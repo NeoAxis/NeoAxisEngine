@@ -17,7 +17,7 @@ class PhysicsSystem;
 class StateRecorder;
 
 /// Base class for configuration of a character
-class CharacterBaseSettings : public RefTarget<CharacterBaseSettings>
+class JPH_EXPORT CharacterBaseSettings : public RefTarget<CharacterBaseSettings>
 {
 public:
 	JPH_OVERRIDE_NEW_DELETE
@@ -42,7 +42,7 @@ public:
 };
 
 /// Base class for character class
-class CharacterBase : public RefTarget<CharacterBase>, public NonCopyable
+class JPH_EXPORT CharacterBase : public RefTarget<CharacterBase>, public NonCopyable
 {
 public:
 	JPH_OVERRIDE_NEW_DELETE
@@ -114,6 +114,10 @@ public:
 	virtual void						RestoreState(StateRecorder &inStream);
 
 protected:
+
+	//!!!!betauser. to access mSupportingVolume
+public:
+
 	// Cached physics system
 	PhysicsSystem *						mSystem;
 

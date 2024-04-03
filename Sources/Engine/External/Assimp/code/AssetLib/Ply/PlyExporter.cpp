@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 
 All rights reserved.
@@ -77,7 +77,7 @@ void ExportScenePly(const char* pFile,IOSystem* pIOSystem, const aiScene* pScene
 
     // we're still here - export successfully completed. Write the file.
     std::unique_ptr<IOStream> outfile (pIOSystem->Open(pFile,"wt"));
-    if(outfile == NULL) {
+    if (outfile == nullptr) {
         throw DeadlyExportError("could not open output .ply file: " + std::string(pFile));
     }
 
@@ -91,7 +91,7 @@ void ExportScenePlyBinary(const char* pFile, IOSystem* pIOSystem, const aiScene*
 
     // we're still here - export successfully completed. Write the file.
     std::unique_ptr<IOStream> outfile(pIOSystem->Open(pFile, "wb"));
-    if (outfile == NULL) {
+    if (outfile == nullptr) {
         throw DeadlyExportError("could not open output .ply file: " + std::string(pFile));
     }
 
@@ -245,9 +245,7 @@ PlyExporter::PlyExporter(const char* _filename, const aiScene* pScene, bool bina
 }
 
 // ------------------------------------------------------------------------------------------------
-PlyExporter::~PlyExporter() {
-    // empty
-}
+PlyExporter::~PlyExporter() = default;
 
 // ------------------------------------------------------------------------------------------------
 void PlyExporter::WriteMeshVerts(const aiMesh* m, unsigned int components)

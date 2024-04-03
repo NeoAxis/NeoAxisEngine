@@ -18,7 +18,7 @@ namespace NeoAxis
 		public Reference<double> Step
 		{
 			get { if( _step.BeginGet() ) Step = _step.Get( this ); return _step.value; }
-			set { if( _step.BeginSet( ref value ) ) { try { StepChanged?.Invoke( this ); } finally { _step.EndSet(); } } }
+			set { if( _step.BeginSet( this, ref value ) ) { try { StepChanged?.Invoke( this ); } finally { _step.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Step"/> property value changes.</summary>
 		public event Action<Grid> StepChanged;
@@ -31,7 +31,7 @@ namespace NeoAxis
 		public Reference<int> ThickStep
 		{
 			get { if( _thickStep.BeginGet() ) ThickStep = _thickStep.Get( this ); return _thickStep.value; }
-			set { if( _thickStep.BeginSet( ref value ) ) { try { ThickStepChanged?.Invoke( this ); } finally { _thickStep.EndSet(); } } }
+			set { if( _thickStep.BeginSet( this, ref value ) ) { try { ThickStepChanged?.Invoke( this ); } finally { _thickStep.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ThickStep"/> property value changes.</summary>
 		public event Action<Grid> ThickStepChanged;
@@ -44,7 +44,7 @@ namespace NeoAxis
 		public Reference<ColorValue> Color
 		{
 			get { if( _color.BeginGet() ) Color = _color.Get( this ); return _color.value; }
-			set { if( _color.BeginSet( ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
+			set { if( _color.BeginSet( this, ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Color"/> property value changes.</summary>
 		public event Action<Grid> ColorChanged;
@@ -57,7 +57,7 @@ namespace NeoAxis
 		public Reference<ColorValue> ColorInvisible
 		{
 			get { if( _colorInvisible.BeginGet() ) ColorInvisible = _colorInvisible.Get( this ); return _colorInvisible.value; }
-			set { if( _colorInvisible.BeginSet( ref value ) ) { try { ColorInvisibleChanged?.Invoke( this ); } finally { _colorInvisible.EndSet(); } } }
+			set { if( _colorInvisible.BeginSet( this, ref value ) ) { try { ColorInvisibleChanged?.Invoke( this ); } finally { _colorInvisible.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ColorInvisible"/> property value changes.</summary>
 		public event Action<Grid> ColorInvisibleChanged;
@@ -71,7 +71,7 @@ namespace NeoAxis
 		public Reference<double> VisibilityDistance
 		{
 			get { if( _visibilityDistance.BeginGet() ) VisibilityDistance = _visibilityDistance.Get( this ); return _visibilityDistance.value; }
-			set { if( _visibilityDistance.BeginSet( ref value ) ) { try { VisibilityDistanceChanged?.Invoke( this ); } finally { _visibilityDistance.EndSet(); } } }
+			set { if( _visibilityDistance.BeginSet( this, ref value ) ) { try { VisibilityDistanceChanged?.Invoke( this ); } finally { _visibilityDistance.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="VisibilityDistance"/> property value changes.</summary>
 		public event Action<Grid> VisibilityDistanceChanged;
@@ -84,7 +84,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayInSimulation
 		{
 			get { if( _displayInSimulation.BeginGet() ) DisplayInSimulation = _displayInSimulation.Get( this ); return _displayInSimulation.value; }
-			set { if( _displayInSimulation.BeginSet( ref value ) ) { try { DisplayInSimulationChanged?.Invoke( this ); } finally { _displayInSimulation.EndSet(); } } }
+			set { if( _displayInSimulation.BeginSet( this, ref value ) ) { try { DisplayInSimulationChanged?.Invoke( this ); } finally { _displayInSimulation.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayInSimulation"/> property value changes.</summary>
 		public event Action<Grid> DisplayInSimulationChanged;

@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2022.1.
+// Made with NeoAxis Engine 2023.1.
 
 .component Project.SimpleGameGUI
 {
@@ -11,7 +11,7 @@
 		Size = Units 300 60
 		HorizontalAlignment = Center
 		VerticalAlignment = Bottom
-		Margin = Units 0 0 0 100
+		Margin = Units 0 0 0 70
 		EditorScrollPosition = 0 0
 		Style
 		{

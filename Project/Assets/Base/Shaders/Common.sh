@@ -26,9 +26,12 @@
 #ifdef MOBILE
 	#define HIGHP highp
 	#define MEDIUMP mediump
+	//#define MEDIUMP highp
+	#define LOWP lowp
 #else
 	#define HIGHP
 	#define MEDIUMP
+	#define LOWP
 #endif
 
 //to mark public function of ShaderScript
@@ -37,6 +40,10 @@
 #define GLOBAL_MATERIAL_SHADING_QUALITY 0
 #define GLOBAL_MATERIAL_SHADING_BASIC 1
 #define GLOBAL_MATERIAL_SHADING_SIMPLE 2
+
+//#ifdef HLSL
+//	#define REVERSEDZ 1
+//#endif
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -184,6 +191,19 @@ void setTranslate(inout mat4 m, vec3 translate)
 #endif
 }
 
+void addTranslate(inout mat4 m, vec3 translate)
+{
+#ifdef GLSL
+	m[3][0] += translate[0];
+	m[3][1] += translate[1];
+	m[3][2] += translate[2];
+#else	
+	m[0][3] += translate[0];
+	m[1][3] += translate[1];
+	m[2][3] += translate[2];
+#endif
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 vec3 flipCubemapCoords(vec3 uvw)
@@ -191,16 +211,18 @@ vec3 flipCubemapCoords(vec3 uvw)
 	return vec3(-uvw.y, uvw.z, uvw.x);
 }
 
-vec3 flipCubemapCoords2(vec3 uvw)
-{
-	return vec3(uvw.y, uvw.z, uvw.x);
-}
+//vec3 flipCubemapCoords2(vec3 uvw)
+//{
+//	return vec3(uvw.y, uvw.z, uvw.x);
+//}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifdef GLOBAL_FOG
-float getFogFactor(vec3 worldPosition, float backgroundFactor)
+float getFogFactor(vec3 cameraPosition, vec3 worldPosition, bool infinityDistance)
+//float getFogFactor(vec3 cameraPosition, vec3 worldPosition, float backgroundFactor, bool infinityDistance)
+//float getFogFactor(vec3 worldPosition, float backgroundFactor, bool infinityDistance)
 {
+#ifdef GLOBAL_FOG	
 	BRANCH
 	if(u_fogDistanceMode != 0.0 || u_fogHeightMode != 0.0)
 	{
@@ -214,16 +236,21 @@ float getFogFactor(vec3 worldPosition, float backgroundFactor)
 		bool modeExp2 = distanceMode == 2;
 		if(modeExp || modeExp2)
 		{
-			float cameraDistance = length(worldPosition - u_viewportOwnerCameraPosition);
-
-			float distance = cameraDistance - u_fogStartDistance;
-			if(distance < 0.0)
-				distance = 0.0;
-			float m = distance * u_fogDensity;
-			if( modeExp2 )
-				m *= m;
-			fog = 1.0 - saturate(1.0 / exp( m * log( 2.718281828 )));
-			fog *= backgroundFactor;
+			BRANCH
+			if(infinityDistance)
+				fog = u_fogAffectBackground;//1.0;
+			else
+			{
+				float cameraDistance = length(worldPosition - cameraPosition);//u_viewportOwnerCameraPosition);
+				float distance = cameraDistance - u_fogStartDistance;
+				if(distance < 0.0)
+					distance = 0.0;
+				float m = distance * u_fogDensity;
+				if( modeExp2 )
+					m *= m;
+				fog = 1.0 - saturate(1.0 / exp( m * log( 2.718281828 )));
+			}
+			//fog *= backgroundFactor;
 		}
 
 		//Height
@@ -234,10 +261,9 @@ float getFogFactor(vec3 worldPosition, float backgroundFactor)
 		
 		return 1.0 - fog;
 	}
-	else
-		return 1.0;
-}
 #endif
+	return 1.0;
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -280,15 +306,41 @@ vec4 textureNoTile( sampler2D samp, vec2 uv )
     // derivatives (for correct mipmapping)
     vec2 ddx2 = dFdx( uv );
     vec2 ddy2 = dFdy( uv );
-    
+
+    // voronoi contribution
+    vec4 va = vec4_splat( 0.0 );
+    float wt = 0.0;
+	
+	{
+		vec2 g = vec2( -1.0, 0.0 );
+		vec4 o = hash4( p + g );
+		vec2 r = g - f + o.xy;
+		float d = dot( r, r );
+		float w = exp( -5.0 * d );
+		vec4 c = texture2DGrad( samp, uv + o.zw, ddx2, ddy2 );
+		va += w * c;
+		wt += w;
+	}
+	{
+		vec2 g = vec2( 0.0, 0.0 );
+		vec4 o = hash4( p + g );
+		vec2 r = g - f + o.xy;
+		float d = dot( r, r );
+		float w = exp( -5.0 * d );
+		vec4 c = texture2DGrad( samp, uv + o.zw, ddx2, ddy2 );
+		va += w * c;
+		wt += w;
+	}
+	
+	/*
     // voronoi contribution
     vec4 va = vec4_splat( 0.0 );
     float wt = 0.0;
 	UNROLL
-    for( int j=-1; j<=1; j++ )
+    for( int j=-1; j<=0; j++ ) //for( int j=-1; j<=1; j++ )
 	{
 		UNROLL
-		for( int i=-1; i<=1; i++ )
+		for( int i=0; i<=0; i++ ) //for( int i=-1; i<=1; i++ )
 		{
 			vec2 g = vec2( float(i), float(j) );
 			vec4 o = hash4( p + g );
@@ -300,15 +352,24 @@ vec4 textureNoTile( sampler2D samp, vec2 uv )
 			wt += w;
 		}
 	}
-	
+	*/
+
     // normalization
     return va / wt;
 }
 
 #endif
 
-vec4 texture2DRemoveTiling(sampler2D tex, vec2 uv, float factor)
+vec4 texture2DRemoveTiling(sampler2D tex, vec2 uv, float factor, float mipBias)
 {
+#ifdef GLOBAL_REMOVE_TEXTURE_TILING
+	//BRANCH if enable branch tag, will compile error on multi material. however it works good without the tag
+	if(factor > 0.0)
+		return textureNoTile(tex, uv);
+#endif
+	return texture2DBias(tex, uv, mipBias);//u_mipBias);
+	
+	/*
 	vec4 original = texture2DBias(tex, uv, u_mipBias);
 #ifdef GLOBAL_REMOVE_TEXTURE_TILING
 	//if enable will compile error on multi material
@@ -321,6 +382,7 @@ vec4 texture2DRemoveTiling(sampler2D tex, vec2 uv, float factor)
 	}
 #endif
 	return original;
+	*/
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -368,14 +430,12 @@ vec4 quatNormalize(vec4 q)
 }
 */
 
-/*
 float vectorsAngle( vec3 vector1, vec3 vector2 )
 {
-	float _cos = dot( vector1, vector2 ) / ( length(vector1) * length(vector2) );
-	_cos = clamp(_cos, -1.0, 1.0);
-	return acos(_cos);
+	float _cos = dot( vector1, vector2 ) / ( length( vector1 ) * length( vector2 ) );
+	_cos = clamp( _cos, -1.0, 1.0 );
+	return acos( _cos );
 }
-*/
 
 vec3 sphericalDirectionGetVector( vec2 sphericalDirection )
 {
@@ -386,7 +446,37 @@ vec3 sphericalDirectionGetVector( vec2 sphericalDirection )
 	return result;
 }
 
+vec2 sphericalDirectionFromVector( vec3 dir )
+{
+	float horizontal = atan2( dir.y, dir.x );
+	float vertical = atan2( dir.z, length( dir.xy ) );
+	return vec2( horizontal, vertical );
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//!!!!GLSL
+#ifndef GLSL
+
+mat3 matInverse(mat3 m)
+{
+	float a00 = m[0][0], a01 = m[0][1], a02 = m[0][2];
+	float a10 = m[1][0], a11 = m[1][1], a12 = m[1][2];
+	float a20 = m[2][0], a21 = m[2][1], a22 = m[2][2];
+
+	float b01 = a22 * a11 - a12 * a21;
+	float b11 = -a22 * a10 + a12 * a20;
+	float b21 = a21 * a10 - a11 * a20;
+
+	float det = a00 * b01 + a01 * b11 + a02 * b21;
+
+	return mat3(
+		b01, (-a22 * a01 + a02 * a21), (a12 * a01 - a02 * a11),
+		b11, (a22 * a00 - a02 * a20), (-a12 * a00 + a02 * a10),
+		b21, (-a21 * a00 + a01 * a20), (a11 * a00 - a01 * a10)) / det;
+}
+
+#endif
 
 //!!!!GLSL
 #ifndef GLSL
@@ -434,13 +524,15 @@ mat4 matInverse( mat4 m )
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //!!!!
-#ifdef GLSL
-vec4 texture2DMaskOpacity(sampler2D tex, vec2 uv, float isLayer, int primitiveID)
-#else
-vec4 texture2DMaskOpacity(sampler2D tex, vec2 uv, float isLayer, uint primitiveID)
-#endif
-{
+//#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_renderOperationData[3].z)
+//#ifdef GLSL
+//vec4 texture2DMaskOpacity(sampler2D tex, vec2 uv, float isLayer, int primitiveID)
+//#else
+//vec4 texture2DMaskOpacity(sampler2D tex, vec2 uv, float isLayer)//, uint primitiveID)
+//#endif
+//{
 	//!!!!
+	
 /*
 	BRANCH
 	if(isLayer == 2.0)
@@ -472,5 +564,29 @@ vec4 texture2DMaskOpacity(sampler2D tex, vec2 uv, float isLayer, uint primitiveI
 	}
 	else
 */
-		return texture2D(tex, uv);
+
+//		return texture2D(tex, uv);
+//}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#define ENUM_LIGHT_TYPE_AMBIENT 0
+#define ENUM_LIGHT_TYPE_DIRECTIONAL 1
+#define ENUM_LIGHT_TYPE_POINT 2
+#define ENUM_LIGHT_TYPE_SPOTLIGHT 3
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+vec4 decodePackedInstanceColor( float rgba, uint exp )
+{
+	uint data = asuint( rgba );
+	vec4 rgba2;
+	rgba2.w = float( ( data & uint( 0xff000000 ) ) >> 24 );
+	rgba2.z = float( ( data & uint( 0x00ff0000 ) ) >> 16 );
+	rgba2.y = float( ( data & uint( 0x0000ff00 ) ) >> 8 );
+	rgba2.x = float( ( data & uint( 0x000000ff ) ) >> 0 );
+	rgba2 = rgba2 / 255.0;
+	
+	float exponent = float( exp ) - 128.0; //float exponent = _rgbe8.w * 255.0 - 128.0;
+	return rgba2 * exp2( exponent );
 }

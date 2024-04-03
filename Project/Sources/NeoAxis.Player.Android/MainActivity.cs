@@ -6,27 +6,35 @@ using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using Android.Content.PM;
+using Android.Content;
+using Android.Views.InputMethods;
+using Android.Runtime;
+using System.Collections.Generic;
 #if OPENGLES
 using Android.Opengl;
 #endif
 
 namespace NeoAxis.Player.Android
 {
-	[Activity( Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true, ScreenOrientation = orientation, ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize )]
+	[Activity( Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true, ScreenOrientation = DefaultScreenOrientation, ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize, WindowSoftInputMode = SoftInput.AdjustResize )]
 	public class MainActivity : AppCompatActivity, View.IOnTouchListener
 	{
-
 		//general settings
-		const ScreenOrientation orientation = ScreenOrientation.Unspecified;// ScreenOrientation.ReverseLandscape;
+		//defined by default screen orientation. you can override orientation in the scene, use Screen Orientation property
+		public const ScreenOrientation DefaultScreenOrientation = ScreenOrientation.Unspecified;// ScreenOrientation.UserLandscape;
+
 		bool fullscreen = true;
 		bool keepScreenOn = true;
-
 
 #if VULKAN
 		VulkanView surfaceView;
 #else
-		GLSurfaceView glSurfaceView;
+		GLSurfaceView surfaceView;
 #endif
+
+		RendererClass renderer;
+
+		bool currentSoftInput;
 
 		//
 
@@ -53,28 +61,28 @@ namespace NeoAxis.Player.Android
 			surfaceView = new VulkanView( this );
 
 			//!!!!LinearLayout?
-			RelativeLayout sceneHolder = (RelativeLayout)this.FindViewById( Resource.Id.sceneHolder );
+			var sceneHolder = (RelativeLayout)this.FindViewById( Resource.Id.sceneHolder );
 			sceneHolder.AddView( surfaceView );
 
 			surfaceView.SetOnTouchListener( this );
 #else
-			glSurfaceView = new GLSurfaceView( this );
-			glSurfaceView.SetEGLContextClientVersion( 3 );
+			surfaceView = new GLSurfaceView( this );
+			surfaceView.SetEGLContextClientVersion( 3 );
 
 			//it's just recommendation, is not works for any device
-			glSurfaceView.PreserveEGLContextOnPause = true;
+			//right now after recreate surface event the engine app will be restarted
+			surfaceView.PreserveEGLContextOnPause = true;
 
-			//!!!!hdr
+			//hdr
 			//glSurfaceView.SetEGLConfigChooser( 8, 8, 8, 8, 24, 8 );
 
-			var renderer = new Renderer();
-			glSurfaceView.SetRenderer( renderer );
+			renderer = new RendererClass();
+			surfaceView.SetRenderer( renderer );
 
-			RelativeLayout sceneHolder = (RelativeLayout)this.FindViewById( Resource.Id.sceneHolder );
-			sceneHolder.AddView( glSurfaceView );
+			var sceneHolder = (RelativeLayout)FindViewById( Resource.Id.sceneHolder );
+			sceneHolder.AddView( surfaceView );
 
-			glSurfaceView.SetOnTouchListener( this );
-
+			surfaceView.SetOnTouchListener( this );
 #endif
 
 			//engineMainThread = new Thread( EngineMainThreadMethod );
@@ -103,7 +111,7 @@ namespace NeoAxis.Player.Android
 			EngineApp.EnginePauseUpdateState( false, true );
 
 #if OPENGLES
-			glSurfaceView.OnPause();
+			surfaceView.OnPause();
 #endif
 		}
 
@@ -112,8 +120,128 @@ namespace NeoAxis.Player.Android
 			base.OnResume();
 
 #if OPENGLES
-			glSurfaceView.OnResume();
+			surfaceView.OnResume();
 #endif
+		}
+
+#if VULKAN
+		public VulkanView VulkanView SurfaceView
+		{
+			get { return surfaceView; }
+		}
+#else
+		public GLSurfaceView SurfaceView
+		{
+			get { return surfaceView; }
+		}
+#endif
+
+		public RendererClass Renderer
+		{
+			get { return renderer; }
+		}
+
+		//void EngineMainThreadMethod()
+		//{
+		//	try
+		//	{
+		//		InitEngine();
+		//	}
+		//	catch( Exception e )
+		//	{
+		//		Log.FatalAsException( e.ToString() );
+		//		return;
+		//	}
+
+		//	engineInitialized = true;
+
+		//	while( true )
+		//	{
+		//		EngineUpdate();
+		//		Thread.Sleep( 0 );
+		//	}
+		//}
+
+		public void RestartApp()
+		{
+			Log.InvisibleInfo( "Restarting the app." );
+
+			var intent = new Intent( this, typeof( MainActivity ) );
+			intent.AddFlags( ActivityFlags.ClearTop | ActivityFlags.ClearTask | ActivityFlags.NewTask );
+			intent.AddCategory( Intent.CategoryDefault );
+
+			Com.JakeWharton.ProcessPhoenix.ProcessPhoenix.TriggerRebirth( this, intent );
+		}
+
+		public void UpdateSoftInput()
+		{
+			var requiredSoftInput = false;
+			var viewport = RenderingSystem.ApplicationRenderTarget?.Viewports[ 0 ];
+			if( viewport != null )
+			{
+				var focusedControl = viewport.UIContainer?.FocusedControl;
+				if( focusedControl != null )
+				{
+					var edit = focusedControl as UIEdit;
+					if( edit != null && !edit.ReadOnlyInHierarchy )
+						requiredSoftInput = true;
+				}
+			}
+
+			try
+			{
+				if( requiredSoftInput != currentSoftInput )
+				{
+					currentSoftInput = requiredSoftInput;
+
+					var view = SurfaceView;
+
+					if( currentSoftInput )
+					{
+						var inputMethodManager = (InputMethodManager)GetSystemService( Context.InputMethodService );
+						view.RequestFocus();
+						inputMethodManager.ShowSoftInput( view, 0 );
+						inputMethodManager.ToggleSoftInput( ShowFlags.Forced, HideSoftInputFlags.ImplicitOnly );
+					}
+					else
+					{
+						//var currentFocus = CurrentFocus;
+						//if( currentFocus != null )
+						//{
+
+						var inputMethodManager = (InputMethodManager)GetSystemService( Context.InputMethodService );
+						inputMethodManager.HideSoftInputFromWindow( view.WindowToken, HideSoftInputFlags.None );
+
+						//}
+					}
+				}
+			}
+			catch { }
+		}
+
+		public void UpdateScreenOrientation()
+		{
+			var orientation = DefaultScreenOrientation;
+
+			if( Project.PlayScreen.Instance != null )
+			{
+				var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+				var scene = viewport.AttachedScene;
+				if( scene != null )
+				{
+					switch( scene.ScreenOrientation.Value )
+					{
+					case Scene.ScreenOrientationEnum.Landscape:
+						orientation = ScreenOrientation.UserLandscape;
+						break;
+					case Scene.ScreenOrientationEnum.Portrait:
+						orientation = ScreenOrientation.UserPortrait;
+						break;
+					}
+				}
+			}
+
+			RequestedOrientation = orientation;
 		}
 
 		public bool OnTouch( View v, MotionEvent e )
@@ -122,13 +250,13 @@ namespace NeoAxis.Player.Android
 
 			if( Engine.engineInitialized )
 			{
-				lock( Engine.touchEventsQueue )
+				lock( Engine.inputEventQueue )
 				{
-					if( Engine.touchEventsQueue.Count < 200 )
+					if( Engine.inputEventQueue.Count < 200 )
 					{
 						var item = new Engine.TouchEventItem();
 
-						//it can't work. MotionEvent properties become invalid when OnTouch is ended
+						//it can't work. MotionEvent properties become invalid when OnTouch call is ended
 						//item.View = v;
 						//item.MotionEvent = e;
 
@@ -145,7 +273,7 @@ namespace NeoAxis.Player.Android
 							item.PointersId[ n ] = e.GetPointerId( n );
 						}
 
-						Engine.touchEventsQueue.Enqueue( item );
+						Engine.inputEventQueue.Enqueue( item );
 					}
 				}
 
@@ -155,34 +283,78 @@ namespace NeoAxis.Player.Android
 			return false;
 		}
 
-		//!!!!
-		//void EngineMainThreadMethod()
-		//{
-		//	try
-		//	{
-		//		InitEngine();
-		//	}
-		//	catch( Exception e )
-		//	{
-		//		Log.FatalAsException( e.ToString() );
-		//		return;
-		//	}
+		bool KeyDown( Keycode keyCode, global::Android.Views.KeyEvent e )
+		{
+			if( Engine.engineInitialized )
+			{
+				lock( Engine.inputEventQueue )
+				{
+					if( Engine.inputEventQueue.Count < 200 )
+					{
+						var item = new Engine.KeyDownEventItem();
 
-		//	//!!!!temp
-		//	Log.Info( "Engine has been initialized." );
+						item.Character = (char)e.UnicodeChar;
 
-		//	engineInitialized = true;
+						switch( e.KeyCode )
+						{
+						case Keycode.Del: item.KeyCode = EKeys.Back/*Delete*/; break;
+						case Keycode.Enter: item.KeyCode = EKeys.Return; break;
+						}
 
-		//	//!!!!как корректно выходить?
+						Engine.inputEventQueue.Enqueue( item );
+					}
+				}
 
-		//	while( true )
-		//	{
-		//		EngineUpdate();
+				return true;
+			}
 
-		//		//!!!!ноль?
-		//		Thread.Sleep( 0 );
-		//	}
-		//}
+			return false;
+		}
 
+		public override bool OnKeyDown( [GeneratedEnum] Keycode keyCode, global::Android.Views.KeyEvent e )
+		{
+			//Log.Info( "unicode: " + ( (char)e.UnicodeChar ).ToString() + ", code: " + e.KeyCode.ToString() );
+
+			if( KeyDown( keyCode, e ) )
+				return true;
+
+			return base.OnKeyDown( keyCode, e );
+		}
+
+		public override bool OnKeyUp( [GeneratedEnum] Keycode keyCode, global::Android.Views.KeyEvent e )
+		{
+			if( Engine.engineInitialized )
+			{
+				return true;
+			}
+
+			return base.OnKeyUp( keyCode, e );
+		}
+
+		public override bool OnKeyMultiple( [GeneratedEnum] Keycode keyCode, int repeatCount, global::Android.Views.KeyEvent e )
+		{
+			//!!!!need?
+
+			//var result = false;
+			//for( int n = 0; n < repeatCount; n++ )
+			//{
+			//	if( KeyDown( keyCode, e ) )
+			//		result = true;
+			//}
+			//if( result )
+			//	return true;
+
+			return base.OnKeyMultiple( keyCode, repeatCount, e );
+		}
+
+		public override bool OnKeyLongPress( [GeneratedEnum] Keycode keyCode, global::Android.Views.KeyEvent e )
+		{
+			return base.OnKeyLongPress( keyCode, e );
+		}
+
+		public override bool OnKeyShortcut( [GeneratedEnum] Keycode keyCode, global::Android.Views.KeyEvent e )
+		{
+			return base.OnKeyShortcut( keyCode, e );
+		}
 	}
 }

@@ -10,6 +10,7 @@ namespace NeoAxis
 	{
 		IntPtr nativeObject;
 		Vector2I size;
+		bool ortho;
 
 		///////////////////////////////////////////////
 
@@ -19,12 +20,13 @@ namespace NeoAxis
 		[DllImport( NativeUtility.library, EntryPoint = "MaskedOcclusionCulling_Destroy", CallingConvention = NativeUtility.convention )]
 		static extern void MaskedOcclusionCulling_Destroy( IntPtr instance );
 
-		[DllImport( NativeUtility.library, EntryPoint = "MaskedOcclusionCulling_SetResolution", CallingConvention = NativeUtility.convention )]
-		static extern void MaskedOcclusionCulling_SetResolution( IntPtr instance, int width, int height );
+		[DllImport( NativeUtility.library, EntryPoint = "MaskedOcclusionCulling_Init", CallingConvention = NativeUtility.convention )]
+		static extern void MaskedOcclusionCulling_Init( IntPtr instance, int width, int height, [MarshalAs( UnmanagedType.U1 )] bool ortho );
 
 		[DllImport( NativeUtility.library, EntryPoint = "MaskedOcclusionCulling_ClearBuffer", CallingConvention = NativeUtility.convention )]
 		static extern void MaskedOcclusionCulling_ClearBuffer( IntPtr instance );
 
+		[Flags]
 		public enum CullingResult
 		{
 			Visible = 0x0,
@@ -75,10 +77,11 @@ namespace NeoAxis
 			}
 		}
 
-		public void SetResolution( Vector2I size )
+		public void Init( Vector2I size, bool ortho )
 		{
 			this.size = size;
-			MaskedOcclusionCulling_SetResolution( nativeObject, size.X, size.Y );
+			this.ortho = ortho;
+			MaskedOcclusionCulling_Init( nativeObject, size.X, size.Y, ortho );
 		}
 
 		public void ClearBuffer()
@@ -109,6 +112,11 @@ namespace NeoAxis
 		public Vector2I Size
 		{
 			get { return size; }
+		}
+
+		public bool Ortho
+		{
+			get { return ortho; }
 		}
 
 		public static Vector2I GetSizeByHeight( Vector2I viewportSize, int sizeParameter )

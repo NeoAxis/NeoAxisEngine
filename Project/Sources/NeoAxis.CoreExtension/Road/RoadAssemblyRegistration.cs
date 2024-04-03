@@ -17,10 +17,10 @@ namespace NeoAxis
 #if !DEPLOY
 			if( EngineApp.IsEditor )
 			{
-				SceneEditor.CreateObjectWhatTypeWillCreatedEvent += Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent;
-				SceneEditor.CreateObjectByCreationDataEvent += Scene_DocumentWindow_CreateObjectByCreationDataEvent;
+				SceneEditorUtility.CreateObjectWhatTypeWillCreatedEvent += Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent;
+				SceneEditorUtility.CreateObjectByCreationDataEvent += Scene_DocumentWindow_CreateObjectByCreationDataEvent;
 
-				PreviewImagesManager.RegisterResourceType( "Road Type" );
+				EditorAPI.PreviewImagesManager_RegisterResourceType( "Road Type" );
 			}
 #endif
 		}

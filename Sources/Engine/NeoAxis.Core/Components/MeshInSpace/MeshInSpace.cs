@@ -11,6 +11,8 @@ namespace NeoAxis
 	/// </summary>
 	public class MeshInSpace : ObjectInSpace, IPhysicalObject
 	{
+		static FastRandom staticRandom = new FastRandom( 0 );
+
 		//creation
 		Mesh.CompiledData usedMeshDataWhenInitialized;
 
@@ -25,7 +27,9 @@ namespace NeoAxis
 		double transformPositionByTime2_Time;
 		Vector3 transformPositionByTime2_Position;
 
-		public delegate void GetRenderSceneDataAddToFrameDataDelegate( MeshInSpace sender, ViewportRenderingContext context, GetRenderSceneDataMode mode, ref RenderingPipeline.RenderSceneData.MeshItem item );
+		protected virtual void OnGetRenderSceneDataAddToFrameData( ViewportRenderingContext context, GetRenderSceneDataMode mode, ref RenderingPipeline.RenderSceneData.MeshItem item, ref bool skip ) { }
+
+		public delegate void GetRenderSceneDataAddToFrameDataDelegate( MeshInSpace sender, ViewportRenderingContext context, GetRenderSceneDataMode mode, ref RenderingPipeline.RenderSceneData.MeshItem item, ref bool skip );
 		public event GetRenderSceneDataAddToFrameDataDelegate GetRenderSceneDataAddToFrameData;
 
 		//List<SceneLODUtility.RenderingContextItem> renderingContextItems;
@@ -37,7 +41,6 @@ namespace NeoAxis
 		//[Browsable( false )]
 		//public bool TransparentRenderingAddOffsetWhenSortByDistance { get; set; }
 
-		//!!!!double
 		//!!!!optimize when relative camera rendering will introducted
 		Transform occluderCacheTransform;
 		Vector3F[] occluderCacheVerticesOriginal;
@@ -49,10 +52,14 @@ namespace NeoAxis
 		Vector3 physicalBodyCreatedTransformScale;
 		bool duringCreateDestroy;
 		bool updatePropertiesWithoutUpdatingBody;
+		Sound collisionSound;
+		float collisionSoundTimeInterval;
+		double collisionSoundMinSpeedChange;
+		float collisionSoundRemainingTime;
 		//!!!!contact data
 
 		//static mode
-		bool needUpdateStaticMode;
+		bool needUpdateStaticModeAndStaticShadows;
 		bool staticModeEnabled;
 		GroupOfObjectsUtility.GroupOfObjectsInstance staticModeGroupOfObjects;
 		List<GroupOfObjects.SubGroup> staticModeGroupOfObjectSubGroups;
@@ -104,7 +111,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _mesh.BeginSet( ref value ) )
+				if( _mesh.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -129,15 +136,18 @@ namespace NeoAxis
 			get { if( _static.BeginGet() ) Static = _static.Get( this ); return _static.value; }
 			set
 			{
-				if( _static.BeginSet( ref value ) )
+				if( _static.BeginSet( this, ref value ) )
 				{
 					try
 					{
 						StaticChanged?.Invoke( this );
 
 						if( EnabledInHierarchy )
-							ParentScene?.ObjectsInSpace_ObjectUpdateGroupMask( this );
-						NeedUpdateStaticMode();
+							ParentScene?.ObjectsInSpace_ObjectUpdateSceneObjectFlags( this );
+						NeedUpdateStaticModeAndStaticShadows();
+
+						//if( !_static.value )
+						//	ResetLightStaticShadowsCache();
 					}
 					finally { _static.EndSet(); }
 				}
@@ -148,6 +158,32 @@ namespace NeoAxis
 		ReferenceField<bool> _static = false;
 
 		/// <summary>
+		/// Whether to allow static shadow optimization for this object.
+		/// </summary>
+		[DefaultValue( true )]// false )]
+		public Reference<bool> StaticShadows
+		{
+			get { if( _staticShadows.BeginGet() ) StaticShadows = _staticShadows.Get( this ); return _staticShadows.value; }
+			set
+			{
+				if( _staticShadows.BeginSet( this, ref value ) )
+				{
+					try
+					{
+						StaticShadowsChanged?.Invoke( this );
+						NeedUpdateStaticModeAndStaticShadows();
+						//if( EnabledInHierarchyAndIsInstance )
+						//	ResetLightStaticShadowsCache();
+					}
+					finally { _staticShadows.EndSet(); }
+				}
+			}
+		}
+		/// <summary>Occurs when the <see cref="StaticShadows"/> property value changes.</summary>
+		public event Action<MeshInSpace> StaticShadowsChanged;
+		ReferenceField<bool> _staticShadows = true;//false;
+
+		/// <summary>
 		/// Replaces all geometries of the mesh by another material.
 		/// </summary>
 		[Serialize]
@@ -155,24 +191,25 @@ namespace NeoAxis
 		public Reference<Material> ReplaceMaterial
 		{
 			get { if( _replaceMaterial.BeginGet() ) ReplaceMaterial = _replaceMaterial.Get( this ); return _replaceMaterial.value; }
-			set { if( _replaceMaterial.BeginSet( ref value ) ) { try { ReplaceMaterialChanged?.Invoke( this ); NeedUpdateStaticMode(); } finally { _replaceMaterial.EndSet(); } } }
+			set { if( _replaceMaterial.BeginSet( this, ref value ) ) { try { ReplaceMaterialChanged?.Invoke( this ); NeedUpdateStaticModeAndStaticShadows(); } finally { _replaceMaterial.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ReplaceMaterial"/> property value changes.</summary>
 		public event Action<MeshInSpace> ReplaceMaterialChanged;
 		ReferenceField<Material> _replaceMaterial;
 
-		/// <summary>
-		/// Replaces selected geometries of the mesh by another material.
-		/// </summary>
-		[Serialize]
-		[Cloneable( CloneType.Deep )]
-		public ReferenceList<Material> ReplaceMaterialSelectively
-		{
-			get { return _replaceMaterialSelectively; }
-		}
-		public delegate void ReplaceMaterialSelectivelyChangedDelegate( MeshInSpace sender );
-		public event ReplaceMaterialSelectivelyChangedDelegate ReplaceMaterialSelectivelyChanged;
-		ReferenceList<Material> _replaceMaterialSelectively;
+		//disabled. still never used but take 2 memory allocations
+		///// <summary>
+		///// Replaces selected geometries of the mesh by another material.
+		///// </summary>
+		//[Serialize]
+		//[Cloneable( CloneType.Deep )]
+		//public ReferenceList<Material> ReplaceMaterialSelectively
+		//{
+		//	get { return _replaceMaterialSelectively; }
+		//}
+		//public delegate void ReplaceMaterialSelectivelyChangedDelegate( MeshInSpace sender );
+		//public event ReplaceMaterialSelectivelyChangedDelegate ReplaceMaterialSelectivelyChanged;
+		//ReferenceList<Material> _replaceMaterialSelectively;
 
 		/// <summary>
 		/// The base color and opacity multiplier.
@@ -183,12 +220,12 @@ namespace NeoAxis
 			get { if( _color.BeginGet() ) Color = _color.Get( this ); return _color.value; }
 			set
 			{
-				if( _color.BeginSet( ref value ) )
+				if( _color.BeginSet( this, ref value ) )
 				{
 					try
 					{
 						ColorChanged?.Invoke( this );
-						NeedUpdateStaticMode();
+						NeedUpdateStaticModeAndStaticShadows();
 						//item.Color = Color;
 						//item.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref item.Color );
 					}
@@ -208,7 +245,7 @@ namespace NeoAxis
 		public Reference<double> VisibilityDistanceFactor
 		{
 			get { if( _visibilityDistanceFactor.BeginGet() ) VisibilityDistanceFactor = _visibilityDistanceFactor.Get( this ); return _visibilityDistanceFactor.value; }
-			set { if( _visibilityDistanceFactor.BeginSet( ref value ) ) { try { VisibilityDistanceFactorChanged?.Invoke( this ); NeedUpdateStaticMode(); } finally { _visibilityDistanceFactor.EndSet(); } } }
+			set { if( _visibilityDistanceFactor.BeginSet( this, ref value ) ) { try { VisibilityDistanceFactorChanged?.Invoke( this ); NeedUpdateStaticModeAndStaticShadows(); } finally { _visibilityDistanceFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="VisibilityDistanceFactor"/> property value changes.</summary>
 		public event Action<MeshInSpace> VisibilityDistanceFactorChanged;
@@ -222,7 +259,7 @@ namespace NeoAxis
 		//public Reference<double> VisibilityDistance
 		//{
 		//	get { if( _visibilityDistance.BeginGet() ) VisibilityDistance = _visibilityDistance.Get( this ); return _visibilityDistance.value; }
-		//	set { if( _visibilityDistance.BeginSet( ref value ) ) { try { VisibilityDistanceChanged?.Invoke( this ); } finally { _visibilityDistance.EndSet(); } } }
+		//	set { if( _visibilityDistance.BeginSet( this, ref value ) ) { try { VisibilityDistanceChanged?.Invoke( this ); } finally { _visibilityDistance.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="VisibilityDistance"/> property value changes.</summary>
 		//public event Action<MeshInSpace> VisibilityDistanceChanged;
@@ -236,7 +273,7 @@ namespace NeoAxis
 		public Reference<bool> CastShadows
 		{
 			get { if( _castShadows.BeginGet() ) CastShadows = _castShadows.Get( this ); return _castShadows.value; }
-			set { if( _castShadows.BeginSet( ref value ) ) { try { CastShadowsChanged?.Invoke( this ); NeedUpdateStaticMode(); } finally { _castShadows.EndSet(); } } }
+			set { if( _castShadows.BeginSet( this, ref value ) ) { try { CastShadowsChanged?.Invoke( this ); NeedUpdateStaticModeAndStaticShadows(); } finally { _castShadows.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CastShadows"/> property value changes.</summary>
 		public event Action<MeshInSpace> CastShadowsChanged;
@@ -251,12 +288,12 @@ namespace NeoAxis
 			get { if( _receiveDecals.BeginGet() ) ReceiveDecals = _receiveDecals.Get( this ); return _receiveDecals.value; }
 			set
 			{
-				if( _receiveDecals.BeginSet( ref value ) )
+				if( _receiveDecals.BeginSet( this, ref value ) )
 				{
 					try
 					{
 						ReceiveDecalsChanged?.Invoke( this );
-						NeedUpdateStaticMode();
+						NeedUpdateStaticModeAndStaticShadows();
 						//item.ReceiveDecals = ReceiveDecals;
 					}
 					finally { _receiveDecals.EndSet(); }
@@ -277,12 +314,12 @@ namespace NeoAxis
 			get { if( _motionBlurFactor.BeginGet() ) MotionBlurFactor = _motionBlurFactor.Get( this ); return _motionBlurFactor.value; }
 			set
 			{
-				if( _motionBlurFactor.BeginSet( ref value ) )
+				if( _motionBlurFactor.BeginSet( this, ref value ) )
 				{
 					try
 					{
 						MotionBlurFactorChanged?.Invoke( this );
-						NeedUpdateStaticMode();
+						NeedUpdateStaticModeAndStaticShadows();
 						//item.MotionBlurFactor = (float)MotionBlurFactor;
 					}
 					finally { _motionBlurFactor.EndSet(); }
@@ -302,14 +339,14 @@ namespace NeoAxis
 			get { if( _occluder.BeginGet() ) Occluder = _occluder.Get( this ); return _occluder.value; }
 			set
 			{
-				if( _occluder.BeginSet( ref value ) )
+				if( _occluder.BeginSet( this, ref value ) )
 				{
 					try
 					{
 						OccluderChanged?.Invoke( this );
 
 						if( EnabledInHierarchy )
-							ParentScene?.ObjectsInSpace_ObjectUpdateGroupMask( this );
+							ParentScene?.ObjectsInSpace_ObjectUpdateSceneObjectFlags( this );
 					}
 					finally { _occluder.EndSet(); }
 				}
@@ -326,7 +363,7 @@ namespace NeoAxis
 		public Reference<List<ObjectSpecialRenderingEffect>> SpecialEffects
 		{
 			get { if( _specialEffects.BeginGet() ) SpecialEffects = _specialEffects.Get( this ); return _specialEffects.value; }
-			set { if( _specialEffects.BeginSet( ref value ) ) { try { SpecialEffectsChanged?.Invoke( this ); } finally { _specialEffects.EndSet(); } } }
+			set { if( _specialEffects.BeginSet( this, ref value ) ) { try { SpecialEffectsChanged?.Invoke( this ); } finally { _specialEffects.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SpecialEffects"/> property value changes.</summary>
 		public event Action<MeshInSpace> SpecialEffectsChanged;
@@ -339,7 +376,7 @@ namespace NeoAxis
 		public Reference<bool> Collision
 		{
 			get { if( _collision.BeginGet() ) Collision = _collision.Get( this ); return _collision.value; }
-			set { if( _collision.BeginSet( ref value ) ) { try { CollisionChanged?.Invoke( this ); RecreateBody(); } finally { _collision.EndSet(); } } }
+			set { if( _collision.BeginSet( this, ref value ) ) { try { CollisionChanged?.Invoke( this ); RecreateBody(); } finally { _collision.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Collision"/> property value changes.</summary>
 		public event Action<MeshInSpace> CollisionChanged;
@@ -349,12 +386,13 @@ namespace NeoAxis
 		/// The initial linear velocity of the body.
 		/// </summary>
 		[DefaultValue( "0 0 0" )]
+		[NetworkSynchronize( false )]//don't sync to optimize networking
 		public Reference<Vector3> PhysicalBodyLinearVelocity
 		{
 			get { if( _physicalBodyLinearVelocity.BeginGet() ) PhysicalBodyLinearVelocity = _physicalBodyLinearVelocity.Get( this ); return _physicalBodyLinearVelocity.value; }
 			set
 			{
-				if( _physicalBodyLinearVelocity.BeginSet( ref value ) )
+				if( _physicalBodyLinearVelocity.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -374,12 +412,13 @@ namespace NeoAxis
 		/// The initial angular velocity of the body.
 		/// </summary>
 		[DefaultValue( "0 0 0" )]
+		[NetworkSynchronize( false )]//don't sync to optimize networking
 		public Reference<Vector3> PhysicalBodyAngularVelocity
 		{
 			get { if( _physicalBodyAngularVelocity.BeginGet() ) PhysicalBodyAngularVelocity = _physicalBodyAngularVelocity.Get( this ); return _physicalBodyAngularVelocity.value; }
 			set
 			{
-				if( _physicalBodyAngularVelocity.BeginSet( ref value ) )
+				if( _physicalBodyAngularVelocity.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -417,7 +456,7 @@ namespace NeoAxis
 			set
 			{
 				additionalItems = value;
-				NeedUpdateStaticMode();
+				NeedUpdateStaticModeAndStaticShadows();
 			}
 		}
 
@@ -434,8 +473,7 @@ namespace NeoAxis
 			public Quaternion Rotation;
 			public Vector3 Scale;
 			public ColorValue Color;
-
-			//!!!!какие еще параметры?
+			public Material ReplaceMaterial;
 
 			public AdditionalItem( Mesh mesh, Vector3 position, Quaternion rotation, Vector3 scale, ColorValue color )
 			{
@@ -444,6 +482,7 @@ namespace NeoAxis
 				Rotation = rotation;
 				Scale = scale;
 				Color = color;
+				ReplaceMaterial = null;
 			}
 		}
 
@@ -461,14 +500,15 @@ namespace NeoAxis
 
 		public MeshInSpace()
 		{
-			_replaceMaterialSelectively = new ReferenceList<Material>( this, () => ReplaceMaterialSelectivelyChanged?.Invoke( this ) );
-			//_additionalMeshes = new ReferenceList<Mesh>( this, () => AdditionalMeshesChanged?.Invoke( this ) );
+			//_replaceMaterialSelectively = new ReferenceList<Material>( this, () => ReplaceMaterialSelectivelyChanged?.Invoke( this ) );
 
-			//item.Creator = this;
-			//item.ReceiveDecals = true;
-			//item.MotionBlurFactor = 1;
-			//item.Color = ColorValue.One;
-			//item.ColorForInstancingData = RenderingPipeline.ColorOneForInstancingData;
+			////_additionalMeshes = new ReferenceList<Mesh>( this, () => AdditionalMeshesChanged?.Invoke( this ) );
+
+			////item.Creator = this;
+			////item.ReceiveDecals = true;
+			////item.MotionBlurFactor = 1;
+			////item.Color = ColorValue.One;
+			////item.ColorForInstancingData = RenderingPipeline.ColorOneForInstancingData;
 		}
 
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
@@ -489,10 +529,15 @@ namespace NeoAxis
 					break;
 
 				//!!!!impl?
-				case nameof( ReplaceMaterialSelectively ):
+				//case nameof( ReplaceMaterialSelectively ):
 				case nameof( SpecialEffects ):
 					//case nameof( AdditionalMeshes ):
 					//case nameof( AdditionalItems ):
+					if( Static )
+						skip = true;
+					break;
+
+				case nameof( StaticShadows ):
 					if( Static )
 						skip = true;
 					break;
@@ -509,6 +554,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal static bool IsTwoSided( Mesh mesh, Material replaceMaterial )
 		{
 			if( replaceMaterial != null && replaceMaterial.TwoSided )
@@ -526,6 +572,7 @@ namespace NeoAxis
 			return false;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void GetTransformWithOptimizedCases( ref Transform cached )
 		{
 			if( cached == null )
@@ -536,19 +583,24 @@ namespace NeoAxis
 		{
 			base.OnUpdate( delta );
 
-			if( needUpdateStaticMode )
+			if( needUpdateStaticModeAndStaticShadows )
+			{
 				UpdateStaticMode();
+				if( StaticShadows )
+					ResetLightStaticShadowsCache();
+			}
 
 			//touch Transform when reference is specified to update space bounds
 			if( !staticModeEnabled && TransformHasReference && VisibleInHierarchy )
 			{
-				var t = Transform;
+				Transform.Touch();
+				//var t = Transform;
 			}
 		}
 
 		private void Scene_GetRenderSceneData2ForGroupOfObjects( Scene scene, ViewportRenderingContext context )
 		{
-			if( needUpdateStaticMode )
+			if( needUpdateStaticModeAndStaticShadows )
 				UpdateStaticMode();
 		}
 
@@ -587,7 +639,8 @@ namespace NeoAxis
 				transformPositionByTime2_Position = transformPositionByTime1_Position;
 				transformPositionByTime1_Time = time;
 				GetTransformWithOptimizedCases( ref tr );
-				transformPositionByTime1_Position = tr.Position;//TransformV.Position;
+				transformPositionByTime1_Position = tr.Position;
+				//context.ConvertToRelative( tr.Position, out transformPositionByTime1_PositionRelative );
 			}
 
 			//if( EnabledInHierarchy )
@@ -609,10 +662,12 @@ namespace NeoAxis
 					var mesh = MeshOutput;
 					if( mesh != null && mesh.Result != null )
 					{
+						var meshDataLOD0 = mesh.Result.MeshData;
+
 						var context2 = context.ObjectInSpaceRenderingContext;
 						context2.disableShowingLabelForThisObject = true;
 
-						if( mode == GetRenderSceneDataMode.InsideFrustum || ( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && mesh.Result.MeshData.CastShadows ) || mode == GetRenderSceneDataMode.GlobalIllumination )
+						if( mode == GetRenderSceneDataMode.InsideFrustum || ( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && meshDataLOD0.CastShadows ) || mode == GetRenderSceneDataMode.GlobalIllumination )
 						{
 							var cameraSettings = context.Owner.CameraSettings;
 							//var tr = Transform.Value;
@@ -620,7 +675,7 @@ namespace NeoAxis
 							var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, SpaceBounds );
 
 							var boundingSize = (float)SpaceBounds.boundingSphere.Radius * 2;
-							var visibilityDistance = (float)( context.GetVisibilityDistanceByObjectSize( boundingSize ) * VisibilityDistanceFactor * mesh.Result.MeshData.VisibilityDistanceFactor );
+							var visibilityDistance = (float)( context.GetVisibilityDistanceByObjectSize( boundingSize ) * VisibilityDistanceFactor * meshDataLOD0.VisibilityDistanceFactor );
 
 							if( cameraDistanceMinSquared < visibilityDistance * visibilityDistance /*|| mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum*/ )
 							{
@@ -635,26 +690,27 @@ namespace NeoAxis
 								var item = new RenderingPipeline.RenderSceneData.MeshItem();
 								item.Creator = this;
 								item.BoundingSphere = SpaceBounds.boundingSphere;
-								item.BoundingBoxCenter = item.BoundingSphere.Center;
+								//item.BoundingBoxCenter = item.BoundingSphere.Center;
 								//SpaceBounds.CalculatedBoundingBox.GetCenter( out item.BoundingBoxCenter );
 								//item.MeshData = mesh.Result.MeshData;
 								//item.CastShadows = CastShadows && item.MeshData.CastShadows;
 								item.ReceiveDecals = ReceiveDecals;
 								item.MotionBlurFactor = (float)MotionBlurFactor;
 								item.ReplaceMaterial = ReplaceMaterial;
-								if( ReplaceMaterialSelectively.Count != 0 )
-								{
-									//!!!!может fixed массив юзать если влазит. или хранить локальный массив
-									//!!!!GC
-									item.ReplaceMaterialSelectively = new Material[ ReplaceMaterialSelectively.Count ];
-									for( int n = 0; n < ReplaceMaterialSelectively.Count; n++ )
-										item.ReplaceMaterialSelectively[ n ] = ReplaceMaterialSelectively[ n ].Value;
-								}
+								//if( ReplaceMaterialSelectively.Count != 0 )
+								//{
+								//	//!!!!может fixed массив юзать если влазит. или хранить локальный массив
+								//	//!!!!GC
+								//	item.ReplaceMaterialSelectively = new Material[ ReplaceMaterialSelectively.Count ];
+								//	for( int n = 0; n < ReplaceMaterialSelectively.Count; n++ )
+								//		item.ReplaceMaterialSelectively[ n ] = ReplaceMaterialSelectively[ n ].Value;
+								//}
 								item.Color = Color;
-								item.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref item.Color );
+								RenderingPipeline.GetColorForInstancingData( ref item.Color, out item.ColorForInstancingData1, out item.ColorForInstancingData2 );
 								item.TransparentRenderingAddOffsetWhenSortByDistance = transparentRenderingAddOffsetWhenSortByDistance;
 								item.VisibilityDistance = visibilityDistance;
 								item.CutVolumes = CutVolumes;
+								item.StaticShadows = StaticShadows;
 
 								var specialEffects = SpecialEffects.Value;
 								if( specialEffects != null && specialEffects.Count != 0 )
@@ -685,30 +741,57 @@ namespace NeoAxis
 								{
 									GetTransformWithOptimizedCases( ref tr );
 									previousPosition = tr.Position;
+									//context.ConvertToRelative( tr.Position, out previousPosition );
+									////previousPosition = tr.Position;
 								}
-								////!!!!double
-								//item.PositionPreviousFrame = previousPosition.ToVector3F();
 
+								//MeshDataLastVoxelLOD
+								var meshDataLods = meshDataLOD0.LODs;
+								if( meshDataLods != null )
+								{
+									var lastLOD = meshDataLods[ meshDataLods.Length - 1 ];
+									if( lastLOD.VoxelGridSize != 0 )
+										item.MeshDataLastVoxelLOD = lastLOD.Mesh?.Result?.MeshData;
+								}
 
 								int item0BillboardMode = 0;
 
-								SceneLODUtility.GetDemandedLODs( context, mesh.Result.MeshData, cameraDistanceMinSquared, cameraDistanceMaxSquared, boundingSize, out var lodState );
+								SceneLODUtility.GetDemandedLODs( context, meshDataLOD0, cameraDistanceMinSquared, cameraDistanceMaxSquared, boundingSize, out var lodState );
 								for( int nLodItem = 0; nLodItem < lodState.Count; nLodItem++ )
 								{
 									lodState.GetItem( nLodItem, out var lodLevel, out var lodRange );
 
-									item.MeshData = mesh.Result.MeshData;
-									item.MeshDataLOD0 = item.MeshData;
+									item.MeshData = meshDataLOD0;
+									item.MeshDataLOD0 = meshDataLOD0;
+
+									//MeshDataShadows, MeshDataShadowsForceBestLOD
+									var lodScaleShadows = context.LODScaleShadowsSquared * meshDataLOD0.LODScaleShadows;
+									if( lodScaleShadows <= lodLevel )
+									{
+										//select last LOD for shadows
+										item.MeshDataShadows = item.MeshDataLastVoxelLOD;
+									}
+									else if( lodScaleShadows >= 100 )
+									{
+										//select the best LOD for shadows
+										item.MeshDataShadows = meshDataLOD0;
+										item.MeshDataShadowsForceBestLOD = true;
+									}
+
 									if( lodLevel > 0 )
 									{
-										ref var lod = ref mesh.Result.MeshData.LODs[ lodLevel - 1 ];
+										ref var lod = ref meshDataLods[ lodLevel - 1 ];
 										var lodMeshData = lod.Mesh?.Result?.MeshData;
 										if( lodMeshData != null )
 											item.MeshData = lodMeshData;
 									}
 
-									//!!!!double
-									item.PositionPreviousFrame = previousPosition.ToVector3F();
+									GetTransformWithOptimizedCases( ref tr );
+									item.PreviousFramePositionChange = ( tr.Position - previousPosition ).ToVector3F();
+									//item.PositionPreviousFrameRelative = previousPosition;
+
+									////context.ConvertToRelative( ref previousPosition, out item.PositionPreviousFrameRelative );
+									//////item.PositionPreviousFrame = previousPosition.ToVector3F();
 
 									item.CastShadows = CastShadows && item.MeshData.CastShadows && cameraDistanceMinSquared < context.GetShadowVisibilityDistanceSquared( visibilityDistance );
 
@@ -736,7 +819,7 @@ namespace NeoAxis
 											else
 												offset = Vector3F.Zero;
 
-											ref var result = ref item.Transform;
+											ref var result = ref item.TransformRelative;
 											result.Item0.X = scaleH;
 											result.Item0.Y = 0;
 											result.Item0.Z = rotation.X;
@@ -749,13 +832,12 @@ namespace NeoAxis
 											result.Item2.Y = 0;
 											result.Item2.Z = (float)scale.Z;
 											result.Item2.W = 0;
-											//!!!!double
-											result.Item3.X = (float)( position.X + offset.X );
-											result.Item3.Y = (float)( position.Y + offset.Y );
-											result.Item3.Z = (float)( position.Z + offset.Z );
+											result.Item3.X = (float)( position.X - context.OwnerCameraSettingsPosition.X + offset.X );
+											result.Item3.Y = (float)( position.Y - context.OwnerCameraSettingsPosition.Y + offset.Y );
+											result.Item3.Z = (float)( position.Z - context.OwnerCameraSettingsPosition.Z + offset.Z );
 											result.Item3.W = 1;
 
-											item.PositionPreviousFrame += offset;
+											//item.PositionPreviousFrameRelative += offset;
 
 											//var scaleX = Math.Max( tr.Scale.X, tr.Scale.Y );
 											//var scale = new Vector3( scaleX, scaleX, tr.Scale.Z );
@@ -767,8 +849,8 @@ namespace NeoAxis
 										else
 										{
 											ref var matrix = ref tr.ToMatrix4();
-											//!!!!double
-											matrix.ToMatrix4F( out item.Transform );
+											context.ConvertToRelative( ref matrix, out item.TransformRelative );
+											//matrix.ToMatrix4F( out item.Transform );
 										}
 									}
 
@@ -788,15 +870,48 @@ namespace NeoAxis
 											item.Layers = a1 ?? a2;
 									}
 
+									//tessellation
+									if( /*cameraDistanceMin < context.TessellationDistance &&*/mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum || mode == GetRenderSceneDataMode.InsideFrustum )
+									{
+										var enable = false;
+
+										if( item.MeshData == meshDataLOD0 )
+										{
+											if( item.ReplaceMaterial != null )
+											{
+												if( item.ReplaceMaterial.Result != null )
+													enable = item.ReplaceMaterial.Result.tessellationQuality != 0;
+											}
+											else
+												enable = meshDataLOD0.ContainsTessellation;
+
+											//if( item.ReplaceMaterialSelectively != null )
+											//{
+											//	for( int n = 0; n < item.ReplaceMaterialSelectively.Length; n++ )
+											//	{
+											//		var result = item.ReplaceMaterialSelectively[ n ].Result;
+											//		if( result != null && result.tessellationQuality != 0 )
+											//			enable = true;
+											//	}
+											//}
+										}
+
+										//set true only for first lod, set false to second (it can be true because item memory is shared)
+										item.Tessellation = enable;
+									}
+
 									//add to render
 									//!!!!double drawing static mode when selected. нужно динамическое отключение в группе объектов
 									if( !staticModeEnabled || context2.selectedObjects.Contains( this ) )
 									{
+										var skip = false;
+										OnGetRenderSceneDataAddToFrameData( context, mode, ref item, ref skip );
 										//set AnimationData from event
-										GetRenderSceneDataAddToFrameData?.Invoke( this, context, mode, ref item );
+										GetRenderSceneDataAddToFrameData?.Invoke( this, context, mode, ref item, ref skip );
 
 										//add the item to render
-										context.FrameData.RenderSceneData.Meshes.Add( ref item );
+										if( !skip )
+											context.FrameData.RenderSceneData.Meshes.Add( ref item );
 									}
 								}
 
@@ -858,7 +973,9 @@ namespace NeoAxis
 						if( mesh?.Result == null )
 							continue;
 
-						if( mode == GetRenderSceneDataMode.InsideFrustum || ( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && mesh.Result.MeshData.CastShadows ) || mode == GetRenderSceneDataMode.GlobalIllumination )
+						var meshDataLOD0 = mesh.Result.MeshData;
+
+						if( mode == GetRenderSceneDataMode.InsideFrustum || ( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && meshDataLOD0.CastShadows ) || mode == GetRenderSceneDataMode.GlobalIllumination )
 						{
 							var cameraSettings = context.Owner.CameraSettings;
 							//var tr = Transform.Value;
@@ -883,7 +1000,9 @@ namespace NeoAxis
 								previousTransform.transformPositionByTime2_Time = previousTransform.transformPositionByTime1_Time;
 								previousTransform.transformPositionByTime2_Position = previousTransform.transformPositionByTime1_Position;
 								previousTransform.transformPositionByTime1_Time = time;
-								previousTransform.transformPositionByTime1_Position = pos;//tr2.Position;//TransformV.Position;
+								previousTransform.transformPositionByTime1_Position = pos;
+								//context.ConvertToRelative( ref pos, out previousTransform.transformPositionByTime1_PositionRelative );
+								////previousTransform.transformPositionByTime1_Position = pos;
 							}
 
 							//additionalItemMesh.Position
@@ -891,7 +1010,7 @@ namespace NeoAxis
 							var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, SpaceBounds );
 
 							var boundingSize = (float)SpaceBounds.boundingSphere.Radius * 2;
-							var visibilityDistance = (float)( context.GetVisibilityDistanceByObjectSize( boundingSize ) * VisibilityDistanceFactor * mesh.Result.MeshData.VisibilityDistanceFactor );
+							var visibilityDistance = (float)( context.GetVisibilityDistanceByObjectSize( boundingSize ) * VisibilityDistanceFactor * meshDataLOD0.VisibilityDistanceFactor );
 
 							if( cameraDistanceMinSquared < visibilityDistance * visibilityDistance /*|| mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum*/ )
 							{
@@ -906,23 +1025,31 @@ namespace NeoAxis
 								var item = new RenderingPipeline.RenderSceneData.MeshItem();
 								item.Creator = this;
 								item.BoundingSphere = SpaceBounds.boundingSphere;
-								item.BoundingBoxCenter = item.BoundingSphere.Center;
+								//item.BoundingBoxCenter = item.BoundingSphere.Center;
 								//SpaceBounds.CalculatedBoundingBox.GetCenter( out item.BoundingBoxCenter );
 								//item.MeshData = mesh.Result.MeshData;
 								//item.CastShadows = CastShadows && item.MeshData.CastShadows;
 								item.ReceiveDecals = ReceiveDecals;
 								item.MotionBlurFactor = (float)MotionBlurFactor;
-								item.ReplaceMaterial = ReplaceMaterial;
-								if( ReplaceMaterialSelectively.Count != 0 )
+								item.StaticShadows = StaticShadows;
+
+								if( additionalItem.ReplaceMaterial != null )
+									item.ReplaceMaterial = additionalItem.ReplaceMaterial;
+								else
 								{
-									//!!!!может fixed массив юзать если влазит
-									//!!!!GC
-									item.ReplaceMaterialSelectively = new Material[ ReplaceMaterialSelectively.Count ];
-									for( int n = 0; n < ReplaceMaterialSelectively.Count; n++ )
-										item.ReplaceMaterialSelectively[ n ] = ReplaceMaterialSelectively[ n ].Value;
+									item.ReplaceMaterial = ReplaceMaterial;
+									//if( ReplaceMaterialSelectively.Count != 0 )
+									//{
+									//	//!!!!может fixed массив юзать если влазит
+									//	//!!!!GC
+									//	item.ReplaceMaterialSelectively = new Material[ ReplaceMaterialSelectively.Count ];
+									//	for( int n = 0; n < ReplaceMaterialSelectively.Count; n++ )
+									//		item.ReplaceMaterialSelectively[ n ] = ReplaceMaterialSelectively[ n ].Value;
+									//}
 								}
+
 								item.Color = Color * additionalItem.Color;
-								item.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref item.Color );
+								RenderingPipeline.GetColorForInstancingData( ref item.Color, out item.ColorForInstancingData1, out item.ColorForInstancingData2 );
 								item.TransparentRenderingAddOffsetWhenSortByDistance = transparentRenderingAddOffsetWhenSortByDistance;
 								item.VisibilityDistance = visibilityDistance;
 								item.CutVolumes = CutVolumes;
@@ -953,31 +1080,56 @@ namespace NeoAxis
 								//PositionPreviousFrame
 								var previousTime = time - context.Owner.LastUpdateTimeStep;
 								if( !AdditionalItemsGetTransformPositionByTime( ref previousTransform, previousTime, out var previousPosition ) )
-									previousPosition = pos;//tr2.Position;
+								{
+									previousPosition = pos;
+									//context.ConvertToRelative( ref pos, out previousPosition );
+									////previousPosition = pos;
+								}
 
-								////!!!!double
-								//item.PositionPreviousFrame = previousPosition.ToVector3F();
-
+								//MeshDataLastVoxelLOD
+								var meshDataLods = meshDataLOD0.LODs;
+								if( meshDataLods != null )
+								{
+									var lastLOD = meshDataLods[ meshDataLods.Length - 1 ];
+									if( lastLOD.VoxelGridSize != 0 )
+										item.MeshDataLastVoxelLOD = lastLOD.Mesh?.Result?.MeshData;
+								}
 
 								int item0BillboardMode = 0;
 
-								SceneLODUtility.GetDemandedLODs( context, mesh.Result.MeshData, cameraDistanceMinSquared, cameraDistanceMaxSquared, boundingSize, out var lodState );
+								SceneLODUtility.GetDemandedLODs( context, meshDataLOD0, cameraDistanceMinSquared, cameraDistanceMaxSquared, boundingSize, out var lodState );
 								for( int nLodItem = 0; nLodItem < lodState.Count; nLodItem++ )
 								{
 									lodState.GetItem( nLodItem, out var lodLevel, out var lodRange );
 
-									item.MeshData = mesh.Result.MeshData;
-									item.MeshDataLOD0 = item.MeshData;
+									item.MeshData = meshDataLOD0;
+									item.MeshDataLOD0 = meshDataLOD0;
+
+									//MeshDataShadows, MeshDataShadowsForceBestLOD
+									var lodScaleShadows = context.LODScaleShadowsSquared * meshDataLOD0.LODScaleShadows;
+									if( lodScaleShadows <= lodLevel )
+									{
+										//select last LOD for shadows
+										item.MeshDataShadows = item.MeshDataLastVoxelLOD;
+									}
+									else if( lodScaleShadows >= 100 )
+									{
+										//select the best LOD for shadows
+										item.MeshDataShadows = meshDataLOD0;
+										item.MeshDataShadowsForceBestLOD = true;
+									}
+
 									if( lodLevel > 0 )
 									{
-										ref var lod = ref mesh.Result.MeshData.LODs[ lodLevel - 1 ];
+										ref var lod = ref meshDataLods[ lodLevel - 1 ];
 										var lodMeshData = lod.Mesh?.Result?.MeshData;
 										if( lodMeshData != null )
 											item.MeshData = lodMeshData;
 									}
 
-									//!!!!double
-									item.PositionPreviousFrame = previousPosition.ToVector3F();
+									item.PreviousFramePositionChange = ( pos - previousPosition ).ToVector3F();
+									//item.PositionPreviousFrameRelative = previousPosition;
+									////item.PositionPreviousFrame = previousPosition.ToVector3F();
 
 									item.CastShadows = CastShadows && item.MeshData.CastShadows && cameraDistanceMinSquared < context.GetShadowVisibilityDistanceSquared( visibilityDistance );
 
@@ -1006,7 +1158,7 @@ namespace NeoAxis
 											else
 												offset = Vector3F.Zero;
 
-											ref var result = ref item.Transform;
+											ref var result = ref item.TransformRelative;
 											result.Item0.X = scaleH;
 											result.Item0.Y = 0;
 											result.Item0.Z = rotation.X;
@@ -1019,13 +1171,12 @@ namespace NeoAxis
 											result.Item2.Y = 0;
 											result.Item2.Z = (float)scale.Z;
 											result.Item2.W = 0;
-											//!!!!double
-											result.Item3.X = (float)( position.X + offset.X );
-											result.Item3.Y = (float)( position.Y + offset.Y );
-											result.Item3.Z = (float)( position.Z + offset.Z );
+											result.Item3.X = (float)( position.X - context.OwnerCameraSettingsPosition.X + offset.X );
+											result.Item3.Y = (float)( position.Y - context.OwnerCameraSettingsPosition.Y + offset.Y );
+											result.Item3.Z = (float)( position.Z - context.OwnerCameraSettingsPosition.Z + offset.Z );
 											result.Item3.W = 1;
 
-											item.PositionPreviousFrame += offset;
+											//item.PositionPreviousFrameRelative += offset;
 
 											//var scaleX = Math.Max( tr.Scale.X, tr.Scale.Y );
 											//var scale = new Vector3( scaleX, scaleX, tr.Scale.Z );
@@ -1041,9 +1192,8 @@ namespace NeoAxis
 											Matrix3.Multiply( ref rot2, ref scl2, out var mat3 );
 											var matrix = new Matrix4( ref mat3, ref pos );
 
-											//ref var matrix = ref tr2.ToMatrix4();
-											//!!!!double
-											matrix.ToMatrix4F( out item.Transform );
+											context.ConvertToRelative( ref matrix, out item.TransformRelative );
+											//matrix.ToMatrix4F( out item.Transform );
 										}
 									}
 
@@ -1063,15 +1213,48 @@ namespace NeoAxis
 											item.Layers = a1 ?? a2;
 									}
 
+									//tessellation
+									if( /*cameraDistanceMin < context.TessellationDistance &&*/ mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum || mode == GetRenderSceneDataMode.InsideFrustum )
+									{
+										var enable = false;
+
+										if( item.MeshData == meshDataLOD0 )
+										{
+											if( item.ReplaceMaterial != null )
+											{
+												if( item.ReplaceMaterial.Result != null )
+													enable = item.ReplaceMaterial.Result.tessellationQuality != 0;
+											}
+											else
+												enable = meshDataLOD0.ContainsTessellation;
+
+											//if( item.ReplaceMaterialSelectively != null )
+											//{
+											//	for( int n = 0; n < item.ReplaceMaterialSelectively.Length; n++ )
+											//	{
+											//		var result = item.ReplaceMaterialSelectively[ n ].Result;
+											//		if( result != null && result.tessellationQuality != 0 )
+											//			enable = true;
+											//	}
+											//}
+										}
+
+										//set true only for first lod, set false to second (it can be true because item memory is shared)
+										item.Tessellation = enable;
+									}
+
 									//add to render
 									//!!!!double drawing static mode when selected. нужно динамическое отключение в группе объектов
 									if( !staticModeEnabled || context2.selectedObjects.Contains( this ) )
 									{
+										var skip = false;
+										OnGetRenderSceneDataAddToFrameData( context, mode, ref item, ref skip );
 										//set AnimationData from event
-										GetRenderSceneDataAddToFrameData?.Invoke( this, context, mode, ref item );
+										GetRenderSceneDataAddToFrameData?.Invoke( this, context, mode, ref item, ref skip );
 
 										//add the item to render
-										context.FrameData.RenderSceneData.Meshes.Add( ref item );
+										if( !skip )
+											context.FrameData.RenderSceneData.Meshes.Add( ref item );
 									}
 								}
 
@@ -1123,10 +1306,10 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected override void OnSpaceBoundsUpdate( ref SpaceBounds newBounds )
 		{
-			Mesh m = MeshOutput;
-			var result = m?.Result;
+			var result = MeshOutput?.Result;
 			if( result != null )
 			{
 				if( result.MeshData.BillboardMode != 0 )
@@ -1137,17 +1320,33 @@ namespace NeoAxis
 				}
 				else
 				{
-					var meshSpaceBounds = result.SpaceBounds;
-
-					var b = SpaceBounds.Multiply( Transform, meshSpaceBounds );
-					newBounds = SpaceBounds.Merge( newBounds, b );
-
-					//Vec3[] points = m.Result.Bounds.ToPoints();
-					//var mat4 = Transform.Value.ToMat4();
-					//var b = Bounds.Cleared;
-					//foreach( var p in points )
-					//	b.Add( mat4 * p );
+					var meshBoundLocal = result.SpaceBounds;
+					var meshBoundsTransformed = SpaceBounds.Multiply( Transform, meshBoundLocal );
+					newBounds = SpaceBounds.Merge( newBounds, meshBoundsTransformed );
 				}
+
+				//bounds prediction to skip small updates in future steps
+				if( PhysicalBody != null && PhysicalBody.Active )
+				{
+					ref var realBounds = ref newBounds.boundingBox;
+
+					if( !SpaceBoundsOctreeOverride.HasValue || !SpaceBoundsOctreeOverride.Value.Contains( ref realBounds ) )
+					{
+						//calculated extended bounds. predict for 2-3 seconds
+
+						var trPosition = TransformV.Position;
+
+						var bTotal = realBounds;
+						var b2 = new Bounds( trPosition );
+						b2.Add( trPosition + PhysicalBody.LinearVelocity * ( 2.0f + staticRandom.NextFloat() ) );
+						b2.Expand( newBounds.boundingSphere.Radius * 1.1 );
+						bTotal.Add( ref b2 );
+
+						SpaceBoundsOctreeOverride = bTotal;
+					}
+				}
+				else
+					SpaceBoundsOctreeOverride = null;
 			}
 		}
 
@@ -1322,9 +1521,15 @@ namespace NeoAxis
 				//после загрузки создается через шейп, т.к. срабатывает RecreateBody()
 				if( physicalBody == null )
 					CreateBody();
+
+				if( StaticShadows )
+					ResetLightStaticShadowsCache();
 			}
 			else
 			{
+				if( StaticShadows )
+					ResetLightStaticShadowsCache();
+
 				DestroyData();
 				DestroyBody();
 			}
@@ -1487,11 +1692,11 @@ namespace NeoAxis
 								GpuVertexBuffer buffer = null;
 								if( ( creationFlags & ModifiableMeshCreationFlags.VertexBuffersDynamic ) != 0 )
 								{
-									buffer = GpuBufferManager.CreateVertexBuffer( (byte[])sourceBuffer.Vertices.Clone(), sourceBuffer.VertexDeclaration, GpuBufferFlags.Dynamic );
+									buffer = GpuBufferManager.CreateVertexBuffer( (byte[])sourceBuffer.Vertices.Clone(), sourceBuffer.VertexDeclaration, GpuBufferFlags.Dynamic | GpuBufferFlags.ComputeRead );
 								}
 								else if( ( creationFlags & ModifiableMeshCreationFlags.VertexBuffersComputeWrite ) != 0 )
 								{
-									buffer = GpuBufferManager.CreateVertexBuffer( sourceBuffer.VertexCount, sourceBuffer.VertexDeclaration, GpuBufferFlags.ComputeWrite );
+									buffer = GpuBufferManager.CreateVertexBuffer( sourceBuffer.VertexCount, sourceBuffer.VertexDeclaration, GpuBufferFlags.ComputeWrite | GpuBufferFlags.ComputeRead );
 								}
 
 								//var buffer = GpuBufferManager.CreateVertexBuffer( (byte[])sourceBuffer.Vertices.Clone(), sourceBuffer.VertexDeclaration, creationFlags.HasFlag( ModifiableMeshCreationFlags.VertexBuffersUpdateDynamic ) );// vertexBuffersUpdateDynamic );
@@ -1517,11 +1722,11 @@ namespace NeoAxis
 								GpuIndexBuffer buffer = null;
 								if( ( creationFlags & ModifiableMeshCreationFlags.IndexBufferDynamic ) != 0 )
 								{
-									buffer = GpuBufferManager.CreateIndexBuffer( (int[])sourceOp.IndexBuffer.Indices.Clone(), GpuBufferFlags.Dynamic );
+									buffer = GpuBufferManager.CreateIndexBuffer( (int[])sourceOp.IndexBuffer.Indices.Clone(), GpuBufferFlags.Dynamic | GpuBufferFlags.ComputeRead );
 								}
 								else if( ( creationFlags & ModifiableMeshCreationFlags.IndexBufferComputeWrite ) != 0 )
 								{
-									buffer = GpuBufferManager.CreateIndexBuffer( sourceOp.IndexBuffer.IndexCount, GpuBufferFlags.ComputeWrite );
+									buffer = GpuBufferManager.CreateIndexBuffer( sourceOp.IndexBuffer.IndexCount, GpuBufferFlags.ComputeWrite | GpuBufferFlags.ComputeRead );
 								}
 								op.IndexBuffer = buffer;
 
@@ -1694,7 +1899,10 @@ namespace NeoAxis
 			}
 
 			RecreateBody();
-			NeedUpdateStaticMode();
+			NeedUpdateStaticModeAndStaticShadows();
+
+			//if( StaticShadows )
+			//	ResetLightStaticShadowsCache();
 		}
 
 		public Mesh.CompiledData.RayCastResult RayCast( Ray ray, Mesh.CompiledData.RayCastModes mode )
@@ -1927,16 +2135,9 @@ namespace NeoAxis
 
 		protected override Scene.SceneObjectFlags OnGetSceneObjectFlags()
 		{
-			Scene.SceneObjectFlags result;
-
-			if( EngineApp.IsSimulation && Static )
-				result = Scene.SceneObjectFlags.Logic;
-			else
-				result = base.OnGetSceneObjectFlags();
-
+			var result = ( EngineApp.IsSimulation && Static ) ? Scene.SceneObjectFlags.Logic : base.OnGetSceneObjectFlags();
 			if( Occluder )
 				result |= Scene.SceneObjectFlags.Occluder;
-
 			return result;
 		}
 
@@ -1974,9 +2175,6 @@ namespace NeoAxis
 							occluderCacheTransform = tr;
 							occluderCacheVerticesOriginal = vertices;
 
-							//!!!!slowly
-							//!!!!double
-
 							ref var matrix = ref tr.ToMatrix4();
 
 							occluderCacheVertices = new Vector3[ vertices.Length ];
@@ -2007,7 +2205,7 @@ namespace NeoAxis
 			//!!!!additional items
 
 
-			NeedUpdateStaticMode();
+			NeedUpdateStaticModeAndStaticShadows();
 
 			if( physicalBody != null && !updatePropertiesWithoutUpdatingBody )
 			{
@@ -2035,7 +2233,6 @@ namespace NeoAxis
 			get { return physicalBody; }
 		}
 
-		//!!!!slowly?
 		Scene.PhysicsWorldClass GetPhysicsWorldData()
 		{
 			var scene = ParentScene;
@@ -2092,15 +2289,10 @@ namespace NeoAxis
 
 				var bodyTransform = Transform.Value;
 
-				var mesh = MeshOutput;
-				var meshResult = mesh?.Result;
+				var meshResult = MeshOutput?.Result;
 				if( meshResult != null )
 				{
 					var collisionDefinition = OnGetCollisionShapeData( meshResult );
-					//var collisionDefinition = mesh.GetComponent<RigidBody>( "Collision Definition" );
-					//if( collisionDefinition == null )
-					//	collisionDefinition = meshResult.GetAutoCollisionDefinition();
-
 					if( collisionDefinition != null )
 					{
 						var nativeShape = physicsWorldData.AllocateShape( collisionDefinition, bodyTransform.Scale );
@@ -2118,17 +2310,16 @@ namespace NeoAxis
 							var pos = bodyTransform.Position;
 							var rot = bodyTransform.Rotation.ToQuaternionF();
 
-							//use local variable to prevent double update inside properties
-							//!!!!
-							var centerOfMassManual = false;//CenterOfMassManual.Value;
-							var centerOfMassPosition = Vector3F.Zero;//CenterOfMassPosition.Value.ToVector3F();
-							var inertiaTensorFactor = Vector3F.One;//InertiaTensorFactor.Value.ToVector3F();
+							var centerOfMassOffset = collisionDefinition.CenterOfMassOffset.Value.ToVector3F();
+							//var centerOfMassManual = collisionDefinition.CenterOfMassManual.Value;
+							//var centerOfMassPosition = collisionDefinition.CenterOfMassPosition.Value.ToVector3F();
+							//impl?
+							//var inertiaTensorFactor = Vector3F.One;//InertiaTensorFactor.Value.ToVector3F();
 
-							var body = physicsWorldData.CreateRigidBody( nativeShape, true, this, motionType, (float)collisionDefinition.LinearDamping.Value, (float)collisionDefinition.AngularDamping.Value, ref pos, ref rot, activate, (float)collisionDefinition.Mass, centerOfMassManual, ref centerOfMassPosition, ref inertiaTensorFactor, collisionDefinition.MotionQuality.Value );
+							var body = physicsWorldData.CreateRigidBody( nativeShape, true, this, motionType, (float)collisionDefinition.LinearDamping.Value, (float)collisionDefinition.AngularDamping.Value, ref pos, ref rot, activate, (float)collisionDefinition.Mass, ref centerOfMassOffset, /*centerOfMassManual, ref centerOfMassPosition, ref inertiaTensorFactor, */collisionDefinition.MotionQuality.Value, collisionDefinition.CharacterMode );
 
 							if( body != null )
 							{
-								//!!!!как kinematic?
 								if( motionType != PhysicsMotionType.Static )
 								{
 									body.LinearVelocity = PhysicalBodyLinearVelocity.Value.ToVector3F();
@@ -2149,6 +2340,14 @@ namespace NeoAxis
 								physicalBodyCreatedTransformScale = bodyTransform.Scale;
 
 								OnCollisionBodyCreated();
+
+								//collision sound
+								collisionSound = collisionDefinition.CollisionSound;
+								if( collisionSound != null )
+								{
+									collisionSoundTimeInterval = (float)collisionDefinition.CollisionSoundTimeInterval;
+									collisionSoundMinSpeedChange = collisionDefinition.CollisionSoundMinSpeedChange;
+								}
 							}
 						}
 						else
@@ -2222,6 +2421,8 @@ namespace NeoAxis
 				physicalBodyCreatedTransformScale = Vector3.Zero;
 				physicalBody.Dispose();
 				physicalBody = null;
+
+				collisionSound = null;
 			}
 
 			duringCreateDestroy = false;
@@ -2248,6 +2449,7 @@ namespace NeoAxis
 		{
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		internal void UpdateDataFromPhysicalBody()
 		{
 			if( physicalBody != null && physicalBody.MotionType != PhysicsMotionType.Static )
@@ -2273,6 +2475,25 @@ namespace NeoAxis
 				{
 					updatePropertiesWithoutUpdatingBody = false;
 				}
+
+				//process collision sound
+				if( collisionSound != null )
+				{
+					if( collisionSoundRemainingTime > 0 )
+					{
+						collisionSoundRemainingTime -= Time.SimulationDelta;
+						if( collisionSoundRemainingTime < 0 )
+							collisionSoundRemainingTime = 0;
+					}
+
+					if( collisionSoundRemainingTime == 0 && physicalBody.Active && physicalBody.ContactsExist() )
+					{
+						var changeSquared = ( physicalBody.LinearVelocity - physicalBody.PreviousLinearVelocity ).LengthSquared();
+						var minChangeSquared = MathEx.Square( collisionSoundMinSpeedChange );
+						if( changeSquared > minChangeSquared )
+							CollisionSoundPlay();
+					}
+				}
 			}
 		}
 
@@ -2288,9 +2509,9 @@ namespace NeoAxis
 		//	get { return staticModeEnabled; }
 		//}
 
-		void NeedUpdateStaticMode()
+		void NeedUpdateStaticModeAndStaticShadows()
 		{
-			needUpdateStaticMode = true;
+			needUpdateStaticModeAndStaticShadows = true;
 		}
 
 		//GroupOfObjects StaticMode_GetOrCreateGroupOfObjects( bool canCreate )
@@ -2377,7 +2598,7 @@ namespace NeoAxis
 				{
 					if( staticModeGroupOfObjects == null )
 					{
-						staticModeGroupOfObjects = GroupOfObjectsUtility.GetOrCreateGroupOfObjects( scene, "__GroupOfObjectsMeshInSpaceStatic", true, scene.MeshInSpaceStaticModeSectorSize, scene.MeshInSpaceStaticModeMaxObjectsInGroup );
+						staticModeGroupOfObjects = GroupOfObjectsUtility.GetOrCreateGroupOfObjects( scene, "__GroupOfObjectsMeshInSpaceStatic", true, scene.MeshInSpaceStaticModeSectorSize );//, scene.MeshInSpaceStaticModeMaxObjectsInGroup );
 					}
 
 					if( staticModeGroupOfObjects != null )
@@ -2394,7 +2615,7 @@ namespace NeoAxis
 							{
 								var tr = TransformV;
 
-								var elementIndex = staticModeGroupOfObjects.GetOrCreateGroupOfObjectsElement( mesh, ReplaceMaterial, CastShadows, VisibilityDistanceFactor, ReceiveDecals, MotionBlurFactor, false );
+								var elementIndex = staticModeGroupOfObjects.GetOrCreateGroupOfObjectsElement( mesh, ReplaceMaterial, CastShadows, VisibilityDistanceFactor, ReceiveDecals, MotionBlurFactor, StaticShadows, false );
 
 								var obj = new GroupOfObjects.Object( elementIndex, 0, 0, GroupOfObjects.Object.FlagsEnum.Enabled | GroupOfObjects.Object.FlagsEnum.Visible, tr.Position, tr.Rotation.ToQuaternionF(), tr.Scale.ToVector3F(), Vector4F.Zero, Color, Vector4F.Zero, Vector4F.Zero, 0 );
 
@@ -2419,7 +2640,7 @@ namespace NeoAxis
 									//var tr2 = Transform.Value;
 									//tr2 = tr2.ApplyOffset( additionalItem.Position, additionalItem.Rotation, additionalItem.Scale );
 
-									var elementIndex = staticModeGroupOfObjects.GetOrCreateGroupOfObjectsElement( additionalItem.Mesh, ReplaceMaterial, CastShadows, VisibilityDistanceFactor, ReceiveDecals, MotionBlurFactor, false );
+									var elementIndex = staticModeGroupOfObjects.GetOrCreateGroupOfObjectsElement( additionalItem.Mesh, additionalItem.ReplaceMaterial ?? ReplaceMaterial, CastShadows, VisibilityDistanceFactor, ReceiveDecals, MotionBlurFactor, StaticShadows, false );
 
 									var obj = new GroupOfObjects.Object( elementIndex, 0, 0, GroupOfObjects.Object.FlagsEnum.Enabled | GroupOfObjects.Object.FlagsEnum.Visible, pos, rot.ToQuaternionF(), scl.ToVector3F(), Vector4F.Zero, additionalItem.Color, Vector4F.Zero, Vector4F.Zero, 0 );
 
@@ -2442,13 +2663,18 @@ namespace NeoAxis
 						staticModeEnabled = true;
 					}
 				}
+
+				//ResetLightStaticShadowsCache();
 			}
 
-			needUpdateStaticMode = false;
+			needUpdateStaticModeAndStaticShadows = false;
 		}
 
 		void DestroyStaticModeData()
 		{
+			//if( Static )
+			//	ResetLightStaticShadowsCache();
+
 			if( staticModeGroupOfObjectSubGroups != null )
 			{
 				for( int n = 0; n < staticModeGroupOfObjectSubGroups.Count; n++ )
@@ -2458,6 +2684,81 @@ namespace NeoAxis
 			//staticModeGroupOfObjects = null;
 
 			staticModeEnabled = false;
+		}
+
+		public void NotifyInstantMovement()
+		{
+			transformPositionByTime2_Time = 0;
+			transformPositionByTime1_Time = 0;
+
+			if( additionalItemsPreviousTransform != null )
+			{
+				for( int n = 0; n < additionalItemsPreviousTransform.Length; n++ )
+				{
+					ref var previousTransform = ref additionalItemsPreviousTransform[ n ];
+					previousTransform.transformPositionByTime2_Time = 0;
+					previousTransform.transformPositionByTime1_Time = 0;
+				}
+			}
+		}
+
+		public delegate void CollisionSoundPlayBeforeDelegate( MeshInSpace sender, ref Sound sound, ref double volume, ref bool handled );
+		public event CollisionSoundPlayBeforeDelegate CollisionSoundPlayBefore;
+
+		public void CollisionSoundPlay()
+		{
+			if( !SoundWorld.BackendNull )
+			{
+				var sound = collisionSound;
+				var volume = 1.0;
+
+				var handled = false;
+				CollisionSoundPlayBefore?.Invoke( this, ref sound, ref volume, ref handled );
+				if( handled )
+					return;
+
+				if( sound != null )
+				{
+					//specify position of collision?
+					ParentScene?.SoundPlay( sound, TransformV.Position, volume: volume );
+
+					collisionSoundRemainingTime = collisionSoundTimeInterval;
+				}
+			}
+
+			if( NetworkIsServer && collisionSound != null )
+			{
+				BeginNetworkMessageToEveryone( "CollisionSoundPlay" );
+				EndNetworkMessage();
+			}
+		}
+
+		protected override bool OnReceiveNetworkMessageFromServer( string message, ArrayDataReader reader )
+		{
+			if( !base.OnReceiveNetworkMessageFromServer( message, reader ) )
+				return false;
+
+			if( message == "CollisionSoundPlay" )
+				CollisionSoundPlay();
+
+			return true;
+		}
+
+		void ResetLightStaticShadowsCache()
+		{
+			var scene = ParentScene;
+			if( scene != null )
+			{
+				var bounds = SpaceBounds.BoundingBox;
+				var item = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, bounds );
+				scene.GetObjectsInSpace( item );
+
+				foreach( var resultItem in item.Result )
+				{
+					var light = resultItem.Object as Light;
+					light?.ResetStaticShadowsCache();
+				}
+			}
 		}
 	}
 }

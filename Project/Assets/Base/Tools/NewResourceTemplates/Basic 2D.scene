@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.Scene
 {
@@ -54,8 +54,9 @@
 		Name = Rendering Pipeline
 		DeferredShading = False
 		Shadows = False
-		ShadowFarDistance = 15
+		ShadowDirectionalDistance = 15
 		ShadowDirectionalLightCascades = 1
+		ShadowPointSpotlightDistance = 15
 		ProvideColorDepthTextureCopy = False
 		.component NeoAxis.Component
 		{
@@ -64,16 +65,6 @@
 		.component NeoAxis.Component
 		{
 			Name = Scene Effects
-			.component NeoAxis.RenderingEffect_AmbientOcclusion
-			{
-				Enabled = False
-				Name = Ambient Occlusion
-			}
-			.component NeoAxis.RenderingEffect_LensEffects
-			{
-				Enabled = False
-				Name = Lens Effects
-			}
 			.component NeoAxis.RenderingEffect_ToneMapping
 			{
 				Enabled = False
@@ -101,6 +92,10 @@
 				Enabled = False
 				Name = Motion Blur
 			}
+			.component NeoAxis.RenderingEffect_Precipitation
+			{
+				Name = Precipitation
+			}
 		}
 		.component NeoAxis.Component
 		{
@@ -110,16 +105,27 @@
 	.component NeoAxis.GameMode
 	{
 		Name = Game Mode
+		ThirdPersonCameraHorizontalAngle = 0
+		InventoryWidget = True
 		CutsceneStarted = False
 		CutsceneGuiFadingFactor = 0
 		CutsceneGuiFadingSpeed = 0
 		ScreenFadingCurrentColor = 0 0 0 0
 		ScreenFadingTargetColor = 0 0 0 0
 		ScreenFadingSpeed = 0
+		ObjectControlledByPlayer
+		{
+			GetByReference = "this:..\\$Character 2D"
+		}
 	}
 	.component NeoAxis.NetworkLogic
 	{
 		Name = Network Logic
+		AvatarWindow = False
+		ObjectTypeControlledByPlayer
+		{
+			GetByReference = NeoAxis.Character2D
+		}
 	}
 	.component NeoAxis.MeshInSpace
 	{
@@ -155,7 +161,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Box
-		Color = 0.6078432 0.6078432 0.6078432
+		Color = 1 0 0.07494117
 		Transform
 		{
 			GetByReference = "this:$Collision Body\\Transform"
@@ -181,6 +187,7 @@
 			.component NeoAxis.MeshGeometry_Box
 			{
 				Name = Mesh Geometry
+				Dimensions = 1.04 1.04 1.04
 				Material
 				{
 					GetByReference = "Base\\Materials\\White.material"
@@ -190,7 +197,7 @@
 		.component NeoAxis.RigidBody2D
 		{
 			Name = Collision Body
-			Transform = "2.91991239547747 6.21684634298425 -0.5; 0 0 -0.0549195241672314 0.998490784066255; 1 1 0.1"
+			Transform = "-0.82422779643763 6.21684634298425 -0.5; 0 0 -0.0549195241672314 0.998490784066255; 1 1 0.1"
 			MotionType = Dynamic
 			.component NeoAxis.CollisionShape2D_Box
 			{
@@ -202,7 +209,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Cylinder
-		Color = 0.6078432 0.6078432 0.6078432
+		Color = 0 0 1
 		Transform
 		{
 			GetByReference = "this:$Collision Body\\Transform"
@@ -228,6 +235,7 @@
 			.component NeoAxis.MeshGeometry_Cylinder
 			{
 				Name = Mesh Geometry
+				Radius = 0.51
 				Material
 				{
 					GetByReference = "Base\\Materials\\White.material"
@@ -237,7 +245,7 @@
 		.component NeoAxis.RigidBody2D
 		{
 			Name = Collision Body
-			Transform = "6.81897792913959 1.29930842320895 -0.5; 0 0 0 1; 1 1 0.1"
+			Transform = "6.81897792913959 2.08017188569392 -0.5; 0 0 0 1; 1 1 0.1"
 			MotionType = Dynamic
 			.component NeoAxis.CollisionShape2D_Ellipse
 			{
@@ -302,17 +310,12 @@
 			}
 		}
 	}
-	.component NeoAxis.MeshInSpace
+	.component NeoAxis.Character2D
 	{
-		Name = Pipe
-		Color = 0.6078432 0.6078432 0.6078432
+		Name = Character 2D
 		Transform
 		{
 			GetByReference = "this:$Collision Body\\Transform"
-		}
-		Mesh
-		{
-			GetByReference = "this:$Mesh"
 		}
 		ReplaceMaterialSelectively
 		{
@@ -325,28 +328,77 @@
 				Count = 0
 			}
 		}
-		.component NeoAxis.Mesh
+		.component NeoAxis.SpriteAnimationController
 		{
-			Name = Mesh
-			.component NeoAxis.MeshGeometry_Pipe
-			{
-				Name = Mesh Geometry
-				Material
-				{
-					GetByReference = "Base\\Materials\\White.material"
-				}
-			}
+			Name = Animation Controller
 		}
 		.component NeoAxis.RigidBody2D
 		{
 			Name = Collision Body
-			Transform = "-0.469554625548654 0.264396606255735 0; 0 0 0 1; 1 1 0.1"
+			CanBeSelected = False
+			Transform = "2.54766299403029 -1.79859750890683 1; 0 0 0 1; 1 1 1"
 			MotionType = Dynamic
-			.component NeoAxis.CollisionShape2D_Ellipse
+			Mass = 70
+			AngularDamping = 10
+			FixedRotation = True
+			.component NeoAxis.CollisionShape2D_Capsule
 			{
-				Restitution = 1
+				Name = Capsule Shape
+				TransformRelativeToParent = "0 0 0.00999999999999995; 0 0 0 1; 1 1 1"
+				Friction = 0
 				CollidesWith = All
+				Radius = 0.3
+				Height = 0.33999999999999997
 			}
 		}
+	}
+	.component NeoAxis.Weapon2D
+	{
+		Name = Weapon 2D
+		Transform = "8.33406147244453 -1.83864178903427 1; 0 0 0 1; 1 1 1"
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.SpriteAnimationController
+		{
+			Name = Animation Controller
+		}
+	}
+	.component NeoAxis.Item2D
+	{
+		Name = Item 2D
+		Transform = "-2.63807128247245 -1.83864178903427 1; 0 0 0 1; 1 1 1"
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ItemType
+		{
+			GetByReference = "Content\\Items 2D\\Authors\\NeoAxis\\Key\\Key.item2dtype"
+		}
+		.component NeoAxis.SpriteAnimationController
+		{
+			Name = Animation Controller
+		}
+	}
+	.component NeoAxis.SpawnPoint
+	{
+		Name = Spawn Point
+		Transform = "10.6966739999631 -0.737424085529826 0; 0 0 0 1; 1 1 1"
 	}
 }

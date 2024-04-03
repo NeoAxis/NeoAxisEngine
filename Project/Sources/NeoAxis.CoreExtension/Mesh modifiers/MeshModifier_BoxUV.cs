@@ -20,7 +20,7 @@ namespace NeoAxis
 		public Reference<Vector3> Tiles
 		{
 			get { if( tiles.BeginGet() ) Tiles = tiles.Get( this ); return tiles.value; }
-			set { if( tiles.BeginSet( ref value ) ) { try { TilesChanged?.Invoke( this ); ShouldRecompileMesh(); } finally { tiles.EndSet(); } } }
+			set { if( tiles.BeginSet( this, ref value ) ) { try { TilesChanged?.Invoke( this ); ShouldRecompileMesh(); } finally { tiles.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Tiles"/> property value changes.</summary>
 		public event Action<MeshModifier_BoxUV> TilesChanged;
@@ -35,7 +35,7 @@ namespace NeoAxis
 		//	get { if( tilesPerUnit.BeginGet() ) TilesPerUnit = tilesPerUnit.Get( this ); return tilesPerUnit.value; }
 		//	set
 		//	{
-		//		if( tilesPerUnit.BeginSet( ref value ) )
+		//		if( tilesPerUnit.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -59,7 +59,7 @@ namespace NeoAxis
 		//	get { if( _extendBounds.BeginGet() ) ExtendBounds = _extendBounds.Get( this ); return _extendBounds.value; }
 		//	set
 		//	{
-		//		if( _extendBounds.BeginSet( ref value ) )
+		//		if( _extendBounds.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -214,7 +214,7 @@ namespace NeoAxis
 		}
 
 #if !DEPLOY
-		protected override void OnBakeIntoMesh( Editor.DocumentInstance document, Editor.UndoMultiAction undoMultiAction )
+		protected override void OnBakeIntoMesh( Editor.IDocumentInstance document, Editor.UndoMultiAction undoMultiAction )
 		{
 			base.OnBakeIntoMesh( document, undoMultiAction );
 

@@ -18,8 +18,8 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "component" )]
 #if !DEPLOY
-	[EditorControl( typeof( DocumentWindow ) )]
-	[SettingsCell( typeof( SettingsCell_Properties ), true )]
+	[EditorControl( "NeoAxis.Editor.DocumentWindow" )]
+	[SettingsCell( "NeoAxis.Editor.SettingsCell_Properties", true )]
 #endif
 	public class Component : Metadata.IMetadataProvider/*, ISettingsProvider*/, IDisposable
 	{
@@ -76,6 +76,8 @@ namespace NeoAxis
 
 		UniqueNameGenerator uniqueNameGenerator;
 
+		Component parentRootCached;
+
 		internal bool createdByBaseType;
 		/// <summary>
 		/// Whether the object is created using a base type.
@@ -106,6 +108,9 @@ namespace NeoAxis
 		internal bool networkSubscribedToEvents;
 		internal bool networkDisableChangedEvents;
 		ESet<ServerNetworkService_Components.ClientItem> networkModeUsers;
+
+		internal ESet<string> networkDisabledPropertiesSynchronization;
+		//internal ESet<Metadata.Property> networkDisabledPropertiesSynchronization;
 
 		Component[] _tempComponentListForUpdateAndSimulationStep;
 		//List<Component> _tempComponentListForUpdateAndSimulationStep;
@@ -139,6 +144,11 @@ namespace NeoAxis
 		/// </summary>
 		protected virtual void OnEnabledInHierarchyChanged()
 		{
+			if( EnabledInHierarchy )
+				parentRootCached = ParentRoot;
+			else
+				parentRootCached = null;
+
 			if( !EnabledInHierarchy )
 				_tempComponentListForUpdateAndSimulationStep = null;
 		}
@@ -305,7 +315,7 @@ namespace NeoAxis
 		public Reference<bool> SaveSupport
 		{
 			get { if( _saveSupport.BeginGet() ) SaveSupport = _saveSupport.Get( this ); return _saveSupport.value; }
-			set { if( _saveSupport.BeginSet( ref value ) ) { try { SaveSupportChanged?.Invoke( this ); } finally { _saveSupport.EndSet(); } } }
+			set { if( _saveSupport.BeginSet( this, ref value ) ) { try { SaveSupportChanged?.Invoke( this ); } finally { _saveSupport.EndSet(); } } }
 		}
 		/// <summary>
 		/// Occurs after changing value of <see cref="SaveSupport"/> property.
@@ -324,7 +334,7 @@ namespace NeoAxis
 		public Reference<bool> CloneSupport
 		{
 			get { if( _cloneSupport.BeginGet() ) CloneSupport = _cloneSupport.Get( this ); return _cloneSupport.value; }
-			set { if( _cloneSupport.BeginSet( ref value ) ) { try { CloneSupportChanged?.Invoke( this ); } finally { _cloneSupport.EndSet(); } } }
+			set { if( _cloneSupport.BeginSet( this, ref value ) ) { try { CloneSupportChanged?.Invoke( this ); } finally { _cloneSupport.EndSet(); } } }
 		}
 		/// <summary>
 		/// Occurs after changing value of <see cref="CloneSupport"/> property.
@@ -2531,6 +2541,12 @@ namespace NeoAxis
 					}
 				}
 			}
+
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			public LinkedList<Component> GetLinkedListReadOnly()
+			{
+				return linkedList;
+			}
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2559,7 +2575,9 @@ namespace NeoAxis
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				//!!!!!!slowly. когда включено EnabledInHierarchy, то можно по идее локально root хранить
+				if( parentRootCached != null )
+					return parentRootCached;
+
 				Component c = this;
 				while( c.Parent != null )
 					c = c.Parent;
@@ -2600,7 +2618,7 @@ namespace NeoAxis
 		public Reference<ScreenLabelEnum> ScreenLabel
 		{
 			get { if( _screenLabel.BeginGet() ) ScreenLabel = _screenLabel.Get( this ); return _screenLabel.value; }
-			set { if( _screenLabel.BeginSet( ref value ) ) { try { ScreenLabelChanged?.Invoke( this ); } finally { _screenLabel.EndSet(); } } }
+			set { if( _screenLabel.BeginSet( this, ref value ) ) { try { ScreenLabelChanged?.Invoke( this ); } finally { _screenLabel.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ScreenLabel"/> property value changes.</summary>
 		public event Action<Component> ScreenLabelChanged;
@@ -2616,7 +2634,7 @@ namespace NeoAxis
 			get { if( _networkMode.BeginGet() ) NetworkMode = _networkMode.Get( this ); return _networkMode.value; }
 			set
 			{
-				if( _networkMode.BeginSet( ref value ) )
+				if( _networkMode.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -3668,7 +3686,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		internal virtual void OnUpdateBefore( float delta ) { }
+		internal virtual void OnUpdateBefore( float delta, ref bool childrenUpdate ) { }
 		/// <summary>
 		/// Called during the update process of all objects.
 		/// </summary>
@@ -3683,85 +3701,89 @@ namespace NeoAxis
 		[MethodImpl( (MethodImplOptions)512 )]
 		internal void PerformUpdate( float delta )
 		{
-			OnUpdateBefore( delta );
+			var childrenUpdate = true;
+			OnUpdateBefore( delta, ref childrenUpdate );
 
 			//children
-			int componentsCount = components.Count;
-			if( componentsCount != 0 )
+			if( childrenUpdate )
 			{
-				if( componentsCount > 1 )
+				int componentsCount = components.Count;
+				if( componentsCount != 0 )
 				{
-					var list = _tempComponentListForUpdateAndSimulationStep;
-					if( list == null || list.Length < componentsCount )
+					if( componentsCount > 1 )
 					{
-						list = new Component[ componentsCount ];
-						_tempComponentListForUpdateAndSimulationStep = list;
-					}
-
-					int counter = 0;
-					for( var node = components.linkedList?.First; node != null; node = node.Next )
-					{
-						var c = node.Value;
-						if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
+						var list = _tempComponentListForUpdateAndSimulationStep;
+						if( list == null || list.Length < componentsCount )
 						{
-							if( counter >= list.Length )
-								break;
-							list[ counter++ ] = c;
+							list = new Component[ componentsCount ];
+							_tempComponentListForUpdateAndSimulationStep = list;
+						}
+
+						int counter = 0;
+						for( var node = components.linkedList?.First; node != null; node = node.Next )
+						{
+							var c = node.Value;
+							if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
+							{
+								if( counter >= list.Length )
+									break;
+								list[ counter++ ] = c;
+							}
+						}
+
+						for( int n = 0; n < counter; n++ )
+						{
+							var c = list[ n ];
+							if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
+								c.PerformUpdate( delta );
+						}
+
+						//!!!!clear array? maybe sometimes
+
+
+
+						//var list = _tempComponentListForUpdateAndSimulationStep;
+						//if( list == null )
+						//{
+						//	list = new List<Component>( componentsCount );
+						//	_tempComponentListForUpdateAndSimulationStep = list;
+						//}
+						//list.Clear();
+						////var list = new List<Component>( componentsCount );
+
+						//for( var node = components.linkedList?.First; node != null; node = node.Next )
+						//{
+						//	var c = node.Value;
+						//	if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
+						//		list.Add( c );
+						//}
+
+						//for( int n = 0; n < list.Count; n++ )
+						//{
+						//	var c = list[ n ];
+						//	if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
+						//		c.PerformUpdate( delta );
+						//}
+
+						//list.Clear();
+					}
+					else
+					{
+						var node = components.linkedList?.First;
+						if( node != null )
+						{
+							var c = node.Value;
+							if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
+								c.PerformUpdate( delta );
 						}
 					}
-
-					for( int n = 0; n < counter; n++ )
-					{
-						var c = list[ n ];
-						if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
-							c.PerformUpdate( delta );
-					}
-
-					//!!!!clear array? maybe sometimes
-
-
-
-					//var list = _tempComponentListForUpdateAndSimulationStep;
-					//if( list == null )
-					//{
-					//	list = new List<Component>( componentsCount );
-					//	_tempComponentListForUpdateAndSimulationStep = list;
-					//}
-					//list.Clear();
-					////var list = new List<Component>( componentsCount );
-
-					//for( var node = components.linkedList?.First; node != null; node = node.Next )
-					//{
-					//	var c = node.Value;
-					//	if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
-					//		list.Add( c );
-					//}
-
-					//for( int n = 0; n < list.Count; n++ )
-					//{
-					//	var c = list[ n ];
-					//	if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
-					//		c.PerformUpdate( delta );
-					//}
-
-					//list.Clear();
 				}
-				else
-				{
-					var node = components.linkedList?.First;
-					if( node != null )
-					{
-						var c = node.Value;
-						if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
-							c.PerformUpdate( delta );
-					}
-				}
+				//foreach( var c in GetComponents( false, false, true ) )
+				//{
+				//	if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
+				//		c.PerformUpdate( delta );
+				//}
 			}
-			//foreach( var c in GetComponents( false, false, true ) )
-			//{
-			//	if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
-			//		c.PerformUpdate( delta );
-			//}
 
 			//!!!!тут?
 			if( EngineApp.IsEditor )
@@ -3786,7 +3808,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		internal virtual void OnSimulationStepBefore() { }
+		internal virtual void OnSimulationStepBefore( ref bool childrenSimulationStep ) { }
 		/// <summary>
 		/// Called during the simulation step.
 		/// </summary>
@@ -3799,85 +3821,89 @@ namespace NeoAxis
 		[MethodImpl( (MethodImplOptions)512 )]
 		internal void PerformSimulationStep()
 		{
-			OnSimulationStepBefore();
+			var childrenSimulationStep = true;
+			OnSimulationStepBefore( ref childrenSimulationStep );
 
 			//children
-			int componentsCount = components.Count;
-			if( componentsCount != 0 )
+			if( childrenSimulationStep )
 			{
-				if( componentsCount > 1 )
+				int componentsCount = components.Count;
+				if( componentsCount != 0 )
 				{
-					var list = _tempComponentListForUpdateAndSimulationStep;
-					if( list == null || list.Length < componentsCount )
+					if( componentsCount > 1 )
 					{
-						list = new Component[ componentsCount ];
-						_tempComponentListForUpdateAndSimulationStep = list;
-					}
-
-					int counter = 0;
-					for( var node = components.linkedList?.First; node != null; node = node.Next )
-					{
-						var c = node.Value;
-						if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
+						var list = _tempComponentListForUpdateAndSimulationStep;
+						if( list == null || list.Length < componentsCount )
 						{
-							if( counter >= list.Length )
-								break;
-							list[ counter++ ] = c;
+							list = new Component[ componentsCount ];
+							_tempComponentListForUpdateAndSimulationStep = list;
+						}
+
+						int counter = 0;
+						for( var node = components.linkedList?.First; node != null; node = node.Next )
+						{
+							var c = node.Value;
+							if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
+							{
+								if( counter >= list.Length )
+									break;
+								list[ counter++ ] = c;
+							}
+						}
+
+						for( int n = 0; n < counter; n++ )
+						{
+							var c = list[ n ];
+							if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
+								c.PerformSimulationStep();
+						}
+
+						//!!!!clear array? maybe sometimes
+
+
+
+						//var list = _tempComponentListForUpdateAndSimulationStep;
+						//if( list == null )
+						//{
+						//	list = new List<Component>( componentsCount );
+						//	_tempComponentListForUpdateAndSimulationStep = list;
+						//}
+						//list.Clear();
+						////var list = new List<Component>( componentsCount );
+
+						//for( var node = components.linkedList?.First; node != null; node = node.Next )
+						//{
+						//	var c = node.Value;
+						//	if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
+						//		list.Add( c );
+						//}
+
+						//for( int n = 0; n < list.Count; n++ )
+						//{
+						//	var c = list[ n ];
+						//	if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
+						//		c.PerformSimulationStep();
+						//}
+
+						//list.Clear();
+					}
+					else
+					{
+						var node = components.linkedList?.First;
+						if( node != null )
+						{
+							var c = node.Value;
+							if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
+								c.PerformSimulationStep();
 						}
 					}
-
-					for( int n = 0; n < counter; n++ )
-					{
-						var c = list[ n ];
-						if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
-							c.PerformSimulationStep();
-					}
-
-					//!!!!clear array? maybe sometimes
-
-
-
-					//var list = _tempComponentListForUpdateAndSimulationStep;
-					//if( list == null )
-					//{
-					//	list = new List<Component>( componentsCount );
-					//	_tempComponentListForUpdateAndSimulationStep = list;
-					//}
-					//list.Clear();
-					////var list = new List<Component>( componentsCount );
-
-					//for( var node = components.linkedList?.First; node != null; node = node.Next )
-					//{
-					//	var c = node.Value;
-					//	if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
-					//		list.Add( c );
-					//}
-
-					//for( int n = 0; n < list.Count; n++ )
-					//{
-					//	var c = list[ n ];
-					//	if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
-					//		c.PerformSimulationStep();
-					//}
-
-					//list.Clear();
 				}
-				else
-				{
-					var node = components.linkedList?.First;
-					if( node != null )
-					{
-						var c = node.Value;
-						if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )
-							c.PerformSimulationStep();
-					}
-				}
+				//foreach( var c in GetComponents( false, false, true ) )
+				//{
+				//	if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
+				//		c.PerformSimulationStep();
+				//}
 			}
-			//foreach( var c in GetComponents( false, false, true ) )
-			//{
-			//	if( c.EnabledInHierarchy && !c.RemoveFromParentQueued )//second check if changed during enumeration
-			//		c.PerformSimulationStep();
-			//}
 
 			//!!!!тут?
 			MethodInvokeUpdate( Time.SimulationDelta );
@@ -4172,7 +4198,7 @@ namespace NeoAxis
 		/// <param name="makeOrderFromTopToBottom"></param>
 		/// <returns></returns>
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public ICollection<Component> GetAllParents( bool makeOrderFromTopToBottom )
+		public ICollection<Component> GetAllParents( bool makeOrderFromTopToBottom = false )
 		{
 			var list = new List<Component>();
 			var current = Parent;
@@ -4195,7 +4221,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayInEditor
 		{
 			get { if( _displayInEditor.BeginGet() ) DisplayInEditor = _displayInEditor.Get( this ); return _displayInEditor.value; }
-			set { if( _displayInEditor.BeginSet( ref value ) ) { try { DisplayInEditorChanged?.Invoke( this ); } finally { _displayInEditor.EndSet(); } } }
+			set { if( _displayInEditor.BeginSet( this, ref value ) ) { try { DisplayInEditorChanged?.Invoke( this ); } finally { _displayInEditor.EndSet(); } } }
 		}
 		/// <summary>
 		/// Occurs when value of <see cref="DisplayInEditor"/> property is changed.
@@ -4350,7 +4376,7 @@ namespace NeoAxis
 
 					item.remainingTime -= delta;
 
-					again:;
+again:;
 					if( item.remainingTime <= 0 )
 					{
 						ObjectEx.MethodInvoke( this, item.methodVirtual, item.methodNative, item.parameters );
@@ -4677,21 +4703,44 @@ namespace NeoAxis
 		public bool NetworkIsServer
 		{
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-			get { return ParentRoot.HierarchyController != null && ParentRoot.HierarchyController.NetworkIsServer; }
+			get
+			{
+				var controller = ParentRoot.HierarchyController;
+				return controller != null && controller.NetworkIsServer;
+			}
 		}
 
 		[Browsable( false )]
 		public bool NetworkIsClient
 		{
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-			get { return ParentRoot.HierarchyController != null && ParentRoot.HierarchyController.NetworkIsClient; }
+			get
+			{
+				var controller = ParentRoot.HierarchyController;
+				return controller != null && controller.NetworkIsClient;
+			}
 		}
 
 		[Browsable( false )]
 		public bool NetworkIsSingle
 		{
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-			get { return ParentRoot.HierarchyController == null || ParentRoot.HierarchyController.NetworkIsSingle; }
+			get
+			{
+				var controller = ParentRoot.HierarchyController;
+				return controller == null || controller.NetworkIsSingle;
+			}
+		}
+
+		[Browsable( false )]
+		public bool NetworkIsSingleOrClient
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get
+			{
+				var controller = ParentRoot.HierarchyController;
+				return controller == null || controller.NetworkIsSingleOrClient;
+			}
 		}
 
 		//!!!!может указывать long userID
@@ -4768,7 +4817,7 @@ namespace NeoAxis
 		//public delegate void ReceiveNetworkMessageFromServerDelegate( Component sender, string message, ArrayDataReader reader );//, ref bool success );
 		//public event ReceiveNetworkMessageFromServerDelegate ReceiveNetworkMessageFromServer;
 
-		[MethodImpl( (MethodImplOptions)512 )]
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal bool PerformReceiveNetworkMessageFromServer( string message, ArrayDataReader reader )
 		{
 			if( !OnReceiveNetworkMessageFromServer( message, reader ) )
@@ -4926,5 +4975,29 @@ namespace NeoAxis
 			return false;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public bool NetworkIsDisabledPropertySynchronization( string propertyName )
+		{
+			return networkDisabledPropertiesSynchronization != null && networkDisabledPropertiesSynchronization.Contains( propertyName );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void NetworkDisablePropertySynchronization( string propertyName )
+		{
+			if( networkDisabledPropertiesSynchronization == null )
+				networkDisabledPropertiesSynchronization = new ESet<string>();
+			networkDisabledPropertiesSynchronization.AddWithCheckAlreadyContained( propertyName );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void NetworkRestoreDisabledPropertySynchronization( string propertyName )
+		{
+			if( networkDisabledPropertiesSynchronization != null )
+			{
+				networkDisabledPropertiesSynchronization.Remove( propertyName );
+				if( networkDisabledPropertiesSynchronization.Count == 0 )
+					networkDisabledPropertiesSynchronization = null;
+			}
+		}
 	}
 }

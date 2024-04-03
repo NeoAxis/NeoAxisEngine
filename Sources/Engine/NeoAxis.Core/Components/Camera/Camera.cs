@@ -10,7 +10,7 @@ namespace NeoAxis
 	/// Representation of a player's point of view.
 	/// </summary>
 #if !DEPLOY
-	[Preview( typeof( CameraPreview ) )]
+	[Preview( "NeoAxis.Editor.CameraPreview" )]
 #endif
 	public class Camera : ObjectInSpace
 	{
@@ -34,7 +34,7 @@ namespace NeoAxis
 		public Reference<ProjectionType> Projection
 		{
 			get { if( _projection.BeginGet() ) Projection = _projection.Get( this ); return _projection.value; }
-			set { if( _projection.BeginSet( ref value ) ) { try { ProjectionChanged?.Invoke( this ); SpaceBoundsUpdate(); } finally { _projection.EndSet(); } } }
+			set { if( _projection.BeginSet( this, ref value ) ) { try { ProjectionChanged?.Invoke( this ); SpaceBoundsUpdate(); } finally { _projection.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Projection"/> property value changes.</summary>
 		public event Action<Camera> ProjectionChanged;
@@ -49,7 +49,7 @@ namespace NeoAxis
 		public Reference<Degree> FieldOfView
 		{
 			get { if( _fieldOfView.BeginGet() ) FieldOfView = _fieldOfView.Get( this ); return _fieldOfView.value; }
-			set { if( _fieldOfView.BeginSet( ref value ) ) { try { FieldOfViewChanged?.Invoke( this ); SpaceBoundsUpdate(); } finally { _fieldOfView.EndSet(); } } }
+			set { if( _fieldOfView.BeginSet( this, ref value ) ) { try { FieldOfViewChanged?.Invoke( this ); SpaceBoundsUpdate(); } finally { _fieldOfView.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FieldOfView"/> property value changes.</summary>
 		public event Action<Camera> FieldOfViewChanged;
@@ -64,7 +64,7 @@ namespace NeoAxis
 		public Reference<double> Height
 		{
 			get { if( _height.BeginGet() ) Height = _height.Get( this ); return _height.value; }
-			set { if( _height.BeginSet( ref value ) ) { try { HeightChanged?.Invoke( this ); } finally { _height.EndSet(); } } }
+			set { if( _height.BeginSet( this, ref value ) ) { try { HeightChanged?.Invoke( this ); } finally { _height.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Height"/> property value changes.</summary>
 		public event Action<Camera> HeightChanged;
@@ -78,7 +78,7 @@ namespace NeoAxis
 		public Reference<Vector3> FixedUp
 		{
 			get { if( _fixedUp.BeginGet() ) FixedUp = _fixedUp.Get( this ); return _fixedUp.value; }
-			set { if( _fixedUp.BeginSet( ref value ) ) { try { FixedUpChanged?.Invoke( this ); } finally { _fixedUp.EndSet(); } } }
+			set { if( _fixedUp.BeginSet( this, ref value ) ) { try { FixedUpChanged?.Invoke( this ); } finally { _fixedUp.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FixedUp"/> property value changes.</summary>
 		public event Action<Camera> FixedUpChanged;
@@ -93,7 +93,7 @@ namespace NeoAxis
 		public Reference<double> NearClipPlane
 		{
 			get { if( _nearClipPlane.BeginGet() ) NearClipPlane = _nearClipPlane.Get( this ); return _nearClipPlane.value; }
-			set { if( _nearClipPlane.BeginSet( ref value ) ) { try { NearClipPlaneChanged?.Invoke( this ); } finally { _nearClipPlane.EndSet(); } } }
+			set { if( _nearClipPlane.BeginSet( this, ref value ) ) { try { NearClipPlaneChanged?.Invoke( this ); } finally { _nearClipPlane.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="NearClipPlane"/> property value changes.</summary>
 		public event Action<Camera> NearClipPlaneChanged;
@@ -108,7 +108,7 @@ namespace NeoAxis
 		public Reference<double> FarClipPlane
 		{
 			get { if( _farClipPlane.BeginGet() ) FarClipPlane = _farClipPlane.Get( this ); return _farClipPlane.value; }
-			set { if( _farClipPlane.BeginSet( ref value ) ) { try { FarClipPlaneChanged?.Invoke( this ); } finally { _farClipPlane.EndSet(); } } }
+			set { if( _farClipPlane.BeginSet( this, ref value ) ) { try { FarClipPlaneChanged?.Invoke( this ); } finally { _farClipPlane.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FarClipPlane"/> property value changes.</summary>
 		public event Action<Camera> FarClipPlaneChanged;
@@ -122,7 +122,7 @@ namespace NeoAxis
 		public Reference<double> AspectRatio
 		{
 			get { if( _aspectRatio.BeginGet() ) AspectRatio = _aspectRatio.Get( this ); return _aspectRatio.value; }
-			set { if( _aspectRatio.BeginSet( ref value ) ) { try { AspectRatioChanged?.Invoke( this ); } finally { _aspectRatio.EndSet(); } } }
+			set { if( _aspectRatio.BeginSet( this, ref value ) ) { try { AspectRatioChanged?.Invoke( this ); } finally { _aspectRatio.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AspectRatio"/> property value changes.</summary>
 		public event Action<Camera> AspectRatioChanged;
@@ -137,7 +137,7 @@ namespace NeoAxis
 		public Reference<double> Aperture
 		{
 			get { if( _aperture.BeginGet() ) Aperture = _aperture.Get( this ); return _aperture.value; }
-			set { if( _aperture.BeginSet( ref value ) ) { try { ApertureChanged?.Invoke( this ); } finally { _aperture.EndSet(); } } }
+			set { if( _aperture.BeginSet( this, ref value ) ) { try { ApertureChanged?.Invoke( this ); } finally { _aperture.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Aperture"/> property value changes.</summary>
 		public event Action<Camera> ApertureChanged;
@@ -153,7 +153,7 @@ namespace NeoAxis
 		public Reference<double> ShutterSpeed
 		{
 			get { if( _shutterSpeed.BeginGet() ) ShutterSpeed = _shutterSpeed.Get( this ); return _shutterSpeed.value; }
-			set { if( _shutterSpeed.BeginSet( ref value ) ) { try { ShutterSpeedChanged?.Invoke( this ); } finally { _shutterSpeed.EndSet(); } } }
+			set { if( _shutterSpeed.BeginSet( this, ref value ) ) { try { ShutterSpeedChanged?.Invoke( this ); } finally { _shutterSpeed.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShutterSpeed"/> property value changes.</summary>
 		public event Action<Camera> ShutterSpeedChanged;
@@ -168,7 +168,7 @@ namespace NeoAxis
 		public Reference<double> Sensitivity
 		{
 			get { if( _sensitivity.BeginGet() ) Sensitivity = _sensitivity.Get( this ); return _sensitivity.value; }
-			set { if( _sensitivity.BeginSet( ref value ) ) { try { SensitivityChanged?.Invoke( this ); } finally { _sensitivity.EndSet(); } } }
+			set { if( _sensitivity.BeginSet( this, ref value ) ) { try { SensitivityChanged?.Invoke( this ); } finally { _sensitivity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Sensitivity"/> property value changes.</summary>
 		public event Action<Camera> SensitivityChanged;
@@ -181,7 +181,7 @@ namespace NeoAxis
 		public Reference<RenderingPipeline> RenderingPipelineOverride
 		{
 			get { if( _renderingPipelineOverride.BeginGet() ) RenderingPipelineOverride = _renderingPipelineOverride.Get( this ); return _renderingPipelineOverride.value; }
-			set { if( _renderingPipelineOverride.BeginSet( ref value ) ) { try { RenderingPipelineOverrideChanged?.Invoke( this ); } finally { _renderingPipelineOverride.EndSet(); } } }
+			set { if( _renderingPipelineOverride.BeginSet( this, ref value ) ) { try { RenderingPipelineOverrideChanged?.Invoke( this ); } finally { _renderingPipelineOverride.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RenderingPipelineOverride"/> property value changes.</summary>
 		public event Action<Camera> RenderingPipelineOverrideChanged;
@@ -194,7 +194,7 @@ namespace NeoAxis
 		//public Reference<double> EmissiveMaterialsFactor
 		//{
 		//	get { if( _emissiveMaterialsFactor.BeginGet() ) EmissiveMaterialsFactor = _emissiveMaterialsFactor.Get( this ); return _emissiveMaterialsFactor.value; }
-		//	set { if( _emissiveMaterialsFactor.BeginSet( ref value ) ) { try { EmissiveMaterialsFactorChanged?.Invoke( this ); } finally { _emissiveMaterialsFactor.EndSet(); } } }
+		//	set { if( _emissiveMaterialsFactor.BeginSet( this, ref value ) ) { try { EmissiveMaterialsFactorChanged?.Invoke( this ); } finally { _emissiveMaterialsFactor.EndSet(); } } }
 		//}
 		//public event Action<Camera> EmissiveMaterialsFactorChanged;
 		//ReferenceField<double> _emissiveMaterialsFactor = 1.0;

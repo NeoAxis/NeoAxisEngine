@@ -25,7 +25,7 @@ namespace NeoAxis
 				//fix invalid value
 				if( value.Value == null )
 					value = new Reference<Transform>( NeoAxis.Transform.Identity, value.GetByReference );
-				if( _transform.BeginSet( ref value ) )
+				if( _transform.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -49,7 +49,7 @@ namespace NeoAxis
 		public Reference<double> Probability
 		{
 			get { if( _probability.BeginGet() ) Probability = _probability.Get( this ); return _probability.value; }
-			set { if( _probability.BeginSet( ref value ) ) { try { ProbabilityChanged?.Invoke( this ); /*ShouldRecompile();*/ } finally { _probability.EndSet(); } } }
+			set { if( _probability.BeginSet( this, ref value ) ) { try { ProbabilityChanged?.Invoke( this ); /*ShouldRecompile();*/ } finally { _probability.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Probability"/> property value changes.</summary>
 		public event Action<ParticleEmitterShape> ProbabilityChanged;

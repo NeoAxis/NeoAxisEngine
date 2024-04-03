@@ -19,7 +19,7 @@ namespace NeoAxis
 		public Reference<UIMeasureValueVector2> BorderSize
 		{
 			get { if( _borderSize.BeginGet() ) BorderSize = _borderSize.Get( this ); return _borderSize.value; }
-			set { if( _borderSize.BeginSet( ref value ) ) { try { BorderSizeChanged?.Invoke( this ); } finally { _borderSize.EndSet(); } } }
+			set { if( _borderSize.BeginSet( this, ref value ) ) { try { BorderSizeChanged?.Invoke( this ); } finally { _borderSize.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BorderSize"/> property value changes.</summary>
 		public event Action<UIWindow> BorderSizeChanged;
@@ -32,7 +32,7 @@ namespace NeoAxis
 		public Reference<bool> TitleBar
 		{
 			get { if( _titleBar.BeginGet() ) TitleBar = _titleBar.Get( this ); return _titleBar.value; }
-			set { if( _titleBar.BeginSet( ref value ) ) { try { TitleBarChanged?.Invoke( this ); } finally { _titleBar.EndSet(); } } }
+			set { if( _titleBar.BeginSet( this, ref value ) ) { try { TitleBarChanged?.Invoke( this ); } finally { _titleBar.EndSet(); } } }
 		}
 		public event Action<UIWindow> TitleBarChanged;
 		ReferenceField<bool> _titleBar = true;
@@ -44,7 +44,7 @@ namespace NeoAxis
 		public Reference<UIMeasureValueDouble> TitleBarHeight
 		{
 			get { if( _titleBarHeight.BeginGet() ) TitleBarHeight = _titleBarHeight.Get( this ); return _titleBarHeight.value; }
-			set { if( _titleBarHeight.BeginSet( ref value ) ) { try { TitleBarHeightChanged?.Invoke( this ); } finally { _titleBarHeight.EndSet(); } } }
+			set { if( _titleBarHeight.BeginSet( this, ref value ) ) { try { TitleBarHeightChanged?.Invoke( this ); } finally { _titleBarHeight.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TitleBarHeight"/> property value changes.</summary>
 		public event Action<UIWindow> TitleBarHeightChanged;
@@ -53,21 +53,21 @@ namespace NeoAxis
 		/// <summary>
 		/// The font size of the title bar.
 		/// </summary>
-		[DefaultValue( "Units 24" )]
+		[DefaultValue( "Units 22" )]
 		public Reference<UIMeasureValueDouble> TitleBarFontSize
 		{
 			get { if( _titleBarFontSize.BeginGet() ) TitleBarFontSize = _titleBarFontSize.Get( this ); return _titleBarFontSize.value; }
-			set { if( _titleBarFontSize.BeginSet( ref value ) ) { try { TitleBarFontSizeChanged?.Invoke( this ); } finally { _titleBarFontSize.EndSet(); } } }
+			set { if( _titleBarFontSize.BeginSet( this, ref value ) ) { try { TitleBarFontSizeChanged?.Invoke( this ); } finally { _titleBarFontSize.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TitleBarFontSize"/> property value changes.</summary>
 		public event Action<UIWindow> TitleBarFontSizeChanged;
-		ReferenceField<UIMeasureValueDouble> _titleBarFontSize = new UIMeasureValueDouble( UIMeasure.Units, 24 );
+		ReferenceField<UIMeasureValueDouble> _titleBarFontSize = new UIMeasureValueDouble( UIMeasure.Units, 22 );
 
 		//[DefaultValue( true )]
 		//public Reference<bool> CloseButton
 		//{
 		//	get { if( _closeButton.BeginGet() ) CloseButton = _closeButton.Get( this ); return _closeButton.value; }
-		//	set { if( _closeButton.BeginSet( ref value ) ) { try { CloseButtonChanged?.Invoke( this ); } finally { _closeButton.EndSet(); } } }
+		//	set { if( _closeButton.BeginSet( this, ref value ) ) { try { CloseButtonChanged?.Invoke( this ); } finally { _closeButton.EndSet(); } } }
 		//}
 		//public event Action<UIWindow> CloseButtonChanged;
 		//ReferenceField<bool> _closeButton = true;

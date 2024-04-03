@@ -19,7 +19,7 @@ namespace NeoAxis
 		public Reference<float> Radius
 		{
 			get { if( _radius.BeginGet() ) Radius = _radius.Get( this ); return _radius.value; }
-			set { if( _radius.BeginSet( ref value ) ) { try { RadiusChanged?.Invoke( this ); } finally { _radius.EndSet(); } } }
+			set { if( _radius.BeginSet( this, ref value ) ) { try { RadiusChanged?.Invoke( this ); } finally { _radius.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Radius"/> property value changes.</summary>
 		public event Action<ParticleEmitterShape_Sphere> RadiusChanged;
@@ -31,7 +31,7 @@ namespace NeoAxis
 		//public Reference<float> Thickness
 		//{
 		//	get { if( _thickness.BeginGet() ) Thickness = _thickness.Get( this ); return _thickness.value; }
-		//	set { if( _thickness.BeginSet( ref value ) ) { try { ThicknessChanged?.Invoke( this ); } finally { _thickness.EndSet(); } } }
+		//	set { if( _thickness.BeginSet( this, ref value ) ) { try { ThicknessChanged?.Invoke( this ); } finally { _thickness.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="Thickness"/> property value changes.</summary>
 		//public event Action<ParticleEmitterShape_Sphere> ThicknessChanged;

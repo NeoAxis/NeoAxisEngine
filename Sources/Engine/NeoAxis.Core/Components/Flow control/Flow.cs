@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using System.Threading;
+using System.Linq;
 
 namespace NeoAxis
 {
@@ -41,6 +42,8 @@ namespace NeoAxis
 		Dictionary<string, object> variables = new Dictionary<string, object>();
 
 		Dictionary<object, object> internalVariables = new Dictionary<object, object>();
+
+		bool ended;
 
 		///////////////////////////////////////////////
 
@@ -126,14 +129,16 @@ namespace NeoAxis
 
 		public static void RemoveFromStack( Flow flow )
 		{
+			//!!!!?
+
 			flowStack.RemoveAt( flowStack.Count - 1 );
 		}
 
-		public static void Execute( ComponentHierarchyController owner, FlowInput entry, IEnumerable<Tuple<string, object>> initVariables = null )
+		public static Flow Execute( ComponentHierarchyController owner, FlowInput entry, IEnumerable<Tuple<string, object>> initVariables = null )
 		{
 			var flow = ExecuteWithoutRemoveFromStack( owner, entry, initVariables );
 			RemoveFromStack( flow );
-			//return flow;
+			return flow;
 		}
 
 		//public static Flow Execute( FlowInput entry, IEnumerable<Tuple<string, object>> initVariables = null )
@@ -322,11 +327,15 @@ namespace NeoAxis
 				var sleep = false;
 				item.Component.FlowExecution( this, item, ref sleep );
 				if( sleep )
-					break;
+					return;
+				//if( sleep )
+				//	break;
 			}
+
+			ended = true;
 		}
 
-		internal static void AddGlobalSleepingFlow( Flow flow )
+		public static void AddGlobalSleepingFlow( Flow flow )
 		{
 			lock( globalSleepingFlows )
 				globalSleepingFlows.AddWithCheckAlreadyContained( flow );
@@ -348,6 +357,11 @@ namespace NeoAxis
 
 			foreach( var flow in flows )
 				flow.ContinueProcess();
+		}
+
+		public bool Ended
+		{
+			get { return ended; }
 		}
 	}
 }

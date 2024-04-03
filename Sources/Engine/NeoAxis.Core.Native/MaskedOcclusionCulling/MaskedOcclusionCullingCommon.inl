@@ -107,6 +107,25 @@ template<> FORCE_INLINE void VtxFetch4<0>(__mw *v, const unsigned int *inTrisPtr
 	(void)v; (void)inTrisPtr; (void)triVtx; (void)inVtx; (void)numLanes;
 }
 
+template<int N> FORCE_INLINE void VtxFetch4(__mw *v, const unsigned short *inTrisPtr, int triVtx, const float *inVtx, int numLanes)
+{
+	// Fetch 4 vectors (matching 1 sse part of the SIMD register), and continue to the next
+	const int ssePart = (SIMD_LANES / 4) - N;
+	for (int k = 0; k < 4; k++)
+	{
+		int lane = 4 * ssePart + k;
+		if (numLanes > lane)
+			v[k] = _mmw_insertf32x4_ps(v[k], _mm_loadu_ps(&inVtx[inTrisPtr[lane * 3 + triVtx] << 2]), ssePart);
+	}
+	VtxFetch4<N - 1>(v, inTrisPtr, triVtx, inVtx, numLanes);
+}
+
+template<> FORCE_INLINE void VtxFetch4<0>(__mw *v, const unsigned short *inTrisPtr, int triVtx, const float *inVtx, int numLanes)
+{
+	// Workaround for unused parameter warning
+	(void)v; (void)inTrisPtr; (void)triVtx; (void)inVtx; (void)numLanes;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Private class containing the implementation
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -138,6 +157,7 @@ public:
 	int             mHeight;
 	int             mTilesWidth;
 	int             mTilesHeight;
+	bool			mOrtho;
 
 	ZTile           *mMaskedHiZBuffer;
 	ScissorRect     mFullscreenScissor;
@@ -151,6 +171,7 @@ public:
 		mMaskedHiZBuffer = nullptr;
 		mAlignedAllocCallback = alignedAlloc;
 		mAlignedFreeCallback = alignedFree;
+		mOrtho = false;
 #if MOC_RECORDER_ENABLE
         mRecorder = nullptr;
 #endif
@@ -176,6 +197,43 @@ public:
 #if MOC_RECORDER_ENABLE
         assert( mRecorder == nullptr ); // forgot to call StopRecording()?
 #endif
+	}
+
+	void SetOrtho(bool ortho)
+	{
+		mOrtho = ortho;
+
+		// Adjust clip planes to include a small guard band to avoid clipping leaks
+		float guardBandWidth = (2.0f / (float)mWidth) * GUARD_BAND_PIXEL_SIZE;
+		float guardBandHeight = (2.0f / (float)mHeight) * GUARD_BAND_PIXEL_SIZE;
+
+		if (mOrtho)
+		{
+			mCSFrustumPlanes[1] = _mm_setr_ps(1.0f - guardBandWidth, 0.0f, 0.0f, 1.0f);
+			mCSFrustumPlanes[2] = _mm_setr_ps(-1.0f + guardBandWidth, 0.0f, 0.0f, 1.0f);
+			mCSFrustumPlanes[3] = _mm_setr_ps(0.0f, 1.0f - guardBandHeight, 0.0f, 1.0f);
+			mCSFrustumPlanes[4] = _mm_setr_ps(0.0f, -1.0f + guardBandHeight, 0.0f, 1.0f);
+		}
+		else
+		{
+			mCSFrustumPlanes[1] = _mm_setr_ps(1.0f - guardBandWidth, 0.0f, 1.0f, 0.0f);
+			mCSFrustumPlanes[2] = _mm_setr_ps(-1.0f + guardBandWidth, 0.0f, 1.0f, 0.0f);
+			mCSFrustumPlanes[3] = _mm_setr_ps(0.0f, 1.0f - guardBandHeight, 1.0f, 0.0f);
+			mCSFrustumPlanes[4] = _mm_setr_ps(0.0f, -1.0f + guardBandHeight, 1.0f, 0.0f);
+		}
+
+#if MOC_RECORDER_ENABLE != 0
+		{
+			std::lock_guard<std::mutex> lock(mRecorderMutex);
+			if (mRecorder != nullptr) mRecorder->RecordOrtho(ortho);
+		}
+#endif
+
+	}
+
+	bool GetOrtho() const override
+	{
+		return mOrtho;
 	}
 
 	void SetResolution(unsigned int width, unsigned int height) override
@@ -217,13 +275,9 @@ public:
 		mFullscreenScissor.mMaxX = mTilesWidth << TILE_WIDTH_SHIFT;
 		mFullscreenScissor.mMaxY = mTilesHeight << TILE_HEIGHT_SHIFT;
 
+
 		// Adjust clip planes to include a small guard band to avoid clipping leaks
-		float guardBandWidth = (2.0f / (float)mWidth) * GUARD_BAND_PIXEL_SIZE;
-		float guardBandHeight = (2.0f / (float)mHeight) * GUARD_BAND_PIXEL_SIZE;
-		mCSFrustumPlanes[1] = _mm_setr_ps(1.0f - guardBandWidth, 0.0f, 1.0f, 0.0f);
-		mCSFrustumPlanes[2] = _mm_setr_ps(-1.0f + guardBandWidth, 0.0f, 1.0f, 0.0f);
-		mCSFrustumPlanes[3] = _mm_setr_ps(0.0f, 1.0f - guardBandHeight, 1.0f, 0.0f);
-		mCSFrustumPlanes[4] = _mm_setr_ps(0.0f, -1.0f + guardBandHeight, 1.0f, 0.0f);
+		SetOrtho(mOrtho);
 
 		// Allocate masked hierarchical Z buffer (if zero size leave at nullptr)
 		if(mTilesWidth * mTilesHeight > 0)
@@ -424,7 +478,7 @@ public:
 		return nout;
 	}
 
-	template<ClipPlanes CLIP_PLANE> void TestClipPlane(__mw *vtxX, __mw *vtxY, __mw *vtxW, unsigned int &straddleMask, unsigned int &triMask, ClipPlanes clipPlaneMask)
+	template<MaskedOcclusionCulling::ClipPlanes CLIP_PLANE, int ORTHO> void TestClipPlane(__mw *vtxX, __mw *vtxY, __mw *vtxW, unsigned int &straddleMask, unsigned int &triMask, MaskedOcclusionCulling::ClipPlanes clipPlaneMask)
 	{
 		straddleMask = 0;
 		// Skip masked clip planes
@@ -433,18 +487,34 @@ public:
 
 		// Evaluate all 3 vertices against the frustum plane
 		__mw planeDp[3];
-		for (int i = 0; i < 3; ++i)
+		if (!ORTHO)
 		{
-			switch (CLIP_PLANE)
+			for (int i = 0; i < 3; ++i)
 			{
-			case ClipPlanes::CLIP_PLANE_LEFT:   planeDp[i] = _mmw_add_ps(vtxW[i], vtxX[i]); break;
-			case ClipPlanes::CLIP_PLANE_RIGHT:  planeDp[i] = _mmw_sub_ps(vtxW[i], vtxX[i]); break;
-			case ClipPlanes::CLIP_PLANE_BOTTOM: planeDp[i] = _mmw_add_ps(vtxW[i], vtxY[i]); break;
-			case ClipPlanes::CLIP_PLANE_TOP:    planeDp[i] = _mmw_sub_ps(vtxW[i], vtxY[i]); break;
-			case ClipPlanes::CLIP_PLANE_NEAR:   planeDp[i] = _mmw_sub_ps(vtxW[i], _mmw_set1_ps(mNearDist)); break;
+				switch (CLIP_PLANE)
+				{
+				case ClipPlanes::CLIP_PLANE_LEFT:   planeDp[i] = _mmw_add_ps(vtxW[i], vtxX[i]); break;
+				case ClipPlanes::CLIP_PLANE_RIGHT:  planeDp[i] = _mmw_sub_ps(vtxW[i], vtxX[i]); break;
+				case ClipPlanes::CLIP_PLANE_BOTTOM: planeDp[i] = _mmw_add_ps(vtxW[i], vtxY[i]); break;
+				case ClipPlanes::CLIP_PLANE_TOP:    planeDp[i] = _mmw_sub_ps(vtxW[i], vtxY[i]); break;
+				case ClipPlanes::CLIP_PLANE_NEAR:   planeDp[i] = _mmw_sub_ps(vtxW[i], _mmw_set1_ps(mNearDist)); break;
+				}
 			}
 		}
-
+		else
+		{
+			for (int i = 0; i < 3; ++i)
+			{
+				switch (CLIP_PLANE)
+				{
+				case ClipPlanes::CLIP_PLANE_LEFT:   planeDp[i] = _mmw_add_ps(_mmw_set1_ps(1.0f), vtxX[i]); break;
+				case ClipPlanes::CLIP_PLANE_RIGHT:  planeDp[i] = _mmw_sub_ps(_mmw_set1_ps(1.0f), vtxX[i]); break;
+				case ClipPlanes::CLIP_PLANE_BOTTOM: planeDp[i] = _mmw_add_ps(_mmw_set1_ps(1.0f), vtxY[i]); break;
+				case ClipPlanes::CLIP_PLANE_TOP:    planeDp[i] = _mmw_sub_ps(_mmw_set1_ps(1.0f), vtxY[i]); break;
+				case ClipPlanes::CLIP_PLANE_NEAR:   planeDp[i] = _mmw_sub_ps(vtxW[i], _mmw_set1_ps(mNearDist)); break;
+				}
+			}
+		}
 		// Look at FP sign and determine if tri is inside, outside or straddles the frustum plane
 		__mw inside = _mmw_andnot_ps(planeDp[0], _mmw_andnot_ps(planeDp[1], _mmw_not_ps(planeDp[2])));
 		__mw outside = _mmw_and_ps(planeDp[0], _mmw_and_ps(planeDp[1], planeDp[2]));
@@ -454,18 +524,18 @@ public:
 		triMask &= ~outMask;
 	}
 
-	FORCE_INLINE void ClipTriangleAndAddToBuffer(__mw *vtxX, __mw *vtxY, __mw *vtxW, __m128 *clippedTrisBuffer, int &clipWriteIdx, unsigned int &triMask, unsigned int triClipMask, ClipPlanes clipPlaneMask)
+	template<int ORTHO> void ClipTriangleAndAddToBuffer(__mw *vtxX, __mw *vtxY, __mw *vtxW, __m128 *clippedTrisBuffer, int &clipWriteIdx, unsigned int &triMask, unsigned int triClipMask, ClipPlanes clipPlaneMask)
 	{
 		if (!triClipMask)
 			return;
 
 		// Inside test all 3 triangle vertices against all active frustum planes
 		unsigned int straddleMask[5];
-		TestClipPlane<ClipPlanes::CLIP_PLANE_NEAR>(vtxX, vtxY, vtxW, straddleMask[0], triMask, clipPlaneMask);
-		TestClipPlane<ClipPlanes::CLIP_PLANE_LEFT>(vtxX, vtxY, vtxW, straddleMask[1], triMask, clipPlaneMask);
-		TestClipPlane<ClipPlanes::CLIP_PLANE_RIGHT>(vtxX, vtxY, vtxW, straddleMask[2], triMask, clipPlaneMask);
-		TestClipPlane<ClipPlanes::CLIP_PLANE_BOTTOM>(vtxX, vtxY, vtxW, straddleMask[3], triMask, clipPlaneMask);
-		TestClipPlane<ClipPlanes::CLIP_PLANE_TOP>(vtxX, vtxY, vtxW, straddleMask[4], triMask, clipPlaneMask);
+		TestClipPlane<ClipPlanes::CLIP_PLANE_NEAR, ORTHO>(vtxX, vtxY, vtxW, straddleMask[0], triMask, clipPlaneMask);
+		TestClipPlane<ClipPlanes::CLIP_PLANE_LEFT, ORTHO>(vtxX, vtxY, vtxW, straddleMask[1], triMask, clipPlaneMask);
+		TestClipPlane<ClipPlanes::CLIP_PLANE_RIGHT, ORTHO>(vtxX, vtxY, vtxW, straddleMask[2], triMask, clipPlaneMask);
+		TestClipPlane<ClipPlanes::CLIP_PLANE_BOTTOM, ORTHO>(vtxX, vtxY, vtxW, straddleMask[3], triMask, clipPlaneMask);
+		TestClipPlane<ClipPlanes::CLIP_PLANE_TOP, ORTHO>(vtxX, vtxY, vtxW, straddleMask[4], triMask, clipPlaneMask);
 
         // Clip triangle against straddling planes and add to the clipped triangle buffer
 		__m128 vtxBuf[2][8];
@@ -476,7 +546,7 @@ public:
         // no clipping needed after all - early out
         if (clipAndStraddleMask == 0)
 			return;
-		while( clipMask )
+		while (clipMask)
 		{
 			// Find and setup next triangle to clip
 			unsigned int triIdx = find_clear_lsb(&clipMask);
@@ -568,7 +638,7 @@ public:
 	// Vertex transform & projection
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	FORCE_INLINE void TransformVerts(__mw *vtxX, __mw *vtxY, __mw *vtxW, const float *modelToClipMatrix)
+	template<int ORTHO> void TransformVerts(__mw *vtxX, __mw *vtxY, __mw *vtxW, const float *modelToClipMatrix)
 	{
 		if (modelToClipMatrix != nullptr)
 		{
@@ -577,14 +647,26 @@ public:
 				__mw tmpX, tmpY, tmpW;
 				tmpX = _mmw_fmadd_ps(vtxX[i], _mmw_set1_ps(modelToClipMatrix[0]), _mmw_fmadd_ps(vtxY[i], _mmw_set1_ps(modelToClipMatrix[4]), _mmw_fmadd_ps(vtxW[i], _mmw_set1_ps(modelToClipMatrix[8]), _mmw_set1_ps(modelToClipMatrix[12]))));
 				tmpY = _mmw_fmadd_ps(vtxX[i], _mmw_set1_ps(modelToClipMatrix[1]), _mmw_fmadd_ps(vtxY[i], _mmw_set1_ps(modelToClipMatrix[5]), _mmw_fmadd_ps(vtxW[i], _mmw_set1_ps(modelToClipMatrix[9]), _mmw_set1_ps(modelToClipMatrix[13]))));
+
+				if (ORTHO)
+				{
+					tmpW = _mmw_fmadd_ps(vtxX[i], _mmw_set1_ps(modelToClipMatrix[2]), _mmw_fmadd_ps(vtxY[i], _mmw_set1_ps(modelToClipMatrix[6]), _mmw_fmadd_ps(vtxW[i], _mmw_set1_ps(modelToClipMatrix[10]), _mmw_set1_ps(modelToClipMatrix[14]))));
+
+#if MOC_ORTHO_GREATER_EQUAL != 0
+					tmpW = _mmw_sub_ps(_mmw_set1_ps(1.0f), tmpW);
+#endif
+				}
+				else
+				{
 				tmpW = _mmw_fmadd_ps(vtxX[i], _mmw_set1_ps(modelToClipMatrix[3]), _mmw_fmadd_ps(vtxY[i], _mmw_set1_ps(modelToClipMatrix[7]), _mmw_fmadd_ps(vtxW[i], _mmw_set1_ps(modelToClipMatrix[11]), _mmw_set1_ps(modelToClipMatrix[15]))));
+				}
 				vtxX[i] = tmpX;	vtxY[i] = tmpY;	vtxW[i] = tmpW;
 			}
 		}
 	}
 
 #if PRECISE_COVERAGE != 0
-	FORCE_INLINE void ProjectVertices(__mwi *ipVtxX, __mwi *ipVtxY, __mw *pVtxX, __mw *pVtxY, __mw *pVtxZ, const __mw *vtxX, const __mw *vtxY, const __mw *vtxW)
+	template<int ORTHO> void ProjectVertices(__mwi *ipVtxX, __mwi *ipVtxY, __mw *pVtxX, __mw *pVtxY, __mw *pVtxZ, const __mw *vtxX, const __mw *vtxY, const __mw *vtxW)
 	{
 #if USE_D3D != 0
 		static const int vertexOrder[] = {2, 1, 0};
@@ -597,17 +679,27 @@ public:
 		{
 			int idx = vertexOrder[i];
 			__mw rcpW = _mmw_div_ps(_mmw_set1_ps(1.0f), vtxW[i]);
+			if (ORTHO)
+			{
+				__mw screenX = _mmw_add_ps(_mmw_mul_ps(vtxX[i], mHalfWidth), mCenterX);
+				__mw screenY = _mmw_add_ps(_mmw_mul_ps(vtxY[i], mHalfHeight), mCenterY);
+				ipVtxX[idx] = _mmw_cvtps_epi32(_mmw_mul_ps(screenX, _mmw_set1_ps(float(1 << FP_BITS))));
+				ipVtxY[idx] = _mmw_cvtps_epi32(_mmw_mul_ps(screenY, _mmw_set1_ps(float(1 << FP_BITS))));
+			}
+			else
+			{
 			__mw screenX = _mmw_fmadd_ps(_mmw_mul_ps(vtxX[i], mHalfWidth), rcpW, mCenterX);
 			__mw screenY = _mmw_fmadd_ps(_mmw_mul_ps(vtxY[i], mHalfHeight), rcpW, mCenterY);
 			ipVtxX[idx] = _mmw_cvtps_epi32(_mmw_mul_ps(screenX, _mmw_set1_ps(float(1 << FP_BITS))));
 			ipVtxY[idx] = _mmw_cvtps_epi32(_mmw_mul_ps(screenY, _mmw_set1_ps(float(1 << FP_BITS))));
+			}
 			pVtxX[idx] = _mmw_mul_ps(_mmw_cvtepi32_ps(ipVtxX[idx]), _mmw_set1_ps(FP_INV));
 			pVtxY[idx] = _mmw_mul_ps(_mmw_cvtepi32_ps(ipVtxY[idx]), _mmw_set1_ps(FP_INV));
 			pVtxZ[idx] = rcpW;
 		}
 	}
 #else
-	FORCE_INLINE void ProjectVertices(__mw *pVtxX, __mw *pVtxY, __mw *pVtxZ, const __mw *vtxX, const __mw *vtxY, const __mw *vtxW)
+	template<int ORTHO> void ProjectVertices(__mw *pVtxX, __mw *pVtxY, __mw *pVtxZ, const __mw *vtxX, const __mw *vtxY, const __mw *vtxW)
 	{
 #if USE_D3D != 0
 		static const int vertexOrder[] = {2, 1, 0};
@@ -623,8 +715,16 @@ public:
 			// The rounding modes are set to match HW rasterization with OpenGL. In practice our samples are placed
 			// in the (1,0) corner of each pixel, while HW rasterizer uses (0.5, 0.5). We get (1,0) because of the 
 			// floor used when interpolating along triangle edges. The rounding modes match an offset of (0.5, -0.5)
+			if (ORTHO)
+			{
+				pVtxX[idx] = _mmw_ceil_ps(_mmw_add_ps(_mmw_mul_ps(vtxX[i], mHalfWidth), mCenterX));
+				pVtxY[idx] = _mmw_floor_ps(_mmw_add_ps(_mmw_mul_ps(vtxY[i], mHalfHeight), mCenterY));
+			}
+			else
+			{
 			pVtxX[idx] = _mmw_ceil_ps(_mmw_fmadd_ps(_mmw_mul_ps(vtxX[i], mHalfWidth), rcpW, mCenterX));
 			pVtxY[idx] = _mmw_floor_ps(_mmw_fmadd_ps(_mmw_mul_ps(vtxY[i], mHalfHeight), rcpW, mCenterY));
+			}
 			pVtxZ[idx] = rcpW;
 		}
 	}
@@ -634,7 +734,7 @@ public:
 	// Common SSE/AVX input assembly functions, note that there are specialized gathers for the general case in the SSE/AVX specific files
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	FORCE_INLINE void GatherVerticesFast(__mw *vtxX, __mw *vtxY, __mw *vtxW, const float *inVtx, const unsigned int *inTrisPtr, int numLanes)
+	template<typename INDEXTYPE> FORCE_INLINE void GatherVerticesFast(__mw *vtxX, __mw *vtxY, __mw *vtxW, const float *inVtx, const INDEXTYPE *inTrisPtr, int numLanes)
 	{
 		// This function assumes that the vertex layout is four packed x, y, z, w-values.
 		// Since the layout is known we can get some additional performance by using a 
@@ -1501,8 +1601,8 @@ public:
 		return cullResult;
 	}
 
-	template<int TEST_Z, int FAST_GATHER>
-	FORCE_INLINE CullingResult RenderTriangles(const float *inVtx, const unsigned int *inTris, int nTris, const float *modelToClipMatrix, BackfaceWinding bfWinding, ClipPlanes clipPlaneMask, const VertexLayout &vtxLayout)
+	template<int TEST_Z, int FAST_GATHER, typename INDEXTYPE>
+	FORCE_INLINE CullingResult RenderTriangles(const float *inVtx, const INDEXTYPE *inTris, int nTris, const float *modelToClipMatrix, BackfaceWinding bfWinding, ClipPlanes clipPlaneMask, const VertexLayout &vtxLayout)
 	{
 		assert(mMaskedHiZBuffer != nullptr);
 
@@ -1521,7 +1621,7 @@ public:
 		__m128 clipTriBuffer[MAX_CLIPPED * 3];
 		int cullResult = CullingResult::VIEW_CULLED;
 
-		const unsigned int *inTrisPtr = inTris;
+		const INDEXTYPE *inTrisPtr = inTris;
 		int numLanes = SIMD_LANES;
 		int triIndex = 0;
 		while (triIndex < nTris || clipHead != clipTail)
@@ -1529,7 +1629,10 @@ public:
             __mw vtxX[3], vtxY[3], vtxW[3];
             unsigned int triMask = SIMD_ALL_LANES_MASK;
 
-            GatherTransformClip<FAST_GATHER>( clipHead, clipTail, numLanes, nTris, triIndex, vtxX, vtxY, vtxW, inVtx, inTrisPtr, vtxLayout, modelToClipMatrix, clipTriBuffer, triMask, clipPlaneMask );
+			if (mOrtho)
+				GatherTransformClip<FAST_GATHER, INDEXTYPE, 1>(clipHead, clipTail, numLanes, nTris, triIndex, vtxX, vtxY, vtxW, inVtx, inTrisPtr, vtxLayout, modelToClipMatrix, clipTriBuffer, triMask, clipPlaneMask);
+			else
+				GatherTransformClip<FAST_GATHER, INDEXTYPE, 0>(clipHead, clipTail, numLanes, nTris, triIndex, vtxX, vtxY, vtxW, inVtx, inTrisPtr, vtxLayout, modelToClipMatrix, clipTriBuffer, triMask, clipPlaneMask);
 
 			if (triMask == 0x0)
 				continue;
@@ -1545,9 +1648,15 @@ public:
 
 #if PRECISE_COVERAGE != 0
 			__mwi ipVtxX[3], ipVtxY[3];
-			ProjectVertices(ipVtxX, ipVtxY, pVtxX, pVtxY, pVtxZ, vtxX, vtxY, vtxW);
+			if (mOrtho)
+				ProjectVertices<1>(ipVtxX, ipVtxY, pVtxX, pVtxY, pVtxZ, vtxX, vtxY, vtxW);
+			else
+				ProjectVertices<0>(ipVtxX, ipVtxY, pVtxX, pVtxY, pVtxZ, vtxX, vtxY, vtxW);
 #else
-			ProjectVertices(pVtxX, pVtxY, pVtxZ, vtxX, vtxY, vtxW);
+			if (mOrtho)
+				ProjectVertices<1>(pVtxX, pVtxY, pVtxZ, vtxX, vtxY, vtxW);
+			else
+				ProjectVertices<0>(pVtxX, pVtxY, pVtxZ, vtxX, vtxY, vtxW);
 #endif
 
 			// Perform backface test. 
@@ -1593,12 +1702,26 @@ public:
         CullingResult retVal;
 
         if (vtxLayout.mStride == 16 && vtxLayout.mOffsetY == 4 && vtxLayout.mOffsetW == 12)
-			retVal = (CullingResult)RenderTriangles<0, 1>(inVtx, inTris, nTris, modelToClipMatrix, bfWinding, clipPlaneMask, vtxLayout);
+			retVal = (CullingResult)RenderTriangles<0, 1, unsigned int>(inVtx, inTris, nTris, modelToClipMatrix, bfWinding, clipPlaneMask, vtxLayout);
         else
-            retVal = (CullingResult)RenderTriangles<0, 0>(inVtx, inTris, nTris, modelToClipMatrix, bfWinding, clipPlaneMask, vtxLayout);
+            retVal = (CullingResult)RenderTriangles<0, 0, unsigned int>(inVtx, inTris, nTris, modelToClipMatrix, bfWinding, clipPlaneMask, vtxLayout);
 
 #if MOC_RECORDER_ENABLE
         RecordRenderTriangles( inVtx, inTris, nTris, modelToClipMatrix, clipPlaneMask, bfWinding, vtxLayout, retVal );
+#endif
+		return retVal;
+	}
+	CullingResult RenderTriangles(const float *inVtx, const unsigned short *inTris, int nTris, const float *modelToClipMatrix, BackfaceWinding bfWinding, ClipPlanes clipPlaneMask, const VertexLayout &vtxLayout) override
+	{
+		CullingResult retVal;
+
+		if (vtxLayout.mStride == 16 && vtxLayout.mOffsetY == 4 && vtxLayout.mOffsetW == 12)
+			retVal = (CullingResult)RenderTriangles<0, 1, unsigned short>(inVtx, inTris, nTris, modelToClipMatrix, bfWinding, clipPlaneMask, vtxLayout);
+		else
+			retVal = (CullingResult)RenderTriangles<0, 0, unsigned short>(inVtx, inTris, nTris, modelToClipMatrix, bfWinding, clipPlaneMask, vtxLayout);
+
+#if MOC_RECORDER_ENABLE
+		RecordRenderTriangles(inVtx, inTris, nTris, modelToClipMatrix, clipPlaneMask, bfWinding, vtxLayout, retVal);
 #endif
 		return retVal;
 	}
@@ -1612,9 +1735,9 @@ public:
         CullingResult retVal;
 
         if (vtxLayout.mStride == 16 && vtxLayout.mOffsetY == 4 && vtxLayout.mOffsetW == 12)
-			retVal = (CullingResult)RenderTriangles<1, 1>(inVtx, inTris, nTris, modelToClipMatrix, bfWinding, clipPlaneMask, vtxLayout);
+			retVal = (CullingResult)RenderTriangles<1, 1, unsigned int>(inVtx, inTris, nTris, modelToClipMatrix, bfWinding, clipPlaneMask, vtxLayout);
         else
-		    retVal = (CullingResult)RenderTriangles<1, 0>(inVtx, inTris, nTris, modelToClipMatrix, bfWinding, clipPlaneMask, vtxLayout);
+		    retVal = (CullingResult)RenderTriangles<1, 0, unsigned int>(inVtx, inTris, nTris, modelToClipMatrix, bfWinding, clipPlaneMask, vtxLayout);
 
 #if MOC_RECORDER_ENABLE
         {
@@ -1683,6 +1806,14 @@ public:
 		// Compute z from w. Note that z is reversed order, 0 = far, 1 = near, which
 		// means we use a greater than test, so zMax is used to test for visibility.
 		//////////////////////////////////////////////////////////////////////////////
+
+#if MOC_ORTHO_GREATER_EQUAL != 0
+		if (mOrtho)
+		{
+			wmin = 1.0f - wmin;
+		}
+#endif
+
 		__mw zMax = _mmw_div_ps(_mmw_set1_ps(1.0f), _mmw_set1_ps(wmin));
 
 		for (;;)
@@ -1744,7 +1875,7 @@ public:
 		return CullingResult::OCCLUDED;
 	}
 
-	template<bool FAST_GATHER>
+	template<bool FAST_GATHER, typename INDEXTYPE>
 	FORCE_INLINE void BinTriangles(const float *inVtx, const unsigned int *inTris, int nTris, TriList *triLists, unsigned int nBinsW, unsigned int nBinsH, const float *modelToClipMatrix, BackfaceWinding bfWinding, ClipPlanes clipPlaneMask, const VertexLayout &vtxLayout)
 	{
 		assert(mMaskedHiZBuffer != nullptr);
@@ -1768,7 +1899,10 @@ public:
             unsigned int triMask = SIMD_ALL_LANES_MASK;
             __mw vtxX[3], vtxY[3], vtxW[3];
 
-            GatherTransformClip<FAST_GATHER>( clipHead, clipTail, numLanes, nTris, triIndex, vtxX, vtxY, vtxW, inVtx, inTrisPtr, vtxLayout, modelToClipMatrix, clipTriBuffer, triMask, clipPlaneMask );
+			if (mOrtho)
+				GatherTransformClip<FAST_GATHER, INDEXTYPE, 1>(clipHead, clipTail, numLanes, nTris, triIndex, vtxX, vtxY, vtxW, inVtx, inTrisPtr, vtxLayout, modelToClipMatrix, clipTriBuffer, triMask, clipPlaneMask);
+			else
+				GatherTransformClip<FAST_GATHER, INDEXTYPE, 0>(clipHead, clipTail, numLanes, nTris, triIndex, vtxX, vtxY, vtxW, inVtx, inTrisPtr, vtxLayout, modelToClipMatrix, clipTriBuffer, triMask, clipPlaneMask);
 
 			if (triMask == 0x0)
 				continue;
@@ -1784,9 +1918,15 @@ public:
 
 #if PRECISE_COVERAGE != 0
 			__mwi ipVtxX[3], ipVtxY[3];
-			ProjectVertices(ipVtxX, ipVtxY, pVtxX, pVtxY, pVtxZ, vtxX, vtxY, vtxW);
+			if (mOrtho)
+				ProjectVertices<1>(ipVtxX, ipVtxY, pVtxX, pVtxY, pVtxZ, vtxX, vtxY, vtxW);
+			else
+				ProjectVertices<0>(ipVtxX, ipVtxY, pVtxX, pVtxY, pVtxZ, vtxX, vtxY, vtxW);
 #else
-			ProjectVertices(pVtxX, pVtxY, pVtxZ, vtxX, vtxY, vtxW);
+			if (mOrtho)
+				ProjectVertices<1>(pVtxX, pVtxY, pVtxZ, vtxX, vtxY, vtxW);
+			else
+				ProjectVertices<0>(pVtxX, pVtxY, pVtxZ, vtxX, vtxY, vtxW);
 #endif
 
 			// Perform backface test. 
@@ -1856,23 +1996,23 @@ public:
 	void BinTriangles(const float *inVtx, const unsigned int *inTris, int nTris, TriList *triLists, unsigned int nBinsW, unsigned int nBinsH, const float *modelToClipMatrix, BackfaceWinding bfWinding, ClipPlanes clipPlaneMask, const VertexLayout &vtxLayout) override
 	{
 		if (vtxLayout.mStride == 16 && vtxLayout.mOffsetY == 4 && vtxLayout.mOffsetW == 12)
-			BinTriangles<true>(inVtx, inTris, nTris, triLists, nBinsW, nBinsH, modelToClipMatrix, bfWinding, clipPlaneMask, vtxLayout);
+			BinTriangles<true, unsigned int>(inVtx, inTris, nTris, triLists, nBinsW, nBinsH, modelToClipMatrix, bfWinding, clipPlaneMask, vtxLayout);
 		else
-			BinTriangles<false>(inVtx, inTris, nTris, triLists, nBinsW, nBinsH, modelToClipMatrix, bfWinding, clipPlaneMask, vtxLayout);
+			BinTriangles<false, unsigned int>(inVtx, inTris, nTris, triLists, nBinsW, nBinsH, modelToClipMatrix, bfWinding, clipPlaneMask, vtxLayout);
 	}
 
-    template<int FAST_GATHER>
-    void GatherTransformClip( int & clipHead, int & clipTail, int & numLanes, int nTris, int & triIndex, __mw * vtxX, __mw * vtxY, __mw * vtxW, const float * inVtx, const unsigned int * &inTrisPtr, const VertexLayout & vtxLayout, const float * modelToClipMatrix, __m128 * clipTriBuffer, unsigned int &triMask, ClipPlanes clipPlaneMask )
+	template<int FAST_GATHER, typename INDEXTYPE, int ORTHO_PROJECTION>
+	void GatherTransformClip(int & clipHead, int & clipTail, int & numLanes, int nTris, int & triIndex, __mw * vtxX, __mw * vtxY, __mw * vtxW, const float * inVtx, const INDEXTYPE * &inTrisPtr, const VertexLayout & vtxLayout, const float * modelToClipMatrix, __m128 * clipTriBuffer, unsigned int &triMask, ClipPlanes clipPlaneMask)
     {
         //////////////////////////////////////////////////////////////////////////////
         // Assemble triangles from the index list 
         //////////////////////////////////////////////////////////////////////////////
         unsigned int triClipMask = SIMD_ALL_LANES_MASK;
 
-        if( clipHead != clipTail )
+		if (clipHead != clipTail)
         {
             int clippedTris = clipHead > clipTail ? clipHead - clipTail : MAX_CLIPPED + clipHead - clipTail;
-            clippedTris = min( clippedTris, SIMD_LANES );
+			clippedTris = min(clippedTris, SIMD_LANES);
 
 #if CLIPPING_PRESERVES_ORDER != 0
             // if preserving order, don't mix clipped and new triangles, handle the clip buffer fully
@@ -1882,48 +2022,48 @@ public:
             numLanes = 0;
 #else
             // Fill out SIMD registers by fetching more triangles. 
-            numLanes = max( 0, min( SIMD_LANES - clippedTris, nTris - triIndex ) );
+			numLanes = max(0, min(SIMD_LANES - clippedTris, nTris - triIndex));
 #endif
 
-            if( numLanes > 0 ) {
-                if( FAST_GATHER )
-                    GatherVerticesFast( vtxX, vtxY, vtxW, inVtx, inTrisPtr, numLanes );
+			if (numLanes > 0) {
+				if (FAST_GATHER)
+					GatherVerticesFast<INDEXTYPE>(vtxX, vtxY, vtxW, inVtx, inTrisPtr, numLanes);
                 else
-                    GatherVertices( vtxX, vtxY, vtxW, inVtx, inTrisPtr, numLanes, vtxLayout );
+					GatherVertices(vtxX, vtxY, vtxW, inVtx, inTrisPtr, numLanes, vtxLayout);
 
-                TransformVerts( vtxX, vtxY, vtxW, modelToClipMatrix );
+				TransformVerts<ORTHO_PROJECTION>(vtxX, vtxY, vtxW, modelToClipMatrix);
             }
 
-            for( int clipTri = numLanes; clipTri < numLanes + clippedTris; clipTri++ )
+			for (int clipTri = numLanes; clipTri < numLanes + clippedTris; clipTri++)
             {
                 int triIdx = clipTail * 3;
-                for( int i = 0; i < 3; i++ )
+				for (int i = 0; i < 3; i++)
                 {
-                    simd_f32( vtxX[i] )[clipTri] = simd_f32( clipTriBuffer[triIdx + i] )[0];
-                    simd_f32( vtxY[i] )[clipTri] = simd_f32( clipTriBuffer[triIdx + i] )[1];
-                    simd_f32( vtxW[i] )[clipTri] = simd_f32( clipTriBuffer[triIdx + i] )[2];
+					simd_f32(vtxX[i])[clipTri] = simd_f32(clipTriBuffer[triIdx + i])[0];
+					simd_f32(vtxY[i])[clipTri] = simd_f32(clipTriBuffer[triIdx + i])[1];
+					simd_f32(vtxW[i])[clipTri] = simd_f32(clipTriBuffer[triIdx + i])[2];
                 }
-                clipTail = ( clipTail + 1 ) & ( MAX_CLIPPED - 1 );
+				clipTail = (clipTail + 1) & (MAX_CLIPPED - 1);
             }
 
             triIndex += numLanes;
             inTrisPtr += numLanes * 3;
 
-            triMask = ( 1U << ( clippedTris + numLanes ) ) - 1;
-            triClipMask = ( 1U << numLanes ) - 1; // Don't re-clip already clipped triangles
+			triMask = (1U << (clippedTris + numLanes)) - 1;
+			triClipMask = (1U << numLanes) - 1; // Don't re-clip already clipped triangles
         }
         else
         {
-            numLanes = min( SIMD_LANES, nTris - triIndex );
-            triMask = ( 1U << numLanes ) - 1;
+			numLanes = min(SIMD_LANES, nTris - triIndex);
+			triMask = (1U << numLanes) - 1;
             triClipMask = triMask;
 
-            if( FAST_GATHER )
-                GatherVerticesFast( vtxX, vtxY, vtxW, inVtx, inTrisPtr, numLanes );
+			if (FAST_GATHER)
+				GatherVerticesFast<INDEXTYPE>(vtxX, vtxY, vtxW, inVtx, inTrisPtr, numLanes);
             else
-                GatherVertices( vtxX, vtxY, vtxW, inVtx, inTrisPtr, numLanes, vtxLayout );
+				GatherVertices(vtxX, vtxY, vtxW, inVtx, inTrisPtr, numLanes, vtxLayout);
 
-            TransformVerts( vtxX, vtxY, vtxW, modelToClipMatrix );
+			TransformVerts<ORTHO_PROJECTION>(vtxX, vtxY, vtxW, modelToClipMatrix);
 
             triIndex += SIMD_LANES;
             inTrisPtr += SIMD_LANES * 3;
@@ -1933,8 +2073,8 @@ public:
         // Clip transformed triangles
         //////////////////////////////////////////////////////////////////////////////
 
-        if( clipPlaneMask != ClipPlanes::CLIP_PLANE_NONE )
-            ClipTriangleAndAddToBuffer( vtxX, vtxY, vtxW, clipTriBuffer, clipHead, triMask, triClipMask, clipPlaneMask );
+		if (clipPlaneMask != ClipPlanes::CLIP_PLANE_NONE)
+			ClipTriangleAndAddToBuffer<ORTHO_PROJECTION>(vtxX, vtxY, vtxW, clipTriBuffer, clipHead, triMask, triClipMask, clipPlaneMask);
     }
 
 	void RenderTrilist(const TriList &triList, const ScissorRect *scissor) override

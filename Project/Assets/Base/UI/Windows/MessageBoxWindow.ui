@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2022.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component Project.MessageBoxWindow
 {
@@ -16,8 +16,8 @@
 		Name = Text
 		Text = Text text text text text text text text text text text text text text text. Text text text text text text text text text text text text text text text.
 		Size = Units 660 100
-		HorizontalAlignment = Center
-		Margin = Units 20 70 20 0
+		HorizontalAlignment = Stretch
+		Margin = Units 40 70 40 0
 		EditorScrollPosition = 0 0
 		WordWrap = True
 	}

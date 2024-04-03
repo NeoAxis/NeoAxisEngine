@@ -15,7 +15,6 @@ namespace NeoAxis
 	/// <summary>
 	/// Represents a shader generation tool for materials and effects.
 	/// </summary>
-	/*public */
 	class ShaderGenerator
 	{
 		//!!!!другой алгоритм генерить, чтобы не было дублирований
@@ -154,7 +153,7 @@ namespace NeoAxis
 			public Reference<double> Opacity
 			{
 				get { if( _opacity.BeginGet() ) Opacity = _opacity.Get( this ); return _opacity.value; }
-				set { if( _opacity.BeginSet( ref value ) ) { _opacity.EndSet(); } }
+				set { if( _opacity.BeginSet( this, ref value ) ) { _opacity.EndSet(); } }
 			}
 			ReferenceField<double> _opacity = 1;
 		}
@@ -448,6 +447,7 @@ namespace NeoAxis
 						//when exists with different ShadingModel
 						var containsLit = false;
 						var containsSubsurface = false;
+						var containsFoliage = false;
 						var containsSimple = false;
 						foreach( var m in multiMaterialSeparateMaterialsOfCombinedGroup )
 						{
@@ -455,10 +455,11 @@ namespace NeoAxis
 							{
 							case Material.ShadingModelEnum.Lit: containsLit = true; break;
 							case Material.ShadingModelEnum.Subsurface: containsSubsurface = true; break;
+							case Material.ShadingModelEnum.Foliage: containsFoliage = true; break;
 							case Material.ShadingModelEnum.Simple: containsSimple = true; break;
 							}
 						}
-						if( ( ( containsLit ? 1 : 0 ) + ( containsSubsurface ? 1 : 0 ) + ( containsSimple ? 1 : 0 ) ) > 1 )
+						if( ( ( containsLit ? 1 : 0 ) + ( containsSubsurface ? 1 : 0 ) + ( containsFoliage ? 1 : 0 ) + ( containsSimple ? 1 : 0 ) ) > 1 )
 						{
 							for( int materialIndex = 0; materialIndex < multiMaterialSeparateMaterialsOfCombinedGroup.Length; materialIndex++ )
 							{
@@ -485,19 +486,19 @@ namespace NeoAxis
 							}
 						}
 
-						//when exists with different RayTracingReflection
-						if( thisMaterial.RayTracingReflection.Value != 0 )
-						{
-							for( int materialIndex = 0; materialIndex < multiMaterialSeparateMaterialsOfCombinedGroup.Length; materialIndex++ )
-							{
-								var material = multiMaterialSeparateMaterialsOfCombinedGroup[ materialIndex ].owner;
-								if( material.RayTracingReflection.Value != 1 )
-								{
-									string line = $"rayTracingReflection = {material.RayTracingReflection.Value};";
-									resultCodeLinesReversed.Add( (line, materialIndex) );
-								}
-							}
-						}
+						////when exists with different RayTracingReflection
+						//if( thisMaterial.RayTracingReflection.Value != 0 )
+						//{
+						//	for( int materialIndex = 0; materialIndex < multiMaterialSeparateMaterialsOfCombinedGroup.Length; materialIndex++ )
+						//	{
+						//		var material = multiMaterialSeparateMaterialsOfCombinedGroup[ materialIndex ].owner;
+						//		if( material.RayTracingReflection.Value != 1 )
+						//		{
+						//			string line = $"rayTracingReflection = {material.RayTracingReflection.Value};";
+						//			resultCodeLinesReversed.Add( (line, materialIndex) );
+						//		}
+						//	}
+						//}
 
 						//when exists with different ReceiveDecals
 						if( thisMaterial.ReceiveDecals )
@@ -551,6 +552,8 @@ namespace NeoAxis
 
 							if( lines.Count != 0 )
 							{
+								//!!!!dx11 hlsl can't compile with BRANCH
+								//lines.Insert( 0, string.Format( "{0}if( localGroupMaterialIndex == {1} ) ", ifStarted ? "else " : "BRANCH\r\n", materialIndex ) + "{" );
 								lines.Insert( 0, string.Format( "{0}if( localGroupMaterialIndex == {1} ) ", ifStarted ? "else " : "", materialIndex ) + "{" );
 								lines.Add( "}" );
 								ifStarted = true;
@@ -756,10 +759,16 @@ namespace NeoAxis
 								else
 									nameInShader = "sourceTexture";
 
+								//mul UV Scale
+								if( shaderTextureSample.TextureType.Value != ShaderTextureSample.TextureTypeEnum.Mask )
+									locationStr = "( " + locationStr + " ) * u_renderOperationData[7].w";
+
 								string constructBody;
-								if( shaderTextureSample.TextureType.Value == ShaderTextureSample.TextureTypeEnum.Mask )
+								//!!!!disabled
+								/*if( shaderTextureSample.TextureType.Value == ShaderTextureSample.TextureTypeEnum.Mask )
 									constructBody = string.Format( "CODE_BODY_TEXTURE2D_MASK_OPACITY({0}, {1})", nameInShader, locationStr );
-								else if( shaderTextureSample.RemoveTiling )
+								else*/
+								if( shaderTextureSample.RemoveTiling )
 									constructBody = string.Format( "CODE_BODY_TEXTURE2D_REMOVE_TILING({0}, {1})", nameInShader, locationStr );
 								else
 									constructBody = string.Format( "CODE_BODY_TEXTURE2D({0}, {1})", nameInShader, locationStr );

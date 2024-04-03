@@ -343,7 +343,9 @@ namespace NeoAxis
 
 					} while( true );
 
-					error = "Unable to get compiled script. The script is not precompiled in the cache. Script compilation is not supported on the current platform, run scenes on dev machine to make the cache.\r\n\r\nScript:\r\n" + scriptShort;//CheckConvert( script );
+					error = "Unable to get compiled script. The script is not precompiled in the cache. Script compilation is not supported on the current platform, run scenes on dev machine to make the cache. It is also possible that your script was unnecessarily synchronized over the network.\r\n\r\nScript:\r\n" + scriptShort;//CheckConvert( script );
+
+					//error = "Unable to get compiled script. The script is not precompiled in the cache. Script compilation is not supported on the current platform, run scenes on dev machine to make the cache.\r\n\r\nScript:\r\n" + scriptShort;//CheckConvert( script );
 
 					//error = "Unable to get compiled script. The script is not precompiled in the cache. Script compilation is not supported on the current platform, run scenes on dev machine to make the cache.";
 					return null;

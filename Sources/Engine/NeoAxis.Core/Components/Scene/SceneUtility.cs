@@ -91,7 +91,7 @@ namespace NeoAxis
 
 				foreach( var resultItem in item.Result )
 				{
-					if( objectInSpace != resultItem.Object && !resultItem.Object.GetAllParents( false ).Contains( objectInSpace ) )
+					if( objectInSpace != resultItem.Object && !resultItem.Object.GetAllParents().Contains( objectInSpace ) )
 					{
 						//mesh in space
 						if( resultItem.Object is MeshInSpace meshInSpace )

@@ -9,266 +9,42 @@ using System.Text;
 
 namespace NeoAxis.Editor
 {
-	public class DocumentWindowWithViewport_CanvasBasedEditor : DocumentWindowWithViewport
+	//!!!!was internal
+	public interface IDocumentWindowWithViewport_CanvasBasedEditor : IDocumentWindowWithViewport
 	{
-		CanvasBasedEditor editor;
-
-		//
-
-		public DocumentWindowWithViewport_CanvasBasedEditor( CanvasBasedEditor editor )
-		{
-			this.editor = editor;
-
-			SelectedObjectsChanged += DocumentWindowWithViewport_CanvasBasedEditor_SelectedObjectsChanged;
-		}
-
-		public CanvasBasedEditor Editor
-		{
-			get { return editor; }
-		}
-
-		protected override void OnLoad( EventArgs e )
-		{
-			base.OnLoad( e );
-			editor.PerformOnCreate();
-		}
-
-		protected override void OnDestroy()
-		{
-			editor.PerformOnDestroy();
-		}
-		public void PerformBaseOnDestroy()
-		{
-			base.OnDestroy();
-		}
-
-		protected override void Viewport_KeyDown( Viewport viewport, KeyEvent e, ref bool handled )
-		{
-			editor.PerformKeyDown( e, ref handled );
-		}
-		public void PerformBaseViewportKeyDown( KeyEvent e, ref bool handled )
-		{
-			base.Viewport_KeyDown( Viewport, e, ref handled );
-		}
-
-		protected override void Viewport_KeyPress( Viewport viewport, KeyPressEvent e, ref bool handled )
-		{
-			editor.PerformKeyPress( e, ref handled );
-		}
-		public void PerformBaseViewportKeyPress( KeyPressEvent e, ref bool handled )
-		{
-			base.Viewport_KeyPress( Viewport, e, ref handled );
-		}
-
-		protected override void Viewport_KeyUp( Viewport viewport, KeyEvent e, ref bool handled )
-		{
-			editor.PerformKeyUp( e, ref handled );
-		}
-		public void PerformBaseViewportKeyUp( KeyEvent e, ref bool handled )
-		{
-			base.Viewport_KeyUp( Viewport, e, ref handled );
-		}
-
-		protected override void Viewport_MouseDown( Viewport viewport, EMouseButtons button, ref bool handled )
-		{
-			editor.PerformMouseDown( button, ref handled );
-		}
-		public void PerformBaseViewportMouseDown( EMouseButtons button, ref bool handled )
-		{
-			base.Viewport_MouseDown( Viewport, button, ref handled );
-		}
-
-		protected override void Viewport_MouseUp( Viewport viewport, EMouseButtons button, ref bool handled )
-		{
-			editor.PerformMouseUp( button, ref handled );
-		}
-		public void PerformBaseViewportMouseUp( EMouseButtons button, ref bool handled )
-		{
-			base.Viewport_MouseUp( Viewport, button, ref handled );
-		}
-
-		protected override void Viewport_MouseDoubleClick( Viewport viewport, EMouseButtons button, ref bool handled )
-		{
-			editor.PerformMouseDoubleClick( button, ref handled );
-		}
-		public void PerformBaseViewportMouseDoubleClick( EMouseButtons button, ref bool handled )
-		{
-			base.Viewport_MouseDoubleClick( Viewport, button, ref handled );
-		}
-
-		protected override void Viewport_MouseMove( Viewport viewport, Vector2 mouse )
-		{
-			editor.PerformMouseMove( mouse );
-		}
-		public void PerformBaseViewportMouseMove( Vector2 mouse )
-		{
-			base.Viewport_MouseMove( Viewport, mouse );
-		}
-
-		protected override void Viewport_MouseRelativeModeChanged( Viewport viewport, ref bool handled )
-		{
-			editor.PerformMouseRelativeModeChanged( ref handled );
-		}
-		public void PerformBaseViewportMouseRelativeModeChanged( ref bool handled )
-		{
-			base.Viewport_MouseRelativeModeChanged( Viewport, ref handled );
-		}
-
-		protected override void Viewport_MouseWheel( Viewport viewport, int delta, ref bool handled )
-		{
-			editor.PerformMouseWheel( delta, ref handled );
-		}
-		public void PerformBaseViewportMouseWheel( int delta, ref bool handled )
-		{
-			base.Viewport_MouseWheel( Viewport, delta, ref handled );
-		}
-
-		protected override void Viewport_JoystickEvent( Viewport viewport, JoystickInputEvent e, ref bool handled )
-		{
-			editor.PerformJoystickEvent( e, ref handled );
-		}
-		public void PerformBaseViewportJoystickEvent( JoystickInputEvent e, ref bool handled )
-		{
-			base.Viewport_JoystickEvent( Viewport, e, ref handled );
-		}
-
-		protected override void Viewport_SpecialInputDeviceEvent( Viewport viewport, InputEvent e, ref bool handled )
-		{
-			editor.PerformSpecialInputDeviceEvent( e, ref handled );
-		}
-		public void PerformBaseViewportSpecialInputDeviceEvent( InputEvent e, ref bool handled )
-		{
-			base.Viewport_SpecialInputDeviceEvent( Viewport, e, ref handled );
-		}
-
-		protected override void Viewport_Tick( Viewport viewport, float delta )
-		{
-			editor.PerformTick( delta );
-		}
-		public void PerformBaseViewportTick( float delta )
-		{
-			base.Viewport_Tick( Viewport, delta );
-		}
-
-		protected override void OnTimer10MsTick()
-		{
-			editor.PerformOnTimer10MsTick();
-		}
-		public void PerformOnTimer10MsTick()
-		{
-			base.OnTimer10MsTick();
-		}
-
-		protected override void Viewport_UpdateBegin( Viewport viewport )
-		{
-			editor.PerformViewportUpdateBegin();
-		}
-		public void PerformBaseViewportUpdateBegin()
-		{
-			base.Viewport_UpdateBegin( Viewport );
-		}
-
-		protected override void Viewport_UpdateEnd( Viewport viewport )
-		{
-			editor.PerformViewportUpdateEnd();
-		}
-		public void PerformBaseViewportUpdateEnd()
-		{
-			base.Viewport_UpdateEnd( Viewport );
-		}
-
-		protected override void ViewportControl_ViewportCreated( EngineViewportControl sender )
-		{
-			editor.PerformViewportCreated();
-		}
-		public void PerformBaseViewportCreated()
-		{
-			base.ViewportControl_ViewportCreated( ViewportControl );
-		}
-
-		protected override void ViewportControl_ViewportDestroyed( EngineViewportControl sender )
-		{
-			editor.PerformViewportDestroyed();
-		}
-		public void PerformBaseViewportDestroyed()
-		{
-			base.ViewportControl_ViewportDestroyed( ViewportControl );
-		}
-
-		protected override void Viewport_UpdateBeforeOutput( Viewport viewport )
-		{
-			editor.PerformViewportUpdateBeforeOutput();
-		}
-		public void PerformBaseViewportUpdateBeforeOutput()
-		{
-			base.Viewport_UpdateBeforeOutput( Viewport );
-		}
-
-		protected override void Viewport_UpdateBeforeOutput2( Viewport viewport )
-		{
-			editor.PerformViewportUpdateBeforeOutput2();
-		}
-		public void PerformBaseViewportUpdateBeforeOutput2()
-		{
-			base.Viewport_UpdateBeforeOutput2( Viewport );
-		}
-
-		protected override void Viewport_UpdateGetObjectInSceneRenderingContext( Viewport viewport, ref ObjectInSpace.RenderingContext context )
-		{
-			editor.PerformViewportUpdateGetObjectInSceneRenderingContext( ref context );
-		}
-		public void PerformBaseViewportUpdateGetObjectInSceneRenderingContext( ref ObjectInSpace.RenderingContext context )
-		{
-			base.Viewport_UpdateGetObjectInSceneRenderingContext( Viewport, ref context );
-		}
-
-		protected override void Scene_ViewportUpdateGetCameraSettings( Scene scene, Viewport viewport, ref bool processed )
-		{
-			editor.PerformSceneViewportUpdateGetCameraSettings( ref processed );
-		}
-		public void PerformBaseSceneViewportUpdateGetCameraSettings( ref bool processed )
-		{
-			base.Scene_ViewportUpdateGetCameraSettings( Scene, Viewport, ref processed );
-		}
-
-		protected override void GetTextInfoLeftTopCorner( List<string> lines )
-		{
-			editor.PerformOnGetTextInfoLeftTopCorner( lines );
-		}
-		public void PerformBaseGetTextInfoLeftTopCorner( List<string> lines )
-		{
-			base.GetTextInfoLeftTopCorner( lines );
-		}
-
-		protected override void GetTextInfoRightBottomCorner( List<string> lines )
-		{
-			editor.PerformOnGetTextInfoRightBottomCorner( lines );
-		}
-		public void PerformBaseGetTextInfoRightBottomCorner( List<string> lines )
-		{
-			base.GetTextInfoRightBottomCorner( lines );
-		}
-
-		protected override void GetTextInfoCenterBottomCorner( List<string> lines )
-		{
-			editor.PerformOnGetTextInfoCenterBottomCorner( lines );
-		}
-		public void PerformBaseGetTextInfoCenterBottomCorner( List<string> lines )
-		{
-			base.GetTextInfoCenterBottomCorner( lines );
-		}
-
-		private void DocumentWindowWithViewport_CanvasBasedEditor_SelectedObjectsChanged( DocumentWindow sender, object[] oldSelectedObjects )
-		{
-			editor.PerformSelectedObjectsChanged( oldSelectedObjects );
-		}
+		void PerformOnTimer10MsTick();
+		void PerformBaseOnDestroy();
+		void SettingsWindowSelectObjects();
+		void PerformBaseViewportKeyDown( KeyEvent e, ref bool handled );
+		void PerformBaseViewportKeyPress( KeyPressEvent e, ref bool handled );
+		void PerformBaseViewportKeyUp( KeyEvent e, ref bool handled );
+		void PerformBaseViewportMouseDown( EMouseButtons button, ref bool handled );
+		void PerformBaseViewportMouseUp( EMouseButtons button, ref bool handled );
+		void PerformBaseViewportMouseDoubleClick( EMouseButtons button, ref bool handled );
+		void PerformBaseViewportMouseMove( Vector2 mouse );
+		void PerformBaseViewportMouseRelativeModeChanged( ref bool handled );
+		void PerformBaseViewportMouseWheel( int delta, ref bool handled );
+		void PerformBaseViewportJoystickEvent( JoystickInputEvent e, ref bool handled );
+		void PerformBaseViewportSpecialInputDeviceEvent( InputEvent e, ref bool handled );
+		void PerformBaseViewportTick( float delta );
+		void PerformBaseViewportUpdateBegin();
+		void PerformBaseViewportUpdateEnd();
+		void PerformBaseViewportCreated();
+		void PerformBaseViewportDestroyed();
+		void PerformBaseViewportUpdateBeforeOutput();
+		void PerformBaseViewportUpdateBeforeOutput2();
+		void PerformBaseViewportUpdateGetObjectInSceneRenderingContext( ref ObjectInSpace.RenderingContext context );
+		void PerformBaseSceneViewportUpdateGetCameraSettings( ref bool processed );
+		void PerformBaseGetTextInfoLeftTopCorner( List<string> lines );
+		void PerformBaseGetTextInfoRightBottomCorner( List<string> lines );
+		void PerformBaseGetTextInfoCenterBottomCorner( List<string> lines );
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public abstract class CanvasBasedEditor
 	{
-		internal DocumentWindowWithViewport_CanvasBasedEditor owner;
+		internal IDocumentWindowWithViewport_CanvasBasedEditor owner;
 
 		//
 
@@ -276,16 +52,16 @@ namespace NeoAxis.Editor
 		{
 		}
 
-		public DocumentWindowWithViewport Owner
+		public IDocumentWindowWithViewport Owner
 		{
 			get { return owner; }
 		}
 
 		/////////////////////////////////////////
 
-		public DocumentInstance Document
+		public IDocumentInstance Document
 		{
-			get { return Owner?.Document; }
+			get { return owner?.Document; }
 		}
 
 		public object ObjectOfEditor
@@ -429,7 +205,7 @@ namespace NeoAxis.Editor
 
 		//!!!!
 
-		//public virtual void EditorActionGetState( EditorAction.GetStateContext context )
+		//public virtual void EditorActionGetState( IEditorAction.GetStateContext context )
 		//{
 		//	switch( context.Action.Name )
 		//	{
@@ -465,7 +241,7 @@ namespace NeoAxis.Editor
 		//	}
 		//}
 
-		//public virtual void EditorActionClick( EditorAction.ClickContext context )
+		//public virtual void EditorActionClick( IEditorAction.ClickContext context )
 		//{
 		//	switch( context.Action.Name )
 		//	{
@@ -508,7 +284,7 @@ namespace NeoAxis.Editor
 		//	{
 		//		var component = ObjectOfWindow as Component;
 		//		if( component != null && document != null && ObjectOfWindow != document.ResultComponent &&
-		//			document.ResultComponent != null && !component.GetAllParents( false ).Contains( document.ResultComponent ) )
+		//			document.ResultComponent != null && !component.GetAllParents().Contains( document.ResultComponent ) )
 		//		{
 		//			return true;
 		//		}
@@ -1046,20 +822,20 @@ namespace NeoAxis.Editor
 		//	}
 
 		//	//!!!!надо ли ref bool handled
-		//	protected virtual void OnEditorActionGetState( EditorAction.GetStateContext context ) { }
-		//	public delegate void EditorActionGetStateDelegate( WorkareaModeClass sender, EditorAction.GetStateContext context );
+		//	protected virtual void OnEditorActionGetState( IEditorAction.GetStateContext context ) { }
+		//	public delegate void EditorActionGetStateDelegate( WorkareaModeClass sender, IEditorAction.GetStateContext context );
 		//	public event EditorActionGetStateDelegate EditorActionGetState;
-		//	internal void PerformEditorActionGetState( EditorAction.GetStateContext context )
+		//	internal void PerformEditorActionGetState( IEditorAction.GetStateContext context )
 		//	{
 		//		OnEditorActionGetState( context );
 		//		EditorActionGetState?.Invoke( this, context );
 		//	}
 
 		//	//!!!!надо ли ref bool handled
-		//	protected virtual void OnEditorActionClick( EditorAction.ClickContext context ) { }
-		//	public delegate void EditorActionClickDelegate( WorkareaModeClass sender, EditorAction.ClickContext context );
+		//	protected virtual void OnEditorActionClick( IEditorAction.ClickContext context ) { }
+		//	public delegate void EditorActionClickDelegate( WorkareaModeClass sender, IEditorAction.ClickContext context );
 		//	public event EditorActionClickDelegate EditorActionClick;
-		//	internal void PerformEditorActionClick( EditorAction.ClickContext context )
+		//	internal void PerformEditorActionClick( IEditorAction.ClickContext context )
 		//	{
 		//		OnEditorActionClick( context );
 		//		EditorActionClick?.Invoke( this, context );
@@ -1068,7 +844,7 @@ namespace NeoAxis.Editor
 
 		///////////////////////////////////////////
 
-		public EngineViewportControl ViewportControl
+		public IEngineViewportControl ViewportControl
 		{
 			get { return owner.ViewportControl; }
 		}
@@ -1419,7 +1195,7 @@ namespace NeoAxis.Editor
 
 		//!!!!
 
-		//public override void EditorActionGetState( EditorAction.GetStateContext context )
+		//public override void EditorActionGetState( IEditorAction.GetStateContext context )
 		//{
 		//	base.EditorActionGetState( context );
 
@@ -1427,7 +1203,7 @@ namespace NeoAxis.Editor
 		//	workareaMode?.PerformEditorActionGetState( context );
 		//}
 
-		//public override void EditorActionClick( EditorAction.ClickContext context )
+		//public override void EditorActionClick( IEditorAction.ClickContext context )
 		//{
 		//	base.EditorActionClick( context );
 

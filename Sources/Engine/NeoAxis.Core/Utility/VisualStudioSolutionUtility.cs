@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Internal;
+using NeoAxis.Editor;
 
 namespace NeoAxis
 {
@@ -35,7 +36,12 @@ namespace NeoAxis
 				builder.Append( $" \"{solutionFullPath}\"" );
 
 				builder.Append( $" --configuration {BuildConfiguration}" );
-				builder.Append( $" --framework netcoreapp3.1" );
+
+				//!!!!можно узнавать значение из csproj файла
+				builder.Append( $" --framework net5.0-windows" );
+				//builder.Append( $" --framework net5.0" );
+
+				//builder.Append( $" --framework netcoreapp3.1" );
 
 				if( !string.IsNullOrEmpty( outputDirectoryOptional ) )
 					builder.Append( $" --output \"{outputDirectoryOptional}\"" );
@@ -51,7 +57,8 @@ namespace NeoAxis
 				arguments = builder.ToString();
 			}
 
-			var dotnetExePath = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Platforms\Windows\dotnet\dotnet.exe" );
+			var dotnetExePath = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Platforms\Windows\dotnet5\dotnet.exe" );
+			//var dotnetExePath = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Platforms\Windows\dotnet\dotnet.exe" );
 
 			var success = ProcessUtility.RunAndWait( dotnetExePath, arguments, out var result ) == 0;
 			result = result.Trim( new char[] { '\r', '\n' } );
@@ -79,7 +86,18 @@ namespace NeoAxis
 				{
 					var error = $"Unable to compile solution {solutionFileName}.\r\n\r\n{result}\r\n\r\nCommand line:\r\n{dotnetExePath} {arguments}\r\n\r\nSee details in the log.";
 
-					Log.Error( error );
+					if( !EngineApp.Created )
+					{
+						Log.InvisibleInfo( error );
+
+						if( EditorMessageBox.ShowQuestion( error, EMessageBoxButtons.OKCancel ) == EDialogResult.Cancel )
+						{
+							Process.GetCurrentProcess().Kill();
+							Environment.Exit( 0 );
+						}
+					}
+					else
+						Log.Error( error );
 				}
 
 				return false;

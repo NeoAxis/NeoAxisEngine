@@ -1,8 +1,6 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using System.ComponentModel;
 using System.Linq;
 using NeoAxis;
@@ -17,7 +15,7 @@ namespace Project
 		public Reference<ShooterGameTypeEnum> GameType
 		{
 			get { if( _gameType.BeginGet() ) GameType = _gameType.Get( this ); return _gameType.value; }
-			set { if( _gameType.BeginSet( ref value ) ) { try { GameTypeChanged?.Invoke( this ); } finally { _gameType.EndSet(); } } }
+			set { if( _gameType.BeginSet( this, ref value ) ) { try { GameTypeChanged?.Invoke( this ); } finally { _gameType.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="GameType"/> property value changes.</summary>
 		public event Action<ShooterNetworkLogic> GameTypeChanged;
@@ -27,7 +25,7 @@ namespace Project
 		public Reference<double> PreparationTime
 		{
 			get { if( _preparationTime.BeginGet() ) PreparationTime = _preparationTime.Get( this ); return _preparationTime.value; }
-			set { if( _preparationTime.BeginSet( ref value ) ) { try { PreparationTimeChanged?.Invoke( this ); } finally { _preparationTime.EndSet(); } } }
+			set { if( _preparationTime.BeginSet( this, ref value ) ) { try { PreparationTimeChanged?.Invoke( this ); } finally { _preparationTime.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PreparationTime"/> property value changes.</summary>
 		public event Action<ShooterNetworkLogic> PreparationTimeChanged;
@@ -37,7 +35,7 @@ namespace Project
 		public Reference<double> GameTime
 		{
 			get { if( _gameTime.BeginGet() ) GameTime = _gameTime.Get( this ); return _gameTime.value; }
-			set { if( _gameTime.BeginSet( ref value ) ) { try { GameTimeChanged?.Invoke( this ); } finally { _gameTime.EndSet(); } } }
+			set { if( _gameTime.BeginSet( this, ref value ) ) { try { GameTimeChanged?.Invoke( this ); } finally { _gameTime.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="GameTime"/> property value changes.</summary>
 		public event Action<ShooterNetworkLogic> GameTimeChanged;
@@ -47,7 +45,7 @@ namespace Project
 		public Reference<double> ObjectControlledByPlayerHealth
 		{
 			get { if( _objectControlledByPlayerHealth.BeginGet() ) ObjectControlledByPlayerHealth = _objectControlledByPlayerHealth.Get( this ); return _objectControlledByPlayerHealth.value; }
-			set { if( _objectControlledByPlayerHealth.BeginSet( ref value ) ) { try { ObjectControlledByPlayerHealthChanged?.Invoke( this ); } finally { _objectControlledByPlayerHealth.EndSet(); } } }
+			set { if( _objectControlledByPlayerHealth.BeginSet( this, ref value ) ) { try { ObjectControlledByPlayerHealthChanged?.Invoke( this ); } finally { _objectControlledByPlayerHealth.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ObjectControlledByPlayerHealth"/> property value changes.</summary>
 		public event Action<ShooterNetworkLogic> ObjectControlledByPlayerHealthChanged;
@@ -60,7 +58,7 @@ namespace Project
 		public Reference<bool> SpawnWeapons
 		{
 			get { if( _spawnWeapons.BeginGet() ) SpawnWeapons = _spawnWeapons.Get( this ); return _spawnWeapons.value; }
-			set { if( _spawnWeapons.BeginSet( ref value ) ) { try { SpawnWeaponsChanged?.Invoke( this ); } finally { _spawnWeapons.EndSet(); } } }
+			set { if( _spawnWeapons.BeginSet( this, ref value ) ) { try { SpawnWeaponsChanged?.Invoke( this ); } finally { _spawnWeapons.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SpawnWeapons"/> property value changes.</summary>
 		public event Action<ShooterNetworkLogic> SpawnWeaponsChanged;
@@ -73,7 +71,7 @@ namespace Project
 		public Reference<ShooterGameStatusEnum> CurrentGameStatus
 		{
 			get { if( _currentGameStatus.BeginGet() ) CurrentGameStatus = _currentGameStatus.Get( this ); return _currentGameStatus.value; }
-			set { if( _currentGameStatus.BeginSet( ref value ) ) { try { CurrentGameStatusChanged?.Invoke( this ); } finally { _currentGameStatus.EndSet(); } } }
+			set { if( _currentGameStatus.BeginSet( this, ref value ) ) { try { CurrentGameStatusChanged?.Invoke( this ); } finally { _currentGameStatus.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CurrentGameStatus"/> property value changes.</summary>
 		public event Action<ShooterNetworkLogic> CurrentGameStatusChanged;
@@ -86,7 +84,7 @@ namespace Project
 		public Reference<float> CurrentGameTime
 		{
 			get { if( _currentGameTime.BeginGet() ) CurrentGameTime = _currentGameTime.Get( this ); return _currentGameTime.value; }
-			set { if( _currentGameTime.BeginSet( ref value ) ) { try { CurrentGameTimeChanged?.Invoke( this ); } finally { _currentGameTime.EndSet(); } } }
+			set { if( _currentGameTime.BeginSet( this, ref value ) ) { try { CurrentGameTimeChanged?.Invoke( this ); } finally { _currentGameTime.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CurrentGameTime"/> property value changes.</summary>
 		public event Action<ShooterNetworkLogic> CurrentGameTimeChanged;
@@ -169,12 +167,13 @@ namespace Project
 
 			//update EntranceScreenDescription
 			{
-				var text = "This is a template for making shooter games. Various modes are available, such as free for all, team deathmatch and battle royale.";
-				text += "\n\nUse F1 to open in-game menu.";
+				var text = "This is a template for creating shooters. Various modes are available such as Free for all, Team deathmatch and Battle royale.";
+				text += "\n\nUse F1 or Enter to open in-game menu.";
 
 				EntranceScreenDescription = text;
 			}
 
+			//save the initial state of weapons
 			if( SpawnWeapons )
 			{
 				var scene = ParentRoot as Scene;
@@ -369,10 +368,12 @@ namespace Project
 			{
 				//game started
 
-				//destroy all characters
+				//destroy all characters and vehicles
 				var scene = ParentRoot as Scene;
 				if( scene != null )
 				{
+					foreach( var vehicle in scene.GetComponents<Vehicle>() )
+						vehicle.RemoveFromParent( true );
 					foreach( var character in scene.GetComponents<Character>() )
 						character.RemoveFromParent( true );
 				}
@@ -465,7 +466,7 @@ namespace Project
 			return obj;
 		}
 
-		private void Character_ProcessDamageAfterAll( Character sender, long whoFired, double damage, object anyData, double oldHealth )
+		private void Character_ProcessDamageAfterAll( Character sender, long whoFired, float damage, object anyData, double oldHealth )
 		{
 			//process events of only our scene
 			if( ParentRoot == sender.ParentRoot )

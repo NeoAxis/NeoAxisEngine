@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -16,8 +16,8 @@ namespace bx
 	class SpScUnboundedQueue
 	{
 		BX_CLASS(SpScUnboundedQueue
+			, NO_DEFAULT_CTOR
 			, NO_COPY
-			, NO_ASSIGNMENT
 			);
 
 	public:
@@ -57,8 +57,8 @@ namespace bx
 	class SpScUnboundedQueueT
 	{
 		BX_CLASS(SpScUnboundedQueueT
+			, NO_DEFAULT_CTOR
 			, NO_COPY
-			, NO_ASSIGNMENT
 			);
 
 	public:
@@ -86,8 +86,8 @@ namespace bx
 	class SpScBlockingUnboundedQueue
 	{
 		BX_CLASS(SpScBlockingUnboundedQueue
+			, NO_DEFAULT_CTOR
 			, NO_COPY
-			, NO_ASSIGNMENT
 			);
 
 	public:
@@ -116,8 +116,8 @@ namespace bx
 	class SpScBlockingUnboundedQueueT
 	{
 		BX_CLASS(SpScBlockingUnboundedQueueT
+			, NO_DEFAULT_CTOR
 			, NO_COPY
-			, NO_ASSIGNMENT
 			);
 
 	public:

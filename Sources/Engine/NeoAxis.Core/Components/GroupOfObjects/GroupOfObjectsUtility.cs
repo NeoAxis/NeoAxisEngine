@@ -14,23 +14,23 @@ namespace NeoAxis
 		public class GroupOfObjectsInstance
 		{
 			internal GroupOfObjects groupOfObjects;
-			Dictionary<(Mesh mesh, Material, bool, double, bool, double, bool), ElementsDictionaryValue> elementsDictionary = new Dictionary<(Mesh mesh, Material, bool, double, bool, double, bool), ElementsDictionaryValue>();
+			Dictionary<(Mesh mesh, Material, bool, double, bool, double, bool, bool), ElementsDictionaryValue> elementsDictionary = new Dictionary<(Mesh mesh, Material, bool, double, bool, double, bool, bool), ElementsDictionaryValue>();
 			Dictionary<ushort, int> elementsInUse = new Dictionary<ushort, int>();
 
 			//////////////////////////////////////////////
 
 			struct ElementsDictionaryValue
 			{
-				public (Mesh mesh, Material, bool, double, bool, double, bool) key;
+				public (Mesh mesh, Material, bool, double, bool, double, bool, bool) key;
 				public GroupOfObjectsElement_Mesh element;
 			}
 
 			//////////////////////////////////////////////
 
-			public ushort GetOrCreateGroupOfObjectsElement( Mesh mesh, Material replaceMaterial, bool castShadows, double visibilityDistanceFactor, bool receiveDecals, double motionBlurFactor, bool collision )
+			public ushort GetOrCreateGroupOfObjectsElement( Mesh mesh, Material replaceMaterial, bool castShadows, double visibilityDistanceFactor, bool receiveDecals, double motionBlurFactor, bool staticShadows, bool collision )
 			{
 				//!!!!может какие-то параметры в Object
-				var key = (mesh, replaceMaterial, castShadows, visibilityDistanceFactor, receiveDecals, motionBlurFactor, collision);
+				var key = (mesh, replaceMaterial, castShadows, visibilityDistanceFactor, receiveDecals, motionBlurFactor, staticShadows, collision);
 
 				GroupOfObjectsElement_Mesh element = null;
 
@@ -50,6 +50,7 @@ namespace NeoAxis
 					element.VisibilityDistanceFactor = visibilityDistanceFactor;
 					element.ReceiveDecals = receiveDecals;
 					element.MotionBlurFactor = motionBlurFactor;
+					element.StaticShadows = staticShadows;
 					element.Collision = collision;
 					element.Enabled = true;
 
@@ -174,7 +175,7 @@ namespace NeoAxis
 			}
 		}
 
-		public static GroupOfObjectsInstance GetOrCreateGroupOfObjects( Scene scene, string groupOfObjectsName, bool canCreate, Vector3? sectorSize = null, int? maxObjectsInGroup = null )
+		public static GroupOfObjectsInstance GetOrCreateGroupOfObjects( Scene scene, string groupOfObjectsName, bool canCreate, Vector3? sectorSize = null )//, int? maxObjectsInGroup = null )
 		{
 			var group = scene.GetComponent<GroupOfObjects>( groupOfObjectsName );
 			if( group == null && canCreate )
@@ -198,8 +199,8 @@ namespace NeoAxis
 
 				if( sectorSize.HasValue )
 					group.SectorSize = sectorSize.Value;
-				if( maxObjectsInGroup.HasValue )
-					group.MaxObjectsInGroup = maxObjectsInGroup.Value;
+				//if( maxObjectsInGroup.HasValue )
+				//	group.MaxObjectsInGroup = maxObjectsInGroup.Value;
 
 				group.Enabled = true;
 			}
@@ -214,13 +215,13 @@ namespace NeoAxis
 				group.Dispose();
 		}
 
-		public static void UpdateGroupOfObjects( Scene scene, string groupOfObjectsName, Vector3 sectorSize, int maxObjectsInGroup )
+		public static void UpdateGroupOfObjects( Scene scene, string groupOfObjectsName, Vector3 sectorSize )//, int maxObjectsInGroup )
 		{
 			var group = scene.GetComponent<GroupOfObjects>( groupOfObjectsName );
 			if( group != null )
 			{
 				group.SectorSize = sectorSize;
-				group.MaxObjectsInGroup = maxObjectsInGroup;
+				//group.MaxObjectsInGroup = maxObjectsInGroup;
 			}
 		}
 	}

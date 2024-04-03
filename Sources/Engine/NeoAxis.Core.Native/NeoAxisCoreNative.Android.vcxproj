@@ -73,7 +73,6 @@
     <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\sharedbook.c" />
     <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\smallft.c" />
     <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\synthesis.c" />
-    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\tone.c" />
     <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\vorbisenc.c" />
     <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\vorbisfile.c" />
     <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\window.c" />
@@ -129,6 +128,7 @@
     <ClCompile Include="Jolt\Core\Color.cpp" />
     <ClCompile Include="Jolt\Core\Factory.cpp" />
     <ClCompile Include="Jolt\Core\IssueReporting.cpp" />
+    <ClCompile Include="Jolt\Core\JobSystemSingleThreaded.cpp" />
     <ClCompile Include="Jolt\Core\JobSystemThreadPool.cpp" />
     <ClCompile Include="Jolt\Core\JobSystemWithBarrier.cpp" />
     <ClCompile Include="Jolt\Core\LinearCurve.cpp" />
@@ -142,7 +142,6 @@
     <ClCompile Include="Jolt\Geometry\ConvexHullBuilder2D.cpp" />
     <ClCompile Include="Jolt\Geometry\Indexify.cpp" />
     <ClCompile Include="Jolt\Geometry\OrientedBox.cpp" />
-    <ClCompile Include="Jolt\Math\UVec4.cpp" />
     <ClCompile Include="Jolt\Math\Vec3.cpp" />
     <ClCompile Include="Jolt\NeoAxisPhysicsNative.cpp" />
     <ClCompile Include="Jolt\ObjectStream\ObjectStream.cpp" />
@@ -217,6 +216,7 @@
     <ClCompile Include="Jolt\Physics\Constraints\RackAndPinionConstraint.cpp" />
     <ClCompile Include="Jolt\Physics\Constraints\SixDOFConstraint.cpp" />
     <ClCompile Include="Jolt\Physics\Constraints\SliderConstraint.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\SpringSettings.cpp" />
     <ClCompile Include="Jolt\Physics\Constraints\SwingTwistConstraint.cpp" />
     <ClCompile Include="Jolt\Physics\Constraints\TwoBodyConstraint.cpp" />
     <ClCompile Include="Jolt\Physics\DeterminismLog.cpp" />
@@ -228,6 +228,7 @@
     <ClCompile Include="Jolt\Physics\PhysicsUpdateContext.cpp" />
     <ClCompile Include="Jolt\Physics\Ragdoll\Ragdoll.cpp" />
     <ClCompile Include="Jolt\Physics\StateRecorderImpl.cpp" />
+    <ClCompile Include="Jolt\Physics\Vehicle\MotorcycleController.cpp" />
     <ClCompile Include="Jolt\Physics\Vehicle\TrackedVehicleController.cpp" />
     <ClCompile Include="Jolt\Physics\Vehicle\VehicleAntiRollBar.cpp" />
     <ClCompile Include="Jolt\Physics\Vehicle\VehicleCollisionTester.cpp" />
@@ -418,6 +419,7 @@
     <ClInclude Include="Jolt\Core\InsertionSort.h" />
     <ClInclude Include="Jolt\Core\IssueReporting.h" />
     <ClInclude Include="Jolt\Core\JobSystem.h" />
+    <ClInclude Include="Jolt\Core\JobSystemSingleThreaded.h" />
     <ClInclude Include="Jolt\Core\JobSystemThreadPool.h" />
     <ClInclude Include="Jolt\Core\JobSystemWithBarrier.h" />
     <ClInclude Include="Jolt\Core\LinearCurve.h" />
@@ -510,6 +512,7 @@
     <ClInclude Include="Jolt\ObjectStream\SerializableAttributeTyped.h" />
     <ClInclude Include="Jolt\ObjectStream\SerializableObject.h" />
     <ClInclude Include="Jolt\ObjectStream\TypeDeclarations.h" />
+    <ClInclude Include="Jolt\Physics\Body\AllowedDOFs.h" />
     <ClInclude Include="Jolt\Physics\Body\Body.h" />
     <ClInclude Include="Jolt\Physics\Body\BodyAccess.h" />
     <ClInclude Include="Jolt\Physics\Body\BodyActivationListener.h" />
@@ -618,10 +621,12 @@
     <ClInclude Include="Jolt\Physics\Constraints\RackAndPinionConstraint.h" />
     <ClInclude Include="Jolt\Physics\Constraints\SixDOFConstraint.h" />
     <ClInclude Include="Jolt\Physics\Constraints\SliderConstraint.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\SpringSettings.h" />
     <ClInclude Include="Jolt\Physics\Constraints\SwingTwistConstraint.h" />
     <ClInclude Include="Jolt\Physics\Constraints\TwoBodyConstraint.h" />
     <ClInclude Include="Jolt\Physics\DeterminismLog.h" />
     <ClInclude Include="Jolt\Physics\EActivation.h" />
+    <ClInclude Include="Jolt\Physics\EPhysicsUpdateError.h" />
     <ClInclude Include="Jolt\Physics\IslandBuilder.h" />
     <ClInclude Include="Jolt\Physics\LargeIslandSplitter.h" />
     <ClInclude Include="Jolt\Physics\PhysicsLock.h" />
@@ -633,6 +638,7 @@
     <ClInclude Include="Jolt\Physics\Ragdoll\Ragdoll.h" />
     <ClInclude Include="Jolt\Physics\StateRecorder.h" />
     <ClInclude Include="Jolt\Physics\StateRecorderImpl.h" />
+    <ClInclude Include="Jolt\Physics\Vehicle\MotorcycleController.h" />
     <ClInclude Include="Jolt\Physics\Vehicle\TrackedVehicleController.h" />
     <ClInclude Include="Jolt\Physics\Vehicle\VehicleAntiRollBar.h" />
     <ClInclude Include="Jolt\Physics\Vehicle\VehicleCollisionTester.h" />
@@ -808,10 +814,10 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">false</LinkIncremental>
@@ -844,31 +850,31 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <GenerateManifest>true</GenerateManifest>
     <TargetName>$(ProjectName)</TargetName>
-    <OutDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
     <PackageDebugSymbols>true</PackageDebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <PackageDebugSymbols>true</PackageDebugSymbols>
     <GenerateManifest>true</GenerateManifest>
     <TargetName>$(ProjectName)</TargetName>
-    <IntDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
-    <OutDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <TargetName>$(ProjectName)</TargetName>
-    <OutDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
     <PackageDebugSymbols>true</PackageDebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <PackageDebugSymbols>true</PackageDebugSymbols>
     <TargetName>$(ProjectName)</TargetName>
-    <IntDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
-    <OutDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -900,7 +906,7 @@
       <Version>
       </Version>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)Engine\Lib\Android\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Sources\Engine\Lib\Android\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -912,7 +918,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(OutDir)libNeoAxisCoreNative.lib</ImportLibrary>
       <AdditionalOptions> -lm %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>$(Sysroot)\usr\lib64\libm.a;$(SolutionDir)Engine\Lib\Android\$(Platform)\FreeImage.a;$(SolutionDir)Engine\Lib\Android\$(Platform)\freetype.a;..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Android\x64\NativeMemoryManager.so;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(Sysroot)\usr\lib64\libm.a;$(SolutionDir)Sources\Engine\Lib\Android\$(Platform)\FreeImage.a;$(SolutionDir)Sources\Engine\Lib\Android\$(Platform)\freetype.a;..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Android\x64\NativeMemoryManager.so;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy $(OutDir)$(TargetName)$(TargetExt) "..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Android"</Command>
@@ -928,7 +934,7 @@
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(StlIncludeDirectories);$(Sysroot)\usr\include;..\include;..\..\PlugIns\ParticleFX\include;..\..\..\FreeImage\Source;..\..\..\FreeType\include;..\..\..\Stlport\stlport;..\..\..\NvidiaTextureTools\src;..\..\..\NvidiaTextureTools\project\vc8;..\..\RenderSystems\NULL\include;..\..\OgreNativeWrapper\src;..\External\OggVorbisTheora\libogg\include;..\External\OggVorbisTheora\libvorbis\include;..\External\OggVorbisTheora\libvorbis\lib;..\External\OggVorbisTheora\libtheora\include;./;MemoryManager;..\External\FreeImage\Source;NativeWrapper;ImageLibrary;..\External\FreeType\include;NeoAxis;MaskedOcclusionCulling;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;NDEBUG;_MT;FREEIMAGE_LIB;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;OGRE_GCC_VISIBILITY;PLATFORM_ANDROID;PNG_ARM_NEON_OPT=0;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;JPH_DOU___________BLE_PRECISION;JPH_DEBUG_RENDERER;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;NDEBUG;_MT;FREEIMAGE_LIB;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;OGRE_GCC_VISIBILITY;PLATFORM_ANDROID;PNG_ARM_NEON_OPT=0;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;JPH_DOU___________BLE_PRECISION;JPH_DEBUG_RENDERER;JPH_FLOA_______disabled_______TING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -949,7 +955,7 @@
       <Version>
       </Version>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)Engine\Lib\Android\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Sources\Engine\Lib\Android\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -961,7 +967,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(OutDir)libNeoAxisCoreNative.lib</ImportLibrary>
       <AdditionalOptions>-z muldefs -lm %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>$(SolutionDir)Engine\Lib\Android\$(Platform)\FreeImage.a;$(SolutionDir)Engine\Lib\Android\$(Platform)\freetype.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Sources\Engine\Lib\Android\$(Platform)\FreeImage.a;$(SolutionDir)Sources\Engine\Lib\Android\$(Platform)\freetype.a;%(AdditionalDependencies)</AdditionalDependencies>
       <DebuggerSymbolInformation>OmitAllSymbolInformation</DebuggerSymbolInformation>
     </Link>
     <PostBuildEvent>
@@ -999,7 +1005,7 @@
       <Version>
       </Version>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)Engine\Lib\Android\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Sources\Engine\Lib\Android\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -1011,7 +1017,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(OutDir)libNeoAxisCoreNative.lib</ImportLibrary>
       <AdditionalOptions>-z muldefs -lm %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>$(SolutionDir)Engine\Lib\Android\$(Platform)\FreeImage.a;$(SolutionDir)Engine\Lib\Android\$(Platform)\freetype.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Sources\Engine\Lib\Android\$(Platform)\FreeImage.a;$(SolutionDir)Sources\Engine\Lib\Android\$(Platform)\freetype.a;%(AdditionalDependencies)</AdditionalDependencies>
       <DebuggerSymbolInformation>OmitAllSymbolInformation</DebuggerSymbolInformation>
       <SharedLibrarySearchPath>%(SharedLibrarySearchPath)</SharedLibrarySearchPath>
     </Link>
@@ -1051,12 +1057,12 @@
       <AdditionalOptions>-fms-extensions %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(Sysroot)\usr\lib64\libm.a;$(SolutionDir)Engine\Lib\Android\$(Platform)\FreeImage.a;$(SolutionDir)Engine\Lib\Android\$(Platform)\freetype.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(Sysroot)\usr\lib64\libm.a;$(SolutionDir)Sources\Engine\Lib\Android\$(Platform)\FreeImage.a;$(SolutionDir)Sources\Engine\Lib\Android\$(Platform)\freetype.a;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <Version>
       </Version>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)Engine\Lib\Android\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Sources\Engine\Lib\Android\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -1082,7 +1088,7 @@
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(StlIncludeDirectories);$(Sysroot)\usr\include;..\include;..\..\PlugIns\ParticleFX\include;..\..\..\FreeImage\Source;..\..\..\FreeType\include;..\..\..\Stlport\stlport;..\..\..\NvidiaTextureTools\src;..\..\..\NvidiaTextureTools\project\vc8;..\..\RenderSystems\NULL\include;..\..\OgreNativeWrapper\src;..\External\OggVorbisTheora\libogg\include;..\External\OggVorbisTheora\libvorbis\include;..\External\OggVorbisTheora\libvorbis\lib;..\External\OggVorbisTheora\libtheora\include;./;MemoryManager;..\External\FreeImage\Source;NativeWrapper;ImageLibrary;..\External\FreeType\include;NeoAxis;MaskedOcclusionCulling;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;_DEBUG;_MT;FREEIMAGE_LIB;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;OGRE_GCC_VISIBILITY;PLATFORM_ANDROID;PNG_ARM_NEON_OPT=0;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;JPH_DOU___________BLE_PRECISION;JPH_DEBUG_RENDERER;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;ANDROID;__ANDROID__;_DEBUG;_MT;FREEIMAGE_LIB;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;OGRE_GCC_VISIBILITY;PLATFORM_ANDROID;PNG_ARM_NEON_OPT=0;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;JPH_DOU___________BLE_PRECISION;JPH_DEBUG_RENDERER;JPH_FLOA_______disabled_______TING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>
       </StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -1104,12 +1110,12 @@
       <AdditionalOptions>-fms-extensions %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(SolutionDir)Engine\Lib\Android\$(Platform)\FreeImage.a;$(SolutionDir)Engine\Lib\Android\$(Platform)\freetype.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Sources\Engine\Lib\Android\$(Platform)\FreeImage.a;$(SolutionDir)Sources\Engine\Lib\Android\$(Platform)\freetype.a;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <Version>
       </Version>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)Engine\Lib\Android\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Sources\Engine\Lib\Android\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -1158,12 +1164,12 @@
       <AdditionalOptions>-fms-extensions %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(SolutionDir)Engine\Lib\Android\$(Platform)\FreeImage.a;$(SolutionDir)Engine\Lib\Android\$(Platform)\freetype.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Sources\Engine\Lib\Android\$(Platform)\FreeImage.a;$(SolutionDir)Sources\Engine\Lib\Android\$(Platform)\freetype.a;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <Version>
       </Version>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)Engine\Lib\Android\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Sources\Engine\Lib\Android\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>

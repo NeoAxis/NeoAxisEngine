@@ -21,7 +21,7 @@ namespace NeoAxis
 		public Reference<LanesEnum> Lanes
 		{
 			get { if( _lanes.BeginGet() ) Lanes = _lanes.Get( this ); return _lanes.value; }
-			set { if( _lanes.BeginSet( ref value ) ) { try { LanesChanged?.Invoke( this ); } finally { _lanes.EndSet(); } } }
+			set { if( _lanes.BeginSet( this, ref value ) ) { try { LanesChanged?.Invoke( this ); } finally { _lanes.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Lanes"/> property value changes.</summary>
 		public event Action<RoadLaneModifier> LanesChanged;
@@ -35,7 +35,7 @@ namespace NeoAxis
 		public Reference<Range> LengthRange
 		{
 			get { if( _lengthRange.BeginGet() ) LengthRange = _lengthRange.Get( this ); return _lengthRange.value; }
-			set { if( _lengthRange.BeginSet( ref value ) ) { try { LengthRangeChanged?.Invoke( this ); DataWasChanged(); } finally { _lengthRange.EndSet(); } } }
+			set { if( _lengthRange.BeginSet( this, ref value ) ) { try { LengthRangeChanged?.Invoke( this ); DataWasChanged(); } finally { _lengthRange.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LengthRange"/> property value changes.</summary>
 		public event Action<RoadLaneModifier> LengthRangeChanged;
@@ -55,7 +55,7 @@ namespace NeoAxis
 		public Reference<PredefinedModifiersEnum> PredefinedModifiers
 		{
 			get { if( _predefinedModifiers.BeginGet() ) PredefinedModifiers = _predefinedModifiers.Get( this ); return _predefinedModifiers.value; }
-			set { if( _predefinedModifiers.BeginSet( ref value ) ) { try { PredefinedModifiersChanged?.Invoke( this ); DataWasChanged(); } finally { _predefinedModifiers.EndSet(); } } }
+			set { if( _predefinedModifiers.BeginSet( this, ref value ) ) { try { PredefinedModifiersChanged?.Invoke( this ); DataWasChanged(); } finally { _predefinedModifiers.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PredefinedModifiers"/> property value changes.</summary>
 		public event Action<RoadLaneModifier> PredefinedModifiersChanged;

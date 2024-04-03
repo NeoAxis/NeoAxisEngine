@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2022.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1143, 842\"><KW V=\"1\" A=\"790607C83A3347EEAF83C4EA23927AF2\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"1740F1199EE243E67E83B36F45D4595B\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"790607C83A3347EEAF83C4EA23927AF2\"><KP UN=\"790607C83A3347EEAF83C4EA23927AF2\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"1F34EFA8A2794DB9CCAB89799AC4DEDD\" S=\"False\"><CPD ObjPath=\"$Material\\$Shader graph\" /></KP><KP UN=\"40D844FD68034FCA4CA9AA00DE915F2F\" S=\"False\"><CPD ObjPath=\"$Material 2\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"790607C83A3347EEAF83C4EA23927AF2\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"1740F1199EE243E67E83B36F45D4595B\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"790607C83A3347EEAF83C4EA23927AF2\"><KP UN=\"790607C83A3347EEAF83C4EA23927AF2\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"1F34EFA8A2794DB9CCAB89799AC4DEDD\" S=\"False\"><CPD ObjPath=\"$Material\\$Shader graph\" /></KP><KP UN=\"40D844FD68034FCA4CA9AA00DE915F2F\" S=\"False\"><CPD ObjPath=\"$Material 2\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -38,8 +38,9 @@
 	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
-		ShadowFarDistance = 40
-		ShadowDirectionalLightCascades = 1
+		ShadowDirectionalDistance = 30
+		ShadowDirectionalLightExtrusionDistance = 100
+		ShadowPointSpotlightDistance = 40
 		.component NeoAxis.Component
 		{
 			Name = Background Effects
@@ -103,6 +104,7 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 91.429
+		Shadows = False
 	}
 	.component NeoAxis.MeshInSpace
 	{

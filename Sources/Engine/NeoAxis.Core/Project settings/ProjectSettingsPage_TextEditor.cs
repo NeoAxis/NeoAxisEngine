@@ -2,7 +2,6 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using Internal.ComponentFactory.Krypton.Toolkit;
 
 namespace NeoAxis
 {
@@ -20,7 +19,7 @@ namespace NeoAxis
 		public Reference<bool> TextEditorDisplayLineNumbers
 		{
 			get { if( _textEditorDisplayLineNumbers.BeginGet() ) TextEditorDisplayLineNumbers = _textEditorDisplayLineNumbers.Get( this ); return _textEditorDisplayLineNumbers.value; }
-			set { if( _textEditorDisplayLineNumbers.BeginSet( ref value ) ) { try { TextEditorDisplayLineNumbersChanged?.Invoke( this ); } finally { _textEditorDisplayLineNumbers.EndSet(); } } }
+			set { if( _textEditorDisplayLineNumbers.BeginSet( this, ref value ) ) { try { TextEditorDisplayLineNumbersChanged?.Invoke( this ); } finally { _textEditorDisplayLineNumbers.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TextEditorDisplayLineNumbers"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorDisplayLineNumbersChanged;
@@ -35,7 +34,7 @@ namespace NeoAxis
 		public Reference<bool> TextEditorWordWrap
 		{
 			get { if( _textEditorWordWrap.BeginGet() ) TextEditorWordWrap = _textEditorWordWrap.Get( this ); return _textEditorWordWrap.value; }
-			set { if( _textEditorWordWrap.BeginSet( ref value ) ) { try { TextEditorWordWrapChanged?.Invoke( this ); } finally { _textEditorWordWrap.EndSet(); } } }
+			set { if( _textEditorWordWrap.BeginSet( this, ref value ) ) { try { TextEditorWordWrapChanged?.Invoke( this ); } finally { _textEditorWordWrap.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TextEditorWordWrap"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorWordWrapChanged;
@@ -50,7 +49,7 @@ namespace NeoAxis
 		public Reference<string> TextEditorFont
 		{
 			get { if( _textEditorFont.BeginGet() ) TextEditorFont = _textEditorFont.Get( this ); return _textEditorFont.value; }
-			set { if( _textEditorFont.BeginSet( ref value ) ) { try { TextEditorFontChanged?.Invoke( this ); } finally { _textEditorFont.EndSet(); } } }
+			set { if( _textEditorFont.BeginSet( this, ref value ) ) { try { TextEditorFontChanged?.Invoke( this ); } finally { _textEditorFont.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TextEditorFont"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorFontChanged;
@@ -66,7 +65,7 @@ namespace NeoAxis
 		public Reference<double> TextEditorFontSize
 		{
 			get { if( _textEditorFontSize.BeginGet() ) TextEditorFontSize = _textEditorFontSize.Get( this ); return _textEditorFontSize.value; }
-			set { if( _textEditorFontSize.BeginSet( ref value ) ) { try { TextEditorFontSizeChanged?.Invoke( this ); } finally { _textEditorFontSize.EndSet(); } } }
+			set { if( _textEditorFontSize.BeginSet( this, ref value ) ) { try { TextEditorFontSizeChanged?.Invoke( this ); } finally { _textEditorFontSize.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TextEditorFontSize"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorFontSizeChanged;
@@ -82,7 +81,7 @@ namespace NeoAxis
 		public Reference<ColorValue> TextEditorBackgroundColorLightTheme
 		{
 			get { if( _textEditorBackgroundColorLightTheme.BeginGet() ) TextEditorBackgroundColorLightTheme = _textEditorBackgroundColorLightTheme.Get( this ); return _textEditorBackgroundColorLightTheme.value; }
-			set { if( _textEditorBackgroundColorLightTheme.BeginSet( ref value ) ) { try { TextEditorBackgroundColorLightThemeChanged?.Invoke( this ); } finally { _textEditorBackgroundColorLightTheme.EndSet(); } } }
+			set { if( _textEditorBackgroundColorLightTheme.BeginSet( this, ref value ) ) { try { TextEditorBackgroundColorLightThemeChanged?.Invoke( this ); } finally { _textEditorBackgroundColorLightTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TextEditorBackgroundColorLightTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorBackgroundColorLightThemeChanged;
@@ -98,7 +97,7 @@ namespace NeoAxis
 		public Reference<ColorValue> TextEditorForegroundColorLightTheme
 		{
 			get { if( _textEditorForegroundColorLightTheme.BeginGet() ) TextEditorForegroundColorLightTheme = _textEditorForegroundColorLightTheme.Get( this ); return _textEditorForegroundColorLightTheme.value; }
-			set { if( _textEditorForegroundColorLightTheme.BeginSet( ref value ) ) { try { TextEditorForegroundColorLightThemeChanged?.Invoke( this ); } finally { _textEditorForegroundColorLightTheme.EndSet(); } } }
+			set { if( _textEditorForegroundColorLightTheme.BeginSet( this, ref value ) ) { try { TextEditorForegroundColorLightThemeChanged?.Invoke( this ); } finally { _textEditorForegroundColorLightTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TextEditorForegroundColorLightTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorForegroundColorLightThemeChanged;
@@ -114,7 +113,7 @@ namespace NeoAxis
 		public Reference<ColorValue> TextEditorBackgroundColorDarkTheme
 		{
 			get { if( _textEditorBackgroundColorDarkTheme.BeginGet() ) TextEditorBackgroundColorDarkTheme = _textEditorBackgroundColorDarkTheme.Get( this ); return _textEditorBackgroundColorDarkTheme.value; }
-			set { if( _textEditorBackgroundColorDarkTheme.BeginSet( ref value ) ) { try { TextEditorBackgroundColorDarkThemeChanged?.Invoke( this ); } finally { _textEditorBackgroundColorDarkTheme.EndSet(); } } }
+			set { if( _textEditorBackgroundColorDarkTheme.BeginSet( this, ref value ) ) { try { TextEditorBackgroundColorDarkThemeChanged?.Invoke( this ); } finally { _textEditorBackgroundColorDarkTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TextEditorBackgroundColorDarkTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorBackgroundColorDarkThemeChanged;
@@ -130,7 +129,7 @@ namespace NeoAxis
 		public Reference<ColorValue> TextEditorForegroundColorDarkTheme
 		{
 			get { if( _textEditorForegroundColorDarkTheme.BeginGet() ) TextEditorForegroundColorDarkTheme = _textEditorForegroundColorDarkTheme.Get( this ); return _textEditorForegroundColorDarkTheme.value; }
-			set { if( _textEditorForegroundColorDarkTheme.BeginSet( ref value ) ) { try { TextEditorForegroundColorDarkThemeChanged?.Invoke( this ); } finally { _textEditorForegroundColorDarkTheme.EndSet(); } } }
+			set { if( _textEditorForegroundColorDarkTheme.BeginSet( this, ref value ) ) { try { TextEditorForegroundColorDarkThemeChanged?.Invoke( this ); } finally { _textEditorForegroundColorDarkTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TextEditorForegroundColorDarkTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorForegroundColorDarkThemeChanged;
@@ -146,7 +145,7 @@ namespace NeoAxis
 		public Reference<ColorValue> TextEditorSelectionBackgroundLightTheme
 		{
 			get { if( _textEditorSelectionBackgroundLightTheme.BeginGet() ) TextEditorSelectionBackgroundLightTheme = _textEditorSelectionBackgroundLightTheme.Get( this ); return _textEditorSelectionBackgroundLightTheme.value; }
-			set { if( _textEditorSelectionBackgroundLightTheme.BeginSet( ref value ) ) { try { TextEditorSelectionBackgroundLightThemeChanged?.Invoke( this ); } finally { _textEditorSelectionBackgroundLightTheme.EndSet(); } } }
+			set { if( _textEditorSelectionBackgroundLightTheme.BeginSet( this, ref value ) ) { try { TextEditorSelectionBackgroundLightThemeChanged?.Invoke( this ); } finally { _textEditorSelectionBackgroundLightTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TextEditorSelectionBackgroundLightTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorSelectionBackgroundLightThemeChanged;
@@ -162,7 +161,7 @@ namespace NeoAxis
 		public Reference<ColorValue> TextEditorSelectionForegroundLightTheme
 		{
 			get { if( _textEditorSelectionForegroundLightTheme.BeginGet() ) TextEditorSelectionForegroundLightTheme = _textEditorSelectionForegroundLightTheme.Get( this ); return _textEditorSelectionForegroundLightTheme.value; }
-			set { if( _textEditorSelectionForegroundLightTheme.BeginSet( ref value ) ) { try { TextEditorSelectionForegroundLightThemeChanged?.Invoke( this ); } finally { _textEditorSelectionForegroundLightTheme.EndSet(); } } }
+			set { if( _textEditorSelectionForegroundLightTheme.BeginSet( this, ref value ) ) { try { TextEditorSelectionForegroundLightThemeChanged?.Invoke( this ); } finally { _textEditorSelectionForegroundLightTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TextEditorSelectionForegroundLightTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorSelectionForegroundLightThemeChanged;
@@ -178,7 +177,7 @@ namespace NeoAxis
 		public Reference<ColorValue> TextEditorSelectionBackgroundDarkTheme
 		{
 			get { if( _textEditorSelectionBackgroundDarkTheme.BeginGet() ) TextEditorSelectionBackgroundDarkTheme = _textEditorSelectionBackgroundDarkTheme.Get( this ); return _textEditorSelectionBackgroundDarkTheme.value; }
-			set { if( _textEditorSelectionBackgroundDarkTheme.BeginSet( ref value ) ) { try { TextEditorSelectionBackgroundDarkThemeChanged?.Invoke( this ); } finally { _textEditorSelectionBackgroundDarkTheme.EndSet(); } } }
+			set { if( _textEditorSelectionBackgroundDarkTheme.BeginSet( this, ref value ) ) { try { TextEditorSelectionBackgroundDarkThemeChanged?.Invoke( this ); } finally { _textEditorSelectionBackgroundDarkTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TextEditorSelectionBackgroundDarkTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorSelectionBackgroundDarkThemeChanged;
@@ -194,7 +193,7 @@ namespace NeoAxis
 		public Reference<ColorValue> TextEditorSelectionForegroundDarkTheme
 		{
 			get { if( _textEditorSelectionForegroundDarkTheme.BeginGet() ) TextEditorSelectionForegroundDarkTheme = _textEditorSelectionForegroundDarkTheme.Get( this ); return _textEditorSelectionForegroundDarkTheme.value; }
-			set { if( _textEditorSelectionForegroundDarkTheme.BeginSet( ref value ) ) { try { TextEditorSelectionForegroundDarkThemeChanged?.Invoke( this ); } finally { _textEditorSelectionForegroundDarkTheme.EndSet(); } } }
+			set { if( _textEditorSelectionForegroundDarkTheme.BeginSet( this, ref value ) ) { try { TextEditorSelectionForegroundDarkThemeChanged?.Invoke( this ); } finally { _textEditorSelectionForegroundDarkTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TextEditorSelectionForegroundDarkTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorSelectionForegroundDarkThemeChanged;
@@ -210,7 +209,7 @@ namespace NeoAxis
 		public Reference<ColorValue> TextEditorSearchBackgroundLightTheme
 		{
 			get { if( _textEditorSearchBackgroundLightTheme.BeginGet() ) TextEditorSearchBackgroundLightTheme = _textEditorSearchBackgroundLightTheme.Get( this ); return _textEditorSearchBackgroundLightTheme.value; }
-			set { if( _textEditorSearchBackgroundLightTheme.BeginSet( ref value ) ) { try { TextEditorSearchBackgroundLightThemeChanged?.Invoke( this ); } finally { _textEditorSearchBackgroundLightTheme.EndSet(); } } }
+			set { if( _textEditorSearchBackgroundLightTheme.BeginSet( this, ref value ) ) { try { TextEditorSearchBackgroundLightThemeChanged?.Invoke( this ); } finally { _textEditorSearchBackgroundLightTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TextEditorSearchBackgroundLightTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorSearchBackgroundLightThemeChanged;
@@ -226,7 +225,7 @@ namespace NeoAxis
 		public Reference<ColorValue> TextEditorSearchBackgroundDarkTheme
 		{
 			get { if( _textEditorSearchBackgroundDarkTheme.BeginGet() ) TextEditorSearchBackgroundDarkTheme = _textEditorSearchBackgroundDarkTheme.Get( this ); return _textEditorSearchBackgroundDarkTheme.value; }
-			set { if( _textEditorSearchBackgroundDarkTheme.BeginSet( ref value ) ) { try { TextEditorSearchBackgroundDarkThemeChanged?.Invoke( this ); } finally { _textEditorSearchBackgroundDarkTheme.EndSet(); } } }
+			set { if( _textEditorSearchBackgroundDarkTheme.BeginSet( this, ref value ) ) { try { TextEditorSearchBackgroundDarkThemeChanged?.Invoke( this ); } finally { _textEditorSearchBackgroundDarkTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TextEditorSearchBackgroundDarkTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_TextEditor> TextEditorSearchBackgroundDarkThemeChanged;

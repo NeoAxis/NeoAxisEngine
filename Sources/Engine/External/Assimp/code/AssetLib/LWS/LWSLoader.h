@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -42,6 +42,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /** @file  LWSLoader.h
  *  @brief Declaration of the LightWave scene importer class.
  */
+#pragma once
 #ifndef AI_LWSLOADER_H_INCLUDED
 #define AI_LWSLOADER_H_INCLUDED
 
@@ -53,6 +54,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 struct aiImporterDesc;
 
 namespace Assimp {
+
 class BatchLoader;
 class Importer;
 class IOSystem;
@@ -67,7 +69,7 @@ namespace LWS {
  */
 class Element {
 public:
-    Element() {}
+    Element() = default;
 
     // first: name, second: rest
     std::string tokens[2];
@@ -84,7 +86,19 @@ public:
  */
 struct NodeDesc {
     NodeDesc() :
-            type(), id(), number(0), parent(0), name(""), isPivotSet(false), lightColor(1.f, 1.f, 1.f), lightIntensity(1.f), lightType(0), lightFalloffType(0), lightConeAngle(45.f), lightEdgeAngle(), parent_resolved(NULL) {}
+            type(),
+            id(),
+            number(0),
+            parent(0),
+            name(),
+            isPivotSet(false),
+            lightColor(1.f, 1.f, 1.f),
+            lightIntensity(1.f),
+            lightType(0),
+            lightFalloffType(0),
+            lightConeAngle(45.f),
+            lightEdgeAngle(),
+            parent_resolved(nullptr) {}
 
     enum {
 
@@ -160,26 +174,26 @@ struct NodeDesc {
 class LWSImporter : public BaseImporter {
 public:
     LWSImporter();
-    ~LWSImporter();
+    ~LWSImporter() override = default;
 
     // -------------------------------------------------------------------
     // Check whether we can read a specific file
     bool CanRead(const std::string &pFile, IOSystem *pIOHandler,
-            bool checkSig) const;
+            bool checkSig) const override;
 
 protected:
     // -------------------------------------------------------------------
     // Get list of supported extensions
-    const aiImporterDesc *GetInfo() const;
+    const aiImporterDesc *GetInfo() const override;
 
     // -------------------------------------------------------------------
     // Import file into given scene data structure
     void InternReadFile(const std::string &pFile, aiScene *pScene,
-            IOSystem *pIOHandler);
+            IOSystem *pIOHandler) override;
 
     // -------------------------------------------------------------------
     // Setup import properties
-    void SetupProperties(const Importer *pImp);
+    void SetupProperties(const Importer *pImp) override;
 
 private:
     // -------------------------------------------------------------------
@@ -214,9 +228,7 @@ private:
 private:
     bool configSpeedFlag;
     IOSystem *io;
-
     double first, last, fps;
-
     bool noSkeletonMesh;
 };
 

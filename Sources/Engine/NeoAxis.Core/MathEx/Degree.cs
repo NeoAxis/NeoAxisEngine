@@ -139,6 +139,21 @@ namespace NeoAxis
 
 		[AutoConvertType]
 		public static Degree Parse( string text ) { return new Degree( double.Parse( text ) ); }
+
+		public static bool TryParse( string text, out Degree result )
+		{
+			try
+			{
+				result = Parse( text );
+				return true;
+			}
+			catch
+			{
+				result = default( Degree );
+				return false;
+			}
+		}
+
 		[AutoConvertType]
 		public override string ToString() { return value.ToString(); }
 

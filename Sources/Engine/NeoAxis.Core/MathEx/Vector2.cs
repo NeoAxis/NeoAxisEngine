@@ -897,6 +897,20 @@ namespace NeoAxis
 		}
 
 		/// <summary>
+		/// Converts the current instance of <see cref="Vector2"/> into the equivalent <see cref="Vector2F"/> structure.
+		/// </summary>
+		/// <returns>The equivalent <see cref="Vector2F"/> structure.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		[AutoConvertType]
+		public Vector2H ToVector2H()
+		{
+			Vector2H result;
+			result.X = new HalfType( X );
+			result.Y = new HalfType( Y );
+			return result;
+		}
+
+		/// <summary>
 		/// Converts the current instance of <see cref="Vector2"/> into the equivalent <see cref="Vector2I"/> structure.
 		/// </summary>
 		/// <returns>The equivalent <see cref="Vector2I"/> structure.</returns>

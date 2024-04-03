@@ -2,8 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
-
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -44,12 +43,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *  @brief Definition of the .MD5 importer class.
  *  http://www.modwiki.net/wiki/MD5_(file_format)
 */
+#pragma once
 #ifndef AI_MD5LOADER_H_INCLUDED
 #define AI_MD5LOADER_H_INCLUDED
 
 #include "MD5Parser.h"
 #include <assimp/BaseImporter.h>
-
 #include <assimp/types.h>
 
 struct aiNode;
@@ -66,35 +65,35 @@ using namespace Assimp::MD5;
 class MD5Importer : public BaseImporter {
 public:
     MD5Importer();
-    ~MD5Importer();
+    ~MD5Importer() override = default;
 
     // -------------------------------------------------------------------
     /** Returns whether the class can handle the format of the given file.
      * See BaseImporter::CanRead() for details.
      */
     bool CanRead(const std::string &pFile, IOSystem *pIOHandler,
-            bool checkSig) const;
+            bool checkSig) const override;
 
 protected:
     // -------------------------------------------------------------------
     /** Return importer meta information.
      * See #BaseImporter::GetInfo for the details
      */
-    const aiImporterDesc *GetInfo() const;
+    const aiImporterDesc *GetInfo() const override;
 
     // -------------------------------------------------------------------
     /** Called prior to ReadFile().
      * The function is a request to the importer to update its configuration
      * basing on the Importer's configuration property list.
      */
-    void SetupProperties(const Importer *pImp);
+    void SetupProperties(const Importer *pImp) override;
 
     // -------------------------------------------------------------------
     /** Imports the given file into the given scene structure.
      * See BaseImporter::InternReadFile() for details
      */
     void InternReadFile(const std::string &pFile, aiScene *pScene,
-            IOSystem *pIOHandler);
+            IOSystem *pIOHandler) override;
 
     // -------------------------------------------------------------------
     /** Load a *.MD5MESH file.
@@ -156,25 +155,25 @@ protected:
     char *mBuffer;
 
     /** Size of the file */
-    unsigned int fileSize;
+    unsigned int mFileSize;
 
     /** Current line number. For debugging purposes */
-    unsigned int iLineNumber;
+    unsigned int mLineNumber;
 
     /** Scene to be filled */
-    aiScene *pScene;
+    aiScene *mScene;
 
     /** true if a MD5MESH file has already been parsed */
-    bool bHadMD5Mesh;
+    bool mHadMD5Mesh;
 
     /** true if a MD5ANIM file has already been parsed */
-    bool bHadMD5Anim;
+    bool mHadMD5Anim;
 
     /** true if a MD5CAMERA file has already been parsed */
-    bool bHadMD5Camera;
+    bool mHadMD5Camera;
 
     /** configuration option: prevent anim autoload */
-    bool configNoAutoLoad;
+    bool mCconfigNoAutoLoad;
 };
 
 } // end of namespace Assimp

@@ -32,7 +32,7 @@ namespace NeoAxis
 		public Reference<UIMeasureValueDouble> FontSize
 		{
 			get { if( _fontSize.BeginGet() ) FontSize = _fontSize.Get( this ); return _fontSize.value; }
-			set { if( _fontSize.BeginSet( ref value ) ) { try { FontSizeChanged?.Invoke( this ); } finally { _fontSize.EndSet(); } } }
+			set { if( _fontSize.BeginSet( this, ref value ) ) { try { FontSizeChanged?.Invoke( this ); } finally { _fontSize.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TitleBarFontSize"/> property value changes.</summary>
 		public event Action<UICheck> FontSizeChanged;
@@ -52,7 +52,7 @@ namespace NeoAxis
 		public Reference<CheckValue> Checked
 		{
 			get { if( _checked.BeginGet() ) Checked = _checked.Get( this ); return _checked.value; }
-			set { if( _checked.BeginSet( ref value ) ) { try { CheckedChanged?.Invoke( this ); } finally { _checked.EndSet(); } } }
+			set { if( _checked.BeginSet( this, ref value ) ) { try { CheckedChanged?.Invoke( this ); } finally { _checked.EndSet(); } } }
 		}
 		public event Action<UICheck> CheckedChanged;
 		ReferenceField<CheckValue> _checked = CheckValue.Unchecked;
@@ -183,14 +183,19 @@ namespace NeoAxis
 			}
 		}
 
-		bool CheckTouchPointerInside( Vector2I positionInPixels )
+		bool CheckTouchPointerInside( TouchData e )//Vector2I positionInPixels )
 		{
+			if( ParentContainer != null && ParentContainer.IsControlCoveredByOther( this, e.Position ) )
+				return false;
+			//if( ParentContainer != null && ParentContainer.IsControlCursorCoveredByOther( this ) )
+			//	return false;
+
 			GetScreenRectangle( out var rect );
 			var rectInPixels = rect * ParentContainer.Viewport.SizeInPixels.ToVector2();
-			var distanceInPixels = rectInPixels.GetPointDistance( positionInPixels.ToVector2() );
+			var distanceInPixels = rectInPixels.GetPointDistance( e.PositionInPixels/*positionInPixels*/.ToVector2() );
 
 			//!!!!
-			int maxDistance = ParentContainer.Viewport.SizeInPixels.MinComponent() / 20;
+			int maxDistance = ParentContainer.Viewport.SizeInPixels.MinComponent() / 30;
 
 			return distanceInPixels <= maxDistance;
 		}
@@ -202,6 +207,11 @@ namespace NeoAxis
 			case TouchData.ActionEnum.Down:
 				if( VisibleInHierarchy && EnabledInHierarchy && !ReadOnlyInHierarchy && touchDown == null )
 				{
+					if( ParentContainer != null && ParentContainer.IsControlCoveredByOther( this, e.Position ) )
+						break;
+					//if( ParentContainer != null && ParentContainer.IsControlCursorCoveredByOther( this ) )
+					//	break;
+
 					GetScreenRectangle( out var rect );
 					var rectInPixels = rect * ParentContainer.Viewport.SizeInPixels.ToVector2();
 					var distanceInPixels = rectInPixels.GetPointDistance( e.PositionInPixels.ToVector2() );
@@ -209,6 +219,8 @@ namespace NeoAxis
 					var item = new TouchData.TouchDownRequestToProcessTouch( this, 0, distanceInPixels, null,
 						delegate ( UIControl sender, TouchData touchData, object anyData )
 						{
+							Focus();
+
 							//start touch
 							touchDown = e.PointerIdentifier;
 							touchDownPointerInside = true;
@@ -229,7 +241,7 @@ namespace NeoAxis
 
 			case TouchData.ActionEnum.Move:
 				if( touchDown != null && ReferenceEquals( e.PointerIdentifier, touchDown ) )
-					touchDownPointerInside = CheckTouchPointerInside( e.PositionInPixels );
+					touchDownPointerInside = CheckTouchPointerInside( e ); //CheckTouchPointerInside( e.PositionInPixels );
 				break;
 
 			}

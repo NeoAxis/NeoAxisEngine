@@ -6,15 +6,17 @@ namespace NeoAxis
 {
 	public interface IProcessDamage
 	{
-		void ProcessDamage( long whoFired, double damage, object anyData );
+		void ProcessDamage( long whoFired, float damage, object anyData );
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public abstract class NetworkLogicAbstract : Component
 	{
-		public virtual Component ServerGetObjectControlledByUser( ServerNetworkService_Users.UserInfo user, bool inputMustEnabled ) { return null; }
-		public virtual ServerNetworkService_Users.UserInfo ServerGetUserByObjectControlled( Component obj, bool inputMustEnabled ) { return null; }
+		//!!!!need inputMustEnabled?
+
+		public virtual Component ServerGetObjectControlledByUser( ServerNetworkService_Users.UserInfo user, bool inputMustEnabled = true ) { return null; }
+		public virtual ServerNetworkService_Users.UserInfo ServerGetUserByObjectControlled( Component obj, bool inputMustEnabled = true ) { return null; }
 		public virtual void ServerChangeObjectControlled( ServerNetworkService_Users.UserInfo user, Component obj ) { }
 	}
 
@@ -31,7 +33,7 @@ namespace NeoAxis
 	public enum PhysicsModeEnum
 	{
 		None,
-		Kinematic,
+		//Kinematic,
 		Basic
 	}
 }

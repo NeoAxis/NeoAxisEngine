@@ -389,8 +389,8 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <OutDir>$(SolutionDir)_Compilation\iOS\$(Platform)\$(MSBuildProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)_Compilation\iOS\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\iOS\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_build\iOS\$(Platform)\$(MSBuildProjectName)\</IntDir>
     <IncludePath>../include;../../PlugIns/ParticleFX/include;../../../FreeImage/Source;../../../FreeType/include;../../../Stlport/stlport;../../../NvidiaTextureTools/src;../../../NvidiaTextureTools/project/vc8;../../RenderSystems/NULL/include;../../OgreNativeWrapper/src;../External/OggVorbisTheora/libogg/include;../External/OggVorbisTheora/libvorbis/include;../External/OggVorbisTheora/libvorbis/lib;../External/OggVorbisTheora/libtheora/include;./;MemoryManager;NativeWrapper;ImageLibrary;../External/FreeType/include;NeoAxis;MaskedOcclusionCulling;../External/FreeImage/Source</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">

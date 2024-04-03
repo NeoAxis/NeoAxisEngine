@@ -10,7 +10,7 @@ namespace NeoAxis
 	/// The component intended to manage and display render target in the scene.
 	/// </summary>
 	[AddToResourcesWindow( @"Base\Scene objects\Additional\Render Target In Space", 0 )]
-	public class RenderTargetInSpace : MeshInSpace, InteractiveObject
+	public class RenderTargetInSpace : MeshInSpace, InteractiveObjectInterface
 	{
 		ImageComponent createdImage;
 		Vector2I createdForSize;
@@ -39,7 +39,7 @@ namespace NeoAxis
 		public Reference<int> SizeInPixels
 		{
 			get { if( _sizeInPixels.BeginGet() ) SizeInPixels = _sizeInPixels.Get( this ); return _sizeInPixels.value; }
-			set { if( _sizeInPixels.BeginSet( ref value ) ) { try { SizeInPixelsChanged?.Invoke( this ); } finally { _sizeInPixels.EndSet(); } } }
+			set { if( _sizeInPixels.BeginSet( this, ref value ) ) { try { SizeInPixelsChanged?.Invoke( this ); } finally { _sizeInPixels.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SizeInPixels"/> property value changes.</summary>
 		public event Action<RenderTargetInSpace> SizeInPixelsChanged;
@@ -52,7 +52,7 @@ namespace NeoAxis
 		public Reference<double> AspectRatio
 		{
 			get { if( _aspectRatio.BeginGet() ) AspectRatio = _aspectRatio.Get( this ); return _aspectRatio.value; }
-			set { if( _aspectRatio.BeginSet( ref value ) ) { try { AspectRatioChanged?.Invoke( this ); } finally { _aspectRatio.EndSet(); } } }
+			set { if( _aspectRatio.BeginSet( this, ref value ) ) { try { AspectRatioChanged?.Invoke( this ); } finally { _aspectRatio.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AspectRatio"/> property value changes.</summary>
 		public event Action<RenderTargetInSpace> AspectRatioChanged;
@@ -65,7 +65,7 @@ namespace NeoAxis
 		public Reference<AutoTrueFalse> HDR
 		{
 			get { if( _hdr.BeginGet() ) HDR = _hdr.Get( this ); return _hdr.value; }
-			set { if( _hdr.BeginSet( ref value ) ) { try { HDRChanged?.Invoke( this ); } finally { _hdr.EndSet(); } } }
+			set { if( _hdr.BeginSet( this, ref value ) ) { try { HDRChanged?.Invoke( this ); } finally { _hdr.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HDR"/> property value changes.</summary>
 		public event Action<RenderTargetInSpace> HDRChanged;
@@ -78,7 +78,7 @@ namespace NeoAxis
 		//public Reference<bool> HDR
 		//{
 		//	get { if( _hdr.BeginGet() ) HDR = _hdr.Get( this ); return _hdr.value; }
-		//	set { if( _hdr.BeginSet( ref value ) ) { try { HDRChanged?.Invoke( this ); } finally { _hdr.EndSet(); } } }
+		//	set { if( _hdr.BeginSet( this, ref value ) ) { try { HDRChanged?.Invoke( this ); } finally { _hdr.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="HDR"/> property value changes.</summary>
 		//public event Action<RenderTargetInSpace> HDRChanged;
@@ -91,7 +91,7 @@ namespace NeoAxis
 		//public Reference<bool> Mipmaps
 		//{
 		//	get { if( _mipmaps.BeginGet() ) Mipmaps = _mipmaps.Get( this ); return _mipmaps.value; }
-		//	set { if( _mipmaps.BeginSet( ref value ) ) { try { MipmapsChanged?.Invoke( this ); } finally { _mipmaps.EndSet(); } } }
+		//	set { if( _mipmaps.BeginSet( this, ref value ) ) { try { MipmapsChanged?.Invoke( this ); } finally { _mipmaps.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="Mipmaps"/> property value changes.</summary>
 		//public event Action<RenderTargetInSpace> MipmapsChanged;
@@ -104,7 +104,7 @@ namespace NeoAxis
 		public Reference<bool> AutoUpdate
 		{
 			get { if( _autoUpdate.BeginGet() ) AutoUpdate = _autoUpdate.Get( this ); return _autoUpdate.value; }
-			set { if( _autoUpdate.BeginSet( ref value ) ) { try { AutoUpdateChanged?.Invoke( this ); } finally { _autoUpdate.EndSet(); } } }
+			set { if( _autoUpdate.BeginSet( this, ref value ) ) { try { AutoUpdateChanged?.Invoke( this ); } finally { _autoUpdate.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AutoUpdate"/> property value changes.</summary>
 		public event Action<RenderTargetInSpace> AutoUpdateChanged;
@@ -117,7 +117,7 @@ namespace NeoAxis
 		public Reference<ColorValue> BackgroundColor
 		{
 			get { if( _backgroundColor.BeginGet() ) BackgroundColor = _backgroundColor.Get( this ); return _backgroundColor.value; }
-			set { if( _backgroundColor.BeginSet( ref value ) ) { try { BackgroundColorChanged?.Invoke( this ); } finally { _backgroundColor.EndSet(); } } }
+			set { if( _backgroundColor.BeginSet( this, ref value ) ) { try { BackgroundColorChanged?.Invoke( this ); } finally { _backgroundColor.EndSet(); } } }
 		}
 		public event Action<RenderTargetInSpace> BackgroundColorChanged;
 		ReferenceField<ColorValue> _backgroundColor = new ColorValue( 0.4, 0.4, 0.4 );
@@ -130,7 +130,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayScene
 		{
 			get { if( _displayScene.BeginGet() ) DisplayScene = _displayScene.Get( this ); return _displayScene.value; }
-			set { if( _displayScene.BeginSet( ref value ) ) { try { DisplaySceneChanged?.Invoke( this ); UpdateAttachedScene(); } finally { _displayScene.EndSet(); } } }
+			set { if( _displayScene.BeginSet( this, ref value ) ) { try { DisplaySceneChanged?.Invoke( this ); UpdateAttachedScene(); } finally { _displayScene.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayScene"/> property value changes.</summary>
 		public event Action<RenderTargetInSpace> DisplaySceneChanged;
@@ -144,7 +144,7 @@ namespace NeoAxis
 		public Reference<Scene> Scene
 		{
 			get { if( _scene.BeginGet() ) Scene = _scene.Get( this ); return _scene.value; }
-			set { if( _scene.BeginSet( ref value ) ) { try { SceneChanged?.Invoke( this ); UpdateAttachedScene(); } finally { _scene.EndSet(); } } }
+			set { if( _scene.BeginSet( this, ref value ) ) { try { SceneChanged?.Invoke( this ); UpdateAttachedScene(); } finally { _scene.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Scene"/> property value changes.</summary>
 		public event Action<RenderTargetInSpace> SceneChanged;
@@ -158,7 +158,7 @@ namespace NeoAxis
 		public Reference<Camera> Camera
 		{
 			get { if( _camera.BeginGet() ) Camera = _camera.Get( this ); return _camera.value; }
-			set { if( _camera.BeginSet( ref value ) ) { try { CameraChanged?.Invoke( this ); } finally { _camera.EndSet(); } } }
+			set { if( _camera.BeginSet( this, ref value ) ) { try { CameraChanged?.Invoke( this ); } finally { _camera.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Camera"/> property value changes.</summary>
 		public event Action<RenderTargetInSpace> CameraChanged;
@@ -172,7 +172,7 @@ namespace NeoAxis
 		public Reference<string> CameraByName
 		{
 			get { if( _cameraByName.BeginGet() ) CameraByName = _cameraByName.Get( this ); return _cameraByName.value; }
-			set { if( _cameraByName.BeginSet( ref value ) ) { try { CameraByNameChanged?.Invoke( this ); } finally { _cameraByName.EndSet(); } } }
+			set { if( _cameraByName.BeginSet( this, ref value ) ) { try { CameraByNameChanged?.Invoke( this ); } finally { _cameraByName.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CameraByName"/> property value changes.</summary>
 		public event Action<RenderTargetInSpace> CameraByNameChanged;
@@ -187,7 +187,7 @@ namespace NeoAxis
 		public Reference<UIControl> UIControl
 		{
 			get { if( _uiControl.BeginGet() ) UIControl = _uiControl.Get( this ); return _uiControl.value; }
-			set { if( _uiControl.BeginSet( ref value ) ) { try { UIControlChanged?.Invoke( this ); UIControlUpdate(); } finally { _uiControl.EndSet(); } } }
+			set { if( _uiControl.BeginSet( this, ref value ) ) { try { UIControlChanged?.Invoke( this ); UIControlUpdate(); } finally { _uiControl.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UIControl"/> property value changes.</summary>
 		public event Action<RenderTargetInSpace> UIControlChanged;
@@ -200,7 +200,7 @@ namespace NeoAxis
 		public Reference<bool> AllowInteract
 		{
 			get { if( _allowInteract.BeginGet() ) AllowInteract = _allowInteract.Get( this ); return _allowInteract.value; }
-			set { if( _allowInteract.BeginSet( ref value ) ) { try { AllowInteractChanged?.Invoke( this ); } finally { _allowInteract.EndSet(); } } }
+			set { if( _allowInteract.BeginSet( this, ref value ) ) { try { AllowInteractChanged?.Invoke( this ); } finally { _allowInteract.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AllowInteract"/> property value changes.</summary>
 		public event Action<RenderTargetInSpace> AllowInteractChanged;
@@ -308,9 +308,9 @@ namespace NeoAxis
 			if( ParentScene != null )
 			{
 				if( EnabledInHierarchyAndIsInstance )
-					ParentScene.ViewportUpdateBefore += ParentScene_ViewportUpdateBefore;
+					ParentScene.ViewportUpdateCameraSettingsReady += ParentScene_ViewportUpdateCameraSettingsReady;
 				else
-					ParentScene.ViewportUpdateBefore -= ParentScene_ViewportUpdateBefore;
+					ParentScene.ViewportUpdateCameraSettingsReady -= ParentScene_ViewportUpdateCameraSettingsReady;
 			}
 
 			if( !EnabledInHierarchy )
@@ -408,7 +408,7 @@ namespace NeoAxis
 		public delegate void RenderTargetUpdateEventDelegate( RenderTargetInSpace sender );
 		public event RenderTargetUpdateEventDelegate RenderTargetUpdateEvent;
 
-		public void RenderTargetUpdate()
+		public void RenderTargetUpdate( Viewport viewport )
 		{
 			if( !viewportDuringUpdate )
 			{
@@ -429,7 +429,12 @@ namespace NeoAxis
 							RenderTargetUpdateEvent?.Invoke( this );
 
 							createdViewport.BackgroundColorDefault = BackgroundColor;
-							createdViewport.Update( true, GetCameraSettings() );
+
+							createdViewport.Update( false, GetCameraSettings(), viewport.RenderingContext.CurrentViewNumber );
+							viewport.RenderingContext.CurrentViewNumber = createdViewport.RenderingContext.CurrentViewNumber;
+							viewport.RenderingContext.UpdateStatisticsCurrent.AddFrom( createdViewport.RenderingContext.UpdateStatisticsCurrent );
+
+							//createdViewport.Update( true, GetCameraSettings() );
 						}
 						finally
 						{
@@ -440,10 +445,10 @@ namespace NeoAxis
 			}
 		}
 
-		private void ParentScene_ViewportUpdateBefore( Scene scene, Viewport viewport, Viewport.CameraSettingsClass overrideCameraSettings )
+		private void ParentScene_ViewportUpdateCameraSettingsReady( Scene scene, Viewport viewport )
 		{
-			if( EnabledInHierarchyAndIsInstance && AutoUpdate && ( viewport.LastUpdateTime == lastVisibleTime || viewport.PreviousUpdateTime == lastVisibleTime ) )
-				RenderTargetUpdate();
+			if( EnabledInHierarchyAndIsInstance && AutoUpdate && ( viewport.LastUpdateTime == lastVisibleTime || viewport.PreviousUpdateTime == lastVisibleTime ) && viewport.Mode == Viewport.ModeEnum.Default )
+				RenderTargetUpdate( viewport );
 		}
 
 		protected override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem )
@@ -541,6 +546,7 @@ namespace NeoAxis
 			}
 		}
 
+		//!!!!может вызывать когда долго не показывается
 		void DestroyRenderTarget()
 		{
 			if( createdImage != null )
@@ -768,12 +774,16 @@ namespace NeoAxis
 			return false;
 		}
 
-		public void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
+		public delegate void ObjectInteractionGetInfoEventDelegate( RenderTargetInSpace sender, GameMode gameMode, ref InteractiveObjectObjectInfo info );
+		public event ObjectInteractionGetInfoEventDelegate ObjectInteractionGetInfoEvent;
+
+		public virtual void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
 		{
 			info = new InteractiveObjectObjectInfo();
 			info.AllowInteract = AllowInteract;
-			info.SelectionTextInfo.Add( Name );
-			info.DisplaySelectionRectangle = false;
+			//info.Text.Add( Name );
+			info.DefaultRender = false;
+			ObjectInteractionGetInfoEvent?.Invoke( this, gameMode, ref info );
 		}
 
 		public delegate void ObjectInteractionEventDelegate( RenderTargetInSpace sender, ObjectInteractionContext context );
@@ -781,17 +791,17 @@ namespace NeoAxis
 		public event ObjectInteractionEventDelegate ObjectInteractionExitEvent;
 		public event ObjectInteractionEventDelegate ObjectInteractionUpdateEvent;
 
-		public void ObjectInteractionEnter( ObjectInteractionContext context )
+		public virtual void ObjectInteractionEnter( ObjectInteractionContext context )
 		{
 			ObjectInteractionEnterEvent?.Invoke( this, context );
 		}
 
-		public void ObjectInteractionExit( ObjectInteractionContext context )
+		public virtual void ObjectInteractionExit( ObjectInteractionContext context )
 		{
 			ObjectInteractionExitEvent?.Invoke( this, context );
 		}
 
-		public void ObjectInteractionUpdate( ObjectInteractionContext context )
+		public virtual void ObjectInteractionUpdate( ObjectInteractionContext context )
 		{
 			ObjectInteractionUpdateEvent?.Invoke( this, context );
 

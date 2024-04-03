@@ -1,9 +1,10 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"18B8A10B53774B0856A1C63CAA95F8A8\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"A72CDF4597AA43952E97B840C78E266C\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"18B8A10B53774B0856A1C63CAA95F8A8\"><KP UN=\"18B8A10B53774B0856A1C63CAA95F8A8\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"F656603AF66A4F1E72BF98B1382136FA\" S=\"False\"><CPD ObjPath=\"$Regulator Switch\\$$n1$C# Script\" /></KP><KP UN=\"99101A6DE2F944D3308BCCE589D7E7B4\" S=\"False\"><CPD ObjPath=\"$Button\\$$n1$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"18B8A10B53774B0856A1C63CAA95F8A8\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"A72CDF4597AA43952E97B840C78E266C\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"18B8A10B53774B0856A1C63CAA95F8A8\"><KP UN=\"18B8A10B53774B0856A1C63CAA95F8A8\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"F656603AF66A4F1E72BF98B1382136FA\" S=\"False\"><CPD ObjPath=\"$Regulator\\$C# Script\" /></KP><KP UN=\"99101A6DE2F944D3308BCCE589D7E7B4\" S=\"False\"><CPD ObjPath=\"$Button\\$C# Script\" /></KP><KP UN=\"AB5A9E41386E4736AB989432866548DB\" S=\"False\"><CPD ObjPath=\"$Character 2D 3\\$Character AI\\$Flow Graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	Mode = _2D
+	ScreenOrientation = Landscape
 	DisplayPhysicalObjects = True
 	DisplaySensors = True
 	RenderingPipeline
@@ -21,6 +22,10 @@
 	CameraEditor2D
 	{
 		GetByReference = "this:$Camera Editor 2D"
+	}
+	BackgroundSound
+	{
+		GetByReference = "Samples\\Platform Game\\Music\\Background.ogg"
 	}
 	.component NeoAxis.Camera
 	{
@@ -68,8 +73,9 @@
 		DeferredShading = False
 		HighDynamicRange = False
 		Shadows = False
-		ShadowFarDistance = 15
+		ShadowDirectionalDistance = 15
 		ShadowDirectionalLightCascades = 1
+		ShadowPointSpotlightDistance = 15
 		ProvideColorDepthTextureCopy = False
 		.component NeoAxis.Component
 		{
@@ -129,7 +135,8 @@
 	.component NeoAxis.GameMode
 	{
 		Name = Game Mode
-		ThirdPersonCameraHorizontalAngle = -180
+		ThirdPersonCameraHorizontalAngle = 0
+		InventoryWidget = True
 		CutsceneStarted = False
 		CutsceneGuiFadingFactor = 0
 		CutsceneGuiFadingSpeed = 0
@@ -141,41 +148,38 @@
 			GetByReference = "this:..\\$Character 2D"
 		}
 	}
+	.component NeoAxis.NetworkLogic
+	{
+		Name = Network Logic
+		AvatarWindow = False
+		ObjectTypeControlledByPlayer
+		{
+			GetByReference = NeoAxis.Character2D
+		}
+	}
 	.component NeoAxis.Character2D
 	{
 		Name = Character 2D
-		Height = 1.2
-		PositionToGroundHeight = 0.75
-		EyePosition = 0.05 0.2
-		RunSupport = True
-		FlyControlSupport = True
-		JumpSupport = True
-		Animate = True
 		Transform
 		{
 			GetByReference = "this:$Collision Body\\Transform"
 		}
-		IdleAnimation
+		ReplaceMaterialSelectively
 		{
-			GetByReference = "Content\\2D\\Penguin\\Animation Idle.component"
+			Count = 0
 		}
-		WalkAnimation
+		SpecialEffects
 		{
-			GetByReference = "Content\\2D\\Penguin\\Animation Walk.component"
-		}
-		FlyAnimation
-		{
-			GetByReference = "Content\\2D\\Penguin\\Animation Fly.component"
-		}
-		JumpAnimation
-		{
-			GetByReference = "Content\\2D\\Penguin\\Animation Jump.component"
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.RigidBody2D
 		{
 			Name = Collision Body
 			CanBeSelected = False
-			Transform = "-2.89735785513877 -1.95806094081686 1; 0 0 0 1; 1 1 1"
+			Transform = "-1.65317772416831 -2.01800560951233 0; 0 0 0 1; 1.2 1.2 1.2"
 			MotionType = Dynamic
 			Mass = 70
 			AngularDamping = 10
@@ -183,54 +187,16 @@
 			.component NeoAxis.CollisionShape2D_Capsule
 			{
 				Name = Capsule Shape
-				TransformRelativeToParent = "0 0 -0.15; 0 0 0 1; 1 1 1"
+				TransformRelativeToParent = "0 0 0.00999999999999995; 0 0 0 1; 1 1 1"
 				Friction = 0
 				CollidesWith = All
 				Radius = 0.3
-				Height = 0.6
+				Height = 0.33999999999999997
 			}
 		}
-		.component NeoAxis.Sprite
+		.component NeoAxis.SpriteAnimationController
 		{
-			Name = Sprite
-			CanBeSelected = False
-			Transform
-			{
-				GetByReference = "this:$Transform Offset\\Result"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.SpriteAnimationController
-			{
-				Name = Sprite Animation Controller
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Transform Offset
-				PositionOffset = 0 -0.05 0
-				ScaleOffset = 1.2 1.2 1.2
-				Source
-				{
-					GetByReference = "this:..\\..\\Transform"
-				}
-			}
-		}
-		.component NeoAxis.Character2DInputProcessing
-		{
-			Name = Character Input Processing
-		}
-		.component NeoAxis.Character2DAI
-		{
-			Name = Character AI
+			Name = Animation Controller
 		}
 	}
 	.component NeoAxis.MeshInSpace
@@ -767,7 +733,6 @@
 	{
 		Name = Weapon 2D
 		Transform = "2.52738108585223 3.84498571309931 0; 0 -1 0 0; 1.5 1.5 1.5"
-		Animate = True
 		ReplaceMaterialSelectively
 		{
 			Count = 0
@@ -779,13 +744,9 @@
 				Count = 0
 			}
 		}
-		IdleAnimation
-		{
-			GetByReference = "Content\\2D\\Weapon\\Animation Idle.component"
-		}
 		.component NeoAxis.SpriteAnimationController
 		{
-			Name = Sprite Animation Controller
+			Name = Animation Controller
 		}
 	}
 	.component NeoAxis.DestroyingSensor2D
@@ -873,7 +834,7 @@
 					Value
 					{
 						Length = 201408
-						.elements = "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"
+						.elements = "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"
 						.elementsZip = True
 					}
 				}
@@ -920,38 +881,27 @@
 	.component NeoAxis.Character2D
 	{
 		Name = Character 2D 2
-		Height = 1.2
-		PositionToGroundHeight = 0.75
-		EyePosition = 0.05 0.2
-		RunSupport = True
-		FlyControlSupport = True
-		JumpSupport = True
-		Animate = True
+		Color = 1 0.5480784 0.5364314
 		Transform
 		{
 			GetByReference = "this:$Collision Body\\Transform"
 		}
-		IdleAnimation
+		ReplaceMaterialSelectively
 		{
-			GetByReference = "Content\\2D\\Penguin\\Animation Idle.component"
+			Count = 0
 		}
-		WalkAnimation
+		SpecialEffects
 		{
-			GetByReference = "Content\\2D\\Penguin\\Animation Walk.component"
-		}
-		FlyAnimation
-		{
-			GetByReference = "Content\\2D\\Penguin\\Animation Fly.component"
-		}
-		JumpAnimation
-		{
-			GetByReference = "Content\\2D\\Penguin\\Animation Jump.component"
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.RigidBody2D
 		{
 			Name = Collision Body
 			CanBeSelected = False
-			Transform = "-7.70199103011987 0.882434492173955 1; 0 0 0 1; 1 1 1"
+			Transform = "-2.31054353713989 0.80632495880127 1; 0 0 0 1; 1.2 1.2 1.2"
 			MotionType = Dynamic
 			Mass = 70
 			AngularDamping = 10
@@ -959,51 +909,16 @@
 			.component NeoAxis.CollisionShape2D_Capsule
 			{
 				Name = Capsule Shape
-				TransformRelativeToParent = "0 0 -0.15; 0 0 0 1; 1 1 1"
+				TransformRelativeToParent = "0 0 0.00999999999999995; 0 0 0 1; 1 1 1"
 				Friction = 0
 				CollidesWith = All
 				Radius = 0.3
-				Height = 0.6
+				Height = 0.33999999999999997
 			}
 		}
-		.component NeoAxis.Sprite
+		.component NeoAxis.SpriteAnimationController
 		{
-			Name = Sprite
-			CanBeSelected = False
-			Color = 1 0.6503922 0.5325882
-			Transform
-			{
-				GetByReference = "this:$Transform Offset\\Result"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.SpriteAnimationController
-			{
-				Name = Sprite Animation Controller
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Transform Offset
-				PositionOffset = 0 -0.05 0
-				ScaleOffset = 1.2 1.2 1.2
-				Source
-				{
-					GetByReference = "this:..\\..\\Transform"
-				}
-			}
-		}
-		.component NeoAxis.Character2DInputProcessing
-		{
-			Name = Character Input Processing
+			Name = Animation Controller
 		}
 		.component NeoAxis.Character2DAI
 		{
@@ -1026,11 +941,148 @@
 			}
 		}
 	}
+	.component NeoAxis.Character2D
+	{
+		Name = Character 2D 3
+		Color = 0.6350588 0.9921569 0.6133726
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.RigidBody2D
+		{
+			Name = Collision Body
+			CanBeSelected = False
+			Transform = "2.04408733250671 8.14015242178949 1; -0 1 -0 0.00000000000000006; 1.2 1.2 1.2"
+			MotionType = Dynamic
+			Mass = 70
+			AngularDamping = 10
+			FixedRotation = True
+			.component NeoAxis.CollisionShape2D_Capsule
+			{
+				Name = Capsule Shape
+				TransformRelativeToParent = "0 0 0.00999999999999995; 0 0 0 1; 1 1 1"
+				Friction = 0
+				CollidesWith = All
+				Radius = 0.3
+				Height = 0.33999999999999997
+			}
+		}
+		.component NeoAxis.SpriteAnimationController
+		{
+			Name = Animation Controller
+		}
+		.component NeoAxis.Character2DAI
+		{
+			Name = Character AI
+			PermanentMessage = Do you want to talk?
+			AllowInteract = True
+			DialogueFlow
+			{
+				GetByReference = "this:$Flow Graph\\$Node Flow Dialogue Message 1"
+			}
+			.component NeoAxis.FlowGraph
+			{
+				Name = Flow Graph
+				NetworkMode = False
+				EditorScrollPosition = 11.9542480639047 3.56699374025674
+				EditorZoomIndex = 7
+				.component NeoAxis.FlowGraphNode
+				{
+					Name = Node Invoke Member 1
+					Position = 4 -6
+					ControlledObject
+					{
+						GetByReference = "this:$Invoke Member"
+					}
+					.component NeoAxis.InvokeMember
+					{
+						Name = Invoke Member
+						FlowSupport = True
+						__parameter_Message = The penguin writing to log
+						Member
+						{
+							GetByReference = "NeoAxis.Log|method:Info(System.String)"
+						}
+						Exit
+						{
+							GetByReference = "this:..\\..\\$Node Flow Dialogue Message 2\\$Flow Dialogue Message\\Entry"
+						}
+					}
+				}
+				.component NeoAxis.FlowGraphNode
+				{
+					Name = Node Flow Dialogue Message 1
+					Position = -13 -9
+					ControlledObject
+					{
+						GetByReference = "this:$Flow Dialogue Message"
+					}
+					.component NeoAxis.FlowDialogueMessage
+					{
+						Name = Flow Dialogue Message
+						Message = Hi! I am a penguin. Are you looking for something?
+						AnswerCount = 2
+						AnswerText0 = Hi penguin! I am a penguin too!
+						AnswerText1 = Bye
+						AnswerBody0
+						{
+							GetByReference = "this:..\\..\\$Node Invoke Member 1\\$Invoke Member\\Entry"
+						}
+						AnswerBody1
+						{
+						}
+					}
+				}
+				.component NeoAxis.FlowGraphNode
+				{
+					Name = Node Flow Dialogue Message 2
+					Position = 21 0
+					ControlledObject
+					{
+						GetByReference = "this:$Flow Dialogue Message"
+					}
+					.component NeoAxis.FlowDialogueMessage
+					{
+						Name = Flow Dialogue Message
+						Message = Oh, really?! I like you, penguin, because you are a penguin!
+						AnswerCount = 2
+						AnswerText0 = What?!
+						AnswerText1 = Bye
+						AnswerBody0
+						{
+							GetByReference = "this:..\\..\\$Node Flow Dialogue Message 1\\$Flow Dialogue Message\\Entry"
+						}
+						AnswerBody1
+						{
+						}
+					}
+				}
+			}
+		}
+	}
 	.component NeoAxis.Text2D
 	{
 		Name = Text 2D
 		Transform = "2.46330644262302 5.0236435208016 4; 0 0 0 1; 1 1 1"
 		Text = Weapon 2D
+	}
+	.component NeoAxis.Text2D
+	{
+		Name = Text 2D 8
+		Transform = "-4.83652881179113 -0.9672597092456 4; 0 0 0 1; 1 1 1"
+		Text = Item 2D
 	}
 	.component NeoAxis.Text2D
 	{
@@ -1042,10 +1094,17 @@
 	{
 		Name = Text 2D 2
 		Transform = "-4.3931125399902 2.02369647580582 4; 0 0 0 1; 1 1 1"
-		Text = Character 2D AI
+		Text = Character 2D AI with move tasks
 	}
 	.component NeoAxis.Text2D
 	{
+		Name = Text 2D 7
+		Transform = "1.99367923807147 10.4633856111016 4; 0 0 0 1; 1 1 1"
+		Text = Character 2D AI with Dialogue
+	}
+	.component NeoAxis.Text2D
+	{
+		Enabled = False
 		Name = Text 2D 4
 		Transform = "2.81521829648632 -3.80274628273585 4; 0 0 0 1; 1 1 1"
 		Text = Destroying Sensor 2D
@@ -1060,27 +1119,26 @@
 	{
 		Name = Text 2D 6
 		Transform = "-7.27644487458078 9.75224254040062 4; 0 0 0 1; 1 1 1"
-		Text = Regulator Switch
+		Text = Regulator
 	}
 	.component NeoAxis.ObjectInSpace
 	{
 		Name = AI Destination
-		Transform = "-1.08436471439531 0.96252305242882 0; 0 0 0 1; 1 1 1"
+		Transform = "-7.80293788352513 0.96252305242882 0; 0 0 0 1; 1 1 1"
 	}
 	.component NeoAxis.ObjectInSpace
 	{
 		Name = AI Destination 2
-		Transform = "-6.85102938357652 0.96252305242882 0; 0 0 0 1; 1 1 1"
+		Transform = "-3.63689715760393 0.96252305242882 0; 0 0 0 1; 1 1 1"
 	}
-	.component NeoAxis.ButtonInSpace
+	.component NeoAxis.Button
 	{
 		Name = Button
 		Transform = "11.0682068957314 -1.72044371610927 0; -0.5 -0.5 -0.5 0.5; 2 2 2"
-		Color = 0.6784314 0.6784314 0.6784314
 		Activated = True
 		Mesh
 		{
-			GetByReference = "this:$Mesh"
+			GetByReference = "Content\\Buttons\\Default\\Base.mesh"
 		}
 		ReplaceMaterialSelectively
 		{
@@ -1093,142 +1151,10 @@
 				Count = 0
 			}
 		}
-		.component NeoAxis.Mesh
-		{
-			Name = Mesh
-			.component NeoAxis.MeshGeometry_Box
-			{
-				Name = Mesh Geometry
-				Dimensions = 0.05 0.3 0.3
-				Material
-				{
-					GetByReference = "Base\\Materials\\White.material"
-				}
-			}
-		}
-		.component NeoAxis.MeshInSpace
-		{
-			Name = Button
-			Transform
-			{
-				GetByReference = "this:$Attach Transform Offset\\Result"
-			}
-			Mesh
-			{
-				GetByReference = "this:$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.Mesh
-			{
-				Name = Mesh
-				.component NeoAxis.MeshGeometry_Box
-				{
-					Name = Mesh Geometry
-					Dimensions = 0.05 0.15 0.15
-					Material
-					{
-						GetByReference = "Base\\Materials\\White.material"
-					}
-				}
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Attach Transform Offset
-				PositionOffset = 0.05 0 0
-				Source
-				{
-					GetByReference = "this:..\\..\\Transform"
-				}
-			}
-		}
-		.component NeoAxis.MeshInSpace
-		{
-			Name = Indicator
-			Color = 0 1 0
-			Transform
-			{
-				GetByReference = "this:$Attach Transform Offset\\Result"
-			}
-			Mesh
-			{
-				GetByReference = "this:$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.Mesh
-			{
-				Name = Mesh
-				.component NeoAxis.MeshGeometry_Cylinder
-				{
-					Name = Mesh Geometry
-					Axis = 0
-					Radius = 0.02
-					Height = 0.02
-					Segments = 16
-					Material
-					{
-						GetByReference = "Base\\Materials\\White.material"
-					}
-				}
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Attach Transform Offset
-				PositionOffset = 0.03 0 0.12
-				Source
-				{
-					GetByReference = "this:..\\..\\Transform"
-				}
-			}
-		}
 		.component NeoAxis.CSharpScript
 		{
 			Name = C# Script
-			Code = "public void InteractiveObjectButton_UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\tvar _this = sender as ButtonInSpace;\r\n\tif (_this != null)\r\n\t{\r\n\t\tvar indicator = _this.GetComponent(\"Indicator\") as MeshInSpace;\r\n\t\tif (indicator != null)\r\n\t\t\tindicator.Color = _this.Activated ? new ColorValue(0, 1, 0) : new ColorValue(0.5, 0.5, 0.5);\r\n\r\n\t\tvar buttonOffset = _this.Components.GetByPath(\"Button\\\\Attach Transform Offset\") as TransformOffset;\r\n\t\tif (buttonOffset != null)\r\n\t\t{\r\n\t\t\tvar offsetPushed = 0.01;\r\n\t\t\tvar offsetDefault = 0.05;\r\n\r\n\t\t\tvar coef = 0.0;\r\n\t\t\tif (_this.Clicking && _this.ClickingTotalTime != 0)\r\n\t\t\t{\r\n\t\t\t\tvar timeFactor = MathEx.Saturate(_this.ClickingCurrentTime / _this.ClickingTotalTime);\r\n\r\n\t\t\t\tif(timeFactor < 0.5)\r\n\t\t\t\t\tcoef = timeFactor * 2;\r\n\t\t\t\telse\r\n\t\t\t\t\tcoef = (1.0f - timeFactor) * 2;\r\n\t\t\t}\r\n\r\n\t\t\tvar offset = MathEx.Lerp(offsetDefault, offsetPushed, coef);\r\n\t\t\tbuttonOffset.PositionOffset = new Vector3(offset, 0, 0);\r\n\t\t}\r\n\t}\r\n}"
-			__parameter_Delta = 0
-			Exit
-			{
-			}
-			.component NeoAxis.EventHandlerComponent
-			{
-				Name = Event Handler UpdateEvent
-				WhenEnable = Editor, Simulation, Instance
-				Event
-				{
-					GetByReference = "this:..\\..\\event:UpdateEvent"
-				}
-				HandlerMethod
-				{
-					GetByReference = "this:..\\method:InteractiveObjectButton_UpdateEvent(NeoAxis.Component,System.Single)"
-				}
-				HandlerFlow
-				{
-				}
-			}
-		}
-		.component NeoAxis.CSharpScript
-		{
-			Name = C# Script
-			Code = "public void Button_Click(NeoAxis.ButtonInSpace sender)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\tvar light = scene.GetComponent(\"Ambient Light\") as Light;\r\n\tif (light != null)\r\n\t\tlight.Enabled = sender.Activated;\t\r\n}\r\n"
+			Code = "public void Button_Click(NeoAxis.Button sender)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\tvar light = scene.GetComponent(\"Ambient Light\") as Light;\r\n\tif (light != null)\r\n\t\tlight.Enabled = sender.Activated;\t\r\n}\r\n"
 			Exit
 			{
 			}
@@ -1241,7 +1167,7 @@
 				}
 				HandlerMethod
 				{
-					GetByReference = "this:..\\method:Button_Click(NeoAxis.ButtonInSpace)"
+					GetByReference = "this:..\\method:Button_Click(NeoAxis.Button)"
 				}
 				HandlerFlow
 				{
@@ -1249,14 +1175,13 @@
 			}
 		}
 	}
-	.component NeoAxis.RegulatorSwitchInSpace
+	.component NeoAxis.Regulator
 	{
-		Name = Regulator Switch
+		Name = Regulator
 		Transform = "-7.23294134109314 8.87126837759707 0; -0.5 -0.5 -0.5 0.5; 2 2 2"
-		Color = 0.6784314 0.6784314 0.6784314
 		Mesh
 		{
-			GetByReference = "this:$Mesh"
+			GetByReference = "Content\\Regulators\\Default\\Base.mesh"
 		}
 		ReplaceMaterialSelectively
 		{
@@ -1269,334 +1194,10 @@
 				Count = 0
 			}
 		}
-		.component NeoAxis.Mesh
-		{
-			Name = Mesh
-			.component NeoAxis.MeshGeometry_Box
-			{
-				Name = Mesh Geometry
-				Dimensions = 0.05 0.3 0.3
-				Material
-				{
-					GetByReference = "Base\\Materials\\White.material"
-				}
-			}
-		}
-		.component NeoAxis.MeshInSpace
-		{
-			Name = Button
-			Transform
-			{
-				GetByReference = "this:$Attach Transform Offset\\Result"
-			}
-			Mesh
-			{
-				GetByReference = "this:$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.Mesh
-			{
-				Name = Mesh
-				.component NeoAxis.MeshGeometry_Cylinder
-				{
-					Name = Mesh Geometry
-					Axis = 0
-					Radius = 0.08
-					Height = 0.08
-					Material
-					{
-						GetByReference = "Base\\Materials\\White.material"
-					}
-				}
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Attach Transform Offset
-				PositionOffset = 0.05 0 0
-				RotationOffset = 0.923879532511287 0 -0 0.38268343236509
-				Source
-				{
-					GetByReference = "this:..\\..\\Transform"
-				}
-			}
-		}
-		.component NeoAxis.MeshInSpace
-		{
-			Name = Indicator Min
-			Color = 1 0 0
-			Transform
-			{
-				GetByReference = "this:$Attach Transform Offset\\Result"
-			}
-			Mesh
-			{
-				GetByReference = "this:$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.Mesh
-			{
-				Name = Mesh
-				.component NeoAxis.MeshGeometry_Cylinder
-				{
-					Name = Mesh Geometry
-					Axis = 0
-					Radius = 0.02
-					Height = 0.02
-					Segments = 16
-					Material
-					{
-						GetByReference = "Base\\Materials\\White.material"
-					}
-				}
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Attach Transform Offset
-				PositionOffset = 0.03 -0.11 0.11
-				Source
-				{
-					GetByReference = "this:..\\..\\Transform"
-				}
-			}
-		}
-		.component NeoAxis.MeshInSpace
-		{
-			Name = Indicator Max
-			Color = 0.5 0.5 0.5
-			Transform
-			{
-				GetByReference = "this:$Attach Transform Offset\\Result"
-			}
-			Mesh
-			{
-				GetByReference = "this:$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.Mesh
-			{
-				Name = Mesh
-				.component NeoAxis.MeshGeometry_Cylinder
-				{
-					Name = Mesh Geometry
-					Axis = 0
-					Radius = 0.02
-					Height = 0.02
-					Segments = 16
-					Material
-					{
-						GetByReference = "Base\\Materials\\White.material"
-					}
-				}
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Attach Transform Offset
-				PositionOffset = 0.03 0.11 0.11
-				Source
-				{
-					GetByReference = "this:..\\..\\Transform"
-				}
-			}
-		}
-		.component NeoAxis.MeshInSpace
-		{
-			Name = Marker Min
-			Color = 1 0 0
-			Transform
-			{
-				GetByReference = "this:$Attach Transform Offset\\Result"
-			}
-			Mesh
-			{
-				GetByReference = "this:$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.Mesh
-			{
-				Name = Mesh
-				.component NeoAxis.MeshGeometry_Box
-				{
-					Name = Mesh Geometry
-					Dimensions = 0.05 0.14 0.01
-					Material
-					{
-						GetByReference = "Base\\Materials\\White.material"
-					}
-				}
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Attach Transform Offset
-				PositionOffset = 0.01 -0.0282842712474619 0.0282842712474619
-				RotationOffset = 0.923879532511287 0 -0 0.38268343236509
-				Source
-				{
-					GetByReference = "this:..\\..\\Transform"
-				}
-			}
-		}
-		.component NeoAxis.MeshInSpace
-		{
-			Name = Marker Max
-			Color = 0 1 0
-			Transform
-			{
-				GetByReference = "this:$Attach Transform Offset\\Result"
-			}
-			Mesh
-			{
-				GetByReference = "this:$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.Mesh
-			{
-				Name = Mesh
-				.component NeoAxis.MeshGeometry_Box
-				{
-					Name = Mesh Geometry
-					Dimensions = 0.05 0.14 0.01
-					Material
-					{
-						GetByReference = "Base\\Materials\\White.material"
-					}
-				}
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Attach Transform Offset
-				PositionOffset = 0.01 0.0282842712474619 0.0282842712474619
-				RotationOffset = 0.38268343236509 0 -0 0.923879532511287
-				Source
-				{
-					GetByReference = "this:..\\..\\Transform"
-				}
-			}
-		}
-		.component NeoAxis.MeshInSpace
-		{
-			Name = Marker Current
-			Transform
-			{
-				GetByReference = "this:$Attach Transform Offset\\Result"
-			}
-			Mesh
-			{
-				GetByReference = "this:$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.Mesh
-			{
-				Name = Mesh
-				.component NeoAxis.MeshGeometry_Box
-				{
-					Name = Mesh Geometry
-					Dimensions = 0.05 0.14 0.01
-					Material
-					{
-						GetByReference = "Base\\Materials\\White.material"
-					}
-				}
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Attach Transform Offset
-				PositionOffset = 0.06 -0.0282842712474619 0.0282842712474619
-				RotationOffset = 0.923879532511287 0 -0 0.38268343236509
-				Source
-				{
-					GetByReference = "this:..\\..\\Transform"
-				}
-			}
-		}
 		.component NeoAxis.CSharpScript
 		{
 			Name = C# Script
-			Code = "public void InteractiveObjectButton_UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\tvar _this = sender as RegulatorSwitchInSpace;\r\n\tif (_this != null)\r\n\t{\r\n\t\tvar indicatorMin = _this.GetComponent(\"Indicator Min\") as MeshInSpace;\r\n\t\tif (indicatorMin != null)\r\n\t\t\tindicatorMin.Color = _this.Value.Value <= _this.ValueRange.Value.Minimum ? new ColorValue(1, 0, 0) : new ColorValue(0.5, 0.5, 0.5);\r\n\r\n\t\tvar indicatorMax = _this.GetComponent(\"Indicator Max\") as MeshInSpace;\r\n\t\tif (indicatorMax != null)\r\n\t\t\tindicatorMax.Color = _this.Value.Value >= _this.ValueRange.Value.Maximum ? new ColorValue(0, 1, 0) : new ColorValue(0.5, 0.5, 0.5);\r\n\r\n\t\tvar button = _this.GetComponent(\"Button\");\r\n\t\tif (button != null)\r\n\t\t{\r\n\t\t\tvar offset = button.GetComponent<TransformOffset>();\r\n\t\t\tif (offset != null)\r\n\t\t\t{\r\n\t\t\t\tvar angle = _this.GetValueAngle() - 90;\r\n\t\t\t\toffset.RotationOffset = new Angles(angle, 0, 0).ToQuaternion();\r\n\t\t\t}\r\n\t\t}\r\n\r\n\t\tvar markerMin = _this.GetComponent(\"Marker Min\");\r\n\t\tif (markerMin != null)\r\n\t\t{\r\n\t\t\tvar offset = markerMin.GetComponent<TransformOffset>();\r\n\t\t\tif (offset != null)\r\n\t\t\t{\r\n\t\t\t\tvar angle = _this.AngleRange.Value.Minimum - 90;\r\n\t\t\t\tvar angleR = MathEx.DegreeToRadian(angle);\r\n\t\t\t\toffset.PositionOffset = new Vector3(0.01, Math.Cos(angleR) * 0.04, Math.Sin(-angleR) * 0.04);\r\n\t\t\t\toffset.RotationOffset = new Angles(angle, 0, 0).ToQuaternion();\r\n\t\t\t}\r\n\t\t}\r\n\r\n\t\tvar markerMax = _this.GetComponent(\"Marker Max\");\r\n\t\tif (markerMax != null)\r\n\t\t{\r\n\t\t\tvar offset = markerMax.GetComponent<TransformOffset>();\r\n\t\t\tif (offset != null)\r\n\t\t\t{\r\n\t\t\t\tvar angle = _this.AngleRange.Value.Maximum - 90;\r\n\t\t\t\tvar angleR = MathEx.DegreeToRadian(angle);\r\n\t\t\t\toffset.PositionOffset = new Vector3(0.01, Math.Cos(angleR) * 0.04, Math.Sin(-angleR) * 0.04);\r\n\t\t\t\toffset.RotationOffset = new Angles(angle, 0, 0).ToQuaternion();\r\n\t\t\t}\r\n\t\t}\r\n\r\n\t\tvar markerCurrent = _this.GetComponent(\"Marker Current\");\r\n\t\tif (markerCurrent != null)\r\n\t\t{\r\n\t\t\tvar offset = markerCurrent.GetComponent<TransformOffset>();\r\n\t\t\tif (offset != null)\r\n\t\t\t{\r\n\t\t\t\tvar angle = _this.GetValueAngle() - 90;\r\n\t\t\t\tvar angleR = MathEx.DegreeToRadian(angle);\r\n\t\t\t\toffset.PositionOffset = new Vector3(0.06, Math.Cos(angleR) * 0.04, Math.Sin(-angleR) * 0.04);\r\n\t\t\t\toffset.RotationOffset = new Angles(angle, 0, 0).ToQuaternion();\r\n\t\t\t}\r\n\t\t}\r\n\t}\r\n}"
-			__parameter_Delta = 0
-			Exit
-			{
-			}
-			.component NeoAxis.EventHandlerComponent
-			{
-				Name = Event Handler UpdateEvent
-				WhenEnable = Editor, Simulation, Instance
-				Event
-				{
-					GetByReference = "this:..\\..\\event:UpdateEvent"
-				}
-				HandlerMethod
-				{
-					GetByReference = "this:..\\method:InteractiveObjectButton_UpdateEvent(NeoAxis.Component,System.Single)"
-				}
-				HandlerFlow
-				{
-				}
-			}
-		}
-		.component NeoAxis.CSharpScript
-		{
-			Name = C# Script
-			Code = "public void RegulatorSwitch_ValueChanged(NeoAxis.RegulatorSwitchInSpace obj)\r\n{\r\n\tvar scene = obj.ParentScene;\r\n\r\n\tvar meshInSpace = scene.GetComponent(\"Ground\") as MeshInSpace;\r\n\tif (meshInSpace != null)\r\n\t\tmeshInSpace.Color = new ColorValue(1.0 - obj.Value, 1.0, 1.0 - obj.Value);\r\n}\r\n"
+			Code = "public void Regulator_ValueChanged(NeoAxis.Regulator obj)\r\n{\r\n\tvar scene = obj.ParentScene;\r\n\r\n\tvar meshInSpace = scene.GetComponent(\"Ground\") as MeshInSpace;\r\n\tif (meshInSpace != null)\r\n\t\tmeshInSpace.Color = new ColorValue(1.0 - obj.Value, 1.0, 1.0 - obj.Value);\r\n}\r\n"
 			Exit
 			{
 			}
@@ -1609,12 +1210,65 @@
 				}
 				HandlerMethod
 				{
-					GetByReference = "this:..\\method:RegulatorSwitch_ValueChanged(NeoAxis.RegulatorSwitchInSpace)"
+					GetByReference = "this:..\\method:Regulator_ValueChanged(NeoAxis.Regulator)"
 				}
 				HandlerFlow
 				{
 				}
 			}
 		}
+	}
+	.component NeoAxis.Item2D
+	{
+		Name = Item 2D
+		Transform = "-4.95619941271869 -1.93779098917473 0; 0 0 0 1; 0.714285714285714 0.714285714285714 0.714285714285714"
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ItemType
+		{
+			GetByReference = "Content\\Items 2D\\Authors\\NeoAxis\\Key\\Key.item2dtype"
+		}
+		.component NeoAxis.SpriteAnimationController
+		{
+			Name = Animation Controller
+		}
+	}
+	.component NeoAxis.Item2D
+	{
+		Name = Item 2D 2
+		Transform = "8.66757395801676 6.54337082000457 0; 0 0 0 1; 0.714285714285714 0.714285714285714 0.714285714285714"
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		ItemType
+		{
+			GetByReference = "Content\\Items 2D\\Authors\\NeoAxis\\Key\\Key.item2dtype"
+		}
+		.component NeoAxis.SpriteAnimationController
+		{
+			Name = Animation Controller
+		}
+	}
+	.component NeoAxis.SpawnPoint
+	{
+		Name = Spawn Point
+		Transform = "3.8424536244278 -2.10743991409359 0; 0 0 0 1; 1 1 1"
 	}
 }

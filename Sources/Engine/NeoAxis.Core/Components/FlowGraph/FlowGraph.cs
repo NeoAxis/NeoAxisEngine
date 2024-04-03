@@ -15,7 +15,7 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "flowgraph" )]
 #if !DEPLOY
-	[EditorControl( typeof( FlowGraphEditor ) )]
+	[EditorControl( "NeoAxis.Editor.FlowGraphEditor" )]
 #endif
 	public class FlowGraph : Component
 	{
@@ -83,7 +83,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _specialization.BeginSet( ref value ) )
+				if( _specialization.BeginSet( this, ref value ) )
 				{
 					try { SpecializationChanged?.Invoke( this ); }
 					finally { _specialization.EndSet(); }
@@ -110,7 +110,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _style.BeginSet( ref value ) )
+				if( _style.BeginSet( this, ref value ) )
 				{
 					try { StyleChanged?.Invoke( this ); }
 					finally { _style.EndSet(); }
@@ -137,7 +137,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _nodesStyle.BeginSet( ref value ) )
+				if( _nodesStyle.BeginSet( this, ref value ) )
 				{
 					try { NodesStyleChanged?.Invoke( this ); }
 					finally { _nodesStyle.EndSet(); }
@@ -389,6 +389,13 @@ namespace NeoAxis
 		public void NeedUpdateBackwardLinkCache()
 		{
 			backwardLinkCache = null;
+		}
+
+		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow = false )
+		{
+			base.NewObjectSetDefaultConfiguration( createdFromNewObjectWindow );
+
+			NetworkMode = NetworkModeEnum.False;
 		}
 	}
 }

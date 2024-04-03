@@ -1,0 +1,542 @@
+{
+    "asset" : {
+        "generator" : "Khronos glTF Blender I/O v3.4.49",
+        "version" : "2.0"
+    },
+    "scene" : 0,
+    "scenes" : [
+        {
+            "name" : "Scene",
+            "nodes" : [
+                22
+            ]
+        }
+    ],
+    "nodes" : [
+        {
+            "name" : "badges",
+            "rotation" : [
+                -0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ],
+            "scale" : [
+                100,
+                100,
+                100
+            ]
+        },
+        {
+            "name" : "badges 2",
+            "rotation" : [
+                -0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ],
+            "scale" : [
+                100,
+                100,
+                100
+            ]
+        },
+        {
+            "name" : "black",
+            "rotation" : [
+                -0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ],
+            "scale" : [
+                100,
+                100,
+                100
+            ]
+        },
+        {
+            "name" : "black2",
+            "rotation" : [
+                -0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ],
+            "scale" : [
+                100,
+                100,
+                100
+            ],
+            "translation" : [
+                0,
+                0.2597217559814453,
+                0
+            ]
+        },
+        {
+            "name" : "body",
+            "rotation" : [
+                -0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ],
+            "scale" : [
+                100,
+                100,
+                100
+            ]
+        },
+        {
+            "name" : "chrome",
+            "rotation" : [
+                -0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ],
+            "scale" : [
+                100,
+                100,
+                100
+            ],
+            "translation" : [
+                0,
+                -0.4741783142089844,
+                0
+            ]
+        },
+        {
+            "name" : "door_handle",
+            "rotation" : [
+                0.5,
+                -0.5,
+                0.4999999403953552,
+                0.5000000596046448
+            ],
+            "scale" : [
+                -4.283161640167236,
+                -4.283161163330078,
+                -4.283161640167236
+            ],
+            "translation" : [
+                -5.9604644775390625e-06,
+                0,
+                1.52587890625e-05
+            ]
+        },
+        {
+            "name" : "glass",
+            "rotation" : [
+                -0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ],
+            "scale" : [
+                100,
+                100,
+                100
+            ]
+        },
+        {
+            "name" : "glass2",
+            "rotation" : [
+                -0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ],
+            "scale" : [
+                100,
+                100,
+                100
+            ]
+        },
+        {
+            "name" : "ground",
+            "rotation" : [
+                -0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ],
+            "scale" : [
+                238.5843963623047,
+                238.58441162109375,
+                238.58441162109375
+            ],
+            "translation" : [
+                -9.548664093017578e-05,
+                -59.60902786254883,
+                209.0409393310547
+            ]
+        },
+        {
+            "name" : "lights",
+            "rotation" : [
+                -0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ],
+            "scale" : [
+                100,
+                100,
+                100
+            ],
+            "translation" : [
+                0,
+                -0.4741783142089844,
+                0
+            ]
+        },
+        {
+            "name" : "lights-glass",
+            "rotation" : [
+                -0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ],
+            "scale" : [
+                100,
+                100,
+                100
+            ]
+        },
+        {
+            "name" : "plate",
+            "rotation" : [
+                -0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ],
+            "scale" : [
+                100,
+                100,
+                100
+            ]
+        },
+        {
+            "name" : "plate-holder",
+            "rotation" : [
+                -0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ],
+            "scale" : [
+                100,
+                100,
+                100
+            ]
+        },
+        {
+            "name" : "rear-view",
+            "rotation" : [
+                -0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ],
+            "scale" : [
+                100,
+                100,
+                100
+            ],
+            "translation" : [
+                0,
+                0,
+                1.52587890625e-05
+            ]
+        },
+        {
+            "name" : "screws",
+            "rotation" : [
+                0,
+                -1,
+                0,
+                7.549789415861596e-08
+            ],
+            "scale" : [
+                100,
+                100.00001525878906,
+                100.00001525878906
+            ]
+        },
+        {
+            "name" : "trim",
+            "rotation" : [
+                -0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ],
+            "scale" : [
+                100,
+                100,
+                100
+            ]
+        },
+        {
+            "name" : "trim2",
+            "rotation" : [
+                -0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ],
+            "scale" : [
+                100,
+                100,
+                100
+            ]
+        },
+        {
+            "mesh" : 0,
+            "name" : "wheels_M_Wheel_0.002",
+            "translation" : [
+                0,
+                -2.1479063434526324e-06,
+                6.843527793884277
+            ]
+        },
+        {
+            "children" : [
+                18
+            ],
+            "name" : "wheels",
+            "rotation" : [
+                -0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ],
+            "scale" : [
+                100,
+                100,
+                100
+            ]
+        },
+        {
+            "children" : [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                19
+            ],
+            "name" : "RootNode"
+        },
+        {
+            "children" : [
+                20
+            ],
+            "name" : "d464560361b749b4ba7bb7d9c23b1386.fbx",
+            "rotation" : [
+                0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ],
+            "translation" : [
+                0,
+                -3.3123233151854947e-06,
+                0
+            ]
+        },
+        {
+            "children" : [
+                21
+            ],
+            "name" : "Sketchfab_model",
+            "rotation" : [
+                -0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ],
+            "scale" : [
+                0.005844937637448311,
+                0.005844938103109598,
+                0.005844938103109598
+            ],
+            "translation" : [
+                0.008129727095365524,
+                0.14409416913986206,
+                -1.20493483543396
+            ]
+        }
+    ],
+    "materials" : [
+        {
+            "doubleSided" : true,
+            "name" : "M_Wheel",
+            "normalTexture" : {
+                "index" : 0
+            },
+            "occlusionTexture" : {
+                "index" : 1
+            },
+            "pbrMetallicRoughness" : {
+                "baseColorTexture" : {
+                    "index" : 2
+                },
+                "metallicRoughnessTexture" : {
+                    "index" : 1
+                }
+            }
+        }
+    ],
+    "meshes" : [
+        {
+            "name" : "wheels_M_Wheel_0.002",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 0,
+                        "TEXCOORD_0" : 1,
+                        "TEXCOORD_1" : 2,
+                        "NORMAL" : 3
+                    },
+                    "indices" : 4,
+                    "material" : 0
+                }
+            ]
+        }
+    ],
+    "textures" : [
+        {
+            "sampler" : 0,
+            "source" : 0
+        },
+        {
+            "sampler" : 0,
+            "source" : 1
+        },
+        {
+            "sampler" : 0,
+            "source" : 2
+        }
+    ],
+    "images" : [
+        {
+            "mimeType" : "image/jpeg",
+            "name" : "M_Wheel_normal",
+            "uri" : "M_Wheel_normal.jpg"
+        },
+        {
+            "mimeType" : "image/png",
+            "name" : "M_Wheel_metallicRoughness",
+            "uri" : "M_Wheel_metallicRoughness.png"
+        },
+        {
+            "mimeType" : "image/png",
+            "name" : "M_Wheel_baseColor",
+            "uri" : "M_Wheel_baseColor.png"
+        }
+    ],
+    "accessors" : [
+        {
+            "bufferView" : 0,
+            "componentType" : 5126,
+            "count" : 3815,
+            "max" : [
+                -0.5536379218101501,
+                -2.8625524044036865,
+                -0.07128999382257462
+            ],
+            "min" : [
+                -0.7295475602149963,
+                -3.3941168785095215,
+                -0.5958367586135864
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 1,
+            "componentType" : 5126,
+            "count" : 3815,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 2,
+            "componentType" : 5126,
+            "count" : 3815,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 3,
+            "componentType" : 5126,
+            "count" : 3815,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 4,
+            "componentType" : 5123,
+            "count" : 17067,
+            "type" : "SCALAR"
+        }
+    ],
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 45780,
+            "byteOffset" : 0,
+            "target" : 34962
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 30520,
+            "byteOffset" : 45780,
+            "target" : 34962
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 30520,
+            "byteOffset" : 76300,
+            "target" : 34962
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 45780,
+            "byteOffset" : 106820,
+            "target" : 34962
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 34134,
+            "byteOffset" : 152600,
+            "target" : 34963
+        }
+    ],
+    "samplers" : [
+        {
+            "magFilter" : 9729,
+            "minFilter" : 9987
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 186736,
+            "uri" : "Wheel.bin"
+        }
+    ]
+}

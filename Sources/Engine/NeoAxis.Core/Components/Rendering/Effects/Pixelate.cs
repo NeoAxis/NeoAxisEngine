@@ -29,7 +29,7 @@ namespace NeoAxis
 		public Reference<double> Cells
 		{
 			get { if( _cells.BeginGet() ) Cells = _cells.Get( this ); return _cells.value; }
-			set { if( _cells.BeginSet( ref value ) ) { try { CellsChanged?.Invoke( this ); } finally { _cells.EndSet(); } } }
+			set { if( _cells.BeginSet( this, ref value ) ) { try { CellsChanged?.Invoke( this ); } finally { _cells.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Cells"/> property value changes.</summary>
 		public event Action<RenderingEffect_Pixelate> CellsChanged;

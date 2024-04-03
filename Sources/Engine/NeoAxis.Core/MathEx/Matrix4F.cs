@@ -898,6 +898,8 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void GetTranspose( out Matrix4F result )
 		{
+			//!!!!slowly. where else
+
 			result = this;
 			result.Transpose();
 		}
@@ -1518,6 +1520,34 @@ namespace NeoAxis
 			}
 			rotationMat3.ToQuaternion( out rotation );
 			return true;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void DecomposeScale( out Vector3F result )
+		{
+			ToMatrix3( out Matrix3F rotationMat3 );
+			rotationMat3.DecomposeScale( out result );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public Vector3F DecomposeScale()
+		{
+			DecomposeScale( out var result );
+			return result;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public float DecomposeScaleMaxComponent()
+		{
+			var scaleSquared = new Vector3F(
+				Item0.X * Item0.X + Item0.Y * Item0.Y + Item0.Z * Item0.Z,
+				Item1.X * Item1.X + Item1.Y * Item1.Y + Item1.Z * Item1.Z,
+				Item2.X * Item2.X + Item2.Y * Item2.Y + Item2.Z * Item2.Z );
+
+			return MathEx.Sqrt( scaleSquared.MaxComponent() );
+
+			//ToMatrix3( out Matrix3F rotationMat3 );
+			//return rotationMat3.DecomposeScaleMaxComponent();
 		}
 	}
 }

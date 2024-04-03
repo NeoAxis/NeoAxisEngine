@@ -192,8 +192,8 @@ namespace NeoAxis.Editor
 
 		protected override void OnDestroy()
 		{
-			if( Document != null )
-				Document.SaveEvent -= Document_SaveEvent;
+			if( Document2 != null )
+				Document2.SaveEvent -= Document_SaveEvent;
 
 			base.OnDestroy();
 		}
@@ -202,7 +202,7 @@ namespace NeoAxis.Editor
 		{
 			try
 			{
-				scriptEditorControl.Initialize( new ScriptDocumentForCSharpFile( Document ) );
+				scriptEditorControl.Initialize( new ScriptDocumentForCSharpFile( Document2 ) );
 				scriptEditorControl.Editor.TextChanged += Editor_TextChanged;
 			}
 			catch( Exception exc )
@@ -259,7 +259,7 @@ namespace NeoAxis.Editor
 			get { return scriptEditorControl; }
 		}
 
-		public override void EditorActionGetState( EditorAction.GetStateContext context )
+		public override void EditorActionGetState( EditorActionGetStateContext context )
 		{
 			switch( context.Action.Name )
 			{
@@ -299,7 +299,7 @@ namespace NeoAxis.Editor
 			base.EditorActionGetState( context );
 		}
 
-		public override void EditorActionClick( EditorAction.ClickContext context )
+		public override void EditorActionClick( EditorActionClickContext context )
 		{
 			switch( context.Action.Name )
 			{
@@ -341,8 +341,8 @@ namespace NeoAxis.Editor
 
 		private void Editor_TextChanged( object sender, EventArgs e )
 		{
-			if( !string.IsNullOrEmpty( Document.RealFileName ) )
-				Document.Modified = true;
+			if( !string.IsNullOrEmpty( Document2.RealFileName ) )
+				Document2.Modified = true;
 		}
 
 		void AddPropertyCode()
@@ -379,7 +379,7 @@ public Reference<{TypeName}> {PropertyName}
 	}
 	set
 	{
-		if( {FieldName}.BeginSet( ref value ) )
+		if( {FieldName}.BeginSet( this, ref value ) )
 		{
 {CheckValue}
 			try { {PropertyName}Changed?.Invoke( this ); }
@@ -400,7 +400,7 @@ ReferenceField<{TypeName}> {FieldName}{DefaultValueSet};
 public Reference<{TypeName}> {PropertyName}
 {
 	get { if( {FieldName}.BeginGet() ) {PropertyName} = {FieldName}.Get( this ); return {FieldName}.value; }
-	set { if( {FieldName}.BeginSet( ref value ) ) { {CheckValue} try { {PropertyName}Changed?.Invoke( this ); } finally { {FieldName}.EndSet(); } {AdditionalActionsWrong} } }
+	set { if( {FieldName}.BeginSet( this, ref value ) ) { {CheckValue} try { {PropertyName}Changed?.Invoke( this ); } finally { {FieldName}.EndSet(); } {AdditionalActionsWrong} } }
 }
 /// <summary>Occurs when the <see cref={Quote}{PropertyName}{Quote}/> property value changes.</summary>
 public event Action<{ClassName}> {PropertyName}Changed;
@@ -422,7 +422,7 @@ public Reference<{TypeName}> {PropertyName}
 	set
 	{
 {CheckValue}
-		if( {FieldName}.BeginSet( ref value ) )
+		if( {FieldName}.BeginSet( this, ref value ) )
 		{
 			try
 			{

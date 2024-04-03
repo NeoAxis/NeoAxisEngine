@@ -1,11 +1,6 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
-using System.Drawing.Design;
-using System.ComponentModel;
-using System.Reflection;
 
 namespace NeoAxis
 {
@@ -175,9 +170,9 @@ namespace NeoAxis
 		public enum ModeEnum
 		{
 			One,
-			//OneClosest,
-			//OneForEach,
-			//OneClosestForEach,
+			OneClosest,
+			OneForEach,
+			OneClosestForEach,
 			All
 		}
 
@@ -198,6 +193,8 @@ namespace NeoAxis
 		public struct ResultItem
 		{
 			public Scene.PhysicsWorldClass.Body Body;
+			public float DistanceScale;
+			//public bool BackFaceHit;
 
 			//!!!!если иметь shape index, тогда может быть несколько результатов на одно тело
 			//public int ShapeIndex;

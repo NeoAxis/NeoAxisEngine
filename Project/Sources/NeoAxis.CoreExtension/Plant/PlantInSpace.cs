@@ -20,7 +20,7 @@
 //		public Reference<PlantType> PlantType
 //		{
 //			get { if( _plantType.BeginGet() ) PlantType = _plantType.Get( this ); return _plantType.value; }
-//			set { if( _plantType.BeginSet( ref value ) ) { try { PlantTypeChanged?.Invoke( this ); ShouldRecompile = true; } finally { _plantType.EndSet(); } } }
+//			set { if( _plantType.BeginSet( this, ref value ) ) { try { PlantTypeChanged?.Invoke( this ); ShouldRecompile = true; } finally { _plantType.EndSet(); } } }
 //		}
 //		/// <summary>Occurs when the <see cref="PlantType"/> property value changes.</summary>
 //		public event Action<PlantMesh> PlantTypeChanged;
@@ -33,7 +33,7 @@
 //		public Reference<int> Seed
 //		{
 //			get { if( _seed.BeginGet() ) Seed = _seed.Get( this ); return _seed.value; }
-//			set { if( _seed.BeginSet( ref value ) ) { try { SeedChanged?.Invoke( this ); ShouldRecompile = true; } finally { _seed.EndSet(); } } }
+//			set { if( _seed.BeginSet( this, ref value ) ) { try { SeedChanged?.Invoke( this ); ShouldRecompile = true; } finally { _seed.EndSet(); } } }
 //		}
 //		/// <summary>Occurs when the <see cref="Seed"/> property value changes.</summary>
 //		public event Action<PlantMesh> SeedChanged;
@@ -50,7 +50,7 @@
 //		//public Reference<double> Quality
 //		//{
 //		//	get { if( _quality.BeginGet() ) Quality = _quality.Get( this ); return _quality.value; }
-//		//	set { if( _quality.BeginSet( ref value ) ) { try { QualityChanged?.Invoke( this ); ShouldRecompile = true; } finally { _quality.EndSet(); } } }
+//		//	set { if( _quality.BeginSet( this, ref value ) ) { try { QualityChanged?.Invoke( this ); ShouldRecompile = true; } finally { _quality.EndSet(); } } }
 //		//}
 //		///// <summary>Occurs when the <see cref="Quality"/> property value changes.</summary>
 //		//public event Action<PlantMesh> QualityChanged;
@@ -65,7 +65,7 @@
 //		public Reference<bool> LODs
 //		{
 //			get { if( _lODs.BeginGet() ) LODs = _lODs.Get( this ); return _lODs.value; }
-//			set { if( _lODs.BeginSet( ref value ) ) { try { LODsChanged?.Invoke( this ); ShouldRecompile = true; } finally { _lODs.EndSet(); } } }
+//			set { if( _lODs.BeginSet( this, ref value ) ) { try { LODsChanged?.Invoke( this ); ShouldRecompile = true; } finally { _lODs.EndSet(); } } }
 //		}
 //		/// <summary>Occurs when the <see cref="LODs"/> property value changes.</summary>
 //		public event Action<PlantMesh> LODsChanged;
@@ -82,7 +82,7 @@
 //		//public Reference<double> LODDistance
 //		//{
 //		//	get { if( _lODDistance.BeginGet() ) LODDistance = _lODDistance.Get( this ); return _lODDistance.value; }
-//		//	set { if( _lODDistance.BeginSet( ref value ) ) { try { LODDistanceChanged?.Invoke( this ); ShouldRecompile = true; } finally { _lODDistance.EndSet(); } } }
+//		//	set { if( _lODDistance.BeginSet( this, ref value ) ) { try { LODDistanceChanged?.Invoke( this ); ShouldRecompile = true; } finally { _lODDistance.EndSet(); } } }
 //		//}
 //		///// <summary>Occurs when the <see cref="LODDistance"/> property value changes.</summary>
 //		//public event Action<PlantMesh> LODDistanceChanged;
@@ -98,7 +98,7 @@
 //		public Reference<double> Age
 //		{
 //			get { if( _age.BeginGet() ) Age = _age.Get( this ); return _age.value; }
-//			set { if( _age.BeginSet( ref value ) ) { try { AgeChanged?.Invoke( this ); ShouldRecompile = true; } finally { _age.EndSet(); } } }
+//			set { if( _age.BeginSet( this, ref value ) ) { try { AgeChanged?.Invoke( this ); ShouldRecompile = true; } finally { _age.EndSet(); } } }
 //		}
 //		/// <summary>Occurs when the <see cref="Age"/> property value changes.</summary>
 //		public event Action<PlantMesh> AgeChanged;
@@ -111,7 +111,7 @@
 //		//public Reference<double?> Age
 //		//{
 //		//	get { if( _age.BeginGet() ) Age = _age.Get( this ); return _age.value; }
-//		//	set { if( _age.BeginSet( ref value ) ) { try { AgeChanged?.Invoke( this ); ShouldRecompile = true; } finally { _age.EndSet(); } } }
+//		//	set { if( _age.BeginSet( this, ref value ) ) { try { AgeChanged?.Invoke( this ); ShouldRecompile = true; } finally { _age.EndSet(); } } }
 //		//}
 //		///// <summary>Occurs when the <see cref="Age"/> property value changes.</summary>
 //		//public event Action<PlantMesh> AgeChanged;
@@ -123,7 +123,7 @@
 //		public Reference<double> Dead
 //		{
 //			get { if( _dead.BeginGet() ) Dead = _dead.Get( this ); return _dead.value; }
-//			set { if( _dead.BeginSet( ref value ) ) { try { DeadChanged?.Invoke( this ); ShouldRecompile = true; } finally { _dead.EndSet(); } } }
+//			set { if( _dead.BeginSet( this, ref value ) ) { try { DeadChanged?.Invoke( this ); ShouldRecompile = true; } finally { _dead.EndSet(); } } }
 //		}
 //		/// <summary>Occurs when the <see cref="Dead"/> property value changes.</summary>
 //		public event Action<PlantMesh> DeadChanged;
@@ -135,7 +135,7 @@
 //		public Reference<double> Fired
 //		{
 //			get { if( _fired.BeginGet() ) Fired = _fired.Get( this ); return _fired.value; }
-//			set { if( _fired.BeginSet( ref value ) ) { try { FiredChanged?.Invoke( this ); ShouldRecompile = true; } finally { _fired.EndSet(); } } }
+//			set { if( _fired.BeginSet( this, ref value ) ) { try { FiredChanged?.Invoke( this ); ShouldRecompile = true; } finally { _fired.EndSet(); } } }
 //		}
 //		/// <summary>Occurs when the <see cref="Fired"/> property value changes.</summary>
 //		public event Action<PlantMesh> FiredChanged;
@@ -152,7 +152,7 @@
 //		//public Reference<double?> MineralsQuality
 //		//{
 //		//	get { if( _mineralsQuality.BeginGet() ) MineralsQuality = _mineralsQuality.Get( this ); return _mineralsQuality.value; }
-//		//	set { if( _mineralsQuality.BeginSet( ref value ) ) { try { MineralsQualityChanged?.Invoke( this ); ShouldRecompile = true; } finally { _mineralsQuality.EndSet(); } } }
+//		//	set { if( _mineralsQuality.BeginSet( this, ref value ) ) { try { MineralsQualityChanged?.Invoke( this ); ShouldRecompile = true; } finally { _mineralsQuality.EndSet(); } } }
 //		//}
 //		///// <summary>Occurs when the <see cref="MineralsQuality"/> property value changes.</summary>
 //		//public event Action<PlantMesh> MineralsQualityChanged;
@@ -164,7 +164,7 @@
 //		//public Reference<double?> AverageSolarEnergy
 //		//{
 //		//	get { if( _averageSolarEnergy.BeginGet() ) AverageSolarEnergy = _averageSolarEnergy.Get( this ); return _averageSolarEnergy.value; }
-//		//	set { if( _averageSolarEnergy.BeginSet( ref value ) ) { try { AverageSolarEnergyChanged?.Invoke( this ); ShouldRecompile = true; } finally { _averageSolarEnergy.EndSet(); } } }
+//		//	set { if( _averageSolarEnergy.BeginSet( this, ref value ) ) { try { AverageSolarEnergyChanged?.Invoke( this ); ShouldRecompile = true; } finally { _averageSolarEnergy.EndSet(); } } }
 //		//}
 //		///// <summary>Occurs when the <see cref="AverageSolarEnergy"/> property value changes.</summary>
 //		//public event Action<PlantMesh> AverageSolarEnergyChanged;
@@ -176,7 +176,7 @@
 //		//public Reference<double?> AverageHumidity
 //		//{
 //		//	get { if( _averageAverageHumidity.BeginGet() ) AverageHumidity = _averageAverageHumidity.Get( this ); return _averageAverageHumidity.value; }
-//		//	set { if( _averageAverageHumidity.BeginSet( ref value ) ) { try { AverageHumidityChanged?.Invoke( this ); ShouldRecompile = true; } finally { _averageAverageHumidity.EndSet(); } } }
+//		//	set { if( _averageAverageHumidity.BeginSet( this, ref value ) ) { try { AverageHumidityChanged?.Invoke( this ); ShouldRecompile = true; } finally { _averageAverageHumidity.EndSet(); } } }
 //		//}
 //		///// <summary>Occurs when the <see cref="AverageHumidity"/> property value changes.</summary>
 //		//public event Action<PlantMesh> AverageHumidityChanged;
@@ -193,7 +193,7 @@
 //		public Reference<double> Season
 //		{
 //			get { if( _season.BeginGet() ) Season = _season.Get( this ); return _season.value; }
-//			set { if( _season.BeginSet( ref value ) ) { try { SeasonChanged?.Invoke( this ); ShouldRecompile = true; } finally { _season.EndSet(); } } }
+//			set { if( _season.BeginSet( this, ref value ) ) { try { SeasonChanged?.Invoke( this ); ShouldRecompile = true; } finally { _season.EndSet(); } } }
 //		}
 //		/// <summary>Occurs when the <see cref="Season"/> property value changes.</summary>
 //		public event Action<PlantMesh> SeasonChanged;
@@ -208,7 +208,7 @@
 //		//public Reference<double?> Season
 //		//{
 //		//	get { if( _season.BeginGet() ) Season = _season.Get( this ); return _season.value; }
-//		//	set { if( _season.BeginSet( ref value ) ) { try { SeasonChanged?.Invoke( this ); ShouldRecompile = true; } finally { _season.EndSet(); } } }
+//		//	set { if( _season.BeginSet( this, ref value ) ) { try { SeasonChanged?.Invoke( this ); ShouldRecompile = true; } finally { _season.EndSet(); } } }
 //		//}
 //		///// <summary>Occurs when the <see cref="Season"/> property value changes.</summary>
 //		//public event Action<PlantMesh> SeasonChanged;
@@ -220,7 +220,7 @@
 //		public Reference<double> Lichen
 //		{
 //			get { if( _lichen.BeginGet() ) Lichen = _lichen.Get( this ); return _lichen.value; }
-//			set { if( _lichen.BeginSet( ref value ) ) { try { LichenChanged?.Invoke( this ); } finally { _lichen.EndSet(); } } }
+//			set { if( _lichen.BeginSet( this, ref value ) ) { try { LichenChanged?.Invoke( this ); } finally { _lichen.EndSet(); } } }
 //		}
 //		/// <summary>Occurs when the <see cref="Lichen"/> property value changes.</summary>
 //		public event Action<PlantMesh> LichenChanged;
@@ -235,7 +235,7 @@
 //		//public Reference<double?> Temperature
 //		//{
 //		//	get { if( _temperature.BeginGet() ) Temperature = _temperature.Get( this ); return _temperature.value; }
-//		//	set { if( _temperature.BeginSet( ref value ) ) { try { TemperatureChanged?.Invoke( this ); } finally { _temperature.EndSet(); } } }
+//		//	set { if( _temperature.BeginSet( this, ref value ) ) { try { TemperatureChanged?.Invoke( this ); } finally { _temperature.EndSet(); } } }
 //		//}
 //		///// <summary>Occurs when the <see cref="Temperature"/> property value changes.</summary>
 //		//public event Action<PlantMesh> TemperatureChanged;
@@ -247,7 +247,7 @@
 //		//public Reference<double?> Humidity
 //		//{
 //		//	get { if( _humidity.BeginGet() ) Humidity = _humidity.Get( this ); return _humidity.value; }
-//		//	set { if( _humidity.BeginSet( ref value ) ) { try { HumidityChanged?.Invoke( this ); } finally { _humidity.EndSet(); } } }
+//		//	set { if( _humidity.BeginSet( this, ref value ) ) { try { HumidityChanged?.Invoke( this ); } finally { _humidity.EndSet(); } } }
 //		//}
 //		///// <summary>Occurs when the <see cref="Humidity"/> property value changes.</summary>
 //		//public event Action<PlantMesh> HumidityChanged;
@@ -259,7 +259,7 @@
 //		//public Reference<double?> Precipitation
 //		//{
 //		//	get { if( _precipitation.BeginGet() ) Precipitation = _precipitation.Get( this ); return _precipitation.value; }
-//		//	set { if( _precipitation.BeginSet( ref value ) ) { try { PrecipitationChanged?.Invoke( this ); } finally { _precipitation.EndSet(); } } }
+//		//	set { if( _precipitation.BeginSet( this, ref value ) ) { try { PrecipitationChanged?.Invoke( this ); } finally { _precipitation.EndSet(); } } }
 //		//}
 //		///// <summary>Occurs when the <see cref="Precipitation"/> property value changes.</summary>
 //		//public event Action<PlantMesh> PrecipitationChanged;
@@ -278,7 +278,7 @@
 //		//public Reference<RangeI?> LODRange
 //		//{
 //		//	get { if( _lODRange.BeginGet() ) LODRange = _lODRange.Get( this ); return _lODRange.value; }
-//		//	set { if( _lODRange.BeginSet( ref value ) ) { try { LODRangeChanged?.Invoke( this ); ShouldRecompile = true; } finally { _lODRange.EndSet(); } } }
+//		//	set { if( _lODRange.BeginSet( this, ref value ) ) { try { LODRangeChanged?.Invoke( this ); ShouldRecompile = true; } finally { _lODRange.EndSet(); } } }
 //		//}
 //		///// <summary>Occurs when the <see cref="LODRange"/> property value changes.</summary>
 //		//public event Action<Plant> LODRangeChanged;

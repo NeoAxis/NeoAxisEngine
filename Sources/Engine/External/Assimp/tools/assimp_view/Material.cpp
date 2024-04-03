@@ -3,7 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -175,33 +175,29 @@ VOID WINAPI FillFunc(D3DXVECTOR4* pOut,
         pOut->x = pOut->y = 1.0f;
         pOut->z = 0.0f;
     }
-    return;
 }
 
 //-------------------------------------------------------------------------------
-int CMaterialManager::UpdateSpecularMaterials()
-    {
-    if (g_pcAsset && g_pcAsset->pcScene)
-        {
-        for (unsigned int i = 0; i < g_pcAsset->pcScene->mNumMeshes;++i)
-            {
-            if (aiShadingMode_Phong == g_pcAsset->apcMeshes[i]->eShadingMode)
-                {
+int CMaterialManager::UpdateSpecularMaterials() {
+    if (g_pcAsset && g_pcAsset->pcScene) {
+        for (unsigned int i = 0; i < g_pcAsset->pcScene->mNumMeshes;++i) {
+            if (aiShadingMode_Phong == g_pcAsset->apcMeshes[i]->eShadingMode) {
                 this->DeleteMaterial(g_pcAsset->apcMeshes[i]);
                 this->CreateMaterial(g_pcAsset->apcMeshes[i],g_pcAsset->pcScene->mMeshes[i]);
-                }
             }
         }
-    return 1;
     }
+    return 1;
+}
+
 //-------------------------------------------------------------------------------
-int CMaterialManager::SetDefaultTexture(IDirect3DTexture9** p_ppiOut)
-{
+int CMaterialManager::SetDefaultTexture(IDirect3DTexture9** p_ppiOut) {
     if  (sDefaultTexture) {
         sDefaultTexture->AddRef();
         *p_ppiOut = sDefaultTexture;
         return 1;
     }
+
     if(FAILED(g_piDevice->CreateTexture(
         256,
         256,
@@ -272,7 +268,7 @@ bool CMaterialManager::TryLongerPath(char* szTemp,aiString* p_szString)
                             szExtFound - 1 - info.cFileName);
 
                         for (unsigned int i = 0; i < iSizeFound;++i)
-                            info.cFileName[i] = (CHAR)tolower(info.cFileName[i]);
+                            info.cFileName[i] = (CHAR)tolower((unsigned char)info.cFileName[i]);
 
                         if (0 == memcmp(info.cFileName,szFile2, std::min(iSizeFound,iSize)))
                         {
@@ -325,9 +321,10 @@ int CMaterialManager::FindValidPath(aiString* p_szString)
 
     // first check whether we can directly load the file
     FILE* pFile = fopen(p_szString->data,"rb");
-    if (pFile)fclose(pFile);
-    else
-    {
+    if (pFile) {
+        fclose(pFile);
+    }
+    else {
         // check whether we can use the directory of  the asset as relative base
         char szTemp[MAX_PATH*2], tmp2[MAX_PATH*2];
         strcpy(szTemp, g_szFileName);
@@ -354,7 +351,7 @@ int CMaterialManager::FindValidPath(aiString* p_szString)
             for (unsigned int i = 0;;++i)
             {
                 if ('\0' == szTemp[i])break;
-                szTemp[i] = (char)tolower(szTemp[i]);
+                szTemp[i] = (char)tolower((unsigned char)szTemp[i]);
             }
 
             if(TryLongerPath(szTemp,p_szString))return 1;
@@ -1482,7 +1479,7 @@ int CMaterialManager::EndMaterial (AssetHelper::MeshHelper* pcMesh)
     pcMesh->piEffect->EndPass();
     pcMesh->piEffect->End();
 
-    // reenable culling if necessary
+    // re-enable culling if necessary
     if (pcMesh->twosided && g_sOptions.bCulling) {
         g_piDevice->SetRenderState(D3DRS_CULLMODE,D3DCULL_CCW);
     }

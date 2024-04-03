@@ -78,6 +78,9 @@
 #include "vector.h"
 
 
+//!!!!betauser
+#ifndef PLATFORM_LINUX
+
 #if defined(HAVE_GCC_GET_CPUID) && (defined(__i386__) || defined(__x86_64__) || \
                                     defined(_M_IX86) || defined(_M_X64))
 using reg_type = unsigned int;
@@ -90,6 +93,9 @@ using reg_type = int;
 static inline void get_cpuid(int f, reg_type *regs)
 { (__cpuid)(regs, f); }
 #define CAN_GET_CPUID
+#endif
+
+//!!!!betauser
 #endif
 
 int CPUCapFlags = 0;

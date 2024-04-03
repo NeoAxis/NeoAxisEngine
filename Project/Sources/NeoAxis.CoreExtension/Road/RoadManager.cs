@@ -24,7 +24,7 @@ namespace NeoAxis
 		public Reference<bool> Collision
 		{
 			get { if( _collision.BeginGet() ) Collision = _collision.Get( this ); return _collision.value; }
-			set { if( _collision.BeginSet( ref value ) ) { try { CollisionChanged?.Invoke( this ); RoadsNeedUpdate(); } finally { _collision.EndSet(); } } }
+			set { if( _collision.BeginSet( this, ref value ) ) { try { CollisionChanged?.Invoke( this ); RoadsNeedUpdate(); } finally { _collision.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Collision"/> property value changes.</summary>
 		public event Action<RoadManager> CollisionChanged;
@@ -38,7 +38,7 @@ namespace NeoAxis
 		public Reference<bool> Display
 		{
 			get { if( _display.BeginGet() ) Display = _display.Get( this ); return _display.value; }
-			set { if( _display.BeginSet( ref value ) ) { try { DisplayChanged?.Invoke( this ); RoadsNeedUpdate(); } finally { _display.EndSet(); } } }
+			set { if( _display.BeginSet( this, ref value ) ) { try { DisplayChanged?.Invoke( this ); RoadsNeedUpdate(); } finally { _display.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Display"/> property value changes.</summary>
 		public event Action<RoadManager> DisplayChanged;
@@ -52,7 +52,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayMarkup
 		{
 			get { if( _displayMarkup.BeginGet() ) DisplayMarkup = _displayMarkup.Get( this ); return _displayMarkup.value; }
-			set { if( _displayMarkup.BeginSet( ref value ) ) { try { DisplayMarkupChanged?.Invoke( this ); RoadsNeedUpdate(); } finally { _displayMarkup.EndSet(); } } }
+			set { if( _displayMarkup.BeginSet( this, ref value ) ) { try { DisplayMarkupChanged?.Invoke( this ); RoadsNeedUpdate(); } finally { _displayMarkup.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayMarkup"/> property value changes.</summary>
 		public event Action<RoadManager> DisplayMarkupChanged;
@@ -79,7 +79,7 @@ namespace NeoAxis
 		//			if( v.Z < 1.0 ) v.Z = 1.0;
 		//			value = new Reference<Vector3>( v, value.GetByReference );
 		//		}
-		//		if( _sectorSize.BeginSet( ref value ) ) { try { SectorSizeChanged?.Invoke( this ); RoadsNeedUpdate();/*UpdateGroupOfObjects();*/ } finally { _sectorSize.EndSet(); } }
+		//		if( _sectorSize.BeginSet( this, ref value ) ) { try { SectorSizeChanged?.Invoke( this ); RoadsNeedUpdate();/*UpdateGroupOfObjects();*/ } finally { _sectorSize.EndSet(); } }
 		//	}
 		//}
 		///// <summary>Occurs when the <see cref="SectorSize"/> property value changes.</summary>
@@ -96,7 +96,7 @@ namespace NeoAxis
 		//public Reference<int> MaxObjectsInGroup
 		//{
 		//	get { if( _maxObjectsInGroup.BeginGet() ) MaxObjectsInGroup = _maxObjectsInGroup.Get( this ); return _maxObjectsInGroup.value; }
-		//	set { if( _maxObjectsInGroup.BeginSet( ref value ) ) { try { MaxObjectsInGroupChanged?.Invoke( this ); RoadsNeedUpdate();/*UpdateGroupOfObjects();*/ } finally { _maxObjectsInGroup.EndSet(); } } }
+		//	set { if( _maxObjectsInGroup.BeginSet( this, ref value ) ) { try { MaxObjectsInGroupChanged?.Invoke( this ); RoadsNeedUpdate();/*UpdateGroupOfObjects();*/ } finally { _maxObjectsInGroup.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="MaxObjectsInGroup"/> property value changes.</summary>
 		//public event Action<RoadManager> MaxObjectsInGroupChanged;

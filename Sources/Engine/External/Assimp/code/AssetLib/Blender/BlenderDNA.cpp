@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 
 All rights reserved.
@@ -72,7 +72,7 @@ struct Type {
 
 // ------------------------------------------------------------------------------------------------
 void DNAParser::Parse() {
-    StreamReaderAny &stream = *db.reader.get();
+    StreamReaderAny &stream = *db.reader;
     DNA &dna = db.dna;
 
     if (!match4(stream, "SDNA")) {
@@ -130,9 +130,7 @@ void DNAParser::Parse() {
 
         uint16_t n = stream.GetI2();
         if (n >= types.size()) {
-            throw DeadlyImportError((format(),
-                    "BlenderDNA: Invalid type index in structure name", n,
-                    " (there are only ", types.size(), " entries)"));
+            throw DeadlyImportError("BlenderDNA: Invalid type index in structure name", n, " (there are only ", types.size(), " entries)");
         }
 
         // maintain separate indexes
@@ -141,7 +139,6 @@ void DNAParser::Parse() {
         dna.structures.push_back(Structure());
         Structure &s = dna.structures.back();
         s.name = types[n].name;
-        //s.index = dna.structures.size()-1;
 
         n = stream.GetI2();
         s.fields.reserve(n);
@@ -151,9 +148,7 @@ void DNAParser::Parse() {
 
             uint16_t j = stream.GetI2();
             if (j >= types.size()) {
-                throw DeadlyImportError((format(),
-                        "BlenderDNA: Invalid type index in structure field ", j,
-                        " (there are only ", types.size(), " entries)"));
+                throw DeadlyImportError("BlenderDNA: Invalid type index in structure field ", j, " (there are only ", types.size(), " entries)");
             }
             s.fields.push_back(Field());
             Field &f = s.fields.back();
@@ -164,9 +159,7 @@ void DNAParser::Parse() {
 
             j = stream.GetI2();
             if (j >= names.size()) {
-                throw DeadlyImportError((format(),
-                        "BlenderDNA: Invalid name index in structure field ", j,
-                        " (there are only ", names.size(), " entries)"));
+                throw DeadlyImportError("BlenderDNA: Invalid name index in structure field ", j, " (there are only ", names.size(), " entries)");
             }
 
             f.name = names[j];
@@ -188,9 +181,7 @@ void DNAParser::Parse() {
             if (*f.name.rbegin() == ']') {
                 const std::string::size_type rb = f.name.find('[');
                 if (rb == std::string::npos) {
-                    throw DeadlyImportError((format(),
-                            "BlenderDNA: Encountered invalid array declaration ",
-                            f.name));
+                    throw DeadlyImportError("BlenderDNA: Encountered invalid array declaration ", f.name);
                 }
 
                 f.flags |= FieldFlag_Array;
@@ -207,9 +198,9 @@ void DNAParser::Parse() {
         s.size = offset;
     }
 
-    ASSIMP_LOG_DEBUG_F("BlenderDNA: Got ", dna.structures.size(), " structures with totally ", fields, " fields");
+    ASSIMP_LOG_DEBUG("BlenderDNA: Got ", dna.structures.size(), " structures with totally ", fields, " fields");
 
-#ifdef ASSIMP_BUILD_BLENDER_DEBUG
+#if ASSIMP_BUILD_BLENDER_DEBUG_DNA
     dna.DumpToFile();
 #endif
 
@@ -217,7 +208,7 @@ void DNAParser::Parse() {
     dna.RegisterConverters();
 }
 
-#ifdef ASSIMP_BUILD_BLENDER_DEBUG
+#if ASSIMP_BUILD_BLENDER_DEBUG_DNA
 
 #include <fstream>
 // ------------------------------------------------------------------------------------------------
@@ -246,7 +237,7 @@ void DNA ::DumpToFile() {
 
     ASSIMP_LOG_INFO("BlenderDNA: Dumped dna to dna.txt");
 }
-#endif
+#endif // ASSIMP_BUILD_BLENDER_DEBUG_DNA
 
 // ------------------------------------------------------------------------------------------------
 /*static*/ void DNA ::ExtractArraySize(
@@ -334,10 +325,10 @@ void SectionParser ::Next() {
     stream.SetCurrentPos(current.start + current.size);
 
     const char tmp[] = {
-        (const char)stream.GetI1(),
-        (const char)stream.GetI1(),
-        (const char)stream.GetI1(),
-        (const char)stream.GetI1()
+        (char)stream.GetI1(),
+        (char)stream.GetI1(),
+        (char)stream.GetI1(),
+        (char)stream.GetI1()
     };
     current.id = std::string(tmp, tmp[3] ? 4 : tmp[2] ? 3 : tmp[1] ? 2 : 1);
 

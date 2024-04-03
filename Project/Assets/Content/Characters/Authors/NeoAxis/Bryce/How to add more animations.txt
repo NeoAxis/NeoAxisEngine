@@ -1,0 +1,13 @@
+https://www.mixamo.com/
+
+- Upload Bryce.fbx to Mixamo.
+
+- Select animation, download it.
+
+- Set import settings:
+	- Scale = 1
+	- Rotation = "0 0 0.707106781186548 0.707106781186548" or Rotation.Angles = "0 0 -90"
+
+- Do Re-import.
+	
+- Copy an animation track and an animation from imported file to Human.fbx. Rename the track and the animation. Configure a reference from the animation to the track.

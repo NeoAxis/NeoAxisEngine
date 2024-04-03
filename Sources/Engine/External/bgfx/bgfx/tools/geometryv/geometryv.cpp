@@ -1,6 +1,6 @@
 /*
  * Copyright 2019-2019 Attila Kocsis. All rights reserved.
- * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
+ * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
 #include "common.h"
@@ -169,7 +169,7 @@ struct Camera
 {
 	Camera()
 	{
-		init(bx::Vec3(0.0f,0.0f,0.0f), 2.0f, 0.01f, 100.0f);
+		init(bx::InitZero, 2.0f, 0.01f, 100.0f);
 	}
 
 	void init(const bx::Vec3& _center, float _distance, float _near, float _far)
@@ -214,7 +214,7 @@ struct Camera
 	{
 		const bx::Vec3 toTarget     = bx::sub(m_target.dest, m_pos.dest);
 		const float toTargetLen     = bx::length(toTarget);
-		const float invToTargetLen  = 1.0f / (toTargetLen + bx::kFloatMin);
+		const float invToTargetLen  = 1.0f / (toTargetLen + bx::kFloatSmallest);
 		const bx::Vec3 toTargetNorm = bx::mul(toTarget, invToTargetLen);
 
 		float delta  = toTargetLen * _dz;
@@ -237,7 +237,7 @@ struct Camera
 
 		const bx::Vec3 toPos     = bx::sub(m_pos.curr, m_target.curr);
 		const float toPosLen     = bx::length(toPos);
-		const float invToPosLen  = 1.0f / (toPosLen + bx::kFloatMin);
+		const float invToPosLen  = 1.0f / (toPosLen + bx::kFloatSmallest);
 		const bx::Vec3 toPosNorm = bx::mul(toPos, invToPosLen);
 
 		float ll[2];
@@ -265,8 +265,8 @@ struct Camera
 
 	struct Interp3f
 	{
-		bx::Vec3 curr;
-		bx::Vec3 dest;
+		bx::Vec3 curr = bx::InitNone;
+		bx::Vec3 dest = bx::InitNone;
 	};
 
 	Interp3f m_target;
@@ -430,7 +430,7 @@ struct View
 		{
 			m_path = _filePath;
 		}
-		else if (bx::open(&dr, _filePath.getPath() ) )
+		else if (bx::open(&dr, _filePath.getPath()) )
 		{
 			m_path = _filePath.getPath();
 		}
@@ -515,7 +515,7 @@ struct View
 		bx::FileReader reader;
 		if (bx::open(&reader, filePath) )
 		{
-			bx::read(&reader, settings);
+			bx::read(&reader, settings, bx::ErrorAssert{});
 			bx::close(&reader);
 
 			if (!bx::fromString(&m_width, settings.get("view/width") ) )
@@ -550,7 +550,7 @@ struct View
 			bx::FileWriter writer;
 			if (bx::open(&writer, filePath) )
 			{
-				bx::write(&writer, settings);
+				bx::write(&writer, settings, bx::ErrorAssert{});
 				bx::close(&writer);
 			}
 		}
@@ -644,9 +644,9 @@ typedef InterpolatorT<bx::lerp, bx::easeInOutQuad> Interpolator;
 
 void keyBindingHelp(const char* _bindings, const char* _description)
 {
-	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), _bindings);
+	ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%s", _bindings);
 	ImGui::SameLine(140);
-	ImGui::Text(_description);
+	ImGui::Text("%s", _description);
 }
 
 void help(const char* _error = NULL)
@@ -659,7 +659,7 @@ void help(const char* _error = NULL)
 	bx::printf(
 		  "geometryv, bgfx geometry viewer tool, version %d.%d.%d.\n"
 		  "Copyright 2019-2019 Attila Kocsis. All rights reserved.\n"
-		  "License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause\n\n"
+		  "License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE\n\n"
 		, BGFX_GEOMETRYV_VERSION_MAJOR
 		, BGFX_GEOMETRYV_VERSION_MINOR
 		, BGFX_API_VERSION
@@ -715,10 +715,12 @@ int _main_(int _argc, char** _argv)
 	View view;
 	cmdAdd("view", cmdView, &view);
 
-	entry::setWindowFlags(entry::WindowHandle{0}, ENTRY_WINDOW_FLAG_ASPECT_RATIO, false);
-	entry::setWindowSize(entry::WindowHandle{0}, view.m_width, view.m_height);
+	entry::setWindowFlags(entry::kDefaultWindowHandle, ENTRY_WINDOW_FLAG_ASPECT_RATIO, false);
+	entry::setWindowSize(entry::kDefaultWindowHandle, view.m_width, view.m_height);
 
 	bgfx::Init init;
+	init.platformData.nwh = entry::getNativeWindowHandle(entry::kDefaultWindowHandle);
+	init.platformData.ndt = entry::getNativeDisplayHandle();
 	init.resolution.width = view.m_width;
 	init.resolution.width = view.m_height;
 	init.resolution.reset = 0
@@ -908,6 +910,7 @@ int _main_(int _argc, char** _argv)
 					ImGui::Separator();
 					ImGui::TextColored(
 						  ImVec4(0.0f, 1.0f, 1.0f, 1.0f)
+						, "%s"
 						, view.m_fileList[view.m_fileIndex].c_str()
 						);
 				}
@@ -1001,20 +1004,40 @@ int _main_(int _argc, char** _argv)
 							ImGui::Text("Name: %s %s", view.m_fileList[view.m_fileIndex].c_str(), layout);
 
 							ImGui::Indent();
-							for (GroupArray::const_iterator itGroup = mesh->m_groups.begin(), itGroupEnd = mesh->m_groups.end(); itGroup != itGroupEnd; ++itGroup)
+							for (GroupArray::const_iterator itGroup = mesh->m_groups.begin(), itGroupEnd = mesh->m_groups.end()
+								; itGroup != itGroupEnd
+								; ++itGroup
+								)
 							{
-								ImGui::Text("Group v %d i %d c %.2f %.2f %.2f r %.2f", itGroup->m_numVertices, itGroup->m_numIndices,
-											itGroup->m_sphere.center.x, itGroup->m_sphere.center.y, itGroup->m_sphere.center.z,
-											itGroup->m_sphere.radius);
+								ImGui::Text("Group v %d i %d c %.2f %.2f %.2f r %.2f"
+									, itGroup->m_numVertices
+									, itGroup->m_numIndices
+									, itGroup->m_sphere.center.x
+									, itGroup->m_sphere.center.y
+									, itGroup->m_sphere.center.z
+									, itGroup->m_sphere.radius
+									);
+
 								ImGui::Indent();
-								for (PrimitiveArray::const_iterator itPrim = itGroup->m_prims.begin(), itPrimEnd = itGroup->m_prims.end(); itPrim != itPrimEnd; ++itPrim)
+
+								for (PrimitiveArray::const_iterator itPrim = itGroup->m_prims.begin(), itPrimEnd = itGroup->m_prims.end()
+									; itPrim != itPrimEnd
+									; ++itPrim
+									)
 								{
-									ImGui::Text("Primitive v %d i %d c %.2f %.2f %.2f r %.2f", itPrim->m_numVertices, itPrim->m_numIndices,
-												itPrim->m_sphere.center.x, itPrim->m_sphere.center.y, itPrim->m_sphere.center.z,
-												itPrim->m_sphere.radius);
+									ImGui::Text("Primitive v %d i %d c %.2f %.2f %.2f r %.2f"
+										, itPrim->m_numVertices
+										, itPrim->m_numIndices
+										, itPrim->m_sphere.center.x
+										, itPrim->m_sphere.center.y
+										, itPrim->m_sphere.center.z
+										, itPrim->m_sphere.radius
+										);
 								}
+
 								ImGui::Unindent();
 							}
+
 							ImGui::Unindent();
 
 							ImGui::Separator();
@@ -1050,12 +1073,15 @@ int _main_(int _argc, char** _argv)
 							;
 
 						ImGui::PushItemWidth(-1);
-						if (ImGui::ListBoxHeader("##empty", ImVec2(0.0f, listHeight) ) )
+						if (ImGui::BeginListBox("##empty", ImVec2(0.0f, listHeight) ) )
 						{
 							const int32_t itemCount = int32_t(view.m_fileList.size() );
 
-							int32_t start, end;
-							ImGui::CalcListClipping(itemCount, itemHeight, &start, &end);
+							ImGuiListClipper clipper;
+							clipper.Begin(itemCount, itemHeight);
+
+							int32_t start = clipper.DisplayStart;
+							int32_t end   = clipper.DisplayEnd;
 
 							const int32_t index = int32_t(view.m_fileIndex);
 							if (index <= start)
@@ -1067,24 +1093,25 @@ int _main_(int _argc, char** _argv)
 								ImGui::SetScrollY(ImGui::GetScrollY() + (index-end+1)*itemHeight);
 							}
 
-							ImGuiListClipper clipper(itemCount, itemHeight);
-
-							for (int32_t pos = clipper.DisplayStart; pos < clipper.DisplayEnd; ++pos)
+							while (clipper.Step() )
 							{
-								ImGui::PushID(pos);
-
-								bool isSelected = uint32_t(pos) == view.m_fileIndex;
-								if (ImGui::Selectable(view.m_fileList[pos].c_str(), &isSelected) )
+								for (int32_t pos = clipper.DisplayStart; pos < clipper.DisplayEnd; ++pos)
 								{
-									view.m_fileIndex = pos;
-								}
+									ImGui::PushID(pos);
 
-								ImGui::PopID();
+									bool isSelected = uint32_t(pos) == view.m_fileIndex;
+									if (ImGui::Selectable(view.m_fileList[pos].c_str(), &isSelected) )
+									{
+										view.m_fileIndex = pos;
+									}
+
+									ImGui::PopID();
+								}
 							}
 
 							clipper.End();
 
-							ImGui::ListBoxFooter();
+							ImGui::EndListBox();
 						}
 
 						ImGui::PopFont();
@@ -1102,7 +1129,7 @@ int _main_(int _argc, char** _argv)
 				ImGui::Text(
 					"geometryv, bgfx geometry viewer tool " ICON_KI_WRENCH ", version %d.%d.%d.\n"
 					"Copyright 2019-2019 Attila Kocsis. All rights reserved.\n"
-					"License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause\n"
+					"License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE\n"
 					, BGFX_GEOMETRYV_VERSION_MAJOR
 					, BGFX_GEOMETRYV_VERSION_MINOR
 					, BGFX_API_VERSION
@@ -1184,7 +1211,7 @@ int _main_(int _argc, char** _argv)
 					uint32_t numPrimitives = 0;
 					uint32_t numVertices = 0;
 					uint32_t numIndices = 0;
-					Aabb boundingBox = {};
+					bx::Aabb boundingBox = {};
 
 					for (GroupArray::const_iterator it = mesh->m_groups.begin(), itEnd = mesh->m_groups.end(); it != itEnd; ++it)
 					{
@@ -1213,8 +1240,8 @@ int _main_(int _argc, char** _argv)
 						, numIndices
 						);
 
-					view.m_meshCenter = getCenter(boundingBox);
-					view.m_meshRadius = bx::length(getExtents(boundingBox));
+					view.m_meshCenter = bx::getCenter(boundingBox);
+					view.m_meshRadius = bx::length(bx::getExtents(boundingBox) );
 
 					view.m_camera.init( view.m_meshCenter, view.m_meshRadius * 2.0f, 0.01f, view.m_meshRadius * 10.0f);
 				}
@@ -1223,8 +1250,7 @@ int _main_(int _argc, char** _argv)
 					bx::stringPrintf(title, "Failed to load %s!", filePath);
 				}
 
-				entry::WindowHandle handle = { 0 };
-				entry::setWindowTitle(handle, title.c_str() );
+				entry::setWindowTitle(entry::kDefaultWindowHandle, title.c_str() );
 			}
 
 			int64_t now = bx::getHPCounter();

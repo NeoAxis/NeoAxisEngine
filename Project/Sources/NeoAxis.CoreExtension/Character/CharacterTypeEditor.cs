@@ -25,6 +25,8 @@ namespace NeoAxis.Editor
 
 			objectInSpace = Scene.CreateComponent<Character>( enabled: false );
 			objectInSpace.CharacterType = CharacterType;
+			objectInSpace.Sitting = CharacterType.SitTest;
+			objectInSpace.DebugVisualization = true;
 			objectInSpace.Enabled = true;
 		}
 
@@ -67,18 +69,28 @@ namespace NeoAxis.Editor
 		{
 			base.OnViewportUpdateBeforeOutput();
 
+			//if( CharacterType != null && CharacterType.MeshGeneratorUpdateIfNeed() )
+			//	needRecreateInstance = true;
+
 			if( needRecreateInstance )
 			{
 				CreateObject();
 				needRecreateInstance = false;
 			}
+
+			//if( objectInSpace != null )
+			//{
+			//	var controller = objectInSpace.GetAnimationController();
+			//	if( controller != null )
+			//		controller.DisplaySkeleton = true;
+			//}
 		}
 
 		protected override void OnSceneViewportUpdateGetCameraSettings( ref bool processed )
 		{
 			base.OnSceneViewportUpdateGetCameraSettings( ref processed );
 
-			if( firstCameraUpdate && Scene.CameraEditor.Value != null )
+			if( firstCameraUpdate && Scene.CameraEditor.Value != null && objectInSpace != null )
 			{
 				InitCamera();
 				Viewport.CameraSettings = new Viewport.CameraSettingsClass( Viewport, Scene.CameraEditor );

@@ -38,7 +38,7 @@ namespace NeoAxis
 			get { if( _mesh.BeginGet() ) Mesh = _mesh.Get( this ); return _mesh.value; }
 			set
 			{
-				if( _mesh.BeginSet( ref value ) )
+				if( _mesh.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -67,7 +67,7 @@ namespace NeoAxis
 			get { if( _vertices.BeginGet() ) Vertices = _vertices.Get( this ); return _vertices.value; }
 			set
 			{
-				if( _vertices.BeginSet( ref value ) )
+				if( _vertices.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -96,7 +96,7 @@ namespace NeoAxis
 			get { if( _indices.BeginGet() ) Indices = _indices.Get( this ); return _indices.value; }
 			set
 			{
-				if( _indices.BeginSet( ref value ) )
+				if( _indices.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -137,7 +137,7 @@ namespace NeoAxis
 			get { if( _shapeType.BeginGet() ) ShapeType = _shapeType.Get( this ); return _shapeType.value; }
 			set
 			{
-				if( _shapeType.BeginSet( ref value ) )
+				if( _shapeType.BeginSet( this, ref value ) )
 				{
 					try
 					{

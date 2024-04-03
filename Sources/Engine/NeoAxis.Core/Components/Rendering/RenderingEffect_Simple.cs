@@ -10,7 +10,7 @@ namespace NeoAxis
 	/// Base class of simple rendering effects.
 	/// </summary>
 #if !DEPLOY
-	[SettingsCell( typeof( RenderingEffect_Simple_SettingsCell ) )]
+	[SettingsCell( "NeoAxis.Editor.RenderingEffect_Simple_SettingsCell" )]
 #endif
 	public class RenderingEffect_Simple : RenderingEffect
 	{
@@ -32,7 +32,7 @@ namespace NeoAxis
 		public Reference<double> Intensity
 		{
 			get { if( _intensity.BeginGet() ) Intensity = _intensity.Get( this ); return _intensity.value; }
-			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
+			set { if( _intensity.BeginSet( this, ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
 		public event Action<RenderingEffect_Simple> IntensityChanged;
@@ -51,7 +51,7 @@ namespace NeoAxis
 			get { if( _shaderFile.BeginGet() ) ShaderFile = _shaderFile.Get( this ); return _shaderFile.value; }
 			set
 			{
-				if( _shaderFile.BeginSet( ref value ) )
+				if( _shaderFile.BeginSet( this, ref value ) )
 				{
 					try
 					{

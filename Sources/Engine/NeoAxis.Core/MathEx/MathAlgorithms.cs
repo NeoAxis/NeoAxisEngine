@@ -1942,7 +1942,10 @@ namespace NeoAxis
 				var initSettings = new OctreeContainer.InitSettings();
 				initSettings.InitialOctreeBounds = bounds;
 				initSettings.OctreeBoundsRebuildExpand = Vector3.Zero;
-				initSettings.MinNodeSize = bounds.GetSize() / 50;
+				if( indices.Length > 100000 )
+					initSettings.MinNodeSize = bounds.GetSize() / 200;
+				else
+					initSettings.MinNodeSize = bounds.GetSize() / 50;
 				var octreeContainer = new OctreeContainer( initSettings );
 
 				foreach( var index in indices )

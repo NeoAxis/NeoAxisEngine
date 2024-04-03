@@ -11,6 +11,11 @@ namespace NeoAxis
 	/// </summary>
 	public class CurveLine1 : CurveSpline1
 	{
+		public CurveLine1( int initialCapacity = 4 ) 
+			: base( initialCapacity )
+		{
+		}
+
 		[MethodImpl( (MethodImplOptions)512 )]
 		public override double CalculateValueByTime( double time )
 		{

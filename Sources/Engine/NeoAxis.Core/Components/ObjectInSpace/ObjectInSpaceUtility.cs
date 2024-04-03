@@ -1,12 +1,6 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
-using System.Reflection;
-using System.ComponentModel;
-using System.Drawing.Design;
-using System.IO;
 using NeoAxis.Editor;
 
 namespace NeoAxis
@@ -74,7 +68,7 @@ namespace NeoAxis
 			return objectToTransform;
 		}
 
-		public static TransformOffset Attach( ObjectInSpace attachTo, ObjectInSpace objectToAttach, TransformOffset.ModeEnum mode, DocumentInstance documentforUndoRedo = null, UndoMultiAction undoMultiAction = null )
+		public static TransformOffset Attach( ObjectInSpace attachTo, ObjectInSpace objectToAttach, TransformOffset.ModeEnum mode, IDocumentInstance documentforUndoRedo = null, UndoMultiAction undoMultiAction = null )
 		{
 			var objectToTransform = CalculateObjectToTransform( objectToAttach );
 			if( objectToTransform != null )
@@ -211,7 +205,7 @@ namespace NeoAxis
 			return objectToDetach;
 		}
 
-		public static void Detach( ObjectInSpace objectToDetach, DocumentInstance documentforUndoRedo = null, UndoMultiAction undoMultiAction = null )
+		public static void Detach( ObjectInSpace objectToDetach, IDocumentInstance documentforUndoRedo = null, UndoMultiAction undoMultiAction = null )
 		{
 			const string transformOffsetName = "Attach Transform Offset";
 

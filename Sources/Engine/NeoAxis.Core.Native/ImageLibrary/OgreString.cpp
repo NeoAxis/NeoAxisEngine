@@ -45,6 +45,11 @@ THE SOFTWARE.
 //#include "ConvertUTF.h"
 #endif
 
+#ifdef LINUX
+#include <codecvt>
+#include <string>
+#endif
+
 
 namespace Ogre {
 
@@ -538,7 +543,7 @@ namespace Ogre {
 					result = aString;
 				//delete[] aString;
 			}
-#elif defined ANDROID
+#elif defined(ANDROID) || defined(LINUX)
 
 			std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
 			result = myconv.to_bytes(str);
@@ -593,7 +598,7 @@ namespace Ogre {
 				//delete[] wString;
 			}
 
-#elif defined ANDROID
+#elif defined(ANDROID) || defined(LINUX)
 
 			std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
 			result = myconv.from_bytes(str);

@@ -12,24 +12,48 @@ namespace NeoAxis
 	public class CurveCubicSpline : CurveSpline
 	{
 		[MethodImpl( (MethodImplOptions)512 )]
-		public unsafe override Vector3 CalculateValueByTime( double time )
+		public unsafe override void CalculateValueByTime( double time, out Vector3 result )
 		{
 			if( points.Count == 1 )
-				return points[ 0 ].value;
+			{
+				result = points[ 0 ].value;
+				return;
+			}
 
 			double* bvals = stackalloc double[ 4 ];
 
 			double clampedTime = GetClampedTime( time );
 			int i = GetIndexForTime( clampedTime );
 			Basis( i - 1, clampedTime, bvals );
-			Vector3 v = Vector3.Zero;
+			result = Vector3.Zero;
 			for( int j = 0; j < 4; j++ )
 			{
 				int k = i + j - 2;
-				v += bvals[ j ] * GetValueForIndex( k );
+
+				GetValueForIndex( k, out var valueForIndex );
+				result += bvals[ j ] * valueForIndex;
 			}
-			return v;
 		}
+
+		//[MethodImpl( (MethodImplOptions)512 )]
+		//public unsafe override Vector3 CalculateValueByTime( double time )
+		//{
+		//	if( points.Count == 1 )
+		//		return points[ 0 ].value;
+
+		//	double* bvals = stackalloc double[ 4 ];
+
+		//	double clampedTime = GetClampedTime( time );
+		//	int i = GetIndexForTime( clampedTime );
+		//	Basis( i - 1, clampedTime, bvals );
+		//	Vector3 v = Vector3.Zero;
+		//	for( int j = 0; j < 4; j++ )
+		//	{
+		//		int k = i + j - 2;
+		//		v += bvals[ j ] * GetValueForIndex( k );
+		//	}
+		//	return v;
+		//}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		unsafe void Basis( int index, double t, double* bvals )

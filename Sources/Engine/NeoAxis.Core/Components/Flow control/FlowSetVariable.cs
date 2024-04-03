@@ -43,7 +43,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _exit.BeginSet( ref value ) )
+				if( _exit.BeginSet( this, ref value ) )
 				{
 					try { ExitChanged?.Invoke( this ); }
 					finally { _exit.EndSet(); }
@@ -69,7 +69,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _variable.BeginSet( ref value ) )
+				if( _variable.BeginSet( this, ref value ) )
 				{
 					try
 					{

@@ -18,6 +18,9 @@
 #ifdef PLATFORM_ANDROID
 #	include <codecvt>
 #endif
+#ifdef PLATFORM_LINUX
+#	include <codecvt>
+#endif
 
 #ifdef PLATFORM_IOS
 	#include <iconv.h>	
@@ -82,7 +85,7 @@ std::string ConvertStringToUTF8(const std::wstring& str)
 			if(WideCharToMultiByte(CP_UTF8, 0, str.c_str(), -1, aString, size, NULL, NULL) != 0)
 				result = aString;
 		}
-#elif defined(PLATFORM_ANDROID)
+#elif defined(PLATFORM_ANDROID) || defined(PLATFORM_LINUX)
 		// can't use ConvertString/iconv because __LP64__ is defined somewhere..
 		// https://stackoverflow.com/questions/4804298/how-to-convert-wstring-into-string
 		using convert_type = std::codecvt_utf8<wchar_t>;
@@ -119,7 +122,7 @@ std::wstring ConvertStringToUTFWide(const std::string& str)
 			if(MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, wString, size) != 0)
 				result = wString;
 		}
-#elif defined(PLATFORM_ANDROID)
+#elif defined(PLATFORM_ANDROID) || defined(PLATFORM_LINUX)
 		using convert_type = std::codecvt_utf8<wchar_t>;
 		std::wstring_convert<convert_type, wchar_t> converter;
 		//use converter (.to_bytes: wstr->str, .from_bytes: str->wstr)

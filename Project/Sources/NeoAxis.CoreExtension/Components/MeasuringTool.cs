@@ -19,7 +19,7 @@ namespace NeoAxis
 		public Reference<ColorValue> Color
 		{
 			get { if( _color.BeginGet() ) Color = _color.Get( this ); return _color.value; }
-			set { if( _color.BeginSet( ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
+			set { if( _color.BeginSet( this, ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Color"/> property value changes.</summary>
 		public event Action<MeasuringTool> ColorChanged;
@@ -33,7 +33,7 @@ namespace NeoAxis
 		public Reference<double> Thickness
 		{
 			get { if( _thickness.BeginGet() ) Thickness = _thickness.Get( this ); return _thickness.value; }
-			set { if( _thickness.BeginSet( ref value ) ) { try { ThicknessChanged?.Invoke( this ); } finally { _thickness.EndSet(); } } }
+			set { if( _thickness.BeginSet( this, ref value ) ) { try { ThicknessChanged?.Invoke( this ); } finally { _thickness.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Thickness"/> property value changes.</summary>
 		public event Action<MeasuringTool> ThicknessChanged;
@@ -53,7 +53,7 @@ namespace NeoAxis
 		public Reference<CapStyleEnum> StartCapStyle
 		{
 			get { if( _startCapStyle.BeginGet() ) StartCapStyle = _startCapStyle.Get( this ); return _startCapStyle.value; }
-			set { if( _startCapStyle.BeginSet( ref value ) ) { try { StartCapStyleChanged?.Invoke( this ); } finally { _startCapStyle.EndSet(); } } }
+			set { if( _startCapStyle.BeginSet( this, ref value ) ) { try { StartCapStyleChanged?.Invoke( this ); } finally { _startCapStyle.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="StartCapStyle"/> property value changes.</summary>
 		public event Action<MeasuringTool> StartCapStyleChanged;
@@ -66,7 +66,7 @@ namespace NeoAxis
 		public Reference<CapStyleEnum> EndCapStyle
 		{
 			get { if( _endCapStyle.BeginGet() ) EndCapStyle = _endCapStyle.Get( this ); return _endCapStyle.value; }
-			set { if( _endCapStyle.BeginSet( ref value ) ) { try { EndCapStyleChanged?.Invoke( this ); } finally { _endCapStyle.EndSet(); } } }
+			set { if( _endCapStyle.BeginSet( this, ref value ) ) { try { EndCapStyleChanged?.Invoke( this ); } finally { _endCapStyle.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="EndCapStyle"/> property value changes.</summary>
 		public event Action<MeasuringTool> EndCapStyleChanged;
@@ -79,7 +79,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayText
 		{
 			get { if( _displayText.BeginGet() ) DisplayText = _displayText.Get( this ); return _displayText.value; }
-			set { if( _displayText.BeginSet( ref value ) ) { try { DisplayTextChanged?.Invoke( this ); } finally { _displayText.EndSet(); } } }
+			set { if( _displayText.BeginSet( this, ref value ) ) { try { DisplayTextChanged?.Invoke( this ); } finally { _displayText.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayText"/> property value changes.</summary>
 		public event Action<MeasuringTool> DisplayTextChanged;
@@ -100,7 +100,7 @@ namespace NeoAxis
 		public Reference<MeasureEnum> MeasureOfDisplayedLength
 		{
 			get { if( _measureOfDisplayedLength.BeginGet() ) MeasureOfDisplayedLength = _measureOfDisplayedLength.Get( this ); return _measureOfDisplayedLength.value; }
-			set { if( _measureOfDisplayedLength.BeginSet( ref value ) ) { try { MeasureOfDisplayedLengthChanged?.Invoke( this ); } finally { _measureOfDisplayedLength.EndSet(); } } }
+			set { if( _measureOfDisplayedLength.BeginSet( this, ref value ) ) { try { MeasureOfDisplayedLengthChanged?.Invoke( this ); } finally { _measureOfDisplayedLength.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MeasureOfDisplayedLength"/> property value changes.</summary>
 		public event Action<MeasuringTool> MeasureOfDisplayedLengthChanged;

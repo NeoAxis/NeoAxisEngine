@@ -1,0 +1,11 @@
+Model Information:
+* title:	Ferret Scout Car Final (nicely baked)
+* source:	https://sketchfab.com/3d-models/ferret-scout-car-final-nicely-baked-212b5668ccaa4bdaa705cef1757160e1
+* author:	Luca Kawe (https://sketchfab.com/LucaKawe)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Ferret Scout Car Final (nicely baked)" (https://sketchfab.com/3d-models/ferret-scout-car-final-nicely-baked-212b5668ccaa4bdaa705cef1757160e1) by Luca Kawe (https://sketchfab.com/LucaKawe) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

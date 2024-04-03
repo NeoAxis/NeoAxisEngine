@@ -13,6 +13,8 @@
 // Written by IAS. :)
 // ---------------------------------------------------------------------------
 
+#include <assimp/types.h>
+
 #include <Windows.h>
 #include <shellapi.h>
 #include <stdexcept>
@@ -21,17 +23,19 @@
 #include <dxgi1_2.h>
 #include <DirectXMath.h>
 #include <d3dcompiler.h>
+#include <utf8.h>
+
 #include "ModelLoader.h"
-#include "UTFConverter.h"
 #include "SafeRelease.hpp"
 
+#ifdef _MSC_VER
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "Dxgi.lib")
 #pragma comment(lib,"d3dcompiler.lib")
 #pragma comment (lib, "dxguid.lib")
+#endif // _MSC_VER
 
 using namespace DirectX;
-using namespace AssimpSamples::SharedCode;
 
 #define VERTEX_SHADER_FILE L"VertexShader.hlsl"
 #define PIXEL_SHADER_FILE L"PixelShader.hlsl"
@@ -48,10 +52,10 @@ struct ConstantBuffer {
 // ------------------------------------------------------------
 //                        Window Variables
 // ------------------------------------------------------------
-#define SCREEN_WIDTH  800
-#define SCREEN_HEIGHT 600
+static constexpr uint32_t SCREEN_WIDTH = 800;
+static constexpr uint32_t SCREEN_HEIGHT = 600;
 
-const char g_szClassName[] = "directxWindowClass";
+constexpr char g_szClassName[] = "directxWindowClass";
 
 static std::string g_ModelPath;
 
@@ -126,8 +130,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
 	int argc;
 	LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 	if (!argv) {
-		MessageBox(nullptr, 
-			TEXT("An error occured while reading command line arguments."),
+		MessageBox(nullptr,
+			TEXT("An error occurred while reading command line arguments."),
 			TEXT("Error!"),
 			MB_ICONERROR | MB_OK);
 		return EXIT_FAILURE;
@@ -143,8 +147,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
 
 	// Ensure that a model file has been specified.
 	if (argc < 2) {
-		MessageBox(nullptr, 
-			TEXT("No model file specified. The program will now close."), 
+		MessageBox(nullptr,
+			TEXT("No model file specified. The program will now close."),
 			TEXT("Error!"),
 			MB_ICONERROR | MB_OK);
 		free_command_line_allocated_memory();
@@ -152,10 +156,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
 	}
 
 	// Retrieve the model file path.
-	g_ModelPath = UTFConverter(argv[1]).str();
+    std::wstring filename(argv[1]);
+    
+	char *targetStart = new char[filename.size()+1];
+    memset(targetStart, '\0', filename.size() + 1);
 
+	utf8::utf16to8(filename.c_str(), filename.c_str() + filename.size(), targetStart);
+    g_ModelPath = targetStart;
+    delete[] targetStart;
 	free_command_line_allocated_memory();
-	
+
 	WNDCLASSEX wc;
 	MSG msg;
 
@@ -509,9 +519,9 @@ void InitPipeline()
 {
 	ID3DBlob *VS, *PS;
 	if(FAILED(CompileShaderFromFile(SHADER_PATH VERTEX_SHADER_FILE, 0, "main", "vs_4_0", &VS)))
-		Throwanerror(UTFConverter(L"Failed to compile shader from file " VERTEX_SHADER_FILE).c_str());
+		Throwanerror("Failed to compile shader from file");
 	if(FAILED(CompileShaderFromFile(SHADER_PATH PIXEL_SHADER_FILE, 0, "main", "ps_4_0", &PS)))
-		Throwanerror(UTFConverter(L"Failed to compile shader from file " PIXEL_SHADER_FILE).c_str());
+		Throwanerror("Failed to compile shader from file ");
 
 	dev->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), nullptr, &pVS);
 	dev->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), nullptr, &pPS);
@@ -571,7 +581,7 @@ void InitGraphics()
 HRESULT	CompileShaderFromFile(LPCWSTR pFileName, const D3D_SHADER_MACRO* pDefines, LPCSTR pEntryPoint, LPCSTR pShaderModel, ID3DBlob** ppBytecodeBlob)
 {
 	UINT compileFlags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_PACK_MATRIX_COLUMN_MAJOR;
-	
+
 #ifdef _DEBUG
 	compileFlags |= D3DCOMPILE_DEBUG;
 #endif

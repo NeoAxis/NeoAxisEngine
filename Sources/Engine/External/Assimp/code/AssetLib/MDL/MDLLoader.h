@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -39,11 +39,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ----------------------------------------------------------------------
 */
 
-
-/**  @file MDLLoader.h
- *   @brief Declaration of the loader for MDL files
- */
-
+/// @file MDLLoader.h
+/// @brief Declaration of the loader for MDL files
+#pragma once
 #ifndef AI_MDLLOADER_H_INCLUDED
 #define AI_MDLLOADER_H_INCLUDED
 
@@ -55,7 +53,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 struct aiNode;
 struct aiTexture;
 
-namespace Assimp    {
+namespace Assimp {
 
 using namespace MDL;
 
@@ -83,38 +81,37 @@ using namespace MDL;
  *  them all with a single 1000-line function-beast. However, it has been
  *  split into several code paths to make the code easier to read and maintain.
 */
-class MDLImporter : public BaseImporter
-{
+class MDLImporter : public BaseImporter {
 public:
     MDLImporter();
-    ~MDLImporter();
+    ~MDLImporter() override = default;
 
     // -------------------------------------------------------------------
     /** Returns whether the class can handle the format of the given file.
     * See BaseImporter::CanRead() for details.  */
     bool CanRead( const std::string& pFile, IOSystem* pIOHandler,
-        bool checkSig) const;
+        bool checkSig) const override;
 
     // -------------------------------------------------------------------
     /** Called prior to ReadFile().
     * The function is a request to the importer to update its configuration
     * basing on the Importer's configuration property list.
     */
-    void SetupProperties(const Importer* pImp);
+    void SetupProperties(const Importer* pImp) override;
 
 protected:
     // -------------------------------------------------------------------
     /** Return importer meta information.
      * See #BaseImporter::GetInfo for the details
      */
-    const aiImporterDesc* GetInfo () const;
+    const aiImporterDesc* GetInfo () const override;
 
     // -------------------------------------------------------------------
     /** Imports the given file into the given scene structure.
     * See BaseImporter::InternReadFile() for details
     */
     void InternReadFile( const std::string& pFile, aiScene* pScene,
-        IOSystem* pIOHandler);
+        IOSystem* pIOHandler) override;
 
     // -------------------------------------------------------------------
     /** Import a quake 1 MDL file (IDPO)
@@ -139,7 +136,7 @@ protected:
     // -------------------------------------------------------------------
     /** Import a CS:S/HL2 MDL file (not fully implemented)
     */
-    void InternReadFile_HL2( );
+    AI_WONT_RETURN void InternReadFile_HL2( ) AI_WONT_RETURN_SUFFIX;
 
     // -------------------------------------------------------------------
     /** Check whether a given position is inside the valid range
@@ -150,6 +147,7 @@ protected:
     */
     void SizeCheck(const void* szPos);
     void SizeCheck(const void* szPos, const char* szFile, unsigned int iLine);
+    bool IsPosValid(const void* szPos) const;
 
     // -------------------------------------------------------------------
     /** Validate the header data structure of a game studio MDL7 file
@@ -320,7 +318,7 @@ protected:
     /** Load the bone list of a MDL7 file
      * \return If the bones could be loaded successfully, a valid
      *   array containing pointers to a temporary bone
-     *   representation. NULL if the bones could not be loaded.
+     *   representation. nullptr if the bones could not be loaded.
      */
     MDL::IntBone_MDL7** LoadBones_3DGS_MDL7();
 

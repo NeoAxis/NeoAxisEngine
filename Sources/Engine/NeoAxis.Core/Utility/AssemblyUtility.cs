@@ -229,7 +229,7 @@ namespace Internal
 			disableAssemblyRegistration = new ESet<string>();
 			disableNamespaceRegistration = new ESet<string>();
 
-			string realFileName = Path.Combine( VirtualFileSystem.Directories.Binaries, "NeoAxis.DefaultSettings.config" );
+			string realFileName = Path.Combine( VirtualFileSystem.Directories.Binaries, "NeoAxis.Internal", "NeoAxis.DefaultSettings.config" );
 			if( File.Exists( realFileName ) )
 			{
 				var block = TextBlockUtility.LoadFromRealFile( realFileName );
@@ -363,8 +363,9 @@ namespace Internal
 #if !DEPLOY
 							if( EngineApp.IsEditor )
 							{
-								EditorUtility.RegisterEditorExtensions( assembly, false );
-								ResourcesWindowItems.RegisterAssembly( exportedTypes );
+								EditorAPI.RegisterEditorAssembly( assembly, exportedTypes );
+								//EditorUtility.RegisterEditorExtensions( assembly, false );
+								//ResourcesWindowItems.RegisterAssembly( exportedTypes );
 							}
 #endif
 						}
@@ -426,8 +427,9 @@ namespace Internal
 #if !DEPLOY
 							if( EngineApp.IsEditor )
 							{
-								EditorUtility.RegisterEditorExtensions( assembly, true );
-								ResourcesWindowItems.UnregisterAssembly( assembly );
+								EditorAPI.UnregisterEditorAssembly( assembly );
+								//EditorUtility.RegisterEditorExtensions( assembly, true );
+								//ResourcesWindowItems.UnregisterAssembly( assembly );
 							}
 #endif
 						}

@@ -16,7 +16,7 @@ namespace NeoAxis
 		public Reference<Transform> Source
 		{
 			get { if( _source.BeginGet() ) Source = _source.Get( this ); return _source.value; }
-			set { if( _source.BeginSet( ref value ) ) { try { SourceChanged?.Invoke( this ); } finally { _source.EndSet(); } } }
+			set { if( _source.BeginSet( this, ref value ) ) { try { SourceChanged?.Invoke( this ); } finally { _source.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Source"/> property value changes.</summary>
 		public event Action<TransformOffset> SourceChanged;
@@ -35,7 +35,7 @@ namespace NeoAxis
 		public Reference<ModeEnum> Mode
 		{
 			get { if( _mode.BeginGet() ) Mode = _mode.Get( this ); return _mode.value; }
-			set { if( _mode.BeginSet( ref value ) ) { try { ModeChanged?.Invoke( this ); } finally { _mode.EndSet(); } } }
+			set { if( _mode.BeginSet( this, ref value ) ) { try { ModeChanged?.Invoke( this ); } finally { _mode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Mode"/> property value changes.</summary>
 		public event Action<TransformOffset> ModeChanged;
@@ -48,7 +48,7 @@ namespace NeoAxis
 		public Reference<Vector3> PositionOffset
 		{
 			get { if( _positionOffset.BeginGet() ) PositionOffset = _positionOffset.Get( this ); return _positionOffset.value; }
-			set { if( _positionOffset.BeginSet( ref value ) ) { try { PositionOffsetChanged?.Invoke( this ); } finally { _positionOffset.EndSet(); } } }
+			set { if( _positionOffset.BeginSet( this, ref value ) ) { try { PositionOffsetChanged?.Invoke( this ); } finally { _positionOffset.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PositionOffset"/> property value changes.</summary>
 		public event Action<TransformOffset> PositionOffsetChanged;
@@ -61,7 +61,7 @@ namespace NeoAxis
 		public Reference<Quaternion> RotationOffset
 		{
 			get { if( _rotationOffset.BeginGet() ) RotationOffset = _rotationOffset.Get( this ); return _rotationOffset.value; }
-			set { if( _rotationOffset.BeginSet( ref value ) ) { try { RotationOffsetChanged?.Invoke( this ); } finally { _rotationOffset.EndSet(); } } }
+			set { if( _rotationOffset.BeginSet( this, ref value ) ) { try { RotationOffsetChanged?.Invoke( this ); } finally { _rotationOffset.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RotationOffset"/> property value changes.</summary>
 		public event Action<TransformOffset> RotationOffsetChanged;
@@ -71,7 +71,7 @@ namespace NeoAxis
 		public Reference<Vector3> ScaleOffset
 		{
 			get { if( _scaleOffset.BeginGet() ) ScaleOffset = _scaleOffset.Get( this ); return _scaleOffset.value; }
-			set { if( _scaleOffset.BeginSet( ref value ) ) { try { ScaleOffsetChanged?.Invoke( this ); } finally { _scaleOffset.EndSet(); } } }
+			set { if( _scaleOffset.BeginSet( this, ref value ) ) { try { ScaleOffsetChanged?.Invoke( this ); } finally { _scaleOffset.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ScaleOffset"/> property value changes.</summary>
 		public event Action<TransformOffset> ScaleOffsetChanged;
@@ -81,7 +81,7 @@ namespace NeoAxis
 		public Reference<Matrix4> Matrix
 		{
 			get { if( _matrix.BeginGet() ) Matrix = _matrix.Get( this ); return _matrix.value; }
-			set { if( _matrix.BeginSet( ref value ) ) { try { MatrixChanged?.Invoke( this ); } finally { _matrix.EndSet(); } } }
+			set { if( _matrix.BeginSet( this, ref value ) ) { try { MatrixChanged?.Invoke( this ); } finally { _matrix.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Matrix"/> property value changes.</summary>
 		public event Action<TransformOffset> MatrixChanged;

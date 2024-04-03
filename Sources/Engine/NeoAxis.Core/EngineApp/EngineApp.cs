@@ -5,7 +5,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
-using System.Drawing;
+//using System.Drawing;
 using System.Reflection;
 using System.IO;
 using System.Linq;
@@ -13,7 +13,6 @@ using NeoAxis.Editor;
 using Internal;
 using Internal.SharpBgfx;
 using System.Threading;
-using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -89,7 +88,7 @@ namespace NeoAxis
 		static double engineTimeScale = 1;
 		static double engineTime;
 		static bool engineTimeManualValueAndDisableAutoUpdate;
-		static object timeLocker = new object();
+		//static object timeLocker = new object();
 
 		//auto unload textures
 		static double lastEngineTimeToAutoUnloadGpuResources;
@@ -438,8 +437,9 @@ namespace NeoAxis
 			//Viewport viewport;
 
 			string title = "NeoAxis Player";
-			Icon icon;
-			Icon iconSmall;//!!!!!так?
+			object/*Icon*/ icon;
+			//object/*Icon*/ smallIcon;//!!!!!так?
+			string iconFilePath;
 
 			//!!!!всё тут
 
@@ -450,11 +450,11 @@ namespace NeoAxis
 
 			internal void Dispose()
 			{
-				if( iconSmall != null )
-				{
-					iconSmall.Dispose();
-					iconSmall = null;
-				}
+				//if( smallIcon != null )
+				//{
+				//	smallIcon.Dispose();
+				//	smallIcon = null;
+				//}
 			}
 
 			public IntPtr Handle
@@ -494,7 +494,7 @@ namespace NeoAxis
 				}
 			}
 
-			public Icon Icon
+			public object/*Icon*/ Icon
 			{
 				get { return icon; }
 				set
@@ -503,11 +503,40 @@ namespace NeoAxis
 						return;
 					icon = value;
 
-					//!!!!IsCreated && !IsClosing
 					if( Created && !Closing )
 						UpdateIcon();
 				}
 			}
+
+			public string IconFilePath
+			{
+				get { return iconFilePath; }
+				set
+				{
+					if( iconFilePath == value )
+						return;
+					iconFilePath = value;
+
+					if( Created && !Closing )
+						UpdateIcon();
+				}
+			}
+
+			//public object SmallIcon
+			//{
+			//	get { return smallIcon; }
+			//}
+
+					//public void SetIcon( object icon, object smallIcon )
+					//{
+					//	if( this.icon == icon && this.smallIcon == smallIcon )
+					//		return;
+					//	this.icon = icon;
+					//	this.smallIcon = smallIcon;
+
+					//	if( Created && !Closing )
+					//		UpdateIcon();
+					//}
 
 			public string Title
 			{
@@ -525,30 +554,34 @@ namespace NeoAxis
 
 			internal void UpdateIcon()
 			{
-				Icon oldSmallIcon = iconSmall;
+				platform.CreatedWindow_UpdateWindowIcon( /*smallIcon, */icon, iconFilePath );
 
-				if( icon != null )
-				{
-					try
-					{
-#if !ANDROID && !IOS && !WEB && !UWP
-						Vector2I smallIconSize = platform.GetSmallIconSize();
-						if( smallIconSize != Vector2I.Zero )
-							iconSmall = new Icon( icon, new Size( smallIconSize.X, smallIconSize.Y ) );
-#endif
-					}
-					catch { }
-				}
-				else
-					iconSmall = null;
+				//				IDisposable/*Icon*/ oldSmallIcon = smallIcon;
 
-				platform.CreatedWindow_UpdateWindowIcon( iconSmall, icon );
+				//				if( icon != null )
+				//				{
+				//					try
+				//					{
+				//#if !ANDROID && !IOS && !WEB && !UWP
+				//						Vector2I smallIconSize = platform.GetSmallIconSize();
+				//						if( smallIconSize != Vector2I.Zero )
+				//						{
+				//							smallIcon = new Icon( icon, new Size( smallIconSize.X, smallIconSize.Y ) );
+				//						}
+				//#endif
+				//					}
+				//					catch { }
+				//				}
+				//				else
+				//					smallIcon = null;
 
-				if( oldSmallIcon != null )
-				{
-					oldSmallIcon.Dispose();
-					oldSmallIcon = null;
-				}
+				//				platform.CreatedWindow_UpdateWindowIcon( smallIcon, icon );
+
+				//				if( oldSmallIcon != null )
+				//				{
+				//					oldSmallIcon.Dispose();
+				//					oldSmallIcon = null;
+				//				}
 			}
 
 			public /*internal */void ProcessMouseMoveEvent()
@@ -582,6 +615,14 @@ namespace NeoAxis
 					lastMousePositionForCursorUpdate = mouse;
 				}
 			}
+
+			public bool Visible
+			{
+				get { return platform.IsWindowVisible(); }
+				set { platform.SetWindowVisible( value ); }
+			}
+
+			public bool HideOnClose { get; set; }
 		}
 
 		///////////////////////////////////////////
@@ -736,6 +777,8 @@ namespace NeoAxis
 						operationSystemDisplayName = "Microsoft Windows";
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 						operationSystemDisplayName = "Apple Mac OS X";
+					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
+						operationSystemDisplayName = "Linux";
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
 						operationSystemDisplayName = "Google Android";
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
@@ -1267,14 +1310,14 @@ namespace NeoAxis
 
 					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
 					{
-#if WINDOWS
+#if !ANDROID && !IOS && !WEB
 						instance = new WindowsInputDeviceManager( applicationWindowHandle );
 #endif
 					}
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 					{
-						Log.Fatal( "MacOSXInputDeviceManager impl." );
-						//instance = new MacOSXInputDeviceManager();
+						Log.Fatal( "MacInputDeviceManager impl." );
+						//instance = new MacInputDeviceManager();
 					}
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 					{
@@ -1499,7 +1542,7 @@ namespace NeoAxis
 			//check dotnet available
 			bool canCompile = true;
 			{
-				var folder = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "dotnet" );
+				var folder = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "dotnet5" );
 				if( !Directory.Exists( folder ) )
 					canCompile = false;
 
@@ -1835,7 +1878,7 @@ namespace NeoAxis
 
 				//renderPerformanceCounter.Start();
 				//needRenderScreenUI = true;
-				Viewport viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+				var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
 
 				viewport.Update( true );
 
@@ -1854,8 +1897,6 @@ namespace NeoAxis
 					fpsStartTime = curtime;
 					fpsCalcFrames = 0;
 				}
-
-
 			}
 			finally
 			{
@@ -2605,21 +2646,29 @@ namespace NeoAxis
 
 		public static double GetSystemTime()
 		{
-			//!!!!use the code for all platforms?
-			//!!!!need timeClocker?
-#if WINDOWS
+			//#if WINDOWS
+			//if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
+			//{
+
 			long time = Stopwatch.GetTimestamp();
 			double elapsedSeconds = time * ( 1.0 / Stopwatch.Frequency );
 			return elapsedSeconds;
-#else
-			lock( timeLocker )
-			{
-				if( platform != null )
-					return platform.GetSystemTime();
-				else
-					return 0;
-			}
-#endif
+
+			//}
+			//else
+			//{
+			//	//#else
+
+			//	lock( timeLocker )
+			//	{
+			//		if( platform != null )
+			//			return platform.GetSystemTime();
+			//		else
+			//			return 0;
+			//	}
+
+			//	//#endif
+			//}
 		}
 
 		///////////////////////////////////////////////////////////////// Get Info ////////////////////////////////////////////////////////////////////
@@ -2809,11 +2858,11 @@ namespace NeoAxis
 		//}
 
 		[Browsable( false )]
-		public/*internal */ static ProjectSettingsPage_General.EngineSplashScreenStyleEnum DrawSplashScreen
+		public static ProjectSettingsPage_General.EngineSplashScreenStyleEnum DrawSplashScreen
 		{
 			get
 			{
-				var result = ProjectSettings.Get.General.EngineSplashScreenStyle.Value;
+				var result = (ProjectSettingsPage_General.EngineSplashScreenStyleEnum)ProjectSettings.Get.General.EngineSplashScreenStyle.Value;
 
 				//if( EngineTime != 0 )
 				//{
@@ -2824,7 +2873,6 @@ namespace NeoAxis
 				if( splashScreenStartTime == 0 )
 					splashScreenStartTime = EngineTime;
 
-				//!!!!
 				double totalTime = 3.0;
 				//double totalTime = ProjectSettings.Get.EngineSplashScreenTime.Value;
 
@@ -2932,6 +2980,11 @@ namespace NeoAxis
 		{
 			get { return renderVideoToFileData; }
 			set { renderVideoToFileData = value; }
+		}
+
+		public static Vector2I GetSystemSmallIconSize()
+		{
+			return platform.GetSmallIconSize();
 		}
 	}
 }

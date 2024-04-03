@@ -28,7 +28,7 @@ namespace NeoAxis
 		public Reference<Vector2> Center
 		{
 			get { if( _center.BeginGet() ) Center = _center.Get( this ); return _center.value; }
-			set { if( _center.BeginSet( ref value ) ) { try { CenterChanged?.Invoke( this ); } finally { _center.EndSet(); } } }
+			set { if( _center.BeginSet( this, ref value ) ) { try { CenterChanged?.Invoke( this ); } finally { _center.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Center"/> property value changes.</summary>
 		public event Action<RenderingEffect_RadialBlur> CenterChanged;
@@ -43,7 +43,7 @@ namespace NeoAxis
 		public Reference<double> BlurFactor
 		{
 			get { if( _blurFactor.BeginGet() ) BlurFactor = _blurFactor.Get( this ); return _blurFactor.value; }
-			set { if( _blurFactor.BeginSet( ref value ) ) { try { BlurFactorChanged?.Invoke( this ); } finally { _blurFactor.EndSet(); } } }
+			set { if( _blurFactor.BeginSet( this, ref value ) ) { try { BlurFactorChanged?.Invoke( this ); } finally { _blurFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BlurFactor"/> property value changes.</summary>
 		public event Action<RenderingEffect_RadialBlur> BlurFactorChanged;

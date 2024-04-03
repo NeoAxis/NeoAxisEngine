@@ -24,7 +24,7 @@ namespace NeoAxis
 					value = new Reference<int>( 0, value.GetByReference );
 				if( value > 2 )
 					value = new Reference<int>( 2, value.GetByReference );
-				if( _axis.BeginSet( ref value ) )
+				if( _axis.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -52,7 +52,7 @@ namespace NeoAxis
 			{
 				if( value < 0 )
 					value = new Reference<double>( 0, value.GetByReference );
-				if( _radius.BeginSet( ref value ) )
+				if( _radius.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -80,7 +80,7 @@ namespace NeoAxis
 			{
 				if( value < 0 )
 					value = new Reference<double>( 0, value.GetByReference );
-				if( _height.BeginSet( ref value ) )
+				if( _height.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -108,7 +108,7 @@ namespace NeoAxis
 			{
 				if( value < 0 )
 					value = new Reference<double>( 0, value.GetByReference );
-				if( _thickness.BeginSet( ref value ) )
+				if( _thickness.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -136,7 +136,7 @@ namespace NeoAxis
 			{
 				if( value < 3 )
 					value = new Reference<int>( 3, value.GetByReference );
-				if( _segments.BeginSet( ref value ) )
+				if( _segments.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -164,7 +164,7 @@ namespace NeoAxis
 			{
 				if( value < 1 )
 					value = new Reference<int>( 1, value.GetByReference );
-				if( _segmentsHeight.BeginSet( ref value ) )
+				if( _segmentsHeight.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -189,7 +189,7 @@ namespace NeoAxis
 			get { if( _insideOut.BeginGet() ) InsideOut = _insideOut.Get( this ); return _insideOut.value; }
 			set
 			{
-				if( _insideOut.BeginSet( ref value ) )
+				if( _insideOut.BeginSet( this, ref value ) )
 				{
 					try
 					{

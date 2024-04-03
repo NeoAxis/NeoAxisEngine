@@ -5,18 +5,19 @@ $input v_texCoord0
 #include "../FragmentFunctions.sh"
 
 SAMPLER2D(s_depthTexture, 0);
-uniform vec4/*float*/ affectBackground;
+//uniform vec4/*float*/ affectBackground;
 //uniform mat4 invViewProj;
 
 void main()
 {
 	float rawDepth = texture2D(s_depthTexture, v_texCoord0).x;
 
-	float backgroundFactor = 1.0;
-	if(rawDepth >= 1.0)
-		backgroundFactor = affectBackground.x;
+	//float backgroundFactor = 1.0;
+	//if(rawDepth >= 1.0)
+	//	backgroundFactor = affectBackground.x;
 	
-	vec3 worldPosition = reconstructWorldPosition(u_invViewProj, v_texCoord0, rawDepth);
-	float value = 1.0 - getFogFactor(worldPosition, backgroundFactor);
+	vec3 worldPosition = reconstructWorldPosition(u_viewportOwnerViewInverse, u_viewportOwnerProjectionInverse, v_texCoord0, rawDepth);
+	//vec3 worldPosition = reconstructWorldPosition(u_invViewProj, v_texCoord0, rawDepth);
+	float value = 1.0 - getFogFactor(u_viewportOwnerCameraPosition, worldPosition/*, backgroundFactor*/, rawDepth >= 1.0);
 	gl_FragColor = vec4(u_fogColor.rgb, value);
 }

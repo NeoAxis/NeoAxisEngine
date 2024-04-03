@@ -6,7 +6,6 @@
 //using System.Runtime.InteropServices;
 //using System.Reflection;
 //using System.IO;
-//using System.Drawing.Design;
 //using System.Text;
 
 //namespace NeoAxis
@@ -27,7 +26,7 @@
 //			get { if( _eventHandlerType.BeginGet() ) EventHandlerType = _eventHandlerType.Get( this ); return _eventHandlerType.value; }
 //			set
 //			{
-//				if( _eventHandlerType.BeginSet( ref value ) )
+//				if( _eventHandlerType.BeginSet( this, ref value ) )
 //				{
 //					try
 //					{

@@ -24,7 +24,7 @@ namespace NeoAxis
 		public Reference<double> Intensity
 		{
 			get { if( _intensity.BeginGet() ) Intensity = _intensity.Get( this ); return _intensity.value; }
-			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
+			set { if( _intensity.BeginSet( this, ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
 		public event Action<RenderingEffect_MotionBlur> IntensityChanged;
@@ -38,7 +38,7 @@ namespace NeoAxis
 		public Reference<double> Multiplier
 		{
 			get { if( _multiplier.BeginGet() ) Multiplier = _multiplier.Get( this ); return _multiplier.value; }
-			set { if( _multiplier.BeginSet( ref value ) ) { try { MultiplierChanged?.Invoke( this ); } finally { _multiplier.EndSet(); } } }
+			set { if( _multiplier.BeginSet( this, ref value ) ) { try { MultiplierChanged?.Invoke( this ); } finally { _multiplier.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Multiplier"/> property value changes.</summary>
 		public event Action<RenderingEffect_MotionBlur> MultiplierChanged;
@@ -52,7 +52,7 @@ namespace NeoAxis
 		public Reference<double> DepthThreshold
 		{
 			get { if( _depthThreshold.BeginGet() ) DepthThreshold = _depthThreshold.Get( this ); return _depthThreshold.value; }
-			set { if( _depthThreshold.BeginSet( ref value ) ) { try { DepthThresholdChanged?.Invoke( this ); } finally { _depthThreshold.EndSet(); } } }
+			set { if( _depthThreshold.BeginSet( this, ref value ) ) { try { DepthThresholdChanged?.Invoke( this ); } finally { _depthThreshold.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DepthThreshold"/> property value changes.</summary>
 		public event Action<RenderingEffect_MotionBlur> DepthThresholdChanged;
@@ -62,7 +62,7 @@ namespace NeoAxis
 		public Reference<double> VelocityThreshold
 		{
 			get { if( _velocityThreshold.BeginGet() ) VelocityThreshold = _velocityThreshold.Get( this ); return _velocityThreshold.value; }
-			set { if( _velocityThreshold.BeginSet( ref value ) ) { try { VelocityThresholdChanged?.Invoke( this ); } finally { _velocityThreshold.EndSet(); } } }
+			set { if( _velocityThreshold.BeginSet( this, ref value ) ) { try { VelocityThresholdChanged?.Invoke( this ); } finally { _velocityThreshold.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="VelocityThreshold"/> property value changes.</summary>
 		public event Action<RenderingEffect_MotionBlur> VelocityThresholdChanged;
@@ -74,6 +74,8 @@ namespace NeoAxis
 		{
 			base.OnRender( context, frameData, ref actualTexture );
 
+			if( context.owner.InstantCameraMovementHappens )
+				return;
 			if( Intensity <= 0 )
 				return;
 

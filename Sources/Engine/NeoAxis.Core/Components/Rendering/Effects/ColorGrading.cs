@@ -33,7 +33,7 @@ namespace NeoAxis
 		public Reference<ImageComponent> LookupTable
 		{
 			get { if( _lookupTable.BeginGet() ) LookupTable = _lookupTable.Get( this ); return _lookupTable.value; }
-			set { if( _lookupTable.BeginSet( ref value ) ) { try { LookupTableChanged?.Invoke( this ); } finally { _lookupTable.EndSet(); } } }
+			set { if( _lookupTable.BeginSet( this, ref value ) ) { try { LookupTableChanged?.Invoke( this ); } finally { _lookupTable.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LookupTable"/> property value changes.</summary>
 		public event Action<RenderingEffect_ColorGrading> LookupTableChanged;
@@ -48,7 +48,7 @@ namespace NeoAxis
 		public Reference<ColorValuePowered> Multiply
 		{
 			get { if( _multiply.BeginGet() ) Multiply = _multiply.Get( this ); return _multiply.value; }
-			set { if( _multiply.BeginSet( ref value ) ) { try { MultiplyChanged?.Invoke( this ); } finally { _multiply.EndSet(); } } }
+			set { if( _multiply.BeginSet( this, ref value ) ) { try { MultiplyChanged?.Invoke( this ); } finally { _multiply.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Multiply"/> property value changes.</summary>
 		public event Action<RenderingEffect_ColorGrading> MultiplyChanged;
@@ -62,7 +62,7 @@ namespace NeoAxis
 		public Reference<Vector3> Add
 		{
 			get { if( _add.BeginGet() ) Add = _add.Get( this ); return _add.value; }
-			set { if( _add.BeginSet( ref value ) ) { try { AddChanged?.Invoke( this ); } finally { _add.EndSet(); } } }
+			set { if( _add.BeginSet( this, ref value ) ) { try { AddChanged?.Invoke( this ); } finally { _add.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Add"/> property value changes.</summary>
 		public event Action<RenderingEffect_ColorGrading> AddChanged;
@@ -83,7 +83,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _add.BeginSet( ref value ) )
+		//		if( _add.BeginSet( this, ref value ) )
 		//		{
 		//			try { AddChanged?.Invoke( this ); }
 		//			finally { _add.EndSet(); }

@@ -1,9 +1,9 @@
-// Made with NeoAxis Engine 2022.1.
+// Made with NeoAxis Engine 2023.1.
 
 .component NeoAxis.FenceEntrance
 {
 	Name = Fence Entrance
-	EditorCameraTransform = "1.69809027395372 -2.05097998570861 1.42442193804256; -0.136066219558441 0.103298333364333 0.784769412223884 0.595778824612797; 1 1 1"
+	EditorCameraTransform = "1.68779834598955 -2.18702935790778 1.69763104798882; -0.167112236518446 0.12988751100133 0.771667624496759 0.599776468524075; 1 1 1"
 	Transform = "0 0 0; 0 0 0 1; 1 1 1"
 	.component NeoAxis.MeshInSpace
 	{
@@ -55,7 +55,6 @@
 		Name = Entrance 1 door left Collision Body
 		CanBeSelected = False
 		MotionType = Dynamic
-		CCD = True
 		Transform
 		{
 			GetByReference = "this:$Attach Transform Offset\\Result"
@@ -67,7 +66,7 @@
 		.component NeoAxis.TransformOffset
 		{
 			Name = Attach Transform Offset
-			PositionOffset = 0.5663452843669 0 0.655726755759668
+			PositionOffset = 0.56 0 0.655726755759668
 			Source
 			{
 				GetByReference = "this:..\\..\\Transform"
@@ -214,13 +213,10 @@
 		ScreenLabel = NeverDisplay
 		CanBeSelected = False
 		CollisionsBetweenLinkedBodies = False
-		AngularAxisZ = Free
-		AngularAxisZMotor = True
-		AngularAxisZMotorTargetVelocity = 1
-		AngularAxisZMotorMaxForce = 1
-		AngularAxisZMotorRestitution = 0.5
-		AngularAxisZServo = True
-		AngularAxisZSpring = True
+		AngularZAxis = Free
+		AngularZAxisMotor = Position
+		AngularZAxisMotorFrequency = 0.7
+		AngularZAxisMotorDamping = 0.3
 		Transform
 		{
 			GetByReference = "this:$Attach Transform Offset\\Result"
@@ -248,13 +244,11 @@
 		Name = Constraint right
 		ScreenLabel = NeverDisplay
 		CanBeSelected = False
-		AngularAxisZ = Free
-		AngularAxisZMotor = True
-		AngularAxisZMotorTargetVelocity = 1
-		AngularAxisZMotorMaxForce = 1
-		AngularAxisZMotorRestitution = 0.5
-		AngularAxisZServo = True
-		AngularAxisZSpring = True
+		CollisionsBetweenLinkedBodies = False
+		AngularZAxis = Free
+		AngularZAxisMotor = Position
+		AngularZAxisMotorFrequency = 0.7
+		AngularZAxisMotorDamping = 0.3
 		Transform
 		{
 			GetByReference = "this:$Attach Transform Offset\\Result"

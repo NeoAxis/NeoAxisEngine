@@ -37,7 +37,7 @@ namespace NeoAxis
 		//public Reference<Vector2I> RenderTargetSize
 		//{
 		//	get { if( _renderTargetSize.BeginGet() ) RenderTargetSize = _renderTargetSize.Get( this ); return _renderTargetSize.value; }
-		//	set { if( _renderTargetSize.BeginSet( ref value ) ) { try { RenderTargetSizeChanged?.Invoke( this ); } finally { _renderTargetSize.EndSet(); } } }
+		//	set { if( _renderTargetSize.BeginSet( this, ref value ) ) { try { RenderTargetSizeChanged?.Invoke( this ); } finally { _renderTargetSize.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="RenderTargetSize"/> property value changes.</summary>
 		//public event Action<UIRenderTarget> RenderTargetSizeChanged;
@@ -50,7 +50,7 @@ namespace NeoAxis
 		public Reference<AutoTrueFalse> HDR
 		{
 			get { if( _hdr.BeginGet() ) HDR = _hdr.Get( this ); return _hdr.value; }
-			set { if( _hdr.BeginSet( ref value ) ) { try { HDRChanged?.Invoke( this ); } finally { _hdr.EndSet(); } } }
+			set { if( _hdr.BeginSet( this, ref value ) ) { try { HDRChanged?.Invoke( this ); } finally { _hdr.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HDR"/> property value changes.</summary>
 		public event Action<UIRenderTarget> HDRChanged;
@@ -63,7 +63,7 @@ namespace NeoAxis
 		//public Reference<double> AspectRatio
 		//{
 		//	get { if( _aspectRatio.BeginGet() ) AspectRatio = _aspectRatio.Get( this ); return _aspectRatio.value; }
-		//	set { if( _aspectRatio.BeginSet( ref value ) ) { try { AspectRatioChanged?.Invoke( this ); } finally { _aspectRatio.EndSet(); } } }
+		//	set { if( _aspectRatio.BeginSet( this, ref value ) ) { try { AspectRatioChanged?.Invoke( this ); } finally { _aspectRatio.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="AspectRatio"/> property value changes.</summary>
 		//public event Action<UIRenderTarget> AspectRatioChanged;
@@ -76,7 +76,7 @@ namespace NeoAxis
 		public Reference<bool> AutoUpdate
 		{
 			get { if( _autoUpdate.BeginGet() ) AutoUpdate = _autoUpdate.Get( this ); return _autoUpdate.value; }
-			set { if( _autoUpdate.BeginSet( ref value ) ) { try { AutoUpdateChanged?.Invoke( this ); } finally { _autoUpdate.EndSet(); } } }
+			set { if( _autoUpdate.BeginSet( this, ref value ) ) { try { AutoUpdateChanged?.Invoke( this ); } finally { _autoUpdate.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AutoUpdate"/> property value changes.</summary>
 		public event Action<UIRenderTarget> AutoUpdateChanged;
@@ -89,7 +89,7 @@ namespace NeoAxis
 		//public Reference<ColorValue> BackgroundColor
 		//{
 		//	get { if( _backgroundColor.BeginGet() ) BackgroundColor = _backgroundColor.Get( this ); return _backgroundColor.value; }
-		//	set { if( _backgroundColor.BeginSet( ref value ) ) { try { BackgroundColorChanged?.Invoke( this ); } finally { _backgroundColor.EndSet(); } } }
+		//	set { if( _backgroundColor.BeginSet( this, ref value ) ) { try { BackgroundColorChanged?.Invoke( this ); } finally { _backgroundColor.EndSet(); } } }
 		//}
 		//public event Action<UIRenderTarget> BackgroundColorChanged;
 		//ReferenceField<ColorValue> _backgroundColor = new ColorValue( 0.4, 0.4, 0.4 );
@@ -102,7 +102,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayScene
 		{
 			get { if( _displayScene.BeginGet() ) DisplayScene = _displayScene.Get( this ); return _displayScene.value; }
-			set { if( _displayScene.BeginSet( ref value ) ) { try { DisplaySceneChanged?.Invoke( this ); UpdateAttachedScene(); } finally { _displayScene.EndSet(); } } }
+			set { if( _displayScene.BeginSet( this, ref value ) ) { try { DisplaySceneChanged?.Invoke( this ); UpdateAttachedScene(); } finally { _displayScene.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayScene"/> property value changes.</summary>
 		public event Action<UIRenderTarget> DisplaySceneChanged;
@@ -116,7 +116,7 @@ namespace NeoAxis
 		public Reference<Scene> Scene
 		{
 			get { if( _scene.BeginGet() ) Scene = _scene.Get( this ); return _scene.value; }
-			set { if( _scene.BeginSet( ref value ) ) { try { SceneChanged?.Invoke( this ); UpdateAttachedScene(); } finally { _scene.EndSet(); } } }
+			set { if( _scene.BeginSet( this, ref value ) ) { try { SceneChanged?.Invoke( this ); UpdateAttachedScene(); } finally { _scene.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Scene"/> property value changes.</summary>
 		public event Action<UIRenderTarget> SceneChanged;
@@ -130,7 +130,7 @@ namespace NeoAxis
 		public Reference<Camera> Camera
 		{
 			get { if( _camera.BeginGet() ) Camera = _camera.Get( this ); return _camera.value; }
-			set { if( _camera.BeginSet( ref value ) ) { try { CameraChanged?.Invoke( this ); } finally { _camera.EndSet(); } } }
+			set { if( _camera.BeginSet( this, ref value ) ) { try { CameraChanged?.Invoke( this ); } finally { _camera.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Camera"/> property value changes.</summary>
 		public event Action<UIRenderTarget> CameraChanged;
@@ -144,7 +144,7 @@ namespace NeoAxis
 		public Reference<string> CameraByName
 		{
 			get { if( _cameraByName.BeginGet() ) CameraByName = _cameraByName.Get( this ); return _cameraByName.value; }
-			set { if( _cameraByName.BeginSet( ref value ) ) { try { CameraByNameChanged?.Invoke( this ); } finally { _cameraByName.EndSet(); } } }
+			set { if( _cameraByName.BeginSet( this, ref value ) ) { try { CameraByNameChanged?.Invoke( this ); } finally { _cameraByName.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CameraByName"/> property value changes.</summary>
 		public event Action<UIRenderTarget> CameraByNameChanged;
@@ -159,7 +159,7 @@ namespace NeoAxis
 		//public Reference<UIControl> UIControl
 		//{
 		//	get { if( _uiControl.BeginGet() ) UIControl = _uiControl.Get( this ); return _uiControl.value; }
-		//	set { if( _uiControl.BeginSet( ref value ) ) { try { UIControlChanged?.Invoke( this ); UIControlUpdate(); } finally { _uiControl.EndSet(); } } }
+		//	set { if( _uiControl.BeginSet( this, ref value ) ) { try { UIControlChanged?.Invoke( this ); UIControlUpdate(); } finally { _uiControl.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="UIControl"/> property value changes.</summary>
 		//public event Action<UIRenderTarget> UIControlChanged;
@@ -173,7 +173,7 @@ namespace NeoAxis
 		//public Reference<bool> ReadOnly
 		//{
 		//	get { if( _readOnly.BeginGet() ) ReadOnly = _readOnly.Get( this ); return _readOnly.value; }
-		//	set { if( _readOnly.BeginSet( ref value ) ) { try { ReadOnlyChanged?.Invoke( this ); } finally { _readOnly.EndSet(); } } }
+		//	set { if( _readOnly.BeginSet( this, ref value ) ) { try { ReadOnlyChanged?.Invoke( this ); } finally { _readOnly.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="ReadOnly"/> property value changes.</summary>
 		//public event Action<UIRenderTarget> ReadOnlyChanged;
@@ -374,7 +374,7 @@ namespace NeoAxis
 
 		}
 
-		public void RenderTargetUpdate()
+		public void RenderTargetUpdate( Viewport viewport )
 		{
 			if( !viewportDuringUpdate )
 			{
@@ -388,6 +388,13 @@ namespace NeoAxis
 						viewportDuringUpdate = true;
 
 						createdViewport.BackgroundColorDefault = BackgroundColor;
+
+						//!!!!works wrong. maybe because inside another scene is used
+
+						//createdViewport.Update( false, GetCameraSettings(), viewport.RenderingContext.CurrentViewNumber );
+						//viewport.RenderingContext.CurrentViewNumber = createdViewport.RenderingContext.CurrentViewNumber;
+						//viewport.RenderingContext.UpdateStatisticsCurrent.AddFrom( createdViewport.RenderingContext.UpdateStatisticsCurrent );
+
 						createdViewport.Update( true, GetCameraSettings() );
 					}
 					finally
@@ -400,8 +407,8 @@ namespace NeoAxis
 
 		private void Viewport_UpdateBegin( Viewport viewport )
 		{
-			if( EnabledInHierarchyAndIsInstance && AutoUpdate && VisibleInHierarchy )
-				RenderTargetUpdate();
+			if( EnabledInHierarchyAndIsInstance && AutoUpdate && VisibleInHierarchy && viewport.Mode == Viewport.ModeEnum.Default )
+				RenderTargetUpdate( viewport );
 		}
 
 		[Browsable( false )]

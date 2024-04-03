@@ -21,7 +21,7 @@ namespace NeoAxis
 			{
 				if( value < 1 )
 					value = new Reference<double>( 1, value.GetByReference );
-				if( _multiplier.BeginSet( ref value ) )
+				if( _multiplier.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -71,7 +71,7 @@ namespace NeoAxis
 		}
 
 #if !DEPLOY
-		protected override void OnBakeIntoMesh( Editor.DocumentInstance document, Editor.UndoMultiAction undoMultiAction )
+		protected override void OnBakeIntoMesh( Editor.IDocumentInstance document, Editor.UndoMultiAction undoMultiAction )
 		{
 			base.OnBakeIntoMesh( document, undoMultiAction );
 

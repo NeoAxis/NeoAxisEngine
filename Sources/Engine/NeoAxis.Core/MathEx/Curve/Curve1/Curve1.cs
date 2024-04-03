@@ -11,7 +11,7 @@ namespace NeoAxis
 	/// </summary>
 	public class Curve1
 	{
-		internal List<Point> points = new List<Point>();
+		internal List<Point> points;// = new List<Point>();
 
 		//bad for multithreading
 		//public bool AllowCachingIndexForTime { get; set; } = true;
@@ -52,6 +52,11 @@ namespace NeoAxis
 		}
 
 		/////////////////////////////////////////
+
+		public Curve1( int initialCapacity = 4 )
+		{
+			points = new List<Point>( initialCapacity );
+		}
 
 		/// <summary>
 		/// The list of points sorted by time.

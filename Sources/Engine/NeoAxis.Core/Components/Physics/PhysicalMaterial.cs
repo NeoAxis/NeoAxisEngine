@@ -2,11 +2,6 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.IO;
-using System.Drawing.Design;
 
 namespace NeoAxis
 {
@@ -32,7 +27,7 @@ namespace NeoAxis
 		public Reference<FrictionModeEnum> FrictionMode
 		{
 			get { if( _frictionMode.BeginGet() ) FrictionMode = _frictionMode.Get( this ); return _frictionMode.value; }
-			set { if( _frictionMode.BeginSet( ref value ) ) { try { FrictionModeChanged?.Invoke( this ); } finally { _frictionMode.EndSet(); } } }
+			set { if( _frictionMode.BeginSet( this, ref value ) ) { try { FrictionModeChanged?.Invoke( this ); } finally { _frictionMode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrictionMode"/> property value changes.</summary>
 		public event Action<PhysicalMaterial> FrictionModeChanged;
@@ -48,7 +43,7 @@ namespace NeoAxis
 		public Reference<double> Friction
 		{
 			get { if( _friction.BeginGet() ) Friction = _friction.Get( this ); return _friction.value; }
-			set { if( _friction.BeginSet( ref value ) ) { try { FrictionChanged?.Invoke( this ); } finally { _friction.EndSet(); } } }
+			set { if( _friction.BeginSet( this, ref value ) ) { try { FrictionChanged?.Invoke( this ); } finally { _friction.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Friction"/> property value changes.</summary>
 		public event Action<PhysicalMaterial> FrictionChanged;
@@ -64,7 +59,7 @@ namespace NeoAxis
 		public Reference<Vector3> AnisotropicFriction
 		{
 			get { if( _anisotropicFriction.BeginGet() ) AnisotropicFriction = _anisotropicFriction.Get( this ); return _anisotropicFriction.value; }
-			set { if( _anisotropicFriction.BeginSet( ref value ) ) { try { AnisotropicFrictionChanged?.Invoke( this ); } finally { _anisotropicFriction.EndSet(); } } }
+			set { if( _anisotropicFriction.BeginSet( this, ref value ) ) { try { AnisotropicFrictionChanged?.Invoke( this ); } finally { _anisotropicFriction.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AnisotropicFriction"/> property value changes.</summary>
 		public event Action<PhysicalMaterial> AnisotropicFrictionChanged;
@@ -80,7 +75,7 @@ namespace NeoAxis
 		public Reference<double> SpinningFriction
 		{
 			get { if( _spinningFriction.BeginGet() ) SpinningFriction = _spinningFriction.Get( this ); return _spinningFriction.value; }
-			set { if( _spinningFriction.BeginSet( ref value ) ) { try { SpinningFrictionChanged?.Invoke( this ); } finally { _spinningFriction.EndSet(); } } }
+			set { if( _spinningFriction.BeginSet( this, ref value ) ) { try { SpinningFrictionChanged?.Invoke( this ); } finally { _spinningFriction.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SpinningFriction"/> property value changes.</summary>
 		public event Action<PhysicalMaterial> SpinningFrictionChanged;
@@ -96,7 +91,7 @@ namespace NeoAxis
 		public Reference<double> RollingFriction
 		{
 			get { if( _rollingFriction.BeginGet() ) RollingFriction = _rollingFriction.Get( this ); return _rollingFriction.value; }
-			set { if( _rollingFriction.BeginSet( ref value ) ) { try { RollingFrictionChanged?.Invoke( this ); } finally { _rollingFriction.EndSet(); } } }
+			set { if( _rollingFriction.BeginSet( this, ref value ) ) { try { RollingFrictionChanged?.Invoke( this ); } finally { _rollingFriction.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RollingFriction"/> property value changes.</summary>
 		public event Action<PhysicalMaterial> RollingFrictionChanged;
@@ -114,7 +109,7 @@ namespace NeoAxis
 		public Reference<double> RigidRestitution
 		{
 			get { if( _rigidRestitution.BeginGet() ) RigidRestitution = _rigidRestitution.Get( this ); return _rigidRestitution.value; }
-			set { if( _rigidRestitution.BeginSet( ref value ) ) { try { RigidRestitutionChanged?.Invoke( this ); } finally { _rigidRestitution.EndSet(); } } }
+			set { if( _rigidRestitution.BeginSet( this, ref value ) ) { try { RigidRestitutionChanged?.Invoke( this ); } finally { _rigidRestitution.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RigidRestitution"/> property value changes.</summary>
 		public event Action<PhysicalMaterial> RigidRestitutionChanged;
@@ -140,7 +135,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _softLinearStiffness.BeginSet( ref value ) )
+		//		if( _softLinearStiffness.BeginSet( this, ref value ) )
 		//		{
 		//			try { SoftLinearStiffnessChanged?.Invoke( this ); }
 		//			finally { _softLinearStiffness.EndSet(); }
@@ -166,7 +161,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _softAngularStiffness.BeginSet( ref value ) )
+		//		if( _softAngularStiffness.BeginSet( this, ref value ) )
 		//		{
 		//			try { SoftAngularStiffnessChanged?.Invoke( this ); }
 		//			finally { _softAngularStiffness.EndSet(); }
@@ -192,7 +187,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _softVolumeStiffness.BeginSet( ref value ) )
+		//		if( _softVolumeStiffness.BeginSet( this, ref value ) )
 		//		{
 		//			try { SoftVolumeStiffnessChanged?.Invoke( this ); }
 		//			finally { _softVolumeStiffness.EndSet(); }

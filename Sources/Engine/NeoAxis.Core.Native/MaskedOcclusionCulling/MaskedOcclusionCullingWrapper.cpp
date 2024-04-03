@@ -15,10 +15,10 @@ EXPORT void MaskedOcclusionCulling_Destroy(MaskedOcclusionCulling* instance)
 	MaskedOcclusionCulling::Destroy(instance);
 }
 
-EXPORT void MaskedOcclusionCulling_SetResolution(MaskedOcclusionCulling* instance, int width, int height)
+EXPORT void MaskedOcclusionCulling_Init(MaskedOcclusionCulling* instance, int width, int height, bool ortho)
 {
 	instance->SetResolution(width, height);
-
+	instance->SetOrtho(ortho);
 	instance->SetNearClipPlane(0);
 }
 

@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 
 All rights reserved.
@@ -49,21 +49,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "STEPFileEncoding.h"
 #include <assimp/TinyFormatter.h>
 #include <assimp/fast_atof.h>
-#include <memory>
 #include <functional>
+#include <memory>
+#include <utility>
 
 using namespace Assimp;
 
 namespace EXPRESS = STEP::EXPRESS;
 
 // ------------------------------------------------------------------------------------------------
-std::string AddLineNumber(const std::string& s,uint64_t line /*= LINE_NOT_SPECIFIED*/, const std::string& prefix = "")
+std::string AddLineNumber(const std::string& s,uint64_t line /*= LINE_NOT_SPECIFIED*/, const std::string& prefix = std::string())
 {
     return line == STEP::SyntaxError::LINE_NOT_SPECIFIED ? prefix+s : static_cast<std::string>( (Formatter::format(),prefix,"(line ",line,") ",s) );
 }
 
 // ------------------------------------------------------------------------------------------------
-std::string AddEntityID(const std::string& s,uint64_t entity /*= ENTITY_NOT_SPECIFIED*/, const std::string& prefix = "")
+std::string AddEntityID(const std::string& s,uint64_t entity /*= ENTITY_NOT_SPECIFIED*/, const std::string& prefix = std::string())
 {
     return entity == STEP::TypeError::ENTITY_NOT_SPECIFIED ? prefix+s : static_cast<std::string>( (Formatter::format(),prefix,"(entity #",entity,") ",s));
 }
@@ -87,7 +88,7 @@ static const char *ISO_Token         = "ISO-10303-21;";
 static const char *FILE_SCHEMA_Token = "FILE_SCHEMA";
 // ------------------------------------------------------------------------------------------------
 STEP::DB* STEP::ReadFileHeader(std::shared_ptr<IOStream> stream) {
-    std::shared_ptr<StreamReaderLE> reader = std::shared_ptr<StreamReaderLE>(new StreamReaderLE(stream));
+    std::shared_ptr<StreamReaderLE> reader = std::shared_ptr<StreamReaderLE>(new StreamReaderLE(std::move(stream)));
     std::unique_ptr<STEP::DB> db = std::unique_ptr<STEP::DB>(new STEP::DB(reader));
 
     LineSplitter &splitter = db->GetSplitter();
@@ -270,11 +271,15 @@ void STEP::ReadFile(DB& db,const EXPRESS::ConversionSchema& scheme,
         }
 
         std::string::size_type ns = n0;
-        do ++ns; while( IsSpace(s.at(ns)));
+        do {
+            ++ns;
+        } while (IsSpace(s.at(ns)));
         std::string::size_type ne = n1;
-        do --ne; while( IsSpace(s.at(ne)));
-        std::string type = s.substr(ns,ne-ns+1);
-        std::transform( type.begin(), type.end(), type.begin(), &Assimp::ToLower<char>  );
+        do {
+            --ne;
+        } while (IsSpace(s.at(ne)));
+        std::string type = s.substr(ns, ne - ns + 1);
+        type = ai_tolower(type);
         const char* sz = scheme.GetStaticStringForToken(type);
         if(sz) {
             const std::string::size_type szLen = n2-n1+1;
@@ -293,13 +298,13 @@ void STEP::ReadFile(DB& db,const EXPRESS::ConversionSchema& scheme,
     }
 
     if ( !DefaultLogger::isNullLogger()){
-        ASSIMP_LOG_DEBUG((Formatter::format(),"STEP: got ",map.size()," object records with ",
-            db.GetRefs().size()," inverse index entries"));
+        ASSIMP_LOG_DEBUG("STEP: got ",map.size()," object records with ",
+            db.GetRefs().size()," inverse index entries");
     }
 }
 
 // ------------------------------------------------------------------------------------------------
-std::shared_ptr<const EXPRESS::DataType> EXPRESS::DataType::Parse(const char*& inout,uint64_t line, const EXPRESS::ConversionSchema* schema /*= NULL*/)
+std::shared_ptr<const EXPRESS::DataType> EXPRESS::DataType::Parse(const char*& inout,uint64_t line, const EXPRESS::ConversionSchema* schema /*= nullptr*/)
 {
     const char* cur = inout;
     SkipSpaces(&cur);
@@ -317,10 +322,10 @@ std::shared_ptr<const EXPRESS::DataType> EXPRESS::DataType::Parse(const char*& i
                 }
                 for(--t;IsSpace(*t);--t);
                 std::string s(cur,static_cast<size_t>(t-cur+1));
-                std::transform(s.begin(),s.end(),s.begin(),&ToLower<char> );
+                std::transform(s.begin(),s.end(),s.begin(),&ai_tolower<char> );
                 if (schema->IsKnownToken(s)) {
                     for(cur = t+1;*cur++ != '(';);
-                    const std::shared_ptr<const EXPRESS::DataType> dt = Parse(cur);
+                    std::shared_ptr<const EXPRESS::DataType> dt = Parse(cur);
                     inout = *cur ? cur+1 : cur;
                     return dt;
                 }
@@ -422,7 +427,7 @@ std::shared_ptr<const EXPRESS::DataType> EXPRESS::DataType::Parse(const char*& i
 }
 
 // ------------------------------------------------------------------------------------------------
-std::shared_ptr<const EXPRESS::LIST> EXPRESS::LIST::Parse(const char*& inout,uint64_t line, const EXPRESS::ConversionSchema* schema /*= NULL*/) {
+std::shared_ptr<const EXPRESS::LIST> EXPRESS::LIST::Parse(const char*& inout,uint64_t line, const EXPRESS::ConversionSchema* schema /*= nullptr*/) {
     const std::shared_ptr<EXPRESS::LIST> list = std::make_shared<EXPRESS::LIST>();
     EXPRESS::LIST::MemberList& members = list->members;
 
@@ -540,9 +545,9 @@ void STEP::LazyObject::LazyInit() const {
     const char* acopy = args;
     std::shared_ptr<const EXPRESS::LIST> conv_args = EXPRESS::LIST::Parse(acopy,(uint64_t)STEP::SyntaxError::LINE_NOT_SPECIFIED,&db.GetSchema());
     delete[] args;
-    args = NULL;
+    args = nullptr;
 
-    // if the converter fails, it should throw an exception, but it should never return NULL
+    // if the converter fails, it should throw an exception, but it should never return nullptr
     try {
         obj = proc(db,*conv_args);
     }

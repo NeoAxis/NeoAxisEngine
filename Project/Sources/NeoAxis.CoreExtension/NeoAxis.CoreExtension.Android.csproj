@@ -54,22 +54,39 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Character\Character.cs" />
-    <Compile Include="Character\CharacterAI.cs" />
-    <Compile Include="Character\CharacterAITask_MoveTo.cs" />
-    <Compile Include="Character\CharacterAITask_PressButton.cs" />
-    <Compile Include="Character\CharacterAITask_TurnSwitch.cs" />
-    <Compile Include="Character\CharacterAITask_TurnTo.cs" />
-    <Compile Include="Character\CharacterAITask_Wait.cs" />
+    <Compile Include="Character\CharacterAI.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Character\CharacterAITask_MoveTo.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Character\CharacterAITask_PressButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Character\CharacterAITask_TurnSwitch.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Character\CharacterAITask_TurnTo.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Character\CharacterAITask_Wait.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Character\CharacterAssemblyRegistration.cs" />
-    <Compile Include="Character\CharacterInputProcessing.cs" />
+    <Compile Include="Character\CharacterInputProcessing.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Character2D\Character2D.cs" />
-    <Compile Include="Character2D\Character2DAI.cs" />
-    <Compile Include="Character2D\Character2DAITask_MoveTo.cs" />
+    <Compile Include="Character2D\Character2DAI.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Character2D\Character2DAITask_MoveTo.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Character2D\Character2DAssemblyRegistration.cs" />
-    <Compile Include="Character2D\Character2DEditor.cs" />
-    <Compile Include="Character2D\Character2DInputProcessing.cs" />
-    <Compile Include="Character2D\Character2DPreview.cs" />
-    <Compile Include="Character2D\Character2DPreviewImage.cs" />
+    <Compile Include="Character2D\Character2DInputProcessing.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\DestroyingSensor.cs" />
     <Compile Include="Components\DestroyingSensor2D.cs" />
     <Compile Include="Components\Grid.cs" />
@@ -78,22 +95,22 @@
     <Compile Include="Components\RenderTargetInSpace.cs" />
     <Compile Include="Components\Text2D.cs" />
     <Compile Include="Components\Text3D.cs" />
-    <Compile Include="Game framework\AI.cs" />
-    <Compile Include="Game framework\AITask.cs" />
-    <Compile Include="Game framework\ButtonInSpace.cs" />
-    <Compile Include="Game framework\ButtonInSpaceSettingsCell.cs" />
-    <Compile Include="Game framework\CameraManagement.cs" />
-    <Compile Include="Game framework\GameMode.cs" />
+    <Compile Include="Game framework\AI.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Game framework\AITask.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Game framework\CameraManagement.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Game framework\GameMode.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Game framework\InputMessage.cs" />
-    <Compile Include="Game framework\InputProcessing.cs" />
-    <Compile Include="Game framework\InteractiveObject.cs" />
-    <Compile Include="Game framework\ObjectInteractionContext.cs" />
-    <Compile Include="Game framework\RegulatorSwitchInSpace.cs" />
-    <Compile Include="Game framework 2D\IGameFrameworkItem2D.cs" />
-    <Compile Include="Game framework 2D\Weapon2D.cs" />
-    <Compile Include="Game framework 3D\Door.cs" />
-    <Compile Include="Game framework 3D\Explosion.cs" />
-    <Compile Include="Game framework 3D\IGameFrameworkItem.cs" />
+    <Compile Include="Game framework\InputProcessing.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Mesh modifiers\MeshModifier_BoxUV.cs" />
     <Compile Include="Mesh modifiers\MeshModifier_RandomizePosition.cs" />
     <Compile Include="Project settings\ProjectSettingsPage_Extension.cs" />
@@ -104,136 +121,63 @@
     <Compile Include="Utility\EngineConsole.cs" />
     <Compile Include="Utility\ScreenMessages.cs" />
     <Compile Include="Vehicle\Vehicle.cs" />
-    <Compile Include="Vehicle\VehicleAI.cs" />
-    <Compile Include="Vehicle\VehicleAITask_MoveTo.cs" />
+    <Compile Include="Vehicle\VehicleAI.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Vehicle\VehicleAITask_MoveTo.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Vehicle\VehicleAssemblyRegistration.cs" />
-    <Compile Include="Vehicle\VehicleInputProcessing.cs" />
+    <Compile Include="Vehicle\VehicleInputProcessing.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\ComputeUsingThreads\ComputeUsingThreads.cs" />
     <Compile Include="Components\ComputeUsingThreads\ComputeUsingThreadsSettingsCell.cs" />
-    <Compile Include="Components\Pathfinding\Pathfinding.cs" />
-    <Compile Include="Components\Pathfinding\PathfindingGeometry.cs" />
-    <Compile Include="Components\Pathfinding\PathfindingGeometryTag.cs" />
-    <Compile Include="Components\Pathfinding\PathfindingSettingsCell.cs" />
-    <Compile Include="Components\Pathfinding\PathfindingTestMode.cs" />
-    <Compile Include="Components\WorldGenerator\WorldGenerator.cs" />
-    <Compile Include="Components\WorldGenerator\WorldGeneratorSettingsCell.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Area.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\AreaGenerator.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Cell.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\CompactCell.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\CompactHeightfield.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\CompactSpan.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\CompactSpanReference.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Contour.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\ContourBuildFlags.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\ContourSet.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\ContourVertex.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Direction.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\EdgeFlags.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Heightfield.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Heightfield.Rasterization.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\HeightPatch.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\MathHelper.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\NavMesh.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\NavMeshBuilder.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\NavMeshGenerationSettings.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\NavMeshQuery.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\NodeFlags.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\NodePool.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\PolyBounds.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\PolyMesh.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\PolyMeshDetail.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\PolyVertex.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Region.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Span.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\SpanReference.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\TiledNavMesh.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Collections\BVTree.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Crowds\Agent.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Crowds\Crowd.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Crowds\CrowdAgentState.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Crowds\ObstacleAvoidanceQuery.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Crowds\PathCorridor.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Crowds\PathQueue.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Crowds\Status.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Crowds\TargetState.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Crowds\UpdateFlags.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Geometry\BBox2i.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Geometry\BBox3.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Geometry\Containment.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Geometry\Distance.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Geometry\Intersection.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Geometry\Triangle3.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Geometry\TriangleEnumerable.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Geometry\Vector2.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Geometry\Vector2i.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Geometry\Vector3.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Geometry\Vector3Extensions.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\IO\NavMeshConfigurationFile.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\IO\NavMeshSerializer.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\BoundarySide.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\FindPathOptions.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\Link.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\NavNode.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\NavPoint.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\NavPoly.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\NavPolyId.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\NavPolyIdManager.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\NavQueryFilter.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\NavTile.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\OffMeshConnection.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\Path.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\PathBuildFlags.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\PathfindingCommon.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\RaycastHit.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\RaycastOptions.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Pathfinding\StraightPathFlags.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Collections\Generic\BufferedQueue.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Collections\Generic\BufferedStack.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Collections\Generic\IValueWithCost.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Collections\Generic\PriorityQueue.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Collections\Generic\ProximityGrid.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\IO\Binary\NavMeshBinarySerializer.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\IO\Json\AreaConverter.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\IO\Json\NavMeshJsonSerializer.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\IO\Json\PolyIdConverter.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\IO\Json\Vector3Converter.cs" />
-    <Compile Include="Components\Pathfinding\SharpNav\Crowds\LocalBoundary.cs" />
     <Compile Include="Game framework\AvatarSettings.cs" />
-    <Compile Include="Game framework\DialogueTree.cs" />
     <Compile Include="Game framework\GameFrameworkCommon.cs" />
     <Compile Include="Game framework\SpawnPoint.cs" />
     <Compile Include="Building\Building.cs" />
     <Compile Include="Building\BuildingAssemblyRegistration.cs" />
-    <Compile Include="Building\BuildingElement.cs" />
-    <Compile Include="Building\BuildingManager.cs" />
+    <Compile Include="Building\BuildingElement.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Building\BuildingManager.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Building\BuildingManagerSettingsCell.cs" />
     <Compile Include="Building\BuildingModifier.cs" />
     <Compile Include="Building\BuildingSettingsCell.cs" />
-    <Compile Include="Building\BuildingType.cs" />
+    <Compile Include="Building\BuildingType.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Bullet\Bullet.cs" />
     <Compile Include="Bullet\BulletAssemblyRegistration.cs" />
-    <Compile Include="Bullet\BulletType.cs" />
+    <Compile Include="Bullet\BulletType.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Bullet\BulletTypeEditor.cs" />
     <Compile Include="Bullet\BulletTypePreview.cs" />
     <Compile Include="Bullet\BulletTypePreviewImage.cs" />
-    <Compile Include="Character\CharacterType.cs" />
+    <Compile Include="Character\CharacterType.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Character\CharacterTypeEditor.cs" />
     <Compile Include="Character\CharacterTypePreview.cs" />
     <Compile Include="Character\CharacterTypePreviewImage.cs" />
-    <Compile Include="Creature\CreatureMaker.cs" />
-    <Compile Include="Creature\CreatureMakerSettingsCell.cs" />
     <Compile Include="Fence\Fence.cs" />
     <Compile Include="Fence\FenceAssemblyRegistration.cs" />
     <Compile Include="Fence\FenceEntrance.cs" />
     <Compile Include="Fence\FencePoint.cs" />
     <Compile Include="Fence\FenceSettingsCell.cs" />
-    <Compile Include="Fence\FenceType.cs" />
+    <Compile Include="Fence\FenceType.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Fence\FenceTypeEditor.cs" />
     <Compile Include="Fence\FenceTypePreview.cs" />
     <Compile Include="Fence\FenceTypePreviewImage.cs" />
-    <Compile Include="Game framework\DemoMode.cs" />
-    <Compile Include="Game framework\GameObject.cs" />
+    <Compile Include="Game framework\DemoMode.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Plant\PlantAssemblyRegistration.cs" />
     <Compile Include="Plant\PlantEditor.cs" />
     <Compile Include="Plant\PlantGenerator_1_Init.cs" />
@@ -247,29 +191,44 @@
     <Compile Include="Road\Crossroad.cs" />
     <Compile Include="Road\Road.cs" />
     <Compile Include="Road\RoadAssemblyRegistration.cs" />
-    <Compile Include="Road\RoadLaneModifier.cs" />
-    <Compile Include="Road\RoadManager.cs" />
+    <Compile Include="Road\RoadLaneModifier.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Road\RoadManager.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Road\RoadManagerSettingsCell.cs" />
-    <Compile Include="Road\RoadModifier.cs" />
+    <Compile Include="Road\RoadModifier.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Road\RoadNode.cs" />
     <Compile Include="Road\RoadPoint.cs" />
     <Compile Include="Road\RoadSettingsCell.cs" />
-    <Compile Include="Road\RoadType.cs" />
+    <Compile Include="Road\RoadType.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Road\RoadTypeEditor.cs" />
     <Compile Include="Road\RoadTypePreview.cs" />
     <Compile Include="Road\RoadTypePreviewImage.cs" />
     <Compile Include="Road\RoadUtility.cs" />
-    <Compile Include="Traffic system\TrafficSystem.cs" />
-    <Compile Include="Traffic system\TrafficSystemElement.cs" />
+    <Compile Include="Traffic system\TrafficSystem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Traffic system\TrafficSystemElement.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Traffic system\TrafficSystemSettingsCell.cs" />
-    <Compile Include="Vehicle\VehicleSeat.cs" />
-    <Compile Include="Vehicle\VehicleType.cs" />
+    <Compile Include="Vehicle\VehicleType.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Vehicle\VehicleTypeEditor.cs" />
     <Compile Include="Vehicle\VehicleTypePreview.cs" />
     <Compile Include="Vehicle\VehicleTypePreviewImage.cs" />
     <Compile Include="Weapon\Weapon.cs" />
     <Compile Include="Weapon\WeaponAssemblyRegistration.cs" />
-    <Compile Include="Weapon\WeaponType.cs" />
+    <Compile Include="Weapon\WeaponType.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Weapon\WeaponTypeEditor.cs" />
     <Compile Include="Weapon\WeaponTypePreview.cs" />
     <Compile Include="Weapon\WeaponTypePreviewImage.cs" />
@@ -277,10 +236,185 @@
     <Compile Include="Pipe\PipeAssemblyRegistration.cs" />
     <Compile Include="Pipe\PipePoint.cs" />
     <Compile Include="Pipe\PipeSettingsCell.cs" />
-    <Compile Include="Pipe\PipeType.cs" />
+    <Compile Include="Pipe\PipeType.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Pipe\PipeTypeEditor.cs" />
     <Compile Include="Pipe\PipeTypePreview.cs" />
     <Compile Include="Pipe\PipeTypePreviewImage.cs" />
+    <Compile Include="Button\Button.cs" />
+    <Compile Include="Button\ButtonAssemblyRegistration.cs" />
+    <Compile Include="Button\ButtonSettingsCell.cs" />
+    <Compile Include="Button\ButtonType.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Button\ButtonTypeEditor.cs" />
+    <Compile Include="Button\ButtonTypePreview.cs" />
+    <Compile Include="Button\ButtonTypePreviewImage.cs" />
+    <Compile Include="Components\Door.cs" />
+    <Compile Include="Components\Explosion.cs" />
+    <Compile Include="Game framework\ContinuousInteraction.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Game framework\FlowDialogueMessage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Item\ItemAssemblyRegistration.cs" />
+    <Compile Include="Pathfinding\Pathfinding.cs" />
+    <Compile Include="Pathfinding\PathfindingGeometry.cs" />
+    <Compile Include="Pathfinding\PathfindingGeometryTag.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Pathfinding\PathfindingSettingsCell.cs" />
+    <Compile Include="Pathfinding\PathfindingTestMode.cs" />
+    <Compile Include="Regulator\Regulator.cs" />
+    <Compile Include="Regulator\RegulatorAssemblyRegistration.cs" />
+    <Compile Include="Regulator\RegulatorType.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Regulator\RegulatorTypeEditor.cs" />
+    <Compile Include="Regulator\RegulatorTypePreview.cs" />
+    <Compile Include="Regulator\RegulatorTypePreviewImage.cs" />
+    <Compile Include="Utility\Text2DFunctionality.cs" />
+    <Compile Include="World generator\WorldGenerator.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="World generator\WorldGeneratorSettingsCell.cs" />
+    <Compile Include="Pathfinding\SharpNav\Area.cs" />
+    <Compile Include="Pathfinding\SharpNav\AreaGenerator.cs" />
+    <Compile Include="Pathfinding\SharpNav\Cell.cs" />
+    <Compile Include="Pathfinding\SharpNav\CompactCell.cs" />
+    <Compile Include="Pathfinding\SharpNav\CompactHeightfield.cs" />
+    <Compile Include="Pathfinding\SharpNav\CompactSpan.cs" />
+    <Compile Include="Pathfinding\SharpNav\CompactSpanReference.cs" />
+    <Compile Include="Pathfinding\SharpNav\Contour.cs" />
+    <Compile Include="Pathfinding\SharpNav\ContourBuildFlags.cs" />
+    <Compile Include="Pathfinding\SharpNav\ContourSet.cs" />
+    <Compile Include="Pathfinding\SharpNav\ContourVertex.cs" />
+    <Compile Include="Pathfinding\SharpNav\Direction.cs" />
+    <Compile Include="Pathfinding\SharpNav\EdgeFlags.cs" />
+    <Compile Include="Pathfinding\SharpNav\Heightfield.cs" />
+    <Compile Include="Pathfinding\SharpNav\Heightfield.Rasterization.cs" />
+    <Compile Include="Pathfinding\SharpNav\HeightPatch.cs" />
+    <Compile Include="Pathfinding\SharpNav\MathHelper.cs" />
+    <Compile Include="Pathfinding\SharpNav\NavMesh.cs" />
+    <Compile Include="Pathfinding\SharpNav\NavMeshBuilder.cs" />
+    <Compile Include="Pathfinding\SharpNav\NavMeshGenerationSettings.cs" />
+    <Compile Include="Pathfinding\SharpNav\NavMeshQuery.cs" />
+    <Compile Include="Pathfinding\SharpNav\NodeFlags.cs" />
+    <Compile Include="Pathfinding\SharpNav\NodePool.cs" />
+    <Compile Include="Pathfinding\SharpNav\PolyBounds.cs" />
+    <Compile Include="Pathfinding\SharpNav\PolyMesh.cs" />
+    <Compile Include="Pathfinding\SharpNav\PolyMeshDetail.cs" />
+    <Compile Include="Pathfinding\SharpNav\PolyVertex.cs" />
+    <Compile Include="Pathfinding\SharpNav\Region.cs" />
+    <Compile Include="Pathfinding\SharpNav\Span.cs" />
+    <Compile Include="Pathfinding\SharpNav\SpanReference.cs" />
+    <Compile Include="Pathfinding\SharpNav\TiledNavMesh.cs" />
+    <Compile Include="Pathfinding\SharpNav\Collections\BVTree.cs" />
+    <Compile Include="Pathfinding\SharpNav\Crowds\Agent.cs" />
+    <Compile Include="Pathfinding\SharpNav\Crowds\Crowd.cs" />
+    <Compile Include="Pathfinding\SharpNav\Crowds\CrowdAgentState.cs" />
+    <Compile Include="Pathfinding\SharpNav\Crowds\LocalBoundary.cs" />
+    <Compile Include="Pathfinding\SharpNav\Crowds\ObstacleAvoidanceQuery.cs" />
+    <Compile Include="Pathfinding\SharpNav\Crowds\PathCorridor.cs" />
+    <Compile Include="Pathfinding\SharpNav\Crowds\PathQueue.cs" />
+    <Compile Include="Pathfinding\SharpNav\Crowds\Status.cs" />
+    <Compile Include="Pathfinding\SharpNav\Crowds\TargetState.cs" />
+    <Compile Include="Pathfinding\SharpNav\Crowds\UpdateFlags.cs" />
+    <Compile Include="Pathfinding\SharpNav\Geometry\BBox2i.cs" />
+    <Compile Include="Pathfinding\SharpNav\Geometry\BBox3.cs" />
+    <Compile Include="Pathfinding\SharpNav\Geometry\Containment.cs" />
+    <Compile Include="Pathfinding\SharpNav\Geometry\Distance.cs" />
+    <Compile Include="Pathfinding\SharpNav\Geometry\Intersection.cs" />
+    <Compile Include="Pathfinding\SharpNav\Geometry\Triangle3.cs" />
+    <Compile Include="Pathfinding\SharpNav\Geometry\TriangleEnumerable.cs" />
+    <Compile Include="Pathfinding\SharpNav\Geometry\Vector2.cs" />
+    <Compile Include="Pathfinding\SharpNav\Geometry\Vector2i.cs" />
+    <Compile Include="Pathfinding\SharpNav\Geometry\Vector3.cs" />
+    <Compile Include="Pathfinding\SharpNav\Geometry\Vector3Extensions.cs" />
+    <Compile Include="Pathfinding\SharpNav\IO\NavMeshConfigurationFile.cs" />
+    <Compile Include="Pathfinding\SharpNav\IO\NavMeshSerializer.cs" />
+    <Compile Include="Pathfinding\SharpNav\Pathfinding\BoundarySide.cs" />
+    <Compile Include="Pathfinding\SharpNav\Pathfinding\FindPathOptions.cs" />
+    <Compile Include="Pathfinding\SharpNav\Pathfinding\Link.cs" />
+    <Compile Include="Pathfinding\SharpNav\Pathfinding\NavNode.cs" />
+    <Compile Include="Pathfinding\SharpNav\Pathfinding\NavPoint.cs" />
+    <Compile Include="Pathfinding\SharpNav\Pathfinding\NavPoly.cs" />
+    <Compile Include="Pathfinding\SharpNav\Pathfinding\NavPolyId.cs" />
+    <Compile Include="Pathfinding\SharpNav\Pathfinding\NavPolyIdManager.cs" />
+    <Compile Include="Pathfinding\SharpNav\Pathfinding\NavQueryFilter.cs" />
+    <Compile Include="Pathfinding\SharpNav\Pathfinding\NavTile.cs" />
+    <Compile Include="Pathfinding\SharpNav\Pathfinding\OffMeshConnection.cs" />
+    <Compile Include="Pathfinding\SharpNav\Pathfinding\Path.cs" />
+    <Compile Include="Pathfinding\SharpNav\Pathfinding\PathBuildFlags.cs" />
+    <Compile Include="Pathfinding\SharpNav\Pathfinding\PathfindingCommon.cs" />
+    <Compile Include="Pathfinding\SharpNav\Pathfinding\RaycastHit.cs" />
+    <Compile Include="Pathfinding\SharpNav\Pathfinding\RaycastOptions.cs" />
+    <Compile Include="Pathfinding\SharpNav\Pathfinding\StraightPathFlags.cs" />
+    <Compile Include="Pathfinding\SharpNav\Collections\Generic\BufferedQueue.cs" />
+    <Compile Include="Pathfinding\SharpNav\Collections\Generic\BufferedStack.cs" />
+    <Compile Include="Pathfinding\SharpNav\Collections\Generic\IValueWithCost.cs" />
+    <Compile Include="Pathfinding\SharpNav\Collections\Generic\PriorityQueue.cs" />
+    <Compile Include="Pathfinding\SharpNav\Collections\Generic\ProximityGrid.cs" />
+    <Compile Include="Pathfinding\SharpNav\IO\Binary\NavMeshBinarySerializer.cs" />
+    <Compile Include="Pathfinding\SharpNav\IO\Json\AreaConverter.cs" />
+    <Compile Include="Pathfinding\SharpNav\IO\Json\NavMeshJsonSerializer.cs" />
+    <Compile Include="Pathfinding\SharpNav\IO\Json\PolyIdConverter.cs" />
+    <Compile Include="Pathfinding\SharpNav\IO\Json\Vector3Converter.cs" />
+    <Compile Include="Character2D\Character2DType.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Character2D\Character2DTypeEditor.cs" />
+    <Compile Include="Character2D\Character2DTypePreview.cs" />
+    <Compile Include="Character2D\Character2DTypePreviewImage.cs" />
+    <Compile Include="Item2D\Item2DAssemblyRegistration.cs" />
+    <Compile Include="Weapon2D\Weapon2D.cs" />
+    <Compile Include="Weapon2D\Weapon2DAssemblyRegistration.cs" />
+    <Compile Include="Weapon2D\Weapon2DType.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Weapon2D\Weapon2DTypeEditor.cs" />
+    <Compile Include="Weapon2D\Weapon2DTypePreview.cs" />
+    <Compile Include="Weapon2D\Weapon2DTypePreviewImage.cs" />
+    <Compile Include="Character\CharacterSettingsCell.cs" />
+    <Compile Include="Character\CharacterUtility.cs" />
+    <Compile Include="Character2D\Character2DSettingsCell.cs" />
+    <Compile Include="Game framework\ObjectInteraction.cs" />
+    <Compile Include="Item\Flashlight.cs" />
+    <Compile Include="Item\FlashlightType.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Item\Item.cs" />
+    <Compile Include="Item\ItemInterface.cs" />
+    <Compile Include="Item\ItemType.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Item\ItemTypeEditor.cs" />
+    <Compile Include="Item\ItemTypePreview.cs" />
+    <Compile Include="Item\ItemTypePreviewImage.cs" />
+    <Compile Include="Item2D\Item2D.cs" />
+    <Compile Include="Item2D\Item2DType.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Item2D\Item2DTypeEditor.cs" />
+    <Compile Include="Item2D\Item2DTypePreview.cs" />
+    <Compile Include="Item2D\Item2DTypePreviewImage.cs" />
+    <Compile Include="Seat\Seat.cs" />
+    <Compile Include="Seat\SeatAssemblyRegistration.cs" />
+    <Compile Include="Seat\SeatItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Seat\SeatType.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Seat\SeatTypeEditor.cs" />
+    <Compile Include="Seat\SeatTypePreview.cs" />
+    <Compile Include="Seat\SeatTypePreviewImage.cs" />
+    <Compile Include="Vehicle\Turret.cs" />
+    <Compile Include="Character\Maker\CharacterMaker.cs" />
+    <Compile Include="Character\Maker\CharacterMakerEditor.cs" />
+    <Compile Include="Character\Maker\CharacterMakerSettingsCell.cs" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

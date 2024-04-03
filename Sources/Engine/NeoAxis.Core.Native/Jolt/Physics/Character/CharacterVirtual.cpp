@@ -377,7 +377,7 @@ bool CharacterVirtual::GetFirstContactForSweep(RVec3Arg inPosition, Vec3Arg inDi
 	return true;
 }
 
-void CharacterVirtual::DetermineConstraints(TempContactList &inContacts, ConstraintList &outConstraints) const
+void CharacterVirtual::DetermineConstraints(TempContactList &inContacts, float inDeltaTime, ConstraintList &outConstraints) const
 {
 	for (Contact &c : inContacts)
 	{
@@ -385,7 +385,7 @@ void CharacterVirtual::DetermineConstraints(TempContactList &inContacts, Constra
 
 		// Penetrating contact: Add a contact velocity that pushes the character out at the desired speed
 		if (c.mDistance < 0.0f)
-			contact_velocity -= c.mContactNormal * c.mDistance * mPenetrationRecoverySpeed;
+			contact_velocity -= c.mContactNormal * c.mDistance * mPenetrationRecoverySpeed / inDeltaTime;
 
 		// Convert to a constraint
 		outConstraints.emplace_back();
@@ -869,7 +869,7 @@ void CharacterVirtual::UpdateSupportingContact(bool inSkipContactVelocityCheck, 
 		TempContactList contacts(mActiveContacts.begin(), mActiveContacts.end(), inAllocator);
 		ConstraintList constraints(inAllocator);
 		constraints.reserve(contacts.size() * 2);
-		DetermineConstraints(contacts, constraints);
+		DetermineConstraints(contacts, mLastDeltaTime, constraints);
 
 		// Solve the displacement using these constraints, this is used to check if we didn't move at all because we are supported
 		Vec3 displacement;
@@ -923,7 +923,7 @@ void CharacterVirtual::MoveShape(RVec3 &ioPosition, Vec3Arg inVelocity, float in
 		// Convert contacts into constraints
 		ConstraintList constraints(inAllocator);
 		constraints.reserve(contacts.size() * 2);
-		DetermineConstraints(contacts, constraints);
+		DetermineConstraints(contacts, inDeltaTime, constraints);
 
 #ifdef JPH_DEBUG_RENDERER
 		bool draw_constraints = inDrawConstraints && iteration == 0;
@@ -1168,12 +1168,42 @@ bool CharacterVirtual::WalkStairs(float inDeltaTime, Vec3Arg inStepUp, Vec3Arg i
 		DebugRenderer::sInstance->DrawArrow(mPosition, up_position, Color::sWhite, 0.01f);
 #endif // JPH_DEBUG_RENDERER
 
+	// Collect normals of steep slopes that we would like to walk stairs on.
+	// We need to do this before calling MoveShape because it will update mActiveContacts.
+	Vec3 character_velocity = inStepForward / inDeltaTime;
+	Vec3 horizontal_velocity = character_velocity - character_velocity.Dot(mUp) * mUp;
+	std::vector<Vec3, STLTempAllocator<Vec3>> steep_slope_normals(inAllocator);
+	steep_slope_normals.reserve(mActiveContacts.size());
+	for (const Contact &c : mActiveContacts)
+		if (c.mHadCollision
+			&& c.mSurfaceNormal.Dot(horizontal_velocity - c.mLinearVelocity) < 0.0f // Pushing into the contact
+			&& IsSlopeTooSteep(c.mSurfaceNormal)) // Slope too steep
+			steep_slope_normals.push_back(c.mSurfaceNormal);
+	if (steep_slope_normals.empty())
+		return false; // No steep slopes, cancel
+
 	// Horizontal movement
 	RVec3 new_position = up_position;
-	MoveShape(new_position, inStepForward / inDeltaTime, inDeltaTime, nullptr, inBroadPhaseLayerFilter, inObjectLayerFilter, inBodyFilter, inShapeFilter, inAllocator);
-	float horizontal_movement_sq = Vec3(new_position - up_position).LengthSq();
+	MoveShape(new_position, character_velocity, inDeltaTime, nullptr, inBroadPhaseLayerFilter, inObjectLayerFilter, inBodyFilter, inShapeFilter, inAllocator);
+	Vec3 horizontal_movement = Vec3(new_position - up_position);
+	float horizontal_movement_sq = horizontal_movement.LengthSq();
 	if (horizontal_movement_sq < 1.0e-8f)
 		return false; // No movement, cancel
+
+	// Check if we made any progress towards any of the steep slopes, if not we just slid along the slope
+	// so we need to cancel the stair walk or else we will move faster than we should as we've done
+	// normal movement first and then stair walk.
+	bool made_progress = false;
+	float max_dot = -0.05f * inStepForward.Length();
+	for (const Vec3 &normal : steep_slope_normals)
+		if (normal.Dot(horizontal_movement) < max_dot)
+		{
+			// We moved more than 5% of the forward step against a steep slope, accept this as progress
+			made_progress = true;
+			break;
+		}
+	if (!made_progress)
+		return false;
 
 #ifdef JPH_DEBUG_RENDERER
 	// Draw horizontal sweep
@@ -1279,7 +1309,9 @@ bool CharacterVirtual::StickToFloor(Vec3Arg inStepDown, const BroadPhaseLayerFil
 	return true;
 }
 
-void CharacterVirtual::ExtendedUpdate(float inDeltaTime, Vec3Arg inGravity, const ExtendedUpdateSettings &inSettings, const BroadPhaseLayerFilter &inBroadPhaseLayerFilter, const ObjectLayerFilter &inObjectLayerFilter, const BodyFilter &inBodyFilter, const ShapeFilter &inShapeFilter, TempAllocator &inAllocator)
+//!!!!betauser. positionBeforeWalkUpDown
+
+void CharacterVirtual::ExtendedUpdate(float inDeltaTime, Vec3Arg inGravity, const ExtendedUpdateSettings &inSettings, const BroadPhaseLayerFilter &inBroadPhaseLayerFilter, const ObjectLayerFilter &inObjectLayerFilter, const BodyFilter &inBodyFilter, const ShapeFilter &inShapeFilter, TempAllocator &inAllocator, RVec3& positionBeforeWalkUpDown)
 {
 	// Update the velocity
 	Vec3 desired_velocity = mLinearVelocity;
@@ -1297,6 +1329,9 @@ void CharacterVirtual::ExtendedUpdate(float inDeltaTime, Vec3Arg inGravity, cons
 	// ... and that we got into air after
 	if (IsSupported())
 		ground_to_air = false;
+
+	//!!!!betauser
+	positionBeforeWalkUpDown = GetPosition();
 
 	// If stick to floor enabled and we're going from supported to not supported
 	if (ground_to_air && !inSettings.mStickToFloorStepDown.IsNearZero())

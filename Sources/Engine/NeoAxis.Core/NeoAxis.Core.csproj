@@ -1,8 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-	<UseWindowsForms>true</UseWindowsForms>
-	<UseWPF>true</UseWPF>
+    <TargetFramework>net5.0</TargetFramework>
+	<CheckEolTargetFramework>false</CheckEolTargetFramework>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <OutputType>Library</OutputType>
@@ -29,9 +28,9 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\..\..\Project\Binaries\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WINDOWS;NET_2_0;WINDOWS_FORMS_SWITCHES;WINFORMS_NAMESPACE;HAVE_APP_DOMAIN;HAVE_PROCESS;HAVE_ENVIRONMENT;HAVE_LOCK;HAVE_THREAD_ID;HAVE_ATTR_DEFINED;HAVE_ADO_NET;HAVE_APP_DOMAIN;HAVE_ASYNC;HAVE_BINARY_FORMATTER;HAVE_BINARY_SERIALIZATION;HAVE_BINARY_EXCEPTION_SERIALIZATION;HAVE_CAS;HAVE_CHAR_TO_LOWER_WITH_CULTURE;HAVE_CHAR_TO_STRING_WITH_CULTURE;HAVE_COM_ATTRIBUTES;HAVE_COMPONENT_MODEL;HAVE_CONCURRENT_COLLECTIONS;HAVE_COVARIANT_GENERICS;HAVE_DATE_TIME_OFFSET;HAVE_DB_NULL_TYPE_CODE;HAVE_DYNAMIC;HAVE_EMPTY_TYPES;HAVE_ENTITY_FRAMEWORK;HAVE_EXPRESSIONS;HAVE_FAST_REVERSE;HAVE_FSHARP_TYPES;HAVE_FULL_REFLECTION;HAVE_GUID_TRY_PARSE;HAVE_HASH_SET;HAVE_ICLONEABLE;HAVE_ICONVERTIBLE;HAVE_INOTIFY_COLLECTION_CHANGED;HAVE_INOTIFY_PROPERTY_CHANGING;HAVE_ISET;HAVE_LINQ;HAVE_MEMORY_BARRIER;HAVE_METHOD_IMPL_ATTRIBUTE;HAVE_NON_SERIALIZED_ATTRIBUTE;HAVE_READ_ONLY_COLLECTIONS;HAVE_REFLECTION_EMIT;HAVE_SECURITY_SAFE_CRITICAL_ATTRIBUTE;HAVE_SERIALIZATION_BINDER_BIND_TO_NAME;HAVE_STREAM_READER_WRITER_CLOSE;HAVE_STRING_JOIN_WITH_ENUMERABLE;HAVE_TIME_SPAN_PARSE_WITH_CULTURE;HAVE_TIME_SPAN_TO_STRING_WITH_CULTURE;HAVE_TIME_ZONE_INFO;HAVE_TRACE_WRITER;HAVE_TYPE_DESCRIPTOR;HAVE_UNICODE_SURROGATE_DETECTION;HAVE_VARIANT_TYPE_PARAMETERS;HAVE_VERSION_TRY_PARSE;HAVE_XML_DOCUMENT;HAVE_XML_DOCUMENT_TYPE;HAVE_CONCURRENT_DICTIONARY;NET45;CLO__UD</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET_2_0;WINDOWS_FORMS_SWITCHES;HAVE_APP_DOMAIN;HAVE_PROCESS;HAVE_ENVIRONMENT;HAVE_LOCK;HAVE_THREAD_ID;HAVE_ATTR_DEFINED;HAVE_ADO_NET;HAVE_APP_DOMAIN;HAVE_ASYNC;HAVE_BINARY_FORMATTER;HAVE_BINARY_SERIALIZATION;HAVE_BINARY_EXCEPTION_SERIALIZATION;HAVE_CAS;HAVE_CHAR_TO_LOWER_WITH_CULTURE;HAVE_CHAR_TO_STRING_WITH_CULTURE;HAVE_COM_ATTRIBUTES;HAVE_COMPONENT_MODEL;HAVE_CONCURRENT_COLLECTIONS;HAVE_COVARIANT_GENERICS;HAVE_DATE_TIME_OFFSET;HAVE_DB_NULL_TYPE_CODE;HAVE_DYNAMIC;HAVE_EMPTY_TYPES;HAVE_ENTITY_FRAMEWORK;HAVE_EXPRESSIONS;HAVE_FAST_REVERSE;HAVE_FSHARP_TYPES;HAVE_FULL_REFLECTION;HAVE_GUID_TRY_PARSE;HAVE_HASH_SET;HAVE_ICLONEABLE;HAVE_ICONVERTIBLE;HAVE_INOTIFY_COLLECTION_CHANGED;HAVE_INOTIFY_PROPERTY_CHANGING;HAVE_ISET;HAVE_LINQ;HAVE_MEMORY_BARRIER;HAVE_METHOD_IMPL_ATTRIBUTE;HAVE_NON_SERIALIZED_ATTRIBUTE;HAVE_READ_ONLY_COLLECTIONS;HAVE_REFLECTION_EMIT;HAVE_SECURITY_SAFE_CRITICAL_ATTRIBUTE;HAVE_SERIALIZATION_BINDER_BIND_TO_NAME;HAVE_STREAM_READER_WRITER_CLOSE;HAVE_STRING_JOIN_WITH_ENUMERABLE;HAVE_TIME_SPAN_PARSE_WITH_CULTURE;HAVE_TIME_SPAN_TO_STRING_WITH_CULTURE;HAVE_TIME_ZONE_INFO;HAVE_TRACE_WRITER;HAVE_TYPE_DESCRIPTOR;HAVE_UNICODE_SURROGATE_DETECTION;HAVE_VARIANT_TYPE_PARAMETERS;HAVE_VERSION_TRY_PARSE;HAVE_XML_DOCUMENT;HAVE_XML_DOCUMENT_TYPE;HAVE_CONCURRENT_DICTIONARY;NET45;CLOUD</DefineConstants>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <NoWarn>CS1591;CS1573;CS0649;CS0414;CS1589;CS1574;CS1587;CS0108;CS1570;CS1572;CS1711;CS0618;MSB3042</NoWarn>
+    <NoWarn>CS1591;CS1573;CS0649;CS0414;CS1589;CS1574;CS1587;CS0108;CS1570;CS1572;CS1711;CS0618;MSB3042;SYSLIB0011;CA1416</NoWarn>
     <DocumentationFile>NeoAxis.Core.xml</DocumentationFile>
     <CodeAnalysisRuleSet></CodeAnalysisRuleSet>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -39,34 +38,31 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>false</Optimize>
     <OutputPath>..\..\..\Project\Binaries\</OutputPath>
-    <DefineConstants>TRACE;WINDOWS;NET_2_0;WINDOWS_FORMS_SWITCHES;WINFORMS_NAMESPACE;HAVE_APP_DOMAIN;HAVE_PROCESS;HAVE_ENVIRONMENT;HAVE_LOCK;HAVE_THREAD_ID;HAVE_ATTR_DEFINED;HAVE_ADO_NET;HAVE_APP_DOMAIN;HAVE_ASYNC;HAVE_BINARY_FORMATTER;HAVE_BINARY_SERIALIZATION;HAVE_BINARY_EXCEPTION_SERIALIZATION;HAVE_CAS;HAVE_CHAR_TO_LOWER_WITH_CULTURE;HAVE_CHAR_TO_STRING_WITH_CULTURE;HAVE_COM_ATTRIBUTES;HAVE_COMPONENT_MODEL;HAVE_CONCURRENT_COLLECTIONS;HAVE_COVARIANT_GENERICS;HAVE_DATE_TIME_OFFSET;HAVE_DB_NULL_TYPE_CODE;HAVE_DYNAMIC;HAVE_EMPTY_TYPES;HAVE_ENTITY_FRAMEWORK;HAVE_EXPRESSIONS;HAVE_FAST_REVERSE;HAVE_FSHARP_TYPES;HAVE_FULL_REFLECTION;HAVE_GUID_TRY_PARSE;HAVE_HASH_SET;HAVE_ICLONEABLE;HAVE_ICONVERTIBLE;HAVE_INOTIFY_COLLECTION_CHANGED;HAVE_INOTIFY_PROPERTY_CHANGING;HAVE_ISET;HAVE_LINQ;HAVE_MEMORY_BARRIER;HAVE_METHOD_IMPL_ATTRIBUTE;HAVE_NON_SERIALIZED_ATTRIBUTE;HAVE_READ_ONLY_COLLECTIONS;HAVE_REFLECTION_EMIT;HAVE_SECURITY_SAFE_CRITICAL_ATTRIBUTE;HAVE_SERIALIZATION_BINDER_BIND_TO_NAME;HAVE_STREAM_READER_WRITER_CLOSE;HAVE_STRING_JOIN_WITH_ENUMERABLE;HAVE_TIME_SPAN_PARSE_WITH_CULTURE;HAVE_TIME_SPAN_TO_STRING_WITH_CULTURE;HAVE_TIME_ZONE_INFO;HAVE_TRACE_WRITER;HAVE_TYPE_DESCRIPTOR;HAVE_UNICODE_SURROGATE_DETECTION;HAVE_VARIANT_TYPE_PARAMETERS;HAVE_VERSION_TRY_PARSE;HAVE_XML_DOCUMENT;HAVE_XML_DOCUMENT_TYPE;HAVE_CONCURRENT_DICTIONARY;NET45;CLO__UD</DefineConstants>
+    <DefineConstants>TRACE;NET_2_0;WINDOWS_FORMS_SWITCHES;HAVE_APP_DOMAIN;HAVE_PROCESS;HAVE_ENVIRONMENT;HAVE_LOCK;HAVE_THREAD_ID;HAVE_ATTR_DEFINED;HAVE_ADO_NET;HAVE_APP_DOMAIN;HAVE_ASYNC;HAVE_BINARY_FORMATTER;HAVE_BINARY_SERIALIZATION;HAVE_BINARY_EXCEPTION_SERIALIZATION;HAVE_CAS;HAVE_CHAR_TO_LOWER_WITH_CULTURE;HAVE_CHAR_TO_STRING_WITH_CULTURE;HAVE_COM_ATTRIBUTES;HAVE_COMPONENT_MODEL;HAVE_CONCURRENT_COLLECTIONS;HAVE_COVARIANT_GENERICS;HAVE_DATE_TIME_OFFSET;HAVE_DB_NULL_TYPE_CODE;HAVE_DYNAMIC;HAVE_EMPTY_TYPES;HAVE_ENTITY_FRAMEWORK;HAVE_EXPRESSIONS;HAVE_FAST_REVERSE;HAVE_FSHARP_TYPES;HAVE_FULL_REFLECTION;HAVE_GUID_TRY_PARSE;HAVE_HASH_SET;HAVE_ICLONEABLE;HAVE_ICONVERTIBLE;HAVE_INOTIFY_COLLECTION_CHANGED;HAVE_INOTIFY_PROPERTY_CHANGING;HAVE_ISET;HAVE_LINQ;HAVE_MEMORY_BARRIER;HAVE_METHOD_IMPL_ATTRIBUTE;HAVE_NON_SERIALIZED_ATTRIBUTE;HAVE_READ_ONLY_COLLECTIONS;HAVE_REFLECTION_EMIT;HAVE_SECURITY_SAFE_CRITICAL_ATTRIBUTE;HAVE_SERIALIZATION_BINDER_BIND_TO_NAME;HAVE_STREAM_READER_WRITER_CLOSE;HAVE_STRING_JOIN_WITH_ENUMERABLE;HAVE_TIME_SPAN_PARSE_WITH_CULTURE;HAVE_TIME_SPAN_TO_STRING_WITH_CULTURE;HAVE_TIME_ZONE_INFO;HAVE_TRACE_WRITER;HAVE_TYPE_DESCRIPTOR;HAVE_UNICODE_SURROGATE_DETECTION;HAVE_VARIANT_TYPE_PARAMETERS;HAVE_VERSION_TRY_PARSE;HAVE_XML_DOCUMENT;HAVE_XML_DOCUMENT_TYPE;HAVE_CONCURRENT_DICTIONARY;NET45;CLOUD</DefineConstants>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <DocumentationFile>NeoAxis.Core.xml</DocumentationFile>
-    <NoWarn>CS1591;CS1573;CS0649;CS0414;CS1589;CS1574;CS1587;CS0618;CS0108;CS1570;CS1572;CS1711;MSB3042</NoWarn>
+    <NoWarn>CS1591;CS1573;CS0649;CS0414;CS1589;CS1574;CS1587;CS0108;CS1570;CS1572;CS1711;CS0618;MSB3042;SYSLIB0011;CA1416</NoWarn>
     <CodeAnalysisRuleSet></CodeAnalysisRuleSet>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Editor\Components\WorldGenerator\**" />
+    <Compile Remove="Editor\ResourcesToCreate\**" />
     <Compile Remove="obj\**" />
     <Compile Remove="Properties\Android\**" />
-    <EmbeddedResource Remove="Editor\Components\WorldGenerator\**" />
+    <Compile Remove="Resources\**" />
+    <EmbeddedResource Remove="Editor\ResourcesToCreate\**" />
     <EmbeddedResource Remove="obj\**" />
     <EmbeddedResource Remove="Properties\Android\**" />
-    <None Remove="Editor\Components\WorldGenerator\**" />
+    <EmbeddedResource Remove="Resources\**" />
+    <None Remove="Editor\ResourcesToCreate\**" />
     <None Remove="obj\**" />
     <None Remove="Properties\Android\**" />
-    <Page Remove="Editor\Components\WorldGenerator\**" />
+    <None Remove="Resources\**" />
     <Page Remove="Properties\Android\**" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Components\Build\ProductEditor.cs" />
     <Compile Update="Components\Camera\Component_Camera_PreviewControl.cs" />
-    <Compile Update="Components\Font\FontPreview.cs" />
-    <Compile Update="Components\Font\FontPreview.designer.cs">
-      <DependentUpon>FontPreview.cs</DependentUpon>
-    </Compile>
     <Compile Update="Components\GroupOfObjects\Component_GroupOfObjectsElement_SettingsCell.cs" />
     <Compile Update="Components\Material\Component_Material_PreviewImage.cs" />
     <Compile Update="Components\Material\Component_Material_PreviewControl - Copy.designer.cs">
@@ -83,9 +79,8 @@
       <DependentUpon>Component_ParticleSystem_PreviewControl.cs</DependentUpon>
     </Compile>
     <Compile Update="Components\ParticleSystem\Component_ParticleSystemInSpace_SettingsCell.cs" />
-    <Compile Update="Components\Sprite\SpriteEditor.cs" />
-    <Compile Update="Components\Sprite\SpriteEditor.designer.cs">
-      <DependentUpon>SpriteEditor.cs</DependentUpon>
+    <Compile Update="Components\Scene\SceneEditor.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Components\Sprite\Component_Sprite_PreviewControl.cs" />
     <Compile Update="Components\Stores\Component_StoreItem_PreviewControl.cs" />
@@ -101,81 +96,17 @@
       <DependentUpon>Component_Image_DocumentWindow.cs</DependentUpon>
     </Compile>
     <Compile Update="Components\ReflectionProbe\Component_ReflectionProbe_SettingsCell.cs" />
-    <Compile Update="Editor\EngineToolTip\EngineToolTipForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Editor\HierarchicalContainer\DropDownEditors\MultilineTextDropDownControl.cs" />
-    <Compile Update="Editor\HierarchicalContainer\DropDownEditors\MultilineTextDropDownControl.designer.cs">
-      <DependentUpon>MultilineTextDropDownControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\Networking\RepositorySettingsForm.cs" />
-    <Compile Update="Editor\PreviewImageGenerator.cs" />
-    <Compile Update="Editor\CanvasBasedPreview.cs" />
-    <Compile Update="Editor\ContentBrowserSearchForm.cs" />
-    <Compile Update="Editor\ContentBrowserSearchForm.Designer.cs">
-      <DependentUpon>ContentBrowserSearchForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\EngineListView.cs" />
-    <Compile Update="Editor\EngineProgressBar.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="Editor\EngineForm.cs" />
-    <Compile Update="Editor\EngineForm.Designer.cs">
-      <DependentUpon>EngineForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\EngineToolStrip.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="Editor\KryptonRibbonGroupSliderControl.cs">
+    <Compile Update="Editor\CanvasBasedEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Editor\KryptonRibbonGroupSliderControl.Designer.cs">
-      <DependentUpon>KryptonRibbonGroupSliderControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\KryptonRibbonGroupSlider.Designer.cs">
-      <DependentUpon>KryptonRibbonGroupSlider.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\KryptonRibbonGroupListBox.Designer.cs">
-      <DependentUpon>KryptonRibbonGroupListBox.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\KryptonRibbonGroupListBoxControl.cs" />
-    <Compile Update="Editor\KryptonRibbonGroupListBoxControl.Designer.cs">
-      <DependentUpon>KryptonRibbonGroupListBoxControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\Networking\RepositoryItemsForm.cs" />
-    <Compile Update="Editor\ResourcesToCreate\NewResourceType_CSharpClassLibrary_Cell.cs" />
-    <Compile Update="Editor\ResourcesToCreate\NewResourceType_CSharpClassLibrary_Cell.designer.cs">
-      <DependentUpon>NewResourceType_CSharpClassLibrary_Cell.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\EngineScrollBar.cs">
+    <Compile Update="Editor\CanvasBasedPreview.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Editor\SplashForm.cs">
-      <SubType>Form</SubType>
+    <Compile Update="Editor\DocumentWindowWithViewportWorkareaMode.cs">
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Editor\SplashForm.Designer.cs">
-      <DependentUpon>SplashForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\StartPageWindow.cs" />
-    <Compile Update="Editor\StartPageWindow.designer.cs">
-      <DependentUpon>StartPageWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\Store\StoresWindow.cs" />
-    <Compile Update="Editor\Store\StoresWindow.designer.cs">
-      <DependentUpon>StoresWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\TipsWindow.cs" />
-    <Compile Update="Editor\TipsWindow.designer.cs">
-      <DependentUpon>TipsWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\SettingsCellProcedureUI.cs" />
-    <Compile Update="Editor\SettingsCellProcedureUI.designer.cs">
-      <DependentUpon>SettingsCellProcedureUI.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Libraries\Aga.Controls\Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
+    <Compile Update="Editor\SettingsCellProcedureUI.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Design\Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -210,44 +141,7 @@
     <Compile Update="Components\Import3D\Component_Import3D_DocumentWindow.cs" />
     <Compile Update="Components\Import3D\Component_Import3D_PreviewControl.cs" />
     <Compile Update="Components\Import3D\Component_Import3D_SettingsCell.cs" />
-    <Compile Update="Editor\Project settings\HCItemProjectShortcutsForm.cs" />
-    <Compile Update="Editor\Project settings\HCItemProjectShortcutsForm.Designer.cs">
-      <DependentUpon>HCItemProjectShortcutsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\Project settings\HCItemProjectRibbonAndToolbarActionsForm.cs" />
-    <Compile Update="Editor\Project settings\HCItemProjectRibbonAndToolbarActionsForm.Designer.cs">
-      <DependentUpon>HCItemProjectRibbonAndToolbarActionsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\MessageLogOptionsForm.cs" />
-    <Compile Update="Editor\MessageLogOptionsForm.Designer.cs">
-      <DependentUpon>MessageLogOptionsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\HierarchicalContainer\DropDownHolder\HCFormDropDownHolder.cs" />
-    <Compile Update="Editor\ImportWindow.cs" />
-    <Compile Update="Editor\ImportWindow.Designer.cs">
-      <DependentUpon>ImportWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\OutputWindow.cs" />
-    <Compile Update="Editor\OutputWindow.designer.cs">
-      <DependentUpon>OutputWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\SolutionExplorer.cs" />
-    <Compile Update="Editor\SolutionExplorer.designer.cs">
-      <DependentUpon>SolutionExplorer.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\Store\StoreDocumentWindow.cs" />
-    <Compile Update="Editor\Store\StoreDocumentWindow.designer.cs">
-      <DependentUpon>StoreDocumentWindow.cs</DependentUpon>
-    </Compile>
     <Compile Update="Components\Scripting\Component_CSharpScript_SettingsCell.cs" />
-    <Compile Update="Editor\ComponentTypeSettingsForm.cs" />
-    <Compile Update="Editor\ComponentTypeSettingsForm.Designer.cs">
-      <DependentUpon>ComponentTypeSettingsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\ObjectSettingsHeader_ObjectInfo.cs" />
-    <Compile Update="Editor\ObjectSettingsHeader_ObjectInfo.designer.cs">
-      <DependentUpon>ObjectSettingsHeader_ObjectInfo.cs</DependentUpon>
-    </Compile>
     <Compile Update="Components\Sound\Component_Sound_PreviewControl.cs" />
     <Compile Update="Components\Sound\Component_Sound_PreviewControl.designer.cs">
       <DependentUpon>Component_Sound_PreviewControl.cs</DependentUpon>
@@ -258,123 +152,9 @@
     <Compile Update="Components\Image\Component_Image_PreviewControl.designer.cs">
       <DependentUpon>Component_Image_PreviewControl.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\BordersContainer.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridEvent.cs" />
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridEvent.Designer.cs">
-      <DependentUpon>HCGridEvent.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridDropDownButton.cs" />
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridDropDownButton.Designer.cs">
-      <DependentUpon>HCGridDropDownButton.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridCollection.cs" />
-    <Compile Update="Editor\HierarchicalContainer\DropDownEditors\RangeDropDownControl.cs" />
-    <Compile Update="Editor\HierarchicalContainer\DropDownEditors\RangeDropDownControl.designer.cs">
-      <DependentUpon>RangeDropDownControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\HierarchicalContainer\DropDownEditors\EnumDropDownControl.cs" />
-    <Compile Update="Editor\HierarchicalContainer\DropDownEditors\EnumDropDownControl.designer.cs">
-      <DependentUpon>EnumDropDownControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridCollection.Designer.cs">
-      <DependentUpon>HCGridCollection.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\DebugInfoWindow.cs" />
-    <Compile Update="Editor\DebugInfoWindow.designer.cs">
-      <DependentUpon>DebugInfoWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\SelectTypeWindow.cs" />
-    <Compile Update="Editor\SelectTypeWindow.Designer.cs">
-      <DependentUpon>SelectTypeWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\SpecifyParametersForm.cs" />
-    <Compile Update="Editor\SpecifyParametersForm.designer.cs">
-      <DependentUpon>SpecifyParametersForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\ResourcesToCreate\NewResourceType_FlowGraphLibrary_Cell.cs" />
-    <Compile Update="Editor\ResourcesToCreate\NewResourceType_FlowGraphLibrary_Cell.designer.cs">
-      <DependentUpon>NewResourceType_FlowGraphLibrary_Cell.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\ResourcesToCreate\NewResourceType_TextFile_Cell.cs" />
-    <Compile Update="Editor\ResourcesToCreate\NewResourceType_TextFile_Cell.designer.cs">
-      <DependentUpon>NewResourceType_TextFile_Cell.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\OKCancelTextBoxForm.cs" />
-    <Compile Update="Editor\OKCancelTextBoxForm.designer.cs">
-      <DependentUpon>OKCancelTextBoxForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\ScreenNotifications\ScreenNotificationForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Editor\ScreenNotifications\ScreenNotificationForm.designer.cs">
-      <DependentUpon>ScreenNotificationForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\NewObjectSettingsCell.cs" />
-    <Compile Update="Editor\NewObjectSettingsCell.designer.cs">
-      <DependentUpon>NewObjectSettingsCell.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\ContentBrowserOptionsForm.cs" />
-    <Compile Update="Editor\ContentBrowserOptionsForm.Designer.cs">
-      <DependentUpon>ContentBrowserOptionsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\WorkspaceWindow.cs" />
-    <Compile Update="Editor\WorkspaceWindow.designer.cs">
-      <DependentUpon>WorkspaceWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridColorValuePowered.cs" />
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridColorValuePowered.Designer.cs">
-      <DependentUpon>HCGridColorValuePowered.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridColorValue.cs" />
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridColorValue.Designer.cs">
-      <DependentUpon>HCGridColorValue.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxSelect.cs" />
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxSelect.Designer.cs">
-      <DependentUpon>HCGridTextBoxSelect.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxNumeric.cs" />
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxNumeric.Designer.cs">
-      <DependentUpon>HCGridTextBoxNumeric.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBox.cs" />
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBox.Designer.cs">
-      <DependentUpon>HCGridTextBox.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridLabel.cs" />
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridLabel.Designer.cs">
-      <DependentUpon>HCGridLabel.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridCheckBox.cs" />
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridCheckBox.Designer.cs">
-      <DependentUpon>HCGridCheckBox.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridGroup.cs" />
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridGroup.Designer.cs">
-      <DependentUpon>HCGridGroup.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridProperty.cs" />
-    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridProperty.Designer.cs">
-      <DependentUpon>HCGridProperty.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\HierarchicalContainer\HCDropDownControl.cs" />
-    <Compile Update="Editor\HierarchicalContainer\HierarchicalContainer.cs" />
-    <Compile Update="Editor\HierarchicalContainer\HierarchicalContainer.designer.cs">
-      <DependentUpon>HierarchicalContainer.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\SettingsHeader_Components.cs" />
-    <Compile Update="Editor\SettingsHeader_Components.designer.cs">
-      <DependentUpon>SettingsHeader_Components.cs</DependentUpon>
-    </Compile>
     <Compile Update="Components\Material\Component_Material_DocumentWindow.cs" />
     <Compile Update="Components\Material\Component_Material_DocumentWindow.designer.cs">
       <DependentUpon>Component_Material_DocumentWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\SetReferenceWindow.cs" />
-    <Compile Update="Editor\SetReferenceWindow.Designer.cs">
-      <DependentUpon>SetReferenceWindow.cs</DependentUpon>
     </Compile>
     <Compile Update="Components\FlowGraph\Component_FlowGraph_DocumentWindow.designer.cs">
       <DependentUpon>Component_FlowGraph_DocumentWindow.cs</DependentUpon>
@@ -390,120 +170,13 @@
     </Compile>
     <Compile Update="Components\Mesh\Component_Mesh_DocumentWindow.cs" />
     <Compile Update="Components\Scene\Component_Scene_DocumentWindow.cs" />
-    <Compile Update="Editor\NewObjectWindow.cs" />
-    <Compile Update="Editor\NewObjectWindow.Designer.cs">
-      <DependentUpon>NewObjectWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\PreviewControl.cs" />
-    <Compile Update="Editor\PreviewControl.designer.cs">
-      <DependentUpon>PreviewControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\PreviewControlWithViewport.cs" />
-    <Compile Update="Editor\PreviewControlWithViewport.designer.cs">
-      <DependentUpon>PreviewControlWithViewport.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\DocumentWindowWithViewport.cs" />
-    <Compile Update="Editor\DocumentWindowWithViewport.designer.cs">
-      <DependentUpon>DocumentWindowWithViewport.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\DockWindow.cs" />
-    <Compile Update="Editor\DockWindow.designer.cs">
-      <DependentUpon>DockWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\MessageLogWindow.cs" />
-    <Compile Update="Editor\MessageLogWindow.designer.cs">
-      <DependentUpon>MessageLogWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\ResourcesWindow.cs" />
-    <Compile Update="Editor\ResourcesWindow.designer.cs">
-      <DependentUpon>ResourcesWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\NewObjectCell.cs" />
-    <Compile Update="Editor\NewObjectCell.designer.cs">
-      <DependentUpon>NewObjectCell.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\ObjectSettingsHeader.cs" />
-    <Compile Update="Editor\ObjectSettingsHeader.designer.cs">
-      <DependentUpon>ObjectSettingsHeader.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\SettingsHeader.cs" />
-    <Compile Update="Editor\SettingsHeader.designer.cs">
-      <DependentUpon>SettingsHeader.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\SettingsLevel2Window.cs" />
-    <Compile Update="Editor\SettingsLevel2Window.designer.cs">
-      <DependentUpon>SettingsLevel2Window.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\ObjectSettingsWindow.cs" />
-    <Compile Update="Editor\ObjectSettingsWindow.designer.cs">
-      <DependentUpon>ObjectSettingsWindow.cs</DependentUpon>
-    </Compile>
     <Compile Update="Components\Rendering\Component_RenderingEffect_CodeGenerated_SettingsCell.cs" />
     <Compile Update="Components\Rendering\Component_RenderingEffect_Simple_SettingsCell.cs" />
     <Compile Update="Components\UI\UIControl_DocumentWindow.cs" />
     <Compile Update="Components\UI\UIControl_DocumentWindow.designer.cs">
       <DependentUpon>UIControl_DocumentWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\SettingsCell_Properties.cs" />
-    <Compile Update="Editor\SettingsCell_Properties.designer.cs">
-      <DependentUpon>SettingsCell_Properties.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\SettingsHeader_ObjectInfo.cs" />
-    <Compile Update="Editor\SettingsHeader_ObjectInfo.designer.cs">
-      <DependentUpon>SettingsHeader_ObjectInfo.cs</DependentUpon>
-    </Compile>
     <Compile Update="Components\Mesh\Component_Mesh_SettingsCell.cs" />
-    <Compile Update="Editor\PreviewWindow.cs" />
-    <Compile Update="Editor\PreviewWindow.designer.cs">
-      <DependentUpon>PreviewWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\SettingsCell.cs" />
-    <Compile Update="Editor\SettingsCell.designer.cs">
-      <DependentUpon>SettingsCell.cs</DependentUpon>
-    </Compile>
-    <Compile Update="WinForms\EUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="WinForms\EUserControl.designer.cs">
-      <DependentUpon>EUserControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\ObjectsWindow.cs" />
-    <Compile Update="Editor\ObjectsWindow.designer.cs">
-      <DependentUpon>ObjectsWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\ForeachDocumentWindowContainer.cs" />
-    <Compile Update="Editor\ForeachDocumentWindowContainer.designer.cs">
-      <DependentUpon>ForeachDocumentWindowContainer.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\DocumentWindow.cs" />
-    <Compile Update="Editor\DocumentWindow.designer.cs">
-      <DependentUpon>DocumentWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="WinForms\EngineViewportControl.cs" />
-    <Compile Update="WinForms\EngineViewportControl.designer.cs">
-      <DependentUpon>EngineViewportControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\BackstageMenu.cs" />
-    <Compile Update="Editor\BackstageMenu.designer.cs">
-      <DependentUpon>BackstageMenu.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\SettingsWindow.cs" />
-    <Compile Update="Editor\SettingsWindow.designer.cs">
-      <DependentUpon>SettingsWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\ContentBrowser.cs" />
-    <Compile Update="Editor\ContentBrowser.designer.cs">
-      <DependentUpon>ContentBrowser.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Editor\EditorForm.cs" />
-    <Compile Update="Editor\EditorForm.designer.cs">
-      <DependentUpon>EditorForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <Compile Update="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -514,9 +187,6 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Components\Font\FontPreview.resx">
-      <DependentUpon>FontPreview.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Update="Components\Material\Component_Material_DocumentWindow.resx">
       <DependentUpon>Component_Material_DocumentWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -529,23 +199,8 @@
     <EmbeddedResource Update="Components\Scene\Component_Scene_DocumentWindow.resx">
       <DependentUpon>Component_Scene_DocumentWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="Editor\ContentBrowserSearchForm.resx">
-      <DependentUpon>ContentBrowserSearchForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\ComponentTypeSettingsForm.resx">
-      <DependentUpon>ComponentTypeSettingsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\SettingsHeader_Components.resx">
-      <DependentUpon>SettingsHeader_Components.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Update="Editor\SettingsCell_Properties.resx">
       <DependentUpon>SettingsCell_Properties.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\ObjectSettingsHeader_ObjectInfo.resx">
-      <DependentUpon>ObjectSettingsHeader_ObjectInfo.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\SettingsHeader_ObjectInfo.resx">
-      <DependentUpon>SettingsHeader_ObjectInfo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Components\FlowGraph\Component_FlowGraph_DocumentWindow.resx">
       <DependentUpon>Component_FlowGraph_DocumentWindow.cs</DependentUpon>
@@ -559,174 +214,8 @@
     <EmbeddedResource Update="Components\Image\Component_Image_PreviewControl.resx">
       <DependentUpon>Component_Image_PreviewControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="Editor\BackstageMenu.resx">
-      <DependentUpon>BackstageMenu.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\KryptonRibbonGroupSliderControl.resx">
-      <DependentUpon>KryptonRibbonGroupSliderControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\KryptonRibbonGroupListBoxControl.resx">
-      <DependentUpon>KryptonRibbonGroupListBoxControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\EngineScrollBar.resx">
-      <DependentUpon>EngineScrollBar.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\ResourcesToCreate\NewResourceType_CSharpClassLibrary_Cell.resx">
-      <DependentUpon>NewResourceType_CSharpClassLibrary_Cell.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\SplashForm.resx">
-      <DependentUpon>SplashForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\StartPageWindow.resx">
-      <DependentUpon>StartPageWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\TipsWindow.resx">
-      <DependentUpon>TipsWindow.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\HierarchicalContainer\DropDownHolder\HCFormDropDownHolder.resx">
-      <DependentUpon>HCFormDropDownHolder.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\MessageLogOptionsForm.resx">
-      <DependentUpon>MessageLogOptionsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridEvent.resx">
-      <DependentUpon>HCGridEvent.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridCollection.resx">
-      <DependentUpon>HCGridCollection.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\HierarchicalContainer\DropDownEditors\RangeDropDownControl.resx">
-      <DependentUpon>RangeDropDownControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\HierarchicalContainer\DropDownEditors\EnumDropDownControl.resx">
-      <DependentUpon>EnumDropDownControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridDropDownButton.resx">
-      <DependentUpon>HCGridDropDownButton.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\ImportWindow.resx">
-      <DependentUpon>ImportWindow.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Update="Editor\OutputWindow.resx">
       <DependentUpon>OutputWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\NewObjectSettingsCell.resx">
-      <DependentUpon>NewObjectSettingsCell.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\ContentBrowserOptionsForm.resx">
-      <DependentUpon>ContentBrowserOptionsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\DebugInfoWindow.resx">
-      <DependentUpon>DebugInfoWindow.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\SettingsCellProcedureUI.resx">
-      <DependentUpon>SettingsCellProcedureUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\SolutionExplorer.resx">
-      <DependentUpon>SolutionExplorer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\SelectTypeWindow.resx">
-      <DependentUpon>SelectTypeWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\SpecifyParametersForm.resx">
-      <DependentUpon>SpecifyParametersForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\OKCancelTextBoxForm.resx">
-      <DependentUpon>OKCancelTextBoxForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\ResourcesToCreate\NewResourceType_FlowGraphLibrary_Cell.resx">
-      <DependentUpon>NewResourceType_FlowGraphLibrary_Cell.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\ResourcesToCreate\NewResourceType_TextFile_Cell.resx">
-      <DependentUpon>NewResourceType_TextFile_Cell.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\ScreenNotifications\ScreenNotificationForm.resx">
-      <DependentUpon>ScreenNotificationForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\Store\StoreDocumentWindow.resx">
-      <DependentUpon>StoreDocumentWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\WorkspaceWindow.resx">
-      <DependentUpon>WorkspaceWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridColorValuePowered.resx">
-      <DependentUpon>HCGridColorValuePowered.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridColorValue.resx">
-      <DependentUpon>HCGridColorValue.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxSelect.resx">
-      <DependentUpon>HCGridTextBoxSelect.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxNumeric.resx">
-      <DependentUpon>HCGridTextBoxNumeric.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBox.resx">
-      <DependentUpon>HCGridTextBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridLabel.resx">
-      <DependentUpon>HCGridLabel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridCheckBox.resx">
-      <DependentUpon>HCGridCheckBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridGroup.resx">
-      <DependentUpon>HCGridGroup.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridProperty.resx">
-      <DependentUpon>HCGridProperty.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\HierarchicalContainer\HierarchicalContainer.resx">
-      <DependentUpon>HierarchicalContainer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\SetReferenceWindow.resx">
-      <DependentUpon>SetReferenceWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\NewObjectWindow.resx">
-      <DependentUpon>NewObjectWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\PreviewControl.resx">
-      <DependentUpon>PreviewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\PreviewControlWithViewport.resx">
-      <DependentUpon>PreviewControlWithViewport.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\DocumentWindowWithViewport.resx">
-      <DependentUpon>DocumentWindowWithViewport.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\DockWindow.resx">
-      <DependentUpon>DockWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\MessageLogWindow.resx">
-      <DependentUpon>MessageLogWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\ResourcesWindow.resx">
-      <DependentUpon>ResourcesWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\PreviewWindow.resx">
-      <DependentUpon>PreviewWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\NewObjectCell.resx">
-      <DependentUpon>NewObjectCell.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\ObjectSettingsHeader.resx">
-      <DependentUpon>ObjectSettingsHeader.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\SettingsHeader.resx">
-      <DependentUpon>SettingsHeader.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\SettingsCell.resx">
-      <DependentUpon>SettingsCell.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Libraries\Aga.Controls\Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Aga.Controls.Properties</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Update="Libraries\Krypton\ComponentFactory.Krypton.Design\Properties\Resources.resx">
       <CustomToolNamespace>ComponentFactory.Krypton.Design.Properties</CustomToolNamespace>
@@ -758,222 +247,6 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="WinForms\EUserControl.resx">
-      <DependentUpon>EUserControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\ObjectsWindow.resx">
-      <DependentUpon>ObjectsWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\ForeachDocumentWindowContainer.resx">
-      <DependentUpon>ForeachDocumentWindowContainer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\DocumentWindow.resx">
-      <DependentUpon>DocumentWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\SettingsLevel2Window.resx">
-      <DependentUpon>SettingsLevel2Window.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\ObjectSettingsWindow.resx">
-      <DependentUpon>ObjectSettingsWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\SettingsWindow.resx">
-      <DependentUpon>SettingsWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="WinForms\EngineViewportControl.resx">
-      <DependentUpon>EngineViewportControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\ContentBrowser.resx">
-      <DependentUpon>ContentBrowser.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\EditorForm.resx">
-      <DependentUpon>EditorForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\Project settings\HCItemProjectShortcutsForm.resx">
-      <DependentUpon>HCItemProjectShortcutsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\Project settings\HCItemProjectRibbonAndToolbarActionsForm.resx">
-      <DependentUpon>HCItemProjectRibbonAndToolbarActionsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Resources\AllBorder.png" />
-    <Content Include="Resources\ApplyStyles.png" />
-    <Content Include="Resources\AppMenuClose.png" />
-    <Content Include="Resources\AppMenuDelete.png" />
-    <Content Include="Resources\AppMenuMemoStyle.PNG" />
-    <Content Include="Resources\AppMenuMove.png" />
-    <Content Include="Resources\AppMenuNewMailMessage.png" />
-    <Content Include="Resources\AppMenuPrint.png" />
-    <Content Include="Resources\AppMenuPrintPreview.PNG" />
-    <Content Include="Resources\AppMenuPrintStyles.PNG" />
-    <Content Include="Resources\AppMenuProperties.png" />
-    <Content Include="Resources\AppMenuQuickPrint.PNG" />
-    <Content Include="Resources\AppMenuSave.png" />
-    <Content Include="Resources\AppMenuSaveAs.png" />
-    <Content Include="Resources\AppMenuSendMessage.png" />
-    <Content Include="Resources\BookmarkLarge.png" />
-    <Content Include="Resources\BookmarkSmall.png" />
-    <Content Include="Resources\BordersAndShading.png" />
-    <Content Include="Resources\BottomBorder.png" />
-    <Content Include="Resources\BottomBorder1.png" />
-    <Content Include="Resources\BrowseThemesSmall.png" />
-    <Content Include="Resources\ChangeStyles.png" />
-    <Content Include="Resources\ChartLarge.png" />
-    <Content Include="Resources\ChartSmall.png" />
-    <Content Include="Resources\ClipArtLarge.png" />
-    <Content Include="Resources\ClipboardCopy.png" />
-    <Content Include="Resources\ClipboardCut.png" />
-    <Content Include="Resources\ClipboardFormatPainter.png" />
-    <Content Include="Resources\ClipboardPaste.png" />
-    <Content Include="Resources\ClipboardPasteSmall.png" />
-    <Content Include="Resources\ClipboardPasteSpecial.png" />
-    <Content Include="Resources\CodeMacros.png" />
-    <Content Include="Resources\CodeVisualBasic.png" />
-    <Content Include="Resources\ColorsSmall.png" />
-    <Content Include="Resources\DateTimeSmall.png" />
-    <Content Include="Resources\DelayDeliveryLarge.png" />
-    <Content Include="Resources\DelayDeliverySmall.png" />
-    <Content Include="Resources\DiagonalDownBorder.png" />
-    <Content Include="Resources\DiagonalUpBorder.png" />
-    <Content Include="Resources\DirectRepliesToLarge.png" />
-    <Content Include="Resources\DrawingCanvasSmall.png" />
-    <Content Include="Resources\DropCapSmall.png" />
-    <Content Include="Resources\EffectsSmall.png" />
-    <Content Include="Resources\EquationLarge.png" />
-    <Content Include="Resources\EquationSmall.png" />
-    <Content Include="Resources\ExcelSpreadsheetSmall.png" />
-    <Content Include="Resources\FieldsSmall.png" />
-    <Content Include="Resources\FindReplaceSmall.png" />
-    <Content Include="Resources\FindSmall.png" />
-    <Content Include="Resources\FollowUp.bmp" />
-    <Content Include="Resources\FollowUp.png" />
-    <Content Include="Resources\FontsSmall.png" />
-    <Content Include="Resources\FormDesignAForm.png" />
-    <Content Include="Resources\FormDesignThisForm.png" />
-    <Content Include="Resources\FormPublish.png" />
-    <Content Include="Resources\FormPublishSmall.png" />
-    <Content Include="Resources\HelpSmall.png" />
-    <Content Include="Resources\HorizontalLineLarge.png" />
-    <Content Include="Resources\HorizontalLineSmall.png" />
-    <Content Include="Resources\HorizontalLineSmall1.png" />
-    <Content Include="Resources\HTMLSmall.png" />
-    <Content Include="Resources\HyperlinkLarge.png" />
-    <Content Include="Resources\HyperlinkSmall.png" />
-    <Content Include="Resources\IncludeAttachFile.png" />
-    <Content Include="Resources\IncludeAttachFileSmall.png" />
-    <Content Include="Resources\IncludeAttachItem.png" />
-    <Content Include="Resources\IncludeAttachItemSmall.png" />
-    <Content Include="Resources\IncludeBusinessCard.png" />
-    <Content Include="Resources\IncludeBusinessCardSmall.png" />
-    <Content Include="Resources\IncludeCalendar.png" />
-    <Content Include="Resources\IncludeCalendarSmall.png" />
-    <Content Include="Resources\IncludeSignature.png" />
-    <Content Include="Resources\IncludeSignatureSmall.png" />
-    <Content Include="Resources\InsideBorder.png" />
-    <Content Include="Resources\InsideHorzBorder.png" />
-    <Content Include="Resources\InsideVertBorder.png" />
-    <Content Include="Resources\LeftBorder.png" />
-    <Content Include="Resources\LineSpacing.png" />
-    <Content Include="Resources\MoreOptionsSmall.png" />
-    <Content Include="Resources\MultiLevelList.png" />
-    <Content Include="Resources\NamesAddressBook.png" />
-    <Content Include="Resources\NamesCheckNames.png" />
-    <Content Include="Resources\NamesGroup.png" />
-    <Content Include="Resources\NoBorder.png" />
-    <Content Include="Resources\ObjectSmall.png" />
-    <Content Include="Resources\OptionsFollowUp.png" />
-    <Content Include="Resources\OptionsFollowUpSmall.png" />
-    <Content Include="Resources\OptionsHighImportance.png" />
-    <Content Include="Resources\OptionsLowImportance.png" />
-    <Content Include="Resources\OptionsReminder.png" />
-    <Content Include="Resources\OptionsToday.png" />
-    <Content Include="Resources\OptionsTomorrow.png" />
-    <Content Include="Resources\OptionsWeek.png" />
-    <Content Include="Resources\OtherFolderSmall.png" />
-    <Content Include="Resources\OutsideBorder.png" />
-    <Content Include="Resources\PageColorLarge.png" />
-    <Content Include="Resources\PicturesLarge.png" />
-    <Content Include="Resources\PlainTextSmall.png" />
-    <Content Include="Resources\ProofingResearchSmall.png" />
-    <Content Include="Resources\ProofingSetLanguageSmall.png" />
-    <Content Include="Resources\ProofingSpelling.png" />
-    <Content Include="Resources\ProofingSpellingSmall.png" />
-    <Content Include="Resources\ProofingThesaurusSmall.png" />
-    <Content Include="Resources\ProofingTranslateSmall.png" />
-    <Content Include="Resources\ProofingTransScreentipSmall.png" />
-    <Content Include="Resources\ProofingWordCountSmall.png" />
-    <Content Include="Resources\QATDeleteSmall.png" />
-    <Content Include="Resources\QATForwardSmall.png" />
-    <Content Include="Resources\QATQuickPrintSmall.png" />
-    <Content Include="Resources\QATRedoSmall.png" />
-    <Content Include="Resources\QATSaveSmall.png" />
-    <Content Include="Resources\QATUndoSmall.png" />
-    <Content Include="Resources\QuickPartsLarge.png" />
-    <Content Include="Resources\QuickPartsSmall.png" />
-    <Content Include="Resources\QuickStyles.png" />
-    <Content Include="Resources\RichTextSmall.png" />
-    <Content Include="Resources\RightBorder.png" />
-    <Content Include="Resources\SaveSentItemLarge.png" />
-    <Content Include="Resources\SaveThemesSmall.png" />
-    <Content Include="Resources\SelectSmall.png" />
-    <Content Include="Resources\SendMail.png" />
-    <Content Include="Resources\SendRepliesToSmall.png" />
-    <Content Include="Resources\Shading.png" />
-    <Content Include="Resources\ShapesLarge.png" />
-    <Content Include="Resources\ShapesSmall.png" />
-    <Content Include="Resources\ShowBccLarge.png" />
-    <Content Include="Resources\ShowFromLarge.png" />
-    <Content Include="Resources\SmartArtLarge.png" />
-    <Content Include="Resources\SmartArtSmall.png" />
-    <Content Include="Resources\SortAscending.png" />
-    <Content Include="Resources\SpacingDouble.png" />
-    <Content Include="Resources\SpacingOne.png" />
-    <Content Include="Resources\SpacingOneHalf.png" />
-    <Content Include="Resources\SpacingParagraph.png" />
-    <Content Include="Resources\StyleSet.png" />
-    <Content Include="Resources\SymbolLarge.png" />
-    <Content Include="Resources\SymbolSmall.png" />
-    <Content Include="Resources\TableDrawSmall.png" />
-    <Content Include="Resources\TablesLarge.png" />
-    <Content Include="Resources\TableSmall.png" />
-    <Content Include="Resources\TextAlignCenter.png" />
-    <Content Include="Resources\TextAlignLeft.png" />
-    <Content Include="Resources\TextAlignRight.png" />
-    <Content Include="Resources\TextBackColor.png" />
-    <Content Include="Resources\TextBold.png" />
-    <Content Include="Resources\TextBoxLarge.png" />
-    <Content Include="Resources\TextBoxSmall.png" />
-    <Content Include="Resources\TextBulletNumbers.png" />
-    <Content Include="Resources\TextBulletPoints.png" />
-    <Content Include="Resources\TextChangeCase.png" />
-    <Content Include="Resources\TextColor.png" />
-    <Content Include="Resources\TextFontLarger.png" />
-    <Content Include="Resources\TextFontSmaller.png" />
-    <Content Include="Resources\TextItalics.png" />
-    <Content Include="Resources\TextJustify.png" />
-    <Content Include="Resources\TextRubout.png" />
-    <Content Include="Resources\TextShowHideMarkup.png" />
-    <Content Include="Resources\TextStrikeout.png" />
-    <Content Include="Resources\TextSubscript.png" />
-    <Content Include="Resources\TextSuperscript.png" />
-    <Content Include="Resources\TextTabLeft.png" />
-    <Content Include="Resources\TextTabRight.png" />
-    <Content Include="Resources\TextUnderline.png" />
-    <Content Include="Resources\ThemesLarge.png" />
-    <Content Include="Resources\ThemesSmall.png" />
-    <Content Include="Resources\TopBorder.png" />
-    <Content Include="Resources\TrackingSmall.png" />
-    <Content Include="Resources\UseVotingButtonsLarge.png" />
-    <Content Include="Resources\ViewGridlines.png" />
-    <Content Include="Resources\WordArtLarge.png" />
-    <Content Include="Resources\WordArtSmall.png" />
-    <Content Include="Resources\ZoomLarge.png" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Properties\Settings.settings">
@@ -982,13 +255,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
-    <PackageReference Include="Microsoft.Build" Version="16.6.0" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.6.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.8.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="2.8.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.8.0" />
-    <PackageReference Include="System.Management" Version="4.7.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Components\Scripting\Editor\" />
   </ItemGroup>
 </Project>

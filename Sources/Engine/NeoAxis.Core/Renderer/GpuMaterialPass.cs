@@ -1,6 +1,7 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Internal.SharpBgfx;
 
 namespace NeoAxis
@@ -10,12 +11,16 @@ namespace NeoAxis
 	/// </summary>
 	public class GpuMaterialPass
 	{
+		//public static bool GlobalComposeOIT;
+
 		Material.CompiledMaterialData owner;
 		GpuLinkedProgram linkedProgram;
 		//GpuProgram vertexProgram;
 		//GpuProgram fragmentProgram;
 
 		//bool lighting = false;
+
+		//blending
 		SceneBlendFactor sourceBlendFactor = SceneBlendFactor.One;
 		SceneBlendFactor destinationBlendFactor = SceneBlendFactor.Zero;
 		//!!!!separate alpha blending
@@ -530,8 +535,11 @@ namespace NeoAxis
 		//	get { return constantParameterValues; }
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static RenderState ConvertBlendFactor( SceneBlendFactor factor )
 		{
+			//!!!!use array by index
+
 			//!!!!еще параметры?
 
 			switch( factor )
@@ -550,8 +558,11 @@ namespace NeoAxis
 			return 0;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static RenderState ConvertRenderOperation( RenderOperationType renderOperation )
 		{
+			//!!!!use array by index
+
 			switch( renderOperation )
 			{
 			case RenderOperationType.TriangleList: return RenderState.PrimitiveTriangles;
@@ -569,20 +580,6 @@ namespace NeoAxis
 		{
 			RenderState state = RenderState.None;
 
-			//switch( PolygonMode )
-			//{
-			//case PolygonMode.Points:
-			//	break;
-			//case PolygonMode.Wireframe:
-			//	break;
-			//case PolygonMode.Solid:
-			//	break;
-
-			//	//Points = 1,//Ogre::PM_POINTS,
-			//	//Wireframe = 2,//Ogre::PM_WIREFRAME,
-			//	//Solid = 3,//Ogre::PM_SOLID,
-			//}
-
 			//culling
 			switch( CullingMode )
 			{
@@ -594,16 +591,33 @@ namespace NeoAxis
 			//depth check
 			if( depthCheck )
 			{
-				switch( depthFunction )
+				if( RenderingSystem.ReversedZ )
 				{
-				case CompareFunction.AlwaysFail: state |= RenderState.DepthTestNever; break;
-				case CompareFunction.AlwaysPass: state |= RenderState.DepthTestAlways; break;
-				case CompareFunction.Less: state |= RenderState.DepthTestLess; break;
-				case CompareFunction.LessEqual: state |= RenderState.DepthTestLessEqual; break;
-				case CompareFunction.Equal: state |= RenderState.DepthTestEqual; break;
-				case CompareFunction.NotEqual: state |= RenderState.DepthTestNotEqual; break;
-				case CompareFunction.GreaterEqual: state |= RenderState.DepthTestGreaterEqual; break;
-				case CompareFunction.Greater: state |= RenderState.DepthTestGreater; break;
+					switch( depthFunction )
+					{
+					case CompareFunction.AlwaysFail: state |= RenderState.DepthTestNever; break;
+					case CompareFunction.AlwaysPass: state |= RenderState.DepthTestAlways; break;
+					case CompareFunction.Less: state |= RenderState.DepthTestGreater; break;
+					case CompareFunction.LessEqual: state |= RenderState.DepthTestGreaterEqual; break;
+					case CompareFunction.Equal: state |= RenderState.DepthTestEqual; break;
+					case CompareFunction.NotEqual: state |= RenderState.DepthTestNotEqual; break;
+					case CompareFunction.GreaterEqual: state |= RenderState.DepthTestLessEqual; break;
+					case CompareFunction.Greater: state |= RenderState.DepthTestLess; break;
+					}
+				}
+				else
+				{
+					switch( depthFunction )
+					{
+					case CompareFunction.AlwaysFail: state |= RenderState.DepthTestNever; break;
+					case CompareFunction.AlwaysPass: state |= RenderState.DepthTestAlways; break;
+					case CompareFunction.Less: state |= RenderState.DepthTestLess; break;
+					case CompareFunction.LessEqual: state |= RenderState.DepthTestLessEqual; break;
+					case CompareFunction.Equal: state |= RenderState.DepthTestEqual; break;
+					case CompareFunction.NotEqual: state |= RenderState.DepthTestNotEqual; break;
+					case CompareFunction.GreaterEqual: state |= RenderState.DepthTestGreaterEqual; break;
+					case CompareFunction.Greater: state |= RenderState.DepthTestGreater; break;
+					}
 				}
 			}
 			else
@@ -623,26 +637,39 @@ namespace NeoAxis
 			if( ColorWriteAlpha )
 				state |= RenderState.WriteA;
 
-			//!!!!более продвинутый блендинг
-			//blending
-			var blendSource = ConvertBlendFactor( sourceBlendFactor );
-			var blendDestination = ConvertBlendFactor( destinationBlendFactor );
+			needUpdate = false;
+			cachedState = state;
 
-			//!!!!
+
+
+
+
+
+			//switch( PolygonMode )
+			//{
+			//case PolygonMode.Points:
+			//	break;
+			//case PolygonMode.Wireframe:
+			//	break;
+			//case PolygonMode.Solid:
+			//	break;
+
+			//	//Points = 1,//Ogre::PM_POINTS,
+			//	//Wireframe = 2,//Ogre::PM_WIREFRAME,
+			//	//Solid = 3,//Ogre::PM_SOLID,
+			//}
+
 			//blendSource = RenderState.BlendOne;
 			//blendDestination = RenderState.BlendZero;
 
-			////!!!!
 			//state |= RenderState.Multisampling;
-			////!!!!
+
 			//if( _tempAlphaToCoverage )
 			//{
 			//	state |= RenderState.BlendAlphaToCoverage;
 			//}
-			//////!!!!
-			//state |= RenderState.LineAA;
 
-			state |= RenderState.BlendFunction( blendSource, blendDestination );
+			//state |= RenderState.LineAA;
 
 			//!!!!видать в шейдерах. в текстурах что-то еще есть про блендинг
 			////CompareFunction alphaRejectFunction = CompareFunction.AlwaysPass;
@@ -655,9 +682,6 @@ namespace NeoAxis
 			////!!!!
 			////!!!!threading
 			//ParameterContainer constantParameterValues = new ParameterContainer();
-
-			needUpdate = false;
-			cachedState = state;
 
 			//!!!!
 			///// <summary>
@@ -770,24 +794,53 @@ namespace NeoAxis
 
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal void RenderingProcess_SetRenderState( RenderOperationType renderOperation, bool canWriteRGBA, bool voxelRendering )
 		{
 			if( needUpdate )
 				Update();
 
-			//!!!!что-то еще выставлять?
-
+			//render operation
 			var renderOperationState = ConvertRenderOperation( renderOperation );
 
-			RenderState state = cachedState | renderOperationState;
+			//blending
+			RenderState blending;
+			//if( GlobalComposeOIT )
+			//	blending = RenderState.BlendFunction( RenderState.BlendOne, RenderState.BlendOne );
+			//else
+			{
+				var blendSource = ConvertBlendFactor( sourceBlendFactor );
+				var blendDestination = ConvertBlendFactor( destinationBlendFactor );
+				blending = RenderState.BlendFunction( blendSource, blendDestination );
+			}
+
+			var state = cachedState | renderOperationState | blending;
 			int colorRGBA = 0;
-			// <param name="colorRgba">The color used for "factor" blending modes.</param>
 
 			if( advancedBlendingWriteMask != uint.MaxValue )
 			{
 				state |= RenderState.BlendIndependent;
 				colorRGBA = (int)advancedBlendingWriteMask;
 			}
+
+			//if( GlobalComposeOIT )
+			//{
+			//	state |= RenderState.BlendIndependent;
+			//	colorRGBA = 49;//BGFX_STATE_BLEND_FUNC_RT_1( BGFX_STATE_BLEND_ZERO, BGFX_STATE_BLEND_SRC_COLOR )
+
+			//	//mrt
+			//	//// Set render states.
+			//	//bgfx::setState( stateNoDepth
+			//	//	| BGFX_STATE_BLEND_FUNC( BGFX_STATE_BLEND_ONE, BGFX_STATE_BLEND_ONE ) | BGFX_STATE_BLEND_INDEPENDENT
+			//	//	, BGFX_STATE_BLEND_FUNC_RT_1( BGFX_STATE_BLEND_ZERO, BGFX_STATE_BLEND_SRC_COLOR )
+			//	//);
+
+			//	////separate
+			//	////bgfx::setState( stateNoDepth
+			//	////| BGFX_STATE_BLEND_FUNC_SEPARATE( BGFX_STATE_BLEND_ONE, BGFX_STATE_BLEND_ONE, BGFX_STATE_BLEND_ZERO, BGFX_STATE_BLEND_INV_SRC_ALPHA )
+			//	////);
+			//}
+
 
 			if( !canWriteRGBA )
 				state &= ~( RenderState.WriteRGB | RenderState.WriteA );
@@ -804,7 +857,7 @@ namespace NeoAxis
 		}
 	}
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public struct GpuMaterialPassGroup
 	{
@@ -815,6 +868,7 @@ namespace NeoAxis
 
 		//
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public GpuMaterialPass Get( bool voxel/*, bool virtualized*/, bool billboard )
 		{
 			if( voxel )
@@ -827,6 +881,7 @@ namespace NeoAxis
 				return Usual;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Set( GpuMaterialPass pass, bool voxel, /*bool virtualized, */bool billboard )
 		{
 			if( voxel )

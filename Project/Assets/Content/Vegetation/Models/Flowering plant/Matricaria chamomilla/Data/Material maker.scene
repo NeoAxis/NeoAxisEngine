@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2021.3.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.Scene
 {
@@ -79,8 +79,9 @@
 	{
 		Name = Rendering Pipeline
 		Shadows = False
-		ShadowFarDistance = 15
+		ShadowDirectionalDistance = 15
 		ShadowDirectionalLightCascades = 1
+		ShadowPointSpotlightDistance = 15
 		.component NeoAxis.Component
 		{
 			Name = Background Effects
@@ -129,7 +130,6 @@
 			.component NeoAxis.RenderingEffect_Sharpen
 			{
 				Name = Sharpen
-				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
 			}
 		}
 		.component NeoAxis.Component

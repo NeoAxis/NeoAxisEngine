@@ -8,8 +8,12 @@ namespace NeoAxis.Editor
 {
 	public class PlantEditor : CanvasBasedEditor
 	{
-		//bool firstCameraUpdate = true;
-		//bool needResultCompile;
+		bool firstCameraUpdate = true;
+
+		bool needRecreateInstance;
+		int editorPreviewUpdateCounter;
+		Mesh previewMesh;
+		MeshInSpace objectInSpace;
 
 		//
 
@@ -23,15 +27,20 @@ namespace NeoAxis.Editor
 			base.OnCreate();
 
 			var scene = CreateScene( false );
+
+			if( PlantType != null )
+				CreateObject();
+
 			//if( PlantType != null )
 			//{
 			//	PlantTypeInSpace objInSpace = scene.CreateComponent<PlantTypeInSpace>();
 			//	objInSpace.Mesh = PlantType;
 			//}
+
 			scene.Enabled = true;
 
-			//if( Document != null )
-			//	Document.UndoSystem.ListOfActionsChanged += UndoSystem_ListOfActionsChanged;
+			if( Document != null )
+				Document.UndoSystem.ListOfActionsChanged += UndoSystem_ListOfActionsChanged;
 
 			if( ObjectOfEditor != null )
 				SelectObjects( new object[] { ObjectOfEditor } );
@@ -39,8 +48,14 @@ namespace NeoAxis.Editor
 
 		protected override void OnDestroy()
 		{
-			//if( Document != null )
-			//	Document.UndoSystem.ListOfActionsChanged -= UndoSystem_ListOfActionsChanged;
+			if( Document != null )
+				Document.UndoSystem.ListOfActionsChanged -= UndoSystem_ListOfActionsChanged;
+
+			if( !EditorAPI.ClosingApplication )
+			{
+				previewMesh?.Dispose();
+				previewMesh = null;
+			}
 
 			base.OnDestroy();
 		}
@@ -56,16 +71,16 @@ namespace NeoAxis.Editor
 		{
 			base.OnSceneViewportUpdateGetCameraSettings( ref processed );
 
-			//if( firstCameraUpdate && Scene.CameraEditor.Value != null )
-			//{
-			//	InitCamera();
-			//	Viewport.CameraSettings = new Viewport.CameraSettingsClass( Viewport, Scene.CameraEditor );
-			//}
+			if( firstCameraUpdate && Scene.CameraEditor.Value != null && objectInSpace != null )
+			{
+				InitCamera();
+				Viewport.CameraSettings = new Viewport.CameraSettingsClass( Viewport, Scene.CameraEditor );
+			}
+
+			firstCameraUpdate = false;
 
 			//if( Scene.CameraEditor.Value != null )
 			//	PlantType.EditorCameraTransform = Scene.CameraEditor.Value.Transform;
-
-			//firstCameraUpdate = false;
 		}
 
 		PlantMaterial GetSelectedMaterial()
@@ -73,6 +88,20 @@ namespace NeoAxis.Editor
 			if( SelectedObjects.Length == 1 )
 				return SelectedObjects[ 0 ] as PlantMaterial;
 			return null;
+		}
+
+		protected override void OnViewportUpdateBeforeOutput()
+		{
+			base.OnViewportUpdateBeforeOutput();
+
+			if( PlantType != null && editorPreviewUpdateCounter != PlantType.EditorPreviewUpdateCounter )
+				needRecreateInstance = true;
+
+			if( needRecreateInstance )
+			{
+				CreateObject();
+				needRecreateInstance = false;
+			}
 		}
 
 		protected override void OnViewportUpdateBeforeOutput2()
@@ -101,22 +130,20 @@ namespace NeoAxis.Editor
 				if( !string.IsNullOrEmpty( PlantType.Name ) )
 					lines.Add( PlantType.Name );
 				else
-					lines.Add( "Plant generation tool" );
+					lines.Add( "Vegetation maker" );// Plant generation tool" );
 
 				var fileNames = new List<string>();
-				PlantType.ExportToMeshes( "", true, fileNames, out _ );
+				PlantType.ExportToMeshes( "", true, fileNames, false, out _, out _ );
 
 				lines.Add( "" );
-				lines.Add( string.Format( "{0} output meshes", fileNames.Count ) );
-				foreach( var fileName in fileNames )
-					lines.Add( fileName );
+				if( fileNames.Count == 1 )
+					lines.Add( string.Format( "{0} output mesh", fileNames.Count ) );
+				else
+					lines.Add( string.Format( "{0} output meshes", fileNames.Count ) );
+				//foreach( var fileName in fileNames )
+				//	lines.Add( fileName );
 			}
 		}
-
-		//private void UndoSystem_ListOfActionsChanged( object sender, EventArgs e )
-		//{
-		//	needResultCompile = true;
-		//}
 
 		//ImageComponent GetBaseColorTexture( Material material )
 		//{
@@ -300,6 +327,72 @@ namespace NeoAxis.Editor
 				}
 			}
 
+		}
+
+		void CreateObject()
+		{
+			objectInSpace?.Dispose();
+			objectInSpace = null;
+			previewMesh?.Dispose();
+			previewMesh = null;
+
+			if( PlantType != null )
+			{
+				try
+				{
+					var fileNames = new List<string>();
+					if( PlantType.ExportToMeshes( "Dummy", false, fileNames, true, out previewMesh, out var error ) )
+					{
+						objectInSpace = Scene.CreateComponent<MeshInSpace>( enabled: false );
+						objectInSpace.Mesh = previewMesh;
+						objectInSpace.Enabled = true;
+
+						editorPreviewUpdateCounter = PlantType.EditorPreviewUpdateCounter;
+					}
+					else
+					{
+						//Log.Warning( error );
+					}
+				}
+				catch( Exception e )
+				{
+					Log.Warning( $"Unable to generate mesh. " + e.Message );
+				}
+			}
+		}
+
+		void InitCamera()
+		{
+			var camera = Scene.CameraEditor.Value;
+			var bounds = objectInSpace.SpaceBounds.BoundingBox;
+			var cameraLookTo = bounds.GetCenter();
+
+			double maxGararite = Math.Max( Math.Max( bounds.GetSize().X, bounds.GetSize().Y ), bounds.GetSize().Z );
+			double distance = maxGararite * 1.5;// 2;
+			if( distance < 2 )
+				distance = 2;
+
+			double cameraZoomFactor = 1;
+			SphericalDirection cameraDirection = new SphericalDirection( -3.83, -.47 );
+
+			var cameraPosition = cameraLookTo - cameraDirection.GetVector() * distance * cameraZoomFactor;
+			var center = cameraLookTo;
+
+			Vector3 from = cameraPosition;
+			Vector3 to = center;
+			Degree fov = 65;
+
+			camera.FieldOfView = fov;
+			camera.NearClipPlane = Math.Max( distance / 10000, 0.01 );
+			camera.FarClipPlane = Math.Max( 1000, distance * 2 );
+
+			camera.Transform = new Transform( from, Quaternion.LookAt( ( to - from ).GetNormalize(), Vector3.ZAxis ) );
+			camera.FixedUp = Vector3.ZAxis;
+		}
+
+		private void UndoSystem_ListOfActionsChanged( object sender, EventArgs e )
+		{
+			needRecreateInstance = true;
 		}
 	}
 }

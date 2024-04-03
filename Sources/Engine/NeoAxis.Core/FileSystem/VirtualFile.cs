@@ -76,15 +76,16 @@ namespace NeoAxis
 
 					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
 					{
-#if WINDOWS || UWP
+//#if WINDOWS || UWP
 						stream = new Win32HandleVirtualFileStream( realPath );
-#endif
+//#endif
 					}
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 					{
-#if MACOS
-						stream = new MacOSXVirtualFileStream( realPath );
-#endif
+						//#if MACOS
+						Log.Fatal( "new MacVirtualFileStream. impl." );
+						//stream = new MacVirtualFileStream( realPath );
+						//#endif
 					}
 					else
 						stream = new DefaultVirtualFileStream( realPath );

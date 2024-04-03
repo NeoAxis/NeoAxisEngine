@@ -43,6 +43,8 @@
 	#endif
 #elif defined(__ANDROID__)
 #   define PLATFORM_ANDROID
+#elif defined(__linux__)
+#   define PLATFORM_LINUX
 #else
 	#error Platform is not supported.
 #endif

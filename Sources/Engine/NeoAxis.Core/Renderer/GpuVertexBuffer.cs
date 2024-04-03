@@ -1,5 +1,6 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
+using System.Runtime.CompilerServices;
 using Internal.SharpBgfx;
 
 namespace NeoAxis
@@ -188,19 +189,19 @@ namespace NeoAxis
 			vertexCountActual = vertexCount;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		unsafe internal void UpdateNativeObject()
-		//unsafe internal IDisposable GetNativeObject()
 		{
 			if( Disposed )
 				Log.Fatal( "GpuVertexBuffer: GetNativeObject: Disposed." );
-
-			EngineThreading.CheckMainThread();
 
 			if( ( Flags & ( GpuBufferFlags.Dynamic | GpuBufferFlags.ComputeWrite ) ) != 0 )
 			//if( ( ( Flags & GpuBufferFlags.Dynamic ) != 0 ) || ( ( Flags & GpuBufferFlags.ComputeWrite ) != 0 ) )
 			{
 				if( nativeObjectHandle == ushort.MaxValue )
 				{
+					EngineThreading.CheckMainThread();
+
 					BufferFlags nativeFlags = 0;
 					if( ( Flags & GpuBufferFlags.ComputeRead ) != 0 )
 						nativeFlags |= BufferFlags.ComputeRead;// | SharpBgfx.BufferFlags.ComputeTypeFloat;
@@ -280,6 +281,8 @@ namespace NeoAxis
 			{
 				if( nativeObjectHandle == ushort.MaxValue )// if( nativeObject == null )
 				{
+					EngineThreading.CheckMainThread();
+
 					var vertexDeclaration2 = vertexDeclaration;
 					var vertices2 = vertices;
 

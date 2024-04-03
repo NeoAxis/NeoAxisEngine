@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Net.Sockets;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 #if !__NOIPENDPOINT__
 using NetEndPoint = System.Net.IPEndPoint;
@@ -217,6 +218,7 @@ namespace Internal.Lidgren.Network
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		private void NetworkLoop()
 		{
 			VerifyNetworkThread();
@@ -325,6 +327,7 @@ namespace Internal.Lidgren.Network
 			return;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		private void Heartbeat()
 		{
 			VerifyNetworkThread();
@@ -335,9 +338,14 @@ namespace Internal.Lidgren.Network
 			int maxCHBpS = 1250 - m_connections.Count;
 			if (maxCHBpS < 250)
 				maxCHBpS = 250;
-			if (delta > (1.0 / (double)maxCHBpS) || delta < 0.0) // max connection heartbeats/second max
+			//!!!!betauser. faster without it, but when many connections may be slower
+			if (delta > (1.0 / (double)maxCHBpS) || delta < 0.0 || m_connections.Count < 10) 
+			//if (delta > (1.0 / (double)maxCHBpS) || delta < 0.0) // max connection heartbeats/second max
 			{
-				m_frameCounter++;
+				unchecked
+				{
+					m_frameCounter++;
+				}
 				m_lastHeartbeat = now;
 
 				// do handshake heartbeats
@@ -367,9 +375,9 @@ namespace Internal.Lidgren.Network
 					}
 				}
 
-#if DEBUG
-				SendDelayedPackets();
-#endif
+//#if DEBUG
+//				SendDelayedPackets();
+//#endif
 
 				// update m_executeFlushSendQueue
 				if (m_configuration.m_autoFlushSendQueue && m_needFlushSendQueue == true)
@@ -462,11 +470,20 @@ namespace Internal.Lidgren.Network
             }
 		}
 
-        private void ReceiveSocketData(double now)
+		[MethodImpl( (MethodImplOptions)512 )]
+		private void ReceiveSocketData(double now)
         {
+			////!!!!new
+   //         int bytesReceived = NetFastSocket.ReceiveFrom(
+	  //          m_socket, 
+	  //          m_receiveBuffer, 0, m_receiveBuffer.Length, 
+	  //          SocketFlags.None, 
+	  //          out var senderRemote,
+	  //          ref m_senderRemote);
+
             int bytesReceived = m_socket.ReceiveFrom(m_receiveBuffer, 0, m_receiveBuffer.Length, SocketFlags.None, ref m_senderRemote);
 
-			if (bytesReceived < NetConstants.HeaderByteSize)
+			if( bytesReceived < NetConstants.HeaderByteSize)
 				return;
 
 			//LogVerbose("Received " + bytesReceived + " bytes");
@@ -596,9 +613,15 @@ namespace Internal.Lidgren.Network
 			}
 
 			m_statistics.PacketReceived(bytesReceived, numMessages, numFragments);
-			if (sender != null)
-				sender.m_statistics.PacketReceived(bytesReceived, numMessages, numFragments);
-        }
+			if( sender != null )
+			{
+				sender.m_statistics.PacketReceived( bytesReceived, numMessages, numFragments );
+
+				//!!!!betauser
+				if( sender.StatisticsCalculation != null )
+					Interlocked.Add( ref sender.StatisticsCalculation.Received, bytesReceived );
+			}
+		}
 
         /// <summary>
 		/// If NetPeerConfiguration.AutoFlushSendQueue() is false; you need to call this to send all messages queued using SendMessage()
@@ -608,6 +631,7 @@ namespace Internal.Lidgren.Network
 			m_executeFlushSendQueue = true;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		internal void HandleIncomingDiscoveryRequest(double now, NetEndPoint senderEndPoint, int ptr, int payloadByteLength)
 		{
 			if (m_configuration.IsMessageTypeEnabled(NetIncomingMessageType.DiscoveryRequest))
@@ -622,6 +646,7 @@ namespace Internal.Lidgren.Network
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		internal void HandleIncomingDiscoveryResponse(double now, NetEndPoint senderEndPoint, int ptr, int payloadByteLength)
 		{
 			if (m_configuration.IsMessageTypeEnabled(NetIncomingMessageType.DiscoveryResponse))
@@ -636,6 +661,7 @@ namespace Internal.Lidgren.Network
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		private void ReceivedUnconnectedLibraryMessage(double now, NetEndPoint senderEndPoint, NetMessageType tp, int ptr, int payloadByteLength)
 		{
 			NetConnection shake;

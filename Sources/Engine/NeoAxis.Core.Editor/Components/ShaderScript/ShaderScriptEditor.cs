@@ -85,7 +85,7 @@ namespace NeoAxis.Editor
 				var property = (Metadata.Property)MetadataManager.GetTypeOfNetType( typeof( ShaderScript ) ).MetadataGetMemberBySignature( "property:Code" );
 				undoItems.Add( new UndoActionPropertiesChange.Item( Script, property, oldValue ) );
 				var undoAction = new UndoActionPropertiesChange( undoItems );
-				Document.CommitUndoAction( undoAction );
+				Document2.CommitUndoAction( undoAction );
 
 
 				//!!!!
@@ -93,7 +93,7 @@ namespace NeoAxis.Editor
 				//Script.RaiseCodeChangedEventAndSetNeedUpdate();
 
 				//update materials. EditorUpdateWhenDocumentModified
-				Document.EditorUpdateWhenDocumentModified_NeedUpdate( EngineApp.GetSystemTime() + 0.1 );
+				Document2.EditorUpdateWhenDocumentModified_NeedUpdate( EngineApp.GetSystemTime() + 0.1 );
 			}
 
 			needApplyChanges = false;
@@ -145,8 +145,8 @@ namespace NeoAxis.Editor
 
 			timer1.Start();
 
-			Document.UndoSystem.ListOfActionsChanged += UndoSystem_ListOfActionsChanged;
-			Document.SaveEvent += Document_SaveEvent;
+			Document2.UndoSystem.ListOfActionsChanged += UndoSystem_ListOfActionsChanged;
+			Document2.SaveEvent += Document_SaveEvent;
 		}
 
 		private void Document_SaveEvent( DocumentInstance document, string saveAsFileName, ref bool handled, ref bool result )
@@ -160,7 +160,7 @@ namespace NeoAxis.Editor
 			get { return avalonTextEditor; }
 		}
 
-		public override void EditorActionGetState( EditorAction.GetStateContext context )
+		public override void EditorActionGetState( EditorActionGetStateContext context )
 		{
 			//switch( context.Action.Name )
 			//{
@@ -192,7 +192,7 @@ namespace NeoAxis.Editor
 			base.EditorActionGetState( context );
 		}
 
-		public override void EditorActionClick( EditorAction.ClickContext context )
+		public override void EditorActionClick( EditorActionClickContext context )
 		{
 			//switch( context.Action.Name )
 			//{
@@ -368,7 +368,7 @@ namespace NeoAxis.Editor
 
 			if( args.KeyCode != Keys.None )
 			{
-				if( EditorAPI.ProcessShortcuts( args.KeyCode, false ) )
+				if( EditorAPI2.ProcessShortcuts( args.KeyCode, false ) )
 				{
 					e.Handled = true;
 					return;
@@ -381,7 +381,7 @@ namespace NeoAxis.Editor
 			if( loadedHighlightingDefinition == null )
 			{
 				string path;
-				if( EditorAPI.DarkTheme )
+				if( EditorAPI2.DarkTheme )
 					path = @"Base\Tools\Highlighting\ShaderDark.xshd";
 				else
 					path = @"Base\Tools\Highlighting\ShaderLight.xshd";
@@ -405,7 +405,7 @@ namespace NeoAxis.Editor
 		void UpdateBackgroundForeground()
 		{
 			{
-				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.ShaderEditor.ShaderEditorBackgroundColorDarkTheme : ProjectSettings.Get.ShaderEditor.ShaderEditorBackgroundColorLightTheme;
+				var color = EditorAPI2.DarkTheme ? ProjectSettings.Get.ShaderEditor.ShaderEditorBackgroundColorDarkTheme : ProjectSettings.Get.ShaderEditor.ShaderEditorBackgroundColorLightTheme;
 				if( backgroundColor != color )
 				{
 					backgroundColor = color;
@@ -415,7 +415,7 @@ namespace NeoAxis.Editor
 			}
 
 			{
-				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.ShaderEditor.ShaderEditorSearchBackgroundDarkTheme.Value : ProjectSettings.Get.ShaderEditor.ShaderEditorSearchBackgroundLightTheme.Value;
+				var color = EditorAPI2.DarkTheme ? ProjectSettings.Get.ShaderEditor.ShaderEditorSearchBackgroundDarkTheme.Value : ProjectSettings.Get.ShaderEditor.ShaderEditorSearchBackgroundLightTheme.Value;
 				var packed = color.ToColorPacked();
 				avalonTextEditor.Editor.TextArea.SearchBackgroundBrush = new SolidColorBrush( Color.FromArgb( packed.Alpha, packed.Red, packed.Green, packed.Blue ) );
 			}
@@ -455,7 +455,7 @@ namespace NeoAxis.Editor
 				catch { }
 			}
 
-			var selectionBackground = EditorAPI.DarkTheme ? ProjectSettings.Get.ShaderEditor.ShaderEditorSelectionBackgroundDarkTheme.Value : ProjectSettings.Get.ShaderEditor.ShaderEditorSelectionBackgroundLightTheme.Value;
+			var selectionBackground = EditorAPI2.DarkTheme ? ProjectSettings.Get.ShaderEditor.ShaderEditorSelectionBackgroundDarkTheme.Value : ProjectSettings.Get.ShaderEditor.ShaderEditorSelectionBackgroundLightTheme.Value;
 			if( currentSelectionBackground != selectionBackground )
 			{
 				currentSelectionBackground = selectionBackground;
@@ -468,7 +468,7 @@ namespace NeoAxis.Editor
 				catch { }
 			}
 
-			var selectionForeground = EditorAPI.DarkTheme ? ProjectSettings.Get.ShaderEditor.ShaderEditorSelectionForegroundDarkTheme.Value : ProjectSettings.Get.ShaderEditor.ShaderEditorSelectionForegroundLightTheme.Value;
+			var selectionForeground = EditorAPI2.DarkTheme ? ProjectSettings.Get.ShaderEditor.ShaderEditorSelectionForegroundDarkTheme.Value : ProjectSettings.Get.ShaderEditor.ShaderEditorSelectionForegroundLightTheme.Value;
 			if( currentSelectionForeground != selectionForeground )
 			{
 				currentSelectionForeground = selectionForeground;

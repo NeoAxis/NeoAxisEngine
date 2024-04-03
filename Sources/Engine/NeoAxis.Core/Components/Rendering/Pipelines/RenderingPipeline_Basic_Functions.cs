@@ -1,6 +1,7 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -11,7 +12,9 @@ namespace NeoAxis
 			var result = new double[ ShadowDirectionalLightCascades + 1 ];
 
 			int index = 0;
-			result[ index++ ] = context.Owner.CameraSettings.NearClipDistance;
+			//!!!!
+			result[ index++ ] = 1;
+			//result[ index++ ] = context.Owner.CameraSettings.NearClipDistance;
 
 			if( ShadowDirectionalLightCascades >= 2 )
 			{
@@ -30,7 +33,7 @@ namespace NeoAxis
 				for( int n = 0; n < values.Length - 1; n++ )
 				{
 					current += values[ n ];
-					result[ index++ ] = ShadowFarDistance * current / total;
+					result[ index++ ] = ShadowDirectionalDistance * current / total;
 				}
 			}
 
@@ -41,20 +44,20 @@ namespace NeoAxis
 			//if( ShadowDirectionalLightCascades >= 4 )
 			//	result[ index++ ] = ShadowDirectionalLightCascadesSplit3.Value * ShadowFarDistance;
 
-			result[ index++ ] = ShadowFarDistance;
+			result[ index++ ] = ShadowDirectionalDistance;
 
 			return result;
 		}
 
-		const double directionalLightShadowsCascadeOverlapping = 1.1;
+		const double directionalLightShadowsCascadeOverlapping = 1.2;//1.1;
 
 		Frustum GetDirectionalLightShadowsFrustum( ViewportRenderingContext context, int cascadeIndex )
 		{
 			var splitDistances = GetShadowCascadeSplitDistances( context );
 
 			var nearDistance = splitDistances[ cascadeIndex ];
-			var farDistance = splitDistances[ cascadeIndex + 1 ] * directionalLightShadowsCascadeOverlapping;
-			//var farDistance = splitDistances[ cascadeIndex + 1 ];
+			var farDistance = splitDistances[ cascadeIndex + 1 ] * directionalLightShadowsCascadeOverlapping;// context.renderingPipeline.ShadowDirectionalLightCascadeOverlapping;
+																											 //var farDistance = splitDistances[ cascadeIndex + 1 ];
 			if( nearDistance < .0001 )
 				nearDistance = .0001;
 			if( farDistance < nearDistance + .01 )
@@ -72,8 +75,8 @@ namespace NeoAxis
 			var splitDistances = GetShadowCascadeSplitDistances( context );
 
 			var nearDistance = splitDistances[ cascadeIndex ];
-			var farDistance = splitDistances[ cascadeIndex + 1 ] * directionalLightShadowsCascadeOverlapping;
-			//var farDistance = splitDistances[ cascadeIndex + 1 ];
+			var farDistance = splitDistances[ cascadeIndex + 1 ] * directionalLightShadowsCascadeOverlapping;// context.renderingPipeline.ShadowDirectionalLightCascadeOverlapping;
+																											 //var farDistance = splitDistances[ cascadeIndex + 1 ];
 			if( nearDistance < .0001 )
 				nearDistance = .0001;
 			if( farDistance < nearDistance + .01 )
@@ -443,6 +446,7 @@ namespace NeoAxis
 
 		static Plane[][] pointLightShadowGenerationPlanes;
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void PointLightShadowGenerationCheckAddFaces( ref Vector3 lightPosition, ref Sphere meshBoundingSphere, bool[] result )
 		{
 			if( pointLightShadowGenerationPlanes == null )
@@ -489,7 +493,7 @@ namespace NeoAxis
 				bool add = true;
 				for( int n = 0; n < planes.Length; n++ )
 				{
-					double distance = planes[ n ].GetDistance( sphereLocalOrigin );// meshSphere.Origin );
+					double distance = planes[ n ].GetDistance( ref sphereLocalOrigin );// meshSphere.Origin );
 					if( distance < -meshBoundingSphere.Radius )
 					{
 						add = false;
@@ -501,7 +505,7 @@ namespace NeoAxis
 			}
 		}
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////
 
 		public enum DownscalingModeEnum
 		{
@@ -512,6 +516,9 @@ namespace NeoAxis
 		public class GaussianBlurSettings
 		{
 			public ImageComponent SourceTexture;
+			//public bool SourceTextureIsArray;
+			//public int SourceTextureArrayIndex;
+
 			//public RenderingEffect ForEffect;
 			public double BlurFactor = 1;
 			public DownscalingModeEnum DownscalingMode = DownscalingModeEnum.Auto;
@@ -520,127 +527,359 @@ namespace NeoAxis
 
 			public ImageComponent BlendResultWithTexture;
 			public double BlendResultWithTextureIntensity;
+
+			public bool DepthCheck;
+			public double DepthCheckThreshold = 1.05;
+
+			public bool NormalCheck;
+			public Radian NormalCheckThreshold = Math.PI / 4;
+
+			public bool GenerateMips;
+
+			//public bool AlphaAsWeight;
+
+			//!!!!
+			//public bool Test;
 		}
 
 		public virtual ImageComponent GaussianBlur( ViewportRenderingContext context, GaussianBlurSettings settings )
 		{
 			ImageComponent currentTexture = settings.SourceTexture;
 
-			//downscaling
-
-			int downscalingValue2;
-			if( settings.DownscalingMode == DownscalingModeEnum.Auto )
+			if( currentTexture.Result.TextureType == ImageComponent.TypeEnum.Cube )
 			{
-				downscalingValue2 = (int)( settings.BlurFactor / 2.0 + 0.999 );
-				if( settings.BlurFactor <= 1 )
-					downscalingValue2 = 0;
-				//downscalingValue2 = (int)( Math.Pow( blurFactor, 1.0 / 1.1 ) ) - 1;
-				//downscalingValue2 = (int)( Math.Sqrt( blurFactor ) ) - 1;
-				//downscalingValue2 = (int)( blurFactor / 1.5 );
-			}
-			else
-				downscalingValue2 = settings.DownscalingValue;
+				//Cube
 
-			for( int n = 0; n < downscalingValue2; n++ )
-			{
-				var size = currentTexture.Result.ResultSize / 2;
-				if( size.X < 1 ) size.X = 1;
-				if( size.Y < 1 ) size.Y = 1;
+				//!!!!downscaling
 
-				var texture = context.RenderTarget2D_Alloc( size, currentTexture.Result.ResultFormat );
+				//!!!!compute. code in PrepareReflectionProbesCubemapEnvironmentMipmapsAndBlur
 
-				context.SetViewport( texture.Result.GetRenderTarget().Viewports[ 0 ] );
 
-				var shader = new CanvasRenderer.ShaderItem();
-				shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
-				shader.FragmentProgramFileName = @"Base\Shaders\Effects\Downscale2_fs.sc";
-
-				shader.Parameters.Set( "sourceSizeInv", new Vector2F( 1, 1 ) / currentTexture.Result.ResultSize.ToVector2F() );
-
-				//shader.Parameters.Set( "0"/*"sourceTexture"*/, new GpuMaterialPass.TextureParameterValue( actualTexture,
-				//	TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
-				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, currentTexture,
-					TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
-
-				context.RenderQuadToCurrentViewport( shader );
-
-				if( currentTexture != settings.SourceTexture )
-					context.DynamicTexture_Free( currentTexture );
-				currentTexture = texture;
-			}
-
-			//horizontal blur
-			//if( dimensions == BlurDimensionsEnum.HorizontalAndVertical || dimensions == BlurDimensionsEnum.Horizontal )
-			{
-				var texture = context.RenderTarget2D_Alloc( settings.SourceTexture.Result.ResultSize, currentTexture.Result.ResultFormat );
-				//var texture = context.RenderTarget2D_Alloc( currentTexture.Result.Size, currentTexture.Result.Format );
+				if( settings.GenerateMips )
 				{
-					context.SetViewport( texture.Result.GetRenderTarget().Viewports[ 0 ] );
+					//with mipmaps
 
-					var shader = new CanvasRenderer.ShaderItem();
-					shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
-					shader.FragmentProgramFileName = @"Base\Shaders\Effects\Blur_fs.sc";
+					var resultTexture = context.RenderTargetCube_Alloc( settings.SourceTexture.Result.ResultSize, currentTexture.Result.ResultFormat, mipmaps: true );
+					var tempTexture = context.RenderTargetCube_Alloc( settings.SourceTexture.Result.ResultSize, currentTexture.Result.ResultFormat, mipmaps: true );
 
-					shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"s_sourceTexture"*/, currentTexture,
-						TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
-
-					var values = GaussianBlurMath.Calculate15( texture.Result.ResultSize, true, settings.BlurFactor, settings.StandardDeviation );//, settings.Intensity );
-					shader.Parameters.Set( "sampleOffsets", values.SampleOffsetsAsVector4Array );
-					shader.Parameters.Set( "sampleWeights", values.SampleWeights );
-
-					context.RenderQuadToCurrentViewport( shader );
-				}
-
-				if( currentTexture != settings.SourceTexture )
-					context.DynamicTexture_Free( currentTexture );
-				currentTexture = texture;
-			}
-
-			//vertical blur
-			//if( dimensions == BlurDimensionsEnum.HorizontalAndVertical || dimensions == BlurDimensionsEnum.Vertical )
-			{
-				var texture = context.RenderTarget2D_Alloc( settings.SourceTexture.Result.ResultSize, currentTexture.Result.ResultFormat );
-				//var texture = context.RenderTarget2D_Alloc( currentTexture.Result.Size, currentTexture.Result.Format );
-				{
-					context.SetViewport( texture.Result.GetRenderTarget().Viewports[ 0 ] );
-
-					var shader = new CanvasRenderer.ShaderItem();
-					shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
-					shader.FragmentProgramFileName = @"Base\Shaders\Effects\Blur_fs.sc";
-
-					shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"s_sourceTexture"*/, currentTexture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
-
-					var values = GaussianBlurMath.Calculate15( texture.Result.ResultSize, false, settings.BlurFactor, settings.StandardDeviation );//, settings.Intensity );
-					shader.Parameters.Set( "sampleOffsets", values.SampleOffsetsAsVector4Array );
-					shader.Parameters.Set( "sampleWeights", values.SampleWeights );
-
-					if( settings.BlendResultWithTexture != null )
+					for( var mip = 0; mip < resultTexture.Result.ResultMipLevels; mip++ )
 					{
-						shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "BLEND_WITH_TEXTURE" ) );
+						var mipSize = settings.SourceTexture.Result.ResultSize;
+						mipSize.X >>= mip;
+						mipSize.Y >>= mip;
 
-						shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1/*"s_blendWithTexture"*/, settings.BlendResultWithTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
+						//horizontal blur
+						{
+							for( var face = 0; face < 6; face++ )
+							{
+								var slice = face;// index * 6 + face;
+								context.SetViewport( tempTexture.Result.GetRenderTarget( mip, slice ).Viewports[ 0 ] );
 
-						shader.Parameters.Set( "intensity", (float)settings.BlendResultWithTextureIntensity );
+								var shader = new CanvasRenderer.ShaderItem();
+								shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+								shader.FragmentProgramFileName = @"Base\Shaders\Effects\BlurCube_fs.sc";
+
+								var sampleFrom = mip == 0 ? currentTexture : resultTexture;
+
+								shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"s_sourceTexture"*/, sampleFrom, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
+
+								var values = GaussianBlurMath.Calculate15( mipSize, true, settings.BlurFactor, settings.StandardDeviation );
+								shader.Parameters.Set( "u_blurSampleOffsets", values.SampleOffsetsAsVector4Array );
+								shader.Parameters.Set( "u_blurSampleWeights", values.SampleWeights );
+
+								var sourceMip = Math.Max( mip - 1, 0 );
+
+								shader.Parameters.Set( "u_blurCubemapParameters", new Vector4F( face, sourceMip, 0, 0 ) );
+
+								context.RenderQuadToCurrentViewport( shader );
+							}
+						}
+
+						//vertical blur
+						{
+							for( var face = 0; face < 6; face++ )
+							{
+								var slice = face;// index * 6 + face;
+								context.SetViewport( resultTexture.Result.GetRenderTarget( mip, slice ).Viewports[ 0 ] );
+
+								var shader = new CanvasRenderer.ShaderItem();
+								shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+								shader.FragmentProgramFileName = @"Base\Shaders\Effects\BlurCube_fs.sc";
+
+								shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"s_sourceTexture"*/, tempTexture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
+
+								var values = GaussianBlurMath.Calculate15( mipSize, false, settings.BlurFactor, settings.StandardDeviation );
+								shader.Parameters.Set( "u_blurSampleOffsets", values.SampleOffsetsAsVector4Array );
+								shader.Parameters.Set( "u_blurSampleWeights", values.SampleWeights );
+
+								var sourceMip = mip;
+
+								shader.Parameters.Set( "u_blurCubemapParameters", new Vector4F( face, sourceMip, 0, 0 ) );
+
+								if( settings.BlendResultWithTexture != null )
+								{
+									shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "BLEND_WITH_TEXTURE" ) );
+
+									shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1/*"s_blendWithTexture"*/, settings.BlendResultWithTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
+
+									shader.Parameters.Set( "intensity", (float)settings.BlendResultWithTextureIntensity );
+								}
+
+								context.RenderQuadToCurrentViewport( shader );
+							}
+						}
 					}
 
+					context.DynamicTexture_Free( tempTexture );
+					currentTexture = resultTexture;
+				}
+				else
+				{
+					//no mipmaps
+
+					//horizontal blur
+					{
+						var texture = context.RenderTargetCube_Alloc( settings.SourceTexture.Result.ResultSize, currentTexture.Result.ResultFormat );
+						{
+							for( var face = 0; face < 6; face++ )
+							{
+								var slice = face;// index * 6 + face;
+								context.SetViewport( texture.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ] );
+
+								var shader = new CanvasRenderer.ShaderItem();
+								shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+								shader.FragmentProgramFileName = @"Base\Shaders\Effects\BlurCube_fs.sc";
+
+								shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"s_sourceTexture"*/, currentTexture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
+
+								var values = GaussianBlurMath.Calculate15( texture.Result.ResultSize, true, settings.BlurFactor, settings.StandardDeviation );
+								shader.Parameters.Set( "u_blurSampleOffsets", values.SampleOffsetsAsVector4Array );
+								shader.Parameters.Set( "u_blurSampleWeights", values.SampleWeights );
+
+								var sourceMip = 0;
+
+								shader.Parameters.Set( "u_blurCubemapParameters", new Vector4F( face, sourceMip, 0, 0 ) );
+
+								context.RenderQuadToCurrentViewport( shader );
+							}
+						}
+
+						if( currentTexture != settings.SourceTexture )
+							context.DynamicTexture_Free( currentTexture );
+						currentTexture = texture;
+					}
+
+					//vertical blur
+					{
+						var texture = context.RenderTargetCube_Alloc( settings.SourceTexture.Result.ResultSize, currentTexture.Result.ResultFormat );
+						{
+							for( var face = 0; face < 6; face++ )
+							{
+								var slice = face;// index * 6 + face;
+								context.SetViewport( texture.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ] );
+
+								var shader = new CanvasRenderer.ShaderItem();
+								shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+								shader.FragmentProgramFileName = @"Base\Shaders\Effects\BlurCube_fs.sc";
+
+								shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"s_sourceTexture"*/, currentTexture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
+
+								var values = GaussianBlurMath.Calculate15( texture.Result.ResultSize, false, settings.BlurFactor, settings.StandardDeviation );
+								shader.Parameters.Set( "u_blurSampleOffsets", values.SampleOffsetsAsVector4Array );
+								shader.Parameters.Set( "u_blurSampleWeights", values.SampleWeights );
+
+								var sourceMip = 0;
+
+								shader.Parameters.Set( "u_blurCubemapParameters", new Vector4F( face, sourceMip, 0, 0 ) );
+
+								if( settings.BlendResultWithTexture != null )
+								{
+									shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "BLEND_WITH_TEXTURE" ) );
+
+									shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1/*"s_blendWithTexture"*/, settings.BlendResultWithTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
+
+									shader.Parameters.Set( "intensity", (float)settings.BlendResultWithTextureIntensity );
+								}
+
+								context.RenderQuadToCurrentViewport( shader );
+							}
+						}
+
+						if( currentTexture != settings.SourceTexture )
+							context.DynamicTexture_Free( currentTexture );
+						currentTexture = texture;
+					}
+				}
+			}
+			else
+			{
+				//2D
+
+				//downscaling
+
+				int downscalingValue2;
+				if( settings.DownscalingMode == DownscalingModeEnum.Auto )
+				{
+					downscalingValue2 = (int)( settings.BlurFactor / 2.0 + 0.999 );
+					if( settings.BlurFactor <= 1 )
+						downscalingValue2 = 0;
+					//downscalingValue2 = (int)( Math.Pow( blurFactor, 1.0 / 1.1 ) ) - 1;
+					//downscalingValue2 = (int)( Math.Sqrt( blurFactor ) ) - 1;
+					//downscalingValue2 = (int)( blurFactor / 1.5 );
+				}
+				else
+					downscalingValue2 = settings.DownscalingValue;
+
+				var depthCheck = settings.DepthCheck;
+				context.ObjectsDuringUpdate.namedTextures.TryGetValue( "depthTexture", out var depthTexture );
+				if( depthTexture == null )
+					depthCheck = false;
+
+				var normalCheck = settings.NormalCheck;
+				context.ObjectsDuringUpdate.namedTextures.TryGetValue( "normalTexture", out var normalTexture );
+				if( normalTexture == null )
+					normalCheck = false;
+
+				for( int n = 0; n < downscalingValue2; n++ )
+				{
+					var size = currentTexture.Result.ResultSize / 2;
+					if( size.X < 1 ) size.X = 1;
+					if( size.Y < 1 ) size.Y = 1;
+
+					var texture = context.RenderTarget2D_Alloc( size, currentTexture.Result.ResultFormat );
+
+					context.SetViewport( texture.Result.GetRenderTarget().Viewports[ 0 ] );
+
+					var shader = new CanvasRenderer.ShaderItem();
+					shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+					shader.FragmentProgramFileName = @"Base\Shaders\Effects\Downscale2_fs.sc";
+
+					shader.Parameters.Set( "sourceSizeInv", new Vector2F( 1, 1 ) / currentTexture.Result.ResultSize.ToVector2F() );
+
+					shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, currentTexture,
+						TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
+
 					context.RenderQuadToCurrentViewport( shader );
+
+					if( currentTexture != settings.SourceTexture )
+						context.DynamicTexture_Free( currentTexture );
+					currentTexture = texture;
 				}
 
-				if( currentTexture != settings.SourceTexture )
-					context.DynamicTexture_Free( currentTexture );
-				currentTexture = texture;
+				//horizontal blur
+				//if( dimensions == BlurDimensionsEnum.HorizontalAndVertical || dimensions == BlurDimensionsEnum.Horizontal )
+				{
+					var texture = context.RenderTarget2D_Alloc( settings.SourceTexture.Result.ResultSize, currentTexture.Result.ResultFormat );
+					//var texture = context.RenderTarget2D_Alloc( currentTexture.Result.Size, currentTexture.Result.Format );
+					{
+						context.SetViewport( texture.Result.GetRenderTarget().Viewports[ 0 ] );
+
+						var shader = new CanvasRenderer.ShaderItem();
+						shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+						shader.FragmentProgramFileName = @"Base\Shaders\Effects\Blur_fs.sc";
+
+						shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"s_sourceTexture"*/, currentTexture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
+
+						var values = GaussianBlurMath.Calculate15( texture.Result.ResultSize, true, settings.BlurFactor, settings.StandardDeviation );//, settings.Intensity );
+						shader.Parameters.Set( "u_blurSampleOffsets", values.SampleOffsetsAsVector4Array );
+						shader.Parameters.Set( "u_blurSampleWeights", values.SampleWeights );
+						shader.Parameters.Set( "u_blurParameters", new Vector4F( (float)settings.DepthCheckThreshold, (float)settings.NormalCheckThreshold, 0, 0 ) );
+
+						if( depthCheck )
+						{
+							shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "DEPTH_CHECK" ) );
+
+							shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 2/*"s_depthTexture"*/, depthTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+						}
+
+						if( normalCheck )
+						{
+							shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "NORMAL_CHECK" ) );
+
+							shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 3/*"s_normalTexture"*/, normalTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+						}
+
+						//if( settings.AlphaAsWeight )
+						//	shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "ALPHA_AS_WEIGHT" ) );
+
+						context.RenderQuadToCurrentViewport( shader );
+					}
+
+					if( currentTexture != settings.SourceTexture )
+						context.DynamicTexture_Free( currentTexture );
+					currentTexture = texture;
+				}
+
+				//vertical blur
+				//if( dimensions == BlurDimensionsEnum.HorizontalAndVertical || dimensions == BlurDimensionsEnum.Vertical )
+				{
+					var texture = context.RenderTarget2D_Alloc( settings.SourceTexture.Result.ResultSize, currentTexture.Result.ResultFormat );
+					//var texture = context.RenderTarget2D_Alloc( currentTexture.Result.Size, currentTexture.Result.Format );
+					{
+						context.SetViewport( texture.Result.GetRenderTarget().Viewports[ 0 ] );
+
+						var shader = new CanvasRenderer.ShaderItem();
+						shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+						shader.FragmentProgramFileName = @"Base\Shaders\Effects\Blur_fs.sc";
+
+						shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"s_sourceTexture"*/, currentTexture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
+
+						var values = GaussianBlurMath.Calculate15( texture.Result.ResultSize, false, settings.BlurFactor, settings.StandardDeviation );//, settings.Intensity );
+						shader.Parameters.Set( "u_blurSampleOffsets", values.SampleOffsetsAsVector4Array );
+						shader.Parameters.Set( "u_blurSampleWeights", values.SampleWeights );
+						shader.Parameters.Set( "u_blurParameters", new Vector4F( (float)settings.DepthCheckThreshold, (float)settings.NormalCheckThreshold, 0, 0 ) );
+
+						if( settings.BlendResultWithTexture != null )
+						{
+							shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "BLEND_WITH_TEXTURE" ) );
+
+							shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1/*"s_blendWithTexture"*/, settings.BlendResultWithTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
+
+							shader.Parameters.Set( "intensity", (float)settings.BlendResultWithTextureIntensity );
+						}
+
+						if( depthCheck )
+						{
+							shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "DEPTH_CHECK" ) );
+
+							shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 2/*"s_depthTexture"*/, depthTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+						}
+
+						if( normalCheck )
+						{
+							shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "NORMAL_CHECK" ) );
+
+							shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 3/*"s_normalTexture"*/, normalTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+						}
+
+						//if( settings.AlphaAsWeight )
+						//	shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "ALPHA_AS_WEIGHT" ) );
+
+						context.RenderQuadToCurrentViewport( shader );
+					}
+
+					if( currentTexture != settings.SourceTexture )
+						context.DynamicTexture_Free( currentTexture );
+					currentTexture = texture;
+				}
 			}
 
 			return currentTexture;
 		}
 
-		public ImageComponent GaussianBlur( ViewportRenderingContext context, ImageComponent sourceTexture, double blurFactor, DownscalingModeEnum downscalingMode, int downscalingValue )
+		public ImageComponent GaussianBlur( ViewportRenderingContext context, ImageComponent sourceTexture, double blurFactor, DownscalingModeEnum downscalingMode, int downscalingValue, bool depthCheck = false, double depthCheckThreshold = 1.05, bool normalCheck = false, double normalCheckThreshold = Math.PI / 4 )
 		{
 			var settings = new GaussianBlurSettings();
 			settings.SourceTexture = sourceTexture;
 			settings.BlurFactor = blurFactor;
 			settings.DownscalingMode = downscalingMode;
 			settings.DownscalingValue = downscalingValue;
+
+			settings.DepthCheck = depthCheck;
+			settings.DepthCheckThreshold = depthCheckThreshold;
+
+			settings.NormalCheck = normalCheck;
+			settings.NormalCheckThreshold = normalCheckThreshold;
 
 			return GaussianBlur( context, settings );
 		}
@@ -699,7 +938,7 @@ namespace NeoAxis
 		//	}
 		//}
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////
 
 		public virtual void ConvertToLDR( ViewportRenderingContext context, ref ImageComponent actualTexture )
 		{
@@ -732,6 +971,59 @@ namespace NeoAxis
 
 				actualTexture = newTexture;
 			}
+		}
+
+		///////////////////////////////////////////////
+
+		//public class DenoiseSettings
+		//{
+		//	public ImageComponent SourceTexture;
+		//	public double SigmaStandardDeviation = 5;
+		//	public double SigmaCoefficient = 2;
+		//	public double EdgeSharpeningThreshold = 0.1;
+		//}
+
+		//public virtual ImageComponent Denoise( ViewportRenderingContext context, DenoiseSettings settings )
+		//{
+		//}
+
+		public virtual ImageComponent Denoise( ViewportRenderingContext context, ImageComponent sourceTexture, double sigma = 5, double sigmaCoefficient = 2, double edgeSharpening = 0.1 )
+		{
+			var edgeSharpening2 = edgeSharpening;
+			if( edgeSharpening2 < 0.0001 )
+				edgeSharpening2 = 0.0001;
+
+			var texture = context.RenderTarget2D_Alloc( sourceTexture.Result.ResultSize, sourceTexture.Result.ResultFormat );
+			context.SetViewport( texture.Result.GetRenderTarget().Viewports[ 0 ] );
+
+			var shader = new CanvasRenderer.ShaderItem();
+			shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+			shader.FragmentProgramFileName = @"Base\Shaders\Effects\Denoise_fs.sc";
+
+			shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"s_sourceTexture"*/, sourceTexture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
+
+			var INV_SQRT_OF_2PI = 0.39894228040143267793994605993439;
+			var INV_PI = 0.31830988618379067153776752674503;
+
+			var radius = Math.Round( sigmaCoefficient * sigma );
+			var radQ = radius * radius;
+
+			var invSigmaQx2 = 0.5 / ( sigma * sigma );      // 1.0 / (sigma^2 * 2.0)
+			var invSigmaQx2PI = INV_PI * invSigmaQx2;    // // 1/(2 * PI * sigma^2)
+
+			var invThresholdSqx2 = 0.5 / ( edgeSharpening2 * edgeSharpening2 );     // 1.0 / (sigma^2 * 2.0)
+			var invThresholdSqrt2PI = INV_SQRT_OF_2PI / edgeSharpening2;   // 1.0 / (sqrt(2*PI) * sigma)
+
+			var parameters = new Vector4F[ 2 ];
+			parameters[ 0 ] = new Vector4( radius, radQ, invSigmaQx2, invSigmaQx2PI ).ToVector4F();
+			parameters[ 1 ] = new Vector4( invThresholdSqx2, invThresholdSqrt2PI, 0, 0 ).ToVector4F();
+			shader.Parameters.Set( "u_denoiseParameters", parameters, ParameterType.Vector4, 2 );
+
+			//shader.Parameters.Set( "u_denoiseParameters", new Vector4F( (float)sigma, (float)sigmaCoefficient, (float)edgeSharpening, 0 ) );
+
+			context.RenderQuadToCurrentViewport( shader );
+
+			return texture;
 		}
 	}
 }

@@ -90,11 +90,11 @@ namespace Project
 
 			if( networkLogic != null )
 			{
-				var gameInfo = "";
+				var gameInfo = "Current game:";
 
 				var gameType = networkLogic.GameType.Value;
 
-				gameInfo += "Type: " + EnumUtility.GetValueDisplayName( gameType );
+				gameInfo += "\nType: " + EnumUtility.GetValueDisplayName( gameType );
 				gameInfo += "\nStatus: " + networkLogic.CurrentGameStatus.Value.ToString();
 				gameInfo += "\nText status: " + networkLogic.GetGameTextStatus();
 
@@ -150,6 +150,8 @@ namespace Project
 
 				GetTextGameInfo().Text = gameInfo;
 
+				//!!!!impl bots
+
 				//GetButtonAddBotLevel1().Visible = isAdmin;
 				//GetButtonAddBotLevel2().Visible = GetButtonAddBotLevel1().Visible;
 				//GetButtonAddBotLevel3().Visible = GetButtonAddBotLevel1().Visible;
@@ -187,6 +189,7 @@ namespace Project
 			//networkLogic.EndNetworkMessage();
 		}
 
+		//!!!!impl
 		//void AddBot( int level )
 		//{
 		//	if( networkLogic == null )

@@ -17,7 +17,7 @@ namespace NeoAxis
 		public Reference<Material> Material
 		{
 			get { if( _material.BeginGet() ) Material = _material.Get( this ); return _material.value; }
-			set { if( _material.BeginSet( ref value ) ) { try { MaterialChanged?.Invoke( this ); } finally { _material.EndSet(); } } }
+			set { if( _material.BeginSet( this, ref value ) ) { try { MaterialChanged?.Invoke( this ); } finally { _material.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Material"/> property value changes.</summary>
 		public event Action<SpriteAnimation> MaterialChanged;
@@ -66,7 +66,7 @@ namespace NeoAxis
 		public Reference<Range> TimeInterval
 		{
 			get { if( _timeInterval.BeginGet() ) TimeInterval = _timeInterval.Get( this ); return _timeInterval.value; }
-			set { if( _timeInterval.BeginSet( ref value ) ) { try { TimeIntervalChanged?.Invoke( this ); } finally { _timeInterval.EndSet(); } } }
+			set { if( _timeInterval.BeginSet( this, ref value ) ) { try { TimeIntervalChanged?.Invoke( this ); } finally { _timeInterval.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TimeInterval"/> property value changes.</summary>
 		public event Action<SpriteAnimationFrame> TimeIntervalChanged;
@@ -79,7 +79,7 @@ namespace NeoAxis
 		public Reference<Material> Material
 		{
 			get { if( _material.BeginGet() ) Material = _material.Get( this ); return _material.value; }
-			set { if( _material.BeginSet( ref value ) ) { try { MaterialChanged?.Invoke( this ); } finally { _material.EndSet(); } } }
+			set { if( _material.BeginSet( this, ref value ) ) { try { MaterialChanged?.Invoke( this ); } finally { _material.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Material"/> property value changes.</summary>
 		public event Action<SpriteAnimationFrame> MaterialChanged;
@@ -92,7 +92,7 @@ namespace NeoAxis
 		public Reference<Rectangle> UV
 		{
 			get { if( _uV.BeginGet() ) UV = _uV.Get( this ); return _uV.value; }
-			set { if( _uV.BeginSet( ref value ) ) { try { UVChanged?.Invoke( this ); } finally { _uV.EndSet(); } } }
+			set { if( _uV.BeginSet( this, ref value ) ) { try { UVChanged?.Invoke( this ); } finally { _uV.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UV"/> property value changes.</summary>
 		public event Action<SpriteAnimationFrame> UVChanged;

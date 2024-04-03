@@ -12,9 +12,9 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "image" )]
 #if !DEPLOY
-	[EditorControl( typeof( ImageEditor ) )]
-	[Preview( typeof( ImagePreview ) )]
-	[PreviewImage( typeof( ImagePreviewImage ) )]
+	[EditorControl( "NeoAxis.Editor.ImageEditor" )]
+	[Preview( "NeoAxis.Editor.ImagePreview" )]
+	[PreviewImage( "NeoAxis.Editor.ImagePreviewImage" )]
 #endif
 	public class ImageComponent : ResultCompile<GpuTexture>
 	{
@@ -29,7 +29,7 @@ namespace NeoAxis
 			get { if( _loadFile.BeginGet() ) LoadFile = _loadFile.Get( this ); return _loadFile.value; }
 			set
 			{
-				if( _loadFile.BeginSet( ref value ) )
+				if( _loadFile.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -44,6 +44,26 @@ namespace NeoAxis
 		public event Action<ImageComponent> LoadFileChanged;
 		ReferenceField<ReferenceValueType_Resource> _loadFile;
 
+		public enum LoadFileHintEnum
+		{
+			None,
+			Cube4x3,
+		}
+
+		/// <summary>
+		/// The hint for the loader. You can configure loading a cube map from 4x3 2D image.
+		/// </summary>
+		[DefaultValue( LoadFileHintEnum.None )]
+		[Category( "Load" )]
+		public Reference<LoadFileHintEnum> LoadFileHint
+		{
+			get { if( _loadFileHint.BeginGet() ) LoadFileHint = _loadFileHint.Get( this ); return _loadFileHint.value; }
+			set { if( _loadFileHint.BeginSet( this, ref value ) ) { try { LoadFileHintChanged?.Invoke( this ); ShouldRecompile = true; } finally { _loadFileHint.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LoadFileHint"/> property value changes.</summary>
+		public event Action<ImageComponent> LoadFileHintChanged;
+		ReferenceField<LoadFileHintEnum> _loadFileHint = LoadFileHintEnum.None;
+
 		/// <summary>
 		/// File name to load a cube texture from, Negative X side.
 		/// </summary>
@@ -56,7 +76,7 @@ namespace NeoAxis
 			get { if( _loadCubeNegativeX.BeginGet() ) LoadCubeNegativeX = _loadCubeNegativeX.Get( this ); return _loadCubeNegativeX.value; }
 			set
 			{
-				if( _loadCubeNegativeX.BeginSet( ref value ) )
+				if( _loadCubeNegativeX.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -83,7 +103,7 @@ namespace NeoAxis
 			get { if( _loadCubeNegativeY.BeginGet() ) LoadCubeNegativeY = _loadCubeNegativeY.Get( this ); return _loadCubeNegativeY.value; }
 			set
 			{
-				if( _loadCubeNegativeY.BeginSet( ref value ) )
+				if( _loadCubeNegativeY.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -110,7 +130,7 @@ namespace NeoAxis
 			get { if( _loadCubeNegativeZ.BeginGet() ) LoadCubeNegativeZ = _loadCubeNegativeZ.Get( this ); return _loadCubeNegativeZ.value; }
 			set
 			{
-				if( _loadCubeNegativeZ.BeginSet( ref value ) )
+				if( _loadCubeNegativeZ.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -137,7 +157,7 @@ namespace NeoAxis
 			get { if( _loadCubePositiveX.BeginGet() ) LoadCubePositiveX = _loadCubePositiveX.Get( this ); return _loadCubePositiveX.value; }
 			set
 			{
-				if( _loadCubePositiveX.BeginSet( ref value ) )
+				if( _loadCubePositiveX.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -164,7 +184,7 @@ namespace NeoAxis
 			get { if( _loadCubePositiveY.BeginGet() ) LoadCubePositiveY = _loadCubePositiveY.Get( this ); return _loadCubePositiveY.value; }
 			set
 			{
-				if( _loadCubePositiveY.BeginSet( ref value ) )
+				if( _loadCubePositiveY.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -191,7 +211,7 @@ namespace NeoAxis
 			get { if( _loadCubePositiveZ.BeginGet() ) LoadCubePositiveZ = _loadCubePositiveZ.Get( this ); return _loadCubePositiveZ.value; }
 			set
 			{
-				if( _loadCubePositiveZ.BeginSet( ref value ) )
+				if( _loadCubePositiveZ.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -217,7 +237,7 @@ namespace NeoAxis
 		public Reference<PixelFormat> CreateFormat
 		{
 			get { if( _createFormat.BeginGet() ) CreateFormat = _createFormat.Get( this ); return _createFormat.value; }
-			set { if( _createFormat.BeginSet( ref value ) ) { try { CreateFormatChanged?.Invoke( this ); } finally { _createFormat.EndSet(); } } }
+			set { if( _createFormat.BeginSet( this, ref value ) ) { try { CreateFormatChanged?.Invoke( this ); } finally { _createFormat.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CreateFormat"/> property value changes.</summary>
 		public event Action<ImageComponent> CreateFormatChanged;
@@ -232,7 +252,7 @@ namespace NeoAxis
 		public Reference<TypeEnum> CreateType
 		{
 			get { if( _createType.BeginGet() ) CreateType = _createType.Get( this ); return _createType.value; }
-			set { if( _createType.BeginSet( ref value ) ) { try { CreateTypeChanged?.Invoke( this ); } finally { _createType.EndSet(); } } }
+			set { if( _createType.BeginSet( this, ref value ) ) { try { CreateTypeChanged?.Invoke( this ); } finally { _createType.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CreateType"/> property value changes.</summary>
 		public event Action<ImageComponent> CreateTypeChanged;
@@ -247,7 +267,7 @@ namespace NeoAxis
 		public Reference<Vector2I> CreateSize
 		{
 			get { if( _createSize.BeginGet() ) CreateSize = _createSize.Get( this ); return _createSize.value; }
-			set { if( _createSize.BeginSet( ref value ) ) { try { CreateSizeChanged?.Invoke( this ); } finally { _createSize.EndSet(); } } }
+			set { if( _createSize.BeginSet( this, ref value ) ) { try { CreateSizeChanged?.Invoke( this ); } finally { _createSize.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CreateSize"/> property value changes.</summary>
 		public event Action<ImageComponent> CreateSizeChanged;
@@ -268,7 +288,7 @@ namespace NeoAxis
 				//@@@ if( value < 1 )
 				//	value = 1;
 
-				if( _createDepth.BeginSet( ref value ) )
+				if( _createDepth.BeginSet( this, ref value ) )
 				{
 					try { CreateDepthChanged?.Invoke( this ); }
 					finally { _createDepth.EndSet(); }
@@ -288,7 +308,7 @@ namespace NeoAxis
 		public Reference<int> CreateArrayLayers
 		{
 			get { if( _createArrayLayers.BeginGet() ) CreateArrayLayers = _createArrayLayers.Get( this ); return _createArrayLayers.value; }
-			set { if( _createArrayLayers.BeginSet( ref value ) ) { try { CreateArrayLayersChanged?.Invoke( this ); } finally { _createArrayLayers.EndSet(); } } }
+			set { if( _createArrayLayers.BeginSet( this, ref value ) ) { try { CreateArrayLayersChanged?.Invoke( this ); } finally { _createArrayLayers.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CreateArrayLayers"/> property value changes.</summary>
 		public event Action<ImageComponent> CreateArrayLayersChanged;
@@ -303,7 +323,7 @@ namespace NeoAxis
 		public Reference<bool> CreateMipmaps
 		{
 			get { if( _createMipmaps.BeginGet() ) CreateMipmaps = _createMipmaps.Get( this ); return _createMipmaps.value; }
-			set { if( _createMipmaps.BeginSet( ref value ) ) { try { CreateMipmapsChanged?.Invoke( this ); } finally { _createMipmaps.EndSet(); } } }
+			set { if( _createMipmaps.BeginSet( this, ref value ) ) { try { CreateMipmapsChanged?.Invoke( this ); } finally { _createMipmaps.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CreateMipmaps"/> property value changes.</summary>
 		public event Action<ImageComponent> CreateMipmapsChanged;
@@ -322,7 +342,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _createMipmaps.BeginSet( ref value ) )
+		//		if( _createMipmaps.BeginSet( this, ref value ) )
 		//		{
 		//			try { CreateMipmapsChanged?.Invoke( this ); }
 		//			finally { _createMipmaps.EndSet(); }
@@ -342,7 +362,7 @@ namespace NeoAxis
 		public Reference<Usages> CreateUsage
 		{
 			get { if( _createUsage.BeginGet() ) CreateUsage = _createUsage.Get( this ); return _createUsage.value; }
-			set { if( _createUsage.BeginSet( ref value ) ) { try { CreateUsageChanged?.Invoke( this ); } finally { _createUsage.EndSet(); } } }
+			set { if( _createUsage.BeginSet( this, ref value ) ) { try { CreateUsageChanged?.Invoke( this ); } finally { _createUsage.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CreateUsage"/> property value changes.</summary>
 		public event Action<ImageComponent> CreateUsageChanged;
@@ -357,7 +377,7 @@ namespace NeoAxis
 		public Reference<int> CreateFSAA
 		{
 			get { if( _createFSAA.BeginGet() ) CreateFSAA = _createFSAA.Get( this ); return _createFSAA.value; }
-			set { if( _createFSAA.BeginSet( ref value ) ) { try { CreateFSAAChanged?.Invoke( this ); } finally { _createFSAA.EndSet(); } } }
+			set { if( _createFSAA.BeginSet( this, ref value ) ) { try { CreateFSAAChanged?.Invoke( this ); } finally { _createFSAA.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CreateFSAA"/> property value changes.</summary>
 		public event Action<ImageComponent> CreateFSAAChanged;
@@ -638,6 +658,7 @@ namespace NeoAxis
 
 					string[] loadCubeMap6Files = null;
 					string loadFromOneFile = null;
+					bool loadFromOneFileAsCube4x3 = false;
 
 					if( AnyCubemapSideIsSpecified() )
 					{
@@ -664,6 +685,9 @@ namespace NeoAxis
 						loadFromOneFile = v != null ? v.ResourceName : "";
 						if( string.IsNullOrEmpty( loadFromOneFile ) || !VirtualFile.Exists( loadFromOneFile ) )
 							loadFromOneFile = null;
+
+						if( loadFromOneFile != null )
+							loadFromOneFileAsCube4x3 = LoadFileHint.Value == LoadFileHintEnum.Cube4x3;
 					}
 
 					//!!!!
@@ -672,7 +696,7 @@ namespace NeoAxis
 					//	result = RenderToTextureTest();
 					//else
 					if( loadFromOneFile != null )
-						result = LoadOneTexture( loadFromOneFile );
+						result = LoadOneTexture( loadFromOneFile, loadFromOneFileAsCube4x3 );
 					else if( loadCubeMap6Files != null )
 						result = LoadCubeTexture( loadCubeMap6Files );
 				}
@@ -756,7 +780,7 @@ namespace NeoAxis
 		//	return result;
 		//}
 
-		GpuTexture LoadOneTexture( string loadFromOneFile )
+		GpuTexture LoadOneTexture( string loadFromOneFile, bool cube4x3 )
 		{
 			GpuTexture result = null;
 
@@ -769,7 +793,7 @@ namespace NeoAxis
 
 					//!!!!возможно хорошая идея грузить данные тут, т.е. в C#. потом закидывать в созданную GpuTexture.
 					//!!!!!!для DDS был бы особый случай, т.к. они умеют сразу в D3D создаваться.
-					result = GpuTexture.CreateFromFile( loadFromOneFile, out var error2 );
+					result = GpuTexture.CreateFromFile( loadFromOneFile, cube4x3, out var error2 );
 					if( result == null )
 						Log.Warning( $"Unable to load texture \'{loadFromOneFile}\'. " + error2 );
 				}
@@ -788,7 +812,7 @@ namespace NeoAxis
 				if( string.IsNullOrEmpty( componentTextureVirtualFileName ) )
 					componentTextureVirtualFileName = loadCubeMap6Files[ 0 ];
 
-				result = GpuTexture.CreateCube( loadCubeMap6Files, componentTextureVirtualFileName, out var error2 );
+				result = GpuTexture.CreateCube( loadCubeMap6Files, false, componentTextureVirtualFileName, out var error2 );
 				if( result == null )
 					Log.Warning( $"Unable to load texture \'{componentTextureVirtualFileName}\'. " + error2 );
 			}, this );
@@ -1005,6 +1029,14 @@ namespace NeoAxis
 
 			error = "";
 			return true;
+		}
+
+		protected override void OnEnabledInHierarchyChanged()
+		{
+			base.OnEnabledInHierarchyChanged();
+
+			if( EnabledInHierarchy )
+				Result?.PrepareNativeObject();
 		}
 	}
 }

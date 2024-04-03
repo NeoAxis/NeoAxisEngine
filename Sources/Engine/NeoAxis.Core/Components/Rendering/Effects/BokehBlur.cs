@@ -21,7 +21,7 @@ namespace NeoAxis
 		public Reference<double> Intensity
 		{
 			get { if( _intensity.BeginGet() ) Intensity = _intensity.Get( this ); return _intensity.value; }
-			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
+			set { if( _intensity.BeginSet( this, ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
 		public event Action<RenderingEffect_BokehBlur> IntensityChanged;
@@ -35,7 +35,7 @@ namespace NeoAxis
 		public Reference<double> Radius
 		{
 			get { if( _radius.BeginGet() ) Radius = _radius.Get( this ); return _radius.value; }
-			set { if( _radius.BeginSet( ref value ) ) { try { RadiusChanged?.Invoke( this ); } finally { _radius.EndSet(); } } }
+			set { if( _radius.BeginSet( this, ref value ) ) { try { RadiusChanged?.Invoke( this ); } finally { _radius.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Radius"/> property value changes.</summary>
 		public event Action<RenderingEffect_BokehBlur> RadiusChanged;
@@ -49,7 +49,7 @@ namespace NeoAxis
 		public Reference<double> Power
 		{
 			get { if( _power.BeginGet() ) Power = _power.Get( this ); return _power.value; }
-			set { if( _power.BeginSet( ref value ) ) { try { PowerChanged?.Invoke( this ); } finally { _power.EndSet(); } } }
+			set { if( _power.BeginSet( this, ref value ) ) { try { PowerChanged?.Invoke( this ); } finally { _power.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Power"/> property value changes.</summary>
 		public event Action<RenderingEffect_BokehBlur> PowerChanged;
@@ -68,7 +68,7 @@ namespace NeoAxis
 		public Reference<PatternEnum> Pattern
 		{
 			get { if( _pattern.BeginGet() ) Pattern = _pattern.Get( this ); return _pattern.value; }
-			set { if( _pattern.BeginSet( ref value ) ) { try { PatternChanged?.Invoke( this ); } finally { _pattern.EndSet(); } } }
+			set { if( _pattern.BeginSet( this, ref value ) ) { try { PatternChanged?.Invoke( this ); } finally { _pattern.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Pattern"/> property value changes.</summary>
 		public event Action<RenderingEffect_BokehBlur> PatternChanged;
@@ -92,7 +92,7 @@ namespace NeoAxis
 		public Reference<SamplesEnum> Samples
 		{
 			get { if( _samples.BeginGet() ) Samples = _samples.Get( this ); return _samples.value; }
-			set { if( _samples.BeginSet( ref value ) ) { try { SamplesChanged?.Invoke( this ); } finally { _samples.EndSet(); } } }
+			set { if( _samples.BeginSet( this, ref value ) ) { try { SamplesChanged?.Invoke( this ); } finally { _samples.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Samples"/> property value changes.</summary>
 		public event Action<RenderingEffect_BokehBlur> SamplesChanged;

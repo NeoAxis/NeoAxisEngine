@@ -1,5 +1,6 @@
 ﻿#if !UWP
 using System;
+using System.Threading;
 
 namespace Internal.Lidgren.Network
 {
@@ -133,6 +134,11 @@ namespace Internal.Lidgren.Network
 			m_lastSentMTUAttemptTime = now;
 
 			m_statistics.PacketSent(len, 1);
+
+			//!!!!betauser
+			if( StatisticsCalculation != null )
+				Interlocked.Add( ref StatisticsCalculation.Sent, len );
+
 			m_peer.Recycle(om);
 		}
 
@@ -160,6 +166,10 @@ namespace Internal.Lidgren.Network
 			//m_peer.LogDebug("Received MTU expand request for " + size + " bytes");
 
 			m_statistics.PacketSent(len, 1);
+
+			//!!!!betauser
+			if( StatisticsCalculation != null )
+				Interlocked.Add( ref StatisticsCalculation.Sent, len );
 		}
 
 		private void HandleExpandMTUSuccess(double now, int size)

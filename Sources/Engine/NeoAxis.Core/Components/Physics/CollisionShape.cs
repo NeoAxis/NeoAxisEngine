@@ -23,7 +23,7 @@ namespace NeoAxis
 			get { if( _localTransform.BeginGet() ) LocalTransform = _localTransform.Get( this ); return _localTransform.value; }
 			set
 			{
-				if( _localTransform.BeginSet( ref value ) )
+				if( _localTransform.BeginSet( this, ref value ) )
 				{
 					try
 					{

@@ -19,7 +19,7 @@ namespace NeoAxis
 		public Reference<Vector3> Dimensions
 		{
 			get { if( _dimensions.BeginGet() ) Dimensions = _dimensions.Get( this ); return _dimensions.value; }
-			set { if( _dimensions.BeginSet( ref value ) ) { try { DimensionsChanged?.Invoke( this ); } finally { _dimensions.EndSet(); } } }
+			set { if( _dimensions.BeginSet( this, ref value ) ) { try { DimensionsChanged?.Invoke( this ); } finally { _dimensions.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Dimensions"/> property value changes.</summary>
 		public event Action<ParticleEmitterShape_Box> DimensionsChanged;

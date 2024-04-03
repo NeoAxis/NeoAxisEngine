@@ -13,15 +13,16 @@ namespace NeoAxis
 		public override void OnRegister()
 		{
 			ResourceManager.RegisterType( "Character Type", new string[] { "charactertype" }, typeof( Resource ) );
+			ResourceManager.RegisterType( "Character Maker", new string[] { "charactermaker" }, typeof( Resource ) );
 			//ResourceManager.RegisterType( "Character", new string[] { "character" }, typeof( Resource ) );
 
 #if !DEPLOY
 			if( EngineApp.IsEditor )
 			{
-				SceneEditor.CreateObjectWhatTypeWillCreatedEvent += Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent;
-				SceneEditor.CreateObjectByCreationDataEvent += Scene_DocumentWindow_CreateObjectByCreationDataEvent;
+				SceneEditorUtility.CreateObjectWhatTypeWillCreatedEvent += Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent;
+				SceneEditorUtility.CreateObjectByCreationDataEvent += Scene_DocumentWindow_CreateObjectByCreationDataEvent;
 
-				PreviewImagesManager.RegisterResourceType( "Character Type" );
+				EditorAPI.PreviewImagesManager_RegisterResourceType( "Character Type" );
 				//PreviewImagesManager.RegisterResourceType( "Character" );
 			}
 #endif

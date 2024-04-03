@@ -111,7 +111,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 2 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( Vector3* v = &this.Item0 )
+				fixed( Vector3* v = &this.Item0 )
 					return v[ index ];
 			}
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -119,7 +119,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 2 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( Vector3* v = &this.Item0 )
+				fixed( Vector3* v = &this.Item0 )
 					v[ index ] = value;
 			}
 		}
@@ -952,7 +952,7 @@ namespace NeoAxis
 					throw new ArgumentOutOfRangeException( "row" );
 				if( column < 0 || column > 2 )
 					throw new ArgumentOutOfRangeException( "column" );
-				fixed ( double* v = &this.Item0.X )
+				fixed( double* v = &this.Item0.X )
 					return v[ row * 3 + column ];
 			}
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -962,7 +962,7 @@ namespace NeoAxis
 					throw new ArgumentOutOfRangeException( "row" );
 				if( column < 0 || column > 2 )
 					throw new ArgumentOutOfRangeException( "column" );
-				fixed ( double* v = &this.Item0.X )
+				fixed( double* v = &this.Item0.X )
 					v[ row * 3 + column ] = value;
 			}
 		}
@@ -1410,6 +1410,77 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public bool DecomposeScale( out Vector3 scale )
+		{
+			//Source: Unknown
+			//References: http://www.gamedev.net/community/forums/topic.asp?topic_id=441695
+
+			//Scaling is the length of the rows.
+			scale = new Vector3(
+				Math.Sqrt( ( Item0.X * Item0.X ) + ( Item0.Y * Item0.Y ) + ( Item0.Z * Item0.Z ) ),
+				Math.Sqrt( ( Item1.X * Item1.X ) + ( Item1.Y * Item1.Y ) + ( Item1.Z * Item1.Z ) ),
+				Math.Sqrt( ( Item2.X * Item2.X ) + ( Item2.Y * Item2.Y ) + ( Item2.Z * Item2.Z ) ) );
+
+			//!!!!1e-6f?
+			const double zeroTolerance = 1e-6f;
+			//If any of the scaling factors are zero, than the rotation matrix can not exist.
+			if( Math.Abs( scale.X ) < zeroTolerance ||
+				Math.Abs( scale.Y ) < zeroTolerance ||
+				Math.Abs( scale.Z ) < zeroTolerance )
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public double DecomposeScaleMaxComponent()
+		{
+			var scaleSquared = new Vector3(
+				 Item0.X * Item0.X + Item0.Y * Item0.Y + Item0.Z * Item0.Z,
+				 Item1.X * Item1.X + Item1.Y * Item1.Y + Item1.Z * Item1.Z,
+				 Item2.X * Item2.X + Item2.Y * Item2.Y + Item2.Z * Item2.Z );
+
+			return MathEx.Sqrt( scaleSquared.MaxComponent() );
+		}
+
+		/// <summary>
+		/// Creates a look-at matrix.
+		/// </summary>
+		/// <param name="direction">Target position in world space.</param>
+		/// <param name="up">Up vector in world space.</param>
+		/// <returns>The instance of <see cref="Matrix3"/> that transforms world space to camera space.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static void LookAt( ref Vector3 direction, ref Vector3 up, out Matrix3 result )
+		{
+			//!!!!not checked
+			if( direction.Equals( Vector3.Zero, MathEx.Epsilon ) )
+			{
+				result = Identity;
+				return;
+			}
+
+			Vector3 x = direction;
+			x.Normalize();
+
+			Vector3.Cross( ref up, ref x, out var cross );
+			if( cross.Equals( Vector3.Zero, MathEx.Epsilon ) )
+			{
+				result = Identity;
+				return;
+			}
+			var y = cross;
+			y.Normalize();
+			//Vec3 y = Vec3.Cross( up, x ).GetNormalize();
+
+			Vector3.Cross( ref y, ref x, out var z );
+			z.Normalize();
+			z.Negate();
+			result = new Matrix3( x, y, z );
+		}
+
 		/// <summary>
 		/// Creates a look-at matrix.
 		/// </summary>
@@ -1419,20 +1490,23 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Matrix3 LookAt( Vector3 direction, Vector3 up )
 		{
-			//!!!!not checked
-			if( direction.Equals( Vector3.Zero, MathEx.Epsilon ) )
-				return Identity;
+			LookAt( ref direction, ref up, out var result );
+			return result;
 
-			Vector3 x = direction.GetNormalize();
+			////!!!!not checked
+			//if( direction.Equals( Vector3.Zero, MathEx.Epsilon ) )
+			//	return Identity;
 
-			var cross = Vector3.Cross( up, x );
-			if( cross.Equals( Vector3.Zero, MathEx.Epsilon ) )
-				return Identity;
-			var y = cross.GetNormalize();
-			//Vec3 y = Vec3.Cross( up, x ).GetNormalize();
+			//Vector3 x = direction.GetNormalize();
 
-			Vector3 z = -Vector3.Cross( y, x ).GetNormalize();
-			return new Matrix3( x, y, z );
+			//var cross = Vector3.Cross( up, x );
+			//if( cross.Equals( Vector3.Zero, MathEx.Epsilon ) )
+			//	return Identity;
+			//var y = cross.GetNormalize();
+			////Vec3 y = Vec3.Cross( up, x ).GetNormalize();
+
+			//Vector3 z = -Vector3.Cross( y, x ).GetNormalize();
+			//return new Matrix3( x, y, z );
 		}
 	}
 }

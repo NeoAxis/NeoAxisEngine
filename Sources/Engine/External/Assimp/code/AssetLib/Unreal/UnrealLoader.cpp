@@ -3,7 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -60,10 +60,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <assimp/IOSystem.hpp>
 #include <assimp/Importer.hpp>
 
-#include <stdint.h>
+#include <cstdint>
 #include <memory>
 
-using namespace Assimp;
+namespace Assimp {
 
 namespace Unreal {
 
@@ -74,7 +74,7 @@ namespace Unreal {
     3 = Masked two-sided
     4 = Modulation blended two-sided
     8 = Placeholder triangle for weapon positioning (invisible)
-    */
+*/
 enum MeshFlags {
     MF_NORMAL_OS = 0,
     MF_NORMAL_TS = 1,
@@ -152,7 +152,7 @@ inline void DecompressVertex(aiVector3D &v, int32_t in) {
 
 } // end namespace Unreal
 
-static const aiImporterDesc desc = {
+static constexpr aiImporterDesc desc = {
     "Unreal Mesh Importer",
     "",
     "",
@@ -168,16 +168,18 @@ static const aiImporterDesc desc = {
 // ------------------------------------------------------------------------------------------------
 // Constructor to be privately used by Importer
 UnrealImporter::UnrealImporter() :
-        mConfigFrameID(0), mConfigHandleFlags(true) {}
+        mConfigFrameID(0), mConfigHandleFlags(true) {
+    // empty
+}
 
 // ------------------------------------------------------------------------------------------------
 // Destructor, private as well
-UnrealImporter::~UnrealImporter() {}
+UnrealImporter::~UnrealImporter() = default;
 
 // ------------------------------------------------------------------------------------------------
 // Returns whether the class can handle the format of the given file.
-bool UnrealImporter::CanRead(const std::string &pFile, IOSystem * /*pIOHandler*/, bool /*checkSig*/) const {
-    return SimpleExtensionCheck(pFile, "3d", "uc");
+bool UnrealImporter::CanRead(const std::string &filename, IOSystem * /*pIOHandler*/, bool /*checkSig*/) const {
+    return SimpleExtensionCheck(filename, "3d", "uc");
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -228,9 +230,9 @@ void UnrealImporter::InternReadFile(const std::string &pFile,
     a_path = extension + "_a.3d";
     uc_path = extension + ".uc";
 
-    ASSIMP_LOG_DEBUG_F("UNREAL: data file is ", d_path);
-    ASSIMP_LOG_DEBUG_F("UNREAL: aniv file is ", a_path);
-    ASSIMP_LOG_DEBUG_F("UNREAL: uc file is ", uc_path);
+    ASSIMP_LOG_DEBUG("UNREAL: data file is ", d_path);
+    ASSIMP_LOG_DEBUG("UNREAL: aniv file is ", a_path);
+    ASSIMP_LOG_DEBUG("UNREAL: uc file is ", uc_path);
 
     // and open the files ... we can't live without them
     std::unique_ptr<IOStream> p(pIOHandler->Open(d_path));
@@ -313,7 +315,7 @@ void UnrealImporter::InternReadFile(const std::string &pFile,
 
     // we can live without the uc file if necessary
     std::unique_ptr<IOStream> pb(pIOHandler->Open(uc_path));
-    if (pb.get()) {
+    if (pb) {
 
         std::vector<char> _data;
         TextFileToBuffer(pb.get(), _data);
@@ -331,15 +333,15 @@ void UnrealImporter::InternReadFile(const std::string &pFile,
                     SkipSpacesAndLineEnd(&data);
 
                     if (TokenMatchI(data, "IMPORT", 6)) {
-                        tempTextures.push_back(std::pair<std::string, std::string>());
+                        tempTextures.emplace_back();
                         std::pair<std::string, std::string> &me = tempTextures.back();
                         for (; !IsLineEnd(*data); ++data) {
-                            if (!::ASSIMP_strincmp(data, "NAME=", 5)) {
+                            if (!ASSIMP_strincmp(data, "NAME=", 5)) {
                                 const char *d = data += 5;
                                 for (; !IsSpaceOrNewLine(*data); ++data)
                                     ;
                                 me.first = std::string(d, (size_t)(data - d));
-                            } else if (!::ASSIMP_strincmp(data, "FILE=", 5)) {
+                            } else if (!ASSIMP_strincmp(data, "FILE=", 5)) {
                                 const char *d = data += 5;
                                 for (; !IsSpaceOrNewLine(*data); ++data)
                                     ;
@@ -357,14 +359,14 @@ void UnrealImporter::InternReadFile(const std::string &pFile,
 
                     if (TokenMatchI(data, "SETTEXTURE", 10)) {
 
-                        textures.push_back(std::pair<unsigned int, std::string>());
+                        textures.emplace_back();
                         std::pair<unsigned int, std::string> &me = textures.back();
 
                         for (; !IsLineEnd(*data); ++data) {
-                            if (!::ASSIMP_strincmp(data, "NUM=", 4)) {
+                            if (!ASSIMP_strincmp(data, "NUM=", 4)) {
                                 data += 4;
                                 me.first = strtoul10(data, &data);
-                            } else if (!::ASSIMP_strincmp(data, "TEXTURE=", 8)) {
+                            } else if (!ASSIMP_strincmp(data, "TEXTURE=", 8)) {
                                 data += 8;
                                 const char *d = data;
                                 for (; !IsSpaceOrNewLine(*data); ++data)
@@ -513,5 +515,7 @@ void UnrealImporter::InternReadFile(const std::string &pFile,
     FlipWindingOrderProcess flipper;
     flipper.Execute(pScene);
 }
+
+} // namespace Assimp
 
 #endif // !! ASSIMP_BUILD_NO_3D_IMPORTER

@@ -57,6 +57,30 @@ namespace NeoAxis
 				Add( item );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public ref T AddNotInitialized()
+		{
+			if( Count == Data.Length )
+			{
+				var old = Data;
+				Data = new T[ old.Length != 0 ? old.Length * 2 : 4 ];
+				Array.Copy( old, Data, old.Length );
+			}
+			return ref Data[ Count++ ];
+		}
+
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public void AddDefault()
+		//{
+		//	if( Count == Data.Length )
+		//	{
+		//		var old = Data;
+		//		Data = new T[ old.Length != 0 ? old.Length * 2 : 4 ];
+		//		Array.Copy( old, Data, old.Length );
+		//	}
+		//	Data[ Count++ ] = default( T );
+		//}
+
 		public T[] ToArray()
 		{
 			var result = new T[ Count ];

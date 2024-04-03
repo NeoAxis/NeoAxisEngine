@@ -24,383 +24,384 @@ namespace NeoAxis
 		public Reference<double> Intensity
 		{
 			get { if( _intensity.BeginGet() ) Intensity = _intensity.Get( this ); return _intensity.value; }
-			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
+			set { if( _intensity.BeginSet( this, ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
 		public event Action<RenderingEffect_IndirectLighting> IntensityChanged;
 		ReferenceField<double> _intensity = 1;
 
-		public enum TechniqueEnum
-		{
-			ScreenSpace,
-			Full
-		}
-
-		//!!!!default
-		/// <summary>
-		/// The technique for getting indirect lighting.
-		/// </summary>
-		[Category( "Effect" )]
-		[DefaultValue( TechniqueEnum.ScreenSpace )]
-		public Reference<TechniqueEnum> Technique
-		{
-			get { if( _technique.BeginGet() ) Technique = _technique.Get( this ); return _technique.value; }
-			set { if( _technique.BeginSet( ref value ) ) { try { TechniqueChanged?.Invoke( this ); } finally { _technique.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="Technique"/> property value changes.</summary>
-		public event Action<RenderingEffect_IndirectLighting> TechniqueChanged;
-		ReferenceField<TechniqueEnum> _technique = TechniqueEnum.ScreenSpace;
-
-
-		//full mode
-
-		//!!!!impl
-		/// <summary>
-		/// The effective distance of the effect. The effect can only have influence within that radius.
-		/// </summary>
-		[Category( "Structure" )]
-		[DefaultValue( 100.0 )]
-		[Range( 10, 500, RangeAttribute.ConvenientDistributionEnum.Exponential )]
-		public Reference<double> Distance
-		{
-			get { if( _distance.BeginGet() ) Distance = _distance.Get( this ); return _distance.value; }
-			set { if( _distance.BeginSet( ref value ) ) { try { DistanceChanged?.Invoke( this ); } finally { _distance.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="Distance"/> property value changes.</summary>
-		public event Action<RenderingEffect_IndirectLighting> DistanceChanged;
-		ReferenceField<double> _distance = 100.0;
-
-		//!!!!default
-		/// <summary>
-		/// The amount of internal voxel grids. Each level two times bigger than previous level by radius. Last level distance is equal Distance property.
-		/// </summary>
-		[Category( "Structure" )]
-		[Range( 1, 10 )]
-		[DefaultValue( 4 )]
-		public Reference<int> Levels
-		{
-			get { if( _levels.BeginGet() ) Levels = _levels.Get( this ); return _levels.value; }
-			set
-			{
-				if( value < 1 ) value = 1;
-				if( _levels.BeginSet( ref value ) ) { try { LevelsChanged?.Invoke( this ); } finally { _levels.EndSet(); } }
-			}
-		}
-		/// <summary>Occurs when the <see cref="Levels"/> property value changes.</summary>
-		public event Action<RenderingEffect_IndirectLighting> LevelsChanged;
-		ReferenceField<int> _levels = 4;
-
-
-		public enum GridSizeEnum
-		{
-			_128,
-			_256,
-			_512,
-		}
-
-		//!!!!default
-
-		/// <summary>
-		/// The size of the internal grid.
-		/// </summary>
-		[Category( "Structure" )]
-		[DefaultValue( GridSizeEnum._128 )]
-		public Reference<GridSizeEnum> GridSize
-		{
-			get { if( _gridSize.BeginGet() ) GridSize = _gridSize.Get( this ); return _gridSize.value; }
-			set { if( _gridSize.BeginSet( ref value ) ) { try { GridSizeChanged?.Invoke( this ); } finally { _gridSize.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="GridSize"/> property value changes.</summary>
-		public event Action<RenderingEffect_IndirectLighting> GridSizeChanged;
-		ReferenceField<GridSizeEnum> _gridSize = GridSizeEnum._128;
-
-		public int GetGridSize()
-		{
-			switch( GridSize.Value )
-			{
-			case GridSizeEnum._128: return 128;
-			case GridSizeEnum._256: return 256;
-			case GridSizeEnum._512: return 512;
-			}
-			return 128;
-		}
-
-		//!!!!need?
-		//!!!!name
-		[Category( "Structure" )]
-		[Range( 0, 2 )]
-		[DefaultValue( 1.0 )]
-		public Reference<double> VoxelizationExpandFactor
-		{
-			get { if( _voxelizationExpandFactor.BeginGet() ) VoxelizationExpandFactor = _voxelizationExpandFactor.Get( this ); return _voxelizationExpandFactor.value; }
-			set { if( _voxelizationExpandFactor.BeginSet( ref value ) ) { try { VoxelizationExpandFactorChanged?.Invoke( this ); } finally { _voxelizationExpandFactor.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="VoxelizationExpandFactor"/> property value changes.</summary>
-		public event Action<RenderingEffect_IndirectLighting> VoxelizationExpandFactorChanged;
-		ReferenceField<double> _voxelizationExpandFactor = 1.0;
-
-
-		//!!!!коэффициент распределение сетки? типа как в тенях parallel split
-
-		//!!!!Bounces?
-
-
-		////!!!!может в самом шейдере делать этот цикл
-		////!!!!name
-		////!!!!need?
-		//[Category( "Basic" )]
-		//[DefaultValue( 1 )]
-		//[Range( 1, 20 )] //!!!!
-		//public Reference<int> RadianceSteps
+		//public enum TechniqueEnum
 		//{
-		//	get { if( _radianceSteps.BeginGet() ) RadianceSteps = _radianceSteps.Get( this ); return _radianceSteps.value; }
-		//	set { if( _radianceSteps.BeginSet( ref value ) ) { try { RadianceStepsChanged?.Invoke( this ); } finally { _radianceSteps.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="RadianceSteps"/> property value changes.</summary>
-		//public event Action<RenderingEffect_IndirectLighting> RadianceStepsChanged;
-		//ReferenceField<int> _radianceSteps = 1;
-
-
-		[Category( "Input" )]
-		[DefaultValue( 0.0 )]
-		[Range( 0, 4, RangeAttribute.ConvenientDistributionEnum.Exponential )]
-		public Reference<double> AmbientLighting
-		{
-			get { if( _ambientLighting.BeginGet() ) AmbientLighting = _ambientLighting.Get( this ); return _ambientLighting.value; }
-			set { if( _ambientLighting.BeginSet( ref value ) ) { try { AmbientLightingChanged?.Invoke( this ); } finally { _ambientLighting.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="AmbientLighting"/> property value changes.</summary>
-		public event Action<RenderingEffect_IndirectLighting> AmbientLightingChanged;
-		ReferenceField<double> _ambientLighting = 0.0;
-
-		[Category( "Input" )]
-		[DefaultValue( 1.0 )]
-		[Range( 0, 4, RangeAttribute.ConvenientDistributionEnum.Exponential )]
-		public Reference<double> DirectLighting
-		{
-			get { if( _directLighting.BeginGet() ) DirectLighting = _directLighting.Get( this ); return _directLighting.value; }
-			set { if( _directLighting.BeginSet( ref value ) ) { try { DirectLightingChanged?.Invoke( this ); } finally { _directLighting.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="DirectLighting"/> property value changes.</summary>
-		public event Action<RenderingEffect_IndirectLighting> DirectLightingChanged;
-		ReferenceField<double> _directLighting = 1.0;
-
-		[Category( "Input" )]
-		[DefaultValue( 1.0 )]
-		[Range( 0, 4, RangeAttribute.ConvenientDistributionEnum.Exponential )]
-		public Reference<double> EmissiveLighting
-		{
-			get { if( _emissiveLighting.BeginGet() ) EmissiveLighting = _emissiveLighting.Get( this ); return _emissiveLighting.value; }
-			set { if( _emissiveLighting.BeginSet( ref value ) ) { try { EmissiveLightingChanged?.Invoke( this ); } finally { _emissiveLighting.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="EmissiveLighting"/> property value changes.</summary>
-		public event Action<RenderingEffect_IndirectLighting> EmissiveLightingChanged;
-		ReferenceField<double> _emissiveLighting = 1.0;
-
-
-		//!!!!impl
-		//!!!!default
-		//!!!!name
-		//!!!!remove?
-
-		/// <summary>
-		/// The shading model for the materials for indirect lighting calculation.
-		/// </summary>
-		[Category( "Input" )]
-		[DefaultValue( false )]
-		public Reference<bool> ShadingModelFull
-		{
-			get { if( _shadingModelFull.BeginGet() ) ShadingModelFull = _shadingModelFull.Get( this ); return _shadingModelFull.value; }
-			set { if( _shadingModelFull.BeginSet( ref value ) ) { try { ShadingModelFullChanged?.Invoke( this ); } finally { _shadingModelFull.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="ShadingModelFull"/> property value changes.</summary>
-		public event Action<RenderingEffect_IndirectLighting> ShadingModelFullChanged;
-		ReferenceField<bool> _shadingModelFull = false;
-
-		/// <summary>
-		/// The output multiplier of indirect diffuse lighting.
-		/// </summary>
-		[Category( "Output" )]
-		[Range( 0, 4, RangeAttribute.ConvenientDistributionEnum.Exponential )]
-		[DefaultValue( 1.0 )]
-		public Reference<double> DiffuseOutput
-		{
-			get { if( _diffuseOutput.BeginGet() ) DiffuseOutput = _diffuseOutput.Get( this ); return _diffuseOutput.value; }
-			set { if( _diffuseOutput.BeginSet( ref value ) ) { try { DiffuseOutputChanged?.Invoke( this ); } finally { _diffuseOutput.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="DiffuseOutput"/> property value changes.</summary>
-		public event Action<RenderingEffect_IndirectLighting> DiffuseOutputChanged;
-		ReferenceField<double> _diffuseOutput = 1.0;
-
-		/// <summary>
-		/// The output multiplier of indirect specular lighting.
-		/// </summary>
-		[Category( "Output" )]
-		[Range( 0, 4, RangeAttribute.ConvenientDistributionEnum.Exponential )]
-		[DefaultValue( 1.0 )]
-		public Reference<double> SpecularOutput
-		{
-			get { if( _specularOutput.BeginGet() ) SpecularOutput = _specularOutput.Get( this ); return _specularOutput.value; }
-			set { if( _specularOutput.BeginSet( ref value ) ) { try { SpecularOutputChanged?.Invoke( this ); } finally { _specularOutput.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="SpecularOutput"/> property value changes.</summary>
-		public event Action<RenderingEffect_IndirectLighting> SpecularOutputChanged;
-		ReferenceField<double> _specularOutput = 1.0;
-
-		[DefaultValue( ResolutionEnum.Half )]
-		[Category( "Output" )]
-		[DisplayName( "Resolution" )]
-		public Reference<ResolutionEnum> ResolutionFull
-		{
-			get { if( _resolutionFull.BeginGet() ) ResolutionFull = _resolutionFull.Get( this ); return _resolutionFull.value; }
-			set { if( _resolutionFull.BeginSet( ref value ) ) { try { ResolutionFullChanged?.Invoke( this ); } finally { _resolutionFull.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="ResolutionFull"/> property value changes.</summary>
-		public event Action<RenderingEffect_IndirectLighting> ResolutionFullChanged;
-		ReferenceField<ResolutionEnum> _resolutionFull = ResolutionEnum.Half;
-
-		//!!!!descriptions
-
-		//!!!!default
-		[Category( "Tracing" )]
-		[Range( 1, 100, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
-		[DefaultValue( 10.0 )]
-		public Reference<double> TraceLength
-		{
-			get { if( _traceLength.BeginGet() ) TraceLength = _traceLength.Get( this ); return _traceLength.value; }
-			set { if( _traceLength.BeginSet( ref value ) ) { try { TraceLengthChanged?.Invoke( this ); } finally { _traceLength.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="TraceLength"/> property value changes.</summary>
-		public event Action<RenderingEffect_IndirectLighting> TraceLengthChanged;
-		ReferenceField<double> _traceLength = 10.0;
-
-		//!!!!default
-		[Category( "Tracing" )]
-		[Range( 0.1, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
-		[DefaultValue( 2.0 )]
-		public Reference<double> TraceStartOffset
-		{
-			get { if( _traceStartOffset.BeginGet() ) TraceStartOffset = _traceStartOffset.Get( this ); return _traceStartOffset.value; }
-			set { if( _traceStartOffset.BeginSet( ref value ) ) { try { TraceStartOffsetChanged?.Invoke( this ); } finally { _traceStartOffset.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="TraceStartOffset"/> property value changes.</summary>
-		public event Action<RenderingEffect_IndirectLighting> TraceStartOffsetChanged;
-		ReferenceField<double> _traceStartOffset = 2.0;
-
-		//!!!!default
-		[Category( "Tracing" )]
-		[Range( 0.1, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
-		[DefaultValue( 0.2 )]
-		public Reference<double> TraceStepFactor
-		{
-			get { if( _traceStepFactor.BeginGet() ) TraceStepFactor = _traceStepFactor.Get( this ); return _traceStepFactor.value; }
-			set { if( _traceStepFactor.BeginSet( ref value ) ) { try { TraceStepFactorChanged?.Invoke( this ); } finally { _traceStepFactor.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="TraceStepFactor"/> property value changes.</summary>
-		public event Action<RenderingEffect_IndirectLighting> TraceStepFactorChanged;
-		ReferenceField<double> _traceStepFactor = 0.2;
-
-
-		//public enum AffectObjectsEnum
-		//{
-		//	All,
-		//	OnlyVisible,
+		//	ScreenSpace,
+		//	Full
 		//}
 
-		//!!!!impl
+		////!!!!
+		////!!!!default
 		///// <summary>
-		///// The mode of selection objects.
+		///// The technique for getting indirect lighting.
 		///// </summary>
-		//[Category( "Basic" )]
-		//[DefaultValue( AffectObjectsEnum.All )]
-		//public Reference<AffectObjectsEnum> AffectObjects
+		//[Category( "Effect" )]
+		//[DefaultValue( TechniqueEnum.ScreenSpace )]
+		//public Reference<TechniqueEnum> Technique
 		//{
-		//	get { if( _affectObjects.BeginGet() ) AffectObjects = _affectObjects.Get( this ); return _affectObjects.value; }
-		//	set { if( _affectObjects.BeginSet( ref value ) ) { try { AffectObjectsChanged?.Invoke( this ); } finally { _affectObjects.EndSet(); } } }
+		//	get { if( _technique.BeginGet() ) Technique = _technique.Get( this ); return _technique.value; }
+		//	set { if( _technique.BeginSet( this, ref value ) ) { try { TechniqueChanged?.Invoke( this ); } finally { _technique.EndSet(); } } }
 		//}
-		///// <summary>Occurs when the <see cref="AffectObjects"/> property value changes.</summary>
-		//public event Action<RenderingEffect_IndirectLighting> AffectObjectsChanged;
-		//ReferenceField<AffectObjectsEnum> _affectObjects = AffectObjectsEnum.All;
+		///// <summary>Occurs when the <see cref="Technique"/> property value changes.</summary>
+		//public event Action<RenderingEffect_IndirectLighting> TechniqueChanged;
+		//ReferenceField<TechniqueEnum> _technique = TechniqueEnum.ScreenSpace;
 
+
+		////full mode
 
 		////!!!!impl
 		///// <summary>
-		///// The distance multiplier when determining the level of detail.
+		///// The effective distance of the effect. The effect can only have influence within that radius.
 		///// </summary>
-		//[Category( "Basic" )]
-		//[DefaultValue( 1.0 )]
-		//[DisplayName( "LOD Scale" )]
-		//[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
-		//public Reference<double> LODScale
+		//[Category( "Structure" )]
+		//[DefaultValue( 100.0 )]
+		//[Range( 10, 500, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		//public Reference<double> Distance
 		//{
-		//	get { if( _lODScale.BeginGet() ) LODScale = _lODScale.Get( this ); return _lODScale.value; }
-		//	set { if( _lODScale.BeginSet( ref value ) ) { try { LODScaleChanged?.Invoke( this ); } finally { _lODScale.EndSet(); } } }
+		//	get { if( _distance.BeginGet() ) Distance = _distance.Get( this ); return _distance.value; }
+		//	set { if( _distance.BeginSet( this, ref value ) ) { try { DistanceChanged?.Invoke( this ); } finally { _distance.EndSet(); } } }
 		//}
-		///// <summary>Occurs when the <see cref="LODScale"/> property value changes.</summary>
-		//public event Action<RenderingEffect_IndirectLighting> LODScaleChanged;
-		//ReferenceField<double> _lODScale = 1.0;
+		///// <summary>Occurs when the <see cref="Distance"/> property value changes.</summary>
+		//public event Action<RenderingEffect_IndirectLighting> DistanceChanged;
+		//ReferenceField<double> _distance = 100.0;
 
-
-		//public enum UseMaterialSettingsEnum
-		//{
-		//	All,
-		//	OnlyEmission,
-		//	//Simple,
-		//}
-
-		//!!!!impl
-		///// <summary>
-		///// The mode of using material settings.
-		///// </summary>
-		//[Category( "Basic" )]
-		//[DefaultValue( UseMaterialSettingsEnum.OnlyEmission )]
-		//public Reference<UseMaterialSettingsEnum> UseMaterialSettings
-		//{
-		//	get { if( _applyMaterialSettings.BeginGet() ) UseMaterialSettings = _applyMaterialSettings.Get( this ); return _applyMaterialSettings.value; }
-		//	set { if( _applyMaterialSettings.BeginSet( ref value ) ) { try { UseMaterialSettingsChanged?.Invoke( this ); } finally { _applyMaterialSettings.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="UseMaterialSettings"/> property value changes.</summary>
-		//public event Action<RenderingEffect_IndirectLighting> UseMaterialSettingsChanged;
-		//ReferenceField<UseMaterialSettingsEnum> _applyMaterialSettings = UseMaterialSettingsEnum.OnlyEmission;
-
-
-		////!!!!need?
 		////!!!!default
 		///// <summary>
-		///// Whether to update scene data over time.
+		///// The amount of internal voxel grids. Each level two times bigger than previous level by radius. Last level distance is equal Distance property.
 		///// </summary>
-		//[DefaultValue( true )]
-		//public Reference<bool> Dynamic
+		//[Category( "Structure" )]
+		//[Range( 1, 10 )]
+		//[DefaultValue( 4 )]
+		//public Reference<int> Levels
 		//{
-		//	get { if( _dynamic.BeginGet() ) Dynamic = _dynamic.Get( this ); return _dynamic.value; }
-		//	set { if( _dynamic.BeginSet( ref value ) ) { try { DynamicChanged?.Invoke( this ); } finally { _dynamic.EndSet(); } } }
+		//	get { if( _levels.BeginGet() ) Levels = _levels.Get( this ); return _levels.value; }
+		//	set
+		//	{
+		//		if( value < 1 ) value = 1;
+		//		if( _levels.BeginSet( this, ref value ) ) { try { LevelsChanged?.Invoke( this ); } finally { _levels.EndSet(); } }
+		//	}
 		//}
-		///// <summary>Occurs when the <see cref="Dynamic"/> property value changes.</summary>
-		//public event Action<RenderingEffect_IndirectLighting> DynamicChanged;
-		//ReferenceField<bool> _dynamic = true;
+		///// <summary>Occurs when the <see cref="Levels"/> property value changes.</summary>
+		//public event Action<RenderingEffect_IndirectLighting> LevelsChanged;
+		//ReferenceField<int> _levels = 4;
 
 
-		//!!!!
-
-		//[DefaultValue( "0 0 0 0" )]
-		//public Reference<Vector4F> TestParameter
+		//public enum GridSizeEnum
 		//{
-		//	get { if( _testParameter.BeginGet() ) TestParameter = _testParameter.Get( this ); return _testParameter.value; }
-		//	set { if( _testParameter.BeginSet( ref value ) ) { try { TestParameterChanged?.Invoke( this ); } finally { _testParameter.EndSet(); } } }
+		//	_128,
+		//	_256,
+		//	_512,
 		//}
-		///// <summary>Occurs when the <see cref="TestParameter"/> property value changes.</summary>
-		//public event Action<RenderingEffect_IndirectLighting> TestParameterChanged;
-		//ReferenceField<Vector4F> _testParameter;
 
-		//[DefaultValue( 0.0f )]
-		//public Reference<float> TestParameter
+		////!!!!default
+
+		///// <summary>
+		///// The size of the internal grid.
+		///// </summary>
+		//[Category( "Structure" )]
+		//[DefaultValue( GridSizeEnum._128 )]
+		//public Reference<GridSizeEnum> GridSize
 		//{
-		//	get { if( _testParameter.BeginGet() ) TestParameter = _testParameter.Get( this ); return _testParameter.value; }
-		//	set { if( _testParameter.BeginSet( ref value ) ) { try { TestParameterChanged?.Invoke( this ); } finally { _testParameter.EndSet(); } } }
+		//	get { if( _gridSize.BeginGet() ) GridSize = _gridSize.Get( this ); return _gridSize.value; }
+		//	set { if( _gridSize.BeginSet( this, ref value ) ) { try { GridSizeChanged?.Invoke( this ); } finally { _gridSize.EndSet(); } } }
 		//}
-		///// <summary>Occurs when the <see cref="TestParameter"/> property value changes.</summary>
-		//public event Action<RenderingEffect_IndirectLighting> TestParameterChanged;
-		//ReferenceField<float> _testParameter = 0.0f;
+		///// <summary>Occurs when the <see cref="GridSize"/> property value changes.</summary>
+		//public event Action<RenderingEffect_IndirectLighting> GridSizeChanged;
+		//ReferenceField<GridSizeEnum> _gridSize = GridSizeEnum._128;
+
+		//public int GetGridSize()
+		//{
+		//	switch( GridSize.Value )
+		//	{
+		//	case GridSizeEnum._128: return 128;
+		//	case GridSizeEnum._256: return 256;
+		//	case GridSizeEnum._512: return 512;
+		//	}
+		//	return 128;
+		//}
+
+		////!!!!need?
+		////!!!!name
+		//[Category( "Structure" )]
+		//[Range( 0, 2 )]
+		//[DefaultValue( 1.0 )]
+		//public Reference<double> VoxelizationExpandFactor
+		//{
+		//	get { if( _voxelizationExpandFactor.BeginGet() ) VoxelizationExpandFactor = _voxelizationExpandFactor.Get( this ); return _voxelizationExpandFactor.value; }
+		//	set { if( _voxelizationExpandFactor.BeginSet( this, ref value ) ) { try { VoxelizationExpandFactorChanged?.Invoke( this ); } finally { _voxelizationExpandFactor.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="VoxelizationExpandFactor"/> property value changes.</summary>
+		//public event Action<RenderingEffect_IndirectLighting> VoxelizationExpandFactorChanged;
+		//ReferenceField<double> _voxelizationExpandFactor = 1.0;
+
+
+		////!!!!коэффициент распределение сетки? типа как в тенях parallel split
+
+		////!!!!Bounces?
+
+
+		//////!!!!может в самом шейдере делать этот цикл
+		//////!!!!name
+		//////!!!!need?
+		////[Category( "Basic" )]
+		////[DefaultValue( 1 )]
+		////[Range( 1, 20 )] //!!!!
+		////public Reference<int> RadianceSteps
+		////{
+		////	get { if( _radianceSteps.BeginGet() ) RadianceSteps = _radianceSteps.Get( this ); return _radianceSteps.value; }
+		////	set { if( _radianceSteps.BeginSet( this, ref value ) ) { try { RadianceStepsChanged?.Invoke( this ); } finally { _radianceSteps.EndSet(); } } }
+		////}
+		/////// <summary>Occurs when the <see cref="RadianceSteps"/> property value changes.</summary>
+		////public event Action<RenderingEffect_IndirectLighting> RadianceStepsChanged;
+		////ReferenceField<int> _radianceSteps = 1;
+
+
+		//[Category( "Input" )]
+		//[DefaultValue( 0.0 )]
+		//[Range( 0, 4, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		//public Reference<double> AmbientLighting
+		//{
+		//	get { if( _ambientLighting.BeginGet() ) AmbientLighting = _ambientLighting.Get( this ); return _ambientLighting.value; }
+		//	set { if( _ambientLighting.BeginSet( this, ref value ) ) { try { AmbientLightingChanged?.Invoke( this ); } finally { _ambientLighting.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="AmbientLighting"/> property value changes.</summary>
+		//public event Action<RenderingEffect_IndirectLighting> AmbientLightingChanged;
+		//ReferenceField<double> _ambientLighting = 0.0;
+
+		//[Category( "Input" )]
+		//[DefaultValue( 1.0 )]
+		//[Range( 0, 4, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		//public Reference<double> DirectLighting
+		//{
+		//	get { if( _directLighting.BeginGet() ) DirectLighting = _directLighting.Get( this ); return _directLighting.value; }
+		//	set { if( _directLighting.BeginSet( this, ref value ) ) { try { DirectLightingChanged?.Invoke( this ); } finally { _directLighting.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="DirectLighting"/> property value changes.</summary>
+		//public event Action<RenderingEffect_IndirectLighting> DirectLightingChanged;
+		//ReferenceField<double> _directLighting = 1.0;
+
+		//[Category( "Input" )]
+		//[DefaultValue( 1.0 )]
+		//[Range( 0, 4, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		//public Reference<double> EmissiveLighting
+		//{
+		//	get { if( _emissiveLighting.BeginGet() ) EmissiveLighting = _emissiveLighting.Get( this ); return _emissiveLighting.value; }
+		//	set { if( _emissiveLighting.BeginSet( this, ref value ) ) { try { EmissiveLightingChanged?.Invoke( this ); } finally { _emissiveLighting.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="EmissiveLighting"/> property value changes.</summary>
+		//public event Action<RenderingEffect_IndirectLighting> EmissiveLightingChanged;
+		//ReferenceField<double> _emissiveLighting = 1.0;
+
+
+		////!!!!impl
+		////!!!!default
+		////!!!!name
+		////!!!!remove?
+
+		///// <summary>
+		///// The shading model for the materials for indirect lighting calculation.
+		///// </summary>
+		//[Category( "Input" )]
+		//[DefaultValue( false )]
+		//public Reference<bool> ShadingModelFull
+		//{
+		//	get { if( _shadingModelFull.BeginGet() ) ShadingModelFull = _shadingModelFull.Get( this ); return _shadingModelFull.value; }
+		//	set { if( _shadingModelFull.BeginSet( this, ref value ) ) { try { ShadingModelFullChanged?.Invoke( this ); } finally { _shadingModelFull.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="ShadingModelFull"/> property value changes.</summary>
+		//public event Action<RenderingEffect_IndirectLighting> ShadingModelFullChanged;
+		//ReferenceField<bool> _shadingModelFull = false;
+
+		///// <summary>
+		///// The output multiplier of indirect diffuse lighting.
+		///// </summary>
+		//[Category( "Output" )]
+		//[Range( 0, 4, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		//[DefaultValue( 1.0 )]
+		//public Reference<double> DiffuseOutput
+		//{
+		//	get { if( _diffuseOutput.BeginGet() ) DiffuseOutput = _diffuseOutput.Get( this ); return _diffuseOutput.value; }
+		//	set { if( _diffuseOutput.BeginSet( this, ref value ) ) { try { DiffuseOutputChanged?.Invoke( this ); } finally { _diffuseOutput.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="DiffuseOutput"/> property value changes.</summary>
+		//public event Action<RenderingEffect_IndirectLighting> DiffuseOutputChanged;
+		//ReferenceField<double> _diffuseOutput = 1.0;
+
+		///// <summary>
+		///// The output multiplier of indirect specular lighting.
+		///// </summary>
+		//[Category( "Output" )]
+		//[Range( 0, 4, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		//[DefaultValue( 1.0 )]
+		//public Reference<double> SpecularOutput
+		//{
+		//	get { if( _specularOutput.BeginGet() ) SpecularOutput = _specularOutput.Get( this ); return _specularOutput.value; }
+		//	set { if( _specularOutput.BeginSet( this, ref value ) ) { try { SpecularOutputChanged?.Invoke( this ); } finally { _specularOutput.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="SpecularOutput"/> property value changes.</summary>
+		//public event Action<RenderingEffect_IndirectLighting> SpecularOutputChanged;
+		//ReferenceField<double> _specularOutput = 1.0;
+
+		//[DefaultValue( ResolutionEnum.Half )]
+		//[Category( "Output" )]
+		//[DisplayName( "Resolution" )]
+		//public Reference<ResolutionEnum> ResolutionFull
+		//{
+		//	get { if( _resolutionFull.BeginGet() ) ResolutionFull = _resolutionFull.Get( this ); return _resolutionFull.value; }
+		//	set { if( _resolutionFull.BeginSet( this, ref value ) ) { try { ResolutionFullChanged?.Invoke( this ); } finally { _resolutionFull.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="ResolutionFull"/> property value changes.</summary>
+		//public event Action<RenderingEffect_IndirectLighting> ResolutionFullChanged;
+		//ReferenceField<ResolutionEnum> _resolutionFull = ResolutionEnum.Half;
+
+		////!!!!descriptions
+
+		////!!!!default
+		//[Category( "Tracing" )]
+		//[Range( 1, 100, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
+		//[DefaultValue( 10.0 )]
+		//public Reference<double> TraceLength
+		//{
+		//	get { if( _traceLength.BeginGet() ) TraceLength = _traceLength.Get( this ); return _traceLength.value; }
+		//	set { if( _traceLength.BeginSet( this, ref value ) ) { try { TraceLengthChanged?.Invoke( this ); } finally { _traceLength.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="TraceLength"/> property value changes.</summary>
+		//public event Action<RenderingEffect_IndirectLighting> TraceLengthChanged;
+		//ReferenceField<double> _traceLength = 10.0;
+
+		////!!!!default
+		//[Category( "Tracing" )]
+		//[Range( 0.1, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
+		//[DefaultValue( 2.0 )]
+		//public Reference<double> TraceStartOffset
+		//{
+		//	get { if( _traceStartOffset.BeginGet() ) TraceStartOffset = _traceStartOffset.Get( this ); return _traceStartOffset.value; }
+		//	set { if( _traceStartOffset.BeginSet( this, ref value ) ) { try { TraceStartOffsetChanged?.Invoke( this ); } finally { _traceStartOffset.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="TraceStartOffset"/> property value changes.</summary>
+		//public event Action<RenderingEffect_IndirectLighting> TraceStartOffsetChanged;
+		//ReferenceField<double> _traceStartOffset = 2.0;
+
+		////!!!!default
+		//[Category( "Tracing" )]
+		//[Range( 0.1, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
+		//[DefaultValue( 0.2 )]
+		//public Reference<double> TraceStepFactor
+		//{
+		//	get { if( _traceStepFactor.BeginGet() ) TraceStepFactor = _traceStepFactor.Get( this ); return _traceStepFactor.value; }
+		//	set { if( _traceStepFactor.BeginSet( this, ref value ) ) { try { TraceStepFactorChanged?.Invoke( this ); } finally { _traceStepFactor.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="TraceStepFactor"/> property value changes.</summary>
+		//public event Action<RenderingEffect_IndirectLighting> TraceStepFactorChanged;
+		//ReferenceField<double> _traceStepFactor = 0.2;
+
+
+		////public enum AffectObjectsEnum
+		////{
+		////	All,
+		////	OnlyVisible,
+		////}
+
+		////!!!!impl
+		/////// <summary>
+		/////// The mode of selection objects.
+		/////// </summary>
+		////[Category( "Basic" )]
+		////[DefaultValue( AffectObjectsEnum.All )]
+		////public Reference<AffectObjectsEnum> AffectObjects
+		////{
+		////	get { if( _affectObjects.BeginGet() ) AffectObjects = _affectObjects.Get( this ); return _affectObjects.value; }
+		////	set { if( _affectObjects.BeginSet( this, ref value ) ) { try { AffectObjectsChanged?.Invoke( this ); } finally { _affectObjects.EndSet(); } } }
+		////}
+		/////// <summary>Occurs when the <see cref="AffectObjects"/> property value changes.</summary>
+		////public event Action<RenderingEffect_IndirectLighting> AffectObjectsChanged;
+		////ReferenceField<AffectObjectsEnum> _affectObjects = AffectObjectsEnum.All;
+
+
+		//////!!!!impl
+		/////// <summary>
+		/////// The distance multiplier when determining the level of detail.
+		/////// </summary>
+		////[Category( "Basic" )]
+		////[DefaultValue( 1.0 )]
+		////[DisplayName( "LOD Scale" )]
+		////[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
+		////public Reference<double> LODScale
+		////{
+		////	get { if( _lODScale.BeginGet() ) LODScale = _lODScale.Get( this ); return _lODScale.value; }
+		////	set { if( _lODScale.BeginSet( this, ref value ) ) { try { LODScaleChanged?.Invoke( this ); } finally { _lODScale.EndSet(); } } }
+		////}
+		/////// <summary>Occurs when the <see cref="LODScale"/> property value changes.</summary>
+		////public event Action<RenderingEffect_IndirectLighting> LODScaleChanged;
+		////ReferenceField<double> _lODScale = 1.0;
+
+
+		////public enum UseMaterialSettingsEnum
+		////{
+		////	All,
+		////	OnlyEmission,
+		////	//Simple,
+		////}
+
+		////!!!!impl
+		/////// <summary>
+		/////// The mode of using material settings.
+		/////// </summary>
+		////[Category( "Basic" )]
+		////[DefaultValue( UseMaterialSettingsEnum.OnlyEmission )]
+		////public Reference<UseMaterialSettingsEnum> UseMaterialSettings
+		////{
+		////	get { if( _applyMaterialSettings.BeginGet() ) UseMaterialSettings = _applyMaterialSettings.Get( this ); return _applyMaterialSettings.value; }
+		////	set { if( _applyMaterialSettings.BeginSet( this, ref value ) ) { try { UseMaterialSettingsChanged?.Invoke( this ); } finally { _applyMaterialSettings.EndSet(); } } }
+		////}
+		/////// <summary>Occurs when the <see cref="UseMaterialSettings"/> property value changes.</summary>
+		////public event Action<RenderingEffect_IndirectLighting> UseMaterialSettingsChanged;
+		////ReferenceField<UseMaterialSettingsEnum> _applyMaterialSettings = UseMaterialSettingsEnum.OnlyEmission;
+
+
+		//////!!!!need?
+		//////!!!!default
+		/////// <summary>
+		/////// Whether to update scene data over time.
+		/////// </summary>
+		////[DefaultValue( true )]
+		////public Reference<bool> Dynamic
+		////{
+		////	get { if( _dynamic.BeginGet() ) Dynamic = _dynamic.Get( this ); return _dynamic.value; }
+		////	set { if( _dynamic.BeginSet( this, ref value ) ) { try { DynamicChanged?.Invoke( this ); } finally { _dynamic.EndSet(); } } }
+		////}
+		/////// <summary>Occurs when the <see cref="Dynamic"/> property value changes.</summary>
+		////public event Action<RenderingEffect_IndirectLighting> DynamicChanged;
+		////ReferenceField<bool> _dynamic = true;
+
+
+		////!!!!
+
+		////[DefaultValue( "0 0 0 0" )]
+		////public Reference<Vector4F> TestParameter
+		////{
+		////	get { if( _testParameter.BeginGet() ) TestParameter = _testParameter.Get( this ); return _testParameter.value; }
+		////	set { if( _testParameter.BeginSet( this, ref value ) ) { try { TestParameterChanged?.Invoke( this ); } finally { _testParameter.EndSet(); } } }
+		////}
+		/////// <summary>Occurs when the <see cref="TestParameter"/> property value changes.</summary>
+		////public event Action<RenderingEffect_IndirectLighting> TestParameterChanged;
+		////ReferenceField<Vector4F> _testParameter;
+
+		////[DefaultValue( 0.0f )]
+		////public Reference<float> TestParameter
+		////{
+		////	get { if( _testParameter.BeginGet() ) TestParameter = _testParameter.Get( this ); return _testParameter.value; }
+		////	set { if( _testParameter.BeginSet( this, ref value ) ) { try { TestParameterChanged?.Invoke( this ); } finally { _testParameter.EndSet(); } } }
+		////}
+		/////// <summary>Occurs when the <see cref="TestParameter"/> property value changes.</summary>
+		////public event Action<RenderingEffect_IndirectLighting> TestParameterChanged;
+		////ReferenceField<float> _testParameter = 0.0f;
 
 
 		public enum QualityEnum
@@ -419,7 +420,7 @@ namespace NeoAxis
 		public Reference<QualityEnum> Quality
 		{
 			get { if( _quality.BeginGet() ) Quality = _quality.Get( this ); return _quality.value; }
-			set { if( _quality.BeginSet( ref value ) ) { try { QualityChanged?.Invoke( this ); } finally { _quality.EndSet(); } } }
+			set { if( _quality.BeginSet( this, ref value ) ) { try { QualityChanged?.Invoke( this ); } finally { _quality.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Quality"/> property value changes.</summary>
 		public event Action<RenderingEffect_IndirectLighting> QualityChanged;
@@ -439,14 +440,14 @@ namespace NeoAxis
 		[DefaultValue( ResolutionEnum.Half )]
 		[Category( "Basic" )]
 		[DisplayName( "Resolution" )]
-		public Reference<ResolutionEnum> ResolutionScreenSpace
+		public Reference<ResolutionEnum> Resolution
 		{
-			get { if( _resolutionScreenSpace.BeginGet() ) ResolutionScreenSpace = _resolutionScreenSpace.Get( this ); return _resolutionScreenSpace.value; }
-			set { if( _resolutionScreenSpace.BeginSet( ref value ) ) { try { ResolutionScreenSpaceChanged?.Invoke( this ); } finally { _resolutionScreenSpace.EndSet(); } } }
+			get { if( _resolution.BeginGet() ) Resolution = _resolution.Get( this ); return _resolution.value; }
+			set { if( _resolution.BeginSet( this, ref value ) ) { try { ResolutionChanged?.Invoke( this ); } finally { _resolution.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="ResolutionScreenSpace"/> property value changes.</summary>
-		public event Action<RenderingEffect_IndirectLighting> ResolutionScreenSpaceChanged;
-		ReferenceField<ResolutionEnum> _resolutionScreenSpace = ResolutionEnum.Half;
+		/// <summary>Occurs when the <see cref="Resolution"/> property value changes.</summary>
+		public event Action<RenderingEffect_IndirectLighting> ResolutionChanged;
+		ReferenceField<ResolutionEnum> _resolution = ResolutionEnum.Half;
 
 		//!!!!remove? from screen space too?
 		/// <summary>
@@ -462,7 +463,7 @@ namespace NeoAxis
 			{
 				if( value < 0 )
 					value = new Reference<double>( 0, value.GetByReference );
-				if( _multiplier.BeginSet( ref value ) )
+				if( _multiplier.BeginSet( this, ref value ) )
 				{
 					try { MultiplierChanged?.Invoke( this ); }
 					finally { _multiplier.EndSet(); }
@@ -482,26 +483,40 @@ namespace NeoAxis
 		public Reference<double> Reduction
 		{
 			get { if( _reduction.BeginGet() ) Reduction = _reduction.Get( this ); return _reduction.value; }
-			set { if( _reduction.BeginSet( ref value ) ) { try { ReductionChanged?.Invoke( this ); } finally { _reduction.EndSet(); } } }
+			set { if( _reduction.BeginSet( this, ref value ) ) { try { ReductionChanged?.Invoke( this ); } finally { _reduction.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Reduction"/> property value changes.</summary>
 		public event Action<RenderingEffect_IndirectLighting> ReductionChanged;
 		ReferenceField<double> _reduction = 0.05;
 
 		/// <summary>
+		/// Whether to apply normals data on the screen for blurring.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Basic" )]
+		public Reference<bool> Normals
+		{
+			get { if( _normals.BeginGet() ) Normals = _normals.Get( this ); return _normals.value; }
+			set { if( _normals.BeginSet( this, ref value ) ) { try { NormalsChanged?.Invoke( this ); } finally { _normals.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Normals"/> property value changes.</summary>
+		public event Action<RenderingEffect_IndirectLighting> NormalsChanged;
+		ReferenceField<bool> _normals = true;
+
+		/// <summary>
 		/// Effective sampling radius in world space. The effect can only have influence within that radius.
 		/// </summary>
-		[DefaultValue( 3 )]
+		[DefaultValue( 5 )]//3 )]
 		[Range( 0, 30, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
 		[Category( "Sampling" )]
 		public Reference<double> Radius
 		{
 			get { if( _radius.BeginGet() ) Radius = _radius.Get( this ); return _radius.value; }
-			set { if( _radius.BeginSet( ref value ) ) { try { RadiusChanged?.Invoke( this ); } finally { _radius.EndSet(); } } }
+			set { if( _radius.BeginSet( this, ref value ) ) { try { RadiusChanged?.Invoke( this ); } finally { _radius.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Radius"/> property value changes.</summary>
 		public event Action<RenderingEffect_IndirectLighting> RadiusChanged;
-		ReferenceField<double> _radius = 3;
+		ReferenceField<double> _radius = 5;//3;
 
 		/// <summary>
 		/// Controls samples distribution. Exp Start is an initial multiplier on the step size, and Exp Factor is an exponent applied at each step. By using a start value < 1, and an exponent > 1, it's possible to get exponential step size.
@@ -512,7 +527,7 @@ namespace NeoAxis
 		public Reference<double> ExpStart
 		{
 			get { if( _expStart.BeginGet() ) ExpStart = _expStart.Get( this ); return _expStart.value; }
-			set { if( _expStart.BeginSet( ref value ) ) { try { ExpStartChanged?.Invoke( this ); } finally { _expStart.EndSet(); } } }
+			set { if( _expStart.BeginSet( this, ref value ) ) { try { ExpStartChanged?.Invoke( this ); } finally { _expStart.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ExpStart"/> property value changes.</summary>
 		public event Action<RenderingEffect_IndirectLighting> ExpStartChanged;
@@ -527,7 +542,7 @@ namespace NeoAxis
 		public Reference<double> ExpFactor
 		{
 			get { if( _expFactor.BeginGet() ) ExpFactor = _expFactor.Get( this ); return _expFactor.value; }
-			set { if( _expFactor.BeginSet( ref value ) ) { try { ExpFactorChanged?.Invoke( this ); } finally { _expFactor.EndSet(); } } }
+			set { if( _expFactor.BeginSet( this, ref value ) ) { try { ExpFactorChanged?.Invoke( this ); } finally { _expFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ExpFactor"/> property value changes.</summary>
 		public event Action<RenderingEffect_IndirectLighting> ExpFactorChanged;
@@ -542,7 +557,7 @@ namespace NeoAxis
 		public Reference<double> SkyLighting
 		{
 			get { if( _skyLighting.BeginGet() ) SkyLighting = _skyLighting.Get( this ); return _skyLighting.value; }
-			set { if( _skyLighting.BeginSet( ref value ) ) { try { SkyLightingChanged?.Invoke( this ); } finally { _skyLighting.EndSet(); } } }
+			set { if( _skyLighting.BeginSet( this, ref value ) ) { try { SkyLightingChanged?.Invoke( this ); } finally { _skyLighting.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SkyLighting"/> property value changes.</summary>
 		public event Action<RenderingEffect_IndirectLighting> SkyLightingChanged;
@@ -556,7 +571,7 @@ namespace NeoAxis
 		//public Reference<bool> JitterSamples
 		//{
 		//	get { if( _jitterSamples.BeginGet() ) JitterSamples = _jitterSamples.Get( this ); return _jitterSamples.value; }
-		//	set { if( _jitterSamples.BeginSet( ref value ) ) { try { JitterSamplesChanged?.Invoke( this ); } finally { _jitterSamples.EndSet(); } } }
+		//	set { if( _jitterSamples.BeginSet( this, ref value ) ) { try { JitterSamplesChanged?.Invoke( this ); } finally { _jitterSamples.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="JitterSamples"/> property value changes.</summary>
 		//public event Action<RenderingEffect_IndirectLighting> JitterSamplesChanged;
@@ -571,7 +586,7 @@ namespace NeoAxis
 		//public Reference<double> LnDlOffset
 		//{
 		//	get { if( _lnDlOffset.BeginGet() ) LnDlOffset = _lnDlOffset.Get( this ); return _lnDlOffset.value; }
-		//	set { if( _lnDlOffset.BeginSet( ref value ) ) { try { LnDlOffsetChanged?.Invoke( this ); } finally { _lnDlOffset.EndSet(); } } }
+		//	set { if( _lnDlOffset.BeginSet( this, ref value ) ) { try { LnDlOffsetChanged?.Invoke( this ); } finally { _lnDlOffset.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="LnDlOffset"/> property value changes.</summary>
 		//public event Action<RenderingEffect_IndirectLighting> LnDlOffsetChanged;
@@ -586,7 +601,7 @@ namespace NeoAxis
 		//public Reference<double> NDlOffset
 		//{
 		//	get { if( _nDlOffset.BeginGet() ) NDlOffset = _nDlOffset.Get( this ); return _nDlOffset.value; }
-		//	set { if( _nDlOffset.BeginSet( ref value ) ) { try { NDlOffsetChanged?.Invoke( this ); } finally { _nDlOffset.EndSet(); } } }
+		//	set { if( _nDlOffset.BeginSet( this, ref value ) ) { try { NDlOffsetChanged?.Invoke( this ); } finally { _nDlOffset.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="NDlOffset"/> property value changes.</summary>
 		//public event Action<RenderingEffect_IndirectLighting> NDlOffsetChanged;
@@ -601,7 +616,7 @@ namespace NeoAxis
 		public Reference<double> Thickness
 		{
 			get { if( _thickness.BeginGet() ) Thickness = _thickness.Get( this ); return _thickness.value; }
-			set { if( _thickness.BeginSet( ref value ) ) { try { ThicknessChanged?.Invoke( this ); } finally { _thickness.EndSet(); } } }
+			set { if( _thickness.BeginSet( this, ref value ) ) { try { ThicknessChanged?.Invoke( this ); } finally { _thickness.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Thickness"/> property value changes.</summary>
 		public event Action<RenderingEffect_IndirectLighting> ThicknessChanged;
@@ -616,7 +631,7 @@ namespace NeoAxis
 		public Reference<double> Falloff
 		{
 			get { if( _falloff.BeginGet() ) Falloff = _falloff.Get( this ); return _falloff.value; }
-			set { if( _falloff.BeginSet( ref value ) ) { try { FalloffChanged?.Invoke( this ); } finally { _falloff.EndSet(); } } }
+			set { if( _falloff.BeginSet( this, ref value ) ) { try { FalloffChanged?.Invoke( this ); } finally { _falloff.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Falloff"/> property value changes.</summary>
 		public event Action<RenderingEffect_IndirectLighting> FalloffChanged;
@@ -630,7 +645,7 @@ namespace NeoAxis
 		//public Reference<int> AccumulateFrames
 		//{
 		//	get { if( _accumulateFrames.BeginGet() ) AccumulateFrames = _accumulateFrames.Get( this ); return _accumulateFrames.value; }
-		//	set { if( _accumulateFrames.BeginSet( ref value ) ) { try { AccumulateFramesChanged?.Invoke( this ); } finally { _accumulateFrames.EndSet(); } } }
+		//	set { if( _accumulateFrames.BeginSet( this, ref value ) ) { try { AccumulateFramesChanged?.Invoke( this ); } finally { _accumulateFrames.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="AccumulateFrames"/> property value changes.</summary>
 		//public event Action<RenderingEffect_IndirectLighting> AccumulateFramesChanged;
@@ -646,7 +661,7 @@ namespace NeoAxis
 		public Reference<double> BlurFactor
 		{
 			get { if( _blurFactor.BeginGet() ) BlurFactor = _blurFactor.Get( this ); return _blurFactor.value; }
-			set { if( _blurFactor.BeginSet( ref value ) ) { try { BlurFactorChanged?.Invoke( this ); } finally { _blurFactor.EndSet(); } } }
+			set { if( _blurFactor.BeginSet( this, ref value ) ) { try { BlurFactorChanged?.Invoke( this ); } finally { _blurFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BlurFactor"/> property value changes.</summary>
 		public event Action<RenderingEffect_IndirectLighting> BlurFactorChanged;
@@ -661,7 +676,7 @@ namespace NeoAxis
 		public Reference<RenderingPipeline_Basic.DownscalingModeEnum> BlurDownscalingMode
 		{
 			get { if( _blurDownscalingMode.BeginGet() ) BlurDownscalingMode = _blurDownscalingMode.Get( this ); return _blurDownscalingMode.value; }
-			set { if( _blurDownscalingMode.BeginSet( ref value ) ) { try { BlurDownscalingModeChanged?.Invoke( this ); } finally { _blurDownscalingMode.EndSet(); } } }
+			set { if( _blurDownscalingMode.BeginSet( this, ref value ) ) { try { BlurDownscalingModeChanged?.Invoke( this ); } finally { _blurDownscalingMode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BlurDownscalingMode"/> property value changes.</summary>
 		public event Action<RenderingEffect_IndirectLighting> BlurDownscalingModeChanged;
@@ -677,7 +692,7 @@ namespace NeoAxis
 		public Reference<int> BlurDownscalingValue
 		{
 			get { if( _blurDownscalingValue.BeginGet() ) BlurDownscalingValue = _blurDownscalingValue.Get( this ); return _blurDownscalingValue.value; }
-			set { if( _blurDownscalingValue.BeginSet( ref value ) ) { try { BlurDownscalingValueChanged?.Invoke( this ); } finally { _blurDownscalingValue.EndSet(); } } }
+			set { if( _blurDownscalingValue.BeginSet( this, ref value ) ) { try { BlurDownscalingValueChanged?.Invoke( this ); } finally { _blurDownscalingValue.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BlurDownscalingValue"/> property value changes.</summary>
 		public event Action<RenderingEffect_IndirectLighting> BlurDownscalingValueChanged;
@@ -692,7 +707,7 @@ namespace NeoAxis
 		public Reference<bool> ShowIndirectLighting
 		{
 			get { if( _showIndirectLighting.BeginGet() ) ShowIndirectLighting = _showIndirectLighting.Get( this ); return _showIndirectLighting.value; }
-			set { if( _showIndirectLighting.BeginSet( ref value ) ) { try { ShowIndirectLightingChanged?.Invoke( this ); } finally { _showIndirectLighting.EndSet(); } } }
+			set { if( _showIndirectLighting.BeginSet( this, ref value ) ) { try { ShowIndirectLightingChanged?.Invoke( this ); } finally { _showIndirectLighting.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShowIndirectLighting"/> property value changes.</summary>
 		public event Action<RenderingEffect_IndirectLighting> ShowIndirectLightingChanged;
@@ -707,71 +722,72 @@ namespace NeoAxis
 		//public Reference<bool> DebugShowGridBounds
 		//{
 		//	get { if( _debugShowGridBounds.BeginGet() ) DebugShowGridBounds = _debugShowGridBounds.Get( this ); return _debugShowGridBounds.value; }
-		//	set { if( _debugShowGridBounds.BeginSet( ref value ) ) { try { DebugShowGridBoundsChanged?.Invoke( this ); } finally { _debugShowGridBounds.EndSet(); } } }
+		//	set { if( _debugShowGridBounds.BeginSet( this, ref value ) ) { try { DebugShowGridBoundsChanged?.Invoke( this ); } finally { _debugShowGridBounds.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="DebugShowGridBounds"/> property value changes.</summary>
 		//public event Action<RenderingEffect_IndirectLighting> DebugShowGridBoundsChanged;
 		//ReferenceField<bool> _debugShowGridBounds = false;
 
-		public enum DebugModeEnum
-		{
-			None = 0,
-			Normal = 1,
-			BaseColor = 2,
-			Metallic = 3,
-			Roughness = 4,
-			//Reflectance = 5,
-			//Emissive = 6,
-			//SubsurfaceColor = 7,
-			Radiance = 8
-		}
+		//public enum DebugModeEnum
+		//{
+		//	None = 0,
+		//	Normal = 1,
+		//	BaseColor = 2,
+		//	Metallic = 3,
+		//	Roughness = 4,
+		//	//Reflectance = 5,
+		//	//Emissive = 6,
+		//	//SubsurfaceColor = 7,
+		//	Radiance = 8
+		//}
 
-		/// <summary>
-		/// The way to visualize internal data.
-		/// </summary>
-		[Category( "Debug" )]
-		[DefaultValue( DebugModeEnum.None )]
-		public Reference<DebugModeEnum> DebugMode
-		{
-			get { if( _debugMode.BeginGet() ) DebugMode = _debugMode.Get( this ); return _debugMode.value; }
-			set { if( _debugMode.BeginSet( ref value ) ) { try { DebugModeChanged?.Invoke( this ); } finally { _debugMode.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="DebugMode"/> property value changes.</summary>
-		public event Action<RenderingEffect_IndirectLighting> DebugModeChanged;
-		ReferenceField<DebugModeEnum> _debugMode = DebugModeEnum.None;
+		///// <summary>
+		///// The way to visualize internal data.
+		///// </summary>
+		//[Category( "Debug" )]
+		//[DefaultValue( DebugModeEnum.None )]
+		//public Reference<DebugModeEnum> DebugMode
+		//{
+		//	get { if( _debugMode.BeginGet() ) DebugMode = _debugMode.Get( this ); return _debugMode.value; }
+		//	set { if( _debugMode.BeginSet( this, ref value ) ) { try { DebugModeChanged?.Invoke( this ); } finally { _debugMode.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="DebugMode"/> property value changes.</summary>
+		//public event Action<RenderingEffect_IndirectLighting> DebugModeChanged;
+		//ReferenceField<DebugModeEnum> _debugMode = DebugModeEnum.None;
 
-		/// <summary>
-		/// The level of the grid to visualize.
-		/// </summary>
-		[Category( "Debug" )]
-		[Range( 0, 10 )]
-		[DefaultValue( 0 )]
-		public Reference<int> DebugModeLevel
-		{
-			get { if( _debugModeLevel.BeginGet() ) DebugModeLevel = _debugModeLevel.Get( this ); return _debugModeLevel.value; }
-			set { if( _debugModeLevel.BeginSet( ref value ) ) { try { DebugModeLevelChanged?.Invoke( this ); } finally { _debugModeLevel.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="DebugModeLevel"/> property value changes.</summary>
-		public event Action<RenderingEffect_IndirectLighting> DebugModeLevelChanged;
-		ReferenceField<int> _debugModeLevel = 0;
+		///// <summary>
+		///// The level of the grid to visualize.
+		///// </summary>
+		//[Category( "Debug" )]
+		//[Range( 0, 10 )]
+		//[DefaultValue( 0 )]
+		//public Reference<int> DebugModeLevel
+		//{
+		//	get { if( _debugModeLevel.BeginGet() ) DebugModeLevel = _debugModeLevel.Get( this ); return _debugModeLevel.value; }
+		//	set { if( _debugModeLevel.BeginSet( this, ref value ) ) { try { DebugModeLevelChanged?.Invoke( this ); } finally { _debugModeLevel.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="DebugModeLevel"/> property value changes.</summary>
+		//public event Action<RenderingEffect_IndirectLighting> DebugModeLevelChanged;
+		//ReferenceField<int> _debugModeLevel = 0;
 
-		/// <summary>
-		/// The intensity of debug mode.
-		/// </summary>
-		[Category( "Debug" )]
-		[Range( 0, 1 )]
-		[DefaultValue( 1.0 )]
-		public Reference<double> DebugModeIntensity
-		{
-			get { if( _debugModeIntensity.BeginGet() ) DebugModeIntensity = _debugModeIntensity.Get( this ); return _debugModeIntensity.value; }
-			set { if( _debugModeIntensity.BeginSet( ref value ) ) { try { DebugModeIntensityChanged?.Invoke( this ); } finally { _debugModeIntensity.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="DebugModeIntensity"/> property value changes.</summary>
-		public event Action<RenderingEffect_IndirectLighting> DebugModeIntensityChanged;
-		ReferenceField<double> _debugModeIntensity = 1.0;
+		///// <summary>
+		///// The intensity of debug mode.
+		///// </summary>
+		//[Category( "Debug" )]
+		//[Range( 0, 1 )]
+		//[DefaultValue( 1.0 )]
+		//public Reference<double> DebugModeIntensity
+		//{
+		//	get { if( _debugModeIntensity.BeginGet() ) DebugModeIntensity = _debugModeIntensity.Get( this ); return _debugModeIntensity.value; }
+		//	set { if( _debugModeIntensity.BeginSet( this, ref value ) ) { try { DebugModeIntensityChanged?.Invoke( this ); } finally { _debugModeIntensity.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="DebugModeIntensity"/> property value changes.</summary>
+		//public event Action<RenderingEffect_IndirectLighting> DebugModeIntensityChanged;
+		//ReferenceField<double> _debugModeIntensity = 1.0;
 
 		///////////////////////////////////////////////
 
+#if __
 		//only for full mode
 		public class FrameData
 		{
@@ -823,6 +839,7 @@ namespace NeoAxis
 				return true;
 			}
 		}
+#endif
 
 		///////////////////////////////////////////////
 
@@ -835,52 +852,52 @@ namespace NeoAxis
 			{
 				switch( p.Name )
 				{
-				case nameof( Quality ):
-				case nameof( ResolutionScreenSpace ):
-				case nameof( Multiplier ):
-				case nameof( Reduction ):
-				case nameof( Radius ):
-				case nameof( ExpStart ):
-				case nameof( ExpFactor ):
-				case nameof( SkyLighting ):
-				case nameof( Thickness ):
-				case nameof( Falloff ):
-				case nameof( ShowIndirectLighting ):
-					if( Technique.Value != TechniqueEnum.ScreenSpace )
-						skip = true;
-					break;
+				//case nameof( Quality ):
+				//case nameof( ResolutionScreenSpace ):
+				//case nameof( Multiplier ):
+				//case nameof( Reduction ):
+				//case nameof( Radius ):
+				//case nameof( ExpStart ):
+				//case nameof( ExpFactor ):
+				//case nameof( SkyLighting ):
+				//case nameof( Thickness ):
+				//case nameof( Falloff ):
+				//case nameof( ShowIndirectLighting ):
+				//	if( Technique.Value != TechniqueEnum.ScreenSpace )
+				//		skip = true;
+				//	break;
 
-				case nameof( Distance ):
-				case nameof( Levels ):
-				case nameof( GridSize ):
-				//case nameof( RadianceSteps ):
-				case nameof( VoxelizationExpandFactor ):
-				//case nameof( AffectObjects ):
-				//case nameof( LODScale ):
-				case nameof( AmbientLighting ):
-				case nameof( DirectLighting ):
-				case nameof( EmissiveLighting ):
-				//!!!!case nameof( DebugShowGridBounds ):
-				case nameof( DebugMode ):
-				case nameof( DiffuseOutput ):
-				case nameof( SpecularOutput ):
-				case nameof( ResolutionFull ):
-				case nameof( ShadingModelFull ):
-				case nameof( TraceLength ):
-				case nameof( TraceStartOffset ):
-				case nameof( TraceStepFactor ):
-					//case nameof( Multiplier ):
-					//case nameof( UseMaterialSettings ):
-					//case nameof( Dynamic ):
-					if( Technique.Value != TechniqueEnum.Full )
-						skip = true;
-					break;
+				//case nameof( Distance ):
+				//case nameof( Levels ):
+				//case nameof( GridSize ):
+				////case nameof( RadianceSteps ):
+				//case nameof( VoxelizationExpandFactor ):
+				////case nameof( AffectObjects ):
+				////case nameof( LODScale ):
+				//case nameof( AmbientLighting ):
+				//case nameof( DirectLighting ):
+				//case nameof( EmissiveLighting ):
+				////!!!!case nameof( DebugShowGridBounds ):
+				//case nameof( DebugMode ):
+				//case nameof( DiffuseOutput ):
+				//case nameof( SpecularOutput ):
+				//case nameof( ResolutionFull ):
+				//case nameof( ShadingModelFull ):
+				//case nameof( TraceLength ):
+				//case nameof( TraceStartOffset ):
+				//case nameof( TraceStepFactor ):
+				//	//case nameof( Multiplier ):
+				//	//case nameof( UseMaterialSettings ):
+				//	//case nameof( Dynamic ):
+				//	if( Technique.Value != TechniqueEnum.Full )
+				//		skip = true;
+				//	break;
 
-				case nameof( DebugModeLevel ):
-				case nameof( DebugModeIntensity ):
-					if( Technique.Value != TechniqueEnum.Full )// || DebugMode.Value == DebugModeEnum.None )
-						skip = true;
-					break;
+				//case nameof( DebugModeLevel ):
+				//case nameof( DebugModeIntensity ):
+				//	if( Technique.Value != TechniqueEnum.Full )// || DebugMode.Value == DebugModeEnum.None )
+				//		skip = true;
+				//	break;
 
 				case nameof( BlurDownscalingValue ):
 					if( BlurDownscalingMode.Value == RenderingPipeline_Basic.DownscalingModeEnum.Auto )
@@ -924,10 +941,13 @@ namespace NeoAxis
 			if( !pipeline.GetUseMultiRenderTargets() )
 				return;
 
-			if( Technique.Value == TechniqueEnum.ScreenSpace )
-				RenderScreenSpaceTechnique( context, frameData, ref actualTexture, multiplier );
-			if( Technique.Value == TechniqueEnum.Full )
-				RenderFullTechniqueDebug( context, frameData, ref actualTexture );
+			//if( Technique.Value == TechniqueEnum.ScreenSpace )
+			RenderScreenSpaceTechnique( context, frameData, ref actualTexture, multiplier );
+
+			//#if __
+			//			if( Technique.Value == TechniqueEnum.Full )
+			//				RenderFullTechniqueDebug( context, frameData, ref actualTexture );
+			//#endif
 		}
 
 		///////////////////////////////////////////////
@@ -1017,7 +1037,8 @@ namespace NeoAxis
 			//	lightingTexture = lightingNoAccumulationTexture;
 			//}
 
-			var lightingTextureSize = actualTexture/*downscaledTexture*/.Result.ResultSize / (int)ResolutionScreenSpace.Value;
+			var lightingTextureSize = context.SizeInPixelsLowResolutionBeforeUpscale / (int)Resolution.Value;
+			//var lightingTextureSize = actualTexture/*downscaledTexture*/.Result.ResultSize / (int)Resolution.Value;
 
 			var lightingTexture = context.RenderTarget2D_Alloc( lightingTextureSize, actualTexture/*downscaledTexture*/.Result.ResultFormat );
 			{
@@ -1071,7 +1092,7 @@ namespace NeoAxis
 				shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "STEP_COUNT", stepCount.ToString() ) );
 
 
-				shader.Parameters.Set( "resolution", (float)ResolutionScreenSpace.Value );
+				shader.Parameters.Set( "resolution", (float)Resolution.Value );
 				shader.Parameters.Set( "skyLighting", (float)SkyLighting.Value );
 
 				shader.Parameters.Set( "radius", (float)Radius.Value );
@@ -1088,7 +1109,8 @@ namespace NeoAxis
 				shader.Parameters.Set( "reduction", (float)Reduction.Value );
 
 				//!!!!double
-				Matrix4F itViewMatrix = ( context.Owner.CameraSettings.ViewMatrix.GetInverse().ToMatrix4F() ).GetTranspose();
+				Matrix4F itViewMatrix = context.Owner.CameraSettings.ViewMatrixRelative.GetInverse().GetTranspose();
+				//Matrix4F itViewMatrix = ( context.Owner.CameraSettings.ViewMatrix.GetInverse().ToMatrix4F() ).GetTranspose();
 				shader.Parameters.Set( "itViewMatrix", itViewMatrix );
 
 				//Vector4F seeds = Vector4F.Zero;
@@ -1101,8 +1123,7 @@ namespace NeoAxis
 
 				//shader.Parameters.Set( "accumulateFrames", (float)AccumulateFrames.Value );
 
-				//!!!!double
-				Matrix4F projectionMatrix = context.Owner.CameraSettings.ProjectionMatrix.ToMatrix4F();
+				Matrix4F projectionMatrix = context.Owner.CameraSettings.ProjectionMatrix;
 				Matrix4F invProjectionMatrix = projectionMatrix.GetInverse();
 				//Matrix4F viewMatrix = context.Owner.CameraSettings.ViewMatrix.ToMatrix4F();
 				//Matrix4F viewProjMatrix = projectionMatrix * viewMatrix;
@@ -1112,8 +1133,7 @@ namespace NeoAxis
 				//shader.Parameters.Set( "invViewProj", invViewProjMatrix );
 				shader.Parameters.Set( "invProj", invProjectionMatrix );
 
-				//!!!!double
-				Vector3F cameraPosition = context.Owner.CameraSettings.Position.ToVector3F();
+				Vector3F cameraPosition = Vector3F.Zero;//context.Owner.CameraSettings.Position.ToVector3F();
 				shader.Parameters.Set( "cameraPosition", cameraPosition );
 
 				var fov = (double)context.Owner.CameraSettings.FieldOfView.InRadians();
@@ -1138,7 +1158,10 @@ namespace NeoAxis
 			//	context.DynamicTexture_Free( downscaledTexture );
 
 			//blur
-			var blurTexture = pipeline.GaussianBlur( context, /* accumulationBuffer ?? */lightingTexture, BlurFactor, BlurDownscalingMode, BlurDownscalingValue );
+
+			//!!!!normalCheckThreshold
+
+			var blurTexture = pipeline.GaussianBlur( context, /* accumulationBuffer ?? */lightingTexture, BlurFactor, BlurDownscalingMode, BlurDownscalingValue, normalCheck: Normals );
 
 			if( lightingTexture != null )
 				context.DynamicTexture_Free( lightingTexture );
@@ -1159,8 +1182,7 @@ namespace NeoAxis
 
 				shader.Parameters.Set( "intensity", (float)Intensity );
 				shader.Parameters.Set( "showIndirectLighting", ShowIndirectLighting.Value ? 1.0f : 0.0f );
-				//!!!!не так умножать. они же в степени
-				shader.Parameters.Set( "multiplier", (float)multiplier * 10.0f * (float)ResolutionScreenSpace.Value );
+				shader.Parameters.Set( "multiplier", (float)multiplier * 10.0f * (float)Resolution.Value * (float)Resolution.Value );
 
 				//#if __TEST
 				//shader.Parameters.Set( "testNew", (float)0.0f );
@@ -1179,6 +1201,8 @@ namespace NeoAxis
 		}
 
 		///////////////////////////////////////////////
+
+#if __
 
 		unsafe void RenderFullTechniqueDebug( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )
 		{
@@ -1214,6 +1238,7 @@ namespace NeoAxis
 					shader.Parameters.Set( "intensity", (float)DebugModeIntensity );
 
 					shader.Parameters.Set( "gridParameters", new Vector4F( data.Levels, data.GridResolution, data.CellSizeLevel0, 0 ) );
+
 					//!!!!double
 					shader.Parameters.Set( "gridCenter", new Vector4F( data.GridCenter.ToVector3F(), 0 ) );
 
@@ -1231,8 +1256,8 @@ namespace NeoAxis
 					//!!!!
 					//!!!!где еще заюзать
 
-					//!!!!double
-					context.Owner.CameraSettings.GetViewProjectionInverseMatrix().ToMatrix4F( out var invViewProjMatrix );
+					////!!!!double
+					//context.Owner.CameraSettings.GetViewProjectionInverseMatrix().ToMatrix4F( out var invViewProjMatrix );
 
 					////!!!!double
 					//Matrix4F projectionMatrix = context.Owner.CameraSettings.ProjectionMatrix.ToMatrix4F();
@@ -1241,10 +1266,11 @@ namespace NeoAxis
 					//Matrix4F viewProjMatrix = projectionMatrix * viewMatrix;
 					//viewProjMatrix.GetInverse( out var invViewProjMatrix );
 
-					//!!!!double
-					shader.Parameters.Set( "cameraPosition", context.Owner.CameraSettings.Position.ToVector3F() );
+					shader.Parameters.Set( "cameraPosition", Vector3F.Zero );
+					//shader.Parameters.Set( "cameraPosition", context.Owner.CameraSettings.Position.ToVector3F() );
+
 					//shader.Parameters.Set( "viewProj", viewProjMatrix );
-					shader.Parameters.Set( "invViewProj", invViewProjMatrix );
+					//shader.Parameters.Set( "invViewProj", invViewProjMatrix );
 
 					context.RenderQuadToCurrentViewport( shader );
 				}
@@ -1256,6 +1282,7 @@ namespace NeoAxis
 				actualTexture = finalTexture;
 			}
 		}
+#endif
 	}
 }
 

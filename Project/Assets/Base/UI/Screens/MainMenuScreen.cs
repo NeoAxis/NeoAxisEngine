@@ -29,7 +29,7 @@ namespace Project
 		public Reference<ReferenceValueType_Resource> BackgroundScene
 		{
 			get { if( _backgroundScene.BeginGet() ) BackgroundScene = _backgroundScene.Get( this ); return _backgroundScene.value; }
-			set { if( _backgroundScene.BeginSet( ref value ) ) { try { BackgroundSceneChanged?.Invoke( this ); } finally { _backgroundScene.EndSet(); } } }
+			set { if( _backgroundScene.BeginSet( this, ref value ) ) { try { BackgroundSceneChanged?.Invoke( this ); } finally { _backgroundScene.EndSet(); } } }
 		}
 		public event Action<MainMenuScreen> BackgroundSceneChanged;
 		ReferenceField<ReferenceValueType_Resource> _backgroundScene;
@@ -39,7 +39,7 @@ namespace Project
 		public Reference<ReferenceValueType_Resource> BackgroundSceneLimitedDevice
 		{
 			get { if( _backgroundSceneLimitedDevice.BeginGet() ) BackgroundSceneLimitedDevice = _backgroundSceneLimitedDevice.Get( this ); return _backgroundSceneLimitedDevice.value; }
-			set { if( _backgroundSceneLimitedDevice.BeginSet( ref value ) ) { try { BackgroundSceneLimitedDeviceChanged?.Invoke( this ); } finally { _backgroundSceneLimitedDevice.EndSet(); } } }
+			set { if( _backgroundSceneLimitedDevice.BeginSet( this, ref value ) ) { try { BackgroundSceneLimitedDeviceChanged?.Invoke( this ); } finally { _backgroundSceneLimitedDevice.EndSet(); } } }
 		}
 		public event Action<MainMenuScreen> BackgroundSceneLimitedDeviceChanged;
 		ReferenceField<ReferenceValueType_Resource> _backgroundSceneLimitedDevice;
@@ -242,7 +242,8 @@ namespace Project
 					SoundWorld.SetListenerReset();
 
 				// Scene simulation.
-				scene?.HierarchyController?.PerformSimulationSteps();
+				if( SimulationApp.Simulate )
+					scene?.HierarchyController?.PerformSimulationSteps();
 				ParentRoot.HierarchyController?.PerformSimulationSteps();
 
 				if( !firstRender )
@@ -254,7 +255,7 @@ namespace Project
 					GetButtonMultiplayerCreate().ReadOnly = SystemSettings.CurrentPlatform != SystemSettings.Platform.Windows;
 				}
 				if( GetButtonMultiplayerJoin() != null )
-					GetButtonMultiplayerJoin().ReadOnly = SystemSettings.CurrentPlatform != SystemSettings.Platform.Windows;
+					GetButtonMultiplayerJoin().ReadOnly = SystemSettings.CurrentPlatform != SystemSettings.Platform.Windows && SystemSettings.CurrentPlatform != SystemSettings.Platform.Android;
 			}
 		}
 

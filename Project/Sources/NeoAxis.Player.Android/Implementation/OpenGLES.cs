@@ -1,34 +1,29 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #if OPENGLES
-
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using Android.App;
-using Android.Content;
 using Android.Opengl;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using Java.Nio;
 using Javax.Microedition.Khronos.Opengles;
 
 namespace NeoAxis.Player.Android
 {
-	class Renderer : Java.Lang.Object, GLSurfaceView.IRenderer
+	public class RendererClass : Java.Lang.Object, GLSurfaceView.IRenderer
 	{
 		volatile bool surfaceResized;
 
-		//bool needRestartEngine;
+		//!!!!better to recreate gpu resources, but harder
+		//restart app after surface recreate
+		public bool needRestartEngine;
 
 		/////////////////////////////////////////
 
 		public void OnSurfaceCreated( IGL10 gl, Javax.Microedition.Khronos.Egl.EGLConfig config )
 		{
-			//needRestartEngine = true;
+			Log.InvisibleInfo( "Renderer: OnSurfaceCreated." );
+
+			if( Engine.engineInitialized )
+				needRestartEngine = true;
 		}
 
 		public void OnSurfaceChanged( IGL10 gl, int width, int height )
@@ -39,23 +34,24 @@ namespace NeoAxis.Player.Android
 
 		public void OnDrawFrame( IGL10 gl )
 		{
-			////restart engine
-			//if( needRestartEngine )
-			//{
-			//	if( Engine.engineInitialized )
-			//	{
-			//		//!!!!restart event
+			//restart app after surface recreate
+			if( needRestartEngine )
+			{
+				needRestartEngine = false;
 
-			//		//UI thread can be changed when initially app ran with disabled screen. update it.
-			//		VirtualFileSystem.SetMainThread( Thread.CurrentThread );
+				if( Engine.engineInitialized )
+				{
+					Engine.activity.RestartApp();
+					return;
 
-			//		Engine.ShutdownEngine();
+					////UI thread can be changed when initially app ran with disabled screen. update it.
+					//VirtualFileSystem.SetMainThread( Thread.CurrentThread );
 
-			//		Engine.engineInitialized = false;
-			//	}
+					//Engine.ShutdownEngine();
 
-			//	needRestartEngine = false;
-			//}
+					//Engine.engineInitialized = false;
+				}
+			}
 
 			//init engine
 			if( !Engine.engineInitialized )
@@ -83,16 +79,18 @@ namespace NeoAxis.Player.Android
 			}
 
 			//process input
-			Engine.ProcessTouchEvents();
+			Engine.ProcessInputEvents();
+			Engine.activity.UpdateSoftInput();
 
 			//engine tick and render
 			EngineApp.CreatedWindowApplicationIdle( false );
 
+			//update screen settings
+			Engine.activity.UpdateScreenOrientation();
+
 			if( EngineApp.NeedExit )
 				Java.Lang.JavaSystem.Exit( 0 );
-
 		}
 	}
 }
-
 #endif

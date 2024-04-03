@@ -23,7 +23,7 @@ namespace NeoAxis
 		public Reference<double> Time
 		{
 			get { if( _time.BeginGet() ) Time = _time.Get( this ); return _time.value; }
-			set { if( _time.BeginSet( ref value ) ) { try { TimeChanged?.Invoke( this ); DataWasChanged(); } finally { _time.EndSet(); } } }
+			set { if( _time.BeginSet( this, ref value ) ) { try { TimeChanged?.Invoke( this ); DataWasChanged(); } finally { _time.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Time"/> property value changes.</summary>
 		public event Action<CurveInSpacePoint> TimeChanged;
@@ -34,7 +34,7 @@ namespace NeoAxis
 		public Reference<double> RoundedLineCurvatureRadius
 		{
 			get { if( _roundedLineCurvatureRadius.BeginGet() ) RoundedLineCurvatureRadius = _roundedLineCurvatureRadius.Get( this ); return _roundedLineCurvatureRadius.value; }
-			set { if( _roundedLineCurvatureRadius.BeginSet( ref value ) ) { try { RoundedLineCurvatureRadiusChanged?.Invoke( this ); DataWasChanged(); } finally { _roundedLineCurvatureRadius.EndSet(); } } }
+			set { if( _roundedLineCurvatureRadius.BeginSet( this, ref value ) ) { try { RoundedLineCurvatureRadiusChanged?.Invoke( this ); DataWasChanged(); } finally { _roundedLineCurvatureRadius.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RoundedLineCurvatureRadius"/> property value changes.</summary>
 		public event Action<CurveInSpacePoint> RoundedLineCurvatureRadiusChanged;

@@ -616,9 +616,6 @@
     <ClCompile Include="Jolt\ObjectStream\TypeDeclarations.cpp">
       <Filter>Physics\Jolt</Filter>
     </ClCompile>
-    <ClCompile Include="Jolt\Math\UVec4.cpp">
-      <Filter>Physics\Jolt</Filter>
-    </ClCompile>
     <ClCompile Include="Jolt\Math\Vec3.cpp">
       <Filter>Physics\Jolt</Filter>
     </ClCompile>
@@ -663,6 +660,36 @@
     </ClCompile>
     <ClCompile Include="Jolt\Physics\LargeIslandSplitter.cpp">
       <Filter>Physics\Jolt</Filter>
+    </ClCompile>
+    <ClCompile Include="Jolt\Physics\Constraints\SpringSettings.cpp">
+      <Filter>Physics\Jolt</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleTrayIcon\dllapi.cpp">
+      <Filter>SimpleTrayIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleTrayIcon\dllmain.cpp">
+      <Filter>SimpleTrayIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleTrayIcon\MyTrayMenu.cpp">
+      <Filter>SimpleTrayIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleTrayIcon\TrayIcon.cpp">
+      <Filter>SimpleTrayIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleTrayIcon\TrayIconManager.cpp">
+      <Filter>SimpleTrayIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleTrayIcon\TrayMenuItem.cpp">
+      <Filter>SimpleTrayIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleTrayIcon\TrayMenuItemBase.cpp">
+      <Filter>SimpleTrayIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleTrayIcon\TrayMenuPopup.cpp">
+      <Filter>SimpleTrayIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleTrayIcon\TrayMenuSeparator.cpp">
+      <Filter>SimpleTrayIcon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1878,6 +1905,42 @@
     <ClInclude Include="Jolt\Physics\LargeIslandSplitter.h">
       <Filter>Physics\Jolt</Filter>
     </ClInclude>
+    <ClInclude Include="Jolt\Physics\Constraints\SpringSettings.h">
+      <Filter>Physics\Jolt</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTrayIcon\dllapi.h">
+      <Filter>SimpleTrayIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTrayIcon\framework.h">
+      <Filter>SimpleTrayIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTrayIcon\MyTrayMenu.h">
+      <Filter>SimpleTrayIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTrayIcon\pch.h">
+      <Filter>SimpleTrayIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTrayIcon\TrayIcon.h">
+      <Filter>SimpleTrayIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTrayIcon\TrayIconManager.h">
+      <Filter>SimpleTrayIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTrayIcon\TrayMenuItem.h">
+      <Filter>SimpleTrayIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTrayIcon\TrayMenuItemBase.h">
+      <Filter>SimpleTrayIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTrayIcon\TrayMenuPopup.h">
+      <Filter>SimpleTrayIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTrayIcon\TrayMenuSeparator.h">
+      <Filter>SimpleTrayIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTrayIcon\Win32Exception.h">
+      <Filter>SimpleTrayIcon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MemoryManager">
@@ -1909,6 +1972,9 @@
     </Filter>
     <Filter Include="Physics\Jolt">
       <UniqueIdentifier>{e2c96eed-a0d3-4b45-91d2-d9685a99d107}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SimpleTrayIcon">
+      <UniqueIdentifier>{74e69e42-6b88-4181-96c0-e6a7dd16c51d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

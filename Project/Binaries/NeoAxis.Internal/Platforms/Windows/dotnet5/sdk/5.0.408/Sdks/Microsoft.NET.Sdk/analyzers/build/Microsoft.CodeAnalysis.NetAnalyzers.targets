@@ -1,0 +1,62 @@
+<Project>
+  <Target Name="AddGlobalAnalyzerConfigForPackage_MicrosoftCodeAnalysisNetAnalyzers" BeforeTargets="CoreCompile" Condition="'$(SkipGlobalAnalyzerConfigForPackage)' != 'true'">
+    <!-- PropertyGroup to compute global analyzer config file to be used -->
+    <PropertyGroup>
+      <!-- Default 'MicrosoftCodeAnalysisNetAnalyzersRulesVersion' to 'EffectiveAnalysisLevel' with trimmed trailing '.0' -->
+      <MicrosoftCodeAnalysisNetAnalyzersRulesVersion Condition="'$(MicrosoftCodeAnalysisNetAnalyzersRulesVersion)' == '' and $(EffectiveAnalysisLevel) != ''">$([System.Text.RegularExpressions.Regex]::Replace($(EffectiveAnalysisLevel), '(.0)*$', ''))</MicrosoftCodeAnalysisNetAnalyzersRulesVersion>
+
+      <!-- Set the default analysis mode, if not set by the user -->
+      <_GlobalAnalyzerConfigAnalysisMode_MicrosoftCodeAnalysisNetAnalyzers>$(AnalysisMode)</_GlobalAnalyzerConfigAnalysisMode_MicrosoftCodeAnalysisNetAnalyzers>
+      <_GlobalAnalyzerConfigAnalysisMode_MicrosoftCodeAnalysisNetAnalyzers Condition="'$(_GlobalAnalyzerConfigAnalysisMode_MicrosoftCodeAnalysisNetAnalyzers)' == ''">Default</_GlobalAnalyzerConfigAnalysisMode_MicrosoftCodeAnalysisNetAnalyzers>
+
+      <!-- GlobalAnalyzerConfig file name based on user specified package version 'MicrosoftCodeAnalysisNetAnalyzersRulesVersion', if any. We replace '.' with '_' to map the version string to file name suffix. -->
+      <_GlobalAnalyzerConfigFileName_MicrosoftCodeAnalysisNetAnalyzers Condition="'$(MicrosoftCodeAnalysisNetAnalyzersRulesVersion)' != ''">AnalysisLevel_$(MicrosoftCodeAnalysisNetAnalyzersRulesVersion.Replace(".","_"))_$(_GlobalAnalyzerConfigAnalysisMode_MicrosoftCodeAnalysisNetAnalyzers).editorconfig</_GlobalAnalyzerConfigFileName_MicrosoftCodeAnalysisNetAnalyzers>
+      
+      <_GlobalAnalyzerConfigDir_MicrosoftCodeAnalysisNetAnalyzers Condition="'$(_GlobalAnalyzerConfigDir_MicrosoftCodeAnalysisNetAnalyzers)' == ''">$(MSBuildThisFileDirectory)config</_GlobalAnalyzerConfigDir_MicrosoftCodeAnalysisNetAnalyzers>
+      <_GlobalAnalyzerConfigFile_MicrosoftCodeAnalysisNetAnalyzers Condition="'$(_GlobalAnalyzerConfigFileName_MicrosoftCodeAnalysisNetAnalyzers)' != ''">$(_GlobalAnalyzerConfigDir_MicrosoftCodeAnalysisNetAnalyzers)\$(_GlobalAnalyzerConfigFileName_MicrosoftCodeAnalysisNetAnalyzers)</_GlobalAnalyzerConfigFile_MicrosoftCodeAnalysisNetAnalyzers>
+    </PropertyGroup>
+
+    <ItemGroup Condition="Exists('$(_GlobalAnalyzerConfigFile_MicrosoftCodeAnalysisNetAnalyzers)')">
+      <EditorConfigFiles Include="$(_GlobalAnalyzerConfigFile_MicrosoftCodeAnalysisNetAnalyzers)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- MSBuild properties to thread to the analyzers as options --> 
+  <ItemGroup>
+    <CompilerVisibleProperty Include="TargetFramework" />
+    <CompilerVisibleProperty Include="TargetPlatformMinVersion" />
+    <CompilerVisibleProperty Include="UsingMicrosoftNETSdkWeb" />
+    <CompilerVisibleProperty Include="ProjectTypeGuids" />
+    <CompilerVisibleProperty Include="PublishSingleFile" />
+    <CompilerVisibleProperty Include="IncludeAllContentForSelfExtract" />
+  </ItemGroup>
+
+  <!-- MSBuild item metadata to thread to the analyzers as options -->
+  <PropertyGroup>
+    <_SupportedPlatformList>@(SupportedPlatform, ',')</_SupportedPlatformList>
+  </PropertyGroup>
+
+  <!-- MSBuild properties to thread to the analyzers as options --> 
+  <ItemGroup>
+    <CompilerVisibleProperty Include="_SupportedPlatformList" />
+  </ItemGroup>
+
+  <!--
+    Design-time target to prevent the rule ids implemented in this package to be bumped to errors in the IDE
+    when 'CodeAnalysisTreatWarningsAsErrors' = 'false'. Note that a similar 'WarningsNotAsErrors'
+    property group is present in the generated props file to ensure this functionality on command line builds.
+  -->
+  <Target Name="_CodeAnalysisTreatWarningsNotAsErrors" BeforeTargets="CoreCompile" Condition="'$(CodeAnalysisTreatWarningsAsErrors)' == 'false' AND ('$(DesignTimeBuild)' == 'true' OR '$(BuildingProject)' != 'true')">
+    <PropertyGroup>
+      <WarningsNotAsErrors>$(WarningsNotAsErrors);$(CodeAnalysisRuleIds)</WarningsNotAsErrors>
+    </PropertyGroup>    
+  </Target>
+
+  <!-- Target to report a warning when SDK NetAnalyzers version is higher then the referenced NuGet NetAnalyzers version -->
+  <Target Name="_ReportUpgradeNetAnalyzersNuGetWarning" BeforeTargets="CoreCompile" Condition="'$(_SkipUpgradeNetAnalyzersNuGetWarning)' != 'true' ">
+    <Warning Text ="The .NET SDK has newer analyzers with version '$(_NETAnalyzersSDKAssemblyVersion)' then what is provided by version '$(_NETAnalyzersNuGetAssemblyVersion)' of 'Microsoft.CodeAnalysis.NetAnalyzers' package. Update or remove this package reference."
+             Condition="'$(_NETAnalyzersNuGetAssemblyVersion)' != '' AND
+                         '$(_NETAnalyzersSDKAssemblyVersion)' != '' AND
+                          $(_NETAnalyzersNuGetAssemblyVersion) &lt; $(_NETAnalyzersSDKAssemblyVersion)"/>
+  </Target>
+</Project>

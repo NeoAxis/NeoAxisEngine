@@ -1535,5 +1535,30 @@ namespace NeoAxis
 			rotationMat3.ToQuaternion( out rotation );
 			return true;
 		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void DecomposeScale( out Vector3 result )
+		{
+			ToMatrix3( out Matrix3 rotationMat3 );
+			rotationMat3.DecomposeScale( out result );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public Vector3 DecomposeScale()
+		{
+			DecomposeScale( out var result );
+			return result;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public double DecomposeScaleMaxComponent()
+		{
+			var scaleSquared = new Vector3(
+				Item0.X * Item0.X + Item0.Y * Item0.Y + Item0.Z * Item0.Z,
+				Item1.X * Item1.X + Item1.Y * Item1.Y + Item1.Z * Item1.Z,
+				Item2.X * Item2.X + Item2.Y * Item2.Y + Item2.Z * Item2.Z );
+
+			return MathEx.Sqrt( scaleSquared.MaxComponent() );
+		}
 	}
 }

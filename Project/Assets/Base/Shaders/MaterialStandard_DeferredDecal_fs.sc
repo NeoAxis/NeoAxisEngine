@@ -4,17 +4,18 @@ $input v_texCoord01, v_worldPosition_depth, v_worldNormal_materialIndex, v_tange
 #define DEFERRED_DECAL 1
 #include "Common.sh"
 #include "UniformsFragment.sh"
-#include "FragmentFunctions.sh"
 
-uniform vec4 u_renderOperationData[7];
+uniform vec4 u_renderOperationData[8];
 uniform vec4 u_materialCustomParameters[2];
+uniform vec4 u_objectInstanceParameters[2];
 SAMPLER2D(s_materials, 1);
 /*
 #if defined(GLOBAL_VIRTUALIZED_GEOMETRY) && defined(VIRTUALIZED)
 	SAMPLER2D(s_virtualizedData, 11);
 #endif
 */
-SAMPLER2D(s_linearSamplerFragment, 10);
+SAMPLER2D(s_linearSamplerFragment, 9);
+//SAMPLER2D(s_linearSamplerFragment, 10);
 
 uniform mat4 u_decalMatrix;
 uniform vec4 u_decalNormalTangent[2];
@@ -33,6 +34,9 @@ SAMPLER2D(s_gBuffer5TextureCopy, 6);
 #ifdef MATERIAL_INDEX_CODE_PARAMETERS
 	MATERIAL_INDEX_CODE_PARAMETERS
 #endif
+#ifdef OPACITY_CODE_PARAMETERS
+	OPACITY_CODE_PARAMETERS
+#endif
 
 #ifdef DISPLACEMENT_CODE_SAMPLERS
 	DISPLACEMENT_CODE_SAMPLERS
@@ -42,6 +46,9 @@ SAMPLER2D(s_gBuffer5TextureCopy, 6);
 #endif
 #ifdef MATERIAL_INDEX_CODE_SAMPLERS
 	MATERIAL_INDEX_CODE_SAMPLERS
+#endif
+#ifdef OPACITY_CODE_SAMPLERS
+	OPACITY_CODE_SAMPLERS
 #endif
 
 #ifdef DISPLACEMENT_CODE_SHADER_SCRIPTS
@@ -56,11 +63,17 @@ SAMPLER2D(s_gBuffer5TextureCopy, 6);
 #ifdef MATERIAL_INDEX_CODE_SHADER_SCRIPTS
 	MATERIAL_INDEX_CODE_SHADER_SCRIPTS
 #endif
+#ifdef OPACITY_CODE_SHADER_SCRIPTS
+	OPACITY_CODE_SHADER_SCRIPTS
+#endif
 
 #ifdef MULTI_MATERIAL_COMBINED_PASS
 	uniform vec4 u_multiMaterialCombinedInfo;
 	uniform vec4 u_multiMaterialCombinedMaterials[4];
 #endif
+
+#include "FragmentFunctions.sh"
+#include "FragmentVoxel.sh"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -70,7 +83,8 @@ void main()
 	
 	vec2 screenPosition = fragCoord.xy * u_viewTexel.xy;
 	float rawDepth = texture2D(s_depthTexture, screenPosition).r;
-	vec3 worldPosition = reconstructWorldPosition(u_invViewProj, screenPosition, rawDepth);
+	vec3 worldPosition = reconstructWorldPosition(u_viewportOwnerViewInverse, u_viewportOwnerProjectionInverse, screenPosition, rawDepth);
+	//vec3 worldPosition = reconstructWorldPosition(u_invViewProj, screenPosition, rawDepth);
 
 	if( cutVolumes( worldPosition ) )
 		discard;
@@ -138,32 +152,30 @@ void main()
 
 	//multi material
 #ifdef MATERIAL_INDEX_CODE_BODY
-	#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(makeSampler(s_linearSamplerFragment, _sampler), _uv, 0, 0)
-	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_mipBias)
+	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_removeTextureTiling, u_mipBias)
 	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_mipBias)
 	{
 		MATERIAL_INDEX_CODE_BODY
 	}
-	#undef CODE_BODY_TEXTURE2D_MASK_OPACITY
 	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 	#undef CODE_BODY_TEXTURE2D
 #endif
 
 	//get material data
-	uint frameMaterialIndex = uint( u_renderOperationData[ 0 ].x );
+	int frameMaterialIndex = int( u_renderOperationData[ 0 ].x );
 #ifdef MULTI_MATERIAL_COMBINED_PASS
 	uint localGroupMaterialIndex = uint( materialIndex ) - uint( u_multiMaterialCombinedInfo.x );
 	BRANCH
 	if( localGroupMaterialIndex < 0 || localGroupMaterialIndex >= uint( u_multiMaterialCombinedInfo.y ) )
 		discard;
-	frameMaterialIndex = uint( u_multiMaterialCombinedMaterials[ localGroupMaterialIndex / 4 ][ localGroupMaterialIndex % 4 ] );
+	frameMaterialIndex = int( u_multiMaterialCombinedMaterials[ localGroupMaterialIndex / 4 ][ localGroupMaterialIndex % 4 ] );
 #endif
-	vec4 materialStandardFragment[ MATERIAL_STANDARD_FRAGMENT_SIZE ];
-	getMaterialData( s_materials, frameMaterialIndex, materialStandardFragment );
+	//vec4 materialStandardFragment[ MATERIAL_STANDARD_FRAGMENT_SIZE ];
+	//getMaterialData( s_materials, frameMaterialIndex, materialStandardFragment );
 
 	//multi material
 #ifdef MULTI_MATERIAL_SEPARATE_PASS
-	if(materialIndex != u_materialMultiSubMaterialSeparatePassIndex)
+	if( materialIndex != u_materialMultiSubMaterialSeparatePassIndex )
 		discard;
 #endif
 	
@@ -207,10 +219,12 @@ void main()
 	vec3 sheenColor = u_materialSheenColor;
 	vec3 subsurfaceColor = u_materialSubsurfaceColor;
 	float ambientOcclusion = 1;
-	float rayTracingReflection = u_materialRayTracingReflection;
+	//float rayTracingReflection = u_materialRayTracingReflection;
 	vec3 emissive = u_materialEmissive;
 	vec4 customParameter1 = u_materialCustomParameters[0];
 	vec4 customParameter2 = u_materialCustomParameters[1];
+	vec4 instanceParameter1 = u_objectInstanceParameters[0];
+	vec4 instanceParameter2 = u_objectInstanceParameters[1];
 
 	vec2 texCoord0BeforeDisplacement = texCoord0;
 	vec2 texCoord1BeforeDisplacement = texCoord1;
@@ -230,13 +244,21 @@ void main()
 #endif
 	
 #ifdef FRAGMENT_CODE_BODY
-	#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_renderOperationData[3].z, 0/*gl_PrimitiveID*/)
-	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_removeTextureTiling)
+	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_removeTextureTiling, u_mipBias)
 	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_mipBias)
 	{
 		FRAGMENT_CODE_BODY
 	}
-	#undef CODE_BODY_TEXTURE2D_MASK_OPACITY
+	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
+	#undef CODE_BODY_TEXTURE2D
+#endif
+
+#ifdef OPACITY_CODE_BODY
+	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_removeTextureTiling, u_mipBias)
+	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_mipBias)
+	{
+		OPACITY_CODE_BODY
+	}
 	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 	#undef CODE_BODY_TEXTURE2D
 #endif
@@ -297,13 +319,14 @@ void main()
 #endif
 
 
-#ifndef SHADING_MODEL_SUBSURFACE
+#if !defined(SHADING_MODEL_SUBSURFACE) && !defined(SHADING_MODEL_FOLIAGE) //#ifndef SHADING_MODEL_SUBSURFACE
 	thickness = 0;
 	subsurfacePower = 0;
 	subsurfaceColor = vec3_splat(0);
 #endif
+
 #ifdef MULTI_MATERIAL_COMBINED_PASS
-	if(shadingModel != 1)//Subsurface
+	if(shadingModel != 1 && shadingModel != 2)//Subsurface, Foliage
 	{
 		thickness = 0;
 		subsurfacePower = 0;
@@ -316,16 +339,16 @@ void main()
 	metallic = 0;
 	roughness = 0;
 	ambientOcclusion = 0;
-	rayTracingReflection = 0;
+	//rayTracingReflection = 0;
 #endif
 #ifdef MULTI_MATERIAL_COMBINED_PASS
-	if(shadingModel == 3)//Simple
+	if(shadingModel == 4)//3)//Simple
 	{
 		reflectance = 0;
 		metallic = 0;
 		roughness = 0;
 		ambientOcclusion = 0;
-		rayTracingReflection = 0;
+		//rayTracingReflection = 0;
 	}
 #endif
 
@@ -333,8 +356,8 @@ void main()
 	
 	gl_FragData[0] = encodeRGBE8(baseColor);
 	gl_FragData[1] = vec4(normal * 0.5 + 0.5, reflectance);
-	gl_FragData[2] = vec4(metallic, roughness, ambientOcclusion, rayTracingReflection);
-#ifdef SHADING_MODEL_SUBSURFACE
+	gl_FragData[2] = vec4(metallic, roughness, ambientOcclusion, 0/*rayTracingReflection*/);
+#if defined(SHADING_MODEL_SUBSURFACE) || defined(SHADING_MODEL_FOLIAGE)
 	gl_FragData[3] = encodeRGBE8(subsurfaceColor);
 #else
 	gl_FragData[3] = encodeRGBE8(emissive);

@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 Copyright (c) 2019 bzt
 
 All rights reserved.
@@ -47,7 +47,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define M3D_EXPORTER
 #ifndef ASSIMP_BUILD_NO_M3D_IMPORTER
 #define M3D_NODUP
-#endif
+
 
 // Header files, standard library.
 #include <memory> // shared_ptr
@@ -76,7 +76,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * Currently supports static meshes, vertex colors, materials, textures
  *
  * For animation, it would require the following conversions:
- *  - aiNode (bones) -> m3d_t.bone (with parent id, position vector and oriantation quaternion)
+ *  - aiNode (bones) -> m3d_t.bone (with parent id, position vector and orientation quaternion)
  *  - aiMesh.aiBone -> m3d_t.skin (per vertex, with bone id, weight pairs)
  *  - aiAnimation -> m3d_action (frame with timestamp and list of bone id, position, orientation
  *      triplets, instead of per bone timestamp + lists)
@@ -181,7 +181,7 @@ M3D_INDEX addMaterial(const Assimp::M3DWrapper &m3d, const aiMaterial *mat) {
             }
             m3d->material[mi].name = SafeStr(name, true);
             m3d->material[mi].numprop = 0;
-            m3d->material[mi].prop = NULL;
+            m3d->material[mi].prop = nullptr;
             // iterate through the material property table and see what we got
             for (k = 0; k < 15; k++) {
                 unsigned int j;
@@ -197,12 +197,15 @@ M3D_INDEX addMaterial(const Assimp::M3DWrapper &m3d, const aiMaterial *mat) {
                         break;
                     case m3dpf_float:
                         if (mat->Get(aiProps[k].pKey, aiProps[k].type,
-                                    aiProps[k].index, f) == AI_SUCCESS)
+                                    aiProps[k].index, f) == AI_SUCCESS) {
+                            uint32_t f_uint32;
+                            memcpy(&f_uint32, &f, sizeof(uint32_t));
                             addProp(&m3d->material[mi],
                                     m3d_propertytypes[k].id,
                                     /* not (uint32_t)f, because we don't want to convert
                                          * it, we want to see it as 32 bits of memory */
-                                    *((uint32_t *)&f));
+                                    f_uint32);
+                        }
                         break;
                     case m3dpf_uint8:
                         if (mat->Get(aiProps[k].pKey, aiProps[k].type,
@@ -229,8 +232,8 @@ M3D_INDEX addMaterial(const Assimp::M3DWrapper &m3d, const aiMaterial *mat) {
                 }
                 if (aiTxProps[k].pKey &&
                         mat->GetTexture((aiTextureType)aiTxProps[k].type,
-                                aiTxProps[k].index, &name, NULL, NULL, NULL,
-                                NULL, NULL) == AI_SUCCESS) {
+                                aiTxProps[k].index, &name, nullptr, nullptr, nullptr,
+                                nullptr, nullptr) == AI_SUCCESS) {
                     unsigned int i;
                     for (j = name.length - 1; j > 0 && name.data[j] != '.'; j++)
                         ;
@@ -259,7 +262,7 @@ M3D_INDEX addMaterial(const Assimp::M3DWrapper &m3d, const aiMaterial *mat) {
                         m3d->texture[i].name = fn;
                         m3d->texture[i].w = 0;
                         m3d->texture[i].h = 0;
-                        m3d->texture[i].d = NULL;
+                        m3d->texture[i].d = nullptr;
                     }
                     addProp(&m3d->material[mi],
                             m3d_propertytypes[k].id + 128, i);
@@ -291,21 +294,17 @@ void ExportSceneM3D(
 // Worker function for exporting a scene to ASCII A3D.
 // Prototyped and registered in Exporter.cpp
 void ExportSceneM3DA(
-        const char *,
-        IOSystem *,
-        const aiScene *,
-        const ExportProperties *
+        const char *pFile,
+        IOSystem *pIOSystem,
+        const aiScene *pScene,
+        const ExportProperties *pProperties
 
 ) {
-#ifdef M3D_ASCII
     // initialize the exporter
     M3DExporter exporter(pScene, pProperties);
 
     // perform ascii export
     exporter.doExport(pFile, pIOSystem, true);
-#else
-    throw DeadlyExportError("Assimp configured without M3D_ASCII support");
-#endif
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -438,6 +437,6 @@ void M3DExporter::NodeWalk(const M3DWrapper &m3d, const aiNode *pNode, aiMatrix4
     }
 }
 } // namespace Assimp
-
+#endif
 #endif // ASSIMP_BUILD_NO_M3D_EXPORTER
 #endif // ASSIMP_BUILD_NO_EXPORT

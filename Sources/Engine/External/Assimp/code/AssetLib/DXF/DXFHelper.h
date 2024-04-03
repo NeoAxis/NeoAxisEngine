@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 
 All rights reserved.
@@ -65,7 +65,6 @@ public:
     LineReader(StreamReaderLE& reader)
     : splitter(reader,false,true)
     , groupcode( 0 )
-    , value()
     , end() {
         // empty
     }
@@ -135,7 +134,7 @@ public:
                 for(;splitter->length() && splitter->at(0) != '}'; splitter++, cnt++);
 
                 splitter++;
-                ASSIMP_LOG_VERBOSE_DEBUG((Formatter::format("DXF: skipped over control group ("),cnt," lines)"));
+                ASSIMP_LOG_VERBOSE_DEBUG("DXF: skipped over control group (",cnt," lines)");
             }
         } catch(std::logic_error&) {
             ai_assert(!splitter);
@@ -186,8 +185,7 @@ struct InsertBlock {
     InsertBlock()
     : pos()
     , scale(1.f,1.f,1.f)
-    , angle()
-    , name() {
+    , angle() {
         // empty
     }
 

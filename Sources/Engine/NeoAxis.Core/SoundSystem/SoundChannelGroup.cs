@@ -56,17 +56,17 @@ namespace NeoAxis
 					SoundVirtualChannel[] channels;
 
 					channels = SoundWorld.activeVirtual2DChannels.ToArray();
-					foreach( SoundVirtualChannel virtualChannel in channels )
+					foreach( var virtualChannel in channels )
 					{
-						SoundRealChannel realChannel = virtualChannel.CurrentRealChannel;
+						var realChannel = virtualChannel.CurrentRealChannel;
 						if( realChannel != null && virtualChannel.IsUsingGroup( this ) )
 							realChannel.UpdateVolume();
 					}
 
 					channels = SoundWorld.activeVirtual3DChannels.ToArray();
-					foreach( SoundVirtualChannel virtualChannel in channels )
+					foreach( var virtualChannel in channels )
 					{
-						SoundRealChannel realChannel = virtualChannel.CurrentRealChannel;
+						var realChannel = virtualChannel.CurrentRealChannel;
 						if( realChannel != null && virtualChannel.IsUsingGroup( this ) )
 							realChannel.UpdateVolume();
 					}
@@ -87,17 +87,17 @@ namespace NeoAxis
 					SoundVirtualChannel[] channels;
 
 					channels = SoundWorld.activeVirtual2DChannels.ToArray();
-					foreach( SoundVirtualChannel virtualChannel in channels )
+					foreach( var virtualChannel in channels )
 					{
-						SoundRealChannel realChannel = virtualChannel.CurrentRealChannel;
+						var realChannel = virtualChannel.CurrentRealChannel;
 						if( realChannel != null && virtualChannel.IsUsingGroup( this ) )
 							realChannel.UpdatePitch();
 					}
 
 					channels = SoundWorld.activeVirtual3DChannels.ToArray();
-					foreach( SoundVirtualChannel virtualChannel in channels )
+					foreach( var virtualChannel in channels )
 					{
-						SoundRealChannel realChannel = virtualChannel.CurrentRealChannel;
+						var realChannel = virtualChannel.CurrentRealChannel;
 						if( realChannel != null && virtualChannel.IsUsingGroup( this ) )
 							realChannel.UpdatePitch();
 					}
@@ -119,14 +119,14 @@ namespace NeoAxis
 					SoundVirtualChannel[] channels;
 
 					channels = SoundWorld.activeVirtual2DChannels.ToArray();
-					foreach( SoundVirtualChannel virtualChannel in channels )
+					foreach( var virtualChannel in channels )
 					{
 						if( virtualChannel.IsUsingGroup( this ) )
 							SoundWorld.Internal_Instance.OnVirtualChannelUpdatePause( virtualChannel );
 					}
 
 					channels = SoundWorld.activeVirtual3DChannels.ToArray();
-					foreach( SoundVirtualChannel virtualChannel in channels )
+					foreach( var virtualChannel in channels )
 					{
 						if( virtualChannel.IsUsingGroup( this ) )
 							SoundWorld.Internal_Instance.OnVirtualChannelUpdatePause( virtualChannel );

@@ -18,12 +18,12 @@ namespace NeoAxis
 		[DefaultValue( "Text" )]
 		[Category( "Text" )]
 #if !DEPLOY
-		[Editor( typeof( Editor.HCItemTextBoxDropMultiline ), typeof( object ) )]
+		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
 #endif
 		public Reference<string> Text
 		{
 			get { if( _text.BeginGet() ) Text = _text.Get( this ); return _text.value; }
-			set { if( _text.BeginSet( ref value ) ) { try { TextChanged?.Invoke( this ); } finally { _text.EndSet(); } } }
+			set { if( _text.BeginSet( this, ref value ) ) { try { TextChanged?.Invoke( this ); } finally { _text.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Text"/> property value changes.</summary>
 		public event Action<Text2D> TextChanged;
@@ -37,7 +37,7 @@ namespace NeoAxis
 		public Reference<bool> Multiline
 		{
 			get { if( _multiline.BeginGet() ) Multiline = _multiline.Get( this ); return _multiline.value; }
-			set { if( _multiline.BeginSet( ref value ) ) { try { MultilineChanged?.Invoke( this ); } finally { _multiline.EndSet(); } } }
+			set { if( _multiline.BeginSet( this, ref value ) ) { try { MultilineChanged?.Invoke( this ); } finally { _multiline.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Multiline"/> property value changes.</summary>
 		public event Action<Text2D> MultilineChanged;
@@ -51,7 +51,7 @@ namespace NeoAxis
 		public Reference<EHorizontalAlignment> TextHorizontalAlignment
 		{
 			get { if( _textHorizontalAlignment.BeginGet() ) TextHorizontalAlignment = _textHorizontalAlignment.Get( this ); return _textHorizontalAlignment.value; }
-			set { if( _textHorizontalAlignment.BeginSet( ref value ) ) { try { TextHorizontalAlignmentChanged?.Invoke( this ); } finally { _textHorizontalAlignment.EndSet(); } } }
+			set { if( _textHorizontalAlignment.BeginSet( this, ref value ) ) { try { TextHorizontalAlignmentChanged?.Invoke( this ); } finally { _textHorizontalAlignment.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TextHorizontalAlignment"/> property value changes.</summary>
 		public event Action<Text2D> TextHorizontalAlignmentChanged;
@@ -65,7 +65,7 @@ namespace NeoAxis
 		public Reference<UIMeasureValueDouble> VerticalIndention
 		{
 			get { if( _verticalIndention.BeginGet() ) VerticalIndention = _verticalIndention.Get( this ); return _verticalIndention.value; }
-			set { if( _verticalIndention.BeginSet( ref value ) ) { try { VerticalIndentionChanged?.Invoke( this ); } finally { _verticalIndention.EndSet(); } } }
+			set { if( _verticalIndention.BeginSet( this, ref value ) ) { try { VerticalIndentionChanged?.Invoke( this ); } finally { _verticalIndention.EndSet(); } } }
 		}
 		public event Action<Text2D> VerticalIndentionChanged;
 		ReferenceField<UIMeasureValueDouble> _verticalIndention = new UIMeasureValueDouble( UIMeasure.Units, 0 );
@@ -78,7 +78,7 @@ namespace NeoAxis
 		public Reference<FontComponent> Font
 		{
 			get { if( _font.BeginGet() ) Font = _font.Get( this ); return _font.value; }
-			set { if( _font.BeginSet( ref value ) ) { try { FontChanged?.Invoke( this ); } finally { _font.EndSet(); } } }
+			set { if( _font.BeginSet( this, ref value ) ) { try { FontChanged?.Invoke( this ); } finally { _font.EndSet(); } } }
 		}
 		public event Action<Text2D> FontChanged;
 		ReferenceField<FontComponent> _font = null;
@@ -91,7 +91,7 @@ namespace NeoAxis
 		public Reference<UIMeasureValueDouble> FontSize
 		{
 			get { if( _fontSize.BeginGet() ) FontSize = _fontSize.Get( this ); return _fontSize.value; }
-			set { if( _fontSize.BeginSet( ref value ) ) { try { FontSizeChanged?.Invoke( this ); } finally { _fontSize.EndSet(); } } }
+			set { if( _fontSize.BeginSet( this, ref value ) ) { try { FontSizeChanged?.Invoke( this ); } finally { _fontSize.EndSet(); } } }
 		}
 		public event Action<Text2D> FontSizeChanged;
 		ReferenceField<UIMeasureValueDouble> _fontSize = new UIMeasureValueDouble( UIMeasure.Screen, 0.025 );
@@ -104,7 +104,7 @@ namespace NeoAxis
 		public Reference<ColorValue> Color
 		{
 			get { if( _color.BeginGet() ) Color = _color.Get( this ); return _color.value; }
-			set { if( _color.BeginSet( ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
+			set { if( _color.BeginSet( this, ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Color"/> property value changes.</summary>
 		public event Action<Text2D> ColorChanged;
@@ -118,7 +118,7 @@ namespace NeoAxis
 		public Reference<bool> PixelAlign
 		{
 			get { if( _pixelAlign.BeginGet() ) PixelAlign = _pixelAlign.Get( this ); return _pixelAlign.value; }
-			set { if( _pixelAlign.BeginSet( ref value ) ) { try { PixelAlignChanged?.Invoke( this ); } finally { _pixelAlign.EndSet(); } } }
+			set { if( _pixelAlign.BeginSet( this, ref value ) ) { try { PixelAlignChanged?.Invoke( this ); } finally { _pixelAlign.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PixelAlign"/> property value changes.</summary>
 		public event Action<Text2D> PixelAlignChanged;
@@ -132,7 +132,7 @@ namespace NeoAxis
 		public Reference<bool> Shadow
 		{
 			get { if( _shadow.BeginGet() ) Shadow = _shadow.Get( this ); return _shadow.value; }
-			set { if( _shadow.BeginSet( ref value ) ) { try { ShadowChanged?.Invoke( this ); } finally { _shadow.EndSet(); } } }
+			set { if( _shadow.BeginSet( this, ref value ) ) { try { ShadowChanged?.Invoke( this ); } finally { _shadow.EndSet(); } } }
 		}
 		public event Action<Text2D> ShadowChanged;
 		ReferenceField<bool> _shadow = true;
@@ -145,7 +145,7 @@ namespace NeoAxis
 		public Reference<UIMeasureValueVector2> ShadowOffset
 		{
 			get { if( _shadowOffset.BeginGet() ) ShadowOffset = _shadowOffset.Get( this ); return _shadowOffset.value; }
-			set { if( _shadowOffset.BeginSet( ref value ) ) { try { ShadowOffsetChanged?.Invoke( this ); } finally { _shadowOffset.EndSet(); } } }
+			set { if( _shadowOffset.BeginSet( this, ref value ) ) { try { ShadowOffsetChanged?.Invoke( this ); } finally { _shadowOffset.EndSet(); } } }
 		}
 		public event Action<Text2D> ShadowOffsetChanged;
 		ReferenceField<UIMeasureValueVector2> _shadowOffset = new UIMeasureValueVector2( UIMeasure.Pixels, 2, 2 );
@@ -158,7 +158,7 @@ namespace NeoAxis
 		public Reference<ColorValue> ShadowColor
 		{
 			get { if( _shadowColor.BeginGet() ) ShadowColor = _shadowColor.Get( this ); return _shadowColor.value; }
-			set { if( _shadowColor.BeginSet( ref value ) ) { try { ShadowColorChanged?.Invoke( this ); } finally { _shadowColor.EndSet(); } } }
+			set { if( _shadowColor.BeginSet( this, ref value ) ) { try { ShadowColorChanged?.Invoke( this ); } finally { _shadowColor.EndSet(); } } }
 		}
 		public event Action<Text2D> ShadowColorChanged;
 		ReferenceField<ColorValue> _shadowColor = new ColorValue( 0, 0, 0, 0.7 );
@@ -171,7 +171,7 @@ namespace NeoAxis
 		public Reference<bool> Back
 		{
 			get { if( _back.BeginGet() ) Back = _back.Get( this ); return _back.value; }
-			set { if( _back.BeginSet( ref value ) ) { try { BackChanged?.Invoke( this ); } finally { _back.EndSet(); } } }
+			set { if( _back.BeginSet( this, ref value ) ) { try { BackChanged?.Invoke( this ); } finally { _back.EndSet(); } } }
 		}
 		public event Action<Text2D> BackChanged;
 		ReferenceField<bool> _back = false;
@@ -184,7 +184,7 @@ namespace NeoAxis
 		public Reference<ColorValue> BackColor
 		{
 			get { if( _BackColor.BeginGet() ) BackColor = _BackColor.Get( this ); return _BackColor.value; }
-			set { if( _BackColor.BeginSet( ref value ) ) { try { BackColorChanged?.Invoke( this ); } finally { _BackColor.EndSet(); } } }
+			set { if( _BackColor.BeginSet( this, ref value ) ) { try { BackColorChanged?.Invoke( this ); } finally { _BackColor.EndSet(); } } }
 		}
 		public event Action<Text2D> BackColorChanged;
 		ReferenceField<ColorValue> _BackColor = new ColorValue( 0.7, 0.7, 0.7 );
@@ -204,7 +204,7 @@ namespace NeoAxis
 		public Reference<Vector2> BackSizeAdd
 		{
 			get { if( _backSizeAdd.BeginGet() ) BackSizeAdd = _backSizeAdd.Get( this ); return _backSizeAdd.value; }
-			set { if( _backSizeAdd.BeginSet( ref value ) ) { try { BackSizeAddChanged?.Invoke( this ); } finally { _backSizeAdd.EndSet(); } } }
+			set { if( _backSizeAdd.BeginSet( this, ref value ) ) { try { BackSizeAddChanged?.Invoke( this ); } finally { _backSizeAdd.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BackSizeAdd"/> property value changes.</summary>
 		public event Action<Text2D> BackSizeAddChanged;
@@ -218,7 +218,7 @@ namespace NeoAxis
 		public Reference<BackStyleEnum> BackStyle
 		{
 			get { if( _backStyle.BeginGet() ) BackStyle = _backStyle.Get( this ); return _backStyle.value; }
-			set { if( _backStyle.BeginSet( ref value ) ) { try { BackStyleChanged?.Invoke( this ); } finally { _backStyle.EndSet(); } } }
+			set { if( _backStyle.BeginSet( this, ref value ) ) { try { BackStyleChanged?.Invoke( this ); } finally { _backStyle.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BackStyle"/> property value changes.</summary>
 		public event Action<Text2D> BackStyleChanged;
@@ -232,7 +232,7 @@ namespace NeoAxis
 		public Reference<EHorizontalAlignment> HorizontalAlignment
 		{
 			get { if( _horizontalAlignment.BeginGet() ) HorizontalAlignment = _horizontalAlignment.Get( this ); return _horizontalAlignment.value; }
-			set { if( _horizontalAlignment.BeginSet( ref value ) ) { try { HorizontalAlignmentChanged?.Invoke( this ); } finally { _horizontalAlignment.EndSet(); } } }
+			set { if( _horizontalAlignment.BeginSet( this, ref value ) ) { try { HorizontalAlignmentChanged?.Invoke( this ); } finally { _horizontalAlignment.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HorizontalAlignment"/> property value changes.</summary>
 		public event Action<Text2D> HorizontalAlignmentChanged;
@@ -246,7 +246,7 @@ namespace NeoAxis
 		public Reference<EVerticalAlignment> VerticalAlignment
 		{
 			get { if( _verticalAlignment.BeginGet() ) VerticalAlignment = _verticalAlignment.Get( this ); return _verticalAlignment.value; }
-			set { if( _verticalAlignment.BeginSet( ref value ) ) { try { VerticalAlignmentChanged?.Invoke( this ); } finally { _verticalAlignment.EndSet(); } } }
+			set { if( _verticalAlignment.BeginSet( this, ref value ) ) { try { VerticalAlignmentChanged?.Invoke( this ); } finally { _verticalAlignment.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="VerticalAlignment"/> property value changes.</summary>
 		public event Action<Text2D> VerticalAlignmentChanged;
@@ -261,7 +261,7 @@ namespace NeoAxis
 		public Reference<double> VisibilityDistance
 		{
 			get { if( _visibilityDistance.BeginGet() ) VisibilityDistance = _visibilityDistance.Get( this ); return _visibilityDistance.value; }
-			set { if( _visibilityDistance.BeginSet( ref value ) ) { try { VisibilityDistanceChanged?.Invoke( this ); } finally { _visibilityDistance.EndSet(); } } }
+			set { if( _visibilityDistance.BeginSet( this, ref value ) ) { try { VisibilityDistanceChanged?.Invoke( this ); } finally { _visibilityDistance.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="VisibilityDistance"/> property value changes.</summary>
 		public event Action<Text2D> VisibilityDistanceChanged;
@@ -276,7 +276,7 @@ namespace NeoAxis
 		public Reference<double> BoundingRadius
 		{
 			get { if( _boundingRadius.BeginGet() ) BoundingRadius = _boundingRadius.Get( this ); return _boundingRadius.value; }
-			set { if( _boundingRadius.BeginSet( ref value ) ) { try { BoundingRadiusChanged?.Invoke( this ); SpaceBoundsUpdate(); } finally { _boundingRadius.EndSet(); } } }
+			set { if( _boundingRadius.BeginSet( this, ref value ) ) { try { BoundingRadiusChanged?.Invoke( this ); SpaceBoundsUpdate(); } finally { _boundingRadius.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BoundingRadius"/> property value changes.</summary>
 		public event Action<Text2D> BoundingRadiusChanged;
@@ -290,7 +290,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayInSimulation
 		{
 			get { if( _displayInSimulation.BeginGet() ) DisplayInSimulation = _displayInSimulation.Get( this ); return _displayInSimulation.value; }
-			set { if( _displayInSimulation.BeginSet( ref value ) ) { try { DisplayInSimulationChanged?.Invoke( this ); } finally { _displayInSimulation.EndSet(); } } }
+			set { if( _displayInSimulation.BeginSet( this, ref value ) ) { try { DisplayInSimulationChanged?.Invoke( this ); } finally { _displayInSimulation.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayInSimulation"/> property value changes.</summary>
 		public event Action<Text2D> DisplayInSimulationChanged;
@@ -411,57 +411,60 @@ namespace NeoAxis
 
 			case BackStyleEnum.RoundedRectangle:
 				{
-					var rect2 = rectangle.ToRectangleF();
 					var fontSize = GetFontSizeScreen( context );
-					var roundSize = new Vector2F( renderer.AspectRatioInv, 1 ) * (float)fontSize * 0.4f;
+					renderer.AddRoundedQuad( rectangle, fontSize * 0.4f, CanvasRenderer.AddRoundedQuadMode.Antialiasing, color );
 
-					int steps = 16;
+					//var rect2 = rectangle.ToRectangleF();
+					//var fontSize = GetFontSizeScreen( context );
+					//var roundSize = new Vector2F( renderer.AspectRatioInv, 1 ) * (float)fontSize * 0.4f;
 
-					var list = new List<Vector2F>( steps * 4 );
+					//int steps = 16;
 
-					for( int n = 0; n < steps; n++ )
-					{
-						var v = (float)n / (float)( steps - 1 );
-						var angle = v * MathEx.PI / 2;
-						list.Add( rect2.LeftTop + new Vector2F( 1.0f - MathEx.Cos( angle ), 1.0f - MathEx.Sin( angle ) ) * roundSize );
-					}
+					//var list = new List<Vector2F>( steps * 4 );
 
-					for( int n = steps - 1; n >= 0; n-- )
-					{
-						var v = (float)n / (float)( steps - 1 );
-						var angle = v * MathEx.PI / 2;
-						list.Add( rect2.RightTop + new Vector2F( MathEx.Cos( angle ) - 1.0f, 1.0f - MathEx.Sin( angle ) ) * roundSize );
-					}
+					//for( int n = 0; n < steps; n++ )
+					//{
+					//	var v = (float)n / (float)( steps - 1 );
+					//	var angle = v * MathEx.PI / 2;
+					//	list.Add( rect2.LeftTop + new Vector2F( 1.0f - MathEx.Cos( angle ), 1.0f - MathEx.Sin( angle ) ) * roundSize );
+					//}
 
-					for( int n = 0; n < steps; n++ )
-					{
-						var v = (float)n / (float)( steps - 1 );
-						var angle = v * MathEx.PI / 2;
-						list.Add( rect2.RightBottom + new Vector2F( MathEx.Cos( angle ) - 1.0f, MathEx.Sin( angle ) - 1.0f ) * roundSize );
-					}
+					//for( int n = steps - 1; n >= 0; n-- )
+					//{
+					//	var v = (float)n / (float)( steps - 1 );
+					//	var angle = v * MathEx.PI / 2;
+					//	list.Add( rect2.RightTop + new Vector2F( MathEx.Cos( angle ) - 1.0f, 1.0f - MathEx.Sin( angle ) ) * roundSize );
+					//}
 
-					for( int n = steps - 1; n >= 0; n-- )
-					{
-						var v = (float)n / (float)( steps - 1 );
-						var angle = v * MathEx.PI / 2;
-						list.Add( rect2.LeftBottom + new Vector2F( 1.0f - MathEx.Cos( angle ), MathEx.Sin( angle ) - 1.0f ) * roundSize );
-					}
+					//for( int n = 0; n < steps; n++ )
+					//{
+					//	var v = (float)n / (float)( steps - 1 );
+					//	var angle = v * MathEx.PI / 2;
+					//	list.Add( rect2.RightBottom + new Vector2F( MathEx.Cos( angle ) - 1.0f, MathEx.Sin( angle ) - 1.0f ) * roundSize );
+					//}
 
-					var vertices = new List<CanvasRenderer.TriangleVertex>( 1 + list.Count );
-					var indices = new List<int>( list.Count * 3 );
+					//for( int n = steps - 1; n >= 0; n-- )
+					//{
+					//	var v = (float)n / (float)( steps - 1 );
+					//	var angle = v * MathEx.PI / 2;
+					//	list.Add( rect2.LeftBottom + new Vector2F( 1.0f - MathEx.Cos( angle ), MathEx.Sin( angle ) - 1.0f ) * roundSize );
+					//}
 
-					vertices.Add( new CanvasRenderer.TriangleVertex( rect2.GetCenter(), color ) );
-					foreach( var v in list )
-						vertices.Add( new CanvasRenderer.TriangleVertex( v, color ) );
+					//var vertices = new List<CanvasRenderer.TriangleVertex>( 1 + list.Count );
+					//var indices = new List<int>( list.Count * 3 );
 
-					for( int n = 0; n < list.Count; n++ )
-					{
-						indices.Add( 0 );
-						indices.Add( 1 + n );
-						indices.Add( 1 + ( n + 1 ) % list.Count );
-					}
+					//vertices.Add( new CanvasRenderer.TriangleVertex( rect2.GetCenter(), color ) );
+					//foreach( var v in list )
+					//	vertices.Add( new CanvasRenderer.TriangleVertex( v, color ) );
 
-					renderer.AddTriangles( vertices, indices );
+					//for( int n = 0; n < list.Count; n++ )
+					//{
+					//	indices.Add( 0 );
+					//	indices.Add( 1 + n );
+					//	indices.Add( 1 + ( n + 1 ) % list.Count );
+					//}
+
+					//renderer.AddTriangles( vertices, indices );
 				}
 				break;
 			}

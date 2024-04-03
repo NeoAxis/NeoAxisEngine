@@ -17,11 +17,11 @@ namespace NeoAxis
 	{
 		object _syncRoot;
 		Dictionary<T, int> baseDictionary;
-		List<OrderedItem> ordered;
+		OpenList<OrderedItem> ordered;//List<OrderedItem> ordered;
 		Stack<int> freeOrderedIndexes;
 		int orderedStartIndex = -1;
 		int orderedLastIndex = -1;
-		int version;
+		//int version;
 		ReadOnlyICollection<T> readOnlyCollection;
 
 		/////////////////////////////////////////
@@ -38,7 +38,7 @@ namespace NeoAxis
 		class Enumerator : IEnumerator<T>
 		{
 			ESet<T> set;
-			int version;
+			//int version;
 			int orderedIndex;
 			T current;
 
@@ -47,7 +47,7 @@ namespace NeoAxis
 			public Enumerator( ESet<T> set )
 			{
 				this.set = set;
-				this.version = set.version;
+				//this.version = set.version;
 				this.orderedIndex = set.orderedStartIndex;
 				this.current = default( T );
 			}
@@ -72,14 +72,15 @@ namespace NeoAxis
 				GC.SuppressFinalize( this );
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			public bool MoveNext()
 			{
-				if( this.version != this.set.version )
-					throw new InvalidOperationException( "Enumerate failed version" );
+				//if( this.version != this.set.version )
+				//	throw new InvalidOperationException( "Enumerate failed version" );
 
 				if( orderedIndex != -1 )
 				{
-					OrderedItem i = set.ordered[ orderedIndex ];
+					ref var i = ref set.ordered.Data[ orderedIndex ];
 					orderedIndex = i.nextItemIndex;
 					current = i.key;
 					return true;
@@ -91,12 +92,12 @@ namespace NeoAxis
 				}
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			public void Reset()
 			{
-				if( this.version != this.set.version )
-				{
-					throw new InvalidOperationException( "Enumerate failed version" );
-				}
+				//if( this.version != this.set.version )
+				//	throw new InvalidOperationException( "Enumerate failed version" );
+
 				this.orderedIndex = set.orderedStartIndex;
 				this.current = default( T );
 			}
@@ -107,7 +108,7 @@ namespace NeoAxis
 		class ReverseEnumerator : IEnumerator<T>
 		{
 			ESet<T> set;
-			int version;
+			//int version;
 			int orderedIndex;
 			T current;
 
@@ -116,7 +117,7 @@ namespace NeoAxis
 			public ReverseEnumerator( ESet<T> dictionary )
 			{
 				this.set = dictionary;
-				this.version = dictionary.version;
+				//this.version = dictionary.version;
 				this.orderedIndex = dictionary.orderedLastIndex;
 				this.current = default( T );
 			}
@@ -144,12 +145,12 @@ namespace NeoAxis
 			[MethodImpl( (MethodImplOptions)512 )]
 			public bool MoveNext()
 			{
-				if( this.version != this.set.version )
-					throw new InvalidOperationException( "Enumerate failed version" );
+				//if( this.version != this.set.version )
+				//	throw new InvalidOperationException( "Enumerate failed version" );
 
 				if( orderedIndex != -1 )
 				{
-					OrderedItem i = set.ordered[ orderedIndex ];
+					ref var i = ref set.ordered.Data[ orderedIndex ];
 					orderedIndex = i.previousItemIndex;
 					current = i.key;
 					return true;
@@ -164,10 +165,9 @@ namespace NeoAxis
 			[MethodImpl( (MethodImplOptions)512 )]
 			public void Reset()
 			{
-				if( this.version != this.set.version )
-				{
-					throw new InvalidOperationException( "Enumerate failed version" );
-				}
+				//if( this.version != this.set.version )
+				//	throw new InvalidOperationException( "Enumerate failed version" );
+
 				this.orderedIndex = set.orderedLastIndex;
 				this.current = default( T );
 			}
@@ -199,14 +199,14 @@ namespace NeoAxis
 		public ESet( int capacity, IEqualityComparer<T> comparer )
 		{
 			baseDictionary = new Dictionary<T, int>( capacity, comparer );
-			ordered = new List<OrderedItem>( capacity );
+			ordered = new OpenList<OrderedItem>( capacity );
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ESet( ICollection<T> set, IEqualityComparer<T> comparer )
 		{
 			baseDictionary = new Dictionary<T, int>( set.Count, comparer );
-			ordered = new List<OrderedItem>( set.Count );
+			ordered = new OpenList<OrderedItem>( set.Count );
 			foreach( T p in set )
 				Add( p );
 		}
@@ -272,10 +272,10 @@ namespace NeoAxis
 			if( orderedStartIndex == -1 )
 				orderedStartIndex = orderedIndex;
 
-			unchecked
-			{
-				version++;
-			}
+			//unchecked
+			//{
+			//	version++;
+			//}
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -296,10 +296,11 @@ namespace NeoAxis
 				freeOrderedIndexes.Clear();
 			orderedStartIndex = -1;
 			orderedLastIndex = -1;
-			unchecked
-			{
-				version++;
-			}
+
+			//unchecked
+			//{
+			//	version++;
+			//}
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -372,10 +373,10 @@ namespace NeoAxis
 				freeOrderedIndexes = new Stack<int>();
 			freeOrderedIndexes.Push( orderedIndex );
 
-			unchecked
-			{
-				version++;
-			}
+			//unchecked
+			//{
+			//	version++;
+			//}
 
 			return true;
 		}

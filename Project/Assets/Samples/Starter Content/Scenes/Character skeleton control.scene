@@ -2,6 +2,7 @@
 
 .component NeoAxis.Scene
 {
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"04A04844246E4D5445970D859D0F09D4\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"4C256B5B8CDC4442B7993B80F68BA3EF\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"04A04844246E4D5445970D859D0F09D4\"><KP UN=\"04A04844246E4D5445970D859D0F09D4\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"D323F78E85E84FE457B2FEE26F90B132\" S=\"False\"><CPD ObjPath=\"$Character\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	DisplayDevelopmentDataInSimulation = True
 	RenderingPipeline
 	{
@@ -19,7 +20,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "-1.51616651756876 -1.39961874436548 2.30000696388737; -0.124476987464659 0.122099650070971 0.702955159797905 0.689529693601205; 1 1 1"
+		Transform = "-1.5130799221003 -1.55967418850191 2.35853696238323; -0.124476987464659 0.122099650070971 0.702955159797905 0.689529693601205; 1 1 1"
 	}
 	.component NeoAxis.Camera
 	{
@@ -51,8 +52,9 @@
 	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
-		ShadowFarDistance = 30
 		ShadowIntensity = 0.5
+		ShadowDirectionalDistance = 30
+		ShadowPointSpotlightDistance = 30
 		.component NeoAxis.Component
 		{
 			Name = Background Effects
@@ -184,12 +186,24 @@
 		Transform = "-1.48277710261228 1.47734958140738 -0.00374229084847322; 0 0 -0.681516051292419 0.731803119182587; 1 1 1"
 		Collision = True
 		LeftHandFactor = 1
+		LeftHandIndexFingerFlexionFactor = 1
+		LeftHandIndexFingerFlexionValue = 0.1924470591575324
+		LeftHandMiddleFingerFlexionFactor = 1
+		LeftHandMiddleFingerFlexionValue = 0.1924470591575324
+		LeftHandRingFingerFlexionFactor = 1
+		LeftHandRingFingerFlexionValue = 0.1924470591575324
+		LeftHandLittleFingerFlexionFactor = 1
+		LeftHandLittleFingerFlexionValue = 0.1924470591575324
 		RightHandFactor = 1
+		RightHandIndexFingerFlexionFactor = 1
+		RightHandIndexFingerFlexionValue = 0.8714792914066555
+		RightHandMiddleFingerFlexionFactor = 1
+		RightHandMiddleFingerFlexionValue = 0.8714792914066555
+		RightHandRingFingerFlexionFactor = 1
+		RightHandRingFingerFlexionValue = 0.8714792914066555
+		RightHandLittleFingerFlexionFactor = 1
+		RightHandLittleFingerFlexionValue = 0.8714792914066555
 		HeadFactor = 1
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
 		ReplaceMaterialSelectively
 		{
 			Count = 0
@@ -220,13 +234,38 @@
 		.component NeoAxis.MeshInSpaceAnimationController
 		{
 			Name = Animation Controller
-			DisplaySkeleton = True
+		}
+		.component NeoAxis.CSharpScript
+		{
+			Name = C# Script
+			NetworkMode = False
+			Code = "public void Character_UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\tvar character = sender as Character;\r\n\tif(character != null)\r\n\t{\r\n\t\t//fingers\r\n\r\n\t\t{\r\n\t\t\tvar value = (Math.Sin(Time.Current * 1.5) + 1) / 2;\r\n\t\t\t\r\n\t\t\t//character.LeftHandThumbFingerFlexionFactor = 1;\r\n\t\t\t//character.LeftHandThumbFingerFlexionValue = value;\r\n\t\t\tcharacter.LeftHandIndexFingerFlexionFactor = 1;\r\n\t\t\tcharacter.LeftHandIndexFingerFlexionValue = value;\r\n\t\t\tcharacter.LeftHandMiddleFingerFlexionFactor = 1;\r\n\t\t\tcharacter.LeftHandMiddleFingerFlexionValue = value;\r\n\t\t\tcharacter.LeftHandRingFingerFlexionFactor = 1;\r\n\t\t\tcharacter.LeftHandRingFingerFlexionValue = value;\r\n\t\t\tcharacter.LeftHandLittleFingerFlexionFactor = 1;\r\n\t\t\tcharacter.LeftHandLittleFingerFlexionValue = value;\r\n\t\t}\r\n\r\n\t\t{\r\n\t\t\tvar value = (Math.Sin((Time.Current + 1) * 1.5) + 1) / 2;\r\n\r\n\t\t\t//character.RightHandThumbFingerFlexionFactor = 1;\r\n\t\t\t//character.RightHandThumbFingerFlexionValue = value;\r\n\t\t\tcharacter.RightHandIndexFingerFlexionFactor = 1;\r\n\t\t\tcharacter.RightHandIndexFingerFlexionValue = value;\r\n\t\t\tcharacter.RightHandMiddleFingerFlexionFactor = 1;\r\n\t\t\tcharacter.RightHandMiddleFingerFlexionValue = value;\r\n\t\t\tcharacter.RightHandRingFingerFlexionFactor = 1;\r\n\t\t\tcharacter.RightHandRingFingerFlexionValue = value;\r\n\t\t\tcharacter.RightHandLittleFingerFlexionFactor = 1;\r\n\t\t\tcharacter.RightHandLittleFingerFlexionValue = value;\r\n\t\t}\r\n\t}\r\n}\r\n"
+			__parameter_Delta = 0
+			Exit
+			{
+			}
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler UpdateEvent
+				WhenEnable = Editor, Simulation, Instance
+				Event
+				{
+					GetByReference = "this:..\\..\\event:UpdateEvent"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\method:Character_UpdateEvent(NeoAxis.Component,System.Single)"
+				}
+				HandlerFlow
+				{
+				}
+			}
 		}
 	}
 	.component NeoAxis.ObjectInSpace
 	{
 		Name = Object In Space 3
-		Transform = "-1.87610280061295 1.1805527039683 1.73260721344696; 0 0 0.865040047194489 0.501702817163465; 1 1 1"
+		Transform = "-1.92774907504552 1.32205909581828 1.55872402951715; 0 0 0.865040047194489 0.501702817163465; 1 1 1"
 	}
 	.component NeoAxis.ObjectInSpace
 	{
@@ -262,7 +301,7 @@
 		.component NeoAxis.CurveInSpacePoint
 		{
 			Name = Curve In Space Point 3
-			Transform = "-0.617339107667411 0.324279131464934 2.40275179974834; 0 0 0 1; 0.450450455983509 0.450450455983509 0.450450455983509"
+			Transform = "-0.617339107667411 0.324279131464934 2.29461190624335; 0 0 0 1; 0.450450455983509 0.450450455983509 0.450450455983509"
 		}
 		.component NeoAxis.CurveInSpacePoint
 		{

@@ -13,11 +13,11 @@ namespace NeoAxis
 	/// Particle system in the scene.
 	/// </summary>
 #if !DEPLOY
-	[SettingsCell( typeof( ParticleSystemInSpaceSettingsCell ) )]
+	[SettingsCell( "NeoAxis.Editor.ParticleSystemInSpaceSettingsCell" )]
 #endif
 	public class ParticleSystemInSpace : ObjectInSpace
 	{
-		static FastRandom staticRandom;
+		static FastRandom staticRandom = new FastRandom( 0 );
 
 		//creation
 		ParticleSystem.CompiledData currentParticleSystem;
@@ -69,7 +69,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _particleSystem.BeginSet( ref value ) )
+				if( _particleSystem.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -92,7 +92,7 @@ namespace NeoAxis
 		public Reference<Material> ReplaceMaterial
 		{
 			get { if( _replaceMaterial.BeginGet() ) ReplaceMaterial = _replaceMaterial.Get( this ); return _replaceMaterial.value; }
-			set { if( _replaceMaterial.BeginSet( ref value ) ) { try { ReplaceMaterialChanged?.Invoke( this ); } finally { _replaceMaterial.EndSet(); } } }
+			set { if( _replaceMaterial.BeginSet( this, ref value ) ) { try { ReplaceMaterialChanged?.Invoke( this ); } finally { _replaceMaterial.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ReplaceMaterial"/> property value changes.</summary>
 		public event Action<ParticleSystemInSpace> ReplaceMaterialChanged;
@@ -105,7 +105,7 @@ namespace NeoAxis
 		public Reference<ColorValue> Color
 		{
 			get { if( _color.BeginGet() ) Color = _color.Get( this ); return _color.value; }
-			set { if( _color.BeginSet( ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
+			set { if( _color.BeginSet( this, ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Color"/> property value changes.</summary>
 		public event Action<ParticleSystemInSpace> ColorChanged;
@@ -119,7 +119,7 @@ namespace NeoAxis
 		public Reference<double> VisibilityDistanceFactor
 		{
 			get { if( _visibilityDistanceFactor.BeginGet() ) VisibilityDistanceFactor = _visibilityDistanceFactor.Get( this ); return _visibilityDistanceFactor.value; }
-			set { if( _visibilityDistanceFactor.BeginSet( ref value ) ) { try { VisibilityDistanceFactorChanged?.Invoke( this ); } finally { _visibilityDistanceFactor.EndSet(); } } }
+			set { if( _visibilityDistanceFactor.BeginSet( this, ref value ) ) { try { VisibilityDistanceFactorChanged?.Invoke( this ); } finally { _visibilityDistanceFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="VisibilityDistanceFactor"/> property value changes.</summary>
 		public event Action<ParticleSystemInSpace> VisibilityDistanceFactorChanged;
@@ -133,7 +133,7 @@ namespace NeoAxis
 		//public Reference<double> VisibilityDistance
 		//{
 		//	get { if( _visibilityDistance.BeginGet() ) VisibilityDistance = _visibilityDistance.Get( this ); return _visibilityDistance.value; }
-		//	set { if( _visibilityDistance.BeginSet( ref value ) ) { try { VisibilityDistanceChanged?.Invoke( this ); } finally { _visibilityDistance.EndSet(); } } }
+		//	set { if( _visibilityDistance.BeginSet( this, ref value ) ) { try { VisibilityDistanceChanged?.Invoke( this ); } finally { _visibilityDistance.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="VisibilityDistance"/> property value changes.</summary>
 		//public event Action<ParticleSystemInSpace> VisibilityDistanceChanged;
@@ -146,7 +146,7 @@ namespace NeoAxis
 		public Reference<bool> CastShadows
 		{
 			get { if( _castShadows.BeginGet() ) CastShadows = _castShadows.Get( this ); return _castShadows.value; }
-			set { if( _castShadows.BeginSet( ref value ) ) { try { CastShadowsChanged?.Invoke( this ); } finally { _castShadows.EndSet(); } } }
+			set { if( _castShadows.BeginSet( this, ref value ) ) { try { CastShadowsChanged?.Invoke( this ); } finally { _castShadows.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CastShadows"/> property value changes.</summary>
 		public event Action<ParticleSystemInSpace> CastShadowsChanged;
@@ -159,7 +159,7 @@ namespace NeoAxis
 		public Reference<bool> ReceiveDecals
 		{
 			get { if( _receiveDecals.BeginGet() ) ReceiveDecals = _receiveDecals.Get( this ); return _receiveDecals.value; }
-			set { if( _receiveDecals.BeginSet( ref value ) ) { try { ReceiveDecalsChanged?.Invoke( this ); } finally { _receiveDecals.EndSet(); } } }
+			set { if( _receiveDecals.BeginSet( this, ref value ) ) { try { ReceiveDecalsChanged?.Invoke( this ); } finally { _receiveDecals.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ReceiveDecals"/> property value changes.</summary>
 		public event Action<ParticleSystemInSpace> ReceiveDecalsChanged;
@@ -173,7 +173,7 @@ namespace NeoAxis
 		public Reference<double> MotionBlurFactor
 		{
 			get { if( _motionBlurFactor.BeginGet() ) MotionBlurFactor = _motionBlurFactor.Get( this ); return _motionBlurFactor.value; }
-			set { if( _motionBlurFactor.BeginSet( ref value ) ) { try { MotionBlurFactorChanged?.Invoke( this ); } finally { _motionBlurFactor.EndSet(); } } }
+			set { if( _motionBlurFactor.BeginSet( this, ref value ) ) { try { MotionBlurFactorChanged?.Invoke( this ); } finally { _motionBlurFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MotionBlurFactor"/> property value changes.</summary>
 		public event Action<ParticleSystemInSpace> MotionBlurFactorChanged;
@@ -186,7 +186,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayEmitters
 		{
 			get { if( _displayEmitters.BeginGet() ) DisplayEmitters = _displayEmitters.Get( this ); return _displayEmitters.value; }
-			set { if( _displayEmitters.BeginSet( ref value ) ) { try { DisplayEmittersChanged?.Invoke( this ); } finally { _displayEmitters.EndSet(); } } }
+			set { if( _displayEmitters.BeginSet( this, ref value ) ) { try { DisplayEmittersChanged?.Invoke( this ); } finally { _displayEmitters.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayEmitters"/> property value changes.</summary>
 		public event Action<ParticleSystemInSpace> DisplayEmittersChanged;
@@ -199,7 +199,7 @@ namespace NeoAxis
 		public Reference<bool> Activated
 		{
 			get { if( _activated.BeginGet() ) Activated = _activated.Get( this ); return _activated.value; }
-			set { if( _activated.BeginSet( ref value ) ) { try { ActivatedChanged?.Invoke( this ); } finally { _activated.EndSet(); } } }
+			set { if( _activated.BeginSet( this, ref value ) ) { try { ActivatedChanged?.Invoke( this ); } finally { _activated.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Activated"/> property value changes.</summary>
 		public event Action<ParticleSystemInSpace> ActivatedChanged;
@@ -212,7 +212,7 @@ namespace NeoAxis
 		public Reference<List<ObjectSpecialRenderingEffect>> SpecialEffects
 		{
 			get { if( _specialEffects.BeginGet() ) SpecialEffects = _specialEffects.Get( this ); return _specialEffects.value; }
-			set { if( _specialEffects.BeginSet( ref value ) ) { try { SpecialEffectsChanged?.Invoke( this ); } finally { _specialEffects.EndSet(); } } }
+			set { if( _specialEffects.BeginSet( this, ref value ) ) { try { SpecialEffectsChanged?.Invoke( this ); } finally { _specialEffects.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SpecialEffects"/> property value changes.</summary>
 		public event Action<ParticleSystemInSpace> SpecialEffectsChanged;
@@ -224,7 +224,7 @@ namespace NeoAxis
 		public Reference<int> MergeSimulationSteps
 		{
 			get { if( _mergeSimulationSteps.BeginGet() ) MergeSimulationSteps = _mergeSimulationSteps.Get( this ); return _mergeSimulationSteps.value; }
-			set { if( _mergeSimulationSteps.BeginSet( ref value ) ) { try { MergeSimulationStepsChanged?.Invoke( this ); } finally { _mergeSimulationSteps.EndSet(); } } }
+			set { if( _mergeSimulationSteps.BeginSet( this, ref value ) ) { try { MergeSimulationStepsChanged?.Invoke( this ); } finally { _mergeSimulationSteps.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MergeSimulationSteps"/> property value changes.</summary>
 		public event Action<ParticleSystemInSpace> MergeSimulationStepsChanged;
@@ -357,6 +357,8 @@ namespace NeoAxis
 					else
 						p = particle.Position;
 					transformPositionByTime1_Position[ particleIndex ] = p;
+					//context.ConvertToRelative( ref p, out transformPositionByTime1_Position[ particleIndex ] );
+					////transformPositionByTime1_Position[ particleIndex ] = p;
 				}
 			}
 
@@ -379,8 +381,9 @@ namespace NeoAxis
 					var cameraSettings = context.Owner.CameraSettings;
 					var tr = Transform.Value;
 					ref var trMatrix = ref tr.ToMatrix4();
-					//!!!!double
-					trMatrix.ToMatrix4F( out var trMatrixF );
+
+					context.ConvertToRelative( ref trMatrix, out var trMatrixF );
+					//trMatrix.ToMatrix4F( out var trMatrixF );
 
 					var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, SpaceBounds );
 
@@ -428,7 +431,7 @@ namespace NeoAxis
 						//init general parameters of mesh item
 						var meshItem = new RenderingPipeline.RenderSceneData.MeshItem();
 						meshItem.Creator = this;
-						meshItem.BoundingBoxCenter = billboardItem.BoundingBoxCenter;
+						//meshItem.BoundingBoxCenter = billboardItem.BoundingBoxCenter;
 						meshItem.BoundingSphere = billboardItem.BoundingSphere;
 						//!!!!можно каждому отдельно
 						meshItem.VisibilityDistance = (float)visibilityDistance;
@@ -465,8 +468,9 @@ namespace NeoAxis
 											Matrix4.Multiply( ref trMatrix, ref particle.Position, out p );
 										else
 											p = particle.Position;
-										//!!!!double
-										billboardItem.Position = p.ToVector3F();
+
+										context.ConvertToRelative( ref p, out billboardItem.PositionRelative );
+										//billboardItem.Position = p.ToVector3F();
 
 										//Size
 										if( currentParticleSystem.SimulationSpace == NeoAxis.ParticleSystem.SimulationSpaceEnum.Local )
@@ -484,22 +488,51 @@ namespace NeoAxis
 
 											//Color
 											billboardItem.Color = particle.Color * color;
-											billboardItem.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref billboardItem.Color );
+											RenderingPipeline.GetColorForInstancingData( ref billboardItem.Color, out billboardItem.ColorForInstancingData1, out billboardItem.ColorForInstancingData2 );
+											//billboardItem.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref billboardItem.Color );
 
 											//PositionPreviousFrame
 											if( previousPositions != null && particleIndex < previousPositions.Length )
 											{
 												var p2 = previousPositions[ particleIndex ];
 												if( !double.IsNaN( p2.X ) )
-												{
-													//!!!!double
-													billboardItem.PositionPreviousFrame = p2.ToVector3F();
-												}
+													billboardItem.PreviousFramePositionChange = ( p - p2 ).ToVector3F();
 												else
-													billboardItem.PositionPreviousFrame = billboardItem.Position;
+													billboardItem.PreviousFramePositionChange = Vector3F.Zero;
 											}
 											else
-												billboardItem.PositionPreviousFrame = billboardItem.Position;
+												billboardItem.PreviousFramePositionChange = Vector3F.Zero;
+
+
+											////PositionPreviousFrame
+											//if( previousPositions != null && particleIndex < previousPositions.Length )
+											//{
+											//	var p2 = previousPositions[ particleIndex ];
+											//	//context.ConvertToRelative( ref previousPositions[ particleIndex ], out var p2 );
+											//	if( !float.IsNaN( p2.X ) )//if( !double.IsNaN( p2.X ) )
+											//		billboardItem.PositionPreviousFrameRelative = p2;
+											//	else
+											//		billboardItem.PositionPreviousFrameRelative = billboardItem.PositionRelative;
+											//}
+											//else
+											//	billboardItem.PositionPreviousFrameRelative = billboardItem.PositionRelative;
+
+
+											////PositionPreviousFrame
+											//if( previousPositions != null && particleIndex < previousPositions.Length )
+											//{
+											//	var p2 = previousPositions[ particleIndex ];
+											//	if( !double.IsNaN( p2.X ) )
+											//	{
+											//		zzz;
+											//		//!!!!double
+											//		billboardItem.PositionPreviousFrame = p2.ToVector3F();
+											//	}
+											//	else
+											//		billboardItem.PositionPreviousFrame = billboardItem.Position;
+											//}
+											//else
+											//	billboardItem.PositionPreviousFrame = billboardItem.Position;
 
 											//add
 											context.FrameData.RenderSceneData.Billboards.Add( ref billboardItem );
@@ -514,14 +547,15 @@ namespace NeoAxis
 									if( mesh == null || mesh.Result == null )
 										mesh = ResourceUtility.MeshInvalid;
 
-
 									meshItem.MeshData = mesh.Result.MeshData;
+									meshItem.MeshDataLOD0 = meshItem.MeshData;
 									meshItem.CastShadows = compiledEmitter.CastShadows && CastShadows && shadowVisibilityByDistance;
 									meshItem.ReceiveDecals = compiledEmitter.ReceiveDecals && ReceiveDecals;
 									meshItem.MotionBlurFactor = compiledEmitter.MotionBlurFactor * (float)MotionBlurFactor;
 									meshItem.ReplaceMaterial = replaceMaterial ?? compiledEmitter.Material;
 									meshItem.Color = particle.Color * color;
-									meshItem.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref meshItem.Color );
+									RenderingPipeline.GetColorForInstancingData( ref meshItem.Color, out meshItem.ColorForInstancingData1, out meshItem.ColorForInstancingData2 );
+									//meshItem.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref meshItem.Color );
 
 									var lods = meshItem.MeshData.LODs;
 									ref var emitter = ref Emitters[ particle.Emitter ];
@@ -544,7 +578,6 @@ namespace NeoAxis
 									for( int nLodItem = 0; nLodItem < lodState.Count; nLodItem++ )
 									{
 										lodState.GetItem( nLodItem, out var lodLevel, out var lodRange );
-
 
 										meshItem.MeshData = mesh.Result.MeshData;
 										if( lodLevel > 0 )
@@ -592,7 +625,7 @@ namespace NeoAxis
 
 												if( size.X > 0 && size.Y > 0 )
 												{
-													ref var result = ref meshItem.Transform;
+													ref var result = ref meshItem.TransformRelative;
 													result.Item0.X = size.X;
 													result.Item0.Y = 0;
 													result.Item0.Z = 0;
@@ -605,10 +638,9 @@ namespace NeoAxis
 													result.Item2.Y = 0;
 													result.Item2.Z = size.Y;
 													result.Item2.W = 0;
-													//!!!!double
-													result.Item3.X = (float)position.X;
-													result.Item3.Y = (float)position.Y;
-													result.Item3.Z = (float)position.Z;
+													result.Item3.X = (float)( position.X - context.OwnerCameraSettingsPosition.X );
+													result.Item3.Y = (float)( position.Y - context.OwnerCameraSettingsPosition.Y );
+													result.Item3.Z = (float)( position.Z - context.OwnerCameraSettingsPosition.Z );
 													result.Item3.W = 1;
 												}
 												else
@@ -619,15 +651,26 @@ namespace NeoAxis
 												//Transform
 												Matrix3F.FromScale( particle.Size, out var scl );
 												Matrix3F.Multiply( ref particle.Rotation, ref scl, out var mat3 );
-												//!!!!double
-												var positionF = particle.Position.ToVector3F();
+
+												//!!!!good?
+												context.ConvertToRelative( ref particle.Position, out var positionF );
 												if( currentParticleSystem.SimulationSpace == NeoAxis.ParticleSystem.SimulationSpaceEnum.Local )
 												{
 													var mat4 = new Matrix4F( ref mat3, ref positionF );
-													Matrix4F.Multiply( ref trMatrixF, ref mat4, out meshItem.Transform );
+													Matrix4F.Multiply( ref trMatrixF, ref mat4, out meshItem.TransformRelative );
 												}
 												else
-													meshItem.Transform = new Matrix4F( ref mat3, ref positionF );
+													meshItem.TransformRelative = new Matrix4F( ref mat3, ref positionF );
+
+
+												//var positionF = particle.Position.ToVector3F();
+												//if( currentParticleSystem.SimulationSpace == NeoAxis.ParticleSystem.SimulationSpaceEnum.Local )
+												//{
+												//	var mat4 = new Matrix4F( ref mat3, ref positionF );
+												//	Matrix4F.Multiply( ref trMatrixF, ref mat4, out meshItem.Transform );
+												//}
+												//else
+												//	meshItem.Transform = new Matrix4F( ref mat3, ref positionF );
 											}
 										}
 
@@ -640,18 +683,55 @@ namespace NeoAxis
 												var p2 = previousPositions[ particleIndex ];
 												if( !double.IsNaN( p2.X ) )
 												{
-													//!!!!double
-													meshItem.PositionPreviousFrame = p2.ToVector3F();
+													//Position
+													Vector3 position;
+													if( currentParticleSystem.SimulationSpace == NeoAxis.ParticleSystem.SimulationSpaceEnum.Local )
+														Matrix4.Multiply( ref trMatrix, ref particle.Position, out position );
+													else
+														position = particle.Position;
+
+													meshItem.PreviousFramePositionChange = ( position - p2 ).ToVector3F();
 												}
 												else
-													meshItem.Transform.GetTranslation( out meshItem.PositionPreviousFrame );
+													meshItem.PreviousFramePositionChange = Vector3F.Zero;
 											}
 											else
-												meshItem.Transform.GetTranslation( out meshItem.PositionPreviousFrame );
+												meshItem.PreviousFramePositionChange = Vector3F.Zero;
+
+
+											////PositionPreviousFrame
+											//if( previousPositions != null && particleIndex < previousPositions.Length )
+											//{
+											//	var p2 = previousPositions[ particleIndex ];
+											//	//context.ConvertToRelative( ref previousPositions[ particleIndex ], out var p2 );
+											//	if( !float.IsNaN( p2.X ) )//if( !double.IsNaN( p2.X ) )
+											//		meshItem.PositionPreviousFrameRelative = p2;
+											//	else
+											//		meshItem.TransformRelative.GetTranslation( out meshItem.PositionPreviousFrameRelative );
+											//}
+											//else
+											//	meshItem.TransformRelative.GetTranslation( out meshItem.PositionPreviousFrameRelative );
+
+
+											////PositionPreviousFrame
+											//if( previousPositions != null && particleIndex < previousPositions.Length )
+											//{
+											//	var p2 = previousPositions[ particleIndex ];
+											//	if( !double.IsNaN( p2.X ) )
+											//	{
+											//		zzzzz;
+											//		//!!!!double
+											//		meshItem.PositionPreviousFrame = p2.ToVector3F();
+											//	}
+											//	else
+											//		meshItem.Transform.GetTranslation( out meshItem.PositionPreviousFrame );
+											//}
+											//else
+											//	meshItem.Transform.GetTranslation( out meshItem.PositionPreviousFrame );
+
 
 											////layers
 											//meshItem.Layers = Layers;
-
 
 											////set AnimationData from event
 											//GetRenderSceneDataAddToFrameData?.Invoke( this, context, mode, ref meshItem );
@@ -899,8 +979,6 @@ namespace NeoAxis
 				Emitters = new Emitter[ currentParticleSystem.Emitters.Length ];
 
 			//update emitters
-			if( staticRandom == null )
-				staticRandom = new FastRandom();
 			for( int n = 0; n < Emitters.Length; n++ )
 			{
 				ref var emitter = ref Emitters[ n ];
@@ -1211,9 +1289,6 @@ namespace NeoAxis
 		void Simulate( float delta, out bool wasUpdated )
 		{
 			var wasUpdated2 = false;
-
-			if( staticRandom == null )
-				staticRandom = new FastRandom();
 
 			//update playing time
 			if( !playingEnded )

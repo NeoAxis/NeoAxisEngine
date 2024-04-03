@@ -28,9 +28,9 @@ namespace NeoAxis.Editor
 		{
 			InitializeComponent();
 
-			Text = EditorLocalization.Translate( "ColorValuePoweredSelectForm", Text );
-			buttonOK.Text = EditorLocalization.Translate( "General", buttonOK.Text );
-			buttonCancel.Text = EditorLocalization.Translate( "General", buttonCancel.Text );
+			Text = EditorLocalization2.Translate( "ColorValuePoweredSelectForm", Text );
+			buttonOK.Text = EditorLocalization2.Translate( "General", buttonOK.Text );
+			buttonCancel.Text = EditorLocalization2.Translate( "General", buttonCancel.Text );
 
 			EditorThemeUtility.ApplyDarkThemeToForm( this );
 		}
@@ -481,7 +481,8 @@ namespace NeoAxis.Editor
 				int r = int.Parse( str.Substring( 0, 2 ), System.Globalization.NumberStyles.HexNumber );
 				int g = int.Parse( str.Substring( 2, 2 ), System.Globalization.NumberStyles.HexNumber );
 				int b = int.Parse( str.Substring( 4, 2 ), System.Globalization.NumberStyles.HexNumber );
-				ColorValue value = new ColorValue( Color.FromArgb( r, g, b ) );
+				ColorValue value = DrawingUtility.ToColorValue( Color.FromArgb( r, g, b ) );
+				//ColorValue value = new ColorValue( Color.FromArgb( r, g, b ) );
 
 				if( !used.Contains( value ) )
 				{
@@ -503,7 +504,7 @@ namespace NeoAxis.Editor
 					Button button = (Button)array[ 0 ];
 
 					button.Enabled = !readOnly;
-					button.BackColor = value.ToColor();
+					button.BackColor = DrawingUtility.ToColor( value );//value.ToColor();
 					button.Tag = value;
 
 					button.Click += Button_Click;

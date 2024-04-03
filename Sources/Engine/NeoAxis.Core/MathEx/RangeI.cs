@@ -40,8 +40,7 @@ namespace NeoAxis
 			if( string.IsNullOrEmpty( text ) )
 				throw new ArgumentNullException( "The text parameter cannot be null or zero length." );
 
-			string[] vals = text.Split( new char[] { ' ' },
-				StringSplitOptions.RemoveEmptyEntries );
+			string[] vals = text.Split( new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries );
 
 			if( vals.Length != 2 )
 				throw new FormatException( string.Format( "Cannot parse the text '{0}' because it does not have 2 parts separated by spaces in the form (x y).", text ) );
@@ -54,7 +53,21 @@ namespace NeoAxis
 			}
 			catch( Exception )
 			{
-				throw new FormatException( "The parts of the vectors must be decimal numbers." );
+				throw new FormatException( "The parts of the vectors must be integer numbers." );
+			}
+		}
+
+		public static bool TryParse( string text, out RangeI result )
+		{
+			try
+			{
+				result = Parse( text );
+				return true;
+			}
+			catch
+			{
+				result = default;
+				return false;
 			}
 		}
 

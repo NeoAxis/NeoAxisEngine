@@ -19,7 +19,7 @@ namespace NeoAxis
 		public Reference<double> Speed
 		{
 			get { if( _speed.BeginGet() ) Speed = _speed.Get( this ); return _speed.value; }
-			set { if( _speed.BeginSet( ref value ) ) { try { SpeedChanged?.Invoke( this ); } finally { _speed.EndSet(); } } }
+			set { if( _speed.BeginSet( this, ref value ) ) { try { SpeedChanged?.Invoke( this ); } finally { _speed.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Speed"/> property value changes.</summary>
 		public event Action<VehicleAITask_MoveTo> SpeedChanged;
@@ -30,7 +30,7 @@ namespace NeoAxis
 		//public Reference<bool> UseRoads
 		//{
 		//	get { if( _useRoads.BeginGet() ) UseRoads = _useRoads.Get( this ); return _useRoads.value; }
-		//	set { if( _useRoads.BeginSet( ref value ) ) { try { UseRoadsChanged?.Invoke( this ); } finally { _useRoads.EndSet(); } } }
+		//	set { if( _useRoads.BeginSet( this, ref value ) ) { try { UseRoadsChanged?.Invoke( this ); } finally { _useRoads.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="UseRoads"/> property value changes.</summary>
 		//public event Action<VehicleAITask_MoveTo> UseRoadsChanged;
@@ -44,7 +44,7 @@ namespace NeoAxis
 		public Reference<double> DistanceToReach
 		{
 			get { if( _distanceToReach.BeginGet() ) DistanceToReach = _distanceToReach.Get( this ); return _distanceToReach.value; }
-			set { if( _distanceToReach.BeginSet( ref value ) ) { try { DistanceToReachChanged?.Invoke( this ); } finally { _distanceToReach.EndSet(); } } }
+			set { if( _distanceToReach.BeginSet( this, ref value ) ) { try { DistanceToReachChanged?.Invoke( this ); } finally { _distanceToReach.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DistanceToReach"/> property value changes.</summary>
 		public event Action<VehicleAITask_MoveTo> DistanceToReachChanged;
@@ -67,7 +67,7 @@ namespace NeoAxis
 		public Reference<Vector3> Target
 		{
 			get { if( _target.BeginGet() ) Target = _target.Get( this ); return _target.value; }
-			set { if( _target.BeginSet( ref value ) ) { try { TargetChanged?.Invoke( this ); } finally { _target.EndSet(); } } }
+			set { if( _target.BeginSet( this, ref value ) ) { try { TargetChanged?.Invoke( this ); } finally { _target.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Target"/> property value changes.</summary>
 		public event Action<VehicleAITask_MoveToPosition> TargetChanged;
@@ -90,7 +90,7 @@ namespace NeoAxis
 		public Reference<ObjectInSpace> Target
 		{
 			get { if( _target.BeginGet() ) Target = _target.Get( this ); return _target.value; }
-			set { if( _target.BeginSet( ref value ) ) { try { TargetChanged?.Invoke( this ); } finally { _target.EndSet(); } } }
+			set { if( _target.BeginSet( this, ref value ) ) { try { TargetChanged?.Invoke( this ); } finally { _target.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Target"/> property value changes.</summary>
 		public event Action<VehicleAITask_MoveToObject> TargetChanged;

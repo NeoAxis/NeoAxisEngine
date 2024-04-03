@@ -4,13 +4,22 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using NeoAxis.Networking;
+using System.Security.Cryptography;
 
-namespace NeoAxis
+namespace NeoAxis.Networking
 {
+	public static class CommonNetworkService_FileSync
+	{
+		public const int FileBlockSize = 1 * 1024 * 1024;
+
+		//public const int MaxFileSizeDefault = 150 * 1024 * 1024;
+		//public static int MaxFileSize = MaxFileSizeDefault;
+	}
+
 	public class ServerNetworkService_FileSync : ServerNetworkService
 	{
-		public int SendFilesMaxSize { get; set; } = 10 * 1024 * 1024;
+		public int SendFilesMaxSize { get; set; } = 5/*10*/ * 1024 * 1024;
+		public bool ZipData = true;
 
 		public delegate void GetFileCacheForConnectedNodeDelegate( ServerNetworkService_FileSync sender, NetworkNode.ConnectedNode connectedNode, ref FileCache fileCache );
 		public event GetFileCacheForConnectedNodeDelegate GetFileCacheForConnectedNode;
@@ -33,13 +42,16 @@ namespace NeoAxis
 
 		public class FileCache
 		{
+			public string ProjectDataFolder;
 			public Dictionary<string, FileInfo> Files;
 			//public string TotalHash = "";
 
-			long totalSizeCached;
+			long? totalSizeCached;
+			long? totalSizeToPlayCached;
 
-			public FileCache( Dictionary<string, FileInfo> files )//, string totalHash )
+			public FileCache( string projectDataFolder, Dictionary<string, FileInfo> files )//, string totalHash )
 			{
+				this.ProjectDataFolder = projectDataFolder;
 				Files = files;
 				//TotalHash = totalHash;
 
@@ -51,14 +63,62 @@ namespace NeoAxis
 			{
 				get
 				{
-					if( totalSizeCached == 0 )
+					if( !totalSizeCached.HasValue )
 					{
 						var result = 0L;
 						foreach( var info in Files.Values )
 							result += info.Length;
 						totalSizeCached = result;
 					}
-					return totalSizeCached;
+					return totalSizeCached.Value;
+				}
+			}
+
+			public long TotalSizeToPlay
+			{
+				get
+				{
+					if( !totalSizeToPlayCached.HasValue )
+					{
+						var projectSettingsCache = new CloudProjectProjectSettingsCache( ProjectDataFolder );
+
+						var result = 0L;
+						foreach( var fileInfo in Files.Values )
+						{
+							if( fileInfo.SyncMode != RepositorySyncMode.Synchronize )
+								continue;
+
+							string extension = "";
+							try
+							{
+								extension = Path.GetExtension( fileInfo.FileName ).ToLower().Replace( ".", "" );
+							}
+							catch { }
+
+							string newFileName = null;
+
+							//rename exe files to prevent manual execution
+							if( extension == "exe" )
+								newFileName = Path.ChangeExtension( fileInfo.FileName, ".exe_secure" );
+
+							//can't send exe, cmd and other files when play
+							if( GetProhibitedExtensionsWhenPlay().Contains( extension ) )
+								continue;
+
+							//skip files depending project settings
+							if( projectSettingsCache.SkipFilesWithExtensionWhenPlay.Contains( extension ) )
+								continue;
+
+							//clear files depending project settings
+							if( projectSettingsCache.ClearFilesWithExtensionWhenPlay.Contains( extension ) )
+								continue;
+
+							result += fileInfo.Length;
+						}
+						totalSizeToPlayCached = result;
+					}
+
+					return totalSizeToPlayCached.Value;
 				}
 			}
 		}
@@ -70,11 +130,6 @@ namespace NeoAxis
 			//server only private files
 			SkipPathsServer.Add( "RepositoryServer.config" );
 			SkipPathsServer.Add( "MessageToServerManager.txt" );
-
-			//SkipPathsDefault.Add( @"Caches\Files" );
-			//SkipPathsDefault.Add( @"Caches\ShaderCache" );
-			////SkipPathsDefault.Add( "Caches" );
-			//SkipPathsDefault.Add( "User settings" );
 		}
 
 		public ServerNetworkService_FileSync()
@@ -92,16 +147,190 @@ namespace NeoAxis
 			base.OnDispose();
 		}
 
-		public static bool SkipFile( ESet<string> skipPaths, string fileName )
+		public static bool SkipFile( ESet<string> skipPaths, ESet<string> skipFolderNames, string fileName )
 		{
 			//!!!!slowly?
 
+			//skip files depending path
 			foreach( var skipPath in skipPaths )
 			{
 				if( fileName.Length >= skipPath.Length && string.Compare( fileName.Substring( 0, skipPath.Length ), skipPath, true ) == 0 )
 					return true;
 			}
+
+			//skip files depending folder name
+			try
+			{
+				var path = Path.GetDirectoryName( fileName );
+				foreach( var folderName in path.Split( '\\', StringSplitOptions.RemoveEmptyEntries ) )
+				{
+					if( skipFolderNames.Contains( folderName ) )
+						return true;
+				}
+			}
+			catch { }
+
 			return false;
+		}
+
+
+		public static ESet<string> GetProhibitedExtensionsWhenPlay()
+		{
+			if( prohibitedExtensionsWhenPlay == null )
+			{
+				var set = new ESet<string>();
+
+				//set.Add( "exe" );//it is renamed to exe_secure
+				set.Add( "com" );
+				set.Add( "cmd" );
+				set.Add( "bat" );
+				set.Add( "job" );
+				set.Add( "msi" );
+				set.Add( "reg" );
+				set.Add( "vb" );
+				set.Add( "vbe" );
+				set.Add( "vbscript" );
+				set.Add( "ws" );
+				set.Add( "wsf" );
+				set.Add( "wsh" );
+				set.Add( "scr" );
+				set.Add( "sct" );
+				set.Add( "ps1" );
+				set.Add( "msp" );
+				set.Add( "mst" );
+				set.Add( "cpl" );
+
+				prohibitedExtensionsWhenPlay = set;
+			}
+
+			return prohibitedExtensionsWhenPlay;
+		}
+		static ESet<string> prohibitedExtensionsWhenPlay;
+
+
+		////clear source Import3D files
+		//static ESet<string> GetClearFileExtensionsWhenPlay()
+		//{
+		//	if( clearFileExtensionsWhenPlay == null )
+		//	{
+		//		var set = new ESet<string>();
+
+		//		var array = ResourceManager.Import3DFileExtensions;
+		//		set.AddRange( array.Select( ext => "." + ext ) );
+
+		//		clearFileExtensionsWhenPlay = set;
+		//	}
+
+		//	return clearFileExtensionsWhenPlay;
+		//}
+		//static ESet<string> clearFileExtensionsWhenPlay;
+
+
+		//get hash of empty file
+		static string GetMD5( MD5 md5, Stream stream )
+		{
+			var hashBytes = md5.ComputeHash( stream );
+
+			var builder = new StringBuilder( ( hashBytes.Length + 1 ) * 2 );
+			for( int i = 0; i < hashBytes.Length; i++ )
+				builder.Append( hashBytes[ i ].ToString( "X2" ) );
+			return builder.ToString();
+		}
+
+		static string GetHashOfEmptyFile()
+		{
+			if( hashOfEmptyFile == null )
+			{
+				using( var md5 = MD5.Create() )
+				{
+					using( var stream = new MemoryStream( new byte[ 0 ] ) )
+						hashOfEmptyFile = GetMD5( md5, stream );
+				}
+			}
+			return hashOfEmptyFile;
+		}
+		static string hashOfEmptyFile;
+
+
+		public static bool CanSendFileToClient( CloudProjectProjectSettingsCache projectSettingsCache, bool edit, FileInfo fileInfo, out string newFileName, out bool clearFile )
+		{
+			newFileName = null;
+			clearFile = false;
+
+			if( !edit )// !clientData.Edit )
+			{
+				//skip server only files
+				if( fileInfo.SyncMode != RepositorySyncMode.Synchronize )
+					return false;
+
+				string extension = "";
+				try
+				{
+					extension = Path.GetExtension( fileInfo.FileName ).ToLower().Replace( ".", "" );
+				}
+				catch { }
+
+				//rename exe files to prevent manual execution
+				if( extension == "exe" )
+					newFileName = Path.ChangeExtension( fileInfo.FileName, ".exe_secure" );
+
+				//can't send exe, cmd and other files when play
+				if( GetProhibitedExtensionsWhenPlay().Contains( extension ) )
+					return false;
+
+
+				//var projectSettingsCache = clientData.GetCloudProjectProjectSettingsCache();
+
+				//skip files depending project settings
+				if( projectSettingsCache.SkipFilesWithExtensionWhenPlay.Contains( extension ) )
+					return false;
+
+				//clear files depending project settings
+				if( projectSettingsCache.ClearFilesWithExtensionWhenPlay.Contains( extension ) )
+					clearFile = true;
+
+
+				////!!!!slowly?
+
+				////skip files depending folder name
+				//try
+				//{
+				//	var path = Path.GetDirectoryName( fileInfo.FileName );
+				//	foreach( var folderName in path.Split( '\\', StringSplitOptions.RemoveEmptyEntries ) )
+				//	{
+				//		if( projectSettingsCache.SkipFoldersWithName.Contains( folderName ) )
+				//			return false;
+				//	}
+				//}
+				//catch { }
+
+
+				////maybe make settings for Import3D and blend files
+
+				////clear source Import3D files
+				//if( GetClearFileExtensionsWhenPlay().Contains( extension ) )
+				//	clearFile = true;
+
+				////skip .bin if .gltf exists with the same name
+				//if( extension == ".bin" )
+				//{
+				//	if( File.Exists( Path.ChangeExtension( fileInfo.FullPath, ".gltf" ) ) )
+				//		return false;
+				//}
+
+				////skip blend, blend1 files
+				//if( extension == ".blend" || extension == ".blend1" )
+				//	return false;
+
+			}
+
+			return true;
+		}
+
+		static bool CanSendFileToClient( CloudProjectClientData clientData, FileInfo fileInfo, out string newFileName, out bool clearFile )
+		{
+			var projectSettingsCache = clientData.GetCloudProjectProjectSettingsCache();
+			return CanSendFileToClient( projectSettingsCache, clientData.Edit, fileInfo, out newFileName, out clearFile );
 		}
 
 		bool ReceiveMessage_RequestInfoToServer( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
@@ -121,22 +350,24 @@ namespace NeoAxis
 			var writer = BeginMessage( sender, GetMessageType( "SendInfoToClient" ) );
 			if( cache != null )
 			{
+				writer.WriteVariableInt32( CommonNetworkService_FileSync.FileBlockSize );
+
 				var count = 0;
 				foreach( var info in cache.Files.Values )
 				{
-					if( clientData.Edit || info.SyncMode == RepositorySyncMode.Synchronize )
+					if( CanSendFileToClient( clientData, info, out _, out _ ) )
 						count++;
 				}
 				writer.Write( count );
 
 				foreach( var info in cache.Files.Values )
 				{
-					if( clientData.Edit || info.SyncMode == RepositorySyncMode.Synchronize )
+					if( CanSendFileToClient( clientData, info, out var newFileName, out var clearFile ) )
 					{
-						writer.Write( info.FileName );
+						writer.Write( newFileName ?? info.FileName );
 						writer.Write( info.TimeModified );
-						writer.Write( info.Length );
-						writer.Write( info.Hash );
+						writer.Write( clearFile ? 0 : info.Length );
+						writer.Write( clearFile ? GetHashOfEmptyFile() : info.Hash );
 						writer.Write( (byte)info.SyncMode );
 					}
 				}
@@ -162,16 +393,31 @@ namespace NeoAxis
 
 			//file names are checked by the cache
 
-			var fileNamesToGet = new List<string>();
+			var fileNamesToGet = new List<(string, int)>();
 			var requiredCount = reader.ReadInt32();
 			for( int n = 0; n < requiredCount; n++ )
 			{
-				var fileName = reader.ReadString();
+				var fileName = PathUtility.NormalizePath( reader.ReadString() );
+				var requestedBlock = reader.ReadVariableInt32();
 
 				if( Path.IsPathRooted( fileName ) || fileName.Contains( ".." ) )
 					return false;
 
-				fileNamesToGet.Add( fileName );
+				//restore original .exe from .exe_secure
+				if( !clientData.Edit )
+				{
+					string extension = "";
+					try
+					{
+						extension = Path.GetExtension( fileName ).ToLower();
+					}
+					catch { }
+
+					if( extension == ".exe_secure" )
+						fileName = Path.ChangeExtension( fileName, ".exe" );
+				}
+
+				fileNamesToGet.Add( (fileName, requestedBlock) );
 			}
 			if( !reader.Complete() )
 			{
@@ -190,22 +436,67 @@ namespace NeoAxis
 			var writer = BeginMessage( sender, GetMessageType( "SendFilesToClient" ) );
 			var totalSent = 0;
 
-			foreach( var fileName in fileNamesToGet )
+			foreach( var fileNameItem in fileNamesToGet )
 			{
-				if( cache != null && cache.Files.TryGetValue( fileName, out var fileItem ) && ( clientData.Edit || fileItem.SyncMode == RepositorySyncMode.Synchronize ) )
+				var fileName = fileNameItem.Item1;
+				var requestedBlock = fileNameItem.Item2;
+
+				if( cache != null && cache.Files.TryGetValue( fileName, out var fileItem ) && CanSendFileToClient( clientData, fileItem, out var newFileName, out var clearFile ) )
 				{
 					var fullPath = fileItem.FullPath;
 
 					try
 					{
-						//!!!!поддержка long
-						var data = File.ReadAllBytes( fullPath );
+						byte[] data;
+						if( clearFile )
+							data = Array.Empty<byte>();
+						else
+						{
+							using( FileStream fs = new FileStream( fullPath, FileMode.Open ) )
+							{
+								var offset = requestedBlock * CommonNetworkService_FileSync.FileBlockSize;
+								fs.Seek( offset, SeekOrigin.Begin );
+
+								var size = (int)Math.Min( fileItem.Length - offset, CommonNetworkService_FileSync.FileBlockSize );
+
+								data = new byte[ size ];
+								if( fs.Read( data, 0, size ) != size )
+									throw new Exception( "File reading failed." );
+							}
+
+							//data = File.readReadAllBytes( fullPath );
+
+							////check max file size limit
+							//if( CommonNetworkService_FileSync.MaxFileSize != int.MaxValue )
+							//{
+							//	var fileInfo = new System.IO.FileInfo( fullPath );
+							//	if( fileInfo.Length > CommonNetworkService_FileSync.MaxFileSize )
+							//	{
+							//		//!!!!check additionalErrorMessage
+							//		additionalErrorMessage = $"File size is more than limit. Limit is {CommonNetworkService_FileSync.MaxFileSize}.";
+							//		return false;
+							//	}
+							//}
+
+							//data = File.ReadAllBytes( fullPath );
+						}
 
 						writer.Write( true );
-						writer.Write( fileName );
+						writer.Write( newFileName ?? fileName );
 						writer.Write( data.Length );
-						writer.Write( fileItem.TimeModified );
-						writer.Write( data );
+						writer.Write( fileItem.TimeModified );//!!!!каждый блок необязательно
+						writer.WriteVariableInt32( requestedBlock );
+
+						var zipData = ZipData && data.Length > 200;
+						writer.Write( zipData );
+						if( zipData )
+						{
+							var zippedData = IOUtility.Zip( data, System.IO.Compression.CompressionLevel.Fastest );
+							writer.Write( zippedData.Length );
+							writer.Write( zippedData );
+						}
+						else
+							writer.Write( data );
 
 						totalSent += data.Length;
 						if( totalSent > SendFilesMaxSize )
@@ -215,13 +506,13 @@ namespace NeoAxis
 					{
 						//no file or busy
 						writer.Write( true );
-						writer.Write( fileName );
+						writer.Write( newFileName ?? fileName );
 						writer.Write( -1 );
 					}
 				}
 				else
 				{
-					//no cache or not in the cache
+					//no cache, not in the cache or can't send
 					writer.Write( true );
 					writer.Write( fileName );
 					writer.Write( -1 );
@@ -235,16 +526,18 @@ namespace NeoAxis
 		}
 	}
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public class ClientNetworkService_FileSync : ClientNetworkService
 	{
 		public static List<string> SkipPathsClient { get; } = new List<string>();
 
-		public int SendFilesMaxSize { get; set; } = 10 * 1024 * 1024;
+		public int SendFilesMaxSize { get; set; } = 5/*10*/ * 1024 * 1024;
 
 		public string DestinationFolder { get; set; } = "";
 		//public string LocalFilesFolder { get; set; } = "";
+
+		public int ServerFileBlockSize { get; set; }
 
 		volatile StatusClass status = new StatusClass( StatusEnum.NotInitialized, "" );
 		bool remainsFilesToDownloadPrepared;
@@ -252,6 +545,9 @@ namespace NeoAxis
 		EDictionary<string, FileInfo> remainsFilesToDownload = new EDictionary<string, FileInfo>();
 		bool filesDuringRequest;
 		public long RemainsToUpdate;
+
+		//cached project settings
+		CloudProjectProjectSettingsCache cloudProjectProjectSettingsCache;
 
 		///////////////////////////////////////////
 
@@ -294,6 +590,20 @@ namespace NeoAxis
 			public DateTime TimeModified;
 			public string Hash;
 			public RepositorySyncMode SyncMode;
+
+			public ESet<int> DownloadedBlocks = new ESet<int>();
+
+			//
+
+			public int BlockCount
+			{
+				get { return (int)( ( Length + CommonNetworkService_FileSync.FileBlockSize - 1 ) / CommonNetworkService_FileSync.FileBlockSize ); }
+			}
+
+			public long RemainingLength
+			{
+				get { return Math.Min( Length, ( BlockCount - DownloadedBlocks.Count ) * CommonNetworkService_FileSync.FileBlockSize ); }
+			}
 		}
 
 		///////////////////////////////////////////
@@ -336,35 +646,49 @@ namespace NeoAxis
 			StatusChanged?.Invoke( this );
 		}
 
-		static string GetMD5( System.Security.Cryptography.MD5 md5, Stream stream )
+		static string GetMD5( MD5 md5, Stream stream )
 		{
 			var hashBytes = md5.ComputeHash( stream );
 
-			var builder = new StringBuilder();
+			var builder = new StringBuilder( ( hashBytes.Length + 1 ) * 2 );
 			for( int i = 0; i < hashBytes.Length; i++ )
 				builder.Append( hashBytes[ i ].ToString( "X2" ) );
 			return builder.ToString();
 		}
 
-		//static string GetMD5( System.Security.Cryptography.MD5 md5, byte[] input )
-		//{
-		//	var hashBytes = md5.ComputeHash( input );
+		static string GetMD5( MD5 md5, byte[] input )
+		{
+			var hashBytes = md5.ComputeHash( input );
 
-		//	var builder = new StringBuilder();
-		//	for( int i = 0; i < hashBytes.Length; i++ )
-		//		builder.Append( hashBytes[ i ].ToString( "X2" ) );
-		//	return builder.ToString();
-		//}
+			var builder = new StringBuilder( ( hashBytes.Length + 1 ) * 2 );
+			for( int i = 0; i < hashBytes.Length; i++ )
+				builder.Append( hashBytes[ i ].ToString( "X2" ) );
+			return builder.ToString();
+		}
 
-		public static bool SkipFile( ESet<string> skipPaths, string fileName )
+		public static bool SkipFile( ESet<string> skipPaths, ESet<string> skipFolderNames, string fileName )
 		{
 			//!!!!slowly?
 
+			//skip files depending path
 			foreach( var skipPath in skipPaths )
 			{
 				if( fileName.Length >= skipPath.Length && string.Compare( fileName.Substring( 0, skipPath.Length ), skipPath, true ) == 0 )
 					return true;
 			}
+
+			//skip files depending folder name
+			try
+			{
+				var path = Path.GetDirectoryName( fileName );
+				foreach( var folderName in path.Split( '\\', StringSplitOptions.RemoveEmptyEntries ) )
+				{
+					if( skipFolderNames.Contains( folderName ) )
+						return true;
+				}
+			}
+			catch { }
+
 			return false;
 		}
 
@@ -405,7 +729,7 @@ namespace NeoAxis
 		//}
 
 		//call inside try/catch
-		public static bool IsNeedUpdate( System.Security.Cryptography.MD5 md5, long fileInfoLength, string fileInfoHash, string fullPath )
+		public static bool IsNeedUpdate( MD5 md5, long fileInfoLength, string fileInfoHash, string fullPath )
 		{
 			var update = false;
 
@@ -417,9 +741,19 @@ namespace NeoAxis
 					update = true;
 				else
 				{
+					//!!!!slowly. use tasks. MD5.Create() for each thread
+
 					string hash;
-					using( var stream = new FileStream( fullPath, FileMode.Open, FileAccess.Read ) )
-						hash = GetMD5( md5, stream );
+					if( fileInfo.Length > 10000000 )
+					{
+						using( var stream = new FileStream( fullPath, FileMode.Open, FileAccess.Read ) )
+							hash = GetMD5( md5, stream );
+					}
+					else
+					{
+						var bytes = File.ReadAllBytes( fullPath );
+						hash = GetMD5( md5, bytes );
+					}
 
 					if( fileInfoHash != hash )
 						update = true;
@@ -432,7 +766,7 @@ namespace NeoAxis
 		}
 
 		//call inside try/catch
-		public static bool IsNeedUpdate( System.Security.Cryptography.MD5 md5, FileInfo info, string fullPath )
+		public static bool IsNeedUpdate( MD5 md5, FileInfo info, string fullPath )
 		{
 			return IsNeedUpdate( md5, info.Length, info.Hash, fullPath );
 		}
@@ -440,26 +774,20 @@ namespace NeoAxis
 		//call inside try/catch
 		void GetFilesToDownloadAndDelete( Dictionary<string, FileInfo> filesOnServer, ref string[] filesToDownload, ref string[] filesToDelete )
 		{
-			using( var md5 = System.Security.Cryptography.MD5.Create() )
+			using( var md5 = MD5.Create() )
 			{
 				//var localFiles = GetLocalFiles();
 
 				var allSkipPaths = new ESet<string>();
+				var allSkipFolderNames = new ESet<string>();
 				{
 					allSkipPaths.AddRangeWithCheckAlreadyContained( SkipPathsClient );
 
-					//get ignore folders from Repository.settings
-					var repositorySettingsFile = Path.Combine( DestinationFolder, "Repository.settings" );
-					if( File.Exists( repositorySettingsFile ) )
-					{
-						if( !RepositorySettingsFile.Load( repositorySettingsFile, out var settings, out var error3 ) )
-						{
-							var error = "Unable to load Repository.settings. " + error3;
-							throw new Exception( error );
-							//return null;
-						}
-						allSkipPaths.AddRangeWithCheckAlreadyContained( settings.IgnoreFolders );
-					}
+					//apply settings from project settings
+					if( cloudProjectProjectSettingsCache == null )
+						cloudProjectProjectSettingsCache = new CloudProjectProjectSettingsCache( DestinationFolder );
+					allSkipPaths.AddRangeWithCheckAlreadyContained( cloudProjectProjectSettingsCache.SkipPaths );
+					allSkipFolderNames.AddRangeWithCheckAlreadyContained( cloudProjectProjectSettingsCache.SkipFoldersWithName );
 				}
 
 				//если на сервере и в локальном сторедже нет, а он есть, то удалять
@@ -475,7 +803,7 @@ namespace NeoAxis
 					{
 						var fileName = fullPath.Substring( DestinationFolder.Length + 1 );
 
-						if( !SkipFile( allSkipPaths, fileName ) )
+						if( !SkipFile( allSkipPaths, allSkipFolderNames, fileName ) )
 						{
 							if( !fileNamesOnServerOrLocalLower.Contains( fileName.ToLower() ) )
 							{
@@ -539,12 +867,15 @@ namespace NeoAxis
 
 		bool ReceiveMessage_SendInfoToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
+			ServerFileBlockSize = reader.ReadVariableInt32();
+
 			var fileCountOnServer = reader.ReadInt32();
 			var filesOnServer = new Dictionary<string, FileInfo>( fileCountOnServer );
 			for( int n = 0; n < fileCountOnServer; n++ )
 			{
 				var info = new FileInfo();
-				info.FileName = reader.ReadString();
+				//!!!!check for "..". where else
+				info.FileName = PathUtility.NormalizePath( reader.ReadString() );
 				info.TimeModified = reader.ReadDateTime();
 				info.Length = reader.ReadInt64();
 				info.Hash = reader.ReadString();
@@ -552,7 +883,7 @@ namespace NeoAxis
 				filesOnServer[ info.FileName.ToLower() ] = info;
 			}
 
-			//хеш получать из сортированного списка. везде так
+			//может дополнительно получать хеш из всего списка (сортированного). где еще
 			//var totalHashOnServer = reader.ReadString();
 
 			if( !reader.Complete() )
@@ -595,8 +926,19 @@ namespace NeoAxis
 				foreach( var fileName in filesToDownload )
 				{
 					if( filesOnServer.TryGetValue( fileName.ToLower(), out var fileInfo ) )
-						remainsFilesToDownload[ fileInfo.FileName.ToLower() ] = fileInfo;
+					{
+						//create empty files immediately without request
+						if( fileInfo.BlockCount == 0 )
+						{
+							var fullPath = Path.Combine( DestinationFolder, fileInfo.FileName );
+							File.WriteAllBytes( fullPath, new byte[ 0 ] );
+							File.SetLastWriteTimeUtc( fullPath, fileInfo.TimeModified );
+						}
+						else
+							remainsFilesToDownload[ fileInfo.FileName.ToLower() ] = fileInfo;
+					}
 				}
+
 				UpdateRemainsToUpdate();
 
 
@@ -641,6 +983,7 @@ namespace NeoAxis
 			public int Length;
 			public DateTime TimeModified;
 			public byte[] Data;
+			public int RequestedBlock;
 		}
 
 		bool ReceiveMessage_SendFilesToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
@@ -649,15 +992,42 @@ namespace NeoAxis
 			while( reader.ReadBoolean() )
 			{
 				var fileItem = new FileItem();
-				fileItem.FileName = reader.ReadString();
+				//!!!!check for "..". where else
+				fileItem.FileName = PathUtility.NormalizePath( reader.ReadString() );
 				fileItem.Length = reader.ReadInt32();
 
 				if( fileItem.Length >= 0 )
 				{
 					fileItem.TimeModified = reader.ReadDateTime();
+					fileItem.RequestedBlock = reader.ReadVariableInt32();
 
-					fileItem.Data = new byte[ fileItem.Length ];
-					reader.ReadBuffer( fileItem.Data, 0, fileItem.Length );
+					var zipped = reader.ReadBoolean();
+					if( zipped )
+					{
+						var zippedSize = reader.ReadInt32();
+						var zippedData = new byte[ zippedSize ];
+						reader.ReadBuffer( zippedData, 0, zippedData.Length );
+
+						try
+						{
+							fileItem.Data = IOUtility.Unzip( zippedData );
+							if( fileItem.Data.Length != fileItem.Length )
+							{
+								SetStatus( new StatusClass( StatusEnum.Error, "Invalid file size after unzip." ) );
+								return false;
+							}
+						}
+						catch( Exception e )
+						{
+							SetStatus( new StatusClass( StatusEnum.Error, e.Message ) );
+							return false;
+						}
+					}
+					else
+					{
+						fileItem.Data = new byte[ fileItem.Length ];
+						reader.ReadBuffer( fileItem.Data, 0, fileItem.Length );
+					}
 				}
 
 				fileItems.Add( fileItem );
@@ -682,23 +1052,44 @@ namespace NeoAxis
 					if( fileItem.Length >= 0 )
 					{
 						var directory = Path.GetDirectoryName( fullPath );
-						Directory.CreateDirectory( directory );
+						if( !Directory.Exists( directory ) )
+							Directory.CreateDirectory( directory );
 
-						File.WriteAllBytes( fullPath, fileItem.Data );
-
-						//!!!!check
+						if( fileItem.RequestedBlock == 0 )
+						{
+							File.WriteAllBytes( fullPath, fileItem.Data );
+						}
+						else
+						{
+							using( var stream = new FileStream( fullPath, FileMode.Append ) )
+								stream.Write( fileItem.Data, 0, fileItem.Data.Length );
+						}
 						File.SetLastWriteTimeUtc( fullPath, fileItem.TimeModified );
+
+						if( remainsFilesToDownload.TryGetValue( fileItem.FileName.ToLower(), out var fileInfo ) )
+						{
+							fileInfo.DownloadedBlocks.AddWithCheckAlreadyContained( fileItem.RequestedBlock );
+
+							if( fileInfo.DownloadedBlocks.Count == fileInfo.BlockCount )
+								remainsFilesToDownload.Remove( fileItem.FileName.ToLower() );
+						}
+						else
+							remainsFilesToDownload.Remove( fileItem.FileName.ToLower() );
+
+						//var directory = Path.GetDirectoryName( fullPath );
+						//Directory.CreateDirectory( directory );
+
+						//File.WriteAllBytes( fullPath, fileItem.Data );
+
+						////!!!!check
+						//File.SetLastWriteTimeUtc( fullPath, fileItem.TimeModified );
 					}
 					else
 					{
 						if( File.Exists( fullPath ) )
 							File.Delete( fullPath );
+						remainsFilesToDownload.Remove( fileItem.FileName.ToLower() );
 					}
-
-					remainsFilesToDownload.Remove( fileItem.FileName.ToLower() );
-
-					////!!!!
-					//Log.Info( "File update: " + fileItem.FileName );
 				}
 			}
 			catch( Exception e )
@@ -733,18 +1124,21 @@ namespace NeoAxis
 					{
 						files.Add( fileInfo );
 
-						totalSize += fileInfo.Length;
+						//может влазить несколько блоков одного файла. сейчас получается несколько файлов одновременно будет качать
+
+						totalSize += CommonNetworkService_FileSync.FileBlockSize;//fileInfo.Length;
 						if( totalSize > SendFilesMaxSize )
 							break;
 					}
 
-
 					var writer = BeginMessage( GetMessageType( "RequestFilesToServer" ) );
 					writer.Write( files.Count );
 					foreach( var fileInfo in files )
+					{
 						writer.Write( fileInfo.FileName );
+						writer.WriteVariableInt32( fileInfo.DownloadedBlocks.Count );
+					}
 					EndMessage();
-
 
 					filesDuringRequest = true;
 				}
@@ -757,7 +1151,7 @@ namespace NeoAxis
 		{
 			var value = 0L;
 			foreach( var fileInfo in remainsFilesToDownload.Values )
-				value += fileInfo.Length;
+				value += fileInfo.RemainingLength;
 			RemainsToUpdate = value;
 		}
 

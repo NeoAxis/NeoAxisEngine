@@ -1,6 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
+	<CheckEolTargetFramework>false</CheckEolTargetFramework>
 	<UseWindowsForms>true</UseWindowsForms>
 	<UseWPF>true</UseWPF>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -27,6 +28,7 @@
     <Compile Update="WidgetControlWinForms.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NeoAxis.Core.Editor\NeoAxis.Core.Editor.csproj" />
     <ProjectReference Include="..\NeoAxis.Core\NeoAxis.Core.csproj" />
   </ItemGroup>
 </Project>

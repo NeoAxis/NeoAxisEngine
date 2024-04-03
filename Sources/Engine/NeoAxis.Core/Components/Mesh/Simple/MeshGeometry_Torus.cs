@@ -24,7 +24,7 @@ namespace NeoAxis
 					value = new Reference<int>( 0, value.GetByReference );
 				if( value > 2 )
 					value = new Reference<int>( 2, value.GetByReference );
-				if( _axis.BeginSet( ref value ) )
+				if( _axis.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -52,7 +52,7 @@ namespace NeoAxis
 			{
 				if( value < 0 )
 					value = new Reference<double>( 0, value.GetByReference );
-				if( _radius.BeginSet( ref value ) )
+				if( _radius.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -80,7 +80,7 @@ namespace NeoAxis
 			{
 				if( value < 3 )
 					value = new Reference<int>( 3, value.GetByReference );
-				if( _segments.BeginSet( ref value ) )
+				if( _segments.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -110,7 +110,7 @@ namespace NeoAxis
 					value = new Reference<Degree>( 0.01, value.GetByReference );
 				if( value.Value > 360 )
 					value = new Reference<Degree>( 360, value.GetByReference );
-				if( _circumference.BeginSet( ref value ) )
+				if( _circumference.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -138,7 +138,7 @@ namespace NeoAxis
 			{
 				if( value < 0 )
 					value = new Reference<double>( 0, value.GetByReference );
-				if( _tubeRadius.BeginSet( ref value ) )
+				if( _tubeRadius.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -166,7 +166,7 @@ namespace NeoAxis
 			{
 				if( value < 3 )
 					value = new Reference<int>( 3, value.GetByReference );
-				if( _tubeSegments.BeginSet( ref value ) )
+				if( _tubeSegments.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -196,7 +196,7 @@ namespace NeoAxis
 					value = new Reference<Degree>( 0.01, value.GetByReference );
 				if( value.Value > 360 )
 					value = new Reference<Degree>( 360, value.GetByReference );
-				if( _tubeCircumference.BeginSet( ref value ) )
+				if( _tubeCircumference.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -222,7 +222,7 @@ namespace NeoAxis
 		//	get { if( _smooth.BeginGet() ) Smooth = _smooth.Get( this ); return _smooth.value; }
 		//	set
 		//	{
-		//		if( _smooth.BeginSet( ref value ) )
+		//		if( _smooth.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -247,7 +247,7 @@ namespace NeoAxis
 			get { if( _insideOut.BeginGet() ) InsideOut = _insideOut.Get( this ); return _insideOut.value; }
 			set
 			{
-				if( _insideOut.BeginSet( ref value ) )
+				if( _insideOut.BeginSet( this, ref value ) )
 				{
 					try
 					{

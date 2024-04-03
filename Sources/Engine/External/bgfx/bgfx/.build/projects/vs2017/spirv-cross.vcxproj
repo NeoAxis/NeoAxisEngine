@@ -76,8 +76,8 @@
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\..\..\..\..\..\..\_Compilation\Win64\bgfx\bin\</OutDir>
-    <IntDir>..\..\..\..\..\..\..\_Compilation\Win64\bgfx\obj\x64\Debug\spirv-cross\</IntDir>
+    <OutDir>..\..\..\..\..\..\..\..\_build\Win64\bgfx\bin\</OutDir>
+    <IntDir>..\..\..\..\..\..\..\..\_build\Win64\bgfx\obj\x64\Debug\spirv-cross\</IntDir>
     <TargetName>spirv-crossDebug</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
@@ -88,8 +88,8 @@
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\..\..\..\..\..\..\_Compilation\Win64\bgfx\bin\</OutDir>
-    <IntDir>..\..\..\..\..\..\..\_Compilation\Win64\bgfx\obj\x64\Release\spirv-cross\</IntDir>
+    <OutDir>..\..\..\..\..\..\..\..\_build\Win64\bgfx\bin\</OutDir>
+    <IntDir>..\..\..\..\..\..\..\..\_build\Win64\bgfx\obj\x64\Release\spirv-cross\</IntDir>
     <TargetName>spirv-crossRelease</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
@@ -145,7 +145,7 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
@@ -224,7 +224,7 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>

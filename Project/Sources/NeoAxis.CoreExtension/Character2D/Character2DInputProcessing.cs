@@ -14,6 +14,11 @@ namespace NeoAxis
 		Vector2 lookDirection;
 		bool firing;
 
+		//!!!!
+		//double networkSentVector = double.MaxValue;
+		//bool networkSentRun;
+		//Vector2 networkSentLookDirection;
+
 		//
 
 		[Browsable( false )]
@@ -40,75 +45,71 @@ namespace NeoAxis
 		{
 			base.OnInputMessage( gameMode, message );
 
-			if( !gameMode.FreeCamera && InputEnabled )
+			var character = Character;
+			if( character != null && InputEnabled && !gameMode.FreeCamera ) //&& ( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson || gameMode.GetCameraManagementOfCurrentObject() != null ) )
 			{
 				//key down
 				var keyDown = message as InputMessageKeyDown;
 				if( keyDown != null )
 				{
-					if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.None || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson )
+					//jump
+					if( Character.TypeCached.JumpSupport && ( keyDown.Key == gameMode.KeyJump1 || keyDown.Key == gameMode.KeyJump2 ) )
 					{
-						//jump
-						if( Character.JumpSupport && keyDown.Key == EKeys.Space )
-						{
-							if( NetworkIsClient )
-							{
-								BeginNetworkMessageToServer( "Jump" );
-								EndNetworkMessage();
-							}
-							else
-								Character.TryJump();
-						}
+						if( NetworkIsClient )
+							Character.JumpClient();
+						else
+							Character.Jump();
+					}
 
-						//drop item
-						if( keyDown.Key == EKeys.T )
+					//!!!!how to configure? keys to activate items too
+					//drop item
+					if( keyDown.Key >= EKeys.D1 && keyDown.Key <= EKeys.D8 )
+					{
+						if( IsKeyPressed( gameMode.KeyDrop1 ) || IsKeyPressed( gameMode.KeyDrop2 ) )
 						{
-							var item = Character.ItemGetEnabledFirst();
+							var index = keyDown.Key - EKeys.D1;
+
+							var items = character.GetAllItems();
+							var item = index < items.Length ? items[ index ] : null;
 							if( item != null )
 							{
+								var amount = 1;
 								if( NetworkIsClient )
-								{
-									var component = item as Component;
-									if( component != null )
-									{
-										var writer = Character.BeginNetworkMessageToServer( "ItemDrop" );
-										if( writer != null )
-										{
-											writer.WriteVariableUInt64( (ulong)component.NetworkID );
-											Character.EndNetworkMessage();
-										}
-									}
-								}
+									character.ItemDropClient( item, amount );
 								else
-									Character.ItemDrop( item, true );
+									character.ItemDrop( gameMode, item, amount );
 							}
 						}
 					}
+
+					////drop item
+					//if( keyDown.Key == gameMode.KeyDrop1 || keyDown.Key == gameMode.KeyDrop2 )
+					//{
+					//	var item = Character.GetActiveItem();//var item = Character.ItemGetFirst();
+					//	if( item != null )
+					//	{
+					//		var amount = 1;
+					//		if( NetworkIsClient )
+					//			character.ItemDropClient( item, amount );
+					//		else
+					//			character.ItemDrop( gameMode, item, amount );
+					//	}
+					//}
 				}
 
 				//mouse down
 				var mouseDown = message as InputMessageMouseButtonDown;
 				if( mouseDown != null && mouseDown.Button == EMouseButtons.Left )
 				{
-					if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.None || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson )
+					var weapon = Character.GetActiveWeapon();
+					if( weapon != null )
 					{
-						var item = Character.ItemGetEnabledFirst();
-						if( item != null )
-						{
-							var weapon = item as Weapon2D;
-							if( weapon != null )
-							{
-								firing = true;
+						firing = true;
 
-								if( NetworkIsClient )
-								{
-									weapon.BeginNetworkMessageToServer( "FiringBegin" );
-									weapon.EndNetworkMessage();
-								}
-								else
-									weapon.FiringBegin();
-							}
-						}
+						if( NetworkIsClient )
+							weapon.FiringBeginClient();
+						else
+							weapon.FiringBegin();
 					}
 				}
 
@@ -145,21 +146,30 @@ namespace NeoAxis
 			}
 		}
 
-		void UpdateObjectControl()
+		void ObjectControlSimulationStep()
 		{
 			var character = Character;
 			if( character != null && InputEnabled )
 			{
 				double vector = 0;
-
-				if( IsKeyPressed( EKeys.A ) || IsKeyPressed( EKeys.Left ) || IsKeyPressed( EKeys.NumPad4 ) )
-					vector -= 1.0;
-				if( IsKeyPressed( EKeys.D ) || IsKeyPressed( EKeys.Right ) || IsKeyPressed( EKeys.NumPad6 ) )
-					vector += 1.0;
-
 				bool run = false;
-				if( character.RunSupport )
-					run = IsKeyPressed( EKeys.Shift );
+
+				//move
+				var scene = ParentRoot as Scene;
+				if( scene != null )
+				{
+					var gameMode = (GameMode)scene.GetGameMode();
+					if( gameMode != null )
+					{
+						if( IsKeyPressed( gameMode.KeyLeft1 ) || IsKeyPressed( gameMode.KeyLeft2 ) /*|| IsKeyPressed( EKeys.NumPad4 )*/ )
+							vector -= 1.0;
+						if( IsKeyPressed( gameMode.KeyRight1 ) || IsKeyPressed( gameMode.KeyRight2 ) /*|| IsKeyPressed( EKeys.NumPad6 )*/ )
+							vector += 1.0;
+
+						if( character.TypeCached.RunSupport )
+							run = IsKeyPressed( gameMode.KeyRun1 ) || IsKeyPressed( gameMode.KeyRun2 );
+					}
+				}
 
 				//update lookDirection
 				if( vector != 0 )
@@ -171,36 +181,37 @@ namespace NeoAxis
 				//send data to the server
 				if( NetworkIsClient )
 				{
-					//!!!!no sense to send same values. firing too
+					//!!!!почему не останавливается? ведь должно быть постоянно SetMoveVector
+					//if( networkSentVector != vector || networkSentRun != run || networkSentLookDirection != lookDirection )
+					//{
+					//	networkSentVector = vector;
+					//	networkSentRun = run;
+					//	networkSentLookDirection = lookDirection;
 
-					var writer = BeginNetworkMessageToServer( "UpdateObjectControl" );
+					var writer = BeginNetworkMessageToServer( "UpdateObjectControlCharacter2D" );
 					if( writer != null )
 					{
-						writer.Write( (float)vector );
+						writer.Write( new HalfType( vector ) );
 						writer.Write( run );
-						writer.Write( lookDirection.ToVector2F() );
+						writer.Write( lookDirection.ToVector2H() );
 						EndNetworkMessage();
 					}
+					//}
 				}
 
 
-				//firing
+				//!!!!don't send same for weapon
+
+				//update firing
 				if( IsMouseButtonPressed( EMouseButtons.Left ) && firing )
 				{
-					var item = Character.ItemGetEnabledFirst();
-					if( item != null )
+					var weapon = Character.GetActiveWeapon();
+					if( weapon != null )
 					{
-						var weapon = item as Weapon2D;
-						if( weapon != null )
-						{
-							if( NetworkIsClient )
-							{
-								weapon.BeginNetworkMessageToServer( "FiringBegin" );
-								weapon.EndNetworkMessage();
-							}
-							else
-								weapon.FiringBegin();
-						}
+						if( NetworkIsClient )
+							weapon.FiringBeginClient();
+						else
+							weapon.FiringBegin();
 					}
 				}
 			}
@@ -211,14 +222,14 @@ namespace NeoAxis
 			base.OnSimulationStep();
 
 			if( NetworkIsSingle )
-				UpdateObjectControl();
+				ObjectControlSimulationStep();
 		}
 
 		protected override void OnSimulationStepClient()
 		{
 			base.OnSimulationStepClient();
 
-			UpdateObjectControl();
+			ObjectControlSimulationStep();
 		}
 
 		protected override bool OnReceiveNetworkMessageFromClient( ServerNetworkService_Components.ClientItem client, string message, ArrayDataReader reader )
@@ -233,11 +244,11 @@ namespace NeoAxis
 				var networkLogic = NetworkLogicUtility.GetNetworkLogic( character );
 				if( networkLogic != null && networkLogic.ServerGetObjectControlledByUser( client.User, true ) == character )
 				{
-					if( message == "UpdateObjectControl" )
+					if( message == "UpdateObjectControlCharacter2D" )
 					{
-						var vector = reader.ReadSingle();
+						var vector = (float)reader.ReadHalf();
 						var run = reader.ReadBoolean();
-						var lookDirection = reader.ReadVector2F();
+						var lookDirection = reader.ReadVector2H().ToVector2();
 						if( !reader.Complete() )
 							return false;
 
@@ -248,13 +259,10 @@ namespace NeoAxis
 						character.SetMoveVector( vector, run );
 						character.SetLookToDirection( lookDirection );
 					}
-					else if( message == "Jump" )
-						character.TryJump();
 				}
 			}
 
 			return true;
 		}
-
 	}
 }

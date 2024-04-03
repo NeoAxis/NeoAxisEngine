@@ -3,7 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -65,7 +65,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using namespace Assimp;
 
-static const aiImporterDesc desc = {
+static constexpr aiImporterDesc desc = {
     "Assimp Binary Importer",
     "Gargaj / Conspiracy",
     "",
@@ -406,7 +406,7 @@ void AssbinImporter::ReadBinaryMesh(IOStream *stream, aiMesh *mesh) {
             f.mIndices = new unsigned int[f.mNumIndices];
 
             for (unsigned int a = 0; a < f.mNumIndices; ++a) {
-                // Check if unsigned  short ( 16 bit  ) are big enought for the indices
+                // Check if unsigned  short ( 16 bit  ) are big enough for the indices
                 if (fitsIntoUI16(mesh->mNumVertices)) {
                     f.mIndices[a] = Read<uint16_t>(stream);
                 } else {
@@ -556,6 +556,10 @@ void AssbinImporter::ReadBinaryLight(IOStream *stream, aiLight *l) {
     l->mName = Read<aiString>(stream);
     l->mType = (aiLightSourceType)Read<unsigned int>(stream);
 
+    l->mPosition = Read<aiVector3D>(stream);
+    l->mDirection = Read<aiVector3D>(stream);
+    l->mUp = Read<aiVector3D>(stream);
+
     if (l->mType != aiLightSource_DIRECTIONAL) {
         l->mAttenuationConstant = Read<float>(stream);
         l->mAttenuationLinear = Read<float>(stream);
@@ -604,7 +608,7 @@ void AssbinImporter::ReadBinaryScene(IOStream *stream, aiScene *scene) {
 
     // Read node graph
     //scene->mRootNode = new aiNode[1];
-    ReadBinaryNode(stream, &scene->mRootNode, (aiNode *)NULL);
+    ReadBinaryNode(stream, &scene->mRootNode, (aiNode *)nullptr);
 
     // Read all meshes
     if (scene->mNumMeshes) {
@@ -671,7 +675,7 @@ void AssbinImporter::ReadBinaryScene(IOStream *stream, aiScene *scene) {
 void AssbinImporter::InternReadFile(const std::string &pFile, aiScene *pScene, IOSystem *pIOHandler) {
     IOStream *stream = pIOHandler->Open(pFile, "rb");
     if (nullptr == stream) {
-        return;
+        throw DeadlyImportError("ASSBIN: Could not open ", pFile);
     }
 
     // signature

@@ -23,7 +23,7 @@ namespace NeoAxis
 			get { if( _limitEnabled.BeginGet() ) LimitEnabled = _limitEnabled.Get( this ); return _limitEnabled.value; }
 			set
 			{
-				if( _limitEnabled.BeginSet( ref value ) )
+				if( _limitEnabled.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -50,7 +50,7 @@ namespace NeoAxis
 			get { if( _limitLow.BeginGet() ) LimitLow = _limitLow.Get( this ); return _limitLow.value; }
 			set
 			{
-				if( _limitLow.BeginSet( ref value ) )
+				if( _limitLow.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -77,7 +77,7 @@ namespace NeoAxis
 			get { if( _limitHigh.BeginGet() ) LimitHigh = _limitHigh.Get( this ); return _limitHigh.value; }
 			set
 			{
-				if( _limitHigh.BeginSet( ref value ) )
+				if( _limitHigh.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -103,7 +103,7 @@ namespace NeoAxis
 			get { if( _motorEnabled.BeginGet() ) MotorEnabled = _motorEnabled.Get( this ); return _motorEnabled.value; }
 			set
 			{
-				if( _motorEnabled.BeginSet( ref value ) )
+				if( _motorEnabled.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -130,7 +130,7 @@ namespace NeoAxis
 			get { if( _motorSpeed.BeginGet() ) MotorSpeed = _motorSpeed.Get( this ); return _motorSpeed.value; }
 			set
 			{
-				if( _motorSpeed.BeginSet( ref value ) )
+				if( _motorSpeed.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -157,7 +157,7 @@ namespace NeoAxis
 			get { if( _motorMaxForce.BeginGet() ) MotorMaxForce = _motorMaxForce.Get( this ); return _motorMaxForce.value; }
 			set
 			{
-				if( _motorMaxForce.BeginSet( ref value ) )
+				if( _motorMaxForce.BeginSet( this, ref value ) )
 				{
 					try
 					{

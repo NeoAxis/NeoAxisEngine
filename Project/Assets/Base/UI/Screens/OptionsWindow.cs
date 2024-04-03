@@ -13,7 +13,11 @@ namespace Project
 		//General page controls
 		UIControl GetPageGeneral() { return Components[ @"Tab Control\Page General\Control" ] as UIControl; }
 		UISlider GetSliderSoundVolume() { return GetPageGeneral()?.Components[ "Slider Sound Volume" ] as UISlider; }
+		UIText GetTextSoundVolume() { return GetPageGeneral()?.Components[ "Text Sound Volume" ] as UIText; }
 		UISlider GetSliderMusicVolume() { return GetPageGeneral()?.Components[ "Slider Music Volume" ] as UISlider; }
+		UIText GetTextMusicVolume() { return GetPageGeneral()?.Components[ "Text Music Volume" ] as UIText; }
+		UISlider GetSliderMouseSensitivity() { return GetPageGeneral()?.Components[ "Slider Mouse Sensitivity" ] as UISlider; }
+		UIText GetTextMouseSensitivity() { return GetPageGeneral()?.Components[ "Text Mouse Sensitivity" ] as UIText; }
 		UIList GetListVideoMode() { return GetPageGeneral()?.Components[ "List Video Mode" ] as UIList; }
 		UICheck GetCheckDisplayFrameInfo() { return GetPageGeneral()?.Components[ "Check Display Frame Info" ] as UICheck; }
 		UICheck GetCheckDisplaySceneInfo() { return GetPageGeneral()?.Components[ "Check Display Scene Info" ] as UICheck; }
@@ -26,6 +30,7 @@ namespace Project
 		//Graphics page controls
 		UIControl GetPageGraphics() { return Components[ @"Tab Control\Page Graphics\Control" ] as UIControl; }
 		UIList GetListAntialiasingBasic() { return GetPageGraphics()?.Components[ "List Antialiasing Basic" ] as UIList; }
+		UIList GetListAntialiasingAdditional() { return GetPageGraphics()?.Components[ "List Antialiasing Additional" ] as UIList; }
 		UIList GetListAntialiasingMotion() { return GetPageGraphics()?.Components[ "List Antialiasing Motion" ] as UIList; }
 		UIList GetListResolutionUpscaleMode() { return GetPageGraphics()?.Components[ "List Resolution Upscale Mode" ] as UIList; }
 		UIList GetListResolutionUpscaleTechnique() { return GetPageGraphics()?.Components[ "List Resolution Upscale Technique" ] as UIList; }
@@ -39,6 +44,9 @@ namespace Project
 
 		UISlider GetSliderLOD() { return GetPageGraphics2()?.Components[ "Slider LOD" ] as UISlider; }
 		UIText GetTextLOD() { return GetPageGraphics2()?.Components[ "Text LOD" ] as UIText; }
+
+		UISlider GetSliderLODShadows() { return GetPageGraphics2()?.Components[ "Slider LOD Shadows" ] as UISlider; }
+		UIText GetTextLODShadows() { return GetPageGraphics2()?.Components[ "Text LOD Shadows" ] as UIText; }
 
 		UISlider GetSliderTexture() { return GetPageGraphics2()?.Components[ "Slider Texture" ] as UISlider; }
 		UIText GetTextTexture() { return GetPageGraphics2()?.Components[ "Text Texture" ] as UIText; }
@@ -58,11 +66,17 @@ namespace Project
 		UISlider GetSliderReflection() { return GetPageGraphics2()?.Components[ "Slider Reflection" ] as UISlider; }
 		UIText GetTextReflection() { return GetPageGraphics2()?.Components[ "Text Reflection" ] as UIText; }
 
+		UISlider GetSliderReflectionScreenSpace() { return GetPageGraphics2()?.Components[ "Slider Reflection Screen Space" ] as UISlider; }
+		UIText GetTextReflectionScreenSpace() { return GetPageGraphics2()?.Components[ "Text Reflection Screen Space" ] as UIText; }
+
 		UISlider GetSliderDOF() { return GetPageGraphics2()?.Components[ "Slider DOF" ] as UISlider; }
 		UIText GetTextDOF() { return GetPageGraphics2()?.Components[ "Text DOF" ] as UIText; }
 
 		UISlider GetSliderBloom() { return GetPageGraphics2()?.Components[ "Slider Bloom" ] as UISlider; }
 		UIText GetTextBloom() { return GetPageGraphics2()?.Components[ "Text Bloom" ] as UIText; }
+
+		UISlider GetSliderMicroparticlesInAir() { return GetPageGraphics2()?.Components[ "Slider Microparticles In Air" ] as UISlider; }
+		UIText GetTextMicroparticlesInAir() { return GetPageGraphics2()?.Components[ "Text Microparticles In Air" ] as UIText; }
 
 		//
 
@@ -99,6 +113,16 @@ namespace Project
 				};
 			}
 
+			var sliderMouseSensitivity = GetSliderMouseSensitivity();
+			if( sliderMouseSensitivity != null )
+			{
+				sliderMouseSensitivity.Value = SimulationApp.MouseSensitivity;
+				sliderMouseSensitivity.ValueChanged += delegate ( UISlider obj )
+				{
+					SimulationApp.MouseSensitivity = obj.Value;
+				};
+			}
+
 			var checkDisplayFrameInfo = GetCheckDisplayFrameInfo();
 			if( checkDisplayFrameInfo != null )
 			{
@@ -132,6 +156,16 @@ namespace Project
 			var listAntialiasingBasic = GetListAntialiasingBasic();
 			if( listAntialiasingBasic != null )
 			{
+				//remove SSAA on mobile
+				if( SystemSettings.LimitedDevice )
+				{
+					for( int n = listAntialiasingBasic.Items.Count - 1; n >= 0; n-- )
+					{
+						if( listAntialiasingBasic.Items[ n ].Contains( "SSAA" ) )
+							listAntialiasingBasic.Items.RemoveAt( n );
+					}
+				}
+
 				listAntialiasingBasic.SelectItem( SimulationApp.AntialiasingBasic );
 				listAntialiasingBasic.SelectedIndexChanged += delegate ( UIList sender )
 				{
@@ -139,20 +173,33 @@ namespace Project
 				};
 			}
 
+			var listAntialiasingAdditional = GetListAntialiasingAdditional();
+			if( listAntialiasingAdditional != null )
+			{
+				if( SystemSettings.LimitedDevice )
+					listAntialiasingAdditional.ReadOnly = true;
+
+				listAntialiasingAdditional.SelectItem( SimulationApp.AntialiasingAdditional );
+				listAntialiasingAdditional.SelectedIndexChanged += delegate ( UIList sender )
+				{
+					SimulationApp.AntialiasingAdditional = sender.SelectedItem;
+				};
+			}
+
 			var listAntialiasingMotion = GetListAntialiasingMotion();
 			if( listAntialiasingMotion != null )
 			{
-				listAntialiasingMotion.SelectItem( SimulationApp.AntialiasingMotion );
-				listAntialiasingMotion.SelectedIndexChanged += delegate ( UIList sender )
-				{
-					SimulationApp.AntialiasingMotion = sender.SelectedItem;
-				};
-
 				if( SystemSettings.LimitedDevice )
 				{
 					listAntialiasingMotion.ReadOnly = true;
 					listAntialiasingMotion.Items.RemoveAt( 2 );
 				}
+
+				listAntialiasingMotion.SelectItem( SimulationApp.AntialiasingMotion );
+				listAntialiasingMotion.SelectedIndexChanged += delegate ( UIList sender )
+				{
+					SimulationApp.AntialiasingMotion = sender.SelectedItem;
+				};
 			}
 
 			var listResolutionUpscaleMode = GetListResolutionUpscaleMode();
@@ -279,6 +326,18 @@ namespace Project
 			}
 
 			{
+				var slider = GetSliderLODShadows();
+				if( slider != null )
+				{
+					slider.Value = SimulationApp.LODScaleShadows;
+					slider.ValueChanged += delegate ( UISlider obj )
+					{
+						SimulationApp.LODScaleShadows = obj.Value;
+					};
+				}
+			}
+
+			{
 				var slider = GetSliderTexture();
 				if( slider != null )
 				{
@@ -339,6 +398,18 @@ namespace Project
 			}
 
 			{
+				var slider = GetSliderReflectionScreenSpace();
+				if( slider != null )
+				{
+					slider.Value = SimulationApp.ReflectionScreenSpaceMultiplier;
+					slider.ValueChanged += delegate ( UISlider obj )
+					{
+						SimulationApp.ReflectionScreenSpaceMultiplier = obj.Value;
+					};
+				}
+			}
+
+			{
 				var slider = GetSliderMotionBlur();
 				if( slider != null )
 				{
@@ -373,6 +444,18 @@ namespace Project
 					};
 				}
 			}
+
+			{
+				var slider = GetSliderMicroparticlesInAir();
+				if( slider != null )
+				{
+					slider.Value = SimulationApp.MicroparticlesInAirMultiplier;
+					slider.ValueChanged += delegate ( UISlider obj )
+					{
+						SimulationApp.MicroparticlesInAirMultiplier = obj.Value;
+					};
+				}
+			}
 		}
 
 		protected override bool OnKeyDown( KeyEvent e )
@@ -397,6 +480,15 @@ namespace Project
 		{
 			base.OnUpdate( delta );
 
+			if( GetTextSoundVolume() != null )
+				GetTextSoundVolume().Text = SimulationApp.SoundVolume.ToString( "F1" );
+
+			if( GetTextMusicVolume() != null )
+				GetTextMusicVolume().Text = SimulationApp.MusicVolume.ToString( "F1" );
+
+			if( GetTextMouseSensitivity() != null )
+				GetTextMouseSensitivity().Text = SimulationApp.MouseSensitivity.ToString( "F1" );
+
 			if( GetSliderSharpness() != null )
 				GetSliderSharpness().ReadOnly = SimulationApp.Sharpness < 0;
 
@@ -405,6 +497,9 @@ namespace Project
 
 			if( GetTextLOD() != null )
 				GetTextLOD().Text = SimulationApp.LODScale.ToString( "F1" );
+
+			if( GetTextLODShadows() != null )
+				GetTextLODShadows().Text = SimulationApp.LODScaleShadows.ToString( "F1" );
 
 			if( GetTextTexture() != null )
 				GetTextTexture().Text = SimulationApp.TextureQuality.ToString( "F1" );
@@ -421,6 +516,9 @@ namespace Project
 			if( GetTextReflection() != null )
 				GetTextReflection().Text = SimulationApp.ReflectionMultiplier.ToString( "F1" );
 
+			if( GetTextReflectionScreenSpace() != null )
+				GetTextReflectionScreenSpace().Text = SimulationApp.ReflectionScreenSpaceMultiplier.ToString( "F1" );
+
 			if( GetTextMotionBlur() != null )
 				GetTextMotionBlur().Text = SimulationApp.MotionBlurMultiplier.ToString( "F1" );
 
@@ -429,6 +527,9 @@ namespace Project
 
 			if( GetTextBloom() != null )
 				GetTextBloom().Text = SimulationApp.BloomScale.ToString( "F1" );
+
+			if( GetTextMicroparticlesInAir() != null )
+				GetTextMicroparticlesInAir().Text = SimulationApp.MicroparticlesInAirMultiplier.ToString( "F1" );
 		}
 	}
 }

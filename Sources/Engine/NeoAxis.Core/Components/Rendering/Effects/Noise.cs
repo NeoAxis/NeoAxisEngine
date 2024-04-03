@@ -30,7 +30,7 @@ namespace NeoAxis
 		public Reference<Range> Multiply
 		{
 			get { if( _multiply.BeginGet() ) Multiply = _multiply.Get( this ); return _multiply.value; }
-			set { if( _multiply.BeginSet( ref value ) ) { try { MultiplyChanged?.Invoke( this ); } finally { _multiply.EndSet(); } } }
+			set { if( _multiply.BeginSet( this, ref value ) ) { try { MultiplyChanged?.Invoke( this ); } finally { _multiply.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Multiply"/> property value changes.</summary>
 		public event Action<RenderingEffect_Noise> MultiplyChanged;
@@ -44,7 +44,7 @@ namespace NeoAxis
 		public Reference<Range> Add
 		{
 			get { if( _add.BeginGet() ) Add = _add.Get( this ); return _add.value; }
-			set { if( _add.BeginSet( ref value ) ) { try { AddChanged?.Invoke( this ); } finally { _add.EndSet(); } } }
+			set { if( _add.BeginSet( this, ref value ) ) { try { AddChanged?.Invoke( this ); } finally { _add.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Add"/> property value changes.</summary>
 		public event Action<RenderingEffect_Noise> AddChanged;
@@ -62,7 +62,7 @@ namespace NeoAxis
 		public Reference<bool> SeedRandom
 		{
 			get { if( _seedRandom.BeginGet() ) SeedRandom = _seedRandom.Get( this ); return _seedRandom.value; }
-			set { if( _seedRandom.BeginSet( ref value ) ) { try { SeedRandomChanged?.Invoke( this ); } finally { _seedRandom.EndSet(); } } }
+			set { if( _seedRandom.BeginSet( this, ref value ) ) { try { SeedRandomChanged?.Invoke( this ); } finally { _seedRandom.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SeedRandom"/> property value changes.</summary>
 		public event Action<RenderingEffect_Noise> SeedRandomChanged;

@@ -97,7 +97,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public bool Contains( Vector3F p )
+		public bool Contains( ref Vector3F p )
 		{
 			float x = p.X - Center.X;
 			float y = p.Y - Center.Y;
@@ -106,6 +106,12 @@ namespace NeoAxis
 			if( lengthSqr > Radius * Radius )
 				return false;
 			return true;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public bool Contains( Vector3F p )
+		{
+			return Contains( ref p );
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -450,9 +456,45 @@ namespace NeoAxis
 			return result;
 		}
 
-		//!!!!!
-		//[AutoConvertType]
-		//!!!!Parse, ToString
+		[AutoConvertType]
+		public static SphereF Parse( string text )
+		{
+			if( string.IsNullOrEmpty( text ) )
+				throw new ArgumentNullException( "The text parameter cannot be null or zero length." );
+
+			string[] vals = text.Split( new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries );
+
+			if( vals.Length != 4 )
+				throw new FormatException( string.Format( "Cannot parse the text '{0}' because it does not have 4 parts separated by spaces in the form (x y z radius).", text ) );
+
+			try
+			{
+				return new SphereF(
+					new Vector3F(
+						float.Parse( vals[ 0 ] ),
+						float.Parse( vals[ 1 ] ),
+						float.Parse( vals[ 2 ] ) ),
+					float.Parse( vals[ 3 ] ) );
+			}
+			catch( Exception )
+			{
+				throw new FormatException( "The parts of the vectors must be decimal numbers." );
+			}
+		}
+
+		[AutoConvertType]
+		public override string ToString()
+		{
+			return ToString( 8 );
+		}
+
+		public string ToString( int precision )
+		{
+			string format = "";
+			format = format.PadLeft( precision, '#' );
+			format = "{0:0." + format + "} {1:0." + format + "} {2:0." + format + "} {3:0." + format + "}";
+			return string.Format( format, Center.X, Center.Y, Center.Z, Radius );
+		}
 
 #if !DISABLE_IMPLICIT
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]

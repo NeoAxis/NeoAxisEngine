@@ -3,9 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
-
-
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -47,15 +45,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace Assimp {
 
-CIOStreamWrapper::~CIOStreamWrapper(void) {
-    /* Various places depend on this destructor to close the file */
-    if (mFile) {
+// ------------------------------------------------------------------------------------------------
+CIOStreamWrapper::~CIOStreamWrapper() {
+    // Various places depend on this destructor to close the file
+    if (mFile != nullptr) {
+        
         mIO->mFileSystem->CloseProc(mIO->mFileSystem, mFile);
-        mFile = nullptr;
     }
 }
 
-// ...................................................................
+// ------------------------------------------------------------------------------------------------
 size_t CIOStreamWrapper::Read(void *pvBuffer,
         size_t pSize,
         size_t pCount) {
@@ -63,7 +62,7 @@ size_t CIOStreamWrapper::Read(void *pvBuffer,
     return mFile->ReadProc(mFile, (char *)pvBuffer, pSize, pCount);
 }
 
-// ...................................................................
+// ------------------------------------------------------------------------------------------------
 size_t CIOStreamWrapper::Write(const void *pvBuffer,
         size_t pSize,
         size_t pCount) {
@@ -71,23 +70,23 @@ size_t CIOStreamWrapper::Write(const void *pvBuffer,
     return mFile->WriteProc(mFile, (const char *)pvBuffer, pSize, pCount);
 }
 
-// ...................................................................
+// ------------------------------------------------------------------------------------------------
 aiReturn CIOStreamWrapper::Seek(size_t pOffset,
         aiOrigin pOrigin) {
     return mFile->SeekProc(mFile, pOffset, pOrigin);
 }
 
-// ...................................................................
-size_t CIOStreamWrapper::Tell(void) const {
+// ------------------------------------------------------------------------------------------------
+size_t CIOStreamWrapper::Tell() const {
     return mFile->TellProc(mFile);
 }
 
-// ...................................................................
+// ------------------------------------------------------------------------------------------------
 size_t CIOStreamWrapper::FileSize() const {
     return mFile->FileSizeProc(mFile);
 }
 
-// ...................................................................
+// ------------------------------------------------------------------------------------------------
 void CIOStreamWrapper::Flush() {
     return mFile->FlushProc(mFile);
 }
@@ -116,7 +115,7 @@ char CIOSystemWrapper::getOsSeparator() const {
 IOStream *CIOSystemWrapper::Open(const char *pFile, const char *pMode) {
     aiFile *p = mFileSystem->OpenProc(mFileSystem, pFile, pMode);
     if (!p) {
-        return NULL;
+        return nullptr;
     }
     return new CIOStreamWrapper(p, this);
 }

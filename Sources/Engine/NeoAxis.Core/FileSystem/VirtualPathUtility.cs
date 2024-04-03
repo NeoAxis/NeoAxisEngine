@@ -262,5 +262,59 @@ namespace NeoAxis
 		//	}
 		//	return path;
 		//}
+
+		public static bool GetAllFilesPathByReal( string realPath, out string projectPath )
+		{
+			if( realPath == null )
+				Log.Fatal( "VirtualPathUtility: GetAllFilesPathByReal: realPath == null." );
+
+			realPath = NormalizePath( realPath );
+			//!!!!Binaries?
+			if( !Path.IsPathRooted( realPath ) )
+				realPath = Path.Combine( VirtualFileSystem.Directories.Binaries, realPath );
+
+			//project directory
+			{
+				string dir = VirtualFileSystem.Directories.AllFiles;
+				if( realPath.Length > dir.Length )
+				{
+					if( string.Equals( realPath, dir, StringComparison.OrdinalIgnoreCase ) )
+					{
+						projectPath = "";
+						return true;
+					}
+					else if( string.Equals( realPath.Substring( 0, dir.Length ), dir, StringComparison.OrdinalIgnoreCase ) )
+					{
+						projectPath = realPath.Substring( dir.Length + 1, realPath.Length - dir.Length - 1 );
+						return true;
+					}
+				}
+			}
+
+			projectPath = "";
+			return false;
+		}
+
+		/// <summary>
+		/// Converts a file path of real file system to all files path.
+		/// </summary>
+		/// <param name="realPath">The real file path.</param>
+		/// <returns>The virtual file path.</returns>
+		public static string GetAllFilesPathByReal( string realPath )
+		{
+			GetAllFilesPathByReal( realPath, out var projectPath );
+			return projectPath;
+		}
+
+		/// <summary>
+		/// Converts all files path to path of real file system.
+		/// </summary>
+		/// <param name="projectPath">The virtual file path.</param>
+		/// <returns>The real file path.</returns>
+		public static string GetRealPathByAllFiles( string projectPath )
+		{
+			projectPath = NormalizePath( projectPath );
+			return Path.Combine( VirtualFileSystem.Directories.AllFiles, projectPath );
+		}
 	}
 }

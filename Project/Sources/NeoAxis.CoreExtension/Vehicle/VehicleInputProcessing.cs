@@ -11,30 +11,206 @@ namespace NeoAxis
 	[AddToResourcesWindow( @"Addons\Vehicle\Vehicle Input Processing", 22003 )]
 	public class VehicleInputProcessing : InputProcessing
 	{
+		bool[] firing = new bool[ 3 ];
+
+		//
+
 		[Browsable( false )]
 		public Vehicle Vehicle
 		{
 			get { return Parent as Vehicle; }
 		}
 
+		public void UpdateTurnToDirectionAndLookToToPosition( GameMode gameMode )//, Vector2F? firstPersonMouseOffset )
+		{
+			var scene = ParentRoot as Scene;
+			if( scene == null )
+				return;
+
+			var vehicle = Vehicle;
+
+			//first person camera
+			if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson )
+			{
+				//just forward. maybe implement targeting
+
+				var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+				var cameraSettings = viewport.CameraSettings;
+
+				var ray = new Ray( cameraSettings.Position, cameraSettings.Direction * 1000 );
+				var lookAt = ray.GetPointOnRay( 1 );
+
+				vehicle.LookToPosition( lookAt );
+			}
+
+			//if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson )
+			//{
+			//	if( firstPersonMouseOffset.HasValue )
+			//	{
+			//		//update turn to direction
+
+			//		var turnToDirection = character.CurrentTurnToDirection;
+
+			//		turnToDirection.Horizontal -= firstPersonMouseOffset.Value.X;
+			//		turnToDirection.Vertical -= firstPersonMouseOffset.Value.Y;
+
+			//		var limit = new DegreeF( 20 ).InRadians();
+			//		if( turnToDirection.Vertical < -( MathEx.PI / 2 - limit ) )
+			//			turnToDirection.Vertical = -( MathEx.PI / 2 - limit );
+			//		if( turnToDirection.Vertical > MathEx.PI / 2 - limit )
+			//			turnToDirection.Vertical = MathEx.PI / 2 - limit;
+
+			//		character.TurnToDirection( turnToDirection, true );
+
+			//		//update third person direction to have same camera direction after camera type change
+			//		gameMode.ThirdPersonCameraHorizontalAngle = new Radian( turnToDirection.Horizontal ).InDegrees();
+			//		gameMode.ThirdPersonCameraVerticalAngle = new Radian( turnToDirection.Vertical ).InDegrees();
+			//	}
+
+			//	//calculate LookToPosition
+			//	{
+			//		var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+			//		var cameraSettings = viewport.CameraSettings;
+
+			//		var characterCenter = character.TransformV.Position + new Vector3( 0, 0, character.TypeCached.Height * 0.5 );
+			//		var cameraDistanceToCharacter = ( characterCenter - cameraSettings.Position ).Length();
+
+			//		var ray = new Ray( cameraSettings.Position, cameraSettings.Direction * 1000 );
+			//		var item = new PhysicsRayTestItem( ray, PhysicsRayTestItem.ModeEnum.OneClosestForEach, PhysicsRayTestItem.FlagsEnum.None );
+			//		scene.PhysicsRayTest( item );
+
+			//		var lookAt = ray.GetPointOnRay( 1 );
+
+			//		foreach( var resultItem in item.Result )
+			//		{
+			//			//skip character body
+			//			if( resultItem.Body == character.PhysicalBody )
+			//				continue;
+
+			//			//check the object is too close to the camera. before the character
+			//			var pos = ray.GetPointOnRay( resultItem.DistanceScale );
+			//			var distanceToCamera = ( pos - cameraSettings.Position ).Length();
+			//			if( distanceToCamera < cameraDistanceToCharacter )
+			//				continue;
+
+			//			//found
+			//			lookAt = pos;
+			//			break;
+			//		}
+
+			//		character.LookToPosition( lookAt, true );
+			//	}
+			//}
+
+			//third person camera
+			if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson )
+			{
+				var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+				var cameraSettings = viewport.CameraSettings;
+
+				//!!!!?
+				var vehicleCenter = vehicle.TransformV.Position;// + new Vector3( 0, 0, vehicle.TypeCached.Height * 0.5 );
+				var cameraDistanceToVehicle = ( vehicleCenter - cameraSettings.Position ).Length();
+
+				//change it to calibrate end point when no collision with objects by the ray
+				var rayDistance = 100;
+
+				var ray = new Ray( cameraSettings.Position, cameraSettings.Direction * rayDistance );
+				var item = new PhysicsRayTestItem( ray, PhysicsRayTestItem.ModeEnum.OneClosestForEach, PhysicsRayTestItem.FlagsEnum.None );
+				scene.PhysicsRayTest( item );
+
+				//find weapon look at target
+
+				var lookAt = ray.GetPointOnRay( 1 );
+
+				foreach( var resultItem in item.Result )
+				{
+
+					//!!!!все другие вложенные тоже пропустить
+
+
+					//skip vehicle body
+					if( resultItem.Body == vehicle.PhysicalBody )
+						continue;
+
+					//check the object is too close to the camera. before the vehicle
+					var pos = ray.GetPointOnRay( resultItem.DistanceScale );
+					var distanceToCamera = ( pos - cameraSettings.Position ).Length();
+					if( distanceToCamera < cameraDistanceToVehicle )
+						continue;
+
+					//found
+					lookAt = pos;
+					break;
+				}
+
+				vehicle.LookToPosition( lookAt );
+			}
+		}
+
+		public void ExitObjectFromVehicle( GameMode gameMode, ObjectInSpace obj )
+		{
+			var seatIndex = Vehicle.GetSeatIndexByObject( obj );
+			if( seatIndex != -1 )
+			{
+				if( NetworkIsClient )
+				{
+					var writer = BeginNetworkMessageToServer( "RemoveObjectFromSeat" );
+					if( writer != null )
+					{
+						writer.WriteVariableInt32( seatIndex );
+						writer.WriteVariableUInt64( (ulong)obj.NetworkID );
+						EndNetworkMessage();
+					}
+				}
+				else
+				{
+					Vehicle.RemoveObjectFromSeat( seatIndex, true );
+					gameMode.ObjectControlledByPlayer = ReferenceUtility.MakeRootReference( obj );
+					GameMode.PlayScreen?.ParentContainer?.Viewport?.NotifyInstantCameraMovement();
+				}
+			}
+		}
+
+		public void ExitAllObjectsFromVehicle( GameMode gameMode )
+		{
+			var objectsOnSeats = new List<ObjectInSpace>();
+			for( int n = 0; n < Vehicle.ObjectsOnSeats.Count; n++ )
+			{
+				var obj2 = Vehicle.ObjectsOnSeats[ n ].Value;
+				if( obj2 != null )
+					objectsOnSeats.Add( obj2 );
+			}
+
+			foreach( var obj in objectsOnSeats )
+				ExitObjectFromVehicle( gameMode, obj );
+		}
+
 		protected override void OnInputMessage( GameMode gameMode, InputMessage message )
 		{
 			base.OnInputMessage( gameMode, message );
 
-			if( !gameMode.FreeCamera && InputEnabled )
+			var vehicle = Vehicle;
+
+			if( vehicle != null )
 			{
-				//key down
-				var keyDown = message as InputMessageKeyDown;
-				if( keyDown != null )
+				//input enabled changed
 				{
-					if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson )
+					var m = message as InputMessageInputEnabledChanged;
+					if( m != null && !m.Value )
 					{
+						vehicle.RequiredLookToPosition = null;
+					}
+				}
 
-						//!!!!hardcoded EKeys
-
-
+				if( InputEnabled && !gameMode.FreeCamera && ( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson || gameMode.GetCameraManagementOfCurrentObject() != null ) )
+				{
+					//key down
+					var keyDown = message as InputMessageKeyDown;
+					if( keyDown != null )
+					{
 						//exit from the vehicle
-						if( keyDown.Key == EKeys.E )
+						if( keyDown.Key == gameMode.KeyInteract1 || keyDown.Key == gameMode.KeyInteract2 )
 						{
 							//!!!!select seat/obj
 
@@ -51,83 +227,155 @@ namespace NeoAxis
 
 							var obj = firstObjectOnSeat;//var obj = gameMode.ObjectControlledByPlayer.Value as ObjectInSpace;
 							if( obj != null )
+								ExitObjectFromVehicle( gameMode, obj );
+
+
+							////var seat = Vehicle.GetComponent<VehicleSeat>();
+							////if( seat != null )
+							////{
+							////	var character = seat.Character.Value;
+							////	if( character != null )
+							////	{
+							////		if( NetworkIsClient )
+							////		{
+							////			var writer = BeginNetworkMessageToServer( "RemoveCharacterFromSeat" );
+							////			if( writer != null )
+							////			{
+							////				writer.WriteVariableUInt64( (ulong)character.NetworkID );
+							////				writer.WriteVariableUInt64( (ulong)seat.NetworkID );
+							////				EndNetworkMessage();
+							////			}
+							////		}
+							////		else
+							////		{
+							////			seat.RemoveCharacterFromSeat();
+							////			gameMode.ObjectControlledByPlayer = ReferenceUtility.MakeRootReference( character );
+
+							////			GameMode.PlayScreen?.ParentContainer?.Viewport?.NotifyInstantCameraMovement();
+							////		}
+							////	}
+							////}
+						}
+
+						if( keyDown.Key == gameMode.KeyHeadlights1 || keyDown.Key == gameMode.KeyHeadlights2 )
+						{
+							var value = vehicle.Headlights.Value > 0.5f ? 0.0f : 1.0f;
+
+							if( NetworkIsClient )
 							{
-								var seatIndex = Vehicle.GetSeatIndexByObject( obj );
-								if( seatIndex != -1 )
+								var writer = BeginNetworkMessageToServer( "Headlights" );
+								if( writer != null )
 								{
-									if( NetworkIsClient )
-									{
-										var writer = BeginNetworkMessageToServer( "RemoveObjectFromSeat" );
-										if( writer != null )
-										{
-											writer.WriteVariableInt32( seatIndex );
-											writer.WriteVariableUInt64( (ulong)obj.NetworkID );
-											EndNetworkMessage();
-										}
-									}
-									else
-									{
-										Vehicle.RemoveObjectFromSeat( seatIndex, true );
-										gameMode.ObjectControlledByPlayer = ReferenceUtility.MakeRootReference( obj );
-										GameMode.PlayScreen?.ParentContainer?.Viewport?.NotifyInstantCameraMovement();
-									}
+									writer.Write( value );
+									EndNetworkMessage();
 								}
 							}
-
-
-							//var seat = Vehicle.GetComponent<VehicleSeat>();
-							//if( seat != null )
-							//{
-							//	var character = seat.Character.Value;
-							//	if( character != null )
-							//	{
-							//		if( NetworkIsClient )
-							//		{
-							//			var writer = BeginNetworkMessageToServer( "RemoveCharacterFromSeat" );
-							//			if( writer != null )
-							//			{
-							//				writer.WriteVariableUInt64( (ulong)character.NetworkID );
-							//				writer.WriteVariableUInt64( (ulong)seat.NetworkID );
-							//				EndNetworkMessage();
-							//			}
-							//		}
-							//		else
-							//		{
-							//			seat.RemoveCharacterFromSeat();
-							//			gameMode.ObjectControlledByPlayer = ReferenceUtility.MakeRootReference( character );
-
-							//			GameMode.PlayScreen?.ParentContainer?.Viewport?.NotifyInstantCameraMovement();
-							//		}
-							//	}
-							//}
+							else
+								vehicle.Headlights = value;
 						}
 					}
+
+					//mouse down
+					var mouseDown = message as InputMessageMouseButtonDown;
+					if( mouseDown != null && ( mouseDown.Button == EMouseButtons.Left || mouseDown.Button == EMouseButtons.Right ) )
+					{
+						var weapons = vehicle.GetComponents<Weapon>( checkChildren: true );
+						if( weapons.Length != 0 )
+						{
+							var mode = mouseDown.Button == EMouseButtons.Left ? 1 : 2;
+							firing[ mode ] = true;
+
+							foreach( var weapon in weapons )
+							{
+								if( NetworkIsClient )
+									weapon.FiringBeginClient( mode );
+								else
+									weapon.FiringBegin( mode, 0 );
+							}
+						}
+
+						//will not work in network
+						//if( vehicle.DynamicData?.Turrets != null )
+						//{
+						//	foreach( var turret in vehicle.DynamicData.Turrets )
+						//	{
+						//		var weapon = turret.Weapon;
+						//		if( weapon != null )
+						//		{
+						//			var mode = mouseDown.Button == EMouseButtons.Left ? 1 : 2;
+						//			firing[ mode ] = true;
+
+						//			if( NetworkIsClient )
+						//				weapon.FiringBeginClient( mode );
+						//			else
+						//				weapon.FiringBegin( mode, 0 );
+						//		}
+						//	}
+						//}
+					}
+
+					//mouse up
+					var mouseUp = message as InputMessageMouseButtonUp;
+					if( mouseUp != null && mouseUp.Button == EMouseButtons.Left )
+						firing[ 1 ] = false;
+					if( mouseUp != null && mouseUp.Button == EMouseButtons.Right )
+						firing[ 2 ] = false;
+
+
+					////mouse move
+					//var mouseMove = message as InputMessageMouseMove;
+					//if( mouseMove != null && MouseRelativeMode )
+					//{
+					//	if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson )
+					//	{
+					//		if( !character.Sitting )
+					//		{
+					//			var sensitivity = new Vector2F( (float)GameMode.MouseSensitivity, (float)GameMode.MouseSensitivity ) * 2;
+					//			var mouseOffset = mouseMove.Position.ToVector2F() * sensitivity;
+
+					//			UpdateTurnToDirectionAndLookToToPosition( gameMode, mouseOffset );
+					//		}
+					//	}
+					//}
 				}
 			}
 		}
 
-		void UpdateObjectControl()
+		void ObjectControlSimulationStep()
 		{
 			var vehicle = Vehicle;
-
 			if( vehicle != null && InputEnabled )
 			{
 				//get control data
 
-				double throttle = 0;
-				if( IsKeyPressed( EKeys.W ) || IsKeyPressed( EKeys.Up ) || IsKeyPressed( EKeys.NumPad8 ) )
-					throttle += 1;
-				if( IsKeyPressed( EKeys.S ) || IsKeyPressed( EKeys.Down ) || IsKeyPressed( EKeys.NumPad2 ) )
-					throttle -= 1;
+				float throttle = 0;
+				float steering = 0;
+				bool brake = false;
 
-				double steering = 0;
-				if( IsKeyPressed( EKeys.A ) || IsKeyPressed( EKeys.Left ) || IsKeyPressed( EKeys.NumPad4 ) )
-					steering -= 1;
-				if( IsKeyPressed( EKeys.D ) || IsKeyPressed( EKeys.Right ) || IsKeyPressed( EKeys.NumPad6 ) )
-					steering += 1;
+				var scene = ParentRoot as Scene;
+				var gameMode = (GameMode)scene?.GetGameMode();
 
-				var brake = IsKeyPressed( EKeys.Space );
+				if( gameMode != null && !gameMode.FreeCamera && ( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson || gameMode.GetCameraManagementOfCurrentObject() != null ) )
+				{
+					if( IsKeyPressed( gameMode.KeyForward1 ) || IsKeyPressed( gameMode.KeyForward2 ) )
+						throttle += 1;
+					if( IsKeyPressed( gameMode.KeyBackward1 ) || IsKeyPressed( gameMode.KeyBackward2 ) )
+						throttle -= 1;
 
+					if( IsKeyPressed( gameMode.KeyLeft1 ) || IsKeyPressed( gameMode.KeyLeft2 ) )
+						steering -= 1;
+					if( IsKeyPressed( gameMode.KeyRight1 ) || IsKeyPressed( gameMode.KeyRight2 ) )
+						steering += 1;
+
+					brake = IsKeyPressed( gameMode.KeyBrake1 ) || IsKeyPressed( gameMode.KeyBrake2 );
+
+					var touchSlider = TouchSliders[ 0 ].ToVector2F();
+					throttle -= touchSlider.Y;
+					steering += touchSlider.X;
+
+					MathEx.Clamp( ref throttle, -1, 1 );
+					MathEx.Clamp( ref steering, -1, 1 );
+				}
 
 				if( NetworkIsClient )
 				{
@@ -135,12 +383,17 @@ namespace NeoAxis
 
 					//!!!!не нужно слать если не менялось
 
-					var writer = BeginNetworkMessageToServer( "UpdateObjectControl" );
+					var writer = BeginNetworkMessageToServer( "UpdateObjectControlVehicle" );
 					if( writer != null )
 					{
-						writer.Write( (float)throttle );
-						writer.Write( (float)( brake ? 1 : 0 ) );
-						writer.Write( (float)steering );
+						writer.Write( new HalfType( throttle ) );
+						writer.Write( new HalfType( brake ? 1.0 : 0.0 ) );
+						writer.Write( new HalfType( steering ) );
+
+						writer.Write( vehicle.RequiredLookToPosition.HasValue );
+						if( vehicle.RequiredLookToPosition.HasValue )
+							writer.Write( vehicle.RequiredLookToPosition.Value );
+
 						EndNetworkMessage();
 					}
 				}
@@ -151,6 +404,79 @@ namespace NeoAxis
 					vehicle.Brake = brake ? 1 : 0;
 					vehicle.HandBrake = 0;
 					vehicle.Steering = steering;
+					vehicle.SetMotorOn();
+				}
+
+				if( gameMode != null && !gameMode.FreeCamera && ( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson || gameMode.GetCameraManagementOfCurrentObject() != null ) )
+				{
+					//update turn to direction and weapon target
+					UpdateTurnToDirectionAndLookToToPosition( gameMode );//, null );
+
+
+					//!!!!network: don't send same for weapon if possible
+
+
+					//update firing
+					if( IsMouseButtonPressed( EMouseButtons.Left ) && firing[ 1 ] )
+					{
+						var weapons = vehicle.GetComponents<Weapon>( checkChildren: true );
+						if( weapons.Length != 0 )
+						{
+							foreach( var weapon in weapons )
+							{
+								if( NetworkIsClient )
+									weapon.FiringBeginClient( 1 );
+								else
+									weapon.FiringBegin( 1, 0 );
+							}
+						}
+
+						//will not work in network
+						//if( vehicle.DynamicData?.Turrets != null )
+						//{
+						//	foreach( var turret in vehicle.DynamicData.Turrets )
+						//	{
+						//		var weapon = turret.Weapon;
+						//		if( weapon != null )
+						//		{
+						//			if( NetworkIsClient )
+						//				weapon.FiringBeginClient( 1 );
+						//			else
+						//				weapon.FiringBegin( 1, 0 );
+						//		}
+						//	}
+						//}
+					}
+					if( IsMouseButtonPressed( EMouseButtons.Right ) && firing[ 2 ] )
+					{
+						var weapons = vehicle.GetComponents<Weapon>( checkChildren: true );
+						if( weapons.Length != 0 )
+						{
+							foreach( var weapon in weapons )
+							{
+								if( NetworkIsClient )
+									weapon.FiringBeginClient( 2 );
+								else
+									weapon.FiringBegin( 2, 0 );
+							}
+						}
+
+						//will not work in network
+						//if( vehicle.DynamicData?.Turrets != null )
+						//{
+						//	foreach( var turret in vehicle.DynamicData.Turrets )
+						//	{
+						//		var weapon = turret.Weapon;
+						//		if( weapon != null )
+						//		{
+						//			if( NetworkIsClient )
+						//				weapon.FiringBeginClient( 2 );
+						//			else
+						//				weapon.FiringBegin( 2, 0 );
+						//		}
+						//	}
+						//}
+					}
 				}
 			}
 		}
@@ -160,14 +486,14 @@ namespace NeoAxis
 			base.OnSimulationStep();
 
 			if( NetworkIsSingle )
-				UpdateObjectControl();
+				ObjectControlSimulationStep();
 		}
 
 		protected override void OnSimulationStepClient()
 		{
 			base.OnSimulationStepClient();
 
-			UpdateObjectControl();
+			ObjectControlSimulationStep();
 		}
 
 		protected override bool OnReceiveNetworkMessageFromClient( ServerNetworkService_Components.ClientItem client, string message, ArrayDataReader reader )
@@ -182,11 +508,16 @@ namespace NeoAxis
 				var networkLogic = NetworkLogicUtility.GetNetworkLogic( vehicle );
 				if( networkLogic != null && networkLogic.ServerGetObjectControlledByUser( client.User, true ) == vehicle )
 				{
-					if( message == "UpdateObjectControl" )
+					if( message == "UpdateObjectControlVehicle" )
 					{
-						var throttle = reader.ReadSingle();
-						var brake = reader.ReadSingle();
-						var steering = reader.ReadSingle();
+						var throttle = (float)reader.ReadHalf();
+						var brake = (float)reader.ReadHalf();
+						var steering = (float)reader.ReadHalf();
+						Vector3? lookToPosition = null;
+
+						if( reader.ReadBoolean() )
+							lookToPosition = reader.ReadVector3();
+
 						if( !reader.Complete() )
 							return false;
 
@@ -198,6 +529,8 @@ namespace NeoAxis
 						vehicle.Brake = brake;
 						vehicle.HandBrake = 0;
 						vehicle.Steering = steering;
+						vehicle.LookToPosition( lookToPosition );
+						vehicle.SetMotorOn();
 					}
 					else if( message == "RemoveObjectFromSeat" )
 					{
@@ -218,6 +551,13 @@ namespace NeoAxis
 							//{
 							//}
 						}
+					}
+					else if( message == "Headlights" )
+					{
+						var value = reader.ReadSingle();
+						if( !reader.Complete() )
+							return false;
+						vehicle.Headlights = value;
 					}
 				}
 			}

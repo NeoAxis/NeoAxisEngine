@@ -18,8 +18,10 @@ namespace NeoAxis//.Import
 		public class Settings
 		{
 			public bool updateMaterials = true;
-			public bool updateMeshes = true;
-			public bool updateObjectsInSpace = true;
+			public bool updateMaterialsOnMeshes = true;
+			//public bool updateMeshes = true;
+			//public bool updateMeshLODs = true;
+			//public bool updateObjectsInSpace = true;
 			public bool resetCollision;
 			public bool resetEditorSettings;
 
@@ -31,7 +33,7 @@ namespace NeoAxis//.Import
 			public Import3D component;
 			public string virtualFileName;
 			//public bool loadAnimations;
-			public double frameStep;
+			//public double frameStep;
 			//public Mat4 globalTransform;
 
 			public bool disableDeletionUnusedMaterials;
@@ -86,6 +88,7 @@ namespace NeoAxis//.Import
 			public string EmissiveTexture;
 			public string OpacityTexture;
 			public string OpacityTextureChannel = "R";
+			public float Opacity = 1;
 
 			public int GetTextureUsedCount()
 			{
@@ -127,7 +130,8 @@ namespace NeoAxis//.Import
 			material.ShadingModel = data.ShadingModel;
 			material.TwoSided = data.TwoSided;
 
-			if( !string.IsNullOrEmpty( data.OpacityTexture ) )
+			//blend mode
+			if( !string.IsNullOrEmpty( data.OpacityTexture ) || data.Opacity < 1 )
 			{
 				switch( settings.component.TransparentMaterialBlending.Value )
 				{
@@ -245,6 +249,8 @@ namespace NeoAxis//.Import
 				var sample = GetOrCreateTextureSample( "Opacity", data.OpacityTexture );
 				material.Opacity = ReferenceUtility.MakeThisReference( material, sample, data.OpacityTextureChannel );
 			}
+			else if( data.Opacity < 1 )
+				material.Opacity = data.Opacity;
 
 			material.Enabled = true;
 

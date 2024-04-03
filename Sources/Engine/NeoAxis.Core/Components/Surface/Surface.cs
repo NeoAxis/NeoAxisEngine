@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using NeoAxis.Editor;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -11,9 +12,9 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "surface" )]
 #if !DEPLOY
-	[EditorControl( typeof( SurfaceEditor ) )]
-	[Preview( typeof( SurfacePreview ) )]
-	[PreviewImage( typeof( SurfacePreviewImage ) )]
+	[EditorControl( "NeoAxis.Editor.SurfaceEditor" )]
+	[Preview( "NeoAxis.Editor.SurfacePreview" )]
+	[PreviewImage( "NeoAxis.Editor.SurfacePreviewImage" )]
 #endif
 	public class Surface : ResultCompile<Surface.CompiledSurfaceData>//, IEditorUpdateWhenDocumentModified
 	{
@@ -24,7 +25,7 @@ namespace NeoAxis
 		public Reference<Material> Material
 		{
 			get { if( _material.BeginGet() ) Material = _material.Get( this ); return _material.value; }
-			set { if( _material.BeginSet( ref value ) ) { try { MaterialChanged?.Invoke( this ); ShouldRecompile = true; } finally { _material.EndSet(); } } }
+			set { if( _material.BeginSet( this, ref value ) ) { try { MaterialChanged?.Invoke( this ); ShouldRecompile = true; } finally { _material.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Material"/> property value changes.</summary>
 		public event Action<Surface> MaterialChanged;
@@ -39,7 +40,7 @@ namespace NeoAxis
 		public Reference<Vector2> MaterialUV0
 		{
 			get { if( _materialUV0.BeginGet() ) MaterialUV0 = _materialUV0.Get( this ); return _materialUV0.value; }
-			set { if( _materialUV0.BeginSet( ref value ) ) { try { MaterialUV0Changed?.Invoke( this ); ShouldRecompile = true; } finally { _materialUV0.EndSet(); } } }
+			set { if( _materialUV0.BeginSet( this, ref value ) ) { try { MaterialUV0Changed?.Invoke( this ); ShouldRecompile = true; } finally { _materialUV0.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MaterialUV0"/> property value changes.</summary>
 		public event Action<Surface> MaterialUV0Changed;
@@ -54,7 +55,7 @@ namespace NeoAxis
 		public Reference<Vector2> MaterialUV1
 		{
 			get { if( _materialUV1.BeginGet() ) MaterialUV1 = _materialUV1.Get( this ); return _materialUV1.value; }
-			set { if( _materialUV1.BeginSet( ref value ) ) { try { MaterialUV1Changed?.Invoke( this ); ShouldRecompile = true; } finally { _materialUV1.EndSet(); } } }
+			set { if( _materialUV1.BeginSet( this, ref value ) ) { try { MaterialUV1Changed?.Invoke( this ); ShouldRecompile = true; } finally { _materialUV1.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MaterialUV1"/> property value changes.</summary>
 		public event Action<Surface> MaterialUV1Changed;
@@ -271,7 +272,7 @@ namespace NeoAxis
 							}
 						}
 
-						end:;
+end:;
 
 						if( position != null )
 						{
@@ -364,6 +365,7 @@ namespace NeoAxis
 				}
 			}
 
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public void GetMesh( int variationGroup, int variationElement, out bool enabled, out Mesh mesh, out Material replaceMaterial, out float visibilityDistanceFactor, out bool castShadows, out bool receiveDecals, out float motionBlurFactor )
 			{
 				var groups = Groups;
@@ -378,8 +380,9 @@ namespace NeoAxis
 							var element = elements[ variationElement ];
 							if( element.Enabled )
 							{
-								enabled = true;
+								//enabled = true;
 								mesh = element.Mesh;
+								enabled = mesh != null;
 								replaceMaterial = element.ReplaceMaterial;
 								visibilityDistanceFactor = element.VisibilityDistanceFactor;
 								castShadows = element.CastShadows;
@@ -398,6 +401,33 @@ namespace NeoAxis
 				castShadows = false;
 				receiveDecals = false;
 				motionBlurFactor = 0;
+			}
+
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			public void GetMesh( int variationGroup, int variationElement, out bool enabled, out Mesh mesh )
+			{
+				var groups = Groups;
+				if( variationGroup < groups.Length )
+				{
+					var group = groups[ variationGroup ];
+					if( group.Enabled )
+					{
+						var elements = group.Elements;
+						if( variationElement < elements.Length )
+						{
+							var element = elements[ variationElement ];
+							if( element.Enabled )
+							{
+								enabled = true;
+								mesh = element.Mesh;
+								return;
+							}
+						}
+					}
+				}
+
+				enabled = false;
+				mesh = null;
 			}
 
 			//public float GetMaxVisibilityDistance()

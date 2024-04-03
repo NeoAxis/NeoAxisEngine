@@ -65,7 +65,10 @@ namespace NeoAxis
 				var initSettings = new OctreeContainer.InitSettings();
 				initSettings.InitialOctreeBounds = bounds;
 				initSettings.OctreeBoundsRebuildExpand = Vector3.Zero;
-				initSettings.MinNodeSize = bounds.GetSize() / 50;
+				if( indices.Length > 100000 )
+					initSettings.MinNodeSize = bounds.GetSize() / 200;
+				else
+					initSettings.MinNodeSize = bounds.GetSize() / 50;
 				octreeContainer = new OctreeContainer( initSettings );
 
 				for( int nTriangle = 0; nTriangle < indices.Length / 3; nTriangle++ )
@@ -98,7 +101,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		public ResultItem[] RayCast( RayF ray, Mode mode, bool twoSided )
+		public ResultItem[] RayCast( RayF ray, Mode mode, bool twoSided, int expectedMaximumNumberButNotStrictlyMaximum = 0 )
 		{
 			unsafe
 			{
@@ -108,11 +111,27 @@ namespace NeoAxis
 				OctreeContainer.GetObjectsRayOutputData* octreeObjects = null;
 				try
 				{
-					octreeObjects = (OctreeContainer.GetObjectsRayOutputData*)NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Utility, sizeof( OctreeContainer.GetObjectsRayOutputData ) * objectCount );
-					var octreeSuccess = octreeContainer.GetObjects( ray, 0xFFFFFFFF, OctreeContainer.ModeEnum.All, octreeObjects, objectCount, out var octreeResultCount );
+					//!!!!
+					int arrayLength = expectedMaximumNumberButNotStrictlyMaximum > 0 ? expectedMaximumNumberButNotStrictlyMaximum : 1024;
 
-					if( !octreeSuccess || octreeResultCount == 0 )
-						return Array.Empty<ResultItem>();
+					octreeObjects = (OctreeContainer.GetObjectsRayOutputData*)NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Utility, sizeof( OctreeContainer.GetObjectsRayOutputData ) * arrayLength );
+					var octreeSuccess = octreeContainer.GetObjects( ray, 0xFFFFFFFF, OctreeContainer.ModeEnum.All, octreeObjects, arrayLength, out var octreeResultCount );
+
+					if( !octreeSuccess )
+					{
+						NativeUtility.Free( octreeObjects );
+
+						octreeObjects = (OctreeContainer.GetObjectsRayOutputData*)NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Utility, sizeof( OctreeContainer.GetObjectsRayOutputData ) * octreeResultCount );
+						var octreeSuccess2 = octreeContainer.GetObjects( ray, 0xFFFFFFFF, OctreeContainer.ModeEnum.All, octreeObjects, octreeResultCount, out var octreeResultCount2 );
+
+						if( !octreeSuccess2 || octreeResultCount2 == 0 )
+							return Array.Empty<ResultItem>();
+					}
+					else
+					{
+						if( !octreeSuccess || octreeResultCount == 0 )
+							return Array.Empty<ResultItem>();
+					}
 
 					using( var resultList = new OpenListNative<ResultItem>( mode == Mode.All ? octreeResultCount : 1 ) )
 					{
@@ -184,6 +203,85 @@ namespace NeoAxis
 
 						return array;
 					}
+
+
+					//octreeObjects = (OctreeContainer.GetObjectsRayOutputData*)NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Utility, sizeof( OctreeContainer.GetObjectsRayOutputData ) * objectCount );
+
+					//var octreeSuccess = octreeContainer.GetObjects( ray, 0xFFFFFFFF, OctreeContainer.ModeEnum.All, octreeObjects, objectCount, out var octreeResultCount );
+
+					//if( !octreeSuccess || octreeResultCount == 0 )
+					//	return Array.Empty<ResultItem>();
+
+					//using( var resultList = new OpenListNative<ResultItem>( mode == Mode.All ? octreeResultCount : 1 ) )
+					//{
+					//	for( int n = 0; n < octreeResultCount; n++ )
+					//	{
+					//		int triangleIndex = octreeObjects[ n ].ObjectIndex;
+					//		ref var vertex0 = ref vertices[ indices[ triangleIndex * 3 + 0 ] ];
+					//		ref var vertex1 = ref vertices[ indices[ triangleIndex * 3 + 1 ] ];
+					//		ref var vertex2 = ref vertices[ indices[ triangleIndex * 3 + 2 ] ];
+
+					//		//!!!!надо ли два раз искать IntersectTriangleRay?
+					//		var found = MathAlgorithms.IntersectTriangleRay( ref vertex0, ref vertex1, ref vertex2, ref ray, out float scale );
+					//		var normal = Vector3F.Zero;
+					//		if( found )
+					//			MathAlgorithms.CalculateTriangleNormal( ref vertex0, ref vertex1, ref vertex2, out normal );
+					//		else
+					//		{
+					//			found = twoSided && MathAlgorithms.IntersectTriangleRay( ref vertex0, ref vertex2, ref vertex1, ref ray, out scale );
+					//			if( found )
+					//				MathAlgorithms.CalculateTriangleNormal( ref vertex0, ref vertex2, ref vertex1, out normal );
+					//		}
+
+					//		//if( MathAlgorithms.IntersectTriangleRay( ref vertex0, ref vertex1, ref vertex2, ref ray, out float scale ) ||
+					//		//	twoSided && MathAlgorithms.IntersectTriangleRay( ref vertex0, ref vertex2, ref vertex1, ref ray, out scale ) )
+					//		if( found )
+					//		{
+					//			var item = new ResultItem( scale, normal, triangleIndex );
+
+					//			if( mode == Mode.One )
+					//			{
+					//				//mode One
+					//				return new ResultItem[] { item };
+					//			}
+					//			else
+					//			{
+					//				//modes OneClosest, All
+					//				if( resultList.Count == 0 )
+					//					resultList.Add( ref item );
+					//				else
+					//				{
+					//					if( mode == Mode.All )
+					//						resultList.Add( ref item );
+					//					else
+					//					{
+					//						if( item.Scale < resultList[ 0 ].Scale )
+					//							resultList.Data[ 0 ] = item;
+					//					}
+					//				}
+					//			}
+					//		}
+					//	}
+
+					//	if( resultList.Count == 0 )
+					//		return Array.Empty<ResultItem>();
+
+					//	var array = resultList.ToArray();
+
+					//	if( mode == Mode.All )
+					//	{
+					//		CollectionUtility.SelectionSort( array, delegate ( ResultItem r1, ResultItem r2 )
+					//		{
+					//			if( r1.Scale < r2.Scale )
+					//				return -1;
+					//			if( r1.Scale > r2.Scale )
+					//				return 1;
+					//			return 0;
+					//		} );
+					//	}
+
+					//	return array;
+					//}
 				}
 				finally
 				{

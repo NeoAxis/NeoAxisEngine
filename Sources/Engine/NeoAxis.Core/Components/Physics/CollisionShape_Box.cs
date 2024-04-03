@@ -20,7 +20,7 @@ namespace NeoAxis
 			get { if( _dimensions.BeginGet() ) Dimensions = _dimensions.Get( this ); return _dimensions.value; }
 			set
 			{
-				if( _dimensions.BeginSet( ref value ) )
+				if( _dimensions.BeginSet( this, ref value ) )
 				{
 					try
 					{

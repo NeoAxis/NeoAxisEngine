@@ -7,7 +7,7 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
-using System.Drawing;
+//using System.Drawing;
 using System.Runtime.CompilerServices;
 
 namespace NeoAxis
@@ -214,12 +214,12 @@ namespace NeoAxis
 		{
 		}
 
-		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		[AutoConvertType]
-		public ColorByte( Color source )
-			: this( source.R, source.G, source.B, source.A )
-		{
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//[AutoConvertType]
+		//public ColorByte( Color source )
+		//	: this( source.R, source.G, source.B, source.A )
+		//{
+		//}
 
 		/// <summary>
 		/// Gets or sets the blue component.
@@ -583,12 +583,12 @@ namespace NeoAxis
 			return new ColorValuePowered( (float)Red / 255.0f, (float)Green / 255.0f, (float)Blue / 255.0f, (float)Alpha / 255.0f );
 		}
 
-		[AutoConvertType]
-		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public Color ToColor()
-		{
-			return Color.FromArgb( Alpha, Red, Green, Blue );
-		}
+		//[AutoConvertType]
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public Color ToColor()
+		//{
+		//	return Color.FromArgb( Alpha, Red, Green, Blue );
+		//}
 
 		//[ShaderGenerationFunction( "{pick1} ? {v1} : {v2}" )]
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]

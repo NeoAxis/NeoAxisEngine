@@ -840,8 +840,8 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <OutDir>$(SolutionDir)_Compilation\iOS\$(Platform)\$(MSBuildProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)_Compilation\iOS\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\iOS\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_build\iOS\$(Platform)\$(MSBuildProjectName)\</IntDir>
     <IncludePath>include;src/pcf;src/autofit;src/base;src/bdf;src/bzip2;src/cache;src/cff;src/cid;src/gxvalid;src/gzip;src/lzw;src/otvalid;src/pfr;src/psaux;src/pshinter;src/psnames;src/raster;src/sfnt;src/smooth;src/tools;src/truetype;src/type1;src/type42;src/winfonts;$(IncludePath)</IncludePath>
     <TargetName>lib$(ProjectName)</TargetName>
   </PropertyGroup>

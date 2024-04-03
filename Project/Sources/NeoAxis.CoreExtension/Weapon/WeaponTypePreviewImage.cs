@@ -14,7 +14,7 @@ namespace NeoAxis.Editor
 
 		protected override void OnUpdate()
 		{
-			var Weapon = ObjectOfPreview as WeaponType;
+			var weapon = ObjectOfPreview as WeaponType;
 
 			//create scene
 			{
@@ -25,7 +25,7 @@ namespace NeoAxis.Editor
 			//create object
 			{
 				var objectInSpace = Scene.CreateComponent<Weapon>( enabled: false );
-				objectInSpace.WeaponType = Weapon;
+				objectInSpace.WeaponType = weapon;
 				objectInSpace.Enabled = true;
 			}
 

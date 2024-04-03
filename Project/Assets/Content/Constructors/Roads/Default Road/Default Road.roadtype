@@ -1,9 +1,13 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.RoadType
 {
 	AgeImperfection
 	{
 		GetByReference = "Content\\Constructors\\Roads\\Default Road\\Age imperfection.surface"
+	}
+	SidewalkMaterial
+	{
+		GetByReference = "Content\\Constructors\\Roads\\Default Road\\Paving Stones 081 with ray tracing reflection.material"
 	}
 }

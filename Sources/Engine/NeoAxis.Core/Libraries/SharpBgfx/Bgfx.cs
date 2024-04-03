@@ -19,8 +19,9 @@ namespace Internal.SharpBgfx {
         /// <param name="vertexBuffer">Returns the allocated transient vertex buffer.</param>
         /// <param name="indexBuffer">Returns the allocated transient index buffer.</param>
         /// <returns><c>true</c> if both space requirements are satisfied and the buffers were allocated.</returns>
-        public static bool AllocateTransientBuffers (int vertexCount, VertexLayout layout, int indexCount, out TransientVertexBuffer vertexBuffer, out TransientIndexBuffer indexBuffer) {
-            return NativeMethods.bgfx_alloc_transient_buffers(out vertexBuffer, ref layout.data, (ushort)vertexCount, out indexBuffer, (ushort)indexCount);
+        public static bool AllocateTransientBuffers (int vertexCount, VertexLayout layout, int indexCount, out TransientVertexBuffer vertexBuffer, out TransientIndexBuffer indexBuffer, bool index32 )
+        {
+            return NativeMethods.bgfx_alloc_transient_buffers(out vertexBuffer, ref layout.data, (ushort)vertexCount, out indexBuffer, (ushort)indexCount, index32 );
         }
 
         /// <summary>
@@ -220,13 +221,15 @@ namespace Internal.SharpBgfx {
         /// <param name="settings">Settings that control initialization, or <c>null</c> to use sane defaults.</param>
         /// <returns><c>true</c> if initialization succeeds; otherwise, <c>false</c>.</returns>
         public static bool Init (InitSettings settings = null) {
+
             InitSettings.Native native;
-            NativeMethods.bgfx_init_ctor(&native);
+            NativeMethods.bgfx_init_ctor( &native );
 
             settings = settings ?? new InitSettings();
             native.Backend = settings.Backend;
             native.VendorId = (ushort)settings.Adapter.Vendor;
             native.DeviceId = (ushort)settings.Adapter.DeviceId;
+            //native.Capabilities = ulong.MaxValue;
             native.Debug = (byte)(settings.Debug ? 1 : 0);
             native.Profiling = (byte)(settings.Profiling ? 1 : 0);
             native.Resolution.Format = settings.Format;
@@ -238,7 +241,7 @@ namespace Internal.SharpBgfx {
             native.Callbacks = CallbackShim.CreateShim(settings.CallbackHandler ?? new DefaultCallbackHandler());
             native.PlatformData = settings.PlatformData;
 
-            return NativeMethods.bgfx_init(&native);
+            return NativeMethods.bgfx_init( &native );
         }
 
         /// <summary>

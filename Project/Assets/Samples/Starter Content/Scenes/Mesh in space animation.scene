@@ -2,7 +2,7 @@
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"9548DCD6D149499BE584418DFC2068A8\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"7957DABB94FF4DB255877C2A7B895295\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"9548DCD6D149499BE584418DFC2068A8\"><KP UN=\"9548DCD6D149499BE584418DFC2068A8\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"25B96ED2DE084CC80781AA9F00E91F93\" S=\"False\"><CPD ObjPath=\"$Opacity Change\" /></KP><KP UN=\"02E5CBADE9584119259C83EBD3C481F4\" S=\"False\"><CPD ObjPath=\"$Opacity Change\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"9548DCD6D149499BE584418DFC2068A8\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"7957DABB94FF4DB255877C2A7B895295\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"9548DCD6D149499BE584418DFC2068A8\"><KP UN=\"9548DCD6D149499BE584418DFC2068A8\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"25B96ED2DE084CC80781AA9F00E91F93\" S=\"False\"><CPD ObjPath=\"$Opacity Change\" /></KP><KP UN=\"02E5CBADE9584119259C83EBD3C481F4\" S=\"False\"><CPD ObjPath=\"$Opacity Change\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -40,8 +40,13 @@
 	{
 		Name = Rendering Pipeline
 		DeferredShading = False
-		ShadowFarDistance = 40
+		ShadowDirectionalDistance = 40
+		ShadowDirectionalLightTextureSize = _512
 		ShadowDirectionalLightCascades = 1
+		ShadowPointSpotlightDistance = 40
+		ShadowPointLightTextureSize = _256
+		ShadowSpotlightTextureSize = _512
+		ShadowStatic = False
 		.component NeoAxis.Component
 		{
 			Name = Background Effects

@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2021.4.
+// Made with NeoAxis Engine 2023.1.
 
 .component NeoAxis.Material
 {
@@ -139,6 +139,6 @@
 	{
 		Name = Fragment code
 		Type = Embedded
-		Code = "#ifdef FORWARD\r\n\r\nfloat infiltration = customParameter1.x;\r\nfloat blur = customParameter1.y;\r\nfloat intensity = 0.5;\r\n\r\nvec2 texCoord = fragCoord.xy * u_viewportSizeInv;\r\nfloat aspectRatio = float(u_viewportSize.y) / float(u_viewportSize.x); \r\n\r\nconst int sampleCount = 64;\r\n\r\nvec3 color = vec3_splat(0);\r\n//float divide = 0;\r\n\r\nfor(int n = 0; n < sampleCount; n++)\r\n{\r\n\tfloat scale = 0.005;\r\n\t\r\n\tvec2 offset = vogelDiskSample(n, sampleCount, 0.0);\r\n\tvec2 texCoord2 = texCoord + offset * blur * vec2(aspectRatio * scale, scale);\r\n\r\n\tcolor += texture2D(s_colorDepthTextureCopy, texCoord2).rgb;\r\n\r\n\t//float factor = 1.0 - length(offset);\r\n\t//vec2 texCoord2 = texCoord + vogelDiskSample(n, sampleCount, 0.0) * blur * scale;\r\n\t//color += texture2D(s_colorDepthTextureCopy, texCoord2).rgb * factor;\r\n\t//divide += factor;\r\n}\r\n\r\ncolor /= float(sampleCount);\r\n//color /= float(divide);\r\n\r\nbaseColor = lerp(baseColor, color, infiltration);\r\n\r\n#endif\r\n"
+		Code = "#ifdef FORWARD\r\n\r\nfloat infiltration = customParameter1.x;\r\nfloat blur = customParameter1.y;\r\nfloat intensity = 0.5;\r\n\r\nvec2 texCoord = fragCoord.xy * u_viewportSizeInv;\r\nfloat aspectRatio = float(u_viewportSize.y) / float(u_viewportSize.x); \r\n\r\nconst int sampleCount = 64;\r\n\r\nvec3 color = vec3_splat(0);\r\n//float divide = 0;\r\n\r\nfor(int n = 0; n < sampleCount; n++)\r\n{\r\n\tfloat scale = 0.005;\r\n\t\r\n\tvec2 offset = vogelDiskSample(n, sampleCount, 0.0);\r\n\tvec2 texCoord2 = texCoord + offset * blur * vec2(aspectRatio * scale, scale);\r\n\r\n\t//color += unpackColor(texture2D(s_colorDepthTextureCopy, texCoord2).r);\r\n\tcolor += texture2D(s_colorDepthTextureCopy, texCoord2).rgb;\r\n\r\n\t//float factor = 1.0 - length(offset);\r\n\t//vec2 texCoord2 = texCoord + vogelDiskSample(n, sampleCount, 0.0) * blur * scale;\r\n\t//color += texture2D(s_colorDepthTextureCopy, texCoord2).rgb * factor;\r\n\t//divide += factor;\r\n}\r\n\r\ncolor /= float(sampleCount);\r\n//color /= float(divide);\r\n\r\nbaseColor = lerp(baseColor, color, infiltration);\r\n\r\n#endif\r\n"
 	}
 }

@@ -3,7 +3,6 @@ using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using NeoAxis.Editor;
-using System.Linq;
 
 namespace NeoAxis
 {
@@ -23,11 +22,10 @@ namespace NeoAxis
 
 		//
 
-		//!!!!
+		//!!!!use Version
 		//DataWasChanged()
 
-
-		const string meshDefault = @"Content\Vehicles\Default\Body.obj|$Mesh";
+		const string meshDefault = @"Content\Vehicles\Default\Body.gltf|$Mesh";
 
 		/// <summary>
 		/// The main mesh of the vehicle.
@@ -37,7 +35,7 @@ namespace NeoAxis
 		public Reference<Mesh> Mesh
 		{
 			get { if( _mesh.BeginGet() ) Mesh = _mesh.Get( this ); return _mesh.value; }
-			set { if( _mesh.BeginSet( ref value ) ) { try { MeshChanged?.Invoke( this ); DataWasChanged(); } finally { _mesh.EndSet(); } } }
+			set { if( _mesh.BeginSet( this, ref value ) ) { try { MeshChanged?.Invoke( this ); DataWasChanged(); } finally { _mesh.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Mesh"/> property value changes.</summary>
 		public event Action<VehicleType> MeshChanged;
@@ -52,7 +50,7 @@ namespace NeoAxis
 		public Reference<ChassisEnum> Chassis
 		{
 			get { if( _chassis.BeginGet() ) Chassis = _chassis.Get( this ); return _chassis.value; }
-			set { if( _chassis.BeginSet( ref value ) ) { try { ChassisChanged?.Invoke( this ); DataWasChanged(); } finally { _chassis.EndSet(); } } }
+			set { if( _chassis.BeginSet( this, ref value ) ) { try { ChassisChanged?.Invoke( this ); DataWasChanged(); } finally { _chassis.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Chassis"/> property value changes.</summary>
 		public event Action<VehicleType> ChassisChanged;
@@ -62,16 +60,16 @@ namespace NeoAxis
 		/// The position offset for front wheels.
 		/// </summary>
 		//[Category( "Configuration" )]
-		[DefaultValue( "1.24 0.7 0.03" )]
+		[DefaultValue( "1.58 0.8 -0.08" )]// "1.24 0.7 0.03" )]
 		[Category( "Front Wheel" )]
 		public Reference<Vector3> FrontWheelPosition
 		{
 			get { if( _frontWheelPosition.BeginGet() ) FrontWheelPosition = _frontWheelPosition.Get( this ); return _frontWheelPosition.value; }
-			set { if( _frontWheelPosition.BeginSet( ref value ) ) { try { FrontWheelPositionChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelPosition.EndSet(); } } }
+			set { if( _frontWheelPosition.BeginSet( this, ref value ) ) { try { FrontWheelPositionChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelPosition.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelPosition"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelPositionChanged;
-		ReferenceField<Vector3> _frontWheelPosition = new Vector3( 1.24, 0.7, 0.03 );
+		ReferenceField<Vector3> _frontWheelPosition = new Vector3( 1.58, 0.8, -0.08 );// 1.24, 0.7, 0.03 );
 
 		/// <summary>
 		/// The diameter of a front wheel.
@@ -82,7 +80,7 @@ namespace NeoAxis
 		public Reference<double> FrontWheelDiameter
 		{
 			get { if( _frontWheelDiameter.BeginGet() ) FrontWheelDiameter = _frontWheelDiameter.Get( this ); return _frontWheelDiameter.value; }
-			set { if( _frontWheelDiameter.BeginSet( ref value ) ) { try { FrontWheelDiameterChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelDiameter.EndSet(); } } }
+			set { if( _frontWheelDiameter.BeginSet( this, ref value ) ) { try { FrontWheelDiameterChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelDiameter.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelDiameter"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelDiameterChanged;
@@ -92,16 +90,16 @@ namespace NeoAxis
 		/// The width of a front wheel.
 		/// </summary>
 		//[Category( "Configuration" )]
-		[DefaultValue( 0.364 )]
+		[DefaultValue( 0.25 )]//0.364 )]
 		[Category( "Front Wheel" )]
 		public Reference<double> FrontWheelWidth
 		{
 			get { if( _frontWheelWidth.BeginGet() ) FrontWheelWidth = _frontWheelWidth.Get( this ); return _frontWheelWidth.value; }
-			set { if( _frontWheelWidth.BeginSet( ref value ) ) { try { FrontWheelWidthChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelWidth.EndSet(); } } }
+			set { if( _frontWheelWidth.BeginSet( this, ref value ) ) { try { FrontWheelWidthChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelWidth.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelWidth"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelWidthChanged;
-		ReferenceField<double> _frontWheelWidth = 0.364;
+		ReferenceField<double> _frontWheelWidth = 0.25;//0.364;
 
 		/// <summary>
 		/// The mass of a front wheel.
@@ -112,13 +110,13 @@ namespace NeoAxis
 		public Reference<double> FrontWheelMass
 		{
 			get { if( _frontWheelMass.BeginGet() ) FrontWheelMass = _frontWheelMass.Get( this ); return _frontWheelMass.value; }
-			set { if( _frontWheelMass.BeginSet( ref value ) ) { try { FrontWheelMassChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelMass.EndSet(); } } }
+			set { if( _frontWheelMass.BeginSet( this, ref value ) ) { try { FrontWheelMassChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelMass.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelMass"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelMassChanged;
 		ReferenceField<double> _frontWheelMass = 18.0;
 
-		const string wheelMeshDefault = @"Content\Vehicles\Default\Wheel.obj|$Mesh";
+		const string wheelMeshDefault = @"Content\Vehicles\Default\Wheel.gltf|$Mesh";
 
 		/// <summary>
 		/// The mesh of a front wheel.
@@ -129,40 +127,40 @@ namespace NeoAxis
 		public Reference<Mesh> FrontWheelMesh
 		{
 			get { if( _frontWheelMesh.BeginGet() ) FrontWheelMesh = _frontWheelMesh.Get( this ); return _frontWheelMesh.value; }
-			set { if( _frontWheelMesh.BeginSet( ref value ) ) { try { FrontWheelMeshChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelMesh.EndSet(); } } }
+			set { if( _frontWheelMesh.BeginSet( this, ref value ) ) { try { FrontWheelMeshChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelMesh.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelMesh"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelMeshChanged;
 		ReferenceField<Mesh> _frontWheelMesh = new Reference<Mesh>( null, wheelMeshDefault );
 
-		[DefaultValue( 0.3 )]
+		[DefaultValue( 0.25 )]//0.3 )]
 		[Category( "Front Wheel" )]
 		public Reference<double> FrontWheelSuspensionMinLength
 		{
 			get { if( _frontWheelSuspensionMinLength.BeginGet() ) FrontWheelSuspensionMinLength = _frontWheelSuspensionMinLength.Get( this ); return _frontWheelSuspensionMinLength.value; }
-			set { if( _frontWheelSuspensionMinLength.BeginSet( ref value ) ) { try { FrontWheelSuspensionMinLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelSuspensionMinLength.EndSet(); } } }
+			set { if( _frontWheelSuspensionMinLength.BeginSet( this, ref value ) ) { try { FrontWheelSuspensionMinLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelSuspensionMinLength.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelSuspensionMinLength"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelSuspensionMinLengthChanged;
-		ReferenceField<double> _frontWheelSuspensionMinLength = 0.3;
+		ReferenceField<double> _frontWheelSuspensionMinLength = 0.25;//0.3;
 
-		[DefaultValue( 0.5 )]
+		[DefaultValue( 0.45 )]//0.5 )]
 		[Category( "Front Wheel" )]
 		public Reference<double> FrontWheelSuspensionMaxLength
 		{
 			get { if( _frontWheelSuspensionMaxLength.BeginGet() ) FrontWheelSuspensionMaxLength = _frontWheelSuspensionMaxLength.Get( this ); return _frontWheelSuspensionMaxLength.value; }
-			set { if( _frontWheelSuspensionMaxLength.BeginSet( ref value ) ) { try { FrontWheelSuspensionMaxLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelSuspensionMaxLength.EndSet(); } } }
+			set { if( _frontWheelSuspensionMaxLength.BeginSet( this, ref value ) ) { try { FrontWheelSuspensionMaxLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelSuspensionMaxLength.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelSuspensionMaxLength"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelSuspensionMaxLengthChanged;
-		ReferenceField<double> _frontWheelSuspensionMaxLength = 0.5;
+		ReferenceField<double> _frontWheelSuspensionMaxLength = 0.45;//0.5;
 
 		[DefaultValue( 0.0 )]
 		[Category( "Front Wheel" )]
 		public Reference<double> FrontWheelSuspensionPreloadLength
 		{
 			get { if( _frontWheelSuspensionPreloadLength.BeginGet() ) FrontWheelSuspensionPreloadLength = _frontWheelSuspensionPreloadLength.Get( this ); return _frontWheelSuspensionPreloadLength.value; }
-			set { if( _frontWheelSuspensionPreloadLength.BeginSet( ref value ) ) { try { FrontWheelSuspensionPreloadLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelSuspensionPreloadLength.EndSet(); } } }
+			set { if( _frontWheelSuspensionPreloadLength.BeginSet( this, ref value ) ) { try { FrontWheelSuspensionPreloadLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelSuspensionPreloadLength.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelSuspensionPreloadLength"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelSuspensionPreloadLengthChanged;
@@ -173,7 +171,7 @@ namespace NeoAxis
 		public Reference<double> FrontWheelSuspensionFrequency
 		{
 			get { if( _frontWheelSuspensionFrequency.BeginGet() ) FrontWheelSuspensionFrequency = _frontWheelSuspensionFrequency.Get( this ); return _frontWheelSuspensionFrequency.value; }
-			set { if( _frontWheelSuspensionFrequency.BeginSet( ref value ) ) { try { FrontWheelSuspensionFrequencyChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelSuspensionFrequency.EndSet(); } } }
+			set { if( _frontWheelSuspensionFrequency.BeginSet( this, ref value ) ) { try { FrontWheelSuspensionFrequencyChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelSuspensionFrequency.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelSuspensionFrequency"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelSuspensionFrequencyChanged;
@@ -184,7 +182,7 @@ namespace NeoAxis
 		public Reference<double> FrontWheelSuspensionDamping
 		{
 			get { if( _frontWheelSuspensionDamping.BeginGet() ) FrontWheelSuspensionDamping = _frontWheelSuspensionDamping.Get( this ); return _frontWheelSuspensionDamping.value; }
-			set { if( _frontWheelSuspensionDamping.BeginSet( ref value ) ) { try { FrontWheelSuspensionDampingChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelSuspensionDamping.EndSet(); } } }
+			set { if( _frontWheelSuspensionDamping.BeginSet( this, ref value ) ) { try { FrontWheelSuspensionDampingChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelSuspensionDamping.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelSuspensionDamping"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelSuspensionDampingChanged;
@@ -199,7 +197,7 @@ namespace NeoAxis
 		public Reference<double> FrontWheelAntiRollBarStiffness
 		{
 			get { if( _frontWheelAntiRollBarStiffness.BeginGet() ) FrontWheelAntiRollBarStiffness = _frontWheelAntiRollBarStiffness.Get( this ); return _frontWheelAntiRollBarStiffness.value; }
-			set { if( _frontWheelAntiRollBarStiffness.BeginSet( ref value ) ) { try { FrontWheelAntiRollBarStiffnessChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelAntiRollBarStiffness.EndSet(); } } }
+			set { if( _frontWheelAntiRollBarStiffness.BeginSet( this, ref value ) ) { try { FrontWheelAntiRollBarStiffnessChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelAntiRollBarStiffness.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelAntiRollBarStiffness"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelAntiRollBarStiffnessChanged;
@@ -213,7 +211,7 @@ namespace NeoAxis
 		public Reference<double> FrontWheelMaxBrakeTorque
 		{
 			get { if( _frontWheelMaxBrakeTorque.BeginGet() ) FrontWheelMaxBrakeTorque = _frontWheelMaxBrakeTorque.Get( this ); return _frontWheelMaxBrakeTorque.value; }
-			set { if( _frontWheelMaxBrakeTorque.BeginSet( ref value ) ) { try { FrontWheelMaxBrakeTorqueChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelMaxBrakeTorque.EndSet(); } } }
+			set { if( _frontWheelMaxBrakeTorque.BeginSet( this, ref value ) ) { try { FrontWheelMaxBrakeTorqueChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelMaxBrakeTorque.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelMaxBrakeTorque"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelMaxBrakeTorqueChanged;
@@ -227,7 +225,7 @@ namespace NeoAxis
 		public Reference<double> FrontWheelMaxHandBrakeTorque
 		{
 			get { if( _frontWheelMaxHandBrakeTorque.BeginGet() ) FrontWheelMaxHandBrakeTorque = _frontWheelMaxHandBrakeTorque.Get( this ); return _frontWheelMaxHandBrakeTorque.value; }
-			set { if( _frontWheelMaxHandBrakeTorque.BeginSet( ref value ) ) { try { FrontWheelMaxHandBrakeTorqueChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelMaxHandBrakeTorque.EndSet(); } } }
+			set { if( _frontWheelMaxHandBrakeTorque.BeginSet( this, ref value ) ) { try { FrontWheelMaxHandBrakeTorqueChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelMaxHandBrakeTorque.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelMaxHandBrakeTorque"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelMaxHandBrakeTorqueChanged;
@@ -241,11 +239,39 @@ namespace NeoAxis
 		public Reference<double> FrontWheelAngularDamping
 		{
 			get { if( _frontWheelAngularDamping.BeginGet() ) FrontWheelAngularDamping = _frontWheelAngularDamping.Get( this ); return _frontWheelAngularDamping.value; }
-			set { if( _frontWheelAngularDamping.BeginSet( ref value ) ) { try { FrontWheelAngularDampingChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelAngularDamping.EndSet(); } } }
+			set { if( _frontWheelAngularDamping.BeginSet( this, ref value ) ) { try { FrontWheelAngularDampingChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelAngularDamping.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelAngularDamping"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelAngularDampingChanged;
 		ReferenceField<double> _frontWheelAngularDamping = 0.2;
+
+		/// <summary>
+		/// Friction in forward direction of tire as a function of the slip ratio (fraction): (omega_wheel * r_wheel - v_longitudinal) / |v_longitudinal|.
+		/// </summary>
+		[Serialize]
+		[Cloneable( CloneType.Deep )]
+		[Category( "Front Wheel" )]
+		public ReferenceList<CurvePoint1F> FrontWheelLongitudinalFriction
+		{
+			get { return _frontWheelLongitudinalFriction; }
+		}
+		public delegate void FrontWheelLongitudinalFrictionChangedDelegate( VehicleType sender );
+		public event FrontWheelLongitudinalFrictionChangedDelegate FrontWheelLongitudinalFrictionChanged;
+		ReferenceList<CurvePoint1F> _frontWheelLongitudinalFriction;
+
+		/// <summary>
+		/// Friction in sideway direction of tire as a function of the slip angle (degrees): angle between relative contact velocity and vehicle direction.
+		/// </summary>
+		[Serialize]
+		[Cloneable( CloneType.Deep )]
+		[Category( "Front Wheel" )]
+		public ReferenceList<CurvePoint1F> FrontWheelLateralFriction
+		{
+			get { return _frontWheelLateralFriction; }
+		}
+		public delegate void FrontWheelLateralFrictionChangedDelegate( VehicleType sender );
+		public event FrontWheelLateralFrictionChangedDelegate FrontWheelLateralFrictionChanged;
+		ReferenceList<CurvePoint1F> _frontWheelLateralFriction;
 
 		/// <summary>
 		/// The maximal steering angle of front wheels.
@@ -255,7 +281,7 @@ namespace NeoAxis
 		public Reference<Degree> FrontWheelMaxSteeringAngle
 		{
 			get { if( _frontWheelMaxSteeringAngle.BeginGet() ) FrontWheelMaxSteeringAngle = _frontWheelMaxSteeringAngle.Get( this ); return _frontWheelMaxSteeringAngle.value; }
-			set { if( _frontWheelMaxSteeringAngle.BeginSet( ref value ) ) { try { FrontWheelMaxSteeringAngleChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelMaxSteeringAngle.EndSet(); } } }
+			set { if( _frontWheelMaxSteeringAngle.BeginSet( this, ref value ) ) { try { FrontWheelMaxSteeringAngleChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelMaxSteeringAngle.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelMaxSteeringAngle"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelMaxSteeringAngleChanged;
@@ -266,7 +292,7 @@ namespace NeoAxis
 		public Reference<double> FrontWheelSteeringTime
 		{
 			get { if( _frontWheelSteeringTime.BeginGet() ) FrontWheelSteeringTime = _frontWheelSteeringTime.Get( this ); return _frontWheelSteeringTime.value; }
-			set { if( _frontWheelSteeringTime.BeginSet( ref value ) ) { try { FrontWheelSteeringTimeChanged?.Invoke( this ); } finally { _frontWheelSteeringTime.EndSet(); } } }
+			set { if( _frontWheelSteeringTime.BeginSet( this, ref value ) ) { try { FrontWheelSteeringTimeChanged?.Invoke( this ); } finally { _frontWheelSteeringTime.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelSteeringTime"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelSteeringTimeChanged;
@@ -277,7 +303,7 @@ namespace NeoAxis
 		public Reference<bool> FrontWheelDrive
 		{
 			get { if( _frontWheelDrive.BeginGet() ) FrontWheelDrive = _frontWheelDrive.Get( this ); return _frontWheelDrive.value; }
-			set { if( _frontWheelDrive.BeginSet( ref value ) ) { try { FrontWheelDriveChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelDrive.EndSet(); } } }
+			set { if( _frontWheelDrive.BeginSet( this, ref value ) ) { try { FrontWheelDriveChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelDrive.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelDrive"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelDriveChanged;
@@ -291,7 +317,7 @@ namespace NeoAxis
 		public Reference<double> FrontWheelDifferentialRatio
 		{
 			get { if( _frontWheelDifferentialRatio.BeginGet() ) FrontWheelDifferentialRatio = _frontWheelDifferentialRatio.Get( this ); return _frontWheelDifferentialRatio.value; }
-			set { if( _frontWheelDifferentialRatio.BeginSet( ref value ) ) { try { FrontWheelDifferentialRatioChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelDifferentialRatio.EndSet(); } } }
+			set { if( _frontWheelDifferentialRatio.BeginSet( this, ref value ) ) { try { FrontWheelDifferentialRatioChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelDifferentialRatio.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelDifferentialRatio"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelDifferentialRatioChanged;
@@ -305,7 +331,7 @@ namespace NeoAxis
 		public Reference<double> FrontWheelDifferentialLeftRightSplit
 		{
 			get { if( _frontWheelDifferentialLeftRightSplit.BeginGet() ) FrontWheelDifferentialLeftRightSplit = _frontWheelDifferentialLeftRightSplit.Get( this ); return _frontWheelDifferentialLeftRightSplit.value; }
-			set { if( _frontWheelDifferentialLeftRightSplit.BeginSet( ref value ) ) { try { FrontWheelDifferentialLeftRightSplitChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelDifferentialLeftRightSplit.EndSet(); } } }
+			set { if( _frontWheelDifferentialLeftRightSplit.BeginSet( this, ref value ) ) { try { FrontWheelDifferentialLeftRightSplitChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelDifferentialLeftRightSplit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelDifferentialLeftRightSplit"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelDifferentialLeftRightSplitChanged;
@@ -319,7 +345,7 @@ namespace NeoAxis
 		public Reference<double> FrontWheelDifferentialLimitedSlipRatio
 		{
 			get { if( _frontWheelDifferentialLimitedSlipRatio.BeginGet() ) FrontWheelDifferentialLimitedSlipRatio = _frontWheelDifferentialLimitedSlipRatio.Get( this ); return _frontWheelDifferentialLimitedSlipRatio.value; }
-			set { if( _frontWheelDifferentialLimitedSlipRatio.BeginSet( ref value ) ) { try { FrontWheelDifferentialLimitedSlipRatioChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelDifferentialLimitedSlipRatio.EndSet(); } } }
+			set { if( _frontWheelDifferentialLimitedSlipRatio.BeginSet( this, ref value ) ) { try { FrontWheelDifferentialLimitedSlipRatioChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelDifferentialLimitedSlipRatio.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelDifferentialLimitedSlipRatio"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelDifferentialLimitedSlipRatioChanged;
@@ -333,7 +359,7 @@ namespace NeoAxis
 		public Reference<double> FrontWheelDifferentialEngineTorqueRatio
 		{
 			get { if( _frontWheelDifferentialEngineTorqueRatio.BeginGet() ) FrontWheelDifferentialEngineTorqueRatio = _frontWheelDifferentialEngineTorqueRatio.Get( this ); return _frontWheelDifferentialEngineTorqueRatio.value; }
-			set { if( _frontWheelDifferentialEngineTorqueRatio.BeginSet( ref value ) ) { try { FrontWheelDifferentialEngineTorqueRatioChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelDifferentialEngineTorqueRatio.EndSet(); } } }
+			set { if( _frontWheelDifferentialEngineTorqueRatio.BeginSet( this, ref value ) ) { try { FrontWheelDifferentialEngineTorqueRatioChanged?.Invoke( this ); DataWasChanged(); } finally { _frontWheelDifferentialEngineTorqueRatio.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrontWheelDifferentialEngineTorqueRatio"/> property value changes.</summary>
 		public event Action<VehicleType> FrontWheelDifferentialEngineTorqueRatioChanged;
@@ -350,7 +376,7 @@ namespace NeoAxis
 		public Reference<Vector3> RearWheelPosition
 		{
 			get { if( _rearWheelPosition.BeginGet() ) RearWheelPosition = _rearWheelPosition.Get( this ); return _rearWheelPosition.value; }
-			set { if( _rearWheelPosition.BeginSet( ref value ) ) { try { RearWheelPositionChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelPosition.EndSet(); } } }
+			set { if( _rearWheelPosition.BeginSet( this, ref value ) ) { try { RearWheelPositionChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelPosition.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RearWheelPosition"/> property value changes.</summary>
 		public event Action<VehicleType> RearWheelPositionChanged;
@@ -365,7 +391,7 @@ namespace NeoAxis
 		public Reference<double> RearWheelDiameter
 		{
 			get { if( _rearWheelDiameter.BeginGet() ) RearWheelDiameter = _rearWheelDiameter.Get( this ); return _rearWheelDiameter.value; }
-			set { if( _rearWheelDiameter.BeginSet( ref value ) ) { try { RearWheelDiameterChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelDiameter.EndSet(); } } }
+			set { if( _rearWheelDiameter.BeginSet( this, ref value ) ) { try { RearWheelDiameterChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelDiameter.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RearWheelDiameter"/> property value changes.</summary>
 		public event Action<VehicleType> RearWheelDiameterChanged;
@@ -375,16 +401,16 @@ namespace NeoAxis
 		/// The width of a rear wheel.
 		/// </summary>
 		//[Category( "Configuration" )]
-		[DefaultValue( 0.364 )]
+		[DefaultValue( 0.25 )]//0.364 )]
 		[Category( "Rear Wheel" )]
 		public Reference<double> RearWheelWidth
 		{
 			get { if( _rearWheelWidth.BeginGet() ) RearWheelWidth = _rearWheelWidth.Get( this ); return _rearWheelWidth.value; }
-			set { if( _rearWheelWidth.BeginSet( ref value ) ) { try { RearWheelWidthChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelWidth.EndSet(); } } }
+			set { if( _rearWheelWidth.BeginSet( this, ref value ) ) { try { RearWheelWidthChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelWidth.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RearWheelWidth"/> property value changes.</summary>
 		public event Action<VehicleType> RearWheelWidthChanged;
-		ReferenceField<double> _rearWheelWidth = 0.364;
+		ReferenceField<double> _rearWheelWidth = 0.25;//0.364;
 
 		/// <summary>
 		/// The mass of a rear wheel.
@@ -395,7 +421,7 @@ namespace NeoAxis
 		public Reference<double> RearWheelMass
 		{
 			get { if( _rearWheelMass.BeginGet() ) RearWheelMass = _rearWheelMass.Get( this ); return _rearWheelMass.value; }
-			set { if( _rearWheelMass.BeginSet( ref value ) ) { try { RearWheelMassChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelMass.EndSet(); } } }
+			set { if( _rearWheelMass.BeginSet( this, ref value ) ) { try { RearWheelMassChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelMass.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RearWheelMass"/> property value changes.</summary>
 		public event Action<VehicleType> RearWheelMassChanged;
@@ -410,40 +436,40 @@ namespace NeoAxis
 		public Reference<Mesh> RearWheelMesh
 		{
 			get { if( _rearWheelMesh.BeginGet() ) RearWheelMesh = _rearWheelMesh.Get( this ); return _rearWheelMesh.value; }
-			set { if( _rearWheelMesh.BeginSet( ref value ) ) { try { RearWheelMeshChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelMesh.EndSet(); } } }
+			set { if( _rearWheelMesh.BeginSet( this, ref value ) ) { try { RearWheelMeshChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelMesh.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RearWheelMesh"/> property value changes.</summary>
 		public event Action<VehicleType> RearWheelMeshChanged;
 		ReferenceField<Mesh> _rearWheelMesh = new Reference<Mesh>( null, wheelMeshDefault );
 
-		[DefaultValue( 0.3 )]
+		[DefaultValue( 0.25 )]// 0.3 )]
 		[Category( "Rear Wheel" )]
 		public Reference<double> RearWheelSuspensionMinLength
 		{
 			get { if( _rearWheelSuspensionMinLength.BeginGet() ) RearWheelSuspensionMinLength = _rearWheelSuspensionMinLength.Get( this ); return _rearWheelSuspensionMinLength.value; }
-			set { if( _rearWheelSuspensionMinLength.BeginSet( ref value ) ) { try { RearWheelSuspensionMinLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelSuspensionMinLength.EndSet(); } } }
+			set { if( _rearWheelSuspensionMinLength.BeginSet( this, ref value ) ) { try { RearWheelSuspensionMinLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelSuspensionMinLength.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RearWheelSuspensionMinLength"/> property value changes.</summary>
 		public event Action<VehicleType> RearWheelSuspensionMinLengthChanged;
-		ReferenceField<double> _rearWheelSuspensionMinLength = 0.3;
+		ReferenceField<double> _rearWheelSuspensionMinLength = 0.25;//0.3;
 
-		[DefaultValue( 0.5 )]
+		[DefaultValue( 0.45 )]//0.5 )]
 		[Category( "Rear Wheel" )]
 		public Reference<double> RearWheelSuspensionMaxLength
 		{
 			get { if( _rearWheelSuspensionMaxLength.BeginGet() ) RearWheelSuspensionMaxLength = _rearWheelSuspensionMaxLength.Get( this ); return _rearWheelSuspensionMaxLength.value; }
-			set { if( _rearWheelSuspensionMaxLength.BeginSet( ref value ) ) { try { RearWheelSuspensionMaxLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelSuspensionMaxLength.EndSet(); } } }
+			set { if( _rearWheelSuspensionMaxLength.BeginSet( this, ref value ) ) { try { RearWheelSuspensionMaxLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelSuspensionMaxLength.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RearWheelSuspensionMaxLength"/> property value changes.</summary>
 		public event Action<VehicleType> RearWheelSuspensionMaxLengthChanged;
-		ReferenceField<double> _rearWheelSuspensionMaxLength = 0.5;
+		ReferenceField<double> _rearWheelSuspensionMaxLength = 0.45;//0.5;
 
 		[DefaultValue( 0.0 )]
 		[Category( "Rear Wheel" )]
 		public Reference<double> RearWheelSuspensionPreloadLength
 		{
 			get { if( _rearWheelSuspensionPreloadLength.BeginGet() ) RearWheelSuspensionPreloadLength = _rearWheelSuspensionPreloadLength.Get( this ); return _rearWheelSuspensionPreloadLength.value; }
-			set { if( _rearWheelSuspensionPreloadLength.BeginSet( ref value ) ) { try { RearWheelSuspensionPreloadLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelSuspensionPreloadLength.EndSet(); } } }
+			set { if( _rearWheelSuspensionPreloadLength.BeginSet( this, ref value ) ) { try { RearWheelSuspensionPreloadLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelSuspensionPreloadLength.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RearWheelSuspensionPreloadLength"/> property value changes.</summary>
 		public event Action<VehicleType> RearWheelSuspensionPreloadLengthChanged;
@@ -454,7 +480,7 @@ namespace NeoAxis
 		public Reference<double> RearWheelSuspensionFrequency
 		{
 			get { if( _rearWheelSuspensionFrequency.BeginGet() ) RearWheelSuspensionFrequency = _rearWheelSuspensionFrequency.Get( this ); return _rearWheelSuspensionFrequency.value; }
-			set { if( _rearWheelSuspensionFrequency.BeginSet( ref value ) ) { try { RearWheelSuspensionFrequencyChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelSuspensionFrequency.EndSet(); } } }
+			set { if( _rearWheelSuspensionFrequency.BeginSet( this, ref value ) ) { try { RearWheelSuspensionFrequencyChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelSuspensionFrequency.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RearWheelSuspensionFrequency"/> property value changes.</summary>
 		public event Action<VehicleType> RearWheelSuspensionFrequencyChanged;
@@ -465,7 +491,7 @@ namespace NeoAxis
 		public Reference<double> RearWheelSuspensionDamping
 		{
 			get { if( _rearWheelSuspensionDamping.BeginGet() ) RearWheelSuspensionDamping = _rearWheelSuspensionDamping.Get( this ); return _rearWheelSuspensionDamping.value; }
-			set { if( _rearWheelSuspensionDamping.BeginSet( ref value ) ) { try { RearWheelSuspensionDampingChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelSuspensionDamping.EndSet(); } } }
+			set { if( _rearWheelSuspensionDamping.BeginSet( this, ref value ) ) { try { RearWheelSuspensionDampingChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelSuspensionDamping.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RearWheelSuspensionDamping"/> property value changes.</summary>
 		public event Action<VehicleType> RearWheelSuspensionDampingChanged;
@@ -480,7 +506,7 @@ namespace NeoAxis
 		public Reference<double> RearWheelAntiRollBarStiffness
 		{
 			get { if( _rearWheelAntiRollBarStiffness.BeginGet() ) RearWheelAntiRollBarStiffness = _rearWheelAntiRollBarStiffness.Get( this ); return _rearWheelAntiRollBarStiffness.value; }
-			set { if( _rearWheelAntiRollBarStiffness.BeginSet( ref value ) ) { try { RearWheelAntiRollBarStiffnessChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelAntiRollBarStiffness.EndSet(); } } }
+			set { if( _rearWheelAntiRollBarStiffness.BeginSet( this, ref value ) ) { try { RearWheelAntiRollBarStiffnessChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelAntiRollBarStiffness.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RearWheelAntiRollBarStiffness"/> property value changes.</summary>
 		public event Action<VehicleType> RearWheelAntiRollBarStiffnessChanged;
@@ -494,7 +520,7 @@ namespace NeoAxis
 		public Reference<double> RearWheelMaxBrakeTorque
 		{
 			get { if( _rearWheelMaxBrakeTorque.BeginGet() ) RearWheelMaxBrakeTorque = _rearWheelMaxBrakeTorque.Get( this ); return _rearWheelMaxBrakeTorque.value; }
-			set { if( _rearWheelMaxBrakeTorque.BeginSet( ref value ) ) { try { RearWheelMaxBrakeTorqueChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelMaxBrakeTorque.EndSet(); } } }
+			set { if( _rearWheelMaxBrakeTorque.BeginSet( this, ref value ) ) { try { RearWheelMaxBrakeTorqueChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelMaxBrakeTorque.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RearWheelMaxBrakeTorque"/> property value changes.</summary>
 		public event Action<VehicleType> RearWheelMaxBrakeTorqueChanged;
@@ -508,7 +534,7 @@ namespace NeoAxis
 		public Reference<double> RearWheelMaxHandBrakeTorque
 		{
 			get { if( _rearWheelMaxHandBrakeTorque.BeginGet() ) RearWheelMaxHandBrakeTorque = _rearWheelMaxHandBrakeTorque.Get( this ); return _rearWheelMaxHandBrakeTorque.value; }
-			set { if( _rearWheelMaxHandBrakeTorque.BeginSet( ref value ) ) { try { RearWheelMaxHandBrakeTorqueChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelMaxHandBrakeTorque.EndSet(); } } }
+			set { if( _rearWheelMaxHandBrakeTorque.BeginSet( this, ref value ) ) { try { RearWheelMaxHandBrakeTorqueChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelMaxHandBrakeTorque.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RearWheelMaxHandBrakeTorque"/> property value changes.</summary>
 		public event Action<VehicleType> RearWheelMaxHandBrakeTorqueChanged;
@@ -522,11 +548,39 @@ namespace NeoAxis
 		public Reference<double> RearWheelAngularDamping
 		{
 			get { if( _rearWheelAngularDamping.BeginGet() ) RearWheelAngularDamping = _rearWheelAngularDamping.Get( this ); return _rearWheelAngularDamping.value; }
-			set { if( _rearWheelAngularDamping.BeginSet( ref value ) ) { try { RearWheelAngularDampingChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelAngularDamping.EndSet(); } } }
+			set { if( _rearWheelAngularDamping.BeginSet( this, ref value ) ) { try { RearWheelAngularDampingChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelAngularDamping.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RearWheelAngularDamping"/> property value changes.</summary>
 		public event Action<VehicleType> RearWheelAngularDampingChanged;
 		ReferenceField<double> _rearWheelAngularDamping = 0.2;
+
+		/// <summary>
+		/// Friction in forward direction of tire as a function of the slip ratio (fraction): (omega_wheel * r_wheel - v_longitudinal) / |v_longitudinal|.
+		/// </summary>
+		[Serialize]
+		[Cloneable( CloneType.Deep )]
+		[Category( "Rear Wheel" )]
+		public ReferenceList<CurvePoint1F> RearWheelLongitudinalFriction
+		{
+			get { return _rearWheelLongitudinalFriction; }
+		}
+		public delegate void RearWheelLongitudinalFrictionChangedDelegate( VehicleType sender );
+		public event RearWheelLongitudinalFrictionChangedDelegate RearWheelLongitudinalFrictionChanged;
+		ReferenceList<CurvePoint1F> _rearWheelLongitudinalFriction;
+
+		/// <summary>
+		/// Friction in sideway direction of tire as a function of the slip angle (degrees): angle between relative contact velocity and vehicle direction.
+		/// </summary>
+		[Serialize]
+		[Cloneable( CloneType.Deep )]
+		[Category( "Rear Wheel" )]
+		public ReferenceList<CurvePoint1F> RearWheelLateralFriction
+		{
+			get { return _rearWheelLateralFriction; }
+		}
+		public delegate void RearWheelLateralFrictionChangedDelegate( VehicleType sender );
+		public event RearWheelLateralFrictionChangedDelegate RearWheelLateralFrictionChanged;
+		ReferenceList<CurvePoint1F> _rearWheelLateralFriction;
 
 		/// <summary>
 		/// The maximal steering angle of rear wheels.
@@ -536,7 +590,7 @@ namespace NeoAxis
 		public Reference<Degree> RearWheelMaxSteeringAngle
 		{
 			get { if( _rearWheelMaxSteeringAngle.BeginGet() ) RearWheelMaxSteeringAngle = _rearWheelMaxSteeringAngle.Get( this ); return _rearWheelMaxSteeringAngle.value; }
-			set { if( _rearWheelMaxSteeringAngle.BeginSet( ref value ) ) { try { RearWheelMaxSteeringAngleChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelMaxSteeringAngle.EndSet(); } } }
+			set { if( _rearWheelMaxSteeringAngle.BeginSet( this, ref value ) ) { try { RearWheelMaxSteeringAngleChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelMaxSteeringAngle.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RearWheelMaxSteeringAngle"/> property value changes.</summary>
 		public event Action<VehicleType> RearWheelMaxSteeringAngleChanged;
@@ -548,7 +602,7 @@ namespace NeoAxis
 		//public Reference<Degree> RearWheelSteeringSpeed
 		//{
 		//	get { if( _rearWheelSteeringSpeed.BeginGet() ) RearWheelSteeringSpeed = _rearWheelSteeringSpeed.Get( this ); return _rearWheelSteeringSpeed.value; }
-		//	set { if( _rearWheelSteeringSpeed.BeginSet( ref value ) ) { try { RearWheelSteeringSpeedChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelSteeringSpeed.EndSet(); } } }
+		//	set { if( _rearWheelSteeringSpeed.BeginSet( this, ref value ) ) { try { RearWheelSteeringSpeedChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelSteeringSpeed.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="RearWheelSteeringSpeed"/> property value changes.</summary>
 		//public event Action<VehicleType> RearWheelSteeringSpeedChanged;
@@ -559,7 +613,7 @@ namespace NeoAxis
 		public Reference<bool> RearWheelDrive
 		{
 			get { if( _rearWheelDrive.BeginGet() ) RearWheelDrive = _rearWheelDrive.Get( this ); return _rearWheelDrive.value; }
-			set { if( _rearWheelDrive.BeginSet( ref value ) ) { try { RearWheelDriveChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelDrive.EndSet(); } } }
+			set { if( _rearWheelDrive.BeginSet( this, ref value ) ) { try { RearWheelDriveChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelDrive.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RearWheelDrive"/> property value changes.</summary>
 		public event Action<VehicleType> RearWheelDriveChanged;
@@ -573,7 +627,7 @@ namespace NeoAxis
 		public Reference<double> RearWheelDifferentialRatio
 		{
 			get { if( _rearWheelDifferentialRatio.BeginGet() ) RearWheelDifferentialRatio = _rearWheelDifferentialRatio.Get( this ); return _rearWheelDifferentialRatio.value; }
-			set { if( _rearWheelDifferentialRatio.BeginSet( ref value ) ) { try { RearWheelDifferentialRatioChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelDifferentialRatio.EndSet(); } } }
+			set { if( _rearWheelDifferentialRatio.BeginSet( this, ref value ) ) { try { RearWheelDifferentialRatioChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelDifferentialRatio.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RearWheelDifferentialRatio"/> property value changes.</summary>
 		public event Action<VehicleType> RearWheelDifferentialRatioChanged;
@@ -587,7 +641,7 @@ namespace NeoAxis
 		public Reference<double> RearWheelDifferentialLeftRightSplit
 		{
 			get { if( _rearWheelDifferentialLeftRightSplit.BeginGet() ) RearWheelDifferentialLeftRightSplit = _rearWheelDifferentialLeftRightSplit.Get( this ); return _rearWheelDifferentialLeftRightSplit.value; }
-			set { if( _rearWheelDifferentialLeftRightSplit.BeginSet( ref value ) ) { try { RearWheelDifferentialLeftRightSplitChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelDifferentialLeftRightSplit.EndSet(); } } }
+			set { if( _rearWheelDifferentialLeftRightSplit.BeginSet( this, ref value ) ) { try { RearWheelDifferentialLeftRightSplitChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelDifferentialLeftRightSplit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RearWheelDifferentialLeftRightSplit"/> property value changes.</summary>
 		public event Action<VehicleType> RearWheelDifferentialLeftRightSplitChanged;
@@ -601,7 +655,7 @@ namespace NeoAxis
 		public Reference<double> RearWheelDifferentialLimitedSlipRatio
 		{
 			get { if( _rearWheelDifferentialLimitedSlipRatio.BeginGet() ) RearWheelDifferentialLimitedSlipRatio = _rearWheelDifferentialLimitedSlipRatio.Get( this ); return _rearWheelDifferentialLimitedSlipRatio.value; }
-			set { if( _rearWheelDifferentialLimitedSlipRatio.BeginSet( ref value ) ) { try { RearWheelDifferentialLimitedSlipRatioChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelDifferentialLimitedSlipRatio.EndSet(); } } }
+			set { if( _rearWheelDifferentialLimitedSlipRatio.BeginSet( this, ref value ) ) { try { RearWheelDifferentialLimitedSlipRatioChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelDifferentialLimitedSlipRatio.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RearWheelDifferentialLimitedSlipRatio"/> property value changes.</summary>
 		public event Action<VehicleType> RearWheelDifferentialLimitedSlipRatioChanged;
@@ -615,7 +669,7 @@ namespace NeoAxis
 		public Reference<double> RearWheelDifferentialEngineTorqueRatio
 		{
 			get { if( _rearWheelDifferentialEngineTorqueRatio.BeginGet() ) RearWheelDifferentialEngineTorqueRatio = _rearWheelDifferentialEngineTorqueRatio.Get( this ); return _rearWheelDifferentialEngineTorqueRatio.value; }
-			set { if( _rearWheelDifferentialEngineTorqueRatio.BeginSet( ref value ) ) { try { RearWheelDifferentialEngineTorqueRatioChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelDifferentialEngineTorqueRatio.EndSet(); } } }
+			set { if( _rearWheelDifferentialEngineTorqueRatio.BeginSet( this, ref value ) ) { try { RearWheelDifferentialEngineTorqueRatioChanged?.Invoke( this ); DataWasChanged(); } finally { _rearWheelDifferentialEngineTorqueRatio.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RearWheelDifferentialEngineTorqueRatio"/> property value changes.</summary>
 		public event Action<VehicleType> RearWheelDifferentialEngineTorqueRatioChanged;
@@ -630,7 +684,7 @@ namespace NeoAxis
 		//public Reference<WheelDriveEnum> WheelDrive
 		//{
 		//	get { if( _WheelDrive.BeginGet() ) WheelDrive = _WheelDrive.Get( this ); return _WheelDrive.value; }
-		//	set { if( _WheelDrive.BeginSet( ref value ) ) { try { WheelDriveChanged?.Invoke( this ); DataWasChanged(); } finally { _WheelDrive.EndSet(); } } }
+		//	set { if( _WheelDrive.BeginSet( this, ref value ) ) { try { WheelDriveChanged?.Invoke( this ); DataWasChanged(); } finally { _WheelDrive.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="WheelDrive"/> property value changes.</summary>
 		//public event Action<VehicleType> WheelDriveChanged;
@@ -646,7 +700,7 @@ namespace NeoAxis
 		//public Reference<double> WheelFriction
 		//{
 		//	get { if( _wheelFriction.BeginGet() ) WheelFriction = _wheelFriction.Get( this ); return _wheelFriction.value; }
-		//	set { if( _wheelFriction.BeginSet( ref value ) ) { try { WheelFrictionChanged?.Invoke( this ); DataWasChanged(); } finally { _wheelFriction.EndSet(); } } }
+		//	set { if( _wheelFriction.BeginSet( this, ref value ) ) { try { WheelFrictionChanged?.Invoke( this ); DataWasChanged(); } finally { _wheelFriction.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="WheelFriction"/> property value changes.</summary>
 		//public event Action<VehicleType> WheelFrictionChanged;
@@ -661,7 +715,7 @@ namespace NeoAxis
 		//public Reference<Range> SuspensionTravel
 		//{
 		//	get { if( _suspensionTravel.BeginGet() ) SuspensionTravel = _suspensionTravel.Get( this ); return _suspensionTravel.value; }
-		//	set { if( _suspensionTravel.BeginSet( ref value ) ) { try { SuspensionTravelChanged?.Invoke( this ); DataWasChanged(); } finally { _suspensionTravel.EndSet(); } } }
+		//	set { if( _suspensionTravel.BeginSet( this, ref value ) ) { try { SuspensionTravelChanged?.Invoke( this ); DataWasChanged(); } finally { _suspensionTravel.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="SuspensionTravel"/> property value changes.</summary>
 		//public event Action<VehicleType> SuspensionTravelChanged;
@@ -677,7 +731,7 @@ namespace NeoAxis
 		//public Reference<double> SpringRate
 		//{
 		//	get { if( _springRate.BeginGet() ) SpringRate = _springRate.Get( this ); return _springRate.value; }
-		//	set { if( _springRate.BeginSet( ref value ) ) { try { SpringRateChanged?.Invoke( this ); } finally { _springRate.EndSet(); } } }
+		//	set { if( _springRate.BeginSet( this, ref value ) ) { try { SpringRateChanged?.Invoke( this ); } finally { _springRate.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="SpringRate"/> property value changes.</summary>
 		//public event Action<VehicleType> SpringRateChanged;
@@ -692,7 +746,7 @@ namespace NeoAxis
 		//public Reference<double> ThrottleTargetVelocity
 		//{
 		//	get { if( _throttleTargetVelocity.BeginGet() ) ThrottleTargetVelocity = _throttleTargetVelocity.Get( this ); return _throttleTargetVelocity.value; }
-		//	set { if( _throttleTargetVelocity.BeginSet( ref value ) ) { try { ThrottleTargetVelocityChanged?.Invoke( this ); } finally { _throttleTargetVelocity.EndSet(); } } }
+		//	set { if( _throttleTargetVelocity.BeginSet( this, ref value ) ) { try { ThrottleTargetVelocityChanged?.Invoke( this ); } finally { _throttleTargetVelocity.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="ThrottleTargetVelocity"/> property value changes.</summary>
 		//public event Action<VehicleType> ThrottleTargetVelocityChanged;
@@ -709,7 +763,7 @@ namespace NeoAxis
 		//public Reference<double> ThrottleForce
 		//{
 		//	get { if( _throttleForce.BeginGet() ) ThrottleForce = _throttleForce.Get( this ); return _throttleForce.value; }
-		//	set { if( _throttleForce.BeginSet( ref value ) ) { try { ThrottleForceChanged?.Invoke( this ); } finally { _throttleForce.EndSet(); } } }
+		//	set { if( _throttleForce.BeginSet( this, ref value ) ) { try { ThrottleForceChanged?.Invoke( this ); } finally { _throttleForce.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="ThrottleForce"/> property value changes.</summary>
 		//public event Action<VehicleType> ThrottleForceChanged;
@@ -724,7 +778,7 @@ namespace NeoAxis
 		//public Reference<double> BrakeForce
 		//{
 		//	get { if( _brakeForce.BeginGet() ) BrakeForce = _brakeForce.Get( this ); return _brakeForce.value; }
-		//	set { if( _brakeForce.BeginSet( ref value ) ) { try { BrakeForceChanged?.Invoke( this ); } finally { _brakeForce.EndSet(); } } }
+		//	set { if( _brakeForce.BeginSet( this, ref value ) ) { try { BrakeForceChanged?.Invoke( this ); } finally { _brakeForce.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="BrakeForce"/> property value changes.</summary>
 		//public event Action<VehicleType> BrakeForceChanged;
@@ -741,7 +795,7 @@ namespace NeoAxis
 		//public Reference<double> SteeringForce
 		//{
 		//	get { if( _steeringForce.BeginGet() ) SteeringForce = _steeringForce.Get( this ); return _steeringForce.value; }
-		//	set { if( _steeringForce.BeginSet( ref value ) ) { try { SteeringForceChanged?.Invoke( this ); } finally { _steeringForce.EndSet(); } } }
+		//	set { if( _steeringForce.BeginSet( this, ref value ) ) { try { SteeringForceChanged?.Invoke( this ); } finally { _steeringForce.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="SteeringForce"/> property value changes.</summary>
 		//public event Action<VehicleType> SteeringForceChanged;
@@ -753,7 +807,7 @@ namespace NeoAxis
 		public Reference<double> EngineMaxTorque
 		{
 			get { if( _engineMaxTorque.BeginGet() ) EngineMaxTorque = _engineMaxTorque.Get( this ); return _engineMaxTorque.value; }
-			set { if( _engineMaxTorque.BeginSet( ref value ) ) { try { EngineMaxTorqueChanged?.Invoke( this ); DataWasChanged(); } finally { _engineMaxTorque.EndSet(); } } }
+			set { if( _engineMaxTorque.BeginSet( this, ref value ) ) { try { EngineMaxTorqueChanged?.Invoke( this ); DataWasChanged(); } finally { _engineMaxTorque.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="EngineMaxTorque"/> property value changes.</summary>
 		public event Action<VehicleType> EngineMaxTorqueChanged;
@@ -765,7 +819,7 @@ namespace NeoAxis
 		public Reference<double> EngineMinRPM
 		{
 			get { if( _engineMinRPM.BeginGet() ) EngineMinRPM = _engineMinRPM.Get( this ); return _engineMinRPM.value; }
-			set { if( _engineMinRPM.BeginSet( ref value ) ) { try { EngineMinRPMChanged?.Invoke( this ); DataWasChanged(); } finally { _engineMinRPM.EndSet(); } } }
+			set { if( _engineMinRPM.BeginSet( this, ref value ) ) { try { EngineMinRPMChanged?.Invoke( this ); DataWasChanged(); } finally { _engineMinRPM.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="EngineMinRPM"/> property value changes.</summary>
 		public event Action<VehicleType> EngineMinRPMChanged;
@@ -777,7 +831,7 @@ namespace NeoAxis
 		public Reference<double> EngineMaxRPM
 		{
 			get { if( _engineMaxRPM.BeginGet() ) EngineMaxRPM = _engineMaxRPM.Get( this ); return _engineMaxRPM.value; }
-			set { if( _engineMaxRPM.BeginSet( ref value ) ) { try { EngineMaxRPMChanged?.Invoke( this ); DataWasChanged(); } finally { _engineMaxRPM.EndSet(); } } }
+			set { if( _engineMaxRPM.BeginSet( this, ref value ) ) { try { EngineMaxRPMChanged?.Invoke( this ); DataWasChanged(); } finally { _engineMaxRPM.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="EngineMaxRPM"/> property value changes.</summary>
 		public event Action<VehicleType> EngineMaxRPMChanged;
@@ -797,7 +851,7 @@ namespace NeoAxis
 		public Reference<bool> TransmissionAuto
 		{
 			get { if( _transmissionAuto.BeginGet() ) TransmissionAuto = _transmissionAuto.Get( this ); return _transmissionAuto.value; }
-			set { if( _transmissionAuto.BeginSet( ref value ) ) { try { TransmissionAutoChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionAuto.EndSet(); } } }
+			set { if( _transmissionAuto.BeginSet( this, ref value ) ) { try { TransmissionAutoChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionAuto.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TransmissionAuto"/> property value changes.</summary>
 		public event Action<VehicleType> TransmissionAutoChanged;
@@ -812,7 +866,7 @@ namespace NeoAxis
 		public Reference<double[]> TransmissionGearRatios
 		{
 			get { if( _transmissionGearRatios.BeginGet() ) TransmissionGearRatios = _transmissionGearRatios.Get( this ); return _transmissionGearRatios.value; }
-			set { if( _transmissionGearRatios.BeginSet( ref value ) ) { try { TransmissionGearRatiosChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionGearRatios.EndSet(); } } }
+			set { if( _transmissionGearRatios.BeginSet( this, ref value ) ) { try { TransmissionGearRatiosChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionGearRatios.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SpecialEffects"/> property value changes.</summary>
 		public event Action<VehicleType> TransmissionGearRatiosChanged;
@@ -827,7 +881,7 @@ namespace NeoAxis
 		public Reference<double[]> TransmissionReverseGearRatios
 		{
 			get { if( _transmissionReverseGearRatios.BeginGet() ) TransmissionReverseGearRatios = _transmissionReverseGearRatios.Get( this ); return _transmissionReverseGearRatios.value; }
-			set { if( _transmissionReverseGearRatios.BeginSet( ref value ) ) { try { TransmissionReverseGearRatiosChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionReverseGearRatios.EndSet(); } } }
+			set { if( _transmissionReverseGearRatios.BeginSet( this, ref value ) ) { try { TransmissionReverseGearRatiosChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionReverseGearRatios.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SpecialEffects"/> property value changes.</summary>
 		public event Action<VehicleType> TransmissionReverseGearRatiosChanged;
@@ -841,7 +895,7 @@ namespace NeoAxis
 		public Reference<double> TransmissionSwitchTime
 		{
 			get { if( _transmissionSwitchTime.BeginGet() ) TransmissionSwitchTime = _transmissionSwitchTime.Get( this ); return _transmissionSwitchTime.value; }
-			set { if( _transmissionSwitchTime.BeginSet( ref value ) ) { try { TransmissionSwitchTimeChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionSwitchTime.EndSet(); } } }
+			set { if( _transmissionSwitchTime.BeginSet( this, ref value ) ) { try { TransmissionSwitchTimeChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionSwitchTime.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TransmissionSwitchTime"/> property value changes.</summary>
 		public event Action<VehicleType> TransmissionSwitchTimeChanged;
@@ -855,7 +909,7 @@ namespace NeoAxis
 		public Reference<double> TransmissionClutchReleaseTime
 		{
 			get { if( _transmissionClutchReleaseTime.BeginGet() ) TransmissionClutchReleaseTime = _transmissionClutchReleaseTime.Get( this ); return _transmissionClutchReleaseTime.value; }
-			set { if( _transmissionClutchReleaseTime.BeginSet( ref value ) ) { try { TransmissionClutchReleaseTimeChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionClutchReleaseTime.EndSet(); } } }
+			set { if( _transmissionClutchReleaseTime.BeginSet( this, ref value ) ) { try { TransmissionClutchReleaseTimeChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionClutchReleaseTime.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TransmissionClutchReleaseTime"/> property value changes.</summary>
 		public event Action<VehicleType> TransmissionClutchReleaseTimeChanged;
@@ -869,7 +923,7 @@ namespace NeoAxis
 		public Reference<double> TransmissionSwitchLatency
 		{
 			get { if( _transmissionSwitchLatency.BeginGet() ) TransmissionSwitchLatency = _transmissionSwitchLatency.Get( this ); return _transmissionSwitchLatency.value; }
-			set { if( _transmissionSwitchLatency.BeginSet( ref value ) ) { try { TransmissionSwitchLatencyChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionSwitchLatency.EndSet(); } } }
+			set { if( _transmissionSwitchLatency.BeginSet( this, ref value ) ) { try { TransmissionSwitchLatencyChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionSwitchLatency.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TransmissionSwitchLatency"/> property value changes.</summary>
 		public event Action<VehicleType> TransmissionSwitchLatencyChanged;
@@ -884,7 +938,7 @@ namespace NeoAxis
 		public Reference<double> TransmissionShiftUpRPM
 		{
 			get { if( _transmissionShiftUpRPM.BeginGet() ) TransmissionShiftUpRPM = _transmissionShiftUpRPM.Get( this ); return _transmissionShiftUpRPM.value; }
-			set { if( _transmissionShiftUpRPM.BeginSet( ref value ) ) { try { TransmissionShiftUpRPMChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionShiftUpRPM.EndSet(); } } }
+			set { if( _transmissionShiftUpRPM.BeginSet( this, ref value ) ) { try { TransmissionShiftUpRPMChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionShiftUpRPM.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TransmissionShiftUpRPM"/> property value changes.</summary>
 		public event Action<VehicleType> TransmissionShiftUpRPMChanged;
@@ -899,7 +953,7 @@ namespace NeoAxis
 		public Reference<double> TransmissionShiftDownRPM
 		{
 			get { if( _transmissionShiftDownRPM.BeginGet() ) TransmissionShiftDownRPM = _transmissionShiftDownRPM.Get( this ); return _transmissionShiftDownRPM.value; }
-			set { if( _transmissionShiftDownRPM.BeginSet( ref value ) ) { try { TransmissionShiftDownRPMChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionShiftDownRPM.EndSet(); } } }
+			set { if( _transmissionShiftDownRPM.BeginSet( this, ref value ) ) { try { TransmissionShiftDownRPMChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionShiftDownRPM.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TransmissionShiftDownRPM"/> property value changes.</summary>
 		public event Action<VehicleType> TransmissionShiftDownRPMChanged;
@@ -913,7 +967,7 @@ namespace NeoAxis
 		public Reference<double> TransmissionClutchStrength
 		{
 			get { if( _transmissionClutchStrength.BeginGet() ) TransmissionClutchStrength = _transmissionClutchStrength.Get( this ); return _transmissionClutchStrength.value; }
-			set { if( _transmissionClutchStrength.BeginSet( ref value ) ) { try { TransmissionClutchStrengthChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionClutchStrength.EndSet(); } } }
+			set { if( _transmissionClutchStrength.BeginSet( this, ref value ) ) { try { TransmissionClutchStrengthChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionClutchStrength.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TransmissionClutchStrength"/> property value changes.</summary>
 		public event Action<VehicleType> TransmissionClutchStrengthChanged;
@@ -927,7 +981,7 @@ namespace NeoAxis
 		public Reference<Degree> MaxSlopeAngle
 		{
 			get { if( _maxSlopeAngle.BeginGet() ) MaxSlopeAngle = _maxSlopeAngle.Get( this ); return _maxSlopeAngle.value; }
-			set { if( _maxSlopeAngle.BeginSet( ref value ) ) { try { MaxSlopeAngleChanged?.Invoke( this ); DataWasChanged(); } finally { _maxSlopeAngle.EndSet(); } } }
+			set { if( _maxSlopeAngle.BeginSet( this, ref value ) ) { try { MaxSlopeAngleChanged?.Invoke( this ); DataWasChanged(); } finally { _maxSlopeAngle.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MaxSlopeAngle"/> property value changes.</summary>
 		public event Action<VehicleType> MaxSlopeAngleChanged;
@@ -942,11 +996,83 @@ namespace NeoAxis
 		public Reference<Degree> MaxPitchRollAngle
 		{
 			get { if( _maxPitchRollAngle.BeginGet() ) MaxPitchRollAngle = _maxPitchRollAngle.Get( this ); return _maxPitchRollAngle.value; }
-			set { if( _maxPitchRollAngle.BeginSet( ref value ) ) { try { MaxPitchRollAngleChanged?.Invoke( this ); DataWasChanged(); } finally { _maxPitchRollAngle.EndSet(); } } }
+			set { if( _maxPitchRollAngle.BeginSet( this, ref value ) ) { try { MaxPitchRollAngleChanged?.Invoke( this ); DataWasChanged(); } finally { _maxPitchRollAngle.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MaxPitchRollAngle"/> property value changes.</summary>
 		public event Action<VehicleType> MaxPitchRollAngleChanged;
 		ReferenceField<Degree> _maxPitchRollAngle = new Degree( 180 );
+
+		[Category( "Sound" )]
+		[DefaultValue( null )]
+		public Reference<Sound> MotorOnSound
+		{
+			get { if( _motorOnSound.BeginGet() ) MotorOnSound = _motorOnSound.Get( this ); return _motorOnSound.value; }
+			set { if( _motorOnSound.BeginSet( this, ref value ) ) { try { MotorOnSoundChanged?.Invoke( this ); } finally { _motorOnSound.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="MotorOnSound"/> property value changes.</summary>
+		public event Action<VehicleType> MotorOnSoundChanged;
+		ReferenceField<Sound> _motorOnSound = null;
+
+		[Category( "Sound" )]
+		[DefaultValue( null )]
+		public Reference<Sound> MotorOffSound
+		{
+			get { if( _motorOffSound.BeginGet() ) MotorOffSound = _motorOffSound.Get( this ); return _motorOffSound.value; }
+			set { if( _motorOffSound.BeginSet( this, ref value ) ) { try { MotorOffSoundChanged?.Invoke( this ); } finally { _motorOffSound.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="MotorOffSound"/> property value changes.</summary>
+		public event Action<VehicleType> MotorOffSoundChanged;
+		ReferenceField<Sound> _motorOffSound = null;
+
+		[Serialize]
+		[Cloneable( CloneType.Deep )]
+		[Category( "Sound" )]
+		public ReferenceList<Sound> GearSounds
+		{
+			get { return _gearSounds; }
+		}
+		public delegate void GearSoundsChangedDelegate( VehicleType sender );
+		/// <summary>Occurs when the <see cref="GearSoundsChanged"/> property value changes.</summary>
+		public event GearSoundsChangedDelegate GearSoundsChanged;
+		ReferenceList<Sound> _gearSounds;
+
+		[Category( "Sound" )]
+		[DefaultValue( null )]
+		public Reference<Sound> GearUpSound
+		{
+			get { if( _gearUpSound.BeginGet() ) GearUpSound = _gearUpSound.Get( this ); return _gearUpSound.value; }
+			set { if( _gearUpSound.BeginSet( this, ref value ) ) { try { GearUpSoundChanged?.Invoke( this ); } finally { _gearUpSound.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="GearUpSound"/> property value changes.</summary>
+		public event Action<VehicleType> GearUpSoundChanged;
+		ReferenceField<Sound> _gearUpSound = null;
+
+		[Category( "Sound" )]
+		[DefaultValue( null )]
+		public Reference<Sound> GearDownSound
+		{
+			get { if( _gearDownSound.BeginGet() ) GearDownSound = _gearDownSound.Get( this ); return _gearDownSound.value; }
+			set { if( _gearDownSound.BeginSet( this, ref value ) ) { try { GearDownSoundChanged?.Invoke( this ); } finally { _gearDownSound.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="GearDownSound"/> property value changes.</summary>
+		public event Action<VehicleType> GearDownSoundChanged;
+		ReferenceField<Sound> _gearDownSound = null;
+
+		//!!!!can be several turrets
+		[Category( "Sound" )]
+		[DefaultValue( null )]
+		public Reference<Sound> TurretTurnSound
+		{
+			get { if( _turretTurnSound.BeginGet() ) TurretTurnSound = _turretTurnSound.Get( this ); return _turretTurnSound.value; }
+			set { if( _turretTurnSound.BeginSet( this, ref value ) ) { try { TurretTurnSoundChanged?.Invoke( this ); } finally { _turretTurnSound.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="TurretTurnSound"/> property value changes.</summary>
+		public event Action<VehicleType> TurretTurnSoundChanged;
+		ReferenceField<Sound> _turretTurnSound = null;
+
+		[Serialize]
+		[Browsable( false )]
+		public Transform EditorCameraTransform;
 
 		/////////////////////////////////////////
 
@@ -985,6 +1111,15 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		public VehicleType()
+		{
+			_frontWheelLongitudinalFriction = new ReferenceList<CurvePoint1F>( this, delegate () { FrontWheelLongitudinalFrictionChanged?.Invoke( this ); DataWasChanged(); } );
+			_frontWheelLateralFriction = new ReferenceList<CurvePoint1F>( this, delegate () { FrontWheelLateralFrictionChanged?.Invoke( this ); DataWasChanged(); } );
+			_rearWheelLongitudinalFriction = new ReferenceList<CurvePoint1F>( this, delegate () { RearWheelLongitudinalFrictionChanged?.Invoke( this ); DataWasChanged(); } );
+			_rearWheelLateralFriction = new ReferenceList<CurvePoint1F>( this, delegate () { RearWheelLateralFrictionChanged?.Invoke( this ); DataWasChanged(); } );
+			_gearSounds = new ReferenceList<Sound>( this, delegate () { GearSoundsChanged?.Invoke( this ); DataWasChanged(); } );
+		}
+
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
 		{
 			base.OnMetadataGetMembersFilter( context, member, ref skip );
@@ -1003,6 +1138,8 @@ namespace NeoAxis
 				case nameof( FrontWheelSuspensionPreloadLength ):
 				case nameof( FrontWheelSuspensionFrequency ):
 				case nameof( FrontWheelSuspensionDamping ):
+				case nameof( FrontWheelLongitudinalFriction ):
+				case nameof( FrontWheelLateralFriction ):
 				case nameof( FrontWheelDrive ):
 				case nameof( FrontWheelAntiRollBarStiffness ):
 				case nameof( FrontWheelMaxBrakeTorque ):
@@ -1020,6 +1157,8 @@ namespace NeoAxis
 				case nameof( RearWheelSuspensionPreloadLength ):
 				case nameof( RearWheelSuspensionFrequency ):
 				case nameof( RearWheelSuspensionDamping ):
+				case nameof( RearWheelLongitudinalFriction ):
+				case nameof( RearWheelLateralFriction ):
 				case nameof( RearWheelDrive ):
 				case nameof( RearWheelAntiRollBarStiffness ):
 				case nameof( RearWheelMaxBrakeTorque ):
@@ -1055,6 +1194,42 @@ namespace NeoAxis
 					if( !TransmissionAuto )
 						skip = true;
 					break;
+				}
+			}
+		}
+
+		protected override void OnEnabledInHierarchyChanged()
+		{
+			base.OnEnabledInHierarchyChanged();
+
+			if( EnabledInHierarchy )
+			{
+				if( FrontWheelLongitudinalFriction.Count == 0 )
+				{
+					FrontWheelLongitudinalFriction.Add( new CurvePoint1F( 0, 0 ) );
+					FrontWheelLongitudinalFriction.Add( new CurvePoint1F( 0.06f, 1.2f ) );
+					FrontWheelLongitudinalFriction.Add( new CurvePoint1F( 0.2f, 1.0f ) );
+				}
+
+				if( FrontWheelLateralFriction.Count == 0 )
+				{
+					FrontWheelLateralFriction.Add( new CurvePoint1F( 0, 0 ) );
+					FrontWheelLateralFriction.Add( new CurvePoint1F( 3.0f, 1.2f ) );
+					FrontWheelLateralFriction.Add( new CurvePoint1F( 20.0f, 1.0f ) );
+				}
+
+				if( RearWheelLongitudinalFriction.Count == 0 )
+				{
+					RearWheelLongitudinalFriction.Add( new CurvePoint1F( 0, 0 ) );
+					RearWheelLongitudinalFriction.Add( new CurvePoint1F( 0.06f, 1.2f ) );
+					RearWheelLongitudinalFriction.Add( new CurvePoint1F( 0.2f, 1.0f ) );
+				}
+
+				if( RearWheelLateralFriction.Count == 0 )
+				{
+					RearWheelLateralFriction.Add( new CurvePoint1F( 0, 0 ) );
+					RearWheelLateralFriction.Add( new CurvePoint1F( 3.0f, 1.2f ) );
+					RearWheelLateralFriction.Add( new CurvePoint1F( 20.0f, 1.0f ) );
 				}
 			}
 		}
@@ -1102,10 +1277,24 @@ namespace NeoAxis
 		{
 			if( Components.Count == 0 )
 			{
-				var seat = CreateComponent<VehicleSeat>();
+				var seat = CreateComponent<SeatItem>();
 				seat.Name = "Vehicle Seat";
 				seat.ExitTransform = new Transform( new Vector3( 0, 2, 1 ), Quaternion.Identity, Vector3.One );
 			}
+		}
+
+		public Sound GetGearSound( int gear )
+		{
+			if( GearSounds.Count != 0 )
+			{
+				var gear2 = gear + 1;
+				if( gear2 < 0 )
+					gear2 = 0;
+				if( gear2 >= GearSounds.Count )
+					gear2 = GearSounds.Count - 1;
+				return GearSounds[ gear2 ];
+			}
+			return null;
 		}
 	}
 }

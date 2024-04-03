@@ -384,16 +384,16 @@ namespace NeoAxis
 		/// <param name="culling">The culling flag.</param>
 		public abstract void AddTriangles( IList<Vector3> vertices, IList<int> indices, bool wireframe, bool culling );
 
-		/// <summary>
-		/// Renders a vertex/index buffer.
-		/// </summary>
-		/// <param name="vertices">The vertices.</param>
-		/// <param name="indices">The indices.</param>
-		/// <param name="wireframe">The wireframe mode flag.</param>
-		/// <param name="culling">The culling flag.</param>
-		public abstract void AddTriangles( IList<Vector3F> vertices, IList<int> indices, bool wireframe, bool culling );
+		///// <summary>
+		///// Renders a vertex/index buffer.
+		///// </summary>
+		///// <param name="vertices">The vertices.</param>
+		///// <param name="indices">The indices.</param>
+		///// <param name="wireframe">The wireframe mode flag.</param>
+		///// <param name="culling">The culling flag.</param>
+		//public abstract void AddTriangles( IList<Vector3F> vertices, IList<int> indices, bool wireframe, bool culling );
 
-		public abstract void AddTriangles( IList<Vector3F> vertices, bool wireframe, bool culling );
+		//public abstract void AddTriangles( IList<Vector3F> vertices, bool wireframe, bool culling );
 
 		public abstract void AddTriangles( IList<Vector3> vertices, bool wireframe, bool culling );
 
@@ -426,12 +426,12 @@ namespace NeoAxis
 			//}
 		}
 
-		/// <summary>
-		/// Renders a line.
-		/// </summary>
-		/// <param name="start">The line start position.</param>
-		/// <param name="end">The line end position.</param>
-		public abstract void AddLine( Vertex start, Vertex end );//, double thickness = 0 );
+		///// <summary>
+		///// Renders a line.
+		///// </summary>
+		///// <param name="start">The line start position.</param>
+		///// <param name="end">The line end position.</param>
+		//public abstract void AddLine( Vertex start, Vertex end );//, double thickness = 0 );
 
 		/////////////////////////////////////////
 		//AddTriangles vertex buffer with transform
@@ -467,16 +467,16 @@ namespace NeoAxis
 		/////////////////////////////////////////
 		//AddTriangles vertex buffer without transform
 
-		/// <summary>
-		/// Renders a vertex/index buffer.
-		/// </summary>
-		/// <param name="vertices">The vertices.</param>
-		/// <param name="indices">The indices.</param>
-		/// <param name="wireframe">The wireframe mode flag.</param>
-		/// <param name="culling">The culling flag.</param>
-		public abstract void AddTriangles( IList<Vertex> vertices, IList<int> indices, bool wireframe, bool culling );
+		///// <summary>
+		///// Renders a vertex/index buffer.
+		///// </summary>
+		///// <param name="vertices">The vertices.</param>
+		///// <param name="indices">The indices.</param>
+		///// <param name="wireframe">The wireframe mode flag.</param>
+		///// <param name="culling">The culling flag.</param>
+		//public abstract void AddTriangles( IList<Vertex> vertices, IList<int> indices, bool wireframe, bool culling );
 
-		public abstract void AddTriangles( IList<Vertex> vertices, bool wireframe, bool culling );
+		//public abstract void AddTriangles( IList<Vertex> vertices, bool wireframe, bool culling );
 
 		/////////////////////////////////////////
 

@@ -73,13 +73,17 @@ namespace NeoAxis.Player
 
 			EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Maximized;
 			//EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Normal;
-			//var screenSize = EngineApp.GetScreenSize().ToVec2();
+			//var screenSize = EngineApp.GetScreenSize().ToVector2();
 			//EngineApp.InitSettings.CreateWindowSize = new Vec2( screenSize.X * 0.85, screenSize.Y * 0.9 ).ToVec2I();
 
 			//create and run application loop.
 			if( EngineApp.Create() )
 			{
-				EngineApp.CreatedInsideEngineWindow.Icon = NeoAxis.Player.Properties.Resources.Logo;
+				//configure app icon
+				var iconFilePath = Path.Combine( VirtualFileSystem.Directories.EngineInternal, "App.ico" );
+				if( File.Exists( iconFilePath ) )
+					EngineApp.CreatedInsideEngineWindow.IconFilePath = iconFilePath;
+				//EngineApp.CreatedInsideEngineWindow.Icon = NeoAxis.Player.Properties.Resources.Logo;
 
 				EngineApp.Run();
 			}
@@ -90,11 +94,9 @@ namespace NeoAxis.Player
 
 			VirtualFileSystem.Shutdown();
 
+			//restart app
 			if( needRestartApplication )
-			{
 				Process.Start( new ProcessStartInfo( Assembly.GetExecutingAssembly().Location, "" ) { UseShellExecute = true } );
-				//Process.Start( Assembly.GetExecutingAssembly().Location, "" );
-			}
 		}
 	}
 }

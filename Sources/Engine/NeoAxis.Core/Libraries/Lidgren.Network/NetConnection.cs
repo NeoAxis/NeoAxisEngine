@@ -36,6 +36,15 @@ namespace Internal.Lidgren.Network
 		private object m_tag;
 		internal NetConnectionStatistics m_statistics;
 
+		//!!!!betauser
+		public class StatisticsCalculationClass
+		{
+			public long Sent;
+			public long Received;
+		}
+		public StatisticsCalculationClass StatisticsCalculation;
+
+
 		/// <summary>
 		/// Gets or sets the application defined object containing data about the connection
 		/// </summary>
@@ -235,6 +244,11 @@ namespace Internal.Lidgren.Network
 						NetException.Assert(m_sendBufferWritePtr > 0 && m_sendBufferNumMessages > 0);
 						m_peer.SendPacket(m_sendBufferWritePtr, m_remoteEndPoint, m_sendBufferNumMessages, out connectionReset);
 						m_statistics.PacketSent(m_sendBufferWritePtr, 1);
+
+						//!!!!betauser
+						if( StatisticsCalculation != null )
+							Interlocked.Add( ref StatisticsCalculation.Sent, m_sendBufferWritePtr );
+
 						m_sendBufferWritePtr = 0;
 						m_sendBufferNumMessages = 0;
 					}
@@ -285,6 +299,11 @@ namespace Internal.Lidgren.Network
 				NetException.Assert(m_sendBufferWritePtr > 0 && m_sendBufferNumMessages > 0);
 				m_peer.SendPacket(m_sendBufferWritePtr, m_remoteEndPoint, m_sendBufferNumMessages, out connectionReset);
 				m_statistics.PacketSent(m_sendBufferWritePtr, m_sendBufferNumMessages);
+
+				//!!!!betauser
+				if( StatisticsCalculation != null )
+					Interlocked.Add( ref StatisticsCalculation.Sent, m_sendBufferWritePtr );
+
 				m_sendBufferWritePtr = 0;
 				m_sendBufferNumMessages = 0;
 			}
@@ -310,6 +329,11 @@ namespace Internal.Lidgren.Network
 					// previous message in buffer; send these first
 					m_peer.SendPacket(m_sendBufferWritePtr, m_remoteEndPoint, m_sendBufferNumMessages, out connReset);
 					m_statistics.PacketSent(m_sendBufferWritePtr, m_sendBufferNumMessages);
+
+					//!!!!betauser
+					if( StatisticsCalculation != null )
+						Interlocked.Add( ref StatisticsCalculation.Sent, m_sendBufferWritePtr );
+
 					m_sendBufferWritePtr = 0;
 					m_sendBufferNumMessages = 0;
 				}
@@ -324,6 +348,11 @@ namespace Internal.Lidgren.Network
 				// send immediately; we're already over MTU
 				m_peer.SendPacket(m_sendBufferWritePtr, m_remoteEndPoint, m_sendBufferNumMessages, out connReset);
 				m_statistics.PacketSent(m_sendBufferWritePtr, m_sendBufferNumMessages);
+
+				//!!!!betauser
+				if( StatisticsCalculation != null )
+					Interlocked.Add( ref StatisticsCalculation.Sent, m_sendBufferWritePtr );
+
 				m_sendBufferWritePtr = 0;
 				m_sendBufferNumMessages = 0;
 			}

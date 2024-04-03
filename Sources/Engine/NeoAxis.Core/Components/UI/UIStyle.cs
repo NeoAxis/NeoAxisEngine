@@ -147,7 +147,7 @@ namespace NeoAxis
 		public Reference<Sound> ButtonSoundMouseEnter
 		{
 			get { if( _buttonSoundMouseEnter.BeginGet() ) ButtonSoundMouseEnter = _buttonSoundMouseEnter.Get( this ); return _buttonSoundMouseEnter.value; }
-			set { if( _buttonSoundMouseEnter.BeginSet( ref value ) ) { try { ButtonSoundMouseEnterChanged?.Invoke( this ); } finally { _buttonSoundMouseEnter.EndSet(); } } }
+			set { if( _buttonSoundMouseEnter.BeginSet( this, ref value ) ) { try { ButtonSoundMouseEnterChanged?.Invoke( this ); } finally { _buttonSoundMouseEnter.EndSet(); } } }
 		}
 		public event Action<UIStyle> ButtonSoundMouseEnterChanged;
 		ReferenceField<Sound> _buttonSoundMouseEnter;
@@ -159,7 +159,7 @@ namespace NeoAxis
 		public Reference<Sound> ButtonSoundMouseLeave
 		{
 			get { if( _buttonSoundMouseLeave.BeginGet() ) ButtonSoundMouseLeave = _buttonSoundMouseLeave.Get( this ); return _buttonSoundMouseLeave.value; }
-			set { if( _buttonSoundMouseLeave.BeginSet( ref value ) ) { try { ButtonSoundMouseLeaveChanged?.Invoke( this ); } finally { _buttonSoundMouseLeave.EndSet(); } } }
+			set { if( _buttonSoundMouseLeave.BeginSet( this, ref value ) ) { try { ButtonSoundMouseLeaveChanged?.Invoke( this ); } finally { _buttonSoundMouseLeave.EndSet(); } } }
 		}
 		public event Action<UIStyle> ButtonSoundMouseLeaveChanged;
 		ReferenceField<Sound> _buttonSoundMouseLeave;
@@ -171,7 +171,7 @@ namespace NeoAxis
 		public Reference<Sound> ButtonSoundClick
 		{
 			get { if( _buttonSoundClick.BeginGet() ) ButtonSoundClick = _buttonSoundClick.Get( this ); return _buttonSoundClick.value; }
-			set { if( _buttonSoundClick.BeginSet( ref value ) ) { try { ButtonSoundClickChanged?.Invoke( this ); } finally { _buttonSoundClick.EndSet(); } } }
+			set { if( _buttonSoundClick.BeginSet( this, ref value ) ) { try { ButtonSoundClickChanged?.Invoke( this ); } finally { _buttonSoundClick.EndSet(); } } }
 		}
 		public event Action<UIStyle> ButtonSoundClickChanged;
 		ReferenceField<Sound> _buttonSoundClick;
@@ -185,7 +185,7 @@ namespace NeoAxis
 		public Reference<Sound> ContextMenuButtonSoundMouseEnter
 		{
 			get { if( _contextMenuButtonSoundMouseEnter.BeginGet() ) ContextMenuButtonSoundMouseEnter = _contextMenuButtonSoundMouseEnter.Get( this ); return _contextMenuButtonSoundMouseEnter.value; }
-			set { if( _contextMenuButtonSoundMouseEnter.BeginSet( ref value ) ) { try { ContextMenuButtonSoundMouseEnterChanged?.Invoke( this ); } finally { _contextMenuButtonSoundMouseEnter.EndSet(); } } }
+			set { if( _contextMenuButtonSoundMouseEnter.BeginSet( this, ref value ) ) { try { ContextMenuButtonSoundMouseEnterChanged?.Invoke( this ); } finally { _contextMenuButtonSoundMouseEnter.EndSet(); } } }
 		}
 		public event Action<UIStyle> ContextMenuButtonSoundMouseEnterChanged;
 		ReferenceField<Sound> _contextMenuButtonSoundMouseEnter;
@@ -197,7 +197,7 @@ namespace NeoAxis
 		public Reference<Sound> ContextMenuButtonSoundMouseLeave
 		{
 			get { if( _contextMenuButtonSoundMouseLeave.BeginGet() ) ContextMenuButtonSoundMouseLeave = _contextMenuButtonSoundMouseLeave.Get( this ); return _contextMenuButtonSoundMouseLeave.value; }
-			set { if( _contextMenuButtonSoundMouseLeave.BeginSet( ref value ) ) { try { ContextMenuButtonSoundMouseLeaveChanged?.Invoke( this ); } finally { _contextMenuButtonSoundMouseLeave.EndSet(); } } }
+			set { if( _contextMenuButtonSoundMouseLeave.BeginSet( this, ref value ) ) { try { ContextMenuButtonSoundMouseLeaveChanged?.Invoke( this ); } finally { _contextMenuButtonSoundMouseLeave.EndSet(); } } }
 		}
 		public event Action<UIStyle> ContextMenuButtonSoundMouseLeaveChanged;
 		ReferenceField<Sound> _contextMenuButtonSoundMouseLeave;
@@ -209,7 +209,7 @@ namespace NeoAxis
 		public Reference<Sound> ContextMenuButtonSoundClick
 		{
 			get { if( _contextMenuButtonSoundClick.BeginGet() ) ContextMenuButtonSoundClick = _contextMenuButtonSoundClick.Get( this ); return _contextMenuButtonSoundClick.value; }
-			set { if( _contextMenuButtonSoundClick.BeginSet( ref value ) ) { try { ContextMenuButtonSoundClickChanged?.Invoke( this ); } finally { _contextMenuButtonSoundClick.EndSet(); } } }
+			set { if( _contextMenuButtonSoundClick.BeginSet( this, ref value ) ) { try { ContextMenuButtonSoundClickChanged?.Invoke( this ); } finally { _contextMenuButtonSoundClick.EndSet(); } } }
 		}
 		public event Action<UIStyle> ContextMenuButtonSoundClickChanged;
 		ReferenceField<Sound> _contextMenuButtonSoundClick;
@@ -271,7 +271,7 @@ namespace NeoAxis
 		public Reference<Sound> CheckSoundMouseEnter
 		{
 			get { if( _checkSoundMouseEnter.BeginGet() ) CheckSoundMouseEnter = _checkSoundMouseEnter.Get( this ); return _checkSoundMouseEnter.value; }
-			set { if( _checkSoundMouseEnter.BeginSet( ref value ) ) { try { CheckSoundMouseEnterChanged?.Invoke( this ); } finally { _checkSoundMouseEnter.EndSet(); } } }
+			set { if( _checkSoundMouseEnter.BeginSet( this, ref value ) ) { try { CheckSoundMouseEnterChanged?.Invoke( this ); } finally { _checkSoundMouseEnter.EndSet(); } } }
 		}
 		public event Action<UIStyle> CheckSoundMouseEnterChanged;
 		ReferenceField<Sound> _checkSoundMouseEnter;
@@ -283,7 +283,7 @@ namespace NeoAxis
 		public Reference<Sound> CheckSoundMouseLeave
 		{
 			get { if( _checkSoundMouseLeave.BeginGet() ) CheckSoundMouseLeave = _checkSoundMouseLeave.Get( this ); return _checkSoundMouseLeave.value; }
-			set { if( _checkSoundMouseLeave.BeginSet( ref value ) ) { try { CheckSoundMouseLeaveChanged?.Invoke( this ); } finally { _checkSoundMouseLeave.EndSet(); } } }
+			set { if( _checkSoundMouseLeave.BeginSet( this, ref value ) ) { try { CheckSoundMouseLeaveChanged?.Invoke( this ); } finally { _checkSoundMouseLeave.EndSet(); } } }
 		}
 		public event Action<UIStyle> CheckSoundMouseLeaveChanged;
 		ReferenceField<Sound> _checkSoundMouseLeave;
@@ -295,7 +295,7 @@ namespace NeoAxis
 		public Reference<Sound> CheckSoundClick
 		{
 			get { if( _checkSoundClick.BeginGet() ) CheckSoundClick = _checkSoundClick.Get( this ); return _checkSoundClick.value; }
-			set { if( _checkSoundClick.BeginSet( ref value ) ) { try { CheckSoundClickChanged?.Invoke( this ); } finally { _checkSoundClick.EndSet(); } } }
+			set { if( _checkSoundClick.BeginSet( this, ref value ) ) { try { CheckSoundClickChanged?.Invoke( this ); } finally { _checkSoundClick.EndSet(); } } }
 		}
 		public event Action<UIStyle> CheckSoundClickChanged;
 		ReferenceField<Sound> _checkSoundClick;
@@ -313,7 +313,7 @@ namespace NeoAxis
 		//public Reference<UIMeasureValueRectangle> EditTextMargin
 		//{
 		//	get { if( _editTextMargin.BeginGet() ) EditTextMargin = _editTextMargin.Get( this ); return _editTextMargin.value; }
-		//	set { if( _editTextMargin.BeginSet( ref value ) ) { try { EditTextMarginChanged?.Invoke( this ); } finally { _editTextMargin.EndSet(); } } }
+		//	set { if( _editTextMargin.BeginSet( this, ref value ) ) { try { EditTextMarginChanged?.Invoke( this ); } finally { _editTextMargin.EndSet(); } } }
 		//}
 		//public event Action<UIStyle> EditTextMarginChanged;
 		//ReferenceField<UIMeasureValueRectangle> _editTextMargin = new UIMeasureValueRectangle( UIMeasure.Units, 2, 2, 2, 2 );
@@ -439,7 +439,16 @@ namespace NeoAxis
 				control.GetScreenRectangle( out var rect );
 				var color = backgroundColor.GetSaturate();
 				if( color.Alpha > 0 )
-					renderer.AddQuad( rect, color );
+				{
+					var rounding = control.BackgroundRounding.Value;
+					if( rounding.Value > 0 )
+					{
+						var roundingSize = control.GetScreenOffsetByValueY( rounding );
+						renderer.AddRoundedQuad( rect, roundingSize, CanvasRenderer.AddRoundedQuadMode.Antialiasing, color );
+					}
+					else
+						renderer.AddQuad( rect, color );
+				}
 			}
 		}
 
@@ -703,7 +712,7 @@ namespace NeoAxis
 				parentEditData.Edit = parentEdit;
 				parentEditData.SelectionColor = new ColorValue( 0.75, 0.75, 0.75, 0.75 );
 				parentEditData.CaretColor = new ColorValue( 1, 1, 1 );
-				if( ( EngineApp.EngineTime - parentEdit.EditingLastTime ) % 1 > 0.5 )
+				if( ( EngineApp.EngineTime - parentEdit.EditingLastTime ) % 2.0 > 1.0 )
 					parentEditData.CaretColor.Alpha = 0;
 			}
 
@@ -912,7 +921,7 @@ namespace NeoAxis
 
 					if( itemRectangle.Intersects( rect2 ) )
 					{
-						renderer.PushClipRectangle( itemRectangle );
+						renderer.PushClipRectangle( new Rectangle( itemRectangle.Left, 0, itemRectangle.Right, 1 ) );
 						OnRenderListItem( control, renderer, n, itemRectangle, font, fontSize );
 						renderer.PopClipRectangle();
 					}
@@ -1198,7 +1207,7 @@ namespace NeoAxis
 					var height = renderer.DefaultFontSize;
 
 					var rect = new Rectangle( position.X, position.Y, position.X + width, position.Y + height );
-					rect.Expand( parentControl.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 4, 4 ) ) );
+					rect.Expand( parentControl.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 8, 6 ) ) );
 
 					//fix rectangle when outside screen
 					if( rect.Right > 1 )
@@ -1218,7 +1227,8 @@ namespace NeoAxis
 					renderer.AddQuad( rect, new ColorValue( 0.3, 0.3, 0.3 ) );
 
 					//text
-					renderer.AddText( text, rect.LeftTop + parentControl.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 2, 2 ) ) );
+					renderer.AddText( text, rect.GetCenter(), EHorizontalAlignment.Center, EVerticalAlignment.Center, new ColorValue( 1, 1, 1 ) );
+					//renderer.AddText( text, rect.LeftTop + parentControl.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 2, 2 ) ) );
 				}
 			}
 		}

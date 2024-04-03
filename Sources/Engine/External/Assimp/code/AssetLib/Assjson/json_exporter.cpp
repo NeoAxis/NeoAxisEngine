@@ -10,6 +10,7 @@ Licensed under a 3-clause BSD license. See the LICENSE file for more information
 #ifndef ASSIMP_BUILD_NO_ASSJSON_EXPORTER
 
 #include <assimp/scene.h>
+#include <assimp/ai_assert.h>
 #include <assimp/Exporter.hpp>
 #include <assimp/IOStream.hpp>
 #include <assimp/IOSystem.hpp>
@@ -23,16 +24,15 @@ Licensed under a 3-clause BSD license. See the LICENSE file for more information
 
 #define CURRENT_FORMAT_VERSION 100
 
-// grab scoped_ptr from assimp to avoid a dependency on boost.
-//#include <assimp/../../code/BoostWorkaround/boost/scoped_ptr.hpp>
-
 #include "mesh_splitter.h"
 
 extern "C" {
-#include "cencode.h"
+#   include "cencode.h"
 }
+
 namespace Assimp {
 
+// Forward declarations
 void ExportAssimp2Json(const char *, Assimp::IOSystem *, const aiScene *, const Assimp::ExportProperties *);
 
 // small utility class to simplify serializing the aiScene to Json
@@ -41,12 +41,17 @@ public:
     enum {
         Flag_DoNotIndent = 0x1,
         Flag_WriteSpecialFloats = 0x2,
+        Flag_SkipWhitespaces = 0x4
     };
 
     JSONWriter(Assimp::IOStream &out, unsigned int flags = 0u) :
-            out(out), first(), flags(flags) {
+            out(out), indent (""), newline("\n"), space(" "), buff (), first(false), flags(flags) {
         // make sure that all formatting happens using the standard, C locale and not the user's current locale
         buff.imbue(std::locale("C"));
+        if (flags & Flag_SkipWhitespaces) {
+            newline = "";
+            space = "";
+        }
     }
 
     ~JSONWriter() {
@@ -70,7 +75,7 @@ public:
     void Key(const std::string &name) {
         AddIndentation();
         Delimit();
-        buff << '\"' + name + "\": ";
+        buff << '\"' + name + "\":" << space;
     }
 
     template <typename Literal>
@@ -78,12 +83,12 @@ public:
         AddIndentation();
         Delimit();
 
-        LiteralToString(buff, name) << '\n';
+        LiteralToString(buff, name) << newline;
     }
 
     template <typename Literal>
     void SimpleValue(const Literal &s) {
-        LiteralToString(buff, s) << '\n';
+        LiteralToString(buff, s) << newline;
     }
 
     void SimpleValue(const void *buffer, size_t len) {
@@ -102,7 +107,7 @@ public:
             }
         }
 
-        buff << '\"' << cur_out << "\"\n";
+        buff << '\"' << cur_out << "\"" << newline;
         delete[] cur_out;
     }
 
@@ -115,7 +120,7 @@ public:
             }
         }
         first = true;
-        buff << "{\n";
+        buff << "{" << newline;
         PushIndent();
     }
 
@@ -123,7 +128,7 @@ public:
         PopIndent();
         AddIndentation();
         first = false;
-        buff << "}\n";
+        buff << "}" << newline;
     }
 
     void StartArray(bool is_element = false) {
@@ -135,19 +140,19 @@ public:
             }
         }
         first = true;
-        buff << "[\n";
+        buff << "[" << newline;
         PushIndent();
     }
 
     void EndArray() {
         PopIndent();
         AddIndentation();
-        buff << "]\n";
+        buff << "]" << newline;
         first = false;
     }
 
     void AddIndentation() {
-        if (!(flags & Flag_DoNotIndent)) {
+        if (!(flags & Flag_DoNotIndent) && !(flags & Flag_SkipWhitespaces)) {
             buff << indent;
         }
     }
@@ -156,7 +161,7 @@ public:
         if (!first) {
             buff << ',';
         } else {
-            buff << ' ';
+            buff << space;
             first = false;
         }
     }
@@ -174,7 +179,6 @@ private:
         // escape backslashes and single quotes, both would render the JSON invalid if left as is
         t.reserve(s.length);
         for (size_t i = 0; i < s.length; ++i) {
-
             if (s.data[i] == '\\' || s.data[i] == '\'' || s.data[i] == '\"') {
                 t.push_back('\\');
             }
@@ -227,14 +231,16 @@ private:
 
 private:
     Assimp::IOStream &out;
-    std::string indent, newline;
+    std::string indent;
+    std::string newline;
+    std::string space;
     std::stringstream buff;
     bool first;
 
     unsigned int flags;
 };
 
-void Write(JSONWriter &out, const aiVector3D &ai, bool is_elem = true) {
+static void Write(JSONWriter &out, const aiVector3D &ai, bool is_elem = true) {
     out.StartArray(is_elem);
     out.Element(ai.x);
     out.Element(ai.y);
@@ -242,7 +248,7 @@ void Write(JSONWriter &out, const aiVector3D &ai, bool is_elem = true) {
     out.EndArray();
 }
 
-void Write(JSONWriter &out, const aiQuaternion &ai, bool is_elem = true) {
+static void Write(JSONWriter &out, const aiQuaternion &ai, bool is_elem = true) {
     out.StartArray(is_elem);
     out.Element(ai.w);
     out.Element(ai.x);
@@ -251,7 +257,7 @@ void Write(JSONWriter &out, const aiQuaternion &ai, bool is_elem = true) {
     out.EndArray();
 }
 
-void Write(JSONWriter &out, const aiColor3D &ai, bool is_elem = true) {
+static void Write(JSONWriter &out, const aiColor3D &ai, bool is_elem = true) {
     out.StartArray(is_elem);
     out.Element(ai.r);
     out.Element(ai.g);
@@ -259,7 +265,7 @@ void Write(JSONWriter &out, const aiColor3D &ai, bool is_elem = true) {
     out.EndArray();
 }
 
-void Write(JSONWriter &out, const aiMatrix4x4 &ai, bool is_elem = true) {
+static void Write(JSONWriter &out, const aiMatrix4x4 &ai, bool is_elem = true) {
     out.StartArray(is_elem);
     for (unsigned int x = 0; x < 4; ++x) {
         for (unsigned int y = 0; y < 4; ++y) {
@@ -269,7 +275,7 @@ void Write(JSONWriter &out, const aiMatrix4x4 &ai, bool is_elem = true) {
     out.EndArray();
 }
 
-void Write(JSONWriter &out, const aiBone &ai, bool is_elem = true) {
+static void Write(JSONWriter &out, const aiBone &ai, bool is_elem = true) {
     out.StartObj(is_elem);
 
     out.Key("name");
@@ -290,7 +296,7 @@ void Write(JSONWriter &out, const aiBone &ai, bool is_elem = true) {
     out.EndObj();
 }
 
-void Write(JSONWriter &out, const aiFace &ai, bool is_elem = true) {
+static void Write(JSONWriter &out, const aiFace &ai, bool is_elem = true) {
     out.StartArray(is_elem);
     for (unsigned int i = 0; i < ai.mNumIndices; ++i) {
         out.Element(ai.mIndices[i]);
@@ -298,7 +304,7 @@ void Write(JSONWriter &out, const aiFace &ai, bool is_elem = true) {
     out.EndArray();
 }
 
-void Write(JSONWriter &out, const aiMesh &ai, bool is_elem = true) {
+static void Write(JSONWriter &out, const aiMesh &ai, bool is_elem = true) {
     out.StartObj(is_elem);
 
     out.Key("name");
@@ -409,7 +415,7 @@ void Write(JSONWriter &out, const aiMesh &ai, bool is_elem = true) {
     out.EndObj();
 }
 
-void Write(JSONWriter &out, const aiNode &ai, bool is_elem = true) {
+static void Write(JSONWriter &out, const aiNode &ai, bool is_elem = true) {
     out.StartObj(is_elem);
 
     out.Key("name");
@@ -439,7 +445,7 @@ void Write(JSONWriter &out, const aiNode &ai, bool is_elem = true) {
     out.EndObj();
 }
 
-void Write(JSONWriter &out, const aiMaterial &ai, bool is_elem = true) {
+static void Write(JSONWriter &out, const aiMaterial &ai, bool is_elem = true) {
     out.StartObj(is_elem);
 
     out.Key("properties");
@@ -459,41 +465,55 @@ void Write(JSONWriter &out, const aiMaterial &ai, bool is_elem = true) {
 
         out.Key("value");
         switch (prop->mType) {
-        case aiPTI_Float:
-            if (prop->mDataLength / sizeof(float) > 1) {
-                out.StartArray();
-                for (unsigned int ii = 0; ii < prop->mDataLength / sizeof(float); ++ii) {
-                    out.Element(reinterpret_cast<float *>(prop->mData)[ii]);
+            case aiPTI_Float:
+                if (prop->mDataLength / sizeof(float) > 1) {
+                    out.StartArray();
+                    for (unsigned int ii = 0; ii < prop->mDataLength / sizeof(float); ++ii) {
+                        out.Element(reinterpret_cast<float *>(prop->mData)[ii]);
+                    }
+                    out.EndArray();
+                } else {
+                    out.SimpleValue(*reinterpret_cast<float *>(prop->mData));
                 }
-                out.EndArray();
-            } else {
-                out.SimpleValue(*reinterpret_cast<float *>(prop->mData));
-            }
-            break;
-
-        case aiPTI_Integer:
-            if (prop->mDataLength / sizeof(int) > 1) {
-                out.StartArray();
-                for (unsigned int ii = 0; ii < prop->mDataLength / sizeof(int); ++ii) {
-                    out.Element(reinterpret_cast<int *>(prop->mData)[ii]);
+                break;
+            case aiPTI_Double:
+                if (prop->mDataLength / sizeof(double) > 1) {
+                    out.StartArray();
+                    for (unsigned int ii = 0; ii < prop->mDataLength / sizeof(double); ++ii) {
+                        out.Element(reinterpret_cast<double*>(prop->mData)[ii]);
+                    }
+                    out.EndArray();
+                } else {
+                    out.SimpleValue(*reinterpret_cast<double*>(prop->mData));
                 }
-                out.EndArray();
-            } else {
-                out.SimpleValue(*reinterpret_cast<int *>(prop->mData));
-            }
-            break;
+                break;
+            case aiPTI_Integer:
+                if (prop->mDataLength / sizeof(int) > 1) {
+                    out.StartArray();
+                    for (unsigned int ii = 0; ii < prop->mDataLength / sizeof(int); ++ii) {
+                        out.Element(reinterpret_cast<int *>(prop->mData)[ii]);
+                    }
+                    out.EndArray();
+                } else {
+                    out.SimpleValue(*reinterpret_cast<int *>(prop->mData));
+                }
+                break;
 
-        case aiPTI_String: {
-            aiString s;
-            aiGetMaterialString(&ai, prop->mKey.data, prop->mSemantic, prop->mIndex, &s);
-            out.SimpleValue(s);
-        } break;
-        case aiPTI_Buffer: {
-            // binary data is written as series of hex-encoded octets
-            out.SimpleValue(prop->mData, prop->mDataLength);
-        } break;
-        default:
-            assert(false);
+            case aiPTI_String:
+                {
+                    aiString s;
+                    aiGetMaterialString(&ai, prop->mKey.data, prop->mSemantic, prop->mIndex, &s);
+                    out.SimpleValue(s);
+                }
+                break;
+            case aiPTI_Buffer:
+                {
+                    // binary data is written as series of hex-encoded octets
+                    out.SimpleValue(prop->mData, prop->mDataLength);
+                }
+                break;
+            default:
+                ai_assert(false);
         }
 
         out.EndObj();
@@ -503,7 +523,7 @@ void Write(JSONWriter &out, const aiMaterial &ai, bool is_elem = true) {
     out.EndObj();
 }
 
-void Write(JSONWriter &out, const aiTexture &ai, bool is_elem = true) {
+static void Write(JSONWriter &out, const aiTexture &ai, bool is_elem = true) {
     out.StartObj(is_elem);
 
     out.Key("width");
@@ -539,7 +559,7 @@ void Write(JSONWriter &out, const aiTexture &ai, bool is_elem = true) {
     out.EndObj();
 }
 
-void Write(JSONWriter &out, const aiLight &ai, bool is_elem = true) {
+static void Write(JSONWriter &out, const aiLight &ai, bool is_elem = true) {
     out.StartObj(is_elem);
 
     out.Key("name");
@@ -587,7 +607,7 @@ void Write(JSONWriter &out, const aiLight &ai, bool is_elem = true) {
     out.EndObj();
 }
 
-void Write(JSONWriter &out, const aiNodeAnim &ai, bool is_elem = true) {
+static void Write(JSONWriter &out, const aiNodeAnim &ai, bool is_elem = true) {
     out.StartObj(is_elem);
 
     out.Key("name");
@@ -640,7 +660,7 @@ void Write(JSONWriter &out, const aiNodeAnim &ai, bool is_elem = true) {
     out.EndObj();
 }
 
-void Write(JSONWriter &out, const aiAnimation &ai, bool is_elem = true) {
+static void Write(JSONWriter &out, const aiAnimation &ai, bool is_elem = true) {
     out.StartObj(is_elem);
 
     out.Key("name");
@@ -661,7 +681,7 @@ void Write(JSONWriter &out, const aiAnimation &ai, bool is_elem = true) {
     out.EndObj();
 }
 
-void Write(JSONWriter &out, const aiCamera &ai, bool is_elem = true) {
+static void Write(JSONWriter &out, const aiCamera &ai, bool is_elem = true) {
     out.StartObj(is_elem);
 
     out.Key("name");
@@ -688,7 +708,7 @@ void Write(JSONWriter &out, const aiCamera &ai, bool is_elem = true) {
     out.EndObj();
 }
 
-void WriteFormatInfo(JSONWriter &out) {
+static void WriteFormatInfo(JSONWriter &out) {
     out.StartObj();
     out.Key("format");
     out.SimpleValue("\"assimp2json\"");
@@ -697,7 +717,7 @@ void WriteFormatInfo(JSONWriter &out) {
     out.EndObj();
 }
 
-void Write(JSONWriter &out, const aiScene &ai) {
+static void Write(JSONWriter &out, const aiScene &ai) {
     out.StartObj();
 
     out.Key("__metadata__");
@@ -765,7 +785,7 @@ void Write(JSONWriter &out, const aiScene &ai) {
     out.EndObj();
 }
 
-void ExportAssimp2Json(const char *file, Assimp::IOSystem *io, const aiScene *scene, const Assimp::ExportProperties *) {
+void ExportAssimp2Json(const char *file, Assimp::IOSystem *io, const aiScene *scene, const Assimp::ExportProperties *pProperties) {
     std::unique_ptr<Assimp::IOStream> str(io->Open(file, "wt"));
     if (!str) {
         throw DeadlyExportError("could not open output file");
@@ -782,7 +802,12 @@ void ExportAssimp2Json(const char *file, Assimp::IOSystem *io, const aiScene *sc
         splitter.Execute(scenecopy_tmp);
 
         // XXX Flag_WriteSpecialFloats is turned on by default, right now we don't have a configuration interface for exporters
-        JSONWriter s(*str, JSONWriter::Flag_WriteSpecialFloats);
+
+        unsigned int flags = JSONWriter::Flag_WriteSpecialFloats;
+        if (pProperties->GetPropertyBool("JSON_SKIP_WHITESPACES", false)) {
+            flags |= JSONWriter::Flag_SkipWhitespaces;
+        }
+        JSONWriter s(*str, flags);
         Write(s, *scenecopy_tmp);
 
     } catch (...) {

@@ -1,3 +1,267 @@
+// Made with NeoAxis Engine 2023.1.
+
 .component Project.ShooterSceneScreen
 {
+	Size = Parent 1 1
+	EditorScrollPosition = 0 0
+	.component NeoAxis.UIControl
+	{
+		Name = Inventory Widget
+		Size = Units 570 80
+		HorizontalAlignment = Center
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 0 10
+		BackgroundColor = 0.3 0.3 0.3
+		BackgroundRounding = Units 12
+		ColorMultiplier = 1 1 1 0.7
+		EditorScrollPosition = 0 0
+		.component NeoAxis.UIImage
+		{
+			Name = Item 1
+			Size = Units 60 60
+			Margin = Units 10 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 1
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 2
+			Size = Units 60 60
+			Margin = Units 80 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 2
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 3
+			Size = Units 60 60
+			Margin = Units 150 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 3
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 4
+			Size = Units 60 60
+			Margin = Units 220 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 4
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 5
+			Size = Units 60 60
+			Margin = Units 290 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 5
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 6
+			Size = Units 60 60
+			Margin = Units 360 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 6
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 7
+			Size = Units 60 60
+			Margin = Units 430 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 7
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 8
+			Size = Units 60 60
+			Margin = Units 500 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 8
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+	}
 }

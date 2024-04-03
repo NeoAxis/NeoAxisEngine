@@ -2,12 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Diagnostics;
-using System.ComponentModel;
-using System.Reflection;
-using System.Collections;
-using System.Threading;
-using System.Windows.Forms;
 
 namespace NeoAxis.Editor
 {

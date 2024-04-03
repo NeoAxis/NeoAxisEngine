@@ -20,7 +20,7 @@ namespace NeoAxis
 
 		//internal int playingCount;
 
-		//only for small fix sorting jerking problem at the DataBuffer and Streams
+		//fix sorting jerking problem at the DataBuffer and Streams
 		static int createIndexCounter;
 		internal int createIndex;
 

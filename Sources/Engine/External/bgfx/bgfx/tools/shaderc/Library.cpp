@@ -15,7 +15,7 @@ enum ShaderType
 enum ShaderModel
 {
 	ShaderModel_DX11_SM5,
-	ShaderModel_DX12_SM6,
+	ShaderModel_DX12,
 	ShaderModel_OpenGLES,
 	ShaderModel_Vulkan,
 };
@@ -38,12 +38,14 @@ public:
 	File(const char* _filePath)
 		: m_data(NULL)
 	{
+		bx::ErrorAssert err;
+
 		bx::FileReader reader;
 		if (bx::open(&reader, _filePath))
 		{
 			m_size = (uint32_t)bx::getSize(&reader);
 			m_data = new char[m_size + 1];
-			m_size = (uint32_t)bx::read(&reader, m_data, m_size);
+			m_size = (uint32_t)bx::read(&reader, m_data, m_size, &err);
 			bx::close(&reader);
 
 			if (m_data[0] == '\xef'
@@ -81,7 +83,8 @@ private:
 
 namespace bgfx
 {
-	bool compileShader(const char* _varying, const char* _comment, char* _shader, uint32_t _shaderLen, Options& _options, bx::FileWriter* _writer);
+	bool compileShader(const char* _varying, const char* _comment, char* _shader, uint32_t _shaderLen, Options& _options, bx::WriterI* _shaderWriter, bx::WriterI* _messageWriter);
+	//bool compileShader(const char* _varying, const char* _comment, char* _shader, uint32_t _shaderLen, Options& _options, bx::FileWriter* _writer);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -158,16 +161,25 @@ EXPORT Instance* ShaderC_New(ShaderType shaderType, ShaderModel shaderModel, wch
 		{
 		//case ShaderType_Vertex:instance->options.profile = "vs_5_1"; break;
 		//case ShaderType_Fragment:instance->options.profile = "ps_5_1"; break;
-		case ShaderType_Vertex:instance->options.profile = "vs_5_0"; break;
-		case ShaderType_Fragment:instance->options.profile = "ps_5_0"; break;
-		case ShaderType_Compute:instance->options.profile = "cs_5_0"; break;
+
+		case ShaderType_Vertex:instance->options.profile = "s_5_0"; break;
+		case ShaderType_Fragment:instance->options.profile = "s_5_0"; break;
+		case ShaderType_Compute:instance->options.profile = "s_5_0"; break;
+
+		//case ShaderType_Vertex:instance->options.profile = "vs_5_0"; break;
+		//case ShaderType_Fragment:instance->options.profile = "ps_5_0"; break;
+		//case ShaderType_Compute:instance->options.profile = "cs_5_0"; break;
+
 		default: ::Fatal("ShaderC_New: impl."); break;
 		}
 		break;
 
-	case ShaderModel_DX12_SM6:
+	case ShaderModel_DX12:
 		switch (shaderType)
 		{
+		//case ShaderType_Vertex:instance->options.profile = "s_5_0"; break;
+		//case ShaderType_Fragment:instance->options.profile = "s_5_0"; break;
+		//case ShaderType_Compute:instance->options.profile = "s_5_0"; break;
 		case ShaderType_Vertex:instance->options.profile = "vs_6_0"; break;
 		case ShaderType_Fragment:instance->options.profile = "ps_6_0"; break;
 		case ShaderType_Compute:instance->options.profile = "cs_6_0"; break;
@@ -178,23 +190,14 @@ EXPORT Instance* ShaderC_New(ShaderType shaderType, ShaderModel shaderModel, wch
 	case ShaderModel_OpenGLES:
 		switch (shaderType)
 		{
-		case ShaderType_Vertex:instance->options.profile = "310"; break;
-		case ShaderType_Fragment:instance->options.profile = "310"; break;
-		case ShaderType_Compute:instance->options.profile = "310"; break;
-		//case ShaderType_Vertex:instance->options.profile = "300"; break;
-		//case ShaderType_Fragment:instance->options.profile = "300"; break;
-		//case ShaderType_Compute:instance->options.profile = "300"; break;
+		case ShaderType_Vertex:instance->options.profile = "310_es"; break;
+		case ShaderType_Fragment:instance->options.profile = "310_es"; break;
+		case ShaderType_Compute:instance->options.profile = "310_es"; break;
 
-		//case ShaderType_Vertex:instance->options.profile = "430"; break;
-		//case ShaderType_Fragment:instance->options.profile = "430"; break;
-		//case ShaderType_Compute:instance->options.profile = "430"; break;
+		//case ShaderType_Vertex:instance->options.profile = "310"; break;
+		//case ShaderType_Fragment:instance->options.profile = "310"; break;
+		//case ShaderType_Compute:instance->options.profile = "310"; break;
 
-		//case ShaderType_Vertex:instance->options.profile = "300 es"; break;
-		//case ShaderType_Fragment:instance->options.profile = "300 es"; break;
-		//case ShaderType_Compute:instance->options.profile = "300 es"; break;
-		//case ShaderType_Vertex:instance->options.profile = "330"; break;
-		//case ShaderType_Fragment:instance->options.profile = "330"; break;
-		//case ShaderType_Compute:instance->options.profile = "330"; break;
 		default: ::Fatal("ShaderC_New: impl."); break;
 		}
 		break;
@@ -202,18 +205,14 @@ EXPORT Instance* ShaderC_New(ShaderType shaderType, ShaderModel shaderModel, wch
 	case ShaderModel_Vulkan:
 		switch (shaderType)
 		{
-		//!!!!
-		case ShaderType_Vertex:instance->options.profile = "310"; break;
-		case ShaderType_Fragment:instance->options.profile = "310"; break;
-		case ShaderType_Compute:instance->options.profile = "310"; break;
+		//case ShaderType_Vertex:instance->options.profile = "spirv16-13"; break;
+		//case ShaderType_Fragment:instance->options.profile = "spirv16-13"; break;
+		//case ShaderType_Compute:instance->options.profile = "spirv16-13"; break;
 
-		//case ShaderType_Vertex:instance->options.profile = "spirv"; break;
-		//case ShaderType_Fragment:instance->options.profile = "spirv"; break;
-		//case ShaderType_Compute:instance->options.profile = "spirv"; break;
+		case ShaderType_Vertex:instance->options.profile = "spirv"; break;
+		case ShaderType_Fragment:instance->options.profile = "spirv"; break;
+		case ShaderType_Compute:instance->options.profile = "spirv"; break;
 
-		//case ShaderType_Vertex:instance->options.profile = "vs_5_0"; break;
-		//case ShaderType_Fragment:instance->options.profile = "ps_5_0"; break;
-		//case ShaderType_Compute:instance->options.profile = "cs_5_0"; break;
 		default: ::Fatal("ShaderC_New: impl."); break;
 		}
 		break;
@@ -340,10 +339,12 @@ EXPORT bool ShaderC_Compile(Instance* instance)
 		FPRINTF(stderr, "ERROR: Failed to parse varying def file: \"%s\" No input/output semantics will be generated in the code!\n",varyingdef.c_str());
 	}
 
+	bx::ErrorAssert err;
+
 	const size_t padding = 16384;
 	uint32_t size = (uint32_t)bx::getSize(&reader);
 	char* data = new char[size + padding + 1];
-	size = (uint32_t)bx::read(&reader, data, size);
+	size = (uint32_t)bx::read(&reader, data, size, &err);
 
 	if (data[0] == '\xef'
 		&&  data[1] == '\xbb'
@@ -359,7 +360,10 @@ EXPORT bool ShaderC_Compile(Instance* instance)
 	bx::memSet(&data[size + 1], 0, padding);
 	bx::close(&reader);
 
-	MemoryFileWriter writer(&instance->resultData);
+	MemoryFileWriter shaderWriter(&instance->resultData);
+
+	std::vector<UINT8> messageWriterData;
+	MemoryFileWriter messageWriter(&messageWriterData);
 
 	//bx::FileWriter* writer = NULL;
 
@@ -382,7 +386,7 @@ EXPORT bool ShaderC_Compile(Instance* instance)
 	//std::streambuf* old = std::cerr.rdbuf(oss.rdbuf());
 
 	//bool compiled = false;
-	bool compiled = compileShader(attribdef.getData(), "", data, size, instance->options, &writer);
+	bool compiled = compileShader(attribdef.getData(), "", data, size, instance->options, &shaderWriter, &messageWriter);
 
 	//std::cerr.rdbuf(old);
 
@@ -391,6 +395,12 @@ EXPORT bool ShaderC_Compile(Instance* instance)
 
 	if (!compiled)
 	{
+		if (messageWriterData.size() != 0)
+		{
+			std::string s((char*)&messageWriterData[0], messageWriterData.size());
+			instance->error += ConvertStringToUTFWide(s);
+		}
+
 		//!!!!
 		if (instance->error.length() == 0)
 			instance->error = L"No error text.";

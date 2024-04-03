@@ -35,7 +35,7 @@ namespace NeoAxis.Editor
 				if( loadedHighlightingDefinition == null )
 				{
 					string path;
-					if( EditorAPI.DarkTheme )
+					if( EditorAPI2.DarkTheme )
 						path = @"Base\Tools\Highlighting\CSharpDark.xshd";
 					else
 						path = @"Base\Tools\Highlighting\CSharpLight.xshd";
@@ -142,7 +142,7 @@ namespace NeoAxis.Editor
 			var visual = new DrawingVisual();
 			using( var drawingContext = visual.RenderOpen() )
 			{
-				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.CSharpEditor.CSharpEditorBackgroundColorDarkTheme : ProjectSettings.Get.CSharpEditor.CSharpEditorBackgroundColorLightTheme;
+				var color = EditorAPI2.DarkTheme ? ProjectSettings.Get.CSharpEditor.CSharpEditorBackgroundColorDarkTheme : ProjectSettings.Get.CSharpEditor.CSharpEditorBackgroundColorLightTheme;
 
 				var packed = color.Value.ToColorPacked();
 				var brush = new SolidColorBrush( Color.FromArgb( packed.Alpha, packed.Red, packed.Green, packed.Blue ) );

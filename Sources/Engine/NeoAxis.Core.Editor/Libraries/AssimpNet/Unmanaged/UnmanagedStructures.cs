@@ -112,9 +112,24 @@ namespace Internal.Assimp.Unmanaged
         public IntPtr Metadata;
 
         /// <summary>
-        /// void*, Private data do not touch!
+        /// The name of the scene itself.
         /// </summary>
-        public IntPtr PrivateData;
+        public AiString Name;
+
+        /// <summary>
+        /// Number of skeletons contained.
+        /// </summary>
+        public uint NumSkeletons;
+
+        /// <summary>
+        /// aiSkeleton**, skeletons in the scene.
+        /// </summary>
+        public IntPtr Skeletons;
+
+        /// <summary>
+        /// Internal data, do not touch
+        /// </summary>
+        public IntPtr Private;
     }
 
     /// <summary>
@@ -305,6 +320,11 @@ namespace Internal.Assimp.Unmanaged
         /// Axis aligned bounding box.
         /// </summary>
         public BoundingBox AABB;
+
+        /// <summary>
+        /// aiString[Max_Value], pointer to array of texture coordinate names. Max_Value is defined as <see cref="AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS"/>.
+        /// </summary>
+        public IntPtr TextureCoordsNames;
     }
 
     /// <summary>
@@ -433,6 +453,16 @@ namespace Internal.Assimp.Unmanaged
         /// Number of weights.
         /// </summary>
         public uint NumWeights;
+
+        /// <summary>
+        /// Bone armature, used for skeleton conversion.
+        /// </summary>
+        public IntPtr Armature;
+
+        /// <summary>
+        /// Bone needed in scene, used for skeleton conversion.
+        /// </summary>
+        public IntPtr Node;
 
         /// <summary>
         /// VertexWeight*, array of vertex weights.

@@ -29,7 +29,7 @@ class BodyCreationSettings;
 /// The functions that get/set the position of the body all indicate if they are relative to the center of mass or to the original position in which the shape was created.
 ///
 /// The linear velocity is also velocity of the center of mass, to correct for this: \f$VelocityCOM = Velocity - AngularVelocity \times ShapeCOM\f$.
-class alignas(JPH_RVECTOR_ALIGNMENT) Body : public NonCopyable
+class alignas(JPH_RVECTOR_ALIGNMENT) JPH_EXPORT Body : public NonCopyable
 {
 public:
 	JPH_OVERRIDE_NEW_DELETE
@@ -68,6 +68,12 @@ public:
 	/// Check if this body is a sensor.
 	inline bool				IsSensor() const												{ return (mFlags.load(memory_order_relaxed) & uint8(EFlags::IsSensor)) != 0; }
 
+	// If this sensor detects static objects entering it. Note that the sensor must be kinematic and active for it to detect static objects.
+	inline void				SetSensorDetectsStatic(bool inDetectsStatic)					{ if (inDetectsStatic) mFlags.fetch_or(uint8(EFlags::SensorDetectsStatic), memory_order_relaxed); else mFlags.fetch_and(uint8(~uint8(EFlags::SensorDetectsStatic)), memory_order_relaxed); }
+
+	/// Check if this sensor detects static objects entering it.
+	inline bool				SensorDetectsStatic() const										{ return (mFlags.load(memory_order_relaxed) & uint8(EFlags::SensorDetectsStatic)) != 0; }
+
 	/// If PhysicsSettings::mUseManifoldReduction is true, this allows turning off manifold reduction for this specific body. Manifold reduction by default will combine contacts that come from different SubShapeIDs (e.g. different triangles or different compound shapes).
 	/// If the application requires tracking exactly which SubShapeIDs are in contact, you can turn off manifold reduction. Note that this comes at a performance cost.
 	inline void				SetUseManifoldReduction(bool inUseReduction)					{ if (inUseReduction) mFlags.fetch_or(uint8(EFlags::UseManifoldReduction), memory_order_relaxed); else mFlags.fetch_and(uint8(~uint8(EFlags::UseManifoldReduction)), memory_order_relaxed); }
@@ -97,13 +103,13 @@ public:
 	bool					GetAllowSleeping() const										{ return mMotionProperties->mAllowSleeping; }
 	void					SetAllowSleeping(bool inAllow);
 
-	/// Friction (dimensionless number, usually between 0 and 1, 0 = no friction, 1 = friction force equals force that presses the two bodies together)
+	/// Friction (dimensionless number, usually between 0 and 1, 0 = no friction, 1 = friction force equals force that presses the two bodies together). Note that bodies can have negative friction but the combined friction (see PhysicsSystem::SetCombineFriction) should never go below zero.
 	inline float			GetFriction() const												{ return mFriction; }
-	void					SetFriction(float inFriction)									{ JPH_ASSERT(inFriction >= 0.0f); mFriction = inFriction; }
+	void					SetFriction(float inFriction)									{ mFriction = inFriction; }
 
-	/// Restitution (dimensionless number, usually between 0 and 1, 0 = completely inelastic collision response, 1 = completely elastic collision response)
+	/// Restitution (dimensionless number, usually between 0 and 1, 0 = completely inelastic collision response, 1 = completely elastic collision response). Note that bodies can have negative restitution but the combined restitution (see PhysicsSystem::SetCombineRestitution) should never go below zero.
 	inline float			GetRestitution() const											{ return mRestitution; }
-	void					SetRestitution(float inRestitution)								{ JPH_ASSERT(inRestitution >= 0.0f && inRestitution <= 1.0f); mRestitution = inRestitution; }
+	void					SetRestitution(float inRestitution)								{ mRestitution = inRestitution; }
 
 	/// Get world space linear velocity of the center of mass (unit: m/s)
 	inline Vec3				GetLinearVelocity() const										{ return !IsStatic()? mMotionProperties->GetLinearVelocity() : Vec3::sZero(); }
@@ -143,6 +149,12 @@ public:
 
 	// Get the total amount of torque applied to the center of mass this time step (through AddForce/AddTorque calls). Note that it will reset to zero after PhysicsSimulation::Update.
 	inline Vec3				GetAccumulatedTorque() const									{ JPH_ASSERT(IsDynamic()); return mMotionProperties->GetAccumulatedTorque(); }
+
+	// Reset the total accumulated force, not that this will be done automatically after every time step.
+	JPH_INLINE void			ResetForce()													{ JPH_ASSERT(IsDynamic()); return mMotionProperties->ResetForce(); }
+
+	// Reset the total accumulated torque, not that this will be done automatically after every time step.
+	JPH_INLINE void			ResetTorque()													{ JPH_ASSERT(IsDynamic()); return mMotionProperties->ResetTorque(); }
 
 	/// Get inverse inertia tensor in world space
 	inline Mat44			GetInverseInertia() const;
@@ -233,8 +245,8 @@ public:
 	static inline bool		sFindCollidingPairsCanCollide(const Body &inBody1, const Body &inBody2);
 
 	/// Update position using an Euler step (used during position integrate & constraint solving)
-	inline void				AddPositionStep(Vec3Arg inLinearVelocityTimesDeltaTime)			{ JPH_ASSERT(BodyAccess::sCheckRights(BodyAccess::sPositionAccess, BodyAccess::EAccess::ReadWrite)); mPosition += inLinearVelocityTimesDeltaTime; JPH_ASSERT(!mPosition.IsNaN()); }
-	inline void				SubPositionStep(Vec3Arg inLinearVelocityTimesDeltaTime) 		{ JPH_ASSERT(BodyAccess::sCheckRights(BodyAccess::sPositionAccess, BodyAccess::EAccess::ReadWrite)); mPosition -= inLinearVelocityTimesDeltaTime; JPH_ASSERT(!mPosition.IsNaN()); }
+	inline void				AddPositionStep(Vec3Arg inLinearVelocityTimesDeltaTime)			{ JPH_ASSERT(BodyAccess::sCheckRights(BodyAccess::sPositionAccess, BodyAccess::EAccess::ReadWrite)); mPosition += mMotionProperties->LockTranslation(inLinearVelocityTimesDeltaTime); JPH_ASSERT(!mPosition.IsNaN()); }
+	inline void				SubPositionStep(Vec3Arg inLinearVelocityTimesDeltaTime) 		{ JPH_ASSERT(BodyAccess::sCheckRights(BodyAccess::sPositionAccess, BodyAccess::EAccess::ReadWrite)); mPosition -= mMotionProperties->LockTranslation(inLinearVelocityTimesDeltaTime); JPH_ASSERT(!mPosition.IsNaN()); }
 
 	/// Update rotation using an Euler step (using during position integrate & constraint solving)
 	inline void				AddRotationStep(Vec3Arg inAngularVelocityTimesDeltaTime);
@@ -298,9 +310,10 @@ private:
 	enum class EFlags : uint8
 	{
 		IsSensor				= 1 << 0,													///< If this object is a sensor. A sensor will receive collision callbacks, but will not cause any collision responses and can be used as a trigger volume.
-		IsInBroadPhase			= 1 << 1,													///< Set this bit to indicate that the body is in the broadphase
-		InvalidateContactCache	= 1 << 2,													///< Set this bit to indicate that all collision caches for this body are invalid, will be reset the next simulation step.
-		UseManifoldReduction	= 1 << 3,													///< Set this bit to indicate that this body can use manifold reduction (if PhysicsSettings::mUseManifoldReduction is true)
+		SensorDetectsStatic		= 1 << 1,													///< If this sensor detects static objects entering it.
+		IsInBroadPhase			= 1 << 2,													///< Set this bit to indicate that the body is in the broadphase
+		InvalidateContactCache	= 1 << 3,													///< Set this bit to indicate that all collision caches for this body are invalid, will be reset the next simulation step.
+		UseManifoldReduction	= 1 << 4,													///< Set this bit to indicate that this body can use manifold reduction (if PhysicsSettings::mUseManifoldReduction is true)
 	};
 
 	// 16 byte aligned
@@ -315,8 +328,8 @@ private:
 	CollisionGroup			mCollisionGroup;												///< The collision group this body belongs to (determines if two objects can collide)
 
 	// 4 byte aligned
-	float					mFriction;														///< Friction of the body (dimensionless number, usually between 0 and 1, 0 = no friction, 1 = friction force equals force that presses the two bodies together)
-	float					mRestitution;													///< Restitution of body (dimensionless number, usually between 0 and 1, 0 = completely inelastic collision response, 1 = completely elastic collision response)
+	float					mFriction;														///< Friction of the body (dimensionless number, usually between 0 and 1, 0 = no friction, 1 = friction force equals force that presses the two bodies together). Note that bodies can have negative friction but the combined friction (see PhysicsSystem::SetCombineFriction) should never go below zero.
+	float					mRestitution;													///< Restitution of body (dimensionless number, usually between 0 and 1, 0 = completely inelastic collision response, 1 = completely elastic collision response). Note that bodies can have negative restitution but the combined restitution (see PhysicsSystem::SetCombineRestitution) should never go below zero.
 	BodyID					mID;															///< ID of the body (index in the bodies array)
 
 	// 2 or 4 bytes aligned

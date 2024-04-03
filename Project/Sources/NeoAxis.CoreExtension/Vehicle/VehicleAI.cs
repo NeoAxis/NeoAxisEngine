@@ -28,7 +28,7 @@ namespace NeoAxis
 		public Reference<bool> CombatMode
 		{
 			get { if( _combatMode.BeginGet() ) CombatMode = _combatMode.Get( this ); return _combatMode.value; }
-			set { if( _combatMode.BeginSet( ref value ) ) { try { CombatModeChanged?.Invoke( this ); } finally { _combatMode.EndSet(); } } }
+			set { if( _combatMode.BeginSet( this, ref value ) ) { try { CombatModeChanged?.Invoke( this ); } finally { _combatMode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CombatMode"/> property value changes.</summary>
 		public event Action<VehicleAI> CombatModeChanged;
@@ -41,7 +41,7 @@ namespace NeoAxis
 		public Reference<bool> CombatModeCanMove
 		{
 			get { if( _combatModeCanMove.BeginGet() ) CombatModeCanMove = _combatModeCanMove.Get( this ); return _combatModeCanMove.value; }
-			set { if( _combatModeCanMove.BeginSet( ref value ) ) { try { CombatModeCanMoveChanged?.Invoke( this ); } finally { _combatModeCanMove.EndSet(); } } }
+			set { if( _combatModeCanMove.BeginSet( this, ref value ) ) { try { CombatModeCanMoveChanged?.Invoke( this ); } finally { _combatModeCanMove.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CombatModeCanMove"/> property value changes.</summary>
 		public event Action<VehicleAI> CombatModeCanMoveChanged;
@@ -51,7 +51,7 @@ namespace NeoAxis
 		public Reference<double> CombatModeFindEnemyDistance
 		{
 			get { if( _combatModeFindEnemyDistance.BeginGet() ) CombatModeFindEnemyDistance = _combatModeFindEnemyDistance.Get( this ); return _combatModeFindEnemyDistance.value; }
-			set { if( _combatModeFindEnemyDistance.BeginSet( ref value ) ) { try { CombatModeFindEnemyDistanceChanged?.Invoke( this ); } finally { _combatModeFindEnemyDistance.EndSet(); } } }
+			set { if( _combatModeFindEnemyDistance.BeginSet( this, ref value ) ) { try { CombatModeFindEnemyDistanceChanged?.Invoke( this ); } finally { _combatModeFindEnemyDistance.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CombatModeFindEnemyDistance"/> property value changes.</summary>
 		public event Action<VehicleAI> CombatModeFindEnemyDistanceChanged;
@@ -61,15 +61,17 @@ namespace NeoAxis
 		/// <summary>
 		/// Whether to visualize a task info.
 		/// </summary>
+		[Category( "Debug" )]
 		[DefaultValue( false )]
 		public Reference<bool> DebugVisualization
 		{
 			get { if( _debugVisualization.BeginGet() ) DebugVisualization = _debugVisualization.Get( this ); return _debugVisualization.value; }
-			set { if( _debugVisualization.BeginSet( ref value ) ) { try { DebugVisualizationChanged?.Invoke( this ); } finally { _debugVisualization.EndSet(); } } }
+			set { if( _debugVisualization.BeginSet( this, ref value ) ) { try { DebugVisualizationChanged?.Invoke( this ); } finally { _debugVisualization.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DebugVisualization"/> property value changes.</summary>
 		public event Action<VehicleAI> DebugVisualizationChanged;
 		ReferenceField<bool> _debugVisualization = false;
+
 
 		/////////////////////////////////////////
 
@@ -97,7 +99,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		void SimulationStepVehicleTasks( Vehicle vehicle )
+		void SimulationStepTasks( Vehicle vehicle )
 		{
 			//!!!!call less often
 
@@ -129,7 +131,7 @@ namespace NeoAxis
 
 						var diff = target - vehicle.TransformV.Position;
 						var distanceXY = diff.ToVector2().Length();
-						var distanceZ = Math.Abs( diff.Z );
+						//var distanceZ = Math.Abs( diff.Z );
 
 						if( distanceXY <= moveTo.DistanceToReach )//!!!! && distanceZ < vehicle.Height )
 						{
@@ -166,9 +168,11 @@ namespace NeoAxis
 									vehicle.Throttle = 0;
 								//vehicle.Throttle = 1;
 
-								vehicle.Steering = -d.Y;
+								vehicle.Steering = (float)-d.Y;
 								vehicle.Brake = 0;
 								vehicle.HandBrake = 0;
+
+								vehicle.SetMotorOn();
 							}
 
 							//!!!!
@@ -214,221 +218,6 @@ namespace NeoAxis
 			}
 		}
 
-		struct UpdateCurrentTargetObject
-		{
-			public ObjectInSpace Object;
-			public Vector3 TargetCenter;
-			public double DistanceSquared;
-		}
-
-		[MethodImpl( (MethodImplOptions)512 )]
-		void UpdateCurrentTarget( Vehicle vehicle )
-		{
-			var findDistance = CombatModeFindEnemyDistance.Value;
-			if( findDistance == 0 )
-				return;
-
-			var tr = vehicle.TransformV;
-
-			var bounds = new Bounds( tr.Position );
-			bounds.Expand( findDistance );
-
-			var item = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, bounds );
-			vehicle.ParentScene.GetObjectsInSpace( item );
-
-			//!!!!GC
-			var objects = new List<UpdateCurrentTargetObject>( 64 );
-
-			for( int n = 0; n < item.Result.Length; n++ )
-			{
-				ref var itemResult = ref item.Result[ n ];
-
-				var obj = itemResult.Object;
-
-				//vehicles
-				var objVehicle = obj as Vehicle;
-				if( objVehicle != null && objVehicle.Team != 0 )
-				{
-					if( ( obj.TransformV.Position - tr.Position ).LengthSquared() < findDistance * findDistance )
-					{
-						if( objVehicle.Team != vehicle.Team )
-						{
-							objVehicle.GetBox( out var box );
-							var targetCenter = box.ToBounds().GetCenter();
-
-							var objectItem = new UpdateCurrentTargetObject();
-							objectItem.Object = obj;
-							objectItem.TargetCenter = targetCenter;
-							objectItem.DistanceSquared = ( objectItem.TargetCenter - tr.Position ).LengthSquared();
-							objects.Add( objectItem );
-						}
-					}
-				}
-
-				//characters
-				//!!!!
-
-			}
-
-			CollectionUtility.MergeSort( objects, delegate ( UpdateCurrentTargetObject item1, UpdateCurrentTargetObject item2 )
-			{
-				if( item1.DistanceSquared < item2.DistanceSquared )
-					return -1;
-				if( item1.DistanceSquared > item2.DistanceSquared )
-					return 1;
-				return 0;
-			} );
-
-			if( objects.Count > 0 )
-				currentTarget = objects[ 0 ].Object;
-			else
-				currentTarget = null;
-		}
-
-		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		Range GetOptimalAttackDistance()
-		{
-			var result = Range.Zero;
-
-			if( weaponsCache != null )
-			{
-				for( int n = 0; n < weaponsCache.Length; n++ )
-				{
-					var weapon = weaponsCache[ n ];
-					var weaponType = weapon.WeaponType.Value;
-
-					if( weaponType.Mode1Enabled )
-					{
-						var range = weaponType.Mode1FiringDistance.Value;
-						result = new Range( Math.Min( result.Minimum, range.Minimum ), Math.Max( result.Maximum, range.Maximum ) );
-					}
-
-					if( weaponType.Mode2Enabled )
-					{
-						var range = weaponType.Mode2FiringDistance.Value;
-						result = new Range( Math.Min( result.Minimum, range.Minimum ), Math.Max( result.Maximum, range.Maximum ) );
-					}
-				}
-			}
-
-			return result;
-		}
-
-		[MethodImpl( (MethodImplOptions)512 )]
-		void SimulationStepCombatMode( Vehicle vehicle )
-		{
-			if( weaponsCache == null )
-				weaponsCache = vehicle.GetComponents<Weapon>( checkChildren: true, onlyEnabledInHierarchy: true );
-
-			if( weaponsCache.Length != 0 )
-			{
-				//update current target
-				{
-					updateTargetRemainingTime -= Time.SimulationDelta;
-					if( updateTargetRemainingTime <= 0 )
-					{
-						UpdateCurrentTarget( vehicle );
-						updateTargetRemainingTime += 1.0f + staticRandom.Next( 0.1f );
-					}
-
-					//reset when target not exists
-					if( currentTarget != null && currentTarget.Parent == null )
-						currentTarget = null;
-				}
-
-				//update moving tasks
-				{
-					updateTasksRemainingTime -= Time.SimulationDelta;
-					if( updateTasksRemainingTime <= 0 )
-					{
-						if( currentTarget != null )
-						{
-							var range = GetOptimalAttackDistance();
-							var distance = ( currentTarget.TransformV.Position - vehicle.TransformV.Position ).Length();
-
-							//check by distance
-							if( distance > range.Maximum )
-							{
-								var alreadyMoving = false;
-
-								var currentTasks = GetComponents<AITask>();
-								if( currentTasks.Length == 1 )
-								{
-									var moveToObject = currentTasks[ 0 ] as VehicleAITask_MoveToObject;
-									if( moveToObject != null && moveToObject.Target.Value == currentTarget )
-										alreadyMoving = true;
-								}
-
-								if( !alreadyMoving )
-									MoveTo( currentTarget, true, true );
-							}
-							else
-								ClearTaskQueue();
-						}
-						else
-							ClearTaskQueue();
-
-						updateTasksRemainingTime += 1.0f + staticRandom.Next( 0.1f );
-					}
-				}
-
-				//update weapons
-				{
-
-					//!!!!call less often?
-
-
-					for( int n = 0; n < weaponsCache.Length; n++ )
-					{
-						var weapon = weaponsCache[ n ];
-						var weaponType = weapon.WeaponType.Value;
-
-						//rotate the weapon. update TransformOffset
-						var transformOffset = weapon.GetComponent<TransformOffset>();
-						if( transformOffset != null )
-						{
-							if( currentTarget != null )
-							{
-								var targetPosition = currentTarget.TransformV.Position;
-								var worldRotation = Quaternion.LookAt( targetPosition - weapon.TransformV.Position, Vector3.ZAxis );
-								var localRotation = vehicle.TransformV.Rotation.GetInverse() * worldRotation;
-
-
-								//!!!!
-								var verticalAngle = new Degree( 2 ).InRadians();
-								localRotation *= Quaternion.FromRotateByY( verticalAngle );
-
-
-								transformOffset.RotationOffset = localRotation;
-							}
-							else
-								transformOffset.RotationOffset = Quaternion.Identity;
-						}
-
-						//fire
-						if( currentTarget != null )
-						{
-							var distance = ( currentTarget.TransformV.Position - vehicle.TransformV.Position ).Length();
-
-							if( weaponType.Mode1Enabled )
-							{
-								var range = weaponType.Mode1FiringDistance.Value;
-								if( distance > range.Minimum && distance < range.Maximum )
-									weapon.FiringBegin( 1, 0 );
-							}
-
-							if( weaponType.Mode2Enabled )
-							{
-								var range = weaponType.Mode2FiringDistance.Value;
-								if( distance > range.Minimum && distance < range.Maximum )
-									weapon.FiringBegin( 2, 0 );
-							}
-						}
-					}
-				}
-			}
-		}
-
 		protected override void OnSimulationStep()
 		{
 			base.OnSimulationStep();
@@ -438,7 +227,7 @@ namespace NeoAxis
 			var vehicle = Vehicle;
 			if( vehicle != null )
 			{
-				SimulationStepVehicleTasks( vehicle );
+				SimulationStepTasks( vehicle );
 				if( CombatMode )
 					SimulationStepCombatMode( vehicle );
 			}
@@ -498,6 +287,9 @@ namespace NeoAxis
 				else
 					scene.GetRenderSceneData += Scene_GetRenderSceneData;
 			}
+
+			updateTargetRemainingTime = staticRandom.Next( 1.0f );
+			updateTasksRemainingTime = staticRandom.Next( 1.0f );
 		}
 
 		private void Scene_GetRenderSceneData( Scene scene, ViewportRenderingContext context )
@@ -632,11 +424,224 @@ namespace NeoAxis
 
 		}
 
+
+		//combat mode
+
+		struct UpdateCurrentTargetObject
+		{
+			public ObjectInSpace Object;
+			public Vector3 TargetCenter;
+			public double DistanceSquared;
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		void UpdateCurrentTarget( Vehicle thisObject )
+		{
+			var findDistance = CombatModeFindEnemyDistance.Value;
+			if( findDistance == 0 )
+				return;
+
+			var tr = thisObject.TransformV;
+
+			var bounds = new Bounds( tr.Position );
+			bounds.Expand( findDistance );
+
+			var item = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, bounds );
+			thisObject.ParentScene.GetObjectsInSpace( item );
+
+			//!!!!GC
+			var objects = new List<UpdateCurrentTargetObject>( 64 );
+
+			for( int n = 0; n < item.Result.Length; n++ )
+			{
+				ref var itemResult = ref item.Result[ n ];
+
+				var obj = itemResult.Object;
+
+				//vehicles
+				var vehicle = obj as Vehicle;
+				if( vehicle != null && vehicle.Team != 0 && vehicle.Team != thisObject.Team )
+				{
+					if( ( obj.TransformV.Position - tr.Position ).LengthSquared() < findDistance * findDistance )
+					{
+						vehicle.GetBox( out var box );
+						var targetCenter = box.ToBounds().GetCenter();
+
+						var objectItem = new UpdateCurrentTargetObject();
+						objectItem.Object = obj;
+						objectItem.TargetCenter = targetCenter;
+						objectItem.DistanceSquared = ( objectItem.TargetCenter - tr.Position ).LengthSquared();
+						objects.Add( objectItem );
+					}
+				}
+
+				//characters
+				var character = obj as Character;
+				if( character != null && character.Team != 0 && character.Team != thisObject.Team )
+				{
+					if( character.LifeStatus.Value == Character.LifeStatusEnum.Normal )
+					{
+						if( ( obj.TransformV.Position - tr.Position ).LengthSquared() < findDistance * findDistance )
+						{
+							var targetCenter = character.GetCenteredPosition();
+
+							var objectItem = new UpdateCurrentTargetObject();
+							objectItem.Object = obj;
+							objectItem.TargetCenter = targetCenter;
+							objectItem.DistanceSquared = ( objectItem.TargetCenter - tr.Position ).LengthSquared();
+							objects.Add( objectItem );
+						}
+					}
+				}
+
+				//other components
+				//..
+
+			}
+
+			CollectionUtility.MergeSort( objects, delegate ( UpdateCurrentTargetObject item1, UpdateCurrentTargetObject item2 )
+			{
+				if( item1.DistanceSquared < item2.DistanceSquared )
+					return -1;
+				if( item1.DistanceSquared > item2.DistanceSquared )
+					return 1;
+				return 0;
+			} );
+
+			if( objects.Count > 0 )
+				currentTarget = objects[ 0 ].Object;
+			else
+				currentTarget = null;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		Range GetOptimalAttackDistance()
+		{
+			var result = Range.Zero;
+
+			if( weaponsCache != null )
+			{
+				for( int n = 0; n < weaponsCache.Length; n++ )
+				{
+					var weapon = weaponsCache[ n ];
+					var weaponType = weapon.WeaponType.Value;
+
+					if( weaponType.Mode1Enabled )
+					{
+						var range = weaponType.Mode1FiringDistance.Value;
+						result = new Range( Math.Min( result.Minimum, range.Minimum ), Math.Max( result.Maximum, range.Maximum ) );
+					}
+
+					if( weaponType.Mode2Enabled )
+					{
+						var range = weaponType.Mode2FiringDistance.Value;
+						result = new Range( Math.Min( result.Minimum, range.Minimum ), Math.Max( result.Maximum, range.Maximum ) );
+					}
+				}
+			}
+
+			return result;
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		void SimulationStepCombatMode( Vehicle thisObject )
+		{
+			if( weaponsCache == null )
+				weaponsCache = thisObject.GetComponents<Weapon>( checkChildren: true, onlyEnabledInHierarchy: true );
+
+			if( weaponsCache.Length != 0 )
+			{
+				//update current target
+				{
+					updateTargetRemainingTime -= Time.SimulationDelta;
+					if( updateTargetRemainingTime <= 0 )
+					{
+						UpdateCurrentTarget( thisObject );
+						updateTargetRemainingTime += 1.0f + staticRandom.Next( 0.1f );
+					}
+
+					//reset when target not exists
+					if( currentTarget != null && currentTarget.Parent == null )
+						currentTarget = null;
+				}
+
+				//update moving tasks
+				{
+					updateTasksRemainingTime -= Time.SimulationDelta;
+					if( updateTasksRemainingTime <= 0 )
+					{
+						if( currentTarget != null )
+						{
+							var range = GetOptimalAttackDistance();
+							var distanceSquared = ( currentTarget.TransformV.Position - thisObject.TransformV.Position ).LengthSquared();
+
+							//check by distance
+							if( distanceSquared > range.Maximum * range.Maximum )
+							{
+								var alreadyMoving = false;
+
+								var currentTasks = GetComponents<AITask>();
+								if( currentTasks.Length == 1 )
+								{
+									var moveToObject = currentTasks[ 0 ] as VehicleAITask_MoveToObject;
+									if( moveToObject != null && moveToObject.Target.Value == currentTarget )
+										alreadyMoving = true;
+								}
+
+								if( !alreadyMoving )
+									MoveTo( currentTarget, true, true );
+							}
+							else
+								ClearTaskQueue();
+						}
+						else
+							ClearTaskQueue();
+
+						updateTasksRemainingTime += 1.0f + staticRandom.Next( 0.1f );
+					}
+				}
+
+				//update weapons
+				{
+					//!!!!call less often?
+
+					if( currentTarget != null )
+						Vehicle.LookToPosition( currentTarget.TransformV.Position );
+					else
+						Vehicle.LookToPosition( null );
+
+					for( int n = 0; n < weaponsCache.Length; n++ )
+					{
+						var weapon = weaponsCache[ n ];
+						var weaponType = weapon.WeaponType.Value;
+
+						//fire
+						if( currentTarget != null )
+						{
+							var distance = ( currentTarget.TransformV.Position - thisObject.TransformV.Position ).Length();
+
+							if( weaponType.Mode1Enabled )
+							{
+								var range = weaponType.Mode1FiringDistance.Value;
+								if( distance > range.Minimum && distance < range.Maximum )
+									weapon.FiringBegin( 1, 0 );
+							}
+
+							if( weaponType.Mode2Enabled )
+							{
+								var range = weaponType.Mode2FiringDistance.Value;
+								if( distance > range.Minimum && distance < range.Maximum )
+									weapon.FiringBegin( 2, 0 );
+							}
+						}
+					}
+				}
+			}
+		}
+
 		void DebugRenderCombatMode( ViewportRenderingContext context )
 		{
-
 			//!!!!
-
 		}
 	}
 }

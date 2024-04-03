@@ -43,6 +43,7 @@
 #include <Jolt/Physics/Constraints/SixDOFConstraint.h>
 #include <Jolt/Physics/Vehicle/VehicleConstraint.h>
 #include <Jolt/Physics/Vehicle/WheeledVehicleController.h>
+#include <Jolt/Physics/Character/CharacterVirtual.h>
 
 // STL includes
 #include <iostream>
@@ -65,6 +66,7 @@ using namespace std;
 class BodyItem;
 class ConstraintItem;
 class PhysicsSystemItem;
+class VehicleConstraintItem;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -110,15 +112,11 @@ Float3 ConvertToFloat3(const Vector3& value)
 
 RRayCast ConvertToRRay(const RayD& value)
 {
-	//!!!!double
-
 	return RRayCast(ConvertToRVec3(value.getOrigin()), ConvertToVec3(value.getDirection()));
 }
 
 RayCast ConvertToRay(const RayD& value)
 {
-	//!!!!double
-
 	return RayCast(ConvertToVec3(value.getOrigin()), ConvertToVec3(value.getDirection()));
 }
 
@@ -161,38 +159,46 @@ void MemoryAlignedFree(void* inPointer)
 /// Layer that objects can be in, determines which other objects it can collide with
 namespace Layers
 {
-	static constexpr ObjectLayer UNUSED1 = 0; // 4 unused values so that broadphase layers values don't match with object layer values (for testing purposes)
-	static constexpr ObjectLayer UNUSED2 = 1;
-	static constexpr ObjectLayer UNUSED3 = 2;
-	static constexpr ObjectLayer UNUSED4 = 3;
-	static constexpr ObjectLayer NON_MOVING = 4;
-	static constexpr ObjectLayer MOVING = 5;
-	static constexpr ObjectLayer DEBRIS = 6; // Example: Debris collides only with NON_MOVING
-	static constexpr ObjectLayer SENSOR = 7; // Sensors only collide with MOVING objects
-	static constexpr ObjectLayer NUM_LAYERS = 8;
+	static constexpr ObjectLayer NON_MOVING = 0;
+	static constexpr ObjectLayer MOVING = 1;
+	static constexpr ObjectLayer CHARACTER = 2;//DEBRIS = 6; // Example: Debris collides only with NON_MOVING
+	static constexpr ObjectLayer MOVING_AND_CHARACTER = 3;//DEBRIS = 6; // Example: Debris collides only with NON_MOVING
+	static constexpr ObjectLayer NUM_LAYERS = 4;
+
+	//static constexpr ObjectLayer UNUSED1 = 0; // 4 unused values so that broadphase layers values don't match with object layer values (for testing purposes)
+	//static constexpr ObjectLayer UNUSED2 = 1;
+	//static constexpr ObjectLayer UNUSED3 = 2;
+	//static constexpr ObjectLayer UNUSED4 = 3;
+	//static constexpr ObjectLayer NON_MOVING = 4;
+	//static constexpr ObjectLayer MOVING = 5;
+	//static constexpr ObjectLayer CHARACTER = 6;//DEBRIS = 6; // Example: Debris collides only with NON_MOVING
+	//static constexpr ObjectLayer SENSOR = 7; // Sensors only collide with MOVING objects
+	//static constexpr ObjectLayer NUM_LAYERS = 8;
 };
 
 /// Class that determines if two object layers can collide
 class ObjectLayerPairFilterImpl : public ObjectLayerPairFilter
 {
 public:
-	virtual bool					ShouldCollide(ObjectLayer inObject1, ObjectLayer inObject2) const override
+	virtual bool ShouldCollide(ObjectLayer inObject1, ObjectLayer inObject2) const override
 	{
 		switch (inObject1)
 		{
-		case Layers::UNUSED1:
-		case Layers::UNUSED2:
-		case Layers::UNUSED3:
-		case Layers::UNUSED4:
-			return false;
+			//case Layers::UNUSED1:
+			//case Layers::UNUSED2:
+			//case Layers::UNUSED3:
+			//case Layers::UNUSED4:
+			//	return false;
 		case Layers::NON_MOVING:
-			return inObject2 == Layers::MOVING || inObject2 == Layers::DEBRIS;
+			return inObject2 == Layers::MOVING;// || inObject2 == Layers::DEBRIS;
 		case Layers::MOVING:
-			return inObject2 == Layers::NON_MOVING || inObject2 == Layers::MOVING || inObject2 == Layers::SENSOR;
-		case Layers::DEBRIS:
-			return inObject2 == Layers::NON_MOVING;
-		case Layers::SENSOR:
-			return inObject2 == Layers::MOVING;
+			return inObject2 == Layers::NON_MOVING || inObject2 == Layers::MOVING;// || inObject2 == Layers::SENSOR;
+		case Layers::CHARACTER://DEBRIS:
+			return false;//return inObject2 == Layers::NON_MOVING;
+		case Layers::MOVING_AND_CHARACTER:
+			return inObject2 == Layers::NON_MOVING || inObject2 == Layers::MOVING || inObject2 == Layers::CHARACTER;// || inObject2 == Layers::SENSOR;
+		//case Layers::SENSOR:
+		//	return inObject2 == Layers::MOVING;
 		default:
 			JPH_ASSERT(false);
 			return false;
@@ -205,10 +211,12 @@ namespace BroadPhaseLayers
 {
 	static constexpr BroadPhaseLayer NON_MOVING(0);
 	static constexpr BroadPhaseLayer MOVING(1);
-	static constexpr BroadPhaseLayer DEBRIS(2);
-	static constexpr BroadPhaseLayer SENSOR(3);
-	static constexpr BroadPhaseLayer UNUSED(4);
-	static constexpr uint NUM_LAYERS(5);
+	static constexpr BroadPhaseLayer CHARACTER(2);//DEBRIS(2);
+	static constexpr uint NUM_LAYERS(3);
+
+	//static constexpr BroadPhaseLayer SENSOR(3);
+	//static constexpr BroadPhaseLayer UNUSED(4);
+	//static constexpr uint NUM_LAYERS(5);
 };
 
 /// BroadPhaseLayerInterface implementation
@@ -218,22 +226,22 @@ public:
 	BPLayerInterfaceImpl()
 	{
 		// Create a mapping table from object to broad phase layer
-		mObjectToBroadPhase[Layers::UNUSED1] = BroadPhaseLayers::UNUSED;
-		mObjectToBroadPhase[Layers::UNUSED2] = BroadPhaseLayers::UNUSED;
-		mObjectToBroadPhase[Layers::UNUSED3] = BroadPhaseLayers::UNUSED;
-		mObjectToBroadPhase[Layers::UNUSED4] = BroadPhaseLayers::UNUSED;
+		//mObjectToBroadPhase[Layers::UNUSED1] = BroadPhaseLayers::UNUSED;
+		//mObjectToBroadPhase[Layers::UNUSED2] = BroadPhaseLayers::UNUSED;
+		//mObjectToBroadPhase[Layers::UNUSED3] = BroadPhaseLayers::UNUSED;
+		//mObjectToBroadPhase[Layers::UNUSED4] = BroadPhaseLayers::UNUSED;
 		mObjectToBroadPhase[Layers::NON_MOVING] = BroadPhaseLayers::NON_MOVING;
 		mObjectToBroadPhase[Layers::MOVING] = BroadPhaseLayers::MOVING;
-		mObjectToBroadPhase[Layers::DEBRIS] = BroadPhaseLayers::DEBRIS;
-		mObjectToBroadPhase[Layers::SENSOR] = BroadPhaseLayers::SENSOR;
+		mObjectToBroadPhase[Layers::CHARACTER] = BroadPhaseLayers::CHARACTER;//mObjectToBroadPhase[Layers::DEBRIS] = BroadPhaseLayers::DEBRIS;
+		//mObjectToBroadPhase[Layers::SENSOR] = BroadPhaseLayers::SENSOR;
 	}
 
-	virtual uint					GetNumBroadPhaseLayers() const override
+	virtual uint GetNumBroadPhaseLayers() const override
 	{
 		return BroadPhaseLayers::NUM_LAYERS;
 	}
 
-	virtual BroadPhaseLayer			GetBroadPhaseLayer(ObjectLayer inLayer) const override
+	virtual BroadPhaseLayer GetBroadPhaseLayer(ObjectLayer inLayer) const override
 	{
 		JPH_ASSERT(inLayer < Layers::NUM_LAYERS);
 		return mObjectToBroadPhase[inLayer];
@@ -255,29 +263,31 @@ public:
 #endif // JPH_EXTERNAL_PROFILE || JPH_PROFILE_ENABLED
 
 private:
-	BroadPhaseLayer					mObjectToBroadPhase[Layers::NUM_LAYERS];
+	BroadPhaseLayer mObjectToBroadPhase[Layers::NUM_LAYERS];
 };
 
 /// Class that determines if an object layer can collide with a broadphase layer
 class ObjectVsBroadPhaseLayerFilterImpl : public ObjectVsBroadPhaseLayerFilter
 {
 public:
-	virtual bool					ShouldCollide(ObjectLayer inLayer1, BroadPhaseLayer inLayer2) const override
+	virtual bool ShouldCollide(ObjectLayer inLayer1, BroadPhaseLayer inLayer2) const override
 	{
 		switch (inLayer1)
 		{
 		case Layers::NON_MOVING:
 			return inLayer2 == BroadPhaseLayers::MOVING;
 		case Layers::MOVING:
-			return inLayer2 == BroadPhaseLayers::NON_MOVING || inLayer2 == BroadPhaseLayers::MOVING || inLayer2 == BroadPhaseLayers::SENSOR;
-		case Layers::DEBRIS:
-			return inLayer2 == BroadPhaseLayers::NON_MOVING;
-		case Layers::SENSOR:
-			return inLayer2 == BroadPhaseLayers::MOVING;
-		case Layers::UNUSED1:
-		case Layers::UNUSED2:
-		case Layers::UNUSED3:
-			return false;
+			return inLayer2 == BroadPhaseLayers::NON_MOVING || inLayer2 == BroadPhaseLayers::MOVING;// || inLayer2 == BroadPhaseLayers::SENSOR;
+		case Layers::CHARACTER://DEBRIS:
+			return false;//return inLayer2 == BroadPhaseLayers::NON_MOVING;
+		case Layers::MOVING_AND_CHARACTER:
+			return inLayer2 == BroadPhaseLayers::NON_MOVING || inLayer2 == BroadPhaseLayers::MOVING || inLayer2 == BroadPhaseLayers::CHARACTER;// || inLayer2 == BroadPhaseLayers::SENSOR;
+		//case Layers::SENSOR:
+		//	return inLayer2 == BroadPhaseLayers::MOVING;
+		//case Layers::UNUSED1:
+		//case Layers::UNUSED2:
+		//case Layers::UNUSED3:
+		//	return false;
 		default:
 			JPH_ASSERT(false);
 			return false;
@@ -302,17 +312,22 @@ public:
 	virtual void OnContactRemoved(const SubShapeIDPair& inSubShapePair) override;
 };
 
-//class MyBodyActivationListener : public BodyActivationListener
-//{
-//public:
-//	virtual void OnBodyActivated(const BodyID& inBodyID, uint64 inBodyUserData) override
-//	{
-//	}
-//
-//	virtual void OnBodyDeactivated(const BodyID& inBodyID, uint64 inBodyUserData) override
-//	{
-//	}
-//};
+class MyBodyActivationListener : public BodyActivationListener
+{
+public:
+	PhysicsSystemItem* system;
+
+	virtual void OnBodyActivated(const BodyID& inBodyID, std::uint64_t inBodyUserData) override;
+	virtual void OnBodyDeactivated(const BodyID& inBodyID, std::uint64_t inBodyUserData) override;
+};
+
+class PhysicsStepListenerForNewStepListeners : public PhysicsStepListener
+{
+public:
+	PhysicsSystemItem* system;
+
+	virtual void OnStep(float inDeltaTime, PhysicsSystem& inPhysicsSystem) override;
+};
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -334,20 +349,39 @@ struct RayTestResultNative
 struct VolumeTestResultNative
 {
 	uint bodyId;
+	float distanceScale;
+	int/*bool*/ backFaceHit;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct ContactsItem
+#pragma pack(push, 1)
+struct ContactItem
 {
-	Vector3D worldPositionOn1;
-	Vector3D worldPositionOn2;
-	uint body2Id;
-	//BodyItem* body2;
+	uint body2ID;
+	Vector3 normal;
+	float penetrationDepth;
+	uint subShapeID1;
+	uint subShapeID2;
+	uint contactPointCount;
+	Vector3D contactPointsOn1[4];
+	Vector3D contactPointsOn2[4];
+
+	//uint body1ID;
+	//Vector3D baseOffset;
+	//Vector3 relativeContactPointsOn1[4];
+	//Vector3 relativeContactPointsOn2[4];
+
+	//Vector3D worldPositionOn1;
+	//Vector3D worldPositionOn2;
+	//uint body2Id;
+	////BodyItem* body2;
 };
+#pragma pack(pop)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#pragma pack(push, 1)
 struct VehicleWheelSettings
 {
 	Vector3 position;
@@ -364,9 +398,10 @@ struct VehicleWheelSettings
 	float inertia;// = 0.9f;
 	float angularDamping;// = 0.2f;
 	float maxSteerAngle;// = DegreesToRadians(70.0f);
-	//!!!!
-	//LinearCurve longitudinalFriction;
-	//LinearCurve lateralFriction;
+	int LongitudinalFrictionCount;
+	float* LongitudinalFrictionData;
+	int LateralFrictionCount;
+	float* LateralFrictionData;
 	float maxBrakeTorque;// = 1500.0f;
 	float maxHandBrakeTorque;// = 4000.0f;
 
@@ -374,6 +409,7 @@ struct VehicleWheelSettings
 	//!!!!
 
 };
+#pragma pack(pop)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -396,14 +432,21 @@ class PhysicsSystemItem
 public:
 	PhysicsSystem system;
 	BPLayerInterfaceImpl broadPhaseLayerInterface;
-	//MyBodyActivationListener body_activation_listener;
+	MyBodyActivationListener body_activation_listener;
 	MyContactListener contactListener;
+	PhysicsStepListenerForNewStepListeners physicsStepListenerForNewStepListeners;
 
 	ObjectVsBroadPhaseLayerFilterImpl objectVsBroadPhaseLayerFilterImpl;
-	ObjectLayerPairFilter objectLayerPairFilter;
+	ObjectLayerPairFilterImpl objectLayerPairFilter;
 
 	//need?
 	std::map<uint, BodyItem*> bodyById;
+	std::map<uint, BodyItem*> bodyCharacterModeById;
+
+	std::set<BodyItem*> bodiesContactsToClear;
+
+	std::mutex vehiclesToActivateMutex;
+	std::set<VehicleConstraintItem*> vehiclesToActivate;
 
 	//DebugRendererImpl debugRenderer;
 };
@@ -414,13 +457,22 @@ class BodyItem
 {
 public:
 	PhysicsSystem* system;
+	PhysicsSystemItem* systemItem;
 	Body* body;
 	BodyID id;
 
 	bool subscribedToGetContacts = false;
-	std::vector<ContactsItem> contacts;
+	std::vector<ContactItem> contacts;
 
 	std::vector<ConstraintItem*> constraints;
+	bool constraintsVehicleAttached = false;
+
+	//character mode
+	Ref<CharacterVirtual> character;
+	CharacterVirtual::ExtendedUpdateSettings* characterUpdateSettings = nullptr;
+	float characterWalkUpDownLastChange = 0;
+	Vector2 characterDesiredVelocity = Vector2::ZERO;
+	//Vector2 characterLastEffenciveVelocity = Vector2::ZERO;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -453,7 +505,7 @@ public:
 	BodyItem* bodyA = nullptr;
 	BodyItem* bodyB = nullptr;
 
-	virtual void OnDestroy() override 
+	virtual void OnDestroy() override
 	{
 		{
 			auto& constraintsA = bodyA->constraints;
@@ -494,7 +546,7 @@ class VehicleConstraintItem : public ConstraintItem
 public:
 	BodyItem* body = nullptr;
 	bool stepListenerAdded = false;
-	bool stepListenerAddedMustBeAdded = false;
+	//bool stepListenerMustBeAdded = false;
 	Ref<VehicleCollisionTester> collisionTester;
 
 	//
@@ -513,7 +565,6 @@ public:
 		if (stepListenerAdded)
 		{
 			VehicleConstraint* c = (VehicleConstraint*)constraint.GetPtr();
-			//!!!!slowly
 			system->RemoveStepListener(c);
 			stepListenerAdded = false;
 		}
@@ -537,7 +588,7 @@ struct DebugDrawLineItem
 {
 	Vector3D From;
 	Vector3D To;
-	Color Color;
+	Color _Color;
 	//int IsArrow;
 };
 
@@ -564,9 +615,9 @@ public:
 	class BatchImpl : public RefTargetVirtual
 	{
 	public:
-		JPH_OVERRIDE_NEW_DELETE
+		//!!!!linux: JPH_OVERRIDE_NEW_DELETE
 
-			BatchImpl(uint32 inID) : mID(inID) {  }
+		BatchImpl(uint32 inID) : mID(inID) {  }
 
 		virtual void					AddRef() override { ++mRefCount; }
 		virtual void					Release() override { if (--mRefCount == 0) delete this; }
@@ -589,7 +640,7 @@ public:
 		DebugDrawLineItem item;
 		item.From = ConvertToVector3D(inFrom);
 		item.To = ConvertToVector3D(inTo);
-		item.Color = inColor;
+		item._Color = inColor;
 		//item.IsArrow = false;
 		lines.push_back(item);
 	}
@@ -789,13 +840,23 @@ TempAllocatorMalloc tempAllocator;
 EXPORT PhysicsSystemItem* JCreateSystem(int maxBodies, int maxBodyPairs, int maxContactConstraints)
 {
 	if (sizeof(RayTestResultNative) != 56)
-		Fatal("JPhysicsSystem_RayTest: sizeof(RayTestResultNative) != 56.");
-	if (sizeof(VolumeTestResultNative) != 4)
-		Fatal("JPhysicsSystem_RayTest: sizeof(RayTestResultNative) != 4.");
-	if (sizeof(VehicleWheelSettings) != 18 * 4)
-		Fatal("JPhysicsSystem_RayTest: sizeof(VehicleWheelSettings) != 18 * 4.");
+		Fatal("JCreateSystem: sizeof(RayTestResultNative) != 56.");
+	if (sizeof(VolumeTestResultNative) != 12)
+		Fatal("JCreateSystem: sizeof(VolumeTestResultNative) != 12.");
+	if (sizeof(void*) == 8)
+	{
+		if (sizeof(VehicleWheelSettings) != 22 * 4 + 8)
+			Fatal("JCreateSystem: sizeof(VehicleWheelSettings) != 22 * 4 + 8.");
+	}
+	else
+	{
+		if (sizeof(VehicleWheelSettings) != 22 * 4)
+			Fatal("JCreateSystem: sizeof(VehicleWheelSettings) != 22 * 4.");
+	}
 	if (sizeof(VehicleWheelData) != 5 * 4)
-		Fatal("JPhysicsSystem_RayTest: sizeof(VehicleWheelSettings) != 5 * 4.");
+		Fatal("JCreateSystem: sizeof(VehicleWheelSettings) != 5 * 4.");
+	if (sizeof(ContactItem) != 224)
+		Fatal("JCreateSystem: sizeof(ContactItem) != 224.");
 
 	if (maxBodies < 4)
 		maxBodies = 4;
@@ -839,12 +900,16 @@ EXPORT PhysicsSystemItem* JCreateSystem(int maxBodies, int maxBodyPairs, int max
 
 	//system->system.Init(maxBodies, 0, maxBodyPairs, maxContactConstraints, system->broadPhaseLayerInterface, MyBroadPhaseCanCollide, MyObjectCanCollide);
 
-	//// Note that this is called from a job so whatever you do here needs to be thread safe.
-	//system->system.SetBodyActivationListener(&system->body_activation_listener);
+	// Note that this is called from a job so whatever you do here needs to be thread safe.
+	system->system.SetBodyActivationListener(&system->body_activation_listener);
+	system->body_activation_listener.system = system;
 
 	// Note that this is called from a job so whatever you do here needs to be thread safe.
 	system->system.SetContactListener(&system->contactListener);
 	system->contactListener.system = system;
+
+	system->system.AddStepListener(&system->physicsStepListenerForNewStepListeners);
+	system->physicsStepListenerForNewStepListeners.system = system;
 
 	return system;
 }
@@ -852,6 +917,8 @@ EXPORT PhysicsSystemItem* JCreateSystem(int maxBodies, int maxBodyPairs, int max
 EXPORT void JDestroySystem(PhysicsSystemItem* system)
 {
 	//!!!!no leaks?
+
+	system->system.RemoveStepListener(&system->physicsStepListenerForNewStepListeners);
 
 	delete system;
 }
@@ -918,6 +985,14 @@ EXPORT void JPhysicsSystem_SetPhysicsSettings(PhysicsSystemItem* system, /*bool 
 	settings.mAllowSleeping = allowSleeping;
 	settings.mCheckActiveEdges = checkActiveEdges;
 
+	//settings.mBaumgarte = 1;
+	//settings.mNumVelocitySteps = 30;
+	//settings.mNumPositionSteps = 10;
+	//settings.mLinearCastThreshold = 0.05;
+	//settings.mLinearCastMaxPenetration = 0.05;
+	//settings.mMaxPenetrationDistance = 0.01;
+
+
 	//}
 
 	system->system.SetPhysicsSettings(settings);
@@ -933,53 +1008,360 @@ EXPORT void JPhysicsSystem_OptimizeBroadPhase(PhysicsSystemItem* system)
 	system->system.OptimizeBroadPhase();
 }
 
-EXPORT void JPhysicsSystem_Update(PhysicsSystemItem* system, float deltaTime, int collisionSteps, int integrationSubSteps)
+EXPORT void JPhysicsSystem_Update(PhysicsSystemItem* system, float deltaTime, int collisionSteps/*, int integrationSubSteps*/, bool debug)
 {
-	//!!!!slowly?
-	for (std::map<uint, BodyItem*>::const_iterator it = system->bodyById.begin(); it != system->bodyById.end(); ++it)
-		it->second->contacts.clear();
+	//if (integrationSubSteps > PhysicsUpdateContext::cMaxSubSteps)
+	//	integrationSubSteps = PhysicsUpdateContext::cMaxSubSteps;
 
-	if (integrationSubSteps > PhysicsUpdateContext::cMaxSubSteps)
-		integrationSubSteps = PhysicsUpdateContext::cMaxSubSteps;
-
-	// We need a temp allocator for temporary allocations during the physics update. We're
-	// pre-allocating 10 MB to avoid having to do allocations during the physics update. 
-	// B.t.w. 10 MB is way too much for this example but it is a typical value you can use.
-	// If you don't want to pre-allocate you can also use TempAllocatorMalloc to fall back to
-	// malloc / free.
-
-	////max size
-	//TempAllocatorImpl temp_allocator(10 * 1024 * 1024);
-
-	auto& constraints = system->system.GetConstraintsNoLock();
-	for (int n = 0; n < constraints.size(); n++)
+	//clear last contacts
 	{
-		Constraint* c = constraints[n];
-		if (c->GetType() == EConstraintType::Vehicle)
-		{
-			VehicleConstraint* c2 = (VehicleConstraint*)c;
-			VehicleConstraintItem* item = (VehicleConstraintItem*)c2->GetUserData();
+		for (auto bodyItem : system->bodiesContactsToClear)
+			bodyItem->contacts.clear();
+		system->bodiesContactsToClear.clear();
+	}
 
-			if (c2->GetVehicleBody()->IsActive() || item->stepListenerAddedMustBeAdded)
+	//add step listeners to active bodies
+	{
+		auto activeBodies = system->system.GetActiveBodiesUnsafe();
+		auto count = system->system.GetNumActiveBodies();
+		for (int n = 0; n < count; n++)
+		{
+			BodyItem* body = (BodyItem*)system->system.GetBody(activeBodies[n]).GetUserData();
+
+			//update vehicle constraint of the body
+			if (body != nullptr && body->constraintsVehicleAttached)
 			{
-				if (!item->stepListenerAdded)
+				for (int n2 = 0; n2 < body->constraints.size(); n2++)
 				{
-					system->system.AddStepListener(c2);
-					item->stepListenerAdded = true;
-				}
-			}
-			else
-			{
-				if (item->stepListenerAdded)
-				{
-					system->system.RemoveStepListener(c2);
-					item->stepListenerAdded = false;
+					ConstraintItem* constraint = body->constraints[n2];
+
+					if (constraint->constraint->GetType() == EConstraintType::Vehicle)
+					{
+						VehicleConstraintItem* vehicleConstraint = (VehicleConstraintItem*)constraint;
+
+						if (!vehicleConstraint->stepListenerAdded)
+						{
+							VehicleConstraint* c2 = (VehicleConstraint*)vehicleConstraint->constraint.GetPtr();
+							if (c2->GetVehicleBody()->IsActive() || c2->IsActive())
+							{
+								system->system.AddStepListener(c2);
+								vehicleConstraint->stepListenerAdded = true;
+							}
+						}
+					}
 				}
 			}
 		}
 	}
 
-	system->system.Update(deltaTime, collisionSteps, integrationSubSteps, &tempAllocator, &job_system);
+	//auto& constraints = system->system.GetConstraintsNoLock();
+	//for (int n = 0; n < constraints.size(); n++)
+	//{
+	//	Constraint* c = constraints[n];
+	//	if (c->GetType() == EConstraintType::Vehicle)
+	//	{
+	//		VehicleConstraint* c2 = (VehicleConstraint*)c;
+	//		VehicleConstraintItem* item = (VehicleConstraintItem*)c2->GetUserData();
+
+	//		if (c2->GetVehicleBody()->IsActive() || c2->IsActive())
+	//		{
+	//			if (!item->stepListenerAdded)
+	//			{
+	//				system->system.AddStepListener(c2);
+	//				item->stepListenerAdded = true;
+	//			}
+	//		}
+	//		else
+	//		{
+	//			if (item->stepListenerAdded)
+	//			{
+	//				system->system.RemoveStepListener(c2);
+	//				item->stepListenerAdded = false;
+	//			}
+	//		}
+
+	//		//if (c2->GetVehicleBody()->IsActive() || item->stepListenerMustBeAdded)
+	//		////if (item->stepListenerMustBeAdded)
+	//		//{
+	//		//	if (!item->stepListenerAdded)
+	//		//	{
+	//		//		system->system.AddStepListener(c2);
+	//		//		item->stepListenerAdded = true;
+	//		//	}
+	//		//}
+	//		//else
+	//		//{
+	//		//	if (item->stepListenerAdded)
+	//		//	{
+	//		//		system->system.RemoveStepListener(c2);
+	//		//		item->stepListenerAdded = false;
+	//		//	}
+	//		//}
+	//	}
+	//}
+
+	auto gravity = system->system.GetGravity();
+	
+	for (const auto& pair : system->bodyCharacterModeById) //for each (auto pair in system->bodyCharacterModeById)
+	{
+		auto body = pair.second;
+
+		auto character = body->character.GetPtr();
+		if (character != nullptr)
+		{
+			//!!!!когда не обновлять?
+			//!!!!slowly?
+
+			Vec3 groundVelocity = character->GetGroundVelocity();
+			Vec3 currentVelocity = character->GetLinearVelocity();
+
+			bool inactive = character->GetGroundState() == CharacterVirtual::EGroundState::OnGround && groundVelocity == Vec3(0, 0, 0) && body->characterDesiredVelocity == Vector2::ZERO && currentVelocity.IsNearZero(0.3f * 0.3f);
+
+			//!!!!
+
+			//if ( character->GetGroundState() == CharacterVirtual::EGroundState::OnGround && groundVelocity == Vec3(0, 0, 0) && body->characterDesiredVelocity == Vector2::ZERO && character->GetLinearVelocity().IsNearZero(0.3f * 0.3f))
+			//{
+			//	//skipUpdate = true;
+
+			//	body->characterWalkUpDownLastChange = 0;
+
+			//	character->SetLinearVelocity(Vec3(0, 0, 0));
+			//}
+			//else
+			//{ 
+
+			//bool enableCharacterInertia = true;
+
+
+			//!!!!
+			//bool player_controls_horizontal_velocity = sControlMovementDuringJump || mCharacter->IsSupported();
+			//if (player_controls_horizontal_velocity)
+			//{
+			//	// Smooth the player input
+			//	mDesiredVelocity = sEnableCharacterInertia ? 0.25f * inMovementDirection * sCharacterSpeed + 0.75f * mDesiredVelocity : inMovementDirection * sCharacterSpeed;
+
+			//	// True if the player intended to move
+			//	mAllowSliding = !inMovementDirection.IsNearZero();
+			//}
+			//else
+			//{
+			//	// While in air we allow sliding
+			//	mAllowSliding = true;
+			//}
+
+			Vec3 newVelocity;
+
+			if (!inactive)
+			{
+				//!!!!0.1f?
+				//!!!!abs?
+				bool movingTowardsGround = (currentVelocity.GetZ() - groundVelocity.GetZ()) < 0.1f;
+
+				if (character->GetGroundState() == CharacterVirtual::EGroundState::OnGround && movingTowardsGround )
+				//if (character->GetGroundState() == CharacterVirtual::EGroundState::OnGround &&
+				//	(enableCharacterInertia ? movingTowardsGround : !character->IsSlopeTooSteep(character->GetGroundNormal())))
+				{
+					newVelocity = groundVelocity;
+
+					//// Jump
+					//if (inJump && moving_towards_ground)
+					//	new_velocity += sJumpSpeed * mCharacter->GetUp();
+				}
+				else
+					newVelocity = Vec3(0, 0, currentVelocity.GetZ());
+
+				newVelocity += gravity * deltaTime;
+
+				//!!!!
+				//!!!!может когда OnGround?
+				bool playerControlsHorizontalVelocity = /*sControlMovementDuringJump ||*/ character->IsSupported();
+
+				auto relativeVelocity2 = Vector2(currentVelocity.GetX() - groundVelocity.GetX(), currentVelocity.GetY() - groundVelocity.GetY());
+
+				if (playerControlsHorizontalVelocity)
+				{
+					//auto relativeVelocity = currentVelocity - groundVelocity;
+					//auto relativeVelocity2 = Vector2(relativeVelocity.GetX(), relativeVelocity.GetY());
+					////auto relativeVelocity2 = body->characterLastEffenciveVelocity - Vector2(groundVelocity.GetX(), groundVelocity.GetY());
+
+					auto v = relativeVelocity2 * 0.75f + body->characterDesiredVelocity * 0.25f;
+					newVelocity += Vec3(v.x, v.y, 0);
+
+					//without inertia
+					//newVelocity += Vec3(body->characterDesiredVelocity.x, body->characterDesiredVelocity.y, 0);
+				}
+				else
+				{
+					//auto relativeVelocity = currentVelocity - groundVelocity;
+					//auto relativeVelocity2 = Vector2(relativeVelocity.GetX(), relativeVelocity.GetY());
+
+					//float factorX = 0.01f;
+					//if (body->characterDesiredVelocity.x > 0 && body->characterDesiredVelocity.x < relativeVelocity2.x)
+					//	factorX = 0.5f;
+					//if (body->characterDesiredVelocity.x < 0 && body->characterDesiredVelocity.x > relativeVelocity2.x)
+					//	factorX = 0.5f;
+
+					//float factorY = 0.01f;
+					//if (body->characterDesiredVelocity.y > 0 && body->characterDesiredVelocity.y < relativeVelocity2.y)
+					//	factorY = 0.5f;
+					//if (body->characterDesiredVelocity.y < 0 && body->characterDesiredVelocity.y > relativeVelocity2.y)
+					//	factorY = 0.5f;
+
+					//float vx = relativeVelocity2.x * (1.0f - factorX) + body->characterDesiredVelocity.x * factorX;
+					//float vy = relativeVelocity2.y * (1.0f - factorY) + body->characterDesiredVelocity.y * factorY;
+					//newVelocity += Vec3(vx, vy, 0);
+
+					auto v = relativeVelocity2 * 0.99f + body->characterDesiredVelocity * 0.01f;
+					newVelocity += Vec3(v.x, v.y, 0);
+
+
+					//auto v = relativeVelocity2 * 0.98f + body->characterDesiredVelocity * 0.02f;
+
+					//auto newVelocityPotential = newVelocity + Vec3(v.x, v.y, 0);
+					//if (body->characterDesiredVelocity.x > 0 && newVelocityPotential.GetX() < body->characterDesiredVelocity.x)
+					//	newVelocityPotential.SetX(min(newVelocityPotential.GetX(), body->characterDesiredVelocity.x));
+
+					//newVelocity += Vec3(body->characterDesiredVelocity.x, body->characterDesiredVelocity.y, 0);
+
+					//newVelocity += Vec3(currentVelocity.GetX(), currentVelocity.GetY(), 0);
+				}
+			}
+			else
+				newVelocity = Vec3(0, 0, 0);
+
+			character->SetLinearVelocity(newVelocity);
+
+
+			auto gravity2 = inactive ? Vec3(0, 0, 0) : gravity;
+			IgnoreSingleBodyFilter bodyFilter(body->body->GetID());
+
+			//auto oldPosition = character->GetPosition();
+
+			RVec3 positionBeforeWalkUpDown;
+
+			character->ExtendedUpdate(deltaTime,
+				gravity2,
+				*body->characterUpdateSettings,
+				system->system.GetDefaultBroadPhaseLayerFilter(Layers::MOVING_AND_CHARACTER),
+				system->system.GetDefaultLayerFilter(Layers::MOVING_AND_CHARACTER),
+				bodyFilter,
+				{ },
+				tempAllocator,
+				positionBeforeWalkUpDown);
+
+
+			//fix sliding on dynamic body
+			if (character->GetGroundState() == CharacterBase::EGroundState::OnGround && body->characterDesiredVelocity == Vector2::ZERO)
+			{
+				auto groundBodyID = character->GetGroundBodyID();
+				BodyInterface& bodyInterface = body->system->GetBodyInterfaceNoLock();
+
+				if (bodyInterface.IsActive(groundBodyID))
+				{
+					auto body2 = body->body;
+					auto diffPosition = body2->GetPosition() - character->GetPosition();
+					auto velocity = character->GetLinearVelocity();
+					//auto diffVelocity = body2->GetLinearVelocity() - character->GetLinearVelocity();
+					float thresholdPos = 0.03f;
+					float thresholdVel = 0.2f;
+					if (abs(diffPosition.GetX()) < thresholdPos && abs(diffPosition.GetY()) < thresholdPos && abs(diffPosition.GetZ()) < thresholdPos &&
+						abs(velocity.GetX()) < thresholdVel && abs(velocity.GetY()) < thresholdVel && abs(velocity.GetZ()) < thresholdVel)
+						//abs(diffVelocity.GetX()) < thresholdVel && abs(diffVelocity.GetY()) < thresholdVel && abs(diffVelocity.GetZ()) < thresholdVel)
+					{
+						character->SetPosition(body2->GetPosition());
+						character->SetLinearVelocity(Vec3(0, 0, 0));
+					}
+				}
+			}
+
+			body->characterWalkUpDownLastChange = (float)(character->GetPosition().GetZ() - positionBeforeWalkUpDown.GetZ());
+
+
+			//auto effectiveVelocity = (character->GetPosition() - oldPosition) / deltaTime;
+			//body->characterLastEffenciveVelocity = Vector2(effectiveVelocity.GetX(), effectiveVelocity.GetY());
+
+			//auto effectiveVelocity = (character->GetPosition() - oldPosition) / deltaTime;
+			////if (body->characterWalkUpDownLastChange != 0)
+			////	effectiveVelocity.SetZ(0);
+			//character->SetLinearVelocity(Vec3(effectiveVelocity.GetX(), effectiveVelocity.GetY(), character->GetLinearVelocity().GetZ()));
+
+			//auto effectiveVelocity = (character->GetPosition() - oldPosition) / deltaTime;
+			//if (body->characterWalkUpDownLastChange != 0)
+			//	effectiveVelocity.SetZ(0);
+			//character->SetLinearVelocity(Vec3(effectiveVelocity));
+		}
+	}
+
+	system->system.Update(deltaTime, collisionSteps, &tempAllocator, &job_system);
+	//system->system.Update(deltaTime, collisionSteps, integrationSubSteps, &tempAllocator, &job_system);
+
+	//process activated vehicles
+	{
+		for (VehicleConstraintItem* vehicleConstraint : system->vehiclesToActivate)
+		{
+			VehicleConstraint* c2 = (VehicleConstraint*)vehicleConstraint->constraint.GetPtr();
+
+			if (c2->GetVehicleBody()->IsActive() || c2->IsActive())
+			{
+				if (!vehicleConstraint->stepListenerAdded)
+				{
+					system->system.AddStepListener(c2);
+					vehicleConstraint->stepListenerAdded = true;
+				}
+			}
+		}
+
+		system->vehiclesToActivate.clear();
+	}
+
+	//deactivate vehicles. iterate vehicle step listeners
+	{
+		std::vector<PhysicsStepListener*> toRemove;
+
+		PhysicsSystem::StepListeners& stepListeners = system->system.mStepListeners;
+		for (int n = 0; n < stepListeners.size(); n++)
+		{
+			PhysicsStepListener* listener = stepListeners[n];
+			if (listener->isVehiclePhysicsStepListener)
+			{
+				VehicleConstraint* c2 = (VehicleConstraint*)listener;
+
+				if (!c2->GetVehicleBody()->IsActive() && !c2->IsActive())
+				{
+					VehicleConstraintItem* vehicleConstraint = (VehicleConstraintItem*)c2->GetUserData();
+					vehicleConstraint->stepListenerAdded = false;
+					toRemove.push_back(c2);
+				}
+			}
+		}
+
+		for (int n = 0; n < toRemove.size(); n++)
+			system->system.RemoveStepListener(toRemove[n]);
+	}
+
+
+	//sync bodies by virtual character (body character mode)
+	for (const auto& pair : system->bodyCharacterModeById) //for each (auto pair in system->bodyCharacterModeById)
+	{
+		auto body = pair.second;
+
+		auto character = body->character.GetPtr();
+		if (character != nullptr)
+		{
+			auto body2 = body->body;
+
+			//!!!!slowly?
+			if (body2->GetPosition() != character->GetPosition() || body2->GetLinearVelocity() != character->GetLinearVelocity())
+			{
+				BodyInterface& bodyInterface = body->system->GetBodyInterfaceNoLock();
+				bodyInterface.SetPosition(body->id, character->GetPosition(), EActivation::Activate);
+				bodyInterface.SetLinearVelocity(body->id, character->GetLinearVelocity());
+
+				//ground velocity is not used inside the library, it is only for user
+				character->UpdateGroundVelocity();
+			}
+		}
+	}
 }
 
 EXPORT void JPhysicsSystem_GetActiveBodies(PhysicsSystemItem* system, int& count, uint*& bodies)
@@ -1084,7 +1466,7 @@ EXPORT void JPhysicsSystem_GetActiveBodiesFree(PhysicsSystemItem* system, uint* 
 ////	delete[] lines;
 ////}
 
-EXPORT BodyItem* JCreateBody(PhysicsSystemItem* system, ShapeItem* shape, int motionType, float linearDamping, float angularDamping, const Vector3D& position, const Vector4& rotation, bool activate, float mass, bool centerOfMassManual, const Vector3& centerOfMassPosition, const Vector3& inertiaTensorFactor, uint& resultBodyId, int motionQuality)
+EXPORT BodyItem* JCreateBody(PhysicsSystemItem* system, ShapeItem* shape, int motionType, float linearDamping, float angularDamping, const Vector3D& position, const Vector4& rotation, bool activate, float mass, const Vector3& centerOfMassOffset, /*bool centerOfMassManual, const Vector3& centerOfMassPosition, const Vector3& inertiaTensorFactor, */uint& resultBodyId, int motionQuality, bool characterMode)
 {
 	if (linearDamping < 0)
 		linearDamping = 0;
@@ -1097,24 +1479,58 @@ EXPORT BodyItem* JCreateBody(PhysicsSystemItem* system, ShapeItem* shape, int mo
 
 	auto motionType2 = (EMotionType)motionType;
 
-	//!!!!?
 	ObjectLayer objectLayer = (motionType2 != EMotionType::Static) ? Layers::MOVING : Layers::NON_MOVING;
+	if (characterMode)
+		objectLayer = Layers::CHARACTER;
 
 	BodyCreationSettings settings(shape->compoundShapeSettings, ConvertToRVec3(position), ConvertToQuat(rotation), motionType2, objectLayer);
 	//BodyCreationSettings settings(shape->compoundShapeSettings->Create().Get(), Convert(position), rotation, motionType2, objectLayer);
 
 	settings.mMotionQuality = (EMotionQuality)motionQuality;
 
-	//!!!!centerOfMassManual, const Vector3& centerOfMassPosition, const Vector3& inertiaTensorFactor
-
-	settings.mOverrideMassProperties = EOverrideMassProperties::CalculateInertia;// MassAndInertiaProvided;//CalculateInertia;
-	settings.mInertiaMultiplier = 1.0f;
 	settings.mMassPropertiesOverride.mMass = mass;
 
-	//settings.mMotionType = (EMotionType)motionType;
+	if (centerOfMassOffset != Vector3::ZERO)
+	{
+		settings.mOverrideMassProperties = EOverrideMassProperties::MassAndInertiaProvided;
+		settings.mInertiaMultiplier = 1.0f;
+
+		settings.mMassPropertiesOverride = settings.GetShape()->GetMassProperties();
+		settings.mMassPropertiesOverride.ScaleToMass(mass);
+		//settings.mMassPropertiesOverride.mInertia *= settings.mInertiaMultiplier;
+		settings.mMassPropertiesOverride.mInertia(3, 3) = 1.0f;
+
+		settings.mMassPropertiesOverride.Translate(ConvertToVec3(centerOfMassOffset));
+	}
+	else
+	{
+		settings.mOverrideMassProperties = EOverrideMassProperties::CalculateInertia;
+		settings.mInertiaMultiplier = 1.0f;
+	}
+
+	//if (centerOfMassManual)
+	//{
+	//	settings.mOverrideMassProperties = EOverrideMassProperties::MassAndInertiaProvided;
+	//	settings.mInertiaMultiplier = 1.0f;
+
+	//	settings.mMassPropertiesOverride = settings.GetShape()->GetMassProperties();
+	//	settings.mMassPropertiesOverride.ScaleToMass(mass);
+	//	//settings.mMassPropertiesOverride.mInertia *= settings.mInertiaMultiplier;
+	//	settings.mMassPropertiesOverride.mInertia(3, 3) = 1.0f;
+
+	//	//!!!!
+	//	settings.mMassPropertiesOverride.Translate(ConvertToVec3(Vector3D(0, 0, -2)));
+	//	//settings.mMassPropertiesOverride.Translate(ConvertToVec3(centerOfMassPosition));
+
+	//}
+	//else
+	//{
+	//	settings.mOverrideMassProperties = EOverrideMassProperties::CalculateInertia;
+	//	settings.mInertiaMultiplier = 1.0f;
+	//}
+
 	settings.mLinearDamping = linearDamping;
 	settings.mAngularDamping = angularDamping;
-
 
 	//!!!!
 	//CollisionGroup mCollisionGroup; ///< The collision group this body belongs to (determines if two objects can collide)
@@ -1133,6 +1549,7 @@ EXPORT BodyItem* JCreateBody(PhysicsSystemItem* system, ShapeItem* shape, int mo
 
 	auto body = new BodyItem();
 	body->system = &system->system;
+	body->systemItem = system;
 	body->body = bodyInterface.CreateBody(settings);
 	if (body->body == nullptr)
 	{
@@ -1144,17 +1561,57 @@ EXPORT BodyItem* JCreateBody(PhysicsSystemItem* system, ShapeItem* shape, int mo
 
 	bodyInterface.AddBody(body->id, activate ? EActivation::Activate : EActivation::DontActivate);
 
-	resultBodyId = (uint)body->id.GetIndexAndSequenceNumber();
+	resultBodyId = body->id.GetIndexAndSequenceNumber();
 
 	system->bodyById[resultBodyId] = body;
+	if (characterMode)
+		system->bodyCharacterModeById[resultBodyId] = body;
 	//system->bodyById.insert(std::pair<uint, BodyItem*>(resultBodyId, body));
+
+
+	if (characterMode)
+	{
+		Ref<CharacterVirtualSettings> settings = new CharacterVirtualSettings();
+
+		settings->mShape = body->body->GetShape();// mStandingShape;
+
+		//settings->mCharacterPadding = sCharacterPadding;
+		//settings->mPenetrationRecoverySpeed = sPenetrationRecoverySpeed;
+		//settings->mPredictiveContactDistance = sPredictiveContactDistance;
+
+		body->character = new CharacterVirtual(settings, body->body->GetPosition(), body->body->GetRotation(), body->system);
+		body->character->SetMass(mass);
+		body->character->SetUp(Vec3(0, 0, 1));
+
+		body->body->GetMotionProperties()->SetGravityFactor(0);
+
+		body->characterUpdateSettings = new CharacterVirtual::ExtendedUpdateSettings();
+
+		//body->characterUpdateSettings->mWalkStairsStepForwardTest = 0.3f;
+
+
+		//!!!!
+		//body->character->SetListener(this);
+	}
 
 	return body;
 }
 
 EXPORT void JDestroyBody(PhysicsSystemItem* system, BodyItem* body)
 {
+	//!!!!what to delete
+	//JBody_SetCharacterMode(body, false);
+
+	if (body->characterUpdateSettings != nullptr)
+	{
+		delete body->characterUpdateSettings;
+		body->characterUpdateSettings = nullptr;
+	}
+
 	system->bodyById.erase(body->id.GetIndexAndSequenceNumber());
+	if (body->character != nullptr)
+		system->bodyCharacterModeById.erase(body->id.GetIndexAndSequenceNumber());
+	system->bodiesContactsToClear.erase(body);
 
 	BodyInterface& bodyInterface = body->system->GetBodyInterfaceNoLock();
 	bodyInterface.RemoveBody(body->id);
@@ -1179,8 +1636,6 @@ EXPORT void JBody_GetData(BodyItem* body, Vector3D& position, Vector4& rotation,
 EXPORT void JBody_GetAABB(BodyItem* body, Vector3D& boundsMin, Vector3D& boundsMax)
 {
 	auto body2 = body->body;
-
-	//!!!!double
 	boundsMin = ConvertToVector3D(DVec3(body2->GetWorldSpaceBounds().mMin));
 	boundsMax = ConvertToVector3D(DVec3(body2->GetWorldSpaceBounds().mMax));
 }
@@ -1193,12 +1648,16 @@ EXPORT void JBody_GetShapeCenterOfMass(BodyItem* body, Vector3& centerOfMass)
 
 EXPORT void JBody_Activate(BodyItem* body)
 {
+	//!!!!character
+
 	BodyInterface& bodyInterface = body->system->GetBodyInterfaceNoLock();
 	bodyInterface.ActivateBody(body->id);
 }
 
 EXPORT void JBody_Deactivate(BodyItem* body)
 {
+	//!!!!character
+
 	BodyInterface& bodyInterface = body->system->GetBodyInterfaceNoLock();
 	bodyInterface.DeactivateBody(body->id);
 }
@@ -1207,7 +1666,12 @@ EXPORT void JBody_SetLinearVelocity(BodyItem* body, const Vector3& value)
 {
 	auto body2 = body->body;
 	if (!body2->IsStatic())
+	{
 		body2->SetLinearVelocityClamped(ConvertToVec3(value));
+
+		if (body->character != nullptr)
+			body->character->SetLinearVelocity(ConvertToVec3(value));
+	}
 }
 
 EXPORT void JBody_SetAngularVelocity(BodyItem* body, const Vector3& value)
@@ -1219,6 +1683,8 @@ EXPORT void JBody_SetAngularVelocity(BodyItem* body, const Vector3& value)
 
 EXPORT void JBody_SetFriction(BodyItem* body, float value)
 {
+	//!!!!character
+
 	if (value < 0)
 		value = 0;
 	body->body->SetFriction(value);
@@ -1226,6 +1692,8 @@ EXPORT void JBody_SetFriction(BodyItem* body, float value)
 
 EXPORT void JBody_SetRestitution(BodyItem* body, float value)
 {
+	//!!!!character
+
 	if (value < 0)
 		value = 0;
 	if (value > 1)
@@ -1235,6 +1703,8 @@ EXPORT void JBody_SetRestitution(BodyItem* body, float value)
 
 EXPORT void JBody_SetLinearDamping(BodyItem* body, float value)
 {
+	//!!!!character
+
 	if (value < 0)
 		value = 0;
 	auto body2 = body->body;
@@ -1244,6 +1714,8 @@ EXPORT void JBody_SetLinearDamping(BodyItem* body, float value)
 
 EXPORT void JBody_SetAngularDamping(BodyItem* body, float value)
 {
+	//!!!!character
+
 	if (value < 0)
 		value = 0;
 	auto body2 = body->body;
@@ -1253,8 +1725,10 @@ EXPORT void JBody_SetAngularDamping(BodyItem* body, float value)
 
 EXPORT void JBody_SetGravityFactor(BodyItem* body, float value)
 {
+	//!!!!character
+
 	auto body2 = body->body;
-	if (!body2->IsStatic() && body2->GetMotionProperties() != nullptr)
+	if (!body2->IsStatic() && body2->GetMotionProperties() != nullptr && body->character == nullptr)
 		body2->GetMotionProperties()->SetGravityFactor(value);
 }
 
@@ -1266,10 +1740,19 @@ EXPORT void JBody_SetTransform(BodyItem* body, const Vector3D& position, const V
 {
 	BodyInterface& bodyInterface = body->system->GetBodyInterfaceNoLock();
 	bodyInterface.SetPositionAndRotation(body->id, ConvertToRVec3(position), ConvertToQuat(rotation), activate ? EActivation::Activate : EActivation::DontActivate);
+
+	auto character = body->character.GetPtr();
+	if (character != nullptr)
+	{
+		character->SetPosition(ConvertToRVec3(position));
+		character->SetRotation(ConvertToQuat(rotation));
+	}
 }
 
 EXPORT void JBody_ApplyForce(BodyItem* body, const Vector3& force, const Vector3& relativePosition)
 {
+	//!!!!character
+
 	auto body2 = body->body;
 
 	if (body2->IsDynamic() && body2->GetMotionProperties() != nullptr)
@@ -1292,8 +1775,10 @@ EXPORT void JBody_SetMotionQuality(BodyItem* body, int motionQuality)
 	bodyInterface.SetMotionQuality(body->id, (EMotionQuality)motionQuality);
 }
 
-EXPORT void JBody_GetContacts(BodyItem* body, int& count, ContactsItem*& buffer)
+EXPORT void JBody_GetContacts(BodyItem* body, int& count, ContactItem*& buffer)
 {
+	//!!!!character
+
 	body->subscribedToGetContacts = true;
 
 	count = body->contacts.size();
@@ -1301,6 +1786,86 @@ EXPORT void JBody_GetContacts(BodyItem* body, int& count, ContactsItem*& buffer)
 		buffer = &body->contacts[0];
 	else
 		buffer = nullptr;
+}
+
+EXPORT bool JBody_ContactsExist(BodyItem* body)
+{
+	//!!!!character
+
+	body->subscribedToGetContacts = true;
+
+	return body->contacts.size() != 0;
+}
+
+EXPORT void JBody_SetInverseInertia(BodyItem* body, const Vector3& diagonal, const Vector4& rotation)
+{
+	auto body2 = body->body;
+
+	if (body2->IsDynamic() && body2->GetMotionProperties() != nullptr)
+		body2->GetMotionProperties()->SetInverseInertia(ConvertToVec3(diagonal), ConvertToQuat(rotation));
+}
+
+EXPORT void JBody_GetWorldSpaceSurfaceNormal(BodyItem* body, uint subShapeID, const Vector3D& position, Vector3& normal)
+{
+	SubShapeID subShapeID2;
+	subShapeID2.SetValue(subShapeID);
+
+	normal = ConvertToVector3(body->body->GetWorldSpaceSurfaceNormal(subShapeID2, ConvertToRVec3(position)));
+}
+
+EXPORT void JBody_SetCharacterModeMaxStrength(BodyItem* body, float value)
+{
+	if (body->character != nullptr)
+		body->character->SetMaxStrength(value);
+}
+
+EXPORT void JBody_SetCharacterModePredictiveContactDistance(BodyItem* body, float value)
+{
+	if (body->character != nullptr)
+		body->character->mPredictiveContactDistance = value;
+}
+
+EXPORT void JBody_SetCharacterModeWalkUpHeight(BodyItem* body, float value)
+{
+	if (body->character != nullptr)
+		body->characterUpdateSettings->mWalkStairsStepUp = Vec3(0, 0, value);
+}
+
+EXPORT void JBody_SetCharacterModeWalkDownHeight(BodyItem* body, float value)
+{
+	if (body->character != nullptr)
+		body->characterUpdateSettings->mStickToFloorStepDown = Vec3(0, 0, -value);
+}
+
+EXPORT void JBody_SetCharacterModeMaxSlopeAngle(BodyItem* body, float value)
+{
+	if (body->character != nullptr)
+		body->character->SetMaxSlopeAngle(value);
+}
+
+EXPORT void JBody_SetCharacterModeSetSupportingVolume(BodyItem* body, float value)
+{
+	if (body->character != nullptr)
+		body->character->mSupportingVolume = JPH::Plane(Vec3::sAxisZ(), -value);
+}
+
+EXPORT void JBody_SetCharacterModeSetDesiredVelocity(BodyItem* body, const Vector2& value)
+{
+	//if (body->character != nullptr)
+	body->characterDesiredVelocity = value;
+}
+
+EXPORT void JBody_GetCharacterModeData(BodyItem* body, CharacterBase::EGroundState& groundState, uint& groundBodyID, uint& groundBodySubShapeID, Vector3D& groundPosition, Vector3& groundNormal, Vector3& groundVelocity, float& walkUpDownLastChange)
+{
+	auto character = body->character.GetPtr();
+
+	groundState = character->GetGroundState();
+	groundBodyID = character->GetGroundBodyID().GetIndexAndSequenceNumber();
+	groundBodySubShapeID = character->GetGroundSubShapeID().GetValue();
+	groundPosition = ConvertToVector3D(character->GetGroundPosition());
+	groundNormal = ConvertToVector3(character->GetGroundNormal());
+	groundVelocity = ConvertToVector3(character->GetGroundVelocity());
+	walkUpDownLastChange = body->characterWalkUpDownLastChange;
 }
 
 EXPORT ShapeItem* JCreateShape(bool mutableCompoundShape)
@@ -1357,7 +1922,6 @@ EXPORT void JShape_AddBox(ShapeItem* shape, const Vector3& position, const Vecto
 		convexRadius = halfDimensions.y;
 	if (convexRadius > halfDimensions.z)
 		convexRadius = halfDimensions.z;
-
 
 	shape->compoundShapeSettings->AddShape(ConvertToVec3(position), ConvertToQuat(rotation), new BoxShape(ConvertToVec3(halfDimensions), convexRadius));
 	//shape->compoundShapeSettings->AddShape(ConvertToVec3(position), rotation, new BoxShape(ConvertToVec3(dimensions) * 0.5f, convexRadius));
@@ -1505,6 +2069,7 @@ EXPORT void JPhysicsSystem_RayTest(PhysicsSystemItem* system, const RayD& ray, i
 		RayTestModeEnum mode;
 		RayTestFlagsEnum flags;
 		ShapeItem* testShape;
+		ShapeSettings::ShapeResult testShapeResult;
 		std::vector<RayTestResultNative> results;
 
 		//!!!!?
@@ -1540,7 +2105,27 @@ EXPORT void JPhysicsSystem_RayTest(PhysicsSystemItem* system, const RayD& ray, i
 					result2.normal = ConvertToVector3(body->body->GetWorldSpaceSurfaceNormal(inResult.mSubShapeID2, ConvertToRVec3(result2.position)));
 				}
 				else
+				{
 					result2.normal = Vector3::ZERO;
+
+					//!!!!wrong. need calculate from center of mass
+					//RMat44 inv_com = GetInverseCenterOfMassTransform();
+					//result2.normal = ConvertToVector3(testShapeResult.Get()->GetSurfaceNormal(inResult.mSubShapeID2, ConvertToVec3(result2.position)));
+
+
+
+					////int shapeIndex = inResult.mSubShapeID2.GetValue();
+
+					////const Array<CompoundShapeSettings::SubShapeSettings>& subShapes = testShape->compoundShapeSettings->mSubShapes;
+					////if (shapeIndex >= 0 && shapeIndex < subShapes.size())
+					////{
+					////	const Shape* shape = subShapes[0].mShapePtr.GetPtr();
+					////	//const Shape* shape = subShapes[inResult.mSubShapeID2.GetValue()].mShapePtr.GetPtr();
+					////	result2.normal = ConvertToVector3(shape->GetSurfaceNormal(inResult.mSubShapeID2, ConvertToVec3(result2.position)));
+					////}
+					//////else
+					//////	result2.normal = Vector3::ZERO;
+				}
 			}
 			else
 				result2.normal = Vector3::ZERO;
@@ -1620,15 +2205,14 @@ EXPORT void JPhysicsSystem_RayTest(PhysicsSystemItem* system, const RayD& ray, i
 	if (testShape != nullptr)
 	{
 		//!!!!
-		ShapeSettings::ShapeResult shapeResult = testShape->compoundShapeSettings->Create();
+		collector.testShapeResult = testShape->compoundShapeSettings->Create();
+
+		//ShapeSettings::ShapeResult testShapeResult = testShape->compoundShapeSettings->Create();
 
 		//!!!!
 		SubShapeIDCreator subShapeIDCreator;
 
-		shapeResult.Get()->CastRay(ConvertToRay(ray), settings, subShapeIDCreator, collector);
-
-		//virtual void CastRay(const SubShapeIDCreator& inSubShapeIDCreator, CastRayCollector& ioCollector, const ShapeFilter& inShapeFilter = { }) const override;
-
+		collector.testShapeResult.Get()->CastRay(ConvertToRay(ray), settings, subShapeIDCreator, collector);
 	}
 	else
 	{
@@ -1671,6 +2255,9 @@ EXPORT void JPhysicsSystem_RayTestFree(PhysicsSystemItem* system, RayTestResultN
 enum class VolumeTestModeEnum
 {
 	One,
+	OneClosest,
+	OneForEach,
+	OneClosestForEach,
 	All
 };
 
@@ -1679,15 +2266,16 @@ enum VolumeTestFlagsEnum
 	VolumeTestFlagsEnum_None = 0,
 };
 
+bool SortVolumeTestResultNative(const VolumeTestResultNative& v0, const VolumeTestResultNative& v1)
+{
+	return v0.distanceScale < v1.distanceScale;
+};
+
 void VolumeTestCommon(PhysicsSystemItem* system, int mode2, int& resultCount, VolumeTestResultNative*& results, Shape& shape, const RMat44& transform, const Vector3D& direction)
 {
-	if (sizeof(VolumeTestResultNative) != 4)
-		Fatal("JPhysicsSystem_VolumeTest: sizeof(VolumeTestResultNative) != 4.");
-
 	auto mode = (VolumeTestModeEnum)mode2;
 
-
-	//!!!!scale?
+	ShapeCastSettings settings;
 
 	Vector3D direction2 = direction;
 	//!!!!good?
@@ -1696,11 +2284,18 @@ void VolumeTestCommon(PhysicsSystemItem* system, int mode2, int& resultCount, Vo
 
 	RShapeCast shapeCast(&shape, Vec3::sReplicate(1.0f), transform, ConvertToVec3(direction2));
 
-	ShapeCastSettings settings;
+	//!!!!new
+	settings.mActiveEdgeMode = EActiveEdgeMode::CollideWithAll;
+
 	//!!!!optionally?
 	settings.mBackFaceModeTriangles = EBackFaceMode::CollideWithBackFaces;
 	settings.mBackFaceModeConvex = EBackFaceMode::CollideWithBackFaces;
-	//!!!!what else?
+
+	//bool mReturnDeepestPoint = false;
+	//ECollectFacesMode			mCollectFacesMode = ECollectFacesMode::NoFaces;
+	//float						mCollisionTolerance = cDefaultCollisionTolerance;
+	//float						mPenetrationTolerance = cDefaultPenetrationTolerance;
+	//Vec3						mActiveEdgeMovementDirection = Vec3::sZero();
 
 
 	class MyCollector : public CastShapeCollector
@@ -1710,16 +2305,13 @@ void VolumeTestCommon(PhysicsSystemItem* system, int mode2, int& resultCount, Vo
 		RShapeCast* shapeCast;
 		VolumeTestModeEnum mode;
 		std::vector<VolumeTestResultNative> results;
-		std::set<uint> addedBodies;
+		//std::set<uint> addedBodies;
 
 		//
 
 		virtual void AddHit(const ShapeCastResult& inResult) override
 		{
 			//!!!!more data
-
-
-			//!!!!mFraction полезен когда sweep
 
 
 			//using Face = StaticArray<Vec3, 32>;
@@ -1743,17 +2335,36 @@ void VolumeTestCommon(PhysicsSystemItem* system, int mode2, int& resultCount, Vo
 
 			uint bodyId = inResult.mBodyID2.GetIndexAndSequenceNumber();
 
-			if (addedBodies.find(bodyId) == addedBodies.end())
+			VolumeTestResultNative result2;
+			result2.bodyId = bodyId;
+			result2.distanceScale = inResult.mFraction;
+			result2.backFaceHit = inResult.mIsBackFaceHit ? 1 : 0;
+
+			if (mode == VolumeTestModeEnum::OneForEach || mode == VolumeTestModeEnum::OneClosestForEach)
 			{
-				addedBodies.insert(bodyId);
-
-				VolumeTestResultNative result2;
-				result2.bodyId = bodyId;
-				results.push_back(result2);
-
-				if (mode == VolumeTestModeEnum::One)
-					ForceEarlyOut();
+				//replace with with same body
+				for (int n = 0; n < results.size(); n++)
+				{
+					if (results[n].bodyId == result2.bodyId)
+					{
+						if (mode == VolumeTestModeEnum::OneClosestForEach && result2.distanceScale < results[n].distanceScale)
+							results[n] = result2;
+						return;
+					}
+				}
 			}
+
+			//if (addedBodies.find(bodyId) == addedBodies.end())
+			//{
+
+			//addedBodies.insert(bodyId);
+
+			results.push_back(result2);
+
+			if (mode == VolumeTestModeEnum::One)
+				ForceEarlyOut();
+
+			//}
 		}
 	};
 
@@ -1768,8 +2379,13 @@ void VolumeTestCommon(PhysicsSystemItem* system, int mode2, int& resultCount, Vo
 	//!!!!baseOffset
 	query.CastShape(shapeCast, settings, RVec3::sZero(), collector);
 
-	if (collector.results.size() > 1 && mode == VolumeTestModeEnum::One)
-		collector.results.resize(1);
+	if (collector.results.size() > 1 && mode != VolumeTestModeEnum::OneForEach)
+	{
+		std::sort(collector.results.begin(), collector.results.end(), SortVolumeTestResultNative);
+
+		if (mode == VolumeTestModeEnum::OneClosest || mode == VolumeTestModeEnum::One)
+			collector.results.resize(1);
+	}
 
 	//out
 	resultCount = collector.results.size();
@@ -2057,33 +2673,77 @@ void MyContactListener::AddContact(const Body& inBody1, const Body& inBody2, con
 
 	if (body1->subscribedToGetContacts)
 	{
-		ContactsItem contact;
-		contact.worldPositionOn1 = ConvertToVector3D(inManifold.GetWorldSpaceContactPointOn1(0));
-		contact.worldPositionOn2 = ConvertToVector3D(inManifold.GetWorldSpaceContactPointOn2(0));
-		contact.body2Id = inBody2.GetID().GetIndexAndSequenceNumber();
+		ContactItem contact;
+		contact.body2ID = inBody2.GetID().GetIndexAndSequenceNumber();
+		contact.normal = ConvertToVector3(inManifold.mWorldSpaceNormal);
+		contact.penetrationDepth = inManifold.mPenetrationDepth;
+		//!!!!
+		contact.subShapeID1 = inManifold.mSubShapeID1.GetValue();
+		contact.subShapeID2 = inManifold.mSubShapeID2.GetValue();
+		contact.contactPointCount = min(inManifold.mRelativeContactPointsOn1.size(), (uint)4);
+		for (uint n = 0; n < contact.contactPointCount; n++)
+		{
+			contact.contactPointsOn1[n] = ConvertToVector3D(inManifold.GetWorldSpaceContactPointOn1(n));
+			contact.contactPointsOn2[n] = ConvertToVector3D(inManifold.GetWorldSpaceContactPointOn2(n));
+		}
 
 		//!!!!need mutex? // Note that this is called from a job so whatever you do here needs to be thread safe.
 		addMutex.lock();
 		body1->contacts.push_back(contact);
+		body1->systemItem->bodiesContactsToClear.insert(body1);
 		addMutex.unlock();
 	}
 
 	if (body2->subscribedToGetContacts)
 	{
-		ContactsItem contact;
-		contact.worldPositionOn1 = ConvertToVector3D(inManifold.GetWorldSpaceContactPointOn2(0));
-		contact.worldPositionOn2 = ConvertToVector3D(inManifold.GetWorldSpaceContactPointOn1(0));
-		contact.body2Id = inBody1.GetID().GetIndexAndSequenceNumber();
+		ContactItem contact;
+		contact.body2ID = inBody1.GetID().GetIndexAndSequenceNumber();
+		contact.normal = -ConvertToVector3(inManifold.mWorldSpaceNormal);
+		contact.penetrationDepth = -inManifold.mPenetrationDepth;
+		//!!!!
+		contact.subShapeID1 = inManifold.mSubShapeID2.GetValue();
+		contact.subShapeID2 = inManifold.mSubShapeID1.GetValue();
+		contact.contactPointCount = min(inManifold.mRelativeContactPointsOn1.size(), (uint)4);
+		for (uint n = 0; n < contact.contactPointCount; n++)
+		{
+			contact.contactPointsOn1[n] = ConvertToVector3D(inManifold.GetWorldSpaceContactPointOn2(n));
+			contact.contactPointsOn2[n] = ConvertToVector3D(inManifold.GetWorldSpaceContactPointOn1(n));
+		}
 
 		//!!!!need mutex? // Note that this is called from a job so whatever you do here needs to be thread safe.
 		addMutex.lock();
 		body2->contacts.push_back(contact);
+		body1->systemItem->bodiesContactsToClear.insert(body2);
 		addMutex.unlock();
 	}
 
 
-	//if (system->bodiesSubscribedToGetContacts.find(inBody1.GetID().GetIndexAndSequenceNumber()) != system->bodiesSubscribedToGetContacts.end())
+	//if (body1->subscribedToGetContacts)
 	//{
+	//	ContactsItem contact;
+	//	contact.worldPositionOn1 = ConvertToVector3D(inManifold.GetWorldSpaceContactPointOn1(0));
+	//	contact.worldPositionOn2 = ConvertToVector3D(inManifold.GetWorldSpaceContactPointOn2(0));
+	//	contact.body2Id = inBody2.GetID().GetIndexAndSequenceNumber();
+
+	//	//!!!!need mutex? // Note that this is called from a job so whatever you do here needs to be thread safe.
+	//	addMutex.lock();
+	//	body1->contacts.push_back(contact);
+	//	body1->systemItem->bodiesContactsToClear.insert(body1);
+	//	addMutex.unlock();
+	//}
+
+	//if (body2->subscribedToGetContacts)
+	//{
+	//	ContactsItem contact;
+	//	contact.worldPositionOn1 = ConvertToVector3D(inManifold.GetWorldSpaceContactPointOn2(0));
+	//	contact.worldPositionOn2 = ConvertToVector3D(inManifold.GetWorldSpaceContactPointOn1(0));
+	//	contact.body2Id = inBody1.GetID().GetIndexAndSequenceNumber();
+
+	//	//!!!!need mutex? // Note that this is called from a job so whatever you do here needs to be thread safe.
+	//	addMutex.lock();
+	//	body2->contacts.push_back(contact);
+	//	body1->systemItem->bodiesContactsToClear.insert(body2);
+	//	addMutex.unlock();
 	//}
 }
 
@@ -2125,7 +2785,7 @@ EXPORT ConstraintItem* JCreateConstraintSixDOF(PhysicsSystemItem* system, BodyIt
 		settings.MakeFixedAxis(SixDOFConstraintSettings::TranslationX);
 	else if (linearAxisX == PhysicsAxisMode::Limited)
 		settings.SetLimitedAxis(SixDOFConstraintSettings::TranslationX, linearLimitX.x, linearLimitX.y);
-	else 
+	else
 		settings.MakeFreeAxis(SixDOFConstraintSettings::TranslationX);
 
 	if (linearAxisY == PhysicsAxisMode::Locked)
@@ -2214,7 +2874,7 @@ EXPORT ConstraintItem* JCreateConstraintSixDOF(PhysicsSystemItem* system, BodyIt
 	system->system.AddConstraint(constraint->constraint);
 	bodyA->constraints.push_back(constraint);
 	bodyB->constraints.push_back(constraint);
-	constraint->constraint->SetUserData((uint64)constraint);
+	constraint->constraint->SetUserData((uint64_t)constraint);
 
 	return constraint;
 }
@@ -2246,7 +2906,7 @@ EXPORT ConstraintItem* JCreateConstraintFixed(PhysicsSystemItem* system, BodyIte
 	system->system.AddConstraint(constraint->constraint);
 	bodyA->constraints.push_back(constraint);
 	bodyB->constraints.push_back(constraint);
-	constraint->constraint->SetUserData((uint64)constraint);
+	constraint->constraint->SetUserData((uint64_t)constraint);
 	constraint->collisionsBetweenLinkedBodies = false;
 
 	return constraint;
@@ -2263,20 +2923,27 @@ EXPORT VehicleConstraintItem* JCreateConstraintVehicle(PhysicsSystemItem* system
 	if (abs(settings.mMaxPitchRollAngle - JPH_PI) < 0.001f)
 		settings.mMaxPitchRollAngle = JPH_PI;
 
-	for (int n = 0; n < wheelCount; n++)
+	for (int nWheel = 0; nWheel < wheelCount; nWheel++)
 	{
-		VehicleWheelSettings* wheelSettings = wheelsSettings + n;
+		VehicleWheelSettings* wheelSettings = wheelsSettings + nWheel;
 
 		//!!!!удаляется?
 		WheelSettingsWV* s = new WheelSettingsWV;
 
 		s->mPosition = ConvertToVec3(wheelSettings->position);
-		s->mDirection = ConvertToVec3(wheelSettings->direction);
+		s->mSuspensionDirection = ConvertToVec3(wheelSettings->direction);
+
+		//add to C#?
+		s->mSteeringAxis = Vec3(0, 0, 1);
+		s->mWheelForward = Vec3(1, 0, 0);
+		s->mWheelUp = Vec3(0, 0, 1);
+
 		s->mSuspensionMinLength = wheelSettings->suspensionMinLength;
 		s->mSuspensionMaxLength = wheelSettings->suspensionMaxLength;
 		s->mSuspensionPreloadLength = wheelSettings->suspensionPreloadLength;
-		s->mSuspensionFrequency = wheelSettings->suspensionFrequency;
-		s->mSuspensionDamping = wheelSettings->suspensionDamping;
+		//!!!!now exists StiffnessAndDamping mode
+		s->mSuspensionSpring.mFrequency = wheelSettings->suspensionFrequency;
+		s->mSuspensionSpring.mDamping = wheelSettings->suspensionDamping;
 		s->mRadius = wheelSettings->radius;
 		s->mWidth = wheelSettings->width;
 
@@ -2284,9 +2951,12 @@ EXPORT VehicleConstraintItem* JCreateConstraintVehicle(PhysicsSystemItem* system
 		s->mInertia = wheelSettings->inertia;
 		s->mAngularDamping = wheelSettings->angularDamping;
 		s->mMaxSteerAngle = wheelSettings->maxSteerAngle;
-		//!!!!
-		//LinearCurve mLongitudinalFriction;
-		//LinearCurve mLateralFriction;
+		s->mLongitudinalFriction.Clear();
+		for (int n = 0; n < wheelSettings->LongitudinalFrictionCount; n++)
+			s->mLongitudinalFriction.AddPoint(wheelSettings->LongitudinalFrictionData[n * 2 + 0], wheelSettings->LongitudinalFrictionData[n * 2 + 1]);
+		s->mLateralFriction.Clear();
+		for (int n = 0; n < wheelSettings->LateralFrictionCount; n++)
+			s->mLateralFriction.AddPoint(wheelSettings->LateralFrictionData[n * 2 + 0], wheelSettings->LateralFrictionData[n * 2 + 1]);
 		s->mMaxBrakeTorque = wheelSettings->maxBrakeTorque;
 		s->mMaxHandBrakeTorque = wheelSettings->maxHandBrakeTorque;
 
@@ -2372,7 +3042,8 @@ EXPORT VehicleConstraintItem* JCreateConstraintVehicle(PhysicsSystemItem* system
 	constraint->body = body;
 	system->system.AddConstraint(constraint->constraint);
 	body->constraints.push_back(constraint);
-	constraint->constraint->SetUserData((uint64)constraint);
+	body->constraintsVehicleAttached = true;
+	constraint->constraint->SetUserData((uint64_t)constraint);
 	constraint->collisionsBetweenLinkedBodies = false;
 
 	//collision tester
@@ -2512,8 +3183,9 @@ EXPORT void JSixDOFConstraint_SetMotor(SixDOFConstraintItem* constraint, int axi
 	auto mode2 = (EMotorState)mode;
 
 	auto& s = c->GetMotorSettings(axis2);
-	s.mFrequency = frequency;
-	s.mDamping = damping;
+	//!!!!now exists StiffnessAndDamping mode
+	s.mSpringSettings.mFrequency = frequency;
+	s.mSpringSettings.mDamping = damping;
 
 	auto isLinear = axis >= 0 && axis <= 2;
 
@@ -2549,11 +3221,17 @@ EXPORT void JSixDOFConstraint_SetMotor(SixDOFConstraintItem* constraint, int axi
 	if (mode2 == EMotorState::Velocity && !isLinear)
 	{
 		if (axis2 == SixDOFConstraint::EAxis::RotationX)
-			constraint->angularXVelocity = DegreesToRadians(target);
+			constraint->angularXVelocity = target;
 		else if (axis2 == SixDOFConstraint::EAxis::RotationY)
-			constraint->angularYVelocity = DegreesToRadians(target);
+			constraint->angularYVelocity = target;
 		else if (axis2 == SixDOFConstraint::EAxis::RotationZ)
-			constraint->angularZVelocity = DegreesToRadians(target);
+			constraint->angularZVelocity = target;
+		//if (axis2 == SixDOFConstraint::EAxis::RotationX)
+		//	constraint->angularXVelocity = DegreesToRadians(target);
+		//else if (axis2 == SixDOFConstraint::EAxis::RotationY)
+		//	constraint->angularYVelocity = DegreesToRadians(target);
+		//else if (axis2 == SixDOFConstraint::EAxis::RotationZ)
+		//	constraint->angularZVelocity = DegreesToRadians(target);
 
 		auto v = Vec3(constraint->angularXVelocity, constraint->angularYVelocity, constraint->angularZVelocity);
 		auto v2 = c->mConstraintToBody1 * (c->mConstraintToBody2.Conjugated() * v);
@@ -2565,11 +3243,17 @@ EXPORT void JSixDOFConstraint_SetMotor(SixDOFConstraintItem* constraint, int axi
 	if (mode2 == EMotorState::Position && !isLinear)
 	{
 		if (axis2 == SixDOFConstraint::EAxis::RotationX)
-			constraint->angularXPosition = DegreesToRadians(target);
+			constraint->angularXPosition = target;
 		else if (axis2 == SixDOFConstraint::EAxis::RotationY)
-			constraint->angularYPosition = DegreesToRadians(target);
+			constraint->angularYPosition = target;
 		else if (axis2 == SixDOFConstraint::EAxis::RotationZ)
-			constraint->angularZPosition = DegreesToRadians(target);
+			constraint->angularZPosition = target;
+		//if (axis2 == SixDOFConstraint::EAxis::RotationX)
+		//	constraint->angularXPosition = DegreesToRadians(target);
+		//else if (axis2 == SixDOFConstraint::EAxis::RotationY)
+		//	constraint->angularYPosition = DegreesToRadians(target);
+		//else if (axis2 == SixDOFConstraint::EAxis::RotationZ)
+		//	constraint->angularZPosition = DegreesToRadians(target);
 
 		c->SetTargetOrientationCS(Quat::sEulerAngles(Vec3(constraint->angularXPosition, constraint->angularYPosition, constraint->angularZPosition)));
 	}
@@ -2596,12 +3280,12 @@ EXPORT void JVehicleConstraint_SetDriverInput(VehicleConstraintItem* constraint,
 	//controller->SetDriverInput(constraint->forward, constraint->right, constraint->brake, constraint->handBrake);
 }
 
-EXPORT void JVehicleConstraint_SetStepListenerAddedMustBeAdded(VehicleConstraintItem* constraint, bool value)
-{
-	constraint->stepListenerAddedMustBeAdded = value;
-}
+//EXPORT void JVehicleConstraint_SetStepListenerMustBeAdded(VehicleConstraintItem* constraint, bool value)
+//{
+//	constraint->stepListenerMustBeAdded = value;
+//}
 
-EXPORT void JVehicleConstraint_GetData(VehicleConstraintItem* constraint, VehicleWheelData* wheelsData, bool& active)
+EXPORT void JVehicleConstraint_GetData(VehicleConstraintItem* constraint, VehicleWheelData* wheelsData, bool& active, int& currentGear, bool& isSwitchingGear, float& currentRPM)
 {
 	VehicleConstraint* c = (VehicleConstraint*)constraint->constraint.GetPtr();
 
@@ -2611,7 +3295,7 @@ EXPORT void JVehicleConstraint_GetData(VehicleConstraintItem* constraint, Vehicl
 		Wheel* wheel = c->GetWheel(n);
 
 		auto* settings = wheel->GetSettings();
-		Vec3 local_wheel_pos = settings->mPosition + settings->mDirection * wheel->GetSuspensionLength();
+		Vec3 local_wheel_pos = settings->mPosition + settings->mSuspensionDirection * wheel->GetSuspensionLength();
 		wheelsData[n].Position = local_wheel_pos.GetZ();
 		////slowly
 		//wheelsData[n].Position = c->GetWheelLocalTransform(n, Vec3(0, -1, 0), Vec3(0, 0, 1)).GetTranslation().GetZ();
@@ -2624,6 +3308,14 @@ EXPORT void JVehicleConstraint_GetData(VehicleConstraintItem* constraint, Vehicl
 	}
 
 	active = c->IsActive();
+
+	WheeledVehicleController* controller2 = static_cast<WheeledVehicleController*>(c->GetController());
+
+	VehicleTransmission& transmission = controller2->GetTransmission();
+	currentGear = transmission.GetCurrentGear();
+	isSwitchingGear = transmission.IsSwitchingGear();
+
+	currentRPM = controller2->GetEngine().GetCurrentRPM();
 }
 
 ////for debug
@@ -2661,3 +3353,41 @@ EXPORT void JVehicleConstraint_GetData(VehicleConstraintItem* constraint, Vehicl
 //	//// Pass the input on to the constraint
 //	//controller->SetDriverInput(constraint->forward, constraint->right, constraint->brake, constraint->handBrake);
 //}
+
+void MyBodyActivationListener::OnBodyActivated(const BodyID& inBodyID, std::uint64_t inBodyUserData)
+{
+	BodyItem* body = (BodyItem*)inBodyUserData;
+
+	//update vehicle constraint of the body
+	if( body != nullptr && body->constraintsVehicleAttached)
+	{
+		for (int n = 0; n < body->constraints.size(); n++)
+		{
+			ConstraintItem* constraint = body->constraints[n];
+
+			if (constraint->constraint->GetType() == EConstraintType::Vehicle)
+			{
+				VehicleConstraintItem* vehicleConstraint = (VehicleConstraintItem*)constraint;
+				if (!vehicleConstraint->stepListenerAdded)
+				{
+					system->vehiclesToActivateMutex.lock();
+					system->vehiclesToActivate.insert(vehicleConstraint);
+					system->vehiclesToActivateMutex.unlock();
+				}
+			}
+		}
+	}
+}
+
+void MyBodyActivationListener::OnBodyDeactivated(const BodyID& inBodyID, std::uint64_t inBodyUserData)
+{
+}
+
+void PhysicsStepListenerForNewStepListeners::OnStep(float inDeltaTime, PhysicsSystem& inPhysicsSystem)
+{
+	for (VehicleConstraintItem* vehicleConstraint : system->vehiclesToActivate)
+	{
+		VehicleConstraint* vehicleConstraint2 = (VehicleConstraint*)vehicleConstraint->constraint.GetPtr();
+		vehicleConstraint2->CallOnStep(inDeltaTime, inPhysicsSystem);
+	}
+}

@@ -1,0 +1,16 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.Mesh
+{
+	Name = Mesh
+	EditorCameraTransform = "1.37704294775239 -1.13284101713683 0.905772570758137; -0.2191854566202 0.0785722056997891 0.915470996498287 0.328172208860071; 1 1 1"
+	.component NeoAxis.MeshGeometry_Cylinder
+	{
+		Name = Mesh Geometry
+		Radius = 0.1
+		Material
+		{
+			GetByReference = "Content\\Weapons 2D\\Default\\Bullet\\Bullet.material"
+		}
+	}
+}

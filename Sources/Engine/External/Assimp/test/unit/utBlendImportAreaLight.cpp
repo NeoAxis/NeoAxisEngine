@@ -3,7 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -48,6 +48,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 class BlendImportAreaLight : public ::testing::Test {
 public:
+    BlendImportAreaLight() :
+            im(nullptr) {}
+    ~BlendImportAreaLight() override = default;
     void SetUp() override {
         im = new Assimp::Importer();
     }
@@ -69,7 +72,7 @@ TEST_F(BlendImportAreaLight, testImportLight) {
     std::vector<std::pair<std::string, size_t>> lightNames;
 
     for (size_t i = 0; i < pTest->mNumLights; i++) {
-        lightNames.push_back(std::make_pair(pTest->mLights[i]->mName.C_Str(), i));
+        lightNames.emplace_back(pTest->mLights[i]->mName.C_Str(), i);
     }
 
     std::sort(lightNames.begin(), lightNames.end());

@@ -29,8 +29,8 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v142</PlatformToolset>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -46,10 +46,10 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\_Compilation\Win64\NeoAxisCoreNative\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\_Compilation\Win64\NeoAxisCoreNative\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\_Compilation\Win64\NeoAxisCoreNative\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\_Compilation\Win64\NeoAxisCoreNative\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\_build\Win64\NeoAxisCoreNative\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\_build\Win64\NeoAxisCoreNative\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\_build\Win64\NeoAxisCoreNative\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\_build\Win64\NeoAxisCoreNative\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkIncremental>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
@@ -67,7 +67,7 @@
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>ImageLibrary;..\NativeMemoryManager;..\External\FreeImage\Source;..\External\FreeType\include;NeoAxis;NeoAxis\hacd\HACD_Lib\inc;NativeWrapper;MemoryManager;MaskedOcclusionCulling;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;NATIVEMEMORYMANAGER_EXPORTS;XAtlasCPPDLL_EXPORTS;JPH_DOUBLE_PRECISION;JPH_DEBUG_RENDERER;JPH_USE_SSE4_1;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;NATIVEMEMORYMANAGER_EXPORTS;XAtlasCPPDLL_EXPORTS;JPH_DOUBLE_PRECISION;JPH_DEBUG_RENDERER;JPH_USE_SSE4_1;JPH_FLOA_______disabled_______TING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -76,7 +76,7 @@
       <PrecompiledHeaderFile>OgreStableHeaders.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4985;4309;26409;26401;26402;26461;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4985;4309;26409;26401;26402;26461;26496;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FloatingPointExceptions>false</FloatingPointExceptions>
@@ -102,8 +102,8 @@
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.lib ..\Lib\Windows_x64
-copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows"
+      <Command>copy ..\..\..\_build\Win64\NeoAxisCoreNative\NeoAxisCoreNative.lib ..\Lib\Windows_x64
+copy ..\..\..\_build\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -117,7 +117,7 @@ copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalIncludeDirectories>ImageLibrary;..\NativeMemoryManager;..\External\FreeImage\Source;..\External\FreeType\include;NeoAxis;NeoAxis\hacd\HACD_Lib\inc;NativeWrapper;MemoryManager;MaskedOcclusionCulling;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;NATIVEMEMORYMANAGER_EXPORTS;XAtlasCPPDLL_EXPORTS;JPH_DOUBLE_PRECISION;JPH_DEBUG_RENDERER;JPH_USE_SSE4_1;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;NATIVEMEMORYMANAGER_EXPORTS;XAtlasCPPDLL_EXPORTS;JPH_DOUBLE_PRECISION;JPH_DEBUG_RENDERER;JPH_USE_SSE4_1;JPH_FLOA_______disabled_______TING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
@@ -151,8 +151,8 @@ copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.lib ..\Lib\Windows_x64
-copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows"
+      <Command>copy ..\..\..\_build\Win64\NeoAxisCoreNative\NeoAxisCoreNative.lib ..\Lib\Windows_x64
+copy ..\..\..\_build\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -222,7 +222,6 @@ copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\
     <ClCompile Include="Jolt\Geometry\ConvexHullBuilder2D.cpp" />
     <ClCompile Include="Jolt\Geometry\Indexify.cpp" />
     <ClCompile Include="Jolt\Geometry\OrientedBox.cpp" />
-    <ClCompile Include="Jolt\Math\UVec4.cpp" />
     <ClCompile Include="Jolt\Math\Vec3.cpp" />
     <ClCompile Include="Jolt\NeoAxisPhysicsNative.cpp" />
     <ClCompile Include="Jolt\ObjectStream\ObjectStream.cpp" />
@@ -297,6 +296,7 @@ copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\
     <ClCompile Include="Jolt\Physics\Constraints\RackAndPinionConstraint.cpp" />
     <ClCompile Include="Jolt\Physics\Constraints\SixDOFConstraint.cpp" />
     <ClCompile Include="Jolt\Physics\Constraints\SliderConstraint.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\SpringSettings.cpp" />
     <ClCompile Include="Jolt\Physics\Constraints\SwingTwistConstraint.cpp" />
     <ClCompile Include="Jolt\Physics\Constraints\TwoBodyConstraint.cpp" />
     <ClCompile Include="Jolt\Physics\DeterminismLog.cpp" />
@@ -390,6 +390,15 @@ copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\
     <ClCompile Include="NeoAxis\vhacd\src\vhacdMesh.cpp" />
     <ClCompile Include="NeoAxis\vhacd\src\vhacdRaycastMesh.cpp" />
     <ClCompile Include="NeoAxis\vhacd\src\vhacdVolume.cpp" />
+    <ClCompile Include="SimpleTrayIcon\dllapi.cpp" />
+    <ClCompile Include="SimpleTrayIcon\dllmain.cpp" />
+    <ClCompile Include="SimpleTrayIcon\MyTrayMenu.cpp" />
+    <ClCompile Include="SimpleTrayIcon\TrayIcon.cpp" />
+    <ClCompile Include="SimpleTrayIcon\TrayIconManager.cpp" />
+    <ClCompile Include="SimpleTrayIcon\TrayMenuItem.cpp" />
+    <ClCompile Include="SimpleTrayIcon\TrayMenuItemBase.cpp" />
+    <ClCompile Include="SimpleTrayIcon\TrayMenuPopup.cpp" />
+    <ClCompile Include="SimpleTrayIcon\TrayMenuSeparator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImageLibrary\DataReaderWriter.h" />
@@ -695,6 +704,7 @@ copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\
     <ClInclude Include="Jolt\Physics\Constraints\RackAndPinionConstraint.h" />
     <ClInclude Include="Jolt\Physics\Constraints\SixDOFConstraint.h" />
     <ClInclude Include="Jolt\Physics\Constraints\SliderConstraint.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\SpringSettings.h" />
     <ClInclude Include="Jolt\Physics\Constraints\SwingTwistConstraint.h" />
     <ClInclude Include="Jolt\Physics\Constraints\TwoBodyConstraint.h" />
     <ClInclude Include="Jolt\Physics\DeterminismLog.h" />
@@ -796,6 +806,17 @@ copy ..\..\_Compilation\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\
     <ClInclude Include="NeoAxis\vhacd\src\vhacdVHACD.h" />
     <ClInclude Include="NeoAxis\vhacd\src\vhacdVolume.h" />
     <ClInclude Include="NeoAxis\vhacd\VHACD.h" />
+    <ClInclude Include="SimpleTrayIcon\dllapi.h" />
+    <ClInclude Include="SimpleTrayIcon\framework.h" />
+    <ClInclude Include="SimpleTrayIcon\MyTrayMenu.h" />
+    <ClInclude Include="SimpleTrayIcon\pch.h" />
+    <ClInclude Include="SimpleTrayIcon\TrayIcon.h" />
+    <ClInclude Include="SimpleTrayIcon\TrayIconManager.h" />
+    <ClInclude Include="SimpleTrayIcon\TrayMenuItem.h" />
+    <ClInclude Include="SimpleTrayIcon\TrayMenuItemBase.h" />
+    <ClInclude Include="SimpleTrayIcon\TrayMenuPopup.h" />
+    <ClInclude Include="SimpleTrayIcon\TrayMenuSeparator.h" />
+    <ClInclude Include="SimpleTrayIcon\Win32Exception.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Jolt\Core\FixedSizeFreeList.inl" />

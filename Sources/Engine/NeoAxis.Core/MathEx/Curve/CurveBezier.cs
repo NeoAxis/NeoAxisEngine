@@ -12,7 +12,7 @@ namespace NeoAxis
 	public class CurveBezier : Curve
 	{
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public unsafe override Vector3 CalculateValueByTime( double time )
+		public unsafe override void CalculateValueByTime( double time, out Vector3 result )
 		{
 #if UWP
 			//!!!!
@@ -22,12 +22,29 @@ namespace NeoAxis
 #endif
 			{
 				Basis( points.Count, time, bvals, 0 );
-				Vector3 v = bvals[ 0 ] * points[ 0 ].value;
+				result = bvals[ 0 ] * points[ 0 ].value;
 				for( int i = 1; i < points.Count; i++ )
-					v += bvals[ i ] * points[ i ].value;
-				return v;
+					result += bvals[ i ] * points[ i ].value;
 			}
 		}
+
+		//		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//		public unsafe override Vector3 CalculateValueByTime( double time )
+		//		{
+		//#if UWP
+		//			//!!!!
+		//			fixed(double* bvals = new double[ points.Count ] )
+		//#else
+		//			fixed( double* bvals = points.Count < 128 ? stackalloc double[ points.Count ] : new double[ points.Count ] )
+		//#endif
+		//			{
+		//				Basis( points.Count, time, bvals, 0 );
+		//				Vector3 v = bvals[ 0 ] * points[ 0 ].value;
+		//				for( int i = 1; i < points.Count; i++ )
+		//					v += bvals[ i ] * points[ i ].value;
+		//				return v;
+		//			}
+		//		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe override Vector3 GetCurrentFirstDerivative( double time )

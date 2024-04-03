@@ -2,11 +2,6 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.IO;
-using System.Drawing.Design;
 using System.Text;
 using NeoAxis.Editor;
 
@@ -16,7 +11,7 @@ namespace NeoAxis
 	/// The component for adding a virtual method to the parent component.
 	/// </summary>
 #if !DEPLOY
-	[NewObjectSettings( typeof( NewObjectSettingsMethod ) )]
+	[NewObjectSettings( "NeoAxis.Editor.VirtualMethodNewObjectSettings" )]
 #endif
 	public class VirtualMethod : VirtualMember
 	{
@@ -38,7 +33,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _parameters.BeginSet( ref value ) )
+		//		if( _parameters.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -62,7 +57,7 @@ namespace NeoAxis
 			get { if( _body.BeginGet() ) Body = _body.Get( this ); return _body.value; }
 			set
 			{
-				if( _body.BeginSet( ref value ) )
+				if( _body.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -114,31 +109,6 @@ namespace NeoAxis
 				}
 			}
 		}
-
-		/////////////////////////////////////////
-
-#if !DEPLOY
-		/// <summary>
-		/// A set of settings for <see cref="VirtualMethod"/> creation in the editor.
-		/// </summary>
-		public class NewObjectSettingsMethod : NewObjectSettings
-		{
-			[DefaultValue( true )]
-			[Category( "Options" )]
-			[DisplayName( "Flow Graph" )]
-			public bool FlowGraph { get; set; } = true;
-
-			public override bool Creation( NewObjectCell.ObjectCreationContext context )
-			{
-				var method = (VirtualMethod)context.newObject;
-
-				if( FlowGraph )
-					method.NewObjectCreateFlowGraph();
-
-				return base.Creation( context );
-			}
-		}
-#endif
 
 		/////////////////////////////////////////
 
@@ -319,7 +289,7 @@ namespace NeoAxis
 		//	}
 		//}
 
-		void NewObjectCreateFlowGraph()
+		public void NewObjectCreateFlowGraph()
 		{
 			var graph = CreateComponent<FlowGraph>();
 			graph.Name = "Flow Graph";

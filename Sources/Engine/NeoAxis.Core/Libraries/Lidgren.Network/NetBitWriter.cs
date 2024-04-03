@@ -232,10 +232,12 @@ namespace Internal.Lidgren.Network
 		{
 			Debug.Assert(((numberOfBits > 0) && (numberOfBits <= 16)), "ReadUInt16() can only read between 1 and 16 bits");
 
+//#if !ANDROID
 			if (numberOfBits == 16 && (readBitOffset & 7) == 0)
 			{
 				return NetUtility.ReadUnaligned<ushort>(fromBuffer.Slice(readBitOffset >> 3));
 			}
+//#endif
 
 			ushort returnValue;
 			if (numberOfBits <= 8)
@@ -268,10 +270,12 @@ namespace Internal.Lidgren.Network
 		{
 			NetException.Assert(((numberOfBits > 0) && (numberOfBits <= 32)), "ReadUInt32() can only read between 1 and 32 bits");
 
+//#if !ANDROID
 			if (numberOfBits == 32 && ((readBitOffset & 7) == 0))
 			{
 				return NetUtility.ReadUnaligned<uint>(fromBuffer.Slice(readBitOffset >> 3));
 			}
+//#endif
 
 			uint returnValue;
 			if (numberOfBits <= 8)

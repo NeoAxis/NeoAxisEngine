@@ -27,7 +27,7 @@ namespace NeoAxis
 		public Reference<double> Intensity
 		{
 			get { if( _intensity.BeginGet() ) Intensity = _intensity.Get( this ); return _intensity.value; }
-			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
+			set { if( _intensity.BeginSet( this, ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
 		public event Action<RenderingEffect_Bloom> IntensityChanged;
@@ -42,7 +42,7 @@ namespace NeoAxis
 		public Reference<double> BrightThreshold
 		{
 			get { if( _brightThreshold.BeginGet() ) BrightThreshold = _brightThreshold.Get( this ); return _brightThreshold.value; }
-			set { if( _brightThreshold.BeginSet( ref value ) ) { try { BrightThresholdChanged?.Invoke( this ); } finally { _brightThreshold.EndSet(); } } }
+			set { if( _brightThreshold.BeginSet( this, ref value ) ) { try { BrightThresholdChanged?.Invoke( this ); } finally { _brightThreshold.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BrightThreshold"/> property value changes.</summary>
 		public event Action<RenderingEffect_Bloom> BrightThresholdChanged;
@@ -57,7 +57,7 @@ namespace NeoAxis
 		public Reference<double> Scale
 		{
 			get { if( _scale.BeginGet() ) Scale = _scale.Get( this ); return _scale.value; }
-			set { if( _scale.BeginSet( ref value ) ) { try { ScaleChanged?.Invoke( this ); } finally { _scale.EndSet(); } } }
+			set { if( _scale.BeginSet( this, ref value ) ) { try { ScaleChanged?.Invoke( this ); } finally { _scale.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Scale"/> property value changes.</summary>
 		public event Action<RenderingEffect_Bloom> ScaleChanged;
@@ -72,7 +72,7 @@ namespace NeoAxis
 		public Reference<double> BlurFactor
 		{
 			get { if( _blurFactor.BeginGet() ) BlurFactor = _blurFactor.Get( this ); return _blurFactor.value; }
-			set { if( _blurFactor.BeginSet( ref value ) ) { try { BlurFactorChanged?.Invoke( this ); } finally { _blurFactor.EndSet(); } } }
+			set { if( _blurFactor.BeginSet( this, ref value ) ) { try { BlurFactorChanged?.Invoke( this ); } finally { _blurFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BlurFactor"/> property value changes.</summary>
 		public event Action<RenderingEffect_Bloom> BlurFactorChanged;
@@ -86,7 +86,7 @@ namespace NeoAxis
 		public Reference<RenderingPipeline_Basic.DownscalingModeEnum> BlurDownscalingMode
 		{
 			get { if( _blurDownscalingMode.BeginGet() ) BlurDownscalingMode = _blurDownscalingMode.Get( this ); return _blurDownscalingMode.value; }
-			set { if( _blurDownscalingMode.BeginSet( ref value ) ) { try { BlurDownscalingModeChanged?.Invoke( this ); } finally { _blurDownscalingMode.EndSet(); } } }
+			set { if( _blurDownscalingMode.BeginSet( this, ref value ) ) { try { BlurDownscalingModeChanged?.Invoke( this ); } finally { _blurDownscalingMode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BlurDownscalingMode"/> property value changes.</summary>
 		public event Action<RenderingEffect_Bloom> BlurDownscalingModeChanged;
@@ -101,7 +101,7 @@ namespace NeoAxis
 		public Reference<int> BlurDownscalingValue
 		{
 			get { if( _blurDownscalingValue.BeginGet() ) BlurDownscalingValue = _blurDownscalingValue.Get( this ); return _blurDownscalingValue.value; }
-			set { if( _blurDownscalingValue.BeginSet( ref value ) ) { try { BlurDownscalingValueChanged?.Invoke( this ); } finally { _blurDownscalingValue.EndSet(); } } }
+			set { if( _blurDownscalingValue.BeginSet( this, ref value ) ) { try { BlurDownscalingValueChanged?.Invoke( this ); } finally { _blurDownscalingValue.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BlurDownscalingValue"/> property value changes.</summary>
 		public event Action<RenderingEffect_Bloom> BlurDownscalingValueChanged;

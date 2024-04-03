@@ -16,5 +16,5 @@ vec3 v_cameraPositionObjectSpace : TEXCOORD4 = vec3(0.0, 0.0, 0.0);
 vec4 v_worldMatrix0 : TEXCOORD5 = vec4(0.0, 0.0, 0.0, 0.0);
 vec4 v_worldMatrix1 : TEXCOORD6 = vec4(0.0, 0.0, 0.0, 0.0);
 vec4 v_worldMatrix2 : TEXCOORD7 = vec4(0.0, 0.0, 0.0, 0.0);
-
 float glPositionZ : TEXCOORD8 = 0.0;
+vec4 v_colorParameter : TEXCOORD9;

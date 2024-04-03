@@ -56,7 +56,7 @@ namespace NeoAxis
 		public Reference<TypeEnum> Type
 		{
 			get { if( _type.BeginGet() ) Type = _type.Get( this ); return _type.value; }
-			set { if( _type.BeginSet( ref value ) ) { try { TypeChanged?.Invoke( this ); } finally { _type.EndSet(); } } }
+			set { if( _type.BeginSet( this, ref value ) ) { try { TypeChanged?.Invoke( this ); } finally { _type.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Type"/> property value changes.</summary>
 		public event Action<ShaderScript> TypeChanged;
@@ -83,7 +83,7 @@ namespace NeoAxis
 		[FlowGraphBrowsable( false )]
 		//!!!!
 #if !DEPLOY
-		[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
+		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
 		//!!!![Editor( typeof( HCItemScript ), typeof( object ) )]
 #endif
 		public Reference<string> Code
@@ -91,7 +91,7 @@ namespace NeoAxis
 			get { if( _code.BeginGet() ) Code = _code.Get( this ); return _code.value; }
 			set
 			{
-				if( _code.BeginSet( ref value ) )
+				if( _code.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -130,7 +130,7 @@ namespace NeoAxis
 		//	get { if( _flowSupport.BeginGet() ) FlowSupport = _flowSupport.Get( this ); return _flowSupport.value; }
 		//	set
 		//	{
-		//		if( _flowSupport.BeginSet( ref value ) )
+		//		if( _flowSupport.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -161,7 +161,7 @@ namespace NeoAxis
 		//public Reference<FlowInput> Exit
 		//{
 		//	get { if( _exit.BeginGet() ) Exit = _exit.Get( this ); return _exit.value; }
-		//	set { if( _exit.BeginSet( ref value ) ) { try { ExitChanged?.Invoke( this ); } finally { _exit.EndSet(); } } }
+		//	set { if( _exit.BeginSet( this, ref value ) ) { try { ExitChanged?.Invoke( this ); } finally { _exit.EndSet(); } } }
 		//}
 		//public event Action<ShaderScript> ExitChanged;
 		//ReferenceField<FlowInput> _exit;

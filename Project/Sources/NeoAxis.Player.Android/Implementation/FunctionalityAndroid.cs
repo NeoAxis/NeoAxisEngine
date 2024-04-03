@@ -144,6 +144,11 @@ namespace NeoAxis
 			//!!!!
 		}
 
+		public override void SetWindowVisible( bool value )
+		{
+			//!!!!
+		}
+
 		public override bool IsFocused()
 		{
 			//!!!!

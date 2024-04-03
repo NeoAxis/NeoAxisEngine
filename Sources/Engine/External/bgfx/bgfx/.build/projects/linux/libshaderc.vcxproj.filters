@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="bgfx">
+      <UniqueIdentifier>{0d42238f-2f99-42c7-ad86-d117c4690432}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bx">
+      <UniqueIdentifier>{a470b5c5-82c8-431e-81d4-e6be57d741c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tools">
+      <UniqueIdentifier>{d84854af-180e-4644-8500-059e0eebee36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tools\shaderc">
+      <UniqueIdentifier>{e57f6684-d69a-4b88-83b1-9c30c22e0e59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="fcpp">
+      <UniqueIdentifier>{4774805e-8670-45e4-82b3-32c901d1c295}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\shader_spirv.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\vertexlayout.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\allocator.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\bounds.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\bx.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\commandline.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\crtnone.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\debug.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\dtoa.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\easing.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\file.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\filepath.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\hash.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\math.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\mutex.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\os.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\process.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\semaphore.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\settings.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\sort.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\string.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\thread.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\timer.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\url.cpp">
+      <Filter>bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\Library.cpp">
+      <Filter>tools\shaderc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\LibraryBase.cpp">
+      <Filter>tools\shaderc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc.cpp">
+      <Filter>tools\shaderc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc_spirv.cpp">
+      <Filter>tools\shaderc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp1.c">
+      <Filter>fcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp2.c">
+      <Filter>fcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp3.c">
+      <Filter>fcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp4.c">
+      <Filter>fcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp5.c">
+      <Filter>fcpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp6.c">
+      <Filter>fcpp</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -13,11 +13,14 @@ namespace NeoAxis
 
 		struct Wrapper
 		{
-			//#if DEBUG
-			//			public const string library = "shaderc_debug";
-			//#else
-			public const string library = "shaderc";
-			//#endif
+			public const string library = "bgfx";
+
+			////#if DEBUG
+			////			public const string library = "shaderc_debug";
+			////#else
+			//public const string library = "shaderc";
+			////#endif
+
 			public const CallingConvention convention = CallingConvention.Cdecl;
 		}
 
@@ -74,7 +77,7 @@ namespace NeoAxis
 		public enum ShaderModel
 		{
 			DX11_SM5,
-			DX12_SM6,
+			DX12,
 			OpenGLES,
 			Vulkan,
 		}

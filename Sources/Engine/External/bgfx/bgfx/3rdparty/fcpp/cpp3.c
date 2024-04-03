@@ -40,8 +40,8 @@ ReturnCode fpp_openfile(struct Global *global, char *filename)
   if (global->openfile)
     fp = global->openfile(filename, "r", global->userdata);
   else {
-    //!!!!
-#if defined(__ANDROID__) || defined(IOS)
+    //!!!!betauser
+#if defined(__ANDROID__) || defined(IOS) || defined(LINUX)
     fp = fopen(filename, "r");
 #else
     wchar_t wfileName[PATH_MAX + 1];

@@ -1,6 +1,8 @@
-.component NeoAxis.Component_Material
+// Made with NeoAxis Engine 2024.1.
+
+.component NeoAxis.Material
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1195, 842\"><KW V=\"1\" A=\"9BF359D98F0F4183CAA716017CFCA89F\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"442A0CEE78AE4CC1DA94E3F2225C80A4\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"9BF359D98F0F4183CAA716017CFCA89F\"><KP UN=\"F16ED1A712F94AEC8CBF1CFF2DFB5C66\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"9BF359D98F0F4183CAA716017CFCA89F\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"9BF359D98F0F4183CAA716017CFCA89F\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"442A0CEE78AE4CC1DA94E3F2225C80A4\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"9BF359D98F0F4183CAA716017CFCA89F\"><KP UN=\"F16ED1A712F94AEC8CBF1CFF2DFB5C66\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"9BF359D98F0F4183CAA716017CFCA89F\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BlendMode = Masked
 	OpacityDithering = True
 	BaseColor
@@ -11,11 +13,11 @@
 	{
 		GetByReference = "this:$Shader graph\\$Node Shader Texture Sample 2\\$Shader Texture Sample\\R"
 	}
-	.component NeoAxis.Component_FlowGraph
+	.component NeoAxis.FlowGraph
 	{
 		Name = Shader graph
 		EditorScrollPosition = 35.5326782477697 24.9313720540186
-		.component NeoAxis.Component_FlowGraphNode
+		.component NeoAxis.FlowGraphNode
 		{
 			Name = "Node "
 			Position = 40 15
@@ -24,7 +26,7 @@
 				GetByReference = "this:..\\.."
 			}
 		}
-		.component NeoAxis.Component_FlowGraphNode
+		.component NeoAxis.FlowGraphNode
 		{
 			Name = Node Shader Texture Sample 1
 			Position = 18 13
@@ -32,7 +34,7 @@
 			{
 				GetByReference = "this:$Shader Texture Sample"
 			}
-			.component NeoAxis.Component_ShaderTextureSample
+			.component NeoAxis.ShaderTextureSample
 			{
 				Name = Shader Texture Sample
 				Location2 = 0 0
@@ -43,7 +45,7 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_FlowGraphNode
+		.component NeoAxis.FlowGraphNode
 		{
 			Name = Node Shader Texture Sample 2
 			Position = 18 24
@@ -51,7 +53,7 @@
 			{
 				GetByReference = "this:$Shader Texture Sample"
 			}
-			.component NeoAxis.Component_ShaderTextureSample
+			.component NeoAxis.ShaderTextureSample
 			{
 				Name = Shader Texture Sample
 				TextureType = Mask

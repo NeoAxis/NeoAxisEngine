@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -42,7 +42,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DefineConstants>TRACE;DEBUG;UWP;DEPLOY;NO_EMIT;HAVE_PROCESS;HAVE_ENVIRONMENT;HAVE_LOCK;HAVE_THREAD_ID;HAVE_ATTR_DEFINED;HAVE_ADO_NET;HAVE_APP_DOMAIN;HAVE_ASYNC;HAVE_BINARY_FORMATTER;HAVE_BINARY_SERIALIZATION;HAVE_BINARY_EXCEPTION_SERIALIZATION;HAVE_CHAR_TO_LOWER_WITH_CULTURE;HAVE_CHAR_TO_STRING_WITH_CULTURE;HAVE_COM_ATTRIBUTES;HAVE_COMPONENT_MODEL;HAVE_CONCURRENT_COLLECTIONS;HAVE_COVARIANT_GENERICS;HAVE_DATE_TIME_OFFSET;HAVE_DB_NULL_TYPE_CODE;HAVE_DYNAMIC;HAVE_EMPTY_TYPES;HAVE_ENTITY_FRAMEWORK;HAVE_EXPRESSIONS;HAVE_FAST_REVERSE;HAVE_FSHARP_TYPES;HAVE_FULL_REFLECTION;HAVE_GUID_TRY_PARSE;HAVE_HASH_SET;HAVE_ICLONEABLE;HAVE_ICONVERTIBLE;HAVE_INOTIFY_COLLECTION_CHANGED;HAVE_INOTIFY_PROPERTY_CHANGING;HAVE_ISET;HAVE_LINQ;HAVE_MEMORY_BARRIER;HAVE_METHOD_IMPL_ATTRIBUTE;HAVE_NON_SERIALIZED_ATTRIBUTE;HAVE_READ_ONLY_COLLECTIONS;HAVE_SECURITY_SAFE_CRITICAL_ATTRIBUTE;HAVE_SERIALIZATION_BINDER_BIND_TO_NAME;HAVE_STREAM_READER_WRITER_CLOSE;HAVE_STRING_JOIN_WITH_ENUMERABLE;HAVE_TIME_SPAN_PARSE_WITH_CULTURE;HAVE_TIME_SPAN_TO_STRING_WITH_CULTURE;HAVE_TIME_ZONE_INFO;HAVE_TRACE_WRITER;HAVE_TYPE_DESCRIPTOR;HAVE_UNICODE_SURROGATE_DETECTION;HAVE_VARIANT_TYPE_PARAMETERS;HAVE_VERSION_TRY_PARSE;HAVE_XML_DOCUMENT;HAVE_XML_DOCUMENT_TYPE;HAVE_CONCURRENT_DICTIONARY;NETSTANDARD2_0;NET45;NO_UI_WEB_BROWSER</DefineConstants>
-    <NoWarn>2008;DE0006;DE0009;CS0414;CS0649;CS0618;CS0108;MSB3042</NoWarn>
+    <NoWarn>2008;DE0006;DE0009;CS0414;CS0649;CS0618;CS0108;MSB3042;CS0169;CS0067</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -55,7 +55,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <DefineConstants>UWP;DEPLOY;NO_EMIT;HAVE_PROCESS;HAVE_ENVIRONMENT;HAVE_LOCK;HAVE_THREAD_ID;HAVE_ATTR_DEFINED;HAVE_ADO_NET;HAVE_APP_DOMAIN;HAVE_ASYNC;HAVE_BINARY_FORMATTER;HAVE_BINARY_SERIALIZATION;HAVE_BINARY_EXCEPTION_SERIALIZATION;HAVE_CHAR_TO_LOWER_WITH_CULTURE;HAVE_CHAR_TO_STRING_WITH_CULTURE;HAVE_COM_ATTRIBUTES;HAVE_COMPONENT_MODEL;HAVE_CONCURRENT_COLLECTIONS;HAVE_COVARIANT_GENERICS;HAVE_DATE_TIME_OFFSET;HAVE_DB_NULL_TYPE_CODE;HAVE_DYNAMIC;HAVE_EMPTY_TYPES;HAVE_ENTITY_FRAMEWORK;HAVE_EXPRESSIONS;HAVE_FAST_REVERSE;HAVE_FSHARP_TYPES;HAVE_FULL_REFLECTION;HAVE_GUID_TRY_PARSE;HAVE_HASH_SET;HAVE_ICLONEABLE;HAVE_ICONVERTIBLE;HAVE_INOTIFY_COLLECTION_CHANGED;HAVE_INOTIFY_PROPERTY_CHANGING;HAVE_ISET;HAVE_LINQ;HAVE_MEMORY_BARRIER;HAVE_METHOD_IMPL_ATTRIBUTE;HAVE_NON_SERIALIZED_ATTRIBUTE;HAVE_READ_ONLY_COLLECTIONS;HAVE_SECURITY_SAFE_CRITICAL_ATTRIBUTE;HAVE_SERIALIZATION_BINDER_BIND_TO_NAME;HAVE_STREAM_READER_WRITER_CLOSE;HAVE_STRING_JOIN_WITH_ENUMERABLE;HAVE_TIME_SPAN_PARSE_WITH_CULTURE;HAVE_TIME_SPAN_TO_STRING_WITH_CULTURE;HAVE_TIME_ZONE_INFO;HAVE_TRACE_WRITER;HAVE_TYPE_DESCRIPTOR;HAVE_UNICODE_SURROGATE_DETECTION;HAVE_VARIANT_TYPE_PARAMETERS;HAVE_VERSION_TRY_PARSE;HAVE_XML_DOCUMENT;HAVE_XML_DOCUMENT_TYPE;HAVE_CONCURRENT_DICTIONARY;NETSTANDARD2_0;NET45;NO_UI_WEB_BROWSER</DefineConstants>
     <Optimize>false</Optimize>
-    <NoWarn>2008;DE0006;DE0009;CS0414;CS0649;CS0618;CS0108;MSB3042</NoWarn>
+    <NoWarn>2008;DE0006;DE0009;CS0414;CS0649;CS0618;CS0108;MSB3042;CS0169;CS0067</NoWarn>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -68,12 +68,6 @@
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\NeoAxis.Core.UWP.rd.xml" />
-    <EmbeddedResource Include="WinForms\EngineViewportControl.resx">
-      <DependentUpon>EngineViewportControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="WinForms\EUserControl.resx">
-      <DependentUpon>EUserControl.cs</DependentUpon>
-    </EmbeddedResource>
     <Compile Include="Base\AssemblyResource.cs" />
     <Compile Include="Base\Common.cs" />
     <Compile Include="Base\Component.cs" />
@@ -125,7 +119,6 @@
     <Compile Include="EngineApp\LanguageManager.cs" />
     <Compile Include="EngineApp\PlatformFunctionality.cs" />
     <Compile Include="FileSystem\ArchiveManager.cs" />
-    <Compile Include="FileSystem\PlatformSpecificUtility.cs" />
     <Compile Include="FileSystem\VirtualDirectory.cs" />
     <Compile Include="FileSystem\VirtualFile.cs" />
     <Compile Include="FileSystem\VirtualFileSystem.cs" />
@@ -212,7 +205,9 @@
     <Compile Include="Networking\Common\NetworkStubs.cs" />
     <Compile Include="Project settings\ProjectSettings.cs" />
     <Compile Include="Project settings\ProjectSettingsComponent.cs" />
-    <Compile Include="Project settings\ProjectSettingsPage.cs" />
+    <Compile Include="Project settings\ProjectSettingsPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Project settings\ProjectSettingsPage_CSharpEditor.cs" />
     <Compile Include="Project settings\ProjectSettingsPage_CustomSplashScreen.cs" />
     <Compile Include="Project settings\ProjectSettingsPage_General.cs" />
@@ -224,7 +219,6 @@
     <Compile Include="Project settings\ProjectSettingsPage_TextEditor.cs" />
     <Compile Include="Project settings\ProjectSettingsPage_UIEditor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs" />
     <Compile Include="Properties\Settings.Designer.cs" />
     <Compile Include="Renderer\CanvasRenderer.cs" />
     <Compile Include="Renderer\CanvasRendererImpl.cs" />
@@ -261,7 +255,6 @@
     <Compile Include="Renderer\Viewport.cs" />
     <Compile Include="Renderer\ViewportRenderingContext.cs" />
     <Compile Include="Renderer\Viewport_CameraSettingsClass.cs" />
-    <Compile Include="SoundSystem\CubicSpline.cs" />
     <Compile Include="SoundSystem\SoundChannelGroup.cs" />
     <Compile Include="SoundSystem\SoundData.cs" />
     <Compile Include="SoundSystem\SoundModes.cs" />
@@ -312,22 +305,10 @@
     <Compile Include="Utility\TextBlockUtility.cs" />
     <Compile Include="Utility\UniqueNameGenerator.cs" />
     <Compile Include="Utility\VisualStudioSolutionUtility.cs" />
-    <Compile Include="Utility\Win32Utility.cs" />
-    <Compile Include="WinForms\EngineViewportControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="WinForms\EngineViewportControl.designer.cs" />
-    <Compile Include="WinForms\EUserControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="WinForms\EUserControl.designer.cs" />
-    <Compile Include="WinForms\WinFormsUtility.cs" />
     <Compile Include="Components\Area\Area.cs" />
     <Compile Include="Components\Area\AreaPoint.cs" />
     <Compile Include="Components\Build\Product.cs" />
     <Compile Include="Components\Build\ProductBuildInstance.cs" />
-    <Compile Include="Components\Build\ProductEditor.cs" />
-    <Compile Include="Components\Build\ProductSettingsCell.cs" />
     <Compile Include="Components\Build\Product_Android.cs" />
     <Compile Include="Components\Build\Product_Store.cs" />
     <Compile Include="Components\Build\Product_UWP.cs" />
@@ -361,10 +342,6 @@
     <Compile Include="Components\FlowGraph\FlowGraphSpecialization.cs" />
     <Compile Include="Components\FlowGraph\FlowGraphStyle.cs" />
     <Compile Include="Components\Font\FontComponent.cs" />
-    <Compile Include="Components\Font\FontPreview.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\Font\FontPreview.designer.cs" />
     <Compile Include="Components\Font\FontResource.cs" />
     <Compile Include="Components\GroupOfObjects\GroupOfObjects.cs" />
     <Compile Include="Components\GroupOfObjects\GroupOfObjectsElement.cs" />
@@ -376,11 +353,6 @@
     <Compile Include="Components\Import3D\Import3DResource.cs" />
     <Compile Include="Components\Import3D\ImportGeneral.cs" />
     <Compile Include="Components\Learning\LearningComponent.cs" />
-    <Compile Include="Components\Learning\LearningEditor.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\Learning\LearningEditor.designer.cs" />
-    <Compile Include="Components\Material\ContentBrowserFilteringMode_Shaders.cs" />
     <Compile Include="Components\Material\FlowGraphSpecialization_Shader.cs" />
     <Compile Include="Components\Material\Material.cs" />
     <Compile Include="Components\Material\MaterialCompiledData.cs" />
@@ -390,7 +362,6 @@
     <Compile Include="Components\Material\ShaderParameter.cs" />
     <Compile Include="Components\Material\ShaderTextureSample.cs" />
     <Compile Include="Components\Mesh\Animation.cs" />
-    <Compile Include="Components\Mesh\AnimationTriggerPoint.cs" />
     <Compile Include="Components\Mesh\Mesh.cs" />
     <Compile Include="Components\Mesh\MeshGeometry.cs" />
     <Compile Include="Components\Mesh\MeshLevelOfDetail.cs" />
@@ -434,30 +405,24 @@
     <Compile Include="Components\Physics2D\Constraint2D_Revolute.cs" />
     <Compile Include="Components\Physics2D\Constraint2D_Weld.cs" />
     <Compile Include="Components\Physics2D\PhysicalBody2D.cs" />
-    <Compile Include="Components\Physics2D\PhysicalBody2DEditorExtensions.cs" />
     <Compile Include="Components\Physics2D\Physics2DCommon.cs" />
     <Compile Include="Components\Physics2D\Physics2DUtility.cs" />
     <Compile Include="Components\Physics2D\RigidBody2D.cs" />
     <Compile Include="Components\Physics2D\Sensor2D.cs" />
     <Compile Include="Components\ReflectionProbe\ReflectionProbe.cs" />
-    <Compile Include="Components\ReflectionProbe\ReflectionProbeSettingsCell.cs" />
     <Compile Include="Components\Rendering\ObjectSpecialRenderingEffects.cs" />
     <Compile Include="Components\Rendering\RenderingEffect.cs" />
     <Compile Include="Components\Rendering\RenderingEffect_Script.cs" />
-    <Compile Include="Components\Rendering\RenderingEffect_Script_SettingsCell.cs" />
     <Compile Include="Components\Rendering\RenderingEffect_Simple.cs" />
-    <Compile Include="Components\Rendering\RenderingEffect_Simple_SettingsCell.cs" />
     <Compile Include="Components\Rendering\RenderingPipeline.cs" />
     <Compile Include="Components\RenderToFile\RenderToFile.cs" />
     <Compile Include="Components\Scene\Scene.cs" />
     <Compile Include="Components\Scene\SceneLODUtility.cs" />
-    <Compile Include="Components\Scene\SceneNewObjectSettings.cs" />
     <Compile Include="Components\Scene\SceneObjectsInSpace.cs" />
     <Compile Include="Components\Scene\ScenePhysics.cs" />
     <Compile Include="Components\Scene\ScenePhysics2D.cs" />
     <Compile Include="Components\Scene\SceneUtility.cs" />
     <Compile Include="Components\Scripting\CSharpScript.cs" />
-    <Compile Include="Components\Scripting\CSharpScriptSettingsCell.cs" />
     <Compile Include="Components\ShaderScript\ShaderScript.cs" />
     <Compile Include="Components\ShaderScript\ShaderScriptSettingsCell.cs" />
     <Compile Include="Components\Sound\Sound.cs" />
@@ -465,17 +430,11 @@
     <Compile Include="Components\Sprite\Sprite.cs" />
     <Compile Include="Components\Sprite\SpriteAnimation.cs" />
     <Compile Include="Components\Sprite\SpriteAnimationController.cs" />
-    <Compile Include="Components\Sprite\SpriteEditor.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\Sprite\SpriteEditor.designer.cs" />
     <Compile Include="Components\Sprite\SpriteMeshManager.cs" />
-    <Compile Include="Components\Sprite\SpritePreview.cs" />
     <Compile Include="Components\Surface\Surface.cs" />
     <Compile Include="Components\Surface\SurfaceElement.cs" />
     <Compile Include="Components\Surface\SurfaceGroupOfElements.cs" />
     <Compile Include="Components\SurfaceArea\SurfaceArea.cs" />
-    <Compile Include="Components\SurfaceArea\SurfaceAreaSettingsCell.cs" />
     <Compile Include="Components\Terrain\Terrain.cs" />
     <Compile Include="Components\UI\UIButton.cs" />
     <Compile Include="Components\UI\UICheck.cs" />
@@ -539,16 +498,6 @@
     <Compile Include="FileSystem\Streams\VirtualFileStream.cs" />
     <Compile Include="FileSystem\Streams\Win32HandleVirtualFileStream.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Settings.cs" />
-    <Compile Include="Libraries\Aga.Controls\BitmapHelper.cs" />
-    <Compile Include="Libraries\Aga.Controls\GifDecoder.cs" />
-    <Compile Include="Libraries\Aga.Controls\NumericTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\PerformanceAnalyzer.cs" />
-    <Compile Include="Libraries\Aga.Controls\ResourceHelper.cs" />
-    <Compile Include="Libraries\Aga.Controls\StringCollectionEditor.cs" />
-    <Compile Include="Libraries\Aga.Controls\TextHelper.cs" />
-    <Compile Include="Libraries\Aga.Controls\TimeCounter.cs" />
     <Compile Include="Libraries\CefGlue\CefRuntime.cs" />
     <Compile Include="Libraries\CefGlue\CefRuntimePlatform.cs" />
     <Compile Include="Libraries\CefGlue\ExceptionBuilder.cs" />
@@ -690,25 +639,12 @@
     <Compile Include="Components\Rendering\Effects\ToLDR.cs" />
     <Compile Include="Components\Rendering\Effects\ToneMapping.cs" />
     <Compile Include="Components\Rendering\Effects\Vignetting.cs" />
-    <Compile Include="Components\Rendering\Fog\Fog.cs" />
     <Compile Include="Components\Rendering\LensFlares\LensFlare.cs" />
     <Compile Include="Components\Rendering\LensFlares\LensFlares.cs" />
     <Compile Include="Components\Rendering\Pipelines\RenderingPipeline_Basic.cs" />
     <Compile Include="Components\Rendering\Pipelines\RenderingPipeline_Basic_Additional.cs" />
     <Compile Include="Components\Rendering\Pipelines\RenderingPipeline_Basic_Functions.cs" />
     <Compile Include="Components\Rendering\Pipelines\RenderingPipeline_Basic_Render.cs" />
-    <Compile Include="Components\Rendering\Sky\Sky.cs" />
-    <Compile Include="Components\Rendering\Sky\Skybox.cs" />
-    <Compile Include="Components\Rendering\Sky\SkyboxEditor.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\Rendering\Sky\SkyboxEditor.designer.cs" />
-    <Compile Include="Components\Rendering\Sky\SkyboxPreview.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\Rendering\Sky\SkyboxPreview.designer.cs" />
-    <Compile Include="Components\Rendering\Sky\SkyboxPreviewImage.cs" />
-    <Compile Include="Components\Rendering\Sky\SkyboxSettingsCell.cs" />
     <Compile Include="Components\Scripting\Core\CompiledScript.cs" />
     <Compile Include="Components\Scripting\Core\ScriptAssemblyNameResolver.cs" />
     <Compile Include="Components\Scripting\Core\ScriptCache.cs" />
@@ -718,7 +654,6 @@
     <Compile Include="Components\Scripting\Core\ScriptCompilerException.cs" />
     <Compile Include="Components\Scripting\Core\ScriptingCSharpEngine.cs" />
     <Compile Include="Components\Scripting\Core\ScriptUtility.cs" />
-    <Compile Include="Components\Scripting\Editor\ContentBrowserFilteringMode_CSharp.cs" />
     <Compile Include="Components\UI\Video\UIVideo.cs" />
     <Compile Include="Components\UI\WebBrowser\BeforePopupEventArgs.cs" />
     <Compile Include="Components\UI\WebBrowser\SimpleApp.cs" />
@@ -777,64 +712,6 @@
     <Compile Include="Libraries\Aether.Physics2D\Dynamics\World.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Dynamics\World.Factory.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Dynamics\WorldCallbacks.cs" />
-    <Compile Include="Libraries\Aga.Controls\Properties\Resources.Designer.cs" />
-    <Compile Include="Libraries\Aga.Controls\Threading\AbortableThreadPool.cs" />
-    <Compile Include="Libraries\Aga.Controls\Threading\WorkItem.cs" />
-    <Compile Include="Libraries\Aga.Controls\Threading\WorkItemStatus.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\AutoHeaderHeightLayout.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\AutoRowHeightLayout.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\ColumnCollection.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\DpiHelper.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\DrawColumnEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\DrawContext.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\DropNodeValidatingEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\DropPosition.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\EditorContext.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\Enums.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\FixedHeaderHeightLayout.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\FixedRowHeightLayout.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\IHeaderLayout.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\IncrementalSearch.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\IRowLayout.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\IToolTipProvider.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\ITreeModel.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\ListModel.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NativeMethods.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\Node.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControlInfo.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\SortedTreeModel.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeColumn.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeColumnCollection.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeColumnEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeListAdapter.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeModel.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeModelBase.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeModelEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeNodeAdv.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeNodeAdvMouseEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreePath.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreePathEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Designer.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Draw.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Editor.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Input.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdv.Properties.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdvCancelEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewAdvEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\TreeViewRowDrawEventArgs.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefApp.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefAuthCallback.g.cs" />
     <Compile Include="Libraries\CefGlue\Classes.g\CefBeforeDownloadCallback.g.cs" />
@@ -1125,11 +1002,6 @@
     <Compile Include="Libraries\CefGlue\Structs\CefSize.cs" />
     <Compile Include="Libraries\CefGlue\Structs\CefUrlParts.cs" />
     <Compile Include="Libraries\CefGlue\Structs\CefWindowInfo.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ControlDoubleBufferComposited.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\KryptonCursors.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\KryptonDarkThemeUtility.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\KryptonToolkitSettings.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\KryptonWinFormsUtility.cs" />
     <Compile Include="Libraries\LiteDB\Document\BsonArray.cs" />
     <Compile Include="Libraries\LiteDB\Document\BsonAutoId.cs" />
     <Compile Include="Libraries\LiteDB\Document\BsonDocument.cs" />
@@ -1237,67 +1109,6 @@
     <Compile Include="Libraries\Aether.Physics2D\Fluids\1\SpringHash.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Fluids\2\FluidSystem2.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Fluids\2\SpartialTable.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\Input\ClickColumnState.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\Input\ColumnState.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\Input\InputState.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\Input\InputWithControl.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\Input\InputWithShift.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\Input\NormalInputState.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\Input\ReorderColumnState.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\Input\ResizeColumnState.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\BaseTextControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\BindableControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\DrawEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\DrawIconEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\DrawTextEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\EditableControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\EditEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\ExpandingIcon.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\InteractiveControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\LabelEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeCheckBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeControlsCollection.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeControlValueEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeDecimalTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeEventArgs.cs" />
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeIcon.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeIntegerTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeNumericUpDown.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodePlusMinus.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeStateIcon.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Aga.Controls\Tree\NodeControls\NodeTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Libraries\CefGlue\Interop\Base\bool_t.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Base\cefglue_userdata_t.cs" />
     <Compile Include="Libraries\CefGlue\Interop\Base\cef_base_t.cs" />
@@ -1442,1032 +1253,6 @@
     <Compile Include="Libraries\CefGlue\Wrapper\MessageRouter\CefMessageRouterConfig.cs" />
     <Compile Include="Libraries\CefGlue\Wrapper\MessageRouter\CefMessageRouterRendererSide.cs" />
     <Compile Include="Libraries\CefGlue\Wrapper\MessageRouter\Helpers.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Control Docking\KryptonAutoHiddenGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Control Docking\KryptonAutoHiddenPanel.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Control Docking\KryptonAutoHiddenProxyPage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Control Docking\KryptonAutoHiddenSlidePanel.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Control Docking\KryptonDockableNavigator.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Control Docking\KryptonDockableWorkspace.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Control Docking\KryptonDockspace.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Control Docking\KryptonDockspaceSeparator.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Control Docking\KryptonDockspaceSlide.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Control Docking\KryptonFloatingWindow.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Control Docking\KryptonFloatspace.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Control Docking\KryptonSpace.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Control Docking\KryptonStorePage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Dragging\DockingDragManager.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Dragging\DockingDragTargetProvider.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Dragging\DragTargetControlEdge.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Dragging\DragTargetNull.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Base\DockingElement.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Base\DockingElementClosedCollection.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Base\DockingElementOpenCollection.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Impl\KryptonDockingAutoHiddenGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Impl\KryptonDockingControl.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Impl\KryptonDockingDockspace.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Impl\KryptonDockingEdge.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Impl\KryptonDockingEdgeAutoHidden.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Impl\KryptonDockingEdgeDocked.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Impl\KryptonDockingFloating.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Impl\KryptonDockingFloatingWindow.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Impl\KryptonDockingFloatspace.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Impl\KryptonDockingManager.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Impl\KryptonDockingNavigator.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Impl\KryptonDockingSpace.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Impl\KryptonDockingWorkspace.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\AutoHiddenGroupEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\AutoHiddenGroupPanelEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\AutoHiddenSeparatorResizeEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\AutoHiddenShowingStateEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\CancelDropDownEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\CancelUniqueNameEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\CloseRequestEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\ContextPageEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\DockableNavigatorEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\DockableWorkspaceCellEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\DockableWorkspaceEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\DockGlobalLoadingEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\DockGlobalSavingEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\DockPageLoadingEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\DockPageSavingEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\DockspaceCellEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\DockspaceEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\DockspaceSeparatorEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\DockspaceSeparatorResizeEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\FloatingWindowEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\FloatspaceCellEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\FloatspaceEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\PagesEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\ScreenAndOffsetEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\StorePageEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\UniqueNameEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Event Args\UniqueNamesEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\General\Definitions.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\General\DockingHelper.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\General\DockingMultiUpdate.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\General\ObscureControl.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\General\PlatformInvoke.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Palette\DockingManagerStrings.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\Properties\Resources.Designer.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Docking\ViewDraw\ViewDrawAutoHiddenTab.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavClose.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavContext.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavFixed.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavFixedConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavigator.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavManagerLayoutBar.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavManagerLayoutHeaderBar.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavNext.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavPrevious.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavRemap.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Controller\DragViewController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Controller\OutlookMiniController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Controller\PageButtonController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Controls Navigator\KryptonNavigator.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Controls Navigator\KryptonNavigatorControlCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Controls Visuals\VisualPopupPage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Converters\BarItemSizingConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Converters\ButtonDisplayConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Converters\ButtonDisplayLogicConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Converters\CloseButtonActionConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Converters\ContextButtonActionConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Converters\DirectionButtonActionConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Converters\MapKryptonPageImageConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Converters\MapKryptonPageTextConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Converters\NavigatorModeConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Converters\PaletteButtonSpecStyleConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Converters\PopupPageAllowConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Converters\PopupPagePositionConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DragFeedback.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DragFeedbackDocking.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DragFeedbackSolid.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DragManager.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DragTarget.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DragTargetNavigatorTransfer.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DropDockingIndicatorsRounded.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DropDockingIndicatorsSquare.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DropSolidWindow.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\PageDragEndData.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\CloseActionEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\ContextActionEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\CtrlTabCancelEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\DirectionActionEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\KryptonContextMenuStripEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\KryptonPageCancelEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\KryptonPageFlagsEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\PageDragCancelEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\PageDragEndEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\PageDragEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\PageDropEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\PageMovedEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\PageReorderEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\PopupPageEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\EventArgs\ShowContextMenuArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\General\Definitions.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\General\PageToToolTipMapping.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\General\PlatformInvoke.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Page\BackstagePage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Page\KryptonPage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Page\KryptonPageCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\HeaderGroupMappingBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\HeaderGroupMappingPrimary.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\HeaderGroupMappingSecondary.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\NavigatorBar.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\NavigatorButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\NavigatorGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\NavigatorHeader.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\NavigatorOutlook.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\NavigatorOutlookFull.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\NavigatorOutlookMini.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\NavigatorPanel.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\NavigatorPopupPages.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\NavigatorStack.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\NavigatorToolTips.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\PaletteBarRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\PaletteMetrics.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\PaletteNavContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\PaletteNavContentText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\PaletteNavigator.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\PaletteNavigatorHeaderGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\PaletteNavigatorHeaderGroupRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\PaletteNavigatorOther.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\PaletteNavigatorOtherEx.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\PaletteNavigatorOtherOverride.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\PaletteNavigatorOtherRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\PaletteNavigatorRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\PalettePage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\PalettePageRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\PaletteRedirectRibbonTabContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\PaletteRibbonGeneralRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\PaletteRibbonTabContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\PaletteRibbonTabContentInheritOverride.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\PaletteRibbonTabContentRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Palette\RibbonTabToContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Properties\Resources.Designer.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderBarCheckButtonGroupInside.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderBarCheckButtonGroupOnly.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderBarCheckButtonGroupOutside.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderBarCheckButtonOnly.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderBarItemBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderBarRibbonTabBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderBarRibbonTabGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderBarRibbonTabOnly.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderBarTabBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderBarTabGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderBarTabOnly.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderHeaderBarCheckButtonBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderHeaderBarCheckButtonGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderHeaderBarCheckButtonHeaderGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderHeaderBarCheckButtonOnly.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderHeaderBarTabGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderHeaderGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderItemBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderOutlookBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderOutlookFull.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderOutlookMini.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderPanel.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderStackCheckButtonBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderStackCheckButtonGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewBuilderStackCheckButtonHeaderGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewletHeaderGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Builder\ViewletHeaderGroupOutlook.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Draw\ViewDrawNavCheckButtonBar.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Draw\ViewDrawNavCheckButtonBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Draw\ViewDrawNavCheckButtonStack.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Draw\ViewDrawNavCheckButtonTab.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Draw\ViewDrawNavOutlookMini.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Draw\ViewDrawNavOutlookOverflow.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Draw\ViewDrawNavOutlookStack.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Draw\ViewDrawNavRibbonTab.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Layout\ViewLayoutBar.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Layout\ViewLayoutBarForTabs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Layout\ViewLayoutDockerOverlap.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Layout\ViewLayoutInsetOverlap.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Layout\ViewLayoutOutlookFull.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Layout\ViewLayoutOutlookMini.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Layout\ViewLayoutPageHide.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Layout\ViewLayoutPageShow.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Navigator\View Layout\ViewLayoutPopupPage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecAppMenu.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecExpandRibbon.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecManagerLayoutAppButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecManagerLayoutRibbon.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecMdiChildClose.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecMdiChildFixed.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecMdiChildMin.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecMdiChildRestore.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecMinimizeRibbon.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecViewAppButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecViewRibbon.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\AppButtonController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\AppTabController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\ButtonSpecAppButtonController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\ButtonSpecRibbonController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\CollapsedGroupController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\ComboBoxController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\ContextClickController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\ContextTitleController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\CustomControlController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\DateTimePickerController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\DialogLauncherButtonController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\DomainUpDownController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\GalleryButtonController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\GalleryController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\GalleryItemController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\GroupButtonController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\GroupCheckBoxController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\GroupRadioButtonController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\LeftDownButtonController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\LeftUpButtonController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\MaskedTextBoxController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\NullController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\NumericUpDownController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\QATButtonController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\QATExtraButtonController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\RecentDocController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\RepeatButtonController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\RibbonTabController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\RibbonTabsController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\RichTextBoxController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\TextBoxController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\TrackBarController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controller\ViewHighlightController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonGallery.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonGalleryRange.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonGalleryRangeCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonRibbon.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonRibbonContext.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonRibbonContextCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonRibbonGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonRibbonGroupCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonRibbonQATButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonRibbonQATButtonCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonRibbonRecentDoc.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonRibbonRecentDocCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonRibbonTab.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Ribbon\KryptonRibbonTabCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\BackstageAppMenu.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\KeyTipControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\VisualPopupAppMenu.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\VisualPopupGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\VisualPopupMinimized.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\VisualPopupQATOverflow.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\EventArgs\GalleryDropMenuEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\General\AppButtonMenuProvider.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\General\CalculatedValues.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\General\Definitions.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\General\DesignTimeDraw.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\General\IAppMenu.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\General\ItemGroupSizeWidth.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\General\KeyTipInfo.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\General\PlatformInvoke.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupCheckBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupCluster.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupClusterButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupClusterCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupClusterColorButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupColorButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupComboBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupContainer.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupContainerCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupCustomControl.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupDateTimePicker.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupDomainUpDown.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupGallery.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupItem.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupLabel.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupLines.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupLinesCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupMaskedTextBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupNumericUpDown.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupRadioButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupRichTextBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupSeparator.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupTextBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupTrackBar.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupTriple.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Group Contents\KryptonRibbonGroupTripleCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\AppButtonToolTipToContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\ApplicationTabToContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\ContextTabSet.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\ContextToContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\DesignTextToContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\GroupItemToolTipToContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\PaletteCaptionRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\PaletteGalleryBackBorder.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\PaletteGalleryRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\PaletteGalleryState.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\PaletteRedirectRibbonAeroOverride.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\PaletteRibbonAppButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\PaletteRibbonAppGroupTab.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\PaletteRibbonContextBack.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\PaletteRibbonContextDouble.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\PaletteRibbonDisabled.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\PaletteRibbonFocus.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\PaletteRibbonGroupAreaTab.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\PaletteRibbonGroupTab.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\PaletteRibbonImages.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\PaletteRibbonJustGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\PaletteRibbonJustTab.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\PaletteRibbonNormal.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\PaletteRibbonRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\PaletteRibbonStyles.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\QATButtonToContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\QATButtonToolTipToContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\RibbonAppButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\RibbonGroupLabelTextToContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\RibbonGroupNormalDisabledTextToContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\RibbonGroupTextToContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\RibbonRecentDocsEntryToContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\RibbonRecentDocsShortCutToContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\RibbonRecentDocsTitleToContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\RibbonShortcuts.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\RibbonStrings.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\RibbonTabToContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Palette\RibbonToContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Properties\Resources.Designer.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Base\ViewRibbonManager.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Base\ViewRibbonMinimizedManager.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Base\ViewRibbonPopupGroupManager.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Base\ViewRibbonQATOverflowManager.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonAppButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonAppMenu.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonAppMenuDocs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonAppMenuInner.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonAppMenuOuter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonAppMenuRecentDoc.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonAppTab.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonCaptionArea.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonCompoRightBorder.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonComposition.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonContextTitle.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonDesignBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonDesignCluster.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonDesignGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonDesignGroupContainer.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonDesignGroupLines.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonDesignGroupTriple.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonDesignTab.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonDropArrow.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGalleryButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGalleryItem.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupButtonBackBorder.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupButtonImage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupButtonText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupCheckBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupCheckBoxImage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupCheckBoxText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupClusterButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupClusterButtonImage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupClusterButtonText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupClusterColorButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupClusterColorButtonImage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupClusterColorButtonText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupClusterEdge.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupClusterSeparator.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupColorButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupColorButtonImage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupColorButtonText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupComboBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupCustomControl.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupDateTimePicker.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupDialogButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupDomainUpDown.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupGallery.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupGalleryImage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupGalleryText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupImage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupImageBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupLabel.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupLabelImage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupLabelText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupMaskedTextBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupNumericUpDown.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupRadioButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupRadioButtonImage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupRadioButtonText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupRichTextBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupsBorder.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupsBorderSynch.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupSeparator.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupTextBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupTitle.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonGroupTrackBar.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonKeyTip.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonMinimizeBar.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonPanel.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonQATBorder.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonQATButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonQATExtraButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonQATExtraButtonMini.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonQATOverflow.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonRecentDocs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonRecentShortcut.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonScrollButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonTab.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Draw\ViewDrawRibbonTabSep.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonAppButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonAppTab.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonCenter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonCenterPadding.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonCheckBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonContextTitles.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonGalleryButtons.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonGalleryItems.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonGroupButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonGroupCluster.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonGroupContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonGroupLines.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonGroups.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonGroupsArea.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonGroupTriple.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonPadding.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonQATContents.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonQATFromOverflow.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonQATFromRibbon.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonQATMini.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonRadioButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonRowCenter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonScroller.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonScrollPort.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonSeparator.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonTabs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonTabsArea.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonTabsSpare.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\View Layout\ViewLayoutRibbonTitle.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\AccurateText\AccurateText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\AccurateText\AccurateTextMemento.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpec.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecAny.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecCalendar.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecFormFixed.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecFormWindowClose.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecFormWindowMax.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecFormWindowMin.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecHeaderGroup.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecManagerBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecManagerDraw.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecManagerLayout.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecRemapByContentBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecRemapByContentCache.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecRemapByContentView.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecToContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecView.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecViewControllers.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuCheckBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuCheckButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuCollections.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuColorColumns.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuHeading.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuImageSelect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuItem.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuItemBase.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuItems.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuLinkLabel.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuMonthCalendar.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuRadioButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuSeparator.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controller\ButtonController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controller\CheckBoxController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controller\ContextMenuController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controller\ControllerDefinitions.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controller\LinkLabelController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controller\MenuCheckBoxController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controller\MenuCheckButtonController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controller\MenuColorBlockController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controller\MenuImageSelectController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controller\MenuItemController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controller\MenuLinkLabelController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controller\MenuRadioButtonController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controller\MonthCalendarController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controller\RadioButtonController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controller\SeparatorController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controller\SeparatorController_v2.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controller\TooltipController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controller\TrackBarController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controller\TrackPositionController.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonBorderEdge.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonBreadCrumb.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonBreadCrumbItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonCheckBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonCheckButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonCheckedListBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonCheckSet.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonColorButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonComboBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonCommand.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonContextMenu.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonDateTimePicker.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonDomainUpDown.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonDropButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonForm.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonGroupBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonGroupPanel.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonHeader.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonHeaderGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonInputBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonLabel.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonLinkLabel.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonListBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonListItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonManager.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonMaskedTextBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonMessageBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonMonthCalendar.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonNumericUpDown.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonPalette.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonPanel.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonRadioButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonRichTextBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonSeparator.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonSplitContainer.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonSplitterPanel.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonTaskDialog.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonTaskDialogCommand.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonTextBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonTrackBar.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonWrapLabel.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualContainerControl.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualContainerControlBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualContextMenu.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualContextMenuDTP.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualControl.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualControlBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualControlContainment.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualForm.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPanel.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupManager.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupShadow.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupSimpleShadow.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupTooltip.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualSimple.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualSimpleBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualTaskDialog.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\ButtonSpecFormFixedConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\ButtonStyleConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\DataGridViewStyleConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\DateTimeNullableConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\GridStyleConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\HeaderGroupCollapseTargetConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\HeaderStyleConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\InputControlStyleConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\KryptonCheckedButtonConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\KryptonLinkBehaviorConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\LabelStyleConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\PaletteBackStyleConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\PaletteBorderStyleConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\PaletteButtonOrientationConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\PaletteButtonSpecStyleConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\PaletteButtonStyleConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\PaletteContentStyleConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\PaletteDrawBordersConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\PaletteImageEffectConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\PaletteImageStyleConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\PaletteModeConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\PaletteModeManagerConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\PaletteTextTrimConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\SeparatorStyleConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\StringLookupConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\TabBorderStyleConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Converters\TabStyleConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\EventArgs\BreadCrumbMenuArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\EventArgs\ButtonDragOffsetEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\EventArgs\ButtonDragRectangleEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\EventArgs\ButtonSpecEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\EventArgs\CloseReasonEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\EventArgs\ColorEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\EventArgs\ContextMenuArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\EventArgs\ContextPositionMenuArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\EventArgs\DateTimePickerCloseArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\EventArgs\DateTimePickerDropArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\EventArgs\ImageSelectEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\EventArgs\NeedLayoutEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\EventArgs\PaletteLayoutEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\EventArgs\PointEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\EventArgs\PointEventCancelArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\EventArgs\PointOffsetEventCancelArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\EventArgs\SplitterMoveRectEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\EventArgs\TooltipEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\EventArgs\TypedCollectionEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\EventArgs\ViewControlHitTestArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\AntiAlias.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\BoolFlags31.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\Clipping.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\CommonHelper.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\ContextMenuProvider.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\ControlObscurer.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\CorrectContextControl.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\Definitions.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\DesktopWindowManager.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\DpiHelper.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\GlobalId.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\GlobalStrings.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\GraphicsHint.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\GraphicsTextHint.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\HSL.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\KryptonControlCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\KryptonDefaultColorAttribute.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\KryptonReadOnlyControls.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\ModalWaitDialog.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\ModalWaitDialog.Designer.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\NullContentValues.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\OperationThread.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\PlatformInvoke.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\SplitIndicatorHelper.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\Storage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\SystemFontsOverride.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\TooltipManager.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\TypedCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\TypedRestrictCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteDefinitions.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Builtin\PaletteBase.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Builtin\PaletteNeoAxisBase.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Builtin\PaletteNeoAxisBlack.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Builtin\PaletteNeoAxisBlue.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonInternalKCT.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteButtonSpecBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteButtonSpecs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteButtonSpecTyped.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteCalendarDay.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteCargo.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteCheckButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteCheckButtons.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteCommon.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteContextMenu.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteControl.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteControls.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteDouble3.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteForm.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteForms.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteGrid.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteGrids.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteHeader.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteHeaderGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteHeaderGroupState.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteHeaders.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteImages.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteImagesCheckBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteImagesContextMenu.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteImagesDropDownButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteImagesGalleryButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteImagesGalleryButtons.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteImagesRadioButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteImagesTreeView.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteInputControl.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteInputControls.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteLabel.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteLabels.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteNavigator.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteNavigatorState.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteNavigatorStateBar.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPalettePanel.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPalettePanels.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteRibbon.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteRibbonAppButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteRibbonGroupArea.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteRibbonGroupBaseText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteRibbonGroupButtonText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteRibbonGroupCheckBoxText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteRibbonGroupCollapsedBack.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteRibbonGroupCollapsedBorder.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteRibbonGroupCollapsedFrameBack.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteRibbonGroupCollapsedFrameBorder.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteRibbonGroupCollapsedText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteRibbonGroupLabelText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteRibbonGroupNormalBorder.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteRibbonGroupNormalTitle.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteRibbonGroupRadioButtonText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteRibbonQATMinibar.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteRibbonTab.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteSeparator.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteSeparators.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteTabButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteTabButtons.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteTMS.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteTMSBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteTMSButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteTMSGrip.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteTMSMenu.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteTMSMenuStrip.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteTMSRafting.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteTMSSeparator.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteTMSStatusStrip.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteTMSToolStrip.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Component\KryptonPaletteTrackBar.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\KryptonColorTable.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\KryptonColorTable2016.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\KryptonPersistAttribute.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\LinkLabelBehaviorInherit.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteBackInheritNode.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteBorderEdge.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteBorderEdgeRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteBreadCrumbDoubleState.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteBreadCrumbRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteBreadCrumbState.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteColorButtonStrings.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteComboBoxJustComboStates.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteComboBoxJustItemStates.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteComboBoxRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteComboBoxStates.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteContentInheritNode.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteContextMenuItemState.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteContextMenuItemStateChecked.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteContextMenuItemStateHighlight.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteContextMenuItemStateRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteContextMenuRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteDataGridViewAll.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteDataGridViewBackInherit.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteDataGridViewCells.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteDataGridViewContentCommon.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteDataGridViewContentInherit.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteDataGridViewContentStates.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteDataGridViewHeaders.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteDataGridViewRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteDataGridViewTripleCommon.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteDataGridViewTripleRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteDataGridViewTripleStates.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteForm.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteFormRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteGroupBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteGroupBoxRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteHeaderButtonRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteHeaderGroup.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteHeaderGroupRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteHeaderPaddingRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteHeaderRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteInputControlBackStates.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteInputControlContentStates.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteInputControlTripleRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteInputControlTripleStates.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteListItemTriple.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteListItemTripleRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteListState.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteListStateRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteMonthCalendarDoubleState.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteMonthCalendarRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteMonthCalendarState.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteMonthCalendarStateRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteNodeOverride.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteRedirectBreadCrumb.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteRedirectCheckBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteRedirectCommon.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteRedirectContextMenu.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteRedirectDropDownButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteRedirectRadioButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteSeparatorPadding.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteSeparatorPaddingRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteSplitContainer.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteSplitContainerRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteTrackBarPositionStates.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteTrackBarPositionStatesOverride.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteTrackBarRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteTrackBarStates.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteTrackBarStatesOverride.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\PaletteWrapLabel.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Controls\SchemeOfficeColors.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Properties\Resources.Designer.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\KryptonNeoAxisRenderer.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\KryptonOffice2010Renderer.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\KryptonProfessionalRenderer.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\KryptonStandardRenderer.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderBase.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderContext.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderDefinitions.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderDragDockingData.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderExpertHelpers.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderGlassHelpers.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderMementos.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderNeoAxis.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderOffice2010.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderProfessional.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderStandard.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\AdjustableContentValue.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\ButtonImageStates.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\ButtonValues.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\CaptionValues.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\CheckBoxImages.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\CheckButtonImageStates.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\CheckButtonValues.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\ColorButtonValues.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\ContextMenuImages.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\DropDownButtonImages.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\FixedContentValue.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\GalleryButtonImages.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\GalleryImages.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\HeaderGroupValuesPrimary.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\HeaderGroupValuesSecondary.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\HeaderValues.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\HeaderValuesBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\LabelValues.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\RadioButtonImages.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Values\ShortTextValue.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewBase.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewComposite.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewContext.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewContextMenuManager.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewDecorator.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewLeaf.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewManager.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Decorator\ViewDecoratorFixedSize.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawBorderEdge.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawCanvas.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawCheckBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawDateTimeButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawDateTimeText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawDebug.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawDocker.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawDropDownButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawEmptyContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawForm.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawGroupBoxDocker.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawMenuCheckBox.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawMenuCheckButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawMenuColorBlock.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawMenuColorColumn.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawMenuColorColumns.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawMenuHeading.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawMenuImageCanvas.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawMenuImageColumn.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawMenuImageSelectItem.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawMenuItem.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawMenuItemContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawMenuLinkLabel.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawMenuMonthCalendar.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawMenuRadioButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawMenuSeparator.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawMonth.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawMonthDayNames.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawMonthDays.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawMonthUpDown.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawNull.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawPanel.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawRadioButton.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawScrollBar.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawSeparator.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawSplitCanvas.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawToday.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawTrackBar.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawTrackPosition.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawTrackTicks.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawTrackTP.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawTrackTrack.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Draw\ViewDrawWeekNumbers.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutCenter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutColorStack.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutContext.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutControl.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutCrumbs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutDocker.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutFill.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutFit.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutMenuItemSelect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutMenuItemsPile.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutMenuSepGap.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutMetricSpacer.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutMonths.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutNull.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutPadding.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutPile.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutScrollViewport.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutSeparator.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutStack.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutStretch.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutViewport.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Layout\ViewLayoutWeekCorner.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\Controls Workspace\KryptonWorkspace.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\Controls Workspace\KryptonWorkspaceCell.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\Controls Workspace\KryptonWorkspaceCollection.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\Controls Workspace\KryptonWorkspaceSequence.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\Controls Workspace\KryptonWorkspaceSequenceConverter.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\Dragging\DragTargetWorkspace.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\Dragging\DragTargetWorkspaceCellEdge.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\Dragging\DragTargetWorkspaceCellTransfer.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\Dragging\DragTargetWorkspaceEdge.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\EventArgs\ActiveCellChangedEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\EventArgs\ActivePageChangedEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\EventArgs\CellDragCancelEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\EventArgs\PageLoadingEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\EventArgs\PageSavingEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\EventArgs\PagesUnmatchedEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\EventArgs\RecreateLoadingPageEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\EventArgs\WorkspaceCellEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\EventArgs\XmlLoadingEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\EventArgs\XmlSavingEventArgs.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\General\CellPageNotify.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\General\Definitions.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\General\PlatformInvoke.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\General\StarNumber.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\General\StarSize.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\Palette\WorkspacePageMenu.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\Properties\Resources.Designer.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Workspace\View Draw\ViewDrawWorkspaceSeparator.cs" />
     <Compile Include="Libraries\LiteDB\Client\Database\ILiteCollection.cs" />
     <Compile Include="Libraries\LiteDB\Client\Database\ILiteDatabase.cs" />
     <Compile Include="Libraries\LiteDB\Client\Database\ILiteQueryable.cs" />
@@ -2603,95 +1388,6 @@
     <Compile Include="Libraries\Aether.Physics2D\Common\Decomposition\Seidel\Triangulator.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Common\Decomposition\Seidel\XNode.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Common\Decomposition\Seidel\YNode.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\DropShadow.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\DropShadowManager.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\ImageMaps.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\ShadowImageCache.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\ShadowImageCacheManager.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteBack\PaletteBack.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteBack\PaletteBackColor1.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteBack\PaletteBackInherit.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteBack\PaletteBackInheritForced.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteBack\PaletteBackInheritOverride.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteBack\PaletteBackInheritRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteBack\PaletteBackLightenColors.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteBack\PaletteBackToPalette.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteBorder\PaletteBorder.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteBorder\PaletteBorderInherit.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteBorder\PaletteBorderInheritForced.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteBorder\PaletteBorderInheritOverride.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteBorder\PaletteBorderInheritRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteBorder\PaletteBorderToPalette.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteContent\PaletteContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteContent\PaletteContentImage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteContent\PaletteContentInherit.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteContent\PaletteContentInheritForced.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteContent\PaletteContentInheritOverride.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteContent\PaletteContentInheritRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteContent\PaletteContentJustImage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteContent\PaletteContentJustShortText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteContent\PaletteContentJustText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteContent\PaletteContentText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteContent\PaletteContentToPalette.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteDouble\PaletteDouble.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteDouble\PaletteDoubleMetric.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteDouble\PaletteDoubleMetricRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteDouble\PaletteDoubleOverride.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteDouble\PaletteDoubleRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteDragDrop\PaletteDragDrop.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteElementColor\PaletteElementColor.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteElementColor\PaletteElementColorInherit.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteElementColor\PaletteElementColorInheritOverride.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteElementColor\PaletteElementColorInheritRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteElementColor\PaletteElementColorRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteMetric\PaletteMetricRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRedirect\PaletteRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRedirect\PaletteRedirectBack.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRedirect\PaletteRedirectBorder.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRedirect\PaletteRedirectBorderEdge.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRedirect\PaletteRedirectButtonSpec.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRedirect\PaletteRedirectContent.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRedirect\PaletteRedirectDouble.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRedirect\PaletteRedirectDoubleMetric.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRedirect\PaletteRedirectGrids.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRedirect\PaletteRedirectMetric.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRedirect\PaletteRedirectRibbonBack.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRedirect\PaletteRedirectRibbonDouble.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRedirect\PaletteRedirectRibbonGeneral.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRedirect\PaletteRedirectTriple.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRedirect\PaletteRedirectTripleMetric.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRibbon\PaletteRibbonBack.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRibbon\PaletteRibbonBackInherit.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRibbon\PaletteRibbonBackInheritRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRibbon\PaletteRibbonBackRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRibbon\PaletteRibbonDouble.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRibbon\PaletteRibbonDoubleInherit.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRibbon\PaletteRibbonDoubleInheritOverride.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRibbon\PaletteRibbonDoubleInheritRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRibbon\PaletteRibbonDoubleRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRibbon\PaletteRibbonGeneral.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRibbon\PaletteRibbonGeneralInherit.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRibbon\PaletteRibbonGeneralInheritRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRibbon\PaletteRibbonText.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRibbon\PaletteRibbonTextInherit.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteRibbon\PaletteRibbonTextInheritRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteTab\PaletteTabBorder.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteTab\PaletteTabTriple.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteTab\PaletteTabTripleRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteTriple\PaletteTriple.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteTriple\PaletteTripleJustImage.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteTriple\PaletteTripleJustImageRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteTriple\PaletteTripleMetric.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteTriple\PaletteTripleMetricRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteTriple\PaletteTripleOverride.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteTriple\PaletteTripleRedirect.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Base\PaletteTriple\PaletteTripleToPalette.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\Win10Glass\AccentColorService.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\Win10Glass\BlurWindowExtensions.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\Win10Glass\ThemeService.cs" />
-    <Compile Include="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\Win10Glass\UserSystemPreferencesService.cs" />
     <Compile Include="Libraries\LiteDB\Client\Database\Collections\Aggregate.cs" />
     <Compile Include="Libraries\LiteDB\Client\Database\Collections\Delete.cs" />
     <Compile Include="Libraries\LiteDB\Client\Database\Collections\Find.cs" />
@@ -2879,166 +1575,18 @@
     <Compile Include="Libraries\Lidgren.Network\Platform\PlatformAndroid.cs" />
     <Compile Include="Libraries\Lidgren.Network\Platform\PlatformWin32.cs" />
     <Compile Include="Libraries\Lidgren.Network\Platform\PlatformWinRT.cs" />
-    <Compile Include="Editor\BackstageMenu.cs" />
-    <Compile Include="Editor\BackstageMenu.designer.cs" />
-    <Compile Include="Editor\BakingFile.cs" />
-    <Compile Include="Editor\BordersContainer.cs" />
-    <Compile Include="Editor\CancelForm.cs" />
-    <Compile Include="Editor\CancelForm.designer.cs" />
     <Compile Include="Editor\CanvasBasedEditor.cs" />
     <Compile Include="Editor\CanvasBasedPreview.cs" />
-    <Compile Include="Editor\ComponentTypeSettingsForm.cs" />
-    <Compile Include="Editor\ComponentTypeSettingsForm.Designer.cs" />
-    <Compile Include="Editor\ContentBrowser.cs" />
-    <Compile Include="Editor\ContentBrowser.designer.cs" />
-    <Compile Include="Editor\ContentBrowserFilteringMode.cs" />
-    <Compile Include="Editor\ContentBrowserImageHelper.cs" />
-    <Compile Include="Editor\ContentBrowserItems.cs" />
-    <Compile Include="Editor\ContentBrowserItems_Solution.cs" />
-    <Compile Include="Editor\ContentBrowserListViewModes.cs" />
-    <Compile Include="Editor\ContentBrowserOptions.cs" />
-    <Compile Include="Editor\ContentBrowserOptionsForm.cs" />
-    <Compile Include="Editor\ContentBrowserOptionsForm.Designer.cs" />
-    <Compile Include="Editor\ContentBrowserSearchForm.cs" />
-    <Compile Include="Editor\ContentBrowserSearchForm.Designer.cs" />
-    <Compile Include="Editor\ContentBrowserUtility.cs" />
-    <Compile Include="Editor\ContentBrowser_ContextMenu.cs" />
-    <Compile Include="Editor\DebugInfoWindow.cs" />
-    <Compile Include="Editor\DebugInfoWindow.designer.cs" />
-    <Compile Include="Editor\DockWindow.cs" />
-    <Compile Include="Editor\DockWindow.designer.cs" />
-    <Compile Include="Editor\DockWindowEventArgs.cs" />
-    <Compile Include="Editor\DocumentationLinksManager.cs" />
-    <Compile Include="Editor\DocumentInstance.cs" />
-    <Compile Include="Editor\DocumentWindow.cs" />
-    <Compile Include="Editor\DocumentWindow.designer.cs" />
-    <Compile Include="Editor\DocumentWindowWithViewport.cs" />
-    <Compile Include="Editor\DocumentWindowWithViewport.designer.cs" />
-    <Compile Include="Editor\EditorActions.cs" />
     <Compile Include="Editor\EditorAPI.cs" />
-    <Compile Include="Editor\EditorApp.cs" />
     <Compile Include="Editor\EditorAssembly.cs" />
-    <Compile Include="Editor\EditorCommandLineTools.cs" />
     <Compile Include="Editor\EditorCommon.cs" />
-    <Compile Include="Editor\EditorContextMenu.cs" />
-    <Compile Include="Editor\EditorContextMenuWinForms.cs" />
-    <Compile Include="Editor\EditorFavorites.cs" />
-    <Compile Include="Editor\EditorForm.cs" />
-    <Compile Include="Editor\EditorForm.designer.cs" />
-    <Compile Include="Editor\EditorImportResource.cs" />
     <Compile Include="Editor\EditorLocalization.cs" />
     <Compile Include="Editor\EditorMessageBox.cs" />
-    <Compile Include="Editor\EditorResourcesCache.cs" />
-    <Compile Include="Editor\EditorRibbonDefaultConfiguration.cs" />
-    <Compile Include="Editor\EditorSettingsSerialization.cs" />
-    <Compile Include="Editor\EditorStandardActions.cs" />
-    <Compile Include="Editor\EditorThemeUtility.cs" />
     <Compile Include="Editor\EditorUtility.cs" />
-    <Compile Include="Editor\EngineForm.cs" />
-    <Compile Include="Editor\EngineForm.Designer.cs" />
-    <Compile Include="Editor\EngineLabel.cs" />
-    <Compile Include="Editor\EngineListView.cs" />
-    <Compile Include="Editor\EngineProgressBar.cs" />
-    <Compile Include="Editor\EngineScrollBar.cs" />
-    <Compile Include="Editor\EngineTextBox.cs" />
-    <Compile Include="Editor\EngineToolStrip.cs" />
-    <Compile Include="Editor\ExtensionMethods.cs" />
-    <Compile Include="Editor\ForeachDocumentWindowContainer.cs" />
-    <Compile Include="Editor\ForeachDocumentWindowContainer.designer.cs" />
-    <Compile Include="Editor\IDocumentWindow.cs" />
-    <Compile Include="Editor\ImageCollection.cs" />
-    <Compile Include="Editor\ImportWindow.cs" />
-    <Compile Include="Editor\ImportWindow.Designer.cs" />
-    <Compile Include="Editor\KryptonConfigGenerator.cs" />
-    <Compile Include="Editor\KryptonRibbonGroupListBox.cs" />
-    <Compile Include="Editor\KryptonRibbonGroupListBox.Designer.cs" />
-    <Compile Include="Editor\KryptonRibbonGroupListBoxControl.cs" />
-    <Compile Include="Editor\KryptonRibbonGroupListBoxControl.Designer.cs" />
-    <Compile Include="Editor\KryptonRibbonGroupSlider.cs" />
-    <Compile Include="Editor\KryptonRibbonGroupSlider.Designer.cs" />
-    <Compile Include="Editor\KryptonRibbonGroupSliderControl.cs" />
-    <Compile Include="Editor\KryptonRibbonGroupSliderControl.Designer.cs" />
-    <Compile Include="Editor\LabelExtended.cs" />
     <Compile Include="Editor\LoginUtility.cs" />
-    <Compile Include="Editor\LowProfileDockableWorkspace.cs" />
-    <Compile Include="Editor\MessageLogOptions.cs" />
-    <Compile Include="Editor\MessageLogOptionsForm.cs" />
-    <Compile Include="Editor\MessageLogOptionsForm.Designer.cs" />
-    <Compile Include="Editor\MessageLogWindow.cs" />
-    <Compile Include="Editor\MessageLogWindow.designer.cs" />
-    <Compile Include="Editor\NewObjectCell.cs" />
-    <Compile Include="Editor\NewObjectCell.designer.cs" />
-    <Compile Include="Editor\NewObjectSettings.cs" />
-    <Compile Include="Editor\NewObjectSettingsCell.cs" />
-    <Compile Include="Editor\NewObjectSettingsCell.designer.cs" />
-    <Compile Include="Editor\NewObjectWindow.cs" />
-    <Compile Include="Editor\NewObjectWindow.Designer.cs" />
     <Compile Include="Editor\ObjectCreationMode.cs" />
-    <Compile Include="Editor\ObjectSettingsHeader.cs" />
-    <Compile Include="Editor\ObjectSettingsHeader.designer.cs" />
-    <Compile Include="Editor\ObjectSettingsHeader_ObjectInfo.cs" />
-    <Compile Include="Editor\ObjectSettingsHeader_ObjectInfo.designer.cs" />
-    <Compile Include="Editor\ObjectSettingsWindow.cs" />
-    <Compile Include="Editor\ObjectSettingsWindow.designer.cs" />
-    <Compile Include="Editor\ObjectsWindow.cs" />
-    <Compile Include="Editor\ObjectsWindow.designer.cs" />
-    <Compile Include="Editor\OKCancelTextBoxForm.cs" />
-    <Compile Include="Editor\OKCancelTextBoxForm.designer.cs" />
-    <Compile Include="Editor\OutputWindow.cs" />
-    <Compile Include="Editor\OutputWindow.designer.cs" />
-    <Compile Include="Editor\PreviewControl.cs" />
-    <Compile Include="Editor\PreviewControl.designer.cs" />
-    <Compile Include="Editor\PreviewControlWithViewport.cs" />
-    <Compile Include="Editor\PreviewControlWithViewport.designer.cs" />
     <Compile Include="Editor\PreviewImageGenerator.cs" />
-    <Compile Include="Editor\PreviewImagesManager.cs" />
-    <Compile Include="Editor\PreviewWindow.cs" />
-    <Compile Include="Editor\PreviewWindow.designer.cs" />
-    <Compile Include="Editor\ResourcesWindow.cs" />
-    <Compile Include="Editor\ResourcesWindow.designer.cs" />
-    <Compile Include="Editor\ResourcesWindowItems.cs" />
-    <Compile Include="Editor\RunSimulation.cs" />
-    <Compile Include="Editor\SelectTypeWindow.cs" />
-    <Compile Include="Editor\SelectTypeWindow.Designer.cs" />
-    <Compile Include="Editor\SetReferenceWindow.cs" />
-    <Compile Include="Editor\SetReferenceWindow.Designer.cs" />
-    <Compile Include="Editor\SettingsCell.cs" />
-    <Compile Include="Editor\SettingsCell.designer.cs" />
     <Compile Include="Editor\SettingsCellProcedureUI.cs" />
-    <Compile Include="Editor\SettingsCellProcedureUI.designer.cs" />
-    <Compile Include="Editor\SettingsCell_Properties.cs" />
-    <Compile Include="Editor\SettingsCell_Properties.designer.cs" />
-    <Compile Include="Editor\SettingsHeader.cs" />
-    <Compile Include="Editor\SettingsHeader.designer.cs" />
-    <Compile Include="Editor\SettingsHeader_Components.cs" />
-    <Compile Include="Editor\SettingsHeader_Components.designer.cs" />
-    <Compile Include="Editor\SettingsHeader_ObjectInfo.cs" />
-    <Compile Include="Editor\SettingsHeader_ObjectInfo.designer.cs" />
-    <Compile Include="Editor\SettingsLevel2Window.cs" />
-    <Compile Include="Editor\SettingsLevel2Window.designer.cs" />
-    <Compile Include="Editor\SettingsProvider.cs" />
-    <Compile Include="Editor\SettingsWindow.cs" />
-    <Compile Include="Editor\SettingsWindow.designer.cs" />
-    <Compile Include="Editor\SolutionExplorer.cs" />
-    <Compile Include="Editor\SolutionExplorer.designer.cs" />
-    <Compile Include="Editor\SpecifyParametersForm.cs" />
-    <Compile Include="Editor\SpecifyParametersForm.designer.cs" />
-    <Compile Include="Editor\SplashForm.cs" />
-    <Compile Include="Editor\SplashForm.Designer.cs" />
-    <Compile Include="Editor\StartPageWindow.cs" />
-    <Compile Include="Editor\StartPageWindow.designer.cs" />
-    <Compile Include="Editor\TipsWindow.cs" />
-    <Compile Include="Editor\TipsWindow.designer.cs" />
-    <Compile Include="Editor\ToolStripBreadCrumbHost.cs" />
-    <Compile Include="Editor\ToolStripTextBoxHost.cs" />
-    <Compile Include="Editor\WindowsClipboard.cs" />
-    <Compile Include="Editor\WinFormsProcedureUI.cs" />
-    <Compile Include="Editor\WorkspaceController.cs" />
-    <Compile Include="Editor\WorkspaceControllerForForm.cs" />
-    <Compile Include="Editor\WorkspaceControllerForWindow.cs" />
-    <Compile Include="Editor\WorkspaceWindow.cs" />
-    <Compile Include="Editor\WorkspaceWindow.designer.cs" />
-    <Compile Include="Editor\XmlDocumentationFiles.cs" />
     <Compile Include="Networking\GeneralManagerExecuteCommand.cs" />
     <Compile Include="Networking\GeneralManagerFunctions.cs" />
     <Compile Include="Networking\NetworkCommonSettings.cs" />
@@ -3049,77 +1597,8 @@
     <Compile Include="Networking\NetworkService_Users.cs" />
     <Compile Include="SoundSystem\NullSoundWorld.cs" />
     <Compile Include="Components\Build\Product_Web.cs" />
-    <Compile Include="Editor\Builder3D\BuilderActions.cs" />
-    <Compile Include="Editor\Builder3D\BuilderCommon.cs" />
-    <Compile Include="Editor\Builder3D\BuilderCommonFunctions.cs" />
-    <Compile Include="Editor\Builder3D\BuilderEditorExtensions.cs" />
-    <Compile Include="Editor\Builder3D\BuilderMeshData.cs" />
-    <Compile Include="Editor\Builder3D\BuilderOneMeshActions.cs" />
-    <Compile Include="Editor\Builder3D\BuilderTransformToolObject_Edge.cs" />
-    <Compile Include="Editor\Builder3D\BuilderTransformToolObject_Face.cs" />
-    <Compile Include="Editor\Builder3D\BuilderTransformToolObject_Vertex.cs" />
-    <Compile Include="Editor\Builder3D\BuilderWorkareaMode.cs" />
-    <Compile Include="Editor\EngineToolTip\EngineToolTip.cs" />
-    <Compile Include="Editor\EngineToolTip\EngineToolTipForm.cs" />
-    <Compile Include="Editor\EngineToolTip\EngineToolTipForm.designer.cs" />
-    <Compile Include="Editor\EngineToolTip\EngineToolTipManager.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCColorPreviewButton.cs" />
     <Compile Include="Editor\HierarchicalContainer\HCCommon.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCDropDownControl.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCExtensions.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCItemCheckBox.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCItemCollection.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCItemColorValue.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCItemColorValuePowered.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCItemEnumDropDown.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCItemGroup.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCItemLabel.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCItemMember.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCItemProperty.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCItemRange.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCItemTextBox.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCItemTextBoxDropMultiline.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCItemTextBoxNumeric.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCItemTextBoxSelect.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HCItemUserControl.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HierarchicalContainer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\HierarchicalContainer.designer.cs" />
-    <Compile Include="Editor\Networking\ClientNetworkService_Commit.cs" />
-    <Compile Include="Editor\Networking\RepositoryActionsWithServer.cs" />
-    <Compile Include="Editor\Networking\RepositoryIconCache.cs" />
-    <Compile Include="Editor\Networking\RepositoryItemsForm.cs" />
-    <Compile Include="Editor\Networking\RepositoryItemsForm.designer.cs" />
-    <Compile Include="Editor\Networking\RepositoryLocal.cs" />
-    <Compile Include="Editor\Networking\RepositoryServerState.cs" />
-    <Compile Include="Editor\Project settings\HCItemProjectRibbonAndToolbarActions.cs" />
-    <Compile Include="Editor\Project settings\HCItemProjectRibbonAndToolbarActionsForm.cs" />
-    <Compile Include="Editor\Project settings\HCItemProjectRibbonAndToolbarActionsForm.Designer.cs" />
-    <Compile Include="Editor\Project settings\HCItemProjectShortcuts.cs" />
-    <Compile Include="Editor\Project settings\HCItemProjectShortcutsForm.cs" />
-    <Compile Include="Editor\Project settings\HCItemProjectShortcutsForm.Designer.cs" />
-    <Compile Include="Editor\ResourcesToCreate\NewResourceType.cs" />
-    <Compile Include="Editor\ResourcesToCreate\NewResourceType_CSharpClass.cs" />
-    <Compile Include="Editor\ResourcesToCreate\NewResourceType_CSharpClassLibrary_Cell.cs" />
-    <Compile Include="Editor\ResourcesToCreate\NewResourceType_CSharpClassLibrary_Cell.designer.cs" />
-    <Compile Include="Editor\ResourcesToCreate\NewResourceType_FlowGraphLibrary_Cell.cs" />
-    <Compile Include="Editor\ResourcesToCreate\NewResourceType_FlowGraphLibrary_Cell.designer.cs" />
-    <Compile Include="Editor\ResourcesToCreate\NewResourceType_TextFile_Cell.cs" />
-    <Compile Include="Editor\ResourcesToCreate\NewResourceType_TextFile_Cell.designer.cs" />
-    <Compile Include="Editor\ScreenNotifications\ScreenNotificationForm.cs" />
-    <Compile Include="Editor\ScreenNotifications\ScreenNotificationForm.designer.cs" />
     <Compile Include="Editor\ScreenNotifications\ScreenNotifications.cs" />
-    <Compile Include="Editor\Store\NeoAxisStoreImplementation.cs" />
-    <Compile Include="Editor\Store\PackageManager.cs" />
-    <Compile Include="Editor\Store\StoreDocumentWindow.cs" />
-    <Compile Include="Editor\Store\StoreDocumentWindow.designer.cs" />
-    <Compile Include="Editor\Store\StoreManager.cs" />
-    <Compile Include="Editor\Store\StoresWindow.cs" />
-    <Compile Include="Editor\Store\StoresWindow.designer.cs" />
-    <Compile Include="Editor\TransformTool\TransformTool.cs" />
-    <Compile Include="Editor\TransformTool\TransformTool.PositionMode.cs" />
-    <Compile Include="Editor\TransformTool\TransformTool.PositionRotationMode.cs" />
-    <Compile Include="Editor\TransformTool\TransformTool.RotationMode.cs" />
-    <Compile Include="Editor\TransformTool\TransformTool.ScaleMode.cs" />
     <Compile Include="Editor\UndoSystem\UndoSystem.cs" />
     <Compile Include="Editor\UndoSystem\UndoSystemActions.cs" />
     <Compile Include="Networking\Common\ClientNetworkService.cs" />
@@ -3127,109 +1606,8 @@
     <Compile Include="Networking\Common\NetworkNode.cs" />
     <Compile Include="Networking\Common\NetworkService.cs" />
     <Compile Include="Networking\Common\ServerNetworkService.cs" />
-    <Compile Include="Editor\Components\Camera\CameraPreview.cs" />
-    <Compile Include="Editor\Components\FlowGraph\FlowGraphEditor.cs" />
-    <Compile Include="Editor\Components\FlowGraph\FlowGraphEditor.designer.cs" />
-    <Compile Include="Editor\Components\GroupOfObjects\GroupOfObjectsElementSettingsCell.cs" />
-    <Compile Include="Editor\Components\GroupOfObjects\GroupOfObjectsSettingsCell.cs" />
-    <Compile Include="Editor\Components\GroupOfObjects\GroupOfObjectsUndo.cs" />
-    <Compile Include="Editor\Components\Image\ImageEditor.cs" />
-    <Compile Include="Editor\Components\Image\ImageEditor.designer.cs" />
-    <Compile Include="Editor\Components\Image\ImagePreview.cs" />
-    <Compile Include="Editor\Components\Image\ImagePreview.designer.cs" />
-    <Compile Include="Editor\Components\Image\ImagePreviewImage.cs" />
-    <Compile Include="Editor\Components\Import3D\Import3DEditor.cs" />
-    <Compile Include="Editor\Components\Import3D\Import3DPreview.cs" />
-    <Compile Include="Editor\Components\Import3D\Import3DPreviewImage.cs" />
-    <Compile Include="Editor\Components\Import3D\Import3DSettingsCell.cs" />
-    <Compile Include="Editor\Components\Material\MaterialEditor.cs" />
-    <Compile Include="Editor\Components\Material\MaterialEditor.designer.cs" />
-    <Compile Include="Editor\Components\Material\MaterialPreview.cs" />
-    <Compile Include="Editor\Components\Material\MaterialPreview.designer.cs" />
-    <Compile Include="Editor\Components\Material\MaterialPreviewImage.cs" />
-    <Compile Include="Editor\Components\Material\MaterialSettingsCell.cs" />
-    <Compile Include="Editor\Components\Mesh\MeshEditor.cs" />
-    <Compile Include="Editor\Components\Mesh\MeshModifierSettingsCell.cs" />
-    <Compile Include="Editor\Components\Mesh\MeshPreview.cs" />
-    <Compile Include="Editor\Components\Mesh\MeshPreviewImage.cs" />
-    <Compile Include="Editor\Components\Mesh\MeshSettingsCell.cs" />
-    <Compile Include="Editor\Components\MeshInSpace\MeshInSpaceEditorExtensions.cs" />
-    <Compile Include="Editor\Components\ObjectInSpace\ObjectInSpaceEditor.cs" />
-    <Compile Include="Editor\Components\ObjectInSpace\ObjectInSpaceEditorExtensions.cs" />
-    <Compile Include="Editor\Components\ObjectInSpace\ObjectInSpacePreview.cs" />
-    <Compile Include="Editor\Components\ObjectInSpace\ObjectInSpacePreviewImage.cs" />
-    <Compile Include="Editor\Components\PaintLayer\PaintLayerSettingsCell.cs" />
-    <Compile Include="Editor\Components\ParticleSystem\ParticleSystemEditor.cs" />
-    <Compile Include="Editor\Components\ParticleSystem\ParticleSystemEditor.designer.cs" />
-    <Compile Include="Editor\Components\ParticleSystem\ParticleSystemInSpaceSettingsCell.cs" />
-    <Compile Include="Editor\Components\ParticleSystem\ParticleSystemPreview.cs" />
-    <Compile Include="Editor\Components\ParticleSystem\ParticleSystemPreview.designer.cs" />
-    <Compile Include="Editor\Components\ParticleSystem\ParticleSystemSettingsCell.cs" />
-    <Compile Include="Editor\Components\Physics\EditorPhysicsUtility.cs" />
-    <Compile Include="Editor\Components\Physics\PhysicalBodyEditorExtensions.cs" />
-    <Compile Include="Editor\Components\RenderToFile\RenderToFileSettingsCell.cs" />
-    <Compile Include="Editor\Components\Scene\HCItemNewSceneTemplates.cs" />
-    <Compile Include="Editor\Components\Scene\SceneEditor.cs" />
-    <Compile Include="Editor\Components\Scene\SceneEditor.designer.cs" />
-    <Compile Include="Editor\Components\Scene\SimulatePhysicsWorkareaMode.cs" />
-    <Compile Include="Editor\Components\Scene\TransformToolObjectObjectInSpace.cs" />
-    <Compile Include="Editor\Components\Sound\SoundPreview.cs" />
-    <Compile Include="Editor\Components\Sound\SoundPreview.designer.cs" />
-    <Compile Include="Editor\Components\Stores\StoreItemPreview.cs" />
-    <Compile Include="Editor\Components\Stores\StoreItemPreview.designer.cs" />
-    <Compile Include="Editor\Components\Surface\SurfaceEditor.cs" />
-    <Compile Include="Editor\Components\Surface\SurfaceEditorUtility.cs" />
-    <Compile Include="Editor\Components\Surface\SurfacePreview.cs" />
-    <Compile Include="Editor\Components\Surface\SurfacePreviewImage.cs" />
-    <Compile Include="Editor\Components\Terrain\TerrainEditingMode.cs" />
-    <Compile Include="Editor\Components\Terrain\TerrainEditorExtensions.cs" />
-    <Compile Include="Editor\Components\Terrain\TerrainSettingsCell.cs" />
-    <Compile Include="Editor\Components\Terrain\TerrainUndo.cs" />
-    <Compile Include="Editor\Components\UI\UIControlEditor.cs" />
-    <Compile Include="Editor\Components\UI\UIControlEditor.designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\DropDownEditors\EnumDropDownControl.cs" />
-    <Compile Include="Editor\HierarchicalContainer\DropDownEditors\EnumDropDownControl.designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\DropDownEditors\MultilineTextDropDownControl.cs" />
-    <Compile Include="Editor\HierarchicalContainer\DropDownEditors\MultilineTextDropDownControl.designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\DropDownEditors\RangeDropDownControl.cs" />
-    <Compile Include="Editor\HierarchicalContainer\DropDownEditors\RangeDropDownControl.designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\DropDownHolder\GripBounds.cs" />
-    <Compile Include="Editor\HierarchicalContainer\DropDownHolder\HCDropDownHolderImpl.cs" />
-    <Compile Include="Editor\HierarchicalContainer\DropDownHolder\HCFormDropDownHolder.cs" />
-    <Compile Include="Editor\HierarchicalContainer\DropDownHolder\HCToolStripDropDownHolder.cs" />
-    <Compile Include="Editor\HierarchicalContainer\DropDownHolder\IDropDownHolder.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridCheckBox.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridCheckBox.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridCollection.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridCollection.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridColorValue.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridColorValue.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridColorValuePowered.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridColorValuePowered.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridDropDownButton.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridDropDownButton.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridEvent.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridEvent.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridGroup.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridGroup.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridLabel.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridLabel.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridProperty.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridProperty.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBox.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBox.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxNumeric.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxNumeric.Designer.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxSelect.cs" />
-    <Compile Include="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxSelect.Designer.cs" />
-    <Compile Include="Editor\ContentBrowserFilteringMode_AllFiles.cs" />
     <Compile Include="Networking\CloudProjectCommon.cs" />
     <Compile Include="Networking\CloudProjectEnteringClient.cs" />
-    <Compile Include="Networking\RepositorySettingsFile.cs" />
-    <Compile Include="Editor\Networking\CloudProjectCommitClient.cs" />
-    <Compile Include="Editor\Networking\EditorClient.cs" />
-    <Compile Include="Editor\Networking\RepositorySettingsForm.cs" />
-    <Compile Include="Editor\Networking\RepositorySettingsForm.designer.cs" />
     <Compile Include="Networking\Common\NetworkClientNode.cs" />
     <Compile Include="Networking\Common\NetworkServerNode.cs" />
     <Compile Include="MathEx\Vector2H.cs" />
@@ -3246,18 +1624,31 @@
     <Compile Include="Components\Physics\PhysicsNative.cs" />
     <Compile Include="MathEx\ClusterMeshSimplifier\ClusterMeshSimplifier.cs" />
     <Compile Include="Components\Rendering\Pipelines\RenderingPipeline_Basic_RenderGI.cs" />
-    <Compile Include="Editor\Components\Scene\SceneSettingsCell.cs" />
     <Compile Include="MathEx\Curve\Curve1\Curve1.cs" />
     <Compile Include="MathEx\Curve\Curve1\CurveCubicSpline1.cs" />
     <Compile Include="MathEx\Curve\Curve1\CurveLine1.cs" />
     <Compile Include="MathEx\Curve\Curve1\CurveSpline1.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <Compile Include="Base\SystemFunctionality.cs" />
+    <Compile Include="Editor\DocumentWindowWithViewportWorkareaMode.cs" />
+    <Compile Include="Editor\TransformTool.cs" />
+    <Compile Include="MathEx\QuaternionH.cs" />
+    <Compile Include="Project settings\ProjectSettingsPage_Repository.cs" />
+    <Compile Include="Utility\PlatformSpecificUtility.cs" />
+    <Compile Include="Components\GroupOfObjects\GroupOfObjectsUndo.cs" />
+    <Compile Include="Components\Mesh\AnimationTrigger.cs" />
+    <Compile Include="Components\Scene\SceneEditor.cs" />
+    <Compile Include="MathEx\Curve\CurvePoint1F.cs" />
+    <Compile Include="Components\Rendering\Effects\Precipitation.cs" />
+    <Compile Include="Libraries\Lidgren.Network\Sockets\NetFastSocket.cs" />
+    <Compile Include="Libraries\Lidgren.Network\Sockets\NetIpAddress.cs" />
+    <Compile Include="Libraries\Lidgren.Network\Sockets\NetNativeSocket.cs" />
+    <Compile Include="Libraries\Lidgren.Network\Sockets\NetSocketAddress.cs" />
+    <Compile Include="Editor\EditorContextMenu.cs" />
+    <Compile Include="Components\Build\Product_Linux.cs" />
+    <Compile Include="Components\Rendering\Fog.cs" />
+    <Compile Include="Components\Rendering\Sky.cs" />
+    <Compile Include="EngineApp\Linux specific\LinuxPlatformFunctionality.cs" />
+    <Compile Include="Components\Rendering\Pipelines\RenderingPipeline_Basic_Tessellation.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Addon_16.png" />

@@ -9,6 +9,8 @@ uniform vec4/*vec2*/ antialiasing_multiplier;
 
 void main()
 {
+	float multiplier = 1;
+	
 #ifdef SSAAX2
 	const int count = 8;
 	
@@ -106,8 +108,16 @@ void main()
 	*/
 #endif
 
-#ifdef SSAAX4
+#if defined(SSAAX4) || defined(SSAAX6) || defined(SSAAX8)
+//#ifdef SSAAX4
 	const int count = 16;
+
+#if defined(SSAAX6)
+	multiplier = 1.225;
+#endif
+#if defined(SSAAX8)
+	multiplier = 1.41;
+#endif
 	
 #ifdef GLSL
 	const vec2 offsets[16] = vec2[16]
@@ -161,7 +171,7 @@ void main()
 
 	vec4 result = vec4_splat(0);
 	for(int n=0;n<count;n++)
-		result += texture2D(s_sourceTexture, v_texCoord0 + offsets[n] * antialiasing_multiplier.xy);
+		result += texture2D(s_sourceTexture, v_texCoord0 + offsets[n] * multiplier * antialiasing_multiplier.xy);
 	result /= float(count);
 	
 	gl_FragColor = result;

@@ -22,6 +22,10 @@ namespace System
 	public class UserPreferenceChangedEventArgs
 	{
 	}
+
+	public class SuppressGCTransitionAttribute : Attribute
+	{
+	}
 }
 
 #if UWP || WEB

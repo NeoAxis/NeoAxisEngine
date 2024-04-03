@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 
 namespace Internal.SharpBgfx {
+
     /// <summary>
     /// Contains platform-specific data used to hook into the bgfx library.
     /// </summary>
@@ -30,6 +31,9 @@ namespace Internal.SharpBgfx {
         /// Depth-stencil pointer to use instead of letting the library create its own.
         /// </summary>
         public IntPtr BackbufferDepthStencil;
+
+        //!!!!check
+        public NativeWindowHandleType Type; //!< Handle type. Needed for platforms having more than one option.
     }
 
     /// <summary>

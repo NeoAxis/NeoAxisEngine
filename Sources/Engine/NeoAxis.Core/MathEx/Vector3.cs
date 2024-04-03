@@ -36,10 +36,12 @@ namespace NeoAxis
 		/// Returns the vector (0,0,0).
 		/// </summary>
 		public static readonly Vector3 Zero = new Vector3( 0.0, 0.0, 0.0 );
+		public const string ZeroAsString = "0 0 0";
 		/// <summary>
 		/// Returns the vector (1,1,1).
 		/// </summary>
 		public static readonly Vector3 One = new Vector3( 1.0, 1.0, 1.0 );
+		public const string OneAsString = "1 1 1";
 		/// <summary>
 		/// Returns the vector (1,0,0).
 		/// </summary>
@@ -830,6 +832,14 @@ namespace NeoAxis
 			Y *= invLength;
 			Z *= invLength;
 			return invLength * sqrLength;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void Negate()
+		{
+			X = -X;
+			Y = -Y;
+			Z = -Z;
 		}
 
 		/// <summary>

@@ -7,13 +7,14 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Xml;
-using Microsoft.Win32;
+//using Microsoft.Win32;
 
 namespace NeoAxis.Editor
 {
 	public static class LoginUtility
 	{
-		const string registryPath = @"SOFTWARE\NeoAxis";
+		const string registryPath = @"HKEY_CURRENT_USER\SOFTWARE\NeoAxis";
+		//const string registryPath = @"SOFTWARE\NeoAxis";
 
 		static volatile string requestedFullLicenseInfo_License = "";
 		static volatile ESet<string> requestedFullLicenseInfo_PurchasedProducts = new ESet<string>();
@@ -23,7 +24,7 @@ namespace NeoAxis.Editor
 
 		static string licenseCached;
 
-		static string machineId;
+		//static string machineId;
 
 		//
 
@@ -32,22 +33,30 @@ namespace NeoAxis.Editor
 #if !DEPLOY
 			try
 			{
-				//opening the subkey  
-				var key = Registry.CurrentUser.OpenSubKey( registryPath );
+				email = PlatformSpecificUtility.Instance.GetRegistryValue( registryPath, "LoginEmail", "" ) as string;
+				hash = PlatformSpecificUtility.Instance.GetRegistryValue( registryPath, "LoginHash", "" ) as string;
+				if( !string.IsNullOrEmpty( hash ) )
+					hash = EncryptDecrypt( hash );
 
-				//if it does exist, retrieve the stored values  
-				if( key != null )
-				{
-					email = ( key.GetValue( "LoginEmail" ) ?? "" ).ToString();
-					var p = key.GetValue( "LoginHash" );
-					if( p != null )
-						hash = EncryptDecrypt( p.ToString() );
-					else
-						hash = "";
-					//hash = ( key.GetValue( "LoginHash" ) ?? "" ).ToString();
-					key.Close();
+				if( !string.IsNullOrEmpty( email ) && !string.IsNullOrEmpty( hash ) )
 					return true;
-				}
+
+				////opening the subkey  
+				//var key = Registry.CurrentUser.OpenSubKey( registryPath );
+
+				////if it does exist, retrieve the stored values  
+				//if( key != null )
+				//{
+				//	email = ( key.GetValue( "LoginEmail" ) ?? "" ).ToString();
+				//	var p = key.GetValue( "LoginHash" );
+				//	if( p != null )
+				//		hash = EncryptDecrypt( p.ToString() );
+				//	else
+				//		hash = "";
+				//	//hash = ( key.GetValue( "LoginHash" ) ?? "" ).ToString();
+				//	key.Close();
+				//	return true;
+				//}
 			}
 			catch { }
 #endif
@@ -70,14 +79,15 @@ namespace NeoAxis.Editor
 
 		public static void SetCurrentLicense( string email, string hash )
 		{
-#if !DEPLOY
 			try
 			{
-				var key = Registry.CurrentUser.CreateSubKey( registryPath );
+				PlatformSpecificUtility.Instance.SetRegistryValue( registryPath, "LoginEmail", email );
+				PlatformSpecificUtility.Instance.SetRegistryValue( registryPath, "LoginHash", EncryptDecrypt( hash ) );
 
-				key.SetValue( "LoginEmail", email );
-				key.SetValue( "LoginHash", EncryptDecrypt( hash ) );
-				key.Close();
+				//var key = Registry.CurrentUser.CreateSubKey( registryPath );
+				//key.SetValue( "LoginEmail", email );
+				//key.SetValue( "LoginHash", EncryptDecrypt( hash ) );
+				//key.Close();
 			}
 			catch( Exception e )
 			{
@@ -86,7 +96,6 @@ namespace NeoAxis.Editor
 			}
 
 			RequestFullLicenseInfo();
-#endif
 		}
 
 		static void ThreadGetLicense( object param )
@@ -316,27 +325,27 @@ namespace NeoAxis.Editor
 		//	return true;
 		//}
 
-		public static string GetMachineId()
-		{
-#if !DEPLOY
-			if( string.IsNullOrEmpty( machineId ) )
-			{
-				try
-				{
-					var mc = new System.Management.ManagementClass( "win32_processor" );
-					foreach( System.Management.ManagementObject mo in mc.GetInstances() )
-					{
-						var cpuInfo = mo.Properties[ "processorID" ].Value.ToString();
-						machineId = cpuInfo;
-						break;
-					}
-				}
-				catch { }
-			}
-#endif
+		//		public static string GetMachineId()
+		//		{
+		//#if !DEPLOY
+		//			if( string.IsNullOrEmpty( machineId ) )
+		//			{
+		//				try
+		//				{
+		//					var mc = new System.Management.ManagementClass( "win32_processor" );
+		//					foreach( System.Management.ManagementObject mo in mc.GetInstances() )
+		//					{
+		//						var cpuInfo = mo.Properties[ "processorID" ].Value.ToString();
+		//						machineId = cpuInfo;
+		//						break;
+		//					}
+		//				}
+		//				catch { }
+		//			}
+		//#endif
 
-			return machineId;
-		}
+		//			return machineId;
+		//		}
 
 		//static PhysicalAddress GetMacAddress2()
 		//{

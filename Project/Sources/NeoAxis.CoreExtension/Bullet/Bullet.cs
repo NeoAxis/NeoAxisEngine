@@ -12,7 +12,7 @@ namespace NeoAxis
 	[AddToResourcesWindow( @"Addons\Bullet\Bullet", 410 )]
 	public class Bullet : MeshInSpace
 	{
-		static FastRandom staticRandom = null;
+		static FastRandom staticRandom = new FastRandom( 0 );
 
 		BulletType typeCached = new BulletType();
 		bool firstSimulationStep = true;
@@ -28,17 +28,20 @@ namespace NeoAxis
 			get { if( _bulletType.BeginGet() ) BulletType = _bulletType.Get( this ); return _bulletType.value; }
 			set
 			{
-				if( _bulletType.BeginSet( ref value ) )
+				if( _bulletType.BeginSet( this, ref value ) )
 				{
 					try
 					{
 						BulletTypeChanged?.Invoke( this );
 
-						//update cached type and mesh
+						//update cached type
 						typeCached = _bulletType.value;
 						if( typeCached == null )
 							typeCached = new BulletType();
-						UpdateMesh();
+
+						//update mesh
+						if( EnabledInHierarchyAndIsInstance )
+							UpdateMesh();
 					}
 					finally { _bulletType.EndSet(); }
 				}
@@ -56,7 +59,7 @@ namespace NeoAxis
 		public Reference<Vector3> LinearVelocityNoPhysicalBodyMode
 		{
 			get { if( _linearVelocityNoPhysicalBodyMode.BeginGet() ) LinearVelocityNoPhysicalBodyMode = _linearVelocityNoPhysicalBodyMode.Get( this ); return _linearVelocityNoPhysicalBodyMode.value; }
-			set { if( _linearVelocityNoPhysicalBodyMode.BeginSet( ref value ) ) { try { LinearVelocityNoPhysicalBodyModeChanged?.Invoke( this ); } finally { _linearVelocityNoPhysicalBodyMode.EndSet(); } } }
+			set { if( _linearVelocityNoPhysicalBodyMode.BeginSet( this, ref value ) ) { try { LinearVelocityNoPhysicalBodyModeChanged?.Invoke( this ); } finally { _linearVelocityNoPhysicalBodyMode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearVelocityNoPhysicalBodyMode"/> property value changes.</summary>
 		public event Action<Bullet> LinearVelocityNoPhysicalBodyModeChanged;
@@ -69,7 +72,7 @@ namespace NeoAxis
 		public Reference<long> WhoFired
 		{
 			get { if( _whoFired.BeginGet() ) WhoFired = _whoFired.Get( this ); return _whoFired.value; }
-			set { if( _whoFired.BeginSet( ref value ) ) { try { WhoFiredChanged?.Invoke( this ); } finally { _whoFired.EndSet(); } } }
+			set { if( _whoFired.BeginSet( this, ref value ) ) { try { WhoFiredChanged?.Invoke( this ); } finally { _whoFired.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="WhoFired"/> property value changes.</summary>
 		public event Action<Bullet> WhoFiredChanged;
@@ -116,11 +119,17 @@ namespace NeoAxis
 
 		////////////////
 
+		[Browsable( false )]
+		public BulletType TypeCached
+		{
+			get { return typeCached; }
+		}
+
 		[MethodImpl( (MethodImplOptions)512 )]
 		public void PerformHit( HitData hit )
 		{
 			//HitBefore
-			typeCached.PerformHitBefore( this, hit );
+			TypeCached.PerformHitBefore( this, hit );
 			if( hit.Handled )
 				return;
 			//OnHitBefore( hit );
@@ -190,7 +199,7 @@ namespace NeoAxis
 			//add an impulse to the hit body
 			if( PhysicalBody == null && hit.PhysicalBody != null && hit.PhysicalBody.MotionType == PhysicsMotionType.Dynamic )
 			{
-				var mass = typeCached.MassNoPhysicalBodyMode.Value;
+				var mass = TypeCached.MassNoPhysicalBodyMode.Value;
 				if( mass > 0 )
 				{
 					//!!!!slowly?
@@ -203,7 +212,7 @@ namespace NeoAxis
 			}
 
 			//damage
-			if( hit.SceneObject != null && typeCached.HitDamage != 0 )
+			if( hit.SceneObject != null && TypeCached.HitDamage != 0 )
 			{
 				var processDamage = hit.SceneObject as IProcessDamage;
 				if( processDamage == null )
@@ -213,7 +222,7 @@ namespace NeoAxis
 				{
 					//!!!!maybe add 'hit' to the method. maybe to anyData
 
-					processDamage.ProcessDamage( WhoFired, typeCached.HitDamage.Value, null );
+					processDamage.ProcessDamage( WhoFired, (float)TypeCached.HitDamage.Value, null );
 					//processDamage.ProcessDamage( OriginalCreator.Value ?? this, HitDamage.Value, null );
 				}
 
@@ -237,11 +246,11 @@ namespace NeoAxis
 			}
 
 			//volume hit
-			if( typeCached.HitVolumeRadius > 0 )
+			if( TypeCached.HitVolumeRadius > 0 )
 			{
 				//get affected bodies
-				var sphere = new Sphere( fixedHitPosition, typeCached.HitVolumeRadius );
-				var volumeTestItem = new PhysicsVolumeTestItem( sphere, Vector3.Zero, PhysicsVolumeTestItem.ModeEnum.All );
+				var sphere = new Sphere( fixedHitPosition, TypeCached.HitVolumeRadius );
+				var volumeTestItem = new PhysicsVolumeTestItem( sphere, Vector3.Zero, PhysicsVolumeTestItem.ModeEnum.OneClosestForEach );
 				ParentScene.PhysicsVolumeTest( volumeTestItem );
 
 				//process affected bodies
@@ -252,32 +261,32 @@ namespace NeoAxis
 					item.Body.GetBounds( out var bodyBounds );
 
 					var distance = bodyBounds.GetPointDistance( fixedHitPosition );
-					if( distance < typeCached.HitVolumeRadius )
+					if( distance < TypeCached.HitVolumeRadius )
 					{
-						var distanceFactor = Math.Cos( distance / typeCached.HitVolumeRadius );
-						//var distanceFactor = MathEx.Saturate( 1.0 - distance / typeCached.HitVolumeRadius );
+						var distanceFactor = Math.Cos( distance / TypeCached.HitVolumeRadius );
+						//var distanceFactor = MathEx.Saturate( 1.0 - distance / TypeCached.HitVolumeRadius );
 
 						if( distanceFactor > 0 )
 						{
 							//add damage
-							if( typeCached.HitVolumeDamage != 0 )
+							if( TypeCached.HitVolumeDamage != 0 )
 							{
 								var obj = item.Body.Owner as ObjectInSpace;
 								if( obj != null )
 								{
-									var damage = typeCached.HitVolumeDamage * distanceFactor;
+									var damage = TypeCached.HitVolumeDamage * distanceFactor;
 
 									var processDamage = obj as IProcessDamage;
 									if( processDamage == null )
 										processDamage = obj.Parent as IProcessDamage;
 
 									if( processDamage != null )
-										processDamage.ProcessDamage( WhoFired, damage, null );
+										processDamage.ProcessDamage( WhoFired, (float)damage, null );
 								}
 							}
 
 							//add impulse
-							if( typeCached.HitVolumeImpulse != 0 )
+							if( TypeCached.HitVolumeImpulse != 0 )
 							{
 								if( item.Body != null && item.Body.MotionType == PhysicsMotionType.Dynamic )
 								{
@@ -287,7 +296,7 @@ namespace NeoAxis
 										direction.X = 0.0001;
 									direction.Normalize();
 
-									var force = direction * typeCached.HitVolumeImpulse * distanceFactor;
+									var force = direction * TypeCached.HitVolumeImpulse * distanceFactor;
 									var localPosition = Vector3F.Zero;
 
 									item.Body.ApplyForce( force.ToVector3F(), localPosition );
@@ -312,12 +321,12 @@ namespace NeoAxis
 			////HitSound
 			//if( NetworkIsSingle )
 			//{
-			//	ParentScene.SoundPlay( typeCached.HitSound, TransformV.Position );
+			//	ParentScene.SoundPlay( TypeCached.HitSound, TransformV.Position );
 
 			//	//!!!!not good. don't transfer sound name it is already know
 			//	//!!!!impl
 
-			//	//var soundName = typeCached.HitSound.GetByReference;
+			//	//var soundName = TypeCached.HitSound.GetByReference;
 			//	//if( NetworkIsServer && !string.IsNullOrEmpty( soundName ) )
 			//	//{
 			//	//	var writer = BeginNetworkMessageToEveryone( "SoundHit" );
@@ -333,26 +342,26 @@ namespace NeoAxis
 			////HitParticle
 			//if( NetworkIsSingle )
 			//{
-			//	var particleSystem = typeCached.HitParticle.Value;
+			//	var particleSystem = TypeCached.HitParticle.Value;
 			//	if( particleSystem != null )
 			//	{
 			//		var obj = Parent.CreateComponent<ParticleSystemInSpace>( enabled: false, networkMode: NetworkModeEnum.False );
 			//		//!!!!can be faster without reference, but then can't serialize in simulation
-			//		obj.ParticleSystem = particleSystem;//p.ParticleSystem = typeCached.HitParticle;
-			//		obj.RemainingLifetime = typeCached.HitParticleLifetime;
+			//		obj.ParticleSystem = particleSystem;//p.ParticleSystem = TypeCached.HitParticle;
+			//		obj.RemainingLifetime = TypeCached.HitParticleLifetime;
 
 			//		if( staticRandom == null )
 			//			staticRandom = new FastRandom();
 
 			//		Quaternion rot;
-			//		if( typeCached.HitParticleApplyHitNormal )
+			//		if( TypeCached.HitParticleApplyHitNormal )
 			//			rot = Quaternion.FromDirectionZAxisUp( hit.Normal ) * Quaternion.FromRotateByX( staticRandom.Next( 0, MathEx.PI * 2 ) );
 			//		else
 			//			rot = Quaternion.Identity;
 			//		obj.Transform = new Transform( hit.Position, rot, obj.TransformV.Scale );
 
 			//		//var bulletTransform = TransformV;
-			//		//var rot = typeCached.HitParticleApplyBulletRotation ? bulletTransform.Rotation : Quaternion.Identity;
+			//		//var rot = TypeCached.HitParticleApplyBulletRotation ? bulletTransform.Rotation : Quaternion.Identity;
 			//		//obj.Transform = new Transform( fixedHitPosition/*bulletTransform.Position*/, rot, obj.TransformV.Scale );
 
 			//		obj.Enabled = true;
@@ -360,7 +369,7 @@ namespace NeoAxis
 			//}
 
 			////HitDecal
-			//if( NetworkIsSingle && typeCached.HitDecal )
+			//if( NetworkIsSingle && TypeCached.HitDecal )
 			//{
 			//	//create only for rigid bodies, don't create for characters
 			//	if( hit.PhysicalBody != null /*hitSceneObject != null */ && hitSceneObject as Character == null && hitSceneObject?.Parent as Character == null )
@@ -368,9 +377,9 @@ namespace NeoAxis
 			//		var obj = Parent.CreateComponent<Decal>( enabled: false, networkMode: NetworkModeEnum.False );
 
 			//		//var bulletTransform = TransformV;
-			//		obj.RemainingLifetime = typeCached.HitDecalLifetime;
-			//		obj.VisibilityDistanceFactor = typeCached.HitDecalVisibilityDistanceFactor;
-			//		obj.Material = typeCached.HitDecalMaterial;
+			//		obj.RemainingLifetime = TypeCached.HitDecalLifetime;
+			//		obj.VisibilityDistanceFactor = TypeCached.HitDecalVisibilityDistanceFactor;
+			//		obj.Material = TypeCached.HitDecalMaterial;
 
 			//		if( staticRandom == null )
 			//			staticRandom = new FastRandom();
@@ -378,7 +387,7 @@ namespace NeoAxis
 			//		var rot = Quaternion.FromDirectionZAxisUp( -hit.Normal );
 			//		rot *= Quaternion.FromRotateByX( staticRandom.Next( 0, MathEx.PI * 2 ) );
 
-			//		obj.Transform = new Transform( fixedHitPosition, rot, typeCached.HitDecalScale/*obj.TransformV.Scale*/ );
+			//		obj.Transform = new Transform( fixedHitPosition, rot, TypeCached.HitDecalScale/*obj.TransformV.Scale*/ );
 
 			//		//attach to the body when it is dynamic
 			//		if( hitSceneObject != null )
@@ -432,17 +441,17 @@ namespace NeoAxis
 			}
 
 			//destroy the bullet
-			if( typeCached.DestroyOnHit )
+			if( TypeCached.DestroyOnHit )
 				RemoveFromParent( true );
 
 
 			//old
 			////HitObjects
-			//for( int nHitObject = 0; nHitObject < typeCached.HitObjects.Count; nHitObject++ )
+			//for( int nHitObject = 0; nHitObject < TypeCached.HitObjects.Count; nHitObject++ )
 			//{
 			//	//if( !allowCreateObjects[ nHitObject ] )
 			//	//	continue;
-			//	var type = typeCached.HitObjects[ nHitObject ].Value;
+			//	var type = TypeCached.HitObjects[ nHitObject ].Value;
 			//	if( type == null )
 			//		continue;
 
@@ -622,34 +631,31 @@ namespace NeoAxis
 		void HitSoundParticleDecal( Vector3 fixedHitPosition, Vector3 hitNormal, bool hitHasPhysicalBody, ObjectInSpace hitSceneObject )
 		{
 			//HitSound
-			ParentScene.SoundPlay( typeCached.HitSound, fixedHitPosition );
+			ParentScene.SoundPlay( TypeCached.HitSound, fixedHitPosition );
 
 			//HitParticle
 			{
 				//!!!!can be faster without reference, but then can't serialize in simulation
-				//var particleSystemReference = typeCached.HitParticle;//var particleSystem = typeCached.HitParticle.Value;
+				//var particleSystemReference = TypeCached.HitParticle;//var particleSystem = TypeCached.HitParticle.Value;
 				//if( particleSystemReference.Value != null )
 				//obj.ParticleSystem = particleSystemReference;
 
-				var particleSystem = typeCached.HitParticle.Value;
+				var particleSystem = TypeCached.HitParticle.Value;
 				if( particleSystem != null )
 				{
 					var obj = Parent.CreateComponent<ParticleSystemInSpace>( enabled: false );
 					obj.ParticleSystem = particleSystem;
-					obj.RemainingLifetime = typeCached.HitParticleLifetime;
-
-					if( staticRandom == null )
-						staticRandom = new FastRandom();
+					obj.RemainingLifetime = TypeCached.HitParticleLifetime;
 
 					Quaternion rot;
-					if( typeCached.HitParticleApplyHitNormal )
-						rot = Quaternion.FromDirectionZAxisUp( hitNormal ) * Quaternion.FromRotateByX( staticRandom.Next( 0, MathEx.PI * 2 ) );
+					if( TypeCached.HitParticleApplyHitNormal )
+						rot = Quaternion.FromDirectionZAxisUp( hitNormal ) * Quaternion.FromRotateByX( staticRandom.Next( MathEx.PI * 2 ) );
 					else
 						rot = Quaternion.Identity;
 					obj.Transform = new Transform( fixedHitPosition, rot, obj.TransformV.Scale );
 
 					//var bulletTransform = TransformV;
-					//var rot = typeCached.HitParticleApplyBulletRotation ? bulletTransform.Rotation : Quaternion.Identity;
+					//var rot = TypeCached.HitParticleApplyBulletRotation ? bulletTransform.Rotation : Quaternion.Identity;
 					//obj.Transform = new Transform( fixedHitPosition/*bulletTransform.Position*/, rot, obj.TransformV.Scale );
 
 					obj.Enabled = true;
@@ -657,7 +663,7 @@ namespace NeoAxis
 			}
 
 			//HitDecal
-			if( typeCached.HitDecal )
+			if( TypeCached.HitDecal )
 			{
 				//create only for rigid bodies, don't create for characters
 				if( hitHasPhysicalBody && hitSceneObject as Character == null && hitSceneObject?.Parent as Character == null )
@@ -665,17 +671,14 @@ namespace NeoAxis
 					var obj = Parent.CreateComponent<Decal>( enabled: false );
 
 					//var bulletTransform = TransformV;
-					obj.RemainingLifetime = typeCached.HitDecalLifetime;
-					obj.VisibilityDistanceFactor = typeCached.HitDecalVisibilityDistanceFactor;
-					obj.Material = typeCached.HitDecalMaterial;
-
-					if( staticRandom == null )
-						staticRandom = new FastRandom();
+					obj.RemainingLifetime = TypeCached.HitDecalLifetime;
+					obj.VisibilityDistanceFactor = TypeCached.HitDecalVisibilityDistanceFactor;
+					obj.Material = TypeCached.HitDecalMaterial;
 
 					var rot = Quaternion.FromDirectionZAxisUp( -hitNormal );
-					rot *= Quaternion.FromRotateByX( staticRandom.Next( 0, MathEx.PI * 2 ) );
+					rot *= Quaternion.FromRotateByX( staticRandom.Next( MathEx.PI * 2 ) );
 
-					obj.Transform = new Transform( fixedHitPosition, rot, typeCached.HitDecalScale/*obj.TransformV.Scale*/ );
+					obj.Transform = new Transform( fixedHitPosition, rot, TypeCached.HitDecalScale/*obj.TransformV.Scale*/ );
 
 					//attach to the body when it is dynamic
 					if( hitSceneObject != null )
@@ -712,21 +715,17 @@ namespace NeoAxis
 
 		void UpdateMesh()
 		{
-			Mesh = typeCached.Mesh;
+			Mesh = TypeCached.Mesh;
 		}
 
 		protected override void OnEnabledInHierarchyChanged()
 		{
+			BulletType.Touch();
+
 			base.OnEnabledInHierarchyChanged();
 
 			if( EnabledInHierarchyAndIsInstance )
-			{
-				//update cached type and mesh
-				typeCached = BulletType.Value;
-				if( typeCached == null )
-					typeCached = new BulletType();
 				UpdateMesh();
-			}
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
@@ -764,7 +763,7 @@ namespace NeoAxis
 				return;
 
 			//apply gravity to velocity
-			var gravityFactor = typeCached.GravityFactorNoPhysicalBodyMode.Value;
+			var gravityFactor = TypeCached.GravityFactorNoPhysicalBodyMode.Value;
 			if( gravityFactor != 0 )
 				LinearVelocityNoPhysicalBodyMode += scene.Gravity.Value * gravityFactor * delta;
 
@@ -892,35 +891,60 @@ namespace NeoAxis
 
 			var hitFound = false;
 
-			var contacts = PhysicalBody.GetContacts();
-			if( contacts.Count != 0 )
+			unsafe
 			{
-				if( contacts.Count != 0 )//for( int nContact = 0; nContact < contacts.Count; nContact++ )
+				PhysicalBody.GetContacts( out var itemCount, out var itemBuffer );
+				if( itemCount != 0 )
 				{
-					var nContact = 0;
-					ref var contact = ref contacts.Array[ contacts.Offset + nContact ];//ref var contact = ref contacts[ nContact ];
+					//if( contacts.Count != 0 )//for( int nContact = 0; nContact < contacts.Count; nContact++ )
+					//{
 
-					//!!!!
-					Vector3 normal;
-					var diff = PhysicalBody.Position - contact.WorldPositionOn2;
-					if( diff != Vector3.Zero )
-						normal = diff.GetNormalize();
-					else
-						normal = Vector3.ZAxis;
+					ref var item = ref itemBuffer[ 0 ];
 
 					var hit = new HitData();
-					hit.PhysicalBody = contact.Body2;
+					hit.PhysicalBody = scene.PhysicsWorld.GetBodyById( item.Body2ID );
 					hit.SceneObject = hit.PhysicalBody.Owner as ObjectInSpace;
-					hit.Position = contact.WorldPositionOn2;
-					hit.Normal = normal;
+					hit.Position = item.GetContactPointOn2( 0 );
+					hit.Normal = -item.Normal;
 					PerformHit( hit );
 
 					hitFound = true;
 
 					//if( !EnabledInHierarchy || RemoveFromParentQueued )
 					//	break;
+					//}
 				}
 			}
+
+			//var contacts = PhysicalBody.GetContacts();
+			//if( contacts.Count != 0 )
+			//{
+			//	if( contacts.Count != 0 )//for( int nContact = 0; nContact < contacts.Count; nContact++ )
+			//	{
+			//		var nContact = 0;
+			//		ref var contact = ref contacts.Array[ contacts.Offset + nContact ];//ref var contact = ref contacts[ nContact ];
+
+			//		//!!!!
+			//		Vector3 normal;
+			//		var diff = PhysicalBody.Position - contact.WorldPositionOn2;
+			//		if( diff != Vector3.Zero )
+			//			normal = diff.GetNormalize();
+			//		else
+			//			normal = Vector3.ZAxis;
+
+			//		var hit = new HitData();
+			//		hit.PhysicalBody = contact.Body2;
+			//		hit.SceneObject = hit.PhysicalBody.Owner as ObjectInSpace;
+			//		hit.Position = contact.WorldPositionOn2;
+			//		hit.Normal = normal;
+			//		PerformHit( hit );
+
+			//		hitFound = true;
+
+			//		//if( !EnabledInHierarchy || RemoveFromParentQueued )
+			//		//	break;
+			//	}
+			//}
 
 			if( !hitFound )
 			{
@@ -984,6 +1008,50 @@ namespace NeoAxis
 			//}
 
 			return true;
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		protected override void OnSpaceBoundsUpdate( ref SpaceBounds newBounds )
+		{
+			if( PhysicalBody == null )
+			{
+				var result = MeshOutput?.Result;
+				if( result != null )
+				{
+					if( result.MeshData.BillboardMode != 0 )
+					{
+						var tr = Transform.Value;
+						var meshSphere = result.MeshData.SpaceBounds.BoundingSphere;
+						newBounds = new SpaceBounds( new Sphere( tr.Position, meshSphere.Radius * tr.Scale.MaxComponent() ) );
+					}
+					else
+					{
+						var meshBoundLocal = result.SpaceBounds;
+						var meshBoundsTransformed = SpaceBounds.Multiply( Transform, meshBoundLocal );
+						newBounds = SpaceBounds.Merge( newBounds, meshBoundsTransformed );
+					}
+
+					//bounds prediction to skip small updates in future steps
+					var realBounds = newBounds.BoundingBox;
+
+					if( !SpaceBoundsOctreeOverride.HasValue || !SpaceBoundsOctreeOverride.Value.Contains( ref realBounds ) )
+					{
+						//calculated extended bounds. predict for 2-3 seconds
+
+						var trPosition = TransformV.Position;
+
+						var bTotal = realBounds;
+						var b2 = new Bounds( trPosition );
+						b2.Add( trPosition + LinearVelocityNoPhysicalBodyMode.Value * ( 2.0f + staticRandom.NextFloat() ) );
+						b2.Expand( newBounds.BoundingSphere.Radius * 1.1 );
+						bTotal.Add( ref b2 );
+
+						SpaceBoundsOctreeOverride = bTotal;
+					}
+				}
+			}
+			else
+				base.OnSpaceBoundsUpdate( ref newBounds );
 		}
 	}
 }

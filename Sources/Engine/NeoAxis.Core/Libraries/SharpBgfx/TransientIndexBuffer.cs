@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace Internal.SharpBgfx {
     /// <summary>
@@ -13,6 +14,9 @@ namespace Internal.SharpBgfx {
         int size;
         int startIndex;
         readonly ushort handle;
+        //!!!!check
+        //[MarshalAs( UnmanagedType.U1 )]
+        byte isIndex16;
 
         /// <summary>
         /// Represents an invalid handle.
@@ -29,12 +33,14 @@ namespace Internal.SharpBgfx {
         /// </summary>
         public int Count { get { return size; } }
 
+        public bool IsIndex16 { get { return isIndex16 != 0; } }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TransientIndexBuffer"/> struct.
         /// </summary>
         /// <param name="indexCount">The number of 16-bit indices that fit in the buffer.</param>
-        public TransientIndexBuffer (int indexCount) {
-            NativeMethods.bgfx_alloc_transient_index_buffer(out this, indexCount);
+        public TransientIndexBuffer (int indexCount, bool index32) {
+            NativeMethods.bgfx_alloc_transient_index_buffer(out this, indexCount, index32);
         }
 
         /// <summary>
@@ -42,8 +48,8 @@ namespace Internal.SharpBgfx {
         /// </summary>
         /// <param name="count">The number of 16-bit indices required.</param>
         /// <returns>The number of available indices.</returns>
-        public static int GetAvailableSpace (int count) {
-            return NativeMethods.bgfx_get_avail_transient_index_buffer(count);
+        public static int GetAvailableSpace (int count, bool index32) {
+            return NativeMethods.bgfx_get_avail_transient_index_buffer(count, index32 );
         }
 
         /// <summary>

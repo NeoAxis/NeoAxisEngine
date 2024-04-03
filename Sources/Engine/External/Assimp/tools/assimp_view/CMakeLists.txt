@@ -1,7 +1,7 @@
 # Open Asset Import Library (assimp)
 # ----------------------------------------------------------------------
-# 
-# Copyright (c) 2006-2020, assimp team
+#
+# Copyright (c) 2006-2022, assimp team
 
 
 # All rights reserved.
@@ -37,9 +37,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 #----------------------------------------------------------------------
-cmake_minimum_required( VERSION 3.0 )
-
-FIND_PACKAGE(DirectX REQUIRED)
+cmake_minimum_required( VERSION 3.10 )
 
 INCLUDE_DIRECTORIES (
   ${Assimp_SOURCE_DIR}/include
@@ -86,6 +84,8 @@ ADD_EXECUTABLE(  assimp_viewer WIN32
   txi.bmp
 )
 
+TARGET_USE_COMMON_OUTPUT_DIRECTORY(assimp_viewer)
+
 SET_PROPERTY(TARGET assimp_viewer PROPERTY DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 
 IF ( MSVC )
@@ -95,8 +95,16 @@ IF ( MSVC )
   REMOVE_DEFINITIONS( -DUNICODE -D_UNICODE )
 ENDIF ()
 
+IF (ASSIMP_WARNINGS_AS_ERRORS)
+  IF (MSVC)
+    TARGET_COMPILE_OPTIONS(assimp_viewer PRIVATE /W4 /WX)
+  ELSE()
+    TARGET_COMPILE_OPTIONS(assimp_viewer PRIVATE -Wall -Werror)
+  ENDIF()
+ENDIF()
+
 # Link the executable to the assimp + dx libs.
-TARGET_LINK_LIBRARIES ( assimp_viewer assimp ${DirectX_LIBRARY} ${DirectX_D3DX9_LIBRARY} comctl32.lib winmm.lib )
+TARGET_LINK_LIBRARIES ( assimp_viewer assimp ${DirectX_LIBRARY} ${DirectX_D3DX9_LIBRARY} comctl32 winmm )
 
 INSTALL( TARGETS assimp_viewer
   DESTINATION "${ASSIMP_BIN_INSTALL_DIR}" COMPONENT assimp-dev

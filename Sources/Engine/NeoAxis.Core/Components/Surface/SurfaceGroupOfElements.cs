@@ -18,7 +18,7 @@ namespace NeoAxis
 		public Reference<double> Probability
 		{
 			get { if( _probability.BeginGet() ) Probability = _probability.Get( this ); return _probability.value; }
-			set { if( _probability.BeginSet( ref value ) ) { try { ProbabilityChanged?.Invoke( this ); ShouldRecompileSurface(); } finally { _probability.EndSet(); } } }
+			set { if( _probability.BeginSet( this, ref value ) ) { try { ProbabilityChanged?.Invoke( this ); ShouldRecompileSurface(); } finally { _probability.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Probability"/> property value changes.</summary>
 		public event Action<SurfaceGroupOfElements> ProbabilityChanged;
@@ -32,7 +32,7 @@ namespace NeoAxis
 		public Reference<double> OccupiedAreaRadius
 		{
 			get { if( _occupiedAreaRadius.BeginGet() ) OccupiedAreaRadius = _occupiedAreaRadius.Get( this ); return _occupiedAreaRadius.value; }
-			set { if( _occupiedAreaRadius.BeginSet( ref value ) ) { try { OccupiedAreaRadiusChanged?.Invoke( this ); ShouldRecompileSurface(); } finally { _occupiedAreaRadius.EndSet(); } } }
+			set { if( _occupiedAreaRadius.BeginSet( this, ref value ) ) { try { OccupiedAreaRadiusChanged?.Invoke( this ); ShouldRecompileSurface(); } finally { _occupiedAreaRadius.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="OccupiedAreaRadius"/> property value changes.</summary>
 		public event Action<SurfaceGroupOfElements> OccupiedAreaRadiusChanged;
@@ -46,7 +46,7 @@ namespace NeoAxis
 		//public Reference<bool> OverlapWithOtherGroups
 		//{
 		//	get { if( _overlapWithOtherGroups.BeginGet() ) OverlapWithOtherGroups = _overlapWithOtherGroups.Get( this ); return _overlapWithOtherGroups.value; }
-		//	set { if( _overlapWithOtherGroups.BeginSet( ref value ) ) { try { OverlapWithOtherGroupsChanged?.Invoke( this ); ShouldRecompileSurface(); } finally { _overlapWithOtherGroups.EndSet(); } } }
+		//	set { if( _overlapWithOtherGroups.BeginSet( this, ref value ) ) { try { OverlapWithOtherGroupsChanged?.Invoke( this ); ShouldRecompileSurface(); } finally { _overlapWithOtherGroups.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="OverlapWithOtherGroups"/> property value changes.</summary>
 		//public event Action<SurfaceGroupOfElements> OverlapWithOtherGroupsChanged;
@@ -60,7 +60,7 @@ namespace NeoAxis
 		public Reference<Range> PositionZRange
 		{
 			get { if( _positionZRange.BeginGet() ) PositionZRange = _positionZRange.Get( this ); return _positionZRange.value; }
-			set { if( _positionZRange.BeginSet( ref value ) ) { try { PositionZRangeChanged?.Invoke( this ); ShouldRecompileSurface(); } finally { _positionZRange.EndSet(); } } }
+			set { if( _positionZRange.BeginSet( this, ref value ) ) { try { PositionZRangeChanged?.Invoke( this ); ShouldRecompileSurface(); } finally { _positionZRange.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PositionZRange"/> property value changes.</summary>
 		public event Action<SurfaceGroupOfElements> PositionZRangeChanged;
@@ -73,7 +73,7 @@ namespace NeoAxis
 		public Reference<bool> RotateBySurfaceNormal
 		{
 			get { if( _rotateBySurfaceNormal.BeginGet() ) RotateBySurfaceNormal = _rotateBySurfaceNormal.Get( this ); return _rotateBySurfaceNormal.value; }
-			set { if( _rotateBySurfaceNormal.BeginSet( ref value ) ) { try { RotateBySurfaceNormalChanged?.Invoke( this ); ShouldRecompileSurface(); } finally { _rotateBySurfaceNormal.EndSet(); } } }
+			set { if( _rotateBySurfaceNormal.BeginSet( this, ref value ) ) { try { RotateBySurfaceNormalChanged?.Invoke( this ); ShouldRecompileSurface(); } finally { _rotateBySurfaceNormal.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RotateBySurfaceNormal"/> property value changes.</summary>
 		public event Action<SurfaceGroupOfElements> RotateBySurfaceNormalChanged;
@@ -86,7 +86,7 @@ namespace NeoAxis
 		public Reference<bool> RotateAroundItsAxis
 		{
 			get { if( _rotateAroundItsAxis.BeginGet() ) RotateAroundItsAxis = _rotateAroundItsAxis.Get( this ); return _rotateAroundItsAxis.value; }
-			set { if( _rotateAroundItsAxis.BeginSet( ref value ) ) { try { RotateAroundItsAxisChanged?.Invoke( this ); ShouldRecompileSurface(); } finally { _rotateAroundItsAxis.EndSet(); } } }
+			set { if( _rotateAroundItsAxis.BeginSet( this, ref value ) ) { try { RotateAroundItsAxisChanged?.Invoke( this ); ShouldRecompileSurface(); } finally { _rotateAroundItsAxis.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RotateAroundItsAxis"/> property value changes.</summary>
 		public event Action<SurfaceGroupOfElements> RotateAroundItsAxisChanged;
@@ -99,7 +99,7 @@ namespace NeoAxis
 		public Reference<Degree> MaxIncline
 		{
 			get { if( _maxIncline.BeginGet() ) MaxIncline = _maxIncline.Get( this ); return _maxIncline.value; }
-			set { if( _maxIncline.BeginSet( ref value ) ) { try { MaxInclineChanged?.Invoke( this ); ShouldRecompileSurface(); } finally { _maxIncline.EndSet(); } } }
+			set { if( _maxIncline.BeginSet( this, ref value ) ) { try { MaxInclineChanged?.Invoke( this ); ShouldRecompileSurface(); } finally { _maxIncline.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MaxIncline"/> property value changes.</summary>
 		public event Action<SurfaceGroupOfElements> MaxInclineChanged;
@@ -112,7 +112,7 @@ namespace NeoAxis
 		public Reference<Range> ScaleRange
 		{
 			get { if( _scaleRange.BeginGet() ) ScaleRange = _scaleRange.Get( this ); return _scaleRange.value; }
-			set { if( _scaleRange.BeginSet( ref value ) ) { try { ScaleRangeChanged?.Invoke( this ); ShouldRecompileSurface(); } finally { _scaleRange.EndSet(); } } }
+			set { if( _scaleRange.BeginSet( this, ref value ) ) { try { ScaleRangeChanged?.Invoke( this ); ShouldRecompileSurface(); } finally { _scaleRange.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ScaleRange"/> property value changes.</summary>
 		public event Action<SurfaceGroupOfElements> ScaleRangeChanged;

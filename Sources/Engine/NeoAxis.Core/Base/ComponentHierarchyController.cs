@@ -38,12 +38,15 @@ namespace NeoAxis
 		//!!!!если динамическое свойство чтобы не копилось
 		Dictionary<Metadata.Property, PropertyChangedHandler> networkComponentPropertyChangedEventHandlers = new Dictionary<Metadata.Property, PropertyChangedHandler>();
 
+		internal bool loading;
+
 		/////////////////////////////////////////
 
 		public class NetworkServerInterface
 		{
 			public delegate void AddComponentDelegate( NetworkServerInterface sender, Component child, bool createComponent );
 			public event AddComponentDelegate AddComponent;
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public void PerformAddComponent( Component child, bool createComponent )
 			{
 				AddComponent?.Invoke( this, child, createComponent );
@@ -51,6 +54,7 @@ namespace NeoAxis
 
 			public delegate void RemoveFromParentDelegate( NetworkServerInterface sender, Component component, bool queued, bool disposing );
 			public event RemoveFromParentDelegate RemoveFromParent;
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public void PerformRemoveFromParent( Component component, bool queued, bool disposing )
 			{
 				RemoveFromParent?.Invoke( this, component, queued, disposing );
@@ -58,6 +62,7 @@ namespace NeoAxis
 
 			public delegate void PropertyChangedEventDelegate( NetworkServerInterface sender, Component component, Metadata.Property property );
 			public event PropertyChangedEventDelegate PropertyChangedEvent;
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public void PerformPropertyChangedEvent( Component component, Metadata.Property property )
 			{
 				PropertyChangedEvent?.Invoke( this, component, property );
@@ -65,6 +70,7 @@ namespace NeoAxis
 
 			public delegate void SimulationStepDelegate( NetworkServerInterface sender );
 			public event SimulationStepDelegate SimulationStep;
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public void PerformSimulationStep()
 			{
 				SimulationStep?.Invoke( this );
@@ -72,6 +78,7 @@ namespace NeoAxis
 
 			public delegate void BeginNetworkMessageDelegate( NetworkServerInterface sender, Component component, IList<ServerNetworkService_Components.ClientItem> clientRecipients, ServerNetworkService_Components.ClientItem clientRecipient, IList<ServerNetworkService_Users.UserInfo> userRecipients, ServerNetworkService_Users.UserInfo userRecipient, bool toEveryone, string message, ref ArrayDataWriter writer );
 			public event BeginNetworkMessageDelegate BeginNetworkMessage;
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public ArrayDataWriter PerformBeginNetworkMessage( Component component, IList<ServerNetworkService_Components.ClientItem> clientRecipients, ServerNetworkService_Components.ClientItem clientRecipient, IList<ServerNetworkService_Users.UserInfo> userRecipients, ServerNetworkService_Users.UserInfo userRecipient, bool toEveryone, string message )
 			{
 				ArrayDataWriter writer = null;
@@ -81,6 +88,7 @@ namespace NeoAxis
 
 			public delegate void EndNetworkMessageDelegate( NetworkServerInterface sender );
 			public event EndNetworkMessageDelegate EndNetworkMessage;
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public void PerformEndNetworkMessage()
 			{
 				EndNetworkMessage?.Invoke( this );
@@ -88,6 +96,7 @@ namespace NeoAxis
 
 			public delegate void GetComponentByNetworkIDDelegate( NetworkServerInterface sender, long networkID, ref Component component );
 			public event GetComponentByNetworkIDDelegate GetComponentByNetworkID;
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public Component PerformGetComponentByNetworkID( long networkID )
 			{
 				Component component = null;
@@ -97,6 +106,7 @@ namespace NeoAxis
 
 			public delegate void ChangeNetworkModeDelegate( NetworkServerInterface sender, Component component );
 			public event ChangeNetworkModeDelegate ChangeNetworkMode;
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public void PerformChangeNetworkMode( Component component )
 			{
 				ChangeNetworkMode?.Invoke( this, component );
@@ -104,6 +114,7 @@ namespace NeoAxis
 
 			public delegate void NetworkModeAddUserDelegate( NetworkServerInterface sender, ServerNetworkService_Components.ClientItem clientItem, Component component );
 			public event NetworkModeAddUserDelegate NetworkModeAddUser;
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public void PerformNetworkModeAddUser( ServerNetworkService_Components.ClientItem clientItem, Component component )
 			{
 				NetworkModeAddUser?.Invoke( this, clientItem, component );
@@ -111,6 +122,7 @@ namespace NeoAxis
 
 			public delegate void NetworkModeRemoveUserDelegate( NetworkServerInterface sender, ServerNetworkService_Components.ClientItem clientItem, Component component );
 			public event NetworkModeRemoveUserDelegate NetworkModeRemoveUser;
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public void PerformNetworkModeRemoveUser( ServerNetworkService_Components.ClientItem clientItem, Component component )
 			{
 				NetworkModeRemoveUser?.Invoke( this, clientItem, component );
@@ -123,6 +135,7 @@ namespace NeoAxis
 		{
 			public delegate void BeginNetworkMessageDelegate( NetworkClientInterface sender, Component component, string message, ref ArrayDataWriter writer );
 			public event BeginNetworkMessageDelegate BeginNetworkMessage;
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public ArrayDataWriter PerformBeginNetworkMessage( Component component, string message )
 			{
 				ArrayDataWriter writer = null;
@@ -132,6 +145,7 @@ namespace NeoAxis
 
 			public delegate void EndNetworkMessageDelegate( NetworkClientInterface sender );
 			public event EndNetworkMessageDelegate EndNetworkMessage;
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public void PerformEndNetworkMessage()
 			{
 				EndNetworkMessage?.Invoke( this );
@@ -139,6 +153,7 @@ namespace NeoAxis
 
 			public delegate void GetComponentByNetworkIDDelegate( NetworkClientInterface sender, long networkID, ref Component component );
 			public event GetComponentByNetworkIDDelegate GetComponentByNetworkID;
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public Component PerformGetComponentByNetworkID( long networkID )
 			{
 				Component component = null;
@@ -161,6 +176,7 @@ namespace NeoAxis
 				this.controller = controller;
 			}
 
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public void NetworkComponentPropertyChangedEventHandler( Component component )
 			{
 				if( !component.networkDisableChangedEvents )
@@ -328,7 +344,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		internal void AddSleepingFlow( Flow flow )
+		public void AddSleepingFlow( Flow flow )
 		{
 			lock( sleepingFlows )
 				sleepingFlows.AddWithCheckAlreadyContained( flow );
@@ -342,7 +358,7 @@ namespace NeoAxis
 		{
 			if( !component.networkSubscribedToEvents )
 			{
-				var context = new Metadata.GetMembersContext( false );
+				var context = NetworkUtility.metadataGetMembersContextNoFilter;//new Metadata.GetMembersContext( false );
 
 				foreach( var member in component.MetadataGetMembers( context ).ToArray() )
 				{
@@ -389,7 +405,7 @@ namespace NeoAxis
 		{
 			if( component.networkSubscribedToEvents )
 			{
-				var context = new Metadata.GetMembersContext( false );
+				var context = NetworkUtility.metadataGetMembersContextNoFilter;//new Metadata.GetMembersContext( false );
 
 				foreach( var member in component.MetadataGetMembers( context ).ToArray() )
 				{
@@ -429,6 +445,12 @@ namespace NeoAxis
 			get { return networkServerInterface == null && networkClientInterface == null; }
 		}
 
+		public bool NetworkIsSingleOrClient
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get { return networkServerInterface == null; }
+		}
+
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Component GetComponentByNetworkID( long networkID )
 		{
@@ -439,5 +461,9 @@ namespace NeoAxis
 			return null;
 		}
 
+		public bool Loading
+		{
+			get { return loading; }
+		}
 	}
 }

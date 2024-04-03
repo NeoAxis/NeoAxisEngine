@@ -1,7 +1,6 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 
 namespace NeoAxis.Editor
 {
@@ -39,12 +38,13 @@ namespace NeoAxis.Editor
 		}
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	[AttributeUsage( AttributeTargets.Class, AllowMultiple = true )]
 	public class SettingsCellAttribute : Attribute
 	{
 		Type settingsCellClass;
+		string settingsCellClassName;
 		bool multiselectionSupport;
 
 		public SettingsCellAttribute( Type settingsCellClass, bool multiselectionSupport = false )
@@ -53,9 +53,20 @@ namespace NeoAxis.Editor
 			this.multiselectionSupport = multiselectionSupport;
 		}
 
+		public SettingsCellAttribute( string settingsCellClassName, bool multiselectionSupport = false )
+		{
+			this.settingsCellClassName = settingsCellClassName;
+			this.multiselectionSupport = multiselectionSupport;
+		}
+
 		public Type SettingsCellClass
 		{
 			get { return settingsCellClass; }
+		}
+
+		public string SettingsCellClassName
+		{
+			get { return settingsCellClassName; }
 		}
 
 		public bool MultiselectionSupport
@@ -64,7 +75,7 @@ namespace NeoAxis.Editor
 		}
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public class PreviewAttribute : Attribute
 	{
@@ -92,7 +103,7 @@ namespace NeoAxis.Editor
 		}
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public class PreviewImageAttribute : Attribute
 	{
@@ -120,24 +131,35 @@ namespace NeoAxis.Editor
 		}
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public class NewObjectSettingsAttribute : Attribute
 	{
 		Type settingsClass;
+		string settingsClassName;
 
 		public NewObjectSettingsAttribute( Type settingsClass )
 		{
 			this.settingsClass = settingsClass;
 		}
 
+		public NewObjectSettingsAttribute( string settingsClassName )
+		{
+			this.settingsClassName = settingsClassName;
+		}
+
 		public Type SettingsClass
 		{
 			get { return settingsClass; }
 		}
+
+		public string SettingsClassName
+		{
+			get { return settingsClassName; }
+		}
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public class NewObjectCellAttribute : Attribute
 	{
@@ -154,7 +176,7 @@ namespace NeoAxis.Editor
 		}
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public enum RenderSelectionState
 	{
@@ -163,73 +185,7 @@ namespace NeoAxis.Editor
 		Selected,
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-#if !DEPLOY
-	/// <summary>
-	/// Provides data to implement drag and drop functionaly for references.
-	/// </summary>
-	public class DragDropSetReferenceData
-	{
-		public DocumentInstance document;
-		public Component[] controlledComponents;
-		public object[] propertyOwners;
-		//public Component[] controlledObjects;
-		public Metadata.Property property;
-		public object[] indexers;
-
-		public void SetProperty( string[] referenceValues )
-		{
-			EditorUtility.SetPropertyReference( document, propertyOwners/*controlledObjects*/, property, indexers, referenceValues );
-		}
-
-		////!!!!TypeInfo?
-		//public Type GetDemandedType()
-		//{
-		//	var netType = ReferenceUtils.GetUnreferencedType( property.Type.GetNetType() );
-		//	//if( ReferenceUtils.IsReferenceType( netType ) )
-		//	//	return ReferenceUtils.GetUnderlyingType( netType );
-		//	return netType;
-		//}
-	}
-#endif
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	//public class DragDropSetResourceData
-	//{
-	//	public DocumentInstance document;
-	//	public object[] controlledObjects;
-	//	public Metadata.Property property;
-	//	public object[] indexers;
-
-	//	ResourceSelectionMode? selectionMode;
-	//	public ResourceSelectionMode SelectionMode
-	//	{
-	//		get
-	//		{
-	//			if( selectionMode == null )
-	//				selectionMode = ResourceUtils.GetSelectionModeByPropertyAttributes( property );
-	//			return selectionMode.Value;
-	//		}
-	//	}
-
-	//	public void SetProperty( string resourceName )
-	//	{
-	//		EditorUtils.SetPropertyResourceName( document, controlledObjects, property, indexers, resourceName );
-	//	}
-
-	//	////!!!!TypeInfo?
-	//	//public Type GetDemandedType()
-	//	//{
-	//	//	var netType = ReferenceUtils.GetUnreferencedType( property.Type.GetNetType() );
-	//	//	//if( ReferenceUtils.IsReferenceType( netType ) )
-	//	//	//	return ReferenceUtils.GetUnderlyingType( netType );
-	//	//	return netType;
-	//	//}
-	//}
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/// <summary>
 	/// Auxiliary class to work with clipboard of the system.
@@ -240,108 +196,7 @@ namespace NeoAxis.Editor
 		public virtual void OnUnregister() { }
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-#if !DEPLOY
-	/// <summary>
-	/// Represents a collection of focuced objects in the document window.
-	/// </summary>
-	public class ObjectsInFocus
-	{
-		//public DockWindow dockWindow;
-		public DocumentWindow DocumentWindow;
-		public object[] Objects;
-
-		public ObjectsInFocus( /*DockWindow dockWindow,*/ DocumentWindow documentWindow, object[] objects )
-		{
-			//this.dockWindow = dockWindow;
-			this.DocumentWindow = documentWindow;
-			this.Objects = objects;
-		}
-	}
-#endif
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-#if !DEPLOY
-	/// <summary>
-	/// Data for storing in clipboard of the system to implement cut/copy/paste functionality.
-	/// </summary>
-	public class ObjectCutCopyPasteData
-	{
-		public DocumentWindow documentWindow;
-		//public DocumentInstance document;
-		public bool cut;
-		public object[] objects;
-
-		public ObjectCutCopyPasteData( DocumentWindow documentWindow, bool cut, object[] objects )
-		{
-			this.documentWindow = documentWindow;
-			this.cut = cut;
-			this.objects = objects;
-		}
-	}
-#endif
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-#if !DEPLOY
-	/// <summary>
-	/// Auxiliary class to work with clipboard of the system.
-	/// </summary>
-	public static class ClipboardManager
-	{
-		static object currentObject;
-
-		public static void CopyToClipboard<T>( T objectToCopy ) where T : class
-		{
-			var format = DataFormats.GetFormat( typeof( T ).FullName );
-
-			currentObject = objectToCopy;
-
-			var dataObject = new DataObject();
-			dataObject.SetData( format.Name, false, "NeoAxis.ClipboardManager" );
-			Clipboard.SetDataObject( dataObject, false );
-		}
-
-		public static bool CheckAvailableInClipboard<T>() where T : class
-		{
-			if( currentObject != null && currentObject is T )
-			{
-				var dataObject = Clipboard.GetDataObject();
-				var format = DataFormats.GetFormat( typeof( T ).FullName );
-
-				if( dataObject.GetDataPresent( format.Name ) )
-					return true;
-			}
-			return false;
-		}
-
-		public static T GetFromClipboard<T>() where T : class
-		{
-			if( currentObject != null && currentObject is T )
-			{
-				var dataObject = Clipboard.GetDataObject();
-				var format = DataFormats.GetFormat( typeof( T ).FullName );
-
-				if( dataObject.GetDataPresent( format.Name ) && dataObject.GetData( format.Name ) as string == "NeoAxis.ClipboardManager" )
-				{
-					var result = currentObject;
-					currentObject = null;
-					return (T)result;
-				}
-			}
-			return null;
-		}
-
-		public static void Clear()
-		{
-			Clipboard.Clear();
-		}
-	}
-#endif
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/// <summary>
 	/// An interface provides the ability to inform the change document to objects.
@@ -351,7 +206,7 @@ namespace NeoAxis.Editor
 		void EditorUpdateWhenDocumentModified();
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/// <summary>
 	/// An attribute to mark dependent property from another. Used when working with the list of properties in the Settings Window.
@@ -371,7 +226,7 @@ namespace NeoAxis.Editor
 		}
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/// <summary>
 	/// An attribute to mark components to show warning when component creating if another component with same type already exists.
@@ -383,7 +238,7 @@ namespace NeoAxis.Editor
 		}
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public class RestoreDockWindowAfterEditorReloadAttribute : Attribute
 	{
@@ -392,7 +247,7 @@ namespace NeoAxis.Editor
 		}
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public enum StoreProductLicense
 	{
@@ -416,6 +271,337 @@ namespace NeoAxis.Editor
 		PaidPerSeat,
 		//PaidThirdParty,
 	}
-}
 
-//#endif
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public interface IDocumentInstance
+	{
+		string Name { get; }
+		string RealFileName { get; }
+		string SpecialMode { get; }
+		Component ResultComponent { get; }
+		object ResultObject { get; }
+		bool Modified { get; set; }
+		UndoSystem UndoSystem { get; }
+		bool AllowUndoRedo { get; set; }
+		bool Destroyed { get; }
+
+		void CommitUndoAction( UndoSystem.Action action, bool setModified = true );
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/// <summary>
+	/// Represents a collection of focuced objects in the document window.
+	/// </summary>
+	public class ObjectsInFocus
+	{
+		public IDocumentWindow DocumentWindow;
+		public object[] Objects;
+
+		public ObjectsInFocus( IDocumentWindow documentWindow, object[] objects )
+		{
+			DocumentWindow = documentWindow;
+			Objects = objects;
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public enum EditorActionHolder
+	{
+		RibbonQAT,
+		ContextMenu,//!!!!потом может еще быть какое именно контекстное меню
+		ShortcutKey,
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public class EditorActionGetStateContext
+	{
+		EditorActionHolder holder;
+		ObjectsInFocus objectsInFocus;
+		IEditorAction action;
+
+		//
+
+		internal EditorActionGetStateContext( EditorActionHolder holder, ObjectsInFocus objectsInFocus, IEditorAction action )
+		{
+			this.holder = holder;
+			this.objectsInFocus = objectsInFocus;
+			this.action = action;
+		}
+
+		public EditorActionHolder Holder
+		{
+			get { return holder; }
+		}
+
+		public ObjectsInFocus ObjectsInFocus
+		{
+			get { return objectsInFocus; }
+		}
+
+		public IEditorAction Action
+		{
+			get { return action; }
+		}
+
+		public bool Enabled { get; set; }
+		public bool Checked { get; set; }
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public class EditorActionClickContext
+	{
+		EditorActionHolder holder;
+		ObjectsInFocus objectsInFocus;
+		IEditorAction action;
+
+		//
+
+		internal EditorActionClickContext( EditorActionHolder holder, ObjectsInFocus objectsInFocus, IEditorAction action )
+		{
+			this.holder = holder;
+			this.objectsInFocus = objectsInFocus;
+			this.action = action;
+		}
+
+		public EditorActionHolder Holder
+		{
+			get { return holder; }
+		}
+
+		public ObjectsInFocus ObjectsInFocus
+		{
+			get { return objectsInFocus; }
+		}
+
+		public IEditorAction Action
+		{
+			get { return action; }
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//#if !DEPLOY
+	public interface IEditorAction
+	{
+		string Name { get; }
+		ProjectSettingsPage_Shortcuts.Keys2[] ShortcutKeys { get; }
+
+		bool QatSupport { get; }
+		bool QatAddByDefault { get; }
+
+		string ContextMenuText { get; }
+		object UserData { get; }
+		bool CompletelyDisabled { get; }
+	}
+	//#endif
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public delegate bool EditorRibbonDefaultConfigurationTabVisibleConditionDelegate();
+
+	public interface IEditorRibbonDefaultConfigurationTab
+	{
+		string Name { get; }
+		string Type { get; }
+
+		Metadata.TypeInfo VisibleOnlyForType { get; }
+
+		EditorRibbonDefaultConfigurationTabVisibleConditionDelegate VisibleCondition { get; }
+
+		IEditorRibbonDefaultConfigurationGroup[] Groups { get; }
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public interface IEditorRibbonDefaultConfigurationGroup
+	{
+		string Name { get; }
+
+		List<object> Children { get; }
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public interface IDragDropSetReferenceData
+	{
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public interface IDockWindow
+	{
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public interface IEngineViewportControl
+	{
+		Viewport Viewport { get; }
+		Viewport.CameraSettingsClass OverrideCameraSettings { get; set; }
+		bool AllowCreateRenderWindow { get; set; }
+		bool Visible { get; set; }
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public delegate void DocumentWindowSelectedObjectsChangedDelegate( IDocumentWindow sender, object[] oldSelectedObjects );
+
+	/// <summary>
+	/// Provides access to the window of the document.
+	/// </summary>
+	public interface IDocumentWindow : IDockWindow
+	{
+		IDocumentInstance Document { get; }
+		object[] SelectedObjects { get; }
+		ESet<object> SelectedObjectsSet { get; }
+		object ObjectOfWindow { get; }
+		bool OpenAsSettings { get; }
+		Dictionary<string, object> WindowTypeSpecificOptions { get; }
+		bool IsWindowInWorkspace { get; set; }
+
+		event DocumentWindowSelectedObjectsChangedDelegate SelectedObjectsChanged;
+
+		bool SaveDocument();
+		bool IsObjectSelected( object obj );
+		bool IsDocumentSaved();
+		bool Focus();
+		void SelectObjects( ICollection<object> objects, bool updateForeachDocumentWindowContainers = true, bool updateSettingsWindowSelectObjects = true, bool forceUpdate = false );
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/// <summary>
+	/// Provides access to the window of the document (with viewport).
+	/// </summary>
+	public interface IDocumentWindowWithViewport : IDocumentWindow
+	{
+		IEngineViewportControl ViewportControl { get; }
+		Viewport Viewport { get; }
+
+		Scene Scene { get; set; }
+		bool SceneNeedDispose { get; set; }
+		bool CameraRotating { get; }
+		string WorkareaModeName { get; }
+		bool AllowCameraControl { get; }
+		bool AllowSelectObjects { get; }
+		bool DisplaySelectedObjects { get; }
+
+		Scene CreateScene( bool enable );
+		void DestroyScene();
+
+		void WorkareaModeSet( string name, DocumentWindowWithViewportWorkareaMode instance = null );
+
+		void AddScreenMessage( string text, ColorValue color );
+		void AddScreenMessage( string text );
+
+		double GetFontSize();
+		void AddTextWithShadow( FontComponent font, double fontSize, string text, Vector2 position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color );
+		void AddTextWithShadow( string text, Vector2 position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color );
+		void AddTextLinesWithShadow( FontComponent font, double fontSize, IList<string> lines, Rectangle rectangle, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color );
+		void AddTextLinesWithShadow( IList<string> lines, Rectangle rectangle, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color );
+		int AddTextWordWrapWithShadow( FontComponent font, double fontSize, string text, Rectangle rectangle, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color );
+		int AddTextWordWrapWithShadow( string text, Rectangle rectangle, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color );
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/// <summary>
+	/// Provides access to the preview control of the document.
+	/// </summary>
+	public interface IPreviewControl
+	{
+		object ObjectOfPreview { get; }
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/// <summary>
+	/// Provides access to the preview control of the document (with viewport).
+	/// </summary>
+	public interface IPreviewControlWithViewport : IPreviewControl
+	{
+		IEngineViewportControl ViewportControl { get; }
+		Viewport Viewport { get; }
+
+		Scene Scene { get; set; }
+		bool SceneNeedDispose { get; set; }
+		Vector3 CameraLookTo { get; set; }
+		double CameraInitialDistance { get; set; }
+		bool CameraRotationMode { get; set; }
+		SphericalDirection CameraDirection { get; set; }
+
+		Scene CreateScene( bool enable );
+		void DestroyScene();
+		void SetCameraByBounds( Bounds bounds, double distanceScale, bool mode2D );
+		double GetFontSize();
+		void AddTextWithShadow( FontComponent font, double fontSize, string text, Vector2 position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color );
+		void AddTextWithShadow( string text, Vector2 position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color );
+		void AddTextLinesWithShadow( FontComponent font, double fontSize, IList<string> lines, Rectangle rectangle, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color );
+		void AddTextLinesWithShadow( IList<string> lines, Rectangle rectangle, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color );
+		int AddTextWordWrapWithShadow( FontComponent font, double fontSize, string text, Rectangle rectangle, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color );
+		int AddTextWordWrapWithShadow( string text, Rectangle rectangle, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color );
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public enum FormSizeType //same as winforms SizeType
+	{
+		AutoSize,
+		Absolute,
+		Percent
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public interface ISettingsCell
+	{
+		ISettingsProvider Provider { get; }
+		float CellsSortingPriority { get; set; }
+		FormSizeType SizeType { get; set; }
+
+		T[] GetObjects<T>() where T : class;
+		T GetFirstObject<T>() where T : class;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public interface ISettingsProvider
+	{
+		IDocumentWindow DocumentWindow { get; }
+		object[] SelectedObjects { get; }
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public interface ISceneEditor : IDocumentWindowWithViewport
+	{
+		ITransformTool TransformTool { get; }
+
+		void ResetWorkareaMode();
+
+		void GetMouseOverObjectToSelectByClick( SceneEditorGetMouseOverObjectToSelectByClickContext context );
+		void GetMouseOverObjectInSpaceToSelectByClick( SceneEditorGetMouseOverObjectToSelectByClickContext context );
+		object GetMouseOverObjectToSelectByClick( out SceneEditorGetMouseOverObjectToSelectByClickContext context );
+		object GetMouseOverObjectToSelectByClick();
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public class SelectTypeWindowInitData
+	{
+		public IDocumentWindow DocumentWindow;
+		public Metadata.TypeInfo[] DemandedTypes;
+		public bool CanSelectNull;
+		public bool CanSelectAbstractClass;
+
+		public delegate void WasSelectedDelegate( Metadata.TypeInfo selectedType, ref bool cancel );
+		public WasSelectedDelegate WasSelected;
+	}
+
+}

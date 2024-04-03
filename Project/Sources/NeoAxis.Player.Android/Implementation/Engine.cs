@@ -14,20 +14,33 @@ using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using ICSharpCode.SharpZipLib.Zip;
-using Java.Nio;
-using Javax.Microedition.Khronos.Opengles;
 using Internal;
+using Android.Views.InputMethods;
 
 namespace NeoAxis.Player.Android
 {
 	static class Engine
 	{
-		public static AppCompatActivity activity;
+		public static MainActivity/*AppCompatActivity*/ activity;
 
 		//Thread engineMainThread;
 		public volatile static bool engineInitialized;
 
-		public struct TouchEventItem
+		public static Queue<InputEventItem> inputEventQueue = new Queue<InputEventItem>();
+		//public static Queue<TouchEventItem> touchEventsQueue = new Queue<TouchEventItem>();
+		//public static Queue<KeyDownEventItem> keyDownEventsQueue = new Queue<KeyDownEventItem>();
+
+		static List<object> pointerIdentifiers = new List<object>();
+
+		/////////////////////////////////////////
+
+		public abstract class InputEventItem
+		{
+		}
+
+		/////////////////////////////////////////
+
+		public class TouchEventItem : InputEventItem
 		{
 			public MotionEventActions Action;
 			public int ActionIndex;
@@ -40,9 +53,14 @@ namespace NeoAxis.Player.Android
 			//public View View;
 			//public MotionEvent MotionEvent;
 		}
-		public static Queue<TouchEventItem> touchEventsQueue = new Queue<TouchEventItem>();
 
-		static List<object> pointerIdentifiers = new List<object>();
+		/////////////////////////////////////////
+
+		public class KeyDownEventItem : InputEventItem
+		{
+			public EKeys KeyCode;
+			public char Character;
+		}
 
 		/////////////////////////////////////////
 
@@ -126,11 +144,6 @@ namespace NeoAxis.Player.Android
 		{
 			//preload NeoAxis.CoreExtension.dll
 			AssemblyUtility.RegisterAssembly( typeof( CanvasRendererUtility ).Assembly, "" );
-
-#if EXTENDED
-			//preload NeoAxis.Extended.dll
-			AssemblyUtility.RegisterAssembly( typeof( Component_RenderTargetInSpace ).Assembly, "" );
-#endif
 
 			//preload Project.dll
 			AssemblyUtility.RegisterAssembly( typeof( Project.SimulationApp ).Assembly, "" );
@@ -242,10 +255,8 @@ namespace NeoAxis.Player.Android
 			//requested actions
 			if( data.TouchDownRequestToControlActions.Count != 0 )
 			{
-
 				//!!!!
-				int maxDistance = viewport.SizeInPixels.MinComponent() / 20;
-
+				int maxDistance = viewport.SizeInPixels.MinComponent() / 30;
 
 				var filtered = new List<TouchData.TouchDownRequestToProcessTouch>();
 				foreach( var i in data.TouchDownRequestToControlActions )
@@ -279,11 +290,9 @@ namespace NeoAxis.Player.Android
 			}
 		}
 
-		static void PerformTouch( TouchEventItem item )
+		static void ProcessInputEvent_Touch( TouchEventItem item )
 		{
 			var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
-			if( viewport.SizeInPixels.X == 0 || viewport.SizeInPixels.Y == 0 )
-				return;
 
 			switch( item.ActionMasked )//switch( item.Action )
 			{
@@ -355,19 +364,103 @@ namespace NeoAxis.Player.Android
 				}
 				break;
 			}
+
 		}
 
-		public static void ProcessTouchEvents()
+		static void ProcessInputEvent_KeyDown( KeyDownEventItem item )
 		{
-			lock( touchEventsQueue )
+			var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+
+			if( item.KeyCode != EKeys.None )
 			{
-				while( touchEventsQueue.Count != 0 )
+				var data = new KeyEvent( item.KeyCode );
+
 				{
-					var item = touchEventsQueue.Dequeue();
-					PerformTouch( item );
+					var handled = false;
+					viewport.PerformKeyDown( data, ref handled );
+				}
+
+				//!!!!
+
+				{
+					var handled = false;
+					viewport.PerformKeyUp( data, ref handled );
+				}
+			}
+			else
+			{
+				var data = new KeyPressEvent( item.Character );
+
+				bool handled = false;
+				viewport.PerformKeyPress( data, ref handled );
+				//if( handled )
+				//	return;
+			}
+
+			//!!!!
+
+			//{
+			//	var data = new KeyEvent( key );
+
+			//	bool handled = false;
+			//	viewport.PerformKeyUp( data, ref handled );
+			//	//if( handled )
+			//	//	return;
+			//}
+
+
+
+			//EKeys key = EKeys.None;
+
+			//if( key == EKeys.None )
+			//	return;
+
+			//{
+			//	var data = new KeyEvent( key );
+
+			//	bool handled = false;
+			//	viewport.PerformKeyDown( data, ref handled );
+			//	//if( handled )
+			//	//	return;
+			//}
+
+			////!!!!
+
+			//{
+			//	var data = new KeyEvent( key );
+
+			//	bool handled = false;
+			//	viewport.PerformKeyUp( data, ref handled );
+			//	//if( handled )
+			//	//	return;
+			//}
+		}
+
+		static void ProcessInputEvent( InputEventItem item )
+		{
+			var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+			if( viewport.SizeInPixels.X == 0 || viewport.SizeInPixels.Y == 0 )
+				return;
+
+			var touchItem = item as TouchEventItem;
+			if( touchItem != null )
+				ProcessInputEvent_Touch( touchItem );
+
+			var keyDownItem = item as KeyDownEventItem;
+			if( keyDownItem != null )
+				ProcessInputEvent_KeyDown( keyDownItem );
+		}
+
+		public static void ProcessInputEvents()
+		{
+			lock( inputEventQueue )
+			{
+				while( inputEventQueue.Count != 0 )
+				{
+					var item = inputEventQueue.Dequeue();
+					ProcessInputEvent( item );
 				}
 			}
 		}
-
 	}
 }

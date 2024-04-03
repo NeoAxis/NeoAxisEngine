@@ -2,7 +2,6 @@
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
-using System.Drawing.Design;
 using System.Runtime.InteropServices;
 using NeoAxis.Editor;
 using System.Runtime.CompilerServices;
@@ -194,6 +193,20 @@ namespace NeoAxis
 			catch( Exception )
 			{
 				throw new FormatException( "The parts of the color powered must be decimal numbers in the form (r g b [a]; power) or (r g b [a])." );
+			}
+		}
+
+		public static bool TryParse( string text, out ColorValuePowered result )
+		{
+			try
+			{
+				result = Parse( text );
+				return true;
+			}
+			catch
+			{
+				result = default( ColorValuePowered );
+				return false;
 			}
 		}
 

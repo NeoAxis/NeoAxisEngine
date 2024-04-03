@@ -796,6 +796,14 @@ namespace NeoAxis
 			return invLength * sqrLength;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void Negate()
+		{
+			X = -X;
+			Y = -Y;
+			Z = -Z;
+		}
+
 		/// <summary>
 		/// Converts a vector into a unit vector. 
 		/// </summary>

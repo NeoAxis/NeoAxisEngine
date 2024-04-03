@@ -2,13 +2,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
-using System.Reflection;
-using System.ComponentModel;
-using System.IO;
-using System.Collections.ObjectModel;
-using System.Drawing.Design;
 using System.Runtime.InteropServices;
 using Internal.SharpBgfx;
 using System.Runtime.CompilerServices;
@@ -27,6 +20,8 @@ namespace NeoAxis
 		byte[] data;
 		int dataUsedBytes;
 		ulong version;
+
+		//!!!!don't forget about Clear()
 
 		/////////////////////////////////////////
 
@@ -358,7 +353,7 @@ namespace NeoAxis
 				//copy value
 				unsafe
 				{
-					fixed ( byte* pData = data )
+					fixed( byte* pData = data )
 					{
 						//!!!!slowly
 
@@ -464,7 +459,7 @@ namespace NeoAxis
 			//copy value
 			unsafe
 			{
-				fixed ( byte* pData = data )
+				fixed( byte* pData = data )
 					NativeUtility.CopyMemory( (IntPtr)( pData + parameter.ValueDataPosition ), (IntPtr)value, parameter.GetTotalSizeInBytes() );
 			}
 
@@ -489,7 +484,7 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe void Set( string name, ParameterType type, int elementCount, byte[] value, int valueStartIndex, int checkTotalSizeInBytes )
 		{
-			fixed ( byte* pValue = value )
+			fixed( byte* pValue = value )
 				Set( name, type, elementCount, pValue + valueStartIndex, checkTotalSizeInBytes );
 		}
 
@@ -525,6 +520,18 @@ namespace NeoAxis
 		{
 			return NamedParameters == null && UniformParameters == null && TextureParameters == null;
 			//return parameters == null || parameters.Count == 0;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void Clear()
+		{
+			NamedParameters?.Clear();
+			UniformParameters?.Clear();
+			TextureParameters?.Clear();
+
+			data = null;
+			dataUsedBytes = 0;
+			version = 0L;
 		}
 	}
 }

@@ -22,7 +22,7 @@ namespace NeoAxis
 		public Reference<double> Intensity
 		{
 			get { if( _intensity.BeginGet() ) Intensity = _intensity.Get( this ); return _intensity.value; }
-			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
+			set { if( _intensity.BeginSet( this, ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
 		public event Action<RenderingEffect_EdgeDetection> IntensityChanged;
@@ -36,7 +36,7 @@ namespace NeoAxis
 		public Reference<double> DepthThreshold
 		{
 			get { if( _depthThreshold.BeginGet() ) DepthThreshold = _depthThreshold.Get( this ); return _depthThreshold.value; }
-			set { if( _depthThreshold.BeginSet( ref value ) ) { try { DepthThresholdChanged?.Invoke( this ); } finally { _depthThreshold.EndSet(); } } }
+			set { if( _depthThreshold.BeginSet( this, ref value ) ) { try { DepthThresholdChanged?.Invoke( this ); } finally { _depthThreshold.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DepthThreshold"/> property value changes.</summary>
 		public event Action<RenderingEffect_EdgeDetection> DepthThresholdChanged;
@@ -50,7 +50,7 @@ namespace NeoAxis
 		public Reference<double> NormalsThreshold
 		{
 			get { if( _normalsThreshold.BeginGet() ) NormalsThreshold = _normalsThreshold.Get( this ); return _normalsThreshold.value; }
-			set { if( _normalsThreshold.BeginSet( ref value ) ) { try { NormalsThresholdChanged?.Invoke( this ); } finally { _normalsThreshold.EndSet(); } } }
+			set { if( _normalsThreshold.BeginSet( this, ref value ) ) { try { NormalsThresholdChanged?.Invoke( this ); } finally { _normalsThreshold.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="NormalsThreshold"/> property value changes.</summary>
 		public event Action<RenderingEffect_EdgeDetection> NormalsThresholdChanged;
@@ -63,7 +63,7 @@ namespace NeoAxis
 		public Reference<ColorValue> EdgeColor
 		{
 			get { if( _edgeColor.BeginGet() ) EdgeColor = _edgeColor.Get( this ); return _edgeColor.value; }
-			set { if( _edgeColor.BeginSet( ref value ) ) { try { EdgeColorChanged?.Invoke( this ); } finally { _edgeColor.EndSet(); } } }
+			set { if( _edgeColor.BeginSet( this, ref value ) ) { try { EdgeColorChanged?.Invoke( this ); } finally { _edgeColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="EdgeColor"/> property value changes.</summary>
 		public event Action<RenderingEffect_EdgeDetection> EdgeColorChanged;
@@ -77,7 +77,7 @@ namespace NeoAxis
 		public Reference<double> Thickness
 		{
 			get { if( _thickness.BeginGet() ) Thickness = _thickness.Get( this ); return _thickness.value; }
-			set { if( _thickness.BeginSet( ref value ) ) { try { ThicknessChanged?.Invoke( this ); } finally { _thickness.EndSet(); } } }
+			set { if( _thickness.BeginSet( this, ref value ) ) { try { ThicknessChanged?.Invoke( this ); } finally { _thickness.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Thickness"/> property value changes.</summary>
 		public event Action<RenderingEffect_EdgeDetection> ThicknessChanged;
@@ -91,7 +91,7 @@ namespace NeoAxis
 		public Reference<double> MaxDistance
 		{
 			get { if( _maxDistance.BeginGet() ) MaxDistance = _maxDistance.Get( this ); return _maxDistance.value; }
-			set { if( _maxDistance.BeginSet( ref value ) ) { try { MaxDistanceChanged?.Invoke( this ); } finally { _maxDistance.EndSet(); } } }
+			set { if( _maxDistance.BeginSet( this, ref value ) ) { try { MaxDistanceChanged?.Invoke( this ); } finally { _maxDistance.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MaxDistance"/> property value changes.</summary>
 		public event Action<RenderingEffect_EdgeDetection> MaxDistanceChanged;

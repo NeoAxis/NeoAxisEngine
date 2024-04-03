@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using NeoAxis.Editor;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -12,10 +13,10 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "mesh" )]
 #if !DEPLOY
-	[EditorControl( typeof( MeshEditor ) )]
-	[Preview( typeof( MeshPreview ) )]
-	[PreviewImage( typeof( MeshPreviewImage ) )]
-	[SettingsCell( typeof( MeshSettingsCell ) )]
+	[EditorControl( "NeoAxis.Editor.MeshEditor" )]
+	[Preview( "NeoAxis.Editor.MeshPreview" )]
+	[PreviewImage( "NeoAxis.Editor.MeshPreviewImage" )]
+	[SettingsCell( "NeoAxis.Editor.MeshSettingsCell" )]
 #endif
 	public partial class Mesh : ResultCompile<Mesh.CompiledData>
 	{
@@ -33,7 +34,7 @@ namespace NeoAxis
 			get { if( _skeleton.BeginGet() ) Skeleton = _skeleton.Get( this ); return _skeleton.value; }
 			set
 			{
-				if( _skeleton.BeginSet( ref value ) )
+				if( _skeleton.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -57,7 +58,7 @@ namespace NeoAxis
 		public Reference<bool> CastShadows
 		{
 			get { if( _castShadows.BeginGet() ) CastShadows = _castShadows.Get( this ); return _castShadows.value; }
-			set { if( _castShadows.BeginSet( ref value ) ) { try { CastShadowsChanged?.Invoke( this ); } finally { _castShadows.EndSet(); } } }
+			set { if( _castShadows.BeginSet( this, ref value ) ) { try { CastShadowsChanged?.Invoke( this ); } finally { _castShadows.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CastShadows"/> property value changes.</summary>
 		public event Action<Mesh> CastShadowsChanged;
@@ -71,7 +72,7 @@ namespace NeoAxis
 		public Reference<double> VisibilityDistanceFactor
 		{
 			get { if( _visibilityDistanceFactor.BeginGet() ) VisibilityDistanceFactor = _visibilityDistanceFactor.Get( this ); return _visibilityDistanceFactor.value; }
-			set { if( _visibilityDistanceFactor.BeginSet( ref value ) ) { try { VisibilityDistanceFactorChanged?.Invoke( this ); } finally { _visibilityDistanceFactor.EndSet(); } } }
+			set { if( _visibilityDistanceFactor.BeginSet( this, ref value ) ) { try { VisibilityDistanceFactorChanged?.Invoke( this ); } finally { _visibilityDistanceFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="VisibilityDistanceFactor"/> property value changes.</summary>
 		public event Action<Mesh> VisibilityDistanceFactorChanged;
@@ -85,7 +86,7 @@ namespace NeoAxis
 		//public Reference<double> VisibilityDistance
 		//{
 		//	get { if( _visibilityDistance.BeginGet() ) VisibilityDistance = _visibilityDistance.Get( this ); return _visibilityDistance.value; }
-		//	set { if( _visibilityDistance.BeginSet( ref value ) ) { try { VisibilityDistanceChanged?.Invoke( this ); } finally { _visibilityDistance.EndSet(); } } }
+		//	set { if( _visibilityDistance.BeginSet( this, ref value ) ) { try { VisibilityDistanceChanged?.Invoke( this ); } finally { _visibilityDistance.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="VisibilityDistance"/> property value changes.</summary>
 		//public event Action<Mesh> VisibilityDistanceChanged;
@@ -97,16 +98,31 @@ namespace NeoAxis
 		[DefaultValue( 1.0 )]
 		[DisplayName( "LOD Scale" )]
 		[Range( 0, 6, RangeAttribute.ConvenientDistributionEnum.Exponential )]
-		//[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
 		public Reference<double> LODScale
 		{
 			get { if( _lODScale.BeginGet() ) LODScale = _lODScale.Get( this ); return _lODScale.value; }
-			set { if( _lODScale.BeginSet( ref value ) ) { try { LODScaleChanged?.Invoke( this ); } finally { _lODScale.EndSet(); } } }
+			set { if( _lODScale.BeginSet( this, ref value ) ) { try { LODScaleChanged?.Invoke( this ); } finally { _lODScale.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODScale"/> property value changes.</summary>
 		[DisplayName( "LOD Scale Changed" )]
 		public event Action<Mesh> LODScaleChanged;
 		ReferenceField<double> _lODScale = 1.0;
+
+		/// <summary>
+		/// The distance multiplier when determining the level of detail for shadows. Set 100 or more to always use the best LOD for shadows.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[DisplayName( "LOD Scale Shadows" )]
+		[Range( 0, 6, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		public Reference<double> LODScaleShadows
+		{
+			get { if( _lODScaleShadows.BeginGet() ) LODScaleShadows = _lODScaleShadows.Get( this ); return _lODScaleShadows.value; }
+			set { if( _lODScaleShadows.BeginSet( this, ref value ) ) { try { LODScaleShadowsChanged?.Invoke( this ); } finally { _lODScaleShadows.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LODScaleShadows"/> property value changes.</summary>
+		[DisplayName( "LOD Scale Shadows Changed" )]
+		public event Action<Mesh> LODScaleShadowsChanged;
+		ReferenceField<double> _lODScaleShadows = 1.0;
 
 		/// <summary>
 		/// Whether to treat the mesh as a billboard. When drawing the mesh will turn to face the camera.
@@ -117,7 +133,7 @@ namespace NeoAxis
 			get { if( _billboard.BeginGet() ) Billboard = _billboard.Get( this ); return _billboard.value; }
 			set
 			{
-				if( _billboard.BeginSet( ref value ) )
+				if( _billboard.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -140,7 +156,7 @@ namespace NeoAxis
 		public Reference<Vector3> BillboardPositionOffset
 		{
 			get { if( _billboardPositionOffset.BeginGet() ) BillboardPositionOffset = _billboardPositionOffset.Get( this ); return _billboardPositionOffset.value; }
-			set { if( _billboardPositionOffset.BeginSet( ref value ) ) { try { BillboardPositionOffsetChanged?.Invoke( this ); } finally { _billboardPositionOffset.EndSet(); } } }
+			set { if( _billboardPositionOffset.BeginSet( this, ref value ) ) { try { BillboardPositionOffsetChanged?.Invoke( this ); } finally { _billboardPositionOffset.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BillboardPositionOffset"/> property value changes.</summary>
 		public event Action<Mesh> BillboardPositionOffsetChanged;
@@ -154,7 +170,7 @@ namespace NeoAxis
 		public Reference<double> BillboardShadowOffset
 		{
 			get { if( _billboardShadowOffset.BeginGet() ) BillboardShadowOffset = _billboardShadowOffset.Get( this ); return _billboardShadowOffset.value; }
-			set { if( _billboardShadowOffset.BeginSet( ref value ) ) { try { BillboardShadowOffsetChanged?.Invoke( this ); } finally { _billboardShadowOffset.EndSet(); } } }
+			set { if( _billboardShadowOffset.BeginSet( this, ref value ) ) { try { BillboardShadowOffsetChanged?.Invoke( this ); } finally { _billboardShadowOffset.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BillboardShadowOffset"/> property value changes.</summary>
 		public event Action<Mesh> BillboardShadowOffsetChanged;
@@ -404,21 +420,23 @@ namespace NeoAxis
 				public float VisibilityDistanceFactor { get; set; }
 				//public float VisibilityDistance { get; set; }
 				public float LODScale { get; set; } = 1;
+				public float LODScaleShadows { get; set; } = 1;
 				public bool CastShadows { get; set; }
 				public RenderingPipeline.RenderSceneData.IMeshDataLODLevel[] LODs { get; set; }
 				public int BillboardMode { get; set; }
 				public Vector3F BillboardPositionOffset { get; set; }
 				public float BillboardShadowOffset { get; set; }
 				public RenderingPipeline.RenderSceneData.LayerItem[] PaintLayers { get; set; }
+				public bool ContainsTransparent { get; set; }
+				public bool ContainsTessellation { get; set; }
 
 				public StructureClass Structure { get; set; }
 
 				//
 
+				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 				public bool ContainsDisposedBuffers()
 				{
-					//!!!!slowly где вызывается?
-
 					for( int n = 0; n < RenderOperations.Count; n++ )
 						if( RenderOperations[ n ].ContainsDisposedBuffers() )
 							return true;
@@ -535,7 +553,6 @@ namespace NeoAxis
 			//	set { renderOperationsDisposeByMesh = value; }
 			//}
 
-			//!!!!
 			public SpaceBounds SpaceBounds
 			{
 				get { return spaceBounds; }
@@ -1436,6 +1453,8 @@ namespace NeoAxis
 				compiledData.MeshData.Creator = this;
 				compiledData.MeshData.Structure = Structure;
 
+				var meshData = compiledData.MeshData;
+
 				OnMeshCompile( compiledData );
 				MeshCompileEvent?.Invoke( this, compiledData );
 
@@ -1514,73 +1533,100 @@ namespace NeoAxis
 
 				compiledData.SpaceBounds = new SpaceBounds( bounds, sphere );
 
-				compiledData.MeshData.SpaceBounds = compiledData.SpaceBounds;
+				meshData.SpaceBounds = compiledData.SpaceBounds;
 				//compiledData.MeshData.BoundingBox = bounds;
 				//compiledData.MeshData.BoundingSphere = sphere;
 
-				compiledData.MeshData.VisibilityDistanceFactor = (float)VisibilityDistanceFactor;
-				compiledData.MeshData.LODScale = (float)LODScale;
-				compiledData.MeshData.CastShadows = CastShadows;
+				meshData.VisibilityDistanceFactor = (float)VisibilityDistanceFactor;
+				meshData.LODScale = (float)LODScale;
+				meshData.LODScaleShadows = (float)LODScaleShadows;
+				meshData.CastShadows = CastShadows;
 
-				//!!!!тут?
 				//LODs
-				if( compiledData.MeshData.LODs == null )
+				if( meshData.LODs == null )
 				{
 					var components = GetComponents<MeshLevelOfDetail>();
 
-					int enabledCount = 0;
+					var lods = new List<RenderingPipeline.RenderSceneData.IMeshDataLODLevel>( components.Length );
+
 					foreach( var lod in components )
 					{
 						if( lod.Enabled )
-							enabledCount++;
-					}
-
-					if( enabledCount != 0 )
-					{
-						var lods = new RenderingPipeline.RenderSceneData.IMeshDataLODLevel[ enabledCount ];
-						int current = 0;
-						foreach( var lod in components )
 						{
-							if( lod.Enabled )
-							{
-								var item = new RenderingPipeline.RenderSceneData.IMeshDataLODLevel();
-								item.Mesh = lod.Mesh;
-								item.Distance = (float)lod.Distance;
-								//item.DistanceSquared = (float)( lod.Distance * lod.Distance );
+							var item = new RenderingPipeline.RenderSceneData.IMeshDataLODLevel();
+							item.Mesh = lod.Mesh;
+							item.Distance = (float)lod.Distance;
+							//item.DistanceSquared = (float)( lod.Distance * lod.Distance );
 
-								if( item.Mesh != null )
+							if( item.Mesh != null )
+							{
+								foreach( var geometry in item.Mesh.GetComponents<MeshGeometry>() )
 								{
-									foreach( var geometry in item.Mesh.GetComponents<MeshGeometry>() )
+									var size = geometry.VoxelGridSize.MaxComponent();
+									if( size != 0 )
 									{
-										var size = geometry.VoxelGridSize.MaxComponent();
-										if( size != 0 )
-										{
-											item.VoxelGridSize = size;
-											break;
-										}
+										item.VoxelGridSize = size;
+										break;
 									}
 								}
 
-								lods[ current ] = item;
-								current++;
+								//skip voxel lod when the feature is disabled
+								if( !RenderingSystem.VoxelLOD && item.Mesh.GetComponents<MeshGeometry>().Any( g => g.VoxelData.Value != null ) )
+									continue;
+							}
+
+							lods.Add( item );
+						}
+					}
+
+					if( lods.Count > 0 )
+					{
+						//fallback when voxel lod id disabled
+						//if all Distances 0 and voxel lod is disabled, then need to calculate distances
+						if( !RenderingSystem.VoxelLOD )
+						{
+							var allZero = true;
+							var containVoxelLOD = false;
+
+							for( int n = 0; n < lods.Count; n++ )
+							{
+								if( lods[ n ].Distance != 0 )
+									allZero = false;
+								if( lods[ n ].VoxelGridSize != 0 )
+									containVoxelLOD = true;
+							}
+
+							if( allZero && !containVoxelLOD )
+							{
+
+								//!!!!
+								const float lodDistance = 10.0f;
+
+
+								for( int n = 0; n < lods.Count; n++ )
+								{
+									var lod = lods[ n ];
+									lod.Distance = lodDistance * ( n + 1 );
+									lods[ n ] = lod;
+								}
 							}
 						}
 
 						//sort by distance
 						CollectionUtility.InsertionSort( lods, delegate ( RenderingPipeline.RenderSceneData.IMeshDataLODLevel l1, RenderingPipeline.RenderSceneData.IMeshDataLODLevel l2 )
-						 {
-							 if( l1.Distance < l2.Distance )
-								 return -1;
-							 if( l1.Distance > l2.Distance )
-								 return 1;
-							 //if( l1.DistanceSquared < l2.DistanceSquared )
-							 // return -1;
-							 //if( l1.DistanceSquared > l2.DistanceSquared )
-							 // return 1;
-							 return 0;
-						 } );
+						{
+							if( l1.Distance < l2.Distance )
+								return -1;
+							if( l1.Distance > l2.Distance )
+								return 1;
+							//if( l1.DistanceSquared < l2.DistanceSquared )
+							// return -1;
+							//if( l1.DistanceSquared > l2.DistanceSquared )
+							// return 1;
+							return 0;
+						} );
 
-						compiledData.MeshData.LODs = lods;
+						meshData.LODs = lods.ToArray();
 					}
 				}
 
@@ -1597,23 +1643,23 @@ namespace NeoAxis
 						var normal = Plane.FromPoints( p0, p1, p2 ).Normal;
 
 						if( normal.Y < -.9f )
-							compiledData.MeshData.BillboardMode = 1;// -MathEx.PI / 2.0f + MathEx.PI * 2.0f;
+							meshData.BillboardMode = 1;// -MathEx.PI / 2.0f + MathEx.PI * 2.0f;
 						else if( normal.Y > .9f )
-							compiledData.MeshData.BillboardMode = 2;// MathEx.PI / 2.0f;
+							meshData.BillboardMode = 2;// MathEx.PI / 2.0f;
 						else if( normal.X > .9f )
-							compiledData.MeshData.BillboardMode = 3;// MathEx.PI / 2.0f - MathEx.PI * 2.0f;
+							meshData.BillboardMode = 3;// MathEx.PI / 2.0f - MathEx.PI * 2.0f;
 						else
-							compiledData.MeshData.BillboardMode = 4;// -MathEx.PI / 2.0f;
+							meshData.BillboardMode = 4;// -MathEx.PI / 2.0f;
 					}
 					else
-						compiledData.MeshData.BillboardMode = 1;// -MathEx.PI / 2.0f + MathEx.PI * 2.0f;
+						meshData.BillboardMode = 1;// -MathEx.PI / 2.0f + MathEx.PI * 2.0f;
 
-					compiledData.MeshData.BillboardPositionOffset = BillboardPositionOffset.Value.ToVector3F();
-					compiledData.MeshData.BillboardShadowOffset = (float)BillboardShadowOffset.Value;
+					meshData.BillboardPositionOffset = BillboardPositionOffset.Value.ToVector3F();
+					meshData.BillboardShadowOffset = (float)BillboardShadowOffset.Value;
 				}
 
 				//Paint layers
-				if( compiledData.MeshData.PaintLayers == null )
+				if( meshData.PaintLayers == null )
 				{
 					var items = new List<RenderingPipeline.RenderSceneData.LayerItem>();
 					foreach( var layer in GetComponents<PaintLayer>() )
@@ -1626,7 +1672,51 @@ namespace NeoAxis
 						}
 					}
 					if( items.Count != 0 )
-						compiledData.MeshData.PaintLayers = items.ToArray();
+						meshData.PaintLayers = items.ToArray();
+				}
+
+				//ContainsTransparent
+				{
+					for( int n = 0; n < meshData.RenderOperations.Count; n++ )
+					{
+						var oper = meshData.RenderOperations[ n ];
+						if( oper.Material?.Result != null && oper.Material.Result.Transparent )
+						{
+							meshData.ContainsTransparent = true;
+							break;
+						}
+					}
+
+					if( meshData.LODs != null )
+					{
+						foreach( var lod in meshData.LODs )
+						{
+							if( lod.Mesh?.Result != null && lod.Mesh.Result.MeshData.ContainsTransparent )
+							{
+								meshData.ContainsTransparent = true;
+								break;
+							}
+
+							//if( lod.Mesh != null && lod.Mesh.ContainsTransparent() )
+							//{
+							//	meshData.ContainsTransparent = true;
+							//	break;
+							//}
+						}
+					}
+				}
+
+				//ContainsTessellation
+				{
+					for( int n = 0; n < meshData.RenderOperations.Count; n++ )
+					{
+						var oper = meshData.RenderOperations[ n ];
+						if( oper.Material?.Result != null && oper.Material.Result.tessellationQuality != 0 )
+						{
+							meshData.ContainsTessellation = true;
+							break;
+						}
+					}
 				}
 
 				Result = compiledData;
@@ -2035,30 +2125,31 @@ namespace NeoAxis
 			return true;
 		}
 
-		public bool ContainsTransparent()
-		{
-			var result = Result;
-			if( Result != null )
-			{
-				var meshData = result.MeshData;
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public bool ContainsTransparent()
+		//{
+		//	var result = Result;
+		//	if( result != null )
+		//	{
+		//		var meshData = result.MeshData;
 
-				for( int n = 0; n < meshData.RenderOperations.Count; n++ )
-				{
-					var oper = meshData.RenderOperations[ n ];
-					if( oper.Material != null && oper.Material.Result != null && oper.Material.Result.Transparent )
-						return true;
-				}
+		//		for( int n = 0; n < meshData.RenderOperations.Count; n++ )
+		//		{
+		//			var oper = meshData.RenderOperations[ n ];
+		//			if( oper.Material != null && oper.Material.Result != null && oper.Material.Result.Transparent )
+		//				return true;
+		//		}
 
-				if( meshData.LODs != null )
-				{
-					foreach( var lod in meshData.LODs )
-						if( lod.Mesh != null && lod.Mesh.ContainsTransparent() )
-							return true;
-				}
-			}
+		//		if( meshData.LODs != null )
+		//		{
+		//			foreach( var lod in meshData.LODs )
+		//				if( lod.Mesh != null && lod.Mesh.ContainsTransparent() )
+		//					return true;
+		//		}
+		//	}
 
-			return false;
-		}
+		//	return false;
+		//}
 
 		//public bool ContainsVirtualizedData()
 		//{

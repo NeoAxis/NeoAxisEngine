@@ -2,6 +2,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.IO;
+using System.Reflection;
 
 namespace NeoAxis
 {
@@ -68,7 +69,10 @@ namespace NeoAxis
 				if( data != null )
 				{
 					if( data.Length != sizeInBytes )
+					{
+						//!!!!где-то Fatal, где-то throw
 						Log.Fatal( "ImageUtility: Image2D: Constructor: data.Length != TotalPixels * PixelFormatUtility.GetNumElemBytes( format )." );
+					}
 				}
 				else
 					this.data = new byte[ sizeInBytes ];
@@ -139,6 +143,25 @@ namespace NeoAxis
 					case PixelFormat.Float32RGB:
 						{
 							var p = (Vector3F*)pData + position.Y * size.X + position.X;
+							value.X = p->X;
+							value.Y = p->Y;
+							value.Z = p->Z;
+						}
+						break;
+
+					case PixelFormat.Float16RGBA:
+						{
+							var p = (Vector4H*)pData + position.Y * size.X + position.X;
+							value.X = p->X;
+							value.Y = p->Y;
+							value.Z = p->Z;
+							value.W = p->W;
+						}
+						break;
+
+					case PixelFormat.Float16RGB:
+						{
+							var p = (Vector3H*)pData + position.Y * size.X + position.X;
 							value.X = p->X;
 							value.Y = p->Y;
 							value.Z = p->Z;
@@ -308,10 +331,41 @@ namespace NeoAxis
 						}
 						break;
 
+					case PixelFormat.Float16RGBA:
+						{
+							var p = (Vector4H*)pData + position.Y * size.X + position.X;
+							p->X = new HalfType( value.X );
+							p->Y = new HalfType( value.Y );
+							p->Z = new HalfType( value.Z );
+							p->W = new HalfType( value.W );
+						}
+						break;
+
+					case PixelFormat.Float16RGB:
+						{
+							var p = (Vector3H*)pData + position.Y * size.X + position.X;
+							p->X = new HalfType( value.X );
+							p->Y = new HalfType( value.Y );
+							p->Z = new HalfType( value.Z );
+						}
+						break;
+
 					case PixelFormat.A8R8G8B8:
+					case PixelFormat.X8R8G8B8://!!!!check
 						{
 							var p = pData + ( position.Y * size.X + position.X ) * 4;
 							p[ 3 ] = (byte)MathEx.Clamp( (int)( value.W * 255.0 ), 0, 255 );
+							p[ 2 ] = (byte)MathEx.Clamp( (int)( value.X * 255.0 ), 0, 255 );
+							p[ 1 ] = (byte)MathEx.Clamp( (int)( value.Y * 255.0 ), 0, 255 );
+							p[ 0 ] = (byte)MathEx.Clamp( (int)( value.Z * 255.0 ), 0, 255 );
+						}
+						break;
+
+					case PixelFormat.R8G8B8:
+						{
+							//!!!!check
+
+							var p = pData + ( position.Y * size.X + position.X ) * 3;
 							p[ 2 ] = (byte)MathEx.Clamp( (int)( value.X * 255.0 ), 0, 255 );
 							p[ 1 ] = (byte)MathEx.Clamp( (int)( value.Y * 255.0 ), 0, 255 );
 							p[ 0 ] = (byte)MathEx.Clamp( (int)( value.Z * 255.0 ), 0, 255 );
@@ -376,18 +430,18 @@ namespace NeoAxis
 				}
 			}
 
-			public void Blit( Vector2I writePosition, Image2D image, Vector2I readPosition )
+			public void Blit( Vector2I writePosition, Image2D sourceImage, Vector2I readPosition )
 			{
 				//!!!!slowly
 
-				for( int y = 0; y < image.Size.Y; y++ )
-					for( int x = 0; x < image.Size.X; x++ )
-						SetPixel( writePosition + new Vector2I( x, y ), image.GetPixel( readPosition + new Vector2I( x, y ) ) );
+				for( int y = 0; y < sourceImage.Size.Y; y++ )
+					for( int x = 0; x < sourceImage.Size.X; x++ )
+						SetPixel( writePosition + new Vector2I( x, y ), sourceImage.GetPixel( readPosition + new Vector2I( x, y ) ) );
 			}
 
-			public void Blit( Vector2I writePosition, Image2D image )
+			public void Blit( Vector2I writePosition, Image2D sourceImage )
 			{
-				Blit( writePosition, image, Vector2I.Zero );
+				Blit( writePosition, sourceImage, Vector2I.Zero );
 			}
 		}
 
@@ -730,7 +784,7 @@ namespace NeoAxis
 		public delegate void ImageAutoCompressionDetectTypeOverrideDelegate( byte[] data, Vector2I size, PixelFormat format, ref string useCompression );
 		public static event ImageAutoCompressionDetectTypeOverrideDelegate ImageAutoCompressionDetectTypeOverride;
 
-		public static string ImageAutoCompressionDetectType( byte[] data, Vector2I size, PixelFormat format )
+		public static string ImageAutoCompressionDetectType( byte[] data, Vector2I size, PixelFormat format, string fileName )
 		{
 			//override
 			string useCompression = null;
@@ -750,6 +804,14 @@ namespace NeoAxis
 			{
 				if( DetectTextureType( data, size, format, out var hasAlpha, out var normalMap ) )
 				{
+					//additional check for normal map by file name
+					if( normalMap && !hasAlpha )
+					{
+						var fileNameLower = fileName.ToLower();
+						if( fileNameLower.Contains( "basecolor" ) || fileNameLower.Contains( "metallic" ) || fileNameLower.Contains( "roughness" ) || fileNameLower.Contains( "emissive" ) )
+							normalMap = false;
+					}
+
 					if( normalMap && !hasAlpha )
 						return "NormalMap";
 					else if( hasAlpha )

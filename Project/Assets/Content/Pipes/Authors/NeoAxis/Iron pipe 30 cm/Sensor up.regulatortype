@@ -1,0 +1,33 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.RegulatorType
+{
+	MarkerCurrentMeshPosition = 0.027 0 0.457
+	MarkerMeshPositionDependingAngleOffset = 0
+	AngleRange = -45 225
+	ChangeSpeed = 0.2
+	AllowInteract = False
+	BaseMesh
+	{
+		GetByReference = "Content\\Pipes\\Authors\\NeoAxis\\Iron pipe 30 cm\\Data\\Sensor\\Sensor up.fbx|$Mesh"
+	}
+	ButtonMesh
+	{
+	}
+	IndicatorMinMesh
+	{
+	}
+	IndicatorMaxMesh
+	{
+	}
+	MarkerMinMesh
+	{
+	}
+	MarkerMaxMesh
+	{
+	}
+	MarkerCurrentMesh
+	{
+		GetByReference = "Content\\Pipes\\Authors\\NeoAxis\\Iron pipe 30 cm\\Data\\Sensor\\Sensor arrow.fbx|$Mesh"
+	}
+}

@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 
 All rights reserved.
@@ -104,7 +104,7 @@ protected:
     //! reads header of data object including the opening brace.
     //! returns false if error happened, and writes name of object
     //! if there is one
-    void readHeadOfDataObject( std::string* poName = NULL);
+    void readHeadOfDataObject(std::string *poName = nullptr);
 
     //! checks for closing curly brace, throws exception if not there
     void CheckForClosingBrace();
@@ -133,7 +133,8 @@ protected:
     aiColor4D ReadRGBA();
 
     /** Throws an exception with a line number and the given text. */
-    AI_WONT_RETURN void ThrowException( const std::string& pText) AI_WONT_RETURN_SUFFIX;
+    template<typename... T>
+    AI_WONT_RETURN void ThrowException(T&&... args) AI_WONT_RETURN_SUFFIX;
 
     /**
       * @brief  Filters the imported hierarchy for some degenerated cases that some exporters produce.

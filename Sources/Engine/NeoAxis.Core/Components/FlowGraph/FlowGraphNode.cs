@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.IO;
+using NeoAxis.Editor;
 
 namespace NeoAxis
 {
@@ -43,7 +44,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _controlledObject.BeginSet( ref value ) )
+				if( _controlledObject.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -81,7 +82,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _mode.BeginSet( ref value ) )
+				if( _mode.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -112,7 +113,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _style.BeginSet( ref value ) )
+				if( _style.BeginSet( this, ref value ) )
 				{
 					try { StyleChanged?.Invoke( this ); }
 					finally { _style.EndSet(); }
@@ -1318,8 +1319,10 @@ namespace NeoAxis
 				style = ownerFlowGraph.NodesStyle;
 			if( style == null )
 			{
-				style = FlowGraphNodeStyle_Rectangle.Instance;
-				//style = (FlowchartNodeStyle)MetadataManager.GetTypeOfNetType( typeof( FlowchartNodeStyle_Rectangle ) ).AutoCreatedInstance;
+				style = EditorAPI.Get_FlowGraphNodeStyle_Rectangle_Instance();
+				//style = FlowGraphNodeStyle_Rectangle.Instance;
+
+				////style = (FlowchartNodeStyle)MetadataManager.GetTypeOfNetType( typeof( FlowchartNodeStyle_Rectangle ) ).AutoCreatedInstance;
 			}
 
 			return style;

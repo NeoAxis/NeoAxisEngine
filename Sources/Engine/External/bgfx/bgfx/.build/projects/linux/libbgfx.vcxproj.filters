@@ -1,0 +1,560 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\bx\src\allocator.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_averages_and_directions.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_block_sizes.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_color_quantize.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_color_unquantize.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_compress_symbolic.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_compute_variance.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_decompress_symbolic.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_diagnostic_trace.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_entry.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_find_best_partitioning.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_ideal_endpoints_and_weights.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_image.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_integer_sequence.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_mathlib.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_mathlib_softfloat.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_partition_tables.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_percentile_tables.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_pick_best_endpoint_format.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_quantization.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_symbolic_physical.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_weight_align.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_weight_quant_xfer_tables.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\bgfx.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\bx.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\commandline.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\crtnone.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\debug.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\dtoa.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\dxgi.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\easing.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\file.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\filepath.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\glcontext_egl.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\glcontext_html5.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\glcontext_wgl.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\hash.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\src\image.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\src\image_gnf.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\math.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\mutex.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\nvapi.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\os.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\process.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\renderer_agc.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\renderer_d3d11.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\renderer_d3d12.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\renderer_gl.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\renderer_gnm.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\renderer_noop.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\renderer_nvn.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\renderer_vk.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\semaphore.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\settings.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\shader.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\shader_dxbc.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\shader_spirv.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\sort.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\special.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\string.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\thread.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\timer.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\topology.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\bx\src\url.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\vertexlayout.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\Library.cpp">
+      <Filter>shaderc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\LibraryBase.cpp">
+      <Filter>shaderc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc.cpp">
+      <Filter>shaderc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc_spirv.cpp">
+      <Filter>shaderc</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\bx\include\bx\allocator.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_diagnostic_trace.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_internal.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_internal_entry.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_mathlib.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_avx2_8.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_common_4.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_neon_4.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_none_4.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_sse_4.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\bgfx\c99\bgfx.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\bgfx\bgfx.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\bgfx_p.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\bounds.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\bx.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\charset.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\commandline.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\config.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\config.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\constants.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\cpu.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\debug.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\debug_renderdoc.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\bgfx\defines.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\dxgi.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\easing.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\bgfx\embedded_shader.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\emscripten.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\endian.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\error.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\file.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\filepath.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\float4x4_t.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\glcontext_egl.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\glcontext_html5.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\glcontext_wgl.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\glimports.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\handlealloc.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\hash.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\macros.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\maputil.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\math.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\mpscqueue.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\mutex.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\nvapi.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\os.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\pixelformat.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\bgfx\platform.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\platform.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\process.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\readerwriter.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\renderer.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\renderer_d3d.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\renderer_d3d11.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\renderer_d3d12.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\renderer_gl.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\renderer_mtl.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\renderer_vk.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\ringbuffer.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\rng.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\semaphore.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\settings.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\shader.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\shader_dxbc.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\shader_spirv.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\simd_t.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\sort.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\special.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\spscqueue.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\string.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\thread.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\timer.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\topology.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\typetraits.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\uint32_t.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\url.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\version.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vertexlayout.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vs_clear.bin.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vs_debugfont.bin.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\bx\include\bx\inline\allocator.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\bounds.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\bx.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\cpu.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\easing.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\endian.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\error.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\float4x4_t.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\handlealloc.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\hash.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\math.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\mpscqueue.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\mutex.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\os.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\pixelformat.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\readerwriter.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\ringbuffer.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\rng.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\simd_ni.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\simd128_langext.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\simd128_neon.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\simd128_ref.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\simd128_sse.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\simd128_swizzle.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\simd256_avx.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\simd256_ref.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\sort.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\spscqueue.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\string.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\typetraits.inl">
+      <Filter>bgfx</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\uint32_t.inl">
+      <Filter>bgfx</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="bgfx">
+      <UniqueIdentifier>{f43c9baa-41af-453e-8f22-ae426c929437}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaderc">
+      <UniqueIdentifier>{71cebbe6-bd9d-4f67-9a5a-e5418eb24780}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

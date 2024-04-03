@@ -1,11 +1,7 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using System.ComponentModel;
-using System.Drawing.Design;
-using System.Diagnostics;
 using OggDecoder;
 using MyOggDecoder;
 
@@ -36,7 +32,7 @@ namespace NeoAxis
 			get { if( _fileName.BeginGet() ) FileName = _fileName.Get( this ); return _fileName.value; }
 			set
 			{
-				if( _fileName.BeginSet( ref value ) )
+				if( _fileName.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -62,7 +58,7 @@ namespace NeoAxis
 		public Reference<bool> Loop
 		{
 			get { if( _loop.BeginGet() ) Loop = _loop.Get( this ); return _loop.value; }
-			set { if( _loop.BeginSet( ref value ) ) { try { LoopChanged?.Invoke( this ); } finally { _loop.EndSet(); } } }
+			set { if( _loop.BeginSet( this, ref value ) ) { try { LoopChanged?.Invoke( this ); } finally { _loop.EndSet(); } } }
 		}
 		public event Action<UIVideo> LoopChanged;
 		ReferenceField<bool> _loop = false;
@@ -76,7 +72,7 @@ namespace NeoAxis
 			get { if( _pause.BeginGet() ) Pause = _pause.Get( this ); return _pause.value; }
 			set
 			{
-				if( _pause.BeginSet( ref value ) )
+				if( _pause.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -107,7 +103,7 @@ namespace NeoAxis
 			get { if( _volume.BeginGet() ) Volume = _volume.Get( this ); return _volume.value; }
 			set
 			{
-				if( _volume.BeginSet( ref value ) )
+				if( _volume.BeginSet( this, ref value ) )
 				{
 					try
 					{

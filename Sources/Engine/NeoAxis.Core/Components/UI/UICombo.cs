@@ -25,7 +25,7 @@ namespace NeoAxis
 		public Reference<bool> AlwaysOpen
 		{
 			get { if( _alwaysOpen.BeginGet() ) AlwaysOpen = _alwaysOpen.Get( this ); return _alwaysOpen.value; }
-			set { if( _alwaysOpen.BeginSet( ref value ) ) { try { AlwaysOpenChanged?.Invoke( this ); } finally { _alwaysOpen.EndSet(); } } }
+			set { if( _alwaysOpen.BeginSet( this, ref value ) ) { try { AlwaysOpenChanged?.Invoke( this ); } finally { _alwaysOpen.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AlwaysOpen"/> property value changes.</summary>
 		public event Action<UICombo> AlwaysOpenChanged;
@@ -38,7 +38,7 @@ namespace NeoAxis
 		public Reference<string> TextWhenNoSelectedItems
 		{
 			get { if( _textWhenNoSelectedItems.BeginGet() ) TextWhenNoSelectedItems = _textWhenNoSelectedItems.Get( this ); return _textWhenNoSelectedItems.value; }
-			set { if( _textWhenNoSelectedItems.BeginSet( ref value ) ) { try { TextWhenNoSelectedItemsChanged?.Invoke( this ); } finally { _textWhenNoSelectedItems.EndSet(); } } }
+			set { if( _textWhenNoSelectedItems.BeginSet( this, ref value ) ) { try { TextWhenNoSelectedItemsChanged?.Invoke( this ); } finally { _textWhenNoSelectedItems.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TextWhenNoSelectedItems"/> property value changes.</summary>
 		public event Action<UICombo> TextWhenNoSelectedItemsChanged;
@@ -512,15 +512,21 @@ namespace NeoAxis
 				}
 
 
-				//!!!!когда внизу на экране не влазит, то сверху показывать
+				//!!!!when it doesn’t fit on the bottom of the screen, then show it from above
+
 
 				var itemSize = list.ConvertOffsetY( list.ItemSize, UIMeasure.Screen );
 
 				var height = itemSize * ( list.Items.Count + 0.5 );
 
+				//!!!!fix scroll bar issue
+				height *= 1.02;
+
 				//!!!!
-				if( height > 0.3 )
-					height = 0.3;
+				if( height > 0.35 )
+					height = 0.35;
+				//if( height > 0.3 )
+				//	height = 0.3;
 
 				list.Size = new UIMeasureValueVector2( UIMeasure.Screen, rect.Size.X, height );
 			}

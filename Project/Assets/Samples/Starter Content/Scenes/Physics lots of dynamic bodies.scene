@@ -2,7 +2,6 @@
 
 .component NeoAxis.Scene
 {
-	PhysicsAdvancedSettings = True
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"

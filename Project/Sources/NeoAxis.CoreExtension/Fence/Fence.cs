@@ -37,7 +37,7 @@ namespace NeoAxis
 		public Reference<FenceType> FenceType
 		{
 			get { if( _fenceType.BeginGet() ) FenceType = _fenceType.Get( this ); return _fenceType.value; }
-			set { if( _fenceType.BeginSet( ref value ) ) { try { FenceTypeChanged?.Invoke( this ); DataWasChanged(); } finally { _fenceType.EndSet(); } } }
+			set { if( _fenceType.BeginSet( this, ref value ) ) { try { FenceTypeChanged?.Invoke( this ); DataWasChanged(); } finally { _fenceType.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FenceType"/> property value changes.</summary>
 		public event Action<Fence> FenceTypeChanged;
@@ -51,7 +51,7 @@ namespace NeoAxis
 		public Reference<bool> FenceCollision
 		{
 			get { if( _fenceCollision.BeginGet() ) FenceCollision = _fenceCollision.Get( this ); return _fenceCollision.value; }
-			set { if( _fenceCollision.BeginSet( ref value ) ) { try { FenceCollisionChanged?.Invoke( this ); DataWasChanged(); } finally { _fenceCollision.EndSet(); } } }
+			set { if( _fenceCollision.BeginSet( this, ref value ) ) { try { FenceCollisionChanged?.Invoke( this ); DataWasChanged(); } finally { _fenceCollision.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FenceCollision"/> property value changes.</summary>
 		public event Action<Fence> FenceCollisionChanged;
@@ -65,7 +65,7 @@ namespace NeoAxis
 		public Reference<ColorValue> ColorMultiplier
 		{
 			get { if( _colorMultiplier.BeginGet() ) ColorMultiplier = _colorMultiplier.Get( this ); return _colorMultiplier.value; }
-			set { if( _colorMultiplier.BeginSet( ref value ) ) { try { ColorMultiplierChanged?.Invoke( this ); DataWasChanged(); } finally { _colorMultiplier.EndSet(); } } }
+			set { if( _colorMultiplier.BeginSet( this, ref value ) ) { try { ColorMultiplierChanged?.Invoke( this ); DataWasChanged(); } finally { _colorMultiplier.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ColorMultiplier"/> property value changes.</summary>
 		public event Action<Fence> ColorMultiplierChanged;
@@ -78,7 +78,7 @@ namespace NeoAxis
 		public Reference<FencePoint.SpecialtyEnum> PointSpecialty
 		{
 			get { if( _pointSpecialty.BeginGet() ) PointSpecialty = _pointSpecialty.Get( this ); return _pointSpecialty.value; }
-			set { if( _pointSpecialty.BeginSet( ref value ) ) { try { PointSpecialtyChanged?.Invoke( this ); DataWasChanged(); } finally { _pointSpecialty.EndSet(); } } }
+			set { if( _pointSpecialty.BeginSet( this, ref value ) ) { try { PointSpecialtyChanged?.Invoke( this ); DataWasChanged(); } finally { _pointSpecialty.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PointSpecialty"/> property value changes.</summary>
 		public event Action<Fence> PointSpecialtyChanged;
@@ -245,28 +245,12 @@ namespace NeoAxis
 				list.Add( item );
 			}
 
-			bool IsAnyTransformToolInModifyingMode()
-			{
-#if !DEPLOY
-				if( EngineApp.IsEditor )
-				{
-					foreach( var instance in EngineViewportControl.AllInstances )
-					{
-						var transformTool = instance.TransformTool as TransformTool;
-						if( transformTool != null && transformTool.Modifying )
-							return true;
-					}
-				}
-#endif
-				return false;
-			}
-
 			internal void ConnectFences( LogicalData connectOnlyToThisFence )
 			{
 				if( Points.Length < 2 )
 					return;
 
-				if( IsAnyTransformToolInModifyingMode() )
+				if( EditorAPI.IsAnyTransformToolInModifyingMode() )
 				{
 					Owner.needUpdateAfterEndModifyingTransformTool = true;
 					return;
@@ -555,7 +539,7 @@ namespace NeoAxis
 
 				if( !Owner.FenceCollision.Value )
 					return;
-				if( IsAnyTransformToolInModifyingMode() )
+				if( EditorAPI.IsAnyTransformToolInModifyingMode() )
 				{
 					Owner.needUpdateAfterEndModifyingTransformTool = true;
 					return;
@@ -838,6 +822,7 @@ namespace NeoAxis
 				}
 
 				meshInSpace.Mesh = mesh;// ReferenceUtility.MakeThisReference( meshInSpace, mesh );
+				meshInSpace.StaticShadows = true;
 				meshInSpace.Enabled = true;
 
 				visualData.meshesInSpace.Add( meshInSpace );
@@ -904,8 +889,8 @@ namespace NeoAxis
 				{
 					scene.ViewportUpdateBefore += Scene_ViewportUpdateBefore;
 #if !DEPLOY
-					TransformTool.AllInstances_ModifyCommit += TransformTool_AllInstances_ModifyCommit;
-					TransformTool.AllInstances_ModifyCancel += TransformTool_AllInstances_ModifyCancel;
+					TransformToolUtility.AllInstances_ModifyCommit += TransformTool_AllInstances_ModifyCommit;
+					TransformToolUtility.AllInstances_ModifyCancel += TransformTool_AllInstances_ModifyCancel;
 #endif
 
 					if( logicalData == null )
@@ -915,8 +900,8 @@ namespace NeoAxis
 				{
 					scene.ViewportUpdateBefore -= Scene_ViewportUpdateBefore;
 #if !DEPLOY
-					TransformTool.AllInstances_ModifyCommit -= TransformTool_AllInstances_ModifyCommit;
-					TransformTool.AllInstances_ModifyCancel -= TransformTool_AllInstances_ModifyCancel;
+					TransformToolUtility.AllInstances_ModifyCommit -= TransformTool_AllInstances_ModifyCommit;
+					TransformToolUtility.AllInstances_ModifyCancel -= TransformTool_AllInstances_ModifyCancel;
 #endif
 
 					Update();
@@ -926,7 +911,7 @@ namespace NeoAxis
 
 #if !DEPLOY
 
-		private void TransformTool_AllInstances_ModifyCommit( TransformTool sender )
+		private void TransformTool_AllInstances_ModifyCommit( ITransformTool sender )
 		{
 			if( needUpdateAfterEndModifyingTransformTool )
 			{
@@ -935,7 +920,7 @@ namespace NeoAxis
 			}
 		}
 
-		private void TransformTool_AllInstances_ModifyCancel( TransformTool sender )
+		private void TransformTool_AllInstances_ModifyCancel( ITransformTool sender )
 		{
 			if( needUpdateAfterEndModifyingTransformTool )
 			{

@@ -126,7 +126,7 @@ namespace Project
 		public enum NetworkModeEnum
 		{
 			CloudProject,
-			Direct,
+			Direct,//usual multiplayer
 		}
 
 		/////////////////////////////////////////
@@ -370,7 +370,7 @@ namespace Project
 
 						try
 						{
-							var fullPath = Path.Combine( VirtualFileSystem.Directories.Project, "MessageToServerManager.txt" );
+							var fullPath = Path.Combine( VirtualFileSystem.Directories.AllFiles, "MessageToServerManager.txt" );
 							File.WriteAllText( fullPath, text );
 						}
 						catch { }
@@ -380,7 +380,7 @@ namespace Project
 				}
 
 				if( server != null && networkMode == NetworkModeEnum.CloudProject )
-					TouchVerificationCodes();
+					TouchUserVerificationCodes();
 			}
 		}
 
@@ -510,43 +510,85 @@ namespace Project
 
 			if( server != null )
 			{
-				if( networkMode == NetworkModeEnum.CloudProject && message == "RequestAvatarSettings" )
+				if( networkMode == NetworkModeEnum.CloudProject )
 				{
-					var user = server.Users.GetUser( source );
-					if( user != null )
-					{
-						var command = new GeneralManagerExecuteCommand();
-						command.FunctionName = "api/get_user_settings";
-						command.Parameters.Add( ("userID", user.UserID.ToString()) );
-						command.Parameters.Add( ("property", "Avatar") );
-						command.Parameters.Add( ("defaultValue", "") );
-						command.Tag = source;
-						command.Processed += GeneralManagerExecuteRequestAvatarSettingsProcessed;
-						command.BeginExecution( true );
-					}
-				}
+					//cloud mode
 
-				if( networkMode == NetworkModeEnum.CloudProject && message == "SetAvatarSettings" )
-				{
-					var block = TextBlock.Parse( data, out var error );
-					//if( !string.IsNullOrEmpty( error ) )
-					//	Log.Warning( "Unable to parse avatar settings. " + error );
 
-					if( block != null )
+					//!!!!impl
+
+					if( message == "RequestAvatarSettings" )
 					{
-						var clientData = (ClientData)source.Tag;
-						if( clientData != null )
+						var user = server.Users.GetUser( source );
+						if( user != null )
 						{
-							var command = new GeneralManagerExecuteCommand();
-							command.FunctionName = "api/set_user_settings";
-							command.Parameters.Add( ("project", projectID.ToString()) );
-							command.Parameters.Add( ("purpose", "Enter") );
-							command.Parameters.Add( ("code", clientData.VerificationCode) );
-							command.Parameters.Add( ("property", "Avatar") );
-							command.ContentData = Encoding.UTF8.GetBytes( block.DumpToString() );
-							//!!!!check Processed?
-							command.BeginExecution( true );
+							server?.Messages.SendToClient( source, "AvatarSettings", user.DirectServerAvatar );
 						}
+					}
+					else if( message == "SetAvatarSettings" )
+					{
+						var user = server.Users.GetUser( source );
+						if( user != null )
+							user.DirectServerAvatar = data;
+					}
+
+
+					//if( message == "RequestAvatarSettings" )
+					//{
+					//	var user = server.Users.GetUser( source );
+					//	if( user != null )
+					//	{
+					//		var command = new GeneralManagerExecuteCommand();
+					//		command.FunctionName = "api/get_user_settings";
+					//		command.Parameters.Add( ("user", user.UserID.ToString()) );
+					//		command.Parameters.Add( ("property", "Avatar") );
+					//		command.Parameters.Add( ("defaultValue", "") );
+					//		command.Tag = source;
+					//		command.Processed += GeneralManagerExecuteRequestAvatarSettingsProcessed;
+					//		command.BeginExecution( true );
+					//	}
+					//}
+					//else if( message == "SetAvatarSettings" )
+					//{
+					//	var block = TextBlock.Parse( data, out var error );
+					//	//if( !string.IsNullOrEmpty( error ) )
+					//	//	Log.Warning( "Unable to parse avatar settings. " + error );
+
+					//	if( block != null )
+					//	{
+					//		var clientData = (ClientData)source.Tag;
+					//		if( clientData != null )
+					//		{
+					//			var command = new GeneralManagerExecuteCommand();
+					//			command.FunctionName = "api/set_user_settings";
+					//			command.Parameters.Add( ("project", projectID.ToString()) );
+					//			command.Parameters.Add( ("purpose", "Enter") );
+					//			command.Parameters.Add( ("code", clientData.VerificationCode) );
+					//			command.Parameters.Add( ("property", "Avatar") );
+					//			command.ContentData = Encoding.UTF8.GetBytes( block.DumpToString() );
+					//			//!!!!check Processed?
+					//			command.BeginExecution( true );
+					//		}
+					//	}
+					//}
+				}
+				else
+				{
+					//usual multiplayer mode
+
+					if( message == "RequestAvatarSettings" )
+					{
+						var user = server.Users.GetUser( source );
+						if( user != null )
+						{
+							server?.Messages.SendToClient( source, "AvatarSettings", user.DirectServerAvatar );
+						}
+					}
+					else if( message == "SetAvatarSettings" )
+					{
+						var user = server.Users.GetUser( source );
+						if( user != null )
+							user.DirectServerAvatar = data;
 					}
 				}
 			}
@@ -599,7 +641,7 @@ namespace Project
 			//}
 		}
 
-		static void TouchVerificationCodes()
+		static void TouchUserVerificationCodes()
 		{
 			var now = DateTime.Now;
 
@@ -612,21 +654,18 @@ namespace Project
 
 
 					var clientData = connectedNode.Tag as ClientData;
-					if( clientData != null && clientData.Verified )
+					if( clientData != null && clientData.Verified && ( now - clientData.LastTouchUserVerificationCode ).TotalMinutes > 5 )
 					{
-						if( ( now - clientData.LastTouchUserVerificationCode ).TotalSeconds > 300 ) //5 minutes
-						{
-							var command = new GeneralManagerExecuteCommand();
-							command.FunctionName = "api/get_user_by_verification_code";
-							command.Parameters.Add( ("project", projectID.ToString()) );
-							command.Parameters.Add( ("purpose", "Enter") );
-							command.Parameters.Add( ("code", clientData.VerificationCode) );
-							command.Tag = connectedNode;
-							//command.Processed += GeneralManagerExecuteCommandProcessed;
-							command.BeginExecution( false );
+						var command = new GeneralManagerExecuteCommand();
+						command.FunctionName = "api/get_user_by_verification_code";
+						command.Parameters.Add( ("project", projectID.ToString()) );
+						command.Parameters.Add( ("purpose", "Enter") );
+						command.Parameters.Add( ("code", clientData.VerificationCode) );
+						command.Tag = connectedNode;
+						//command.Processed += GeneralManagerExecuteCommandProcessed;
+						command.BeginExecution( false );
 
-							clientData.LastTouchUserVerificationCode = now;
-						}
+						clientData.LastTouchUserVerificationCode = now;
 					}
 				}
 

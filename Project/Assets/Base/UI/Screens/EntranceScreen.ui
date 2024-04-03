@@ -16,6 +16,7 @@
 		VerticalAlignment = Center
 		Margin = Units 0 0 0 0
 		BackgroundColor = 0 0 0 0.7
+		BackgroundRounding = Units 16
 		EditorScrollPosition = 0 0
 		.component NeoAxis.UIText
 		{
@@ -50,7 +51,7 @@
 		{
 			Enabled = False
 			Name = Button Avatar
-			Text = Customize Avatar
+			Text = Select Avatar
 			Size = Units 200 40
 			HorizontalAlignment = Center
 			Margin = Units 0 550 0 0

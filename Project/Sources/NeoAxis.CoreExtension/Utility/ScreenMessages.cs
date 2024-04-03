@@ -80,10 +80,11 @@ namespace NeoAxis
 			lock( messages )
 			{
 				var renderer = viewport.CanvasRenderer;
-				var fontSize = renderer.DefaultFontSize;
+
+				var fontSize = renderer.DefaultFontSize * 1.5;
 				var offset = new Vector2( fontSize * renderer.AspectRatioInv * 3, 0 );
 
-				var pos = new Vector2( offset.X, 0.75 );
+				var pos = new Vector2( 0.5, 0.85 );
 				for( int n = messages.Count - 1; n >= 0; n-- )
 				{
 					var message = messages[ n ];
@@ -93,16 +94,15 @@ namespace NeoAxis
 						alpha = 1;
 					var color = message.Error ? new ColorValue( 1, 0, 0, alpha ) : new ColorValue( 1, 1, 1, alpha );
 
-					CanvasRendererUtility.AddTextWithShadow( viewport, message.Text, pos, EHorizontalAlignment.Left, EVerticalAlignment.Bottom, color );
+					CanvasRendererUtility.AddTextWithShadow( viewport, renderer.DefaultFont, fontSize, message.Text, pos, EHorizontalAlignment.Center, EVerticalAlignment.Bottom, color );
 
-					pos.Y -= renderer.DefaultFontSize;
+					pos.Y -= fontSize;
 				}
 
-				//var renderer = viewport.CanvasRenderer;
 				//var fontSize = renderer.DefaultFontSize;
-				//var offset = new Vector2( fontSize * renderer.AspectRatioInv * 0.8, fontSize * 0.6 );
+				//var offset = new Vector2( fontSize * renderer.AspectRatioInv * 3, 0 );
 
-				//var pos = new Vector2( offset.X, 0.75 );// 1.0 - offset.Y );
+				//var pos = new Vector2( offset.X, 0.75 );
 				//for( int n = messages.Count - 1; n >= 0; n-- )
 				//{
 				//	var message = messages[ n ];
@@ -116,6 +116,26 @@ namespace NeoAxis
 
 				//	pos.Y -= renderer.DefaultFontSize;
 				//}
+
+
+				////var renderer = viewport.CanvasRenderer;
+				////var fontSize = renderer.DefaultFontSize;
+				////var offset = new Vector2( fontSize * renderer.AspectRatioInv * 0.8, fontSize * 0.6 );
+
+				////var pos = new Vector2( offset.X, 0.75 );// 1.0 - offset.Y );
+				////for( int n = messages.Count - 1; n >= 0; n-- )
+				////{
+				////	var message = messages[ n ];
+
+				////	var alpha = message.TimeRemaining;
+				////	if( alpha > 1 )
+				////		alpha = 1;
+				////	var color = message.Error ? new ColorValue( 1, 0, 0, alpha ) : new ColorValue( 1, 1, 1, alpha );
+
+				////	CanvasRendererUtility.AddTextWithShadow( viewport, message.Text, pos, EHorizontalAlignment.Left, EVerticalAlignment.Bottom, color );
+
+				////	pos.Y -= renderer.DefaultFontSize;
+				////}
 			}
 		}
 

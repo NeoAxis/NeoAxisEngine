@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 
 All rights reserved.
@@ -91,7 +91,7 @@ void ExportSceneCollada(const char *pFile, IOSystem *pIOSystem, const aiScene *p
 // Encodes a string into a valid XML ID using the xsd:ID schema qualifications.
 static const std::string XMLIDEncode(const std::string &name) {
     const char XML_ID_CHARS[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-.";
-    const unsigned int XML_ID_CHARS_COUNT = sizeof(XML_ID_CHARS) / sizeof(char);
+    const unsigned int XML_ID_CHARS_COUNT = sizeof(XML_ID_CHARS) / sizeof(char) - 1;
 
     if (name.length() == 0) {
         return name;
@@ -129,7 +129,7 @@ inline std::string MakeUniqueId(const std::unordered_set<std::string> &idSet, co
         // Select a number to append
         size_t idnum = 1;
         do {
-            result = idPrefix + '_' + to_string(idnum) + postfix;
+            result = idPrefix + '_' + ai_to_string(idnum) + postfix;
             ++idnum;
         } while (!IsUniqueId(idSet, result));
     }
@@ -154,8 +154,7 @@ ColladaExporter::ColladaExporter(const aiScene *pScene, IOSystem *pIOSystem, con
 
 // ------------------------------------------------------------------------------------------------
 // Destructor
-ColladaExporter::~ColladaExporter() {
-}
+ColladaExporter::~ColladaExporter() = default;
 
 // ------------------------------------------------------------------------------------------------
 // Starts writing the contents
@@ -247,7 +246,7 @@ void ColladaExporter::WriteHeader() {
     }
 
     // Assimp root nodes can have meshes, Collada Scenes cannot
-    if (mScene->mRootNode->mNumChildren == 0 || mScene->mRootNode->mMeshes != 0) {
+    if (mScene->mRootNode->mNumChildren == 0 || mScene->mRootNode->mMeshes != nullptr) {
         mAdd_root_node = true;
     }
 
@@ -449,7 +448,7 @@ void ColladaExporter::WriteLight(size_t pIndex) {
     PushTag();
     switch (light->mType) {
     case aiLightSource_AMBIENT:
-        WriteAmbienttLight(light);
+        WriteAmbientLight(light);
         break;
     case aiLightSource_DIRECTIONAL:
         WriteDirectionalLight(light);
@@ -544,7 +543,7 @@ void ColladaExporter::WriteSpotLight(const aiLight *const light) {
     mOutput << startstr << "</spot>" << endstr;
 }
 
-void ColladaExporter::WriteAmbienttLight(const aiLight *const light) {
+void ColladaExporter::WriteAmbientLight(const aiLight *const light) {
 
     const aiColor3D &color = light->mColorAmbient;
     mOutput << startstr << "<ambient>" << endstr;
@@ -573,7 +572,7 @@ bool ColladaExporter::ReadMaterialSurface(Surface &poSurface, const aiMaterial &
             index_str = index_str.substr(1, std::string::npos);
 
             try {
-                index = (unsigned int)strtoul10_64(index_str.c_str());
+                index = (unsigned int)strtoul10_64<DeadlyExportError>(index_str.c_str());
             } catch (std::exception &error) {
                 throw DeadlyExportError(error.what());
             }
@@ -1017,7 +1016,7 @@ void ColladaExporter::WriteGeometry(size_t pIndex) {
     // texture coords
     for (size_t a = 0; a < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++a) {
         if (mesh->HasTextureCoords(static_cast<unsigned int>(a))) {
-            WriteFloatArray(geometryId + "-tex" + to_string(a), mesh->mNumUVComponents[a] == 3 ? FloatType_TexCoord3 : FloatType_TexCoord2,
+            WriteFloatArray(geometryId + "-tex" + ai_to_string(a), mesh->mNumUVComponents[a] == 3 ? FloatType_TexCoord3 : FloatType_TexCoord2,
                     (ai_real *)mesh->mTextureCoords[a], mesh->mNumVertices);
         }
     }
@@ -1025,7 +1024,7 @@ void ColladaExporter::WriteGeometry(size_t pIndex) {
     // vertex colors
     for (size_t a = 0; a < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++a) {
         if (mesh->HasVertexColors(static_cast<unsigned int>(a)))
-            WriteFloatArray(geometryId + "-color" + to_string(a), FloatType_Color, (ai_real *)mesh->mColors[a], mesh->mNumVertices);
+            WriteFloatArray(geometryId + "-color" + ai_to_string(a), FloatType_Color, (ai_real *)mesh->mColors[a], mesh->mNumVertices);
     }
 
     // assemble vertex structure
@@ -1330,9 +1329,9 @@ void ColladaExporter::WriteAnimationLibrary(size_t pIndex) {
             std::vector<std::string> names;
             for (size_t i = 0; i < nodeAnim->mNumPositionKeys; ++i) {
                 if (nodeAnim->mPreState == aiAnimBehaviour_DEFAULT || nodeAnim->mPreState == aiAnimBehaviour_LINEAR || nodeAnim->mPreState == aiAnimBehaviour_REPEAT) {
-                    names.push_back("LINEAR");
+                    names.emplace_back("LINEAR");
                 } else if (nodeAnim->mPostState == aiAnimBehaviour_CONSTANT) {
-                    names.push_back("STEP");
+                    names.emplace_back("STEP");
                 }
             }
 
@@ -1724,7 +1723,7 @@ ColladaExporter::NameIdPair ColladaExporter::AddObjectIndexToMaps(AiObjectType t
         case AiObjectType::Camera: idStr = std::string("camera_"); break;
         case AiObjectType::Count: throw std::logic_error("ColladaExporter::AiObjectType::Count is not an object type");
         }
-        idStr.append(to_string(index));
+        idStr.append(ai_to_string(index));
     } else {
         idStr = XMLIDEncode(name);
     }

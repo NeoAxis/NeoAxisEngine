@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -43,27 +43,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "AssbinFileWriter.h"
-
 #include "Common/assbin_chunks.h"
 #include "PostProcessing/ProcessHelper.h"
 
 #include <assimp/Exceptional.h>
 #include <assimp/version.h>
-#include <assimp/Exporter.hpp>
 #include <assimp/IOStream.hpp>
 
-#ifdef ASSIMP_BUILD_NO_OWN_ZLIB
-#include <zlib.h>
-#else
-#include "../contrib/zlib/zlib.h"
-#endif
+#include "zlib.h"
 
-#include <time.h>
+#include <ctime>
 
-#ifdef _WIN32
+#if _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4706)
-#endif // _WIN32
+#endif // _MSC_VER
 
 namespace Assimp {
 
@@ -132,7 +126,7 @@ inline size_t Write<double>(IOStream *stream, const double &f) {
 // Serialize a vec3
 template <>
 inline size_t Write<aiVector3D>(IOStream *stream, const aiVector3D &v) {
-    size_t t = Write<float>(stream, v.x);
+    size_t t = Write<ai_real>(stream, v.x);
     t += Write<float>(stream, v.y);
     t += Write<float>(stream, v.z);
 
@@ -143,7 +137,7 @@ inline size_t Write<aiVector3D>(IOStream *stream, const aiVector3D &v) {
 // Serialize a color value
 template <>
 inline size_t Write<aiColor3D>(IOStream *stream, const aiColor3D &v) {
-    size_t t = Write<float>(stream, v.r);
+    size_t t = Write<ai_real>(stream, v.r);
     t += Write<float>(stream, v.g);
     t += Write<float>(stream, v.b);
 
@@ -154,7 +148,7 @@ inline size_t Write<aiColor3D>(IOStream *stream, const aiColor3D &v) {
 // Serialize a color value
 template <>
 inline size_t Write<aiColor4D>(IOStream *stream, const aiColor4D &v) {
-    size_t t = Write<float>(stream, v.r);
+    size_t t = Write<ai_real>(stream, v.r);
     t += Write<float>(stream, v.g);
     t += Write<float>(stream, v.b);
     t += Write<float>(stream, v.a);
@@ -166,13 +160,13 @@ inline size_t Write<aiColor4D>(IOStream *stream, const aiColor4D &v) {
 // Serialize a quaternion
 template <>
 inline size_t Write<aiQuaternion>(IOStream *stream, const aiQuaternion &v) {
-    size_t t = Write<float>(stream, v.w);
+    size_t t = Write<ai_real>(stream, v.w);
     t += Write<float>(stream, v.x);
     t += Write<float>(stream, v.y);
     t += Write<float>(stream, v.z);
     ai_assert(t == 16);
 
-    return 16;
+    return t;
 }
 
 // -----------------------------------------------------------------------------------
@@ -184,17 +178,19 @@ inline size_t Write<aiVertexWeight>(IOStream *stream, const aiVertexWeight &v) {
     return t + Write<float>(stream, v.mWeight);
 }
 
+constexpr size_t MatrixSize = 64;
+
 // -----------------------------------------------------------------------------------
 // Serialize a mat4x4
 template <>
 inline size_t Write<aiMatrix4x4>(IOStream *stream, const aiMatrix4x4 &m) {
     for (unsigned int i = 0; i < 4; ++i) {
         for (unsigned int i2 = 0; i2 < 4; ++i2) {
-            Write<float>(stream, m[i][i2]);
+            Write<ai_real>(stream, m[i][i2]);
         }
     }
 
-    return 64;
+    return MatrixSize;
 }
 
 // -----------------------------------------------------------------------------------
@@ -277,7 +273,7 @@ public:
         // empty
     }
 
-    virtual ~AssbinChunkWriter() {
+    ~AssbinChunkWriter() override {
         if (container) {
             container->Write(&magic, sizeof(uint32_t), 1);
             container->Write(&cursor, sizeof(uint32_t), 1);
@@ -288,26 +284,27 @@ public:
 
     void *GetBufferPointer() { return buffer; }
 
-    // -------------------------------------------------------------------
-    virtual size_t Read(void * /*pvBuffer*/, size_t /*pSize*/, size_t /*pCount*/) {
+    size_t Read(void * /*pvBuffer*/, size_t /*pSize*/, size_t /*pCount*/) override {
         return 0;
     }
-    virtual aiReturn Seek(size_t /*pOffset*/, aiOrigin /*pOrigin*/) {
+
+    aiReturn Seek(size_t /*pOffset*/, aiOrigin /*pOrigin*/) override {
         return aiReturn_FAILURE;
     }
-    virtual size_t Tell() const {
+
+    size_t Tell() const override {
         return cursor;
     }
-    virtual void Flush() {
+
+    void Flush() override {
         // not implemented
     }
 
-    virtual size_t FileSize() const {
+    size_t FileSize() const override {
         return cursor;
     }
 
-    // -------------------------------------------------------------------
-    virtual size_t Write(const void *pvBuffer, size_t pSize, size_t pCount) {
+    size_t Write(const void *pvBuffer, size_t pSize, size_t pCount) override {
         pSize *= pCount;
         if (cursor + pSize > cur_size) {
             Grow(cursor + pSize);
@@ -336,7 +333,7 @@ protected:
     void WriteBinaryNode(IOStream *container, const aiNode *node) {
         AssbinChunkWriter chunk(container, ASSBIN_CHUNK_AINODE);
 
-        unsigned int nb_metadata = (node->mMetaData != NULL ? node->mMetaData->mNumProperties : 0);
+        unsigned int nb_metadata = (node->mMetaData != nullptr ? node->mMetaData->mNumProperties : 0);
 
         Write<aiString>(&chunk, node->mName);
         Write<aiMatrix4x4>(&chunk, node->mTransformation);
@@ -641,6 +638,10 @@ protected:
         Write<aiString>(&chunk, l->mName);
         Write<unsigned int>(&chunk, l->mType);
 
+        Write<aiVector3D>(&chunk, l->mPosition);
+        Write<aiVector3D>(&chunk, l->mDirection);
+        Write<aiVector3D>(&chunk, l->mUp);
+
         if (l->mType != aiLightSource_DIRECTIONAL) {
             Write<float>(&chunk, l->mAttenuationConstant);
             Write<float>(&chunk, l->mAttenuationLinear);
@@ -744,7 +745,7 @@ public:
         };
 
         try {
-            time_t tt = time(NULL);
+            time_t tt = time(nullptr);
 #if _WIN32
             tm *p = gmtime(&tt);
 #else
@@ -790,7 +791,7 @@ public:
             // Up to here the data is uncompressed. For compressed files, the rest
             // is compressed using standard DEFLATE from zlib.
             if (compressed) {
-                AssbinChunkWriter uncompressedStream(NULL, 0);
+                AssbinChunkWriter uncompressedStream(nullptr, 0);
                 WriteBinaryScene(&uncompressedStream, pScene);
 
                 uLongf uncompressedSize = static_cast<uLongf>(uncompressedStream.Tell());
@@ -825,8 +826,8 @@ void DumpSceneToAssbin(
     AssbinFileWriter fileWriter(shortened, compressed);
     fileWriter.WriteBinaryDump(pFile, cmd, pIOSystem, pScene);
 }
-#ifdef _WIN32
+#if _MSC_VER
 #pragma warning(pop)
-#endif // _WIN32
+#endif // _MSC_VER
 
 } // end of namespace Assimp

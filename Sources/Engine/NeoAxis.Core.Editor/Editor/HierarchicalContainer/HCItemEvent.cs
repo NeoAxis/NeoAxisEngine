@@ -165,7 +165,7 @@ namespace NeoAxis.Editor
 					{
 						var graph = parentNode.Parent as FlowGraph;
 						if( graph != null )
-							EditorAPI.OpenDocumentWindowForObject( Owner.DocumentWindow.Document, graph );
+							EditorAPI2.OpenDocumentWindowForObject( Owner.DocumentWindow.Document2, graph );
 					}
 
 					//select object
@@ -180,7 +180,7 @@ namespace NeoAxis.Editor
 
 		static string Translate( string text )
 		{
-			return EditorLocalization.Translate( "SettingsWindow", text );
+			return EditorLocalization2.Translate( "SettingsWindow", text );
 		}
 
 		FlowGraphNode AddFlowGraphNode( FlowGraph graph, Component subscribeTo )
@@ -293,7 +293,7 @@ namespace NeoAxis.Editor
 			newObjects.Add( handler );
 
 			//undo for handler
-			var document = Owner.DocumentWindow.Document;
+			var document = Owner.DocumentWindow.Document2;
 			var action = new UndoActionComponentCreateDelete( document, newObjects, true );
 			document.UndoSystem.CommitAction( action );
 			document.Modified = true;
@@ -301,7 +301,7 @@ namespace NeoAxis.Editor
 			Owner.DocumentWindow.SelectObjects( newObjects.ToArray() );
 
 			//open cs file and add method
-			var documentWindow = EditorAPI.OpenFileAsDocument( csharpFileName, true, true ) as CSharpDocumentWindow;
+			var documentWindow = EditorAPI2.OpenFileAsDocument( csharpFileName, true, true ) as CSharpDocumentWindow;
 			if( documentWindow != null )
 			{
 				if( !documentWindow.ScriptEditorControl.AddMethod( methodName, parameters, out var error ) )
@@ -383,16 +383,17 @@ namespace NeoAxis.Editor
 						var childItem = new KryptonContextMenuItem( itemData.Item1, null, delegate ( object s, EventArgs e2 )
 						{
 							var parent = (Component)( (KryptonContextMenuItem)s ).Tag;
-							var document = Owner.DocumentWindow.Document;
+							var document = Owner.DocumentWindow.Document2;
 
 							//create script
 							var script = parent.CreateComponent<CSharpScript>( enabled: false );
+							script.NewObjectSetDefaultConfiguration();
 							script.Name = script.BaseType.GetUserFriendlyNameForInstance();
 							script.Code = "class _Temp{\r\n}";
 							script.Enabled = true;
 
 							//activate flow graph window
-							var scriptDocumentWindow = EditorAPI.OpenDocumentWindowForObject( document, script ) as CSharpScriptEditor;
+							var scriptDocumentWindow = EditorAPI2.OpenDocumentWindowForObject( document, script ) as CSharpScriptEditor;
 
 							Owner.DocumentWindow.SelectObjects( new object[] { script } );
 
@@ -462,14 +463,14 @@ namespace NeoAxis.Editor
 						var item = new KryptonContextMenuItem( text, null, delegate ( object s, EventArgs e2 )
 						{
 							var script2 = (CSharpScript)( (KryptonContextMenuItem)s ).Tag;
-							var document = Owner.DocumentWindow.Document;
+							var document = Owner.DocumentWindow.Document2;
 
 							var oldCode = script2.Code;
 
 							script2.Code = "class _Temp{\r\n}";
 
 							//activate flow graph window
-							var scriptDocumentWindow = EditorAPI.OpenDocumentWindowForObject( document, script2 ) as CSharpScriptEditor;
+							var scriptDocumentWindow = EditorAPI2.OpenDocumentWindowForObject( document, script2 ) as CSharpScriptEditor;
 
 							Owner.DocumentWindow.SelectObjects( new object[] { script2 } );
 
@@ -587,6 +588,7 @@ namespace NeoAxis.Editor
 
 							//create flow graph
 							var graph = parent.CreateComponent<FlowGraph>( enabled: false );
+							graph.NewObjectSetDefaultConfiguration();
 							graph.Name = graph.BaseType.GetUserFriendlyNameForInstance();
 							graph.Enabled = true;
 
@@ -595,13 +597,13 @@ namespace NeoAxis.Editor
 							node.Position = new Vector2I( -20, -10 );
 
 							//undo
-							var document = Owner.DocumentWindow.Document;
+							var document = Owner.DocumentWindow.Document2;
 							var action = new UndoActionComponentCreateDelete( document, new Component[] { graph }, true );
 							document.UndoSystem.CommitAction( action );
 							document.Modified = true;
 
 							//activate flow graph window
-							EditorAPI.OpenDocumentWindowForObject( document, graph );
+							EditorAPI2.OpenDocumentWindowForObject( document, graph );
 						} );
 						childItem.Tag = itemData.Item2;
 						childItems.Add( childItem );
@@ -622,13 +624,13 @@ namespace NeoAxis.Editor
 							var node = AddFlowGraphNode( graph2, subscribeTo );
 
 							//undo
-							var document = Owner.DocumentWindow.Document;
+							var document = Owner.DocumentWindow.Document2;
 							var action = new UndoActionComponentCreateDelete( document, new Component[] { node }, true );
 							document.UndoSystem.CommitAction( action );
 							document.Modified = true;
 
 							//activate flow graph window
-							EditorAPI.OpenDocumentWindowForObject( document, graph2 );
+							EditorAPI2.OpenDocumentWindowForObject( document, graph2 );
 						} );
 						item.Tag = graph;
 						childItems.Add( item );

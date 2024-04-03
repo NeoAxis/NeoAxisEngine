@@ -1,73 +1,31 @@
 ﻿#if !DEPLOY
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
-using System.Text;
-using System.Windows.Forms;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
 namespace NeoAxis.Editor
 {
-	partial class SettingsCellProcedureUI_Container : SettingsCell
+	internal interface ISettingsCellProcedureUI_Container : ISettingsCell
 	{
-		internal SettingsCellProcedureUI procedureUI;
-		WinFormsProcedureUI.WinFormsForm procedureForm;
-
-		/////////////////////////////////////////
-
-		public SettingsCellProcedureUI_Container()
-		{
-			InitializeComponent();
-
-			SizeType = SizeType.AutoSize;
-		}
-
-		[Browsable( false )]
-		public ProcedureUI.Form ProcedureForm
-		{
-			get { return procedureForm; }
-		}
-
-		internal override void PerformInit()
-		{
-			base.PerformInit();
-
-			procedureForm = new WinFormsProcedureUI.WinFormsForm( this );
-			procedureUI.PerformInit();
-
-			Height = procedureForm.positionY + 6;
-		}
-
-		private void SettingsCellProcedureUI_Container_Load( object sender, EventArgs e )
-		{
-			timer1.Start();
-			procedureUI.PerformUpdate();
-		}
-
-		private void timer1_Tick( object sender, EventArgs e )
-		{
-			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
-				return;
-
-			procedureUI.PerformUpdate();
-		}
+		ProcedureUI.Form ProcedureForm { get; }
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public abstract class SettingsCellProcedureUI
 	{
-		internal SettingsCellProcedureUI_Container container;
+		internal ISettingsCellProcedureUI_Container container;
 
 		/////////////////////////////////////////
 
-		public SettingsCell/*ProcedureUI_Container*/ Container
+		public ISettingsCell Container
 		{
 			get { return container; }
 		}
 
-		public SettingsProvider Provider
+		public ISettingsProvider Provider
 		{
 			get { return container.Provider; }
 		}
@@ -78,7 +36,7 @@ namespace NeoAxis.Editor
 			set { container.CellsSortingPriority = value; }
 		}
 
-		public SizeType SizeType
+		public FormSizeType SizeType
 		{
 			get { return container.SizeType; }
 			set { container.SizeType = value; }

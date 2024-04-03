@@ -1,30 +1,53 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 
-#define LIGHTDATA_FRAGMENT_SIZE 29
-//#define LIGHTDATA_FRAGMENT_SIZE 28
-//vec4 u_lightDataFragment[LIGHTDATA_FRAGMENT_SIZE]
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define u_lightPosition u_lightDataFragment[0]
-#define u_lightDirection u_lightDataFragment[1].xyz
-#define u_lightPower u_lightDataFragment[2].xyz
-#define u_lightAttenuation u_lightDataFragment[3]
-#define u_lightSpot u_lightDataFragment[4]
-#define u_lightShadowIntensity u_lightDataFragment[5].x
-#define u_lightShadowTextureSize u_lightDataFragment[5].y
-#define u_lightShadowMapFarClipDistance u_lightDataFragment[5].z
-#define u_lightShadowCascadesVisualize u_lightDataFragment[5].w
-#define u_lightShadowTextureViewProjMatrix0 mtxFromRows(u_lightDataFragment[6], u_lightDataFragment[7], u_lightDataFragment[8], u_lightDataFragment[9])
-#define u_lightShadowTextureViewProjMatrix1 mtxFromRows(u_lightDataFragment[10], u_lightDataFragment[11], u_lightDataFragment[12], u_lightDataFragment[13])
-#define u_lightShadowTextureViewProjMatrix2 mtxFromRows(u_lightDataFragment[14], u_lightDataFragment[15], u_lightDataFragment[16], u_lightDataFragment[17])
-#define u_lightShadowTextureViewProjMatrix3 mtxFromRows(u_lightDataFragment[18], u_lightDataFragment[19], u_lightDataFragment[20], u_lightDataFragment[21])
-#define u_lightShadowCascades u_lightDataFragment[22]
-#define u_lightMaskMatrix mtxFromRows(u_lightDataFragment[23], u_lightDataFragment[24], u_lightDataFragment[25], u_lightDataFragment[26])
-#define u_lightShadowUnitDistanceTexelSizes u_lightDataFragment[27]
-#define u_lightShadowBias u_lightDataFragment[28].x
-#define u_lightShadowNormalBias u_lightDataFragment[28].y
-#define u_lightShadowSoftness u_lightDataFragment[28].z
-//#define u_lightSourceRadiusOrAngle u_lightDataFragment[28].z
-#define u_lightShadowContactLength u_lightDataFragment[28].w
+uniform vec4 u_multiLightParams;
+#define d_lightCount int(u_multiLightParams.x)
+
+uniform vec4 u_lightGridParams;
+#define d_lightGridEnabled u_lightGridParams.x
+#define d_lightGridSize u_lightGridParams.y
+#define d_lightGridStart u_lightGridParams.z
+#define d_lightGridCellSize u_lightGridParams.w
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#define d_lightPosition ( texelFetch( s_lightsTexture, ivec2( 0, nLight ), 0 ).xyz )
+#define d_lightBoundingRadius ( texelFetch( s_lightsTexture, ivec2( 0, nLight ), 0 ).w )
+
+#define d_lightDirection ( texelFetch( s_lightsTexture, ivec2( 1, nLight ), 0 ).xyz )
+#define d_lightStartDistance ( texelFetch( s_lightsTexture, ivec2( 1, nLight ), 0 ).w )
+
+#define d_lightPower ( texelFetch( s_lightsTexture, ivec2( 2, nLight ), 0 ).xyz )
+#define d_lightType ( texelFetch( s_lightsTexture, ivec2( 2, nLight ), 0 ).w )
+
+#define d_lightAttenuation ( texelFetch( s_lightsTexture, ivec2( 3, nLight ), 0 ).xyz )
+#define d_lightMaskIndex ( texelFetch( s_lightsTexture, ivec2( 3, nLight ), 0 ).w )
+
+#define d_lightSpot ( texelFetch( s_lightsTexture, ivec2( 4, nLight ), 0 ).xyz )
+#define d_shadowMapIndex ( texelFetch( s_lightsTexture, ivec2( 4, nLight ), 0 ).w )
+
+#define d_lightMaskMatrix mtxFromRows( texelFetch( s_lightsTexture, ivec2( 5, nLight ), 0 ), texelFetch( s_lightsTexture, ivec2( 6, nLight ), 0 ), texelFetch( s_lightsTexture, ivec2( 7, nLight ), 0 ), texelFetch( s_lightsTexture, ivec2( 8, nLight ), 0 ) )
+
+#define d_lightShadowIntensity ( texelFetch( s_lightsTexture, ivec2( 9, nLight ), 0 ).x )
+#define d_lightShadowTextureSize ( texelFetch( s_lightsTexture, ivec2( 9, nLight ), 0 ).y )
+#define d_lightShadowMapFarClipDistance ( texelFetch( s_lightsTexture, ivec2( 9, nLight ), 0 ).z )
+#define d_lightShadowCascadesVisualize ( texelFetch( s_lightsTexture, ivec2( 9, nLight ), 0 ).w )
+
+#define d_lightShadowBias ( texelFetch( s_lightsTexture, ivec2( 10, nLight ), 0 ).x )
+#define d_lightShadowNormalBias ( texelFetch( s_lightsTexture, ivec2( 10, nLight ), 0 ).y )
+#define d_lightShadowSoftness ( texelFetch( s_lightsTexture, ivec2( 10, nLight ), 0 ).z )
+#define d_lightShadowContactLength ( texelFetch( s_lightsTexture, ivec2( 10, nLight ), 0 ).w )
+
+#define d_lightShadowUnitDistanceTexelSizes ( texelFetch( s_lightsTexture, ivec2( 11, nLight ), 0 ) )
+
+#define d_lightShadowTextureViewProjMatrix0 mtxFromRows( texelFetch( s_lightsTexture, ivec2( 12, nLight ), 0 ),  texelFetch( s_lightsTexture, ivec2( 13, nLight ), 0 ), texelFetch( s_lightsTexture, ivec2( 14, nLight ), 0 ), texelFetch( s_lightsTexture, ivec2( 15, nLight ), 0 ) )
+#define d_lightShadowTextureViewProjMatrix1 mtxFromRows( texelFetch( s_lightsTexture, ivec2( 16, nLight ), 0 ), texelFetch( s_lightsTexture, ivec2( 17, nLight ), 0 ), texelFetch( s_lightsTexture, ivec2( 18, nLight ), 0 ), texelFetch( s_lightsTexture, ivec2( 19, nLight ), 0 ) )
+#define d_lightShadowTextureViewProjMatrix2 mtxFromRows( texelFetch( s_lightsTexture, ivec2( 20, nLight ), 0 ), texelFetch( s_lightsTexture, ivec2( 21, nLight ), 0 ), texelFetch( s_lightsTexture, ivec2( 22, nLight ), 0 ), texelFetch( s_lightsTexture, ivec2( 23, nLight ), 0 ) )
+#define d_lightShadowTextureViewProjMatrix3 mtxFromRows( texelFetch( s_lightsTexture, ivec2( 24, nLight ), 0 ), texelFetch( s_lightsTexture, ivec2( 25, nLight ), 0 ), texelFetch( s_lightsTexture, ivec2( 26, nLight ), 0 ), texelFetch( s_lightsTexture, ivec2( 27, nLight ), 0 ) )
+
+#define d_lightShadowCascades ( texelFetch( s_lightsTexture, ivec2( 28, nLight ), 0 ) )
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //#define REFLECTION_PROBE_DATA_FRAGMENT_SIZE 2
@@ -32,6 +55,44 @@
 //#define u_reflectionProbeRadius u_reflectionProbeDataFragment[1].x
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#define u_materialBaseColor ( texelFetch( s_materials, ivec2( 0, frameMaterialIndex ), 0 ).xyz )
+#define u_materialOpacity ( texelFetch( s_materials, ivec2( 0, frameMaterialIndex ), 0 ).w )
+
+#define u_materialAnisotropyDirection ( texelFetch( s_materials, ivec2( 1, frameMaterialIndex ), 0 ).xyz )
+#define u_materialOpacityMaskThreshold ( texelFetch( s_materials, ivec2( 1, frameMaterialIndex ), 0 ).w )
+
+#define u_materialSubsurfaceColor ( texelFetch( s_materials, ivec2( 2, frameMaterialIndex ), 0 ).xyz )
+#define u_materialMetallic ( texelFetch( s_materials, ivec2( 2, frameMaterialIndex ), 0 ).w )
+
+#define u_materialSheenColor ( texelFetch( s_materials, ivec2( 3, frameMaterialIndex ), 0 ).xyz )
+#define u_materialRoughness ( texelFetch( s_materials, ivec2( 3, frameMaterialIndex ), 0 ).w )
+
+#define u_materialEmissive ( texelFetch( s_materials, ivec2( 4, frameMaterialIndex ), 0 ).xyz )
+#define u_materialReflectance ( texelFetch( s_materials, ivec2( 4, frameMaterialIndex ), 0 ).w )
+
+#define u_materialClearCoat ( texelFetch( s_materials, ivec2( 5, frameMaterialIndex ), 0 ).x )
+#define u_materialClearCoatRoughness ( texelFetch( s_materials, ivec2( 5, frameMaterialIndex ), 0 ).y )
+#define u_materialAnisotropy ( texelFetch( s_materials, ivec2( 5, frameMaterialIndex ), 0 ).z )
+#define u_materialThickness ( texelFetch( s_materials, ivec2( 5, frameMaterialIndex ), 0 ).w )
+
+#define u_materialSubsurfacePower ( texelFetch( s_materials, ivec2( 6, frameMaterialIndex ), 0 ).x )
+#define u_materialShadingModel int( texelFetch( s_materials, ivec2( 6, frameMaterialIndex ), 0 ).y )
+//#define u_materialRayTracingReflection ( texelFetch( s_materials, ivec2( 6, frameMaterialIndex ), 0 ).y )
+#define u_materialAnisotropyDirectionBasis ( texelFetch( s_materials, ivec2( 6, frameMaterialIndex ), 0 ).z )
+#define u_materialMultiSubMaterialSeparatePassIndex int( texelFetch( s_materials, ivec2( 6, frameMaterialIndex ), 0 ).w )
+
+#define u_materialDisplacementScale ( texelFetch( s_materials, ivec2( 7, frameMaterialIndex ), 0 ).x )
+#define u_materialReceiveDecals ( texelFetch( s_materials, ivec2( 7, frameMaterialIndex ), 0 ).y )
+//#define u_materialShadingModel int( abs( texelFetch( s_materials, ivec2( 7, frameMaterialIndex ), 0 ).y ) - 1.0 )
+//#define u_materialReceiveDecals ( texelFetch( s_materials, ivec2( 7, frameMaterialIndex ), 0 ).y < 0.0 )
+////#define u_materialReceiveDecals materialStandardFragment[7].y
+#define u_materialUseVertexColor ( texelFetch( s_materials, ivec2( 7, frameMaterialIndex ), 0 ).z )
+#define u_materialSoftParticlesDistance ( texelFetch( s_materials, ivec2( 7, frameMaterialIndex ), 0 ).w )
+
+
+
+/*
 #define MATERIAL_STANDARD_FRAGMENT_SIZE 8
 
 #define u_materialBaseColor materialStandardFragment[0].xyz
@@ -53,10 +114,16 @@
 #define u_materialAnisotropyDirectionBasis materialStandardFragment[6].z
 #define u_materialMultiSubMaterialSeparatePassIndex int(materialStandardFragment[6].w)
 #define u_materialDisplacementScale materialStandardFragment[7].x
-#define u_materialReceiveDecals materialStandardFragment[7].y
+
+#define u_materialShadingModel int( abs( materialStandardFragment[7].y ) - 1.0 )
+#define u_materialReceiveDecals ( materialStandardFragment[7].y < 0.0 )
+//#define u_materialReceiveDecals materialStandardFragment[7].y
+
 #define u_materialUseVertexColor materialStandardFragment[7].z
 #define u_materialSoftParticlesDistance materialStandardFragment[7].w
+*/
 
+/*
 void getMaterialData( sampler2D materials, uint frameMaterialIndex, out vec4 materialStandardFragment[ MATERIAL_STANDARD_FRAGMENT_SIZE ] )
 {
 #ifdef GLSL
@@ -79,3 +146,4 @@ void getMaterialData( sampler2D materials, uint frameMaterialIndex, out vec4 mat
 	}
 #endif	
 }
+*/

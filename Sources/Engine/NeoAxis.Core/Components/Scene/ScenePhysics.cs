@@ -29,6 +29,7 @@ namespace NeoAxis
 			internal Dictionary<uint, Body> allRigidBodies = new Dictionary<uint, Body>( 256 );
 			internal Dictionary<uint, Body> kinematicDynamicRigidBodies = new Dictionary<uint, Body>( 256 );
 			internal ESet<Constraint> allConstraints = new ESet<Constraint>();
+			internal ESet<TwoBodyConstraint> twoBodyConstraints = new ESet<TwoBodyConstraint>();
 
 			////////////
 
@@ -148,13 +149,22 @@ namespace NeoAxis
 				Vector3F linearVelocity;
 				Vector3F angularVelocity;
 				internal bool active;
+				//!!!!new
+				internal int activeUpdateCount;
 
 				internal bool disposed;
 
 				internal List<Constraint> linkedConstraints;
 
-				//bool subscribedToGetContacts;
-				//ArraySegment<ContactsItem> lastContacts;
+				//character mode
+				internal bool characterMode;
+				float characterModeMaxStrength = 100;
+				float characterModePredictiveContactDistance = 0.1f;
+				float characterModeWalkUpHeight = 0.4f;
+				float characterModeWalkDownHeight = 0.5f;
+				float characterModeMaxSlopeAngle = MathEx.DegreeToRadian( 50 );
+				float characterModeSetSupportingVolume = 1.0e10f;
+				Vector2F characterModeDesiredVelocity;
 
 				//public object AnyData;
 
@@ -187,7 +197,11 @@ namespace NeoAxis
 					this.position = position;
 					this.rotation = rotation;
 					if( MotionType == PhysicsMotionType.Dynamic )
+					{
 						active = activate;
+						if( !active )
+							activeUpdateCount = 0;
+					}
 
 					PhysicsNative.JBody_SetTransform( body, ref position, ref rotation, activate );
 				}
@@ -286,6 +300,8 @@ namespace NeoAxis
 							return;
 
 						active = value;
+						if( !active )
+							activeUpdateCount = 0;
 
 						if( body != IntPtr.Zero )
 						{
@@ -295,6 +311,11 @@ namespace NeoAxis
 								PhysicsNative.JBody_Deactivate( body );
 						}
 					}
+				}
+
+				public int ActiveUpdateCount
+				{
+					get { return activeUpdateCount; }
 				}
 
 				public Vector3 Position
@@ -333,6 +354,9 @@ namespace NeoAxis
 					}
 				}
 
+				public Vector3F PreviousLinearVelocity { get; set; }
+				public Vector3F PreviousAngularVelocity { get; set; }
+
 				//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 				//public void Activate()
 				//{
@@ -352,7 +376,24 @@ namespace NeoAxis
 				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 				internal void UpdateDataFromPhysicsEngine()
 				{
+					PreviousLinearVelocity = linearVelocity;
+					PreviousAngularVelocity = angularVelocity;
+
 					PhysicsNative.JBody_GetData( body, out position, out rotation, out linearVelocity, out angularVelocity, out active );
+
+					if( !active )
+					{
+						PreviousLinearVelocity = Vector3F.Zero;
+						PreviousAngularVelocity = Vector3F.Zero;
+						activeUpdateCount = 0;
+					}
+					else
+					{
+						unchecked
+						{
+							activeUpdateCount++;
+						}
+					}
 				}
 
 				public void RenderPhysicalObject( ViewportRenderingContext context, ref int verticesRendered )
@@ -410,59 +451,260 @@ namespace NeoAxis
 				}
 
 				/// <summary>
-				/// Requests and gets a contacts data of the last simulation step.
+				/// Subscribes to getting and gets a contacts data of the last simulation step.
 				/// </summary>
 				/// <returns></returns>
-				public ArraySegment<ContactsItem> GetContacts()
+				[MethodImpl( (MethodImplOptions)512 )]
+				public unsafe void GetContacts( out int count, out ContactItem* buffer )
 				{
 					if( Disposed )
-						return Array.Empty<ContactsItem>();
-
-					//!!!!GC, caching, one array for all bodies
-
-					unsafe
 					{
-						PhysicsNative.JBody_GetContacts( body, out var count, out var buffer );
-						if( count == 0 )
-							return Array.Empty<ContactsItem>();
-
-						var array = new ContactsItem[ count ];
-						for( int n = 0; n < count; n++ )
-						{
-							ref var input = ref buffer[ n ];
-							ref var output = ref array[ n ];
-
-							output.WorldPositionOn1 = input.worldPositionOn1;
-							output.WorldPositionOn2 = input.worldPositionOn2;
-							output.Body2 = physicsWorld.allRigidBodies[ input.body2Id ];
-						}
-
-						return array;
+						count = 0;
+						buffer = null;
 					}
+					else
+						PhysicsNative.JBody_GetContacts( body, out count, out buffer );
+				}
 
-					//if( !subscribedToGetContacts )
-					//{
-					//	subscribedToGetContacts = true;
-					//}
+				///// <summary>
+				///// Subscribes to getting and gets a contacts data of the last simulation step.
+				///// </summary>
+				///// <returns></returns>
+				//[MethodImpl( (MethodImplOptions)512 )]
+				//public ArraySegment<ContactsItem> GetContacts()
+				//{
+				//	if( Disposed )
+				//		return Array.Empty<ContactsItem>();
 
-					//return lastContacts;
+				//	//!!!!GC, caching, one array for all bodies
+
+				//	unsafe
+				//	{
+				//		PhysicsNative.JBody_GetContacts( body, out var count, out var buffer );
+				//		if( count == 0 )
+				//			return Array.Empty<ContactsItem>();
+
+				//		var array = new ContactsItem[ count ];
+				//		for( int n = 0; n < count; n++ )
+				//		{
+				//			ref var input = ref buffer[ n ];
+				//			ref var output = ref array[ n ];
+
+				//			output.WorldPositionOn1 = input.worldPositionOn1;
+				//			output.WorldPositionOn2 = input.worldPositionOn2;
+				//			output.Body2 = physicsWorld.allRigidBodies[ input.body2Id ];
+				//		}
+
+				//		return array;
+				//	}
+
+				//	//if( !subscribedToGetContacts )
+				//	//{
+				//	//	subscribedToGetContacts = true;
+				//	//}
+
+				//	//return lastContacts;
+				//}
+
+				/// <summary>
+				/// Subscribes to getting and checks the fact of exist contacts.
+				/// </summary>
+				/// <returns></returns>
+				public bool ContactsExist()
+				{
+					if( Disposed )
+						return false;
+					return PhysicsNative.JBody_ContactsExist( body );
+				}
+
+				public void SetInverseInertia( ref Vector3F diagonal, ref QuaternionF rotation )
+				{
+					PhysicsNative.JBody_SetInverseInertia( body, ref diagonal, ref rotation );
+				}
+
+				public void SetInverseInertia( Vector3F diagonal, QuaternionF rotation )
+				{
+					SetInverseInertia( ref diagonal, ref rotation );
+				}
+
+				public void GetWorldSpaceSurfaceNormal( uint subShapeID, ref Vector3 position, out Vector3F normal )
+				{
+					PhysicsNative.JBody_GetWorldSpaceSurfaceNormal( body, subShapeID, ref position, out normal );
+				}
+
+				public Vector3F GetWorldSpaceSurfaceNormal( uint subShapeID, Vector3 position )
+				{
+					GetWorldSpaceSurfaceNormal( subShapeID, ref position, out var normal );
+					return normal;
+				}
+
+				////////////////////
+
+				public bool CharacterMode
+				{
+					get { return characterMode; }
+				}
+
+				public float CharacterModeMaxStrength
+				{
+					get { return characterModeMaxStrength; }
+					set
+					{
+						if( characterModeMaxStrength == value )
+							return;
+						characterModeMaxStrength = value;
+						PhysicsNative.JBody_SetCharacterModeMaxStrength( body, characterModeMaxStrength );
+					}
+				}
+
+				public float CharacterModePredictiveContactDistance
+				{
+					get { return characterModePredictiveContactDistance; }
+					set
+					{
+						if( characterModePredictiveContactDistance == value )
+							return;
+						characterModePredictiveContactDistance = value;
+						PhysicsNative.JBody_SetCharacterModePredictiveContactDistance( body, characterModePredictiveContactDistance );
+					}
+				}
+
+				public float CharacterModeWalkUpHeight
+				{
+					get { return characterModeWalkUpHeight; }
+					set
+					{
+						if( characterModeWalkUpHeight == value )
+							return;
+						characterModeWalkUpHeight = value;
+						PhysicsNative.JBody_SetCharacterModeWalkUpHeight( body, characterModeWalkUpHeight );
+					}
+				}
+
+				public float CharacterModeWalkDownHeight
+				{
+					get { return characterModeWalkDownHeight; }
+					set
+					{
+						if( characterModeWalkDownHeight == value )
+							return;
+						characterModeWalkDownHeight = value;
+						PhysicsNative.JBody_SetCharacterModeWalkDownHeight( body, characterModeWalkDownHeight );
+					}
+				}
+
+				public float CharacterModeMaxSlopeAngle
+				{
+					get { return characterModeMaxSlopeAngle; }
+					set
+					{
+						if( characterModeMaxSlopeAngle == value )
+							return;
+						characterModeMaxSlopeAngle = value;
+						PhysicsNative.JBody_SetCharacterModeMaxSlopeAngle( body, characterModeMaxSlopeAngle );
+					}
+				}
+
+				public float CharacterModeSetSupportingVolume
+				{
+					get { return characterModeSetSupportingVolume; }
+					set
+					{
+						if( characterModeSetSupportingVolume == value )
+							return;
+						characterModeSetSupportingVolume = value;
+						PhysicsNative.JBody_SetCharacterModeSetSupportingVolume( body, characterModeSetSupportingVolume );
+					}
+				}
+
+				public Vector2F CharacterModeDesiredVelocity
+				{
+					get { return characterModeDesiredVelocity; }
+					set
+					{
+						if( characterModeDesiredVelocity == value )
+							return;
+						characterModeDesiredVelocity = value;
+						PhysicsNative.JBody_SetCharacterModeSetDesiredVelocity( body, ref characterModeDesiredVelocity );
+					}
+				}
+
+				public enum CharacterDataGroundState
+				{
+					/// <summary>
+					/// Character is on the ground and can move freely.
+					/// </summary>
+					OnGround,
+					/// <summary>
+					/// Character is on a slope that is too steep and can't climb up any further. The caller should start applying downward velocity if sliding from the slope is desired.
+					/// </summary>
+					OnSteepGround,
+					/// <summary>
+					/// Character is touching an object, but is not supported by it and should fall. The GetGroundXXX functions will return information about the touched object.
+					/// </summary>
+					NotSupported,
+					/// <summary>
+					/// Character is in the air and is not touching anything.
+					/// </summary>
+					InAir,
+				}
+
+				public void GetCharacterModeData( out CharacterDataGroundState groundState, out uint groundBodyID, out uint groundBodySubShapeID, out Vector3 groundPosition, out Vector3F groundNormal, out Vector3F groundVelocity, out float walkUpDownLastChange )
+				{
+					PhysicsNative.JBody_GetCharacterModeData( body, out groundState, out groundBodyID, out groundBodySubShapeID, out groundPosition, out groundNormal, out groundVelocity, out walkUpDownLastChange );
 				}
 			}
 
 			/////////////////////
 
-			public struct ContactsItem
+			[StructLayout( LayoutKind.Sequential, Pack = 1 )]
+			public struct ContactItem
 			{
-				public Vector3 WorldPositionOn1;
-				public Vector3 WorldPositionOn2;
-				public Body Body2;
+				public uint Body2ID;
+				public Vector3F Normal;
+				public float PenetrationDepth;
+				public uint SubShapeID1;
+				public uint SubShapeID2;
+				public uint ContactPointCount;
+				Vector3 ContactPointsOn10;
+				Vector3 ContactPointsOn11;
+				Vector3 ContactPointsOn12;
+				Vector3 ContactPointsOn13;
+				Vector3 ContactPointsOn20;
+				Vector3 ContactPointsOn21;
+				Vector3 ContactPointsOn22;
+				Vector3 ContactPointsOn23;
 
-				//public int SimulationSubStep;
-				//public Vector3 PositionWorldOnA;
-				//public Vector3 PositionWorldOnB;
-				//public float AppliedImpulse;
-				//public float Distance;
-				//public PhysicalBody BodyB;
+				//
+
+				public ref Vector3 GetContactPointOn1( int index )
+				{
+					unsafe
+					{
+						fixed( Vector3* v = &ContactPointsOn10 )
+							return ref v[ index ];
+					}
+				}
+
+				public ref Vector3 GetContactPointOn2( int index )
+				{
+					unsafe
+					{
+						fixed( Vector3* v = &ContactPointsOn20 )
+							return ref v[ index ];
+					}
+				}
+
+				//public Vector3 WorldPositionOn1;
+				//public Vector3 WorldPositionOn2;
+				//public Body Body2;
+
+				////public int SimulationSubStep;
+				////public Vector3 PositionWorldOnA;
+				////public Vector3 PositionWorldOnB;
+				////public float AppliedImpulse;
+				////public float Distance;
+				////public PhysicalBody BodyB;
 			}
 
 			/////////////////////
@@ -624,6 +866,7 @@ namespace NeoAxis
 			/////////////////////
 
 			//!!!!юзать его когда только одна ось нужна в SixDOF?
+			//maybe sense because dof6 constraint
 			//public class HingeConstraint : TwoBodyConstraint
 			//{
 			//	//!!!!dynamic update
@@ -654,6 +897,11 @@ namespace NeoAxis
 
 				//
 
+				/// <summary>
+				/// 
+				/// </summary>
+				/// <param name="axis"></param>
+				/// <param name="value">For rotation axis in radians.</param>
 				public void SetLimit( AxisEnum axis, RangeF value )
 				{
 					PhysicsNative.JSixDOFConstraint_SetLimit( constraint, (int)axis, value.Minimum, value.Maximum );
@@ -664,6 +912,15 @@ namespace NeoAxis
 					PhysicsNative.JSixDOFConstraint_SetFriction( constraint, (int)axis, value );
 				}
 
+				/// <summary>
+				/// 
+				/// </summary>
+				/// <param name="axis"></param>
+				/// <param name="mode"></param>
+				/// <param name="frequency"></param>
+				/// <param name="damping"></param>
+				/// <param name="limit"></param>
+				/// <param name="target">For rotation axis in radians.</param>
 				public void SetMotor( AxisEnum axis, int mode, float frequency, float damping, RangeF limit, float target )
 				{
 					PhysicsNative.JSixDOFConstraint_SetMotor( constraint, (int)axis, mode, frequency, damping, limit.Minimum, limit.Maximum, target );
@@ -677,7 +934,7 @@ namespace NeoAxis
 
 			/////////////////////
 
-			[StructLayout( LayoutKind.Sequential )]
+			[StructLayout( LayoutKind.Sequential, Pack = 1 )]
 			public struct VehicleWheelSettings
 			{
 				public Vector3F Position;
@@ -694,10 +951,10 @@ namespace NeoAxis
 				public float Inertia;// = 0.9f;
 				public float AngularDamping;// = 0.2f;
 				public float MaxSteerAngle;// = DegreesToRadians(70.0f);
-
-				//!!!!
-				//LinearCurve longitudinalFriction;
-				//LinearCurve lateralFriction;
+				public int LongitudinalFrictionCount;
+				public unsafe float* LongitudinalFrictionData;
+				public int LateralFrictionCount;
+				public unsafe float* LateralFrictionData;
 				public float MaxBrakeTorque;// = 1500.0f;
 				public float MaxHandBrakeTorque;// = 4000.0f;
 
@@ -707,7 +964,7 @@ namespace NeoAxis
 
 			/////////////////////
 
-			[StructLayout( LayoutKind.Sequential )]
+			[StructLayout( LayoutKind.Sequential, Pack = 1 )]
 			public struct VehicleWheelData
 			{
 				public float Position;//SuspensionLength;
@@ -725,7 +982,7 @@ namespace NeoAxis
 			public class VehicleConstraint : Constraint
 			{
 				internal Body body;
-				bool stepListenerAddedMustBeAdded;
+				//bool stepListenerMustBeAdded;
 
 				//
 
@@ -736,19 +993,20 @@ namespace NeoAxis
 					PhysicsNative.JVehicleConstraint_SetDriverInput( constraint, forward, /*left, */right, brake, handBrake, activateBody );
 				}
 
-				public void SetStepListenerAddedMustBeAdded( bool value )
-				{
-					if( stepListenerAddedMustBeAdded != value )
-					{
-						stepListenerAddedMustBeAdded = value;
-						PhysicsNative.JVehicleConstraint_SetStepListenerAddedMustBeAdded( constraint, value );
-					}
-				}
+				//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+				//public void SetStepListenerMustBeAdded( bool value )
+				//{
+				//	if( stepListenerMustBeAdded != value )
+				//	{
+				//		stepListenerMustBeAdded = value;
+				//		PhysicsNative.JVehicleConstraint_SetStepListenerMustBeAdded( constraint, value );
+				//	}
+				//}
 
 				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-				public unsafe void GetData( VehicleWheelData* wheelsData, out bool active )
+				public unsafe void GetData( VehicleWheelData* wheelsData, out bool active, out int currentGear, out bool isSwitchingGear, out float currentRPM )
 				{
-					PhysicsNative.JVehicleConstraint_GetData( constraint, wheelsData, out active );
+					PhysicsNative.JVehicleConstraint_GetData( constraint, wheelsData, out active, out currentGear, out isSwitchingGear, out currentRPM );
 				}
 
 				//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -920,6 +1178,14 @@ namespace NeoAxis
 				{
 					key.Append( ' ' );
 					key.Append( shapeData.Mass.Value );
+					key.Append( ' ' );
+					key.Append( shapeData.CenterOfMassOffset.Value.ToString() );
+					//key.Append( shapeData.CenterOfMassManual.Value.ToString() );
+					//if( shapeData.CenterOfMassManual )
+					//{
+					//	key.Append( ' ' );
+					//	key.Append( shapeData.CenterOfMassPosition.Value.ToString() );
+					//}
 				}
 				key.Append( ' ' );
 				key.Append( scaleKey.X );
@@ -1072,7 +1338,7 @@ namespace NeoAxis
 				}
 			}
 
-			public Body CreateRigidBody( Shape shape, bool shapeAutoDestroy, object owner, PhysicsMotionType motionType, float linearDamping, float angularDamping, ref Vector3 position, ref QuaternionF rotation, [MarshalAs( UnmanagedType.U1 )] bool activate, float mass, [MarshalAs( UnmanagedType.U1 )] bool centerOfMassManual, ref Vector3F centerOfMassPosition, ref Vector3F inertiaTensorFactor, PhysicsMotionQuality motionQuality )
+			public Body CreateRigidBody( Shape shape, bool shapeAutoDestroy, object owner, PhysicsMotionType motionType, float linearDamping, float angularDamping, ref Vector3 position, ref QuaternionF rotation, [MarshalAs( UnmanagedType.U1 )] bool activate, float mass, ref Vector3F centerOfMassOffset, /*[MarshalAs( UnmanagedType.U1 )] bool centerOfMassManual, ref Vector3F centerOfMassPosition, ref Vector3F inertiaTensorFactor, */PhysicsMotionQuality motionQuality, bool characterMode )
 			{
 				var item = new Body();
 				item.physicsWorld = this;
@@ -1081,7 +1347,7 @@ namespace NeoAxis
 				item.shapeAutoDestroy = shapeAutoDestroy;
 				item.owner = owner;
 
-				item.body = PhysicsNative.JCreateBody( physicsSystem, shape.nativeShape, (int)motionType, linearDamping, angularDamping, ref position, ref rotation, activate, mass, centerOfMassManual, ref centerOfMassPosition, ref inertiaTensorFactor, ref item.bodyId, (int)motionQuality );
+				item.body = PhysicsNative.JCreateBody( physicsSystem, shape.nativeShape, (int)motionType, linearDamping, angularDamping, ref position, ref rotation, activate, mass, ref centerOfMassOffset, /*centerOfMassManual, ref centerOfMassPosition, ref inertiaTensorFactor, */ref item.bodyId, (int)motionQuality, characterMode );
 
 				if( item.body == IntPtr.Zero )
 				{
@@ -1095,6 +1361,7 @@ namespace NeoAxis
 				item.active = motionType == PhysicsMotionType.Dynamic ? activate : false;
 				item.position = position;
 				item.rotation = rotation;
+				item.characterMode = characterMode;
 
 				allRigidBodies[ item.bodyId ] = item;
 				if( item.motionType != PhysicsMotionType.Static )
@@ -1105,9 +1372,10 @@ namespace NeoAxis
 
 			public Body CreateRigidBodyStatic( Shape shape, bool shapeAutoDestroy, object owner, ref Vector3 position, ref QuaternionF rotation )
 			{
-				var centerOfMassPosition = Vector3F.Zero;
-				var inertiaTensorFactor = Vector3F.One;
-				var item = CreateRigidBody( shape, shapeAutoDestroy, owner, PhysicsMotionType.Static, 0.1f, 0.1f, ref position, ref rotation, false, 0, false, ref centerOfMassPosition, ref inertiaTensorFactor, PhysicsMotionQuality.Discrete );
+				var centerOfMassOffset = Vector3F.Zero;
+				//var centerOfMassPosition = Vector3F.Zero;
+				//var inertiaTensorFactor = Vector3F.One;
+				var item = CreateRigidBody( shape, shapeAutoDestroy, owner, PhysicsMotionType.Static, 0.1f, 0.1f, ref position, ref rotation, false, 0, ref centerOfMassOffset, /*false, ref centerOfMassPosition, ref inertiaTensorFactor, */PhysicsMotionQuality.Discrete, false );
 
 				return item;
 			}
@@ -1159,6 +1427,7 @@ namespace NeoAxis
 				}
 
 				allConstraints.Add( constraint );
+				twoBodyConstraints.Add( constraint );
 
 				//!!!!slowly
 
@@ -1337,6 +1606,8 @@ namespace NeoAxis
 				{
 					twoBody.bodyA?.linkedConstraints.Remove( item );
 					twoBody.bodyB?.linkedConstraints.Remove( item );
+
+					twoBodyConstraints.Remove( twoBody );
 				}
 				else
 				{
@@ -1672,12 +1943,22 @@ namespace NeoAxis
 			{
 				if( sizeof( PhysicsNative.RayTestResult ) != 56 )
 					Log.Fatal( "Scene: PhysicsWorldCreate: sizeof( PhysicsNative.RayTestResult ) != 56." );
-				if( sizeof( PhysicsNative.VolumeTestResult ) != 4 )
-					Log.Fatal( "Scene: PhysicsWorldCreate: sizeof( PhysicsNative.VolumeTestResult ) != 4." );
-				if( sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 18 * 4 )
-					Log.Fatal( "Scene: PhysicsWorldCreate: sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 18 * 4." );
+				if( sizeof( PhysicsNative.VolumeTestResult ) != 12 )
+					Log.Fatal( "Scene: PhysicsWorldCreate: sizeof( PhysicsNative.VolumeTestResult ) != 12." );
+				if( sizeof( IntPtr ) == 8 )
+				{
+					if( sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 22 * 4 + 8 )
+						Log.Fatal( "Scene: PhysicsWorldCreate: sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 22 * 4 + 8." );
+				}
+				else
+				{
+					if( sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 22 * 4 )
+						Log.Fatal( "Scene: PhysicsWorldCreate: sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 22 * 4." );
+				}
 				if( sizeof( PhysicsWorldClass.VehicleWheelData ) != 5 * 4 )
 					Log.Fatal( "Scene: PhysicsWorldCreate: sizeof( PhysicsWorldClass.VehicleWheelData ) != 5 * 4." );
+				if( sizeof( PhysicsWorldClass.ContactItem ) != 224 )
+					Log.Fatal( "Scene: PhysicsWorldCreate: sizeof( PhysicsWorldClass.ContactItem ) != 224." );
 			}
 
 			physicsWorld = new PhysicsWorldClass();
@@ -1732,16 +2013,14 @@ namespace NeoAxis
 
 		public event Action<Scene> PhysicsSimulationStepAfter;
 
+		static List<PhysicsWorldClass.Body> tempBodiesToUpdateFromLibrary = null;
+
 		[MethodImpl( (MethodImplOptions)512 )]
 		internal unsafe void PhysicsSimulate( bool editorSimulateSelectedMode, ESet<IPhysicalObject> updateOnlySelected )
 		{
 			if( physicsWorld == null )
 				return;
 
-			//!!!!maybe be call several times here in the loop. additional property then
-
-
-			////!!!!slowly
 			//foreach( var c in physicsWorld.allConstraints )
 			//{
 			//	var vehicleConstraint = c as PhysicsWorldClass.VehicleConstraint;
@@ -1751,51 +2030,77 @@ namespace NeoAxis
 			//	}
 			//}
 
+			//!!!!
+			var debug = false;//EngineApp._DebugCapsLock;
 
 			//simulate
 			float invStep = (float)ProjectSettings.Get.General.SimulationStepsPerSecondInv;
-			PhysicsNative.JPhysicsSystem_Update( physicsWorld.physicsSystem, invStep, PhysicsAdvancedSettings ? PhysicsCollisionSteps.Value : 2, PhysicsAdvancedSettings ? PhysicsIntegrationSubSteps.Value : 1 );
+			PhysicsNative.JPhysicsSystem_Update( physicsWorld.physicsSystem, invStep, PhysicsAdvancedSettings ? PhysicsCollisionSteps.Value : 2, debug );
+			//PhysicsNative.JPhysicsSystem_Update( physicsWorld.physicsSystem, invStep, PhysicsAdvancedSettings ? PhysicsCollisionSteps.Value : 2, PhysicsAdvancedSettings ? PhysicsIntegrationSubSteps.Value : 1, debug );
+
+
+			////get updated body states
+			//if( tempBodiesToUpdateFromLibrary == null )
+			//	tempBodiesToUpdateFromLibrary = new List<PhysicsWorldClass.Body>( 32 );
 
 			//update lastActive field for active bodies
 			PhysicsNative.JPhysicsSystem_GetActiveBodies( physicsWorld.physicsSystem, out var count, out var bodies );
-			for( int n = 0; n < count; n++ )
+
+			Parallel.For( 0, count, delegate ( int n ) //for( int n = 0; n < count; n++ )
 			{
 				var bodyId = bodies[ n ];
 				if( physicsWorld.kinematicDynamicRigidBodies.TryGetValue( bodyId, out var bodyItem ) )
 				{
 					if( updateOnlySelected == null )
-						bodyItem.active = true;
+					{
+						if( !bodyItem.active )
+							bodyItem.active = true;
+						//tempBodiesToUpdateFromLibrary.Add( bodyItem );
+					}
 					else
 					{
 						var bodyToUpdate = bodyItem.Owner as IPhysicalObject;
 						if( bodyToUpdate != null && updateOnlySelected.Contains( bodyToUpdate ) )
-							bodyItem.active = true;
+						{
+							if( !bodyItem.active )
+								bodyItem.active = true;
+							//tempBodiesToUpdateFromLibrary.Add( bodyItem );
+						}
 					}
 				}
-			}
+			} );
 			PhysicsNative.JPhysicsSystem_GetActiveBodiesFree( physicsWorld.physicsSystem, bodies );
 
+
+			//!!!!slowly. need get now sleeping bodies, but active == true
+
 			//get updated body states
-			//!!!!capacity
-			var toUpdateFromLibrary = new List<PhysicsWorldClass.Body>( 32 );
+			if( tempBodiesToUpdateFromLibrary == null )
+				tempBodiesToUpdateFromLibrary = new List<PhysicsWorldClass.Body>( 32 );
+
 			foreach( var bodyItem in physicsWorld.kinematicDynamicRigidBodies.Values )
 			{
 				if( bodyItem.Active )
 				{
 					if( updateOnlySelected == null )
-						toUpdateFromLibrary.Add( bodyItem );
+						tempBodiesToUpdateFromLibrary.Add( bodyItem );
 					else
 					{
 						var bodyToUpdate = bodyItem.Owner as IPhysicalObject;
 						if( bodyToUpdate != null && updateOnlySelected.Contains( bodyToUpdate ) )
-							toUpdateFromLibrary.Add( bodyItem );
+							tempBodiesToUpdateFromLibrary.Add( bodyItem );
 					}
 				}
 			}
-			foreach( var body in toUpdateFromLibrary )
+
+
+			Parallel.ForEach( tempBodiesToUpdateFromLibrary, delegate ( PhysicsWorldClass.Body body )
 			{
 				body.UpdateDataFromPhysicsEngine();
+			} );
 
+			foreach( var body in tempBodiesToUpdateFromLibrary )
+			{
 				var owner = body.Owner;
 				if( owner != null )
 				{
@@ -1811,27 +2116,60 @@ namespace NeoAxis
 				}
 			}
 
+			//foreach( var body in tempBodiesToUpdateFromLibrary )
+			//{
+			//	body.UpdateDataFromPhysicsEngine();
 
-			//!!!!slowly
-			//!!!!vehicles
+			//	var owner = body.Owner;
+			//	if( owner != null )
+			//	{
+			//		var rigidBody = owner as RigidBody;
+			//		if( rigidBody != null )
+			//			rigidBody.UpdateDataFromPhysicalBody();
+			//		else
+			//		{
+			//			var meshInSpace = owner as MeshInSpace;
+			//			if( meshInSpace != null )
+			//				meshInSpace.UpdateDataFromPhysicalBody();
+			//		}
+			//	}
+			//}
 
-			foreach( var c in physicsWorld.allConstraints )
+			tempBodiesToUpdateFromLibrary.Clear();
+
+
+			//!!!!slowly. use active bodies list
+			foreach( var twoBody in physicsWorld.twoBodyConstraints )
 			{
-				var twoBody = c as PhysicsWorldClass.TwoBodyConstraint;
-				if( twoBody != null )
+				if( twoBody.BodyA.Active || twoBody.BodyB.Active )
 				{
-					if( !twoBody.BodyA.Active && !twoBody.BodyB.Active )
-						continue;
-				}
-
-				var owner = c.Owner;
-				if( owner != null )
-				{
-					var component = owner as Constraint_SixDOF;
-					if( component != null && ( updateOnlySelected == null || updateOnlySelected.Contains( component ) ) )
-						component.UpdateDataFromPhysicalConstraint();
+					var owner = twoBody.Owner;
+					if( owner != null )
+					{
+						var component = owner as Constraint_SixDOF;
+						if( component != null && ( updateOnlySelected == null || updateOnlySelected.Contains( component ) ) )
+							component.UpdateDataFromPhysicalConstraint();
+					}
 				}
 			}
+
+			//foreach( var c in physicsWorld.allConstraints )
+			//{
+			//	var twoBody = c as PhysicsWorldClass.TwoBodyConstraint;
+			//	if( twoBody != null )
+			//	{
+			//		if( !twoBody.BodyA.Active && !twoBody.BodyB.Active )
+			//			continue;
+			//	}
+
+			//	var owner = c.Owner;
+			//	if( owner != null )
+			//	{
+			//		var component = owner as Constraint_SixDOF;
+			//		if( component != null && ( updateOnlySelected == null || updateOnlySelected.Contains( component ) ) )
+			//			component.UpdateDataFromPhysicalConstraint();
+			//	}
+			//}
 
 			//////get updated body states
 			////foreach( var bodyItem in physicsWorld.dynamicRigidBodies.Values )
@@ -1862,7 +2200,7 @@ namespace NeoAxis
 			//!!!!
 			//PhysicsTest( viewport );
 
-			var renderer = viewport.simple3DRenderer;
+			//var renderer = viewport.simple3DRenderer;
 
 			////draw internal data
 			//if( physicsWorld != null && renderer != null )
@@ -2664,7 +3002,19 @@ namespace NeoAxis
 						ref var result = ref results[ n ];
 						ref var result2 = ref results2[ n ];
 						result2.Body = physicsWorld.allRigidBodies[ result.bodyId ];
+						result2.DistanceScale = result.fraction;
+						//result2.BackFaceHit = result.backFaceHit != 0;
 					}
+
+					CollectionUtility.MergeSort( results2, delegate ( PhysicsVolumeTestItem.ResultItem item1, PhysicsVolumeTestItem.ResultItem item2 )
+					 {
+						 if( item1.DistanceScale < item2.DistanceScale )
+							 return -1;
+						 if( item1.DistanceScale > item2.DistanceScale )
+							 return 1;
+						 return 0;
+					 } );
+
 					item.Result = results2;
 				}
 				else
@@ -3369,8 +3719,8 @@ namespace NeoAxis
 						(float)0.2,
 						(float)0.01,
 						(float)0.01,
-						(float)0.75,
-						(float)0.25,
+						(float)0.1,//0.75,
+						(float)0.05,//0.25,
 						(float)( 0.001 * 0.001 ),
 						(float)0.02,
 						(float)( 0.001 * 0.001 ),

@@ -20,7 +20,7 @@ namespace NeoAxis
 		public Reference<Material> MaterialSurface
 		{
 			get { if( _materialSurface.BeginGet() ) MaterialSurface = _materialSurface.Get( this ); return _materialSurface.value; }
-			set { if( _materialSurface.BeginSet( ref value ) ) { try { MaterialSurfaceChanged?.Invoke( this ); MeshShouldRecompile(); } finally { _materialSurface.EndSet(); } } }
+			set { if( _materialSurface.BeginSet( this, ref value ) ) { try { MaterialSurfaceChanged?.Invoke( this ); MeshShouldRecompile(); } finally { _materialSurface.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MaterialSurface"/> property value changes.</summary>
 		public event Action<LiquidVolume> MaterialSurfaceChanged;
@@ -36,7 +36,7 @@ namespace NeoAxis
 		public Reference<double> TessellationPerUnit
 		{
 			get { if( _tessellationPerUnit.BeginGet() ) TessellationPerUnit = _tessellationPerUnit.Get( this ); return _tessellationPerUnit.value; }
-			set { if( _tessellationPerUnit.BeginSet( ref value ) ) { try { TessellationPerUnitChanged?.Invoke( this ); MeshShouldRecompile(); } finally { _tessellationPerUnit.EndSet(); } } }
+			set { if( _tessellationPerUnit.BeginSet( this, ref value ) ) { try { TessellationPerUnitChanged?.Invoke( this ); MeshShouldRecompile(); } finally { _tessellationPerUnit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TessellationPerUnit"/> property value changes.</summary>
 		public event Action<LiquidVolume> TessellationPerUnitChanged;
@@ -51,7 +51,7 @@ namespace NeoAxis
 		public Reference<double> UVTilesPerUnit
 		{
 			get { if( _uVTilesPerUnit.BeginGet() ) UVTilesPerUnit = _uVTilesPerUnit.Get( this ); return _uVTilesPerUnit.value; }
-			set { if( _uVTilesPerUnit.BeginSet( ref value ) ) { try { UVTilesPerUnitChanged?.Invoke( this ); MeshShouldRecompile(); } finally { _uVTilesPerUnit.EndSet(); } } }
+			set { if( _uVTilesPerUnit.BeginSet( this, ref value ) ) { try { UVTilesPerUnitChanged?.Invoke( this ); MeshShouldRecompile(); } finally { _uVTilesPerUnit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UVTilesPerUnit"/> property value changes.</summary>
 		public event Action<LiquidVolume> UVTilesPerUnitChanged;

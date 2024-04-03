@@ -12,7 +12,7 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "fencetype" )]
 #if !DEPLOY
-	[AddToResourcesWindow( @"Addons\Fence\Fence Type", 400 )]
+	[AddToResourcesWindow( @"Addons\Fence\Fence Type", 500 )]
 	[EditorControl( typeof( FenceTypeEditor ) )]
 	[Preview( typeof( FenceTypePreview ) )]
 	[PreviewImage( typeof( FenceTypePreviewImage ) )]
@@ -27,7 +27,7 @@ namespace NeoAxis
 		public Reference<Mesh> EndPost
 		{
 			get { if( _endPost.BeginGet() ) EndPost = _endPost.Get( this ); return _endPost.value; }
-			set { if( _endPost.BeginSet( ref value ) ) { try { EndPostChanged?.Invoke( this ); DataWasChanged(); } finally { _endPost.EndSet(); } } }
+			set { if( _endPost.BeginSet( this, ref value ) ) { try { EndPostChanged?.Invoke( this ); DataWasChanged(); } finally { _endPost.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="EndPost"/> property value changes.</summary>
 		public event Action<FenceType> EndPostChanged;
@@ -41,7 +41,7 @@ namespace NeoAxis
 		public Reference<Mesh> LinePost
 		{
 			get { if( _linePost.BeginGet() ) LinePost = _linePost.Get( this ); return _linePost.value; }
-			set { if( _linePost.BeginSet( ref value ) ) { try { LinePostChanged?.Invoke( this ); DataWasChanged(); } finally { _linePost.EndSet(); } } }
+			set { if( _linePost.BeginSet( this, ref value ) ) { try { LinePostChanged?.Invoke( this ); DataWasChanged(); } finally { _linePost.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinePost"/> property value changes.</summary>
 		public event Action<FenceType> LinePostChanged;
@@ -55,7 +55,7 @@ namespace NeoAxis
 		public Reference<Mesh> CornerPost
 		{
 			get { if( _cornerPost.BeginGet() ) CornerPost = _cornerPost.Get( this ); return _cornerPost.value; }
-			set { if( _cornerPost.BeginSet( ref value ) ) { try { CornerPostChanged?.Invoke( this ); DataWasChanged(); } finally { _cornerPost.EndSet(); } } }
+			set { if( _cornerPost.BeginSet( this, ref value ) ) { try { CornerPostChanged?.Invoke( this ); DataWasChanged(); } finally { _cornerPost.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CornerPost"/> property value changes.</summary>
 		public event Action<FenceType> CornerPostChanged;
@@ -69,7 +69,7 @@ namespace NeoAxis
 		public Reference<Mesh> StepPost
 		{
 			get { if( _stepPost.BeginGet() ) StepPost = _stepPost.Get( this ); return _stepPost.value; }
-			set { if( _stepPost.BeginSet( ref value ) ) { try { StepPostChanged?.Invoke( this ); DataWasChanged(); } finally { _stepPost.EndSet(); } } }
+			set { if( _stepPost.BeginSet( this, ref value ) ) { try { StepPostChanged?.Invoke( this ); DataWasChanged(); } finally { _stepPost.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="StepPost"/> property value changes.</summary>
 		public event Action<FenceType> StepPostChanged;
@@ -83,7 +83,7 @@ namespace NeoAxis
 		public Reference<Material> PostReplaceMaterial
 		{
 			get { if( _postReplaceMaterial.BeginGet() ) PostReplaceMaterial = _postReplaceMaterial.Get( this ); return _postReplaceMaterial.value; }
-			set { if( _postReplaceMaterial.BeginSet( ref value ) ) { try { PostReplaceMaterialChanged?.Invoke( this ); DataWasChanged(); } finally { _postReplaceMaterial.EndSet(); } } }
+			set { if( _postReplaceMaterial.BeginSet( this, ref value ) ) { try { PostReplaceMaterialChanged?.Invoke( this ); DataWasChanged(); } finally { _postReplaceMaterial.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PostReplaceMaterial"/> property value changes.</summary>
 		public event Action<FenceType> PostReplaceMaterialChanged;
@@ -94,7 +94,7 @@ namespace NeoAxis
 		//public Reference<Mesh> ArbitraryAnglePost
 		//{
 		//	get { if( _arbitraryAnglePost.BeginGet() ) ArbitraryAnglePost = _arbitraryAnglePost.Get( this ); return _arbitraryAnglePost.value; }
-		//	set { if( _arbitraryAnglePost.BeginSet( ref value ) ) { try { ArbitraryAnglePostChanged?.Invoke( this ); DataWasChanged();} finally { _arbitraryAnglePost.EndSet(); } } }
+		//	set { if( _arbitraryAnglePost.BeginSet( this, ref value ) ) { try { ArbitraryAnglePostChanged?.Invoke( this ); DataWasChanged();} finally { _arbitraryAnglePost.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="ArbitraryAnglePost"/> property value changes.</summary>
 		//public event Action<Fence> ArbitraryAnglePostChanged;
@@ -106,7 +106,7 @@ namespace NeoAxis
 		//public Reference<Mesh> CornerPost90
 		//{
 		//	get { if( _cornerPost90.BeginGet() ) CornerPost90 = _cornerPost90.Get( this ); return _cornerPost90.value; }
-		//	set { if( _cornerPost90.BeginSet( ref value ) ) { try { CornerPost90Changed?.Invoke( this );DataWasChanged(); } finally { _cornerPost90.EndSet(); } } }
+		//	set { if( _cornerPost90.BeginSet( this, ref value ) ) { try { CornerPost90Changed?.Invoke( this );DataWasChanged(); } finally { _cornerPost90.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="CornerPost90"/> property value changes.</summary>
 		//public event Action<Fence> CornerPost90Changed;
@@ -117,7 +117,7 @@ namespace NeoAxis
 		//public Reference<Mesh> TeePost
 		//{
 		//	get { if( _teePost.BeginGet() ) TeePost = _teePost.Get( this ); return _teePost.value; }
-		//	set { if( _teePost.BeginSet( ref value ) ) { try { TeePostChanged?.Invoke( this );DataWasChanged(); } finally { _teePost.EndSet(); } } }
+		//	set { if( _teePost.BeginSet( this, ref value ) ) { try { TeePostChanged?.Invoke( this );DataWasChanged(); } finally { _teePost.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="TeePost"/> property value changes.</summary>
 		//public event Action<Fence> TeePostChanged;
@@ -128,7 +128,7 @@ namespace NeoAxis
 		//public Reference<Mesh> CrossPost
 		//{
 		//	get { if( _crossPost.BeginGet() ) CrossPost = _crossPost.Get( this ); return _crossPost.value; }
-		//	set { if( _crossPost.BeginSet( ref value ) ) { try { CrossPostChanged?.Invoke( this ); DataWasChanged();} finally { _crossPost.EndSet(); } } }
+		//	set { if( _crossPost.BeginSet( this, ref value ) ) { try { CrossPostChanged?.Invoke( this ); DataWasChanged();} finally { _crossPost.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="CrossPost"/> property value changes.</summary>
 		//public event Action<Fence> CrossPostChanged;
@@ -144,7 +144,7 @@ namespace NeoAxis
 		public Reference<double> PanelLength
 		{
 			get { if( _panelLength.BeginGet() ) PanelLength = _panelLength.Get( this ); return _panelLength.value; }
-			set { if( _panelLength.BeginSet( ref value ) ) { try { PanelLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _panelLength.EndSet(); } } }
+			set { if( _panelLength.BeginSet( this, ref value ) ) { try { PanelLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _panelLength.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PanelLength"/> property value changes.</summary>
 		public event Action<FenceType> PanelLengthChanged;
@@ -158,7 +158,7 @@ namespace NeoAxis
 		public Reference<Mesh> FullPanel
 		{
 			get { if( _fullPanel.BeginGet() ) FullPanel = _fullPanel.Get( this ); return _fullPanel.value; }
-			set { if( _fullPanel.BeginSet( ref value ) ) { try { FullPanelChanged?.Invoke( this ); DataWasChanged(); } finally { _fullPanel.EndSet(); } } }
+			set { if( _fullPanel.BeginSet( this, ref value ) ) { try { FullPanelChanged?.Invoke( this ); DataWasChanged(); } finally { _fullPanel.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FullPanel"/> property value changes.</summary>
 		public event Action<FenceType> FullPanelChanged;
@@ -172,7 +172,7 @@ namespace NeoAxis
 		public Reference<Mesh> HalfPanel
 		{
 			get { if( _halfPanel.BeginGet() ) HalfPanel = _halfPanel.Get( this ); return _halfPanel.value; }
-			set { if( _halfPanel.BeginSet( ref value ) ) { try { HalfPanelChanged?.Invoke( this ); DataWasChanged(); } finally { _halfPanel.EndSet(); } } }
+			set { if( _halfPanel.BeginSet( this, ref value ) ) { try { HalfPanelChanged?.Invoke( this ); DataWasChanged(); } finally { _halfPanel.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HalfPanel"/> property value changes.</summary>
 		public event Action<FenceType> HalfPanelChanged;
@@ -186,7 +186,7 @@ namespace NeoAxis
 		public Reference<Mesh> QuarterPanel
 		{
 			get { if( _quarterPanel.BeginGet() ) QuarterPanel = _quarterPanel.Get( this ); return _quarterPanel.value; }
-			set { if( _quarterPanel.BeginSet( ref value ) ) { try { QuarterPanelChanged?.Invoke( this ); DataWasChanged(); } finally { _quarterPanel.EndSet(); } } }
+			set { if( _quarterPanel.BeginSet( this, ref value ) ) { try { QuarterPanelChanged?.Invoke( this ); DataWasChanged(); } finally { _quarterPanel.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="QuarterPanel"/> property value changes.</summary>
 		public event Action<FenceType> QuarterPanelChanged;
@@ -201,7 +201,7 @@ namespace NeoAxis
 		public Reference<bool> FillEmptySpaceByCSG
 		{
 			get { if( _fillEmptySpaceByCSG.BeginGet() ) FillEmptySpaceByCSG = _fillEmptySpaceByCSG.Get( this ); return _fillEmptySpaceByCSG.value; }
-			set { if( _fillEmptySpaceByCSG.BeginSet( ref value ) ) { try { FillEmptySpaceByCSGChanged?.Invoke( this ); DataWasChanged(); } finally { _fillEmptySpaceByCSG.EndSet(); } } }
+			set { if( _fillEmptySpaceByCSG.BeginSet( this, ref value ) ) { try { FillEmptySpaceByCSGChanged?.Invoke( this ); DataWasChanged(); } finally { _fillEmptySpaceByCSG.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FillEmptySpaceByCSG"/> property value changes.</summary>
 		public event Action<FenceType> FillEmptySpaceByCSGChanged;
@@ -215,7 +215,7 @@ namespace NeoAxis
 		public Reference<Material> PanelReplaceMaterial
 		{
 			get { if( _panelReplaceMaterial.BeginGet() ) PanelReplaceMaterial = _panelReplaceMaterial.Get( this ); return _panelReplaceMaterial.value; }
-			set { if( _panelReplaceMaterial.BeginSet( ref value ) ) { try { PanelReplaceMaterialChanged?.Invoke( this ); DataWasChanged(); } finally { _panelReplaceMaterial.EndSet(); } } }
+			set { if( _panelReplaceMaterial.BeginSet( this, ref value ) ) { try { PanelReplaceMaterialChanged?.Invoke( this ); DataWasChanged(); } finally { _panelReplaceMaterial.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PanelReplaceMaterial"/> property value changes.</summary>
 		public event Action<FenceType> PanelReplaceMaterialChanged;

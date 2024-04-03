@@ -14,8 +14,8 @@ namespace NeoAxis
 	/// Represents an area that filled by surface.
 	/// </summary>
 #if !DEPLOY
-	[SettingsCell( typeof( SurfaceAreaSettingsCell ) )]
-	[ObjectCreationMode( typeof( CreationModeSurfaceArea ) )]
+	[SettingsCell( "NeoAxis.Editor.SurfaceAreaSettingsCell" )]
+	[ObjectCreationMode( "NeoAxis.Editor.SurfaceAreaCreationMode" )]
 	[AddToResourcesWindow( @"Base\Scene objects\Areas\Surface Area", 0 )]
 #endif
 	public class SurfaceArea : Area
@@ -30,7 +30,7 @@ namespace NeoAxis
 		public Reference<Surface> Surface
 		{
 			get { if( _surface.BeginGet() ) Surface = _surface.Get( this ); return _surface.value; }
-			set { if( _surface.BeginSet( ref value ) ) { try { SurfaceChanged?.Invoke( this ); NeedUpdate(); } finally { _surface.EndSet(); } } }
+			set { if( _surface.BeginSet( this, ref value ) ) { try { SurfaceChanged?.Invoke( this ); NeedUpdate(); } finally { _surface.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Surface"/> property value changes.</summary>
 		public event Action<SurfaceArea> SurfaceChanged;
@@ -40,7 +40,7 @@ namespace NeoAxis
 		//public Reference<Material> Material
 		//{
 		//	get { if( _material.BeginGet() ) Material = _material.Get( this ); return _material.value; }
-		//	set { if( _material.BeginSet( ref value ) ) { try { MaterialChanged?.Invoke( this ); } finally { _material.EndSet(); } } }
+		//	set { if( _material.BeginSet( this, ref value ) ) { try { MaterialChanged?.Invoke( this ); } finally { _material.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="Material"/> property value changes.</summary>
 		//public event Action<SurfaceArea> MaterialChanged;
@@ -54,7 +54,7 @@ namespace NeoAxis
 		public Reference<double> ObjectsDistribution
 		{
 			get { if( _objectsDistribution.BeginGet() ) ObjectsDistribution = _objectsDistribution.Get( this ); return _objectsDistribution.value; }
-			set { if( _objectsDistribution.BeginSet( ref value ) ) { try { ObjectsDistributionChanged?.Invoke( this ); NeedUpdate(); } finally { _objectsDistribution.EndSet(); } } }
+			set { if( _objectsDistribution.BeginSet( this, ref value ) ) { try { ObjectsDistributionChanged?.Invoke( this ); NeedUpdate(); } finally { _objectsDistribution.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ObjectsDistribution"/> property value changes.</summary>
 		public event Action<SurfaceArea> ObjectsDistributionChanged;
@@ -68,7 +68,7 @@ namespace NeoAxis
 		public Reference<double> ObjectsScale
 		{
 			get { if( _objectsScale.BeginGet() ) ObjectsScale = _objectsScale.Get( this ); return _objectsScale.value; }
-			set { if( _objectsScale.BeginSet( ref value ) ) { try { ObjectsScaleChanged?.Invoke( this ); NeedUpdate(); } finally { _objectsScale.EndSet(); } } }
+			set { if( _objectsScale.BeginSet( this, ref value ) ) { try { ObjectsScaleChanged?.Invoke( this ); NeedUpdate(); } finally { _objectsScale.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ObjectsScale"/> property value changes.</summary>
 		public event Action<SurfaceArea> ObjectsScaleChanged;
@@ -81,7 +81,7 @@ namespace NeoAxis
 		public Reference<ColorValue> ObjectsColor
 		{
 			get { if( _objectsColor.BeginGet() ) ObjectsColor = _objectsColor.Get( this ); return _objectsColor.value; }
-			set { if( _objectsColor.BeginSet( ref value ) ) { try { ObjectsColorChanged?.Invoke( this ); NeedUpdate(); } finally { _objectsColor.EndSet(); } } }
+			set { if( _objectsColor.BeginSet( this, ref value ) ) { try { ObjectsColorChanged?.Invoke( this ); NeedUpdate(); } finally { _objectsColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ObjectsColor"/> property value changes.</summary>
 		public event Action<SurfaceArea> ObjectsColorChanged;
@@ -95,7 +95,7 @@ namespace NeoAxis
 		public Reference<double> FadeLength
 		{
 			get { if( _fadeLength.BeginGet() ) FadeLength = _fadeLength.Get( this ); return _fadeLength.value; }
-			set { if( _fadeLength.BeginSet( ref value ) ) { try { FadeLengthChanged?.Invoke( this ); NeedUpdate(); } finally { _fadeLength.EndSet(); } } }
+			set { if( _fadeLength.BeginSet( this, ref value ) ) { try { FadeLengthChanged?.Invoke( this ); NeedUpdate(); } finally { _fadeLength.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FadeLength"/> property value changes.</summary>
 		public event Action<SurfaceArea> FadeLengthChanged;
@@ -106,7 +106,7 @@ namespace NeoAxis
 		//public Reference<double> FadeHardness
 		//{
 		//	get { if( _fadeHardness.BeginGet() ) FadeHardness = _fadeHardness.Get( this ); return _fadeHardness.value; }
-		//	set { if( _fadeHardness.BeginSet( ref value ) ) { try { FadeHardnessChanged?.Invoke( this ); NeedUpdate(); } finally { _fadeHardness.EndSet(); } } }
+		//	set { if( _fadeHardness.BeginSet( this, ref value ) ) { try { FadeHardnessChanged?.Invoke( this ); NeedUpdate(); } finally { _fadeHardness.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="FadeHardness"/> property value changes.</summary>
 		//public event Action<SurfaceArea> FadeHardnessChanged;
@@ -120,7 +120,7 @@ namespace NeoAxis
 		//public Reference<int> RandomSeed
 		//{
 		//	get { if( _randomSeed.BeginGet() ) RandomSeed = _randomSeed.Get( this ); return _randomSeed.value; }
-		//	set { if( _randomSeed.BeginSet( ref value ) ) { try { RandomSeedChanged?.Invoke( this ); NeedUpdate(); } finally { _randomSeed.EndSet(); } } }
+		//	set { if( _randomSeed.BeginSet( this, ref value ) ) { try { RandomSeedChanged?.Invoke( this ); NeedUpdate(); } finally { _randomSeed.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="RandomSeed"/> property value changes.</summary>
 		//public event Action<SurfaceArea> RandomSeedChanged;
@@ -133,65 +133,11 @@ namespace NeoAxis
 		public Reference<bool> AutoUpdate
 		{
 			get { if( _autoUpdate.BeginGet() ) AutoUpdate = _autoUpdate.Get( this ); return _autoUpdate.value; }
-			set { if( _autoUpdate.BeginSet( ref value ) ) { try { AutoUpdateChanged?.Invoke( this ); } finally { _autoUpdate.EndSet(); } } }
+			set { if( _autoUpdate.BeginSet( this, ref value ) ) { try { AutoUpdateChanged?.Invoke( this ); } finally { _autoUpdate.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AutoUpdate"/> property value changes.</summary>
 		public event Action<SurfaceArea> AutoUpdateChanged;
 		ReferenceField<bool> _autoUpdate = true;
-
-		/////////////////////////////////////////
-
-#if !DEPLOY
-		/// <summary>
-		/// A class for providing the creation of a <see cref="SurfaceArea"/> in the editor.
-		/// </summary>
-		public class CreationModeSurfaceArea : CreationModeArea
-		{
-			public CreationModeSurfaceArea( DocumentWindowWithViewport documentWindow, Component creatingObject )
-				: base( documentWindow, creatingObject )
-			{
-			}
-
-			public new SurfaceArea CreatingObject
-			{
-				get { return (SurfaceArea)base.CreatingObject; }
-			}
-
-			protected override bool CalculatePointPosition( Viewport viewport, out Vector3 position, out ObjectInSpace collidedWith )
-			{
-				var result = base.CalculatePointPosition( viewport, out position, out collidedWith );
-
-				if( result )
-				{
-					if( collidedWith != null )
-					{
-						Component obj = collidedWith;
-						{
-							var meshInSpace = collidedWith as MeshInSpace;
-							if( meshInSpace != null )
-							{
-								var terrain = Terrain.GetTerrainByMeshInSpace( meshInSpace );
-								if( terrain != null )
-									obj = terrain;
-							}
-						}
-
-						CreatingObject.AddBaseObject( obj );
-					}
-				}
-
-				return result;
-			}
-
-			public override void Finish( bool cancel )
-			{
-				base.Finish( cancel );
-
-				if( !cancel )
-					CreatingObject.Surface = ReferenceUtility.MakeReference( @"Base\Surfaces\Default.surface" );
-			}
-		}
-#endif
 
 		/////////////////////////////////////////
 

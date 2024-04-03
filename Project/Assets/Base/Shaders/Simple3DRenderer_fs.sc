@@ -27,6 +27,8 @@ void main()
 	{
 		vec2 texCoord = getFragCoord().xy * u_viewportSizeInv;
 		float rawDepth = texture2D(s_depthTexture, texCoord).r;
+		//!!!!
+		//float depth = getDepthValue2(texCoord, rawDepth, u_viewportOwnerNearClipDistance, u_viewportOwnerFarClipDistance, u_viewportOwnerProjectionInverse);
 		float depth = getDepthValue(rawDepth, u_viewportOwnerNearClipDistance, u_viewportOwnerFarClipDistance);
 
 		//!!!!
@@ -34,6 +36,7 @@ void main()
 
 		if(depth < v_worldPosition_depth.w - offset)
 			visible = false;
+		
 		
 		//float originalZ = gl_FragCoord.z / gl_FragCoord.w;
 		//if(depth < originalZ - offset)

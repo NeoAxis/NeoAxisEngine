@@ -24,7 +24,7 @@ namespace NeoAxis
 		public Reference<bool> Vertical
 		{
 			get { if( _vertical.BeginGet() ) Vertical = _vertical.Get( this ); return _vertical.value; }
-			set { if( _vertical.BeginSet( ref value ) ) { try { VerticalChanged?.Invoke( this ); } finally { _vertical.EndSet(); } } }
+			set { if( _vertical.BeginSet( this, ref value ) ) { try { VerticalChanged?.Invoke( this ); } finally { _vertical.EndSet(); } } }
 		}
 		public event Action<UIScroll> VerticalChanged;
 		ReferenceField<bool> _vertical = false;
@@ -36,7 +36,7 @@ namespace NeoAxis
 		public Reference<Range> ValueRange
 		{
 			get { if( _valueRange.BeginGet() ) ValueRange = _valueRange.Get( this ); return _valueRange.value; }
-			set { if( _valueRange.BeginSet( ref value ) ) { try { ValueRangeChanged?.Invoke( this ); } finally { _valueRange.EndSet(); } } }
+			set { if( _valueRange.BeginSet( this, ref value ) ) { try { ValueRangeChanged?.Invoke( this ); } finally { _valueRange.EndSet(); } } }
 		}
 		public event Action<UIScroll> ValueRangeChanged;
 		ReferenceField<Range> _valueRange = new Range( 0, 1 );
@@ -48,7 +48,7 @@ namespace NeoAxis
 		public Reference<double> Value
 		{
 			get { if( _value.BeginGet() ) Value = _value.Get( this ); return _value.value; }
-			set { if( _value.BeginSet( ref value ) ) { try { ValueChanged?.Invoke( this ); } finally { _value.EndSet(); } } }
+			set { if( _value.BeginSet( this, ref value ) ) { try { ValueChanged?.Invoke( this ); } finally { _value.EndSet(); } } }
 		}
 		public event Action<UIScroll> ValueChanged;
 		ReferenceField<double> _value = 0.0;
@@ -128,6 +128,9 @@ namespace NeoAxis
 			case TouchData.ActionEnum.Down:
 				if( VisibleInHierarchy && EnabledInHierarchy && !ReadOnlyInHierarchy && touchDown == null )
 				{
+					if( ParentContainer != null && ParentContainer.IsControlCursorCoveredByOther( this ) )
+						break;
+
 					GetScreenRectangle( out var rect );
 					var rectInPixels = rect * ParentContainer.Viewport.SizeInPixels.ToVector2();
 					var distanceInPixels = rectInPixels.GetPointDistance( e.PositionInPixels.ToVector2() );
@@ -135,6 +138,8 @@ namespace NeoAxis
 					var item = new TouchData.TouchDownRequestToProcessTouch( this, 2, distanceInPixels, null,
 						delegate ( UIControl sender, TouchData touchData, object anyData )
 						{
+							Focus();
+
 							//start touch
 							touchDown = e.PointerIdentifier;
 							UpdateValueByCursor( e.Position );
@@ -153,11 +158,11 @@ namespace NeoAxis
 					UpdateValueByCursor( e.Position );
 				break;
 
-			//case TouchData.ActionEnum.Cancel:
-			//	break;
+				//case TouchData.ActionEnum.Cancel:
+				//	break;
 
-			//case TouchData.ActionEnum.Outside:
-			//	break;
+				//case TouchData.ActionEnum.Outside:
+				//	break;
 			}
 
 			return base.OnTouch( e );

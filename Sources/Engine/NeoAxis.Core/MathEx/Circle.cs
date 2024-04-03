@@ -101,7 +101,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public bool Contains( Vector2 p )
+		public bool Contains( ref Vector2 p )
 		{
 			double x = p.X - Center.X;
 			double y = p.Y - Center.Y;
@@ -109,6 +109,12 @@ namespace NeoAxis
 			if( lengthSqr > Radius * Radius )
 				return false;
 			return true;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public bool Contains( Vector2 p )
+		{
+			return Contains( ref p );
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]

@@ -1,13 +1,14 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace NeoAxis.Networking
 {
 	public abstract class NetworkService
 	{
-		internal const int maxMessageTypeIdentifier = 255;// ( 1 << NetworkDefines.bitsForServiceMessageTypeIdentifier ) - 1;
+		internal const int maxMessageTypeIdentifier = 15;// ( 1 << NetworkDefines.bitsForServiceMessageTypeIdentifier ) - 1;
 
 		//
 
@@ -15,7 +16,7 @@ namespace NeoAxis.Networking
 
 		//general
 		string name;
-		byte identifier;
+		int identifier;
 
 		//message types
 		Dictionary<string, MessageType> messageTypesByName = new Dictionary<string, MessageType>();
@@ -23,10 +24,10 @@ namespace NeoAxis.Networking
 
 		///////////////////////////////////////////
 
-		protected sealed class MessageType
+		public sealed class MessageType
 		{
 			string name;
-			byte identifier;
+			int identifier;
 			ReceiveHandlerDelegate receiveHandler;
 
 			///////////////
@@ -35,7 +36,7 @@ namespace NeoAxis.Networking
 
 			///////////////
 
-			internal MessageType( string name, byte identifier, ReceiveHandlerDelegate receiveHandler )
+			internal MessageType( string name, int identifier, ReceiveHandlerDelegate receiveHandler )
 			{
 				this.name = name;
 				this.identifier = identifier;
@@ -47,7 +48,7 @@ namespace NeoAxis.Networking
 				get { return name; }
 			}
 
-			public byte Identifier
+			public int Identifier
 			{
 				get { return identifier; }
 			}
@@ -60,7 +61,7 @@ namespace NeoAxis.Networking
 
 		///////////////////////////////////////////
 
-		protected NetworkService( string name, byte identifier )
+		protected NetworkService( string name, int identifier )
 		{
 			this.name = name;
 			this.identifier = identifier;
@@ -71,7 +72,7 @@ namespace NeoAxis.Networking
 			get { return name; }
 		}
 
-		public byte Identifier
+		public int Identifier
 		{
 			get { return identifier; }
 		}
@@ -86,7 +87,7 @@ namespace NeoAxis.Networking
 			OnDispose();
 		}
 
-		protected MessageType RegisterMessageType( string name, byte identifier, MessageType.ReceiveHandlerDelegate receiveHandler )
+		protected MessageType RegisterMessageType( string name, int identifier, MessageType.ReceiveHandlerDelegate receiveHandler )
 		{
 			if( identifier == 0 )
 				Log.Fatal( "NetworkService: RegisterMessageType: Invalid message type identifier. Identifier can not be zero." );
@@ -110,12 +111,13 @@ namespace NeoAxis.Networking
 			return messageType;
 		}
 
-		protected MessageType RegisterMessageType( string name, byte identifier )
+		protected MessageType RegisterMessageType( string name, int identifier )
 		{
 			return RegisterMessageType( name, identifier, null );
 		}
 
-		protected MessageType GetMessageType( string name )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public MessageType GetMessageType( string name )
 		{
 			MessageType messageType;
 			if( !messageTypesByName.TryGetValue( name, out messageType ) )
@@ -123,23 +125,34 @@ namespace NeoAxis.Networking
 			return messageType;
 		}
 
-		protected MessageType GetMessageType( byte identifier )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public MessageType GetMessageType( int identifier )
 		{
 			if( identifier >= messageTypesByID.Count )
 				return null;
 			return messageTypesByID[ identifier ];
 		}
 
-		internal void ProcessReceivedMessage( NetworkNode.ConnectedNode connectedNode, ArrayDataReader reader )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		internal void ProcessReceivedMessage( NetworkNode.ConnectedNode connectedNode, ArrayDataReader reader, int byteLengthForProfiler, int messageIdentifier )
 		{
-			//receive message identifier
-			byte messageIdentifier = reader.ReadByte();// NetworkDefines.bitsForServiceMessageTypeIdentifier );
+			////receive message identifier
+			//var messageIdentifier = reader.ReadByte();// NetworkDefines.bitsForServiceMessageTypeIdentifier );
 
-			MessageType messageType = GetMessageType( messageIdentifier );
+			var messageType = GetMessageType( messageIdentifier );
 			if( messageType == null )
 			{
 				//no such message type
 				return;
+			}
+
+			//!!!!some data can be received, but message type is not registered
+			if( baseOwner.ProfilerData != null )
+			{
+				var serviceItem = baseOwner.ProfilerData.GetServiceItem( Identifier );
+				var messageTypeItem = serviceItem.GetMessageTypeItem( messageType.Identifier );
+				messageTypeItem.ReceivedMessages++;
+				messageTypeItem.ReceivedSize += byteLengthForProfiler;
 			}
 
 			if( messageType.ReceiveHandler == null )
@@ -151,7 +164,7 @@ namespace NeoAxis.Networking
 			string additionalErrorMessage = null;
 			if( !messageType.ReceiveHandler( connectedNode, messageType, reader, ref additionalErrorMessage ) )
 			{
-				string text = string.Format( "Invalid service message \'{0}\'.", messageType.Name );
+				var text = string.Format( "Invalid service message \'{0}\'.", messageType.Name );
 				if( !string.IsNullOrEmpty( additionalErrorMessage ) )
 					text += " " + additionalErrorMessage;
 				baseOwner.OnReceiveProtocolErrorInternal( connectedNode, text );

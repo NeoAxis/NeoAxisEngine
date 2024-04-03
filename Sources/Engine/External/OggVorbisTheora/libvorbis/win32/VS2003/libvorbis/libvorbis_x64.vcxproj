@@ -40,8 +40,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\..\..\..\..\_Compilation\Win64\OggVorbisTheora\libvorbis\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\..\..\..\..\_Compilation\Win64\OggVorbisTheora\libvorbis\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\..\..\..\..\..\_build\Win64\OggVorbisTheora\libvorbis\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\..\..\..\..\..\_build\Win64\OggVorbisTheora\libvorbis\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
@@ -75,7 +75,7 @@
     <Link>
       <AdditionalDependencies>libogg.lib;NativeMemoryManager.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)libvorbis.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\..\..\..\..\_Compilation\Win64\OggVorbisTheora\libogg;..\..\..\..\..\..\Lib\Windows_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\..\..\..\..\_build\Win64\OggVorbisTheora\libogg;..\..\..\..\..\..\Lib\Windows_x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>..\..\vorbis.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -88,7 +88,7 @@
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy ..\..\..\..\..\..\..\_Compilation\Win64\oggvorbistheora\libvorbis\libvorbis.lib "..\..\..\..\..\..\..\..\Sources\Engine\Lib\Windows_x64"</Command>
+      <Command>copy ..\..\..\..\..\..\..\..\_build\Win64\oggvorbistheora\libvorbis\libvorbis.lib "..\..\..\..\..\..\..\..\Sources\Engine\Lib\Windows_x64"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

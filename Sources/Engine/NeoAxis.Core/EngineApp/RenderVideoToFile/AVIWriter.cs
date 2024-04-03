@@ -11,8 +11,8 @@
 namespace NeoAxis//Accord.Video.VFW
 {
 	using System;
-	using System.Drawing;
-	using System.Drawing.Imaging;
+	//using System.Drawing;
+	//using System.Drawing.Imaging;
 	using System.Runtime.InteropServices;
 
 	/// <summary>
@@ -368,66 +368,67 @@ namespace NeoAxis//Accord.Video.VFW
             }
 		}
 
-        /// <summary>
-        /// Add new frame to the AVI file.
-        /// </summary>
-        /// 
-        /// <param name="frameImage">New frame image.</param>
-        /// 
-        /// <remarks><para>The method adds new video frame to an opened video file. The width and heights
-        /// of the frame should be the same as it was specified in <see cref="Open"/> method
-        /// (see <see cref="Width"/> and <see cref="Height"/> properties).</para></remarks>
-        /// 
-        /// <exception cref="System.IO.IOException">Thrown if no video file was open.</exception>
-        /// <exception cref="ArgumentException">Bitmap size must be of the same as video size, which was specified on opening video file.</exception>
-        /// <exception cref="AVIWriterVideoException">A error occurred while writing new video frame. See exception message.</exception>
-        /// 
-        public void AddFrame( Bitmap frameImage )
-		{
-            lock ( sync )
-            {
-                // check if AVI file was properly opened
-                if ( buffer == IntPtr.Zero )
-                    throw new System.IO.IOException( "AVI file should be successfully opened before writing." );
+		//!!!!надо
+  //      /// <summary>
+  //      /// Add new frame to the AVI file.
+  //      /// </summary>
+  //      /// 
+  //      /// <param name="frameImage">New frame image.</param>
+  //      /// 
+  //      /// <remarks><para>The method adds new video frame to an opened video file. The width and heights
+  //      /// of the frame should be the same as it was specified in <see cref="Open"/> method
+  //      /// (see <see cref="Width"/> and <see cref="Height"/> properties).</para></remarks>
+  //      /// 
+  //      /// <exception cref="System.IO.IOException">Thrown if no video file was open.</exception>
+  //      /// <exception cref="ArgumentException">Bitmap size must be of the same as video size, which was specified on opening video file.</exception>
+  //      /// <exception cref="AVIWriterVideoException">A error occurred while writing new video frame. See exception message.</exception>
+  //      /// 
+  //      public void AddFrame( Bitmap frameImage )
+		//{
+  //          lock ( sync )
+  //          {
+  //              // check if AVI file was properly opened
+  //              if ( buffer == IntPtr.Zero )
+  //                  throw new System.IO.IOException( "AVI file should be successfully opened before writing." );
 
-                // check image dimension
-                if ( ( frameImage.Width != width ) || ( frameImage.Height != height ) )
-                    throw new ArgumentException( "Bitmap size must be of the same as video size, which was specified on opening video file." );
+  //              // check image dimension
+  //              if ( ( frameImage.Width != width ) || ( frameImage.Height != height ) )
+  //                  throw new ArgumentException( "Bitmap size must be of the same as video size, which was specified on opening video file." );
 
-                // lock bitmap data
-                BitmapData imageData = frameImage.LockBits(
-                    new System.Drawing.Rectangle( 0, 0, width, height ),
-                    ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb );
+  //              // lock bitmap data
+  //              BitmapData imageData = frameImage.LockBits(
+  //                  new System.Drawing.Rectangle( 0, 0, width, height ),
+  //                  ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb );
 
-                // copy image data
-                int srcStride = imageData.Stride;
-                int dstStride = stride;
+  //              // copy image data
+  //              int srcStride = imageData.Stride;
+  //              int dstStride = stride;
 
-                //!!!!betauser
-                var src = imageData.Scan0.ToInt64() + srcStride * ( height - 1 );
-                var dst = buffer.ToInt64();
-                //int src = imageData.Scan0.ToInt32( ) + srcStride * ( height - 1 );
-                //int dst = buffer.ToInt32( );
+  //              //!!!!betauser
+  //              var src = imageData.Scan0.ToInt64() + srcStride * ( height - 1 );
+  //              var dst = buffer.ToInt64();
+  //              //int src = imageData.Scan0.ToInt32( ) + srcStride * ( height - 1 );
+  //              //int dst = buffer.ToInt32( );
 
-                for( int y = 0; y < height; y++ )
-                {
-                    AVIWriterWin32.memcpy( (IntPtr) dst, (IntPtr)src, dstStride );
-                    //Win32.memcpy(  dst, src, dstStride );
-                    dst += dstStride;
-                    src -= srcStride;
-                }
+  //              for( int y = 0; y < height; y++ )
+  //              {
+  //                  AVIWriterWin32.memcpy( (IntPtr) dst, (IntPtr)src, dstStride );
+  //                  //Win32.memcpy(  dst, src, dstStride );
+  //                  dst += dstStride;
+  //                  src -= srcStride;
+  //              }
 
-                // unlock bitmap data
-                frameImage.UnlockBits( imageData );
+  //              // unlock bitmap data
+  //              frameImage.UnlockBits( imageData );
 
-                // write to stream
-                if ( AVIWriterWin32.AVIStreamWrite( streamCompressed, position, 1, buffer,
-                    stride * height, 0, IntPtr.Zero, IntPtr.Zero ) != 0 )
-                    throw new AVIWriterVideoException( "Failed adding frame." );
+  //              // write to stream
+  //              if ( AVIWriterWin32.AVIStreamWrite( streamCompressed, position, 1, buffer,
+  //                  stride * height, 0, IntPtr.Zero, IntPtr.Zero ) != 0 )
+  //                  throw new AVIWriterVideoException( "Failed adding frame." );
 
-                position++;
-            }
-		}
+  //              position++;
+  //          }
+		//}
 	}
 }
 

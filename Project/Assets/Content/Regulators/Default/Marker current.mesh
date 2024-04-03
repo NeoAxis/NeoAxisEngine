@@ -1,0 +1,15 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.Mesh
+{
+	EditorCameraTransform = "0.137704294775242 -0.113284101713679 0.0905772570758139; -0.2191854566202 0.0785722056997891 0.915470996498287 0.328172208860071; 1 1 1"
+	.component NeoAxis.MeshGeometry_Box
+	{
+		Name = Mesh Geometry
+		Dimensions = 0.03 0.14 0.01
+		Material
+		{
+			GetByReference = "Base\\Materials\\White.material"
+		}
+	}
+}

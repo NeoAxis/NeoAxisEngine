@@ -103,8 +103,10 @@ namespace Internal.Assimp
         {
             get
             {
-                return m_nonCompressedData != null || m_nonCompressedData.Length != 0;
-            }
+				//!!!!betauser
+				return m_nonCompressedData != null && m_nonCompressedData.Length != 0;
+				//return m_nonCompressedData != null || m_nonCompressedData.Length != 0;
+			}
         }
 
         /// <summary>
@@ -136,8 +138,10 @@ namespace Internal.Assimp
         {
             get
             {
-                return m_compressedData != null || m_compressedData.Length != 0;
-            }
+				//!!!!betauser
+				return m_compressedData != null && m_compressedData.Length != 0;
+				//return m_compressedData != null || m_compressedData.Length != 0;
+			}
         }
 
         /// <summary>

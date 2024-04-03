@@ -34,7 +34,7 @@ namespace NeoAxis
 			get { if( _bodyA.BeginGet() ) BodyA = _bodyA.Get( this ); return _bodyA.value; }
 			set
 			{
-				if( _bodyA.BeginSet( ref value ) )
+				if( _bodyA.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -58,7 +58,7 @@ namespace NeoAxis
 			get { if( _bodyB.BeginGet() ) BodyB = _bodyB.Get( this ); return _bodyB.value; }
 			set
 			{
-				if( _bodyB.BeginSet( ref value ) )
+				if( _bodyB.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -83,7 +83,7 @@ namespace NeoAxis
 			get { if( _collisionsBetweenLinkedBodies.BeginGet() ) CollisionsBetweenLinkedBodies = _collisionsBetweenLinkedBodies.Get( this ); return _collisionsBetweenLinkedBodies.value; }
 			set
 			{
-				if( _collisionsBetweenLinkedBodies.BeginSet( ref value ) )
+				if( _collisionsBetweenLinkedBodies.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -109,7 +109,7 @@ namespace NeoAxis
 			get { if( _breakpoint.BeginGet() ) Breakpoint = _breakpoint.Get( this ); return _breakpoint.value; }
 			set
 			{
-				if( _breakpoint.BeginSet( ref value ) )
+				if( _breakpoint.BeginSet( this, ref value ) )
 				{
 					try
 					{

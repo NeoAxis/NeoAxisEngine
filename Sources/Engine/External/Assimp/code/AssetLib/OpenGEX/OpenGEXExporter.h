@@ -2,8 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
-
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -39,6 +38,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ----------------------------------------------------------------------
 */
+#pragma once
 #ifndef AI_OPENGEX_EXPORTER_H
 #define AI_OPENGEX_EXPORTER_H
 
@@ -55,7 +55,7 @@ namespace OpenGEX {
 class OpenGEXExporter {
 public:
     OpenGEXExporter();
-    ~OpenGEXExporter();
+    ~OpenGEXExporter() = default;
     bool exportScene( const char *filename, const aiScene* pScene );
 };
 

@@ -14,10 +14,13 @@ if sys.version_info >= (3,0):
     xrange = range
 
 
-try: import numpy
-except ImportError: numpy = None
+try: 
+    import numpy
+except ImportError: 
+    numpy = None
 import logging
 import ctypes
+from contextlib import contextmanager
 logger = logging.getLogger("pyassimp")
 # attach default null handler to logger so it doesn't complain
 # even if you don't attach another handler to logger
@@ -110,6 +113,10 @@ def _init(self, target = None, parent = None):
     for m in dirself:
 
         if m.startswith("_"):
+            continue
+
+        # We should not be accessing `mPrivate` according to structs.Scene.
+        if m == 'mPrivate':
             continue
 
         if m.startswith('mNum'):
@@ -272,6 +279,13 @@ def recur_pythonize(node, scene):
     for c in node.children:
         recur_pythonize(c, scene)
 
+def release(scene):
+    '''
+    Release resources of a loaded scene.
+    '''
+    _assimp_lib.release(ctypes.pointer(scene))
+
+@contextmanager
 def load(filename,
          file_type  = None,
          processing = postprocess.aiProcess_Triangulate):
@@ -297,6 +311,7 @@ def load(filename,
     Scene object with model data
     '''
 
+    from ctypes import c_char_p
     if hasattr(filename, 'read'):
         # This is the case where a file object has been passed to load.
         # It is calling the following function:
@@ -310,7 +325,7 @@ def load(filename,
         model = _assimp_lib.load_mem(data,
                                      len(data),
                                      processing,
-                                     file_type)
+                                     c_char_p(file_type.encode(sys.getfilesystemencoding())))
     else:
         # a filename string has been passed
         model = _assimp_lib.load(filename.encode(sys.getfilesystemencoding()), processing)
@@ -319,7 +334,10 @@ def load(filename,
         raise AssimpError('Could not import file!')
     scene = _init(model.contents)
     recur_pythonize(scene.rootnode, scene)
-    return scene
+    try:
+        yield scene
+    finally:
+        release(scene)
 
 def export(scene,
            filename,
@@ -373,8 +391,18 @@ def export_blob(scene,
         raise AssimpError('Could not export scene to blob!')
     return exportBlobPtr
 
-def release(scene):
-    _assimp_lib.release(ctypes.pointer(scene))
+def available_formats():
+    """
+    Return a list of file format extensions supported to import.
+
+    Returns
+    ---------
+    A list of upper-case file extensions, e.g. [3DS, OBJ]
+    """
+    from ctypes import byref
+    extension_list = structs.String()
+    _assimp_lib.dll.aiGetExtensionList(byref(extension_list))
+    return [e[2:].upper() for e in str(extension_list.data, sys.getfilesystemencoding()).split(";")]
 
 def _finalize_texture(tex, target):
     setattr(target, "achformathint", tex.achFormatHint)

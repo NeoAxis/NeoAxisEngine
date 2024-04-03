@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -11,8 +11,6 @@
 #	include <bx/cpu.h>
 #	include "crt0.h"
 #elif  BX_PLATFORM_ANDROID \
-	|| BX_PLATFORM_BSD     \
-	|| BX_PLATFORM_HAIKU   \
 	|| BX_PLATFORM_LINUX   \
 	|| BX_PLATFORM_IOS     \
 	|| BX_PLATFORM_OSX     \

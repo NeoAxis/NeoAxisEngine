@@ -958,6 +958,6 @@
 	{
 		Name = Text 2D
 		Transform = "-9.8210013891538 -25.8898182578252 3.47162496996539; 0 0 0 1; 1 1 1"
-		Text = You can use another screen effects instead of or with blurring
+		Text = You can combine several effects for depth of field. As an example, mix blurring and grayscale
 	}
 }

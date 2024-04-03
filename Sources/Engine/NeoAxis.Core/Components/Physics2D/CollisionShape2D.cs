@@ -2,11 +2,6 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.IO;
-using System.Drawing.Design;
 using Internal.tainicom.Aether.Physics2D.Dynamics;
 
 namespace NeoAxis
@@ -30,7 +25,7 @@ namespace NeoAxis
 			get { if( _transformRelativeToParent.BeginGet() ) TransformRelativeToParent = _transformRelativeToParent.Get( this ); return _transformRelativeToParent.value; }
 			set
 			{
-				if( _transformRelativeToParent.BeginSet( ref value ) )
+				if( _transformRelativeToParent.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -57,7 +52,7 @@ namespace NeoAxis
 			get { if( _friction.BeginGet() ) Friction = _friction.Get( this ); return _friction.value; }
 			set
 			{
-				if( _friction.BeginSet( ref value ) )
+				if( _friction.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -93,7 +88,7 @@ namespace NeoAxis
 			get { if( _restitution.BeginGet() ) Restitution = _restitution.Get( this ); return _restitution.value; }
 			set
 			{
-				if( _restitution.BeginSet( ref value ) )
+				if( _restitution.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -120,7 +115,7 @@ namespace NeoAxis
 			get { if( _collisionCategories.BeginGet() ) CollisionCategories = _collisionCategories.Get( this ); return _collisionCategories.value; }
 			set
 			{
-				if( _collisionCategories.BeginSet( ref value ) )
+				if( _collisionCategories.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -147,7 +142,7 @@ namespace NeoAxis
 			get { if( _collidesWith.BeginGet() ) CollidesWith = _collidesWith.Get( this ); return _collidesWith.value; }
 			set
 			{
-				if( _collidesWith.BeginSet( ref value ) )
+				if( _collidesWith.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -173,7 +168,7 @@ namespace NeoAxis
 			get { if( _collisionGroup.BeginGet() ) CollisionGroup = _collisionGroup.Get( this ); return _collisionGroup.value; }
 			set
 			{
-				if( _collisionGroup.BeginSet( ref value ) )
+				if( _collisionGroup.BeginSet( this, ref value ) )
 				{
 					try
 					{

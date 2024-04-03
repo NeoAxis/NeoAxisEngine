@@ -11,19 +11,9 @@ namespace NeoAxis
 	[AddToResourcesWindow( @"Base\3D\Character Input Processing", -8998 )]
 	public class CharacterInputProcessing : InputProcessing
 	{
-		//!!!!было
-		//SphericalDirection lookDirection;
 		bool[] firing = new bool[ 3 ];
 
 		//
-
-		//!!!!было
-		//[Browsable( false )]
-		//public SphericalDirection LookDirection
-		//{
-		//	get { return lookDirection; }
-		//	set { lookDirection = value; }
-		//}
 
 		[Browsable( false )]
 		public Character Character
@@ -31,68 +21,244 @@ namespace NeoAxis
 			get { return Parent as Character; }
 		}
 
-		protected override void OnEnabledInHierarchyChanged()
+		public void UpdateTurnToDirectionAndLookToToPosition( GameMode gameMode, Vector2F? firstPersonMouseOffset )
 		{
-			base.OnEnabledInHierarchyChanged();
+			var scene = ParentRoot as Scene;
+			if( scene == null )
+				return;
 
-			//!!!!было
-			//if( EnabledInHierarchy )
-			//{
-			//	var character = Character;
-			//	if( character != null )
-			//	{
-			//		//get initial look direction
-			//		lookDirection = SphericalDirection.FromVector( character.TransformV.Rotation.GetForward() );
-			//	}
-			//}
+			var character = Character;
+
+			//first person camera
+			if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson )
+			{
+				if( firstPersonMouseOffset.HasValue )
+				{
+					//update turn to direction
+
+					var turnToDirection = character.CurrentTurnToDirection;
+
+					turnToDirection.Horizontal -= firstPersonMouseOffset.Value.X;
+					turnToDirection.Vertical -= firstPersonMouseOffset.Value.Y;
+
+					var limit = new DegreeF( 20 ).InRadians();
+					if( turnToDirection.Vertical < -( MathEx.PI / 2 - limit ) )
+						turnToDirection.Vertical = -( MathEx.PI / 2 - limit );
+					if( turnToDirection.Vertical > MathEx.PI / 2 - limit )
+						turnToDirection.Vertical = MathEx.PI / 2 - limit;
+
+					character.TurnToDirection( turnToDirection, true );
+
+					//update third person direction to have same camera direction after camera type change
+					gameMode.ThirdPersonCameraHorizontalAngle = new Radian( turnToDirection.Horizontal ).InDegrees();
+					gameMode.ThirdPersonCameraVerticalAngle = new Radian( turnToDirection.Vertical ).InDegrees();
+				}
+
+				//calculate LookToPosition
+				{
+					var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+					var cameraSettings = viewport.CameraSettings;
+
+					var characterCenter = character.TransformV.Position + new Vector3( 0, 0, character.TypeCached.Height * 0.5 );
+					var cameraDistanceToCharacter = ( characterCenter - cameraSettings.Position ).Length();
+
+					var ray = new Ray( cameraSettings.Position, cameraSettings.Direction * 1000 );
+					var item = new PhysicsRayTestItem( ray, PhysicsRayTestItem.ModeEnum.OneClosestForEach, PhysicsRayTestItem.FlagsEnum.None );
+					scene.PhysicsRayTest( item );
+
+					var lookAt = ray.GetPointOnRay( 1 );
+
+					foreach( var resultItem in item.Result )
+					{
+						//skip character body
+						if( resultItem.Body == character.PhysicalBody )
+							continue;
+
+						//check the object is too close to the camera. before the character
+						var pos = ray.GetPointOnRay( resultItem.DistanceScale );
+						var distanceToCamera = ( pos - cameraSettings.Position ).Length();
+						if( distanceToCamera < cameraDistanceToCharacter )
+							continue;
+
+						//found
+						lookAt = pos;
+						break;
+					}
+
+					character.LookToPosition( lookAt, true );
+				}
+			}
+
+			//third person camera
+			if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson )
+			{
+				var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+				var cameraSettings = viewport.CameraSettings;
+
+				var characterCenter = character.TransformV.Position + new Vector3( 0, 0, character.TypeCached.Height * 0.5 );
+				var cameraDistanceToCharacter = ( characterCenter - cameraSettings.Position ).Length();
+
+				//change it to calibrate end point when no collision with objects by the ray
+				var rayDistance = 100;
+
+				var ray = new Ray( cameraSettings.Position, cameraSettings.Direction * rayDistance );
+				var item = new PhysicsRayTestItem( ray, PhysicsRayTestItem.ModeEnum.OneClosestForEach, PhysicsRayTestItem.FlagsEnum.None );
+				scene.PhysicsRayTest( item );
+
+				//find weapon look at target
+
+				var lookAt = ray.GetPointOnRay( 1 );
+
+				foreach( var resultItem in item.Result )
+				{
+					//skip character body
+					if( resultItem.Body == character.PhysicalBody )
+						continue;
+
+					//check the object is too close to the camera. before the character
+					var pos = ray.GetPointOnRay( resultItem.DistanceScale );
+					var distanceToCamera = ( pos - cameraSettings.Position ).Length();
+					if( distanceToCamera < cameraDistanceToCharacter )
+						continue;
+
+					//found
+					lookAt = pos;
+					break;
+				}
+
+				Character.LookToPosition( lookAt, false );
+
+
+				////var lookDirection = ( lookAt - characterCenter ).GetNormalize();
+
+				////need?
+				////float limit = fpsCamera ? 0.1f : MathEx.PI / 8;
+				////if( lookDirection.Vertical < -( MathEx.PI / 2 - limit ) )
+				////	lookDirection.Vertical = -( MathEx.PI / 2 - limit );
+				////if( lookDirection.Vertical > MathEx.PI / 2 - limit )
+				////	lookDirection.Vertical = MathEx.PI / 2 - limit;
+
+				////if( !gameMode.ThirdPersonCameraFollowDirection )
+				////{
+
+				////Character.TurnToDirection( (float)MathEx.DegreeToRadian( gameMode.ThirdPersonCameraHorizontalAngle.Value ), false );
+
+				////var direction = new SphericalDirection( MathEx.DegreeToRadian( gameMode.ThirdPersonCameraHorizontalAngle.Value ), MathEx.DegreeToRadian( gameMode.ThirdPersonCameraVerticalAngle.Value ) );
+				////Character.TurnToDirection( direction.ToSphericalDirectionF(), true );
+
+				////	//Character.TurnToDirection( SphericalDirectionF.FromVector( lookDirection.ToVector3F() ), true );
+				////}
+
+				////Character.LookToPosition( lookAt, false );
+			}
 		}
 
 		protected override void OnInputMessage( GameMode gameMode, InputMessage message )
 		{
 			base.OnInputMessage( gameMode, message );
 
-			if( !gameMode.FreeCamera && InputEnabled )
+			var character = Character;
+
+			if( character != null && InputEnabled && !gameMode.FreeCamera && ( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson || gameMode.GetCameraManagementOfCurrentObject() != null ) )
 			{
 				//key down
 				var keyDown = message as InputMessageKeyDown;
 				if( keyDown != null )
 				{
-					if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson )
+					//jump
+					var characterType = character.TypeCached;//CharacterType.Value;
+					if( characterType != null && characterType.Jump && ( keyDown.Key == gameMode.KeyJump1 || keyDown.Key == gameMode.KeyJump2 ) )
 					{
-						//jump
-						var characterType = Character.CharacterType.Value;
-						if( characterType != null && characterType.Jump && keyDown.Key == EKeys.Space )
+						if( NetworkIsClient )
+							character.JumpClient();
+						else
+							character.Jump();
+					}
+
+					//!!!!how to configure? keys to activate items too
+					//drop item
+					if( keyDown.Key >= EKeys.D1 && keyDown.Key <= EKeys.D8 && character.TypeCached.AllowManageInventory )
+					{
+						if( IsKeyPressed( gameMode.KeyDrop1 ) || IsKeyPressed( gameMode.KeyDrop2 ) )
 						{
-							if( NetworkIsClient )
+							var index = keyDown.Key - EKeys.D1;
+
+							var items = character.GetAllItems();
+							var item = index < items.Length ? items[ index ] : null;
+							if( item != null )
 							{
-								BeginNetworkMessageToServer( "Jump" );
-								EndNetworkMessage();
+								//disable drop when weapon firing
+								var weapon = item as Weapon;
+								if( weapon == null || !weapon.IsFiringAnyMode() )
+								{
+									var amount = 1;
+									if( NetworkIsClient )
+										character.ItemDropClient( item, amount );
+									else
+										character.ItemDrop( gameMode, item, amount );
+								}
 							}
-							else
-								Character.TryJump();
+						}
+					}
+
+					////drop item
+					//if( keyDown.Key == gameMode.KeyDrop1 || keyDown.Key == gameMode.KeyDrop2 )
+					//{
+					//	var item = character.GetActiveItem();
+					//	//var item = character.ItemGetFirst();
+					//	if( item != null )
+					//	{
+					//		var amount = 1;
+					//		if( NetworkIsClient )
+					//			character.ItemDropClient( item, amount );
+					//		else
+					//			character.ItemDrop( gameMode, item, amount );
+					//	}
+					//}
+
+					//exit from seat
+					if( keyDown.Key == gameMode.KeyInteract1 || keyDown.Key == gameMode.KeyInteract2 )
+					{
+						//get seat where the character sitting
+						Seat seat = null;
+						{
+							var scene = character.ParentScene;
+							if( scene != null )
+							{
+								var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, character.SpaceBounds.BoundingBox );
+								scene.GetObjectsInSpace( getObjectsItem );
+								foreach( var resultItem in getObjectsItem.Result )
+								{
+									var seat2 = resultItem.Object as Seat;
+									if( seat2 != null && seat2.GetSeatIndexByObject( character ) != -1 )
+									{
+										seat = seat2;
+										break;
+									}
+								}
+							}
 						}
 
-						//drop item
-						if( keyDown.Key == EKeys.T )
+						if( seat != null )
 						{
-							var item = Character.ItemGetEnabledFirst();
-							if( item != null )
+							var seatIndex = seat.GetSeatIndexByObject( character );
+							if( seatIndex != -1 )
 							{
 								if( NetworkIsClient )
 								{
-									var component = item as Component;
-									if( component != null )
+									var writer = BeginNetworkMessageToServer( "RemoveObjectFromSeat" );
+									if( writer != null )
 									{
-										var writer = Character.BeginNetworkMessageToServer( "ItemDrop" );
-										if( writer != null )
-										{
-											writer.WriteVariableUInt64( (ulong)component.NetworkID );
-											Character.EndNetworkMessage();
-										}
+										writer.WriteVariableUInt64( (ulong)seat.NetworkID );
+										writer.WriteVariableInt32( seatIndex );
+										EndNetworkMessage();
 									}
 								}
 								else
-									Character.ItemDrop( item, true );
+								{
+									seat.RemoveObjectFromSeat( seatIndex );
+									GameMode.PlayScreen?.ParentContainer?.Viewport?.NotifyInstantCameraMovement();
+								}
 							}
 						}
 					}
@@ -102,31 +268,17 @@ namespace NeoAxis
 				var mouseDown = message as InputMessageMouseButtonDown;
 				if( mouseDown != null && ( mouseDown.Button == EMouseButtons.Left || mouseDown.Button == EMouseButtons.Right ) )
 				{
-					if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson )
+					var weapon = character.GetActiveWeapon();
+					if( weapon != null )
 					{
-						var item = Character.ItemGetEnabledFirst();
-						if( item != null )
-						{
-							var weapon = item as Weapon;
-							if( weapon != null )
-							{
-								var mode = mouseDown.Button == EMouseButtons.Left ? 1 : 2;
+						var mode = mouseDown.Button == EMouseButtons.Left ? 1 : 2;
 
-								firing[ mode ] = true;
+						firing[ mode ] = true;
 
-								if( NetworkIsClient )
-								{
-									var writer = weapon.BeginNetworkMessageToServer( "FiringBegin" );
-									if( writer != null )
-									{
-										writer.WriteVariableInt32( mode );
-										weapon.EndNetworkMessage();
-									}
-								}
-								else
-									weapon.FiringBegin( mode, 0 );
-							}
-						}
+						if( NetworkIsClient )
+							weapon.FiringBeginClient( mode );
+						else
+							weapon.FiringBegin( mode, 0 );
 					}
 				}
 
@@ -141,137 +293,200 @@ namespace NeoAxis
 				var mouseMove = message as InputMessageMouseMove;
 				if( mouseMove != null && MouseRelativeMode )
 				{
-					if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson )
+					if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson )
 					{
-						var mouseOffset = mouseMove.Position.ToVector2F();
+						if( !character.Sitting )
+						{
+							var sensitivity = new Vector2F( (float)GameMode.MouseSensitivity, (float)GameMode.MouseSensitivity ) * 2;
+							var mouseOffset = mouseMove.Position.ToVector2F() * sensitivity;
 
-						var fpsCamera = gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson;
-
-						//!!!!
-						Vector2F sens = new Vector2F( 1, 1 ) * 2;
-						//Vector2 sens = GameControlsManager.Instance.MouseSensitivity * 2;
-
-						var lookDirection = Character.CurrentTurnToDirection;
-
-						lookDirection.Horizontal -= mouseOffset.X * sens.X;
-						lookDirection.Vertical -= mouseOffset.Y * sens.Y;
-
-						float limit = fpsCamera ? 0.1f : MathEx.PI / 8;
-						if( lookDirection.Vertical < -( MathEx.PI / 2 - limit ) )
-							lookDirection.Vertical = -( MathEx.PI / 2 - limit );
-						if( lookDirection.Vertical > MathEx.PI / 2 - limit )
-							lookDirection.Vertical = MathEx.PI / 2 - limit;
-
-
-						//!!!!turn instantly optionally? property in this?
-
-						Character.TurnToDirection( lookDirection, true );
+							UpdateTurnToDirectionAndLookToToPosition( gameMode, mouseOffset );
+						}
 					}
 				}
 			}
 		}
 
-		void UpdateObjectControl()
+		void ObjectControlSimulationStep()
 		{
 			var character = Character;
 			if( character != null && InputEnabled )
 			{
-				//movement
+				var scene = ParentRoot as Scene;
+				var gameMode = (GameMode)scene?.GetGameMode();//var gameMode = scene?.GetComponent<GameMode>();
 
-				Vector2F localVector = Vector2F.Zero;
-				if( IsKeyPressed( EKeys.W ) || IsKeyPressed( EKeys.Up ) || IsKeyPressed( EKeys.NumPad8 ) )
-					localVector.X += 1.0f;
-				if( IsKeyPressed( EKeys.S ) || IsKeyPressed( EKeys.Down ) || IsKeyPressed( EKeys.NumPad2 ) )
-					localVector.X -= 1.0f;
-				if( IsKeyPressed( EKeys.A ) || IsKeyPressed( EKeys.Left ) || IsKeyPressed( EKeys.NumPad4 ) )
-					localVector.Y += 1.0f;
-				if( IsKeyPressed( EKeys.D ) || IsKeyPressed( EKeys.Right ) || IsKeyPressed( EKeys.NumPad6 ) )
-					localVector.Y -= 1.0f;
-				//localVector.X += Intellect.GetControlKeyStrength( GameControlKeys.Forward );
-				//localVector.X -= Intellect.GetControlKeyStrength( GameControlKeys.Backward );
-				//localVector.Y += Intellect.GetControlKeyStrength( GameControlKeys.Left );
-				//localVector.Y -= Intellect.GetControlKeyStrength( GameControlKeys.Right );
-
-				Vector2F vector = ( new Vector3F( localVector.X, localVector.Y, 0 ) * character.TransformV.Rotation ).ToVector2F();
-				if( vector != Vector2.Zero )
+				if( gameMode != null && !gameMode.FreeCamera && ( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson || gameMode.GetCameraManagementOfCurrentObject() != null ) )
 				{
-					var length = vector.Length();
-					if( length > 1 )
-						vector /= length;
-				}
 
-				bool run = false;
-				var characterType = Character.CharacterType.Value;
-				if( characterType != null && characterType.Run )
-					run = IsKeyPressed( EKeys.Shift );
+					character.AllowLookToBackWhenNoActiveItem = gameMode.ThirdPersonCameraAllowLookToBackWhenNoActiveItem;
 
-				character.SetMoveVector( vector, run );
-				//!!!!было
-				//character.SetTurnToDirection( lookDirection, true );
-
-				//send data to the server
-				if( NetworkIsClient )
-				{
-					//!!!!no sense to send same values. firing too
-
-					var writer = BeginNetworkMessageToServer( "UpdateObjectControl" );
-					if( writer != null )
+					//move
 					{
-						writer.Write( vector );
-						writer.Write( run );
+						Vector2F localVector = Vector2F.Zero;
+						bool run = false;
 
-						//!!!!impl check
+						if( gameMode != null )
+						{
+							if( IsKeyPressed( gameMode.KeyForward1 ) || IsKeyPressed( gameMode.KeyForward2 ) )
+								localVector.X += 1.0f;
+							if( IsKeyPressed( gameMode.KeyBackward1 ) || IsKeyPressed( gameMode.KeyBackward2 ) )
+								localVector.X -= 1.0f;
+							if( IsKeyPressed( gameMode.KeyLeft1 ) || IsKeyPressed( gameMode.KeyLeft2 ) )
+								localVector.Y += 1.0f;
+							if( IsKeyPressed( gameMode.KeyRight1 ) || IsKeyPressed( gameMode.KeyRight2 ) )
+								localVector.Y -= 1.0f;
 
-						writer.Write( character.CurrentTurnToDirection );
-						//.ToSphericalDirectionF() );
-						//writer.Write( lookDirection.ToSphericalDirectionF() );
+							var characterType = Character.TypeCached;//CharacterType.Value;
+							if( characterType != null && characterType.Run )
+								run = IsKeyPressed( gameMode.KeyRun1 ) || IsKeyPressed( gameMode.KeyRun2 );
 
-						EndNetworkMessage();
+							var touchSlider = TouchSliders[ 0 ].ToVector2F();
+							if( touchSlider != Vector2F.Zero )
+							{
+								var length = touchSlider.Length();
+								touchSlider.Normalize();
+								localVector += new Vector2F( -touchSlider.Y, -touchSlider.X );
+
+								if( length > 1 && characterType != null && characterType.Run )
+									run = true;
+							}
+						}
+
+						//movement works depending on camera direction
+
+						var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+						var cameraSettings = viewport.CameraSettings;
+
+						var allowLookToBack = character.AllowLookToBackWhenNoActiveItem && character.GetActiveItem() == null;
+
+						var vector = Vector2F.Zero;
+
+						var direction = cameraSettings.Direction.ToVector2F();
+						if( direction != Vector2.Zero )
+						{
+							direction.Normalize();
+							var rotation = QuaternionF.FromDirectionZAxisUp( new Vector3F( direction, 0 ) );
+							vector = ( new Vector3F( localVector.X, localVector.Y, 0 ) * rotation ).ToVector2();
+							if( vector != Vector2F.Zero )
+								vector.Normalize();
+						}
+						//var vector = ( new Vector3F( localVector.X, localVector.Y, 0 ) * cameraSettings.Rotation ).ToVector2F();
+						//if( vector != Vector2F.Zero )
+						//	vector.Normalize();
+
+						character.SetMoveVector( vector, run );
+
+
+						//Vector2F vector = ( new Vector3F( localVector.X, localVector.Y, 0 ) * character.TransformV.Rotation ).ToVector2F();
+						//if( vector != Vector2.Zero )
+						//{
+						//	var length = vector.Length();
+						//	if( length > 1 )
+						//		vector /= length;
+						//}
+
+						//character.SetMoveVector( vector, run );
+
+
+						if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson )
+						{
+							var turnToVector = vector;
+
+							if( turnToVector != Vector2F.Zero )
+							{
+								//switch to backward rotation and backward animation
+								if( localVector.X < -0.1f && !allowLookToBack )
+									turnToVector *= -1;
+
+								character.TurnToDirection( turnToVector, false );
+							}
+							else
+							{
+								//stop turning
+								character.TurnToDirection( null, false );
+
+								////turn forward when idle
+								//character.TurnToDirection( cameraSettings.Rotation.GetForward().ToVector2F(), false );
+							}
+						}
 					}
-				}
 
-				//firing
-				if( IsMouseButtonPressed( EMouseButtons.Left ) && firing[ 1 ] )
-				{
-					var item = Character.ItemGetEnabledFirst();
-					if( item != null )
+					//update turn to direction and weapon target
+					UpdateTurnToDirectionAndLookToToPosition( gameMode, null );
+
+
+					//!!!!don't send same for weapon if possible. jump too
+
+
+					//update firing
+					if( IsMouseButtonPressed( EMouseButtons.Left ) && firing[ 1 ] )
 					{
-						var weapon = item as Weapon;
+						var weapon = Character.GetActiveWeapon();
 						if( weapon != null )
 						{
 							if( NetworkIsClient )
-							{
-								var writer = weapon.BeginNetworkMessageToServer( "FiringBegin" );
-								if( writer != null )
-								{
-									writer.WriteVariableInt32( 1 );
-									weapon.EndNetworkMessage();
-								}
-							}
+								weapon.FiringBeginClient( 1 );
 							else
 								weapon.FiringBegin( 1, 0 );
 						}
 					}
-				}
-				if( IsMouseButtonPressed( EMouseButtons.Right ) && firing[ 2 ] )
-				{
-					var item = Character.ItemGetEnabledFirst();
-					if( item != null )
+					if( IsMouseButtonPressed( EMouseButtons.Right ) && firing[ 2 ] )
 					{
-						var weapon = item as Weapon;
+						var weapon = Character.GetActiveWeapon();
 						if( weapon != null )
 						{
 							if( NetworkIsClient )
-							{
-								var writer = weapon.BeginNetworkMessageToServer( "FiringBegin" );
-								if( writer != null )
-								{
-									writer.WriteVariableInt32( 2 );
-									weapon.EndNetworkMessage();
-								}
-							}
+								weapon.FiringBeginClient( 2 );
 							else
 								weapon.FiringBegin( 2, 0 );
+						}
+					}
+
+					//send data to the server
+					if( NetworkIsClient )
+					{
+
+						//!!!!maybe send some data not each step
+
+						//!!!!no sense to send same values. firing too
+
+						//!!!!pack lookTo
+
+
+						var writer = BeginNetworkMessageToServer( "UpdateObjectControlCharacter" );
+						if( writer != null )
+						{
+							writer.Write( character.AllowLookToBackWhenNoActiveItem );
+							writer.Write( character.MoveVector.ToVector2H() );
+							writer.Write( character.MoveVectorRun );
+
+							var turnInstantly = gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson;
+							writer.Write( turnInstantly );
+
+							if( turnInstantly )
+							{
+								writer.Write( new HalfType( character.CurrentTurnToDirection.Horizontal ) );
+								writer.Write( new HalfType( character.CurrentTurnToDirection.Vertical ) );
+
+								writer.Write( character.CurrentLookToPosition.HasValue );
+								if( character.CurrentLookToPosition.HasValue )
+									writer.Write( character.CurrentLookToPosition.Value );
+							}
+							else
+							{
+								writer.Write( character.RequiredTurnToDirection.HasValue );
+								if( character.RequiredTurnToDirection.HasValue )
+								{
+									writer.Write( new HalfType( character.RequiredTurnToDirection.Value.Horizontal ) );
+									writer.Write( new HalfType( character.RequiredTurnToDirection.Value.Vertical ) );
+								}
+
+								writer.Write( character.RequiredLookToPosition.HasValue );
+								if( character.RequiredLookToPosition.HasValue )
+									writer.Write( character.RequiredLookToPosition.Value );
+							}
+
+							EndNetworkMessage();
 						}
 					}
 				}
@@ -283,14 +498,14 @@ namespace NeoAxis
 			base.OnSimulationStep();
 
 			if( NetworkIsSingle )
-				UpdateObjectControl();
+				ObjectControlSimulationStep();
 		}
 
 		protected override void OnSimulationStepClient()
 		{
 			base.OnSimulationStepClient();
 
-			UpdateObjectControl();
+			ObjectControlSimulationStep();
 		}
 
 		protected override bool OnReceiveNetworkMessageFromClient( ServerNetworkService_Components.ClientItem client, string message, ArrayDataReader reader )
@@ -305,22 +520,59 @@ namespace NeoAxis
 				var networkLogic = NetworkLogicUtility.GetNetworkLogic( character );
 				if( networkLogic != null && networkLogic.ServerGetObjectControlledByUser( client.User, true ) == character )
 				{
-					if( message == "UpdateObjectControl" )
+					if( message == "UpdateObjectControlCharacter" )
 					{
-						var vector = reader.ReadVector2F();
+						var allowLookToBackWhenNoActiveItem = reader.ReadBoolean();
+						var vector = reader.ReadVector2H().ToVector2F();
+						if( vector != Vector2F.Zero )
+							vector.Normalize();
 						var run = reader.ReadBoolean();
-						var lookDirection = reader.ReadSphericalDirectionF();
+
+						var turnInstantly = reader.ReadBoolean();
+
+						SphericalDirectionF? turnToDirection = null;
+						Vector3? lookToPosition = null;
+
+						if( turnInstantly )
+						{
+							turnToDirection = new SphericalDirectionF( reader.ReadHalf(), reader.ReadHalf() );
+							if( reader.ReadBoolean() )
+								lookToPosition = reader.ReadVector3();
+						}
+						else
+						{
+							if( reader.ReadBoolean() )
+								turnToDirection = new SphericalDirectionF( reader.ReadHalf(), reader.ReadHalf() );
+							if( reader.ReadBoolean() )
+								lookToPosition = reader.ReadVector3();
+						}
+
 						if( !reader.Complete() )
 							return false;
 
-						if( vector != Vector2F.Zero )
-							vector.Normalize();
-
+						character.AllowLookToBackWhenNoActiveItem = allowLookToBackWhenNoActiveItem;
 						character.SetMoveVector( vector, run );
-						character.TurnToDirection( lookDirection, true );
+						character.TurnToDirection( turnToDirection, turnInstantly );
+						character.LookToPosition( lookToPosition, turnInstantly );
 					}
-					else if( message == "Jump" )
-						character.TryJump();
+					else if( message == "RemoveObjectFromSeat" )
+					{
+						var seatNetworkID = (long)reader.ReadVariableUInt64();
+						var seatIndex = reader.ReadVariableInt32();
+						if( !reader.Complete() )
+							return false;
+
+
+						//!!!!verify security
+
+
+						var seat = ParentRoot.HierarchyController.GetComponentByNetworkID( seatNetworkID ) as Seat;
+						if( seat != null )
+						{
+							seat.RemoveObjectFromSeat( seatIndex );
+							//networkLogic.ServerChangeObjectControlled( client.User, obj );
+						}
+					}
 				}
 			}
 

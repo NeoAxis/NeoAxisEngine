@@ -1,11 +1,8 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using Internal.SharpBgfx;
@@ -18,6 +15,18 @@ namespace NeoAxis
 		const int textBufferSize = 6 * 50;//50 chars
 		const int lineBufferSize = 2;
 		//const int trianglesBufferSize = 3 * 64;//64 triangles
+
+		static Uniform? u_canvasClipRectangleUniform;
+		static RectangleF canvasClipRectangleBinded = new RectangleF( -1000, -1000, 1000, 1000 );
+
+		static Uniform? u_bc5UNormLUniform;
+		static Vector4F bc5UNormLBinded = new Vector4F( -100, -100, -100, -100 );
+
+		static Uniform? u_canvasColorMultiplier;
+		static ColorValue canvasColorMultiplierBinded = new ColorValue( -100, -100, -100, -100 );
+
+		static Uniform? u_canvasOcclusionDepthCheck;
+		static Vector4F canvasOcclusionDepthCheckBinded = new Vector4F( -100, -100, -100, -100 );
 
 		//
 
@@ -39,6 +48,7 @@ namespace NeoAxis
 		Stack<RectangleF> clipRectanglesStack = new Stack<RectangleF>();
 		Stack<TextureFilteringMode> textureFilteringModeStack = new Stack<TextureFilteringMode>();
 		Stack<ColorValue> colorMultiplierStack = new Stack<ColorValue>();
+		Stack<Vector4F> occlusionDepthCheckStack = new Stack<Vector4F>();
 
 		bool disposed;
 
@@ -70,12 +80,15 @@ namespace NeoAxis
 		//static bool logoInitialTimeFinished;
 		//static Image watermarkTexture;
 
+		static ImageComponent circleForRoundedCached;
+		static ImageComponent circleForRoundedFadingCached;
+
 		////////////////////////////////////////
 
 		[StructLayout( LayoutKind.Sequential )]
 		struct BufferVertex
 		{
-			//Vec2 position; - intel cards are not support Position as float2
+			//Vec2 position; - old intel cards are not support Position as float2
 			public Vector3F position;
 			public ColorValue color;//!!!!new public uint color;
 			public Vector2F texCoord;
@@ -88,6 +101,7 @@ namespace NeoAxis
 			public ItemKey itemKey;
 			public RenderableItem[] renderableItems;
 			public ColorValue colorMultiplier;
+			public Vector4F occlusionDepthCheck;
 		}
 
 		///////////////////////////////////////////
@@ -2288,7 +2302,8 @@ namespace NeoAxis
 		//			}
 		//		}
 
-		public override unsafe void ViewportRendering_RenderToCurrentViewport( ViewportRenderingContext context, bool clearData, double time )
+		[MethodImpl( (MethodImplOptions)512 )]
+		public override unsafe void ViewportRendering_RenderToCurrentViewport( ViewportRenderingContext context, bool clearData, double time, bool registerUniformsAndSetIdentityMatrix )
 		{
 			if( updateTime != time )
 				updateTimePrevious = updateTime;
@@ -2304,47 +2319,45 @@ namespace NeoAxis
 			//_this->getWorldTransform( worldTransform );
 			//RenderingSystem.CallCustomMethod( "_setWorldMatrix", &identity );
 
-			//u_canvasClipRectangle
-			var canvasClipRectangleUniform = GpuProgramManager.RegisterUniform( "u_canvasClipRectangle", UniformType.Vector4, 1 );
-			RectangleF canvasClipRectangleBinded = RectangleF.Zero;
-			Bgfx.SetUniform( canvasClipRectangleUniform, &canvasClipRectangleBinded, 1 );
-
-			//u_bc5UNorm_L
-			var bc5UNormLUniform = GpuProgramManager.RegisterUniform( "u_bc5UNorm_L", UniformType.Vector4, 1 );
-			Vector4F bc5UNormLBinded = Vector4F.Zero;
-			Bgfx.SetUniform( bc5UNormLUniform, &bc5UNormLBinded, 1 );
-
-			//u_canvasColorMultiplier
-			var u_canvasColorMultiplier = GpuProgramManager.RegisterUniform( "u_canvasColorMultiplier", UniformType.Vector4, 1 );
-			ColorValue canvasColorMultiplierBinded = new ColorValue( 1, 1, 1 );
-			Bgfx.SetUniform( u_canvasColorMultiplier, &canvasColorMultiplierBinded, 1 );
-
-			Matrix4F identity = Matrix4F.Identity;
-			Bgfx.SetTransform( (float*)&identity );
-
-			foreach( Item item in outItems )
+			if( registerUniformsAndSetIdentityMatrix )
 			{
-				ShaderItem shader = item.itemKey.shader;
+				if( !u_canvasClipRectangleUniform.HasValue )
+					u_canvasClipRectangleUniform = GpuProgramManager.RegisterUniform( "u_canvasClipRectangle", UniformType.Vector4, 1 );
+				if( !u_bc5UNormLUniform.HasValue )
+					u_bc5UNormLUniform = GpuProgramManager.RegisterUniform( "u_bc5UNorm_L", UniformType.Vector4, 1 );
+				if( !u_canvasColorMultiplier.HasValue )
+					u_canvasColorMultiplier = GpuProgramManager.RegisterUniform( "u_canvasColorMultiplier", UniformType.Vector4, 1 );
+				if( !u_canvasOcclusionDepthCheck.HasValue )
+					u_canvasOcclusionDepthCheck = GpuProgramManager.RegisterUniform( "u_canvasOcclusionDepthCheck", UniformType.Vector4, 1 );
+
+				Matrix4F identity = Matrix4F.Identity;
+				Bgfx.SetTransform( (float*)&identity );
+			}
+
+			context.ObjectsDuringUpdate.namedTextures.TryGetValue( "depthTexture", out ImageComponent depthTexture );
+
+			for( int nItem = 0; nItem < outItems.Count; nItem++ )
+			{
+				var item = outItems[ nItem ];
+
+				var shader = item.itemKey.shader;
 
 				//get parameters from shader
 				//!!!!can optimize
-				ParameterContainer itemContainer = shader.Parameters;
+				var itemContainer = shader.Parameters;
 
 				foreach( RenderableItem renderableItem in item.renderableItems )
 				{
-					//!!!!xx xx;//color
+					if( renderableItem.vertexBuffer.Disposed )
+						continue;
 
 					//!!!!!может все пассы. хот€ по дефолту всегда один
 
-					//Bgfx.SetTransform( (float*)&identity );
-
-					GpuMaterialPass pass = renderableItem.material.MaterialPass;// Result.AllPasses[ 0 ];
+					var pass = renderableItem.material.MaterialPass;// Result.AllPasses[ 0 ];
 					if( pass != null )
 					{
 						//bind texture
 						{
-							//ParameterContainer generalContainer = new ParameterContainer();
-
 							//!!!!а если не загружена еще? то ниже подставл€ть другую? какую?
 							var texture = renderableItem.texture;
 							if( texture == null )
@@ -2362,6 +2375,40 @@ namespace NeoAxis
 							//generalContainer.Set( "0", textureValue, ParameterType.Texture2D );//"baseTexture"
 						}
 
+						//!!!!impl mobile
+						//bind depth texture
+						if( !SystemSettings.MobileDevice )
+						{
+							context.BindTexture( 1/* "depthTexture"*/, depthTexture ?? ResourceUtility.WhiteTexture2D, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point, 0, false );
+						}
+
+
+						var scissorEnabled = false;
+
+						//doing scissor and clip rectangle both because just scissor can not clip one pixel line
+
+						if( IsScreen )
+						{
+							ref var clip = ref item.itemKey.clipRectangle;
+							if( !clip.IsCleared() && ( clip.Left > 0 || clip.Top > 0 || clip.Right < 1 || clip.Bottom < 1 ) )
+							{
+								var sizeInPixels = context.CurrentViewport.SizeInPixels;
+
+								var size = clip.Size;
+
+								var x = (int)( clip.Left * sizeInPixels.X );
+								var y = (int)( clip.Top * sizeInPixels.Y );
+								var width = (int)Math.Ceiling( size.X * sizeInPixels.X );
+								var height = (int)Math.Ceiling( size.Y * sizeInPixels.Y );
+
+								Bgfx.SetScissor( x, y, width, height );
+								scissorEnabled = true;
+							}
+						}
+						else
+						{
+						}
+
 						//bind clip rectangle
 						{
 							var clipRectangle = item.itemKey.clipRectangle;
@@ -2370,7 +2417,7 @@ namespace NeoAxis
 							if( clipRectangle != canvasClipRectangleBinded )
 							{
 								canvasClipRectangleBinded = clipRectangle;
-								Bgfx.SetUniform( canvasClipRectangleUniform, &canvasClipRectangleBinded, 1 );
+								Bgfx.SetUniform( u_canvasClipRectangleUniform.Value, &clipRectangle, 1 );
 							}
 						}
 
@@ -2388,7 +2435,7 @@ namespace NeoAxis
 							if( value != bc5UNormLBinded )
 							{
 								bc5UNormLBinded = value;
-								Bgfx.SetUniform( bc5UNormLUniform, &bc5UNormLBinded, 1 );
+								Bgfx.SetUniform( u_bc5UNormLUniform.Value, &value, 1 );
 							}
 						}
 
@@ -2396,12 +2443,23 @@ namespace NeoAxis
 						if( canvasColorMultiplierBinded != item.colorMultiplier )
 						{
 							canvasColorMultiplierBinded = item.colorMultiplier;
-							Bgfx.SetUniform( u_canvasColorMultiplier, &canvasColorMultiplierBinded, 1 );
+							var v = item.colorMultiplier;
+							Bgfx.SetUniform( u_canvasColorMultiplier.Value, &v, 1 );
 						}
+
+						//bind u_canvasOcclusionDepthCheck
+						if( canvasOcclusionDepthCheckBinded != item.occlusionDepthCheck )
+						{
+							canvasOcclusionDepthCheckBinded = item.occlusionDepthCheck;
+							var v = item.occlusionDepthCheck;
+							Bgfx.SetUniform( u_canvasOcclusionDepthCheck.Value, &v, 1 );
+						}
+
 
 						List<ParameterContainer> containers = null;
 						if( itemContainer != null || shader.AdditionalParameterContainersExists )
 						{
+							//!!!!GC
 							containers = new List<ParameterContainer>();
 
 							if( itemContainer != null )
@@ -2409,8 +2467,6 @@ namespace NeoAxis
 							if( shader.AdditionalParameterContainersExists )
 								containers.AddRange( shader.AdditionalParameterContainers );
 						}
-
-						//containers.Add( generalContainer );
 
 
 						//!!!!!!gpu parameters
@@ -2438,20 +2494,23 @@ namespace NeoAxis
 						//virtual void setClipPlanes(const PlaneList& clipPlanes);
 						//virtual void resetClipPlanes();
 
-						if( !renderableItem.vertexBuffer.Disposed )
-						{
-							context.SetVertexBuffer( 0, renderableItem.vertexBuffer, 0, renderableItem.vertexCount );
-							context.SetPassAndSubmit( pass, renderableItem.renderOperation, containers, null, false );
 
-							if( renderableItem.renderOperation == RenderOperationType.TriangleList )
-								context.UpdateStatisticsCurrent.Triangles += renderableItem.vertexCount / 3;
-							else if( renderableItem.renderOperation == RenderOperationType.LineList )
-								context.UpdateStatisticsCurrent.Lines += renderableItem.vertexCount / 2;
-							context.UpdateStatisticsCurrent.Instances++;
-						}
+						context.SetVertexBuffer( 0, renderableItem.vertexBuffer, 0, renderableItem.vertexCount );
+						context.SetPassAndSubmit( pass, renderableItem.renderOperation, containers, null, false, true );
+
+						if( scissorEnabled )
+							Bgfx.SetScissor( -1 );
+
+						if( renderableItem.renderOperation == RenderOperationType.TriangleList )
+							context.UpdateStatisticsCurrent.Triangles += renderableItem.vertexCount / 3;
+						else if( renderableItem.renderOperation == RenderOperationType.LineList )
+							context.UpdateStatisticsCurrent.Lines += renderableItem.vertexCount / 2;
+						context.UpdateStatisticsCurrent.Instances++;
 					}
 				}
 			}
+
+			Bgfx.Discard( DiscardFlags.All );
 
 			if( clearData )
 				ViewportRendering_Clear( updateTime );
@@ -2465,25 +2524,40 @@ namespace NeoAxis
 
 		void DestroyRenderableItemsInCaches( double time )
 		{
-			foreach( Item item in quadItemCache.Values )
-				DestroyItem( item );
-			quadItemCache.Clear();
+			if( quadItemCache.Count != 0 )
+			{
+				foreach( Item item in quadItemCache.Values )
+					DestroyItem( item );
+				quadItemCache.Clear();
+			}
 
-			foreach( Item item in textItemCache.Values )
-				DestroyItem( item );
-			textItemCache.Clear();
+			if( textItemCache.Count != 0 )
+			{
+				foreach( Item item in textItemCache.Values )
+					DestroyItem( item );
+				textItemCache.Clear();
+			}
 
-			foreach( Item item in lineItemCache.Values )
-				DestroyItem( item );
-			lineItemCache.Clear();
+			if( lineItemCache.Count != 0 )
+			{
+				foreach( Item item in lineItemCache.Values )
+					DestroyItem( item );
+				lineItemCache.Clear();
+			}
 
-			foreach( Item item in trianglesItemCache.Values )
-				DestroyItem( item );
-			trianglesItemCache.Clear();
+			if( trianglesItemCache.Count != 0 )
+			{
+				foreach( Item item in trianglesItemCache.Values )
+					DestroyItem( item );
+				trianglesItemCache.Clear();
+			}
 
-			foreach( Item item in linesItemCache.Values )
-				DestroyItem( item );
-			linesItemCache.Clear();
+			if( linesItemCache.Count != 0 )
+			{
+				foreach( Item item in linesItemCache.Values )
+					DestroyItem( item );
+				linesItemCache.Clear();
+			}
 		}
 
 		void DestroyLongTimeNotUsedFreeRenderableItems( double time )
@@ -2549,10 +2623,14 @@ namespace NeoAxis
 			DestroyRenderableItemsInCaches( time );
 
 			//move used renderable items to freeRenderableItems.
-			foreach( Item item in outItems )
+			for( int nItem = 0; nItem < outItems.Count; nItem++ )
 			{
+				var item = outItems[ nItem ];
+
+				//!!!!slowly?
+
 				{
-					QuadItemKey itemKey = item.itemKey as QuadItemKey;
+					var itemKey = item.itemKey as QuadItemKey;
 					if( itemKey != null )
 					{
 						if( !quadItemCache.ContainsKey( itemKey ) )
@@ -2564,7 +2642,7 @@ namespace NeoAxis
 				}
 
 				{
-					TextItemKey itemKey = item.itemKey as TextItemKey;
+					var itemKey = item.itemKey as TextItemKey;
 					if( itemKey != null )
 					{
 						if( !textItemCache.ContainsKey( itemKey ) )
@@ -2576,7 +2654,7 @@ namespace NeoAxis
 				}
 
 				{
-					LineItemKey itemKey = item.itemKey as LineItemKey;
+					var itemKey = item.itemKey as LineItemKey;
 					if( itemKey != null )
 					{
 						if( !lineItemCache.ContainsKey( itemKey ) )
@@ -2588,7 +2666,7 @@ namespace NeoAxis
 				}
 
 				{
-					TrianglesItemKey itemKey = item.itemKey as TrianglesItemKey;
+					var itemKey = item.itemKey as TrianglesItemKey;
 					if( itemKey != null )
 					{
 						if( !trianglesItemCache.ContainsKey( itemKey ) )
@@ -2600,7 +2678,7 @@ namespace NeoAxis
 				}
 
 				{
-					LinesItemKey itemKey = item.itemKey as LinesItemKey;
+					var itemKey = item.itemKey as LinesItemKey;
 					if( itemKey != null )
 					{
 						if( !linesItemCache.ContainsKey( itemKey ) )
@@ -2892,7 +2970,8 @@ namespace NeoAxis
 
 		public override void PushColorMultiplier( ColorValue color )
 		{
-			colorMultiplierStack.Push( GetCurrentColorMultiplier() * color );
+			GetCurrentColorMultiplier( out var current );
+			colorMultiplierStack.Push( current * color );
 		}
 
 		public override void PopColorMultiplier()
@@ -2900,6 +2979,18 @@ namespace NeoAxis
 			if( colorMultiplierStack.Count == 0 )
 				Log.Fatal( "CanvasRenderer: PopTextureFilteringMode: colorMultiplierStack.Count == 0." );
 			colorMultiplierStack.Pop();
+		}
+
+		public override void PushOcclusionDepthCheck( Vector2F screenPosition, float screenSize, float compareDepth )
+		{
+			occlusionDepthCheckStack.Push( new Vector4F( screenPosition.X, screenPosition.Y, screenSize, compareDepth ) );
+		}
+
+		public override void PopOcclusionDepthCheck()
+		{
+			if( occlusionDepthCheckStack.Count == 0 )
+				Log.Fatal( "CanvasRenderer: PopOcclusionDepthCheck: occlusionDepthCheckStack.Count == 0." );
+			occlusionDepthCheckStack.Pop();
 		}
 
 		void CheckForAllPushedParameters()
@@ -2914,6 +3005,8 @@ namespace NeoAxis
 				Log.Fatal( "CanvasRenderer: Not all texture filtering mode values are removed from stack." );
 			if( colorMultiplierStack.Count != 0 )
 				Log.Fatal( "CanvasRenderer: Not all color multiplier values are removed from stack." );
+			if( occlusionDepthCheckStack.Count != 0 )
+				Log.Fatal( "CanvasRenderer: Not all occlusion depth check values are removed from stack." );
 		}
 
 		public override void PushClipRectangle( RectangleF clipRectangle )
@@ -2924,13 +3017,45 @@ namespace NeoAxis
 
 			if( !clipRectangle.IsCleared() )
 			{
+				var clipRectangle2 = clipRectangle;
+				if( clipRectangle2.Right <= 0 )
+				{
+					clipRectangle2.Left = 0;
+					clipRectangle2.Right = 0;
+				}
+				if( clipRectangle2.Left >= 1 )
+				{
+					clipRectangle2.Left = 1;
+					clipRectangle2.Right = 1;
+				}
+				if( clipRectangle2.Bottom <= 0 )
+				{
+					clipRectangle2.Top = 0;
+					clipRectangle2.Bottom = 0;
+				}
+				if( clipRectangle2.Top >= 1 )
+				{
+					clipRectangle2.Top = 1;
+					clipRectangle2.Bottom = 1;
+				}
+
 				if( !currentRectangle.IsCleared() )
-					rectangle = currentRectangle.Intersection( clipRectangle );
+					rectangle = currentRectangle.Intersection( clipRectangle2 );
 				else
-					rectangle = clipRectangle;
+					rectangle = clipRectangle2;
 			}
 			else
 				rectangle = currentRectangle;
+
+			//if( !clipRectangle.IsCleared() )
+			//{
+			//	if( !currentRectangle.IsCleared() )
+			//		rectangle = currentRectangle.Intersection( clipRectangle );
+			//	else
+			//		rectangle = clipRectangle;
+			//}
+			//else
+			//	rectangle = currentRectangle;
 
 			clipRectanglesStack.Push( rectangle );
 		}
@@ -2956,26 +3081,54 @@ namespace NeoAxis
 					switch( GetCurrentBlendingType() )
 					{
 					case BlendingType.AlphaBlend:
-						pass.SourceBlendFactor = SceneBlendFactor.SourceAlpha;
-						pass.DestinationBlendFactor = SceneBlendFactor.OneMinusSourceAlpha;
+						pass.SourceBlendFactor = SceneBlendFactor.SourceAlpha; //BGFX_STATE_BLEND_SRC_ALPHA
+						pass.DestinationBlendFactor = SceneBlendFactor.OneMinusSourceAlpha; //BGFX_STATE_BLEND_INV_SRC_ALPHA
+
+						//pass.ComposeOIT = false;
 						break;
+
 					case BlendingType.AlphaAdd:
 						pass.SourceBlendFactor = SceneBlendFactor.SourceAlpha;
 						pass.DestinationBlendFactor = SceneBlendFactor.One;
+						//pass.ComposeOIT = false;
 						break;
+
 					case BlendingType.Opaque:
 						pass.SourceBlendFactor = SceneBlendFactor.One;
 						pass.DestinationBlendFactor = SceneBlendFactor.Zero;
+						//pass.ComposeOIT = false;
 						break;
+
 					case BlendingType.Add:
 						pass.SourceBlendFactor = SceneBlendFactor.One;
 						pass.DestinationBlendFactor = SceneBlendFactor.One;
+						//pass.ComposeOIT = false;
 						break;
+
+						//case BlendingType.ComposeOIT:
+						//	//pass.ComposeOIT = true;
+
+						//	//pass.SourceBlendFactor = SceneBlendFactor.SourceAlpha;
+						//	//pass.DestinationBlendFactor = SceneBlendFactor.OneMinusSourceAlpha;
+
+						//	pass.SourceBlendFactor = SceneBlendFactor.OneMinusSourceAlpha;
+						//	pass.DestinationBlendFactor = SceneBlendFactor.SourceAlpha;
+
+						//	//bgfx::setState( 0
+						//	//	| BGFX_STATE_WRITE_RGB
+						//	//	| BGFX_STATE_BLEND_FUNC( BGFX_STATE_BLEND_INV_SRC_ALPHA, BGFX_STATE_BLEND_SRC_ALPHA )
+						//	//	);
+
+						//	//pass.SourceBlendFactor = SceneBlendFactor.Zero;
+						//	//pass.DestinationBlendFactor = SceneBlendFactor.OneMinusSourceAlpha;
+
+						//	break;
 					}
 				}
 			}
 
-			item.colorMultiplier = GetCurrentColorMultiplier();
+			GetCurrentColorMultiplier( out item.colorMultiplier );
+			GetCurrentOcclusionDepthCheck( out item.occlusionDepthCheck );
 		}
 
 		void ClearTexturesForRenderableItem( RenderableItem renderableItem )
@@ -3045,7 +3198,7 @@ namespace NeoAxis
 			var m = renderableItem.material;
 			if( m == null )
 				return;
-			ShaderItem shader = m.Shader;
+			var shader = m.Shader;
 			//ShaderItem shader = ( (GuiRendererMaterial)renderableItem.material.ResultObject ).Shader;
 
 			//string sourceFileName = renderableItem.material.SourceFileName;
@@ -3055,7 +3208,7 @@ namespace NeoAxis
 
 			ClearTexturesForRenderableItem( renderableItem );
 
-			FreeRenderableItemGroup group = GetFreeRenderableItemGroup( shader, bufferVertexCount );
+			var group = GetFreeRenderableItemGroup( shader, bufferVertexCount );
 
 			if( group != null && enableCache )
 			{
@@ -3154,12 +3307,20 @@ namespace NeoAxis
 				return BlendingType.AlphaBlend;
 		}
 
-		public override ColorValue GetCurrentColorMultiplier()
+		public override void GetCurrentColorMultiplier( out ColorValue result )
 		{
 			if( colorMultiplierStack.Count != 0 )
-				return colorMultiplierStack.Peek();
+				result = colorMultiplierStack.Peek();
 			else
-				return new ColorValue( 1, 1, 1 );
+				result = new ColorValue( 1, 1, 1 );
+		}
+
+		public override void GetCurrentOcclusionDepthCheck( out Vector4F result )
+		{
+			if( occlusionDepthCheckStack.Count != 0 )
+				result = occlusionDepthCheckStack.Peek();
+			else
+				result = Vector4F.Zero;
 		}
 
 		void SetRenderableItemDynamicData( RenderableItem renderableItem, RenderOperationType renderOperation, ImageComponent texture, bool clamp )
@@ -3183,5 +3344,246 @@ namespace NeoAxis
 				pos.Minimum.X * 2 - 1, ( pos.Minimum.Y * 2 - 1 ) * -1,
 				pos.Maximum.X * 2 - 1, ( pos.Maximum.Y * 2 - 1 ) * -1 );
 		}
+
+		public override void AddRoundedQuad( Rectangle rectangle, Vector2 roundingSize, AddRoundedQuadMode mode/*bool antialiasing, bool fading*/, ColorValue color )
+		{
+			var rect2 = rectangle.ToRectangleF();
+			var roundSize = roundingSize.ToVector2F();
+
+			if( mode == AddRoundedQuadMode.Antialiasing || mode == AddRoundedQuadMode.Fading )
+			{
+				ImageComponent texture;
+				if( mode == AddRoundedQuadMode.Fading )
+				{
+					if( circleForRoundedFadingCached == null )
+						circleForRoundedFadingCached = ResourceManager.LoadResource<ImageComponent>( @"Base\UI\Images\CircleForRoundedFading.png" );
+					texture = circleForRoundedFadingCached;
+				}
+				else
+				{
+					if( circleForRoundedCached == null )
+						circleForRoundedCached = ResourceManager.LoadResource<ImageComponent>( @"Base\UI\Images\CircleForRounded.png" );
+					texture = circleForRoundedCached;
+				}
+
+				var vertices = new List<TriangleVertex>( 16 );
+				var indices = new List<int>( 9 * 3 * 2 );
+
+				vertices.Add( new TriangleVertex( rect2.LeftTop, color, new Vector2F( 0, 0 ) ) );
+				vertices.Add( new TriangleVertex( rect2.LeftTop + new Vector2F( roundSize.X, 0 ), color, new Vector2F( 0.5f, 0 ) ) );
+				vertices.Add( new TriangleVertex( rect2.RightTop + new Vector2F( -roundSize.X, 0 ), color, new Vector2F( 0.5f, 0 ) ) );
+				vertices.Add( new TriangleVertex( rect2.RightTop, color, new Vector2F( 1, 0 ) ) );
+
+				vertices.Add( new TriangleVertex( rect2.LeftTop + new Vector2F( 0, roundSize.Y ), color, new Vector2F( 0, 0.5f ) ) );
+				vertices.Add( new TriangleVertex( rect2.LeftTop + new Vector2F( roundSize.X, roundSize.Y ), color, new Vector2F( 0.5f, 0.5f ) ) );
+				vertices.Add( new TriangleVertex( rect2.RightTop + new Vector2F( -roundSize.X, roundSize.Y ), color, new Vector2F( 0.5f, 0.5f ) ) );
+				vertices.Add( new TriangleVertex( rect2.RightTop + new Vector2F( 0, roundSize.Y ), color, new Vector2F( 1, 0.5f ) ) );
+
+				vertices.Add( new TriangleVertex( rect2.LeftBottom + new Vector2F( 0, -roundSize.Y ), color, new Vector2F( 0, 0.5f ) ) );
+				vertices.Add( new TriangleVertex( rect2.LeftBottom + new Vector2F( roundSize.X, -roundSize.Y ), color, new Vector2F( 0.5f, 0.5f ) ) );
+				vertices.Add( new TriangleVertex( rect2.RightBottom + new Vector2F( -roundSize.X, -roundSize.Y ), color, new Vector2F( 0.5f, 0.5f ) ) );
+				vertices.Add( new TriangleVertex( rect2.RightBottom + new Vector2F( 0, -roundSize.Y ), color, new Vector2F( 1, 0.5f ) ) );
+
+				vertices.Add( new TriangleVertex( rect2.LeftBottom, color, new Vector2F( 0, 1 ) ) );
+				vertices.Add( new TriangleVertex( rect2.LeftBottom + new Vector2F( roundSize.X, 0 ), color, new Vector2F( 0.5f, 1 ) ) );
+				vertices.Add( new TriangleVertex( rect2.RightBottom + new Vector2F( -roundSize.X, 0 ), color, new Vector2F( 0.5f, 1 ) ) );
+				vertices.Add( new TriangleVertex( rect2.RightBottom, color, new Vector2F( 1, 1 ) ) );
+
+				indices.Add( 0 ); indices.Add( 1 ); indices.Add( 1 + 4 );
+				indices.Add( 1 + 4 ); indices.Add( 0 + 4 ); indices.Add( 0 );
+
+				indices.Add( 1 ); indices.Add( 2 ); indices.Add( 2 + 4 );
+				indices.Add( 2 + 4 ); indices.Add( 1 + 4 ); indices.Add( 1 );
+
+				indices.Add( 2 ); indices.Add( 3 ); indices.Add( 3 + 4 );
+				indices.Add( 3 + 4 ); indices.Add( 2 + 4 ); indices.Add( 2 );
+
+				indices.Add( 4 ); indices.Add( 5 ); indices.Add( 5 + 4 );
+				indices.Add( 5 + 4 ); indices.Add( 4 + 4 ); indices.Add( 4 );
+
+				indices.Add( 5 ); indices.Add( 6 ); indices.Add( 6 + 4 );
+				indices.Add( 6 + 4 ); indices.Add( 5 + 4 ); indices.Add( 5 );
+
+				indices.Add( 6 ); indices.Add( 7 ); indices.Add( 7 + 4 );
+				indices.Add( 7 + 4 ); indices.Add( 6 + 4 ); indices.Add( 6 );
+
+				indices.Add( 8 ); indices.Add( 9 ); indices.Add( 9 + 4 );
+				indices.Add( 9 + 4 ); indices.Add( 8 + 4 ); indices.Add( 8 );
+
+				indices.Add( 9 ); indices.Add( 10 ); indices.Add( 10 + 4 );
+				indices.Add( 10 + 4 ); indices.Add( 9 + 4 ); indices.Add( 9 );
+
+				indices.Add( 10 ); indices.Add( 11 ); indices.Add( 11 + 4 );
+				indices.Add( 11 + 4 ); indices.Add( 10 + 4 ); indices.Add( 10 );
+
+				AddTriangles( vertices, indices, texture, true );
+			}
+			else
+			{
+				int steps = 16;
+
+				var list = new List<Vector2F>( steps * 4 );
+
+				for( int n = 0; n < steps; n++ )
+				{
+					var v = (float)n / (float)( steps - 1 );
+					var angle = v * MathEx.PI / 2;
+					list.Add( rect2.LeftTop + new Vector2F( 1.0f - MathEx.Cos( angle ), 1.0f - MathEx.Sin( angle ) ) * roundSize );
+				}
+
+				for( int n = steps - 1; n >= 0; n-- )
+				{
+					var v = (float)n / (float)( steps - 1 );
+					var angle = v * MathEx.PI / 2;
+					list.Add( rect2.RightTop + new Vector2F( MathEx.Cos( angle ) - 1.0f, 1.0f - MathEx.Sin( angle ) ) * roundSize );
+				}
+
+				for( int n = 0; n < steps; n++ )
+				{
+					var v = (float)n / (float)( steps - 1 );
+					var angle = v * MathEx.PI / 2;
+					list.Add( rect2.RightBottom + new Vector2F( MathEx.Cos( angle ) - 1.0f, MathEx.Sin( angle ) - 1.0f ) * roundSize );
+				}
+
+				for( int n = steps - 1; n >= 0; n-- )
+				{
+					var v = (float)n / (float)( steps - 1 );
+					var angle = v * MathEx.PI / 2;
+					list.Add( rect2.LeftBottom + new Vector2F( 1.0f - MathEx.Cos( angle ), MathEx.Sin( angle ) - 1.0f ) * roundSize );
+				}
+
+				var vertices = new List<TriangleVertex>( 1 + list.Count );
+				var indices = new List<int>( list.Count * 3 );
+
+				vertices.Add( new TriangleVertex( rect2.GetCenter(), color ) );
+				foreach( var v in list )
+					vertices.Add( new TriangleVertex( v, color ) );
+
+				for( int n = 0; n < list.Count; n++ )
+				{
+					indices.Add( 0 );
+					indices.Add( 1 + n );
+					indices.Add( 1 + ( n + 1 ) % list.Count );
+				}
+
+				AddTriangles( vertices, indices );
+			}
+		}
+
+		//public override void AddRoundedQuad( Rectangle rectangle, Vector2 roundingSize, bool antialiasing, ColorValue color )
+		//{
+		//	var rect2 = rectangle.ToRectangleF();
+		//	var roundSize = roundingSize.ToVector2F();
+
+		//	if( antialiasing )
+		//	{
+		//		if( circleForRoundedCached == null )
+		//			circleForRoundedCached = ResourceManager.LoadResource<ImageComponent>( @"Base\UI\Images\CircleForRounded.png" );
+		//		var texture = circleForRoundedCached;
+
+		//		var vertices = new List<TriangleVertex>( 16 );
+		//		var indices = new List<int>( 9 * 3 * 2 );
+
+		//		vertices.Add( new TriangleVertex( rect2.LeftTop, color, new Vector2F( 0, 0 ) ) );
+		//		vertices.Add( new TriangleVertex( rect2.LeftTop + new Vector2F( roundSize.X, 0 ), color, new Vector2F( 0.5f, 0 ) ) );
+		//		vertices.Add( new TriangleVertex( rect2.RightTop + new Vector2F( -roundSize.X, 0 ), color, new Vector2F( 0.5f, 0 ) ) );
+		//		vertices.Add( new TriangleVertex( rect2.RightTop, color, new Vector2F( 1, 0 ) ) );
+
+		//		vertices.Add( new TriangleVertex( rect2.LeftTop + new Vector2F( 0, roundSize.Y ), color, new Vector2F( 0, 0.5f ) ) );
+		//		vertices.Add( new TriangleVertex( rect2.LeftTop + new Vector2F( roundSize.X, roundSize.Y ), color, new Vector2F( 0.5f, 0.5f ) ) );
+		//		vertices.Add( new TriangleVertex( rect2.RightTop + new Vector2F( -roundSize.X, roundSize.Y ), color, new Vector2F( 0.5f, 0.5f ) ) );
+		//		vertices.Add( new TriangleVertex( rect2.RightTop + new Vector2F( 0, roundSize.Y ), color, new Vector2F( 1, 0.5f ) ) );
+
+		//		vertices.Add( new TriangleVertex( rect2.LeftBottom + new Vector2F( 0, -roundSize.Y ), color, new Vector2F( 0, 0.5f ) ) );
+		//		vertices.Add( new TriangleVertex( rect2.LeftBottom + new Vector2F( roundSize.X, -roundSize.Y ), color, new Vector2F( 0.5f, 0.5f ) ) );
+		//		vertices.Add( new TriangleVertex( rect2.RightBottom + new Vector2F( -roundSize.X, -roundSize.Y ), color, new Vector2F( 0.5f, 0.5f ) ) );
+		//		vertices.Add( new TriangleVertex( rect2.RightBottom + new Vector2F( 0, -roundSize.Y ), color, new Vector2F( 1, 0.5f ) ) );
+
+		//		vertices.Add( new TriangleVertex( rect2.LeftBottom, color, new Vector2F( 0, 1 ) ) );
+		//		vertices.Add( new TriangleVertex( rect2.LeftBottom + new Vector2F( roundSize.X, 0 ), color, new Vector2F( 0.5f, 1 ) ) );
+		//		vertices.Add( new TriangleVertex( rect2.RightBottom + new Vector2F( -roundSize.X, 0 ), color, new Vector2F( 0.5f, 1 ) ) );
+		//		vertices.Add( new TriangleVertex( rect2.RightBottom, color, new Vector2F( 1, 1 ) ) );
+
+		//		indices.Add( 0 ); indices.Add( 1 ); indices.Add( 1 + 4 );
+		//		indices.Add( 1 + 4 ); indices.Add( 0 + 4 ); indices.Add( 0 );
+
+		//		indices.Add( 1 ); indices.Add( 2 ); indices.Add( 2 + 4 );
+		//		indices.Add( 2 + 4 ); indices.Add( 1 + 4 ); indices.Add( 1 );
+
+		//		indices.Add( 2 ); indices.Add( 3 ); indices.Add( 3 + 4 );
+		//		indices.Add( 3 + 4 ); indices.Add( 2 + 4 ); indices.Add( 2 );
+
+		//		indices.Add( 4 ); indices.Add( 5 ); indices.Add( 5 + 4 );
+		//		indices.Add( 5 + 4 ); indices.Add( 4 + 4 ); indices.Add( 4 );
+
+		//		indices.Add( 5 ); indices.Add( 6 ); indices.Add( 6 + 4 );
+		//		indices.Add( 6 + 4 ); indices.Add( 5 + 4 ); indices.Add( 5 );
+
+		//		indices.Add( 6 ); indices.Add( 7 ); indices.Add( 7 + 4 );
+		//		indices.Add( 7 + 4 ); indices.Add( 6 + 4 ); indices.Add( 6 );
+
+		//		indices.Add( 8 ); indices.Add( 9 ); indices.Add( 9 + 4 );
+		//		indices.Add( 9 + 4 ); indices.Add( 8 + 4 ); indices.Add( 8 );
+
+		//		indices.Add( 9 ); indices.Add( 10 ); indices.Add( 10 + 4 );
+		//		indices.Add( 10 + 4 ); indices.Add( 9 + 4 ); indices.Add( 9 );
+
+		//		indices.Add( 10 ); indices.Add( 11 ); indices.Add( 11 + 4 );
+		//		indices.Add( 11 + 4 ); indices.Add( 10 + 4 ); indices.Add( 10 );
+
+		//		AddTriangles( vertices, indices, texture, true );
+		//	}
+		//	else
+		//	{
+		//		int steps = 16;
+
+		//		var list = new List<Vector2F>( steps * 4 );
+
+		//		for( int n = 0; n < steps; n++ )
+		//		{
+		//			var v = (float)n / (float)( steps - 1 );
+		//			var angle = v * MathEx.PI / 2;
+		//			list.Add( rect2.LeftTop + new Vector2F( 1.0f - MathEx.Cos( angle ), 1.0f - MathEx.Sin( angle ) ) * roundSize );
+		//		}
+
+		//		for( int n = steps - 1; n >= 0; n-- )
+		//		{
+		//			var v = (float)n / (float)( steps - 1 );
+		//			var angle = v * MathEx.PI / 2;
+		//			list.Add( rect2.RightTop + new Vector2F( MathEx.Cos( angle ) - 1.0f, 1.0f - MathEx.Sin( angle ) ) * roundSize );
+		//		}
+
+		//		for( int n = 0; n < steps; n++ )
+		//		{
+		//			var v = (float)n / (float)( steps - 1 );
+		//			var angle = v * MathEx.PI / 2;
+		//			list.Add( rect2.RightBottom + new Vector2F( MathEx.Cos( angle ) - 1.0f, MathEx.Sin( angle ) - 1.0f ) * roundSize );
+		//		}
+
+		//		for( int n = steps - 1; n >= 0; n-- )
+		//		{
+		//			var v = (float)n / (float)( steps - 1 );
+		//			var angle = v * MathEx.PI / 2;
+		//			list.Add( rect2.LeftBottom + new Vector2F( 1.0f - MathEx.Cos( angle ), MathEx.Sin( angle ) - 1.0f ) * roundSize );
+		//		}
+
+		//		var vertices = new List<TriangleVertex>( 1 + list.Count );
+		//		var indices = new List<int>( list.Count * 3 );
+
+		//		vertices.Add( new TriangleVertex( rect2.GetCenter(), color ) );
+		//		foreach( var v in list )
+		//			vertices.Add( new TriangleVertex( v, color ) );
+
+		//		for( int n = 0; n < list.Count; n++ )
+		//		{
+		//			indices.Add( 0 );
+		//			indices.Add( 1 + n );
+		//			indices.Add( 1 + ( n + 1 ) % list.Count );
+		//		}
+
+		//		AddTriangles( vertices, indices );
+		//	}
+		//}
+
 	}
 }

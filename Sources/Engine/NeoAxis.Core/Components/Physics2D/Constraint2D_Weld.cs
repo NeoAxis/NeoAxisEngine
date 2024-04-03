@@ -21,7 +21,7 @@ namespace NeoAxis
 		public Reference<double> Frequency
 		{
 			get { if( _frequency.BeginGet() ) Frequency = _frequency.Get( this ); return _frequency.value; }
-			set { if( _frequency.BeginSet( ref value ) ) { try { FrequencyChanged?.Invoke( this ); } finally { _frequency.EndSet(); } } }
+			set { if( _frequency.BeginSet( this, ref value ) ) { try { FrequencyChanged?.Invoke( this ); } finally { _frequency.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Frequency"/> property value changes.</summary>
 		public event Action<Constraint2D_Weld> FrequencyChanged;
@@ -34,7 +34,7 @@ namespace NeoAxis
 		public Reference<double> DampingRatio
 		{
 			get { if( _dampingRatio.BeginGet() ) DampingRatio = _dampingRatio.Get( this ); return _dampingRatio.value; }
-			set { if( _dampingRatio.BeginSet( ref value ) ) { try { DampingRatioChanged?.Invoke( this ); } finally { _dampingRatio.EndSet(); } } }
+			set { if( _dampingRatio.BeginSet( this, ref value ) ) { try { DampingRatioChanged?.Invoke( this ); } finally { _dampingRatio.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DampingRatio"/> property value changes.</summary>
 		public event Action<Constraint2D_Weld> DampingRatioChanged;

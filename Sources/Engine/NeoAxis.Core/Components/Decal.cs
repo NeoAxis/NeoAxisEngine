@@ -22,7 +22,7 @@ namespace NeoAxis
 
 				if( _material.BeginGet() ) Material = _material.Get( this ); return _material.value;
 			}
-			set { if( _material.BeginSet( ref value ) ) { try { MaterialChanged?.Invoke( this ); } finally { _material.EndSet(); } } }
+			set { if( _material.BeginSet( this, ref value ) ) { try { MaterialChanged?.Invoke( this ); } finally { _material.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Material"/> property value changes.</summary>
 		public event Action<Decal> MaterialChanged;
@@ -35,7 +35,7 @@ namespace NeoAxis
 		public Reference<ColorValue> Color
 		{
 			get { if( _color.BeginGet() ) Color = _color.Get( this ); return _color.value; }
-			set { if( _color.BeginSet( ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
+			set { if( _color.BeginSet( this, ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Color"/> property value changes.</summary>
 		public event Action<Decal> ColorChanged;
@@ -54,7 +54,7 @@ namespace NeoAxis
 		public Reference<NormalsModeEnum> NormalsMode
 		{
 			get { if( _normalsMode.BeginGet() ) NormalsMode = _normalsMode.Get( this ); return _normalsMode.value; }
-			set { if( _normalsMode.BeginSet( ref value ) ) { try { NormalsModeChanged?.Invoke( this ); } finally { _normalsMode.EndSet(); } } }
+			set { if( _normalsMode.BeginSet( this, ref value ) ) { try { NormalsModeChanged?.Invoke( this ); } finally { _normalsMode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="NormalsMode"/> property value changes.</summary>
 		public event Action<Decal> NormalsModeChanged;
@@ -68,7 +68,7 @@ namespace NeoAxis
 		public Reference<double> VisibilityDistanceFactor
 		{
 			get { if( _visibilityDistanceFactor.BeginGet() ) VisibilityDistanceFactor = _visibilityDistanceFactor.Get( this ); return _visibilityDistanceFactor.value; }
-			set { if( _visibilityDistanceFactor.BeginSet( ref value ) ) { try { VisibilityDistanceFactorChanged?.Invoke( this ); } finally { _visibilityDistanceFactor.EndSet(); } } }
+			set { if( _visibilityDistanceFactor.BeginSet( this, ref value ) ) { try { VisibilityDistanceFactorChanged?.Invoke( this ); } finally { _visibilityDistanceFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="VisibilityDistanceFactor"/> property value changes.</summary>
 		public event Action<Decal> VisibilityDistanceFactorChanged;
@@ -82,7 +82,7 @@ namespace NeoAxis
 		//public Reference<double> VisibilityDistance
 		//{
 		//	get { if( _visibilityDistance.BeginGet() ) VisibilityDistance = _visibilityDistance.Get( this ); return _visibilityDistance.value; }
-		//	set { if( _visibilityDistance.BeginSet( ref value ) ) { try { VisibilityDistanceChanged?.Invoke( this ); } finally { _visibilityDistance.EndSet(); } } }
+		//	set { if( _visibilityDistance.BeginSet( this, ref value ) ) { try { VisibilityDistanceChanged?.Invoke( this ); } finally { _visibilityDistance.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="VisibilityDistance"/> property value changes.</summary>
 		//public event Action<Decal> VisibilityDistanceChanged;
@@ -94,7 +94,7 @@ namespace NeoAxis
 		//public Reference<double> VisibilityFadeDistance
 		//{
 		//	get { if( _visibilityFadeDistance.BeginGet() ) VisibilityFadeDistance = _visibilityFadeDistance.Get( this ); return _visibilityFadeDistance.value; }
-		//	set { if( _visibilityFadeDistance.BeginSet( ref value ) ) { try { VisibilityFadeDistanceChanged?.Invoke( this ); } finally { _visibilityFadeDistance.EndSet(); } } }
+		//	set { if( _visibilityFadeDistance.BeginSet( this, ref value ) ) { try { VisibilityFadeDistanceChanged?.Invoke( this ); } finally { _visibilityFadeDistance.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="VisibilityFadeDistance"/> property value changes.</summary>
 		//public event Action<Decal> VisibilityFadeDistanceChanged;
@@ -108,7 +108,7 @@ namespace NeoAxis
 		public Reference<double> SortOrder
 		{
 			get { if( _sortOrder.BeginGet() ) SortOrder = _sortOrder.Get( this ); return _sortOrder.value; }
-			set { if( _sortOrder.BeginSet( ref value ) ) { try { SortOrderChanged?.Invoke( this ); } finally { _sortOrder.EndSet(); } } }
+			set { if( _sortOrder.BeginSet( this, ref value ) ) { try { SortOrderChanged?.Invoke( this ); } finally { _sortOrder.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SortOrder"/> property value changes.</summary>
 		public event Action<Decal> SortOrderChanged;
@@ -172,7 +172,11 @@ namespace NeoAxis
 						item.Scale = tr.Scale.ToVector3F();
 
 						item.Material = Material;
+
 						item.Color = Color;
+						if( RemainingLifetime.Value > 0 )
+							item.Color.Alpha *= MathEx.Saturate( (float)RemainingLifetime.Value * 0.5f );
+
 						item.NormalsMode = NormalsMode.Value;
 						item.SortOrder = SortOrder;
 

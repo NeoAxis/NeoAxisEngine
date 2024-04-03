@@ -5,8 +5,8 @@ Open Asset Import Library (ASSIMP)
 Copyright (c) 2006-2020, ASSIMP Development Team
 All rights reserved.
 
-Redistribution and use of this software in source and binary forms, 
-with or without modification, are permitted provided that the 
+Redistribution and use of this software in source and binary forms,
+with or without modification, are permitted provided that the
 following conditions are met:
 
 * Redistributions of source code must retain the above
@@ -23,16 +23,16 @@ following conditions are met:
   derived from this software without specific prior
   written permission of the ASSIMP Development Team.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
 LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY 
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ----------------------------------------------------------------------
@@ -45,6 +45,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "IFCReaderGen_2x3.h"
 
+#if _MSC_VER
+#    pragma warning(push)
+#    pragma warning(disable : 4702)
+#endif // _MSC_VER
+
 namespace Assimp {
 
 using namespace ::Assimp::IFC;
@@ -54,333 +59,333 @@ namespace {
 	typedef EXPRESS::ConversionSchema::SchemaEntry SchemaEntry;
 
     static const SchemaEntry schema_raw_2x3[] =  {
-		SchemaEntry("ifcstairtypeenum",NULL )
-,		SchemaEntry("ifcspacetypeenum",NULL )
-,		SchemaEntry("ifcwalltypeenum",NULL )
-,		SchemaEntry("ifcmonthinyearnumber",NULL )
-,		SchemaEntry("ifcheatfluxdensitymeasure",NULL )
-,		SchemaEntry("ifckinematicviscositymeasure",NULL )
-,		SchemaEntry("ifcsequenceenum",NULL )
-,		SchemaEntry("ifcairtoairheatrecoverytypeenum",NULL )
-,		SchemaEntry("ifcactorselect",NULL )
-,		SchemaEntry("ifctransformertypeenum",NULL )
-,		SchemaEntry("ifcunitaryequipmenttypeenum",NULL )
-,		SchemaEntry("ifcelectricflowstoragedevicetypeenum",NULL )
-,		SchemaEntry("ifcenergysequenceenum",NULL )
-,		SchemaEntry("ifcworkcontroltypeenum",NULL )
-,		SchemaEntry("ifccurvaturemeasure",NULL )
-,		SchemaEntry("ifcparametervalue",NULL )
-,		SchemaEntry("ifcappliedvalueselect",NULL )
-,		SchemaEntry("ifcwarpingconstantmeasure",NULL )
-,		SchemaEntry("ifcarithmeticoperatorenum",NULL )
-,		SchemaEntry("ifclinearforcemeasure",NULL )
-,		SchemaEntry("ifcwindowpanelpositionenum",NULL )
-,		SchemaEntry("ifcflowmetertypeenum",NULL )
-,		SchemaEntry("ifcrampflighttypeenum",NULL )
-,		SchemaEntry("ifcspecularhighlightselect",NULL )
-,		SchemaEntry("ifcactiontypeenum",NULL )
-,		SchemaEntry("ifcgeometricprojectionenum",NULL )
-,		SchemaEntry("ifctimeseriesdatatypeenum",NULL )
-,		SchemaEntry("ifcmagneticfluxmeasure",NULL )
-,		SchemaEntry("ifcobjecttypeenum",NULL )
-,		SchemaEntry("ifcdataoriginenum",NULL )
-,		SchemaEntry("ifcmassdensitymeasure",NULL )
-,		SchemaEntry("ifclightfixturetypeenum",NULL )
-,		SchemaEntry("ifcservicelifetypeenum",NULL )
-,		SchemaEntry("ifcelectricvoltagemeasure",NULL )
-,		SchemaEntry("ifcheatingvaluemeasure",NULL )
-,		SchemaEntry("ifcpresentabletext",NULL )
-,		SchemaEntry("ifcaheadorbehind",NULL )
-,		SchemaEntry("ifcsimplevalue",NULL )
-,		SchemaEntry("ifcsensortypeenum",NULL )
-,		SchemaEntry("ifcderivedunitenum",NULL )
-,		SchemaEntry("ifcsizeselect",NULL )
-,		SchemaEntry("ifctransportelementtypeenum",NULL )
-,		SchemaEntry("ifcinventorytypeenum",NULL )
-,		SchemaEntry("ifctextdecoration",NULL )
-,		SchemaEntry("ifcdirectionsenseenum",NULL )
-,		SchemaEntry("ifcductfittingtypeenum",NULL )
-,		SchemaEntry("ifcdocumentstatusenum",NULL )
-,		SchemaEntry("ifcslabtypeenum",NULL )
-,		SchemaEntry("ifcdoorstyleconstructionenum",NULL )
-,		SchemaEntry("ifcvolumemeasure",NULL )
-,		SchemaEntry("ifcinductancemeasure",NULL )
-,		SchemaEntry("ifccurtainwalltypeenum",NULL )
-,		SchemaEntry("ifcsiunitname",NULL )
-,		SchemaEntry("ifcspecularexponent",NULL )
-,		SchemaEntry("ifcsoundpressuremeasure",NULL )
-,		SchemaEntry("ifcanalysistheorytypeenum",NULL )
-,		SchemaEntry("ifcgasterminaltypeenum",NULL )
-,		SchemaEntry("ifcyearnumber",NULL )
-,		SchemaEntry("ifcmodulusofelasticitymeasure",NULL )
-,		SchemaEntry("ifcchangeactionenum",NULL )
-,		SchemaEntry("ifcdampertypeenum",NULL )
-,		SchemaEntry("ifcevaporatortypeenum",NULL )
-,		SchemaEntry("ifcionconcentrationmeasure",NULL )
-,		SchemaEntry("ifcductsegmenttypeenum",NULL )
-,		SchemaEntry("ifcprotectivedevicetypeenum",NULL )
-,		SchemaEntry("ifcabsorbeddosemeasure",NULL )
-,		SchemaEntry("ifcmassperlengthmeasure",NULL )
-,		SchemaEntry("ifctextfontname",NULL )
-,		SchemaEntry("ifcorientationselect",NULL )
-,		SchemaEntry("ifcilluminancemeasure",NULL )
-,		SchemaEntry("ifcfiresuppressionterminaltypeenum",NULL )
-,		SchemaEntry("ifcfontstyle",NULL )
-,		SchemaEntry("ifcmomentofinertiameasure",NULL )
-,		SchemaEntry("ifcmodulusofsubgradereactionmeasure",NULL )
-,		SchemaEntry("ifccomplexnumber",NULL )
-,		SchemaEntry("ifchumidifiertypeenum",NULL )
-,		SchemaEntry("ifcpresentationstyleselect",NULL )
-,		SchemaEntry("ifcthermaltransmittancemeasure",NULL )
-,		SchemaEntry("ifcribplatedirectionenum",NULL )
-,		SchemaEntry("ifcclassificationnotationselect",NULL )
-,		SchemaEntry("ifcminuteinhour",NULL )
-,		SchemaEntry("ifcinternalorexternalenum",NULL )
-,		SchemaEntry("ifcrotationalfrequencymeasure",NULL )
-,		SchemaEntry("ifcsanitaryterminaltypeenum",NULL )
-,		SchemaEntry("ifcsymbolstyleselect",NULL )
-,		SchemaEntry("ifcelementcompositionenum",NULL )
-,		SchemaEntry("ifctextpath",NULL )
-,		SchemaEntry("ifcpowermeasure",NULL )
-,		SchemaEntry("ifcsurfacestyleelementselect",NULL )
-,		SchemaEntry("ifcresourceconsumptionenum",NULL )
-,		SchemaEntry("ifcelectriccapacitancemeasure",NULL )
-,		SchemaEntry("ifclayersetdirectionenum",NULL )
-,		SchemaEntry("ifcrailingtypeenum",NULL )
-,		SchemaEntry("ifcobjectiveenum",NULL )
-,		SchemaEntry("ifcdocumentselect",NULL )
-,		SchemaEntry("ifcmodulusoflinearsubgradereactionmeasure",NULL )
-,		SchemaEntry("ifcthermaladmittancemeasure",NULL )
-,		SchemaEntry("ifctransitioncode",NULL )
-,		SchemaEntry("ifcconnectiontypeenum",NULL )
-,		SchemaEntry("ifcmonetarymeasure",NULL )
-,		SchemaEntry("ifcstackterminaltypeenum",NULL )
-,		SchemaEntry("ifccolour",NULL )
-,		SchemaEntry("ifctext",NULL )
-,		SchemaEntry("ifccontextdependentmeasure",NULL )
-,		SchemaEntry("ifcthermalconductivitymeasure",NULL )
-,		SchemaEntry("ifcprojectedortruelengthenum",NULL )
-,		SchemaEntry("ifcpressuremeasure",NULL )
-,		SchemaEntry("ifcmoisturediffusivitymeasure",NULL )
-,		SchemaEntry("ifcbooleanoperator",NULL )
-,		SchemaEntry("ifcpropertysourceenum",NULL )
-,		SchemaEntry("ifctimestamp",NULL )
-,		SchemaEntry("ifcmaterialselect",NULL )
-,		SchemaEntry("ifcgloballyuniqueid",NULL )
-,		SchemaEntry("ifcreflectancemethodenum",NULL )
-,		SchemaEntry("ifcvaporpermeabilitymeasure",NULL )
-,		SchemaEntry("ifctimeseriesscheduletypeenum",NULL )
-,		SchemaEntry("ifclinearmomentmeasure",NULL )
-,		SchemaEntry("ifcgeometricsetselect",NULL )
-,		SchemaEntry("ifcsectionmodulusmeasure",NULL )
-,		SchemaEntry("ifcbsplinecurveform",NULL )
-,		SchemaEntry("ifcdimensionextentusage",NULL )
-,		SchemaEntry("ifcthermalexpansioncoefficientmeasure",NULL )
-,		SchemaEntry("ifchourinday",NULL )
-,		SchemaEntry("ifclinearvelocitymeasure",NULL )
-,		SchemaEntry("ifctorquemeasure",NULL )
-,		SchemaEntry("ifctemperaturegradientmeasure",NULL )
-,		SchemaEntry("ifcfillstyleselect",NULL )
-,		SchemaEntry("ifcelectricchargemeasure",NULL )
-,		SchemaEntry("ifcheatexchangertypeenum",NULL )
-,		SchemaEntry("ifcelectriccurrentenum",NULL )
-,		SchemaEntry("ifcdaylightsavinghour",NULL )
-,		SchemaEntry("ifcshell",NULL )
-,		SchemaEntry("ifcdoseequivalentmeasure",NULL )
-,		SchemaEntry("ifcprojectordertypeenum",NULL )
-,		SchemaEntry("ifcderivedmeasurevalue",NULL )
-,		SchemaEntry("ifclightdistributioncurveenum",NULL )
-,		SchemaEntry("ifcwarpingmomentmeasure",NULL )
-,		SchemaEntry("ifcmembertypeenum",NULL )
-,		SchemaEntry("ifcsoundpowermeasure",NULL )
-,		SchemaEntry("ifctextalignment",NULL )
-,		SchemaEntry("ifccurveoredgecurve",NULL )
-,		SchemaEntry("ifcmassflowratemeasure",NULL )
-,		SchemaEntry("ifcisothermalmoisturecapacitymeasure",NULL )
-,		SchemaEntry("ifccsgselect",NULL )
-,		SchemaEntry("ifccoolingtowertypeenum",NULL )
-,		SchemaEntry("ifcmassmeasure",NULL )
-,		SchemaEntry("ifcpileconstructionenum",NULL )
-,		SchemaEntry("ifcdoorstyleoperationenum",NULL )
-,		SchemaEntry("ifcflowdirectionenum",NULL )
-,		SchemaEntry("ifcthermalloadsourceenum",NULL )
-,		SchemaEntry("ifclengthmeasure",NULL )
-,		SchemaEntry("ifcconstraintenum",NULL )
-,		SchemaEntry("ifcaxis2placement",NULL )
-,		SchemaEntry("ifcloadgrouptypeenum",NULL )
-,		SchemaEntry("ifcvalue",NULL )
-,		SchemaEntry("ifcreinforcingbarsurfaceenum",NULL )
-,		SchemaEntry("ifcprojectorderrecordtypeenum",NULL )
-,		SchemaEntry("ifcdatetimeselect",NULL )
-,		SchemaEntry("ifcstructuralsurfacetypeenum",NULL )
-,		SchemaEntry("ifcpermeablecoveringoperationenum",NULL )
-,		SchemaEntry("ifcfontweight",NULL )
-,		SchemaEntry("ifcphmeasure",NULL )
-,		SchemaEntry("ifcdescriptivemeasure",NULL )
-,		SchemaEntry("ifccurvestylefontselect",NULL )
-,		SchemaEntry("ifcunit",NULL )
-,		SchemaEntry("ifchatchlinedistanceselect",NULL )
-,		SchemaEntry("ifctextstyleselect",NULL )
-,		SchemaEntry("ifcmetricvalueselect",NULL )
-,		SchemaEntry("ifcvectorordirection",NULL )
-,		SchemaEntry("ifcassemblyplaceenum",NULL )
-,		SchemaEntry("ifcairterminaltypeenum",NULL )
-,		SchemaEntry("ifccoveringtypeenum",NULL )
-,		SchemaEntry("ifcplanarforcemeasure",NULL )
-,		SchemaEntry("ifcvalvetypeenum",NULL )
-,		SchemaEntry("ifcalarmtypeenum",NULL )
-,		SchemaEntry("ifcdynamicviscositymeasure",NULL )
-,		SchemaEntry("ifccurrencyenum",NULL )
-,		SchemaEntry("ifcmodulusofrotationalsubgradereactionmeasure",NULL )
-,		SchemaEntry("ifccablecarrierfittingtypeenum",NULL )
-,		SchemaEntry("ifcboolean",NULL )
-,		SchemaEntry("ifcactionsourcetypeenum",NULL )
-,		SchemaEntry("ifcstructuralactivityassignmentselect",NULL )
-,		SchemaEntry("ifcdistributionchamberelementtypeenum",NULL )
-,		SchemaEntry("ifcevaporativecoolertypeenum",NULL )
-,		SchemaEntry("ifcmagneticfluxdensitymeasure",NULL )
-,		SchemaEntry("ifclightdistributiondatasourceselect",NULL )
-,		SchemaEntry("ifctubebundletypeenum",NULL )
-,		SchemaEntry("ifcaccelerationmeasure",NULL )
-,		SchemaEntry("ifcboilertypeenum",NULL )
-,		SchemaEntry("ifcramptypeenum",NULL )
-,		SchemaEntry("ifcluminousintensitydistributionmeasure",NULL )
-,		SchemaEntry("ifctrimmingpreference",NULL )
-,		SchemaEntry("ifcspecificheatcapacitymeasure",NULL )
-,		SchemaEntry("ifcamountofsubstancemeasure",NULL )
-,		SchemaEntry("ifcroleenum",NULL )
-,		SchemaEntry("ifcdocumentconfidentialityenum",NULL )
-,		SchemaEntry("ifcfrequencymeasure",NULL )
-,		SchemaEntry("ifcsectiontypeenum",NULL )
-,		SchemaEntry("ifcelementassemblytypeenum",NULL )
-,		SchemaEntry("ifcfootingtypeenum",NULL )
-,		SchemaEntry("ifclayereditem",NULL )
-,		SchemaEntry("ifccablesegmenttypeenum",NULL )
-,		SchemaEntry("ifcdefinedsymbolselect",NULL )
-,		SchemaEntry("ifcbuildingelementproxytypeenum",NULL )
-,		SchemaEntry("ifcelectricgeneratortypeenum",NULL )
-,		SchemaEntry("ifcrotationalstiffnessmeasure",NULL )
-,		SchemaEntry("ifcspaceheatertypeenum",NULL )
-,		SchemaEntry("ifcareameasure",NULL )
-,		SchemaEntry("ifclabel",NULL )
-,		SchemaEntry("ifccostscheduletypeenum",NULL )
-,		SchemaEntry("ifcswitchingdevicetypeenum",NULL )
-,		SchemaEntry("ifcelectrictimecontroltypeenum",NULL )
-,		SchemaEntry("ifcfiltertypeenum",NULL )
-,		SchemaEntry("ifcpositivelengthmeasure",NULL )
-,		SchemaEntry("ifcnullstyle",NULL )
-,		SchemaEntry("ifcconditioncriterionselect",NULL )
-,		SchemaEntry("ifcshearmodulusmeasure",NULL )
-,		SchemaEntry("ifcnormalisedratiomeasure",NULL )
-,		SchemaEntry("ifcdoorpaneloperationenum",NULL )
-,		SchemaEntry("ifcpointorvertexpoint",NULL )
-,		SchemaEntry("ifcrooftypeenum",NULL )
-,		SchemaEntry("ifccountmeasure",NULL )
-,		SchemaEntry("ifcelectricconductancemeasure",NULL )
-,		SchemaEntry("ifcproceduretypeenum",NULL )
-,		SchemaEntry("ifcflowinstrumenttypeenum",NULL )
-,		SchemaEntry("ifcelectricmotortypeenum",NULL )
-,		SchemaEntry("ifcsurfaceside",NULL )
-,		SchemaEntry("ifcstructuralcurvetypeenum",NULL )
-,		SchemaEntry("ifccondensertypeenum",NULL )
-,		SchemaEntry("ifclinearstiffnessmeasure",NULL )
-,		SchemaEntry("ifcunitenum",NULL )
-,		SchemaEntry("ifcoccupanttypeenum",NULL )
-,		SchemaEntry("ifcthermalloadtypeenum",NULL )
-,		SchemaEntry("ifcreinforcingbarroleenum",NULL )
-,		SchemaEntry("ifcbenchmarkenum",NULL )
-,		SchemaEntry("ifcpositiveplaneanglemeasure",NULL )
-,		SchemaEntry("ifctexttransformation",NULL )
-,		SchemaEntry("ifcdraughtingcalloutelement",NULL )
-,		SchemaEntry("ifcratiomeasure",NULL )
-,		SchemaEntry("ifcsolidanglemeasure",NULL )
-,		SchemaEntry("ifcpipesegmenttypeenum",NULL )
-,		SchemaEntry("ifccablecarriersegmenttypeenum",NULL )
-,		SchemaEntry("ifccolourorfactor",NULL )
-,		SchemaEntry("ifcidentifier",NULL )
-,		SchemaEntry("ifctendontypeenum",NULL )
-,		SchemaEntry("ifccontrollertypeenum",NULL )
-,		SchemaEntry("ifcradioactivitymeasure",NULL )
-,		SchemaEntry("ifctimemeasure",NULL )
-,		SchemaEntry("ifcpumptypeenum",NULL )
-,		SchemaEntry("ifcelectricheatertypeenum",NULL )
-,		SchemaEntry("ifcbeamtypeenum",NULL )
-,		SchemaEntry("ifcstateenum",NULL )
-,		SchemaEntry("ifcsiprefix",NULL )
-,		SchemaEntry("ifcnumericmeasure",NULL )
-,		SchemaEntry("ifcoutlettypeenum",NULL )
-,		SchemaEntry("ifccompoundplaneanglemeasure",NULL )
-,		SchemaEntry("ifcservicelifefactortypeenum",NULL )
-,		SchemaEntry("ifclogicaloperatorenum",NULL )
-,		SchemaEntry("ifcbooleanoperand",NULL )
-,		SchemaEntry("ifcobjectreferenceselect",NULL )
-,		SchemaEntry("ifccooledbeamtypeenum",NULL )
-,		SchemaEntry("ifcductsilencertypeenum",NULL )
-,		SchemaEntry("ifcsectionalareaintegralmeasure",NULL )
-,		SchemaEntry("ifcfontvariant",NULL )
-,		SchemaEntry("ifcvolumetricflowratemeasure",NULL )
-,		SchemaEntry("ifcplatetypeenum",NULL )
-,		SchemaEntry("ifcenvironmentalimpactcategoryenum",NULL )
-,		SchemaEntry("ifcvibrationisolatortypeenum",NULL )
-,		SchemaEntry("ifcthermodynamictemperaturemeasure",NULL )
-,		SchemaEntry("ifcrotationalmassmeasure",NULL )
-,		SchemaEntry("ifcsecondinminute",NULL )
-,		SchemaEntry("ifcdayinmonthnumber",NULL )
-,		SchemaEntry("ifcdimensioncount",NULL )
-,		SchemaEntry("ifcwindowstyleoperationenum",NULL )
-,		SchemaEntry("ifcthermalresistancemeasure",NULL )
-,		SchemaEntry("ifcmeasurevalue",NULL )
-,		SchemaEntry("ifcwindowpaneloperationenum",NULL )
-,		SchemaEntry("ifcchillertypeenum",NULL )
-,		SchemaEntry("ifcpositiveratiomeasure",NULL )
-,		SchemaEntry("ifcinteger",NULL )
-,		SchemaEntry("ifclogical",NULL )
-,		SchemaEntry("ifcjunctionboxtypeenum",NULL )
-,		SchemaEntry("ifcaddresstypeenum",NULL )
-,		SchemaEntry("ifcwasteterminaltypeenum",NULL )
-,		SchemaEntry("ifctrimmingselect",NULL )
-,		SchemaEntry("ifclightemissionsourceenum",NULL )
-,		SchemaEntry("ifcsoundscaleenum",NULL )
-,		SchemaEntry("ifcluminousfluxmeasure",NULL )
-,		SchemaEntry("ifcelectricresistancemeasure",NULL )
-,		SchemaEntry("ifcintegercountratemeasure",NULL )
-,		SchemaEntry("ifcphysicalorvirtualenum",NULL )
-,		SchemaEntry("ifcmolecularweightmeasure",NULL )
-,		SchemaEntry("ifcprofiletypeenum",NULL )
-,		SchemaEntry("ifcboxalignment",NULL )
-,		SchemaEntry("ifcglobalorlocalenum",NULL )
-,		SchemaEntry("ifcspecularroughness",NULL )
-,		SchemaEntry("ifclamptypeenum",NULL )
-,		SchemaEntry("ifcpiletypeenum",NULL )
-,		SchemaEntry("ifcelectriccurrentmeasure",NULL )
-,		SchemaEntry("ifcfantypeenum",NULL )
-,		SchemaEntry("ifcsurfaceorfacesurface",NULL )
-,		SchemaEntry("ifcpipefittingtypeenum",NULL )
-,		SchemaEntry("ifctanktypeenum",NULL )
-,		SchemaEntry("ifccurvefontorscaledcurvefontselect",NULL )
-,		SchemaEntry("ifcwindowstyleconstructionenum",NULL )
-,		SchemaEntry("ifcairterminalboxtypeenum",NULL )
-,		SchemaEntry("ifcstairflighttypeenum",NULL )
-,		SchemaEntry("ifcluminousintensitymeasure",NULL )
-,		SchemaEntry("ifcmotorconnectiontypeenum",NULL )
-,		SchemaEntry("ifcplaneanglemeasure",NULL )
-,		SchemaEntry("ifcactuatortypeenum",NULL )
-,		SchemaEntry("ifccolumntypeenum",NULL )
-,		SchemaEntry("ifctextfontselect",NULL )
-,		SchemaEntry("ifcdoorpanelpositionenum",NULL )
-,		SchemaEntry("ifccoiltypeenum",NULL )
-,		SchemaEntry("ifcangularvelocitymeasure",NULL )
-,		SchemaEntry("ifcanalysismodeltypeenum",NULL )
-,		SchemaEntry("ifclibraryselect",NULL )
-,		SchemaEntry("ifcforcemeasure",NULL )
-,		SchemaEntry("ifcfillareastyletileshapeselect",NULL )
-,		SchemaEntry("ifcelectricappliancetypeenum",NULL )
-,		SchemaEntry("ifcsurfacetextureenum",NULL )
-,		SchemaEntry("ifccharacterstyleselect",NULL )
-,		SchemaEntry("ifcenergymeasure",NULL )
-,		SchemaEntry("ifcreal",NULL )
-,		SchemaEntry("ifccompressortypeenum",NULL )
-,		SchemaEntry("ifcelectricdistributionpointfunctionenum",NULL )
+		SchemaEntry("ifcstairtypeenum",nullptr )
+,		SchemaEntry("ifcspacetypeenum",nullptr )
+,		SchemaEntry("ifcwalltypeenum",nullptr )
+,		SchemaEntry("ifcmonthinyearnumber",nullptr )
+,		SchemaEntry("ifcheatfluxdensitymeasure",nullptr )
+,		SchemaEntry("ifckinematicviscositymeasure",nullptr )
+,		SchemaEntry("ifcsequenceenum",nullptr )
+,		SchemaEntry("ifcairtoairheatrecoverytypeenum",nullptr )
+,		SchemaEntry("ifcactorselect",nullptr )
+,		SchemaEntry("ifctransformertypeenum",nullptr )
+,		SchemaEntry("ifcunitaryequipmenttypeenum",nullptr )
+,		SchemaEntry("ifcelectricflowstoragedevicetypeenum",nullptr )
+,		SchemaEntry("ifcenergysequenceenum",nullptr )
+,		SchemaEntry("ifcworkcontroltypeenum",nullptr )
+,		SchemaEntry("ifccurvaturemeasure",nullptr )
+,		SchemaEntry("ifcparametervalue",nullptr )
+,		SchemaEntry("ifcappliedvalueselect",nullptr )
+,		SchemaEntry("ifcwarpingconstantmeasure",nullptr )
+,		SchemaEntry("ifcarithmeticoperatorenum",nullptr )
+,		SchemaEntry("ifclinearforcemeasure",nullptr )
+,		SchemaEntry("ifcwindowpanelpositionenum",nullptr )
+,		SchemaEntry("ifcflowmetertypeenum",nullptr )
+,		SchemaEntry("ifcrampflighttypeenum",nullptr )
+,		SchemaEntry("ifcspecularhighlightselect",nullptr )
+,		SchemaEntry("ifcactiontypeenum",nullptr )
+,		SchemaEntry("ifcgeometricprojectionenum",nullptr )
+,		SchemaEntry("ifctimeseriesdatatypeenum",nullptr )
+,		SchemaEntry("ifcmagneticfluxmeasure",nullptr )
+,		SchemaEntry("ifcobjecttypeenum",nullptr )
+,		SchemaEntry("ifcdataoriginenum",nullptr )
+,		SchemaEntry("ifcmassdensitymeasure",nullptr )
+,		SchemaEntry("ifclightfixturetypeenum",nullptr )
+,		SchemaEntry("ifcservicelifetypeenum",nullptr )
+,		SchemaEntry("ifcelectricvoltagemeasure",nullptr )
+,		SchemaEntry("ifcheatingvaluemeasure",nullptr )
+,		SchemaEntry("ifcpresentabletext",nullptr )
+,		SchemaEntry("ifcaheadorbehind",nullptr )
+,		SchemaEntry("ifcsimplevalue",nullptr )
+,		SchemaEntry("ifcsensortypeenum",nullptr )
+,		SchemaEntry("ifcderivedunitenum",nullptr )
+,		SchemaEntry("ifcsizeselect",nullptr )
+,		SchemaEntry("ifctransportelementtypeenum",nullptr )
+,		SchemaEntry("ifcinventorytypeenum",nullptr )
+,		SchemaEntry("ifctextdecoration",nullptr )
+,		SchemaEntry("ifcdirectionsenseenum",nullptr )
+,		SchemaEntry("ifcductfittingtypeenum",nullptr )
+,		SchemaEntry("ifcdocumentstatusenum",nullptr )
+,		SchemaEntry("ifcslabtypeenum",nullptr )
+,		SchemaEntry("ifcdoorstyleconstructionenum",nullptr )
+,		SchemaEntry("ifcvolumemeasure",nullptr )
+,		SchemaEntry("ifcinductancemeasure",nullptr )
+,		SchemaEntry("ifccurtainwalltypeenum",nullptr )
+,		SchemaEntry("ifcsiunitname",nullptr )
+,		SchemaEntry("ifcspecularexponent",nullptr )
+,		SchemaEntry("ifcsoundpressuremeasure",nullptr )
+,		SchemaEntry("ifcanalysistheorytypeenum",nullptr )
+,		SchemaEntry("ifcgasterminaltypeenum",nullptr )
+,		SchemaEntry("ifcyearnumber",nullptr )
+,		SchemaEntry("ifcmodulusofelasticitymeasure",nullptr )
+,		SchemaEntry("ifcchangeactionenum",nullptr )
+,		SchemaEntry("ifcdampertypeenum",nullptr )
+,		SchemaEntry("ifcevaporatortypeenum",nullptr )
+,		SchemaEntry("ifcionconcentrationmeasure",nullptr )
+,		SchemaEntry("ifcductsegmenttypeenum",nullptr )
+,		SchemaEntry("ifcprotectivedevicetypeenum",nullptr )
+,		SchemaEntry("ifcabsorbeddosemeasure",nullptr )
+,		SchemaEntry("ifcmassperlengthmeasure",nullptr )
+,		SchemaEntry("ifctextfontname",nullptr )
+,		SchemaEntry("ifcorientationselect",nullptr )
+,		SchemaEntry("ifcilluminancemeasure",nullptr )
+,		SchemaEntry("ifcfiresuppressionterminaltypeenum",nullptr )
+,		SchemaEntry("ifcfontstyle",nullptr )
+,		SchemaEntry("ifcmomentofinertiameasure",nullptr )
+,		SchemaEntry("ifcmodulusofsubgradereactionmeasure",nullptr )
+,		SchemaEntry("ifccomplexnumber",nullptr )
+,		SchemaEntry("ifchumidifiertypeenum",nullptr )
+,		SchemaEntry("ifcpresentationstyleselect",nullptr )
+,		SchemaEntry("ifcthermaltransmittancemeasure",nullptr )
+,		SchemaEntry("ifcribplatedirectionenum",nullptr )
+,		SchemaEntry("ifcclassificationnotationselect",nullptr )
+,		SchemaEntry("ifcminuteinhour",nullptr )
+,		SchemaEntry("ifcinternalorexternalenum",nullptr )
+,		SchemaEntry("ifcrotationalfrequencymeasure",nullptr )
+,		SchemaEntry("ifcsanitaryterminaltypeenum",nullptr )
+,		SchemaEntry("ifcsymbolstyleselect",nullptr )
+,		SchemaEntry("ifcelementcompositionenum",nullptr )
+,		SchemaEntry("ifctextpath",nullptr )
+,		SchemaEntry("ifcpowermeasure",nullptr )
+,		SchemaEntry("ifcsurfacestyleelementselect",nullptr )
+,		SchemaEntry("ifcresourceconsumptionenum",nullptr )
+,		SchemaEntry("ifcelectriccapacitancemeasure",nullptr )
+,		SchemaEntry("ifclayersetdirectionenum",nullptr )
+,		SchemaEntry("ifcrailingtypeenum",nullptr )
+,		SchemaEntry("ifcobjectiveenum",nullptr )
+,		SchemaEntry("ifcdocumentselect",nullptr )
+,		SchemaEntry("ifcmodulusoflinearsubgradereactionmeasure",nullptr )
+,		SchemaEntry("ifcthermaladmittancemeasure",nullptr )
+,		SchemaEntry("ifctransitioncode",nullptr )
+,		SchemaEntry("ifcconnectiontypeenum",nullptr )
+,		SchemaEntry("ifcmonetarymeasure",nullptr )
+,		SchemaEntry("ifcstackterminaltypeenum",nullptr )
+,		SchemaEntry("ifccolour",nullptr )
+,		SchemaEntry("ifctext",nullptr )
+,		SchemaEntry("ifccontextdependentmeasure",nullptr )
+,		SchemaEntry("ifcthermalconductivitymeasure",nullptr )
+,		SchemaEntry("ifcprojectedortruelengthenum",nullptr )
+,		SchemaEntry("ifcpressuremeasure",nullptr )
+,		SchemaEntry("ifcmoisturediffusivitymeasure",nullptr )
+,		SchemaEntry("ifcbooleanoperator",nullptr )
+,		SchemaEntry("ifcpropertysourceenum",nullptr )
+,		SchemaEntry("ifctimestamp",nullptr )
+,		SchemaEntry("ifcmaterialselect",nullptr )
+,		SchemaEntry("ifcgloballyuniqueid",nullptr )
+,		SchemaEntry("ifcreflectancemethodenum",nullptr )
+,		SchemaEntry("ifcvaporpermeabilitymeasure",nullptr )
+,		SchemaEntry("ifctimeseriesscheduletypeenum",nullptr )
+,		SchemaEntry("ifclinearmomentmeasure",nullptr )
+,		SchemaEntry("ifcgeometricsetselect",nullptr )
+,		SchemaEntry("ifcsectionmodulusmeasure",nullptr )
+,		SchemaEntry("ifcbsplinecurveform",nullptr )
+,		SchemaEntry("ifcdimensionextentusage",nullptr )
+,		SchemaEntry("ifcthermalexpansioncoefficientmeasure",nullptr )
+,		SchemaEntry("ifchourinday",nullptr )
+,		SchemaEntry("ifclinearvelocitymeasure",nullptr )
+,		SchemaEntry("ifctorquemeasure",nullptr )
+,		SchemaEntry("ifctemperaturegradientmeasure",nullptr )
+,		SchemaEntry("ifcfillstyleselect",nullptr )
+,		SchemaEntry("ifcelectricchargemeasure",nullptr )
+,		SchemaEntry("ifcheatexchangertypeenum",nullptr )
+,		SchemaEntry("ifcelectriccurrentenum",nullptr )
+,		SchemaEntry("ifcdaylightsavinghour",nullptr )
+,		SchemaEntry("ifcshell",nullptr )
+,		SchemaEntry("ifcdoseequivalentmeasure",nullptr )
+,		SchemaEntry("ifcprojectordertypeenum",nullptr )
+,		SchemaEntry("ifcderivedmeasurevalue",nullptr )
+,		SchemaEntry("ifclightdistributioncurveenum",nullptr )
+,		SchemaEntry("ifcwarpingmomentmeasure",nullptr )
+,		SchemaEntry("ifcmembertypeenum",nullptr )
+,		SchemaEntry("ifcsoundpowermeasure",nullptr )
+,		SchemaEntry("ifctextalignment",nullptr )
+,		SchemaEntry("ifccurveoredgecurve",nullptr )
+,		SchemaEntry("ifcmassflowratemeasure",nullptr )
+,		SchemaEntry("ifcisothermalmoisturecapacitymeasure",nullptr )
+,		SchemaEntry("ifccsgselect",nullptr )
+,		SchemaEntry("ifccoolingtowertypeenum",nullptr )
+,		SchemaEntry("ifcmassmeasure",nullptr )
+,		SchemaEntry("ifcpileconstructionenum",nullptr )
+,		SchemaEntry("ifcdoorstyleoperationenum",nullptr )
+,		SchemaEntry("ifcflowdirectionenum",nullptr )
+,		SchemaEntry("ifcthermalloadsourceenum",nullptr )
+,		SchemaEntry("ifclengthmeasure",nullptr )
+,		SchemaEntry("ifcconstraintenum",nullptr )
+,		SchemaEntry("ifcaxis2placement",nullptr )
+,		SchemaEntry("ifcloadgrouptypeenum",nullptr )
+,		SchemaEntry("ifcvalue",nullptr )
+,		SchemaEntry("ifcreinforcingbarsurfaceenum",nullptr )
+,		SchemaEntry("ifcprojectorderrecordtypeenum",nullptr )
+,		SchemaEntry("ifcdatetimeselect",nullptr )
+,		SchemaEntry("ifcstructuralsurfacetypeenum",nullptr )
+,		SchemaEntry("ifcpermeablecoveringoperationenum",nullptr )
+,		SchemaEntry("ifcfontweight",nullptr )
+,		SchemaEntry("ifcphmeasure",nullptr )
+,		SchemaEntry("ifcdescriptivemeasure",nullptr )
+,		SchemaEntry("ifccurvestylefontselect",nullptr )
+,		SchemaEntry("ifcunit",nullptr )
+,		SchemaEntry("ifchatchlinedistanceselect",nullptr )
+,		SchemaEntry("ifctextstyleselect",nullptr )
+,		SchemaEntry("ifcmetricvalueselect",nullptr )
+,		SchemaEntry("ifcvectorordirection",nullptr )
+,		SchemaEntry("ifcassemblyplaceenum",nullptr )
+,		SchemaEntry("ifcairterminaltypeenum",nullptr )
+,		SchemaEntry("ifccoveringtypeenum",nullptr )
+,		SchemaEntry("ifcplanarforcemeasure",nullptr )
+,		SchemaEntry("ifcvalvetypeenum",nullptr )
+,		SchemaEntry("ifcalarmtypeenum",nullptr )
+,		SchemaEntry("ifcdynamicviscositymeasure",nullptr )
+,		SchemaEntry("ifccurrencyenum",nullptr )
+,		SchemaEntry("ifcmodulusofrotationalsubgradereactionmeasure",nullptr )
+,		SchemaEntry("ifccablecarrierfittingtypeenum",nullptr )
+,		SchemaEntry("ifcboolean",nullptr )
+,		SchemaEntry("ifcactionsourcetypeenum",nullptr )
+,		SchemaEntry("ifcstructuralactivityassignmentselect",nullptr )
+,		SchemaEntry("ifcdistributionchamberelementtypeenum",nullptr )
+,		SchemaEntry("ifcevaporativecoolertypeenum",nullptr )
+,		SchemaEntry("ifcmagneticfluxdensitymeasure",nullptr )
+,		SchemaEntry("ifclightdistributiondatasourceselect",nullptr )
+,		SchemaEntry("ifctubebundletypeenum",nullptr )
+,		SchemaEntry("ifcaccelerationmeasure",nullptr )
+,		SchemaEntry("ifcboilertypeenum",nullptr )
+,		SchemaEntry("ifcramptypeenum",nullptr )
+,		SchemaEntry("ifcluminousintensitydistributionmeasure",nullptr )
+,		SchemaEntry("ifctrimmingpreference",nullptr )
+,		SchemaEntry("ifcspecificheatcapacitymeasure",nullptr )
+,		SchemaEntry("ifcamountofsubstancemeasure",nullptr )
+,		SchemaEntry("ifcroleenum",nullptr )
+,		SchemaEntry("ifcdocumentconfidentialityenum",nullptr )
+,		SchemaEntry("ifcfrequencymeasure",nullptr )
+,		SchemaEntry("ifcsectiontypeenum",nullptr )
+,		SchemaEntry("ifcelementassemblytypeenum",nullptr )
+,		SchemaEntry("ifcfootingtypeenum",nullptr )
+,		SchemaEntry("ifclayereditem",nullptr )
+,		SchemaEntry("ifccablesegmenttypeenum",nullptr )
+,		SchemaEntry("ifcdefinedsymbolselect",nullptr )
+,		SchemaEntry("ifcbuildingelementproxytypeenum",nullptr )
+,		SchemaEntry("ifcelectricgeneratortypeenum",nullptr )
+,		SchemaEntry("ifcrotationalstiffnessmeasure",nullptr )
+,		SchemaEntry("ifcspaceheatertypeenum",nullptr )
+,		SchemaEntry("ifcareameasure",nullptr )
+,		SchemaEntry("ifclabel",nullptr )
+,		SchemaEntry("ifccostscheduletypeenum",nullptr )
+,		SchemaEntry("ifcswitchingdevicetypeenum",nullptr )
+,		SchemaEntry("ifcelectrictimecontroltypeenum",nullptr )
+,		SchemaEntry("ifcfiltertypeenum",nullptr )
+,		SchemaEntry("ifcpositivelengthmeasure",nullptr )
+,		SchemaEntry("ifcnullstyle",nullptr )
+,		SchemaEntry("ifcconditioncriterionselect",nullptr )
+,		SchemaEntry("ifcshearmodulusmeasure",nullptr )
+,		SchemaEntry("ifcnormalisedratiomeasure",nullptr )
+,		SchemaEntry("ifcdoorpaneloperationenum",nullptr )
+,		SchemaEntry("ifcpointorvertexpoint",nullptr )
+,		SchemaEntry("ifcrooftypeenum",nullptr )
+,		SchemaEntry("ifccountmeasure",nullptr )
+,		SchemaEntry("ifcelectricconductancemeasure",nullptr )
+,		SchemaEntry("ifcproceduretypeenum",nullptr )
+,		SchemaEntry("ifcflowinstrumenttypeenum",nullptr )
+,		SchemaEntry("ifcelectricmotortypeenum",nullptr )
+,		SchemaEntry("ifcsurfaceside",nullptr )
+,		SchemaEntry("ifcstructuralcurvetypeenum",nullptr )
+,		SchemaEntry("ifccondensertypeenum",nullptr )
+,		SchemaEntry("ifclinearstiffnessmeasure",nullptr )
+,		SchemaEntry("ifcunitenum",nullptr )
+,		SchemaEntry("ifcoccupanttypeenum",nullptr )
+,		SchemaEntry("ifcthermalloadtypeenum",nullptr )
+,		SchemaEntry("ifcreinforcingbarroleenum",nullptr )
+,		SchemaEntry("ifcbenchmarkenum",nullptr )
+,		SchemaEntry("ifcpositiveplaneanglemeasure",nullptr )
+,		SchemaEntry("ifctexttransformation",nullptr )
+,		SchemaEntry("ifcdraughtingcalloutelement",nullptr )
+,		SchemaEntry("ifcratiomeasure",nullptr )
+,		SchemaEntry("ifcsolidanglemeasure",nullptr )
+,		SchemaEntry("ifcpipesegmenttypeenum",nullptr )
+,		SchemaEntry("ifccablecarriersegmenttypeenum",nullptr )
+,		SchemaEntry("ifccolourorfactor",nullptr )
+,		SchemaEntry("ifcidentifier",nullptr )
+,		SchemaEntry("ifctendontypeenum",nullptr )
+,		SchemaEntry("ifccontrollertypeenum",nullptr )
+,		SchemaEntry("ifcradioactivitymeasure",nullptr )
+,		SchemaEntry("ifctimemeasure",nullptr )
+,		SchemaEntry("ifcpumptypeenum",nullptr )
+,		SchemaEntry("ifcelectricheatertypeenum",nullptr )
+,		SchemaEntry("ifcbeamtypeenum",nullptr )
+,		SchemaEntry("ifcstateenum",nullptr )
+,		SchemaEntry("ifcsiprefix",nullptr )
+,		SchemaEntry("ifcnumericmeasure",nullptr )
+,		SchemaEntry("ifcoutlettypeenum",nullptr )
+,		SchemaEntry("ifccompoundplaneanglemeasure",nullptr )
+,		SchemaEntry("ifcservicelifefactortypeenum",nullptr )
+,		SchemaEntry("ifclogicaloperatorenum",nullptr )
+,		SchemaEntry("ifcbooleanoperand",nullptr )
+,		SchemaEntry("ifcobjectreferenceselect",nullptr )
+,		SchemaEntry("ifccooledbeamtypeenum",nullptr )
+,		SchemaEntry("ifcductsilencertypeenum",nullptr )
+,		SchemaEntry("ifcsectionalareaintegralmeasure",nullptr )
+,		SchemaEntry("ifcfontvariant",nullptr )
+,		SchemaEntry("ifcvolumetricflowratemeasure",nullptr )
+,		SchemaEntry("ifcplatetypeenum",nullptr )
+,		SchemaEntry("ifcenvironmentalimpactcategoryenum",nullptr )
+,		SchemaEntry("ifcvibrationisolatortypeenum",nullptr )
+,		SchemaEntry("ifcthermodynamictemperaturemeasure",nullptr )
+,		SchemaEntry("ifcrotationalmassmeasure",nullptr )
+,		SchemaEntry("ifcsecondinminute",nullptr )
+,		SchemaEntry("ifcdayinmonthnumber",nullptr )
+,		SchemaEntry("ifcdimensioncount",nullptr )
+,		SchemaEntry("ifcwindowstyleoperationenum",nullptr )
+,		SchemaEntry("ifcthermalresistancemeasure",nullptr )
+,		SchemaEntry("ifcmeasurevalue",nullptr )
+,		SchemaEntry("ifcwindowpaneloperationenum",nullptr )
+,		SchemaEntry("ifcchillertypeenum",nullptr )
+,		SchemaEntry("ifcpositiveratiomeasure",nullptr )
+,		SchemaEntry("ifcinteger",nullptr )
+,		SchemaEntry("ifclogical",nullptr )
+,		SchemaEntry("ifcjunctionboxtypeenum",nullptr )
+,		SchemaEntry("ifcaddresstypeenum",nullptr )
+,		SchemaEntry("ifcwasteterminaltypeenum",nullptr )
+,		SchemaEntry("ifctrimmingselect",nullptr )
+,		SchemaEntry("ifclightemissionsourceenum",nullptr )
+,		SchemaEntry("ifcsoundscaleenum",nullptr )
+,		SchemaEntry("ifcluminousfluxmeasure",nullptr )
+,		SchemaEntry("ifcelectricresistancemeasure",nullptr )
+,		SchemaEntry("ifcintegercountratemeasure",nullptr )
+,		SchemaEntry("ifcphysicalorvirtualenum",nullptr )
+,		SchemaEntry("ifcmolecularweightmeasure",nullptr )
+,		SchemaEntry("ifcprofiletypeenum",nullptr )
+,		SchemaEntry("ifcboxalignment",nullptr )
+,		SchemaEntry("ifcglobalorlocalenum",nullptr )
+,		SchemaEntry("ifcspecularroughness",nullptr )
+,		SchemaEntry("ifclamptypeenum",nullptr )
+,		SchemaEntry("ifcpiletypeenum",nullptr )
+,		SchemaEntry("ifcelectriccurrentmeasure",nullptr )
+,		SchemaEntry("ifcfantypeenum",nullptr )
+,		SchemaEntry("ifcsurfaceorfacesurface",nullptr )
+,		SchemaEntry("ifcpipefittingtypeenum",nullptr )
+,		SchemaEntry("ifctanktypeenum",nullptr )
+,		SchemaEntry("ifccurvefontorscaledcurvefontselect",nullptr )
+,		SchemaEntry("ifcwindowstyleconstructionenum",nullptr )
+,		SchemaEntry("ifcairterminalboxtypeenum",nullptr )
+,		SchemaEntry("ifcstairflighttypeenum",nullptr )
+,		SchemaEntry("ifcluminousintensitymeasure",nullptr )
+,		SchemaEntry("ifcmotorconnectiontypeenum",nullptr )
+,		SchemaEntry("ifcplaneanglemeasure",nullptr )
+,		SchemaEntry("ifcactuatortypeenum",nullptr )
+,		SchemaEntry("ifccolumntypeenum",nullptr )
+,		SchemaEntry("ifctextfontselect",nullptr )
+,		SchemaEntry("ifcdoorpanelpositionenum",nullptr )
+,		SchemaEntry("ifccoiltypeenum",nullptr )
+,		SchemaEntry("ifcangularvelocitymeasure",nullptr )
+,		SchemaEntry("ifcanalysismodeltypeenum",nullptr )
+,		SchemaEntry("ifclibraryselect",nullptr )
+,		SchemaEntry("ifcforcemeasure",nullptr )
+,		SchemaEntry("ifcfillareastyletileshapeselect",nullptr )
+,		SchemaEntry("ifcelectricappliancetypeenum",nullptr )
+,		SchemaEntry("ifcsurfacetextureenum",nullptr )
+,		SchemaEntry("ifccharacterstyleselect",nullptr )
+,		SchemaEntry("ifcenergymeasure",nullptr )
+,		SchemaEntry("ifcreal",nullptr )
+,		SchemaEntry("ifccompressortypeenum",nullptr )
+,		SchemaEntry("ifcelectricdistributionpointfunctionenum",nullptr )
 ,		SchemaEntry("ifcroot",&STEP::ObjectHelper<IfcRoot,4>::Construct )
 ,		SchemaEntry("ifcobjectdefinition",&STEP::ObjectHelper<IfcObjectDefinition,0>::Construct )
 ,		SchemaEntry("ifctypeobject",&STEP::ObjectHelper<IfcTypeObject,2>::Construct )
@@ -1058,30 +1063,30 @@ template <> size_t GenericFill<IfcRoot>(const DB& db, const LIST& params, IfcRoo
 	if (params.GetSize() < 4) { throw STEP::TypeError("expected 4 arguments to IfcRoot"); }    do { // convert the 'GlobalId' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcRoot,4>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->GlobalId, arg, db ); break; } 
+        try { GenericConvert( in->GlobalId, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcRoot to be a `IfcGloballyUniqueId`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'OwnerHistory' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcRoot,4>::aux_is_derived[1]=true; break; }
-        try { GenericConvert( in->OwnerHistory, arg, db ); break; } 
+        try { GenericConvert( in->OwnerHistory, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 1 to IfcRoot to be a `IfcOwnerHistory`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'Name' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcRoot,4>::aux_is_derived[2]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->Name, arg, db ); break; } 
+        try { GenericConvert( in->Name, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 2 to IfcRoot to be a `IfcLabel`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'Description' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcRoot,4>::aux_is_derived[3]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->Description, arg, db ); break; } 
+        try { GenericConvert( in->Description, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 3 to IfcRoot to be a `IfcText`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcObjectDefinition>(const DB& db, const LIST& params, IfcObjectDefinition* in)
@@ -1145,30 +1150,30 @@ template <> size_t GenericFill<IfcRepresentation>(const DB& db, const LIST& para
 	if (params.GetSize() < 4) { throw STEP::TypeError("expected 4 arguments to IfcRepresentation"); }    do { // convert the 'ContextOfItems' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcRepresentation,4>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->ContextOfItems, arg, db ); break; } 
+        try { GenericConvert( in->ContextOfItems, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcRepresentation to be a `IfcRepresentationContext`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'RepresentationIdentifier' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcRepresentation,4>::aux_is_derived[1]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->RepresentationIdentifier, arg, db ); break; } 
+        try { GenericConvert( in->RepresentationIdentifier, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 1 to IfcRepresentation to be a `IfcLabel`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'RepresentationType' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcRepresentation,4>::aux_is_derived[2]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->RepresentationType, arg, db ); break; } 
+        try { GenericConvert( in->RepresentationType, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 2 to IfcRepresentation to be a `IfcLabel`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'Items' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcRepresentation,4>::aux_is_derived[3]=true; break; }
-        try { GenericConvert( in->Items, arg, db ); break; } 
+        try { GenericConvert( in->Items, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 3 to IfcRepresentation to be a `SET [1:?] OF IfcRepresentationItem`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcShapeModel>(const DB& db, const LIST& params, IfcShapeModel* in)
@@ -1232,10 +1237,10 @@ template <> size_t GenericFill<IfcObject>(const DB& db, const LIST& params, IfcO
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcObject,1>::aux_is_derived[0]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->ObjectType, arg, db ); break; } 
+        try { GenericConvert( in->ObjectType, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 4 to IfcObject to be a `IfcLabel`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcControl>(const DB& db, const LIST& params, IfcControl* in)
@@ -1285,23 +1290,23 @@ template <> size_t GenericFill<IfcProductRepresentation>(const DB& db, const LIS
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcProductRepresentation,3>::aux_is_derived[0]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->Name, arg, db ); break; } 
+        try { GenericConvert( in->Name, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcProductRepresentation to be a `IfcLabel`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'Description' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcProductRepresentation,3>::aux_is_derived[1]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->Description, arg, db ); break; } 
+        try { GenericConvert( in->Description, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 1 to IfcProductRepresentation to be a `IfcText`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'Representations' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcProductRepresentation,3>::aux_is_derived[2]=true; break; }
-        try { GenericConvert( in->Representations, arg, db ); break; } 
+        try { GenericConvert( in->Representations, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 2 to IfcProductRepresentation to be a `LIST [1:?] OF IfcRepresentation`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcProduct>(const DB& db, const LIST& params, IfcProduct* in)
@@ -1311,17 +1316,17 @@ template <> size_t GenericFill<IfcProduct>(const DB& db, const LIST& params, Ifc
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcProduct,2>::aux_is_derived[0]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->ObjectPlacement, arg, db ); break; } 
+        try { GenericConvert( in->ObjectPlacement, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 5 to IfcProduct to be a `IfcObjectPlacement`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'Representation' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcProduct,2>::aux_is_derived[1]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->Representation, arg, db ); break; } 
+        try { GenericConvert( in->Representation, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 6 to IfcProduct to be a `IfcProductRepresentation`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcElement>(const DB& db, const LIST& params, IfcElement* in)
@@ -1331,10 +1336,10 @@ template <> size_t GenericFill<IfcElement>(const DB& db, const LIST& params, Ifc
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcElement,1>::aux_is_derived[0]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->Tag, arg, db ); break; } 
+        try { GenericConvert( in->Tag, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 7 to IfcElement to be a `IfcIdentifier`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcDistributionElement>(const DB& db, const LIST& params, IfcDistributionElement* in)
@@ -1369,16 +1374,16 @@ template <> size_t GenericFill<IfcCompositeCurve>(const DB& db, const LIST& para
 	if (params.GetSize() < 2) { throw STEP::TypeError("expected 2 arguments to IfcCompositeCurve"); }    do { // convert the 'Segments' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcCompositeCurve,2>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->Segments, arg, db ); break; } 
+        try { GenericConvert( in->Segments, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcCompositeCurve to be a `LIST [1:?] OF IfcCompositeCurveSegment`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'SelfIntersect' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcCompositeCurve,2>::aux_is_derived[1]=true; break; }
-        try { GenericConvert( in->SelfIntersect, arg, db ); break; } 
+        try { GenericConvert( in->SelfIntersect, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 1 to IfcCompositeCurve to be a `LOGICAL`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<Ifc2DCompositeCurve>(const DB& db, const LIST& params, Ifc2DCompositeCurve* in)
@@ -1395,30 +1400,30 @@ template <> size_t GenericFill<IfcCartesianTransformationOperator>(const DB& db,
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcCartesianTransformationOperator,4>::aux_is_derived[0]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->Axis1, arg, db ); break; } 
+        try { GenericConvert( in->Axis1, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcCartesianTransformationOperator to be a `IfcDirection`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'Axis2' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcCartesianTransformationOperator,4>::aux_is_derived[1]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->Axis2, arg, db ); break; } 
+        try { GenericConvert( in->Axis2, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 1 to IfcCartesianTransformationOperator to be a `IfcDirection`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'LocalOrigin' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcCartesianTransformationOperator,4>::aux_is_derived[2]=true; break; }
-        try { GenericConvert( in->LocalOrigin, arg, db ); break; } 
+        try { GenericConvert( in->LocalOrigin, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 2 to IfcCartesianTransformationOperator to be a `IfcCartesianPoint`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'Scale' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcCartesianTransformationOperator,4>::aux_is_derived[3]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->Scale, arg, db ); break; } 
+        try { GenericConvert( in->Scale, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 3 to IfcCartesianTransformationOperator to be a `REAL`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcCartesianTransformationOperator3D>(const DB& db, const LIST& params, IfcCartesianTransformationOperator3D* in)
@@ -1428,10 +1433,10 @@ template <> size_t GenericFill<IfcCartesianTransformationOperator3D>(const DB& d
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcCartesianTransformationOperator3D,1>::aux_is_derived[0]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->Axis3, arg, db ); break; } 
+        try { GenericConvert( in->Axis3, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 4 to IfcCartesianTransformationOperator3D to be a `IfcDirection`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcProperty>(const DB& db, const LIST& params, IfcProperty* in)
@@ -1440,17 +1445,17 @@ template <> size_t GenericFill<IfcProperty>(const DB& db, const LIST& params, If
 	if (params.GetSize() < 2) { throw STEP::TypeError("expected 2 arguments to IfcProperty"); }    do { // convert the 'Name' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcProperty,2>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->Name, arg, db ); break; } 
+        try { GenericConvert( in->Name, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcProperty to be a `IfcIdentifier`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'Description' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcProperty,2>::aux_is_derived[1]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->Description, arg, db ); break; } 
+        try { GenericConvert( in->Description, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 1 to IfcProperty to be a `IfcText`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcSimpleProperty>(const DB& db, const LIST& params, IfcSimpleProperty* in)
@@ -1492,10 +1497,10 @@ template <> size_t GenericFill<IfcElementarySurface>(const DB& db, const LIST& p
 	if (params.GetSize() < 1) { throw STEP::TypeError("expected 1 arguments to IfcElementarySurface"); }    do { // convert the 'Position' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcElementarySurface,1>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->Position, arg, db ); break; } 
+        try { GenericConvert( in->Position, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcElementarySurface to be a `IfcAxis2Placement3D`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcPlane>(const DB& db, const LIST& params, IfcPlane* in)
@@ -1510,22 +1515,22 @@ template <> size_t GenericFill<IfcBooleanResult>(const DB& db, const LIST& param
 	if (params.GetSize() < 3) { throw STEP::TypeError("expected 3 arguments to IfcBooleanResult"); }    do { // convert the 'Operator' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcBooleanResult,3>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->Operator, arg, db ); break; } 
+        try { GenericConvert( in->Operator, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcBooleanResult to be a `IfcBooleanOperator`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'FirstOperand' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcBooleanResult,3>::aux_is_derived[1]=true; break; }
-        try { GenericConvert( in->FirstOperand, arg, db ); break; } 
+        try { GenericConvert( in->FirstOperand, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 1 to IfcBooleanResult to be a `IfcBooleanOperand`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'SecondOperand' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcBooleanResult,3>::aux_is_derived[2]=true; break; }
-        try { GenericConvert( in->SecondOperand, arg, db ); break; } 
+        try { GenericConvert( in->SecondOperand, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 2 to IfcBooleanResult to be a `IfcBooleanOperand`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcBooleanClippingResult>(const DB& db, const LIST& params, IfcBooleanClippingResult* in)
@@ -1546,10 +1551,10 @@ template <> size_t GenericFill<IfcManifoldSolidBrep>(const DB& db, const LIST& p
 	if (params.GetSize() < 1) { throw STEP::TypeError("expected 1 arguments to IfcManifoldSolidBrep"); }    do { // convert the 'Outer' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcManifoldSolidBrep,1>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->Outer, arg, db ); break; } 
+        try { GenericConvert( in->Outer, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcManifoldSolidBrep to be a `IfcClosedShell`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcFlowTerminalType>(const DB& db, const LIST& params, IfcFlowTerminalType* in)
@@ -1625,15 +1630,15 @@ template <> size_t GenericFill<IfcRelFillsElement>(const DB& db, const LIST& par
 	size_t base = GenericFill(db,params,static_cast<IfcRelConnects*>(in));
 	if (params.GetSize() < 6) { throw STEP::TypeError("expected 6 arguments to IfcRelFillsElement"); }    do { // convert the 'RelatingOpeningElement' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->RelatingOpeningElement, arg, db ); break; } 
+        try { GenericConvert( in->RelatingOpeningElement, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 4 to IfcRelFillsElement to be a `IfcOpeningElement`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'RelatedBuildingElement' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->RelatedBuildingElement, arg, db ); break; } 
+        try { GenericConvert( in->RelatedBuildingElement, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 5 to IfcRelFillsElement to be a `IfcElement`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcProcedure>(const DB& db, const LIST& params, IfcProcedure* in)
@@ -1676,15 +1681,15 @@ template <> size_t GenericFill<IfcRelContainedInSpatialStructure>(const DB& db, 
 	size_t base = GenericFill(db,params,static_cast<IfcRelConnects*>(in));
 	if (params.GetSize() < 6) { throw STEP::TypeError("expected 6 arguments to IfcRelContainedInSpatialStructure"); }    do { // convert the 'RelatedElements' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->RelatedElements, arg, db ); break; } 
+        try { GenericConvert( in->RelatedElements, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 4 to IfcRelContainedInSpatialStructure to be a `SET [1:?] OF IfcProduct`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'RelatingStructure' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->RelatingStructure, arg, db ); break; } 
+        try { GenericConvert( in->RelatingStructure, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 5 to IfcRelContainedInSpatialStructure to be a `IfcSpatialStructureElement`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcTopologicalRepresentationItem>(const DB& db, const LIST& params, IfcTopologicalRepresentationItem* in)
@@ -1767,10 +1772,10 @@ template <> size_t GenericFill<IfcDirection>(const DB& db, const LIST& params, I
 	size_t base = GenericFill(db,params,static_cast<IfcGeometricRepresentationItem*>(in));
 	if (params.GetSize() < 1) { throw STEP::TypeError("expected 1 arguments to IfcDirection"); }    do { // convert the 'DirectionRatios' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->DirectionRatios, arg, db ); break; } 
+        try { GenericConvert( in->DirectionRatios, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcDirection to be a `LIST [2:3] OF REAL`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcProfileDef>(const DB& db, const LIST& params, IfcProfileDef* in)
@@ -1779,17 +1784,17 @@ template <> size_t GenericFill<IfcProfileDef>(const DB& db, const LIST& params, 
 	if (params.GetSize() < 2) { throw STEP::TypeError("expected 2 arguments to IfcProfileDef"); }    do { // convert the 'ProfileType' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcProfileDef,2>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->ProfileType, arg, db ); break; } 
+        try { GenericConvert( in->ProfileType, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcProfileDef to be a `IfcProfileTypeEnum`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'ProfileName' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcProfileDef,2>::aux_is_derived[1]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->ProfileName, arg, db ); break; } 
+        try { GenericConvert( in->ProfileName, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 1 to IfcProfileDef to be a `IfcLabel`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcParameterizedProfileDef>(const DB& db, const LIST& params, IfcParameterizedProfileDef* in)
@@ -1798,10 +1803,10 @@ template <> size_t GenericFill<IfcParameterizedProfileDef>(const DB& db, const L
 	if (params.GetSize() < 3) { throw STEP::TypeError("expected 3 arguments to IfcParameterizedProfileDef"); }    do { // convert the 'Position' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcParameterizedProfileDef,1>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->Position, arg, db ); break; } 
+        try { GenericConvert( in->Position, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 2 to IfcParameterizedProfileDef to be a `IfcAxis2Placement2D`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcCShapeProfileDef>(const DB& db, const LIST& params, IfcCShapeProfileDef* in)
@@ -1905,10 +1910,10 @@ template <> size_t GenericFill<IfcCircleProfileDef>(const DB& db, const LIST& pa
 	if (params.GetSize() < 4) { throw STEP::TypeError("expected 4 arguments to IfcCircleProfileDef"); }    do { // convert the 'Radius' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcCircleProfileDef,1>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->Radius, arg, db ); break; } 
+        try { GenericConvert( in->Radius, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 3 to IfcCircleProfileDef to be a `IfcPositiveLengthMeasure`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcCircleHollowProfileDef>(const DB& db, const LIST& params, IfcCircleHollowProfileDef* in)
@@ -1916,10 +1921,10 @@ template <> size_t GenericFill<IfcCircleHollowProfileDef>(const DB& db, const LI
 	size_t base = GenericFill(db,params,static_cast<IfcCircleProfileDef*>(in));
 	if (params.GetSize() < 5) { throw STEP::TypeError("expected 5 arguments to IfcCircleHollowProfileDef"); }    do { // convert the 'WallThickness' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->WallThickness, arg, db ); break; } 
+        try { GenericConvert( in->WallThickness, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 4 to IfcCircleHollowProfileDef to be a `IfcPositiveLengthMeasure`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcPlacement>(const DB& db, const LIST& params, IfcPlacement* in)
@@ -1928,10 +1933,10 @@ template <> size_t GenericFill<IfcPlacement>(const DB& db, const LIST& params, I
 	if (params.GetSize() < 1) { throw STEP::TypeError("expected 1 arguments to IfcPlacement"); }    do { // convert the 'Location' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcPlacement,1>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->Location, arg, db ); break; } 
+        try { GenericConvert( in->Location, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcPlacement to be a `IfcCartesianPoint`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcAxis2Placement3D>(const DB& db, const LIST& params, IfcAxis2Placement3D* in)
@@ -1940,16 +1945,16 @@ template <> size_t GenericFill<IfcAxis2Placement3D>(const DB& db, const LIST& pa
 	if (params.GetSize() < 3) { throw STEP::TypeError("expected 3 arguments to IfcAxis2Placement3D"); }    do { // convert the 'Axis' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->Axis, arg, db ); break; } 
+        try { GenericConvert( in->Axis, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 1 to IfcAxis2Placement3D to be a `IfcDirection`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'RefDirection' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->RefDirection, arg, db ); break; } 
+        try { GenericConvert( in->RefDirection, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 2 to IfcAxis2Placement3D to be a `IfcDirection`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcPresentationStyle>(const DB& db, const LIST& params, IfcPresentationStyle* in)
@@ -1959,10 +1964,10 @@ template <> size_t GenericFill<IfcPresentationStyle>(const DB& db, const LIST& p
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcPresentationStyle,1>::aux_is_derived[0]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->Name, arg, db ); break; } 
+        try { GenericConvert( in->Name, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcPresentationStyle to be a `IfcLabel`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcEquipmentElement>(const DB& db, const LIST& params, IfcEquipmentElement* in)
@@ -1977,20 +1982,20 @@ template <> size_t GenericFill<IfcCompositeCurveSegment>(const DB& db, const LIS
 	size_t base = GenericFill(db,params,static_cast<IfcGeometricRepresentationItem*>(in));
 	if (params.GetSize() < 3) { throw STEP::TypeError("expected 3 arguments to IfcCompositeCurveSegment"); }    do { // convert the 'Transition' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->Transition, arg, db ); break; } 
+        try { GenericConvert( in->Transition, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcCompositeCurveSegment to be a `IfcTransitionCode`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'SameSense' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->SameSense, arg, db ); break; } 
+        try { GenericConvert( in->SameSense, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 1 to IfcCompositeCurveSegment to be a `BOOLEAN`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'ParentCurve' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->ParentCurve, arg, db ); break; } 
+        try { GenericConvert( in->ParentCurve, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 2 to IfcCompositeCurveSegment to be a `IfcCurve`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcRectangleProfileDef>(const DB& db, const LIST& params, IfcRectangleProfileDef* in)
@@ -1999,16 +2004,16 @@ template <> size_t GenericFill<IfcRectangleProfileDef>(const DB& db, const LIST&
 	if (params.GetSize() < 5) { throw STEP::TypeError("expected 5 arguments to IfcRectangleProfileDef"); }    do { // convert the 'XDim' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcRectangleProfileDef,2>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->XDim, arg, db ); break; } 
+        try { GenericConvert( in->XDim, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 3 to IfcRectangleProfileDef to be a `IfcPositiveLengthMeasure`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'YDim' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcRectangleProfileDef,2>::aux_is_derived[1]=true; break; }
-        try { GenericConvert( in->YDim, arg, db ); break; } 
+        try { GenericConvert( in->YDim, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 4 to IfcRectangleProfileDef to be a `IfcPositiveLengthMeasure`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcBuildingElementProxy>(const DB& db, const LIST& params, IfcBuildingElementProxy* in)
@@ -2101,15 +2106,15 @@ template <> size_t GenericFill<IfcLocalPlacement>(const DB& db, const LIST& para
 	if (params.GetSize() < 2) { throw STEP::TypeError("expected 2 arguments to IfcLocalPlacement"); }    do { // convert the 'PlacementRelTo' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->PlacementRelTo, arg, db ); break; } 
+        try { GenericConvert( in->PlacementRelTo, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcLocalPlacement to be a `IfcObjectPlacement`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'RelativePlacement' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->RelativePlacement, arg, db ); break; } 
+        try { GenericConvert( in->RelativePlacement, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 1 to IfcLocalPlacement to be a `IfcAxis2Placement`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcSweptAreaSolid>(const DB& db, const LIST& params, IfcSweptAreaSolid* in)
@@ -2118,16 +2123,16 @@ template <> size_t GenericFill<IfcSweptAreaSolid>(const DB& db, const LIST& para
 	if (params.GetSize() < 2) { throw STEP::TypeError("expected 2 arguments to IfcSweptAreaSolid"); }    do { // convert the 'SweptArea' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcSweptAreaSolid,2>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->SweptArea, arg, db ); break; } 
+        try { GenericConvert( in->SweptArea, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcSweptAreaSolid to be a `IfcProfileDef`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'Position' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcSweptAreaSolid,2>::aux_is_derived[1]=true; break; }
-        try { GenericConvert( in->Position, arg, db ); break; } 
+        try { GenericConvert( in->Position, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 1 to IfcSweptAreaSolid to be a `IfcAxis2Placement3D`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcRevolvedAreaSolid>(const DB& db, const LIST& params, IfcRevolvedAreaSolid* in)
@@ -2135,15 +2140,15 @@ template <> size_t GenericFill<IfcRevolvedAreaSolid>(const DB& db, const LIST& p
 	size_t base = GenericFill(db,params,static_cast<IfcSweptAreaSolid*>(in));
 	if (params.GetSize() < 4) { throw STEP::TypeError("expected 4 arguments to IfcRevolvedAreaSolid"); }    do { // convert the 'Axis' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->Axis, arg, db ); break; } 
+        try { GenericConvert( in->Axis, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 2 to IfcRevolvedAreaSolid to be a `IfcAxis1Placement`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'Angle' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->Angle, arg, db ); break; } 
+        try { GenericConvert( in->Angle, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 3 to IfcRevolvedAreaSolid to be a `IfcPlaneAngleMeasure`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcStructuralSurfaceConnection>(const DB& db, const LIST& params, IfcStructuralSurfaceConnection* in)
@@ -2165,31 +2170,31 @@ template <> size_t GenericFill<IfcSweptDiskSolid>(const DB& db, const LIST& para
 	size_t base = GenericFill(db,params,static_cast<IfcSolidModel*>(in));
 	if (params.GetSize() < 5) { throw STEP::TypeError("expected 5 arguments to IfcSweptDiskSolid"); }    do { // convert the 'Directrix' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->Directrix, arg, db ); break; } 
+        try { GenericConvert( in->Directrix, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcSweptDiskSolid to be a `IfcCurve`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'Radius' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->Radius, arg, db ); break; } 
+        try { GenericConvert( in->Radius, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 1 to IfcSweptDiskSolid to be a `IfcPositiveLengthMeasure`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'InnerRadius' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->InnerRadius, arg, db ); break; } 
+        try { GenericConvert( in->InnerRadius, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 2 to IfcSweptDiskSolid to be a `IfcPositiveLengthMeasure`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'StartParam' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->StartParam, arg, db ); break; } 
+        try { GenericConvert( in->StartParam, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 3 to IfcSweptDiskSolid to be a `IfcParameterValue`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'EndParam' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->EndParam, arg, db ); break; } 
+        try { GenericConvert( in->EndParam, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 4 to IfcSweptDiskSolid to be a `IfcParameterValue`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcHalfSpaceSolid>(const DB& db, const LIST& params, IfcHalfSpaceSolid* in)
@@ -2198,16 +2203,16 @@ template <> size_t GenericFill<IfcHalfSpaceSolid>(const DB& db, const LIST& para
 	if (params.GetSize() < 2) { throw STEP::TypeError("expected 2 arguments to IfcHalfSpaceSolid"); }    do { // convert the 'BaseSurface' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcHalfSpaceSolid,2>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->BaseSurface, arg, db ); break; } 
+        try { GenericConvert( in->BaseSurface, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcHalfSpaceSolid to be a `IfcSurface`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'AgreementFlag' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcHalfSpaceSolid,2>::aux_is_derived[1]=true; break; }
-        try { GenericConvert( in->AgreementFlag, arg, db ); break; } 
+        try { GenericConvert( in->AgreementFlag, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 1 to IfcHalfSpaceSolid to be a `BOOLEAN`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcPolygonalBoundedHalfSpace>(const DB& db, const LIST& params, IfcPolygonalBoundedHalfSpace* in)
@@ -2215,15 +2220,15 @@ template <> size_t GenericFill<IfcPolygonalBoundedHalfSpace>(const DB& db, const
 	size_t base = GenericFill(db,params,static_cast<IfcHalfSpaceSolid*>(in));
 	if (params.GetSize() < 4) { throw STEP::TypeError("expected 4 arguments to IfcPolygonalBoundedHalfSpace"); }    do { // convert the 'Position' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->Position, arg, db ); break; } 
+        try { GenericConvert( in->Position, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 2 to IfcPolygonalBoundedHalfSpace to be a `IfcAxis2Placement3D`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'PolygonalBoundary' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->PolygonalBoundary, arg, db ); break; } 
+        try { GenericConvert( in->PolygonalBoundary, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 3 to IfcPolygonalBoundedHalfSpace to be a `IfcBoundedCurve`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcTimeSeriesSchedule>(const DB& db, const LIST& params, IfcTimeSeriesSchedule* in)
@@ -2246,26 +2251,26 @@ template <> size_t GenericFill<IfcProject>(const DB& db, const LIST& params, Ifc
 	if (params.GetSize() < 9) { throw STEP::TypeError("expected 9 arguments to IfcProject"); }    do { // convert the 'LongName' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->LongName, arg, db ); break; } 
+        try { GenericConvert( in->LongName, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 5 to IfcProject to be a `IfcLabel`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'Phase' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->Phase, arg, db ); break; } 
+        try { GenericConvert( in->Phase, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 6 to IfcProject to be a `IfcLabel`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'RepresentationContexts' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->RepresentationContexts, arg, db ); break; } 
+        try { GenericConvert( in->RepresentationContexts, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 7 to IfcProject to be a `SET [1:?] OF IfcRepresentationContext`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'UnitsInContext' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->UnitsInContext, arg, db ); break; } 
+        try { GenericConvert( in->UnitsInContext, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 8 to IfcProject to be a `IfcUnitAssignment`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcEvaporatorType>(const DB& db, const LIST& params, IfcEvaporatorType* in)
@@ -2322,30 +2327,30 @@ template <> size_t GenericFill<IfcTrimmedCurve>(const DB& db, const LIST& params
 	size_t base = GenericFill(db,params,static_cast<IfcBoundedCurve*>(in));
 	if (params.GetSize() < 5) { throw STEP::TypeError("expected 5 arguments to IfcTrimmedCurve"); }    do { // convert the 'BasisCurve' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->BasisCurve, arg, db ); break; } 
+        try { GenericConvert( in->BasisCurve, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcTrimmedCurve to be a `IfcCurve`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'Trim1' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->Trim1, arg, db ); break; } 
+        try { GenericConvert( in->Trim1, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 1 to IfcTrimmedCurve to be a `SET [1:2] OF IfcTrimmingSelect`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'Trim2' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->Trim2, arg, db ); break; } 
+        try { GenericConvert( in->Trim2, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 2 to IfcTrimmedCurve to be a `SET [1:2] OF IfcTrimmingSelect`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'SenseAgreement' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->SenseAgreement, arg, db ); break; } 
+        try { GenericConvert( in->SenseAgreement, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 3 to IfcTrimmedCurve to be a `BOOLEAN`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'MasterRepresentation' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->MasterRepresentation, arg, db ); break; } 
+        try { GenericConvert( in->MasterRepresentation, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 4 to IfcTrimmedCurve to be a `IfcTrimmingPreference`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcRelDefines>(const DB& db, const LIST& params, IfcRelDefines* in)
@@ -2354,10 +2359,10 @@ template <> size_t GenericFill<IfcRelDefines>(const DB& db, const LIST& params, 
 	if (params.GetSize() < 5) { throw STEP::TypeError("expected 5 arguments to IfcRelDefines"); }    do { // convert the 'RelatedObjects' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcRelDefines,1>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->RelatedObjects, arg, db ); break; } 
+        try { GenericConvert( in->RelatedObjects, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 4 to IfcRelDefines to be a `SET [1:?] OF IfcObject`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcRelDefinesByProperties>(const DB& db, const LIST& params, IfcRelDefinesByProperties* in)
@@ -2366,10 +2371,10 @@ template <> size_t GenericFill<IfcRelDefinesByProperties>(const DB& db, const LI
 	if (params.GetSize() < 6) { throw STEP::TypeError("expected 6 arguments to IfcRelDefinesByProperties"); }    do { // convert the 'RelatingPropertyDefinition' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcRelDefinesByProperties,1>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->RelatingPropertyDefinition, arg, db ); break; } 
+        try { GenericConvert( in->RelatingPropertyDefinition, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 5 to IfcRelDefinesByProperties to be a `IfcPropertySetDefinition`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcActor>(const DB& db, const LIST& params, IfcActor* in)
@@ -2399,10 +2404,10 @@ template <> size_t GenericFill<IfcArbitraryOpenProfileDef>(const DB& db, const L
 	if (params.GetSize() < 3) { throw STEP::TypeError("expected 3 arguments to IfcArbitraryOpenProfileDef"); }    do { // convert the 'Curve' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcArbitraryOpenProfileDef,1>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->Curve, arg, db ); break; } 
+        try { GenericConvert( in->Curve, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 2 to IfcArbitraryOpenProfileDef to be a `IfcBoundedCurve`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcPermit>(const DB& db, const LIST& params, IfcPermit* in)
@@ -2565,16 +2570,16 @@ template <> size_t GenericFill<IfcRelDecomposes>(const DB& db, const LIST& param
 	if (params.GetSize() < 6) { throw STEP::TypeError("expected 6 arguments to IfcRelDecomposes"); }    do { // convert the 'RelatingObject' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcRelDecomposes,2>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->RelatingObject, arg, db ); break; } 
+        try { GenericConvert( in->RelatingObject, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 4 to IfcRelDecomposes to be a `IfcObjectDefinition`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'RelatedObjects' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcRelDecomposes,2>::aux_is_derived[1]=true; break; }
-        try { GenericConvert( in->RelatedObjects, arg, db ); break; } 
+        try { GenericConvert( in->RelatedObjects, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 5 to IfcRelDecomposes to be a `SET [1:?] OF IfcObjectDefinition`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcCovering>(const DB& db, const LIST& params, IfcCovering* in)
@@ -2589,10 +2594,10 @@ template <> size_t GenericFill<IfcPolyline>(const DB& db, const LIST& params, If
 	size_t base = GenericFill(db,params,static_cast<IfcBoundedCurve*>(in));
 	if (params.GetSize() < 1) { throw STEP::TypeError("expected 1 arguments to IfcPolyline"); }    do { // convert the 'Points' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->Points, arg, db ); break; } 
+        try { GenericConvert( in->Points, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcPolyline to be a `LIST [2:?] OF IfcCartesianPoint`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcPath>(const DB& db, const LIST& params, IfcPath* in)
@@ -2621,15 +2626,15 @@ template <> size_t GenericFill<IfcMappedItem>(const DB& db, const LIST& params, 
 	size_t base = GenericFill(db,params,static_cast<IfcRepresentationItem*>(in));
 	if (params.GetSize() < 2) { throw STEP::TypeError("expected 2 arguments to IfcMappedItem"); }    do { // convert the 'MappingSource' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->MappingSource, arg, db ); break; } 
+        try { GenericConvert( in->MappingSource, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcMappedItem to be a `IfcRepresentationMap`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'MappingTarget' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->MappingTarget, arg, db ); break; } 
+        try { GenericConvert( in->MappingTarget, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 1 to IfcMappedItem to be a `IfcCartesianTransformationOperator`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcRectangularPyramid>(const DB& db, const LIST& params, IfcRectangularPyramid* in)
@@ -2653,16 +2658,16 @@ template <> size_t GenericFill<IfcNamedUnit>(const DB& db, const LIST& params, I
         std::shared_ptr<const DataType> arg = params[base++];
 		if (dynamic_cast<const UNSET*>(&*arg)) break;
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcNamedUnit,2>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->Dimensions, arg, db ); break; } 
+        try { GenericConvert( in->Dimensions, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcNamedUnit to be a `IfcDimensionalExponents`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'UnitType' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcNamedUnit,2>::aux_is_derived[1]=true; break; }
-        try { GenericConvert( in->UnitType, arg, db ); break; } 
+        try { GenericConvert( in->UnitType, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 1 to IfcNamedUnit to be a `IfcUnitEnum`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcContextDependentUnit>(const DB& db, const LIST& params, IfcContextDependentUnit* in)
@@ -2714,16 +2719,16 @@ template <> size_t GenericFill<IfcSpatialStructureElement>(const DB& db, const L
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcSpatialStructureElement,2>::aux_is_derived[0]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->LongName, arg, db ); break; } 
+        try { GenericConvert( in->LongName, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 7 to IfcSpatialStructureElement to be a `IfcLabel`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'CompositionType' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcSpatialStructureElement,2>::aux_is_derived[1]=true; break; }
-        try { GenericConvert( in->CompositionType, arg, db ); break; } 
+        try { GenericConvert( in->CompositionType, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 8 to IfcSpatialStructureElement to be a `IfcElementCompositionEnum`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcBuilding>(const DB& db, const LIST& params, IfcBuilding* in)
@@ -2732,22 +2737,22 @@ template <> size_t GenericFill<IfcBuilding>(const DB& db, const LIST& params, If
 	if (params.GetSize() < 12) { throw STEP::TypeError("expected 12 arguments to IfcBuilding"); }    do { // convert the 'ElevationOfRefHeight' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->ElevationOfRefHeight, arg, db ); break; } 
+        try { GenericConvert( in->ElevationOfRefHeight, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 9 to IfcBuilding to be a `IfcLengthMeasure`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'ElevationOfTerrain' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->ElevationOfTerrain, arg, db ); break; } 
+        try { GenericConvert( in->ElevationOfTerrain, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 10 to IfcBuilding to be a `IfcLengthMeasure`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'BuildingAddress' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->BuildingAddress, arg, db ); break; } 
+        try { GenericConvert( in->BuildingAddress, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 11 to IfcBuilding to be a `IfcPostalAddress`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcConnectedFaceSet>(const DB& db, const LIST& params, IfcConnectedFaceSet* in)
@@ -2756,10 +2761,10 @@ template <> size_t GenericFill<IfcConnectedFaceSet>(const DB& db, const LIST& pa
 	if (params.GetSize() < 1) { throw STEP::TypeError("expected 1 arguments to IfcConnectedFaceSet"); }    do { // convert the 'CfsFaces' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcConnectedFaceSet,1>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->CfsFaces, arg, db ); break; } 
+        try { GenericConvert( in->CfsFaces, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcConnectedFaceSet to be a `SET [1:?] OF IfcFace`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcOpenShell>(const DB& db, const LIST& params, IfcOpenShell* in)
@@ -2782,10 +2787,10 @@ template <> size_t GenericFill<IfcConic>(const DB& db, const LIST& params, IfcCo
 	if (params.GetSize() < 1) { throw STEP::TypeError("expected 1 arguments to IfcConic"); }    do { // convert the 'Position' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcConic,1>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->Position, arg, db ); break; } 
+        try { GenericConvert( in->Position, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcConic to be a `IfcAxis2Placement`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcCoveringType>(const DB& db, const LIST& params, IfcCoveringType* in)
@@ -2829,35 +2834,35 @@ template <> size_t GenericFill<IfcIShapeProfileDef>(const DB& db, const LIST& pa
 	if (params.GetSize() < 8) { throw STEP::TypeError("expected 8 arguments to IfcIShapeProfileDef"); }    do { // convert the 'OverallWidth' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcIShapeProfileDef,5>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->OverallWidth, arg, db ); break; } 
+        try { GenericConvert( in->OverallWidth, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 3 to IfcIShapeProfileDef to be a `IfcPositiveLengthMeasure`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'OverallDepth' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcIShapeProfileDef,5>::aux_is_derived[1]=true; break; }
-        try { GenericConvert( in->OverallDepth, arg, db ); break; } 
+        try { GenericConvert( in->OverallDepth, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 4 to IfcIShapeProfileDef to be a `IfcPositiveLengthMeasure`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'WebThickness' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcIShapeProfileDef,5>::aux_is_derived[2]=true; break; }
-        try { GenericConvert( in->WebThickness, arg, db ); break; } 
+        try { GenericConvert( in->WebThickness, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 5 to IfcIShapeProfileDef to be a `IfcPositiveLengthMeasure`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'FlangeThickness' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcIShapeProfileDef,5>::aux_is_derived[3]=true; break; }
-        try { GenericConvert( in->FlangeThickness, arg, db ); break; } 
+        try { GenericConvert( in->FlangeThickness, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 6 to IfcIShapeProfileDef to be a `IfcPositiveLengthMeasure`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'FilletRadius' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcIShapeProfileDef,5>::aux_is_derived[4]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->FilletRadius, arg, db ); break; } 
+        try { GenericConvert( in->FilletRadius, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 7 to IfcIShapeProfileDef to be a `IfcPositiveLengthMeasure`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcAsymmetricIShapeProfileDef>(const DB& db, const LIST& params, IfcAsymmetricIShapeProfileDef* in)
@@ -2928,16 +2933,16 @@ template <> size_t GenericFill<IfcPropertyListValue>(const DB& db, const LIST& p
 	size_t base = GenericFill(db,params,static_cast<IfcSimpleProperty*>(in));
 	if (params.GetSize() < 4) { throw STEP::TypeError("expected 4 arguments to IfcPropertyListValue"); }    do { // convert the 'ListValues' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->ListValues, arg, db ); break; } 
+        try { GenericConvert( in->ListValues, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 2 to IfcPropertyListValue to be a `LIST [1:?] OF IfcValue`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'Unit' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->Unit, arg, db ); break; } 
+        try { GenericConvert( in->Unit, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 3 to IfcPropertyListValue to be a `IfcUnit`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcFurnitureStandard>(const DB& db, const LIST& params, IfcFurnitureStandard* in)
@@ -2960,16 +2965,16 @@ template <> size_t GenericFill<IfcDoor>(const DB& db, const LIST& params, IfcDoo
 	if (params.GetSize() < 10) { throw STEP::TypeError("expected 10 arguments to IfcDoor"); }    do { // convert the 'OverallHeight' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->OverallHeight, arg, db ); break; } 
+        try { GenericConvert( in->OverallHeight, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 8 to IfcDoor to be a `IfcPositiveLengthMeasure`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'OverallWidth' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->OverallWidth, arg, db ); break; } 
+        try { GenericConvert( in->OverallWidth, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 9 to IfcDoor to be a `IfcPositiveLengthMeasure`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcStyledItem>(const DB& db, const LIST& params, IfcStyledItem* in)
@@ -2979,23 +2984,23 @@ template <> size_t GenericFill<IfcStyledItem>(const DB& db, const LIST& params, 
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcStyledItem,3>::aux_is_derived[0]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->Item, arg, db ); break; } 
+        try { GenericConvert( in->Item, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcStyledItem to be a `IfcRepresentationItem`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'Styles' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcStyledItem,3>::aux_is_derived[1]=true; break; }
-        try { GenericConvert( in->Styles, arg, db ); break; } 
+        try { GenericConvert( in->Styles, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 1 to IfcStyledItem to be a `SET [1:?] OF IfcPresentationStyleAssignment`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'Name' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcStyledItem,3>::aux_is_derived[2]=true; break; }
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->Name, arg, db ); break; } 
+        try { GenericConvert( in->Name, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 2 to IfcStyledItem to be a `IfcLabel`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcAnnotationOccurrence>(const DB& db, const LIST& params, IfcAnnotationOccurrence* in)
@@ -3018,10 +3023,10 @@ template <> size_t GenericFill<IfcArbitraryClosedProfileDef>(const DB& db, const
 	if (params.GetSize() < 3) { throw STEP::TypeError("expected 3 arguments to IfcArbitraryClosedProfileDef"); }    do { // convert the 'OuterCurve' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcArbitraryClosedProfileDef,1>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->OuterCurve, arg, db ); break; } 
+        try { GenericConvert( in->OuterCurve, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 2 to IfcArbitraryClosedProfileDef to be a `IfcCurve`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcArbitraryProfileDefWithVoids>(const DB& db, const LIST& params, IfcArbitraryProfileDefWithVoids* in)
@@ -3036,15 +3041,15 @@ template <> size_t GenericFill<IfcLine>(const DB& db, const LIST& params, IfcLin
 	size_t base = GenericFill(db,params,static_cast<IfcCurve*>(in));
 	if (params.GetSize() < 2) { throw STEP::TypeError("expected 2 arguments to IfcLine"); }    do { // convert the 'Pnt' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->Pnt, arg, db ); break; } 
+        try { GenericConvert( in->Pnt, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcLine to be a `IfcCartesianPoint`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'Dir' argument
         std::shared_ptr<const DataType> arg = params[base++];
-        try { GenericConvert( in->Dir, arg, db ); break; } 
+        try { GenericConvert( in->Dir, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 1 to IfcLine to be a `IfcVector`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcFlowSegmentType>(const DB& db, const LIST& params, IfcFlowSegmentType* in)
@@ -3067,16 +3072,16 @@ template <> size_t GenericFill<IfcPropertySingleValue>(const DB& db, const LIST&
 	if (params.GetSize() < 4) { throw STEP::TypeError("expected 4 arguments to IfcPropertySingleValue"); }    do { // convert the 'NominalValue' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->NominalValue, arg, db ); break; } 
+        try { GenericConvert( in->NominalValue, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 2 to IfcPropertySingleValue to be a `IfcValue`")); }
-    } while(0);
+    } while (false);
     do { // convert the 'Unit' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const UNSET*>(&*arg)) break;
-        try { GenericConvert( in->Unit, arg, db ); break; } 
+        try { GenericConvert( in->Unit, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 3 to IfcPropertySingleValue to be a `IfcUnit`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcAlarmType>(const DB& db, const LIST& params, IfcAlarmType* in)
@@ -3106,10 +3111,10 @@ template <> size_t GenericFill<IfcSurfaceStyleShading>(const DB& db, const LIST&
 	if (params.GetSize() < 1) { throw STEP::TypeError("expected 1 arguments to IfcSurfaceStyleShading"); }    do { // convert the 'SurfaceColour' argument
         std::shared_ptr<const DataType> arg = params[base++];
         if (dynamic_cast<const ISDERIVED*>(&*arg)) { in->ObjectHelper<Assimp::IFC::Schema_2x3::IfcSurfaceStyleShading,1>::aux_is_derived[0]=true; break; }
-        try { GenericConvert( in->SurfaceColour, arg, db ); break; } 
+        try { GenericConvert( in->SurfaceColour, arg, db ); break; }
         catch (const TypeError& t) { throw TypeError(t.what() + std::string(" - expected argument 0 to IfcSurfaceStyleShading to be a `IfcColourRgb`")); }
-    } while(0);
-	return base;
+    } while (false);
+    return base;
 }
 // -----------------------------------------------------------------------------------------------------------
 template <> size_t GenericFill<IfcPumpType>(const DB& db, const LIST& params, IfcPumpType* in)
@@ -3164,5 +3169,9 @@ template <> size_t GenericFill<IfcLightSourceDirectional>(const DB& db, const LI
 
 } // ! STEP
 } // ! Assimp
+
+#if _MSC_VER
+#    pragma warning(pop)
+#endif // _MSC_VER
 
 #endif

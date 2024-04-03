@@ -336,8 +336,8 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <OutDir>$(SolutionDir)_Compilation\iOS\$(Platform)\$(MSBuildProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)_Compilation\iOS\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\iOS\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_build\iOS\$(Platform)\$(MSBuildProjectName)\</IntDir>
     <IncludePath>../../../include;../../../../../../NativeMemoryManager;../../../../bx/include;../../../../bx/3rdparty;../../../../bimg/include;../../../../bimg/3rdparty;../../../../bimg/3rdparty/astc-codec/include;../../../../bimg/3rdparty/astc-codec;../../../3rdparty/khronos</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">

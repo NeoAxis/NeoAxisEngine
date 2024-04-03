@@ -1,0 +1,11 @@
+Model Information:
+* title:	Flashlight
+* source:	https://sketchfab.com/3d-models/flashlight-5fa9a65e7b0141ee877ed18f4f42d953
+* author:	MAR.COS. (https://sketchfab.com/mar.cos.)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Flashlight" (https://sketchfab.com/3d-models/flashlight-5fa9a65e7b0141ee877ed18f4f42d953) by MAR.COS. (https://sketchfab.com/mar.cos.) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

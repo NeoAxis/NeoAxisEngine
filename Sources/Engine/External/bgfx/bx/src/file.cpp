@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -48,6 +48,8 @@
 #define PLATFORM_MACOS
 #elif defined(__ANDROID__)
 #define PLATFORM_ANDROID
+#elif defined(__linux__)
+#define PLATFORM_LINUX
 #else
 #error Platform is not supported.
 #endif
@@ -101,8 +103,7 @@ namespace bx
 #		define ftello64 _ftelli64
 #	elif 0                   \
 	  || BX_PLATFORM_ANDROID \
-	  || BX_PLATFORM_BSD     \
-	  || BX_PLATFORM_HAIKU   \
+	  || BX_PLATFORM_EMSCRIPTEN \
 	  || BX_PLATFORM_IOS     \
 	  || BX_PLATFORM_OSX
 #		define fseeko64 fseeko
@@ -137,7 +138,7 @@ namespace bx
 			}
 
 			//!!!!betauser
-#if defined(__ANDROID__) || defined(IOS)
+#if defined(__ANDROID__) || defined(IOS) || defined(LINUX)
 			m_file = fopen(_filePath.getCPtr(), "rb");
 #else
 			wchar_t wfilePath[PATH_MAX + 1];
@@ -239,7 +240,7 @@ namespace bx
 			}
 
 			//!!!!betauser
-#if defined(__ANDROID__) || defined(IOS)
+#if defined(__ANDROID__) || defined(IOS) || defined(LINUX)
 			m_file = fopen(_filePath.getCPtr(), _append ? "ab" : "wb");
 #else
 			wchar_t wfilePath[PATH_MAX + 1];

@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Threading;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -145,6 +146,7 @@ namespace NeoAxis
 
 		public Reference<T> this[ int index ]
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				ref var itemByRef = ref _items[ index ];
@@ -152,10 +154,11 @@ namespace NeoAxis
 					this[ index ] = itemByRef.Get( owner );
 				return _items[ index ].value;
 			}
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			set
 			{
 				ref var itemByRef = ref _items[ index ];
-				if( itemByRef.BeginSet( ref value ) )
+				if( itemByRef.BeginSet( this, ref value ) )
 				{
 					try { PerformChangedEvent(); }
 					finally { itemByRef.EndSet(); }
@@ -249,7 +252,6 @@ namespace NeoAxis
 			{
 				throw new NotImplementedException();
 			}
-
 			set
 			{
 				throw new NotImplementedException();

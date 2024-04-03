@@ -2,10 +2,10 @@
 
 .component NeoAxis.Import3D
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1146, 842\"><KW V=\"1\" A=\"4DA5540CAAB6472B72BA4234F22DEA43\"><CGD /><WS UN=\"22FC729D78EA4C5D1F9DE58F9702DAC1\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"BF2DA401C3044BCDF98EE7235259797B\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"4DA5540CAAB6472B72BA4234F22DEA43\"><KP UN=\"F31EDC9B51544ABF218226A72C08E2B2\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"4DA5540CAAB6472B72BA4234F22DEA43\" S=\"False\"><CPD ObjPath=\"$Mesh\" /></KP><KP UN=\"2FD9D394BAEE44CDEF9F460A5875719E\" S=\"False\"><CPD ObjPath=\"$Materials\\$Material.004\\$Material.004 shader graph\" /></KP><KP UN=\"1F630907586C4104B189A2728ABFBF25\" S=\"False\"><CPD ObjPath=\"$Materials\\$Material.005\\$Material.005 shader graph\" /></KP><KP UN=\"37BD94E9302540D86CA484788461708F\" S=\"False\"><CPD ObjPath=\"$Materials\\$Material.006\\$Material.006 shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"4DA5540CAAB6472B72BA4234F22DEA43\"><CGD /><WS UN=\"22FC729D78EA4C5D1F9DE58F9702DAC1\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"BF2DA401C3044BCDF98EE7235259797B\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"4DA5540CAAB6472B72BA4234F22DEA43\"><KP UN=\"F31EDC9B51544ABF218226A72C08E2B2\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"4DA5540CAAB6472B72BA4234F22DEA43\" S=\"False\"><CPD ObjPath=\"$Mesh\" /></KP><KP UN=\"2FD9D394BAEE44CDEF9F460A5875719E\" S=\"False\"><CPD ObjPath=\"$Materials\\$Material.004\\$Material.004 shader graph\" /></KP><KP UN=\"1F630907586C4104B189A2728ABFBF25\" S=\"False\"><CPD ObjPath=\"$Materials\\$Material.005\\$Material.005 shader graph\" /></KP><KP UN=\"37BD94E9302540D86CA484788461708F\" S=\"False\"><CPD ObjPath=\"$Materials\\$Material.006\\$Material.006 shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	LODs = False
 	LODLevels = 2
-	LODVoxelGrid = _128
+	LODVoxelGrid = _75
 	LODVoxelFillHolesDistance = 10000
 	.component NeoAxis.Component
 	{
@@ -129,7 +129,7 @@
 				Value
 				{
 					Length = 960
-					.elements = "UEsDBBQAAAAIABlLJ1aBd8BjqwAAAMADAAAEAAAAZmlsZX3SwRGEIAwF0Jy3EE973wsq1VgHhTmjBbCH7WgRyJAAP3pxxjf+T+L2+vjjWO5vjCtR2EleZ7qJ3PO4VVdeTJxTzhuOpDNy2d2tH1/Jl+8M/aDr+hlO5mKn+/lffD9nDtVdul/YORc6p1w6B3S5R5sLzJ04uF+v5wz3yw7vreQLB3Mnrp4B9xP76Fzr1+13cJxbHcyVTsw5n6XMW/eT/9/o9PwsJ+di5Wb3B1BLAQIUABQAAAAIABlLJ1aBd8BjqwAAAMADAAAEAAAAAAAAAAAAAAAAAAAAAABmaWxlUEsFBgAAAAABAAEAMgAAAM0AAAAAAA=="
+					.elements = "UEsDBBQAAAAIAJCy2VaBd8BjqwAAAMADAAAEAAAAZmlsZX3SwRGEIAwF0Jy3EE973wsq1VgHhTmjBbCH7WgRyJAAP3pxxjf+T+L2+vjjWO5vjCtR2EleZ7qJ3PO4VVdeTJxTzhuOpDNy2d2tH1/Jl+8M/aDr+hlO5mKn+/lffD9nDtVdul/YORc6p1w6B3S5R5sLzJ04uF+v5wz3yw7vreQLB3Mnrp4B9xP76Fzr1+13cJxbHcyVTsw5n6XMW/eT/9/o9PwsJ+di5Wb3B1BLAQIUABQAAAAIAJCy2VaBd8BjqwAAAMADAAAEAAAAAAAAAAAAAAAAAAAAAABmaWxlUEsFBgAAAAABAAEAMgAAAM0AAAAAAA=="
 					.elementsZip = True
 				}
 			}

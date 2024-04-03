@@ -7,8 +7,9 @@ $output v_texCoord01, v_worldPosition_depth, v_worldNormal_materialIndex, v_tang
 #include "UniformsVertex.sh"
 #include "VertexFunctions.sh"
 
-uniform vec4 u_renderOperationData[7];
+uniform vec4 u_renderOperationData[8];
 uniform vec4 u_materialCustomParameters[2];
+uniform vec4 u_objectInstanceParameters[2];
 #ifdef GLOBAL_SKELETAL_ANIMATION
 	SAMPLER2D(s_bones, 0);
 #endif
@@ -40,18 +41,16 @@ void main()
 	{
 		//instancing
 		worldMatrix = mtxFromRows(i_data0, i_data1, i_data2, vec4(0,0,0,1));
-		uint data = asuint(i_data3.w);
-		v_colorParameter.w = float((data & uint(0xff000000)) >> 24);
-		v_colorParameter.z = float((data & uint(0x00ff0000)) >> 16);
-		v_colorParameter.y = float((data & uint(0x0000ff00)) >> 8);
-		v_colorParameter.x = float((data & uint(0x000000ff)) >> 0);
-		v_colorParameter = pow2(v_colorParameter / 255.0, 2.0) * 10.0;
+		addTranslate(worldMatrix, u_renderOperationData[7].xyz);
 		
 		v_lodValue_visibilityDistance_receiveDecals.xy = i_data4.xy;
 		uint data2 = asuint(i_data4.z);
 		v_lodValue_visibilityDistance_receiveDecals.z = float((data2 & uint(0x000000ff)) >> 0) / 255.0;
 		v_lodValue_visibilityDistance_receiveDecals.w = 0.0;//float((data2 & uint(0x0000ff00)) >> 8) / 255.0;
+		uint colorExp = ( data2 & uint( 0x00ff0000 ) ) >> 16;
 		//v_lodValue_visibilityDistance_receiveDecals = i_data4;
+
+		v_colorParameter = decodePackedInstanceColor( i_data3.w, colorExp );
 		
 		if(v_lodValue_visibilityDistance_receiveDecals.y < 0.0)
 			v_lodValue_visibilityDistance_receiveDecals.y = u_renderOperationData[1].y;
@@ -63,8 +62,7 @@ void main()
 		worldMatrix = u_model[0];
 		v_colorParameter = u_renderOperationData[4];
 		v_lodValue_visibilityDistance_receiveDecals = vec4(u_renderOperationData[2].w, u_renderOperationData[1].y, u_renderOperationData[1].x, 0);
-		//!!!!?
-		//cullingByCameraDirectionData = 0;
+		cullingByCameraDirectionData = asuint( u_renderOperationData[3].w );
 	}
 	
 	vec4 billboardRotation;
@@ -80,15 +78,15 @@ void main()
 	vec3 positionOffset = vec3(0,0,0);
 	vec4 customParameter1 = u_materialCustomParameters[0];
 	vec4 customParameter2 = u_materialCustomParameters[1];
+	vec4 instanceParameter1 = u_objectInstanceParameters[0];
+	vec4 instanceParameter2 = u_objectInstanceParameters[1];
 	vec3 cameraPosition = u_viewportOwnerCameraPosition;
 #ifdef VERTEX_CODE_BODY
-	#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(makeSampler(s_linearSamplerVertex, _sampler), _uv, 0, 0)
-	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerVertex, _sampler), _uv, u_removeTextureTiling)
+	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerVertex, _sampler), _uv, u_removeTextureTiling, u_mipBias)
 	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerVertex, _sampler), _uv, u_mipBias)
 	{
 		VERTEX_CODE_BODY
 	}
-	#undef CODE_BODY_TEXTURE2D_MASK_OPACITY
 	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 	#undef CODE_BODY_TEXTURE2D
 #endif

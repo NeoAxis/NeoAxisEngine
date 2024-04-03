@@ -3,7 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -57,6 +57,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <iomanip>
 #include <sstream>
+#include <map>
 
 #ifdef MDL_HALFLIFE_LOG_WARN_HEADER
 #undef MDL_HALFLIFE_LOG_WARN_HEADER
@@ -68,9 +69,9 @@ namespace Assimp {
 namespace MDL {
 namespace HalfLife {
 
-#ifdef _WIN32
-#    pragma warning(disable : 4706) 
-#endif // _WIN32
+#ifdef _MSC_VER
+#    pragma warning(disable : 4706)
+#endif // _MSC_VER
 
 // ------------------------------------------------------------------------------------------------
 HL1MDLLoader::HL1MDLLoader(
@@ -469,14 +470,16 @@ void HL1MDLLoader::read_bones() {
 
     temp_bones_.resize(header_->numbones);
 
+    // Create the main 'bones' node that will contain all MDL root bones.
     aiNode *bones_node = new aiNode(AI_MDL_HL1_NODE_BONES);
     rootnode_children_.push_back(bones_node);
-    bones_node->mNumChildren = static_cast<unsigned int>(header_->numbones);
-    bones_node->mChildren = new aiNode *[bones_node->mNumChildren];
+
+    // Store roots bones IDs temporarily.
+    std::vector<int> roots;
 
     // Create bone matrices in local space.
     for (int i = 0; i < header_->numbones; ++i) {
-        aiNode *bone_node = temp_bones_[i].node = bones_node->mChildren[i] = new aiNode(unique_bones_names[i]);
+        aiNode *bone_node = temp_bones_[i].node = new aiNode(unique_bones_names[i]);
 
         aiVector3D angles(pbone[i].value[3], pbone[i].value[4], pbone[i].value[5]);
         temp_bones_[i].absolute_transform = bone_node->mTransformation =
@@ -484,9 +487,11 @@ void HL1MDLLoader::read_bones() {
                         aiVector3D(pbone[i].value[0], pbone[i].value[1], pbone[i].value[2]));
 
         if (pbone[i].parent == -1) {
-            bone_node->mParent = scene_->mRootNode;
+            bone_node->mParent = bones_node;
+            roots.push_back(i); // This bone has no parent. Add it to the roots list.
         } else {
-            bone_node->mParent = bones_node->mChildren[pbone[i].parent];
+            bone_node->mParent = temp_bones_[pbone[i].parent].node;
+            temp_bones_[pbone[i].parent].children.push_back(i); // Add this bone to the parent bone's children list.
 
             temp_bones_[i].absolute_transform =
                     temp_bones_[pbone[i].parent].absolute_transform * bone_node->mTransformation;
@@ -494,6 +499,36 @@ void HL1MDLLoader::read_bones() {
 
         temp_bones_[i].offset_matrix = temp_bones_[i].absolute_transform;
         temp_bones_[i].offset_matrix.Inverse();
+    }
+
+    // Allocate memory for each MDL root bone.
+    bones_node->mNumChildren = static_cast<unsigned int>(roots.size());
+    bones_node->mChildren = new aiNode *[bones_node->mNumChildren];
+
+    // Build all bones children hierarchy starting from each MDL root bone.
+    for (size_t i = 0; i < roots.size(); ++i)
+    {
+        const TempBone &root_bone = temp_bones_[roots[i]];
+        bones_node->mChildren[i] = root_bone.node;
+        build_bone_children_hierarchy(root_bone);
+    }
+}
+
+void HL1MDLLoader::build_bone_children_hierarchy(const TempBone &bone)
+{
+    if (bone.children.empty())
+        return;
+
+    aiNode* bone_node = bone.node;
+    bone_node->mNumChildren = static_cast<unsigned int>(bone.children.size());
+    bone_node->mChildren = new aiNode *[bone_node->mNumChildren];
+
+    // Build each child bone's hierarchy recursively.
+    for (size_t i = 0; i < bone.children.size(); ++i)
+    {
+        const TempBone &child_bone = temp_bones_[bone.children[i]];
+        bone_node->mChildren[i] = child_bone.node;
+        build_bone_children_hierarchy(child_bone);
     }
 }
 
@@ -628,7 +663,7 @@ void HL1MDLLoader::read_meshes() {
             +-- bodypart --+-- model -- [mesh index, mesh index, ...]
             |              |
             |              +-- model -- [mesh index, mesh index, ...]
-            |              |           
+            |              |
             |              ...
             |
             |-- bodypart -- ...
@@ -829,7 +864,7 @@ void HL1MDLLoader::read_meshes() {
                         }
                     } else {
                         for (int faceIdx = 0; faceIdx < num_faces; ++faceIdx) {
-                            if (i & 1) {
+                            if (faceIdx & 1) {
                                 // Preserve winding order.
                                 mesh_faces.push_back(HL1MeshFace{
                                         tricmds[faceIdx + 1],
@@ -868,7 +903,7 @@ void HL1MDLLoader::read_meshes() {
                         scene_mesh->mNormals[v] = bind_pose_normals[pTrivert->normindex];
                         scene_mesh->mTextureCoords[0][v] = aiVector3D(
                                 pTrivert->s * texcoords_s_scale,
-                                pTrivert->t * texcoords_t_scale, 0);
+                                pTrivert->t * -texcoords_t_scale, 0);
                     }
 
                     // Add face and indices.
@@ -879,9 +914,9 @@ void HL1MDLLoader::read_meshes() {
                         aiFace *face = &scene_mesh->mFaces[f];
                         face->mNumIndices = 3;
                         face->mIndices = new unsigned int[3];
-                        face->mIndices[0] = mesh_faces[f].v0;
+                        face->mIndices[0] = mesh_faces[f].v2;
                         face->mIndices[1] = mesh_faces[f].v1;
-                        face->mIndices[2] = mesh_faces[f].v2;
+                        face->mIndices[2] = mesh_faces[f].v0;
                     }
 
                     // Add mesh bones.
@@ -1297,7 +1332,7 @@ void HL1MDLLoader::read_global_info() {
 *   @note The structure of this method is taken from HL2 source code.
 *   Although this is from HL2, it's implementation is almost identical
 *   to code found in HL1 SDK. See HL1 and HL2 SDKs for more info.
-*   
+*
 *   source:
 *       HL1 source code.
 *           file: studio_render.cpp
@@ -1309,7 +1344,7 @@ void HL1MDLLoader::read_global_info() {
 */
 void HL1MDLLoader::extract_anim_value(
         const AnimValue_HL1 *panimvalue,
-        int frame, float bone_scale, float &value) {
+        int frame, float bone_scale, ai_real &value) {
     int k = frame;
 
     // find span of values that includes the frame we want
@@ -1342,7 +1377,7 @@ bool HL1MDLLoader::get_num_blend_controllers(const int num_blend_animations, int
             return true;
         default:
             num_blend_controllers = 0;
-            ASSIMP_LOG_WARN(MDL_HALFLIFE_LOG_HEADER "Unsupported number of blend animations (" + std::to_string(num_blend_animations) + ")");
+            ASSIMP_LOG_WARN(MDL_HALFLIFE_LOG_HEADER "Unsupported number of blend animations (", num_blend_animations, ")");
             return false;
     }
 }

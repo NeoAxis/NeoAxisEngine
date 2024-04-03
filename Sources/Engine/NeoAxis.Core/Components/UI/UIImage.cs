@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
-using System.Drawing.Design;
 
 namespace NeoAxis
 {
@@ -23,7 +22,7 @@ namespace NeoAxis
 		public Reference<ImageComponent> SourceImage
 		{
 			get { if( _sourceImage.BeginGet() ) SourceImage = _sourceImage.Get( this ); return _sourceImage.value; }
-			set { if( _sourceImage.BeginSet( ref value ) ) { try { SourceImageChanged?.Invoke( this ); } finally { _sourceImage.EndSet(); } } }
+			set { if( _sourceImage.BeginSet( this, ref value ) ) { try { SourceImageChanged?.Invoke( this ); } finally { _sourceImage.EndSet(); } } }
 		}
 		public event Action<UIImage> SourceImageChanged;
 		ReferenceField<ImageComponent> _sourceImage;
@@ -37,7 +36,7 @@ namespace NeoAxis
 		public Reference<Rectangle> TextureCoordinates
 		{
 			get { if( _textureCoordinates.BeginGet() ) TextureCoordinates = _textureCoordinates.Get( this ); return _textureCoordinates.value; }
-			set { if( _textureCoordinates.BeginSet( ref value ) ) { try { TextureCoordinatesChanged?.Invoke( this ); } finally { _textureCoordinates.EndSet(); } } }
+			set { if( _textureCoordinates.BeginSet( this, ref value ) ) { try { TextureCoordinatesChanged?.Invoke( this ); } finally { _textureCoordinates.EndSet(); } } }
 		}
 		public event Action<UIImage> TextureCoordinatesChanged;
 		ReferenceField<Rectangle> _textureCoordinates = new Rectangle( 0, 0, 1, 1 );
@@ -50,7 +49,7 @@ namespace NeoAxis
 		public Reference<Degree> TextureCoordinatesRotation
 		{
 			get { if( _textureCoordinatesRotation.BeginGet() ) TextureCoordinatesRotation = _textureCoordinatesRotation.Get( this ); return _textureCoordinatesRotation.value; }
-			set { if( _textureCoordinatesRotation.BeginSet( ref value ) ) { try { TextureCoordinatesRotationChanged?.Invoke( this ); } finally { _textureCoordinatesRotation.EndSet(); } } }
+			set { if( _textureCoordinatesRotation.BeginSet( this, ref value ) ) { try { TextureCoordinatesRotationChanged?.Invoke( this ); } finally { _textureCoordinatesRotation.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TextureCoordinatesRotation"/> property value changes.</summary>
 		public event Action<UIImage> TextureCoordinatesRotationChanged;
@@ -65,7 +64,7 @@ namespace NeoAxis
 		public Reference<bool> Clamp
 		{
 			get { if( _clamp.BeginGet() ) Clamp = _clamp.Get( this ); return _clamp.value; }
-			set { if( _clamp.BeginSet( ref value ) ) { try { ClampChanged?.Invoke( this ); } finally { _clamp.EndSet(); } } }
+			set { if( _clamp.BeginSet( this, ref value ) ) { try { ClampChanged?.Invoke( this ); } finally { _clamp.EndSet(); } } }
 		}
 		public event Action<UIImage> ClampChanged;
 		ReferenceField<bool> _clamp = true;
@@ -79,7 +78,7 @@ namespace NeoAxis
 		public Reference<CanvasRenderer.TextureFilteringMode> Filtering
 		{
 			get { if( _filtering.BeginGet() ) Filtering = _filtering.Get( this ); return _filtering.value; }
-			set { if( _filtering.BeginSet( ref value ) ) { try { FilteringChanged?.Invoke( this ); } finally { _filtering.EndSet(); } } }
+			set { if( _filtering.BeginSet( this, ref value ) ) { try { FilteringChanged?.Invoke( this ); } finally { _filtering.EndSet(); } } }
 		}
 		public event Action<UIImage> FilteringChanged;
 		ReferenceField<CanvasRenderer.TextureFilteringMode> _filtering = CanvasRenderer.TextureFilteringMode.Linear;

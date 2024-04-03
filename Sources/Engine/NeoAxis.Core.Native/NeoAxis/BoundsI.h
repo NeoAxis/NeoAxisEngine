@@ -33,6 +33,9 @@ THE SOFTWARE.
 #include "OgrePrerequisites.h"
 
 #include "Vector3I.h"
+#ifdef LINUX
+#include <limits.h>
+#endif
 
 namespace Ogre {
 

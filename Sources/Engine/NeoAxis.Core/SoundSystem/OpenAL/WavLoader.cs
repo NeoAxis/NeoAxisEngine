@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using NeoAxis;
 
 namespace OpenALSoundSystem
 {
@@ -103,8 +104,8 @@ namespace OpenALSoundSystem
 				{
 					sizeInBytes = (int)length;
 					samples = new byte[ sizeInBytes ];
-
-					if( stream.Read( samples, 0, sizeInBytes ) != sizeInBytes )
+					if( IOUtility.ReadGuaranteed( stream, samples ) != sizeInBytes )
+					//if( stream.Read( samples, 0, sizeInBytes ) != sizeInBytes )
 					{
 						error = "Invalid format";
 						return false;

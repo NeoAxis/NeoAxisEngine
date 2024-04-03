@@ -2,7 +2,7 @@
   "profiles": {
     "NeoAxis.Player": {
       "commandName": "Project",
-      "commandLineArgs": "-play \"Samples\\Starter Content\\Scenes\\Character.scene\"",
+      "commandLineArgs": "-pl__ay \"Samples\\Starter Content\\Scenes\\Character.scene\"",
       "nativeDebugging": true
     }
   }

@@ -2,7 +2,6 @@
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"753675821D3D4864C598A4CF85FBC750\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"D4B72E7FD9B247A81E8E6C34D3B88874\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"753675821D3D4864C598A4CF85FBC750\"><KP UN=\"753675821D3D4864C598A4CF85FBC750\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"CDCBE92292624FA1BAAD447ED8455689\" S=\"False\"><CPD ObjPath=\"$Button\\$$n1$C# Script\" /></KP><KP UN=\"654BBC52A8A9476DB398309225BD08C4\" S=\"False\"><CPD ObjPath=\"$Regulator Switch\\$$n1$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -108,6 +107,7 @@
 	{
 		Name = Game Mode
 		UseBuiltInCamera = FirstPerson
+		ThirdPersonCameraHorizontalAngle = -89.99999999999993
 		CutsceneStarted = False
 		CutsceneGuiFadingFactor = 0
 		CutsceneGuiFadingSpeed = 0
@@ -354,550 +354,6 @@
 			}
 		}
 	}
-	.component NeoAxis.ButtonInSpace
-	{
-		Name = Button
-		Transform = "-1.3658208777314 4.15177148121879 1.32489341333328; 0 0 -0.478282120422081 0.878206247577731; 1 1 1"
-		Color = 0.6784314 0.6784314 0.6784314
-		Mesh
-		{
-			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.Mesh
-		{
-			Name = Mesh
-			.component NeoAxis.MeshGeometry_Box
-			{
-				Name = Mesh Geometry
-				Dimensions = 0.05 0.3 0.3
-				Material
-				{
-					GetByReference = "Base\\Materials\\White.material"
-				}
-			}
-		}
-		.component NeoAxis.MeshInSpace
-		{
-			Name = Button
-			Transform
-			{
-				GetByReference = "this:$Attach Transform Offset\\Result"
-			}
-			Mesh
-			{
-				GetByReference = "this:$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.Mesh
-			{
-				Name = Mesh
-				.component NeoAxis.MeshGeometry_Box
-				{
-					Name = Mesh Geometry
-					Dimensions = 0.05 0.15 0.15
-					Material
-					{
-						GetByReference = "Base\\Materials\\White.material"
-					}
-				}
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Attach Transform Offset
-				PositionOffset = 0.05 0 0
-				Source
-				{
-					GetByReference = "this:..\\..\\Transform"
-				}
-			}
-		}
-		.component NeoAxis.MeshInSpace
-		{
-			Name = Indicator
-			Color = 0.5 0.5 0.5
-			Transform
-			{
-				GetByReference = "this:$Attach Transform Offset\\Result"
-			}
-			Mesh
-			{
-				GetByReference = "this:$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.Mesh
-			{
-				Name = Mesh
-				.component NeoAxis.MeshGeometry_Cylinder
-				{
-					Name = Mesh Geometry
-					Axis = 0
-					Radius = 0.02
-					Height = 0.02
-					Segments = 16
-					Material
-					{
-						GetByReference = "Base\\Materials\\White.material"
-					}
-				}
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Attach Transform Offset
-				PositionOffset = 0.03 0 0.12
-				Source
-				{
-					GetByReference = "this:..\\..\\Transform"
-				}
-			}
-		}
-		.component NeoAxis.CSharpScript
-		{
-			Name = C# Script
-			Code = "public void InteractiveObjectButton_UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\tvar _this = sender as ButtonInSpace;\r\n\tif (_this != null)\r\n\t{\r\n\t\tvar indicator = _this.GetComponent(\"Indicator\") as MeshInSpace;\r\n\t\tif (indicator != null)\r\n\t\t\tindicator.Color = _this.Activated ? new ColorValue(0, 1, 0) : new ColorValue(0.5, 0.5, 0.5);\r\n\r\n\t\tvar buttonOffset = _this.Components.GetByPath(\"Button\\\\Attach Transform Offset\") as TransformOffset;\r\n\t\tif (buttonOffset != null)\r\n\t\t{\r\n\t\t\tvar offsetPushed = 0.01;\r\n\t\t\tvar offsetDefault = 0.05;\r\n\r\n\t\t\tvar coef = 0.0;\r\n\t\t\tif (_this.Clicking && _this.ClickingTotalTime != 0)\r\n\t\t\t{\r\n\t\t\t\tvar timeFactor = MathEx.Saturate(_this.ClickingCurrentTime / _this.ClickingTotalTime);\r\n\r\n\t\t\t\tif(timeFactor < 0.5)\r\n\t\t\t\t\tcoef = timeFactor * 2;\r\n\t\t\t\telse\r\n\t\t\t\t\tcoef = (1.0f - timeFactor) * 2;\r\n\t\t\t}\r\n\r\n\t\t\tvar offset = MathEx.Lerp(offsetDefault, offsetPushed, coef);\r\n\t\t\tbuttonOffset.PositionOffset = new Vector3(offset, 0, 0);\r\n\t\t}\r\n\t}\r\n}"
-			__parameter_Delta = 0
-			Exit
-			{
-			}
-			.component NeoAxis.EventHandlerComponent
-			{
-				Name = Event Handler UpdateEvent
-				WhenEnable = Editor, Simulation, Instance
-				Event
-				{
-					GetByReference = "this:..\\..\\event:UpdateEvent"
-				}
-				HandlerMethod
-				{
-					GetByReference = "this:..\\method:InteractiveObjectButton_UpdateEvent(NeoAxis.Component,System.Single)"
-				}
-				HandlerFlow
-				{
-				}
-			}
-		}
-		.component NeoAxis.CSharpScript
-		{
-			Name = C# Script
-			Code = "public void Button_Click(NeoAxis.ButtonInSpace sender)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\tvar ground = scene.GetComponent(\"Ground\") as MeshInSpace;\r\n\tif (ground != null)\r\n\t{\r\n\t\tif (!ground.ReplaceMaterial.ReferenceSpecified)\r\n\t\t{\r\n\t\t\tground.ReplaceMaterial = ReferenceUtility.MakeReference(\r\n\t\t\t\t@\"Content\\Materials\\Basic Library\\Concrete\\Concrete Floor 01.material\");\r\n\t\t}\r\n\t\telse\r\n\t\t\tground.ReplaceMaterial = null;\r\n\t}\r\n}\r\n"
-			Exit
-			{
-			}
-			.component NeoAxis.EventHandlerComponent
-			{
-				Name = Event Handler Click
-				Event
-				{
-					GetByReference = "this:..\\..\\event:Click"
-				}
-				HandlerMethod
-				{
-					GetByReference = "this:..\\method:Button_Click(NeoAxis.ButtonInSpace)"
-				}
-				HandlerFlow
-				{
-				}
-			}
-		}
-	}
-	.component NeoAxis.RegulatorSwitchInSpace
-	{
-		Name = Regulator Switch
-		Transform = "-0.572169875907708 4.66559510889641 1.31229185132108; 0 0 -0.48183375394467 0.876262651012576; 1 1 1"
-		Color = 0.6784314 0.6784314 0.6784314
-		Mesh
-		{
-			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.Mesh
-		{
-			Name = Mesh
-			.component NeoAxis.MeshGeometry_Box
-			{
-				Name = Mesh Geometry
-				Dimensions = 0.05 0.3 0.3
-				Material
-				{
-					GetByReference = "Base\\Materials\\White.material"
-				}
-			}
-		}
-		.component NeoAxis.MeshInSpace
-		{
-			Name = Button
-			Transform
-			{
-				GetByReference = "this:$Attach Transform Offset\\Result"
-			}
-			Mesh
-			{
-				GetByReference = "this:$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.Mesh
-			{
-				Name = Mesh
-				.component NeoAxis.MeshGeometry_Cylinder
-				{
-					Name = Mesh Geometry
-					Axis = 0
-					Radius = 0.08
-					Height = 0.08
-					Material
-					{
-						GetByReference = "Base\\Materials\\White.material"
-					}
-				}
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Attach Transform Offset
-				PositionOffset = 0.05 0 0
-				RotationOffset = 0.923879532511287 0 -0 0.38268343236509
-				Source
-				{
-					GetByReference = "this:..\\..\\Transform"
-				}
-			}
-		}
-		.component NeoAxis.MeshInSpace
-		{
-			Name = Indicator Min
-			Color = 1 0 0
-			Transform
-			{
-				GetByReference = "this:$Attach Transform Offset\\Result"
-			}
-			Mesh
-			{
-				GetByReference = "this:$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.Mesh
-			{
-				Name = Mesh
-				.component NeoAxis.MeshGeometry_Cylinder
-				{
-					Name = Mesh Geometry
-					Axis = 0
-					Radius = 0.02
-					Height = 0.02
-					Segments = 16
-					Material
-					{
-						GetByReference = "Base\\Materials\\White.material"
-					}
-				}
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Attach Transform Offset
-				PositionOffset = 0.03 -0.11 0.11
-				Source
-				{
-					GetByReference = "this:..\\..\\Transform"
-				}
-			}
-		}
-		.component NeoAxis.MeshInSpace
-		{
-			Name = Indicator Max
-			Color = 0.5 0.5 0.5
-			Transform
-			{
-				GetByReference = "this:$Attach Transform Offset\\Result"
-			}
-			Mesh
-			{
-				GetByReference = "this:$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.Mesh
-			{
-				Name = Mesh
-				.component NeoAxis.MeshGeometry_Cylinder
-				{
-					Name = Mesh Geometry
-					Axis = 0
-					Radius = 0.02
-					Height = 0.02
-					Segments = 16
-					Material
-					{
-						GetByReference = "Base\\Materials\\White.material"
-					}
-				}
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Attach Transform Offset
-				PositionOffset = 0.03 0.11 0.11
-				Source
-				{
-					GetByReference = "this:..\\..\\Transform"
-				}
-			}
-		}
-		.component NeoAxis.MeshInSpace
-		{
-			Name = Marker Min
-			Color = 1 0 0
-			Transform
-			{
-				GetByReference = "this:$Attach Transform Offset\\Result"
-			}
-			Mesh
-			{
-				GetByReference = "this:$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.Mesh
-			{
-				Name = Mesh
-				.component NeoAxis.MeshGeometry_Box
-				{
-					Name = Mesh Geometry
-					Dimensions = 0.05 0.14 0.01
-					Material
-					{
-						GetByReference = "Base\\Materials\\White.material"
-					}
-				}
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Attach Transform Offset
-				PositionOffset = 0.01 -0.0282842712474619 0.0282842712474619
-				RotationOffset = 0.923879532511287 0 -0 0.38268343236509
-				Source
-				{
-					GetByReference = "this:..\\..\\Transform"
-				}
-			}
-		}
-		.component NeoAxis.MeshInSpace
-		{
-			Name = Marker Max
-			Color = 0 1 0
-			Transform
-			{
-				GetByReference = "this:$Attach Transform Offset\\Result"
-			}
-			Mesh
-			{
-				GetByReference = "this:$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.Mesh
-			{
-				Name = Mesh
-				.component NeoAxis.MeshGeometry_Box
-				{
-					Name = Mesh Geometry
-					Dimensions = 0.05 0.14 0.01
-					Material
-					{
-						GetByReference = "Base\\Materials\\White.material"
-					}
-				}
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Attach Transform Offset
-				PositionOffset = 0.01 0.0282842712474619 0.0282842712474619
-				RotationOffset = 0.38268343236509 0 -0 0.923879532511287
-				Source
-				{
-					GetByReference = "this:..\\..\\Transform"
-				}
-			}
-		}
-		.component NeoAxis.MeshInSpace
-		{
-			Name = Marker Current
-			Transform
-			{
-				GetByReference = "this:$Attach Transform Offset\\Result"
-			}
-			Mesh
-			{
-				GetByReference = "this:$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
-			SpecialEffects
-			{
-				Value
-				{
-					Count = 0
-				}
-			}
-			.component NeoAxis.Mesh
-			{
-				Name = Mesh
-				.component NeoAxis.MeshGeometry_Box
-				{
-					Name = Mesh Geometry
-					Dimensions = 0.05 0.14 0.01
-					Material
-					{
-						GetByReference = "Base\\Materials\\White.material"
-					}
-				}
-			}
-			.component NeoAxis.TransformOffset
-			{
-				Name = Attach Transform Offset
-				PositionOffset = 0.06 -0.0282842712474619 0.0282842712474619
-				RotationOffset = 0.923879532511287 0 -0 0.38268343236509
-				Source
-				{
-					GetByReference = "this:..\\..\\Transform"
-				}
-			}
-		}
-		.component NeoAxis.CSharpScript
-		{
-			Name = C# Script
-			Code = "public void InteractiveObjectButton_UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\tvar _this = sender as RegulatorSwitchInSpace;\r\n\tif (_this != null)\r\n\t{\r\n\t\tvar indicatorMin = _this.GetComponent(\"Indicator Min\") as MeshInSpace;\r\n\t\tif (indicatorMin != null)\r\n\t\t\tindicatorMin.Color = _this.Value.Value <= _this.ValueRange.Value.Minimum ? new ColorValue(1, 0, 0) : new ColorValue(0.5, 0.5, 0.5);\r\n\r\n\t\tvar indicatorMax = _this.GetComponent(\"Indicator Max\") as MeshInSpace;\r\n\t\tif (indicatorMax != null)\r\n\t\t\tindicatorMax.Color = _this.Value.Value >= _this.ValueRange.Value.Maximum ? new ColorValue(0, 1, 0) : new ColorValue(0.5, 0.5, 0.5);\r\n\r\n\t\tvar button = _this.GetComponent(\"Button\");\r\n\t\tif (button != null)\r\n\t\t{\r\n\t\t\tvar offset = button.GetComponent<TransformOffset>();\r\n\t\t\tif (offset != null)\r\n\t\t\t{\r\n\t\t\t\tvar angle = _this.GetValueAngle() - 90;\r\n\t\t\t\toffset.RotationOffset = new Angles(angle, 0, 0).ToQuaternion();\r\n\t\t\t}\r\n\t\t}\r\n\r\n\t\tvar markerMin = _this.GetComponent(\"Marker Min\");\r\n\t\tif (markerMin != null)\r\n\t\t{\r\n\t\t\tvar offset = markerMin.GetComponent<TransformOffset>();\r\n\t\t\tif (offset != null)\r\n\t\t\t{\r\n\t\t\t\tvar angle = _this.AngleRange.Value.Minimum - 90;\r\n\t\t\t\tvar angleR = MathEx.DegreeToRadian(angle);\r\n\t\t\t\toffset.PositionOffset = new Vector3(0.01, Math.Cos(angleR) * 0.04, Math.Sin(-angleR) * 0.04);\r\n\t\t\t\toffset.RotationOffset = new Angles(angle, 0, 0).ToQuaternion();\r\n\t\t\t}\r\n\t\t}\r\n\r\n\t\tvar markerMax = _this.GetComponent(\"Marker Max\");\r\n\t\tif (markerMax != null)\r\n\t\t{\r\n\t\t\tvar offset = markerMax.GetComponent<TransformOffset>();\r\n\t\t\tif (offset != null)\r\n\t\t\t{\r\n\t\t\t\tvar angle = _this.AngleRange.Value.Maximum - 90;\r\n\t\t\t\tvar angleR = MathEx.DegreeToRadian(angle);\r\n\t\t\t\toffset.PositionOffset = new Vector3(0.01, Math.Cos(angleR) * 0.04, Math.Sin(-angleR) * 0.04);\r\n\t\t\t\toffset.RotationOffset = new Angles(angle, 0, 0).ToQuaternion();\r\n\t\t\t}\r\n\t\t}\r\n\r\n\t\tvar markerCurrent = _this.GetComponent(\"Marker Current\");\r\n\t\tif (markerCurrent != null)\r\n\t\t{\r\n\t\t\tvar offset = markerCurrent.GetComponent<TransformOffset>();\r\n\t\t\tif (offset != null)\r\n\t\t\t{\r\n\t\t\t\tvar angle = _this.GetValueAngle() - 90;\r\n\t\t\t\tvar angleR = MathEx.DegreeToRadian(angle);\r\n\t\t\t\toffset.PositionOffset = new Vector3(0.06, Math.Cos(angleR) * 0.04, Math.Sin(-angleR) * 0.04);\r\n\t\t\t\toffset.RotationOffset = new Angles(angle, 0, 0).ToQuaternion();\r\n\t\t\t}\r\n\t\t}\r\n\t}\r\n}"
-			__parameter_Delta = 0
-			Exit
-			{
-			}
-			.component NeoAxis.EventHandlerComponent
-			{
-				Name = Event Handler UpdateEvent
-				WhenEnable = Editor, Simulation, Instance
-				Event
-				{
-					GetByReference = "this:..\\..\\event:UpdateEvent"
-				}
-				HandlerMethod
-				{
-					GetByReference = "this:..\\method:InteractiveObjectButton_UpdateEvent(NeoAxis.Component,System.Single)"
-				}
-				HandlerFlow
-				{
-				}
-			}
-		}
-		.component NeoAxis.CSharpScript
-		{
-			Name = C# Script
-			Code = "public void RegulatorSwitch_ValueChanged(NeoAxis.RegulatorSwitchInSpace obj)\r\n{\r\n\tvar scene = obj.ParentScene;\r\n\r\n\tvar ground = scene.GetComponent(\"Ground\") as MeshInSpace;\r\n\tif (ground != null)\r\n\t\tground.Color = ColorValue.Lerp(new ColorValue(1, 1, 1), new ColorValue(0.4, 0.9, 0.4), (float)obj.Value);\r\n}\r\n"
-			Exit
-			{
-			}
-			.component NeoAxis.EventHandlerComponent
-			{
-				Name = Event Handler ValueChanged
-				Event
-				{
-					GetByReference = "this:..\\..\\event:ValueChanged"
-				}
-				HandlerMethod
-				{
-					GetByReference = "this:..\\method:RegulatorSwitch_ValueChanged(NeoAxis.RegulatorSwitchInSpace)"
-				}
-				HandlerFlow
-				{
-				}
-			}
-		}
-	}
 	.component NeoAxis.Text2D
 	{
 		Name = Text 2D
@@ -933,7 +389,7 @@
 	{
 		Name = Text 2D 3
 		Transform = "-1.33283552707357 5.2917463227358 2.69140950734803; 0 0 0 1; 1 1 1"
-		Text = "Interactive objects\r\nButton\r\nRegulator Switch"
+		Text = "Interactive objects\r\nButton\r\nRegulator"
 		TextHorizontalAlignment = Left
 		Back = True
 		BackColor = 0 0.5770196 0
@@ -987,6 +443,92 @@
 		.component NeoAxis.CharacterInputProcessing
 		{
 			Name = Character Input Processing
+		}
+	}
+	.component NeoAxis.Button
+	{
+		Name = Button
+		Transform = "-1.3658208777314 4.15177148121879 1.32489341333328; 0 0 -0.478282120422081 0.878206247577731; 1 1 1"
+		Mesh
+		{
+			GetByReference = "Content\\Buttons\\Default\\Base.mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.CSharpScript
+		{
+			Name = C# Script
+			Code = "public void Button_Click(NeoAxis.Button sender)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\tvar ground = scene.GetComponent(\"Ground\") as MeshInSpace;\r\n\tif (ground != null)\r\n\t{\r\n\t\tif (!ground.ReplaceMaterial.ReferenceSpecified)\r\n\t\t{\r\n\t\t\tground.ReplaceMaterial = ReferenceUtility.MakeReference(\r\n\t\t\t\t@\"Content\\Materials\\Basic Library\\Concrete\\Concrete Floor 01.material\");\r\n\t\t}\r\n\t\telse\r\n\t\t\tground.ReplaceMaterial = null;\r\n\t}\r\n}\r\n"
+			Exit
+			{
+			}
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\method:Button_Click(NeoAxis.Button)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Regulator
+	{
+		Name = Regulator
+		Transform = "-0.572169875907708 4.66559510889641 1.31229185132108; 0 0 -0.48183375394467 0.876262651012576; 1 1 1"
+		Mesh
+		{
+			GetByReference = "Content\\Regulators\\Default\\Base.mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.CSharpScript
+		{
+			Name = C# Script
+			Code = "public void Regulator_ValueChanged(NeoAxis.Regulator obj)\r\n{\r\n\tvar scene = obj.ParentScene;\r\n\r\n\tvar ground = scene.GetComponent(\"Ground\") as MeshInSpace;\r\n\tif (ground != null)\r\n\t\tground.Color = ColorValue.Lerp(new ColorValue(1, 1, 1), new ColorValue(0.4, 0.9, 0.4), (float)obj.Value);\r\n}\r\n"
+			Exit
+			{
+			}
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler ValueChanged
+				Event
+				{
+					GetByReference = "this:..\\..\\event:ValueChanged"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\method:Regulator_ValueChanged(NeoAxis.Regulator)"
+				}
+				HandlerFlow
+				{
+				}
+			}
 		}
 	}
 }

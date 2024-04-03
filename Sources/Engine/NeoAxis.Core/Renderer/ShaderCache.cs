@@ -42,8 +42,12 @@ namespace NeoAxis
 			string folder = PathUtility.Combine( VirtualFileSystem.Directories.Project, @"Caches\ShaderCache" );
 
 			string name = "";
-			if( Bgfx.GetCurrentBackend() == RendererBackend.Direct3D11 || Bgfx.GetCurrentBackend() == RendererBackend.Direct3D12 )
+			if( Bgfx.GetCurrentBackend() == RendererBackend.Direct3D11 )
 				name = "Direct3D11";
+			else if( Bgfx.GetCurrentBackend() == RendererBackend.Direct3D12 )
+				name = "Direct3D12";
+			//if( Bgfx.GetCurrentBackend() == RendererBackend.Direct3D11 || Bgfx.GetCurrentBackend() == RendererBackend.Direct3D12 )
+			//	name = "Direct3D11";
 			else if( Bgfx.GetCurrentBackend() == RendererBackend.OpenGLES )
 				name = "OpenGLES";
 			else if( Bgfx.GetCurrentBackend() == RendererBackend.Vulkan )
@@ -89,13 +93,13 @@ namespace NeoAxis
 							//if( ( EngineInfo.EngineMode == EngineInfo.EngineModeEnum.WorldsClient || EngineInfo.EngineMode == EngineInfo.EngineModeEnum.WorldsServer ) && EngineApp.IsSimulation )
 							if( SystemSettings.AppContainer )
 								connection = "direct";
-							
+
 							var connectionString = $"Filename={fileName};Connection={connection};Upgrade=true";
 							if( readOnly )
 								connectionString += ";ReadOnly=true";
 
 							int attemp = 0;
-							again:
+again:
 							try
 							{
 								database = new LiteDatabase( connectionString );
@@ -117,7 +121,7 @@ namespace NeoAxis
 								}
 
 							}
-							catch( Exception e2 )
+							catch( Exception )//e2 )
 							{
 								if( attemp < 3 )
 								{
@@ -126,7 +130,7 @@ namespace NeoAxis
 									goto again;
 								}
 								else
-									throw e2;
+									throw;// e2;
 							}
 						}
 					}
@@ -260,7 +264,7 @@ namespace NeoAxis
 				var item = new DatabaseItem();
 				item.Key = GetKey( shaderModel, shaderType, shaderFile, varyingFile, defines );
 				item.KeyIndex = StringUtility.GetStableHashCode( item.Key );
-				item.Data = IOUtility.Zip( compiledData );
+				item.Data = IOUtility.Zip( compiledData, CompressionLevel.Fastest );
 
 				try
 				{

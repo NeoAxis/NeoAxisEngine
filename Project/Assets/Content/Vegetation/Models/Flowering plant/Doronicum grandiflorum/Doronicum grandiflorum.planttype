@@ -2,7 +2,7 @@
 
 .component NeoAxis.PlantType
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"D53AA502ACDB417FFCBB1173F4CC1EFB\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"092C469E48234EF8739E46FE78C67C11\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"D53AA502ACDB417FFCBB1173F4CC1EFB\"><KP UN=\"0ED3A5216DD04328228618F9D4D99D90\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"D53AA502ACDB417FFCBB1173F4CC1EFB\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"0ED3A5216DD04328228618F9D4D99D90\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"092C469E48234EF8739E46FE78C67C11\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"0ED3A5216DD04328228618F9D4D99D90\"><KP UN=\"0ED3A5216DD04328228618F9D4D99D90\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"D53AA502ACDB417FFCBB1173F4CC1EFB\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	MatureAge = 0.25
 	MatureHeight = 0.4 0.55
 	GenerateIndividuals = False
@@ -14,8 +14,8 @@
 	SegmentsByMeter = 15
 	SegmentsByCircle = 6
 	LODDistance = 7
-	LODVoxelGrid = _128
-	LODVoxelThinFactor = 0.08
+	LODVoxelGrid = _100
+	LODVoxelThinFactor = 0.25
 	.component NeoAxis.PlantMaterial
 	{
 		Name = Bark Material

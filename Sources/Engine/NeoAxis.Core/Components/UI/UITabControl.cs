@@ -25,7 +25,7 @@ namespace NeoAxis
 			get { if( _button.BeginGet() ) Button = _button.Get( this ); return _button.value; }
 			set
 			{
-				if( _button.BeginSet( ref value ) )
+				if( _button.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -56,7 +56,7 @@ namespace NeoAxis
 		public Reference<SideEnum> Side
 		{
 			get { if( _side.BeginGet() ) Side = _side.Get( this ); return _side.value; }
-			set { if( _side.BeginSet( ref value ) ) { try { SideChanged?.Invoke( this ); } finally { _side.EndSet(); } } }
+			set { if( _side.BeginSet( this, ref value ) ) { try { SideChanged?.Invoke( this ); } finally { _side.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Side"/> property value changes.</summary>
 		public event Action<UITabControl> SideChanged;
@@ -69,7 +69,7 @@ namespace NeoAxis
 		public Reference<UIMeasureValueVector2> ButtonIndents
 		{
 			get { if( _buttonIndents.BeginGet() ) ButtonIndents = _buttonIndents.Get( this ); return _buttonIndents.value; }
-			set { if( _buttonIndents.BeginSet( ref value ) ) { try { ButtonIndentsChanged?.Invoke( this ); } finally { _buttonIndents.EndSet(); } } }
+			set { if( _buttonIndents.BeginSet( this, ref value ) ) { try { ButtonIndentsChanged?.Invoke( this ); } finally { _buttonIndents.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ButtonIndents"/> property value changes.</summary>
 		public event Action<UITabControl> ButtonIndentsChanged;

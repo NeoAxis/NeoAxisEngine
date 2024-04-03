@@ -339,9 +339,6 @@
     <ClCompile Include="Jolt\Geometry\OrientedBox.cpp">
       <Filter>Physics\Jolt</Filter>
     </ClCompile>
-    <ClCompile Include="Jolt\Math\UVec4.cpp">
-      <Filter>Physics\Jolt</Filter>
-    </ClCompile>
     <ClCompile Include="Jolt\Math\Vec3.cpp">
       <Filter>Physics\Jolt</Filter>
     </ClCompile>
@@ -679,6 +676,12 @@
       <Filter>Physics\Jolt</Filter>
     </ClCompile>
     <ClCompile Include="Jolt\Physics\LargeIslandSplitter.cpp">
+      <Filter>Physics\Jolt</Filter>
+    </ClCompile>
+    <ClCompile Include="Jolt\Core\JobSystemSingleThreaded.cpp">
+      <Filter>Physics\Jolt</Filter>
+    </ClCompile>
+    <ClCompile Include="Jolt\Physics\Constraints\SpringSettings.cpp">
       <Filter>Physics\Jolt</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1890,6 +1893,12 @@
       <Filter>Physics\Jolt</Filter>
     </ClInclude>
     <ClInclude Include="Jolt\Physics\LargeIslandSplitter.h">
+      <Filter>Physics\Jolt</Filter>
+    </ClInclude>
+    <ClInclude Include="Jolt\Core\JobSystemSingleThreaded.h">
+      <Filter>Physics\Jolt</Filter>
+    </ClInclude>
+    <ClInclude Include="Jolt\Physics\Constraints\SpringSettings.h">
       <Filter>Physics\Jolt</Filter>
     </ClInclude>
   </ItemGroup>

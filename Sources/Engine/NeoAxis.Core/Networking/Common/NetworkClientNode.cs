@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 using Internal.Lidgren.Network;
 
 namespace NeoAxis.Networking
@@ -12,6 +13,7 @@ namespace NeoAxis.Networking
 		string remoteServerName = "";
 
 		string disconnectionReason = "";
+		double lastReceivedMessageTime;
 
 		//services
 		List<ClientNetworkService> services = new List<ClientNetworkService>();
@@ -57,12 +59,18 @@ namespace NeoAxis.Networking
 			config.PingInterval = 1;
 			config.ConnectionTimeout = connectionTimeout;
 
-			//!!!!
 			config.ReceiveBufferSize = 131071 * 10;
 			config.SendBufferSize = 131071 * 10;
+			config.AutoExpandMTU = true;//with it much faster
 
-			//!!!!!!new
-			//config.AutoExpandMTU = true;
+			//!!!!?
+			//m_useMessageRecycling = true;
+			//m_recycledCacheMaxCount = 64;
+			//m_resendHandshakeInterval = 3.0f;
+			//m_maximumHandshakeAttempts = 5;
+			//m_autoFlushSendQueue = true;
+			//m_suppressUnreliableUnorderedAcks = false;
+
 
 			client = new NetClient( config );
 
@@ -166,6 +174,7 @@ namespace NeoAxis.Networking
 
 		public NetworkStatus Status
 		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
 				if( beginConnecting )
@@ -191,6 +200,7 @@ namespace NeoAxis.Networking
 			get { return serverConnectedNode; }
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected override void OnUpdate()
 		{
 			base.OnUpdate();
@@ -200,6 +210,8 @@ namespace NeoAxis.Networking
 			NetIncomingMessage incomingMessage;
 			while( client != null && ( incomingMessage = client.ReadMessage() ) != null )
 			{
+				lastReceivedMessageTime = EngineApp.EngineTime;
+
 				switch( incomingMessage.MessageType )
 				{
 
@@ -290,9 +302,15 @@ namespace NeoAxis.Networking
 
 						while( incomingMessage.Position < incomingMessage.LengthBits )
 						{
-							int byteLength = (int)incomingMessage.ReadVariableUInt32();
+							int byteLength = (int)incomingMessage.ReadVariableUInt32WithBytesReaded( out var bytesReaded );
 							ProcessReceivedMessage( serverConnectedNode, incomingMessage, (int)incomingMessage.Position / 8, byteLength );
 							incomingMessage.Position += byteLength * 8;
+
+							if( ProfilerData != null )
+							{
+								//ProfilerData.TotalReceivedMessages++;
+								ProfilerData.TotalReceivedSize += bytesReaded + byteLength;
+							}
 
 							//ProcessReceivedMessage( serverConnectedNode, incomingMessage, (int)incomingMessage.Position, bitLength );
 							//incomingMessage.Position += bitLength;
@@ -341,26 +359,26 @@ namespace NeoAxis.Networking
 		protected void RegisterService( ClientNetworkService service )
 		{
 			if( service.owner != null )
-				Log.Fatal( "NetworkClient: RegisterService: Service is already registered." );
+				Log.Fatal( "NetworkClientNode: RegisterService: Service is already registered." );
 
 			if( service.Identifier == 0 )
-				Log.Fatal( "NetworkClient: RegisterService: Invalid service identifier. Identifier can not be zero." );
+				Log.Fatal( "NetworkClientNode: RegisterService: Invalid service identifier. Identifier can not be zero." );
 
 			if( service.Identifier > maxServiceIdentifier )
-				Log.Fatal( "NetworkClient: RegisterService: Invalid service identifier. Max identifier is \"{0}\".", maxServiceIdentifier );
+				Log.Fatal( "NetworkClientNode: RegisterService: Invalid service identifier. Max identifier is \"{0}\".", maxServiceIdentifier );
 
 			//check for unique identifier
 			{
 				NetworkService checkService = GetService( service.Identifier );
 				if( checkService != null )
-					Log.Fatal( "NetworkClient: RegisterService: Service with identifier \"{0}\" is already registered.", service.Identifier );
+					Log.Fatal( "NetworkClientNode: RegisterService: Service with identifier \"{0}\" is already registered.", service.Identifier );
 			}
 
 			//check for unique name
 			{
 				NetworkService checkService = GetService( service.Name );
 				if( checkService != null )
-					Log.Fatal( "NetworkClient: RegisterService: Service with name \"{0}\" is already registered.", service.Name );
+					Log.Fatal( "NetworkClientNode: RegisterService: Service with name \"{0}\" is already registered.", service.Name );
 			}
 
 			service.baseOwner = this;
@@ -369,17 +387,20 @@ namespace NeoAxis.Networking
 			servicesByIdentifier[ service.Identifier ] = service;
 		}
 
-		internal override NetworkService GetService( byte identifier )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		internal override NetworkService GetService( int identifier )
 		{
 			if( identifier >= servicesByIdentifier.Length )
 				return null;
 			return servicesByIdentifier[ identifier ];
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal override NetworkService GetService( string name )
 		{
-			foreach( ClientNetworkService service in services )
+			for( int n = 0; n < services.Count; n++ )
 			{
+				var service = services[ n ];
 				if( service.Name == name )
 					return service;
 			}
@@ -397,6 +418,11 @@ namespace NeoAxis.Networking
 		public string DisconnectionReason
 		{
 			get { return disconnectionReason; }
+		}
+
+		public double LastReceivedMessageTime
+		{
+			get { return lastReceivedMessageTime; }
 		}
 
 		public void SendAccumulatedMessages()

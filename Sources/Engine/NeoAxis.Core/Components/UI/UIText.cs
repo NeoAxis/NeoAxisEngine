@@ -20,7 +20,7 @@ namespace NeoAxis
 		public Reference<FontComponent> Font
 		{
 			get { if( _font.BeginGet() ) Font = _font.Get( this ); return _font.value; }
-			set { if( _font.BeginSet( ref value ) ) { try { FontChanged?.Invoke( this ); } finally { _font.EndSet(); } } }
+			set { if( _font.BeginSet( this, ref value ) ) { try { FontChanged?.Invoke( this ); } finally { _font.EndSet(); } } }
 		}
 		public event Action<UIText> FontChanged;
 		ReferenceField<FontComponent> _font = null;
@@ -32,7 +32,7 @@ namespace NeoAxis
 		public Reference<UIMeasureValueDouble> FontSize
 		{
 			get { if( _fontSize.BeginGet() ) FontSize = _fontSize.Get( this ); return _fontSize.value; }
-			set { if( _fontSize.BeginSet( ref value ) ) { try { FontSizeChanged?.Invoke( this ); } finally { _fontSize.EndSet(); } } }
+			set { if( _fontSize.BeginSet( this, ref value ) ) { try { FontSizeChanged?.Invoke( this ); } finally { _fontSize.EndSet(); } } }
 		}
 		public event Action<UIText> FontSizeChanged;
 		ReferenceField<UIMeasureValueDouble> _fontSize = new UIMeasureValueDouble( UIMeasure.Screen, 0.02 );
@@ -46,7 +46,7 @@ namespace NeoAxis
 		public Reference<EHorizontalAlignment> TextHorizontalAlignment
 		{
 			get { if( _textHorizontalAlignment.BeginGet() ) TextHorizontalAlignment = _textHorizontalAlignment.Get( this ); return _textHorizontalAlignment.value; }
-			set { if( _textHorizontalAlignment.BeginSet( ref value ) ) { try { TextHorizontalAlignChanged?.Invoke( this ); } finally { _textHorizontalAlignment.EndSet(); } } }
+			set { if( _textHorizontalAlignment.BeginSet( this, ref value ) ) { try { TextHorizontalAlignChanged?.Invoke( this ); } finally { _textHorizontalAlignment.EndSet(); } } }
 		}
 		public event Action<UIText> TextHorizontalAlignChanged;
 		ReferenceField<EHorizontalAlignment> _textHorizontalAlignment = EHorizontalAlignment.Center;
@@ -60,7 +60,7 @@ namespace NeoAxis
 		public Reference<EVerticalAlignment> TextVerticalAlignment
 		{
 			get { if( _textVerticalAlignment.BeginGet() ) TextVerticalAlignment = _textVerticalAlignment.Get( this ); return _textVerticalAlignment.value; }
-			set { if( _textVerticalAlignment.BeginSet( ref value ) ) { try { TextVerticalAlignChanged?.Invoke( this ); } finally { _textVerticalAlignment.EndSet(); } } }
+			set { if( _textVerticalAlignment.BeginSet( this, ref value ) ) { try { TextVerticalAlignChanged?.Invoke( this ); } finally { _textVerticalAlignment.EndSet(); } } }
 		}
 		public event Action<UIText> TextVerticalAlignChanged;
 		ReferenceField<EVerticalAlignment> _textVerticalAlignment = EVerticalAlignment.Center;
@@ -74,7 +74,7 @@ namespace NeoAxis
 		public Reference<ColorValue> Color
 		{
 			get { if( _color.BeginGet() ) Color = _color.Get( this ); return _color.value; }
-			set { if( _color.BeginSet( ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
+			set { if( _color.BeginSet( this, ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
 		}
 		public event Action<UIText> ColorChanged;
 		ReferenceField<ColorValue> _color = ColorValue.One;
@@ -88,7 +88,7 @@ namespace NeoAxis
 		public Reference<UIMeasureValueVector2> Offset
 		{
 			get { if( _offset.BeginGet() ) Offset = _offset.Get( this ); return _offset.value; }
-			set { if( _offset.BeginSet( ref value ) ) { try { OffsetChanged?.Invoke( this ); } finally { _offset.EndSet(); } } }
+			set { if( _offset.BeginSet( this, ref value ) ) { try { OffsetChanged?.Invoke( this ); } finally { _offset.EndSet(); } } }
 		}
 		public event Action<UIText> OffsetChanged;
 		ReferenceField<UIMeasureValueVector2> _offset = new UIMeasureValueVector2( UIMeasure.Units, 0, 0 );
@@ -102,7 +102,7 @@ namespace NeoAxis
 		public Reference<bool> WordWrap
 		{
 			get { if( _wordWrap.BeginGet() ) WordWrap = _wordWrap.Get( this ); return _wordWrap.value; }
-			set { if( _wordWrap.BeginSet( ref value ) ) { try { WordWrapChanged?.Invoke( this ); } finally { _wordWrap.EndSet(); } } }
+			set { if( _wordWrap.BeginSet( this, ref value ) ) { try { WordWrapChanged?.Invoke( this ); } finally { _wordWrap.EndSet(); } } }
 		}
 		public event Action<UIText> WordWrapChanged;
 		ReferenceField<bool> _wordWrap = false;
@@ -116,7 +116,7 @@ namespace NeoAxis
 		public Reference<UIMeasureValueDouble> VerticalIndention
 		{
 			get { if( _verticalIndention.BeginGet() ) VerticalIndention = _verticalIndention.Get( this ); return _verticalIndention.value; }
-			set { if( _verticalIndention.BeginSet( ref value ) ) { try { VerticalIndentionChanged?.Invoke( this ); } finally { _verticalIndention.EndSet(); } } }
+			set { if( _verticalIndention.BeginSet( this, ref value ) ) { try { VerticalIndentionChanged?.Invoke( this ); } finally { _verticalIndention.EndSet(); } } }
 		}
 		public event Action<UIText> VerticalIndentionChanged;
 		ReferenceField<UIMeasureValueDouble> _verticalIndention = new UIMeasureValueDouble( UIMeasure.Units, 0 );
@@ -131,7 +131,7 @@ namespace NeoAxis
 		//public Reference<double> VerticalIndention
 		//{
 		//	get { if( _verticalIndention.BeginGet() ) VerticalIndention = _verticalIndention.Get( this ); return _verticalIndention.value; }
-		//	set { if( _verticalIndention.BeginSet( ref value ) ) { try { VerticalIndentionChanged?.Invoke( this ); } finally { _verticalIndention.EndSet(); } } }
+		//	set { if( _verticalIndention.BeginSet( this, ref value ) ) { try { VerticalIndentionChanged?.Invoke( this ); } finally { _verticalIndention.EndSet(); } } }
 		//}
 		//public event Action<UIText> VerticalIndentionChanged;
 		//ReferenceField<double> _verticalIndention = 0.0;
@@ -145,7 +145,7 @@ namespace NeoAxis
 		//public Reference<bool> AutoSize
 		//{
 		//	get { if( _autoSize.BeginGet() ) AutoSize = _autoSize.Get( this ); return _autoSize.value; }
-		//	set { if( _autoSize.BeginSet( ref value ) ) { try { AutoSizeChanged?.Invoke( this ); } finally { _autoSize.EndSet(); } } }
+		//	set { if( _autoSize.BeginSet( this, ref value ) ) { try { AutoSizeChanged?.Invoke( this ); } finally { _autoSize.EndSet(); } } }
 		//}
 		//public event Action<UIText> AutoSizeChanged;
 		//ReferenceField<bool> _autoSize = false;
@@ -159,7 +159,7 @@ namespace NeoAxis
 		public Reference<bool> Shadow
 		{
 			get { if( _shadow.BeginGet() ) Shadow = _shadow.Get( this ); return _shadow.value; }
-			set { if( _shadow.BeginSet( ref value ) ) { try { ShadowChanged?.Invoke( this ); } finally { _shadow.EndSet(); } } }
+			set { if( _shadow.BeginSet( this, ref value ) ) { try { ShadowChanged?.Invoke( this ); } finally { _shadow.EndSet(); } } }
 		}
 		public event Action<UIText> ShadowChanged;
 		ReferenceField<bool> _shadow = false;
@@ -173,7 +173,7 @@ namespace NeoAxis
 		public Reference<UIMeasureValueVector2> ShadowOffset
 		{
 			get { if( _shadowOffset.BeginGet() ) ShadowOffset = _shadowOffset.Get( this ); return _shadowOffset.value; }
-			set { if( _shadowOffset.BeginSet( ref value ) ) { try { ShadowOffsetChanged?.Invoke( this ); } finally { _shadowOffset.EndSet(); } } }
+			set { if( _shadowOffset.BeginSet( this, ref value ) ) { try { ShadowOffsetChanged?.Invoke( this ); } finally { _shadowOffset.EndSet(); } } }
 		}
 		public event Action<UIText> ShadowOffsetChanged;
 		ReferenceField<UIMeasureValueVector2> _shadowOffset = new UIMeasureValueVector2( UIMeasure.Units, 1, 1 );
@@ -187,7 +187,7 @@ namespace NeoAxis
 		public Reference<ColorValue> ShadowColor
 		{
 			get { if( _shadowColor.BeginGet() ) ShadowColor = _shadowColor.Get( this ); return _shadowColor.value; }
-			set { if( _shadowColor.BeginSet( ref value ) ) { try { ShadowColorChanged?.Invoke( this ); } finally { _shadowColor.EndSet(); } } }
+			set { if( _shadowColor.BeginSet( this, ref value ) ) { try { ShadowColorChanged?.Invoke( this ); } finally { _shadowColor.EndSet(); } } }
 		}
 		public event Action<UIText> ShadowColorChanged;
 		ReferenceField<ColorValue> _shadowColor = new ColorValue( 0, 0, 0 );
@@ -202,7 +202,7 @@ namespace NeoAxis
 		//public Reference<bool> SupportLocalization
 		//{
 		//	get { if( _supportLocalization.BeginGet() ) SupportLocalization = _supportLocalization.Get( this ); return _supportLocalization.value; }
-		//	set { if( _supportLocalization.BeginSet( ref value ) ) { try { SupportLocalizationChanged?.Invoke( this ); } finally { _supportLocalization.EndSet(); } } }
+		//	set { if( _supportLocalization.BeginSet( this, ref value ) ) { try { SupportLocalizationChanged?.Invoke( this ); } finally { _supportLocalization.EndSet(); } } }
 		//}
 		//public event Action<UIText> SupportLocalizationChanged;
 		//ReferenceField<bool> _supportLocalization = true;
@@ -217,7 +217,7 @@ namespace NeoAxis
 		public Reference<bool> ClipRectangle
 		{
 			get { if( _clipRectangle.BeginGet() ) ClipRectangle = _clipRectangle.Get( this ); return _clipRectangle.value; }
-			set { if( _clipRectangle.BeginSet( ref value ) ) { try { ClipRectangleChanged?.Invoke( this ); } finally { _clipRectangle.EndSet(); } } }
+			set { if( _clipRectangle.BeginSet( this, ref value ) ) { try { ClipRectangleChanged?.Invoke( this ); } finally { _clipRectangle.EndSet(); } } }
 		}
 		public event Action<UIText> ClipRectangleChanged;
 		ReferenceField<bool> _clipRectangle = false;

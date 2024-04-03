@@ -15,6 +15,18 @@ namespace NeoAxis
 #endif
 	public class Crossroad : RoadNode
 	{
+		/// <summary>
+		/// The type of the crossroad.
+		/// </summary>
+		[DefaultValue( RoadType.WayToUseEnum.Driving )]
+		public Reference<RoadType.WayToUseEnum> WayToUse
+		{
+			get { if( _wayToUse.BeginGet() ) WayToUse = _wayToUse.Get( this ); return _wayToUse.value; }
+			set { if( _wayToUse.BeginSet( this, ref value ) ) { try { WayToUseChanged?.Invoke( this ); DataWasChanged(); } finally { _wayToUse.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="WayToUse"/> property value changes.</summary>
+		public event Action<Crossroad> WayToUseChanged;
+		ReferenceField<RoadType.WayToUseEnum> _wayToUse = RoadType.WayToUseEnum.Driving;
 
 		//!!!!может быть несколько радиусов кривизны для каждой пары
 
@@ -26,26 +38,100 @@ namespace NeoAxis
 		public Reference<double> CurvatureRadius
 		{
 			get { if( _curvatureRadius.BeginGet() ) CurvatureRadius = _curvatureRadius.Get( this ); return _curvatureRadius.value; }
-			set { if( _curvatureRadius.BeginSet( ref value ) ) { try { CurvatureRadiusChanged?.Invoke( this ); DataWasChanged(); } finally { _curvatureRadius.EndSet(); } } }
+			set { if( _curvatureRadius.BeginSet( this, ref value ) ) { try { CurvatureRadiusChanged?.Invoke( this ); DataWasChanged(); } finally { _curvatureRadius.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CurvatureRadius"/> property value changes.</summary>
 		public event Action<Crossroad> CurvatureRadiusChanged;
 		ReferenceField<double> _curvatureRadius = 5.0;
 
+		/// <summary>
+		/// Whether to visualize crossing markings.
+		/// </summary>
+		[DefaultValue( false )]
+		public Reference<bool> CrossingMarkings
+		{
+			get { if( _crossingMarkings.BeginGet() ) CrossingMarkings = _crossingMarkings.Get( this ); return _crossingMarkings.value; }
+			set { if( _crossingMarkings.BeginSet( this, ref value ) ) { try { CrossingMarkingsChanged?.Invoke( this ); DataWasChanged(); } finally { _crossingMarkings.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="CrossingMarkings"/> property value changes.</summary>
+		public event Action<Crossroad> CrossingMarkingsChanged;
+		ReferenceField<bool> _crossingMarkings = false;
+
+		/// <summary>
+		/// Whether to add traffic lights.
+		/// </summary>
+		[DefaultValue( false )]
+		public Reference<bool> TrafficLights
+		{
+			get { if( _trafficLights.BeginGet() ) TrafficLights = _trafficLights.Get( this ); return _trafficLights.value; }
+			set { if( _trafficLights.BeginSet( this, ref value ) ) { try { TrafficLightsChanged?.Invoke( this ); DataWasChanged(); } finally { _trafficLights.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="TrafficLights"/> property value changes.</summary>
+		public event Action<Crossroad> TrafficLightsChanged;
+		ReferenceField<bool> _trafficLights = false;
+
+		[DefaultValue( "0 -1 0" )]
+		public Reference<Vector3> TrafficLightsLocalOffset
+		{
+			get { if( _trafficLightsLocalOffset.BeginGet() ) TrafficLightsLocalOffset = _trafficLightsLocalOffset.Get( this ); return _trafficLightsLocalOffset.value; }
+			set { if( _trafficLightsLocalOffset.BeginSet( this, ref value ) ) { try { TrafficLightsLocalOffsetChanged?.Invoke( this ); DataWasChanged(); } finally { _trafficLightsLocalOffset.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="TrafficLightsLocalOffset"/> property value changes.</summary>
+		public event Action<Crossroad> TrafficLightsLocalOffsetChanged;
+		ReferenceField<Vector3> _trafficLightsLocalOffset = new Vector3( 0, -1, 0 );
+
+		//[DefaultValue( 0.0 )]
+		//public Reference<double> TrafficLightsOverrideDistance
+		//{
+		//	get { if( _trafficLightsOverrideDistance.BeginGet() ) TrafficLightsOverrideDistance = _trafficLightsOverrideDistance.Get( this ); return _trafficLightsOverrideDistance.value; }
+		//	set { if( _trafficLightsOverrideDistance.BeginSet( this, ref value ) ) { try { TrafficLightsOverrideDistanceChanged?.Invoke( this ); DataWasChanged(); } finally { _trafficLightsOverrideDistance.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="TrafficLightsOverrideDistance"/> property value changes.</summary>
+		//public event Action<Crossroad> TrafficLightsOverrideDistanceChanged;
+		//ReferenceField<double> _trafficLightsOverrideDistance = 0.0;
+
+		/// <summary>
+		/// Whether to display logical data in the editor.
+		/// </summary>
+		[DefaultValue( false )]
+		public Reference<bool> DisplayLogicalDataInEditor
+		{
+			get { if( _displayLogicalDataInEditor.BeginGet() ) DisplayLogicalDataInEditor = _displayLogicalDataInEditor.Get( this ); return _displayLogicalDataInEditor.value; }
+			set { if( _displayLogicalDataInEditor.BeginSet( this, ref value ) ) { try { DisplayLogicalDataInEditorChanged?.Invoke( this ); } finally { _displayLogicalDataInEditor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DisplayLogicalDataInEditor"/> property value changes.</summary>
+		public event Action<Crossroad> DisplayLogicalDataInEditorChanged;
+		ReferenceField<bool> _displayLogicalDataInEditor = false;
+
+		/// <summary>
+		/// Whether to display logical data in the simulation.
+		/// </summary>
+		[DefaultValue( false )]
+		public Reference<bool> DisplayLogicalDataInSimulation
+		{
+			get { if( _displayLogicalDataInSimulation.BeginGet() ) DisplayLogicalDataInSimulation = _displayLogicalDataInSimulation.Get( this ); return _displayLogicalDataInSimulation.value; }
+			set { if( _displayLogicalDataInSimulation.BeginSet( this, ref value ) ) { try { DisplayLogicalDataInSimulationChanged?.Invoke( this ); } finally { _displayLogicalDataInSimulation.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DisplayLogicalDataInSimulation"/> property value changes.</summary>
+		public event Action<Crossroad> DisplayLogicalDataInSimulationChanged;
+		ReferenceField<bool> _displayLogicalDataInSimulation = false;
 
 		///////////////////////////////////////////////
 
 		public class CrossroadLogicalData : LogicalData
 		{
 			public List<ConnectedRoadItem> ConnectedRoads = new List<ConnectedRoadItem>();
-
 			public bool Valid;
 			public List<ConnectedRoadItem> SortedRoads;
+
+			//public List<Road.RoadData> WalkingRoads = new List<Road.RoadData>();
 
 			/////////////////////
 
 			public class ConnectedRoadItem
 			{
+				public CrossroadLogicalData Owner;
+
 				public Road.RoadData ConnectedRoad;//public Road.LogicalData ConnectedRoad;
 
 				public ItemTypeEnum ItemType;
@@ -71,11 +157,16 @@ namespace NeoAxis
 					Right,
 				}
 
+				public ConnectedRoadItem( CrossroadLogicalData owner )
+				{
+					Owner = owner;
+				}
+
 				public void GetSurfacePositionOnEdge( PositionOnEdge positionOnEdge, out Vector3 position, out Vector3 direction, out Vector3 up )
 				{
-					var centerPosition = ConnectedRoad.GetPositionByTime( TimeOnCurve );
-					var directionForward = ConnectedRoad.GetDirectionByTime( TimeOnCurve );
-					up = ConnectedRoad.GetUpByTime( TimeOnCurve );
+					ConnectedRoad.GetPositionByTime( TimeOnCurve, out var centerPosition );
+					ConnectedRoad.GetDirectionByTime( TimeOnCurve, out var directionForward );
+					ConnectedRoad.GetUpByTime( TimeOnCurve, out up );
 
 					direction = directionForward;
 					if( !ForwardDirection )
@@ -128,6 +219,8 @@ namespace NeoAxis
 					ConnectedRoads.Clear();
 				}
 
+				//WalkingRoads.Clear();
+
 				base.OnDelete();
 			}
 
@@ -135,7 +228,9 @@ namespace NeoAxis
 			{
 				base.OnConnectedRoadDelete( roadData );
 
-				again:;
+//!!!!never used?
+
+again:;
 				for( int n = 0; n < ConnectedRoads.Count; n++ )
 				{
 					if( ConnectedRoads[ n ].ConnectedRoad == roadData )
@@ -211,7 +306,7 @@ namespace NeoAxis
 
 			//////////////////////////////////////////////
 
-			class RoadConnection
+			public class RoadConnection
 			{
 				public ConnectedRoadItem Road;
 				public ConnectedRoadItem NextRoad;
@@ -244,7 +339,7 @@ namespace NeoAxis
 					{
 						var stepDivide = 2.0;
 
-						timeSteps = new List<double>( (int)( totalLengthNoCurvature / segmentsLength * stepDivide * 2 ) );
+						timeSteps = new List<double>( Math.Max( (int)( totalLengthNoCurvature / segmentsLength * stepDivide * 2 ), 4 ) );
 
 						for( int nPoint = 0; nPoint < curvePosition.Points.Count - 1; nPoint++ )
 						{
@@ -362,7 +457,7 @@ namespace NeoAxis
 						{
 							var time = roadConnection.TimeSteps[ n ];
 
-							var v = geometryGenerator.GetPositionByTime( time );
+							geometryGenerator.GetPositionByTime( time, out var v );
 							if( n != 0 )
 								roadConnection.TotalLength += ( v - previous ).Length();
 							previous = v;
@@ -629,11 +724,250 @@ namespace NeoAxis
 					}
 				}
 
+				//generate crossing markings
+				if( Owner.CrossingMarkings && !generateCollision )
+				{
+					//!!!!потом перенести в RoadUtility потому что не только для перекрестков
+
+					//!!!!каждой дороге своя разметка
+					RoadType firstRoadType = null;
+					if( SortedRoads.Count != 0 )
+					{
+						var road = SortedRoads[ 0 ];
+						firstRoadType = road.ConnectedRoad.RoadType;
+					}
+
+					var geometryWithSurface = meshData.MeshGeometries.FirstOrDefault( g => g.Part == RoadUtility.RoadGeometryGenerator.GeneratePartEnum.Surface );
+
+					if( geometryWithSurface != null )
+					{
+						//make octree for ray case from Surface mesh data
+						using( var meshTest = new MeshTest( geometryWithSurface.Positions, geometryWithSurface.Indices ) )
+						{
+							var walkingVertices = new List<(Vector3, Vector3F, Vector2F)>( 128 );
+							var walkingIndices = new List<int>( 128 );
+
+							//get connected walking roads
+							{
+								var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, false, cylinder.ToBounds() );
+								Scene.GetObjectsInSpace( getObjectsItem );
+
+								foreach( var item in getObjectsItem.Result ) //foreach( var walkingRoad in WalkingRoads )
+								{
+									var walkingRoad = item.Object as Road;
+									if( walkingRoad != null )
+									{
+										var walkingRoadData = walkingRoad.GetRoadData();
+										if( walkingRoadData != null && walkingRoadData.RoadType.WayToUse.Value == RoadType.WayToUseEnum.Walking )
+										{
+											var timeSteps = walkingRoadData.GetCurveTimeSteps( 2, null );
+
+											var started = false;
+											var borderPositions1 = new List<(Vector3, Vector3F, Vector2F)>( 32 );
+											var borderPositions2 = new List<(Vector3, Vector3F, Vector2F)>( 32 );
+											var firstP1 = Vector3.Zero;
+
+											var previousPos = Vector3.Zero;
+
+											for( int nTimeStep = 0; nTimeStep < timeSteps.Count; nTimeStep++ )
+											{
+												var time = timeSteps[ nTimeStep ];
+												walkingRoadData.GetPositionByTime( time, out var centerPos );
+
+												if( nTimeStep != 0 )
+												{
+													var laneWidth = walkingRoadData.RoadType.LaneWidth.Value;
+													var sidewalkEdgeWidth = walkingRoadData.RoadType.RoadsideEdgeWidth.Value;
+
+													var lanes = walkingRoadData.Owner.Lanes.Value;
+													var width = lanes * laneWidth + sidewalkEdgeWidth * 2;
+													var widthOffsetSide0 = width * 0.5;
+													var widthOffsetSide1 = -width * 0.5;
+
+													var collided = false;
+
+													if( ( ownerPosition - centerPos ).LengthSquared() < radius * radius )
+													{
+														var dir = ( centerPos - previousPos ).GetNormalize();
+														var rot = Quaternion.LookAt( dir, Vector3.ZAxis );
+
+														var pos1 = centerPos + rot * new Vector3( 0, widthOffsetSide0, 0 );
+														var pos2 = centerPos + rot * new Vector3( 0, widthOffsetSide1, 0 );
+
+														var localPos1 = ( pos1 - ownerPosition ).ToVector3F();
+														var localRay1 = new RayF( localPos1 + new Vector3F( 0, 0, 100 ), new Vector3F( 0, 0, -200 ) );
+														var rayResults1 = meshTest.RayCast( localRay1, MeshTest.Mode.OneClosest, false );
+
+														var localPos2 = ( pos2 - ownerPosition ).ToVector3F();
+														var localRay2 = new RayF( localPos2 + new Vector3F( 0, 0, 100 ), new Vector3F( 0, 0, -200 ) );
+														var rayResults2 = meshTest.RayCast( localRay2, MeshTest.Mode.OneClosest, false );
+
+														if( rayResults1.Length != 0 && rayResults2.Length != 0 )
+														{
+															var rayResult1 = rayResults1[ 0 ];
+															var rayResult2 = rayResults2[ 0 ];
+
+															var p1 = localRay1.GetPointOnRay( rayResult1.Scale ).ToVector3() + ownerPosition;
+															var normal1 = rayResult1.Normal;
+
+															var p2 = localRay2.GetPointOnRay( rayResult2.Scale ).ToVector3() + ownerPosition;
+															var normal2 = rayResult2.Normal;
+
+															if( !started )
+																firstP1 = p1;
+
+															var distance = 0.0;
+															if( p1 != firstP1 )
+																distance = ( p1 - firstP1 ).Length();
+
+															//!!!!
+															var uvFactor = 5.0f;
+															var uvOffsetAlong = (float)( distance * uvFactor );
+
+															var texCoord1 = new Vector2F( 0, uvOffsetAlong );
+
+															var texCoord2 = new Vector2F( (float)( p2 - p1 ).Length() * uvFactor, uvOffsetAlong );
+
+															borderPositions1.Add( (p1, normal1, texCoord1) );
+															borderPositions2.Add( (p2, normal2, texCoord2) );
+
+															collided = true;
+														}
+													}
+
+													if( collided )
+													{
+														if( !started )
+															started = true;
+													}
+													else
+													{
+														if( started )
+														{
+															//var startOffset = 0;
+															//var count = borderPositions1.Count;
+
+															var clampCount = 1;
+															var startOffset = clampCount;
+															var count = borderPositions1.Count - clampCount * 2 - clampCount;
+
+															//clamp partial pieces
+															var lastTexCoord = borderPositions1[ startOffset + count - 1 ].Item3;
+															if( ( lastTexCoord.Y % 1.0f ) < 0.5f )
+																count--;
+
+															if( count >= 2 )
+															{
+																var currentVertexIndex = walkingVertices.Count;
+
+																for( int n = 0; n < count; n++ )
+																{
+																	walkingVertices.Add( borderPositions1[ startOffset + n ] );
+																	walkingVertices.Add( borderPositions2[ startOffset + n ] );
+
+																	if( n > 0 )
+																	{
+																		walkingIndices.Add( currentVertexIndex + n * 2 + 1 );
+																		walkingIndices.Add( currentVertexIndex + n * 2 + 0 );
+																		walkingIndices.Add( currentVertexIndex + ( n - 1 ) * 2 + 1 );
+
+																		walkingIndices.Add( currentVertexIndex + ( n - 1 ) * 2 + 0 );
+																		walkingIndices.Add( currentVertexIndex + ( n - 1 ) * 2 + 1 );
+																		walkingIndices.Add( currentVertexIndex + n * 2 + 0 );
+																	}
+																}
+															}
+														}
+
+														started = false;
+														borderPositions1.Clear();
+														borderPositions2.Clear();
+													}
+												}
+
+												previousPos = centerPos;
+											}
+										}
+									}
+								}
+							}
+
+
+							if( walkingIndices.Count > 0 )
+							{
+								var vertexStructure = StandardVertex.MakeStructure( StandardVertex.Components.StaticOneTexCoord, true, out int vertexSize );
+
+								var vertices = new byte[ vertexSize * walkingVertices.Count ];
+								var positions = new Vector3F[ walkingVertices.Count ];
+
+								unsafe
+								{
+									fixed( byte* pVertices = vertices )
+									{
+										var pVertex = (StandardVertex.StaticOneTexCoord*)pVertices;
+
+										for( int n = 0; n < walkingVertices.Count; n++ )
+										{
+											var walkingVertex = walkingVertices[ n ];
+											var pos = walkingVertex.Item1;
+											var normal = walkingVertex.Item2;
+											var texCoord = walkingVertex.Item3;
+
+											pVertex->Position = ( pos - ownerPosition ).ToVector3F();
+											positions[ n ] = pVertex->Position;
+
+											pVertex->Normal = normal;
+
+											//!!!!right?
+											pVertex->Tangent = new Vector4F( QuaternionF.LookAt( new Vector3F( 1, 0, 0 ), pVertex->Normal ).GetForward(), -1 );
+
+											pVertex->Color = new ColorValue( 1, 1, 1 );
+											pVertex->TexCoord0 = texCoord;
+
+											pVertex++;
+										}
+									}
+								}
+
+								//add to result
+								{
+									var meshGeometryItem = new RoadUtility.RoadGeometryGenerator.MeshGeometryItem();
+									meshGeometryItem.Part = RoadUtility.RoadGeometryGenerator.GeneratePartEnum.Markup;
+									meshGeometryItem.Vertices = vertices;
+									meshGeometryItem.Positions = positions;
+									meshGeometryItem.Indices = walkingIndices.ToArray();
+									meshGeometryItem.Material = firstRoadType.CrossingMarkingsMaterial;
+									meshData.MeshGeometries.Add( meshGeometryItem );
+								}
+
+							}
+
+						}
+					}
+				}
+
 				return meshData;
 			}
 		}
 
 		///////////////////////////////////////////////
+
+		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
+		{
+			base.OnMetadataGetMembersFilter( context, member, ref skip );
+
+			if( member is Metadata.Property )
+			{
+				switch( member.Name )
+				{
+				case nameof( TrafficLightsLocalOffset ):
+					//case nameof( TrafficLightsOverrideDistance ):
+					if( !TrafficLights )
+						skip = true;
+					break;
+				}
+			}
+		}
 
 		bool IsInsideCylinder( Vector3 position )
 		{
@@ -664,26 +998,26 @@ namespace NeoAxis
 						var roadData = road.GetRoadData();
 						//var roadData = road.GetLogicalData();
 
-						if( roadData != null )//&& data.GetCurveTimeByPosition( pointPosition, maxDistanceToCurve, out var timeOnCurve ) )
+						if( roadData != null && roadData.RoadType.WayToUse.Value == WayToUse.Value )//&& data.GetCurveTimeByPosition( pointPosition, maxDistanceToCurve, out var timeOnCurve ) )
 						{
-							double timeStep;
-							{
-								double totalLengthNoCurvature = 0;
-								{
-									for( int n = 1; n < roadData.Points.Length; n++ )
-										totalLengthNoCurvature += ( roadData.Points[ n ].Transform.Position - roadData.Points[ n - 1 ].Transform.Position ).Length();
-									if( totalLengthNoCurvature <= 0.001 )
-										totalLengthNoCurvature = 0.001;
-								}
+							//double timeStep;
+							//{
+							//	double totalLengthNoCurvature = 0;
+							//	{
+							//		for( int n = 1; n < roadData.Points.Length; n++ )
+							//			totalLengthNoCurvature += ( roadData.Points[ n ].Transform.Position - roadData.Points[ n - 1 ].Transform.Position ).Length();
+							//		if( totalLengthNoCurvature <= 0.001 )
+							//			totalLengthNoCurvature = 0.001;
+							//	}
 
-								var totalTime = roadData.LastPoint.TimeOnCurve;
+							//	var totalTime = roadData.LastPoint.TimeOnCurve;
 
-								//!!!!
-								var stepLength = 0.5;
+							//	//!!!!
+							//	var stepLength = 0.5;
 
-								//!!!!? totalTime
-								timeStep = stepLength / totalLengthNoCurvature * totalTime;
-							}
+							//	//!!!!? totalTime
+							//	timeStep = stepLength / totalLengthNoCurvature * totalTime;
+							//}
 
 							var startPosition = roadData.Points[ 0 ].Transform.Position;
 							var endPosition = roadData.LastPoint.Transform.Position;
@@ -695,7 +1029,7 @@ namespace NeoAxis
 							{
 								if( startInside != endInside )
 								{
-									var roadItem = new CrossroadLogicalData.ConnectedRoadItem();
+									var roadItem = new CrossroadLogicalData.ConnectedRoadItem( logicalData );
 									roadItem.ConnectedRoad = roadData;
 
 									//calculate time with radius distance to center of crossroad
@@ -705,7 +1039,8 @@ namespace NeoAxis
 										var dir = ( startPosition - center ).GetNormalize();
 										var splitPosition = center + dir * cylinder.Radius;
 
-										roadData.GetClosestCurveTimeToPosition( splitPosition, timeStep, out var timeOnCurve );
+										roadData.GetClosestCurveTimeToPosition( splitPosition, radius, 0.5, out var timeOnCurve );
+										//roadData.GetClosestCurveTimeToPosition( splitPosition, timeStep, out var timeOnCurve );
 
 										roadItem.ItemType = CrossroadLogicalData.ConnectedRoadItem.ItemTypeEnum.StartPointInside;
 										roadItem.TimeOnCurve = timeOnCurve;
@@ -716,7 +1051,8 @@ namespace NeoAxis
 										var dir = ( endPosition - center ).GetNormalize();
 										var splitPosition = center + dir * cylinder.Radius;
 
-										roadData.GetClosestCurveTimeToPosition( splitPosition, timeStep, out var timeOnCurve );
+										roadData.GetClosestCurveTimeToPosition( splitPosition, radius, 0.5, out var timeOnCurve );
+										//roadData.GetClosestCurveTimeToPosition( splitPosition, timeStep, out var timeOnCurve );
 
 										roadItem.ItemType = CrossroadLogicalData.ConnectedRoadItem.ItemTypeEnum.EndPointInside;
 										roadItem.TimeOnCurve = timeOnCurve;
@@ -772,25 +1108,27 @@ namespace NeoAxis
 							{
 								//check for crossing road
 
-								roadData.GetClosestCurveTimeToPosition( center, timeStep, out var centerTimeOnCurve );
-								var positionOnCurve = roadData.GetPositionByTime( centerTimeOnCurve );
+								roadData.GetClosestCurveTimeToPosition( center, radius, 0.5, out var centerTimeOnCurve );
+								//roadData.GetClosestCurveTimeToPosition( center, timeStep, out var centerTimeOnCurve );
+								roadData.GetPositionByTime( centerTimeOnCurve, out var positionOnCurve );
 
 								var diff = positionOnCurve - center;
 								if( diff.Length() < radius && positionOnCurve.Z > cylinder.Point1.Z && positionOnCurve.Z < cylinder.Point2.Z )
 								{
-									var dir = roadData.GetDirectionByTime( centerTimeOnCurve );
+									roadData.GetDirectionByTime( centerTimeOnCurve, out var dir );
 
 
 									CrossroadLogicalData.ConnectedRoadItem roadItemStart;
 									CrossroadLogicalData.ConnectedRoadItem roadItemEnd;
 
 									{
-										var roadItem = new CrossroadLogicalData.ConnectedRoadItem();
+										var roadItem = new CrossroadLogicalData.ConnectedRoadItem( logicalData );
 										roadItemStart = roadItem;
 										roadItem.ConnectedRoad = roadData;
 
 										var splitPosition = center - dir * cylinder.Radius;
-										roadData.GetClosestCurveTimeToPosition( splitPosition, timeStep, out var timeOnCurve );
+										roadData.GetClosestCurveTimeToPosition( splitPosition, radius, 0.5, out var timeOnCurve );
+										//roadData.GetClosestCurveTimeToPosition( splitPosition, timeStep, out var timeOnCurve );
 
 										roadItem.ItemType = CrossroadLogicalData.ConnectedRoadItem.ItemTypeEnum.CrossingStart;
 										roadItem.TimeOnCurve = timeOnCurve;
@@ -802,12 +1140,13 @@ namespace NeoAxis
 									}
 
 									{
-										var roadItem = new CrossroadLogicalData.ConnectedRoadItem();
+										var roadItem = new CrossroadLogicalData.ConnectedRoadItem( logicalData );
 										roadItemEnd = roadItem;
 										roadItem.ConnectedRoad = roadData;
 
 										var splitPosition = center + dir * cylinder.Radius;
-										roadData.GetClosestCurveTimeToPosition( splitPosition, timeStep, out var timeOnCurve );
+										roadData.GetClosestCurveTimeToPosition( splitPosition, radius, 0.5, out var timeOnCurve );
+										//roadData.GetClosestCurveTimeToPosition( splitPosition, timeStep, out var timeOnCurve );
 
 										roadItem.ItemType = CrossroadLogicalData.ConnectedRoadItem.ItemTypeEnum.CrossingEnd;
 										roadItem.TimeOnCurve = timeOnCurve;
@@ -826,6 +1165,12 @@ namespace NeoAxis
 								}
 							}
 						}
+
+						//if( roadData != null && roadData.RoadType.WayToUse.Value == RoadType.WayToUseEnum.Walking )
+						//{
+						//	logicalData.WalkingRoads.Add( roadData );
+						//}
+
 					}
 				}
 			}
@@ -894,8 +1239,15 @@ namespace NeoAxis
 					if( context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this )
 						show = true;
 
+				if( EngineApp.IsEditor && DisplayLogicalDataInEditor )
+					show = true;
+				if( EngineApp.IsSimulation && DisplayLogicalDataInSimulation )
+					show = true;
+
 				if( show )
 				{
+					//!!!!фрустум порверять
+
 					var logicalData = (CrossroadLogicalData)GetLogicalData( false );
 					if( logicalData != null )
 					{
@@ -916,10 +1268,10 @@ namespace NeoAxis
 
 							foreach( var road in logicalData.SortedRoads )
 							{
-								var pos = road.ConnectedRoad.GetPositionByTime( road.TimeOnCurve );
+								road.ConnectedRoad.GetPositionByTime( road.TimeOnCurve, out var pos );
 								renderer.AddSphere( new Sphere( pos, 0.2 ), 32, true );
 
-								var dir = road.ConnectedRoad.GetDirectionByTime( road.TimeOnCurve );
+								road.ConnectedRoad.GetDirectionByTime( road.TimeOnCurve, out var dir );
 								if( !road.ForwardDirection )
 									dir = -dir;
 
@@ -928,7 +1280,7 @@ namespace NeoAxis
 								{
 									road.GetSurfacePositionOnEdge( CrossroadLogicalData.ConnectedRoadItem.PositionOnEdge.Left, out var left, out _, out _ );
 									road.GetSurfacePositionOnEdge( CrossroadLogicalData.ConnectedRoadItem.PositionOnEdge.Right, out var right, out _, out _ );
-									renderer.AddLine( left, right );
+									renderer.AddLineThin( left, right );
 								}
 							}
 						}
@@ -955,6 +1307,8 @@ namespace NeoAxis
 
 			var logicalData = (CrossroadLogicalData)GetLogicalData();
 			if( !logicalData.Valid )
+				return;
+			if( !logicalData.SortedRoads[ 0 ].ConnectedRoad.RoadType.SurfaceMaterial.ReferenceOrValueSpecified )
 				return;
 
 
@@ -984,6 +1338,141 @@ namespace NeoAxis
 					//var items = RoadUtility.CalculateSurfaceObjects( surface.Result, meshData, TransformV.Position, firstRoad.Owner.Age );
 					//if( items != null && items.Length != 0 )
 					//	visualData.CreateGroupOfObjectsSubGroup( surface.Result, items );
+				}
+			}
+
+			//traffic lights
+			if( TrafficLights )
+			{
+				var baseMesh = firstRoad.RoadType.TrafficLightBaseMesh.Value;
+				var baseMeshWalkingOnly = firstRoad.RoadType.TrafficLightBaseMeshWalkingOnly.Value ?? baseMesh;
+				if( baseMesh != null )
+				{
+					//!!!!левостороннее движение
+
+
+					for( int nRoad = 0; nRoad < logicalData.SortedRoads.Count; nRoad++ )
+					{
+						var road = logicalData.SortedRoads[ nRoad ];
+
+						//var nextRoad = logicalData.SortedRoads[ ( nRoad + 1 ) % logicalData.SortedRoads.Count ];
+						//var previousRoad = logicalData.SortedRoads[ ( nRoad + logicalData.SortedRoads.Count - 1 ) % logicalData.SortedRoads.Count ];
+
+						road.GetSurfacePositionOnEdge( CrossroadLogicalData.ConnectedRoadItem.PositionOnEdge.Right, out var roadRightCornerPosition, out var roadRightCornerDirection, out var roadRightCornerUp );
+
+						road.GetSurfacePositionOnEdge( CrossroadLogicalData.ConnectedRoadItem.PositionOnEdge.Left, out var roadLeftCornerPosition, out var roadLeftCornerDirection, out var roadLeftCornerUp );
+
+						//road.GetSurfacePositionOnEdge( CrossroadLogicalData.ConnectedRoadItem.PositionOnEdge.Left, out var roadCornerPosition, out var roadCornerDirection, out var roadCornerUp );
+
+						//nextRoad.GetSurfacePositionOnEdge( CrossroadLogicalData.ConnectedRoadItem.PositionOnEdge.Right, out var nextRoadCornerPosition, out var nextRoadCornerDirection, out var nextRoadCornerUp );
+
+						////!!!!left?
+						//previousRoad.GetSurfacePositionOnEdge( CrossroadLogicalData.ConnectedRoadItem.PositionOnEdge.Right, out var previousRoadCornerPosition, out var previousRoadCornerDirection, out var previousRoadCornerUp );
+
+						//if( !MathAlgorithms.IntersectRayRay( roadCornerPosition.ToVector2(), roadCornerPosition.ToVector2() + roadCornerDirection.ToVector2(), nextRoadCornerPosition.ToVector2(), nextRoadCornerPosition.ToVector2() + nextRoadCornerDirection.ToVector2(), out var intersectionPoint2 ) )
+						//{
+						//	intersectionPoint2 = ( roadCornerPosition.ToVector2() + nextRoadCornerPosition.ToVector2() ) * 0.5;
+						//}
+
+						//var distance = ( intersectionPoint2 - roadCornerPosition.ToVector2() ).Length();
+						//var intersectionPoint = new Vector3( intersectionPoint2, ( roadCornerPosition + roadCornerDirection * distance ).Z );
+
+
+						var alongRoadDirection = roadRightCornerDirection;// nextRoadCornerDirection;
+						var alongRoadRotation = Quaternion.FromDirectionZAxisUp( alongRoadDirection );
+
+						//right side. driving and walking
+						{
+
+							//calculate world position of the object
+							var pos = roadRightCornerPosition;//nextRoadCornerPosition;
+
+							//var overrideDistance = TrafficLightsOverrideDistance.Value;
+							//if( overrideDistance != 0 )
+							//{
+							//	var ray = new Ray2( nextRoadCornerDirection.ToVector2(), intersectionPoint.ToVector2() );
+							//	var circle = new Circle( tr.Position.ToVector2(), overrideDistance );
+
+							//	if( circle.Intersects( ray, out var scale1, out var scale2 ) )
+							//	{
+							//		var scale = Math.Min( scale1, scale2 );
+							//		var intersection = ray.GetPointOnRay( scale );
+
+							//		//!!!!pos.Z
+							//		pos = new Vector3( intersection, pos.Z );
+							//	}
+							//}
+
+							//add local offset
+							pos += alongRoadRotation * TrafficLightsLocalOffset.Value;
+
+							//!!!!
+							//var verticalOffset = height on sidewalk;
+
+							var tr2 = new Transform( pos, Quaternion.Identity, Vector3.One );
+
+							//!!!!collision: it is not visual data
+							//!!!!collision: about road manager update
+
+
+							var additionalItems = new List<MeshInSpace.AdditionalItem>();
+							{
+								//driving
+								var drivingMesh = firstRoad.RoadType.TrafficLightDrivingMesh.Value;
+								if( drivingMesh != null )
+								{
+									var rot = Quaternion.LookAt( -roadRightCornerDirection, Vector3.ZAxis );
+									var item = new MeshInSpace.AdditionalItem( drivingMesh, Vector3.Zero, rot, Vector3.One, ColorValue.One );
+									additionalItems.Add( item );
+								}
+
+								//walking
+								var walkingMesh = firstRoad.RoadType.TrafficLightWalkingMesh.Value;
+								if( walkingMesh != null )
+								{
+									var dir = roadLeftCornerPosition - roadRightCornerPosition;
+									var rot = Quaternion.LookAt( dir, Vector3.ZAxis );
+									var item = new MeshInSpace.AdditionalItem( walkingMesh, Vector3.Zero, rot, Vector3.One, ColorValue.One );
+									additionalItems.Add( item );
+								}
+							}
+
+							visualData.CreateMeshObject( baseMesh, tr2, ColorValue.One, additionalItems.ToArray(), Collision );
+						}
+
+						//left side. walking only
+						{
+							//calculate world position of the object
+							var pos = roadLeftCornerPosition;
+
+							//add local offset
+							pos += alongRoadRotation * ( TrafficLightsLocalOffset.Value * new Vector3( 1, -1, 1 ) );
+
+							var tr2 = new Transform( pos, Quaternion.Identity, Vector3.One );
+
+							var additionalItems = new List<MeshInSpace.AdditionalItem>();
+							{
+								//walking
+								var walkingMesh = firstRoad.RoadType.TrafficLightWalkingMesh.Value;
+								if( walkingMesh != null )
+								{
+									var dir = roadRightCornerPosition - roadLeftCornerPosition;
+									var rot = Quaternion.LookAt( dir, Vector3.ZAxis );
+									var item = new MeshInSpace.AdditionalItem( walkingMesh, Vector3.Zero, rot, Vector3.One, ColorValue.One );
+									additionalItems.Add( item );
+
+									//{
+									//	var rot = Quaternion.LookAt( -roadLeftCornerDirection, Vector3.ZAxis );
+									//	var item = new MeshInSpace.AdditionalItem( walkingMesh, Vector3.Zero, rot, Vector3.One, ColorValue.One );
+									//	additionalItems.Add( item );
+									//}
+								}
+							}
+
+							visualData.CreateMeshObject( baseMeshWalkingOnly, tr2, ColorValue.One, additionalItems.ToArray(), Collision );
+						}
+					}
+
 				}
 			}
 
@@ -1089,7 +1578,8 @@ namespace NeoAxis
 			var logicalData = (CrossroadLogicalData)GetLogicalData();
 			if( !logicalData.Valid )
 				return;
-
+			if( !logicalData.SortedRoads[ 0 ].ConnectedRoad.RoadType.SurfaceMaterial.ReferenceOrValueSpecified )
+				return;
 
 			//!!!!
 			//Log.Info( "OnCalculateCollisionBodies: " + Name );

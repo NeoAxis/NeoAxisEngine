@@ -145,6 +145,107 @@ namespace NeoAxis
 			}
 		}
 
+		static ImageComponent dummyShadowMap2DArrayFloat32R;
+		public static ImageComponent DummyShadowMap2DArrayFloat32R
+		{
+			get
+			{
+				if( dummyShadowMap2DArrayFloat32R == null )
+				{
+					var texture = ComponentUtility.CreateComponent<ImageComponent>( null, true, false );
+					texture.CreateType = ImageComponent.TypeEnum._2D;
+					texture.CreateSize = new Vector2I( 2, 2 );
+					texture.CreateDepth = 2;
+					texture.CreateFormat = PixelFormat.Float32R;
+					texture.Enabled = true;
+
+					dummyShadowMap2DArrayFloat32R = texture;
+				}
+				return dummyShadowMap2DArrayFloat32R;
+			}
+		}
+
+		static ImageComponent dummyShadowMapCubeArrayFloat32R;
+		public static ImageComponent DummyShadowMapCubeArrayFloat32R
+		{
+			get
+			{
+				if( dummyShadowMapCubeArrayFloat32R == null )
+				{
+					var texture = ComponentUtility.CreateComponent<ImageComponent>( null, true, false );
+					texture.CreateType = ImageComponent.TypeEnum.Cube;
+					texture.CreateSize = new Vector2I( 2, 2 );
+					texture.CreateDepth = 2;
+					texture.CreateFormat = PixelFormat.Float32R;
+					texture.Enabled = true;
+
+					dummyShadowMapCubeArrayFloat32R = texture;
+				}
+				return dummyShadowMapCubeArrayFloat32R;
+			}
+		}
+
+		static ImageComponent dummyTexture3DFloat32RGBA;
+		public static ImageComponent DummyTexture3DFloat32RGBA
+		{
+			get
+			{
+				if( dummyTexture3DFloat32RGBA == null )
+				{
+					var texture = ComponentUtility.CreateComponent<ImageComponent>( null, true, false );
+					texture.CreateType = ImageComponent.TypeEnum._3D;
+					texture.CreateSize = new Vector2I( 2, 2 );
+					texture.CreateDepth = 2;
+					texture.CreateFormat = PixelFormat.Float32RGBA;
+					texture.Enabled = true;
+
+					dummyTexture3DFloat32RGBA = texture;
+				}
+				return dummyTexture3DFloat32RGBA;
+			}
+		}
+
+		static ImageComponent dummyTexture2DArrayARGB8;
+		public static ImageComponent DummyTexture2DArrayARGB8
+		{
+			get
+			{
+				if( dummyTexture2DArrayARGB8 == null )
+				{
+					var texture = ComponentUtility.CreateComponent<ImageComponent>( null, true, false );
+					texture.CreateType = ImageComponent.TypeEnum._2D;
+					texture.CreateSize = new Vector2I( 2, 2 );
+					texture.CreateDepth = 2;
+					texture.CreateFormat = PixelFormat.A8R8G8B8;
+					texture.Enabled = true;
+
+					dummyTexture2DArrayARGB8 = texture;
+				}
+				return dummyTexture2DArrayARGB8;
+			}
+		}
+
+		static ImageComponent dummyTextureCubeArrayARGB8;
+		public static ImageComponent DummyTextureCubeArrayARGB8
+		{
+			get
+			{
+				if( dummyTextureCubeArrayARGB8 == null )
+				{
+					var texture = ComponentUtility.CreateComponent<ImageComponent>( null, true, false );
+					texture.CreateType = ImageComponent.TypeEnum.Cube;
+					texture.CreateSize = new Vector2I( 2, 2 );
+					texture.CreateDepth = 2;
+					texture.CreateFormat = PixelFormat.A8R8G8B8;
+					texture.Enabled = true;
+
+					dummyTextureCubeArrayARGB8 = texture;
+				}
+				return dummyTextureCubeArrayARGB8;
+			}
+		}
+
+
 		//public static Image EnvironmentDefaultTexture
 		//{
 		//	get

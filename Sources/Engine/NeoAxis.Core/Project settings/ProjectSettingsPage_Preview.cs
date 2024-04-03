@@ -20,7 +20,7 @@ namespace NeoAxis
 		public Reference<double> PreviewAmbientLightBrightness
 		{
 			get { if( _previewAmbientLightBrightness.BeginGet() ) PreviewAmbientLightBrightness = _previewAmbientLightBrightness.Get( this ); return _previewAmbientLightBrightness.value; }
-			set { if( _previewAmbientLightBrightness.BeginSet( ref value ) ) { try { PreviewAmbientLightBrightnessChanged?.Invoke( this ); } finally { _previewAmbientLightBrightness.EndSet(); } } }
+			set { if( _previewAmbientLightBrightness.BeginSet( this, ref value ) ) { try { PreviewAmbientLightBrightnessChanged?.Invoke( this ); } finally { _previewAmbientLightBrightness.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PreviewAmbientLightBrightness"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_Preview> PreviewAmbientLightBrightnessChanged;
@@ -35,7 +35,7 @@ namespace NeoAxis
 		public Reference<double> PreviewDirectionalLightBrightness
 		{
 			get { if( _previewDirectionalLightBrightness.BeginGet() ) PreviewDirectionalLightBrightness = _previewDirectionalLightBrightness.Get( this ); return _previewDirectionalLightBrightness.value; }
-			set { if( _previewDirectionalLightBrightness.BeginSet( ref value ) ) { try { PreviewDirectionalLightBrightnessChanged?.Invoke( this ); } finally { _previewDirectionalLightBrightness.EndSet(); } } }
+			set { if( _previewDirectionalLightBrightness.BeginSet( this, ref value ) ) { try { PreviewDirectionalLightBrightnessChanged?.Invoke( this ); } finally { _previewDirectionalLightBrightness.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PreviewDirectionalLightBrightness"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_Preview> PreviewDirectionalLightBrightnessChanged;
@@ -50,7 +50,7 @@ namespace NeoAxis
 		public Reference<ImageComponent> MaterialPreviewEnvironmentLightTheme
 		{
 			get { if( _materialPreviewEnvironmentLightTheme.BeginGet() ) MaterialPreviewEnvironmentLightTheme = _materialPreviewEnvironmentLightTheme.Get( this ); return _materialPreviewEnvironmentLightTheme.value; }
-			set { if( _materialPreviewEnvironmentLightTheme.BeginSet( ref value ) ) { try { MaterialPreviewEnvironmentLightThemeChanged?.Invoke( this ); } finally { _materialPreviewEnvironmentLightTheme.EndSet(); } } }
+			set { if( _materialPreviewEnvironmentLightTheme.BeginSet( this, ref value ) ) { try { MaterialPreviewEnvironmentLightThemeChanged?.Invoke( this ); } finally { _materialPreviewEnvironmentLightTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MaterialPreviewEnvironmentLightTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_Preview> MaterialPreviewEnvironmentLightThemeChanged;
@@ -64,7 +64,7 @@ namespace NeoAxis
 		public Reference<Mesh> MaterialPreviewMesh
 		{
 			get { if( _materialPreviewMesh.BeginGet() ) MaterialPreviewMesh = _materialPreviewMesh.Get( this ); return _materialPreviewMesh.value; }
-			set { if( _materialPreviewMesh.BeginSet( ref value ) ) { try { MaterialPreviewMeshChanged?.Invoke( this ); } finally { _materialPreviewMesh.EndSet(); } } }
+			set { if( _materialPreviewMesh.BeginSet( this, ref value ) ) { try { MaterialPreviewMeshChanged?.Invoke( this ); } finally { _materialPreviewMesh.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MaterialPreviewMesh"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_Preview> MaterialPreviewMeshChanged;
@@ -79,7 +79,7 @@ namespace NeoAxis
 		public Reference<ImageComponent> MaterialPreviewEnvironmentDarkTheme
 		{
 			get { if( _materialPreviewEnvironmentDarkTheme.BeginGet() ) MaterialPreviewEnvironmentDarkTheme = _materialPreviewEnvironmentDarkTheme.Get( this ); return _materialPreviewEnvironmentDarkTheme.value; }
-			set { if( _materialPreviewEnvironmentDarkTheme.BeginSet( ref value ) ) { try { MaterialPreviewEnvironmentDarkThemeChanged?.Invoke( this ); } finally { _materialPreviewEnvironmentDarkTheme.EndSet(); } } }
+			set { if( _materialPreviewEnvironmentDarkTheme.BeginSet( this, ref value ) ) { try { MaterialPreviewEnvironmentDarkThemeChanged?.Invoke( this ); } finally { _materialPreviewEnvironmentDarkTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MaterialPreviewEnvironmentDarkTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_Preview> MaterialPreviewEnvironmentDarkThemeChanged;
@@ -103,7 +103,7 @@ namespace NeoAxis
 		public Reference<ColorValuePowered> MaterialPreviewEnvironmentMultiplier
 		{
 			get { if( _materialPreviewEnvironmentMultiplier.BeginGet() ) MaterialPreviewEnvironmentMultiplier = _materialPreviewEnvironmentMultiplier.Get( this ); return _materialPreviewEnvironmentMultiplier.value; }
-			set { if( _materialPreviewEnvironmentMultiplier.BeginSet( ref value ) ) { try { MaterialPreviewEnvironmentMultiplierChanged?.Invoke( this ); } finally { _materialPreviewEnvironmentMultiplier.EndSet(); } } }
+			set { if( _materialPreviewEnvironmentMultiplier.BeginSet( this, ref value ) ) { try { MaterialPreviewEnvironmentMultiplierChanged?.Invoke( this ); } finally { _materialPreviewEnvironmentMultiplier.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MaterialPreviewEnvironmentMultiplier"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_Preview> MaterialPreviewEnvironmentMultiplierChanged;
@@ -118,7 +118,7 @@ namespace NeoAxis
 		public Reference<double> MaterialPreviewEnvironmentAffectLighting
 		{
 			get { if( _materialPreviewEnvironmentAffectLighting.BeginGet() ) MaterialPreviewEnvironmentAffectLighting = _materialPreviewEnvironmentAffectLighting.Get( this ); return _materialPreviewEnvironmentAffectLighting.value; }
-			set { if( _materialPreviewEnvironmentAffectLighting.BeginSet( ref value ) ) { try { MaterialPreviewEnvironmentAffectLightingChanged?.Invoke( this ); } finally { _materialPreviewEnvironmentAffectLighting.EndSet(); } } }
+			set { if( _materialPreviewEnvironmentAffectLighting.BeginSet( this, ref value ) ) { try { MaterialPreviewEnvironmentAffectLightingChanged?.Invoke( this ); } finally { _materialPreviewEnvironmentAffectLighting.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MaterialPreviewEnvironmentAffectLighting"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_Preview> MaterialPreviewEnvironmentAffectLightingChanged;

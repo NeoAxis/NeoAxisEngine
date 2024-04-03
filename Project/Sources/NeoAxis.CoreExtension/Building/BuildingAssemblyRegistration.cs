@@ -15,16 +15,17 @@ namespace NeoAxis
 #if !DEPLOY
 			if( EngineApp.IsEditor )
 			{
-				SceneEditor.CreateObjectWhatTypeWillCreatedEvent += Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent;
-				SceneEditor.CreateObjectByCreationDataEvent += Scene_DocumentWindow_CreateObjectByCreationDataEvent;
+				SceneEditorUtility.CreateObjectWhatTypeWillCreatedEvent += Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent;
+				SceneEditorUtility.CreateObjectByCreationDataEvent += Scene_DocumentWindow_CreateObjectByCreationDataEvent;
 
-				PreviewImagesManager.RegisterResourceType( "Building Type" );
+				EditorAPI.PreviewImagesManager_RegisterResourceType( "Building Type" );
 				//need?
 				//PreviewImagesManager.RegisterResourceType( "Building" );
 			}
 #endif
 		}
 
+#if !DEPLOY
 		private void Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent( Metadata.TypeInfo objectType, string referenceToObject, ref Metadata.TypeInfo type )
 		{
 			if( MetadataManager.GetTypeOfNetType( typeof( BuildingType ) ).IsAssignableFrom( objectType ) )
@@ -40,5 +41,6 @@ namespace NeoAxis
 				obj.BuildingType = new Reference<BuildingType>( null, referenceToObject );
 			}
 		}
+#endif
 	}
 }

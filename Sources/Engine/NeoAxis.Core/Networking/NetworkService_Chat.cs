@@ -115,7 +115,8 @@ namespace NeoAxis
 		ClientNetworkService_Users users;
 
 		public const int MaxLastMessages = 200;
-		Queue<LastMessage> lastMessages = new Queue<LastMessage>();
+		LinkedList<LastMessage> lastMessages = new LinkedList<LastMessage>();
+		//Queue<LastMessage> lastMessages = new Queue<LastMessage>();
 
 		///////////////////////////////////////////
 
@@ -128,13 +129,15 @@ namespace NeoAxis
 		{
 			ClientNetworkService_Users.UserInfo fromUser;
 			string text;
+			double time;
 
 			//
 
-			public LastMessage( ClientNetworkService_Users.UserInfo fromUser, string text )
+			public LastMessage( ClientNetworkService_Users.UserInfo fromUser, string text, double time )
 			{
 				this.fromUser = fromUser;
 				this.text = text;
+				this.time = time;
 			}
 
 			public LastMessage()
@@ -149,6 +152,11 @@ namespace NeoAxis
 			public string Text
 			{
 				get { return text; }
+			}
+
+			public double Time
+			{
+				get { return time; }
 			}
 		}
 
@@ -201,9 +209,12 @@ namespace NeoAxis
 				return true;
 			}
 
-			lastMessages.Enqueue( new LastMessage( fromUser, text ) );
+			lastMessages.AddLast( new LastMessage( fromUser, text, EngineApp.EngineTime ) );
 			if( lastMessages.Count > MaxLastMessages )
-				lastMessages.Dequeue();
+				lastMessages.RemoveFirst();
+			//lastMessages.Enqueue( new LastMessage( fromUser, text ) );
+			//if( lastMessages.Count > MaxLastMessages )
+			//	lastMessages.Dequeue();
 
 			ReceiveText?.Invoke( this, fromUser, text );
 
@@ -213,6 +224,16 @@ namespace NeoAxis
 		public IReadOnlyCollection<LastMessage> LastMessages
 		{
 			get { return lastMessages; }
+		}
+
+		public LastMessage GetLastMessageFromUser( ClientNetworkService_Users.UserInfo fromUser )
+		{
+			foreach( var message in lastMessages.GetReverse() )
+			{
+				if( message.FromUser == fromUser )
+					return message;
+			}
+			return null;
 		}
 	}
 }

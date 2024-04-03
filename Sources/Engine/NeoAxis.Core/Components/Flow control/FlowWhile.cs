@@ -38,7 +38,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _condition.BeginSet( ref value ) )
+				if( _condition.BeginSet( this, ref value ) )
 				{
 					try { ConditionChanged?.Invoke( this ); }
 					finally { _condition.EndSet(); }
@@ -65,7 +65,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _loopBody.BeginSet( ref value ) )
+				if( _loopBody.BeginSet( this, ref value ) )
 				{
 					try { LoopBodyChanged?.Invoke( this ); }
 					finally { _loopBody.EndSet(); }
@@ -92,7 +92,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _exit.BeginSet( ref value ) )
+				if( _exit.BeginSet( this, ref value ) )
 				{
 					try { ExitChanged?.Invoke( this ); }
 					finally { _exit.EndSet(); }

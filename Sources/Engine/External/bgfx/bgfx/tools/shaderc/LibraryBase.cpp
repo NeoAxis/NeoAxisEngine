@@ -41,6 +41,12 @@ void LogLongText(std::string s)
 #include <iconv.h>	
 #endif
 
+#ifdef LINUX
+#include <codecvt>
+#include <string.h>
+#include <locale>
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifdef IOS
@@ -103,7 +109,7 @@ std::string ConvertStringToUTF8(const std::wstring& str)
 			if(WideCharToMultiByte(CP_UTF8, 0, str.c_str(), -1, aString, size, NULL, NULL) != 0)
 				result = aString;
 		}
-#elif defined(__ANDROID__)
+#elif defined(__ANDROID__) || defined(LINUX)
 
 		std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
 		result = myconv.to_bytes(str);
@@ -143,7 +149,7 @@ std::wstring ConvertStringToUTFWide(const std::string& str)
 			if(MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, wString, size) != 0)
 				result = wString;
 		}
-#elif defined(__ANDROID__)
+#elif defined(__ANDROID__) || defined(LINUX)
 
 		//!!!!
 		for (int n = 0; n < str.length(); n++)
@@ -196,26 +202,26 @@ EXPORT void FreeOutString(wchar16* pointer)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-void Fatal(const char* text)
-{
-#if BX_PLATFORM_OSX
-	CFStringRef textRef = CFStringCreateWithCString(NULL, text, kCFStringEncodingUTF8);
-	CFUserNotificationDisplayAlert(0, kCFUserNotificationStopAlertLevel, NULL, NULL, NULL,
-		CFSTR("Fatal"), textRef, CFSTR("OK"), NULL, NULL, NULL);
-	CFRelease(textRef);
-#elif BX_PLATFORM_WINRT || BX_PLATFORM_XBOXONE
-	bx::debugOutput(text);
-	bx::debugBreak();
-#elif defined(__ANDROID__)
-	//!!!!!!dr
-	char tempBuffer[4096];
-	sprintf(tempBuffer, "ShaderC: Fatal: %s\n", text);
-	__android_log_write(ANDROID_LOG_ERROR, "NeoAxis Engine", tempBuffer);
-#elif BX_PLATFORM_WINDOWS
-	MessageBoxA(NULL, text, "Fatal", MB_OK | MB_ICONEXCLAMATION);
-#endif
-	exit(0);
-}
+//void Fatal(const char* text)
+//{
+//#if BX_PLATFORM_OSX
+//	CFStringRef textRef = CFStringCreateWithCString(NULL, text, kCFStringEncodingUTF8);
+//	CFUserNotificationDisplayAlert(0, kCFUserNotificationStopAlertLevel, NULL, NULL, NULL,
+//		CFSTR("Fatal"), textRef, CFSTR("OK"), NULL, NULL, NULL);
+//	CFRelease(textRef);
+//#elif BX_PLATFORM_WINRT || BX_PLATFORM_XBOXONE
+//	bx::debugOutput(text);
+//	bx::debugBreak();
+//#elif defined(__ANDROID__)
+//	//!!!!!!dr
+//	char tempBuffer[4096];
+//	sprintf(tempBuffer, "ShaderC: Fatal: %s\n", text);
+//	__android_log_write(ANDROID_LOG_ERROR, "NeoAxis Engine", tempBuffer);
+//#elif BX_PLATFORM_WINDOWS
+//	MessageBoxA(NULL, text, "Fatal", MB_OK | MB_ICONEXCLAMATION);
+//#endif
+//	exit(0);
+//}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 

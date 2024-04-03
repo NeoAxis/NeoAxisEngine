@@ -22,7 +22,9 @@ namespace NeoAxis
 		public double W;
 
 		public static readonly Quaternion Identity = new Quaternion( 0.0, 0.0, 0.0, 1.0 );
+		public const string IdentityAsString = "0 0 0 1";
 		public static readonly Quaternion Zero = new Quaternion( 0.0, 0.0, 0.0, 0.0 );
+		public const string ZeroAsString = "0 0 0 0";
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Quaternion( Vector3 v, double w )
@@ -549,11 +551,20 @@ namespace NeoAxis
 			double omega, cosom, sinom, scale0, scale1;
 
 			if( t <= 0.0 )
+			{
 				result = from;
+				return;
+			}
 			if( t >= 1.0 )
+			{
 				result = to;
+				return;
+			}
 			if( from == to )
+			{
 				result = to;
+				return;
+			}
 
 			cosom = from.X * to.X + from.Y * to.Y + from.Z * to.Z + from.W * to.W;
 			if( cosom < 0.0 )
@@ -753,9 +764,30 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		[AutoConvertType]
+		public QuaternionH ToQuaternionH()
+		{
+			QuaternionH result;
+			result.X = new HalfType( X );
+			result.Y = new HalfType( Y );
+			result.Z = new HalfType( Z );
+			result.W = new HalfType( W );
+			return result;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static void LookAt( ref Vector3 direction, ref Vector3 up, out Quaternion result )
+		{
+			Matrix3.LookAt( ref direction, ref up, out var matrix );
+			matrix.ToQuaternion( out result );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Quaternion LookAt( Vector3 direction, Vector3 up )
 		{
-			return Matrix3.LookAt( direction, up ).ToQuaternion();
+			LookAt( ref direction, ref up, out var result );
+			return result;
+			//return Matrix3.LookAt( direction, up ).ToQuaternion();
 		}
 
 		/////////////////////////////////////////
@@ -812,6 +844,13 @@ namespace NeoAxis
 		public static bool Equals( ref Quaternion v1, ref Quaternion v2 )
 		{
 			return v1.X == v2.X && v1.Y == v2.Y && v1.Z == v2.Z && v1.W == v2.W;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		[AutoConvertType]
+		public Vector4 ToVector4()
+		{
+			return new Vector4( X, Y, Z, W );
 		}
 	}
 }

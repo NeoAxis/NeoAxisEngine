@@ -11,9 +11,14 @@ namespace Internal.SharpBgfx {
         Noop,
 
         /// <summary>
-        /// Direct3D 9
+        /// AGC
         /// </summary>
-        Direct3D9,
+        Agc,
+
+        ///// <summary>
+        ///// Direct3D 9
+        ///// </summary>
+        //Direct3D9,
 
         /// <summary>
         /// Direct3D 11
@@ -26,7 +31,7 @@ namespace Internal.SharpBgfx {
         Direct3D12,
 
         /// <summary>
-        /// PlayStation 4's GNM
+        /// PlayStation GNM
         /// </summary>
         GNM,
 
@@ -55,10 +60,10 @@ namespace Internal.SharpBgfx {
         /// </summary>
         Vulkan,
 
-        /// <summary>
-        /// WebGPU
-        /// </summary>
-        WebGPU,
+        ///// <summary>
+        ///// WebGPU
+        ///// </summary>
+        //WebGPU,
 
         /// <summary>
         /// Used during initialization; specifies that the library should
@@ -311,9 +316,19 @@ namespace Internal.SharpBgfx {
         ASTC4x4,
 
         /// <summary>
+        /// ASTC 5x4 6.40 bpp
+        /// </summary>
+        ASTC5x4,
+
+        /// <summary>
         /// ASTC 5x5 5.12 bpp
         /// </summary>
         ASTC5x5,
+
+        /// <summary>
+        /// ASTC 6x5 4.27 bpp
+        /// </summary>
+        ASTC6x5,    
 
         /// <summary>
         /// ASTC 6x6 3.56 bpp
@@ -331,9 +346,37 @@ namespace Internal.SharpBgfx {
         ASTC8x6,
 
         /// <summary>
+        /// ASTC 8x8 2.00 bpp
+        /// </summary>
+        ASTC8x8,    
+
+        /// <summary>
         /// ASTC 10x5 2.56 bpp
         /// </summary>
         ASTC10x5,
+
+        /// <summary>
+        /// ASTC 10x6 2.13 bpp
+        /// </summary>
+        ASTC10x6,
+        /// <summary>
+        /// ASTC 10x8 1.60 bpp
+        /// </summary>
+        ASTC10x8,
+        /// <summary>
+        /// ASTC 10x10 1.28 bpp
+        /// </summary>
+        ASTC10x10,
+        /// <summary>
+        /// ASTC 12x10 1.07 bpp
+        /// </summary>
+        ASTC12x10,
+        /// <summary>
+        /// ASTC 12x12 0.89 bpp
+        /// </summary>
+        ASTC12x12,	 
+
+
 
         /// <summary>
         /// Unknown texture format.
@@ -560,15 +603,21 @@ namespace Internal.SharpBgfx {
         /// </summary>
         RGBA32F,
 
+        B5G6R5,
+
         /// <summary>
         /// 5-6-6 color.
         /// </summary>
         R5G6B5,
 
+        BGRA4,
+
         /// <summary>
         /// 4-bit RGBA color.
         /// </summary>
         RGBA4,
+
+        BGR5A1,
 
         /// <summary>
         /// 5-bit RGB color with 1-bit alpha.
@@ -907,79 +956,79 @@ namespace Internal.SharpBgfx {
         FragmentOrdering = 0x40,
 
         /// <summary>
-        /// Read/write framebuffer attachments are supported.
-        /// </summary>
-        FramebufferRW = 0x80,
-
-        /// <summary>
         /// A graphics debugger is present.
         /// </summary>
-        GraphicsDebugger = 0x100,
+        GraphicsDebugger = 0x0000000000000080,
 
         /// <summary>
         /// Devices supports HDR10 rendering.
         /// </summary>
-        HDR10 = 0x400,
+        HDR10 = 0x100,
 
         /// <summary>
         /// Device supports high-DPI rendering.
         /// </summary>
-        HighDPI = 0x800,
+        HighDPI = 0x200,
+
+        /// <summary>
+        /// Image Read/Write is supported.
+        /// </summary>
+        ImageRW = 0x0000000000000400,
 
         /// <summary>
         /// Device supports 32-bit indices.
         /// </summary>
-        Index32 = 0x1000,
+        Index32 = 0x800,
 
         /// <summary>
         /// Device supports instancing.
         /// </summary>
-        Instancing = 0x2000,
+        Instancing = 0x1000,
 
         /// <summary>
         /// Device supports occlusion queries.
         /// </summary>
-        OcclusionQuery = 0x4000,
+        OcclusionQuery = 0x2000,
 
         /// <summary>
         /// Device supports multithreaded rendering.
         /// </summary>
-        RendererMultithreaded = 0x8000,
+        RendererMultithreaded = 0x4000,
 
         /// <summary>
         /// Indicates whether the device can render to multiple swap chains.
         /// </summary>
-        SwapChain = 0x10000,
+        SwapChain = 0x8000,
 
         /// <summary>
         /// Device supports 2D texture arrays.
         /// </summary>
-        Texture2DArray = 0x20000,
+        Texture2DArray = 0x10000,
 
         /// <summary>
         /// Device supports 3D textures.
         /// </summary>
-        Texture3D = 0x40000,
+        Texture3D = 0x20000,
 
         /// <summary>
         /// Device supports texture blits.
         /// </summary>
-        TextureBlit = 0x80000,
+        TextureBlit = 0x40000,
+
+        /// <summary>
+        /// Transparent back buffer supported.
+        /// </summary>
+        TransparentBackBuffer = 0x0000000000080000,
 
         /// <summary>
         /// Device supports other texture comparison modes.
         /// </summary>
-        TextureCompareExtended = 0x100000,
+        TextureCompareReserved = 0x100000,
 
         /// <summary>
         /// Device supports "Less than or equal to" texture comparison mode.
         /// </summary>
         TextureCompareLessEqual = 0x200000,
-
-        ///// <summary>
-        ///// Device supports all texture comparison modes.
-        ///// </summary>
-        //TextureCompareAll = TextureCompareLessEqual | TextureCompareExtended,
 
         /// <summary>
         /// Device supports cubemap texture arrays.
@@ -1009,7 +1058,18 @@ namespace Internal.SharpBgfx {
         /// <summary>
         /// Devices supports rendering with VertexID only.
         /// </summary>
-        VertexID = 0x8000000
+        VertexID = 0x8000000,
+
+        ///PrimitiveID is available in fragment shader.
+        PrimitiveId  = 0x0000000010000000,
+        /// <summary>
+        /// Viewport layer is available in vertex shader.
+        /// </summary>
+        ViewportLayerArray = 0x0000000020000000,
+        /// <summary>
+        /// Draw indirect wit.
+        /// </summary>
+        DrawIndirectCount = 0x0000000040000000 
     }
 
     /// <summary>
@@ -1073,29 +1133,34 @@ namespace Internal.SharpBgfx {
         Vertex = 0x200,
 
         /// <summary>
-        /// The format is supported for compute image operations.
+        /// Texture format can be used as image and read from.
         /// </summary>
-        Image = 0x400,
+        ImageRead = 0x00000400,
+
+        /// <summary>
+        /// Texture format can be used as image and written to.
+        /// </summary>
+        ImageWrite = 0x00000800,
 
         /// <summary>
         /// The format is supported for framebuffers.
         /// </summary>
-        Framebuffer = 0x800,
+        Framebuffer = 0x00001000,
 
         /// <summary>
         /// The format is supported for MSAA framebuffers.
         /// </summary>
-        FramebufferMSAA = 0x1000,
+        FramebufferMSAA = 0x00002000,
 
         /// <summary>
         /// The format is supported for MSAA sampling.
         /// </summary>
-        MSAA = 0x2000,
+        MSAA = 0x00004000,
 
         /// <summary>
         /// The format supports auto-generated mipmaps.
         /// </summary>
-        MipsAutogen = 0x4000
+        MipsAutogen = 0x00008000
     }
 
     /// <summary>
@@ -1389,6 +1454,11 @@ namespace Internal.SharpBgfx {
         AMD = 0x1002,
 
         /// <summary>
+        /// Apple adapter.
+        /// </summary>
+        Apple = 0x106b,
+
+        /// <summary>
         /// Intel
         /// </summary>
         Intel = 0x8086,
@@ -1401,7 +1471,12 @@ namespace Internal.SharpBgfx {
         /// <summary>
         /// Microsoft
         /// </summary>
-        Microsoft = 0x1414
+        Microsoft = 0x1414,
+
+        /// <summary>
+        /// ARM adapter.
+        /// </summary>
+        ARM = 0x13b5,
     }
 
     /// <summary>
@@ -1773,7 +1848,7 @@ namespace Internal.SharpBgfx {
     [Flags]
     public enum DiscardFlags : byte
     {
-        None                   = (0x00), //!< Preserve everything.
+        None = (0x00), //!< Preserve everything.
         Bindings = (0x01), //!< Discard texture sampler and buffer bindings.
         IndexBuffer = (0x02), //!< Discard index buffer.
         InstanceData = ( 0x04 ), //!< Discard instance data.
@@ -1781,6 +1856,14 @@ namespace Internal.SharpBgfx {
         Transform = (0x10), //!< Discard transform.
         VertexStreams = (0x20), //!< Discard vertex streams.
         All = (0xff), //!< Discard all states.
+    }
+
+    public enum NativeWindowHandleType
+    {
+        Default = 0, //!< Platform default handle type (X11 on Linux).
+        Wayland,     //!< Wayland.
+
+        Count
     }
 
 }

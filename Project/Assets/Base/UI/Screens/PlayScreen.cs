@@ -243,7 +243,8 @@ namespace Project
 			//scene simulation
 			if( !SimulationAppClient.Created )
 			{
-				scene?.HierarchyController?.PerformSimulationSteps();
+				if( SimulationApp.Simulate )
+					scene?.HierarchyController?.PerformSimulationSteps();
 				ParentRoot.HierarchyController?.PerformSimulationSteps();
 			}
 
@@ -376,7 +377,16 @@ namespace Project
 					}
 				}
 				else
-					uiControl = CreateComponent<BasicSceneScreen>();
+				{
+					var fileName = @"Base\UI\Screens\BasicSceneScreen.ui";
+					if( !string.IsNullOrEmpty( fileName ) && VirtualFile.Exists( fileName ) )
+					{
+						uiControl = ResourceManager.LoadSeparateInstance<UIControl>( fileName, false, null );
+						if( uiControl != null )
+							AddComponent( uiControl );
+					}
+					//uiControl = CreateComponent<BasicSceneScreen>();
+				}
 			}
 		}
 
@@ -390,13 +400,13 @@ namespace Project
 			if( scene == null )
 				return false;
 
-			Log.InvisibleInfo( "Scene loaded successfully." );
-
 			//if( !string.IsNullOrEmpty( error ) )
 			//{
 			//	Log.Error( error );
 			//	return;
 			//}
+
+			Log.InvisibleInfo( "Scene loaded successfully." );
 
 			GC.Collect();
 			GC.WaitForPendingFinalizers();
@@ -581,13 +591,30 @@ namespace Project
 		{
 			get
 			{
+				//disable when console
 				if( EngineConsole.Active )
 					return false;
+
+				//disable when window on top
 				if( GetComponent<UIWindow>( checkChildren: true, onlyEnabledInHierarchy: true ) != null )
 					return false;
+
+				//disable when cutscene
 				if( gameMode != null && gameMode.CutsceneStarted )
 					return false;
 
+				//disable when continuous interaction (dialogue)
+				var basicSceneScreen = GetComponent<BasicSceneScreen>( checkChildren: true, onlyEnabledInHierarchy: true );
+				if( basicSceneScreen != null )
+				{
+					if( basicSceneScreen.IsContinuousInteractionEnabled() )
+						return false;
+					//var widget = basicSceneScreen.GetContinuousInteractionWidget();
+					//if( widget != null && widget.Enabled )
+					//	return false;
+				}
+
+				//custom
 				var enabled = true;
 				InputEnabledEvent?.Invoke( this, ref enabled );
 				if( !enabled )

@@ -15,6 +15,8 @@ namespace NeoAxis
 
 		bool[] keys;
 
+		//!!!!memory. maybe allocate memory per request
+
 		bool[] mouseButtons = new bool[ 5 ];
 		Vector2 mousePosition = new Vector2( -10000, -10000 );
 		bool mouseRelativeMode;
@@ -25,6 +27,7 @@ namespace NeoAxis
 		Vector2[] joystickSliders = new Vector2[ 16 ];
 
 		List<TouchPointerData> touchPointers = new List<TouchPointerData>();
+		Vector2[] touchSliders = new Vector2[ 4 ];
 
 		/////////////////////////////////////////
 
@@ -63,13 +66,40 @@ namespace NeoAxis
 		public delegate void InputMessageEventDelegate( InputProcessing sender, GameMode gameMode, InputMessage message );
 		public event InputMessageEventDelegate InputMessageEvent;
 
+		public void KeyMouseTouchUpAll()
+		{
+			if( keys != null )
+			{
+				for( int n = 0; n < keys.Length; n++ )
+					keys[ n ] = false;
+			}
+			for( int n = 0; n < mouseButtons.Length; n++ )
+				mouseButtons[ n ] = false;
+			for( int n = 0; n < joystickButtons.Length; n++ )
+				joystickButtons[ n ] = false;
+			for( int n = 0; n < joystickAxes.Length; n++ )
+				joystickAxes[ n ] = 0;
+			for( int n = 0; n < joystickPOVs.Length; n++ )
+				joystickPOVs[ n ] = JoystickPOVDirections.Centered;
+			for( int n = 0; n < joystickSliders.Length; n++ )
+				joystickSliders[ n ] = Vector2.Zero;
+			touchPointers.Clear();
+			for( int n = 0; n < touchSliders.Length; n++ )
+				touchSliders[ n ] = Vector2.Zero;
+		}
+
 		void InputMessageBefore( GameMode gameMode, InputMessage message )
 		{
 			//input enabled changed
 			{
 				var m = message as InputMessageInputEnabledChanged;
 				if( m != null )
+				{
 					inputEnabled = m.Value;
+
+					if( !inputEnabled )
+						KeyMouseTouchUpAll();
+				}
 			}
 
 			//key down
@@ -229,6 +259,17 @@ namespace NeoAxis
 				}
 			}
 
+			//touch slider
+			{
+				var m2 = message as InputMessageTouchSliderChanged;
+				if( m2 != null )
+				{
+					var index = m2.Slider;
+					if( index >= 0 && index < touchSliders.Length )
+						touchSliders[ index ] = m2.Value;
+				}
+			}
+
 			////special input device
 			//{
 			//	var m = message as InputMessageSpecialInputDevice;
@@ -357,6 +398,12 @@ namespace NeoAxis
 					return data;
 			}
 			return null;
+		}
+
+		[Browsable( false )]
+		public Vector2[] TouchSliders
+		{
+			get { return touchSliders; }
 		}
 	}
 }

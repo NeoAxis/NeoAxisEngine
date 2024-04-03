@@ -1,0 +1,11 @@
+Model Information:
+* title:	the Golden Key
+* source:	https://sketchfab.com/3d-models/the-golden-key-16c6d58a74764ef9a8bda39408bcf0b8
+* author:	3DisFUNny (https://sketchfab.com/3DisFUNny)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "the Golden Key" (https://sketchfab.com/3d-models/the-golden-key-16c6d58a74764ef9a8bda39408bcf0b8) by 3DisFUNny (https://sketchfab.com/3DisFUNny) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

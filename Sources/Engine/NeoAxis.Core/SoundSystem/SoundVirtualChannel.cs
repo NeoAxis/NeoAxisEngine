@@ -23,7 +23,7 @@ namespace NeoAxis
 		internal double pitch = 1;
 		internal double pan;
 		internal double volume = 1;
-		internal RolloffGraphItem[] rolloffGraph;
+		internal Curve1 rolloffGraph;//internal RolloffGraphItem[] rolloffGraph;
 		internal double time;
 		internal double priority = .5f;
 
@@ -38,37 +38,37 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
-		/// <summary>
-		/// Represents an item for <see cref="RolloffGraph"/> method.
-		/// </summary>
-		public struct RolloffGraphItem
-		{
-			double distance;
-			double gain;
+		///// <summary>
+		///// Represents an item for <see cref="RolloffGraph"/> method.
+		///// </summary>
+		//public struct RolloffGraphItem
+		//{
+		//	double distance;
+		//	double gain;
 
-			public RolloffGraphItem( double distance, double gain )
-			{
-				this.distance = distance;
-				this.gain = gain;
-			}
+		//	public RolloffGraphItem( double distance, double gain )
+		//	{
+		//		this.distance = distance;
+		//		this.gain = gain;
+		//	}
 
-			public double Distance
-			{
-				get { return distance; }
-				set { distance = value; }
-			}
+		//	public double Distance
+		//	{
+		//		get { return distance; }
+		//		set { distance = value; }
+		//	}
 
-			public double Gain
-			{
-				get { return gain; }
-				set { gain = value; }
-			}
+		//	public double Gain
+		//	{
+		//		get { return gain; }
+		//		set { gain = value; }
+		//	}
 
-			public override string ToString()
-			{
-				return string.Format( "Distance {0} - {1}", distance.ToString( "F3" ), gain.ToString( "F3" ) );
-			}
-		}
+		//	public override string ToString()
+		//	{
+		//		return string.Format( "Distance {0} - {1}", distance.ToString( "F3" ), gain.ToString( "F3" ) );
+		//	}
+		//}
 
 		///////////////////////////////////////////
 
@@ -81,12 +81,75 @@ namespace NeoAxis
 			this.group = group;
 			startTime = EngineApp.EngineTime;
 
+			if( attachedToScene != null && ( sound.Mode & SoundModes.Mode3D ) != 0 )
+			{
+				if( attachedToScene.soundDefaultRolloffGraph == null )
+				{
+					var minDistance = attachedToScene.SoundAttenuationNear.Value;
+					var maxDistance = attachedToScene.SoundAttenuationFar.Value;
+					var rolloffFactor = attachedToScene.SoundRolloffFactor.Value;
+
+					if( maxDistance < minDistance )
+						maxDistance = minDistance;
+
+					int count = 10;
+
+					attachedToScene.soundDefaultRolloffGraph = new CurveCubicSpline1( count );
+					for( int n = 0; n < count; n++ )
+						attachedToScene.soundDefaultRolloffGraph.AddPoint( 0, 0 );
+
+					attachedToScene.soundDefaultRolloffGraph.Points[ 0 ] = new Curve1.Point( minDistance, 1 );
+					attachedToScene.soundDefaultRolloffGraph.Points[ count - 1 ] = new Curve1.Point( maxDistance, 0 );
+
+					var distanceOffset = ( maxDistance - minDistance ) * 0.5;
+					for( int index = count - 2; index >= 1; index-- )
+					{
+						var distance = minDistance + distanceOffset;
+						var divisor = minDistance + rolloffFactor * distanceOffset;
+						double gain;
+						if( divisor != 0 )
+							gain = minDistance / divisor;
+						else
+							gain = 1;
+						MathEx.Saturate( ref gain );
+						attachedToScene.soundDefaultRolloffGraph.Points[ index ] = new Curve1.Point( distance, gain );
+
+						distanceOffset *= 0.5;
+					}
+
+
+					//int count = 10;
+					//if( attachedToScene.soundDefaultRolloffGraph == null || attachedToScene.soundDefaultRolloffGraph.Length != count )
+					//	attachedToScene.soundDefaultRolloffGraph = new RolloffGraphItem[ count ];
+					//attachedToScene.soundDefaultRolloffGraph[ 0 ] = new RolloffGraphItem( minDistance, 1 );
+					//attachedToScene.soundDefaultRolloffGraph[ count - 1 ] = new RolloffGraphItem( maxDistance, 0 );
+
+					//double distanceOffset = ( maxDistance - minDistance ) * 0.5;
+					//for( int index = count - 2; index >= 1; index-- )
+					//{
+					//	double distance = minDistance + distanceOffset;
+					//	double divisor = minDistance + rolloffFactor * distanceOffset;
+					//	double gain;
+					//	if( divisor != 0 )
+					//		gain = minDistance / divisor;
+					//	else
+					//		gain = 1;
+					//	MathEx.Saturate( ref gain );
+					//	attachedToScene.soundDefaultRolloffGraph[ index ] = new RolloffGraphItem( distance, gain );
+
+					//	distanceOffset *= 0.5;
+					//}
+				}
+
+				RolloffGraph = attachedToScene.soundDefaultRolloffGraph;
+			}
+
 			//!!!!было
 			//sound.playingCount++;
 			//if( ( sound.Mode & SoundModes.Stream ) != 0 )
 			//{
 			//	if( sound.playingCount != 1 )
-			//		Log.Fatal( "VirtualChannel: SoundPlayInit: sound.playingCount != 1." );
+			//		Log.Fatal( "SoundVirtualChannel: SoundPlayInit: sound.playingCount != 1." );
 			//}
 		}
 
@@ -98,24 +161,24 @@ namespace NeoAxis
 
 			Pause = true;
 			if( currentRealChannel != null )
-				Log.Fatal( "VirtualChannel: Stop: currentRealChannel != null." );
+				Log.Fatal( "SoundVirtualChannel: Stop: currentRealChannel != null." );
 
 			//!!!!было
 			//data.currentSound.playingCount--;
 			//if( data.currentSound.playingCount < 0 )
-			//	Log.Fatal( "VirtualChannel: Stop: data.currentSound.playingCount < 0." );
+			//	Log.Fatal( "SoundVirtualChannel: Stop: data.currentSound.playingCount < 0." );
 
 			if( ( sound.Mode & SoundModes.Mode3D ) != 0 )
 			{
 				bool removed = SoundWorld.activeVirtual3DChannels.Remove( this );
 				if( !removed )
-					Log.Fatal( "VirtualChannel: Stop: !removed." );
+					Log.Fatal( "SoundVirtualChannel: Stop: !removed." );
 			}
 			else
 			{
 				bool removed = SoundWorld.activeVirtual2DChannels.Remove( this );
 				if( !removed )
-					Log.Fatal( "VirtualChannel: Stop: !removed." );
+					Log.Fatal( "SoundVirtualChannel: Stop: !removed." );
 			}
 
 			stopped = true;
@@ -268,11 +331,17 @@ namespace NeoAxis
 			set { priority = value; }
 		}
 
-		public RolloffGraphItem[] RolloffGraph
+		public Curve1 RolloffGraph
 		{
 			get { return rolloffGraph; }
 			set { rolloffGraph = value; }
 		}
+
+		//public RolloffGraphItem[] RolloffGraph
+		//{
+		//	get { return rolloffGraph; }
+		//	set { rolloffGraph = value; }
+		//}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal bool IsUsingGroup( SoundChannelGroup group )
@@ -287,47 +356,74 @@ namespace NeoAxis
 			return false;
 		}
 
-		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void SetLogarithmicRolloff( double minDistance, double maxDistance, double rolloffFactor )
 		{
-			//!!!!slowly
-
 			if( maxDistance < minDistance )
 				maxDistance = minDistance;
 
 			int count = 10;
-			if( rolloffGraph == null || rolloffGraph.Length != count )
-				rolloffGraph = new RolloffGraphItem[ count ];
-			rolloffGraph[ 0 ] = new RolloffGraphItem( minDistance, 1 );
-			rolloffGraph[ count - 1 ] = new RolloffGraphItem( maxDistance, 0 );
 
-			double distanceOffset = ( maxDistance - minDistance ) * .5f;
+			rolloffGraph = new CurveCubicSpline1( count );
+			for( int n = 0; n < count; n++ )
+				rolloffGraph.AddPoint( 0, 0 );
+
+			rolloffGraph.Points[ 0 ] = new Curve1.Point( minDistance, 1 );
+			rolloffGraph.Points[ count - 1 ] = new Curve1.Point( maxDistance, 0 );
+
+			var distanceOffset = ( maxDistance - minDistance ) * 0.5;
 			for( int index = count - 2; index >= 1; index-- )
 			{
-				double distance = minDistance + distanceOffset;
-				double divisor = minDistance + rolloffFactor * distanceOffset;
+				var distance = minDistance + distanceOffset;
+				var divisor = minDistance + rolloffFactor * distanceOffset;
 				double gain;
 				if( divisor != 0 )
 					gain = minDistance / divisor;
 				else
 					gain = 1;
 				MathEx.Saturate( ref gain );
-				rolloffGraph[ index ] = new RolloffGraphItem( distance, gain );
+				rolloffGraph.Points[ index ] = new Curve1.Point( distance, gain );
 
-				distanceOffset *= .5f;
+				distanceOffset *= 0.5;
 			}
+
+			//int count = 10;
+			//if( rolloffGraph == null || rolloffGraph.Length != count )
+			//	rolloffGraph = new RolloffGraphItem[ count ];
+			//rolloffGraph[ 0 ] = new RolloffGraphItem( minDistance, 1 );
+			//rolloffGraph[ count - 1 ] = new RolloffGraphItem( maxDistance, 0 );
+
+			//double distanceOffset = ( maxDistance - minDistance ) * 0.5;
+			//for( int index = count - 2; index >= 1; index-- )
+			//{
+			//	double distance = minDistance + distanceOffset;
+			//	double divisor = minDistance + rolloffFactor * distanceOffset;
+			//	double gain;
+			//	if( divisor != 0 )
+			//		gain = minDistance / divisor;
+			//	else
+			//		gain = 1;
+			//	MathEx.Saturate( ref gain );
+			//	rolloffGraph[ index ] = new RolloffGraphItem( distance, gain );
+
+			//	distanceOffset *= 0.5;
+			//}
 		}
 
-		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void SetLinearRolloff( double minDistance, double maxDistance )
 		{
 			if( maxDistance < minDistance )
 				maxDistance = minDistance;
 
-			if( rolloffGraph == null || rolloffGraph.Length != 2 )
-				rolloffGraph = new RolloffGraphItem[ 2 ];
-			rolloffGraph[ 0 ] = new RolloffGraphItem( minDistance, 1 );
-			rolloffGraph[ 1 ] = new RolloffGraphItem( maxDistance, 0 );
+			rolloffGraph = new CurveLine1();
+			rolloffGraph.AddPoint( minDistance, 1 );
+			rolloffGraph.AddPoint( maxDistance, 0 );
+
+			//if( rolloffGraph == null || rolloffGraph.Length != 2 )
+			//	rolloffGraph = new RolloffGraphItem[ 2 ];
+			//rolloffGraph[ 0 ] = new RolloffGraphItem( minDistance, 1 );
+			//rolloffGraph[ 1 ] = new RolloffGraphItem( maxDistance, 0 );
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -336,54 +432,83 @@ namespace NeoAxis
 			if( ( sound.Mode & SoundModes.Mode3D ) != 0 )
 			{
 				var graph = rolloffGraph;
-				if( graph != null && graph.Length > 0 )
+				if( graph != null )
 				{
-					double distance = ( position - SoundWorld.ListenerPosition ).Length();
-
-					if( distance <= graph[ 0 ].Distance )
-						return graph[ 0 ].Gain;
-					if( distance >= graph[ graph.Length - 1 ].Distance )
-						return graph[ graph.Length - 1 ].Gain;
-
-					if( graph.Length == 1 )
+					var points = graph.Points;
+					if( points.Count > 0 )
 					{
-						return graph[ 0 ].Gain;
-					}
-					else if( graph.Length == 2 )
-					{
-						//linear rolloff
-						if( graph[ 0 ].Distance >= graph[ 1 ].Distance )
-							return graph[ 0 ].Gain;
-						double factor = ( distance - graph[ 0 ].Distance ) / ( graph[ 1 ].Distance - graph[ 0 ].Distance );
-						double gain = graph[ 0 ].Gain * ( 1.0f - factor ) + graph[ 1 ].Gain * factor;
-						return MathEx.Saturate( gain );
-					}
-					else
-					{
-						//spline rolloff
+						var distance = ( position - SoundWorld.ListenerPosition ).Length();
 
-						//!!!!!slowly
+						if( distance <= points[ 0 ].Time )
+							return points[ 0 ].Value;
+						if( distance >= points[ points.Count - 1 ].Time )
+							return points[ points.Count - 1 ].Value;
 
-						CubicSpline spline = new CubicSpline();
-
-						//!!!!double
-
-						float[] distances = new float[ graph.Length ];
-						float[] gains = new float[ graph.Length ];
-						for( int n = 0; n < graph.Length; n++ )
-						{
-							distances[ n ] = (float)graph[ n ].Distance;
-							gains[ n ] = (float)graph[ n ].Gain;
-						}
-
-						double gain = spline.FitAndEval( distances, gains, (float)distance );
-
-						//Log.Info( "GET: {0} - {1}", distance, gain );
-
-						return MathEx.Saturate( gain );
+						return MathEx.Saturate( graph.CalculateValueByTime( distance ) );
 					}
 				}
+
+
+				//if( graph != null && graph.Length > 0 )
+				//{
+				//	var distance = ( position - SoundWorld.ListenerPosition ).Length();
+
+				//	if( distance <= graph[ 0 ].Distance )
+				//		return graph[ 0 ].Gain;
+				//	if( distance >= graph[ graph.Length - 1 ].Distance )
+				//		return graph[ graph.Length - 1 ].Gain;
+
+				//	if( graph.Length == 1 )
+				//	{
+				//		return graph[ 0 ].Gain;
+				//	}
+				//	else if( graph.Length == 2 )
+				//	{
+				//		//linear rolloff
+				//		if( graph[ 0 ].Distance >= graph[ 1 ].Distance )
+				//			return graph[ 0 ].Gain;
+				//		var factor = ( distance - graph[ 0 ].Distance ) / ( graph[ 1 ].Distance - graph[ 0 ].Distance );
+				//		var gain = graph[ 0 ].Gain * ( 1.0f - factor ) + graph[ 1 ].Gain * factor;
+				//		return MathEx.Saturate( gain );
+				//	}
+				//	else
+				//	{
+				//		//spline rolloff
+
+				//		//!!!!!slowly
+
+				//		var curve = new CurveCubicSpline1();
+
+				//		for( int n = 0; n < graph.Length; n++ )
+				//		{
+				//			ref var item = ref graph[ n ];
+				//			curve.Points.Add( new Curve1.Point( item.Distance, item.Gain ) );
+				//		}
+
+				//		var gain = curve.CalculateValueByTime( distance );
+				//		return MathEx.Saturate( gain );
+
+
+
+				//		//CubicSpline spline = new CubicSpline();
+
+				//		//float[] distances = new float[ graph.Length ];
+				//		//float[] gains = new float[ graph.Length ];
+				//		//for( int n = 0; n < graph.Length; n++ )
+				//		//{
+				//		//	distances[ n ] = (float)graph[ n ].Distance;
+				//		//	gains[ n ] = (float)graph[ n ].Gain;
+				//		//}
+
+				//		//double gain = spline.FitAndEval( distances, gains, (float)distance );
+
+				//		////Log.Info( "GET: {0} - {1}", distance, gain );
+
+				//		//return MathEx.Saturate( gain );
+				//	}
+				//}
 			}
+
 			return 1;
 		}
 	}

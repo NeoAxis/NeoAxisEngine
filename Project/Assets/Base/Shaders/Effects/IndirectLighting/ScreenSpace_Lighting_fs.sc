@@ -110,6 +110,9 @@ void main()
 	//!!!!
 	float _TemporalOffsets = 0;
 	float _TemporalDirections = 0;
+
+	////!!!!
+	//_TemporalDirections = u_engineTime;
 	
 	vec2 uv = v_texCoord0;
 	

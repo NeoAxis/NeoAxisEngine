@@ -1,7 +1,6 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using NeoAxis;
 
@@ -52,45 +51,32 @@ namespace Project
 			}
 		}
 
-		static string antialiasingBasic = "";
+		static double mouseSensitivity = 1;
 		[EngineConfig]
-		public static string AntialiasingBasic
+		public static double MouseSensitivity
 		{
-			get { return antialiasingBasic; }
-			set { antialiasingBasic = value; }
+			get { return GameMode.MouseSensitivity; }
+			set
+			{
+				mouseSensitivity = value;
+				GameMode.MouseSensitivity = mouseSensitivity;
+			}
 		}
 
-		static string antialiasingMotion = "";
 		[EngineConfig]
-		public static string AntialiasingMotion
-		{
-			get { return antialiasingMotion; }
-			set { antialiasingMotion = value; }
-		}
+		public static string AntialiasingBasic { get; set; } = "";
+		[EngineConfig]
+		public static string AntialiasingAdditional { get; set; } = "";
+		[EngineConfig]
+		public static string AntialiasingMotion { get; set; } = "";
 
-		static string resolutionUpscaleMode = "";
 		[EngineConfig]
-		public static string ResolutionUpscaleMode
-		{
-			get { return resolutionUpscaleMode; }
-			set { resolutionUpscaleMode = value; }
-		}
+		public static string ResolutionUpscaleMode { get; set; } = "";
+		[EngineConfig]
+		public static string ResolutionUpscaleTechnique { get; set; } = "";
 
-		static string resolutionUpscaleTechnique = "";
 		[EngineConfig]
-		public static string ResolutionUpscaleTechnique
-		{
-			get { return resolutionUpscaleTechnique; }
-			set { resolutionUpscaleTechnique = value; }
-		}
-
-		static double sharpness = -1.0;
-		[EngineConfig]
-		public static double Sharpness
-		{
-			get { return sharpness; }
-			set { sharpness = value; }
-		}
+		public static double Sharpness { get; set; } = -1.0;
 
 		[EngineConfig]
 		public static bool DisplayFrameInfo { get; set; }
@@ -116,6 +102,18 @@ namespace Project
 			{
 				lodScale = value;
 				RenderingPipeline.GlobalLODScale = LODScale;
+			}
+		}
+
+		static double lodScaleShadows = 1.0;
+		[EngineConfig]
+		public static double LODScaleShadows
+		{
+			get { return lodScaleShadows; }
+			set
+			{
+				lodScaleShadows = value;
+				RenderingPipeline.GlobalLODScaleShadows = LODScaleShadows;
 			}
 		}
 
@@ -179,6 +177,18 @@ namespace Project
 			}
 		}
 
+		static double reflectionScreenSpaceMultiplier = 1.0;
+		[EngineConfig]
+		public static double ReflectionScreenSpaceMultiplier
+		{
+			get { return reflectionScreenSpaceMultiplier; }
+			set
+			{
+				reflectionScreenSpaceMultiplier = value;
+				RenderingEffect_Reflection.GlobalMultiplierScreenSpace = ReflectionScreenSpaceMultiplier;
+			}
+		}
+
 		static double motionBlurMultiplier = 1.0;
 		[EngineConfig]
 		public static double MotionBlurMultiplier
@@ -215,6 +225,18 @@ namespace Project
 			}
 		}
 
+		static double microparticlesInAirMultiplier = 1.0;
+		[EngineConfig]
+		public static double MicroparticlesInAirMultiplier
+		{
+			get { return microparticlesInAirMultiplier; }
+			set
+			{
+				microparticlesInAirMultiplier = value;
+				RenderingEffect_MicroparticlesInAir.GlobalMultiplier = MicroparticlesInAirMultiplier;
+			}
+		}
+
 		static bool networkLogging;
 		[EngineConfig]
 		public static bool NetworkLogging
@@ -226,6 +248,21 @@ namespace Project
 				NeoAxis.Networking.NetworkCommonSettings.NetworkLogging = networkLogging;
 			}
 		}
+
+		[EngineConfig]
+		public static bool Simulate { get; set; } = true;
+
+		[EngineConfig]
+		public static bool SimulatePhysics
+		{
+			get { return simulatePhysics; }
+			set
+			{
+				simulatePhysics = value;
+				Scene.InternalSimulatePhysics = simulatePhysics;
+			}
+		}
+		static bool simulatePhysics = true;
 
 		//[EngineConfig]
 		//public static bool ShowEngineWatermark { get; set; }
@@ -304,7 +341,7 @@ namespace Project
 
 			//get from project settings
 			{
-				var windowStateString = ProjectSettings.ReadParameterFromFile( "WindowState" );
+				var windowStateString = ProjectSettings.ReadParameterDirectly( "General", "WindowState", "" );
 				if( !string.IsNullOrEmpty( windowStateString ) )
 				{
 					if( Enum.TryParse<ProjectSettingsPage_General.WindowStateEnum>( windowStateString, out var windowState ) )
@@ -318,12 +355,22 @@ namespace Project
 									EngineApp.InitSettings.CreateWindowFullscreen = false;
 									EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Normal;
 
-									var windowSizeString = ProjectSettings.ReadParameterFromFile( "WindowSize", ProjectSettingsPage_General.WindowSizeDefault.ToString() );
+									var windowSizeString = ProjectSettings.ReadParameterDirectly( "General", "WindowSize", ProjectSettingsPage_General.WindowSizeDefault.ToString() );
+
 									if( !string.IsNullOrEmpty( windowSizeString ) )
 									{
 										try
 										{
-											EngineApp.InitSettings.CreateWindowSize = Vector2I.Parse( windowSizeString );
+											var windowSize = Vector2I.Parse( windowSizeString );
+
+											var windowSizeApplySystemFontScaleString = ProjectSettings.ReadParameterDirectly( "General", "WindowSizeApplySystemFontScale", "True" );
+											if( bool.TryParse( windowSizeApplySystemFontScaleString, out var applySystemFontScale ) )
+											{
+												if( applySystemFontScale )
+													windowSize = ( windowSize.ToVector2() * SystemSettings.DPIScale ).ToVector2I();
+											}
+
+											EngineApp.InitSettings.CreateWindowSize = windowSize;
 										}
 										catch { }
 									}
@@ -612,9 +659,13 @@ namespace Project
 						lines.Add( "FPS: " + statistics.FPS.ToString( "F1" ) );
 						lines.Add( "Triangles: " + statistics.Triangles.ToString( "N0" ) );
 						lines.Add( "Lines: " + statistics.Lines.ToString( "N0" ) );
-						lines.Add( "Draw calls: " + statistics.DrawCalls.ToString( "N0" ) );
-						lines.Add( "Instances: " + statistics.Instances.ToString( "N0" ) );
 						lines.Add( "Compute dispatches: " + statistics.ComputeDispatches.ToString( "N0" ) );
+						lines.Add( "Draw calls total: " + statistics.DrawCalls.ToString( "N0" ) );
+						lines.Add( "Draw calls shadows: " + statistics.DrawCallsShadows.ToString( "N0" ) );
+						lines.Add( "Draw calls deferred: " + statistics.DrawCallsDeferred.ToString( "N0" ) );
+						lines.Add( "Draw calls forward: " + statistics.DrawCallsForward.ToString( "N0" ) );
+						lines.Add( "Instances: " + statistics.Instances.ToString( "N0" ) );
+						//lines.Add( "Compute dispatches: " + statistics.ComputeDispatches.ToString( "N0" ) );
 						lines.Add( "Render targets: " + statistics.RenderTargets.ToString( "N0" ) );
 						lines.Add( "Dynamic textures: " + statistics.DynamicTextures.ToString( "N0" ) );
 						lines.Add( "Compute write images: " + statistics.ComputeWriteImages.ToString( "N0" ) );
@@ -693,14 +744,47 @@ namespace Project
 							}
 						}
 
-						if( scene.GetOctreeStatistics( out var objectCount, out var octreeBounds, out var octreeNodeCount, out var timeSinceLastFullRebuild ) )
 						{
-							lines.Add( "Octree objects: " + objectCount.ToString( "N0" ) );
-							lines.Add( "Octree nodes: " + octreeNodeCount.ToString( "N0" ) );
-							var size = octreeBounds.GetSize();
-							lines.Add( "Octree bounds size: " + size.X.ToString( "N1" ) + " " + size.Y.ToString( "N1" ) + " " + size.Z.ToString( "N1" ) );
-							lines.Add( "Octree since last full rebuild: " + timeSinceLastFullRebuild.ToString( "F1" ) );
+							if( scene.GetOctreeStatistics( Scene.SceneObjectFlags.Logic, out var objectCount, out var octreeBounds, out var octreeNodeCount, out var timeSinceLastFullRebuild ) )
+							{
+								lines.Add( "Octree logic objects: " + objectCount.ToString( "N0" ) );
+								lines.Add( "Octree logic nodes: " + octreeNodeCount.ToString( "N0" ) );
+								var size = octreeBounds.GetSize();
+								lines.Add( "Octree logic bounds size: " + size.X.ToString( "N1" ) + " " + size.Y.ToString( "N1" ) + " " + size.Z.ToString( "N1" ) );
+								lines.Add( "Octree logic since last full rebuild: " + timeSinceLastFullRebuild.ToString( "F1" ) );
+							}
 						}
+
+						{
+							if( scene.GetOctreeStatistics( Scene.SceneObjectFlags.Visual, out var objectCount, out var octreeBounds, out var octreeNodeCount, out var timeSinceLastFullRebuild ) )
+							{
+								lines.Add( "Octree visual objects: " + objectCount.ToString( "N0" ) );
+								lines.Add( "Octree visual nodes: " + octreeNodeCount.ToString( "N0" ) );
+								var size = octreeBounds.GetSize();
+								lines.Add( "Octree visual bounds size: " + size.X.ToString( "N1" ) + " " + size.Y.ToString( "N1" ) + " " + size.Z.ToString( "N1" ) );
+								lines.Add( "Octree visual since last full rebuild: " + timeSinceLastFullRebuild.ToString( "F1" ) );
+							}
+						}
+
+						{
+							if( scene.GetOctreeStatistics( Scene.SceneObjectFlags.Occluder, out var objectCount, out var octreeBounds, out var octreeNodeCount, out var timeSinceLastFullRebuild ) )
+							{
+								lines.Add( "Octree occluder objects: " + objectCount.ToString( "N0" ) );
+								lines.Add( "Octree occluder nodes: " + octreeNodeCount.ToString( "N0" ) );
+								var size = octreeBounds.GetSize();
+								lines.Add( "Octree occluder bounds size: " + size.X.ToString( "N1" ) + " " + size.Y.ToString( "N1" ) + " " + size.Z.ToString( "N1" ) );
+								lines.Add( "Octree occluder since last full rebuild: " + timeSinceLastFullRebuild.ToString( "F1" ) );
+							}
+						}
+
+						//if( scene.GetOctreeStatistics( out var objectCount, out var octreeBounds, out var octreeNodeCount, out var timeSinceLastFullRebuild ) )
+						//{
+						//	lines.Add( "Octree objects: " + objectCount.ToString( "N0" ) );
+						//	lines.Add( "Octree nodes: " + octreeNodeCount.ToString( "N0" ) );
+						//	var size = octreeBounds.GetSize();
+						//	lines.Add( "Octree bounds size: " + size.X.ToString( "N1" ) + " " + size.Y.ToString( "N1" ) + " " + size.Z.ToString( "N1" ) );
+						//	lines.Add( "Octree since last full rebuild: " + timeSinceLastFullRebuild.ToString( "F1" ) );
+						//}
 					}
 				}
 
@@ -728,20 +812,6 @@ namespace Project
 				var fontSize = renderer.DefaultFontSize;
 				var offset = new Vector2( fontSize * renderer.AspectRatioInv * 0.8, fontSize * 0.6 );
 
-				////draw background
-				//{
-				//	var maxLength = 0.0;
-				//	foreach( var line in lines )
-				//	{
-				//		var length = renderer.DefaultFont.GetTextLength( fontSize, renderer, line );
-				//		if( length > maxLength )
-				//			maxLength = length;
-				//	}
-				//	var rect = offset + new Rectangle( 0, 0, maxLength, fontSize * lines.Count );
-				//	rect.Expand( new Vector2( fontSize * 0.2, fontSize * 0.2 * renderer.AspectRatio ) );
-				//	renderer.AddQuad( rect, new ColorValue( 0, 0, 0, 0.4 ) );
-				//}
-
 				//draw text
 				CanvasRendererUtility.AddTextLinesWithShadow( MainViewport, null, fontSize, lines, new Rectangle( offset.X, offset.Y, 1, 1 ), EHorizontalAlignment.Left, EVerticalAlignment.Top, new ColorValue( 1, 1, 1 ) );
 			}
@@ -750,24 +820,6 @@ namespace Project
 
 			//engine console
 			EngineConsole.PerformRenderUI();
-
-			//!!!!too blurry
-			//if( ShowEngineWatermark )
-			//{
-			//	var texture = ResourceManager.LoadResource<ImageComponent>( @"Base\UI\Images\Watermark.png" );
-			//	if( texture != null )
-			//	{
-			//		var renderer = MainViewport.CanvasRenderer;
-
-			//		var imageSize = texture.Result.SourceSize;
-			//		var aspect = (double)imageSize.X / (double)imageSize.Y;
-			//		var size = 0.1;
-
-			//		var screenSize = new Vector2( size * renderer.AspectRatioInv * aspect, size );
-
-			//		renderer.AddQuad( new Rectangle( 1.0 - screenSize.X, 1.0 - screenSize.Y, 1, 1 ), new RectangleF( 0, 0, 1, 1 ), texture, new ColorValue( 1, 1, 1, 0.8 ), true );
-			//	}
-			//}
 		}
 
 		private static void MainViewport_UpdateBeforeOutput( Viewport viewport )
@@ -778,23 +830,6 @@ namespace Project
 		private static void MainViewport_UpdateEnd( Viewport viewport )
 		{
 		}
-
-		//protected override void OnSystemPause( bool pause )
-		//{
-		//	base.OnSystemPause( pause );
-
-		//	if( EntitySystemWorld.Instance != null )
-		//		EntitySystemWorld.Instance.SystemPauseOfSimulation = pause;
-		//}
-
-		//bool IsScreenFadingOut()
-		//{
-		//	//if( needMapLoadName != null || needRunExampleOfProceduralMapCreation || needWorldLoadName != null )
-		//	//	return true;
-		//	//if( needFadingOutAndExit )
-		//	//	return true;
-		//	return false;
-		//}
 
 		static void InvisibleLog_Handlers_InfoHandler( string text, ref bool dumpToLogFile )
 		{
@@ -819,78 +854,6 @@ namespace Project
 			EngineConsole.Print( "Error: " + text, new ColorValue( 1, 0, 0 ) );
 			if( EngineConsole.AutoOpening )
 				EngineConsole.Active = true;
-
-			//if( MainViewport != null && MainViewport.UIContainer != null )
-			//{
-			//	handled = true;
-
-			//	//find already created MessageBoxWindow
-			//	foreach( UIControl control in MainViewport.UIContainer.GetComponents<UIControl>( false ) )
-			//	{
-			//		if( control is MessageBoxWindow && !control.RemoveFromParentQueued )
-			//			return;
-			//	}
-
-			//	bool insideTheGame = false;
-			//	//bool insideTheGame = GameWindow.Instance != null;
-
-			//	//if( insideTheGame )
-			//	//{
-			//	//	if( Map.Instance != null )
-			//	//	{
-			//	//		if( EntitySystemWorld.Instance.IsServer() || EntitySystemWorld.Instance.IsSingle() )
-			//	//			EntitySystemWorld.Instance.Simulation = false;
-			//	//	}
-
-			//	//	EngineApp.Instance.MouseRelativeMode = false;
-
-			//	//	DeleteAllGameWindows();
-
-			//	//	MapSystemWorld.MapDestroy();
-			//	//	if( EntitySystemWorld.Instance != null )
-			//	//		EntitySystemWorld.Instance.WorldDestroy();
-			//	//}
-
-			//	//GameEngineApp.Instance.Server_DestroyServer( "Error on the server" );
-			//	//GameEngineApp.Instance.Client_DisconnectFromServer();
-
-			//	//show message box
-
-			//	MessageBoxWindow messageBoxWindow = new MessageBoxWindow( text, "Error", delegate ( UIButton sender )
-			//	{
-			//		if( insideTheGame )
-			//		{
-			//			//close all windows
-			//			foreach( UIControl control in MainViewport.UIContainer.GetComponents<UIControl>( false ) )
-			//				control.RemoveFromParent( true );
-			//		}
-			//		else
-			//		{
-			//			////destroy Lobby Window
-			//			//foreach( UIControl control in MainViewport.ControlManager.Controls )
-			//			//{
-			//			//	if( control is MultiplayerLobbyWindow )
-			//			//	{
-			//			//		control.SetShouldDetach();
-			//			//		break;
-			//			//	}
-			//			//}
-			//		}
-
-			//		//if( EntitySystemWorld.Instance == null )
-			//		//{
-			//		//	EngineApp.Instance.NeedExit = true;
-			//		//	return;
-			//		//}
-
-			//		////create main menu
-			//		//if( MainMenuWindow.Instance == null )
-			//		//	MainViewport.UIContainer.AddComponent( new MainMenuWindow() );
-
-			//	} );
-
-			//	MainViewport.UIContainer.AddComponent( messageBoxWindow );
-			//}
 		}
 
 		static void Log_Handlers_FatalHandler( string text, string createdLogFilePath, ref bool handled )
@@ -912,9 +875,9 @@ namespace Project
 					catch { }
 				}
 
-				if( string.IsNullOrEmpty( playFile ) && ProjectSettings.Get.General.AutorunScene.ReferenceSpecified )
+				if( string.IsNullOrEmpty( playFile ) && ProjectSettings.Get.General.SceneAutoPlay.ReferenceSpecified )
 				{
-					var res = ProjectSettings.Get.General.AutorunScene.Value;
+					var res = ProjectSettings.Get.General.SceneAutoPlay.Value;
 					if( res != null && VirtualFile.Exists( res.ResourceName ) )
 						playFile = res.ResourceName;
 				}
@@ -1001,6 +964,11 @@ namespace Project
 					else
 						effect.BasicTechnique = effect.BasicTechniqueAfterLoading;
 
+					if( Enum.TryParse<RenderingEffect_Antialiasing.AdditionalTechniqueEnum>( AntialiasingAdditional.Replace( " ", "" ), true, out var additional ) )
+						effect.AdditionalTechnique = additional;
+					else
+						effect.AdditionalTechnique = effect.AdditionalTechniqueAfterLoading;
+
 					if( Enum.TryParse<RenderingEffect_Antialiasing.MotionTechniqueEnum>( AntialiasingMotion.Replace( " ", "" ), true, out var motion ) )
 						effect.MotionTechnique = motion;
 					else
@@ -1051,6 +1019,5 @@ namespace Project
 				}
 			}
 		}
-
 	}
 }

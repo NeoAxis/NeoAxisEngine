@@ -1,5 +1,4 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-//#if CLOUD
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,6 +12,8 @@ namespace NeoAxis.Networking
 {
 	public class GeneralManagerExecuteCommand
 	{
+		static string generalManagerAddressCached;
+
 		public string FunctionName = "";
 		public bool RequireUserLogin;
 		public List<(string, string)> Parameters = new List<(string, string)>();
@@ -60,7 +61,11 @@ namespace NeoAxis.Networking
 
 			try
 			{
-				var url = string.Format( @"{0}/{1}/", NetworkCommonSettings.GeneralManagerURL, FunctionName );
+				//get GeneralManager address
+				if( string.IsNullOrEmpty( generalManagerAddressCached ) )
+					generalManagerAddressCached = GeneralManagerFunctions.RequestGeneralManagerAddress( out var error2 );
+
+				var url = string.Format( @"{0}/{1}/", GeneralManagerFunctions.GetHttpURL( generalManagerAddressCached ), FunctionName );
 
 				var paramsAdded = false;
 
@@ -193,4 +198,3 @@ namespace NeoAxis.Networking
 		}
 	}
 }
-//#endif

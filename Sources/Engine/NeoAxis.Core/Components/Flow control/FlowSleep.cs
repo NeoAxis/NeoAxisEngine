@@ -28,7 +28,7 @@ namespace NeoAxis
 		public Reference<double> Seconds
 		{
 			get { if( _seconds.BeginGet() ) Seconds = _seconds.Get( this ); return _seconds.value; }
-			set { if( _seconds.BeginSet( ref value ) ) { try { SecondsChanged?.Invoke( this ); } finally { _seconds.EndSet(); } } }
+			set { if( _seconds.BeginSet( this, ref value ) ) { try { SecondsChanged?.Invoke( this ); } finally { _seconds.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Seconds"/> property value changes.</summary>
 		public event Action<FlowSleep> SecondsChanged;
@@ -41,7 +41,7 @@ namespace NeoAxis
 		public Reference<FlowInput> Exit
 		{
 			get { if( _exit.BeginGet() ) Exit = _exit.Get( this ); return _exit.value; }
-			set { if( _exit.BeginSet( ref value ) ) { try { ExitChanged?.Invoke( this ); } finally { _exit.EndSet(); } } }
+			set { if( _exit.BeginSet( this, ref value ) ) { try { ExitChanged?.Invoke( this ); } finally { _exit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Exit"/> property value changes.</summary>
 		public event Action<FlowSleep> ExitChanged;

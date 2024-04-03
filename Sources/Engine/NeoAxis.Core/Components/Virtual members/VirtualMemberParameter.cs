@@ -2,11 +2,6 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.IO;
-using System.Drawing.Design;
 
 namespace NeoAxis
 {
@@ -31,7 +26,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _type.BeginSet( ref value ) )
+				if( _type.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -62,7 +57,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _byReference.BeginSet( ref value ) )
+				if( _byReference.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -118,7 +113,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _output.BeginSet( ref value ) )
+				if( _output.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -149,7 +144,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _returnValue.BeginSet( ref value ) )
+				if( _returnValue.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -180,7 +175,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _optional.BeginSet( ref value ) )
+				if( _optional.BeginSet( this, ref value ) )
 				{
 					try
 					{

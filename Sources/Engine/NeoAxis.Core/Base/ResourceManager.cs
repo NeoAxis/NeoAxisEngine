@@ -594,6 +594,14 @@ namespace NeoAxis
 			return type;
 		}
 
+		public static string[] Import3DFileExtensions
+		{
+			get
+			{
+				return new string[] { "fbx", "3d", "3ds", "ac", "ac3d", "acc", "ase", "ask", "b3d", /*"blend", */"bvh", "cob", "csm", "dae", "dxf", "enff", "hmp", "ifc", "irr", "irrmesh", "lwo", "lws", "lxo", "md2", "md3", "md5anim", "md5camera", "md5mesh", "mdc", "mdl", "mot", "ms3d", "ndo", "nff", "obj", "off", "pk3", "ply", "x", "q3d", "q3s", "assxml", "gltf", "glb"/*, "json"*/};
+			}
+		}
+
 		static void RegisterStandardTypes()
 		{
 			RegisterType( "Assembly", new string[] { "dll" }, typeof( AssemblyResource ) );
@@ -617,16 +625,20 @@ namespace NeoAxis
 			RegisterType( "Surface", new string[] { "surface" }, typeof( Resource ) );
 			RegisterType( "Sprite", new string[] { "sprite" }, typeof( Resource ) );
 			//RegisterType( "Shader", new string[] { "shader" }, typeof( Resource ) );
-			RegisterType( "Skybox", new string[] { "skybox" }, typeof( Resource ) );
+			RegisterType( "Sky", new string[] { "sky", "skybox" }, typeof( Resource ) );
 			RegisterType( "Light", new string[] { "light" }, typeof( Resource ) );
 			RegisterType( "Learning", new string[] { "learning" }, typeof( Resource ) );
+			RegisterType( "Animation", new string[] { "animation" }, typeof( Resource ) );
+			RegisterType( "Skeleton", new string[] { "skeleton" }, typeof( Resource ) );
 
-			RegisterType( "Import 3D", new string[] { "fbx", "3d", "3ds", "ac", "ac3d", "acc", "ase", "ask", "b3d", /*"blend", */"bvh", "cob", "csm", "dae", "dxf", "enff", "hmp", "ifc", "irr", "irrmesh", "lwo", "lws", "lxo", "md2", "md3", "md5anim", "md5camera", "md5mesh", "mdc", "mdl", "mot", "ms3d", "ndo", "nff", "obj", "off", "pk3", "ply", "x", "q3d", "q3s", "assxml", "gltf", "glb", "json" }, typeof( Import3DResource ) );
+			RegisterType( "Import 3D", Import3DFileExtensions, typeof( Import3DResource ) );
+
+			//RegisterType( "Import 3D", new string[] { "fbx", "3d", "3ds", "ac", "ac3d", "acc", "ase", "ask", "b3d", /*"blend", */"bvh", "cob", "csm", "dae", "dxf", "enff", "hmp", "ifc", "irr", "irrmesh", "lwo", "lws", "lxo", "md2", "md3", "md5anim", "md5camera", "md5mesh", "mdc", "mdl", "mot", "ms3d", "ndo", "nff", "obj", "off", "pk3", "ply", "x", "q3d", "q3s", "assxml", "gltf", "glb"/*, "json"*/ }, typeof( Import3DResource ) );
 		}
 
 		internal static void DisposeAllResources()
 		{
-			again:;
+again:;
 			var array = GetAllResources();
 			if( array.Length != 0 )
 			{

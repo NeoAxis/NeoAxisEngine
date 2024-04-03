@@ -5,5 +5,5 @@ You can make:
 - With help of canvas based editor you can add support of another GUI libraries like Avalonia.
 
 Projects for this folder:
-- NeoAxis.Addon.ExampleEditorEngineGUI
-- NeoAxis.Addon.ExampleEditorWinForms
+- NeoAxis.Addon.Editor.ExampleEditorEngineGUI
+- NeoAxis.Addon.Editor.ExampleEditorWinForms

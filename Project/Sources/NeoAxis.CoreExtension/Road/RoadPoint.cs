@@ -19,7 +19,7 @@ namespace NeoAxis
 		public Reference<ModifiersEnum> Modifiers
 		{
 			get { if( _modifiers.BeginGet() ) Modifiers = _modifiers.Get( this ); return _modifiers.value; }
-			set { if( _modifiers.BeginSet( ref value ) ) { try { ModifiersChanged?.Invoke( this ); DataWasChanged(); } finally { _modifiers.EndSet(); } } }
+			set { if( _modifiers.BeginSet( this, ref value ) ) { try { ModifiersChanged?.Invoke( this ); DataWasChanged(); } finally { _modifiers.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Modifiers"/> property value changes.</summary>
 		public event Action<RoadPoint> ModifiersChanged;
@@ -31,7 +31,7 @@ namespace NeoAxis
 		//public Reference<double> OverpassSupportHeight
 		//{
 		//	get { if( _overpassSupportHeight.BeginGet() ) OverpassSupportHeight = _overpassSupportHeight.Get( this ); return _overpassSupportHeight.value; }
-		//	set { if( _overpassSupportHeight.BeginSet( ref value ) ) { try { OverpassSupportHeightChanged?.Invoke( this ); DataWasChanged(); } finally { _overpassSupportHeight.EndSet(); } } }
+		//	set { if( _overpassSupportHeight.BeginSet( this, ref value ) ) { try { OverpassSupportHeightChanged?.Invoke( this ); DataWasChanged(); } finally { _overpassSupportHeight.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="OverpassSupportHeight"/> property value changes.</summary>
 		//public event Action<RoadPoint> OverpassSupportHeightChanged;

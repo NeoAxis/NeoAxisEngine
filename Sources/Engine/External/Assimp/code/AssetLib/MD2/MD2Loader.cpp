@@ -3,9 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
-
-
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -41,7 +39,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ---------------------------------------------------------------------------
 */
 
-
 #ifndef ASSIMP_BUILD_NO_MD2_IMPORTER
 
 /** @file Implementation of the MD2 importer class */
@@ -53,6 +50,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <assimp/IOSystem.hpp>
 #include <assimp/scene.h>
 #include <assimp/importerdesc.h>
+#include <assimp/StringUtils.h>
 
 #include <memory>
 
@@ -64,7 +62,7 @@ using namespace Assimp::MD2;
 #   define ARRAYSIZE(_array) (int(sizeof(_array) / sizeof(_array[0])))
 #endif
 
-static const aiImporterDesc desc = {
+static constexpr aiImporterDesc desc = {
     "Quake II Mesh Importer",
     "",
     "",
@@ -78,7 +76,7 @@ static const aiImporterDesc desc = {
 };
 
 // ------------------------------------------------------------------------------------------------
-// Helper function to lookup a normal in Quake 2's precalculated table
+// Helper function to lookup a normal in Quake 2's pre-calculated table
 void MD2::LookupNormalIndex(uint8_t iNormalIndex,aiVector3D& vOut)
 {
     // make sure the normal index has a valid value
@@ -100,25 +98,11 @@ MD2Importer::MD2Importer()
 {}
 
 // ------------------------------------------------------------------------------------------------
-// Destructor, private as well
-MD2Importer::~MD2Importer()
-{}
-
-// ------------------------------------------------------------------------------------------------
 // Returns whether the class can handle the format of the given file.
-bool MD2Importer::CanRead( const std::string& pFile, IOSystem* pIOHandler, bool checkSig) const
+bool MD2Importer::CanRead( const std::string& pFile, IOSystem* pIOHandler, bool /*checkSig*/) const
 {
-    const std::string extension = GetExtension(pFile);
-    if (extension == "md2")
-        return true;
-
-    // if check for extension is not enough, check for the magic tokens
-    if (!extension.length() || checkSig) {
-        uint32_t tokens[1];
-        tokens[0] = AI_MD2_MAGIC_NUMBER_LE;
-        return CheckMagicToken(pIOHandler,pFile,tokens,1);
-    }
-    return false;
+    static const uint32_t tokens[] = { AI_MD2_MAGIC_NUMBER_LE };
+    return CheckMagicToken(pIOHandler,pFile,tokens,AI_COUNT_OF(tokens));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -148,46 +132,39 @@ void MD2Importer::ValidateHeader( )
     if (m_pcHeader->magic != AI_MD2_MAGIC_NUMBER_BE &&
         m_pcHeader->magic != AI_MD2_MAGIC_NUMBER_LE)
     {
-        char szBuffer[5];
-        szBuffer[0] = ((char*)&m_pcHeader->magic)[0];
-        szBuffer[1] = ((char*)&m_pcHeader->magic)[1];
-        szBuffer[2] = ((char*)&m_pcHeader->magic)[2];
-        szBuffer[3] = ((char*)&m_pcHeader->magic)[3];
-        szBuffer[4] = '\0';
-
-        throw DeadlyImportError("Invalid MD2 magic word: should be IDP2, the "
-            "magic word found is " + std::string(szBuffer));
+        throw DeadlyImportError("Invalid MD2 magic word: expected IDP2, found ",
+                                ai_str_toprintable((char *)&m_pcHeader->magic, 4));
     }
 
     // check file format version
     if (m_pcHeader->version != 8)
-        ASSIMP_LOG_WARN( "Unsupported md2 file version. Continuing happily ...");
+        ASSIMP_LOG_WARN( "Unsupported MD2 file version. Continuing happily ...");
 
     // check some values whether they are valid
     if (0 == m_pcHeader->numFrames)
-        throw DeadlyImportError( "Invalid md2 file: NUM_FRAMES is 0");
+        throw DeadlyImportError( "Invalid MD2 file: NUM_FRAMES is 0");
 
     if (m_pcHeader->offsetEnd > (uint32_t)fileSize)
-        throw DeadlyImportError( "Invalid md2 file: File is too small");
+        throw DeadlyImportError( "Invalid MD2 file: File is too small");
 
     if (m_pcHeader->numSkins > AI_MAX_ALLOC(MD2::Skin)) {
-        throw DeadlyImportError("Invalid MD2 header: too many skins, would overflow");
+        throw DeadlyImportError("Invalid MD2 header: Too many skins, would overflow");
     }
 
     if (m_pcHeader->numVertices > AI_MAX_ALLOC(MD2::Vertex)) {
-        throw DeadlyImportError("Invalid MD2 header: too many vertices, would overflow");
+        throw DeadlyImportError("Invalid MD2 header: Too many vertices, would overflow");
     }
 
     if (m_pcHeader->numTexCoords > AI_MAX_ALLOC(MD2::TexCoord)) {
-        throw DeadlyImportError("Invalid MD2 header: too many texcoords, would overflow");
+        throw DeadlyImportError("Invalid MD2 header: Too many texcoords, would overflow");
     }
 
     if (m_pcHeader->numTriangles > AI_MAX_ALLOC(MD2::Triangle)) {
-        throw DeadlyImportError("Invalid MD2 header: too many triangles, would overflow");
+        throw DeadlyImportError("Invalid MD2 header: Too many triangles, would overflow");
     }
 
     if (m_pcHeader->numFrames > AI_MAX_ALLOC(MD2::Frame)) {
-        throw DeadlyImportError("Invalid MD2 header: too many frames, would overflow");
+        throw DeadlyImportError("Invalid MD2 header: Too many frames, would overflow");
     }
 
     // -1 because Frame already contains one
@@ -199,7 +176,7 @@ void MD2Importer::ValidateHeader( )
         m_pcHeader->offsetFrames    + m_pcHeader->numFrames * frameSize                 >= fileSize ||
         m_pcHeader->offsetEnd           > fileSize)
     {
-        throw DeadlyImportError("Invalid MD2 header: some offsets are outside the file");
+        throw DeadlyImportError("Invalid MD2 header: Some offsets are outside the file");
     }
 
     if (m_pcHeader->numSkins > AI_MD2_MAX_SKINS)
@@ -210,7 +187,7 @@ void MD2Importer::ValidateHeader( )
         ASSIMP_LOG_WARN("The model contains more vertices than Quake 2 supports");
 
     if (m_pcHeader->numFrames <= configFrameID )
-        throw DeadlyImportError("The requested frame is not existing the file");
+        throw DeadlyImportError("MD2: The requested frame (", configFrameID, ") does not exist in the file");
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -221,19 +198,20 @@ void MD2Importer::InternReadFile( const std::string& pFile,
     std::unique_ptr<IOStream> file( pIOHandler->Open( pFile));
 
     // Check whether we can read from the file
-    if( file.get() == NULL)
-        throw DeadlyImportError( "Failed to open MD2 file " + pFile + "");
+    if (file == nullptr) {
+        throw DeadlyImportError("Failed to open MD2 file ", pFile, "");
+    }
 
     // check whether the md3 file is large enough to contain
     // at least the file header
     fileSize = (unsigned int)file->FileSize();
-    if( fileSize < sizeof(MD2::Header))
-        throw DeadlyImportError( "MD2 File is too small");
+    if (fileSize < sizeof(MD2::Header)) {
+        throw DeadlyImportError("MD2 File is too small");
+    }
 
     std::vector<uint8_t> mBuffer2(fileSize);
     file->Read(&mBuffer2[0], 1, fileSize);
     mBuffer = &mBuffer2[0];
-
 
     m_pcHeader = (BE_NCONST MD2::Header*)mBuffer;
 
@@ -432,10 +410,6 @@ void MD2Importer::InternReadFile( const std::string& pFile,
             aiVector3D& vNormal = pcMesh->mNormals[iCurrent];
             LookupNormalIndex(pcVerts[iIndex].lightNormalIndex,vNormal);
 
-            // flip z and y to become right-handed
-            std::swap((float&)vNormal.z,(float&)vNormal.y);
-            std::swap((float&)vec.z,(float&)vec.y);
-
             if (m_pcHeader->numTexCoords)   {
                 // validate texture coordinates
                 iIndex = pcTriangles[i].textureIndices[c];
@@ -453,7 +427,15 @@ void MD2Importer::InternReadFile( const std::string& pFile,
             }
             pScene->mMeshes[0]->mFaces[i].mIndices[c] = iCurrent;
         }
+        // flip the face order
+        std::swap( pScene->mMeshes[0]->mFaces[i].mIndices[0], pScene->mMeshes[0]->mFaces[i].mIndices[2] );
     }
+    // Now rotate the whole scene 90 degrees around the x axis to convert to internal coordinate system
+    pScene->mRootNode->mTransformation = aiMatrix4x4(
+            1.f, 0.f, 0.f, 0.f,
+            0.f, 0.f, 1.f, 0.f,
+            0.f, -1.f, 0.f, 0.f,
+            0.f, 0.f, 0.f, 1.f);
 }
 
 #endif // !! ASSIMP_BUILD_NO_MD2_IMPORTER

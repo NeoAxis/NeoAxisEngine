@@ -18,7 +18,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "4.20878044947926 -0.155804427611447 2.03036227291731; -0.138760392111332 0.0367295030107415 0.95669666713802 0.253235037616635; 1 1 1"
+		Transform = "6.37196298743802 -0.45680987126706 2.9580602243303; -0.201986822031512 0.0500029024318749 0.949450642035592 0.235041510827771; 1 1 1"
 	}
 	.component NeoAxis.Camera
 	{
@@ -107,6 +107,8 @@
 	{
 		Name = Game Mode
 		UseBuiltInCamera = FirstPerson
+		ThirdPersonCameraHorizontalAngle = 90.00000000000007
+		DisplayTarget = True
 		CutsceneStarted = False
 		CutsceneGuiFadingFactor = 0
 		CutsceneGuiFadingSpeed = 0
@@ -117,17 +119,6 @@
 		{
 			GetByReference = "this:..\\$Character"
 		}
-	}
-	.component NeoAxis.Light
-	{
-		Enabled = False
-		Name = Light 2
-		Transform = "-16.276133519817 -13.7764744895929 22.8055842838911; -0.800753779408636 -0.218616030310482 0.553641801455134 0.066941554624803; 1 1 1"
-		Type = Spotlight
-		AttenuationFar = 100
-		AttenuationPower = 1.5
-		SpotlightInnerAngle = 80
-		SpotlightOuterAngle = 91.429
 	}
 	.component NeoAxis.MeshInSpace
 	{
@@ -340,7 +331,7 @@
 		}
 		UIControl
 		{
-			GetByReference = "Base\\UI\\Screens\\MenuWindow.ui"
+			GetByReference = "Base\\UI\\Screens\\OptionsWindow.ui"
 		}
 		.component NeoAxis.Mesh
 		{
@@ -452,7 +443,7 @@
 	.component NeoAxis.Character
 	{
 		Name = Character
-		Transform = "1.16318388566298 -0.678351915698838 0.0056448639330271; 0 0 0.707106781186548 0.707106781186548; 1 1 1"
+		Transform = "2.41510538558536 -0.91161935090323 0.0056448639330271; 0 0 0.779542743749859 0.626349032622341; 1 1 1"
 		Collision = True
 		Mesh
 		{

@@ -22,19 +22,19 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
-		Stopwatch stopwatch;
+		//Stopwatch stopwatch;
 
-		public override double GetSystemTime()
-		{
-			if( stopwatch == null )
-			{
-				stopwatch = new Stopwatch();
-				//Debug.Assert( Stopwatch.IsHighResolution );
-				stopwatch.Start();
-			}
+		//public override double GetSystemTime()
+		//{
+		//	if( stopwatch == null )
+		//	{
+		//		stopwatch = new Stopwatch();
+		//		//Debug.Assert( Stopwatch.IsHighResolution );
+		//		stopwatch.Start();
+		//	}
 
-			return stopwatch.Elapsed.TotalSeconds;
-		}
+		//	return stopwatch.Elapsed.TotalSeconds;
+		//}
 
 		public override string[] GetNativeModuleNames()
 		{

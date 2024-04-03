@@ -60,9 +60,6 @@
     <ClCompile Include="..\..\..\tools\shaderc\shaderc.cpp">
       <Filter>tools\shaderc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\tools\shaderc\shaderc_glsl.cpp">
-      <Filter>tools\shaderc</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\bx\src\allocator.cpp">
       <Filter>bx</Filter>
     </ClCompile>

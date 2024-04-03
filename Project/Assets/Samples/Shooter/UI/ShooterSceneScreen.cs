@@ -79,7 +79,7 @@ namespace Project
 			}
 		}
 
-		protected override void GameMode_GetInteractiveObjectInfoEvent( GameMode sender, InteractiveObject obj, ref InteractiveObjectObjectInfo result )
+		protected override void GameMode_GetInteractiveObjectInfoEvent( GameMode sender, InteractiveObjectInterface obj, ref InteractiveObjectObjectInfo result )
 		{
 			base.GameMode_GetInteractiveObjectInfoEvent( sender, obj, ref result );
 
@@ -115,9 +115,9 @@ namespace Project
 			//	show = false;
 		}
 
-		protected override void GameMode_RenderTargetImageBefore( GameMode sender, ref bool show )
+		protected override void GameMode_RenderTargetImageBefore( GameMode sender, CanvasRenderer renderer, ref bool show )
 		{
-			base.GameMode_RenderTargetImageBefore( sender, ref show );
+			base.GameMode_RenderTargetImageBefore( sender, renderer, ref show );
 
 			//if( currentGameCommonScreen != null )
 			//	show = false;
@@ -169,6 +169,5 @@ namespace Project
 
 			base.InGameContextScreenDestroy();
 		}
-
 	}
 }

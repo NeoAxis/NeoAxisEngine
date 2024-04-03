@@ -2,13 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.IO;
-using System.Drawing.Design;
 using Internal.tainicom.Aether.Physics2D.Dynamics;
-using NeoAxis.Editor;
 using Internal.tainicom.Aether.Physics2D.Common;
 
 namespace NeoAxis
@@ -29,7 +23,7 @@ namespace NeoAxis
 			get { if( _dimensions.BeginGet() ) Dimensions = _dimensions.Get( this ); return _dimensions.value; }
 			set
 			{
-				if( _dimensions.BeginSet( ref value ) )
+				if( _dimensions.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -57,7 +51,7 @@ namespace NeoAxis
 			{
 				if( value < 3 )
 					value = new Reference<int>( 3, value.GetByReference );
-				if( _edges.BeginSet( ref value ) )
+				if( _edges.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -82,7 +76,7 @@ namespace NeoAxis
 			get { if( _useSmoothCircleWhenPossible.BeginGet() ) UseSmoothCircleWhenPossible = _useSmoothCircleWhenPossible.Get( this ); return _useSmoothCircleWhenPossible.value; }
 			set
 			{
-				if( _useSmoothCircleWhenPossible.BeginSet( ref value ) )
+				if( _useSmoothCircleWhenPossible.BeginSet( this, ref value ) )
 				{
 					try
 					{

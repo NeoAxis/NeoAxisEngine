@@ -50,8 +50,11 @@ namespace NeoAxis
 		double lastUpdateTimeStepSmoothResult;
 		double previousUpdateTime;
 
-		Matrix4? viewMatrixPreviousFrame;
-		Matrix4? projectionMatrixPreviousFrame;
+		Matrix4F? previousFrameViewMatrixRelative;
+		Matrix4F? previousFrameProjectionMatrix;
+		Vector3? previousFramePosition;
+		Vector3F previousFramePositionChange;
+		bool instantCameraMovementHappens;
 
 		ViewportRenderingContext renderingContext;
 		RenderingPipeline renderingPipelineCreated;
@@ -81,8 +84,6 @@ namespace NeoAxis
 		bool allowRenderScreenLabels = true;
 
 		ColorValue backgroundColorDefault = new ColorValue( 0, 0, 0 );
-
-		bool outputFlipY;
 
 		bool insideUpdate;
 
@@ -202,7 +203,6 @@ namespace NeoAxis
 
 					RenderingPipelineDestroyCreated();
 
-					//!!!!так? т.е. каждому виюпорту - свой инстанс класса?
 					if( renderingContext != null )
 					{
 						renderingContext.Dispose();
@@ -841,7 +841,7 @@ namespace NeoAxis
 		/// <summary>
 		/// Updates viewport with the rendering of attached map and GUI rendering.
 		/// </summary>
-		public void Update( bool callBgfxFrame, CameraSettingsClass overrideCameraSettings = null )
+		public void Update( bool callBgfxFrame, CameraSettingsClass overrideCameraSettings = null, int parentCurrentViewNumber = -1 )
 		{
 			if( insideUpdate )
 				return;
@@ -877,18 +877,20 @@ namespace NeoAxis
 				if( attachedScene != null && !Scene.AllInstancesEnabledContains( attachedScene ) )
 					attachedScene = null;
 
-				//!!!!!тут? так?
-				//!!!!создавать так? надо ли Enabled= true или типа того
+				//create rendering context
 				if( renderingContext == null )
 					renderingContext = new ViewportRenderingContext( this );
 
-				ViewportRenderingContext.current = renderingContext;
+				//ViewportRenderingContext.current = renderingContext;
 
 				//begin update
 				renderingContext.uniquePerFrameObjectToDetectNewFrame = new object();
 				renderingContext.ObjectsDuringUpdate = new ViewportRenderingContext.ObjectsDuringUpdateClass();
+				renderingContext.AnimationBonesData.Clear();
+				renderingContext.AnimationBonesDataTasks.Clear();
 
-				renderingContext.currentViewNumber = -1;
+				//теперь ниже
+				//renderingContext.currentViewNumber = -1;
 
 				previousUpdateTime = lastUpdateTime;
 
@@ -958,10 +960,9 @@ namespace NeoAxis
 					//renderingContext.UpdateStatisticsCurrent.FPS = lastUpdateTimeStep != 0 ? 1.0 / lastUpdateTimeStep : double.PositiveInfinity;
 				}
 
+				//!!!!name
 				UpdateBegin?.Invoke( this );
 				AllViewports_UpdateBegin?.Invoke( this );
-
-				//!!!!!!where sound listener?
 
 				//!!!!new тут. было ниже
 				AttachedScene?.PerformViewportUpdateBegin( this, overrideCameraSettings );
@@ -989,30 +990,21 @@ namespace NeoAxis
 				else
 					RenderingPipelineDestroyCreated();
 
+				//AttachedScene?.PerformViewportUpdateCameraSettingsReady( this );
+
+				if( callBgfxFrame )
+					renderingContext.currentViewNumber = -1;
+				else
+					renderingContext.currentViewNumber = parentCurrentViewNumber;
+
+				AttachedScene?.PerformViewportUpdateCameraSettingsReady( this );
+
+
 				//!!!!теперь выше
 				////!!!!!что там?
 				//AttachedScene?.PerformViewportUpdateBegin( this, overrideCameraSettings );
 
 
-				////!!!!так?
-				////update reflection probes in Capture mode
-				//if( AttachedScene != null && Mode == ModeEnum.Default )
-				//{
-				//	//!!!!slowly. еще одна выборка из octree
-
-				//	var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All,
-				//		MetadataManager.GetTypeOfNetType( typeof( ReflectionProbe ) ), true, CameraSettings.Frustum );
-				//	AttachedScene.GetObjectsInSpace( getObjectsItem );
-
-				//	foreach( var item in getObjectsItem.Result )
-				//	{
-				//		var probe = item.Object as ReflectionProbe;
-				//		if( probe != null && probe.Mode.Value == ReflectionProbe.ModeEnum.Capture )
-				//			probe.Update( false );
-				//	}
-				//}
-
-				//!!!!
 				//rendering data
 				//RenderingDataClass renderingData = new RenderingDataClass();
 
@@ -1157,21 +1149,30 @@ namespace NeoAxis
 				renderingContext.MultiRenderTarget_DestroyAll();
 				renderingContext.DynamicTexture_FreeAllEndUpdate();
 				renderingContext.OcclusionCullingBuffer_FreeAllEndUpdate();
+				renderingContext.SceneOcclusionCullingBuffer = null;
+
+				if( cameraSettings != null && previousFramePosition.HasValue )
+					previousFramePositionChange = ( cameraSettings.Position - previousFramePosition.Value ).ToVector3F();
+				else
+					previousFramePositionChange = Vector3F.Zero;
 
 				if( cameraSettings != null )
 				{
-					viewMatrixPreviousFrame = cameraSettings.ViewMatrix;
-					projectionMatrixPreviousFrame = cameraSettings.ProjectionMatrix;
+					previousFrameViewMatrixRelative = cameraSettings.ViewMatrixRelative;
+					previousFrameProjectionMatrix = cameraSettings.ProjectionMatrix;
+					previousFramePosition = cameraSettings.Position;
 				}
 				else
 				{
-					viewMatrixPreviousFrame = null;
-					projectionMatrixPreviousFrame = null;
+					previousFrameViewMatrixRelative = null;
+					previousFrameProjectionMatrix = null;
+					previousFramePosition = null;
 				}
+				instantCameraMovementHappens = false;
 
 				//!!!!что чистить?
 
-				ViewportRenderingContext.current = null;
+				//ViewportRenderingContext.current = null;
 
 				if( RenderingSystem.viewportsDuringUpdate.Count == 0 )
 					Log.Fatal( "Viewport: Update: RendererWorld.viewportsDuringUpdate.Count == 0." );
@@ -1265,28 +1266,43 @@ namespace NeoAxis
 			renderingPipelineCreated = null;
 		}
 
-		public Matrix4 ViewMatrixPreviousFrame
+		public Matrix4F PreviousFrameViewMatrixRelative
 		{
 			get
 			{
-				if( viewMatrixPreviousFrame != null )
-					return viewMatrixPreviousFrame.Value;
+				if( previousFrameViewMatrixRelative.HasValue )
+					return previousFrameViewMatrixRelative.Value;
 				if( cameraSettings != null )
-					return cameraSettings.ViewMatrix;
-				return Matrix4.Identity;
+					return cameraSettings.ViewMatrixRelative;
+				return Matrix4F.Identity;
 			}
 		}
 
-		public Matrix4 ProjectionMatrixPreviousFrame
+		public Matrix4F PreviousFrameProjectionMatrix
 		{
 			get
 			{
-				if( projectionMatrixPreviousFrame != null )
-					return projectionMatrixPreviousFrame.Value;
+				if( previousFrameProjectionMatrix.HasValue )
+					return previousFrameProjectionMatrix.Value;
 				if( cameraSettings != null )
 					return cameraSettings.ProjectionMatrix;
-				return Matrix4.Identity;
+				return Matrix4F.Identity;
 			}
+		}
+
+		public Vector3? PreviousFramePosition
+		{
+			get { return previousFramePosition; }
+		}
+
+		public Vector3F PreviousFramePositionChange
+		{
+			get { return previousFramePositionChange; }
+		}
+
+		public bool InstantCameraMovementHappens
+		{
+			get { return instantCameraMovementHappens; }
 		}
 
 		public ColorValue BackgroundColorDefault
@@ -1301,18 +1317,17 @@ namespace NeoAxis
 
 		public void NotifyInstantCameraMovement()
 		{
-			viewMatrixPreviousFrame = null;
-			projectionMatrixPreviousFrame = null;
+			//viewMatrixPreviousFrameAbsolute = null;
+			previousFrameViewMatrixRelative = null;
+			previousFrameProjectionMatrix = null;
+			instantCameraMovementHappens = true;
 
 			InstantCameraMovement?.Invoke( this );
 			AllViewports_InstantCameraMovement?.Invoke( this );
 		}
 
-		public bool OutputFlipY
-		{
-			get { return outputFlipY; }
-			set { outputFlipY = value; }
-		}
+		public bool OutputFlipY { get; set; }
+		public Viewport OutputViewport { get; set; }
 
 		public object AnyData { get; set; }
 	}

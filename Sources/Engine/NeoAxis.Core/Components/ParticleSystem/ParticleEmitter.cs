@@ -12,6 +12,8 @@ namespace NeoAxis
 	[NewObjectDefaultName( "Emitter" )]
 	public class ParticleEmitter : Component
 	{
+		static Metadata.GetMembersContext getMemberContextNoFilter = new Metadata.GetMembersContext( false );
+
 		/// <summary>
 		/// The start time of the emitter.
 		/// </summary>
@@ -22,7 +24,7 @@ namespace NeoAxis
 			get { if( _startTime.BeginGet() ) StartTime = _startTime.Get( this ); return _startTime.value; }
 			set
 			{
-				if( _startTime.BeginSet( ref value ) )
+				if( _startTime.BeginSet( this, ref value ) )
 				{
 					//!!!!is not so good
 					if( !_startTime.value.ReferenceSpecified && _startTime.value.Value != null )
@@ -46,7 +48,7 @@ namespace NeoAxis
 			get { if( _duration.BeginGet() ) Duration = _duration.Get( this ); return _duration.value; }
 			set
 			{
-				if( _duration.BeginSet( ref value ) )
+				if( _duration.BeginSet( this, ref value ) )
 				{
 					if( !_duration.value.ReferenceSpecified && _duration.value.Value != null )
 						_duration.value.Value.Owner = this;
@@ -68,7 +70,7 @@ namespace NeoAxis
 		//public Reference<SingleProperty> Probability
 		//{
 		//	get { if( _probability.BeginGet() ) Probability = _probability.Get( this ); return _probability.value; }
-		//	set { if( _probability.BeginSet( ref value ) ) { try { ProbabilityChanged?.Invoke( this ); ShouldRecompile(); } finally { _probability.EndSet(); } } }
+		//	set { if( _probability.BeginSet( this, ref value ) ) { try { ProbabilityChanged?.Invoke( this ); ShouldRecompile(); } finally { _probability.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="Probability"/> property value changes.</summary>
 		//public event Action<ParticleEmitter> ProbabilityChanged;
@@ -84,7 +86,7 @@ namespace NeoAxis
 			get { if( _spawnRate.BeginGet() ) SpawnRate = _spawnRate.Get( this ); return _spawnRate.value; }
 			set
 			{
-				if( _spawnRate.BeginSet( ref value ) )
+				if( _spawnRate.BeginSet( this, ref value ) )
 				{
 					if( !_spawnRate.value.ReferenceSpecified && _spawnRate.value.Value != null )
 						_spawnRate.value.Value.Owner = this;
@@ -107,7 +109,7 @@ namespace NeoAxis
 			get { if( _spawnCount.BeginGet() ) SpawnCount = _spawnCount.Get( this ); return _spawnCount.value; }
 			set
 			{
-				if( _spawnCount.BeginSet( ref value ) )
+				if( _spawnCount.BeginSet( this, ref value ) )
 				{
 					if( !_spawnCount.value.ReferenceSpecified && _spawnCount.value.Value != null )
 						_spawnCount.value.Value.Owner = this;
@@ -134,7 +136,7 @@ namespace NeoAxis
 		public Reference<DirectionEnum> Direction
 		{
 			get { if( _direction.BeginGet() ) Direction = _direction.Get( this ); return _direction.value; }
-			set { if( _direction.BeginSet( ref value ) ) { try { DirectionChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _direction.EndSet(); } } }
+			set { if( _direction.BeginSet( this, ref value ) ) { try { DirectionChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _direction.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Direction"/> property value changes.</summary>
 		public event Action<ParticleEmitter> DirectionChanged;
@@ -150,7 +152,7 @@ namespace NeoAxis
 			get { if( _dispersionAngle.BeginGet() ) DispersionAngle = _dispersionAngle.Get( this ); return _dispersionAngle.value; }
 			set
 			{
-				if( _dispersionAngle.BeginSet( ref value ) )
+				if( _dispersionAngle.BeginSet( this, ref value ) )
 				{
 					if( !_dispersionAngle.value.ReferenceSpecified && _dispersionAngle.value.Value != null )
 						_dispersionAngle.value.Value.Owner = this;
@@ -173,7 +175,7 @@ namespace NeoAxis
 			get { if( _speed.BeginGet() ) Speed = _speed.Get( this ); return _speed.value; }
 			set
 			{
-				if( _speed.BeginSet( ref value ) )
+				if( _speed.BeginSet( this, ref value ) )
 				{
 					if( !_speed.value.ReferenceSpecified && _speed.value.Value != null )
 						_speed.value.Value.Owner = this;
@@ -194,7 +196,7 @@ namespace NeoAxis
 		public Reference<bool> RotateAlongMovement
 		{
 			get { if( _rotateAlongMovement.BeginGet() ) RotateAlongMovement = _rotateAlongMovement.Get( this ); return _rotateAlongMovement.value; }
-			set { if( _rotateAlongMovement.BeginSet( ref value ) ) { try { RotateAlongMovementChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _rotateAlongMovement.EndSet(); } } }
+			set { if( _rotateAlongMovement.BeginSet( this, ref value ) ) { try { RotateAlongMovementChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _rotateAlongMovement.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RotateAlongMovement"/> property value changes.</summary>
 		public event Action<ParticleEmitter> RotateAlongMovementChanged;
@@ -210,7 +212,7 @@ namespace NeoAxis
 			get { if( _rotation.BeginGet() ) Rotation = _rotation.Get( this ); return _rotation.value; }
 			set
 			{
-				if( _rotation.BeginSet( ref value ) )
+				if( _rotation.BeginSet( this, ref value ) )
 				{
 					if( !_rotation.value.ReferenceSpecified && _rotation.value.Value != null )
 						_rotation.value.Value.Owner = this;
@@ -233,7 +235,7 @@ namespace NeoAxis
 			get { if( _angularVelocity.BeginGet() ) AngularVelocity = _angularVelocity.Get( this ); return _angularVelocity.value; }
 			set
 			{
-				if( _angularVelocity.BeginSet( ref value ) )
+				if( _angularVelocity.BeginSet( this, ref value ) )
 				{
 					if( !_angularVelocity.value.ReferenceSpecified && _angularVelocity.value.Value != null )
 						_angularVelocity.value.Value.Owner = this;
@@ -256,7 +258,7 @@ namespace NeoAxis
 			get { if( _lifetime.BeginGet() ) Lifetime = _lifetime.Get( this ); return _lifetime.value; }
 			set
 			{
-				if( _lifetime.BeginSet( ref value ) )
+				if( _lifetime.BeginSet( this, ref value ) )
 				{
 					if( !_lifetime.value.ReferenceSpecified && _lifetime.value.Value != null )
 						_lifetime.value.Value.Owner = this;
@@ -279,7 +281,7 @@ namespace NeoAxis
 			get { if( _size.BeginGet() ) Size = _size.Get( this ); return _size.value; }
 			set
 			{
-				if( _size.BeginSet( ref value ) )
+				if( _size.BeginSet( this, ref value ) )
 				{
 					if( !_size.value.ReferenceSpecified && _size.value.Value != null )
 						_size.value.Value.Owner = this;
@@ -302,7 +304,7 @@ namespace NeoAxis
 			get { if( _gravityMultiplier.BeginGet() ) GravityMultiplier = _gravityMultiplier.Get( this ); return _gravityMultiplier.value; }
 			set
 			{
-				if( _gravityMultiplier.BeginSet( ref value ) )
+				if( _gravityMultiplier.BeginSet( this, ref value ) )
 				{
 					if( !_gravityMultiplier.value.ReferenceSpecified && _gravityMultiplier.value.Value != null )
 						_gravityMultiplier.value.Value.Owner = this;
@@ -330,7 +332,7 @@ namespace NeoAxis
 		public Reference<RenderingModeEnum> RenderingMode
 		{
 			get { if( _renderingMode.BeginGet() ) RenderingMode = _renderingMode.Get( this ); return _renderingMode.value; }
-			set { if( _renderingMode.BeginSet( ref value ) ) { try { RenderingModeChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _renderingMode.EndSet(); } } }
+			set { if( _renderingMode.BeginSet( this, ref value ) ) { try { RenderingModeChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _renderingMode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RenderingMode"/> property value changes.</summary>
 		public event Action<ParticleEmitter> RenderingModeChanged;
@@ -349,7 +351,7 @@ namespace NeoAxis
 
 				if( _mesh.BeginGet() ) Mesh = _mesh.Get( this ); return _mesh.value;
 			}
-			set { if( _mesh.BeginSet( ref value ) ) { try { MeshChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _mesh.EndSet(); } } }
+			set { if( _mesh.BeginSet( this, ref value ) ) { try { MeshChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _mesh.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Mesh"/> property value changes.</summary>
 		public event Action<ParticleEmitter> MeshChanged;
@@ -368,7 +370,7 @@ namespace NeoAxis
 
 				if( _material.BeginGet() ) Material = _material.Get( this ); return _material.value;
 			}
-			set { if( _material.BeginSet( ref value ) ) { try { MaterialChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _material.EndSet(); } } }
+			set { if( _material.BeginSet( this, ref value ) ) { try { MaterialChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _material.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Material"/> property value changes.</summary>
 		public event Action<ParticleEmitter> MaterialChanged;
@@ -384,7 +386,7 @@ namespace NeoAxis
 			get { if( _color.BeginGet() ) Color = _color.Get( this ); return _color.value; }
 			set
 			{
-				if( _color.BeginSet( ref value ) )
+				if( _color.BeginSet( this, ref value ) )
 				{
 					if( !_color.value.ReferenceSpecified && _color.value.Value != null )
 						_color.value.Value.Owner = this;
@@ -405,7 +407,7 @@ namespace NeoAxis
 		public Reference<bool> CastShadows
 		{
 			get { if( _castShadows.BeginGet() ) CastShadows = _castShadows.Get( this ); return _castShadows.value; }
-			set { if( _castShadows.BeginSet( ref value ) ) { try { CastShadowsChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _castShadows.EndSet(); } } }
+			set { if( _castShadows.BeginSet( this, ref value ) ) { try { CastShadowsChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _castShadows.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CastShadows"/> property value changes.</summary>
 		public event Action<ParticleEmitter> CastShadowsChanged;
@@ -419,7 +421,7 @@ namespace NeoAxis
 		public Reference<bool> ReceiveDecals
 		{
 			get { if( _receiveDecals.BeginGet() ) ReceiveDecals = _receiveDecals.Get( this ); return _receiveDecals.value; }
-			set { if( _receiveDecals.BeginSet( ref value ) ) { try { ReceiveDecalsChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _receiveDecals.EndSet(); } } }
+			set { if( _receiveDecals.BeginSet( this, ref value ) ) { try { ReceiveDecalsChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _receiveDecals.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ReceiveDecals"/> property value changes.</summary>
 		public event Action<ParticleEmitter> ReceiveDecalsChanged;
@@ -434,7 +436,7 @@ namespace NeoAxis
 		public Reference<double> MotionBlurFactor
 		{
 			get { if( _motionBlurFactor.BeginGet() ) MotionBlurFactor = _motionBlurFactor.Get( this ); return _motionBlurFactor.value; }
-			set { if( _motionBlurFactor.BeginSet( ref value ) ) { try { MotionBlurFactorChanged?.Invoke( this ); } finally { _motionBlurFactor.EndSet(); } } }
+			set { if( _motionBlurFactor.BeginSet( this, ref value ) ) { try { MotionBlurFactorChanged?.Invoke( this ); } finally { _motionBlurFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MotionBlurFactor"/> property value changes.</summary>
 		public event Action<ParticleEmitter> MotionBlurFactorChanged;
@@ -482,11 +484,11 @@ namespace NeoAxis
 			//!!!!не ReferenceList
 			[Serialize]
 			[Cloneable( CloneType.Deep )]
-			public ReferenceList<ParticleSystem.CurvePoint> Curve
+			public ReferenceList<CurvePoint1F> Curve
 			{
 				get { return _curve; }
 			}
-			ReferenceList<ParticleSystem.CurvePoint> _curve;
+			ReferenceList<CurvePoint1F> _curve;
 
 			//[DefaultValue( TypeEnum.Constant )]
 			//public TypeEnum Type { get; set; } = TypeEnum.Constant;
@@ -502,7 +504,7 @@ namespace NeoAxis
 
 			public SingleProperty()
 			{
-				_curve = new ReferenceList<ParticleSystem.CurvePoint>( null, delegate () { Owner?.ShouldRecompileParticleSystem(); } );
+				_curve = new ReferenceList<CurvePoint1F>( null, delegate () { Owner?.ShouldRecompileParticleSystem(); } );
 			}
 
 			public SingleProperty( float contant ) : this()
@@ -525,7 +527,7 @@ namespace NeoAxis
 
 			public IEnumerable<Metadata.Member> MetadataGetMembers( Metadata.GetMembersContext context = null )
 			{
-				foreach( var m in BaseType.MetadataGetMembers( EditorUtility.getMemberContextNoFilter ) )
+				foreach( var m in BaseType.MetadataGetMembers( getMemberContextNoFilter ) )
 				{
 					bool skip = false;
 					if( context == null || context.Filter )
@@ -537,7 +539,7 @@ namespace NeoAxis
 
 			public Metadata.Member MetadataGetMemberBySignature( string signature, Metadata.GetMembersContext context = null )
 			{
-				var m = BaseType.MetadataGetMemberBySignature( signature, EditorUtility.getMemberContextNoFilter );
+				var m = BaseType.MetadataGetMemberBySignature( signature, getMemberContextNoFilter );
 				if( m != null )
 					return m;
 				return null;
@@ -643,11 +645,11 @@ namespace NeoAxis
 
 			[Serialize]
 			[Cloneable( CloneType.Deep )]
-			public ReferenceList<ParticleSystem.CurvePoint> Curve
+			public ReferenceList<CurvePoint1F> Curve
 			{
 				get { return _curve; }
 			}
-			ReferenceList<ParticleSystem.CurvePoint> _curve;
+			ReferenceList<CurvePoint1F> _curve;
 
 			////[DefaultValue( 1 )]
 			//public int Constant { get; set; } = 1;
@@ -662,7 +664,7 @@ namespace NeoAxis
 
 			public IntegerProperty()
 			{
-				_curve = new ReferenceList<ParticleSystem.CurvePoint>( null, delegate () { Owner?.ShouldRecompileParticleSystem(); } );
+				_curve = new ReferenceList<CurvePoint1F>( null, delegate () { Owner?.ShouldRecompileParticleSystem(); } );
 			}
 
 			public IntegerProperty( int contant ) : this()
@@ -685,7 +687,7 @@ namespace NeoAxis
 
 			public IEnumerable<Metadata.Member> MetadataGetMembers( Metadata.GetMembersContext context = null )
 			{
-				foreach( var m in BaseType.MetadataGetMembers( EditorUtility.getMemberContextNoFilter ) )
+				foreach( var m in BaseType.MetadataGetMembers( getMemberContextNoFilter ) )
 				{
 					bool skip = false;
 					if( context == null || context.Filter )
@@ -697,7 +699,7 @@ namespace NeoAxis
 
 			public Metadata.Member MetadataGetMemberBySignature( string signature, Metadata.GetMembersContext context = null )
 			{
-				var m = BaseType.MetadataGetMemberBySignature( signature, EditorUtility.getMemberContextNoFilter );
+				var m = BaseType.MetadataGetMemberBySignature( signature, getMemberContextNoFilter );
 				if( m != null )
 					return m;
 				return null;
@@ -803,35 +805,35 @@ namespace NeoAxis
 
 			[Serialize]
 			[Cloneable( CloneType.Deep )]
-			public ReferenceList<ParticleSystem.CurvePoint> CurveX
+			public ReferenceList<CurvePoint1F> CurveX
 			{
 				get { return _curveX; }
 			}
-			ReferenceList<ParticleSystem.CurvePoint> _curveX;
+			ReferenceList<CurvePoint1F> _curveX;
 
 			[Serialize]
 			[Cloneable( CloneType.Deep )]
-			public ReferenceList<ParticleSystem.CurvePoint> CurveY
+			public ReferenceList<CurvePoint1F> CurveY
 			{
 				get { return _curveY; }
 			}
-			ReferenceList<ParticleSystem.CurvePoint> _curveY;
+			ReferenceList<CurvePoint1F> _curveY;
 
 			[Serialize]
 			[Cloneable( CloneType.Deep )]
-			public ReferenceList<ParticleSystem.CurvePoint> CurveZ
+			public ReferenceList<CurvePoint1F> CurveZ
 			{
 				get { return _curveZ; }
 			}
-			ReferenceList<ParticleSystem.CurvePoint> _curveZ;
+			ReferenceList<CurvePoint1F> _curveZ;
 
 			//
 
 			public AnglesProperty()
 			{
-				_curveX = new ReferenceList<ParticleSystem.CurvePoint>( null, delegate () { Owner?.ShouldRecompileParticleSystem(); } );
-				_curveY = new ReferenceList<ParticleSystem.CurvePoint>( null, delegate () { Owner?.ShouldRecompileParticleSystem(); } );
-				_curveZ = new ReferenceList<ParticleSystem.CurvePoint>( null, delegate () { Owner?.ShouldRecompileParticleSystem(); } );
+				_curveX = new ReferenceList<CurvePoint1F>( null, delegate () { Owner?.ShouldRecompileParticleSystem(); } );
+				_curveY = new ReferenceList<CurvePoint1F>( null, delegate () { Owner?.ShouldRecompileParticleSystem(); } );
+				_curveZ = new ReferenceList<CurvePoint1F>( null, delegate () { Owner?.ShouldRecompileParticleSystem(); } );
 			}
 
 			public AnglesProperty( Vector3F contant ) : this()
@@ -854,7 +856,7 @@ namespace NeoAxis
 
 			public IEnumerable<Metadata.Member> MetadataGetMembers( Metadata.GetMembersContext context = null )
 			{
-				foreach( var m in BaseType.MetadataGetMembers( EditorUtility.getMemberContextNoFilter ) )
+				foreach( var m in BaseType.MetadataGetMembers( getMemberContextNoFilter ) )
 				{
 					bool skip = false;
 					if( context == null || context.Filter )
@@ -866,7 +868,7 @@ namespace NeoAxis
 
 			public Metadata.Member MetadataGetMemberBySignature( string signature, Metadata.GetMembersContext context = null )
 			{
-				var m = BaseType.MetadataGetMemberBySignature( signature, EditorUtility.getMemberContextNoFilter );
+				var m = BaseType.MetadataGetMemberBySignature( signature, getMemberContextNoFilter );
 				if( m != null )
 					return m;
 				return null;
@@ -1009,7 +1011,7 @@ namespace NeoAxis
 
 			public IEnumerable<Metadata.Member> MetadataGetMembers( Metadata.GetMembersContext context = null )
 			{
-				foreach( var m in BaseType.MetadataGetMembers( EditorUtility.getMemberContextNoFilter ) )
+				foreach( var m in BaseType.MetadataGetMembers( getMemberContextNoFilter ) )
 				{
 					bool skip = false;
 					if( context == null || context.Filter )
@@ -1021,7 +1023,7 @@ namespace NeoAxis
 
 			public Metadata.Member MetadataGetMemberBySignature( string signature, Metadata.GetMembersContext context = null )
 			{
-				var m = BaseType.MetadataGetMemberBySignature( signature, EditorUtility.getMemberContextNoFilter );
+				var m = BaseType.MetadataGetMemberBySignature( signature, getMemberContextNoFilter );
 				if( m != null )
 					return m;
 				return null;
@@ -1105,7 +1107,7 @@ namespace NeoAxis
 		//public Reference<AttachmentEnum> Attachment
 		//{
 		//	get { if( _attachment.BeginGet() ) Attachment = _attachment.Get( this ); return _attachment.value; }
-		//	set { if( _attachment.BeginSet( ref value ) ) { try { AttachmentChanged?.Invoke( this ); } finally { _attachment.EndSet(); } } }
+		//	set { if( _attachment.BeginSet( this, ref value ) ) { try { AttachmentChanged?.Invoke( this ); } finally { _attachment.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="Attachment"/> property value changes.</summary>
 		//public event Action<ParticleEmitter> AttachmentChanged;

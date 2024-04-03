@@ -1,10 +1,10 @@
-// Made with NeoAxis Engine 2022.2.
+// Made with NeoAxis Engine 2023.1.
 
 .component "Base\\Material templates\\Vegetation.material"
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"368A6B981A574510AF8DD01782DEA31D\"><CGD /><WS UN=\"A1D7F65B8B3C438F2A903E4C01002F88\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"DDA7A1B2BB43484E19A8E577FDC9D13C\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"368A6B981A574510AF8DD01782DEA31D\"><KP UN=\"1D1C882AA7E54671D7BD7173CA3EEFCB\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"368A6B981A574510AF8DD01782DEA31D\" S=\"False\"><CPD ObjPath=\"$$n1$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"707F6938CC704F6FE29BEA52C2DAC426\"><CGD /><WS UN=\"05BC4F8048B844A4EB8FBDA0E3E8BDE9\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"54A8A4DE18AE4EEA5899A1BDDF5F064E\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"707F6938CC704F6FE29BEA52C2DAC426\"><KP UN=\"68AAF85CC8184DC472B85639348BC8C1\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"707F6938CC704F6FE29BEA52C2DAC426\" S=\"False\"><CPD ObjPath=\"$$n1$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BlendMode = Masked
-	ShadingModel = Subsurface
+	ShadingModel = Foliage
 	Thickness = 0.02
 	Bendability = 0.2
 	BaseColor
@@ -14,6 +14,10 @@
 	Roughness
 	{
 		GetByReference = "this:$$n1$Shader graph\\$Node Texture Sample Roughness\\$Shader Texture Sample\\R"
+	}
+	Normal
+	{
+		GetByReference = "this:$$n1$Shader graph\\$Node Texture Sample Normal\\$Shader Texture Sample\\RGBA"
 	}
 	Opacity
 	{

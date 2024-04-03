@@ -28,6 +28,7 @@ namespace NeoAxis.Editor
 
 			objectInSpace = Scene.CreateComponent<Vehicle>( enabled: false );
 			objectInSpace.VehicleType = VehicleType;
+			objectInSpace.Headlights = 1;
 			objectInSpace.Enabled = true;
 
 			objectInSpace.DebugVisualization = true;
@@ -116,6 +117,9 @@ namespace NeoAxis.Editor
 				Viewport.CameraSettings = new Viewport.CameraSettingsClass( Viewport, Scene.CameraEditor );
 			}
 
+			if( VehicleType != null && Scene.CameraEditor.Value != null )
+				VehicleType.EditorCameraTransform = Scene.CameraEditor.Value.Transform;
+
 			firstCameraUpdate = false;
 		}
 
@@ -145,7 +149,11 @@ namespace NeoAxis.Editor
 			camera.NearClipPlane = Math.Max( distance / 10000, 0.01 );
 			camera.FarClipPlane = Math.Max( 1000, distance * 2 );
 
-			camera.Transform = new Transform( from, Quaternion.LookAt( ( to - from ).GetNormalize(), Vector3.ZAxis ) );
+			if( VehicleType != null && VehicleType.EditorCameraTransform != null )
+				camera.Transform = VehicleType.EditorCameraTransform;
+			else
+				camera.Transform = new Transform( from, Quaternion.LookAt( ( to - from ).GetNormalize(), Vector3.ZAxis ) );
+
 			camera.FixedUp = Vector3.ZAxis;
 		}
 

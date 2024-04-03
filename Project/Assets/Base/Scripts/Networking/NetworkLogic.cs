@@ -1,8 +1,6 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using System.ComponentModel;
 using Project;
 using System.Linq;
@@ -24,34 +22,37 @@ namespace NeoAxis
 		public Reference<bool> EntranceScreen
 		{
 			get { if( _entranceScreen.BeginGet() ) EntranceScreen = _entranceScreen.Get( this ); return _entranceScreen.value; }
-			set { if( _entranceScreen.BeginSet( ref value ) ) { try { EntranceScreenChanged?.Invoke( this ); } finally { _entranceScreen.EndSet(); } } }
+			set { if( _entranceScreen.BeginSet( this, ref value ) ) { try { EntranceScreenChanged?.Invoke( this ); } finally { _entranceScreen.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="EntranceScreen"/> property value changes.</summary>
 		public event Action<NetworkLogic> EntranceScreenChanged;
 		ReferenceField<bool> _entranceScreen = true;
 
+		/// <summary>
+		/// Description of the world that is shown at the start.
+		/// </summary>
 		[DefaultValue( "A description of your world." )]
 		public Reference<string> EntranceScreenDescription
 		{
 			get { if( _entranceScreenDescription.BeginGet() ) EntranceScreenDescription = _entranceScreenDescription.Get( this ); return _entranceScreenDescription.value; }
-			set { if( _entranceScreenDescription.BeginSet( ref value ) ) { try { EntranceScreenDescriptionChanged?.Invoke( this ); } finally { _entranceScreenDescription.EndSet(); } } }
+			set { if( _entranceScreenDescription.BeginSet( this, ref value ) ) { try { EntranceScreenDescriptionChanged?.Invoke( this ); } finally { _entranceScreenDescription.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="EntranceScreenDescription"/> property value changes.</summary>
 		public event Action<NetworkLogic> EntranceScreenDescriptionChanged;
 		ReferenceField<string> _entranceScreenDescription = "A description of your world.";
 
 		/// <summary>
-		/// Whether to use avatars. Your character will be changed by your avatar settings. Entrance screen will have the ability to configure avatar.
+		/// The ability the select avatar before entrance to the world.
 		/// </summary>
 		[DefaultValue( true )]
-		public Reference<bool> Avatars
+		public Reference<bool> AvatarWindow
 		{
-			get { if( _avatars.BeginGet() ) Avatars = _avatars.Get( this ); return _avatars.value; }
-			set { if( _avatars.BeginSet( ref value ) ) { try { AvatarsChanged?.Invoke( this ); } finally { _avatars.EndSet(); } } }
+			get { if( _avatarWindow.BeginGet() ) AvatarWindow = _avatarWindow.Get( this ); return _avatarWindow.value; }
+			set { if( _avatarWindow.BeginSet( this, ref value ) ) { try { AvatarWindowChanged?.Invoke( this ); } finally { _avatarWindow.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="Avatars"/> property value changes.</summary>
-		public event Action<NetworkLogic> AvatarsChanged;
-		ReferenceField<bool> _avatars = true;
+		/// <summary>Occurs when the <see cref="AvatarWindow"/> property value changes.</summary>
+		public event Action<NetworkLogic> AvatarWindowChanged;
+		ReferenceField<bool> _avatarWindow = true;
 
 		/// <summary>
 		/// The type of object to control by the player.
@@ -61,7 +62,7 @@ namespace NeoAxis
 		public Reference<Metadata.TypeInfo> ObjectTypeControlledByPlayer
 		{
 			get { if( _objectTypeControlledByPlayer.BeginGet() ) ObjectTypeControlledByPlayer = _objectTypeControlledByPlayer.Get( this ); return _objectTypeControlledByPlayer.value; }
-			set { if( _objectTypeControlledByPlayer.BeginSet( ref value ) ) { try { ObjectTypeControlledByPlayerChanged?.Invoke( this ); } finally { _objectTypeControlledByPlayer.EndSet(); } } }
+			set { if( _objectTypeControlledByPlayer.BeginSet( this, ref value ) ) { try { ObjectTypeControlledByPlayerChanged?.Invoke( this ); } finally { _objectTypeControlledByPlayer.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ObjectTypeControlledByPlayer"/> property value changes.</summary>
 		public event Action<NetworkLogic> ObjectTypeControlledByPlayerChanged;
@@ -126,8 +127,6 @@ namespace NeoAxis
 				ClientOnDisabledInSimulation();
 		}
 
-
-
 		/////////////////////////////////////////
 		/////////////////////////////////////////
 		/////////////////////////////////////////
@@ -138,7 +137,7 @@ namespace NeoAxis
 		Dictionary<ServerNetworkService_Users.UserInfo, ServerUserItem> serverUsers = new Dictionary<ServerNetworkService_Users.UserInfo, ServerUserItem>();
 
 		//!!!!cache only for simulation
-		//SpawnPoint[] spawnPointsCache;
+		SpawnPoint[] spawnPointsCache;
 
 		///////////////////////////////////////////////
 
@@ -182,91 +181,6 @@ namespace NeoAxis
 					UpdateObjectControlledByPlayers();
 				}
 			}
-		}
-
-		//!!!!
-		//protected override void OnComponentAdded( Component component )
-		//{
-		//	base.OnComponentAdded( component );
-
-		//	они же в сцене, не тут
-		//	if( component is SpawnPoint )
-		//		spawnPointsCache = null;
-		//}
-
-		//!!!!
-		//protected override void OnComponentRemoved( Component component )
-		//{
-		//	base.OnComponentRemoved( component );
-
-		//	они же в сцене, не тут
-		//	if( component is SpawnPoint )
-		//		spawnPointsCache = null;
-		//}
-
-		bool IsFreePlace( Bounds bounds )
-		{
-			var scene = ParentRoot as Scene;
-			if( scene != null )
-			{
-				var contactTestItem = new PhysicsVolumeTestItem( bounds, Vector3.Zero, PhysicsVolumeTestItem.ModeEnum.All/*OneForEach*/ );
-				scene.PhysicsVolumeTest( contactTestItem );
-
-				foreach( var item in contactTestItem.Result )
-				{
-					//what to skip?
-					//if( item.Body == mainBody )
-					//	continue;
-
-					return false;
-
-					//var body = item.Body as RigidBody;
-					//if( body != null )
-					//	return false;
-				}
-			}
-
-			return true;
-		}
-
-		Transform GetFreePlaceForObjectDefault( Vector3 objectPosition, Bounds objectBounds )
-		{
-			if( IsFreePlace( objectBounds + objectPosition ) )
-				return new Transform( objectPosition );
-
-			var maxRadius = objectBounds.GetSize().X * 15;
-			var radiusStep = objectBounds.GetSize().X;
-
-			for( var radius = radiusStep; radius < maxRadius; radius += radiusStep )
-			{
-				for( var angle = 0.0; angle < Math.PI * 2; angle += Math.PI / 8 )
-				{
-					var maxHeight = objectBounds.GetSize().Z / 2;
-
-					for( var height = 0.0; height < maxHeight; height += maxHeight / 4 )
-					{
-						var pos = objectPosition + new Vector3( Math.Cos( angle ) * radius, Math.Sin( angle ) * radius, height );
-
-						if( IsFreePlace( objectBounds + pos ) )
-							return new Transform( objectPosition );
-					}
-				}
-			}
-
-			return null;
-		}
-
-		public delegate void GetFreePlaceForObjectEventDelegate( NetworkLogic sender, Vector3 objectPosition, Bounds objectBounds, ref Transform transform );
-		public event GetFreePlaceForObjectEventDelegate GetFreePlaceForObjectEvent;
-
-		public virtual Transform GetFreePlaceForObject( Vector3 objectPosition, Bounds objectBounds )
-		{
-			Transform result = null;
-			GetFreePlaceForObjectEvent?.Invoke( this, objectPosition, objectBounds, ref result );
-			if( result != null )
-				return result;
-
-			return GetFreePlaceForObjectDefault( objectPosition, objectBounds );
 		}
 
 		protected virtual ServerUserItem ServerOnNewUserItem()
@@ -324,16 +238,11 @@ namespace NeoAxis
 			}
 		}
 
-		//!!!!
-		TextBlock GetUserAvatarSettings( ServerUserItem userIter )
-		{
-			var block = new TextBlock();
+		public delegate void ObjectControlledByPlayerCreatedDelegate( NetworkLogic sender, Component obj );
+		public event ObjectControlledByPlayerCreatedDelegate ObjectControlledByPlayerCreated;
 
-			block.SetAttribute( "Mesh", "Content\\Characters\\Default\\Human.fbx|$Mesh" );
-			//block.SetAttribute( "Mesh", "Content\\Characters\\Kachujin\\Kachujin G Rosales.fbx|$Mesh" );
-
-			return block;
-		}
+		public delegate void ObjectControlledByPlayerRemovingDelegate( NetworkLogic sender, Component obj );
+		public event ObjectControlledByPlayerRemovingDelegate ObjectControlledByPlayerRemoving;
 
 		public virtual Component CreateObjectControlledByPlayer( ServerUserItem userItem, Metadata.TypeInfo objectType, Transform transform )
 		{
@@ -344,36 +253,104 @@ namespace NeoAxis
 			var obj = scene.CreateComponent( objectType, enabled: false, setUniqueName: true );
 			obj.NewObjectSetDefaultConfiguration();
 
-			//!!!!возможно передавать на клиента только имя
 			if( obj is Character character )
 			{
+				//Character
+
 				var inputProcessing = obj.CreateComponent<CharacterInputProcessing>();
-				inputProcessing.Name = "Character Input Processing";
 
+				string avatarSettings = "";
 
-				//!!!!было
+				if( SimulationAppServer.NetworkMode == SimulationAppServer.NetworkModeEnum.CloudProject )
+				{
 
-				//var avatarSettings = GetUserAvatarSettings( userItem );
+					//!!!!impl cloud
 
-				//var path = avatarSettings.GetAttribute( "Mesh" );
-				////var path = "Content\\Characters\\Kachujin\\Kachujin G Rosales.fbx|$Mesh";
+					avatarSettings = userItem.User.DirectServerAvatar;
 
-				//var meshInSpace = character.GetComponent<MeshInSpace>();
-				//if( meshInSpace != null )
-				//	meshInSpace.Mesh = new ReferenceNoValue( path );
+				}
+				else
+					avatarSettings = userItem.User.DirectServerAvatar;
 
+				var block = TextBlock.Parse( avatarSettings, out var error );
+				if( !string.IsNullOrEmpty( error ) )
+					Log.Warning( "NetworkLogic: CreateObjectControlledByPlayer: Unable to parse avatar settings. " + error );
 
-				//!!!!было
+				if( block != null )
+				{
+					var settings = new AvatarSettings();
+					if( settings.Load( block ) )
+					{
+						var name = settings.NamedCharacter;
+						if( !string.IsNullOrEmpty( name ) )
+						{
+							var typeFileName = @$"Content\Characters\Authors\NeoAxis\{name}\{name}.charactertype";
 
-				//character.IdleAnimation = new ReferenceNoValue( path + "\\$Animations\\$Idle" );
-				//character.WalkAnimation = new ReferenceNoValue( path + "\\$Animations\\$Walk" );
-				//character.RunAnimation = new ReferenceNoValue( path + "\\$Animations\\$Run" );
-				//character.FlyAnimation = new ReferenceNoValue( path + "\\$Animations\\$Fly" );
-				//character.JumpAnimation = new ReferenceNoValue( path + "\\$Animations\\$Jump" );
-				//character.LeftTurnAnimation = new ReferenceNoValue( path + "\\$Animations\\$Left Turn" );
-				//character.RightTurnAnimation = new ReferenceNoValue( path + "\\$Animations\\$Right Turn" );
+							if( VirtualFile.Exists( typeFileName ) )
+							{
+								//it is synchronized with clients via GetByReference property
+								character.CharacterType = new ReferenceNoValue( typeFileName );
+
+								if( character.CharacterType.Value == null )
+									Log.Warning( "NetworkLogic: CreateObjectControlledByPlayer: character.CharacterType.Value == null. Reference value: " + typeFileName );
+							}
+						}
+					}
+				}
 			}
+			else if( obj is Character2D character2D )
+			{
+				//Character2D
 
+				var inputProcessing = obj.CreateComponent<Character2DInputProcessing>();
+
+				//!!!!avatars for 2D
+
+				//string avatarSettings = "";
+
+				//if( SimulationAppServer.NetworkMode == SimulationAppServer.NetworkModeEnum.CloudProject )
+				//{
+
+				//	//!!!!impl cloud
+
+				//}
+				//else
+				//	avatarSettings = userItem.User.DirectServerAvatar;
+
+				//var block = TextBlock.Parse( avatarSettings, out var error );
+				//if( !string.IsNullOrEmpty( error ) )
+				//	Log.Warning( "NetworkLogic: CreateObjectControlledByPlayer: Unable to parse avatar settings. " + error );
+
+				//if( block != null )
+				//{
+				//	var settings = new AvatarSettings();
+				//	if( settings.Load( block ) )
+				//	{
+				//		var name = settings.NamedCharacter;
+				//		if( !string.IsNullOrEmpty( name ) )
+				//		{
+				//			var typeFileName = @$"Content\Characters 2D\Authors\NeoAxis\{name}\{name}.character2dtype";
+				//			if( VirtualFile.Exists( typeFileName ) )
+				//			{
+				//				//it is synchronized with clients via GetByReference property
+				//				character2D.CharacterType = new ReferenceNoValue( typeFileName );
+
+				//				if( character2D.CharacterType.Value == null )
+				//					Log.Warning( "NetworkLogic: CreateObjectControlledByPlayer: character.CharacterType.Value == null. Reference value: " + typeFileName );
+				//			}
+				//		}
+				//	}
+				//}
+			}
+			else if( obj is Vehicle vehicle )
+			{
+				//Vehicle
+
+				var inputProcessing = obj.CreateComponent<VehicleInputProcessing>();
+
+				//!!!!
+				//vehicle.VehicleType = ;
+			}
 
 			obj.Enabled = true;
 
@@ -381,13 +358,17 @@ namespace NeoAxis
 			{
 				//Character specific
 				character2.SetTransformAndTurnToDirectionInstantly( transform );
-				//character2.SetTransform( transform, true );
-				//character2.SetTurnToDirection( transform.Rotation.GetForward(), true );
 			}
-			else if( obj is Vehicle vehicle )
+			else if( obj is Character2D character2D2 )
+			{
+				//Character2D specific
+				character2D2.SetTransform( transform );
+				//character2D2.SetTransformAndTurnToDirectionInstantly( transform );
+			}
+			else if( obj is Vehicle vehicle2 )
 			{
 				//Vehicle specific
-				vehicle.SetTransform( transform, true );
+				vehicle2.SetTransform( transform, true );
 			}
 			else if( obj is ObjectInSpace objectInSpace )
 			{
@@ -401,20 +382,24 @@ namespace NeoAxis
 
 			SendSetObjectControlledByPlayer( userItem );
 
+			ObjectControlledByPlayerCreated?.Invoke( this, obj );
+
 			return obj;
 		}
 
-		public SpawnPoint[] GetSpawnPoints()
+		public virtual SpawnPoint[] GetSpawnPoints()
 		{
-			//!!!!slowly
-			return ParentRoot.GetComponents<SpawnPoint>( onlyEnabledInHierarchy: true );
-
-			//if( spawnPointsCache == null )
-			//	spawnPointsCache = ParentRoot.GetComponents<SpawnPoint>( onlyEnabledInHierarchy: true );
-			//return spawnPointsCache;
+			if( spawnPointsCache == null )
+				spawnPointsCache = ParentRoot.GetComponents<SpawnPoint>( onlyEnabledInHierarchy: true );
+			return spawnPointsCache;
 		}
 
-		public SpawnPoint[] GetSpawnPointsForTeam( int team )
+		public void ResetSpawnPointsCache()
+		{
+			spawnPointsCache = null;
+		}
+
+		public virtual SpawnPoint[] GetSpawnPointsForTeam( int team )
 		{
 			return GetSpawnPoints().Where( p => (int)p.Team.Value == team ).ToArray();
 		}
@@ -431,119 +416,72 @@ namespace NeoAxis
 			return null;
 		}
 
+		public delegate void ObjectControlledByPlayerBeforeCreateDelegate( NetworkLogic sender, ServerUserItem userItem, ref bool handled );
+		public event ObjectControlledByPlayerBeforeCreateDelegate ObjectControlledByPlayerBeforeCreate;
+
 		protected virtual void UpdateObjectControlledByPlayer( ServerUserItem userItem )
 		{
 			//create new
 			if( userItem.EnteredToWorld && userItem.ObjectControlledByPlayer == null )
 			{
-				var objectType = ObjectTypeControlledByPlayer.Value;
-				if( objectType != null && MetadataManager.GetTypeOfNetType( typeof( ObjectInSpace ) ).IsAssignableFrom( objectType ) )
+				var handled = false;
+				ObjectControlledByPlayerBeforeCreate?.Invoke( this, userItem, ref handled );
+
+				//default behaviour
+				if( !handled )
 				{
-					var spawnPoint = OnGetSpawnPoint( userItem, objectType );
-					if( spawnPoint != null )
+					var objectType = ObjectTypeControlledByPlayer.Value;
+					if( objectType != null && MetadataManager.GetTypeOfNetType( typeof( ObjectInSpace ) ).IsAssignableFrom( objectType ) )
 					{
-						var objectPosition = spawnPoint.TransformV.Position;
+						var spawnPoint = OnGetSpawnPoint( userItem, objectType );
+						if( spawnPoint != null )
+						{
+							if( MetadataManager.GetTypeOfNetType( typeof( Character ) ).IsAssignableFrom( objectType ) )
+							{
+								//Character
 
-						//Vector3 objectPosition;
-						//{
-						//	var spawnPoint = OnGetSpawnPoint( userItem, objectType );// = SpawnPoint.Value;
-						//	if( spawnPoint != null )
-						//		objectPosition = spawnPoint.TransformV.Position;
-						//	else
-						//		objectPosition = Vector3.Zero;
-						//}
+								var scene = GetScene();
+								if( scene != null )
+								{
+									if( CharacterUtility.FindFreePlace( scene, 2, 0.5, spawnPoint.TransformV.Position, 4, -1, 1, null, out var freePlacePosition ) )
+									{
+										var tr = spawnPoint.TransformV;
+										tr = tr.UpdatePosition( freePlacePosition );
+										CreateObjectControlledByPlayer( userItem, objectType, tr );
+									}
+								}
+							}
+							else if( MetadataManager.GetTypeOfNetType( typeof( Character2D ) ).IsAssignableFrom( objectType ) )
+							{
+								//Character2D
 
-						//!!!!not only for characters
-						var objectBounds = new Bounds( -0.2, -0.2, -0.9, 0.2, 0.2, 0.9 );
+								//!!!!
 
-						var transform = GetFreePlaceForObject( objectPosition, objectBounds );
-						if( transform != null )
-							CreateObjectControlledByPlayer( userItem, objectType, transform );
+								////!!!!not only for characters
+								//var objectBounds = new Bounds( -0.2, -0.2, -0.9, 0.2, 0.2, 0.9 );
+
+								var transform = new Transform( spawnPoint.TransformV.Position );//GetFreePlaceForObject( objectPosition, objectBounds );
+								if( transform != null )
+									CreateObjectControlledByPlayer( userItem, objectType, transform );
+							}
+							else
+							{
+								//!!!!other components check free place
+
+								var transform = spawnPoint.TransformV;
+
+								CreateObjectControlledByPlayer( userItem, objectType, transform );
+							}
+						}
 					}
 				}
-
-				//var objectType = ObjectTypeControlledByPlayer.Value;
-
-				//if( objectType != null && MetadataManager.GetTypeOfNetType( typeof( ObjectInSpace ) ).IsAssignableFrom( objectType ) )
-				//{
-
-				//Vector3 objectPosition;
-				//{
-				//	var spawnPoint = SpawnPoint.Value;
-				//	if( spawnPoint != null )
-				//		objectPosition = spawnPoint.TransformV.Position;
-				//	else
-				//		objectPosition = Vector3.Zero;
-				//}
-
-				////!!!!not only for characters
-				//var objectBounds = new Bounds( -0.2, -0.2, -0.9, 0.2, 0.2, 0.9 );
-
-				//zzzzz;
-
-				//var transform = GetFreePlaceForObject( objectPosition, objectBounds );
-				//if( transform != null )
-				//{
-				//	var scene = ParentRoot as Scene;
-				//	if( scene != null )
-				//	{
-				//		var obj = (ObjectInSpace)scene.CreateComponent( objectType, enabled: false, setUniqueName: true );
-				//		obj.NewObjectSetDefaultConfiguration();
-
-
-				//		//!!!!
-				//		//!!!!возможно передавать на клиента только имя
-				//		if( obj is Character character )
-				//		{
-				//			var avatarSettings = GetUserAvatarSettings( userItem );
-
-				//			var path = avatarSettings.GetAttribute( "Mesh" );
-				//			//var path = "Content\\Characters\\Kachujin\\Kachujin G Rosales.fbx|$Mesh";
-
-				//			var meshInSpace = character.GetComponent<MeshInSpace>();
-				//			if( meshInSpace != null )
-				//				meshInSpace.Mesh = new ReferenceNoValue( path );
-
-				//			character.IdleAnimation = new ReferenceNoValue( path + "\\$Animations\\$Idle" );
-				//			character.WalkAnimation = new ReferenceNoValue( path + "\\$Animations\\$Walk" );
-				//			character.RunAnimation = new ReferenceNoValue( path + "\\$Animations\\$Run" );
-				//			character.FlyAnimation = new ReferenceNoValue( path + "\\$Animations\\$Fly" );
-				//			character.JumpAnimation = new ReferenceNoValue( path + "\\$Animations\\$Jump" );
-				//			character.LeftTurnAnimation = new ReferenceNoValue( path + "\\$Animations\\$Left Turn" );
-				//			character.RightTurnAnimation = new ReferenceNoValue( path + "\\$Animations\\$Right Turn" );
-				//		}
-
-
-				//		obj.Enabled = true;
-
-				//		if( obj is Character character2 )
-				//		{
-				//			character2.SetTransform( transform, true );
-				//			character2.SetTurnToDirection( transform.Rotation.GetForward(), true );
-				//		}
-				//		else if( obj is Vehicle vehicle )
-				//		{
-				//			vehicle.SetTransform( transform );
-				//		}
-				//		else
-				//		{
-				//			obj.SetPosition( transform.Position );
-				//			obj.SetRotation( transform.Rotation );
-				//		}
-
-				//		userItem.ObjectControlledByPlayer = obj;
-				//		userItem.ObjectControlledByPlayerInputEnabled = true;
-
-				//		SendSetObjectControlledByPlayer( userItem );
-				//	}
-				//}
-				//}
-
 			}
 
-			//destroy when leave the world to World Entrance screen
+			//destroy when leave the world (to World Entrance screen or exited)
 			if( !userItem.EnteredToWorld && userItem.ObjectControlledByPlayer != null )
 			{
+				ObjectControlledByPlayerRemoving?.Invoke( this, userItem.ObjectControlledByPlayer );
+
 				userItem.ObjectControlledByPlayer.RemoveFromParent( true );
 				userItem.ObjectControlledByPlayer = null;
 			}
@@ -554,6 +492,7 @@ namespace NeoAxis
 			foreach( var userItem in serverUsers.Values )
 			{
 				//clear deleted
+				//!!!!maybe better to check EnabledInHierarchy because object can be deleted with parent. where else
 				if( userItem.ObjectControlledByPlayer != null && userItem.ObjectControlledByPlayer.Parent == null )
 					userItem.ObjectControlledByPlayer = null;
 
@@ -568,7 +507,7 @@ namespace NeoAxis
 			return null;
 		}
 
-		public override Component ServerGetObjectControlledByUser( ServerNetworkService_Users.UserInfo user, bool inputMustEnabled )
+		public override Component ServerGetObjectControlledByUser( ServerNetworkService_Users.UserInfo user, bool inputMustEnabled = true )
 		{
 			var item = ServerGetUser( user );
 			if( item != null )
@@ -579,7 +518,7 @@ namespace NeoAxis
 			return null;
 		}
 
-		public override ServerNetworkService_Users.UserInfo ServerGetUserByObjectControlled( Component obj, bool inputMustEnabled )
+		public override ServerNetworkService_Users.UserInfo ServerGetUserByObjectControlled( Component obj, bool inputMustEnabled = true )
 		{
 			//!!!!slowly. dictionary
 
@@ -603,12 +542,16 @@ namespace NeoAxis
 		{
 			var referenceToObject = item.ObjectControlledByPlayer != null ? "root:" + item.ObjectControlledByPlayer.GetPathFromRoot() : "";
 
+			//send update to the user
 			var writer = BeginNetworkMessage( item.User, "SetObjectControlledByPlayer" );
 			if( writer != null )
 			{
 				writer.Write( referenceToObject );
 				EndNetworkMessage();
 			}
+
+			//send update to all users. can be optional
+			SimulationAppServer.Server?.Users.UpdateObjectControlledByPlayerToClient( item.User, referenceToObject );
 		}
 
 		public override void ServerChangeObjectControlled( ServerNetworkService_Users.UserInfo user, Component obj )
@@ -712,7 +655,6 @@ namespace NeoAxis
 			return true;
 		}
 
-
 #endif
 
 
@@ -730,7 +672,24 @@ namespace NeoAxis
 
 		protected virtual void ClientOnEnabledInHierarchyChanged()
 		{
+			////subscribe/unsubscribe to scene render event
+			//var scene = ParentRoot as Scene;
+			//if( scene != null )
+			//{
+			//	if( EnabledInHierarchy )
+			//		scene.RenderEvent += Scene_RenderEvent;
+			//	else
+			//		scene.RenderEvent -= Scene_RenderEvent;
+			//}
 		}
+
+		//do it in BasicSceneScreen
+		//private void Scene_RenderEvent( Scene sender, Viewport viewport )
+		//{
+		//	var renderer = viewport.CanvasRenderer;
+
+		//	renderer.AddText( "Test", new Vector2( 0.5, 0.5 ) );
+		//}
 
 		protected virtual void ClientOnEnabledInSimulation()
 		{
@@ -740,7 +699,7 @@ namespace NeoAxis
 				var scene = SimulationAppClient.Client?.Components.Scene;
 				if( scene != null )
 				{
-					var gameMode = scene.GetComponent<GameMode>();
+					var gameMode = (GameMode)scene.GetGameMode();
 					if( gameMode != null )
 						gameMode.ObjectControlledByPlayer = null;
 				}
@@ -772,10 +731,19 @@ namespace NeoAxis
 				var scene = GetScene();
 				if( scene != null )
 				{
-					var gameMode = scene.GetComponent<GameMode>();
+					var gameMode = (GameMode)scene.GetGameMode();
 					if( gameMode != null )
 					{
 						gameMode.ObjectControlledByPlayer = new Reference<Component>( null, referenceToObject );
+
+						//configure third person camera
+						var obj = gameMode.ObjectControlledByPlayer.Value as ObjectInSpace;
+						if( obj != null )
+						{
+							var direction = obj.TransformV.Rotation.GetForward().ToVector2();
+							gameMode.ThirdPersonCameraHorizontalAngle = new Radian( Math.Atan2( direction.Y, direction.X ) ).InDegrees();
+						}
+
 						GameMode.PlayScreen?.ParentContainer?.Viewport?.NotifyInstantCameraMovement();
 					}
 				}

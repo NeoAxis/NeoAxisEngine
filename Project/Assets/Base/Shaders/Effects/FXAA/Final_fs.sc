@@ -8,7 +8,7 @@ uniform vec4 viewportSize;
 uniform vec4/*float*/ intensity;
 
 
-#ifdef HLSL
+#if HLSL || SPIRV //#ifdef HLSL
 	#define FXAA_PC 1
 	#define FXAA_HLSL_5 1
 #endif
@@ -2077,14 +2077,14 @@ void main()
 {
 	vec4 sourceColor = texture2D(s_sourceTexture, v_texCoord0);
 
-#ifdef HLSL
+#if HLSL || SPIRV //#ifdef HLSL
 	FxaaTex InputFXAATex = { s_sourceTextureSampler, s_sourceTextureTexture };
 #endif
 
 	vec4 color = FxaaPixelShader(
 		v_texCoord0,							// FxaaFloat2 pos,
 		FxaaFloat4(0.0f, 0.0f, 0.0f, 0.0f),		// FxaaFloat4 fxaaConsolePosPos,
-#ifdef HLSL
+#if HLSL || SPIRV //#ifdef HLSL
 		InputFXAATex,							// FxaaTex tex,
 		InputFXAATex,							// FxaaTex fxaaConsole360TexExpBiasNegOne,
 		InputFXAATex,							// FxaaTex fxaaConsole360TexExpBiasNegTwo,

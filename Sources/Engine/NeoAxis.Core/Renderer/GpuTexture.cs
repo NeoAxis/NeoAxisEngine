@@ -26,6 +26,7 @@ namespace NeoAxis
 		}
 		ModeEnum mode;
 		string[] loadFileNames;
+		bool loadFileCube4x3;
 		string componentTextureVirtualFileName;
 
 		ImageComponent.TypeEnum textureType = ImageComponent.TypeEnum._2D;
@@ -35,6 +36,7 @@ namespace NeoAxis
 		int resultDepth;
 		PixelFormat sourceFormat = PixelFormat.Unknown;
 		PixelFormat resultFormat = PixelFormat.Unknown;
+		int resultMipLevels;
 		bool mipmaps = true;
 		int arrayLayers;
 		Usages usage;
@@ -240,7 +242,8 @@ namespace NeoAxis
 
 		void CreateNativeObject()
 		{
-			EngineThreading.CheckMainThread();
+			//commented to optimize
+			//EngineThreading.CheckMainThread();
 
 			if( nativeObject != null )
 				Log.Fatal( "Texture: Create: The texture data is already initialized. nativeObject != null." );
@@ -250,7 +253,6 @@ namespace NeoAxis
 			TextureFlags flags = TextureFlags.None;
 			if( ( usage & Usages.RenderTarget ) != 0 )
 			{
-				//!!!!
 				//if( ( usage & Usages.WriteOnly ) != 0 )
 				//flags |= TextureFlags.RenderTargetWriteOnly;
 				//else
@@ -267,7 +269,6 @@ namespace NeoAxis
 				flags |= TextureFlags.ReadBack;
 
 
-			//!!!!
 			//MSAASample
 			//RenderTargetWriteOnly
 
@@ -304,21 +305,25 @@ namespace NeoAxis
 				nativeObjectLastUsedTime = EngineApp.EngineTime;
 				break;
 			}
+
+			if( nativeObject != null )
+				resultMipLevels = nativeObject.MipLevels;
 		}
 
-		GpuTexture( string[] loadFileNames, string componentTextureVirtualFileName )
+		GpuTexture( string[] loadFileNames, bool cube4x3, string componentTextureVirtualFileName )
 		{
 			mode = ModeEnum.Load;
 			this.loadFileNames = loadFileNames;
+			this.loadFileCube4x3 = cube4x3;
 			this.componentTextureVirtualFileName = componentTextureVirtualFileName;
 
 			lock( all )
 				all.Add( this );
 		}
 
-		public static GpuTexture CreateFromFile( string virtualFileName, out string error )
+		public static GpuTexture CreateFromFile( string virtualFileName, bool cube4x3, out string error )
 		{
-			var result = new GpuTexture( new string[] { virtualFileName }, virtualFileName );
+			var result = new GpuTexture( new string[] { virtualFileName }, cube4x3, virtualFileName );
 
 			//detect type of DDS texture
 			if( Path.GetExtension( virtualFileName ) == ".dds" )
@@ -334,6 +339,8 @@ namespace NeoAxis
 						result.TextureType = ImageComponent.TypeEnum._2D;
 				}
 			}
+			if( cube4x3 )
+				result.TextureType = ImageComponent.TypeEnum.Cube;
 
 			if( !result.Load( out error ) )
 			{
@@ -364,9 +371,9 @@ namespace NeoAxis
 		//}
 
 		// unique names
-		public static GpuTexture CreateCube( string[] virtualFileNames, string componentTextureVirtualFileName, out string error )
+		public static GpuTexture CreateCube( string[] virtualFileNames, bool cube4x3, string componentTextureVirtualFileName, out string error )
 		{
-			var result = new GpuTexture( virtualFileNames, componentTextureVirtualFileName );
+			var result = new GpuTexture( virtualFileNames, cube4x3, componentTextureVirtualFileName );
 			result.TextureType = ImageComponent.TypeEnum.Cube;
 
 			if( !result.Load( out error ) )
@@ -414,10 +421,12 @@ namespace NeoAxis
 			case PixelFormat.Float32R: return TextureFormat.R32F;
 			case PixelFormat.Float32GR: return TextureFormat.RG32F;
 			case PixelFormat.Float32RGBA: return TextureFormat.RGBA32F;
+			case PixelFormat.R11G11B10_Float: return TextureFormat.RG11B10F;
 
 			case PixelFormat.ShortRGBA: return TextureFormat.RGBA16U;
 
 			case PixelFormat.Depth24S8: return TextureFormat.D24S8;
+			case PixelFormat.Depth32F: return TextureFormat.D32F;
 			}
 
 			Log.Fatal( "GpuTexture: ConvertFormat (from PixelFormat to TextureFormat): " + format.ToString() + "." );
@@ -462,10 +471,12 @@ namespace NeoAxis
 			case TextureFormat.RGBA32F: return PixelFormat.Float32RGBA;
 			case TextureFormat.RG16F: return PixelFormat.Float16GR;
 			case TextureFormat.RG32F: return PixelFormat.Float32GR;
+			case TextureFormat.RG11B10F: return PixelFormat.R11G11B10_Float;
 
 			case TextureFormat.RGBA16U: return PixelFormat.ShortRGBA;
 
 			case TextureFormat.D24S8: return PixelFormat.Depth24S8;
+			case TextureFormat.D32F: return PixelFormat.Depth32F;
 			}
 
 			Log.Fatal( "GpuTexture: ConvertFormat (from TextureFormat to PixelFormat): " + format.ToString() + "." );
@@ -517,11 +528,11 @@ namespace NeoAxis
 				Directory.CreateDirectory( directoryName );
 
 #if !DEPLOY
-			ScreenNotifications.StickyNotificationItem notification = null;
+			ScreenNotifications.IStickyNotificationItem notification = null;
 			if( EngineApp.IsEditor )
 			{
 				var text = string.Format( EditorLocalization.Translate( "Texture", "Compressing \'{0}\'..." ), Path.GetFileName( loadFileNames[ 0 ] ) );
-				notification = Editor.ScreenNotifications.ShowSticky( text );
+				notification = ScreenNotifications.ShowSticky( text );
 			}
 #endif
 
@@ -587,6 +598,107 @@ namespace NeoAxis
 			resultSize = new Vector2I( nativeObject.Width, nativeObject.Height );
 			resultDepth = nativeObject.Depth;
 			resultFormat = ConvertFormat( nativeObject.Format );
+			resultMipLevels = nativeObject.MipLevels;
+			mipmaps = nativeObject.MipLevels > 1;
+			usage = Usages.Static;
+
+			error = "";
+			return true;
+		}
+
+		bool LoadResultDataCube4x3( string fileName, bool isVirtualFileName, out string error )
+		{
+			byte[] sourceData;
+			Vector2I sourceSize;
+			PixelFormat sourceFormat;
+			if( isVirtualFileName )
+			{
+				if( !ImageUtility.LoadFromVirtualFile( fileName, out sourceData, out sourceSize, out _, out sourceFormat, out var faces, out var numMipmaps, out error ) )
+					return false;
+			}
+			else
+			{
+				if( !ImageUtility.LoadFromRealFile( fileName, out sourceData, out sourceSize, out _, out sourceFormat, out var faces, out var numMipmaps, out error ) )
+					return false;
+			}
+
+			var sourceSizeF = sourceSize.ToVector2F();
+			if( Math.Abs( sourceSizeF.X / sourceSizeF.Y - 1.333333333333333f ) > 0.01f )
+			{
+				error = "The size must be 4x3.";
+				return false;
+			}
+			int size = sourceSize.X / 4;
+			if( size * 4 != sourceSize.X || size * 3 != sourceSize.Y )
+			{
+				error = "The size must be 4x3.";
+				return false;
+			}
+
+			var sourceImage = new ImageUtility.Image2D( sourceFormat, sourceSize, sourceData );
+
+			var format = sourceImage.Format;
+			if( format == PixelFormat.R8G8B8 )
+				format = PixelFormat.A8R8G8B8;
+
+			var pixelSize = PixelFormatUtility.GetNumElemBytes( format );
+			byte[] data = new byte[ size * size * pixelSize * 6 ];
+
+			try
+			{
+				var faceImage = new ImageUtility.Image2D( format, new Vector2I( size, size ) );
+
+				for( int face = 0; face < 6; face++ )
+				{
+					Vector2I index = Vector2I.Zero;
+					switch( face )
+					{
+					case 1: index = new Vector2I( 2, 1 ); break;
+					case 0: index = new Vector2I( 0, 1 ); break;
+					case 2: index = new Vector2I( 1, 0 ); break;
+					case 3: index = new Vector2I( 1, 2 ); break;
+					case 4: index = new Vector2I( 1, 1 ); break;
+					case 5: index = new Vector2I( 3, 1 ); break;
+					}
+
+					faceImage.Blit( Vector2I.Zero, sourceImage, new Vector2I( size, size ) * index );
+
+					Array.Copy( faceImage.Data, 0, data, size * size * pixelSize * face, faceImage.Data.Length );
+				}
+
+
+				//faceImage.Blit( Vector2I.Zero, sourceImage, new Vector2I( size, size ) );
+
+				//for( int n = 0; n < 6; n++ )
+				//{
+				//	Array.Copy( faceImage.Data, 0, data, size * size * pixelSize * n, faceImage.Data.Length );
+				//}
+
+			}
+			catch( Exception ex )
+			{
+				error = ex.Message;
+				return false;
+			}
+
+			var memory = MemoryBlock.FromArray( data );
+			nativeObject = Texture.CreateCube( size, false, 1, ConvertFormat( format ), TextureFlags.None, memory );
+			//SharpBgfx bug fix
+			if( nativeObject != null && TextureType == ImageComponent.TypeEnum.Cube )
+				nativeObject.IsCubeMap = true;
+			nativeObjectLastUsedTime = EngineApp.EngineTime;
+
+			if( nativeObject == null )
+			{
+				error = "Unable to read texture data.";
+				return false;
+			}
+
+			UpdateTextureTypeFromNativeObject();
+			resultSize = new Vector2I( nativeObject.Width, nativeObject.Height );
+			resultDepth = nativeObject.Depth;
+			resultFormat = ConvertFormat( nativeObject.Format );
+			resultMipLevels = nativeObject.MipLevels;
 			mipmaps = nativeObject.MipLevels > 1;
 			usage = Usages.Static;
 
@@ -776,6 +888,18 @@ namespace NeoAxis
 					return true;
 				}
 
+				//!!!!compression support? mipmaps
+				//load cube 4x3
+				if( loadFileNames.Length == 1 && loadFileCube4x3 )
+				{
+					if( !LoadResultDataCube4x3( loadFileNames[ 0 ], true, out error ) )
+						return false;
+					sourceSize = resultSize;
+					sourceFormat = resultFormat;
+					error = "";
+					return true;
+				}
+
 				string sourceFileHash = CalculateSourceFileHash();
 				if( string.IsNullOrEmpty( sourceFileHash ) )
 				{
@@ -829,6 +953,29 @@ namespace NeoAxis
 				if( !ReadSourceData( out sourceSize, out sourceFormat, out var sourceData, out error ) )
 					return false;
 
+				//auto rescale
+				var allowedSize = RenderingSystem.LimitTextureSize;
+				if( allowedSize > 0 && sourceSize.MaxComponent() > allowedSize )
+				{
+					var newSizeF = sourceSize.ToVector2();
+					if( newSizeF.X > allowedSize )
+						newSizeF *= ( (double)allowedSize ) / newSizeF.X;
+					if( newSizeF.Y > allowedSize )
+						newSizeF *= ( (double)allowedSize ) / newSizeF.Y;
+					var newSize = newSizeF.ToVector2I();
+
+					var newData = new byte[ sourceData.Length ][];
+
+					for( int n = 0; n < sourceData.Length; n++ )
+					{
+						ImageUtility.Scale( sourceData[ n ], sourceSize, sourceFormat, newSize, ImageUtility.Filters.Bicubic, out var newData2 );
+						newData[ n ] = newData2;
+					}
+
+					sourceData = newData;
+					sourceSize = newSize;
+				}
+
 				string useCompression;
 				{
 					if( !forceNoCompression )
@@ -840,7 +987,7 @@ namespace NeoAxis
 
 							//!!!!no cubemap support. loadFileNames.Length == 1
 							if( loadFileNames.Length == 1 )
-								useCompression = ImageUtility.ImageAutoCompressionDetectType( sourceData[ 0 ], sourceSize, sourceFormat );
+								useCompression = ImageUtility.ImageAutoCompressionDetectType( sourceData[ 0 ], sourceSize, sourceFormat, Path.GetFileName( componentTextureVirtualFileName ) );
 							else
 								useCompression = "NoCompression";
 						}
@@ -1097,6 +1244,11 @@ namespace NeoAxis
 			get { return resultFormat; }
 		}
 
+		public int ResultMipLevels
+		{
+			get { return resultMipLevels; }
+		}
+
 		public bool Mipmaps
 		{
 			get { return mipmaps; }
@@ -1203,8 +1355,8 @@ namespace NeoAxis
 
 		public RenderTexture GetRenderTarget( int mip = 0, int slice = 0 )
 		{
-			//!!!!
-			EngineThreading.CheckMainThread();
+			//commented to optimize
+			//EngineThreading.CheckMainThread();
 
 			if( nativeObject == null )
 				return null;
@@ -1215,6 +1367,17 @@ namespace NeoAxis
 					return item2.RenderTarget;
 			}
 
+			var sizeF = new Vector2F( ResultSize.X, ResultSize.Y );
+			sizeF /= (float)Math.Pow( 2.0, mip );
+			//sizeF.X = (float)Math.Round((double)sizeF.X);
+			//sizeF.Y = (float)Math.Round((double)sizeF.Y);
+			sizeF.X += 0.5f;
+			sizeF.Y += 0.5f;
+			var newSize = new Vector2I( (int)sizeF.X, (int)sizeF.Y );
+
+			if( newSize.X < 1 || newSize.Y < 1 )
+				return null;
+
 			////!!!!
 			//var buffer = new FrameBuffer( new Texture[] { realObject } );
 
@@ -1222,18 +1385,19 @@ namespace NeoAxis
 			attachment.Texture = nativeObject;
 			attachment.Mip = mip;
 			attachment.Layer = slice;
+			//!!!!
+			attachment.NumLayers = 1;
 			attachment.Access = ComputeBufferAccess.Write;
 			var attachments = new Attachment[] { attachment };
 			var buffer = new FrameBuffer( attachments ); // create bgfx framebuffer with attachment
 
-			Vector2F sizeF = new Vector2F( (float)ResultSize.X, (float)ResultSize.Y );
-			sizeF /= (float)Math.Pow( 2.0, (double)mip );
-			//sizeF.X = (float)Math.Round((double)sizeF.X);
-			//sizeF.Y = (float)Math.Round((double)sizeF.Y);
-			sizeF.X += 0.5f;
-			sizeF.Y += 0.5f;
-
-			Vector2I newSize = new Vector2I( (int)sizeF.X, (int)sizeF.Y );
+			//var sizeF = new Vector2F( (float)ResultSize.X, (float)ResultSize.Y );
+			//sizeF /= (float)Math.Pow( 2.0, (double)mip );
+			////sizeF.X = (float)Math.Round((double)sizeF.X);
+			////sizeF.Y = (float)Math.Round((double)sizeF.Y);
+			//sizeF.X += 0.5f;
+			//sizeF.Y += 0.5f;
+			//var newSize = new Vector2I( (int)sizeF.X, (int)sizeF.Y );
 
 			var target = new RenderTexture( buffer, newSize, this );
 
@@ -1242,15 +1406,10 @@ namespace NeoAxis
 			return target;
 		}
 
-		public unsafe void PrepareNativeObject()
+		internal unsafe void PrepareNativeObject()
 		{
-			//!!!!!вызывать. пока в SetData
-
 			if( Disposed )
 				return;
-
-			//!!!!
-			EngineThreading.CheckMainThread();
 
 			if( mode == ModeEnum.Create )
 			{

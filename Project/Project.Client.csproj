@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
+	<CheckEolTargetFramework>false</CheckEolTargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputType>Library</OutputType>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
@@ -11,8 +12,10 @@
     <OutputPath>Binaries\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet />
-    <DefineConstants>TRACE;WINDOWS;CLIENT</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CLIENT</DefineConstants>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <DocumentationFile>Binaries\Project.Client.xml</DocumentationFile>
+    <NoWarn>1701;1702;CS1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>false</Optimize>
@@ -20,7 +23,9 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet />
-    <DefineConstants>TRACE;WINDOWS;CLIENT</DefineConstants>
+    <DefineConstants>TRACE;CLIENT</DefineConstants>
+    <DocumentationFile>Binaries\Project.Client.xml</DocumentationFile>
+    <NoWarn>1701;1702;CS1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Remove="Packages\**" />
@@ -40,11 +45,6 @@
       <HintPath>Binaries\NeoAxis.CoreExtension.dll</HintPath>
       <SpecificVersion>false</SpecificVersion>
       <Private>false</Private>
-    </Reference>
-    <Reference Include="System.ComponentModel.Primitives">
-      <HintPath>Binaries\System.ComponentModel.Primitives.dll</HintPath>
-      <Private>false</Private>
-      <SpecificVersion>false</SpecificVersion>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -79,6 +79,7 @@
     <Compile Include="Assets\Base\UI\Screens\BasicSceneScreen.cs" />
     <Compile Include="Assets\Base\UI\Screens\EntranceScreen.cs" />
     <Compile Include="Assets\Base\UI\Screens\InGameContextScreen.cs" />
+    <Compile Include="Assets\Base\UI\Screens\AvatarWindow.cs" />
   </ItemGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="if EXIST &quot;$(ProjectDir)Project.csproj&quot; ( if EXIST &quot;$(ProjectDir)Binaries\NeoAxis.Editor.exe&quot; ( &quot;$(ProjectDir)Binaries\NeoAxis.Editor.exe&quot; -platformProjectPatch &quot;$(ProjectDir)Project.Client.csproj&quot; -baseProject &quot;$(ProjectDir)Project.csproj&quot; ) )" />

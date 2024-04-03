@@ -2,12 +2,13 @@
 
 #ifdef GLOBAL_SKELETAL_ANIMATION
 
-mat4 getBoneTransform(sampler2D bones, int index)
+mat4 getBoneTransform(sampler2D bones, int bonesIndex, int index)
 {
-	vec4 item0 = texelFetch(bones, ivec2(0, index), 0);
-	vec4 item1 = texelFetch(bones, ivec2(1, index), 0);
-	vec4 item2 = texelFetch(bones, ivec2(2, index), 0);
-	vec4 item3 = texelFetch(bones, ivec2(3, index), 0);
+	int index4 = index * 4;
+	vec4 item0 = texelFetch(bones, ivec2(index4 + 0, bonesIndex), 0);
+	vec4 item1 = texelFetch(bones, ivec2(index4 + 1, bonesIndex), 0);
+	vec4 item2 = texelFetch(bones, ivec2(index4 + 2, bonesIndex), 0);
+	vec4 item3 = texelFetch(bones, ivec2(index4 + 3, bonesIndex), 0);
 	return mtxFromCols(item0, item1, item2, item3);
 }
 
@@ -16,11 +17,13 @@ void getAnimationData(vec4 renderOperationData, sampler2D bones, uvec4 indices, 
 	BRANCH
 	if(renderOperationData.y > 0.0)
 	{
+		int bonesIndex = int(renderOperationData.y) - 1;
+		
 		mat4 transform = 
-			getBoneTransform(bones, int(indices.x)) * weight.x +
-			getBoneTransform(bones, int(indices.y)) * weight.y +
-			getBoneTransform(bones, int(indices.z)) * weight.z +
-			getBoneTransform(bones, int(indices.w)) * weight.w;
+			getBoneTransform(bones, bonesIndex, int(indices.x)) * weight.x +
+			getBoneTransform(bones, bonesIndex, int(indices.y)) * weight.y +
+			getBoneTransform(bones, bonesIndex, int(indices.z)) * weight.z +
+			getBoneTransform(bones, bonesIndex, int(indices.w)) * weight.w;
 		mat3 transform3 = toMat3(transform);
 		position = (mul(transform, vec4(position, 1.0))).xyz;
 		normal = normalize(mul(transform3, normal));
@@ -117,7 +120,7 @@ mat3 lookAt( vec3 direction, vec3 up )
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void billboardRotateWorldMatrix(vec4 renderOperationData[7], inout mat4 worldMatrix, bool shadowCaster, vec3 shadowCasterCameraPosition, out vec4 billboardRotation )
+void billboardRotateWorldMatrix(vec4 renderOperationData[8], inout mat4 worldMatrix, bool shadowCaster, vec3 shadowCasterCameraPosition, out vec4 billboardRotation )
 {
 	billboardRotation = vec4_splat(0);
 	
@@ -207,15 +210,14 @@ void billboardRotateWorldMatrix(vec4 renderOperationData[7], inout mat4 worldMat
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#ifdef GLOBAL_VOXEL_LOD
+#if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )
 
-void voxelOrVirtualizedDataModeCalculateParametersV(vec4 renderOperationData[7], mat4 worldMatrix, vec3 cameraPosition, inout vec3 cameraPositionObjectSpace, inout vec4 worldMatrix0, inout vec4 worldMatrix1, inout vec4 worldMatrix2 )//, inout vec4 worldMatrixRotation, inout vec3 worldMatrixScale)
+void voxelOrVirtualizedDataModeCalculateParametersV(vec4 renderOperationData[8], mat4 worldMatrix, vec3 cameraPosition, inout vec3 cameraPositionObjectSpace, inout vec4 worldMatrix0, inout vec4 worldMatrix1, inout vec4 worldMatrix2 )//, inout vec4 worldMatrixRotation, inout vec3 worldMatrixScale)
 {
 	float voxelDataMode = renderOperationData[1].w;
-	//float virtualizedDataMode = renderOperationData[3].w;
 	
 	BRANCH
-	if( voxelDataMode != 0.0 )//|| virtualizedDataMode != 0.0)
+	if( voxelDataMode != 0.0 )
 	{
 		mat4 worldMatrixInv = matInverse(worldMatrix);
 		cameraPositionObjectSpace = mul(worldMatrixInv, vec4(cameraPosition, 1.0)).xyz;

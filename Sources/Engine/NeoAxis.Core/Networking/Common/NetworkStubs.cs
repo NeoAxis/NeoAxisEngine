@@ -7,7 +7,7 @@ using System.Net;
 
 namespace Internal.Lidgren.Network
 {
-	enum NetConnectionStatus
+	public enum NetConnectionStatus
 	{
 		None,
 		InitiatedConnect,
@@ -17,7 +17,7 @@ namespace Internal.Lidgren.Network
 		Disconnected,
 	}
 
-	class NetConnection
+	public class NetConnection
 	{
 		public IPEndPoint RemoteEndPoint
 		{

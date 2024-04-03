@@ -109,59 +109,99 @@ namespace NeoAxis
 	/// <summary>Vertex element type, used to identify the base types of the vertex contents.</summary>
 	public enum VertexElementType
 	{
+		None = 0,
+
 		/// <summary>Float 1.</summary>
-		Float1 = 0,//Ogre::VET_FLOAT1,
+		Float1 = 1,
 		/// <summary>Float 2.</summary>
-		Float2 = 1,//Ogre::VET_FLOAT2,
+		Float2 = 2,
 		/// <summary>Float 3.</summary>
-		Float3 = 2,//Ogre::VET_FLOAT3,
+		Float3 = 3,
 		/// <summary>Float 4.</summary>
-		Float4 = 3,//Ogre::VET_FLOAT4,
-		/// <summary>alias to more specific color type - use the current rendersystem's color packing.</summary>
-		//Color = 4,//Ogre::VET_COLOUR,
-		//		  /// <summary>Short 1.</summary>
-		Short1 = 5,//Ogre::VET_SHORT1,
+		Float4 = 4,
+		///// <summary>alias to more specific color type - use the current rendersystem's color packing.</summary>
+		//Color = 5,
+		/// <summary>Short 1.</summary>
+		Short1 = 6,
 		/// <summary>Short 2.</summary>
-		Short2 = 6,//Ogre::VET_SHORT2,
+		Short2 = 7,
 		/// <summary>Short 3.</summary>
-		Short3 = 7,//Ogre::VET_SHORT3,
+		Short3 = 8,
 		/// <summary>Short 4.</summary>
-		Short4 = 8,//Ogre::VET_SHORT4,
+		Short4 = 9,
 		/// <summary>Byte 4.</summary>
-		UByte4 = 9,//Ogre::VET_UBYTE4,
+		UByte4 = 10,
 
 		//!!!!
 		/// <summary>D3D style compact color.</summary>
-		ColorARGB = 10,//Ogre::VET_COLOUR_ARGB,
+		ColorARGB = 11,
 		/// <summary>GL style compact color.</summary>
-		ColorABGR = 11,//Ogre::VET_COLOUR_ABGR
+		ColorABGR = 12,
 
-		Integer1 = 12,
-		Integer2 = 13,
-		Integer3 = 14,
-		Integer4 = 15,
+		Integer1 = 13,
+		Integer2 = 14,
+		Integer3 = 15,
+		Integer4 = 16,
 
-		Half1 = 16,
-		Half2 = 17,
-		Half3 = 18,
-		Half4 = 19,
+		Half1 = 17,
+		Half2 = 18,
+		Half3 = 19,
+		Half4 = 20,
 
-		//Double1 = 12,
-		//Double2 = 13,
-		//Double3 = 14,
-		//Double4 = 15,
-		//UShort1 = 16,
-		//UShort2 = 17,
-		//UShort3 = 18,
-		//UShort4 = 19,
-		//Int1 = 20,
-		//Int2 = 21,
-		//Int3 = 22,
-		//Int4 = 23,
-		//UInt1 = 24,
-		//UInt2 = 25,
-		//UInt3 = 26,
-		//UInt4 = 27
+
+		///// <summary>Float 1.</summary>
+		//Float1 = 0,//Ogre::VET_FLOAT1,
+		///// <summary>Float 2.</summary>
+		//Float2 = 1,//Ogre::VET_FLOAT2,
+		///// <summary>Float 3.</summary>
+		//Float3 = 2,//Ogre::VET_FLOAT3,
+		///// <summary>Float 4.</summary>
+		//Float4 = 3,//Ogre::VET_FLOAT4,
+		///// <summary>alias to more specific color type - use the current rendersystem's color packing.</summary>
+		////Color = 4,//Ogre::VET_COLOUR,
+		////		  /// <summary>Short 1.</summary>
+		//Short1 = 5,//Ogre::VET_SHORT1,
+		///// <summary>Short 2.</summary>
+		//Short2 = 6,//Ogre::VET_SHORT2,
+		///// <summary>Short 3.</summary>
+		//Short3 = 7,//Ogre::VET_SHORT3,
+		///// <summary>Short 4.</summary>
+		//Short4 = 8,//Ogre::VET_SHORT4,
+		///// <summary>Byte 4.</summary>
+		//UByte4 = 9,//Ogre::VET_UBYTE4,
+
+		////!!!!
+		///// <summary>D3D style compact color.</summary>
+		//ColorARGB = 10,//Ogre::VET_COLOUR_ARGB,
+		///// <summary>GL style compact color.</summary>
+		//ColorABGR = 11,//Ogre::VET_COLOUR_ABGR
+
+		//Integer1 = 12,
+		//Integer2 = 13,
+		//Integer3 = 14,
+		//Integer4 = 15,
+
+		//Half1 = 16,
+		//Half2 = 17,
+		//Half3 = 18,
+		//Half4 = 19,
+
+		////Double1 = 12,
+		////Double2 = 13,
+		////Double3 = 14,
+		////Double4 = 15,
+		////UShort1 = 16,
+		////UShort2 = 17,
+		////UShort3 = 18,
+		////UShort4 = 19,
+		////Int1 = 20,
+		////Int2 = 21,
+		////Int3 = 22,
+		////Int4 = 23,
+		////UInt1 = 24,
+		////UInt2 = 25,
+		////UInt3 = 26,
+		////UInt4 = 27
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -202,7 +242,7 @@ namespace NeoAxis
 			set { source = value; }
 		}
 
-		/// <summary>Gets the offset into the buffer where this element starts.</summary>
+		/// <summary>Gets the offset into the buffer where this element starts in bytes.</summary>
 		[Serialize]
 		public int Offset
 		{

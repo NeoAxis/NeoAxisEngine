@@ -542,7 +542,9 @@
 		.component NeoAxis.CharacterAI
 		{
 			Name = Character AI
-			DisplayPath = True
+			TurningSpeedOverride = 70
+			LookingForFoodModeIdleTime = 10
+			DebugVisualization = True
 			.component NeoAxis.CharacterAITask_MoveToObject
 			{
 				Name = Move To Object

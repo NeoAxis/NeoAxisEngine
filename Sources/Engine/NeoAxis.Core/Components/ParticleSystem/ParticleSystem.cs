@@ -12,9 +12,9 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "particle" )]
 #if !DEPLOY
-	[EditorControl( typeof( ParticleSystemEditor ) )]
-	[Preview( typeof( ParticleSystemPreview ) )]
-	[SettingsCell( typeof( ParticleSystemSettingsCell ) )]
+	[EditorControl( "NeoAxis.Editor.ParticleSystemEditor" )]
+	[Preview( "NeoAxis.Editor.ParticleSystemPreview" )]
+	[SettingsCell( "NeoAxis.Editor.ParticleSystemSettingsCell" )]
 #endif
 	public class ParticleSystem : ResultCompile<ParticleSystem.CompiledData>
 	{
@@ -29,7 +29,7 @@ namespace NeoAxis
 		public Reference<bool> Looping
 		{
 			get { if( _looping.BeginGet() ) Looping = _looping.Get( this ); return _looping.value; }
-			set { if( _looping.BeginSet( ref value ) ) { try { LoopingChanged?.Invoke( this ); ShouldRecompile = true; } finally { _looping.EndSet(); } } }
+			set { if( _looping.BeginSet( this, ref value ) ) { try { LoopingChanged?.Invoke( this ); ShouldRecompile = true; } finally { _looping.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Looping"/> property value changes.</summary>
 		public event Action<ParticleSystem> LoopingChanged;
@@ -49,7 +49,7 @@ namespace NeoAxis
 		public Reference<SimulationSpaceEnum> SimulationSpace
 		{
 			get { if( _simulationSpace.BeginGet() ) SimulationSpace = _simulationSpace.Get( this ); return _simulationSpace.value; }
-			set { if( _simulationSpace.BeginSet( ref value ) ) { try { SimulationSpaceChanged?.Invoke( this ); ShouldRecompile = true; } finally { _simulationSpace.EndSet(); } } }
+			set { if( _simulationSpace.BeginSet( this, ref value ) ) { try { SimulationSpaceChanged?.Invoke( this ); ShouldRecompile = true; } finally { _simulationSpace.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SimulationSpace"/> property value changes.</summary>
 		public event Action<ParticleSystem> SimulationSpaceChanged;
@@ -62,7 +62,7 @@ namespace NeoAxis
 		//public Reference<bool> Batching
 		//{
 		//	get { if( _batching.BeginGet() ) Batching = _batching.Get( this ); return _batching.value; }
-		//	set { if( _batching.BeginSet( ref value ) ) { try { BatchingChanged?.Invoke( this ); } finally { _batching.EndSet(); } } }
+		//	set { if( _batching.BeginSet( this, ref value ) ) { try { BatchingChanged?.Invoke( this ); } finally { _batching.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="Batching"/> property value changes.</summary>
 		//public event Action<ParticleSystem> BatchingChanged;
@@ -75,7 +75,7 @@ namespace NeoAxis
 		public Reference<int> MaxParticles
 		{
 			get { if( _maxParticles.BeginGet() ) MaxParticles = _maxParticles.Get( this ); return _maxParticles.value; }
-			set { if( _maxParticles.BeginSet( ref value ) ) { try { MaxParticlesChanged?.Invoke( this ); } finally { _maxParticles.EndSet(); } } }
+			set { if( _maxParticles.BeginSet( this, ref value ) ) { try { MaxParticlesChanged?.Invoke( this ); } finally { _maxParticles.EndSet(); } } }
 		}
 		public event Action<ParticleSystem> MaxParticlesChanged;
 		ReferenceField<int> _maxParticles = 1000;
@@ -88,7 +88,7 @@ namespace NeoAxis
 		public Reference<float> SimulationSpeed
 		{
 			get { if( _simulationSpeed.BeginGet() ) SimulationSpeed = _simulationSpeed.Get( this ); return _simulationSpeed.value; }
-			set { if( _simulationSpeed.BeginSet( ref value ) ) { try { SimulationSpeedChanged?.Invoke( this ); } finally { _simulationSpeed.EndSet(); } } }
+			set { if( _simulationSpeed.BeginSet( this, ref value ) ) { try { SimulationSpeedChanged?.Invoke( this ); } finally { _simulationSpeed.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SimulationSpeed"/> property value changes.</summary>
 		public event Action<ParticleSystem> SimulationSpeedChanged;
@@ -102,7 +102,7 @@ namespace NeoAxis
 		public Reference<double> VisibilityDistanceFactor
 		{
 			get { if( _visibilityDistanceFactor.BeginGet() ) VisibilityDistanceFactor = _visibilityDistanceFactor.Get( this ); return _visibilityDistanceFactor.value; }
-			set { if( _visibilityDistanceFactor.BeginSet( ref value ) ) { try { VisibilityDistanceFactorChanged?.Invoke( this ); } finally { _visibilityDistanceFactor.EndSet(); } } }
+			set { if( _visibilityDistanceFactor.BeginSet( this, ref value ) ) { try { VisibilityDistanceFactorChanged?.Invoke( this ); } finally { _visibilityDistanceFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="VisibilityDistanceFactor"/> property value changes.</summary>
 		public event Action<ParticleSystem> VisibilityDistanceFactorChanged;
@@ -117,59 +117,11 @@ namespace NeoAxis
 		//public Reference<double> VisibilityDistance
 		//{
 		//	get { if( _visibilityDistance.BeginGet() ) VisibilityDistance = _visibilityDistance.Get( this ); return _visibilityDistance.value; }
-		//	set { if( _visibilityDistance.BeginSet( ref value ) ) { try { VisibilityDistanceChanged?.Invoke( this ); } finally { _visibilityDistance.EndSet(); } } }
+		//	set { if( _visibilityDistance.BeginSet( this, ref value ) ) { try { VisibilityDistanceChanged?.Invoke( this ); } finally { _visibilityDistance.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="VisibilityDistance"/> property value changes.</summary>
 		//public event Action<ParticleSystem> VisibilityDistanceChanged;
 		//ReferenceField<double> _visibilityDistance = 10000.0;
-
-		/////////////////////////////////////////
-
-		[HCExpandable]
-		public struct CurvePoint : ICanParseFromAndConvertToString
-		{
-			//[DefaultValue( 0.0 )]
-			[Serialize]
-			public float Point { get; set; }
-
-			//[DefaultValue( 0.0 )]
-			[Serialize]
-			public float Value { get; set; }
-
-			//
-
-			public CurvePoint( float point, float value )
-			{
-				Point = point;
-				Value = value;
-			}
-
-			public override string ToString()
-			{
-				return string.Format( "{0} {1}", Point, Value );
-				//return string.Format( "{0} - {1}", Time, Value );
-			}
-
-			public static CurvePoint Parse( string text )
-			{
-				if( string.IsNullOrEmpty( text ) )
-					throw new ArgumentNullException( "The text parameter cannot be null or zero length." );
-
-				string[] values = text.Split( new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries );
-
-				if( values.Length != 2 )
-					throw new FormatException( string.Format( "Cannot parse the text '{0}' because it does not have 2 parts separated by spaces in the form \'Point Value\'.", text ) );
-
-				try
-				{
-					return new CurvePoint( float.Parse( values[ 0 ] ), float.Parse( values[ 1 ] ) );
-				}
-				catch( Exception )
-				{
-					throw new FormatException( "The parts of the value must be decimal numbers." );
-				}
-			}
-		}
 
 		/////////////////////////////////////////
 
@@ -852,7 +804,7 @@ namespace NeoAxis
 		//}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		static CurveCubicSpline1F CreateCurve( ReferenceList<CurvePoint> curve )
+		static CurveCubicSpline1F CreateCurve( ReferenceList<CurvePoint1F> curve )
 		{
 			if( curve != null && curve.Count != 0 )
 			{
@@ -1006,10 +958,10 @@ namespace NeoAxis
 			colorMultiplier.Name = "Color Multiplier By Time";
 			colorMultiplier.Channels = ParticleColorMultiplierByTime.ChannelsEnum.Alpha;
 			colorMultiplier.Type = ParticleColorMultiplierByTime.TypeEnum.Curve;
-			colorMultiplier.Curve.Add( new CurvePoint( 0, 0 ) );
-			colorMultiplier.Curve.Add( new CurvePoint( 1, 1 ) );
-			colorMultiplier.Curve.Add( new CurvePoint( 2, 1 ) );
-			colorMultiplier.Curve.Add( new CurvePoint( 3, 0 ) );
+			colorMultiplier.Curve.Add( new CurvePoint1F( 0, 0 ) );
+			colorMultiplier.Curve.Add( new CurvePoint1F( 1, 1 ) );
+			colorMultiplier.Curve.Add( new CurvePoint1F( 2, 1 ) );
+			colorMultiplier.Curve.Add( new CurvePoint1F( 3, 0 ) );
 		}
 
 	}

@@ -42,17 +42,14 @@ substituted by assertions ...):
 
 ```python
 
-from pyassimp import *
-scene = load('hello.3ds')
+from pyassimp import load
+with load('hello.3ds') as scene:
 
-assert len(scene.meshes)
-mesh = scene.meshes[0]
+  assert len(scene.meshes)
+  mesh = scene.meshes[0]
 
-assert len(mesh.vertices)
-print(mesh.vertices[0])
-
-# don't forget this one, or you will leak!
-release(scene)
+  assert len(mesh.vertices)
+  print(mesh.vertices[0])
 
 ```
 
@@ -61,13 +58,11 @@ scene:
 
 ```python
 
-from pyassimp import *
-scene = load('hello.3ds')
+from pyassimp import load
+with load('hello.3ds') as scene:
 
-for c in scene.rootnode.children:
-    print(str(c))
-
-release(scene)
+  for c in scene.rootnode.children:
+      print(str(c))
 
 ```
 
@@ -81,7 +76,7 @@ $ python setup.py install
 ```
 
 PyAssimp requires a assimp dynamic library (`DLL` on windows,
-`.so` on linux, `.dynlib` on macOS) in order to work. The default search directories are:
+`.so` on linux, `.dylib` on macOS) in order to work. The default search directories are:
   - the current directory
   - on linux additionally: `/usr/lib`, `/usr/local/lib`,
     `/usr/lib/x86_64-linux-gnu`

@@ -3,7 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -52,9 +52,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <cctype>
 #include <memory>
 
-using namespace Assimp;
+namespace Assimp {
 
-static const unsigned int NotSet = 0xcdcdcdcd;
+static constexpr unsigned int NotSet = 0xcdcdcdcd;
 
 // ------------------------------------------------------------------------------------------------
 // Setup final material indices, generae a default material if necessary
@@ -68,8 +68,8 @@ void Discreet3DSImporter::ReplaceDefaultMaterial() {
     unsigned int idx(NotSet);
     for (unsigned int i = 0; i < mScene->mMaterials.size(); ++i) {
         std::string s = mScene->mMaterials[i].mName;
-        for (std::string::iterator it = s.begin(); it != s.end(); ++it) {
-            *it = static_cast<char>(::tolower(*it));
+        for (char &it : s) {
+            it = static_cast<char>(::tolower(static_cast<unsigned char>(it)));
         }
 
         if (std::string::npos == s.find("default")) continue;
@@ -79,12 +79,7 @@ void Discreet3DSImporter::ReplaceDefaultMaterial() {
                 mScene->mMaterials[i].mDiffuse.r !=
                         mScene->mMaterials[i].mDiffuse.b) continue;
 
-        if (mScene->mMaterials[i].sTexDiffuse.mMapName.length() != 0 ||
-                mScene->mMaterials[i].sTexBump.mMapName.length() != 0 ||
-                mScene->mMaterials[i].sTexOpacity.mMapName.length() != 0 ||
-                mScene->mMaterials[i].sTexEmissive.mMapName.length() != 0 ||
-                mScene->mMaterials[i].sTexSpecular.mMapName.length() != 0 ||
-                mScene->mMaterials[i].sTexShininess.mMapName.length() != 0) {
+        if (ContainsTextures(i)) {
             continue;
         }
         idx = i;
@@ -212,7 +207,7 @@ void Discreet3DSImporter::ConvertMaterial(D3DS::Material &oldMat,
         mat.AddProperty(&tex, AI_MATKEY_GLOBAL_BACKGROUND_IMAGE);
 
         // Be sure this is only done for the first material
-        mBackgroundImage = std::string("");
+        mBackgroundImage = std::string();
     }
 
     // At first add the base ambient color of the scene to the material
@@ -267,6 +262,7 @@ void Discreet3DSImporter::ConvertMaterial(D3DS::Material &oldMat,
         unsigned int iWire = 1;
         mat.AddProperty<int>((int *)&iWire, 1, AI_MATKEY_ENABLE_WIREFRAME);
     }
+        [[fallthrough]];
 
     case D3DS::Discreet3DS::Gouraud:
         eShading = aiShadingMode_Gouraud;
@@ -597,7 +593,7 @@ void Discreet3DSImporter::AddNodeToGraph(aiScene *pcSOut, aiNode *pcOut,
 
         // Cameras or lights define their transformation in their parent node and in the
         // corresponding light or camera chunks. However, we read and process the latter
-        // to to be able to return valid cameras/lights even if no scenegraph is given.
+        // to be able to return valid cameras/lights even if no scenegraph is given.
         for (unsigned int n = 0; n < pcSOut->mNumCameras; ++n) {
             if (pcSOut->mCameras[n]->mName == pcOut->mName) {
                 pcSOut->mCameras[n]->mLookAt = aiVector3D(0.f, 0.f, 1.f);
@@ -808,5 +804,7 @@ void Discreet3DSImporter::ConvertScene(aiScene *pcOut) {
         ::memcpy(pcOut->mCameras, &mScene->mCameras[0], sizeof(void *) * pcOut->mNumCameras);
     }
 }
+
+} // namespace Assimp
 
 #endif // !! ASSIMP_BUILD_NO_3DS_IMPORTER

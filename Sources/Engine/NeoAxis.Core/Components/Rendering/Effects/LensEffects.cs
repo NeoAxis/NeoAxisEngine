@@ -22,38 +22,61 @@ namespace NeoAxis
 		public Reference<double> Intensity
 		{
 			get { if( _intensity.BeginGet() ) Intensity = _intensity.Get( this ); return _intensity.value; }
-			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
+			set { if( _intensity.BeginSet( this, ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
 		public event Action<RenderingEffect_LensEffects> IntensityChanged;
 		ReferenceField<double> _intensity = 1;
 
-		[DefaultValue( 3.0 )]
-		[Range( 1, 10 )]
-		public Reference<double> FadeSpeed
-		{
-			get { if( _fadeSpeed.BeginGet() ) FadeSpeed = _fadeSpeed.Get( this ); return _fadeSpeed.value; }
-			set { if( _fadeSpeed.BeginSet( ref value ) ) { try { FadeSpeedChanged?.Invoke( this ); } finally { _fadeSpeed.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="FadeSpeed"/> property value changes.</summary>
-		public event Action<RenderingEffect_LensEffects> FadeSpeedChanged;
-		ReferenceField<double> _fadeSpeed = 3.0;
-
 		public enum CheckVisibilityMethodEnum
 		{
+			DepthTextureFetch,
 			OcclusionQuery,
 			PhysicsRayCast,
 		}
 
-		[DefaultValue( CheckVisibilityMethodEnum.OcclusionQuery )]
+		[DefaultValue( CheckVisibilityMethodEnum.DepthTextureFetch/*OcclusionQuery*/ )]
 		public Reference<CheckVisibilityMethodEnum> CheckVisibilityMethod
 		{
 			get { if( _checkVisibilityMethod.BeginGet() ) CheckVisibilityMethod = _checkVisibilityMethod.Get( this ); return _checkVisibilityMethod.value; }
-			set { if( _checkVisibilityMethod.BeginSet( ref value ) ) { try { CheckVisibilityMethodChanged?.Invoke( this ); } finally { _checkVisibilityMethod.EndSet(); } } }
+			set { if( _checkVisibilityMethod.BeginSet( this, ref value ) ) { try { CheckVisibilityMethodChanged?.Invoke( this ); } finally { _checkVisibilityMethod.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CheckVisibilityMethod"/> property value changes.</summary>
 		public event Action<RenderingEffect_LensEffects> CheckVisibilityMethodChanged;
-		ReferenceField<CheckVisibilityMethodEnum> _checkVisibilityMethod = CheckVisibilityMethodEnum.OcclusionQuery;
+		ReferenceField<CheckVisibilityMethodEnum> _checkVisibilityMethod = CheckVisibilityMethodEnum.DepthTextureFetch;// OcclusionQuery;
+
+		[DefaultValue( 10.0 )]
+		[Range( 1, 10 )]
+		public Reference<double> FadeInSpeed
+		{
+			get { if( _fadeInSpeed.BeginGet() ) FadeInSpeed = _fadeInSpeed.Get( this ); return _fadeInSpeed.value; }
+			set { if( _fadeInSpeed.BeginSet( this, ref value ) ) { try { FadeInSpeedChanged?.Invoke( this ); } finally { _fadeInSpeed.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="FadeInSpeed"/> property value changes.</summary>
+		public event Action<RenderingEffect_LensEffects> FadeInSpeedChanged;
+		ReferenceField<double> _fadeInSpeed = 10.0;
+
+		[DefaultValue( 10.0 )]
+		[Range( 1, 10 )]
+		public Reference<double> FadeOutSpeed
+		{
+			get { if( _fadeOutSpeed.BeginGet() ) FadeOutSpeed = _fadeOutSpeed.Get( this ); return _fadeOutSpeed.value; }
+			set { if( _fadeOutSpeed.BeginSet( this, ref value ) ) { try { FadeOutSpeedChanged?.Invoke( this ); } finally { _fadeOutSpeed.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="FadeOutSpeed"/> property value changes.</summary>
+		public event Action<RenderingEffect_LensEffects> FadeOutSpeedChanged;
+		ReferenceField<double> _fadeOutSpeed = 10.0;
+
+		//[DefaultValue( 3.0 )]
+		//[Range( 1, 10 )]
+		//public Reference<double> FadeSpeed
+		//{
+		//	get { if( _fadeSpeed.BeginGet() ) FadeSpeed = _fadeSpeed.Get( this ); return _fadeSpeed.value; }
+		//	set { if( _fadeSpeed.BeginSet( this, ref value ) ) { try { FadeSpeedChanged?.Invoke( this ); } finally { _fadeSpeed.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="FadeSpeed"/> property value changes.</summary>
+		//public event Action<RenderingEffect_LensEffects> FadeSpeedChanged;
+		//ReferenceField<double> _fadeSpeed = 3.0;
 
 		/////////////////////////////////////////
 
@@ -69,21 +92,21 @@ namespace NeoAxis
 
 			////////////
 
-			public void Update( double delta, double intensity, double fadeSpeed )
+			public void Update( double delta, double intensity, double fadeInSpeed, double fadeOutSpeed )
 			{
 				var toRemove = new List<LightItem>();
 
 				foreach( var item in lightItems )
 				{
-					if( Time.Current - item.lastTimeVisible < 0.25 + delta )
+					if( Time.Current - item.lastTimeVisible < 0.1/*0.25*/ + delta )
 					{
-						item.intensity += delta * fadeSpeed;
+						item.intensity += delta * fadeInSpeed;
 						if( item.intensity > intensity )
 							item.intensity = intensity;
 					}
 					else
 					{
-						item.intensity -= delta * fadeSpeed;
+						item.intensity -= delta * fadeOutSpeed;
 						if( item.intensity < 0 )
 							toRemove.Add( item );
 					}
@@ -142,7 +165,7 @@ namespace NeoAxis
 			if( context.Owner.CameraSettings.ProjectToScreenCoordinates( position, out var screenLightPosition ) )
 			{
 				gotScreenPosition = true;
-				if( new Rectangle( 0, 0, 1, 1 ).Contains( screenLightPosition ) )
+				if( new Rectangle( 0, 0, 1, 1 ).Contains( ref screenLightPosition ) )
 					insideScreen = true;
 			}
 		}
@@ -152,7 +175,9 @@ namespace NeoAxis
 			var scene = context.Owner.AttachedScene;
 			if( scene != null )
 			{
+				//!!!!
 				var cameraVisibleStartOffset = 1.0;
+				var cameraVisibleEndOffset = 1.0;
 
 				var cameraPosition = context.Owner.CameraSettings.Position;
 				//if( camera.IsReflected() )
@@ -160,9 +185,10 @@ namespace NeoAxis
 
 				var direction = ( position - cameraPosition ).GetNormalize();
 				var start = cameraPosition + direction * cameraVisibleStartOffset;
+				var end = position - direction * cameraVisibleEndOffset;
 
 				//!!!!contact group
-				var item = new PhysicsRayTestItem( new Ray( start, position - start ), PhysicsRayTestItem.ModeEnum.One, PhysicsRayTestItem.FlagsEnum.None );
+				var item = new PhysicsRayTestItem( new Ray( start, end/* position*/ - start ), PhysicsRayTestItem.ModeEnum.One, PhysicsRayTestItem.FlagsEnum.None );
 				scene.PhysicsRayTest( item );
 
 				if( item.Result.Length != 0 )
@@ -178,19 +204,21 @@ namespace NeoAxis
 
 			if( Intensity <= 0 )
 				return;
-			var pipeline = context.RenderingPipeline as RenderingPipeline_Basic;
-			if( pipeline == null )
-				return;
-			var frameData2 = frameData as RenderingPipeline_Basic.FrameData;
-			if( frameData2 == null )
-				return;
+
+			var pipeline = context.RenderingPipeline;
 
 			bool skip = true;
-			foreach( var lightIndex in frameData2.LightsInFrustumSorted )
+			foreach( var lightIndex in frameData.LightsInFrustumSorted )
 			{
-				var lightItem = frameData2.Lights[ lightIndex ];
+				var lightItem = frameData.Lights[ lightIndex ];
 
-				if( lightItem.data.children != null )
+				var light = lightItem.data.Creator;
+				if( light == null )
+					continue;
+
+				if( light.FlareImage.ReferenceOrValueSpecified )
+					skip = false;
+				else if( lightItem.data.children != null )
 				{
 					foreach( var child in lightItem.data.children )
 					{
@@ -206,26 +234,34 @@ namespace NeoAxis
 			if( skip )
 				return;
 
-			//init context data
-			ViewportRenderingContextData contextData;
-			if( context.AnyData.TryGetValue( "LensEffects", out var contextData2 ) )
-				contextData = (ViewportRenderingContextData)contextData2;
-			else
-			{
-				contextData = new ViewportRenderingContextData();
-				context.AnyData[ "LensEffects" ] = contextData;
-			}
 
-			//update context data light items
-			contextData.Update( context.Owner.LastUpdateTimeStep, Intensity, FadeSpeed );
+			//!!!!for physics mode and depth texture check no sense to create texture?
+
+			var occlusionDepthCheck = CheckVisibilityMethod.Value == CheckVisibilityMethodEnum.DepthTextureFetch;
+
+			//init context data
+			ViewportRenderingContextData contextData = null;
+			if( !occlusionDepthCheck )
+			{
+				if( context.AnyData.TryGetValue( "LensEffects", out var contextData2 ) )
+					contextData = (ViewportRenderingContextData)contextData2;
+				else
+				{
+					contextData = new ViewportRenderingContextData();
+					context.AnyData[ "LensEffects" ] = contextData;
+				}
+
+				//update context data light items
+				contextData.Update( context.Owner.LastUpdateTimeStep, Intensity, FadeInSpeed, FadeOutSpeed );
+			}
 
 			//create copy
 			var newTexture = context.RenderTarget2D_Alloc( actualTexture.Result.ResultSize, actualTexture.Result.ResultFormat, createSimple3DRenderer: true, createCanvasRenderer: true );
 
 			var viewport = newTexture.Result.GetRenderTarget().Viewports[ 0 ];
-			//!!!!double precision
-			Matrix4F viewMatrix = context.Owner.CameraSettings.ViewMatrix.ToMatrix4F();
-			Matrix4F projectionMatrix = context.Owner.CameraSettings.ProjectionMatrix.ToMatrix4F();
+
+			var viewMatrix = context.Owner.CameraSettings.ViewMatrixRelative;
+			var projectionMatrix = context.Owner.CameraSettings.ProjectionMatrix;
 			context.SetViewport( viewport, viewMatrix, projectionMatrix );
 
 			pipeline.CopyToCurrentViewport( context, actualTexture );
@@ -234,68 +270,91 @@ namespace NeoAxis
 			var canvasRenderer = viewport.CanvasRenderer;
 
 			//render
-			foreach( var lightIndex in frameData2.LightsInFrustumSorted )
+			foreach( var lightIndex in frameData.LightsInFrustumSorted )
 			{
-				var lightItem = frameData2.Lights[ lightIndex ];
+				var lightItem = frameData.Lights[ lightIndex ];
 
-				if( lightItem.data.children != null )
+				var light = lightItem.data.Creator;
+				if( light == null )
+					continue;
+
+				var needCheck = false;
 				{
-					foreach( var child in lightItem.data.children )
+					if( light.FlareImage.ReferenceOrValueSpecified )
+						needCheck = true;
+					else if( lightItem.data.children != null )
 					{
-						var lensFlares = child as LensFlares;
-						if( lensFlares != null )
+						foreach( var child in lightItem.data.children )
 						{
-							var light = lightItem.data.Creator as Light;
-							if( light != null )
-							{
-								CheckVisibilityScreenPosition( context, lightItem.data.Position, out var gotScreenPosition, out var insideScreen );
-
-								if( gotScreenPosition )
-								{
-									//update
-									{
-										switch( CheckVisibilityMethod.Value )
-										{
-										case CheckVisibilityMethodEnum.OcclusionQuery:
-											{
-												var parameter = (contextData, light);
-												if( RenderingSystem.TryCreateOcclusionQuery( OcclusionQueryCallback, parameter, out var query ) )
-												{
-													var thickness = context.Owner.Simple3DRenderer.GetThicknessByPixelSize( lightItem.data.Position, 5 );
-													var bounds = new Bounds( lightItem.data.Position );
-													bounds.Expand( thickness * 0.5 );
-
-													simple3DRenderer.SetColor( new ColorValue( 1, 0, 0 ) );
-													simple3DRenderer.SetOcclusionQuery( query );
-													simple3DRenderer.AddBounds( bounds, true );
-													//simple3DRenderer.AddSphere( new Sphere( lightItem.data.Position, 0.5 ), 4, true );
-													simple3DRenderer.SetOcclusionQuery( null );
-												}
-											}
-											break;
-
-										case CheckVisibilityMethodEnum.PhysicsRayCast:
-											if( CheckVisibilityPhysics( context, lightItem.data.Position ) )
-												contextData.UpdateLastTimeVisible( light );
-											break;
-										}
-									}
-
-									//render
-									var intensity = contextData.GetIntensity( light );
-									if( intensity > 0 )
-									{
-										//simple3DRenderer.SetColor( new ColorValue( 1, 0, 0 ) );
-										//simple3DRenderer.AddSphere( new Sphere( lightItem.data.Position, 0.5 ), 10, true );
-
-										lensFlares.RenderUI( canvasRenderer, lightItem.data, context.Owner, intensity );
-									}
-								}
-								else
-									contextData.Remove( light );
-							}
+							var lensFlares = child as LensFlares;
+							if( lensFlares != null )
+								needCheck = true;
 						}
 					}
+				}
+
+				if( needCheck )
+				{
+					CheckVisibilityScreenPosition( context, lightItem.data.Position, out var gotScreenPosition, out var insideScreen );
+
+					if( gotScreenPosition )
+					{
+						//update
+						if( contextData != null )
+						{
+							switch( CheckVisibilityMethod.Value )
+							{
+							case CheckVisibilityMethodEnum.OcclusionQuery:
+								{
+									var parameter = (contextData, light);
+									if( RenderingSystem.TryCreateOcclusionQuery( OcclusionQueryCallback, parameter, out var query ) )
+									{
+										var thickness = context.Owner.Simple3DRenderer.GetThicknessByPixelSize( lightItem.data.Position, 5 );
+										var bounds = new Bounds( lightItem.data.Position );
+										bounds.Expand( thickness * 0.5 );
+
+										simple3DRenderer.SetColor( new ColorValue( 1, 0, 0 ) );
+										simple3DRenderer.SetOcclusionQuery( query );
+										simple3DRenderer.AddBounds( bounds, true );
+										//simple3DRenderer.AddSphere( new Sphere( lightItem.data.Position, 0.5 ), 4, true );
+										simple3DRenderer.SetOcclusionQuery( null );
+									}
+								}
+								break;
+
+							case CheckVisibilityMethodEnum.PhysicsRayCast:
+								if( CheckVisibilityPhysics( context, lightItem.data.Position ) )
+									contextData.UpdateLastTimeVisible( light );
+								break;
+							}
+						}
+
+						//render
+						double intensity = 1;
+						if( contextData != null )
+							intensity *= contextData.GetIntensity( light );
+						intensity *= Intensity;
+
+						if( intensity > 0 )
+						{
+							lightItem.data.Creator?.RenderFlare( context, canvasRenderer, lightItem.data, context.Owner, intensity, occlusionDepthCheck );
+
+							if( lightItem.data.children != null )
+							{
+								foreach( var child in lightItem.data.children )
+								{
+									var lensFlares = child as LensFlares;
+									if( lensFlares != null )
+										lensFlares.RenderUI( context, canvasRenderer, lightItem.data, context.Owner, intensity, occlusionDepthCheck );
+								}
+							}
+
+							//simple3DRenderer.SetColor( new ColorValue( 1, 0, 0 ) );
+							//simple3DRenderer.AddSphere( new Sphere( lightItem.data.Position, 0.5 ), 10, true );
+						}
+					}
+					else
+						contextData?.Remove( light );
 				}
 			}
 
@@ -332,5 +391,22 @@ namespace NeoAxis
 			get { return true; }
 		}
 
+		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
+		{
+			base.OnMetadataGetMembersFilter( context, member, ref skip );
+
+			var p = member as Metadata.Property;
+			if( p != null )
+			{
+				switch( p.Name )
+				{
+				case nameof( FadeInSpeed ):
+				case nameof( FadeOutSpeed ):
+					if( CheckVisibilityMethod.Value == CheckVisibilityMethodEnum.DepthTextureFetch )
+						skip = true;
+					break;
+				}
+			}
+		}
 	}
 }

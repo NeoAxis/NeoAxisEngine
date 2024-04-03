@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using NeoAxis.Editor;
 using Internal;
+using Microsoft.CodeAnalysis;
 
 namespace NeoAxis
 {
@@ -13,10 +14,10 @@ namespace NeoAxis
 	/// The component for import of 3D content.
 	/// </summary>
 #if !DEPLOY
-	[EditorControl( typeof( Import3DEditor ) )]
-	[Preview( typeof( Import3DPreview ) )]
-	[PreviewImage( typeof( Import3DPreviewImage ) )]
-	[SettingsCell( typeof( Import3DSettingsCell ) )]
+	[EditorControl( "NeoAxis.Editor.Import3DEditor" )]
+	[Preview( "NeoAxis.Editor.Import3DPreview" )]
+	[PreviewImage( "NeoAxis.Editor.Import3DPreviewImage" )]
+	[SettingsCell( "NeoAxis.Editor.Import3DSettingsCell" )]
 #endif
 	public class Import3D : Component
 	{
@@ -25,7 +26,7 @@ namespace NeoAxis
 
 		public enum ModeEnum
 		{
-			Auto,
+			//Auto,
 			OneMesh,
 			Meshes,
 			//Scene,
@@ -33,17 +34,17 @@ namespace NeoAxis
 		/// <summary>
 		/// The mode of the import. You can import into one mesh or to make a set of separated meshes.
 		/// </summary>
-		[DefaultValue( ModeEnum.Auto )]
+		[DefaultValue( ModeEnum.OneMesh )]
 		[Serialize]
 		[Category( "Basic" )]
 		public Reference<ModeEnum> Mode
 		{
 			get { if( _mode.BeginGet() ) Mode = _mode.Get( this ); return _mode.value; }
-			set { if( _mode.BeginSet( ref value ) ) { try { ModeChanged?.Invoke( this ); } finally { _mode.EndSet(); } } }
+			set { if( _mode.BeginSet( this, ref value ) ) { try { ModeChanged?.Invoke( this ); } finally { _mode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Mode"/> property value changes.</summary>
 		public event Action<Import3D> ModeChanged;
-		ReferenceField<ModeEnum> _mode = ModeEnum.Auto;
+		ReferenceField<ModeEnum> _mode = ModeEnum.OneMesh;//Auto;
 
 		/// <summary>
 		/// Specifies a result position offset of imported 3D models.
@@ -53,7 +54,7 @@ namespace NeoAxis
 		public Reference<Vector3> Position
 		{
 			get { if( _position.BeginGet() ) Position = _position.Get( this ); return _position.value; }
-			set { if( _position.BeginSet( ref value ) ) { try { PositionChanged?.Invoke( this ); } finally { _position.EndSet(); } } }
+			set { if( _position.BeginSet( this, ref value ) ) { try { PositionChanged?.Invoke( this ); } finally { _position.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Position"/> property value changes.</summary>
 		public event Action<Import3D> PositionChanged;
@@ -68,7 +69,7 @@ namespace NeoAxis
 		public Reference<Quaternion> Rotation
 		{
 			get { if( _rotation.BeginGet() ) Rotation = _rotation.Get( this ); return _rotation.value; }
-			set { if( _rotation.BeginSet( ref value ) ) { try { RotationChanged?.Invoke( this ); } finally { _rotation.EndSet(); } } }
+			set { if( _rotation.BeginSet( this, ref value ) ) { try { RotationChanged?.Invoke( this ); } finally { _rotation.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Rotation"/> property value changes.</summary>
 		public event Action<Import3D> RotationChanged;
@@ -83,7 +84,7 @@ namespace NeoAxis
 		public Reference<double> Scale
 		{
 			get { if( _scale.BeginGet() ) Scale = _scale.Get( this ); return _scale.value; }
-			set { if( _scale.BeginSet( ref value ) ) { try { ScaleChanged?.Invoke( this ); } finally { _scale.EndSet(); } } }
+			set { if( _scale.BeginSet( this, ref value ) ) { try { ScaleChanged?.Invoke( this ); } finally { _scale.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Scale"/> property value changes.</summary>
 		public event Action<Import3D> ScaleChanged;
@@ -93,17 +94,15 @@ namespace NeoAxis
 		/// Whether to rotate models to engine's coordinate system. X axis is forward, Z axis is up.
 		/// </summary>
 		[DefaultValue( true )]
-		[Serialize]
-		[DisplayName( "Force Front X Axis" )]
 		[Category( "Transform" )]
-		public Reference<bool> ForceFrontXAxis
+		public Reference<bool> FixAxes
 		{
-			get { if( _forceFrontXAxis.BeginGet() ) ForceFrontXAxis = _forceFrontXAxis.Get( this ); return _forceFrontXAxis.value; }
-			set { if( _forceFrontXAxis.BeginSet( ref value ) ) { try { ForceFrontXAxisChanged?.Invoke( this ); } finally { _forceFrontXAxis.EndSet(); } } }
+			get { if( _fixAxes.BeginGet() ) FixAxes = _fixAxes.Get( this ); return _fixAxes.value; }
+			set { if( _fixAxes.BeginSet( this, ref value ) ) { try { FixAxesChanged?.Invoke( this ); } finally { _fixAxes.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="ForceFrontXAxis"/> property value changes.</summary>
-		public event Action<Import3D> ForceFrontXAxisChanged;
-		ReferenceField<bool> _forceFrontXAxis = true;
+		/// <summary>Occurs when the <see cref="FixAxes"/> property value changes.</summary>
+		public event Action<Import3D> FixAxesChanged;
+		ReferenceField<bool> _fixAxes = true;
 
 		/// <summary>
 		/// Whether to move models to center by result bounding box.
@@ -113,26 +112,77 @@ namespace NeoAxis
 		public Reference<bool> CenterBySize
 		{
 			get { if( _centerBySize.BeginGet() ) CenterBySize = _centerBySize.Get( this ); return _centerBySize.value; }
-			set { if( _centerBySize.BeginSet( ref value ) ) { try { CenterBySizeChanged?.Invoke( this ); } finally { _centerBySize.EndSet(); } } }
+			set { if( _centerBySize.BeginSet( this, ref value ) ) { try { CenterBySizeChanged?.Invoke( this ); } finally { _centerBySize.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CenterBySize"/> property value changes.</summary>
 		public event Action<Import3D> CenterBySizeChanged;
 		ReferenceField<bool> _centerBySize = false;
 
+		public enum SimplifyMethodEnum
+		{
+			None,
+			Careful,
+			Usual,
+		}
+
 		/// <summary>
-		/// The factor to simplify initial geometry. The reduction makes less amount of triangles with some quality decreasing.
+		/// The way to reduce amount of triangles.
 		/// </summary>
-		[DefaultValue( 1.0 )]
-		[Range( 0, 1 )]
+		[DefaultValue( SimplifyMethodEnum.None )]
 		[Category( "Geometry" )]
-		public Reference<double> Simplify
+		public Reference<SimplifyMethodEnum> Simplify
 		{
 			get { if( _simplify.BeginGet() ) Simplify = _simplify.Get( this ); return _simplify.value; }
-			set { if( _simplify.BeginSet( ref value ) ) { try { SimplifyChanged?.Invoke( this ); } finally { _simplify.EndSet(); } } }
+			set { if( _simplify.BeginSet( this, ref value ) ) { try { SimplifyChanged?.Invoke( this ); } finally { _simplify.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Simplify"/> property value changes.</summary>
 		public event Action<Import3D> SimplifyChanged;
-		ReferenceField<double> _simplify = 1.0;
+		ReferenceField<SimplifyMethodEnum> _simplify = SimplifyMethodEnum.None;
+
+		/// <summary>
+		/// The factor to simplify initial geometry. The reduction makes less amount of triangles with some quality decreasing.
+		/// </summary>
+		[DefaultValue( 0.5 )]
+		[Range( 0, 1 )]
+		[Category( "Geometry" )]
+		public Reference<double> SimplifyQuality
+		{
+			get { if( _simplifyQuality.BeginGet() ) SimplifyQuality = _simplifyQuality.Get( this ); return _simplifyQuality.value; }
+			set { if( _simplifyQuality.BeginSet( this, ref value ) ) { try { SimplifyQualityChanged?.Invoke( this ); } finally { _simplifyQuality.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="SimplifyQuality"/> property value changes.</summary>
+		public event Action<Import3D> SimplifyQualityChanged;
+		ReferenceField<double> _simplifyQuality = 0.5;
+
+		///// <summary>
+		///// The factor to simplify initial geometry. The reduction makes less amount of triangles with some quality decreasing.
+		///// </summary>
+		//[DefaultValue( 1.0 )]
+		//[Range( 0, 1 )]
+		//[Category( "Geometry" )]
+		//public Reference<double> Simplify
+		//{
+		//	get { if( _simplify.BeginGet() ) Simplify = _simplify.Get( this ); return _simplify.value; }
+		//	set { if( _simplify.BeginSet( this, ref value ) ) { try { SimplifyChanged?.Invoke( this ); } finally { _simplify.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="Simplify"/> property value changes.</summary>
+		//public event Action<Import3D> SimplifyChanged;
+		//ReferenceField<double> _simplify = 1.0;
+
+		///// <summary>
+		///// The factor to simplify initial geometry. The reduction makes less amount of triangles with some quality decreasing.
+		///// </summary>
+		//[DefaultValue( 1.0 )]
+		//[Range( 0, 1 )]
+		//[Category( "Geometry" )]
+		//public Reference<double> Simplify
+		//{
+		//	get { if( _simplify.BeginGet() ) Simplify = _simplify.Get( this ); return _simplify.value; }
+		//	set { if( _simplify.BeginSet( this, ref value ) ) { try { SimplifyChanged?.Invoke( this ); } finally { _simplify.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="Simplify"/> property value changes.</summary>
+		//public event Action<Import3D> SimplifyChanged;
+		//ReferenceField<double> _simplify = 1.0;
 
 		public enum MergeGeometriesEnum
 		{
@@ -149,7 +199,7 @@ namespace NeoAxis
 		public Reference<MergeGeometriesEnum> MergeGeometries
 		{
 			get { if( _mergeGeometries.BeginGet() ) MergeGeometries = _mergeGeometries.Get( this ); return _mergeGeometries.value; }
-			set { if( _mergeGeometries.BeginSet( ref value ) ) { try { MergeGeometriesChanged?.Invoke( this ); } finally { _mergeGeometries.EndSet(); } } }
+			set { if( _mergeGeometries.BeginSet( this, ref value ) ) { try { MergeGeometriesChanged?.Invoke( this ); } finally { _mergeGeometries.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MergeGeometries"/> property value changes.</summary>
 		public event Action<Import3D> MergeGeometriesChanged;
@@ -163,7 +213,7 @@ namespace NeoAxis
 		//public Reference<bool> Virtualize
 		//{
 		//	get { if( _virtualize.BeginGet() ) Virtualize = _virtualize.Get( this ); return _virtualize.value; }
-		//	set { if( _virtualize.BeginSet( ref value ) ) { try { VirtualizeChanged?.Invoke( this ); } finally { _virtualize.EndSet(); } } }
+		//	set { if( _virtualize.BeginSet( this, ref value ) ) { try { VirtualizeChanged?.Invoke( this ); } finally { _virtualize.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="Virtualize"/> property value changes.</summary>
 		//public event Action<Import3D> VirtualizeChanged;
@@ -175,7 +225,7 @@ namespace NeoAxis
 		//public Reference<double> VirtualizeProxyFactor
 		//{
 		//	get { if( _virtualizeProxyFactor.BeginGet() ) VirtualizeProxyFactor = _virtualizeProxyFactor.Get( this ); return _virtualizeProxyFactor.value; }
-		//	set { if( _virtualizeProxyFactor.BeginSet( ref value ) ) { try { VirtualizeProxyFactorChanged?.Invoke( this ); } finally { _virtualizeProxyFactor.EndSet(); } } }
+		//	set { if( _virtualizeProxyFactor.BeginSet( this, ref value ) ) { try { VirtualizeProxyFactorChanged?.Invoke( this ); } finally { _virtualizeProxyFactor.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="VirtualizeProxyFactor"/> property value changes.</summary>
 		//public event Action<Import3D> VirtualizeProxyFactorChanged;
@@ -190,7 +240,7 @@ namespace NeoAxis
 		//public Reference<bool> Clusters
 		//{
 		//	get { if( _clusters.BeginGet() ) Clusters = _clusters.Get( this ); return _clusters.value; }
-		//	set { if( _clusters.BeginSet( ref value ) ) { try { ClustersChanged?.Invoke( this ); } finally { _clusters.EndSet(); } } }
+		//	set { if( _clusters.BeginSet( this, ref value ) ) { try { ClustersChanged?.Invoke( this ); } finally { _clusters.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="Clusters"/> property value changes.</summary>
 		//public event Action<Import3D> ClustersChanged;
@@ -204,7 +254,7 @@ namespace NeoAxis
 		//public Reference<Range> ClusterCellSize
 		//{
 		//	get { if( _clusterCellSize.BeginGet() ) ClusterCellSize = _clusterCellSize.Get( this ); return _clusterCellSize.value; }
-		//	set { if( _clusterCellSize.BeginSet( ref value ) ) { try { ClusterCellSizeChanged?.Invoke( this ); } finally { _clusterCellSize.EndSet(); } } }
+		//	set { if( _clusterCellSize.BeginSet( this, ref value ) ) { try { ClusterCellSizeChanged?.Invoke( this ); } finally { _clusterCellSize.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="ClusterCellSize"/> property value changes.</summary>
 		//public event Action<Import3D> ClusterCellSizeChanged;
@@ -219,7 +269,7 @@ namespace NeoAxis
 		public Reference<bool> LODs
 		{
 			get { if( _lods.BeginGet() ) LODs = _lods.Get( this ); return _lods.value; }
-			set { if( _lods.BeginSet( ref value ) ) { try { LODsChanged?.Invoke( this ); } finally { _lods.EndSet(); } } }
+			set { if( _lods.BeginSet( this, ref value ) ) { try { LODsChanged?.Invoke( this ); } finally { _lods.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODs"/> property value changes.</summary>
 		public event Action<Import3D> LODsChanged;
@@ -235,7 +285,7 @@ namespace NeoAxis
 		public Reference<int> LODLevels
 		{
 			get { if( _lODLevels.BeginGet() ) LODLevels = _lODLevels.Get( this ); return _lODLevels.value; }
-			set { if( _lODLevels.BeginSet( ref value ) ) { try { LODLevelsChanged?.Invoke( this ); } finally { _lODLevels.EndSet(); } } }
+			set { if( _lODLevels.BeginSet( this, ref value ) ) { try { LODLevelsChanged?.Invoke( this ); } finally { _lODLevels.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODLevels"/> property value changes.</summary>
 		public event Action<Import3D> LODLevelsChanged;
@@ -250,7 +300,7 @@ namespace NeoAxis
 		//public Reference<MeshSimplificationMethod> LODMethod
 		//{
 		//	get { if( _lODMethod.BeginGet() ) LODMethod = _lODMethod.Get( this ); return _lODMethod.value; }
-		//	set { if( _lODMethod.BeginSet( ref value ) ) { try { LODMethodChanged?.Invoke( this ); } finally { _lODMethod.EndSet(); } } }
+		//	set { if( _lODMethod.BeginSet( this, ref value ) ) { try { LODMethodChanged?.Invoke( this ); } finally { _lODMethod.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="LODMethod"/> property value changes.</summary>
 		//public event Action<Import3D> LODMethodChanged;
@@ -266,7 +316,7 @@ namespace NeoAxis
 		public Reference<double> LODReduction
 		{
 			get { if( _lODReduction.BeginGet() ) LODReduction = _lODReduction.Get( this ); return _lODReduction.value; }
-			set { if( _lODReduction.BeginSet( ref value ) ) { try { LODReductionChanged?.Invoke( this ); } finally { _lODReduction.EndSet(); } } }
+			set { if( _lODReduction.BeginSet( this, ref value ) ) { try { LODReductionChanged?.Invoke( this ); } finally { _lODReduction.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODReduction"/> property value changes.</summary>
 		public event Action<Import3D> LODReductionChanged;
@@ -282,7 +332,7 @@ namespace NeoAxis
 		public Reference<double> LODDistance
 		{
 			get { if( _lODDistance.BeginGet() ) LODDistance = _lODDistance.Get( this ); return _lODDistance.value; }
-			set { if( _lODDistance.BeginSet( ref value ) ) { try { LODDistanceChanged?.Invoke( this ); } finally { _lODDistance.EndSet(); } } }
+			set { if( _lODDistance.BeginSet( this, ref value ) ) { try { LODDistanceChanged?.Invoke( this ); } finally { _lODDistance.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODDistance"/> property value changes.</summary>
 		public event Action<Import3D> LODDistanceChanged;
@@ -295,11 +345,10 @@ namespace NeoAxis
 		[DisplayName( "LOD Scale" )]
 		[Category( "Geometry" )]
 		[Range( 0, 6, RangeAttribute.ConvenientDistributionEnum.Exponential )]
-		//[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
 		public Reference<double> LODScale
 		{
 			get { if( _lODScale.BeginGet() ) LODScale = _lODScale.Get( this ); return _lODScale.value; }
-			set { if( _lODScale.BeginSet( ref value ) ) { try { LODScaleChanged?.Invoke( this ); } finally { _lODScale.EndSet(); } } }
+			set { if( _lODScale.BeginSet( this, ref value ) ) { try { LODScaleChanged?.Invoke( this ); } finally { _lODScale.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODScale"/> property value changes.</summary>
 		[DisplayName( "LOD Scale Changed" )]
@@ -307,19 +356,51 @@ namespace NeoAxis
 		ReferenceField<double> _lODScale = 1.0;
 
 		/// <summary>
-		/// Whether to generate a voxel grid for a last LOD.
+		/// The distance multiplier when determining the level of detail for shadows. Set 100 or more to always use the best LOD for shadows.
 		/// </summary>
-		[DefaultValue( true )]
+		[DefaultValue( 1.0 )]
+		[DisplayName( "LOD Scale Shadows" )]
+		[Category( "Geometry" )]
+		[Range( 0, 6, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		public Reference<double> LODScaleShadows
+		{
+			get { if( _lODScaleShadows.BeginGet() ) LODScaleShadows = _lODScaleShadows.Get( this ); return _lODScaleShadows.value; }
+			set { if( _lODScaleShadows.BeginSet( this, ref value ) ) { try { LODScaleShadowsChanged?.Invoke( this ); } finally { _lODScaleShadows.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LODScaleShadows"/> property value changes.</summary>
+		[DisplayName( "LOD Scale Shadows Changed" )]
+		public event Action<Import3D> LODScaleShadowsChanged;
+		ReferenceField<double> _lODScaleShadows = 1.0;
+
+		/// <summary>
+		/// Whether to generate a voxel grid for a last LOD. In auto mode voxel LOD is disabled when imported mesh has a skeleton.
+		/// </summary>
+		[DefaultValue( AutoTrueFalse.Auto )]
 		[DisplayName( "LOD Voxels" )]
 		[Category( "Geometry" )]
-		public Reference<bool> LODVoxels
+		public Reference<AutoTrueFalse> LODVoxels
 		{
 			get { if( _lODVoxels.BeginGet() ) LODVoxels = _lODVoxels.Get( this ); return _lODVoxels.value; }
-			set { if( _lODVoxels.BeginSet( ref value ) ) { try { LODVoxelsChanged?.Invoke( this ); } finally { _lODVoxels.EndSet(); } } }
+			set { if( _lODVoxels.BeginSet( this, ref value ) ) { try { LODVoxelsChanged?.Invoke( this ); } finally { _lODVoxels.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODVoxels"/> property value changes.</summary>
 		public event Action<Import3D> LODVoxelsChanged;
-		ReferenceField<bool> _lODVoxels = true;
+		ReferenceField<AutoTrueFalse> _lODVoxels = AutoTrueFalse.Auto;
+
+		///// <summary>
+		///// Whether to generate a voxel grid for a last LOD.
+		///// </summary>
+		//[DefaultValue( true )]
+		//[DisplayName( "LOD Voxels" )]
+		//[Category( "Geometry" )]
+		//public Reference<bool> LODVoxels
+		//{
+		//	get { if( _lODVoxels.BeginGet() ) LODVoxels = _lODVoxels.Get( this ); return _lODVoxels.value; }
+		//	set { if( _lODVoxels.BeginSet( this, ref value ) ) { try { LODVoxelsChanged?.Invoke( this ); } finally { _lODVoxels.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="LODVoxels"/> property value changes.</summary>
+		//public event Action<Import3D> LODVoxelsChanged;
+		//ReferenceField<bool> _lODVoxels = true;
 
 		/// <summary>
 		/// The size of a voxel grid of a last LOD.
@@ -330,7 +411,7 @@ namespace NeoAxis
 		public Reference<VoxelGridSizeEnum> LODVoxelGrid
 		{
 			get { if( _lODVoxelGrid.BeginGet() ) LODVoxelGrid = _lODVoxelGrid.Get( this ); return _lODVoxelGrid.value; }
-			set { if( _lODVoxelGrid.BeginSet( ref value ) ) { try { LODVoxelGridChanged?.Invoke( this ); } finally { _lODVoxelGrid.EndSet(); } } }
+			set { if( _lODVoxelGrid.BeginSet( this, ref value ) ) { try { LODVoxelGridChanged?.Invoke( this ); } finally { _lODVoxelGrid.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODVoxelGrid"/> property value changes.</summary>
 		public event Action<Import3D> LODVoxelGridChanged;
@@ -346,14 +427,14 @@ namespace NeoAxis
 		public Reference<double> LODVoxelThinFactor
 		{
 			get { if( _lODVoxelThinFactor.BeginGet() ) LODVoxelThinFactor = _lODVoxelThinFactor.Get( this ); return _lODVoxelThinFactor.value; }
-			set { if( _lODVoxelThinFactor.BeginSet( ref value ) ) { try { LODVoxelThinFactorChanged?.Invoke( this ); } finally { _lODVoxelThinFactor.EndSet(); } } }
+			set { if( _lODVoxelThinFactor.BeginSet( this, ref value ) ) { try { LODVoxelThinFactorChanged?.Invoke( this ); } finally { _lODVoxelThinFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODVoxelThinFactor"/> property value changes.</summary>
 		public event Action<Import3D> LODVoxelThinFactorChanged;
 		ReferenceField<double> _lODVoxelThinFactor = 1.0; //0.5;
 
 		/// <summary>
-		/// Whether to apply the material opacity during the voxel calculation.
+		/// Whether to apply the material opacity during the voxel calculation. The baked opacity works faster. Not baked mode supports 4 transparency steps, instead of baked which supports 1 transparency step.
 		/// </summary>
 		[DefaultValue( true )]
 		[DisplayName( "LOD Voxel Bake Opacity" )]
@@ -361,7 +442,7 @@ namespace NeoAxis
 		public Reference<bool> LODVoxelBakeOpacity
 		{
 			get { if( _lODVoxelBakeOpacity.BeginGet() ) LODVoxelBakeOpacity = _lODVoxelBakeOpacity.Get( this ); return _lODVoxelBakeOpacity.value; }
-			set { if( _lODVoxelBakeOpacity.BeginSet( ref value ) ) { try { LODVoxelBakeOpacityChanged?.Invoke( this ); } finally { _lODVoxelBakeOpacity.EndSet(); } } }
+			set { if( _lODVoxelBakeOpacity.BeginSet( this, ref value ) ) { try { LODVoxelBakeOpacityChanged?.Invoke( this ); } finally { _lODVoxelBakeOpacity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODVoxelBakeOpacity"/> property value changes.</summary>
 		public event Action<Import3D> LODVoxelBakeOpacityChanged;
@@ -376,7 +457,7 @@ namespace NeoAxis
 		public Reference<bool> LODVoxelOptimizeMaterials
 		{
 			get { if( _lODVoxelOptimizeMaterials.BeginGet() ) LODVoxelOptimizeMaterials = _lODVoxelOptimizeMaterials.Get( this ); return _lODVoxelOptimizeMaterials.value; }
-			set { if( _lODVoxelOptimizeMaterials.BeginSet( ref value ) ) { try { LODVoxelOptimizeMaterialsChanged?.Invoke( this ); } finally { _lODVoxelOptimizeMaterials.EndSet(); } } }
+			set { if( _lODVoxelOptimizeMaterials.BeginSet( this, ref value ) ) { try { LODVoxelOptimizeMaterialsChanged?.Invoke( this ); } finally { _lODVoxelOptimizeMaterials.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODVoxelOptimizeMaterials"/> property value changes.</summary>
 		public event Action<Import3D> LODVoxelOptimizeMaterialsChanged;
@@ -392,7 +473,7 @@ namespace NeoAxis
 		public Reference<double> LODVoxelFillHolesDistance
 		{
 			get { if( _lODVoxelFillHolesDistance.BeginGet() ) LODVoxelFillHolesDistance = _lODVoxelFillHolesDistance.Get( this ); return _lODVoxelFillHolesDistance.value; }
-			set { if( _lODVoxelFillHolesDistance.BeginSet( ref value ) ) { try { LODVoxelFillHolesDistanceChanged?.Invoke( this ); } finally { _lODVoxelFillHolesDistance.EndSet(); } } }
+			set { if( _lODVoxelFillHolesDistance.BeginSet( this, ref value ) ) { try { LODVoxelFillHolesDistanceChanged?.Invoke( this ); } finally { _lODVoxelFillHolesDistance.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODVoxelFillHolesDistance"/> property value changes.</summary>
 		public event Action<Import3D> LODVoxelFillHolesDistanceChanged;
@@ -406,7 +487,7 @@ namespace NeoAxis
 		//public Reference<VertexFormatEnum> VertexFormat
 		//{
 		//	get { if( _vertexFormat.BeginGet() ) VertexFormat = _vertexFormat.Get( this ); return _vertexFormat.value; }
-		//	set { if( _vertexFormat.BeginSet( ref value ) ) { try { VertexFormatChanged?.Invoke( this ); } finally { _vertexFormat.EndSet(); } } }
+		//	set { if( _vertexFormat.BeginSet( this, ref value ) ) { try { VertexFormatChanged?.Invoke( this ); } finally { _vertexFormat.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="VertexFormat"/> property value changes.</summary>
 		//public event Action<Import3D> VertexFormatChanged;
@@ -420,7 +501,7 @@ namespace NeoAxis
 		//public Reference<bool> CompressTextureCoordinates
 		//{
 		//	get { if( _compressTextureCoordinates.BeginGet() ) CompressTextureCoordinates = _compressTextureCoordinates.Get( this ); return _compressTextureCoordinates.value; }
-		//	set { if( _compressTextureCoordinates.BeginSet( ref value ) ) { try { CompressTextureCoordinatesChanged?.Invoke( this ); } finally { _compressTextureCoordinates.EndSet(); } } }
+		//	set { if( _compressTextureCoordinates.BeginSet( this, ref value ) ) { try { CompressTextureCoordinatesChanged?.Invoke( this ); } finally { _compressTextureCoordinates.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="CompressTextureCoordinates"/> property value changes.</summary>
 		//public event Action<Import3D> CompressTextureCoordinatesChanged;
@@ -435,7 +516,7 @@ namespace NeoAxis
 		//public Reference<bool> UVUnwrap
 		//{
 		//	get { if( _uVUnwrap.BeginGet() ) UVUnwrap = _uVUnwrap.Get( this ); return _uVUnwrap.value; }
-		//	set { if( _uVUnwrap.BeginSet( ref value ) ) { try { UVUnwrapChanged?.Invoke( this ); } finally { _uVUnwrap.EndSet(); } } }
+		//	set { if( _uVUnwrap.BeginSet( this, ref value ) ) { try { UVUnwrapChanged?.Invoke( this ); } finally { _uVUnwrap.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="UVUnwrap"/> property value changes.</summary>
 		//public event Action<Import3D> UVUnwrapChanged;
@@ -457,7 +538,7 @@ namespace NeoAxis
 		public Reference<TransparentMaterialBlendingEnum> TransparentMaterialBlending
 		{
 			get { if( _transparentMaterialFormat.BeginGet() ) TransparentMaterialBlending = _transparentMaterialFormat.Get( this ); return _transparentMaterialFormat.value; }
-			set { if( _transparentMaterialFormat.BeginSet( ref value ) ) { try { TransparentMaterialsBlendingChanged?.Invoke( this ); } finally { _transparentMaterialFormat.EndSet(); } } }
+			set { if( _transparentMaterialFormat.BeginSet( this, ref value ) ) { try { TransparentMaterialsBlendingChanged?.Invoke( this ); } finally { _transparentMaterialFormat.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TransparentMaterialBlending"/> property value changes.</summary>
 		public event Action<Import3D> TransparentMaterialsBlendingChanged;
@@ -471,7 +552,7 @@ namespace NeoAxis
 		public Reference<bool> FlipUVs
 		{
 			get { if( _flipUVs.BeginGet() ) FlipUVs = _flipUVs.Get( this ); return _flipUVs.value; }
-			set { if( _flipUVs.BeginSet( ref value ) ) { try { FlipUVsChanged?.Invoke( this ); } finally { _flipUVs.EndSet(); } } }
+			set { if( _flipUVs.BeginSet( this, ref value ) ) { try { FlipUVsChanged?.Invoke( this ); } finally { _flipUVs.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FlipUVs"/> property value changes.</summary>
 		public event Action<Import3D> FlipUVsChanged;
@@ -485,7 +566,7 @@ namespace NeoAxis
 		public Reference<bool> DeleteUnusedMaterials
 		{
 			get { if( _deleteUnusedMaterials.BeginGet() ) DeleteUnusedMaterials = _deleteUnusedMaterials.Get( this ); return _deleteUnusedMaterials.value; }
-			set { if( _deleteUnusedMaterials.BeginSet( ref value ) ) { try { DeleteUnusedMaterialsChanged?.Invoke( this ); } finally { _deleteUnusedMaterials.EndSet(); } } }
+			set { if( _deleteUnusedMaterials.BeginSet( this, ref value ) ) { try { DeleteUnusedMaterialsChanged?.Invoke( this ); } finally { _deleteUnusedMaterials.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DeleteUnusedMaterials"/> property value changes.</summary>
 		public event Action<Import3D> DeleteUnusedMaterialsChanged;
@@ -499,7 +580,7 @@ namespace NeoAxis
 		public Reference<bool> MaterialDisplacement
 		{
 			get { if( _materialDisplacement.BeginGet() ) MaterialDisplacement = _materialDisplacement.Get( this ); return _materialDisplacement.value; }
-			set { if( _materialDisplacement.BeginSet( ref value ) ) { try { MaterialDisplacementChanged?.Invoke( this ); } finally { _materialDisplacement.EndSet(); } } }
+			set { if( _materialDisplacement.BeginSet( this, ref value ) ) { try { MaterialDisplacementChanged?.Invoke( this ); } finally { _materialDisplacement.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MaterialDisplacement"/> property value changes.</summary>
 		public event Action<Import3D> MaterialDisplacementChanged;
@@ -509,11 +590,11 @@ namespace NeoAxis
 		/// Whether to optimize the mesh without losing quality. The optimization includes the merging of almost identical vertices, optimizing for vertex cache, for overdraw and for vertex fetch.
 		/// </summary>
 		[DefaultValue( true )]
-		[Category( "Geometry Advanced" )]
+		[Category( "Advanced" )]//[Category( "Geometry Advanced" )]
 		public Reference<bool> Optimize
 		{
 			get { if( _optimize.BeginGet() ) Optimize = _optimize.Get( this ); return _optimize.value; }
-			set { if( _optimize.BeginSet( ref value ) ) { try { OptimizeChanged?.Invoke( this ); } finally { _optimize.EndSet(); } } }
+			set { if( _optimize.BeginSet( this, ref value ) ) { try { OptimizeChanged?.Invoke( this ); } finally { _optimize.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Optimize"/> property value changes.</summary>
 		public event Action<Import3D> OptimizeChanged;
@@ -523,12 +604,12 @@ namespace NeoAxis
 		/// The threshold value when optimizes the mesh without losing quality. The parameter affects merging of almost identical vertices.
 		/// </summary>
 		[DefaultValue( 0.001 )]
-		[Category( "Geometry Advanced" )]
+		[Category( "Advanced" )]//[Category( "Geometry Advanced" )]
 		[Range( 0.0, 0.01, RangeAttribute.ConvenientDistributionEnum.Exponential, 5 )]
 		public Reference<double> OptimizeThreshold
 		{
 			get { if( _optimizeThreshold.BeginGet() ) OptimizeThreshold = _optimizeThreshold.Get( this ); return _optimizeThreshold.value; }
-			set { if( _optimizeThreshold.BeginSet( ref value ) ) { try { OptimizeThresholdChanged?.Invoke( this ); } finally { _optimizeThreshold.EndSet(); } } }
+			set { if( _optimizeThreshold.BeginSet( this, ref value ) ) { try { OptimizeThresholdChanged?.Invoke( this ); } finally { _optimizeThreshold.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="OptimizeThreshold"/> property value changes.</summary>
 		public event Action<Import3D> OptimizeThresholdChanged;
@@ -539,15 +620,33 @@ namespace NeoAxis
 		/// Whether to compress normals, tangents, colors, texture coordinates and blend weights from Float32 to Half16.
 		/// </summary>
 		[DefaultValue( true )]
-		[Category( "Geometry Advanced" )]
+		[Category( "Advanced" )]//[Category( "Geometry Advanced" )]
 		public Reference<bool> Compress
 		{
 			get { if( _compress.BeginGet() ) Compress = _compress.Get( this ); return _compress.value; }
-			set { if( _compress.BeginSet( ref value ) ) { try { CompressChanged?.Invoke( this ); } finally { _compress.EndSet(); } } }
+			set { if( _compress.BeginSet( this, ref value ) ) { try { CompressChanged?.Invoke( this ); } finally { _compress.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Compress"/> property value changes.</summary>
 		public event Action<Import3D> CompressChanged;
 		ReferenceField<bool> _compress = true;
+
+		///// <summary>
+		///// Whether to reset rotation and scale of bones and apply to key frames.
+		///// </summary>
+		//[DefaultValue( true )]
+		//[Category( "Advanced" )]
+		//public Reference<bool> NormalizeSkeleton
+		//{
+		//	get { if( _normalizeSkeleton.BeginGet() ) NormalizeSkeleton = _normalizeSkeleton.Get( this ); return _normalizeSkeleton.value; }
+		//	set { if( _normalizeSkeleton.BeginSet( this, ref value ) ) { try { NormalizeSkeletonChanged?.Invoke( this ); } finally { _normalizeSkeleton.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="NormalizeSkeleton"/> property value changes.</summary>
+		//public event Action<Import3D> NormalizeSkeletonChanged;
+		//ReferenceField<bool> _normalizeSkeleton = true;
+
+		[Serialize]
+		[Browsable( false )]
+		public Transform EditorCameraTransform;
 
 		/////////////////////////////////////////
 
@@ -575,13 +674,14 @@ namespace NeoAxis
 				case nameof( LODReduction ):
 					if( !LODs || LODLevels.Value < 2 )
 						skip = true;
-					if( LODLevels.Value == 2 && LODVoxels )
+					if( LODLevels.Value == 2 && LODVoxels.Value != AutoTrueFalse.False )
 						skip = true;
 					break;
 
 				case nameof( LODLevels ):
 				case nameof( LODDistance ):
 				case nameof( LODScale ):
+				case nameof( LODScaleShadows ):
 				case nameof( LODVoxels ):
 					if( !LODs )
 						skip = true;
@@ -593,7 +693,12 @@ namespace NeoAxis
 				case nameof( LODVoxelBakeOpacity ):
 				case nameof( LODVoxelOptimizeMaterials ):
 				case nameof( LODVoxelFillHolesDistance ):
-					if( !LODs || !LODVoxels )
+					if( !LODs || LODVoxels.Value == AutoTrueFalse.False )
+						skip = true;
+					break;
+
+				case nameof( SimplifyQuality ):
+					if( Simplify.Value == SimplifyMethodEnum.None )
 						skip = true;
 					break;
 
@@ -615,54 +720,54 @@ namespace NeoAxis
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			if( !insideDoUpdate && EnabledInHierarchy && IsNeedUpdate() )
-			{
-				if( !DoUpdate( null, out string error ) )
-				{
-					var virtualFileName = ParentRoot.HierarchyController?.CreatedByResource?.Owner.Name;
-					if( string.IsNullOrEmpty( virtualFileName ) )
-						virtualFileName = "NO FILE NAME";
-					var error2 = $"Unable to load or import resource \"{virtualFileName}\".\r\n\r\n" + error;
-					Log.Error( error2 );
-					return;
-				}
+			//autoupdate is disabled because big files take a lot of time
+			//if( !insideDoUpdate && EnabledInHierarchy && IsNeedUpdate() )
+			//{
+			//	if( !DoUpdate( null, out string error ) )
+			//	{
+			//		var virtualFileName = ParentRoot.HierarchyController?.CreatedByResource?.Owner.Name;
+			//		if( string.IsNullOrEmpty( virtualFileName ) )
+			//			virtualFileName = "NO FILE NAME";
+			//		var error2 = $"Unable to load or import resource \"{virtualFileName}\".\r\n\r\n" + error;
+			//		Log.Error( error2 );
+			//		return;
+			//	}
 
-				//save to file
-				if( HierarchyController != null && HierarchyController.CreatedByResource != null &&
-					HierarchyController.CreatedByResource.InstanceType == Resource.InstanceType.Resource &&
-					HierarchyController.CreatedByResource.Owner.LoadFromFile )
-				{
-					var resource = HierarchyController.CreatedByResource.Owner;
-					string virtualPath = resource.Name + resource.GetSaveAddFileExtension();
-					string realPath = VirtualPathUtility.GetRealPathByVirtual( virtualPath );
+			//	//save to file
+			//	if( HierarchyController != null && HierarchyController.CreatedByResource != null &&
+			//		HierarchyController.CreatedByResource.InstanceType == Resource.InstanceType.Resource &&
+			//		HierarchyController.CreatedByResource.Owner.LoadFromFile )
+			//	{
+			//		var resource = HierarchyController.CreatedByResource.Owner;
+			//		string virtualPath = resource.Name + resource.GetSaveAddFileExtension();
+			//		string realPath = VirtualPathUtility.GetRealPathByVirtual( virtualPath );
 
-					if( !File.Exists( realPath ) && Components.Count != 0 )
-					{
-						if( !ComponentUtility.SaveComponentToFile( this, realPath, null, out error ) )
-						{
-							Log.Warning( error );
-							return;
-						}
-					}
-				}
-			}
+			//		if( !File.Exists( realPath ) && Components.Count != 0 )
+			//		{
+			//			if( !ComponentUtility.SaveComponentToFile( this, realPath, null, out error ) )
+			//			{
+			//				Log.Warning( error );
+			//				return;
+			//			}
+			//		}
+			//	}
+			//}
 		}
 
-		public bool IsNeedUpdate()
-		{
-			if( EngineApp.IsEditor )
-			{
-				if( Parent == null )
-				{
-					if( Components.Count == 0 )
-						return true;
+		//public bool IsNeedUpdate()
+		//{
+		//	if( EngineApp.IsEditor )
+		//	{
+		//		if( Parent == null )
+		//		{
+		//			if( Components.Count == 0 )
+		//				return true;
 
-					//!!!!хотя проверять тоже долго ведь. варианты: в дейплойменте сорцы удалить (сделать пустые файлы)
-				}
-			}
-
-			return false;
-		}
+		//			//!!!!хотя проверять тоже долго ведь. варианты: в дейплойменте сорцы удалить (сделать пустые файлы)
+		//		}
+		//	}
+		//	return false;
+		//}
 
 		/// <summary>
 		/// Represents settings for reimporting data of <see cref="Import3D"/>.
@@ -676,11 +781,21 @@ namespace NeoAxis
 
 			[DefaultValue( true )]
 			[Category( "Options" )]
-			public bool UpdateMeshes { get; set; } = true;
+			//[Description( "" )]
+			public bool UpdateMaterialsOnMeshes { get; set; } = true;
 
-			[DefaultValue( true )]
-			[Category( "Options" )]
-			public bool UpdateObjectsInSpace { get; set; } = true;
+			//[DefaultValue( true )]
+			//[Category( "Options" )]
+			//public bool UpdateMeshes { get; set; } = true;
+
+			//[DefaultValue( true )]
+			//[Category( "Options" )]
+			//[DisplayName( "Update Mesh LODs" )]
+			//public bool UpdateMeshLODs { get; set; } = true;
+
+			//[DefaultValue( true )]
+			//[Category( "Options" )]
+			//public bool UpdateObjectsInSpace { get; set; } = true;
 
 			[DefaultValue( false )]
 			[Category( "Options" )]
@@ -696,7 +811,7 @@ namespace NeoAxis
 
 		public bool DoUpdate( ReimportSettings reimportSettings, out string error )
 		{
-			ScreenNotifications.StickyNotificationItem notification = EngineApp.IsEditor ? ScreenNotifications.ShowSticky( "Importing..." ) : null;
+			ScreenNotifications.IStickyNotificationItem notification = EngineApp.IsEditor ? ScreenNotifications.ShowSticky( "Importing..." ) : null;
 
 			try
 			{
@@ -716,19 +831,25 @@ namespace NeoAxis
 				{
 					var settings = new ImportGeneral.Settings();
 					settings.updateMaterials = reimportSettings.UpdateMaterials;
-					settings.updateMeshes = reimportSettings.UpdateMeshes;
-					settings.updateObjectsInSpace = reimportSettings.UpdateObjectsInSpace;
+					settings.updateMaterialsOnMeshes = reimportSettings.UpdateMaterialsOnMeshes;
+					//settings.updateMeshes = reimportSettings.UpdateMeshes;
+					//settings.updateMeshLODs = reimportSettings.UpdateMeshLODs;
+					//settings.updateObjectsInSpace = reimportSettings.UpdateObjectsInSpace;
 					settings.resetCollision = reimportSettings.ResetCollision;
 					settings.resetEditorSettings = reimportSettings.ResetEditorSettings;
 
 					//save binding of materials settings
-					if( !settings.updateMaterials )
+					if( !settings.updateMaterialsOnMeshes )
 					{
 						var c = GetComponent( "Mesh" );
 						if( c != null )
 						{
 							foreach( var geometry in c.GetComponents<MeshGeometry>( checkChildren: true ) )
 							{
+								////!!!!
+								//if( !settings.updateMeshLODs && geometry.FindParent<MeshLevelOfDetail>() != null )
+								//	continue;
+
 								var key = geometry.GetPathFromRoot();
 								if( !string.IsNullOrEmpty( key ) )
 								{
@@ -749,6 +870,10 @@ namespace NeoAxis
 						{
 							foreach( var geometry in c.GetComponents<MeshGeometry>( checkChildren: true ) )
 							{
+								////!!!!
+								//if( !settings.updateMeshLODs && geometry.FindParent<MeshLevelOfDetail>() != null )
+								//	continue;
+
 								var key = geometry.GetPathFromRoot();
 								if( !string.IsNullOrEmpty( key ) )
 								{
@@ -766,13 +891,15 @@ namespace NeoAxis
 						}
 					}
 
-					//save collision of meshes
-					if( !settings.resetCollision )
+					//save collision of meshes and remove
+					//if( !settings.resetCollision )
+					//{
+					foreach( var mesh in GetMeshes( false ) )
 					{
-						foreach( var mesh in GetMeshes( false ) )
+						var collision = mesh.GetComponent<RigidBody>( "Collision Definition" );
+						if( collision != null )
 						{
-							var collision = mesh.GetComponent<RigidBody>( "Collision Definition" );
-							if( collision != null )
+							if( !settings.resetCollision )
 							{
 								var key = mesh.GetPathFromRoot();
 								if( !string.IsNullOrEmpty( key ) )
@@ -781,8 +908,27 @@ namespace NeoAxis
 									settings.collisionToRestore[ key ] = (RigidBody)collision.Clone();
 								}
 							}
+
+							collision.RemoveFromParent( false );
 						}
 					}
+					//}
+
+					//if( settings.updateMeshLODs )
+					//{
+					//	var c = GetComponent( "Mesh" );
+					//	if( c != null )
+					//	{
+					//		foreach( var lod in c.GetComponents<MeshLevelOfDetail>( checkChildren: true ) )
+					//			lod.RemoveFromParent( false );
+					//	}
+					//	c = GetComponent( "Meshes" );
+					//	if( c != null )
+					//	{
+					//		foreach( var lod in c.GetComponents<MeshLevelOfDetail>( checkChildren: true ) )
+					//			lod.RemoveFromParent( false );
+					//	}
+					//}
 
 					//save editor settings
 					if( !settings.resetEditorSettings )
@@ -815,17 +961,17 @@ namespace NeoAxis
 						}
 					}
 
-					//remove old objects
-					if( settings.updateObjectsInSpace )
-					{
-						var c = GetComponent( "Object In Space" );
-						if( c != null )
-							RemoveComponent( c, false );
-						c = GetComponent( "Objects In Space" );
-						if( c != null )
-							RemoveComponent( c, false );
-					}
-					if( settings.updateMeshes )
+					////remove old objects
+					//if( settings.updateObjectsInSpace )
+					//{
+					//	var c = GetComponent( "Object In Space" );
+					//	if( c != null )
+					//		RemoveComponent( c, false );
+					//	c = GetComponent( "Objects In Space" );
+					//	if( c != null )
+					//		RemoveComponent( c, false );
+					//}
+					//if( settings.updateMeshes )
 					{
 						var c = GetComponent( "Mesh" );
 						if( c != null )
@@ -859,9 +1005,8 @@ namespace NeoAxis
 					{
 						//FBX
 
-						//settings.loadAnimations = true;
-						//!!!!to options?
-						settings.frameStep = .25;
+						////settings.loadAnimations = true;
+						//settings.frameStep = 0.25;
 
 						EditorAssemblyInterface.Instance.ImportFBX( settings, out error );
 						//Import.FBX.ImportFBX.DoImport( settings, out error );
@@ -880,8 +1025,11 @@ namespace NeoAxis
 							return false;
 					}
 
+					//if( settings.updateMeshes )
+					//{
 					if( CenterBySize )
 						DoCenterBySize();
+					//}
 
 					//if( UVUnwrap )
 					//{
@@ -890,22 +1038,33 @@ namespace NeoAxis
 					//}
 
 					//simplify
-					if( Simplify.Value < 1 )
+					//if( settings.updateMeshes )
+					//{
+
+					if( Simplify.Value != SimplifyMethodEnum.None )//if( Simplify.Value < 1 )
 					{
-						if( !GenerateLODsAndReductLOD0( true, out error ) )
+						if( !GenerateLODsOrReductLOD0( true, out error ) )
 							return false;
 					}
+
+					//}
 
 					//merge equal vertices, remove extra triangles, 
+					//if( settings.updateMeshes )
+					//{
 					if( Optimize && OptimizeThreshold.Value >= 0 )
 						OptimizeByThreshold( false );
+					//}
 
 					//generate LODs
+					//if( settings.updateMeshLODs )
+					//{
 					if( LODs )
 					{
-						if( !GenerateLODsAndReductLOD0( false, out error ) )
+						if( !GenerateLODsOrReductLOD0( false, out error ) )
 							return false;
 					}
+					//}
 
 					////generate LODs and optimize
 					//if( LODs || Simplify.Value < 1 )
@@ -915,29 +1074,56 @@ namespace NeoAxis
 					//}
 
 					//optimize for vertex cache
+					//if( settings.updateMeshLODs )
+					//{
 					if( Optimize && OptimizeThreshold.Value >= 0 )
 						OptimizeByThreshold( true );
+					//}
 
 					//compress vertices
 					if( Compress )//&& !Virtualize )
 					{
+						//if( settings.updateMeshes )
 						CompressVertices( false );
+						//if( settings.updateMeshLODs )
 						CompressVertices( true );
 					}
 
 					//optimize
 					if( Optimize )//&& !Virtualize )
-						OptimizeCaches();
+					{
+						//if( settings.updateMeshes )
+						OptimizeCaches( false );
+						//if( settings.updateMeshLODs )
+						OptimizeCaches( true );
+					}
+					//if( Optimize )//&& !Virtualize )
+					//	OptimizeCaches();
 
 					//merge to multimaterial
 					if( MergeGeometries.Value == MergeGeometriesEnum.MultiMaterial )
 					{
-						var meshes = GetMeshes( false );
-						meshes.AddRange( GetMeshes( true ) );
-
-						foreach( var mesh in meshes )
-							MergeToMultiMaterial( mesh );
+						//if( settings.updateMeshes )
+						{
+							var meshes = GetMeshes( false );
+							foreach( var mesh in meshes )
+								MergeToMultiMaterial( mesh );
+						}
+						//if( settings.updateMeshLODs )
+						{
+							var meshes = GetMeshes( true );
+							foreach( var mesh in meshes )
+								MergeToMultiMaterial( mesh );
+						}
 					}
+					//if( MergeGeometries.Value == MergeGeometriesEnum.MultiMaterial )
+					//{
+					//	var meshes = GetMeshes( false );
+					//	meshes.AddRange( GetMeshes( true ) );
+
+					//	foreach( var mesh in meshes )
+					//		MergeToMultiMaterial( mesh );
+					//}
 
 					////calculate virtualized data
 					//if( Virtualize )
@@ -981,7 +1167,7 @@ namespace NeoAxis
 							}
 						}
 
-						again:
+again:
 						foreach( var material in GetComponents<Material>( false, true ) )
 						{
 							if( !usedMaterials.Contains( material ) )
@@ -994,7 +1180,7 @@ namespace NeoAxis
 					}
 
 					//restore materials of mesh geometries
-					if( !settings.updateMaterials )
+					if( !settings.updateMaterialsOnMeshes )
 					{
 						foreach( var item in settings.meshGeometryMaterialsToRestore )
 						{
@@ -1038,7 +1224,6 @@ namespace NeoAxis
 					//save editor settings
 					if( !settings.resetEditorSettings )
 					{
-
 						foreach( var item in settings.meshEditorSeetingsToRestore )
 						{
 							var key = item.Key;
@@ -1065,6 +1250,11 @@ namespace NeoAxis
 							}
 						}
 					}
+
+					//reset editor settings
+					if( settings.resetEditorSettings )
+						EditorCameraTransform = null;
+
 				}
 				finally
 				{
@@ -1103,7 +1293,7 @@ namespace NeoAxis
 					//select window with mesh or select window with root object
 					var selectObject = mesh != null ? (Component)mesh : this;
 
-					EditorDocumentConfiguration = KryptonConfigGenerator.CreateEditorDocumentXmlConfiguration( toSelect, selectObject );
+					EditorDocumentConfiguration = EditorAPI.CreateEditorDocumentXmlConfiguration( toSelect, selectObject );
 
 					//update windows
 					if( EngineApp.IsEditor )
@@ -1126,7 +1316,7 @@ namespace NeoAxis
 
 							//select window
 							var windows = EditorAPI.FindDocumentWindowsWithObject( selectObject );
-							if( windows.Count != 0 )
+							if( windows.Length != 0 )
 								EditorAPI.SelectDockWindow( windows[ 0 ] );
 						}
 
@@ -1323,7 +1513,7 @@ namespace NeoAxis
 			return result;
 		}
 
-		bool GenerateLODsAndReductLOD0( bool simplifyLOD0, out string error )
+		bool GenerateLODsOrReductLOD0( bool simplifyLOD0, out string error )
 		{
 			error = "";
 
@@ -1347,8 +1537,11 @@ namespace NeoAxis
 				var lodLevels = LODs.Value ? LODLevels.Value : 1;
 
 				var voxelLodIndex = -1;
-				if( LODs && LODVoxels )// LODBillboardMode.Value != MeshGeometry.BillboardDataModeEnum.None )
+				if( LODs && ( LODVoxels.Value == AutoTrueFalse.True || LODVoxels.Value == AutoTrueFalse.Auto && !sourceMesh.Skeleton.ReferenceOrValueSpecified ) )
+				{
+					//if( LODs && LODVoxels )// LODBillboardMode.Value != MeshGeometry.BillboardDataModeEnum.None )
 					voxelLodIndex = lodLevels - 1;
+				}
 
 				var meshes = new List<Mesh>();
 				meshes.Add( sourceMesh );
@@ -1361,7 +1554,12 @@ namespace NeoAxis
 
 						foreach( var sourceGeometry in sourceGeometries )
 						{
-							var carefully = lodIndex != 0 && LODReduction.Value == 0;
+							bool carefully;
+							if( lodIndex == 0 )
+								carefully = Simplify.Value == SimplifyMethodEnum.Careful;
+							else
+								carefully = LODReduction.Value == 0;
+							//var carefully = lodIndex != 0 && LODReduction.Value == 0;
 
 							var voxelLOD = voxelLodIndex != -1 && lodIndex == lodLevels - 1;
 
@@ -1384,7 +1582,7 @@ namespace NeoAxis
 							{
 								//simplify
 
-								if( !sourceGeometry.CalculateSimplification( carefully, lodIndex /*LODMethod*/, currentQuality, out var newVertices, out var newVertexStructure, out var newIndices, out error ) )
+								if( !sourceGeometry.CalculateSimplification( carefully, lodIndex /*LODMethod*/, currentQuality, SimplifyQuality, out var newVertices, out var newVertexStructure, out var newIndices, out error ) )
 									return false;
 
 								//create mesh geometry
@@ -1448,6 +1646,7 @@ namespace NeoAxis
 				}
 
 				sourceMesh.LODScale = LODScale;
+				sourceMesh.LODScaleShadows = LODScaleShadows;
 			}
 #endif
 
@@ -1545,7 +1744,6 @@ namespace NeoAxis
 
 		//						//geometry.VerticesExtractChannel<Vector3F>( VertexElementSemantic.Position );
 
-		//						//zzzzz;
 		//						//geometry.extra
 
 		//						//geometry.UnwrappedUV = (UnwrappedUVEnum)( (int)freeTexCoordElement.Value.Semantic - (int)VertexElementSemantic.TextureCoordinate0 + (int)UnwrappedUVEnum.TextureCoordinate0 );
@@ -1644,10 +1842,10 @@ namespace NeoAxis
 			}
 		}
 
-		void OptimizeCaches()
+		void OptimizeCaches( bool lods )
 		{
-			var meshes = GetMeshes( false );
-			meshes.AddRange( GetMeshes( true ) );
+			var meshes = GetMeshes( lods );
+			//meshes.AddRange( GetMeshes( true ) );
 
 			foreach( var mesh in meshes )
 			{
@@ -1686,6 +1884,8 @@ namespace NeoAxis
 			//old version compatibility
 			if( block.AttributeExists( "MergeMeshGeometries" ) && bool.TryParse( block.GetAttribute( "MergeMeshGeometries" ), out var v ) && !v )
 				MergeGeometries = MergeGeometriesEnum.False;
+			if( block.AttributeExists( "ForceFrontXAxis" ) && bool.TryParse( block.GetAttribute( "ForceFrontXAxis" ), out var v2 ) )
+				FixAxes = v2;
 
 			return true;
 		}

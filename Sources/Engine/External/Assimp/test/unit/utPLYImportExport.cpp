@@ -3,7 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -125,6 +125,22 @@ TEST_F(utPLYImportExport, importBinaryPLY) {
     EXPECT_EQ(12u, scene->mMeshes[0]->mNumFaces);
 }
 
+// Tests of a PLY file gets read with \r\n as newlines instead of just \n (i.e. solidwork exported ply files)
+TEST_F(utPLYImportExport, importBinaryPLYWithRNNewline) {
+    Assimp::Importer importer;
+    const aiScene *scene = importer.ReadFile(ASSIMP_TEST_MODELS_DIR "/PLY/cube_binary_header_with_RN_newline.ply", aiProcess_ValidateDataStructure);
+
+    ASSERT_NE(nullptr, scene);
+    ASSERT_NE(nullptr, scene->mMeshes[0]);
+    // This test model is double sided, so 12 faces instead of 6
+    ASSERT_EQ(12u, scene->mMeshes[0]->mNumFaces);
+    // Also check if the indices were parsed correctly
+    ASSERT_EQ(3u, scene->mMeshes[0]->mFaces[0].mNumIndices);
+    EXPECT_EQ(0u, scene->mMeshes[0]->mFaces[0].mIndices[0]);
+    EXPECT_EQ(1u, scene->mMeshes[0]->mFaces[0].mIndices[1]);
+    EXPECT_EQ(2u, scene->mMeshes[0]->mFaces[0].mIndices[2]);
+}
+
 TEST_F(utPLYImportExport, vertexColorTest) {
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(ASSIMP_TEST_MODELS_DIR "/PLY/float-color.ply", aiProcess_ValidateDataStructure);
@@ -179,4 +195,11 @@ TEST_F(utPLYImportExport, parseErrorTest) {
     //Could not use aiProcess_ValidateDataStructure since it's missing faces.
     const aiScene *scene = importer.ReadFileFromMemory(test_file, strlen(test_file), 0);
     EXPECT_NE(nullptr, scene);
+}
+
+// This file is invalid, we just want to ensure that the importer is not crashing
+TEST_F(utPLYImportExport, parseInvalid) {
+    Assimp::Importer importer;
+    const aiScene *scene = importer.ReadFile(ASSIMP_TEST_MODELS_DIR "/invalid/crash-30d6d0f7c529b3b66b4131700b7a4580cd7082df.ply", 0);
+    EXPECT_EQ(nullptr, scene);
 }

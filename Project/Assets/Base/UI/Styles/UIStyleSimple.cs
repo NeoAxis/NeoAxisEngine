@@ -1,18 +1,38 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using NeoAxis;
 
 namespace Project
 {
 	public class UIStyleSimple : UIStyleDefault
 	{
-		protected override void OnBeforeRenderUIWithChildren( Component component, CanvasRenderer renderer )
+		//!!!!maybe move to UIStyleDefault
+		/// <summary>
+		/// Whether to enable the rendering of controls with rounding.
+		/// </summary>
+		[DefaultValue( true )]
+		public Reference<bool> Rounding
+		{
+			get { if( _rounding.BeginGet() ) Rounding = _rounding.Get( this ); return _rounding.value; }
+			set { if( _rounding.BeginSet( this, ref value ) ) { try { RoundingChanged?.Invoke( this ); } finally { _rounding.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Rounding"/> property value changes.</summary>
+		public event Action<UIStyleSimple> RoundingChanged;
+		ReferenceField<bool> _rounding = true;
+
+		//public static bool Rounding = false;
+		//public static bool RoundingAntialiasing = true;
+
+		//
+
+		protected override void OnBeforeRenderUIWithChildren( NeoAxis.Component component, CanvasRenderer renderer )
 		{
 			base.OnBeforeRenderUIWithChildren( component, renderer );
 		}
 
-		protected override void OnAfterRenderUIWithChildren( Component component, CanvasRenderer renderer )
+		protected override void OnAfterRenderUIWithChildren( NeoAxis.Component component, CanvasRenderer renderer )
 		{
 			base.OnAfterRenderUIWithChildren( component, renderer );
 		}
@@ -71,7 +91,59 @@ namespace Project
 				if( color.Alpha > 0 )
 				{
 					//back
-					renderer.AddQuad( rect, color );
+					if( Rounding )
+					{
+						//!!!!maybe depends by height
+
+						var roundingSize = 0.0075;
+						{
+							var rounding = control.BackgroundRounding.Value;
+							if( rounding.Value > 0 )
+								roundingSize = control.GetScreenOffsetByValueY( rounding );
+						}
+
+						var handled = false;
+
+						//TabControl specific
+						if( control.Parent != null && control.Parent is UITabControl tabControl )
+						{
+							var side = tabControl.Side.Value;
+							if( side != UITabControl.SideEnum.None )
+							{
+								//too specific?
+
+								var rect2 = rect;
+								var color2 = color;
+								if( side == UITabControl.SideEnum.Top )
+								{
+									rect2.Bottom += 1000;
+
+									//if( control.State == UIButton.StateEnum.Highlighted )
+									//	color2 = new ColorValue( 0, 0, 0.4 );
+									//else if( control.State == UIButton.StateEnum.Normal )
+									//	color2 = new ColorValue( 0, 0, 0.2 );
+								}
+								//impl?
+								//else if( side == UITabControl.SideEnum.Left )
+								//	rect2.Right += 1000;
+								//else if( side == UITabControl.SideEnum.Bottom )
+								//	rect2.Top -= 1000;
+								//else if( side == UITabControl.SideEnum.Right )
+								//	rect2.Left -= 1000;
+
+								renderer.PushClipRectangle( rect );
+								renderer.AddRoundedQuad( rect2, roundingSize, CanvasRenderer.AddRoundedQuadMode.Antialiasing, color2 );
+								renderer.PopClipRectangle();
+
+								handled = true;
+							}
+						}
+
+						if( !handled )
+							renderer.AddRoundedQuad( rect, roundingSize, CanvasRenderer.AddRoundedQuadMode.Antialiasing, color );
+					}
+					else
+						renderer.AddQuad( rect, color );
 
 					//image
 					if( control.Image.Value != null )
@@ -329,7 +401,7 @@ namespace Project
 
 					if( itemRectangle.Intersects( rect2 ) )
 					{
-						renderer.PushClipRectangle( itemRectangle );
+						renderer.PushClipRectangle( new Rectangle( itemRectangle.Left, 0, itemRectangle.Right, 1 ) );
 						OnRenderListItem( control, renderer, n, itemRectangle, font, fontSize );
 						renderer.PopClipRectangle();
 					}
@@ -354,7 +426,31 @@ namespace Project
 		protected override void OnRenderWindow( UIWindow control, CanvasRenderer renderer )
 		{
 			var rect = control.GetScreenRectangle();
-			renderer.AddQuad( rect, new ColorValue( 0.05, 0.05, 0.25 ) );
+
+			//shadow
+			{
+				var shadowSize = new Vector2( 0.02 * renderer.AspectRatioInv, 0.02 );
+				var roundingSize = 0.04;
+
+				var shadowRectangle = rect;
+				shadowRectangle.Expand( shadowSize );
+
+				renderer.AddRoundedQuad( shadowRectangle, roundingSize, CanvasRenderer.AddRoundedQuadMode.Fading, new ColorValue( 0, 0, 0, 0.3 ) );
+			}
+
+			if( Rounding )
+			{
+				if( control.TitleBar.Value )
+				{
+					double screenY = rect.Top + control.GetScreenOffsetByValueY( control.TitleBarHeight ) / 2;
+					renderer.PushClipRectangle( new Rectangle( -10000, screenY, 10000, 10000 ) );
+				}
+				renderer.AddRoundedQuad( rect, 0.02, CanvasRenderer.AddRoundedQuadMode.Antialiasing/*false*/, new ColorValue( 0.05, 0.05, 0.25 ) );
+				if( control.TitleBar.Value )
+					renderer.PopClipRectangle();
+			}
+			else
+				renderer.AddQuad( rect, new ColorValue( 0.05, 0.05, 0.25 ) );
 
 			var borderSize = control.BorderSize.Value;
 
@@ -362,16 +458,33 @@ namespace Project
 			rect2.Expand( -control.GetScreenOffsetByValue( borderSize ) );
 
 			var color = new ColorValue( 0.25, 0.25, 0.75 );
-			renderer.AddQuad( new Rectangle( rect.Left, rect.Top, rect2.Left, rect.Bottom ), color );
-			renderer.AddQuad( new Rectangle( rect2.Left, rect.Top, rect2.Right, rect2.Top ), color );
-			renderer.AddQuad( new Rectangle( rect2.Right, rect.Top, rect.Right, rect.Bottom ), color );
-			renderer.AddQuad( new Rectangle( rect.Left, rect2.Bottom, rect2.Right, rect.Bottom ), color );
+			if( !Rounding )
+			{
+				renderer.AddQuad( new Rectangle( rect.Left, rect.Top, rect2.Left, rect.Bottom ), color );
+				renderer.AddQuad( new Rectangle( rect2.Left, rect.Top, rect2.Right, rect2.Top ), color );
+				renderer.AddQuad( new Rectangle( rect2.Right, rect.Top, rect.Right, rect.Bottom ), color );
+				renderer.AddQuad( new Rectangle( rect.Left, rect2.Bottom, rect2.Right, rect.Bottom ), color );
+			}
 
 			if( control.TitleBar.Value )
 			{
 				double screenY = rect.Top + control.GetScreenOffsetByValueY( control.TitleBarHeight );
-				var rect3 = new Rectangle( rect2.Left, rect2.Top, rect2.Right, screenY );
-				renderer.AddQuad( rect3, color );
+
+				Rectangle rect3;
+
+				if( Rounding )
+				{
+					rect3 = new Rectangle( rect.Left, rect.Top, rect.Right, screenY );
+
+					renderer.PushClipRectangle( new Rectangle( -10000, -10000, 10000, screenY ) );
+					renderer.AddRoundedQuad( new Rectangle( rect.Left, rect.Top, rect.Right, screenY + 1000 ), 0.02, CanvasRenderer.AddRoundedQuadMode.Antialiasing/*false*/, color );
+					renderer.PopClipRectangle();
+				}
+				else
+				{
+					rect3 = new Rectangle( rect2.Left, rect2.Top, rect2.Right, screenY );
+					renderer.AddQuad( rect3, color );
+				}
 
 				if( !string.IsNullOrEmpty( control.Text ) )
 				{
@@ -380,6 +493,20 @@ namespace Project
 					var fontSize = control.GetScreenOffsetByValueY( control.TitleBarFontSize );
 					renderer.AddText( renderer.DefaultFont, fontSize, control.Text, pos, EHorizontalAlignment.Center, EVerticalAlignment.Center, new ColorValue( 1, 1, 1 ) );
 				}
+
+
+				//double screenY = rect.Top + control.GetScreenOffsetByValueY( control.TitleBarHeight );
+				//var rect3 = new Rectangle( rect2.Left, rect2.Top, rect2.Right, screenY );
+				//renderer.AddQuad( rect3, color );
+
+				//if( !string.IsNullOrEmpty( control.Text ) )
+				//{
+				//	var rect4 = new Rectangle( rect3.Left, rect.Top, rect3.Right, rect3.Bottom );
+				//	var pos = rect4.GetCenter();
+				//	var fontSize = control.GetScreenOffsetByValueY( control.TitleBarFontSize );
+				//	renderer.AddText( renderer.DefaultFont, fontSize, control.Text, pos, EHorizontalAlignment.Center, EVerticalAlignment.Center, new ColorValue( 1, 1, 1 ) );
+				//}
+
 			}
 
 			//var rect = control.GetScreenRectangle();

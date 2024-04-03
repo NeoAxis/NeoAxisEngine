@@ -19,7 +19,7 @@ namespace NeoAxis
 		public Reference<UIMeasureValueRectangle> BorderIndents
 		{
 			get { if( _borderIndents.BeginGet() ) BorderIndents = _borderIndents.Get( this ); return _borderIndents.value; }
-			set { if( _borderIndents.BeginSet( ref value ) ) { try { BorderIndentsChanged?.Invoke( this ); } finally { _borderIndents.EndSet(); } } }
+			set { if( _borderIndents.BeginSet( this, ref value ) ) { try { BorderIndentsChanged?.Invoke( this ); } finally { _borderIndents.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BorderIndents"/> property value changes.</summary>
 		public event Action<UIToolbar> BorderIndentsChanged;
@@ -32,7 +32,7 @@ namespace NeoAxis
 		public Reference<UIMeasureValueVector2> IndentBetweenItems
 		{
 			get { if( _indentBetweenItems.BeginGet() ) IndentBetweenItems = _indentBetweenItems.Get( this ); return _indentBetweenItems.value; }
-			set { if( _indentBetweenItems.BeginSet( ref value ) ) { try { IndentBetweenItemsChanged?.Invoke( this ); } finally { _indentBetweenItems.EndSet(); } } }
+			set { if( _indentBetweenItems.BeginSet( this, ref value ) ) { try { IndentBetweenItemsChanged?.Invoke( this ); } finally { _indentBetweenItems.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="IndentBetweenItems"/> property value changes.</summary>
 		public event Action<UIToolbar> IndentBetweenItemsChanged;

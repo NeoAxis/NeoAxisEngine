@@ -76,8 +76,8 @@
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\..\..\..\..\..\..\_Compilation\Win64\bgfx\bin\</OutDir>
-    <IntDir>..\..\..\..\..\..\..\_Compilation\Win64\bgfx\obj\x64\Debug\glslang\</IntDir>
+    <OutDir>..\..\..\..\..\..\..\..\_build\Win64\bgfx\bin\</OutDir>
+    <IntDir>..\..\..\..\..\..\..\..\_build\Win64\bgfx\obj\x64\Debug\glslang\</IntDir>
     <TargetName>glslangDebug</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
@@ -88,8 +88,8 @@
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\..\..\..\..\..\..\_Compilation\Win64\bgfx\bin\</OutDir>
-    <IntDir>..\..\..\..\..\..\..\_Compilation\Win64\bgfx\obj\x64\Release\glslang\</IntDir>
+    <OutDir>..\..\..\..\..\..\..\..\_build\Win64\bgfx\bin\</OutDir>
+    <IntDir>..\..\..\..\..\..\..\..\_build\Win64\bgfx\obj\x64\Release\glslang\</IntDir>
     <TargetName>glslangRelease</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
@@ -145,7 +145,7 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
@@ -224,7 +224,7 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
@@ -314,6 +314,13 @@
     </ClCompile>
     <ClCompile Include="..\..\..\3rdparty\glslang\glslang\GenericCodeGen\Link.cpp">
     </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\HLSL\hlslAttributes.cpp" />
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\HLSL\hlslGrammar.cpp" />
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\HLSL\hlslOpMap.cpp" />
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\HLSL\hlslParseables.cpp" />
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\HLSL\hlslParseHelper.cpp" />
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\HLSL\hlslScanContext.cpp" />
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\HLSL\hlslTokenStream.cpp" />
     <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\attribute.cpp">
     </ClCompile>
     <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\Constant.cpp">
@@ -354,6 +361,7 @@
     </ClCompile>
     <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\ShaderLang.cpp">
     </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\SpirvIntrinsics.cpp" />
     <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\SymbolTable.cpp">
     </ClCompile>
     <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\Versions.cpp">

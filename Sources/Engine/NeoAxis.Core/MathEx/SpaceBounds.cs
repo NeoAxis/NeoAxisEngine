@@ -238,23 +238,28 @@ namespace NeoAxis
 			if( b == null )
 				return a;
 
-			Bounds bounds;
-			if( a.boundingBoxOriginal && b.boundingBoxOriginal )
-				Bounds.Merge( ref a.boundingBox, ref b.boundingBox, out bounds );
-			else if( a.boundingBoxOriginal )
-				bounds = a.boundingBox;
-			else //if( b.boundingBoxOriginal )
-				bounds = b.boundingBox;
-
-			Sphere sphere;
-			if( a.boundingSphereOriginal && b.boundingSphereOriginal )
-				Sphere.Merge( ref a.boundingSphere, ref b.boundingSphere, out sphere );
-			else if( a.boundingSphereOriginal )
-				sphere = a.boundingSphere;
-			else //if( b.boundingSphereOriginal )
-				sphere = b.boundingSphere;
-
+			Bounds.Merge( ref a.boundingBox, ref b.boundingBox, out var bounds );
+			Sphere.Merge( ref a.boundingSphere, ref b.boundingSphere, out var sphere );
 			return new SpaceBounds( bounds, sphere );
+
+			//Bounds bounds;
+			//if( a.boundingBoxOriginal && b.boundingBoxOriginal )
+			//	Bounds.Merge( ref a.boundingBox, ref b.boundingBox, out bounds );
+			//else if( a.boundingBoxOriginal )
+			//	bounds = a.boundingBox;
+			//else //if( b.boundingBoxOriginal )
+			//	bounds = b.boundingBox;
+
+			//Sphere sphere;
+			//if( a.boundingSphereOriginal && b.boundingSphereOriginal )
+			//	Sphere.Merge( ref a.boundingSphere, ref b.boundingSphere, out sphere );
+			//else if( a.boundingSphereOriginal )
+			//	sphere = a.boundingSphere;
+			//else //if( b.boundingSphereOriginal )
+			//	sphere = b.boundingSphere;
+
+			//return new SpaceBounds( bounds, sphere );
+
 
 			//Bounds? bounds = null;
 			//if( a.boundingBox != null && b.boundingBox != null )

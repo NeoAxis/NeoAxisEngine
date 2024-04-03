@@ -22,7 +22,26 @@ namespace NeoAxis
 		int version;
 
 		//
-		
+
+		public enum WayToUseEnum
+		{
+			Driving,
+			Walking,
+		}
+
+		/// <summary>
+		/// How to use the road.
+		/// </summary>
+		[DefaultValue( WayToUseEnum.Driving )]
+		public Reference<WayToUseEnum> WayToUse
+		{
+			get { if( _wayToUse.BeginGet() ) WayToUse = _wayToUse.Get( this ); return _wayToUse.value; }
+			set { if( _wayToUse.BeginSet( this, ref value ) ) { try { WayToUseChanged?.Invoke( this ); } finally { _wayToUse.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="WayToUse"/> property value changes.</summary>
+		public event Action<RoadType> WayToUseChanged;
+		ReferenceField<WayToUseEnum> _wayToUse = WayToUseEnum.Driving;
+
 		/// <summary>
 		/// The width of lanes.
 		/// </summary>
@@ -31,7 +50,7 @@ namespace NeoAxis
 		public Reference<double> LaneWidth
 		{
 			get { if( _laneWidth.BeginGet() ) LaneWidth = _laneWidth.Get( this ); return _laneWidth.value; }
-			set { if( _laneWidth.BeginSet( ref value ) ) { try { LaneWidthChanged?.Invoke( this ); DataWasChanged(); } finally { _laneWidth.EndSet(); } } }
+			set { if( _laneWidth.BeginSet( this, ref value ) ) { try { LaneWidthChanged?.Invoke( this ); DataWasChanged(); } finally { _laneWidth.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LaneWidth"/> property value changes.</summary>
 		public event Action<RoadType> LaneWidthChanged;
@@ -45,7 +64,7 @@ namespace NeoAxis
 		public Reference<double> RoadsideEdgeWidth
 		{
 			get { if( _roadsideEdgeWidth.BeginGet() ) RoadsideEdgeWidth = _roadsideEdgeWidth.Get( this ); return _roadsideEdgeWidth.value; }
-			set { if( _roadsideEdgeWidth.BeginSet( ref value ) ) { try { RoadsideEdgeWidthChanged?.Invoke( this ); DataWasChanged(); } finally { _roadsideEdgeWidth.EndSet(); } } }
+			set { if( _roadsideEdgeWidth.BeginSet( this, ref value ) ) { try { RoadsideEdgeWidthChanged?.Invoke( this ); DataWasChanged(); } finally { _roadsideEdgeWidth.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RoadsideEdgeWidth"/> property value changes.</summary>
 		public event Action<RoadType> RoadsideEdgeWidthChanged;
@@ -61,7 +80,7 @@ namespace NeoAxis
 		public Reference<Material> SurfaceMaterial
 		{
 			get { if( _surfaceMaterial.BeginGet() ) SurfaceMaterial = _surfaceMaterial.Get( this ); return _surfaceMaterial.value; }
-			set { if( _surfaceMaterial.BeginSet( ref value ) ) { try { SurfaceMaterialChanged?.Invoke( this ); DataWasChanged(); } finally { _surfaceMaterial.EndSet(); } } }
+			set { if( _surfaceMaterial.BeginSet( this, ref value ) ) { try { SurfaceMaterialChanged?.Invoke( this ); DataWasChanged(); } finally { _surfaceMaterial.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SurfaceMaterial"/> property value changes.</summary>
 		public event Action<RoadType> SurfaceMaterialChanged;
@@ -77,7 +96,7 @@ namespace NeoAxis
 		public Reference<double> UVTilesLength
 		{
 			get { if( _uVTilesLength.BeginGet() ) UVTilesLength = _uVTilesLength.Get( this ); return _uVTilesLength.value; }
-			set { if( _uVTilesLength.BeginSet( ref value ) ) { try { UVTilesLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _uVTilesLength.EndSet(); } } }
+			set { if( _uVTilesLength.BeginSet( this, ref value ) ) { try { UVTilesLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _uVTilesLength.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UVTilesLength"/> property value changes.</summary>
 		public event Action<RoadType> UVTilesLengthChanged;
@@ -91,7 +110,7 @@ namespace NeoAxis
 		public Reference<Surface> AgeImperfection
 		{
 			get { if( _ageImperfection.BeginGet() ) AgeImperfection = _ageImperfection.Get( this ); return _ageImperfection.value; }
-			set { if( _ageImperfection.BeginSet( ref value ) ) { try { AgeImperfectionChanged?.Invoke( this ); } finally { _ageImperfection.EndSet(); } } }
+			set { if( _ageImperfection.BeginSet( this, ref value ) ) { try { AgeImperfectionChanged?.Invoke( this ); } finally { _ageImperfection.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AgeImperfection"/> property value changes.</summary>
 		public event Action<RoadType> AgeImperfectionChanged;
@@ -102,7 +121,7 @@ namespace NeoAxis
 		//public Reference<double> UVTilesCircle
 		//{
 		//	get { if( _uVTilesCircle.BeginGet() ) UVTilesCircle = _uVTilesCircle.Get( this ); return _uVTilesCircle.value; }
-		//	set { if( _uVTilesCircle.BeginSet( ref value ) ) { try { UVTilesCircleChanged?.Invoke( this ); DataWasChanged(); } finally { _uVTilesCircle.EndSet(); } } }
+		//	set { if( _uVTilesCircle.BeginSet( this, ref value ) ) { try { UVTilesCircleChanged?.Invoke( this ); DataWasChanged(); } finally { _uVTilesCircle.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="UVTilesCircle"/> property value changes.</summary>
 		//public event Action<Road> UVTilesCircleChanged;
@@ -114,7 +133,7 @@ namespace NeoAxis
 		//public Reference<double> MedianStripWidth
 		//{
 		//	get { if( _medianStripWidth.BeginGet() ) MedianStripWidth = _medianStripWidth.Get( this ); return _medianStripWidth.value; }
-		//	set { if( _medianStripWidth.BeginSet( ref value ) ) { try { MedianStripWidthChanged?.Invoke( this ); } finally { _medianStripWidth.EndSet(); } } }
+		//	set { if( _medianStripWidth.BeginSet( this, ref value ) ) { try { MedianStripWidthChanged?.Invoke( this ); } finally { _medianStripWidth.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="MedianStripWidth"/> property value changes.</summary>
 		//public event Action<RoadType> MedianStripWidthChanged;
@@ -126,7 +145,7 @@ namespace NeoAxis
 		//public Reference<FenceType> MedianStripFence
 		//{
 		//	get { if( _medianStripFence.BeginGet() ) MedianStripFence = _medianStripFence.Get( this ); return _medianStripFence.value; }
-		//	set { if( _medianStripFence.BeginSet( ref value ) ) { try { MedianStripFenceChanged?.Invoke( this ); } finally { _medianStripFence.EndSet(); } } }
+		//	set { if( _medianStripFence.BeginSet( this, ref value ) ) { try { MedianStripFenceChanged?.Invoke( this ); } finally { _medianStripFence.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="MedianStripFence"/> property value changes.</summary>
 		//public event Action<RoadType> MedianStripFenceChanged;
@@ -142,7 +161,7 @@ namespace NeoAxis
 		public Reference<Material> MarkupMaterial
 		{
 			get { if( _markupMaterial.BeginGet() ) MarkupMaterial = _markupMaterial.Get( this ); return _markupMaterial.value; }
-			set { if( _markupMaterial.BeginSet( ref value ) ) { try { MarkupMaterialChanged?.Invoke( this ); DataWasChanged(); } finally { _markupMaterial.EndSet(); } } }
+			set { if( _markupMaterial.BeginSet( this, ref value ) ) { try { MarkupMaterialChanged?.Invoke( this ); DataWasChanged(); } finally { _markupMaterial.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MarkupMaterial"/> property value changes.</summary>
 		public event Action<RoadType> MarkupMaterialChanged;
@@ -158,7 +177,7 @@ namespace NeoAxis
 		public Reference<Material> MarkupDottedMaterial
 		{
 			get { if( _markupDottedMaterial.BeginGet() ) MarkupDottedMaterial = _markupDottedMaterial.Get( this ); return _markupDottedMaterial.value; }
-			set { if( _markupDottedMaterial.BeginSet( ref value ) ) { try { MarkupDottedMaterialChanged?.Invoke( this ); DataWasChanged(); } finally { _markupDottedMaterial.EndSet(); } } }
+			set { if( _markupDottedMaterial.BeginSet( this, ref value ) ) { try { MarkupDottedMaterialChanged?.Invoke( this ); DataWasChanged(); } finally { _markupDottedMaterial.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MarkupDottedMaterial"/> property value changes.</summary>
 		public event Action<RoadType> MarkupDottedMaterialChanged;
@@ -173,7 +192,7 @@ namespace NeoAxis
 		public Reference<double> MarkupDividingLaneWidth
 		{
 			get { if( _markupDividingLaneWidth.BeginGet() ) MarkupDividingLaneWidth = _markupDividingLaneWidth.Get( this ); return _markupDividingLaneWidth.value; }
-			set { if( _markupDividingLaneWidth.BeginSet( ref value ) ) { try { MarkupDividingLaneWidthChanged?.Invoke( this ); DataWasChanged(); } finally { _markupDividingLaneWidth.EndSet(); } } }
+			set { if( _markupDividingLaneWidth.BeginSet( this, ref value ) ) { try { MarkupDividingLaneWidthChanged?.Invoke( this ); DataWasChanged(); } finally { _markupDividingLaneWidth.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MarkupDividingLaneWidth"/> property value changes.</summary>
 		public event Action<RoadType> MarkupDividingLaneWidthChanged;
@@ -188,11 +207,29 @@ namespace NeoAxis
 		public Reference<double> MarkupRoadsideWidth
 		{
 			get { if( _markupRoadsideWidth.BeginGet() ) MarkupRoadsideWidth = _markupRoadsideWidth.Get( this ); return _markupRoadsideWidth.value; }
-			set { if( _markupRoadsideWidth.BeginSet( ref value ) ) { try { MarkupRoadsideWidthChanged?.Invoke( this ); DataWasChanged(); } finally { _markupRoadsideWidth.EndSet(); } } }
+			set { if( _markupRoadsideWidth.BeginSet( this, ref value ) ) { try { MarkupRoadsideWidthChanged?.Invoke( this ); DataWasChanged(); } finally { _markupRoadsideWidth.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MarkupRoadsideWidth"/> property value changes.</summary>
 		public event Action<RoadType> MarkupRoadsideWidthChanged;
 		ReferenceField<double> _markupRoadsideWidth = 0.15;
+
+
+		const string crossingMarkingsMaterialDefault = @"Content\Constructors\Roads\Default Road\Crossing markings.material";
+
+		/// <summary>
+		/// The material of crossing markings.
+		/// </summary>
+		[DefaultValueReference( crossingMarkingsMaterialDefault )]
+		[Category( "Markup" )]
+		public Reference<Material> CrossingMarkingsMaterial
+		{
+			get { if( _crossingMarkingsMaterial.BeginGet() ) CrossingMarkingsMaterial = _crossingMarkingsMaterial.Get( this ); return _crossingMarkingsMaterial.value; }
+			set { if( _crossingMarkingsMaterial.BeginSet( this, ref value ) ) { try { CrossingMarkingsMaterialChanged?.Invoke( this ); DataWasChanged(); } finally { _crossingMarkingsMaterial.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="CrossingMarkingsMaterial"/> property value changes.</summary>
+		public event Action<RoadType> CrossingMarkingsMaterialChanged;
+		ReferenceField<Material> _crossingMarkingsMaterial = new Reference<Material>( null, crossingMarkingsMaterialDefault );
+
 
 		//////////////////////
 
@@ -204,7 +241,7 @@ namespace NeoAxis
 		public Reference<double> ShoulderWidth
 		{
 			get { if( _shoulderWidth.BeginGet() ) ShoulderWidth = _shoulderWidth.Get( this ); return _shoulderWidth.value; }
-			set { if( _shoulderWidth.BeginSet( ref value ) ) { try { ShoulderWidthChanged?.Invoke( this ); DataWasChanged(); } finally { _shoulderWidth.EndSet(); } } }
+			set { if( _shoulderWidth.BeginSet( this, ref value ) ) { try { ShoulderWidthChanged?.Invoke( this ); DataWasChanged(); } finally { _shoulderWidth.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShoulderWidth"/> property value changes.</summary>
 		public event Action<RoadType> ShoulderWidthChanged;
@@ -220,7 +257,7 @@ namespace NeoAxis
 		public Reference<Material> ShoulderMaterial
 		{
 			get { if( _shoulderMaterial.BeginGet() ) ShoulderMaterial = _shoulderMaterial.Get( this ); return _shoulderMaterial.value; }
-			set { if( _shoulderMaterial.BeginSet( ref value ) ) { try { ShoulderMaterialChanged?.Invoke( this ); DataWasChanged(); } finally { _shoulderMaterial.EndSet(); } } }
+			set { if( _shoulderMaterial.BeginSet( this, ref value ) ) { try { ShoulderMaterialChanged?.Invoke( this ); DataWasChanged(); } finally { _shoulderMaterial.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShoulderMaterial"/> property value changes.</summary>
 		public event Action<RoadType> ShoulderMaterialChanged;
@@ -236,7 +273,7 @@ namespace NeoAxis
 		public Reference<double> ShoulderUVTilesLength
 		{
 			get { if( _shoulderUVTilesLength.BeginGet() ) ShoulderUVTilesLength = _shoulderUVTilesLength.Get( this ); return _shoulderUVTilesLength.value; }
-			set { if( _shoulderUVTilesLength.BeginSet( ref value ) ) { try { ShoulderUVTilesLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _shoulderUVTilesLength.EndSet(); } } }
+			set { if( _shoulderUVTilesLength.BeginSet( this, ref value ) ) { try { ShoulderUVTilesLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _shoulderUVTilesLength.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShoulderUVTilesLength"/> property value changes.</summary>
 		public event Action<RoadType> ShoulderUVTilesLengthChanged;
@@ -252,7 +289,7 @@ namespace NeoAxis
 		public Reference<double> SidewalkWidth
 		{
 			get { if( _sidewalkWidth.BeginGet() ) SidewalkWidth = _sidewalkWidth.Get( this ); return _sidewalkWidth.value; }
-			set { if( _sidewalkWidth.BeginSet( ref value ) ) { try { SidewalkWidthChanged?.Invoke( this ); DataWasChanged(); } finally { _sidewalkWidth.EndSet(); } } }
+			set { if( _sidewalkWidth.BeginSet( this, ref value ) ) { try { SidewalkWidthChanged?.Invoke( this ); DataWasChanged(); } finally { _sidewalkWidth.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SidewalkWidth"/> property value changes.</summary>
 		public event Action<RoadType> SidewalkWidthChanged;
@@ -266,7 +303,7 @@ namespace NeoAxis
 		public Reference<double> SidewalkHeight
 		{
 			get { if( _sidewalkHeight.BeginGet() ) SidewalkHeight = _sidewalkHeight.Get( this ); return _sidewalkHeight.value; }
-			set { if( _sidewalkHeight.BeginSet( ref value ) ) { try { SidewalkHeightChanged?.Invoke( this ); DataWasChanged(); } finally { _sidewalkHeight.EndSet(); } } }
+			set { if( _sidewalkHeight.BeginSet( this, ref value ) ) { try { SidewalkHeightChanged?.Invoke( this ); DataWasChanged(); } finally { _sidewalkHeight.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SidewalkHeight"/> property value changes.</summary>
 		public event Action<RoadType> SidewalkHeightChanged;
@@ -282,11 +319,32 @@ namespace NeoAxis
 		public Reference<Material> SidewalkMaterial
 		{
 			get { if( _sidewalkMaterial.BeginGet() ) SidewalkMaterial = _sidewalkMaterial.Get( this ); return _sidewalkMaterial.value; }
-			set { if( _sidewalkMaterial.BeginSet( ref value ) ) { try { SidewalkMaterialChanged?.Invoke( this ); DataWasChanged(); } finally { _sidewalkMaterial.EndSet(); } } }
+			set { if( _sidewalkMaterial.BeginSet( this, ref value ) ) { try { SidewalkMaterialChanged?.Invoke( this ); DataWasChanged(); } finally { _sidewalkMaterial.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SidewalkMaterial"/> property value changes.</summary>
 		public event Action<RoadType> SidewalkMaterialChanged;
 		ReferenceField<Material> _sidewalkMaterial = new Reference<Material>( null, sidewalkMaterialDefault );
+
+		public enum SidewalkUVTilingEnum
+		{
+			AlongRoad,
+			HorizontalTiling,
+		}
+
+		/// <summary>
+		/// The method of calculating UV coordinates for sidewalk geometry.
+		/// </summary>
+		[Category( "Sidewalk" )]
+		[DisplayName( "Sidewalk UV Tiling" )]
+		[DefaultValue( SidewalkUVTilingEnum.AlongRoad )]
+		public Reference<SidewalkUVTilingEnum> SidewalkUVTiling
+		{
+			get { if( _sidewalkUVTiling.BeginGet() ) SidewalkUVTiling = _sidewalkUVTiling.Get( this ); return _sidewalkUVTiling.value; }
+			set { if( _sidewalkUVTiling.BeginSet( this, ref value ) ) { try { SidewalkUVTilingChanged?.Invoke( this ); DataWasChanged(); } finally { _sidewalkUVTiling.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="SidewalkUVTiling"/> property value changes.</summary>
+		public event Action<RoadType> SidewalkUVTilingChanged;
+		ReferenceField<SidewalkUVTilingEnum> _sidewalkUVTiling = SidewalkUVTilingEnum.AlongRoad;
 
 		/// <summary>
 		/// The UV tiles length of sidewalks.
@@ -298,7 +356,7 @@ namespace NeoAxis
 		public Reference<double> SidewalkUVTilesLength
 		{
 			get { if( _sidewalkUVTilesLength.BeginGet() ) SidewalkUVTilesLength = _sidewalkUVTilesLength.Get( this ); return _sidewalkUVTilesLength.value; }
-			set { if( _sidewalkUVTilesLength.BeginSet( ref value ) ) { try { SidewalkUVTilesLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _sidewalkUVTilesLength.EndSet(); } } }
+			set { if( _sidewalkUVTilesLength.BeginSet( this, ref value ) ) { try { SidewalkUVTilesLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _sidewalkUVTilesLength.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SidewalkUVTilesLength"/> property value changes.</summary>
 		public event Action<RoadType> SidewalkUVTilesLengthChanged;
@@ -314,7 +372,7 @@ namespace NeoAxis
 		public Reference<double> SidewalkBorderWidth
 		{
 			get { if( _sidewalkBorderWidth.BeginGet() ) SidewalkBorderWidth = _sidewalkBorderWidth.Get( this ); return _sidewalkBorderWidth.value; }
-			set { if( _sidewalkBorderWidth.BeginSet( ref value ) ) { try { SidewalkBorderWidthChanged?.Invoke( this ); DataWasChanged(); } finally { _sidewalkBorderWidth.EndSet(); } } }
+			set { if( _sidewalkBorderWidth.BeginSet( this, ref value ) ) { try { SidewalkBorderWidthChanged?.Invoke( this ); DataWasChanged(); } finally { _sidewalkBorderWidth.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SidewalkBorderWidth"/> property value changes.</summary>
 		public event Action<RoadType> SidewalkBorderWidthChanged;
@@ -330,7 +388,7 @@ namespace NeoAxis
 		public Reference<Material> SidewalkBorderMaterial
 		{
 			get { if( _sidewalkBorderMaterial.BeginGet() ) SidewalkBorderMaterial = _sidewalkBorderMaterial.Get( this ); return _sidewalkBorderMaterial.value; }
-			set { if( _sidewalkBorderMaterial.BeginSet( ref value ) ) { try { SidewalkBorderMaterialChanged?.Invoke( this ); DataWasChanged(); } finally { _sidewalkBorderMaterial.EndSet(); } } }
+			set { if( _sidewalkBorderMaterial.BeginSet( this, ref value ) ) { try { SidewalkBorderMaterialChanged?.Invoke( this ); DataWasChanged(); } finally { _sidewalkBorderMaterial.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SidewalkBorderMaterial"/> property value changes.</summary>
 		public event Action<RoadType> SidewalkBorderMaterialChanged;
@@ -346,7 +404,7 @@ namespace NeoAxis
 		public Reference<double> SidewalkBorderUVTilesLength
 		{
 			get { if( _sidewalkBorderUVTilesLength.BeginGet() ) SidewalkBorderUVTilesLength = _sidewalkBorderUVTilesLength.Get( this ); return _sidewalkBorderUVTilesLength.value; }
-			set { if( _sidewalkBorderUVTilesLength.BeginSet( ref value ) ) { try { SidewalkBorderUVTilesLengthChanged?.Invoke( this ); } finally { _sidewalkBorderUVTilesLength.EndSet(); } } }
+			set { if( _sidewalkBorderUVTilesLength.BeginSet( this, ref value ) ) { try { SidewalkBorderUVTilesLengthChanged?.Invoke( this ); } finally { _sidewalkBorderUVTilesLength.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SidewalkBorderUVTilesLength"/> property value changes.</summary>
 		public event Action<RoadType> SidewalkBorderUVTilesLengthChanged;
@@ -359,7 +417,7 @@ namespace NeoAxis
 		//public Reference<FenceType> SidewalkFence
 		//{
 		//	get { if( _sidewalkFence.BeginGet() ) SidewalkFence = _sidewalkFence.Get( this ); return _sidewalkFence.value; }
-		//	set { if( _sidewalkFence.BeginSet( ref value ) ) { try { SidewalkFenceChanged?.Invoke( this ); } finally { _sidewalkFence.EndSet(); } } }
+		//	set { if( _sidewalkFence.BeginSet( this, ref value ) ) { try { SidewalkFenceChanged?.Invoke( this ); } finally { _sidewalkFence.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="SidewalkFence"/> property value changes.</summary>
 		//public event Action<RoadType> SidewalkFenceChanged;
@@ -374,7 +432,7 @@ namespace NeoAxis
 		//public Reference<double> OverpassWidth
 		//{
 		//	get { if( _overpassWidth.BeginGet() ) OverpassWidth = _overpassWidth.Get( this ); return _overpassWidth.value; }
-		//	set { if( _overpassWidth.BeginSet( ref value ) ) { try { OverpassWidthChanged?.Invoke( this ); } finally { _overpassWidth.EndSet(); } } }
+		//	set { if( _overpassWidth.BeginSet( this, ref value ) ) { try { OverpassWidthChanged?.Invoke( this ); } finally { _overpassWidth.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="OverpassWidth"/> property value changes.</summary>
 		//public event Action<RoadType> OverpassWidthChanged;
@@ -385,7 +443,7 @@ namespace NeoAxis
 		//public Reference<double> OverpassHeight
 		//{
 		//	get { if( _overpassHeight.BeginGet() ) OverpassHeight = _overpassHeight.Get( this ); return _overpassHeight.value; }
-		//	set { if( _overpassHeight.BeginSet( ref value ) ) { try { OverpassHeightChanged?.Invoke( this ); } finally { _overpassHeight.EndSet(); } } }
+		//	set { if( _overpassHeight.BeginSet( this, ref value ) ) { try { OverpassHeightChanged?.Invoke( this ); } finally { _overpassHeight.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="OverpassHeight"/> property value changes.</summary>
 		//public event Action<RoadType> OverpassHeightChanged;
@@ -396,7 +454,7 @@ namespace NeoAxis
 		//public Reference<Material> OverpassMaterial
 		//{
 		//	get { if( _overpassMaterial.BeginGet() ) OverpassMaterial = _overpassMaterial.Get( this ); return _overpassMaterial.value; }
-		//	set { if( _overpassMaterial.BeginSet( ref value ) ) { try { OverpassMaterialChanged?.Invoke( this ); } finally { _overpassMaterial.EndSet(); } } }
+		//	set { if( _overpassMaterial.BeginSet( this, ref value ) ) { try { OverpassMaterialChanged?.Invoke( this ); } finally { _overpassMaterial.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="OverpassMaterial"/> property value changes.</summary>
 		//public event Action<RoadType> OverpassMaterialChanged;
@@ -409,7 +467,7 @@ namespace NeoAxis
 		//public Reference<double> OverpassUVTilesLength
 		//{
 		//	get { if( _overpassUVTilesLength.BeginGet() ) OverpassUVTilesLength = _overpassUVTilesLength.Get( this ); return _overpassUVTilesLength.value; }
-		//	set { if( _overpassUVTilesLength.BeginSet( ref value ) ) { try { OverpassUVTilesLengthChanged?.Invoke( this ); } finally { _overpassUVTilesLength.EndSet(); } } }
+		//	set { if( _overpassUVTilesLength.BeginSet( this, ref value ) ) { try { OverpassUVTilesLengthChanged?.Invoke( this ); } finally { _overpassUVTilesLength.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="OverpassUVTilesLength"/> property value changes.</summary>
 		//public event Action<RoadType> OverpassUVTilesLengthChanged;
@@ -420,7 +478,7 @@ namespace NeoAxis
 		////public Reference<FenceType> OverpassFence
 		////{
 		////	get { if( _overpassFence.BeginGet() ) OverpassFence = _overpassFence.Get( this ); return _overpassFence.value; }
-		////	set { if( _overpassFence.BeginSet( ref value ) ) { try { OverpassFenceChanged?.Invoke( this ); } finally { _overpassFence.EndSet(); } } }
+		////	set { if( _overpassFence.BeginSet( this, ref value ) ) { try { OverpassFenceChanged?.Invoke( this ); } finally { _overpassFence.EndSet(); } } }
 		////}
 		/////// <summary>Occurs when the <see cref="OverpassFence"/> property value changes.</summary>
 		////public event Action<RoadType> OverpassFenceChanged;
@@ -431,7 +489,7 @@ namespace NeoAxis
 		//public Reference<Mesh> OverpassSupportTopMesh
 		//{
 		//	get { if( _overpassSupportTopMesh.BeginGet() ) OverpassSupportTopMesh = _overpassSupportTopMesh.Get( this ); return _overpassSupportTopMesh.value; }
-		//	set { if( _overpassSupportTopMesh.BeginSet( ref value ) ) { try { OverpassSupportTopMeshChanged?.Invoke( this ); } finally { _overpassSupportTopMesh.EndSet(); } } }
+		//	set { if( _overpassSupportTopMesh.BeginSet( this, ref value ) ) { try { OverpassSupportTopMeshChanged?.Invoke( this ); } finally { _overpassSupportTopMesh.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="OverpassSupportTopMesh"/> property value changes.</summary>
 		//public event Action<RoadType> OverpassSupportTopMeshChanged;
@@ -442,7 +500,7 @@ namespace NeoAxis
 		//public Reference<Mesh> OverpassSupportBottomMesh
 		//{
 		//	get { if( _overpassSupportBottomMesh.BeginGet() ) OverpassSupportBottomMesh = _overpassSupportBottomMesh.Get( this ); return _overpassSupportBottomMesh.value; }
-		//	set { if( _overpassSupportBottomMesh.BeginSet( ref value ) ) { try { OverpassSupportBottomMeshChanged?.Invoke( this ); } finally { _overpassSupportBottomMesh.EndSet(); } } }
+		//	set { if( _overpassSupportBottomMesh.BeginSet( this, ref value ) ) { try { OverpassSupportBottomMeshChanged?.Invoke( this ); } finally { _overpassSupportBottomMesh.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="OverpassSupportBottomMesh"/> property value changes.</summary>
 		//public event Action<RoadType> OverpassSupportBottomMeshChanged;
@@ -453,7 +511,7 @@ namespace NeoAxis
 		//public Reference<double> OverpassSupportColumnRadius
 		//{
 		//	get { if( _overpassSupportColumnRadius.BeginGet() ) OverpassSupportColumnRadius = _overpassSupportColumnRadius.Get( this ); return _overpassSupportColumnRadius.value; }
-		//	set { if( _overpassSupportColumnRadius.BeginSet( ref value ) ) { try { OverpassSupportColumnRadiusChanged?.Invoke( this ); } finally { _overpassSupportColumnRadius.EndSet(); } } }
+		//	set { if( _overpassSupportColumnRadius.BeginSet( this, ref value ) ) { try { OverpassSupportColumnRadiusChanged?.Invoke( this ); } finally { _overpassSupportColumnRadius.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="OverpassSupportColumnRadius"/> property value changes.</summary>
 		//public event Action<RoadType> OverpassSupportColumnRadiusChanged;
@@ -464,7 +522,7 @@ namespace NeoAxis
 		//public Reference<Material> OverpassSupportColumnMaterial
 		//{
 		//	get { if( _overpassSupportColumnMaterial.BeginGet() ) OverpassSupportColumnMaterial = _overpassSupportColumnMaterial.Get( this ); return _overpassSupportColumnMaterial.value; }
-		//	set { if( _overpassSupportColumnMaterial.BeginSet( ref value ) ) { try { OverpassSupportColumnMaterialChanged?.Invoke( this ); } finally { _overpassSupportColumnMaterial.EndSet(); } } }
+		//	set { if( _overpassSupportColumnMaterial.BeginSet( this, ref value ) ) { try { OverpassSupportColumnMaterialChanged?.Invoke( this ); } finally { _overpassSupportColumnMaterial.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="OverpassSupportColumnMaterial"/> property value changes.</summary>
 		//public event Action<RoadType> OverpassSupportColumnMaterialChanged;
@@ -477,7 +535,7 @@ namespace NeoAxis
 		//public Reference<double> OverpassSupportColumnUVTilesLength
 		//{
 		//	get { if( _overpassSupportColumnUVTilesLength.BeginGet() ) OverpassSupportColumnUVTilesLength = _overpassSupportColumnUVTilesLength.Get( this ); return _overpassSupportColumnUVTilesLength.value; }
-		//	set { if( _overpassSupportColumnUVTilesLength.BeginSet( ref value ) ) { try { OverpassSupportColumnUVTilesLengthChanged?.Invoke( this ); } finally { _overpassSupportColumnUVTilesLength.EndSet(); } } }
+		//	set { if( _overpassSupportColumnUVTilesLength.BeginSet( this, ref value ) ) { try { OverpassSupportColumnUVTilesLengthChanged?.Invoke( this ); } finally { _overpassSupportColumnUVTilesLength.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="OverpassSupportColumnUVTilesLength"/> property value changes.</summary>
 		//public event Action<RoadType> OverpassSupportColumnUVTilesLengthChanged;
@@ -490,7 +548,7 @@ namespace NeoAxis
 		//public Reference<double> OverpassSupportColumnUVTilesCircle
 		//{
 		//	get { if( _overpassSupportColumnUVTilesCircle.BeginGet() ) OverpassSupportColumnUVTilesCircle = _overpassSupportColumnUVTilesCircle.Get( this ); return _overpassSupportColumnUVTilesCircle.value; }
-		//	set { if( _overpassSupportColumnUVTilesCircle.BeginSet( ref value ) ) { try { OverpassSupportColumnUVTilesCircleChanged?.Invoke( this ); } finally { _overpassSupportColumnUVTilesCircle.EndSet(); } } }
+		//	set { if( _overpassSupportColumnUVTilesCircle.BeginSet( this, ref value ) ) { try { OverpassSupportColumnUVTilesCircleChanged?.Invoke( this ); } finally { _overpassSupportColumnUVTilesCircle.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="OverpassSupportColumnUVTilesCircle"/> property value changes.</summary>
 		//public event Action<RoadType> OverpassSupportColumnUVTilesCircleChanged;
@@ -507,7 +565,7 @@ namespace NeoAxis
 		public Reference<double> SegmentsLength
 		{
 			get { if( _segmentsLength.BeginGet() ) SegmentsLength = _segmentsLength.Get( this ); return _segmentsLength.value; }
-			set { if( _segmentsLength.BeginSet( ref value ) ) { try { SegmentsLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _segmentsLength.EndSet(); } } }
+			set { if( _segmentsLength.BeginSet( this, ref value ) ) { try { SegmentsLengthChanged?.Invoke( this ); DataWasChanged(); } finally { _segmentsLength.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SegmentsLength"/> property value changes.</summary>
 		public event Action<RoadType> SegmentsLengthChanged;
@@ -520,7 +578,7 @@ namespace NeoAxis
 		//public Reference<int> SegmentsCircle
 		//{
 		//	get { if( _segmentsCircle.BeginGet() ) SegmentsCircle = _segmentsCircle.Get( this ); return _segmentsCircle.value; }
-		//	set { if( _segmentsCircle.BeginSet( ref value ) ) { try { SegmentsCircleChanged?.Invoke( this ); DataWasChanged(); } finally { _segmentsCircle.EndSet(); } } }
+		//	set { if( _segmentsCircle.BeginSet( this, ref value ) ) { try { SegmentsCircleChanged?.Invoke( this ); DataWasChanged(); } finally { _segmentsCircle.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="SegmentsCircle"/> property value changes.</summary>
 		//public event Action<Road> SegmentsCircleChanged;
@@ -531,7 +589,7 @@ namespace NeoAxis
 		////public Reference<bool> SharpEdges
 		////{
 		////	get { if( _sharpEdges.BeginGet() ) SharpEdges = _sharpEdges.Get( this ); return _sharpEdges.value; }
-		////	set { if( _sharpEdges.BeginSet( ref value ) ) { try { SharpEdgesChanged?.Invoke( this ); DataWasChanged(); } finally { _sharpEdges.EndSet(); } } }
+		////	set { if( _sharpEdges.BeginSet( this, ref value ) ) { try { SharpEdgesChanged?.Invoke( this ); DataWasChanged(); } finally { _sharpEdges.EndSet(); } } }
 		////}
 		/////// <summary>Occurs when the <see cref="SharpEdges"/> property value changes.</summary>
 		////public event Action<Road> SharpEdgesChanged;
@@ -546,7 +604,7 @@ namespace NeoAxis
 		public Reference<double> VisibilityDistanceFactor
 		{
 			get { if( _visibilityDistanceFactor.BeginGet() ) VisibilityDistanceFactor = _visibilityDistanceFactor.Get( this ); return _visibilityDistanceFactor.value; }
-			set { if( _visibilityDistanceFactor.BeginSet( ref value ) ) { try { VisibilityDistanceFactorChanged?.Invoke( this ); } finally { _visibilityDistanceFactor.EndSet(); } } }
+			set { if( _visibilityDistanceFactor.BeginSet( this, ref value ) ) { try { VisibilityDistanceFactorChanged?.Invoke( this ); } finally { _visibilityDistanceFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="VisibilityDistanceFactor"/> property value changes.</summary>
 		public event Action<RoadType> VisibilityDistanceFactorChanged;
@@ -561,7 +619,7 @@ namespace NeoAxis
 		public Reference<PhysicalMaterial> SurfaceCollisionMaterial
 		{
 			get { if( _surfaceCollisionMaterial.BeginGet() ) SurfaceCollisionMaterial = _surfaceCollisionMaterial.Get( this ); return _surfaceCollisionMaterial.value; }
-			set { if( _surfaceCollisionMaterial.BeginSet( ref value ) ) { try { SurfaceCollisionMaterialChanged?.Invoke( this ); DataWasChanged(); } finally { _surfaceCollisionMaterial.EndSet(); } } }
+			set { if( _surfaceCollisionMaterial.BeginSet( this, ref value ) ) { try { SurfaceCollisionMaterialChanged?.Invoke( this ); DataWasChanged(); } finally { _surfaceCollisionMaterial.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SurfaceCollisionMaterial"/> property value changes.</summary>
 		public event Action<RoadType> SurfaceCollisionMaterialChanged;
@@ -576,7 +634,7 @@ namespace NeoAxis
 		//public Reference<PhysicalMaterial.FrictionModeEnum> SurfaceCollisionFrictionMode
 		//{
 		//	get { if( _surfaceCollisionFrictionMode.BeginGet() ) SurfaceCollisionFrictionMode = _surfaceCollisionFrictionMode.Get( this ); return _surfaceCollisionFrictionMode.value; }
-		//	set { if( _surfaceCollisionFrictionMode.BeginSet( ref value ) ) { try { SurfaceCollisionFrictionModeChanged?.Invoke( this ); DataWasChanged(); } finally { _surfaceCollisionFrictionMode.EndSet(); } } }
+		//	set { if( _surfaceCollisionFrictionMode.BeginSet( this, ref value ) ) { try { SurfaceCollisionFrictionModeChanged?.Invoke( this ); DataWasChanged(); } finally { _surfaceCollisionFrictionMode.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="SurfaceCollisionFrictionMode"/> property value changes.</summary>
 		//public event Action<RoadType> SurfaceCollisionFrictionModeChanged;
@@ -591,7 +649,7 @@ namespace NeoAxis
 		public Reference<double> SurfaceCollisionFriction
 		{
 			get { if( _surfaceCollisionFriction.BeginGet() ) SurfaceCollisionFriction = _surfaceCollisionFriction.Get( this ); return _surfaceCollisionFriction.value; }
-			set { if( _surfaceCollisionFriction.BeginSet( ref value ) ) { try { SurfaceCollisionFrictionChanged?.Invoke( this ); DataWasChanged(); } finally { _surfaceCollisionFriction.EndSet(); } } }
+			set { if( _surfaceCollisionFriction.BeginSet( this, ref value ) ) { try { SurfaceCollisionFrictionChanged?.Invoke( this ); DataWasChanged(); } finally { _surfaceCollisionFriction.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SurfaceCollisionFriction"/> property value changes.</summary>
 		public event Action<RoadType> SurfaceCollisionFrictionChanged;
@@ -606,7 +664,7 @@ namespace NeoAxis
 		//public Reference<Vector3> SurfaceCollisionAnisotropicFriction
 		//{
 		//	get { if( _surfaceCollisionAnisotropicFriction.BeginGet() ) SurfaceCollisionAnisotropicFriction = _surfaceCollisionAnisotropicFriction.Get( this ); return _surfaceCollisionAnisotropicFriction.value; }
-		//	set { if( _surfaceCollisionAnisotropicFriction.BeginSet( ref value ) ) { try { SurfaceCollisionAnisotropicFrictionChanged?.Invoke( this ); DataWasChanged(); } finally { _surfaceCollisionAnisotropicFriction.EndSet(); } } }
+		//	set { if( _surfaceCollisionAnisotropicFriction.BeginSet( this, ref value ) ) { try { SurfaceCollisionAnisotropicFrictionChanged?.Invoke( this ); DataWasChanged(); } finally { _surfaceCollisionAnisotropicFriction.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="SurfaceCollisionAnisotropicFriction"/> property value changes.</summary>
 		//public event Action<RoadType> SurfaceCollisionAnisotropicFrictionChanged;
@@ -622,7 +680,7 @@ namespace NeoAxis
 		//public Reference<double> SurfaceCollisionSpinningFriction
 		//{
 		//	get { if( _surfaceCollisionSpinningFriction.BeginGet() ) SurfaceCollisionSpinningFriction = _surfaceCollisionSpinningFriction.Get( this ); return _surfaceCollisionSpinningFriction.value; }
-		//	set { if( _surfaceCollisionSpinningFriction.BeginSet( ref value ) ) { try { SurfaceCollisionSpinningFrictionChanged?.Invoke( this ); DataWasChanged(); } finally { _surfaceCollisionSpinningFriction.EndSet(); } } }
+		//	set { if( _surfaceCollisionSpinningFriction.BeginSet( this, ref value ) ) { try { SurfaceCollisionSpinningFrictionChanged?.Invoke( this ); DataWasChanged(); } finally { _surfaceCollisionSpinningFriction.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="SurfaceCollisionSpinningFriction"/> property value changes.</summary>
 		//public event Action<RoadType> SurfaceCollisionSpinningFrictionChanged;
@@ -638,7 +696,7 @@ namespace NeoAxis
 		//public Reference<double> SurfaceCollisionRollingFriction
 		//{
 		//	get { if( _surfaceCollisionRollingFriction.BeginGet() ) SurfaceCollisionRollingFriction = _surfaceCollisionRollingFriction.Get( this ); return _surfaceCollisionRollingFriction.value; }
-		//	set { if( _surfaceCollisionRollingFriction.BeginSet( ref value ) ) { try { SurfaceCollisionRollingFrictionChanged?.Invoke( this ); DataWasChanged(); } finally { _surfaceCollisionRollingFriction.EndSet(); } } }
+		//	set { if( _surfaceCollisionRollingFriction.BeginSet( this, ref value ) ) { try { SurfaceCollisionRollingFrictionChanged?.Invoke( this ); DataWasChanged(); } finally { _surfaceCollisionRollingFriction.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="SurfaceCollisionRollingFriction"/> property value changes.</summary>
 		//public event Action<RoadType> SurfaceCollisionRollingFrictionChanged;
@@ -653,13 +711,69 @@ namespace NeoAxis
 		public Reference<double> SurfaceCollisionRestitution
 		{
 			get { if( _surfaceCollisionRestitution.BeginGet() ) SurfaceCollisionRestitution = _surfaceCollisionRestitution.Get( this ); return _surfaceCollisionRestitution.value; }
-			set { if( _surfaceCollisionRestitution.BeginSet( ref value ) ) { try { SurfaceCollisionRestitutionChanged?.Invoke( this ); DataWasChanged(); } finally { _surfaceCollisionRestitution.EndSet(); } } }
+			set { if( _surfaceCollisionRestitution.BeginSet( this, ref value ) ) { try { SurfaceCollisionRestitutionChanged?.Invoke( this ); DataWasChanged(); } finally { _surfaceCollisionRestitution.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SurfaceCollisionRestitution"/> property value changes.</summary>
 		public event Action<RoadType> SurfaceCollisionRestitutionChanged;
 		ReferenceField<double> _surfaceCollisionRestitution;
 
-		//
+		/////////////////////////////////////////
+
+		const string trafficLightBaseMeshDefault = @"Content\Constructors\Roads\Default Road\Traffic Light\Base\Street light.gltf|$Mesh";
+		//const string trafficLightBaseMeshDefault = @"Content\Constructors\Roads\Default Road\Traffic Light\Base.gltf|$Mesh";
+
+		[Category( "Traffic Lights" )]
+		[DefaultValueReference( trafficLightBaseMeshDefault )]
+		public Reference<Mesh> TrafficLightBaseMesh
+		{
+			get { if( _trafficLightBaseMesh.BeginGet() ) TrafficLightBaseMesh = _trafficLightBaseMesh.Get( this ); return _trafficLightBaseMesh.value; }
+			set { if( _trafficLightBaseMesh.BeginSet( this, ref value ) ) { try { TrafficLightBaseMeshChanged?.Invoke( this ); } finally { _trafficLightBaseMesh.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="TrafficLightBaseMesh"/> property value changes.</summary>
+		public event Action<RoadType> TrafficLightBaseMeshChanged;
+		ReferenceField<Mesh> _trafficLightBaseMesh = new Reference<Mesh>( null, trafficLightBaseMeshDefault );
+
+		const string trafficLightBaseMeshWalkingOnlyDefault = @"Content\Constructors\Roads\Default Road\Traffic Light\Base\Street light walking only.gltf|$Mesh";
+		//const string trafficLightBaseMeshWalkingOnlyDefault = @"Content\Constructors\Roads\Default Road\Traffic Light\Base Walking Only.gltf|$Mesh";
+
+		[Category( "Traffic Lights" )]
+		[DefaultValueReference( trafficLightBaseMeshWalkingOnlyDefault )]
+		public Reference<Mesh> TrafficLightBaseMeshWalkingOnly
+		{
+			get { if( _trafficLightBaseMeshWalkingOnly.BeginGet() ) TrafficLightBaseMeshWalkingOnly = _trafficLightBaseMeshWalkingOnly.Get( this ); return _trafficLightBaseMeshWalkingOnly.value; }
+			set { if( _trafficLightBaseMeshWalkingOnly.BeginSet( this, ref value ) ) { try { TrafficLightBaseMeshWalkingOnlyChanged?.Invoke( this ); } finally { _trafficLightBaseMeshWalkingOnly.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="TrafficLightBaseMeshWalkingOnly"/> property value changes.</summary>
+		public event Action<RoadType> TrafficLightBaseMeshWalkingOnlyChanged;
+		ReferenceField<Mesh> _trafficLightBaseMeshWalkingOnly = new Reference<Mesh>( null, trafficLightBaseMeshWalkingOnlyDefault );
+
+		const string trafficLightDrivingMeshDefault = @"Content\Constructors\Roads\Default Road\Traffic Light\Driving.gltf|$Mesh";
+
+		[Category( "Traffic Lights" )]
+		[DefaultValueReference( trafficLightDrivingMeshDefault )]
+		public Reference<Mesh> TrafficLightDrivingMesh
+		{
+			get { if( _trafficLightDrivingMesh.BeginGet() ) TrafficLightDrivingMesh = _trafficLightDrivingMesh.Get( this ); return _trafficLightDrivingMesh.value; }
+			set { if( _trafficLightDrivingMesh.BeginSet( this, ref value ) ) { try { TrafficLightDrivingMeshChanged?.Invoke( this ); } finally { _trafficLightDrivingMesh.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="TrafficLightDrivingMesh"/> property value changes.</summary>
+		public event Action<RoadType> TrafficLightDrivingMeshChanged;
+		ReferenceField<Mesh> _trafficLightDrivingMesh = new Reference<Mesh>( null, trafficLightDrivingMeshDefault );
+
+		const string trafficLightWalkingMeshDefault = @"Content\Constructors\Roads\Default Road\Traffic Light\Walking.gltf|$Mesh";
+
+		[Category( "Traffic Lights" )]
+		[DefaultValueReference( trafficLightWalkingMeshDefault )]
+		public Reference<Mesh> TrafficLightWalkingMesh
+		{
+			get { if( _trafficLightWalkingMesh.BeginGet() ) TrafficLightWalkingMesh = _trafficLightWalkingMesh.Get( this ); return _trafficLightWalkingMesh.value; }
+			set { if( _trafficLightWalkingMesh.BeginSet( this, ref value ) ) { try { TrafficLightWalkingMeshChanged?.Invoke( this ); } finally { _trafficLightWalkingMesh.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="TrafficLightWalkingMesh"/> property value changes.</summary>
+		public event Action<RoadType> TrafficLightWalkingMeshChanged;
+		ReferenceField<Mesh> _trafficLightWalkingMesh = new Reference<Mesh>( null, trafficLightWalkingMeshDefault );
+
+		/////////////////////////////////////////
 
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
 		{

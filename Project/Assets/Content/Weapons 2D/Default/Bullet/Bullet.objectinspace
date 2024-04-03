@@ -1,0 +1,38 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.MeshInSpace
+{
+	EditorCameraTransform = "1.37704294775239 -1.13284101713683 0.905772570758137; -0.2191854566202 0.0785722056997891 0.915470996498287 0.328172208860071; 1 1 1"
+	Transform
+	{
+		GetByReference = "this:$Collision Body\\Transform"
+	}
+	Mesh
+	{
+		GetByReference = "Content\\Weapons 2D\\Default\\Bullet\\Bullet.mesh"
+	}
+	ReplaceMaterialSelectively
+	{
+		Count = 0
+	}
+	SpecialEffects
+	{
+		Value
+		{
+			Count = 0
+		}
+	}
+	.component NeoAxis.RigidBody2D
+	{
+		Name = Collision Body
+		Transform = "0 0 0; 0 0 0 1; 1 1 0.05"
+		MotionType = Dynamic
+		CCD = True
+		.component NeoAxis.CollisionShape2D_Ellipse
+		{
+			Restitution = 0.5
+			CollidesWith = All
+			Dimensions = 0.200000002980232 0.200000002980232
+		}
+	}
+}

@@ -23,7 +23,7 @@ namespace NeoAxis
 		public Reference<double> Intensity
 		{
 			get { if( _intensity.BeginGet() ) Intensity = _intensity.Get( this ); return _intensity.value; }
-			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
+			set { if( _intensity.BeginSet( this, ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
 		public event Action<RenderingEffect_ToneMapping> IntensityChanged;
@@ -38,7 +38,7 @@ namespace NeoAxis
 		public Reference<double> GammaInput
 		{
 			get { if( _gammaInput.BeginGet() ) GammaInput = _gammaInput.Get( this ); return _gammaInput.value; }
-			set { if( _gammaInput.BeginSet( ref value ) ) { try { GammaInputChanged?.Invoke( this ); } finally { _gammaInput.EndSet(); } } }
+			set { if( _gammaInput.BeginSet( this, ref value ) ) { try { GammaInputChanged?.Invoke( this ); } finally { _gammaInput.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="GammaInput"/> property value changes.</summary>
 		public event Action<RenderingEffect_ToneMapping> GammaInputChanged;
@@ -53,7 +53,7 @@ namespace NeoAxis
 		public Reference<double> Exposure
 		{
 			get { if( _exposure.BeginGet() ) Exposure = _exposure.Get( this ); return _exposure.value; }
-			set { if( _exposure.BeginSet( ref value ) ) { try { ExposureChanged?.Invoke( this ); } finally { _exposure.EndSet(); } } }
+			set { if( _exposure.BeginSet( this, ref value ) ) { try { ExposureChanged?.Invoke( this ); } finally { _exposure.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Exposure"/> property value changes.</summary>
 		public event Action<RenderingEffect_ToneMapping> ExposureChanged;
@@ -73,7 +73,7 @@ namespace NeoAxis
 		public Reference<MethodEnum> Method
 		{
 			get { if( _method.BeginGet() ) Method = _method.Get( this ); return _method.value; }
-			set { if( _method.BeginSet( ref value ) ) { try { MethodChanged?.Invoke( this ); } finally { _method.EndSet(); } } }
+			set { if( _method.BeginSet( this, ref value ) ) { try { MethodChanged?.Invoke( this ); } finally { _method.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Method"/> property value changes.</summary>
 		public event Action<RenderingEffect_ToneMapping> MethodChanged;
@@ -88,7 +88,7 @@ namespace NeoAxis
 		public Reference<string> CustomCode
 		{
 			get { if( _customCode.BeginGet() ) CustomCode = _customCode.Get( this ); return _customCode.value; }
-			set { if( _customCode.BeginSet( ref value ) ) { try { CustomCodeChanged?.Invoke( this ); } finally { _customCode.EndSet(); } } }
+			set { if( _customCode.BeginSet( this, ref value ) ) { try { CustomCodeChanged?.Invoke( this ); } finally { _customCode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CustomCode"/> property value changes.</summary>
 		public event Action<RenderingEffect_ToneMapping> CustomCodeChanged;
@@ -103,7 +103,7 @@ namespace NeoAxis
 		public Reference<double> GammaOutput
 		{
 			get { if( _gammaOutput.BeginGet() ) GammaOutput = _gammaOutput.Get( this ); return _gammaOutput.value; }
-			set { if( _gammaOutput.BeginSet( ref value ) ) { try { GammaOutputChanged?.Invoke( this ); } finally { _gammaOutput.EndSet(); } } }
+			set { if( _gammaOutput.BeginSet( this, ref value ) ) { try { GammaOutputChanged?.Invoke( this ); } finally { _gammaOutput.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="GammaOutput"/> property value changes.</summary>
 		public event Action<RenderingEffect_ToneMapping> GammaOutputChanged;

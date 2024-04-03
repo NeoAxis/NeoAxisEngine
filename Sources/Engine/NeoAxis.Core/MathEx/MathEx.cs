@@ -887,5 +887,41 @@ namespace NeoAxis
 
 			//result = rotation * ( point * scale ) + position;
 		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static RangeF DegreeToRadian( RangeF v )
+		{
+			return new RangeF( DegreeToRadian( v.Minimum ), DegreeToRadian( v.Maximum ) );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static RangeF RadianToDegree( RangeF v )
+		{
+			return new RangeF( RadianToDegree( v.Minimum ), RadianToDegree( v.Maximum ) );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static Range DegreeToRadian( Range v )
+		{
+			return new Range( DegreeToRadian( v.Minimum ), DegreeToRadian( v.Maximum ) );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static Range RadianToDegree( Range v )
+		{
+			return new Range( RadianToDegree( v.Minimum ), RadianToDegree( v.Maximum ) );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static double Square( double v )
+		{
+			return v * v;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static float Square( float v )
+		{
+			return v * v;
+		}
 	}
 }

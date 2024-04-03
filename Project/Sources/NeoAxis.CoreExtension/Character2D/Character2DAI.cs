@@ -12,6 +12,34 @@ namespace NeoAxis
 	[AddToResourcesWindow( @"Base\2D\Character 2D AI", -7897 )]
 	public class Character2DAI : AI
 	{
+		/// <summary>
+		/// Whether to enable the ability to interact with the character.
+		/// </summary>
+		[DefaultValue( false )]
+		public Reference<bool> AllowInteract
+		{
+			get { if( _allowInteract.BeginGet() ) AllowInteract = _allowInteract.Get( this ); return _allowInteract.value; }
+			set { if( _allowInteract.BeginSet( this, ref value ) ) { try { AllowInteractChanged?.Invoke( this ); } finally { _allowInteract.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="AllowInteract"/> property value changes.</summary>
+		public event Action<Character2DAI> AllowInteractChanged;
+		ReferenceField<bool> _allowInteract = false;
+
+		/// <summary>
+		/// The entry point of the dialogue based on the flow graph.
+		/// </summary>
+		[DefaultValue( null )]
+		public Reference<Component> DialogueFlow
+		{
+			get { if( _dialogueFlow.BeginGet() ) DialogueFlow = _dialogueFlow.Get( this ); return _dialogueFlow.value; }
+			set { if( _dialogueFlow.BeginSet( this, ref value ) ) { try { DialogueFlowChanged?.Invoke( this ); } finally { _dialogueFlow.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DialogueFlow"/> property value changes.</summary>
+		public event Action<Character2DAI> DialogueFlowChanged;
+		ReferenceField<Component> _dialogueFlow = null;
+
+		///////////////////////////////////////////////
+
 		[Browsable( false )]
 		public Character2D Character
 		{
@@ -52,7 +80,7 @@ namespace NeoAxis
 							var distanceX = Math.Abs( diff.X );
 							var distanceZ = Math.Abs( diff.Y );
 
-							if( distanceX <= moveTo.DistanceToReach && distanceZ < character.Height )
+							if( distanceX <= moveTo.DistanceToReach && distanceZ < character.TypeCached.Height )
 							{
 								//reach
 								if( task.DeleteTaskWhenReach )
@@ -102,6 +130,144 @@ namespace NeoAxis
 			task.Enabled = true;
 
 			return task;
+		}
+
+		public override void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
+		{
+			if( AllowInteract )
+			{
+				//interact with another character
+				var character = gameMode.ObjectControlledByPlayer.Value as Character2D;
+				if( character != null )
+				{
+					info = new InteractiveObjectObjectInfo();
+					info.AllowInteract = true;
+					//info.Text.Add( "Click to interact." );
+					return;
+				}
+			}
+
+			base.ObjectInteractionGetInfo( gameMode, ref info );
+		}
+
+		bool StartDialogueFlow( GameMode gameMode, Component secondParticipant, ServerNetworkService_Components.ClientItem sendToSpecifiedClient )
+		{
+			var dialogueFlow = DialogueFlow.Value;
+			if( dialogueFlow != null && secondParticipant != null )
+			{
+				////check already in interaction
+				//foreach( var i in gameMode.GetComponents<ContinuousInteraction>() )
+				//{
+				//	if( i.Creator.Value == this )
+				//		return false;
+				//}
+
+				//flow graph node as entry is ok too
+				var flowNode = dialogueFlow as FlowGraphNode;
+				if( flowNode != null )
+					dialogueFlow = flowNode.ControlledObject.Value;
+
+				//get entry of the flow component
+				var entry = ObjectEx.PropertyGet<FlowInput>( dialogueFlow, "Entry" );
+				if( entry == null )
+				{
+					Log.Warning( "Character AI: No entry to the dialogue flow." );
+					return true;
+				}
+
+				//create interaction
+				var interaction = gameMode.CreateComponent<ContinuousInteraction>( enabled: false, networkMode: NetworkModeEnum.SelectedUsers );
+				if( sendToSpecifiedClient != null )
+					interaction.NetworkModeAddUser( sendToSpecifiedClient );
+				interaction.Creator = this;
+				//make reference for SecondParticipant to synchronize via network
+				interaction.SecondParticipant = new Reference<Component>( null, "root:" + secondParticipant.GetPathFromRoot() );
+				interaction.Enabled = true;
+
+				//start a new flow
+				ContinuousInteraction.Latest = interaction;
+				var initVariables = new List<Tuple<string, object>>();
+				initVariables.Add( new Tuple<string, object>( "_Interaction", interaction ) );
+				var flow = Flow.Execute( ParentRoot.HierarchyController, entry, initVariables );
+				interaction.DeleteWhenFlowEnded = flow;
+
+				return true;
+			}
+
+			return false;
+		}
+
+		public override bool ObjectInteractionInputMessage( GameMode gameMode, InputMessage message )
+		{
+			//entry to dialogue flow
+			var buttonDown = message as InputMessageMouseButtonDown;
+			if( buttonDown != null && AllowInteract )
+			{
+				if( NetworkIsClient )
+				{
+					//var writer = 
+					BeginNetworkMessageToServer( "ObjectInteractionInputMessage_InteractByClick" );
+					//writer.Write( (byte)buttonDown.Button );
+					EndNetworkMessage();
+				}
+				else
+				{
+					if( StartDialogueFlow( gameMode, gameMode.ObjectControlledByPlayer, null ) )
+						return true;
+				}
+			}
+
+			return base.ObjectInteractionInputMessage( gameMode, message );
+		}
+
+		public override void ObjectInteractionEnter( ObjectInteractionContext context )
+		{
+			base.ObjectInteractionEnter( context );
+		}
+
+		public override void ObjectInteractionExit( ObjectInteractionContext context )
+		{
+			base.ObjectInteractionExit( context );
+		}
+
+		public override void ObjectInteractionUpdate( ObjectInteractionContext context )
+		{
+			base.ObjectInteractionUpdate( context );
+		}
+
+		protected override bool OnReceiveNetworkMessageFromClient( ServerNetworkService_Components.ClientItem client, string message, ArrayDataReader reader )
+		{
+			if( !base.OnReceiveNetworkMessageFromClient( client, message, reader ) )
+				return false;
+
+			if( message == "ObjectInteractionInputMessage_InteractByClick" )
+			{
+
+				//!!!!server security verifications. characters must be close. what else
+
+
+				//var button = (EMouseButtons)reader.ReadByte();
+				if( !reader.Complete() )
+					return false;
+
+				var scene = ParentRoot as Scene;
+				if( scene != null )
+				{
+					var gameMode = (GameMode)scene.GetGameMode();
+					if( gameMode != null )
+					{
+						var networkLogic = NetworkLogicUtility.GetNetworkLogic( this );
+						if( networkLogic != null )
+						{
+							var secondParticipant = networkLogic.ServerGetObjectControlledByUser( client.User, true );
+							if( secondParticipant != null )
+								StartDialogueFlow( gameMode, secondParticipant, client );
+						}
+					}
+				}
+			}
+
+			return true;
 		}
 	}
 }

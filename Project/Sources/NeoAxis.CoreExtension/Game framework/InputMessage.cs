@@ -179,6 +179,30 @@ namespace NeoAxis
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	public class InputMessageTouchSliderChanged : InputMessage
+	{
+		int slider;
+		Vector2 value;
+
+		public InputMessageTouchSliderChanged( int slider, Vector2 value )
+		{
+			this.slider = slider;
+			this.value = value;
+		}
+
+		public int Slider
+		{
+			get { return slider; }
+		}
+
+		public Vector2 Value
+		{
+			get { return value; }
+		}
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	public class InputMessageSpecialInputDevice : InputMessage
 	{
 		InputEvent inputEvent;
@@ -193,7 +217,7 @@ namespace NeoAxis
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public class InputMessageInputEnabledChanged : InputMessageMouse
+	public class InputMessageInputEnabledChanged : InputMessage
 	{
 		bool value;
 

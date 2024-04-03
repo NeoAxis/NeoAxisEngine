@@ -3,7 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -174,7 +174,7 @@ TEST_F(ImporterTest, testMemoryRead) {
     const aiScene *sc = pImp->ReadFileFromMemory(InputData_abRawBlock, InputData_BLOCK_SIZE,
             aiProcessPreset_TargetRealtime_Quality, "3ds");
 
-    ASSERT_TRUE(sc != NULL);
+    ASSERT_TRUE(sc != nullptr);
     EXPECT_EQ(aiString("<3DSRoot>"), sc->mRootNode->mName);
     EXPECT_EQ(1U, sc->mNumMeshes);
     EXPECT_EQ(24U, sc->mMeshes[0]->mNumVertices);
@@ -220,10 +220,10 @@ TEST_F(ImporterTest, testPluginInterface) {
     EXPECT_FALSE(pImp->IsExtensionSupported("."));
 
     TestPlugin *p = (TestPlugin *)pImp->GetImporter(".windows");
-    ASSERT_TRUE(NULL != p);
+    ASSERT_TRUE(nullptr != p);
 
     try {
-        p->InternReadFile("", 0, NULL);
+        p->InternReadFile("", nullptr, nullptr);
     } catch (const DeadlyImportError &dead) {
         EXPECT_TRUE(!strcmp(dead.what(), AIUT_DEF_ERROR_TEXT));
 
@@ -279,3 +279,119 @@ TEST_F(ImporterTest, SearchFileHeaderForTokenTest) {
     //DefaultIOSystem ioSystem;
     //    BaseImporter::SearchFileHeaderForToken( &ioSystem, assetPath, Token, 2 )
 }
+
+namespace {
+// Description for an importer which fails in specific ways.
+aiImporterDesc s_failingImporterDescription = {
+    "Failing importer",
+    "assimp team",
+    "",
+    "",
+    0,
+    1,
+    0,
+    1,
+    0,
+    "fail"
+};
+
+// This importer fails in specific ways.
+class FailingImporter : public Assimp::BaseImporter {
+public:
+    virtual ~FailingImporter() = default;
+    virtual bool CanRead(const std::string &, Assimp::IOSystem *, bool) const override {
+        return true;
+    }
+
+protected:
+    const aiImporterDesc *GetInfo() const override {
+        return &s_failingImporterDescription;
+    }
+
+    void InternReadFile(const std::string &pFile, aiScene *, Assimp::IOSystem *) override {
+        if (pFile == "deadlyImportError.fail") {
+            throw DeadlyImportError("Deadly import error test. Details: ", 42, " More Details: ", "Failure");
+        } else if (pFile == "stdException.fail") {
+            throw std::runtime_error("std::exception test");
+        } else if (pFile == "unexpectedException.fail") {
+            throw 5;
+        }
+    }
+};
+} // namespace
+
+TEST_F(ImporterTest, deadlyImportError) {
+    pImp->RegisterLoader(new FailingImporter);
+    pImp->SetIOHandler(new TestIOSystem);
+    const aiScene *scene = pImp->ReadFile("deadlyImportError.fail", 0);
+    EXPECT_EQ(scene, nullptr);
+    EXPECT_STREQ(pImp->GetErrorString(), "Deadly import error test. Details: 42 More Details: Failure");
+    EXPECT_NE(pImp->GetException(), std::exception_ptr());
+}
+
+TEST_F(ImporterTest, stdException) {
+    pImp->RegisterLoader(new FailingImporter);
+    pImp->SetIOHandler(new TestIOSystem);
+    const aiScene *scene = pImp->ReadFile("stdException.fail", 0);
+    EXPECT_EQ(scene, nullptr);
+    EXPECT_STREQ(pImp->GetErrorString(), "std::exception test");
+    EXPECT_NE(pImp->GetException(), std::exception_ptr());
+    try {
+        std::rethrow_exception(pImp->GetException());
+    } catch (const std::exception &e) {
+        EXPECT_STREQ(e.what(), "std::exception test");
+    } catch (...) {
+        EXPECT_TRUE(false);
+    }
+}
+
+TEST_F(ImporterTest, unexpectedException) {
+    pImp->RegisterLoader(new FailingImporter);
+    pImp->SetIOHandler(new TestIOSystem);
+    const aiScene *scene = pImp->ReadFile("unexpectedException.fail", 0);
+
+    EXPECT_EQ(scene, nullptr);
+    EXPECT_STREQ(pImp->GetErrorString(), "Unknown exception");
+    ASSERT_NE(pImp->GetException(), std::exception_ptr());
+    try {
+        std::rethrow_exception(pImp->GetException());
+    } catch (int x) {
+        EXPECT_EQ(x, 5);
+    } catch (...) {
+        EXPECT_TRUE(false);
+    }
+}
+
+// ------------------------------------------------------------------------------------------------
+
+struct ExtensionTestCase {
+    std::string testName;
+    std::string filename;
+    std::string getExtensionResult;
+    std::string hasExtension;
+    bool hasExtensionResult;
+};
+
+using ExtensionTest = ::testing::TestWithParam<ExtensionTestCase>;
+
+TEST_P(ExtensionTest, testGetAndHasExtension) {
+    const ExtensionTestCase& testCase = GetParam();
+    EXPECT_EQ(testCase.getExtensionResult, BaseImporter::GetExtension(testCase.filename));
+    EXPECT_EQ(testCase.hasExtensionResult, BaseImporter::HasExtension(testCase.filename, {testCase.hasExtension}));
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    ExtensionTests, ExtensionTest,
+    ::testing::ValuesIn<ExtensionTestCase>({
+        {"NoExtension", "name", "", "glb", false},
+        {"NoExtensionAndEmptyVersion", "name#", "", "glb", false},
+        {"WithExtensionAndEmptyVersion", "name.glb#", "glb#", "glb", false},
+        {"WithExtensionAndVersion", "name.glb#1234", "glb", "glb", true},
+        {"WithExtensionAndHashInStem", "name#1234.glb", "glb", "glb", true},
+        {"WithExtensionAndInvalidVersion", "name.glb#_", "glb#_", "glb", false},
+        {"WithExtensionAndDotAndHashInStem", "name.glb#.abc", "abc", "glb", false},
+        {"WithTwoExtensions", "name.abc.def", "def", "abc.def", true},
+    }),
+    [](const ::testing::TestParamInfo<ExtensionTest::ParamType>& info) {
+        return info.param.testName;
+    });

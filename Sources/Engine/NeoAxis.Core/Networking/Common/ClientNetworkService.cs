@@ -1,6 +1,7 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace NeoAxis.Networking
@@ -11,11 +12,12 @@ namespace NeoAxis.Networking
 
 		//send data
 		bool sendingData;
-		ArrayDataWriter sendDataWriter = new ArrayDataWriter();
+		int sendingMessageID;
+		ArrayDataWriter sendingDataWriter = new ArrayDataWriter();
 
 		///////////////////////////////////////////
 
-		protected ClientNetworkService( string name, byte identifier )
+		protected ClientNetworkService( string name, int identifier )
 			: base( name, identifier )
 		{
 		}
@@ -36,29 +38,37 @@ namespace NeoAxis.Networking
 			get { return sendingData; }
 		}
 
-		protected ArrayDataWriter BeginMessage( byte messageID )
+		public int SendingDataWriterLength
+		{
+			get { return sendingDataWriter.Length; }
+		}
+
+		[ MethodImpl( (MethodImplOptions)512 )]
+		protected ArrayDataWriter BeginMessage( int messageID )
 		{
 			if( sendingData )
 				Log.Fatal( "ClientNetworkService: BeginMessage: The message is already begun." );
-			if( messageID <= 0 || messageID > 255 )
-				Log.Fatal( "ServerNetworkService: BeginMessage: messageID <= 0 || messageID > 255." );
-			//if( messageType == null )
-			//	Log.Fatal( "ClientNetworkService: BeginMessage: messageType = null." );
+			if( messageID <= 0 || messageID > 15 )
+				Log.Fatal( "ClientNetworkService: BeginMessage: messageID <= 0 || messageID > 15." );
 
 			sendingData = true;
-			sendDataWriter.Reset();
+			sendingMessageID = messageID;
+			sendingDataWriter.Reset();
 
-			sendDataWriter.Write( (byte)Identifier );//, NetworkDefines.bitsForServiceIdentifier );
-			sendDataWriter.Write( (byte)messageID );// messageType.Identifier );//, NetworkDefines.bitsForServiceMessageTypeIdentifier );
+			sendingDataWriter.Write( (byte)( ( Identifier << 4 ) + messageID ) );
+			//sendDataWriter.Write( (byte)Identifier );//, NetworkDefines.bitsForServiceIdentifier );
+			//sendDataWriter.Write( (byte)messageID );// messageType.Identifier );//, NetworkDefines.bitsForServiceMessageTypeIdentifier );
 
-			return sendDataWriter;
+			return sendingDataWriter;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		protected ArrayDataWriter BeginMessage( MessageType messageType )
 		{
 			return BeginMessage( messageType.Identifier );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected void EndMessage()
 		{
 			if( !sendingData )
@@ -67,11 +77,20 @@ namespace NeoAxis.Networking
 			if( owner != null && owner.client != null )
 			{
 				var connectedNode = Owner.ServerConnectedNode;
-				connectedNode.AddDataForSending( sendDataWriter );
+				connectedNode.AddDataForSending( sendingDataWriter );
+
+				if( owner.ProfilerData != null )
+				{
+					var serviceItem = owner.ProfilerData.GetServiceItem( Identifier );
+					var messageTypeItem = serviceItem.GetMessageTypeItem( sendingMessageID );
+					messageTypeItem.SentMessages++;
+					messageTypeItem.SentSize += sendingDataWriter.Length;
+				}
 			}
 
 			sendingData = false;
-			sendDataWriter.Reset();
+			sendingMessageID = -1;
+			sendingDataWriter.Reset();
 		}
 	}
 }

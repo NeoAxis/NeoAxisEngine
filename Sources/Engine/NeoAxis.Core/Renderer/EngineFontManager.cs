@@ -2,10 +2,6 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.IO;
-using System.Drawing.Design;
 
 namespace NeoAxis
 {

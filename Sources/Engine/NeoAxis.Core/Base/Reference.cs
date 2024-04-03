@@ -1,5 +1,6 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -95,14 +96,21 @@ namespace NeoAxis
 		public bool ReferenceSpecified
 		{
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-			get { return !string.IsNullOrEmpty( getByReference ); }
+			get
+			{
+				return getByReference != null && getByReference.Length != 0;//return !string.IsNullOrEmpty( getByReference );
+			}
 		}
 
 		[Browsable( false )]
 		public bool ReferenceOrValueSpecified
 		{
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-			get { return !string.IsNullOrEmpty( getByReference ) || value != null; }
+			get
+			{
+				return getByReference != null && getByReference.Length != 0 || value != null;
+				//return !string.IsNullOrEmpty( getByReference ) || value != null;
+			}
 		}
 
 		[Browsable( false )]
@@ -278,6 +286,12 @@ namespace NeoAxis
 		{
 			return new Reference<T>( default, r.GetByReference );
 		}
+
+		[MethodImpl( MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining )]//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void Touch()
+		{
+			var d = GetByReference;
+		}
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -289,30 +303,12 @@ namespace NeoAxis
 	public struct ReferenceField<T>
 	{
 		public Reference<T> value;
-		bool getLock;
-		bool setLock;
-		//UpdateLock getLock;
-		//UpdateLock setLock;
+		int getLock;
+		int setLock;
+		//bool getLock;
+		//bool setLock;
 
 		//
-
-		//struct UpdateLock
-		//{
-		//	bool locked;
-
-		//	public bool Enter()
-		//	{
-		//		if( locked )
-		//			return false;
-		//		locked = true;
-		//		return true;
-		//	}
-
-		//	public void Exit()
-		//	{
-		//		locked = false;
-		//	}
-		//}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator ReferenceField<T>( T initValue )
@@ -357,11 +353,11 @@ namespace NeoAxis
 		{
 			if( !value.ReferenceSpecified )
 				return false;
-			if( getLock )
+			if( getLock != 0 )//if( getLock )
 				return false;
 			if( GetFastExitOptimized() )
 				return false;
-			getLock = true;
+			getLock = 1;//getLock = true;
 			return true;
 		}
 
@@ -370,60 +366,58 @@ namespace NeoAxis
 		{
 			if( !value.ReferenceSpecified )
 				return false;
-			if( getLock )
+			if( getLock != 0 )//if( getLock )
 				return false;
 			//if( GetFastExitOptimized() )
 			//	return false;
-			getLock = true;
+			getLock = 1;//getLock = true;
 			return true;
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Reference<T> Get( object owner )
 		{
-			//не может быть исключения наружу.
-
 			try
 			{
 				return value.GetValue( owner );
 			}
 			catch
 			{
-				//!!!!как-то обрабатывать?
-
 				return value;
 			}
 			finally
 			{
-				getLock = false;
-				//getLock.Exit();
+				getLock = 0;//getLock = false;
 			}
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public bool BeginSet( ref Reference<T> newValue )
+		public bool BeginSet( object owner, ref Reference<T> newValue )
 		{
+			if( newValue.ReferenceSpecified && EqualityComparer<T>.Default.Equals( newValue.Value, default( T ) ) )
+			{
+				try
+				{
+					newValue = newValue.GetValue( owner );
+				}
+				catch { }
+			}
+
 			if( value.Equals( newValue ) )
 				return false;
-			//!!!!здесь проверять лок? если выше, то останется старое значение
-			if( setLock )
+			if( setLock != 0 )//if( setLock )
 				return false;
 
 			value = newValue;
 
-			////!!!!здесь проверять лок? если выше, то останется старое значение
-			//if( setLock )
-			//	return false;
-			setLock = true;
+			setLock = 1;//setLock = true;
 			return true;
-			//return setLock.Enter();
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void EndSet()
 		{
-			setLock = false;
-			//setLock.Exit();
+			setLock = 0;//setLock = false;
 		}
 	}
 

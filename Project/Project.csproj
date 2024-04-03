@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputType>Library</OutputType>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
@@ -11,7 +12,7 @@
     <OutputPath>Binaries\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet />
-    <DefineConstants>TRACE;WINDOWS</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <DocumentationFile>Binaries\Project.xml</DocumentationFile>
     <NoWarn>1701;1702;CS1591</NoWarn>
@@ -22,7 +23,7 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet />
-    <DefineConstants>TRACE;WINDOWS</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <DocumentationFile>Binaries\Project.xml</DocumentationFile>
     <NoWarn>1701;1702;CS1591</NoWarn>
   </PropertyGroup>
@@ -44,11 +45,6 @@
       <HintPath>Binaries\NeoAxis.CoreExtension.dll</HintPath>
       <SpecificVersion>false</SpecificVersion>
       <Private>false</Private>
-    </Reference>
-    <Reference Include="System.ComponentModel.Primitives">
-      <HintPath>Binaries\System.ComponentModel.Primitives.dll</HintPath>
-      <Private>false</Private>
-      <SpecificVersion>false</SpecificVersion>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -83,5 +79,6 @@
     <Compile Include="Assets\Base\UI\Screens\BasicSceneScreen.cs" />
     <Compile Include="Assets\Base\UI\Screens\EntranceScreen.cs" />
     <Compile Include="Assets\Base\UI\Screens\InGameContextScreen.cs" />
+    <Compile Include="Assets\Base\UI\Screens\AvatarWindow.cs" />
   </ItemGroup>
 </Project>

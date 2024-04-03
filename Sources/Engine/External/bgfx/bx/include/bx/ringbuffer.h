@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -16,8 +16,8 @@ namespace bx
 	class RingBufferControl
 	{
 		BX_CLASS(RingBufferControl
+			, NO_DEFAULT_CTOR
 			, NO_COPY
-			, NO_ASSIGNMENT
 			);
 
 	public:
@@ -55,8 +55,8 @@ namespace bx
 	class SpScRingBufferControl
 	{
 		BX_CLASS(SpScRingBufferControl
+			, NO_DEFAULT_CTOR
 			, NO_COPY
-			, NO_ASSIGNMENT
 			);
 
 	public:
@@ -97,7 +97,6 @@ namespace bx
 		BX_CLASS(ReadRingBufferT
 			, NO_DEFAULT_CTOR
 			, NO_COPY
-			, NO_ASSIGNMENT
 			);
 
 	public:
@@ -140,7 +139,6 @@ namespace bx
 		BX_CLASS(WriteRingBufferT
 			, NO_DEFAULT_CTOR
 			, NO_COPY
-			, NO_ASSIGNMENT
 			);
 
 	public:

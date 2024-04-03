@@ -130,7 +130,7 @@ namespace NeoAxis.Editor
 	/// </summary>
 	public class UndoActionComponentCreateDelete : UndoSystem.Action
 	{
-		DocumentInstance document;
+		IDocumentInstance document;
 		List<Component> objects;
 		bool create;
 		Dictionary<Component, RestoreData> dataToRestore = new Dictionary<Component, RestoreData>();
@@ -143,7 +143,7 @@ namespace NeoAxis.Editor
 
 		//
 
-		public UndoActionComponentCreateDelete( DocumentInstance document, ICollection<Component> objects, bool create )//, bool callDeleteObjects )
+		public UndoActionComponentCreateDelete( IDocumentInstance document, ICollection<Component> objects, bool create )//, bool callDeleteObjects )
 		{
 			this.document = document;
 			this.objects = new List<Component>( objects );
@@ -167,7 +167,7 @@ namespace NeoAxis.Editor
 		void CreateObjects()
 		{
 #if !DEPLOY
-			ContentBrowserUtility.AllContentBrowsers_SuspendChildrenChangedEvent();
+			EditorAPI.ContentBrowserUtility_AllContentBrowsers_SuspendChildrenChangedEvent();
 #endif
 			ESet<ComponentHierarchyController> controllersToProcessDelayedOperations = new ESet<ComponentHierarchyController>();
 			try
@@ -195,7 +195,7 @@ namespace NeoAxis.Editor
 				foreach( var c in controllersToProcessDelayedOperations )
 					c.ProcessDelayedOperations();
 #if !DEPLOY
-				ContentBrowserUtility.AllContentBrowsers_ResumeChildrenChangedEvent();
+				EditorAPI.ContentBrowserUtility_AllContentBrowsers_ResumeChildrenChangedEvent();
 #endif
 			}
 		}
@@ -203,7 +203,7 @@ namespace NeoAxis.Editor
 		void DeleteObjects()
 		{
 #if !DEPLOY
-			ContentBrowserUtility.AllContentBrowsers_SuspendChildrenChangedEvent();
+			EditorAPI.ContentBrowserUtility_AllContentBrowsers_SuspendChildrenChangedEvent();
 #endif
 			ESet<ComponentHierarchyController> controllersToProcessDelayedOperations = new ESet<ComponentHierarchyController>();
 
@@ -236,7 +236,7 @@ namespace NeoAxis.Editor
 				foreach( var c in controllersToProcessDelayedOperations )
 					c.ProcessDelayedOperations();
 #if !DEPLOY
-				ContentBrowserUtility.AllContentBrowsers_ResumeChildrenChangedEvent();
+				EditorAPI.ContentBrowserUtility_AllContentBrowsers_ResumeChildrenChangedEvent();
 #endif
 			}
 
@@ -306,7 +306,7 @@ namespace NeoAxis.Editor
 			objects.Clear();
 		}
 
-		public DocumentInstance Document
+		public IDocumentInstance Document
 		{
 			get { return document; }
 		}
@@ -329,7 +329,7 @@ namespace NeoAxis.Editor
 	/// </summary>
 	public class UndoActionComponentMove : UndoSystem.Action
 	{
-		DocumentInstance document;
+		IDocumentInstance document;
 		Component obj;
 		RestoreData dataToRestore = new RestoreData();
 
@@ -341,7 +341,7 @@ namespace NeoAxis.Editor
 
 		//
 
-		public UndoActionComponentMove( DocumentInstance document, Component obj, Component oldParent, int oldIndex )
+		public UndoActionComponentMove( IDocumentInstance document, Component obj, Component oldParent, int oldIndex )
 		{
 			this.document = document;
 			this.obj = obj;
@@ -394,7 +394,7 @@ namespace NeoAxis.Editor
 			obj = null;
 		}
 
-		public DocumentInstance Document
+		public IDocumentInstance Document
 		{
 			get { return document; }
 		}

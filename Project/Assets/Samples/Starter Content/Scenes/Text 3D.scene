@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.Scene
 {
@@ -18,7 +18,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "2.55382255502285 -3.01046586921847 3.54828626462031; -0.200626964660957 0.199013764045156 0.68101790169415 0.675541975264016; 1 1 1"
+		Transform = "2.54419121680529 -3.85340093153133 3.5635965611791; -0.191143937150175 0.190960680092827 0.681134050206407 0.680481020748287; 1 1 1"
 	}
 	.component NeoAxis.Camera
 	{
@@ -47,11 +47,20 @@
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 91.429
 	}
+	.component NeoAxis.Light
+	{
+		Enabled = False
+		Name = Light
+		Transform = "-1.37961911696081 6.63834849360527 2.40416081614913; 0 0 0 1; 1 1 1"
+		Type = Point
+		Brightness = 200000
+		AttenuationFar = 134.689
+	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
-		ShadowFarDistance = 15
-		ShadowIntensity = 0.5
+		ShadowDirectionalDistance = 15
+		ShadowPointSpotlightDistance = 20
 		.component NeoAxis.Component
 		{
 			Name = Background Effects
@@ -106,7 +115,8 @@
 	.component NeoAxis.GameMode
 	{
 		Name = Game Mode
-		UseBuiltInCamera = FirstPerson
+		UseBuiltInCamera = ThirdPerson
+		ThirdPersonCameraHorizontalAngle = 90.00000000000007
 		CutsceneStarted = False
 		CutsceneGuiFadingFactor = 0
 		CutsceneGuiFadingSpeed = 0
@@ -117,17 +127,6 @@
 		{
 			GetByReference = "this:..\\$Character"
 		}
-	}
-	.component NeoAxis.Light
-	{
-		Enabled = False
-		Name = Light 2
-		Transform = "-16.276133519817 -13.7764744895929 22.8055842838911; -0.800753779408636 -0.218616030310482 0.553641801455134 0.066941554624803; 1 1 1"
-		Type = Spotlight
-		AttenuationFar = 100
-		AttenuationPower = 1.5
-		SpotlightInnerAngle = 80
-		SpotlightOuterAngle = 91.429
 	}
 	.component NeoAxis.MeshInSpace
 	{
@@ -196,9 +195,13 @@
 	.component NeoAxis.Text3D
 	{
 		Name = Text 3D
-		Transform = "-0.0359173426543839 2.91914536642007 0.639125332093821; 0 0 -0.422618261740699 0.90630778703665; 1 1 1"
 		Color = 0 1 0
+		Collision = True
 		Text = Green
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\White.material"
@@ -214,12 +217,23 @@
 				Count = 0
 			}
 		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform = "-0.0359173426543839 2.91914536642007 0.511737043848792; 0 0 -0.422618261740699 0.90630778703665; 1 1 1"
+			.component NeoAxis.CollisionShape_Box
+			{
+				LocalTransform = "0.0500000007450581 0.00000005960464478 0; 0 0 0 1; 1 1 1"
+				Dimensions = 0.100000001490116 3.70738637447357 1
+			}
+		}
 	}
 	.component NeoAxis.Text3D
 	{
 		Name = Text 3D 2
-		Transform = "4.94880576293333 3.14126993998663 0.639125332093821; 0 0 -0.819152044288992 0.573576436351046; 1 1 1"
+		Transform = "4.94880576293333 3.14126993998663 0.549289416131165; 0 0 -0.819152044288992 0.573576436351046; 1 1 1"
 		Color = 1 0 0
+		Collision = True
 		Text = Red
 		ReplaceMaterial
 		{
@@ -240,12 +254,8 @@
 	.component NeoAxis.Character
 	{
 		Name = Character
-		Transform = "2.52805366896505 -0.94569941559593 0.0214691162784302; 0 0 0.707106781186548 0.707106781186548; 1 1 1"
+		Transform = "2.52805366896505 -0.94569941559593 0.00925639537436738; 0 0 0.707106781186548 0.707106781186548; 1 1 1"
 		Collision = True
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
 		ReplaceMaterialSelectively
 		{
 			Count = 0

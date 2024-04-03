@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -15,18 +15,13 @@
 #if BX_CRT_NONE
 #	include "crt0.h"
 #elif  BX_PLATFORM_ANDROID \
-	|| BX_PLATFORM_BSD     \
-	|| BX_PLATFORM_HAIKU   \
 	|| BX_PLATFORM_LINUX   \
 	|| BX_PLATFORM_IOS     \
 	|| BX_PLATFORM_OSX     \
 	|| BX_PLATFORM_PS4     \
-	|| BX_PLATFORM_RPI	   \
+	|| BX_PLATFORM_RPI     \
 	|| BX_PLATFORM_NX
 #	include <pthread.h>
-#	if BX_PLATFORM_BSD
-#		include <pthread_np.h>
-#	endif // BX_PLATFORM_BSD
 #	if BX_PLATFORM_LINUX && (BX_CRT_GLIBC < 21200)
 #		include <sys/prctl.h>
 #	endif // BX_PLATFORM_
@@ -109,7 +104,7 @@ namespace bx
 
 		ThreadInternal* ti = (ThreadInternal*)m_internal;
 #if BX_CRT_NONE
-		ti->m_handle = INT32_MIN;
+		ti->m_handle = -1;
 #elif  BX_PLATFORM_WINDOWS \
 	|| BX_PLATFORM_WINRT   \
 	|| BX_PLATFORM_XBOXONE
@@ -140,7 +135,7 @@ namespace bx
 #if BX_CRT_NONE
 		ti->m_handle = crt0::threadCreate(&ti->threadFunc, _userData, m_stackSize, _name);
 
-		if (NULL == ti->m_handle)
+		if (-1 == ti->m_handle)
 		{
 			return false;
 		}
@@ -250,16 +245,10 @@ namespace bx
 #elif  BX_PLATFORM_OSX \
 	|| BX_PLATFORM_IOS
 		pthread_setname_np(_name);
-#elif (BX_CRT_GLIBC >= 21200) && ! BX_PLATFORM_HURD
+#elif (BX_CRT_GLIBC >= 21200)
 		pthread_setname_np(ti->m_handle, _name);
 #elif BX_PLATFORM_LINUX
 		prctl(PR_SET_NAME,_name, 0, 0, 0);
-#elif BX_PLATFORM_BSD
-#	if defined(__NetBSD__)
-		pthread_setname_np(ti->m_handle, "%s", (void*)_name);
-#	else
-		pthread_set_name_np(ti->m_handle, _name);
-#	endif // defined(__NetBSD__)
 #elif BX_PLATFORM_WINDOWS
 		// Try to use the new thread naming API from Win10 Creators update onwards if we have it
 		typedef HRESULT (WINAPI *SetThreadDescriptionProc)(HANDLE, PCWSTR);

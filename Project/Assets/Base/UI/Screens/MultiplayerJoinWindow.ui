@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2022.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component Project.MultiplayerJoinWindow
 {
@@ -113,18 +113,31 @@
 	.component NeoAxis.UIText
 	{
 		Name = Text
-		Text = "Servers:"
+		Text = "Predefined servers:"
 		Size = Units 360 30
 		Margin = Units 20 210 0 0
 		EditorScrollPosition = 0 0
 		TextHorizontalAlignment = Left
 	}
+	.component NeoAxis.UIText
+	{
+		Name = Text 6
+		Text = "You can configure predefined servers in Binaries\\NeoAxis.Internal\\NeoAxis.DefaultSettings.config."
+		Size = Units 360 50
+		Margin = Units 20 540 0 0
+		EditorScrollPosition = 0 0
+		FontSize = Screen 0.017
+		TextHorizontalAlignment = Left
+		TextVerticalAlignment = Top
+		Color = 0.5 0.5 0.5
+		WordWrap = True
+	}
 	.component NeoAxis.UIList
 	{
 		Name = List Servers
-		Size = Units 360 280
+		Size = Units 360 230
 		VerticalAlignment = Stretch
-		Margin = Units 20 240 0 260
+		Margin = Units 20 240 0 310
 		EditorScrollPosition = 0 0
 		Items
 		{
@@ -140,6 +153,21 @@
 			Margin = Units 0 2 2 2
 			EditorScrollPosition = 0 0
 			Vertical = True
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler SelectedIndexChanged
+			Event
+			{
+				GetByReference = "this:..\\event:SelectedIndexChanged"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ListServers_SelectedIndexChanged(NeoAxis.UIList)"
+			}
+			HandlerFlow
+			{
+			}
 		}
 	}
 	.component NeoAxis.UIText

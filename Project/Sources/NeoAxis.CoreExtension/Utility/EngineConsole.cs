@@ -670,17 +670,37 @@ namespace NeoAxis
 			int startpos = stringDownPosition;
 			if( startpos > strings.Count - 1 )
 				startpos = strings.Count - 1;
+
 			for( int n = startpos; n >= 0 && y - fontheight > 0; n-- )
 			{
 				var text = strings[ n ].text;
-				int lineCount = text.Count( f => f == '\n' ) + 1;
 
-				float y2 = y - fontheight * ( lineCount - 1 ) / 2;
+				foreach( var text2 in text.Split( '\n' ).Reverse() )
+				{
+					foreach( var lineItem in font.GetWordWrapLines( fontSize, renderer, text2, 1.0 - x ).Reverse() )
+					{
+						var text3 = lineItem.Text;
 
-				renderer.AddText( font, fontSize, text, new Vector2F( x, y2 ) + shadowOffset, EHorizontalAlignment.Left, EVerticalAlignment.Center, strings[ n ].color * new ColorValue( 0, 0, 0, transparency / 2 ) );
-				renderer.AddText( font, fontSize, text, new Vector2F( x, y2 ), EHorizontalAlignment.Left, EVerticalAlignment.Center, strings[ n ].color * new ColorValue( 1, 1, 1, transparency ) );
-				y -= fontheight * lineCount;
+						renderer.AddText( font, fontSize, text3, new Vector2F( x, y ) + shadowOffset, EHorizontalAlignment.Left, EVerticalAlignment.Center, strings[ n ].color * new ColorValue( 0, 0, 0, transparency / 2 ) );
+						renderer.AddText( font, fontSize, text3, new Vector2F( x, y ), EHorizontalAlignment.Left, EVerticalAlignment.Center, strings[ n ].color * new ColorValue( 1, 1, 1, transparency ) );
+
+						y -= fontheight;
+					}
+				}
 			}
+
+			//for( int n = startpos; n >= 0 && y - fontheight > 0; n-- )
+			//{
+			//	var text = strings[ n ].text;
+			//	int lineCount = text.Count( f => f == '\n' ) + 1;
+
+			//	float y2 = y - fontheight * ( lineCount - 1 ) / 2;
+
+			//	renderer.AddText( font, fontSize, text, new Vector2F( x, y2 ) + shadowOffset, EHorizontalAlignment.Left, EVerticalAlignment.Center, strings[ n ].color * new ColorValue( 0, 0, 0, transparency / 2 ) );
+			//	renderer.AddText( font, fontSize, text, new Vector2F( x, y2 ), EHorizontalAlignment.Left, EVerticalAlignment.Center, strings[ n ].color * new ColorValue( 1, 1, 1, transparency ) );
+
+			//	y -= fontheight * lineCount;
+			//}
 		}
 
 		static void OnConsoleConfigCommand( string arguments, object userData )

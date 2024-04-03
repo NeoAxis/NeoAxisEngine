@@ -99,6 +99,27 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
+		enum TransformTypeEnum
+		{
+			Identity,
+			CameraPosition,
+			Value,
+		}
+
+		///////////////////////////////////////////
+
+		class TransformValueClass
+		{
+			public Matrix4 matrix;
+
+			public TransformValueClass( ref Matrix4 matrix )
+			{
+				this.matrix = matrix;
+			}
+		}
+
+		///////////////////////////////////////////
+
 		abstract class Item
 		{
 			public bool depthTest;
@@ -107,11 +128,34 @@ namespace NeoAxis
 			public RenderingPipeline.RenderSceneData.CutVolumeItem[] cutVolumes;
 			//public int nonOverlappingGroup;
 
-			public Matrix4 transform;
-			public bool transformIsIdentity;
+			public TransformTypeEnum transformType;
+			public TransformValueClass transformValue;
+			//public Matrix4 transform;
+			//public bool transformIsIdentity;
 
 			public bool wireframe;
 			public bool culling;
+
+			//
+
+			public bool IsEqualTransform( TransformTypeEnum type, TransformValueClass value )
+			{
+				if( transformType == type )
+				{
+					if( transformType == TransformTypeEnum.Value )
+						return value.matrix == transformValue.matrix;
+					else
+						return true;
+				}
+				else
+					return false;
+			}
+
+			public bool IsEqualTransform( ref Matrix4 matrix )
+			{
+				//!!!!
+				return transformType == TransformTypeEnum.Value && transformValue.matrix == matrix;
+			}
 		}
 
 		///////////////////////////////////////////
@@ -259,22 +303,38 @@ namespace NeoAxis
 
 			if( solid )
 			{
-				//!!!!double
+				var center = bounds.GetCenter();
+				var half = bounds.GetSize().ToVector3F() * 0.5f;
 
-				var center = bounds.GetCenter().ToVector3F();
-				var half = bounds.GetSize().ToVector3F() * .5f;
+				Matrix4.FromTranslate( ref center, out var transform );
 
-				boundsTempPositions[ 0 ] = center + new Vector3F( half.X, -half.Y, -half.Z );
-				boundsTempPositions[ 1 ] = center + new Vector3F( half.X, -half.Y, half.Z );
-				boundsTempPositions[ 2 ] = center + new Vector3F( half.X, half.Y, -half.Z );
-				boundsTempPositions[ 3 ] = center + new Vector3F( half.X, half.Y, half.Z );
-				boundsTempPositions[ 4 ] = center + new Vector3F( -half.X, -half.Y, -half.Z );
-				boundsTempPositions[ 5 ] = center + new Vector3F( -half.X, -half.Y, half.Z );
-				boundsTempPositions[ 6 ] = center + new Vector3F( -half.X, half.Y, -half.Z );
-				boundsTempPositions[ 7 ] = center + new Vector3F( -half.X, half.Y, half.Z );
+				boundsTempPositions[ 0 ] = new Vector3F( half.X, -half.Y, -half.Z );
+				boundsTempPositions[ 1 ] = new Vector3F( half.X, -half.Y, half.Z );
+				boundsTempPositions[ 2 ] = new Vector3F( half.X, half.Y, -half.Z );
+				boundsTempPositions[ 3 ] = new Vector3F( half.X, half.Y, half.Z );
+				boundsTempPositions[ 4 ] = new Vector3F( -half.X, -half.Y, -half.Z );
+				boundsTempPositions[ 5 ] = new Vector3F( -half.X, -half.Y, half.Z );
+				boundsTempPositions[ 6 ] = new Vector3F( -half.X, half.Y, -half.Z );
+				boundsTempPositions[ 7 ] = new Vector3F( -half.X, half.Y, half.Z );
 
-				//Matrix4 m = Matrix4.Identity;
-				AddTriangles( boundsTempPositions, boundsIndices, ref transformIdentity, true, false, true );
+				AddTriangles( boundsTempPositions, boundsIndices, ref transform/*, false*/, false, true );
+
+
+				//var center = bounds.GetCenter().ToVector3F();
+				//var half = bounds.GetSize().ToVector3F() * .5f;
+
+				//boundsTempPositions[ 0 ] = center + new Vector3F( half.X, -half.Y, -half.Z );
+				//boundsTempPositions[ 1 ] = center + new Vector3F( half.X, -half.Y, half.Z );
+				//boundsTempPositions[ 2 ] = center + new Vector3F( half.X, half.Y, -half.Z );
+				//boundsTempPositions[ 3 ] = center + new Vector3F( half.X, half.Y, half.Z );
+				//boundsTempPositions[ 4 ] = center + new Vector3F( -half.X, -half.Y, -half.Z );
+				//boundsTempPositions[ 5 ] = center + new Vector3F( -half.X, -half.Y, half.Z );
+				//boundsTempPositions[ 6 ] = center + new Vector3F( -half.X, half.Y, -half.Z );
+				//boundsTempPositions[ 7 ] = center + new Vector3F( -half.X, half.Y, half.Z );
+
+				////Matrix4 m = Matrix4.Identity;
+				//AddTriangles( boundsTempPositions, boundsIndices, ref transformIdentity, true, false, true );
+
 
 				//Vector3 pos = bounds.GetCenter();
 				//Vector3 scl = ( bounds.Maximum - pos ) * 2;
@@ -844,8 +904,10 @@ namespace NeoAxis
 					//}
 					//else
 					//{
+
 					thicknessStart = GetThicknessByPixelSize( ref start, ProjectSettings.Get.Rendering.LineThickness );
 					thicknessEnd = GetThicknessByPixelSize( ref end, ProjectSettings.Get.Rendering.LineThickness );
+
 					//}
 				}
 				else
@@ -854,17 +916,19 @@ namespace NeoAxis
 					thicknessEnd = thickness;
 				}
 
-				//!!!!double
+				var positionOffset = Viewport.CameraSettings.Position;
+				Matrix4.FromTranslate( ref positionOffset, out var transform );
+
 				var directionF = direction.ToVector3F();
 				QuaternionF.FromDirectionZAxisUp( ref directionF, out var rotation );
 				rotation.ToMatrix3( out var rotationMatrix );
 
 				var halfThicknessStart = (float)thicknessStart * 0.5f;
 				var halfThicknessEnd = (float)thicknessEnd * 0.5f;
-				var start2 = start.ToVector3F();
-				var end2 = end.ToVector3F();
+				var start2 = ( start - positionOffset ).ToVector3F();
+				var end2 = ( end - positionOffset ).ToVector3F();
 
-				Vector3F[] positions = addLineTempPositions;
+				var positions = addLineTempPositions;
 				positions[ 0 ] = end2 + rotationMatrix * new Vector3F( halfThicknessEnd, -halfThicknessEnd, -halfThicknessEnd );
 				positions[ 1 ] = end2 + rotationMatrix * new Vector3F( halfThicknessEnd, -halfThicknessEnd, halfThicknessEnd );
 				positions[ 2 ] = end2 + rotationMatrix * new Vector3F( halfThicknessEnd, halfThicknessEnd, -halfThicknessEnd );
@@ -873,20 +937,36 @@ namespace NeoAxis
 				positions[ 5 ] = start2 + rotationMatrix * new Vector3F( -halfThicknessStart, -halfThicknessStart, halfThicknessStart );
 				positions[ 6 ] = start2 + rotationMatrix * new Vector3F( -halfThicknessStart, halfThicknessStart, -halfThicknessStart );
 				positions[ 7 ] = start2 + rotationMatrix * new Vector3F( -halfThicknessStart, halfThicknessStart, halfThicknessStart );
-				//positions[ 0 ] = new Vector3( half.X, -half.Y, -half.Z );
-				//positions[ 1 ] = new Vector3( half.X, -half.Y, half.Z );
-				//positions[ 2 ] = new Vector3( half.X, half.Y, -half.Z );
-				//positions[ 3 ] = new Vector3( half.X, half.Y, half.Z );
-				//positions[ 4 ] = new Vector3( -half.X, -half.Y, -half.Z );
-				//positions[ 5 ] = new Vector3( -half.X, -half.Y, half.Z );
-				//positions[ 6 ] = new Vector3( -half.X, half.Y, -half.Z );
-				//positions[ 7 ] = new Vector3( -half.X, half.Y, half.Z );
 
 				if( boxShapePositions == null )
 					SimpleMeshGenerator.GenerateBox( new Vector3F( 1, 1, 1 ), out boxShapePositions, out boxShapeIndices );
 
-				AddVertexIndexBuffer_Array( positions, boxShapeIndices, ref transformIdentity, true, false, true );
-				//AddTriangles( positions, boxShapeIndices, false, true );
+				AddVertexIndexBuffer_Array( positions, boxShapeIndices, ref transform, false, true );
+
+
+				//var directionF = direction.ToVector3F();
+				//QuaternionF.FromDirectionZAxisUp( ref directionF, out var rotation );
+				//rotation.ToMatrix3( out var rotationMatrix );
+
+				//var halfThicknessStart = (float)thicknessStart * 0.5f;
+				//var halfThicknessEnd = (float)thicknessEnd * 0.5f;
+				//var start2 = start.ToVector3F();
+				//var end2 = end.ToVector3F();
+
+				//Vector3F[] positions = addLineTempPositions;
+				//positions[ 0 ] = end2 + rotationMatrix * new Vector3F( halfThicknessEnd, -halfThicknessEnd, -halfThicknessEnd );
+				//positions[ 1 ] = end2 + rotationMatrix * new Vector3F( halfThicknessEnd, -halfThicknessEnd, halfThicknessEnd );
+				//positions[ 2 ] = end2 + rotationMatrix * new Vector3F( halfThicknessEnd, halfThicknessEnd, -halfThicknessEnd );
+				//positions[ 3 ] = end2 + rotationMatrix * new Vector3F( halfThicknessEnd, halfThicknessEnd, halfThicknessEnd );
+				//positions[ 4 ] = start2 + rotationMatrix * new Vector3F( -halfThicknessStart, -halfThicknessStart, -halfThicknessStart );
+				//positions[ 5 ] = start2 + rotationMatrix * new Vector3F( -halfThicknessStart, -halfThicknessStart, halfThicknessStart );
+				//positions[ 6 ] = start2 + rotationMatrix * new Vector3F( -halfThicknessStart, halfThicknessStart, -halfThicknessStart );
+				//positions[ 7 ] = start2 + rotationMatrix * new Vector3F( -halfThicknessStart, halfThicknessStart, halfThicknessStart );
+
+				//if( boxShapePositions == null )
+				//	SimpleMeshGenerator.GenerateBox( new Vector3F( 1, 1, 1 ), out boxShapePositions, out boxShapeIndices );
+
+				//AddVertexIndexBuffer_Array( positions, boxShapeIndices, ref transformIdentity, true, false, true );
 
 
 
@@ -928,6 +1008,10 @@ namespace NeoAxis
 			}
 			else
 			{
+				var positionOffset = Viewport.CameraSettings.Position;
+				Matrix4.FromTranslate( ref positionOffset, out var transform );
+				TransformTypeEnum transformType = TransformTypeEnum.CameraPosition;
+
 				Item_DynamicallyCreated item = null;
 
 				//try use last item
@@ -942,6 +1026,8 @@ namespace NeoAxis
 						Equal( lastItem.occlusionQuery, currentOcclusionQuery ) &&
 						RenderingPipeline.IsEqualCutVolumes( lastItem.cutVolumes, currentCutVolumes ) &&
 						//lastItem.nonOverlappingGroup == nonOverlappingGroup &&
+						lastItem.IsEqualTransform( transformType, null ) &&
+						//( ( lastItem.transformIsIdentity && transformIsIdentity ) || lastItem.transform == transform ) &&
 						lastItem.vertexCount + 2 <= constBufferVertexCount &&
 						lastItem.indexCount + 2 <= constBufferIndexCount )
 					{
@@ -963,8 +1049,8 @@ namespace NeoAxis
 					item.occlusionQuery = currentOcclusionQuery;
 					item.cutVolumes = currentCutVolumes;
 					//item.nonOverlappingGroup = nonOverlappingGroup;
-					item.transform = Matrix4.Identity;
-					item.transformIsIdentity = true;
+					item.transformType = transformType;
+					item.transformValue = null;
 					item.culling = false;
 					item.vertexCount = 0;
 					item.indexCount = 0;
@@ -980,24 +1066,21 @@ namespace NeoAxis
 						Vertex* pVertices = (Vertex*)pVertices2;
 						Vertex* pVertex = pVertices + item.vertexCount;
 
-						//!!!!!double
-						pVertex->Position = start.ToVector3F();
+						pVertex->Position = ( start - positionOffset ).ToVector3F();
 						SetColors( pVertex );
 						pVertex++;
 
-						//!!!!!double
-						pVertex->Position = end.ToVector3F();
+						pVertex->Position = ( end - positionOffset ).ToVector3F();
 						SetColors( pVertex );
 					}
 				}
 
 				item.indices[ item.indexCount++ ] = item.vertexCount++;
 				item.indices[ item.indexCount++ ] = item.vertexCount++;
-				//item.vertexCount += 2;
 			}
 		}
 
-		unsafe void AddVertexIndexBuffer_Array( Vector3F[] vertices, int[] indices, ref Matrix4 transform, bool transformIsIdentity, bool wireframe, bool culling )
+		unsafe void AddVertexIndexBuffer_Array( Vector3F[] vertices, int[] indices, ref Matrix4 transform, bool wireframe, bool culling )
 		{
 			int triangleCount;
 			if( indices != null )
@@ -1019,7 +1102,8 @@ namespace NeoAxis
 						Equal( lastItem.occlusionQuery, currentOcclusionQuery ) &&
 						RenderingPipeline.IsEqualCutVolumes( lastItem.cutVolumes, currentCutVolumes ) &&
 						//lastItem.nonOverlappingGroup == nonOverlappingGroup &&
-						( ( lastItem.transformIsIdentity && transformIsIdentity ) || lastItem.transform == transform ) &&
+						lastItem.IsEqualTransform( ref transform ) &&
+						//( ( lastItem.transformIsIdentity && transformIsIdentity ) || lastItem.transform == transform ) &&
 						lastItem.wireframe == wireframe &&
 						lastItem.culling == culling )
 					{
@@ -1101,8 +1185,8 @@ namespace NeoAxis
 					item.vertexCount = 0;
 					item.indexCount = 0;
 					item.actualIndexData = false;
-					item.transform = transform;
-					item.transformIsIdentity = transformIsIdentity;
+					item.transformType = TransformTypeEnum.Value;
+					item.transformValue = new TransformValueClass( ref transform );
 					item.wireframe = wireframe;
 					item.culling = culling;
 
@@ -1155,11 +1239,10 @@ namespace NeoAxis
 				item.indices[ item.indexCount++ ] = item.vertexCount++;
 				item.indices[ item.indexCount++ ] = item.vertexCount++;
 				item.indices[ item.indexCount++ ] = item.vertexCount++;
-				//item.vertexCount += 3;
 			}
 		}
 
-		unsafe void AddVertexIndexBuffer_IList( IList<Vector3F> vertices, IList<int> indices, ref Matrix4 transform, bool transformIsIdentity, bool wireframe, bool culling )
+		unsafe void AddVertexIndexBuffer_IList( IList<Vector3F> vertices, IList<int> indices, ref Matrix4 transform, bool wireframe, bool culling )
 		{
 			int triangleCount;
 			if( indices != null )
@@ -1181,7 +1264,8 @@ namespace NeoAxis
 						Equal( lastItem.occlusionQuery, currentOcclusionQuery ) &&
 						RenderingPipeline.IsEqualCutVolumes( lastItem.cutVolumes, currentCutVolumes ) &&
 						//lastItem.nonOverlappingGroup == nonOverlappingGroup &&
-						( ( lastItem.transformIsIdentity && transformIsIdentity ) || lastItem.transform == transform ) &&
+						lastItem.IsEqualTransform( ref transform ) &&
+						//( ( lastItem.transformIsIdentity && transformIsIdentity ) || lastItem.transform == transform ) &&
 						lastItem.wireframe == wireframe &&
 						lastItem.culling == culling )
 					{
@@ -1263,8 +1347,8 @@ namespace NeoAxis
 					item.vertexCount = 0;
 					item.indexCount = 0;
 					item.actualIndexData = false;
-					item.transform = transform;
-					item.transformIsIdentity = transformIsIdentity;
+					item.transformType = TransformTypeEnum.Value;
+					item.transformValue = new TransformValueClass( ref transform );
 					item.wireframe = wireframe;
 					item.culling = culling;
 
@@ -1317,11 +1401,10 @@ namespace NeoAxis
 				item.indices[ item.indexCount++ ] = item.vertexCount++;
 				item.indices[ item.indexCount++ ] = item.vertexCount++;
 				item.indices[ item.indexCount++ ] = item.vertexCount++;
-				//item.vertexCount += 3;
 			}
 		}
 
-		void AddTriangles( IList<Vector3F> vertices, IList<int> indices, ref Matrix4 transform, bool transformIsIdentity, bool wireframe, bool culling )
+		public override void AddTriangles( IList<Vector3F> vertices, IList<int> indices, ref Matrix4 transform, bool wireframe, bool culling )
 		{
 			if( indices != null )
 			{
@@ -1338,18 +1421,19 @@ namespace NeoAxis
 			{
 				//convert to lines. no wireframe triangles in bgfx.
 
-				//!!!!slowly
+				//!!!!slowly?
 
 				var verticesTransformed = new Vector3[ vertices.Count ];
 				{
-					bool identity = transformIsIdentity;// || transform == Matrix4.Identity;
+					//bool identity = false;// transformIsIdentity;// || transform == Matrix4.Identity;
 					for( int n = 0; n < verticesTransformed.Length; n++ )
 					{
 						Vector3 v = vertices[ n ].ToVector3();
-						if( !identity )
-							Matrix4.Multiply( ref transform, ref v, out verticesTransformed[ n ] );//v = transform * v;
-						else
-							verticesTransformed[ n ] = v;
+						//if( !identity )
+						Matrix4.Multiply( ref transform, ref v, out verticesTransformed[ n ] );//v = transform * v;
+
+						//else
+						//	verticesTransformed[ n ] = v;
 					}
 				}
 
@@ -1425,54 +1509,81 @@ namespace NeoAxis
 				if( verticesArray != null && ( indices == null || indicesArray != null ) )
 				{
 					//optimization for arrays
-					AddVertexIndexBuffer_Array( verticesArray, indicesArray, ref transform, transformIsIdentity, wireframe, culling );
+					AddVertexIndexBuffer_Array( verticesArray, indicesArray, ref transform, wireframe, culling );
 				}
 				else
 				{
 					//default implementation
-					AddVertexIndexBuffer_IList( vertices, indices, ref transform, transformIsIdentity, wireframe, culling );
+					AddVertexIndexBuffer_IList( vertices, indices, ref transform, wireframe, culling );
 				}
 			}
 		}
 
-		public override void AddTriangles( IList<Vector3F> vertices, IList<int> indices, ref Matrix4 transform, bool wireframe, bool culling )
-		{
-			AddTriangles( vertices, indices, ref transform, false, wireframe, culling );
-		}
+		//public override void AddTriangles( IList<Vector3F> vertices, IList<int> indices, ref Matrix4 transform, bool wireframe, bool culling )
+		//{
+		//	AddTriangles( vertices, indices, ref transform, false, wireframe, culling );
+		//}
 
-		public override void AddTriangles( IList<Vector3F> vertices, IList<int> indices, bool wireframe, bool culling )
-		{
-			//var transform = Matrix4.Identity;
-			AddTriangles( vertices, indices, ref transformIdentity, true, wireframe, culling );
-		}
+		////public override void AddTriangles( IList<Vector3F> vertices, IList<int> indices, bool wireframe, bool culling )
+		////{
+		////	AddTriangles( vertices, indices, ref transformIdentity, true, wireframe, culling );
+		////}
 
 		public override void AddTriangles( IList<Vector3> vertices, IList<int> indices, ref Matrix4 transform, bool wireframe, bool culling )
 		{
-			Vector3F[] array = new Vector3F[ vertices.Count ];
+			if( vertices.Count == 0 )
+				return;
+
+			//!!!!use TransformTypeEnum.CameraPosition?
+			var positionOffset = vertices[ 0 ];
+
+			var transform2 = transform;
+			transform2.SetTranslation( transform2.GetTranslation() + positionOffset );
+
+			var array = new Vector3F[ vertices.Count ];
 			for( int n = 0; n < vertices.Count; n++ )
-				array[ n ] = vertices[ n ].ToVector3F();
-			AddTriangles( array, indices, ref transform, false, wireframe, culling );
+				array[ n ] = ( vertices[ n ] - positionOffset ).ToVector3F();
+			AddTriangles( array, indices, ref transform2/*, false*/, wireframe, culling );
+
+
+			//Vector3F[] array = new Vector3F[ vertices.Count ];
+			//for( int n = 0; n < vertices.Count; n++ )
+			//	array[ n ] = vertices[ n ].ToVector3F();
+			//AddTriangles( array, indices, ref transform, false, wireframe, culling );
 		}
 
 		public override void AddTriangles( IList<Vector3> vertices, IList<int> indices, bool wireframe, bool culling )
 		{
-			Vector3F[] array = new Vector3F[ vertices.Count ];
+			if( vertices.Count == 0 )
+				return;
+
+			var positionOffset = Viewport.CameraSettings.Position;
+			Matrix4.FromTranslate( ref positionOffset, out var transform );
+
+			//var positionOffset = vertices[ 0 ];
+			//Matrix4.FromTranslate( ref positionOffset, out var transform );
+
+			var array = new Vector3F[ vertices.Count ];
 			for( int n = 0; n < vertices.Count; n++ )
-				array[ n ] = vertices[ n ].ToVector3F();
-			//var transform = Matrix4.Identity;
-			AddTriangles( array, indices, ref transformIdentity, true, wireframe, culling );
+				array[ n ] = ( vertices[ n ] - positionOffset ).ToVector3F();
+			AddTriangles( array, indices, ref transform, wireframe, culling );
+
+
+			//Vector3F[] array = new Vector3F[ vertices.Count ];
+			//for( int n = 0; n < vertices.Count; n++ )
+			//	array[ n ] = vertices[ n ].ToVector3F();
+			//AddTriangles( array, indices, ref transformIdentity, true, wireframe, culling );
 		}
 
 		public override void AddTriangles( IList<Vector3F> vertices, ref Matrix4 transform, bool wireframe, bool culling )
 		{
-			AddTriangles( vertices, null, ref transform, false, wireframe, culling );
+			AddTriangles( vertices, null, ref transform, wireframe, culling );
 		}
 
-		public override void AddTriangles( IList<Vector3F> vertices, bool wireframe, bool culling )
-		{
-			//var transform = Matrix4.Identity;
-			AddTriangles( vertices, null, ref transformIdentity, true, wireframe, culling );
-		}
+		//public override void AddTriangles( IList<Vector3F> vertices, bool wireframe, bool culling )
+		//{
+		//	AddTriangles( vertices, null, ref transformIdentity, true, wireframe, culling );
+		//}
 
 		public override void AddTriangles( IList<Vector3> vertices, ref Matrix4 transform, bool wireframe, bool culling )
 		{
@@ -1481,11 +1592,29 @@ namespace NeoAxis
 
 		public override void AddTriangles( IList<Vector3> vertices, bool wireframe, bool culling )
 		{
-			Vector3F[] array = new Vector3F[ vertices.Count ];
+			var positionOffset = Viewport.CameraSettings.Position;
+			Matrix4.FromTranslate( ref positionOffset, out var transform );
+
+			//var positionOffset = new Vector3( double.MaxValue, double.MaxValue, double.MaxValue );
+			//for( int n = 0; n < vertices.Count; n++ )
+			//{
+			//	var v = vertices[ n ];
+			//	positionOffset.X = Math.Min( positionOffset.X, v.X );
+			//	positionOffset.Y = Math.Min( positionOffset.Y, v.Y );
+			//	positionOffset.Z = Math.Min( positionOffset.Z, v.Z );
+			//}
+			//Matrix4.FromTranslate( ref positionOffset, out var transform );
+
+			var array = new Vector3F[ vertices.Count ];
 			for( int n = 0; n < vertices.Count; n++ )
-				array[ n ] = vertices[ n ].ToVector3F();
-			//var transform = Matrix4.Identity;
-			AddTriangles( array, null, ref transformIdentity, true, wireframe, culling );
+				array[ n ] = ( vertices[ n ] - positionOffset ).ToVector3F();
+			AddTriangles( array, null, ref transform, wireframe, culling );
+
+
+			//Vector3F[] array = new Vector3F[ vertices.Count ];
+			//for( int n = 0; n < vertices.Count; n++ )
+			//	array[ n ] = vertices[ n ].ToVector3F();
+			//AddTriangles( array, null, ref transformIdentity, true, wireframe, culling );
 		}
 
 		/////////////////////////////////////////
@@ -1540,6 +1669,7 @@ namespace NeoAxis
 					//!!!!глючит на HD7850
 					//renderableItem.indexCount = itemDynamicallyCreated.indexCount;
 
+					//!!!!можно для всего юзать один буфер
 					renderableItem.vertexBuffer.SetData( itemDynamicallyCreated.vertices, renderableItem.vertexCount );
 
 					//!!!!глючит на HD7850
@@ -1695,19 +1825,18 @@ namespace NeoAxis
 			if( preparedRenderables.Count == 0 )
 				return;
 
-			var owner = context.Owner;
+			//var owner = context.Owner;
 			//Mat4F viewMatrix = owner.CameraSettings.ViewMatrix.ToMat4F();
 			//Mat4F projectionMatrix = owner.CameraSettings.ProjectionMatrix.ToMat4F();
 			//Bgfx.SetViewTransform( context.CurrentViewNumber, (float*)&viewMatrix, (float*)&projectionMatrix );
 
-			//!!!!double
-			Vector3F cameraPosition = owner.CameraSettings.Position.ToVector3F();
-			context.SetUniform( "u_cameraPosition", ParameterType.Vector3, 1, &cameraPosition );
+			//var cameraPosition = Vector3F.Zero;// owner.CameraSettings.Position.ToVector3F();
+			//context.SetUniform( "u_cameraPosition", ParameterType.Vector3, 1, &cameraPosition );
 
 			var simple3DRendererVertexUniform = GpuProgramManager.RegisterUniform( "u_simple3DRendererVertex", UniformType.Vector4, sizeof( Simple3DRendererVertexData ) / sizeof( Vector4F ) );
 			var simple3DRendererVertexData = new Simple3DRendererVertexData();
 
-			Simple3DRendererVertexData currentSimple3DRendererVertex = new Simple3DRendererVertexData();
+			var currentSimple3DRendererVertex = new Simple3DRendererVertexData();
 			currentSimple3DRendererVertex.color = new ColorValue( -10000, 0, 0, 0 );
 
 			ImageComponent depthTexture;
@@ -1729,6 +1858,10 @@ namespace NeoAxis
 			//context.SetViewport( simpleDataTexture.Result.GetRenderTarget().Viewports[ 0 ], viewMatrix, projectionMatrix, FrameBufferTypes.Color, new ColorValue( 0, 0, 0, 0 ) );
 			//Bgfx.SetStencil( zzzzz, zzzzzz );
 
+
+			Matrix4.FromTranslate( ref Viewport.CameraSettings.position, out var transformCameraSettings );
+
+
 			foreach( var renderableItem in preparedRenderables )
 			{
 				Item item = renderableItem.currentItem;
@@ -1741,13 +1874,33 @@ namespace NeoAxis
 				if( renderableItem_DynamicallyCreated != null && renderableItem_DynamicallyCreated.vertexCount == 0 )
 					continue;
 
-				//!!!!double
-				Matrix4F worldMatrix;
-				if( renderableItem.currentItem.transformIsIdentity )
-					worldMatrix = Matrix4F.Identity;
-				else
-					renderableItem.currentItem.transform.ToMatrix4F( out worldMatrix );
-				//var worldMatrix = renderableItem.currentItem.transform.ToMatrix4F();
+				Matrix4F worldMatrixRelative;
+				switch( renderableItem.currentItem.transformType )
+				{
+				case TransformTypeEnum.Identity:
+					context.ConvertToRelative( ref transformIdentity, out worldMatrixRelative );
+					break;
+				case TransformTypeEnum.CameraPosition:
+					context.ConvertToRelative( ref transformCameraSettings, out worldMatrixRelative );
+					break;
+				case TransformTypeEnum.Value:
+					context.ConvertToRelative( ref renderableItem.currentItem.transformValue.matrix, out worldMatrixRelative );
+					break;
+				default:
+					worldMatrixRelative = Matrix4F.Zero;
+					break;
+				}
+
+				//if( renderableItem.currentItem.transformIsIdentity )
+				//	context.ConvertToRelative( ref transformIdentity, out worldMatrixRelative );
+				//else
+				//	context.ConvertToRelative( ref renderableItem.currentItem.transform, out worldMatrixRelative );
+
+				////Matrix4F worldMatrixRelative;
+				////if( renderableItem.currentItem.transformIsIdentity )
+				////	worldMatrixRelative = Matrix4F.Identity;
+				////else
+				////	renderableItem.currentItem.transform.ToMatrix4F( out worldMatrixRelative );
 
 				var pass = oneMaterial;
 				//foreach( var pass in oneMaterial.Result.AllPasses )
@@ -1821,7 +1974,7 @@ namespace NeoAxis
 					//virtual void setClipPlanes(const PlaneList& clipPlanes);
 					//virtual void resetClipPlanes();
 
-					Bgfx.SetTransform( (float*)&worldMatrix );
+					Bgfx.SetTransform( (float*)&worldMatrixRelative );
 
 					//_DynamicallyCreated
 					if( item_DynamicallyCreated != null )
@@ -1835,7 +1988,7 @@ namespace NeoAxis
 							//!!!!глючит на HD7850
 							//if( item_DynamicallyCreated.actualIndexData )
 							//	context.SetIndexBuffer( renderableItem_DynamicallyCreated.indexBuffer, 0, renderableItem_DynamicallyCreated.indexCount );
-							context.SetPassAndSubmit( pass, operationType, containers, item_DynamicallyCreated.occlusionQuery, false );
+							context.SetPassAndSubmit( pass, operationType, containers, item_DynamicallyCreated.occlusionQuery, false, true );
 
 							if( operationType == RenderOperationType.TriangleList )
 								context.UpdateStatisticsCurrent.Triangles += renderableItem_DynamicallyCreated.vertexCount / 3;
@@ -1857,7 +2010,7 @@ namespace NeoAxis
 								context.SetVertexBuffer( n, data.VertexBuffers[ n ], data.VertexStartOffset, data.VertexCount );
 							if( data.IndexBuffer != null )
 								context.SetIndexBuffer( data.IndexBuffer, data.IndexStartOffset, data.IndexCount );
-							context.SetPassAndSubmit( pass, data.OperationType, containers, item_VertexIndexData.occlusionQuery, false );
+							context.SetPassAndSubmit( pass, data.OperationType, containers, item_VertexIndexData.occlusionQuery, false, true );
 
 							if( data.OperationType == RenderOperationType.TriangleList )
 								context.UpdateStatisticsCurrent.Triangles += data.IndexBuffer != null ? data.IndexCount / 3 : data.VertexCount / 3;
@@ -1912,7 +2065,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		public override void AddLine( Vertex start, Vertex end )//, double thickness = 0 )
+		void AddLine( Vertex start, Vertex end, ref Matrix4 transform )//, double thickness = 0 )
 		{
 			//if( thickness != 0 )
 			//{
@@ -1958,6 +2111,8 @@ namespace NeoAxis
 						Equal( lastItem.occlusionQuery, currentOcclusionQuery ) &&
 						RenderingPipeline.IsEqualCutVolumes( lastItem.cutVolumes, currentCutVolumes ) &&
 						//lastItem.nonOverlappingGroup == nonOverlappingGroup &&
+						lastItem.IsEqualTransform( ref transform ) &&
+						//( ( lastItem.transformIsIdentity && transformIsIdentity ) || lastItem.transform == transform ) &&
 						lastItem.vertexCount + 2 <= constBufferVertexCount &&
 						lastItem.indexCount + 2 <= constBufferIndexCount )
 					{
@@ -1979,8 +2134,8 @@ namespace NeoAxis
 					item.occlusionQuery = currentOcclusionQuery;
 					item.cutVolumes = currentCutVolumes;
 					//item.nonOverlappingGroup = nonOverlappingGroup;
-					item.transform = Matrix4.Identity;
-					item.transformIsIdentity = true;
+					item.transformType = TransformTypeEnum.Value;
+					item.transformValue = new TransformValueClass( ref transform );
 					item.culling = false;
 					item.vertexCount = 0;
 					item.indexCount = 0;
@@ -2005,11 +2160,10 @@ namespace NeoAxis
 
 				item.indices[ item.indexCount++ ] = item.vertexCount++;
 				item.indices[ item.indexCount++ ] = item.vertexCount++;
-				//item.vertexCount += 2;
 			}
 		}
 
-		void AddVertexIndexBuffer_Array( Vertex[] vertices, int[] indices, ref Matrix4 transform, bool transformIsIdentity, bool wireframe, bool culling )
+		void AddVertexIndexBuffer_Array( Vertex[] vertices, int[] indices, ref Matrix4 transform, bool wireframe, bool culling )
 		{
 			int triangleCount;
 			if( indices != null )
@@ -2041,8 +2195,8 @@ namespace NeoAxis
 					item.vertexCount = 0;
 					item.indexCount = 0;
 					item.actualIndexData = false;
-					item.transform = transform;
-					item.transformIsIdentity = transformIsIdentity;
+					item.transformType = TransformTypeEnum.Value;
+					item.transformValue = new TransformValueClass( ref transform );
 					item.wireframe = wireframe;
 					item.culling = culling;
 
@@ -2086,11 +2240,10 @@ namespace NeoAxis
 				item.indices[ item.indexCount++ ] = item.vertexCount++;
 				item.indices[ item.indexCount++ ] = item.vertexCount++;
 				item.indices[ item.indexCount++ ] = item.vertexCount++;
-				//item.vertexCount += 3;
 			}
 		}
 
-		void AddVertexIndexBuffer_IList( IList<Vertex> vertices, IList<int> indices, ref Matrix4 transform, bool transformIsIdentity, bool wireframe, bool culling )
+		void AddVertexIndexBuffer_IList( IList<Vertex> vertices, IList<int> indices, ref Matrix4 transform, bool wireframe, bool culling )
 		{
 			int triangleCount;
 			if( indices != null )
@@ -2122,8 +2275,8 @@ namespace NeoAxis
 					item.vertexCount = 0;
 					item.indexCount = 0;
 					item.actualIndexData = false;
-					item.transform = transform;
-					item.transformIsIdentity = transformIsIdentity;
+					item.transformType = TransformTypeEnum.Value;
+					item.transformValue = new TransformValueClass( ref transform );
 					item.wireframe = wireframe;
 					item.culling = culling;
 
@@ -2167,12 +2320,14 @@ namespace NeoAxis
 				item.indices[ item.indexCount++ ] = item.vertexCount++;
 				item.indices[ item.indexCount++ ] = item.vertexCount++;
 				item.indices[ item.indexCount++ ] = item.vertexCount++;
-				//item.vertexCount += 3;
 			}
 		}
 
-		void AddTriangles( IList<Vertex> vertices, IList<int> indices, ref Matrix4 transform, bool transformIsIdentity, bool wireframe, bool culling )
+		public override void AddTriangles( IList<Vertex> vertices, IList<int> indices, ref Matrix4 transform, bool wireframe, bool culling )
 		{
+			if( vertices.Count == 0 )
+				return;
+
 			if( indices != null )
 			{
 				if( indices.Count % 3 != 0 )
@@ -2189,19 +2344,6 @@ namespace NeoAxis
 				//convert to lines. no wireframe triangles in bgfx.
 
 				//!!!!slowly
-
-				Vector3[] verticesTransformed = new Vector3[ vertices.Count ];
-				{
-					bool identity = transformIsIdentity;// transform == Matrix4.Identity;
-					for( int n = 0; n < verticesTransformed.Length; n++ )
-					{
-						Vector3 v = vertices[ n ].Position.ToVector3();
-						if( !identity )
-							Matrix4.Multiply( ref transform, ref v, out verticesTransformed[ n ] );//v = transform * v;
-						else
-							verticesTransformed[ n ] = v;
-					}
-				}
 
 				if( indices != null )
 				{
@@ -2228,13 +2370,7 @@ namespace NeoAxis
 						int index0 = dest[ nLine * 2 + 0 ];
 						int index1 = dest[ nLine * 2 + 1 ];
 
-						var p0 = verticesTransformed[ index0 ];
-						var p1 = verticesTransformed[ index1 ];
-
-						var v0 = new Vertex( p0.ToVector3F(), vertices[ index0 ].Color, vertices[ index0 ].ColorInvisibleBehindObjects );
-						var v1 = new Vertex( p1.ToVector3F(), vertices[ index1 ].Color, vertices[ index1 ].ColorInvisibleBehindObjects );
-
-						AddLine( v0, v1 );
+						AddLine( vertices[ index0 ], vertices[ index1 ], ref transform );
 					}
 				}
 				else
@@ -2245,19 +2381,82 @@ namespace NeoAxis
 						int index1 = nTriangle * 3 + 1;
 						int index2 = nTriangle * 3 + 2;
 
-						var p0 = verticesTransformed[ index0 ];
-						var p1 = verticesTransformed[ index1 ];
-						var p2 = verticesTransformed[ index2 ];
-
-						var v0 = new Vertex( p0.ToVector3F(), vertices[ index0 ].Color, vertices[ index0 ].ColorInvisibleBehindObjects );
-						var v1 = new Vertex( p1.ToVector3F(), vertices[ index1 ].Color, vertices[ index1 ].ColorInvisibleBehindObjects );
-						var v2 = new Vertex( p2.ToVector3F(), vertices[ index2 ].Color, vertices[ index2 ].ColorInvisibleBehindObjects );
-
-						AddLine( v0, v1 );
-						AddLine( v1, v2 );
-						AddLine( v2, v0 );
+						AddLine( vertices[ index0 ], vertices[ index1 ], ref transform );
+						AddLine( vertices[ index1 ], vertices[ index2 ], ref transform );
+						AddLine( vertices[ index2 ], vertices[ index0 ], ref transform );
 					}
 				}
+
+
+				//Vector3[] verticesTransformed = new Vector3[ vertices.Count ];
+				//{
+				//	bool identity = transformIsIdentity;
+				//	for( int n = 0; n < verticesTransformed.Length; n++ )
+				//	{
+				//		Vector3 v = vertices[ n ].Position.ToVector3();
+				//		if( !identity )
+				//			Matrix4.Multiply( ref transform, ref v, out verticesTransformed[ n ] );//v = transform * v;
+				//		else
+				//			verticesTransformed[ n ] = v;
+				//	}
+				//}
+
+				//if( indices != null )
+				//{
+				//	int[] indicesArray;
+				//	indicesArray = indices as int[];
+				//	if( indicesArray == null )
+				//		indicesArray = indices.ToArray();
+
+				//	//AddTriangleList( verticesTransformed, indicesArray );
+				//	//AddLineList( verticesTransformed, tempIndices );
+
+				//	int[] dest = new int[ indicesArray.Length * 2 ];
+				//	int destCount;
+				//	unsafe
+				//	{
+				//		fixed( int* pDest = dest, pIndices = indicesArray )
+				//		{
+				//			destCount = (int)Bgfx.TopologyConvert( TopologyConvert.TriListToLineList, (IntPtr)pDest, (uint)dest.Length * sizeof( uint ), (IntPtr)pIndices, (uint)indices.Count, true );
+				//		}
+				//	}
+
+				//	for( int nLine = 0; nLine < destCount / 2; nLine++ )
+				//	{
+				//		int index0 = dest[ nLine * 2 + 0 ];
+				//		int index1 = dest[ nLine * 2 + 1 ];
+
+				//		var p0 = verticesTransformed[ index0 ];
+				//		var p1 = verticesTransformed[ index1 ];
+
+				//		zzz;
+				//		var v0 = new Vertex( p0.ToVector3F(), vertices[ index0 ].Color, vertices[ index0 ].ColorInvisibleBehindObjects );
+				//		var v1 = new Vertex( p1.ToVector3F(), vertices[ index1 ].Color, vertices[ index1 ].ColorInvisibleBehindObjects );
+
+				//		AddLine( v0, v1 );
+				//	}
+				//}
+				//else
+				//{
+				//	for( int nTriangle = 0; nTriangle < vertices.Count / 3; nTriangle++ )
+				//	{
+				//		int index0 = nTriangle * 3 + 0;
+				//		int index1 = nTriangle * 3 + 1;
+				//		int index2 = nTriangle * 3 + 2;
+
+				//		var p0 = verticesTransformed[ index0 ];
+				//		var p1 = verticesTransformed[ index1 ];
+				//		var p2 = verticesTransformed[ index2 ];
+
+				//		var v0 = new Vertex( p0.ToVector3F(), vertices[ index0 ].Color, vertices[ index0 ].ColorInvisibleBehindObjects );
+				//		var v1 = new Vertex( p1.ToVector3F(), vertices[ index1 ].Color, vertices[ index1 ].ColorInvisibleBehindObjects );
+				//		var v2 = new Vertex( p2.ToVector3F(), vertices[ index2 ].Color, vertices[ index2 ].ColorInvisibleBehindObjects );
+
+				//		AddLine( v0, v1 );
+				//		AddLine( v1, v2 );
+				//		AddLine( v2, v0 );
+				//	}
+				//}
 			}
 			else
 			{
@@ -2266,37 +2465,35 @@ namespace NeoAxis
 				if( verticesArray != null && ( indices == null || indicesArray != null ) )
 				{
 					//optimization for arrays
-					AddVertexIndexBuffer_Array( verticesArray, indicesArray, ref transform, transformIsIdentity, wireframe, culling );
+					AddVertexIndexBuffer_Array( verticesArray, indicesArray, ref transform, wireframe, culling );
 				}
 				else
 				{
 					//default implementation
-					AddVertexIndexBuffer_IList( vertices, indices, ref transform, transformIsIdentity, wireframe, culling );
+					AddVertexIndexBuffer_IList( vertices, indices, ref transform, wireframe, culling );
 				}
 			}
 		}
 
-		public override void AddTriangles( IList<Vertex> vertices, IList<int> indices, ref Matrix4 transform, bool wireframe, bool culling )
-		{
-			AddTriangles( vertices, indices, ref transform, false, wireframe, culling );
-		}
+		//public override void AddTriangles( IList<Vertex> vertices, IList<int> indices, ref Matrix4 transform, bool wireframe, bool culling )
+		//{
+		//	AddTriangles( vertices, indices, ref transform/*, false*/, wireframe, culling );
+		//}
 
-		public override void AddTriangles( IList<Vertex> vertices, IList<int> indices, bool wireframe, bool culling )
-		{
-			//var transform = Matrix4.Identity;
-			AddTriangles( vertices, indices, ref transformIdentity, true, wireframe, culling );
-		}
+		//public override void AddTriangles( IList<Vertex> vertices, IList<int> indices, bool wireframe, bool culling )
+		//{
+		//	AddTriangles( vertices, indices, ref transformIdentity/*, true*/, wireframe, culling );
+		//}
 
 		public override void AddTriangles( IList<Vertex> vertices, ref Matrix4 transform, bool wireframe, bool culling )
 		{
-			AddTriangles( vertices, null, ref transform, false, wireframe, culling );
+			AddTriangles( vertices, null, ref transform/*, false*/, wireframe, culling );
 		}
 
-		public override void AddTriangles( IList<Vertex> vertices, bool wireframe, bool culling )
-		{
-			//var transform = Matrix4.Identity;
-			AddTriangles( vertices, null, ref transformIdentity, true, wireframe, culling );
-		}
+		//public override void AddTriangles( IList<Vertex> vertices, bool wireframe, bool culling )
+		//{
+		//	AddTriangles( vertices, null, ref transformIdentity/*, true*/, wireframe, culling );
+		//}
 
 		public override void AddVertexIndexData( VertexIndexData data, ref Matrix4 transform, bool wireframe, bool culling )
 		{
@@ -2316,10 +2513,8 @@ namespace NeoAxis
 			item.occlusionQuery = currentOcclusionQuery;
 			item.cutVolumes = currentCutVolumes;
 			//item.nonOverlappingGroup = nonOverlappingGroup;
-			item.transform = transform;
-			//!!!!
-			item.transformIsIdentity = false;
-
+			item.transformType = TransformTypeEnum.Value;
+			item.transformValue = new TransformValueClass( ref transform );
 			item.wireframe = wireframe;
 			item.culling = culling;
 			items.Add( item );
@@ -2327,17 +2522,10 @@ namespace NeoAxis
 
 		public override void AddMesh( Mesh.CompiledData meshData, ref Matrix4 transform, bool wireframe, bool culling )
 		{
-			//!!!!может порядок менять полезно?
-
 			foreach( var oper in meshData.MeshData.RenderOperations )
 			{
-				//var oper = item.operation;
 				if( oper.ContainsDisposedBuffers() )
 					continue;
-
-				ref Matrix4 worldMatrix = ref transform;
-				//if( !item.transform.IsIdentity )
-				//	worldMatrix *= item.transform.ToMat4();
 
 				var data = new VertexIndexData();
 				data.OperationType = RenderOperationType.TriangleList;
@@ -2350,7 +2538,7 @@ namespace NeoAxis
 				data.IndexCount = oper.IndexCount;
 				data.BillboardMode = meshData.MeshData.BillboardMode;
 
-				AddVertexIndexData( data, ref worldMatrix, wireframe, culling );
+				AddVertexIndexData( data, ref transform, wireframe, culling );
 			}
 		}
 
@@ -2361,7 +2549,6 @@ namespace NeoAxis
 			int handle2 = v2.HasValue ? v2.Value.handle : -1;
 			return handle1 == handle2;
 		}
-
 
 		public unsafe override void AddRectangle( ref Rectangle rectangle, ref Matrix4 transform, bool solid, double lineThickness )
 		{
@@ -2435,6 +2622,5 @@ namespace NeoAxis
 				}
 			}
 		}
-
 	}
 }

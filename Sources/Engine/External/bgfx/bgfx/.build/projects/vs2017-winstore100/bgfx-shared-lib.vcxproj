@@ -194,7 +194,7 @@
     <ClCompile>
       <AdditionalOptions>/wd4201 /wd4324 /Ob2 /wd4530  %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\3rdparty;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\3rdparty\dxsdk\include;..\..\..\3rdparty\khronos;..\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\3rdparty;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\3rdparty\dxsdk\include;..\..\..\3rdparty\khronos;..\..\..\include;..\..\..\3rdparty\fcpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;_DEBUG;WIN32;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_WIN64;BGFX_SHARED_LIB_BUILD=1;BGFX_CONFIG_DEBUG=1;BGFX_CONFIG_DEBUG_UNIFORM=0;BX_CONFIG_DEBUG=1;BX_CONFIG_DEBUG_UNIFORM=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -204,7 +204,7 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
@@ -220,9 +220,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)bgfx-shared-libDebug.pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>gdi32.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gdi32.lib;psapi.lib;fcppDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bgfx-shared-libDebug.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\3rdparty\lib\win64_vs2017-winstore100;..\..\..\..\..\..\Lib\UWP\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\3rdparty\lib\win64_vs2017-winstore100;..\..\..\..\..\..\Lib\UWP\x64;..\..\win64_vs2017-winstore100\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\..\win64_vs2017-winstore100\bin\bgfx-shared-libDebug.lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
       <AdditionalOptions>/ignore:4221 /ignore:4264 %(AdditionalOptions)</AdditionalOptions>
@@ -314,7 +314,7 @@ copy ..\..\win64_vs2017-winstore100\bin\bgfx-shared-libDebug.dll "..\..\..\..\..
     <ClCompile>
       <AdditionalOptions>/wd4201 /wd4324 /Ob2 /wd4530  %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\3rdparty;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\3rdparty\dxsdk\include;..\..\..\3rdparty\khronos;..\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\3rdparty;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\3rdparty\dxsdk\include;..\..\..\3rdparty\khronos;..\..\..\include;..\..\..\3rdparty\fcpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;NDEBUG;WIN32;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_WIN64;BGFX_SHARED_LIB_BUILD=1;BGFX_CONFIG_DEBUG=0;BGFX_CONFIG_DEBUG_UNIFORM=0;BX_CONFIG_DEBUG=0;BX_CONFIG_DEBUG_UNIFORM=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
@@ -345,9 +345,9 @@ copy ..\..\win64_vs2017-winstore100\bin\bgfx-shared-libDebug.dll "..\..\..\..\..
       <ProgramDatabaseFile>$(OutDir)bgfx-shared-libRelease.pdb</ProgramDatabaseFile>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>gdi32.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gdi32.lib;psapi.lib;fcppRelease.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bgfx-shared-libRelease.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\3rdparty\lib\win64_vs2017-winstore100;..\..\..\..\..\..\Lib\UWP\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\3rdparty\lib\win64_vs2017-winstore100;..\..\..\..\..\..\Lib\UWP\x64;..\..\win64_vs2017-winstore100\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\..\win64_vs2017-winstore100\bin\bgfx-shared-libRelease.lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
       <AdditionalOptions>/ignore:4221 /ignore:4264 %(AdditionalOptions)</AdditionalOptions>
@@ -410,7 +410,6 @@ copy ..\..\win64_vs2017-winstore100\bin\bgfx-shared-libRelease.dll "..\..\..\..\
     <ClInclude Include="..\..\..\src\dxgi.h" />
     <ClInclude Include="..\..\..\src\glcontext_eagl.h" />
     <ClInclude Include="..\..\..\src\glcontext_egl.h" />
-    <ClInclude Include="..\..\..\src\glcontext_glx.h" />
     <ClInclude Include="..\..\..\src\glcontext_nsgl.h" />
     <ClInclude Include="..\..\..\src\glcontext_wgl.h" />
     <ClInclude Include="..\..\..\src\glimports.h" />
@@ -419,18 +418,17 @@ copy ..\..\win64_vs2017-winstore100\bin\bgfx-shared-libRelease.dll "..\..\..\..\
     <ClInclude Include="..\..\..\src\renderer_d3d.h" />
     <ClInclude Include="..\..\..\src\renderer_d3d11.h" />
     <ClInclude Include="..\..\..\src\renderer_d3d12.h" />
-    <ClInclude Include="..\..\..\src\renderer_d3d9.h" />
     <ClInclude Include="..\..\..\src\renderer_gl.h" />
     <ClInclude Include="..\..\..\src\renderer_mtl.h" />
     <ClInclude Include="..\..\..\src\renderer_vk.h" />
-    <ClInclude Include="..\..\..\src\renderer_webgpu.h" />
     <ClInclude Include="..\..\..\src\shader.h" />
-    <ClInclude Include="..\..\..\src\shader_dx9bc.h" />
     <ClInclude Include="..\..\..\src\shader_dxbc.h" />
     <ClInclude Include="..\..\..\src\shader_spirv.h" />
     <ClInclude Include="..\..\..\src\special.h" />
     <ClInclude Include="..\..\..\src\topology.h" />
     <ClInclude Include="..\..\..\src\vertexlayout.h" />
+    <ClInclude Include="..\..\..\tools\shaderc\LibraryBase.h" />
+    <ClInclude Include="..\..\..\tools\shaderc\shaderc.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\amalgamated.cpp">
@@ -449,17 +447,14 @@ copy ..\..\win64_vs2017-winstore100\bin\bgfx-shared-libRelease.dll "..\..\..\..\
     </ClCompile>
     <ClCompile Include="..\..\..\src\glcontext_egl.cpp">
     </ClCompile>
-    <ClCompile Include="..\..\..\src\glcontext_glx.cpp">
-    </ClCompile>
     <ClCompile Include="..\..\..\src\glcontext_wgl.cpp">
     </ClCompile>
     <ClCompile Include="..\..\..\src\nvapi.cpp">
     </ClCompile>
+    <ClCompile Include="..\..\..\src\renderer_agc.cpp" />
     <ClCompile Include="..\..\..\src\renderer_d3d11.cpp">
     </ClCompile>
     <ClCompile Include="..\..\..\src\renderer_d3d12.cpp">
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\renderer_d3d9.cpp">
     </ClCompile>
     <ClCompile Include="..\..\..\src\renderer_gl.cpp">
     </ClCompile>
@@ -470,10 +465,7 @@ copy ..\..\win64_vs2017-winstore100\bin\bgfx-shared-libRelease.dll "..\..\..\..\
     <ClCompile Include="..\..\..\src\renderer_nvn.cpp" />
     <ClCompile Include="..\..\..\src\renderer_vk.cpp">
     </ClCompile>
-    <ClCompile Include="..\..\..\src\renderer_webgpu.cpp" />
     <ClCompile Include="..\..\..\src\shader.cpp">
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\shader_dx9bc.cpp">
     </ClCompile>
     <ClCompile Include="..\..\..\src\shader_dxbc.cpp">
     </ClCompile>
@@ -484,6 +476,11 @@ copy ..\..\win64_vs2017-winstore100\bin\bgfx-shared-libRelease.dll "..\..\..\..\
     </ClCompile>
     <ClCompile Include="..\..\..\src\vertexlayout.cpp">
     </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\Library.cpp" />
+    <ClCompile Include="..\..\..\tools\shaderc\LibraryBase.cpp" />
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc.cpp" />
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc_hlsl.cpp" />
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc_spirv.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\src\glcontext_eagl.mm" />

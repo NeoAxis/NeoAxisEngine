@@ -24,7 +24,7 @@ namespace NeoAxis
 			get { if( _source.BeginGet() ) Source = _source.Get( this ); return _source.value; }
 			set
 			{
-				if( _source.BeginSet( ref value ) )
+				if( _source.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -51,7 +51,7 @@ namespace NeoAxis
 			get { if( _manuallySpecifiedReturnType.BeginGet() ) ManuallySpecifiedReturnType = _manuallySpecifiedReturnType.Get( this ); return _manuallySpecifiedReturnType.value; }
 			set
 			{
-				if( _manuallySpecifiedReturnType.BeginSet( ref value ) )
+				if( _manuallySpecifiedReturnType.BeginSet( this, ref value ) )
 				{
 					try
 					{

@@ -1,10 +1,10 @@
 ﻿//#if !DEPLOY
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-using Internal.ComponentFactory.Krypton.Toolkit;
+//using Internal.ComponentFactory.Krypton.Toolkit;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 
 namespace NeoAxis.Editor
 {
@@ -16,23 +16,28 @@ namespace NeoAxis.Editor
 		public static EDialogResult ShowQuestion( string text, EMessageBoxButtons buttons, string caption = null )
 		{
 #if !DEPLOY
-			return (EDialogResult)KryptonMessageBox.Show( text, caption ?? EngineInfo.OriginalName, (MessageBoxButtons)buttons, MessageBoxIcon.Question );
-#else
-			return EDialogResult.None;
+			if( EditorAssemblyInterface.Instance != null )
+				return EditorAssemblyInterface.Instance.ShowQuestion( text, buttons, caption );
+			//return (EDialogResult)KryptonMessageBox.Show( text, caption ?? EngineInfo.OriginalName, (MessageBoxButtons)buttons, MessageBoxIcon.Question );
 #endif
+			return EDialogResult.None;
 		}
 
 		public static void ShowWarning( string text, string caption = null )
 		{
 #if !DEPLOY
-			KryptonMessageBox.Show( text, caption ?? EngineInfo.OriginalName, MessageBoxButtons.OK, MessageBoxIcon.Warning );
+			if( EditorAssemblyInterface.Instance != null )
+				EditorAssemblyInterface.Instance.ShowWarning( text, caption );
+			//KryptonMessageBox.Show( text, caption ?? EngineInfo.OriginalName, MessageBoxButtons.OK, MessageBoxIcon.Warning );
 #endif
 		}
 
 		public static void ShowInfo( string text, string caption = null )
 		{
 #if !DEPLOY
-			KryptonMessageBox.Show( text, caption ?? EngineInfo.OriginalName, MessageBoxButtons.OK, MessageBoxIcon.Information );
+			if( EditorAssemblyInterface.Instance != null )
+				EditorAssemblyInterface.Instance.ShowInfo( text, caption );
+			//KryptonMessageBox.Show( text, caption ?? EngineInfo.OriginalName, MessageBoxButtons.OK, MessageBoxIcon.Information );
 #endif
 		}
 	}

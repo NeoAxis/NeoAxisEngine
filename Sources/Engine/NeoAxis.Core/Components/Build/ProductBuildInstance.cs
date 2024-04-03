@@ -2,12 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace NeoAxis.Editor
 {
 	public class ProductBuildInstance
 	{
 		Product configuration;
+		ESet<string> skipFilesByExtension = new ESet<string>();
+		ESet<string> clearFilesByExtension = new ESet<string>();
 		string destinationFolder;
 		bool run;
 		volatile StateEnum state = StateEnum.Building;
@@ -34,6 +37,16 @@ namespace NeoAxis.Editor
 		public Product Configuration
 		{
 			get { return configuration; }
+		}
+
+		public ESet<string> SkipFilesByExtension
+		{
+			get { return skipFilesByExtension; }
+		}
+
+		public ESet<string> ClearFilesByExtension
+		{
+			get { return clearFilesByExtension; }
 		}
 
 		public string DestinationFolder
@@ -94,7 +107,35 @@ namespace NeoAxis.Editor
 			get { return buildFunctionFinished; }
 		}
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////
+
+		public bool NeedSkipFile( string path )
+		{
+			try
+			{
+				var extension = Path.GetExtension( path ).Replace( ".", "" ).ToLower();
+				if( SkipFilesByExtension.Contains( extension ) )
+					return true;
+			}
+			catch { }
+
+			return false;
+		}
+
+		public bool NeedClearFile( string path )
+		{
+			try
+			{
+				var extension = Path.GetExtension( path ).Replace( ".", "" ).ToLower();
+				if( ClearFilesByExtension.Contains( extension ) )
+					return true;
+			}
+			catch { }
+
+			return false;
+		}
+
+		///////////////////////////////////////////////
 
 		static void BuildFunction( object obj )
 		{
@@ -107,6 +148,23 @@ namespace NeoAxis.Editor
 		{
 			var instance = new ProductBuildInstance();
 			instance.configuration = configuration;
+
+			//SkipFilesByExtension
+			foreach( var extension in configuration.SkipFilesWithExtension.Value.Split( new char[] { '\n', ';' }, StringSplitOptions.RemoveEmptyEntries ) )
+			{
+				var extension2 = extension.Replace( "\r", "" ).Replace( ".", "" ).Trim().ToLower();
+				instance.skipFilesByExtension.AddWithCheckAlreadyContained( extension2 );
+			}
+
+			//ClearFilesByExtension
+			foreach( var extension in configuration.ClearFilesWithExtension.Value.Split( new char[] { '\n', ';' }, StringSplitOptions.RemoveEmptyEntries ) )
+			{
+				var extension2 = extension.Replace( "\r", "" ).Replace( ".", "" ).Trim().ToLower();
+				instance.clearFilesByExtension.AddWithCheckAlreadyContained( extension2 );
+			}
+			//if( configuration.ClearImport3DFiles )
+			//	instance.clearFilesByExtension.AddRange( ResourceManager.Import3DFileExtensions );
+
 			instance.destinationFolder = destinationFolder;
 			instance.run = run;
 

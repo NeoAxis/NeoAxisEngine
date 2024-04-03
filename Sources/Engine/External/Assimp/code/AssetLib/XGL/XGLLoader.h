@@ -2,8 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
-
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -47,69 +46,64 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define AI_XGLLOADER_H_INCLUDED
 
 #include <assimp/BaseImporter.h>
-#include <assimp/irrXMLWrapper.h>
+#include <assimp/XmlParser.h>
 #include <assimp/LogAux.h>
+#include <assimp/light.h>
 #include <assimp/material.h>
-#include <assimp/Importer.hpp>
 #include <assimp/mesh.h>
 #include <assimp/light.h>
-#include <memory>
+#include <assimp/Importer.hpp>
+#include <assimp/XmlParser.h>
+
 #include <map>
+#include <memory>
 
 struct aiNode;
 
-namespace Assimp    {
+namespace Assimp {
 
 // ---------------------------------------------------------------------------
 /** XGL/ZGL importer.
  *
  * Spec: http://vizstream.aveva.com/release/vsplatform/XGLSpec.htm
  */
-class XGLImporter : public BaseImporter, public LogFunctions<XGLImporter>
-{
+class XGLImporter : public BaseImporter, public LogFunctions<XGLImporter> {
 public:
-
+    /// @brief  The class constructor.
     XGLImporter();
-    ~XGLImporter();
 
+    /// @brief The class destructor.
+    ~XGLImporter() override;
 
-public:
-
-    // -------------------------------------------------------------------
-    /** Returns whether the class can handle the format of the given file.
-     *  See BaseImporter::CanRead() for details.    */
-    bool CanRead( const std::string& pFile, IOSystem* pIOHandler,
-        bool checkSig) const;
+    /// @brief Returns whether the class can handle the format of the given file.
+    /// @see BaseImporter::CanRead() for details.    */
+    bool CanRead(const std::string &pFile, IOSystem *pIOHandler,
+            bool checkSig) const override;
 
 protected:
+    void clear();
 
     // -------------------------------------------------------------------
     /** Return importer meta information.
      * See #BaseImporter::GetInfo for the details  */
-    const aiImporterDesc* GetInfo () const;
+    const aiImporterDesc *GetInfo() const override;
 
     // -------------------------------------------------------------------
     /** Imports the given file into the given scene structure.
      * See BaseImporter::InternReadFile() for details */
-    void InternReadFile( const std::string& pFile, aiScene* pScene,
-        IOSystem* pIOHandler);
+    void InternReadFile(const std::string &pFile, aiScene *pScene,
+            IOSystem *pIOHandler) override;
 
 private:
+    struct TempScope {
+        TempScope() : light() {}
 
-
-    struct TempScope
-    {
-        TempScope()
-            : light()
-        {}
-
-        ~TempScope()
-        {
-            for(aiMesh* m : meshes_linear) {
+        ~TempScope() {
+            for (aiMesh *m : meshes_linear) {
                 delete m;
             }
 
-            for(aiMaterial* m : materials_linear) {
+            for (aiMaterial *m : materials_linear) {
                 delete m;
             }
 
@@ -117,45 +111,44 @@ private:
         }
 
         void dismiss() {
-            light = NULL;
+            light = nullptr;
             meshes_linear.clear();
             materials_linear.clear();
             meshes.clear();
             materials.clear();
         }
 
-        std::multimap<unsigned int, aiMesh*> meshes;
-        std::map<unsigned int, aiMaterial*> materials;
+        std::multimap<unsigned int, aiMesh *> meshes;
+        std::map<unsigned int, aiMaterial *> materials;
 
-        std::vector<aiMesh*> meshes_linear;
-        std::vector<aiMaterial*> materials_linear;
+        std::vector<aiMesh *> meshes_linear;
+        std::vector<aiMaterial *> materials_linear;
 
-        aiLight* light;
+        aiLight *light;
     };
 
-
     struct SortMeshByMaterialId {
-        SortMeshByMaterialId(const TempScope& scope) : scope(scope) {}
+        SortMeshByMaterialId(const TempScope &scope) :
+                scope(scope) {
+            // empty
+        }
         bool operator()(unsigned int a, unsigned int b) const {
             return scope.meshes_linear[a]->mMaterialIndex < scope.meshes_linear[b]->mMaterialIndex;
         };
 
-        const TempScope& scope;
+        const TempScope &scope;
     };
 
-    struct TempMesh
-    {
+    struct TempMesh {
         std::map<unsigned int, aiVector3D> points;
         std::map<unsigned int, aiVector3D> normals;
         std::map<unsigned int, aiVector2D> uvs;
     };
 
-    struct TempMaterialMesh
-    {
-        TempMaterialMesh()
-            : pflags()
-            , matid()
-        {}
+    struct TempMaterialMesh {
+        TempMaterialMesh() : pflags(), matid() {
+            // empty
+        }
 
         std::vector<aiVector3D> positions, normals;
         std::vector<aiVector2D> uvs;
@@ -165,12 +158,10 @@ private:
         unsigned int matid;
     };
 
-    struct TempFace
-    {
-        TempFace()
-            : has_uv()
-            , has_normal()
-        {}
+    struct TempFace {
+        TempFace() : has_uv(), has_normal() {
+            // empty
+        }
 
         aiVector3D pos;
         aiVector3D normal;
@@ -180,35 +171,33 @@ private:
     };
 
 private:
-
     void Cleanup();
-
     std::string GetElementName();
     bool ReadElement();
-    bool ReadElementUpToClosing(const char* closetag);
+    bool ReadElementUpToClosing(const char *closetag);
     bool SkipToText();
-    unsigned int ReadIDAttr();
-
-    void ReadWorld(TempScope& scope);
-    void ReadLighting(TempScope& scope);
-    aiLight* ReadDirectionalLight();
-    aiNode* ReadObject(TempScope& scope,bool skipFirst = false,const char* closetag = "object");
-    bool ReadMesh(TempScope& scope);
-    void ReadMaterial(TempScope& scope);
-    aiVector2D ReadVec2();
-    aiVector3D ReadVec3();
-    aiColor3D ReadCol3();
-    aiMatrix4x4 ReadTrafo();
-    unsigned int ReadIndexFromText();
-    float ReadFloat();
-
-    aiMesh* ToOutputMesh(const TempMaterialMesh& m);
-    void ReadFaceVertex(const TempMesh& t, TempFace& out);
-    unsigned int ResolveMaterialRef(TempScope& scope);
+    unsigned int ReadIDAttr(XmlNode &node);
+    void ReadWorld(XmlNode &node, TempScope &scope);
+    void ReadLighting(XmlNode &node, TempScope &scope);
+    aiLight *ReadDirectionalLight(XmlNode &node);
+    aiNode *ReadObject(XmlNode &node, TempScope &scope);
+    bool ReadMesh(XmlNode &node, TempScope &scope);
+    void AppendOutputMeshes(std::map<unsigned int, TempMaterialMesh> bymat, TempScope &scope, const unsigned int mesh_id);
+    unsigned int ReadVertices(XmlNode &child, TempMesh t, TempFace *tf, bool *has, unsigned int mid, TempScope &scope);
+    unsigned int ReadMaterial(XmlNode &node, TempScope &scope);
+    aiVector2D ReadVec2(XmlNode &node);
+    aiVector3D ReadVec3(XmlNode &node);
+    aiColor3D ReadCol3(XmlNode &node);
+    aiMatrix4x4 ReadTrafo(XmlNode &node);
+    unsigned int ReadIndexFromText(XmlNode &node);
+    float ReadFloat(XmlNode &node);
+    aiMesh *ToOutputMesh(const TempMaterialMesh &m);
+    void ReadFaceVertex(XmlNode &node, const TempMesh &t, TempFace &out);
+    unsigned int ResolveMaterialRef(XmlNode &node, TempScope &scope);
 
 private:
-    std::shared_ptr<irr::io::IrrXMLReader> m_reader;
-    aiScene* m_scene;
+    XmlParser *mXmlParser;
+    aiScene *m_scene;
 };
 
 } // end of namespace Assimp

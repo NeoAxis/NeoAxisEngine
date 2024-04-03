@@ -39,7 +39,7 @@ namespace NeoAxis
 		public Reference<ElementTypeEnum> ElementType
 		{
 			get { if( _elementType.BeginGet() ) ElementType = _elementType.Get( this ); return _elementType.value; }
-			set { if( _elementType.BeginSet( ref value ) ) { try { ElementTypeChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _elementType.EndSet(); } } }
+			set { if( _elementType.BeginSet( this, ref value ) ) { try { ElementTypeChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _elementType.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ElementType"/> property value changes.</summary>
 		public event Action<BuildingElement> ElementTypeChanged;
@@ -52,7 +52,7 @@ namespace NeoAxis
 		public Reference<Mesh> Mesh
 		{
 			get { if( _mesh.BeginGet() ) Mesh = _mesh.Get( this ); return _mesh.value; }
-			set { if( _mesh.BeginSet( ref value ) ) { try { MeshChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _mesh.EndSet(); } } }
+			set { if( _mesh.BeginSet( this, ref value ) ) { try { MeshChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _mesh.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Mesh"/> property value changes.</summary>
 		public event Action<BuildingElement> MeshChanged;
@@ -68,7 +68,7 @@ namespace NeoAxis
 		//public Reference<Vector3> Size
 		//{
 		//	get { if( _size.BeginGet() ) Size = _size.Get( this ); return _size.value; }
-		//	set { if( _size.BeginSet( ref value ) ) { try { SizeChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _size.EndSet(); } } }
+		//	set { if( _size.BeginSet( this, ref value ) ) { try { SizeChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _size.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="Size"/> property value changes.</summary>
 		//public event Action<BuildingElement> SizeChanged;
@@ -81,7 +81,7 @@ namespace NeoAxis
 		public Reference<RangeI> Levels
 		{
 			get { if( _levels.BeginGet() ) Levels = _levels.Get( this ); return _levels.value; }
-			set { if( _levels.BeginSet( ref value ) ) { try { LevelsChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _levels.EndSet(); } } }
+			set { if( _levels.BeginSet( this, ref value ) ) { try { LevelsChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _levels.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Levels"/> property value changes.</summary>
 		public event Action<BuildingElement> LevelsChanged;
@@ -95,7 +95,17 @@ namespace NeoAxis
 			MinusY = 2,
 			PlusX = 4,
 			PlusY = 8,
-			All = MinusX | MinusY | PlusX | PlusY
+
+			[DisplayNameEnum( "Minus X, Minus Y" )]
+			MinusXMinusY = 16,
+			[DisplayNameEnum( "Plus X, Minus Y" )]
+			PlusXMinusY = 32,
+			[DisplayNameEnum( "Minus X, Plus Y" )]
+			MinusXPlusY = 64,
+			[DisplayNameEnum( "Plus X, Plus Y" )]
+			PlusXPlusY = 128,
+
+			All = MinusX | MinusY | PlusX | PlusY | MinusXMinusY | PlusXMinusY | MinusXPlusY | PlusXPlusY,
 		}
 
 		/// <summary>
@@ -105,11 +115,25 @@ namespace NeoAxis
 		public Reference<SidesEnum> Sides
 		{
 			get { if( _sides.BeginGet() ) Sides = _sides.Get( this ); return _sides.value; }
-			set { if( _sides.BeginSet( ref value ) ) { try { SidesChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _sides.EndSet(); } } }
+			set { if( _sides.BeginSet( this, ref value ) ) { try { SidesChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _sides.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Sides"/> property value changes.</summary>
 		public event Action<BuildingElement> SidesChanged;
 		ReferenceField<SidesEnum> _sides = SidesEnum.All;
+
+		//!!!!new. here?
+		/// <summary>
+		/// Override height for affected levels by the element. Set 0 to use default element height.
+		/// </summary>
+		[DefaultValue( 0.0 )]
+		public Reference<double> OverrideHeight
+		{
+			get { if( _overrideHeight.BeginGet() ) OverrideHeight = _overrideHeight.Get( this ); return _overrideHeight.value; }
+			set { if( _overrideHeight.BeginSet( this, ref value ) ) { try { OverrideHeightChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _overrideHeight.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="OverrideHeight"/> property value changes.</summary>
+		public event Action<BuildingElement> OverrideHeightChanged;
+		ReferenceField<double> _overrideHeight = 0.0;
 
 		/// <summary>
 		/// The probability of choosing this element from others.
@@ -119,7 +143,7 @@ namespace NeoAxis
 		public Reference<double> Probability
 		{
 			get { if( _probability.BeginGet() ) Probability = _probability.Get( this ); return _probability.value; }
-			set { if( _probability.BeginSet( ref value ) ) { try { ProbabilityChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _probability.EndSet(); } } }
+			set { if( _probability.BeginSet( this, ref value ) ) { try { ProbabilityChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _probability.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Probability"/> property value changes.</summary>
 		public event Action<BuildingElement> ProbabilityChanged;
@@ -133,7 +157,7 @@ namespace NeoAxis
 		public Reference<double> Distance
 		{
 			get { if( _distance.BeginGet() ) Distance = _distance.Get( this ); return _distance.value; }
-			set { if( _distance.BeginSet( ref value ) ) { try { DistanceChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _distance.EndSet(); } } }
+			set { if( _distance.BeginSet( this, ref value ) ) { try { DistanceChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _distance.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Distance"/> property value changes.</summary>
 		public event Action<BuildingElement> DistanceChanged;
@@ -147,7 +171,7 @@ namespace NeoAxis
 		public Reference<Range> Interval
 		{
 			get { if( _interval.BeginGet() ) Interval = _interval.Get( this ); return _interval.value; }
-			set { if( _interval.BeginSet( ref value ) ) { try { IntervalChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _interval.EndSet(); } } }
+			set { if( _interval.BeginSet( this, ref value ) ) { try { IntervalChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _interval.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Interval"/> property value changes.</summary>
 		public event Action<BuildingElement> IntervalChanged;
@@ -161,7 +185,7 @@ namespace NeoAxis
 		public Reference<double> Step
 		{
 			get { if( _step.BeginGet() ) Step = _step.Get( this ); return _step.value; }
-			set { if( _step.BeginSet( ref value ) ) { try { StepChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _step.EndSet(); } } }
+			set { if( _step.BeginSet( this, ref value ) ) { try { StepChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _step.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Step"/> property value changes.</summary>
 		public event Action<BuildingElement> StepChanged;
@@ -177,7 +201,7 @@ namespace NeoAxis
 		public Reference<Vector3> PositionOffset
 		{
 			get { if( _positionOffset.BeginGet() ) PositionOffset = _positionOffset.Get( this ); return _positionOffset.value; }
-			set { if( _positionOffset.BeginSet( ref value ) ) { try { PositionOffsetChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _positionOffset.EndSet(); } } }
+			set { if( _positionOffset.BeginSet( this, ref value ) ) { try { PositionOffsetChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _positionOffset.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PositionOffset"/> property value changes.</summary>
 		public event Action<BuildingElement> PositionOffsetChanged;
@@ -190,7 +214,7 @@ namespace NeoAxis
 		public Reference<Quaternion> RotationOffset
 		{
 			get { if( _rotationOffset.BeginGet() ) RotationOffset = _rotationOffset.Get( this ); return _rotationOffset.value; }
-			set { if( _rotationOffset.BeginSet( ref value ) ) { try { RotationOffsetChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _rotationOffset.EndSet(); } } }
+			set { if( _rotationOffset.BeginSet( this, ref value ) ) { try { RotationOffsetChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _rotationOffset.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RotationOffset"/> property value changes.</summary>
 		public event Action<BuildingElement> RotationOffsetChanged;
@@ -203,12 +227,24 @@ namespace NeoAxis
 		public Reference<Vector3> ScaleOffset
 		{
 			get { if( _scaleOffset.BeginGet() ) ScaleOffset = _scaleOffset.Get( this ); return _scaleOffset.value; }
-			set { if( _scaleOffset.BeginSet( ref value ) ) { try { ScaleOffsetChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _scaleOffset.EndSet(); } } }
+			set { if( _scaleOffset.BeginSet( this, ref value ) ) { try { ScaleOffsetChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _scaleOffset.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ScaleOffset"/> property value changes.</summary>
 		public event Action<BuildingElement> ScaleOffsetChanged;
 		ReferenceField<Vector3> _scaleOffset = new Vector3( 1, 1, 1 );
 
+		/// <summary>
+		/// Whether to cull visibility by the camera direction.
+		/// </summary>
+		[DefaultValue( true )]
+		public Reference<bool> CullingByCameraDirection
+		{
+			get { if( _cullingByCameraDirection.BeginGet() ) CullingByCameraDirection = _cullingByCameraDirection.Get( this ); return _cullingByCameraDirection.value; }
+			set { if( _cullingByCameraDirection.BeginSet( this, ref value ) ) { try { CullingByCameraDirectionChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _cullingByCameraDirection.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="CullingByCameraDirection"/> property value changes.</summary>
+		public event Action<BuildingElement> CullingByCameraDirectionChanged;
+		ReferenceField<bool> _cullingByCameraDirection = true;
 
 
 		//!!!!Side: можно ли увидеть комнату

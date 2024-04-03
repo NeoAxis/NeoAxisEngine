@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -51,9 +51,6 @@
     <Reference Include="NeoAxis.Core">
       <HintPath>Binaries\NeoAxis.Internal\Platforms\Android\Managed\NeoAxis.Core.dll</HintPath>
     </Reference>
-    <Reference Include="NeoAxis.CoreExtension">
-      <HintPath>Binaries\NeoAxis.Internal\Platforms\Android\Managed\NeoAxis.CoreExtension.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
@@ -89,8 +86,13 @@
     <Compile Include="Assets\Base\UI\Screens\BasicSceneScreen.cs" />
     <Compile Include="Assets\Base\UI\Screens\EntranceScreen.cs" />
     <Compile Include="Assets\Base\UI\Screens\InGameContextScreen.cs" />
+    <Compile Include="Assets\Base\UI\Screens\AvatarWindow.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.Android.csproj">
+      <Project>{876cbdec-8f38-453f-9be5-d90a6af28d10}</Project>
+      <Name>NeoAxis.CoreExtension.Android</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <PropertyGroup>

@@ -7,9 +7,9 @@ $output v_texCoord01, v_worldPosition_depth, v_worldNormal_materialIndex, v_tang
 #include "UniformsVertex.sh"
 #include "VertexFunctions.sh"
 
-uniform vec4 u_renderOperationData[7];
+uniform vec4 u_renderOperationData[8];
 uniform vec4 u_materialCustomParameters[2];
-uniform mat4 u_viewProjPrevious;
+uniform vec4 u_objectInstanceParameters[2];
 #ifdef GLOBAL_SKELETAL_ANIMATION
 	SAMPLER2D(s_bones, 0);
 #endif
@@ -25,6 +25,9 @@ SAMPLER2D(s_linearSamplerVertex, 9);
 	VERTEX_CODE_SHADER_SCRIPTS
 #endif
 
+//TAA jittering test
+//uniform vec4 jitteringTest;
+
 void main()
 {
 	vec3 positionLocal = a_position;
@@ -35,26 +38,24 @@ void main()
 #endif
 	
 	mat4 worldMatrix;
-	vec3 previousWorldPosition;
+	vec3 previousFramePositionChange;
 	uint cullingByCameraDirectionData = uint(0);
 	BRANCH
 	if(u_renderOperationData[0].y < 0.0)
 	{
 		//instancing
 		worldMatrix = mtxFromRows(i_data0, i_data1, i_data2, vec4(0,0,0,1));
-		previousWorldPosition = i_data3.xyz;		
-		uint data = asuint(i_data3.w);
-		v_colorParameter.x = float((data & uint(0x000000ff)) >> 0);
-		v_colorParameter.y = float((data & uint(0x0000ff00)) >> 8);
-		v_colorParameter.z = float((data & uint(0x00ff0000)) >> 16);
-		v_colorParameter.w = float((data & uint(0xff000000)) >> 24);
-		v_colorParameter = pow2(v_colorParameter / 255.0, 2.0) * 10.0;
+		addTranslate(worldMatrix, u_renderOperationData[7].xyz);
+		previousFramePositionChange = i_data3.xyz;
 
 		v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.xy = i_data4.xy;
 		uint data2 = asuint(i_data4.z);
 		v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.z = float((data2 & uint(0x000000ff)) >> 0) / 255.0;
 		v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.w = float((data2 & uint(0x0000ff00)) >> 8) / 255.0;
+		uint colorExp = ( data2 & uint( 0x00ff0000 ) ) >> 16;
 		//v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor = i_data4;
+
+		v_colorParameter = decodePackedInstanceColor( i_data3.w, colorExp );
 		
 		if(v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.y < 0.0)
 			v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.y = u_renderOperationData[1].y;
@@ -64,15 +65,13 @@ void main()
 	else
 	{
 		worldMatrix = u_model[0];
-		previousWorldPosition = u_renderOperationData[2].xyz;
+		vec4 renderOperationData1 = u_renderOperationData[1];
+		vec4 renderOperationData2 = u_renderOperationData[2];
+		previousFramePositionChange = renderOperationData2.xyz;
 		v_colorParameter = u_renderOperationData[4];
-		v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor = vec4(u_renderOperationData[2].w, u_renderOperationData[1].y, u_renderOperationData[1].x, u_renderOperationData[1].z);
-		//!!!!?
-		//cullingByCameraDirectionData = 0;
+		v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor = vec4(renderOperationData2.w, renderOperationData1.y, renderOperationData1.x, renderOperationData1.z);
+		cullingByCameraDirectionData = asuint( u_renderOperationData[3].w );
 	}
-	
-	//mat4 worldMatrixBeforeChanges = worldMatrix;
-	//vec3 worldObjectPositionBeforeChanges = getTranslate(worldMatrix);
 	
 #ifdef BILLBOARD
 	vec4 billboardRotation;
@@ -89,18 +88,20 @@ void main()
 	vec3 positionOffset = vec3(0,0,0);
 	vec4 customParameter1 = u_materialCustomParameters[0];
 	vec4 customParameter2 = u_materialCustomParameters[1];
+	vec4 instanceParameter1 = u_objectInstanceParameters[0];
+	vec4 instanceParameter2 = u_objectInstanceParameters[1];
 	vec3 cameraPosition = u_viewportOwnerCameraPosition;
 #ifdef VERTEX_CODE_BODY
-	#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(makeSampler(s_linearSamplerVertex, _sampler), _uv, 0, 0)
-	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerVertex, _sampler), _uv, u_removeTextureTiling)
-	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerVertex, _sampler), _uv, u_mipMap)
-//	#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(_sampler, _uv, 0, 0)
-//	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(_sampler, _uv, u_removeTextureTiling)
-//	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(_sampler, _uv, u_mipMap)
+	#if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )
+		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DLod(makeSampler(s_linearSamplerFragment, _sampler), _uv, pow( float( textureSize( makeSampler(s_linearSamplerFragment, _sampler), 0 ).x ), 0.5 ) * 0.1)
+		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DLod(makeSampler(s_linearSamplerFragment, _sampler), _uv, pow( float( textureSize( makeSampler(s_linearSamplerFragment, _sampler), 0 ).x ), 0.5 ) * 0.1)
+	#else
+		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerVertex, _sampler), _uv, u_removeTextureTiling, u_mipMap)
+		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerVertex, _sampler), _uv, u_mipMap)
+	#endif
 	{
 		VERTEX_CODE_BODY
 	}
-	#undef CODE_BODY_TEXTURE2D_MASK_OPACITY
 	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 	#undef CODE_BODY_TEXTURE2D
 #endif
@@ -108,7 +109,12 @@ void main()
 
 	mat3 worldMatrix3 = toMat3(worldMatrix);
 	
+	////TAA jittering test
+	//vec4 clipPosition = mul(u_viewProj, worldPosition);
+	//clipPosition.xy += jitteringTest.xy * clipPosition.w;
+	//gl_Position = clipPosition;
 	gl_Position = mul(u_viewProj, worldPosition);
+	
 	v_texCoord01.xy = texCoord0;
 	v_texCoord01.zw = texCoord1;
 	v_texCoord23.xy = texCoord2;
@@ -173,14 +179,14 @@ void main()
 #ifdef GLOBAL_MOTION_VECTOR
 	v_position = gl_Position;
 	mat4 previousWorldMatrix = worldMatrix;
-	setTranslate(previousWorldMatrix, previousWorldPosition);
+	addTranslate(previousWorldMatrix, u_viewportOwnerCameraPositionPreviousFrameChange - previousFramePositionChange);
 	vec4 previousPosition = mul(previousWorldMatrix, vec4(positionLocal, 1));
 	previousPosition.xyz += positionOffset;
-	v_previousPosition = mul(u_viewProjPrevious, vec4(previousPosition.xyz,1));
+	v_previousPosition = mul(u_viewportOwnerViewProjectionPrevious, vec4(previousPosition.xyz,1));
 #endif
 
 	//geometry with voxel data
-#if (defined(GLOBAL_VOXEL_LOD) && defined(VOXEL)) || (defined(GLOBAL_VIRTUALIZED_GEOMETRY) && defined(VIRTUALIZED))
+#if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )
 	v_objectSpacePosition = positionLocal;
 	voxelOrVirtualizedDataModeCalculateParametersV(u_renderOperationData, worldMatrix, u_viewportOwnerCameraPosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2 );
 #endif

@@ -8,7 +8,7 @@ namespace NeoAxis
 {
 	[ResourceFileExtension( "learning" )]
 #if !DEPLOY
-	[EditorControl( typeof( LearningEditor ) )]
+	[EditorControl( "NeoAxis.Editor.LearningEditor" )]
 #endif
 	public class LearningComponent : Component
 	{

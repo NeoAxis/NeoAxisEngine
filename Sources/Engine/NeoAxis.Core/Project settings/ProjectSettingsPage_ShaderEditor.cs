@@ -2,7 +2,6 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using Internal.ComponentFactory.Krypton.Toolkit;
 
 namespace NeoAxis
 {
@@ -20,7 +19,7 @@ namespace NeoAxis
 		public Reference<bool> ShaderEditorDisplayLineNumbers
 		{
 			get { if( _shaderEditorDisplayLineNumbers.BeginGet() ) ShaderEditorDisplayLineNumbers = _shaderEditorDisplayLineNumbers.Get( this ); return _shaderEditorDisplayLineNumbers.value; }
-			set { if( _shaderEditorDisplayLineNumbers.BeginSet( ref value ) ) { try { ShaderEditorDisplayLineNumbersChanged?.Invoke( this ); } finally { _shaderEditorDisplayLineNumbers.EndSet(); } } }
+			set { if( _shaderEditorDisplayLineNumbers.BeginSet( this, ref value ) ) { try { ShaderEditorDisplayLineNumbersChanged?.Invoke( this ); } finally { _shaderEditorDisplayLineNumbers.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShaderEditorDisplayLineNumbers"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorDisplayLineNumbersChanged;
@@ -35,7 +34,7 @@ namespace NeoAxis
 		public Reference<bool> ShaderEditorWordWrap
 		{
 			get { if( _shaderEditorWordWrap.BeginGet() ) ShaderEditorWordWrap = _shaderEditorWordWrap.Get( this ); return _shaderEditorWordWrap.value; }
-			set { if( _shaderEditorWordWrap.BeginSet( ref value ) ) { try { ShaderEditorWordWrapChanged?.Invoke( this ); } finally { _shaderEditorWordWrap.EndSet(); } } }
+			set { if( _shaderEditorWordWrap.BeginSet( this, ref value ) ) { try { ShaderEditorWordWrapChanged?.Invoke( this ); } finally { _shaderEditorWordWrap.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShaderEditorWordWrap"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorWordWrapChanged;
@@ -51,7 +50,7 @@ namespace NeoAxis
 		public Reference<ColorValue> ShaderEditorBackgroundColorLightTheme
 		{
 			get { if( _shaderEditorBackgroundColorLightTheme.BeginGet() ) ShaderEditorBackgroundColorLightTheme = _shaderEditorBackgroundColorLightTheme.Get( this ); return _shaderEditorBackgroundColorLightTheme.value; }
-			set { if( _shaderEditorBackgroundColorLightTheme.BeginSet( ref value ) ) { try { ShaderEditorBackgroundColorLightThemeChanged?.Invoke( this ); } finally { _shaderEditorBackgroundColorLightTheme.EndSet(); } } }
+			set { if( _shaderEditorBackgroundColorLightTheme.BeginSet( this, ref value ) ) { try { ShaderEditorBackgroundColorLightThemeChanged?.Invoke( this ); } finally { _shaderEditorBackgroundColorLightTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShaderEditorBackgroundColorLightTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorBackgroundColorLightThemeChanged;
@@ -64,7 +63,7 @@ namespace NeoAxis
 		//public Reference<ColorValue> ShaderEditorDefaultTextColorLightTheme
 		//{
 		//	get { if( _shaderEditorDefaultTextColorLightTheme.BeginGet() ) ShaderEditorDefaultTextColorLightTheme = _shaderEditorDefaultTextColorLightTheme.Get( this ); return _shaderEditorDefaultTextColorLightTheme.value; }
-		//	set { if( _shaderEditorDefaultTextColorLightTheme.BeginSet( ref value ) ) { try { ShaderEditorDefaultTextColorLightThemeChanged?.Invoke( this ); } finally { _shaderEditorDefaultTextColorLightTheme.EndSet(); } } }
+		//	set { if( _shaderEditorDefaultTextColorLightTheme.BeginSet( this, ref value ) ) { try { ShaderEditorDefaultTextColorLightThemeChanged?.Invoke( this ); } finally { _shaderEditorDefaultTextColorLightTheme.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="ShaderEditorDefaultTextColorLightTheme"/> property value changes.</summary>
 		//public event Action<ProjectSettingsComponentPage_ShaderEditor> ShaderEditorDefaultTextColorLightThemeChanged;
@@ -79,7 +78,7 @@ namespace NeoAxis
 		public Reference<string> ShaderEditorFont
 		{
 			get { if( _shaderEditorFont.BeginGet() ) ShaderEditorFont = _shaderEditorFont.Get( this ); return _shaderEditorFont.value; }
-			set { if( _shaderEditorFont.BeginSet( ref value ) ) { try { ShaderEditorFontChanged?.Invoke( this ); } finally { _shaderEditorFont.EndSet(); } } }
+			set { if( _shaderEditorFont.BeginSet( this, ref value ) ) { try { ShaderEditorFontChanged?.Invoke( this ); } finally { _shaderEditorFont.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShaderEditorFont"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorFontChanged;
@@ -95,7 +94,7 @@ namespace NeoAxis
 		public Reference<double> ShaderEditorFontSize
 		{
 			get { if( _shaderEditorFontSize.BeginGet() ) ShaderEditorFontSize = _shaderEditorFontSize.Get( this ); return _shaderEditorFontSize.value; }
-			set { if( _shaderEditorFontSize.BeginSet( ref value ) ) { try { ShaderEditorFontSizeChanged?.Invoke( this ); } finally { _shaderEditorFontSize.EndSet(); } } }
+			set { if( _shaderEditorFontSize.BeginSet( this, ref value ) ) { try { ShaderEditorFontSizeChanged?.Invoke( this ); } finally { _shaderEditorFontSize.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShaderEditorFontSize"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorFontSizeChanged;
@@ -111,7 +110,7 @@ namespace NeoAxis
 		public Reference<ColorValue> ShaderEditorBackgroundColorDarkTheme
 		{
 			get { if( _shaderEditorBackgroundColorDarkTheme.BeginGet() ) ShaderEditorBackgroundColorDarkTheme = _shaderEditorBackgroundColorDarkTheme.Get( this ); return _shaderEditorBackgroundColorDarkTheme.value; }
-			set { if( _shaderEditorBackgroundColorDarkTheme.BeginSet( ref value ) ) { try { ShaderEditorBackgroundColorDarkThemeChanged?.Invoke( this ); } finally { _shaderEditorBackgroundColorDarkTheme.EndSet(); } } }
+			set { if( _shaderEditorBackgroundColorDarkTheme.BeginSet( this, ref value ) ) { try { ShaderEditorBackgroundColorDarkThemeChanged?.Invoke( this ); } finally { _shaderEditorBackgroundColorDarkTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShaderEditorBackgroundColorDarkTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorBackgroundColorDarkThemeChanged;
@@ -127,7 +126,7 @@ namespace NeoAxis
 		public Reference<ColorValue> ShaderEditorSelectionBackgroundLightTheme
 		{
 			get { if( _shaderEditorSelectionBackgroundLightTheme.BeginGet() ) ShaderEditorSelectionBackgroundLightTheme = _shaderEditorSelectionBackgroundLightTheme.Get( this ); return _shaderEditorSelectionBackgroundLightTheme.value; }
-			set { if( _shaderEditorSelectionBackgroundLightTheme.BeginSet( ref value ) ) { try { ShaderEditorSelectionBackgroundLightThemeChanged?.Invoke( this ); } finally { _shaderEditorSelectionBackgroundLightTheme.EndSet(); } } }
+			set { if( _shaderEditorSelectionBackgroundLightTheme.BeginSet( this, ref value ) ) { try { ShaderEditorSelectionBackgroundLightThemeChanged?.Invoke( this ); } finally { _shaderEditorSelectionBackgroundLightTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShaderEditorSelectionBackgroundLightTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorSelectionBackgroundLightThemeChanged;
@@ -143,7 +142,7 @@ namespace NeoAxis
 		public Reference<ColorValue> ShaderEditorSelectionForegroundLightTheme
 		{
 			get { if( _shaderEditorSelectionForegroundLightTheme.BeginGet() ) ShaderEditorSelectionForegroundLightTheme = _shaderEditorSelectionForegroundLightTheme.Get( this ); return _shaderEditorSelectionForegroundLightTheme.value; }
-			set { if( _shaderEditorSelectionForegroundLightTheme.BeginSet( ref value ) ) { try { ShaderEditorSelectionForegroundLightThemeChanged?.Invoke( this ); } finally { _shaderEditorSelectionForegroundLightTheme.EndSet(); } } }
+			set { if( _shaderEditorSelectionForegroundLightTheme.BeginSet( this, ref value ) ) { try { ShaderEditorSelectionForegroundLightThemeChanged?.Invoke( this ); } finally { _shaderEditorSelectionForegroundLightTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShaderEditorSelectionForegroundLightTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorSelectionForegroundLightThemeChanged;
@@ -159,7 +158,7 @@ namespace NeoAxis
 		public Reference<ColorValue> ShaderEditorSelectionBackgroundDarkTheme
 		{
 			get { if( _shaderEditorSelectionBackgroundDarkTheme.BeginGet() ) ShaderEditorSelectionBackgroundDarkTheme = _shaderEditorSelectionBackgroundDarkTheme.Get( this ); return _shaderEditorSelectionBackgroundDarkTheme.value; }
-			set { if( _shaderEditorSelectionBackgroundDarkTheme.BeginSet( ref value ) ) { try { ShaderEditorSelectionBackgroundDarkThemeChanged?.Invoke( this ); } finally { _shaderEditorSelectionBackgroundDarkTheme.EndSet(); } } }
+			set { if( _shaderEditorSelectionBackgroundDarkTheme.BeginSet( this, ref value ) ) { try { ShaderEditorSelectionBackgroundDarkThemeChanged?.Invoke( this ); } finally { _shaderEditorSelectionBackgroundDarkTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShaderEditorSelectionBackgroundDarkTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorSelectionBackgroundDarkThemeChanged;
@@ -175,7 +174,7 @@ namespace NeoAxis
 		public Reference<ColorValue> ShaderEditorSelectionForegroundDarkTheme
 		{
 			get { if( _shaderEditorSelectionForegroundDarkTheme.BeginGet() ) ShaderEditorSelectionForegroundDarkTheme = _shaderEditorSelectionForegroundDarkTheme.Get( this ); return _shaderEditorSelectionForegroundDarkTheme.value; }
-			set { if( _shaderEditorSelectionForegroundDarkTheme.BeginSet( ref value ) ) { try { ShaderEditorSelectionForegroundDarkThemeChanged?.Invoke( this ); } finally { _shaderEditorSelectionForegroundDarkTheme.EndSet(); } } }
+			set { if( _shaderEditorSelectionForegroundDarkTheme.BeginSet( this, ref value ) ) { try { ShaderEditorSelectionForegroundDarkThemeChanged?.Invoke( this ); } finally { _shaderEditorSelectionForegroundDarkTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShaderEditorSelectionForegroundDarkTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorSelectionForegroundDarkThemeChanged;
@@ -191,7 +190,7 @@ namespace NeoAxis
 		public Reference<ColorValue> ShaderEditorSearchBackgroundLightTheme
 		{
 			get { if( _shaderEditorSearchBackgroundLightTheme.BeginGet() ) ShaderEditorSearchBackgroundLightTheme = _shaderEditorSearchBackgroundLightTheme.Get( this ); return _shaderEditorSearchBackgroundLightTheme.value; }
-			set { if( _shaderEditorSearchBackgroundLightTheme.BeginSet( ref value ) ) { try { ShaderEditorSearchBackgroundLightThemeChanged?.Invoke( this ); } finally { _shaderEditorSearchBackgroundLightTheme.EndSet(); } } }
+			set { if( _shaderEditorSearchBackgroundLightTheme.BeginSet( this, ref value ) ) { try { ShaderEditorSearchBackgroundLightThemeChanged?.Invoke( this ); } finally { _shaderEditorSearchBackgroundLightTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShaderEditorSearchBackgroundLightTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorSearchBackgroundLightThemeChanged;
@@ -207,7 +206,7 @@ namespace NeoAxis
 		public Reference<ColorValue> ShaderEditorSearchBackgroundDarkTheme
 		{
 			get { if( _shaderEditorSearchBackgroundDarkTheme.BeginGet() ) ShaderEditorSearchBackgroundDarkTheme = _shaderEditorSearchBackgroundDarkTheme.Get( this ); return _shaderEditorSearchBackgroundDarkTheme.value; }
-			set { if( _shaderEditorSearchBackgroundDarkTheme.BeginSet( ref value ) ) { try { ShaderEditorSearchBackgroundDarkThemeChanged?.Invoke( this ); } finally { _shaderEditorSearchBackgroundDarkTheme.EndSet(); } } }
+			set { if( _shaderEditorSearchBackgroundDarkTheme.BeginSet( this, ref value ) ) { try { ShaderEditorSearchBackgroundDarkThemeChanged?.Invoke( this ); } finally { _shaderEditorSearchBackgroundDarkTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShaderEditorSearchBackgroundDarkTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorSearchBackgroundDarkThemeChanged;
@@ -220,7 +219,7 @@ namespace NeoAxis
 		//public Reference<ColorValue> ShaderEditorDefaultTextColorDarkTheme
 		//{
 		//	get { if( _shaderEditorDefaultTextColorDarkTheme.BeginGet() ) ShaderEditorDefaultTextColorDarkTheme = _shaderEditorDefaultTextColorDarkTheme.Get( this ); return _shaderEditorDefaultTextColorDarkTheme.value; }
-		//	set { if( _shaderEditorDefaultTextColorDarkTheme.BeginSet( ref value ) ) { try { ShaderEditorDefaultTextColorDarkThemeChanged?.Invoke( this ); } finally { _shaderEditorDefaultTextColorDarkTheme.EndSet(); } } }
+		//	set { if( _shaderEditorDefaultTextColorDarkTheme.BeginSet( this, ref value ) ) { try { ShaderEditorDefaultTextColorDarkThemeChanged?.Invoke( this ); } finally { _shaderEditorDefaultTextColorDarkTheme.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="ShaderEditorDefaultTextColorDarkTheme"/> property value changes.</summary>
 		//public event Action<ProjectSettingsComponentPage_ShaderEditor> ShaderEditorDefaultTextColorDarkThemeChanged;

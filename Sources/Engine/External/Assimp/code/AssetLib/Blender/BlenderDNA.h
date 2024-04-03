@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 
 All rights reserved.
@@ -59,6 +59,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define ASSIMP_BUILD_BLENDER_DEBUG
 #endif
 
+// set this to non-zero to dump BlenderDNA stuff to dna.txt.
+// you could set it on the assimp build command line too without touching it here.
+// !!! please make sure this is set to 0 in the repo !!!
+#ifndef ASSIMP_BUILD_BLENDER_DEBUG_DNA
+#define ASSIMP_BUILD_BLENDER_DEBUG_DNA 0
+#endif
+
 // #define ASSIMP_BUILD_BLENDER_NO_STATS
 
 namespace Assimp {
@@ -83,9 +90,9 @@ class ObjectCache;
  *  ancestry. */
 // -------------------------------------------------------------------------------
 struct Error : DeadlyImportError {
-    Error(const std::string &s) :
-            DeadlyImportError(s) {
-        // empty
+    template <typename... T>
+    explicit Error(T &&...args) :
+            DeadlyImportError(args...) {
     }
 };
 
@@ -99,9 +106,7 @@ struct ElemBase {
         // empty
     }
 
-    virtual ~ElemBase() {
-        // empty
-    }
+    virtual ~ElemBase() = default;
 
     /** Type name of the element. The type
      * string points is the `c_str` of the `name` attribute of the
@@ -186,7 +191,7 @@ struct Field {
 };
 
 // -------------------------------------------------------------------------------
-/** Range of possible behaviours for fields absend in the input file. Some are
+/** Range of possible behaviors for fields absence in the input file. Some are
  *  mission critical so we need them, while others can silently be default
  *  initialized and no animations are harmed. */
 // -------------------------------------------------------------------------------
@@ -230,7 +235,7 @@ public:
 
     // --------------------------------------------------------
     /** Access a field of the structure by its canonical name. The pointer version
-     *  returns NULL on failure while the reference version raises an import error. */
+     *  returns nullptr on failure while the reference version raises an import error. */
     inline const Field &operator[](const std::string &ss) const;
     inline const Field *Get(const std::string &ss) const;
 
@@ -359,7 +364,7 @@ private:
     template <typename T>
     T *_allocate(vector<T> &out, size_t &s) const {
         out.resize(s);
-        return s ? &out.front() : NULL;
+        return s ? &out.front() : nullptr;
     }
 
     // --------------------------------------------------------
@@ -367,14 +372,14 @@ private:
     struct _defaultInitializer {
 
         template <typename T, unsigned int N>
-        void operator()(T (&out)[N], const char * = NULL) {
+        void operator()(T (&out)[N], const char * = nullptr) {
             for (unsigned int i = 0; i < N; ++i) {
                 out[i] = T();
             }
         }
 
         template <typename T, unsigned int N, unsigned int M>
-        void operator()(T (&out)[N][M], const char * = NULL) {
+        void operator()(T (&out)[N][M], const char * = nullptr) {
             for (unsigned int i = 0; i < N; ++i) {
                 for (unsigned int j = 0; j < M; ++j) {
                     out[i][j] = T();
@@ -383,7 +388,7 @@ private:
         }
 
         template <typename T>
-        void operator()(T &out, const char * = NULL) {
+        void operator()(T &out, const char * = nullptr) {
             out = T();
         }
     };
@@ -394,7 +399,7 @@ private:
 
 // --------------------------------------------------------
 template <>
-struct Structure ::_defaultInitializer<ErrorPolicy_Warn> {
+struct Structure::_defaultInitializer<ErrorPolicy_Warn> {
 
     template <typename T>
     void operator()(T &out, const char *reason = "<add reason>") {
@@ -406,13 +411,13 @@ struct Structure ::_defaultInitializer<ErrorPolicy_Warn> {
 };
 
 template <>
-struct Structure ::_defaultInitializer<ErrorPolicy_Fail> {
+struct Structure::_defaultInitializer<ErrorPolicy_Fail> {
 
     template <typename T>
-    void operator()(T & /*out*/, const char * = "") {
+    void operator()(T & /*out*/, const char *message = "") {
         // obviously, it is crucial that _DefaultInitializer is used
         // only from within a catch clause.
-        throw DeadlyImportError("Constructing BlenderDNA Structure encountered an error");
+        throw DeadlyImportError("Constructing BlenderDNA Structure encountered an error: ", message);
     }
 };
 
@@ -423,6 +428,17 @@ inline bool Structure ::ResolvePointer<std::shared_ptr, ElemBase>(std::shared_pt
         const FileDatabase &db,
         const Field &f,
         bool) const;
+
+template <> bool Structure :: ResolvePointer<std::shared_ptr,ElemBase>(
+    std::shared_ptr<ElemBase>& out, const Pointer & ptrval,
+    const FileDatabase& db, const Field&, bool) const;
+template <> inline void Structure :: Convert<int>    (int& dest,const FileDatabase& db) const;
+template<> inline void Structure :: Convert<short>  (short& dest,const FileDatabase& db) const;
+template <> inline void Structure :: Convert<char>   (char& dest,const FileDatabase& db) const;
+template <> inline void Structure::Convert<unsigned char>(unsigned char& dest, const FileDatabase& db) const;
+template <> inline void Structure :: Convert<float>  (float& dest,const FileDatabase& db) const;
+template <> inline void Structure :: Convert<double> (double& dest,const FileDatabase& db) const;
+template <> inline void Structure :: Convert<Pointer> (Pointer& dest,const FileDatabase& db) const;
 
 // -------------------------------------------------------------------------------
 /** Represents the full data structure information for a single BLEND file.
@@ -448,7 +464,7 @@ public:
 
 public:
     // --------------------------------------------------------
-    /** Access a structure by its canonical name, the pointer version returns NULL on failure
+    /** Access a structure by its canonical name, the pointer version returns nullptr on failure
       * while the reference version raises an error. */
     inline const Structure &operator[](const std::string &ss) const;
     inline const Structure *Get(const std::string &ss) const;
@@ -469,7 +485,7 @@ public:
      *  in BlenderScene.cpp and is machine-generated.
      *  Converters are used to quickly handle objects whose
      *  exact data type is a runtime-property and not yet
-     *  known at compile time (consier Object::data).*/
+     *  known at compile time (consider Object::data).*/
     void RegisterConverters();
 
     // --------------------------------------------------------
@@ -495,7 +511,7 @@ public:
             const Structure &structure,
             const FileDatabase &db) const;
 
-#ifdef ASSIMP_BUILD_BLENDER_DEBUG
+#if ASSIMP_BUILD_BLENDER_DEBUG_DNA
     // --------------------------------------------------------
     /** Dump the DNA to a text file. This is for debugging purposes.
      *  The output file is `dna.txt` in the current working folder*/

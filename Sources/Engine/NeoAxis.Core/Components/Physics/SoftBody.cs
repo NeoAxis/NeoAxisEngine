@@ -2,11 +2,6 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.IO;
-using System.Drawing.Design;
 
 namespace NeoAxis
 {
@@ -47,7 +42,7 @@ namespace NeoAxis
 			get { if( _mesh.BeginGet() ) Mesh = _mesh.Get( this ); return _mesh.value; }
 			set
 			{
-				if( _mesh.BeginSet( ref value ) )
+				if( _mesh.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -73,7 +68,7 @@ namespace NeoAxis
 		//	get { if( _bendingConstraints.BeginGet() ) BendingConstraints = _bendingConstraints.Get( this ); return _bendingConstraints.value; }
 		//	set
 		//	{
-		//		if( _bendingConstraints.BeginSet( ref value ) )
+		//		if( _bendingConstraints.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -98,7 +93,7 @@ namespace NeoAxis
 			get { if( _randomizeConstraints.BeginGet() ) RandomizeConstraints = _randomizeConstraints.Get( this ); return _randomizeConstraints.value; }
 			set
 			{
-				if( _randomizeConstraints.BeginSet( ref value ) )
+				if( _randomizeConstraints.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -125,7 +120,7 @@ namespace NeoAxis
 			get { if( _bendingConstraintDistance.BeginGet() ) BendingConstraintDistance = _bendingConstraintDistance.Get( this ); return _bendingConstraintDistance.value; }
 			set
 			{
-				if( _bendingConstraintDistance.BeginSet( ref value ) )
+				if( _bendingConstraintDistance.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -160,7 +155,7 @@ namespace NeoAxis
 		//	get { if( _generateClusters.BeginGet() ) GenerateClusters = _generateClusters.Get( this ); return _generateClusters.value; }
 		//	set
 		//	{
-		//		if( _generateClusters.BeginSet( ref value ) )
+		//		if( _generateClusters.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -186,7 +181,7 @@ namespace NeoAxis
 			get { if( _clustersNumber.BeginGet() ) ClustersNumber = _clustersNumber.Get( this ); return _clustersNumber.value; }
 			set
 			{
-				if( _clustersNumber.BeginSet( ref value ) )
+				if( _clustersNumber.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -212,7 +207,7 @@ namespace NeoAxis
 			get { if( _selfCollision.BeginGet() ) SelfCollision = _selfCollision.Get( this ); return _selfCollision.value; }
 			set
 			{
-				if( _selfCollision.BeginSet( ref value ) )
+				if( _selfCollision.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -256,7 +251,7 @@ namespace NeoAxis
 			{
 				if( value < 0 )
 					value = new Reference<double>( 0, value.GetByReference );
-				if( _mass.BeginSet( ref value ) )
+				if( _mass.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -287,7 +282,7 @@ namespace NeoAxis
 			get { if( _massFromFaces.BeginGet() ) MassFromFaces = _massFromFaces.Get( this ); return _massFromFaces.value; }
 			set
 			{
-				if( _massFromFaces.BeginSet( ref value ) )
+				if( _massFromFaces.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -316,7 +311,7 @@ namespace NeoAxis
 			get { if( _damping.BeginGet() ) Damping = _damping.Get( this ); return _damping.value; }
 			set
 			{
-				if( _damping.BeginSet( ref value ) )
+				if( _damping.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -351,7 +346,7 @@ namespace NeoAxis
 			get { if( _pressure.BeginGet() ) Pressure = _pressure.Get( this ); return _pressure.value; }
 			set
 			{
-				if( _pressure.BeginSet( ref value ) )
+				if( _pressure.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -380,7 +375,7 @@ namespace NeoAxis
 			get { if( _drag.BeginGet() ) Drag = _drag.Get( this ); return _drag.value; }
 			set
 			{
-				if( _drag.BeginSet( ref value ) )
+				if( _drag.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -409,7 +404,7 @@ namespace NeoAxis
 			get { if( _lift.BeginGet() ) Lift = _lift.Get( this ); return _lift.value; }
 			set
 			{
-				if( _lift.BeginSet( ref value ) )
+				if( _lift.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -448,7 +443,7 @@ namespace NeoAxis
 			get { if( _aeroModel.BeginGet() ) BodyAeroModel = _aeroModel.Get( this ); return _aeroModel.value; }
 			set
 			{
-				if( _aeroModel.BeginSet( ref value ) )
+				if( _aeroModel.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -479,7 +474,7 @@ namespace NeoAxis
 			get { if( _shapeMatching.BeginGet() ) ShapeMatching = _shapeMatching.Get( this ); return _shapeMatching.value; }
 			set
 			{
-				if( _shapeMatching.BeginSet( ref value ) )
+				if( _shapeMatching.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -509,7 +504,7 @@ namespace NeoAxis
 			get { if( _shapeCoefficient.BeginGet() ) ShapeCoefficient = _shapeCoefficient.Get( this ); return _shapeCoefficient.value; }
 			set
 			{
-				if( _shapeCoefficient.BeginSet( ref value ) )
+				if( _shapeCoefficient.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -537,7 +532,7 @@ namespace NeoAxis
 			get { if( _volumeMatching.BeginGet() ) VolumeMatching = _volumeMatching.Get( this ); return _volumeMatching.value; }
 			set
 			{
-				if( _volumeMatching.BeginSet( ref value ) )
+				if( _volumeMatching.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -567,7 +562,7 @@ namespace NeoAxis
 			get { if( _volumeCoefficient.BeginGet() ) VolumeCoefficient = _volumeCoefficient.Get( this ); return _volumeCoefficient.value; }
 			set
 			{
-				if( _volumeCoefficient.BeginSet( ref value ) )
+				if( _volumeCoefficient.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -596,7 +591,7 @@ namespace NeoAxis
 			get { if( _maxVolumeRatio.BeginGet() ) MaxVolumeRatio = _maxVolumeRatio.Get( this ); return _maxVolumeRatio.value; }
 			set
 			{
-				if( _maxVolumeRatio.BeginSet( ref value ) )
+				if( _maxVolumeRatio.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -627,7 +622,7 @@ namespace NeoAxis
 			get { if( _material.BeginGet() ) Material = _material.Get( this ); return _material.value; }
 			set
 			{
-				if( _material.BeginSet( ref value ) )
+				if( _material.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -657,7 +652,7 @@ namespace NeoAxis
 			get { if( _materialFriction.BeginGet() ) MaterialFriction = _materialFriction.Get( this ); return _materialFriction.value; }
 			set
 			{
-				if( _materialFriction.BeginSet( ref value ) )
+				if( _materialFriction.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -686,7 +681,7 @@ namespace NeoAxis
 			get { if( _materialLinearStiffness.BeginGet() ) MaterialLinearStiffness = _materialLinearStiffness.Get( this ); return _materialLinearStiffness.value; }
 			set
 			{
-				if( _materialLinearStiffness.BeginSet( ref value ) )
+				if( _materialLinearStiffness.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -719,7 +714,7 @@ namespace NeoAxis
 			get { if( _materialAngularStiffness.BeginGet() ) MaterialAngularStiffness = _materialAngularStiffness.Get( this ); return _materialAngularStiffness.value; }
 			set
 			{
-				if( _materialAngularStiffness.BeginSet( ref value ) )
+				if( _materialAngularStiffness.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -751,7 +746,7 @@ namespace NeoAxis
 			get { if( _materialVolumeStiffness.BeginGet() ) MaterialVolumeStiffness = _materialVolumeStiffness.Get( this ); return _materialVolumeStiffness.value; }
 			set
 			{
-				if( _materialVolumeStiffness.BeginSet( ref value ) )
+				if( _materialVolumeStiffness.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -786,7 +781,7 @@ namespace NeoAxis
 			get { if( _rigidContactHardness.BeginGet() ) RigidContactHardness = _rigidContactHardness.Get( this ); return _rigidContactHardness.value; }
 			set
 			{
-				if( _rigidContactHardness.BeginSet( ref value ) )
+				if( _rigidContactHardness.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -815,7 +810,7 @@ namespace NeoAxis
 			get { if( _softRigidContactHardness.BeginGet() ) SoftRigidContactHardness = _softRigidContactHardness.Get( this ); return _softRigidContactHardness.value; }
 			set
 			{
-				if( _softRigidContactHardness.BeginSet( ref value ) )
+				if( _softRigidContactHardness.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -844,7 +839,7 @@ namespace NeoAxis
 			get { if( _kineticContactHardness.BeginGet() ) KineticContactHardness = _kineticContactHardness.Get( this ); return _kineticContactHardness.value; }
 			set
 			{
-				if( _kineticContactHardness.BeginSet( ref value ) )
+				if( _kineticContactHardness.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -873,7 +868,7 @@ namespace NeoAxis
 			get { if( _softRigidImpulseSplit.BeginGet() ) SoftRigidImpulseSplit = _softRigidImpulseSplit.Get( this ); return _softRigidImpulseSplit.value; }
 			set
 			{
-				if( _softRigidImpulseSplit.BeginSet( ref value ) )
+				if( _softRigidImpulseSplit.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -902,7 +897,7 @@ namespace NeoAxis
 			get { if( _softSoftImpulseSplit.BeginGet() ) SoftSoftImpulseSplit = _softSoftImpulseSplit.Get( this ); return _softSoftImpulseSplit.value; }
 			set
 			{
-				if( _softSoftImpulseSplit.BeginSet( ref value ) )
+				if( _softSoftImpulseSplit.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -931,7 +926,7 @@ namespace NeoAxis
 			get { if( _softKineticImpulseSplit.BeginGet() ) SoftKineticImpulseSplit = _softKineticImpulseSplit.Get( this ); return _softKineticImpulseSplit.value; }
 			set
 			{
-				if( _softKineticImpulseSplit.BeginSet( ref value ) )
+				if( _softKineticImpulseSplit.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -960,7 +955,7 @@ namespace NeoAxis
 			get { if( _softKineticContactHardness.BeginGet() ) SoftKineticContactHardness = _softKineticContactHardness.Get( this ); return _softKineticContactHardness.value; }
 			set
 			{
-				if( _softKineticContactHardness.BeginSet( ref value ) )
+				if( _softKineticContactHardness.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -989,7 +984,7 @@ namespace NeoAxis
 			get { if( _softSoftContactHardness.BeginGet() ) SoftSoftContactHardness = _softSoftContactHardness.Get( this ); return _softSoftContactHardness.value; }
 			set
 			{
-				if( _softSoftContactHardness.BeginSet( ref value ) )
+				if( _softSoftContactHardness.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1018,7 +1013,7 @@ namespace NeoAxis
 			get { if( _softContactHardness.BeginGet() ) SoftContactHardness = _softContactHardness.Get( this ); return _softContactHardness.value; }
 			set
 			{
-				if( _softContactHardness.BeginSet( ref value ) )
+				if( _softContactHardness.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1048,7 +1043,7 @@ namespace NeoAxis
 			get { if( _anchorContactHardness.BeginGet() ) AnchorContactHardness = _anchorContactHardness.Get( this ); return _anchorContactHardness.value; }
 			set
 			{
-				if( _anchorContactHardness.BeginSet( ref value ) )
+				if( _anchorContactHardness.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1079,7 +1074,7 @@ namespace NeoAxis
 			get { if( _positionIterations.BeginGet() ) PositionIterations = _positionIterations.Get( this ); return _positionIterations.value; }
 			set
 			{
-				if( _positionIterations.BeginSet( ref value ) )
+				if( _positionIterations.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1108,7 +1103,7 @@ namespace NeoAxis
 			get { if( _velocityIterations.BeginGet() ) VelocityIterations = _velocityIterations.Get( this ); return _velocityIterations.value; }
 			set
 			{
-				if( _velocityIterations.BeginSet( ref value ) )
+				if( _velocityIterations.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1137,7 +1132,7 @@ namespace NeoAxis
 			get { if( _driftIterations.BeginGet() ) DriftIterations = _driftIterations.Get( this ); return _driftIterations.value; }
 			set
 			{
-				if( _driftIterations.BeginSet( ref value ) )
+				if( _driftIterations.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1166,7 +1161,7 @@ namespace NeoAxis
 			get { if( _clusterIterations.BeginGet() ) ClusterIterations = _clusterIterations.Get( this ); return _clusterIterations.value; }
 			set
 			{
-				if( _clusterIterations.BeginSet( ref value ) )
+				if( _clusterIterations.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1197,7 +1192,7 @@ namespace NeoAxis
 			{
 				//!!!!проверять значения. везде так
 
-				if( _collisionMargin.BeginSet( ref value ) )
+				if( _collisionMargin.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1226,7 +1221,7 @@ namespace NeoAxis
 			get { if( _velocityCorrectionFactor.BeginGet() ) VelocityCorrectionFactor = _velocityCorrectionFactor.Get( this ); return _velocityCorrectionFactor.value; }
 			set
 			{
-				if( _velocityCorrectionFactor.BeginSet( ref value ) )
+				if( _velocityCorrectionFactor.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1256,7 +1251,7 @@ namespace NeoAxis
 			get { if( _timeScale.BeginGet() ) TimeScale = _timeScale.Get( this ); return _timeScale.value; }
 			set
 			{
-				if( _timeScale.BeginSet( ref value ) )
+				if( _timeScale.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1288,7 +1283,7 @@ namespace NeoAxis
 			get { if( _collisionGroup.BeginGet() ) CollisionGroup = _collisionGroup.Get( this ); return _collisionGroup.value; }
 			set
 			{
-				if( _collisionGroup.BeginSet( ref value ) )
+				if( _collisionGroup.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1317,7 +1312,7 @@ namespace NeoAxis
 			get { if( _collisionMask.BeginGet() ) CollisionMask = _collisionMask.Get( this ); return _collisionMask.value; }
 			set
 			{
-				if( _collisionMask.BeginSet( ref value ) )
+				if( _collisionMask.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1347,7 +1342,7 @@ namespace NeoAxis
 			get { if( _linearVelocity.BeginGet() ) LinearVelocity = _linearVelocity.Get( this ); return _linearVelocity.value; }
 			set
 			{
-				if( _linearVelocity.BeginSet( ref value ) )
+				if( _linearVelocity.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1590,7 +1585,7 @@ namespace NeoAxis
 				var vertexDeclaration = op.VertexStructure.CreateVertexDeclaration( 0 );
 
 				var vertexBuffers = new List<GpuVertexBuffer>();//op.VertexBuffers = new List<GpuVertexBuffer>();
-				vertexBuffers.Add( GpuBufferManager.CreateVertexBuffer( newVertices, vertexDeclaration, GpuBufferFlags.Dynamic ) );
+				vertexBuffers.Add( GpuBufferManager.CreateVertexBuffer( newVertices, vertexDeclaration, GpuBufferFlags.Dynamic | GpuBufferFlags.ComputeRead ) );
 				op.VertexBuffers = vertexBuffers.ToArray();
 				op.VertexStartOffset = 0;
 				op.VertexCount = processedVertices.Length;

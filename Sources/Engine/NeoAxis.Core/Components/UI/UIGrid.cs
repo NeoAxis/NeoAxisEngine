@@ -20,7 +20,7 @@ namespace NeoAxis
 			get { if( _columns.BeginGet() ) Columns = _columns.Get( this ); return _columns.value; }
 			set
 			{
-				if( _columns.BeginSet( ref value ) )
+				if( _columns.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -44,7 +44,7 @@ namespace NeoAxis
 			get { if( _rows.BeginGet() ) Rows = _rows.Get( this ); return _rows.value; }
 			set
 			{
-				if( _rows.BeginSet( ref value ) )
+				if( _rows.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -66,7 +66,7 @@ namespace NeoAxis
 		public Reference<bool> AutoPosition
 		{
 			get { if( _autoPosition.BeginGet() ) AutoPosition = _autoPosition.Get( this ); return _autoPosition.value; }
-			set { if( _autoPosition.BeginSet( ref value ) ) { try { AutoPositionChanged?.Invoke( this ); } finally { _autoPosition.EndSet(); } } }
+			set { if( _autoPosition.BeginSet( this, ref value ) ) { try { AutoPositionChanged?.Invoke( this ); } finally { _autoPosition.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AutoPosition"/> property value changes.</summary>
 		public event Action<UIGrid> AutoPositionChanged;
@@ -79,7 +79,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayBorders
 		{
 			get { if( _displayBorders.BeginGet() ) DisplayBorders = _displayBorders.Get( this ); return _displayBorders.value; }
-			set { if( _displayBorders.BeginSet( ref value ) ) { try { DisplayBordersChanged?.Invoke( this ); } finally { _displayBorders.EndSet(); } } }
+			set { if( _displayBorders.BeginSet( this, ref value ) ) { try { DisplayBordersChanged?.Invoke( this ); } finally { _displayBorders.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayBorders"/> property value changes.</summary>
 		public event Action<UIGrid> DisplayBordersChanged;

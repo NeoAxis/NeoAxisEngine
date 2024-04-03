@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -44,6 +44,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef ASSIMP_BUILD_NO_COB_IMPORTER
+
 #include "AssetLib/COB/COBLoader.h"
 #include "AssetLib/COB/COBScene.h"
 #include "PostProcessing/ConvertToLHProcess.h"
@@ -60,11 +61,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <memory>
 
-using namespace Assimp;
+namespace Assimp {
 using namespace Assimp::COB;
 using namespace Assimp::Formatter;
 
-static const float units[] = {
+static constexpr float units[] = {
     1000.f,
     100.f,
     1.f,
@@ -75,7 +76,7 @@ static const float units[] = {
     1.f / 1609.344f
 };
 
-static const aiImporterDesc desc = {
+static constexpr aiImporterDesc desc = {
     "TrueSpace Object Importer",
     "",
     "",
@@ -89,26 +90,10 @@ static const aiImporterDesc desc = {
 };
 
 // ------------------------------------------------------------------------------------------------
-// Constructor to be privately used by Importer
-COBImporter::COBImporter() {}
-
-// ------------------------------------------------------------------------------------------------
-// Destructor, private as well
-COBImporter::~COBImporter() {}
-
-// ------------------------------------------------------------------------------------------------
 // Returns whether the class can handle the format of the given file.
-bool COBImporter::CanRead(const std::string &pFile, IOSystem *pIOHandler, bool checkSig) const {
-    const std::string &extension = GetExtension(pFile);
-    if (extension == "cob" || extension == "scn" || extension == "COB" || extension == "SCN") {
-        return true;
-    }
-
-    else if ((!extension.length() || checkSig) && pIOHandler) {
-        const char *tokens[] = { "Caligary" };
-        return SearchFileHeaderForToken(pIOHandler, pFile, tokens, 1);
-    }
-    return false;
+bool COBImporter::CanRead(const std::string &pFile, IOSystem *pIOHandler, bool /*checkSig*/) const {
+    static const char *tokens[] = { "Caligary" };
+    return SearchFileHeaderForToken(pIOHandler, pFile, tokens, AI_COUNT_OF(tokens));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -125,14 +110,20 @@ void COBImporter::SetupProperties(const Importer * /*pImp*/) {
 
 // ------------------------------------------------------------------------------------------------
 /*static*/ AI_WONT_RETURN void COBImporter::ThrowException(const std::string &msg) {
-    throw DeadlyImportError("COB: " + msg);
+    throw DeadlyImportError("COB: ", msg);
 }
 
 // ------------------------------------------------------------------------------------------------
 // Imports the given file into the given scene structure.
 void COBImporter::InternReadFile(const std::string &pFile, aiScene *pScene, IOSystem *pIOHandler) {
     COB::Scene scene;
-    std::unique_ptr<StreamReaderLE> stream(new StreamReaderLE(pIOHandler->Open(pFile, "rb")));
+
+    auto file = pIOHandler->Open(pFile, "rb");
+    if (!file) {
+        ThrowException("Could not open " + pFile);
+    }
+
+    std::unique_ptr<StreamReaderLE> stream(new StreamReaderLE(file));
 
     // check header
     char head[32];
@@ -141,7 +132,7 @@ void COBImporter::InternReadFile(const std::string &pFile, aiScene *pScene, IOSy
         ThrowException("Could not found magic id: `Caligari`");
     }
 
-    ASSIMP_LOG_INFO_F("File format tag: ", std::string(head + 9, 6));
+    ASSIMP_LOG_INFO("File format tag: ", std::string(head + 9, 6));
     if (head[16] != 'L') {
         ThrowException("File is big-endian, which is not supported");
     }
@@ -159,7 +150,7 @@ void COBImporter::InternReadFile(const std::string &pFile, aiScene *pScene, IOSy
     // sort faces by material indices
     for (std::shared_ptr<Node> &n : scene.nodes) {
         if (n->type == Node::TYPE_MESH) {
-            Mesh &mesh = (Mesh &)(*n.get());
+            Mesh &mesh = (Mesh &)(*n);
             for (Face &f : mesh.faces) {
                 mesh.temp_map[f.material].push_back(&f);
             }
@@ -169,7 +160,7 @@ void COBImporter::InternReadFile(const std::string &pFile, aiScene *pScene, IOSy
     // count meshes
     for (std::shared_ptr<Node> &n : scene.nodes) {
         if (n->type == Node::TYPE_MESH) {
-            Mesh &mesh = (Mesh &)(*n.get());
+            Mesh &mesh = (Mesh &)(*n);
             if (mesh.vertex_positions.size() && mesh.texture_coords.size()) {
                 pScene->mNumMeshes += static_cast<unsigned int>(mesh.temp_map.size());
             }
@@ -212,14 +203,14 @@ void COBImporter::InternReadFile(const std::string &pFile, aiScene *pScene, IOSy
         }
     }
 
-    pScene->mRootNode = BuildNodes(*root.get(), scene, pScene);
+    pScene->mRootNode = BuildNodes(*root, scene, pScene);
     //flip normals after import
     FlipWindingOrderProcess flip;
     flip.Execute(pScene);
 }
 
 // ------------------------------------------------------------------------------------------------
-void ConvertTexture(std::shared_ptr<Texture> tex, aiMaterial *out, aiTextureType type) {
+void ConvertTexture(const std::shared_ptr<Texture> &tex, aiMaterial *out, aiTextureType type) {
     const aiString path(tex->path);
     out->AddProperty(&path, AI_MATKEY_TEXTURE(type, 0));
     out->AddProperty(&tex->transform, 1, AI_MATKEY_UVTRANSFORM(type, 0));
@@ -290,8 +281,7 @@ aiNode *COBImporter::BuildNodes(const Node &root, const Scene &scin, aiScene *fi
                     }
                     std::unique_ptr<const Material> defmat;
                     if (!min) {
-                        ASSIMP_LOG_VERBOSE_DEBUG(format() << "Could not resolve material index "
-                                                  << reflist.first << " - creating default material for this slot");
+                        ASSIMP_LOG_VERBOSE_DEBUG("Could not resolve material index ", reflist.first, " - creating default material for this slot");
 
                         defmat.reset(min = new Material());
                     }
@@ -322,7 +312,9 @@ aiNode *COBImporter::BuildNodes(const Node &root, const Scene &scin, aiScene *fi
                             break;
 
                         default:
+                            ASSIMP_LOG_ERROR("Unknown option.");
                             ai_assert(false); // shouldn't be here
+                            break;
                         }
                         mat->AddProperty(&shader, 1, AI_MATKEY_SHADING_MODEL);
                         if (shader != aiShadingMode_Gouraud) {
@@ -464,8 +456,9 @@ void COBImporter::UnsupportedChunk_Ascii(LineSplitter &splitter, const ChunkInfo
         // missing the next line.
         splitter.get_stream().IncPtr(nfo.size);
         splitter.swallow_next_increment();
-    } else
+    } else {
         ThrowException(error);
+    }
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -513,11 +506,11 @@ void COBImporter::ReadMat1_Ascii(Scene &out, LineSplitter &splitter, const Chunk
 
     ++splitter;
     if (!splitter.match_start("mat# ")) {
-        ASSIMP_LOG_WARN_F("Expected `mat#` line in `Mat1` chunk ", nfo.id);
+        ASSIMP_LOG_WARN("Expected `mat#` line in `Mat1` chunk ", nfo.id);
         return;
     }
 
-    out.materials.push_back(Material());
+    out.materials.emplace_back();
     Material &mat = out.materials.back();
     mat = nfo;
 
@@ -525,7 +518,7 @@ void COBImporter::ReadMat1_Ascii(Scene &out, LineSplitter &splitter, const Chunk
     ++splitter;
 
     if (!splitter.match_start("shader: ")) {
-        ASSIMP_LOG_WARN_F("Expected `mat#` line in `Mat1` chunk ", nfo.id);
+        ASSIMP_LOG_WARN("Expected `mat#` line in `Mat1` chunk ", nfo.id);
         return;
     }
     std::string shader = std::string(splitter[1]);
@@ -536,12 +529,12 @@ void COBImporter::ReadMat1_Ascii(Scene &out, LineSplitter &splitter, const Chunk
     } else if (shader == "phong") {
         mat.shader = Material::PHONG;
     } else if (shader != "flat") {
-        ASSIMP_LOG_WARN_F("Unknown value for `shader` in `Mat1` chunk ", nfo.id);
+        ASSIMP_LOG_WARN("Unknown value for `shader` in `Mat1` chunk ", nfo.id);
     }
 
     ++splitter;
     if (!splitter.match_start("rgb ")) {
-        ASSIMP_LOG_WARN_F("Expected `rgb` line in `Mat1` chunk ", nfo.id);
+        ASSIMP_LOG_WARN("Expected `rgb` line in `Mat1` chunk ", nfo.id);
     }
 
     const char *rgb = splitter[1];
@@ -549,7 +542,7 @@ void COBImporter::ReadMat1_Ascii(Scene &out, LineSplitter &splitter, const Chunk
 
     ++splitter;
     if (!splitter.match_start("alpha ")) {
-        ASSIMP_LOG_WARN_F("Expected `alpha` line in `Mat1` chunk ", nfo.id);
+        ASSIMP_LOG_WARN("Expected `alpha` line in `Mat1` chunk ", nfo.id);
     }
 
     const char *tokens[10];
@@ -569,23 +562,23 @@ void COBImporter::ReadUnit_Ascii(Scene &out, LineSplitter &splitter, const Chunk
     }
     ++splitter;
     if (!splitter.match_start("Units ")) {
-        ASSIMP_LOG_WARN_F("Expected `Units` line in `Unit` chunk ", nfo.id);
+        ASSIMP_LOG_WARN("Expected `Units` line in `Unit` chunk ", nfo.id);
         return;
     }
 
-    // parent chunks preceede their childs, so we should have the
+    // parent chunks preceede their children, so we should have the
     // corresponding chunk already.
     for (std::shared_ptr<Node> &nd : out.nodes) {
         if (nd->id == nfo.parent_id) {
             const unsigned int t = strtoul10(splitter[1]);
 
             nd->unit_scale = t >= sizeof(units) / sizeof(units[0]) ? (
-                                                                             ASSIMP_LOG_WARN_F(t, " is not a valid value for `Units` attribute in `Unit chunk` ", nfo.id), 1.f) :
+                                                                             ASSIMP_LOG_WARN(t, " is not a valid value for `Units` attribute in `Unit chunk` ", nfo.id), 1.f) :
                                                                      units[t];
             return;
         }
     }
-    ASSIMP_LOG_WARN_F("`Unit` chunk ", nfo.id, " is a child of ", nfo.parent_id, " which does not exist");
+    ASSIMP_LOG_WARN("`Unit` chunk ", nfo.id, " is a child of ", nfo.parent_id, " which does not exist");
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -614,13 +607,13 @@ void COBImporter::ReadLght_Ascii(Scene &out, LineSplitter &splitter, const Chunk
     } else if (splitter.match_start("Spot ")) {
         msh.ltype = Light::SPOT;
     } else {
-        ASSIMP_LOG_WARN_F("Unknown kind of light source in `Lght` chunk ", nfo.id, " : ", *splitter);
+        ASSIMP_LOG_WARN("Unknown kind of light source in `Lght` chunk ", nfo.id, " : ", *splitter);
         msh.ltype = Light::SPOT;
     }
 
     ++splitter;
     if (!splitter.match_start("color ")) {
-        ASSIMP_LOG_WARN_F("Expected `color` line in `Lght` chunk ", nfo.id);
+        ASSIMP_LOG_WARN("Expected `color` line in `Lght` chunk ", nfo.id);
     }
 
     const char *rgb = splitter[1];
@@ -628,14 +621,14 @@ void COBImporter::ReadLght_Ascii(Scene &out, LineSplitter &splitter, const Chunk
 
     SkipSpaces(&rgb);
     if (strncmp(rgb, "cone angle", 10) != 0) {
-        ASSIMP_LOG_WARN_F("Expected `cone angle` entity in `color` line in `Lght` chunk ", nfo.id);
+        ASSIMP_LOG_WARN("Expected `cone angle` entity in `color` line in `Lght` chunk ", nfo.id);
     }
     SkipSpaces(rgb + 10, &rgb);
     msh.angle = fast_atof(&rgb);
 
     SkipSpaces(&rgb);
     if (strncmp(rgb, "inner angle", 11) != 0) {
-        ASSIMP_LOG_WARN_F("Expected `inner angle` entity in `color` line in `Lght` chunk ", nfo.id);
+        ASSIMP_LOG_WARN("Expected `inner angle` entity in `color` line in `Lght` chunk ", nfo.id);
     }
     SkipSpaces(rgb + 11, &rgb);
     msh.inner_angle = fast_atof(&rgb);
@@ -655,7 +648,7 @@ void COBImporter::ReadCame_Ascii(Scene &out, LineSplitter &splitter, const Chunk
 
     ReadBasicNodeInfo_Ascii(msh, ++splitter, nfo);
 
-    // skip the next line, we don't know this differenciation between a
+    // skip the next line, we don't know this differentiation between a
     // standard camera and a panoramic camera.
     ++splitter;
 }
@@ -748,7 +741,7 @@ void COBImporter::ReadPolH_Ascii(Scene &out, LineSplitter &splitter, const Chunk
                     ThrowException("Expected Face line");
                 }
 
-                msh.faces.push_back(Face());
+                msh.faces.emplace_back();
                 Face &face = msh.faces.back();
 
                 face.indices.resize(strtoul10(splitter[2]));
@@ -788,25 +781,12 @@ void COBImporter::ReadBitM_Ascii(Scene & /*out*/, LineSplitter &splitter, const 
     if (nfo.version > 1) {
         return UnsupportedChunk_Ascii(splitter, nfo, "BitM");
     }
-    /*
-    "\nThumbNailHdrSize %ld"
-    "\nThumbHeader: %02hx 02hx %02hx "
-    "\nColorBufSize %ld"
-    "\nColorBufZipSize %ld"
-    "\nZippedThumbnail: %02hx 02hx %02hx "
-*/
 
     const unsigned int head = strtoul10((++splitter)[1]);
     if (head != sizeof(Bitmap::BitmapHeader)) {
         ASSIMP_LOG_WARN("Unexpected ThumbNailHdrSize, skipping this chunk");
         return;
     }
-
-    /*union {
-        Bitmap::BitmapHeader data;
-        char opaq[sizeof Bitmap::BitmapHeader()];
-    };*/
-    //  ReadHexOctets(opaq,head,(++splitter)[1]);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -880,9 +860,12 @@ void COBImporter::ReadBinaryFile(Scene &out, StreamReaderLE *reader) {
         return;
     }
 
-    while (1) {
+    while (true) {
         std::string type;
-        type += reader->GetI1(), type += reader->GetI1(), type += reader->GetI1(), type += reader->GetI1();
+        type += reader->GetI1();
+        type += reader->GetI1();
+        type += reader->GetI1();
+        type += reader->GetI1();
 
         ChunkInfo nfo;
         nfo.version = reader->GetI2() * 10;
@@ -904,14 +887,7 @@ void COBImporter::ReadBinaryFile(Scene &out, StreamReaderLE *reader) {
             ReadCame_Binary(out, *reader, nfo);
         } else if (type == "Mat1") {
             ReadMat1_Binary(out, *reader, nfo);
-        }
-        /*  else if (type == "Bone") {
-            ReadBone_Binary(out,*reader,nfo);
-        }
-        else if (type == "Chan") {
-            ReadChan_Binary(out,*reader,nfo);
-        }*/
-        else if (type == "Unit") {
+        } else if (type == "Unit") {
             ReadUnit_Binary(out, *reader, nfo);
         } else if (type == "OLay") {
             // ignore layer index silently.
@@ -921,8 +897,9 @@ void COBImporter::ReadBinaryFile(Scene &out, StreamReaderLE *reader) {
                 return UnsupportedChunk_Binary(*reader, nfo, type.c_str());
         } else if (type == "END ") {
             return;
-        } else
+        } else {
             UnsupportedChunk_Binary(*reader, nfo, type.c_str());
+        }
     }
 }
 
@@ -967,7 +944,7 @@ void COBImporter::ReadPolH_Binary(COB::Scene &out, StreamReaderLE &reader, const
                 ThrowException(format("A hole is the first entity in the `PolH` chunk with id ") << nfo.id);
             }
         } else
-            msh.faces.push_back(Face());
+            msh.faces.emplace_back();
         Face &f = msh.faces.back();
 
         const size_t num = reader.GetI2();
@@ -979,7 +956,7 @@ void COBImporter::ReadPolH_Binary(COB::Scene &out, StreamReaderLE &reader, const
         }
 
         for (size_t x = 0; x < num; ++x) {
-            f.indices.push_back(VertexIndex());
+            f.indices.emplace_back();
 
             VertexIndex &v = f.indices.back();
             v.pos_idx = reader.GetI4();
@@ -1019,7 +996,7 @@ void COBImporter::ReadMat1_Binary(COB::Scene &out, StreamReaderLE &reader, const
 
     const chunk_guard cn(nfo, reader);
 
-    out.materials.push_back(Material());
+    out.materials.emplace_back();
     Material &mat = out.materials.back();
     mat = nfo;
 
@@ -1035,7 +1012,7 @@ void COBImporter::ReadMat1_Binary(COB::Scene &out, StreamReaderLE &reader, const
         mat.type = Material::METAL;
         break;
     default:
-        ASSIMP_LOG_ERROR_F("Unrecognized shader type in `Mat1` chunk with id ", nfo.id);
+        ASSIMP_LOG_ERROR("Unrecognized shader type in `Mat1` chunk with id ", nfo.id);
         mat.type = Material::FLAT;
     }
 
@@ -1050,7 +1027,7 @@ void COBImporter::ReadMat1_Binary(COB::Scene &out, StreamReaderLE &reader, const
         mat.autofacet = Material::SMOOTH;
         break;
     default:
-        ASSIMP_LOG_ERROR_F("Unrecognized faceting mode in `Mat1` chunk with id ", nfo.id);
+        ASSIMP_LOG_ERROR("Unrecognized faceting mode in `Mat1` chunk with id ", nfo.id);
         mat.autofacet = Material::FACETED;
     }
     mat.autofacet_angle = static_cast<float>(reader.GetI1());
@@ -1069,7 +1046,7 @@ void COBImporter::ReadMat1_Binary(COB::Scene &out, StreamReaderLE &reader, const
     id[0] = reader.GetI1(), id[1] = reader.GetI1();
 
     if (id[0] == 'e' && id[1] == ':') {
-        mat.tex_env.reset(new Texture());
+        mat.tex_env = std::make_shared<Texture>();
 
         reader.GetI1();
         ReadString_Binary(mat.tex_env->path, reader);
@@ -1079,7 +1056,7 @@ void COBImporter::ReadMat1_Binary(COB::Scene &out, StreamReaderLE &reader, const
     }
 
     if (id[0] == 't' && id[1] == ':') {
-        mat.tex_color.reset(new Texture());
+        mat.tex_color = std::make_shared<Texture>();
 
         reader.GetI1();
         ReadString_Binary(mat.tex_color->path, reader);
@@ -1095,7 +1072,7 @@ void COBImporter::ReadMat1_Binary(COB::Scene &out, StreamReaderLE &reader, const
     }
 
     if (id[0] == 'b' && id[1] == ':') {
-        mat.tex_bump.reset(new Texture());
+        mat.tex_bump = std::make_shared<Texture>();
 
         reader.GetI1();
         ReadString_Binary(mat.tex_bump->path, reader);
@@ -1172,19 +1149,21 @@ void COBImporter::ReadUnit_Binary(COB::Scene &out, StreamReaderLE &reader, const
 
     const chunk_guard cn(nfo, reader);
 
-    // parent chunks preceede their childs, so we should have the
+    // parent chunks preceede their children, so we should have the
     // corresponding chunk already.
     for (std::shared_ptr<Node> &nd : out.nodes) {
         if (nd->id == nfo.parent_id) {
             const unsigned int t = reader.GetI2();
             nd->unit_scale = t >= sizeof(units) / sizeof(units[0]) ? (
-                                                                             ASSIMP_LOG_WARN_F(t, " is not a valid value for `Units` attribute in `Unit chunk` ", nfo.id), 1.f) :
+                                                                             ASSIMP_LOG_WARN(t, " is not a valid value for `Units` attribute in `Unit chunk` ", nfo.id), 1.f) :
                                                                      units[t];
 
             return;
         }
     }
-    ASSIMP_LOG_WARN_F("`Unit` chunk ", nfo.id, " is a child of ", nfo.parent_id, " which does not exist");
+    ASSIMP_LOG_WARN("`Unit` chunk ", nfo.id, " is a child of ", nfo.parent_id, " which does not exist");
+}
+
 }
 
 #endif // ASSIMP_BUILD_NO_COB_IMPORTER

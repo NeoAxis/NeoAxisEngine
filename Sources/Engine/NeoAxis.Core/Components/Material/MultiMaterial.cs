@@ -27,13 +27,13 @@ namespace NeoAxis
 		ReferenceList<Material> _materials;
 
 		/// <summary>
-		/// The parameter to determine behavior of material index selection during rasterization.
+		/// The parameter is used to determine behavior of material index selection during rasterization.
 		/// </summary>
 		[DefaultValue( 0 )]
 		public Reference<int> MaterialIndex
 		{
 			get { if( _materialIndex.BeginGet() ) MaterialIndex = _materialIndex.Get( this ); return _materialIndex.value; }
-			set { if( _materialIndex.BeginSet( ref value ) ) { try { MaterialIndexChanged?.Invoke( this ); } finally { _materialIndex.EndSet(); } } }
+			set { if( _materialIndex.BeginSet( this, ref value ) ) { try { MaterialIndexChanged?.Invoke( this ); } finally { _materialIndex.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MaterialIndex"/> property value changes.</summary>
 		public event Action<MultiMaterial> MaterialIndexChanged;
@@ -77,6 +77,8 @@ namespace NeoAxis
 				count1 += materialData.displacementGeneratedCode.GetTextureCount();
 			if( materialData.fragmentGeneratedCode != null )
 				count1 += materialData.fragmentGeneratedCode.GetTextureCount();
+			if( materialData.opacityGeneratedCode != null )
+				count1 += materialData.opacityGeneratedCode.GetTextureCount();
 
 			//shadow caster
 			var count2 = 0;
@@ -115,7 +117,6 @@ namespace NeoAxis
 
 			result.Transparent = Array.Exists( materials, m => m.BlendMode.Value == BlendModeEnum.Transparent || m.BlendMode.Value == BlendModeEnum.Add );
 
-
 			var resultSeparatePasses = new List<CompiledMaterialData>();
 			var textureCounts = new List<int>( materials.Length );
 
@@ -135,6 +136,11 @@ namespace NeoAxis
 
 				resultSeparatePasses.Add( compiled );
 				textureCounts.Add( GetTextureCount( compiled ) );
+
+				if( compiled.tessellationQuality > result.tessellationQuality )
+					result.tessellationQuality = compiled.tessellationQuality;
+				//if( compiled.tessellation )
+				//	result.tessellation = true;
 			}
 
 			//calculate combine groups
@@ -159,8 +165,11 @@ namespace NeoAxis
 								var transparent1 = material.BlendMode == BlendModeEnum.Transparent || material.BlendMode == BlendModeEnum.Add;
 								if( !transparent1 )
 								{
-									if( lastGroup.Materials.Count < 32 && lastGroup.TextureCount + textureCounts[ nMaterial ] < 114 )
+									//!!!!new
+									if( lastGroup.Materials.Count < 32 && lastGroup.TextureCount + textureCounts[ nMaterial ] < 110 )
 										canCombineWithLastGroup = true;
+									//if( lastGroup.Materials.Count < 32 && lastGroup.TextureCount + textureCounts[ nMaterial ] < 114 )
+									//	canCombineWithLastGroup = true;
 								}
 							}
 						}
@@ -201,10 +210,12 @@ namespace NeoAxis
 					if( group.Materials.Exists( m => !m.TwoSidedFlipNormals ) )
 						combinedMaterial.TwoSidedFlipNormals = false;
 
-					//supported shading models by deferred: Lit, Subsurface (if no Emissive), Simple.
+					//supported shading models by deferred: Lit, Subsurface (if no Emissive), Foliage (if no Emissive), Simple.
 					combinedMaterial.ShadingModel = ShadingModelEnum.Lit;
 					if( group.Materials.Exists( m => m.ShadingModel.Value == ShadingModelEnum.Subsurface ) )
 						combinedMaterial.ShadingModel = ShadingModelEnum.Subsurface;
+					if( group.Materials.Exists( m => m.ShadingModel.Value == ShadingModelEnum.Foliage ) )
+						combinedMaterial.ShadingModel = ShadingModelEnum.Foliage;
 					if( group.Materials.All( m => m.ShadingModel.Value == ShadingModelEnum.Simple ) )
 						combinedMaterial.ShadingModel = ShadingModelEnum.Simple;
 
@@ -213,8 +224,8 @@ namespace NeoAxis
 						combinedMaterial.ClearCoat = 1;
 					if( group.Materials.Exists( m => m.Anisotropy.Value != 0 ) )
 						combinedMaterial.Anisotropy = 1;
-					if( group.Materials.Exists( m => m.RayTracingReflection.Value != 0 ) )
-						combinedMaterial.RayTracingReflection = 1;
+					//if( group.Materials.Exists( m => m.RayTracingReflection.Value != 0 ) )
+					//	combinedMaterial.RayTracingReflection = 1;
 					combinedMaterial.ReceiveDecals = group.Materials.Exists( m => m.ReceiveDecals );
 					combinedMaterial.UseVertexColor = group.Materials.Exists( m => m.UseVertexColor );
 

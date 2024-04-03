@@ -2,7 +2,6 @@
 #if !DEPLOY
 using System;
 using System.Text;
-using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -11,26 +10,47 @@ namespace NeoAxis.Editor
 {
 	public class PlantSettingsCell : SettingsCellProcedureUI
 	{
+		ProcedureUI.Button buttonUpdate;
 		ProcedureUI.Button buttonGenerateMeshes;
 
 		//
 
 		protected override void OnInit()
 		{
+			buttonUpdate = ProcedureForm.CreateButton( EditorLocalization.Translate( "General", "Update Preview" ), ProcedureUI.Button.SizeEnum.Long );
+			buttonUpdate.Click += ButtonUpdate_Click;
+			//ProcedureForm.AddRow( new ProcedureUI.Control[] { buttonUpdate } );
+
+			//!!!!Update Meshes
 			buttonGenerateMeshes = ProcedureForm.CreateButton( EditorLocalization.Translate( "General", "Bake Meshes" ), ProcedureUI.Button.SizeEnum.Long );
 			buttonGenerateMeshes.Click += ButtonGenerateMeshes_Click;
 
-			ProcedureForm.AddRow( new ProcedureUI.Control[] { buttonGenerateMeshes } );
+			ProcedureForm.AddRow( new ProcedureUI.Control[] { buttonUpdate, buttonGenerateMeshes } );
 		}
 
 		static bool ExportToMeshes( PlantType plant, string writeToFolder, bool getFileNamesMode, List<string> fileNames )
 		{
-			var success = plant.ExportToMeshes( writeToFolder, getFileNamesMode, fileNames, out var error );
+			var success = plant.ExportToMeshes( writeToFolder, getFileNamesMode, fileNames, false, out _, out var error );
 
 			if( !string.IsNullOrEmpty( error ) )
 				EditorMessageBox.ShowWarning( error );
 
 			return success;
+		}
+
+		private void ButtonUpdate_Click( ProcedureUI.Button sender )
+		{
+			foreach( var plantType in GetObjects<PlantType>() )
+			{
+				//force compile scripts
+				foreach( var script in plantType.GetComponents<CSharpScript>() )
+					script.Update();
+
+				unchecked 
+				{
+					plantType.EditorPreviewUpdateCounter++;
+				}
+			}
 		}
 
 		private void ButtonGenerateMeshes_Click( ProcedureUI.Button sender )
@@ -50,7 +70,7 @@ namespace NeoAxis.Editor
 				if( !ExportToMeshes( plantType, writeToFolder, true, fileNames ) )
 					return;
 
-				var text = $"{fileNames.Count} files will created in the folder \'{writeToFolder}\'. Continue?";
+				var text = $"{fileNames.Count} files will created in the folder \"{writeToFolder}\". Continue?";
 				if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.OKCancel ) == EDialogResult.Cancel )
 					return;
 

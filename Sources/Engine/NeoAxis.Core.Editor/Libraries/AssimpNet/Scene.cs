@@ -439,6 +439,9 @@ namespace Internal.Assimp
         /// <param name="nativeValue">Output native value</param>
         void IMarshalable<Scene, AiScene>.ToNative(IntPtr thisPtr, out AiScene nativeValue)
         {
+			//!!!!betauser
+			nativeValue = new AiScene();
+
             nativeValue.Flags = m_flags;
             nativeValue.Materials = IntPtr.Zero;
             nativeValue.RootNode = IntPtr.Zero;
@@ -449,8 +452,8 @@ namespace Internal.Assimp
             nativeValue.Animations = IntPtr.Zero;
             nativeValue.Metadata = IntPtr.Zero;
             //nativeValue.Name = new AiString(m_name);
-            //nativeValue.Skeletons = IntPtr.Zero;
-            nativeValue.PrivateData = IntPtr.Zero;
+            nativeValue.Skeletons = IntPtr.Zero;
+            nativeValue.Private = IntPtr.Zero;
 
             nativeValue.NumMaterials = (uint) MaterialCount;
             nativeValue.NumMeshes = (uint) MeshCount;
@@ -458,7 +461,7 @@ namespace Internal.Assimp
             nativeValue.NumCameras = (uint) CameraCount;
             nativeValue.NumTextures = (uint) TextureCount;
             nativeValue.NumAnimations = (uint) AnimationCount;
-            //nativeValue.NumSkeletons = 0;
+            nativeValue.NumSkeletons = 0;
 
             //Write materials
             if (nativeValue.NumMaterials > 0)

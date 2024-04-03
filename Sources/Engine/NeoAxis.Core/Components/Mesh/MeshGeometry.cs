@@ -29,7 +29,7 @@ namespace NeoAxis
 			get { if( _vertexStructure.BeginGet() ) VertexStructure = _vertexStructure.Get( this ); return _vertexStructure.value; }
 			set
 			{
-				if( _vertexStructure.BeginSet( ref value ) )
+				if( _vertexStructure.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -54,7 +54,7 @@ namespace NeoAxis
 			get { if( _unwrappedUV.BeginGet() ) UnwrappedUV = _unwrappedUV.Get( this ); return _unwrappedUV.value; }
 			set
 			{
-				if( _unwrappedUV.BeginSet( ref value ) )
+				if( _unwrappedUV.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -82,7 +82,7 @@ namespace NeoAxis
 			set
 			{
 				//!!!!так проверять? массив ведь. где еще так
-				if( _vertices.BeginSet( ref value ) )
+				if( _vertices.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -109,7 +109,7 @@ namespace NeoAxis
 			get { if( _indices.BeginGet() ) Indices = _indices.Get( this ); return _indices.value; }
 			set
 			{
-				if( _indices.BeginSet( ref value ) )
+				if( _indices.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -135,7 +135,7 @@ namespace NeoAxis
 			get { if( _material.BeginGet() ) Material = _material.Get( this ); return _material.value; }
 			set
 			{
-				if( _material.BeginSet( ref value ) )
+				if( _material.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -160,7 +160,7 @@ namespace NeoAxis
 		public Reference<byte[]> VoxelData
 		{
 			get { if( _voxelData.BeginGet() ) VoxelData = _voxelData.Get( this ); return _voxelData.value; }
-			set { if( _voxelData.BeginSet( ref value ) ) { try { VoxelDataChanged?.Invoke( this ); ShouldRecompileMesh(); } finally { _voxelData.EndSet(); } } }
+			set { if( _voxelData.BeginSet( this, ref value ) ) { try { VoxelDataChanged?.Invoke( this ); ShouldRecompileMesh(); } finally { _voxelData.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="VoxelData"/> property value changes.</summary>
 		public event Action<MeshGeometry> VoxelDataChanged;
@@ -212,7 +212,7 @@ namespace NeoAxis
 		/// The format of a voxel grid.
 		/// </summary>
 		[Category( "Voxelized" )]
-		public VertexFormatEnum VoxelFormat
+		public VoxelFormatEnum VoxelFormat
 		{
 			get
 			{
@@ -222,10 +222,11 @@ namespace NeoAxis
 					if( data != null && data.Length >= sizeof( VoxelDataHeader ) )
 					{
 						fixed( byte* pData2 = data )
-							return ( (VoxelDataHeader*)pData2 )->Format != 0 ? VertexFormatEnum.Full : VertexFormatEnum.Basic;
+							return ( (VoxelDataHeader*)pData2 )->Format;
+						//return ( (VoxelDataHeader*)pData2 )->Format != 0 ? VoxelFormatEnum.Full : VoxelFormatEnum.Basic;
 					}
 				}
-				return VertexFormatEnum.Basic;
+				return VoxelFormatEnum.Basic;
 			}
 		}
 
@@ -262,7 +263,7 @@ namespace NeoAxis
 		//public Reference<byte[]> VirtualizedData
 		//{
 		//	get { if( _virtualizedData.BeginGet() ) VirtualizedData = _virtualizedData.Get( this ); return _virtualizedData.value; }
-		//	set { if( _virtualizedData.BeginSet( ref value ) ) { try { VirtualizedDataChanged?.Invoke( this ); ShouldRecompileMesh(); } finally { _virtualizedData.EndSet(); } } }
+		//	set { if( _virtualizedData.BeginSet( this, ref value ) ) { try { VirtualizedDataChanged?.Invoke( this ); ShouldRecompileMesh(); } finally { _virtualizedData.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="VirtualizedData"/> property value changes.</summary>
 		//public event Action<MeshGeometry> VirtualizedDataChanged;
@@ -332,7 +333,7 @@ namespace NeoAxis
 		//		//!!!!slowly?
 		//		//!!!!!!возможно выставлять без проверок. SetTransformNoChecks
 
-		//		if( _transformRelativeToParent.BeginSet( ref value ) )
+		//		if( _transformRelativeToParent.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -358,7 +359,7 @@ namespace NeoAxis
 			public Vector3I GridSize;
 			public Vector3F BoundsMin;
 			public float CellSize;
-			public int Format;
+			public VoxelFormatEnum/*int*/ Format;
 			public int VoxelCount;//VoxelDataCount
 			public float FillHolesDistance;
 
@@ -561,8 +562,10 @@ namespace NeoAxis
 					float fillHolesDistanceAndFormat = header.FillHolesDistance;
 					if( fillHolesDistanceAndFormat < 0.001f )
 						fillHolesDistanceAndFormat = 0.001f;
-					if( header.Format != 0 )
+					if( ( header.Format & VoxelFormatEnum.Full ) != 0 )
 						fillHolesDistanceAndFormat *= -1.0f;
+					//if( header.Format >= VoxelFormatEnum.Full ) //if( header.Format != 0 )
+					//	fillHolesDistanceAndFormat *= -1.0f;
 					voxelDataInfo[ 0 ] = new Vector4F( header.GridSize.ToVector3F(), fillHolesDistanceAndFormat );
 
 					//float formatAndFillHolesDistance = 0;
@@ -573,7 +576,16 @@ namespace NeoAxis
 
 					//voxelDataInfo[ 0 ] = new Vector4F( header.GridSize.ToVector3F(), header.Format );
 
-					voxelDataInfo[ 1 ] = new Vector4F( header.BoundsMin, header.CellSize );
+					var cellSizeAndBakedOpacity = header.CellSize;
+					if( ( header.Format & VoxelFormatEnum.BakedOpacity ) != 0 )
+						cellSizeAndBakedOpacity *= -1.0f;
+					voxelDataInfo[ 1 ] = new Vector4F( header.BoundsMin, cellSizeAndBakedOpacity );
+
+					//voxelDataInfo[ 1 ] = new Vector4F( header.BoundsMin, header.CellSize );
+					////var cellSizeAndTransparent = header.CellSize;
+					////if( header.Format == VoxelFormatEnum.FullTransparent )
+					////	cellSizeAndTransparent *= -1.0f;
+					////voxelDataInfo[ 1 ] = new Vector4F( header.BoundsMin, cellSizeAndTransparent );
 				}
 			}
 		}
@@ -607,13 +619,13 @@ namespace NeoAxis
 					op.UnwrappedUV = unwrappedUVV;
 
 					var vertexDeclaration = op.VertexStructure.CreateVertexDeclaration( 0 );
-					op.VertexBuffers = new GpuVertexBuffer[] { GpuBufferManager.CreateVertexBuffer( verticesV, vertexDeclaration ) };
+					op.VertexBuffers = new GpuVertexBuffer[] { GpuBufferManager.CreateVertexBuffer( verticesV, vertexDeclaration, GpuBufferFlags.ComputeRead ) };
 					op.VertexStartOffset = 0;
 					op.VertexCount = vertexCount;
 
 					if( indicesV != null )
 					{
-						op.IndexBuffer = GpuBufferManager.CreateIndexBuffer( indicesV );
+						op.IndexBuffer = GpuBufferManager.CreateIndexBuffer( indicesV, GpuBufferFlags.ComputeRead );
 						op.IndexStartOffset = 0;
 						op.IndexCount = indicesV.Length;
 					}
@@ -679,13 +691,13 @@ namespace NeoAxis
 					op.UnwrappedUV = unwrappedUVV;
 
 					var vertexDeclaration = op.VertexStructure.CreateVertexDeclaration( 0 );
-					op.VertexBuffers = new GpuVertexBuffer[] { GpuBufferManager.CreateVertexBuffer( verticesV, vertexDeclaration ) };
+					op.VertexBuffers = new GpuVertexBuffer[] { GpuBufferManager.CreateVertexBuffer( verticesV, vertexDeclaration, GpuBufferFlags.ComputeRead ) };
 					op.VertexStartOffset = 0;
 					op.VertexCount = vertexCount;
 
 					if( indicesV != null )
 					{
-						op.IndexBuffer = GpuBufferManager.CreateIndexBuffer( indicesV );
+						op.IndexBuffer = GpuBufferManager.CreateIndexBuffer( indicesV, GpuBufferFlags.ComputeRead );
 						op.IndexStartOffset = 0;
 						op.IndexCount = indicesV.Length;
 					}
@@ -3298,7 +3310,7 @@ namespace NeoAxis
 			}
 		}
 
-		public bool CalculateSimplification( bool carefully, int lodIndex, /*MeshSimplificationMethod method, */double simplificationFactor, out byte[] newVertices, out VertexElement[] newVertexStructure, out int[] newIndices, out string error )
+		public bool CalculateSimplification( bool carefully, int lodIndex, /*MeshSimplificationMethod method, */double currentQuality, double simplificationQuality, out byte[] newVertices, out VertexElement[] newVertexStructure, out int[] newIndices, out string error )
 		{
 			newVertices = null;
 			newVertexStructure = null;
@@ -3431,16 +3443,25 @@ namespace NeoAxis
 			foreach( var v in simplifier.Vertices )
 				totalBounds.Add( v );
 
+			var simplificationQualityMinus = 1.0 - simplificationQuality;
+			if( simplificationQualityMinus < 0 )
+				simplificationQualityMinus = 0;
+
 			options.EnableSmartLink = true;
+			options.VertexLinkDistance = totalBounds.GetSize().MaxComponent() * 0.0025;
 			if( carefully )
 			{
-				options.VertexLinkDistance = totalBounds.GetSize().MaxComponent() * 0.0025;
-				options.VertexLinkDistance *= lodIndex * lodIndex;
+				if( lodIndex == 0 )
+					options.VertexLinkDistance *= simplificationQualityMinus;
+				else
+					options.VertexLinkDistance *= lodIndex * lodIndex;
 			}
 			else
 			{
-				options.VertexLinkDistance = totalBounds.GetSize().MaxComponent() * 0.0025;
-				options.VertexLinkDistance /= simplificationFactor;
+				if( lodIndex == 0 )
+					options.VertexLinkDistance *= simplificationQualityMinus;
+				else
+					options.VertexLinkDistance /= currentQuality;
 			}
 
 			//options.MaxIterationCount = 200;
@@ -3454,16 +3475,28 @@ namespace NeoAxis
 			{
 				if( carefully )
 				{
-					//var threshold = 0.001 * ( lodIndex * lodIndex );
-					var threshold = 0.0005 * ( lodIndex * lodIndex );
-					//var threshold = 0.0001 * ( lodIndex * lodIndex );
-					//var threshold = 0.00001 * ( lodIndex * lodIndex );
-					//var threshold = 0.0000001 * lodIndex;
-					//var threshold = 0.000000001 * lodIndex;
+					double threshold;
+					if( lodIndex == 0 )
+						threshold = 0.0005 * simplificationQualityMinus;
+					else
+					{
+						//var threshold = 0.001 * ( lodIndex * lodIndex );
+						threshold = 0.0005 * ( lodIndex * lodIndex );
+						//var threshold = 0.0001 * ( lodIndex * lodIndex );
+						//var threshold = 0.00001 * ( lodIndex * lodIndex );
+						//var threshold = 0.0000001 * lodIndex;
+						//var threshold = 0.000000001 * lodIndex;
+					}
+
 					simplifier.SimplifyMeshCarefully( threshold );
 				}
 				else
-					simplifier.SimplifyMeshDefault( (float)simplificationFactor );
+				{
+					if( lodIndex == 0 )
+						simplifier.SimplifyMeshDefault( (float)simplificationQuality );
+					else
+						simplifier.SimplifyMeshDefault( (float)currentQuality );
+				}
 			}
 			catch( Exception e )
 			{

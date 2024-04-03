@@ -1,6 +1,6 @@
 /*
- * Copyright 2011-2022 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
+ * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
 #include "bgfx_p.h"
@@ -1230,7 +1230,7 @@ namespace bgfx
 				_instruction.primitiveTopology = DxbcPrimitiveTopology::Enum( (token & UINT32_C(0x0001f800) ) >> 11);
 				break;
 
-			case DxbcOpcode::DCL_INPUT_PS: BX_FALLTHROUGH;
+			case DxbcOpcode::DCL_INPUT_PS: [[fallthrough]];
 			case DxbcOpcode::DCL_INPUT_PS_SIV:
 				// 0       1       2       3
 				// 76543210765432107654321076543210
@@ -1395,12 +1395,12 @@ namespace bgfx
 		_instruction.numOperands = info.numOperands;
 		switch (info.numOperands)
 		{
-		case 6: size += read(_reader, _instruction.operand[currOp++], _err); BX_FALLTHROUGH;
-		case 5: size += read(_reader, _instruction.operand[currOp++], _err); BX_FALLTHROUGH;
-		case 4: size += read(_reader, _instruction.operand[currOp++], _err); BX_FALLTHROUGH;
-		case 3: size += read(_reader, _instruction.operand[currOp++], _err); BX_FALLTHROUGH;
-		case 2: size += read(_reader, _instruction.operand[currOp++], _err); BX_FALLTHROUGH;
-		case 1: size += read(_reader, _instruction.operand[currOp++], _err); BX_FALLTHROUGH;
+		case 6: size += read(_reader, _instruction.operand[currOp++], _err); [[fallthrough]];
+		case 5: size += read(_reader, _instruction.operand[currOp++], _err); [[fallthrough]];
+		case 4: size += read(_reader, _instruction.operand[currOp++], _err); [[fallthrough]];
+		case 3: size += read(_reader, _instruction.operand[currOp++], _err); [[fallthrough]];
+		case 2: size += read(_reader, _instruction.operand[currOp++], _err); [[fallthrough]];
+		case 1: size += read(_reader, _instruction.operand[currOp++], _err); [[fallthrough]];
 		case 0:
 			if (0 < info.numValues)
 			{
@@ -1471,7 +1471,7 @@ namespace bgfx
 				token |= (_instruction.primitiveTopology << 11) & UINT32_C(0x0001f800);
 				break;
 
-			case DxbcOpcode::DCL_INPUT_PS: BX_FALLTHROUGH;
+			case DxbcOpcode::DCL_INPUT_PS: [[fallthrough]];
 			case DxbcOpcode::DCL_INPUT_PS_SIV:
 				token |= (_instruction.interpolation << 11) & UINT32_C(0x0000f800);
 				break;
@@ -1991,7 +1991,7 @@ namespace bgfx
 			{
 			case DXBC_CHUNK_SHADER_EX:
 				_dxbc.shader.shex = true;
-				BX_FALLTHROUGH;
+				[[fallthrough]];
 
 			case DXBC_CHUNK_SHADER:
 				size += read(_reader, _dxbc.shader, _err);
@@ -2038,6 +2038,12 @@ namespace bgfx
 			case BX_MAKEFOURCC('P', 'S', 'O', '2'): // Pipeline State Object 2
 			case BX_MAKEFOURCC('X', 'N', 'A', 'P'): // ?
 			case BX_MAKEFOURCC('X', 'N', 'A', 'S'): // ?
+
+			//!!!!betauser dx12
+			case BX_MAKEFOURCC('P', 'S', 'V', '0'):
+			case BX_MAKEFOURCC('H', 'A', 'S', 'H'):
+			case BX_MAKEFOURCC('D', 'X', 'I', 'L'):
+
 				size += chunkSize;
 				break;
 

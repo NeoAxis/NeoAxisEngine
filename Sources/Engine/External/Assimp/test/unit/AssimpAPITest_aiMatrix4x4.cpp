@@ -3,7 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 
 
@@ -57,7 +57,7 @@ protected:
     aiMatrix4x4 get_predetermined_transformation_matrix_for_decomposition() const {
         aiMatrix4x4 t, r;
         aiMatrix4x4::Translation(aiVector3D(14,-25,-8), t);
-        aiMatrix4x4::Rotation(Math::PI<float>() / 4.0f, aiVector3D(1).Normalize(), r);
+        aiMatrix4x4::Rotation(Math::aiPi<float>() / 4.0f, aiVector3D(1).Normalize(), r);
         return t * r;
     }
 
@@ -176,7 +176,7 @@ TEST_F(AssimpAPITest_aiMatrix4x4, aiMatrix4DecomposeIntoScalingAxisAnglePosition
     aiVector3D scaling_c, scaling_cpp,
         axis_c, axis_cpp,
         position_c, position_cpp;
-    float angle_c, angle_cpp;
+    ai_real angle_c, angle_cpp;
 
     result_c = result_cpp = get_predetermined_transformation_matrix_for_decomposition();
     result_cpp.Decompose(scaling_cpp, axis_cpp, angle_cpp, position_cpp);

@@ -22,7 +22,11 @@ namespace Project
 		[Browsable( false )]
 		public double PoweredByTime
 		{
-			get { return drawSplashScreen != ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled ? 2.0 : 0.0; }
+			get
+			{
+				return drawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.WhiteBackground || drawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.BlackBackground ? 2.0 : 0.0;
+				//return drawSplashScreen != ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled ? 2.0 : 0.0; 
+			}
 		}
 
 		[Serialize]
@@ -39,12 +43,12 @@ namespace Project
 		{
 			var originalDrawSplashScreen = ProjectSettings.Get.General.EngineSplashScreenStyle.Value;
 
-			//get drawing engine splash settings. engine splash for Windows is rendered from another place
-			if( SystemSettings.CurrentPlatform != SystemSettings.Platform.Windows )
-				drawSplashScreen = originalDrawSplashScreen;
+			////get drawing engine splash settings. engine splash for Windows is rendered from another place
+			//if( SystemSettings.CurrentPlatform != SystemSettings.Platform.Windows )
+			drawSplashScreen = (ProjectSettingsPage_General.EngineSplashScreenStyleEnum)originalDrawSplashScreen;
 
 			//update background color
-			if( originalDrawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.WhiteBackground )
+			if( drawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.WhiteBackground || drawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.WhiteBackgroundSmall )
 				BackgroundColor = new ColorValue( 1, 1, 1 );
 		}
 
@@ -100,7 +104,7 @@ namespace Project
 			return 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0 + FadingTime + ProjectTime + FadingTime;
 		}
 
-		void GetImagesTransparency( out double poweredBy, out double project )
+		void GetImagesTransparency( out double engine, out double project )
 		{
 			var curve = new CurveLine();
 			curve.AddPoint( 0, new Vector3( 0, 0, 0 ) );
@@ -114,37 +118,51 @@ namespace Project
 			curve.AddPoint( 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0 + FadingTime + ProjectTime + FadingTime, new Vector3( 0, 0, 0 ) );
 
 			var value = curve.CalculateValueByTime( resetTimeCounter != 0 ? 0 : Time );
-			poweredBy = MathEx.Saturate( value.X );
+			engine = MathEx.Saturate( value.X );
 			project = MathEx.Saturate( value.Y );
 
 			if( gotoMainMenu )
 			{
-				poweredBy = 0;
+				engine = 0;
 				project = 0;
 			}
 		}
 
 		void UpdateImagesTransparency()
 		{
-			GetImagesTransparency( out var poweredBy, out var project );
+			GetImagesTransparency( out var engine, out var project );
 
-			var image = Components[ "PoweredBy_BlackBackground" ] as UIImage;
+			var image = Components[ "NeoAxisLogo_DarkBackground" ] as UIImage;
 			if( image != null )
 			{
 				image.Visible = drawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.BlackBackground;
-				image.ColorMultiplier = new ColorValue( 1, 1, 1, poweredBy );
+				image.ColorMultiplier = new ColorValue( 1, 1, 1, engine );
 			}
 
-			image = Components[ "PoweredBy_WhiteBackground" ] as UIImage;
+			image = Components[ "NeoAxisLogo_LightBackground" ] as UIImage;
 			if( image != null )
 			{
 				image.Visible = drawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.WhiteBackground;
-				image.ColorMultiplier = new ColorValue( 1, 1, 1, poweredBy );
+				image.ColorMultiplier = new ColorValue( 1, 1, 1, engine );
 			}
 
 			image = Components[ "Project" ] as UIImage;
 			if( image != null )
 				image.ColorMultiplier = new ColorValue( 1, 1, 1, project );
+
+			image = Components[ "NeoAxisLogo_DarkBackground_Small" ] as UIImage;
+			if( image != null )
+			{
+				image.Visible = drawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.BlackBackgroundSmall;
+				image.ColorMultiplier = new ColorValue( 1, 1, 1, project );
+			}
+
+			image = Components[ "NeoAxisLogo_LightBackground_Small" ] as UIImage;
+			if( image != null )
+			{
+				image.Visible = drawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.WhiteBackgroundSmall;
+				image.ColorMultiplier = new ColorValue( 1, 1, 1, project );
+			}
 		}
 
 		protected override void OnRenderUI( CanvasRenderer renderer )
@@ -168,6 +186,10 @@ namespace Project
 					resetTimeCounter--;
 					ResetCreateTime();
 				}
+
+				//antialiase for better scaling images
+				if( !SystemSettings.LimitedDevice )
+					renderer.ScreenAntialisingForThisFrame = true;
 			}
 		}
 	}

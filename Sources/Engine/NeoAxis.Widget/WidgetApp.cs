@@ -76,7 +76,7 @@ namespace NeoAxis.Widget
 			form.Show();
 			while( form.Created )
 			{
-				NeoAxis.Editor.EditorAPI.ApplicationDoEvents( true );//Application.DoEvents();
+				EditorAPI2.ApplicationDoEvents( true );//Application.DoEvents();
 
 				if( /*WidgetAppForm.Instance == null ||*/ EngineApp.Instance == null || EngineApp.Closing )
 					break;

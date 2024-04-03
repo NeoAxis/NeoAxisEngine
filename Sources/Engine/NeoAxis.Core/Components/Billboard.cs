@@ -31,7 +31,7 @@ namespace NeoAxis
 			get { if( _size.BeginGet() ) Size = _size.Get( this ); return _size.value; }
 			set
 			{
-				if( _size.BeginSet( ref value ) )
+				if( _size.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -54,7 +54,7 @@ namespace NeoAxis
 		public Reference<Degree> Rotation
 		{
 			get { if( _rotation.BeginGet() ) Rotation = _rotation.Get( this ); return _rotation.value; }
-			set { if( _rotation.BeginSet( ref value ) ) { try { RotationChanged?.Invoke( this ); } finally { _rotation.EndSet(); } } }
+			set { if( _rotation.BeginSet( this, ref value ) ) { try { RotationChanged?.Invoke( this ); } finally { _rotation.EndSet(); } } }
 		}
 		public event Action<Billboard> RotationChanged;
 		ReferenceField<Degree> _rotation = new Degree( 0.0 );
@@ -83,7 +83,7 @@ namespace NeoAxis
 				if( _material.BeginGet_WithoutFastExitOptimization() ) Material = _material.Get( this ); return _material.value;
 				//if( _material.BeginGet() ) Material = _material.Get( this ); return _material.value;
 			}
-			set { if( _material.BeginSet( ref value ) ) { try { MaterialChanged?.Invoke( this ); } finally { _material.EndSet(); } } }
+			set { if( _material.BeginSet( this, ref value ) ) { try { MaterialChanged?.Invoke( this ); } finally { _material.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Material"/> property value changes.</summary>
 		public event Action<Billboard> MaterialChanged;
@@ -96,7 +96,7 @@ namespace NeoAxis
 		public Reference<ColorValue> Color
 		{
 			get { if( _color.BeginGet() ) Color = _color.Get( this ); return _color.value; }
-			set { if( _color.BeginSet( ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
+			set { if( _color.BeginSet( this, ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
 		}
 		public event Action<Billboard> ColorChanged;
 		ReferenceField<ColorValue> _color = new ColorValue( 1, 1, 1 );
@@ -106,7 +106,7 @@ namespace NeoAxis
 		//public Reference<double> Opacity
 		//{
 		//	get { if( _opacity.BeginGet() ) Opacity = _opacity.Get( this ); return _opacity.value; }
-		//	set { if( _opacity.BeginSet( ref value ) ) { try { OpacityChanged?.Invoke( this ); } finally { _opacity.EndSet(); } } }
+		//	set { if( _opacity.BeginSet( this, ref value ) ) { try { OpacityChanged?.Invoke( this ); } finally { _opacity.EndSet(); } } }
 		//}
 		//public event Action<Billboard> OpacityChanged;
 		//ReferenceField<double> _opacity = 1.0;
@@ -119,7 +119,7 @@ namespace NeoAxis
 		public Reference<double> VisibilityDistanceFactor
 		{
 			get { if( _visibilityDistanceFactor.BeginGet() ) VisibilityDistanceFactor = _visibilityDistanceFactor.Get( this ); return _visibilityDistanceFactor.value; }
-			set { if( _visibilityDistanceFactor.BeginSet( ref value ) ) { try { VisibilityDistanceFactorChanged?.Invoke( this ); } finally { _visibilityDistanceFactor.EndSet(); } } }
+			set { if( _visibilityDistanceFactor.BeginSet( this, ref value ) ) { try { VisibilityDistanceFactorChanged?.Invoke( this ); } finally { _visibilityDistanceFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="VisibilityDistanceFactor"/> property value changes.</summary>
 		public event Action<Billboard> VisibilityDistanceFactorChanged;
@@ -133,7 +133,7 @@ namespace NeoAxis
 		//public Reference<double> VisibilityDistance
 		//{
 		//	get { if( _visibilityDistance.BeginGet() ) VisibilityDistance = _visibilityDistance.Get( this ); return _visibilityDistance.value; }
-		//	set { if( _visibilityDistance.BeginSet( ref value ) ) { try { VisibilityDistanceChanged?.Invoke( this ); } finally { _visibilityDistance.EndSet(); } } }
+		//	set { if( _visibilityDistance.BeginSet( this, ref value ) ) { try { VisibilityDistanceChanged?.Invoke( this ); } finally { _visibilityDistance.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="VisibilityDistance"/> property value changes.</summary>
 		//public event Action<Billboard> VisibilityDistanceChanged;
@@ -147,7 +147,7 @@ namespace NeoAxis
 		public Reference<bool> CastShadows
 		{
 			get { if( _castShadows.BeginGet() ) CastShadows = _castShadows.Get( this ); return _castShadows.value; }
-			set { if( _castShadows.BeginSet( ref value ) ) { try { CastShadowsChanged?.Invoke( this ); } finally { _castShadows.EndSet(); } } }
+			set { if( _castShadows.BeginSet( this, ref value ) ) { try { CastShadowsChanged?.Invoke( this ); } finally { _castShadows.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CastShadows"/> property value changes.</summary>
 		public event Action<Billboard> CastShadowsChanged;
@@ -161,7 +161,7 @@ namespace NeoAxis
 		public Reference<double> ShadowOffset
 		{
 			get { if( _shadowOffset.BeginGet() ) ShadowOffset = _shadowOffset.Get( this ); return _shadowOffset.value; }
-			set { if( _shadowOffset.BeginSet( ref value ) ) { try { ShadowOffsetChanged?.Invoke( this ); } finally { _shadowOffset.EndSet(); } } }
+			set { if( _shadowOffset.BeginSet( this, ref value ) ) { try { ShadowOffsetChanged?.Invoke( this ); } finally { _shadowOffset.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShadowOffset"/> property value changes.</summary>
 		public event Action<Billboard> ShadowOffsetChanged;
@@ -174,7 +174,7 @@ namespace NeoAxis
 		public Reference<bool> ReceiveDecals
 		{
 			get { if( _receiveDecals.BeginGet() ) ReceiveDecals = _receiveDecals.Get( this ); return _receiveDecals.value; }
-			set { if( _receiveDecals.BeginSet( ref value ) ) { try { ReceiveDecalsChanged?.Invoke( this ); } finally { _receiveDecals.EndSet(); } } }
+			set { if( _receiveDecals.BeginSet( this, ref value ) ) { try { ReceiveDecalsChanged?.Invoke( this ); } finally { _receiveDecals.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ReceiveDecals"/> property value changes.</summary>
 		public event Action<Billboard> ReceiveDecalsChanged;
@@ -188,7 +188,7 @@ namespace NeoAxis
 		public Reference<double> MotionBlurFactor
 		{
 			get { if( _motionBlurFactor.BeginGet() ) MotionBlurFactor = _motionBlurFactor.Get( this ); return _motionBlurFactor.value; }
-			set { if( _motionBlurFactor.BeginSet( ref value ) ) { try { MotionBlurFactorChanged?.Invoke( this ); } finally { _motionBlurFactor.EndSet(); } } }
+			set { if( _motionBlurFactor.BeginSet( this, ref value ) ) { try { MotionBlurFactorChanged?.Invoke( this ); } finally { _motionBlurFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MotionBlurFactor"/> property value changes.</summary>
 		public event Action<Billboard> MotionBlurFactorChanged;
@@ -201,7 +201,7 @@ namespace NeoAxis
 		public Reference<List<ObjectSpecialRenderingEffect>> SpecialEffects
 		{
 			get { if( _specialEffects.BeginGet() ) SpecialEffects = _specialEffects.Get( this ); return _specialEffects.value; }
-			set { if( _specialEffects.BeginSet( ref value ) ) { try { SpecialEffectsChanged?.Invoke( this ); } finally { _specialEffects.EndSet(); } } }
+			set { if( _specialEffects.BeginSet( this, ref value ) ) { try { SpecialEffectsChanged?.Invoke( this ); } finally { _specialEffects.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SpecialEffects"/> property value changes.</summary>
 		public event Action<Billboard> SpecialEffectsChanged;
@@ -289,6 +289,8 @@ namespace NeoAxis
 				transformPositionByTime2_Position = transformPositionByTime1_Position;
 				transformPositionByTime1_Time = time;
 				transformPositionByTime1_Position = TransformV.Position;
+				//context.ConvertToRelative( TransformV.Position, out transformPositionByTime1_Position );
+				////transformPositionByTime1_Position = TransformV.Position;
 			}
 
 			if( mode == GetRenderSceneDataMode.InsideFrustum || ( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && CastShadows ) )
@@ -356,8 +358,9 @@ namespace NeoAxis
 					}
 #endif
 
-					//!!!!double
-					item.Position = tr.Position.ToVector3F();
+					context.ConvertToRelative( tr.Position, out item.PositionRelative );
+					//item.Position = tr.Position.ToVector3F();
+
 					item.Size = new Vector2( size.X * Math.Max( tr.Scale.X, tr.Scale.Y ), size.Y * tr.Scale.Z ).ToVector2F();
 					item.RotationAngle = Rotation.Value.InRadians().ToRadianF();
 					if( tr.Rotation != Quaternion.Identity )
@@ -367,13 +370,21 @@ namespace NeoAxis
 					}
 					item.RotationQuaternion = tr.Rotation.ToQuaternionF();
 					item.Color = Color;
-					item.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref item.Color );
+					RenderingPipeline.GetColorForInstancingData( ref item.Color, out item.ColorForInstancingData1, out item.ColorForInstancingData2 );
+					//item.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref item.Color );
 
 					//PositionPreviousFrame
 					var previousTime = time - context.Owner.LastUpdateTimeStep;
 					if( !GetTransformPositionByTime( previousTime, out var previousPosition ) )
+					{
 						previousPosition = tr.Position;
-					item.PositionPreviousFrame = previousPosition.ToVector3F();
+						//context.ConvertToRelative( tr.Position, out previousPosition );
+						////previousPosition = tr.Position;
+					}
+					item.PreviousFramePositionChange = ( tr.Position - previousPosition ).ToVector3F();
+					//item.PositionPreviousFrameRelative = previousPosition;
+					////context.ConvertToRelative( ref previousPosition, out item.PositionPreviousFrameRelative );
+					////item.PositionPreviousFrame = previousPosition.ToVector3F();
 
 					context.FrameData.RenderSceneData.Billboards.Add( ref item );
 
@@ -399,11 +410,13 @@ namespace NeoAxis
 								{
 									viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 
-									item.GetWorldMatrix( out var worldMatrix );
+									item.GetWorldMatrixRelative( out var worldMatrix );
 
-									//!!!!double
-									worldMatrix.ToMatrix4( out var worldMatrix2 );
-									viewport.Simple3DRenderer.AddMesh( GetBillboardMesh().Result, ref worldMatrix2, false, false );
+									context.ConvertToAbsolute( ref worldMatrix, out var worldMatrixAbsolute );
+									viewport.Simple3DRenderer.AddMesh( GetBillboardMesh().Result, ref worldMatrixAbsolute, false, false );
+
+									//worldMatrix.ToMatrix4( out var worldMatrix2 );
+									//viewport.Simple3DRenderer.AddMesh( GetBillboardMesh().Result, ref worldMatrix2, false, false );
 								}
 							}
 						}
@@ -447,7 +460,7 @@ namespace NeoAxis
 				position = transformPositionByTime1_Position;
 				return true;
 			}
-			position = Vector3.Zero;
+			position = Vector3F.Zero;
 			return false;
 		}
 

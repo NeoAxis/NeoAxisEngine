@@ -21,6 +21,8 @@
 #define PLATFORM_MACOS
 #elif defined(__ANDROID__)
 #define PLATFORM_ANDROID
+#elif defined(__linux__)
+#define PLATFORM_LINUX
 #else
 #error Platform is not supported.
 #endif
@@ -65,6 +67,9 @@
 /* #undef HAVE_NEON */
 
 /* Define if we have the ALSA backend */
+#ifdef PLATFORM_LINUX
+#define HAVE_ALSA
+#endif
 /* #undef HAVE_ALSA */
 
 /* Define if we have the OSS backend */

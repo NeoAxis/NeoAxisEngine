@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -14,6 +15,8 @@ namespace NeoAxis
 	/// </summary>
 	public class RigidBody : PhysicalBody
 	{
+		static FastRandom staticRandom = new FastRandom( 0 );
+
 		//!!!!хранить тут как можно меньше
 
 		Scene.PhysicsWorldClass.Body physicalBody;
@@ -24,18 +27,21 @@ namespace NeoAxis
 		bool duringCreateDestroy;
 		bool updatePropertiesWithoutUpdatingBody;
 
+		bool collisionSoundSpecified;
+		float collisionSoundRemainingTime;
+
 		//!!!!need?
 		//Matrix4 centerOfMassOffset;
 		//Matrix4 centerOfMassOffsetInverted;
 
 		//!!!!
-		class CenterOfMassGeometry
-		{
-			public float radius;
-			public Vector3F[] positions;
-			public int[] indices;
-		}
-		static List<CenterOfMassGeometry> centerOfMassGeometryCache = new List<CenterOfMassGeometry>();
+		//class CenterOfMassGeometry
+		//{
+		//	public float radius;
+		//	public Vector3F[] positions;
+		//	public int[] indices;
+		//}
+		//static List<CenterOfMassGeometry> centerOfMassGeometryCache = new List<CenterOfMassGeometry>();
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -49,7 +55,7 @@ namespace NeoAxis
 			get { if( _motionType.BeginGet() ) MotionType = _motionType.Get( this ); return _motionType.value; }
 			set
 			{
-				if( _motionType.BeginSet( ref value ) )
+				if( _motionType.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -77,7 +83,7 @@ namespace NeoAxis
 			get { if( _motionQuality.BeginGet() ) MotionQuality = _motionQuality.Get( this ); return _motionQuality.value; }
 			set
 			{
-				if( _motionQuality.BeginSet( ref value ) )
+				if( _motionQuality.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -105,7 +111,7 @@ namespace NeoAxis
 			{
 				if( value < 0 )
 					value = new Reference<double>( 0, value.GetByReference );
-				if( _mass.BeginSet( ref value ) )
+				if( _mass.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -124,6 +130,90 @@ namespace NeoAxis
 		ReferenceField<double> _mass = 1;
 
 		/// <summary>
+		/// Offset of the center of mass from the automatically calculated value.
+		/// </summary>
+		[Category( "Rigid Body" )]
+		[DefaultValue( "0 0 0" )]
+		public Reference<Vector3> CenterOfMassOffset
+		{
+			get { if( _centerOfMassOffset.BeginGet() ) CenterOfMassOffset = _centerOfMassOffset.Get( this ); return _centerOfMassOffset.value; }
+			set
+			{
+				if( _centerOfMassOffset.BeginSet( this, ref value ) )
+				{
+					try
+					{
+						CenterOfMassOffsetChanged?.Invoke( this );
+
+						//!!!!обязательно ли пересоздавать? констрейнты?
+						if( physicalBody != null )
+							RecreateBody();
+					}
+					finally { _centerOfMassOffset.EndSet(); }
+				}
+			}
+		}
+		/// <summary>Occurs when the <see cref="CenterOfMassOffset"/> property value changes.</summary>
+		public event Action<RigidBody> CenterOfMassOffsetChanged;
+		ReferenceField<Vector3> _centerOfMassOffset = new Vector3( 0, 0, 0 );
+
+		///// <summary>
+		///// Whether the rigid body is using manual center of mass.
+		///// </summary>
+		//[Category( "Rigid Body" )]
+		//[DefaultValue( false )]
+		//public Reference<bool> CenterOfMassManual
+		//{
+		//	get { if( _centerOfMassManual.BeginGet() ) CenterOfMassManual = _centerOfMassManual.Get( this ); return _centerOfMassManual.value; }
+		//	set
+		//	{
+		//		if( _centerOfMassManual.BeginSet( this, ref value ) )
+		//		{
+		//			try
+		//			{
+		//				CenterOfMassManualChanged?.Invoke( this );
+
+		//				//!!!!обязательно ли пересоздавать? констрейнты?
+		//				if( physicalBody != null )
+		//					RecreateBody();
+		//			}
+		//			finally { _centerOfMassManual.EndSet(); }
+		//		}
+		//	}
+		//}
+		///// <summary>Occurs when the <see cref="CenterOfMassManual"/> property value changes.</summary>
+		//public event Action<RigidBody> CenterOfMassManualChanged;
+		//ReferenceField<bool> _centerOfMassManual = false;
+
+		///// <summary>
+		///// The offset of center of mass from the body position.
+		///// </summary>
+		//[Category( "Rigid Body" )]
+		//[DefaultValue( "0 0 0" )]
+		//public Reference<Vector3> CenterOfMassPosition
+		//{
+		//	get { if( _centerOfMassPosition.BeginGet() ) CenterOfMassPosition = _centerOfMassPosition.Get( this ); return _centerOfMassPosition.value; }
+		//	set
+		//	{
+		//		if( _centerOfMassPosition.BeginSet( this, ref value ) )
+		//		{
+		//			try
+		//			{
+		//				CenterOfMassPositionChanged?.Invoke( this );
+
+		//				//!!!!обязательно ли пересоздавать? констрейнты?
+		//				if( physicalBody != null )
+		//					RecreateBody();
+		//			}
+		//			finally { _centerOfMassPosition.EndSet(); }
+		//		}
+		//	}
+		//}
+		///// <summary>Occurs when the <see cref="CenterOfMassPosition"/> property value changes.</summary>
+		//public event Action<RigidBody> CenterOfMassPositionChanged;
+		//ReferenceField<Vector3> _centerOfMassPosition = new Vector3( 0, 0, 0 );
+
+		/// <summary>
 		/// The factor of affect global gravity.
 		/// </summary>
 		[Category( "Rigid Body" )]
@@ -134,7 +224,7 @@ namespace NeoAxis
 			get { if( _gravityFactor.BeginGet() ) GravityFactor = _gravityFactor.Get( this ); return _gravityFactor.value; }
 			set
 			{
-				if( _gravityFactor.BeginSet( ref value ) )
+				if( _gravityFactor.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -160,7 +250,7 @@ namespace NeoAxis
 		//	get { if( _enableGravity.BeginGet() ) EnableGravity = _enableGravity.Get( this ); return _enableGravity.value; }
 		//	set
 		//	{
-		//		if( _enableGravity.BeginSet( ref value ) )
+		//		if( _enableGravity.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -188,12 +278,13 @@ namespace NeoAxis
 		[DefaultValue( 0.05 )]//1 )]
 		[Range( 0, 1 )]
 		[Category( "Rigid Body" )]
+		[NetworkSynchronize( false )]
 		public Reference<double> LinearDamping
 		{
 			get { if( _linearDamping.BeginGet() ) LinearDamping = _linearDamping.Get( this ); return _linearDamping.value; }
 			set
 			{
-				if( _linearDamping.BeginSet( ref value ) )
+				if( _linearDamping.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -215,12 +306,13 @@ namespace NeoAxis
 		[DefaultValue( 0.05 )] //0.1
 		[Range( 0, 1 )]
 		[Category( "Rigid Body" )]
+		[NetworkSynchronize( false )]
 		public Reference<double> AngularDamping
 		{
 			get { if( _angularDamping.BeginGet() ) AngularDamping = _angularDamping.Get( this ); return _angularDamping.value; }
 			set
 			{
-				if( _angularDamping.BeginSet( ref value ) )
+				if( _angularDamping.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -246,7 +338,7 @@ namespace NeoAxis
 			get { if( _material.BeginGet() ) Material = _material.Get( this ); return _material.value; }
 			set
 			{
-				if( _material.BeginSet( ref value ) )
+				if( _material.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -273,7 +365,7 @@ namespace NeoAxis
 		//	get { if( _materialFrictionMode.BeginGet() ) MaterialFrictionMode = _materialFrictionMode.Get( this ); return _materialFrictionMode.value; }
 		//	set
 		//	{
-		//		if( _materialFrictionMode.BeginSet( ref value ) )
+		//		if( _materialFrictionMode.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -300,7 +392,7 @@ namespace NeoAxis
 			get { if( _materialFriction.BeginGet() ) MaterialFriction = _materialFriction.Get( this ); return _materialFriction.value; }
 			set
 			{
-				if( _materialFriction.BeginSet( ref value ) )
+				if( _materialFriction.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -328,7 +420,7 @@ namespace NeoAxis
 		//	get { if( _materialAnisotropicFriction.BeginGet() ) MaterialAnisotropicFriction = _materialAnisotropicFriction.Get( this ); return _materialAnisotropicFriction.value; }
 		//	set
 		//	{
-		//		if( _materialAnisotropicFriction.BeginSet( ref value ) )
+		//		if( _materialAnisotropicFriction.BeginSet( this, ref value ) )
 		//		{
 		//			try { MaterialAnisotropicFrictionChanged?.Invoke( this ); }
 		//			finally { _materialAnisotropicFriction.EndSet(); }
@@ -351,7 +443,7 @@ namespace NeoAxis
 		//	get { if( _materialSpinningFriction.BeginGet() ) MaterialSpinningFriction = _materialSpinningFriction.Get( this ); return _materialSpinningFriction.value; }
 		//	set
 		//	{
-		//		if( _materialSpinningFriction.BeginSet( ref value ) )
+		//		if( _materialSpinningFriction.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -379,7 +471,7 @@ namespace NeoAxis
 		//	get { if( _materialRollingFriction.BeginGet() ) MaterialRollingFriction = _materialRollingFriction.Get( this ); return _materialRollingFriction.value; }
 		//	set
 		//	{
-		//		if( _materialRollingFriction.BeginSet( ref value ) )
+		//		if( _materialRollingFriction.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -406,7 +498,7 @@ namespace NeoAxis
 			get { if( _materialRestitution.BeginGet() ) MaterialRestitution = _materialRestitution.Get( this ); return _materialRestitution.value; }
 			set
 			{
-				if( _materialRestitution.BeginSet( ref value ) )
+				if( _materialRestitution.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -433,35 +525,6 @@ namespace NeoAxis
 
 		//!!!!impl
 		///// <summary>
-		///// Whether the rigid body is using manual center of mass.
-		///// </summary>
-		//[DefaultValue( false )]
-		//[Category( "Rigid Body" )]
-		//public Reference<bool> CenterOfMassManual
-		//{
-		//	get { if( _centerOfMassManual.BeginGet() ) CenterOfMassManual = _centerOfMassManual.Get( this ); return _centerOfMassManual.value; }
-		//	set
-		//	{
-		//		if( _centerOfMassManual.BeginSet( ref value ) )
-		//		{
-		//			try
-		//			{
-		//				CenterOfMassManualChanged?.Invoke( this );
-
-		//				//!!!!обязательно ли пересоздавать?
-		//				if( rigidBody != null )
-		//					RecreateBody();
-		//			}
-		//			finally { _centerOfMassManual.EndSet(); }
-		//		}
-		//	}
-		//}
-		///// <summary>Occurs when the <see cref="CenterOfMassManual"/> property value changes.</summary>
-		//public event Action<RigidBody> CenterOfMassManualChanged;
-		//ReferenceField<bool> _centerOfMassManual = false;
-
-		//!!!!impl
-		///// <summary>
 		///// The position of center of mass.
 		///// </summary>
 		//[DefaultValue( "0 0 0" )]
@@ -471,7 +534,7 @@ namespace NeoAxis
 		//	get { if( _centerOfMassPosition.BeginGet() ) CenterOfMassPosition = _centerOfMassPosition.Get( this ); return _centerOfMassPosition.value; }
 		//	set
 		//	{
-		//		if( _centerOfMassPosition.BeginSet( ref value ) )
+		//		if( _centerOfMassPosition.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -500,7 +563,7 @@ namespace NeoAxis
 		//	get { if( _inertiaTensorFactor.BeginGet() ) InertiaTensorFactor = _inertiaTensorFactor.Get( this ); return _inertiaTensorFactor.value; }
 		//	set
 		//	{
-		//		if( _inertiaTensorFactor.BeginSet( ref value ) )
+		//		if( _inertiaTensorFactor.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -538,7 +601,7 @@ namespace NeoAxis
 		//	get { if( _linearSleepingThreshold.BeginGet() ) LinearSleepingThreshold = _linearSleepingThreshold.Get( this ); return _linearSleepingThreshold.value; }
 		//	set
 		//	{
-		//		if( _linearSleepingThreshold.BeginSet( ref value ) )
+		//		if( _linearSleepingThreshold.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -567,7 +630,7 @@ namespace NeoAxis
 		//	get { if( _angularSleepingThreshold.BeginGet() ) AngularSleepingThreshold = _angularSleepingThreshold.Get( this ); return _angularSleepingThreshold.value; }
 		//	set
 		//	{
-		//		if( _angularSleepingThreshold.BeginSet( ref value ) )
+		//		if( _angularSleepingThreshold.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -600,7 +663,7 @@ namespace NeoAxis
 		//	get { if( _collisionGroup.BeginGet() ) CollisionGroup = _collisionGroup.Get( this ); return _collisionGroup.value; }
 		//	set
 		//	{
-		//		if( _collisionGroup.BeginSet( ref value ) )
+		//		if( _collisionGroup.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -626,7 +689,7 @@ namespace NeoAxis
 		//	get { if( _collisionMask.BeginGet() ) CollisionMask = _collisionMask.Get( this ); return _collisionMask.value; }
 		//	set
 		//	{
-		//		if( _collisionMask.BeginSet( ref value ) )
+		//		if( _collisionMask.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -647,12 +710,13 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( "0 0 0" )]
 		[Category( "Velocity" )]
+		[NetworkSynchronize( false )]//don't sync to optimize networking
 		public Reference<Vector3> LinearVelocity
 		{
 			get { if( _linearVelocity.BeginGet() ) LinearVelocity = _linearVelocity.Get( this ); return _linearVelocity.value; }
 			set
 			{
-				if( _linearVelocity.BeginSet( ref value ) )
+				if( _linearVelocity.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -673,12 +737,13 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( "0 0 0" )]
 		[Category( "Velocity" )]
+		[NetworkSynchronize( false )]//don't sync to optimize networking
 		public Reference<Vector3> AngularVelocity
 		{
 			get { if( _angularVelocity.BeginGet() ) AngularVelocity = _angularVelocity.Get( this ); return _angularVelocity.value; }
 			set
 			{
-				if( _angularVelocity.BeginSet( ref value ) )
+				if( _angularVelocity.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -702,11 +767,58 @@ namespace NeoAxis
 		public Reference<bool> DisplayContacts
 		{
 			get { if( _displayContacts.BeginGet() ) DisplayContacts = _displayContacts.Get( this ); return _displayContacts.value; }
-			set { if( _displayContacts.BeginSet( ref value ) ) { try { DisplayContactsChanged?.Invoke( this ); } finally { _displayContacts.EndSet(); } } }
+			set { if( _displayContacts.BeginSet( this, ref value ) ) { try { DisplayContactsChanged?.Invoke( this ); } finally { _displayContacts.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayContacts"/> property value changes.</summary>
 		public event Action<RigidBody> DisplayContactsChanged;
 		ReferenceField<bool> _displayContacts = false;
+
+		/// <summary>
+		/// The sound when the body collided with another body.
+		/// </summary>
+		[DefaultValue( null )]
+		[Category( "Collision" )]
+		public Reference<Sound> CollisionSound
+		{
+			get { if( _collisionSound.BeginGet() ) CollisionSound = _collisionSound.Get( this ); return _collisionSound.value; }
+			set { if( _collisionSound.BeginSet( this, ref value ) ) { try { CollisionSoundChanged?.Invoke( this ); collisionSoundSpecified = CollisionSound.ReferenceOrValueSpecified; } finally { _collisionSound.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="CollisionSound"/> property value changes.</summary>
+		public event Action<RigidBody> CollisionSoundChanged;
+		ReferenceField<Sound> _collisionSound = null;
+
+		[DefaultValue( 1.0 )]
+		[Category( "Collision" )]
+		public Reference<double> CollisionSoundMinSpeedChange
+		{
+			get { if( _collisionSoundMinSpeedChange.BeginGet() ) CollisionSoundMinSpeedChange = _collisionSoundMinSpeedChange.Get( this ); return _collisionSoundMinSpeedChange.value; }
+			set { if( _collisionSoundMinSpeedChange.BeginSet( this, ref value ) ) { try { CollisionSoundMinSpeedChangeChanged?.Invoke( this ); } finally { _collisionSoundMinSpeedChange.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="CollisionSoundMinSpeedChange"/> property value changes.</summary>
+		public event Action<RigidBody> CollisionSoundMinSpeedChangeChanged;
+		ReferenceField<double> _collisionSoundMinSpeedChange = 1.0;
+
+		[DefaultValue( 0.25 )]
+		[Category( "Collision" )]
+		public Reference<double> CollisionSoundTimeInterval
+		{
+			get { if( _collisionSoundTimeInterval.BeginGet() ) CollisionSoundTimeInterval = _collisionSoundTimeInterval.Get( this ); return _collisionSoundTimeInterval.value; }
+			set { if( _collisionSoundTimeInterval.BeginSet( this, ref value ) ) { try { CollisionSoundTimeIntervalChanged?.Invoke( this ); } finally { _collisionSoundTimeInterval.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="CollisionSoundTimeInterval"/> property value changes.</summary>
+		public event Action<RigidBody> CollisionSoundTimeIntervalChanged;
+		ReferenceField<double> _collisionSoundTimeInterval = 0.25;
+
+
+		[Browsable( false )]
+		[Cloneable( CloneType.Deep )]
+		public bool CharacterMode { get; set; }
+
+
+		//!!!!как часто вызывать? ведь контакты разные могут быть
+
+		//!!!!при каких условиях проигрывать. максимальный импульс или изменение скорости. нужно для статичных?
+
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -721,15 +833,21 @@ namespace NeoAxis
 				{
 				case nameof( MotionQuality ):
 				case nameof( Mass ):
-				//!!!!impl
-				//case nameof( CenterOfMassManual ):
-				//case nameof( InertiaTensorFactor ):
-				//case nameof( LinearSleepingThreshold ):
-				//case nameof( AngularSleepingThreshold ):
+				case nameof( CenterOfMassOffset ):
+					//case nameof( CenterOfMassManual ):
+					//!!!!impl
+					//case nameof( InertiaTensorFactor ):
+					//case nameof( LinearSleepingThreshold ):
+					//case nameof( AngularSleepingThreshold ):
 					//!!!!
 					if( MotionType.Value != PhysicsMotionType.Dynamic )
 						skip = true;
 					break;
+
+				//case nameof( CenterOfMassPosition ):
+				//	if( MotionType.Value != PhysicsMotionType.Dynamic || !CenterOfMassManual )
+				//		skip = true;
+				//	break;
 
 				case nameof( GravityFactor ):
 				case nameof( LinearDamping ):
@@ -774,10 +892,16 @@ namespace NeoAxis
 						skip = true;
 					break;
 
-					//case nameof( DisplayContacts ):
-					//	if( !ContactsCollect )
-					//		skip = true;
-					//	break;
+				//case nameof( DisplayContacts ):
+				//	if( !ContactsCollect )
+				//		skip = true;
+				//	break;
+
+				case nameof( CollisionSoundTimeInterval ):
+				case nameof( CollisionSoundMinSpeedChange ):
+					if( !CollisionSound.ReferenceOrValueSpecified )
+						skip = true;
+					break;
 				}
 			}
 		}
@@ -821,7 +945,6 @@ namespace NeoAxis
 					var pos = bodyTransform.Position;
 					var rot = bodyTransform.Rotation.ToQuaternionF();
 					physicalBody?.SetTransform( ref pos, ref rot, activate );
-
 
 
 					//!!!!impl
@@ -873,11 +996,31 @@ namespace NeoAxis
 			if( physicalBody != null )
 			{
 				physicalBody.GetBounds( out var bounds );
-				//if( bounds.Minimum.X > bounds.Maximum.X || bounds.Minimum.Y > bounds.Maximum.Y || bounds.Minimum.Z > bounds.Maximum.Z )
-				//	Log.Fatal( "bounds" );
-
-				var b = new SpaceBounds( bounds );//, null );
+				var b = new SpaceBounds( bounds );
 				newBounds = SpaceBounds.Merge( newBounds, b );
+
+				//bounds prediction to skip small updates in future steps
+				if( physicalBody.Active )
+				{
+					ref var realBounds = ref newBounds.boundingBox;
+
+					if( !SpaceBoundsOctreeOverride.HasValue || !SpaceBoundsOctreeOverride.Value.Contains( ref realBounds ) )
+					{
+						//calculated extended bounds. predict for 2-3 seconds
+
+						var trPosition = TransformV.Position;
+
+						var bTotal = realBounds;
+						var b2 = new Bounds( trPosition );
+						b2.Add( trPosition + PhysicalBody.LinearVelocity * ( 2.0f + staticRandom.NextFloat() ) );
+						b2.Expand( newBounds.boundingSphere.Radius * 1.1 );
+						bTotal.Add( ref b2 );
+
+						SpaceBoundsOctreeOverride = bTotal;
+					}
+				}
+				else
+					SpaceBoundsOctreeOverride = null;
 			}
 		}
 
@@ -1143,13 +1286,13 @@ namespace NeoAxis
 						var pos = bodyTransform.Position;
 						var rot = bodyTransform.Rotation.ToQuaternionF();
 
-						//use local variable to prevent double update inside properties
-						//!!!!
-						var centerOfMassManual = false;//CenterOfMassManual.Value;
-						var centerOfMassPosition = Vector3F.Zero;//CenterOfMassPosition.Value.ToVector3F();
-						var inertiaTensorFactor = Vector3F.One;//InertiaTensorFactor.Value.ToVector3F();
+						var centerOfMassOffset = CenterOfMassOffset.Value.ToVector3F();
+						//var centerOfMassManual = CenterOfMassManual.Value;
+						//var centerOfMassPosition = CenterOfMassPosition.Value.ToVector3F();
+						//impl?
+						//var inertiaTensorFactor = Vector3F.One;//InertiaTensorFactor.Value.ToVector3F();
 
-						var body = physicsWorldData.CreateRigidBody( nativeShape, true, this, motionType, (float)LinearDamping.Value, (float)AngularDamping.Value, ref pos, ref rot, activate, (float)Mass, centerOfMassManual, ref centerOfMassPosition, ref inertiaTensorFactor, MotionQuality.Value );
+						var body = physicsWorldData.CreateRigidBody( nativeShape, true, this, motionType, (float)LinearDamping.Value, (float)AngularDamping.Value, ref pos, ref rot, activate, (float)Mass, ref centerOfMassOffset, /*centerOfMassManual, ref centerOfMassPosition, ref inertiaTensorFactor, */MotionQuality.Value, CharacterMode );
 
 						if( body != null )
 						{
@@ -1195,6 +1338,13 @@ namespace NeoAxis
 
 				//!!!!
 				SpaceBoundsUpdate();
+
+
+				if( CollisionSound.ReferenceOrValueSpecified )
+				{
+					//starts getting contacts
+					physicalBody.ContactsExist();//GetContacts();
+				}
 			}
 
 			duringCreateDestroy = false;
@@ -1339,14 +1489,13 @@ namespace NeoAxis
 		}
 
 		//public override void UpdateDataFromPhysicsEngine()
+		[MethodImpl( (MethodImplOptions)512 )]
 		internal void UpdateDataFromPhysicalBody()
 		{
-			//!!!!когда не вызывать?
-
 			//if( ContactsData != null )
 			//	ContactsData.Clear();
 
-			if( MotionType.Value != PhysicsMotionType.Static && physicalBody != null )
+			if( physicalBody != null && ( MotionType.Value == PhysicsMotionType.Dynamic || MotionType.Value == PhysicsMotionType.Kinematic && !Transform.ReferenceSpecified ) )
 			{
 				var pos = physicalBody.Position;
 				var rot = physicalBody.Rotation;
@@ -1392,6 +1541,25 @@ namespace NeoAxis
 				finally
 				{
 					updatePropertiesWithoutUpdatingBody = false;
+				}
+
+				//process collision sound
+				if( physicalBody != null && collisionSoundSpecified )
+				{
+					if( collisionSoundRemainingTime > 0 )
+					{
+						collisionSoundRemainingTime -= Time.SimulationDelta;
+						if( collisionSoundRemainingTime < 0 )
+							collisionSoundRemainingTime = 0;
+					}
+
+					if( collisionSoundRemainingTime == 0 && physicalBody.Active && physicalBody.ContactsExist() )
+					{
+						var changeSquared = ( physicalBody.LinearVelocity - physicalBody.PreviousLinearVelocity ).LengthSquared();
+						var minChangeSquared = MathEx.Square( CollisionSoundMinSpeedChange.Value );
+						if( changeSquared > minChangeSquared )
+							CollisionSoundPlay();
+					}
 				}
 			}
 		}
@@ -1446,26 +1614,26 @@ namespace NeoAxis
 			}
 		}
 
-		CenterOfMassGeometry GetCenterOfMassGeometry( float radius )
-		{
-			for( int n = 0; n < centerOfMassGeometryCache.Count; n++ )
-			{
-				var item2 = centerOfMassGeometryCache[ n ];
-				if( Math.Abs( item2.radius - radius ) < .01 )
-					return item2;
-			}
+		//CenterOfMassGeometry GetCenterOfMassGeometry( float radius )
+		//{
+		//	for( int n = 0; n < centerOfMassGeometryCache.Count; n++ )
+		//	{
+		//		var item2 = centerOfMassGeometryCache[ n ];
+		//		if( Math.Abs( item2.radius - radius ) < .01 )
+		//			return item2;
+		//	}
 
-			while( centerOfMassGeometryCache.Count > 15 )
-				centerOfMassGeometryCache.RemoveAt( 0 );
+		//	while( centerOfMassGeometryCache.Count > 15 )
+		//		centerOfMassGeometryCache.RemoveAt( 0 );
 
-			var item = new CenterOfMassGeometry();
-			item.radius = radius;
-			var segments = 10;
-			SimpleMeshGenerator.GenerateSphere( radius, segments, ( ( segments + 1 ) / 2 ) * 2, false, out item.positions, out item.indices );
-			centerOfMassGeometryCache.Add( item );
+		//	var item = new CenterOfMassGeometry();
+		//	item.radius = radius;
+		//	var segments = 10;
+		//	SimpleMeshGenerator.GenerateSphere( radius, segments, ( ( segments + 1 ) / 2 ) * 2, false, out item.positions, out item.indices );
+		//	centerOfMassGeometryCache.Add( item );
 
-			return item;
-		}
+		//	return item;
+		//}
 
 		public void Render( ViewportRenderingContext context, bool renderActive, bool renderSelected, bool renderCanSelect, Transform bodyTransform, ref int verticesRendered )
 		{
@@ -1583,26 +1751,53 @@ namespace NeoAxis
 				//display collision contacts
 				if( DisplayContacts && PhysicalBody != null )
 				{
-					var contacts = PhysicalBody.GetContacts();
-					if( contacts.Count != 0 )
+					unsafe
 					{
-						var size3 = SpaceBounds.BoundingBox.GetSize();
-						var scale = (float)Math.Min( size3.X, Math.Min( size3.Y, size3.Z ) ) / 30;
-
-						renderer.SetColor( new ColorValue( 1, 0, 0 ) );
-
-						for( int nContact = 0; nContact < contacts.Count; nContact++ )
+						PhysicalBody.GetContacts( out var itemCount, out var itemBuffer );
+						if( itemCount != 0 )
 						{
-							ref var contact = ref contacts.Array[ contacts.Offset + nContact ];//var contact = contacts[ n ];
+							var size3 = SpaceBounds.BoundingBox.GetSize();
+							var scale = size3.MinComponent() / 30;
 
-							var pos = contact.WorldPositionOn1;//var pos = contact.PositionWorldOnA;
-							var bounds = new Bounds(
-								pos - new Vector3( scale, scale, scale ),
-								pos + new Vector3( scale, scale, scale ) );
+							renderer.SetColor( new ColorValue( 1, 0, 0 ) );
 
-							renderer.AddBounds( bounds, true );
+							for( int nItem = 0; nItem < itemCount; nItem++ )
+							{
+								ref var item = ref itemBuffer[ nItem ];
+
+								for( int nPoint = 0; nPoint < item.ContactPointCount; nPoint++ )
+								{
+									ref var point = ref item.GetContactPointOn1( nPoint );
+
+									var bounds = new Bounds( point );
+									bounds.Expand( scale );
+
+									renderer.AddBounds( bounds, true );
+								}
+							}
 						}
 					}
+
+					//var contacts = PhysicalBody.GetContacts();
+					//if( contacts.Count != 0 )
+					//{
+					//	var size3 = SpaceBounds.BoundingBox.GetSize();
+					//	var scale = (float)Math.Min( size3.X, Math.Min( size3.Y, size3.Z ) ) / 30;
+
+					//	renderer.SetColor( new ColorValue( 1, 0, 0 ) );
+
+					//	for( int nContact = 0; nContact < contacts.Count; nContact++ )
+					//	{
+					//		ref var contact = ref contacts.Array[ contacts.Offset + nContact ];//var contact = contacts[ n ];
+
+					//		var pos = contact.WorldPositionOn1;//var pos = contact.PositionWorldOnA;
+					//		var bounds = new Bounds(
+					//			pos - new Vector3( scale, scale, scale ),
+					//			pos + new Vector3( scale, scale, scale ) );
+
+					//		renderer.AddBounds( bounds, true );
+					//	}
+					//}
 				}
 
 				////display collision contacts
@@ -1714,6 +1909,48 @@ namespace NeoAxis
 				////BulletPhysicsUtility.Convert( ref relativePosition, out var bRelPos );
 				////rigidBody?.ApplyForceRef( ref bForce, ref bRelPos );
 			}
+		}
+
+		public delegate void CollisionSoundPlayBeforeDelegate( RigidBody sender, ref Sound sound, ref double volume, ref bool handled );
+		public event CollisionSoundPlayBeforeDelegate CollisionSoundPlayBefore;
+
+		public void CollisionSoundPlay()
+		{
+			if( !SoundWorld.BackendNull )
+			{
+				var sound = CollisionSound.Value;
+				var volume = 1.0;
+
+				var handled = false;
+				CollisionSoundPlayBefore?.Invoke( this, ref sound, ref volume, ref handled );
+				if( handled )
+					return;
+
+				if( sound != null )
+				{
+					//specify position of collision?
+					ParentScene?.SoundPlay( sound, TransformV.Position, volume: volume );
+
+					collisionSoundRemainingTime = (float)CollisionSoundTimeInterval;
+				}
+			}
+
+			if( NetworkIsServer && CollisionSound.ReferenceOrValueSpecified )
+			{
+				BeginNetworkMessageToEveryone( "CollisionSoundPlay" );
+				EndNetworkMessage();
+			}
+		}
+
+		protected override bool OnReceiveNetworkMessageFromServer( string message, ArrayDataReader reader )
+		{
+			if( !base.OnReceiveNetworkMessageFromServer( message, reader ) )
+				return false;
+
+			if( message == "CollisionSoundPlay" )
+				CollisionSoundPlay();
+
+			return true;
 		}
 	}
 }

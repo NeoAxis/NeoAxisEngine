@@ -2,11 +2,6 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.IO;
-using System.Drawing.Design;
 using NeoAxis.Editor;
 
 namespace NeoAxis
@@ -15,7 +10,7 @@ namespace NeoAxis
 	/// 6-degrees of freedom constraint link between two physical bodies.
 	/// </summary>
 #if !DEPLOY
-	[NewObjectSettings( typeof( NewObjectSettingsConstraint ) )]
+	[NewObjectSettings( "NeoAxis.Editor.Constraint_SixDOF_NewObjectSettings" )]
 #endif
 	public class Constraint_SixDOF : ObjectInSpace, IPhysicalObject
 	{
@@ -42,7 +37,7 @@ namespace NeoAxis
 			get { if( _bodyA.BeginGet() ) BodyA = _bodyA.Get( this ); return _bodyA.value; }
 			set
 			{
-				if( _bodyA.BeginSet( ref value ) )
+				if( _bodyA.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -67,7 +62,7 @@ namespace NeoAxis
 			get { if( _bodyB.BeginGet() ) BodyB = _bodyB.Get( this ); return _bodyB.value; }
 			set
 			{
-				if( _bodyB.BeginSet( ref value ) )
+				if( _bodyB.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -92,7 +87,7 @@ namespace NeoAxis
 			get { if( _collisionsBetweenLinkedBodies.BeginGet() ) CollisionsBetweenLinkedBodies = _collisionsBetweenLinkedBodies.Get( this ); return _collisionsBetweenLinkedBodies.value; }
 			set
 			{
-				if( _collisionsBetweenLinkedBodies.BeginSet( ref value ) )
+				if( _collisionsBetweenLinkedBodies.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -121,7 +116,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _breakable.BeginSet( ref value ) )
+		//		if( _breakable.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -154,7 +149,7 @@ namespace NeoAxis
 		//	get { if( _breakingImpulseThreshold.BeginGet() ) BreakingImpulseThreshold = _breakingImpulseThreshold.Get( this ); return _breakingImpulseThreshold.value; }
 		//	set
 		//	{
-		//		if( _breakingImpulseThreshold.BeginSet( ref value ) )
+		//		if( _breakingImpulseThreshold.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -181,7 +176,7 @@ namespace NeoAxis
 			get { if( _numVelocityStepsOverride.BeginGet() ) NumVelocityStepsOverride = _numVelocityStepsOverride.Get( this ); return _numVelocityStepsOverride.value; }
 			set
 			{
-				if( _numVelocityStepsOverride.BeginSet( ref value ) )
+				if( _numVelocityStepsOverride.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -205,7 +200,7 @@ namespace NeoAxis
 			get { if( _numPositionStepsOverride.BeginGet() ) NumPositionStepsOverride = _numPositionStepsOverride.Get( this ); return _numPositionStepsOverride.value; }
 			set
 			{
-				if( _numPositionStepsOverride.BeginSet( ref value ) )
+				if( _numPositionStepsOverride.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -229,7 +224,7 @@ namespace NeoAxis
 			get { if( _simulate.BeginGet() ) Simulate = _simulate.Get( this ); return _simulate.value; }
 			set
 			{
-				if( _simulate.BeginSet( ref value ) )
+				if( _simulate.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -255,7 +250,7 @@ namespace NeoAxis
 		//	get { if( _overrideNumberSolverIterations.BeginGet() ) OverrideNumberSolverIterations = _overrideNumberSolverIterations.Get( this ); return _overrideNumberSolverIterations.value; }
 		//	set
 		//	{
-		//		if( _overrideNumberSolverIterations.BeginSet( ref value ) )
+		//		if( _overrideNumberSolverIterations.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -281,7 +276,7 @@ namespace NeoAxis
 		//public Reference<bool> AutoActivateBodies
 		//{
 		//	get { if( _autoActivateBodies.BeginGet() ) AutoActivateBodies = _autoActivateBodies.Get( this ); return _autoActivateBodies.value; }
-		//	set { if( _autoActivateBodies.BeginSet( ref value ) ) { try { AutoActivateBodiesChanged?.Invoke( this ); } finally { _autoActivateBodies.EndSet(); } } }
+		//	set { if( _autoActivateBodies.BeginSet( this, ref value ) ) { try { AutoActivateBodiesChanged?.Invoke( this ); } finally { _autoActivateBodies.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="AutoActivateBodies"/> property value changes.</summary>
 		//public event Action<Constraint> AutoActivateBodiesChanged;
@@ -449,7 +444,7 @@ namespace NeoAxis
 						//AngularXAxis
 						if( AngularXAxis.Value == PhysicsAxisMode.Limited )
 						{
-							angularLimitX = AngularXAxisLimit.Value.ToRangeF();
+							angularLimitX = MathEx.DegreeToRadian( AngularXAxisLimit.Value.ToRangeF() );
 							if( angularLimitX.Minimum > angularLimitX.Maximum )
 								angularLimitX.Maximum = angularLimitX.Minimum;
 							if( angularLimitX.Minimum > 0 )
@@ -461,7 +456,7 @@ namespace NeoAxis
 						//AngularYAxis
 						if( AngularYAxis.Value == PhysicsAxisMode.Limited )
 						{
-							angularLimitY = AngularYAxisLimit.Value.ToRangeF();
+							angularLimitY = MathEx.DegreeToRadian( AngularYAxisLimit.Value.ToRangeF() );
 							if( angularLimitY.Minimum > angularLimitY.Maximum )
 								angularLimitY.Maximum = angularLimitY.Minimum;
 							if( angularLimitY.Minimum > 0 )
@@ -473,7 +468,7 @@ namespace NeoAxis
 						//AngularZAxis
 						if( AngularZAxis.Value == PhysicsAxisMode.Limited )
 						{
-							angularLimitZ = AngularZAxisLimit.Value.ToRangeF();
+							angularLimitZ = MathEx.DegreeToRadian( AngularZAxisLimit.Value.ToRangeF() );
 							if( angularLimitZ.Minimum > angularLimitZ.Maximum )
 								angularLimitZ.Maximum = angularLimitZ.Minimum;
 							if( angularLimitZ.Minimum > 0 )
@@ -1151,7 +1146,7 @@ namespace NeoAxis
 			get { if( _linearXAxis.BeginGet() ) LinearXAxis = _linearXAxis.Get( this ); return _linearXAxis.value; }
 			set
 			{
-				if( _linearXAxis.BeginSet( ref value ) )
+				if( _linearXAxis.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1176,7 +1171,7 @@ namespace NeoAxis
 		public Reference<Range> LinearXAxisLimit
 		{
 			get { if( _linearXAxisLimit.BeginGet() ) LinearXAxisLimit = _linearXAxisLimit.Get( this ); return _linearXAxisLimit.value; }
-			set { if( _linearXAxisLimit.BeginSet( ref value ) ) { try { LinearXAxisLimitChanged?.Invoke( this ); UpdateLimit( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearXAxisLimit.EndSet(); } } }
+			set { if( _linearXAxisLimit.BeginSet( this, ref value ) ) { try { LinearXAxisLimitChanged?.Invoke( this ); UpdateLimit( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearXAxisLimit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearXAxisLimit"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearXAxisLimitChanged;
@@ -1191,7 +1186,7 @@ namespace NeoAxis
 		public Reference<double> LinearXAxisFriction
 		{
 			get { if( _linearXAxisFriction.BeginGet() ) LinearXAxisFriction = _linearXAxisFriction.Get( this ); return _linearXAxisFriction.value; }
-			set { if( _linearXAxisFriction.BeginSet( ref value ) ) { try { LinearXAxisFrictionChanged?.Invoke( this ); UpdateFriction( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearXAxisFriction.EndSet(); } } }
+			set { if( _linearXAxisFriction.BeginSet( this, ref value ) ) { try { LinearXAxisFrictionChanged?.Invoke( this ); UpdateFriction( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearXAxisFriction.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearXAxisFriction"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearXAxisFrictionChanged;
@@ -1206,7 +1201,7 @@ namespace NeoAxis
 		public Reference<Scene.PhysicsWorldClass.MotorModeEnum> LinearXAxisMotor
 		{
 			get { if( _linearXAxisMotor.BeginGet() ) LinearXAxisMotor = _linearXAxisMotor.Get( this ); return _linearXAxisMotor.value; }
-			set { if( _linearXAxisMotor.BeginSet( ref value ) ) { try { LinearXAxisMotorChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearXAxisMotor.EndSet(); } } }
+			set { if( _linearXAxisMotor.BeginSet( this, ref value ) ) { try { LinearXAxisMotorChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearXAxisMotor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearXAxisMotor"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearXAxisMotorChanged;
@@ -1221,7 +1216,7 @@ namespace NeoAxis
 		public Reference<double> LinearXAxisMotorFrequency
 		{
 			get { if( _linearXAxisMotorFrequency.BeginGet() ) LinearXAxisMotorFrequency = _linearXAxisMotorFrequency.Get( this ); return _linearXAxisMotorFrequency.value; }
-			set { if( _linearXAxisMotorFrequency.BeginSet( ref value ) ) { try { LinearXAxisMotorFrequencyChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearXAxisMotorFrequency.EndSet(); } } }
+			set { if( _linearXAxisMotorFrequency.BeginSet( this, ref value ) ) { try { LinearXAxisMotorFrequencyChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearXAxisMotorFrequency.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearXAxisMotorFrequency"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearXAxisMotorFrequencyChanged;
@@ -1236,7 +1231,7 @@ namespace NeoAxis
 		public Reference<double> LinearXAxisMotorDamping
 		{
 			get { if( _linearXAxisMotorDamping.BeginGet() ) LinearXAxisMotorDamping = _linearXAxisMotorDamping.Get( this ); return _linearXAxisMotorDamping.value; }
-			set { if( _linearXAxisMotorDamping.BeginSet( ref value ) ) { try { LinearXAxisMotorDampingChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearXAxisMotorDamping.EndSet(); } } }
+			set { if( _linearXAxisMotorDamping.BeginSet( this, ref value ) ) { try { LinearXAxisMotorDampingChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearXAxisMotorDamping.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearXAxisMotorDamping"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearXAxisMotorDampingChanged;
@@ -1251,7 +1246,7 @@ namespace NeoAxis
 		public Reference<Range> LinearXAxisMotorLimit
 		{
 			get { if( _linearXAxisMotorLimit.BeginGet() ) LinearXAxisMotorLimit = _linearXAxisMotorLimit.Get( this ); return _linearXAxisMotorLimit.value; }
-			set { if( _linearXAxisMotorLimit.BeginSet( ref value ) ) { try { LinearXAxisMotorLimitChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearXAxisMotorLimit.EndSet(); } } }
+			set { if( _linearXAxisMotorLimit.BeginSet( this, ref value ) ) { try { LinearXAxisMotorLimitChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearXAxisMotorLimit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearXAxisMotorLimit"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearXAxisMotorLimitChanged;
@@ -1266,7 +1261,7 @@ namespace NeoAxis
 		public Reference<double> LinearXAxisMotorTarget
 		{
 			get { if( _linearXAxisMotorTarget.BeginGet() ) LinearXAxisMotorTarget = _linearXAxisMotorTarget.Get( this ); return _linearXAxisMotorTarget.value; }
-			set { if( _linearXAxisMotorTarget.BeginSet( ref value ) ) { try { LinearXAxisMotorTargetChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearXAxisMotorTarget.EndSet(); } } }
+			set { if( _linearXAxisMotorTarget.BeginSet( this, ref value ) ) { try { LinearXAxisMotorTargetChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearXAxisMotorTarget.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearXAxisMotorTarget"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearXAxisMotorTargetChanged;
@@ -1283,7 +1278,7 @@ namespace NeoAxis
 		//public Reference<Range> LinearXAxisMotorTorqueLimit
 		//{
 		//	get { if( _linearXAxisMotorTorqueLimit.BeginGet() ) LinearXAxisMotorTorqueLimit = _linearXAxisMotorTorqueLimit.Get( this ); return _linearXAxisMotorTorqueLimit.value; }
-		//	set { if( _linearXAxisMotorTorqueLimit.BeginSet( ref value ) ) { try { LinearXAxisMotorTorqueLimitChanged?.Invoke( this ); UpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearXAxisMotorTorqueLimit.EndSet(); } } }
+		//	set { if( _linearXAxisMotorTorqueLimit.BeginSet( this, ref value ) ) { try { LinearXAxisMotorTorqueLimitChanged?.Invoke( this ); UpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearXAxisMotorTorqueLimit.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="LinearXAxisMotorTorqueLimit"/> property value changes.</summary>
 		//public event Action<Constraint> LinearXAxisMotorTorqueLimitChanged;
@@ -1306,7 +1301,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearXAxisMotor.BeginSet( ref value ) )
+		//		if( _linearXAxisMotor.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -1331,7 +1326,7 @@ namespace NeoAxis
 		//public Reference<double> LinearXAxisMotorTargetVelocity
 		//{
 		//	get { if( _linearXAxisMotorTargetVelocity.BeginGet() ) LinearXAxisMotorTargetVelocity = _linearXAxisMotorTargetVelocity.Get( this ); return _linearXAxisMotorTargetVelocity.value; }
-		//	set { if( _linearXAxisMotorTargetVelocity.BeginSet( ref value ) ) { try { LinearXAxisMotorTargetVelocityChanged?.Invoke( this ); UpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearXAxisMotorTargetVelocity.EndSet(); } } }
+		//	set { if( _linearXAxisMotorTargetVelocity.BeginSet( this, ref value ) ) { try { LinearXAxisMotorTargetVelocityChanged?.Invoke( this ); UpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearXAxisMotorTargetVelocity.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="LinearXAxisMotorTargetVelocity"/> property value changes.</summary>
 		//public event Action<Constraint> LinearXAxisMotorTargetVelocityChanged;
@@ -1346,7 +1341,7 @@ namespace NeoAxis
 		//public Reference<double> LinearXAxisMotorTargetPosition
 		//{
 		//	get { if( _linearXAxisMotorTargetPosition.BeginGet() ) LinearXAxisMotorTargetPosition = _linearXAxisMotorTargetPosition.Get( this ); return _linearXAxisMotorTargetPosition.value; }
-		//	set { if( _linearXAxisMotorTargetPosition.BeginSet( ref value ) ) { try { LinearXAxisMotorTargetPositionChanged?.Invoke( this ); UpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearXAxisMotorTargetPosition.EndSet(); } } }
+		//	set { if( _linearXAxisMotorTargetPosition.BeginSet( this, ref value ) ) { try { LinearXAxisMotorTargetPositionChanged?.Invoke( this ); UpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearXAxisMotorTargetPosition.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="LinearXAxisMotorTargetPosition"/> property value changes.</summary>
 		//public event Action<Constraint> LinearXAxisMotorTargetPositionChanged;
@@ -1369,7 +1364,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearXAxisMotorMaxForce.BeginSet( ref value ) )
+		//		if( _linearXAxisMotorMaxForce.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -1403,7 +1398,7 @@ namespace NeoAxis
 		//	set
 		//	{
 		//		value = new Reference<double>( Math.Max( 0, value.Value ), value.GetByReference );
-		//		if( _linearXAxisMotorRestitution.BeginSet( ref value ) )
+		//		if( _linearXAxisMotorRestitution.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -1435,7 +1430,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearXAxisMotorServo.BeginSet( ref value ) )
+		//		if( _linearXAxisMotorServo.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -1468,7 +1463,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearXAxisMotorServoTarget.BeginSet( ref value ) )
+		//		if( _linearXAxisMotorServoTarget.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -1500,7 +1495,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearXAxisSpring.BeginSet( ref value ) )
+		//		if( _linearXAxisSpring.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -1534,7 +1529,7 @@ namespace NeoAxis
 		//	set
 		//	{
 		//		value = new Reference<double>( Math.Max( 0, value.Value ), value.GetByReference );
-		//		if( _linearXAxisSpringStiffness.BeginSet( ref value ) )
+		//		if( _linearXAxisSpringStiffness.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -1568,7 +1563,7 @@ namespace NeoAxis
 		//	set
 		//	{
 		//		value = new Reference<double>( Math.Max( 0, value.Value ), value.GetByReference );
-		//		if( _linearXAxisSpringDamping.BeginSet( ref value ) )
+		//		if( _linearXAxisSpringDamping.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -1597,7 +1592,7 @@ namespace NeoAxis
 			get { if( _linearYAxis.BeginGet() ) LinearYAxis = _linearYAxis.Get( this ); return _linearYAxis.value; }
 			set
 			{
-				if( _linearYAxis.BeginSet( ref value ) )
+				if( _linearYAxis.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1622,7 +1617,7 @@ namespace NeoAxis
 		public Reference<Range> LinearYAxisLimit
 		{
 			get { if( _linearYAxisLimit.BeginGet() ) LinearYAxisLimit = _linearYAxisLimit.Get( this ); return _linearYAxisLimit.value; }
-			set { if( _linearYAxisLimit.BeginSet( ref value ) ) { try { LinearYAxisLimitChanged?.Invoke( this ); UpdateLimit( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationY ); } finally { _linearYAxisLimit.EndSet(); } } }
+			set { if( _linearYAxisLimit.BeginSet( this, ref value ) ) { try { LinearYAxisLimitChanged?.Invoke( this ); UpdateLimit( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationY ); } finally { _linearYAxisLimit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearYAxisLimit"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearYAxisLimitChanged;
@@ -1637,7 +1632,7 @@ namespace NeoAxis
 		public Reference<double> LinearYAxisFriction
 		{
 			get { if( _linearYAxisFriction.BeginGet() ) LinearYAxisFriction = _linearYAxisFriction.Get( this ); return _linearYAxisFriction.value; }
-			set { if( _linearYAxisFriction.BeginSet( ref value ) ) { try { LinearYAxisFrictionChanged?.Invoke( this ); UpdateFriction( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationY ); } finally { _linearYAxisFriction.EndSet(); } } }
+			set { if( _linearYAxisFriction.BeginSet( this, ref value ) ) { try { LinearYAxisFrictionChanged?.Invoke( this ); UpdateFriction( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationY ); } finally { _linearYAxisFriction.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearYAxisFriction"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearYAxisFrictionChanged;
@@ -1652,7 +1647,7 @@ namespace NeoAxis
 		public Reference<Scene.PhysicsWorldClass.MotorModeEnum> LinearYAxisMotor
 		{
 			get { if( _linearYAxisMotor.BeginGet() ) LinearYAxisMotor = _linearYAxisMotor.Get( this ); return _linearYAxisMotor.value; }
-			set { if( _linearYAxisMotor.BeginSet( ref value ) ) { try { LinearYAxisMotorChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationY ); } finally { _linearYAxisMotor.EndSet(); } } }
+			set { if( _linearYAxisMotor.BeginSet( this, ref value ) ) { try { LinearYAxisMotorChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationY ); } finally { _linearYAxisMotor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearYAxisMotor"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearYAxisMotorChanged;
@@ -1667,7 +1662,7 @@ namespace NeoAxis
 		public Reference<double> LinearYAxisMotorFrequency
 		{
 			get { if( _linearYAxisMotorFrequency.BeginGet() ) LinearYAxisMotorFrequency = _linearYAxisMotorFrequency.Get( this ); return _linearYAxisMotorFrequency.value; }
-			set { if( _linearYAxisMotorFrequency.BeginSet( ref value ) ) { try { LinearYAxisMotorFrequencyChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearYAxisMotorFrequency.EndSet(); } } }
+			set { if( _linearYAxisMotorFrequency.BeginSet( this, ref value ) ) { try { LinearYAxisMotorFrequencyChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearYAxisMotorFrequency.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearYAxisMotorFrequency"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearYAxisMotorFrequencyChanged;
@@ -1682,7 +1677,7 @@ namespace NeoAxis
 		public Reference<double> LinearYAxisMotorDamping
 		{
 			get { if( _linearYAxisMotorDamping.BeginGet() ) LinearYAxisMotorDamping = _linearYAxisMotorDamping.Get( this ); return _linearYAxisMotorDamping.value; }
-			set { if( _linearYAxisMotorDamping.BeginSet( ref value ) ) { try { LinearYAxisMotorDampingChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationY ); } finally { _linearYAxisMotorDamping.EndSet(); } } }
+			set { if( _linearYAxisMotorDamping.BeginSet( this, ref value ) ) { try { LinearYAxisMotorDampingChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationY ); } finally { _linearYAxisMotorDamping.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearYAxisMotorDamping"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearYAxisMotorDampingChanged;
@@ -1697,7 +1692,7 @@ namespace NeoAxis
 		public Reference<Range> LinearYAxisMotorLimit
 		{
 			get { if( _linearYAxisMotorLimit.BeginGet() ) LinearYAxisMotorLimit = _linearYAxisMotorLimit.Get( this ); return _linearYAxisMotorLimit.value; }
-			set { if( _linearYAxisMotorLimit.BeginSet( ref value ) ) { try { LinearYAxisMotorLimitChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationY ); } finally { _linearYAxisMotorLimit.EndSet(); } } }
+			set { if( _linearYAxisMotorLimit.BeginSet( this, ref value ) ) { try { LinearYAxisMotorLimitChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationY ); } finally { _linearYAxisMotorLimit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearYAxisMotorLimit"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearYAxisMotorLimitChanged;
@@ -1712,7 +1707,7 @@ namespace NeoAxis
 		public Reference<double> LinearYAxisMotorTarget
 		{
 			get { if( _linearYAxisMotorTarget.BeginGet() ) LinearYAxisMotorTarget = _linearYAxisMotorTarget.Get( this ); return _linearYAxisMotorTarget.value; }
-			set { if( _linearYAxisMotorTarget.BeginSet( ref value ) ) { try { LinearYAxisMotorTargetChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationY ); } finally { _linearYAxisMotorTarget.EndSet(); } } }
+			set { if( _linearYAxisMotorTarget.BeginSet( this, ref value ) ) { try { LinearYAxisMotorTargetChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationY ); } finally { _linearYAxisMotorTarget.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearYAxisMotorTarget"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearYAxisMotorTargetChanged;
@@ -1738,7 +1733,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearYAxis.BeginSet( ref value ) )
+		//		if( _linearYAxis.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -1770,7 +1765,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearYAxisLimitLow.BeginSet( ref value ) )
+		//		if( _linearYAxisLimitLow.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -1802,7 +1797,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearYAxisLimitHigh.BeginSet( ref value ) )
+		//		if( _linearYAxisLimitHigh.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -1834,7 +1829,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearYAxisMotor.BeginSet( ref value ) )
+		//		if( _linearYAxisMotor.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -1866,7 +1861,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearYAxisMotorTargetVelocity.BeginSet( ref value ) )
+		//		if( _linearYAxisMotorTargetVelocity.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -1898,7 +1893,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearYAxisMotorMaxForce.BeginSet( ref value ) )
+		//		if( _linearYAxisMotorMaxForce.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -1932,7 +1927,7 @@ namespace NeoAxis
 		//	set
 		//	{
 		//		value = new Reference<double>( Math.Max( 0, value.Value ), value.GetByReference );
-		//		if( _linearYAxisMotorRestitution.BeginSet( ref value ) )
+		//		if( _linearYAxisMotorRestitution.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -1964,7 +1959,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearYAxisMotorServo.BeginSet( ref value ) )
+		//		if( _linearYAxisMotorServo.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -1996,7 +1991,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearYAxisMotorServoTarget.BeginSet( ref value ) )
+		//		if( _linearYAxisMotorServoTarget.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2028,7 +2023,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearYAxisSpring.BeginSet( ref value ) )
+		//		if( _linearYAxisSpring.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2062,7 +2057,7 @@ namespace NeoAxis
 		//	set
 		//	{
 		//		value = new Reference<double>( Math.Max( 0, value.Value ), value.GetByReference );
-		//		if( _linearYAxisSpringStiffness.BeginSet( ref value ) )
+		//		if( _linearYAxisSpringStiffness.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2096,7 +2091,7 @@ namespace NeoAxis
 		//	set
 		//	{
 		//		value = new Reference<double>( Math.Max( 0, value.Value ), value.GetByReference );
-		//		if( _linearYAxisSpringDamping.BeginSet( ref value ) )
+		//		if( _linearYAxisSpringDamping.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2125,7 +2120,7 @@ namespace NeoAxis
 			get { if( _linearZAxis.BeginGet() ) LinearZAxis = _linearZAxis.Get( this ); return _linearZAxis.value; }
 			set
 			{
-				if( _linearZAxis.BeginSet( ref value ) )
+				if( _linearZAxis.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -2150,7 +2145,7 @@ namespace NeoAxis
 		public Reference<Range> LinearZAxisLimit
 		{
 			get { if( _linearZAxisLimit.BeginGet() ) LinearZAxisLimit = _linearZAxisLimit.Get( this ); return _linearZAxisLimit.value; }
-			set { if( _linearZAxisLimit.BeginSet( ref value ) ) { try { LinearZAxisLimitChanged?.Invoke( this ); UpdateLimit( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationZ ); } finally { _linearZAxisLimit.EndSet(); } } }
+			set { if( _linearZAxisLimit.BeginSet( this, ref value ) ) { try { LinearZAxisLimitChanged?.Invoke( this ); UpdateLimit( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationZ ); } finally { _linearZAxisLimit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearZAxisLimit"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearZAxisLimitChanged;
@@ -2165,7 +2160,7 @@ namespace NeoAxis
 		public Reference<double> LinearZAxisFriction
 		{
 			get { if( _linearZAxisFriction.BeginGet() ) LinearZAxisFriction = _linearZAxisFriction.Get( this ); return _linearZAxisFriction.value; }
-			set { if( _linearZAxisFriction.BeginSet( ref value ) ) { try { LinearZAxisFrictionChanged?.Invoke( this ); UpdateFriction( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationZ ); } finally { _linearZAxisFriction.EndSet(); } } }
+			set { if( _linearZAxisFriction.BeginSet( this, ref value ) ) { try { LinearZAxisFrictionChanged?.Invoke( this ); UpdateFriction( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationZ ); } finally { _linearZAxisFriction.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearZAxisFriction"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearZAxisFrictionChanged;
@@ -2180,7 +2175,7 @@ namespace NeoAxis
 		public Reference<Scene.PhysicsWorldClass.MotorModeEnum> LinearZAxisMotor
 		{
 			get { if( _linearZAxisMotor.BeginGet() ) LinearZAxisMotor = _linearZAxisMotor.Get( this ); return _linearZAxisMotor.value; }
-			set { if( _linearZAxisMotor.BeginSet( ref value ) ) { try { LinearZAxisMotorChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearZAxisMotor.EndSet(); } } }
+			set { if( _linearZAxisMotor.BeginSet( this, ref value ) ) { try { LinearZAxisMotorChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationX ); } finally { _linearZAxisMotor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearZAxisMotor"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearZAxisMotorChanged;
@@ -2195,7 +2190,7 @@ namespace NeoAxis
 		public Reference<double> LinearZAxisMotorFrequency
 		{
 			get { if( _linearZAxisMotorFrequency.BeginGet() ) LinearZAxisMotorFrequency = _linearZAxisMotorFrequency.Get( this ); return _linearZAxisMotorFrequency.value; }
-			set { if( _linearZAxisMotorFrequency.BeginSet( ref value ) ) { try { LinearZAxisMotorFrequencyChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationZ ); } finally { _linearZAxisMotorFrequency.EndSet(); } } }
+			set { if( _linearZAxisMotorFrequency.BeginSet( this, ref value ) ) { try { LinearZAxisMotorFrequencyChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationZ ); } finally { _linearZAxisMotorFrequency.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearZAxisMotorFrequency"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearZAxisMotorFrequencyChanged;
@@ -2210,7 +2205,7 @@ namespace NeoAxis
 		public Reference<double> LinearZAxisMotorDamping
 		{
 			get { if( _linearZAxisMotorDamping.BeginGet() ) LinearZAxisMotorDamping = _linearZAxisMotorDamping.Get( this ); return _linearZAxisMotorDamping.value; }
-			set { if( _linearZAxisMotorDamping.BeginSet( ref value ) ) { try { LinearZAxisMotorDampingChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationZ ); } finally { _linearZAxisMotorDamping.EndSet(); } } }
+			set { if( _linearZAxisMotorDamping.BeginSet( this, ref value ) ) { try { LinearZAxisMotorDampingChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationZ ); } finally { _linearZAxisMotorDamping.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearZAxisMotorDamping"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearZAxisMotorDampingChanged;
@@ -2225,7 +2220,7 @@ namespace NeoAxis
 		public Reference<Range> LinearZAxisMotorLimit
 		{
 			get { if( _linearZAxisMotorLimit.BeginGet() ) LinearZAxisMotorLimit = _linearZAxisMotorLimit.Get( this ); return _linearZAxisMotorLimit.value; }
-			set { if( _linearZAxisMotorLimit.BeginSet( ref value ) ) { try { LinearZAxisMotorLimitChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationZ ); } finally { _linearZAxisMotorLimit.EndSet(); } } }
+			set { if( _linearZAxisMotorLimit.BeginSet( this, ref value ) ) { try { LinearZAxisMotorLimitChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationZ ); } finally { _linearZAxisMotorLimit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearZAxisMotorLimit"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearZAxisMotorLimitChanged;
@@ -2240,7 +2235,7 @@ namespace NeoAxis
 		public Reference<double> LinearZAxisMotorTarget
 		{
 			get { if( _linearZAxisMotorTarget.BeginGet() ) LinearZAxisMotorTarget = _linearZAxisMotorTarget.Get( this ); return _linearZAxisMotorTarget.value; }
-			set { if( _linearZAxisMotorTarget.BeginSet( ref value ) ) { try { LinearZAxisMotorTargetChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationZ ); } finally { _linearZAxisMotorTarget.EndSet(); } } }
+			set { if( _linearZAxisMotorTarget.BeginSet( this, ref value ) ) { try { LinearZAxisMotorTargetChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.TranslationZ ); } finally { _linearZAxisMotorTarget.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LinearZAxisMotorTarget"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> LinearZAxisMotorTargetChanged;
@@ -2265,7 +2260,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearZAxis.BeginSet( ref value ) )
+		//		if( _linearZAxis.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2297,7 +2292,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearZAxisLimitLow.BeginSet( ref value ) )
+		//		if( _linearZAxisLimitLow.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2329,7 +2324,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearZAxisLimitHigh.BeginSet( ref value ) )
+		//		if( _linearZAxisLimitHigh.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2361,7 +2356,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearZAxisMotor.BeginSet( ref value ) )
+		//		if( _linearZAxisMotor.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2393,7 +2388,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearZAxisMotorTargetVelocity.BeginSet( ref value ) )
+		//		if( _linearZAxisMotorTargetVelocity.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2425,7 +2420,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearZAxisMotorMaxForce.BeginSet( ref value ) )
+		//		if( _linearZAxisMotorMaxForce.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2459,7 +2454,7 @@ namespace NeoAxis
 		//	set
 		//	{
 		//		value = new Reference<double>( Math.Max( 0, value.Value ), value.GetByReference );
-		//		if( _linearZAxisMotorRestitution.BeginSet( ref value ) )
+		//		if( _linearZAxisMotorRestitution.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2491,7 +2486,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearZAxisMotorServo.BeginSet( ref value ) )
+		//		if( _linearZAxisMotorServo.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2523,7 +2518,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearZAxisMotorServoTarget.BeginSet( ref value ) )
+		//		if( _linearZAxisMotorServoTarget.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2555,7 +2550,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _linearZAxisSpring.BeginSet( ref value ) )
+		//		if( _linearZAxisSpring.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2589,7 +2584,7 @@ namespace NeoAxis
 		//	set
 		//	{
 		//		value = new Reference<double>( Math.Max( 0, value.Value ), value.GetByReference );
-		//		if( _linearZAxisSpringStiffness.BeginSet( ref value ) )
+		//		if( _linearZAxisSpringStiffness.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2623,7 +2618,7 @@ namespace NeoAxis
 		//	set
 		//	{
 		//		value = new Reference<double>( Math.Max( 0, value.Value ), value.GetByReference );
-		//		if( _linearZAxisSpringDamping.BeginSet( ref value ) )
+		//		if( _linearZAxisSpringDamping.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2652,7 +2647,7 @@ namespace NeoAxis
 			get { if( _angularXAxis.BeginGet() ) AngularXAxis = _angularXAxis.Get( this ); return _angularXAxis.value; }
 			set
 			{
-				if( _angularXAxis.BeginSet( ref value ) )
+				if( _angularXAxis.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -2677,7 +2672,7 @@ namespace NeoAxis
 		public Reference<Range> AngularXAxisLimit
 		{
 			get { if( _angularXAxisLimit.BeginGet() ) AngularXAxisLimit = _angularXAxisLimit.Get( this ); return _angularXAxisLimit.value; }
-			set { if( _angularXAxisLimit.BeginSet( ref value ) ) { try { AngularXAxisLimitChanged?.Invoke( this ); UpdateLimit( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationX ); } finally { _angularXAxisLimit.EndSet(); } } }
+			set { if( _angularXAxisLimit.BeginSet( this, ref value ) ) { try { AngularXAxisLimitChanged?.Invoke( this ); UpdateLimit( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationX ); } finally { _angularXAxisLimit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularXAxisLimit"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularXAxisLimitChanged;
@@ -2692,7 +2687,7 @@ namespace NeoAxis
 		public Reference<double> AngularXAxisFriction
 		{
 			get { if( _angularXAxisFriction.BeginGet() ) AngularXAxisFriction = _angularXAxisFriction.Get( this ); return _angularXAxisFriction.value; }
-			set { if( _angularXAxisFriction.BeginSet( ref value ) ) { try { AngularXAxisFrictionChanged?.Invoke( this ); UpdateFriction( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationX ); } finally { _angularXAxisFriction.EndSet(); } } }
+			set { if( _angularXAxisFriction.BeginSet( this, ref value ) ) { try { AngularXAxisFrictionChanged?.Invoke( this ); UpdateFriction( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationX ); } finally { _angularXAxisFriction.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularXAxisFriction"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularXAxisFrictionChanged;
@@ -2707,7 +2702,7 @@ namespace NeoAxis
 		public Reference<Scene.PhysicsWorldClass.MotorModeEnum> AngularXAxisMotor
 		{
 			get { if( _angularXAxisMotor.BeginGet() ) AngularXAxisMotor = _angularXAxisMotor.Get( this ); return _angularXAxisMotor.value; }
-			set { if( _angularXAxisMotor.BeginSet( ref value ) ) { try { AngularXAxisMotorChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationX ); } finally { _angularXAxisMotor.EndSet(); } } }
+			set { if( _angularXAxisMotor.BeginSet( this, ref value ) ) { try { AngularXAxisMotorChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationX ); } finally { _angularXAxisMotor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularXAxisMotor"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularXAxisMotorChanged;
@@ -2722,7 +2717,7 @@ namespace NeoAxis
 		public Reference<double> AngularXAxisMotorFrequency
 		{
 			get { if( _angularXAxisMotorFrequency.BeginGet() ) AngularXAxisMotorFrequency = _angularXAxisMotorFrequency.Get( this ); return _angularXAxisMotorFrequency.value; }
-			set { if( _angularXAxisMotorFrequency.BeginSet( ref value ) ) { try { AngularXAxisMotorFrequencyChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationX ); } finally { _angularXAxisMotorFrequency.EndSet(); } } }
+			set { if( _angularXAxisMotorFrequency.BeginSet( this, ref value ) ) { try { AngularXAxisMotorFrequencyChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationX ); } finally { _angularXAxisMotorFrequency.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularXAxisMotorFrequency"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularXAxisMotorFrequencyChanged;
@@ -2737,7 +2732,7 @@ namespace NeoAxis
 		public Reference<double> AngularXAxisMotorDamping
 		{
 			get { if( _angularXAxisMotorDamping.BeginGet() ) AngularXAxisMotorDamping = _angularXAxisMotorDamping.Get( this ); return _angularXAxisMotorDamping.value; }
-			set { if( _angularXAxisMotorDamping.BeginSet( ref value ) ) { try { AngularXAxisMotorDampingChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationX ); } finally { _angularXAxisMotorDamping.EndSet(); } } }
+			set { if( _angularXAxisMotorDamping.BeginSet( this, ref value ) ) { try { AngularXAxisMotorDampingChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationX ); } finally { _angularXAxisMotorDamping.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularXAxisMotorDamping"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularXAxisMotorDampingChanged;
@@ -2752,7 +2747,7 @@ namespace NeoAxis
 		public Reference<Range> AngularXAxisMotorLimit
 		{
 			get { if( _angularXAxisMotorLimit.BeginGet() ) AngularXAxisMotorLimit = _angularXAxisMotorLimit.Get( this ); return _angularXAxisMotorLimit.value; }
-			set { if( _angularXAxisMotorLimit.BeginSet( ref value ) ) { try { AngularXAxisMotorLimitChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationX ); } finally { _angularXAxisMotorLimit.EndSet(); } } }
+			set { if( _angularXAxisMotorLimit.BeginSet( this, ref value ) ) { try { AngularXAxisMotorLimitChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationX ); } finally { _angularXAxisMotorLimit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularXAxisMotorLimit"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularXAxisMotorLimitChanged;
@@ -2767,7 +2762,7 @@ namespace NeoAxis
 		public Reference<double> AngularXAxisMotorTarget
 		{
 			get { if( _angularXAxisMotorTarget.BeginGet() ) AngularXAxisMotorTarget = _angularXAxisMotorTarget.Get( this ); return _angularXAxisMotorTarget.value; }
-			set { if( _angularXAxisMotorTarget.BeginSet( ref value ) ) { try { AngularXAxisMotorTargetChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationX ); } finally { _angularXAxisMotorTarget.EndSet(); } } }
+			set { if( _angularXAxisMotorTarget.BeginSet( this, ref value ) ) { try { AngularXAxisMotorTargetChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationX ); } finally { _angularXAxisMotorTarget.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularXAxisMotorTarget"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularXAxisMotorTargetChanged;
@@ -2790,7 +2785,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularXAxisMotor.BeginSet( ref value ) )
+		//		if( _angularXAxisMotor.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2822,7 +2817,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularXAxisMotorTargetVelocity.BeginSet( ref value ) )
+		//		if( _angularXAxisMotorTargetVelocity.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2853,7 +2848,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularXAxisMotorMaxForce.BeginSet( ref value ) )
+		//		if( _angularXAxisMotorMaxForce.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2888,7 +2883,7 @@ namespace NeoAxis
 		//	set
 		//	{
 		//		value = new Reference<double>( Math.Max( 0, value.Value ), value.GetByReference );
-		//		if( _angularXAxisMotorRestitution.BeginSet( ref value ) )
+		//		if( _angularXAxisMotorRestitution.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2919,7 +2914,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularXAxisServo.BeginSet( ref value ) )
+		//		if( _angularXAxisServo.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2951,7 +2946,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularXAxisServoTarget.BeginSet( ref value ) )
+		//		if( _angularXAxisServoTarget.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -2982,7 +2977,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularXAxisSpring.BeginSet( ref value ) )
+		//		if( _angularXAxisSpring.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3015,7 +3010,7 @@ namespace NeoAxis
 		//	set
 		//	{
 		//		value = new Reference<double>( Math.Max( 0, value.Value ), value.GetByReference );
-		//		if( _angularXAxisSpringStiffness.BeginSet( ref value ) )
+		//		if( _angularXAxisSpringStiffness.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3048,7 +3043,7 @@ namespace NeoAxis
 		//	set
 		//	{
 		//		value = new Reference<double>( Math.Max( 0, value.Value ), value.GetByReference );
-		//		if( _angularXAxisSpringDamping.BeginSet( ref value ) )
+		//		if( _angularXAxisSpringDamping.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3076,7 +3071,7 @@ namespace NeoAxis
 			get { if( _angularYAxis.BeginGet() ) AngularYAxis = _angularYAxis.Get( this ); return _angularYAxis.value; }
 			set
 			{
-				if( _angularYAxis.BeginSet( ref value ) )
+				if( _angularYAxis.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -3101,7 +3096,7 @@ namespace NeoAxis
 		public Reference<Range> AngularYAxisLimit
 		{
 			get { if( _angularYAxisLimit.BeginGet() ) AngularYAxisLimit = _angularYAxisLimit.Get( this ); return _angularYAxisLimit.value; }
-			set { if( _angularYAxisLimit.BeginSet( ref value ) ) { try { AngularYAxisLimitChanged?.Invoke( this ); UpdateLimit( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationY ); } finally { _angularYAxisLimit.EndSet(); } } }
+			set { if( _angularYAxisLimit.BeginSet( this, ref value ) ) { try { AngularYAxisLimitChanged?.Invoke( this ); UpdateLimit( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationY ); } finally { _angularYAxisLimit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularYAxisLimit"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularYAxisLimitChanged;
@@ -3116,7 +3111,7 @@ namespace NeoAxis
 		public Reference<double> AngularYAxisFriction
 		{
 			get { if( _angularYAxisFriction.BeginGet() ) AngularYAxisFriction = _angularYAxisFriction.Get( this ); return _angularYAxisFriction.value; }
-			set { if( _angularYAxisFriction.BeginSet( ref value ) ) { try { AngularYAxisFrictionChanged?.Invoke( this ); UpdateFriction( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationY ); } finally { _angularYAxisFriction.EndSet(); } } }
+			set { if( _angularYAxisFriction.BeginSet( this, ref value ) ) { try { AngularYAxisFrictionChanged?.Invoke( this ); UpdateFriction( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationY ); } finally { _angularYAxisFriction.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularYAxisFriction"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularYAxisFrictionChanged;
@@ -3131,7 +3126,7 @@ namespace NeoAxis
 		public Reference<Scene.PhysicsWorldClass.MotorModeEnum> AngularYAxisMotor
 		{
 			get { if( _angularYAxisMotor.BeginGet() ) AngularYAxisMotor = _angularYAxisMotor.Get( this ); return _angularYAxisMotor.value; }
-			set { if( _angularYAxisMotor.BeginSet( ref value ) ) { try { AngularYAxisMotorChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationY ); } finally { _angularYAxisMotor.EndSet(); } } }
+			set { if( _angularYAxisMotor.BeginSet( this, ref value ) ) { try { AngularYAxisMotorChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationY ); } finally { _angularYAxisMotor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularYAxisMotor"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularYAxisMotorChanged;
@@ -3146,7 +3141,7 @@ namespace NeoAxis
 		public Reference<double> AngularYAxisMotorFrequency
 		{
 			get { if( _angularYAxisMotorFrequency.BeginGet() ) AngularYAxisMotorFrequency = _angularYAxisMotorFrequency.Get( this ); return _angularYAxisMotorFrequency.value; }
-			set { if( _angularYAxisMotorFrequency.BeginSet( ref value ) ) { try { AngularYAxisMotorFrequencyChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationY ); } finally { _angularYAxisMotorFrequency.EndSet(); } } }
+			set { if( _angularYAxisMotorFrequency.BeginSet( this, ref value ) ) { try { AngularYAxisMotorFrequencyChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationY ); } finally { _angularYAxisMotorFrequency.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularYAxisMotorFrequency"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularYAxisMotorFrequencyChanged;
@@ -3161,7 +3156,7 @@ namespace NeoAxis
 		public Reference<double> AngularYAxisMotorDamping
 		{
 			get { if( _angularYAxisMotorDamping.BeginGet() ) AngularYAxisMotorDamping = _angularYAxisMotorDamping.Get( this ); return _angularYAxisMotorDamping.value; }
-			set { if( _angularYAxisMotorDamping.BeginSet( ref value ) ) { try { AngularYAxisMotorDampingChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationY ); } finally { _angularYAxisMotorDamping.EndSet(); } } }
+			set { if( _angularYAxisMotorDamping.BeginSet( this, ref value ) ) { try { AngularYAxisMotorDampingChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationY ); } finally { _angularYAxisMotorDamping.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularYAxisMotorDamping"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularYAxisMotorDampingChanged;
@@ -3176,7 +3171,7 @@ namespace NeoAxis
 		public Reference<Range> AngularYAxisMotorLimit
 		{
 			get { if( _angularYAxisMotorLimit.BeginGet() ) AngularYAxisMotorLimit = _angularYAxisMotorLimit.Get( this ); return _angularYAxisMotorLimit.value; }
-			set { if( _angularYAxisMotorLimit.BeginSet( ref value ) ) { try { AngularYAxisMotorLimitChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationY ); } finally { _angularYAxisMotorLimit.EndSet(); } } }
+			set { if( _angularYAxisMotorLimit.BeginSet( this, ref value ) ) { try { AngularYAxisMotorLimitChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationY ); } finally { _angularYAxisMotorLimit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularYAxisMotorLimit"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularYAxisMotorLimitChanged;
@@ -3191,7 +3186,7 @@ namespace NeoAxis
 		public Reference<double> AngularYAxisMotorTarget
 		{
 			get { if( _angularYAxisMotorTarget.BeginGet() ) AngularYAxisMotorTarget = _angularYAxisMotorTarget.Get( this ); return _angularYAxisMotorTarget.value; }
-			set { if( _angularYAxisMotorTarget.BeginSet( ref value ) ) { try { AngularYAxisMotorTargetChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationY ); } finally { _angularYAxisMotorTarget.EndSet(); } } }
+			set { if( _angularYAxisMotorTarget.BeginSet( this, ref value ) ) { try { AngularYAxisMotorTargetChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationY ); } finally { _angularYAxisMotorTarget.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularYAxisMotorTarget"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularYAxisMotorTargetChanged;
@@ -3216,7 +3211,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularYAxis.BeginSet( ref value ) )
+		//		if( _angularYAxis.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3248,7 +3243,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularYAxisLimitLow.BeginSet( ref value ) )
+		//		if( _angularYAxisLimitLow.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3280,7 +3275,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularYAxisLimitHigh.BeginSet( ref value ) )
+		//		if( _angularYAxisLimitHigh.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3311,7 +3306,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularYAxisMotor.BeginSet( ref value ) )
+		//		if( _angularYAxisMotor.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3342,7 +3337,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularYAxisMotorTargetVelocity.BeginSet( ref value ) )
+		//		if( _angularYAxisMotorTargetVelocity.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3373,7 +3368,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularYAxisMotorMaxForce.BeginSet( ref value ) )
+		//		if( _angularYAxisMotorMaxForce.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3406,7 +3401,7 @@ namespace NeoAxis
 		//	set
 		//	{
 		//		value = new Reference<double>( Math.Max( 0, value.Value ), value.GetByReference );
-		//		if( _angularYAxisMotorRestitution.BeginSet( ref value ) )
+		//		if( _angularYAxisMotorRestitution.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3437,7 +3432,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularYAxisServo.BeginSet( ref value ) )
+		//		if( _angularYAxisServo.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3469,7 +3464,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularYAxisServoTarget.BeginSet( ref value ) )
+		//		if( _angularYAxisServoTarget.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3500,7 +3495,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularYAxisSpring.BeginSet( ref value ) )
+		//		if( _angularYAxisSpring.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3533,7 +3528,7 @@ namespace NeoAxis
 		//	set
 		//	{
 		//		value = new Reference<double>( Math.Max( 0, value.Value ), value.GetByReference );
-		//		if( _angularYAxisSpringStiffness.BeginSet( ref value ) )
+		//		if( _angularYAxisSpringStiffness.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3566,7 +3561,7 @@ namespace NeoAxis
 		//	set
 		//	{
 		//		value = new Reference<double>( Math.Max( 0, value.Value ), value.GetByReference );
-		//		if( _angularYAxisSpringDamping.BeginSet( ref value ) )
+		//		if( _angularYAxisSpringDamping.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3594,7 +3589,7 @@ namespace NeoAxis
 			get { if( _angularZAxis.BeginGet() ) AngularZAxis = _angularZAxis.Get( this ); return _angularZAxis.value; }
 			set
 			{
-				if( _angularZAxis.BeginSet( ref value ) )
+				if( _angularZAxis.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -3619,7 +3614,7 @@ namespace NeoAxis
 		public Reference<Range> AngularZAxisLimit
 		{
 			get { if( _angularZAxisLimit.BeginGet() ) AngularZAxisLimit = _angularZAxisLimit.Get( this ); return _angularZAxisLimit.value; }
-			set { if( _angularZAxisLimit.BeginSet( ref value ) ) { try { AngularZAxisLimitChanged?.Invoke( this ); UpdateLimit( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationZ ); } finally { _angularZAxisLimit.EndSet(); } } }
+			set { if( _angularZAxisLimit.BeginSet( this, ref value ) ) { try { AngularZAxisLimitChanged?.Invoke( this ); UpdateLimit( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationZ ); } finally { _angularZAxisLimit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularZAxisLimit"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularZAxisLimitChanged;
@@ -3634,7 +3629,7 @@ namespace NeoAxis
 		public Reference<double> AngularZAxisFriction
 		{
 			get { if( _angularZAxisFriction.BeginGet() ) AngularZAxisFriction = _angularZAxisFriction.Get( this ); return _angularZAxisFriction.value; }
-			set { if( _angularZAxisFriction.BeginSet( ref value ) ) { try { AngularZAxisFrictionChanged?.Invoke( this ); UpdateFriction( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationZ ); } finally { _angularZAxisFriction.EndSet(); } } }
+			set { if( _angularZAxisFriction.BeginSet( this, ref value ) ) { try { AngularZAxisFrictionChanged?.Invoke( this ); UpdateFriction( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationZ ); } finally { _angularZAxisFriction.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularZAxisFriction"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularZAxisFrictionChanged;
@@ -3649,7 +3644,7 @@ namespace NeoAxis
 		public Reference<Scene.PhysicsWorldClass.MotorModeEnum> AngularZAxisMotor
 		{
 			get { if( _angularZAxisMotor.BeginGet() ) AngularZAxisMotor = _angularZAxisMotor.Get( this ); return _angularZAxisMotor.value; }
-			set { if( _angularZAxisMotor.BeginSet( ref value ) ) { try { AngularZAxisMotorChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationZ ); } finally { _angularZAxisMotor.EndSet(); } } }
+			set { if( _angularZAxisMotor.BeginSet( this, ref value ) ) { try { AngularZAxisMotorChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationZ ); } finally { _angularZAxisMotor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularZAxisMotor"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularZAxisMotorChanged;
@@ -3664,7 +3659,7 @@ namespace NeoAxis
 		public Reference<double> AngularZAxisMotorFrequency
 		{
 			get { if( _angularZAxisMotorFrequency.BeginGet() ) AngularZAxisMotorFrequency = _angularZAxisMotorFrequency.Get( this ); return _angularZAxisMotorFrequency.value; }
-			set { if( _angularZAxisMotorFrequency.BeginSet( ref value ) ) { try { AngularZAxisMotorFrequencyChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationZ ); } finally { _angularZAxisMotorFrequency.EndSet(); } } }
+			set { if( _angularZAxisMotorFrequency.BeginSet( this, ref value ) ) { try { AngularZAxisMotorFrequencyChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationZ ); } finally { _angularZAxisMotorFrequency.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularZAxisMotorFrequency"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularZAxisMotorFrequencyChanged;
@@ -3679,7 +3674,7 @@ namespace NeoAxis
 		public Reference<double> AngularZAxisMotorDamping
 		{
 			get { if( _angularZAxisMotorDamping.BeginGet() ) AngularZAxisMotorDamping = _angularZAxisMotorDamping.Get( this ); return _angularZAxisMotorDamping.value; }
-			set { if( _angularZAxisMotorDamping.BeginSet( ref value ) ) { try { AngularZAxisMotorDampingChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationZ ); } finally { _angularZAxisMotorDamping.EndSet(); } } }
+			set { if( _angularZAxisMotorDamping.BeginSet( this, ref value ) ) { try { AngularZAxisMotorDampingChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationZ ); } finally { _angularZAxisMotorDamping.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularZAxisMotorDamping"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularZAxisMotorDampingChanged;
@@ -3694,7 +3689,7 @@ namespace NeoAxis
 		public Reference<Range> AngularZAxisMotorLimit
 		{
 			get { if( _angularZAxisMotorLimit.BeginGet() ) AngularZAxisMotorLimit = _angularZAxisMotorLimit.Get( this ); return _angularZAxisMotorLimit.value; }
-			set { if( _angularZAxisMotorLimit.BeginSet( ref value ) ) { try { AngularZAxisMotorLimitChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationZ ); } finally { _angularZAxisMotorLimit.EndSet(); } } }
+			set { if( _angularZAxisMotorLimit.BeginSet( this, ref value ) ) { try { AngularZAxisMotorLimitChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationZ ); } finally { _angularZAxisMotorLimit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularZAxisMotorLimit"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularZAxisMotorLimitChanged;
@@ -3709,7 +3704,7 @@ namespace NeoAxis
 		public Reference<double> AngularZAxisMotorTarget
 		{
 			get { if( _angularZAxisMotorTarget.BeginGet() ) AngularZAxisMotorTarget = _angularZAxisMotorTarget.Get( this ); return _angularZAxisMotorTarget.value; }
-			set { if( _angularZAxisMotorTarget.BeginSet( ref value ) ) { try { AngularZAxisMotorTargetChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationZ ); } finally { _angularZAxisMotorTarget.EndSet(); } } }
+			set { if( _angularZAxisMotorTarget.BeginSet( this, ref value ) ) { try { AngularZAxisMotorTargetChanged?.Invoke( this ); NeedUpdateMotor( Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationZ ); } finally { _angularZAxisMotorTarget.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AngularZAxisMotorTarget"/> property value changes.</summary>
 		public event Action<Constraint_SixDOF> AngularZAxisMotorTargetChanged;
@@ -3734,7 +3729,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularZAxis.BeginSet( ref value ) )
+		//		if( _angularZAxis.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3767,7 +3762,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularZAxisLimitLow.BeginSet( ref value ) )
+		//		if( _angularZAxisLimitLow.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3799,7 +3794,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularZAxisLimitHigh.BeginSet( ref value ) )
+		//		if( _angularZAxisLimitHigh.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3830,7 +3825,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularZAxisMotor.BeginSet( ref value ) )
+		//		if( _angularZAxisMotor.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3861,7 +3856,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularZAxisMotorTargetVelocity.BeginSet( ref value ) )
+		//		if( _angularZAxisMotorTargetVelocity.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3892,7 +3887,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularZAxisMotorMaxForce.BeginSet( ref value ) )
+		//		if( _angularZAxisMotorMaxForce.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3925,7 +3920,7 @@ namespace NeoAxis
 		//	set
 		//	{
 		//		value = new Reference<double>( Math.Max( 0, value.Value ), value.GetByReference );
-		//		if( _angularZAxisMotorRestitution.BeginSet( ref value ) )
+		//		if( _angularZAxisMotorRestitution.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3956,7 +3951,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularZAxisServo.BeginSet( ref value ) )
+		//		if( _angularZAxisServo.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -3988,7 +3983,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularZAxisServoTarget.BeginSet( ref value ) )
+		//		if( _angularZAxisServoTarget.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -4019,7 +4014,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _angularZAxisSpring.BeginSet( ref value ) )
+		//		if( _angularZAxisSpring.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -4052,7 +4047,7 @@ namespace NeoAxis
 		//	set
 		//	{
 		//		value = new Reference<double>( Math.Max( 0, value.Value ), value.GetByReference );
-		//		if( _angularZAxisSpringStiffness.BeginSet( ref value ) )
+		//		if( _angularZAxisSpringStiffness.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -4085,7 +4080,7 @@ namespace NeoAxis
 		//	set
 		//	{
 		//		value = new Reference<double>( Math.Max( 0, value.Value ), value.GetByReference );
-		//		if( _angularZAxisSpringDamping.BeginSet( ref value ) )
+		//		if( _angularZAxisSpringDamping.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -4404,90 +4399,6 @@ namespace NeoAxis
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if !DEPLOY
-		/// <summary>
-		/// A set of settings for <see cref="Constraint_SixDOF"/> creation in the editor.
-		/// </summary>
-		public class NewObjectSettingsConstraint : NewObjectSettings
-		{
-			/// <summary>
-			/// Enumerates the types of constraint link between two physical bodies.
-			/// </summary>
-			public enum InitialConfigurationEnum
-			{
-				Fixed,
-				Hinge,
-				Point,
-				ConeTwist,
-				Slider,
-			}
-
-			InitialConfigurationEnum initialConfiguration = InitialConfigurationEnum.Fixed;
-
-			[DefaultValue( InitialConfigurationEnum.Fixed )]
-			[Category( "Options" )]
-			public InitialConfigurationEnum InitialConfiguration
-			{
-				get { return initialConfiguration; }
-				set { initialConfiguration = value; }
-			}
-
-			public override bool Creation( NewObjectCell.ObjectCreationContext context )
-			{
-				var c = (Constraint_SixDOF)context.newObject;
-
-				//!!!!Constraint: создание: если выделены тела, то констрейнт становится чилдом
-				////get bodies from selected objects
-				//{
-				//	//!!!!пока так. надо брать из документа
-				//	var selectedObjects = SettingsWindow.Instance._SelectedObjects;
-				//	if( selectedObjects.Length == 2 )
-				//	{
-				//		var bodyA = selectedObjects[ 0 ] as RigidBody;
-				//		var bodyB = selectedObjects[ 1 ] as RigidBody;
-				//		if( bodyA != null && bodyB != null )
-				//		{
-				//			c.BodyA = new Reference<RigidBody>( null, ReferenceUtils.CalculateThisReference( c, bodyA ) );
-				//			c.BodyB = new Reference<RigidBody>( null, ReferenceUtils.CalculateThisReference( c, bodyB ) );
-
-				//			//!!!!можно луч от курсора учитывать
-				//			var pos = ( bodyA.Transform.Value.Position + bodyB.Transform.Value.Position ) * 0.5;
-				//			c.Transform = new Transform( pos, Quat.Identity );
-				//		}
-				//	}
-				//}
-
-				switch( InitialConfiguration )
-				{
-				case InitialConfigurationEnum.Hinge:
-					c.AngularZAxis = PhysicsAxisMode.Free;
-					break;
-
-				case InitialConfigurationEnum.Point:
-					c.AngularXAxis = PhysicsAxisMode.Free;
-					c.AngularYAxis = PhysicsAxisMode.Free;
-					c.AngularZAxis = PhysicsAxisMode.Free;
-					break;
-
-				case InitialConfigurationEnum.ConeTwist:
-					//!!!!так?
-					c.AngularXAxis = PhysicsAxisMode.Free;
-					c.AngularYAxis = PhysicsAxisMode.Limited;
-					c.AngularZAxis = PhysicsAxisMode.Limited;
-					break;
-
-				case InitialConfigurationEnum.Slider:
-					c.LinearXAxis = PhysicsAxisMode.Free;
-					break;
-				}
-
-				return base.Creation( context );
-			}
-		}
-#endif
-
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 		[Browsable( false )]
 		public Scene.PhysicsWorldClass.Constraint PhysicalConstraint
 		{
@@ -4757,15 +4668,15 @@ namespace NeoAxis
 					break;
 
 				case Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationX:
-					sixDOF.SetLimit( axis, AngularXAxisLimit.Value.ToRangeF() );
+					sixDOF.SetLimit( axis, MathEx.DegreeToRadian( AngularXAxisLimit.Value.ToRangeF() ) );
 					break;
 
 				case Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationY:
-					sixDOF.SetLimit( axis, AngularYAxisLimit.Value.ToRangeF() );
+					sixDOF.SetLimit( axis, MathEx.DegreeToRadian( AngularYAxisLimit.Value.ToRangeF() ) );
 					break;
 
 				case Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationZ:
-					sixDOF.SetLimit( axis, AngularZAxisLimit.Value.ToRangeF() );
+					sixDOF.SetLimit( axis, MathEx.DegreeToRadian( AngularZAxisLimit.Value.ToRangeF() ) );
 					break;
 				}
 			}
@@ -4822,15 +4733,15 @@ namespace NeoAxis
 				break;
 
 			case Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationX:
-				sixDOF.SetMotor( axis, (int)AngularXAxisMotor.Value, (float)AngularXAxisMotorFrequency, (float)AngularXAxisMotorDamping, AngularXAxisMotorLimit.Value.ToRangeF(), (float)AngularXAxisMotorTarget );
+				sixDOF.SetMotor( axis, (int)AngularXAxisMotor.Value, (float)AngularXAxisMotorFrequency, (float)AngularXAxisMotorDamping, AngularXAxisMotorLimit.Value.ToRangeF(), MathEx.DegreeToRadian( (float)AngularXAxisMotorTarget ) );
 				break;
 
 			case Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationY:
-				sixDOF.SetMotor( axis, (int)AngularYAxisMotor.Value, (float)AngularYAxisMotorFrequency, (float)AngularYAxisMotorDamping, AngularYAxisMotorLimit.Value.ToRangeF(), (float)AngularYAxisMotorTarget );
+				sixDOF.SetMotor( axis, (int)AngularYAxisMotor.Value, (float)AngularYAxisMotorFrequency, (float)AngularYAxisMotorDamping, AngularYAxisMotorLimit.Value.ToRangeF(), MathEx.DegreeToRadian( (float)AngularYAxisMotorTarget ) );
 				break;
 
 			case Scene.PhysicsWorldClass.SixDOFConstraint.AxisEnum.RotationZ:
-				sixDOF.SetMotor( axis, (int)AngularZAxisMotor.Value, (float)AngularZAxisMotorFrequency, (float)AngularZAxisMotorDamping, AngularZAxisMotorLimit.Value.ToRangeF(), (float)AngularZAxisMotorTarget );
+				sixDOF.SetMotor( axis, (int)AngularZAxisMotor.Value, (float)AngularZAxisMotorFrequency, (float)AngularZAxisMotorDamping, AngularZAxisMotorLimit.Value.ToRangeF(), MathEx.DegreeToRadian( (float)AngularZAxisMotorTarget ) );
 				break;
 			}
 		}

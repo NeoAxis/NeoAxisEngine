@@ -19,6 +19,7 @@ namespace NeoAxis
 	public abstract class SoundWorld
 	{
 		static SoundWorld instance;
+		static bool instanceIsNullSoundWorld;
 
 		//system
 		static bool suspendWorkingWhenApplicationIsNotActive = true;
@@ -65,6 +66,8 @@ namespace NeoAxis
 
 		internal static void Init( IntPtr mainWindowHandle )
 		{
+			instanceIsNullSoundWorld = false;
+
 			if( instance != null )
 				Log.Fatal( "SoundWorld: Init: The sound system is already initialized." );
 
@@ -85,6 +88,7 @@ namespace NeoAxis
 			{
 				maxReal2DChannels = 0;
 				maxReal3DChannels = 0;
+				instanceIsNullSoundWorld = true;
 			}
 
 			instance.InitInternal( maxReal2DChannels, maxReal3DChannels );
@@ -416,7 +420,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		public static SoundVirtualChannel SoundPlay( Scene attachedToScene, SoundData sound, SoundChannelGroup group, double priority, bool paused = false )
+		public static SoundVirtualChannel SoundPlay( Scene attachedToScene, SoundData sound, SoundChannelGroup group, double priority, double volume, bool paused = false )
 		{
 			if( sound == null || BackendNull )
 				return null;
@@ -470,25 +474,16 @@ namespace NeoAxis
 			if( group == null )
 				group = MasterChannelGroup;
 
-			SoundVirtualChannel virtualChannel = new SoundVirtualChannel();
+			var virtualChannel = new SoundVirtualChannel();
 
 			if( ( sound.Mode & SoundModes.Mode3D ) != 0 )
-			{
 				activeVirtual3DChannels.Add( virtualChannel );
-
-				//if( activeVirtual3DChannels.Count > 2048 )
-				//	Log.Info( "SoundSystem: Quantity of active 3D channels > 2048." );
-			}
 			else
-			{
 				activeVirtual2DChannels.Add( virtualChannel );
-
-				//if( activeVirtual2DChannels.Count > 2048 )
-				//	Log.Info( "SoundSystem: Quantity of active 2D channels > 2048." );
-			}
 
 			virtualChannel.SoundPlayInit( attachedToScene, sound, group );
 			virtualChannel.Priority = priority;
+			virtualChannel.Volume = volume;
 
 			if( !paused )
 				virtualChannel.Pause = false;
@@ -682,7 +677,7 @@ namespace NeoAxis
 						{
 							//if( ( sound.Mode & SoundModes.Stream ) != 0 )
 							//	priority += 10;
-							priority = ( virtualChannel.Priority + .00001 ) * 10000000000;
+							priority = ( virtualChannel.Priority + 0.00001 ) * 10000000000;
 
 							//fix sorting jerking problem
 							priority += (double)sound.createIndex;
@@ -713,7 +708,6 @@ namespace NeoAxis
 
 			//sort by priority
 			CollectionUtility.MergeSort( activeVirtualChannels, virtualChannelsTempPriorityComparer, true );
-			//CollectionUtility.SelectionSort( activeVirtualChannels, virtualChannelsTempPriorityComparer );
 
 			//remove virtual channels from real channels
 			for( int n = 0; n < activeVirtualChannels.Length; n++ )
@@ -811,7 +805,7 @@ namespace NeoAxis
 			{
 				for( int n = 0; n < real3DChannels.Count; n++ )
 				{
-					SoundRealChannel realChannel = real3DChannels[ n ];
+					var realChannel = real3DChannels[ n ];
 					if( realChannel.currentVirtualChannel != null )
 					{
 						//!!!!slowly enter to critical section for each real channel?
@@ -1060,7 +1054,7 @@ namespace NeoAxis
 
 		public static bool BackendNull
 		{
-			get { return instance as NullSoundWorld != null; }
+			get { return instanceIsNullSoundWorld; }
 		}
 	}
 }

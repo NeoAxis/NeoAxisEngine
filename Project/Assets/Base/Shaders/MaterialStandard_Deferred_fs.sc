@@ -4,18 +4,17 @@ $input v_texCoord01, v_worldPosition_depth, v_worldNormal_materialIndex, v_tange
 #define DEFERRED 1
 #include "Common.sh"
 #include "UniformsFragment.sh"
-#include "FragmentFunctions.sh"
 
-uniform vec4 u_renderOperationData[7];
+uniform vec4 u_renderOperationData[8];
 uniform vec4 u_materialCustomParameters[2];
+uniform vec4 u_objectInstanceParameters[2];
+
 SAMPLER2D(s_materials, 1);
-#if defined(GLOBAL_VOXEL_LOD) && defined(VOXEL)
+#if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )
 	SAMPLER2D(s_voxelData, 2);
 #endif
-#if defined(GLOBAL_VIRTUALIZED_GEOMETRY) && defined(VIRTUALIZED)
-	SAMPLER2D(s_virtualizedData, 11);
-#endif
-SAMPLER2D(s_linearSamplerFragment, 10);
+SAMPLER2D(s_linearSamplerFragment, 9);
+//SAMPLER2D(s_linearSamplerFragment, 10);
 
 #ifdef DISPLACEMENT_CODE_PARAMETERS
 	DISPLACEMENT_CODE_PARAMETERS
@@ -26,6 +25,9 @@ SAMPLER2D(s_linearSamplerFragment, 10);
 #ifdef MATERIAL_INDEX_CODE_PARAMETERS
 	MATERIAL_INDEX_CODE_PARAMETERS
 #endif
+#ifdef OPACITY_CODE_PARAMETERS
+	OPACITY_CODE_PARAMETERS
+#endif
 
 #ifdef DISPLACEMENT_CODE_SAMPLERS
 	DISPLACEMENT_CODE_SAMPLERS
@@ -35,6 +37,9 @@ SAMPLER2D(s_linearSamplerFragment, 10);
 #endif
 #ifdef MATERIAL_INDEX_CODE_SAMPLERS
 	MATERIAL_INDEX_CODE_SAMPLERS
+#endif
+#ifdef OPACITY_CODE_SAMPLERS
+	OPACITY_CODE_SAMPLERS
 #endif
 
 #ifdef DISPLACEMENT_CODE_SHADER_SCRIPTS
@@ -49,18 +54,30 @@ SAMPLER2D(s_linearSamplerFragment, 10);
 #ifdef MATERIAL_INDEX_CODE_SHADER_SCRIPTS
 	MATERIAL_INDEX_CODE_SHADER_SCRIPTS
 #endif
+#ifdef OPACITY_CODE_SHADER_SCRIPTS
+	OPACITY_CODE_SHADER_SCRIPTS
+#endif
 
 #ifdef MULTI_MATERIAL_COMBINED_PASS
 	uniform vec4 u_multiMaterialCombinedInfo;
 	uniform vec4 u_multiMaterialCombinedMaterials[8];
 #endif
 
+#include "FragmentFunctions.sh"
+#include "FragmentVoxel.sh"
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void main()
 {
 	vec4 fragCoord = getFragCoord();
-	float voxelDataMode = u_renderOperationData[1].w;
+	
+#if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )
+	float voxelDataMode = u_renderOperationData[ 1 ].w;
+#else
+	const float voxelDataMode = 0.0;
+#endif
+
 	//float virtualizedDataMode = u_renderOperationData[3].w;
 
 	//lod
@@ -81,10 +98,8 @@ void main()
 
 	int materialIndex = 0;
 	float depthOffset = 0.0;
-#if defined(GLOBAL_VOXEL_LOD) && defined(VOXEL)
-	voxelDataModeCalculateParametersF(voxelDataMode, s_voxelData, fragCoord, v_objectSpacePosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2, u_renderOperationData, fromCameraDirection, inputWorldNormal, tangent, texCoord0, texCoord1, texCoord2, color0, depthOffset, materialIndex);
-//#elif defined(GLOBAL_VIRTUALIZED_GEOMETRY) && defined(VIRTUALIZED)
-//	virtualizedDataModeCalculateParametersF(virtualizedDataMode, s_virtualizedData, fragCoord, v_objectSpacePosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2, u_renderOperationData, gl_PrimitiveID, inputWorldNormal, tangent, texCoord0, texCoord1, texCoord2, color0, depthOffset, materialIndex);
+#if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )
+	voxelDataModeCalculateParametersF(voxelDataMode, s_voxelData, fragCoord, v_objectSpacePosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2, u_renderOperationData, fromCameraDirection, inputWorldNormal, tangent, texCoord0, texCoord1, texCoord2, color0, depthOffset, materialIndex, v_colorParameter);
 #else
 	materialIndex = int(round(v_worldNormal_materialIndex.w));
 #endif
@@ -102,7 +117,7 @@ void main()
 
 	if( cutVolumes( worldPosition ) )
 		discard;
-
+	
 	inputWorldNormal = normalize(inputWorldNormal);
 	tangent.xyz = normalize(tangent.xyz);
 	
@@ -112,31 +127,31 @@ void main()
 	
 	//multi material
 #ifdef MATERIAL_INDEX_CODE_BODY
-	#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(makeSampler(s_linearSamplerFragment, _sampler), _uv, 0, 0)
-	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_mipBias)
-	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_mipBias)	
-	//#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(_sampler, _uv, 0, 0)
-	//#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DBias(_sampler, _uv, u_mipBias)
-	//#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(_sampler, _uv, u_mipBias)
+	#if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )
+		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DLod(makeSampler(s_linearSamplerFragment, _sampler), _uv, pow( float( textureSize( makeSampler(s_linearSamplerFragment, _sampler), 0 ).x ), 0.5 ) * 0.1)
+		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DLod(makeSampler(s_linearSamplerFragment, _sampler), _uv, pow( float( textureSize( makeSampler(s_linearSamplerFragment, _sampler), 0 ).x ), 0.5 ) * 0.1)
+	#else
+		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_removeTextureTiling, u_mipBias)
+		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_mipBias)
+	#endif
 	{
 		MATERIAL_INDEX_CODE_BODY
 	}
-	#undef CODE_BODY_TEXTURE2D_MASK_OPACITY
 	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 	#undef CODE_BODY_TEXTURE2D
 #endif
 
 	//get material data
-	uint frameMaterialIndex = uint( u_renderOperationData[ 0 ].x );
+	int frameMaterialIndex = int( u_renderOperationData[ 0 ].x );
 #ifdef MULTI_MATERIAL_COMBINED_PASS
 	uint localGroupMaterialIndex = uint( materialIndex ) - uint( u_multiMaterialCombinedInfo.x );
 	BRANCH
 	if( localGroupMaterialIndex < 0 || localGroupMaterialIndex >= uint( u_multiMaterialCombinedInfo.y ) )
 		discard;
-	frameMaterialIndex = uint( u_multiMaterialCombinedMaterials[ localGroupMaterialIndex / 4 ][ localGroupMaterialIndex % 4 ] );
+	frameMaterialIndex = int( u_multiMaterialCombinedMaterials[ localGroupMaterialIndex / 4 ][ localGroupMaterialIndex % 4 ] );
 #endif
-	vec4 materialStandardFragment[ MATERIAL_STANDARD_FRAGMENT_SIZE ];
-	getMaterialData( s_materials, frameMaterialIndex, materialStandardFragment );
+	//vec4 materialStandardFragment[ MATERIAL_STANDARD_FRAGMENT_SIZE ];
+	//getMaterialData( s_materials, frameMaterialIndex, materialStandardFragment );
 
 	//multi material
 #ifdef MULTI_MATERIAL_SEPARATE_PASS
@@ -170,10 +185,12 @@ void main()
 	vec3 sheenColor = u_materialSheenColor;
 	vec3 subsurfaceColor = u_materialSubsurfaceColor;
 	float ambientOcclusion = 1;
-	float rayTracingReflection = u_materialRayTracingReflection;
+	//float rayTracingReflection = u_materialRayTracingReflection;
 	vec3 emissive = u_materialEmissive;
 	vec4 customParameter1 = u_materialCustomParameters[0];
 	vec4 customParameter2 = u_materialCustomParameters[1];
+	vec4 instanceParameter1 = u_objectInstanceParameters[0];
+	vec4 instanceParameter2 = u_objectInstanceParameters[1];
 	
 	//get material parameters (procedure generated code)
 	vec2 texCoord0BeforeDisplacement = texCoord0;
@@ -193,17 +210,32 @@ void main()
 	opacityDithering = true;
 #endif
 
-#ifdef FRAGMENT_CODE_BODY
-	#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_renderOperationData[3].z, 0/*gl_PrimitiveID*/)
-	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_removeTextureTiling)
-	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_mipBias)
-//	#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(_sampler, _uv, u_renderOperationData[3].z, 0/*gl_PrimitiveID*/)
-//	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(_sampler, _uv, u_removeTextureTiling)
-//	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(_sampler, _uv, u_mipBias)
+#ifdef FRAGMENT_CODE_BODY	
+	#if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )
+		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DLod(makeSampler(s_linearSamplerFragment, _sampler), _uv, pow( float( textureSize( makeSampler(s_linearSamplerFragment, _sampler), 0 ).x ), 0.5 ) * 0.1 )
+		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DLod(makeSampler(s_linearSamplerFragment, _sampler), _uv, pow( float( textureSize( makeSampler(s_linearSamplerFragment, _sampler), 0 ).x ), 0.5 ) * 0.1 )
+	#else
+		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_removeTextureTiling, u_mipBias)
+		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_mipBias)
+	#endif
 	{
 		FRAGMENT_CODE_BODY
 	}
-	#undef CODE_BODY_TEXTURE2D_MASK_OPACITY
+	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
+	#undef CODE_BODY_TEXTURE2D
+#endif
+
+#ifdef OPACITY_CODE_BODY
+	#if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )
+		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DLod(makeSampler(s_linearSamplerFragment, _sampler), _uv, pow( float( textureSize( makeSampler(s_linearSamplerFragment, _sampler), 0 ).x ), 0.5 ) * 0.1 )
+		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DLod(makeSampler(s_linearSamplerFragment, _sampler), _uv, pow( float( textureSize( makeSampler(s_linearSamplerFragment, _sampler), 0 ).x ), 0.5 ) * 0.1 )
+	#else
+		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_removeTextureTiling, u_mipBias)
+		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_mipBias)
+	#endif
+	{
+		OPACITY_CODE_BODY
+	}
 	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 	#undef CODE_BODY_TEXTURE2D
 #endif
@@ -225,7 +257,7 @@ void main()
 	//	sheenColor *= color0.xyz;
 	//sheenColor = max(sheenColor, vec3_splat(0));
 
-#ifdef SHADING_MODEL_SUBSURFACE
+#if defined(SHADING_MODEL_SUBSURFACE) || defined(SHADING_MODEL_FOLIAGE)
 	subsurfaceColor *= v_colorParameter.xyz;
 	if(useVertexColor)
 		subsurfaceColor *= color0.xyz;
@@ -270,13 +302,14 @@ void main()
 		normal = -normal;
 #endif
 
-#ifndef SHADING_MODEL_SUBSURFACE
+#if !defined(SHADING_MODEL_SUBSURFACE) && !defined(SHADING_MODEL_FOLIAGE) //#ifndef SHADING_MODEL_SUBSURFACE
 	thickness = 0;
 	subsurfacePower = 0;
 	subsurfaceColor = vec3_splat(0);
 #endif
+
 #ifdef MULTI_MATERIAL_COMBINED_PASS
-	if(shadingModel != 1)//Subsurface
+	if(shadingModel != 1 && shadingModel != 2)//Subsurface, Foliage
 	{
 		thickness = 0;
 		subsurfacePower = 0;
@@ -289,23 +322,23 @@ void main()
 	metallic = 0;
 	roughness = 0;
 	ambientOcclusion = 0;
-	rayTracingReflection = 0;
+	//rayTracingReflection = 0;
 #endif
 #ifdef MULTI_MATERIAL_COMBINED_PASS
-	if(shadingModel == 3)//Simple
+	if(shadingModel == 4)//3)//Simple
 	{
 		reflectance = 0;
 		metallic = 0;
 		roughness = 0;
 		ambientOcclusion = 0;
-		rayTracingReflection = 0;
+		//rayTracingReflection = 0;
 	}
 #endif
 
 	gl_FragData[0] = encodeRGBE8(baseColor);
 	gl_FragData[1] = vec4(normal * 0.5 + 0.5, reflectance);
-	gl_FragData[2] = vec4(metallic, roughness, ambientOcclusion, rayTracingReflection);
-#ifdef SHADING_MODEL_SUBSURFACE
+	gl_FragData[2] = vec4(metallic, roughness, ambientOcclusion, 0/*rayTracingReflection*/);
+#if defined(SHADING_MODEL_SUBSURFACE) || defined(SHADING_MODEL_FOLIAGE)
 	gl_FragData[3] = encodeRGBE8(subsurfaceColor);
 #else
 	gl_FragData[3] = encodeRGBE8(emissive);
@@ -342,7 +375,7 @@ void main()
 	gl_FragData[6] = vec4(velocity.x,velocity.y,0,0);
 #endif
 
-#if (defined(GLOBAL_VOXEL_LOD) && defined(VOXEL)) || (defined(GLOBAL_VIRTUALIZED_GEOMETRY) && defined(VIRTUALIZED)) || defined(DEPTH_OFFSET_MODE_GREATER_EQUAL)
+#if (defined(GLOBAL_VOXEL_LOD) && defined(VOXEL)) || defined(DEPTH_OFFSET_MODE_GREATER_EQUAL)
 	float depth = getDepthValue(fragCoord.z, u_viewportOwnerNearClipDistance, u_viewportOwnerFarClipDistance);
 	depth += depthOffset;
 	gl_GreaterEqualFragDepth = getRawDepthValue(depth, u_viewportOwnerNearClipDistance, u_viewportOwnerFarClipDistance);

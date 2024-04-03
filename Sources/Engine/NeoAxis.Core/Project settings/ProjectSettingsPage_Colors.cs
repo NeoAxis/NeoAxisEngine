@@ -26,7 +26,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _selectedColor.BeginSet( ref value ) )
+				if( _selectedColor.BeginSet( this, ref value ) )
 				{
 					try { SelectedColorChanged?.Invoke( this ); }
 					finally { _selectedColor.EndSet(); }
@@ -55,7 +55,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _canSelectColor.BeginSet( ref value ) )
+				if( _canSelectColor.BeginSet( this, ref value ) )
 				{
 					try { CanSelectColorChanged?.Invoke( this ); }
 					finally { _canSelectColor.EndSet(); }
@@ -85,7 +85,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _hiddenByOtherObjectsColorMultiplier.BeginSet( ref value ) )
+				if( _hiddenByOtherObjectsColorMultiplier.BeginSet( this, ref value ) )
 				{
 					try { HiddenByOtherObjectsColorMultiplierChanged?.Invoke( this ); }
 					finally { _hiddenByOtherObjectsColorMultiplier.EndSet(); }
@@ -114,7 +114,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _sceneShowLightColor.BeginSet( ref value ) )
+				if( _sceneShowLightColor.BeginSet( this, ref value ) )
 				{
 					try { SceneShowLightColorChanged?.Invoke( this ); }
 					finally { _sceneShowLightColor.EndSet(); }
@@ -132,7 +132,7 @@ namespace NeoAxis
 		public Reference<ColorValue> SceneShowDecalColor
 		{
 			get { if( _sceneShowDecalColor.BeginGet() ) SceneShowDecalColor = _sceneShowDecalColor.Get( this ); return _sceneShowDecalColor.value; }
-			set { if( _sceneShowDecalColor.BeginSet( ref value ) ) { try { SceneShowDecalColorChanged?.Invoke( this ); } finally { _sceneShowDecalColor.EndSet(); } } }
+			set { if( _sceneShowDecalColor.BeginSet( this, ref value ) ) { try { SceneShowDecalColorChanged?.Invoke( this ); } finally { _sceneShowDecalColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SceneShowDecalColor"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_Colors> SceneShowDecalColorChanged;
@@ -155,7 +155,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _sceneShowPhysicsStaticColor.BeginSet( ref value ) )
+				if( _sceneShowPhysicsStaticColor.BeginSet( this, ref value ) )
 				{
 					try { SceneShowPhysicsStaticColorChanged?.Invoke( this ); }
 					finally { _sceneShowPhysicsStaticColor.EndSet(); }
@@ -183,7 +183,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _sceneShowPhysicsDynamicActiveColor.BeginSet( ref value ) )
+				if( _sceneShowPhysicsDynamicActiveColor.BeginSet( this, ref value ) )
 				{
 					try { SceneShowPhysicsDynamicActiveColorChanged?.Invoke( this ); }
 					finally { _sceneShowPhysicsDynamicActiveColor.EndSet(); }
@@ -211,7 +211,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _sceneShowPhysicsDynamicInactiveColor.BeginSet( ref value ) )
+				if( _sceneShowPhysicsDynamicInactiveColor.BeginSet( this, ref value ) )
 				{
 					try { SceneShowPhysicsDynamicInactiveColorChanged?.Invoke( this ); }
 					finally { _sceneShowPhysicsDynamicInactiveColor.EndSet(); }
@@ -229,7 +229,7 @@ namespace NeoAxis
 		public Reference<ColorValue> SceneShowAreaColor
 		{
 			get { if( _sceneShowAreaColor.BeginGet() ) SceneShowAreaColor = _sceneShowAreaColor.Get( this ); return _sceneShowAreaColor.value; }
-			set { if( _sceneShowAreaColor.BeginSet( ref value ) ) { try { SceneShowAreaColorChanged?.Invoke( this ); } finally { _sceneShowAreaColor.EndSet(); } } }
+			set { if( _sceneShowAreaColor.BeginSet( this, ref value ) ) { try { SceneShowAreaColorChanged?.Invoke( this ); } finally { _sceneShowAreaColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SceneShowAreaColor"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_Colors> SceneShowAreaColorChanged;
@@ -243,7 +243,7 @@ namespace NeoAxis
 		public Reference<ColorValue> SceneShowVolumeColor
 		{
 			get { if( _sceneShowVolumeColor.BeginGet() ) SceneShowVolumeColor = _sceneShowVolumeColor.Get( this ); return _sceneShowVolumeColor.value; }
-			set { if( _sceneShowVolumeColor.BeginSet( ref value ) ) { try { SceneShowVolumeColorChanged?.Invoke( this ); } finally { _sceneShowVolumeColor.EndSet(); } } }
+			set { if( _sceneShowVolumeColor.BeginSet( this, ref value ) ) { try { SceneShowVolumeColorChanged?.Invoke( this ); } finally { _sceneShowVolumeColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SceneShowVolumeColor"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_Colors> SceneShowVolumeColorChanged;
@@ -257,7 +257,7 @@ namespace NeoAxis
 		public Reference<ColorValue> SceneShowSoundSourceColor
 		{
 			get { if( _sceneShowSoundSourceColor.BeginGet() ) SceneShowSoundSourceColor = _sceneShowSoundSourceColor.Get( this ); return _sceneShowSoundSourceColor.value; }
-			set { if( _sceneShowSoundSourceColor.BeginSet( ref value ) ) { try { SceneShowSoundSourceColorChanged?.Invoke( this ); } finally { _sceneShowSoundSourceColor.EndSet(); } } }
+			set { if( _sceneShowSoundSourceColor.BeginSet( this, ref value ) ) { try { SceneShowSoundSourceColorChanged?.Invoke( this ); } finally { _sceneShowSoundSourceColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SceneShowSoundSourceColor"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_Colors> SceneShowSoundSourceColorChanged;
@@ -280,7 +280,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _sceneShowObjectInSpaceBoundsColor.BeginSet( ref value ) )
+				if( _sceneShowObjectInSpaceBoundsColor.BeginSet( this, ref value ) )
 				{
 					try { SceneShowObjectInSpaceBoundsColorChanged?.Invoke( this ); }
 					finally { _sceneShowObjectInSpaceBoundsColor.EndSet(); }
@@ -308,7 +308,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _sceneShowReflectionProbeColor.BeginSet( ref value ) )
+				if( _sceneShowReflectionProbeColor.BeginSet( this, ref value ) )
 				{
 					try { SceneShowReflectionProbeColorChanged?.Invoke( this ); }
 					finally { _sceneShowReflectionProbeColor.EndSet(); }

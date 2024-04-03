@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2022.2.
+// Made with NeoAxis Engine 2023.1.
 
 .component NeoAxis.Surface
 {
-	EditorCameraTransform = "-2.77632751132366 -10.0826007624175 5.46007753583401; -0.176893216522112 0.232051015511956 0.579862184699843 0.760671389565466; 1 1 1"
+	EditorCameraTransform = "-2.82682346635828 -10.2663858305179 5.58829652757095; -0.176893216522112 0.232051015511956 0.579862184699843 0.760671389565466; 1 1 1"
 	.component NeoAxis.SurfaceGroupOfElements
 	{
 		Name = Group Young
@@ -15,7 +15,7 @@
 		.component NeoAxis.SurfaceElement_Mesh
 		{
 			Name = Mesh 1
-			VisibilityDistanceFactor = 0.2
+			VisibilityDistanceFactor = 0.25
 			ReceiveDecals = False
 			Mesh
 			{
@@ -34,7 +34,7 @@
 		.component NeoAxis.SurfaceElement_Mesh
 		{
 			Name = Mesh 1
-			VisibilityDistanceFactor = 0.2
+			VisibilityDistanceFactor = 0.25
 			ReceiveDecals = False
 			Mesh
 			{

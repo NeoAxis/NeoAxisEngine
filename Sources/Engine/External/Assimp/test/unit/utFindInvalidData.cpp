@@ -3,7 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -106,24 +106,26 @@ void utFindInvalidDataProcess::TearDown() {
 
 // ------------------------------------------------------------------------------------------------
 TEST_F(utFindInvalidDataProcess, testStepNegativeResult) {
-    ::memset(mMesh->mNormals, 0, mMesh->mNumVertices * sizeof(aiVector3D));
-    ::memset(mMesh->mBitangents, 0, mMesh->mNumVertices * sizeof(aiVector3D));
+    for ( size_t i=0; i<mMesh->mNumVertices; ++i ) {
+        mMesh->mNormals[i].x = mMesh->mNormals[i].y = mMesh->mNormals[i].z =0;
+        mMesh->mBitangents[i].x = mMesh->mBitangents[i].y = mMesh->mBitangents[i].z = 0;
+    }
 
     mMesh->mTextureCoords[2][455] = aiVector3D(std::numeric_limits<float>::quiet_NaN());
 
     mProcess->ProcessMesh(mMesh);
 
-    EXPECT_TRUE(NULL != mMesh->mVertices);
-    EXPECT_EQ(NULL, mMesh->mNormals);
-    EXPECT_EQ(NULL, mMesh->mTangents);
-    EXPECT_EQ(NULL, mMesh->mBitangents);
+    EXPECT_TRUE(nullptr != mMesh->mVertices);
+    EXPECT_EQ(nullptr, mMesh->mNormals);
+    EXPECT_EQ(nullptr, mMesh->mTangents);
+    EXPECT_EQ(nullptr, mMesh->mBitangents);
 
     for (unsigned int i = 0; i < 2; ++i) {
-        EXPECT_TRUE(NULL != mMesh->mTextureCoords[i]);
+        EXPECT_TRUE(nullptr != mMesh->mTextureCoords[i]);
     }
 
     for (unsigned int i = 2; i < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++i) {
-        EXPECT_EQ(NULL, mMesh->mTextureCoords[i]);
+        EXPECT_EQ(nullptr, mMesh->mTextureCoords[i]);
     }
 }
 

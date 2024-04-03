@@ -16,6 +16,9 @@
     <Filter Include="scripts">
       <UniqueIdentifier>{6D076287-D9E6-E022-E2FE-6BF94E5D4784}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaderc">
+      <UniqueIdentifier>{6c0f2297-d825-4faf-a829-8a636f80862d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\src\glcontext_eagl.mm">
@@ -68,9 +71,6 @@
     <ClInclude Include="..\..\..\src\glcontext_egl.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\glcontext_glx.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\glcontext_nsgl.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -95,9 +95,6 @@
     <ClInclude Include="..\..\..\src\renderer_d3d12.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\renderer_d3d9.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\renderer_gl.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -108,9 +105,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\shader.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\shader_dx9bc.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\shader_dxbc.h">
@@ -125,11 +119,14 @@
     <ClInclude Include="..\..\..\src\special.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\renderer_webgpu.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\vertexlayout.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tools\shaderc\LibraryBase.h">
+      <Filter>shaderc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\tools\shaderc\shaderc.h">
+      <Filter>shaderc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -148,9 +145,6 @@
     <ClCompile Include="..\..\..\src\glcontext_egl.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\glcontext_glx.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\glcontext_wgl.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -161,9 +155,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\renderer_d3d12.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\renderer_d3d9.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\renderer_gl.cpp">
@@ -181,9 +172,6 @@
     <ClCompile Include="..\..\..\src\shader.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\shader_dx9bc.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\shader_dxbc.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -199,11 +187,32 @@
     <ClCompile Include="..\..\..\src\renderer_nvn.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\renderer_webgpu.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\vertexlayout.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\renderer_agc.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\Library.cpp">
+      <Filter>shaderc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\LibraryBase.cpp">
+      <Filter>shaderc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc.cpp">
+      <Filter>shaderc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc_glsl.cpp">
+      <Filter>shaderc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc_hlsl.cpp">
+      <Filter>shaderc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc_spirv.cpp">
+      <Filter>shaderc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc_hlsl_dx12.cpp">
+      <Filter>shaderc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

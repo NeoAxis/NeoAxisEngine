@@ -10,8 +10,6 @@ using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
-	//!!!!new: immutable. тогда можно ChangedEvent
-
 	/// <summary>
 	/// Defines the position in space. This class is immutable for optimization purposes.
 	/// </summary>

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
 using NeoAxis.Editor;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -12,15 +13,16 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "scene" )]
 #if !DEPLOY
-	[EditorControl( typeof( SceneEditor ) )]
-	//[EditorNewObjectCell( typeof( Scene_NewObjectCell ) )]
-	[NewObjectSettings( typeof( NewObjectSettingsScene ) )]
-	[SettingsCell( typeof( SceneSettingsCell ) )]
+	[EditorControl( "NeoAxis.Editor.SceneEditor" )] //[EditorControl( typeof( SceneEditor ) )]
+	[NewObjectSettings( "NeoAxis.Editor.SceneNewObjectSettings" )]
+	[SettingsCell( "NeoAxis.Editor.SceneSettingsCell" )]
 #endif
 	public partial class Scene : Component
 	{
 		static List<Scene> all = new List<Scene>();
 		static List<Scene> allInstancesEnabled = new List<Scene>();
+
+		public static bool InternalSimulatePhysics { get; set; } = true;
 
 		double initTime;
 		Bounds boundsWhenSimulationStarted;
@@ -28,6 +30,12 @@ namespace NeoAxis
 		Sound backgroundSoundCurrent;
 		SoundData backgroundSoundInstance;
 		SoundVirtualChannel backgroundSoundChannel;
+
+		//optimization
+		IGameMode gameModeCached;
+
+		//sound
+		internal CurveCubicSpline1 soundDefaultRolloffGraph;
 
 		//!!!!
 		//Particles freeParticles;
@@ -42,7 +50,7 @@ namespace NeoAxis
 		public Reference<RenderingPipeline> RenderingPipeline
 		{
 			get { if( _renderingPipeline.BeginGet() ) RenderingPipeline = _renderingPipeline.Get( this ); return _renderingPipeline.value; }
-			set { if( _renderingPipeline.BeginSet( ref value ) ) { try { RenderingPipelineChanged?.Invoke( this ); } finally { _renderingPipeline.EndSet(); } } }
+			set { if( _renderingPipeline.BeginSet( this, ref value ) ) { try { RenderingPipelineChanged?.Invoke( this ); } finally { _renderingPipeline.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RenderingPipeline"/> property value changes.</summary>
 		public event Action<Scene> RenderingPipelineChanged;
@@ -52,16 +60,16 @@ namespace NeoAxis
 		/// The background color of the scene.
 		/// </summary>
 		[Serialize]
-		[DefaultValue( "0.9 0.9 0.9" )]
+		[DefaultValue( "1 1 1" )]//[DefaultValue( "0.9 0.9 0.9" )]
 		[ColorValueNoAlpha]
 		public Reference<ColorValue> BackgroundColor
 		{
 			get { if( _backgroundColor.BeginGet() ) BackgroundColor = _backgroundColor.Get( this ); return _backgroundColor.value; }
-			set { if( _backgroundColor.BeginSet( ref value ) ) { try { BackgroundColorChanged?.Invoke( this ); } finally { _backgroundColor.EndSet(); } } }
+			set { if( _backgroundColor.BeginSet( this, ref value ) ) { try { BackgroundColorChanged?.Invoke( this ); } finally { _backgroundColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BackgroundColor"/> property value changes.</summary>
 		public event Action<Scene> BackgroundColorChanged;
-		ReferenceField<ColorValue> _backgroundColor = new ColorValue( 0.9, 0.9, 0.9 );
+		ReferenceField<ColorValue> _backgroundColor = new ColorValue( 1, 1, 1 );//new ColorValue( 0.9, 0.9, 0.9 );
 
 		/// <summary>
 		/// Whether to affect the background color to ambient lighting.
@@ -71,7 +79,7 @@ namespace NeoAxis
 		public Reference<double> BackgroundColorAffectLighting
 		{
 			get { if( _backgroundColorAffectLighting.BeginGet() ) BackgroundColorAffectLighting = _backgroundColorAffectLighting.Get( this ); return _backgroundColorAffectLighting.value; }
-			set { if( _backgroundColorAffectLighting.BeginSet( ref value ) ) { try { BackgroundColorAffectLightingChanged?.Invoke( this ); } finally { _backgroundColorAffectLighting.EndSet(); } } }
+			set { if( _backgroundColorAffectLighting.BeginSet( this, ref value ) ) { try { BackgroundColorAffectLightingChanged?.Invoke( this ); } finally { _backgroundColorAffectLighting.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BackgroundColorAffectLighting"/> property value changes.</summary>
 		public event Action<Scene> BackgroundColorAffectLightingChanged;
@@ -89,7 +97,7 @@ namespace NeoAxis
 		public Reference<UIControl> UIScreen
 		{
 			get { if( _uIScreen.BeginGet() ) UIScreen = _uIScreen.Get( this ); return _uIScreen.value; }
-			set { if( _uIScreen.BeginSet( ref value ) ) { try { UIScreenChanged?.Invoke( this ); } finally { _uIScreen.EndSet(); } } }
+			set { if( _uIScreen.BeginSet( this, ref value ) ) { try { UIScreenChanged?.Invoke( this ); } finally { _uIScreen.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UIScreen"/> property value changes.</summary>
 		public event Action<Scene> UIScreenChanged;
@@ -109,10 +117,30 @@ namespace NeoAxis
 		public Reference<ModeEnum> Mode
 		{
 			get { if( _mode.BeginGet() ) Mode = _mode.Get( this ); return _mode.value; }
-			set { if( _mode.BeginSet( ref value ) ) { try { ModeChanged?.Invoke( this ); } finally { _mode.EndSet(); } } }
+			set { if( _mode.BeginSet( this, ref value ) ) { try { ModeChanged?.Invoke( this ); } finally { _mode.EndSet(); } } }
 		}
 		public event Action<Scene> ModeChanged;
 		ReferenceField<ModeEnum> _mode = ModeEnum._3D;
+
+		public enum ScreenOrientationEnum
+		{
+			Unspecified,
+			Landscape,
+			Portrait
+		}
+
+		/// <summary>
+		/// The way to override default screen orientation settings for the scene. The property is used for mobile devices.
+		/// </summary>
+		[DefaultValue( ScreenOrientationEnum.Unspecified )]
+		public Reference<ScreenOrientationEnum> ScreenOrientation
+		{
+			get { if( _screenOrientation.BeginGet() ) ScreenOrientation = _screenOrientation.Get( this ); return _screenOrientation.value; }
+			set { if( _screenOrientation.BeginSet( this, ref value ) ) { try { ScreenOrientationChanged?.Invoke( this ); } finally { _screenOrientation.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ScreenOrientation"/> property value changes.</summary>
+		public event Action<Scene> ScreenOrientationChanged;
+		ReferenceField<ScreenOrientationEnum> _screenOrientation = ScreenOrientationEnum.Unspecified;
 
 		/// <summary>
 		/// The camera used by the editor in 3D mode.
@@ -121,7 +149,7 @@ namespace NeoAxis
 		public Reference<Camera> CameraEditor
 		{
 			get { if( _cameraEditor.BeginGet() ) CameraEditor = _cameraEditor.Get( this ); return _cameraEditor.value; }
-			set { if( _cameraEditor.BeginSet( ref value ) ) { try { CameraEditorChanged?.Invoke( this ); } finally { _cameraEditor.EndSet(); } } }
+			set { if( _cameraEditor.BeginSet( this, ref value ) ) { try { CameraEditorChanged?.Invoke( this ); } finally { _cameraEditor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CameraEditor"/> property value changes.</summary>
 		public event Action<Scene> CameraEditorChanged;
@@ -135,7 +163,7 @@ namespace NeoAxis
 		public Reference<Camera> CameraEditor2D
 		{
 			get { if( _cameraEditor2D.BeginGet() ) CameraEditor2D = _cameraEditor2D.Get( this ); return _cameraEditor2D.value; }
-			set { if( _cameraEditor2D.BeginSet( ref value ) ) { try { CameraEditor2DChanged?.Invoke( this ); } finally { _cameraEditor2D.EndSet(); } } }
+			set { if( _cameraEditor2D.BeginSet( this, ref value ) ) { try { CameraEditor2DChanged?.Invoke( this ); } finally { _cameraEditor2D.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CameraEditor2D"/> property value changes.</summary>
 		[DisplayName( "Camera Editor 2D Changed" )]
@@ -156,7 +184,7 @@ namespace NeoAxis
 		public Reference<Camera> CameraDefault
 		{
 			get { if( _cameraDefault.BeginGet() ) CameraDefault = _cameraDefault.Get( this ); return _cameraDefault.value; }
-			set { if( _cameraDefault.BeginSet( ref value ) ) { try { CameraDefaultChanged?.Invoke( this ); } finally { _cameraDefault.EndSet(); } } }
+			set { if( _cameraDefault.BeginSet( this, ref value ) ) { try { CameraDefaultChanged?.Invoke( this ); } finally { _cameraDefault.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CameraDefault"/> property value changes.</summary>
 		public event Action<Scene> CameraDefaultChanged;
@@ -175,7 +203,7 @@ namespace NeoAxis
 			get { if( _gravity.BeginGet() ) Gravity = _gravity.Get( this ); return _gravity.value; }
 			set
 			{
-				if( _gravity.BeginSet( ref value ) )
+				if( _gravity.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -201,7 +229,7 @@ namespace NeoAxis
 		public Reference<Degree> WindDirection
 		{
 			get { if( _windDirection.BeginGet() ) WindDirection = _windDirection.Get( this ); return _windDirection.value; }
-			set { if( _windDirection.BeginSet( ref value ) ) { try { WindDirectionChanged?.Invoke( this ); } finally { _windDirection.EndSet(); } } }
+			set { if( _windDirection.BeginSet( this, ref value ) ) { try { WindDirectionChanged?.Invoke( this ); } finally { _windDirection.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="WindDirection"/> property value changes.</summary>
 		public event Action<Scene> WindDirectionChanged;
@@ -216,7 +244,7 @@ namespace NeoAxis
 		public Reference<double> WindSpeed
 		{
 			get { if( _windSpeed.BeginGet() ) WindSpeed = _windSpeed.Get( this ); return _windSpeed.value; }
-			set { if( _windSpeed.BeginSet( ref value ) ) { try { WindSpeedChanged?.Invoke( this ); } finally { _windSpeed.EndSet(); } } }
+			set { if( _windSpeed.BeginSet( this, ref value ) ) { try { WindSpeedChanged?.Invoke( this ); } finally { _windSpeed.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="WindSpeed"/> property value changes.</summary>
 		public event Action<Scene> WindSpeedChanged;
@@ -233,7 +261,7 @@ namespace NeoAxis
 		public Reference<int> PhysicsMaxBodies
 		{
 			get { if( _maxBodies.BeginGet() ) PhysicsMaxBodies = _maxBodies.Get( this ); return _maxBodies.value; }
-			set { if( _maxBodies.BeginSet( ref value ) ) { try { MaxBodiesChanged?.Invoke( this ); } finally { _maxBodies.EndSet(); } } }
+			set { if( _maxBodies.BeginSet( this, ref value ) ) { try { MaxBodiesChanged?.Invoke( this ); } finally { _maxBodies.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsMaxBodies"/> property value changes.</summary>
 		public event Action<Scene> MaxBodiesChanged;
@@ -247,7 +275,7 @@ namespace NeoAxis
 		public Reference<bool> PhysicsAdvancedSettings
 		{
 			get { if( _physicsAdvancedSettings.BeginGet() ) PhysicsAdvancedSettings = _physicsAdvancedSettings.Get( this ); return _physicsAdvancedSettings.value; }
-			set { if( _physicsAdvancedSettings.BeginSet( ref value ) ) { try { PhysicsAdvancedSettingsChanged?.Invoke( this ); UpdateAdvancedPhysicsSettings(); } finally { _physicsAdvancedSettings.EndSet(); } } }
+			set { if( _physicsAdvancedSettings.BeginSet( this, ref value ) ) { try { PhysicsAdvancedSettingsChanged?.Invoke( this ); UpdateAdvancedPhysicsSettings(); } finally { _physicsAdvancedSettings.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsAdvancedSettings"/> property value changes.</summary>
 		public event Action<Scene> PhysicsAdvancedSettingsChanged;
@@ -263,7 +291,7 @@ namespace NeoAxis
 		public Reference<double> PhysicsDefaultConvexRadius
 		{
 			get { if( _physicsDefaultConvexRadius.BeginGet() ) PhysicsDefaultConvexRadius = _physicsDefaultConvexRadius.Get( this ); return _physicsDefaultConvexRadius.value; }
-			set { if( _physicsDefaultConvexRadius.BeginSet( ref value ) ) { try { PhysicsDefaultConvexRadiusChanged?.Invoke( this ); } finally { _physicsDefaultConvexRadius.EndSet(); } } }
+			set { if( _physicsDefaultConvexRadius.BeginSet( this, ref value ) ) { try { PhysicsDefaultConvexRadiusChanged?.Invoke( this ); } finally { _physicsDefaultConvexRadius.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsDefaultConvexRadius"/> property value changes.</summary>
 		public event Action<Scene> PhysicsDefaultConvexRadiusChanged;
@@ -277,7 +305,7 @@ namespace NeoAxis
 		public Reference<int> PhysicsMaxBodyPairs
 		{
 			get { if( _physicsMaxBodyPairs.BeginGet() ) PhysicsMaxBodyPairs = _physicsMaxBodyPairs.Get( this ); return _physicsMaxBodyPairs.value; }
-			set { if( _physicsMaxBodyPairs.BeginSet( ref value ) ) { try { PhysicsMaxBodyPairsChanged?.Invoke( this ); } finally { _physicsMaxBodyPairs.EndSet(); } } }
+			set { if( _physicsMaxBodyPairs.BeginSet( this, ref value ) ) { try { PhysicsMaxBodyPairsChanged?.Invoke( this ); } finally { _physicsMaxBodyPairs.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsMaxBodyPairs"/> property value changes.</summary>
 		public event Action<Scene> PhysicsMaxBodyPairsChanged;
@@ -291,7 +319,7 @@ namespace NeoAxis
 		public Reference<int> PhysicsMaxContactConstraints
 		{
 			get { if( _physicsMaxContactConstraints.BeginGet() ) PhysicsMaxContactConstraints = _physicsMaxContactConstraints.Get( this ); return _physicsMaxContactConstraints.value; }
-			set { if( _physicsMaxContactConstraints.BeginSet( ref value ) ) { try { PhysicsMaxContactConstraintsChanged?.Invoke( this ); } finally { _physicsMaxContactConstraints.EndSet(); } } }
+			set { if( _physicsMaxContactConstraints.BeginSet( this, ref value ) ) { try { PhysicsMaxContactConstraintsChanged?.Invoke( this ); } finally { _physicsMaxContactConstraints.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsMaxContactConstraints"/> property value changes.</summary>
 		public event Action<Scene> PhysicsMaxContactConstraintsChanged;
@@ -305,7 +333,7 @@ namespace NeoAxis
 		public Reference<int> PhysicsMaxInFlightBodyPairs
 		{
 			get { if( _physicsMaxInFlightBodyPairs.BeginGet() ) PhysicsMaxInFlightBodyPairs = _physicsMaxInFlightBodyPairs.Get( this ); return _physicsMaxInFlightBodyPairs.value; }
-			set { if( _physicsMaxInFlightBodyPairs.BeginSet( ref value ) ) { try { PhysicsMaxInFlightBodyPairsChanged?.Invoke( this ); UpdateAdvancedPhysicsSettings(); } finally { _physicsMaxInFlightBodyPairs.EndSet(); } } }
+			set { if( _physicsMaxInFlightBodyPairs.BeginSet( this, ref value ) ) { try { PhysicsMaxInFlightBodyPairsChanged?.Invoke( this ); UpdateAdvancedPhysicsSettings(); } finally { _physicsMaxInFlightBodyPairs.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsMaxInFlightBodyPairs"/> property value changes.</summary>
 		public event Action<Scene> PhysicsMaxInFlightBodyPairsChanged;
@@ -314,31 +342,31 @@ namespace NeoAxis
 		/// <summary>
 		/// The amount of collision steps for one update.
 		/// </summary>
-		[DefaultValue( 2 )]
+		[DefaultValue( 2 )]//4 )]//2 )]
 		[Category( "Physics" )]
 		public Reference<int> PhysicsCollisionSteps
 		{
 			get { if( _physicsCollisionSteps.BeginGet() ) PhysicsCollisionSteps = _physicsCollisionSteps.Get( this ); return _physicsCollisionSteps.value; }
-			set { if( _physicsCollisionSteps.BeginSet( ref value ) ) { try { PhysicsCollisionStepsChanged?.Invoke( this ); } finally { _physicsCollisionSteps.EndSet(); } } }
+			set { if( _physicsCollisionSteps.BeginSet( this, ref value ) ) { try { PhysicsCollisionStepsChanged?.Invoke( this ); } finally { _physicsCollisionSteps.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsCollisionSteps"/> property value changes.</summary>
 		public event Action<Scene> PhysicsCollisionStepsChanged;
-		ReferenceField<int> _physicsCollisionSteps = 2;
+		ReferenceField<int> _physicsCollisionSteps = 2;//4;//2;
 
-		/// <summary>
-		/// The amount of integration sub steps for one update.
-		/// </summary>
-		[DefaultValue( 1 )]
-		[Range( 1, 4 )]
-		[Category( "Physics" )]
-		public Reference<int> PhysicsIntegrationSubSteps
-		{
-			get { if( _physicsIntegrationSubSteps.BeginGet() ) PhysicsIntegrationSubSteps = _physicsIntegrationSubSteps.Get( this ); return _physicsIntegrationSubSteps.value; }
-			set { if( _physicsIntegrationSubSteps.BeginSet( ref value ) ) { try { PhysicsIntegrationSubStepsChanged?.Invoke( this ); } finally { _physicsIntegrationSubSteps.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="PhysicsIntegrationSubSteps"/> property value changes.</summary>
-		public event Action<Scene> PhysicsIntegrationSubStepsChanged;
-		ReferenceField<int> _physicsIntegrationSubSteps = 1;
+		///// <summary>
+		///// The amount of integration sub steps for one update.
+		///// </summary>
+		//[DefaultValue( 2 )]
+		//[Range( 1, 4 )]
+		//[Category( "Physics" )]
+		//public Reference<int> PhysicsIntegrationSubSteps
+		//{
+		//	get { if( _physicsIntegrationSubSteps.BeginGet() ) PhysicsIntegrationSubSteps = _physicsIntegrationSubSteps.Get( this ); return _physicsIntegrationSubSteps.value; }
+		//	set { if( _physicsIntegrationSubSteps.BeginSet( this, ref value ) ) { try { PhysicsIntegrationSubStepsChanged?.Invoke( this ); } finally { _physicsIntegrationSubSteps.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="PhysicsIntegrationSubSteps"/> property value changes.</summary>
+		//public event Action<Scene> PhysicsIntegrationSubStepsChanged;
+		//ReferenceField<int> _physicsIntegrationSubSteps = 2;
 
 		/// <summary>
 		/// How many PhysicsStepListeners to notify in 1 batch.
@@ -348,7 +376,7 @@ namespace NeoAxis
 		public Reference<int> PhysicsStepListenersBatchSize
 		{
 			get { if( _physicsStepListenersBatchSize.BeginGet() ) PhysicsStepListenersBatchSize = _physicsStepListenersBatchSize.Get( this ); return _physicsStepListenersBatchSize.value; }
-			set { if( _physicsStepListenersBatchSize.BeginSet( ref value ) ) { try { PhysicsStepListenersBatchSizeChanged?.Invoke( this ); UpdateAdvancedPhysicsSettings(); } finally { _physicsStepListenersBatchSize.EndSet(); } } }
+			set { if( _physicsStepListenersBatchSize.BeginSet( this, ref value ) ) { try { PhysicsStepListenersBatchSizeChanged?.Invoke( this ); UpdateAdvancedPhysicsSettings(); } finally { _physicsStepListenersBatchSize.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsStepListenersBatchSize"/> property value changes.</summary>
 		public event Action<Scene> PhysicsStepListenersBatchSizeChanged;
@@ -362,7 +390,7 @@ namespace NeoAxis
 		public Reference<int> PhysicsStepListenerBatchesPerJob
 		{
 			get { if( _physicsStepListenerBatchesPerJob.BeginGet() ) PhysicsStepListenerBatchesPerJob = _physicsStepListenerBatchesPerJob.Get( this ); return _physicsStepListenerBatchesPerJob.value; }
-			set { if( _physicsStepListenerBatchesPerJob.BeginSet( ref value ) ) { try { PhysicsStepListenerBatchesPerJobChanged?.Invoke( this ); } finally { _physicsStepListenerBatchesPerJob.EndSet(); } } }
+			set { if( _physicsStepListenerBatchesPerJob.BeginSet( this, ref value ) ) { try { PhysicsStepListenerBatchesPerJobChanged?.Invoke( this ); } finally { _physicsStepListenerBatchesPerJob.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsStepListenerBatchesPerJob"/> property value changes.</summary>
 		public event Action<Scene> PhysicsStepListenerBatchesPerJobChanged;
@@ -376,7 +404,7 @@ namespace NeoAxis
 		public Reference<double> PhysicsBaumgarte
 		{
 			get { if( _physicsBaumgarte.BeginGet() ) PhysicsBaumgarte = _physicsBaumgarte.Get( this ); return _physicsBaumgarte.value; }
-			set { if( _physicsBaumgarte.BeginSet( ref value ) ) { try { PhysicsBaumgarteChanged?.Invoke( this ); } finally { _physicsBaumgarte.EndSet(); } } }
+			set { if( _physicsBaumgarte.BeginSet( this, ref value ) ) { try { PhysicsBaumgarteChanged?.Invoke( this ); } finally { _physicsBaumgarte.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsBaumgarte"/> property value changes.</summary>
 		public event Action<Scene> PhysicsBaumgarteChanged;
@@ -391,7 +419,7 @@ namespace NeoAxis
 		public Reference<double> PhysicsSpeculativeContactDistance
 		{
 			get { if( _physicsSpeculativeContactDistance.BeginGet() ) PhysicsSpeculativeContactDistance = _physicsSpeculativeContactDistance.Get( this ); return _physicsSpeculativeContactDistance.value; }
-			set { if( _physicsSpeculativeContactDistance.BeginSet( ref value ) ) { try { PhysicsSpeculativeContactDistanceChanged?.Invoke( this ); } finally { _physicsSpeculativeContactDistance.EndSet(); } } }
+			set { if( _physicsSpeculativeContactDistance.BeginSet( this, ref value ) ) { try { PhysicsSpeculativeContactDistanceChanged?.Invoke( this ); } finally { _physicsSpeculativeContactDistance.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsSpeculativeContactDistance"/> property value changes.</summary>
 		public event Action<Scene> PhysicsSpeculativeContactDistanceChanged;
@@ -405,7 +433,7 @@ namespace NeoAxis
 		public Reference<double> PhysicsPenetrationSlop
 		{
 			get { if( _physicsPenetrationSlop.BeginGet() ) PhysicsPenetrationSlop = _physicsPenetrationSlop.Get( this ); return _physicsPenetrationSlop.value; }
-			set { if( _physicsPenetrationSlop.BeginSet( ref value ) ) { try { PhysicsPenetrationSlopChanged?.Invoke( this ); } finally { _physicsPenetrationSlop.EndSet(); } } }
+			set { if( _physicsPenetrationSlop.BeginSet( this, ref value ) ) { try { PhysicsPenetrationSlopChanged?.Invoke( this ); } finally { _physicsPenetrationSlop.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsPenetrationSlop"/> property value changes.</summary>
 		public event Action<Scene> PhysicsPenetrationSlopChanged;
@@ -414,30 +442,32 @@ namespace NeoAxis
 		/// <summary>
 		/// Fraction of its inner radius a body must move per step to enable casting for the LinearCast motion quality.
 		/// </summary>
-		[DefaultValue( 0.75 )]
+		[DefaultValue( 0.1 )]//0.75 )]
 		[Category( "Physics" )]
+		[Range( 0, 1 )]
 		public Reference<double> PhysicsLinearCastThreshold
 		{
 			get { if( _physicsLinearCastThreshold.BeginGet() ) PhysicsLinearCastThreshold = _physicsLinearCastThreshold.Get( this ); return _physicsLinearCastThreshold.value; }
-			set { if( _physicsLinearCastThreshold.BeginSet( ref value ) ) { try { PhysicsLinearCastThresholdChanged?.Invoke( this ); } finally { _physicsLinearCastThreshold.EndSet(); } } }
+			set { if( _physicsLinearCastThreshold.BeginSet( this, ref value ) ) { try { PhysicsLinearCastThresholdChanged?.Invoke( this ); } finally { _physicsLinearCastThreshold.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsLinearCastThreshold"/> property value changes.</summary>
 		public event Action<Scene> PhysicsLinearCastThresholdChanged;
-		ReferenceField<double> _physicsLinearCastThreshold = 0.75;
+		ReferenceField<double> _physicsLinearCastThreshold = 0.1;//0.75;
 
 		/// <summary>
 		/// Fraction of its inner radius a body may penetrate another body for the LinearCast motion quality.
 		/// </summary>
-		[DefaultValue( 0.25 )]
+		[DefaultValue( 0.05 )]//0.25 )]
 		[Category( "Physics" )]
+		[Range( 0, 1 )]
 		public Reference<double> PhysicsLinearCastMaxPenetration
 		{
 			get { if( _physicsLinearCastMaxPenetration.BeginGet() ) PhysicsLinearCastMaxPenetration = _physicsLinearCastMaxPenetration.Get( this ); return _physicsLinearCastMaxPenetration.value; }
-			set { if( _physicsLinearCastMaxPenetration.BeginSet( ref value ) ) { try { PhysicsLinearCastMaxPenetrationChanged?.Invoke( this ); } finally { _physicsLinearCastMaxPenetration.EndSet(); } } }
+			set { if( _physicsLinearCastMaxPenetration.BeginSet( this, ref value ) ) { try { PhysicsLinearCastMaxPenetrationChanged?.Invoke( this ); } finally { _physicsLinearCastMaxPenetration.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsLinearCastMaxPenetration"/> property value changes.</summary>
 		public event Action<Scene> PhysicsLinearCastMaxPenetrationChanged;
-		ReferenceField<double> _physicsLinearCastMaxPenetration = 0.25;
+		ReferenceField<double> _physicsLinearCastMaxPenetration = 0.05;//0.25;
 
 		/// <summary>
 		/// Max squared distance to use to determine if two points are on the same plane for determining the contact manifold between two shape faces (unit: meter).
@@ -447,7 +477,7 @@ namespace NeoAxis
 		public Reference<double> PhysicsManifoldTolerance
 		{
 			get { if( _physicsManifoldTolerance.BeginGet() ) PhysicsManifoldTolerance = _physicsManifoldTolerance.Get( this ); return _physicsManifoldTolerance.value; }
-			set { if( _physicsManifoldTolerance.BeginSet( ref value ) ) { try { PhysicsManifoldToleranceChanged?.Invoke( this ); } finally { _physicsManifoldTolerance.EndSet(); } } }
+			set { if( _physicsManifoldTolerance.BeginSet( this, ref value ) ) { try { PhysicsManifoldToleranceChanged?.Invoke( this ); } finally { _physicsManifoldTolerance.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsManifoldTolerance"/> property value changes.</summary>
 		public event Action<Scene> PhysicsManifoldToleranceChanged;
@@ -461,7 +491,7 @@ namespace NeoAxis
 		public Reference<double> PhysicsMaxPenetrationDistance
 		{
 			get { if( _physicsMaxPenetrationDistance.BeginGet() ) PhysicsMaxPenetrationDistance = _physicsMaxPenetrationDistance.Get( this ); return _physicsMaxPenetrationDistance.value; }
-			set { if( _physicsMaxPenetrationDistance.BeginSet( ref value ) ) { try { PhysicsMaxPenetrationDistanceChanged?.Invoke( this ); } finally { _physicsMaxPenetrationDistance.EndSet(); } } }
+			set { if( _physicsMaxPenetrationDistance.BeginSet( this, ref value ) ) { try { PhysicsMaxPenetrationDistanceChanged?.Invoke( this ); } finally { _physicsMaxPenetrationDistance.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsMaxPenetrationDistance"/> property value changes.</summary>
 		public event Action<Scene> PhysicsMaxPenetrationDistanceChanged;
@@ -475,7 +505,7 @@ namespace NeoAxis
 		public Reference<double> PhysicsBodyPairCacheMaxDeltaPosition
 		{
 			get { if( _physicsBodyPairCacheMaxDeltaPosition.BeginGet() ) PhysicsBodyPairCacheMaxDeltaPosition = _physicsBodyPairCacheMaxDeltaPosition.Get( this ); return _physicsBodyPairCacheMaxDeltaPosition.value; }
-			set { if( _physicsBodyPairCacheMaxDeltaPosition.BeginSet( ref value ) ) { try { PhysicsBodyPairCacheMaxDeltaPositionChanged?.Invoke( this ); } finally { _physicsBodyPairCacheMaxDeltaPosition.EndSet(); } } }
+			set { if( _physicsBodyPairCacheMaxDeltaPosition.BeginSet( this, ref value ) ) { try { PhysicsBodyPairCacheMaxDeltaPositionChanged?.Invoke( this ); } finally { _physicsBodyPairCacheMaxDeltaPosition.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsBodyPairCacheMaxDeltaPosition"/> property value changes.</summary>
 		public event Action<Scene> PhysicsBodyPairCacheMaxDeltaPositionChanged;
@@ -489,7 +519,7 @@ namespace NeoAxis
 		public Reference<double> PhysicsBodyPairCacheCosMaxDeltaRotationDiv2
 		{
 			get { if( _physicsBodyPairCacheCosMaxDeltaRotationDiv2.BeginGet() ) PhysicsBodyPairCacheCosMaxDeltaRotationDiv2 = _physicsBodyPairCacheCosMaxDeltaRotationDiv2.Get( this ); return _physicsBodyPairCacheCosMaxDeltaRotationDiv2.value; }
-			set { if( _physicsBodyPairCacheCosMaxDeltaRotationDiv2.BeginSet( ref value ) ) { try { PhysicsBodyPairCacheCosMaxDeltaRotationDiv2Changed?.Invoke( this ); } finally { _physicsBodyPairCacheCosMaxDeltaRotationDiv2.EndSet(); } } }
+			set { if( _physicsBodyPairCacheCosMaxDeltaRotationDiv2.BeginSet( this, ref value ) ) { try { PhysicsBodyPairCacheCosMaxDeltaRotationDiv2Changed?.Invoke( this ); } finally { _physicsBodyPairCacheCosMaxDeltaRotationDiv2.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsBodyPairCacheCosMaxDeltaRotationDiv2"/> property value changes.</summary>
 		public event Action<Scene> PhysicsBodyPairCacheCosMaxDeltaRotationDiv2Changed;
@@ -503,7 +533,7 @@ namespace NeoAxis
 		public Reference<double> PhysicsContactNormalCosMaxDeltaRotation
 		{
 			get { if( _physicsContactNormalCosMaxDeltaRotation.BeginGet() ) PhysicsContactNormalCosMaxDeltaRotation = _physicsContactNormalCosMaxDeltaRotation.Get( this ); return _physicsContactNormalCosMaxDeltaRotation.value; }
-			set { if( _physicsContactNormalCosMaxDeltaRotation.BeginSet( ref value ) ) { try { PhysicsContactNormalCosMaxDeltaRotationChanged?.Invoke( this ); } finally { _physicsContactNormalCosMaxDeltaRotation.EndSet(); } } }
+			set { if( _physicsContactNormalCosMaxDeltaRotation.BeginSet( this, ref value ) ) { try { PhysicsContactNormalCosMaxDeltaRotationChanged?.Invoke( this ); } finally { _physicsContactNormalCosMaxDeltaRotation.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsContactNormalCosMaxDeltaRotation"/> property value changes.</summary>
 		public event Action<Scene> PhysicsContactNormalCosMaxDeltaRotationChanged;
@@ -517,7 +547,7 @@ namespace NeoAxis
 		public Reference<double> PhysicsContactPointPreserveLambdaMaxDist
 		{
 			get { if( _physicsContactPointPreserveLambdaMaxDist.BeginGet() ) PhysicsContactPointPreserveLambdaMaxDist = _physicsContactPointPreserveLambdaMaxDist.Get( this ); return _physicsContactPointPreserveLambdaMaxDist.value; }
-			set { if( _physicsContactPointPreserveLambdaMaxDist.BeginSet( ref value ) ) { try { PhysicsContactPointPreserveLambdaMaxDistChanged?.Invoke( this ); } finally { _physicsContactPointPreserveLambdaMaxDist.EndSet(); } } }
+			set { if( _physicsContactPointPreserveLambdaMaxDist.BeginSet( this, ref value ) ) { try { PhysicsContactPointPreserveLambdaMaxDistChanged?.Invoke( this ); } finally { _physicsContactPointPreserveLambdaMaxDist.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsContactPointPreserveLambdaMaxDist"/> property value changes.</summary>
 		public event Action<Scene> PhysicsContactPointPreserveLambdaMaxDistChanged;
@@ -531,7 +561,7 @@ namespace NeoAxis
 		public Reference<int> PhysicsNumVelocitySteps
 		{
 			get { if( _physicsNumVelocitySteps.BeginGet() ) PhysicsNumVelocitySteps = _physicsNumVelocitySteps.Get( this ); return _physicsNumVelocitySteps.value; }
-			set { if( _physicsNumVelocitySteps.BeginSet( ref value ) ) { try { PhysicsNumVelocityStepsChanged?.Invoke( this ); } finally { _physicsNumVelocitySteps.EndSet(); } } }
+			set { if( _physicsNumVelocitySteps.BeginSet( this, ref value ) ) { try { PhysicsNumVelocityStepsChanged?.Invoke( this ); } finally { _physicsNumVelocitySteps.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsNumVelocitySteps"/> property value changes.</summary>
 		public event Action<Scene> PhysicsNumVelocityStepsChanged;
@@ -545,7 +575,7 @@ namespace NeoAxis
 		public Reference<int> PhysicsNumPositionSteps
 		{
 			get { if( _physicsNumPositionSteps.BeginGet() ) PhysicsNumPositionSteps = _physicsNumPositionSteps.Get( this ); return _physicsNumPositionSteps.value; }
-			set { if( _physicsNumPositionSteps.BeginSet( ref value ) ) { try { PhysicsNumPositionStepsChanged?.Invoke( this ); } finally { _physicsNumPositionSteps.EndSet(); } } }
+			set { if( _physicsNumPositionSteps.BeginSet( this, ref value ) ) { try { PhysicsNumPositionStepsChanged?.Invoke( this ); } finally { _physicsNumPositionSteps.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsNumPositionSteps"/> property value changes.</summary>
 		public event Action<Scene> PhysicsNumPositionStepsChanged;
@@ -559,7 +589,7 @@ namespace NeoAxis
 		public Reference<double> PhysicsMinVelocityForRestitution
 		{
 			get { if( _physicsMinVelocityForRestitution.BeginGet() ) PhysicsMinVelocityForRestitution = _physicsMinVelocityForRestitution.Get( this ); return _physicsMinVelocityForRestitution.value; }
-			set { if( _physicsMinVelocityForRestitution.BeginSet( ref value ) ) { try { PhysicsMinVelocityForRestitutionChanged?.Invoke( this ); } finally { _physicsMinVelocityForRestitution.EndSet(); } } }
+			set { if( _physicsMinVelocityForRestitution.BeginSet( this, ref value ) ) { try { PhysicsMinVelocityForRestitutionChanged?.Invoke( this ); } finally { _physicsMinVelocityForRestitution.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsMinVelocityForRestitution"/> property value changes.</summary>
 		public event Action<Scene> PhysicsMinVelocityForRestitutionChanged;
@@ -573,7 +603,7 @@ namespace NeoAxis
 		public Reference<double> PhysicsTimeBeforeSleep
 		{
 			get { if( _physicsTimeBeforeSleep.BeginGet() ) PhysicsTimeBeforeSleep = _physicsTimeBeforeSleep.Get( this ); return _physicsTimeBeforeSleep.value; }
-			set { if( _physicsTimeBeforeSleep.BeginSet( ref value ) ) { try { PhysicsTimeBeforeSleepChanged?.Invoke( this ); } finally { _physicsTimeBeforeSleep.EndSet(); } } }
+			set { if( _physicsTimeBeforeSleep.BeginSet( this, ref value ) ) { try { PhysicsTimeBeforeSleepChanged?.Invoke( this ); } finally { _physicsTimeBeforeSleep.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsTimeBeforeSleep"/> property value changes.</summary>
 		public event Action<Scene> PhysicsTimeBeforeSleepChanged;
@@ -587,7 +617,7 @@ namespace NeoAxis
 		public Reference<double> PhysicsPointVelocitySleepThreshold
 		{
 			get { if( _physicsPointVelocitySleepThreshold.BeginGet() ) PhysicsPointVelocitySleepThreshold = _physicsPointVelocitySleepThreshold.Get( this ); return _physicsPointVelocitySleepThreshold.value; }
-			set { if( _physicsPointVelocitySleepThreshold.BeginSet( ref value ) ) { try { PhysicsPointVelocitySleepThresholdChanged?.Invoke( this ); } finally { _physicsPointVelocitySleepThreshold.EndSet(); } } }
+			set { if( _physicsPointVelocitySleepThreshold.BeginSet( this, ref value ) ) { try { PhysicsPointVelocitySleepThresholdChanged?.Invoke( this ); } finally { _physicsPointVelocitySleepThreshold.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsPointVelocitySleepThreshold"/> property value changes.</summary>
 		public event Action<Scene> PhysicsPointVelocitySleepThresholdChanged;
@@ -601,7 +631,7 @@ namespace NeoAxis
 		public Reference<bool> PhysicsConstraintWarmStart
 		{
 			get { if( _physicsConstraintWarmStart.BeginGet() ) PhysicsConstraintWarmStart = _physicsConstraintWarmStart.Get( this ); return _physicsConstraintWarmStart.value; }
-			set { if( _physicsConstraintWarmStart.BeginSet( ref value ) ) { try { PhysicsConstraintWarmStartChanged?.Invoke( this ); } finally { _physicsConstraintWarmStart.EndSet(); } } }
+			set { if( _physicsConstraintWarmStart.BeginSet( this, ref value ) ) { try { PhysicsConstraintWarmStartChanged?.Invoke( this ); } finally { _physicsConstraintWarmStart.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsConstraintWarmStart"/> property value changes.</summary>
 		public event Action<Scene> PhysicsConstraintWarmStartChanged;
@@ -615,7 +645,7 @@ namespace NeoAxis
 		public Reference<bool> PhysicsUseBodyPairContactCache
 		{
 			get { if( _physicsUseBodyPairContactCache.BeginGet() ) PhysicsUseBodyPairContactCache = _physicsUseBodyPairContactCache.Get( this ); return _physicsUseBodyPairContactCache.value; }
-			set { if( _physicsUseBodyPairContactCache.BeginSet( ref value ) ) { try { PhysicsUseBodyPairContactCacheChanged?.Invoke( this ); } finally { _physicsUseBodyPairContactCache.EndSet(); } } }
+			set { if( _physicsUseBodyPairContactCache.BeginSet( this, ref value ) ) { try { PhysicsUseBodyPairContactCacheChanged?.Invoke( this ); } finally { _physicsUseBodyPairContactCache.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsUseBodyPairContactCache"/> property value changes.</summary>
 		public event Action<Scene> PhysicsUseBodyPairContactCacheChanged;
@@ -629,7 +659,7 @@ namespace NeoAxis
 		public Reference<bool> PhysicsUseManifoldReduction
 		{
 			get { if( _physicsUseManifoldReduction.BeginGet() ) PhysicsUseManifoldReduction = _physicsUseManifoldReduction.Get( this ); return _physicsUseManifoldReduction.value; }
-			set { if( _physicsUseManifoldReduction.BeginSet( ref value ) ) { try { PhysicsUseManifoldReductionChanged?.Invoke( this ); } finally { _physicsUseManifoldReduction.EndSet(); } } }
+			set { if( _physicsUseManifoldReduction.BeginSet( this, ref value ) ) { try { PhysicsUseManifoldReductionChanged?.Invoke( this ); } finally { _physicsUseManifoldReduction.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsUseManifoldReduction"/> property value changes.</summary>
 		public event Action<Scene> PhysicsUseManifoldReductionChanged;
@@ -643,7 +673,7 @@ namespace NeoAxis
 		public Reference<bool> PhysicsAllowSleeping
 		{
 			get { if( _physicsAllowSleeping.BeginGet() ) PhysicsAllowSleeping = _physicsAllowSleeping.Get( this ); return _physicsAllowSleeping.value; }
-			set { if( _physicsAllowSleeping.BeginSet( ref value ) ) { try { PhysicsAllowSleepingChanged?.Invoke( this ); } finally { _physicsAllowSleeping.EndSet(); } } }
+			set { if( _physicsAllowSleeping.BeginSet( this, ref value ) ) { try { PhysicsAllowSleepingChanged?.Invoke( this ); } finally { _physicsAllowSleeping.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsAllowSleeping"/> property value changes.</summary>
 		public event Action<Scene> PhysicsAllowSleepingChanged;
@@ -657,7 +687,7 @@ namespace NeoAxis
 		public Reference<bool> PhysicsCheckActiveEdges
 		{
 			get { if( _physicsCheckActiveEdges.BeginGet() ) PhysicsCheckActiveEdges = _physicsCheckActiveEdges.Get( this ); return _physicsCheckActiveEdges.value; }
-			set { if( _physicsCheckActiveEdges.BeginSet( ref value ) ) { try { PhysicsCheckActiveEdgesChanged?.Invoke( this ); } finally { _physicsCheckActiveEdges.EndSet(); } } }
+			set { if( _physicsCheckActiveEdges.BeginSet( this, ref value ) ) { try { PhysicsCheckActiveEdgesChanged?.Invoke( this ); } finally { _physicsCheckActiveEdges.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsCheckActiveEdges"/> property value changes.</summary>
 		public event Action<Scene> PhysicsCheckActiveEdgesChanged;
@@ -674,7 +704,7 @@ namespace NeoAxis
 		//public Reference<int> PhysicsSimulationSteps
 		//{
 		//	get { if( _physicsSimulationSteps.BeginGet() ) PhysicsSimulationSteps = _physicsSimulationSteps.Get( this ); return _physicsSimulationSteps.value; }
-		//	set { if( _physicsSimulationSteps.BeginSet( ref value ) ) { try { PhysicsSimulationStepsChanged?.Invoke( this ); } finally { _physicsSimulationSteps.EndSet(); } } }
+		//	set { if( _physicsSimulationSteps.BeginSet( this, ref value ) ) { try { PhysicsSimulationStepsChanged?.Invoke( this ); } finally { _physicsSimulationSteps.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="PhysicsSimulationSteps"/> property value changes.</summary>
 		//public event Action<Scene> PhysicsSimulationStepsChanged;
@@ -690,7 +720,7 @@ namespace NeoAxis
 		//public Reference<int> PhysicsNumberIterations
 		//{
 		//	get { if( _physicsNumberIterations.BeginGet() ) PhysicsNumberIterations = _physicsNumberIterations.Get( this ); return _physicsNumberIterations.value; }
-		//	set { if( _physicsNumberIterations.BeginSet( ref value ) ) { try { PhysicsNumberIterationsChanged?.Invoke( this ); } finally { _physicsNumberIterations.EndSet(); } } }
+		//	set { if( _physicsNumberIterations.BeginSet( this, ref value ) ) { try { PhysicsNumberIterationsChanged?.Invoke( this ); } finally { _physicsNumberIterations.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="PhysicsNumberIterations"/> property value changes.</summary>
 		//public event Action<Scene> PhysicsNumberIterationsChanged;
@@ -710,7 +740,7 @@ namespace NeoAxis
 			get { if( _gravity2D.BeginGet() ) Gravity2D = _gravity2D.Get( this ); return _gravity2D.value; }
 			set
 			{
-				if( _gravity2D.BeginSet( ref value ) )
+				if( _gravity2D.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -738,7 +768,7 @@ namespace NeoAxis
 			get { if( _backgroundSound.BeginGet() ) BackgroundSound = _backgroundSound.Get( this ); return _backgroundSound.value; }
 			set
 			{
-				if( _backgroundSound.BeginSet( ref value ) )
+				if( _backgroundSound.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -764,7 +794,7 @@ namespace NeoAxis
 			get { if( _backgroundSoundVolumeInEditor.BeginGet() ) BackgroundSoundVolumeInEditor = _backgroundSoundVolumeInEditor.Get( this ); return _backgroundSoundVolumeInEditor.value; }
 			set
 			{
-				if( _backgroundSoundVolumeInEditor.BeginSet( ref value ) )
+				if( _backgroundSoundVolumeInEditor.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -790,7 +820,7 @@ namespace NeoAxis
 			get { if( _backgroundSoundVolumeInSimulation.BeginGet() ) BackgroundSoundVolumeInSimulation = _backgroundSoundVolumeInSimulation.Get( this ); return _backgroundSoundVolumeInSimulation.value; }
 			set
 			{
-				if( _backgroundSoundVolumeInSimulation.BeginSet( ref value ) )
+				if( _backgroundSoundVolumeInSimulation.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -805,61 +835,24 @@ namespace NeoAxis
 		public event Action<Scene> BackgroundSoundVolumeInSimulationChanged;
 		ReferenceField<double> _backgroundSoundVolumeInSimulation = 1.0;
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////
 
-		//!!!!в terrain?
+		//!!!!слишком общие параметры? в здании может быть иначе или в разных местах сцены
+
+		///// <summary>
+		///// Season of a year. 0 - summer, 1 - fall, 2 - winter, 3 - spring.
+		///// </summary>
 		//[Category( "Environment" )]
-		//[DefaultValue( 0.75 )]
-		//[Range( 0, 1 )]
-		//public Reference<double> MineralsQuality
+		//[DefaultValue( 0.0 )]
+		//[Range( 0, 4 )]
+		//public Reference<double> Season
 		//{
-		//	get { if( _mineralsQuality.BeginGet() ) MineralsQuality = _mineralsQuality.Get( this ); return _mineralsQuality.value; }
-		//	set { if( _mineralsQuality.BeginSet( ref value ) ) { try { MineralsQualityChanged?.Invoke( this ); } finally { _mineralsQuality.EndSet(); } } }
+		//	get { if( _season.BeginGet() ) Season = _season.Get( this ); return _season.value; }
+		//	set { if( _season.BeginSet( this, ref value ) ) { try { SeasonChanged?.Invoke( this ); } finally { _season.EndSet(); } } }
 		//}
-		///// <summary>Occurs when the <see cref="MineralsQuality"/> property value changes.</summary>
-		//public event Action<Scene> MineralsQualityChanged;
-		//ReferenceField<double> _mineralsQuality = 0.75;
-
-		//!!!!
-		//[Category( "Environment" )]
-		//[DefaultValue( 0.75 )]
-		//[Range( 0, 1 )]
-		//public Reference<double> AverageSolarEnergy
-		//{
-		//	get { if( _averageSolarEnergy.BeginGet() ) AverageSolarEnergy = _averageSolarEnergy.Get( this ); return _averageSolarEnergy.value; }
-		//	set { if( _averageSolarEnergy.BeginSet( ref value ) ) { try { AverageSolarEnergyChanged?.Invoke( this ); } finally { _averageSolarEnergy.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="AverageSolarEnergy"/> property value changes.</summary>
-		//public event Action<Scene> AverageSolarEnergyChanged;
-		//ReferenceField<double> _averageSolarEnergy = 0.75;
-
-		//!!!!
-		//[Category( "Environment" )]
-		//[DefaultValue( 0.5 )]
-		//[Range( 0, 1 )]
-		//public Reference<double> AverageHumidity
-		//{
-		//	get { if( _averageAverageHumidity.BeginGet() ) AverageHumidity = _averageAverageHumidity.Get( this ); return _averageAverageHumidity.value; }
-		//	set { if( _averageAverageHumidity.BeginSet( ref value ) ) { try { AverageHumidityChanged?.Invoke( this ); } finally { _averageAverageHumidity.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="AverageHumidity"/> property value changes.</summary>
-		//public event Action<Scene> AverageHumidityChanged;
-		//ReferenceField<double> _averageAverageHumidity = 0.5;
-
-		/// <summary>
-		/// Season of a year. 0 - summer, 1 - fall, 2 - winter, 3 - spring.
-		/// </summary>
-		[Category( "Environment" )]
-		[DefaultValue( 0.0 )]
-		[Range( 0, 4 )]
-		public Reference<double> Season
-		{
-			get { if( _season.BeginGet() ) Season = _season.Get( this ); return _season.value; }
-			set { if( _season.BeginSet( ref value ) ) { try { SeasonChanged?.Invoke( this ); } finally { _season.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="Season"/> property value changes.</summary>
-		public event Action<Scene> SeasonChanged;
-		ReferenceField<double> _season = 0.0;
+		///// <summary>Occurs when the <see cref="Season"/> property value changes.</summary>
+		//public event Action<Scene> SeasonChanged;
+		//ReferenceField<double> _season = 0.0;
 
 		[Category( "Environment" )]
 		[DefaultValue( 20 )]
@@ -868,37 +861,147 @@ namespace NeoAxis
 		public Reference<double> Temperature
 		{
 			get { if( _temperature.BeginGet() ) Temperature = _temperature.Get( this ); return _temperature.value; }
-			set { if( _temperature.BeginSet( ref value ) ) { try { TemperatureChanged?.Invoke( this ); } finally { _temperature.EndSet(); } } }
+			set { if( _temperature.BeginSet( this, ref value ) ) { try { TemperatureChanged?.Invoke( this ); } finally { _temperature.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Temperature"/> property value changes.</summary>
 		public event Action<Scene> TemperatureChanged;
 		ReferenceField<double> _temperature = 20;
 
-		[Category( "Environment" )]
-		[DefaultValue( 0.5 )]
-		[Range( 0, 1 )]
-		public Reference<double> Humidity
-		{
-			get { if( _humidity.BeginGet() ) Humidity = _humidity.Get( this ); return _humidity.value; }
-			set { if( _humidity.BeginSet( ref value ) ) { try { HumidityChanged?.Invoke( this ); } finally { _humidity.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="Humidity"/> property value changes.</summary>
-		public event Action<Scene> HumidityChanged;
-		ReferenceField<double> _humidity = 0.5;
+		//[Category( "Environment" )]
+		//[DefaultValue( 0.5 )]
+		//[Range( 0, 1 )]
+		//public Reference<double> Humidity
+		//{
+		//	get { if( _humidity.BeginGet() ) Humidity = _humidity.Get( this ); return _humidity.value; }
+		//	set { if( _humidity.BeginSet( this, ref value ) ) { try { HumidityChanged?.Invoke( this ); } finally { _humidity.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="Humidity"/> property value changes.</summary>
+		//public event Action<Scene> HumidityChanged;
+		//ReferenceField<double> _humidity = 0.5;
 
 		[Category( "Environment" )]
 		[DefaultValue( 0.0 )]
 		[Range( 0, 1 )]
-		public Reference<double> Precipitation
+		public Reference<double> PrecipitationFalling
 		{
-			get { if( _precipitation.BeginGet() ) Precipitation = _precipitation.Get( this ); return _precipitation.value; }
-			set { if( _precipitation.BeginSet( ref value ) ) { try { PrecipitationChanged?.Invoke( this ); } finally { _precipitation.EndSet(); } } }
+			get { if( _precipitationFalling.BeginGet() ) PrecipitationFalling = _precipitationFalling.Get( this ); return _precipitationFalling.value; }
+			set { if( _precipitationFalling.BeginSet( this, ref value ) ) { try { PrecipitationFallingChanged?.Invoke( this ); } finally { _precipitationFalling.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="Precipitation"/> property value changes.</summary>
-		public event Action<Scene> PrecipitationChanged;
-		ReferenceField<double> _precipitation = 0.0;
+		/// <summary>Occurs when the <see cref="PrecipitationFalling"/> property value changes.</summary>
+		public event Action<Scene> PrecipitationFallingChanged;
+		ReferenceField<double> _precipitationFalling = 0.0;
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		[Category( "Environment" )]
+		[DefaultValue( 0.0 )]
+		[Range( 0, 1 )]
+		public Reference<double> PrecipitationFallen
+		{
+			get { if( _precipitationFallen.BeginGet() ) PrecipitationFallen = _precipitationFallen.Get( this ); return _precipitationFallen.value; }
+			set { if( _precipitationFallen.BeginSet( this, ref value ) ) { try { PrecipitationFallenChanged?.Invoke( this ); } finally { _precipitationFallen.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PrecipitationFallen"/> property value changes.</summary>
+		public event Action<Scene> PrecipitationFallenChanged;
+		ReferenceField<double> _precipitationFallen = 0.0;
+
+		////!!!!в terrain?
+		////[Category( "Environment" )]
+		////[DefaultValue( 0.75 )]
+		////[Range( 0, 1 )]
+		////public Reference<double> MineralsQuality
+		////{
+		////	get { if( _mineralsQuality.BeginGet() ) MineralsQuality = _mineralsQuality.Get( this ); return _mineralsQuality.value; }
+		////	set { if( _mineralsQuality.BeginSet( this, ref value ) ) { try { MineralsQualityChanged?.Invoke( this ); } finally { _mineralsQuality.EndSet(); } } }
+		////}
+		/////// <summary>Occurs when the <see cref="MineralsQuality"/> property value changes.</summary>
+		////public event Action<Scene> MineralsQualityChanged;
+		////ReferenceField<double> _mineralsQuality = 0.75;
+
+		////!!!!
+		////[Category( "Environment" )]
+		////[DefaultValue( 0.75 )]
+		////[Range( 0, 1 )]
+		////public Reference<double> AverageSolarEnergy
+		////{
+		////	get { if( _averageSolarEnergy.BeginGet() ) AverageSolarEnergy = _averageSolarEnergy.Get( this ); return _averageSolarEnergy.value; }
+		////	set { if( _averageSolarEnergy.BeginSet( this, ref value ) ) { try { AverageSolarEnergyChanged?.Invoke( this ); } finally { _averageSolarEnergy.EndSet(); } } }
+		////}
+		/////// <summary>Occurs when the <see cref="AverageSolarEnergy"/> property value changes.</summary>
+		////public event Action<Scene> AverageSolarEnergyChanged;
+		////ReferenceField<double> _averageSolarEnergy = 0.75;
+
+		////!!!!
+		////[Category( "Environment" )]
+		////[DefaultValue( 0.5 )]
+		////[Range( 0, 1 )]
+		////public Reference<double> AverageHumidity
+		////{
+		////	get { if( _averageAverageHumidity.BeginGet() ) AverageHumidity = _averageAverageHumidity.Get( this ); return _averageAverageHumidity.value; }
+		////	set { if( _averageAverageHumidity.BeginSet( this, ref value ) ) { try { AverageHumidityChanged?.Invoke( this ); } finally { _averageAverageHumidity.EndSet(); } } }
+		////}
+		/////// <summary>Occurs when the <see cref="AverageHumidity"/> property value changes.</summary>
+		////public event Action<Scene> AverageHumidityChanged;
+		////ReferenceField<double> _averageAverageHumidity = 0.5;
+
+		[Category( "Environment" )]
+		[DefaultValue( 12.0 )]
+		[Range( 0, 24 )]
+		public Reference<double> TimeOfDay
+		{
+			get { if( _timeOfDay.BeginGet() ) TimeOfDay = _timeOfDay.Get( this ); return _timeOfDay.value; }
+			set { if( _timeOfDay.BeginSet( this, ref value ) ) { try { TimeOfDayChanged?.Invoke( this ); } finally { _timeOfDay.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="TimeOfDay"/> property value changes.</summary>
+		public event Action<Scene> TimeOfDayChanged;
+		ReferenceField<double> _timeOfDay = 12.0;
+
+		///////////////////////////////////////////////
+
+		/// <summary>
+		/// The default minimum distance from the listener, after which the sound begins to weaken.
+		/// </summary>
+		[Category( "Sound" )]
+		[DefaultValue( 5.0 )]
+		[Range( 0, 100, RangeAttribute.ConvenientDistributionEnum.Exponential, 4 )]
+		public Reference<double> SoundAttenuationNear
+		{
+			get { if( _soundAttenuationNear.BeginGet() ) SoundAttenuationNear = _soundAttenuationNear.Get( this ); return _soundAttenuationNear.value; }
+			set { if( _soundAttenuationNear.BeginSet( this, ref value ) ) { try { SoundAttenuationNearChanged?.Invoke( this ); soundDefaultRolloffGraph = null; } finally { _soundAttenuationNear.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="SoundAttenuationNear"/> property value changes.</summary>
+		public event Action<Scene> SoundAttenuationNearChanged;
+		ReferenceField<double> _soundAttenuationNear = 5.0;
+
+		/// <summary>
+		/// The default maximum distance from the listener, after which no sound is heard.
+		/// </summary>
+		[Category( "Sound" )]
+		[DefaultValue( 100.0 )]
+		[Range( 0, 1000, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
+		public Reference<double> SoundAttenuationFar
+		{
+			get { if( _soundAttenuationFar.BeginGet() ) SoundAttenuationFar = _soundAttenuationFar.Get( this ); return _soundAttenuationFar.value; }
+			set { if( _soundAttenuationFar.BeginSet( this, ref value ) ) { try { SoundAttenuationFarChanged?.Invoke( this ); soundDefaultRolloffGraph = null; } finally { _soundAttenuationFar.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="SoundAttenuationFar"/> property value changes.</summary>
+		public event Action<Scene> SoundAttenuationFarChanged;
+		ReferenceField<double> _soundAttenuationFar = 100.0;
+
+		/// <summary>
+		/// The default damping factor.
+		/// </summary>
+		[Category( "Sound" )]
+		[DefaultValue( 1.0 )]
+		[Range( 0.1, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 4 )]
+		public Reference<double> SoundRolloffFactor
+		{
+			get { if( _soundRolloffFactor.BeginGet() ) SoundRolloffFactor = _soundRolloffFactor.Get( this ); return _soundRolloffFactor.value; }
+			set { if( _soundRolloffFactor.BeginSet( this, ref value ) ) { try { SoundRolloffFactorChanged?.Invoke( this ); soundDefaultRolloffGraph = null; } finally { _soundRolloffFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="SoundRolloffFactor"/> property value changes.</summary>
+		public event Action<Scene> SoundRolloffFactorChanged;
+		ReferenceField<double> _soundRolloffFactor = 1.0;
+
+		///////////////////////////////////////////////
 
 		/// <summary>
 		/// Whether to show development data in the editor.
@@ -909,7 +1012,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayDevelopmentDataInEditor
 		{
 			get { if( _displayDevelopmentDataInEditor.BeginGet() ) DisplayDevelopmentDataInEditor = _displayDevelopmentDataInEditor.Get( this ); return _displayDevelopmentDataInEditor.value; }
-			set { if( _displayDevelopmentDataInEditor.BeginSet( ref value ) ) { try { DisplayDevelopmentDataInEditorChanged?.Invoke( this ); } finally { _displayDevelopmentDataInEditor.EndSet(); } } }
+			set { if( _displayDevelopmentDataInEditor.BeginSet( this, ref value ) ) { try { DisplayDevelopmentDataInEditorChanged?.Invoke( this ); } finally { _displayDevelopmentDataInEditor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayDevelopmentDataInEditor"/> property value changes.</summary>
 		public event Action<Scene> DisplayDevelopmentDataInEditorChanged;
@@ -924,7 +1027,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayDevelopmentDataInSimulation
 		{
 			get { if( _displayDevelopmentDataInSimulation.BeginGet() ) DisplayDevelopmentDataInSimulation = _displayDevelopmentDataInSimulation.Get( this ); return _displayDevelopmentDataInSimulation.value; }
-			set { if( _displayDevelopmentDataInSimulation.BeginSet( ref value ) ) { try { DisplayDevelopmentDataInSimulationChanged?.Invoke( this ); } finally { _displayDevelopmentDataInSimulation.EndSet(); } } }
+			set { if( _displayDevelopmentDataInSimulation.BeginSet( this, ref value ) ) { try { DisplayDevelopmentDataInSimulationChanged?.Invoke( this ); } finally { _displayDevelopmentDataInSimulation.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayDevelopmentDataInSimulation"/> property value changes.</summary>
 		public event Action<Scene> DisplayDevelopmentDataInSimulationChanged;
@@ -948,7 +1051,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _displayDevelopmentDataInSimulation.BeginSet( ref value ) )
+		//		if( _displayDevelopmentDataInSimulation.BeginSet( this, ref value ) )
 		//		{
 		//			try { DisplayAdditionalDataInSimulationChanged?.Invoke( this ); }
 		//			finally { _displayDevelopmentDataInSimulation.EndSet(); }
@@ -968,7 +1071,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayTextInfo
 		{
 			get { if( _displayTextInfo.BeginGet() ) DisplayTextInfo = _displayTextInfo.Get( this ); return _displayTextInfo.value; }
-			set { if( _displayTextInfo.BeginSet( ref value ) ) { try { DisplayTextInfoChanged?.Invoke( this ); } finally { _displayTextInfo.EndSet(); } } }
+			set { if( _displayTextInfo.BeginSet( this, ref value ) ) { try { DisplayTextInfoChanged?.Invoke( this ); } finally { _displayTextInfo.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayTextInfo"/> property value changes.</summary>
 		public event Action<Scene> DisplayTextInfoChanged;
@@ -991,7 +1094,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _displayLabels.BeginSet( ref value ) )
+				if( _displayLabels.BeginSet( this, ref value ) )
 				{
 					try { DisplayLabelsChanged?.Invoke( this ); }
 					finally { _displayLabels.EndSet(); }
@@ -1010,7 +1113,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayLights
 		{
 			get { if( _displayLights.BeginGet() ) DisplayLights = _displayLights.Get( this ); return _displayLights.value; }
-			set { if( _displayLights.BeginSet( ref value ) ) { try { DisplayLightsChanged?.Invoke( this ); } finally { _displayLights.EndSet(); } } }
+			set { if( _displayLights.BeginSet( this, ref value ) ) { try { DisplayLightsChanged?.Invoke( this ); } finally { _displayLights.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayLights"/> property value changes.</summary>
 		public event Action<Scene> DisplayLightsChanged;
@@ -1025,7 +1128,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayDecals
 		{
 			get { if( _displayDecals.BeginGet() ) DisplayDecals = _displayDecals.Get( this ); return _displayDecals.value; }
-			set { if( _displayDecals.BeginSet( ref value ) ) { try { DisplayDecalsChanged?.Invoke( this ); } finally { _displayDecals.EndSet(); } } }
+			set { if( _displayDecals.BeginSet( this, ref value ) ) { try { DisplayDecalsChanged?.Invoke( this ); } finally { _displayDecals.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayDecals"/> property value changes.</summary>
 		public event Action<Scene> DisplayDecalsChanged;
@@ -1049,7 +1152,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _displayReflectionProbes.BeginSet( ref value ) )
+				if( _displayReflectionProbes.BeginSet( this, ref value ) )
 				{
 					try { DisplayReflectionProbesChanged?.Invoke( this ); }
 					finally { _displayReflectionProbes.EndSet(); }
@@ -1077,7 +1180,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _displayCameras.BeginSet( ref value ) )
+				if( _displayCameras.BeginSet( this, ref value ) )
 				{
 					try { DisplayCamerasChanged?.Invoke( this ); }
 					finally { _displayCameras.EndSet(); }
@@ -1095,7 +1198,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayPhysicalObjects
 		{
 			get { if( _displayPhysicalObjects.BeginGet() ) DisplayPhysicalObjects = _displayPhysicalObjects.Get( this ); return _displayPhysicalObjects.value; }
-			set { if( _displayPhysicalObjects.BeginSet( ref value ) ) { try { DisplayPhysicalObjectsChanged?.Invoke( this ); } finally { _displayPhysicalObjects.EndSet(); } } }
+			set { if( _displayPhysicalObjects.BeginSet( this, ref value ) ) { try { DisplayPhysicalObjectsChanged?.Invoke( this ); } finally { _displayPhysicalObjects.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayPhysicalObjects"/> property value changes.</summary>
 		public event Action<Scene> DisplayPhysicalObjectsChanged;
@@ -1109,7 +1212,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayAreas
 		{
 			get { if( _displayAreas.BeginGet() ) DisplayAreas = _displayAreas.Get( this ); return _displayAreas.value; }
-			set { if( _displayAreas.BeginSet( ref value ) ) { try { DisplayAreasChanged?.Invoke( this ); } finally { _displayAreas.EndSet(); } } }
+			set { if( _displayAreas.BeginSet( this, ref value ) ) { try { DisplayAreasChanged?.Invoke( this ); } finally { _displayAreas.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayAreas"/> property value changes.</summary>
 		public event Action<Scene> DisplayAreasChanged;
@@ -1123,7 +1226,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayVolumes
 		{
 			get { if( _displayVolumes.BeginGet() ) DisplayVolumes = _displayVolumes.Get( this ); return _displayVolumes.value; }
-			set { if( _displayVolumes.BeginSet( ref value ) ) { try { DisplayVolumesChanged?.Invoke( this ); } finally { _displayVolumes.EndSet(); } } }
+			set { if( _displayVolumes.BeginSet( this, ref value ) ) { try { DisplayVolumesChanged?.Invoke( this ); } finally { _displayVolumes.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayVolumes"/> property value changes.</summary>
 		public event Action<Scene> DisplayVolumesChanged;
@@ -1137,7 +1240,7 @@ namespace NeoAxis
 		public Reference<bool> DisplaySensors
 		{
 			get { if( _displaySensors.BeginGet() ) DisplaySensors = _displaySensors.Get( this ); return _displaySensors.value; }
-			set { if( _displaySensors.BeginSet( ref value ) ) { try { DisplaySensorsChanged?.Invoke( this ); } finally { _displaySensors.EndSet(); } } }
+			set { if( _displaySensors.BeginSet( this, ref value ) ) { try { DisplaySensorsChanged?.Invoke( this ); } finally { _displaySensors.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplaySensors"/> property value changes.</summary>
 		public event Action<Scene> DisplaySensorsChanged;
@@ -1162,7 +1265,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _displayPhysicsStatic.BeginSet( ref value ) )
+		//		if( _displayPhysicsStatic.BeginSet( this, ref value ) )
 		//		{
 		//			try { DisplayPhysicsStaticChanged?.Invoke( this ); }
 		//			finally { _displayPhysicsStatic.EndSet(); }
@@ -1189,7 +1292,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _displayPhysicsDynamic.BeginSet( ref value ) )
+		//		if( _displayPhysicsDynamic.BeginSet( this, ref value ) )
 		//		{
 		//			try { DisplayPhysicsDynamicChanged?.Invoke( this ); }
 		//			finally { _displayPhysicsDynamic.EndSet(); }
@@ -1209,7 +1312,7 @@ namespace NeoAxis
 		public Reference<bool> DisplaySoundSources
 		{
 			get { if( _displaySoundSources.BeginGet() ) DisplaySoundSources = _displaySoundSources.Get( this ); return _displaySoundSources.value; }
-			set { if( _displaySoundSources.BeginSet( ref value ) ) { try { DisplaySoundSourcesChanged?.Invoke( this ); } finally { _displaySoundSources.EndSet(); } } }
+			set { if( _displaySoundSources.BeginSet( this, ref value ) ) { try { DisplaySoundSourcesChanged?.Invoke( this ); } finally { _displaySoundSources.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplaySoundSources"/> property value changes.</summary>
 		public event Action<Scene> DisplaySoundSourcesChanged;
@@ -1232,7 +1335,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _displayObjectInSpaceBounds.BeginSet( ref value ) )
+				if( _displayObjectInSpaceBounds.BeginSet( this, ref value ) )
 				{
 					try { DisplayObjectInSpaceBoundsChanged?.Invoke( this ); }
 					finally { _displayObjectInSpaceBounds.EndSet(); }
@@ -1242,8 +1345,6 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="DisplayObjectInSpaceBounds"/> property value changes.</summary>
 		public event Action<Scene> DisplayObjectInSpaceBoundsChanged;
 
-		//DisplaySceneOctree
-		ReferenceField<bool> _displaySceneOctree;
 		/// <summary>
 		/// Whether to display the scene octree.
 		/// </summary>
@@ -1252,23 +1353,12 @@ namespace NeoAxis
 		[Category( "Development Data" )]
 		public Reference<bool> DisplaySceneOctree
 		{
-			get
-			{
-				if( _displaySceneOctree.BeginGet() )
-					DisplaySceneOctree = _displaySceneOctree.Get( this );
-				return _displaySceneOctree.value;
-			}
-			set
-			{
-				if( _displaySceneOctree.BeginSet( ref value ) )
-				{
-					try { DisplaySceneOctreeChanged?.Invoke( this ); }
-					finally { _displaySceneOctree.EndSet(); }
-				}
-			}
+			get { if( _displaySceneOctree.BeginGet() ) DisplaySceneOctree = _displaySceneOctree.Get( this ); return _displaySceneOctree.value; }
+			set { if( _displaySceneOctree.BeginSet( this, ref value ) ) { try { DisplaySceneOctreeChanged?.Invoke( this ); } finally { _displaySceneOctree.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplaySceneOctree"/> property value changes.</summary>
 		public event Action<Scene> DisplaySceneOctreeChanged;
+		ReferenceField<bool> _displaySceneOctree;
 
 		/// <summary>
 		/// Enables the frustum culling test.
@@ -1279,7 +1369,7 @@ namespace NeoAxis
 		public Reference<bool> FrustumCullingTest
 		{
 			get { if( _frustumCullingTest.BeginGet() ) FrustumCullingTest = _frustumCullingTest.Get( this ); return _frustumCullingTest.value; }
-			set { if( _frustumCullingTest.BeginSet( ref value ) ) { try { FrustumCullingTestChanged?.Invoke( this ); } finally { _frustumCullingTest.EndSet(); } } }
+			set { if( _frustumCullingTest.BeginSet( this, ref value ) ) { try { FrustumCullingTestChanged?.Invoke( this ); } finally { _frustumCullingTest.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FrustumCullingTest"/> property value changes.</summary>
 		public event Action<Scene> FrustumCullingTestChanged;
@@ -1309,7 +1399,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _octreeEnabled.BeginSet( ref value ) )
+				if( _octreeEnabled.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1343,7 +1433,7 @@ namespace NeoAxis
 			{
 				if( value < 1 )
 					value = new Reference<int>( 1, value.GetByReference );
-				if( _octreeObjectCountOutsideOctreeToRebuld.BeginSet( ref value ) )
+				if( _octreeObjectCountOutsideOctreeToRebuld.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1383,7 +1473,7 @@ namespace NeoAxis
 					if( v.Z < 0 ) v.Z = 0;
 					value = new Reference<Vector3>( v, value.GetByReference );
 				}
-				if( _octreeBoundsRebuildExpand.BeginSet( ref value ) )
+				if( _octreeBoundsRebuildExpand.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1423,7 +1513,7 @@ namespace NeoAxis
 					if( v.Z < 1 ) v.Z = 1;
 					value = new Reference<Vector3>( v, value.GetByReference );
 				}
-				if( _octreeMinNodeSize.BeginSet( ref value ) )
+				if( _octreeMinNodeSize.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1457,7 +1547,7 @@ namespace NeoAxis
 			{
 				if( value < 1 )
 					value = new Reference<int>( 1, value.GetByReference );
-				if( _octreeObjectCountToCreateChildNodes.BeginSet( ref value ) )
+				if( _octreeObjectCountToCreateChildNodes.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1491,7 +1581,7 @@ namespace NeoAxis
 			{
 				if( value < 10 )
 					value = new Reference<int>( 10, value.GetByReference );
-				if( _octreeMaxNodeCount.BeginSet( ref value ) )
+				if( _octreeMaxNodeCount.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1513,7 +1603,7 @@ namespace NeoAxis
 			get { if( _octreeThreadingMode.BeginGet() ) OctreeThreadingMode = _octreeThreadingMode.Get( this ); return _octreeThreadingMode.value; }
 			set
 			{
-				if( _octreeThreadingMode.BeginSet( ref value ) )
+				if( _octreeThreadingMode.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1529,19 +1619,19 @@ namespace NeoAxis
 		ReferenceField<OctreeContainer.ThreadingModeEnum> _octreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;//BackgroundThread;
 
 		[Category( "MeshInSpace Static Mode" )]
-		[DefaultValue( "150 150 10000" )]
+		[DefaultValue( "200 200 10000" )] //[DefaultValue( "150 150 10000" )]
 		public Reference<Vector3> MeshInSpaceStaticModeSectorSize
 		{
 			get { if( _meshInSpaceStaticModeSectorSize.BeginGet() ) MeshInSpaceStaticModeSectorSize = _meshInSpaceStaticModeSectorSize.Get( this ); return _meshInSpaceStaticModeSectorSize.value; }
 			set
 			{
-				if( _meshInSpaceStaticModeSectorSize.BeginSet( ref value ) )
+				if( _meshInSpaceStaticModeSectorSize.BeginSet( this, ref value ) )
 				{
 					try
 					{
 						MeshInSpaceStaticModeSectorSizeChanged?.Invoke( this );
 
-						GroupOfObjectsUtility.UpdateGroupOfObjects( this, "__GroupOfObjectsMeshInSpaceStatic", MeshInSpaceStaticModeSectorSize, MeshInSpaceStaticModeMaxObjectsInGroup );
+						GroupOfObjectsUtility.UpdateGroupOfObjects( this, "__GroupOfObjectsMeshInSpaceStatic", MeshInSpaceStaticModeSectorSize );//, MeshInSpaceStaticModeMaxObjectsInGroup );
 					}
 					finally { _meshInSpaceStaticModeSectorSize.EndSet(); }
 				}
@@ -1549,30 +1639,30 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="MeshInSpaceStaticModeSectorSize"/> property value changes.</summary>
 		public event Action<Scene> MeshInSpaceStaticModeSectorSizeChanged;
-		ReferenceField<Vector3> _meshInSpaceStaticModeSectorSize = new Vector3( 150, 150, 10000 );
+		ReferenceField<Vector3> _meshInSpaceStaticModeSectorSize = new Vector3( 200, 200, 10000 ); //new Vector3( 150, 150, 10000 );
 
-		[Category( "MeshInSpace Static Mode" )]
-		[DefaultValue( 1000 )]
-		public Reference<int> MeshInSpaceStaticModeMaxObjectsInGroup
-		{
-			get { if( _meshInSpaceStaticModeMaxObjectsInGroup.BeginGet() ) MeshInSpaceStaticModeMaxObjectsInGroup = _meshInSpaceStaticModeMaxObjectsInGroup.Get( this ); return _meshInSpaceStaticModeMaxObjectsInGroup.value; }
-			set
-			{
-				if( _meshInSpaceStaticModeMaxObjectsInGroup.BeginSet( ref value ) )
-				{
-					try
-					{
-						MeshInSpaceStaticModeMaxObjectsInGroupChanged?.Invoke( this );
+		//[Category( "MeshInSpace Static Mode" )]
+		//[DefaultValue( 2000 )]
+		//public Reference<int> MeshInSpaceStaticModeMaxObjectsInGroup
+		//{
+		//	get { if( _meshInSpaceStaticModeMaxObjectsInGroup.BeginGet() ) MeshInSpaceStaticModeMaxObjectsInGroup = _meshInSpaceStaticModeMaxObjectsInGroup.Get( this ); return _meshInSpaceStaticModeMaxObjectsInGroup.value; }
+		//	set
+		//	{
+		//		if( _meshInSpaceStaticModeMaxObjectsInGroup.BeginSet( this, ref value ) )
+		//		{
+		//			try
+		//			{
+		//				MeshInSpaceStaticModeMaxObjectsInGroupChanged?.Invoke( this );
 
-						GroupOfObjectsUtility.UpdateGroupOfObjects( this, "__GroupOfObjectsMeshInSpaceStatic", MeshInSpaceStaticModeSectorSize, MeshInSpaceStaticModeMaxObjectsInGroup );
-					}
-					finally { _meshInSpaceStaticModeMaxObjectsInGroup.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="MeshInSpaceStaticModeMaxObjectsInGroup"/> property value changes.</summary>
-		public event Action<Scene> MeshInSpaceStaticModeMaxObjectsInGroupChanged;
-		ReferenceField<int> _meshInSpaceStaticModeMaxObjectsInGroup = 1000;
+		//				GroupOfObjectsUtility.UpdateGroupOfObjects( this, "__GroupOfObjectsMeshInSpaceStatic", MeshInSpaceStaticModeSectorSize, MeshInSpaceStaticModeMaxObjectsInGroup );
+		//			}
+		//			finally { _meshInSpaceStaticModeMaxObjectsInGroup.EndSet(); }
+		//		}
+		//	}
+		//}
+		///// <summary>Occurs when the <see cref="MeshInSpaceStaticModeMaxObjectsInGroup"/> property value changes.</summary>
+		//public event Action<Scene> MeshInSpaceStaticModeMaxObjectsInGroupChanged;
+		//ReferenceField<int> _meshInSpaceStaticModeMaxObjectsInGroup = 2000;
 
 
 
@@ -1584,7 +1674,7 @@ namespace NeoAxis
 		//public Reference<bool> DisplayPhysicsInternal
 		//{
 		//	get { if( _displayPhysicsInternal.BeginGet() ) DisplayPhysicsInternal = _displayPhysicsInternal.Get( this ); return _displayPhysicsInternal.value; }
-		//	set { if( _displayPhysicsInternal.BeginSet( ref value ) ) { try { DisplayPhysicsInternalChanged?.Invoke( this ); } finally { _displayPhysicsInternal.EndSet(); } } }
+		//	set { if( _displayPhysicsInternal.BeginSet( this, ref value ) ) { try { DisplayPhysicsInternalChanged?.Invoke( this ); } finally { _displayPhysicsInternal.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="DisplayPhysicsInternal"/> property value changes.</summary>
 		//public event Action<Scene> DisplayPhysicsInternalChanged;
@@ -1614,7 +1704,7 @@ namespace NeoAxis
 				case nameof( PhysicsMaxBodyPairs ):
 				case nameof( PhysicsMaxContactConstraints ):
 				case nameof( PhysicsCollisionSteps ):
-				case nameof( PhysicsIntegrationSubSteps ):
+				//case nameof( PhysicsIntegrationSubSteps ):
 				case nameof( PhysicsMaxInFlightBodyPairs ):
 				case nameof( PhysicsStepListenersBatchSize ):
 				case nameof( PhysicsStepListenerBatchesPerJob ):
@@ -2582,8 +2672,8 @@ namespace NeoAxis
 
 			if( EnabledInHierarchy && EngineApp.IsSimulation )
 			{
-				if( octree != null )
-					boundsWhenSimulationStarted = octree.GetOctreeBoundsWithBoundsOfObjectsOutsideOctree();
+				if( octreeLogic != null )
+					boundsWhenSimulationStarted = octreeLogic.GetOctreeBoundsWithBoundsOfObjectsOutsideOctree();
 				else
 					boundsWhenSimulationStarted = CalculateTotalBoundsOfObjectsInSpace();
 			}
@@ -2606,12 +2696,18 @@ namespace NeoAxis
 
 		public delegate void ViewportUpdateBeginDelegate( Scene scene, Viewport viewport, Viewport.CameraSettingsClass overrideCameraSettings );
 		public event ViewportUpdateBeginDelegate ViewportUpdateBefore;
+
 		public event ViewportUpdateBeginDelegate ViewportUpdateBegin;
-		public delegate void ViewportUpdateEndDelegate( Scene scene, Viewport viewport );
-		public event ViewportUpdateEndDelegate ViewportUpdateEnd;
 
 		public delegate void ViewportUpdateGetCameraSettingsDelegate( Scene scene, Viewport viewport, ref bool processed );
 		public event ViewportUpdateGetCameraSettingsDelegate ViewportUpdateGetCameraSettings;
+
+		public delegate void ViewportUpdateCameraSettingsReadyDelegate( Scene scene, Viewport viewport );
+		public event ViewportUpdateCameraSettingsReadyDelegate ViewportUpdateCameraSettingsReady;
+
+		public delegate void ViewportUpdateEndDelegate( Scene scene, Viewport viewport );
+		public event ViewportUpdateEndDelegate ViewportUpdateEnd;
+
 
 		protected virtual void OnViewportUpdateBefore( Viewport viewport, Viewport.CameraSettingsClass overrideCameraSettings )
 		{
@@ -2621,6 +2717,16 @@ namespace NeoAxis
 		{
 			OnViewportUpdateBefore( viewport, overrideCameraSettings );
 			ViewportUpdateBefore?.Invoke( this, viewport, overrideCameraSettings );
+		}
+
+		protected virtual void OnViewportUpdateCameraSettingsReady( Viewport viewport )
+		{
+		}
+
+		internal void PerformViewportUpdateCameraSettingsReady( Viewport viewport )
+		{
+			OnViewportUpdateCameraSettingsReady( viewport );
+			ViewportUpdateCameraSettingsReady?.Invoke( this, viewport );
 		}
 
 		protected virtual void OnViewportUpdateBegin( Viewport viewport, Viewport.CameraSettingsClass overrideCameraSettings )
@@ -2639,11 +2745,10 @@ namespace NeoAxis
 				if( !processed )
 				{
 					//get camera settings from Camera parameter
-					Camera cam = CameraDefault;
-					if( cam != null )
+					var camera = CameraDefault.Value;
+					if( camera != null )
 					{
-						//!!!!каждый раз обновлять норм?
-						viewport.CameraSettings = new Viewport.CameraSettingsClass( viewport, cam, FrustumCullingTest );
+						viewport.CameraSettings = new Viewport.CameraSettingsClass( viewport, camera, FrustumCullingTest );
 
 						//var context = new Metadata.CloneContext();
 						//context.unreferenceProperties = true;
@@ -2797,17 +2902,21 @@ namespace NeoAxis
 			return bounds;
 		}
 
-		internal override void OnSimulationStepBefore()
+		internal override void OnSimulationStepBefore( ref bool childrenSimulationStep )
 		{
-			base.OnSimulationStepBefore();
+			base.OnSimulationStepBefore( ref childrenSimulationStep );
 
-			PhysicsSimulate( false, null );
-			Physics2DSimulate( false, null );
+			if( InternalSimulatePhysics )
+			{
+				PhysicsSimulate( false, null );
+				Physics2DSimulate( false, null );
+			}
 		}
 
 		public delegate void GetDisplayDevelopmentDataInThisApplicationOverrideDelegate( Scene sender, ref bool display );
 		public event GetDisplayDevelopmentDataInThisApplicationOverrideDelegate GetDisplayDevelopmentDataInThisApplicationOverride;
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool GetDisplayDevelopmentDataInThisApplication()
 		{
 			bool result;
@@ -2824,7 +2933,7 @@ namespace NeoAxis
 		protected virtual void OnRender( Viewport viewport )
 		{
 			if( GetDisplayDevelopmentDataInThisApplication() && DisplaySceneOctree )
-				octree?.DebugRender( viewport );
+				octreeLogic?.DebugRender( viewport );
 		}
 		public delegate void RenderEventDelegate( Scene sender, Viewport viewport );
 		public event RenderEventDelegate RenderEvent;
@@ -2880,6 +2989,11 @@ namespace NeoAxis
 		internal event GetRenderSceneDataDelegate GetRenderSceneData2ForGroupOfObjects;
 		internal event GetRenderSceneDataDelegate GetRenderSceneData3ForGroupOfObjects;
 
+		//protected virtual void OnGetRenderSceneDataAfterObjects( ViewportRenderingContext context ) { }
+
+		//public event GetRenderSceneDataDelegate GetRenderSceneDataAfterObjects;
+		//public static event GetRenderSceneDataDelegate AllScenes_GetRenderSceneDataAfterObjects;
+
 		internal void PerformGetRenderSceneData( ViewportRenderingContext context )
 		{
 			OnGetRenderSceneData( context );
@@ -2914,7 +3028,6 @@ namespace NeoAxis
 			else
 				AllScenes_GetRenderSceneData?.Invoke( this, context );
 
-
 			//process group of objects queued actions
 			if( EngineApp.IsEditor )
 			{
@@ -2948,6 +3061,41 @@ namespace NeoAxis
 				GetRenderSceneData3ForGroupOfObjects?.Invoke( this, context );
 		}
 
+		//internal void PerformGetRenderSceneDataAfterObjects( ViewportRenderingContext context )
+		//{
+		//	OnGetRenderSceneDataAfterObjects( context );
+
+		//	if( EngineApp.IsEditor )
+		//	{
+		//		try
+		//		{
+		//			GetRenderSceneDataAfterObjects?.Invoke( this, context );
+		//		}
+		//		catch( Exception e )
+		//		{
+		//			Log.Warning( "Scene: PerformGetRenderSceneDataAfterObjects: GetRenderSceneDataAfterObjects: " + e.Message );
+		//			return;
+		//		}
+		//	}
+		//	else
+		//		GetRenderSceneDataAfterObjects?.Invoke( this, context );
+
+		//	if( EngineApp.IsEditor )
+		//	{
+		//		try
+		//		{
+		//			AllScenes_GetRenderSceneDataAfterObjects?.Invoke( this, context );
+		//		}
+		//		catch( Exception e )
+		//		{
+		//			Log.Warning( "Scene: PerformGetRenderSceneDataAfterObjects: AllScenes_GetRenderSceneDataAfterObjects: " + e.Message );
+		//			return;
+		//		}
+		//	}
+		//	else
+		//		AllScenes_GetRenderSceneDataAfterObjects?.Invoke( this, context );
+		//}
+
 		/////////////////////////////////////////
 
 		protected override void OnUpdate( float delta )
@@ -2956,7 +3104,9 @@ namespace NeoAxis
 
 			BackgroundSoundUpdate();
 
-			octree?.SetEngineTimeToGetStatistics( EngineApp.EngineTime );
+			octreeLogic?.SetEngineTimeToGetStatistics( EngineApp.EngineTime );
+			octreeVisual?.SetEngineTimeToGetStatistics( EngineApp.EngineTime );
+			octreeOccluder?.SetEngineTimeToGetStatistics( EngineApp.EngineTime );
 		}
 
 		void BackgroundSoundUpdate()
@@ -2991,7 +3141,7 @@ namespace NeoAxis
 						var group = SoundWorld.GetChannelGroup( "Music" );
 						if( group == null )
 							group = EngineApp.DefaultSoundChannelGroup;
-						backgroundSoundChannel = SoundWorld.SoundPlay( this, backgroundSoundInstance, group, 1, true );
+						backgroundSoundChannel = SoundWorld.SoundPlay( this, backgroundSoundInstance, group, 1, 1, true );
 					}
 				}
 			}
@@ -3043,69 +3193,84 @@ namespace NeoAxis
 		[Browsable( false )]
 		public ESet<Component> CachedObjectsInSpaceToFastFindByRenderingPipeline { get; } = new ESet<Component>();
 
+		//!!!!threading?
+		[Browsable( false )]
+		public ESet<Light> CachedDirectionalLightsToFastFindByRenderingPipeline { get; } = new ESet<Light>();
 
-		public void SoundPlay( SoundData sound, Vector3 position )
+
+		public SoundVirtualChannel SoundPlay( SoundData sound, Vector3 position, double priority = 0.5, double volume = 1.0 )
 		{
 			if( SoundWorld.BackendNull )
-				return;
+				return null;
 
-			var channel = SoundWorld.SoundPlay( this, sound, EngineApp.DefaultSoundChannelGroup, 0.5, true );
+			var channel = SoundWorld.SoundPlay( this, sound, EngineApp.DefaultSoundChannelGroup, priority, volume, true );
 			if( channel != null )
 			{
-				channel.Position = position;// TransformV.Position;
+				channel.Position = position;
+				channel.Volume = volume;
 
 				//!!!!
 				//channel.Velocity = Velocity3D;
+
 				channel.Pause = false;
 			}
+
+			return channel;
 		}
 
-		public void SoundPlay( string name, Vector3 position )
+		public SoundVirtualChannel SoundPlay( string name, Vector3 position, double priority = 0.5, double volume = 1.0, bool loop = false )
 		{
 			if( string.IsNullOrEmpty( name ) || SoundWorld.BackendNull )
-				return;
+				return null;
 
-			var sound = SoundWorld.SoundCreate( name, SoundModes.Mode3D );
+			var mode = SoundModes.Mode3D;
+			if( loop )
+				mode |= SoundModes.Loop;
+
+			var sound = SoundWorld.SoundCreate( name, mode );
 			if( sound != null )
-				SoundPlay( sound, position );
+				return SoundPlay( sound, position, priority, volume );
+			return null;
 		}
 
-		public void SoundPlay( Sound sound, Vector3 position )
+		public SoundVirtualChannel SoundPlay( Sound sound, Vector3 position, double priority = 0.5, double volume = 1.0, bool loop = false )
 		{
-			var sound2 = sound?.Result?.LoadSoundByMode( SoundModes.Mode3D );
+			var mode = SoundModes.Mode3D;
+			if( loop )
+				mode |= SoundModes.Loop;
+
+			var sound2 = sound?.Result?.LoadSoundByMode( mode );
 			if( sound2 != null )
-				SoundPlay( sound2, position );
+				return SoundPlay( sound2, position, priority, volume );
+			return null;
 		}
 
-		public void SoundPlay2D( SoundData sound )
+		public SoundVirtualChannel SoundPlay2D( SoundData sound, double priority = 0.5, double volume = 1.0 )
 		{
 			if( SoundWorld.BackendNull )
-				return;
+				return null;
 
-			SoundWorld.SoundPlay( this, sound, EngineApp.DefaultSoundChannelGroup, 0.5 );
+			return SoundWorld.SoundPlay( this, sound, EngineApp.DefaultSoundChannelGroup, priority, volume );
 		}
 
-		public void SoundPlay2D( Sound sound )
+		public SoundVirtualChannel SoundPlay2D( Sound sound )
 		{
 			var sound2 = sound?.Result?.LoadSoundByMode( 0 );
 			if( sound2 != null )
-				SoundPlay2D( sound2 );
+				return SoundPlay2D( sound2 );
+			return null;
 		}
 
-		public void SoundPlay2D( string name )
+		public SoundVirtualChannel SoundPlay2D( string name )
 		{
 			if( string.IsNullOrEmpty( name ) || SoundWorld.BackendNull )
-				return;
+				return null;
 
 			var sound = SoundWorld.SoundCreate( name, 0 );
 			if( sound != null )
-				SoundPlay2D( sound );
+				return SoundPlay2D( sound );
+			return null;
 		}
-
-		//public OctreeContainer GetOctree()
-		//{
-		//	return octree;
-		//}
 
 		[Browsable( false )]
 		public Bounds BoundsWhenSimulationStarted
@@ -3113,5 +3278,40 @@ namespace NeoAxis
 			get { return boundsWhenSimulationStarted; }
 		}
 
+		protected override void OnComponentAdded( Component component )
+		{
+			base.OnComponentAdded( component );
+
+			var gameMode = component as IGameMode;
+			if( gameMode != null )
+				gameModeCached = gameMode;
+		}
+
+		protected override void OnComponentRemoved( Component component )
+		{
+			base.OnComponentRemoved( component );
+
+			if( component == gameModeCached )
+				gameModeCached = null;
+		}
+
+		public IGameMode GetGameMode()
+		{
+			return gameModeCached;
+		}
+
+		//!!!!new
+
+		public delegate void RenderAfterSetCommonUniformsDelegate( Scene scene, RenderingPipeline_Basic pipeline, ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData );
+		public event RenderAfterSetCommonUniformsDelegate RenderAfterSetCommonUniforms;
+
+		//protected virtual void OnRenderAfterSetCommonUniforms( Viewport viewport, Viewport.CameraSettingsClass overrideCameraSettings )
+		//{
+		//}
+
+		internal void PerformRenderAfterSetCommonUniforms( RenderingPipeline_Basic pipeline, ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData )
+		{
+			RenderAfterSetCommonUniforms?.Invoke( this, pipeline, context, frameData );
+		}
 	}
 }

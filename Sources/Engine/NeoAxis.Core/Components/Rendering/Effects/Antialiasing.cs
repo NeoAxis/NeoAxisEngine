@@ -22,7 +22,7 @@ namespace NeoAxis
 		public Reference<double> Intensity
 		{
 			get { if( _intensity.BeginGet() ) Intensity = _intensity.Get( this ); return _intensity.value; }
-			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
+			set { if( _intensity.BeginSet( this, ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
 		public event Action<RenderingEffect_Antialiasing> IntensityChanged;
@@ -43,10 +43,21 @@ namespace NeoAxis
 			SSAAx3,
 			[DisplayNameEnum( "SSAA x4" )]
 			SSAAx4,
+			//[DisplayNameEnum( "SSAA x6" )]
+			//SSAAx6,
+			[DisplayNameEnum( "SSAA x8" )]
+			SSAAx8,
 			//MSAAx2,
 			//MSAAx4,
 			//MSAAx8,
 			//MSAAx16,
+		}
+
+		public enum AdditionalTechniqueEnum
+		{
+			Auto,
+			None,
+			FXAA,
 		}
 
 		public enum MotionTechniqueEnum
@@ -64,7 +75,7 @@ namespace NeoAxis
 		public Reference<BasicTechniqueEnum> BasicTechnique
 		{
 			get { if( _basicTechnique.BeginGet() ) BasicTechnique = _basicTechnique.Get( this ); return _basicTechnique.value; }
-			set { if( _basicTechnique.BeginSet( ref value ) ) { try { BasicTechniqueChanged?.Invoke( this ); } finally { _basicTechnique.EndSet(); } } }
+			set { if( _basicTechnique.BeginSet( this, ref value ) ) { try { BasicTechniqueChanged?.Invoke( this ); } finally { _basicTechnique.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BasicTechnique"/> property value changes.</summary>
 		public event Action<RenderingEffect_Antialiasing> BasicTechniqueChanged;
@@ -76,7 +87,7 @@ namespace NeoAxis
 		public Reference<double> DownscaleSamplerMultiplier
 		{
 			get { if( _downscaleSamplerMultiplier.BeginGet() ) DownscaleSamplerMultiplier = _downscaleSamplerMultiplier.Get( this ); return _downscaleSamplerMultiplier.value; }
-			set { if( _downscaleSamplerMultiplier.BeginSet( ref value ) ) { try { DownscaleSamplerMultiplierChanged?.Invoke( this ); } finally { _downscaleSamplerMultiplier.EndSet(); } } }
+			set { if( _downscaleSamplerMultiplier.BeginSet( this, ref value ) ) { try { DownscaleSamplerMultiplierChanged?.Invoke( this ); } finally { _downscaleSamplerMultiplier.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DownscaleSamplerMultiplier"/> property value changes.</summary>
 		public event Action<RenderingEffect_Antialiasing> DownscaleSamplerMultiplierChanged;
@@ -87,11 +98,25 @@ namespace NeoAxis
 		public Reference<bool> DownscaleBeforeSceneEffects
 		{
 			get { if( _downscaleBeforeSceneEffects.BeginGet() ) DownscaleBeforeSceneEffects = _downscaleBeforeSceneEffects.Get( this ); return _downscaleBeforeSceneEffects.value; }
-			set { if( _downscaleBeforeSceneEffects.BeginSet( ref value ) ) { try { DownscaleBeforeSceneEffectsChanged?.Invoke( this ); } finally { _downscaleBeforeSceneEffects.EndSet(); } } }
+			set { if( _downscaleBeforeSceneEffects.BeginSet( this, ref value ) ) { try { DownscaleBeforeSceneEffectsChanged?.Invoke( this ); } finally { _downscaleBeforeSceneEffects.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DownscaleBeforeSceneEffects"/> property value changes.</summary>
 		public event Action<RenderingEffect_Antialiasing> DownscaleBeforeSceneEffectsChanged;
 		ReferenceField<bool> _downscaleBeforeSceneEffects = true;
+
+		/// <summary>
+		/// The additional technique of the antialiasing solution.
+		/// </summary>
+		[DefaultValue( AdditionalTechniqueEnum.Auto )]
+		[Category( "Additional" )]
+		public Reference<AdditionalTechniqueEnum> AdditionalTechnique
+		{
+			get { if( _additionalTechnique.BeginGet() ) AdditionalTechnique = _additionalTechnique.Get( this ); return _additionalTechnique.value; }
+			set { if( _additionalTechnique.BeginSet( this, ref value ) ) { try { AdditionalTechniqueChanged?.Invoke( this ); } finally { _additionalTechnique.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="AdditionalTechnique"/> property value changes.</summary>
+		public event Action<RenderingEffect_Antialiasing> AdditionalTechniqueChanged;
+		ReferenceField<AdditionalTechniqueEnum> _additionalTechnique = AdditionalTechniqueEnum.Auto;
 
 		/// <summary>
 		/// The technique to work with moving objects and with moving camera.
@@ -101,23 +126,23 @@ namespace NeoAxis
 		public Reference<MotionTechniqueEnum> MotionTechnique
 		{
 			get { if( _motionTechnique.BeginGet() ) MotionTechnique = _motionTechnique.Get( this ); return _motionTechnique.value; }
-			set { if( _motionTechnique.BeginSet( ref value ) ) { try { MotionTechniqueChanged?.Invoke( this ); } finally { _motionTechnique.EndSet(); } } }
+			set { if( _motionTechnique.BeginSet( this, ref value ) ) { try { MotionTechniqueChanged?.Invoke( this ); } finally { _motionTechnique.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MotionTechnique"/> property value changes.</summary>
 		public event Action<RenderingEffect_Antialiasing> MotionTechniqueChanged;
 		ReferenceField<MotionTechniqueEnum> _motionTechnique = MotionTechniqueEnum.Auto;
 
-		[DefaultValue( 1.7 )]//1.3 )]//2.0 )]
+		[DefaultValue( 1.3 )]//1.0 )]//1.7 )]//1.3 )]//2.0 )]
 		[Range( 0, 4 )]
 		[Category( "Motion" )]
 		public Reference<double> Alpha
 		{
 			get { if( _alpha.BeginGet() ) Alpha = _alpha.Get( this ); return _alpha.value; }
-			set { if( _alpha.BeginSet( ref value ) ) { try { AlphaChanged?.Invoke( this ); } finally { _alpha.EndSet(); } } }
+			set { if( _alpha.BeginSet( this, ref value ) ) { try { AlphaChanged?.Invoke( this ); } finally { _alpha.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Alpha"/> property value changes.</summary>
 		public event Action<RenderingEffect_Antialiasing> AlphaChanged;
-		ReferenceField<double> _alpha = 1.7;//1.3;//2.0;
+		ReferenceField<double> _alpha = 1.3;//1.0;//1.7;//1.3;//2.0;
 
 		[DefaultValue( 1.0 )]
 		[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
@@ -125,7 +150,7 @@ namespace NeoAxis
 		public Reference<double> ColorBoxSigma
 		{
 			get { if( _colorBoxSigma.BeginGet() ) ColorBoxSigma = _colorBoxSigma.Get( this ); return _colorBoxSigma.value; }
-			set { if( _colorBoxSigma.BeginSet( ref value ) ) { try { ColorBoxSigmaChanged?.Invoke( this ); } finally { _colorBoxSigma.EndSet(); } } }
+			set { if( _colorBoxSigma.BeginSet( this, ref value ) ) { try { ColorBoxSigmaChanged?.Invoke( this ); } finally { _colorBoxSigma.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ColorBoxSigma"/> property value changes.</summary>
 		public event Action<RenderingEffect_Antialiasing> ColorBoxSigmaChanged;
@@ -135,6 +160,8 @@ namespace NeoAxis
 
 		[Browsable( false )]
 		public BasicTechniqueEnum BasicTechniqueAfterLoading = BasicTechniqueEnum.Auto;
+		[Browsable( false )]
+		public AdditionalTechniqueEnum AdditionalTechniqueAfterLoading = AdditionalTechniqueEnum.Auto;
 		[Browsable( false )]
 		public MotionTechniqueEnum MotionTechniqueAfterLoading = MotionTechniqueEnum.Auto;
 
@@ -151,7 +178,8 @@ namespace NeoAxis
 				{
 				case nameof( DownscaleSamplerMultiplier ):
 				case nameof( DownscaleBeforeSceneEffects ):
-					if( BasicTechnique.Value != BasicTechniqueEnum.SSAAx2 && BasicTechnique.Value != BasicTechniqueEnum.SSAAx3 && BasicTechnique.Value != BasicTechniqueEnum.SSAAx4 )
+					if( !BasicTechnique.Value.ToString().Contains( "SSAA" ) )
+						//if( BasicTechnique.Value != BasicTechniqueEnum.SSAAx2 && BasicTechnique.Value != BasicTechniqueEnum.SSAAx3 && BasicTechnique.Value != BasicTechniqueEnum.SSAAx4 )
 						skip = true;
 					break;
 
@@ -170,6 +198,7 @@ namespace NeoAxis
 				return false;
 
 			BasicTechniqueAfterLoading = BasicTechnique;
+			AdditionalTechniqueAfterLoading = AdditionalTechnique;
 			MotionTechniqueAfterLoading = MotionTechnique;
 
 			return true;
@@ -184,6 +213,20 @@ namespace NeoAxis
 					result = BasicTechniqueEnum.FXAA;
 				else
 					result = BasicTechniqueEnum.SSAAx2;
+			}
+			return result;
+		}
+
+		public AdditionalTechniqueEnum GetAdditionalTechnique()
+		{
+			var result = AdditionalTechnique.Value;
+			if( result == AdditionalTechniqueEnum.Auto )
+			{
+				var basicTechnique = GetBasicTechnique();
+				if( SystemSettings.LimitedDevice || basicTechnique == BasicTechniqueEnum.FXAA || basicTechnique == BasicTechniqueEnum.None )
+					result = AdditionalTechniqueEnum.None;
+				else
+					result = AdditionalTechniqueEnum.FXAA;
 			}
 			return result;
 		}
@@ -208,7 +251,9 @@ namespace NeoAxis
 			//!!!!!A8R8G8B8  где еще. когда tonemapping
 			//!!!!Optionally do AA after tonemapping?
 
-			var lumaTexture = context.RenderTarget2D_Alloc( actualTexture.Result.ResultSize, PixelFormat.A8R8G8B8 );
+			var resultSize = actualTexture.Result.ResultSize;
+
+			var lumaTexture = context.RenderTarget2D_Alloc( resultSize, PixelFormat.A8R8G8B8 );
 			{
 				context.SetViewport( lumaTexture.Result.GetRenderTarget().Viewports[ 0 ] );
 
@@ -227,13 +272,17 @@ namespace NeoAxis
 
 			//render final
 			{
-				actualTexture = context.RenderTarget2D_Alloc( actualTexture.Result.ResultSize, PixelFormat.A8R8G8B8 );
+				actualTexture = context.RenderTarget2D_Alloc( resultSize, PixelFormat.A8R8G8B8 );
 
 				context.SetViewport( actualTexture.Result.GetRenderTarget().Viewports[ 0 ] );
 
 				CanvasRenderer.ShaderItem shader = new CanvasRenderer.ShaderItem();
 				shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
 				shader.FragmentProgramFileName = @"Base\Shaders\Effects\FXAA\Final_fs.sc";
+
+				////no difference
+				//if( EngineApp._DebugCapsLock )
+				//	shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "FXAA_QUALITY__PRESET", "29" ) );
 
 				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, lumaTexture,
 					TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
@@ -262,6 +311,9 @@ namespace NeoAxis
 						RenderDownscale( context, frameData, ref actualTexture );
 				}
 
+				if( GetAdditionalTechnique() == AdditionalTechniqueEnum.FXAA )
+					RenderFXAA( context, frameData, ref actualTexture, Intensity );
+
 				if( GetMotionTechnique() != MotionTechniqueEnum.None )
 				{
 					if( GetMotionTechnique() == MotionTechniqueEnum.TAA )
@@ -279,6 +331,8 @@ namespace NeoAxis
 			case BasicTechniqueEnum.SSAAx2: return new Vector2( 1.4, 1.4 );
 			case BasicTechniqueEnum.SSAAx3: return new Vector2( 1.7, 1.7 );
 			case BasicTechniqueEnum.SSAAx4: return new Vector2( 2.0, 2.0 );
+			//case BasicTechniqueEnum.SSAAx6: return new Vector2( 2.45, 2.45 );
+			case BasicTechniqueEnum.SSAAx8: return new Vector2( 2.82, 2.82 );
 			}
 			return Vector2.One;
 		}
@@ -327,7 +381,8 @@ namespace NeoAxis
 
 			var destinationSize = context.SizeInPixelsLowResolutionBeforeUpscale;//context.Owner.SizeInPixels
 
-			if( GetBasicTechnique() >= BasicTechniqueEnum.SSAAx2 && GetBasicTechnique() <= BasicTechniqueEnum.SSAAx4 && destinationSize != actualTexture.Result.ResultSize )
+			if( GetBasicTechnique().ToString().Contains( "SSAA" ) && destinationSize != actualTexture.Result.ResultSize )
+			//if( GetBasicTechnique() >= BasicTechniqueEnum.SSAAx2 && GetBasicTechnique() <= BasicTechniqueEnum.SSAAx4 && destinationSize != actualTexture.Result.ResultSize )
 			{
 				var rescaledTexture = context.RenderTarget2D_Alloc( destinationSize, actualTexture.Result.ResultFormat );
 

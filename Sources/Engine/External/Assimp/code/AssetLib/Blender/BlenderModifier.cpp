@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 
 All rights reserved.
@@ -71,10 +71,6 @@ static const fpCreateModifier creators[] = {
     nullptr // sentinel
 };
 
-// ------------------------------------------------------------------------------------------------
-struct SharedModifierData : ElemBase {
-    ModifierData modifier;
-};
 
 // ------------------------------------------------------------------------------------------------
 void BlenderModifierShowcase::ApplyModifiers(aiNode &out, ConversionData &conv_data, const Scene &in, const Object &orig_object) {
@@ -90,7 +86,7 @@ void BlenderModifierShowcase::ApplyModifiers(aiNode &out, ConversionData &conv_d
 
         const Structure *s = conv_data.db.dna.Get(cur->dna_type);
         if (!s) {
-            ASSIMP_LOG_WARN_F("BlendModifier: could not resolve DNA name: ", cur->dna_type);
+            ASSIMP_LOG_WARN("BlendModifier: could not resolve DNA name: ", cur->dna_type);
             continue;
         }
 
@@ -132,7 +128,7 @@ void BlenderModifierShowcase::ApplyModifiers(aiNode &out, ConversionData &conv_d
             }
         }
         if (curgod) {
-            ASSIMP_LOG_WARN_F("Couldn't find a handler for modifier: ", dat.name);
+            ASSIMP_LOG_WARN("Couldn't find a handler for modifier: ", dat.name);
         }
     }
 
@@ -140,7 +136,7 @@ void BlenderModifierShowcase::ApplyModifiers(aiNode &out, ConversionData &conv_d
     // object, we still can't say whether our modifier implementations were
     // able to fully do their job.
     if (ful) {
-        ASSIMP_LOG_DEBUG_F("BlendModifier: found handlers for ", cnt, " of ", ful, " modifiers on `", orig_object.id.name,
+        ASSIMP_LOG_DEBUG("BlendModifier: found handlers for ", cnt, " of ", ful, " modifiers on `", orig_object.id.name,
                 "`, check log messages above for errors");
     }
 }
@@ -157,6 +153,7 @@ void BlenderModifier_Mirror ::DoIt(aiNode &out, ConversionData &conv_data, const
     // hijacking the ABI, see the big note in BlenderModifierShowcase::ApplyModifiers()
     const MirrorModifierData &mir = static_cast<const MirrorModifierData &>(orig_modifier);
     ai_assert(mir.modifier.type == ModifierData::eModifierType_Mirror);
+    std::shared_ptr<Object> mirror_ob = mir.mirror_ob.lock();
 
     conv_data.meshes->reserve(conv_data.meshes->size() + out.mNumMeshes);
 
@@ -171,8 +168,8 @@ void BlenderModifier_Mirror ::DoIt(aiNode &out, ConversionData &conv_data, const
         const float ys = mir.flag & MirrorModifierData::Flags_AXIS_Y ? -1.f : 1.f;
         const float zs = mir.flag & MirrorModifierData::Flags_AXIS_Z ? -1.f : 1.f;
 
-        if (mir.mirror_ob) {
-            const aiVector3D center(mir.mirror_ob->obmat[3][0], mir.mirror_ob->obmat[3][1], mir.mirror_ob->obmat[3][2]);
+        if (mirror_ob) {
+            const aiVector3D center(mirror_ob->obmat[3][0], mirror_ob->obmat[3][1], mirror_ob->obmat[3][2]);
             for (unsigned int j = 0; j < mesh->mNumVertices; ++j) {
                 aiVector3D &v = mesh->mVertices[j];
 
@@ -248,7 +245,7 @@ void BlenderModifier_Mirror ::DoIt(aiNode &out, ConversionData &conv_data, const
     out.mMeshes = nind;
     out.mNumMeshes *= 2;
 
-    ASSIMP_LOG_INFO_F("BlendModifier: Applied the `Mirror` modifier to `",
+    ASSIMP_LOG_INFO("BlendModifier: Applied the `Mirror` modifier to `",
             orig_object.id.name, "`");
 }
 
@@ -277,7 +274,7 @@ void BlenderModifier_Subdivision ::DoIt(aiNode &out, ConversionData &conv_data, 
         break;
 
     default:
-        ASSIMP_LOG_WARN_F("BlendModifier: Unrecognized subdivision algorithm: ", mir.subdivType);
+        ASSIMP_LOG_WARN("BlendModifier: Unrecognized subdivision algorithm: ", mir.subdivType);
         return;
     };
 
@@ -286,13 +283,18 @@ void BlenderModifier_Subdivision ::DoIt(aiNode &out, ConversionData &conv_data, 
     if (conv_data.meshes->empty()) {
         return;
     }
+    const size_t meshIndex = conv_data.meshes->size() - out.mNumMeshes;
+    if (meshIndex >= conv_data.meshes->size()) {
+        ASSIMP_LOG_ERROR("Invalid index detected.");
+        return;
+    }
     aiMesh **const meshes = &conv_data.meshes[conv_data.meshes->size() - out.mNumMeshes];
     std::unique_ptr<aiMesh *[]> tempmeshes(new aiMesh *[out.mNumMeshes]());
 
     subd->Subdivide(meshes, out.mNumMeshes, tempmeshes.get(), std::max(mir.renderLevels, mir.levels), true);
     std::copy(tempmeshes.get(), tempmeshes.get() + out.mNumMeshes, meshes);
 
-    ASSIMP_LOG_INFO_F("BlendModifier: Applied the `Subdivision` modifier to `",
+    ASSIMP_LOG_INFO("BlendModifier: Applied the `Subdivision` modifier to `",
             orig_object.id.name, "`");
 }
 

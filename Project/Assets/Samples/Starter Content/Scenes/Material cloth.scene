@@ -1,3 +1,5 @@
+// Made with NeoAxis Engine 2024.1.
+
 .component NeoAxis.Scene
 {
 	RenderingPipeline
@@ -26,7 +28,7 @@
 		Name = Light 1
 		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
 		Type = Directional
-		Brightness = 130000
+		Brightness = 200000
 		AttenuationFar = 100
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
@@ -67,7 +69,6 @@
 			.component NeoAxis.RenderingEffect_Antialiasing
 			{
 				Name = Antialiasing
-				Technique = SSAAx3
 			}
 			.component NeoAxis.RenderingEffect_ResolutionUpscale
 			{
@@ -90,6 +91,12 @@
 	.component NeoAxis.GameMode
 	{
 		Name = Game Mode
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
 	}
 	.component NeoAxis.Light
 	{
@@ -114,6 +121,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Mesh
 		{
@@ -175,6 +189,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 	}
 	.component NeoAxis.Material
 	{
@@ -183,7 +204,6 @@
 		BaseColor = 0.4352941 0.4167843 0.4352549
 		SheenColor = 1 0.9826275 0.6651372
 		SubsurfaceColor = 0.5 0.7 0.7
-		ReceiveShadows = False
 		.component NeoAxis.FlowGraph
 		{
 			Name = Shader graph

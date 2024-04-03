@@ -1,9 +1,10 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.Material
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"74363FFDABE04245ECB551AFB3510F94\"><CGD /><WS UN=\"9C95CAF519814A31AD8456EA2029F50A\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"D924478975364B4971AB20A3D9501D51\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"74363FFDABE04245ECB551AFB3510F94\"><KP UN=\"D41CFC42D17242404AB8DAC0E4F2D91D\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"74363FFDABE04245ECB551AFB3510F94\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"74363FFDABE04245ECB551AFB3510F94\"><CGD /><WS UN=\"9C95CAF519814A31AD8456EA2029F50A\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"D924478975364B4971AB20A3D9501D51\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"74363FFDABE04245ECB551AFB3510F94\"><KP UN=\"D41CFC42D17242404AB8DAC0E4F2D91D\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"74363FFDABE04245ECB551AFB3510F94\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BlendMode = Masked
+	OpacityDithering = True
 	BaseColor
 	{
 		GetByReference = "this:$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\RGBA"

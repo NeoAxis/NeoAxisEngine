@@ -14,7 +14,7 @@ namespace NeoAxis
 	[ResourceFileExtension( "csscript" )]
 	[NewObjectDefaultName( "C# Script" )]
 #if !DEPLOY
-	[SettingsCell( typeof( CSharpScriptSettingsCell ) )]
+	[SettingsCell( "NeoAxis.Editor.CSharpScriptSettingsCell" )]
 	[EditorControl( "NeoAxis.Editor.CSharpScriptEditor" )]
 	[Preview( "NeoAxis.Editor.CSharpScriptPreview" )]
 #endif
@@ -55,7 +55,7 @@ namespace NeoAxis
 		//public Reference<ReferenceValueType_Resource> File
 		//{
 		//	get { if( _file.BeginGet() ) File = _file.Get( this ); return _file.value; }
-		//	set { if( _file.BeginSet( ref value ) ) { try { FileChanged?.Invoke( this ); } finally { _file.EndSet(); } } }
+		//	set { if( _file.BeginSet( this, ref value ) ) { try { FileChanged?.Invoke( this ); } finally { _file.EndSet(); } } }
 		//}
 		//public event Action<Script> FileChanged;
 		//ReferenceField<ReferenceValueType_Resource> _file;
@@ -72,7 +72,7 @@ namespace NeoAxis
 		//public Reference<LanguageEnum> Language
 		//{
 		//	get { if( _language.BeginGet() ) Language = _language.Get( this ); return _language.value; }
-		//	set { if( _language.BeginSet( ref value ) ) { try { LanguageChanged?.Invoke( this ); } finally { _language.EndSet(); } } }
+		//	set { if( _language.BeginSet( this, ref value ) ) { try { LanguageChanged?.Invoke( this ); } finally { _language.EndSet(); } } }
 		//}
 		//public event Action<Script> LanguageChanged;
 		//ReferenceField<LanguageEnum> _language = LanguageEnum.CSharp;
@@ -96,7 +96,7 @@ namespace NeoAxis
 			get { if( _code.BeginGet() ) Code = _code.Get( this ); return _code.value; }
 			set
 			{
-				if( _code.BeginSet( ref value ) )
+				if( _code.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -124,7 +124,7 @@ namespace NeoAxis
 		//public Reference<bool> AddMembersToParent
 		//{
 		//	get { if( _addMembersToParent.BeginGet() ) AddMembersToParent = _addMembersToParent.Get( this ); return _addMembersToParent.value; }
-		//	set { if( _addMembersToParent.BeginSet( ref value ) ) { try { AddMembersToParentChanged?.Invoke( this ); } finally { _addMembersToParent.EndSet(); } } }
+		//	set { if( _addMembersToParent.BeginSet( this, ref value ) ) { try { AddMembersToParentChanged?.Invoke( this ); } finally { _addMembersToParent.EndSet(); } } }
 		//}
 		//public event Action<Script> AddMembersToParentChanged;
 		//ReferenceField<bool> _addMembersToParent = false;
@@ -141,7 +141,7 @@ namespace NeoAxis
 			get { if( _flowSupport.BeginGet() ) FlowSupport = _flowSupport.Get( this ); return _flowSupport.value; }
 			set
 			{
-				if( _flowSupport.BeginSet( ref value ) )
+				if( _flowSupport.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -173,7 +173,7 @@ namespace NeoAxis
 		public Reference<FlowInput> Exit
 		{
 			get { if( _exit.BeginGet() ) Exit = _exit.Get( this ); return _exit.value; }
-			set { if( _exit.BeginSet( ref value ) ) { try { ExitChanged?.Invoke( this ); } finally { _exit.EndSet(); } } }
+			set { if( _exit.BeginSet( this, ref value ) ) { try { ExitChanged?.Invoke( this ); } finally { _exit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Exit"/> property value changes.</summary>
 		public event Action<CSharpScript> ExitChanged;
@@ -417,12 +417,21 @@ namespace NeoAxis
 					if( !string.IsNullOrEmpty( category ) )
 						result.Add( new CategoryAttribute( category ) );
 				}
+
 				//DisplayName
 				if( attributeType.IsAssignableFrom( typeof( DisplayNameAttribute ) ) )
 				{
 					if( !string.IsNullOrEmpty( displayName ) )
 						result.Add( new DisplayNameAttribute( displayName ) );
 				}
+
+				////Serialize
+				//if( attributeType.IsAssignableFrom( typeof( SerializeAttribute ) ) )
+				//{
+				//	var readOnly = parameter.Output || parameter.ReturnValue || parameter.ByReference;
+				//	if( readOnly )
+				//		result.Add( new SerializeAttribute( false ) );
+				//}
 
 				return result.ToArray();
 			}
@@ -886,6 +895,8 @@ namespace NeoAxis
 			prop.Description = "";
 			if( !readOnly )
 				prop.Serializable = SerializeType.Enable;
+			//else
+			//	prop.Serializable = SerializeType.Disable;
 
 			return prop;
 		}
@@ -1192,6 +1203,13 @@ namespace NeoAxis
 
 				property.SetValue( ScriptInstance, value2, index );
 			}
+		}
+
+		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow = false )
+		{
+			base.NewObjectSetDefaultConfiguration( createdFromNewObjectWindow );
+
+			NetworkMode = NetworkModeEnum.False;
 		}
 	}
 }

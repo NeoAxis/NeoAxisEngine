@@ -37,7 +37,7 @@ namespace NeoAxis
 			get { if( _member.BeginGet() ) Member = _member.Get( this ); return _member.value; }
 			set
 			{
-				if( _member.BeginSet( ref value ) )
+				if( _member.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -63,7 +63,7 @@ namespace NeoAxis
 			get { if( _flowSupport.BeginGet() ) FlowSupport = _flowSupport.Get( this ); return _flowSupport.value; }
 			set
 			{
-				if( _flowSupport.BeginSet( ref value ) )
+				if( _flowSupport.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -94,7 +94,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _invokeEachGet.BeginSet( ref value ) )
+		//		if( _invokeEachGet.BeginSet( this, ref value ) )
 		//		{
 		//			try { InvokeEachGetChanged?.Invoke( this ); }
 		//			finally { _invokeEachGet.EndSet(); }
@@ -118,7 +118,7 @@ namespace NeoAxis
 		public Reference<FlowInput> Exit
 		{
 			get { if( _exit.BeginGet() ) Exit = _exit.Get( this ); return _exit.value; }
-			set { if( _exit.BeginSet( ref value ) ) { try { ExitChanged?.Invoke( this ); } finally { _exit.EndSet(); } } }
+			set { if( _exit.BeginSet( this, ref value ) ) { try { ExitChanged?.Invoke( this ); } finally { _exit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Exit"/> property value changes.</summary>
 		public event Action<InvokeMember> ExitChanged;

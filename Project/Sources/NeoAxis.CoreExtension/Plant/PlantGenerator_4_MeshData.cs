@@ -724,11 +724,11 @@ namespace NeoAxis
 					//op.UnwrappedUV = unwrappedUV;
 
 					var vertexDeclaration = op.VertexStructure.CreateVertexDeclaration( 0 );
-					op.VertexBuffers = new GpuVertexBuffer[] { GpuBufferManager.CreateVertexBuffer( vertices, vertexDeclaration ) };
+					op.VertexBuffers = new GpuVertexBuffer[] { GpuBufferManager.CreateVertexBuffer( vertices, vertexDeclaration, GpuBufferFlags.ComputeRead ) };
 					op.VertexStartOffset = 0;
 					op.VertexCount = vertexCount;
 
-					op.IndexBuffer = GpuBufferManager.CreateIndexBuffer( geometry.Indices.ToArray() );
+					op.IndexBuffer = GpuBufferManager.CreateIndexBuffer( geometry.Indices.ToArray(), GpuBufferFlags.ComputeRead );
 					op.IndexStartOffset = 0;
 					op.IndexCount = geometry.Indices.Count;
 

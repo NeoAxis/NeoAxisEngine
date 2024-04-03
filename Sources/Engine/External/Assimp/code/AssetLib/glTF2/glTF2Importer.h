@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 
 All rights reserved.
@@ -43,13 +43,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define AI_GLTF2IMPORTER_H_INC
 
 #include <assimp/BaseImporter.h>
-#include <assimp/DefaultIOSystem.h>
+#include <AssetLib/glTF2/glTF2Asset.h>
 
 struct aiNode;
 
-
-namespace glTF2
-{
+namespace glTF2 {
     class Asset;
 }
 
@@ -59,35 +57,38 @@ namespace Assimp {
  * Load the glTF2 format.
  * https://github.com/KhronosGroup/glTF/tree/master/specification
  */
-class glTF2Importer : public BaseImporter{
+class glTF2Importer : public BaseImporter {
 public:
     glTF2Importer();
-    virtual ~glTF2Importer();
-    virtual bool CanRead( const std::string& pFile, IOSystem* pIOHandler, bool checkSig ) const;
+    ~glTF2Importer() override = default;
+    bool CanRead(const std::string &pFile, IOSystem *pIOHandler, bool checkSig) const override;
 
 protected:
-    virtual const aiImporterDesc* GetInfo() const;
-    virtual void InternReadFile( const std::string& pFile, aiScene* pScene, IOSystem* pIOHandler );
+    const aiImporterDesc *GetInfo() const override;
+    void InternReadFile(const std::string &pFile, aiScene *pScene, IOSystem *pIOHandler) override;
+    void SetupProperties(const Importer *pImp) override;
 
 private:
+    void ImportEmbeddedTextures(glTF2::Asset &a);
+    void ImportMaterials(glTF2::Asset &a);
+    void ImportMeshes(glTF2::Asset &a);
+    void ImportCameras(glTF2::Asset &a);
+    void ImportLights(glTF2::Asset &a);
+    void ImportNodes(glTF2::Asset &a);
+    void ImportAnimations(glTF2::Asset &a);
+    void ImportCommonMetadata(glTF2::Asset &a);
+    aiNode *ImportNode(glTF2::Asset &r, glTF2::Ref<glTF2::Node> &ptr);
 
+private:
     std::vector<unsigned int> meshOffsets;
+    std::vector<int> mEmbeddedTexIdxs;
+    std::vector<std::vector<unsigned int>> mVertexRemappingTables; // for each converted aiMesh in the scene, it stores a list of vertices that are actually used
+    aiScene *mScene;
 
-    std::vector<int> embeddedTexIdxs;
-
-    aiScene* mScene;
-
-    void ImportEmbeddedTextures(glTF2::Asset& a);
-    void ImportMaterials(glTF2::Asset& a);
-    void ImportMeshes(glTF2::Asset& a);
-    void ImportCameras(glTF2::Asset& a);
-    void ImportLights(glTF2::Asset& a);
-    void ImportNodes(glTF2::Asset& a);
-    void ImportAnimations(glTF2::Asset& a);
-    void ImportCommonMetadata(glTF2::Asset& a);
+    /// An instance of rapidjson::IRemoteSchemaDocumentProvider
+    void *mSchemaDocumentProvider = nullptr;
 };
 
-} // Namespace assimp
+} // namespace Assimp
 
 #endif // AI_GLTF2IMPORTER_H_INC
-

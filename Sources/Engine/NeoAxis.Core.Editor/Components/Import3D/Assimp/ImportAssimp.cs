@@ -43,7 +43,8 @@ namespace NeoAxis.Import
 			//#if DEBUG
 			//         string libraryName = "assimp-vc100-mtd";
 			//#else
-			string libraryName = "assimp-vc141-mt";
+			string libraryName = "assimp-vc143-mt";
+			//string libraryName = "assimp-vc141-mt";
 			//#endif
 
 			NativeUtility.PreloadLibrary( libraryName );
@@ -306,278 +307,282 @@ namespace NeoAxis.Import
 			return Vector3F.Dot( Vector3F.Cross( m.Item0, m.Item1 ), m.Item2 ) < 0.0f ? true : false;
 		}
 
-		static bool ContainsMeshesRecursive( Node node )
+		//static bool ContainsMeshesRecursive( Node node )
+		//{
+		//	if( node.HasMeshes )
+		//		return true;
+		//	foreach( var child in node.Children )
+		//	{
+		//		if( ContainsMeshesRecursive( child ) )
+		//			return true;
+		//	}
+		//	return false;
+		//}
+
+		static void AddMesh( ImportContext importContext, Matrix4 nodeTransform, Mesh mesh, Internal.Assimp.Mesh aiMesh )
 		{
-			if( node.HasMeshes )
-				return true;
-			foreach( var child in node.Children )
+			StandardVertex[] vertices = new StandardVertex[ aiMesh.VertexCount ];
+
+			bool hasVertexColor = aiMesh.HasVertexColors( 0 );
+			List<Color4D> colors0 = null;
+			if( hasVertexColor )
+				colors0 = aiMesh.VertexColorChannels[ 0 ];
+
+			int textureCoordsCount = 0;
+			for( int n = 0; n < 4 && n < aiMesh.TextureCoordinateChannelCount; n++ )
 			{
-				if( ContainsMeshesRecursive( child ) )
-					return true;
+				if( aiMesh.HasTextureCoords( n ) )
+					textureCoordsCount++;
+				else
+					break;
 			}
-			return false;
+			List<Vector3D> texCoords0 = textureCoordsCount > 0 ? aiMesh.TextureCoordinateChannels[ 0 ] : null;
+			List<Vector3D> texCoords1 = textureCoordsCount > 1 ? aiMesh.TextureCoordinateChannels[ 1 ] : null;
+			List<Vector3D> texCoords2 = textureCoordsCount > 2 ? aiMesh.TextureCoordinateChannels[ 2 ] : null;
+			List<Vector3D> texCoords3 = textureCoordsCount > 3 ? aiMesh.TextureCoordinateChannels[ 3 ] : null;
+
+			Matrix4 geometryTransform = nodeTransform;
+			geometryTransform.Decompose( out _, out Matrix3 geometryTransformR, out _ );
+
+			////{
+			////geometryTransform = importContext.settings.globalTransform.ToMat4F() * nodeTransform;// childTransform;
+			////geometryTransform = nodeTransform;// childTransform;
+
+			////var importTransform = importContext.settings.component.ImportTransform.Value;
+			////geometryTransform = importTransform.ToMat4().ToMat4F();
+			////geometryTransformR = importTransform.Rotation.ToMat3().ToMat3F();
+			////}
+
+			////Mat4F transform90Fix = new Mat4F( 1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1 );
+			////Mat3F transform90RFix = transform90Fix.ToMat3();
+
+			////Mat4F geometryTransform;
+			////Mat3F geometryTransformR;
+			////if( aiMesh.HasBones )
+			////{
+			////	geometryTransform = transform90Fix * importTransform;
+			////	//geometryTransform = nodeTransform;
+			////	Vec3F dummy1;
+			////	Vec3F dummy2;
+			////	geometryTransform.ToMat3().QDUDecomposition( out geometryTransformR, out dummy1, out dummy2 );
+			////}
+			////else
+			////{
+			////	geometryTransform = Mat4F.Identity;
+			////	geometryTransformR = Mat3F.Identity;
+			////}
+
+			////if( HasTransformMatrixNegParity( geometryTransform .GetTranspose().ToMat3() ) )
+			////{
+			////   //what to do?
+			////}
+
+			//get data
+			for( int n = 0; n < vertices.Length; n++ )
+			{
+				StandardVertex vertex = new StandardVertex();
+
+				vertex.Position = ( geometryTransform * ToVector3( aiMesh.Vertices[ n ] ) ).ToVector3F();
+				if( aiMesh.HasNormals )
+					vertex.Normal = ( geometryTransformR * ToVector3( aiMesh.Normals[ n ] ) ).ToVector3F().GetNormalize();
+
+				if( textureCoordsCount > 0 )
+				{
+					vertex.TexCoord0 = ToVector2F( texCoords0[ n ] );
+					if( textureCoordsCount > 1 )
+					{
+						vertex.TexCoord1 = ToVector2F( texCoords1[ n ] );
+						if( textureCoordsCount > 2 )
+						{
+							vertex.TexCoord2 = ToVector2F( texCoords2[ n ] );
+							if( textureCoordsCount > 3 )
+								vertex.TexCoord3 = ToVector2F( texCoords3[ n ] );
+						}
+					}
+				}
+
+				if( hasVertexColor )
+					vertex.Color = ToColorValue( colors0[ n ] );
+
+				if( aiMesh.HasTangentBasis )
+				{
+					Vector3F tangent = ( geometryTransformR * ToVector3( aiMesh.Tangents[ n ] ) ).ToVector3F().GetNormalize();
+					Vector3F binormal = ( geometryTransformR * ToVector3( aiMesh.BiTangents[ n ] ) ).ToVector3F().GetNormalize();
+
+					float parity;
+					if( Vector3F.Dot( Vector3F.Cross( tangent, binormal ), vertex.Normal ) >= 0 )
+						parity = -1;
+					else
+						parity = 1;
+					vertex.Tangent = new Vector4F( tangent, parity );
+				}
+
+				vertices[ n ] = vertex;
+			}
+
+			int[] indices = new int[ aiMesh.FaceCount * 3 ];
+			for( int n = 0; n < aiMesh.FaceCount; n++ )
+			{
+				Face face = aiMesh.Faces[ n ];
+				indices[ n * 3 + 0 ] = face.Indices[ 0 ];
+				indices[ n * 3 + 1 ] = face.Indices[ 1 ];
+				indices[ n * 3 + 2 ] = face.Indices[ 2 ];
+			}
+
+			//ModelImportSceneSource.MaterialSource material = null;
+			//if( aiMesh.MaterialIndex < sceneSource.Materials.Count )
+			//	material = sceneSource.Materials[ (int)aiMesh.MaterialIndex ];
+
+			////edit bind pose
+			//Dictionary<string, int> boneNameToBoneIndexDictionary = null;
+			//if( aiMesh.HasBones )
+			//{
+			//	Dictionary<string, Assimp.Bone> assimpBonesDictionary = new Dictionary<string, Assimp.Bone>();
+			//	for( int i = 0; i < aiMesh.BoneCount; i++ )
+			//	{
+			//		Assimp.Bone aiBone = aiMesh.Bones[ i ];
+			//		try
+			//		{
+			//			assimpBonesDictionary.Add( aiBone.Name, aiBone );
+			//		}
+			//		catch { }
+			//	}
+
+			//	Dictionary<string, Mat4F> boneGlobalTransforms = new Dictionary<string, Mat4F>();
+			//	foreach( ModelImportSceneSource.BoneSource bone in sceneSource.Bones )
+			//	{
+			//		string boneName = bone.Name;
+			//		Assimp.Bone aiBone;
+			//		if( assimpBonesDictionary.TryGetValue( boneName, out aiBone ) )
+			//		{
+			//			Mat4F parentTransform = Mat4F.Identity;
+			//			if( bone.Parent != null )
+			//				parentTransform = boneGlobalTransforms[ bone.Parent.Name ];
+			//			Mat4F boneGlobalTransform = geometryTransform * aiBone.OffsetMatrix.ToMat4().GetInverse();
+			//			Mat4F boneBindPoseLocalTransform = parentTransform.GetInverse() * boneGlobalTransform;
+
+			//			Vec3F bonePosition = boneBindPoseLocalTransform.Item3.ToVec3();
+			//			Mat3F boneRotationM;
+			//			Vec3F boneScale;
+			//			Vec3F dummy2;
+			//			boneBindPoseLocalTransform.ToMat3().QDUDecomposition( out boneRotationM, out boneScale, out dummy2 );
+			//			QuatF boneRotation = boneRotationM.ToQuat();
+
+			//			if( changedBindPoseMatrixBoneDictionary[ boneName ] )
+			//			{
+			//				if( bone.Position != bonePosition || bone.Rotation != boneRotation || bone.Scale != boneScale )
+			//					Log.InvisibleInfo( "Assimp Import Library: " + boneName + " bind pose bone has difference." );
+			//			}
+
+			//			bone.Position = bonePosition;
+			//			bone.Rotation = boneRotation;
+			//			bone.Scale = boneScale;
+
+			//			boneGlobalTransforms.Add( boneName, boneGlobalTransform );
+			//			changedBindPoseMatrixBoneDictionary[ boneName ] = true;
+			//		}
+			//		else
+			//		{
+			//			Mat4F parentTransform = Mat4F.Identity;
+			//			if( bone.Parent != null )
+			//				parentTransform = boneGlobalTransforms[ bone.Parent.Name ];
+
+			//			Mat4F localTransform = new Mat4F( bone.Rotation.ToMat3() *
+			//				Mat3F.FromScale( bone.Scale ), bone.Position );
+			//			Mat4F boneTransform = parentTransform * localTransform;
+
+			//			boneGlobalTransforms.Add( bone.Name, boneTransform );
+			//		}
+			//	}
+
+			//	boneNameToBoneIndexDictionary = new Dictionary<string, int>();
+			//	for( int i = 0; i < sceneSource.Bones.Count; i++ )
+			//		boneNameToBoneIndexDictionary.Add( sceneSource.Bones[ i ].Name, i );
+			//}
+
+			//ModelImportSceneSource.MeshSource.BoneAssignmentItem[][] boneAssignments = null;
+			//if( aiMesh.HasBones )
+			//{
+			//	boneAssignments = new ModelImportSceneSource.MeshSource.BoneAssignmentItem[ aiMesh.BoneCount ][];
+
+			//	for( int i = 0; i < aiMesh.BoneCount; i++ )
+			//	{
+			//		Assimp.Bone aiBone = aiMesh.Bones[ i ];
+			//		boneAssignments[ i ] = new ModelImportSceneSource.MeshSource.BoneAssignmentItem[ aiBone.VertexWeightCount ];
+
+			//		int boneIndex;
+			//		if( boneNameToBoneIndexDictionary.TryGetValue( aiBone.Name, out boneIndex ) )
+			//		{
+			//			for( int j = 0; j < aiBone.VertexWeightCount; j++ )
+			//			{
+			//				VertexWeight aiWeight = aiBone.VertexWeights[ j ];
+			//				ModelImportSceneSource.MeshSource.BoneAssignmentItem assignment =
+			//					new ModelImportSceneSource.MeshSource.BoneAssignmentItem(
+			//					(int)aiWeight.VertexID, boneIndex, aiWeight.Weight );
+			//				boneAssignments[ i ][ j ] = assignment;
+			//			}
+			//		}
+			//	}
+			//}
+
+			//Vec3F position = Vec3F.Zero;
+			//QuatF rotation = QuatF.Identity;
+			//Vec3F scale = new Vec3F( 1, 1, 1 );
+			//if( !aiMesh.HasBones )
+			//{
+			//	Mat4F nodeTransformRotated = transform90Fix * importTransform;
+			//	//Mat4 nodeTransformRotated = nodeTransform;
+			//	position = nodeTransformRotated.Item3.ToVec3F();
+			//	Mat3F r;
+			//	Vec3F dummy;
+			//	nodeTransformRotated.ToMat3().QDUDecomposition( out r, out scale, out dummy );
+			//	rotation = r.ToQuat();
+			//}
+
+			var geometry = mesh.CreateComponent<MeshGeometry>();
+			geometry.Name = GetFixedName( aiMesh.Name );
+
+			StandardVertex.Components vertexComponents = StandardVertex.Components.Position;
+			if( aiMesh.HasNormals )
+				vertexComponents |= StandardVertex.Components.Normal;
+			if( aiMesh.HasTangentBasis )
+				vertexComponents |= StandardVertex.Components.Tangent;
+			if( hasVertexColor )
+				vertexComponents |= StandardVertex.Components.Color;
+			if( textureCoordsCount > 0 )
+				vertexComponents |= StandardVertex.Components.TexCoord0;
+			if( textureCoordsCount > 1 )
+				vertexComponents |= StandardVertex.Components.TexCoord1;
+			if( textureCoordsCount > 2 )
+				vertexComponents |= StandardVertex.Components.TexCoord2;
+			if( textureCoordsCount > 3 )
+				vertexComponents |= StandardVertex.Components.TexCoord3;
+
+			geometry.SetVertexData( vertices, vertexComponents );
+			geometry.Indices = indices;
+
+			//material
+			importContext.materialByIndex.TryGetValue( aiMesh.MaterialIndex, out Material material );
+			if( material != null )
+			{
+				var referenceValue = ReferenceUtility.CalculateRootReference( material );
+				//var referenceValue = importContext.settings.virtualFileName + "|" + material.GetNamePathToAccessFromRoot();
+				//var referenceValue = importContext.settings.virtualFileName + "|" + material.GetNamePathToAccessFromRoot();
+				geometry.Material = ReferenceUtility.MakeReference<Material>( null, referenceValue );
+				//meshData.Material = ReferenceUtils.CreateReference<Material>( null,
+				//	ReferenceUtils.CalculateThisReference( meshData, material ) );
+				//meshData.Material = ResourceManager.LoadResource<Material>( "_Dev\\Sphere.material" );
+			}
 		}
 
 		static void InitMeshGeometriesRecursive( ImportContext importContext, Node node, Matrix4 nodeTransform, Mesh mesh )
 		{
-			//!!!!пока меши не индексируются/не инстансятся.
+			//!!!!меши не индексируются/не инстансятся. это какие-то структуризированные меши
 
 			foreach( var meshIndex in node.MeshIndices )
 			{
 				var aiMesh = importContext.scene.Meshes[ meshIndex ];
-
-				StandardVertex[] vertices = new StandardVertex[ aiMesh.VertexCount ];
-
-				bool hasVertexColor = aiMesh.HasVertexColors( 0 );
-				List<Color4D> colors0 = null;
-				if( hasVertexColor )
-					colors0 = aiMesh.VertexColorChannels[ 0 ];
-
-				int textureCoordsCount = 0;
-				for( int n = 0; n < 4 && n < aiMesh.TextureCoordinateChannelCount; n++ )
-				{
-					if( aiMesh.HasTextureCoords( n ) )
-						textureCoordsCount++;
-					else
-						break;
-				}
-				List<Vector3D> texCoords0 = textureCoordsCount > 0 ? aiMesh.TextureCoordinateChannels[ 0 ] : null;
-				List<Vector3D> texCoords1 = textureCoordsCount > 1 ? aiMesh.TextureCoordinateChannels[ 1 ] : null;
-				List<Vector3D> texCoords2 = textureCoordsCount > 2 ? aiMesh.TextureCoordinateChannels[ 2 ] : null;
-				List<Vector3D> texCoords3 = textureCoordsCount > 3 ? aiMesh.TextureCoordinateChannels[ 3 ] : null;
-
-				Matrix4 geometryTransform = nodeTransform;
-				geometryTransform.Decompose( out _, out Matrix3 geometryTransformR, out _ );
-
-				//{
-				//geometryTransform = importContext.settings.globalTransform.ToMat4F() * nodeTransform;// childTransform;
-				//geometryTransform = nodeTransform;// childTransform;
-
-				//var importTransform = importContext.settings.component.ImportTransform.Value;
-				//geometryTransform = importTransform.ToMat4().ToMat4F();
-				//geometryTransformR = importTransform.Rotation.ToMat3().ToMat3F();
-				//}
-
-				//Mat4F transform90Fix = new Mat4F( 1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1 );
-				//Mat3F transform90RFix = transform90Fix.ToMat3();
-
-				//Mat4F geometryTransform;
-				//Mat3F geometryTransformR;
-				//if( aiMesh.HasBones )
-				//{
-				//	geometryTransform = transform90Fix * importTransform;
-				//	//geometryTransform = nodeTransform;
-				//	Vec3F dummy1;
-				//	Vec3F dummy2;
-				//	geometryTransform.ToMat3().QDUDecomposition( out geometryTransformR, out dummy1, out dummy2 );
-				//}
-				//else
-				//{
-				//	geometryTransform = Mat4F.Identity;
-				//	geometryTransformR = Mat3F.Identity;
-				//}
-
-				//if( HasTransformMatrixNegParity( geometryTransform .GetTranspose().ToMat3() ) )
-				//{
-				//   //what to do?
-				//}
-
-				//get data
-				for( int n = 0; n < vertices.Length; n++ )
-				{
-					StandardVertex vertex = new StandardVertex();
-
-					vertex.Position = ( geometryTransform * ToVector3( aiMesh.Vertices[ n ] ) ).ToVector3F();
-					if( aiMesh.HasNormals )
-						vertex.Normal = ( geometryTransformR * ToVector3( aiMesh.Normals[ n ] ) ).ToVector3F().GetNormalize();
-
-					if( textureCoordsCount > 0 )
-					{
-						vertex.TexCoord0 = ToVector2F( texCoords0[ n ] );
-						if( textureCoordsCount > 1 )
-						{
-							vertex.TexCoord1 = ToVector2F( texCoords1[ n ] );
-							if( textureCoordsCount > 2 )
-							{
-								vertex.TexCoord2 = ToVector2F( texCoords2[ n ] );
-								if( textureCoordsCount > 3 )
-									vertex.TexCoord3 = ToVector2F( texCoords3[ n ] );
-							}
-						}
-					}
-
-					if( hasVertexColor )
-						vertex.Color = ToColorValue( colors0[ n ] );
-
-					if( aiMesh.HasTangentBasis )
-					{
-						Vector3F tangent = ( geometryTransformR * ToVector3( aiMesh.Tangents[ n ] ) ).ToVector3F().GetNormalize();
-						Vector3F binormal = ( geometryTransformR * ToVector3( aiMesh.BiTangents[ n ] ) ).ToVector3F().GetNormalize();
-
-						float parity;
-						if( Vector3F.Dot( Vector3F.Cross( tangent, binormal ), vertex.Normal ) >= 0 )
-							parity = -1;
-						else
-							parity = 1;
-						vertex.Tangent = new Vector4F( tangent, parity );
-					}
-
-					vertices[ n ] = vertex;
-				}
-
-				int[] indices = new int[ aiMesh.FaceCount * 3 ];
-				for( int n = 0; n < aiMesh.FaceCount; n++ )
-				{
-					Face face = aiMesh.Faces[ n ];
-					indices[ n * 3 + 0 ] = face.Indices[ 0 ];
-					indices[ n * 3 + 1 ] = face.Indices[ 1 ];
-					indices[ n * 3 + 2 ] = face.Indices[ 2 ];
-				}
-
-				//ModelImportSceneSource.MaterialSource material = null;
-				//if( aiMesh.MaterialIndex < sceneSource.Materials.Count )
-				//	material = sceneSource.Materials[ (int)aiMesh.MaterialIndex ];
-
-				////edit bind pose
-				//Dictionary<string, int> boneNameToBoneIndexDictionary = null;
-				//if( aiMesh.HasBones )
-				//{
-				//	Dictionary<string, Assimp.Bone> assimpBonesDictionary = new Dictionary<string, Assimp.Bone>();
-				//	for( int i = 0; i < aiMesh.BoneCount; i++ )
-				//	{
-				//		Assimp.Bone aiBone = aiMesh.Bones[ i ];
-				//		try
-				//		{
-				//			assimpBonesDictionary.Add( aiBone.Name, aiBone );
-				//		}
-				//		catch { }
-				//	}
-
-				//	Dictionary<string, Mat4F> boneGlobalTransforms = new Dictionary<string, Mat4F>();
-				//	foreach( ModelImportSceneSource.BoneSource bone in sceneSource.Bones )
-				//	{
-				//		string boneName = bone.Name;
-				//		Assimp.Bone aiBone;
-				//		if( assimpBonesDictionary.TryGetValue( boneName, out aiBone ) )
-				//		{
-				//			Mat4F parentTransform = Mat4F.Identity;
-				//			if( bone.Parent != null )
-				//				parentTransform = boneGlobalTransforms[ bone.Parent.Name ];
-				//			Mat4F boneGlobalTransform = geometryTransform * aiBone.OffsetMatrix.ToMat4().GetInverse();
-				//			Mat4F boneBindPoseLocalTransform = parentTransform.GetInverse() * boneGlobalTransform;
-
-				//			Vec3F bonePosition = boneBindPoseLocalTransform.Item3.ToVec3();
-				//			Mat3F boneRotationM;
-				//			Vec3F boneScale;
-				//			Vec3F dummy2;
-				//			boneBindPoseLocalTransform.ToMat3().QDUDecomposition( out boneRotationM, out boneScale, out dummy2 );
-				//			QuatF boneRotation = boneRotationM.ToQuat();
-
-				//			if( changedBindPoseMatrixBoneDictionary[ boneName ] )
-				//			{
-				//				if( bone.Position != bonePosition || bone.Rotation != boneRotation || bone.Scale != boneScale )
-				//					Log.InvisibleInfo( "Assimp Import Library: " + boneName + " bind pose bone has difference." );
-				//			}
-
-				//			bone.Position = bonePosition;
-				//			bone.Rotation = boneRotation;
-				//			bone.Scale = boneScale;
-
-				//			boneGlobalTransforms.Add( boneName, boneGlobalTransform );
-				//			changedBindPoseMatrixBoneDictionary[ boneName ] = true;
-				//		}
-				//		else
-				//		{
-				//			Mat4F parentTransform = Mat4F.Identity;
-				//			if( bone.Parent != null )
-				//				parentTransform = boneGlobalTransforms[ bone.Parent.Name ];
-
-				//			Mat4F localTransform = new Mat4F( bone.Rotation.ToMat3() *
-				//				Mat3F.FromScale( bone.Scale ), bone.Position );
-				//			Mat4F boneTransform = parentTransform * localTransform;
-
-				//			boneGlobalTransforms.Add( bone.Name, boneTransform );
-				//		}
-				//	}
-
-				//	boneNameToBoneIndexDictionary = new Dictionary<string, int>();
-				//	for( int i = 0; i < sceneSource.Bones.Count; i++ )
-				//		boneNameToBoneIndexDictionary.Add( sceneSource.Bones[ i ].Name, i );
-				//}
-
-				//ModelImportSceneSource.MeshSource.BoneAssignmentItem[][] boneAssignments = null;
-				//if( aiMesh.HasBones )
-				//{
-				//	boneAssignments = new ModelImportSceneSource.MeshSource.BoneAssignmentItem[ aiMesh.BoneCount ][];
-
-				//	for( int i = 0; i < aiMesh.BoneCount; i++ )
-				//	{
-				//		Assimp.Bone aiBone = aiMesh.Bones[ i ];
-				//		boneAssignments[ i ] = new ModelImportSceneSource.MeshSource.BoneAssignmentItem[ aiBone.VertexWeightCount ];
-
-				//		int boneIndex;
-				//		if( boneNameToBoneIndexDictionary.TryGetValue( aiBone.Name, out boneIndex ) )
-				//		{
-				//			for( int j = 0; j < aiBone.VertexWeightCount; j++ )
-				//			{
-				//				VertexWeight aiWeight = aiBone.VertexWeights[ j ];
-				//				ModelImportSceneSource.MeshSource.BoneAssignmentItem assignment =
-				//					new ModelImportSceneSource.MeshSource.BoneAssignmentItem(
-				//					(int)aiWeight.VertexID, boneIndex, aiWeight.Weight );
-				//				boneAssignments[ i ][ j ] = assignment;
-				//			}
-				//		}
-				//	}
-				//}
-
-				//Vec3F position = Vec3F.Zero;
-				//QuatF rotation = QuatF.Identity;
-				//Vec3F scale = new Vec3F( 1, 1, 1 );
-				//if( !aiMesh.HasBones )
-				//{
-				//	Mat4F nodeTransformRotated = transform90Fix * importTransform;
-				//	//Mat4 nodeTransformRotated = nodeTransform;
-				//	position = nodeTransformRotated.Item3.ToVec3F();
-				//	Mat3F r;
-				//	Vec3F dummy;
-				//	nodeTransformRotated.ToMat3().QDUDecomposition( out r, out scale, out dummy );
-				//	rotation = r.ToQuat();
-				//}
-
-				var geometry = mesh.CreateComponent<MeshGeometry>();
-				geometry.Name = GetFixedName( aiMesh.Name );
-
-				StandardVertex.Components vertexComponents = StandardVertex.Components.Position;
-				if( aiMesh.HasNormals )
-					vertexComponents |= StandardVertex.Components.Normal;
-				if( aiMesh.HasTangentBasis )
-					vertexComponents |= StandardVertex.Components.Tangent;
-				if( hasVertexColor )
-					vertexComponents |= StandardVertex.Components.Color;
-				if( textureCoordsCount > 0 )
-					vertexComponents |= StandardVertex.Components.TexCoord0;
-				if( textureCoordsCount > 1 )
-					vertexComponents |= StandardVertex.Components.TexCoord1;
-				if( textureCoordsCount > 2 )
-					vertexComponents |= StandardVertex.Components.TexCoord2;
-				if( textureCoordsCount > 3 )
-					vertexComponents |= StandardVertex.Components.TexCoord3;
-
-				geometry.SetVertexData( vertices, vertexComponents );
-				geometry.Indices = indices;
-
-				//material
-				importContext.materialByIndex.TryGetValue( aiMesh.MaterialIndex, out Material material );
-				if( material != null )
-				{
-					var referenceValue = ReferenceUtility.CalculateRootReference( material );
-					//var referenceValue = importContext.settings.virtualFileName + "|" + material.GetNamePathToAccessFromRoot();
-					//var referenceValue = importContext.settings.virtualFileName + "|" + material.GetNamePathToAccessFromRoot();
-					geometry.Material = ReferenceUtility.MakeReference<Material>( null, referenceValue );
-					//meshData.Material = ReferenceUtils.CreateReference<Material>( null,
-					//	ReferenceUtils.CalculateThisReference( meshData, material ) );
-					//meshData.Material = ResourceManager.LoadResource<Material>( "_Dev\\Sphere.material" );
-				}
+				AddMesh( importContext, nodeTransform, mesh, aiMesh );
 			}
 
 			foreach( var childNode in node.Children )
@@ -586,6 +591,9 @@ namespace NeoAxis.Import
 				InitMeshGeometriesRecursive( importContext, childNode, childTransform, mesh );
 			}
 		}
+
+
+
 
 #if FFFF
 
@@ -1109,7 +1117,7 @@ namespace NeoAxis.Import
 
 					PostProcessSteps flags =
 						PostProcessSteps.CalculateTangentSpace |
-						//!!!!new PostProcessSteps.JoinIdenticalVertices |
+						//PostProcessSteps.JoinIdenticalVertices |
 						//PostProcessSteps.MakeLeftHanded |
 						PostProcessSteps.Triangulate |
 						PostProcessSteps.RemoveComponent |
@@ -1117,8 +1125,8 @@ namespace NeoAxis.Import
 						//PostProcessSteps.SplitLargeMeshes |
 						//PostProcessSteps.PreTransformVertices |
 						PostProcessSteps.LimitBoneWeights |
-						PostProcessSteps.ValidateDataStructure |
-						//!!!!new PostProcessSteps.ImproveCacheLocality |
+						//!!!!new PostProcessSteps.ValidateDataStructure |
+						//PostProcessSteps.ImproveCacheLocality |
 						//PostProcessSteps.RemoveRedundantMaterials |
 						//PostProcessSteps.FixInFacingNormals | //!!!!?
 						PostProcessSteps.SortByPrimitiveType |
@@ -1126,9 +1134,9 @@ namespace NeoAxis.Import
 						PostProcessSteps.FindInvalidData |
 						PostProcessSteps.GenerateUVCoords |
 						PostProcessSteps.TransformUVCoords |
-						//PostProcessSteps.FindInstances | //!!!!как опцию
+						//PostProcessSteps.FindInstances |
 						PostProcessSteps.OptimizeMeshes |
-						//PostProcessSteps.OptimizeGraph | //!!!!как опцию
+						//PostProcessSteps.OptimizeGraph |
 						//PostProcessSteps.FlipUVs |
 						//PostProcessSteps.FlipWindingOrder |
 						//PostProcessSteps.SplitByBoneCount |
@@ -1170,6 +1178,13 @@ namespace NeoAxis.Import
 					//public List<Animation> Animations { get; }
 					//public SceneFlags SceneFlags { get; set; }
 					//public List<EmbeddedTexture> Textures { get; }
+
+					////!!!!
+					//if( scene.Textures != null )
+					//{
+					//	Log.Info( scene.Textures.Count.ToString() );
+					//}
+
 
 					var context = new ImportContext();
 					context.scene = scene;
@@ -1251,7 +1266,7 @@ namespace NeoAxis.Import
 					Matrix3 rotation = settings.component.Rotation.Value.ToMatrix3();
 
 					Matrix3 rotateByX = Matrix3.Identity;
-					if( settings.component.ForceFrontXAxis )
+					if( settings.component.FixAxes )
 						rotateByX = new Matrix3( 1, 0, 0, 0, 0, 1, 0, -1, 0 );
 
 					Matrix4 globalTransform = new Matrix4( rotation * rotateByX, settings.component.Position ) * ToMatrix4( scene.RootNode.Transform );
@@ -1268,11 +1283,11 @@ namespace NeoAxis.Import
 					//Matrix4 globalTransform = rotation * rotateByX * scene.RootNode.Transform.ToMat4();
 
 					var mode = settings.component.Mode.Value;
-					if( mode == Import3D.ModeEnum.Auto )
-						mode = Import3D.ModeEnum.OneMesh;
+					//if( mode == Import3D.ModeEnum.Auto )
+					//	mode = Import3D.ModeEnum.OneMesh;
 
 					//create one mesh (OneMesh mode)
-					if( mode == Import3D.ModeEnum.OneMesh && scene.HasMeshes && scene.MeshCount != 0 && settings.updateMeshes )
+					if( mode == Import3D.ModeEnum.OneMesh && scene.HasMeshes && scene.MeshCount != 0 )//&& settings.updateMeshes )
 					{
 						//mesh
 						var mesh = settings.component.CreateComponent<Mesh>( enabled: false );
@@ -1282,6 +1297,13 @@ namespace NeoAxis.Import
 						{
 							var transform = globalTransform * ToMatrix4( node.Transform );
 							InitMeshGeometriesRecursive( context, node, transform, mesh );
+						}
+
+						//!!!!or process not processed meshes
+						if( mesh.Components.Count == 0 )
+						{
+							foreach( var aiMesh in scene.Meshes )
+								AddMesh( context, globalTransform, mesh, aiMesh );
 						}
 
 						if( settings.component.MergeGeometries.Value != Import3D.MergeGeometriesEnum.False )
@@ -1296,15 +1318,13 @@ namespace NeoAxis.Import
 						var meshesGroup = settings.component.GetComponent( "Meshes" );
 
 						//Meshes
-						if( settings.updateMeshes )
+						//if( settings.updateMeshes )
 						{
 							meshesGroup = settings.component.CreateComponent<Component>( enabled: false );
 							meshesGroup.Name = "Meshes";
 
 							foreach( var node in scene.RootNode.Children )
 							{
-								//!!!!transform?
-
 								var transform = globalTransform * ToMatrix4( node.Transform );
 
 								var mesh = meshesGroup.CreateComponent<Mesh>();
@@ -1312,9 +1332,10 @@ namespace NeoAxis.Import
 
 								if( mesh.Components.Count != 0 )
 								{
-									mesh.Name = mesh.Components.ToArray()[ 0 ].Name;
-
-									//!!!!transform?
+									if( string.IsNullOrEmpty( node.Name ) )
+										mesh.Name = mesh.Components.ToArray()[ 0 ].Name;
+									else
+										mesh.Name = node.Name;
 
 									if( settings.component.MergeGeometries.Value != Import3D.MergeGeometriesEnum.False )
 										mesh.MergeGeometriesWithEqualVertexStructureAndMaterial();
@@ -1323,318 +1344,341 @@ namespace NeoAxis.Import
 									mesh.Dispose();
 							}
 
+							//!!!!or process not processed meshes
+							if( meshesGroup.Components.Count == 0 )
+							{
+								foreach( var aiMesh in scene.Meshes )
+								{
+									var mesh = meshesGroup.CreateComponent<Mesh>();
+									AddMesh( context, globalTransform, mesh, aiMesh );
+
+									if( mesh.Components.Count != 0 )
+									{
+										mesh.Name = mesh.Components.ToArray()[ 0 ].Name;
+
+										if( settings.component.MergeGeometries.Value != Import3D.MergeGeometriesEnum.False )
+											mesh.MergeGeometriesWithEqualVertexStructureAndMaterial();
+									}
+									else
+										mesh.Dispose();
+								}
+							}
+
 							meshesGroup.Enabled = true;
 						}
 
-						//Object In Space
-						if( settings.updateObjectsInSpace && meshesGroup != null )
-						{
-							var objectInSpace = settings.component.CreateComponent<ObjectInSpace>( enabled: false );
-							objectInSpace.Name = "Object In Space";
+						//////Object In Space
+						////if( settings.updateObjectsInSpace && meshesGroup != null )
+						////{
+						////	var objectInSpace = settings.component.CreateComponent<ObjectInSpace>( enabled: false );
+						////	objectInSpace.Name = "Object In Space";
 
-							foreach( var mesh in meshesGroup.Components )
-							{
-								var meshInSpace = objectInSpace.CreateComponent<MeshInSpace>();
-								meshInSpace.Name = mesh.Name;
-								meshInSpace.CanBeSelected = false;
-								meshInSpace.Mesh = ReferenceUtility.MakeReference<Mesh>( null, ReferenceUtility.CalculateRootReference( mesh ) );
+						////	foreach( var mesh in meshesGroup.Components )
+						////	{
+						////		var meshInSpace = objectInSpace.CreateComponent<MeshInSpace>();
+						////		meshInSpace.Name = mesh.Name;
+						////		meshInSpace.CanBeSelected = false;
+						////		meshInSpace.Mesh = ReferenceUtility.MakeReference<Mesh>( null, ReferenceUtility.CalculateRootReference( mesh ) );
 
-								//Transform
-								//!!!!transform?
-								var pos = Vector3.Zero;
-								var rot = Quaternion.Identity;
-								var scl = Vector3.One;
-								//( globalTransform * node.Transform.ToMat4() ).Decompose( out var pos, out Quat rot, out var scl );
+						////		//Transform
+						////		//!!!!transform?
+						////		var pos = Vector3.Zero;
+						////		var rot = Quaternion.Identity;
+						////		var scl = Vector3.One;
+						////		//( globalTransform * node.Transform.ToMat4() ).Decompose( out var pos, out Quat rot, out var scl );
 
-								var transformOffset = meshInSpace.CreateComponent<TransformOffset>();
-								transformOffset.Name = "Transform Offset";
-								transformOffset.PositionOffset = pos;
-								transformOffset.RotationOffset = rot;
-								transformOffset.ScaleOffset = scl;
-								transformOffset.Source = ReferenceUtility.MakeReference<Transform>( null,
-									ReferenceUtility.CalculateThisReference( transformOffset, objectInSpace, "Transform" ) );
+						////		var transformOffset = meshInSpace.CreateComponent<TransformOffset>();
+						////		transformOffset.Name = "Transform Offset";
+						////		transformOffset.PositionOffset = pos;
+						////		transformOffset.RotationOffset = rot;
+						////		transformOffset.ScaleOffset = scl;
+						////		transformOffset.Source = ReferenceUtility.MakeReference<Transform>( null,
+						////			ReferenceUtility.CalculateThisReference( transformOffset, objectInSpace, "Transform" ) );
 
-								meshInSpace.Transform = ReferenceUtility.MakeReference<Transform>( null,
-									ReferenceUtility.CalculateThisReference( meshInSpace, transformOffset, "Result" ) );
-							}
+						////		meshInSpace.Transform = ReferenceUtility.MakeReference<Transform>( null,
+						////			ReferenceUtility.CalculateThisReference( meshInSpace, transformOffset, "Result" ) );
+						////	}
 
-							objectInSpace.Enabled = true;
-						}
+						////	objectInSpace.Enabled = true;
+						////}
 
 
-						//!!!!не Clean update
+						////!!!!не Clean update
 
-						//for( int nMesh = 0; nMesh < scene.MeshCount; nMesh++ )
-						//{
-						//	global::Assimp.Mesh aiMesh = scene.Meshes[ nMesh ];
-						//	if( aiMesh.PrimitiveType == PrimitiveType.Triangle )
-						//	{
-						//		xx xx;
+						////for( int nMesh = 0; nMesh < scene.MeshCount; nMesh++ )
+						////{
+						////	global::Assimp.Mesh aiMesh = scene.Meshes[ nMesh ];
+						////	if( aiMesh.PrimitiveType == PrimitiveType.Triangle )
+						////	{
+						////		var mesh = CreateMesh( importContext, aiMesh );
 
-						//		var mesh = CreateMesh( importContext, aiMesh );
+						////		importContext.sourcesMeshByIndex.Add( nMesh, mesh );
 
-						//		importContext.sourcesMeshByIndex.Add( nMesh, mesh );
+						////		importContext.sourcesMaterialByIndex.TryGetValue( aiMesh.MaterialIndex, out var material );
+						////		if( material != null )
+						////			importContext.materialNamePathByMeshNamePath[ mesh.GetNameWithIndexFromParent() ] = material.GetNameWithIndexFromParent();
+						////	}
+						////}
 
-						//		importContext.sourcesMaterialByIndex.TryGetValue( aiMesh.MaterialIndex, out var material );
-						//		if( material != null )
-						//			importContext.materialNamePathByMeshNamePath[ mesh.GetNameWithIndexFromParent() ] = material.GetNameWithIndexFromParent();
-						//	}
-						//}
+						////!!!!
+						////	//!!!!?
+						////	Mat4F transform90Fix = new Mat4F( 1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1 );
+						////	//var rootTransform = scene.RootNode.Transform.ToMat4();
+						////	var rootTransform = transform90Fix * scene.RootNode.Transform.ToMat4();
 
-						//!!!!
-						//	//!!!!?
-						//	Mat4F transform90Fix = new Mat4F( 1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1 );
-						//	//var rootTransform = scene.RootNode.Transform.ToMat4();
-						//	var rootTransform = transform90Fix * scene.RootNode.Transform.ToMat4();
-
-						//xx xx;
-						//	InitMeshFromNodesRecursive( settings, scene, importContext, groupMeshes, scene.RootNode, rootTransform, 0 /*, boneDictionary, changedBindPoseMatrixBoneDictionary*/ );
+						////	InitMeshFromNodesRecursive( settings, scene, importContext, groupMeshes, scene.RootNode, rootTransform, 0 /*, boneDictionary, changedBindPoseMatrixBoneDictionary*/ );
 					}
 
-#if DISABLED
-					//!!!!
-					//create objects in space (Scene mode)
-					if( false /*settings.component.Mode.Value == Import3D.ModeEnum.Scene*/ &&
-						( importContext.meshesGroup != null || scene.LightCount != 0 || scene.CameraCount != 0 ) )
-					{
-						var groupName = "Scene Objects";
-
-						//group
-						importContext.objectsInSpaceGroup = settings.component.GetComponentByName( groupName ) as ObjectInSpace;
-						if( importContext.objectsInSpaceGroup == null )
-						{
-							importContext.objectsInSpaceGroup = settings.component.CreateComponent<ObjectInSpace>( -1, false );
-							importContext.objectsInSpaceGroup.Name = groupName;
-						}
-						else
-							importContext.objectsInSpaceGroup.Enabled = false;
-
-						//meshes in space
-						if( importContext.meshesGroup != null )
-						{
-							foreach( var node in scene.RootNode.Children )
-							{
-								if( ContainsMeshesRecursive( node ) )
-								{
-									//mesh
-									var mesh = importContext.meshesGroup.CreateComponent<Mesh>();
-									mesh.Name = GetFixedName( node.Name );
-									InitMeshGeometriesRecursive( importContext, node, Mat4F.Identity, mesh );
-
-									//object in space
-
-									var objectInSpace = importContext.objectsInSpaceGroup.CreateComponent<MeshInSpace>();
-									objectInSpace.Name = GetFixedName( node.Name );
-
-									var referenceValue = ReferenceUtils.CalculateRootReference( mesh );
-									//var referenceValue = settings.virtualFileName + "|" + mesh.GetNamePathToAccessFromRoot();
-									objectInSpace.Mesh = ReferenceUtils.CreateReference<Mesh>( null, referenceValue );
-
-									//Transform
-									( globalTransform * node.Transform.ToMat4() ).Decompose( out var pos, out Quat rot, out var scl );
-									var transformOffset = objectInSpace.CreateComponent<TransformOffset>();
-									transformOffset.Name = "Attach Transform Offset";
-									transformOffset.PositionOffset = pos;
-									transformOffset.RotationOffset = rot;
-									transformOffset.ScaleOffset = scl;
-									transformOffset.Source = ReferenceUtils.CreateReference<Transform>( null,
-										ReferenceUtils.CalculateThisReference( transformOffset, importContext.objectsInSpaceGroup, "Transform" ) );
-									objectInSpace.Transform = ReferenceUtils.CreateReference<Transform>( null,
-										ReferenceUtils.CalculateThisReference( objectInSpace, transformOffset, "Result" ) );
-
-									//objectInSpace.Transform = new Transform( pos, rot, scl );
-								}
-							}
-
-							//foreach( var obj in groupMeshes.Components )
-							//{
-							//	var mesh = obj as Mesh;
-							//	if( mesh != null )
-							//	{
-							//		//!!!!по имени проверять? везде так
-							//		var objectInSpace = groupObjectsInSpace.GetComponentByName( mesh.Name );
-							//		if( objectInSpace == null )
-							//		{
-							//			var objectInSpace2 = groupObjectsInSpace.CreateComponent<MeshInSpace>();
-							//			objectInSpace2.Name = mesh.Name;
-
-							//			var referenceValue = settings.virtualFileName + "|" + mesh.GetNamePathToAccessFromRoot();
-							//			objectInSpace2.Mesh = ReferenceUtils.CreateReference<Mesh>( null, referenceValue );
-
-							//			objectInSpace2.Transform = mesh.TransformRelativeToParent;
-							//		}
-							//	}
-							//}
-						}
-
-						//lights
-						//!!!!
-						if( false )
-						{
-							foreach( var light in scene.Lights )
-							{
-								var objectInSpace = importContext.objectsInSpaceGroup.CreateComponent<Light>();
-								objectInSpace.Name = light.Name;
-
-								//Transform
-								var transformOffset = objectInSpace.CreateComponent<TransformOffset>();
-								transformOffset.Name = "Attach Transform Offset";
-								transformOffset.PositionOffset = light.Position.ToVec3();
-
-								//!!!!
-								//globalTransform*
-
-								//!!!!temp
-								transformOffset.PositionOffset = new Vec3( 0, 0, -1 );
-
-								//!!!!globalTransform, globalTransformR
-								transformOffset.RotationOffset = Quat.FromDirectionZAxisUp( light.Direction.ToVec3() );
-								transformOffset.ScaleOffset = Vec3.One;
-								transformOffset.Source = ReferenceUtils.CreateReference<Transform>( null,
-									ReferenceUtils.CalculateThisReference( transformOffset, importContext.objectsInSpaceGroup, "Transform" ) );
-								objectInSpace.Transform = ReferenceUtils.CreateReference<Transform>( null,
-									ReferenceUtils.CalculateThisReference( objectInSpace, transformOffset, "Result" ) );
-								//objectInSpace.Transform = new Transform( light.Position.ToVec3(), Quat.FromDirectionZAxisUp( light.Direction.ToVec3() ), Vec3.One );
-
-								//type
-								switch( light.LightType )
-								{
-								case LightSourceType.Directional: objectInSpace.Type = Light.TypeEnum.Directional; break;
-								case LightSourceType.Point: objectInSpace.Type = Light.TypeEnum.Point; break;
-								case LightSourceType.Spot: objectInSpace.Type = Light.TypeEnum.Spotlight; break;
-								default: objectInSpace.Type = Light.TypeEnum.Point; break;
-								}
-
-								//!!!!всё ниже не работает
-
-								//power
-								ColorValue color = new ColorValue( light.ColorDiffuse.R, light.ColorDiffuse.G, light.ColorDiffuse.B );
-								objectInSpace.Power = new ColorValuePowered( color );
-								//public Color3D ColorSpecular { get; set; }
-								//public Color3D ColorAmbient { get; set; }
-
-								//spot angles
-								if( light.LightType == LightSourceType.Spot )
-								{
-									if( light.AngleInnerCone != 0 || light.AngleOuterCone != 0 )
-									{
-										objectInSpace.SpotlightInnerAngle = new Radian( light.AngleInnerCone ).InDegrees();
-										objectInSpace.SpotlightOuterAngle = new Radian( light.AngleOuterCone ).InDegrees();
-									}
-								}
-
-								//attenuation
-
-								//!!!!
-								//public float AttenuationConstant { get; set; }
-								//public float AttenuationLinear { get; set; }
-								//public float AttenuationQuadratic { get; set; }
-								//objectInSpace.AttenuationNear
-								//objectInSpace.AttenuationFar
-								//objectInSpace.AttenuationPower
-							}
-						}
-
-						//cameras
-						//!!!!
-						if( false )
-						{
-							foreach( var camera in scene.Cameras )
-							{
-								var objectInSpace = importContext.objectsInSpaceGroup.CreateComponent<Camera>();
-								objectInSpace.Name = camera.Name;
-
-								//Transform
-								var transformOffset = objectInSpace.CreateComponent<TransformOffset>();
-								transformOffset.Name = "Attach Transform Offset";
-								transformOffset.PositionOffset = globalTransform * camera.Position.ToVec3();
-								transformOffset.RotationOffset = ( globalTransformR * Mat3.LookAt( camera.Direction.ToVec3(), camera.Up.ToVec3() ) ).ToQuat();
-								//transformOffset.PositionOffset = camera.Position.ToVec3().ToVec3();
-								//transformOffset.RotationOffset = Quat.LookAt( camera.Direction.ToVec3(), camera.Up.ToVec3() );
-								transformOffset.ScaleOffset = Vec3.One;
-								transformOffset.Source = ReferenceUtils.CreateReference<Transform>( null,
-									ReferenceUtils.CalculateThisReference( transformOffset, importContext.objectsInSpaceGroup, "Transform" ) );
-								objectInSpace.Transform = ReferenceUtils.CreateReference<Transform>( null,
-									ReferenceUtils.CalculateThisReference( objectInSpace, transformOffset, "Result" ) );
-								//objectInSpace.Transform = new Transform( camera.Position.ToVec3(), 
-								//	Quat.LookAt( camera.Direction.ToVec3(), camera.Up.ToVec3() ), Vec3.One );
-
-								objectInSpace.NearClipPlane = camera.ClipPlaneNear;
-								objectInSpace.FarClipPlane = camera.ClipPlaneFar;
-								objectInSpace.AspectRatio = camera.AspectRatio;
-								objectInSpace.FieldOfView = new Radian( camera.FieldOfview ).InDegrees();
-								//public Matrix4x4 ViewMatrix { get; }
-							}
-						}
-					}
-
-					//enable groups
-					//if( importContext.meshesGroup != null )
-					//	importContext.meshesGroup.Enabled = true;
-					//if( importContext.objectInSpaceGroup != null )
-					//	importContext.objectInSpaceGroup.Enabled = true;
-					if( importContext.objectsInSpaceGroup != null )
-						importContext.objectsInSpaceGroup.Enabled = true;
-#endif
 
 
-					////create meshes
-					//if( scene.HasMeshes && scene.MeshCount != 0 )
-					//{
-					//	var groupMeshes = settings.component.GetComponentByName( "Meshes" ) as Mesh;
-					//	if( groupMeshes == null )
-					//	{
-					//		groupMeshes = settings.component.CreateComponent<Mesh>( -1, false );
-					//		groupMeshes.Name = "Meshes";
-					//	}
-					//	else
-					//		groupMeshes.Enabled = false;
 
-					//	foreach( var item in sourcesMeshByIndex )
-					//	{
-					//		var original = item.Value;
-					//		var type = original.GetProvidedType();
-					//		if( type != null )
-					//		{
-					//			//!!!!тип проверять еще
-					//			var obj = groupMeshes.GetComponentByName( original.Name );
-					//			if( obj == null )
-					//			{
-					//				obj = groupMeshes.CreateComponent( type, -1, false );
-					//				//var obj = group.CreateComponent( MetadataManager.MetadataGetType( original ), -1, false );
-					//				obj.Name = original.Name;
-					//				obj.Enabled = true;
+					//////!!!!
+					//////create objects in space (Scene mode)
+					////if( false /*settings.component.Mode.Value == Import3D.ModeEnum.Scene*/ &&
+					////	( importContext.meshesGroup != null || scene.LightCount != 0 || scene.CameraCount != 0 ) )
+					////{
+					////	var groupName = "Scene Objects";
 
-					//				//material
-					//				var mesh = obj as Mesh;
-					//				if( mesh != null )
-					//				{
-					//					if( groupMaterials != null )
-					//					{
-					//						materialNamePathByMeshNamePath.TryGetValue( mesh.GetNameWithIndexFromParent(), out string materialNamePath );
-					//						if( !string.IsNullOrEmpty( materialNamePath ) )
-					//						{
-					//							var material = groupMaterials.GetComponentByNamePath( materialNamePath ) as Material;
-					//							if( material != null )
-					//							{
-					//								//не через "this:", впрочем неважно, т.к. полный путь есть при указании типа в "Sources".
+					////	//group
+					////	importContext.objectsInSpaceGroup = settings.component.GetComponentByName( groupName ) as ObjectInSpace;
+					////	if( importContext.objectsInSpaceGroup == null )
+					////	{
+					////		importContext.objectsInSpaceGroup = settings.component.CreateComponent<ObjectInSpace>( -1, false );
+					////		importContext.objectsInSpaceGroup.Name = groupName;
+					////	}
+					////	else
+					////		importContext.objectsInSpaceGroup.Enabled = false;
 
-					//								var referenceValue = settings.virtualFileName + "|" + material.GetNamePathToAccessFromRoot();
-					//								mesh.Material = ReferenceUtils.CreateReference<Material>( null, referenceValue );
+					////	//meshes in space
+					////	if( importContext.meshesGroup != null )
+					////	{
+					////		foreach( var node in scene.RootNode.Children )
+					////		{
+					////			if( ContainsMeshesRecursive( node ) )
+					////			{
+					////				//mesh
+					////				var mesh = importContext.meshesGroup.CreateComponent<Mesh>();
+					////				mesh.Name = GetFixedName( node.Name );
+					////				InitMeshGeometriesRecursive( importContext, node, Mat4F.Identity, mesh );
 
-					//								//meshData.Material = ReferenceUtils.CreateReference<Material>( null,
-					//								//	ReferenceUtils.CalculateThisReference( meshData, material ) );
-					//								//meshData.Material = ResourceManager.LoadResource<Material>( "_Dev\\Sphere.material" );
-					//							}
-					//						}
-					//					}
-					//				}
-					//			}
-					//		}
-					//	}
+					////				//object in space
 
-					//	groupMeshes.Enabled = true;
-					//}
+					////				var objectInSpace = importContext.objectsInSpaceGroup.CreateComponent<MeshInSpace>();
+					////				objectInSpace.Name = GetFixedName( node.Name );
+
+					////				var referenceValue = ReferenceUtils.CalculateRootReference( mesh );
+					////				//var referenceValue = settings.virtualFileName + "|" + mesh.GetNamePathToAccessFromRoot();
+					////				objectInSpace.Mesh = ReferenceUtils.CreateReference<Mesh>( null, referenceValue );
+
+					////				//Transform
+					////				( globalTransform * node.Transform.ToMat4() ).Decompose( out var pos, out Quat rot, out var scl );
+					////				var transformOffset = objectInSpace.CreateComponent<TransformOffset>();
+					////				transformOffset.Name = "Attach Transform Offset";
+					////				transformOffset.PositionOffset = pos;
+					////				transformOffset.RotationOffset = rot;
+					////				transformOffset.ScaleOffset = scl;
+					////				transformOffset.Source = ReferenceUtils.CreateReference<Transform>( null,
+					////					ReferenceUtils.CalculateThisReference( transformOffset, importContext.objectsInSpaceGroup, "Transform" ) );
+					////				objectInSpace.Transform = ReferenceUtils.CreateReference<Transform>( null,
+					////					ReferenceUtils.CalculateThisReference( objectInSpace, transformOffset, "Result" ) );
+
+					////				//objectInSpace.Transform = new Transform( pos, rot, scl );
+					////			}
+					////		}
+
+					////		//foreach( var obj in groupMeshes.Components )
+					////		//{
+					////		//	var mesh = obj as Mesh;
+					////		//	if( mesh != null )
+					////		//	{
+					////		//		//!!!!по имени проверять? везде так
+					////		//		var objectInSpace = groupObjectsInSpace.GetComponentByName( mesh.Name );
+					////		//		if( objectInSpace == null )
+					////		//		{
+					////		//			var objectInSpace2 = groupObjectsInSpace.CreateComponent<MeshInSpace>();
+					////		//			objectInSpace2.Name = mesh.Name;
+
+					////		//			var referenceValue = settings.virtualFileName + "|" + mesh.GetNamePathToAccessFromRoot();
+					////		//			objectInSpace2.Mesh = ReferenceUtils.CreateReference<Mesh>( null, referenceValue );
+
+					////		//			objectInSpace2.Transform = mesh.TransformRelativeToParent;
+					////		//		}
+					////		//	}
+					////		//}
+					////	}
+
+					////	//lights
+					////	//!!!!
+					////	if( false )
+					////	{
+					////		foreach( var light in scene.Lights )
+					////		{
+					////			var objectInSpace = importContext.objectsInSpaceGroup.CreateComponent<Light>();
+					////			objectInSpace.Name = light.Name;
+
+					////			//Transform
+					////			var transformOffset = objectInSpace.CreateComponent<TransformOffset>();
+					////			transformOffset.Name = "Attach Transform Offset";
+					////			transformOffset.PositionOffset = light.Position.ToVec3();
+
+					////			//!!!!
+					////			//globalTransform*
+
+					////			//!!!!temp
+					////			transformOffset.PositionOffset = new Vec3( 0, 0, -1 );
+
+					////			//!!!!globalTransform, globalTransformR
+					////			transformOffset.RotationOffset = Quat.FromDirectionZAxisUp( light.Direction.ToVec3() );
+					////			transformOffset.ScaleOffset = Vec3.One;
+					////			transformOffset.Source = ReferenceUtils.CreateReference<Transform>( null,
+					////				ReferenceUtils.CalculateThisReference( transformOffset, importContext.objectsInSpaceGroup, "Transform" ) );
+					////			objectInSpace.Transform = ReferenceUtils.CreateReference<Transform>( null,
+					////				ReferenceUtils.CalculateThisReference( objectInSpace, transformOffset, "Result" ) );
+					////			//objectInSpace.Transform = new Transform( light.Position.ToVec3(), Quat.FromDirectionZAxisUp( light.Direction.ToVec3() ), Vec3.One );
+
+					////			//type
+					////			switch( light.LightType )
+					////			{
+					////			case LightSourceType.Directional: objectInSpace.Type = Light.TypeEnum.Directional; break;
+					////			case LightSourceType.Point: objectInSpace.Type = Light.TypeEnum.Point; break;
+					////			case LightSourceType.Spot: objectInSpace.Type = Light.TypeEnum.Spotlight; break;
+					////			default: objectInSpace.Type = Light.TypeEnum.Point; break;
+					////			}
+
+					////			//!!!!всё ниже не работает
+
+					////			//power
+					////			ColorValue color = new ColorValue( light.ColorDiffuse.R, light.ColorDiffuse.G, light.ColorDiffuse.B );
+					////			objectInSpace.Power = new ColorValuePowered( color );
+					////			//public Color3D ColorSpecular { get; set; }
+					////			//public Color3D ColorAmbient { get; set; }
+
+					////			//spot angles
+					////			if( light.LightType == LightSourceType.Spot )
+					////			{
+					////				if( light.AngleInnerCone != 0 || light.AngleOuterCone != 0 )
+					////				{
+					////					objectInSpace.SpotlightInnerAngle = new Radian( light.AngleInnerCone ).InDegrees();
+					////					objectInSpace.SpotlightOuterAngle = new Radian( light.AngleOuterCone ).InDegrees();
+					////				}
+					////			}
+
+					////			//attenuation
+
+					////			//!!!!
+					////			//public float AttenuationConstant { get; set; }
+					////			//public float AttenuationLinear { get; set; }
+					////			//public float AttenuationQuadratic { get; set; }
+					////			//objectInSpace.AttenuationNear
+					////			//objectInSpace.AttenuationFar
+					////			//objectInSpace.AttenuationPower
+					////		}
+					////	}
+
+					////	//cameras
+					////	//!!!!
+					////	if( false )
+					////	{
+					////		foreach( var camera in scene.Cameras )
+					////		{
+					////			var objectInSpace = importContext.objectsInSpaceGroup.CreateComponent<Camera>();
+					////			objectInSpace.Name = camera.Name;
+
+					////			//Transform
+					////			var transformOffset = objectInSpace.CreateComponent<TransformOffset>();
+					////			transformOffset.Name = "Attach Transform Offset";
+					////			transformOffset.PositionOffset = globalTransform * camera.Position.ToVec3();
+					////			transformOffset.RotationOffset = ( globalTransformR * Mat3.LookAt( camera.Direction.ToVec3(), camera.Up.ToVec3() ) ).ToQuat();
+					////			//transformOffset.PositionOffset = camera.Position.ToVec3().ToVec3();
+					////			//transformOffset.RotationOffset = Quat.LookAt( camera.Direction.ToVec3(), camera.Up.ToVec3() );
+					////			transformOffset.ScaleOffset = Vec3.One;
+					////			transformOffset.Source = ReferenceUtils.CreateReference<Transform>( null,
+					////				ReferenceUtils.CalculateThisReference( transformOffset, importContext.objectsInSpaceGroup, "Transform" ) );
+					////			objectInSpace.Transform = ReferenceUtils.CreateReference<Transform>( null,
+					////				ReferenceUtils.CalculateThisReference( objectInSpace, transformOffset, "Result" ) );
+					////			//objectInSpace.Transform = new Transform( camera.Position.ToVec3(), 
+					////			//	Quat.LookAt( camera.Direction.ToVec3(), camera.Up.ToVec3() ), Vec3.One );
+
+					////			objectInSpace.NearClipPlane = camera.ClipPlaneNear;
+					////			objectInSpace.FarClipPlane = camera.ClipPlaneFar;
+					////			objectInSpace.AspectRatio = camera.AspectRatio;
+					////			objectInSpace.FieldOfView = new Radian( camera.FieldOfview ).InDegrees();
+					////			//public Matrix4x4 ViewMatrix { get; }
+					////		}
+					////	}
+					////}
+
+					//////enable groups
+					//////if( importContext.meshesGroup != null )
+					//////	importContext.meshesGroup.Enabled = true;
+					//////if( importContext.objectInSpaceGroup != null )
+					//////	importContext.objectInSpaceGroup.Enabled = true;
+					////if( importContext.objectsInSpaceGroup != null )
+					////	importContext.objectsInSpaceGroup.Enabled = true;
+
+
+
+
+					//////create meshes
+					////if( scene.HasMeshes && scene.MeshCount != 0 )
+					////{
+					////	var groupMeshes = settings.component.GetComponentByName( "Meshes" ) as Mesh;
+					////	if( groupMeshes == null )
+					////	{
+					////		groupMeshes = settings.component.CreateComponent<Mesh>( -1, false );
+					////		groupMeshes.Name = "Meshes";
+					////	}
+					////	else
+					////		groupMeshes.Enabled = false;
+
+					////	foreach( var item in sourcesMeshByIndex )
+					////	{
+					////		var original = item.Value;
+					////		var type = original.GetProvidedType();
+					////		if( type != null )
+					////		{
+					////			//!!!!тип проверять еще
+					////			var obj = groupMeshes.GetComponentByName( original.Name );
+					////			if( obj == null )
+					////			{
+					////				obj = groupMeshes.CreateComponent( type, -1, false );
+					////				//var obj = group.CreateComponent( MetadataManager.MetadataGetType( original ), -1, false );
+					////				obj.Name = original.Name;
+					////				obj.Enabled = true;
+
+					////				//material
+					////				var mesh = obj as Mesh;
+					////				if( mesh != null )
+					////				{
+					////					if( groupMaterials != null )
+					////					{
+					////						materialNamePathByMeshNamePath.TryGetValue( mesh.GetNameWithIndexFromParent(), out string materialNamePath );
+					////						if( !string.IsNullOrEmpty( materialNamePath ) )
+					////						{
+					////							var material = groupMaterials.GetComponentByNamePath( materialNamePath ) as Material;
+					////							if( material != null )
+					////							{
+					////								//не через "this:", впрочем неважно, т.к. полный путь есть при указании типа в "Sources".
+
+					////								var referenceValue = settings.virtualFileName + "|" + material.GetNamePathToAccessFromRoot();
+					////								mesh.Material = ReferenceUtils.CreateReference<Material>( null, referenceValue );
+
+					////								//meshData.Material = ReferenceUtils.CreateReference<Material>( null,
+					////								//	ReferenceUtils.CalculateThisReference( meshData, material ) );
+					////								//meshData.Material = ResourceManager.LoadResource<Material>( "_Dev\\Sphere.material" );
+					////							}
+					////						}
+					////					}
+					////				}
+					////			}
+					////		}
+					////	}
+
+					////	groupMeshes.Enabled = true;
+					////}
+
+
+
 
 					////!!!!
 					////create nodes
@@ -1655,6 +1699,9 @@ namespace NeoAxis.Import
 					//	groupNodes.Enabled = true;
 					//}
 
+
+
+
 					stream?.Dispose();
 				}
 			}
@@ -1665,6 +1712,8 @@ namespace NeoAxis.Import
 				//return null;
 			}
 		}
+
+
 
 		//public override bool IsSupportedExportToFormat( string extension )
 		//{
@@ -1856,6 +1905,10 @@ namespace NeoAxis.Import
 			var scene = importContext.scene;
 			if( scene.HasMaterials && scene.MaterialCount != 0 )
 			{
+				var extractedTextures = new Dictionary<int, string>();
+
+				var embedTexturesOutputVirtualDirectory = Path.Combine( Path.GetDirectoryName( importContext.settings.virtualFileName ), Path.GetFileName( importContext.settings.virtualFileName ) + "_files" );
+
 				for( int nMaterial = 0; nMaterial < scene.MaterialCount; nMaterial++ )
 				{
 					var aiMaterial = scene.Materials[ nMaterial ];
@@ -1877,8 +1930,42 @@ namespace NeoAxis.Import
 							data.BaseColor = new ColorValue( scale.X, scale.Y, scale.Z );
 						}
 
+						float? transmissionFactor = null;
+						foreach( var p in aiMaterial.GetAllProperties() )
+						{
+							if( p.Name == "$mat.transmission.factor" )
+							{
+								if( p.PropertyType == PropertyType.Float )
+									transmissionFactor = p.GetFloatValue();
+								else if( p.PropertyType == PropertyType.Double )
+									transmissionFactor = (float)p.GetDoubleValue();
+							}
+						}
 
-						//!!!!support texture coord channels. right now support only channel 0
+						//Opacity
+						if( aiMaterial.HasOpacity && aiMaterial.Opacity < 1 )
+							data.Opacity = aiMaterial.Opacity;
+
+						//Transmission factor
+						if( data.Opacity == 1 && transmissionFactor.HasValue )
+						{
+							//!!!!not right?
+							data.Opacity = MathEx.Saturate( 1.0f - MathEx.Sqrt( transmissionFactor.Value ) );
+						}
+
+						//!!!!
+
+						//if( aiMaterial.HasTransparencyFactor )
+						//	Log.Info( "tf " + aiMaterial.TransparencyFactor.ToString() );
+
+						//if( aiMaterial.HasColorTransparent )
+						//	Log.Info( "ct " + aiMaterial.ColorTransparent.ToString() );
+
+						//if( aiMaterial.HasBlendMode )
+						//	Log.Info( "bm " + aiMaterial.BlendMode.ToString() );
+
+
+						//!!!!support texture coord channels? right now support only channel 0
 
 
 						var textureTypes = new List<TextureType>();
@@ -1896,19 +1983,81 @@ namespace NeoAxis.Import
 
 						foreach( var textureType in textureTypes )
 						{
-							for( int nTexCoord = 0; nTexCoord < 4; nTexCoord++ )
+							int nTexCoord = 0;//for( int nTexCoord = 0; nTexCoord < 4; nTexCoord++ )
 							{
 								aiMaterial.GetMaterialTexture( textureType, nTexCoord, out var slot );
 
 								if( !string.IsNullOrEmpty( slot.FilePath ) && nTexCoord == 0 )
 								{
-									var filePath = slot.FilePath;
-									if( filePath.Length > 2 && filePath.Substring( 0, 2 ) == "./" )
-										filePath = filePath.Substring( 2 );
+									string fullPath = "";
 
-									var fullPath = Path.Combine( importContext.directoryName, filePath );
-									if( VirtualFile.Exists( fullPath ) )
+									if( slot.FilePath.Length > 1 && slot.FilePath[ 0 ] == '*' )
 									{
+										var filePath = slot.FilePath.Substring( 1 );
+
+										//replace %20
+										filePath = System.Web.HttpUtility.UrlDecode( filePath );
+
+										//embed
+										if( int.TryParse( filePath, out var embedIndex ) )
+										{
+											if( embedIndex < scene.TextureCount )
+											{
+												if( !extractedTextures.TryGetValue( embedIndex, out var fullPath2 ) )
+												{
+													var embedTexture = scene.Textures[ embedIndex ];
+													if( embedTexture.HasCompressedData )
+													{
+														//compressed data
+														var ext = embedTexture.CompressedFormatHint;
+														if( !string.IsNullOrEmpty( ext ) )
+														{
+															fullPath2 = Path.Combine( embedTexturesOutputVirtualDirectory, embedTexture.Filename + "." + ext );
+															var realPath = VirtualPathUtility.GetRealPathByVirtual( fullPath2 );
+
+															//write file
+															{
+																var realPathFolder = Path.GetDirectoryName( realPath );
+																if( !Directory.Exists( realPathFolder ) )
+																	Directory.CreateDirectory( realPathFolder );
+																File.WriteAllBytes( realPath, embedTexture.CompressedData );
+															}
+
+															extractedTextures[ embedIndex ] = fullPath2;
+														}
+													}
+													else
+													{
+														//uncompressed data
+
+														//!!!!impl
+													}
+												}
+
+												fullPath = fullPath2;
+											}
+										}
+									}
+									else
+									{
+										//usual reference to file
+
+										var filePath = slot.FilePath;
+										if( filePath.Length > 2 && filePath.Substring( 0, 2 ) == "./" )
+											filePath = filePath.Substring( 2 );
+										filePath = VirtualPathUtility.NormalizePath( filePath );
+
+										//replace %20
+										filePath = System.Web.HttpUtility.UrlDecode( filePath );
+
+										var fullPath2 = Path.Combine( importContext.directoryName, filePath );
+										if( VirtualFile.Exists( fullPath2 ) )
+											fullPath = fullPath2;
+									}
+
+									if( !string.IsNullOrEmpty( fullPath ) )
+									{
+										var filePath = Path.GetFileName( fullPath );
 
 										switch( textureType )
 										{
@@ -1958,7 +2107,19 @@ namespace NeoAxis.Import
 										}
 
 									}
+
 								}
+							}
+						}
+
+						//fix channels for merged metallic, roughness textures
+						if( !string.IsNullOrEmpty( data.MetallicTexture ) && !string.IsNullOrEmpty( data.RoughnessTexture ) && data.MetallicTexture == data.RoughnessTexture )
+						{
+							if( data.MetallicTextureChannel == "R" && data.RoughnessTextureChannel == "R" )
+							{
+								//!!!!maybe detect order by file name
+								data.MetallicTextureChannel = "R";
+								data.RoughnessTextureChannel = "G";
 							}
 						}
 

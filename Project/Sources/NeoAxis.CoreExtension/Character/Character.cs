@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -9,108 +10,121 @@ namespace NeoAxis
 	/// A basic class for characters.
 	/// </summary>
 	[AddToResourcesWindow( @"Base\3D\Character", -8999 )]
-	public class Character : MeshInSpace, IProcessDamage, InteractiveObject
+#if !DEPLOY
+	[Editor.SettingsCell( typeof( Editor.CharacterSettingsCell ), true )]
+#endif
+	public class Character : MeshInSpace, IProcessDamage, InteractiveObjectInterface, MeshInSpaceAnimationController.IParentAnimationTriggerProcess
 	{
-		CharacterType typeCached = new CharacterType();
+		static FastRandom staticRandom = new FastRandom( 0 );
 
-		//on ground and flying states
-		float mainBodyGroundDistanceNoScale = 1000;//from Transform (bottom) of the body/object
-		Scene.PhysicsWorldClass.Body groundBody;
-		float forceIsOnGroundRemainingTime;
-		float disableGravityRemainingTime;
+		CharacterType typeCached = new CharacterType();
+		int typeCachedVersion;
+
+		Scene.PhysicsWorldClass.Body groundBody1;
+		float groundBody1RemainingTime;
+		Vector3F groundBody1Velocity;
+		//networking
+		bool clientIsOnGround;
+		bool sentToClientsIsOnGround;
+		Vector3F sentToClientsGroundBody1Velocity;
+
+		//Scene.PhysicsWorldClass.Body groundBody2;
+		//float groundBody2RemainingTime;
+
+		//float forceIsOnGroundRemainingTime;
+		//float disableGravityRemainingTime;
 		bool isOnGroundHasValue;
 		bool isOnGroundValue;
-		//[FieldSerialize( FieldSerializeSerializationTypes.World )]
 		float onGroundTime;
-		//[FieldSerialize( FieldSerializeSerializationTypes.World )]
 		float elapsedTimeSinceLastGroundContact;
-		//Vector3 lastSimulationStepPosition;
 
 		//moveVector
 		int moveVectorTimer;//is disabled when equal 0
 		Vector2F moveVector;
 		bool moveVectorRun;
-		Vector2F lastTickForceVector;
+		//Vector2F lastTickForceVector;
 
 		//jumping state
-		//[FieldSerialize( FieldSerializeSerializationTypes.World )]
 		float jumpInactiveTime;
-		//[FieldSerialize( FieldSerializeSerializationTypes.World )]
 		float jumpDisableRemainingTime;
 
-		//!!!!smooth?
 		Vector3? lastTransformPosition;
 		Vector3F lastLinearVelocity;
+		bool lastActive;
 
-		//right now it includes look to. can separate
-		SphericalDirectionF currentTurnToDirection;
-		SphericalDirectionF requiredTurnToDirection;
-		////Radian horizontalDirectionForUpdateRotation;
-		//SphericalDirection currentLookToDirection;
-		//SphericalDirection requiredLookToDirection;
-
-		//[FieldSerialize( FieldSerializeSerializationTypes.World )]
-		//Vector3 linearVelocityForSerialization;
-
-		Vector3F groundRelativeVelocity;
 		Vector3F[] groundRelativeVelocitySmoothArray;
 		Vector3F groundRelativeVelocitySmooth;
 
-		float allowToSleepTime;
-
+		//crouching is not implemented
 		//crouching
 		//const float crouchingVisualSwitchTime = .3f;
-		//[FieldSerialize( FieldSerializeSerializationTypes.World )]
 		bool crouching;
 		//float crouchingSwitchRemainingTime;
-		////[FieldSerialize( FieldSerializeSerializationTypes.World )]
 		//float crouchingVisualFactor;
 
 		//wiggle camera when walking
 		float wiggleWhenWalkingSpeedFactor;
 
 		//smooth camera
-		double smoothCameraOffsetZ;
-		//Vector3? initialTransformOffsetPositionInSimulation;
+		float smoothCameraOffsetZ;
+		float sentToClientsSmoothCameraOffsetZ;
 
 		//play one animation
 		Animation playOneAnimation;
 		double playOneAnimationSpeed = 1;
+		bool playOneAnimationFreezeOnEnd;
 		double playOneAnimationRemainingTime;
 
-		//weapon
-		double disableUpdateAttachedWeaponRemainingTime;
+		//play one animation additional
+		MeshInSpaceAnimationController.AnimationStateClass.AnimationItem playOneAnimationAdditional;
+		double playOneAnimationAdditionalRemainingTime;
 
 		//optimization
 		MeshInSpaceAnimationController animationControllerCached;
-		//CharacterInputProcessing characterInputProcessingCached;
-		//!!!!for what animations add the cache
+
+		bool flyEndSoundOnGround = true;
+
+		float disableControlRemainingTime;
+
+		//client cached data
+		//double sentToClientsSmoothCameraOffsetZ;
+
+		//float allowToSleepTime;
+
+		//Vector3 linearVelocityForSerialization;
 
 		////damageFastChangeSpeed
 		//Vector3 damageFastChangeSpeedLastVelocity = new Vector3( float.NaN, float.NaN, float.NaN );
 
 		/////////////////////////////////////////
 
-		const string characterTypeDefault = @"Content\Characters\Default\Default.charactertype";
+		const string characterTypeDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Bryce.charactertype";
+		//const string characterTypeDefault = @"Content\Characters\Default\Default.charactertype";
 
 		[DefaultValueReference( characterTypeDefault )]
-		//[Category( "General" )]
 		public Reference<CharacterType> CharacterType
 		{
 			get { if( _characterType.BeginGet() ) CharacterType = _characterType.Get( this ); return _characterType.value; }
 			set
 			{
-				if( _characterType.BeginSet( ref value ) )
+				if( _characterType.BeginSet( this, ref value ) )
 				{
 					try
 					{
 						CharacterTypeChanged?.Invoke( this );
 
-						//update cached type and mesh
+						//update cached type
 						typeCached = _characterType.value;
 						if( typeCached == null )
 							typeCached = new CharacterType();
-						UpdateMesh();
+						typeCachedVersion = typeCached.Version;
+
+						//update mesh and body
+						if( EnabledInHierarchyAndIsInstance )
+						{
+							UpdateMesh();
+							RecreateBody();
+						}
 					}
 					finally { _characterType.EndSet(); }
 				}
@@ -120,56 +134,172 @@ namespace NeoAxis
 		public event Action<Character> CharacterTypeChanged;
 		ReferenceField<CharacterType> _characterType = new Reference<CharacterType>( null, characterTypeDefault );
 
-		//[Category( "Skeleton State" )]
-		//[DefaultValue( "NaN NaN NaN" )]
-		//public Reference<Vector3> TorsoLookAt
-		//{
-		//	get { if( _torsoLookAt.BeginGet() ) TorsoLookAt = _torsoLookAt.Get( this ); return _torsoLookAt.value; }
-		//	set { if( _torsoLookAt.BeginSet( ref value ) ) { try { TorsoLookAtChanged?.Invoke( this ); } finally { _torsoLookAt.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="TorsoLookAt"/> property value changes.</summary>
-		//public event Action<Character> TorsoLookAtChanged;
-		//ReferenceField<Vector3> _torsoLookAt = new Vector3( double.NaN, double.NaN, double.NaN );
+
+		//left hand
 
 		/// <summary>
 		/// Left hand control ratio.
 		/// </summary>
-		[Category( "State" )]
+		[Category( "Left Hand" )]
 		[Range( 0, 1 )]
 		[DefaultValue( 0.0 )]
 		public Reference<double> LeftHandFactor
 		{
 			get { if( _leftHandFactor.BeginGet() ) LeftHandFactor = _leftHandFactor.Get( this ); return _leftHandFactor.value; }
-			set { if( _leftHandFactor.BeginSet( ref value ) ) { try { LeftHandFactorChanged?.Invoke( this ); } finally { _leftHandFactor.EndSet(); } } }
+			set { if( _leftHandFactor.BeginSet( this, ref value ) ) { try { LeftHandFactorChanged?.Invoke( this ); } finally { _leftHandFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LeftHandFactor"/> property value changes.</summary>
 		public event Action<Character> LeftHandFactorChanged;
 		ReferenceField<double> _leftHandFactor = 0.0;
 
+		//transform is ok? maybe add bool LeftHandApplyRotation
+
 		/// <summary>
 		/// Left hand target transform in the world coordinates. X - forward, -Z - palm.
 		/// </summary>
-		[Category( "State" )]
+		[Category( "Left Hand" )]
 		[DefaultValue( NeoAxis.Transform.IdentityAsString )]
 		public Reference<Transform> LeftHandTransform
 		{
 			get { if( _leftHandTransform.BeginGet() ) LeftHandTransform = _leftHandTransform.Get( this ); return _leftHandTransform.value; }
-			set { if( _leftHandTransform.BeginSet( ref value ) ) { try { LeftHandTransformChanged?.Invoke( this ); } finally { _leftHandTransform.EndSet(); } } }
+			set { if( _leftHandTransform.BeginSet( this, ref value ) ) { try { LeftHandTransformChanged?.Invoke( this ); } finally { _leftHandTransform.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LeftHandTransform"/> property value changes.</summary>
 		public event Action<Character> LeftHandTransformChanged;
 		ReferenceField<Transform> _leftHandTransform = NeoAxis.Transform.Identity;
 
+		[Category( "Left Hand" )]
+		[DefaultValue( 0.0 )]
+		[Range( 0, 1 )]
+		public Reference<double> LeftHandThumbFingerFlexionFactor
+		{
+			get { if( _leftHandThumbFingerFlexionFactor.BeginGet() ) LeftHandThumbFingerFlexionFactor = _leftHandThumbFingerFlexionFactor.Get( this ); return _leftHandThumbFingerFlexionFactor.value; }
+			set { if( _leftHandThumbFingerFlexionFactor.BeginSet( this, ref value ) ) { try { LeftHandThumbFingerFlexionFactorChanged?.Invoke( this ); } finally { _leftHandThumbFingerFlexionFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LeftHandThumbFingerFlexionFactor"/> property value changes.</summary>
+		public event Action<Character> LeftHandThumbFingerFlexionFactorChanged;
+		ReferenceField<double> _leftHandThumbFingerFlexionFactor = 0.0;
+
+		[Category( "Left Hand" )]
+		[DefaultValue( 0.5 )]
+		[Range( 0, 1 )]
+		public Reference<double> LeftHandThumbFingerFlexionValue
+		{
+			get { if( _leftHandThumbFingerFlexionValue.BeginGet() ) LeftHandThumbFingerFlexionValue = _leftHandThumbFingerFlexionValue.Get( this ); return _leftHandThumbFingerFlexionValue.value; }
+			set { if( _leftHandThumbFingerFlexionValue.BeginSet( this, ref value ) ) { try { LeftHandThumbFingerFlexionValueChanged?.Invoke( this ); } finally { _leftHandThumbFingerFlexionValue.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LeftHandThumbFingerFlexionValue"/> property value changes.</summary>
+		public event Action<Character> LeftHandThumbFingerFlexionValueChanged;
+		ReferenceField<double> _leftHandThumbFingerFlexionValue = 0.5;
+
+		[Category( "Left Hand" )]
+		[DefaultValue( 0.0 )]
+		[Range( 0, 1 )]
+		public Reference<double> LeftHandIndexFingerFlexionFactor
+		{
+			get { if( _leftHandIndexFingerFlexionFactor.BeginGet() ) LeftHandIndexFingerFlexionFactor = _leftHandIndexFingerFlexionFactor.Get( this ); return _leftHandIndexFingerFlexionFactor.value; }
+			set { if( _leftHandIndexFingerFlexionFactor.BeginSet( this, ref value ) ) { try { LeftHandIndexFingerFlexionFactorChanged?.Invoke( this ); } finally { _leftHandIndexFingerFlexionFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LeftHandIndexFingerFlexionFactor"/> property value changes.</summary>
+		public event Action<Character> LeftHandIndexFingerFlexionFactorChanged;
+		ReferenceField<double> _leftHandIndexFingerFlexionFactor = 0.0;
+
+		[Category( "Left Hand" )]
+		[DefaultValue( 0.5 )]
+		[Range( 0, 1 )]
+		public Reference<double> LeftHandIndexFingerFlexionValue
+		{
+			get { if( _leftHandIndexFingerFlexionValue.BeginGet() ) LeftHandIndexFingerFlexionValue = _leftHandIndexFingerFlexionValue.Get( this ); return _leftHandIndexFingerFlexionValue.value; }
+			set { if( _leftHandIndexFingerFlexionValue.BeginSet( this, ref value ) ) { try { LeftHandIndexFingerFlexionValueChanged?.Invoke( this ); } finally { _leftHandIndexFingerFlexionValue.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LeftHandIndexFingerFlexionValue"/> property value changes.</summary>
+		public event Action<Character> LeftHandIndexFingerFlexionValueChanged;
+		ReferenceField<double> _leftHandIndexFingerFlexionValue = 0.5;
+
+		[Category( "Left Hand" )]
+		[DefaultValue( 0.0 )]
+		[Range( 0, 1 )]
+		public Reference<double> LeftHandMiddleFingerFlexionFactor
+		{
+			get { if( _leftHandMiddleFingerFlexionFactor.BeginGet() ) LeftHandMiddleFingerFlexionFactor = _leftHandMiddleFingerFlexionFactor.Get( this ); return _leftHandMiddleFingerFlexionFactor.value; }
+			set { if( _leftHandMiddleFingerFlexionFactor.BeginSet( this, ref value ) ) { try { LeftHandMiddleFingerFlexionFactorChanged?.Invoke( this ); } finally { _leftHandMiddleFingerFlexionFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LeftHandMiddleFingerFlexionFactor"/> property value changes.</summary>
+		public event Action<Character> LeftHandMiddleFingerFlexionFactorChanged;
+		ReferenceField<double> _leftHandMiddleFingerFlexionFactor = 0.0;
+
+		[Category( "Left Hand" )]
+		[DefaultValue( 0.5 )]
+		[Range( 0, 1 )]
+		public Reference<double> LeftHandMiddleFingerFlexionValue
+		{
+			get { if( _leftHandMiddleFingerFlexionValue.BeginGet() ) LeftHandMiddleFingerFlexionValue = _leftHandMiddleFingerFlexionValue.Get( this ); return _leftHandMiddleFingerFlexionValue.value; }
+			set { if( _leftHandMiddleFingerFlexionValue.BeginSet( this, ref value ) ) { try { LeftHandMiddleFingerFlexionValueChanged?.Invoke( this ); } finally { _leftHandMiddleFingerFlexionValue.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LeftHandMiddleFingerFlexionValue"/> property value changes.</summary>
+		public event Action<Character> LeftHandMiddleFingerFlexionValueChanged;
+		ReferenceField<double> _leftHandMiddleFingerFlexionValue = 0.5;
+
+		[Category( "Left Hand" )]
+		[DefaultValue( 0.0 )]
+		[Range( 0, 1 )]
+		public Reference<double> LeftHandRingFingerFlexionFactor
+		{
+			get { if( _leftHandRingFingerFlexionFactor.BeginGet() ) LeftHandRingFingerFlexionFactor = _leftHandRingFingerFlexionFactor.Get( this ); return _leftHandRingFingerFlexionFactor.value; }
+			set { if( _leftHandRingFingerFlexionFactor.BeginSet( this, ref value ) ) { try { LeftHandRingFingerFlexionFactorChanged?.Invoke( this ); } finally { _leftHandRingFingerFlexionFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LeftHandRingFingerFlexionFactor"/> property value changes.</summary>
+		public event Action<Character> LeftHandRingFingerFlexionFactorChanged;
+		ReferenceField<double> _leftHandRingFingerFlexionFactor = 0.0;
+
+		[Category( "Left Hand" )]
+		[DefaultValue( 0.5 )]
+		[Range( 0, 1 )]
+		public Reference<double> LeftHandRingFingerFlexionValue
+		{
+			get { if( _leftHandRingFingerFlexionValue.BeginGet() ) LeftHandRingFingerFlexionValue = _leftHandRingFingerFlexionValue.Get( this ); return _leftHandRingFingerFlexionValue.value; }
+			set { if( _leftHandRingFingerFlexionValue.BeginSet( this, ref value ) ) { try { LeftHandRingFingerFlexionValueChanged?.Invoke( this ); } finally { _leftHandRingFingerFlexionValue.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LeftHandRingFingerFlexionValue"/> property value changes.</summary>
+		public event Action<Character> LeftHandRingFingerFlexionValueChanged;
+		ReferenceField<double> _leftHandRingFingerFlexionValue = 0.5;
+
+		[Category( "Left Hand" )]
+		[DefaultValue( 0.0 )]
+		[Range( 0, 1 )]
+		public Reference<double> LeftHandLittleFingerFlexionFactor
+		{
+			get { if( _leftHandLittleFingerFlexionFactor.BeginGet() ) LeftHandLittleFingerFlexionFactor = _leftHandLittleFingerFlexionFactor.Get( this ); return _leftHandLittleFingerFlexionFactor.value; }
+			set { if( _leftHandLittleFingerFlexionFactor.BeginSet( this, ref value ) ) { try { LeftHandLittleFingerFlexionFactorChanged?.Invoke( this ); } finally { _leftHandLittleFingerFlexionFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LeftHandLittleFingerFlexionFactor"/> property value changes.</summary>
+		public event Action<Character> LeftHandLittleFingerFlexionFactorChanged;
+		ReferenceField<double> _leftHandLittleFingerFlexionFactor = 0.0;
+
+		[Category( "Left Hand" )]
+		[DefaultValue( 0.5 )]
+		[Range( 0, 1 )]
+		public Reference<double> LeftHandLittleFingerFlexionValue
+		{
+			get { if( _leftHandLittleFingerFlexionValue.BeginGet() ) LeftHandLittleFingerFlexionValue = _leftHandLittleFingerFlexionValue.Get( this ); return _leftHandLittleFingerFlexionValue.value; }
+			set { if( _leftHandLittleFingerFlexionValue.BeginSet( this, ref value ) ) { try { LeftHandLittleFingerFlexionValueChanged?.Invoke( this ); } finally { _leftHandLittleFingerFlexionValue.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LeftHandLittleFingerFlexionValue"/> property value changes.</summary>
+		public event Action<Character> LeftHandLittleFingerFlexionValueChanged;
+		ReferenceField<double> _leftHandLittleFingerFlexionValue = 0.5;
+
+		//right hand
+
 		/// <summary>
 		/// Right hand control ratio.
 		/// </summary>
-		[Category( "State" )]
+		[Category( "Right Hand" )]
 		[Range( 0, 1 )]
 		[DefaultValue( 0.0 )]
 		public Reference<double> RightHandFactor
 		{
 			get { if( _rightHandFactor.BeginGet() ) RightHandFactor = _rightHandFactor.Get( this ); return _rightHandFactor.value; }
-			set { if( _rightHandFactor.BeginSet( ref value ) ) { try { RightHandFactorChanged?.Invoke( this ); } finally { _rightHandFactor.EndSet(); } } }
+			set { if( _rightHandFactor.BeginSet( this, ref value ) ) { try { RightHandFactorChanged?.Invoke( this ); } finally { _rightHandFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RightHandFactor"/> property value changes.</summary>
 		public event Action<Character> RightHandFactorChanged;
@@ -178,27 +308,149 @@ namespace NeoAxis
 		/// <summary>
 		/// Right hand target transform in the world coordinates. X - forward, -Z - palm.
 		/// </summary>
-		[Category( "State" )]
+		[Category( "Right Hand" )]
 		[DefaultValue( NeoAxis.Transform.IdentityAsString )]
 		public Reference<Transform> RightHandTransform
 		{
 			get { if( _rightHandTransform.BeginGet() ) RightHandTransform = _rightHandTransform.Get( this ); return _rightHandTransform.value; }
-			set { if( _rightHandTransform.BeginSet( ref value ) ) { try { RightHandTransformChanged?.Invoke( this ); } finally { _rightHandTransform.EndSet(); } } }
+			set { if( _rightHandTransform.BeginSet( this, ref value ) ) { try { RightHandTransformChanged?.Invoke( this ); } finally { _rightHandTransform.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RightHandTransform"/> property value changes.</summary>
 		public event Action<Character> RightHandTransformChanged;
 		ReferenceField<Transform> _rightHandTransform = NeoAxis.Transform.Identity;
 
+		[Category( "Right Hand" )]
+		[DefaultValue( 0.0 )]
+		[Range( 0, 1 )]
+		public Reference<double> RightHandThumbFingerFlexionFactor
+		{
+			get { if( _rightHandThumbFingerFlexionFactor.BeginGet() ) RightHandThumbFingerFlexionFactor = _rightHandThumbFingerFlexionFactor.Get( this ); return _rightHandThumbFingerFlexionFactor.value; }
+			set { if( _rightHandThumbFingerFlexionFactor.BeginSet( this, ref value ) ) { try { RightHandThumbFingerFlexionFactorChanged?.Invoke( this ); } finally { _rightHandThumbFingerFlexionFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RightHandThumbFingerFlexionFactor"/> property value changes.</summary>
+		public event Action<Character> RightHandThumbFingerFlexionFactorChanged;
+		ReferenceField<double> _rightHandThumbFingerFlexionFactor = 0.0;
+
+		[Category( "Right Hand" )]
+		[DefaultValue( 0.5 )]
+		[Range( 0, 1 )]
+		public Reference<double> RightHandThumbFingerFlexionValue
+		{
+			get { if( _rightHandThumbFingerFlexionValue.BeginGet() ) RightHandThumbFingerFlexionValue = _rightHandThumbFingerFlexionValue.Get( this ); return _rightHandThumbFingerFlexionValue.value; }
+			set { if( _rightHandThumbFingerFlexionValue.BeginSet( this, ref value ) ) { try { RightHandThumbFingerFlexionValueChanged?.Invoke( this ); } finally { _rightHandThumbFingerFlexionValue.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RightHandThumbFingerFlexionValue"/> property value changes.</summary>
+		public event Action<Character> RightHandThumbFingerFlexionValueChanged;
+		ReferenceField<double> _rightHandThumbFingerFlexionValue = 0.5;
+
+		[Category( "Right Hand" )]
+		[DefaultValue( 0.0 )]
+		[Range( 0, 1 )]
+		public Reference<double> RightHandIndexFingerFlexionFactor
+		{
+			get { if( _rightHandIndexFingerFlexionFactor.BeginGet() ) RightHandIndexFingerFlexionFactor = _rightHandIndexFingerFlexionFactor.Get( this ); return _rightHandIndexFingerFlexionFactor.value; }
+			set { if( _rightHandIndexFingerFlexionFactor.BeginSet( this, ref value ) ) { try { RightHandIndexFingerFlexionFactorChanged?.Invoke( this ); } finally { _rightHandIndexFingerFlexionFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RightHandIndexFingerFlexionFactor"/> property value changes.</summary>
+		public event Action<Character> RightHandIndexFingerFlexionFactorChanged;
+		ReferenceField<double> _rightHandIndexFingerFlexionFactor = 0.0;
+
+		[Category( "Right Hand" )]
+		[DefaultValue( 0.5 )]
+		[Range( 0, 1 )]
+		public Reference<double> RightHandIndexFingerFlexionValue
+		{
+			get { if( _rightHandIndexFingerFlexionValue.BeginGet() ) RightHandIndexFingerFlexionValue = _rightHandIndexFingerFlexionValue.Get( this ); return _rightHandIndexFingerFlexionValue.value; }
+			set { if( _rightHandIndexFingerFlexionValue.BeginSet( this, ref value ) ) { try { RightHandIndexFingerFlexionValueChanged?.Invoke( this ); } finally { _rightHandIndexFingerFlexionValue.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RightHandIndexFingerFlexionValue"/> property value changes.</summary>
+		public event Action<Character> RightHandIndexFingerFlexionValueChanged;
+		ReferenceField<double> _rightHandIndexFingerFlexionValue = 0.5;
+
+		[Category( "Right Hand" )]
+		[DefaultValue( 0.0 )]
+		[Range( 0, 1 )]
+		public Reference<double> RightHandMiddleFingerFlexionFactor
+		{
+			get { if( _rightHandMiddleFingerFlexionFactor.BeginGet() ) RightHandMiddleFingerFlexionFactor = _rightHandMiddleFingerFlexionFactor.Get( this ); return _rightHandMiddleFingerFlexionFactor.value; }
+			set { if( _rightHandMiddleFingerFlexionFactor.BeginSet( this, ref value ) ) { try { RightHandMiddleFingerFlexionFactorChanged?.Invoke( this ); } finally { _rightHandMiddleFingerFlexionFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RightHandMiddleFingerFlexionFactor"/> property value changes.</summary>
+		public event Action<Character> RightHandMiddleFingerFlexionFactorChanged;
+		ReferenceField<double> _rightHandMiddleFingerFlexionFactor = 0.0;
+
+		[Category( "Right Hand" )]
+		[DefaultValue( 0.5 )]
+		[Range( 0, 1 )]
+		public Reference<double> RightHandMiddleFingerFlexionValue
+		{
+			get { if( _rightHandMiddleFingerFlexionValue.BeginGet() ) RightHandMiddleFingerFlexionValue = _rightHandMiddleFingerFlexionValue.Get( this ); return _rightHandMiddleFingerFlexionValue.value; }
+			set { if( _rightHandMiddleFingerFlexionValue.BeginSet( this, ref value ) ) { try { RightHandMiddleFingerFlexionValueChanged?.Invoke( this ); } finally { _rightHandMiddleFingerFlexionValue.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RightHandMiddleFingerFlexionValue"/> property value changes.</summary>
+		public event Action<Character> RightHandMiddleFingerFlexionValueChanged;
+		ReferenceField<double> _rightHandMiddleFingerFlexionValue = 0.5;
+
+		[Category( "Right Hand" )]
+		[DefaultValue( 0.0 )]
+		[Range( 0, 1 )]
+		public Reference<double> RightHandRingFingerFlexionFactor
+		{
+			get { if( _rightHandRingFingerFlexionFactor.BeginGet() ) RightHandRingFingerFlexionFactor = _rightHandRingFingerFlexionFactor.Get( this ); return _rightHandRingFingerFlexionFactor.value; }
+			set { if( _rightHandRingFingerFlexionFactor.BeginSet( this, ref value ) ) { try { RightHandRingFingerFlexionFactorChanged?.Invoke( this ); } finally { _rightHandRingFingerFlexionFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RightHandRingFingerFlexionFactor"/> property value changes.</summary>
+		public event Action<Character> RightHandRingFingerFlexionFactorChanged;
+		ReferenceField<double> _rightHandRingFingerFlexionFactor = 0.0;
+
+		[Category( "Right Hand" )]
+		[DefaultValue( 0.5 )]
+		[Range( 0, 1 )]
+		public Reference<double> RightHandRingFingerFlexionValue
+		{
+			get { if( _rightHandRingFingerFlexionValue.BeginGet() ) RightHandRingFingerFlexionValue = _rightHandRingFingerFlexionValue.Get( this ); return _rightHandRingFingerFlexionValue.value; }
+			set { if( _rightHandRingFingerFlexionValue.BeginSet( this, ref value ) ) { try { RightHandRingFingerFlexionValueChanged?.Invoke( this ); } finally { _rightHandRingFingerFlexionValue.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RightHandRingFingerFlexionValue"/> property value changes.</summary>
+		public event Action<Character> RightHandRingFingerFlexionValueChanged;
+		ReferenceField<double> _rightHandRingFingerFlexionValue = 0.5;
+
+		[Category( "Right Hand" )]
+		[DefaultValue( 0.0 )]
+		[Range( 0, 1 )]
+		public Reference<double> RightHandLittleFingerFlexionFactor
+		{
+			get { if( _rightHandLittleFingerFlexionFactor.BeginGet() ) RightHandLittleFingerFlexionFactor = _rightHandLittleFingerFlexionFactor.Get( this ); return _rightHandLittleFingerFlexionFactor.value; }
+			set { if( _rightHandLittleFingerFlexionFactor.BeginSet( this, ref value ) ) { try { RightHandLittleFingerFlexionFactorChanged?.Invoke( this ); } finally { _rightHandLittleFingerFlexionFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RightHandLittleFingerFlexionFactor"/> property value changes.</summary>
+		public event Action<Character> RightHandLittleFingerFlexionFactorChanged;
+		ReferenceField<double> _rightHandLittleFingerFlexionFactor = 0.0;
+
+		[Category( "Right Hand" )]
+		[DefaultValue( 0.5 )]
+		[Range( 0, 1 )]
+		public Reference<double> RightHandLittleFingerFlexionValue
+		{
+			get { if( _rightHandLittleFingerFlexionValue.BeginGet() ) RightHandLittleFingerFlexionValue = _rightHandLittleFingerFlexionValue.Get( this ); return _rightHandLittleFingerFlexionValue.value; }
+			set { if( _rightHandLittleFingerFlexionValue.BeginSet( this, ref value ) ) { try { RightHandLittleFingerFlexionValueChanged?.Invoke( this ); } finally { _rightHandLittleFingerFlexionValue.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RightHandLittleFingerFlexionValue"/> property value changes.</summary>
+		public event Action<Character> RightHandLittleFingerFlexionValueChanged;
+		ReferenceField<double> _rightHandLittleFingerFlexionValue = 0.5;
+
+		//head
+
 		/// <summary>
 		/// Head control ratio.
 		/// </summary>
-		[Category( "State" )]
+		[Category( "Head" )]
 		[Range( 0, 1 )]
 		[DefaultValue( 0.0 )]
 		public Reference<double> HeadFactor
 		{
 			get { if( _headFactor.BeginGet() ) HeadFactor = _headFactor.Get( this ); return _headFactor.value; }
-			set { if( _headFactor.BeginSet( ref value ) ) { try { HeadFactorChanged?.Invoke( this ); } finally { _headFactor.EndSet(); } } }
+			set { if( _headFactor.BeginSet( this, ref value ) ) { try { HeadFactorChanged?.Invoke( this ); } finally { _headFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HeadFactor"/> property value changes.</summary>
 		public event Action<Character> HeadFactorChanged;
@@ -207,143 +459,25 @@ namespace NeoAxis
 		/// <summary>
 		/// Target position of the head.
 		/// </summary>
-		[Category( "State" )]
+		[Category( "Head" )]
 		[DefaultValue( "0 0 0" )]
 		public Reference<Vector3> HeadLookAt
 		{
 			get { if( _headLookAt.BeginGet() ) HeadLookAt = _headLookAt.Get( this ); return _headLookAt.value; }
-			set { if( _headLookAt.BeginSet( ref value ) ) { try { HeadLookAtChanged?.Invoke( this ); } finally { _headLookAt.EndSet(); } } }
+			set { if( _headLookAt.BeginSet( this, ref value ) ) { try { HeadLookAtChanged?.Invoke( this ); } finally { _headLookAt.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HeadLookAt"/> property value changes.</summary>
 		public event Action<Character> HeadLookAtChanged;
 		ReferenceField<Vector3> _headLookAt = new Vector3( 0, 0, 0 );
 
-		//[Category( "Skeleton State" )]
-		//[DefaultValue( 0.0 )]
-		//[Range( -0.25, 1 )]
-		//public Reference<double> LeftHandThumbFingerFlexion
-		//{
-		//	get { if( _leftHandThumbFingerFlexion.BeginGet() ) LeftHandThumbFingerFlexion = _leftHandThumbFingerFlexion.Get( this ); return _leftHandThumbFingerFlexion.value; }
-		//	set { if( _leftHandThumbFingerFlexion.BeginSet( ref value ) ) { try { LeftHandThumbFingerFlexionChanged?.Invoke( this ); } finally { _leftHandThumbFingerFlexion.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="LeftHandThumbFingerFlexion"/> property value changes.</summary>
-		//public event Action<Character> LeftHandThumbFingerFlexionChanged;
-		//ReferenceField<double> _leftHandThumbFingerFlexion = 0.0;
-
-		//[Category( "Skeleton State" )]
-		//[DefaultValue( 0.0 )]
-		//[Range( -0.25, 1 )]
-		//public Reference<double> LeftHandIndexFingerFlexion
-		//{
-		//	get { if( _leftHandIndexFingerFlexion.BeginGet() ) LeftHandIndexFingerFlexion = _leftHandIndexFingerFlexion.Get( this ); return _leftHandIndexFingerFlexion.value; }
-		//	set { if( _leftHandIndexFingerFlexion.BeginSet( ref value ) ) { try { LeftHandIndexFingerFlexionChanged?.Invoke( this ); } finally { _leftHandIndexFingerFlexion.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="LeftHandIndexFingerFlexion"/> property value changes.</summary>
-		//public event Action<Character> LeftHandIndexFingerFlexionChanged;
-		//ReferenceField<double> _leftHandIndexFingerFlexion = 0.0;
-
-		//[Category( "Skeleton State" )]
-		//[DefaultValue( 0.0 )]
-		//[Range( -0.25, 1 )]
-		//public Reference<double> LeftHandMiddleFingerFlexion
-		//{
-		//	get { if( _leftHandMiddleFingerFlexion.BeginGet() ) LeftHandMiddleFingerFlexion = _leftHandMiddleFingerFlexion.Get( this ); return _leftHandMiddleFingerFlexion.value; }
-		//	set { if( _leftHandMiddleFingerFlexion.BeginSet( ref value ) ) { try { LeftHandMiddleFingerFlexionChanged?.Invoke( this ); } finally { _leftHandMiddleFingerFlexion.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="LeftHandMiddleFingerFlexion"/> property value changes.</summary>
-		//public event Action<Character> LeftHandMiddleFingerFlexionChanged;
-		//ReferenceField<double> _leftHandMiddleFingerFlexion = 0.0;
-
-		//[Category( "Skeleton State" )]
-		//[DefaultValue( 0.0 )]
-		//[Range( -0.25, 1 )]
-		//public Reference<double> LeftHandRingFingerFlexion
-		//{
-		//	get { if( _leftHandRingFingerFlexion.BeginGet() ) LeftHandRingFingerFlexion = _leftHandRingFingerFlexion.Get( this ); return _leftHandRingFingerFlexion.value; }
-		//	set { if( _leftHandRingFingerFlexion.BeginSet( ref value ) ) { try { LeftHandRingFingerFlexionChanged?.Invoke( this ); } finally { _leftHandRingFingerFlexion.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="LeftHandRingFingerFlexion"/> property value changes.</summary>
-		//public event Action<Character> LeftHandRingFingerFlexionChanged;
-		//ReferenceField<double> _leftHandRingFingerFlexion = 0.0;
-
-		//[Category( "Skeleton State" )]
-		//[DefaultValue( 0.0 )]
-		//[Range( -0.25, 1 )]
-		//public Reference<double> LeftHandPinkyFingerFlexion
-		//{
-		//	get { if( _leftHandPinkyFingerFlexion.BeginGet() ) LeftHandPinkyFingerFlexion = _leftHandPinkyFingerFlexion.Get( this ); return _leftHandPinkyFingerFlexion.value; }
-		//	set { if( _leftHandPinkyFingerFlexion.BeginSet( ref value ) ) { try { LeftHandPinkyFingerFlexionChanged?.Invoke( this ); } finally { _leftHandPinkyFingerFlexion.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="LeftHandPinkyFingerFlexion"/> property value changes.</summary>
-		//public event Action<Character> LeftHandPinkyFingerFlexionChanged;
-		//ReferenceField<double> _leftHandPinkyFingerFlexion = 0.0;
 
 
-		//[Category( "Skeleton State" )]
-		//[DefaultValue( 0.0 )]
-		//[Range( -0.25, 1 )]
-		//public Reference<double> RightHandThumbFingerFlexion
-		//{
-		//	get { if( _rightHandThumbFingerFlexion.BeginGet() ) RightHandThumbFingerFlexion = _rightHandThumbFingerFlexion.Get( this ); return _rightHandThumbFingerFlexion.value; }
-		//	set { if( _rightHandThumbFingerFlexion.BeginSet( ref value ) ) { try { RightHandThumbFingerFlexionChanged?.Invoke( this ); } finally { _rightHandThumbFingerFlexion.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="RightHandThumbFingerFlexion"/> property value changes.</summary>
-		//public event Action<Character> RightHandThumbFingerFlexionChanged;
-		//ReferenceField<double> _rightHandThumbFingerFlexion = 0.0;
-
-		//[Category( "Skeleton State" )]
-		//[DefaultValue( 0.0 )]
-		//[Range( -0.25, 1 )]
-		//public Reference<double> RightHandIndexFingerFlexion
-		//{
-		//	get { if( _rightHandIndexFingerFlexion.BeginGet() ) RightHandIndexFingerFlexion = _rightHandIndexFingerFlexion.Get( this ); return _rightHandIndexFingerFlexion.value; }
-		//	set { if( _rightHandIndexFingerFlexion.BeginSet( ref value ) ) { try { RightHandIndexFingerFlexionChanged?.Invoke( this ); } finally { _rightHandIndexFingerFlexion.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="RightHandIndexFingerFlexion"/> property value changes.</summary>
-		//public event Action<Character> RightHandIndexFingerFlexionChanged;
-		//ReferenceField<double> _rightHandIndexFingerFlexion = 0.0;
-
-		//[Category( "Skeleton State" )]
-		//[DefaultValue( 0.0 )]
-		//[Range( -0.25, 1 )]
-		//public Reference<double> RightHandMiddleFingerFlexion
-		//{
-		//	get { if( _rightHandMiddleFingerFlexion.BeginGet() ) RightHandMiddleFingerFlexion = _rightHandMiddleFingerFlexion.Get( this ); return _rightHandMiddleFingerFlexion.value; }
-		//	set { if( _rightHandMiddleFingerFlexion.BeginSet( ref value ) ) { try { RightHandMiddleFingerFlexionChanged?.Invoke( this ); } finally { _rightHandMiddleFingerFlexion.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="RightHandMiddleFingerFlexion"/> property value changes.</summary>
-		//public event Action<Character> RightHandMiddleFingerFlexionChanged;
-		//ReferenceField<double> _rightHandMiddleFingerFlexion = 0.0;
-
-		//[Category( "Skeleton State" )]
-		//[DefaultValue( 0.0 )]
-		//[Range( -0.25, 1 )]
-		//public Reference<double> RightHandRingFingerFlexion
-		//{
-		//	get { if( _rightHandRingFingerFlexion.BeginGet() ) RightHandRingFingerFlexion = _rightHandRingFingerFlexion.Get( this ); return _rightHandRingFingerFlexion.value; }
-		//	set { if( _rightHandRingFingerFlexion.BeginSet( ref value ) ) { try { RightHandRingFingerFlexionChanged?.Invoke( this ); } finally { _rightHandRingFingerFlexion.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="RightHandRingFingerFlexion"/> property value changes.</summary>
-		//public event Action<Character> RightHandRingFingerFlexionChanged;
-		//ReferenceField<double> _rightHandRingFingerFlexion = 0.0;
-
-		//[Category( "Skeleton State" )]
-		//[DefaultValue( 0.0 )]
-		//[Range( -0.25, 1 )]
-		//public Reference<double> RightHandPinkyFingerFlexion
-		//{
-		//	get { if( _rightHandPinkyFingerFlexion.BeginGet() ) RightHandPinkyFingerFlexion = _rightHandPinkyFingerFlexion.Get( this ); return _rightHandPinkyFingerFlexion.value; }
-		//	set { if( _rightHandPinkyFingerFlexion.BeginSet( ref value ) ) { try { RightHandPinkyFingerFlexionChanged?.Invoke( this ); } finally { _rightHandPinkyFingerFlexion.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="RightHandPinkyFingerFlexion"/> property value changes.</summary>
-		//public event Action<Character> RightHandPinkyFingerFlexionChanged;
-		//ReferenceField<double> _rightHandPinkyFingerFlexion = 0.0;
 
 		//!!!!foots
 
 		//!!!!
-		//EyesFactor
-		//EyesControlFactor
+		//EyesLookAtFactor
+		//EyesLookAtValue
 
 		//!!!!
 		//[Category( "Skeleton State" )]
@@ -351,7 +485,7 @@ namespace NeoAxis
 		//public Reference<ObjectInSpace> EyesLookAt
 		//{
 		//	get { if( _eyesLookAt.BeginGet() ) EyesLookAt = _eyesLookAt.Get( this ); return _eyesLookAt.value; }
-		//	set { if( _eyesLookAt.BeginSet( ref value ) ) { try { EyesLookAtChanged?.Invoke( this ); } finally { _eyesLookAt.EndSet(); } } }
+		//	set { if( _eyesLookAt.BeginSet( this, ref value ) ) { try { EyesLookAtChanged?.Invoke( this ); } finally { _eyesLookAt.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="EyesLookAt"/> property value changes.</summary>
 		//public event Action<Character> EyesLookAtChanged;
@@ -372,19 +506,84 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		public enum LifeStatusEnum
+		{
+			Normal,
+			Dead,
+		}
+
+		/// <summary>
+		/// Dead or alive.
+		/// </summary>
+		[Category( "Game Framework" )]
+		[DefaultValue( LifeStatusEnum.Normal )]
+		public Reference<LifeStatusEnum> LifeStatus
+		{
+			get { if( _lifeStatus.BeginGet() ) LifeStatus = _lifeStatus.Get( this ); return _lifeStatus.value; }
+			set
+			{
+				if( _lifeStatus.BeginSet( this, ref value ) )
+				{
+					try
+					{
+						LifeStatusChanged?.Invoke( this );
+						CurrentLifeStatusTime = 0;
+
+						if( EngineApp.IsSimulation && _lifeStatus.value.Value == LifeStatusEnum.Dead )
+						{
+							RequiredTurnToDirection = null;
+							RequiredLookToPosition = null;
+							CurrentLookToPosition = null;
+
+							foreach( var item in GetAllItems() )
+								ItemDeactivate( null, item );
+						}
+					}
+					finally { _lifeStatus.EndSet(); }
+				}
+			}
+		}
+		/// <summary>Occurs when the <see cref="LifeStatus"/> property value changes.</summary>
+		public event Action<Character> LifeStatusChanged;
+		ReferenceField<LifeStatusEnum> _lifeStatus = LifeStatusEnum.Normal;
+
 		/// <summary>
 		/// The health of the character.
 		/// </summary>
 		[Category( "Game Framework" )]
 		[DefaultValue( 0.0 )]
-		public Reference<double> Health
+		public Reference<float> Health
 		{
 			get { if( _health.BeginGet() ) Health = _health.Get( this ); return _health.value; }
-			set { if( _health.BeginSet( ref value ) ) { try { HealthChanged?.Invoke( this ); } finally { _health.EndSet(); } } }
+			set { if( _health.BeginSet( this, ref value ) ) { try { HealthChanged?.Invoke( this ); } finally { _health.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Health"/> property value changes.</summary>
 		public event Action<Character> HealthChanged;
-		ReferenceField<double> _health = 0.0;
+		ReferenceField<float> _health = 0.0f;
+
+		[Category( "Game Framework" )]
+		[DefaultValue( 10.0 )]
+		public Reference<double> DeletionTimeAfterDeath
+		{
+			get { if( _deletionTimeAfterDeath.BeginGet() ) DeletionTimeAfterDeath = _deletionTimeAfterDeath.Get( this ); return _deletionTimeAfterDeath.value; }
+			set { if( _deletionTimeAfterDeath.BeginSet( this, ref value ) ) { try { DeletionTimeAfterDeathChanged?.Invoke( this ); } finally { _deletionTimeAfterDeath.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DeletionTimeAfterDeath"/> property value changes.</summary>
+		public event Action<Character> DeletionTimeAfterDeathChanged;
+		ReferenceField<double> _deletionTimeAfterDeath = 10.0;
+
+		[Category( "Game Framework" )]
+		[DefaultValue( 0.0 )]
+		[Browsable( false )]
+		[NetworkSynchronize( false )] //don't syncronize via network, but increment on clients too
+		public Reference<double> CurrentLifeStatusTime
+		{
+			get { if( _currentLifeStatusTime.BeginGet() ) CurrentLifeStatusTime = _currentLifeStatusTime.Get( this ); return _currentLifeStatusTime.value; }
+			set { if( _currentLifeStatusTime.BeginSet( this, ref value ) ) { try { CurrentLifeStatusTimeChanged?.Invoke( this ); } finally { _currentLifeStatusTime.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="CurrentLifeStatusTime"/> property value changes.</summary>
+		public event Action<Character> CurrentLifeStatusTimeChanged;
+		ReferenceField<double> _currentLifeStatusTime = 0.0;
 
 		/// <summary>
 		/// The team index of the object.
@@ -394,17 +593,73 @@ namespace NeoAxis
 		public Reference<int> Team
 		{
 			get { if( _team.BeginGet() ) Team = _team.Get( this ); return _team.value; }
-			set { if( _team.BeginSet( ref value ) ) { try { TeamChanged?.Invoke( this ); } finally { _team.EndSet(); } } }
+			set { if( _team.BeginSet( this, ref value ) ) { try { TeamChanged?.Invoke( this ); } finally { _team.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Team"/> property value changes.</summary>
 		public event Action<Character> TeamChanged;
 		ReferenceField<int> _team = 0;
+
+		/// <summary>
+		/// Whether to display the RequiredLookToPosition, RequiredTurnToDirection, hands position and sitting info.
+		/// </summary>
+		[Category( "Debug" )]
+		[DefaultValue( false )]
+		public Reference<bool> DebugVisualization
+		{
+			get { if( _debugVisualization.BeginGet() ) DebugVisualization = _debugVisualization.Get( this ); return _debugVisualization.value; }
+			set { if( _debugVisualization.BeginSet( this, ref value ) ) { try { DebugVisualizationChanged?.Invoke( this ); } finally { _debugVisualization.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DebugVisualization"/> property value changes.</summary>
+		public event Action<Character> DebugVisualizationChanged;
+		ReferenceField<bool> _debugVisualization = false;
+
+		/////////////////////////////////////////
+		//sitting
+
+		[Browsable( false )]
+		public bool Sitting
+		{
+			get { return sitting; }
+			set
+			{
+				if( sitting == value )
+					return;
+				sitting = value;
+
+				ResetAnimation();
+				lastTransformPosition = null;
+				lastLinearVelocity = Vector3F.Zero;
+				PhysicalBodyLinearVelocity = Vector3.Zero;
+				PhysicalBodyAngularVelocity = Vector3.Zero;
+				TickAnimate( 0.001f );
+
+				if( NetworkIsServer )
+				{
+					var writer = BeginNetworkMessageToEveryone( "Sitting" );
+					writer.Write( Sitting );
+					EndNetworkMessage();
+				}
+			}
+		}
+		bool sitting;
+
+		[Browsable( false )]
+		public Degree SittingSpineAngle { get; set; }
+
+		[Browsable( false )]
+		public Degree SittingLegsAngle { get; set; }
 
 		/////////////////////////////////////////
 
 		public Character()
 		{
 			Collision = true;
+		}
+
+		[Browsable( false )]
+		public CharacterType TypeCached
+		{
+			get { return typeCached; }
 		}
 
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
@@ -424,29 +679,52 @@ namespace NeoAxis
 			}
 		}
 
+		void ResetAnimation()
+		{
+			var controller = GetAnimationController();
+			if( controller != null )
+			{
+				controller.PlayAnimation = null;
+				controller.Speed = 1;
+				controller.SetAnimationState( null, false );
+			}
+			StartPlayOneAnimation( null );
+			StartPlayOneAnimationAdditional( null );
+		}
+
 		void UpdateMesh()
 		{
-			Mesh = typeCached.Mesh;
+			//!!!!new
+			Mesh = TypeCached.Mesh.Value;
+			//Mesh = TypeCached.Mesh;
+			ResetAnimation();
 		}
 
 		protected override void OnEnabledInHierarchyChanged()
 		{
 			animationControllerCached = null;
-			//characterInputProcessingCached = null;
+			CharacterType.Touch();
 
 			base.OnEnabledInHierarchyChanged();
 
 			if( EnabledInHierarchyAndIsInstance )
 			{
-				//update cached type and mesh
-				typeCached = CharacterType.Value;
-				if( typeCached == null )
-					typeCached = new CharacterType();
+				//optimize networking
+				{
+					var controller = GetAnimationController();
+					if( controller != null )
+					{
+						controller.NetworkDisablePropertySynchronization( "PlayAnimation" );
+						controller.NetworkDisablePropertySynchronization( "Speed" );
+						controller.NetworkDisablePropertySynchronization( "AutoRewind" );
+						controller.NetworkDisablePropertySynchronization( "FreezeOnEnd" );
+					}
+				}
+
 				UpdateMesh();
 
-				//update requiredTurnToDirection, currentTurnToDirection
-				requiredTurnToDirection = SphericalDirectionF.FromVector( TransformV.Rotation.GetForward().ToVector3F() );
-				currentTurnToDirection = requiredTurnToDirection;
+				//update currentTurnToDirection
+				CalculateCurrentTurnToDirectionByTransform();
 
 				//if( mainBody != null )
 				//	mainBody.LinearVelocity = linearVelocityForSerialization;
@@ -454,9 +732,11 @@ namespace NeoAxis
 				if( ParentScene != null )
 					ParentScene.PhysicsSimulationStepAfter += ParentScene_PhysicsSimulationStepAfter;
 
-				//if( EngineApp.IsSimulation )
 				TickAnimate( 0.001f );
 				SpaceBoundsUpdate();
+
+				if( NetworkIsClient )
+					clientIsOnGround = true;
 			}
 			else
 			{
@@ -465,26 +745,11 @@ namespace NeoAxis
 			}
 		}
 
+		//!!!!need? maybe slowly to unsubscribe from event. event for body?
 		private void ParentScene_PhysicsSimulationStepAfter( Scene obj )
 		{
-			if( ParentScene == null )
-				return;
-
 			if( PhysicalBody != null && PhysicalBody.Active )
 				UpdateRotation();
-		}
-
-		//CharacterInputProcessing GetCharacterInputProcessing()
-		//{
-		//	if( characterInputProcessingCached == null )
-		//		characterInputProcessingCached = GetComponent<CharacterInputProcessing>();
-		//	return characterInputProcessingCached;
-		//}
-
-		public void SetTransformAndTurnToDirectionInstantly( Transform value )
-		{
-			Transform = value;
-			TurnToDirection( value.Rotation.GetForward().ToVector3F(), true );
 		}
 
 		protected override RigidBody OnGetCollisionShapeData( Mesh.CompiledData meshResult )
@@ -492,19 +757,22 @@ namespace NeoAxis
 			//it must support physics shape caching
 
 			var body = new RigidBody();
-			body.MotionType = PhysicsMotionType.Dynamic;
-			body.Mass = typeCached.Mass;
+			body.CharacterMode = true;
+			body.MotionType = PhysicsMotionType.Kinematic;
+			body.Mass = TypeCached.Mass;
 
-			//!!!!center of mass
-
-			typeCached.GetBodyFormInfo( crouching, out var height, out _ );
-			var length = height - typeCached.Radius * 2;
+			TypeCached.GetBodyFormInfo( crouching, out var height, out _, out _ );
+			var length = height - TypeCached.Radius * 2;
 			if( length < 0.01 )
 				length = 0.01;
 
+			//!!!!apply scale. where else
+
+			body.CenterOfMassOffset = new Vector3( 0, 0, height * 0.5 );
+
 			var capsuleShape = body.CreateComponent<CollisionShape_Capsule>();
 			capsuleShape.Height = length;
-			capsuleShape.Radius = typeCached.Radius;
+			capsuleShape.Radius = TypeCached.Radius;
 			capsuleShape.LocalTransform = new Transform( new Vector3( 0, 0, height * 0.5 ), Quaternion.Identity );
 
 			return body;
@@ -516,45 +784,26 @@ namespace NeoAxis
 
 			if( PhysicalBody != null )
 			{
-				//!!!!было
-				//body.LinearSleepingThreshold = 0;
-				//body.AngularSleepingThreshold = 0;
+				TypeCached.GetBodyFormInfo( crouching, out _, out var walkUpHeight, out var walkDownHeight );
 
-				//!!!!было 10
-				//!!!!можно ли 10?
-				PhysicalBody.AngularDamping = 1;
-				//body.AngularDamping = 10;
+				PhysicalBody.CharacterModeMaxStrength = (float)TypeCached.MaxStrength;
+				PhysicalBody.CharacterModeWalkUpHeight = (float)walkUpHeight;
+				PhysicalBody.CharacterModeWalkDownHeight = (float)walkDownHeight;
+				PhysicalBody.CharacterModeMaxSlopeAngle = (float)TypeCached.MaxSlopeAngle.Value.InRadians();
 
-				PhysicalBody.Friction = 0;
-				PhysicalBody.Restitution = 0;
+				//!!!!smaller area works bad. maybe need set another ExtendedUpdateSettings
+				PhysicalBody.CharacterModeSetSupportingVolume = (float)TypeCached.Radius * 0.8f;
+				//PhysicalBody.CharacterModeSetSupportingVolume = (float)TypeCached.Radius * 0.5f;
+
+				//PhysicalBody.CharacterModePredictiveContactDistance = 0.1f;
+				//what else
 			}
 		}
-
-		//public void UpdateCollisionBody()
-		//{
-		//	if( NetworkIsClient )
-		//		return;
-
-		//	////DestroyCollisionBody();
-
-		//	////body.PhysX_SolverPositionIterations = body.PhysX_SolverPositionIterations * 2;
-		//	////body.PhysX_SolverVelocityIterations = body.PhysX_SolverVelocityIterations * 2;
-
-		//	//body.MaterialFriction = 0;
-		//	////!!!!
-		//	////body.MaterialSpinningFriction = 0;
-		//	////body.MaterialRollingFriction = 0;
-		//	//body.MaterialRestitution = 0;
-		//	////shape.Hardness = 0;
-		//	////shape.SpecialLiquidDensity = 2000;
-		//	////shape.ContactGroup = (int)ContactGroup.Dynamic;
-
-		//}
 
 		public double GetScaleFactor()
 		{
 			var result = TransformV.Scale.MaxComponent();
-			if( result == 0 )
+			if( result < 0.0001 )
 				result = 0.0001;
 			return result;
 		}
@@ -576,78 +825,178 @@ namespace NeoAxis
 		}
 
 		[Browsable( false )]
+		public Vector2F MoveVector
+		{
+			get { return moveVector; }
+		}
+
+		[Browsable( false )]
+		public bool MoveVectorRun
+		{
+			get { return moveVectorRun; }
+		}
+
+		//network: no sense to update via network, it is calculated from Transform
+		SphericalDirectionF currentTurnToDirection;//use SphericalDirectionF instead float because vertical direction is used for first person camera
+
+		//network: no sense to send to clients
+		[Browsable( false )]
+		public SphericalDirectionF? RequiredTurnToDirection { get; set; }
+
+		[Browsable( false )]
+		public Degree? TurningSpeedOverride { get; set; }
+
+		//network: no sense to send to clients
+		[Browsable( false )]
+		public Vector3? RequiredLookToPosition { get; set; }
+
+		//network: sychronized via network
+		[Browsable( false )]
+		public Vector3? CurrentLookToPosition
+		{
+			get { return currentLookToPosition; }
+			set
+			{
+				if( currentLookToPosition == value )
+					return;
+				currentLookToPosition = value;
+
+				if( NetworkIsServer )
+				{
+					//!!!!pack
+
+					var writer = BeginNetworkMessageToEveryone( "CurrentLookToPosition" );
+					writer.Write( currentLookToPosition.HasValue );
+					if( currentLookToPosition.HasValue )
+						writer.Write( currentLookToPosition.Value );
+					EndNetworkMessage();
+				}
+			}
+		}
+		Vector3? currentLookToPosition;
+
+		//network: no sense to send to clients
+		[Browsable( false )]
+		public bool AllowLookToBackWhenNoActiveItem { get; set; }
+
+		[Browsable( false )]
 		public SphericalDirectionF CurrentTurnToDirection
 		{
 			get { return currentTurnToDirection; }
 		}
 
-		[Browsable( false )]
-		public SphericalDirectionF RequiredTurnToDirection
+		public void TurnToDirection( SphericalDirectionF? value, bool turnInstantly )
 		{
-			get { return requiredTurnToDirection; }
-		}
+			RequiredTurnToDirection = value;
 
-		public void TurnToDirection( SphericalDirectionF value, bool turnInstantly )
-		{
-			requiredTurnToDirection = value;
-			if( turnInstantly )
-				currentTurnToDirection = requiredTurnToDirection;
-
-			if( turnInstantly )
+			if( turnInstantly && RequiredTurnToDirection.HasValue )
+			{
+				currentTurnToDirection = RequiredTurnToDirection.Value;
 				UpdateRotation();
+				RequiredTurnToDirection = null;
+			}
 		}
 
-		public void TurnToDirection( Vector3F value, bool turnInstantly )
+		public void TurnToDirection( Vector2F direction, bool turnInstantly )
 		{
-			TurnToDirection( SphericalDirectionF.FromVector( value ), turnInstantly );
+			TurnToDirection( new SphericalDirectionF( (float)MathEx.Atan2( direction.Y, direction.X ), 0 ), turnInstantly );
+		}
+
+		void CalculateCurrentTurnToDirectionByTransform()
+		{
+			var forward = TransformV.Rotation.GetForward();
+			currentTurnToDirection = new SphericalDirectionF( (float)MathEx.Atan2( forward.Y, forward.X ), 0 );
+		}
+
+		public void LookToPosition( Vector3? value, bool turnInstantly )
+		{
+			RequiredLookToPosition = value;
+			if( turnInstantly )
+			{
+				CurrentLookToPosition = RequiredLookToPosition;
+				RequiredLookToPosition = null;
+			}
+		}
+
+		public void SetTransformAndTurnToDirectionInstantly( Transform value )
+		{
+			Transform = value;
+			TurnToDirection( TransformV.Rotation.GetForward().ToVector2F(), true );
+		}
+
+		protected override void OnTransformUpdating( ref Reference<Transform> value )
+		{
+			base.OnTransformUpdating( ref value );
+
+			//when it is client and turning instantly, then don't update rotation from server. restore current value from CurrentTurnToDirection
+			if( NetworkIsClient && IsControlledByPlayerAndFirstPersonCameraEnabled() && !Sitting )
+			{
+				var halfAngle = currentTurnToDirection.Horizontal * 0.5;
+				var rot = new Quaternion( new Vector3( 0, 0, Math.Sin( halfAngle ) ), Math.Cos( halfAngle ) );
+
+				var tr = value.Value;
+				if( tr != null )
+				{
+					tr = tr.UpdateRotation( rot );
+					value = new Reference<Transform>( tr, value.GetByReference );
+				}
+			}
 		}
 
 		protected override void OnTransformChanged()
 		{
 			base.OnTransformChanged();
 
-			//update requiredTurnToDirection, currentTurnToDirection
+			//update currentTurnToDirection
 			if( EngineApp.IsEditor )
-			{
-				requiredTurnToDirection = SphericalDirectionF.FromVector( TransformV.Rotation.GetForward().ToVector3F() );
-				currentTurnToDirection = requiredTurnToDirection;
-			}
+				CalculateCurrentTurnToDirectionByTransform();
+
+			//update currentTurnToDirection
+			if( NetworkIsClient && ( !IsControlledByPlayerAndFirstPersonCameraEnabled() || Sitting ) )
+				CalculateCurrentTurnToDirectionByTransform();
 
 			isOnGroundHasValue = false;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void UpdateRotation()
 		{
-			var diff = CurrentTurnToDirection.GetVector();
-			var halfAngle = Math.Atan2( diff.Y, diff.X ) * 0.5;
-			//var halfAngle = horizontalDirectionForUpdateRotation * 0.5;
-			Quaternion rot = new Quaternion( new Vector3( 0, 0, Math.Sin( halfAngle ) ), Math.Cos( halfAngle ) );
+			if( Collision )
+			{
+				var halfAngle = currentTurnToDirection.Horizontal * 0.5;
+				var rot = new Quaternion( new Vector3( 0, 0, Math.Sin( halfAngle ) ), Math.Cos( halfAngle ) );
 
-			const float epsilon = .0001f;
+				const float epsilon = 0.0001f;
 
-			var tr = TransformV;
+				var tr = TransformV;
 
-			//update Rotation
-			if( !tr.Rotation.Equals( rot, epsilon ) )
-				Transform = tr.UpdateRotation( rot );
+				//update Rotation
+				if( !tr.Rotation.Equals( rot, epsilon ) )
+					Transform = tr.UpdateRotation( rot );
+			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		bool CalculateIsOnGround()
 		{
 			if( jumpInactiveTime != 0 )
 				return false;
-			if( forceIsOnGroundRemainingTime > 0 )
+			//if( forceIsOnGroundRemainingTime > 0 )
+			//	return true;
+			if( Sitting )
 				return true;
 
-			const float maxThreshold = 0.1f;
-			//const float maxThreshold = 0.2f;
-			return mainBodyGroundDistanceNoScale < maxThreshold && groundBody != null;
+			return groundBody1 != null || EngineApp.IsEditor || clientIsOnGround;// || groundBody2 != null;
 
-			//double distanceFromPositionToFloor = 0.0;//crouching ? typeCached.CrouchingPositionToGroundHeight : typeCached.PositionToGroundHeight;
-			//const double maxThreshold = 0.2;
-			//return mainBodyGroundDistanceNoScale - maxThreshold < distanceFromPositionToFloor && groundBody != null;
+			//const float maxThreshold = 0.1f;
+			//return mainBodyGroundDistanceNoScale < maxThreshold && groundBody1 != null;
+
+			////double distanceFromPositionToFloor = 0.0;//crouching ? typeCached.CrouchingPositionToGroundHeight : typeCached.PositionToGroundHeight;
+			////const double maxThreshold = 0.2;
+			////return mainBodyGroundDistanceNoScale - maxThreshold < distanceFromPositionToFloor && groundBody != null;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool IsOnGround()
 		{
 			if( !isOnGroundHasValue )
@@ -658,8 +1007,10 @@ namespace NeoAxis
 			return isOnGroundValue;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool IsOnGroundWithLatency()
 		{
+			//return IsOnGround();
 			return elapsedTimeSinceLastGroundContact < 0.25f || IsOnGround();
 		}
 
@@ -668,59 +1019,65 @@ namespace NeoAxis
 			return elapsedTimeSinceLastGroundContact;
 		}
 
-		//protected override void OnSave( TextBlock block )
-		//{
-		//	if( mainBody != null )
-		//		linearVelocityForSerialization = mainBody.LinearVelocity;
+		[MethodImpl( (MethodImplOptions)512 )]
+		void GroundBodiesSimulationStepAndClearGroundBodiesWhenDisposed()
+		{
+			if( PhysicalBody != null && PhysicalBody.Active )
+			{
+				if( groundBody1 != null )
+				{
+					groundBody1RemainingTime -= Time.SimulationDelta;
+					if( groundBody1RemainingTime <= 0 )
+					{
+						groundBody1 = null;
+						groundBody1Velocity = Vector3F.Zero;
+					}
+				}
+				//if( groundBody2 != null )
+				//{
+				//	groundBody2RemainingTime -= Time.SimulationDelta;
+				//	if( groundBody2RemainingTime <= 0 )
+				//		groundBody2 = null;
+				//}
+			}
 
-		//	base.OnSave( block );
-		//}
+			if( groundBody1 != null && groundBody1.Disposed )
+			{
+				groundBody1 = null;
+				groundBody1Velocity = Vector3F.Zero;
+			}
+			//if( groundBody2 != null && groundBody2.Disposed )
+			//	groundBody2 = null;
 
-		//protected override void OnSuspendPhysicsDuringMapLoading( bool suspend )
-		//{
-		//	base.OnSuspendPhysicsDuringMapLoading( suspend );
+			//if( groundBody1 == null && groundBody2 != null )
+			//{
+			//	groundBody1 = groundBody2;
+			//	groundBody1RemainingTime = groundBody2RemainingTime;
+			//	groundBody2 = null;
+			//}
+		}
 
-		//	//After loading a map, the physics simulate 5 seconds, that bodies have fallen asleep.
-		//	//During this time we will disable physics for this entity.
-		//		foreach( Body body in PhysicsModel.Bodies )
-		//		{
-		//			body.Static = suspend;
-		//			if( !suspend )
-		//				mainBody.Sleeping = false;
-		//		}
-		//}
-
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected override void OnSimulationStep()
 		{
 			base.OnSimulationStep();
 
-			//clear groundBody when disposed
-			if( groundBody != null && groundBody.Disposed )
-				groundBody = null;
+			//!!!!slowly? что-то может реже вызывать
 
 			isOnGroundHasValue = false;
 
-			//ScreenMessages.Add( "IsOnGround: " + IsOnGround().ToString() );
-			//ScreenMessages.Add( "required " + requiredTurnToDirection.Horizontal.ToString() );
-			//ScreenMessages.Add( "current " + currentTurnToDirection.Horizontal.ToString() );
-			//ScreenMessages.Add( "GetSmoothCameraOffset " + GetSmoothCameraOffset().ToString() );
-			//ScreenMessages.Add( "damping " + PhysicalBody.LinearDamping.ToString() );
-			//ScreenMessages.Add( "moveVector " + GetMoveVector().ToString() );
+			GroundBodiesSimulationStepAndClearGroundBodiesWhenDisposed();
 
-			//!!!!всё тут ниже
-
-			//!!!!что-то можно реже вызывать
-
-
-			if( PhysicalBody != null )
+			if( PhysicalBody != null && ParentScene != null )
 			{
-				TickMovement();
+				CalculateMainBodyGroundDistanceAndGroundBody();
 				TickPhysicsForce();
 			}
-			TickCurrentTurnToDirection();
-			//UpdateRotation();// true );
 
-			if( typeCached.Jump )
+			TickTurnToDirection();
+			TickLookToPosition();
+
+			if( TypeCached.Jump )
 				TickJump( false );
 
 			if( IsOnGround() )
@@ -745,54 +1102,91 @@ namespace NeoAxis
 			//if( DamageFastChangeSpeedFactor != 0 )
 			//	DamageFastChangeSpeedTick();
 
+			if( PhysicalBody != null && !PhysicalBody.Active && lastActive )
+				SpaceBoundsUpdate();
+
 			var trPosition = TransformV.Position;
 			if( lastTransformPosition.HasValue )
 				lastLinearVelocity = ( ( trPosition - lastTransformPosition.Value ) / Time.SimulationDelta ).ToVector3F();
 			else
 				lastLinearVelocity = Vector3F.Zero;
 			lastTransformPosition = trPosition;
+			lastActive = PhysicalBody != null && PhysicalBody.Active;
 
-			//lastSimulationStepPosition = GetTransform().Position;
+			//if( forceIsOnGroundRemainingTime > 0 )
+			//{
+			//	forceIsOnGroundRemainingTime -= Time.SimulationDelta;
+			//	if( forceIsOnGroundRemainingTime < 0 )
+			//	{
+			//		forceIsOnGroundRemainingTime = 0;
+			//		isOnGroundHasValue = false;
+			//	}
+			//}
 
-			if( forceIsOnGroundRemainingTime > 0 )
+			//if( disableGravityRemainingTime > 0 )
+			//{
+			//	disableGravityRemainingTime -= Time.SimulationDelta;
+			//	if( disableGravityRemainingTime < 0 )
+			//		disableGravityRemainingTime = 0;
+			//}
+
+			TickFlyEndSound();
+
+			if( disableControlRemainingTime > 0 )
 			{
-				forceIsOnGroundRemainingTime -= Time.SimulationDelta;
-				if( forceIsOnGroundRemainingTime < 0 )
+				disableControlRemainingTime -= Time.SimulationDelta;
+				if( disableControlRemainingTime < 0 )
+					disableControlRemainingTime = 0;
+			}
+
+			//update life time
+			CurrentLifeStatusTime += Time.SimulationDelta;
+			if( LifeStatus.Value == LifeStatusEnum.Dead && CurrentLifeStatusTime.Value >= DeletionTimeAfterDeath.Value )
+				RemoveFromParent( true );
+
+			//send on ground info to clients, smoothCameraOffsetZ
+			if( NetworkIsServer )
+			{
+				if( sentToClientsIsOnGround != IsOnGround() || sentToClientsGroundBody1Velocity != groundBody1Velocity )
 				{
-					forceIsOnGroundRemainingTime = 0;
-					isOnGroundHasValue = false;
+					sentToClientsIsOnGround = IsOnGround();
+					sentToClientsGroundBody1Velocity = groundBody1Velocity;
+
+					var writer = BeginNetworkMessageToEveryone( "OnGroundState" );
+					if( writer != null )
+					{
+						writer.Write( sentToClientsIsOnGround );
+						writer.Write( sentToClientsGroundBody1Velocity );
+						EndNetworkMessage();
+					}
+				}
+
+				if( sentToClientsSmoothCameraOffsetZ != smoothCameraOffsetZ )
+				{
+					sentToClientsSmoothCameraOffsetZ = smoothCameraOffsetZ;
+
+					var writer = BeginNetworkMessageToEveryone( "SmoothCameraOffsetZ" );
+					if( writer != null )
+					{
+						writer.Write( sentToClientsSmoothCameraOffsetZ );
+						EndNetworkMessage();
+					}
 				}
 			}
-
-			if( disableGravityRemainingTime > 0 )
-			{
-				disableGravityRemainingTime -= Time.SimulationDelta;
-				if( disableGravityRemainingTime < 0 )
-					disableGravityRemainingTime = 0;
-			}
-
-			//UpdateTransformOffsetInSimulation();
 		}
 
 		protected override void OnSimulationStepClient()
 		{
 			base.OnSimulationStepClient();
 
-			//clear groundBody when disposed
-			if( groundBody != null && groundBody.Disposed )
-				groundBody = null;
-
 			isOnGroundHasValue = false;
 
+			//GroundBodiesSimulationStepAndClearGroundBodiesWhenDisposed();
 
-			//!!!!update
+			//if( PhysicalBody != null )
+			//	CalculateMainBodyGroundDistanceAndGroundBody();
 
-
-			if( PhysicalBody != null )
-				CalculateMainBodyGroundDistanceAndGroundBody();
-
-			//UpdateRotation();// true );
-			if( typeCached.Jump )
+			if( TypeCached.Jump )
 				TickJumpClient( false );
 
 			if( IsOnGround() )
@@ -806,7 +1200,7 @@ namespace NeoAxis
 			CalculateGroundRelativeVelocity();
 
 			TickWiggleWhenWalkingSpeedFactor();
-			TickSmoothCameraOffset();
+			//TickSmoothCameraOffset();
 
 			////if( CrouchingSupport )
 			////	TickCrouching();
@@ -821,17 +1215,19 @@ namespace NeoAxis
 				lastLinearVelocity = Vector3F.Zero;
 			lastTransformPosition = trPosition;
 
-			////lastSimulationStepPosition = GetTransform().Position;
+			//if( forceIsOnGroundRemainingTime > 0 )
+			//{
+			//	forceIsOnGroundRemainingTime -= Time.SimulationDelta;
+			//	if( forceIsOnGroundRemainingTime < 0 )
+			//	{
+			//		forceIsOnGroundRemainingTime = 0;
+			//		isOnGroundHasValue = false;
+			//	}
+			//}
 
-			if( forceIsOnGroundRemainingTime > 0 )
-			{
-				forceIsOnGroundRemainingTime -= Time.SimulationDelta;
-				if( forceIsOnGroundRemainingTime < 0 )
-				{
-					forceIsOnGroundRemainingTime = 0;
-					isOnGroundHasValue = false;
-				}
-			}
+			TickFlyEndSound();
+
+			CurrentLifeStatusTime += Time.SimulationDelta;
 		}
 
 		protected override void OnUpdate( float delta )
@@ -841,10 +1237,23 @@ namespace NeoAxis
 			if( EngineApp.IsEditor )
 				isOnGroundHasValue = false;
 
-			//!!!!slowly
-
+			//FixTurnToDirectionWhenItInvalidForAnimation();
 			TickAnimate( delta );
-			UpdateEnabledItemTransform( delta );
+			UpdateActiveItemTransformOffset();
+
+			//check for CharacterType changes
+			//!!!!also update Mesh when it is null. to fix on client in networking mode
+			if( TypeCached.Version != typeCachedVersion || Mesh.Value == null )
+			{
+				typeCachedVersion = TypeCached.Version;
+
+				//update mesh and body
+				if( EnabledInHierarchyAndIsInstance )
+				{
+					UpdateMesh();
+					RecreateBody();
+				}
+			}
 		}
 
 		public bool IsNeedRun()
@@ -865,513 +1274,141 @@ namespace NeoAxis
 			return Vector2F.Zero;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void TickPhysicsForce()
 		{
-			//!!!!slowly?
+			var desiredVelocity = Vector2F.Zero;
 
 			var forceVec = GetMoveVector();
-			if( forceVec != Vector2.Zero )
+			if( forceVec != Vector2.Zero && disableControlRemainingTime == 0 )
 			{
 				float speedMultiplier = 1;
 				//if( FastMoveInfluence != null )
 				//	speedCoefficient = FastMoveInfluence.Type.Coefficient;
 
 				double maxSpeed = 0;
-				double force = 0;
+				//double force = 0;
 
 				if( IsOnGround() )
 				{
 					//calcualate maxSpeed and force on ground
 
-					var localVec = ( new Vector3F( forceVec.X, forceVec.Y, 0 ) * TransformV.Rotation.GetInverse().ToQuaternionF() ).ToVector2();
+					var localVelocity = ( new Vector3F( forceVec.X, forceVec.Y, 0 ) * TransformV.Rotation.GetInverse().ToQuaternionF() ).ToVector2();
 
-					var absSum = Math.Abs( localVec.X ) + Math.Abs( localVec.Y );
+					var absSum = Math.Abs( localVelocity.X ) + Math.Abs( localVelocity.Y );
 					if( absSum > 1 )
-						localVec /= absSum;
+						localVelocity /= absSum;
 
 					maxSpeed = 0;
-					force = 0;
+					//force = 0;
 
 					if( !Crouching )
 					{
 						bool running = IsNeedRun();
 
-						if( Math.Abs( localVec.X ) >= .001f )
+						if( Math.Abs( localVelocity.X ) >= .001f )
 						{
 							//forward and backward
 							double speedX;
-							if( localVec.X > 0 )
-								speedX = running ? typeCached.RunForwardMaxSpeed : typeCached.WalkForwardMaxSpeed;
+							if( localVelocity.X > 0 )
+								speedX = running ? TypeCached.RunForwardMaxSpeed : TypeCached.WalkForwardMaxSpeed;
 							else
-								speedX = running ? typeCached.RunBackwardMaxSpeed : typeCached.WalkBackwardMaxSpeed;
-							maxSpeed += speedX * Math.Abs( localVec.X );
-							force += ( running ? typeCached.RunForce : typeCached.WalkForce ) * Math.Abs( localVec.X );
+								speedX = running ? TypeCached.RunBackwardMaxSpeed : TypeCached.WalkBackwardMaxSpeed;
+							maxSpeed += speedX * Math.Abs( localVelocity.X );
+							//force += ( running ? TypeCached.RunForce : TypeCached.WalkForce ) * Math.Abs( localVec.X );
 						}
 
-						if( Math.Abs( localVec.Y ) >= .001f )
+						if( Math.Abs( localVelocity.Y ) >= .001f )
 						{
 							//left and right
-							maxSpeed += ( running ? typeCached.RunSideMaxSpeed : typeCached.WalkSideMaxSpeed ) * Math.Abs( localVec.Y );
-							force += ( running ? typeCached.RunForce : typeCached.WalkForce ) * Math.Abs( localVec.Y );
+							maxSpeed += ( running ? TypeCached.RunSideMaxSpeed : TypeCached.WalkSideMaxSpeed ) * Math.Abs( localVelocity.Y );
+							//force += ( running ? TypeCached.RunForce : TypeCached.WalkForce ) * Math.Abs( localVec.Y );
 						}
 					}
 					else
 					{
-						maxSpeed = typeCached.CrouchingMaxSpeed;
-						force = typeCached.CrouchingForce;
+						maxSpeed = TypeCached.CrouchingMaxSpeed;
+						//force = TypeCached.CrouchingForce;
 					}
 				}
 				else
 				{
 					//calcualate maxSpeed and force when flying.
-					if( typeCached.FlyControl )
+					if( TypeCached.FlyControl )
 					{
-						maxSpeed = typeCached.FlyControlMaxSpeed;
-						force = typeCached.FlyControlForce;
+						maxSpeed = TypeCached.FlyControlMaxSpeed;
+						//force = TypeCached.FlyControlForce;
 					}
 				}
 
-				if( force > 0 )
+				if( maxSpeed > 0 )//if( force > 0 )
 				{
 					//speedCoefficient
 					maxSpeed *= speedMultiplier;
-					force *= speedMultiplier;
+					//force *= speedMultiplier;
 
 					var scaleFactor = GetScaleFactor();
 					maxSpeed *= scaleFactor;
-					force *= scaleFactor;
+					//force *= scaleFactor;
 
-					if( GetLinearVelocity().ToVector2().Length() < maxSpeed )
-						PhysicalBody.ApplyForce( new Vector3F( forceVec.X, forceVec.Y, 0 ) * (float)force * Time.SimulationDelta, Vector3F.Zero );
+					//if( velocity.ToVector2().LengthSquared() < maxSpeed * maxSpeed )
+					////if( GetLinearVelocity().ToVector2().LengthSquared() < maxSpeed * maxSpeed )
+					//{
+
+					desiredVelocity = new Vector2F( forceVec.X, forceVec.Y ).GetNormalize() * (float)maxSpeed;
+
+					//}
 				}
 			}
 
-			lastTickForceVector = forceVec;
+			PhysicalBody.CharacterModeDesiredVelocity = desiredVelocity;
 		}
 
-		void UpdateMainBodyDamping()
+		////!!!!
+		//List<Ray> debugRays;// = new List<Ray>();
+		//List<Vector3> debugPoints = new List<Vector3>();
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		void CalculateMainBodyGroundDistanceAndGroundBody()
 		{
-			//!!!!
-			//реже вызывать
+			PhysicalBody.GetCharacterModeData( out var groundState, out var groundBodyID, out var groundBodySubShapeID, out var groundPosition, out var groundNormal, out var groundVelocity, out var walkUpDownLastChange );
 
-			if( IsOnGround() && jumpInactiveTime == 0 )
+			if( groundState == Scene.PhysicsWorldClass.Body.CharacterDataGroundState.OnGround )
 			{
-				//!!!!new commented
-				if( /*allowToSleepTime > Time.SimulationDelta * 2.5f &&*/ GetMoveVector() == Vector2F.Zero )
-					PhysicalBody.LinearDamping = (float)typeCached.LinearDampingOnGroundIdle;
-				else
-					PhysicalBody.LinearDamping = (float)typeCached.LinearDampingOnGroundMove;
-			}
-			else
-				PhysicalBody.LinearDamping = (float)typeCached.LinearDampingFly;
-		}
-
-		void TickMovement()
-		{
-			//!!!!need?
-			////wake up when ground is moving
-			//if( !PhysicalBody.Active && groundBody != null && groundBody.Active && ( groundBody.LinearVelocity.LengthSquared() > .3f || groundBody.AngularVelocity.LengthSquared() > .3f ) )
-			//{
-			//	PhysicalBody.Active = true;
-			//}
-
-			CalculateMainBodyGroundDistanceAndGroundBody();//out var addForceOnBigSlope );
-
-			if( PhysicalBody.Active || !IsOnGround() )
-			{
-				UpdateMainBodyDamping();
-
-				if( IsOnGround() )
-				{
-					//reset angular velocity
-					PhysicalBody.AngularVelocity = Vector3F.Zero;
-
-					//move the object when it underground
-					if( lastTickForceVector != Vector2.Zero && forceIsOnGroundRemainingTime == 0 )
-					{
-						var scaleFactor = GetScaleFactor();
-
-						var maxSpeed = Math.Min( typeCached.WalkSideMaxSpeed, Math.Min( typeCached.WalkForwardMaxSpeed, typeCached.WalkBackwardMaxSpeed ) );
-						Vector3 newPositionOffsetNoScale = new Vector3( lastTickForceVector.GetNormalize() * (float)maxSpeed * .15f, 0 );
-
-						ClimbObstacleTest( ref newPositionOffsetNoScale, out var upHeightNoScale );
-
-						//move object
-						typeCached.GetBodyFormInfo( crouching, out var height, out var walkUpHeight );
-						//!!!! * 0.5?
-						if( upHeightNoScale > typeCached.Radius * 0.5 && upHeightNoScale <= walkUpHeight && jumpInactiveTime == 0 && walkUpHeight != 0 )
-						{
-							////additional offset
-							//upHeightNoScale += typeCached.Radius * 0.5;
-
-							var tr = TransformV;
-							var newPosition = tr.Position + new Vector3( 0, 0, upHeightNoScale * scaleFactor );
-
-							if( IsFreePositionToMove( newPosition ) )
-							{
-								Transform = tr.UpdatePosition( newPosition );
-								//SetTransform( tr.UpdatePosition( newPosition ), false );
-
-								////!!!!temp
-								//ScreenMessages.Add( "climb" );
-
-								forceIsOnGroundRemainingTime = 0.5f;//0.2f;
-								disableGravityRemainingTime = 0.5f;
-								isOnGroundHasValue = false;
-								smoothCameraOffsetZ = Math.Min( tr.Position.Z - newPosition.Z, smoothCameraOffsetZ );
-
-								if( NetworkIsServer )
-								{
-									var writer = BeginNetworkMessageToEveryone( "TickMovement" );
-									writer.Write( (float)forceIsOnGroundRemainingTime );
-									writer.Write( (float)smoothCameraOffsetZ );
-									EndNetworkMessage();
-								}
-							}
-						}
-					}
-				}
-
-				////add force to body on big slope
-				//if( addForceOnBigSlope != Vector3.Zero )
-				//{
-				//	mainBody.ApplyForce( addForceOnBigSlope * Time.SimulationDelta, Vector3.Zero );
-				//	//mainBody.AddForce( ForceType.GlobalAtLocalPos, TickDelta, addForceOnBigSlope, Vector3.Zero );
-				//}
-
-				//on dynamic ground velocity
-				if( IsOnGround() && groundBody != null && typeCached.ApplyGroundVelocity )
-				{
-					if( groundBody.MotionType != PhysicsMotionType.Static && groundBody.Active )
-					{
-						Vector3F groundVel = groundBody.LinearVelocity;
-
-						Vector3F vel = PhysicalBody.LinearVelocity;
-
-						if( groundVel.X > 0 && vel.X >= 0 && vel.X < groundVel.X )
-							vel.X = groundVel.X;
-						else if( groundVel.X < 0 && vel.X <= 0 && vel.X > groundVel.X )
-							vel.X = groundVel.X;
-
-						if( groundVel.Y > 0 && vel.Y >= 0 && vel.Y < groundVel.Y )
-							vel.Y = groundVel.Y;
-						else if( groundVel.Y < 0 && vel.Y <= 0 && vel.Y > groundVel.Y )
-							vel.Y = groundVel.Y;
-
-						if( groundVel.Z > 0 && vel.Z >= 0 && vel.Z < groundVel.Z )
-							vel.Z = groundVel.Z;
-						else if( groundVel.Z < 0 && vel.Z <= 0 && vel.Z > groundVel.Z )
-							vel.Z = groundVel.Z;
-
-						//simple anti-damping
-						vel += groundVel * .25f;
-
-						PhysicalBody.LinearVelocity = vel;
-					}
-				}
-
-				//sleep if on ground and zero velocity
-
-				bool needSleep = false;
-				if( IsOnGround() && groundBody != null )
-				{
-					bool groundStopped = !groundBody.Active || ( groundBody.LinearVelocity.LengthSquared() < .3f && groundBody.AngularVelocity.LengthSquared() < .3f );
-					if( groundStopped && GetLinearVelocity().ToVector2().Length() < typeCached.MinSpeedToSleepBody && GetMoveVector() == Vector2F.Zero )
-						needSleep = true;
-				}
-
-				if( needSleep )
-					allowToSleepTime += Time.SimulationDelta;
-				else
-					allowToSleepTime = 0;
-
-				PhysicalBody.Active = allowToSleepTime < Time.SimulationDelta * 2.5f;
-
-				//if( allowToSleepTime > Time.SimulationDelta * 2.5f )
-				//{
-				//	PhysicalBody.Active = false;
-				//	//mainBody.WantsDeactivation();
-				//}
-				//else
-				//{
-				//	PhysicalBody.Active = true;
-				//	//mainBody.Activate();
-				//}
+				groundBody1 = ParentScene.PhysicsWorld.GetBodyById( groundBodyID );
+				groundBody1RemainingTime = 0.1f;//0.25f;
+				groundBody1Velocity = groundVelocity;
 			}
 
-			PhysicalBody.GravityFactor = disableGravityRemainingTime == 0 ? 1 : 0;
-			//mainBody.EnableGravity = disableGravityRemainingTime == 0;
-		}
-
-		bool VolumeCheckGetFirstNotFreePlace( ref Capsule sourceVolumeCapsule, ref Vector3 destVector, bool firstIteration, float step, out List<Scene.PhysicsWorldClass.Body> collisionBodies, out float collisionDistance, out bool collisionOnFirstCheck )
-		{
-
-			//!!!!GC. где еще
-
-			collisionBodies = new List<Scene.PhysicsWorldClass.Body>();
-			collisionDistance = 0;
-			collisionOnFirstCheck = false;
-
-			//!!!!sweep юзать
-
-			bool firstCheck = true;
-
-			Vector3 direction = destVector.GetNormalize();
-			float totalDistance = (float)destVector.Length();
-			int stepCount = (int)( (float)totalDistance / step ) + 2;
-			Vector3 previousOffset = Vector3.Zero;
-
-
-			//!!!!sweep test
-
-
-			for( int nStep = 0; nStep < stepCount; nStep++ )
-			{
-				float distance = (float)nStep * step;
-				if( distance > totalDistance )
-					distance = totalDistance;
-				Vector3 offset = direction * distance;
-
-				var scene = ParentScene;
-				if( scene != null )
-				{
-					var capsule = sourceVolumeCapsule;
-					CapsuleAddOffset( ref capsule, ref offset );
-
-					//check by capsule
-					{
-						var contactTestItem = new PhysicsVolumeTestItem( capsule, Vector3.Zero, PhysicsVolumeTestItem.ModeEnum.All/*OneForEach*/ );
-						ParentScene.PhysicsVolumeTest( contactTestItem );
-
-						foreach( var item in contactTestItem.Result )
-						{
-							if( item.Body == PhysicalBody )
-								continue;
-							if( !collisionBodies.Contains( item.Body ) )
-								collisionBodies.Add( item.Body );
-						}
-					}
-
-					//check by cylinder at bottom
-					{
-						var cylinder = new Cylinder( capsule.GetCenter(), capsule.Point1 - new Vector3( 0, 0, typeCached.Radius ), typeCached.Radius );
-						if( cylinder.Point1 != cylinder.Point2 )
-						{
-							var contactTestItem = new PhysicsVolumeTestItem( cylinder, Vector3.Zero, PhysicsVolumeTestItem.ModeEnum.All/*OneForEach*/ );
-							ParentScene.PhysicsVolumeTest( contactTestItem );
-
-							foreach( var resultItem in contactTestItem.Result )
-							{
-								if( resultItem.Body == PhysicalBody )
-									continue;
-								if( !collisionBodies.Contains( resultItem.Body ) )
-									collisionBodies.Add( resultItem.Body );
-							}
-						}
-					}
-				}
-
-				if( collisionBodies.Count != 0 )
-				{
-					//second iteration
-					if( nStep != 0 && firstIteration )
-					{
-						float step2 = step / 10;
-						var capsule = sourceVolumeCapsule;
-						CapsuleAddOffset( ref capsule, ref previousOffset );
-						var destVector2 = offset - previousOffset;
-
-						if( VolumeCheckGetFirstNotFreePlace( ref capsule, ref destVector2, false, step2, out var collisionBodies2,
-							out var collisionDistance2, out var collisionOnFirstCheck2 ) )
-						{
-							collisionBodies = collisionBodies2;
-							collisionDistance = ( previousOffset != Vector3.Zero ? (float)previousOffset.Length() : 0 ) + collisionDistance2;
-							collisionOnFirstCheck = false;
-							return true;
-						}
-					}
-
-					collisionDistance = distance;
-					collisionOnFirstCheck = firstCheck;
-					return true;
-				}
-
-				firstCheck = false;
-				previousOffset = offset;
-			}
-
-			return false;
-		}
-
-		//!!!!
-		List<Ray> debugRays;// = new List<Ray>();
-
-		void CalculateMainBodyGroundDistanceAndGroundBody()//out Vector3 addForceOnBigSlope )
-		{
-			//addForceOnBigSlope = Vector3.Zero;
-
-			debugRays?.Clear();
-
-			if( PhysicalBody.Active || !IsOnGround() )
-			{
-				typeCached.GetBodyFormInfo( crouching, out var height, out var walkUpHeight );//, out var fromPositionToFloorDistance );
-
-				GetVolumeCapsule( out var capsule );
-				//make radius smaller
-				capsule.Radius *= .99f;
-
-				mainBodyGroundDistanceNoScale = 1000;
-				groundBody = null;
-
-				var scene = ParentScene;
-				if( scene != null )
-				{
-					var scaleFactor = GetScaleFactor();
-
-					//1. get collision bodies
-					List<Scene.PhysicsWorldClass.Body> collisionBodies;
-					float collisionOffset;
-					{
-						Vector3 destVector = new Vector3( 0, 0, -height * scaleFactor );
-						//Vector3 destVector = new Vector3( 0, 0, -height * 1.5f * scaleFactor );
-						var step = (float)( typeCached.Radius.Value / 2 * scaleFactor );
-						VolumeCheckGetFirstNotFreePlace( ref capsule, ref destVector, true, step, out collisionBodies, out collisionOffset, out _ );
-					}
-
-					//2. check slope angle
-					if( collisionBodies.Count != 0 )
-					{
-						Vector3 rayCenter = capsule.Point1 - new Vector3( 0, 0, collisionOffset );
-
-						Scene.PhysicsWorldClass.Body foundBodyWithGoodAngle = null;
-						Radian foundBodyWithGoodAngleSlopeAngle = 0;
-						//Vector3 bigSlopeVector = Vector3.Zero;
-
-						//!!!!call parallel?
-
-						const int horizontalStepCount = 8;
-						const int verticalStepCount = 4;
-
-						for( int verticalStep = 0; verticalStep < verticalStepCount; verticalStep++ )
-						{
-							//.8f - to disable checking by horizontal rays
-							float verticalAngle = MathEx.PI / 2 - ( (float)verticalStep / (float)verticalStepCount ) * MathEx.PI / 2 * .8f;
-
-							for( int horizontalStep = 0; horizontalStep < horizontalStepCount; horizontalStep++ )
-							{
-								//skip same rays on direct vertical ray
-								if( verticalStep == 0 && horizontalStep != 0 )
-									continue;
-
-								float horizontalAngle = ( (float)horizontalStep / (float)horizontalStepCount ) * MathEx.PI * 2;
-
-								var sphereDir = new SphericalDirection( horizontalAngle, -verticalAngle );
-								Ray ray = new Ray( rayCenter, sphereDir.GetVector() * typeCached.Radius * 1.3f * scaleFactor );//Type.Radius * 1.1f );
-
-								var item = new PhysicsRayTestItem( ray, PhysicsRayTestItem.ModeEnum.All, PhysicsRayTestItem.FlagsEnum.CalculateNormal );
-								scene.PhysicsRayTest( item );
-
-								debugRays?.Add( ray );
-
-								for( int n = 0; n < item.Result.Length; n++ )//foreach( var resultItem in item.Result )
-								{
-									ref var resultItem = ref item.Result[ n ];
-
-									if( resultItem.Body != PhysicalBody )
-									{
-										//check slope angle
-										var slope = MathAlgorithms.GetVectorsAngle( resultItem.Normal, Vector3.ZAxis );
-										if( slope < typeCached.MaxSlopeAngle.Value.InRadians() )
-										{
-											if( foundBodyWithGoodAngle == null || slope < foundBodyWithGoodAngleSlopeAngle )
-											{
-												foundBodyWithGoodAngle = resultItem.Body;
-												foundBodyWithGoodAngleSlopeAngle = slope;
-											}
-										}
-									}
-									//else
-									//{
-									//	Vector3 vector = new Vector3( result.Normal.X, result.Normal.Y, 0 );
-									//	if( vector != Vector3.Zero )
-									//		bigSlopeVector += vector;
-									//}
-								}
-
-								if( foundBodyWithGoodAngle != null )
-									break;
-							}
-							if( foundBodyWithGoodAngle != null )
-								break;
-						}
-
-						if( foundBodyWithGoodAngle != null )
-						{
-							groundBody = foundBodyWithGoodAngle;
-							mainBodyGroundDistanceNoScale = /*fromPositionToFloorDistance + */collisionOffset / (float)scaleFactor;
-						}
-						//else
-						//{
-						//	if( bigSlopeVector != Vector3.Zero )
-						//	{
-						//		//add force
-						//		bigSlopeVector.Normalize();
-						//		bigSlopeVector *= mainBody.Mass * 2;
-						//		addForceOnBigSlope = bigSlopeVector;
-						//	}
-						//}
-					}
-				}
-			}
+			if( walkUpDownLastChange != 0 )
+				smoothCameraOffsetZ -= walkUpDownLastChange;
 
 			isOnGroundHasValue = false;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void GetVolumeCapsule( out Capsule capsule )
 		{
+			//!!!!scaling тут не учтен
+
 			var tr = TransformV;
-			var height = typeCached.Height.Value;
-			var radius = typeCached.Radius.Value;
+			var height = TypeCached.Height.Value;
+			var radius = TypeCached.Radius.Value;
 			capsule = new Capsule( tr.Position + new Vector3( 0, 0, radius ), tr.Position + new Vector3( 0, 0, height - radius ), radius );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void CapsuleAddOffset( ref Capsule capsule, ref Vector3 offset )
 		{
 			capsule.Point1 += offset;
 			capsule.Point2 += offset;
 		}
 
-		void ClimbObstacleTest( ref Vector3 newPositionOffsetNoScale, out double upHeightNoScale )
-		{
-			typeCached.GetBodyFormInfo( crouching, out var height, out var walkUpHeight );
-
-			var scaleFactor = GetScaleFactor();
-
-			GetVolumeCapsule( out var volumeCapsule );
-			var offset = ( newPositionOffsetNoScale + new Vector3( 0, 0, walkUpHeight ) ) * scaleFactor;
-			CapsuleAddOffset( ref volumeCapsule, ref offset );
-
-			var destVector = new Vector3( 0, 0, -walkUpHeight );
-			var step = (float)typeCached.Radius / 2;
-			List<Scene.PhysicsWorldClass.Body> collisionBodies;
-			float collisionDistance;
-			bool collisionOnFirstCheck;
-			bool foundCollision = VolumeCheckGetFirstNotFreePlace( ref volumeCapsule, ref destVector, true, step, out collisionBodies, out collisionDistance, out collisionOnFirstCheck );
-			if( foundCollision )
-			{
-				if( collisionOnFirstCheck )
-					upHeightNoScale = float.MaxValue;
-				else
-					upHeightNoScale = ( walkUpHeight - collisionDistance ) / scaleFactor;
-			}
-			else
-				upHeightNoScale = 0;
-		}
-
 		protected virtual void OnJump()
 		{
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void TickJump( bool ignoreTicks )
 		{
 			if( !ignoreTicks )
@@ -1394,11 +1431,11 @@ namespace NeoAxis
 				}
 			}
 
-			if( IsOnGround() && onGroundTime > Time.SimulationDelta && jumpInactiveTime == 0 && jumpDisableRemainingTime != 0 && PhysicalBody != null )
+			if( IsOnGround() && onGroundTime > Time.SimulationDelta && jumpInactiveTime == 0 && jumpDisableRemainingTime != 0 && PhysicalBody != null && disableControlRemainingTime == 0 )
 			{
-				var vel = PhysicalBody.LinearVelocity;
-				vel.Z = (float)( typeCached.JumpSpeed * GetScaleFactor() );
-				PhysicalBody.LinearVelocity = vel;
+				var velocity = PhysicalBody.LinearVelocity;
+				velocity.Z = (float)( TypeCached.JumpSpeed * GetScaleFactor() );
+				PhysicalBody.LinearVelocity = velocity;
 
 				var tr = TransformV;
 				Transform = tr.UpdatePosition( tr.Position + new Vector3( 0, 0, 0.05 ) );
@@ -1408,14 +1445,14 @@ namespace NeoAxis
 				jumpDisableRemainingTime = 0;
 				isOnGroundHasValue = false;
 
-				UpdateMainBodyDamping();
+				//UpdateMainBodyDamping();
 
 				//PhysicalBody.Active = true;
 
-				SoundPlay( typeCached.JumpSound );
-				StartPlayOneAnimation( typeCached.JumpAnimation );
+				SoundPlay( TypeCached.JumpSound );
+				StartPlayOneAnimation( TypeCached.JumpAnimation );
 
-				if( NetworkIsServer && ( typeCached.JumpSound.ReferenceOrValueSpecified || typeCached.JumpAnimation.ReferenceOrValueSpecified ) )
+				if( NetworkIsServer && ( TypeCached.JumpSound.ReferenceOrValueSpecified || TypeCached.JumpAnimation.ReferenceOrValueSpecified ) )
 				{
 					BeginNetworkMessageToEveryone( "Jump" );
 					EndNetworkMessage();
@@ -1448,9 +1485,9 @@ namespace NeoAxis
 			}
 		}
 
-		public void TryJump()
+		public void Jump()
 		{
-			if( !typeCached.Jump )
+			if( !TypeCached.Jump )
 				return;
 			if( Crouching )
 				return;
@@ -1459,29 +1496,64 @@ namespace NeoAxis
 			TickJump( true );
 		}
 
-		[Browsable( false )]
-		public Vector2 LastTickForceVector
+		public void JumpClient()
 		{
-			get { return lastTickForceVector; }
+			if( !TypeCached.Jump )
+				return;
+			if( Crouching )
+				return;
+
+			BeginNetworkMessageToServer( "Jump" );
+			EndNetworkMessage();
 		}
 
+		//[Browsable( false )]
+		//public Vector2 LastTickForceVector
+		//{
+		//	get { return lastTickForceVector; }
+		//}
+
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected override void OnSpaceBoundsUpdate( ref SpaceBounds newBounds )
 		{
-			//base.OnSpaceBoundsUpdate( ref newBounds );
-
-			//!!!!bounds prediction
-
 			var meshResult = Mesh.Value?.Result;
 			if( meshResult != null )
 			{
 				//make bounds from bounds sphere (to expand bounds for animation)
-				var meshBounds = meshResult.SpaceBounds;
-				meshBounds.BoundingSphere.ToBounds( out var b );
-				var b2 = TransformV * b;
-				newBounds = new SpaceBounds( ref b2 );
+				var meshBoundsLocal = meshResult.SpaceBounds;
+				meshBoundsLocal.BoundingSphere.ToBounds( out var b );
+				var meshBoundsTransformed = TransformV * b;
+				newBounds = new SpaceBounds( ref meshBoundsTransformed );
+
+				//!!!!predict when inside vehicle
+
+				//!!!!check
+				//bounds prediction to skip small updates in future steps
+				if( PhysicalBody != null && PhysicalBody.Active )
+				{
+					var realBounds = newBounds.BoundingBox;
+
+					if( !SpaceBoundsOctreeOverride.HasValue || !SpaceBoundsOctreeOverride.Value.Contains( ref realBounds ) )
+					{
+						//calculated extended bounds. predict for 2-3 seconds
+
+						var trPosition = TransformV.Position;
+
+						var bTotal = realBounds;
+						var b2 = new Bounds( trPosition );
+						b2.Add( trPosition + PhysicalBody.LinearVelocity * ( 2.0f + staticRandom.NextFloat() ) );
+						b2.Expand( newBounds.BoundingSphere.Radius * 1.1 );
+						bTotal.Add( ref b2 );
+
+						SpaceBoundsOctreeOverride = bTotal;
+					}
+				}
+				else
+					SpaceBoundsOctreeOverride = null;
 			}
 			else
 				base.OnSpaceBoundsUpdate( ref newBounds );
+
 
 			//if( PhysicalBody != null )
 			//{
@@ -1504,43 +1576,38 @@ namespace NeoAxis
 			//	context.thisObjectResultRayScale = scale;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void CalculateGroundRelativeVelocity()
 		{
 			if( PhysicalBody != null && PhysicalBody.Active )
 			{
-				groundRelativeVelocity = GetLinearVelocity();
-				if( groundBody != null && groundBody.AngularVelocity.LengthSquared() < .3f )
-					groundRelativeVelocity -= groundBody.LinearVelocity;
-
-				//groundRelativeVelocityToSmooth
+				//groundRelativeVelocitySmooth
 				if( groundRelativeVelocitySmoothArray == null )
 				{
-					var seconds = .2f;
-					var count = ( seconds / Time.SimulationDelta ) + .999f;
+					var seconds = 0.2f;
+					var count = ( seconds / Time.SimulationDelta ) + 0.999f;
 					groundRelativeVelocitySmoothArray = new Vector3F[ (int)count ];
 				}
 				for( int n = 0; n < groundRelativeVelocitySmoothArray.Length - 1; n++ )
 					groundRelativeVelocitySmoothArray[ n ] = groundRelativeVelocitySmoothArray[ n + 1 ];
-				groundRelativeVelocitySmoothArray[ groundRelativeVelocitySmoothArray.Length - 1 ] = groundRelativeVelocity;
+				groundRelativeVelocitySmoothArray[ groundRelativeVelocitySmoothArray.Length - 1 ] = GetGroundRelativeVelocity();//groundRelativeVelocity;
 				groundRelativeVelocitySmooth = Vector3F.Zero;
 				for( int n = 0; n < groundRelativeVelocitySmoothArray.Length; n++ )
 					groundRelativeVelocitySmooth += groundRelativeVelocitySmoothArray[ n ];
-				groundRelativeVelocitySmooth /= (float)groundRelativeVelocitySmoothArray.Length;
+				groundRelativeVelocitySmooth /= groundRelativeVelocitySmoothArray.Length;
 			}
 			else
 			{
-				//!!!!slowly?
-
-				groundRelativeVelocity = Vector3F.Zero;
-				groundRelativeVelocitySmoothArray = null;
-				groundRelativeVelocitySmooth = Vector3F.Zero;
+				if( groundRelativeVelocitySmoothArray != null )
+					groundRelativeVelocitySmoothArray = null;
+				if( groundRelativeVelocitySmooth != Vector3F.Zero )
+					groundRelativeVelocitySmooth = Vector3F.Zero;
 			}
 		}
 
-		[Browsable( false )]
-		public Vector3 GroundRelativeVelocity
+		public Vector3F GetGroundRelativeVelocity()
 		{
-			get { return groundRelativeVelocity; }
+			return lastLinearVelocity - groundBody1Velocity;
 		}
 
 		[Browsable( false )]
@@ -1552,9 +1619,6 @@ namespace NeoAxis
 		public Vector3F GetLinearVelocity()
 		{
 			return lastLinearVelocity;
-			//if( EngineApp.IsSimulation )
-			//	return ( GetTransform().Position - lastSimulationStepPosition ) / Time.SimulationDelta;
-			//return Vector3.Zero;
 		}
 
 		//public void DamageFastChangeSpeedResetLastVelocity()
@@ -1692,13 +1756,78 @@ namespace NeoAxis
 
 		void UpdateTransformVisualOverride()
 		{
-			//!!!!slowly
+			var rotateMeshDependingGroundEnabled = TypeCached.RotateMeshDependingGround && IsOnGround();// && groundBody1 != null;
 
-			var offset = GetSmoothCameraOffset();
-			if( offset != Vector3.Zero )
+			if( rotateMeshDependingGroundEnabled || smoothCameraOffsetZ != 0 )
 			{
 				var tr = TransformV;
-				TransformVisualOverride = new Transform( tr.Position + GetSmoothCameraOffset(), tr.Rotation, tr.Scale );
+
+				var rotateMeshDependingGround = Quaternion.Identity;
+				var rotateMeshDependingGroundSpecified = false;
+
+				//rotate mesh depending ground
+				if( rotateMeshDependingGroundEnabled )
+				{
+					var scene = ParentScene;
+					if( scene != null )
+					{
+						//!!!!GC
+
+						var r = TypeCached.Radius;
+
+						var positionPlusHalfRadius = tr.Position;
+						positionPlusHalfRadius.Z += r * 0.5;
+						var vectorForward = tr.Rotation * new Vector3( r * 0.5, 0, 0 );
+
+						var rayForward = new Ray( positionPlusHalfRadius + vectorForward, new Vector3( 0, 0, -r ) );
+						var itemForward = new PhysicsRayTestItem( rayForward, PhysicsRayTestItem.ModeEnum.OneClosestForEach, PhysicsRayTestItem.FlagsEnum.None );
+
+						var rayBackward = new Ray( positionPlusHalfRadius - vectorForward, new Vector3( 0, 0, -r ) );
+						var itemBackward = new PhysicsRayTestItem( rayBackward, PhysicsRayTestItem.ModeEnum.OneClosestForEach, PhysicsRayTestItem.FlagsEnum.None );
+
+						scene.PhysicsRayTest( new PhysicsRayTestItem[] { itemForward, itemBackward }, true );
+
+						double? forwardZ = null;
+						double? backwardZ = null;
+						foreach( var item in itemForward.Result )
+						{
+							if( item.Body != PhysicalBody )
+							{
+								forwardZ = item.Position.Z;
+								break;
+							}
+						}
+						foreach( var item in itemBackward.Result )
+						{
+							if( item.Body != PhysicalBody )
+							{
+								backwardZ = item.Position.Z;
+								break;
+							}
+						}
+
+						if( forwardZ.HasValue && backwardZ.HasValue )
+						{
+							var frontAngle = (float)Math.Atan2( forwardZ.Value - backwardZ.Value, r );
+							rotateMeshDependingGround = QuaternionF.FromRotateByY( frontAngle );
+							rotateMeshDependingGroundSpecified = true;
+						}
+					}
+				}
+
+				if( rotateMeshDependingGroundSpecified || smoothCameraOffsetZ != 0 )
+				{
+					var pos = tr.Position;
+					pos.Z += smoothCameraOffsetZ;
+
+					var rot = tr.Rotation;
+					if( rotateMeshDependingGroundSpecified )
+						rot *= rotateMeshDependingGround;
+
+					TransformVisualOverride = new Transform( pos, rot, tr.Scale );
+				}
+				else
+					TransformVisualOverride = null;
 			}
 			else
 				TransformVisualOverride = null;
@@ -1712,8 +1841,6 @@ namespace NeoAxis
 
 			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
-			//!!!!
-
 			if( mode == GetRenderSceneDataMode.InsideFrustum )
 			{
 				var context2 = context.ObjectInSpaceRenderingContext;
@@ -1721,7 +1848,7 @@ namespace NeoAxis
 
 				if( scene != null && context.SceneDisplayDevelopmentDataInThisApplication && scene.DisplayPhysicalObjects )
 				{
-					typeCached.GetBodyFormInfo( crouching, out var height, out var walkUpHeight );//, out var fromPositionToFloorDistance );
+					TypeCached.GetBodyFormInfo( crouching, out var height, out var walkUpHeight, out var walkDownHeight );
 
 					var renderer = context.Owner.Simple3DRenderer;
 					var tr = TransformV;
@@ -1730,20 +1857,27 @@ namespace NeoAxis
 					renderer.SetColor( new ColorValue( 1, 0, 0, 1 ) );
 
 					//object position
-					renderer.AddSphere( new Sphere( tr.Position, .05f ), 16 );
+					renderer.AddSphere( new Sphere( tr.Position, 0.05 ), 16 );
 
-					//stand up height
+					//walk up height
 					{
-						Vector3 pos = tr.Position - new Vector3( 0, 0, ( /*fromPositionToFloorDistance*/ -walkUpHeight ) * scaleFactor );
-						renderer.AddLine( pos + new Vector3( .2f, 0, 0 ), pos - new Vector3( .2f, 0, 0 ) );
-						renderer.AddLine( pos + new Vector3( 0, .2f, 0 ), pos - new Vector3( 0, .2f, 0 ) );
+						Vector3 pos = tr.Position + new Vector3( 0, 0, walkUpHeight * scaleFactor );
+						renderer.AddLine( pos + new Vector3( 0.05, 0, 0 ), pos - new Vector3( 0.05, 0, 0 ) );
+						renderer.AddLine( pos + new Vector3( 0, 0.05, 0 ), pos - new Vector3( 0, 0.05, 0 ) );
+					}
+
+					//walk down height
+					{
+						Vector3 pos = tr.Position - new Vector3( 0, 0, walkDownHeight * scaleFactor );
+						renderer.AddLine( pos + new Vector3( 0.05, 0, 0 ), pos - new Vector3( 0.05, 0, 0 ) );
+						renderer.AddLine( pos + new Vector3( 0, 0.05, 0 ), pos - new Vector3( 0, 0.05, 0 ) );
 					}
 
 					//eye position
 					renderer.SetColor( new ColorValue( 0, 1, 0, 1 ) );
-					var eyePosition = TransformV * typeCached.EyePosition.Value;
-					renderer.AddArrow( eyePosition, eyePosition + new Vector3( typeCached.Height.Value * 0.05, 0, 0 ) );
-					//renderer.AddSphere( new Sphere( TransformV * typeCached.EyePosition.Value, .05f ), 16 );
+					var eyePosition = TransformV * TypeCached.EyePosition.Value;
+					renderer.AddArrow( eyePosition, eyePosition + tr.Rotation * new Vector3( TypeCached.Height.Value * 0.05, 0, 0 ) );
+					//renderer.AddSphere( new Sphere( TransformV * TypeCached.EyePosition.Value, .05f ), 16 );
 				}
 
 				var showLabels = /*show &&*/ PhysicalBody == null;
@@ -1772,30 +1906,110 @@ namespace NeoAxis
 				}
 #endif
 
-				if( debugRays != null && debugRays.Count != 0 )
+				//if( debugRays != null && debugRays.Count != 0 )
+				//{
+				//	foreach( var ray in debugRays )
+				//	{
+				//		var renderer = context.Owner.Simple3DRenderer;
+				//		renderer.SetColor( new ColorValue( 1, 0, 0 ) );
+				//		renderer.AddArrow( ray.Origin, ray.GetEndPoint(), 0, 0, true, 0 );
+				//	}
+				//}
+
+				//if( debugPoints != null && debugPoints.Count != 0 )
+				//{
+				//	foreach( var point in debugPoints )
+				//	{
+				//		var renderer = context.Owner.Simple3DRenderer;
+				//		renderer.SetColor( new ColorValue( 1, 0, 0 ) );
+				//		renderer.AddSphere( point, 0.01, 32 );
+				//	}
+				//}
+
+				if( DebugVisualization )
 				{
-					foreach( var ray in debugRays )
+					var renderer = context.Owner.Simple3DRenderer;
+
+					if( RequiredLookToPosition.HasValue )
 					{
-						var renderer = context.Owner.Simple3DRenderer;
 						renderer.SetColor( new ColorValue( 1, 0, 0 ) );
-						renderer.AddArrow( ray.Origin, ray.GetEndPoint(), 0, 0, true, 0 );
+						renderer.AddSphere( new Sphere( RequiredLookToPosition.Value, .05 ) );
+					}
+
+					if( RequiredTurnToDirection.HasValue )
+					{
+						renderer.SetColor( new ColorValue( 1, 0, 0 ) );
+						renderer.AddArrow( TransformV.Position, TransformV.Position + TransformV.Rotation.GetForward() );
+					}
+
+					//hand positions
+					var weapon = GetActiveWeapon();
+					if( weapon != null )
+					{
+						var controller = GetAnimationController();
+						if( controller != null )
+						{
+							var globalBoneTransforms = controller.GetBoneGlobalTransforms();
+							if( globalBoneTransforms != null )
+							{
+								if( weapon.TypeCached.WayToUse.Value == WeaponType.WayToUseEnum.Rifle )
+								{
+									var boneLeftHandIndex = controller.GetBoneIndex( TypeCached.LeftHandBone );
+									var boneLeftHandMiddle1Index = controller.GetBoneIndex( TypeCached.GetFingerBoneName( "Left", "Middle", 1 ) );
+
+									if( boneLeftHandIndex != -1 && boneLeftHandMiddle1Index != -1 )
+									{
+										var boneLeftHand = globalBoneTransforms[ boneLeftHandIndex ].Position;
+										var boneLeftHandMiddle1 = globalBoneTransforms[ boneLeftHandMiddle1Index ].Position;
+
+										var localCenter = Vector3F.Lerp( boneLeftHand, boneLeftHandMiddle1, 0.75f );
+										var center = TransformV * localCenter;
+
+										renderer.SetColor( new ColorValue( 1, 0, 0 ) );
+										renderer.AddSphere( new Sphere( center, .02 ) );
+									}
+								}
+
+								{
+									var boneRightHandIndex = controller.GetBoneIndex( TypeCached.RightHandBone );
+									var boneRightHandMiddle1Index = controller.GetBoneIndex( TypeCached.GetFingerBoneName( "Right", "Middle", 1 ) );
+
+									if( boneRightHandIndex != -1 && boneRightHandMiddle1Index != -1 )
+									{
+										var boneRightHand = globalBoneTransforms[ boneRightHandIndex ].Position;
+										var boneRightHandMiddle1 = globalBoneTransforms[ boneRightHandMiddle1Index ].Position;
+
+										var localCenter = Vector3F.Lerp( boneRightHand, boneRightHandMiddle1, 0.75f );
+										var center = TransformV * localCenter;
+
+										renderer.SetColor( new ColorValue( 1, 0, 0 ) );
+										renderer.AddSphere( new Sphere( center, .02 ) );
+									}
+								}
+
+							}
+						}
+					}
+
+					if( Sitting )
+					{
+						renderer.SetColor( new ColorValue( 1, 0, 0 ) );
+						renderer.AddSphere( new Sphere( TransformV.Position + new Vector3( 0, 0, TypeCached.SitButtHeight ), .02 ) );
 					}
 				}
 
+
+				//!!!!
 				//if( _tempDebug.Count != 0 )
 				//{
-				//	var meshInSpace = GetComponent<MeshInSpace>( onlyEnabledInHierarchy: true );
-				//	if( meshInSpace != null )
+				//	foreach( var p in _tempDebug )
 				//	{
-				//		foreach( var p in _tempDebug )
-				//		{
-				//			var viewport = context.Owner;
-				//			viewport.Simple3DRenderer.SetColor( new ColorValue( 1, 0, 0 ) );
+				//		var viewport = context.Owner;
+				//		viewport.Simple3DRenderer.SetColor( new ColorValue( 1, 0, 0 ) );
 
-				//			var pp = meshInSpace.TransformV * p;
+				//		var pp = TransformV * p;
 
-				//			viewport.Simple3DRenderer.AddSphere( new Sphere( pp, 0.01 ) );
-				//		}
+				//		viewport.Simple3DRenderer.AddSphere( new Sphere( pp, 0.01 ) );
 				//	}
 				//}
 			}
@@ -1828,41 +2042,16 @@ namespace NeoAxis
 			//	}
 			//}
 
-
-
-			////!!!!temp
-			//if( PhysicalBody != null )
-			//{
-			//	var position = TransformV.Position + new Vector3( 2, 0, 0 );
-
-			//	GetVolumeCapsule( out var capsule );
-			//	//make radius smaller
-			//	capsule.Radius *= .99f;
-
-			//	var offset = position - TransformV.Position;//capsule.GetCenter();
-			//	var checkCapsule = capsule;
-			//	CapsuleAddOffset( ref checkCapsule, ref offset );
-
-
-			//	var viewport = context.Owner;
-			//	var renderer = viewport.Simple3DRenderer;
-			//	GetBox( out var box );
-			//	var points = box.ToPoints();
-
-			//	renderer.SetColor( new ColorValue( 1, 0, 0 ) );
-			//	renderer.AddCapsule( checkCapsule );
-
-
-			//	//IsFreePositionToMove(TransformV.Position + new Vector3(2,0,0))
-			//}
 		}
 
 		void TickWiggleWhenWalkingSpeedFactor()
 		{
+			//!!!!slowly?
+
 			float destinationFactor;
 			if( IsOnGround() )
 			{
-				destinationFactor = (float)GroundRelativeVelocitySmooth.Length() * .3f;
+				destinationFactor = (float)GroundRelativeVelocitySmooth.Length() * 0.3f;
 				if( destinationFactor < 0.1f ) //0.5f
 					destinationFactor = 0;
 				if( destinationFactor > 1 )
@@ -1888,56 +2077,127 @@ namespace NeoAxis
 
 		void TickSmoothCameraOffset()
 		{
-			if( smoothCameraOffsetZ < 0 )
+			if( smoothCameraOffsetZ != 0 )
 			{
-				var speed = typeCached.Height.Value * 0.75;
-
-				smoothCameraOffsetZ += Time.SimulationDelta * speed;
+				var speed = (float)TypeCached.Height.Value * 1.2f;// 0.75;
 
 				if( smoothCameraOffsetZ > 0 )
-					smoothCameraOffsetZ = 0;
+				{
+					smoothCameraOffsetZ -= Time.SimulationDelta * speed;
+					if( smoothCameraOffsetZ < 0 )
+						smoothCameraOffsetZ = 0;
+				}
+				else
+				{
+					smoothCameraOffsetZ += Time.SimulationDelta * speed;
+					if( smoothCameraOffsetZ > 0 )
+						smoothCameraOffsetZ = 0;
+				}
 			}
 		}
 
-		Vector3 GetSmoothCameraOffset()
+		Vector3F GetSmoothCameraOffset()
 		{
-			return new Vector3( 0, 0, smoothCameraOffsetZ );
+			//if need X, Y then need change code outside. checks for smoothCameraOffsetZ
+
+			return new Vector3F( 0, 0, smoothCameraOffsetZ );
 		}
 
-		public bool GetEyesPosition( out Vector3 position )
+		public bool GetEyesPosition( Transform tr, out Vector3 position )
 		{
 			var controller = GetAnimationController();
 			if( controller != null && controller.Bones != null )
 			{
-				var bones = new List<SkeletonBone>();
-				foreach( var bone in controller.Bones )
+				//already calculated where this method called
+				//UpdateTransformVisualOverride();
+				//var tr = TransformVisualOverride ?? TransformV;
+
+				////check for bones for eyes. Default: mixamorig:LeftEye, mixamorig:RightEye
+				//{
+				//	var leftEyeIndex = controller.GetBoneIndex( TypeCached.LeftEyeBone );
+				//	var rightEyeIndex = controller.GetBoneIndex( TypeCached.RightEyeBone );
+				//	if( leftEyeIndex != -1 && rightEyeIndex != -1 )
+				//	{
+				//		//get bones position in object space
+				//		controller.GetBoneGlobalTransform( leftEyeIndex, out var globalItem1 );
+				//		controller.GetBoneGlobalTransform( rightEyeIndex, out var globalItem2 );
+
+				//		//calculate position in object space
+				//		var resultPos = ( globalItem1.Position + globalItem2.Position ) / 2;
+
+				//		//calculate world position
+				//		position = tr.ToMatrix4() * resultPos;
+
+				//		return true;
+				//	}
+				//}
+
+				//get eye position by head bones. Default: mixamorig:HeadTop_End, mixamorig:Head
 				{
-					if( bone.Name.Contains( "eye", StringComparison.OrdinalIgnoreCase ) )
-						bones.Add( bone );
-				}
-
-				if( bones.Count != 0 )
-				{
-					position = Vector3.Zero;
-
-					UpdateTransformVisualOverride();
-					var tr = TransformVisualOverride ?? TransformV;
-
-					foreach( var bone in bones )
+					var headTopEndIndex = controller.GetBoneIndex( TypeCached.HeadTopBone );
+					var headIndex = controller.GetBoneIndex( TypeCached.HeadBone );
+					if( headTopEndIndex != -1 && headIndex != -1 )
 					{
-						var boneIndex = controller.GetBoneIndex( bone );
-						Matrix4F globalMatrix = Matrix4F.Zero;
-						controller.GetBoneGlobalTransform( boneIndex, ref globalMatrix );
+						//get bones position in object space
+						controller.GetBoneGlobalTransform( headTopEndIndex, out var globalItem1 );
+						controller.GetBoneGlobalTransform( headIndex, out var globalItem2 );
 
-						var m = tr.ToMatrix4() * globalMatrix;
+						//calculate base position in object space
+						var basePos = ( globalItem1.Position + globalItem2.Position ) / 2;
 
-						position += m.GetTranslation();
+						//add offset
+						var length = ( globalItem1.Position - globalItem2.Position ).Length();
+						var offset = globalItem1.Rotation * new Vector3F( 0, 0, 1 ) * length / 2;
+
+						//calculate result position in object space
+						var resultPos = basePos + offset;
+
+						//calculate world position
+						position = tr.ToMatrix4() * resultPos;
+
+						return true;
 					}
-
-					position /= bones.Count;
-
-					return true;
 				}
+
+
+				//var bones = new List<SkeletonBone>();
+				//foreach( var bone in controller.Bones )
+				//{
+				//	if( bone.Name.Contains( "eye", StringComparison.OrdinalIgnoreCase ) )
+				//		bones.Add( bone );
+
+				//	//if( bone.Name.Contains( "head", StringComparison.OrdinalIgnoreCase ) )
+				//	//	bones.Add( bone );
+				//}
+
+				//if( bones.Count != 0 )
+				//{
+				//	position = Vector3.Zero;
+
+				//	//already calculated where this method called
+				//	//UpdateTransformVisualOverride();
+				//	//var tr = TransformVisualOverride ?? TransformV;
+
+				//	foreach( var bone in bones )
+				//	{
+				//		var boneIndex = controller.GetBoneIndex( bone );
+
+				//		controller.GetBoneGlobalTransform( boneIndex, out var globalItem );
+				//		globalItem.ToMatrix( out var globalMatrix );
+				//		//controller.GetBoneGlobalTransform( boneIndex, out var globalMatrix );
+
+				//		//!!!!что с RotateRootBone
+
+				//		var m = tr.ToMatrix4() * globalMatrix;
+
+				//		position += m.GetTranslation();
+				//	}
+
+				//	position /= bones.Count;
+
+				//	return true;
+				//}
+
 			}
 
 			position = Vector3.Zero;
@@ -1956,14 +2216,14 @@ namespace NeoAxis
 			//get eyes position from skeleton
 			if( useEyesPositionOfModel )
 			{
-				if( GetEyesPosition( out position ) )
+				if( GetEyesPosition( tr, out position ) )
 					positionCalculated = true;
 			}
 
 			//calculate position
 			if( !positionCalculated )
 			{
-				position = tr * typeCached.EyePosition.Value + GetSmoothCameraOffset();
+				position = tr * TypeCached.EyePosition.Value + GetSmoothCameraOffset();
 
 				//if( CrouchingSupport )
 				//{
@@ -2002,435 +2262,50 @@ namespace NeoAxis
 		//	return TransformV.Position + GetSmoothCameraOffset();
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Transform GetCenteredTransform()
 		{
 			var tr = TransformV;
-			var offset = new Vector3( 0, 0, typeCached.Height * 0.5 );
+			var offset = new Vector3( 0, 0, TypeCached.Height * 0.5 );
 			return new Transform( tr.Position + tr.Rotation * offset, tr.Rotation, tr.Scale );
 		}
 
-		//public Vector3 GetCenteredPosition()
-		//{
-		//	return TransformV.Position + new Vector3( 0, 0, typeCached.Height * 0.5 );
-		//}
-
-		public Vector3 GetCenteredSmoothPosition()
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public Vector3 GetCenteredPosition()
 		{
-			return TransformV.Position + new Vector3( 0, 0, typeCached.Height * 0.5 ) + GetSmoothCameraOffset();
+			return TransformV.Position + new Vector3( 0, 0, TypeCached.Height * 0.5 );
 		}
 
-		//void UpdateTransformOffsetInSimulation()
-		//{
-		//var meshInSpace = GetComponent<MeshInSpace>( onlyEnabledInHierarchy: true );
-		//if( meshInSpace != null )
-		//{
-		//	var transformOffset = meshInSpace.GetComponent<TransformOffset>( onlyEnabledInHierarchy: true );
-		//	if( transformOffset != null )
-		//	{
-		//		if( initialTransformOffsetPositionInSimulation == null )
-		//			initialTransformOffsetPositionInSimulation = transformOffset.PositionOffset;
-
-		//		transformOffset.PositionOffset = initialTransformOffsetPositionInSimulation.Value + GetSmoothCameraOffset();
-		//	}
-		//}
-		//}
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public Vector3 GetCenteredSmoothPosition()
+		{
+			var result = GetCenteredPosition();
+			result.Z += smoothCameraOffsetZ;
+			return result;
+			//return TransformV.Position + new Vector3( 0, 0, TypeCached.Height * 0.5 ) + GetSmoothCameraOffset();
+		}
 
 		public MeshInSpaceAnimationController GetAnimationController()
 		{
 			if( animationControllerCached == null )
-				animationControllerCached = GetComponent<MeshInSpaceAnimationController>( onlyEnabledInHierarchy: true );
+			{
+				//get or create animation controller
+				animationControllerCached = GetComponent<MeshInSpaceAnimationController>();// onlyEnabledInHierarchy: true );
+				if( animationControllerCached == null && !NetworkIsClient )//&& EngineApp.IsSimulation && createInSimulationIfNotExists )
+				{
+					animationControllerCached = CreateComponent<MeshInSpaceAnimationController>();
+					animationControllerCached.Name = "Animation Controller";
+				}
+			}
+
 			return animationControllerCached;
 		}
 
-		//!!!!
-		void OnAnimateChanged()
-		{
-			//reset
-			if( !typeCached.Animate )
-			{
-				var controller = GetAnimationController();
-				if( controller != null )
-				{
-					controller.PlayAnimation = null;
-					controller.Speed = 1;
-					controller.SetAnimationState( null, false );
-				}
-			}
-		}
-
-		void GetHandTransform( HandEnum hand, out double factor, out Transform transform )
-		{
-			//override for weapon
-			var item = ItemGetEnabledFirst();
-			if( item != null )
-			{
-				var obj = item as ObjectInSpace;
-				if( obj != null )
-				{
-					var weapon = item as Weapon;
-					if( weapon != null )
-					{
-						var tr = hand == HandEnum.Left ? weapon.WeaponTypeCached.LeftHandTransform.Value : weapon.WeaponTypeCached.RightHandTransform.Value;
-						if( tr != NeoAxis.Transform.Zero )
-						{
-							factor = 1;
-							transform = weapon.GetHandWorldTransform( hand );
-							return;
-						}
-					}
-				}
-			}
-
-			factor = hand == HandEnum.Left ? LeftHandFactor.Value : RightHandFactor.Value;
-			transform = hand == HandEnum.Left ? LeftHandTransform.Value : RightHandTransform.Value;
-		}
-
-		////!!!!temp
+		//!!!!temp
 		//List<Vector3> _tempDebug = new List<Vector3>();
 
-		protected virtual void AdditionalBoneTransformsUpdate( MeshInSpaceAnimationController controller, MeshInSpaceAnimationController.AnimationStateClass animationState, Skeleton skeleton, SkeletonAnimationTrack.CalculateBoneTransformsItem[] result, ref bool updateTwice, int updateIteration )
-		{
-			//!!!!too hardcoded
 
-			////!!!!
-			//_tempDebug.Clear();
-
-			//var meshInSpace = GetComponent<MeshInSpace>( onlyEnabledInHierarchy: true );
-			//if( meshInSpace == null )
-			//	return;
-			if( controller.Bones == null )
-				return;
-
-			var inverseTransformCalculated = false;
-			Matrix4 inverseTransform = Matrix4.Zero;
-
-			//hands
-			for( var hand = HandEnum.Left; hand <= HandEnum.Right; hand++ )
-			{
-				GetHandTransform( hand, out var factor, out var worldHandTransform );
-				//var factor = hand == HandEnum.Left ? LeftHandFactor.Value : RightHandFactor.Value;
-				if( factor > 0 )
-				{
-					//update skeleton twice because during calculation the data of bone transforms taken from previous update
-					updateTwice = true;
-
-					if( updateIteration == 1 )
-					{
-						//var worldHandTransform = hand == HandEnum.Left ? LeftHandTransform.Value : RightHandTransform.Value;
-
-						//inverseTransform
-						if( !inverseTransformCalculated )
-						{
-							/*meshInSpace.*/
-							TransformV.ToMatrix4().GetInverse( out inverseTransform );
-							inverseTransformCalculated = true;
-						}
-
-						var objectHandPosition = inverseTransform * worldHandTransform.Position;
-						var objectHandRotation = Quaternion.LookAt( inverseTransform * worldHandTransform.Rotation.GetForward(), inverseTransform * worldHandTransform.Rotation.GetUp() );
-
-						//!!!!
-						//_tempDebug.Add( localHandPosition );
-
-
-						var handBoneIndex = controller.GetBoneIndex( hand == HandEnum.Left ? typeCached.LeftHandBone : typeCached.RightHandBone );
-						if( handBoneIndex >= 0 && handBoneIndex < result.Length )
-						{
-							var handBoneComponent = controller.Bones[ handBoneIndex ];
-
-							var foreArmBoneComponent = handBoneComponent.Parent as SkeletonBone;
-							if( foreArmBoneComponent != null )
-							{
-								var foreArmBoneIndex = controller.GetBoneIndex( foreArmBoneComponent.Name );
-								if( foreArmBoneIndex >= 0 && foreArmBoneIndex < result.Length )
-								{
-									var armBoneComponent = foreArmBoneComponent.Parent as SkeletonBone;
-									if( armBoneComponent != null )
-									{
-										var armBoneIndex = controller.GetBoneIndex( armBoneComponent.Name );
-										if( armBoneIndex >= 0 && armBoneIndex < result.Length )
-										{
-											var shoulderBoneComponent = armBoneComponent.Parent as SkeletonBone;
-											if( shoulderBoneComponent != null )
-											{
-												var shoulderBoneIndex = controller.GetBoneIndex( shoulderBoneComponent.Name );
-												if( shoulderBoneIndex >= 0 && shoulderBoneIndex < result.Length )
-												{
-													ref var handBone = ref result[ handBoneIndex ];
-													ref var foreArmBone = ref result[ foreArmBoneIndex ];
-													ref var armBone = ref result[ armBoneIndex ];
-													ref var shoulderBone = ref result[ shoulderBoneIndex ];
-
-													Matrix4F handBoneMatrix = Matrix4F.Identity;
-													Matrix4F foreArmBoneMatrix = Matrix4F.Identity;
-													Matrix4F armBoneMatrix = Matrix4F.Identity;
-													Matrix4F shoulderBoneMatrix = Matrix4F.Identity;
-
-													if( controller.GetBoneGlobalTransform( handBoneIndex, ref handBoneMatrix ) &&
-														controller.GetBoneGlobalTransform( foreArmBoneIndex, ref foreArmBoneMatrix ) &&
-														controller.GetBoneGlobalTransform( armBoneIndex, ref armBoneMatrix ) &&
-														controller.GetBoneGlobalTransform( shoulderBoneIndex, ref shoulderBoneMatrix ) )
-													{
-														var handBonePosition = handBoneMatrix.GetTranslation();
-														var foreArmBonePosition = foreArmBoneMatrix.GetTranslation();
-														var armBonePosition = armBoneMatrix.GetTranslation();
-														//var shoulderBonePosition = shoulderBoneMatrix.GetTranslation();
-
-														Vector3 requiredForeArmBonePosition;
-														{
-															var bone1Length = ( foreArmBonePosition - armBonePosition ).Length();
-															var bone2Length = ( handBonePosition - foreArmBonePosition ).Length();
-															var totalLength = bone1Length + bone2Length;
-															var requiredLength = ( objectHandPosition - armBonePosition ).Length();
-
-															if( requiredLength >= totalLength )
-															{
-																//flat
-																requiredForeArmBonePosition = ( armBonePosition + objectHandPosition ) * 0.5;
-															}
-															else
-															{
-																//bend
-
-																var a = requiredLength;
-																var b = bone1Length;
-																var c = bone2Length;
-																var p = 0.5 * ( a + b + c );
-																var h = ( 2.0 * Math.Sqrt( p * ( p - a ) * ( p - b ) * ( p - c ) ) ) / a;
-
-																//h = b * sin(yAngle)
-																var yAngle = Math.Asin( h / b );
-
-																var dir = ( objectHandPosition - armBonePosition ).GetNormalize();
-																var sphericalDir = SphericalDirection.FromVector( dir );
-																sphericalDir.Vertical -= yAngle;
-
-																requiredForeArmBonePosition = armBonePosition + sphericalDir.GetVector().GetNormalize() * bone1Length;
-															}
-
-															//_tempDebug.Add( requiredForeArmBonePosition );
-														}
-
-														//_tempDebug.Add( foreArmBonePosition );
-
-														//_tempDebug.Add( armBonePosition );
-														//_tempDebug.Add( requiredForeArmBonePosition );
-														//_tempDebug.Add( localHandPosition );
-
-														QuaternionF armRotationOffset;
-
-														//calculate arm bone
-														{
-															var dir = ( requiredForeArmBonePosition - armBonePosition ).GetNormalize();
-
-															armBoneMatrix.Decompose( out _, out QuaternionF objectArmRotation, out _ );
-
-															shoulderBoneMatrix.Decompose( out _, out QuaternionF objectShoulderRotation, out _ );
-															var objectShoulderRotationInv = objectShoulderRotation.GetInverse();
-
-															//!!!!take into account the starting angles. now hands are always down, idle
-
-															var sphericalDir = SphericalDirection.FromVector( dir );
-
-															armRotationOffset =
-																QuaternionF.FromRotateByZ( (float)-sphericalDir.Horizontal ) *
-																QuaternionF.FromRotateByY( (float)sphericalDir.Vertical + MathEx.PI / 2 );
-
-															var rot = armRotationOffset * objectArmRotation;
-
-															var newRotation = objectShoulderRotationInv * rot;
-															armBone.Rotation = QuaternionF.Slerp( armBone.Rotation, newRotation, (float)factor );
-														}
-
-														QuaternionF foreArmRotationOffset;
-
-														//calculate fore arm bone
-														{
-															var dir = ( objectHandPosition - requiredForeArmBonePosition ).GetNormalize();
-
-															foreArmBoneMatrix.Decompose( out _, out QuaternionF objectForeArmRotation, out _ );
-
-															armBoneMatrix.Decompose( out _, out QuaternionF objectArmRotation, out _ );
-															var objectArmRotationInv = objectArmRotation.GetInverse();
-
-															//!!!!take into account the starting angles. now hands are always down, idle
-
-															var sphericalDir = SphericalDirection.FromVector( dir );
-
-															foreArmRotationOffset = armRotationOffset.GetInverse() *
-																QuaternionF.FromRotateByZ( (float)-sphericalDir.Horizontal ) *
-																QuaternionF.FromRotateByY( (float)sphericalDir.Vertical + MathEx.PI / 2 );
-
-															var rot = foreArmRotationOffset * objectForeArmRotation;
-
-															//var rot = armRotationOffset.GetInverse() *
-															//	QuaternionF.FromRotateByZ( (float)-sphericalDir.Horizontal ) *
-															//	QuaternionF.FromRotateByY( (float)sphericalDir.Vertical + MathEx.PI / 2 ) *
-															//	objectForeArmRotation;
-
-															var newRotation = objectArmRotationInv * rot;
-															foreArmBone.Rotation = QuaternionF.Slerp( foreArmBone.Rotation, newRotation, (float)factor );
-														}
-
-														////calculate hand bone
-														//{
-														//	handBoneMatrix.Decompose( out _, out QuaternionF objectHandRotationM, out _ );
-
-														//	foreArmBoneMatrix.Decompose( out _, out QuaternionF objectForeArmRotation, out _ );
-														//	var objectForeArmRotationInv = objectForeArmRotation.GetInverse();
-
-														//	var rot = foreArmRotationOffset.GetInverse() *
-														//		//QuaternionF.FromRotateByY( (float)MathEx.PI / 2 ) *
-														//		QuaternionF.FromRotateByZ( (float)EngineApp.EngineTime ) *
-														//		objectHandRotationM;
-
-														//	//var rot = foreArmRotationOffset * objectHandRotationM;
-
-														//	var newRotation = objectForeArmRotationInv * rot;
-														//	handBone.Rotation = QuaternionF.Slerp( handBone.Rotation, newRotation, (float)factor );
-
-														//	//handBone.Rotation = QuaternionF.FromRotateByX( (float)MathEx.PI / 2 );
-
-														//	//handBone.Rotation = QuaternionF.FromRotateByX( (float)EngineApp.EngineTime );
-														//}
-
-
-
-
-														////calculate arm bone
-														//{
-														//	var dir = ( requiredForeArmBonePosition - armBonePosition ).GetNormalize();
-
-														//	shoulderBoneMatrix.Decompose( out _, out QuaternionF shoulderRot, out _ );
-														//	var dirLocal = shoulderRot.GetInverse() * dir.ToVector3F();
-														//	if( !left )
-														//		dirLocal = -dirLocal;
-
-														//	var upLocal = shoulderRot.GetInverse() * ( new Vector3F( 0, left ? -1 : 1, 1 ).GetNormalize() );
-
-														//	var newRotation = QuaternionF.LookAt( dirLocal, upLocal );
-														//	armBone.Rotation = QuaternionF.Slerp( armBone.Rotation, newRotation, (float)factor );
-														//}
-
-														////calculate fore arm bone
-														//{
-														//	var dir = ( localHandPosition - foreArmBonePosition ).GetNormalize();
-
-														//	armBoneMatrix.Decompose( out _, out QuaternionF armRot, out _ );
-														//	var dirLocal = armRot.GetInverse() * dir.ToVector3F();
-														//	if( !left )
-														//		dirLocal = -dirLocal;
-
-														//	var upLocal = armRot.GetInverse() * ( new Vector3F( 0, left ? -1 : 1, 1 ).GetNormalize() );
-
-														//	var newRotation = QuaternionF.LookAt( dirLocal, upLocal );
-														//	foreArmBone.Rotation = QuaternionF.Slerp( foreArmBone.Rotation, newRotation, (float)factor );
-														//}
-
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-
-			//head
-			{
-				var factor = HeadFactor.Value;
-				if( factor > 0 )
-				{
-					//update skeleton twice because during calculation the data of bone transforms taken from previous update
-					updateTwice = true;
-
-					if( updateIteration == 1 )
-					{
-						var worldLookAt = HeadLookAt.Value;
-
-						//inverseTransform
-						if( !inverseTransformCalculated )
-						{
-							/*meshInSpace.*/
-							TransformV.ToMatrix4().GetInverse( out inverseTransform );
-							inverseTransformCalculated = true;
-						}
-
-						var localLookAt = inverseTransform * worldLookAt;
-
-						//!!!!
-						//_tempDebug.Add( localHandPosition );
-
-
-						var headBoneIndex = controller.GetBoneIndex( typeCached.HeadBone );
-						if( headBoneIndex >= 0 && headBoneIndex < result.Length )
-						{
-							var headBoneComponent = controller.Bones[ headBoneIndex ];
-
-							var neckBoneComponent = headBoneComponent.Parent as SkeletonBone;
-							if( neckBoneComponent != null )
-							{
-								var neckBoneIndex = controller.GetBoneIndex( neckBoneComponent.Name );
-								if( neckBoneIndex >= 0 && neckBoneIndex < result.Length )
-								{
-									ref var headBone = ref result[ headBoneIndex ];
-									ref var neckBone = ref result[ neckBoneIndex ];
-
-									Matrix4F headBoneMatrix = Matrix4F.Identity;
-									Matrix4F neckBoneMatrix = Matrix4F.Identity;
-
-									if( controller.GetBoneGlobalTransform( headBoneIndex, ref headBoneMatrix ) &&
-										controller.GetBoneGlobalTransform( neckBoneIndex, ref neckBoneMatrix ) )
-									{
-										var headBonePosition = headBoneMatrix.GetTranslation();
-										//var neckBonePosition = neckBoneMatrix.GetTranslation();
-
-
-										//!!!!simple implementation
-
-										var dir = ( localLookAt - headBonePosition ).GetNormalize();
-										var sphericalDir = SphericalDirectionF.FromVector( dir.ToVector3F() );
-
-										var newRotation = QuaternionF.FromRotateByY( -sphericalDir.Horizontal ) * QuaternionF.FromRotateByX( sphericalDir.Vertical );
-
-
-										//var rot = QuaternionF.LookAt( dir.ToVector3F(), new Vector3F( 0, 0, 1 ) );
-
-										//var newRotation = rot * QuaternionF.FromRotateByY( MathEx.PI / 2 );// Quaternion.FromRotateByX( EngineApp.EngineTime ).ToQuaternionF();
-
-										//headBoneMatrix.Decompose( out _, out QuaternionF headRot, out _ );
-										//neckBoneMatrix.Decompose( out _, out QuaternionF neckRot, out _ );
-										//var dirLocal = neckRot.GetInverse() * dir.ToVector3F();
-
-										//neckRot *= QuaternionF.FromRotateByY( MathEx.PI / 2 ) * QuaternionF.FromRotateByX( MathEx.PI / 2 );
-										//headRot *= QuaternionF.FromRotateByY( MathEx.PI / 2 ) * QuaternionF.FromRotateByX( MathEx.PI / 2 );
-
-										//_tempDebug.Add( headBonePosition + neckRot.GetForward() );
-										//_tempDebug.Add( headBonePosition + neckRot.GetUp() * 0.5f );
-
-										//var newRotation = headBone.Rotation * neckRot.GetInverse() * rot;
-
-										//var upLocal = neckRot.GetInverse() * ( new Vector3F( 0, 1, 0 ).GetNormalize() );
-
-										//var newRotation = Quaternion.FromRotateByX( EngineApp.EngineTime ).ToQuaternionF();
-
-										//var newRotation = neckRot.GetInverse() * QuaternionF.FromRotateByX( -MathEx.PI / 2 ) * Quaternion.FromRotateByY( -sphericalDir.Horizontal ).ToQuaternionF();
-
-
-										headBone.Rotation = QuaternionF.Slerp( headBone.Rotation, newRotation, (float)factor );
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-
-		}
-
+		[MethodImpl( (MethodImplOptions)512 )]
 		void TickAnimate( float delta )
 		{
 			//play one animation
@@ -2441,64 +2316,137 @@ namespace NeoAxis
 					StartPlayOneAnimation( null );
 			}
 
-			if( typeCached.Animate )
+			//play one animation additional
+			if( playOneAnimationAdditional != null )
+			{
+				playOneAnimationAdditionalRemainingTime -= delta;
+				if( playOneAnimationAdditionalRemainingTime <= 0 )
+					StartPlayOneAnimationAdditional( null );
+			}
+
+			//if( TypeCached.Animate )
 			{
 				var controller = GetAnimationController();
 				if( controller != null )
 				{
+					var activeItem = GetActiveItem();
+
+					Weapon activeWeapon;
+					bool rifleAnimations;
+					bool oneHandedMeleeWeaponAnimations;
+					bool basicItemAnimations;
+					if( activeItem != null )
+					{
+						activeWeapon = activeItem as Weapon;
+						rifleAnimations = activeWeapon != null && activeWeapon.TypeCached.WayToUse.Value == WeaponType.WayToUseEnum.Rifle;
+						oneHandedMeleeWeaponAnimations = activeWeapon != null && activeWeapon.TypeCached.WayToUse.Value == WeaponType.WayToUseEnum.OneHandedMelee;
+						basicItemAnimations = activeItem as Item != null;
+					}
+					else
+					{
+						activeWeapon = null;
+						rifleAnimations = false;
+						oneHandedMeleeWeaponAnimations = false;
+						basicItemAnimations = false;
+					}
+
 					Animation animation = null;
 					double speed = 1;
 					bool autoRewind = true;
+					bool freezeOnEnd = false;
 
 					if( PhysicalBody != null )
 					{
-						if( IsOnGroundWithLatency() )
+						if( IsOnGround() )// IsOnGroundWithLatency() )
 						{
-							var localVelocity = TransformV.Rotation.GetInverse() * GetLinearVelocity();
-							var linearSpeedNoScale = ( localVelocity.X + Math.Abs( localVelocity.Y ) * 0.5 ) / GetScaleFactor();
+							var localVelocityNoScale = TransformV.Rotation.GetInverse() * GetGroundRelativeVelocity() / GetScaleFactor();
+							//var localVelocityNoScale = TransformV.Rotation.GetInverse() * GetLinearVelocity() / GetScaleFactor();
 
-							//RunAnimation
-							if( typeCached.Run )
+							var localSpeedNoScale = localVelocityNoScale.X;
+							//var localSpeedNoScale = localVelocityNoScale.ToVector2().Length();
+							//var localMovementAngle = Math.Atan2( localVelocityNoScale.Y, localVelocityNoScale.X );
+
+							//Run
+							if( TypeCached.Run )
 							{
-								var running = Math.Abs( linearSpeedNoScale ) > typeCached.RunForwardMaxSpeed * 0.6;
+								var running = Math.Abs( localSpeedNoScale ) > TypeCached.RunForwardMaxSpeed * 0.6;
+								//var running = localSpeedNoScale > TypeCached.RunForwardMaxSpeed * 0.6;
 								if( running )
 								{
-									animation = typeCached.RunAnimation;
+									animation = TypeCached.RunAnimation;
 									if( animation != null )
-										speed = typeCached.RunAnimationSpeed * linearSpeedNoScale;
+										speed = TypeCached.RunAnimationSpeed * localSpeedNoScale;
 								}
 							}
 
-							//WalkAnimation
+							//Walk
 							if( animation == null )
 							{
-								var walking = Math.Abs( linearSpeedNoScale ) > typeCached.WalkForwardMaxSpeed * 0.2;
+								var walking = Math.Abs( localSpeedNoScale ) > TypeCached.WalkForwardMaxSpeed * 0.2 || Math.Abs( localVelocityNoScale.Y ) > TypeCached.WalkForwardMaxSpeed * 0.2;
+								//var walking = localSpeedNoScale > TypeCached.WalkForwardMaxSpeed * 0.2;
 								if( walking )
 								{
-									animation = typeCached.WalkAnimation;
-									if( animation != null )
-										speed = typeCached.WalkAnimationSpeed * linearSpeedNoScale;
+									if( rifleAnimations )
+									{
+										animation = TypeCached.RifleAimingWalkAnimation;
+										if( animation != null )
+											speed = TypeCached.RifleAimingWalkAnimationSpeed * localSpeedNoScale;
+									}
+									if( oneHandedMeleeWeaponAnimations )
+									{
+										animation = TypeCached.OneHandedMeleeWeaponWalkAnimation;
+										if( animation != null )
+											speed = TypeCached.OneHandedMeleeWeaponWalkAnimationSpeed * localSpeedNoScale;
+									}
+									if( animation == null )
+									{
+										animation = TypeCached.WalkAnimation;
+										if( animation != null )
+											speed = TypeCached.WalkAnimationSpeed * localSpeedNoScale;
+									}
 								}
 							}
 
 							//Left Turn, Right Turn
 							if( animation == null )
 							{
-								if( currentTurnToDirection.Horizontal != requiredTurnToDirection.Horizontal && IsOnGround() )
+								if( RequiredTurnToDirection.HasValue && IsOnGround() )
 								{
-									var angle = requiredTurnToDirection.Horizontal - currentTurnToDirection.Horizontal;
-									var leftTurn = Math.Sin( angle ) > 0;
+									if( CurrentTurnToDirection.Horizontal != RequiredTurnToDirection.Value.Horizontal )
+									{
+										var angle = RequiredTurnToDirection.Value.Horizontal - CurrentTurnToDirection.Horizontal;
+										var leftTurn = Math.Sin( angle ) > 0;
 
-									animation = leftTurn ? typeCached.LeftTurnAnimation : typeCached.RightTurnAnimation;
+										animation = leftTurn ? TypeCached.LeftTurnAnimation : TypeCached.RightTurnAnimation;
+										if( animation != null )
+											speed = TypeCached.TurnAnimationSpeed;
+									}
 								}
 							}
 						}
 						else
-							animation = typeCached.FlyAnimation;
+						{
+							if( !IsOnGroundWithLatency() )
+								animation = TypeCached.FlyAnimation;
+						}
 					}
 
+					if( Sitting )
+					{
+						if( animation == null )
+							animation = TypeCached.SitAnimation;
+					}
+
+					//Idle
 					if( animation == null )
-						animation = typeCached.IdleAnimation;
+					{
+						if( rifleAnimations )
+							animation = TypeCached.RifleAimingIdleAnimation;
+						if( oneHandedMeleeWeaponAnimations )
+							animation = TypeCached.OneHandedMeleeWeaponIdleAnimation;
+						if( animation == null )
+							animation = TypeCached.IdleAnimation;
+					}
 
 					//play one animation
 					if( playOneAnimation != null )
@@ -2506,87 +2454,991 @@ namespace NeoAxis
 						animation = playOneAnimation;
 						speed = playOneAnimationSpeed;
 						autoRewind = false;
+						freezeOnEnd = playOneAnimationFreezeOnEnd;
 					}
 
 					//!!!!GC
-
 					var state = new MeshInSpaceAnimationController.AnimationStateClass();
-					state.Animations.Add( new MeshInSpaceAnimationController.AnimationStateClass.AnimationItem() { Animation = animation, Speed = speed, AutoRewind = autoRewind } );
+					state.Animations.Add( new MeshInSpaceAnimationController.AnimationStateClass.AnimationItem() { Animation = animation, Speed = speed, AutoRewind = autoRewind, FreezeOnEnd = freezeOnEnd } );
+
+
+					//additional animations
+
+					if( playOneAnimationAdditional != null )
+						state.Animations.Add( playOneAnimationAdditional );
+
+					if( rifleAnimations )
+					{
+						var rifleIdle = TypeCached.RifleAimingIdleAnimation.Value;
+						var rifleIdleMinus45 = TypeCached.RifleAimingIdleMinus45Animation.Value;
+						var rifleIdlePlus45 = TypeCached.RifleAimingIdlePlus45Animation.Value;
+
+						if( rifleIdle != null && ( rifleIdleMinus45 != null || rifleIdlePlus45 != null ) )
+						{
+							//!!!!good to take angle from transform offset?
+							var transformOffset = activeWeapon.GetComponent<TransformOffset>();
+							if( transformOffset != null )
+							{
+								var spherical = SphericalDirection.FromVector( transformOffset.RotationOffset.Value.GetForward() );
+								var vertical = (float)spherical.Vertical;
+
+								if( vertical <= 0 && rifleIdleMinus45 != null )
+								{
+									var factor = -vertical / ( MathEx.PI / 4 );
+									if( factor > 1 )
+										factor = 1;
+
+									state.Animations.Add( new MeshInSpaceAnimationController.AnimationStateClass.AnimationItem() { Animation = rifleIdle, Animation2 = rifleIdleMinus45, Animation2Factor = factor, AnimationItemTag = 2, AffectBonesWithChildren = new string[] { TypeCached.UpperPartBone }, ReplaceMode = true } );
+								}
+								else if( vertical > 0 && rifleIdlePlus45 != null )
+								{
+									var factor = vertical / ( MathEx.PI / 4 );
+									if( factor > 1 )
+										factor = 1;
+
+									state.Animations.Add( new MeshInSpaceAnimationController.AnimationStateClass.AnimationItem() { Animation = rifleIdle, Animation2 = rifleIdlePlus45, Animation2Factor = factor, AnimationItemTag = 2, AffectBonesWithChildren = new string[] { TypeCached.UpperPartBone }, ReplaceMode = true } );
+								}
+							}
+						}
+					}
+
+					if( basicItemAnimations )
+					{
+						var idle = TypeCached.ItemHoldingIdleAnimation.Value;
+						if( idle == null )
+							idle = TypeCached.IdleAnimation.Value;
+
+						if( idle != null )
+						{
+							//affect only right shoulder
+							state.Animations.Add( new MeshInSpaceAnimationController.AnimationStateClass.AnimationItem() { Animation = idle, AnimationItemTag = 4, AffectBonesWithChildren = new string[] { TypeCached.RightShoulderBone }, ReplaceMode = true } );
+						}
+					}
 
 					state.AdditionalBoneTransformsUpdate = AdditionalBoneTransformsUpdate;
 
-
-					//var headLookAt = HeadLookAt.Value;
-					//if( headLookAt != null )
-					//{
-					//	state.HeadLookAt = headLookAt.TransformV.Position;
-					//	state.HeadBone = HeadBone;
-					//}
-
-					//var leftHandTransform = LeftHandTransform.Value;
-					//if( leftHandTransform != null )
-					//{
-					//	var tr = leftHandTransform.TransformV;
-					//	state.LeftHandTransform = true;
-					//	state.LeftHandPosition = tr.Position;
-					//	state.LeftHandRotation = tr.Rotation;
-					//	state.LeftHandBone = LeftHandBone;
-					//}
-
-					//var rightHandTransform = RightHandTransform.Value;
-					//if( rightHandTransform != null )
-					//{
-					//	var tr = rightHandTransform.TransformV;
-					//	state.RightHandTransform = true;
-					//	state.RightHandPosition = tr.Position;
-					//	state.RightHandRotation = tr.Rotation;
-					//	state.RightHandBone = RightHandBone;
-					//}
-
-					//state.LeftHandThumbFingerFlexion = LeftHandThumbFingerFlexion;
-					//state.LeftHandIndexFingerFlexion = LeftHandIndexFingerFlexion;
-					//state.LeftHandMiddleFingerFlexion = LeftHandMiddleFingerFlexion;
-					//state.LeftHandRingFingerFlexion = LeftHandRingFingerFlexion;
-					//state.LeftHandPinkyFingerFlexion = LeftHandPinkyFingerFlexion;
-
-					//state.RightHandThumbFingerFlexion = RightHandThumbFingerFlexion;
-					//state.RightHandIndexFingerFlexion = RightHandIndexFingerFlexion;
-					//state.RightHandMiddleFingerFlexion = RightHandMiddleFingerFlexion;
-					//state.RightHandRingFingerFlexion = RightHandRingFingerFlexion;
-					//state.RightHandPinkyFingerFlexion = RightHandPinkyFingerFlexion;
-
 					//update controller
-
 					controller.SetAnimationState( state, true );
-					//controller.PlayAnimation = animation;
-					//controller.Speed = speed;
 				}
 			}
 		}
 
-		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow = false )
+		class InverseTransformValue
 		{
-			if( Components.Count == 0 )
+			public Matrix4 Value;
+		}
+
+		//!!!!static, multithreading
+		[MethodImpl( (MethodImplOptions)512 )]
+		protected virtual void AdditionalBoneTransformsUpdate( MeshInSpaceAnimationController controller, MeshInSpaceAnimationController.AnimationStateClass animationState, Skeleton skeleton, SkeletonAnimationTrack.CalculateBoneTransformsItem[] outputBoneTransforms )
+		{
+			//this code is quite specialized
+
+			//!!!!
+			//_tempDebug.Clear();
+
+
+			//get inverse transform with caching
+			InverseTransformValue inverseTransform = null;
+			InverseTransformValue GetInverseTransform()
 			{
-				var controller = CreateComponent<MeshInSpaceAnimationController>();
-				controller.Name = "Animation Controller";
+				if( inverseTransform == null )
+				{
+					inverseTransform = new InverseTransformValue();
+					( TransformVisualOverride ?? TransformV ).ToMatrix4().GetInverse( out inverseTransform.Value );
+				}
+				return inverseTransform;
+			}
 
-				//var inputProcessing = CreateComponent<CharacterInputProcessing>();
-				//inputProcessing.Name = "Character Input Processing";
 
-				//var characterAI = CreateComponent<CharacterAI>();
-				//characterAI.Name = "Character AI";
-				//characterAI.NetworkMode = NetworkModeEnum.False;
+			var globalBoneTransforms = controller.GetBoneGlobalTransforms();
+
+			var activeItem = GetActiveItem();
+			Weapon weapon = null;
+			Item basicItem = null;
+			if( activeItem != null )
+			{
+				weapon = activeItem as Weapon;
+				basicItem = activeItem as Item;
+			}
+
+			var firstPersonCamera = IsControlledByPlayerAndFirstPersonCameraEnabled();
+
+			//rotate look to position for rifle weapon
+			if( weapon != null && weapon.TypeCached.WayToUse.Value == WeaponType.WayToUseEnum.Rifle && !Sitting )
+			{
+				var transformOffset = weapon.GetComponent<TransformOffset>();
+				if( transformOffset != null )
+				{
+					//get factor from animation state
+					var morphFactor = 0.0f;
+					var animationItem = animationState.FindItemByAnimationItemTag( 2 );
+					if( animationItem != null && animationItem.CurrentFactor.HasValue )
+						morphFactor = animationItem.CurrentFactor.Value;
+
+					var leftHandBoneIndex = controller.GetBoneIndex( TypeCached.LeftHandBone );
+					var rightHandBoneIndex = controller.GetBoneIndex( TypeCached.RightHandBone );
+					if( leftHandBoneIndex != -1 && rightHandBoneIndex != -1 )
+					{
+						var spineBoneIndexes = new List<int>();
+						{
+							var boneIndex = controller.GetBoneIndex( TypeCached.SpineBone1 );
+							if( boneIndex != -1 )
+								spineBoneIndexes.Add( boneIndex );
+						}
+						{
+							var boneIndex = controller.GetBoneIndex( TypeCached.SpineBone2 );
+							if( boneIndex != -1 )
+								spineBoneIndexes.Add( boneIndex );
+						}
+						{
+							var boneIndex = controller.GetBoneIndex( TypeCached.SpineBone3 );
+							if( boneIndex != -1 )
+								spineBoneIndexes.Add( boneIndex );
+						}
+
+						if( spineBoneIndexes.Count != 0 )
+						{
+							controller.CalculateGlobalBoneTransforms();
+
+
+							Vector3 requiredArmsCenterPosition;
+							if( transformOffset.AnyData != null && transformOffset.AnyData is Vector3 )
+							{
+								requiredArmsCenterPosition = (Vector3)transformOffset.AnyData - GetSmoothCameraOffset() + transformOffset.RotationOffset.Value * weapon.TypeCached.GetArmsCenter();
+							}
+							else
+							{
+								requiredArmsCenterPosition = transformOffset.PositionOffset.Value - GetSmoothCameraOffset() + transformOffset.RotationOffset.Value * weapon.TypeCached.GetArmsCenter();
+							}
+
+
+							for( int boneNumber = 0; boneNumber < spineBoneIndexes.Count; boneNumber++ )
+							{
+								var spineBoneIndex = spineBoneIndexes[ boneNumber ];
+								var spineBonePosition = globalBoneTransforms[ spineBoneIndex ].Position;
+								var spineBoneRotation = globalBoneTransforms[ spineBoneIndex ].Rotation;
+								ref var spineBoneItem = ref outputBoneTransforms[ spineBoneIndex ];
+
+								var currentArmsCenterPosition = ( globalBoneTransforms[ leftHandBoneIndex ].Position + globalBoneTransforms[ rightHandBoneIndex ].Position ) * 0.5f;
+
+								var toCurrentDirection = SphericalDirectionF.FromVector( currentArmsCenterPosition - spineBonePosition );
+								var toRequiredDirection = SphericalDirectionF.FromVector( requiredArmsCenterPosition.ToVector3F() - spineBonePosition );
+								var diffDirection = toRequiredDirection - toCurrentDirection;
+
+								var spineBoneRotationNew = QuaternionF.FromRotateByZ( -diffDirection.Horizontal ) * QuaternionF.FromRotateByY( diffDirection.Vertical ) * spineBoneRotation;
+
+								float factor = 0.3333f + boneNumber * 0.3333f;
+								if( factor > 0.99f )
+									factor = 1;
+
+								spineBoneItem.Rotation = QuaternionF.Slerp( spineBoneRotation, spineBoneRotationNew, factor * morphFactor );
+								spineBoneItem.Flags |= SkeletonAnimationTrack.CalculateBoneTransformsItem.FlagsEnum.GlobalRotation;
+								globalBoneTransforms[ spineBoneIndex ].NeedUpdate = true;
+							}
+						}
+
+						//calibrate hands position
+
+						{
+							controller.CalculateGlobalBoneTransforms();
+
+							{
+								var boneLeftShoulderIndex = controller.GetBoneIndex( TypeCached.LeftShoulderBone );
+								var boneLeftArmIndex = controller.GetBoneIndex( TypeCached.LeftArmBone );
+								//var boneLeftForeArmIndex = controller.GetBoneIndex( "mixamorig:LeftForeArm" );
+								var boneLeftHandIndex = controller.GetBoneIndex( TypeCached.LeftHandBone );
+								var boneLeftHandMiddle1Index = controller.GetBoneIndex( TypeCached.GetFingerBoneName( "Left", "Middle", 1 ) );
+
+								if( boneLeftShoulderIndex != -1 && boneLeftArmIndex != -1 && boneLeftHandIndex != -1 && boneLeftHandMiddle1Index != -1 )
+								{
+									ref var boneLeftShoulderItem = ref outputBoneTransforms[ boneLeftShoulderIndex ];
+									ref var boneLeftArmItem = ref outputBoneTransforms[ boneLeftArmIndex ];
+
+									var boneLeftHand = globalBoneTransforms[ boneLeftHandIndex ].Position;
+									var boneLeftHandMiddle1 = globalBoneTransforms[ boneLeftHandMiddle1Index ].Position;
+									var currentPosition = Vector3F.Lerp( boneLeftHand, boneLeftHandMiddle1, 0.75f );
+
+									var requiredPosition = transformOffset.PositionOffset.Value - GetSmoothCameraOffset() + transformOffset.RotationOffset.Value * weapon.TypeCached.GetHandguardCenter() - new Vector3( 0, 0, 0.01 );
+
+									var sourceBonePosition = globalBoneTransforms[ boneLeftShoulderIndex ].Position;
+									var sourceBoneRotation = globalBoneTransforms[ boneLeftShoulderIndex ].Rotation;
+
+									var rotation1 = QuaternionF.FromDirectionZAxisUp( ( requiredPosition - sourceBonePosition ).ToVector3F() );
+									var rotation2 = QuaternionF.FromDirectionZAxisUp( currentPosition - sourceBonePosition );
+
+									var sourceBoneRotationNew = ( rotation1 * rotation2.GetInverse() ) * sourceBoneRotation;
+
+									//!!!!
+									var factor = 1.0f;
+
+									boneLeftShoulderItem.Rotation = QuaternionF.Slerp( sourceBoneRotation, sourceBoneRotationNew, factor * morphFactor );
+									boneLeftShoulderItem.Flags |= SkeletonAnimationTrack.CalculateBoneTransformsItem.FlagsEnum.GlobalRotation;
+									globalBoneTransforms[ boneLeftShoulderIndex ].NeedUpdate = true;
+
+									//don't change next bone rotation
+									boneLeftArmItem.Rotation = globalBoneTransforms[ boneLeftArmIndex ].Rotation;
+									boneLeftArmItem.Flags |= SkeletonAnimationTrack.CalculateBoneTransformsItem.FlagsEnum.GlobalRotation;
+									globalBoneTransforms[ boneLeftArmIndex ].NeedUpdate = true;
+								}
+							}
+
+
+							{
+								var boneRightShoulderIndex = controller.GetBoneIndex( TypeCached.RightShoulderBone );
+								var boneRightArmIndex = controller.GetBoneIndex( TypeCached.RightArmBone );
+								//var boneRightForeArmIndex = controller.GetBoneIndex( "mixamorig:RightForeArm" );
+								var boneRightHandIndex = controller.GetBoneIndex( TypeCached.RightHandBone );
+								var boneRightHandMiddle1Index = controller.GetBoneIndex( TypeCached.GetFingerBoneName( "Right", "Middle", 1 ) );
+
+								if( boneRightShoulderIndex != -1 && boneRightArmIndex != -1 && boneRightHandIndex != -1 && boneRightHandMiddle1Index != -1 )
+								{
+									ref var boneRightShoulderItem = ref outputBoneTransforms[ boneRightShoulderIndex ];
+									ref var boneRightArmItem = ref outputBoneTransforms[ boneRightArmIndex ];
+
+									var boneRightHand = globalBoneTransforms[ boneRightHandIndex ].Position;
+									var boneRightHandMiddle1 = globalBoneTransforms[ boneRightHandMiddle1Index ].Position;
+									//var currentPosition = boneRightHandMiddle1;
+									var currentPosition = Vector3F.Lerp( boneRightHand, boneRightHandMiddle1, 0.75f );
+
+									var requiredPosition = transformOffset.PositionOffset.Value - GetSmoothCameraOffset() + transformOffset.RotationOffset.Value * weapon.TypeCached.GetPistolGripCenter();
+
+									var sourceBonePosition = globalBoneTransforms[ boneRightShoulderIndex ].Position;
+									var sourceBoneRotation = globalBoneTransforms[ boneRightShoulderIndex ].Rotation;
+
+									var rotation1 = QuaternionF.FromDirectionZAxisUp( ( requiredPosition - sourceBonePosition ).ToVector3F() );
+									var rotation2 = QuaternionF.FromDirectionZAxisUp( currentPosition - sourceBonePosition );
+
+									var sourceBoneRotationNew = ( rotation1 * rotation2.GetInverse() ) * sourceBoneRotation;
+									//var sourceBoneRotationNew = sourceBoneRotation * ( rotation1 * rotation2.GetInverse() );
+
+									//	sourceBoneRotationNew = ( rotation2.GetInverse() * rotation1 ) * sourceBoneRotation;
+
+									//!!!!
+									var factor = 1.0f;
+
+									boneRightShoulderItem.Rotation = QuaternionF.Slerp( sourceBoneRotation, sourceBoneRotationNew, factor * morphFactor );
+									boneRightShoulderItem.Flags |= SkeletonAnimationTrack.CalculateBoneTransformsItem.FlagsEnum.GlobalRotation;
+									globalBoneTransforms[ boneRightShoulderIndex ].NeedUpdate = true;
+
+									//don't change next bone rotation
+									boneRightArmItem.Rotation = globalBoneTransforms[ boneRightArmIndex ].Rotation;
+									boneRightArmItem.Flags |= SkeletonAnimationTrack.CalculateBoneTransformsItem.FlagsEnum.GlobalRotation;
+									globalBoneTransforms[ boneRightArmIndex ].NeedUpdate = true;
+								}
+							}
+						}
+
+					}
+				}
+			}
+
+			//rotate look to position for basic item
+			if( basicItem != null && CurrentLookToPosition.HasValue && !Sitting )
+			{
+				var transformOffset = basicItem.GetComponent<TransformOffset>();
+				if( transformOffset != null )
+				{
+					//get factor from animation state
+					var morphFactor = 0.0f;
+					var animationItem = animationState.FindItemByAnimationItemTag( 4 );
+					if( animationItem != null && animationItem.CurrentFactor.HasValue )
+						morphFactor = animationItem.CurrentFactor.Value;
+
+					//rotate upper body part
+					{
+						var spineBoneIndexes = new List<int>();
+						{
+							var boneIndex = controller.GetBoneIndex( TypeCached.SpineBone1 );
+							if( boneIndex != -1 )
+								spineBoneIndexes.Add( boneIndex );
+						}
+						{
+							var boneIndex = controller.GetBoneIndex( TypeCached.SpineBone2 );
+							if( boneIndex != -1 )
+								spineBoneIndexes.Add( boneIndex );
+						}
+						{
+							var boneIndex = controller.GetBoneIndex( TypeCached.SpineBone3 );
+							if( boneIndex != -1 )
+								spineBoneIndexes.Add( boneIndex );
+						}
+
+						if( spineBoneIndexes.Count != 0 )
+						{
+							controller.CalculateGlobalBoneTransforms();
+
+							var tr = TransformV;
+							var current = QuaternionF.FromDirectionZAxisUp( tr.Rotation.GetForward().ToVector3F() );
+							var diff = CurrentLookToPosition.Value - tr.Position;
+							var required = QuaternionF.LookAt( new Vector3F( (float)diff.X, (float)diff.Y, 0 ), Vector3F.ZAxis );
+							var diffRotation = required * current.GetInverse();
+
+							for( int boneNumber = 0; boneNumber < spineBoneIndexes.Count; boneNumber++ )
+							{
+								var spineBoneIndex = spineBoneIndexes[ boneNumber ];
+								ref var spineBoneRotation = ref globalBoneTransforms[ spineBoneIndex ].Rotation;
+								ref var spineBoneItem = ref outputBoneTransforms[ spineBoneIndex ];
+
+								var spineBoneRotationNew = diffRotation * spineBoneRotation;
+
+								float factor = 0.3333f + boneNumber * 0.3333f;
+								if( factor > 0.99f )
+									factor = 1;
+
+								spineBoneItem.Rotation = QuaternionF.Slerp( spineBoneRotation, spineBoneRotationNew, factor * morphFactor );
+								spineBoneItem.Flags |= SkeletonAnimationTrack.CalculateBoneTransformsItem.FlagsEnum.GlobalRotation;
+								globalBoneTransforms[ spineBoneIndex ].NeedUpdate = true;
+							}
+						}
+					}
+
+
+					controller.CalculateGlobalBoneTransforms();
+
+
+					//calibrate hands position
+					{
+						QuaternionF CalculateLookAt( Vector3F diff )
+						{
+							var angle = MathEx.Atan2( diff.Z, diff.X );
+							angle -= MathEx.PI / 2;
+							return QuaternionF.LookAt( diff, new SphericalDirectionF( 0, angle ).GetVector() );
+						}
+
+						var handBoneIndex = controller.GetBoneIndex( TypeCached.RightHandBone );
+						if( handBoneIndex != -1 )
+						{
+							var handBoneComponent = controller.Bones[ handBoneIndex ];
+
+							var foreArmBoneComponent = handBoneComponent.Parent as SkeletonBone;
+							if( foreArmBoneComponent != null )
+							{
+								var foreArmBoneIndex = controller.GetBoneIndex( foreArmBoneComponent.Name );
+								if( foreArmBoneIndex != -1 )
+								{
+									var armBoneComponent = foreArmBoneComponent.Parent as SkeletonBone;
+									if( armBoneComponent != null )
+									{
+										var armBoneIndex = controller.GetBoneIndex( armBoneComponent.Name );
+										if( armBoneIndex != -1 )
+										{
+											var requiredHandPosition = ( GetInverseTransform().Value * basicItem.TransformV.Position ).ToVector3F();
+
+											//custom
+											requiredHandPosition += transformOffset.RotationOffset.Value.ToQuaternionF() * new Vector3F( -0.13f, 0, 0 );
+											//requiredHandPosition += transformOffset.RotationOffset.Value.ToQuaternionF() * new Vector3F( -0.07f, 0.03f, 0.03f );
+
+											//calculate arm bone rotation
+											{
+												ref var handBonePosition = ref globalBoneTransforms[ handBoneIndex ].Position;
+												ref var foreArmBonePosition = ref globalBoneTransforms[ foreArmBoneIndex ].Position;
+												ref var armBonePosition = ref globalBoneTransforms[ armBoneIndex ].Position;
+												ref var armBoneRotation = ref globalBoneTransforms[ armBoneIndex ].Rotation;
+
+												Vector3F requiredForeArmPosition;
+												{
+													var bone1Length = ( foreArmBonePosition - armBonePosition ).Length();
+													var bone2Length = ( handBonePosition - foreArmBonePosition ).Length();
+													var totalLength = bone1Length + bone2Length;
+													var requiredLength = ( requiredHandPosition - armBonePosition ).Length();
+
+													if( requiredLength >= totalLength )
+													{
+														//flat
+														requiredForeArmPosition = ( armBonePosition + requiredHandPosition ) * 0.5f;
+													}
+													else
+													{
+														//bend
+
+														var a = requiredLength;
+														var b = bone1Length;
+														var c = bone2Length;
+														var p = 0.5 * ( a + b + c );
+														var h = ( 2.0 * Math.Sqrt( p * ( p - a ) * ( p - b ) * ( p - c ) ) ) / a;
+
+														var yAngle = (float)Math.Asin( h / b );//h = b * sin(yAngle)
+
+														var dir = ( requiredHandPosition - armBonePosition ).GetNormalize();
+														var sphericalDir = SphericalDirectionF.FromVector( dir );
+
+														sphericalDir.Vertical -= yAngle;
+
+														requiredForeArmPosition = armBonePosition + sphericalDir.GetVector().GetNormalize() * bone1Length;
+
+														//add horizontal offset
+														requiredForeArmPosition.Y -= 0.1f;
+
+														//!!!!
+														////apply twist
+														//{
+														//	var twistAngle = new DegreeF( 20 ).InRadians();
+														//	var rot = QuaternionF.FromDirectionZAxisUp( requiredHandPosition - armBonePosition ) * QuaternionF.FromRotateByX( twistAngle );
+														//	//var rot = QuaternionF.FromRotateByX( twistAngle ) * QuaternionF.FromDirectionZAxisUp( requiredHandPosition - armBonePosition );
+
+														//	var diff = requiredForeArmPosition - armBonePosition;
+														//	diff = rot * diff;
+														//	requiredForeArmPosition = armBonePosition + diff;
+														//}
+													}
+												}
+
+												ref var armBoneItem = ref outputBoneTransforms[ armBoneIndex ];
+
+												var current = CalculateLookAt( foreArmBonePosition - armBonePosition );
+												var required = CalculateLookAt( requiredForeArmPosition - armBonePosition );
+												var diffRotation = required * current.GetInverse();
+
+												var armBoneRotationNew = diffRotation * armBoneRotation;
+
+												armBoneItem.Rotation = QuaternionF.Slerp( armBoneRotation, armBoneRotationNew, morphFactor );
+												armBoneItem.Flags |= SkeletonAnimationTrack.CalculateBoneTransformsItem.FlagsEnum.GlobalRotation;
+												globalBoneTransforms[ armBoneIndex ].NeedUpdate = true;
+											}
+
+
+											controller.CalculateGlobalBoneTransforms();
+
+
+											//calculate fore arm bone rotation
+											{
+												ref var handBonePosition = ref globalBoneTransforms[ handBoneIndex ].Position;
+												ref var foreArmBonePosition = ref globalBoneTransforms[ foreArmBoneIndex ].Position;
+												ref var foreArmBoneRotation = ref globalBoneTransforms[ foreArmBoneIndex ].Rotation;
+
+												ref var foreArmBoneItem = ref outputBoneTransforms[ foreArmBoneIndex ];
+
+												var current = CalculateLookAt( handBonePosition - foreArmBonePosition );
+												var required = CalculateLookAt( requiredHandPosition - foreArmBonePosition );
+												var diffRotation = required * current.GetInverse();
+
+												var foreArmBoneRotationNew = diffRotation * foreArmBoneRotation;
+
+												foreArmBoneItem.Rotation = QuaternionF.Slerp( foreArmBoneRotation, foreArmBoneRotationNew, morphFactor );
+												foreArmBoneItem.Flags |= SkeletonAnimationTrack.CalculateBoneTransformsItem.FlagsEnum.GlobalRotation;
+												globalBoneTransforms[ foreArmBoneIndex ].NeedUpdate = true;
+											}
+
+
+											controller.CalculateGlobalBoneTransforms();
+
+
+											//calculate hand rotation
+											{
+												ref var handBoneRotation = ref globalBoneTransforms[ handBoneIndex ].Rotation;
+												ref var handBoneItem = ref outputBoneTransforms[ handBoneIndex ];
+
+												//custom
+												var handBoneRotationNew = transformOffset.RotationOffset.Value.ToQuaternionF();
+												handBoneRotationNew *= QuaternionF.FromRotateByZ( new DegreeF( 90 ).InRadians() );
+												handBoneRotationNew *= QuaternionF.FromRotateByY( new DegreeF( 180 ).InRadians() );
+
+												//var handBoneRotationNew = transformOffset.RotationOffset.Value.ToQuaternionF() * QuaternionF.FromRotateByZ( new DegreeF( -65 ).InRadians() ) * new QuaternionF( 0.5f, 0.5f, 0.5f, 0.5f );
+
+												handBoneItem.Rotation = QuaternionF.Slerp( handBoneRotation, handBoneRotationNew, morphFactor );
+												handBoneItem.Flags |= SkeletonAnimationTrack.CalculateBoneTransformsItem.FlagsEnum.GlobalRotation;
+												globalBoneTransforms[ handBoneIndex ].NeedUpdate = true;
+											}
+										}
+									}
+								}
+							}
+
+						}
+					}
+				}
+			}
+
+			//sitting
+			if( Sitting )
+			{
+				controller.CalculateGlobalBoneTransforms();
+
+				//!!!!maybe rotate the root and the beginning of the legs in the other direction to get better visual result
+
+				//!!!!control hands
+
+
+				{
+					var boneIndex = controller.GetBoneIndex( TypeCached.SpineBone1 );
+					if( boneIndex != -1 )
+					{
+						ref var boneItem = ref outputBoneTransforms[ boneIndex ];
+						var boneRotation = globalBoneTransforms[ boneIndex ].Rotation;
+
+						boneItem.Rotation = QuaternionF.FromRotateByY( SittingSpineAngle.ToDegreeF().InRadians() ) * boneRotation;
+						boneItem.Flags |= SkeletonAnimationTrack.CalculateBoneTransformsItem.FlagsEnum.GlobalRotation;
+						globalBoneTransforms[ boneIndex ].NeedUpdate = true;
+					}
+				}
+
+				var legsRotation = QuaternionF.FromRotateByY( SittingLegsAngle.ToDegreeF().InRadians() );
+
+				{
+					var boneIndex = controller.GetBoneIndex( typeCached.LeftLegBone );
+					if( boneIndex != -1 )
+					{
+						ref var boneItem = ref outputBoneTransforms[ boneIndex ];
+						var boneRotation = globalBoneTransforms[ boneIndex ].Rotation;
+
+						boneItem.Rotation = legsRotation * boneRotation;
+						boneItem.Flags |= SkeletonAnimationTrack.CalculateBoneTransformsItem.FlagsEnum.GlobalRotation;
+						globalBoneTransforms[ boneIndex ].NeedUpdate = true;
+					}
+				}
+
+				{
+					var boneIndex = controller.GetBoneIndex( typeCached.RightLegBone );
+					if( boneIndex != -1 )
+					{
+						ref var boneItem = ref outputBoneTransforms[ boneIndex ];
+						var boneRotation = globalBoneTransforms[ boneIndex ].Rotation;
+
+						boneItem.Rotation = legsRotation * boneRotation;
+						boneItem.Flags |= SkeletonAnimationTrack.CalculateBoneTransformsItem.FlagsEnum.GlobalRotation;
+						globalBoneTransforms[ boneIndex ].NeedUpdate = true;
+					}
+				}
+			}
+
+			//hands
+			for( var hand = HandEnum.Left; hand <= HandEnum.Right; hand++ )
+			{
+				var morphFactor = (float)( hand == HandEnum.Left ? LeftHandFactor.Value : RightHandFactor.Value );
+				if( morphFactor > 0 )
+				{
+					var requiredWorldHandTransform = hand == HandEnum.Left ? LeftHandTransform.Value : RightHandTransform.Value;
+					var requiredHandPosition = ( GetInverseTransform().Value * requiredWorldHandTransform.Position ).ToVector3F();
+					//!!!!impl
+					//var requiredHandRotation = Quaternion.LookAt( inverseTransform * worldHandTransform.Rotation.GetForward(), inverseTransform * worldHandTransform.Rotation.GetUp() );
+
+					//!!!!
+					//_tempDebug.Add( localHandPosition );
+
+					QuaternionF CalculateLookAt( Vector3F diff )
+					{
+						var angle = MathEx.Atan2( diff.Z, diff.X );
+						angle -= MathEx.PI / 2;
+						return QuaternionF.LookAt( diff, new SphericalDirectionF( 0, angle ).GetVector() );
+					}
+
+					var handBoneIndex = controller.GetBoneIndex( hand == HandEnum.Left ? TypeCached.LeftHandBone : TypeCached.RightHandBone );
+					if( handBoneIndex != -1 )
+					{
+						var handBoneComponent = controller.Bones[ handBoneIndex ];
+
+						var foreArmBoneComponent = handBoneComponent.Parent as SkeletonBone;
+						if( foreArmBoneComponent != null )
+						{
+							var foreArmBoneIndex = controller.GetBoneIndex( foreArmBoneComponent.Name );
+							if( foreArmBoneIndex != -1 )
+							{
+								var armBoneComponent = foreArmBoneComponent.Parent as SkeletonBone;
+								if( armBoneComponent != null )
+								{
+									var armBoneIndex = controller.GetBoneIndex( armBoneComponent.Name );
+									if( armBoneIndex != -1 )
+									{
+
+										controller.CalculateGlobalBoneTransforms();
+
+
+										//calculate arm bone rotation
+										{
+											ref var handBonePosition = ref globalBoneTransforms[ handBoneIndex ].Position;
+											ref var foreArmBonePosition = ref globalBoneTransforms[ foreArmBoneIndex ].Position;
+											ref var armBonePosition = ref globalBoneTransforms[ armBoneIndex ].Position;
+											ref var armBoneRotation = ref globalBoneTransforms[ armBoneIndex ].Rotation;
+
+											Vector3F requiredForeArmPosition;
+											{
+												var bone1Length = ( foreArmBonePosition - armBonePosition ).Length();
+												var bone2Length = ( handBonePosition - foreArmBonePosition ).Length();
+												var totalLength = bone1Length + bone2Length;
+												var requiredLength = ( requiredHandPosition - armBonePosition ).Length();
+
+												if( requiredLength >= totalLength )
+												{
+													//flat
+													requiredForeArmPosition = ( armBonePosition + requiredHandPosition ) * 0.5f;
+												}
+												else
+												{
+													//bend
+
+													var a = requiredLength;
+													var b = bone1Length;
+													var c = bone2Length;
+													var p = 0.5 * ( a + b + c );
+													var h = ( 2.0 * Math.Sqrt( p * ( p - a ) * ( p - b ) * ( p - c ) ) ) / a;
+
+													var yAngle = (float)Math.Asin( h / b );//h = b * sin(yAngle)
+
+													var dir = ( requiredHandPosition - armBonePosition ).GetNormalize();
+													var sphericalDir = SphericalDirectionF.FromVector( dir );
+
+													sphericalDir.Vertical -= yAngle;
+
+													requiredForeArmPosition = armBonePosition + sphericalDir.GetVector().GetNormalize() * bone1Length;
+												}
+											}
+
+											ref var armBoneItem = ref outputBoneTransforms[ armBoneIndex ];
+
+											var current = CalculateLookAt( foreArmBonePosition - armBonePosition );
+											var required = CalculateLookAt( requiredForeArmPosition - armBonePosition );
+											var diffRotation = required * current.GetInverse();
+
+											var armBoneRotationNew = diffRotation * armBoneRotation;
+
+											armBoneItem.Rotation = QuaternionF.Slerp( armBoneRotation, armBoneRotationNew, morphFactor );
+											armBoneItem.Flags |= SkeletonAnimationTrack.CalculateBoneTransformsItem.FlagsEnum.GlobalRotation;
+											globalBoneTransforms[ armBoneIndex ].NeedUpdate = true;
+										}
+
+
+										controller.CalculateGlobalBoneTransforms();
+
+
+										//calculate fore arm bone rotation
+										{
+											ref var handBonePosition = ref globalBoneTransforms[ handBoneIndex ].Position;
+											ref var foreArmBonePosition = ref globalBoneTransforms[ foreArmBoneIndex ].Position;
+											ref var foreArmBoneRotation = ref globalBoneTransforms[ foreArmBoneIndex ].Rotation;
+
+											ref var foreArmBoneItem = ref outputBoneTransforms[ foreArmBoneIndex ];
+
+											var current = CalculateLookAt( handBonePosition - foreArmBonePosition );
+											var required = CalculateLookAt( requiredHandPosition - foreArmBonePosition );
+											var diffRotation = required * current.GetInverse();
+
+											var foreArmBoneRotationNew = diffRotation * foreArmBoneRotation;
+
+											foreArmBoneItem.Rotation = QuaternionF.Slerp( foreArmBoneRotation, foreArmBoneRotationNew, morphFactor );
+											foreArmBoneItem.Flags |= SkeletonAnimationTrack.CalculateBoneTransformsItem.FlagsEnum.GlobalRotation;
+											globalBoneTransforms[ foreArmBoneIndex ].NeedUpdate = true;
+										}
+
+
+										//controller.CalculateGlobalBoneTransforms();
+
+
+										////calculate hand rotation
+										//{
+										//	ref var handBoneRotation = ref globalBoneTransforms[ handBoneIndex ].Rotation;
+										//	ref var handBoneItem = ref outputBoneTransforms[ handBoneIndex ];
+
+										//	//custom
+										//	var handBoneRotationNew = transformOffset.RotationOffset.Value.ToQuaternionF() * QuaternionF.FromRotateByZ( new DegreeF( -65 ).InRadians() ) * new QuaternionF( 0.5f, 0.5f, 0.5f, 0.5f );
+
+										//	handBoneItem.Rotation = QuaternionF.Slerp( handBoneRotation, handBoneRotationNew, morphFactor );
+										//	handBoneItem.Flags |= SkeletonAnimationTrack.CalculateBoneTransformsItem.FlagsEnum.GlobalRotation;
+										//	globalBoneTransforms[ handBoneIndex ].NeedUpdate = true;
+										//}
+
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			//head
+			{
+				var headFactor = HeadFactor.Value;
+
+				var factor = headFactor;
+				Vector3F? localLookAt = null;
+
+				if( headFactor == 0 )
+				{
+					//!!!!
+					//rotate head for first person camera when no item activated
+					if( headFactor == 0 /*&& activeItem == null*/ && firstPersonCamera && CurrentLookToPosition.HasValue )
+					{
+						factor = 1;
+						localLookAt = ( GetInverseTransform().Value * CurrentLookToPosition.Value ).ToVector3F();
+					}
+
+					//Sitting specific
+					if( Sitting )
+					{
+						factor = 1;
+						localLookAt = new Vector3F( 1000, 0, 0 );
+					}
+				}
+
+				if( factor > 0 )
+				{
+					//default behaviour
+					if( !localLookAt.HasValue )
+						localLookAt = ( GetInverseTransform().Value * HeadLookAt.Value ).ToVector3F();
+
+					var headBoneIndex = controller.GetBoneIndex( TypeCached.HeadBone );
+					if( headBoneIndex != -1 )
+					{
+						ref var headBone = ref outputBoneTransforms[ headBoneIndex ];
+
+						controller.CalculateGlobalBoneTransforms();
+
+						var headBonePosition = globalBoneTransforms[ headBoneIndex ].Position;
+						var headBoneRotation = globalBoneTransforms[ headBoneIndex ].Rotation;
+
+						var dir = ( localLookAt.Value - headBonePosition ).GetNormalize();
+						var rotation = QuaternionF.LookAt( dir, Vector3F.ZAxis );
+
+						//!!!!maybe better to multiply to initial bone transform? controller.Bones[ headBoneIndex ].Transform.Value.Rotation;
+						var destRotation = rotation * new QuaternionF( 0.5f, 0.5f, 0.5f, 0.5f );
+						headBone.Rotation = QuaternionF.Slerp( headBoneRotation, destRotation, (float)factor );
+						headBone.Flags |= SkeletonAnimationTrack.CalculateBoneTransformsItem.FlagsEnum.GlobalRotation;
+						globalBoneTransforms[ headBoneIndex ].NeedUpdate = true;
+					}
+				}
+			}
+
+
+			//!!!!can skip fingers update on far distances
+
+			//left hand fingers
+			{
+				if( LeftHandThumbFingerFlexionFactor > 0 )
+				{
+					var value = (float)LeftHandThumbFingerFlexionValue.Value;
+
+					var rotation =
+						-QuaternionF.FromRotateByY( MathEx.PI / 2 / -1.0f * value / 4 ) *
+						-QuaternionF.FromRotateByX( MathEx.PI / 2 / -1.0f * value / 4 ) *
+						-QuaternionF.FromRotateByZ( MathEx.PI / 2 / 1.0f * value / 4 );
+
+					for( int n = 1; n <= 3; n++ )
+					{
+						var boneIndex = controller.GetBoneIndex( TypeCached.GetFingerBoneName( "Left", "Thumb", n ) );
+						if( boneIndex != -1 )
+						{
+							ref var item = ref outputBoneTransforms[ boneIndex ];
+							QuaternionF.Slerp( ref item.Rotation, ref rotation, (float)LeftHandThumbFingerFlexionFactor, out item.Rotation );
+							globalBoneTransforms[ boneIndex ].NeedUpdate = true;
+						}
+					}
+				}
+
+				if( LeftHandIndexFingerFlexionFactor > 0 )
+				{
+					var rotation = QuaternionF.FromRotateByX( MathEx.PI / 2 * -1.0f * (float)LeftHandIndexFingerFlexionValue );
+					for( int n = 1; n <= 3; n++ )
+					{
+						var boneIndex = controller.GetBoneIndex( TypeCached.GetFingerBoneName( "Left", "Index", n ) );
+						if( boneIndex != -1 )
+						{
+							ref var item = ref outputBoneTransforms[ boneIndex ];
+							QuaternionF.Slerp( ref item.Rotation, ref rotation, (float)LeftHandIndexFingerFlexionFactor, out item.Rotation );
+							globalBoneTransforms[ boneIndex ].NeedUpdate = true;
+						}
+					}
+				}
+
+				if( LeftHandMiddleFingerFlexionFactor > 0 )
+				{
+					var rotation = QuaternionF.FromRotateByX( MathEx.PI / 2 * -1.0f * (float)LeftHandMiddleFingerFlexionValue );
+					for( int n = 1; n <= 3; n++ )
+					{
+						var boneIndex = controller.GetBoneIndex( TypeCached.GetFingerBoneName( "Left", "Middle", n ) );
+						if( boneIndex != -1 )
+						{
+							ref var item = ref outputBoneTransforms[ boneIndex ];
+							QuaternionF.Slerp( ref item.Rotation, ref rotation, (float)LeftHandMiddleFingerFlexionFactor, out item.Rotation );
+							globalBoneTransforms[ boneIndex ].NeedUpdate = true;
+						}
+					}
+				}
+
+				if( LeftHandRingFingerFlexionFactor > 0 )
+				{
+					var rotation = QuaternionF.FromRotateByX( MathEx.PI / 2 * -1.0f * (float)LeftHandRingFingerFlexionValue );
+					for( int n = 1; n <= 3; n++ )
+					{
+						var boneIndex = controller.GetBoneIndex( TypeCached.GetFingerBoneName( "Left", "Ring", n ) );
+						if( boneIndex != -1 )
+						{
+							ref var item = ref outputBoneTransforms[ boneIndex ];
+							QuaternionF.Slerp( ref item.Rotation, ref rotation, (float)LeftHandRingFingerFlexionFactor, out item.Rotation );
+							globalBoneTransforms[ boneIndex ].NeedUpdate = true;
+						}
+					}
+				}
+
+				if( LeftHandLittleFingerFlexionFactor > 0 )
+				{
+					var rotation = QuaternionF.FromRotateByX( MathEx.PI / 2 * -1.0f * (float)LeftHandLittleFingerFlexionValue );
+					for( int n = 1; n <= 3; n++ )
+					{
+						var boneIndex = controller.GetBoneIndex( TypeCached.GetFingerBoneName( "Left", "Pinky", n ) );
+						if( boneIndex == -1 )
+							boneIndex = controller.GetBoneIndex( TypeCached.GetFingerBoneName( "Left", "Little", n ) );
+						if( boneIndex != -1 )
+						{
+							ref var item = ref outputBoneTransforms[ boneIndex ];
+							QuaternionF.Slerp( ref item.Rotation, ref rotation, (float)LeftHandLittleFingerFlexionFactor, out item.Rotation );
+							globalBoneTransforms[ boneIndex ].NeedUpdate = true;
+						}
+					}
+				}
+			}
+
+			//right hand fingers
+			{
+				var basicItemInHand = basicItem != null;
+
+				//thumb
+				{
+					var factor = (float)RightHandThumbFingerFlexionFactor.Value;
+					var value = (float)RightHandThumbFingerFlexionValue.Value;
+					if( factor == 0 && basicItemInHand )
+					{
+						factor = 1;
+						value = 0.5f;
+					}
+
+					if( factor > 0 )
+					{
+						var rotation =
+							QuaternionF.FromRotateByY( MathEx.PI / 2 / 1.0f * value / 4 ) *
+							QuaternionF.FromRotateByX( MathEx.PI / 2 / -1.0f * value / 4 ) *
+							QuaternionF.FromRotateByZ( MathEx.PI / 2 / -1.0f * value / 4 );
+
+						for( int n = 1; n <= 3; n++ )
+						{
+							var boneIndex = controller.GetBoneIndex( TypeCached.GetFingerBoneName( "Right", "Thumb", n ) );
+							if( boneIndex != -1 )
+							{
+								ref var item = ref outputBoneTransforms[ boneIndex ];
+								QuaternionF.Slerp( ref item.Rotation, ref rotation, factor, out item.Rotation );
+								globalBoneTransforms[ boneIndex ].NeedUpdate = true;
+							}
+						}
+					}
+				}
+
+				//index
+				{
+					var factor = (float)RightHandIndexFingerFlexionFactor.Value;
+					var value = (float)RightHandIndexFingerFlexionValue.Value;
+					if( factor == 0 && basicItemInHand )
+					{
+						factor = 1;
+						value = 0.5f;
+					}
+
+					if( factor > 0 )
+					{
+						var rotation = QuaternionF.FromRotateByX( MathEx.PI / 2 * -value );
+						for( int n = 1; n <= 3; n++ )
+						{
+							var boneIndex = controller.GetBoneIndex( TypeCached.GetFingerBoneName( "Right", "Index", n ) );
+							if( boneIndex != -1 )
+							{
+								ref var item = ref outputBoneTransforms[ boneIndex ];
+								QuaternionF.Slerp( ref item.Rotation, ref rotation, factor, out item.Rotation );
+								globalBoneTransforms[ boneIndex ].NeedUpdate = true;
+							}
+						}
+					}
+				}
+
+				//middle
+				{
+					var factor = (float)RightHandMiddleFingerFlexionFactor.Value;
+					var value = (float)RightHandMiddleFingerFlexionValue.Value;
+					if( factor == 0 && basicItemInHand )
+					{
+						factor = 1;
+						value = 0.6f;
+					}
+
+					if( factor > 0 )
+					{
+						var rotation = QuaternionF.FromRotateByX( MathEx.PI / 2 * -value );
+						for( int n = 1; n <= 3; n++ )
+						{
+							var boneIndex = controller.GetBoneIndex( TypeCached.GetFingerBoneName( "Right", "Middle", n ) );
+							if( boneIndex != -1 )
+							{
+								ref var item = ref outputBoneTransforms[ boneIndex ];
+								QuaternionF.Slerp( ref item.Rotation, ref rotation, factor, out item.Rotation );
+								globalBoneTransforms[ boneIndex ].NeedUpdate = true;
+							}
+						}
+					}
+				}
+
+				//ring
+				{
+					var factor = (float)RightHandRingFingerFlexionFactor.Value;
+					var value = (float)RightHandRingFingerFlexionValue.Value;
+					if( factor == 0 && basicItemInHand )
+					{
+						factor = 1;
+						value = 0.7f;
+					}
+
+					if( factor > 0 )
+					{
+						var rotation = QuaternionF.FromRotateByX( MathEx.PI / 2 * -value );
+						for( int n = 1; n <= 3; n++ )
+						{
+							var boneIndex = controller.GetBoneIndex( TypeCached.GetFingerBoneName( "Right", "Ring", n ) );
+							if( boneIndex != -1 )
+							{
+								ref var item = ref outputBoneTransforms[ boneIndex ];
+								QuaternionF.Slerp( ref item.Rotation, ref rotation, factor, out item.Rotation );
+								globalBoneTransforms[ boneIndex ].NeedUpdate = true;
+							}
+						}
+					}
+				}
+
+				//little
+				{
+					var factor = (float)RightHandLittleFingerFlexionFactor.Value;
+					var value = (float)RightHandLittleFingerFlexionValue.Value;
+					if( factor == 0 && basicItemInHand )
+					{
+						factor = 1;
+						value = 0.8f;
+					}
+
+					if( factor > 0 )
+					{
+						var rotation = QuaternionF.FromRotateByX( MathEx.PI / 2 * -value );
+						for( int n = 1; n <= 3; n++ )
+						{
+							var boneIndex = controller.GetBoneIndex( TypeCached.GetFingerBoneName( "Right", "Pinky", n ) );
+							if( boneIndex == -1 )
+								boneIndex = controller.GetBoneIndex( TypeCached.GetFingerBoneName( "Right", "Little", n ) );
+							if( boneIndex != -1 )
+							{
+								ref var item = ref outputBoneTransforms[ boneIndex ];
+								QuaternionF.Slerp( ref item.Rotation, ref rotation, factor, out item.Rotation );
+								globalBoneTransforms[ boneIndex ].NeedUpdate = true;
+							}
+						}
+					}
+				}
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public bool IsFreePositionToMove( Vector3 position )
 		{
+			//!!!!check where used
+
 			if( PhysicalBody != null )
 			{
 				GetVolumeCapsule( out var capsule );
 				//make radius smaller
-				capsule.Radius *= .99f;
+				capsule.Radius *= 0.99;
 
 				var offset = position - TransformV.Position;//capsule.GetCenter();
 				var checkCapsule = capsule;
@@ -2595,7 +3447,7 @@ namespace NeoAxis
 				var scene = ParentScene;
 				if( scene != null )
 				{
-					var contactTestItem = new PhysicsVolumeTestItem( checkCapsule, Vector3.Zero, PhysicsVolumeTestItem.ModeEnum.All/*OneForEach*/ );
+					var contactTestItem = new PhysicsVolumeTestItem( checkCapsule, Vector3.Zero, PhysicsVolumeTestItem.ModeEnum.OneForEach );
 					ParentScene.PhysicsVolumeTest( contactTestItem );
 
 					foreach( var item in contactTestItem.Result )
@@ -2613,17 +3465,147 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		public ItemInterface[] GetAllItems()
+		{
+			return GetComponents<ItemInterface>();
+		}
+
+		public ItemInterface GetItemByType( ItemTypeInterface type )
+		{
+			if( type != null )
+			{
+				foreach( var c in GetComponents<ItemInterface>() )
+				{
+					var item = c as Item;
+					if( item != null )
+					{
+						if( item.ItemType.Value == type )
+							return c;
+					}
+
+					var weapon = c as Weapon;
+					if( weapon != null )
+					{
+						if( weapon.WeaponType.Value == type )
+							return c;
+					}
+				}
+			}
+			return null;
+		}
+
+		public ItemInterface GetItemByResourceName( string resourceName )
+		{
+			foreach( var c in GetComponents<ItemInterface>() )
+			{
+				var item = c as Item;
+				if( item != null )
+				{
+					var itemType = item.ItemType.Value;
+					if( itemType != null )
+					{
+						var resource = ComponentUtility.GetResourceInstanceByComponent( itemType );
+						if( resource != null && resource.Owner.Name == resourceName )
+							return c;
+					}
+				}
+
+				var weapon = c as Weapon;
+				if( weapon != null )
+				{
+					var itemType = weapon.WeaponType.Value;
+					if( itemType != null )
+					{
+						var resource = ComponentUtility.GetResourceInstanceByComponent( itemType );
+						if( resource != null && resource.Owner.Name == resourceName )
+							return c;
+					}
+				}
+
+			}
+			return null;
+		}
+
+		public ItemInterface GetActiveItem()
+		{
+			//optimized to remove memory allocations
+
+			var node = Components.GetLinkedListReadOnly()?.First;
+			while( node != null )
+			{
+				var component = node.Value;
+				if( component.Enabled )
+				{
+					var item = component as ItemInterface;
+					if( item != null )
+						return item;
+				}
+				node = node.Next;
+			}
+
+			//foreach( var item in GetAllItems() )
+			//{
+			//	if( item.Enabled )
+			//		return item;
+			//}
+
+			return null;
+		}
+
+		public Weapon GetActiveWeapon()
+		{
+			return GetActiveItem() as Weapon;
+		}
+
+		public bool ItemCanTake( GameMode gameMode, ItemInterface item )
+		{
+			var item2 = (ObjectInSpace)item;
+
+			//allow manage inventory
+			if( !TypeCached.AllowManageInventory && EngineApp.IsSimulation )
+				return false;
+
+			//check already taken
+			if( item2.Parent == this )
+				return false;
+
+			//disable taking from another owner
+			if( item2.Parent as ObjectInSpace != null )
+				return false;
+
+			//InventoryCharacterCanHaveSeveralWeapons, InventoryCharacterCanHaveSeveralWeaponsOfSameType
+			var weapon = item2 as Weapon;
+			if( weapon != null )
+			{
+				if( !gameMode.InventoryCharacterCanHaveSeveralWeapons && GetComponent<Weapon>() != null )
+					return false;
+				if( !gameMode.InventoryCharacterCanHaveSeveralWeaponsOfSameType && GetItemByType( weapon.WeaponType.Value ) != null )
+					return false;
+			}
+
+			//!!!!need check by distance and do other checks. can be done in GameMode.ItemTakeEvent
+
+			var allowAction = true;
+			gameMode.PerformItemCanTakeEvent( this, item, ref allowAction );
+			if( !allowAction )
+				return false;
+
+			return true;
+		}
+
 		/// <summary>
 		/// Takes the item. The item will moved to the character and will disabled.
 		/// </summary>
 		/// <param name="item"></param>
-		public void ItemTake( IGameFrameworkItem item )
+		public bool ItemTake( GameMode gameMode, ItemInterface item )
 		{
 			var item2 = (ObjectInSpace)item;
 
-			//check already taken
-			if( item2.Parent == this )
-				return;
+			if( gameMode != null )
+			{
+				if( !ItemCanTake( gameMode, item ) )
+					return false;
+			}
 
 			//disable
 			item2.Enabled = false;
@@ -2632,15 +3614,31 @@ namespace NeoAxis
 			ObjectInSpaceUtility.Detach( item2 );
 			item2.RemoveFromParent( false );
 
+			//Item: combine into one item
+			var basicItem = item as Item;
+			if( basicItem != null )
+			{
+				if( basicItem.ItemType.Value.CanCombineIntoOneItem )
+				{
+					var existsItem = GetItemByType( basicItem.ItemType.Value );
+					if( existsItem != null )
+					{
+						existsItem.ItemCount += basicItem.ItemCount;
+						return true;
+					}
+				}
+			}
+
 			var originalScale = item2.TransformV.Scale;
 
 			//attach
 			AddComponent( item2 );
-			//!!!!
 			item2.Transform = GetCenteredTransform();//Transform.Value;
 			var transformOffset = ObjectInSpaceUtility.Attach( this, item2, TransformOffset.ModeEnum.Elements );
 			if( transformOffset != null )
 				transformOffset.ScaleOffset = originalScale / GetScaleFactor();
+
+			return true;
 		}
 
 		/// <summary>
@@ -2648,65 +3646,225 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="item"></param>
 		/// <param name="newTransform"></param>
-		public void ItemDrop( IGameFrameworkItem item, bool calculateTransform = false, Transform setTransform = null )
+		public bool ItemDrop( GameMode gameMode, ItemInterface item/*, bool calculateTransform, Transform setTransform*/, double amount )
 		{
 			var item2 = (ObjectInSpace)item;
+			var amount2 = amount;
+
+			if( !TypeCached.AllowManageInventory && EngineApp.IsSimulation )
+				return false;
 
 			//check can drop
 			if( item2.Parent != this )
-				return;
+				return false;
 
-			//disable
-			item2.Enabled = false;
+			var allowAction = true;
+			gameMode.PerformItemCanDropEvent( this, item, ref allowAction, ref amount2 );
+			if( !allowAction )
+				return false;
 
-			//detach
-			ObjectInSpaceUtility.Detach( item2 );
-			item2.RemoveFromParent( false );
+			//Item: combined into one item
+			var itemSplit = false;
+			{
+				var basicItem = item2 as Item;
+				if( basicItem != null )
+				{
+					if( basicItem.ItemCount - amount2 > 0 )
+					{
+						basicItem.ItemCount -= amount2;
+						itemSplit = true;
+					}
+				}
+			}
+
+			var existsCollision = false;
+			{
+				var meshInSpace = item2 as MeshInSpace;
+				if( meshInSpace != null )
+				{
+					var mesh = meshInSpace.Mesh.Value;
+					if( mesh != null && mesh.GetComponent<RigidBody>( "Collision Definition" ) != null )
+						existsCollision = true;
+				}
+			}
+
+			if( !itemSplit )
+			{
+				//disable
+				item2.Enabled = false;
+
+				//detach
+				ObjectInSpaceUtility.Detach( item2 );
+				item2.RemoveFromParent( false );
+			}
+			else
+			{
+				item2 = (ObjectInSpace)item2.Clone();
+				( (Item)item2 ).ItemCount = amount2;
+			}
 
 			//add to the scene
 			ParentScene.AddComponent( item2 );
-			if( calculateTransform )
+
+			//calculate transform
 			{
-				//it is simple implementation
 				var scaleFactor = GetScaleFactor();
 
-				item2.Transform = new Transform( TransformV.Position + new Vector3( 0, 0, 0.2 * scaleFactor /*- typeCached.PositionToGroundHeight * scaleFactor*/ ), TransformV.Rotation, item2.TransformV.Scale );
+				//!!!!need calculate better position
+
+				var tr = TransformVisualOverride ?? TransformV;
+
+				if( existsCollision )
+				{
+					var pos = tr.Position + new Vector3( 0, 0, TypeCached.Height / 2 ) + tr.Rotation * new Vector3( 1.3, 0, 0 );
+					item2.Transform = new Transform( pos, tr.Rotation, item2.TransformV.Scale );
+				}
+				else
+				{
+					item2.Transform = new Transform( tr.Position + new Vector3( 0, 0, 0.1 * scaleFactor /*- TypeCached.PositionToGroundHeight * scaleFactor*/ ), tr.Rotation, item2.TransformV.Scale );
+				}
 			}
-			else if( setTransform != null )
-				item2.Transform = setTransform;
+			//else if( setTransform != null )
+			//	item2.Transform = setTransform;
 
 			//enable
 			item2.Enabled = true;
+
+			return true;
+		}
+
+		public void ItemDropClient( ItemInterface item, double amount )
+		{
+			var component = item as Component;
+			if( component != null )
+			{
+				var writer = BeginNetworkMessageToServer( "ItemDrop" );
+				if( writer != null )
+				{
+					writer.WriteVariableUInt64( (ulong)component.NetworkID );
+					writer.Write( amount );//writer.WriteVariableInt32( amount );
+					EndNetworkMessage();
+				}
+			}
 		}
 
 		/// <summary>
 		/// Activates the item. The item will enabled.
 		/// </summary>
 		/// <param name="item"></param>
-		public void ItemActivate( IGameFrameworkItem item )
+		public bool ItemActivate( GameMode gameMode, ItemInterface item )
 		{
 			var item2 = (ObjectInSpace)item;
+
+			if( !TypeCached.AllowManageInventory && EngineApp.IsSimulation )
+				return false;
+
+			//Item
+			var basicItem = item as Item;
+			if( basicItem != null && !basicItem.ItemType.Value.CanActivate )
+				return false;
+
+			if( gameMode != null )
+			{
+				var allowAction = true;
+				gameMode.PerformItemCanActivateEvent( this, item, ref allowAction );
+				if( !allowAction )
+					return false;
+			}
+
+			//deactivate other before activate new
+			{
+				foreach( var item3 in GetAllItems() )
+					ItemDeactivate( gameMode, item3 );
+
+				//if can't deactivate other, then can't activate new
+				if( GetActiveItem() != null )
+					return false;
+			}
+
 			item2.Enabled = true;
+
+			return true;
 		}
 
 		/// <summary>
 		/// Deactivates the item. The item will disabled.
 		/// </summary>
 		/// <param name="item"></param>
-		public void ItemDeactivate( IGameFrameworkItem item )
+		public bool ItemDeactivate( GameMode gameMode, ItemInterface item )
 		{
 			var item2 = (ObjectInSpace)item;
+
+			if( !TypeCached.AllowManageInventory && EngineApp.IsSimulation )
+				return false;
+
+			if( !item2.Enabled )
+				return true;
+
+			if( gameMode != null )
+			{
+				var allowAction = true;
+				gameMode.PerformItemCanDeactivateEvent( this, item, ref allowAction );
+				if( !allowAction )
+					return false;
+			}
+
 			item2.Enabled = false;
+
+			return true;
+		}
+
+		public void DeactivateAllItems( GameMode gameMode )
+		{
+			foreach( var item in GetAllItems() )
+				ItemDeactivate( gameMode, item );
+		}
+
+		public void ItemTakeAndActivateClient( ItemInterface item, bool activate )
+		{
+			var item2 = (ObjectInSpace)item;
+
+			var writer = BeginNetworkMessageToServer( "ItemTakeAndActivate" );
+			if( writer != null )
+			{
+				writer.WriteVariableUInt64( (ulong)item2.NetworkID );
+				writer.Write( activate );
+				EndNetworkMessage();
+			}
+		}
+
+		public void ItemActivateClient( ItemInterface item )
+		{
+			var item2 = (ObjectInSpace)item;
+
+			var writer = BeginNetworkMessageToServer( "ItemActivate" );
+			if( writer != null )
+			{
+				writer.WriteVariableUInt64( (ulong)item2.NetworkID );
+				EndNetworkMessage();
+			}
+		}
+
+		public void ItemDeactivateClient( ItemInterface item )
+		{
+			var item2 = (ObjectInSpace)item;
+
+			var writer = BeginNetworkMessageToServer( "ItemDeactivate" );
+			if( writer != null )
+			{
+				writer.WriteVariableUInt64( (ulong)item2.NetworkID );
+				EndNetworkMessage();
+			}
 		}
 
 		/// <summary>
-		/// Returns first activated item of the character.
+		/// Returns first item of the character.
 		/// </summary>
 		/// <returns></returns>
-		public IGameFrameworkItem ItemGetEnabledFirst()
+		public ItemInterface ItemGetFirst()
 		{
 			foreach( var c in Components )
-				if( c.Enabled && c is IGameFrameworkItem item )
+				if( c is ItemInterface item )
 					return item;
 			return null;
 		}
@@ -2722,7 +3880,7 @@ namespace NeoAxis
 			if( meshLength <= 0 )
 				return;
 
-			var scene = FindParent<Scene>();
+			var scene = ParentScene;//FindParent<Scene>();
 			if( scene == null )
 				return;
 
@@ -2776,152 +3934,532 @@ namespace NeoAxis
 				offset.RotationOffset = Quaternion.FromRotateByY( newAngle.Value.InRadians() );
 		}
 
-		protected virtual void UpdateEnabledItemTransform( float delta )
+		void UpdateActiveItemTransformOffset()
 		{
-			//disable update for first person camera
-			if( disableUpdateAttachedWeaponRemainingTime > 0 )
-			{
-				disableUpdateAttachedWeaponRemainingTime -= delta;
-				if( disableUpdateAttachedWeaponRemainingTime < 0 )
-					disableUpdateAttachedWeaponRemainingTime = 0;
-			}
-			else
-			{
-				var item = ItemGetEnabledFirst();
-				if( item != null )
-				{
-					var obj = item as ObjectInSpace;
-					if( obj != null )
-					{
-						var offset = obj.GetComponent<TransformOffset>();
-						if( offset != null )
-						{
-							var weapon = item as Weapon;
-							if( weapon != null )
-							{
-								var rotationOffet = CurrentTurnToDirection.Vertical + weapon.WeaponTypeCached.RotationOffsetWhenAttached.Value.InRadians();
-
-								//!!!!
-								var centeredOffset = new Vector3( 0, 0, typeCached.Height * 0.5 );
-
-								offset.PositionOffset = centeredOffset + weapon.WeaponTypeCached.PositionOffsetWhenAttached;
-								offset.RotationOffset = Quaternion.FromRotateByY( rotationOffet );
-
-								RotateWeaponIfCollided( weapon, offset, rotationOffet.InDegrees() );
-
-								//reset motion blur settings
-								weapon.MotionBlurFactor = 1;
-							}
-						}
-					}
-				}
-			}
-		}
-
-		public void UpdateDataForFirstPersonCamera( GameMode gameMode, Viewport viewport )
-		{
-			var item = ItemGetEnabledFirst();
+			var item = GetActiveItem() as MeshInSpace;
 			if( item != null )
 			{
-				var obj = item as ObjectInSpace;
-				if( obj != null )
+				var firstPersonCamera = IsControlledByPlayerAndFirstPersonCameraEnabled();
+
+				var transformOffset = item.GetComponent<TransformOffset>();
+				if( transformOffset != null )
 				{
-					var offset = obj.GetComponent<TransformOffset>();
-					if( offset != null )
+					//disable properties synchronization
+					if( NetworkIsServer )
 					{
-						var weapon = item as Weapon;
-						if( weapon != null )
+						if( !transformOffset.NetworkIsDisabledPropertySynchronization( "PositionOffset" ) )
 						{
-							var positionOffset = weapon.WeaponTypeCached.PositionOffsetWhenAttachedFirstPerson.Value;
-							var rotationOffset = weapon.WeaponTypeCached.RotationOffsetWhenAttachedFirstPerson.Value;
+							transformOffset.NetworkDisablePropertySynchronization( "PositionOffset" );
+							transformOffset.NetworkDisablePropertySynchronization( "RotationOffset" );
 
-							//idle, walking
-							{
-								var maxOffset = 0.005;
+							//!!!!motion blur factor?
 
-								//!!!!impl when moving
-								//if( IsOnGround() )
-								//{
-								//	var maxOffset2 = 0.01;
-								//	var factor = MathEx.Saturate( GetLinearVelocity().Length() * 0.5 );
-								//	maxOffset = MathEx.Lerp( maxOffset, maxOffset2, factor );
-								//}
-
-								positionOffset.Y += Math.Sin( Time.Current * 0.25 ) * maxOffset;
-								positionOffset.Z += Math.Sin( Time.Current * 0.43 ) * maxOffset;
-							}
-
-							//add recoil offset
-							{
-								var maxRecoil = 0.0;
-
-								for( int mode = 1; mode <= 2; mode++ )
-								{
-									if( weapon.IsFiring( mode ) )
-									{
-										var currentTime = weapon.GetFiringCurrentTime( mode );
-
-										var firingTotalTime = mode == 1 ? weapon.WeaponTypeCached.Mode1FiringTotalTime : weapon.WeaponTypeCached.Mode2FiringTotalTime;
-										var recoilOffset = mode == 1 ? weapon.WeaponTypeCached.Mode1MaxRecoilOffset : weapon.WeaponTypeCached.Mode2MaxRecoilOffset;
-										var maxRecoilOffsetTime = mode == 1 ? weapon.WeaponTypeCached.Mode1MaxRecoilOffsetTime : weapon.WeaponTypeCached.Mode2MaxRecoilOffsetTime;
-
-										var endTime = Math.Min( firingTotalTime, maxRecoilOffsetTime * 10 );
-
-										var curve = new CurveCubicSpline1();//new CurveLine1();
-										curve.AddPoint( 0, 0 );
-										curve.AddPoint( maxRecoilOffsetTime, recoilOffset );
-										curve.AddPoint( endTime, 0 );
-
-										var recoil = curve.CalculateValueByTime( currentTime );
-										if( recoil > maxRecoil )
-											maxRecoil = recoil;
-									}
-								}
-
-								positionOffset.X -= maxRecoil;
-							}
-
-							var cameraSettings = viewport.CameraSettings;
-							var worldTransform = new Transform( cameraSettings.Position + cameraSettings.Rotation * positionOffset, cameraSettings.Rotation * new Angles( 0, rotationOffset, 0 ).ToQuaternion() );
-
-							var localToCameraTransform = TransformV.ToMatrix4().GetInverse() * worldTransform.ToMatrix4();
-							localToCameraTransform.Decompose( out var position, out Quaternion rotation, out var scale );
-
-							offset.PositionOffset = position;
-							offset.RotationOffset = rotation;
-
-							RotateWeaponIfCollided( weapon, offset, new Radian( CurrentTurnToDirection.Vertical ).InDegrees() + rotationOffset );
-
-							//update bounds
-							weapon.SpaceBoundsUpdate();
-
-							//disable motion blur
-							weapon.MotionBlurFactor = 0;
-
-							//!!!!how to do it better?
-							//inform the character about first person update to disable default behaviour which doing in UpdateEnabledItemTransform()
-							disableUpdateAttachedWeaponRemainingTime = 0.25;
+							//!!!!что еще? weapon Transform?
 						}
 					}
+
+					//!!!!у пушки надо уменьшать scale, если персонаж увеличен. где еще учитывать
+
+					var weapon = item as Weapon;
+
+					if( weapon != null && weapon.TypeCached.WayToUse.Value == WeaponType.WayToUseEnum.OneHandedMelee )
+					{
+						var controller = GetAnimationController();
+						if( controller != null )
+						{
+							var globalBoneTransforms = controller.GetBoneGlobalTransforms();
+							if( globalBoneTransforms != null )
+							{
+								var boneRightHandIndex = controller.GetBoneIndex( TypeCached.RightHandBone );
+								var boneRightHandMiddle1Index = controller.GetBoneIndex( TypeCached.GetFingerBoneName( "Right", "Middle", 1 ) );
+
+								if( boneRightHandIndex != -1 && boneRightHandMiddle1Index != -1 )
+								{
+									var boneRightHand = globalBoneTransforms[ boneRightHandIndex ];//.Position;
+									var boneRightHandMiddle1 = globalBoneTransforms[ boneRightHandMiddle1Index ];//.Position;
+
+									var localCenter = Vector3F.Lerp( boneRightHand.Position, boneRightHandMiddle1.Position, 0.75f );
+									//var center = TransformV * localCenter;
+
+									//!!!!offset тоже
+
+									transformOffset.PositionOffset = localCenter.ToVector3();// boneItem.Position.ToVector3();
+
+									//!!!!
+									transformOffset.RotationOffset = boneRightHand.Rotation.ToQuaternion() * new Angles( -90, 0, 0 ).ToQuaternion();
+
+									//transformOffset.RotationOffset = boneRightHand.Rotation.ToQuaternion() * new Angles( -90, 0, -90 ).ToQuaternion();
+
+
+									////transformOffset.RotationOffset = new Angles( -90, 0, -90 ).ToQuaternion() * boneRightHand.Rotation.ToQuaternion();
+									////transformOffset.RotationOffset = Quaternion.FromRotateByX( -Math.PI / 2 ) * boneRightHand.Rotation.ToQuaternion();
+
+									////transformOffset.PositionOffset = boneItem.Position.ToVector3();
+									////transformOffset.RotationOffset = Quaternion.FromRotateByY( -Math.PI / 2 ) * boneItem.Rotation.ToQuaternion();
+
+									////transformOffset.PositionOffset = boneItem.Position.ToVector3();
+									////transformOffset.RotationOffset = boneItem.Rotation.ToQuaternion();
+
+								}
+							}
+						}
+					}
+					else
+					{
+						var typeArmsCenter = Vector3.Zero;
+						if( weapon != null )
+							typeArmsCenter = weapon.TypeCached.GetArmsCenter();
+
+						Vector3 aimingArmsCenter;
+						if( weapon != null )
+						{
+							if( firstPersonCamera )
+								aimingArmsCenter = TypeCached.RifleAimingArmsCenterFirstPerson.Value;
+							else
+								aimingArmsCenter = TypeCached.RifleAimingArmsCenter.Value;
+						}
+						else
+							aimingArmsCenter = TypeCached.ItemHoldingPosition;
+
+						var tr = TransformV;
+						var trInverse = tr.ToMatrix4().GetInverse();
+
+						var worldVectorFrom = tr.ToMatrix4() * new Vector3( 0, 0, aimingArmsCenter.Z );
+
+						Vector3 worldVectorTo;
+						if( firstPersonCamera )
+						{
+							//in first person mode use not real direction to have constant rotation
+							worldVectorTo = worldVectorFrom + Quaternion.FromDirectionZAxisUp( CurrentTurnToDirection.GetVector() ) * new Vector3( 1000, 0, 0 );
+						}
+						else if( CurrentLookToPosition.HasValue )
+							worldVectorTo = CurrentLookToPosition.Value;
+						else
+							worldVectorTo = worldVectorFrom + tr.Rotation * new Vector3( 1000, 0, 0 );
+
+						var worldRotationFromTo = Quaternion.FromDirectionZAxisUp( worldVectorTo - worldVectorFrom );
+
+						//calculate breath offset
+						var amplitude = 0.003;
+						if( weapon == null )
+							amplitude += 0.02 * GetLinearVelocity().ToVector2().Length();
+						var breathOffset = new Vector3( Math.Sin( Time.Current * 2 ) * amplitude * 1.7, 0, Math.Cos( Time.Current * 2 ) * amplitude );
+
+						//recoil offset
+						var addRecoilOffset = Vector3.Zero;
+						if( weapon != null )
+						{
+							var maxRecoil = 0.0;
+
+							for( int mode = 1; mode <= 2; mode++ )
+							{
+								if( weapon.IsFiring( mode ) )
+								{
+									var currentTime = weapon.GetFiringCurrentTime( mode );
+
+									var firingTotalTime = mode == 1 ? weapon.TypeCached.Mode1FiringTotalTime : weapon.TypeCached.Mode2FiringTotalTime;
+									var recoilOffset = mode == 1 ? weapon.TypeCached.Mode1MaxRecoilOffset : weapon.TypeCached.Mode2MaxRecoilOffset;
+									var maxRecoilOffsetTime = mode == 1 ? weapon.TypeCached.Mode1MaxRecoilOffsetTime : weapon.TypeCached.Mode2MaxRecoilOffsetTime;
+
+									var endTime = Math.Min( firingTotalTime, maxRecoilOffsetTime * 10 );
+
+									var curve = new CurveCubicSpline1();
+									curve.AddPoint( 0, 0 );
+									curve.AddPoint( maxRecoilOffsetTime, recoilOffset );
+									curve.AddPoint( endTime, 0 );
+
+									var recoil = curve.CalculateValueByTime( currentTime );
+									if( recoil > maxRecoil )
+										maxRecoil = recoil;
+								}
+							}
+
+							addRecoilOffset.X -= maxRecoil;
+						}
+
+						var worldItemPosition = worldVectorFrom + worldRotationFromTo * ( new Vector3( aimingArmsCenter.X, aimingArmsCenter.Y, 0 ) - typeArmsCenter + breathOffset + addRecoilOffset ) + GetSmoothCameraOffset();
+
+						transformOffset.PositionOffset = trInverse * worldItemPosition;
+						transformOffset.RotationOffset = tr.Rotation.GetInverse() * Quaternion.FromDirectionZAxisUp( worldVectorTo - worldItemPosition );
+
+						//save position offset to AnyData. it is used to calculate upper body rotation
+						transformOffset.AnyData = trInverse * worldItemPosition;
+
+						////save position offset without recoil and breath offset to AnyData. it is used to calculate upper body rotation
+						//transformOffset.AnyData = trInverse * ( worldVectorFrom + worldRotationFromTo * ( new Vector3( aimingArmsCenter.X, aimingArmsCenter.Y, 0 ) - typeArmsCenter ) + GetSmoothCameraOffset() );
+
+
+						//rotate weapon in special situations
+						if( weapon != null )
+							RotateWeaponIfCollided( weapon, transformOffset, new Radian( CurrentTurnToDirection.Vertical ).InDegrees() );
+					}
+
+
+					//!!!!by idea it must be always enabled
+					//reset motion blur settings
+					if( firstPersonCamera )
+						item.MotionBlurFactor = 0;
+					else
+						item.MotionBlurFactor = 1;
 				}
 			}
 		}
 
-		public void SoundPlay( Sound sound )
+
+		////var item = GetActiveItem() as MeshInSpace;
+		////if( item != null )
+		////{
+		////	var transformOffset = item.GetComponent<TransformOffset>();
+		////	if( transformOffset != null )
+		////	{
+		////		var weapon = item as Weapon;
+
+
+		////		//!!!!у пушки надо уменьшать scale, если персонаж увеличен. где еще учитывать
+
+
+
+		////		//var armsCenterWhenAimingRifle = TypeCached.ArmsCenterWhenAimingRifle.Value;
+		////		//var localTargetFromPosition = new Vector3( 0, armsCenterWhenAimingRifle.Y, armsCenterWhenAimingRifle.Z );
+
+		////		//Vector3 localTargetToPosition;
+		////		//if( CurrentLookToPosition.HasValue )
+		////		//	localTargetToPosition = tr.ToMatrix4().GetInverse() * CurrentLookToPosition.Value;
+		////		//else
+		////		//	localTargetToPosition = new Vector3( 0, armsCenterWhenAimingRifle.Y, 0 ) + new Vector3( 100, 0, 0 );
+
+		////		//var localDirection = ( localTargetToPosition - localTargetFromPosition ).GetNormalize();
+		////		//transformOffset.RotationOffset = Quaternion.FromDirectionZAxisUp( localDirection );
+
+		////		//var sphericalDir = SphericalDirection.FromVector( localDirection );
+
+		////		////!!!!
+		////		//var breathOffset = new Vector3( Math.Sin( Time.Current * 1.5 ) * 0.005, 0, Math.Cos( Time.Current * 1.5 ) * 0.003 );
+
+		////		//transformOffset.PositionOffset = localTargetFromPosition + Quaternion.FromRotateByY( sphericalDir.Vertical ) * ( new Vector3( armsCenterWhenAimingRifle.X, 0, 0 ) - weaponTypeArmsCenter + breathOffset ) + GetSmoothCameraOffset();
+
+
+
+
+		////		//var worldTargetFromPosition = tr * localTargetFromPosition;
+
+		////		//Vector3 worldTargetToPosition;
+		////		//if( WeaponTargetToPosition.HasValue )
+		////		//	worldTargetToPosition = WeaponTargetToPosition.Value;
+		////		//else
+		////		//{
+		////		//	worldTargetToPosition = worldTargetFromPosition + tr.Rotation * new Vector3( 100, 0, 0 );
+		////		//	//worldTargetToPosition = GetCenteredPosition() + TransformV.Rotation * new Vector3( 100, 0, 0 );
+		////		//}
+
+		////		//var worldDirection = ( worldTargetToPosition - worldTargetFromPosition ).Normalize();
+
+
+
+		////		//zzzz;//мы его как раз считаем
+		////		//var weaponPosition = weapon.TransformV.Position;
+		////		//var lookDirection = worldTargetToPosition/*WeaponTargetToPosition.Value*/ - weaponPosition;
+
+		////		//var rotationOffset = Quaternion.FromDirectionZAxisUp( lookDirection );
+		////		////var centeredOffset = new Vector3( 0, 0, TypeCached.Height * 0.5 );
+
+
+		////		////!!!!
+		////		//var breathOffset = new Vector3( Math.Sin( Time.Current * 1.5 ) * 0.005, 0, Math.Cos( Time.Current * 1.5 ) * 0.003 );
+
+
+		////		////!!!!
+		////		//transformOffset.PositionOffset = armsCenterWhenAimingRifle - weaponTypeArmsCenter + breathOffset;
+
+		////		////offset.PositionOffset = TypeCached.RiflePosition.Value;
+		////		////offset.PositionOffset = centeredOffset + weapon.TypeCached.PositionOffsetWhenAttached;
+
+		////		//transformOffset.RotationOffset = TransformV.Rotation.GetInverse() * rotationOffset;
+
+
+
+
+		////		//!!!!need?
+		////		//RotateWeaponIfCollided( weapon, offset, rotationOffset.InDegrees() );
+
+		////		//reset motion blur settings
+		////		item.MotionBlurFactor = 1;
+
+
+		////		//var rotationOffet = CurrentTurnToDirection.Vertical + weapon.TypeCached.RotationOffsetWhenAttached.Value.InRadians();
+
+		////		////!!!!
+		////		//var centeredOffset = new Vector3( 0, 0, TypeCached.Height * 0.5 );
+
+		////		//offset.PositionOffset = centeredOffset + weapon.TypeCached.PositionOffsetWhenAttached;
+		////		//offset.RotationOffset = Quaternion.FromRotateByY( rotationOffet );
+
+		////		//RotateWeaponIfCollided( weapon, offset, rotationOffet.InDegrees() );
+
+		////		////reset motion blur settings
+		////		//weapon.MotionBlurFactor = 1;
+		////	}
+		////}
+		//}
+
+		//}
+
+		public void UpdateDataForFirstOrThirdPersonCamera( bool firstPersonCamera )
 		{
-			ParentScene?.SoundPlay( sound, TransformV.Position );
+			UpdateActiveItemTransformOffset();
 		}
 
-		public void StartPlayOneAnimation( Animation animation, double speed = 1.0 )
+		//public void UpdateDataForFirstPersonCamera( GameMode gameMode, Viewport viewport )
+		//{
+
+		//var item = GetActiveItem() as MeshInSpace;
+		//if( item != null )
+		//{
+		//	var transformOffset = item.GetComponent<TransformOffset>();
+		//	if( transformOffset != null )
+		//	{
+		//		var weapon = item as Weapon;
+
+		//		var typeArmsCenter = Vector3.Zero;
+		//		if( weapon != null )
+		//			typeArmsCenter = weapon.TypeCached.GetArmsCenter();
+
+		//		Vector3 aimingArmsCenter;
+		//		if( weapon != null )
+		//			aimingArmsCenter = TypeCached.RifleAimingArmsCenter.Value;
+		//		else
+		//			aimingArmsCenter = TypeCached.ItemHoldingPosition;
+
+
+		//		var tr = TransformV;
+		//		var trInverse = tr.ToMatrix4().GetInverse();
+
+		//		var worldVectorFrom = tr.ToMatrix4() * new Vector3( 0, 0, aimingArmsCenter.Z );
+
+		//		Vector3 worldVectorTo;
+		//		if( CurrentLookToPosition.HasValue )
+		//			worldVectorTo = CurrentLookToPosition.Value;
+		//		else
+		//			worldVectorTo = worldVectorFrom + tr.Rotation * new Vector3( 100, 0, 0 );
+
+		//		var worldRotationFromTo = Quaternion.FromDirectionZAxisUp( worldVectorTo - worldVectorFrom );
+
+		//		//!!!!
+		//		var breathOffset = new Vector3( Math.Sin( Time.Current * 1.5 ) * 0.005, 0, Math.Cos( Time.Current * 1.5 ) * 0.003 );
+
+		//		var worldItemPosition = worldVectorFrom + worldRotationFromTo * ( new Vector3( aimingArmsCenter.X, aimingArmsCenter.Y, 0 ) - typeArmsCenter + breathOffset ) + GetSmoothCameraOffset();
+
+		//		transformOffset.PositionOffset = trInverse * worldItemPosition;
+		//		transformOffset.RotationOffset = tr.Rotation.GetInverse() * Quaternion.FromDirectionZAxisUp( worldVectorTo - worldItemPosition );
+
+
+
+		//		//var positionOffset = weapon.TypeCached.PositionOffsetWhenAttachedFirstPerson.Value;
+		//		////!!!!было
+		//		////var rotationOffset = weapon.TypeCached.RotationOffsetWhenAttachedFirstPerson.Value;
+
+		//		////idle, walking
+		//		//{
+		//		//	var maxOffset = 0.005;
+
+		//		//	//!!!!impl when moving
+		//		//	//if( IsOnGround() )
+		//		//	//{
+		//		//	//	var maxOffset2 = 0.01;
+		//		//	//	var factor = MathEx.Saturate( GetLinearVelocity().Length() * 0.5 );
+		//		//	//	maxOffset = MathEx.Lerp( maxOffset, maxOffset2, factor );
+		//		//	//}
+
+		//		//	positionOffset.Y += Math.Sin( Time.Current * 0.25 ) * maxOffset;
+		//		//	positionOffset.Z += Math.Sin( Time.Current * 0.43 ) * maxOffset;
+		//		//}
+
+		//		////add recoil offset
+		//		//{
+		//		//	var maxRecoil = 0.0;
+
+		//		//	for( int mode = 1; mode <= 2; mode++ )
+		//		//	{
+		//		//		if( weapon.IsFiring( mode ) )
+		//		//		{
+		//		//			var currentTime = weapon.GetFiringCurrentTime( mode );
+
+		//		//			var firingTotalTime = mode == 1 ? weapon.TypeCached.Mode1FiringTotalTime : weapon.TypeCached.Mode2FiringTotalTime;
+		//		//			var recoilOffset = mode == 1 ? weapon.TypeCached.Mode1MaxRecoilOffset : weapon.TypeCached.Mode2MaxRecoilOffset;
+		//		//			var maxRecoilOffsetTime = mode == 1 ? weapon.TypeCached.Mode1MaxRecoilOffsetTime : weapon.TypeCached.Mode2MaxRecoilOffsetTime;
+
+		//		//			var endTime = Math.Min( firingTotalTime, maxRecoilOffsetTime * 10 );
+
+		//		//			var curve = new CurveCubicSpline1();//new CurveLine1();
+		//		//			curve.AddPoint( 0, 0 );
+		//		//			curve.AddPoint( maxRecoilOffsetTime, recoilOffset );
+		//		//			curve.AddPoint( endTime, 0 );
+
+		//		//			var recoil = curve.CalculateValueByTime( currentTime );
+		//		//			if( recoil > maxRecoil )
+		//		//				maxRecoil = recoil;
+		//		//		}
+		//		//	}
+
+		//		//	positionOffset.X -= maxRecoil;
+		//		//}
+
+		//		//var cameraSettings = viewport.CameraSettings;
+		//		//var worldTransform = new Transform( cameraSettings.Position + cameraSettings.Rotation * positionOffset, cameraSettings.Rotation );
+
+		//		//var localToCameraTransform = TransformV.ToMatrix4().GetInverse() * worldTransform.ToMatrix4();
+		//		//localToCameraTransform.Decompose( out var position, out Quaternion rotation, out var scale );
+
+		//		//offset.PositionOffset = position;
+
+		//		////{
+		//		////	var weaponPosition = weapon.TransformV.Position;
+		//		////	var lookDirection = WeaponTargetToPosition.Value - weaponPosition;
+		//		////	var rotationOffset = Quaternion.FromDirectionZAxisUp( lookDirection );
+		//		////	//var centeredOffset = new Vector3( 0, 0, TypeCached.Height * 0.5 );
+		//		////	//offset.PositionOffset = centeredOffset + weapon.TypeCached.PositionOffsetWhenAttached;
+
+		//		////	offset.RotationOffset = TransformV.Rotation.GetInverse() * rotationOffset;
+		//		////}
+		//		//offset.RotationOffset = rotation;
+
+
+
+
+		//		//var positionOffset = weapon.TypeCached.PositionOffsetWhenAttachedFirstPerson.Value;
+		//		////!!!!было
+		//		////var rotationOffset = weapon.TypeCached.RotationOffsetWhenAttachedFirstPerson.Value;
+
+		//		////idle, walking
+		//		//{
+		//		//	var maxOffset = 0.005;
+
+		//		//	//!!!!impl when moving
+		//		//	//if( IsOnGround() )
+		//		//	//{
+		//		//	//	var maxOffset2 = 0.01;
+		//		//	//	var factor = MathEx.Saturate( GetLinearVelocity().Length() * 0.5 );
+		//		//	//	maxOffset = MathEx.Lerp( maxOffset, maxOffset2, factor );
+		//		//	//}
+
+		//		//	positionOffset.Y += Math.Sin( Time.Current * 0.25 ) * maxOffset;
+		//		//	positionOffset.Z += Math.Sin( Time.Current * 0.43 ) * maxOffset;
+		//		//}
+
+		//		////add recoil offset
+		//		//{
+		//		//	var maxRecoil = 0.0;
+
+		//		//	for( int mode = 1; mode <= 2; mode++ )
+		//		//	{
+		//		//		if( weapon.IsFiring( mode ) )
+		//		//		{
+		//		//			var currentTime = weapon.GetFiringCurrentTime( mode );
+
+		//		//			var firingTotalTime = mode == 1 ? weapon.TypeCached.Mode1FiringTotalTime : weapon.TypeCached.Mode2FiringTotalTime;
+		//		//			var recoilOffset = mode == 1 ? weapon.TypeCached.Mode1MaxRecoilOffset : weapon.TypeCached.Mode2MaxRecoilOffset;
+		//		//			var maxRecoilOffsetTime = mode == 1 ? weapon.TypeCached.Mode1MaxRecoilOffsetTime : weapon.TypeCached.Mode2MaxRecoilOffsetTime;
+
+		//		//			var endTime = Math.Min( firingTotalTime, maxRecoilOffsetTime * 10 );
+
+		//		//			var curve = new CurveCubicSpline1();//new CurveLine1();
+		//		//			curve.AddPoint( 0, 0 );
+		//		//			curve.AddPoint( maxRecoilOffsetTime, recoilOffset );
+		//		//			curve.AddPoint( endTime, 0 );
+
+		//		//			var recoil = curve.CalculateValueByTime( currentTime );
+		//		//			if( recoil > maxRecoil )
+		//		//				maxRecoil = recoil;
+		//		//		}
+		//		//	}
+
+		//		//	positionOffset.X -= maxRecoil;
+		//		//}
+
+		//		//var cameraSettings = viewport.CameraSettings;
+		//		//var worldTransform = new Transform( cameraSettings.Position + cameraSettings.Rotation * positionOffset, cameraSettings.Rotation );
+
+		//		//var localToCameraTransform = TransformV.ToMatrix4().GetInverse() * worldTransform.ToMatrix4();
+		//		//localToCameraTransform.Decompose( out var position, out Quaternion rotation, out var scale );
+
+		//		//offset.PositionOffset = position;
+
+		//		////{
+		//		////	var weaponPosition = weapon.TransformV.Position;
+		//		////	var lookDirection = WeaponTargetToPosition.Value - weaponPosition;
+		//		////	var rotationOffset = Quaternion.FromDirectionZAxisUp( lookDirection );
+		//		////	//var centeredOffset = new Vector3( 0, 0, TypeCached.Height * 0.5 );
+		//		////	//offset.PositionOffset = centeredOffset + weapon.TypeCached.PositionOffsetWhenAttached;
+
+		//		////	offset.RotationOffset = TransformV.Rotation.GetInverse() * rotationOffset;
+		//		////}
+		//		//offset.RotationOffset = rotation;
+
+
+
+
+
+
+
+
+		//		//!!!!надо
+		//		//!!!!надо
+		//		//!!!!надо
+		//		//RotateWeaponIfCollided( weapon, offset, new Radian( CurrentTurnToDirection.Vertical ).InDegrees() );
+
+
+
+		//		////RotateWeaponIfCollided( weapon, offset, new Radian( CurrentTurnToDirection.Vertical ).InDegrees() + rotationOffset );
+
+		//		//update bounds
+		//		item.SpaceBoundsUpdate();
+
+		//		//disable motion blur
+		//		item.MotionBlurFactor = 0;
+
+		//		//inform the character about first person update to disable default behaviour which doing in UpdateEnabledItemTransform()
+		//		disableUpdateAttachedWeaponRemainingTime = 0.25;
+		//	}
+		//}
+
+		//}
+
+
+		public delegate void SoundPlayBeforeDelegate( Character sender, ref Sound sound, ref bool handled );
+		public event SoundPlayBeforeDelegate SoundPlayBefore;
+
+		public virtual void SoundPlay( Sound sound, double priority = 0.5 )
 		{
+			var handled = false;
+			SoundPlayBefore?.Invoke( this, ref sound, ref handled );
+			if( handled )
+				return;
+
+			ParentScene?.SoundPlay( sound, ( TransformVisualOverride ?? TransformV ).Position, priority: priority );
+		}
+
+		public delegate void StartPlayOneAnimationBeforeDelegate( Character sender, ref Animation animation, ref double speed, ref bool freezeOnEnd, ref bool handled );
+		public event StartPlayOneAnimationBeforeDelegate StartPlayOneAnimationBefore;
+
+		public virtual void StartPlayOneAnimation( Animation animation, double speed = 1.0, bool freezeOnEnd = false )
+		{
+			var handled = false;
+			StartPlayOneAnimationBefore?.Invoke( this, ref animation, ref speed, ref freezeOnEnd, ref handled );
+			if( handled )
+				return;
+
 			playOneAnimation = animation;
 			playOneAnimationSpeed = speed;
 			if( playOneAnimation != null && playOneAnimationSpeed == 0 )
 				playOneAnimationSpeed = 0.000001;
+			playOneAnimationFreezeOnEnd = freezeOnEnd;
 
 			if( playOneAnimation != null )
 			{
-				playOneAnimationRemainingTime = playOneAnimation.Length / playOneAnimationSpeed;
+				if( freezeOnEnd )
+					playOneAnimationRemainingTime = 1000000000.0;
+				else
+					playOneAnimationRemainingTime = playOneAnimation.Length / playOneAnimationSpeed;
 
 				var controller = GetAnimationController();
 				if( controller != null && playOneAnimationRemainingTime > controller.InterpolationTime.Value )
@@ -2944,29 +4482,314 @@ namespace NeoAxis
 		}
 
 		[Browsable( false )]
+		public bool PlayOneAnimationFreezeOnEnd
+		{
+			get { return playOneAnimationFreezeOnEnd; }
+		}
+
+		[Browsable( false )]
 		public double PlayOneAnimationRemainingTime
 		{
 			get { return playOneAnimationRemainingTime; }
 		}
 
-		void TickCurrentTurnToDirection()
+		public void StartPlayOneAnimationAdditional( MeshInSpaceAnimationController.AnimationStateClass.AnimationItem animationItem )
 		{
-			if( currentTurnToDirection.Horizontal != requiredTurnToDirection.Horizontal && IsOnGround() )
+			playOneAnimationAdditional = animationItem;
+			if( playOneAnimationAdditional != null && playOneAnimationAdditional.Speed == 0 )
+				playOneAnimationAdditional.Speed = 0.000001;
+
+			if( playOneAnimationAdditional != null )
 			{
-				var angle = requiredTurnToDirection.Horizontal - currentTurnToDirection.Horizontal;
-				var leftTurn = Math.Sin( angle ) > 0;
+				if( playOneAnimationAdditional.FreezeOnEnd )
+					playOneAnimationAdditionalRemainingTime = 1000000000.0;
+				else
+					playOneAnimationAdditionalRemainingTime = playOneAnimationAdditional.Animation.Length / playOneAnimationAdditional.Speed;
 
-				var step = (float)(double)typeCached.TurningSpeed.Value.InRadians() * Time.SimulationDelta;
-				currentTurnToDirection.Horizontal += leftTurn ? step : -step;
+				var controller = GetAnimationController();
+				if( controller != null && playOneAnimationAdditionalRemainingTime > controller.InterpolationTime.Value )
+					playOneAnimationAdditionalRemainingTime -= controller.InterpolationTime.Value;
+			}
+			else
+				playOneAnimationAdditionalRemainingTime = 0;
+		}
 
-				var newAngle = requiredTurnToDirection.Horizontal - currentTurnToDirection.Horizontal;
-				var newLeftTurn = Math.Sin( newAngle ) > 0;
+		[Browsable( false )]
+		public MeshInSpaceAnimationController.AnimationStateClass.AnimationItem PlayOneAnimationAdditional
+		{
+			get { return playOneAnimationAdditional; }
+		}
 
-				if( newLeftTurn != leftTurn )
-					currentTurnToDirection.Horizontal = requiredTurnToDirection.Horizontal;
+		[Browsable( false )]
+		public double PlayOneAnimationAdditionalRemainingTime
+		{
+			get { return playOneAnimationAdditionalRemainingTime; }
+		}
 
-				//!!!!new
-				UpdateRotation();
+		public void WeaponFiringBegin( Weapon weapon, int mode )
+		{
+			//One-handed melee weapon. play character attack animation
+			if( weapon.TypeCached.WayToUse.Value == WeaponType.WayToUseEnum.OneHandedMelee )
+			{
+				var stopMovementWhenFiring = mode == 1 ? weapon.TypeCached.Mode1StopMovementWhenFiring : weapon.TypeCached.Mode2StopMovementWhenFiring;
+
+				var playIdleAnimation = false;
+
+				if( IsOnGround() )// IsOnGroundWithLatency() )
+				{
+					var localVelocityNoScale = TransformV.Rotation.GetInverse() * GetLinearVelocity() / GetScaleFactor();
+					var localSpeedNoScale = localVelocityNoScale.X;
+
+					var walking = Math.Abs( localSpeedNoScale ) > TypeCached.WalkForwardMaxSpeed * 0.2 || Math.Abs( localVelocityNoScale.Y ) > TypeCached.WalkForwardMaxSpeed * 0.2;
+
+					if( !walking )
+						playIdleAnimation = true;
+				}
+
+				MeshInSpaceAnimationController.AnimationStateClass.AnimationItem animationItem;
+
+				if( playIdleAnimation )
+				{
+					//play full body
+					animationItem = new MeshInSpaceAnimationController.AnimationStateClass.AnimationItem() { Animation = TypeCached.OneHandedMeleeWeaponAttackAnimation, Speed = TypeCached.OneHandedMeleeWeaponAttackAnimationSpeed, AnimationItemTag = 3, ReplaceMode = true };
+				}
+				else
+				{
+					//play only upper part body
+					animationItem = new MeshInSpaceAnimationController.AnimationStateClass.AnimationItem() { Animation = TypeCached.OneHandedMeleeWeaponAttackAnimation, Speed = TypeCached.OneHandedMeleeWeaponAttackAnimationSpeed, AnimationItemTag = 3, AffectBonesWithChildren = new string[] { TypeCached.UpperPartBone }, ReplaceMode = true };
+				}
+
+				if( animationItem.Animation != null )
+				{
+					//disable control
+					if( playIdleAnimation || stopMovementWhenFiring )
+					{
+						var time = animationItem.Animation.Length / animationItem.Speed;
+						disableControlRemainingTime = Math.Max( disableControlRemainingTime, (float)time );
+					}
+
+					StartPlayOneAnimationAdditional( animationItem );
+				}
+			}
+		}
+
+
+		//!!!!резко обновляет модель
+		//[MethodImpl( (MethodImplOptions)512 )]
+		//void FixTurnToDirectionWhenItInvalidForAnimation()
+		//{
+		//	var allowLookToBack = AllowLookToBackWhenNoActiveItem && GetActiveItem() == null;
+
+		//	//turn direction when it have too big angle between look to
+		//	if( CurrentLookToPosition.HasValue && !allowLookToBack )
+		//	{
+		//		var thresholdAngle = new DegreeF( 130.0f ).InRadians();
+
+		//		var tr = TransformV;
+
+		//		var currentLookToDirection = ( CurrentLookToPosition.Value - tr.Position ).ToVector2F();
+		//		if( currentLookToDirection != Vector2F.Zero )
+		//		{
+		//			currentLookToDirection.Normalize();
+
+		//			var currentDirection = tr.Rotation.GetForward().ToVector2F();
+
+		//			var angle = MathAlgorithms.GetVectorsAngle( ref currentLookToDirection, ref currentDirection );
+		//			if( angle > thresholdAngle )
+		//			{
+		//				var lookToAngle = MathEx.Atan2( currentLookToDirection.Y, currentLookToDirection.X );
+		//				var currentAngle = MathEx.Atan2( currentDirection.Y, currentDirection.X );
+
+		//				var leftTurn = Math.Sin( lookToAngle - currentAngle ) > 0;
+
+		//				if( leftTurn )
+		//					currentTurnToDirection.Horizontal = currentAngle - thresholdAngle;
+		//				else
+		//					currentTurnToDirection.Horizontal = currentAngle + thresholdAngle;
+		//				UpdateRotation();
+		//			}
+		//		}
+		//	}
+		//}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		void TickTurnToDirection()
+		{
+			var allowLookToBack = AllowLookToBackWhenNoActiveItem && GetActiveItem() == null;
+
+			//turn direction when it have too big angle between look to
+			if( !RequiredTurnToDirection.HasValue && RequiredLookToPosition.HasValue && !allowLookToBack )
+			{
+				var thresholdAngle = new DegreeF( 91.0f ).InRadians();
+
+				var tr = TransformV;
+
+				var requiredDiff = ( RequiredLookToPosition.Value - tr.Position ).ToVector2F();
+				if( requiredDiff != Vector2F.Zero )
+				{
+					requiredDiff.Normalize();
+
+					var currentDirection = tr.Rotation.GetForward().ToVector2F();
+
+					var angle = MathAlgorithms.GetVectorsAngle( ref requiredDiff, ref currentDirection );
+					if( angle > thresholdAngle )
+					{
+						var lookToAngle = MathEx.Atan2( requiredDiff.Y, requiredDiff.X );
+						var currentAngle = MathEx.Atan2( currentDirection.Y, currentDirection.X );
+
+						var leftTurn = Math.Sin( lookToAngle - currentAngle ) > 0;
+
+						if( leftTurn )
+							RequiredTurnToDirection = new SphericalDirectionF( currentAngle - thresholdAngle, 0 );
+						else
+							RequiredTurnToDirection = new SphericalDirectionF( currentAngle + thresholdAngle, 0 );
+					}
+				}
+			}
+
+			//simulate RequiredTurnToDirection
+			if( RequiredTurnToDirection.HasValue && disableControlRemainingTime == 0 )// && IsOnGround() )
+			{
+				var requiredTurnToDirection = RequiredTurnToDirection.Value.Horizontal;
+
+				if( currentTurnToDirection.Horizontal != requiredTurnToDirection )
+				{
+					if( RequiredLookToPosition.HasValue && !allowLookToBack )
+					{
+						//change rotation when look to is enabled. character can't turn around in back to look to direction
+
+						var diff = RequiredLookToPosition.Value - TransformV.Position;
+						var lookToDirection = Math.Atan2( diff.Y, diff.X );
+
+						var requiredAngleDiff = MathEx.RadianNormalize180( requiredTurnToDirection - lookToDirection );
+						var currentAngleDiff = MathEx.RadianNormalize180( currentTurnToDirection.Horizontal - lookToDirection );
+						var leftTurn = requiredAngleDiff > currentAngleDiff;
+
+						var step = (float)(double)( TurningSpeedOverride ?? TypeCached.TurningSpeed.Value ).InRadians() * Time.SimulationDelta;
+
+						var current = currentTurnToDirection.Horizontal;
+						current += leftTurn ? step : -step;
+
+						var newCurrentAngleDiff = MathEx.RadianNormalize180( current - lookToDirection );
+						var newLeftTurn = requiredAngleDiff > newCurrentAngleDiff;
+
+						if( newLeftTurn != leftTurn )
+						{
+							current = requiredTurnToDirection;
+
+							//reset
+							RequiredTurnToDirection = null;
+						}
+
+						currentTurnToDirection.Horizontal = current;
+
+						UpdateRotation();
+					}
+					else
+					{
+						//change rotation when look to is disabled
+
+						var angle = requiredTurnToDirection - currentTurnToDirection.Horizontal;
+						var leftTurn = Math.Sin( angle ) > 0;
+
+						var step = (float)(double)( TurningSpeedOverride ?? TypeCached.TurningSpeed.Value ).InRadians() * Time.SimulationDelta;
+
+						var current = currentTurnToDirection.Horizontal;
+						current += leftTurn ? step : -step;
+
+						var newAngle = requiredTurnToDirection - current;
+						var newLeftTurn = Math.Sin( newAngle ) > 0;
+
+						if( newLeftTurn != leftTurn )
+						{
+							current = requiredTurnToDirection;
+
+							//reset
+							RequiredTurnToDirection = null;
+						}
+
+						currentTurnToDirection.Horizontal = current;
+
+						UpdateRotation();
+					}
+				}
+				else
+				{
+					//reset
+					RequiredTurnToDirection = null;
+				}
+			}
+		}
+
+		void TickLookToPosition()
+		{
+			if( RequiredLookToPosition.HasValue && disableControlRemainingTime == 0 )
+			{
+				var tr = TransformVisualOverride ?? TransformV;
+
+				Vector3 eyeDirection;
+
+				//when weapon is active, eye position is calculated from weapon position
+				var weapon = GetActiveWeapon();
+				if( weapon != null )
+				{
+					var weaponTransform = weapon.TransformV;
+					var bulletTransform = weapon.TypeCached.Mode1BulletTransform.Value;
+					eyeDirection = weaponTransform.Position + weaponTransform.Rotation * new Vector3( 0, 0, bulletTransform.Position.Z );
+				}
+				else
+				{
+					eyeDirection = tr.Position + new Vector3( 0, 0, TypeCached.EyePosition.Value.Z );
+					//eyeDirection = tr.Position + new Vector3( 0, 0, TypeCached.Height * 0.8 );
+				}
+
+				if( !CurrentLookToPosition.HasValue )
+					CurrentLookToPosition = eyeDirection + tr.Rotation.GetForward() * 1000;
+
+				var required = SphericalDirection.FromVector( RequiredLookToPosition.Value - eyeDirection );
+				var current = SphericalDirection.FromVector( CurrentLookToPosition.Value - eyeDirection );
+
+				//!!!!change together axes, not separated
+
+				var step = (float)(double)TypeCached.TurningSpeedOfLooking.Value.InRadians() * Time.SimulationDelta;
+
+				//update horizontal
+				if( Math.Abs( required.Horizontal - current.Horizontal ) > 0.0001 )
+				{
+					var angle = required.Horizontal - current.Horizontal;
+					var leftTurn = Math.Sin( angle ) > 0;
+
+					current.Horizontal += leftTurn ? step : -step;
+
+					var newAngle = required.Horizontal - current.Horizontal;
+					var newLeftTurn = Math.Sin( newAngle ) > 0;
+
+					if( newLeftTurn != leftTurn )
+						current.Horizontal = required.Horizontal;
+				}
+
+				//update vertical
+				if( Math.Abs( required.Vertical - current.Vertical ) > 0.0001 )
+				{
+					if( current.Vertical < required.Vertical )
+					{
+						current.Vertical += step;
+						if( current.Vertical > required.Vertical )
+							current.Vertical = required.Vertical;
+					}
+					else
+					{
+						current.Vertical -= step;
+						if( current.Vertical < required.Vertical )
+							current.Vertical = required.Vertical;
+					}
+				}
+
+				CurrentLookToPosition = eyeDirection + current.GetVector() * 1000;
+
+				//reset
+				if( required == current )
+					RequiredLookToPosition = null;
 			}
 		}
 
@@ -2977,18 +4800,44 @@ namespace NeoAxis
 
 			if( message == "Jump" )
 			{
-				SoundPlay( typeCached.JumpSound );
-				StartPlayOneAnimation( typeCached.JumpAnimation );
+				SoundPlay( TypeCached.JumpSound );
+				StartPlayOneAnimation( TypeCached.JumpAnimation );
 			}
-			else if( message == "TickMovement" )
+			else if( message == "CurrentLookToPosition" )
 			{
-				var forceIsOnGroundRemainingTime2 = reader.ReadSingle();
-				var smoothCameraOffsetZ2 = reader.ReadSingle();
+				Vector3? value = null;
+				if( reader.ReadBoolean() )
+					value = reader.ReadVector3();
 				if( !reader.Complete() )
 					return false;
 
-				forceIsOnGroundRemainingTime = forceIsOnGroundRemainingTime2;
-				smoothCameraOffsetZ = smoothCameraOffsetZ2;
+				if( !IsControlledByPlayerAndFirstPersonCameraEnabled() )
+					CurrentLookToPosition = value;
+			}
+			else if( message == "Sitting" )
+			{
+				var value = reader.ReadBoolean();
+				if( !reader.Complete() )
+					return false;
+				Sitting = value;
+			}
+			else if( message == "PlayDieAnimation" )
+			{
+				if( TypeCached.DieAnimation.ReferenceOrValueSpecified )
+					StartPlayOneAnimation( TypeCached.DieAnimation, freezeOnEnd: true );
+			}
+			else if( message == "OnGroundState" )
+			{
+				clientIsOnGround = reader.ReadBoolean();
+				groundBody1Velocity = reader.ReadVector3F();
+				if( !reader.Complete() )
+					return false;
+			}
+			else if( message == "SmoothCameraOffsetZ" )
+			{
+				smoothCameraOffsetZ = reader.ReadSingle();
+				if( !reader.Complete() )
+					return false;
 			}
 
 			return true;
@@ -3003,56 +4852,102 @@ namespace NeoAxis
 			var networkLogic = NetworkLogicUtility.GetNetworkLogic( this );
 			if( networkLogic != null && networkLogic.ServerGetObjectControlledByUser( client.User, true ) == this )
 			{
-				if( message == "ItemTakeAndActivate" )
+				if( message == "Jump" )
+					Jump();
+				else if( message == "ItemTakeAndActivate" )
 				{
 					var itemNetworkID = (long)reader.ReadVariableUInt64();
+					var activate = reader.ReadBoolean();
 					if( !reader.Complete() )
 						return false;
 
 					var item = ParentRoot.HierarchyController.GetComponentByNetworkID( itemNetworkID );
 					if( item != null )
 					{
-						//!!!!check it can be taken
-
-						var item2 = item as IGameFrameworkItem;
+						var item2 = item as ItemInterface;
 						if( item2 != null )
 						{
-							ItemTake( item2 );
-							ItemActivate( item2 );
+							var gameMode = (GameMode)ParentScene?.GetGameMode();
+							if( gameMode != null )
+							{
+								if( ItemTake( gameMode, item2 ) )
+								{
+									if( activate )
+										ItemActivate( gameMode, item2 );
+								}
+							}
 						}
 					}
 				}
 				else if( message == "ItemDrop" )
 				{
 					var itemNetworkID = (long)reader.ReadVariableUInt64();
+					var amount = reader.ReadDouble();//ReadVariableInt32();
 					if( !reader.Complete() )
 						return false;
 
 					var item = ParentRoot.HierarchyController.GetComponentByNetworkID( itemNetworkID );
 					if( item != null )
 					{
-						//!!!!check it can be dropped
-
-						var item2 = item as IGameFrameworkItem;
-						if( item2 != null )
-							ItemDrop( item2, true );
+						var gameMode = (GameMode)ParentScene?.GetGameMode();
+						if( gameMode != null )
+						{
+							var item2 = item as ItemInterface;
+							if( item2 != null )
+								ItemDrop( gameMode, item2, amount );
+						}
 					}
 				}
+				else if( message == "ItemActivate" )
+				{
+					var itemNetworkID = (long)reader.ReadVariableUInt64();
+					if( !reader.Complete() )
+						return false;
 
+					var item = ParentRoot.HierarchyController.GetComponentByNetworkID( itemNetworkID );
+					if( item != null && item.Parent == this )
+					{
+						var gameMode = (GameMode)ParentScene?.GetGameMode();
+						if( gameMode != null )
+						{
+							var item2 = item as ItemInterface;
+							if( item2 != null )
+								ItemActivate( gameMode, item2 );
+						}
+					}
+				}
+				else if( message == "ItemDeactivate" )
+				{
+					var itemNetworkID = (long)reader.ReadVariableUInt64();
+					if( !reader.Complete() )
+						return false;
+
+					var item = ParentRoot.HierarchyController.GetComponentByNetworkID( itemNetworkID );
+					if( item != null && item.Parent == this )
+					{
+						var gameMode = (GameMode)ParentScene?.GetGameMode();
+						if( gameMode != null )
+						{
+							var item2 = item as ItemInterface;
+							if( item2 != null )
+								ItemDeactivate( gameMode, item2 );
+						}
+					}
+				}
 			}
 
 			return true;
 		}
 
-		public delegate void ProcessDamageBeforeDelegate( Character sender, long whoFired, ref double damage, ref object anyData, ref bool handled );
+		public delegate void ProcessDamageBeforeDelegate( Character sender, long whoFired, ref float damage, ref object anyData, ref bool handled );
 		public event ProcessDamageBeforeDelegate ProcessDamageBefore;
 		public static event ProcessDamageBeforeDelegate ProcessDamageBeforeAll;
 
-		public delegate void ProcessDamageAfterDelegate( Character sender, long whoFired, double damage, object anyData, double oldHealth );
+		public delegate void ProcessDamageAfterDelegate( Character sender, long whoFired, float damage, object anyData, double oldHealth );
 		public event ProcessDamageAfterDelegate ProcessDamageAfter;
 		public static event ProcessDamageAfterDelegate ProcessDamageAfterAll;
 
-		public void ProcessDamage( long whoFired, double damage, object anyData )
+		public void ProcessDamage( long whoFired, float damage, object anyData )
 		{
 			var oldHealth = Health.Value;
 
@@ -3064,13 +4959,32 @@ namespace NeoAxis
 
 			if( !handled )
 			{
-				var health = Health.Value;
-				if( health > 0 )
+				if( LifeStatus.Value == LifeStatusEnum.Normal )
 				{
-					Health = health - damage;
+					var health = Health.Value;
+					if( health > 0 )
+					{
+						Health = health - damage;
 
-					if( Health.Value <= 0 )
-						RemoveFromParent( true );
+						if( Health.Value <= 0 )
+						{
+							LifeStatus = LifeStatusEnum.Dead;
+
+							//!!!!manage Collision not just change here and from vehicle
+							Collision = false;
+
+							if( TypeCached.DieAnimation.ReferenceOrValueSpecified )
+								StartPlayOneAnimation( TypeCached.DieAnimation, freezeOnEnd: true );
+
+							if( NetworkIsServer )
+							{
+								BeginNetworkMessageToEveryone( "PlayDieAnimation" );
+								EndNetworkMessage();
+							}
+
+							//RemoveFromParent( true );
+						}
+					}
 				}
 			}
 
@@ -3078,9 +4992,13 @@ namespace NeoAxis
 			ProcessDamageAfterAll?.Invoke( this, whoFired, damage2, anyData2, oldHealth );
 		}
 
+		public delegate void ObjectInteractionGetInfoEventDelegate( Character sender, GameMode gameMode, ref InteractiveObjectObjectInfo info );
+		public event ObjectInteractionGetInfoEventDelegate ObjectInteractionGetInfoEvent;
+
 		public virtual void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
 		{
 			GetComponent<AI>()?.ObjectInteractionGetInfo( gameMode, ref info );
+			ObjectInteractionGetInfoEvent?.Invoke( this, gameMode, ref info );
 		}
 
 		public virtual bool ObjectInteractionInputMessage( GameMode gameMode, InputMessage message )
@@ -3088,7 +5006,6 @@ namespace NeoAxis
 			var ai = GetComponent<AI>();
 			if( ai != null && ai.ObjectInteractionInputMessage( gameMode, message ) )
 				return true;
-
 			return false;
 		}
 
@@ -3113,8 +5030,57 @@ namespace NeoAxis
 
 			if( animationControllerCached == component )
 				animationControllerCached = null;
-			//if( characterInputProcessingCached == component )
-			//	characterInputProcessingCached = null;
+		}
+
+		public delegate void FootstepSoundBeforeDelegate( Character sender, MeshInSpaceAnimationController.AnimationStateClass animationState, MeshInSpaceAnimationController.AnimationStateClass.AnimationItem animationItem, AnimationTrigger trigger, ref bool handled );
+		public event FootstepSoundBeforeDelegate FootstepSoundBefore;
+
+		void MeshInSpaceAnimationController.IParentAnimationTriggerProcess.AnimationTriggerFired( MeshInSpaceAnimationController sender, MeshInSpaceAnimationController.AnimationStateClass animationState, MeshInSpaceAnimationController.AnimationStateClass.AnimationItem animationItem, AnimationTrigger trigger )
+		{
+			if( trigger.AnyData == "Footstep" && animationItem.Factor > 0.5 )
+			{
+				var handled = false;
+				FootstepSoundBefore?.Invoke( this, animationState, animationItem, trigger, ref handled );
+				if( !handled )
+					TypeCached.PerformFootstepSoundBefore( this, animationState, animationItem, trigger, ref handled );
+				if( !handled )
+					SoundPlay( TypeCached.FootstepSound, 0.25 );
+			}
+		}
+
+		public delegate void FlyEndSoundBeforeDelegate( Character sender, ref bool handled );
+		public event FlyEndSoundBeforeDelegate FlyEndSoundBefore;
+
+		void TickFlyEndSound()
+		{
+			var newValue = IsOnGround();//IsOnGroundWithLatency();
+
+			if( newValue && !flyEndSoundOnGround )
+			{
+				var handled = false;
+				FlyEndSoundBefore?.Invoke( this, ref handled );
+				if( !handled )
+					TypeCached.PerformFlyEndSoundBefore( this, ref handled );
+				if( !handled )
+					SoundPlay( TypeCached.FlyEndSound );
+			}
+
+			flyEndSoundOnGround = newValue;
+		}
+
+		public bool IsControlledByPlayerAndFirstPersonCameraEnabled()
+		{
+			var gameMode = (GameMode)ParentScene?.GetGameMode();
+			if( gameMode != null )
+			{
+				if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson && !gameMode.FreeCamera )
+				{
+					var character = gameMode.ObjectControlledByPlayer.Value as Character;
+					if( character != null && character == this )
+						return true;
+				}
+			}
+			return false;
 		}
 	}
 }

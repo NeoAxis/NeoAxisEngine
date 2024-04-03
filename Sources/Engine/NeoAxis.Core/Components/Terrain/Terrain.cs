@@ -18,7 +18,7 @@ namespace NeoAxis
 	/// A heightmap based terrain.
 	/// </summary>
 #if !DEPLOY
-	[SettingsCell( typeof( TerrainSettingsCell ) )]
+	[SettingsCell( "NeoAxis.Editor.TerrainSettingsCell" )]
 	//because sorting is added from ResourcesWindowItems.cs [AddToResourcesWindow( @"Base\Scene objects\Terrain", 0 )]
 #endif
 	public class Terrain : Component
@@ -77,7 +77,7 @@ namespace NeoAxis
 			get { if( _position.BeginGet() ) Position = _position.Get( this ); return _position.value; }
 			set
 			{
-				if( _position.BeginSet( ref value ) )
+				if( _position.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -104,7 +104,7 @@ namespace NeoAxis
 			{
 				if( value <= 0.1 )
 					value = 0.1;
-				if( _horizontalSize.BeginSet( ref value ) )
+				if( _horizontalSize.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -140,7 +140,7 @@ namespace NeoAxis
 			get { if( _heightmapSize.BeginGet() ) HeightmapSize = _heightmapSize.Get( this ); return _heightmapSize.value; }
 			set
 			{
-				if( _heightmapSize.BeginSet( ref value ) )
+				if( _heightmapSize.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -191,7 +191,7 @@ namespace NeoAxis
 		public Reference<bool> HolesEnabled
 		{
 			get { if( _holesEnabled.BeginGet() ) HolesEnabled = _holesEnabled.Get( this ); return _holesEnabled.value; }
-			set { if( _holesEnabled.BeginSet( ref value ) ) { try { HolesEnabledChanged?.Invoke( this ); RecreateInternalData( true ); } finally { _holesEnabled.EndSet(); } } }
+			set { if( _holesEnabled.BeginSet( this, ref value ) ) { try { HolesEnabledChanged?.Invoke( this ); RecreateInternalData( true ); } finally { _holesEnabled.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HolesEnabled"/> property value changes.</summary>
 		public event Action<Terrain> HolesEnabledChanged;
@@ -207,7 +207,7 @@ namespace NeoAxis
 			get { if( _visible.BeginGet() ) Visible = _visible.Get( this ); return _visible.value; }
 			set
 			{
-				if( _visible.BeginSet( ref value ) )
+				if( _visible.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -245,7 +245,7 @@ namespace NeoAxis
 			get { if( _material.BeginGet() ) Material = _material.Get( this ); return _material.value; }
 			set
 			{
-				if( _material.BeginSet( ref value ) )
+				if( _material.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -282,7 +282,7 @@ namespace NeoAxis
 			get { if( _materialUV0.BeginGet() ) MaterialUV0 = _materialUV0.Get( this ); return _materialUV0.value; }
 			set
 			{
-				if( _materialUV0.BeginSet( ref value ) )
+				if( _materialUV0.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -315,7 +315,7 @@ namespace NeoAxis
 			get { if( _materialUV1.BeginGet() ) MaterialUV1 = _materialUV1.Get( this ); return _materialUV1.value; }
 			set
 			{
-				if( _materialUV1.BeginSet( ref value ) )
+				if( _materialUV1.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -347,7 +347,7 @@ namespace NeoAxis
 			get { if( _materialUVCurvatureIntensity.BeginGet() ) MaterialUVCurvatureIntensity = _materialUVCurvatureIntensity.Get( this ); return _materialUVCurvatureIntensity.value; }
 			set
 			{
-				if( _materialUVCurvatureIntensity.BeginSet( ref value ) )
+				if( _materialUVCurvatureIntensity.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -379,7 +379,7 @@ namespace NeoAxis
 			get { if( _materialUVCurvatureFrequency.BeginGet() ) MaterialUVCurvatureFrequency = _materialUVCurvatureFrequency.Get( this ); return _materialUVCurvatureFrequency.value; }
 			set
 			{
-				if( _materialUVCurvatureFrequency.BeginSet( ref value ) )
+				if( _materialUVCurvatureFrequency.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -409,7 +409,7 @@ namespace NeoAxis
 			get { if( _materialColor.BeginGet() ) MaterialColor = _materialColor.Get( this ); return _materialColor.value; }
 			set
 			{
-				if( _materialColor.BeginSet( ref value ) )
+				if( _materialColor.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -449,7 +449,7 @@ namespace NeoAxis
 			get { if( _paintMaskSize.BeginGet() ) PaintMaskSize = _paintMaskSize.Get( this ); return _paintMaskSize.value; }
 			set
 			{
-				if( _paintMaskSize.BeginSet( ref value ) )
+				if( _paintMaskSize.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -474,7 +474,7 @@ namespace NeoAxis
 			get { if( _castShadows.BeginGet() ) CastShadows = _castShadows.Get( this ); return _castShadows.value; }
 			set
 			{
-				if( _castShadows.BeginSet( ref value ) )
+				if( _castShadows.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -506,7 +506,7 @@ namespace NeoAxis
 			get { if( _receiveDecals.BeginGet() ) ReceiveDecals = _receiveDecals.Get( this ); return _receiveDecals.value; }
 			set
 			{
-				if( _receiveDecals.BeginSet( ref value ) )
+				if( _receiveDecals.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -538,7 +538,7 @@ namespace NeoAxis
 			get { if( _surface.BeginGet() ) Surface = _surface.Get( this ); return _surface.value; }
 			set
 			{
-				if( _surface.BeginSet( ref value ) )
+				if( _surface.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -570,7 +570,7 @@ namespace NeoAxis
 			get { if( _surfaceObjects.BeginGet() ) SurfaceObjects = _surfaceObjects.Get( this ); return _surfaceObjects.value; }
 			set
 			{
-				if( _surfaceObjects.BeginSet( ref value ) )
+				if( _surfaceObjects.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -603,7 +603,7 @@ namespace NeoAxis
 			get { if( _surfaceObjectsDistribution.BeginGet() ) SurfaceObjectsDistribution = _surfaceObjectsDistribution.Get( this ); return _surfaceObjectsDistribution.value; }
 			set
 			{
-				if( _surfaceObjectsDistribution.BeginSet( ref value ) )
+				if( _surfaceObjectsDistribution.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -636,7 +636,7 @@ namespace NeoAxis
 			get { if( _surfaceObjectsScale.BeginGet() ) SurfaceObjectsScale = _surfaceObjectsScale.Get( this ); return _surfaceObjectsScale.value; }
 			set
 			{
-				if( _surfaceObjectsScale.BeginSet( ref value ) )
+				if( _surfaceObjectsScale.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -668,7 +668,7 @@ namespace NeoAxis
 			get { if( _surfaceObjectsColor.BeginGet() ) SurfaceObjectsColor = _surfaceObjectsColor.Get( this ); return _surfaceObjectsColor.value; }
 			set
 			{
-				if( _surfaceObjectsColor.BeginSet( ref value ) )
+				if( _surfaceObjectsColor.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -702,7 +702,7 @@ namespace NeoAxis
 			get { if( _surfaceObjectsVisibilityDistanceFactor.BeginGet() ) SurfaceObjectsVisibilityDistanceFactor = _surfaceObjectsVisibilityDistanceFactor.Get( this ); return _surfaceObjectsVisibilityDistanceFactor.value; }
 			set
 			{
-				if( _surfaceObjectsVisibilityDistanceFactor.BeginSet( ref value ) )
+				if( _surfaceObjectsVisibilityDistanceFactor.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -735,7 +735,7 @@ namespace NeoAxis
 			get { if( _surfaceObjectsCastShadows.BeginGet() ) SurfaceObjectsCastShadows = _surfaceObjectsCastShadows.Get( this ); return _surfaceObjectsCastShadows.value; }
 			set
 			{
-				if( _surfaceObjectsCastShadows.BeginSet( ref value ) )
+				if( _surfaceObjectsCastShadows.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -768,7 +768,7 @@ namespace NeoAxis
 			get { if( _surfaceObjectsCollision.BeginGet() ) SurfaceObjectsCollision = _surfaceObjectsCollision.Get( this ); return _surfaceObjectsCollision.value; }
 			set
 			{
-				if( _surfaceObjectsCollision.BeginSet( ref value ) )
+				if( _surfaceObjectsCollision.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -811,7 +811,7 @@ namespace NeoAxis
 			get { if( _motionBlurFactor.BeginGet() ) MotionBlurFactor = _motionBlurFactor.Get( this ); return _motionBlurFactor.value; }
 			set
 			{
-				if( _motionBlurFactor.BeginSet( ref value ) )
+				if( _motionBlurFactor.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -843,7 +843,7 @@ namespace NeoAxis
 			get { if( _collision.BeginGet() ) Collision = _collision.Get( this ); return _collision.value; }
 			set
 			{
-				if( _collision.BeginSet( ref value ) )
+				if( _collision.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -869,7 +869,7 @@ namespace NeoAxis
 			get { if( _collisionMaterial.BeginGet() ) CollisionMaterial = _collisionMaterial.Get( this ); return _collisionMaterial.value; }
 			set
 			{
-				if( _collisionMaterial.BeginSet( ref value ) )
+				if( _collisionMaterial.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -896,7 +896,7 @@ namespace NeoAxis
 		//	get { if( _collisionFrictionMode.BeginGet() ) CollisionFrictionMode = _collisionFrictionMode.Get( this ); return _collisionFrictionMode.value; }
 		//	set
 		//	{
-		//		if( _collisionFrictionMode.BeginSet( ref value ) )
+		//		if( _collisionFrictionMode.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -923,7 +923,7 @@ namespace NeoAxis
 			get { if( _collisionFriction.BeginGet() ) CollisionFriction = _collisionFriction.Get( this ); return _collisionFriction.value; }
 			set
 			{
-				if( _collisionFriction.BeginSet( ref value ) )
+				if( _collisionFriction.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -951,7 +951,7 @@ namespace NeoAxis
 		//	get { if( _collisionAnisotropicFriction.BeginGet() ) CollisionAnisotropicFriction = _collisionAnisotropicFriction.Get( this ); return _collisionAnisotropicFriction.value; }
 		//	set
 		//	{
-		//		if( _collisionAnisotropicFriction.BeginSet( ref value ) )
+		//		if( _collisionAnisotropicFriction.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -979,7 +979,7 @@ namespace NeoAxis
 		//	get { if( _collisionSpinningFriction.BeginGet() ) CollisionSpinningFriction = _collisionSpinningFriction.Get( this ); return _collisionSpinningFriction.value; }
 		//	set
 		//	{
-		//		if( _collisionSpinningFriction.BeginSet( ref value ) )
+		//		if( _collisionSpinningFriction.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -1007,7 +1007,7 @@ namespace NeoAxis
 		//	get { if( _collisionRollingFriction.BeginGet() ) CollisionRollingFriction = _collisionRollingFriction.Get( this ); return _collisionRollingFriction.value; }
 		//	set
 		//	{
-		//		if( _collisionRollingFriction.BeginSet( ref value ) )
+		//		if( _collisionRollingFriction.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -1034,7 +1034,7 @@ namespace NeoAxis
 			get { if( _collisionRestitution.BeginGet() ) CollisionRestitution = _collisionRestitution.Get( this ); return _collisionRestitution.value; }
 			set
 			{
-				if( _collisionRestitution.BeginSet( ref value ) )
+				if( _collisionRestitution.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1069,7 +1069,7 @@ namespace NeoAxis
 			get { if( _tileSize.BeginGet() ) TileSize = _tileSize.Get( this ); return _tileSize.value; }
 			set
 			{
-				if( _tileSize.BeginSet( ref value ) )
+				if( _tileSize.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1094,7 +1094,7 @@ namespace NeoAxis
 		public Reference<bool> LODEnabled
 		{
 			get { if( _lODEnabled.BeginGet() ) LODEnabled = _lODEnabled.Get( this ); return _lODEnabled.value; }
-			set { if( _lODEnabled.BeginSet( ref value ) ) { try { LODEnabledChanged?.Invoke( this ); RecreateInternalData( false ); } finally { _lODEnabled.EndSet(); } } }
+			set { if( _lODEnabled.BeginSet( this, ref value ) ) { try { LODEnabledChanged?.Invoke( this ); RecreateInternalData( false ); } finally { _lODEnabled.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODEnabled"/> property value changes.</summary>
 		public event Action<Terrain> LODEnabledChanged;
@@ -1107,7 +1107,7 @@ namespace NeoAxis
 		public Reference<int> LODCount
 		{
 			get { if( _lODCount.BeginGet() ) LODCount = _lODCount.Get( this ); return _lODCount.value; }
-			set { if( _lODCount.BeginSet( ref value ) ) { try { LODCountChanged?.Invoke( this ); RecreateInternalData( false ); } finally { _lODCount.EndSet(); } } }
+			set { if( _lODCount.BeginSet( this, ref value ) ) { try { LODCountChanged?.Invoke( this ); RecreateInternalData( false ); } finally { _lODCount.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODCount"/> property value changes.</summary>
 		public event Action<Terrain> LODCountChanged;
@@ -1123,7 +1123,7 @@ namespace NeoAxis
 		//public Reference<RangeI> LODRange
 		//{
 		//	get { if( _lODRange.BeginGet() ) LODRange = _lODRange.Get( this ); return _lODRange.value; }
-		//	set { if( _lODRange.BeginSet( ref value ) ) { try { LODRangeChanged?.Invoke( this ); } finally { _lODRange.EndSet(); } } }
+		//	set { if( _lODRange.BeginSet( this, ref value ) ) { try { LODRangeChanged?.Invoke( this ); } finally { _lODRange.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="LODRange"/> property value changes.</summary>
 		//public event Action<Terrain> LODRangeChanged;
@@ -1142,7 +1142,7 @@ namespace NeoAxis
 			get { if( _lODDistance.BeginGet() ) LODDistance = _lODDistance.Get( this ); return _lODDistance.value; }
 			set
 			{
-				if( _lODDistance.BeginSet( ref value ) )
+				if( _lODDistance.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1166,44 +1166,44 @@ namespace NeoAxis
 		public Reference<bool> PrecalculateObjects
 		{
 			get { if( _precalculateObjects.BeginGet() ) PrecalculateObjects = _precalculateObjects.Get( this ); return _precalculateObjects.value; }
-			set { if( _precalculateObjects.BeginSet( ref value ) ) { try { PrecalculateObjectsChanged?.Invoke( this ); } finally { _precalculateObjects.EndSet(); } } }
+			set { if( _precalculateObjects.BeginSet( this, ref value ) ) { try { PrecalculateObjectsChanged?.Invoke( this ); } finally { _precalculateObjects.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PrecalculateObjects"/> property value changes.</summary>
 		public event Action<Terrain> PrecalculateObjectsChanged;
 		ReferenceField<bool> _precalculateObjects = true;
 
-		/// <summary>
-		/// The maximal amount of objects created from layers in one rendering group.
-		/// </summary>
-		[DefaultValue( 1000 )]
-		[Category( "Optimization" )]
-		public Reference<int> MaxObjectsInGroup
-		{
-			get { if( _maxObjectsInGroup.BeginGet() ) MaxObjectsInGroup = _maxObjectsInGroup.Get( this ); return _maxObjectsInGroup.value; }
-			set
-			{
-				if( _maxObjectsInGroup.BeginSet( ref value ) )
-				{
-					try
-					{
-						MaxObjectsInGroupChanged?.Invoke( this );
+		///// <summary>
+		///// The maximal amount of objects created from layers in one rendering group.
+		///// </summary>
+		//[DefaultValue( 2000 )]
+		//[Category( "Optimization" )]
+		//public Reference<int> MaxObjectsInGroup
+		//{
+		//	get { if( _maxObjectsInGroup.BeginGet() ) MaxObjectsInGroup = _maxObjectsInGroup.Get( this ); return _maxObjectsInGroup.value; }
+		//	set
+		//	{
+		//		if( _maxObjectsInGroup.BeginSet( this, ref value ) )
+		//		{
+		//			try
+		//			{
+		//				MaxObjectsInGroupChanged?.Invoke( this );
 
-						if( EnabledInHierarchyAndIsInstance )
-						{
-							SetNeedUpdateAllTiles( NeedUpdateEnum.Layers );
-							UpdateTiles();
-						}
-						//var groupOfObjects = GetOrCreateGroupOfObjects( false );
-						//if( groupOfObjects != null )
-						//	groupOfObjects.MaxObjectsInGroup = MaxObjectsInGroup;
-					}
-					finally { _maxObjectsInGroup.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="MaxObjectsInGroup"/> property value changes.</summary>
-		public event Action<Terrain> MaxObjectsInGroupChanged;
-		ReferenceField<int> _maxObjectsInGroup = 1000;
+		//				if( EnabledInHierarchyAndIsInstance )
+		//				{
+		//					SetNeedUpdateAllTiles( NeedUpdateEnum.Layers );
+		//					UpdateTiles();
+		//				}
+		//				//var groupOfObjects = GetOrCreateGroupOfObjects( false );
+		//				//if( groupOfObjects != null )
+		//				//	groupOfObjects.MaxObjectsInGroup = MaxObjectsInGroup;
+		//			}
+		//			finally { _maxObjectsInGroup.EndSet(); }
+		//		}
+		//	}
+		//}
+		///// <summary>Occurs when the <see cref="MaxObjectsInGroup"/> property value changes.</summary>
+		//public event Action<Terrain> MaxObjectsInGroupChanged;
+		//ReferenceField<int> _maxObjectsInGroup = 2000;
 
 		//!!!!cut volumes
 
@@ -1217,7 +1217,7 @@ namespace NeoAxis
 			get { if( _occluder.BeginGet() ) Occluder = _occluder.Get( this ); return _occluder.value; }
 			set
 			{
-				if( _occluder.BeginSet( ref value ) )
+				if( _occluder.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -1240,7 +1240,7 @@ namespace NeoAxis
 		public Reference<bool> DebugDrawSurfaceObjectsBounds
 		{
 			get { if( _debugDrawSurfaceObjectsBounds.BeginGet() ) DebugDrawSurfaceObjectsBounds = _debugDrawSurfaceObjectsBounds.Get( this ); return _debugDrawSurfaceObjectsBounds.value; }
-			set { if( _debugDrawSurfaceObjectsBounds.BeginSet( ref value ) ) { try { DebugDrawSurfaceObjectsBoundsChanged?.Invoke( this ); } finally { _debugDrawSurfaceObjectsBounds.EndSet(); } } }
+			set { if( _debugDrawSurfaceObjectsBounds.BeginSet( this, ref value ) ) { try { DebugDrawSurfaceObjectsBoundsChanged?.Invoke( this ); } finally { _debugDrawSurfaceObjectsBounds.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DebugDrawSurfaceObjectsBounds"/> property value changes.</summary>
 		public event Action<Terrain> DebugDrawSurfaceObjectsBoundsChanged;
@@ -1415,8 +1415,9 @@ namespace NeoAxis
 					public QuaternionF Rotation;//!!!!need only for billboard
 					public Vector3F Scale;//!!!!need only for billboard
 
-					public Matrix4F MeshMatrix;
-					//public Matrix3F MeshMatrix3;
+					public Matrix3F MeshMatrix3;
+					//public Vector3 MeshPosition;
+					//public Matrix4 MeshMatrix;
 
 					//!!!!need only for separate rendering
 					public Bounds BoundingBox;
@@ -1434,9 +1435,10 @@ namespace NeoAxis
 
 				public GpuVertexBuffer BatchingInstanceBufferMesh;
 				public GpuVertexBuffer BatchingInstanceBufferBillboard;
+				public Vector3 BatchingInstancePositionOffset;
 
-				//for RenderingDataUpdate() method
-				public int NextSplitAxis;
+				////for RenderingDataUpdate() method
+				//public int NextSplitAxis;
 			}
 
 			/////////////////////
@@ -1683,7 +1685,7 @@ namespace NeoAxis
 								owner.HolesCacheSetItem( index, Vertices, Indices );
 							}
 
-							end:;
+end:;
 
 							if( noData )
 							{
@@ -2179,6 +2181,9 @@ namespace NeoAxis
 					Occluder?.RemoveFromParent( false );
 					Occluder = null;
 				}
+
+				ResetLightStaticShadowsCache( ObjectInSpace );
+				ResetLightStaticShadowsCache( SurfaceObjectsObjectInSpace );
 			}
 
 			public void DestroyRenderingData()
@@ -2188,6 +2193,8 @@ namespace NeoAxis
 
 				if( ObjectInSpace != null )
 				{
+					ResetLightStaticShadowsCache( ObjectInSpace );
+
 					ObjectInSpace.SpaceBoundsUpdateEvent -= ObjectInSpace_SpaceBoundsUpdateEvent;
 					ObjectInSpace.GetRenderSceneData -= ObjectInSpace_GetRenderSceneData;
 					ObjectInSpace.RemoveFromParent( false );
@@ -2461,7 +2468,7 @@ namespace NeoAxis
 										}
 									}
 								}
-								toSkip:
+toSkip:
 
 								if( allZero )
 									skip = true;
@@ -2726,13 +2733,18 @@ namespace NeoAxis
 						objectItem.Rotation = obj.Rotation;
 						objectItem.Scale = obj.Scale;
 
-						//!!!!double
-						var pos = obj.Position.ToVector3F();
 						obj.Rotation.ToMatrix3( out var rot );
 						Matrix3F.FromScale( ref obj.Scale, out var scl );
-						Matrix3F.Multiply( ref rot, ref scl, out var mat3 );
-						objectItem.MeshMatrix = new Matrix4F( ref mat3, ref pos );
+						Matrix3F.Multiply( ref rot, ref scl, out objectItem.MeshMatrix3 );
+						//objectItem.MeshPosition = obj.Position;
 						//Matrix3F.Multiply( ref rot, ref scl, out objectItem.MeshMatrix3 );
+
+						//var pos = obj.Position.ToVector3F();
+						//obj.Rotation.ToMatrix3( out var rot );
+						//Matrix3F.FromScale( ref obj.Scale, out var scl );
+						//Matrix3F.Multiply( ref rot, ref scl, out var mat3 );
+						//objectItem.MeshMatrix = new Matrix4F( ref mat3, ref pos );
+						////Matrix3F.Multiply( ref rot, ref scl, out objectItem.MeshMatrix3 );
 
 
 						//!!!!slowly
@@ -2759,133 +2771,133 @@ namespace NeoAxis
 						group.Objects.Add( ref objectItem );
 					}
 
-					//split groups by max objects count
-					if( owner.MaxObjectsInGroup > 1 )//!!!!
-					{
-						bool needProcess = true;
-						do
-						{
-							needProcess = false;
+					////split groups by max objects count
+					//if( owner.MaxObjectsInGroup > 1 )//!!!!
+					//{
+					//	bool needProcess = true;
+					//	do
+					//	{
+					//		needProcess = false;
 
-							var currentGroups = renderGroups;
-							renderGroups = new List<SurfaceObjectsRenderGroup>( currentGroups.Capacity );
+					//		var currentGroups = renderGroups;
+					//		renderGroups = new List<SurfaceObjectsRenderGroup>( currentGroups.Capacity );
 
-							foreach( var group in currentGroups )
-							{
-								if( group.Objects.Count > owner.MaxObjectsInGroup )
-								{
-									unsafe
-									{
-										//!!!!если равномерно то можно раскладывать на две стороны без сортировки
+					//		foreach( var group in currentGroups )
+					//		{
+					//			if( group.Objects.Count > owner.MaxObjectsInGroup )
+					//			{
+					//				unsafe
+					//				{
+					//					//!!!!если равномерно то можно раскладывать на две стороны без сортировки
 
-										//!!!!группы объектов сделать тоже как тут
+					//					//!!!!группы объектов сделать тоже как тут
 
-										var objectsArray = group.Objects.Data;
-										var objectCount = group.Objects.Count;
+					//					var objectsArray = group.Objects.Data;
+					//					var objectCount = group.Objects.Count;
 
-										//var objects = group.Objects.ToArray();
+					//					//var objects = group.Objects.ToArray();
 
-										//!!!!GC
-										var indexes = new int[ objectCount ];
-										for( int n = 0; n < objectCount; n++ )
-											indexes[ n ] = n;
+					//					//!!!!GC
+					//					var indexes = new int[ objectCount ];
+					//					for( int n = 0; n < objectCount; n++ )
+					//						indexes[ n ] = n;
 
-										CollectionUtility.MergeSortUnmanaged( indexes, delegate ( int index1, int index2 )
-										{
-											var pos1 = objectsArray[ index1 ].Position[ group.NextSplitAxis ];
-											var pos2 = objectsArray[ index2 ].Position[ group.NextSplitAxis ];
+					//					CollectionUtility.MergeSortUnmanaged( indexes, delegate ( int index1, int index2 )
+					//					{
+					//						var pos1 = objectsArray[ index1 ].Position[ group.NextSplitAxis ];
+					//						var pos2 = objectsArray[ index2 ].Position[ group.NextSplitAxis ];
 
-											if( pos1 < pos2 )
-												return -1;
-											if( pos1 > pos2 )
-												return 1;
-											return 0;
-										}, true );
+					//						if( pos1 < pos2 )
+					//							return -1;
+					//						if( pos1 > pos2 )
+					//							return 1;
+					//						return 0;
+					//					}, true );
 
-										int middle = objectCount / 2;
-										//int middle = objects.Length / 2;
+					//					int middle = objectCount / 2;
+					//					//int middle = objects.Length / 2;
 
-										for( int nGroup = 0; nGroup < 2; nGroup++ )
-										{
-											var newGroup = new SurfaceObjectsRenderGroup();
-											newGroup.NoBatchingGroup = group.NoBatchingGroup;
-											newGroup.VariationGroup = group.VariationGroup;
-											newGroup.VariationElement = group.VariationElement;
+					//					for( int nGroup = 0; nGroup < 2; nGroup++ )
+					//					{
+					//						var newGroup = new SurfaceObjectsRenderGroup();
+					//						newGroup.NoBatchingGroup = group.NoBatchingGroup;
+					//						newGroup.VariationGroup = group.VariationGroup;
+					//						newGroup.VariationElement = group.VariationElement;
 
-											if( nGroup == 0 )
-											{
-												for( int n = 0; n < middle; n++ )
-													newGroup.Objects.Add( ref objectsArray[ indexes[ n ] ] );
-											}
-											else
-											{
-												for( int n = middle; n < objectCount; n++ )
-													newGroup.Objects.Add( ref objectsArray[ indexes[ n ] ] );
-											}
+					//						if( nGroup == 0 )
+					//						{
+					//							for( int n = 0; n < middle; n++ )
+					//								newGroup.Objects.Add( ref objectsArray[ indexes[ n ] ] );
+					//						}
+					//						else
+					//						{
+					//							for( int n = middle; n < objectCount; n++ )
+					//								newGroup.Objects.Add( ref objectsArray[ indexes[ n ] ] );
+					//						}
 
-											newGroup.NextSplitAxis = group.NextSplitAxis + 1;
-											//quadtree
-											if( newGroup.NextSplitAxis > 1 )
-												newGroup.NextSplitAxis = 0;
+					//						newGroup.NextSplitAxis = group.NextSplitAxis + 1;
+					//						//quadtree
+					//						if( newGroup.NextSplitAxis > 1 )
+					//							newGroup.NextSplitAxis = 0;
 
-											renderGroups.Add( newGroup );
-										}
+					//						renderGroups.Add( newGroup );
+					//					}
 
 
-										//var objects = group.Objects.ToArray();
+					//					//var objects = group.Objects.ToArray();
 
-										//CollectionUtility.MergeSort( objects, delegate ( SurfaceObjectsRenderGroup.ObjectItem item1, SurfaceObjectsRenderGroup.ObjectItem item2 )
-										//{
-										//	var pos1 = item1.Position[ group.NextSplitAxis ];
-										//	var pos2 = item2.Position[ group.NextSplitAxis ];
+					//					//CollectionUtility.MergeSort( objects, delegate ( SurfaceObjectsRenderGroup.ObjectItem item1, SurfaceObjectsRenderGroup.ObjectItem item2 )
+					//					//{
+					//					//	var pos1 = item1.Position[ group.NextSplitAxis ];
+					//					//	var pos2 = item2.Position[ group.NextSplitAxis ];
 
-										//	if( pos1 < pos2 )
-										//		return -1;
-										//	if( pos1 > pos2 )
-										//		return 1;
-										//	return 0;
+					//					//	if( pos1 < pos2 )
+					//					//		return -1;
+					//					//	if( pos1 > pos2 )
+					//					//		return 1;
+					//					//	return 0;
 
-										//}, true );
+					//					//}, true );
 
-										//int middle = objects.Length / 2;
+					//					//int middle = objects.Length / 2;
 
-										//for( int nGroup = 0; nGroup < 2; nGroup++ )
-										//{
-										//	var newGroup = new SurfaceObjectsRenderGroup();
-										//	newGroup.NoBatchingGroup = group.NoBatchingGroup;
-										//	newGroup.VariationGroup = group.VariationGroup;
-										//	newGroup.VariationElement = group.VariationElement;
+					//					//for( int nGroup = 0; nGroup < 2; nGroup++ )
+					//					//{
+					//					//	var newGroup = new SurfaceObjectsRenderGroup();
+					//					//	newGroup.NoBatchingGroup = group.NoBatchingGroup;
+					//					//	newGroup.VariationGroup = group.VariationGroup;
+					//					//	newGroup.VariationElement = group.VariationElement;
 
-										//	if( nGroup == 0 )
-										//	{
-										//		for( int n = 0; n < middle; n++ )
-										//			newGroup.Objects.Add( objects[ n ] );
-										//	}
-										//	else
-										//	{
-										//		for( int n = middle; n < objects.Length; n++ )
-										//			newGroup.Objects.Add( objects[ n ] );
-										//	}
+					//					//	if( nGroup == 0 )
+					//					//	{
+					//					//		for( int n = 0; n < middle; n++ )
+					//					//			newGroup.Objects.Add( objects[ n ] );
+					//					//	}
+					//					//	else
+					//					//	{
+					//					//		for( int n = middle; n < objects.Length; n++ )
+					//					//			newGroup.Objects.Add( objects[ n ] );
+					//					//	}
 
-										//	newGroup.NextSplitAxis = group.NextSplitAxis + 1;
-										//	//quadtree
-										//	if( newGroup.NextSplitAxis > 1 )
-										//		newGroup.NextSplitAxis = 0;
+					//					//	newGroup.NextSplitAxis = group.NextSplitAxis + 1;
+					//					//	//quadtree
+					//					//	if( newGroup.NextSplitAxis > 1 )
+					//					//		newGroup.NextSplitAxis = 0;
 
-										//	renderGroups.Add( newGroup );
-										//}
-									}
+					//					//	renderGroups.Add( newGroup );
+					//					//}
+					//				}
 
-									needProcess = true;
-								}
-								else
-								{
-									renderGroups.Add( group );
-								}
-							}
+					//				needProcess = true;
+					//			}
+					//			else
+					//			{
+					//				renderGroups.Add( group );
+					//			}
+					//		}
 
-						} while( needProcess );
-					}
+					//	} while( needProcess );
+					//}
 
 					//calculate Bounds, VisibilityDistance
 					foreach( var group in renderGroups )
@@ -3229,6 +3241,8 @@ namespace NeoAxis
 
 				if( SurfaceObjectsObjectInSpace != null )
 				{
+					ResetLightStaticShadowsCache( SurfaceObjectsObjectInSpace );
+
 					SurfaceObjectsObjectInSpace.SpaceBoundsUpdateEvent -= SurfaceObjectsObjectInSpace_SpaceBoundsUpdateEvent;
 					SurfaceObjectsObjectInSpace.GetRenderSceneData -= SurfaceObjectsObjectInSpace_GetRenderSceneData;
 					SurfaceObjectsObjectInSpace.RemoveFromParent( false );
@@ -3264,6 +3278,26 @@ namespace NeoAxis
 					var tile = sender.AnyData as Tile;
 					if( tile != null )
 						owner.TileGetRenderSceneDataSurfaceObjects( tile, context, mode, modeGetObjectsItem );
+				}
+			}
+
+			void ResetLightStaticShadowsCache( ObjectInSpace objectInSpace )
+			{
+				if( objectInSpace != null )
+				{
+					var scene = owner.ParentRoot as Scene;
+					if( scene != null )
+					{
+						var bounds = objectInSpace.SpaceBounds.BoundingBox;
+						var item = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, bounds );
+						scene.GetObjectsInSpace( item );
+
+						foreach( var resultItem in item.Result )
+						{
+							var light = resultItem.Object as Light;
+							light?.ResetStaticShadowsCache();
+						}
+					}
 				}
 			}
 		}
@@ -3733,7 +3767,7 @@ namespace NeoAxis
 			{
 				var byteArray = HeightmapToByteArray( HeightmapBuffer );
 
-				var zipped = IOUtility.Zip( byteArray );
+				var zipped = IOUtility.Zip( byteArray, System.IO.Compression.CompressionLevel.Fastest );
 				if( zipped.Length < (int)( (float)byteArray.Length / 1.25 ) )
 				{
 					block.SetAttribute( nameof( HeightmapBuffer ), Convert.ToBase64String( zipped, Base64FormattingOptions.None ) );
@@ -5467,7 +5501,8 @@ namespace NeoAxis
 			if( surface == null )
 				return;
 			surfaceObjectsItem.GetObjectsColor( out var color );
-			var colorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref color );
+			RenderingPipeline.GetColorForInstancingData( ref color, out var colorForInstancingData1, out var colorForInstancingData2 );
+			//var colorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref color );
 			var surfaceObjectsVisibilityDistanceFactor = surfaceObjectsItem.GetObjectsVisibilityDistanceFactor();
 			var surfaceObjectsCastShadows = surfaceObjectsItem.GetObjectsCastShadows();
 
@@ -5487,8 +5522,8 @@ namespace NeoAxis
 
 			//touch mesh result before multithreading
 			var meshResult = mesh.Result;
-			var meshData = meshResult.MeshData;
-
+			var meshDataLOD0 = meshResult.MeshData;
+			var meshDataLods = meshDataLOD0.LODs;
 
 			SurfaceObjectsLocalItem* localItems = (SurfaceObjectsLocalItem*)NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Renderer, sizeof( SurfaceObjectsLocalItem ) * objectCount );
 			for( int n = 0; n < objectCount; n++ )
@@ -5522,14 +5557,17 @@ namespace NeoAxis
 
 					var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref objectItem.BoundingBox );
 
-					var boundingSize = (float)( meshResult.SpaceBounds.boundingSphere.Radius * 2 * objectItem.Scale.MaxComponent() );
-					var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * visibilityDistanceFactor * meshData.VisibilityDistanceFactor;
+					var boundingSize = (float)( meshResult.SpaceBounds.boundingSphere.Radius * 2 * group.ObjectsMaxScale );
+					//var boundingSize = (float)( meshResult.SpaceBounds.boundingSphere.Radius * 2 * objectItem.Scale.MaxComponent() );
+					var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * visibilityDistanceFactor * meshDataLOD0.VisibilityDistanceFactor;
 
 					if( cameraDistanceMinSquared < visibilityDistance * visibilityDistance )
 					{
-						var itemCastShadows = castShadows && cameraDistanceMinSquared < context.GetShadowVisibilityDistanceSquared( visibilityDistance );
-						if( onlyForShadowGeneration && !itemCastShadows )
-							return;
+						if( onlyForShadowGeneration )
+						{
+							if( !castShadows || cameraDistanceMinSquared > context.GetShadowVisibilityDistanceSquared( visibilityDistance ) )
+								return;
+						}
 
 						var cameraDistanceMin = MathEx.Sqrt( cameraDistanceMinSquared );
 						var cameraDistanceMaxSquared = SceneLODUtility.GetCameraDistanceMax( cameraSettings, ref objectItem.BoundingSphere );
@@ -5544,15 +5582,14 @@ namespace NeoAxis
 						localItem.boundingSize = boundingSize;
 						localItem.visibilityDistance = visibilityDistance;
 
-						SceneLODUtility.GetDemandedLODs( context, meshData, cameraDistanceMinSquared, cameraDistanceMaxSquared, localItem.boundingSize, out localItem.lodState );
+						SceneLODUtility.GetDemandedLODs( context, meshDataLOD0, cameraDistanceMinSquared, cameraDistanceMaxSquared, localItem.boundingSize, out localItem.lodState );
 					}
 				} );
 
 				int maxLods = 1;
-				if( meshData.LODs != null )
-					maxLods += meshData.LODs.Length;
+				if( meshDataLOD0.LODs != null )
+					maxLods += meshDataLOD0.LODs.Length;
 
-				//!!!!GC little bit
 				var allLodItems = new LodItem[ maxLods * 2 ];
 				var allLodItemsFound = false;
 
@@ -5580,6 +5617,7 @@ namespace NeoAxis
 						//!!!!threading. может потом посчитать
 						lodObjectItem.LODValue = SceneLODUtility.GetLodValue( context, lodRange, localItem.cameraDistanceMin );
 						lodObjectItem.VisibilityDistance = localItem.visibilityDistance;
+
 						lodItem.List.Add( ref lodObjectItem );
 
 						if( lodObjectItem.VisibilityDistance > lodItem.MaxVisibilityDistance )
@@ -5592,25 +5630,27 @@ namespace NeoAxis
 				if( !allLodItemsFound )
 					return;
 
-
 				var templateItem = new RenderingPipeline.RenderSceneData.MeshItem();
 				templateItem.Creator = this;
 				templateItem.ReceiveDecals = true;
 				templateItem.MotionBlurFactor = 1.0f;
 				templateItem.ReplaceMaterial = replaceMaterial;
 				templateItem.Color = ColorValue.One;
-				templateItem.ColorForInstancingData = RenderingPipeline.ColorOneForInstancingData;
-				//if( ReplaceMaterialSelectively.Count != 0 )
-				//{
-				//	templateItem.ReplaceMaterialSelectively = new Material[ ReplaceMaterialSelectively.Count ];
-				//	for( int n = 0; n < ReplaceMaterialSelectively.Count; n++ )
-				//		templateItem.ReplaceMaterialSelectively[ n ] = ReplaceMaterialSelectively[ n ].Value;
-				//}
-
+				templateItem.ColorForInstancingData1 = RenderingPipeline.ColorOneForInstancingData1;
+				templateItem.ColorForInstancingData2 = RenderingPipeline.ColorOneForInstancingData2;
+				templateItem.StaticShadows = true;
 
 				var outputMeshes = context.FrameData.RenderSceneData.Meshes;
 
 				var totalInstanceCount = 0;
+
+				//MeshDataLastVoxelLOD
+				if( meshDataLods != null )
+				{
+					var lastLOD = meshDataLods[ meshDataLods.Length - 1 ];
+					if( lastLOD.VoxelGridSize != 0 )
+						templateItem.MeshDataLastVoxelLOD = lastLOD.Mesh?.Result?.MeshData;
+				}
 
 				//add mesh items and save indexes
 				for( int meshItemIndex = 0; meshItemIndex < allLodItems.Length; meshItemIndex++ )
@@ -5627,12 +5667,26 @@ namespace NeoAxis
 
 						var lodLevel = meshItemIndex / 2;
 
-						item.MeshData = meshData;
+						item.MeshData = meshDataLOD0;
+						item.MeshDataLOD0 = meshDataLOD0;
+
+						//MeshDataShadows, MeshDataShadowsForceBestLOD
+						var lodScaleShadows = context.LODScaleShadowsSquared * meshDataLOD0.LODScaleShadows;
+						if( lodScaleShadows <= lodLevel )
+						{
+							//select last LOD for shadows
+							item.MeshDataShadows = item.MeshDataLastVoxelLOD;
+						}
+						else if( lodScaleShadows >= 100 )
+						{
+							//select the best LOD for shadows
+							item.MeshDataShadows = meshDataLOD0;
+							item.MeshDataShadowsForceBestLOD = true;
+						}
+
 						if( lodLevel > 0 )
 						{
-							var lods = meshData.LODs;
-
-							ref var lod = ref lods[ lodLevel - 1 ];
+							ref var lod = ref meshDataLods[ lodLevel - 1 ];
 							//!!!!can't thread
 							var lodMeshData = lod.Mesh?.Result?.MeshData;
 							if( lodMeshData != null )
@@ -5658,6 +5712,36 @@ namespace NeoAxis
 						//	return 0;
 						//}, true );
 
+						//tessellation
+						if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum || mode == GetRenderSceneDataMode.InsideFrustum )
+						{
+							var enable = false;
+
+							if( item.MeshData == meshDataLOD0 )
+							{
+								if( item.ReplaceMaterial != null )
+								{
+									if( item.ReplaceMaterial.Result != null )
+										enable = item.ReplaceMaterial.Result.tessellationQuality != 0;
+								}
+								else
+									enable = meshDataLOD0.ContainsTessellation;
+
+								//if( item.ReplaceMaterialSelectively != null )
+								//{
+								//	for( int n = 0; n < item.ReplaceMaterialSelectively.Length; n++ )
+								//	{
+								//		var result = item.ReplaceMaterialSelectively[ n ].Result;
+								//		if( result != null && result.tessellationQuality != 0 )
+								//			enable = true;
+								//	}
+								//}
+							}
+
+							//set true only for first lod, set false to second (it can be true because item memory is shared)
+							item.Tessellation = enable;
+						}
+
 						lodItem.InstancingStart = totalInstanceCount;
 						totalInstanceCount += lodItem.List.Count;
 					}
@@ -5671,9 +5755,9 @@ namespace NeoAxis
 
 				//allocate instancing buffer data
 				int instanceStride = sizeof( RenderingPipeline.RenderSceneData.ObjectInstanceData );
-				if( InstanceDataBuffer.GetAvailableSpace( totalInstanceCount, instanceStride ) != totalInstanceCount )
-					return;
 				var instanceBuffer = new InstanceDataBuffer( totalInstanceCount, instanceStride );
+				if( !instanceBuffer.Valid )
+					return;
 				var instancingData = (RenderingPipeline.RenderSceneData.ObjectInstanceData*)instanceBuffer.Data;
 
 
@@ -5691,7 +5775,7 @@ namespace NeoAxis
 
 						//!!!!нужно собрать из тех что есть в списке? или ничего не делать, это же только сфера
 						item.BoundingSphere = group.BoundingSphere;
-						item.BoundingBoxCenter = item.BoundingSphere.Center;
+						//item.BoundingBoxCenter = item.BoundingSphere.Center;
 						//item.BoundingSphere = objectItem.BoundingSphere;
 						//item.BoundingBoxCenter = item.BoundingSphere.Center;//objectItem.BoundingBox.GetCenter( out item.BoundingBoxCenter );
 
@@ -5727,7 +5811,6 @@ namespace NeoAxis
 								else
 									offset = Vector3F.Zero;
 
-
 								var itemTransform = new Matrix4F();
 								itemTransform.Item0.X = scaleH;
 								itemTransform.Item0.Y = 0;
@@ -5741,37 +5824,47 @@ namespace NeoAxis
 								itemTransform.Item2.Y = 0;
 								itemTransform.Item2.Z = obj.Scale.Z;
 								itemTransform.Item2.W = 0;
-								//!!!!double. где еще
-								itemTransform.Item3.X = (float)( obj.Position.X + offset.X );
-								itemTransform.Item3.Y = (float)( obj.Position.Y + offset.Y );
-								itemTransform.Item3.Z = (float)( obj.Position.Z + offset.Z );
+
+								context.ConvertToRelative( obj.Position + offset, out var positionRelative );
+								itemTransform.Item3.X = positionRelative.X;
+								itemTransform.Item3.Y = positionRelative.Y;
+								itemTransform.Item3.Z = positionRelative.Z;
+
 								itemTransform.Item3.W = 1;
 
-
 								//!!!!slowly
-								itemTransform.GetTranspose( out data.Transform );
+								itemTransform.GetTranspose( out data.TransformRelative );
 
-
-								//!!!!double
-								data.PositionPreviousFrame = itemTransform.Item3.ToVector3F();
+								//data.TransformRelative.GetTranslation( out data.PositionPreviousFrameRelative );
+								//data.PositionPreviousFrameRelative += context.OwnerCameraSettingsPositionPreviousChange;
+								////data.PositionPreviousFrameRelative = itemTransform.Item3.ToVector3F();
 							}
 							else
 							{
-								objectItem.MeshMatrix.GetTranspose( out data.Transform );
+								context.ConvertToRelative( ref obj.Position, out var positionRelative );
+								Matrix3x4F.ConstructTransposeMatrix3( ref objectItem.MeshMatrix3, ref positionRelative, out data.TransformRelative );
 
-								//!!!!double
-								//var pos = obj.Position.ToVector3F();
-								//var matrix = new Matrix4F( ref objectItem.MeshMatrix3, ref pos );
+								//data.PositionPreviousFrameRelative = positionRelative + context.OwnerCameraSettingsPositionPreviousChange;
 
-								////!!!!slowly?
-								//matrix.GetTranspose( out data.Transform );
 
-								//!!!!double
-								data.PositionPreviousFrame = obj.Position.ToVector3F();
-								////matrix.GetTranslation( out data.PositionPreviousFrame );
+								//objectItem.MeshMatrix.GetTranspose( out data.Transform );
+
+								////!!!!double
+								////var pos = obj.Position.ToVector3F();
+								////var matrix = new Matrix4F( ref objectItem.MeshMatrix3, ref pos );
+
+								//////!!!!slowly?
+								////matrix.GetTranspose( out data.Transform );
+
+								////!!!!double
+								//data.PositionPreviousFrame = obj.Position.ToVector3F();
+								//////matrix.GetTranslation( out data.PositionPreviousFrame );
 							}
 
-							data.Color = colorForInstancingData;// objectItem.ColorForInstancingData;
+							data.PreviousFramePositionChange = Vector3F.Zero;
+
+							data.ColorPackedValue1 = colorForInstancingData1;// objectItem.ColorForInstancingData;
+							data.ColorPackedValue2 = colorForInstancingData2;
 							data.LodValue = lodObjectItem.LODValue;
 							data.VisibilityDistance = lodObjectItem.VisibilityDistance;
 							//!!!!
@@ -5892,6 +5985,7 @@ namespace NeoAxis
 
 					ref var objectItem = ref group.Objects.Data[ nObject ];
 
+					//!!!!что-то в Parallel. GetMesh нужно предрасчитать заранее
 
 					surface.GetMesh( group.VariationGroup, group.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out var visibilityDistanceFactor, out var castShadows, out var receiveDecals, out var motionBlurFactor );
 					if( mesh?.Result == null )
@@ -5902,10 +5996,12 @@ namespace NeoAxis
 					if( onlyForShadowGeneration && ( !castShadows || !surfaceObjectsCastShadows ) )
 						continue;
 
-					var boundingSize = (float)( mesh.Result.SpaceBounds.boundingSphere.Radius * 2 * objectItem.Scale.MaxComponent() );
-					var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * visibilityDistanceFactor * mesh.Result.MeshData.VisibilityDistanceFactor * surfaceObjectsVisibilityDistanceFactor;
+					var meshDataLOD0 = mesh.Result.MeshData;
 
-					if( localItem.cameraDistanceMinSquared < visibilityDistance * visibilityDistance/* || mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum*/ )
+					var boundingSize = (float)( mesh.Result.SpaceBounds.boundingSphere.Radius * 2 * objectItem.Scale.MaxComponent() );
+					var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * visibilityDistanceFactor * meshDataLOD0.VisibilityDistanceFactor * surfaceObjectsVisibilityDistanceFactor;
+
+					if( localItem.cameraDistanceMinSquared < visibilityDistance * visibilityDistance )
 					{
 						ref var position = ref objectItem.Position;
 						ref var rotation = ref objectItem.Rotation;
@@ -5914,41 +6010,57 @@ namespace NeoAxis
 						var item = new RenderingPipeline.RenderSceneData.MeshItem();
 						item.Creator = this;
 						item.BoundingSphere = objectItem.BoundingSphere;
-						item.BoundingBoxCenter = item.BoundingSphere.Center;
-						//objectItem.BoundingBox.GetCenter( out item.BoundingBoxCenter );
 						//item.MeshData = mesh.Result.MeshData;
 						//!!!!выключать тени. где еще так. что еще помимо теней
 						//item.CastShadows = castShadows && item.MeshData.CastShadows && localItem.cameraDistanceMinSquared < context.GetShadowVisibilityDistanceSquared( visibilityDistance ); ;
 						item.ReceiveDecals = receiveDecals;
 						item.MotionBlurFactor = motionBlurFactor;
 						item.ReplaceMaterial = replaceMaterial;
-						//impl?
-						//if( ReplaceMaterialSelectively.Count != 0 )
-						//{
-						//	item.ReplaceMaterialSelectively = new Material[ ReplaceMaterialSelectively.Count ];
-						//	for( int n = 0; n < ReplaceMaterialSelectively.Count; n++ )
-						//		item.ReplaceMaterialSelectively[ n ] = ReplaceMaterialSelectively[ n ].Value;
-						//}
 						item.Color = color;// obj.Color;
-						item.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref item.Color );
-						item.VisibilityDistance = (float)visibilityDistance;
+						RenderingPipeline.GetColorForInstancingData( ref item.Color, out item.ColorForInstancingData1, out item.ColorForInstancingData2 );
+						item.VisibilityDistance = visibilityDistance;
 						item.OnlyForShadowGeneration = onlyForShadowGeneration;
+						item.StaticShadows = true;
 
 						if( onlyForShadowGeneration && ( !item.CastShadows || !surfaceObjectsCastShadows ) )
 							continue;
 
 						int item0BillboardMode = 0;
 
-						SceneLODUtility.GetDemandedLODs( context, mesh.Result.MeshData, localItem.cameraDistanceMinSquared, localItem.cameraDistanceMaxSquared, boundingSize, out var lodState );
+						//MeshDataLastVoxelLOD
+						var meshDataLods = meshDataLOD0.LODs;
+						if( meshDataLods != null )
+						{
+							var lastLOD = meshDataLods[ meshDataLods.Length - 1 ];
+							if( lastLOD.VoxelGridSize != 0 )
+								item.MeshDataLastVoxelLOD = lastLOD.Mesh?.Result?.MeshData;
+						}
+
+						SceneLODUtility.GetDemandedLODs( context, meshDataLOD0, localItem.cameraDistanceMinSquared, localItem.cameraDistanceMaxSquared, boundingSize, out var lodState );
 						for( int nLodItem = 0; nLodItem < lodState.Count; nLodItem++ )
 						{
 							lodState.GetItem( nLodItem, out var lodLevel, out var lodRange );
 
+							item.MeshData = meshDataLOD0;
+							item.MeshDataLOD0 = meshDataLOD0;
 
-							item.MeshData = mesh.Result.MeshData;
+							//MeshDataShadows, MeshDataShadowsForceBestLOD
+							var lodScaleShadows = context.LODScaleShadowsSquared * meshDataLOD0.LODScaleShadows;
+							if( lodScaleShadows <= lodLevel )
+							{
+								//select last LOD for shadows
+								item.MeshDataShadows = item.MeshDataLastVoxelLOD;
+							}
+							else if( lodScaleShadows >= 100 )
+							{
+								//select the best LOD for shadows
+								item.MeshDataShadows = meshDataLOD0;
+								item.MeshDataShadowsForceBestLOD = true;
+							}
+
 							if( lodLevel > 0 )
 							{
-								ref var lod = ref mesh.Result.MeshData.LODs[ lodLevel - 1 ];
+								ref var lod = ref meshDataLods[ lodLevel - 1 ];
 								var lodMeshData = lod.Mesh?.Result?.MeshData;
 								if( lodMeshData != null )
 									item.MeshData = lodMeshData;
@@ -5956,8 +6068,6 @@ namespace NeoAxis
 
 							item.CastShadows = castShadows && surfaceObjectsCastShadows && item.MeshData.CastShadows && localItem.cameraDistanceMinSquared < context.GetShadowVisibilityDistanceSquared( visibilityDistance );
 							item.LODValue = SceneLODUtility.GetLodValue( context, lodRange, localItem.cameraDistanceMin );
-							//item.LODRange = lodRange;
-
 
 							//calculate MeshInstanceOne, PositionPreviousFrame
 							if( nLodItem == 0 )
@@ -5975,7 +6085,7 @@ namespace NeoAxis
 									else
 										offset = Vector3F.Zero;
 
-									ref var result = ref item.Transform;
+									ref var result = ref item.TransformRelative;
 									result.Item0.X = scaleH;
 									result.Item0.Y = 0;
 									result.Item0.Z = rotation.X;
@@ -5988,19 +6098,52 @@ namespace NeoAxis
 									result.Item2.Y = 0;
 									result.Item2.Z = scale.Z;
 									result.Item2.W = 0;
-									//!!!!double. где еще
-									result.Item3.X = (float)( position.X + offset.X );
-									result.Item3.Y = (float)( position.Y + offset.Y );
-									result.Item3.Z = (float)( position.Z + offset.Z );
+									result.Item3.X = (float)( position.X - context.OwnerCameraSettingsPosition.X + offset.X );
+									result.Item3.Y = (float)( position.Y - context.OwnerCameraSettingsPosition.Y + offset.Y );
+									result.Item3.Z = (float)( position.Z - context.OwnerCameraSettingsPosition.Z + offset.Z );
 									result.Item3.W = 1;
 								}
 								else
-									item.Transform = objectItem.MeshMatrix;
+								{
+									context.ConvertToRelative( ref objectItem.Position, out var positionRelative );
+									item.TransformRelative = new Matrix4F( ref objectItem.MeshMatrix3, ref positionRelative );
+									//item.Transform = objectItem.MeshMatrix;
+								}
 
-								//PositionPreviousFrame
-								item.Transform.GetTranslation( out item.PositionPreviousFrame );
+								////PositionPreviousFrame
+								//item.TransformRelative.GetTranslation( out item.PositionPreviousFrameRelative );
+								//item.PositionPreviousFrameRelative += context.OwnerCameraSettingsPositionPreviousChange;
 							}
 
+							//tessellation
+							if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum || mode == GetRenderSceneDataMode.InsideFrustum )
+							{
+								var enable = false;
+
+								if( item.MeshData == meshDataLOD0 )
+								{
+									if( item.ReplaceMaterial != null )
+									{
+										if( item.ReplaceMaterial.Result != null )
+											enable = item.ReplaceMaterial.Result.tessellationQuality != 0;
+									}
+									else
+										enable = meshDataLOD0.ContainsTessellation;
+
+									//if( item.ReplaceMaterialSelectively != null )
+									//{
+									//	for( int n = 0; n < item.ReplaceMaterialSelectively.Length; n++ )
+									//	{
+									//		var result = item.ReplaceMaterialSelectively[ n ].Result;
+									//		if( result != null && result.tessellationQuality != 0 )
+									//			enable = true;
+									//	}
+									//}
+								}
+
+								//set true only for first lod, set false to second (it can be true because item memory is shared)
+								item.Tessellation = enable;
+							}
 
 							//add to render
 							{
@@ -6029,9 +6172,19 @@ namespace NeoAxis
 		//	surfaceObjectsItem.RenderGroupsTaskResult = Tile.CalculateSurfaceObjectsRenderGroups( surfaceObjectsItem );
 		//}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		unsafe void CreateBatchingInstanceBufferMesh( Tile.SurfaceObjectsItem surfaceObjectsItem, Tile.SurfaceObjectsRenderGroup batch, float lodValue/*, float visibilityDistance*/, bool receiveDecals, float motionBlurFactor )
 		{
 			surfaceObjectsItem.GetObjectsColor( out var color );
+
+			var instancePositionOffset = new Vector3( double.MaxValue, double.MaxValue, double.MaxValue );
+			for( int n = 0; n < batch.Objects.Count; n++ )
+			{
+				ref var objectItem = ref batch.Objects.Data[ n ];
+				instancePositionOffset.X = Math.Min( instancePositionOffset.X, objectItem.Position.X );
+				instancePositionOffset.Y = Math.Min( instancePositionOffset.Y, objectItem.Position.Y );
+				instancePositionOffset.Z = Math.Min( instancePositionOffset.Z, objectItem.Position.Z );
+			}
 
 			var vertices = new byte[ sizeof( RenderingPipeline.RenderSceneData.ObjectInstanceData ) * batch.Objects.Count ];
 			fixed( byte* pVertices = vertices )
@@ -6042,23 +6195,44 @@ namespace NeoAxis
 
 					ref var objectItem = ref batch.Objects.Data[ n ];
 
-					ref var matrix = ref objectItem.MeshMatrix;
-					////!!!!double
-					//var pos = objectItem.Position.ToVector3F();
-					//var matrix = new Matrix4F( ref objectItem.MeshMatrix3, ref pos );
+					var matrix = new Matrix4F( objectItem.MeshMatrix3, ( objectItem.Position - instancePositionOffset ).ToVector3F() );
 
-					matrix.GetTranslation( out var positionPreviousFrame );
+					var vector3FZero = Vector3F.Zero;
+					//matrix.GetTranslation( out var positionPreviousFrame );
+
 					//!!!!CullingByCameraDirectionData
-					instanceData->Init( ref matrix, ref positionPreviousFrame, ref color, lodValue, -1/*visibilityDistance*/, receiveDecals, motionBlurFactor, 0 );
+
+					instanceData->Init( ref matrix, ref vector3FZero, ref color, lodValue, -1/*visibilityDistance*/, receiveDecals, motionBlurFactor, 0 );
+
+
+					//ref var matrix = ref objectItem.MeshMatrix;
+					//////!!!!double
+					////var pos = objectItem.Position.ToVector3F();
+					////var matrix = new Matrix4F( ref objectItem.MeshMatrix3, ref pos );
+
+					//matrix.GetTranslation( out var positionPreviousFrame );
+					////!!!!CullingByCameraDirectionData
+					//instanceData->Init( ref matrix, ref positionPreviousFrame, ref color, lodValue, -1/*visibilityDistance*/, receiveDecals, motionBlurFactor, 0 );
 				}
 			}
 
-			batch.BatchingInstanceBufferMesh = GpuBufferManager.CreateVertexBuffer( vertices, GpuBufferManager.InstancingVertexDeclaration, 0 );
+			batch.BatchingInstanceBufferMesh = GpuBufferManager.CreateVertexBuffer( vertices, GpuBufferManager.InstancingVertexDeclaration, GpuBufferFlags.ComputeRead );
+			batch.BatchingInstancePositionOffset = instancePositionOffset;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		unsafe void CreateBatchingInstanceBufferBillboard( Tile.SurfaceObjectsItem surfaceObjectsItem, Tile.SurfaceObjectsRenderGroup batch, float lodValue, /*float visibilityDistance, */bool receiveDecals, float motionBlurFactor, RenderingPipeline.RenderSceneData.IMeshData meshData )
 		{
 			surfaceObjectsItem.GetObjectsColor( out var color );
+
+			var instancePositionOffset = new Vector3( double.MaxValue, double.MaxValue, double.MaxValue );
+			for( int n = 0; n < batch.Objects.Count; n++ )
+			{
+				ref var objectItem = ref batch.Objects.Data[ n ];
+				instancePositionOffset.X = Math.Min( instancePositionOffset.X, objectItem.Position.X );
+				instancePositionOffset.Y = Math.Min( instancePositionOffset.Y, objectItem.Position.Y );
+				instancePositionOffset.Z = Math.Min( instancePositionOffset.Z, objectItem.Position.Z );
+			}
 
 			var vertices = new byte[ sizeof( RenderingPipeline.RenderSceneData.ObjectInstanceData ) * batch.Objects.Count ];
 			fixed( byte* pVertices = vertices )
@@ -6095,61 +6269,68 @@ namespace NeoAxis
 					matrix.Item2.Y = 0;
 					matrix.Item2.Z = scaleV;
 					matrix.Item2.W = 0;
-					//!!!!double. где еще
-					matrix.Item3.X = (float)( position.X + offset.X );
-					matrix.Item3.Y = (float)( position.Y + offset.Y );
-					matrix.Item3.Z = (float)( position.Z + offset.Z );
+					matrix.Item3.X = (float)( position.X - instancePositionOffset.X + offset.X );
+					matrix.Item3.Y = (float)( position.Y - instancePositionOffset.Y + offset.Y );
+					matrix.Item3.Z = (float)( position.Z - instancePositionOffset.Z + offset.Z );
 					matrix.Item3.W = 1;
 
-					matrix.GetTranslation( out var positionPreviousFrame );
+					var vector3FZero = Vector3F.Zero;
+					//matrix.GetTranslation( out var positionPreviousFrame );
+
 					//!!!!CullingByCameraDirectionData
-					instanceData->Init( ref matrix, ref positionPreviousFrame, ref color, lodValue, -1/*visibilityDistance*/, receiveDecals, motionBlurFactor, 0 );
+
+					instanceData->Init( ref matrix, ref vector3FZero, ref color, lodValue, -1/*visibilityDistance*/, receiveDecals, motionBlurFactor, 0 );
 				}
 			}
 
-			batch.BatchingInstanceBufferBillboard = GpuBufferManager.CreateVertexBuffer( vertices, GpuBufferManager.InstancingVertexDeclaration, 0 );
+			batch.BatchingInstanceBufferBillboard = GpuBufferManager.CreateVertexBuffer( vertices, GpuBufferManager.InstancingVertexDeclaration, GpuBufferFlags.ComputeRead );
+			batch.BatchingInstancePositionOffset = instancePositionOffset;
 		}
 
+		struct GroupItem
+		{
+			public int Added;
+			public float CameraDistanceMinSquared;
+			public float BoundingSize;
+			public float VisibilityDistance;
+			public int OnlyForShadowGeneration;
+			public SceneLODUtility.LodState LodState;
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
 		unsafe void RenderSurfaceObjectsItem( Tile tile, ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem, Tile.SurfaceObjectsItem surfaceObjectsItem )
 		{
-			if( surfaceObjectsItem.RenderGroups != null && surfaceObjectsItem.RenderGroups.Length != 0 )
+			var surface = surfaceObjectsItem.GetSurface().Result;
+
+			if( surfaceObjectsItem.RenderGroups != null && surfaceObjectsItem.RenderGroups.Length != 0 && surface != null )
 			{
 				var cameraSettings = context.Owner.CameraSettings;
-
 				var surfaceObjectsVisibilityDistanceFactor = surfaceObjectsItem.GetObjectsVisibilityDistanceFactor();
 				var surfaceObjectsCastShadows = surfaceObjectsItem.GetObjectsCastShadows();
-
 				var groups = surfaceObjectsItem.RenderGroups;
 				var groupCount = groups.Length;
 
+				var groupItems = stackalloc GroupItem[ groupCount ];
+				var groupIndexesAdded = stackalloc int[ groupCount ];
+				var groupIndexesAddedCount = 0;
 
-				//draw render groups
-				var groupsAdded = stackalloc int/*bool*/[ groupCount ];
-				for( int nGroup = 0; nGroup < groupCount; nGroup++ )
-					groupsAdded[ nGroup ] = 0;
-				var groupsCameraDistanceMinSquared = stackalloc float[ groupCount ];
-				var groupsBoundingSize = stackalloc float[ groupCount ];
-				var groupsVisibilityDistance = stackalloc float[ groupCount ];
-				var groupsOnlyForShadowGeneration = stackalloc int[ groupCount ];
-
-
+				//first single threaded pass
 				for( int nGroup = 0; nGroup < groupCount; nGroup++ )
 				{
 					var group = groups[ nGroup ];
+					ref var groupItem = ref groupItems[ nGroup ];
+
+					groupItem.Added = 0;
 
 					if( group.NoBatchingGroup )
 					{
-						//!!!!что еще проверять?
-
-						groupsAdded[ nGroup ] = 1;
+						//no batching group is already got result here
+						RenderObjectsNoBatchingGroup( context, mode, modeGetObjectsItem, surfaceObjectsItem, group );
+						//groupsAdded[ nGroup ] = 1;
 					}
 					else
 					{
-						var surface = surfaceObjectsItem.GetSurface().Result;
-						if( surface == null )
-							return;
-
-						surface.GetMesh( group.VariationGroup, group.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out var visibilityDistanceFactor, out var castShadows, out var receiveDecals, out var motionBlurFactor );
+						surface.GetMesh( group.VariationGroup, group.VariationElement, out var enabled, out var mesh, out _, out var visibilityDistanceFactor, out var castShadows, out _, out _ );
 						if( mesh?.Result == null )
 							mesh = ResourceUtility.MeshInvalid;
 
@@ -6158,52 +6339,39 @@ namespace NeoAxis
 						if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && ( !castShadows || !surfaceObjectsCastShadows ) )
 							continue;
 
+						var meshResult = mesh.Result;
+
 						var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref group.BoundingBox );
 
-						var boundingSize = (float)( mesh.Result.SpaceBounds.boundingSphere.Radius * 2 * group.ObjectsMaxScale );
-						var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * visibilityDistanceFactor * mesh.Result.MeshData.VisibilityDistanceFactor * surfaceObjectsVisibilityDistanceFactor;
+						var boundingSize = (float)( meshResult.SpaceBounds.boundingSphere.Radius * 2 * group.ObjectsMaxScale );
+						var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * visibilityDistanceFactor * meshResult.MeshData.VisibilityDistanceFactor * surfaceObjectsVisibilityDistanceFactor;
 
-						if( cameraDistanceMinSquared < visibilityDistance * visibilityDistance/* || mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum*/ )
+						if( cameraDistanceMinSquared < visibilityDistance * visibilityDistance )
 						{
-							groupsAdded[ nGroup ] = 1;
-							groupsVisibilityDistance[ nGroup ] = (float)visibilityDistance;
-							groupsCameraDistanceMinSquared[ nGroup ] = cameraDistanceMinSquared;
-							groupsBoundingSize[ nGroup ] = boundingSize;
+							groupItem.Added = 1;
+							groupItem.VisibilityDistance = visibilityDistance;
+							groupItem.CameraDistanceMinSquared = cameraDistanceMinSquared;
+							groupItem.BoundingSize = boundingSize;
+
+							groupIndexesAdded[ groupIndexesAddedCount++ ] = nGroup;
 						}
 					}
 				}
 
-
-
-				////detect amount of render groups to draw. RenderGroups are sorted by distance
-				//int groupsCountToCheck = 0;
-				//if( mode == GetRenderSceneDataMode.InsideFrustum )
-				//{
-				//	var cameraDistanceToSectorSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref surfaceObjectsItem.Bounds );
-				//	for( int nGroup = 0; nGroup < surfaceObjectsItem.RenderGroups.Length; nGroup++ )
-				//	{
-				//		var group = surfaceObjectsItem.RenderGroups[ nGroup ];
-				//		if( cameraDistanceToSectorSquared > group.VisibilityDistanceSquared )
-				//			break;
-				//		groupsCountToCheck++;
-				//	}
-				//}
-				//else if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum )
-				//	groupsCountToCheck = surfaceObjectsItem.RenderGroups.Length;
-
-
-				Parallel.For( 0, groupCount, delegate ( int nGroup )
+				//multithreaded pass
+				Parallel.For( 0, groupIndexesAddedCount, delegate ( int groupIndexesIndex )//Parallel.For( 0, groupCount, delegate ( int nGroup )
 				{
+					var nGroup = groupIndexesAdded[ groupIndexesIndex ];
 					var group = groups[ nGroup ];
+					ref var groupItem = ref groupItems[ nGroup ];
 
-					//!!!!
-					if( groupsAdded[ nGroup ] != 0 )
+					//if( groupsAdded[ nGroup ] != 0 )
 					{
-						if( group.NoBatchingGroup )
-						{
-							groupsAdded[ nGroup ] = 2;
-						}
-						else
+						//if( group.NoBatchingGroup )
+						//{
+						//	groupsAdded[ nGroup ] = 2;
+						//}
+						//else
 						{
 							var add = false;
 							var onlyForShadowGeneration = false;
@@ -6220,90 +6388,39 @@ namespace NeoAxis
 
 							if( add )
 							{
-								groupsAdded[ nGroup ] = 2;
-								groupsOnlyForShadowGeneration[ nGroup ] = onlyForShadowGeneration ? 1 : 0;
+								groupItem.Added = 2;
+								groupItem.OnlyForShadowGeneration = onlyForShadowGeneration ? 1 : 0;
+
+								surface.GetMesh( group.VariationGroup, group.VariationElement, out var enabled, out var mesh );
+								if( mesh?.Result == null )
+									mesh = ResourceUtility.MeshInvalid;
+
+								var cameraDistanceMaxSquared = SceneLODUtility.GetCameraDistanceMax( cameraSettings, ref group.BoundingSphere );
+								cameraDistanceMaxSquared *= cameraDistanceMaxSquared;
+
+								SceneLODUtility.GetDemandedLODs( context, mesh.Result.MeshData, groupItem.CameraDistanceMinSquared, cameraDistanceMaxSquared, groupItem.BoundingSize, out groupItem.LodState );
 							}
 						}
 					}
 				} );
 
-
-				////detect amount of render groups to draw. RenderGroups are sorted by distance
-				//int groupsCountToCheck = 0;
-				//if( mode == GetRenderSceneDataMode.InsideFrustum )
-				//{
-				//	var cameraDistanceToSectorSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref surfaceObjectsItem.Bounds );
-				//	for( int nGroup = 0; nGroup < surfaceObjectsItem.RenderGroups.Length; nGroup++ )
-				//	{
-				//		var group = surfaceObjectsItem.RenderGroups[ nGroup ];
-				//		if( cameraDistanceToSectorSquared > group.VisibilityDistanceSquared )
-				//			break;
-				//		groupsCountToCheck++;
-				//	}
-				//}
-				//else if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum )
-				//	groupsCountToCheck = surfaceObjectsItem.RenderGroups.Length;
-
-				////draw render groups
-				//var groupsAdded = stackalloc int/*bool*/[ groupsCountToCheck ];
-				//for( int nGroup = 0; nGroup < groupsCountToCheck; nGroup++ )
-				//	groupsAdded[ nGroup ] = 0;
-				//var groupsCameraDistanceMinSquared = stackalloc float[ groupsCountToCheck ];
-				//var groupsOnlyForShadowGeneration = stackalloc int[ groupsCountToCheck ];
-
-				//Parallel.For( 0, groupsCountToCheck, delegate ( int nGroup )
-				//{
-				//	var group = surfaceObjectsItem.RenderGroups[ nGroup ];
-
-				//	var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref group.BoundingBox );
-
-				//	zzzz;
-				//	if( cameraDistanceMinSquared < group.VisibilityDistanceSquared )//|| mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum )
-				//	{
-				//		var add = false;
-				//		var onlyForShadowGeneration = false;
-				//		if( mode == GetRenderSceneDataMode.InsideFrustum )
-				//		{
-				//			add = true;
-				//			onlyForShadowGeneration = !cameraSettings.Frustum.Intersects( ref group.BoundingSphere );
-				//		}
-				//		else if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && modeGetObjectsItem.Intersects( ref group.BoundingBox ) )
-				//		{
-				//			add = true;
-				//			onlyForShadowGeneration = true;
-				//		}
-
-				//		if( add )
-				//		{
-				//			groupsAdded[ nGroup ] = 1;
-				//			groupsCameraDistanceMinSquared[ nGroup ] = cameraDistanceMinSquared;
-				//			groupsOnlyForShadowGeneration[ nGroup ] = onlyForShadowGeneration ? 1 : 0;
-				//		}
-				//	}
-				//} );
-
+				//result pass
 				for( int nGroup = 0; nGroup < groupCount; nGroup++ )
 				{
-					if( groupsAdded[ nGroup ] != 2 )
+					ref var groupItem = ref groupItems[ nGroup ];
+					if( groupItem.Added != 2 )
 						continue;
 
 					var group = groups[ nGroup ];
 
-					if( group.NoBatchingGroup )
+					//if( group.NoBatchingGroup )
+					//{
+					//	RenderObjectsNoBatchingGroup( context, mode, modeGetObjectsItem, surfaceObjectsItem, group );
+					//}
+					//else
 					{
-						RenderObjectsNoBatchingGroup( context, mode, modeGetObjectsItem, surfaceObjectsItem, group );
-					}
-					else
-					{
-						var surface = surfaceObjectsItem.GetSurface().Result;
-						if( surface == null )
-							return;
-						surfaceObjectsItem.GetObjectsColor( out var color );
-
-						var cameraDistanceMinSquared = groupsCameraDistanceMinSquared[ nGroup ];
-						var onlyForShadowGeneration = groupsOnlyForShadowGeneration[ nGroup ] != 0;
-						var visibilityDistance = groupsVisibilityDistance[ nGroup ];
-						var boundingSize = groupsBoundingSize[ nGroup ];
+						var onlyForShadowGeneration = groupItem.OnlyForShadowGeneration != 0;
+						ref var lodState = ref groupItem.LodState;
 
 						surface.GetMesh( group.VariationGroup, group.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out var visibilityDistanceFactor, out var castShadows, out var receiveDecals, out var motionBlurFactor );
 						if( mesh?.Result == null )
@@ -6314,24 +6431,19 @@ namespace NeoAxis
 						if( onlyForShadowGeneration && ( !castShadows || !surfaceObjectsCastShadows ) )
 							continue;
 
-						var cameraDistanceMaxSquared = SceneLODUtility.GetCameraDistanceMax( cameraSettings, ref group.BoundingSphere );
-						cameraDistanceMaxSquared *= cameraDistanceMaxSquared;
-
-						SceneLODUtility.GetDemandedLODs( context, mesh.Result.MeshData, cameraDistanceMinSquared, cameraDistanceMaxSquared, boundingSize, out var lodState );
-
-
-						var lods = mesh.Result.MeshData.LODs;
+						var meshDataLOD0 = mesh.Result.MeshData;
+						var meshDataLods = meshDataLOD0.LODs;
 
 						bool useBatching = false;
 						{
-							if( lods == null )
+							if( meshDataLods == null )
 								useBatching = true;
 							else
 							{
 								//check for only one last lod
 								if( lodState.Count == 1 )
 								{
-									var lodCount = lods.Length + 1;
+									var lodCount = meshDataLods.Length + 1;
 									lodState.GetItem( 0, out var level, out var range );
 
 									if( level == lodCount - 1 )
@@ -6342,48 +6454,53 @@ namespace NeoAxis
 
 						if( useBatching )
 						{
+							surfaceObjectsItem.GetObjectsColor( out var color );
+
 							var item = new RenderingPipeline.RenderSceneData.MeshItem();
 							item.Creator = this;
 							item.BoundingSphere = group.BoundingSphere;
-							item.BoundingBoxCenter = item.BoundingSphere.Center;
-							//group.Bounds.CalculatedBoundingBox.GetCenter( out item.BoundingBoxCenter );
-
 							//item.MeshData = mesh.Result.MeshData;
 							//item.CastShadows = castShadows && item.MeshData.CastShadows;
 							item.ReceiveDecals = receiveDecals;
 							item.MotionBlurFactor = motionBlurFactor;
 							item.ReplaceMaterial = replaceMaterial;
-							//impl?
-							//if( ReplaceMaterialSelectively.Count != 0 )
-							//{
-							//	item.ReplaceMaterialSelectively = new Material[ ReplaceMaterialSelectively.Count ];
-							//	for( int n = 0; n < ReplaceMaterialSelectively.Count; n++ )
-							//		item.ReplaceMaterialSelectively[ n ] = ReplaceMaterialSelectively[ n ].Value;
-							//}
 							item.Color = color;// ColorValue.One;
-							item.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref item.Color );
-							item.VisibilityDistance = (float)visibilityDistance;
+							RenderingPipeline.GetColorForInstancingData( ref item.Color, out item.ColorForInstancingData1, out item.ColorForInstancingData2 );
+							item.VisibilityDistance = groupItem.VisibilityDistance;
 							item.OnlyForShadowGeneration = onlyForShadowGeneration;
-
+							item.StaticShadows = true;
 
 							for( int nLodItem = 0; nLodItem < lodState.Count; nLodItem++ )
 							{
 								lodState.GetItem( nLodItem, out var lodLevel, out _ );
 
+								item.MeshData = meshDataLOD0;
+								item.MeshDataLOD0 = meshDataLOD0;
 
-								item.MeshData = mesh.Result.MeshData;
+								//MeshDataShadows, MeshDataShadowsForceBestLOD
+								var lodScaleShadows = context.LODScaleShadowsSquared * meshDataLOD0.LODScaleShadows;
+								if( lodScaleShadows <= lodLevel )
+								{
+									//select last LOD for shadows
+									item.MeshDataShadows = item.MeshDataLastVoxelLOD;
+								}
+								else if( lodScaleShadows >= 100 )
+								{
+									//select the best LOD for shadows
+									item.MeshDataShadows = meshDataLOD0;
+									item.MeshDataShadowsForceBestLOD = true;
+								}
+
 								if( lodLevel > 0 )
 								{
-									ref var lod = ref lods[ lodLevel - 1 ];
+									ref var lod = ref meshDataLods[ lodLevel - 1 ];
 									var lodMeshData = lod.Mesh?.Result?.MeshData;
 									if( lodMeshData != null )
 										item.MeshData = lodMeshData;
 								}
 
-								item.CastShadows = castShadows && surfaceObjectsCastShadows && item.MeshData.CastShadows && cameraDistanceMinSquared < context.GetShadowVisibilityDistanceSquared( visibilityDistance );
+								item.CastShadows = castShadows && surfaceObjectsCastShadows && item.MeshData.CastShadows && groupItem.CameraDistanceMinSquared < context.GetShadowVisibilityDistanceSquared( groupItem.VisibilityDistance );
 								item.LODValue = 0;
-								// = SceneLODUtility.GetLodValue( lodRange, objectCameraDistance );
-								//item.LODRange = lodRange;
 
 								if( onlyForShadowGeneration && !item.CastShadows )
 									continue;
@@ -6391,29 +6508,27 @@ namespace NeoAxis
 								//set BatchingInstanceBuffer
 								if( item.MeshData.BillboardMode != 0 )
 								{
-									//!!!!сразу создавать, чтобы потом не тормозило? или в потоке
 									if( group.BatchingInstanceBufferBillboard == null )
-										CreateBatchingInstanceBufferBillboard( surfaceObjectsItem, group, item.LODValue, /*item.VisibilityDistance,*/ item.ReceiveDecals, item.MotionBlurFactor, item.MeshData );
+										CreateBatchingInstanceBufferBillboard( surfaceObjectsItem, group, item.LODValue, item.ReceiveDecals, item.MotionBlurFactor, item.MeshData );
 
 									item.InstancingEnabled = true;
 									item.InstancingVertexBuffer = group.BatchingInstanceBufferBillboard;
-									//!!!!
 									item.InstancingStart = 0;
 									item.InstancingCount = -1;
 									item.InstancingMaxLocalBounds = (float)( group.ObjectsMaxScale * item.MeshData.SpaceBounds.boundingSphere.Radius );
+									context.ConvertToRelative( ref group.BatchingInstancePositionOffset, out item.InstancingPositionOffsetRelative );
 								}
 								else
 								{
-									//!!!!сразу создавать, чтобы потом не тормозило? или в потоке
 									if( group.BatchingInstanceBufferMesh == null )
-										CreateBatchingInstanceBufferMesh( surfaceObjectsItem, group, item.LODValue, /*item.VisibilityDistance,*/ item.ReceiveDecals, item.MotionBlurFactor );
+										CreateBatchingInstanceBufferMesh( surfaceObjectsItem, group, item.LODValue, item.ReceiveDecals, item.MotionBlurFactor );
 
 									item.InstancingEnabled = true;
 									item.InstancingVertexBuffer = group.BatchingInstanceBufferMesh;
-									//!!!!
 									item.InstancingStart = 0;
 									item.InstancingCount = -1;
 									item.InstancingMaxLocalBounds = (float)( group.ObjectsMaxScale * item.MeshData.SpaceBounds.boundingSphere.Radius );
+									context.ConvertToRelative( ref group.BatchingInstancePositionOffset, out item.InstancingPositionOffsetRelative );
 								}
 
 								//add to render
@@ -6427,7 +6542,7 @@ namespace NeoAxis
 						}
 						else
 						{
-							bool containTransparent = replaceMaterial?.Result != null && replaceMaterial.Result.Transparent || mesh.ContainsTransparent();
+							bool containTransparent = replaceMaterial?.Result != null && replaceMaterial.Result.Transparent || meshDataLOD0.ContainsTransparent;
 							if( containTransparent )
 								RenderObjectsNoBatchingGroup( context, mode, modeGetObjectsItem, surfaceObjectsItem, group );
 							else
@@ -6450,9 +6565,7 @@ namespace NeoAxis
 
 		unsafe void TileGetRenderSceneDataSurfaceObjects( Tile tile, ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
-
 			//when context == null means precalculation of data
-
 
 			//hide label
 			if( context != null )
@@ -6592,7 +6705,7 @@ namespace NeoAxis
 					var writer = client != null ? BeginNetworkMessage( client, "HeightmapBuffer" ) : BeginNetworkMessageToEveryone( "HeightmapBuffer" );
 
 					var byteArray = HeightmapToByteArray( HeightmapBuffer );
-					var zipped = IOUtility.Zip( byteArray );
+					var zipped = IOUtility.Zip( byteArray, System.IO.Compression.CompressionLevel.Fastest );
 
 					writer.Write( zipped.Length );
 					writer.Write( zipped );

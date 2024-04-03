@@ -18,7 +18,7 @@ namespace NeoAxis
 		//public Reference<Range> LengthRange
 		//{
 		//	get { if( _lengthRange.BeginGet() ) LengthRange = _lengthRange.Get( this ); return _lengthRange.value; }
-		//	set { if( _lengthRange.BeginSet( ref value ) ) { try { LengthRangeChanged?.Invoke( this ); DataWasChanged(); } finally { _lengthRange.EndSet(); } } }
+		//	set { if( _lengthRange.BeginSet( this, ref value ) ) { try { LengthRangeChanged?.Invoke( this ); DataWasChanged(); } finally { _lengthRange.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="LengthRange"/> property value changes.</summary>
 		//public event Action<RoadModifier> LengthRangeChanged;
@@ -50,7 +50,7 @@ namespace NeoAxis
 		public Reference<PredefinedModifiersEnum> PredefinedModifiers
 		{
 			get { if( _predefinedModifiers.BeginGet() ) PredefinedModifiers = _predefinedModifiers.Get( this ); return _predefinedModifiers.value; }
-			set { if( _predefinedModifiers.BeginSet( ref value ) ) { try { PredefinedModifiersChanged?.Invoke( this ); DataWasChanged(); } finally { _predefinedModifiers.EndSet(); } } }
+			set { if( _predefinedModifiers.BeginSet( this, ref value ) ) { try { PredefinedModifiersChanged?.Invoke( this ); DataWasChanged(); } finally { _predefinedModifiers.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PredefinedModifiers"/> property value changes.</summary>
 		public event Action<RoadModifier> PredefinedModifiersChanged;
@@ -64,7 +64,7 @@ namespace NeoAxis
 		//public Reference<double> OverpassSupportHeight
 		//{
 		//	get { if( _overpassSupportHeight.BeginGet() ) OverpassSupportHeight = _overpassSupportHeight.Get( this ); return _overpassSupportHeight.value; }
-		//	set { if( _overpassSupportHeight.BeginSet( ref value ) ) { try { OverpassSupportHeightChanged?.Invoke( this ); DataWasChanged(); } finally { _overpassSupportHeight.EndSet(); } } }
+		//	set { if( _overpassSupportHeight.BeginSet( this, ref value ) ) { try { OverpassSupportHeightChanged?.Invoke( this ); DataWasChanged(); } finally { _overpassSupportHeight.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="OverpassSupportHeight"/> property value changes.</summary>
 		//public event Action<RoadModifier> OverpassSupportHeightChanged;

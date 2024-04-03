@@ -99,7 +99,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 2 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( Vector3F* v = &this.Item0 )
+				fixed( Vector3F* v = &this.Item0 )
 					return v[ index ];
 			}
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -107,7 +107,7 @@ namespace NeoAxis
 			{
 				if( index < 0 || index > 2 )
 					throw new ArgumentOutOfRangeException( "index" );
-				fixed ( Vector3F* v = &this.Item0 )
+				fixed( Vector3F* v = &this.Item0 )
 					v[ index ] = value;
 			}
 		}
@@ -941,7 +941,7 @@ namespace NeoAxis
 					throw new ArgumentOutOfRangeException( "row" );
 				if( column < 0 || column > 2 )
 					throw new ArgumentOutOfRangeException( "column" );
-				fixed ( float* v = &this.Item0.X )
+				fixed( float* v = &this.Item0.X )
 					return v[ row * 3 + column ];
 			}
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -951,7 +951,7 @@ namespace NeoAxis
 					throw new ArgumentOutOfRangeException( "row" );
 				if( column < 0 || column > 2 )
 					throw new ArgumentOutOfRangeException( "column" );
-				fixed ( float* v = &this.Item0.X )
+				fixed( float* v = &this.Item0.X )
 					v[ row * 3 + column ] = value;
 			}
 		}
@@ -1376,7 +1376,7 @@ namespace NeoAxis
 				(float)Math.Sqrt( ( Item2.X * Item2.X ) + ( Item2.Y * Item2.Y ) + ( Item2.Z * Item2.Z ) ) );
 
 			//!!!!1e-6f?
-			const double zeroTolerance = 1e-6f;
+			const float zeroTolerance = 1e-6f;
 			//If any of the scaling factors are zero, than the rotation matrix can not exist.
 			if( Math.Abs( scale.X ) < zeroTolerance ||
 				Math.Abs( scale.Y ) < zeroTolerance ||
@@ -1411,6 +1411,77 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public bool DecomposeScale( out Vector3F scale )
+		{
+			//Source: Unknown
+			//References: http://www.gamedev.net/community/forums/topic.asp?topic_id=441695
+
+			//Scaling is the length of the rows.
+			scale = new Vector3F(
+				(float)Math.Sqrt( ( Item0.X * Item0.X ) + ( Item0.Y * Item0.Y ) + ( Item0.Z * Item0.Z ) ),
+				(float)Math.Sqrt( ( Item1.X * Item1.X ) + ( Item1.Y * Item1.Y ) + ( Item1.Z * Item1.Z ) ),
+				(float)Math.Sqrt( ( Item2.X * Item2.X ) + ( Item2.Y * Item2.Y ) + ( Item2.Z * Item2.Z ) ) );
+
+			//!!!!1e-6f?
+			const float zeroTolerance = 1e-6f;
+			//If any of the scaling factors are zero, than the rotation matrix can not exist.
+			if( Math.Abs( scale.X ) < zeroTolerance ||
+				Math.Abs( scale.Y ) < zeroTolerance ||
+				Math.Abs( scale.Z ) < zeroTolerance )
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public float DecomposeScaleMaxComponent()
+		{
+			var scaleSquared = new Vector3F(
+				 Item0.X * Item0.X + Item0.Y * Item0.Y + Item0.Z * Item0.Z,
+				 Item1.X * Item1.X + Item1.Y * Item1.Y + Item1.Z * Item1.Z,
+				 Item2.X * Item2.X + Item2.Y * Item2.Y + Item2.Z * Item2.Z );
+
+			return MathEx.Sqrt( scaleSquared.MaxComponent() );
+		}
+
+		/// <summary>
+		/// Creates a look-at matrix.
+		/// </summary>
+		/// <param name="direction">Target position in world space.</param>
+		/// <param name="up">Up vector in world space.</param>
+		/// <returns>The instance of <see cref="Matrix3"/> that transforms world space to camera space.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static void LookAt( ref Vector3F direction, ref Vector3F up, out Matrix3F result )
+		{
+			//!!!!not checked
+			if( direction.Equals( Vector3F.Zero, MathEx.Epsilon ) )
+			{
+				result = Identity;
+				return;
+			}
+
+			Vector3F x = direction;
+			x.Normalize();
+
+			Vector3F.Cross( ref up, ref x, out var cross );
+			if( cross.Equals( Vector3F.Zero, MathEx.Epsilon ) )
+			{
+				result = Identity;
+				return;
+			}
+			var y = cross;
+			y.Normalize();
+			//Vec3 y = Vec3.Cross( up, x ).GetNormalize();
+
+			Vector3F.Cross( ref y, ref x, out var z );
+			z.Normalize();
+			z.Negate();
+			result = new Matrix3F( x, y, z );
+		}
+
 		/// <summary>
 		/// Creates a look-at matrix.
 		/// </summary>
@@ -1420,21 +1491,23 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Matrix3F LookAt( Vector3F direction, Vector3F up )
 		{
+			LookAt( ref direction, ref up, out var result );
+			return result;
 
-			//!!!!not checked
-			if( direction.Equals( Vector3F.Zero, MathEx.Epsilon ) )
-				return Identity;
+			////!!!!not checked
+			//if( direction.Equals( Vector3F.Zero, MathEx.Epsilon ) )
+			//	return Identity;
 
-			Vector3F x = direction.GetNormalize();
+			//Vector3F x = direction.GetNormalize();
 
-			var cross = Vector3F.Cross( up, x );
-			if( cross.Equals( Vector3F.Zero, MathEx.Epsilon ) )
-				return Identity;
-			var y = cross.GetNormalize();
-			//Vec3 y = Vec3.Cross( up, x ).GetNormalize();
+			//var cross = Vector3F.Cross( up, x );
+			//if( cross.Equals( Vector3F.Zero, MathEx.Epsilon ) )
+			//	return Identity;
+			//var y = cross.GetNormalize();
+			////Vec3 y = Vec3.Cross( up, x ).GetNormalize();
 
-			Vector3F z = -Vector3F.Cross( y, x ).GetNormalize();
-			return new Matrix3F( x, y, z );
+			//Vector3F z = -Vector3F.Cross( y, x ).GetNormalize();
+			//return new Matrix3F( x, y, z );
 		}
 	}
 }

@@ -22,7 +22,7 @@ namespace NeoAxis
 		//public Reference<double> Intensity
 		//{
 		//	get { if( _intensity.BeginGet() ) Intensity = _intensity.Get( this ); return _intensity.value; }
-		//	set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
+		//	set { if( _intensity.BeginSet( this, ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
 		//public event Action<RenderingEffect_ResolutionUpscale> IntensityChanged;
@@ -45,7 +45,7 @@ namespace NeoAxis
 		public Reference<ModeEnum> Mode
 		{
 			get { if( _mode.BeginGet() ) Mode = _mode.Get( this ); return _mode.value; }
-			set { if( _mode.BeginSet( ref value ) ) { try { ModeChanged?.Invoke( this ); } finally { _mode.EndSet(); } } }
+			set { if( _mode.BeginSet( this, ref value ) ) { try { ModeChanged?.Invoke( this ); } finally { _mode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Mode"/> property value changes.</summary>
 		public event Action<RenderingEffect_ResolutionUpscale> ModeChanged;
@@ -68,25 +68,25 @@ namespace NeoAxis
 		public Reference<TechniqueEnum> Technique
 		{
 			get { if( _technique.BeginGet() ) Technique = _technique.Get( this ); return _technique.value; }
-			set { if( _technique.BeginSet( ref value ) ) { try { TechniqueChanged?.Invoke( this ); } finally { _technique.EndSet(); } } }
+			set { if( _technique.BeginSet( this, ref value ) ) { try { TechniqueChanged?.Invoke( this ); } finally { _technique.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Technique"/> property value changes.</summary>
 		public event Action<RenderingEffect_ResolutionUpscale> TechniqueChanged;
 		ReferenceField<TechniqueEnum> _technique = TechniqueEnum.Auto;
 
-		/// <summary>
-		/// The multiplier to the mipmapping bias.
-		/// </summary>
-		[DefaultValue( 1.0 )]
-		[Range( 0, 1 )]
-		public Reference<double> AffectMipBias
-		{
-			get { if( _affectMipBias.BeginGet() ) AffectMipBias = _affectMipBias.Get( this ); return _affectMipBias.value; }
-			set { if( _affectMipBias.BeginSet( ref value ) ) { try { AffectMipBiasChanged?.Invoke( this ); } finally { _affectMipBias.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="AffectMipBias"/> property value changes.</summary>
-		public event Action<RenderingEffect_ResolutionUpscale> AffectMipBiasChanged;
-		ReferenceField<double> _affectMipBias = 1.0;
+		///// <summary>
+		///// The multiplier to the mipmapping bias.
+		///// </summary>
+		//[DefaultValue( 1.0 )]
+		//[Range( 0, 1 )]
+		//public Reference<double> AffectMipBias
+		//{
+		//	get { if( _affectMipBias.BeginGet() ) AffectMipBias = _affectMipBias.Get( this ); return _affectMipBias.value; }
+		//	set { if( _affectMipBias.BeginSet( this, ref value ) ) { try { AffectMipBiasChanged?.Invoke( this ); } finally { _affectMipBias.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="AffectMipBias"/> property value changes.</summary>
+		//public event Action<RenderingEffect_ResolutionUpscale> AffectMipBiasChanged;
+		//ReferenceField<double> _affectMipBias = 1.0;
 
 		/////////////////////////////////////////
 
@@ -101,17 +101,17 @@ namespace NeoAxis
 		{
 			base.OnMetadataGetMembersFilter( context, member, ref skip );
 
-			var p = member as Metadata.Property;
-			if( p != null )
-			{
-				switch( p.Name )
-				{
-				case nameof( AffectMipBias ):
-					if( Mode.Value == ModeEnum.Original || Technique.Value != TechniqueEnum.AMDFSR1 )
-						skip = true;
-					break;
-				}
-			}
+			//var p = member as Metadata.Property;
+			//if( p != null )
+			//{
+			//	switch( p.Name )
+			//	{
+			//	case nameof( AffectMipBias ):
+			//		if( Mode.Value == ModeEnum.Original || Technique.Value != TechniqueEnum.AMDFSR1 )
+			//			skip = true;
+			//		break;
+			//	}
+			//}
 		}
 
 		public ModeEnum GetMode()
@@ -168,22 +168,23 @@ namespace NeoAxis
 			return Vector2.One;
 		}
 
-		public virtual double GetMipBias()
-		{
-			var result = 0.0;
-			if( GetTechnique() == TechniqueEnum.AMDFSR1 )
-			{
-				switch( GetMode() )
-				{
-				case ModeEnum.UltraQuality: result = -0.38; break;
-				case ModeEnum.Quality: result = -0.58; break;
-				case ModeEnum.Balanced: result = -0.79; break;
-				case ModeEnum.Performance: result = -1.0; break;
-				}
-			}
-			result *= AffectMipBias.Value;
-			return result;
-		}
+		//mip bias is disabled
+		//public virtual double GetMipBias()
+		//{
+		//	var result = 0.0;
+		//	if( GetTechnique() == TechniqueEnum.AMDFSR1 )
+		//	{
+		//		switch( GetMode() )
+		//		{
+		//		case ModeEnum.UltraQuality: result = -0.38; break;
+		//		case ModeEnum.Quality: result = -0.58; break;
+		//		case ModeEnum.Balanced: result = -0.79; break;
+		//		case ModeEnum.Performance: result = -1.0; break;
+		//		}
+		//	}
+		//	result *= AffectMipBias.Value;
+		//	return result;
+		//}
 
 		public virtual double GetSharpnessMultiplier()
 		{

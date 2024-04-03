@@ -16,17 +16,4 @@
 			GetByReference = "Content\\Weapons\\Default\\Bullet 2\\Bullet 2.material"
 		}
 	}
-	.component NeoAxis.RigidBody
-	{
-		Name = Collision Definition
-		Transform = "0 0 0; 0 0 0 1; 1 1 1"
-		MotionType = Dynamic
-		MotionQuality = LinearCast
-		MaterialRestitution = 0.5
-		.component NeoAxis.CollisionShape_Sphere
-		{
-			Name = Shape
-			Radius = 0.03
-		}
-	}
 }

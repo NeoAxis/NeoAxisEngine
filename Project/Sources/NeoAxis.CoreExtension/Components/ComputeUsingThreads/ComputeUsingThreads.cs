@@ -31,7 +31,7 @@
 //		public Reference<int> ThreadCount
 //		{
 //			get { if( _threadCount.BeginGet() ) ThreadCount = _threadCount.Get( this ); return _threadCount.value; }
-//			set { if( _threadCount.BeginSet( ref value ) ) { try { ThreadCountChanged?.Invoke( this ); Start(); } finally { _threadCount.EndSet(); } } }
+//			set { if( _threadCount.BeginSet( this, ref value ) ) { try { ThreadCountChanged?.Invoke( this ); Start(); } finally { _threadCount.EndSet(); } } }
 //		}
 //		/// <summary>Occurs when the <see cref="ThreadCount"/> property value changes.</summary>
 //		public event Action<ComputeUsingThreads> ThreadCountChanged;
@@ -44,7 +44,7 @@
 //		public Reference<bool> AutoStart
 //		{
 //			get { if( _autoStart.BeginGet() ) AutoStart = _autoStart.Get( this ); return _autoStart.value; }
-//			set { if( _autoStart.BeginSet( ref value ) ) { try { AutoStartChanged?.Invoke( this ); } finally { _autoStart.EndSet(); } } }
+//			set { if( _autoStart.BeginSet( this, ref value ) ) { try { AutoStartChanged?.Invoke( this ); } finally { _autoStart.EndSet(); } } }
 //		}
 //		/// <summary>Occurs when the <see cref="AutoStart"/> property value changes.</summary>
 //		public event Action<ComputeUsingThreads> AutoStartChanged;

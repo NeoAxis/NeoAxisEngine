@@ -1,0 +1,11 @@
+Model Information:
+* title:	Colt xm177e1 Game Asset
+* source:	https://sketchfab.com/3d-models/colt-xm177e1-game-asset-9794e331c2c54bf5b7cfcf170ece7007
+* author:	Bazylonator (https://sketchfab.com/Bazylonator)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Colt xm177e1 Game Asset" (https://sketchfab.com/3d-models/colt-xm177e1-game-asset-9794e331c2c54bf5b7cfcf170ece7007) by Bazylonator (https://sketchfab.com/Bazylonator) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

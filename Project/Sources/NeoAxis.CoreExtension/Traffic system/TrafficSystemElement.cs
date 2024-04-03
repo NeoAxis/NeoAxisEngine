@@ -26,7 +26,7 @@ namespace NeoAxis
 		public Reference<Component> ObjectType
 		{
 			get { if( _objectType.BeginGet() ) ObjectType = _objectType.Get( this ); return _objectType.value; }
-			set { if( _objectType.BeginSet( ref value ) ) { try { ObjectTypeChanged?.Invoke( this ); } finally { _objectType.EndSet(); } } }
+			set { if( _objectType.BeginSet( this, ref value ) ) { try { ObjectTypeChanged?.Invoke( this ); } finally { _objectType.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ObjectType"/> property value changes.</summary>
 		public event Action<TrafficSystemElement> ObjectTypeChanged;
@@ -47,7 +47,7 @@ namespace NeoAxis
 		public Reference<RolesEnum> Roles
 		{
 			get { if( _roles.BeginGet() ) Roles = _roles.Get( this ); return _roles.value; }
-			set { if( _roles.BeginSet( ref value ) ) { try { RolesChanged?.Invoke( this ); } finally { _roles.EndSet(); } } }
+			set { if( _roles.BeginSet( this, ref value ) ) { try { RolesChanged?.Invoke( this ); } finally { _roles.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Roles"/> property value changes.</summary>
 		public event Action<TrafficSystemElement> RolesChanged;
@@ -60,7 +60,7 @@ namespace NeoAxis
 		public Reference<Range> FlyingHeightRange
 		{
 			get { if( _flyingHeightRange.BeginGet() ) FlyingHeightRange = _flyingHeightRange.Get( this ); return _flyingHeightRange.value; }
-			set { if( _flyingHeightRange.BeginSet( ref value ) ) { try { FlyingHeightRangeChanged?.Invoke( this ); } finally { _flyingHeightRange.EndSet(); } } }
+			set { if( _flyingHeightRange.BeginSet( this, ref value ) ) { try { FlyingHeightRangeChanged?.Invoke( this ); } finally { _flyingHeightRange.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FlyingHeightRange"/> property value changes.</summary>
 		public event Action<TrafficSystemElement> FlyingHeightRangeChanged;
@@ -73,7 +73,7 @@ namespace NeoAxis
 		public Reference<Range> FlyingSpeedRange
 		{
 			get { if( _flyingSpeedRange.BeginGet() ) FlyingSpeedRange = _flyingSpeedRange.Get( this ); return _flyingSpeedRange.value; }
-			set { if( _flyingSpeedRange.BeginSet( ref value ) ) { try { FlyingSpeedRangeChanged?.Invoke( this ); } finally { _flyingSpeedRange.EndSet(); } } }
+			set { if( _flyingSpeedRange.BeginSet( this, ref value ) ) { try { FlyingSpeedRangeChanged?.Invoke( this ); } finally { _flyingSpeedRange.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FlyingSpeedRange"/> property value changes.</summary>
 		public event Action<TrafficSystemElement> FlyingSpeedRangeChanged;

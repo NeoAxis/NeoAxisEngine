@@ -24,7 +24,7 @@ namespace NeoAxis
 		//public Reference<OccluderShape> Shape
 		//{
 		//	get { if( _shape.BeginGet() ) Shape = _shape.Get( this ); return _shape.value; }
-		//	set { if( _shape.BeginSet( ref value ) ) { try { ShapeChanged?.Invoke( this ); SpaceBoundsUpdate(); } finally { _shape.EndSet(); } } }
+		//	set { if( _shape.BeginSet( this, ref value ) ) { try { ShapeChanged?.Invoke( this ); SpaceBoundsUpdate(); } finally { _shape.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="Shape"/> property value changes.</summary>
 		//public event Action<Occluder> ShapeChanged;
@@ -78,7 +78,13 @@ namespace NeoAxis
 			{
 				var context2 = context.ObjectInSpaceRenderingContext;
 
-				bool show = ( context.SceneDisplayDevelopmentDataInThisApplication && ParentScene.DisplayVolumes ) || context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
+				bool show = ( context.SceneDisplayDevelopmentDataInThisApplication && ParentScene.DisplayVolumes );// || context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
+				if( EngineApp.IsEditor )
+				{
+					if( context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this )
+						show = true;
+				}
+
 				if( show )
 				{
 					//if( context2.displayVolumesCounter < context2.displayVolumesMax )
@@ -111,8 +117,11 @@ namespace NeoAxis
 
 		protected override Scene.SceneObjectFlags OnGetSceneObjectFlags()
 		{
-			//!!!!maybe in simulation no sense for visual
-			return base.OnGetSceneObjectFlags() | Scene.SceneObjectFlags.Occluder;
+			//!!!!but OnGetRenderSceneData will skipped
+			if( EngineApp.IsSimulation )
+				return Scene.SceneObjectFlags.Logic | Scene.SceneObjectFlags.Occluder;
+			else
+				return base.OnGetSceneObjectFlags() | Scene.SceneObjectFlags.Occluder;
 		}
 
 		//protected override bool OnOcclusionCullingDataContains()

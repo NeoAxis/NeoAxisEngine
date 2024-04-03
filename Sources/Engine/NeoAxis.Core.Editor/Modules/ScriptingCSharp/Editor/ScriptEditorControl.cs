@@ -247,7 +247,7 @@ namespace NeoAxis.Editor
 
 			if( args.KeyCode != Keys.None )
 			{
-				if( EditorAPI.ProcessShortcuts( args.KeyCode, false ) )
+				if( EditorAPI2.ProcessShortcuts( args.KeyCode, false ) )
 				{
 					e.Handled = true;
 					return;
@@ -726,7 +726,7 @@ namespace NeoAxis.Editor
 
 		string Translate( string text )
 		{
-			return EditorLocalization.Translate( "ScriptEditor", text );
+			return EditorLocalization2.Translate( "ScriptEditor", text );
 		}
 
 		public void TryShowRenameDialog()
@@ -877,7 +877,7 @@ namespace NeoAxis.Editor
 			if( loadedHighlightingDefinition == null )
 			{
 				string path;
-				if( EditorAPI.DarkTheme )
+				if( EditorAPI2.DarkTheme )
 					path = @"Base\Tools\Highlighting\CSharpDark.xshd";
 				else
 					path = @"Base\Tools\Highlighting\CSharpLight.xshd";
@@ -930,7 +930,7 @@ namespace NeoAxis.Editor
 		void UpdateBackgroundForeground()
 		{
 			{
-				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.CSharpEditor.CSharpEditorBackgroundColorDarkTheme.Value : ProjectSettings.Get.CSharpEditor.CSharpEditorBackgroundColorLightTheme.Value;
+				var color = EditorAPI2.DarkTheme ? ProjectSettings.Get.CSharpEditor.CSharpEditorBackgroundColorDarkTheme.Value : ProjectSettings.Get.CSharpEditor.CSharpEditorBackgroundColorLightTheme.Value;
 				if( backgroundColor != color )
 				{
 					backgroundColor = color;
@@ -940,7 +940,7 @@ namespace NeoAxis.Editor
 			}
 
 			{
-				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.CSharpEditor.CSharpEditorSearchBackgroundDarkTheme.Value : ProjectSettings.Get.CSharpEditor.CSharpEditorSearchBackgroundLightTheme.Value;
+				var color = EditorAPI2.DarkTheme ? ProjectSettings.Get.CSharpEditor.CSharpEditorSearchBackgroundDarkTheme.Value : ProjectSettings.Get.CSharpEditor.CSharpEditorSearchBackgroundLightTheme.Value;
 				var packed = color.ToColorPacked();
 				editor.TextArea.SearchBackgroundBrush = new SolidColorBrush( Color.FromArgb( packed.Alpha, packed.Red, packed.Green, packed.Blue ) );
 			}
@@ -991,7 +991,7 @@ namespace NeoAxis.Editor
 				catch { }
 			}
 
-			var selectionBackground = EditorAPI.DarkTheme ? ProjectSettings.Get.CSharpEditor.CSharpEditorSelectionBackgroundDarkTheme.Value : ProjectSettings.Get.CSharpEditor.CSharpEditorSelectionBackgroundLightTheme.Value;
+			var selectionBackground = EditorAPI2.DarkTheme ? ProjectSettings.Get.CSharpEditor.CSharpEditorSelectionBackgroundDarkTheme.Value : ProjectSettings.Get.CSharpEditor.CSharpEditorSelectionBackgroundLightTheme.Value;
 			if( currentSelectionBackground != selectionBackground )
 			{
 				currentSelectionBackground = selectionBackground;
@@ -1004,7 +1004,7 @@ namespace NeoAxis.Editor
 				catch { }
 			}
 
-			var selectionForeground = EditorAPI.DarkTheme ? ProjectSettings.Get.CSharpEditor.CSharpEditorSelectionForegroundDarkTheme.Value : ProjectSettings.Get.CSharpEditor.CSharpEditorSelectionForegroundLightTheme.Value;
+			var selectionForeground = EditorAPI2.DarkTheme ? ProjectSettings.Get.CSharpEditor.CSharpEditorSelectionForegroundDarkTheme.Value : ProjectSettings.Get.CSharpEditor.CSharpEditorSelectionForegroundLightTheme.Value;
 			if( currentSelectionForeground != selectionForeground )
 			{
 				currentSelectionForeground = selectionForeground;
@@ -1034,7 +1034,7 @@ namespace NeoAxis.Editor
 			engineScrollBarVertical.Scroll += EngineScrollBarVertical_Scroll;
 			engineScrollBarHorizontal.Scroll += EngineScrollBarHorizontal_Scroll;
 
-			if( EditorAPI.DarkTheme )
+			if( EditorAPI2.DarkTheme )
 			{
 				kryptonSplitContainerSub1.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb( 40, 40, 40 );
 				kryptonSplitContainerSub2.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb( 47, 47, 47 );
@@ -1233,7 +1233,7 @@ namespace NeoAxis.Editor
 							var path = location.SourceTree.FilePath;
 							if( File.Exists( path ) )
 							{
-								var documentWindow = EditorAPI.OpenFileAsDocument( path, true, true ) as CSharpDocumentWindow;
+								var documentWindow = EditorAPI2.OpenFileAsDocument( path, true, true ) as CSharpDocumentWindow;
 								if( documentWindow != null )
 								{
 									var scriptEditorControl = documentWindow.ScriptEditorControl;
@@ -1326,7 +1326,7 @@ namespace NeoAxis.Editor
 
 					//Log.Info( selectLine );
 
-					EditorAPI.OpenTextAsDocument( metadataText, engineType.Name + " [from metadata]", true, true, "CSharp", selectLine );
+					EditorAPI2.OpenTextAsDocument( metadataText, engineType.Name + " [from metadata]", true, true, "CSharp", selectLine );
 
 					//EditorAPI.OpenTextAsDocument( metadataText, engineType.Name + " [from metadata]", true, true, "CSharp", selectLine.Minimum, selectLine.Maximum );
 				}

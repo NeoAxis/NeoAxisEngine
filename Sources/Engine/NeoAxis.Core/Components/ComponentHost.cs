@@ -22,7 +22,7 @@ namespace NeoAxis
 		public Reference<ReferenceValueType_Resource> LoadFile
 		{
 			get { if( _loadFile.BeginGet() ) LoadFile = _loadFile.Get( this ); return _loadFile.value; }
-			set { if( _loadFile.BeginSet( ref value ) ) { try { LoadFileChanged?.Invoke( this ); ComponentCreate(); } finally { _loadFile.EndSet(); } } }
+			set { if( _loadFile.BeginSet( this, ref value ) ) { try { LoadFileChanged?.Invoke( this ); ComponentCreate(); } finally { _loadFile.EndSet(); } } }
 		}
 		public event Action<ComponentHost> LoadFileChanged;
 		ReferenceField<ReferenceValueType_Resource> _loadFile;
@@ -34,7 +34,7 @@ namespace NeoAxis
 		public Reference<Metadata.TypeInfo> CreateType
 		{
 			get { if( _createType.BeginGet() ) CreateType = _createType.Get( this ); return _createType.value; }
-			set { if( _createType.BeginSet( ref value ) ) { try { CreateTypeChanged?.Invoke( this ); ComponentCreate(); } finally { _createType.EndSet(); } } }
+			set { if( _createType.BeginSet( this, ref value ) ) { try { CreateTypeChanged?.Invoke( this ); ComponentCreate(); } finally { _createType.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CreateType"/> property value changes.</summary>
 		public event Action<ComponentHost> CreateTypeChanged;

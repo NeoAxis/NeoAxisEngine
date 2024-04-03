@@ -3,7 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2023, assimp team
 
 All rights reserved.
 
@@ -45,11 +45,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef ASSIMP_BUILD_NO_FINDINVALIDDATA_PROCESS
 
 // internal headers
-#    include "FindInvalidDataProcess.h"
-#    include "ProcessHelper.h"
+#include "FindInvalidDataProcess.h"
+#include "ProcessHelper.h"
 
-#    include <assimp/Exceptional.h>
-#    include <assimp/qnan.h>
+#include <assimp/Exceptional.h>
+#include <assimp/qnan.h>
 
 using namespace Assimp;
 
@@ -57,12 +57,6 @@ using namespace Assimp;
 // Constructor to be privately used by Importer
 FindInvalidDataProcess::FindInvalidDataProcess() :
         configEpsilon(0.0), mIgnoreTexCoods(false) {
-    // nothing to do here
-}
-
-// ------------------------------------------------------------------------------------------------
-// Destructor, private as well
-FindInvalidDataProcess::~FindInvalidDataProcess() {
     // nothing to do here
 }
 
@@ -88,6 +82,9 @@ void UpdateMeshReferences(aiNode *node, const std::vector<unsigned int> &meshMap
         for (unsigned int a = 0; a < node->mNumMeshes; ++a) {
 
             unsigned int ref = node->mMeshes[a];
+            if (ref >= meshMapping.size())
+                throw DeadlyImportError("Invalid mesh ref");
+
             if (UINT_MAX != (ref = meshMapping[ref])) {
                 node->mMeshes[out++] = ref;
             }
@@ -97,7 +94,7 @@ void UpdateMeshReferences(aiNode *node, const std::vector<unsigned int> &meshMap
         node->mNumMeshes = out;
         if (0 == out) {
             delete[] node->mMeshes;
-            node->mMeshes = NULL;
+            node->mMeshes = nullptr;
         }
     }
     // recursively update all children
@@ -124,9 +121,10 @@ void FindInvalidDataProcess::Execute(aiScene *pScene) {
         if (2 == result) {
             // remove this mesh
             delete pScene->mMeshes[a];
-            pScene->mMeshes[a] = NULL;
+            pScene->mMeshes[a] = nullptr;
 
             meshMapping[a] = UINT_MAX;
+            out = true;
             continue;
         }
 
@@ -148,7 +146,13 @@ void FindInvalidDataProcess::Execute(aiScene *pScene) {
             // we need to remove some meshes.
             // therefore we'll also need to remove all references
             // to them from the scenegraph
-            UpdateMeshReferences(pScene->mRootNode, meshMapping);
+            try {
+                UpdateMeshReferences(pScene->mRootNode, meshMapping);
+            } catch (const std::exception&) {
+                // fix the real number of meshes otherwise we'll get double free in the scene destructor
+                pScene->mNumMeshes = real;
+                throw;
+            }
             pScene->mNumMeshes = real;
         }
 
@@ -199,9 +203,9 @@ inline bool ProcessArray(T *&in, unsigned int num, const char *name,
         const std::vector<bool> &dirtyMask, bool mayBeIdentical = false, bool mayBeZero = true) {
     const char *err = ValidateArrayContents(in, num, dirtyMask, mayBeIdentical, mayBeZero);
     if (err) {
-        ASSIMP_LOG_ERROR_F("FindInvalidDataProcess fails on mesh ", name, ": ", err);
+        ASSIMP_LOG_ERROR("FindInvalidDataProcess fails on mesh ", name, ": ", err);
         delete[] in;
-        in = NULL;
+        in = nullptr;
         return true;
     }
     return false;
@@ -269,7 +273,8 @@ void FindInvalidDataProcess::ProcessAnimation(aiAnimation *anim) {
 void FindInvalidDataProcess::ProcessAnimationChannel(aiNodeAnim *anim) {
     ai_assert(nullptr != anim);
     if (anim->mNumPositionKeys == 0 && anim->mNumRotationKeys == 0 && anim->mNumScalingKeys == 0) {
-        ai_assert_entry();
+        ASSIMP_LOG_ERROR("Invalid node anuimation instance detected.");
+
         return;
     }
 
@@ -345,7 +350,7 @@ int FindInvalidDataProcess::ProcessMesh(aiMesh *pMesh) {
                 // delete all subsequent texture coordinate sets.
                 for (unsigned int a = i + 1; a < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++a) {
                     delete[] pMesh->mTextureCoords[a];
-                    pMesh->mTextureCoords[a] = NULL;
+                    pMesh->mTextureCoords[a] = nullptr;
                     pMesh->mNumUVComponents[a] = 0;
                 }
 
@@ -391,14 +396,14 @@ int FindInvalidDataProcess::ProcessMesh(aiMesh *pMesh) {
         // Process mesh tangents
         if (pMesh->mTangents && ProcessArray(pMesh->mTangents, pMesh->mNumVertices, "tangents", dirtyMask)) {
             delete[] pMesh->mBitangents;
-            pMesh->mBitangents = NULL;
+            pMesh->mBitangents = nullptr;
             ret = true;
         }
 
         // Process mesh bitangents
         if (pMesh->mBitangents && ProcessArray(pMesh->mBitangents, pMesh->mNumVertices, "bitangents", dirtyMask)) {
             delete[] pMesh->mTangents;
-            pMesh->mTangents = NULL;
+            pMesh->mTangents = nullptr;
             ret = true;
         }
     }

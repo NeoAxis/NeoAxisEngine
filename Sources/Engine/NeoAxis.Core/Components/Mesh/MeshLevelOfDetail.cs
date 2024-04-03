@@ -21,7 +21,7 @@ namespace NeoAxis
 		public Reference<Mesh> Mesh
 		{
 			get { if( _mesh.BeginGet() ) Mesh = _mesh.Get( this ); return _mesh.value; }
-			set { if( _mesh.BeginSet( ref value ) ) { try { MeshChanged?.Invoke( this ); } finally { _mesh.EndSet(); } } }
+			set { if( _mesh.BeginSet( this, ref value ) ) { try { MeshChanged?.Invoke( this ); } finally { _mesh.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Mesh"/> property value changes.</summary>
 		public event Action<MeshLevelOfDetail> MeshChanged;
@@ -36,7 +36,7 @@ namespace NeoAxis
 		public Reference<double> Distance
 		{
 			get { if( _distance.BeginGet() ) Distance = _distance.Get( this ); return _distance.value; }
-			set { if( _distance.BeginSet( ref value ) ) { try { DistanceChanged?.Invoke( this ); } finally { _distance.EndSet(); } } }
+			set { if( _distance.BeginSet( this, ref value ) ) { try { DistanceChanged?.Invoke( this ); } finally { _distance.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Distance"/> property value changes.</summary>
 		public event Action<MeshLevelOfDetail> DistanceChanged;

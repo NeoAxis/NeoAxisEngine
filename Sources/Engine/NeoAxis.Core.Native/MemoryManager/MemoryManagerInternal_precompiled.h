@@ -25,6 +25,8 @@
 	#endif
 #elif defined(__ANDROID__)
 	#define PLATFORM_ANDROID
+#elif defined(__linux__)
+	#define PLATFORM_LINUX
 #else
 	#error Platform is not supported.
 #endif
@@ -45,6 +47,13 @@
 	#include <string.h>
 	#include <stdint.h>
 	#include <android/log.h>
+#endif
+
+#ifdef PLATFORM_LINUX
+	#include <stdlib.h>
+	#include <pthread.h>
+	#include <string.h>
+	#include <stdint.h>
 #endif
 
 #include <stdio.h>

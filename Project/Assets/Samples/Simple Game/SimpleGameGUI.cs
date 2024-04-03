@@ -8,34 +8,40 @@ using NeoAxis;
 
 namespace Project
 {
+	//!!!!base on BasicSceneScreen?
+
 	public class SimpleGameGUI : NeoAxis.UIControl
 	{
 		object touchDown;
 		Vector2? touchPosition;
 
-		protected override void OnEnabledInSimulation()
+		protected override void OnEnabledInHierarchyChanged()
 		{
-			base.OnEnabledInSimulation();
+			base.OnEnabledInHierarchyChanged();
 
-			InitializeSceneEvents();
+			if( EnabledInHierarchyAndIsInstance )
+				InitializeSceneEvents();
 		}
 
 		void InitializeSceneEvents()
 		{
-			// Subscribe to Render event of the scene.
+			//subscribe to Render event of the scene
 			Scene.First.RenderEvent += SceneRenderEvent;
 		}
 
 		void SceneRenderEvent(Scene scene, Viewport viewport)
 		{
-			// Find object by the cursor. 
-			var obj = GetObjectByCursor(viewport);
-
-			// Draw selection border.
-			if (obj != null)
+			if( !IsAnyWindowOpened() )
 			{
-				viewport.Simple3DRenderer.SetColor(new ColorValue(1, 1, 0));
-				viewport.Simple3DRenderer.AddBounds(obj.SpaceBounds.BoundingBox);
+				//find object by the cursor
+				var obj = GetObjectByCursor( viewport );
+
+				//draw selection border
+				if( obj != null )
+				{
+					viewport.Simple3DRenderer.SetColor( new ColorValue( 1, 1, 0 ) );
+					viewport.Simple3DRenderer.AddBounds( obj.SpaceBounds.BoundingBox );
+				}
 			}
 		}
 
@@ -44,7 +50,7 @@ namespace Project
 			var result = new List<ObjectInSpace>();
 			foreach (var obj in Scene.First.GetComponents<MeshInSpace>())
 			{
-				// Skip ground.
+				//skip ground
 				if (obj.Name != "Ground")
 					result.Add(obj);
 			}
@@ -57,24 +63,24 @@ namespace Project
 			if( touchPosition != null )
 				mouse = touchPosition.Value;
 
-			// Get scene object.
+			//get scene object
 			var scene = Scene.First;
 
-			// Get world ray by cursor position.
+			//get world ray by cursor position
 			var ray = viewport.CameraSettings.GetRayByScreenCoordinates(mouse);
 
-			// Get objects by the ray.
+			//get objects by the ray
 			var item = new Scene.GetObjectsInSpaceItem(Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, ray);
 			scene.GetObjectsInSpace(item);
 
-			// To test by physical objects:
+			//to test by physical objects:
 			//scene.PhysicsRayTest()
 			//scene.PhysicsContactTest()
 			//scene.PhysicsConvexSweepTest()
 
 			var objectsThanCanBeSelected = GetObjectsThanCanBeSelected();
 
-			// Process objects.
+			//process objects
 			foreach (var resultItem in item.Result)
 			{
 				if (objectsThanCanBeSelected.Contains(resultItem.Object))
@@ -91,41 +97,49 @@ namespace Project
 		{
 			base.OnUpdate(delta);
 
-			// Update Button Next Level.
+			//update Button Next Level
 			if (EngineApp.IsSimulation)
 			{
 				var buttonNextLevel = GetComponent<UIButton>("Button Next Level");
-				if (buttonNextLevel != null)
-					buttonNextLevel.ReadOnly = GetObjectsThanCanBeSelected().Count != 0;
+				if( buttonNextLevel != null )
+					buttonNextLevel.ReadOnly = GetObjectsThanCanBeSelected().Count != 0 || IsAnyWindowOpened();
 			}
 		}
 
 		void ClickToDestroy()
 		{
-			// Get viewport.
+			//get viewport
 			var viewport = ParentContainer.Viewport;
 
-			// Get object by the cursor.
+			//get scene object
+			var scene = Scene.First;
+
+			//get object by the cursor
 			var obj = GetObjectByCursor( viewport );
 			if( obj != null )
 			{
-				// Destroy the object.
+				//destroy the object
 				obj.RemoveFromParent( false );
 
-				// Play sound.
+				//play sound
 				ParentContainer.PlaySound(@"Base\UI\Styles\Sounds\ButtonClick.ogg");
 				
-				// Show screen messages.
+				//show screen messages
 				var objectsLeft = GetObjectsThanCanBeSelected().Count;
 				ScreenMessages.Add( $"Objects left: {objectsLeft}" );
+
+				//check to win
 				if( objectsLeft == 0 )
+				{
 					ScreenMessages.Add( "You won!" );
+					scene.SoundPlay2D( @"Samples\Simple Game\Sounds\Win.ogg" );
+				}
 			}
 		}
 
 		protected override bool OnMouseDown(EMouseButtons button)
 		{
-			if (EngineApp.IsSimulation && button == EMouseButtons.Left)
+			if (EngineApp.IsSimulation && button == EMouseButtons.Left && !IsAnyWindowOpened() )
 				ClickToDestroy();
 
 			return base.OnMouseDown(button);

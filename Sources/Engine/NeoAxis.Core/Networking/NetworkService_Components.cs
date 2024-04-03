@@ -3,11 +3,145 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using NeoAxis.Networking;
 
 namespace NeoAxis
 {
+	static class ServerNetworkService_Components_SpecialSerialization
+	{
+		static bool initialized;
+		static ArrayDataWriter writer = new ArrayDataWriter();
+
+		//ObjectInSpace.Transform
+		[Flags]
+		enum ObjectInSpaceTransformModes
+		{
+			PositionFloat = 1,
+			ScaleAllEqual = 2,
+			ScaleOne = 4,
+		}
+		static Metadata.Property objectInSpaceTransformProperty;
+
+		//
+
+		static void Init()
+		{
+			if( !initialized )
+			{
+				initialized = true;
+
+				//ObjectInSpace.Transform
+				{
+					var type = MetadataManager.GetTypeOfNetType( typeof( ObjectInSpace ) );
+					objectInSpaceTransformProperty = type.MetadataGetMemberBySignature( "property:Transform" ) as Metadata.Property;
+					if( objectInSpaceTransformProperty == null )
+						Log.Fatal( "ServerNetworkService_Components_SpecialSerialization: transformProperty == null." );
+				}
+			}
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static bool WriteSpecialSerialized( Metadata.Property property, Component component, out ArraySegment<byte> arraySegment )
+		{
+			Init();
+
+			//ObjectInSpace.Transform
+			if( property == objectInSpaceTransformProperty )
+			{
+				var value = (Reference<Transform>)property.GetValue( component, null );
+				if( !value.ReferenceSpecified && value.Value != null )
+				{
+					var tr = value.Value;
+					var position = tr.Position;
+					var scale = tr.Scale;
+
+					//get mode
+					ObjectInSpaceTransformModes mode = 0;
+					if( Math.Abs( position.X ) < 10000 && Math.Abs( position.Y ) < 10000 && Math.Abs( position.Z ) < 10000 )
+						mode |= ObjectInSpaceTransformModes.PositionFloat;
+					if( scale.X == scale.Y && scale.X == scale.Z )
+					{
+						if( scale.X == 1 )
+							mode |= ObjectInSpaceTransformModes.ScaleOne;
+						else
+							mode |= ObjectInSpaceTransformModes.ScaleAllEqual;
+					}
+
+					writer.Reset();
+					writer.Write( (byte)mode );
+
+					//position
+					if( ( mode & ObjectInSpaceTransformModes.PositionFloat ) != 0 )
+						writer.Write( position.ToVector3F() );
+					else
+						writer.Write( ref position );
+
+					//rotation
+					writer.Write( tr.Rotation.ToQuaternionH() );
+
+					//scale
+
+					if( ( mode & ObjectInSpaceTransformModes.ScaleOne ) != 0 )
+					{
+					}
+					else if( ( mode & ObjectInSpaceTransformModes.ScaleAllEqual ) != 0 )
+						writer.Write( new HalfType( scale.X ) );
+					else
+						writer.Write( new Vector3H( scale.ToVector3F() ) );
+
+					arraySegment = writer.ToArraySegment();
+					return true;
+				}
+			}
+
+			arraySegment = new ArraySegment<byte>();
+			return false;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static void SetSpecialSerialized( Metadata.Property property, Component component, byte[] data )
+		{
+			Init();
+
+			//ObjectInSpace.Transform
+			if( property == objectInSpaceTransformProperty )
+			{
+				var reader = new ArrayDataReader( data );
+
+				//mode
+				var mode = (ObjectInSpaceTransformModes)reader.ReadByte();
+
+				//position
+				Vector3 position;
+				if( ( mode & ObjectInSpaceTransformModes.PositionFloat ) != 0 )
+					position = reader.ReadVector3F();
+				else
+					position = reader.ReadVector3();
+
+				//rotation
+				var rotation = reader.ReadQuaternionH().ToQuaternion();
+				rotation.Normalize();
+
+				//scale
+				Vector3 scale;
+				if( ( mode & ObjectInSpaceTransformModes.ScaleOne ) != 0 )
+					scale = Vector3.One;
+				else if( ( mode & ObjectInSpaceTransformModes.ScaleAllEqual ) != 0 )
+				{
+					var v = reader.ReadHalf();
+					scale = new Vector3F( v, v, v );
+				}
+				else
+					scale = reader.ReadVector3H();
+
+				var tr = new Transform( position, rotation, scale );
+				property.SetValue( component, new Reference<Transform>( tr ), null );
+			}
+		}
+	}
+
 	public class ServerNetworkService_Components : ServerNetworkService
 	{
 		ServerNetworkService_Users users;
@@ -26,35 +160,46 @@ namespace NeoAxis
 
 		ClientItem[] allClientItemsCached;
 
+		Dictionary<string, int> registeredPropertySignatures = new Dictionary<string, int>();
+		Dictionary<string, int> registeredNetworkMessageNames = new Dictionary<string, int>();
+
 		///////////////////////////////////////////
 
 		public class ClientItem
 		{
-			//!!!!public
+			internal ServerNetworkService_Users.UserInfo user;
 
-			public ServerNetworkService_Users.UserInfo User;
+			public ServerNetworkService_Users.UserInfo User { get { return user; } }
 
-			//!!!!
 			//bool sceneSynchronization;
 
 			internal Dictionary<Component, Dictionary<Metadata.Property, string>> synchronizedFlagAndSentPropertyValues = new Dictionary<Component, Dictionary<Metadata.Property, string>>();
+
+			//!!!!use Bit list. https://gist.github.com/Wouterdek/c94b2dad6985b447c5a87348faceb442
+			internal List<bool> sentPropertySignatures = new List<bool>();
+			internal List<bool> sentNetworkMessageNames = new List<bool>();
+
+			internal List<string> receivedNetworkMessageNames = new List<string>();
 		}
 
 		///////////////////////////////////////////
 
-		const byte SceneCreateBeginToClient = 1;
-		const byte SceneCreateEndToClient = 2;
-		const byte SceneDestroyToClient = 3;
-		//const byte SceneInstanceIDToServer = 4;
+		const int SceneCreateBeginToClient = 1;
+		const int SceneCreateEndToClient = 2;
+		const int SceneDestroyToClient = 3;
+		//const int SceneInstanceIDToServer = 4;
 
-		const byte ComponentCreateBeginToClient = 10;
-		const byte ComponentSetEnabledToClient = 11;
-		const byte ComponentRemoveFromParentToClient = 12;
-		const byte ComponentSetPropertyValueToClient = 13;
-		const byte ComponentSendNetworkMessageToClient = 14;
-		const byte SimulationStepToClient = 15;
+		const int ComponentCreateBeginToClient = 5;
+		const int ComponentSetEnabledToClient = 6;
+		const int ComponentRemoveFromParentToClient = 7;
+		const int ComponentSetPropertySignatureToClient = 8;
+		const int ComponentSetPropertyValueToClient = 9;
+		const int ComponentSendNetworkMessageName = 10;//both directions
+		const int ComponentSendNetworkMessage = 11;//both directions
+		const int SimulationStepToClient = 12;
 
-		const byte ComponentSendNetworkMessageToServer = 16;
+		//const int ComponentSendNetworkMessageNameToServer = 13;
+		//const int ComponentSendNetworkMessageToServer = 14;
 
 		///////////////////////////////////////////
 
@@ -71,20 +216,21 @@ namespace NeoAxis
 			RegisterMessageType( nameof( ComponentCreateBeginToClient ), ComponentCreateBeginToClient );
 			RegisterMessageType( nameof( ComponentSetEnabledToClient ), ComponentSetEnabledToClient );
 			RegisterMessageType( nameof( ComponentRemoveFromParentToClient ), ComponentRemoveFromParentToClient );
+			RegisterMessageType( nameof( ComponentSetPropertySignatureToClient ), ComponentSetPropertySignatureToClient );
 			RegisterMessageType( nameof( ComponentSetPropertyValueToClient ), ComponentSetPropertyValueToClient );
-			RegisterMessageType( nameof( ComponentSendNetworkMessageToClient ), ComponentSendNetworkMessageToClient );
+			RegisterMessageType( nameof( ComponentSendNetworkMessageName ), ComponentSendNetworkMessageName, ReceiveMessage_ComponentSendNetworkMessageNameToServer );
+			RegisterMessageType( nameof( ComponentSendNetworkMessage ), ComponentSendNetworkMessage, ReceiveMessage_ComponentSendNetworkMessageToServer );
 			RegisterMessageType( nameof( SimulationStepToClient ), SimulationStepToClient );
 
-			RegisterMessageType( nameof( ComponentSendNetworkMessageToServer ), ComponentSendNetworkMessageToServer, ReceiveMessage_ComponentSendNetworkMessageToServer );
-
-			//!!!!
+			//RegisterMessageType( nameof( ComponentSendNetworkMessageNameToServer ), ComponentSendNetworkMessageNameToServer, ReceiveMessage_ComponentSendNetworkMessageNameToServer );
+			//RegisterMessageType( nameof( ComponentSendNetworkMessageToServer ), ComponentSendNetworkMessageToServer, ReceiveMessage_ComponentSendNetworkMessageToServer );
 
 			//!!!!
 			//ChangeSimulationFlag
 
 
-			users.AddUserEvent += Users_AddUserEvent;
-			users.RemoveUserEvent += Users_RemoveUserEvent;
+			users.UserAdded += Users_UserAdded;
+			users.UserRemoved += Users_UserRemoved;
 		}
 
 		protected override void OnDispose()
@@ -101,8 +247,8 @@ namespace NeoAxis
 			//	}
 			//}
 
-			users.AddUserEvent -= Users_AddUserEvent;
-			users.RemoveUserEvent -= Users_RemoveUserEvent;
+			users.UserAdded -= Users_UserAdded;
+			users.UserRemoved -= Users_UserRemoved;
 
 			base.OnDispose();
 		}
@@ -197,6 +343,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ClientItem GetClientItem( ServerNetworkService_Users.UserInfo user )
 		{
 			if( clientItemByUser.TryGetValue( user, out var value ) )
@@ -204,6 +351,7 @@ namespace NeoAxis
 			return null;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ClientItem GetClientItem( long userID )
 		{
 			if( clientItemByUserID.TryGetValue( userID, out var value ) )
@@ -211,6 +359,7 @@ namespace NeoAxis
 			return null;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ClientItem GetClientItem( NetworkNode.ConnectedNode connectedNode )
 		{
 			if( clientItemByConnectedNode.TryGetValue( connectedNode, out var value ) )
@@ -218,6 +367,7 @@ namespace NeoAxis
 			return null;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ClientItem[] GetAllClientItems()
 		{
 			if( allClientItemsCached == null )
@@ -229,10 +379,10 @@ namespace NeoAxis
 			return allClientItemsCached;
 		}
 
-		void Users_AddUserEvent( ServerNetworkService_Users service, ServerNetworkService_Users.UserInfo user )
+		void Users_UserAdded( ServerNetworkService_Users service, ServerNetworkService_Users.UserInfo user )
 		{
 			var clientItem = new ClientItem();
-			clientItem.User = user;
+			clientItem.user = user;
 
 			clientItemByUser[ user ] = clientItem;
 			clientItemByUserID[ user.UserID ] = clientItem;
@@ -241,7 +391,7 @@ namespace NeoAxis
 			allClientItemsCached = null;
 		}
 
-		void Users_RemoveUserEvent( ServerNetworkService_Users service, ServerNetworkService_Users.UserInfo user )
+		void Users_UserRemoved( ServerNetworkService_Users service, ServerNetworkService_Users.UserInfo user )
 		{
 			var clientItem = GetClientItem( user );
 			if( clientItem != null )
@@ -257,14 +407,19 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		ArrayDataWriter BeginMessage( ICollection<ClientItem> clients, byte messageID )
 		{
 			var writer = BeginMessage( messageID );
 
-			var asArray = clients as ClientItem[];
-			if( asArray != null )
+			if( clients is List<ClientItem> list )
 			{
-				foreach( var client in asArray )
+				for( int n = 0; n < list.Count; n++ )
+					AddMessageRecipient( list[ n ] );
+			}
+			else if( clients is ClientItem[] array )
+			{
+				foreach( var client in array )
 					AddMessageRecipient( client );
 			}
 			else
@@ -276,19 +431,24 @@ namespace NeoAxis
 			return writer;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		ArrayDataWriter BeginMessage( ClientItem client, byte messageID )
 		{
 			return BeginMessage( client.User.ConnectedNode, messageID );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void AddMessageRecipient( ClientItem client )
 		{
 			AddMessageRecipient( client.User.ConnectedNode );
 		}
 
 		//!!!!use array
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		ICollection<ClientItem> GetClientsWithAccessToComponentByNetworkMode( Component component, ClientItem onlyThisClient )
 		{
+			//!!!!GC
+
 			if( onlyThisClient != null )
 			{
 				if( component.NetworkModeIsEnabledForUser( onlyThisClient ) )
@@ -306,8 +466,11 @@ namespace NeoAxis
 			return Array.Empty<ClientItem>();
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		List<ClientItem> GetSynchronizedClientsOfComponent( Component component, ClientItem onlyThisClient )
 		{
+			//!!!!GC
+
 			if( onlyThisClient != null )
 			{
 				var result = new List<ClientItem>( 1 );
@@ -331,6 +494,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		ArrayDataWriter BeginMessage2( ClientItem clientItem, byte messageID )
 		{
 			if( clientItem != null )
@@ -454,6 +618,7 @@ namespace NeoAxis
 		//	return true;
 		//}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void SendComponentCreateWithChildrenRecursive( ClientItem clientItem, Component component, bool sendInsertIndex )
 		{
 			var parent = component.Parent;
@@ -521,6 +686,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void SendComponentProperties( ClientItem clientItem, Component component, bool sendName, bool sendEnabled )
 		{
 			if( component.networkID != 0 && !component.Disposed && !component.RemoveFromParentQueued )
@@ -552,6 +718,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void SendComponentEnabled( ClientItem clientItem, Component component )
 		{
 			if( component.networkID != 0 && !component.Disposed && !component.RemoveFromParentQueued )
@@ -570,6 +737,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void SendAddComponent( ClientItem clientItem, Component child, bool createComponent )
 		{
 			if( child.NetworkMode.Value != NetworkModeEnum.False )//&& IsComponentTypeSynced( child ) )
@@ -592,11 +760,13 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		private void NetworkInterface_AddComponent( ComponentHierarchyController.NetworkServerInterface sender, Component child, bool createComponent )
 		{
 			SendAddComponent( null, child, createComponent );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void SendRemoveFromParent( ClientItem clientItem, Component component, bool queued, bool disposing )
 		{
 			if( component.networkID != 0 )
@@ -646,11 +816,13 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		private void NetworkInterface_RemoveFromParent( ComponentHierarchyController.NetworkServerInterface sender, Component component, bool queued, bool disposing )
 		{
 			SendRemoveFromParent( null, component, queued, disposing );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void SendComponentSetPropertyValue( ClientItem clientItem, Component component, Metadata.Property property )
 		{
 			if( component.networkID != 0 && !component.Disposed && !component.RemoveFromParentQueued )
@@ -659,16 +831,22 @@ namespace NeoAxis
 				if( clientItem != null && !clientItem.synchronizedFlagAndSentPropertyValues.ContainsKey( component ) )
 					return;
 
+				//disabled synchronization
+				if( component.NetworkIsDisabledPropertySynchronization( property.Name ) )
+					return;
+
 				var context = new Metadata.SaveContext();
 				context.UseDefaultValue = false;
 
 				//!!!!slowly?
-				//!!!!не только строками передавать. тогда networkPropertyValuesSent иначе
+				//!!!!не нужно сериализовывать если потом special serialization. возможно лучше свойство вручную через network message слать
 				var block = new TextBlock();
 				if( MetadataManager.Serialization.SaveSerializableMember( context, component, property, block, out var serialized, out var error ) && serialized )
 				{
 					var emptyValue = string.IsNullOrEmpty( block.Name ) && block.Children.Count == 0 && block.Attributes.Count == 0;
 					var valueString = emptyValue ? "" : block.DumpToString( false );
+
+					int signatureID = int.MaxValue;// -1;
 
 					var sent = false;
 
@@ -694,14 +872,50 @@ namespace NeoAxis
 							{
 								//!!!!может лучше их тут всех сразу слать
 
-								var writer = BeginMessage( client, ComponentSetPropertyValueToClient );
-								writer.WriteVariableUInt64( (ulong)component.networkID );
-								writer.Write( property.Signature );
-								writer.Write( valueString );
-								EndMessage();
+								//register property signature
+								if( signatureID == int.MaxValue )//- 1 )
+								{
+									if( !registeredPropertySignatures.TryGetValue( property.Signature, out signatureID ) )
+									{
+										//+1 - to make signatureID always positive. it combined with special serialization flag
+										signatureID = registeredPropertySignatures.Count + 1;
+										registeredPropertySignatures[ property.Signature ] = signatureID;
+									}
+								}
+
+								//send property signature
+								{
+									while( signatureID >= client.sentPropertySignatures.Count )
+										client.sentPropertySignatures.Add( false );
+									if( !client.sentPropertySignatures[ signatureID ] )
+									{
+										var writer2 = BeginMessage( client, ComponentSetPropertySignatureToClient );
+										writer2.Write( property.Signature );
+										writer2.WriteVariableInt32( signatureID );
+										EndMessage();
+
+										client.sentPropertySignatures[ signatureID ] = true;
+									}
+								}
+
+								//send property value
+								{
+									var specialSerialized = ServerNetworkService_Components_SpecialSerialization.WriteSpecialSerialized( property, component, out var arraySegment );
+
+									var writer = BeginMessage( client, ComponentSetPropertyValueToClient );
+									writer.WriteVariableUInt64( (ulong)component.networkID );
+									writer.WriteVariableInt32( signatureID * ( specialSerialized ? -1 : 1 ) );
+									if( specialSerialized )
+									{
+										writer.WriteVariableUInt32( (uint)arraySegment.Count );
+										writer.Write( arraySegment.Array, 0, arraySegment.Count );
+									}
+									else
+										writer.Write( valueString );
+									EndMessage();
+								}
 
 								sentPropertyItem[ property ] = valueString;
-
 								sent = true;
 							}
 						}
@@ -711,26 +925,8 @@ namespace NeoAxis
 					{
 						if( NetworkCommonSettings.NetworkLogging )
 							Log.Info( "Network log: Server: Send component set property: " + property.Signature + ", Network ID: " + component.networkID.ToString() + ", Value: " + valueString.Replace( '\n', ' ' ).Replace( "\r", "" ) );
-
-						////!!!!temp
-						//if( property.Name == "BulletType" )
-						//{
-						//	Log.Info( "Network log: Server: Send component set property: " + property.Signature + ", Network ID: " + component.networkID.ToString() + ", Value: " + valueString.Replace( '\n', ' ' ).Replace( "\r", "" ) );
-						//	Log.Info( "emptyValue: " + emptyValue.ToString() + " -:" + block.Data + ":" );
-
-						//	var v = property.GetValue( component, null );
-						//	if( v != null )
-						//	{
-						//		var vv = (IReference)v;
-						//		Log.Info( "vv: " + vv.GetByReference.ToString() );
-						//		Log.Info( "vvv: " + vv.ValueAsObject != null ? "not null" : "null" );
-						//	}
-						//	else
-						//		Log.Info( "v: null" );
-
-						//}
-
 					}
+
 
 					//if( !clientItem.sendPropertyValues.TryGetValue( component, out var sentPropertyItem ) )
 					//{
@@ -769,11 +965,13 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		private void NetworkInterface_PropertyChangedEvent( ComponentHierarchyController.NetworkServerInterface sender, Component component, Metadata.Property property )
 		{
 			SendComponentSetPropertyValue( null, component, property );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		private void NetworkInterface_SimulationStep( ComponentHierarchyController.NetworkServerInterface sender )
 		{
 			BeginMessageToEveryone( SimulationStepToClient );
@@ -783,12 +981,23 @@ namespace NeoAxis
 				Log.Info( "Network log: Server: Send simulation step ------------------------------------------------------------------" );
 		}
 
+		List<ClientItem> _tempNetworkMessageRecepients = new List<ClientItem>();
+
+		[MethodImpl( (MethodImplOptions)512 )]
 		private void NetworkInterface_BeginNetworkMessage( ComponentHierarchyController.NetworkServerInterface sender, Component component, IList<ClientItem> clientRecipients, ClientItem clientRecipient, IList<ServerNetworkService_Users.UserInfo> userRecipients, ServerNetworkService_Users.UserInfo userRecipient, bool toEveryone, string message, ref ArrayDataWriter writer )
 		{
 			if( component.networkID != 0 && !component.Disposed && !component.RemoveFromParentQueued )
 			{
-				writer = BeginMessage( ComponentSendNetworkMessageToClient );
+				//get nameID
+				int nameID;
+				if( !registeredNetworkMessageNames.TryGetValue( message, out nameID ) )
+				{
+					nameID = registeredNetworkMessageNames.Count;
+					registeredNetworkMessageNames[ message ] = nameID;
+				}
 
+				//get list of recepients
+				_tempNetworkMessageRecepients.Clear();
 				if( toEveryone )
 				{
 					var allClients = GetAllClientItems();
@@ -796,13 +1005,13 @@ namespace NeoAxis
 					{
 						var client = allClients[ n ];
 						if( client.synchronizedFlagAndSentPropertyValues.ContainsKey( component ) )
-							AddMessageRecipient( client );
+							_tempNetworkMessageRecepients.Add( client );
 					}
 				}
 				else if( clientRecipient != null )
 				{
 					if( clientRecipient.synchronizedFlagAndSentPropertyValues.ContainsKey( component ) )
-						AddMessageRecipient( clientRecipient );
+						_tempNetworkMessageRecepients.Add( clientRecipient );
 				}
 				else if( clientRecipients != null )
 				{
@@ -810,14 +1019,14 @@ namespace NeoAxis
 					{
 						var client = clientRecipients[ n ];
 						if( client.synchronizedFlagAndSentPropertyValues.ContainsKey( component ) )
-							AddMessageRecipient( client );
+							_tempNetworkMessageRecepients.Add( client );
 					}
 				}
 				else if( userRecipient != null )
 				{
 					var client = GetClientItem( userRecipient );
 					if( client != null && client.synchronizedFlagAndSentPropertyValues.ContainsKey( component ) )
-						AddMessageRecipient( client );
+						_tempNetworkMessageRecepients.Add( client );
 				}
 				else if( userRecipients != null )
 				{
@@ -825,24 +1034,101 @@ namespace NeoAxis
 					{
 						var client = GetClientItem( userRecipients[ n ] );
 						if( client != null && client.synchronizedFlagAndSentPropertyValues.ContainsKey( component ) )
-							AddMessageRecipient( client );
+							_tempNetworkMessageRecepients.Add( client );
 					}
 				}
 
+				//send nameID
+				for( int n = 0; n < _tempNetworkMessageRecepients.Count; n++ )
+				{
+					var client = _tempNetworkMessageRecepients[ n ];
+
+					while( nameID >= client.sentNetworkMessageNames.Count )
+						client.sentNetworkMessageNames.Add( false );
+
+					if( !client.sentNetworkMessageNames[ nameID ] )
+					{
+						var writer2 = BeginMessage( client, ComponentSendNetworkMessageName );
+						writer2.Write( message );
+						writer2.WriteVariableInt32( nameID );
+						EndMessage();
+
+						client.sentNetworkMessageNames[ nameID ] = true;
+					}
+				}
+
+				//begin network message
+				writer = BeginMessage( ComponentSendNetworkMessage );
+				for( int n = 0; n < _tempNetworkMessageRecepients.Count; n++ )
+					AddMessageRecipient( _tempNetworkMessageRecepients[ n ] );
 				writer.WriteVariableUInt64( (ulong)component.networkID );
-				writer.Write( message );
+				writer.WriteVariableInt32( nameID );
+
+				_tempNetworkMessageRecepients.Clear();
 
 				if( NetworkCommonSettings.NetworkLogging )
 					Log.Info( "Network log: Server: Send network message: " + component.networkID.ToString() + " " + message );
+
+
+
+				//writer = BeginMessage( ComponentSendNetworkMessageToClient );
+
+				//if( toEveryone )
+				//{
+				//	var allClients = GetAllClientItems();
+				//	for( int n = 0; n < allClients.Length; n++ )
+				//	{
+				//		var client = allClients[ n ];
+				//		if( client.synchronizedFlagAndSentPropertyValues.ContainsKey( component ) )
+				//			AddMessageRecipient( client );
+				//	}
+				//}
+				//else if( clientRecipient != null )
+				//{
+				//	if( clientRecipient.synchronizedFlagAndSentPropertyValues.ContainsKey( component ) )
+				//		AddMessageRecipient( clientRecipient );
+				//}
+				//else if( clientRecipients != null )
+				//{
+				//	for( int n = 0; n < clientRecipients.Count; n++ )
+				//	{
+				//		var client = clientRecipients[ n ];
+				//		if( client.synchronizedFlagAndSentPropertyValues.ContainsKey( component ) )
+				//			AddMessageRecipient( client );
+				//	}
+				//}
+				//else if( userRecipient != null )
+				//{
+				//	var client = GetClientItem( userRecipient );
+				//	if( client != null && client.synchronizedFlagAndSentPropertyValues.ContainsKey( component ) )
+				//		AddMessageRecipient( client );
+				//}
+				//else if( userRecipients != null )
+				//{
+				//	for( int n = 0; n < userRecipients.Count; n++ )
+				//	{
+				//		var client = GetClientItem( userRecipients[ n ] );
+				//		if( client != null && client.synchronizedFlagAndSentPropertyValues.ContainsKey( component ) )
+				//			AddMessageRecipient( client );
+				//	}
+				//}
+
+				//writer.WriteVariableUInt64( (ulong)component.networkID );
+				//writer.Write( message );
+
+				//if( NetworkCommonSettings.NetworkLogging )
+				//	Log.Info( "Network log: Server: Send network message: " + component.networkID.ToString() + " " + message );
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		private void NetworkInterface_EndNetworkMessage( ComponentHierarchyController.NetworkServerInterface sender )
 		{
 			if( SendingData )
 				EndMessage();
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		Component GetComponentByNetworkID( long networkID )
 		{
 			if( componentByNetworkID.TryGetValue( networkID, out var component ) )
@@ -850,11 +1136,13 @@ namespace NeoAxis
 			return null;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		private void NetworkInterface_GetComponentByNetworkID( ComponentHierarchyController.NetworkServerInterface sender, long networkID, ref Component component )
 		{
 			component = GetComponentByNetworkID( networkID );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		private void NetworkInterface_ChangeNetworkMode( ComponentHierarchyController.NetworkServerInterface sender, Component component )
 		{
 			if( component.Parent == null )
@@ -893,37 +1181,66 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		private void NetworkInterface_NetworkModeAddUser( ComponentHierarchyController.NetworkServerInterface sender, ClientItem clientItem, Component component )
 		{
 			if( component.NetworkMode.Value == NetworkModeEnum.SelectedUsers )
 				SendAddComponent( clientItem, component, false );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		private void NetworkInterface_NetworkModeRemoveUser( ComponentHierarchyController.NetworkServerInterface sender, ClientItem clientItem, Component component )
 		{
 			if( component.NetworkMode.Value == NetworkModeEnum.SelectedUsers )
 				SendRemoveFromParent( clientItem, component, false, true );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
+		bool ReceiveMessage_ComponentSendNetworkMessageNameToServer( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		{
+			var name = reader.ReadString();
+			var nameID = reader.ReadVariableInt32();
+			if( !reader.Complete() )
+				return false;
+
+			var client = GetClientItem( sender );
+			if( client != null )
+			{
+				while( nameID >= client.receivedNetworkMessageNames.Count )
+					client.receivedNetworkMessageNames.Add( "" );
+				client.receivedNetworkMessageNames[ nameID ] = name;
+			}
+
+			return true;
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
 		bool ReceiveMessage_ComponentSendNetworkMessageToServer( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var sceneInstanceID = reader.ReadVariableInt32();
 			var componentID = (long)reader.ReadVariableUInt64();
-			var message = reader.ReadString();
+			var nameID = reader.ReadVariableInt32();
 			if( reader.Overflow )
 				return false;
 
 			if( this.sceneInstanceID == sceneInstanceID && scene != null && !scene.Disposed )
 			{
-				if( NetworkCommonSettings.NetworkLogging )
-					Log.Info( "Network log: Server: Receive network message: " + componentID.ToString() + " " + message );
+				//if( NetworkCommonSettings.NetworkLogging )
+				//	Log.Info( "Network log: Server: Receive network message: " + componentID.ToString() + " " + message );
 
 				var component = GetComponentByNetworkID( componentID );
 				if( component != null )
 				{
 					var client = GetClientItem( sender );
 					if( client != null )
+					{
+						var message = client.receivedNetworkMessageNames[ nameID ];
+
+						if( NetworkCommonSettings.NetworkLogging )
+							Log.Info( "Network log: Server: Receive network message: " + componentID.ToString() + " " + message );
+
 						return component.PerformReceiveNetworkMessageFromClient( client, message, reader );
+					}
 				}
 
 				//if( !reader.Complete() )
@@ -946,6 +1263,14 @@ namespace NeoAxis
 		//!!!!объект может быть удален на клиенте. хотя это вроде как норм, просто он тут уже не нужен
 		Dictionary<long, Component> componentByNetworkID = new Dictionary<long, Component>();
 
+		List<string> receivedPropertyNameSignatures = new List<string>();
+		List<string> receivedNetworkMessageNames = new List<string>();
+
+		Dictionary<string, int> registeredAndSentNetworkMessageNames = new Dictionary<string, int>();
+
+		//for profiler
+		string sendingNetworkMessage = "";
+
 		///////////////////////////////////////////
 
 		public delegate void SceneCreateBeginDelegate( ClientNetworkService_Components sender, string sceneInfo );// string mapVirtualFileName );
@@ -959,19 +1284,22 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
-		const byte SceneCreateBeginToClient = 1;
-		const byte SceneCreateEndToClient = 2;
-		const byte SceneDestroyToClient = 3;
-		//const byte SceneInstanceIDToServer = 4;
+		const int SceneCreateBeginToClient = 1;
+		const int SceneCreateEndToClient = 2;
+		const int SceneDestroyToClient = 3;
+		//const int SceneInstanceIDToServer = 4;
 
-		const byte ComponentCreateBeginToClient = 10;
-		const byte ComponentSetEnabledToClient = 11;
-		const byte ComponentRemoveFromParentToClient = 12;
-		const byte ComponentSetPropertyValueToClient = 13;
-		const byte ComponentSendNetworkMessageToClient = 14;
-		const byte SimulationStepToClient = 15;
+		const int ComponentCreateBeginToClient = 5;
+		const int ComponentSetEnabledToClient = 6;
+		const int ComponentRemoveFromParentToClient = 7;
+		const int ComponentSetPropertySignatureToClient = 8;
+		const int ComponentSetPropertyValueToClient = 9;
+		const int ComponentSendNetworkMessageName = 10;//both directions
+		const int ComponentSendNetworkMessage = 11;//both directions
+		const int SimulationStepToClient = 12;
 
-		const byte ComponentSendNetworkMessageToServer = 16;
+		//const int ComponentSendNetworkMessageNameToServer = 13;
+		//const int ComponentSendNetworkMessageToServer = 14;
 
 		///////////////////////////////////////////
 
@@ -988,11 +1316,14 @@ namespace NeoAxis
 			RegisterMessageType( nameof( ComponentCreateBeginToClient ), ComponentCreateBeginToClient, ReceiveMessage_ComponentCreateBeginToClient );
 			RegisterMessageType( nameof( ComponentSetEnabledToClient ), ComponentSetEnabledToClient, ReceiveMessage_ComponentSetEnabledToClient );
 			RegisterMessageType( nameof( ComponentRemoveFromParentToClient ), ComponentRemoveFromParentToClient, ReceiveMessage_ComponentRemoveFromParentToClient );
+			RegisterMessageType( nameof( ComponentSetPropertySignatureToClient ), ComponentSetPropertySignatureToClient, ReceiveMessage_ComponentSetPropertySignatureToClient );
 			RegisterMessageType( nameof( ComponentSetPropertyValueToClient ), ComponentSetPropertyValueToClient, ReceiveMessage_ComponentSetPropertyValueToClient );
-			RegisterMessageType( nameof( ComponentSendNetworkMessageToClient ), ComponentSendNetworkMessageToClient, ReceiveMessage_ComponentSendNetworkMessageToClient );
+			RegisterMessageType( nameof( ComponentSendNetworkMessageName ), ComponentSendNetworkMessageName, ReceiveMessage_ComponentSendNetworkMessageNameToClient );
+			RegisterMessageType( nameof( ComponentSendNetworkMessage ), ComponentSendNetworkMessage, ReceiveMessage_ComponentSendNetworkMessageToClient );
 			RegisterMessageType( nameof( SimulationStepToClient ), SimulationStepToClient, ReceiveMessage_SimulationStepToClient );
 
-			RegisterMessageType( nameof( ComponentSendNetworkMessageToServer ), ComponentSendNetworkMessageToServer );
+			//RegisterMessageType( nameof( ComponentSendNetworkMessageNameToServer ), ComponentSendNetworkMessageNameToServer );
+			//RegisterMessageType( nameof( ComponentSendNetworkMessageToServer ), ComponentSendNetworkMessageToServer );
 		}
 
 		protected override void OnDispose()
@@ -1012,6 +1343,7 @@ namespace NeoAxis
 			get { return scene; }
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void CheckSceneDisposed()
 		{
 			if( scene != null && scene.Disposed )
@@ -1128,6 +1460,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		Component GetComponentByNetworkID( long networkID )
 		{
 			if( componentByNetworkID.TryGetValue( networkID, out var component ) )
@@ -1135,16 +1468,22 @@ namespace NeoAxis
 			return null;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		private void NetworkInterface_GetComponentByNetworkID( ComponentHierarchyController.NetworkClientInterface sender, long networkID, ref Component component )
 		{
 			component = GetComponentByNetworkID( networkID );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		bool ReceiveMessage_ComponentCreateBeginToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var parentComponentID = (long)reader.ReadVariableUInt64();
 			var componentID = (long)reader.ReadVariableUInt64();
+
+			//!!!!тоже сделать id? typeNameID
+			//!!!!может ли быть динамическим?
 			var typeName = reader.ReadString();
+
 			var insertIndex = reader.ReadVariableInt32();
 			var name = reader.ReadString();
 			//var enabled = reader.ReadBoolean();
@@ -1209,6 +1548,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		bool ReceiveMessage_ComponentSetEnabledToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var componentID = (long)reader.ReadVariableUInt64();
@@ -1230,6 +1570,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		bool ReceiveMessage_ComponentRemoveFromParentToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var componentID = (long)reader.ReadVariableUInt64();
@@ -1270,16 +1611,68 @@ namespace NeoAxis
 			return true;
 		}
 
-		bool ReceiveMessage_ComponentSetPropertyValueToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		[MethodImpl( (MethodImplOptions)512 )]
+		bool ReceiveMessage_ComponentSetPropertySignatureToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
-			var componentID = (long)reader.ReadVariableUInt64();
 			var signature = reader.ReadString();
-			var valueString = reader.ReadString();
+			var signatureID = reader.ReadVariableInt32();
 			if( !reader.Complete() )
 				return false;
 
+			while( signatureID >= receivedPropertyNameSignatures.Count )
+				receivedPropertyNameSignatures.Add( "" );
+			receivedPropertyNameSignatures[ signatureID ] = signature;
+
+			return true;
+		}
+
+		byte[] tempSpecialSerializedData;
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		bool ReceiveMessage_ComponentSetPropertyValueToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		{
+			var size = reader.EndPosition - reader.CurrentPosition;
+
+			var componentID = (long)reader.ReadVariableUInt64();
+
+			var signatureIDAndSpecialSerialized = reader.ReadVariableInt32();
+			var signatureID = Math.Abs( signatureIDAndSpecialSerialized );
+			var specialSerialized = signatureIDAndSpecialSerialized < 0;
+
+			string valueString = "";
+			if( specialSerialized )
+			{
+				var specialDataSize = reader.ReadVariableUInt32();
+				if( tempSpecialSerializedData == null || tempSpecialSerializedData.Length < specialDataSize )
+					tempSpecialSerializedData = new byte[ specialDataSize ];
+				reader.ReadBuffer( tempSpecialSerializedData, 0, (int)specialDataSize );
+			}
+			else
+				valueString = reader.ReadString();
+
+			if( !reader.Complete() )
+				return false;
+
+
+			//!!!!maybe cache Metadata.Property
+			var signature = receivedPropertyNameSignatures[ signatureID ];
+
 			if( NetworkCommonSettings.NetworkLogging )
 				Log.Info( "Network log: Client: Receive component set property: " + signature + " " + componentID.ToString() + " " + valueString.Replace( '\n', ' ' ).Replace( "\r", "" ) );
+
+			if( owner.ProfilerData != null )
+			{
+				var serviceItem = owner.ProfilerData.GetServiceItem( Identifier );
+				var messageTypeItem = serviceItem.GetMessageTypeItem( messageType.Identifier );
+
+				if( messageTypeItem.ReceivedCustomData == null )
+					messageTypeItem.ReceivedCustomData = new Dictionary<string, NetworkNode.ProfilerDataClass.ServiceItem.MessageTypeItem.CustomData>();
+
+				messageTypeItem.ReceivedCustomData.TryGetValue( signature, out var item );
+				item.Messages++;
+				item.Size += size;
+				messageTypeItem.ReceivedCustomData[ signature ] = item;
+			}
 
 			CheckSceneDisposed();
 			if( scene != null )
@@ -1287,38 +1680,46 @@ namespace NeoAxis
 				var component = GetComponentByNetworkID( componentID );
 				if( component != null )
 				{
-					var property = component.MetadataGetMemberBySignature( signature ) as Metadata.Property;
+					var context = NetworkUtility.metadataGetMembersContextNoFilter;
+					var property = component.MetadataGetMemberBySignature( signature, context ) as Metadata.Property;
 					if( property != null )
 					{
-						var emptyValue = string.IsNullOrEmpty( valueString );
-						if( emptyValue )
+						if( specialSerialized )
 						{
-							var netType = property.Type.GetNetType();
-
-							try
-							{
-								if( !netType.IsValueType )
-								{
-									property.SetValue( component, null, null );
-								}
-								else
-								{
-									if( ReferenceUtility.IsReferenceType( netType ) )
-									{
-										var value = (IReference)netType.InvokeMember( "", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance, null, null, new object[] { null, "" } );
-										property.SetValue( component, value, null );
-									}
-								}
-							}
-							catch { }
+							ServerNetworkService_Components_SpecialSerialization.SetSpecialSerialized( property, component, tempSpecialSerializedData );
 						}
 						else
 						{
-							var block = TextBlock.Parse( valueString, out _ );
-							if( block != null )
+							var emptyValue = string.IsNullOrEmpty( valueString );
+							if( emptyValue )
 							{
-								var context = new Metadata.LoadContext();
-								MetadataManager.Serialization.LoadSerializableMember( context, component, property, block, out _ );
+								var netType = property.Type.GetNetType();
+
+								try
+								{
+									if( !netType.IsValueType )
+									{
+										property.SetValue( component, null, null );
+									}
+									else
+									{
+										if( ReferenceUtility.IsReferenceType( netType ) )
+										{
+											var value = (IReference)netType.InvokeMember( "", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance, null, null, new object[] { null, "" } );
+											property.SetValue( component, value, null );
+										}
+									}
+								}
+								catch { }
+							}
+							else
+							{
+								var block = TextBlock.Parse( valueString, out _ );
+								if( block != null )
+								{
+									var context2 = new Metadata.LoadContext();
+									MetadataManager.Serialization.LoadSerializableMember( context2, component, property, block, out _ );
+								}
 							}
 						}
 
@@ -1337,6 +1738,7 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		bool ReceiveMessage_SimulationStepToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			//!!!!может какое-то время синхронизации
@@ -1357,15 +1759,49 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
+		bool ReceiveMessage_ComponentSendNetworkMessageNameToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		{
+			var name = reader.ReadString();
+			var nameID = reader.ReadVariableInt32();
+			if( !reader.Complete() )
+				return false;
+
+			while( nameID >= receivedNetworkMessageNames.Count )
+				receivedNetworkMessageNames.Add( "" );
+			receivedNetworkMessageNames[ nameID ] = name;
+
+			return true;
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
 		bool ReceiveMessage_ComponentSendNetworkMessageToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
+			var size = reader.EndPosition - reader.CurrentPosition;
+
 			var componentID = (long)reader.ReadVariableUInt64();
-			var message = reader.ReadString();
+			var nameID = reader.ReadVariableInt32();
 			if( reader.Overflow )
 				return false;
 
+			var message = receivedNetworkMessageNames[ nameID ];
+
 			if( NetworkCommonSettings.NetworkLogging )
 				Log.Info( "Network log: Client: Receive network message: " + componentID.ToString() + " " + message );
+
+			if( owner.ProfilerData != null )
+			{
+				var serviceItem = owner.ProfilerData.GetServiceItem( Identifier );
+				var messageTypeItem = serviceItem.GetMessageTypeItem( messageType.Identifier );
+
+				if( messageTypeItem.ReceivedCustomData == null )
+					messageTypeItem.ReceivedCustomData = new Dictionary<string, NetworkNode.ProfilerDataClass.ServiceItem.MessageTypeItem.CustomData>();
+
+				messageTypeItem.ReceivedCustomData.TryGetValue( message, out var item );
+				item.Messages++;
+				item.Size += size;
+				messageTypeItem.ReceivedCustomData[ message ] = item;
+			}
 
 			CheckSceneDisposed();
 			if( scene != null )
@@ -1381,25 +1817,62 @@ namespace NeoAxis
 			return true;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		private void NetworkInterface_BeginNetworkMessage( ComponentHierarchyController.NetworkClientInterface sender, Component component, string message, ref ArrayDataWriter writer )
 		{
 			if( component.networkID != 0 && !component.Disposed && !component.RemoveFromParentQueued )
 			{
-				writer = BeginMessage( ComponentSendNetworkMessageToServer );
+				//get nameID, register and send
+				int nameID;
+				if( !registeredAndSentNetworkMessageNames.TryGetValue( message, out nameID ) )
+				{
+					//register
+					nameID = registeredAndSentNetworkMessageNames.Count;
+					registeredAndSentNetworkMessageNames[ message ] = nameID;
+
+					//send
+					var writer2 = BeginMessage( ComponentSendNetworkMessageName );
+					writer2.Write( message );
+					writer2.WriteVariableInt32( nameID );
+					EndMessage();
+				}
+
+				//begin network message
+				writer = BeginMessage( ComponentSendNetworkMessage );
 				writer.WriteVariableInt32( sceneInstanceID );
 				writer.WriteVariableUInt64( (ulong)component.networkID );
-				writer.Write( message );
+				writer.WriteVariableInt32( nameID );
 
 				if( NetworkCommonSettings.NetworkLogging )
 					Log.Info( "Network log: Client: Send network message: " + component.networkID.ToString() + " " + message );
+
+				sendingNetworkMessage = message;
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		private void NetworkInterface_EndNetworkMessage( ComponentHierarchyController.NetworkClientInterface sender )
 		{
 			if( SendingData )
-				EndMessage();
-		}
+			{
+				if( owner.ProfilerData != null )
+				{
+					var serviceItem = owner.ProfilerData.GetServiceItem( Identifier );
+					var messageTypeItem = serviceItem.GetMessageTypeItem( ComponentSendNetworkMessage );// messageType.Identifier );
 
+					if( messageTypeItem.SentCustomData == null )
+						messageTypeItem.SentCustomData = new Dictionary<string, NetworkNode.ProfilerDataClass.ServiceItem.MessageTypeItem.CustomData>();
+
+					messageTypeItem.SentCustomData.TryGetValue( sendingNetworkMessage, out var item );
+					item.Messages++;
+					item.Size += SendingDataWriterLength;
+					messageTypeItem.SentCustomData[ sendingNetworkMessage ] = item;
+				}
+
+				EndMessage();
+
+				sendingNetworkMessage = "";
+			}
+		}
 	}
 }

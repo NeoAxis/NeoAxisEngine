@@ -7,7 +7,7 @@ using System.ComponentModel;
 namespace NeoAxis
 {
 	/// <summary>
-	/// Clickable button.
+	/// Clickable button of the engine GUI.
 	/// </summary>
 	public class UIButton : UIControl
 	{
@@ -29,21 +29,27 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		/// <summary>
+		/// The image on the button.
+		/// </summary>
 		[DefaultValue( null )]
 		public Reference<ImageComponent> Image
 		{
 			get { if( _image.BeginGet() ) Image = _image.Get( this ); return _image.value; }
-			set { if( _image.BeginSet( ref value ) ) { try { ImageChanged?.Invoke( this ); } finally { _image.EndSet(); } } }
+			set { if( _image.BeginSet( this, ref value ) ) { try { ImageChanged?.Invoke( this ); } finally { _image.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Image"/> property value changes.</summary>
 		public event Action<UIButton> ImageChanged;
 		ReferenceField<ImageComponent> _image = null;
 
+		/// <summary>
+		/// The image on the button when it is disabled.
+		/// </summary>
 		[DefaultValue( null )]
 		public Reference<ImageComponent> ImageDisabled
 		{
 			get { if( _imageDisabled.BeginGet() ) ImageDisabled = _imageDisabled.Get( this ); return _imageDisabled.value; }
-			set { if( _imageDisabled.BeginSet( ref value ) ) { try { ImageDisabledChanged?.Invoke( this ); } finally { _imageDisabled.EndSet(); } } }
+			set { if( _imageDisabled.BeginSet( this, ref value ) ) { try { ImageDisabledChanged?.Invoke( this ); } finally { _imageDisabled.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ImageDisabled"/> property value changes.</summary>
 		public event Action<UIButton> ImageDisabledChanged;
@@ -56,7 +62,7 @@ namespace NeoAxis
 		public Reference<UIMeasureValueDouble> FontSize
 		{
 			get { if( _fontSize.BeginGet() ) FontSize = _fontSize.Get( this ); return _fontSize.value; }
-			set { if( _fontSize.BeginSet( ref value ) ) { try { FontSizeChanged?.Invoke( this ); } finally { _fontSize.EndSet(); } } }
+			set { if( _fontSize.BeginSet( this, ref value ) ) { try { FontSizeChanged?.Invoke( this ); } finally { _fontSize.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TitleBarFontSize"/> property value changes.</summary>
 		public event Action<UIButton> FontSizeChanged;
@@ -69,7 +75,7 @@ namespace NeoAxis
 		public Reference<bool> Highlighted
 		{
 			get { if( _highlighted.BeginGet() ) Highlighted = _highlighted.Get( this ); return _highlighted.value; }
-			set { if( _highlighted.BeginSet( ref value ) ) { try { HighlightedChanged?.Invoke( this ); } finally { _highlighted.EndSet(); } } }
+			set { if( _highlighted.BeginSet( this, ref value ) ) { try { HighlightedChanged?.Invoke( this ); } finally { _highlighted.EndSet(); } } }
 		}
 		public event Action<UIButton> HighlightedChanged;
 		ReferenceField<bool> _highlighted = false;
@@ -148,14 +154,17 @@ namespace NeoAxis
 			return false;//base.OnMouseUp( button );
 		}
 
-		bool CheckTouchPointerInside( Vector2I positionInPixels )
+		bool CheckTouchPointerInside( TouchData e )//Vector2I positionInPixels )
 		{
+			if( ParentContainer != null && ParentContainer.IsControlCoveredByOther( this, e.Position ) )
+				return false;
+
 			GetScreenRectangle( out var rect );
 			var rectInPixels = rect * ParentContainer.Viewport.SizeInPixels.ToVector2();
-			var distanceInPixels = rectInPixels.GetPointDistance( positionInPixels.ToVector2() );
+			var distanceInPixels = rectInPixels.GetPointDistance( e.PositionInPixels/*positionInPixels*/.ToVector2() );
 
 			//!!!!
-			int maxDistance = ParentContainer.Viewport.SizeInPixels.MinComponent() / 20;
+			int maxDistance = ParentContainer.Viewport.SizeInPixels.MinComponent() / 30;
 
 			return distanceInPixels <= maxDistance;
 		}
@@ -167,6 +176,9 @@ namespace NeoAxis
 			case TouchData.ActionEnum.Down:
 				if( VisibleInHierarchy && EnabledInHierarchy && !ReadOnlyInHierarchy && touchDown == null )
 				{
+					if( ParentContainer != null && ParentContainer.IsControlCoveredByOther( this, e.Position ) )
+						break;
+
 					GetScreenRectangle( out var rect );
 					var rectInPixels = rect * ParentContainer.Viewport.SizeInPixels.ToVector2();
 					var distanceInPixels = rectInPixels.GetPointDistance( e.PositionInPixels.ToVector2() );
@@ -174,6 +186,8 @@ namespace NeoAxis
 					var item = new TouchData.TouchDownRequestToProcessTouch( this, 0, distanceInPixels, null,
 						delegate ( UIControl sender, TouchData touchData, object anyData )
 						{
+							Focus();
+
 							//start touch
 							touchDown = e.PointerIdentifier;
 							touchDownPointerInside = true;
@@ -194,7 +208,7 @@ namespace NeoAxis
 
 			case TouchData.ActionEnum.Move:
 				if( touchDown != null && ReferenceEquals( e.PointerIdentifier, touchDown ) )
-					touchDownPointerInside = CheckTouchPointerInside( e.PositionInPixels );
+					touchDownPointerInside = CheckTouchPointerInside( e );//.PositionInPixels );
 				break;
 
 			}
@@ -209,7 +223,7 @@ namespace NeoAxis
 				return true;
 
 			//control rectangle
-			if( !( new Rectangle( Vector2.Zero, new Vector2( 1, 1 ) ) ).Contains( MousePosition ) )
+			if( !new Rectangle( Vector2.Zero, new Vector2( 1, 1 ) ).Contains( MousePosition ) )
 				return false;
 
 			if( ParentContainer != null && ParentContainer.IsControlCursorCoveredByOther( this ) )

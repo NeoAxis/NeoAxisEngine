@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2019, assimp team
 
 
 All rights reserved.
@@ -48,12 +48,40 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "X3DImporter.hpp"
 #include "X3DImporter_Macro.hpp"
+#include "X3DXmlHelper.h"
 
-namespace Assimp
-{
+namespace Assimp {
+
+bool X3DImporter::checkForMetadataNode(XmlNode &node) {
+    const std::string &name = node.name();
+    if (name == "MetadataBoolean") {
+        readMetadataBoolean(node);
+    } else if (name == "MetadataDouble") {
+        readMetadataDouble(node);
+    } else if (name == "MetadataFloat") {
+        readMetadataFloat(node);
+    } else if (name == "MetadataInteger") {
+        readMetadataInteger(node);
+    } else if (name == "MetadataSet") {
+        readMetadataSet(node);
+    } else if (name == "MetadataString") {
+        readMetadataString(node);
+    } else
+        return false;
+    return true;
+}
+
+void X3DImporter::childrenReadMetadata(XmlNode &node, X3DNodeElementBase *pParentElement, const std::string &pNodeName) {
+    ParseHelper_Node_Enter(pParentElement);
+    for (auto childNode : node.children()) {
+        if (!checkForMetadataNode(childNode)) skipUnsupportedNode(pNodeName, childNode);
+    }
+    ParseHelper_Node_Exit();
+}
 
 /// \def MACRO_METADATA_FINDCREATE(pDEF_Var, pUSE_Var, pReference, pValue, pNE, pMetaName)
 /// Find element by "USE" or create new one.
+/// \param [in] pNode - pugi xml node to read.
 /// \param [in] pDEF_Var - variable name with "DEF" value.
 /// \param [in] pUSE_Var - variable name with "USE" value.
 /// \param [in] pReference - variable name with "reference" value.
@@ -62,56 +90,27 @@ namespace Assimp
 /// \param [in] pMetaClass - Class of node.
 /// \param [in] pMetaName - Name of node.
 /// \param [in] pType - type of element to find.
-#define MACRO_METADATA_FINDCREATE(pDEF_Var, pUSE_Var, pReference, pValue, pNE, pMetaClass, pMetaName, pType) \
-	/* if "USE" defined then find already defined element. */ \
-	if(!pUSE_Var.empty()) \
-	{ \
-		MACRO_USE_CHECKANDAPPLY(pDEF_Var, pUSE_Var, pType, pNE); \
-	} \
-	else \
-	{ \
-		pNE = new pMetaClass(NodeElement_Cur); \
-		if(!pDEF_Var.empty()) pNE->ID = pDEF_Var; \
-	 \
-		((pMetaClass*)pNE)->Reference = pReference; \
-		((pMetaClass*)pNE)->Value = pValue; \
-		/* also metadata node can contain childs */ \
-		if(!mReader->isEmptyElement()) \
-			ParseNode_Metadata(pNE, pMetaName);/* in that case node element will be added to child elements list of current node. */ \
-		else \
-			NodeElement_Cur->Child.push_back(pNE);/* else - add element to child list manually */ \
-	 \
-		NodeElement_List.push_back(pNE);/* add new element to elements list. */ \
-	}/* if(!pUSE_Var.empty()) else */ \
-	 \
-	do {} while(false)
-
-bool X3DImporter::ParseHelper_CheckRead_X3DMetadataObject()
-{
-	if(XML_CheckNode_NameEqual("MetadataBoolean"))
-		ParseNode_MetadataBoolean();
-	else if(XML_CheckNode_NameEqual("MetadataDouble"))
-		ParseNode_MetadataDouble();
-	else if(XML_CheckNode_NameEqual("MetadataFloat"))
-		ParseNode_MetadataFloat();
-	else if(XML_CheckNode_NameEqual("MetadataInteger"))
-		ParseNode_MetadataInteger();
-	else if(XML_CheckNode_NameEqual("MetadataSet"))
-		ParseNode_MetadataSet();
-	else if(XML_CheckNode_NameEqual("MetadataString"))
-		ParseNode_MetadataString();
-	else
-		return false;
-
-	return true;
-}
-
-void X3DImporter::ParseNode_Metadata(CX3DImporter_NodeElement* pParentElement, const std::string& /*pNodeName*/)
-{
-	ParseHelper_Node_Enter(pParentElement);
-	MACRO_NODECHECK_METADATA(mReader->getNodeName());
-	ParseHelper_Node_Exit();
-}
+#define MACRO_METADATA_FINDCREATE(pNode, pDEF_Var, pUSE_Var, pReference, pValue, pNE, pMetaClass, pMetaName, pType)                            \
+    /* if "USE" defined then find already defined element. */                                                                                  \
+    if (!pUSE_Var.empty()) {                                                                                                                   \
+        ne = MACRO_USE_CHECKANDAPPLY(pNode, pDEF_Var, pUSE_Var, pType, pNE);                                                                        \
+    } else {                                                                                                                                   \
+        pNE = new pMetaClass(mNodeElementCur);                                                                                                 \
+        if (!pDEF_Var.empty()) pNE->ID = pDEF_Var;                                                                                             \
+                                                                                                                                               \
+        ((pMetaClass *)pNE)->Reference = pReference;                                                                                           \
+        ((pMetaClass *)pNE)->Value = pValue;                                                                                                   \
+        /* also metadata node can contain childs */                                                                                            \
+        if (!isNodeEmpty(pNode))                                                                                                               \
+            childrenReadMetadata(pNode, pNE, pMetaName); /* in that case node element will be added to child elements list of current node. */ \
+        else                                                                                                                                   \
+            mNodeElementCur->Children.push_back(pNE); /* else - add element to child list manually */                                          \
+                                                                                                                                               \
+        NodeElement_List.push_back(pNE); /* add new element to elements list. */                                                               \
+    } /* if(!pUSE_Var.empty()) else */                                                                                                         \
+                                                                                                                                               \
+    do {                                                                                                                                       \
+    } while (false)
 
 // <MetadataBoolean
 // DEF=""       ID
@@ -120,21 +119,18 @@ void X3DImporter::ParseNode_Metadata(CX3DImporter_NodeElement* pParentElement, c
 // reference="" SFString [inputOutput]
 // value=""     MFBool   [inputOutput]
 // />
-void X3DImporter::ParseNode_MetadataBoolean()
-{
+void X3DImporter::readMetadataBoolean(XmlNode &node) {
     std::string def, use;
     std::string name, reference;
     std::vector<bool> value;
-    CX3DImporter_NodeElement* ne( nullptr );
+    X3DNodeElementBase *ne(nullptr);
 
-	MACRO_ATTRREAD_LOOPBEG;
-		MACRO_ATTRREAD_CHECKUSEDEF_RET(def, use);
-		MACRO_ATTRREAD_CHECK_RET("name", name, mReader->getAttributeValue);
-		MACRO_ATTRREAD_CHECK_RET("reference", reference, mReader->getAttributeValue);
-		MACRO_ATTRREAD_CHECK_REF("value", value, XML_ReadNode_GetAttrVal_AsArrB);
-	MACRO_ATTRREAD_LOOPEND;
+    MACRO_ATTRREAD_CHECKUSEDEF_RET(node, def, use);
+    XmlParser::getStdStrAttribute(node, "name", name);
+    XmlParser::getStdStrAttribute(node, "reference", reference);
+    X3DXmlHelper::getBooleanArrayAttribute(node, "value", value);
 
-	MACRO_METADATA_FINDCREATE(def, use, reference, value, ne, CX3DImporter_NodeElement_MetaBoolean, "MetadataBoolean", ENET_MetaBoolean);
+    MACRO_METADATA_FINDCREATE(node, def, use, reference, value, ne, X3DNodeElementMetaBoolean, "MetadataBoolean", ENET_MetaBoolean);
 }
 
 // <MetadataDouble
@@ -144,21 +140,18 @@ void X3DImporter::ParseNode_MetadataBoolean()
 // reference="" SFString [inputOutput]
 // value=""     MFDouble [inputOutput]
 // />
-void X3DImporter::ParseNode_MetadataDouble()
-{
+void X3DImporter::readMetadataDouble(XmlNode &node) {
     std::string def, use;
     std::string name, reference;
     std::vector<double> value;
-    CX3DImporter_NodeElement* ne( nullptr );
+    X3DNodeElementBase *ne(nullptr);
 
-	MACRO_ATTRREAD_LOOPBEG;
-		MACRO_ATTRREAD_CHECKUSEDEF_RET(def, use);
-		MACRO_ATTRREAD_CHECK_RET("name", name, mReader->getAttributeValue);
-		MACRO_ATTRREAD_CHECK_RET("reference", reference, mReader->getAttributeValue);
-		MACRO_ATTRREAD_CHECK_REF("value", value, XML_ReadNode_GetAttrVal_AsArrD);
-	MACRO_ATTRREAD_LOOPEND;
+    MACRO_ATTRREAD_CHECKUSEDEF_RET(node, def, use);
+    XmlParser::getStdStrAttribute(node, "name", name);
+    XmlParser::getStdStrAttribute(node, "reference", reference);
+    X3DXmlHelper::getDoubleArrayAttribute(node, "value", value);
 
-	MACRO_METADATA_FINDCREATE(def, use, reference, value, ne, CX3DImporter_NodeElement_MetaDouble, "MetadataDouble", ENET_MetaDouble);
+    MACRO_METADATA_FINDCREATE(node, def, use, reference, value, ne, X3DNodeElementMetaDouble, "MetadataDouble", ENET_MetaDouble);
 }
 
 // <MetadataFloat
@@ -168,21 +161,18 @@ void X3DImporter::ParseNode_MetadataDouble()
 // reference="" SFString [inputOutput]
 // value=""     MFFloat  [inputOutput]
 // />
-void X3DImporter::ParseNode_MetadataFloat()
-{
+void X3DImporter::readMetadataFloat(XmlNode &node) {
     std::string def, use;
     std::string name, reference;
     std::vector<float> value;
-    CX3DImporter_NodeElement* ne( nullptr );
+    X3DNodeElementBase *ne(nullptr);
 
-	MACRO_ATTRREAD_LOOPBEG;
-		MACRO_ATTRREAD_CHECKUSEDEF_RET(def, use);
-		MACRO_ATTRREAD_CHECK_RET("name", name, mReader->getAttributeValue);
-		MACRO_ATTRREAD_CHECK_RET("reference", reference, mReader->getAttributeValue);
-		MACRO_ATTRREAD_CHECK_REF("value", value, XML_ReadNode_GetAttrVal_AsArrF);
-	MACRO_ATTRREAD_LOOPEND;
+    MACRO_ATTRREAD_CHECKUSEDEF_RET(node, def, use);
+    XmlParser::getStdStrAttribute(node, "name", name);
+    XmlParser::getStdStrAttribute(node, "reference", reference);
+    X3DXmlHelper::getFloatArrayAttribute(node, "value", value);
 
-	MACRO_METADATA_FINDCREATE(def, use, reference, value, ne, CX3DImporter_NodeElement_MetaFloat, "MetadataFloat", ENET_MetaFloat);
+    MACRO_METADATA_FINDCREATE(node, def, use, reference, value, ne, X3DNodeElementMetaFloat, "MetadataFloat", ENET_MetaFloat);
 }
 
 // <MetadataInteger
@@ -192,21 +182,18 @@ void X3DImporter::ParseNode_MetadataFloat()
 // reference="" SFString  [inputOutput]
 // value=""     MFInteger [inputOutput]
 // />
-void X3DImporter::ParseNode_MetadataInteger()
-{
+void X3DImporter::readMetadataInteger(XmlNode &node) {
     std::string def, use;
     std::string name, reference;
     std::vector<int32_t> value;
-    CX3DImporter_NodeElement* ne( nullptr );
+    X3DNodeElementBase *ne(nullptr);
 
-	MACRO_ATTRREAD_LOOPBEG;
-		MACRO_ATTRREAD_CHECKUSEDEF_RET(def, use);
-		MACRO_ATTRREAD_CHECK_RET("name", name, mReader->getAttributeValue);
-		MACRO_ATTRREAD_CHECK_RET("reference", reference, mReader->getAttributeValue);
-		MACRO_ATTRREAD_CHECK_REF("value", value, XML_ReadNode_GetAttrVal_AsArrI32);
-	MACRO_ATTRREAD_LOOPEND;
+    MACRO_ATTRREAD_CHECKUSEDEF_RET(node, def, use);
+    XmlParser::getStdStrAttribute(node, "name", name);
+    XmlParser::getStdStrAttribute(node, "reference", reference);
+    X3DXmlHelper::getInt32ArrayAttribute(node, "value", value);
 
-	MACRO_METADATA_FINDCREATE(def, use, reference, value, ne, CX3DImporter_NodeElement_MetaInteger, "MetadataInteger", ENET_MetaInteger);
+    MACRO_METADATA_FINDCREATE(node, def, use, reference, value, ne, X3DNodeElementMetaInt, "MetadataInteger", ENET_MetaInteger);
 }
 
 // <MetadataSet
@@ -215,37 +202,31 @@ void X3DImporter::ParseNode_MetadataInteger()
 // name=""      SFString [inputOutput]
 // reference="" SFString [inputOutput]
 // />
-void X3DImporter::ParseNode_MetadataSet()
-{
+void X3DImporter::readMetadataSet(XmlNode &node) {
     std::string def, use;
     std::string name, reference;
-    CX3DImporter_NodeElement* ne( nullptr );
+    X3DNodeElementBase *ne(nullptr);
 
-	MACRO_ATTRREAD_LOOPBEG;
-		MACRO_ATTRREAD_CHECKUSEDEF_RET(def, use);
-		MACRO_ATTRREAD_CHECK_RET("name", name, mReader->getAttributeValue);
-		MACRO_ATTRREAD_CHECK_RET("reference", reference, mReader->getAttributeValue);
-	MACRO_ATTRREAD_LOOPEND;
+    MACRO_ATTRREAD_CHECKUSEDEF_RET(node, def, use);
+    XmlParser::getStdStrAttribute(node, "name", name);
+    XmlParser::getStdStrAttribute(node, "reference", reference);
 
-	// if "USE" defined then find already defined element.
-	if(!use.empty())
-	{
-		MACRO_USE_CHECKANDAPPLY(def, use, ENET_MetaSet, ne);
-	}
-	else
-	{
-		ne = new CX3DImporter_NodeElement_MetaSet(NodeElement_Cur);
-		if(!def.empty()) ne->ID = def;
+    // if "USE" defined then find already defined element.
+    if (!use.empty()) {
+        ne = MACRO_USE_CHECKANDAPPLY(node, def, use, ENET_MetaSet, ne);
+    } else {
+        ne = new X3DNodeElementMetaSet(mNodeElementCur);
+        if (!def.empty()) ne->ID = def;
 
-		((CX3DImporter_NodeElement_MetaSet*)ne)->Reference = reference;
-		// also metadata node can contain childs
-		if(!mReader->isEmptyElement())
-			ParseNode_Metadata(ne, "MetadataSet");
-		else
-			NodeElement_Cur->Child.push_back(ne);// made object as child to current element
+        ((X3DNodeElementMetaSet *)ne)->Reference = reference;
+        // also metadata node can contain children
+        if (!isNodeEmpty(node))
+            childrenReadMetadata(node, ne, "MetadataSet");
+        else
+            mNodeElementCur->Children.push_back(ne); // made object as child to current element
 
-		NodeElement_List.push_back(ne);// add new element to elements list.
-	}// if(!use.empty()) else
+        NodeElement_List.push_back(ne); // add new element to elements list.
+    } // if(!use.empty()) else
 }
 
 // <MetadataString
@@ -255,21 +236,18 @@ void X3DImporter::ParseNode_MetadataSet()
 // reference="" SFString [inputOutput]
 // value=""     MFString [inputOutput]
 // />
-void X3DImporter::ParseNode_MetadataString()
-{
+void X3DImporter::readMetadataString(XmlNode &node) {
     std::string def, use;
     std::string name, reference;
-    std::list<std::string> value;
-    CX3DImporter_NodeElement* ne( nullptr );
+    std::vector<std::string> value;
+    X3DNodeElementBase *ne(nullptr);
 
-	MACRO_ATTRREAD_LOOPBEG;
-		MACRO_ATTRREAD_CHECKUSEDEF_RET(def, use);
-		MACRO_ATTRREAD_CHECK_RET("name", name, mReader->getAttributeValue);
-		MACRO_ATTRREAD_CHECK_RET("reference", reference, mReader->getAttributeValue);
-		MACRO_ATTRREAD_CHECK_REF("value", value, XML_ReadNode_GetAttrVal_AsListS);
-	MACRO_ATTRREAD_LOOPEND;
+    MACRO_ATTRREAD_CHECKUSEDEF_RET(node, def, use);
+    XmlParser::getStdStrAttribute(node, "name", name);
+    XmlParser::getStdStrAttribute(node, "reference", reference);
+    X3DXmlHelper::getStringArrayAttribute(node, "value", value);
 
-	MACRO_METADATA_FINDCREATE(def, use, reference, value, ne, CX3DImporter_NodeElement_MetaString, "MetadataString", ENET_MetaString);
+    MACRO_METADATA_FINDCREATE(node, def, use, reference, value, ne, X3DNodeElementMetaString, "MetadataString", ENET_MetaString);
 }
 
 }// namespace Assimp

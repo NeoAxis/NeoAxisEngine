@@ -4,9 +4,9 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using NeoAxis.Editor;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 //!!!!
-//humans
 //creatures
 //railroads
 //serialization in simulation (optionally) ?
@@ -22,27 +22,38 @@ namespace NeoAxis
 #endif
 	public class TrafficSystem : Component
 	{
+		static FastRandom staticRandom = new FastRandom( 0 );
+
+		//
+
 		bool needUpdateObjects;
 
 		Dictionary<TrafficSystemElement, ElementCachedData> cachedElementsDictionary;
-		ElementCachedData[] cachedGroundElements;
-		ElementCachedData[] cachedFlyingElements;
+		ElementCachedData[] cachedGroundVehicleElements;
+		ElementCachedData[] cachedFlyingVehicleElements;
+		ElementCachedData[] cachedPedestriansElements;
 
 		GroupOfObjectsUtility.GroupOfObjectsInstance groupOfObjects;
 		List<GroupOfObjects.SubGroup> groupOfObjectsSubGroups = new List<GroupOfObjects.SubGroup>();
 
 		ESet<ObjectInstance> parkedVehicles = new ESet<ObjectInstance>();
 		ESet<ObjectInstance> movingVehicles = new ESet<ObjectInstance>();
+
 		ESet<ObjectInstance> flyingObjects = new ESet<ObjectInstance>();
-		double remainingTimeToUpdateFlyingObjects;
-		double editorFlyingObjectsUpdateRemainingTime;
+		double flyingObjectsRemainingTimeToUpdate;
+		double flyingObjectsRemainingTimeToUpdateEditor;
 
-		Rectangle camerasBoundsLastSecond = Rectangle.Cleared;
-		double camerasBoundsLastSecondRemainingTime;
-		Queue<Rectangle> camerasBoundsLast10Seconds = new Queue<Rectangle>();
-		//Vector2? lastCameraPosition;
+		ESet<ObjectInstance> walkingPedestrians = new ESet<ObjectInstance>();
+		double walkingPedestriansRemainingTimeToUpdate;
+		//double walkingPedestriansRemainingTimeToUpdateEditor;
 
-		FastRandom componentRandom = new FastRandom();
+		//!!!!need support for many camera contexts
+		Vector3? lastCameraPosition;
+		//Bounds camerasPositionBoundsLastSecond = Bounds.Cleared;
+		//float camerasPositionBoundsLastSecondRemainingTime;
+		//Queue<Bounds> camerasPositionBoundsLast10Seconds = new Queue<Bounds>();
+
+		List<Road.LogicalData> allWalkableRoadsCache;
 
 		///////////////////////////////////////////////
 
@@ -54,13 +65,11 @@ namespace NeoAxis
 		public Reference<int> ParkedVehicles
 		{
 			get { if( _parkedVehicles.BeginGet() ) ParkedVehicles = _parkedVehicles.Get( this ); return _parkedVehicles.value; }
-			set { if( _parkedVehicles.BeginSet( ref value ) ) { try { ParkedVehiclesChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _parkedVehicles.EndSet(); } } }
+			set { if( _parkedVehicles.BeginSet( this, ref value ) ) { try { ParkedVehiclesChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _parkedVehicles.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ParkedVehicles"/> property value changes.</summary>
 		public event Action<TrafficSystem> ParkedVehiclesChanged;
 		ReferenceField<int> _parkedVehicles = 0;
-
-		//!!!!impl. сравнить
 
 		public enum ObjectModeEnum
 		{
@@ -76,7 +85,7 @@ namespace NeoAxis
 		public Reference<ObjectModeEnum> ParkedVehiclesObjectMode
 		{
 			get { if( _parkedVehiclesObjectMode.BeginGet() ) ParkedVehiclesObjectMode = _parkedVehiclesObjectMode.Get( this ); return _parkedVehiclesObjectMode.value; }
-			set { if( _parkedVehiclesObjectMode.BeginSet( ref value ) ) { try { ParkedVehiclesObjectModeChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _parkedVehiclesObjectMode.EndSet(); } } }
+			set { if( _parkedVehiclesObjectMode.BeginSet( this, ref value ) ) { try { ParkedVehiclesObjectModeChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _parkedVehiclesObjectMode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ParkedVehiclesObjectMode"/> property value changes.</summary>
 		public event Action<TrafficSystem> ParkedVehiclesObjectModeChanged;
@@ -86,15 +95,15 @@ namespace NeoAxis
 		/// The physics mode of parked vehicles.
 		/// </summary>
 		[Category( "Ground Objects" )]
-		[DefaultValue( PhysicsModeEnum.Kinematic )]
+		[DefaultValue( PhysicsModeEnum.Basic )]//Kinematic )]
 		public Reference<PhysicsModeEnum> ParkedVehiclesPhysicsMode
 		{
 			get { if( _parkedVehiclesPhysicsMode.BeginGet() ) ParkedVehiclesPhysicsMode = _parkedVehiclesPhysicsMode.Get( this ); return _parkedVehiclesPhysicsMode.value; }
-			set { if( _parkedVehiclesPhysicsMode.BeginSet( ref value ) ) { try { ParkedVehiclesPhysicsModeChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _parkedVehiclesPhysicsMode.EndSet(); } } }
+			set { if( _parkedVehiclesPhysicsMode.BeginSet( this, ref value ) ) { try { ParkedVehiclesPhysicsModeChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _parkedVehiclesPhysicsMode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ParkedVehiclesPhysicsMode"/> property value changes.</summary>
 		public event Action<TrafficSystem> ParkedVehiclesPhysicsModeChanged;
-		ReferenceField<PhysicsModeEnum> _parkedVehiclesPhysicsMode = PhysicsModeEnum.Kinematic;
+		ReferenceField<PhysicsModeEnum> _parkedVehiclesPhysicsMode = PhysicsModeEnum.Basic;//Kinematic;
 
 
 		//!!!!temp
@@ -103,12 +112,13 @@ namespace NeoAxis
 		public Reference<bool> ParkedVehiclesCanParkOnRoad
 		{
 			get { if( _parkedVehiclesCanParkOnRoad.BeginGet() ) ParkedVehiclesCanParkOnRoad = _parkedVehiclesCanParkOnRoad.Get( this ); return _parkedVehiclesCanParkOnRoad.value; }
-			set { if( _parkedVehiclesCanParkOnRoad.BeginSet( ref value ) ) { try { ParkedVehiclesCanParkOnRoadChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _parkedVehiclesCanParkOnRoad.EndSet(); } } }
+			set { if( _parkedVehiclesCanParkOnRoad.BeginSet( this, ref value ) ) { try { ParkedVehiclesCanParkOnRoadChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _parkedVehiclesCanParkOnRoad.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ParkedVehiclesCanParkOnRoad"/> property value changes.</summary>
 		public event Action<TrafficSystem> ParkedVehiclesCanParkOnRoadChanged;
 		ReferenceField<bool> _parkedVehiclesCanParkOnRoad = false;
 
+		///////////////////////////////////////////////
 
 		//!!!!impl
 
@@ -117,7 +127,7 @@ namespace NeoAxis
 		//public Reference<int> MovingVehicles
 		//{
 		//	get { if( _movingVehicles.BeginGet() ) MovingVehicles = _movingVehicles.Get( this ); return _movingVehicles.value; }
-		//	set { if( _movingVehicles.BeginSet( ref value ) ) { try { MovingVehiclesChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _movingVehicles.EndSet(); } } }
+		//	set { if( _movingVehicles.BeginSet( this, ref value ) ) { try { MovingVehiclesChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _movingVehicles.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="MovingVehicles"/> property value changes.</summary>
 		//public event Action<TrafficSystem> MovingVehiclesChanged;
@@ -128,13 +138,15 @@ namespace NeoAxis
 		//public Reference<PhysicsModeEnum> MovingVehiclesPhysicsMode
 		//{
 		//	get { if( _movingVehiclesPhysicsMode.BeginGet() ) MovingVehiclesPhysicsMode = _movingVehiclesPhysicsMode.Get( this ); return _movingVehiclesPhysicsMode.value; }
-		//	set { if( _movingVehiclesPhysicsMode.BeginSet( ref value ) ) { try { MovingVehiclesPhysicsModeChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _movingVehiclesPhysicsMode.EndSet(); } } }
+		//	set { if( _movingVehiclesPhysicsMode.BeginSet( this, ref value ) ) { try { MovingVehiclesPhysicsModeChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _movingVehiclesPhysicsMode.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="MovingVehiclesPhysicsMode"/> property value changes.</summary>
 		//public event Action<TrafficSystem> MovingVehiclesPhysicsModeChanged;
 		//ReferenceField<PhysicsModeEnum> _movingVehiclesPhysicsMode = PhysicsModeEnum.Kinematic;
 
 
+
+		///////////////////////////////////////////////
 
 		//!!!!flying parked/stopped, flying moving
 
@@ -146,7 +158,7 @@ namespace NeoAxis
 		public Reference<int> FlyingVehicles
 		{
 			get { if( _flyingVehicles.BeginGet() ) FlyingVehicles = _flyingVehicles.Get( this ); return _flyingVehicles.value; }
-			set { if( _flyingVehicles.BeginSet( ref value ) ) { try { FlyingVehiclesChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _flyingVehicles.EndSet(); } } }
+			set { if( _flyingVehicles.BeginSet( this, ref value ) ) { try { FlyingVehiclesChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _flyingVehicles.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FlyingVehicles"/> property value changes.</summary>
 		public event Action<TrafficSystem> FlyingVehiclesChanged;
@@ -160,7 +172,7 @@ namespace NeoAxis
 		public Reference<PhysicsModeEnum> FlyingVehiclesPhysicsMode
 		{
 			get { if( _flyingVehiclesPhysicsMode.BeginGet() ) FlyingVehiclesPhysicsMode = _flyingVehiclesPhysicsMode.Get( this ); return _flyingVehiclesPhysicsMode.value; }
-			set { if( _flyingVehiclesPhysicsMode.BeginSet( ref value ) ) { try { FlyingVehiclesPhysicsModeChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _flyingVehiclesPhysicsMode.EndSet(); } } }
+			set { if( _flyingVehiclesPhysicsMode.BeginSet( this, ref value ) ) { try { FlyingVehiclesPhysicsModeChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _flyingVehiclesPhysicsMode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FlyingVehiclesPhysicsMode"/> property value changes.</summary>
 		public event Action<TrafficSystem> FlyingVehiclesPhysicsModeChanged;
@@ -174,13 +186,11 @@ namespace NeoAxis
 		public Reference<int> FlyingVehiclesCreateMaxPerStep
 		{
 			get { if( _flyingVehiclesCreateMaxPerStep.BeginGet() ) FlyingVehiclesCreateMaxPerStep = _flyingVehiclesCreateMaxPerStep.Get( this ); return _flyingVehiclesCreateMaxPerStep.value; }
-			set { if( _flyingVehiclesCreateMaxPerStep.BeginSet( ref value ) ) { try { FlyingVehiclesCreateMaxPerStepChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _flyingVehiclesCreateMaxPerStep.EndSet(); } } }
+			set { if( _flyingVehiclesCreateMaxPerStep.BeginSet( this, ref value ) ) { try { FlyingVehiclesCreateMaxPerStepChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _flyingVehiclesCreateMaxPerStep.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FlyingVehiclesCreateMaxPerStep"/> property value changes.</summary>
 		public event Action<TrafficSystem> FlyingVehiclesCreateMaxPerStepChanged;
 		ReferenceField<int> _flyingVehiclesCreateMaxPerStep = 10;
-
-		//!!!!FlyingCreatures
 
 		/// <summary>
 		/// The distance from the camera for new flying objects.
@@ -190,41 +200,104 @@ namespace NeoAxis
 		public Reference<double> FlyingObjectsCreateDistance
 		{
 			get { if( _flyingObjectsCreateDistance.BeginGet() ) FlyingObjectsCreateDistance = _flyingObjectsCreateDistance.Get( this ); return _flyingObjectsCreateDistance.value; }
-			set { if( _flyingObjectsCreateDistance.BeginSet( ref value ) ) { try { FlyingObjectsCreateDistanceChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _flyingObjectsCreateDistance.EndSet(); } } }
+			set { if( _flyingObjectsCreateDistance.BeginSet( this, ref value ) ) { try { FlyingObjectsCreateDistanceChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _flyingObjectsCreateDistance.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FlyingObjectsCreateDistance"/> property value changes.</summary>
 		public event Action<TrafficSystem> FlyingObjectsCreateDistanceChanged;
 		ReferenceField<double> _flyingObjectsCreateDistance = 1100.0;
 
-		//!!!!
+		///////////////////////////////////////////////
+
+		/// <summary>
+		/// The amount of walking pedestrians.
+		/// </summary>
+		[Category( "Walking Pedestrians" )]
+		[DefaultValue( 0 )]
+		public Reference<int> WalkingPedestrians
+		{
+			get { if( _walkingPedestrians.BeginGet() ) WalkingPedestrians = _walkingPedestrians.Get( this ); return _walkingPedestrians.value; }
+			set { if( _walkingPedestrians.BeginSet( this, ref value ) ) { try { WalkingPedestriansChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _walkingPedestrians.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="WalkingPedestrians"/> property value changes.</summary>
+		public event Action<TrafficSystem> WalkingPedestriansChanged;
+		ReferenceField<int> _walkingPedestrians = 0;
+
+		//!!!!physics mode
+
+		/// <summary>
+		/// The maximal amount of new flying vehicle in one simulation step.
+		/// </summary>
+		[Category( "Walking Pedestrians" )]
+		[DefaultValue( 10 )]
+		public Reference<int> WalkingPedestriansCreateMaxPerStep
+		{
+			get { if( _walkingPedestriansCreateMaxPerStep.BeginGet() ) WalkingPedestriansCreateMaxPerStep = _walkingPedestriansCreateMaxPerStep.Get( this ); return _walkingPedestriansCreateMaxPerStep.value; }
+			set { if( _walkingPedestriansCreateMaxPerStep.BeginSet( this, ref value ) ) { try { WalkingPedestriansCreateMaxPerStepChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _walkingPedestriansCreateMaxPerStep.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="WalkingPedestriansCreateMaxPerStep"/> property value changes.</summary>
+		public event Action<TrafficSystem> WalkingPedestriansCreateMaxPerStepChanged;
+		ReferenceField<int> _walkingPedestriansCreateMaxPerStep = 10;
+
+		//!!!!default distance
+
+		/// <summary>
+		/// The distance from the camera for new flying objects.
+		/// </summary>
+		[Category( "Walking Pedestrians" )]
+		[DefaultValue( 150.0 )]
+		public Reference<double> WalkingPedestriansCreateDistance
+		{
+			get { if( _walkingPedestriansCreateDistance.BeginGet() ) WalkingPedestriansCreateDistance = _walkingPedestriansCreateDistance.Get( this ); return _walkingPedestriansCreateDistance.value; }
+			set { if( _walkingPedestriansCreateDistance.BeginSet( this, ref value ) ) { try { WalkingPedestriansCreateDistanceChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _walkingPedestriansCreateDistance.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="WalkingPedestriansCreateDistance"/> property value changes.</summary>
+		public event Action<TrafficSystem> WalkingPedestriansCreateDistanceChanged;
+		ReferenceField<double> _walkingPedestriansCreateDistance = 150.0;
+
+		[Category( "Walking Pedestrians" )]
+		[DefaultValue( 2.0 )]
+		public Reference<double> WalkingPedestriansMinimalDistanceBetweenPedestrians
+		{
+			get { if( _walkingPedestriansMinimalDistanceBetweenPedestrians.BeginGet() ) WalkingPedestriansMinimalDistanceBetweenPedestrians = _walkingPedestriansMinimalDistanceBetweenPedestrians.Get( this ); return _walkingPedestriansMinimalDistanceBetweenPedestrians.value; }
+			set { if( _walkingPedestriansMinimalDistanceBetweenPedestrians.BeginSet( this, ref value ) ) { try { WalkingPedestriansMinimalDistanceBetweenPedestriansChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _walkingPedestriansMinimalDistanceBetweenPedestrians.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="WalkingPedestriansMinimalDistanceBetweenPedestrians"/> property value changes.</summary>
+		public event Action<TrafficSystem> WalkingPedestriansMinimalDistanceBetweenPedestriansChanged;
+		ReferenceField<double> _walkingPedestriansMinimalDistanceBetweenPedestrians = 2.0;
+
+		[Category( "Walking Pedestrians" )]
+		[DefaultValue( true )]
+		public Reference<bool> WalkingPedestriansManageTasks
+		{
+			get { if( _walkingPedestriansManageTasks.BeginGet() ) WalkingPedestriansManageTasks = _walkingPedestriansManageTasks.Get( this ); return _walkingPedestriansManageTasks.value; }
+			set { if( _walkingPedestriansManageTasks.BeginSet( this, ref value ) ) { try { WalkingPedestriansManageTasksChanged?.Invoke( this ); WalkingPedestriansUpdateManageTasks(); } finally { _walkingPedestriansManageTasks.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="WalkingPedestriansManageTasks"/> property value changes.</summary>
+		public event Action<TrafficSystem> WalkingPedestriansManageTasksChanged;
+		ReferenceField<bool> _walkingPedestriansManageTasks = true;
+
+		///////////////////////////////////////////////
+
+		//!!!!?
 		//[DefaultValue( 0 )]
 		//public Reference<int> IdleHumans
 		//{
 		//	get { if( _idleHumans.BeginGet() ) IdleHumans = _idleHumans.Get( this ); return _idleHumans.value; }
-		//	set { if( _idleHumans.BeginSet( ref value ) ) { try { IdleHumansChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _idleHumans.EndSet(); } } }
+		//	set { if( _idleHumans.BeginSet( this, ref value ) ) { try { IdleHumansChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _idleHumans.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="IdleHumans"/> property value changes.</summary>
 		//public event Action<TrafficSystem> IdleHumansChanged;
 		//ReferenceField<int> _idleHumans = 0;
 
-		//[DefaultValue( 0 )]
-		//public Reference<int> WalkingHumans
-		//{
-		//	get { if( _walkingHumans.BeginGet() ) WalkingHumans = _walkingHumans.Get( this ); return _walkingHumans.value; }
-		//	set { if( _walkingHumans.BeginSet( ref value ) ) { try { WalkingHumansChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _walkingHumans.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="WalkingHumans"/> property value changes.</summary>
-		//public event Action<TrafficSystem> WalkingHumansChanged;
-		//ReferenceField<int> _walkingHumans = 0;
-
-		//!!!!WalkingCreatures, FlyingCreatures
+		//!!!!?
+		//WalkingCreatures, FlyingCreatures
 
 
 		//!!!!default
 		/// <summary>
 		/// The size of the sector in the scene. The sector size allows to optimize the culling and rendering of objects.
 		/// </summary>
-		[DefaultValue( "200 200 10000" )]
+		[DefaultValue( "200 200 10000" )]//[DefaultValue( "150 150 10000" )]
 		[Category( "Optimization" )]
 		public Reference<Vector3> StaticObjectsSectorSize
 		{
@@ -239,28 +312,29 @@ namespace NeoAxis
 					if( v.Z < 1.0 ) v.Z = 1.0;
 					value = new Reference<Vector3>( v, value.GetByReference );
 				}
-				if( _staticObjectsSectorSize.BeginSet( ref value ) ) { try { StaticObjectsSectorSizeChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _staticObjectsSectorSize.EndSet(); } }
+				if( _staticObjectsSectorSize.BeginSet( this, ref value ) ) { try { StaticObjectsSectorSizeChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _staticObjectsSectorSize.EndSet(); } }
 			}
 		}
 		/// <summary>Occurs when the <see cref="StaticObjectsSectorSize"/> property value changes.</summary>
 		public event Action<TrafficSystem> StaticObjectsSectorSizeChanged;
-		ReferenceField<Vector3> _staticObjectsSectorSize = new Vector3( 200, 200, 10000 );
+		ReferenceField<Vector3> _staticObjectsSectorSize = new Vector3( 200, 200, 10000 ); //new Vector3( 150, 150, 10000 );
 
-		//!!!!default
-		/// <summary>
-		/// The maximal amount of objects in one group/batch.
-		/// </summary>
-		[DefaultValue( 1000 )]
-		[Category( "Optimization" )]
-		public Reference<int> StaticObjectsMaxObjectsInGroup
-		{
-			get { if( _staticObjectsMaxObjectsInGroup.BeginGet() ) StaticObjectsMaxObjectsInGroup = _staticObjectsMaxObjectsInGroup.Get( this ); return _staticObjectsMaxObjectsInGroup.value; }
-			set { if( _staticObjectsMaxObjectsInGroup.BeginSet( ref value ) ) { try { StaticObjectsMaxObjectsInGroupChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _staticObjectsMaxObjectsInGroup.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="StaticObjectsMaxObjectsInGroup"/> property value changes.</summary>
-		public event Action<TrafficSystem> StaticObjectsMaxObjectsInGroupChanged;
-		ReferenceField<int> _staticObjectsMaxObjectsInGroup = 1000;
+		////!!!!default
+		///// <summary>
+		///// The maximal amount of objects in one group/batch.
+		///// </summary>
+		//[DefaultValue( 2000 )]
+		//[Category( "Optimization" )]
+		//public Reference<int> StaticObjectsMaxObjectsInGroup
+		//{
+		//	get { if( _staticObjectsMaxObjectsInGroup.BeginGet() ) StaticObjectsMaxObjectsInGroup = _staticObjectsMaxObjectsInGroup.Get( this ); return _staticObjectsMaxObjectsInGroup.value; }
+		//	set { if( _staticObjectsMaxObjectsInGroup.BeginSet( this, ref value ) ) { try { StaticObjectsMaxObjectsInGroupChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _staticObjectsMaxObjectsInGroup.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="StaticObjectsMaxObjectsInGroup"/> property value changes.</summary>
+		//public event Action<TrafficSystem> StaticObjectsMaxObjectsInGroupChanged;
+		//ReferenceField<int> _staticObjectsMaxObjectsInGroup = 2000;
 
+		//!!!!может разделить на отдельные свойства?
 		/// <summary>
 		/// Whether to simulate dynamic objects.
 		/// </summary>
@@ -269,7 +343,7 @@ namespace NeoAxis
 		public Reference<bool> SimulateDynamicObjects
 		{
 			get { if( _simulateDynamicObjects.BeginGet() ) SimulateDynamicObjects = _simulateDynamicObjects.Get( this ); return _simulateDynamicObjects.value; }
-			set { if( _simulateDynamicObjects.BeginSet( ref value ) ) { try { SimulateDynamicObjectsChanged?.Invoke( this ); } finally { _simulateDynamicObjects.EndSet(); } } }
+			set { if( _simulateDynamicObjects.BeginSet( this, ref value ) ) { try { SimulateDynamicObjectsChanged?.Invoke( this ); } finally { _simulateDynamicObjects.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SimulateDynamicObjects"/> property value changes.</summary>
 		public event Action<TrafficSystem> SimulateDynamicObjectsChanged;
@@ -292,6 +366,7 @@ namespace NeoAxis
 			ParkedVehicles,
 			MovingVehicles,
 			FlyingObjects,
+			WalkingPedestrians,
 		}
 
 		///////////////////////////////////////////////
@@ -354,6 +429,9 @@ namespace NeoAxis
 				case ObjectListEnum.FlyingObjects:
 					Owner.flyingObjects.Remove( this );
 					break;
+				case ObjectListEnum.WalkingPedestrians:
+					Owner.walkingPedestrians.Remove( this );
+					break;
 				}
 
 				disposed = true;
@@ -391,6 +469,14 @@ namespace NeoAxis
 					if( FlyingVehicles.Value <= 0 )
 						skip = true;
 					break;
+
+				case nameof( WalkingPedestriansCreateMaxPerStep ):
+				case nameof( WalkingPedestriansCreateDistance ):
+				case nameof( WalkingPedestriansMinimalDistanceBetweenPedestrians ):
+				case nameof( WalkingPedestriansManageTasks ):
+					if( WalkingPedestrians.Value <= 0 )
+						skip = true;
+					break;
 				}
 			}
 		}
@@ -401,12 +487,20 @@ namespace NeoAxis
 
 			if( Components.Count == 0 )
 			{
-				var element = CreateComponent<TrafficSystemElement>();
-				element.Name = element.BaseType.GetUserFriendlyNameForInstance();
-				element.Roles = TrafficSystemElement.RolesEnum.Ground | TrafficSystemElement.RolesEnum.Flying;
-				element.ObjectType = new Reference<Component>( null, @"Content\Vehicles\Default\Default Vehicle.vehicletype" );
+				{
+					var element = CreateComponent<TrafficSystemElement>();
+					element.Name = element.BaseType.GetUserFriendlyNameForInstance();
+					element.Roles = TrafficSystemElement.RolesEnum.Ground;// | TrafficSystemElement.RolesEnum.Flying;
+					element.ObjectType = new Reference<Component>( null, @"Content\Vehicles\Default\Default Vehicle.vehicletype" );
+				}
 
-				FlyingVehicles = 200;
+				{
+					var element = CreateComponent<TrafficSystemElement>();
+					element.Name = element.BaseType.GetUserFriendlyNameForInstance() + " 2";
+					element.Roles = TrafficSystemElement.RolesEnum.Ground;
+					element.ObjectType = new Reference<Component>( null, @"Content\Characters\Authors\NeoAxis\Bryce\Bryce.charactertype" );
+					//element.ObjectType = new Reference<Component>( null, @"Content\Characters\Default\Default.charactertype" );
+				}
 			}
 		}
 
@@ -446,30 +540,40 @@ namespace NeoAxis
 				if( needUpdateObjects )
 					UpdateObjects();
 
-				//!!!!here? maybe it simulation step when it is simulation
-				camerasBoundsLastSecondRemainingTime -= delta;
-				if( camerasBoundsLastSecondRemainingTime < 0 )
-				{
-					if( !camerasBoundsLastSecond.IsCleared() )
-					{
-						camerasBoundsLast10Seconds.Enqueue( camerasBoundsLastSecond );
-						if( camerasBoundsLast10Seconds.Count > 10 )
-							camerasBoundsLast10Seconds.Dequeue();
-					}
-					camerasBoundsLastSecond = Rectangle.Cleared;
-					camerasBoundsLastSecondRemainingTime = 1;
-				}
+				//!!!!
+				////!!!!here? maybe it simulation step when it is simulation
+				//camerasPositionBoundsLastSecondRemainingTime -= delta;
+				//if( camerasPositionBoundsLastSecondRemainingTime < 0 )
+				//{
+				//	if( !camerasPositionBoundsLastSecond.IsCleared() )
+				//	{
+				//		camerasPositionBoundsLast10Seconds.Enqueue( camerasPositionBoundsLastSecond );
+				//		if( camerasPositionBoundsLast10Seconds.Count > 10 )
+				//			camerasPositionBoundsLast10Seconds.Dequeue();
+				//	}
+				//	camerasPositionBoundsLastSecond = Bounds.Cleared;
+				//	camerasPositionBoundsLastSecondRemainingTime = 1;
+				//}
 
 				if( EngineApp.IsEditor )
 				{
-					editorFlyingObjectsUpdateRemainingTime -= delta;
-					if( editorFlyingObjectsUpdateRemainingTime < -0.5 )
-						editorFlyingObjectsUpdateRemainingTime = -0.5;
-					while( editorFlyingObjectsUpdateRemainingTime <= 0 )
+					flyingObjectsRemainingTimeToUpdateEditor -= delta;
+					if( flyingObjectsRemainingTimeToUpdateEditor < -0.5 )
+						flyingObjectsRemainingTimeToUpdateEditor = -0.5;
+					while( flyingObjectsRemainingTimeToUpdateEditor <= 0 )
 					{
-						editorFlyingObjectsUpdateRemainingTime += Time.SimulationDelta;
+						flyingObjectsRemainingTimeToUpdateEditor += Time.SimulationDelta;
 						SimulateFlyingObjects( false );
 					}
+
+					//walkingPedestriansRemainingTimeToUpdateEditor -= delta;
+					//if( walkingPedestriansRemainingTimeToUpdateEditor < -0.5 )
+					//	walkingPedestriansRemainingTimeToUpdateEditor = -0.5;
+					//while( walkingPedestriansRemainingTimeToUpdateEditor <= 0 )
+					//{
+					//	walkingPedestriansRemainingTimeToUpdateEditor += Time.SimulationDelta;
+					//	SimulateWalkingPedestrians( false );
+					//}
 				}
 			}
 		}
@@ -479,15 +583,19 @@ namespace NeoAxis
 			needUpdateObjects = true;
 		}
 
-		static Road.LogicalData[] GetRoads( Scene scene )
+		static Road.LogicalData[] GetDrivingRoads( Scene scene )//, bool forGroundVehicles, bool forWalking )
 		{
-			var roads = new List<Road.LogicalData>( 32 );
+			var roads = new List<Road.LogicalData>( 64 );
 
-			foreach( var road in scene.GetComponents<Road>( onlyEnabledInHierarchy: true ) )
+			foreach( var road in scene.GetComponents<Road>( checkChildren: true, onlyEnabledInHierarchy: true ) )
 			{
 				var roadData = road.GetLogicalData();
 				if( roadData != null )
-					roads.Add( roadData );
+				{
+					var wayToUse = roadData.RoadData.RoadType.WayToUse.Value;
+					if( wayToUse == RoadType.WayToUseEnum.Driving )//&& forGroundVehicles || wayToUse == RoadType.WayToUseEnum.Walking && forWalking )
+						roads.Add( roadData );
+				}
 			}
 
 			return roads.ToArray();
@@ -636,8 +744,9 @@ namespace NeoAxis
 			}
 
 			var all = cachedElementsDictionary.Values.ToArray();
-			cachedGroundElements = all.Where( t => ( t.Element.Roles.Value & TrafficSystemElement.RolesEnum.Ground ) != 0 ).ToArray();
-			cachedFlyingElements = all.Where( t => ( t.Element.Roles.Value & TrafficSystemElement.RolesEnum.Flying ) != 0 ).ToArray();
+			cachedGroundVehicleElements = all.Where( t => ( t.Element.Roles.Value & TrafficSystemElement.RolesEnum.Ground ) != 0 && t.Element.ObjectType.Value as VehicleType != null ).ToArray();
+			cachedFlyingVehicleElements = all.Where( t => ( t.Element.Roles.Value & TrafficSystemElement.RolesEnum.Flying ) != 0 && t.Element.ObjectType.Value as VehicleType != null ).ToArray();
+			cachedPedestriansElements = all.Where( t => ( t.Element.Roles.Value & TrafficSystemElement.RolesEnum.Ground ) != 0 && t.Element.ObjectType.Value as CharacterType != null ).ToArray();
 		}
 
 		ElementCachedData GetElementCachedData( TrafficSystemElement element )
@@ -656,130 +765,137 @@ namespace NeoAxis
 			var vehicleItems = new OpenList<VehicleCreateItem>( maxVehiclesAtThisStep );
 			//var vehiclesAtThisStep = 0;
 
-			//!!!!
-			var initSettings = new OctreeContainer.InitSettings();
-			//!!!!
-			//initSettings.InitialOctreeBounds = totalBounds;
-			//initSettings.OctreeBoundsRebuildExpand = Vector3.Zero;
-			//initSettings.MinNodeSize = totalBounds.GetSize() / 40;
-			using( var octree = new OctreeContainer( initSettings ) )
+			if( maxVehiclesAtThisStep > 0 )
 			{
-				var maxTryCount = maxVehiclesAtThisStep * 10;
-
-				for( int n = 0; n < maxTryCount; n++ )
+				//!!!!
+				var initSettings = new OctreeContainer.InitSettings();
+				//!!!!
+				//initSettings.InitialOctreeBounds = totalBounds;
+				//initSettings.OctreeBoundsRebuildExpand = Vector3.Zero;
+				//initSettings.MinNodeSize = totalBounds.GetSize() / 40;
+				using( var octree = new OctreeContainer( initSettings ) )
 				{
-					var vehicle = new VehicleCreateItem();
+					var maxTryCount = maxVehiclesAtThisStep * 10;
 
-					//!!!!probability
-					var typeIndex = random.Next( elementsToCreate.Length - 1 );
-					vehicle.VehicleType = elementsToCreate[ typeIndex ].Element;
-
-
-					var road = roads[ random.Next( roads.Length - 1 ) ];
-					var maxTime = road.RoadData.LastPoint.TimeOnCurve;
-
-					//!!!!
-					if( movingVehicles && road.RoadData.Lanes <= 2 )
-						continue;
-
-					//var time = random.Next( maxTime );
-					//var pos = road.GetPositionByTime( time );
-
-					//!!!!
-					//road.GetLaneOffset( 0 );
-
-
-					var time = random.Next( maxTime );
-
-					//check by time clip ranges
-					var allowByTimeClipRanges = false;
-					var selectedTimeClipRange = Range.Zero;
+					for( int n = 0; n < maxTryCount; n++ )
 					{
-						foreach( var timeClipRange in road.GetTimeClipRanges() )
+						var vehicle = new VehicleCreateItem();
+
+						//!!!!probability
+						var typeIndex = random.Next( elementsToCreate.Length - 1 );
+						vehicle.VehicleType = elementsToCreate[ typeIndex ].Element;
+
+
+						var road = roads[ random.Next( roads.Length - 1 ) ];
+						var maxTime = road.RoadData.LastPoint.TimeOnCurve;
+
+						//!!!!
+						if( movingVehicles && road.RoadData.Lanes <= 2 )
+							continue;
+
+						//var time = random.Next( maxTime );
+						//var pos = road.GetPositionByTime( time );
+
+						//!!!!
+						//road.GetLaneOffset( 0 );
+
+
+						var time = random.Next( maxTime );
+
+						//check by time clip ranges
+						var allowByTimeClipRanges = false;
+						var selectedTimeClipRange = Range.Zero;
 						{
-							if( time >= timeClipRange.Minimum && time <= timeClipRange.Maximum )
+							foreach( var timeClipRange in road.GetTimeClipRanges() )
 							{
-								allowByTimeClipRanges = true;
-								selectedTimeClipRange = timeClipRange;
-								break;
+								if( time >= timeClipRange.Minimum && time <= timeClipRange.Maximum )
+								{
+									allowByTimeClipRanges = true;
+									selectedTimeClipRange = timeClipRange;
+									break;
+								}
 							}
 						}
-					}
 
-					if( allowByTimeClipRanges )
-					{
-						var pos = road.RoadData.GetPositionByTime( time );
-						var dir = road.RoadData.GetDirectionByTime( time );
-
-						//check it on start or on end of the road
-						var distanceStart = ( road.RoadData.GetPositionByTime( selectedTimeClipRange.Minimum ) - pos ).Length();
-						var distanceEnd = ( road.RoadData.GetPositionByTime( selectedTimeClipRange.Maximum ) - pos ).Length();
-
-						//!!!!property
-						const double minOffset = 5.0;// 10.0;
-
-						if( distanceStart > minOffset && distanceEnd > minOffset )
+						if( allowByTimeClipRanges )
 						{
-							var laneOffset = 0.0;
+							road.RoadData.GetPositionByTime( time, out var pos );
+							road.RoadData.GetDirectionByTime( time, out var dir );
 
-							if( movingVehicles )
+							//check it on start or on end of the road
+							road.RoadData.GetPositionByTime( selectedTimeClipRange.Minimum, out var min );
+							road.RoadData.GetPositionByTime( selectedTimeClipRange.Maximum, out var max );
+							var distanceStart = ( min - pos ).Length();
+							var distanceEnd = ( max - pos ).Length();
+							//var distanceStart = ( road.RoadData.GetPositionByTime( selectedTimeClipRange.Minimum ) - pos ).Length();
+							//var distanceEnd = ( road.RoadData.GetPositionByTime( selectedTimeClipRange.Maximum ) - pos ).Length();
+
+							//!!!!property
+							const double minOffset = 5.0;// 10.0;
+
+							if( distanceStart > minOffset && distanceEnd > minOffset )
 							{
-								var lane = random.Next( road.RoadData.Lanes - 2 - 1 ) + 1;
-								laneOffset = road.RoadData.GetLaneOffset( lane );
-							}
-							else
-							{
-								var onRoad = ParkedVehiclesCanParkOnRoad && random.Next( 3 ) == 0;
-								//var onRoad = ParkedVehiclesCanParkOnRoad && random.NextBoolean();
-								if( onRoad )
+								var laneOffset = 0.0;
+
+								if( movingVehicles )
 								{
 									var lane = random.Next( road.RoadData.Lanes - 2 - 1 ) + 1;
 									laneOffset = road.RoadData.GetLaneOffset( lane );
 								}
 								else
 								{
-									var side = random.NextBoolean();
-									laneOffset = road.RoadData.GetLaneOffset( side ? 0 : road.RoadData.Lanes - 1 );
-									if( laneOffset < 0 )
-										laneOffset -= 0.5;
+									var onRoad = ParkedVehiclesCanParkOnRoad && random.Next( 3 ) == 0;
+									//var onRoad = ParkedVehiclesCanParkOnRoad && random.NextBoolean();
+									if( onRoad )
+									{
+										var lane = random.Next( Math.Max( road.RoadData.Lanes - 2 - 1, 0 ) ) + 1;
+										laneOffset = road.RoadData.GetLaneOffset( lane );
+									}
 									else
-										laneOffset += 0.5;
+									{
+										var side = random.NextBoolean();
+										laneOffset = road.RoadData.GetLaneOffset( side ? 0 : road.RoadData.Lanes - 1 );
+										if( laneOffset < 0 )
+											laneOffset -= 0.5;
+										else
+											laneOffset += 0.5;
+									}
 								}
-							}
 
-							var dir2 = dir;
-							if( laneOffset > 0 )
-								dir2 = -dir2;
+								var dir2 = dir;
+								if( laneOffset > 0 )
+									dir2 = -dir2;
 
-							var vehicleTypeData = GetElementCachedData( vehicle.VehicleType );
+								var vehicleTypeData = GetElementCachedData( vehicle.VehicleType );
 
-							vehicle.Rotation = QuaternionF.FromDirectionZAxisUp( dir2.ToVector3F() );
+								vehicle.Rotation = QuaternionF.FromDirectionZAxisUp( dir2.ToVector3F() );
 
-							vehicle.Position = pos + QuaternionF.FromDirectionZAxisUp( dir.ToVector3F() ) * new Vector3F( 0, (float)laneOffset, 0 );
+								vehicle.Position = pos + QuaternionF.FromDirectionZAxisUp( dir.ToVector3F() ) * new Vector3F( 0, (float)laneOffset, 0 );
 
-							//!!!!
-							vehicle.Position -= new Vector3( 0, 0, vehicleTypeData.LocalBounds.Minimum.Z );
-							//vehicle.Position -= new Vector3( 0, 0, vehicleTypeData.LocalBounds.Minimum.Z + 0.02 );
+								//!!!!
+								vehicle.Position -= new Vector3( 0, 0, vehicleTypeData.LocalBounds.Minimum.Z );
+								//vehicle.Position -= new Vector3( 0, 0, vehicleTypeData.LocalBounds.Minimum.Z + 0.02 );
 
-							//!!!!precalculate
-							var boundingRadius = 0.0;
-							foreach( var p in vehicleTypeData.LocalBounds.ToPoints() )
-								boundingRadius = Math.Max( boundingRadius, p.Length() );
+								//!!!!precalculate
+								var boundingRadius = 0.0;
+								foreach( var p in vehicleTypeData.LocalBounds.ToPoints() )
+									boundingRadius = Math.Max( boundingRadius, p.Length() );
 
-							//var boundingRadius = mesh.Result.SpaceBounds.BoundingSphere.Value.Radius;
-							var sphere = new Sphere( vehicle.Position, boundingRadius );
+								//var boundingRadius = mesh.Result.SpaceBounds.BoundingSphere.Value.Radius;
+								var sphere = new Sphere( vehicle.Position, boundingRadius );
 
-							if( octree.GetObjects( sphere, 1, OctreeContainer.ModeEnum.One ).Length == 0 )
-							{
-								octree.AddObject( sphere.ToBounds(), 1 );
+								if( octree.GetObjects( sphere, 1, OctreeContainer.ModeEnum.One ).Length == 0 )
+								{
+									octree.AddObject( sphere.ToBounds(), 1 );
 
-								vehicleItems.Add( ref vehicle );
-								//vehiclesAtThisStep++;
+									vehicleItems.Add( ref vehicle );
+									//vehiclesAtThisStep++;
 
-								if( vehicleItems.Count >= maxVehiclesAtThisStep )
-									break;
-								//if( vehiclesAtThisStep >= maxVehiclesAtThisStep )
-								//	break;
+									if( vehicleItems.Count >= maxVehiclesAtThisStep )
+										break;
+									//if( vehiclesAtThisStep >= maxVehiclesAtThisStep )
+									//	break;
+								}
 							}
 						}
 					}
@@ -795,17 +911,16 @@ namespace NeoAxis
 			if( scene == null )
 				return;
 
-			var roads = GetRoads( scene );
+			var roads = GetDrivingRoads( scene );//, true, false );
 			if( roads.Length == 0 )
 				return;
 			foreach( var road in roads )
 				road.DropTimeClipRanges();
 
-			if( cachedGroundElements == null )
+			if( cachedGroundVehicleElements == null )
 				return;
 
-			//!!!!what else?
-			var elementsToCreate = cachedGroundElements.Where( e => e.Element.ObjectType.Value as VehicleType != null ).ToArray();
+			var elementsToCreate = cachedGroundVehicleElements.Where( e => e.Element.ObjectType.Value as VehicleType != null ).ToArray();
 			if( elementsToCreate.Length == 0 )
 				return;
 
@@ -820,24 +935,23 @@ namespace NeoAxis
 						var element = vehicleItem.VehicleType;
 						var tr = new Transform( vehicleItem.Position, vehicleItem.Rotation, Vector3.One );
 
-						//!!!!
-						var isStatic = true;// false;
+						//create sleeping (static)
 
-						////!!!!
-						//break;
+						var isStatic = true;
 
-						var obj = CreateObject( element, ObjectListEnum.ParkedVehicles, tr, isStatic );// true );
-
-						//!!!!
-						//deactivate physics body
-						var vehicle = obj.SceneObject as Vehicle;
-						if( vehicle != null )
-							vehicle.PhysicalBody.Active = false;
+						var objectInstance = CreateObject( element, ObjectListEnum.ParkedVehicles, tr, isStatic );
+						if( objectInstance != null )
+						{
+							//deactivate physics body
+							var vehicle = objectInstance.SceneObject as Vehicle;
+							if( vehicle != null && vehicle.PhysicalBody != null )
+								vehicle.PhysicalBody.Active = false;
+						}
 					}
 				}
 				else
 				{
-					groupOfObjects = GroupOfObjectsUtility.GetOrCreateGroupOfObjects( scene, "__GroupOfObjectsTrafficSystem", true, StaticObjectsSectorSize, StaticObjectsMaxObjectsInGroup );
+					groupOfObjects = GroupOfObjectsUtility.GetOrCreateGroupOfObjects( scene, "__GroupOfObjectsTrafficSystem", true, StaticObjectsSectorSize );//, StaticObjectsMaxObjectsInGroup );
 
 					if( groupOfObjects != null )
 					{
@@ -867,7 +981,7 @@ namespace NeoAxis
 									//make collision only for first mesh
 									var collision = ParkedVehiclesPhysicsMode.Value != PhysicsModeEnum.None && nMesh == 0;
 
-									var elementIndex = groupOfObjects.GetOrCreateGroupOfObjectsElement( item.Mesh, null, true, 1, true, 1, collision );
+									var elementIndex = groupOfObjects.GetOrCreateGroupOfObjectsElement( item.Mesh, null, true, 1, true, 1, true, collision );
 
 									var obj = new GroupOfObjects.Object( elementIndex, 0, 0, GroupOfObjects.Object.FlagsEnum.Enabled | GroupOfObjects.Object.FlagsEnum.Visible, pos, rot.ToQuaternionF(), scl.ToVector3F(), Vector4F.Zero, ColorValue.One, Vector4F.Zero, Vector4F.Zero, 0 );
 
@@ -909,14 +1023,17 @@ namespace NeoAxis
 
 			if( !EnabledInHierarchyAndIsInstance )
 				return;
-			if( !GetCamerasPosition().HasValue )
+			//!!!!
+			if( !lastCameraPosition.HasValue )
 				return;
+			//if( !GetCamerasPosition().HasValue )
+			//	return;
 
 			CalculateCachedElements();
 			UpdateParkedVehicles();
-			//UpdateCharacters();
 
 			SimulateFlyingObjects( true );
+			SimulateWalkingPedestrians( true );
 
 			needUpdateObjects = false;
 		}
@@ -929,6 +1046,8 @@ namespace NeoAxis
 				movingVehicles.First().Dispose();
 			while( flyingObjects.Count != 0 )
 				flyingObjects.First().Dispose();
+			while( walkingPedestrians.Count != 0 )
+				walkingPedestrians.First().Dispose();
 
 			if( groupOfObjects != null )
 			{
@@ -942,160 +1061,113 @@ namespace NeoAxis
 
 				groupOfObjects = null;
 			}
+
+			allWalkableRoadsCache = null;
 		}
 
 		public ObjectInstance CreateObject( TrafficSystemElement element, ObjectListEnum objectList, Transform transform, bool isStatic )
 		{
-			var objectInstance = new ObjectInstance();
-			objectInstance.Owner = this;
-			objectInstance.Element = element;
-			objectInstance.ObjectList = objectList;
-
-			switch( objectInstance.ObjectList )
-			{
-			case ObjectListEnum.ParkedVehicles:
-				parkedVehicles.AddWithCheckAlreadyContained( objectInstance );
-				break;
-			case ObjectListEnum.MovingVehicles:
-				movingVehicles.AddWithCheckAlreadyContained( objectInstance );
-				break;
-			case ObjectListEnum.FlyingObjects:
-				flyingObjects.AddWithCheckAlreadyContained( objectInstance );
-				break;
-			}
-
-
 			var objectType = element.ObjectType.Value;
-
-			Metadata.TypeInfo typeToCreate = null;
-
-			var vehicleType = objectType as VehicleType;
-			if( vehicleType != null )
-				typeToCreate = MetadataManager.GetTypeOfNetType( typeof( Vehicle ) );
-
-			//!!!!support all other types. clone component if no known type?
-
-			if( typeToCreate != null && MetadataManager.GetTypeOfNetType( typeof( MeshInSpace ) ).IsAssignableFrom( typeToCreate ) )
+			if( objectType != null )
 			{
-				//need set ShowInEditor = false before AddComponent
-				var obj = (MeshInSpace)ComponentUtility.CreateComponent( typeToCreate, null, false, false );
-				obj.DisplayInEditor = false;
-				AddComponent( obj, -1 );
-				//var obj = scene.CreateComponent<MeshInSpace>();
+				var objectInstance = new ObjectInstance();
+				objectInstance.Owner = this;
+				objectInstance.Element = element;
+				objectInstance.ObjectList = objectList;
 
-				obj.SaveSupport = false;
-				obj.CloneSupport = false;
-				obj.CanBeSelected = false;
-				obj.NetworkMode = NetworkModeEnum.False;
-				obj.Transform = transform;
-
-				var vehicle = obj as Vehicle;
-				if( vehicle != null )
+				switch( objectInstance.ObjectList )
 				{
-					if( vehicleType != null )
-						vehicle.VehicleType = vehicleType;
-
-					if( objectList == ObjectListEnum.ParkedVehicles )
-						vehicle.PhysicsMode = ParkedVehiclesPhysicsMode;
-					else if( objectList == ObjectListEnum.FlyingObjects )
-						vehicle.PhysicsMode = FlyingVehiclesPhysicsMode;
-					//else if( objectList == ObjectListEnum.MovingVehicles)
-					//	vehicle.PhysicsMode = MovingVehiclesPhysicsMode;
-
-					//!!!!
-					//vehicle.PhysicsMode = PhysicsModeEnum.None;
+				case ObjectListEnum.ParkedVehicles:
+					parkedVehicles.AddWithCheckAlreadyContained( objectInstance );
+					break;
+				case ObjectListEnum.MovingVehicles:
+					movingVehicles.AddWithCheckAlreadyContained( objectInstance );
+					break;
+				case ObjectListEnum.FlyingObjects:
+					flyingObjects.AddWithCheckAlreadyContained( objectInstance );
+					break;
+				case ObjectListEnum.WalkingPedestrians:
+					walkingPedestrians.AddWithCheckAlreadyContained( objectInstance );
+					break;
 				}
 
-				obj.Static = isStatic;
+				Metadata.TypeInfo typeToCreate = null;
+				var vehicleType = objectType as VehicleType;
+				if( vehicleType != null )
+					typeToCreate = MetadataManager.GetTypeOfNetType( typeof( Vehicle ) );
+				var characterType = objectType as CharacterType;
+				if( characterType != null )
+					typeToCreate = MetadataManager.GetTypeOfNetType( typeof( Character ) );
 
-				obj.Enabled = true;
+				//!!!!support all other types. clone component if no known type?
 
-				objectInstance.SceneObject = obj;
-			}
-
-
-			return objectInstance;
-		}
-
-		protected virtual ObjectInstance CreateFlyingObject( bool initialization )
-		{
-			var camerasPosition = GetCamerasPosition();
-
-			if( cachedFlyingElements != null && cachedFlyingElements.Length != 0 && camerasPosition.HasValue )
-			{
-				var typeIndex = componentRandom.Next( cachedFlyingElements.Length - 1 );
-				var type = cachedFlyingElements[ typeIndex ];
-				var element = type.Element;
-
-				var heightRange = element.FlyingHeightRange.Value;
-				var createDistance = FlyingObjectsCreateDistance.Value;
-
-				//calculate position
-				Vector3? pos = null;
-				for( int nIteration = 0; nIteration < 20; nIteration++ )
+				if( typeToCreate != null && MetadataManager.GetTypeOfNetType( typeof( MeshInSpace ) ).IsAssignableFrom( typeToCreate ) )
 				{
-					//!!!!check for free place
-					var height = componentRandom.Next( heightRange.Minimum, heightRange.Maximum );
+					//need set ShowInEditor = false before AddComponent
+					var obj = (MeshInSpace)ComponentUtility.CreateComponent( typeToCreate, null, false, false );
+					obj.DisplayInEditor = false;
+					AddComponent( obj, -1 );
+					//var obj = scene.CreateComponent<MeshInSpace>();
 
-					if( !initialization )
+					obj.SaveSupport = false;
+					obj.CloneSupport = false;
+					obj.CanBeSelected = false;
+					obj.NetworkMode = NetworkModeEnum.False;
+					obj.Transform = transform;
+
+					var vehicle = obj as Vehicle;
+					if( vehicle != null )
 					{
-						//create on far border
+						if( vehicleType != null )
+							vehicle.VehicleType = vehicleType;
 
-						var angle = componentRandom.Next( 0, Math.PI * 2 );
+						if( objectList == ObjectListEnum.ParkedVehicles )
+							vehicle.PhysicsMode = ParkedVehiclesPhysicsMode;
+						else if( objectList == ObjectListEnum.FlyingObjects )
+							vehicle.PhysicsMode = FlyingVehiclesPhysicsMode;
+						//else if( objectList == ObjectListEnum.MovingVehicles)
+						//	vehicle.PhysicsMode = MovingVehiclesPhysicsMode;
 
-						var offset = new Vector2( Math.Cos( angle ), Math.Sin( angle ) ) * createDistance;
-						pos = new Vector3( camerasPosition.Value + offset, height );
+						//!!!!
+						//vehicle.PhysicsMode = PhysicsModeEnum.None;
 					}
-					else
+
+					var character = obj as Character;
+					if( character != null )
 					{
-						//create anywhere in radius
+						if( characterType != null )
+							character.CharacterType = characterType;
 
-						var offset = new Vector2( componentRandom.Next( -createDistance, createDistance ), componentRandom.Next( -createDistance, createDistance ) );
-
-						//check by distance
-						if( offset.LengthSquared() < createDistance * createDistance )
-							pos = new Vector3( camerasPosition.Value + offset, height );
+						//physics mode
 					}
+
+					obj.Static = isStatic;
+					obj.Enabled = true;
+
+					objectInstance.SceneObject = obj;
 				}
 
-				if( pos.HasValue )
-				{
-					var speedRange = element.FlyingSpeedRange.Value;
-					var speed = componentRandom.Next( speedRange.Minimum, speedRange.Maximum );
-
-					var destX = componentRandom.Next( camerasPosition.Value.X - createDistance, camerasPosition.Value.X + createDistance );
-					var destY = componentRandom.Next( camerasPosition.Value.Y - createDistance, camerasPosition.Value.Y + createDistance );
-					var destPos = new Vector2( destX, destY );
-					if( destPos == pos.Value.ToVector2() )
-						destPos.X += 1;
-					var dir = ( destPos - pos.Value.ToVector2() ).GetNormalize();
-
-					var rot = Quaternion.FromDirectionZAxisUp( new Vector3( dir, 0 ) );
-					var scl = Vector3.One;
-
-					var tr = new Transform( pos.Value, rot, scl );
-
-					var objectInstance = CreateObject( element, ObjectListEnum.FlyingObjects, tr, false );
-					objectInstance.TargetLinearVelocity = rot.GetForward() * speed;
-
-					return objectInstance;
-				}
+				return objectInstance;
 			}
 
 			return null;
 		}
 
-		public Vector2? GetCamerasPosition()
-		{
-			var result = camerasBoundsLastSecond;//Bounds.Cleared;
-			foreach( var b in camerasBoundsLast10Seconds )
-				result.Add( b );
+		//!!!!
+		////!!!!лучше отдельно их хранить если можем видеть несколько камер на большом расстоянии
+		//public Vector2? GetCamerasPosition()
+		//{
+		//	zzzzz;
 
-			if( result.IsCleared() )
-				return null;
+		//	var result = camerasPositionBoundsLastSecond;//Bounds.Cleared;
+		//	foreach( var b in camerasPositionBoundsLast10Seconds )
+		//		result.Add( b );
 
-			return result.GetCenter();
-		}
+		//	if( result.IsCleared() )
+		//		return null;
+
+		//	return result.GetCenter();
+		//}
 
 		//public Rectangle GetCamerasBounds()
 		//{
@@ -1113,9 +1185,81 @@ namespace NeoAxis
 		//	return b.GetCenter();
 		//}
 
+		protected virtual ObjectInstance CreateFlyingObject( bool initialization )
+		{
+			//var camerasPosition = GetCamerasPosition();
+
+			if( cachedFlyingVehicleElements != null && cachedFlyingVehicleElements.Length != 0 && lastCameraPosition/*camerasPosition*/.HasValue )
+			{
+				var cameraPosition = lastCameraPosition.Value.ToVector2();
+
+				var typeIndex = staticRandom.Next( cachedFlyingVehicleElements.Length - 1 );
+				var type = cachedFlyingVehicleElements[ typeIndex ];
+				var element = type.Element;
+
+				var heightRange = element.FlyingHeightRange.Value;
+				var createDistance = FlyingObjectsCreateDistance.Value;
+
+				//calculate position
+				Vector3? pos = null;
+				for( int nIteration = 0; nIteration < 20; nIteration++ )
+				{
+					//!!!!check for free place
+					var height = staticRandom.Next( heightRange.Minimum, heightRange.Maximum );
+
+					if( !initialization )
+					{
+						//create on far border
+
+						var angle = staticRandom.Next( 0, Math.PI * 2 );
+
+						var offset = new Vector2( Math.Cos( angle ), Math.Sin( angle ) ) * createDistance;
+						pos = new Vector3( cameraPosition + offset, height );
+					}
+					else
+					{
+						//create anywhere in radius
+
+						var offset = new Vector2( staticRandom.Next( -createDistance, createDistance ), staticRandom.Next( -createDistance, createDistance ) );
+
+						//check by distance
+						if( offset.LengthSquared() < createDistance * createDistance )
+							pos = new Vector3( cameraPosition + offset, height );
+					}
+				}
+
+				if( pos.HasValue )
+				{
+					var speedRange = element.FlyingSpeedRange.Value;
+					var speed = staticRandom.Next( speedRange.Minimum, speedRange.Maximum );
+
+					var destX = staticRandom.Next( cameraPosition.X - createDistance, cameraPosition.X + createDistance );
+					var destY = staticRandom.Next( cameraPosition.Y - createDistance, cameraPosition.Y + createDistance );
+					var destPos = new Vector2( destX, destY );
+					if( destPos == pos.Value.ToVector2() )
+						destPos.X += 1;
+					var dir = ( destPos - pos.Value.ToVector2() ).GetNormalize();
+
+					var rot = Quaternion.FromDirectionZAxisUp( new Vector3( dir, 0 ) );
+					var scl = Vector3.One;
+
+					var tr = new Transform( pos.Value, rot, scl );
+
+					var objectInstance = CreateObject( element, ObjectListEnum.FlyingObjects, tr, false );
+					if( objectInstance != null )
+					{
+						objectInstance.TargetLinearVelocity = rot.GetForward() * speed;
+						return objectInstance;
+					}
+				}
+			}
+
+			return null;
+		}
+
 		void SimulateFlyingObjects( bool initialization )
 		{
-			//simulate flying objects
+			//simulate created objects
 			foreach( var obj in flyingObjects.ToArray() ) //make copy to change flyingObjects
 			{
 				//check for already destroyed
@@ -1154,18 +1298,20 @@ namespace NeoAxis
 				}
 			}
 
-			//create, destroy flying vehicles
-			remainingTimeToUpdateFlyingObjects -= Time.SimulationDelta;
-			if( remainingTimeToUpdateFlyingObjects <= 0 || initialization )
+			//create, destroy objects
+			flyingObjectsRemainingTimeToUpdate -= Time.SimulationDelta;
+			if( flyingObjectsRemainingTimeToUpdate <= 0 || initialization )
 			{
-				remainingTimeToUpdateFlyingObjects = 1 + componentRandom.Next( 0.1 );
+				flyingObjectsRemainingTimeToUpdate = 1 + staticRandom.Next( 0.1 );
 
 				//var camerasBounds = GetCamerasBounds();
 				//if( !camerasBounds.IsCleared() )
 
-				var camerasPosition = GetCamerasPosition();
-				if( camerasPosition.HasValue )
+				//var camerasPosition = GetCamerasPosition();
+				if( lastCameraPosition.HasValue )
 				{
+					var cameraPosition = lastCameraPosition.Value.ToVector2();
+
 					//create new vehicles
 					var createObjectLimit = initialization ? FlyingVehicles : FlyingVehiclesCreateMaxPerStep;
 					for( int n = 0; n < createObjectLimit; n++ )
@@ -1191,7 +1337,7 @@ namespace NeoAxis
 							{
 								var pos = v.SceneObject.TransformV.Position.ToVector2();
 
-								var distanceSquared = ( camerasPosition.Value - pos ).LengthSquared();
+								var distanceSquared = ( cameraPosition - pos ).LengthSquared();
 								//var distanceSquared = camerasBounds.GetPointDistanceSquared( ref pos );
 								if( distanceSquared > maxDistanceSquared )
 									toDestroy.Add( v );
@@ -1205,12 +1351,404 @@ namespace NeoAxis
 			}
 		}
 
+		List<Road.LogicalData> GetAllWalkableRoads()
+		{
+			if( allWalkableRoadsCache == null )
+			{
+				allWalkableRoadsCache = new List<Road.LogicalData>( 64 );
+
+				var scene = FindParent<Scene>();
+				if( scene != null )
+				{
+					foreach( var road in scene.GetComponents<Road>( checkChildren: true, onlyEnabledInHierarchy: true ) )
+					{
+						var roadData = road.GetLogicalData();
+						if( roadData != null )
+						{
+							var wayToUse = roadData.RoadData.RoadType.WayToUse.Value;
+							if( wayToUse == RoadType.WayToUseEnum.Walking )
+								allWalkableRoadsCache.Add( roadData );
+						}
+					}
+				}
+			}
+
+			return allWalkableRoadsCache;
+		}
+
+		List<Road.LogicalData> GetWalkableRoadsByCircle( Circle circle )// Sphere sphere )
+		{
+			//!!!!slowly?
+
+			var result = new List<Road.LogicalData>( 64 );
+
+			foreach( var road in GetAllWalkableRoads() )
+			{
+				var roadBounds = road.RoadData.GetBounds().ToRectangle();
+				if( circle.Intersects( ref roadBounds ) )
+				{
+					//!!!!можно более точно определить хотя дольше
+
+					result.Add( road );
+				}
+			}
+
+			return result;
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		protected virtual ObjectInstance CreateWalkingPedestrian( Scene scene, bool initialization, Vector3 cameraPosition, Circle circle, Circle circleFar, List<Road.LogicalData> roadsInRadius )
+		{
+
+			//!!!!Parallel, threading?
+
+			//var camerasPosition = GetCamerasPosition();
+
+			//get object type
+			TrafficSystemElement element = null;
+			if( cachedPedestriansElements != null && cachedPedestriansElements.Length != 0 )//&& camerasPosition.HasValue )
+			{
+				var cachedElement = cachedPedestriansElements[ staticRandom.Next( cachedPedestriansElements.Length - 1 ) ];
+				element = cachedElement.Element;
+			}
+
+			if( element != null )
+			{
+				var characterType = element.ObjectType.Value as CharacterType;
+				if( characterType != null )
+				{
+					//get walking road and place on it
+
+					//calculate position
+					Vector3? freePosition = null;
+					Vector2 selectedDirection = Vector2.Zero;
+					Road selectedRoad = null;
+					int selectedRoadLane = 0;
+
+					//!!!!10?
+					for( int nIteration = 0; nIteration < 10; nIteration++ )//for( int nIteration = 0; nIteration < 20; nIteration++ )
+					{
+						//get random point in circles inverval
+						Vector2 point;
+						{
+							var angle = staticRandom.Next( MathEx.PI * 2 );
+							double radius;
+							if( initialization )
+								radius = staticRandom.Next( circle.Radius );
+							else
+								radius = staticRandom.Next( circle.Radius, circleFar.Radius );
+							point = circle.Center + new Vector2( Math.Cos( angle ), Math.Sin( angle ) ) * radius;
+						}
+
+						//find nearest road to point
+						Road.LogicalData nearestRoad = null;
+						var nearestRoadDistanceToPointSquared = 0.0;
+						var nearestRoadTimeOnCurve = 0.0;
+
+						for( int n = 0; n < roadsInRadius.Count; n++ )
+						{
+							var road = roadsInRadius[ n ];
+							var roadData = road.RoadData;
+
+							//!!!!good?
+							var point3 = new Vector3( point, cameraPosition.Z );
+
+							if( roadData.GetClosestCurveTimeToPosition( point3, circleFar.Radius, 1.0, out var timeOnCurve ) )
+							{
+								roadData.GetPositionByTime( timeOnCurve, out var positionOnCurve );
+								var positionOnCurve2 = positionOnCurve.ToVector2();
+
+								var distanceToPointSquared = ( positionOnCurve2 - point ).LengthSquared();
+								if( nearestRoad == null || distanceToPointSquared < nearestRoadDistanceToPointSquared )
+								{
+									bool radiusCheckGood;
+									if( initialization )
+										radiusCheckGood = circle.Contains( ref positionOnCurve2 );
+									else
+										radiusCheckGood = circleFar.Contains( ref positionOnCurve2 ) && !circle.Contains( ref positionOnCurve2 );
+
+									if( radiusCheckGood )
+									{
+										nearestRoad = road;
+										nearestRoadDistanceToPointSquared = distanceToPointSquared;
+										nearestRoadTimeOnCurve = timeOnCurve;
+									}
+								}
+							}
+						}
+
+						if( nearestRoad != null )
+						{
+							var roadData = nearestRoad.RoadData;
+
+							//get lane
+							var lane = staticRandom.Next( roadData.Lanes - 1 );
+							var laneOffset = roadData.GetLaneOffset( lane );
+
+							roadData.GetPositionByTime( nearestRoadTimeOnCurve, out var positionOnCurve );
+							roadData.GetDirectionByTime( nearestRoadTimeOnCurve, out var roadDirection );
+
+							var directionDependingLaneVector = roadDirection;
+							if( laneOffset > 0 )
+								directionDependingLaneVector = -directionDependingLaneVector;
+
+							var positionOnLane = positionOnCurve + QuaternionF.FromDirectionZAxisUp( roadDirection.ToVector3F() ) * new Vector3F( 0, (float)laneOffset, 0 );
+							var positionOnLane2 = positionOnLane.ToVector2();
+
+							bool radiusCheckGood;
+							if( initialization )
+								radiusCheckGood = circle.Contains( ref positionOnLane2 );
+							else
+								radiusCheckGood = circleFar.Contains( ref positionOnLane2 ) && !circle.Contains( ref positionOnLane2 );
+
+							if( radiusCheckGood )
+							{
+								if( CharacterUtility.FindFreePlace( scene, characterType.Height, characterType.Radius, positionOnLane, 0, -0.25, 0.25, null, out var freePosition2 ) )
+								{
+									if( WalkingPedestriansMinimalDistanceBetweenPedestrians.Value == 0 || CharacterUtility.FindClosestCharacter( scene, new Sphere( freePosition2, WalkingPedestriansMinimalDistanceBetweenPedestrians ) ) == null )
+									{
+										freePosition = freePosition2;
+										selectedDirection = directionDependingLaneVector.ToVector2();
+										selectedRoad = roadData.Owner;
+										selectedRoadLane = lane;
+										break;
+									}
+								}
+							}
+						}
+					}
+
+
+					//for( int nIteration = 0; nIteration < 20; nIteration++ )
+					//{
+					//	//select road
+					//	var road = roadsInRadius[ staticRandom.Next( roadsInRadius.Count - 1 ) ];
+					//	var roadData = road.RoadData;
+
+					//	//get positon on curve
+					//	var maxTime = roadData.LastPoint.TimeOnCurve;
+					//	var time = staticRandom.Next( maxTime );
+					//	roadData.GetPositionByTime( time, out var position );
+
+					//	//get lane
+					//	var lane = staticRandom.Next( roadData.Lanes - 1 );
+					//	var laneOffset = road.RoadData.GetLaneOffset( lane );
+
+					//	roadData.GetDirectionByTime( time, out var roadDirection );
+
+					//	var directionDependingLaneVector = roadDirection;
+					//	if( laneOffset > 0 )
+					//		directionDependingLaneVector = -directionDependingLaneVector;
+
+					//	var positionOnLane = position + QuaternionF.FromDirectionZAxisUp( roadDirection.ToVector3F() ) * new Vector3F( 0, (float)laneOffset, 0 );
+					//	var positionOnLane2 = positionOnLane.ToVector2();
+
+					//	bool radiusCheckGood;
+					//	if( initialization )
+					//		radiusCheckGood = circle.Contains( ref positionOnLane2 );
+					//	else
+					//		radiusCheckGood = circleFar.Contains( ref positionOnLane2 ) && !circle.Contains( ref positionOnLane2 );
+
+					//	if( radiusCheckGood )
+					//	{
+					//		if( CharacterUtility.FindFreePlace( scene, characterType.Height, characterType.Radius, positionOnLane, 0, -0.25, 0.25, null, out var freePosition2 ) )
+					//		{
+					//			if( WalkingPedestriansMinimalDistanceBetweenPedestrians.Value == 0 || CharacterUtility.FindClosestCharacter( scene, new Sphere( freePosition2, WalkingPedestriansMinimalDistanceBetweenPedestrians ) ) == null )
+					//			{
+					//				freePosition = freePosition2;
+					//				selectedDirection = directionDependingLaneVector.ToVector2();
+					//				selectedRoad = road.Owner;
+					//				selectedRoadLane = lane;
+					//				break;
+					//			}
+					//		}
+					//	}
+					//}
+
+					if( freePosition.HasValue )
+					{
+						var rot = Quaternion.FromDirectionZAxisUp( new Vector3( selectedDirection, 0 ) );
+						var scl = Vector3.One;
+
+						var tr = new Transform( freePosition.Value, rot, scl );
+
+						var objectInstance = CreateObject( element, ObjectListEnum.WalkingPedestrians, tr, false );
+						if( objectInstance != null )
+						{
+							//create character AI
+							var character = objectInstance.SceneObject as Character;
+							if( character != null )
+							{
+								var ai = character.CreateComponent<CharacterAI>( enabled: WalkingPedestriansManageTasks );
+								ai.TrafficWalkingMode = true;
+								ai.TrafficWalkingModeCurrentRoad = selectedRoad;
+								ai.TrafficWalkingModeCurrentRoadLane = selectedRoadLane;
+								//ai.TrafficWalkingModeDeleteObjectAtEndOfRoad = true;
+
+								//!!!!temp
+								//ai.DebugVisualization = true;
+							}
+
+							return objectInstance;
+						}
+					}
+				}
+			}
+
+			return null;
+		}
+
+		void SimulateWalkingPedestrians( bool initialization )
+		{
+			var scene = FindParent<Scene>();
+			if( scene == null )
+				return;
+
+			//delete before recreation
+			if( initialization )
+			{
+				foreach( var obj in walkingPedestrians.ToArray() )
+					obj.Dispose();
+			}
+
+			//simulate created objects
+			foreach( var obj in walkingPedestrians.ToArray() ) //make copy to change walkingPedestrians
+			{
+				//check for already destroyed
+				if( obj.SceneObject != null && obj.SceneObject.Parent == null )
+				{
+					obj.Dispose();
+					continue;
+				}
+
+				//!!!!
+
+				//if( obj.TargetLinearVelocity != Vector3.Zero )
+				//{
+				//	if( obj.SceneObject != null )
+				//	{
+
+				//		//!!!!помимо предсказания bounds можно тут реже делать шаг для объектов вдалеке
+
+
+				//		var previousTransform = obj.SceneObject.TransformV;
+
+				//		var pos = previousTransform.Position + obj.TargetLinearVelocity * Time.SimulationDelta;
+				//		//var rot = Quaternion.FromDirectionZAxisUp( v.TargetLinearVelocity );
+
+
+				//		var tr = new Transform( pos, previousTransform.Rotation, previousTransform.Scale );
+
+				//		var vehicle = obj.SceneObject as Vehicle;
+				//		if( vehicle != null )
+				//		{
+				//			vehicle.LinearVelocityToPredictBounds = obj.TargetLinearVelocity;
+				//			vehicle.SetTransform( tr, false );
+				//			//vehicle.SetTransformWithoutRecreating( tr );
+				//		}
+				//		else
+				//			obj.SceneObject.Transform = tr;
+				//	}
+				//}
+			}
+
+			//create, destroy objects
+			walkingPedestriansRemainingTimeToUpdate -= Time.SimulationDelta;
+			if( walkingPedestriansRemainingTimeToUpdate <= 0 || initialization )
+			{
+				walkingPedestriansRemainingTimeToUpdate = 1 + staticRandom.Next( 0.1 );
+
+				//var camerasPosition = GetCamerasPosition();
+				if( lastCameraPosition.HasValue ) //if( camerasPosition.HasValue )
+				{
+					var cameraPosition = lastCameraPosition.Value;
+					var cameraPosition2 = cameraPosition.ToVector2();
+
+					//!!!!нужна поддержка нескольких камер если они на большом расстоянии
+					var circle = new Circle( cameraPosition2, WalkingPedestriansCreateDistance.Value );
+					//var sphere = new Sphere( camerasPosition.Value, WalkingPedestriansCreateDistance.Value );
+
+					//var createInsideSpheres = new List<Sphere>();
+					//foreach( var cameraPosition in camerasPosition.Value )
+					//{
+					//	createInsideSpheres.Add( new Sphere( cameraPosition, WalkingPedestriansCreateDistance.Value ) );
+					//}
+
+					List<Road.LogicalData> roadsInRadius = null;
+
+					//create new
+					var createObjectLimit = initialization ? WalkingPedestrians : WalkingPedestriansCreateMaxPerStep;
+					for( int n = 0; n < createObjectLimit; n++ )
+					{
+						if( walkingPedestrians.Count < WalkingPedestrians )
+						{
+							if( roadsInRadius == null )
+							{
+								roadsInRadius = GetWalkableRoadsByCircle( circle );
+								if( roadsInRadius.Count == 0 )
+									break;
+							}
+
+							var circleFar = new Circle( circle.Center, circle.Radius * 1.15 );
+
+							var v = CreateWalkingPedestrian( scene, initialization, cameraPosition, circle, circleFar, roadsInRadius );
+							if( v == null )
+								break;
+						}
+					}
+
+					//destroy when far away
+					{
+						var toDestroy = new List<ObjectInstance>( 32 );
+
+						var maxDistance = WalkingPedestriansCreateDistance.Value * 1.3;
+						var maxDistanceSquared = maxDistance * maxDistance;
+
+						foreach( var v in walkingPedestrians )
+						{
+							if( v.SceneObject != null )
+							{
+								var pos = v.SceneObject.TransformV.Position.ToVector2();
+
+								var distanceSquared = ( cameraPosition2 - pos ).LengthSquared();
+								//var distanceSquared = camerasBounds.GetPointDistanceSquared( ref pos );
+								if( distanceSquared > maxDistanceSquared )
+									toDestroy.Add( v );
+							}
+						}
+
+						foreach( var v in toDestroy )
+							v.Dispose();
+					}
+				}
+			}
+		}
+
+		void WalkingPedestriansUpdateManageTasks()
+		{
+			var manage = WalkingPedestriansManageTasks.Value;
+
+			foreach( var objectInstance in walkingPedestrians )
+			{
+				var obj = objectInstance.SceneObject;
+				if( obj != null && obj.Parent != null )
+				{
+					var ai = obj.GetComponent<CharacterAI>();
+					if( ai != null )
+						ai.Enabled = manage;
+				}
+			}
+		}
+
 		protected override void OnSimulationStep()
 		{
 			base.OnSimulationStep();
 
 			if( SimulateDynamicObjects )
+			{
 				SimulateFlyingObjects( false );
+				SimulateWalkingPedestrians( false );
+			}
 		}
 
 		private void Scene_GetRenderSceneData( Scene scene, ViewportRenderingContext context )
@@ -1218,15 +1756,82 @@ namespace NeoAxis
 			var viewport = context.Owner;
 			var cameraSettings = viewport.CameraSettings;
 
-			camerasBoundsLastSecond.Add( cameraSettings.Position.ToVector2() );
-			//var bounds = new Rectangle( cameraSettings.Position.ToVector2() );
-			//bounds.Expand( FlyingVehiclesCreateDistance );
-			//camerasBoundsLastSecond.Add( bounds );
-			////lastCameraPosition = cameraSettings.Position.ToVector2();
+			lastCameraPosition = cameraSettings.Position;
+			//camerasPositionBoundsLastSecond.Add( cameraSettings.Position );
+
+			////var bounds = new Rectangle( cameraSettings.Position.ToVector2() );
+			////bounds.Expand( FlyingVehiclesCreateDistance );
+			////camerasBoundsLastSecond.Add( bounds );
+			//////lastCameraPosition = cameraSettings.Position.ToVector2();
 
 			//!!!!good?
 			if( needUpdateObjects )
 				UpdateObjects();
+
+
+			//!!!!temp
+			//var test = ParentRoot.GetComponent( "TEST" ) as ObjectInSpace;
+			//if( test != null )
+			//{
+			//	var position = test.TransformV.Position;
+
+
+			//	foreach( var road in GetAllWalkableRoads() )
+			//	{
+			//		var roadData = road.RoadData;
+
+			//		//double totalLengthNoCurvature = 0;
+			//		//{
+			//		//	for( int n = 1; n < roadData.Points.Length; n++ )
+			//		//		totalLengthNoCurvature += ( roadData.Points[ n ].Transform.Position - roadData.Points[ n - 1 ].Transform.Position ).Length();
+			//		//	if( totalLengthNoCurvature <= 0.001 )
+			//		//		totalLengthNoCurvature = 0.001;
+			//		//}
+
+			//		//var totalTime = roadData.LastPoint.TimeOnCurve;
+
+			//		//double timeStep;
+			//		//{
+			//		//	//!!!!
+			//		//	var stepLength = 1.0;
+
+			//		//	//!!!!? totalTime
+			//		//	timeStep = stepLength / totalLengthNoCurvature * totalTime;
+			//		//}
+
+			//		if( roadData.GetClosestCurveTimeToPosition( position, 50, 1.1, out var timeOnCurve ) )
+			//		{
+			//			//roadData.GetClosestCurveTimeToPosition( position, timeStep, out var timeOnCurve );
+
+			//			var p = roadData.GetPositionByTime( timeOnCurve );
+
+			//			var renderer = context.Owner.Simple3DRenderer;
+			//			renderer.SetColor( new ColorValue( 1, 0, 0 ), new ColorValue( 1, 0, 0, 0.5 ) );
+			//			renderer.AddArrow( position, p );
+			//		}
+			//	}
+
+			//}
+		}
+
+		public ESet<ObjectInstance> GetParkedVehicles()
+		{
+			return parkedVehicles;
+		}
+
+		public ESet<ObjectInstance> GetMovingVehicles()
+		{
+			return movingVehicles;
+		}
+
+		public ESet<ObjectInstance> GetFlyingObjects()
+		{
+			return flyingObjects;
+		}
+
+		public ESet<ObjectInstance> GetWalkingPedestrians()
+		{
+			return walkingPedestrians;
 		}
 	}
 }

@@ -1,9 +1,8 @@
-﻿/*
+/*
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
-
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -45,13 +44,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * glTF Extensions Support:
  *   KHR_materials_pbrSpecularGlossiness full
+ *   KHR_materials_specular full
  *   KHR_materials_unlit full
  *   KHR_lights_punctual full
+ *   KHR_materials_sheen full
+ *   KHR_materials_clearcoat full
+ *   KHR_materials_transmission full
+ *   KHR_materials_volume full
+ *   KHR_materials_ior full
+ *   KHR_materials_emissive_strength full
  */
 #ifndef GLTF2ASSET_H_INC
 #define GLTF2ASSET_H_INC
 
-#ifndef ASSIMP_BUILD_NO_GLTF_IMPORTER
+#if !defined(ASSIMP_BUILD_NO_GLTF_IMPORTER) && !defined(ASSIMP_BUILD_NO_GLTF2_IMPORTER)
 
 #include <assimp/Exceptional.h>
 
@@ -63,46 +69,61 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string>
 #include <vector>
 
-#define RAPIDJSON_HAS_STDSTRING 1
+// clang-format off
+#if (__GNUC__ == 8 && __GNUC_MINOR__ >= 0)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wclass-memaccess"
+#endif
+
 #include <rapidjson/document.h>
 #include <rapidjson/error/en.h>
 #include <rapidjson/rapidjson.h>
+#include <rapidjson/schema.h>
+
+#if (__GNUC__ == 8 && __GNUC_MINOR__ >= 0)
+#   pragma GCC diagnostic pop
+#endif
 
 #ifdef ASSIMP_API
-#include <assimp/ByteSwapper.h>
-#include <assimp/DefaultIOSystem.h>
-#include <memory>
+#   include <assimp/ByteSwapper.h>
+#   include <assimp/DefaultIOSystem.h>
+#   include <memory>
 #else
-#include <memory>
-#define AI_SWAP4(p)
-#define ai_assert
+#   include <memory>
+#   define AI_SWAP4(p)
+#   define ai_assert
 #endif
 
 #if _MSC_VER > 1500 || (defined __GNUC___)
-#define ASSIMP_GLTF_USE_UNORDERED_MULTIMAP
+#   define ASSIMP_GLTF_USE_UNORDERED_MULTIMAP
 #else
-#define gltf_unordered_map map
-#define gltf_unordered_set set
+#   define gltf_unordered_map map
+#   define gltf_unordered_set set
 #endif
 
 #ifdef ASSIMP_GLTF_USE_UNORDERED_MULTIMAP
-#include <unordered_map>
-#include <unordered_set>
-#if _MSC_VER > 1600
-#define gltf_unordered_map unordered_map
-#define gltf_unordered_set unordered_set
-#else
-#define gltf_unordered_map tr1::unordered_map
-#define gltf_unordered_set tr1::unordered_set
+#   include <unordered_map>
+#   include <unordered_set>
+#   if defined(_MSC_VER) && _MSC_VER <= 1600
+#       define gltf_unordered_map tr1::unordered_map
+#       define gltf_unordered_set tr1::unordered_set
+#   else
+#       define gltf_unordered_map unordered_map
+#       define gltf_unordered_set unordered_set
+#   endif
 #endif
-#endif
+// clang-format on
 
 #include <assimp/StringUtils.h>
+#include <assimp/material.h>
+#include <assimp/GltfMaterial.h>
 
 #include "AssetLib/glTF/glTFCommon.h"
 
 namespace glTF2 {
 
+using glTFCommon::Nullable;
+using glTFCommon::Ref;
 using glTFCommon::IOStream;
 using glTFCommon::IOSystem;
 using glTFCommon::shared_ptr;
@@ -123,7 +144,6 @@ using glTFCommon::vec4;
 
 //! Magic number for GLB files
 #define AI_GLB_MAGIC_NUMBER "glTF"
-#include <assimp/pbrmaterial.h>
 
 #ifdef ASSIMP_API
 #include <assimp/Compiler/pushpack1.h>
@@ -175,19 +195,19 @@ enum ComponentType {
 
 inline unsigned int ComponentTypeSize(ComponentType t) {
     switch (t) {
-        case ComponentType_SHORT:
-        case ComponentType_UNSIGNED_SHORT:
-            return 2;
+    case ComponentType_SHORT:
+    case ComponentType_UNSIGNED_SHORT:
+        return 2;
 
-        case ComponentType_UNSIGNED_INT:
-        case ComponentType_FLOAT:
-            return 4;
+    case ComponentType_UNSIGNED_INT:
+    case ComponentType_FLOAT:
+        return 4;
 
-        case ComponentType_BYTE:
-        case ComponentType_UNSIGNED_BYTE:
-            return 1;
-        default:
-            throw DeadlyImportError("GLTF: Unsupported Component Type " + to_string(t));
+    case ComponentType_BYTE:
+    case ComponentType_UNSIGNED_BYTE:
+        return 1;
+    default:
+        throw DeadlyImportError("GLTF: Unsupported Component Type ", ai_to_string(t));
     }
 }
 
@@ -309,38 +329,55 @@ const AttribType::Info
             { "SCALAR", 1 }, { "VEC2", 2 }, { "VEC3", 3 }, { "VEC4", 4 }, { "MAT2", 4 }, { "MAT3", 9 }, { "MAT4", 16 }
         };
 
-//! A reference to one top-level object, which is valid
-//! until the Asset instance is destroyed
-template <class T>
-class Ref {
-    std::vector<T *> *vector;
-    unsigned int index;
 
-public:
-    Ref() :
-            vector(0), index(0) {}
-    Ref(std::vector<T *> &vec, unsigned int idx) :
-            vector(&vec), index(idx) {}
+struct CustomExtension {
 
-    inline unsigned int GetIndex() const { return index; }
+    //
+    // A struct containing custom extension data added to a glTF2 file
+    // Has to contain Object, Array, String, Double, Uint64, and Int64 at a minimum
+    // String, Double, Uint64, and Int64 are stored in the Nullables
+    // Object and Array are stored in the std::vector
+    //
+    std::string name;
 
-    operator bool() const { return vector != 0; }
+    Nullable<std::string> mStringValue;
+    Nullable<double> mDoubleValue;
+    Nullable<uint64_t> mUint64Value;
+    Nullable<int64_t> mInt64Value;
+    Nullable<bool> mBoolValue;
 
-    T *operator->() { return (*vector)[index]; }
+    // std::vector<CustomExtension> handles both Object and Array
+    Nullable<std::vector<CustomExtension>> mValues;
 
-    T &operator*() { return *((*vector)[index]); }
+    operator bool() const {
+        return Size() != 0;
+    }
+
+    size_t Size() const {
+        if (mValues.isPresent) {
+            return mValues.value.size();
+        } else if (mStringValue.isPresent || mDoubleValue.isPresent || mUint64Value.isPresent || mInt64Value.isPresent || mBoolValue.isPresent) {
+            return 1;
+        }
+        return 0;
+    }
+
+    CustomExtension() = default;
+
+    ~CustomExtension() = default;
+
+    CustomExtension(const CustomExtension &other) = default;
+
+    CustomExtension& operator=(const CustomExtension&) = default;
 };
 
-//! Helper struct to represent values that might not be present
-template <class T>
-struct Nullable {
-    T value;
-    bool isPresent;
+//! Represents metadata in an glTF2 object
+struct Extras {
+    std::vector<CustomExtension> mValues;
 
-    Nullable() :
-            isPresent(false) {}
-    Nullable(T &val) :
-            value(val), isPresent(true) {}
+    inline bool HasExtras() const {
+        return !mValues.empty();
+    }
 };
 
 //! Base class for all glTF top-level objects
@@ -350,154 +387,31 @@ struct Object {
     std::string id; //!< The globally unique ID used to reference this object
     std::string name; //!< The user-defined name of this object
 
+    CustomExtension customExtensions;
+    Extras extras;
+
     //! Objects marked as special are not exported (used to emulate the binary body buffer)
     virtual bool IsSpecial() const { return false; }
 
-    virtual ~Object() {}
+    virtual ~Object() = default;
 
     //! Maps special IDs to another ID, where needed. Subclasses may override it (statically)
     static const char *TranslateId(Asset & /*r*/, const char *id) { return id; }
+
+    inline Value *FindString(Value &val, const char *id);
+    inline Value *FindNumber(Value &val, const char *id);
+    inline Value *FindUInt(Value &val, const char *id);
+    inline Value *FindArray(Value &val, const char *id);
+    inline Value *FindObject(Value &val, const char *id);
+    inline Value *FindExtension(Value &val, const char *extensionId);
+
+    inline void ReadExtensions(Value &val);
+    inline void ReadExtras(Value &val);
 };
 
 //
 // Classes for each glTF top-level object type
 //
-
-//! Base class for types that access binary data from a BufferView, such as accessors
-//! or sparse accessors' indices.
-//! N.B. not a virtual class. All owned pointers to BufferViewClient instances should
-//! be to their most derived types (which may of course be just BufferViewClient).
-struct BufferViewClient : public Object {
-    Ref<BufferView> bufferView; //!< The ID of the bufferView. (required)
-    size_t byteOffset; //!< The offset relative to the start of the bufferView in bytes. (required)
-
-    inline uint8_t *GetPointer();
-
-    void Read(Value &obj, Asset &r);
-};
-
-//! BufferViewClient with component type information.
-//! N.B. not a virtual class. All owned pointers to ComponentTypedBufferViewClient
-//! instances should be to their most derived types (which may of course be just
-//! ComponentTypedBufferViewClient).
-struct ComponentTypedBufferViewClient : public BufferViewClient {
-    ComponentType componentType; //!< The datatype of components in the attribute. (required)
-
-    unsigned int GetBytesPerComponent();
-
-    void Read(Value &obj, Asset &r);
-};
-
-//! A typed view into a BufferView. A BufferView contains raw binary data.
-//! An accessor provides a typed view into a BufferView or a subset of a BufferView
-//! similar to how WebGL's vertexAttribPointer() defines an attribute in a buffer.
-struct Accessor : public ComponentTypedBufferViewClient {
-    struct Sparse;
-
-    size_t count; //!< The number of attributes referenced by this accessor. (required)
-    AttribType::Value type; //!< Specifies if the attribute is a scalar, vector, or matrix. (required)
-    std::vector<double> max; //!< Maximum value of each component in this attribute.
-    std::vector<double> min; //!< Minimum value of each component in this attribute.
-    std::unique_ptr<Sparse> sparse; //!< Sparse accessor information
-
-    unsigned int GetNumComponents();
-    unsigned int GetElementSize();
-
-    inline uint8_t *GetPointer();
-
-    template<class T>
-    void ExtractData(T *&outData);
-
-    void WriteData(size_t count, const void *src_buffer, size_t src_stride);
-
-    //! Helper class to iterate the data
-    class Indexer {
-        friend struct Accessor;
-
-    // This field is reported as not used, making it protectd is the easiest way to work around it without going to the bottom of what the problem is:
-    // ../code/glTF2/glTF2Asset.h:392:19: error: private field 'accessor' is not used [-Werror,-Wunused-private-field]
-    protected:
-        Accessor &accessor;
-
-    private:
-        uint8_t *data;
-        size_t elemSize, stride;
-
-        Indexer(Accessor &acc);
-    
-        
-    public:
-        //! Accesses the i-th value as defined by the accessor
-        template <class T>
-        T GetValue(int i);
-
-        //! Accesses the i-th value as defined by the accessor
-        inline unsigned int GetUInt(int i) {
-            return GetValue<unsigned int>(i);
-        }
-
-        inline bool IsValid() const {
-            return data != 0;
-        }
-    };
-
-    //! Sparse accessor information
-    struct Sparse {
-        size_t count;
-        ComponentTypedBufferViewClient indices;
-        BufferViewClient values;
-
-        std::vector<uint8_t> data; //!< Actual data, which may be defaulted to an array of zeros or the original data, with the sparse buffer view applied on top of it.
-
-        inline void PopulateData(size_t numBytes, uint8_t *bytes) {
-            if (bytes) {
-                data.assign(bytes, bytes + numBytes);
-            } else {
-                data.resize(numBytes, 0x00);
-            }
-        }
-
-        inline void PatchData(unsigned int elementSize)
-        {
-            uint8_t *pIndices = indices.GetPointer();
-            const unsigned int indexSize = indices.GetBytesPerComponent();
-            uint8_t *indicesEnd = pIndices + count * indexSize;
-
-            uint8_t *pValues = values.GetPointer();
-            while (pIndices != indicesEnd) {
-                size_t offset;
-                switch (indices.componentType) {
-                case ComponentType_UNSIGNED_BYTE:
-                    offset = *pIndices;
-                    break;
-                case ComponentType_UNSIGNED_SHORT:
-                    offset = *reinterpret_cast<uint16_t *>(pIndices);
-                    break;
-                case ComponentType_UNSIGNED_INT:
-                    offset = *reinterpret_cast<uint32_t *>(pIndices);
-                    break;
-                default:
-                    // have fun with float and negative values from signed types as indices.
-                    throw DeadlyImportError("Unsupported component type in index.");
-                }
-
-                offset *= elementSize;
-                std::memcpy(data.data() + offset, pValues, elementSize);
-
-                pValues += elementSize;
-                pIndices += indexSize;
-            }
-        }
-    };
-
-    inline Indexer GetIndexer() {
-        return Indexer(*this);
-    }
-
-    Accessor() {}
-
-    void Read(Value &obj, Asset &r);
-};
 
 //! A buffer points to binary geometry, animation, or skins.
 struct Buffer : public Object {
@@ -524,8 +438,12 @@ public:
         /// \param [in] pDecodedData - pointer to decoded data array.
         /// \param [in] pDecodedData_Length - size of encoded region, in bytes.
         /// \param [in] pID - ID of the region.
-        SEncodedRegion(const size_t pOffset, const size_t pEncodedData_Length, uint8_t *pDecodedData, const size_t pDecodedData_Length, const std::string pID) :
-                Offset(pOffset), EncodedData_Length(pEncodedData_Length), DecodedData(pDecodedData), DecodedData_Length(pDecodedData_Length), ID(pID) {}
+        SEncodedRegion(const size_t pOffset, const size_t pEncodedData_Length, uint8_t *pDecodedData, const size_t pDecodedData_Length, const std::string &pID) :
+                Offset(pOffset),
+                EncodedData_Length(pEncodedData_Length),
+                DecodedData(pDecodedData),
+                DecodedData_Length(pDecodedData_Length),
+                ID(pID) {}
 
         /// \fn ~SEncodedRegion()
         /// Destructor.
@@ -575,7 +493,7 @@ private:
 
 public:
     Buffer();
-    ~Buffer();
+    ~Buffer() override;
 
     void Read(Value &obj, Asset &r);
 
@@ -612,7 +530,7 @@ public:
 
     void MarkAsSpecial() { mIsSpecial = true; }
 
-    bool IsSpecial() const { return mIsSpecial; }
+    bool IsSpecial() const override { return mIsSpecial; }
 
     std::string GetURI() { return std::string(this->id) + ".bin"; }
 
@@ -629,6 +547,91 @@ struct BufferView : public Object {
     BufferViewTarget target; //! The target that the WebGL buffer should be bound to.
 
     void Read(Value &obj, Asset &r);
+    uint8_t *GetPointer(size_t accOffset);
+};
+
+//! A typed view into a BufferView. A BufferView contains raw binary data.
+//! An accessor provides a typed view into a BufferView or a subset of a BufferView
+//! similar to how WebGL's vertexAttribPointer() defines an attribute in a buffer.
+struct Accessor : public Object {
+    struct Sparse;
+
+    Ref<BufferView> bufferView; //!< The ID of the bufferView. (required)
+    size_t byteOffset; //!< The offset relative to the start of the bufferView in bytes. (required)
+    ComponentType componentType; //!< The datatype of components in the attribute. (required)
+    size_t count; //!< The number of attributes referenced by this accessor. (required)
+    AttribType::Value type; //!< Specifies if the attribute is a scalar, vector, or matrix. (required)
+    std::vector<double> max; //!< Maximum value of each component in this attribute.
+    std::vector<double> min; //!< Minimum value of each component in this attribute.
+    std::unique_ptr<Sparse> sparse;
+    std::unique_ptr<Buffer> decodedBuffer; // Packed decoded data, returned instead of original bufferView if present
+
+    unsigned int GetNumComponents();
+    unsigned int GetBytesPerComponent();
+    unsigned int GetElementSize();
+
+    inline uint8_t *GetPointer();
+    inline size_t GetStride();
+    inline size_t GetMaxByteSize();
+
+    template <class T>
+    size_t ExtractData(T *&outData, const std::vector<unsigned int> *remappingIndices = nullptr);
+
+    void WriteData(size_t count, const void *src_buffer, size_t src_stride);
+    void WriteSparseValues(size_t count, const void *src_data, size_t src_dataStride);
+    void WriteSparseIndices(size_t count, const void *src_idx, size_t src_idxStride);
+
+    //! Helper class to iterate the data
+    class Indexer {
+        friend struct Accessor;
+
+        // This field is reported as not used, making it protectd is the easiest way to work around it without going to the bottom of what the problem is:
+        // ../code/glTF2/glTF2Asset.h:392:19: error: private field 'accessor' is not used [-Werror,-Wunused-private-field]
+    protected:
+        Accessor &accessor;
+
+    private:
+        uint8_t *data;
+        size_t elemSize, stride;
+
+        Indexer(Accessor &acc);
+
+    public:
+        //! Accesses the i-th value as defined by the accessor
+        template <class T>
+        T GetValue(int i);
+
+        //! Accesses the i-th value as defined by the accessor
+        inline unsigned int GetUInt(int i) {
+            return GetValue<unsigned int>(i);
+        }
+
+        inline bool IsValid() const {
+            return data != nullptr;
+        }
+    };
+
+    inline Indexer GetIndexer() {
+        return Indexer(*this);
+    }
+
+    Accessor() = default;
+    void Read(Value &obj, Asset &r);
+
+    //sparse
+    struct Sparse {
+        size_t count;
+        ComponentType indicesType;
+        Ref<BufferView> indices;
+        size_t indicesByteOffset;
+        Ref<BufferView> values;
+        size_t valuesByteOffset;
+
+        std::vector<uint8_t> data; //!< Actual data, which may be defaulted to an array of zeros or the original data, with the sparse buffer view applied on top of it.
+
+        void PopulateData(size_t numBytes, uint8_t *bytes);
+        void PatchData(unsigned int elementSize);
+    };
 };
 
 struct Camera : public Object {
@@ -656,7 +659,8 @@ struct Camera : public Object {
     } cameraProperties;
 
     Camera() :
-            type(Perspective), cameraProperties() {
+            type(Perspective),
+            cameraProperties() {
         // empty
     }
     void Read(Value &obj, Asset &r);
@@ -679,7 +683,7 @@ struct Light : public Object {
     float innerConeAngle;
     float outerConeAngle;
 
-    Light() {}
+    Light() = default;
     void Read(Value &obj, Asset &r);
 };
 
@@ -716,6 +720,9 @@ const vec4 defaultBaseColor = { 1, 1, 1, 1 };
 const vec3 defaultEmissiveFactor = { 0, 0, 0 };
 const vec4 defaultDiffuseFactor = { 1, 1, 1, 1 };
 const vec3 defaultSpecularFactor = { 1, 1, 1 };
+const vec3 defaultSpecularColorFactor = { 1, 1, 1 };
+const vec3 defaultSheenFactor = { 0, 0, 0 };
+const vec3 defaultAttenuationColor = { 1, 1, 1 };
 
 struct TextureInfo {
     Ref<Texture> texture;
@@ -757,6 +764,63 @@ struct PbrSpecularGlossiness {
     void SetDefaults();
 };
 
+struct MaterialSpecular {
+    float specularFactor;
+    vec3 specularColorFactor;
+    TextureInfo specularTexture;
+    TextureInfo specularColorTexture;
+
+    MaterialSpecular() { SetDefaults(); }
+    void SetDefaults();
+};
+
+struct MaterialSheen {
+    vec3 sheenColorFactor;
+    float sheenRoughnessFactor;
+    TextureInfo sheenColorTexture;
+    TextureInfo sheenRoughnessTexture;
+
+    MaterialSheen() { SetDefaults(); }
+    void SetDefaults();
+};
+
+struct MaterialClearcoat {
+    float clearcoatFactor = 0.f;
+    float clearcoatRoughnessFactor = 0.f;
+    TextureInfo clearcoatTexture;
+    TextureInfo clearcoatRoughnessTexture;
+    NormalTextureInfo clearcoatNormalTexture;
+};
+
+struct MaterialTransmission {
+    TextureInfo transmissionTexture;
+    float transmissionFactor = 0.f;
+};
+
+struct MaterialVolume {
+    float thicknessFactor = 0.f;
+    TextureInfo thicknessTexture;
+    float attenuationDistance = 0.f;
+    vec3 attenuationColor;
+
+    MaterialVolume() { SetDefaults(); }
+    void SetDefaults();
+};
+
+struct MaterialIOR {
+    float ior = 0.f;
+
+    MaterialIOR() { SetDefaults(); }
+    void SetDefaults();
+};
+
+struct MaterialEmissiveStrength {
+    float emissiveStrength = 0.f;
+
+    MaterialEmissiveStrength() { SetDefaults(); }
+    void SetDefaults();
+};
+
 //! The material appearance of a primitive.
 struct Material : public Object {
     //PBR metallic roughness properties
@@ -774,17 +838,43 @@ struct Material : public Object {
     //extension: KHR_materials_pbrSpecularGlossiness
     Nullable<PbrSpecularGlossiness> pbrSpecularGlossiness;
 
+    //extension: KHR_materials_specular
+    Nullable<MaterialSpecular> materialSpecular;
+
+    //extension: KHR_materials_sheen
+    Nullable<MaterialSheen> materialSheen;
+
+    //extension: KHR_materials_clearcoat
+    Nullable<MaterialClearcoat> materialClearcoat;
+
+    //extension: KHR_materials_transmission
+    Nullable<MaterialTransmission> materialTransmission;
+
+    //extension: KHR_materials_volume
+    Nullable<MaterialVolume> materialVolume;
+
+    //extension: KHR_materials_ior
+    Nullable<MaterialIOR> materialIOR;
+
+    //extension: KHR_materials_emissive_strength
+    Nullable<MaterialEmissiveStrength> materialEmissiveStrength;
+
     //extension: KHR_materials_unlit
     bool unlit;
 
     Material() { SetDefaults(); }
     void Read(Value &obj, Asset &r);
     void SetDefaults();
+
+    inline void SetTextureProperties(Asset &r, Value *prop, TextureInfo &out);
+    inline void ReadTextureProperty(Asset &r, Value &vals, const char *propName, TextureInfo &out);
+    inline void ReadTextureProperty(Asset &r, Value &vals, const char *propName, NormalTextureInfo &out);
+    inline void ReadTextureProperty(Asset &r, Value &vals, const char *propName, OcclusionTextureInfo &out);
 };
 
 //! A set of primitives to be rendered. A node can contain one or more meshes. A node's transform places the mesh in the scene.
 struct Mesh : public Object {
-    typedef std::vector<Ref<Accessor>> AccessorList;
+    using AccessorList = std::vector<Ref<Accessor>>;
 
     struct Primitive {
         PrimitiveMode mode;
@@ -801,6 +891,11 @@ struct Mesh : public Object {
             AccessorList position, normal, tangent;
         };
         std::vector<Target> targets;
+
+        // extension: FB_ngon_encoding
+        bool ngonEncoded;
+
+        Primitive(): ngonEncoded(false) {}
     };
 
     std::vector<Primitive> primitives;
@@ -808,9 +903,8 @@ struct Mesh : public Object {
     std::vector<float> weights;
     std::vector<std::string> targetNames;
 
-    Mesh() {}
+    Mesh() = default;
 
-    /// \fn void Read(Value& pJSON_Object, Asset& pAsset_Root)
     /// Get mesh data from JSON-object and place them to root asset.
     /// \param [in] pJSON_Object - reference to pJSON-object from which data are read.
     /// \param [out] pAsset_Root - reference to root asset where data will be stored.
@@ -835,12 +929,12 @@ struct Node : public Object {
 
     Ref<Node> parent; //!< This is not part of the glTF specification. Used as a helper.
 
-    Node() {}
+    Node() = default;
     void Read(Value &obj, Asset &r);
 };
 
 struct Program : public Object {
-    Program() {}
+    Program() = default;
     void Read(Value &obj, Asset &r);
 };
 
@@ -856,14 +950,15 @@ struct Sampler : public Object {
 };
 
 struct Scene : public Object {
+    std::string name;
     std::vector<Ref<Node>> nodes;
 
-    Scene() {}
+    Scene() = default;
     void Read(Value &obj, Asset &r);
 };
 
 struct Shader : public Object {
-    Shader() {}
+    Shader() = default;
     void Read(Value &obj, Asset &r);
 };
 
@@ -873,7 +968,7 @@ struct Skin : public Object {
     std::vector<Ref<Node>> jointNames; //!< Joint names of the joints (nodes with a jointName property) in this skin.
     std::string name; //!< The user-defined name of this object.
 
-    Skin() {}
+    Skin() = default;
     void Read(Value &obj, Asset &r);
 };
 
@@ -888,7 +983,7 @@ struct Texture : public Object {
     //TextureTarget target; //!< The target that the WebGL texture should be bound to. (default: TextureTarget_TEXTURE_2D)
     //TextureType type; //!< Texel datatype. (default: TextureType_UNSIGNED_BYTE)
 
-    Texture() {}
+    Texture() = default;
     void Read(Value &obj, Asset &r);
 };
 
@@ -921,19 +1016,21 @@ struct Animation : public Object {
     std::vector<Sampler> samplers; //!< All the key-frame data for this animation.
     std::vector<Channel> channels; //!< Data to connect nodes to key-frames.
 
-    Animation() {}
+    Animation() = default;
     void Read(Value &obj, Asset &r);
 };
 
 //! Base class for LazyDict that acts as an interface
 class LazyDictBase {
 public:
-    virtual ~LazyDictBase() {}
+    virtual ~LazyDictBase() = default;
 
     virtual void AttachToDocument(Document &doc) = 0;
     virtual void DetachFromDocument() = 0;
 
+#if !defined(ASSIMP_BUILD_NO_EXPORT)
     virtual void WriteObjects(AssetWriter &writer) = 0;
+#endif
 };
 
 template <class T>
@@ -950,8 +1047,8 @@ class LazyDict : public LazyDictBase {
     friend class Asset;
     friend class AssetWriter;
 
-    typedef typename std::gltf_unordered_map<unsigned int, unsigned int> Dict;
-    typedef typename std::gltf_unordered_map<std::string, unsigned int> IdDict;
+    using Dict = typename std::gltf_unordered_map<unsigned int, unsigned int>;
+    using IdDict = typename std::gltf_unordered_map<std::string, unsigned int>;
 
     std::vector<T *> mObjs; //! The read objects
     Dict mObjsByOIndex; //! The read objects accessible by original index
@@ -961,17 +1058,19 @@ class LazyDict : public LazyDictBase {
     Value *mDict; //! JSON dictionary object
     Asset &mAsset; //! The asset instance
 
-    std::gltf_unordered_set<unsigned int> mRecursiveReferenceCheck;  //! Used by Retrieve to prevent recursive lookups
+    std::gltf_unordered_set<unsigned int> mRecursiveReferenceCheck; //! Used by Retrieve to prevent recursive lookups
 
     void AttachToDocument(Document &doc);
     void DetachFromDocument();
 
+#if !defined(ASSIMP_BUILD_NO_EXPORT)
     void WriteObjects(AssetWriter &writer) { WriteLazyDict<T>(*this, writer); }
+#endif
 
     Ref<T> Add(T *obj);
 
 public:
-    LazyDict(Asset &asset, const char *dictId, const char *extId = 0);
+    LazyDict(Asset &asset, const char *dictId, const char *extId = nullptr);
     ~LazyDict();
 
     Ref<T> Retrieve(unsigned int i);
@@ -1002,8 +1101,7 @@ struct AssetMetadata {
 
     void Read(Document &doc);
 
-    AssetMetadata() :
-            version("") {}
+    AssetMetadata() = default;
 };
 
 //
@@ -1012,47 +1110,64 @@ struct AssetMetadata {
 
 //! Root object for a glTF asset
 class Asset {
-    typedef std::gltf_unordered_map<std::string, int> IdMap;
+    using IdMap = std::gltf_unordered_map<std::string, int>;
 
     template <class T>
     friend class LazyDict;
-
     friend struct Buffer; // To access OpenFile
-
     friend class AssetWriter;
 
-private:
-    IOSystem *mIOSystem;
-
-    std::string mCurrentAssetDir;
-
-    size_t mSceneLength;
-    size_t mBodyOffset, mBodyLength;
-
     std::vector<LazyDictBase *> mDicts;
-
-    IdMap mUsedIds;
-
-    Ref<Buffer> mBodyBuffer;
-
-    Asset(Asset &);
-    Asset &operator=(const Asset &);
 
 public:
     //! Keeps info about the enabled extensions
     struct Extensions {
         bool KHR_materials_pbrSpecularGlossiness;
+        bool KHR_materials_specular;
         bool KHR_materials_unlit;
         bool KHR_lights_punctual;
         bool KHR_texture_transform;
+        bool KHR_materials_sheen;
+        bool KHR_materials_clearcoat;
+        bool KHR_materials_transmission;
+        bool KHR_materials_volume;
+        bool KHR_materials_ior;
+        bool KHR_materials_emissive_strength;
+        bool KHR_draco_mesh_compression;
+        bool FB_ngon_encoding;
+        bool KHR_texture_basisu;
+
+        Extensions() :
+                KHR_materials_pbrSpecularGlossiness(false), 
+                KHR_materials_specular(false), 
+                KHR_materials_unlit(false), 
+                KHR_lights_punctual(false), 
+                KHR_texture_transform(false), 
+                KHR_materials_sheen(false), 
+                KHR_materials_clearcoat(false), 
+                KHR_materials_transmission(false), 
+                KHR_materials_volume(false),
+                KHR_materials_ior(false),
+                KHR_materials_emissive_strength(false),
+                KHR_draco_mesh_compression(false),
+                FB_ngon_encoding(false),
+                KHR_texture_basisu(false) {
+            // empty
+        }
     } extensionsUsed;
 
     //! Keeps info about the required extensions
     struct RequiredExtensions {
         bool KHR_draco_mesh_compression;
+        bool KHR_texture_basisu;
+
+        RequiredExtensions() : KHR_draco_mesh_compression(false), KHR_texture_basisu(false) {
+            // empty
+        }
     } extensionsRequired;
 
     AssetMetadata asset;
+    Value *extras;
 
     // Dictionaries for each type of object
 
@@ -1074,14 +1189,36 @@ public:
     Ref<Scene> scene;
 
 public:
-    Asset(IOSystem *io = 0) :
-            mIOSystem(io), asset(), accessors(*this, "accessors"), animations(*this, "animations"), buffers(*this, "buffers"), bufferViews(*this, "bufferViews"), cameras(*this, "cameras"), lights(*this, "lights", "KHR_lights_punctual"), images(*this, "images"), materials(*this, "materials"), meshes(*this, "meshes"), nodes(*this, "nodes"), samplers(*this, "samplers"), scenes(*this, "scenes"), skins(*this, "skins"), textures(*this, "textures") {
-        memset(&extensionsUsed, 0, sizeof(extensionsUsed));
-        memset(&extensionsRequired, 0, sizeof(extensionsRequired));
+    Asset(IOSystem *io = nullptr, rapidjson::IRemoteSchemaDocumentProvider *schemaDocumentProvider = nullptr) :
+            mDicts(),
+            extensionsUsed(),
+            extensionsRequired(),
+            asset(),
+            extras(nullptr),
+            accessors(*this, "accessors"),
+            animations(*this, "animations"),
+            buffers(*this, "buffers"),
+            bufferViews(*this, "bufferViews"),
+            cameras(*this, "cameras"),
+            lights(*this, "lights", "KHR_lights_punctual"),
+            images(*this, "images"),
+            materials(*this, "materials"),
+            meshes(*this, "meshes"),
+            nodes(*this, "nodes"),
+            samplers(*this, "samplers"),
+            scenes(*this, "scenes"),
+            skins(*this, "skins"),
+            textures(*this, "textures") ,
+            mIOSystem(io),
+            mSchemaDocumentProvider(schemaDocumentProvider) {
+        // empty
     }
 
     //! Main function
     void Load(const std::string &file, bool isBinary = false);
+
+    //! Parse the AssetMetadata and check that the version is 2.
+    bool CanRead(const std::string &pFile, bool isBinary = false);
 
     //! Enables binary encoding on the asset
     void SetAsBinary();
@@ -1091,14 +1228,40 @@ public:
 
     Ref<Buffer> GetBodyBuffer() { return mBodyBuffer; }
 
+    Asset(Asset &) = delete;
+    Asset &operator=(const Asset &) = delete;
+
 private:
     void ReadBinaryHeader(IOStream &stream, std::vector<char> &sceneData);
+
+    /// Obtain a JSON document from the stream.
+    /// \param second argument is a buffer used by the document. It must be kept
+    /// alive while the document is in use.
+    Document ReadDocument(IOStream& stream, bool isBinary, std::vector<char>& sceneData);
 
     void ReadExtensionsUsed(Document &doc);
     void ReadExtensionsRequired(Document &doc);
 
-    IOStream *OpenFile(std::string path, const char *mode, bool absolute = false);
+    IOStream *OpenFile(const std::string &path, const char *mode, bool absolute = false);
+
+private:
+    IOSystem *mIOSystem;
+    rapidjson::IRemoteSchemaDocumentProvider *mSchemaDocumentProvider;
+    std::string mCurrentAssetDir;
+    size_t mSceneLength;
+    size_t mBodyOffset;
+    size_t mBodyLength;
+    IdMap mUsedIds;
+    Ref<Buffer> mBodyBuffer;
 };
+
+inline std::string getContextForErrorMessages(const std::string &id, const std::string &name) {
+    std::string context = id;
+    if (!name.empty()) {
+        context += " (\"" + name + "\")";
+    }
+    return context;
+}
 
 } // namespace glTF2
 

@@ -227,5 +227,5 @@
 
 
 # Set GitHub top language to C#
-Sources/Engine/External/FreeImage/* linguist-vendored
-Sources/Engine/External/FreeType/* linguist-vendored
+# Sources/Engine/External/FreeImage/* linguist-vendored
+# Sources/Engine/External/FreeType/* linguist-vendored

@@ -1,12 +1,13 @@
 $input v_texCoord0
 
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-#define DEFERRED_ENVIRONMENT_LIGHT 1
+//#define DEFERRED_ENVIRONMENT_LIGHT 1
 #include "Common.sh"
 #include "UniformsFragment.sh"
 #include "FragmentFunctions.sh"
 
-uniform vec4 u_lightDataFragment[LIGHTDATA_FRAGMENT_SIZE];
+uniform vec4 u_environmentLightParams;
+#define u_ssrEnabled ( u_environmentLightParams.w != 0.0 )
 
 uniform vec4 u_reflectionProbeData;
 #define u_reflectionProbePosition u_reflectionProbeData.xyz
@@ -36,7 +37,12 @@ SAMPLERCUBE(s_environmentTexture, 6);
 //SAMPLERCUBE(s_environmentTextureIBL, 7);
 SAMPLER2D(s_brdfLUT, 8);
 
+//#ifdef SSR
+SAMPLER2DARRAY( s_ssrTexture, 12 );
+//#endif
+
 #define SHADING_MODEL_SUBSURFACE
+#define SHADING_MODEL_FOLIAGE
 
 #include "PBRFilament/common_math.sh"
 #include "PBRFilament/brdf.sh"
@@ -47,7 +53,8 @@ SAMPLER2D(s_brdfLUT, 8);
 void main()
 {
 	float rawDepth = texture2D(s_depthTexture, v_texCoord0).r;
-	vec3 worldPosition = reconstructWorldPosition(u_invViewProj, v_texCoord0, rawDepth);
+	vec3 worldPosition = reconstructWorldPosition(u_viewportOwnerViewInverse, u_viewportOwnerProjectionInverse, v_texCoord0, rawDepth);
+	//vec3 worldPosition = reconstructWorldPosition(u_invViewProj, v_texCoord0, rawDepth);
 
 	// discard if probe pass and pixel outside of probe
 	float distanceToProbe = 0;
@@ -78,13 +85,14 @@ void main()
 	float subsurfacePower = gBuffer5Data.w * 15.0;
 	
 	bool shadingModelSubsurface = shadingModel == 1;
-	bool shadingModelSimple = shadingModel == 3;
+	bool shadingModelFoliage = shadingModel == 2;
+	bool shadingModelSimple = shadingModel == 4;//3;
 	
 	vec3 subsurfaceColor = vec3_splat(0);
 	vec3 emissive = vec3_splat(0);
 	{
 		vec3 v = decodeRGBE8(gBuffer3Data);
-		if(shadingModelSubsurface)
+		if(shadingModelSubsurface || shadingModelFoliage)
 			subsurfaceColor = v;
 		else
 			emissive = v;
@@ -106,7 +114,7 @@ void main()
 	toCamera = normalize(toCamera);
 
 	//light color
-	vec3 lightColor = u_lightPower.rgb * u_cameraExposure;
+	vec3 lightColor = u_environmentLightParams.rgb/*u_lightPower.rgb*/ * u_cameraExposure;
 
 	
 	vec4 resultColor = vec4_splat(0);
@@ -118,7 +126,7 @@ void main()
 	}
 	else
 	{
-		//Lit, Subsurface shading models
+		//Lit, Subsurface, Foliage shading models
 
 #if GLOBAL_MATERIAL_SHADING == GLOBAL_MATERIAL_SHADING_SIMPLE
 		resultColor.rgb = baseColor * lightColor;
@@ -140,8 +148,10 @@ void main()
 		material.reflectance = reflectance;
 		material.ambientOcclusion = ambientOcclusion;
 
+#ifdef MATERIAL_HAS_ANISOTROPY
 		material.anisotropyDirection = vec3_splat(0);
 		material.anisotropy = 0;
+#endif
 
 		//#if defined(SHADING_MODEL_SUBSURFACE)
 		material.thickness = thickness;
@@ -149,9 +159,11 @@ void main()
 		material.subsurfaceColor = subsurfaceColor;
 		//#endif
 
+#ifdef MATERIAL_HAS_CLEAR_COAT
 		material.clearCoat = 0;
 		material.clearCoatRoughness = 0;
 		material.clearCoatNormal = vec3_splat(0);
+#endif
 
 		/*
 		#if defined(SHADING_MODEL_CLOTH)
@@ -160,10 +172,11 @@ void main()
 		#endif
 		*/
 
-		setupPBRFilamentParams(material, tangent.xyz, bitangent, normal, vec3_splat(0), toLight, toCamera, gl_FrontFacing);
+		ShadingParams shading;
+		getPBRFilamentShadingParams( material, tangent.xyz, bitangent, normal, vec3_splat(0), toLight, toCamera, gl_FrontFacing, shading );
 
 		PixelParams pixel;
-		getPBRFilamentPixelParams(material, pixel);
+		getPBRFilamentPixelParams( material, shading, pixel );
 		
 		EnvironmentTextureData data1;
 		data1.rotation = u_deferredEnvironmentDataRotation;//u_environmentTextureRotation;
@@ -173,10 +186,22 @@ void main()
 		dataIBL.rotation = u_deferredEnvironmentDataIBLRotation;//u_environmentTextureIBLRotation;
 		dataIBL.multiplierAndAffect = u_deferredEnvironmentDataIBLMultiplierAndAffect;//u_environmentTextureIBLMultiplierAndAffect;
 
-		resultColor.rgb = iblDiffuse(material, pixel, u_deferredEnvironmentIrradiance, dataIBL, s_environmentTexture, data1, shadingModelSubsurface) +
-			iblSpecular(material, pixel, vec3_splat(0), 0, s_environmentTexture, data1);
-
+		vec3 diffuse = iblDiffuse( material, pixel, shading, u_deferredEnvironmentIrradiance, dataIBL, s_environmentTexture, data1, shadingModelSubsurface, shadingModelFoliage );
+		
+		vec4 screenSpaceReflection = vec4_splat( 0 );		
+//#ifdef SSR
+		BRANCH
+		if( u_ssrEnabled )
+			screenSpaceReflection = texture2DArrayLod( s_ssrTexture, vec3( v_texCoord0, roughness * 3.0 ), 0 );
+//#endif
+		
+		vec3 specular = iblSpecular( material, pixel, shading, screenSpaceReflection.xyz, screenSpaceReflection.w, s_environmentTexture, data1 );
+		resultColor.rgb = diffuse + specular;
+		
+		//resultColor.rgb = iblDiffuse(material, pixel, shading, u_deferredEnvironmentIrradiance, dataIBL, s_environmentTexture, data1, shadingModelSubsurface, shadingModelFoliage) + iblSpecular(material, pixel, shading, vec3_splat(0), 0, s_environmentTexture, data1);
+	
 		resultColor.rgb *= lightColor;
+		
 #endif
 	}
 

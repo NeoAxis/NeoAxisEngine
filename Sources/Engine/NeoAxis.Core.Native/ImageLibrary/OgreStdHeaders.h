@@ -33,6 +33,8 @@
 #ifndef FORCEINLINE
 #	if OGRE_COMPILER == OGRE_COMPILER_CLANG
 #		define FORCEINLINE __attribute__((always_inline))
+#	elif OGRE_COMPILER == OGRE_COMPILER_GNUC
+#		define FORCEINLINE inline
 #	else
 #		define FORCEINLINE __forceinline
 #	endif

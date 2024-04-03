@@ -24,7 +24,7 @@ namespace NeoAxis
 			{
 				if( value < 0 )
 					value = new Reference<double>( 0, value.GetByReference );
-				if( _radius.BeginSet( ref value ) ) { try { RadiusChanged?.Invoke( this ); } finally { _radius.EndSet(); } }
+				if( _radius.BeginSet( this, ref value ) ) { try { RadiusChanged?.Invoke( this ); } finally { _radius.EndSet(); } }
 			}
 		}
 		/// <summary>Occurs when the <see cref="Radius"/> property value changes.</summary>
@@ -44,7 +44,7 @@ namespace NeoAxis
 			{
 				if( value < 0 )
 					value = new Reference<double>( 0, value.GetByReference );
-				if( _height.BeginSet( ref value ) ) { try { HeightChanged?.Invoke( this ); } finally { _height.EndSet(); } }
+				if( _height.BeginSet( this, ref value ) ) { try { HeightChanged?.Invoke( this ); } finally { _height.EndSet(); } }
 			}
 		}
 		/// <summary>Occurs when the <see cref="Height"/> property value changes.</summary>

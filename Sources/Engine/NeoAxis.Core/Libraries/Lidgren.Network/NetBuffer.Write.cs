@@ -226,7 +226,11 @@ namespace Internal.Lidgren.Network
 			// can write fast?
 			if ((m_bitLength & 7) == 0)
 			{
+//#if !ANDROID
 				NetUtility.WriteUnaligned(Data.AsSpan(m_bitLength >> 3), ref source);
+//#else
+//				NetBitWriter.WriteUInt32( (UInt32)source, 32, Data, m_bitLength );
+//#endif
 			}
 			else
 			{
@@ -258,7 +262,11 @@ namespace Internal.Lidgren.Network
 			// can write fast?
 			if ((m_bitLength & 7) == 0)
 			{
+//#if !ANDROID
 				NetUtility.WriteUnaligned(Data.AsSpan(m_bitLength >> 3), ref source);
+//#else
+//				NetBitWriter.WriteUInt32( source, 32, Data, m_bitLength );
+//#endif
 			}
 			else
 			{
@@ -397,7 +405,7 @@ namespace Internal.Lidgren.Network
 		/// </summary>
 		public void Write(float source)
 		{
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP// || ANDROID
 			int val = BitConverter.SingleToInt32Bits(source);
 #else
 			int val = Unsafe.As<float, int>(ref source);
@@ -415,8 +423,8 @@ namespace Internal.Lidgren.Network
 		/// </summary>
 		public void Write(double source)
 		{
-#if NETSTANDARD2_1 || NETCOREAPP
-            long val = BitConverter.DoubleToInt64Bits(source);
+#if NETSTANDARD2_1 || NETCOREAPP// || ANDROID
+			long val = BitConverter.DoubleToInt64Bits(source);
 #else
             long val = Unsafe.As<double, long>(ref source);
 #endif

@@ -63,7 +63,8 @@ size_t strnlen(const char *s, size_t n)
 #ifdef ANDROID
 #include <asm/byteorder.h> 
 
-void swab(const void *from, void*to, ssize_t n)
+//!!!!betauser
+void swab2(const void *from, void*to, ssize_t n)//void swab(const void *from, void*to, ssize_t n)
 {
     if(n < 0)
         return;
@@ -82,6 +83,10 @@ void swab(const void *from, void*to, ssize_t n)
 		#endif
     }
 }
+//!!!!betauser
+#else
+   #define swab2 swab
+
 #endif
 
 #ifndef __GLIBC__
@@ -226,7 +231,7 @@ void CLASS read_shorts (ushort *pixel, int count)
 {
   if (fread (pixel, 2, count, ifp) < count) derror();
   if ((order == 0x4949) == (ntohs(0x1234) == 0x1234))
-    swab ((char*)pixel, (char*)pixel, count*2);
+    swab2 ((char*)pixel, (char*)pixel, count*2);
 }
 
 void CLASS cubic_spline (const int *x_, const int *y_, const int len)
@@ -2703,7 +2708,7 @@ fill_input_buffer (j_decompress_ptr cinfo)
   size_t nbytes;
 
   nbytes = fread (jpeg_buffer, 1, 4096, ifp);
-  swab (jpeg_buffer, jpeg_buffer, nbytes);
+  swab2 (jpeg_buffer, jpeg_buffer, nbytes);
   cinfo->src->next_input_byte = jpeg_buffer;
   cinfo->src->bytes_in_buffer = nbytes;
   return TRUE;
@@ -2780,7 +2785,7 @@ void CLASS kodak_jpeg_load_raw()
   merror(pixel_buf,"kodak_jpeg_load_raw");
 
   fread(jpg_buf,data_size,1,ifp);
-  swab ((char*)jpg_buf, (char*)jpg_buf, data_size);
+  swab2 ((char*)jpg_buf, (char*)jpg_buf, data_size);
   try
     {
       jpeg_mem_src(&cinfo, jpg_buf, data_size);
@@ -14766,7 +14771,7 @@ void CLASS write_ppm_tiff()
 	   FORCC ppm [col*colors+c] = curve[image[soff][c]] >> 8;
       else FORCC ppm2[col*colors+c] = curve[image[soff][c]];
     if (output_bps == 16 && !output_tiff && htons(0x55aa) != 0x55aa)
-      swab ((char*)ppm2, (char*)ppm2, width*colors*2);
+      swab2 ((char*)ppm2, (char*)ppm2, width*colors*2);
     fwrite (ppm, colors*output_bps/8, width, ofp);
   }
   free (ppm);

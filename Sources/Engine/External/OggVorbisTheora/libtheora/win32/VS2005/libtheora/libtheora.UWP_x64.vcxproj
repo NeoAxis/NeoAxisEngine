@@ -39,8 +39,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <GenerateManifest>false</GenerateManifest>
     <IgnoreImportLibrary>false</IgnoreImportLibrary>
-    <OutDir>$(SolutionDir)_Compilation\UWP\$(Platform)\$(MSBuildProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)_Compilation\UWP\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\UWP\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_build\UWP\$(Platform)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -59,11 +59,11 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
       <ModuleDefinitionFile>..\..\libtheora.def</ModuleDefinitionFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)Engine\Lib\UWP\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Sources\Engine\Lib\UWP\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>WindowsApp.lib;%(AdditionalDependencies);NativeMemoryManager.lib;libogg.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(OutDir)$(TargetName).lib" "$(SolutionDir)Engine\Lib\UWP\$(Platform)"
+      <Command>copy "$(OutDir)$(TargetName).lib" "$(SolutionDir)Sources\Engine\Lib\UWP\$(Platform)"
 rem copy $(OutDir)$(TargetName)$(TargetExt) "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

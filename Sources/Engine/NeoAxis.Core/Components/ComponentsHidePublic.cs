@@ -1,12 +1,6 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.IO;
-using System.Drawing.Design;
 using System.Runtime.CompilerServices;
 
 namespace NeoAxis
@@ -51,6 +45,11 @@ namespace NeoAxis
 		{
 			obj.PerformGetRenderSceneData( context );
 		}
+
+		//public static void PerformGetRenderSceneDataAfterObjects( Scene obj, ViewportRenderingContext context )
+		//{
+		//	obj.PerformGetRenderSceneDataAfterObjects( context );
+		//}
 
 		/////////////////////////////////////////
 		//ObjectInSpace

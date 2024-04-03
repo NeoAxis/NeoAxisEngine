@@ -1,9 +1,11 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"22296A4D49194EF268976ABF602970A9\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WS UN=\"0456B00D96B149C79998AD980C2D0279\" S=\"T,0,50:T,0,50\" D=\"Vertical\"><WC UN=\"E1F301B07EC6487188AB196DB53D79FB\" S=\"T,0,50:T,0,525\" NM=\"BarTabGroup\" AR=\"True\" SP=\"22296A4D49194EF268976ABF602970A9\"><KP UN=\"22296A4D49194EF268976ABF602970A9\" S=\"False\"><CPD ObjPath=\"\" /></KP></WC><WC UN=\"E6FC5A17B2B942946E971FA482395C42\" S=\"T,0,50:T,0,312\" NM=\"BarTabGroup\" AR=\"True\" SP=\"A50D235CAA3D4B3DAABD1FE0551E9D07\"><KP UN=\"A50D235CAA3D4B3DAABD1FE0551E9D07\" S=\"False\"><CPD ObjPath=\"$Spaceship\\$Input Processing\\$C# Script\" /></KP></WC></WS></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"07F44F47046D4794D4B38F4CF7DD7A07\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"0DF6541441E84D2550B3D01B893DAB72\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"07F44F47046D4794D4B38F4CF7DD7A07\"><KP UN=\"07F44F47046D4794D4B38F4CF7DD7A07\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"57893F0D0E144F678884B085CAAB9D1C\" S=\"False\"><CPD ObjPath=\"$Rendering Pipeline\\$Background Effects\\$Script\\$Shader graph\" /></KP><KP UN=\"CB060FDDB1A7430C59BA755C3DB17584\" S=\"False\"><CPD ObjPath=\"$Rendering Pipeline\\$Background Effects\\$Script\\$Shader graph\\$Node Shader 1\\$Shader\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	BackgroundColor = 0.2392157 0.2392157 0.2392157
 	Mode = _2D
+	ScreenOrientation = Landscape
 	Gravity2D = 0 0
 	RenderingPipeline
 	{
@@ -51,7 +53,7 @@
 		Name = Light 1
 		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
 		Type = Directional
-		Brightness = 130000
+		Brightness = 200000
 		AttenuationFar = 100
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
@@ -67,6 +69,118 @@
 		.component NeoAxis.Component
 		{
 			Name = Background Effects
+			.component NeoAxis.RenderingEffect_Script
+			{
+				Name = Script
+				Color
+				{
+					GetByReference = "this:$Shader graph\\$Node Shader 1\\$Shader\\__parameter_ReturnValue"
+				}
+				.component NeoAxis.FlowGraph
+				{
+					Name = Shader graph
+					EditorScrollPosition = -0.176470588235288 -5.17647058823529
+					Specialization
+					{
+						GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+					}
+					.component NeoAxis.FlowGraphNode
+					{
+						Name = Node Script
+						Position = 10 -7
+						ControlledObject
+						{
+							GetByReference = "this:..\\.."
+						}
+					}
+					.component NeoAxis.FlowGraphNode
+					{
+						Name = Node Shader 1
+						Position = -14 -10
+						ControlledObject
+						{
+							GetByReference = "this:$Shader"
+						}
+						.component NeoAxis.ShaderScript
+						{
+							Name = Shader
+							Code = "//Starfield shader from https://www.shadertoy.com/view/tst3WS\r\n\r\n// Goals:\r\n//  - Star sizes should not change when switching to fullscreen\r\n//  - Perceived brightness should not change with resolution (somewhat exclusive with goal one!)\r\n//  - Reduce flickering when scrolling\r\n\r\n\r\n// Dave Hoskins hash functions\r\nvec4 hash42(vec2 p)\r\n{\r\n\tvec4 p4 = fract(vec4(p.xyxy) * vec4(.1031, .1030, .0973, .1099));\r\n    p4 += dot(p4, p4.wzxy+19.19);\r\n    return fract((p4.xxyz+p4.yzzw)*p4.zywx) - 0.5;\r\n}\r\n\r\nvec2 hash22(vec2 p)\r\n{\r\n\tvec3 p3 = fract(vec3(p.xyx) * vec3(443.897, 441.423, 437.195));\r\n    p3 += dot(p3, p3.yzx+19.19);\r\n    return -1.0+2.0*fract((p3.xx+p3.yz)*p3.zy);\r\n}\r\n\r\n// IQ\'s Gradient Noise\r\nfloat Gradient2D( in vec2 p )\r\n{\r\n    vec2 i = floor( p );\r\n    vec2 f = fract( p );\r\n\tvec2 u = f*f*(3.0-2.0*f);\r\n\r\n    return mix( mix( dot( hash22( i + vec2(0.0,0.0) ), f - vec2(0.0,0.0) ), \r\n                     dot( hash22( i + vec2(1.0,0.0) ), f - vec2(1.0,0.0) ), u.x),\r\n                mix( dot( hash22( i + vec2(0.0,1.0) ), f - vec2(0.0,1.0) ), \r\n                     dot( hash22( i + vec2(1.0,1.0) ), f - vec2(1.0,1.0) ), u.x), u.y);\r\n}\r\n\r\nconst vec3 cold = vec3(255.0, 244.0, 189.0)/255.0;\r\nconst vec3 hot  = vec3(181.0, 236.0, 255.0)/255.0;\r\n\r\nvec3 StarFieldLayer(vec2 p, float du, float count, float brightness, float size)\r\n{\r\n    // Tiling:\r\n    vec2 pi;\r\n    du *= count;    p *= count;\r\n    pi  = floor(p); p  = fract(p)-0.5;\r\n  \r\n    // Randomize position, brightness and spectrum:\r\n    vec4 h = hash42(pi);\r\n\r\n    // Resolution independent radius:\r\n    float s = brightness*(0.7+0.6*h.z)*smoothstep(0.8*du, -0.2*du, length(p+0.9*h.xy) - size*du);\r\n\r\n\treturn s*mix(mix(vec3_splat(1.), cold, min(1.,-2.*h.w)), hot, max(0.,2.*h.w));   \r\n}\r\n\r\nvec3 StarField(vec2 p, float du)\r\n{\r\n    vec3 c;\r\n    c  = StarFieldLayer(p, du, 25.0, 0.18, 0.5); \r\n    c += StarFieldLayer(p, du, 15.0, 0.25, 0.5); \r\n    c += StarFieldLayer(p, du, 12.0, 0.50, 0.5); \r\n    c += StarFieldLayer(p, du,  5.0, 1.00, 0.5); \r\n    c += StarFieldLayer(p, du,  3.0, 1.00, 0.9); \r\n\r\n    // Cluster:\r\n    float s = 3.5*(max(0.2, Gradient2D(2.0*p*vec2(1.2,1.9)))-0.2)/(1.0-0.2);\r\n    c += s*StarFieldLayer(p, du, 160.0, 0.10, 0.5); \r\n    c += s*StarFieldLayer(p, du,  80.0, 0.15, 0.5); \r\n    c += s*StarFieldLayer(p, du,  40.0, 0.25, 0.5); \r\n    c += s*StarFieldLayer(p, du,  30.0, 0.50, 0.5); \r\n    c += s*StarFieldLayer(p, du,  20.0, 1.00, 0.5); \r\n    c += s*StarFieldLayer(p, du,  10.0, 1.00, 0.9); \r\n\r\n    c *= 1.3;\r\n    \r\n    // Resolution independent brightness:\r\n    float f = 1.0 / sqrt(60.0*du);\r\n    //float f = 1.0 / sqrt(660.0*du);\r\n\r\n    return f*min(c, 1.0);\r\n}\r\n\r\npublic vec4 Method( vec2 texCoord )\r\n{\r\n\r\n\t//!!!!too slow on mobile\r\n\r\n#ifdef MOBILE\r\n\r\n\treturn vec4( 0, 0, saturate( 0.2 + texCoord.x / 4.0 ), 0 );\r\n\r\n#else\r\n\r\n\tvec2 iResolution = u_viewportSize;\r\n\tfloat iTime = u_engineTime;\r\n\r\n    float du = 1.0 / iResolution.y;\r\n    vec2 uv = du * ( texCoord * iResolution - 0.5 * iResolution.xy) + vec2( 1.33 + iTime / 30.0, 0.0 ); \r\n    return vec4( StarField( uv, du ), 1.0 );\r\n    \r\n#endif\r\n    \r\n\t//return vec4(1,0,0,1);\r\n}\r\n"
+							__parameter_TexCoord
+							{
+								GetByReference = "this:..\\..\\$Node Invoke Member 1\\$Invoke Member\\__value_Value"
+							}
+						}
+					}
+					.component NeoAxis.FlowGraphNode
+					{
+						Name = Node Invoke Member 1
+						Position = -29 -11
+						ControlledObject
+						{
+							GetByReference = "this:$Invoke Member"
+						}
+						.component NeoAxis.InvokeMember
+						{
+							Name = Invoke Member
+							Member
+							{
+								GetByReference = "NeoAxis.ShaderConstants|property:TexCoord0"
+							}
+							Exit
+							{
+							}
+						}
+					}
+					.component NeoAxis.FlowGraphNode
+					{
+						Name = Node Invoke Member 3
+						Position = -29 -15
+						ControlledObject
+						{
+							GetByReference = "this:$Invoke Member"
+						}
+						.component NeoAxis.InvokeMember
+						{
+							Name = Invoke Member
+							Member
+							{
+								GetByReference = "NeoAxis.ShaderConstants|property:Color0"
+							}
+							Exit
+							{
+							}
+						}
+					}
+					.component NeoAxis.FlowGraphNode
+					{
+						Name = Node Shader Parameter 1
+						Position = -29 -7
+						ControlledObject
+						{
+							GetByReference = "this:$Shader Parameter"
+						}
+						.component NeoAxis.ShaderParameter
+						{
+							Name = Shader Parameter
+							Source
+							{
+								GetByReference = NeoAxis.EngineApp|EngineTime
+							}
+						}
+					}
+				}
+			}
+			.component NeoAxis.RenderingEffect_Noise
+			{
+				Name = Noise
+				ShaderFile = "Base\\Shaders\\Effects\\Noise_fs.sc"
+			}
+			.component NeoAxis.RenderingEffect_Pixelate
+			{
+				Enabled = False
+				Name = Pixelate
+				ShaderFile = "Base\\Shaders\\Effects\\Pixelate_fs.sc"
+			}
 		}
 		.component NeoAxis.Component
 		{
@@ -123,7 +237,7 @@
 	.component NeoAxis.GameMode
 	{
 		Name = Game Mode
-		ThirdPersonCameraHorizontalAngle = -180
+		ThirdPersonCameraHorizontalAngle = 0
 		CutsceneStarted = False
 		CutsceneGuiFadingFactor = 0
 		CutsceneGuiFadingSpeed = 0
@@ -133,6 +247,29 @@
 		ObjectControlledByPlayer
 		{
 			GetByReference = "this:..\\$Spaceship"
+		}
+	}
+	.component NeoAxis.Material
+	{
+		Name = Material White
+		ShadingModel = Unlit
+		.component NeoAxis.FlowGraph
+		{
+			Name = Shader graph
+			EditorScrollPosition = 0 0
+			Specialization
+			{
+				GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+			}
+			.component NeoAxis.FlowGraphNode
+			{
+				Name = Node Material White
+				Position = 10 -7
+				ControlledObject
+				{
+					GetByReference = "this:..\\.."
+				}
+			}
 		}
 	}
 	.component NeoAxis.Sprite
@@ -162,8 +299,11 @@
 			Name = Collision Body
 			Transform = "2.27723759820109 1.77330378085272 0; 0 0 0 1; 0.3 0.3 0.3"
 			MotionType = Dynamic
+			LinearDamping = 0.6
+			AngularDamping = 0.6
 			.component NeoAxis.CollisionShape2D_Mesh
 			{
+				Name = Shape
 				CollidesWith = All
 				ShapeType = Convex
 				Vertices
@@ -203,50 +343,11 @@
 		.component NeoAxis.InputProcessing
 		{
 			Name = Input Processing
-			.component NeoAxis.CSharpScript
-			{
-				Name = C# Script
-				Code = "public double LastSpeedingUp;\r\npublic double LastTurning;\r\n\r\npublic void InputProcessing_SimulationStep(NeoAxis.Component obj)\r\n{\r\n\tvar sender = (NeoAxis.InputProcessing)obj;\r\n\r\n\tLastSpeedingUp = 0;\r\n\tLastTurning = 0;\r\n\r\n\t//get access to the ship\r\n\tvar ship = sender.Parent;\r\n\tif (ship == null)\r\n\t\treturn;\r\n\r\n\t//control the ship\r\n\tvar body = ship.GetComponent<RigidBody2D>();\r\n\tif (body != null)\r\n\t{\r\n\t\t//keyboard\r\n\r\n\t\t//fly forward\r\n\t\tif (sender.IsKeyPressed(EKeys.W) || sender.IsKeyPressed(EKeys.Up) || sender.IsKeyPressed(EKeys.NumPad8))\r\n\t\t{\r\n\t\t\tvar dir = body.TransformV.Rotation.GetForward().ToVector2();\r\n\t\t\tbody.ApplyForce(dir * 1.0);\t\t\r\n\t\t\tLastSpeedingUp += 1.0;\r\n\t\t}\r\n\r\n\t\t//fly back\r\n\t\tif (sender.IsKeyPressed(EKeys.S) || sender.IsKeyPressed(EKeys.Down) || sender.IsKeyPressed(EKeys.NumPad2))\r\n\t\t{\r\n\t\t\tvar dir = body.TransformV.Rotation.GetForward().ToVector2();\r\n\t\t\tbody.ApplyForce(dir * -1.0);\t\t\t\r\n\t\t\tLastSpeedingUp -= 1.0;\r\n\t\t}\r\n\r\n\t\t//turn left\r\n\t\tif (sender.IsKeyPressed(EKeys.A) || sender.IsKeyPressed(EKeys.Left) || sender.IsKeyPressed(EKeys.NumPad4))\r\n\t\t{\r\n\t\t\tbody.ApplyTorque(1.0);\r\n\t\t\tLastTurning += 1.0;\r\n\t\t}\r\n\r\n\t\t//turn right\r\n\t\tif (sender.IsKeyPressed(EKeys.D) || sender.IsKeyPressed(EKeys.Right) || sender.IsKeyPressed(EKeys.NumPad6))\r\n\t\t{\r\n\t\t\tbody.ApplyTorque(-1.0);\r\n\t\t\tLastTurning -= 1.0;\r\n\t\t}\r\n\r\n\t\t//movement by joystick axes\r\n\t\tif (Math.Abs(sender.JoystickAxes[0]) >= 0.01)\r\n\t\t{\r\n\t\t\tbody.ApplyTorque(-sender.JoystickAxes[0]);\r\n\t\t\tLastTurning -= sender.JoystickAxes[0];\r\n\t\t}\r\n\t\tif (Math.Abs(sender.JoystickAxes[1]) >= 0.01)\r\n\t\t{\r\n\t\t\tvar dir = body.TransformV.Rotation.GetForward().ToVector2();\r\n\t\t\tbody.ApplyForce(dir * sender.JoystickAxes[1]);\r\n\t\t\tLastSpeedingUp += sender.JoystickAxes[1];\r\n\t\t}\r\n\t\t//JoystickAxes\r\n\t\t//JoystickButtons\r\n\t\t//JoystickPOVs\r\n\t\t//JoystickSliders\r\n\t\t//IsJoystickButtonPressed\r\n\t\t//GetJoystickAxis\r\n\t\t//GetJoystickPOV\r\n\t\t//GetJoystickSlider\r\n\r\n\r\n\t\t//multi-touch\r\n\r\n\t\t//debug to control by mouse\r\n\t\t//Vector2[] touchPositions = new Vector2[0];\t\t\r\n\t\t//if(sender.IsMouseButtonPressed(EMouseButtons.Left))\r\n\t\t//\ttouchPositions = new Vector2[] { sender.MousePosition };\r\n\t\t\r\n\t\tforeach(var data in sender.TouchPointers)\r\n\t\t{\r\n\t\t\tvar touchPosition = data.Position; \r\n\r\n\t\t\tif(touchPosition.X < 0.5 && touchPosition.Y > 0.4)\r\n\t\t\t{\r\n\t\t\t\t//fly forward, back\r\n\t\t\t\t{\r\n\t\t\t\t\tvar factor = 1.0 - (touchPosition.Y - 0.6) / 0.4;\r\n\t\t\t\t\tvar force = factor * 2.0 - 1.0;\r\n\t\t\t\t\tforce *= 1.2;\r\n\t\t\t\t\tforce = MathEx.Clamp(force, -1.0, 1.0);\r\n\r\n\t\t\t\t\tvar dir = body.TransformV.Rotation.GetForward().ToVector2();\r\n\t\t\t\t\tbody.ApplyForce(dir * force);\r\n\r\n\t\t\t\t\tLastSpeedingUp += force;\r\n\t\t\t\t}\r\n\t\t\t\t\r\n\t\t\t\t//turn left, right\r\n\t\t\t\t{\r\n\t\t\t\t\tvar factor = 1.0 - MathEx.Clamp(touchPosition.X / 0.2, 0, 1);\r\n\t\t\t\t\tvar force = factor * 2.0 - 1.0;\t\t\t\t\t\r\n\t\t\t\t\tforce *= 1.2;\r\n\t\t\t\t\tforce = MathEx.Clamp(force, -1.0, 1.0);\r\n\t\t\t\t\t\r\n\t\t\t\t\tbody.ApplyTorque(force);\r\n\t\r\n\t\t\t\t\tLastTurning += force;\r\n\t\t\t\t}\r\n\t\t\t}\r\n\t\t}\r\n\r\n\t}\r\n\t\r\n}\r\n\r\npublic void InputProcessing_InputMessageEvent(NeoAxis.InputProcessing sender, NeoAxis.GameMode gameMode, NeoAxis.InputMessage message)\r\n{\r\n\t////get access to the ship\r\n\t//var ship = sender.Parent;\r\n\t//if (ship == null)\r\n\t//\treturn;\r\n\r\n\t//var keyDown = message as InputMessageKeyDown;\r\n\t//if(keyDown != null)\r\n\t//{\r\n\t//\tif(keyDown.Key == EKeys.Space)\r\n\t//\t{\r\n\t//\t\t//var body = ship.GetComponent<RigidBody2D>();\r\n\t//\t\t//if (body != null)\r\n\t//\t\t//{\r\n\t//\t\t//\tbody.ApplyForce(new Vector2(1, 0));\r\n\t//\t\t//}\r\n\t//\t}\r\n\t//}\r\n}\r\n"
-				LastSpeedingUp = 0
-				LastTurning = 0
-				Exit
-				{
-				}
-				.component NeoAxis.EventHandlerComponent
-				{
-					Name = Event Handler InputMessageEvent
-					Event
-					{
-						GetByReference = "this:..\\..\\event:InputMessageEvent"
-					}
-					HandlerMethod
-					{
-						GetByReference = "this:..\\method:InputProcessing_InputMessageEvent(NeoAxis.InputProcessing,NeoAxis.InputMessage)"
-					}
-					HandlerFlow
-					{
-					}
-				}
-				.component NeoAxis.EventHandlerComponent
-				{
-					Name = Event Handler SimulationStep
-					Event
-					{
-						GetByReference = "this:..\\..\\event:SimulationStep"
-					}
-					HandlerMethod
-					{
-						GetByReference = "this:..\\method:InputProcessing_SimulationStep(NeoAxis.Component)"
-					}
-					HandlerFlow
-					{
-					}
-				}
-			}
 		}
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Enabled = False
 		Name = Ground
 		CanBeSelected = False
 		Transform = "0 0 -2; 0 0 0 1; 1 1 1"
@@ -313,7 +414,7 @@
 	.component NeoAxis.Sprite
 	{
 		Name = Sprite 4
-		Color = 0.9727451 0.9879216 1
+		Color = 0.4313726 0.4313726 0.4313726
 		Transform
 		{
 			GetByReference = "this:$Rigid Body 2D\\Transform"
@@ -347,7 +448,7 @@
 	.component NeoAxis.Sprite
 	{
 		Name = Sprite 17
-		Color = 0.9727451 0.9879216 1
+		Color = 0.4313726 0.4313726 0.4313726
 		Transform
 		{
 			GetByReference = "this:$Rigid Body 2D\\Transform"
@@ -378,36 +479,17 @@
 			}
 		}
 	}
-	.component NeoAxis.Material
-	{
-		Name = Material White
-		ShadingModel = Unlit
-		.component NeoAxis.FlowGraph
-		{
-			Name = Shader graph
-			EditorScrollPosition = 0 0
-			Specialization
-			{
-				GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
-			}
-			.component NeoAxis.FlowGraphNode
-			{
-				Name = Node Material White
-				Position = 10 -7
-				ControlledObject
-				{
-					GetByReference = "this:..\\.."
-				}
-			}
-		}
-	}
 	.component NeoAxis.Sprite
 	{
 		Name = Sprite
-		Color = 1 1 0
+		Color = 0 0.3970588 0.7607843
 		Transform
 		{
 			GetByReference = "this:$Rigid Body 2D\\Transform"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material White"
 		}
 		ReplaceMaterialSelectively
 		{
@@ -435,10 +517,14 @@
 	.component NeoAxis.Sprite
 	{
 		Name = Sprite 14
-		Color = 1 1 0
+		Color = 0 0.3970588 0.7607843
 		Transform
 		{
 			GetByReference = "this:$Rigid Body 2D\\Transform"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material White"
 		}
 		ReplaceMaterialSelectively
 		{

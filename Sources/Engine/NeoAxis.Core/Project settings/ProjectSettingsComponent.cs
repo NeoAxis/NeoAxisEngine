@@ -10,7 +10,7 @@ namespace NeoAxis
 	/// Component representing the settings of the project.
 	/// </summary>
 #if !DEPLOY
-	[EditorControl( typeof( ObjectSettingsWindow ) )]
+	[EditorControl( "NeoAxis.Editor.ObjectSettingsWindow" )]
 #endif
 	public class ProjectSettingsComponent : Component
 	{
@@ -33,7 +33,7 @@ namespace NeoAxis
 #if !DEPLOY
 				if( EngineApp.IsEditor )
 				{
-					var document = EditorUtility.GetDocumentByComponent( this );
+					var document = EditorAPI.GetDocumentByComponent( this );
 					if( document != null && document.SpecialMode == "ProjectSettingsUserMode" )
 						return true;
 				}
@@ -179,7 +179,6 @@ namespace NeoAxis
 		}
 		ProjectSettingsPage_Shortcuts shortcuts;
 
-
 		[Browsable( false )]
 		public ProjectSettingsPage_Rendering Rendering
 		{
@@ -192,17 +191,16 @@ namespace NeoAxis
 		}
 		ProjectSettingsPage_Rendering rendering;
 
-
-		//[Browsable( false )]
-		//public ProjectSettingsPage_General CustomSplashScreen
-		//{
-		//	get
-		//	{
-		//		if( customSplashScreen == null )
-		//			customSplashScreen = GetComponent<ProjectSettingsPage_CustomSplashScreen>();
-		//		return customSplashScreen ?? new ProjectSettingsPage_CustomSplashScreen();
-		//	}
-		//}
-		//ProjectSettingsPage_CustomSplashScreen customSplashScreen;
+		[Browsable( false )]
+		public ProjectSettingsPage_Repository Repository
+		{
+			get
+			{
+				if( repository == null )
+					repository = GetComponent<ProjectSettingsPage_Repository>();
+				return repository ?? new ProjectSettingsPage_Repository();
+			}
+		}
+		ProjectSettingsPage_Repository repository;
 	}
 }

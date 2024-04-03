@@ -1,5 +1,6 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
+using System.Collections.Generic;
 using NeoAxis;
 using NeoAxis.Networking;
 
@@ -17,6 +18,8 @@ namespace Project
 		public static string lastPassword { get; set; } = "";
 
 		MessageBoxWindow.ResultData connectingWindowData;
+
+		List<(string, string)> predefinedServers = new List<(string, string)>();
 
 		/////////////////////////////////////////
 
@@ -101,9 +104,36 @@ namespace Project
 			var list = GetListServers();
 			if( list != null )
 			{
-				//!!!!find servers in local network
+				list.Items.Add( "" );// "Not selected" );
+				predefinedServers.Add( ("", "") );
 
-				list.Items.Add( "localhost" );
+				//get prefined list from NeoAxis.DefaultSettings.config
+				foreach( var block in VirtualFileSystem.DefaultSettingsConfig.Children )
+				{
+					if( string.Compare( block.Name, "PredefinedServer", true ) == 0 )
+					{
+						string address = block.GetAttribute( "Address" );
+						string port = block.GetAttribute( "Port" );
+
+						if( !string.IsNullOrEmpty( address ) )
+						{
+							if( address.Contains( ":" ) )
+								list.Items.Add( "[" + address + "]:" + port );
+							else
+								list.Items.Add( address + ":" + port );
+
+							predefinedServers.Add( (address, port) );
+						}
+					}
+				}
+
+				//!!!!find servers in local network
+				//{
+				//}
+
+
+				//hardcoded variant:
+				//list.Items.Add( "1.1.1.1:52000" );
 			}
 		}
 
@@ -208,5 +238,15 @@ namespace Project
 				break;
 			}
 		}
-	}
+
+        public void ListServers_SelectedIndexChanged(NeoAxis.UIList sender)
+        {
+			if( sender.SelectedIndex > 0 )
+			{
+				var value = predefinedServers[ sender.SelectedIndex ];
+				GetEditAddress().Text = value.Item1;
+				GetEditPort().Text = value.Item2;
+			}
+        }
+    }
 }

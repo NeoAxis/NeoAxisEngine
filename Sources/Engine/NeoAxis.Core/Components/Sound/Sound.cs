@@ -20,7 +20,7 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "sound" )]
 #if !DEPLOY
-	[Preview( typeof( SoundPreview ) )]
+	[Preview( "NeoAxis.Editor.SoundPreview" )]
 #endif
 	public class Sound : ResultCompile<Sound.CompiledData>
 	{
@@ -38,7 +38,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _createFormat.BeginSet( ref value ) )
+		//		if( _createFormat.BeginSet( this, ref value ) )
 		//		{
 		//			try { CreateFormatChanged?.Invoke( this ); }
 		//			finally { _createFormat.EndSet(); }
@@ -61,7 +61,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _createSize.BeginSet( ref value ) )
+		//		if( _createSize.BeginSet( this, ref value ) )
 		//		{
 		//			try { CreateSizeChanged?.Invoke( this ); }
 		//			finally { _createSize.EndSet(); }
@@ -84,7 +84,7 @@ namespace NeoAxis
 			get { if( _loadFile.BeginGet() ) LoadFile = _loadFile.Get( this ); return _loadFile.value; }
 			set
 			{
-				if( _loadFile.BeginSet( ref value ) )
+				if( _loadFile.BeginSet( this, ref value ) )
 				{
 					try
 					{

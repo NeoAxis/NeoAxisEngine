@@ -25,7 +25,7 @@ namespace NeoAxis
 		public Reference<double> Time
 		{
 			get { if( _time.BeginGet() ) Time = _time.Get( this ); return _time.value; }
-			set { if( _time.BeginSet( ref value ) ) { try { TimeChanged?.Invoke( this ); } finally { _time.EndSet(); } } }
+			set { if( _time.BeginSet( this, ref value ) ) { try { TimeChanged?.Invoke( this ); } finally { _time.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Time"/> property value changes.</summary>
 		public event Action<CharacterAITask_Wait> TimeChanged;

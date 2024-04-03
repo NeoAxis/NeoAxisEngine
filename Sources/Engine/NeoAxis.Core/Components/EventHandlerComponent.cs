@@ -38,7 +38,7 @@ namespace NeoAxis
 			get { if( _event.BeginGet() ) Event = _event.Get( this ); return _event.value; }
 			set
 			{
-				if( _event.BeginSet( ref value ) )
+				if( _event.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -63,7 +63,7 @@ namespace NeoAxis
 			get { if( _sender.BeginGet() ) Sender = _sender.Get( this ); return _sender.value; }
 			set
 			{
-				if( _sender.BeginSet( ref value ) )
+				if( _sender.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -88,7 +88,7 @@ namespace NeoAxis
 			get { if( _handlerMethod.BeginGet() ) HandlerMethod = _handlerMethod.Get( this ); return _handlerMethod.value; }
 			set
 			{
-				if( _handlerMethod.BeginSet( ref value ) )
+				if( _handlerMethod.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -112,7 +112,7 @@ namespace NeoAxis
 			get { if( _handlerFlow.BeginGet() ) HandlerFlow = _handlerFlow.Get( this ); return _handlerFlow.value; }
 			set
 			{
-				if( _handlerFlow.BeginSet( ref value ) )
+				if( _handlerFlow.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -144,7 +144,7 @@ namespace NeoAxis
 		public Reference<WhenEnableEnum> WhenEnable
 		{
 			get { if( _whenEnable.BeginGet() ) WhenEnable = _whenEnable.Get( this ); return _whenEnable.value; }
-			set { if( _whenEnable.BeginSet( ref value ) ) { try { WhenEnableChanged?.Invoke( this ); UpdateSubscription(); } finally { _whenEnable.EndSet(); } } }
+			set { if( _whenEnable.BeginSet( this, ref value ) ) { try { WhenEnableChanged?.Invoke( this ); UpdateSubscription(); } finally { _whenEnable.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="WhenEnable"/> property value changes.</summary>
 		public event Action<EventHandlerComponent> WhenEnableChanged;
@@ -272,7 +272,7 @@ namespace NeoAxis
 						var ins = ComponentUtility.GetResourceInstanceByComponent( this );
 						var isResource = ins != null && ins.InstanceType == Resource.InstanceType.Resource;
 
-						if( ( ( whenEnable & WhenEnableEnum.Resource ) != 0 ) && isResource || 
+						if( ( ( whenEnable & WhenEnableEnum.Resource ) != 0 ) && isResource ||
 							( ( whenEnable & WhenEnableEnum.Instance ) != 0 ) && !isResource )
 						{
 							subscribed = true;
@@ -447,8 +447,7 @@ namespace NeoAxis
 			var instance = func.Target == null ? null : Expression.Constant( func.Target );
 			var converted = parameters.Select( parm => Expression.Convert( parm, typeof( object ) ) );
 			var call = Expression.Call( instance, func.Method, Expression.NewArrayInit( typeof( object ), converted ) );
-			var body = invokeMethod.ReturnType == typeof( void ) ?
-				(Expression)call : Expression.Convert( call, invokeMethod.ReturnType );
+			var body = invokeMethod.ReturnType == typeof( void ) ? (Expression)call : Expression.Convert( call, invokeMethod.ReturnType );
 			var expr = Expression.Lambda( delegateType, body, parameters );
 			return expr.Compile();
 		}

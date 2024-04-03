@@ -27,7 +27,7 @@ namespace NeoAxis
 		public Reference<ColorValue> Color
 		{
 			get { if( _color.BeginGet() ) Color = _color.Get( this ); return _color.value; }
-			set { if( _color.BeginSet( ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
+			set { if( _color.BeginSet( this, ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Color"/> property value changes.</summary>
 		public event Action<RenderingEffect_Vignetting> ColorChanged;
@@ -42,7 +42,7 @@ namespace NeoAxis
 		public Reference<double> Radius
 		{
 			get { if( _radius.BeginGet() ) Radius = _radius.Get( this ); return _radius.value; }
-			set { if( _radius.BeginSet( ref value ) ) { try { RadiusChanged?.Invoke( this ); } finally { _radius.EndSet(); } } }
+			set { if( _radius.BeginSet( this, ref value ) ) { try { RadiusChanged?.Invoke( this ); } finally { _radius.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Radius"/> property value changes.</summary>
 		public event Action<RenderingEffect_Vignetting> RadiusChanged;
@@ -57,7 +57,7 @@ namespace NeoAxis
 		public Reference<Range> NoiseRange
 		{
 			get { if( _noiseRange.BeginGet() ) NoiseRange = _noiseRange.Get( this ); return _noiseRange.value; }
-			set { if( _noiseRange.BeginSet( ref value ) ) { try { NoiseRangeChanged?.Invoke( this ); } finally { _noiseRange.EndSet(); } } }
+			set { if( _noiseRange.BeginSet( this, ref value ) ) { try { NoiseRangeChanged?.Invoke( this ); } finally { _noiseRange.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="NoiseRange"/> property value changes.</summary>
 		public event Action<RenderingEffect_Vignetting> NoiseRangeChanged;

@@ -90,6 +90,7 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Implementation\RestartApp.cs" />
     <Compile Include="Implementation\Engine.cs" />
     <Compile Include="Implementation\FunctionalityAndroid.cs" />
     <Compile Include="Implementation\FunctionalityAndroid.Input.cs" />
@@ -177,13 +178,9 @@
     <AndroidNativeLibrary Include="lib\armeabi-v7a\libOpenAL.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AndroidNativeLibrary>
-    <AndroidNativeLibrary Include="lib\armeabi-v7a\libshaderc.so">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </AndroidNativeLibrary>
     <None Include="lib\arm64-v8a\libbgfx.so" />
     <None Include="lib\arm64-v8a\libNeoAxisCoreNative.so" />
     <None Include="lib\arm64-v8a\libOpenAL.so" />
-    <None Include="lib\arm64-v8a\libshaderc.so" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml" />
     <None Include="Assets\AboutAssets.txt" />
@@ -221,6 +218,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Android.Support.Design" Version="26.1.0.1" />
+    <PackageReference Include="Xamarin.Plugins.Clipboard">
+      <Version>2.3.0</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <AndroidEnvironment Include="environment.txt" />

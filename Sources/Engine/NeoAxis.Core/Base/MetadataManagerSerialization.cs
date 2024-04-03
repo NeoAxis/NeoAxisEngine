@@ -7,6 +7,7 @@ using System.Reflection;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -148,6 +149,7 @@ namespace NeoAxis
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			static void RegisterSimpleTypes()
 			{
 				foreach( SimpleTypes.TypeItem item in SimpleTypes.Types )
@@ -209,6 +211,7 @@ namespace NeoAxis
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			static void RegisterEnum()
 			{
 				serializableTypes_Enum = new SerializableTypeItem();
@@ -269,6 +272,7 @@ namespace NeoAxis
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			static void RegisterArray()
 			{
 				serializableTypes_Array = new SerializableTypeItem();
@@ -481,7 +485,7 @@ namespace NeoAxis
 							{
 								var value2 = (byte[])value;
 
-								var zipped = IOUtility.Zip( value2 );
+								var zipped = IOUtility.Zip( value2, CompressionLevel.Fastest );
 								if( zipped.Length < (int)( (float)value2.Length / 1.25 ) )
 								{
 									string str = Convert.ToBase64String( zipped, Base64FormattingOptions.None );
@@ -636,6 +640,7 @@ namespace NeoAxis
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			static Type GetGenericArgumentInBaseTypes( Type type, Type findType, int index )
 			{
 				var t = type;
@@ -652,6 +657,7 @@ namespace NeoAxis
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			public static void RegisterListSet( Type containerType )
 			{
 				RegisterSerializableType( containerType, false,
@@ -994,6 +1000,7 @@ namespace NeoAxis
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			public static void RegisterDictionary( Type containerType )
 			{
 				RegisterSerializableType( containerType, false,
@@ -1389,6 +1396,7 @@ namespace NeoAxis
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			static void RegisterReference()
 			{
 				RegisterSerializableType( typeof( Reference<> ), false,
@@ -1591,6 +1599,7 @@ namespace NeoAxis
 
 			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			static void RegisterComponent()
 			{
 				//!!!!!
@@ -1689,6 +1698,7 @@ namespace NeoAxis
 				RegisterComponent();
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			static bool Load_LoadMemberForRegisteredType( Metadata.LoadContext context, ref object obj, MemberData member, TextBlock block, out bool fullySerialized, out string error )
 			{
 				SerializableTypeItem item = GetSuitableSerializableType( member.Type.GetNetType(), out fullySerialized );
@@ -1714,6 +1724,7 @@ namespace NeoAxis
 				return true;
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			static bool Load_LoadMemberForNotRegisteredType( Metadata.LoadContext context, ref object obj, MemberData member, TextBlock block, out string error )
 			{
 				//!!!!!?
@@ -1773,6 +1784,7 @@ namespace NeoAxis
 				return true;
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			public static bool Serialization_LoadMemberRecursive( Metadata.LoadContext context, ref object obj, MemberData member, TextBlock block, out string error )
 			{
 				//"ref obj" - for structures
@@ -1790,6 +1802,7 @@ namespace NeoAxis
 				return true;
 			}
 
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public static bool IsMemberSerializable( Metadata.Member member )
 			{
 				var property = member as Metadata.Property;
@@ -1817,6 +1830,7 @@ namespace NeoAxis
 				return false;
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			public static bool LoadSerializableMember( Metadata.LoadContext context, object obj, Metadata.Member member, TextBlock block, out string error )
 			{
 				var property = member as Metadata.Property;
@@ -1841,6 +1855,7 @@ namespace NeoAxis
 				return true;
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			public static bool LoadSerializableMembers( Metadata.LoadContext context, object obj, TextBlock block, out string error )
 			{
 				foreach( var member in MetadataGetMembers( obj, new Metadata.GetMembersContext( false ) ) )
@@ -1853,6 +1868,7 @@ namespace NeoAxis
 				return true;
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			static bool Save_SaveMemberForRegisteredType( Metadata.SaveContext context, ref object obj, MemberData member, TextBlock block, out bool fullySerialized, out string error )
 			{
 				SerializableTypeItem item = GetSuitableSerializableType( member.Type.GetNetType(), out fullySerialized );
@@ -1882,6 +1898,7 @@ namespace NeoAxis
 				return true;
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			static bool Save_SaveMemberForNotRegisteredType( Metadata.SaveContext context, ref object obj, MemberData member, TextBlock block, out string error )
 			{
 				object value = member.GetValue( obj );
@@ -1912,6 +1929,7 @@ namespace NeoAxis
 				return true;
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			public static bool Serialization_SaveMemberRecursive( Metadata.SaveContext context, ref object obj, MemberData member, TextBlock block, out string error )
 			{
 				bool fullySerialized;
@@ -1928,6 +1946,7 @@ namespace NeoAxis
 				return true;
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			public static bool SaveSerializableMember( Metadata.SaveContext context, object obj, Metadata.Member member, TextBlock block, out bool serialized, out string error )
 			{
 				serialized = false;
@@ -1972,6 +1991,7 @@ namespace NeoAxis
 				return true;
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			public static bool SaveSerializableMembers( Metadata.SaveContext context, object obj, TextBlock block, out string error )
 			{
 				foreach( var member in MetadataGetMembers( obj, new Metadata.GetMembersContext( false ) ) )
@@ -1984,6 +2004,7 @@ namespace NeoAxis
 				return true;
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			public static void CloneMemberValues( Metadata.CloneContext context, object sourceObject, object newObject )
 			{
 				//members
@@ -2108,6 +2129,7 @@ namespace NeoAxis
 				}
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			static void CloneNotRegisteredType( Metadata.CloneContext context, ref object obj )
 			{
 				var cloneable = obj as ICloneable;
@@ -2123,6 +2145,7 @@ namespace NeoAxis
 				}
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			public static void CloneObject( Metadata.CloneContext context, object sourceObject, object newObject, Metadata.Property property, ref object value )
 			{
 				if( value != null )

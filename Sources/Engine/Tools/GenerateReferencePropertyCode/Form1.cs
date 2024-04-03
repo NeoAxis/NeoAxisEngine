@@ -69,7 +69,7 @@ public Reference<{TypeName}> {PropertyName}
 	}
 	set
 	{
-		if( {FieldName}.BeginSet( ref value ) )
+		if( {FieldName}.BeginSet( this, ref value ) )
 		{
 {CheckValue}
 			try { {PropertyName}Changed?.Invoke( this ); }
@@ -90,7 +90,7 @@ ReferenceField<{TypeName}> {FieldName}{DefaultValueSet};
 public Reference<{TypeName}> {PropertyName}
 {
 	get { if( {FieldName}.BeginGet() ) {PropertyName} = {FieldName}.Get( this ); return {FieldName}.value; }
-	set { if( {FieldName}.BeginSet( ref value ) ) { {CheckValue} try { {PropertyName}Changed?.Invoke( this ); } finally { {FieldName}.EndSet(); } {AdditionalActionsWrong} } }
+	set { if( {FieldName}.BeginSet( this, ref value ) ) { {CheckValue} try { {PropertyName}Changed?.Invoke( this ); } finally { {FieldName}.EndSet(); } {AdditionalActionsWrong} } }
 }
 /// <summary>Occurs when the <see cref={Quote}{PropertyName}{Quote}/> property value changes.</summary>
 public event Action<{ClassName}> {PropertyName}Changed;
@@ -112,7 +112,7 @@ public Reference<{TypeName}> {PropertyName}
 	set
 	{
 {CheckValue}
-		if( {FieldName}.BeginSet( ref value ) )
+		if( {FieldName}.BeginSet( this, ref value ) )
 		{
 			try
 			{

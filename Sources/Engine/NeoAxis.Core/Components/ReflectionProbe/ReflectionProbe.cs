@@ -8,10 +8,10 @@ using NeoAxis.Editor;
 namespace NeoAxis
 {
 	/// <summary>
-	/// The camera that captures surroundings in the scene and passes information to the reflective surfaces.
+	/// The component is capturing surroundings of the scene to get reflections and to get ambient lighting data.
 	/// </summary>
 #if !DEPLOY
-	[SettingsCell( typeof( ReflectionProbeSettingsCell ) )]
+	[SettingsCell( "NeoAxis.Editor.ReflectionProbeSettingsCell" )]
 #endif
 	public class ReflectionProbe : ObjectInSpace
 	{
@@ -24,6 +24,21 @@ namespace NeoAxis
 		//ImageComponent processedIrradianceCubemap;
 
 		string networkOwnedFileNameOfComponent = "";
+
+
+		//real-time
+
+		ImageComponent createdImage;
+		bool createdImageAtLeastOneTimeUpdated;
+		int createdForSize;
+		bool createdForHDR;
+
+		Viewport[] createdViewports;
+		RenderingPipeline_Basic createdRenderingPipeline;
+
+		bool viewportDuringUpdate;
+
+		double lastVisibleTime;
 
 		/////////////////////////////////////////
 
@@ -42,7 +57,7 @@ namespace NeoAxis
 			get { if( _mode.BeginGet() ) Mode = _mode.Get( this ); return _mode.value; }
 			set
 			{
-				if( _mode.BeginSet( ref value ) )
+				if( _mode.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -59,7 +74,20 @@ namespace NeoAxis
 		public event Action<ReflectionProbe> ModeChanged;
 		ReferenceField<ModeEnum> _mode = ModeEnum.Resource;// Capture;
 
-		//!!!!может ColorMultiplier?
+		/// <summary>
+		/// Whether to affect all scene instead of sphere volume.
+		/// </summary>
+		[DefaultValue( false )]
+		public Reference<bool> Global
+		{
+			get { if( _global.BeginGet() ) Global = _global.Get( this ); return _global.value; }
+			set { if( _global.BeginSet( this, ref value ) ) { try { GlobalChanged?.Invoke( this ); } finally { _global.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Global"/> property value changes.</summary>
+		public event Action<ReflectionProbe> GlobalChanged;
+		ReferenceField<bool> _global = false;
+
+		//может ColorMultiplier?
 		///// <summary>
 		///// The brightness of the reflection probe.
 		///// </summary>
@@ -68,7 +96,7 @@ namespace NeoAxis
 		//public Reference<double> Brightness
 		//{
 		//	get { if( _brightness.BeginGet() ) Brightness = _brightness.Get( this ); return _brightness.value; }
-		//	set { if( _brightness.BeginSet( ref value ) ) { try { BrightnessChanged?.Invoke( this ); } finally { _brightness.EndSet(); } } }
+		//	set { if( _brightness.BeginSet( this, ref value ) ) { try { BrightnessChanged?.Invoke( this ); } finally { _brightness.EndSet(); } } }
 		//}
 		//public event Action<ReflectionProbe> BrightnessChanged;
 		//ReferenceField<double> _brightness = 1;
@@ -76,14 +104,14 @@ namespace NeoAxis
 		/// <summary>
 		/// The cubemap texture of reflection data used by the probe.
 		/// </summary>
-		[Category( "Resource" )]
+		//[Category( "Resource" )]
 		[DefaultValueReference( @"Content\Environments\Base\Forest.image" )]
 		public Reference<ImageComponent> Cubemap
 		{
 			get { if( _cubemap.BeginGet() ) Cubemap = _cubemap.Get( this ); return _cubemap.value; }
 			set
 			{
-				if( _cubemap.BeginSet( ref value ) )
+				if( _cubemap.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -106,11 +134,25 @@ namespace NeoAxis
 		public Reference<Degree> Rotation
 		{
 			get { if( _rotation.BeginGet() ) Rotation = _rotation.Get( this ); return _rotation.value; }
-			set { if( _rotation.BeginSet( ref value ) ) { try { RotationChanged?.Invoke( this ); } finally { _rotation.EndSet(); } } }
+			set { if( _rotation.BeginSet( this, ref value ) ) { try { RotationChanged?.Invoke( this ); } finally { _rotation.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Rotation"/> property value changes.</summary>
 		public event Action<ReflectionProbe> RotationChanged;
 		ReferenceField<Degree> _rotation;
+
+		/// <summary>
+		/// The factor of the probe effect.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[Range( 0, 1 )]
+		public Reference<double> Intensity
+		{
+			get { if( _intensity.BeginGet() ) Intensity = _intensity.Get( this ); return _intensity.value; }
+			set { if( _intensity.BeginSet( this, ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
+		public event Action<ReflectionProbe> IntensityChanged;
+		ReferenceField<double> _intensity = 1.0;
 
 		/// <summary>
 		/// A cubemap color multiplier.
@@ -121,7 +163,7 @@ namespace NeoAxis
 		public Reference<ColorValuePowered> Multiplier
 		{
 			get { if( _multiplier.BeginGet() ) Multiplier = _multiplier.Get( this ); return _multiplier.value; }
-			set { if( _multiplier.BeginSet( ref value ) ) { try { MultiplierChanged?.Invoke( this ); } finally { _multiplier.EndSet(); } } }
+			set { if( _multiplier.BeginSet( this, ref value ) ) { try { MultiplierChanged?.Invoke( this ); } finally { _multiplier.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Multiplier"/> property value changes.</summary>
 		public event Action<ReflectionProbe> MultiplierChanged;
@@ -134,32 +176,35 @@ namespace NeoAxis
 		//public Reference<Image> CubemapIrradiance
 		//{
 		//	get { if( _cubemapIrradiance.BeginGet() ) CubemapIrradiance = _cubemapIrradiance.Get( this ); return _cubemapIrradiance.value; }
-		//	set { if( _cubemapIrradiance.BeginSet( ref value ) ) { try { CubemapIrradianceChanged?.Invoke( this ); } finally { _cubemapIrradiance.EndSet(); } } }
+		//	set { if( _cubemapIrradiance.BeginSet( this, ref value ) ) { try { CubemapIrradianceChanged?.Invoke( this ); } finally { _cubemapIrradiance.EndSet(); } } }
 		//}
 		//public event Action<ReflectionProbe> CubemapIrradianceChanged;
 		//ReferenceField<Image> _cubemapIrradiance;
 
-		//!!!!remove
-		///// <summary>
-		///// Whether to capture and pass the information in real-time.
-		///// </summary>
-		//[DefaultValue( false )]
-		//[Category( "Capture" )]
-		//public Reference<bool> Realtime
-		//{
-		//	get { if( _realtime.BeginGet() ) Realtime = _realtime.Get( this ); return _realtime.value; }
-		//	set { if( _realtime.BeginSet( ref value ) ) { try { RealtimeChanged?.Invoke( this ); } finally { _realtime.EndSet(); } } }
-		//}
-		//public event Action<ReflectionProbe> RealtimeChanged;
-		//ReferenceField<bool> _realtime = false;
+
+		//!!!!при изменении свойства RealTime удалить ресурсы
+
+
+		/// <summary>
+		/// Whether to capture and pass the information in real-time.
+		/// </summary>
+		[DefaultValue( false )]
+		[Category( "Capture" )]
+		public Reference<bool> RealTime
+		{
+			get { if( _realTime.BeginGet() ) RealTime = _realTime.Get( this ); return _realTime.value; }
+			set { if( _realTime.BeginSet( this, ref value ) ) { try { RealTimeChanged?.Invoke( this ); } finally { _realTime.EndSet(); } } }
+		}
+		public event Action<ReflectionProbe> RealTimeChanged;
+		ReferenceField<bool> _realTime = false;
 
 		public enum ResolutionEnum
 		{
-			_1,
-			_2,
-			_4,
-			_8,
-			_16,
+			//_1,
+			//_2,
+			//_4,
+			//_8,
+			//_16,
 			_32,
 			_64,
 			_128,
@@ -167,22 +212,23 @@ namespace NeoAxis
 			_512,
 			_1024,
 			_2048,
-			//_4096,
+			_4096,
 			//_8192,
-			//_16384,//!!!!как проверять хватит ли памяти
+			//_16384,
 		}
 
+		//!!!!может зависеть от размера экрана. для realtime
 		/// <summary>
 		/// The resolution of the capture.
 		/// </summary>
-		[DefaultValue( ResolutionEnum._256 )]
+		[DefaultValue( ResolutionEnum._512 )]
 		[Category( "Capture" )]
 		public Reference<ResolutionEnum> Resolution
 		{
 			get { if( _resolution.BeginGet() ) Resolution = _resolution.Get( this ); return _resolution.value; }
 			set
 			{
-				if( _resolution.BeginSet( ref value ) )
+				if( _resolution.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -195,46 +241,148 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="Resolution"/> property value changes.</summary>
 		public event Action<ReflectionProbe> ResolutionChanged;
-		ReferenceField<ResolutionEnum> _resolution = ResolutionEnum._256;
+		ReferenceField<ResolutionEnum> _resolution = ResolutionEnum._512;
 
 		/// <summary>
 		/// Whether the high dynamic range is enabled. For Auto mode HDR is disabled on limited devices (mobile).
 		/// </summary>
 		[DefaultValue( AutoTrueFalse.Auto )]
 		[Category( "Capture" )]
-		public Reference<AutoTrueFalse> HDR
+		public Reference<AutoTrueFalse> HighDynamicRange
 		{
-			get { if( _hdr.BeginGet() ) HDR = _hdr.Get( this ); return _hdr.value; }
+			get { if( _highDynamicRange.BeginGet() ) HighDynamicRange = _highDynamicRange.Get( this ); return _highDynamicRange.value; }
 			set
 			{
-				if( _hdr.BeginSet( ref value ) )
+				if( _highDynamicRange.BeginSet( this, ref value ) )
 				{
 					try
 					{
-						HDRChanged?.Invoke( this );
+						HighDynamicRangeChanged?.Invoke( this );
 						//CaptureTextureDispose();
 					}
-					finally { _hdr.EndSet(); }
+					finally { _highDynamicRange.EndSet(); }
 				}
 			}
 		}
-		/// <summary>Occurs when the <see cref="HDR"/> property value changes.</summary>
-		public event Action<ReflectionProbe> HDRChanged;
-		ReferenceField<AutoTrueFalse> _hdr = AutoTrueFalse.Auto;
+		/// <summary>Occurs when the <see cref="HighDynamicRange"/> property value changes.</summary>
+		public event Action<ReflectionProbe> HighDynamicRangeChanged;
+		ReferenceField<AutoTrueFalse> _highDynamicRange = AutoTrueFalse.Auto;
 
-		//!!!!remove
-		///// <summary>
-		///// Whether to generate a mip levels.
-		///// </summary>
-		//[DefaultValue( false )]
-		//[Category( "Capture" )]
-		//public Reference<bool> Mipmaps
-		//{
-		//	get { if( _mipmaps.BeginGet() ) Mipmaps = _mipmaps.Get( this ); return _mipmaps.value; }
-		//	set { if( _mipmaps.BeginSet( ref value ) ) { try { MipmapsChanged?.Invoke( this ); } finally { _mipmaps.EndSet(); } } }
-		//}
-		//public event Action<ReflectionProbe> MipmapsChanged;
-		//ReferenceField<bool> _mipmaps = false;
+		/// <summary>
+		/// Enables using additional render targets during rendering the frame.
+		/// </summary>
+		[DefaultValue( AutoTrueFalse.Auto )]
+		[Category( "Capture" )]
+		public Reference<AutoTrueFalse> UseRenderTargets
+		{
+			get { if( _useRenderTargets.BeginGet() ) UseRenderTargets = _useRenderTargets.Get( this ); return _useRenderTargets.value; }
+			set { if( _useRenderTargets.BeginSet( this, ref value ) ) { try { UseRenderTargetsChanged?.Invoke( this ); } finally { _useRenderTargets.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="UseRenderTargets"/> property value changes.</summary>
+		public event Action<ReflectionProbe> UseRenderTargetsChanged;
+		ReferenceField<AutoTrueFalse> _useRenderTargets = AutoTrueFalse.Auto;
+
+		/// <summary>
+		/// Enables the deferred shading. Limited devices (mobile) are not support deferred shading.
+		/// </summary>
+		[DefaultValue( AutoTrueFalse.Auto )]
+		[Category( "Capture" )]
+		public Reference<AutoTrueFalse> DeferredShading
+		{
+			get { if( _deferredShading.BeginGet() ) DeferredShading = _deferredShading.Get( this ); return _deferredShading.value; }
+			set { if( _deferredShading.BeginSet( this, ref value ) ) { try { DeferredShadingChanged?.Invoke( this ); } finally { _deferredShading.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DeferredShading"/> property value changes.</summary>
+		public event Action<ReflectionProbe> DeferredShadingChanged;
+		ReferenceField<AutoTrueFalse> _deferredShading = AutoTrueFalse.Auto;
+
+		/// <summary>
+		/// Whether to visualize shadows.
+		/// </summary>
+		[DefaultValue( AutoTrueFalse.Auto )]
+		[Category( "Capture" )]
+		public Reference<AutoTrueFalse> Shadows
+		{
+			get { if( _shadows.BeginGet() ) Shadows = _shadows.Get( this ); return _shadows.value; }
+			set { if( _shadows.BeginSet( this, ref value ) ) { try { ShadowsChanged?.Invoke( this ); } finally { _shadows.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Shadows"/> property value changes.</summary>
+		public event Action<ReflectionProbe> ShadowsChanged;
+		ReferenceField<AutoTrueFalse> _shadows = AutoTrueFalse.Auto;
+
+		/// <summary>
+		/// Whether to visualize transparent objects.
+		/// </summary>
+		[DefaultValue( AutoTrueFalse.Auto )]
+		[Category( "Capture" )]
+		public Reference<AutoTrueFalse> TransparentObjects
+		{
+			get { if( _transparentObjects.BeginGet() ) TransparentObjects = _transparentObjects.Get( this ); return _transparentObjects.value; }
+			set { if( _transparentObjects.BeginSet( this, ref value ) ) { try { TransparentObjectsChanged?.Invoke( this ); } finally { _transparentObjects.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="TransparentObjects"/> property value changes.</summary>
+		public event Action<ReflectionProbe> TransparentObjectsChanged;
+		ReferenceField<AutoTrueFalse> _transparentObjects = AutoTrueFalse.Auto;
+
+		/// <summary>
+		/// Whether to visualize meshes with skeleton animation.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Capture" )]
+		public Reference<bool> AnimatedObjects
+		{
+			get { if( _animatedObjects.BeginGet() ) AnimatedObjects = _animatedObjects.Get( this ); return _animatedObjects.value; }
+			set { if( _animatedObjects.BeginSet( this, ref value ) ) { try { AnimatedObjectsChanged?.Invoke( this ); } finally { _animatedObjects.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="AnimatedObjects"/> property value changes.</summary>
+		public event Action<ReflectionProbe> AnimatedObjectsChanged;
+		ReferenceField<bool> _animatedObjects = true;
+
+		/// <summary>
+		/// The max amount of light sources to draw.
+		/// </summary>
+		[Category( "Capture" )]
+		[DefaultValue( 32 )]
+		[Range( 10, 10000, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		public Reference<int> LightMaxCount
+		{
+			get { if( _lightMaxCount.BeginGet() ) LightMaxCount = _lightMaxCount.Get( this ); return _lightMaxCount.value; }
+			set { if( _lightMaxCount.BeginSet( this, ref value ) ) { try { LightMaxCountChanged?.Invoke( this ); } finally { _lightMaxCount.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LightMaxCount"/> property value changes.</summary>
+		public event Action<ReflectionProbe> LightMaxCountChanged;
+		ReferenceField<int> _lightMaxCount = 32;
+
+		/// <summary>
+		/// Whether to prepare and apply light masks.
+		/// </summary>
+		[Category( "Capture" )]
+		[DefaultValue( true )]
+		public Reference<bool> LightMasks
+		{
+			get { if( _lightMasks.BeginGet() ) LightMasks = _lightMasks.Get( this ); return _lightMasks.value; }
+			set { if( _lightMasks.BeginSet( this, ref value ) ) { try { LightMasksChanged?.Invoke( this ); } finally { _lightMasks.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LightMasks"/> property value changes.</summary>
+		public event Action<ReflectionProbe> LightMasksChanged;
+		ReferenceField<bool> _lightMasks = true;
+
+		/// <summary>
+		/// The distance multiplier when determining the level of detail.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[DisplayName( "LOD Scale" )]
+		[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
+		[Category( "Capture" )]
+		public Reference<double> LODScale
+		{
+			get { if( _lODScale.BeginGet() ) LODScale = _lODScale.Get( this ); return _lODScale.value; }
+			set { if( _lODScale.BeginSet( this, ref value ) ) { try { LODScaleChanged?.Invoke( this ); } finally { _lODScale.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LODScale"/> property value changes.</summary>
+		[DisplayName( "LOD Scale Changed" )]
+		public event Action<ReflectionProbe> LODScaleChanged;
+		ReferenceField<double> _lODScale = 1.0;
 
 		/// <summary>
 		/// The minimum distance of the reflection probe.
@@ -245,7 +393,7 @@ namespace NeoAxis
 		public Reference<double> NearClipPlane
 		{
 			get { if( _nearClipPlane.BeginGet() ) NearClipPlane = _nearClipPlane.Get( this ); return _nearClipPlane.value; }
-			set { if( _nearClipPlane.BeginSet( ref value ) ) { try { NearClipPlaneChanged?.Invoke( this ); } finally { _nearClipPlane.EndSet(); } } }
+			set { if( _nearClipPlane.BeginSet( this, ref value ) ) { try { NearClipPlaneChanged?.Invoke( this ); } finally { _nearClipPlane.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="NearClipPlane"/> property value changes.</summary>
 		public event Action<ReflectionProbe> NearClipPlaneChanged;
@@ -254,17 +402,17 @@ namespace NeoAxis
 		/// <summary>
 		/// The maximum distance of the reflection probe.
 		/// </summary>
-		[DefaultValue( 100.0 )]
+		[DefaultValue( 150.0 )]
 		[Category( "Capture" )]
-		[Range( 10, 10000, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
+		[Range( 10, 1000, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
 		public Reference<double> FarClipPlane
 		{
 			get { if( _farClipPlane.BeginGet() ) FarClipPlane = _farClipPlane.Get( this ); return _farClipPlane.value; }
-			set { if( _farClipPlane.BeginSet( ref value ) ) { try { FarClipPlaneChanged?.Invoke( this ); } finally { _farClipPlane.EndSet(); } } }
+			set { if( _farClipPlane.BeginSet( this, ref value ) ) { try { FarClipPlaneChanged?.Invoke( this ); } finally { _farClipPlane.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FarClipPlane"/> property value changes.</summary>
 		public event Action<ReflectionProbe> FarClipPlaneChanged;
-		ReferenceField<double> _farClipPlane = 100;
+		ReferenceField<double> _farClipPlane = 150;
 
 		/// <summary>
 		/// Whether to render sky of the scene.
@@ -274,19 +422,68 @@ namespace NeoAxis
 		public Reference<bool> RenderSky
 		{
 			get { if( _renderSky.BeginGet() ) RenderSky = _renderSky.Get( this ); return _renderSky.value; }
-			set { if( _renderSky.BeginSet( ref value ) ) { try { RenderSkyChanged?.Invoke( this ); } finally { _renderSky.EndSet(); } } }
+			set { if( _renderSky.BeginSet( this, ref value ) ) { try { RenderSkyChanged?.Invoke( this ); } finally { _renderSky.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RenderSky"/> property value changes.</summary>
 		public event Action<ReflectionProbe> RenderSkyChanged;
 		ReferenceField<bool> _renderSky = true;
 
-		//!!!!
-		//capture settings:
-		//Resolution - в анрыле это общая настройка двига. можно по ссылке указать
-		//Shadow Distance
-		//Background Color
-		//Use Occlusion Culling
-		//из CubemapZone что там?
+		/// <summary>
+		/// The amount of blur applied.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[Range( 0, 5, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		[Category( "Capture" )]
+		public Reference<double> BlurFactor
+		{
+			get { if( _blurFactor.BeginGet() ) BlurFactor = _blurFactor.Get( this ); return _blurFactor.value; }
+			set { if( _blurFactor.BeginSet( this, ref value ) ) { try { BlurFactorChanged?.Invoke( this ); } finally { _blurFactor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="BlurFactor"/> property value changes.</summary>
+		public event Action<ReflectionProbe> BlurFactorChanged;
+		ReferenceField<double> _blurFactor = 1.0;
+
+		/// <summary>
+		/// The mipmap offset when fetching blurred reflection data to calculate ambient environment lighting.
+		/// </summary>
+		[DefaultValue( 0.0 )]
+		[Range( -5, 2 )]
+		[Category( "Capture" )]
+		public Reference<double> AffectLightingMipOffset
+		{
+			get { if( _affectLightingMipOffset.BeginGet() ) AffectLightingMipOffset = _affectLightingMipOffset.Get( this ); return _affectLightingMipOffset.value; }
+			set { if( _affectLightingMipOffset.BeginSet( this, ref value ) ) { try { AffectLightingMipOffsetChanged?.Invoke( this ); } finally { _affectLightingMipOffset.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="AffectLightingMipOffset"/> property value changes.</summary>
+		public event Action<ReflectionProbe> AffectLightingMipOffsetChanged;
+		ReferenceField<double> _affectLightingMipOffset = 0.0;
+
+		/// <summary>
+		/// Whether to position of the object in the scene by tracking camera position.
+		/// </summary>
+		[DefaultValue( false )]
+		[Category( "Position Depending Camera" )]
+		public Reference<bool> PositionDependingCamera
+		{
+			get { if( _positionDependingCamera.BeginGet() ) PositionDependingCamera = _positionDependingCamera.Get( this ); return _positionDependingCamera.value; }
+			set { if( _positionDependingCamera.BeginSet( this, ref value ) ) { try { PositionDependingCameraChanged?.Invoke( this ); } finally { _positionDependingCamera.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PositionDependingCamera"/> property value changes.</summary>
+		public event Action<ReflectionProbe> PositionDependingCameraChanged;
+		ReferenceField<bool> _positionDependingCamera = false;
+
+		[DefaultValue( "0 0 1" )]
+		[Category( "Position Depending Camera" )]
+		public Reference<Vector3> PositionDependingCameraOffset
+		{
+			get { if( _positionDependingCameraOffset.BeginGet() ) PositionDependingCameraOffset = _positionDependingCameraOffset.Get( this ); return _positionDependingCameraOffset.value; }
+			set { if( _positionDependingCameraOffset.BeginSet( this, ref value ) ) { try { PositionDependingCameraOffsetChanged?.Invoke( this ); } finally { _positionDependingCameraOffset.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PositionDependingCameraOffset"/> property value changes.</summary>
+		public event Action<ReflectionProbe> PositionDependingCameraOffsetChanged;
+		ReferenceField<Vector3> _positionDependingCameraOffset = new Vector3( 0, 0, 1 );
+
+		///////////////////////////////////////////////
 
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
 		{
@@ -302,18 +499,67 @@ namespace NeoAxis
 						skip = true;
 					break;
 
+				case nameof( RealTime ):
 				case nameof( Resolution ):
-				case nameof( HDR ):
-				//case nameof( Mipmaps ):
-				//case nameof( Realtime ):
 				case nameof( NearClipPlane ):
 				case nameof( FarClipPlane ):
 				case nameof( RenderSky ):
 					if( Mode.Value != ModeEnum.Capture )
 						skip = true;
 					break;
+
+				case nameof( HighDynamicRange ):
+				case nameof( UseRenderTargets ):
+				case nameof( TransparentObjects ):
+				case nameof( AnimatedObjects ):
+				case nameof( LODScale ):
+				case nameof( LightMaxCount ):
+				case nameof( LightMasks ):
+				case nameof( BlurFactor ):
+				case nameof( AffectLightingMipOffset ):
+					if( Mode.Value != ModeEnum.Capture || !RealTime )
+						skip = true;
+					break;
+
+				case nameof( DeferredShading ):
+				case nameof( Shadows ):
+					if( Mode.Value != ModeEnum.Capture || UseRenderTargets.Value == AutoTrueFalse.False )
+						skip = true;
+					break;
+
+				case nameof( PositionDependingCamera ):
+					if( Mode.Value != ModeEnum.Capture || !RealTime )
+						skip = true;
+					break;
+
+				case nameof( PositionDependingCameraOffset ):
+					if( Mode.Value != ModeEnum.Capture || !PositionDependingCamera || !RealTime )
+						skip = true;
+					break;
 				}
 			}
+		}
+
+		protected override void OnEnabledInHierarchyChanged()
+		{
+			base.OnEnabledInHierarchyChanged();
+
+			var scene = ParentScene;
+			if( scene != null )
+			{
+				if( EnabledInHierarchyAndIsInstance )
+					scene.GetRenderSceneData += Scene_GetRenderSceneData;
+				else
+					scene.GetRenderSceneData -= Scene_GetRenderSceneData;
+
+				if( EnabledInHierarchyAndIsInstance )
+					scene.ViewportUpdateCameraSettingsReady += ParentScene_ViewportUpdateCameraSettingsReady;
+				else
+					scene.ViewportUpdateCameraSettingsReady -= ParentScene_ViewportUpdateCameraSettingsReady;
+			}
+
+			if( !EnabledInHierarchy )
+				RealTime_DestroyRenderTarget();
 		}
 
 		protected override void OnEnabled()
@@ -329,9 +575,11 @@ namespace NeoAxis
 		{
 			base.OnSpaceBoundsUpdate( ref newBounds );
 
-			var tr = Transform.Value;
-			var attenuationFar = tr.Scale.MaxComponent();
-			newBounds = new SpaceBounds( new Sphere( tr.Position, attenuationFar ) );
+			var tr = TransformV;
+			if( Global )
+				newBounds = new SpaceBounds( new Sphere( tr.Position, 1 ) );
+			else
+				newBounds = new SpaceBounds( new Sphere( tr.Position, tr.Scale.MaxComponent() ) );
 		}
 
 		//protected override void OnTransformChanged()
@@ -344,7 +592,16 @@ namespace NeoAxis
 		[Browsable( false )]
 		public Sphere Sphere
 		{
-			get { return SpaceBounds.BoundingSphere; }
+			get
+			{
+				var tr = TransformV;
+				if( Global )
+					return new Sphere( tr.Position, 100000 );
+				else
+					return new Sphere( tr.Position, tr.Scale.MaxComponent() );
+
+				//return SpaceBounds.BoundingSphere;
+			}
 		}
 
 		protected override bool OnEnabledSelectionByCursor()
@@ -380,15 +637,17 @@ namespace NeoAxis
 
 		public void DebugDraw( Viewport viewport )
 		{
-			var sphere = Sphere;
-			var pos = sphere.Center;
-			var r = sphere.Radius;
+			if( !Global )
+			{
+				DebugDrawBorder( viewport );
 
-			DebugDrawBorder( viewport );
-
-			viewport.Simple3DRenderer.AddLine( pos - new Vector3( r, 0, 0 ), pos + new Vector3( r, 0, 0 ) );
-			viewport.Simple3DRenderer.AddLine( pos - new Vector3( 0, r, 0 ), pos + new Vector3( 0, r, 0 ) );
-			viewport.Simple3DRenderer.AddLine( pos - new Vector3( 0, 0, r ), pos + new Vector3( 0, 0, r ) );
+				var sphere = Sphere;
+				var pos = sphere.Center;
+				var r = sphere.Radius;
+				viewport.Simple3DRenderer.AddLine( pos - new Vector3( r, 0, 0 ), pos + new Vector3( r, 0, 0 ) );
+				viewport.Simple3DRenderer.AddLine( pos - new Vector3( 0, r, 0 ), pos + new Vector3( 0, r, 0 ) );
+				viewport.Simple3DRenderer.AddLine( pos - new Vector3( 0, 0, r ), pos + new Vector3( 0, 0, r ) );
+			}
 		}
 
 		protected override void OnUpdate( float delta )
@@ -408,77 +667,102 @@ namespace NeoAxis
 		//	Matrix3.FromRotateByZ( Rotation.Value.InRadians() ).ToMatrix3F( out result );
 		//}
 
-		protected override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem )
+		void GetRenderSceneData( ViewportRenderingContext context, bool insideFrustum )
 		{
-			if( mode == GetRenderSceneDataMode.InsideFrustum )
+			//UpdateProcessedCubemaps();
+
+			var sphere = Sphere;
+			if( sphere.Radius > 0 && Intensity.Value > 0 )
 			{
-				//UpdateProcessedCubemaps();
+				//real-time
+				if( insideFrustum && RealTime )
+					lastVisibleTime = Time.Current;
 
-				var sphere = Sphere;
-				if( sphere.Radius > 0 )
+				var item = new RenderingPipeline.RenderSceneData.ReflectionProbeItem();
+				item.Creator = this;
+				item.BoundingBox = SpaceBounds.BoundingBox;
+				//item.BoundingSphere = SpaceBounds.CalculatedBoundingSphere;
+				item.Sphere = sphere;
+
+				//if( Mode.Value == ModeEnum.Resource )
+				//{
+
+				if( createdImage != null && RealTime )
 				{
-					var item = new RenderingPipeline.RenderSceneData.ReflectionProbeItem();
-					item.Creator = this;
-					item.BoundingBox = SpaceBounds.BoundingBox;
-					//item.BoundingSphere = SpaceBounds.CalculatedBoundingSphere;
-					item.Sphere = sphere;
-
-					//if( Mode.Value == ModeEnum.Resource )
-					//{
+					item.CubemapEnvironment = createdImage;
+					item.CubemapEnvironmentMipmapsAndBlurRequired = (float)BlurFactor;
+					item.CubemapEnvironmentAffectLightingLodOffset = (float)AffectLightingMipOffset;
+				}
+				else
+				{
 					if( processedEnvironmentCubemap != null )
 						item.CubemapEnvironment = processedEnvironmentCubemap;
 					else
 						item.CubemapEnvironment = Cubemap;
-
-					item.HarmonicsIrradiance = processedIrradianceHarmonics;
-					//item.CubemapIrradiance = processedIrradianceCubemap;
-
-					GetRotationQuaternion( out item.Rotation );
-					item.Multiplier = Multiplier.Value.ToVector3F();
-
-					//item.CubemapEnvironment = Cubemap;
-					//item.CubemapIrradiance = CubemapIrradiance;
-					//}
-					//else
-					//{
-					//	//!!!!IBL
-					//	item.CubemapEnvironment = CaptureTexture;
-					//}
-
-					context.FrameData.RenderSceneData.ReflectionProbes.Add( item );
 				}
 
+				item.HarmonicsIrradiance = processedIrradianceHarmonics;
+				item.Intensity = (float)Intensity;
+				//item.CubemapIrradiance = processedIrradianceCubemap;
+
+				GetRotationQuaternion( out item.Rotation );
+				item.Multiplier = Multiplier.Value.ToVector3F();
+
+				//item.CubemapEnvironment = Cubemap;
+				//item.CubemapIrradiance = CubemapIrradiance;
+				//}
+				//else
+				//{
+				//	item.CubemapEnvironment = CaptureTexture;
+				//}
+
+				context.FrameData.RenderSceneData.ReflectionProbes.Add( ref item );
+			}
+
+			{
+				var context2 = context.ObjectInSpaceRenderingContext;
+
+				bool show = ( context.SceneDisplayDevelopmentDataInThisApplication && ParentScene.DisplayReflectionProbes ) || context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
+				if( show )
 				{
-					var context2 = context.ObjectInSpaceRenderingContext;
-
-					bool show = ( context.SceneDisplayDevelopmentDataInThisApplication && ParentScene.DisplayReflectionProbes ) || context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
-					if( show )
+					if( context2.displayReflectionProbesCounter < context2.displayReflectionProbesMax )
 					{
-						if( context2.displayReflectionProbesCounter < context2.displayReflectionProbesMax )
+						context2.displayReflectionProbesCounter++;
+
+						ColorValue color;
+						if( context2.selectedObjects.Contains( this ) )
+							color = ProjectSettings.Get.Colors.SelectedColor;
+						else if( context2.canSelectObjects.Contains( this ) )
+							color = ProjectSettings.Get.Colors.CanSelectColor;
+						else
+							color = ProjectSettings.Get.Colors.SceneShowReflectionProbeColor;
+
+						var viewport = context.Owner;
+						if( viewport.Simple3DRenderer != null )
 						{
-							context2.displayReflectionProbesCounter++;
-
-							ColorValue color;
-							if( context2.selectedObjects.Contains( this ) )
-								color = ProjectSettings.Get.Colors.SelectedColor;
-							else if( context2.canSelectObjects.Contains( this ) )
-								color = ProjectSettings.Get.Colors.CanSelectColor;
-							else
-								color = ProjectSettings.Get.Colors.SceneShowReflectionProbeColor;
-
-							var viewport = context.Owner;
-							if( viewport.Simple3DRenderer != null )
-							{
-								viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
-								DebugDraw( viewport );
-								//viewport.Simple3DRenderer.AddSphere( Transform.Value.ToMat4(), 0.5, 32 );
-							}
+							viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
+							DebugDraw( viewport );
+							//viewport.Simple3DRenderer.AddSphere( Transform.Value.ToMat4(), 0.5, 32 );
 						}
 					}
-					//if( !show )
-					//	context.disableShowingLabelForThisObject = true;
 				}
+				//if( !show )
+				//	context.disableShowingLabelForThisObject = true;
 			}
+		}
+
+		protected override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem )
+		{
+			if( mode == GetRenderSceneDataMode.InsideFrustum && !Global && context.Owner.Mode != Viewport.ModeEnum.ReflectionProbeCubemap && RenderingEffect_Reflection.GlobalMultiplier > 0 )
+				GetRenderSceneData( context, mode == GetRenderSceneDataMode.InsideFrustum );
+		}
+
+		private void Scene_GetRenderSceneData( Scene scene, ViewportRenderingContext context )
+		{
+			//!!!!don't subscribe to event for not Global
+
+			if( VisibleInHierarchy && Global && context.Owner.Mode != Viewport.ModeEnum.ReflectionProbeCubemap && RenderingEffect_Reflection.GlobalMultiplier > 0 )
+				GetRenderSceneData( context, true );
 		}
 
 		//public bool Contains( Vec3 point )
@@ -493,8 +777,6 @@ namespace NeoAxis
 		//	texture = null;
 		//	textureIBL = null;
 
-		//	//!!!!пока так
-
 		//	if( SourceType.Value == SourceTypeEnum.SpecifiedCubemap )
 		//	{
 		//		texture = Cubemap;
@@ -508,119 +790,6 @@ namespace NeoAxis
 		//	base.OnDisabled();
 		//}
 
-		//void CaptureTextureUpdate()
-		//{
-		//	if( Mode.Value == ModeEnum.Capture )
-		//	{
-		//		var resolution = Resolution.Value;
-		//		var hdr = HDR.Value;
-		//		var mipmaps = Mipmaps.Value;
-
-		//		if( captureTexture != null && captureTexture.Disposed )
-		//			captureTexture = null;
-		//		if( captureTexture == null )
-		//		{
-		//			var size = int.Parse( resolution.ToString().Replace( "_", "" ) );
-		//			PixelFormat format = hdr ? PixelFormat.Float16RGBA : PixelFormat.A8R8G8B8;
-
-		//			var texture = ComponentUtility.CreateComponent<Image>( null, true, false );
-		//			captureTexture = texture;
-		//			texture.CreateType = Image.TypeEnum.Cube;
-		//			texture.CreateSize = new Vector2I( size, size );
-		//			texture.CreateMipmaps = mipmaps;
-		//			//texture.CreateMipmaps = true;
-		//			//texture.CreateArrayLayers = arrayLayers;
-		//			texture.CreateFormat = format;
-		//			texture.CreateUsage = Image.Usages.RenderTarget;
-		//			texture.CreateFSAA = 0;// fsaaLevel;
-		//			texture.Enabled = true;
-
-		//			//!!!!
-
-		//			//int faces = type == Image.TypeEnum.Cube ? 6 : arrayLayers;
-
-		//			//int numMips;
-		//			//if( mipmaps )
-		//			//{
-		//			//	int max = size.MaxComponent();
-		//			//	float kInvLogNat2 = 1.4426950408889634073599246810019f;
-		//			//	numMips = 1 + (int)( Math.Log( size.MaxComponent() ) * kInvLogNat2 );
-		//			//}
-		//			//else
-		//			//	numMips = 1;
-
-		//			for( int face = 0; face < 6; face++ )
-		//			{
-		//				//!!!!
-		//				var mip = 0;
-		//				//for( int mip = 0; mip < numMips; mip++ )
-		//				//{
-
-		//				var renderTexture = CaptureTexture.Result.GetRenderTarget( mip, face );
-		//				//!!!!
-		//				var viewport = renderTexture.AddViewport( true, false );
-		//				//var viewport = renderTexture.AddViewport( false, false );
-		//				viewport.Mode = Viewport.ModeEnum.ReflectionProbeCubemap;
-		//				viewport.AttachedScene = ParentScene;
-
-		//				//!!!!надо ли чистить что-то? лишние таржеты чтобы не висели
-
-		//				//}
-		//				//!!!!что-то еще?
-		//			}
-
-		//			//captureTextureNeedUpdate = true;
-		//		}
-		//	}
-		//	else
-		//		CaptureTextureDispose();
-
-		//	//!!!!!как проверять ошибки создания текстур? везде так
-		//	//if( texture == null )
-		//	//{
-		//	//	//!!!!!
-		//	//	Log.Fatal( "ViewportRenderingPipeline: RenderTarget_Alloc: Unable to create texture." );
-		//	//	return null;
-		//	//}
-
-		//	//int faces = type == Image.TypeEnum.Cube ? 6 : arrayLayers;
-
-		//	//int numMips;
-		//	//if( mipmaps )
-		//	//{
-		//	//	int max = size.MaxComponent();
-		//	//	float kInvLogNat2 = 1.4426950408889634073599246810019f;
-		//	//	numMips = 1 + (int)( Math.Log( size.MaxComponent() ) * kInvLogNat2 );
-		//	//}
-		//	//else
-		//	//	numMips = 1;
-
-		//	//for( int face = 0; face < faces; face++ )
-		//	//{
-		//	//	for( int mip = 0; mip < numMips; mip++ )
-		//	//	{
-		//	//		RenderTexture renderTexture = texture.Result.GetRenderTarget( mip, face );
-		//	//		var viewport = renderTexture.AddViewport( false, false );
-
-		//	//		viewport.RenderingPipelineCreate();
-		//	//		viewport.RenderingPipelineCreated.UseRenderTargets = false;
-		//	//	}
-		//	//	//!!!!что-то еще?
-		//	//}
-		//}
-
-		//void CaptureTextureDispose()
-		//{
-		//	captureTexture?.Dispose();
-		//	captureTexture = null;
-		//}
-
-		//[Browsable( false )]
-		//public Image CaptureTexture
-		//{
-		//	get { return captureTexture; }
-		//}
-
 		string GetDestVirtualFileName()
 		{
 			var ownedFileName = NetworkIsClient ? networkOwnedFileNameOfComponent : ComponentUtility.GetOwnedFileNameOfComponent( this );
@@ -632,11 +801,28 @@ namespace NeoAxis
 			return PathUtility.Combine( ownedFileName + "_Files", name + ".hdr" );
 		}
 
-		public bool GetHDR()
+		public int GetDemandedSize()
 		{
-			var hdr = HDR.Value;
+			var resolution = Resolution.Value;
+			var size = int.Parse( resolution.ToString().Replace( "_", "" ) );
+
+			//apply global multiplier
+			if( RenderingEffect_Reflection.GlobalMultiplier > 0 )
+				size = (int)( size * RenderingEffect_Reflection.GlobalMultiplier );
+
+			size = MathEx.Clamp( size, 1, RenderingSystem.Capabilities.MaxTextureSize );
+
+			return size;
+		}
+
+		public bool GetHighDynamicRange()
+		{
+			var hdr = HighDynamicRange.Value;
 			if( hdr == AutoTrueFalse.Auto )
+			{
+				//!!!!better take from pipeline
 				hdr = SystemSettings.LimitedDevice ? AutoTrueFalse.False : AutoTrueFalse.True;
+			}
 			return hdr == AutoTrueFalse.True;
 		}
 
@@ -652,13 +838,9 @@ namespace NeoAxis
 			{
 				//create
 
-				var resolution = Resolution.Value;
-				var hdr = GetHDR();
-
-				var size = int.Parse( resolution.ToString().Replace( "_", "" ) );
-				//!!!!16 бит достаточно, тогда нужно поддержку для Image2D
-				PixelFormat format = hdr ? PixelFormat.Float32RGBA : PixelFormat.A8R8G8B8;
-				//PixelFormat format = hdr ? PixelFormat.Float16RGBA : PixelFormat.A8R8G8B8;
+				var hdr = GetHighDynamicRange();
+				var size = GetDemandedSize();
+				var format = hdr ? PixelFormat.Float16RGBA : PixelFormat.A8R8G8B8;
 
 				texture = ComponentUtility.CreateComponent<ImageComponent>( null, true, false );
 				texture.CreateType = ImageComponent.TypeEnum._2D;
@@ -669,12 +851,14 @@ namespace NeoAxis
 				texture.CreateFSAA = 0;
 				texture.Enabled = true;
 
+				//!!!!свой пайплайн создавать как в RealTime чтобы все свойства поддержать
+
 				var renderTexture = texture.Result.GetRenderTarget( 0, 0 );
-				//!!!!
-				var viewport = renderTexture.AddViewport( true, false );
-				//var viewport = renderTexture.AddViewport( false, false );
+				//var viewport = renderTexture.AddViewport( true, false );
+				var viewport = renderTexture.AddViewport( false, false );
 				viewport.Mode = Viewport.ModeEnum.ReflectionProbeCubemap;
 				viewport.AttachedScene = ParentScene;
+				viewport.AnyData = this;
 
 				textureRead = ComponentUtility.CreateComponent<ImageComponent>( null, true, false );
 				textureRead.CreateType = ImageComponent.TypeEnum._2D;
@@ -686,7 +870,12 @@ namespace NeoAxis
 				textureRead.Enabled = true;
 
 				//render
-				var image2D = new ImageUtility.Image2D( PixelFormat.Float32RGB, new Vector2I( size * 4, size * 3 ) );
+				//!!!!add support for not hdr format
+				var image2D = new ImageUtility.Image2D( PixelFormat.Float16RGB, new Vector2I( size * 4, size * 3 ) );
+				//var image2D = new ImageUtility.Image2D( hdr ? PixelFormat.Float16RGB : PixelFormat.R8G8B8, new Vector2I( size * 4, size * 3 ) );
+
+				////var image2D = new ImageUtility.Image2D( hdr ? PixelFormat.Float32RGB : PixelFormat.R8G8B8, new Vector2I( size * 4, size * 3 ) );
+				////var image2D = new ImageUtility.Image2D( PixelFormat.Float32RGB, new Vector2I( size * 4, size * 3 ) );
 
 				var position = Transform.Value.Position;
 
@@ -717,11 +906,12 @@ namespace NeoAxis
 
 					viewport.Update( true, cameraSettings );
 
+					//!!!!
 					//clear temp data
 					viewport.RenderingContext.MultiRenderTarget_DestroyAll();
 					viewport.RenderingContext.DynamicTexture_DestroyAll();
 
-					texture.Result.GetNativeObject( true ).BlitTo( viewport.RenderingContext.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
+					texture.Result.GetNativeObject( true ).BlitTo( (ushort)viewport.RenderingContext.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
 
 					//get data
 					var totalBytes = PixelFormatUtility.GetNumElemBytes( format ) * size * size;
@@ -890,6 +1080,9 @@ namespace NeoAxis
 			processedIrradianceHarmonics = null;
 			//processedIrradianceCubemap = null;
 
+			if( RealTime )
+				return;
+
 			string sourceFileName;
 			if( Mode.Value == ModeEnum.Resource )
 			{
@@ -976,5 +1169,275 @@ namespace NeoAxis
 			return true;
 		}
 
+
+		void RealTime_CreateRenderTarget()
+		{
+			RealTime_DestroyRenderTarget();
+
+			var size = GetDemandedSize();
+			var hdr = GetHighDynamicRange();
+			var mipmaps = false;
+
+			createdImage = ComponentUtility.CreateComponent<ImageComponent>( null, true, false );
+
+			createdImage.CreateType = ImageComponent.TypeEnum.Cube;
+			createdImage.CreateSize = new Vector2I( size, size );
+			createdImage.CreateMipmaps = mipmaps;
+			createdImage.CreateFormat = hdr ? PixelFormat.Float16RGBA : PixelFormat.A8R8G8B8;
+
+			var usage = ImageComponent.Usages.RenderTarget;
+			if( mipmaps )
+				usage |= ImageComponent.Usages.AutoMipmaps;
+			createdImage.CreateUsage = usage;
+			createdImage.Enabled = true;
+
+			createdViewports = new Viewport[ 6 ];
+
+			for( var face = 0; face < 6; face++ )
+			{
+				var renderTexture = createdImage.Result.GetRenderTarget( slice: face );
+
+				var createdViewport = renderTexture.AddViewport( false, false );// true, true );
+				createdViewport.Mode = Viewport.ModeEnum.ReflectionProbeCubemap;
+				createdViewport.AttachedScene = ParentScene;
+				createdViewport.AnyData = this;
+
+				//!!!!check android
+				//PC: OriginBottomLeft = false, Android: OriginBottomLeft = true
+				createdViewport.OutputFlipY = RenderingSystem.Capabilities.OriginBottomLeft;
+
+				createdViewports[ face ] = createdViewport;
+			}
+
+			createdForSize = size;
+			createdForHDR = hdr;
+
+			createdImageAtLeastOneTimeUpdated = false;
+		}
+
+		void RealTime_RecreateRenderTargetIfNeeded()
+		{
+			if( !RenderingSystem.BackendNull )
+			{
+				if( createdImage == null || createdForSize != GetDemandedSize() || createdForHDR != GetHighDynamicRange() )
+					RealTime_CreateRenderTarget();
+			}
+		}
+
+		//!!!!вызывать когда не нужен. когда не показывается
+		void RealTime_DestroyRenderTarget()
+		{
+			if( createdImage != null )
+			{
+				createdImage.Dispose();
+				createdImage = null;
+				createdViewports = null;
+				createdImageAtLeastOneTimeUpdated = false;
+			}
+
+			createdRenderingPipeline?.Dispose();
+			createdRenderingPipeline = null;
+		}
+
+		public virtual Vector3 GetRealTimeCameraPosition( /*Scene scene, */Viewport viewport )//, out Vector3 result )
+		{
+			Vector3 result;
+
+			if( PositionDependingCamera )
+			{
+				var cameraSettings = viewport.CameraSettings;
+				if( cameraSettings != null )
+				{
+					var gameMode = ParentScene?.GetGameMode();
+					if( gameMode != null )
+						result = gameMode.GetBestGlobalReflectionProbePosition( viewport );
+					else
+						result = cameraSettings.Position;
+				}
+				else
+					result = Transform.Value.Position;
+
+				result += PositionDependingCameraOffset;
+			}
+			else
+				result = Transform.Value.Position;
+
+			return result;
+		}
+
+		//public delegate void RenderTargetUpdateBeforeEventDelegate( ReflectionProbe sender );
+		//public event RenderTargetUpdateBeforeEventDelegate RenderTargetUpdateBeforeEvent;
+
+		void RealTime_RenderTargetUpdate( Viewport viewport )
+		{
+			if( !viewportDuringUpdate )
+			{
+				RealTime_RecreateRenderTargetIfNeeded();
+
+				if( createdViewports != null && ( RenderingEffect_Reflection.GlobalMultiplier > 0 || !createdImageAtLeastOneTimeUpdated ) )
+				{
+					try
+					{
+						viewportDuringUpdate = true;
+
+						//need?
+						//RenderTargetUpdateBeforeEvent?.Invoke( this );
+
+						var scene = ParentScene;
+
+						//!!!!apply overriding pipeline by camera
+						var sourcePipeline = scene.RenderingPipeline.Value as RenderingPipeline_Basic;
+						if( sourcePipeline == null )
+							sourcePipeline = new RenderingPipeline_Basic();
+
+						//using separate viewports because need smooth update allocated render targets between frames
+						//////use only first face rendering context to optimize resource management
+						////var firstViewport = createdImage.Result.GetRenderTarget( 0 ).Viewports[ 0 ];
+
+						if( createdRenderingPipeline == null )
+						{
+							createdRenderingPipeline = ComponentUtility.CreateComponent<RenderingPipeline_Basic>( null, true, false );
+							createdRenderingPipeline.RemoveAllComponents( false );
+							createdRenderingPipeline.Enabled = true;
+						}
+
+						var pipeline = createdRenderingPipeline;
+
+
+						//update pipeline properties
+
+						var useRenderTargets = UseRenderTargets.Value;
+						if( useRenderTargets == AutoTrueFalse.Auto )
+							useRenderTargets = sourcePipeline.UseRenderTargets ? AutoTrueFalse.True : AutoTrueFalse.False;
+						pipeline.UseRenderTargets = useRenderTargets == AutoTrueFalse.True;
+
+						pipeline.LODScale = sourcePipeline.LODScale * LODScale;
+						pipeline.LODScaleShadows = sourcePipeline.LODScaleShadows;
+
+						var deferredShading = DeferredShading.Value;
+						if( deferredShading == AutoTrueFalse.Auto )
+							deferredShading = sourcePipeline.DeferredShading;
+						pipeline.DeferredShading = deferredShading;
+
+						//не совсем так в идеале, потому что HDR раньше нужно знать
+						pipeline.HighDynamicRange = HighDynamicRange;
+
+						pipeline.MinimumVisibleSizeOfObjects = sourcePipeline.MinimumVisibleSizeOfObjects * 4;
+
+
+						var shadows = Shadows.Value;
+						if( shadows == AutoTrueFalse.Auto )
+						{
+							if( sourcePipeline.Shadows )
+								shadows = RealTime.Value ? AutoTrueFalse.False : AutoTrueFalse.True;
+							else
+								shadows = AutoTrueFalse.False;
+						}
+						pipeline.Shadows = shadows == AutoTrueFalse.True;
+
+						//!!!!может другие опции теней задавать
+
+
+						var transparentObjects = TransparentObjects.Value;
+						if( transparentObjects == AutoTrueFalse.Auto )
+							transparentObjects = RealTime.Value ? AutoTrueFalse.False : AutoTrueFalse.True;
+						pipeline.DebugDrawForwardTransparentPass = transparentObjects == AutoTrueFalse.True;
+
+
+						//!!!!про окклюдеры
+						pipeline.OcclusionCullingBufferScene = false;
+						pipeline.OcclusionCullingBufferDirectionalLight = false;
+
+						pipeline.LightMaxDistance = Math.Min( sourcePipeline.LightMaxDistance, FarClipPlane );
+						pipeline.LightMaxCount = Math.Min( sourcePipeline.LightMaxCount, LightMaxCount );
+
+						//light grid is disabled because currently the light grid will be created for each face.
+						//need to support sharing one between all faces passes and screen pass
+						pipeline.LightGrid = AutoTrueFalse.False;
+						//pipeline.LightGridResolution = RenderingPipeline_Basic.LightGridResolutionEnum._128;
+
+						//add to properties?
+						pipeline.DisplacementMappingMaxSteps = sourcePipeline.DisplacementMappingMaxSteps / 2;
+						pipeline.RemoveTextureTiling = 0;
+						pipeline.ProvideColorDepthTextureCopy = AutoTrueFalse.False;
+						pipeline.TessellationQuality = 0;
+
+						//for better instancing, less amount of dips
+						pipeline.SectorsByDistance = Math.Min( sourcePipeline.SectorsByDistance, 2 );
+
+
+						//update faces
+
+						var position = GetRealTimeCameraPosition( viewport );
+
+						for( int face = 0; face < 6; face++ )
+						{
+							Vector3 dir = Vector3.Zero;
+							Vector3 up = Vector3.Zero;
+
+							//flipped
+							switch( face )
+							{
+							case 0: dir = -Vector3.YAxis; up = Vector3.ZAxis; break;
+							case 1: dir = Vector3.YAxis; up = Vector3.ZAxis; break;
+							case 2: dir = Vector3.ZAxis; up = -Vector3.XAxis; break;
+							case 3: dir = -Vector3.ZAxis; up = Vector3.XAxis; break;
+							case 4: dir = Vector3.XAxis; up = Vector3.ZAxis; break;
+							case 5: dir = -Vector3.XAxis; up = Vector3.ZAxis; break;
+							}
+
+
+							var faceViewport = createdImage.Result.GetRenderTarget( slice: face ).Viewports[ 0 ];
+
+
+							Viewport.CameraSettingsClass cameraSettings;
+
+							if( viewport.CameraSettings != null )
+							{
+								var sourceCamera = viewport.CameraSettings;
+
+								cameraSettings = new Viewport.CameraSettingsClass( faceViewport/*firstViewport*/, 1, 90, NearClipPlane.Value, FarClipPlane.Value, position, dir, up, ProjectionType.Perspective, 1, sourceCamera.Exposure, sourceCamera.EmissiveFactor, renderSky: RenderSky, renderingPipelineOverride: pipeline );
+							}
+							else
+							{
+								var cameraEditor = scene.Mode.Value == Scene.ModeEnum._2D ? scene.CameraEditor2D.Value : scene.CameraEditor.Value;
+								if( cameraEditor == null )
+									cameraEditor = new Camera();
+
+								cameraSettings = new Viewport.CameraSettingsClass( faceViewport/*firstViewport*/, 1, 90, NearClipPlane.Value, FarClipPlane.Value, position, dir, up, ProjectionType.Perspective, 1, cameraEditor.Exposure, cameraEditor.EmissiveFactor, renderSky: RenderSky, renderingPipelineOverride: pipeline );
+							}
+
+
+							//createdViewport.BackgroundColorDefault = BackgroundColor;
+
+
+							//firstViewport.OutputViewport = faceViewport;
+							faceViewport/*firstViewport*/.CameraSettings = cameraSettings;
+
+							faceViewport/*firstViewport*/.Update( false, cameraSettings, viewport.RenderingContext.CurrentViewNumber );
+							viewport.RenderingContext.CurrentViewNumber = faceViewport.RenderingContext.CurrentViewNumber;
+							viewport.RenderingContext.UpdateStatisticsCurrent.AddFrom( faceViewport.RenderingContext.UpdateStatisticsCurrent );
+
+							//faceViewport/*firstViewport*/.Update( true, cameraSettings );
+						}
+
+						createdImageAtLeastOneTimeUpdated = true;
+					}
+					finally
+					{
+						viewportDuringUpdate = false;
+					}
+				}
+			}
+		}
+
+		private void ParentScene_ViewportUpdateCameraSettingsReady( Scene scene, Viewport viewport )
+		{
+			//real-time
+			if( EnabledInHierarchyAndIsInstance && RealTime && ( viewport.LastUpdateTime == lastVisibleTime || viewport.PreviousUpdateTime == lastVisibleTime ) && viewport.Mode == Viewport.ModeEnum.Default )
+			{
+				RealTime_RenderTargetUpdate( viewport );
+			}
+		}
 	}
 }

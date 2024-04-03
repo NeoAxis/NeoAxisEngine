@@ -23,7 +23,7 @@ namespace NeoAxis
 			{
 				//!!!!check value. везде в шейпах
 
-				if( _radius.BeginSet( ref value ) )
+				if( _radius.BeginSet( this, ref value ) )
 				{
 					try
 					{

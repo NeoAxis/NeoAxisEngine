@@ -172,7 +172,10 @@ namespace NeoAxis
 						list.Add( ("GLOBAL_DEBUG_MODE", "1") );
 
 					if( RenderingSystem.LightMask )
-						list.Add( ("GLOBAL_LIGHT_MASK_SUPPORT", "1") );
+						list.Add( ("GLOBAL_LIGHT_MASK", "1") );
+
+					if( RenderingSystem.LightGrid )
+						list.Add( ("GLOBAL_LIGHT_GRID", "1") );
 
 					list.Add( ("DISPLACEMENT_MAX_STEPS", RenderingSystem.DisplacementMaxSteps.ToString()) );
 
@@ -217,6 +220,19 @@ namespace NeoAxis
 					list.Add( ("GLOBAL_MATERIAL_SHADING", ( (int)RenderingSystem.MaterialShading ).ToString()) );
 
 					list.Add( ("SHADOW_TEXTURE_FORMAT_" + RenderingSystem.ShadowTextureFormat.ToString().ToUpper(), "1") );
+
+					if( RenderingSystem.GlobalIllumination )
+					{
+						list.Add( ("GLOBAL_GI", "1") );
+						//!!!!
+						//list.Add( ("GLOBAL_VOXEL_LOD_MAX_STEPS", RenderingSystem.VoxelLODMaxSteps.ToString()) );
+					}
+
+					if( RenderingSystem.EnvironmentMapMixing )
+						list.Add( ("GLOBAL_ENVIRONMENT_MAP_MIXING", "1") );
+
+					//if( RenderingSystem.Tessellation )
+					//	list.Add( ("GLOBAL_TESSELLATION", "1") );
 
 					globalDefines = list;
 				}
@@ -381,12 +397,10 @@ namespace NeoAxis
 			}
 
 			ShaderCompiler.ShaderModel model = ShaderCompiler.ShaderModel.DX11_SM5;
-			if( Bgfx.GetCurrentBackend() == RendererBackend.Direct3D11 || Bgfx.GetCurrentBackend() == RendererBackend.Direct3D12 )
+			if( Bgfx.GetCurrentBackend() == RendererBackend.Direct3D12 )
+				model = ShaderCompiler.ShaderModel.DX12;
+			else if( Bgfx.GetCurrentBackend() == RendererBackend.Direct3D11 )
 				model = ShaderCompiler.ShaderModel.DX11_SM5;
-			//if( Bgfx.GetCurrentBackend() == RendererBackend.Direct3D12 )
-			//	model = ShaderCompiler.ShaderModel.DX12_SM6;
-			//else if( Bgfx.GetCurrentBackend() == RendererBackend.Direct3D11 )
-			//	model = ShaderCompiler.ShaderModel.DX11_SM5;
 			else if( Bgfx.GetCurrentBackend() == RendererBackend.OpenGLES )
 				model = ShaderCompiler.ShaderModel.OpenGLES;
 			else if( Bgfx.GetCurrentBackend() == RendererBackend.Vulkan )
@@ -476,10 +490,16 @@ namespace NeoAxis
 			foreach( var item in items )
 				items2[ item.GetKey() ] = item;
 
+#if DEBUG
+			foreach( var item in items2.Values )
+				GetProgram( item, out item.Error );
+#else
 			Parallel.ForEach( items2.Values.ToArray(), delegate ( GetProgramItem item )
 			{
-				GetProgram( item, out _ );
+				GetProgram( item, out item.Error );
+				//GetProgram( item, out _ );
 			} );
+#endif
 		}
 
 		public static GpuLinkedProgram GetLinkedProgram( GpuProgram vertexProgram, GpuProgram fragmentProgram )

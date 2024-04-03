@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2022 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -11,37 +11,13 @@ namespace bgfx
 	extern bool g_verbose;
 }
 
-//#define _BX_TRACE(_format, ...) \
-//				BX_MACRO_BLOCK_BEGIN \
-//					if (bgfx::g_verbose) \
-//					{ \
-//						fprintf(stdout, BX_FILE_LINE_LITERAL "" _format "\n", ##__VA_ARGS__); \
-//					} \
-//				BX_MACRO_BLOCK_END
-//
-//#define _BX_WARN(_condition, _format, ...) \
-//				BX_MACRO_BLOCK_BEGIN \
-//					if (!(_condition) ) \
-//					{ \
-//						BX_TRACE("WARN " _format, ##__VA_ARGS__); \
-//					} \
-//				BX_MACRO_BLOCK_END
-//
-//#define _BX_ASSERT(_condition, _format, ...) \
-//				BX_MACRO_BLOCK_BEGIN \
-//					if (!(_condition) ) \
-//					{ \
-//						BX_TRACE("CHECK " _format, ##__VA_ARGS__); \
-//						bx::debugBreak(); \
-//					} \
-//				BX_MACRO_BLOCK_END
-
-#define BX_TRACE _BX_TRACE
-#define BX_WARN  _BX_WARN
-#define BX_ASSERT _BX_ASSERT
-
 #ifndef SHADERC_CONFIG_HLSL
 #	define SHADERC_CONFIG_HLSL BX_PLATFORM_WINDOWS || BX_PLATFORM_WINRT //!!!!betauser
+#endif // SHADERC_CONFIG_HLSL
+
+//!!!!betauser
+#ifndef SHADERC_CONFIG_SPIRV
+#	define SHADERC_CONFIG_SPIRV BX_PLATFORM_WINDOWS
 #endif // SHADERC_CONFIG_HLSL
 
 #include <alloca.h>
@@ -81,57 +57,19 @@ namespace bgfx
 {
 	extern bool g_verbose;
 
-	class LineReader : public bx::ReaderI
-	{
-	public:
-		LineReader(const char* _str)
-			: m_str(_str)
-			, m_pos(0)
-			, m_size(bx::strLen(_str) )
-		{
-		}
-
-		virtual int32_t read(void* _data, int32_t _size, bx::Error* _err) override
-		{
-			if (m_str[m_pos] == '\0'
-			||  m_pos == m_size)
-			{
-				BX_ERROR_SET(_err, bx::kErrorReaderWriterEof, "LineReader: EOF.");
-				return 0;
-			}
-
-			uint32_t pos = m_pos;
-			const char* str = &m_str[pos];
-			const char* nl = bx::strFindNl(bx::StringView(str, str + (m_size - pos))).getPtr();
-			pos += (uint32_t)(nl - str);
-
-			const char* eol = &m_str[pos];
-
-			uint32_t size = bx::uint32_min(uint32_t(eol - str), _size);
-
-			bx::memCopy(_data, str, size);
-			m_pos += size;
-
-			return size;
-		}
-
-		const char* m_str;
-		uint32_t m_pos;
-		uint32_t m_size;
-	};
-
 	bx::StringView nextWord(bx::StringView& _parse);
 
-	constexpr uint8_t kUniformFragmentBit  = 0x10;
-	constexpr uint8_t kUniformSamplerBit   = 0x20;
-	constexpr uint8_t kUniformReadOnlyBit  = 0x40;
-	constexpr uint8_t kUniformCompareBit   = 0x80;
-	constexpr uint8_t kUniformMask = 0
-		| kUniformFragmentBit
-		| kUniformSamplerBit
-		| kUniformReadOnlyBit
-		| kUniformCompareBit
-		;
+	//!!!!betauser
+	//constexpr uint8_t kUniformFragmentBit  = 0x10;
+	//constexpr uint8_t kUniformSamplerBit   = 0x20;
+	//constexpr uint8_t kUniformReadOnlyBit  = 0x40;
+	//constexpr uint8_t kUniformCompareBit   = 0x80;
+	//constexpr uint8_t kUniformMask = 0
+	//	| kUniformFragmentBit
+	//	| kUniformSamplerBit
+	//	| kUniformReadOnlyBit
+	//	| kUniformCompareBit
+	//	;
 
 	const char* getUniformTypeName(UniformType::Enum _enum);
 	UniformType::Enum nameToUniformTypeEnum(const char* _name);
@@ -145,6 +83,7 @@ namespace bgfx
 			, regCount(0)
 			, texComponent(0)
 			, texDimension(0)
+			, texFormat(0)
 		{
 		}
 
@@ -155,6 +94,7 @@ namespace bgfx
 		uint16_t regCount;
 		uint8_t texComponent;
 		uint8_t texDimension;
+		uint16_t texFormat;
 	};
 
 	struct Options
@@ -200,11 +140,12 @@ namespace bgfx
 	int32_t writef(bx::WriterI* _writer, const char* _format, ...);
 	void writeFile(const char* _filePath, const void* _data, int32_t _size);
 
-	bool compileGLSLShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer);
-	bool compileHLSLShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer);
-	bool compileMetalShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer);
-	bool compilePSSLShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer);
-	bool compileSPIRVShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer);
+	bool compileGLSLShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer, bx::WriterI* _messages);
+	bool compileHLSLShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer, bx::WriterI* _messages);
+	bool compileHLSLShaderDX12(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer, bx::WriterI* _messages);
+	bool compileMetalShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer, bx::WriterI* _messages);
+	bool compilePSSLShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer, bx::WriterI* _messages);
+	bool compileSPIRVShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer, bx::WriterI* _messages);
 
 	const char* getPsslPreamble();
 

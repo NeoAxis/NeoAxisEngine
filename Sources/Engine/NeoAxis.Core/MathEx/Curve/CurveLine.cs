@@ -12,27 +12,62 @@ namespace NeoAxis
 	public class CurveLine : CurveSpline
 	{
 		[MethodImpl( (MethodImplOptions)512 )]
-		public override Vector3 CalculateValueByTime( double time )
+		public override void CalculateValueByTime( double time, out Vector3 result )
 		{
 			if( points.Count == 1 )
-				return points[ 0 ].value;
+			{
+				result = points[ 0 ].value;
+				return;
+			}
 
 			double clampedTime = GetClampedTime( time );
 			int i = GetIndexForTime( clampedTime );
 			if( i == 0 )
-				return GetValueForIndex( i );
+			{
+				GetValueForIndex( i, out result );
+				return;
+			}
 			if( i >= points.Count )
-				return GetValueForIndex( points.Count - 1 );
+			{
+				GetValueForIndex( points.Count - 1, out result );
+				return;
+			}
 
-			Vector3 from = GetValueForIndex( i - 1 );
-			Vector3 to = GetValueForIndex( i );
+			GetValueForIndex( i - 1, out var from );
+			GetValueForIndex( i, out var to );
 			double length = points[ i ].time - points[ i - 1 ].time;
 			if( length == 0 )
-				return from;
+			{
+				result = from;
+				return;
+			}
 
 			double diffCoef = ( time - points[ i - 1 ].time ) / length;
-			Vector3 v = from + diffCoef * ( to - from );
-			return v;
+			result = from + diffCoef * ( to - from );
 		}
+
+		//[MethodImpl( (MethodImplOptions)512 )]
+		//public override Vector3 CalculateValueByTime( double time )
+		//{
+		//	if( points.Count == 1 )
+		//		return points[ 0 ].value;
+
+		//	double clampedTime = GetClampedTime( time );
+		//	int i = GetIndexForTime( clampedTime );
+		//	if( i == 0 )
+		//		return GetValueForIndex( i );
+		//	if( i >= points.Count )
+		//		return GetValueForIndex( points.Count - 1 );
+
+		//	Vector3 from = GetValueForIndex( i - 1 );
+		//	Vector3 to = GetValueForIndex( i );
+		//	double length = points[ i ].time - points[ i - 1 ].time;
+		//	if( length == 0 )
+		//		return from;
+
+		//	double diffCoef = ( time - points[ i - 1 ].time ) / length;
+		//	Vector3 v = from + diffCoef * ( to - from );
+		//	return v;
+		//}
 	}
 }

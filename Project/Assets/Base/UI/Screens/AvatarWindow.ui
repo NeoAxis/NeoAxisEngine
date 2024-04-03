@@ -1,0 +1,277 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component Project.AvatarWindow
+{
+	Text = Customize Your Avatar
+	Size = Units 1000 900
+	HorizontalAlignment = Center
+	VerticalAlignment = Center
+	EditorScrollPosition = 0 0
+	Style
+	{
+		GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button OK
+		Text = OK
+		Size = Units 150 40
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		Margin = Units 1170 830 20 70
+		EditorScrollPosition = 0 0
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonOK_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Cancel
+		Text = Cancel
+		Size = Units 150 40
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		Margin = Units 1170 830 20 20
+		EditorScrollPosition = 0 0
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonCancel_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIList
+	{
+		Name = List
+		Size = Units 1340 620
+		HorizontalAlignment = Stretch
+		VerticalAlignment = Stretch
+		Margin = Units 20 80 20 130
+		EditorScrollPosition = 0 0
+		ItemSize = Screen 0.08
+		FontSize = Screen 0.03
+		Items
+		{
+			Count = 0
+		}
+		.component NeoAxis.UIScroll
+		{
+			Name = Scroll
+			CanBeSelected = False
+			Size = Units 30 400
+			HorizontalAlignment = Right
+			VerticalAlignment = Stretch
+			Margin = Units 0 2 2 2
+			EditorScrollPosition = 0 0
+			Vertical = True
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler ItemMouseDoubleClick
+			Event
+			{
+				GetByReference = "this:..\\event:ItemMouseDoubleClick"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:List_ItemMouseDoubleClick(NeoAxis.UIControl,NeoAxis.EMouseButtons,ref System.Boolean)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text
+		Text = Select ready to use avatar
+		Size = Units 400 30
+		Margin = Units 20 50 0 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+	}
+	.component NeoAxis.UIText
+	{
+		Enabled = False
+		Name = Text 2
+		Text = Make your avatar
+		ReadOnly = True
+		Size = Units 400 30
+		Margin = Units 710 440 0 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+	}
+	.component NeoAxis.UITabControl
+	{
+		Enabled = False
+		Name = Tab Control
+		ReadOnly = True
+		Size = Units 660 330
+		Margin = Units 710 480 0 0
+		EditorScrollPosition = 0 0
+		ButtonIndents = Units 0 0
+		Button
+		{
+			GetByReference = "this:$Button"
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button
+			Size = Units 150 40
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIControl
+		{
+			Name = Page Common
+			Text = Common
+			Size = Parent 0.97 0.9500000000000001
+			Margin = Parent 0.12 0.1 0 0
+			BackgroundColor = 0 0 0
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text 4
+				Text = Sex
+				Size = Units 130 40
+				Margin = Units 20 20 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+			}
+			.component NeoAxis.UICheck
+			{
+				Name = Check Male
+				Text = Male
+				Size = Units 25 25
+				Margin = Units 200 30 0 0
+				EditorScrollPosition = 0 0
+			}
+			.component NeoAxis.UICheck
+			{
+				Name = Check Female
+				Text = Female
+				Size = Units 25 25
+				Margin = Units 350 30 0 0
+				EditorScrollPosition = 0 0
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text 3
+				Text = Height
+				Size = Units 130 40
+				Margin = Units 20 70 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text 2
+				Text = Maturity
+				Size = Units 130 40
+				Margin = Units 20 120 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+			}
+			.component NeoAxis.UIEdit
+			{
+				Name = Edit Height
+				Text = 1.8
+				Size = Units 60 40
+				Margin = Units 580 70 0 0
+				EditorScrollPosition = 0 0
+				.component NeoAxis.UIText
+				{
+					Name = Text
+					CanBeSelected = False
+					Size = Parent 1 1
+					HorizontalAlignment = Stretch
+					VerticalAlignment = Stretch
+					Margin = Units 4 2 4 2
+					EditorScrollPosition = 0 0
+					TextHorizontalAlignment = Left
+					ClipRectangle = True
+					Text
+					{
+						GetByReference = "this:..\\DisplayText"
+					}
+				}
+			}
+			.component NeoAxis.UISlider
+			{
+				Name = Slider Maturity
+				Size = Units 360 40
+				Margin = Units 200 120 0 0
+				EditorScrollPosition = 0 0
+			}
+			.component NeoAxis.UISlider
+			{
+				Name = Slider Height
+				Size = Units 360 40
+				Margin = Units 200 70 0 0
+				EditorScrollPosition = 0 0
+			}
+			.component NeoAxis.UIEdit
+			{
+				Name = Edit Muscles
+				Text = 0.5
+				Size = Units 60 40
+				Margin = Units 580 120 0 0
+				EditorScrollPosition = 0 0
+				.component NeoAxis.UIText
+				{
+					Name = Text
+					CanBeSelected = False
+					Size = Parent 1 1
+					HorizontalAlignment = Stretch
+					VerticalAlignment = Stretch
+					Margin = Units 4 2 4 2
+					EditorScrollPosition = 0 0
+					TextHorizontalAlignment = Left
+					ClipRectangle = True
+					Text
+					{
+						GetByReference = "this:..\\DisplayText"
+					}
+				}
+			}
+		}
+	}
+	.component NeoAxis.UIControl
+	{
+		Enabled = False
+		Name = Control Preview
+		Size = Units 660 870
+		Margin = Units 30 60 0 0
+		BackgroundColor = 0.25 0.25 0.25
+		EditorScrollPosition = 0 0
+	}
+	.component NeoAxis.UIRenderTarget
+	{
+		Enabled = False
+		Name = Render Target Preview
+		Size = Units 660 870
+		Margin = Units 30 60 0 0
+		EditorScrollPosition = 0 0
+		HDR = False
+	}
+}

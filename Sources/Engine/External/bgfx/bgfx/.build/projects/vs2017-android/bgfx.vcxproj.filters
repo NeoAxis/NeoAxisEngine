@@ -7,14 +7,56 @@
     <Filter Include="bx">
       <UniqueIdentifier>{b6163e48-2095-4f35-84ed-ddeb948d480a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="bimg">
-      <UniqueIdentifier>{3f6e6ac8-8e0b-4ec8-8e9a-4153f6113ee7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="bimg\astc-codec">
-      <UniqueIdentifier>{296c46dd-c0d9-4832-a569-07f248d62f7c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="bx\include">
       <UniqueIdentifier>{184166f8-1773-46cf-9131-9cdfa7222e67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bimg">
+      <UniqueIdentifier>{64d1f172-284d-4af0-b8df-b69c218e5822}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaderc">
+      <UniqueIdentifier>{c39416d8-b78f-45a5-b33b-1492ad846a2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaderc\fcpp">
+      <UniqueIdentifier>{ae53164b-540d-47f8-9497-1b00127cf984}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaderc\glslang">
+      <UniqueIdentifier>{40e34893-7b3f-47b8-87e7-2208b9572ae3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaderc\glslang\MachineIndependent">
+      <UniqueIdentifier>{c6412432-c994-4852-89bb-5b0e45a6b519}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaderc\glslang\OSDependent">
+      <UniqueIdentifier>{f3b78a3c-1ba1-4f41-b3a1-20e8514afde5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaderc\glslang\OGLCompilersDLL">
+      <UniqueIdentifier>{2ac164ee-0884-4735-a356-559bfaedd0d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaderc\glslang\GenericCodeGen">
+      <UniqueIdentifier>{4abc1652-62af-47c8-951a-fe6d18679181}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaderc\glslang\SPIRV">
+      <UniqueIdentifier>{6da9a61d-643e-4373-9413-e6fed076f886}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaderc\spirv-cross">
+      <UniqueIdentifier>{04b05740-8545-4a1f-b9d9-bcc3ff0d6dca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaderc\spirv-tools">
+      <UniqueIdentifier>{f2a9f535-8ce5-4be0-86c4-e01824da2cc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaderc\spirv-tools\val">
+      <UniqueIdentifier>{946f414b-2573-40e2-a841-1967309f4cf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaderc\spirv-tools\util">
+      <UniqueIdentifier>{a5d1ec21-687e-4584-9a3a-f2ceb3ae3bc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaderc\spirv-tools\opt">
+      <UniqueIdentifier>{de619005-5e23-4a03-8a40-fc0b3d1ce2bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaderc\tools">
+      <UniqueIdentifier>{ada9ae24-1313-4f69-b9da-abf43d419cc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaderc\tools\shaderc">
+      <UniqueIdentifier>{244131b3-54b4-4ac6-86e9-97bb911bfab8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -96,9 +138,6 @@
     <ClCompile Include="..\..\..\src\glcontext_egl.cpp">
       <Filter>bgfx</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\glcontext_glx.cpp">
-      <Filter>bgfx</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\glcontext_html5.cpp">
       <Filter>bgfx</Filter>
     </ClCompile>
@@ -112,9 +151,6 @@
       <Filter>bgfx</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\renderer_d3d12.cpp">
-      <Filter>bgfx</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\renderer_d3d9.cpp">
       <Filter>bgfx</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\renderer_gl.cpp">
@@ -135,9 +171,6 @@
     <ClCompile Include="..\..\..\src\shader.cpp">
       <Filter>bgfx</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\shader_dx9bc.cpp">
-      <Filter>bgfx</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\shader_dxbc.cpp">
       <Filter>bgfx</Filter>
     </ClCompile>
@@ -150,47 +183,716 @@
     <ClCompile Include="..\..\..\src\topology.cpp">
       <Filter>bgfx</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\vertexlayout.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\renderer_agc.cpp">
+      <Filter>bgfx</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\..\bimg\src\image.cpp">
       <Filter>bimg</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\bimg\src\image_gnf.cpp">
       <Filter>bimg</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\astc_file.cc">
-      <Filter>bimg\astc-codec</Filter>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp1.c">
+      <Filter>shaderc\fcpp</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\codec.cc">
-      <Filter>bimg\astc-codec</Filter>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp2.c">
+      <Filter>shaderc\fcpp</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\endpoint_codec.cc">
-      <Filter>bimg\astc-codec</Filter>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp3.c">
+      <Filter>shaderc\fcpp</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\footprint.cc">
-      <Filter>bimg\astc-codec</Filter>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp4.c">
+      <Filter>shaderc\fcpp</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\integer_sequence_codec.cc">
-      <Filter>bimg\astc-codec</Filter>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp5.c">
+      <Filter>shaderc\fcpp</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\intermediate_astc_block.cc">
-      <Filter>bimg\astc-codec</Filter>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp6.c">
+      <Filter>shaderc\fcpp</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\logical_astc_block.cc">
-      <Filter>bimg\astc-codec</Filter>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\attribute.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\partition.cc">
-      <Filter>bimg\astc-codec</Filter>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\Constant.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\physical_astc_block.cc">
-      <Filter>bimg\astc-codec</Filter>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\glslang_tab.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\quantization.cc">
-      <Filter>bimg\astc-codec</Filter>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\InfoSink.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\weight_infill.cc">
-      <Filter>bimg\astc-codec</Filter>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\Initialize.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\vertexlayout.cpp">
-      <Filter>bgfx</Filter>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\Intermediate.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\intermOut.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\IntermTraverse.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\iomapper.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\limits.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\linkValidate.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\parseConst.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\ParseContextBase.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\ParseHelper.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\PoolAlloc.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\preprocessor\Pp.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\preprocessor\PpAtom.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\preprocessor\PpContext.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\preprocessor\PpScanner.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\preprocessor\PpTokens.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\propagateNoContraction.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\reflection.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\RemoveTree.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\Scan.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\ShaderLang.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\SymbolTable.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\Versions.cpp">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\OSDependent\Unix\ossource.cpp">
+      <Filter>shaderc\glslang\OSDependent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\OGLCompilersDLL\InitializeDll.cpp">
+      <Filter>shaderc\glslang\OGLCompilersDLL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\GenericCodeGen\CodeGen.cpp">
+      <Filter>shaderc\glslang\GenericCodeGen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\glslang\GenericCodeGen\Link.cpp">
+      <Filter>shaderc\glslang\GenericCodeGen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\SPIRV\doc.cpp">
+      <Filter>shaderc\glslang\SPIRV</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\SPIRV\GlslangToSpv.cpp">
+      <Filter>shaderc\glslang\SPIRV</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\SPIRV\InReadableOrder.cpp">
+      <Filter>shaderc\glslang\SPIRV</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\SPIRV\Logger.cpp">
+      <Filter>shaderc\glslang\SPIRV</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\SPIRV\SpvBuilder.cpp">
+      <Filter>shaderc\glslang\SPIRV</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\SPIRV\SpvPostProcess.cpp">
+      <Filter>shaderc\glslang\SPIRV</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\SPIRV\SPVRemapper.cpp">
+      <Filter>shaderc\glslang\SPIRV</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\glslang\SPIRV\SpvTools.cpp">
+      <Filter>shaderc\glslang\SPIRV</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-cross\spirv_cfg.cpp">
+      <Filter>shaderc\spirv-cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-cross\spirv_cpp.cpp">
+      <Filter>shaderc\spirv-cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-cross\spirv_cross.cpp">
+      <Filter>shaderc\spirv-cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-cross\spirv_cross_c.cpp">
+      <Filter>shaderc\spirv-cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-cross\spirv_cross_parsed_ir.cpp">
+      <Filter>shaderc\spirv-cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-cross\spirv_cross_util.cpp">
+      <Filter>shaderc\spirv-cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-cross\spirv_glsl.cpp">
+      <Filter>shaderc\spirv-cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-cross\spirv_hlsl.cpp">
+      <Filter>shaderc\spirv-cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-cross\spirv_msl.cpp">
+      <Filter>shaderc\spirv-cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-cross\spirv_parser.cpp">
+      <Filter>shaderc\spirv-cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-cross\spirv_reflect.cpp">
+      <Filter>shaderc\spirv-cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\assembly_grammar.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\binary.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\diagnostic.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\disassemble.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\enum_string_mapping.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\extensions.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\ext_inst.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\libspirv.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\name_mapper.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opcode.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\operand.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\parsed_operand.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\pch_source.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\print.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\software_version.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\spirv_endian.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\spirv_fuzzer_options.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\spirv_optimizer_options.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\spirv_reducer_options.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\spirv_target_env.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\spirv_validator_options.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\table.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\text.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\text_handler.cpp">
+      <Filter>shaderc\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\basic_block.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\construct.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\function.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\instruction.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_adjacency.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_annotation.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_arithmetics.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_atomics.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_barriers.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_bitwise.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_builtins.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_capability.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_cfg.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_composites.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_constants.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_conversion.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_debug.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_decorations.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_derivatives.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_execution_limitations.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_extensions.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_function.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_id.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_image.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_instruction.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_interfaces.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_layout.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_literals.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_logicals.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_memory.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_memory_semantics.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_misc.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_mode_setting.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_non_uniform.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_primitives.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_scopes.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_small_type_uses.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validate_type.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\val\validation_state.cpp">
+      <Filter>shaderc\spirv-tools\val</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\util\bit_vector.cpp">
+      <Filter>shaderc\spirv-tools\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\util\parse_number.cpp">
+      <Filter>shaderc\spirv-tools\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\util\string_utils.cpp">
+      <Filter>shaderc\spirv-tools\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\util\timer.cpp">
+      <Filter>shaderc\spirv-tools\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\aggressive_dead_code_elim_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\amd_ext_to_khr.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\basic_block.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\block_merge_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\block_merge_util.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\build_module.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\ccp_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\cfg.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\cfg_cleanup_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\code_sink.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\combine_access_chains.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\compact_ids_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\composite.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\constants.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\const_folding_rules.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\convert_to_half_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\copy_prop_arrays.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\dead_branch_elim_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\dead_insert_elim_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\dead_variable_elimination.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\debug_info_manager.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\decompose_initialized_variables_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\decoration_manager.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\def_use_manager.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\desc_sroa.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\dominator_analysis.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\dominator_tree.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\eliminate_dead_constant_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\eliminate_dead_functions_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\eliminate_dead_functions_util.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\eliminate_dead_members_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\feature_manager.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\fix_storage_class.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\flatten_decoration_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\fold.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\folding_rules.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\fold_spec_constant_op_and_composite_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\freeze_spec_constant_value_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\function.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\generate_webgpu_initializers_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\graphics_robust_access_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\if_conversion.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\inline_exhaustive_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\inline_opaque_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\inline_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\instruction.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\instruction_list.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\instrument_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\inst_bindless_check_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\inst_buff_addr_check_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\inst_debug_printf_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\ir_context.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\ir_loader.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\legalize_vector_shuffle_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\licm_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\local_access_chain_convert_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\local_redundancy_elimination.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\local_single_block_elim_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\local_single_store_elim_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\loop_dependence.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\loop_dependence_helpers.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\loop_descriptor.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\loop_fission.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\loop_fusion.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\loop_fusion_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\loop_peeling.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\loop_unroller.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\loop_unswitch_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\loop_utils.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\mem_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\merge_return_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\module.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\optimizer.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\pass_manager.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\pch_source_opt.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\private_to_local_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\process_lines_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\propagator.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\reduce_load_size.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\redundancy_elimination.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\register_pressure.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\relax_float_ops_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\remove_duplicates_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\replace_invalid_opc.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\scalar_analysis.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\scalar_analysis_simplification.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\scalar_replacement_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\set_spec_constant_default_value_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\simplification_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\split_invalid_unreachable_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\ssa_rewrite_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\strength_reduction_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\strip_atomic_counter_memory_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\strip_debug_info_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\strip_reflect_info_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\struct_cfg_analysis.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\types.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\type_manager.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\unify_const_pass.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\upgrade_memory_model.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\value_number_table.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\vector_dce.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\workaround1209.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\spirv-tools\source\opt\wrap_opkill.cpp">
+      <Filter>shaderc\spirv-tools\opt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\Library.cpp">
+      <Filter>shaderc\tools\shaderc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\LibraryBase.cpp">
+      <Filter>shaderc\tools\shaderc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc.cpp">
+      <Filter>shaderc\tools\shaderc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc_spirv.cpp">
+      <Filter>shaderc\tools\shaderc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -282,6 +984,9 @@
       <Filter>bx\include</Filter>
     </None>
     <None Include="..\..\..\..\bx\include\bx\inline\uint32_t.inl">
+      <Filter>bx\include</Filter>
+    </None>
+    <None Include="..\..\..\..\bx\include\bx\inline\typetraits.inl">
       <Filter>bx\include</Filter>
     </None>
   </ItemGroup>
@@ -399,6 +1104,114 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\bx\include\bx\url.h">
       <Filter>bx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\bx\include\bx\typetraits.h">
+      <Filter>bx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\bgfx_p.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\charset.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\config.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\debug_renderdoc.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\dxgi.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\emscripten.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\glcontext_egl.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\glcontext_html5.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\glcontext_wgl.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\glimports.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\nvapi.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\renderer.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\renderer_d3d.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\renderer_d3d11.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\renderer_d3d12.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\renderer_gl.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\renderer_mtl.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\renderer_vk.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\shader.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\shader_dxbc.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\shader_spirv.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\special.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\topology.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\version.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vertexlayout.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vs_clear.bin.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vs_debugfont.bin.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\bgfx\bgfx.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\bgfx\defines.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\bgfx\embedded_shader.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\bgfx\platform.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\bgfx\c99\bgfx.h">
+      <Filter>bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\attribute.h">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\glslang_tab.cpp.h">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\3rdparty\glslang\glslang\MachineIndependent\gl_types.h">
+      <Filter>shaderc\glslang\MachineIndependent</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

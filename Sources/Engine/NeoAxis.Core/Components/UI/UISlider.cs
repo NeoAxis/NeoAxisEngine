@@ -24,7 +24,7 @@ namespace NeoAxis
 		public Reference<bool> Vertical
 		{
 			get { if( _vertical.BeginGet() ) Vertical = _vertical.Get( this ); return _vertical.value; }
-			set { if( _vertical.BeginSet( ref value ) ) { try { VerticalChanged?.Invoke( this ); } finally { _vertical.EndSet(); } } }
+			set { if( _vertical.BeginSet( this, ref value ) ) { try { VerticalChanged?.Invoke( this ); } finally { _vertical.EndSet(); } } }
 		}
 		public event Action<UISlider> VerticalChanged;
 		ReferenceField<bool> _vertical = false;
@@ -36,7 +36,7 @@ namespace NeoAxis
 		public Reference<Range> ValueRange
 		{
 			get { if( _valueRange.BeginGet() ) ValueRange = _valueRange.Get( this ); return _valueRange.value; }
-			set { if( _valueRange.BeginSet( ref value ) ) { try { ValueRangeChanged?.Invoke( this ); } finally { _valueRange.EndSet(); } } }
+			set { if( _valueRange.BeginSet( this, ref value ) ) { try { ValueRangeChanged?.Invoke( this ); } finally { _valueRange.EndSet(); } } }
 		}
 		public event Action<UISlider> ValueRangeChanged;
 		ReferenceField<Range> _valueRange = new Range( 0, 10 );
@@ -48,7 +48,7 @@ namespace NeoAxis
 		public Reference<double> Value
 		{
 			get { if( _value.BeginGet() ) Value = _value.Get( this ); return _value.value; }
-			set { if( _value.BeginSet( ref value ) ) { try { ValueChanged?.Invoke( this ); } finally { _value.EndSet(); } } }
+			set { if( _value.BeginSet( this, ref value ) ) { try { ValueChanged?.Invoke( this ); } finally { _value.EndSet(); } } }
 		}
 		public event Action<UISlider> ValueChanged;
 		ReferenceField<double> _value = 0.0;
@@ -60,7 +60,7 @@ namespace NeoAxis
 		public Reference<double> Step
 		{
 			get { if( _step.BeginGet() ) Step = _step.Get( this ); return _step.value; }
-			set { if( _step.BeginSet( ref value ) ) { try { StepChanged?.Invoke( this ); } finally { _step.EndSet(); } } }
+			set { if( _step.BeginSet( this, ref value ) ) { try { StepChanged?.Invoke( this ); } finally { _step.EndSet(); } } }
 		}
 		public event Action<UISlider> StepChanged;
 		ReferenceField<double> _step = 1.0;
@@ -72,7 +72,7 @@ namespace NeoAxis
 		public Reference<double> TickFrequency
 		{
 			get { if( _tickFrequency.BeginGet() ) TickFrequency = _tickFrequency.Get( this ); return _tickFrequency.value; }
-			set { if( _tickFrequency.BeginSet( ref value ) ) { try { TickFrequencyChanged?.Invoke( this ); } finally { _tickFrequency.EndSet(); } } }
+			set { if( _tickFrequency.BeginSet( this, ref value ) ) { try { TickFrequencyChanged?.Invoke( this ); } finally { _tickFrequency.EndSet(); } } }
 		}
 		public event Action<UISlider> TickFrequencyChanged;
 		ReferenceField<double> _tickFrequency = 1.0;
@@ -225,6 +225,9 @@ namespace NeoAxis
 			case TouchData.ActionEnum.Down:
 				if( VisibleInHierarchy && EnabledInHierarchy && !ReadOnlyInHierarchy && touchDown == null )
 				{
+					if( ParentContainer != null && ParentContainer.IsControlCursorCoveredByOther( this ) )
+						break;
+
 					GetScreenRectangle( out var rect );
 					var rectInPixels = rect * ParentContainer.Viewport.SizeInPixels.ToVector2();
 					var distanceInPixels = rectInPixels.GetPointDistance( e.PositionInPixels.ToVector2() );
@@ -232,6 +235,8 @@ namespace NeoAxis
 					var item = new TouchData.TouchDownRequestToProcessTouch( this, 0, distanceInPixels, null,
 						delegate ( UIControl sender, TouchData touchData, object anyData )
 						{
+							Focus();
+
 							//start touch
 							touchDown = e.PointerIdentifier;
 							UpdateValueByCursor( e.Position );

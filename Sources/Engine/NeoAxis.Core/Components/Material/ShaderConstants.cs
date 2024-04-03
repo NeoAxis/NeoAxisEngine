@@ -132,6 +132,30 @@ namespace NeoAxis
 			get { return Vector3.Zero; }
 		}
 
+		[ShaderGenerationFunction( "u_temperature" )]
+		public static double Temparature
+		{
+			get { return 0; }
+		}
+
+		[ShaderGenerationFunction( "u_precipitationFalling" )]
+		public static double PrecipitationFalling
+		{
+			get { return 0; }
+		}
+
+		[ShaderGenerationFunction( "u_precipitationFallen" )]
+		public static double PrecipitationFallen
+		{
+			get { return 0; }
+		}
+
+		[ShaderGenerationFunction( "u_timeOfDay" )]
+		public static double TimeOfDay
+		{
+			get { return 0; }
+		}
+
 		///////////////////////////////////////////////
 
 		/// <summary>
@@ -283,6 +307,24 @@ namespace NeoAxis
 		/// </summary>
 		[ShaderGenerationFunction( "color0" )]
 		public static Vector4 Color0
+		{
+			get { return Vector4.Zero; }
+		}
+
+		/// <summary>
+		/// Gets material instance parameter 1.
+		/// </summary>
+		[ShaderGenerationFunction( "instanceParameter1" )]
+		public static Vector4 InstanceParameter1
+		{
+			get { return Vector4.Zero; }
+		}
+
+		/// <summary>
+		/// Gets material instance parameter 2.
+		/// </summary>
+		[ShaderGenerationFunction( "instanceParameter2" )]
+		public static Vector4 InstanceParameter2
 		{
 			get { return Vector4.Zero; }
 		}

@@ -31,7 +31,7 @@ namespace NeoAxis
 		public Reference<ColorValue> ColorMultiplier
 		{
 			get { if( _colorMultiplier.BeginGet() ) ColorMultiplier = _colorMultiplier.Get( this ); return _colorMultiplier.value; }
-			set { if( _colorMultiplier.BeginSet( ref value ) ) { try { ColorMultiplierChanged?.Invoke( this ); DataWasChanged(); } finally { _colorMultiplier.EndSet(); } } }
+			set { if( _colorMultiplier.BeginSet( this, ref value ) ) { try { ColorMultiplierChanged?.Invoke( this ); DataWasChanged(); } finally { _colorMultiplier.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ColorMultiplier"/> property value changes.</summary>
 		public event Action<RoadNode> ColorMultiplierChanged;
@@ -41,7 +41,7 @@ namespace NeoAxis
 		public Reference<bool> Collision
 		{
 			get { if( _collision.BeginGet() ) Collision = _collision.Get( this ); return _collision.value; }
-			set { if( _collision.BeginSet( ref value ) ) { try { CollisionChanged?.Invoke( this ); DataWasChanged(); } finally { _collision.EndSet(); } } }
+			set { if( _collision.BeginSet( this, ref value ) ) { try { CollisionChanged?.Invoke( this ); DataWasChanged(); } finally { _collision.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Collision"/> property value changes.</summary>
 		public event Action<RoadNode> CollisionChanged;
@@ -75,7 +75,7 @@ namespace NeoAxis
 
 				if( !Owner.Collision.Value )
 					return;
-				if( RoadUtility.IsAnyTransformToolInModifyingMode() )
+				if( EditorAPI.IsAnyTransformToolInModifyingMode() )
 				{
 					Owner.needUpdateAfterEndModifyingTransformTool = true;
 					return;
@@ -158,7 +158,7 @@ namespace NeoAxis
 				GetLogicalData();
 				if( logicalData != null && ParentScene != null )
 				{
-					if( !RoadUtility.UpdateVisualDataInModifyingMode && RoadUtility.IsAnyTransformToolInModifyingMode() )
+					if( !RoadUtility.UpdateVisualDataInModifyingMode && EditorAPI.IsAnyTransformToolInModifyingMode() )
 					{
 						needUpdateAfterEndModifyingTransformTool = true;
 						return null;
@@ -194,8 +194,8 @@ namespace NeoAxis
 					scene.EnabledInHierarchyChanged += Scene_EnabledInHierarchyChanged;
 					scene.ViewportUpdateBefore += Scene_ViewportUpdateBefore;
 #if !DEPLOY
-					TransformTool.AllInstances_ModifyCommit += TransformTool_AllInstances_ModifyCommit;
-					TransformTool.AllInstances_ModifyCancel += TransformTool_AllInstances_ModifyCancel;
+					TransformToolUtility.AllInstances_ModifyCommit += TransformTool_AllInstances_ModifyCommit;
+					TransformToolUtility.AllInstances_ModifyCancel += TransformTool_AllInstances_ModifyCancel;
 #endif
 
 					if( logicalData == null )
@@ -206,8 +206,8 @@ namespace NeoAxis
 					scene.EnabledInHierarchyChanged -= Scene_EnabledInHierarchyChanged;
 					scene.ViewportUpdateBefore -= Scene_ViewportUpdateBefore;
 #if !DEPLOY
-					TransformTool.AllInstances_ModifyCommit -= TransformTool_AllInstances_ModifyCommit;
-					TransformTool.AllInstances_ModifyCancel -= TransformTool_AllInstances_ModifyCancel;
+					TransformToolUtility.AllInstances_ModifyCommit -= TransformTool_AllInstances_ModifyCommit;
+					TransformToolUtility.AllInstances_ModifyCancel -= TransformTool_AllInstances_ModifyCancel;
 #endif
 
 					Update();
@@ -216,7 +216,7 @@ namespace NeoAxis
 		}
 
 #if !DEPLOY
-		private void TransformTool_AllInstances_ModifyCommit( TransformTool sender )
+		private void TransformTool_AllInstances_ModifyCommit( ITransformTool sender )
 		{
 			if( needUpdateAfterEndModifyingTransformTool )
 			{
@@ -226,7 +226,7 @@ namespace NeoAxis
 			}
 		}
 
-		private void TransformTool_AllInstances_ModifyCancel( TransformTool sender )
+		private void TransformTool_AllInstances_ModifyCancel( ITransformTool sender )
 		{
 			if( needUpdateAfterEndModifyingTransformTool )
 			{

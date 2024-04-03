@@ -1,5 +1,5 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-#if WINDOWS || UWP
+#if !ANDROID && !IOS && !WEB
 using System;
 using System.Runtime.InteropServices;
 using System.Security;

@@ -4,7 +4,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 
 All rights reserved.
@@ -112,7 +112,7 @@ protected:
     /** Reads the hierarchy */
     void ReadHierarchy(aiScene *pScene);
 
-    /** Reads a node and recursively its childs and returns the created node. */
+    /** Reads a node and recursively its children and returns the created node. */
     aiNode *ReadNode();
 
     /** Reads an end node and returns the created node. */
@@ -134,7 +134,8 @@ protected:
     float GetNextTokenAsFloat();
 
     /** Aborts the file reading with an exception */
-    AI_WONT_RETURN void ThrowException(const std::string &pError) AI_WONT_RETURN_SUFFIX;
+    template<typename... T>
+    AI_WONT_RETURN void ThrowException(T&&... args) AI_WONT_RETURN_SUFFIX;
 
     /** Constructs an animation for the motion data and stores it in the given scene */
     void CreateAnimation(aiScene *pScene);

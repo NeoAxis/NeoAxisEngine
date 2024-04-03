@@ -69,8 +69,7 @@ namespace NeoAxis
 			if( string.IsNullOrEmpty( text ) )
 				throw new ArgumentNullException( "The text parameter cannot be null or zero length." );
 
-			string[] vals = text.Split( new char[] { ' ' },
-				StringSplitOptions.RemoveEmptyEntries );
+			string[] vals = text.Split( new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries );
 
 			if( vals.Length != 4 )
 				throw new FormatException( string.Format( "Cannot parse the text '{0}' because it does not have 4 parts separated by spaces in the form (left top right bottom).", text ) );

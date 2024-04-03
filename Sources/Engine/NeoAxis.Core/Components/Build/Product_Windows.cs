@@ -4,10 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Reflection;
 using System.IO;
-using System.Drawing.Design;
 using NeoAxis.Editor;
 
 namespace NeoAxis
@@ -25,7 +22,7 @@ namespace NeoAxis
 		public Reference<string> ExecutableName
 		{
 			get { if( _executableName.BeginGet() ) ExecutableName = _executableName.Get( this ); return _executableName.value; }
-			set { if( _executableName.BeginSet( ref value ) ) { try { ExecutableNameChanged?.Invoke( this ); } finally { _executableName.EndSet(); } } }
+			set { if( _executableName.BeginSet( this, ref value ) ) { try { ExecutableNameChanged?.Invoke( this ); } finally { _executableName.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ExecutableName"/> property value changes.</summary>
 		public event Action<Product_Windows> ExecutableNameChanged;
@@ -38,7 +35,7 @@ namespace NeoAxis
 		public Reference<bool> Editor
 		{
 			get { if( _editor.BeginGet() ) Editor = _editor.Get( this ); return _editor.value; }
-			set { if( _editor.BeginSet( ref value ) ) { try { EditorChanged?.Invoke( this ); } finally { _editor.EndSet(); } } }
+			set { if( _editor.BeginSet( this, ref value ) ) { try { EditorChanged?.Invoke( this ); } finally { _editor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Editor"/> property value changes.</summary>
 		public event Action<Product_Windows> EditorChanged;
@@ -51,7 +48,7 @@ namespace NeoAxis
 		public Reference<bool> ImportTools
 		{
 			get { if( _importTools.BeginGet() ) ImportTools = _importTools.Get( this ); return _importTools.value; }
-			set { if( _importTools.BeginSet( ref value ) ) { try { ImportToolsChanged?.Invoke( this ); } finally { _importTools.EndSet(); } } }
+			set { if( _importTools.BeginSet( this, ref value ) ) { try { ImportToolsChanged?.Invoke( this ); } finally { _importTools.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ImportTools"/> property value changes.</summary>
 		public event Action<Product_Windows> ImportToolsChanged;
@@ -64,7 +61,7 @@ namespace NeoAxis
 		public Reference<bool> CubemapProcessingTools
 		{
 			get { if( _cubemapProcessingTools.BeginGet() ) CubemapProcessingTools = _cubemapProcessingTools.Get( this ); return _cubemapProcessingTools.value; }
-			set { if( _cubemapProcessingTools.BeginSet( ref value ) ) { try { CubemapProcessingToolsChanged?.Invoke( this ); } finally { _cubemapProcessingTools.EndSet(); } } }
+			set { if( _cubemapProcessingTools.BeginSet( this, ref value ) ) { try { CubemapProcessingToolsChanged?.Invoke( this ); } finally { _cubemapProcessingTools.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CubemapProcessingTools"/> property value changes.</summary>
 		public event Action<Product_Windows> CubemapProcessingToolsChanged;
@@ -77,7 +74,7 @@ namespace NeoAxis
 		//public Reference<bool> BuildTools
 		//{
 		//	get { if( _buildTools.BeginGet() ) BuildTools = _buildTools.Get( this ); return _buildTools.value; }
-		//	set { if( _buildTools.BeginSet( ref value ) ) { try { BuildToolsChanged?.Invoke( this ); } finally { _buildTools.EndSet(); } } }
+		//	set { if( _buildTools.BeginSet( this, ref value ) ) { try { BuildToolsChanged?.Invoke( this ); } finally { _buildTools.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="BuildTools"/> property value changes.</summary>
 		//public event Action<Product_Windows> BuildToolsChanged;
@@ -90,7 +87,7 @@ namespace NeoAxis
 		public Reference<bool> DebugFiles
 		{
 			get { if( _debugFiles.BeginGet() ) DebugFiles = _debugFiles.Get( this ); return _debugFiles.value; }
-			set { if( _debugFiles.BeginSet( ref value ) ) { try { DebugFilesChanged?.Invoke( this ); } finally { _debugFiles.EndSet(); } } }
+			set { if( _debugFiles.BeginSet( this, ref value ) ) { try { DebugFilesChanged?.Invoke( this ); } finally { _debugFiles.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DebugFiles"/> property value changes.</summary>
 		public event Action<Product_Windows> DebugFilesChanged;
@@ -104,7 +101,7 @@ namespace NeoAxis
 		public Reference<bool> UIWebBrowser
 		{
 			get { if( _uIWebBrowser.BeginGet() ) UIWebBrowser = _uIWebBrowser.Get( this ); return _uIWebBrowser.value; }
-			set { if( _uIWebBrowser.BeginSet( ref value ) ) { try { UIWebBrowserChanged?.Invoke( this ); } finally { _uIWebBrowser.EndSet(); } } }
+			set { if( _uIWebBrowser.BeginSet( this, ref value ) ) { try { UIWebBrowserChanged?.Invoke( this ); } finally { _uIWebBrowser.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UIWebBrowser"/> property value changes.</summary>
 		public event Action<Product_Windows> UIWebBrowserChanged;
@@ -117,11 +114,24 @@ namespace NeoAxis
 		public Reference<bool> SatelliteResourceLanguages
 		{
 			get { if( _satelliteResourceLanguages.BeginGet() ) SatelliteResourceLanguages = _satelliteResourceLanguages.Get( this ); return _satelliteResourceLanguages.value; }
-			set { if( _satelliteResourceLanguages.BeginSet( ref value ) ) { try { SatelliteResourceLanguagesChanged?.Invoke( this ); } finally { _satelliteResourceLanguages.EndSet(); } } }
+			set { if( _satelliteResourceLanguages.BeginSet( this, ref value ) ) { try { SatelliteResourceLanguagesChanged?.Invoke( this ); } finally { _satelliteResourceLanguages.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SatelliteResourceLanguages"/> property value changes.</summary>
 		public event Action<Product_Windows> SatelliteResourceLanguagesChanged;
 		ReferenceField<bool> _satelliteResourceLanguages = false;
+
+		/// <summary>
+		/// Whether to include assemblies from .NET WindowsDesktop configuration (WinForms, WPF).
+		/// </summary>
+		[DefaultValue( false )]
+		public Reference<bool> WindowsDesktopAssemblies
+		{
+			get { if( _windowsDesktopAssemblies.BeginGet() ) WindowsDesktopAssemblies = _windowsDesktopAssemblies.Get( this ); return _windowsDesktopAssemblies.value; }
+			set { if( _windowsDesktopAssemblies.BeginSet( this, ref value ) ) { try { WindowsDesktopAssembliesChanged?.Invoke( this ); } finally { _windowsDesktopAssemblies.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="WindowsDesktopAssemblies"/> property value changes.</summary>
+		public event Action<Product_Windows> WindowsDesktopAssembliesChanged;
+		ReferenceField<bool> _windowsDesktopAssemblies = false;
 
 		/////////////////////////////////////////
 
@@ -429,6 +439,9 @@ namespace NeoAxis
 					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Localization" ) );
 					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tools\PlatformTools" ) );
 
+					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Core.Editor.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Core.Editor.deps.json" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.dll" ) );
 					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.exe" ) );
 					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.exe.config" ) );
 					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.deps.json" ) );
@@ -451,7 +464,10 @@ namespace NeoAxis
 				excludePaths.Add( Path.Combine( sourceFolder, "_TestPlayerParameters.cmd" ) );
 
 				if( !Editor )
-					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\Windows\dotnet" ) );
+				{
+					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\Windows\dotnet5" ) );
+					//excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\Windows\dotnet" ) );
+				}
 
 				//if( !BuildTools )
 				//{
@@ -496,6 +512,68 @@ namespace NeoAxis
 					excludePaths.Add( Path.Combine( sourceFolder, "tr" ) );
 					excludePaths.Add( Path.Combine( sourceFolder, "zh-Hans" ) );
 					excludePaths.Add( Path.Combine( sourceFolder, "zh-Hant" ) );
+				}
+
+				if( !WindowsDesktopAssemblies )
+				{
+					excludePaths.Add( Path.Combine( sourceFolder, "Accessibility.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "D3DCompiler_47_cor3.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "DirectWriteForwarder.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "Microsoft.Win32.Registry.AccessControl.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "Microsoft.Win32.SystemEvents.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "Microsoft.WindowsDesktop.App.deps.json" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "Microsoft.WindowsDesktop.App.runtimeconfig.json" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "PenImc_cor3.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "PresentationCore.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "PresentationFramework-SystemCore.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "PresentationFramework-SystemData.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "PresentationFramework-SystemDrawing.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "PresentationFramework-SystemXml.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "PresentationFramework-SystemXmlLinq.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "PresentationFramework.Aero.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "PresentationFramework.Aero2.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "PresentationFramework.AeroLite.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "PresentationFramework.Classic.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "PresentationFramework.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "PresentationFramework.Luna.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "PresentationFramework.Royale.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "PresentationNative_cor3.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "PresentationUI.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "ReachFramework.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.CodeDom.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Configuration.ConfigurationManager.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Design.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Diagnostics.EventLog.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Diagnostics.PerformanceCounter.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.DirectoryServices.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Drawing.Common.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Drawing.Design.dll" ) );
+					//need//excludePaths.Add( Path.Combine( sourceFolder, "System.Drawing.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.IO.Packaging.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Printing.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Resources.Extensions.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Security.Cryptography.Pkcs.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Security.Cryptography.ProtectedData.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Security.Cryptography.Xml.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Security.Permissions.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Threading.AccessControl.dll" ) );
+
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Windows.Controls.Ribbon.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Windows.Extensions.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Windows.Forms.Design.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Windows.Forms.Design.Editors.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Windows.Forms.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Windows.Input.Manipulations.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Windows.Presentation.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "System.Xaml.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "UIAutomationClient.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "UIAutomationClientSideProviders.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "UIAutomationProvider.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "UIAutomationTypes.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "vcruntime140_cor3.dll" ) );
+					//need//excludePaths.Add( Path.Combine( sourceFolder, "WindowsBase.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "WindowsFormsIntegration.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "wpfgfx_cor3.dll" ) );
 				}
 
 				foreach( var excludePath in excludePaths )

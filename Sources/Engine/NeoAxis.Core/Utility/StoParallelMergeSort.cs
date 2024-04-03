@@ -68,9 +68,7 @@ namespace Sto
 		/// Sorts an array of elements.
 		/// </summary>
 		/// <param name="list">Array of elements to sort.</param>
-#if WINDOWS
 		[MethodImpl( (MethodImplOptions)512 )]
-#endif
 		public void Sort( T[] list )
 		{
 			if( list == null )
@@ -86,9 +84,7 @@ namespace Sto
 		/// Sorts a list of elements.
 		/// </summary>
 		/// <param name="list">List of elements to sort.</param>
-#if WINDOWS
 		[MethodImpl( (MethodImplOptions)512 )]
-#endif
 		public void Sort( IList<T> list )
 		{
 			if( list == null )
@@ -117,9 +113,7 @@ namespace Sto
 		/// <param name="beginBlock">First index of block to sort.</param>
 		/// <param name="endBlock">Last index of the block to sort.</param>
 		/// <param name="recursionDepth">Level of recursion.</param>
-#if WINDOWS
 		[MethodImpl( (MethodImplOptions)512 )]
-#endif
 		void SortBlock( T[] list, T[] tempList, int beginBlock, int endBlock, int recursionDepth )
 		{
 			// Odd levels should store the result in the list, even levels in the
@@ -173,9 +167,7 @@ namespace Sto
 		/// <param name="endBlock1">Index of last element of block 1.</param>
 		/// <param name="beginBlock2">First index of block 2 (always endBlock1 + 1).</param>
 		/// <param name="endBlock2">Index of last element of block2.</param>
-#if WINDOWS
 		[MethodImpl( (MethodImplOptions)512 )]
-#endif
 		void MergeTwoBlocks( T[] sourceList, T[] targetList, int beginBlock1, int endBlock1, int beginBlock2, int endBlock2 )
 		{
 			for( int targetIndex = beginBlock1; targetIndex <= endBlock2; targetIndex++ )
@@ -207,9 +199,7 @@ namespace Sto
 		/// <param name="list">List with element to sort.</param>
 		/// <param name="beginBlock">Index of the first element in the block to sort.</param>
 		/// <param name="endBlock">Index of the last element in the block so sort.</param>
-#if WINDOWS
 		[MethodImpl( (MethodImplOptions)512 )]
-#endif
 		internal void InsertionSort( T[] list, int beginBlock, int endBlock )
 		{
 			for( int endAlreadySorted = beginBlock; endAlreadySorted < endBlock; endAlreadySorted++ )
@@ -245,9 +235,7 @@ namespace Sto
 		/// want to insert the element.</param>
 		/// <param name="elementToInsert">Element we are looking for a place.</param>
 		/// <returns>The index in list, where the element should be inserted.</returns>
-#if WINDOWS
 		[MethodImpl( (MethodImplOptions)512 )]
-#endif
 		internal int InsertionSortBinarySearch( T[] list, int beginBlock, int endBlock, T elementToInsert )
 		{
 			while( beginBlock <= endBlock )
@@ -282,9 +270,7 @@ namespace Sto
 		/// This results in 2^depth tasks.
 		/// </summary>
 		/// <returns>Depth of splitting.</returns>
-#if WINDOWS
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-#endif
 		int DetermineMaxParallelDepth()
 		{
 			const int MaxTasksPerProcessor = 8;
@@ -355,9 +341,7 @@ namespace Sto
 		/// <param name="list">Array of elements to sort.</param>
 		/// <param name="ascending">Determines whether the elements will be sorted
 		/// in ascending order. A descending sorting will still be stable.</param>
-#if WINDOWS
 		[MethodImpl( (MethodImplOptions)512 )]
-#endif
 		public unsafe void Sort( T* pointer, int count )
 		{
 			if( pointer == null )
@@ -401,9 +385,7 @@ namespace Sto
 		/// <param name="beginBlock">First index of block to sort.</param>
 		/// <param name="endBlock">Last index of the block to sort.</param>
 		/// <param name="recursionDepth">Level of recursion.</param>
-#if WINDOWS
 		[MethodImpl( (MethodImplOptions)512 )]
-#endif
 		unsafe void SortBlock( T* list, T* tempList, int beginBlock, int endBlock, int recursionDepth )
 		{
 			// Odd levels should store the result in the list, even levels in the
@@ -489,9 +471,7 @@ namespace Sto
 		/// <param name="list">List with element to sort.</param>
 		/// <param name="beginBlock">Index of the first element in the block to sort.</param>
 		/// <param name="endBlock">Index of the last element in the block so sort.</param>
-#if WINDOWS
 		[MethodImpl( (MethodImplOptions)512 )]
-#endif
 		unsafe internal void InsertionSort( T* list, int beginBlock, int endBlock )
 		{
 			for( int endAlreadySorted = beginBlock; endAlreadySorted < endBlock; endAlreadySorted++ )
@@ -527,9 +507,7 @@ namespace Sto
 		/// want to insert the element.</param>
 		/// <param name="elementToInsert">Element we are looking for a place.</param>
 		/// <returns>The index in list, where the element should be inserted.</returns>
-#if WINDOWS
 		[MethodImpl( (MethodImplOptions)512 )]
-#endif
 		unsafe internal int InsertionSortBinarySearch( T* list, int beginBlock, int endBlock, T elementToInsert )
 		{
 			while( beginBlock <= endBlock )

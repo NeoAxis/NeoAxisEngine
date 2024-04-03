@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using NeoAxis.Editor;
 using System.Runtime.CompilerServices;
 using Internal.SharpBgfx;
+using System.Dynamic;
 
 namespace NeoAxis
 {
@@ -14,13 +15,17 @@ namespace NeoAxis
 	/// An object in a scene designed to store a large number of similar objects.
 	/// </summary>
 #if !DEPLOY
-	[SettingsCell( typeof( GroupOfObjectsSettingsCell ) )]
+	[SettingsCell( "NeoAxis.Editor.GroupOfObjectsSettingsCell" )]
 #endif
 	public partial class GroupOfObjects : Component, IVisibleInHierarchy
 	{
 		const int formatVersion = 2;
 
 		Dictionary<Vector3I, Sector> sectors = new Dictionary<Vector3I, Sector>();
+
+		//!!!!про когда обновлять
+		//!!!!удалять
+		//Dictionary<Vector4I, Sector> sectorLevels = new Dictionary<Vector4I, Sector>();
 
 		//Count = capacity of Object or can be null.
 		OpenList<bool> removedObjects;
@@ -41,6 +46,8 @@ namespace NeoAxis
 		//!!!!cuncurrent?
 		Queue<SubGroupAction> subGroupActionQueue = new Queue<SubGroupAction>();
 
+		bool needUpdateStaticShadows;
+
 		/////////////////////////////////////////
 
 		/// <summary>
@@ -50,7 +57,7 @@ namespace NeoAxis
 		public Reference<bool> Visible
 		{
 			get { if( _visible.BeginGet() ) Visible = _visible.Get( this ); return _visible.value; }
-			set { if( _visible.BeginSet( ref value ) ) { try { VisibleChanged?.Invoke( this ); } finally { _visible.EndSet(); } } }
+			set { if( _visible.BeginSet( this, ref value ) ) { try { VisibleChanged?.Invoke( this ); } finally { _visible.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Visible"/> property value changes.</summary>
 		public event Action<GroupOfObjects> VisibleChanged;
@@ -90,7 +97,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The size of the sector in the scene. The sector size allows to optimize the culling and rendering of objects.
 		/// </summary>
-		[DefaultValue( "150 150 10000" )]
+		[DefaultValue( "200 200 10000" )]//[DefaultValue( "100 100 10000" )]
 		public Reference<Vector3> SectorSize
 		{
 			get { if( _sectorSize.BeginGet() ) SectorSize = _sectorSize.Get( this ); return _sectorSize.value; }
@@ -104,7 +111,7 @@ namespace NeoAxis
 					if( v.Z < 1.0 ) v.Z = 1.0;
 					value = new Reference<Vector3>( v, value.GetByReference );
 				}
-				if( _sectorSize.BeginSet( ref value ) )
+				if( _sectorSize.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -117,21 +124,69 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="SectorSize"/> property value changes.</summary>
 		public event Action<GroupOfObjects> SectorSizeChanged;
-		ReferenceField<Vector3> _sectorSize = new Vector3( 150, 150, 10000 );
+		ReferenceField<Vector3> _sectorSize = new Vector3( 200, 200, 10000 );// = new Vector3( 100, 100, 10000 );
 
-		//!!!!default value
+		//!!!!support several levels?
 		/// <summary>
-		/// The maximal amount of objects in one group/batch.
+		/// The maximal amount of sub sectors along the axis in the sector.
 		/// </summary>
-		[DefaultValue( 1000 )]
-		public Reference<int> MaxObjectsInGroup
+		[DefaultValue( 3 )]
+		[Range( 1, 8 )]
+		public Reference<int> SectorSubdivide
 		{
-			get { if( _maxObjectsInGroup.BeginGet() ) MaxObjectsInGroup = _maxObjectsInGroup.Get( this ); return _maxObjectsInGroup.value; }
-			set { if( _maxObjectsInGroup.BeginSet( ref value ) ) { try { MaxObjectsInGroupChanged?.Invoke( this ); CreateSectors(); } finally { _maxObjectsInGroup.EndSet(); } } }
+			get { if( _sectorSubdivide.BeginGet() ) SectorSubdivide = _sectorSubdivide.Get( this ); return _sectorSubdivide.value; }
+			set
+			{
+				var v = value.Value;
+				if( v < 1 || v > 8 )
+				{
+					v = MathEx.Clamp( v, 1, 8 );
+					value = new Reference<int>( v, value.GetByReference );
+				}
+
+				if( _sectorSubdivide.BeginSet( this, ref value ) )
+				{
+					try
+					{
+						SectorSubdivideChanged?.Invoke( this );
+						CreateSectors();
+					}
+					finally { _sectorSubdivide.EndSet(); }
+				}
+			}
 		}
-		/// <summary>Occurs when the <see cref="MaxObjectsInGroup"/> property value changes.</summary>
-		public event Action<GroupOfObjects> MaxObjectsInGroupChanged;
-		ReferenceField<int> _maxObjectsInGroup = 1000;
+		/// <summary>Occurs when the <see cref="SectorSubdivide"/> property value changes.</summary>
+		public event Action<GroupOfObjects> SectorSubdivideChanged;
+		ReferenceField<int> _sectorSubdivide = 3;
+
+		////!!!!default
+		///// <summary>
+		///// The amount of levels of sectors. The levels are like LODs but for instances.
+		///// </summary>
+		//[DefaultValue( 3 )]
+		//[Range( 1, 6 )]
+		//public Reference<int> SectorLevels
+		//{
+		//	get { if( _sectorLevels.BeginGet() ) SectorLevels = _sectorLevels.Get( this ); return _sectorLevels.value; }
+		//	set { if( _sectorLevels.BeginSet( this, ref value ) ) { try { SectorLevelsChanged?.Invoke( this ); CreateSectors(); } finally { _sectorLevels.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="SectorLevels"/> property value changes.</summary>
+		//public event Action<GroupOfObjects> SectorLevelsChanged;
+		//ReferenceField<int> _sectorLevels = 3;
+
+		////!!!!default value
+		///// <summary>
+		///// The maximal amount of objects in one group/batch.
+		///// </summary>
+		//[DefaultValue( 100000 )]// 2000 )]
+		//public Reference<int> MaxObjectsInGroup
+		//{
+		//	get { if( _maxObjectsInGroup.BeginGet() ) MaxObjectsInGroup = _maxObjectsInGroup.Get( this ); return _maxObjectsInGroup.value; }
+		//	set { if( _maxObjectsInGroup.BeginSet( this, ref value ) ) { try { MaxObjectsInGroupChanged?.Invoke( this ); CreateSectors(); } finally { _maxObjectsInGroup.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="MaxObjectsInGroup"/> property value changes.</summary>
+		//public event Action<GroupOfObjects> MaxObjectsInGroupChanged;
+		//ReferenceField<int> _maxObjectsInGroup = 100000;//2000;
 
 		/// <summary>
 		/// Whether to enable serialization of objects data.
@@ -140,7 +195,7 @@ namespace NeoAxis
 		public Reference<bool> ObjectsSerialize
 		{
 			get { if( _objectsSerialize.BeginGet() ) ObjectsSerialize = _objectsSerialize.Get( this ); return _objectsSerialize.value; }
-			set { if( _objectsSerialize.BeginSet( ref value ) ) { try { ObjectsSerializeChanged?.Invoke( this ); } finally { _objectsSerialize.EndSet(); } } }
+			set { if( _objectsSerialize.BeginSet( this, ref value ) ) { try { ObjectsSerializeChanged?.Invoke( this ); } finally { _objectsSerialize.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ObjectsSerialize"/> property value changes.</summary>
 		public event Action<GroupOfObjects> ObjectsSerializeChanged;
@@ -153,7 +208,7 @@ namespace NeoAxis
 		public Reference<bool> ObjectsNetworkMode
 		{
 			get { if( _objectsNetworkMode.BeginGet() ) ObjectsNetworkMode = _objectsNetworkMode.Get( this ); return _objectsNetworkMode.value; }
-			set { if( _objectsNetworkMode.BeginSet( ref value ) ) { try { ObjectsNetworkModeChanged?.Invoke( this ); } finally { _objectsNetworkMode.EndSet(); } } }
+			set { if( _objectsNetworkMode.BeginSet( this, ref value ) ) { try { ObjectsNetworkModeChanged?.Invoke( this ); } finally { _objectsNetworkMode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ObjectsNetworkMode"/> property value changes.</summary>
 		public event Action<GroupOfObjects> ObjectsNetworkModeChanged;
@@ -167,7 +222,7 @@ namespace NeoAxis
 		public Reference<bool> DrawGroupBounds
 		{
 			get { if( _drawGroupBounds.BeginGet() ) DrawGroupBounds = _drawGroupBounds.Get( this ); return _drawGroupBounds.value; }
-			set { if( _drawGroupBounds.BeginSet( ref value ) ) { try { DrawGroupBoundsChanged?.Invoke( this ); } finally { _drawGroupBounds.EndSet(); } } }
+			set { if( _drawGroupBounds.BeginSet( this, ref value ) ) { try { DrawGroupBoundsChanged?.Invoke( this ); } finally { _drawGroupBounds.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DrawGroupBounds"/> property value changes.</summary>
 		public event Action<GroupOfObjects> DrawGroupBoundsChanged;
@@ -177,6 +232,14 @@ namespace NeoAxis
 		public bool EditorAllowUsePaintBrush { get; set; } = true;
 
 		Object[] Objects { get; set; }
+
+		//struct TempSectorGetSceneData
+		//{
+		//	public Sector sector;
+		//	public GetRenderSceneDataMode mode;
+		//	public Scene.GetObjectsInSpaceItem modeGetObjectsItem;
+		//}
+		//OpenList<TempSectorGetSceneData> _tempSectorsGetSceneData = new OpenList<TempSectorGetSceneData>();
 
 		/////////////////////////////////////////
 
@@ -289,31 +352,44 @@ namespace NeoAxis
 
 			//rendering data
 			public bool RenderingDataNeedUpdate = true;
-			//sorted by group.VisibilityDistance from far to nearest
-			public List<Group> Groups = new List<Group>();
+			//still sorted? sorted by group.VisibilityDistance from far to nearest
+			public List<RenderGroup> RenderGroupsOne = new List<RenderGroup>();
+			public List<RenderGroup> RenderGroupsSubdivided = new List<RenderGroup>();
+			//public List<Group> Groups = new List<Group>();
+
+			//!!!!maybe per group
+			//can be Cleared
+			public Bounds StaticShadowsAffectedBounds = Bounds.Cleared;
+			public int StaticShadowsAffectedBoundsHash;
 
 			////////////
 
-			public class Group
+			public class RenderGroup
 			{
 				public Sector Owner;
+				public Vector3I SubdivideIndex;
 
 				//for transparent materials
 				public bool NoBatchingGroup;
 				//batching
-				public ushort Element;
-				public byte VariationGroup;
-				public byte VariationElement;
+				public int/*ushort*/ Element;
+				public int/*byte*/ VariationGroup;
+				public int/*byte*/ VariationElement;
 
 				//!!!!не многовато данных?
 				public struct ObjectItem
 				{
 					public int ObjectIndex;
-					public Matrix4F MeshMatrix;
-					//public Matrix3F MeshMatrix3;
+
+					public Matrix3F MeshMatrix3;
+					//public Vector3 MeshPosition;
+					//public Matrix4 MeshMatrix;
+
 					public Bounds BoundingBox;
 					public Sphere BoundingSphere;
-					public ColorByte ColorForInstancingData;
+
+					public uint ColorForInstancingData1;
+					public byte ColorForInstancingData2;
 				}
 				public OpenList<ObjectItem> Objects = new OpenList<ObjectItem>();
 
@@ -327,9 +403,10 @@ namespace NeoAxis
 
 				public GpuVertexBuffer BatchingInstanceBufferMesh;
 				public GpuVertexBuffer BatchingInstanceBufferBillboard;
+				public Vector3 BatchingInstancePositionOffset;
 
-				//for RenderingDataUpdate() method
-				public int NextSplitAxis;
+				////for RenderingDataUpdate() method
+				//public int NextSplitAxis;
 			}
 
 			////////////
@@ -354,7 +431,7 @@ namespace NeoAxis
 			public void AddToObjectsBounds( ref Object obj )
 			{
 				//!!!!не только меши
-				owner.GetMesh( obj.Element, obj.VariationGroup, obj.VariationElement, out _, out var mesh, out _, out _, out _, out _, out _, out _ );
+				owner.GetMesh( obj.Element, obj.VariationGroup, obj.VariationElement, out _, out var mesh, out _, out _, out _, out _, out _, out _, out _ );
 
 				//!!!!enabled
 
@@ -472,7 +549,7 @@ namespace NeoAxis
 					{
 						ref var obj = ref owner.Objects[ objectIndex ];
 
-						owner.GetMesh( obj.Element, obj.VariationGroup, obj.VariationElement, out var enabled, out var mesh, out _, out _, out _, out _, out _, out var objCollision );
+						owner.GetMesh( obj.Element, obj.VariationGroup, obj.VariationElement, out var enabled, out var mesh, out _, out _, out _, out _, out _, out _, out var objCollision );
 
 						if( enabled && mesh != null && objCollision )
 						{
@@ -515,6 +592,13 @@ namespace NeoAxis
 
 				if( ObjectInSpace != null )
 				{
+					if( !StaticShadowsAffectedBounds.IsCleared() )
+					{
+						ResetLightStaticShadowsCache( ref StaticShadowsAffectedBounds );
+						StaticShadowsAffectedBounds = Bounds.Cleared;
+						StaticShadowsAffectedBoundsHash = 0;
+					}
+
 					ObjectInSpace.SpaceBoundsUpdateEvent -= ObjectInSpace_SpaceBoundsUpdateEvent;
 					ObjectInSpace.GetRenderSceneData -= ObjectInSpace_GetRenderSceneData;
 					ObjectInSpace.RemoveFromParent( false );
@@ -542,20 +626,43 @@ namespace NeoAxis
 				{
 					var sector = sender.AnyData as Sector;
 					if( sector != null )
+					{
+						//if( owner.SectorLevels > 1 && !EngineApp._DebugCapsLock )
+						//{
+						//	var item = new TempSectorGetSceneData();
+						//	item.sector = sector;
+						//	item.mode = mode;
+						//	item.modeGetObjectsItem = modeGetObjectsItem;
+						//	owner._tempSectorsGetSceneData.Add( ref item );
+
+						//	//_tempSectors.Add( sector );
+						//}
+						//else
+
 						owner.SectorGetRenderSceneData( context, mode, modeGetObjectsItem, sector );
+					}
 				}
 			}
 
 			void RenderingDataDestroy()
 			{
-				foreach( var batch in Groups )
+				foreach( var batch in RenderGroupsOne )
 				{
 					batch.BatchingInstanceBufferMesh?.Dispose();
 					batch.BatchingInstanceBufferMesh = null;
 					batch.BatchingInstanceBufferBillboard?.Dispose();
 					batch.BatchingInstanceBufferBillboard = null;
 				}
-				Groups.Clear();
+				RenderGroupsOne.Clear();
+
+				foreach( var batch in RenderGroupsSubdivided )
+				{
+					batch.BatchingInstanceBufferMesh?.Dispose();
+					batch.BatchingInstanceBufferMesh = null;
+					batch.BatchingInstanceBufferBillboard?.Dispose();
+					batch.BatchingInstanceBufferBillboard = null;
+				}
+				RenderGroupsSubdivided.Clear();
 			}
 
 			void CollisionBodiesDestroy()
@@ -569,17 +676,17 @@ namespace NeoAxis
 			}
 
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-			Group GetGroup( bool noBatchingGroup, ushort elementIndex, byte variationGroup, byte variationElement )
+			static RenderGroup GetGroup( List<RenderGroup> groupList, bool noBatchingGroup, ushort elementIndex, byte variationGroup, byte variationElement, Vector3I subdivideIndex )
 			{
-				for( int nGroup = 0; nGroup < Groups.Count; nGroup++ )
+				for( int nGroup = 0; nGroup < groupList/*Groups*/.Count; nGroup++ )
 				{
-					var group = Groups[ nGroup ];
+					var group = groupList/*Groups*/[ nGroup ];
 
 					if( noBatchingGroup == group.NoBatchingGroup )
 					{
 						if( noBatchingGroup )
 							return group;
-						else if( group.Element == elementIndex && group.VariationGroup == variationGroup && group.VariationElement == variationElement )
+						else if( group.Element == elementIndex && group.VariationGroup == variationGroup && group.VariationElement == variationElement && group.SubdivideIndex == subdivideIndex )
 							return group;
 					}
 				}
@@ -587,8 +694,18 @@ namespace NeoAxis
 			}
 
 			[MethodImpl( (MethodImplOptions)512 )]
-			public unsafe void CreateBatchingInstanceBufferMesh( Group batch, float lodValue, /*float visibilityDistance, */bool receiveDecals, float motionBlurFactor )
+			public unsafe void CreateBatchingInstanceBufferMesh( RenderGroup batch, float lodValue, /*float visibilityDistance, */bool receiveDecals, float motionBlurFactor )
 			{
+				var instancePositionOffset = new Vector3( double.MaxValue, double.MaxValue, double.MaxValue );
+				for( int n = 0; n < batch.Objects.Count; n++ )
+				{
+					ref var objectItem = ref batch.Objects.Data[ n ];
+					ref var obj = ref owner.Objects[ objectItem.ObjectIndex ];
+					instancePositionOffset.X = Math.Min( instancePositionOffset.X, obj.Position.X );
+					instancePositionOffset.Y = Math.Min( instancePositionOffset.Y, obj.Position.Y );
+					instancePositionOffset.Z = Math.Min( instancePositionOffset.Z, obj.Position.Z );
+				}
+
 				var vertices = new byte[ sizeof( RenderingPipeline.RenderSceneData.ObjectInstanceData ) * batch.Objects.Count ];
 				fixed( byte* pVertices = vertices )
 				{
@@ -599,22 +716,41 @@ namespace NeoAxis
 						ref var objectItem = ref batch.Objects.Data[ n ];
 						ref var obj = ref owner.Objects[ objectItem.ObjectIndex ];
 
-						ref var matrix = ref objectItem.MeshMatrix;
-						////!!!!double
-						//var pos = obj.Position.ToVector3F();
-						//var matrix = new Matrix4F( ref objectItem.MeshMatrix3, ref pos );
+						var matrix = new Matrix4F( objectItem.MeshMatrix3, ( obj.Position - instancePositionOffset ).ToVector3F() );
 
-						matrix.GetTranslation( out var positionPreviousFrame );
-						instanceData->Init( ref matrix, ref positionPreviousFrame, ref obj.Color, lodValue, -1/*visibilityDistance*/, receiveDecals, motionBlurFactor, obj.CullingByCameraDirectionData );
+						var vector3FZero = Vector3F.Zero;
+						//matrix.GetTranslation( out var positionPreviousFrame );
+
+						instanceData->Init( ref matrix, ref vector3FZero, ref obj.Color, lodValue, -1/*visibilityDistance*/, receiveDecals, motionBlurFactor, obj.CullingByCameraDirectionData );
+
+
+						//ref var matrix = ref objectItem.MeshMatrix;
+						////var pos = obj.Position.ToVector3F();
+						////var matrix = new Matrix4F( ref objectItem.MeshMatrix3, ref pos );
+
+						//matrix.GetTranslation( out var positionPreviousFrame );
+						//instanceData->Init( ref matrix, ref positionPreviousFrame, ref obj.Color, lodValue, -1/*visibilityDistance*/, receiveDecals, motionBlurFactor, obj.CullingByCameraDirectionData );
 					}
 				}
 
-				batch.BatchingInstanceBufferMesh = GpuBufferManager.CreateVertexBuffer( vertices, GpuBufferManager.InstancingVertexDeclaration, 0 );
+				//!!!!new GpuBufferFlags.ComputeRead
+				batch.BatchingInstanceBufferMesh = GpuBufferManager.CreateVertexBuffer( vertices, GpuBufferManager.InstancingVertexDeclaration, GpuBufferFlags.ComputeRead );
+				batch.BatchingInstancePositionOffset = instancePositionOffset;
 			}
 
 			[MethodImpl( (MethodImplOptions)512 )]
-			public unsafe void CreateBatchingInstanceBufferBillboard( Group batch, float lodValue, /*float visibilityDistance, */bool receiveDecals, float motionBlurFactor, RenderingPipeline.RenderSceneData.IMeshData meshData )
+			public unsafe void CreateBatchingInstanceBufferBillboard( RenderGroup batch, float lodValue, /*float visibilityDistance, */bool receiveDecals, float motionBlurFactor, RenderingPipeline.RenderSceneData.IMeshData meshData )
 			{
+				var instancePositionOffset = new Vector3( double.MaxValue, double.MaxValue, double.MaxValue );
+				for( int n = 0; n < batch.Objects.Count; n++ )
+				{
+					ref var objectItem = ref batch.Objects.Data[ n ];
+					ref var obj = ref owner.Objects[ objectItem.ObjectIndex ];
+					instancePositionOffset.X = Math.Min( instancePositionOffset.X, obj.Position.X );
+					instancePositionOffset.Y = Math.Min( instancePositionOffset.Y, obj.Position.Y );
+					instancePositionOffset.Z = Math.Min( instancePositionOffset.Z, obj.Position.Z );
+				}
+
 				var vertices = new byte[ sizeof( RenderingPipeline.RenderSceneData.ObjectInstanceData ) * batch.Objects.Count ];
 				fixed( byte* pVertices = vertices )
 				{
@@ -651,18 +787,21 @@ namespace NeoAxis
 						matrix.Item2.Y = 0;
 						matrix.Item2.Z = scaleV;
 						matrix.Item2.W = 0;
-						//!!!!double. где еще
-						matrix.Item3.X = (float)( position.X + offset.X );
-						matrix.Item3.Y = (float)( position.Y + offset.Y );
-						matrix.Item3.Z = (float)( position.Z + offset.Z );
+
+						matrix.Item3.X = (float)( position.X - instancePositionOffset.X + offset.X );
+						matrix.Item3.Y = (float)( position.Y - instancePositionOffset.Y + offset.Y );
+						matrix.Item3.Z = (float)( position.Z - instancePositionOffset.Z + offset.Z );
 						matrix.Item3.W = 1;
 
-						matrix.GetTranslation( out var positionPreviousFrame );
-						instanceData->Init( ref matrix, ref positionPreviousFrame, ref obj.Color, lodValue, -1/*visibilityDistance*/, receiveDecals, motionBlurFactor, obj.CullingByCameraDirectionData );
+						var vector3FZero = Vector3F.Zero;
+						//matrix.GetTranslation( out var positionPreviousFrame );
+
+						instanceData->Init( ref matrix, ref vector3FZero, ref obj.Color, lodValue, -1/*visibilityDistance*/, receiveDecals, motionBlurFactor, obj.CullingByCameraDirectionData );
 					}
 				}
 
-				batch.BatchingInstanceBufferBillboard = GpuBufferManager.CreateVertexBuffer( vertices, GpuBufferManager.InstancingVertexDeclaration, 0 );
+				batch.BatchingInstanceBufferBillboard = GpuBufferManager.CreateVertexBuffer( vertices, GpuBufferManager.InstancingVertexDeclaration, GpuBufferFlags.ComputeRead );
+				batch.BatchingInstancePositionOffset = instancePositionOffset;
 			}
 
 			[MethodImpl( (MethodImplOptions)512 )]
@@ -670,173 +809,228 @@ namespace NeoAxis
 			{
 				RenderingDataDestroy();
 
-				foreach( var objectIndex in Objects )
+				var newStaticShadowsAffectedBounds = Bounds.Cleared;
+				var newStaticShadowsAffectedBoundsHash = 0;
+
+				//!!!!создавать вариацию только когда нужна
+
+				for( var nSubdivisionStep = 0; nSubdivisionStep < 2; nSubdivisionStep++ )
 				{
-					ref var obj = ref owner.Objects[ objectIndex ];
-
-					if( ( obj.Flags & Object.FlagsEnum.Enabled ) == 0 )
-						continue;
-					if( ( obj.Flags & Object.FlagsEnum.Visible ) == 0 )
-						continue;
-
-					owner.GetMesh( obj.Element, obj.VariationGroup, obj.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out _, out _, out _, out _, out _ );
-
-					if( !enabled )
+					if( nSubdivisionStep == 1 && owner.SectorSubdivide <= 1 )
 						continue;
 
-					bool allowBatching = true;
-					if( allowBatching && replaceMaterial?.Result != null && replaceMaterial.Result.Transparent )
-						allowBatching = false;
-					if( allowBatching && !mesh.SupportsBatching() )
-						allowBatching = false;
+					var groupList = nSubdivisionStep == 1 ? RenderGroupsSubdivided : RenderGroupsOne;
 
-					var group = GetGroup( !allowBatching, obj.Element, obj.VariationGroup, obj.VariationElement );
-					if( group == null )
+					foreach( var objectIndex in Objects )
 					{
-						group = new Group();
-						group.Owner = this;
-						group.NoBatchingGroup = !allowBatching;
-						group.Element = obj.Element;
-						group.VariationGroup = obj.VariationGroup;
-						group.VariationElement = obj.VariationElement;
-						Groups.Add( group );
-					}
-
-					var objectItem = new Group.ObjectItem();
-					objectItem.ObjectIndex = objectIndex;
-
-					//!!!!double
-					var pos = obj.Position.ToVector3F();
-					obj.Rotation.ToMatrix3( out var rot );
-					Matrix3F.FromScale( ref obj.Scale, out var scl );
-					Matrix3F.Multiply( ref rot, ref scl, out var mat3 );
-					objectItem.MeshMatrix = new Matrix4F( ref mat3, ref pos );
-					//Matrix3F.Multiply( ref rot, ref scl, out objectItem.MeshMatrix3 );
-
-
-					//!!!!slowly
-
-
-					var transform = new Transform( obj.Position, obj.Rotation, obj.Scale );
-					//!!!!можно считать оптимальнее?
-					var b = SpaceBounds.Multiply( transform, mesh.Result.SpaceBounds );
-					objectItem.BoundingBox = b.boundingBox;
-					objectItem.BoundingSphere = b.boundingSphere;
-
-					objectItem.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref obj.Color );
-
-					group.Objects.Add( ref objectItem );
-				}
-
-				//split groups by max objects count
-				if( owner.MaxObjectsInGroup > 1 )
-				{
-					bool needProcess = true;
-					do
-					{
-						needProcess = false;
-
-						var currentGroups = Groups;
-						Groups = new List<Group>();
-
-						foreach( var group in currentGroups )
-						{
-							if( group.Objects.Count > owner.MaxObjectsInGroup )
-							{
-								var objects = group.Objects.ToArray();
-
-								//!!!!CollectionUtility.MergeSortUnmanaged
-
-								//!!!!slowly? copy large items. use indices or make ref support
-								CollectionUtility.MergeSort( objects, delegate ( Group.ObjectItem item1, Group.ObjectItem item2 )
-								{
-									ref var obj1 = ref owner.Objects[ item1.ObjectIndex ];
-									ref var obj2 = ref owner.Objects[ item2.ObjectIndex ];
-
-									var pos1 = obj1.Position[ group.NextSplitAxis ];
-									var pos2 = obj2.Position[ group.NextSplitAxis ];
-
-									if( pos1 < pos2 )
-										return -1;
-									if( pos1 > pos2 )
-										return 1;
-									return 0;
-
-								}, true );
-
-								int middle = objects.Length / 2;
-
-								for( int nGroup = 0; nGroup < 2; nGroup++ )
-								{
-									var newGroup = new Group();
-									newGroup.Owner = this;
-									newGroup.NoBatchingGroup = group.NoBatchingGroup;
-									newGroup.Element = group.Element;
-									newGroup.VariationGroup = group.VariationGroup;
-									newGroup.VariationElement = group.VariationElement;
-
-									if( nGroup == 0 )
-									{
-										for( int n = 0; n < middle; n++ )
-											newGroup.Objects.Add( objects[ n ] );
-									}
-									else
-									{
-										for( int n = middle; n < objects.Length; n++ )
-											newGroup.Objects.Add( objects[ n ] );
-									}
-
-									newGroup.NextSplitAxis = group.NextSplitAxis + 1;
-									//quadtree
-									if( newGroup.NextSplitAxis > 1 )
-										newGroup.NextSplitAxis = 0;
-
-									Groups.Add( newGroup );
-								}
-
-								needProcess = true;
-							}
-							else
-							{
-								Groups.Add( group );
-							}
-						}
-
-					} while( needProcess );
-				}
-
-				//calculate Bounds, ObjectsMaxScale
-				foreach( var group in Groups )
-				{
-					var bounds = Bounds.Cleared;
-					//var maxLocalObjectsBounds = Bounds.Cleared;
-					//float maxVisibilityDistance = float.MinValue;
-
-					for( int nObject = 0; nObject < group.Objects.Count; nObject++ )
-					{
-						ref var objectItem = ref group.Objects.Data[ nObject ];
-						ref var obj = ref owner.Objects[ objectItem.ObjectIndex ];
+						ref var obj = ref owner.Objects[ objectIndex ];
 
 						if( ( obj.Flags & Object.FlagsEnum.Enabled ) == 0 )
 							continue;
 						if( ( obj.Flags & Object.FlagsEnum.Visible ) == 0 )
 							continue;
 
-						//!!!!не только меши
-						owner.GetMesh( obj.Element, obj.VariationGroup, obj.VariationElement, out var enabled, out var mesh, out _, out var visibilityDistanceFactor, out _, out _, out _, out _ );
+						owner.GetMesh( obj.Element, obj.VariationGroup, obj.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out _, out _, out _, out _, out var staticShadows, out _ );
 
 						if( !enabled )
 							continue;
 
-						bounds.Add( ref objectItem.BoundingBox );
-						group.ObjectsMaxScale = Math.Max( group.ObjectsMaxScale, obj.Scale.MaxComponent() );
-						//maxVisibilityDistance = Math.Max( maxVisibilityDistance, (float)visibilityDistance );
+						bool allowBatching = true;
+						if( allowBatching && replaceMaterial?.Result != null && replaceMaterial.Result.Transparent )
+							allowBatching = false;
+						if( allowBatching && !mesh.SupportsBatching() )
+							allowBatching = false;
+
+						var subdivideIndex = Vector3I.Zero;
+						if( nSubdivisionStep == 1 )
+						{
+							owner.GetSectorBounds( ref Index, out var sectorBounds );
+							var sectorSize = sectorBounds.GetSize();
+
+							for( int n = 0; n < 3; n++ )
+							{
+								//!!!!good?
+								if( sectorSize[ n ] < 10000 )
+								{
+									var p = ( obj.Position[ n ] - sectorBounds.Minimum[ n ] ) / sectorSize[ n ];
+									p *= (double)owner.SectorSubdivide.Value;
+
+									subdivideIndex[ n ] = MathEx.Clamp( (int)p, 0, owner.SectorSubdivide.Value - 1 );
+								}
+							}
+						}
+
+
+						var group = GetGroup( groupList, !allowBatching, obj.Element, obj.VariationGroup, obj.VariationElement, subdivideIndex );
+						if( group == null )
+						{
+							group = new RenderGroup();
+							group.Owner = this;
+							group.SubdivideIndex = subdivideIndex;
+							group.NoBatchingGroup = !allowBatching;
+							group.Element = obj.Element;
+							group.VariationGroup = obj.VariationGroup;
+							group.VariationElement = obj.VariationElement;
+							groupList/*Groups*/.Add( group );
+						}
+
+						var objectItem = new RenderGroup.ObjectItem();
+						objectItem.ObjectIndex = objectIndex;
+
+						obj.Rotation.ToMatrix3( out var rot );
+						Matrix3F.FromScale( ref obj.Scale, out var scl );
+						Matrix3F.Multiply( ref rot, ref scl, out objectItem.MeshMatrix3 );
+						//objectItem.MeshPosition = obj.Position;
+						//Matrix3F.Multiply( ref rot, ref scl, out objectItem.MeshMatrix3 );
+
+						//var pos = obj.Position.ToVector3F();
+						//obj.Rotation.ToMatrix3( out var rot );
+						//Matrix3F.FromScale( ref obj.Scale, out var scl );
+						//Matrix3F.Multiply( ref rot, ref scl, out var mat3 );
+						//objectItem.MeshMatrix = new Matrix4F( ref mat3, ref pos );
+						////Matrix3F.Multiply( ref rot, ref scl, out objectItem.MeshMatrix3 );
+
+
+						//!!!!slowly
+
+
+						var transform = new Transform( obj.Position, obj.Rotation, obj.Scale );
+						//!!!!можно считать оптимальнее?
+						var b = SpaceBounds.Multiply( transform, mesh.Result.SpaceBounds );
+						objectItem.BoundingBox = b.boundingBox;
+						objectItem.BoundingSphere = b.boundingSphere;
+
+						RenderingPipeline.GetColorForInstancingData( ref obj.Color, out objectItem.ColorForInstancingData1, out objectItem.ColorForInstancingData2 );
+						//objectItem.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref obj.Color );
+
+						group.Objects.Add( ref objectItem );
+
+						if( staticShadows )
+						{
+							newStaticShadowsAffectedBounds.Add( ref objectItem.BoundingBox );
+
+							//!!!!what else
+							newStaticShadowsAffectedBoundsHash ^= mesh.GetHashCode() ^ transform.GetHashCode();
+						}
 					}
 
-					group.BoundingBox = bounds;
-					group.BoundingBox.GetBoundingSphere( out group.BoundingSphere );
-					//group.VisibilityDistance = maxVisibilityDistance;
-					//group.VisibilityDistanceSquared = group.VisibilityDistance * group.VisibilityDistance;
+					////split groups by max objects count
+					////!!!!не нарезать которые не батчатся
+					//if( owner.MaxObjectsInGroup > 1 ) 1?
+					//{
+					//	bool needProcess = true;
+					//	do
+					//	{
+					//		needProcess = false;
+
+					//		var currentGroups = groupList;
+					//		groupList = new List<Group>();
+					//		if( nSubdivisionStep == 1 )
+					//			GroupsSubdivided = groupList;
+					//		else
+					//			GroupsOne = groupList;
+					//		//var currentGroups = Groups;
+					//		//Groups = new List<Group>();
+
+					//		foreach( var group in currentGroups )
+					//		{
+					//			if( group.Objects.Count > owner.MaxObjectsInGroup )
+					//			{
+					//				var objects = group.Objects.ToArray();
+
+					//				//!!!!CollectionUtility.MergeSortUnmanaged
+
+					//				//!!!!slowly? copy large items. use indices or make ref support
+					//				CollectionUtility.MergeSort( objects, delegate ( Group.ObjectItem item1, Group.ObjectItem item2 )
+					//				{
+					//					ref var obj1 = ref owner.Objects[ item1.ObjectIndex ];
+					//					ref var obj2 = ref owner.Objects[ item2.ObjectIndex ];
+
+					//					var pos1 = obj1.Position[ group.NextSplitAxis ];
+					//					var pos2 = obj2.Position[ group.NextSplitAxis ];
+
+					//					if( pos1 < pos2 )
+					//						return -1;
+					//					if( pos1 > pos2 )
+					//						return 1;
+					//					return 0;
+
+					//				}, true );
+
+					//				int middle = objects.Length / 2;
+
+					//				for( int nGroup = 0; nGroup < 2; nGroup++ )
+					//				{
+					//					var newGroup = new Group();
+					//					newGroup.Owner = this;
+					//					newGroup.SubdivideIndex = group.SubdivideIndex;
+					//					newGroup.NoBatchingGroup = group.NoBatchingGroup;
+					//					newGroup.Element = group.Element;
+					//					newGroup.VariationGroup = group.VariationGroup;
+					//					newGroup.VariationElement = group.VariationElement;
+
+					//					if( nGroup == 0 )
+					//					{
+					//						for( int n = 0; n < middle; n++ )
+					//							newGroup.Objects.Add( objects[ n ] );
+					//					}
+					//					else
+					//					{
+					//						for( int n = middle; n < objects.Length; n++ )
+					//							newGroup.Objects.Add( objects[ n ] );
+					//					}
+
+					//					newGroup.NextSplitAxis = group.NextSplitAxis + 1;
+					//					//quadtree
+					//					if( newGroup.NextSplitAxis > 1 )
+					//						newGroup.NextSplitAxis = 0;
+
+					//					groupList/*Groups*/.Add( newGroup );
+					//				}
+
+					//				needProcess = true;
+					//			}
+					//			else
+					//			{
+					//				groupList/*Groups*/.Add( group );
+					//			}
+					//		}
+
+					//	} while( needProcess );
+					//}
+
+					//calculate Bounds, ObjectsMaxScale
+					foreach( var group in groupList/*Groups*/ )
+					{
+						var bounds = Bounds.Cleared;
+						//var maxLocalObjectsBounds = Bounds.Cleared;
+						//float maxVisibilityDistance = float.MinValue;
+
+						for( int nObject = 0; nObject < group.Objects.Count; nObject++ )
+						{
+							ref var objectItem = ref group.Objects.Data[ nObject ];
+							ref var obj = ref owner.Objects[ objectItem.ObjectIndex ];
+
+							if( ( obj.Flags & Object.FlagsEnum.Enabled ) == 0 )
+								continue;
+							if( ( obj.Flags & Object.FlagsEnum.Visible ) == 0 )
+								continue;
+
+							owner.GetMesh( obj.Element, obj.VariationGroup, obj.VariationElement, out var enabled, out var mesh, out _, out var visibilityDistanceFactor, out _, out _, out _, out _, out _ );
+
+							if( !enabled )
+								continue;
+
+							bounds.Add( ref objectItem.BoundingBox );
+							group.ObjectsMaxScale = Math.Max( group.ObjectsMaxScale, obj.Scale.MaxComponent() );
+							//maxVisibilityDistance = Math.Max( maxVisibilityDistance, (float)visibilityDistance );
+						}
+
+						group.BoundingBox = bounds;
+						group.BoundingBox.GetBoundingSphere( out group.BoundingSphere );
+						//group.VisibilityDistance = maxVisibilityDistance;
+						//group.VisibilityDistanceSquared = group.VisibilityDistance * group.VisibilityDistance;
+					}
 				}
 
 				////sort by VisibilityDistance from far to nearest
@@ -849,6 +1043,48 @@ namespace NeoAxis
 				//	return 0;
 				//}, true );
 
+
+				if( StaticShadowsAffectedBoundsHash != newStaticShadowsAffectedBoundsHash )
+				{
+					var affectBounds = StaticShadowsAffectedBounds;
+					affectBounds.Add( ref newStaticShadowsAffectedBounds );
+					if( !affectBounds.IsCleared() )
+						ResetLightStaticShadowsCache( ref affectBounds );
+				}
+
+				StaticShadowsAffectedBounds = newStaticShadowsAffectedBounds;
+				StaticShadowsAffectedBoundsHash = newStaticShadowsAffectedBoundsHash;
+			}
+
+			internal void ResetLightStaticShadowsCache( ref Bounds bounds )
+			{
+				if( ObjectInSpace != null )//&& !StaticShadowsAffectedBounds.IsCleared() )
+				{
+					var scene = owner.ParentRoot as Scene;
+					if( scene != null )
+					{
+						var item = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, bounds );// StaticShadowsAffectedBounds );
+						scene.GetObjectsInSpace( item );
+
+						foreach( var resultItem in item.Result )
+						{
+							var light = resultItem.Object as Light;
+							light?.ResetStaticShadowsCache();
+						}
+
+						//var bounds = ObjectInSpace.SpaceBounds.BoundingBox;
+						//var item = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, bounds );
+						//scene.GetObjectsInSpace( item );
+
+						//foreach( var resultItem in item.Result )
+						//{
+						//	var light = resultItem.Object as Light;
+						//	light?.ResetStaticShadowsCache();
+						//}
+					}
+
+					//StaticShadowsAffectedBounds = Bounds.Cleared;
+				}
 			}
 
 			//public Vector3 GetPosition()
@@ -905,6 +1141,7 @@ namespace NeoAxis
 					public bool castShadows;
 					public bool receiveDecals;
 					public float motionBlurFactor;
+					public bool staticShadows;
 
 					//!!!!другие типы объектов
 				}
@@ -1011,12 +1248,14 @@ namespace NeoAxis
 					scene.UpdateEvent += Scene_UpdateEvent;
 					scene.GetRenderSceneData3ForGroupOfObjects += Scene_GetRenderSceneData3ForGroupOfObjects;
 					scene.GetRenderSceneData += Scene_GetRenderSceneData;
+					//scene.GetRenderSceneDataAfterObjects += Scene_GetRenderSceneDataAfterObjects;
 				}
 				else
 				{
 					scene.UpdateEvent -= Scene_UpdateEvent;
 					scene.GetRenderSceneData3ForGroupOfObjects -= Scene_GetRenderSceneData3ForGroupOfObjects;
 					scene.GetRenderSceneData -= Scene_GetRenderSceneData;
+					//scene.GetRenderSceneDataAfterObjects -= Scene_GetRenderSceneDataAfterObjects;
 				}
 			}
 
@@ -1102,7 +1341,7 @@ namespace NeoAxis
 
 				var byteArray = ToByteArray( array );
 
-				var zipped = IOUtility.Zip( byteArray );
+				var zipped = IOUtility.Zip( byteArray, System.IO.Compression.CompressionLevel.Fastest );
 				if( zipped.Length < (int)( (float)byteArray.Length / 1.25 ) )
 				{
 					block.SetAttribute( nameof( Objects ), Convert.ToBase64String( zipped, Base64FormattingOptions.None ) );
@@ -1250,6 +1489,17 @@ namespace NeoAxis
 			return sector;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		void GetSectorBounds( ref Vector3I index, out Bounds bounds )
+		{
+			var sectorSize = SectorSize.Value;
+			var min = ( index.ToVector3() - new Vector3( 0.5, 0.5, 0.5 ) ) * sectorSize;
+			var max = min + sectorSize;
+			//min -= sectorSize * 0.5;
+			//max -= sectorSize * 0.5;
+			bounds = new Bounds( min, max );
+		}
+
 		struct LocalItem
 		{
 			public int added;
@@ -1280,14 +1530,14 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		unsafe void RenderObjectsDynamicBatched( ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem, Sector.Group group )
+		unsafe void RenderObjectsDynamicBatched( ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem, Sector.RenderGroup group )
 		{
 			//!!!!те что по одному не инстансить. а может и больше чем 1
 
 			var cameraSettings = context.Owner.CameraSettings;
 			var objectCount = group.Objects.Count;
 
-			GetMesh( group.Element, group.VariationGroup, group.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out var visibilityDistanceFactor, out var castShadows, out var receiveDecals, out var motionBlurFactor, out var collision );
+			GetMesh( group.Element, group.VariationGroup, group.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out var visibilityDistanceFactor, out var castShadows, out var receiveDecals, out var motionBlurFactor, out var staticShadows, out var collision );
 			if( !enabled )
 				return;
 			if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && !castShadows )
@@ -1295,7 +1545,7 @@ namespace NeoAxis
 
 			//touch mesh result before multithreading
 			var meshResult = mesh.Result;
-			var meshData = meshResult.MeshData;
+			var meshDataLOD0 = meshResult.MeshData;
 
 			LocalItem* localItems = (LocalItem*)NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Renderer, sizeof( LocalItem ) * objectCount );
 			for( int n = 0; n < objectCount; n++ )
@@ -1330,14 +1580,17 @@ namespace NeoAxis
 
 					var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref objectItem.BoundingBox );
 
-					var boundingSize = (float)( meshResult.SpaceBounds.boundingSphere.Radius * 2 * obj.Scale.MaxComponent() );
-					var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * visibilityDistanceFactor * meshData.VisibilityDistanceFactor;
+					var boundingSize = (float)( meshResult.SpaceBounds.boundingSphere.Radius * 2 * group.ObjectsMaxScale );
+					//var boundingSize = (float)( meshResult.SpaceBounds.boundingSphere.Radius * 2 * obj.Scale.MaxComponent() );
+					var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * visibilityDistanceFactor * meshDataLOD0.VisibilityDistanceFactor;
 
 					if( cameraDistanceMinSquared < visibilityDistance * visibilityDistance )
 					{
-						var itemCastShadows = castShadows && cameraDistanceMinSquared < context.GetShadowVisibilityDistanceSquared( visibilityDistance );
-						if( onlyForShadowGeneration && !itemCastShadows )
-							return;
+						if( onlyForShadowGeneration )
+						{
+							if( !castShadows || cameraDistanceMinSquared > context.GetShadowVisibilityDistanceSquared( visibilityDistance ) )
+								return;
+						}
 
 						var cameraDistanceMin = MathEx.Sqrt( cameraDistanceMinSquared );
 						var cameraDistanceMaxSquared = SceneLODUtility.GetCameraDistanceMax( cameraSettings, ref objectItem.BoundingSphere );
@@ -1352,14 +1605,13 @@ namespace NeoAxis
 						localItem.boundingSize = boundingSize;
 						localItem.visibilityDistance = visibilityDistance;
 
-						SceneLODUtility.GetDemandedLODs( context, meshData, cameraDistanceMinSquared, cameraDistanceMaxSquared, localItem.boundingSize, out localItem.lodState );
+						SceneLODUtility.GetDemandedLODs( context, meshDataLOD0, cameraDistanceMinSquared, cameraDistanceMaxSquared, localItem.boundingSize, out localItem.lodState );
 					}
 				} );
 
-
 				int maxLods = 1;
-				if( meshData.LODs != null )
-					maxLods += meshData.LODs.Length;
+				if( meshDataLOD0.LODs != null )
+					maxLods += meshDataLOD0.LODs.Length;
 
 				//!!!!GC little bit
 				var allLodItems = new LodItem[ maxLods * 2 ];
@@ -1401,25 +1653,28 @@ namespace NeoAxis
 				if( !allLodItemsFound )
 					return;
 
-
 				var templateItem = new RenderingPipeline.RenderSceneData.MeshItem();
 				templateItem.Creator = this;
 				templateItem.ReceiveDecals = true;
 				templateItem.MotionBlurFactor = 1.0f;
 				templateItem.ReplaceMaterial = replaceMaterial;
 				templateItem.Color = ColorValue.One;
-				templateItem.ColorForInstancingData = RenderingPipeline.ColorOneForInstancingData;
-				//if( ReplaceMaterialSelectively.Count != 0 )
-				//{
-				//	templateItem.ReplaceMaterialSelectively = new Material[ ReplaceMaterialSelectively.Count ];
-				//	for( int n = 0; n < ReplaceMaterialSelectively.Count; n++ )
-				//		templateItem.ReplaceMaterialSelectively[ n ] = ReplaceMaterialSelectively[ n ].Value;
-				//}
-
+				templateItem.ColorForInstancingData1 = RenderingPipeline.ColorOneForInstancingData1;
+				templateItem.ColorForInstancingData2 = RenderingPipeline.ColorOneForInstancingData2;
+				templateItem.StaticShadows = staticShadows;
 
 				var outputMeshes = context.FrameData.RenderSceneData.Meshes;
 
 				var totalInstanceCount = 0;
+
+				//MeshDataLastVoxelLOD
+				var meshDataLods = meshDataLOD0.LODs;
+				if( meshDataLods != null )
+				{
+					var lastLOD = meshDataLods[ meshDataLods.Length - 1 ];
+					if( lastLOD.VoxelGridSize != 0 )
+						templateItem.MeshDataLastVoxelLOD = lastLOD.Mesh?.Result?.MeshData;
+				}
 
 				//add mesh items and save indexes
 				for( int meshItemIndex = 0; meshItemIndex < allLodItems.Length; meshItemIndex++ )
@@ -1436,12 +1691,27 @@ namespace NeoAxis
 
 						var lodLevel = meshItemIndex / 2;
 
-						item.MeshData = meshData;
+						item.MeshData = meshDataLOD0;
+						item.MeshDataLOD0 = meshDataLOD0;
+
+						//MeshDataShadows, MeshDataShadowsForceBestLOD
+						//!!!!why squared
+						var lodScaleShadows = context.LODScaleShadowsSquared * meshDataLOD0.LODScaleShadows;
+						if( lodScaleShadows <= lodLevel )
+						{
+							//select last LOD for shadows
+							item.MeshDataShadows = item.MeshDataLastVoxelLOD;
+						}
+						else if( lodScaleShadows >= 100 )
+						{
+							//select the best LOD for shadows
+							item.MeshDataShadows = meshDataLOD0;
+							item.MeshDataShadowsForceBestLOD = true;
+						}
+
 						if( lodLevel > 0 )
 						{
-							var lods = meshData.LODs;
-
-							ref var lod = ref lods[ lodLevel - 1 ];
+							ref var lod = ref meshDataLOD0.LODs[ lodLevel - 1 ];
 							//!!!!can't thread
 							var lodMeshData = lod.Mesh?.Result?.MeshData;
 							if( lodMeshData != null )
@@ -1467,6 +1737,36 @@ namespace NeoAxis
 						//	return 0;
 						//}, true );
 
+						//tessellation
+						if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum || mode == GetRenderSceneDataMode.InsideFrustum )
+						{
+							var enable = false;
+
+							if( item.MeshData == meshDataLOD0 )
+							{
+								if( item.ReplaceMaterial != null )
+								{
+									if( item.ReplaceMaterial.Result != null )
+										enable = item.ReplaceMaterial.Result.tessellationQuality != 0;
+								}
+								else
+									enable = meshDataLOD0.ContainsTessellation;
+
+								//if( item.ReplaceMaterialSelectively != null )
+								//{
+								//	for( int n = 0; n < item.ReplaceMaterialSelectively.Length; n++ )
+								//	{
+								//		var result = item.ReplaceMaterialSelectively[ n ].Result;
+								//		if( result != null && result.tessellationQuality != 0 )
+								//			enable = true;
+								//	}
+								//}
+							}
+
+							//set true only for first lod, set false to second (it can be true because item memory is shared)
+							item.Tessellation = enable;
+						}
+
 						lodItem.InstancingStart = totalInstanceCount;
 						totalInstanceCount += lodItem.List.Count;
 					}
@@ -1480,9 +1780,9 @@ namespace NeoAxis
 
 				//allocate instancing buffer data
 				int instanceStride = sizeof( RenderingPipeline.RenderSceneData.ObjectInstanceData );
-				if( InstanceDataBuffer.GetAvailableSpace( totalInstanceCount, instanceStride ) != totalInstanceCount )
-					return;
 				var instanceBuffer = new InstanceDataBuffer( totalInstanceCount, instanceStride );
+				if( !instanceBuffer.Valid )
+					return;
 				var instancingData = (RenderingPipeline.RenderSceneData.ObjectInstanceData*)instanceBuffer.Data;
 
 
@@ -1500,7 +1800,7 @@ namespace NeoAxis
 
 						//!!!!нужно собрать из тех что есть в списке? или ничего не делать, это же только сфера
 						item.BoundingSphere = group.BoundingSphere;
-						item.BoundingBoxCenter = item.BoundingSphere.Center;
+						//item.BoundingBoxCenter = item.BoundingSphere.Center;
 						//item.BoundingSphere = objectItem.BoundingSphere;
 						//item.BoundingBoxCenter = item.BoundingSphere.Center;//objectItem.BoundingBox.GetCenter( out item.BoundingBoxCenter );
 
@@ -1508,8 +1808,6 @@ namespace NeoAxis
 						item.OnlyForShadowGeneration = onlyForShadowGeneration;
 
 						var objectsMaxScale = 0.0;
-
-						//!!!!maybe parallel. blocks of items
 
 						int currentIndex = lodItem.InstancingStart;
 
@@ -1534,7 +1832,6 @@ namespace NeoAxis
 								else
 									offset = Vector3F.Zero;
 
-
 								var itemTransform = new Matrix4F();
 								itemTransform.Item0.X = scaleH;
 								itemTransform.Item0.Y = 0;
@@ -1548,30 +1845,44 @@ namespace NeoAxis
 								itemTransform.Item2.Y = 0;
 								itemTransform.Item2.Z = obj.Scale.Z;
 								itemTransform.Item2.W = 0;
-								//!!!!double. где еще
-								itemTransform.Item3.X = (float)( obj.Position.X + offset.X );
-								itemTransform.Item3.Y = (float)( obj.Position.Y + offset.Y );
-								itemTransform.Item3.Z = (float)( obj.Position.Z + offset.Z );
+
+								context.ConvertToRelative( obj.Position + offset, out var positionRelative );
+								itemTransform.Item3.X = positionRelative.X;
+								itemTransform.Item3.Y = positionRelative.Y;
+								itemTransform.Item3.Z = positionRelative.Z;
+
 								itemTransform.Item3.W = 1;
 
-
 								//!!!!slowly
-								itemTransform.GetTranspose( out data.Transform );
+								itemTransform.GetTranspose( out data.TransformRelative );
 
-
-								//!!!!double
-								data.PositionPreviousFrame = itemTransform.Item3.ToVector3F();
+								//data.TransformRelative.GetTranslation( out data.PositionPreviousFrameRelative );
+								//data.PositionPreviousFrameRelative += context.OwnerCameraSettingsPositionPreviousChange;
+								////data.PositionPreviousFrameRelative = itemTransform.Item3.ToVector3F();
 							}
 							else
 							{
-								objectItem.MeshMatrix.GetTranspose( out data.Transform );
+								context.ConvertToRelative( ref obj.Position, out var positionRelative );
+								Matrix3x4F.ConstructTransposeMatrix3( ref objectItem.MeshMatrix3, ref positionRelative, out data.TransformRelative );
+								//data.PositionPreviousFrameRelative = positionRelative + context.OwnerCameraSettingsPositionPreviousChange;
 
-								//!!!!double
-								data.PositionPreviousFrame = obj.Position.ToVector3F();
-								////matrix.GetTranslation( out data.PositionPreviousFrame );
+								//!!!!
+								//Log.Info( context.OwnerCameraSettingsPositionPreviousChange.ToString() );
+
+								//!!!!
+								//var offset = ( context.OwnerCameraSettingsPosition - context.OwnerCameraSettingsPositionPrevious ).ToVector3F();
+								//data.PositionPreviousFrameRelative = positionRelative + offset;
+
+								//data.PositionPreviousFrameRelative = positionRelative;
+
+								//objectItem.MeshMatrix.GetTranspose( out data.Transform );
+								//data.PositionPreviousFrame = obj.Position.ToVector3F();
 							}
 
-							data.Color = objectItem.ColorForInstancingData;
+							data.PreviousFramePositionChange = Vector3F.Zero;
+
+							data.ColorPackedValue1 = objectItem.ColorForInstancingData1;
+							data.ColorPackedValue2 = objectItem.ColorForInstancingData2;
 							data.LodValue = lodObjectItem.LODValue;
 							data.VisibilityDistance = lodObjectItem.VisibilityDistance;
 							data.ReceiveDecals = receiveDecals ? (byte)255 : (byte)0;
@@ -1632,7 +1943,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		unsafe void RenderObjectsNoBatchingGroup( ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem, Sector.Group group )
+		unsafe void RenderObjectsNoBatchingGroup( ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem, Sector.RenderGroup group )
 		{
 			var cameraSettings = context.Owner.CameraSettings;
 			var objectCount = group.Objects.Count;
@@ -1642,7 +1953,6 @@ namespace NeoAxis
 				localItems[ n ].added = 0;
 			try
 			{
-
 				Parallel.For( 0, objectCount, delegate ( int nObject )
 				{
 					ref var objectItem = ref group.Objects.Data[ nObject ];
@@ -1682,6 +1992,8 @@ namespace NeoAxis
 					}
 				} );
 
+				//!!!!что-то в Parallel. GetMesh предрасчитать
+
 				for( int nObject = 0; nObject < objectCount; nObject++ )
 				{
 					ref var localItem = ref localItems[ nObject ];
@@ -1692,15 +2004,17 @@ namespace NeoAxis
 					ref var objectItem = ref group.Objects.Data[ nObject ];
 					ref var obj = ref Objects[ objectItem.ObjectIndex ];
 
-					GetMesh( obj.Element, obj.VariationGroup, obj.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out var visibilityDistanceFactor, out var castShadows, out var receiveDecals, out var motionBlurFactor, out var collision );
+					GetMesh( obj.Element, obj.VariationGroup, obj.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out var visibilityDistanceFactor, out var castShadows, out var receiveDecals, out var motionBlurFactor, out var staticShadows, out var collision );
 
 					if( !enabled )
 						continue;
 					if( onlyForShadowGeneration && !castShadows )
 						continue;
 
+					var meshDataLOD0 = mesh.Result.MeshData;
+
 					var boundingSize = (float)( mesh.Result.SpaceBounds.boundingSphere.Radius * 2 * obj.Scale.MaxComponent() );
-					var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * visibilityDistanceFactor * mesh.Result.MeshData.VisibilityDistanceFactor;
+					var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * visibilityDistanceFactor * meshDataLOD0.VisibilityDistanceFactor;
 
 					if( localItem.cameraDistanceMinSquared < visibilityDistance * visibilityDistance /*|| mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum*/ )
 					{
@@ -1711,38 +2025,59 @@ namespace NeoAxis
 						var item = new RenderingPipeline.RenderSceneData.MeshItem();
 						item.Creator = this;
 						item.BoundingSphere = objectItem.BoundingSphere;
-						item.BoundingBoxCenter = item.BoundingSphere.Center;//objectItem.BoundingBox.GetCenter( out item.BoundingBoxCenter );
-						item.MeshData = mesh.Result.MeshData;
+						//item.MeshData = meshDataLOD0;
+						//item.MeshDataLOD0 = item.MeshData;
 						item.CastShadows = castShadows && localItem.cameraDistanceMinSquared < context.GetShadowVisibilityDistanceSquared( visibilityDistance );// && item.MeshData.CastShadows;
 						item.ReceiveDecals = receiveDecals;
 						item.MotionBlurFactor = motionBlurFactor;
 						item.ReplaceMaterial = replaceMaterial;
-						//if( ReplaceMaterialSelectively.Count != 0 )
-						//{
-						//	item.ReplaceMaterialSelectively = new Material[ ReplaceMaterialSelectively.Count ];
-						//	for( int n = 0; n < ReplaceMaterialSelectively.Count; n++ )
-						//		item.ReplaceMaterialSelectively[ n ] = ReplaceMaterialSelectively[ n ].Value;
-						//}
 						item.Color = obj.Color;
-						item.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref item.Color );
-
-						item.VisibilityDistance = (float)visibilityDistance;
+						RenderingPipeline.GetColorForInstancingData( ref item.Color, out item.ColorForInstancingData1, out item.ColorForInstancingData2 );
+						//item.ColorForInstancingData = RenderingPipeline.GetColorForInstancingData( ref item.Color );
+						item.VisibilityDistance = visibilityDistance;
 						item.OnlyForShadowGeneration = onlyForShadowGeneration;
+						item.CullingByCameraDirectionData = obj.CullingByCameraDirectionData;
+						item.StaticShadows = staticShadows;
 
 						if( onlyForShadowGeneration && !item.CastShadows )
 							continue;
 
 						int item0BillboardMode = 0;
 
-						SceneLODUtility.GetDemandedLODs( context, mesh.Result.MeshData, localItem.cameraDistanceMinSquared, localItem.cameraDistanceMaxSquared, boundingSize, out var lodState );
+						//MeshDataLastVoxelLOD
+						var meshDataLods = meshDataLOD0.LODs;
+						if( meshDataLods != null )
+						{
+							var lastLOD = meshDataLods[ meshDataLods.Length - 1 ];
+							if( lastLOD.VoxelGridSize != 0 )
+								item.MeshDataLastVoxelLOD = lastLOD.Mesh?.Result?.MeshData;
+						}
+
+						SceneLODUtility.GetDemandedLODs( context, meshDataLOD0, localItem.cameraDistanceMinSquared, localItem.cameraDistanceMaxSquared, boundingSize, out var lodState );
 						for( int nLodItem = 0; nLodItem < lodState.Count; nLodItem++ )
 						{
 							lodState.GetItem( nLodItem, out var lodLevel, out var lodRange );
 
-							item.MeshData = mesh.Result.MeshData;
+							item.MeshData = meshDataLOD0;
+							item.MeshDataLOD0 = meshDataLOD0;
+
+							//MeshDataShadows, MeshDataShadowsForceBestLOD
+							var lodScaleShadows = context.LODScaleShadowsSquared * meshDataLOD0.LODScaleShadows;
+							if( lodScaleShadows <= lodLevel )
+							{
+								//select last LOD for shadows
+								item.MeshDataShadows = item.MeshDataLastVoxelLOD;
+							}
+							else if( lodScaleShadows >= 100 )
+							{
+								//select the best LOD for shadows
+								item.MeshDataShadows = meshDataLOD0;
+								item.MeshDataShadowsForceBestLOD = true;
+							}
+
 							if( lodLevel > 0 )
 							{
-								ref var lod = ref mesh.Result.MeshData.LODs[ lodLevel - 1 ];
+								ref var lod = ref meshDataLods[ lodLevel - 1 ];
 								var lodMeshData = lod.Mesh?.Result?.MeshData;
 								if( lodMeshData != null )
 									item.MeshData = lodMeshData;
@@ -1768,7 +2103,7 @@ namespace NeoAxis
 									else
 										offset = Vector3F.Zero;
 
-									ref var result = ref item.Transform;
+									ref var result = ref item.TransformRelative;
 									result.Item0.X = scaleH;
 									result.Item0.Y = 0;
 									result.Item0.Z = rotation.X;
@@ -1781,19 +2116,52 @@ namespace NeoAxis
 									result.Item2.Y = 0;
 									result.Item2.Z = scale.Z;
 									result.Item2.W = 0;
-									//!!!!double. где еще
-									result.Item3.X = (float)( position.X + offset.X );
-									result.Item3.Y = (float)( position.Y + offset.Y );
-									result.Item3.Z = (float)( position.Z + offset.Z );
+									result.Item3.X = (float)( position.X - context.OwnerCameraSettingsPosition.X + offset.X );
+									result.Item3.Y = (float)( position.Y - context.OwnerCameraSettingsPosition.Y + offset.Y );
+									result.Item3.Z = (float)( position.Z - context.OwnerCameraSettingsPosition.Z + offset.Z );
 									result.Item3.W = 1;
 								}
 								else
-									item.Transform = objectItem.MeshMatrix;
+								{
+									context.ConvertToRelative( ref obj.Position, out var positionRelative );
+									item.TransformRelative = new Matrix4F( ref objectItem.MeshMatrix3, ref positionRelative );
+									//item.Transform = objectItem.MeshMatrix;
+								}
 
-								//PositionPreviousFrame
-								item.Transform.GetTranslation( out item.PositionPreviousFrame );
+								////PositionPreviousFrame
+								//item.TransformRelative.GetTranslation( out item.PositionPreviousFrameRelative );
+								//item.PositionPreviousFrameRelative += context.OwnerCameraSettingsPositionPreviousChange;
 							}
 
+							//tessellation
+							if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum || mode == GetRenderSceneDataMode.InsideFrustum )
+							{
+								var enable = false;
+
+								if( item.MeshData == meshDataLOD0 )
+								{
+									if( item.ReplaceMaterial != null )
+									{
+										if( item.ReplaceMaterial.Result != null )
+											enable = item.ReplaceMaterial.Result.tessellationQuality != 0;
+									}
+									else
+										enable = meshDataLOD0.ContainsTessellation;
+
+									//if( item.ReplaceMaterialSelectively != null )
+									//{
+									//	for( int n = 0; n < item.ReplaceMaterialSelectively.Length; n++ )
+									//	{
+									//		var result = item.ReplaceMaterialSelectively[ n ].Result;
+									//		if( result != null && result.tessellationQuality != 0 )
+									//			enable = true;
+									//	}
+									//}
+								}
+
+								//set true only for first lod, set false to second (it can be true because item memory is shared)
+								item.Tessellation = enable;
+							}
 
 							//add to render
 							{
@@ -1805,7 +2173,6 @@ namespace NeoAxis
 						}
 					}
 				}
-
 			}
 			finally
 			{
@@ -1813,9 +2180,24 @@ namespace NeoAxis
 			}
 		}
 
+		struct GroupItem
+		{
+			public int Added;
+			public float CameraDistanceMinSquared;
+			public float BoundingSize;
+			public float VisibilityDistance;
+			public int OnlyForShadowGeneration;
+			public SceneLODUtility.LodState LodState;
+		}
+
 		[MethodImpl( (MethodImplOptions)512 )]
 		unsafe void SectorGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem, Sector sector )
 		{
+			//!!!!может сам метод вызывать мультипоточно, только нужно потом как-то их собрать
+			//!!!!может GetMesh можно закешировать. и внутри его
+			//!!!!может для всей группы объектов подготовить что-то. типа GetMesh
+			//!!!!тени еще
+
 			//hide label
 			var context2 = context.ObjectInSpaceRenderingContext;
 			context2.disableShowingLabelForThisObject = true;
@@ -1828,65 +2210,121 @@ namespace NeoAxis
 			}
 
 			var cameraSettings = context.Owner.CameraSettings;
-			//var cameraDistanceToSectorSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref sector.ObjectsBoundsValue );
-
-			var groupCount = sector.Groups.Count;
 
 
-			var groupsAdded = stackalloc int/*bool*/[ groupCount ];
-			for( int nGroup = 0; nGroup < groupCount; nGroup++ )
-				groupsAdded[ nGroup ] = 0;
-			var groupsCameraDistanceMinSquared = stackalloc float[ groupCount ];
-			var groupsBoundingSize = stackalloc float[ groupCount ];
-			var groupsVisibilityDistance = stackalloc float[ groupCount ];
-			var groupsOnlyForShadowGeneration = stackalloc int[ groupCount ];
+			//!!!!software culling buffer for subdivided
+
+
+			var useSubdivided = false;
+			if( SectorSubdivide >= 2 )
+			{
+				var cameraFrustum = cameraSettings.Frustum;
+
+				//check by camera distance
+				var cameraDistanceSquared = sector.ObjectsBounds.GetPointDistanceSquared( cameraFrustum.Origin );
+				if( cameraDistanceSquared < MathEx.Square( SectorSize.Value.MinComponent() ) )
+					useSubdivided = true;
+
+
+				////making a lot of draw calls
+				////check on the edges of the screen
+				//if( !useSubdivided )
+				//{
+				//	var planes = cameraFrustum.Planes;
+
+				//	sector.ObjectsBounds.GetCenter( out var boundsCenter );
+				//	var boundsHalfSize = sector.ObjectsBounds.GetSize() * 0.5;
+
+				//	if( planes[ 2 ].GetSide( ref boundsCenter, ref boundsHalfSize ) != Plane.Side.Negative ||
+				//		planes[ 3 ].GetSide( ref boundsCenter, ref boundsHalfSize ) != Plane.Side.Negative ||
+				//		planes[ 4 ].GetSide( ref boundsCenter, ref boundsHalfSize ) != Plane.Side.Negative ||
+				//		planes[ 5 ].GetSide( ref boundsCenter, ref boundsHalfSize ) != Plane.Side.Negative )
+				//	{
+				//		//if( !EngineApp._DebugCapsLock )
+				//		useSubdivided = true;
+				//	}
+
+				//	//if( planes[ 2 ].GetSide( ref sector.ObjectsBounds ) != Plane.Side.Negative || 
+				//	//	planes[ 3 ].GetSide( ref sector.ObjectsBounds ) != Plane.Side.Negative || 
+				//	//	planes[ 4 ].GetSide( ref sector.ObjectsBounds ) != Plane.Side.Negative || 
+				//	//	planes[ 5 ].GetSide( ref sector.ObjectsBounds ) != Plane.Side.Negative )
+				//	//{
+				//	//		useSubdivided = true;
+				//	//}
+				//}
+
+
+				////if( EngineApp._DebugCapsLock )
+				////	if( cameraDistance < SectorSize.Value.MinComponent() * 1.5 )
+				////		useSubdivided = true;
+
+				////if( EngineApp._DebugCapsLock )
+				////	useSubdivided = true;
+			}
+
+			var groupList = useSubdivided ? sector.RenderGroupsSubdivided : sector.RenderGroupsOne;
+
+
+			var groupCount = groupList/*sector.Groups*/.Count;
+
+			var groupItems = stackalloc GroupItem[ groupCount ];
+			var groupIndexesAdded = stackalloc int[ groupCount ];
+			var groupIndexesAddedCount = 0;
 
 			for( int nGroup = 0; nGroup < groupCount; nGroup++ )
 			{
-				var group = sector.Groups[ nGroup ];
+				var group = groupList/*sector.Groups*/[ nGroup ];
+				ref var groupItem = ref groupItems[ nGroup ];
+
+				groupItem.Added = 0;
 
 				if( group.NoBatchingGroup )
 				{
-					//!!!!что еще проверять?
-
-					groupsAdded[ nGroup ] = 1;
+					//no batching group is already got result here
+					RenderObjectsNoBatchingGroup( context, mode, modeGetObjectsItem, group );
+					//groupsAdded[ nGroup ] = 1;
 				}
 				else
 				{
-					GetMesh( group.Element, group.VariationGroup, group.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out var visibilityDistanceFactor, out var castShadows, out var receiveDecals, out var motionBlurFactor, out var collision );
+					GetMesh( group.Element, group.VariationGroup, group.VariationElement, out var enabled, out var mesh, out _, out var visibilityDistanceFactor, out var castShadows, out _, out _, out _, out _ );
 
 					if( !enabled )
 						continue;
 					if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && !castShadows )
 						continue;
 
+					var meshResult = mesh.Result;
+
 					var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref group.BoundingBox );
 
-					var boundingSize = (float)( mesh.Result.SpaceBounds.boundingSphere.Radius * 2 * group.ObjectsMaxScale );
-					var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * visibilityDistanceFactor * mesh.Result.MeshData.VisibilityDistanceFactor;
+					var boundingSize = (float)( meshResult.SpaceBounds.boundingSphere.Radius * 2 * group.ObjectsMaxScale );
+					var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * visibilityDistanceFactor * meshResult.MeshData.VisibilityDistanceFactor;
 
-					if( cameraDistanceMinSquared < visibilityDistance * visibilityDistance /* || mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum*/ )
+					if( cameraDistanceMinSquared < visibilityDistance * visibilityDistance )
 					{
-						groupsAdded[ nGroup ] = 1;
-						groupsVisibilityDistance[ nGroup ] = (float)visibilityDistance;
-						groupsCameraDistanceMinSquared[ nGroup ] = cameraDistanceMinSquared;
-						groupsBoundingSize[ nGroup ] = (float)boundingSize;
+						groupItem.Added = 1;
+						groupItem.VisibilityDistance = visibilityDistance;
+						groupItem.CameraDistanceMinSquared = cameraDistanceMinSquared;
+						groupItem.BoundingSize = boundingSize;
+
+						groupIndexesAdded[ groupIndexesAddedCount++ ] = nGroup;
 					}
 				}
 			}
 
-
-			Parallel.For( 0, groupCount, delegate ( int nGroup )
+			Parallel.For( 0, groupIndexesAddedCount, delegate ( int groupIndexesIndex )//Parallel.For( 0, groupCount, delegate ( int nGroup )
 			{
-				var group = sector.Groups[ nGroup ];
+				var nGroup = groupIndexesAdded[ groupIndexesIndex ];
+				var group = groupList/*sector.Groups*/[ nGroup ];
+				ref var groupItem = ref groupItems[ nGroup ];
 
-				if( groupsAdded[ nGroup ] != 0 )
+				//if( groupsAdded[ nGroup ] != 0 )
 				{
-					if( group.NoBatchingGroup )
-					{
-						groupsAdded[ nGroup ] = 2;
-					}
-					else
+					//if( group.NoBatchingGroup )
+					//{
+					//	groupsAdded[ nGroup ] = 2;
+					//}
+					//else
 					{
 						var add = false;
 						var onlyForShadowGeneration = false;
@@ -1903,103 +2341,43 @@ namespace NeoAxis
 
 						if( add )
 						{
-							groupsAdded[ nGroup ] = 2;
-							groupsOnlyForShadowGeneration[ nGroup ] = onlyForShadowGeneration ? 1 : 0;
+							groupItem.Added = 2;
+							groupItem.OnlyForShadowGeneration = onlyForShadowGeneration ? 1 : 0;
+
+							GetMesh( group.Element, group.VariationGroup, group.VariationElement, out var enabled, out var mesh );
+
+							var cameraDistanceMaxSquared = SceneLODUtility.GetCameraDistanceMax( cameraSettings, ref group.BoundingSphere );
+							cameraDistanceMaxSquared *= cameraDistanceMaxSquared;
+
+							SceneLODUtility.GetDemandedLODs( context, mesh.Result.MeshData, groupItem.CameraDistanceMinSquared, cameraDistanceMaxSquared, groupItem.BoundingSize, out groupItem.LodState );
 						}
 					}
 				}
 			} );
 
-
-			//int groupsCountToCheck = 0;
-			//if( mode == GetRenderSceneDataMode.InsideFrustum )
-			//{
-			//	var cameraDistanceToSectorSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref sector.ObjectsBoundsValue );
-			//	for( int nGroup = 0; nGroup < sector.Groups.Count; nGroup++ )
-			//	{
-			//		var group = sector.Groups[ nGroup ];
-
-			//		GetMesh( group.Element, group.VariationGroup, group.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out var visibilityDistanceFactor, out var castShadows, out var receiveDecals, out var motionBlurFactor );
-
-			//		var boundingRadius = mesh.Result.SpaceBounds.BoundingSphere.Radius * group.ObjectsMaxScale;
-			//		var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingRadius ) * visibilityDistanceFactor * mesh.Result.MeshData.VisibilityDistanceFactor;
-
-			//		if( cameraDistanceToSectorSquared > visibilityDistance * visibilityDistance )
-			//			break;
-
-			//		//if( cameraDistanceToSectorSquared > group.VisibilityDistanceSquared )
-			//		//	break;
-
-			//		groupsCountToCheck++;
-			//	}
-			//}
-			//else if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum )
-			//{
-			//	groupsCountToCheck = sector.Groups.Count;
-			//}
-
-
-			//var groupsAdded = stackalloc int/*bool*/[ groupsCountToCheck ];
-			//for( int nGroup = 0; nGroup < groupsCountToCheck; nGroup++ )
-			//	groupsAdded[ nGroup ] = 0;
-			//var groupsCameraDistanceMinSquared = stackalloc float[ groupsCountToCheck ];
-			//var groupsOnlyForShadowGeneration = stackalloc int[ groupsCountToCheck ];
-			//Parallel.For( 0, groupsCountToCheck, delegate ( int nGroup )
-			//{
-			//	var group = sector.Groups[ nGroup ];
-
-			//	var cameraDistanceMinSquared = SceneLODUtility.GetCameraDistanceMinSquared( cameraSettings, ref group.BoundingBox );
-
-			//	if( cameraDistanceMinSquared < group.VisibilityDistanceSquared )//|| mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum )
-			//	{
-			//		var add = false;
-			//		var onlyForShadowGeneration = false;
-			//		if( mode == GetRenderSceneDataMode.InsideFrustum )
-			//		{
-			//			add = true;
-			//			onlyForShadowGeneration = !cameraSettings.Frustum.Intersects( ref group.BoundingSphere );
-			//		}
-			//		else if( mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum && modeGetObjectsItem.Intersects( ref group.BoundingBox ) )
-			//		{
-			//			add = true;
-			//			onlyForShadowGeneration = true;
-			//		}
-
-			//		if( add )
-			//		{
-			//			groupsAdded[ nGroup ] = 1;
-			//			groupsCameraDistanceMinSquared[ nGroup ] = cameraDistanceMinSquared;
-			//			groupsOnlyForShadowGeneration[ nGroup ] = onlyForShadowGeneration ? 1 : 0;
-			//		}
-			//	}
-			//} );
-
-
-
-			for( int nGroup = 0; nGroup < sector.Groups.Count; nGroup++ )
+			for( int nGroup = 0; nGroup < groupList/*sector.Groups*/.Count; nGroup++ )
 			{
-				if( groupsAdded[ nGroup ] != 2 )
+				ref var groupItem = ref groupItems[ nGroup ];
+				if( groupItem.Added != 2 )
 					continue;
 
-				var group = sector.Groups[ nGroup ];
+				var group = groupList/*sector.Groups*/[ nGroup ];
 
-				if( group.NoBatchingGroup )
+				//if( group.NoBatchingGroup )
+				//{
+				//	RenderObjectsNoBatchingGroup( context, mode, modeGetObjectsItem, group );
+				//}
+				//else
 				{
-					RenderObjectsNoBatchingGroup( context, mode, modeGetObjectsItem, group );
-				}
-				else
-				{
-					var cameraDistanceMinSquared = groupsCameraDistanceMinSquared[ nGroup ];
-					var onlyForShadowGeneration = groupsOnlyForShadowGeneration[ nGroup ] != 0;
-					var visibilityDistance = groupsVisibilityDistance[ nGroup ];
-					var boundingSize = groupsBoundingSize[ nGroup ];
+					var onlyForShadowGeneration = groupItem.OnlyForShadowGeneration != 0;
+					ref var lodState = ref groupItem.LodState;
 
 					//if( ( obj.Flags & Object.FlagsEnum.Enabled ) == 0 )
 					//	continue;
 					//if( ( obj.Flags & Object.FlagsEnum.Visible ) == 0 )
 					//	continue;
 
-					GetMesh( group.Element, group.VariationGroup, group.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out var visibilityDistanceFactor, out var castShadows, out var receiveDecals, out var motionBlurFactor, out var collision );
+					GetMesh( group.Element, group.VariationGroup, group.VariationElement, out var enabled, out var mesh, out var replaceMaterial, out var visibilityDistanceFactor, out var castShadows, out var receiveDecals, out var motionBlurFactor, out var staticShadows, out var collision );
 
 					if( !enabled )
 						continue;
@@ -2009,21 +2387,19 @@ namespace NeoAxis
 					var cameraDistanceMaxSquared = SceneLODUtility.GetCameraDistanceMax( cameraSettings, ref group.BoundingSphere );
 					cameraDistanceMaxSquared *= cameraDistanceMaxSquared;
 
-					var meshData = mesh.Result.MeshData;
-					var lods = meshData.LODs;
-
-					SceneLODUtility.GetDemandedLODs( context, meshData, cameraDistanceMinSquared, cameraDistanceMaxSquared, boundingSize, out var lodState );
+					var meshDataLOD0 = mesh.Result.MeshData;
+					var meshDataLods = meshDataLOD0.LODs;
 
 					bool useBatching = false;
 					{
-						if( lods == null )
+						if( meshDataLods == null )
 							useBatching = true;
 						else
 						{
 							//check for only one last lod
 							if( lodState.Count == 1 )
 							{
-								var lodCount = lods.Length + 1;
+								var lodCount = meshDataLods.Length + 1;
 								lodState.GetItem( 0, out var level, out var range );
 
 								if( level == lodCount - 1 )
@@ -2037,45 +2413,57 @@ namespace NeoAxis
 						var item = new RenderingPipeline.RenderSceneData.MeshItem();
 						item.Creator = this;
 						item.BoundingSphere = group.BoundingSphere;
-						item.BoundingBoxCenter = item.BoundingSphere.Center;
-						//group.Bounds.CalculatedBoundingBox.GetCenter( out item.BoundingBoxCenter );
-
 						//item.MeshData = mesh.Result.MeshData;
 						//item.CastShadows = castShadows && item.MeshData.CastShadows;
 						item.ReceiveDecals = receiveDecals;
 						item.MotionBlurFactor = motionBlurFactor;
 						item.ReplaceMaterial = replaceMaterial;
-						//if( ReplaceMaterialSelectively.Count != 0 )
-						//{
-						//	item.ReplaceMaterialSelectively = new Material[ ReplaceMaterialSelectively.Count ];
-						//	for( int n = 0; n < ReplaceMaterialSelectively.Count; n++ )
-						//		item.ReplaceMaterialSelectively[ n ] = ReplaceMaterialSelectively[ n ].Value;
-						//}
-
 						item.Color = ColorValue.One;
-						item.ColorForInstancingData = RenderingPipeline.ColorOneForInstancingData;// GetColorForInstancingData( ref item.Color );
-						item.VisibilityDistance = visibilityDistance;
+						item.ColorForInstancingData1 = RenderingPipeline.ColorOneForInstancingData1;
+						item.ColorForInstancingData2 = RenderingPipeline.ColorOneForInstancingData2;
+						item.VisibilityDistance = groupItem.VisibilityDistance;
 						item.OnlyForShadowGeneration = onlyForShadowGeneration;
+						item.StaticShadows = staticShadows;
 
+						//MeshDataLastVoxelLOD
+						if( meshDataLods != null )
+						{
+							var lastLOD = meshDataLods[ meshDataLods.Length - 1 ];
+							if( lastLOD.VoxelGridSize != 0 )
+								item.MeshDataLastVoxelLOD = lastLOD.Mesh?.Result?.MeshData;
+						}
 
 						for( int nLodItem = 0; nLodItem < lodState.Count; nLodItem++ )
 						{
 							lodState.GetItem( nLodItem, out var lodLevel, out _ );
 
+							item.MeshData = meshDataLOD0;
+							item.MeshDataLOD0 = meshDataLOD0;
 
-							item.MeshData = mesh.Result.MeshData;
+							//MeshDataShadows, MeshDataShadowsForceBestLOD
+							var lodScaleShadows = context.LODScaleShadowsSquared * meshDataLOD0.LODScaleShadows;
+							if( lodScaleShadows <= lodLevel )
+							{
+								//select last LOD for shadows
+								item.MeshDataShadows = item.MeshDataLastVoxelLOD;
+							}
+							else if( lodScaleShadows >= 100 )
+							{
+								//select the best LOD for shadows
+								item.MeshDataShadows = meshDataLOD0;
+								item.MeshDataShadowsForceBestLOD = true;
+							}
+
 							if( lodLevel > 0 )
 							{
-								ref var lod = ref lods[ lodLevel - 1 ];
+								ref var lod = ref meshDataLods[ lodLevel - 1 ];
 								var lodMeshData = lod.Mesh?.Result?.MeshData;
 								if( lodMeshData != null )
 									item.MeshData = lodMeshData;
 							}
 
-							item.CastShadows = castShadows && item.MeshData.CastShadows && cameraDistanceMinSquared < context.GetShadowVisibilityDistanceSquared( visibilityDistance );
+							item.CastShadows = castShadows && item.MeshData.CastShadows && groupItem.CameraDistanceMinSquared < context.GetShadowVisibilityDistanceSquared( groupItem.VisibilityDistance );
 							item.LODValue = 0;
-							// = SceneLODUtility.GetLodValue( lodRange, objectCameraDistance );
-							//item.LODRange = lodRange;
 
 							if( onlyForShadowGeneration && !item.CastShadows )
 								continue;
@@ -2083,29 +2471,32 @@ namespace NeoAxis
 							//set BatchingInstanceBuffer
 							if( item.MeshData.BillboardMode != 0 )
 							{
-								//!!!!сразу создавать, чтобы потом не тормозило? или в потоке
+								//!!!!сразу создавать, чтобы потом не тормозило? или в потоке. опцию для создания при загрузке. где еще
 								if( group.BatchingInstanceBufferBillboard == null )
 									sector.CreateBatchingInstanceBufferBillboard( group, item.LODValue, /*item.VisibilityDistance, */item.ReceiveDecals, item.MotionBlurFactor, item.MeshData );
 
 								item.InstancingEnabled = true;
 								item.InstancingVertexBuffer = group.BatchingInstanceBufferBillboard;
-								//!!!!может один буфер на всех собирать
+								//!!!!может один буфер на всех собирать. где еще
 								item.InstancingStart = 0;
 								item.InstancingCount = -1;
 								item.InstancingMaxLocalBounds = (float)( group.ObjectsMaxScale * item.MeshData.SpaceBounds.boundingSphere.Radius );
+								context.ConvertToRelative( ref group.BatchingInstancePositionOffset, out item.InstancingPositionOffsetRelative );
 							}
 							else
 							{
-								//!!!!сразу создавать, чтобы потом не тормозило? или в потоке. опцию для создания при загрузке
 								if( group.BatchingInstanceBufferMesh == null )
 									sector.CreateBatchingInstanceBufferMesh( group, item.LODValue, /*item.VisibilityDistance, */item.ReceiveDecals, item.MotionBlurFactor );
 
 								item.InstancingEnabled = true;
 								item.InstancingVertexBuffer = group.BatchingInstanceBufferMesh;
-								//!!!!может один буфер на всех собирать
 								item.InstancingStart = 0;
 								item.InstancingCount = -1;
 								item.InstancingMaxLocalBounds = (float)( group.ObjectsMaxScale * item.MeshData.SpaceBounds.boundingSphere.Radius );
+								context.ConvertToRelative( ref group.BatchingInstancePositionOffset, out item.InstancingPositionOffsetRelative );
+
+								//!!!!
+								//item.PositionPreviousFrameRelative
 							}
 
 							//add to render
@@ -2119,7 +2510,7 @@ namespace NeoAxis
 					}
 					else
 					{
-						bool containTransparent = replaceMaterial?.Result != null && replaceMaterial.Result.Transparent || mesh.ContainsTransparent();
+						bool containTransparent = replaceMaterial?.Result != null && replaceMaterial.Result.Transparent || meshDataLOD0.ContainsTransparent;
 						if( containTransparent )
 							RenderObjectsNoBatchingGroup( context, mode, modeGetObjectsItem, group );
 						else
@@ -2134,7 +2525,7 @@ namespace NeoAxis
 				var renderer = context.Owner.Simple3DRenderer;
 				renderer.SetColor( new ColorValue( 0, 0, 1 ) );
 
-				foreach( var group in sector.Groups )
+				foreach( var group in groupList/*sector.Groups*/ )
 					renderer.AddBounds( group.BoundingBox, false );
 			}
 
@@ -2564,6 +2955,7 @@ namespace NeoAxis
 						variation.castShadows = elementMesh.CastShadows;
 						variation.receiveDecals = elementMesh.ReceiveDecals;
 						variation.motionBlurFactor = (float)elementMesh.MotionBlurFactor;
+						variation.staticShadows = elementMesh.StaticShadows;
 
 						group.variations = new ElementTypesCache.Element.Variation[] { variation };
 					}
@@ -2608,6 +3000,7 @@ namespace NeoAxis
 									variation.castShadows = surfaceElementMesh.CastShadows & elementSurface.CastShadows;
 									variation.receiveDecals = surfaceElementMesh.ReceiveDecals;
 									variation.motionBlurFactor = (float)surfaceElementMesh.MotionBlurFactor;
+									variation.staticShadows = surfaceElementMesh.StaticShadows;
 								}
 
 								group.variations[ nVariation ] = variation;
@@ -2645,8 +3038,20 @@ namespace NeoAxis
 			//!!!!по идее секторы тоже обновить, т.к. bounds
 		}
 
+		//class GetMeshData
+		//{
+		//	public bool enabled;
+		//	public Mesh mesh;
+		//	public Material replaceMaterial;
+		//	public float visibilityDistanceFactor;
+		//	public bool castShadows;
+		//	public bool receiveDecals;
+		//	public float motionBlurFactor;
+		//	public bool collision;
+		//}
+
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		void GetMesh( ushort elementIndex, byte variationGroup, byte variationElement, out bool enabled, out Mesh mesh, out Material replaceMaterial, out float visibilityDistanceFactor, out bool castShadows, out bool receiveDecals, out float motionBlurFactor, out bool collision )
+		void GetMesh( int elementIndex, int variationGroup, int variationElement, out bool enabled, out Mesh mesh, out Material replaceMaterial, out float visibilityDistanceFactor, out bool castShadows, out bool receiveDecals, out float motionBlurFactor, out bool staticShadows, out bool collision )
 		{
 			enabled = false;
 			mesh = null;
@@ -2655,6 +3060,7 @@ namespace NeoAxis
 			castShadows = false;
 			receiveDecals = false;
 			motionBlurFactor = 1.0f;
+			staticShadows = true;
 			collision = false;
 
 			if( elementTypesCacheNeedUpdate )
@@ -2676,6 +3082,7 @@ namespace NeoAxis
 						castShadows = variation.castShadows;
 						receiveDecals = variation.receiveDecals;
 						motionBlurFactor = variation.motionBlurFactor;
+						staticShadows = variation.staticShadows;
 					}
 
 					collision = elementData.collision;
@@ -2690,6 +3097,32 @@ namespace NeoAxis
 			//visibilityDistance = Math.Min( visibilityDistance, meshData.VisibilityDistance );
 			//!!!!LODScale?
 			castShadows = castShadows && meshData.CastShadows;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		void GetMesh( int elementIndex, int variationGroup, int variationElement, out bool enabled, out Mesh mesh )
+		{
+			enabled = false;
+			mesh = null;
+
+			if( elementTypesCacheNeedUpdate )
+				ElementTypesCacheUpdate();
+
+			if( elementTypesCache != null )
+			{
+				var elementData = elementTypesCache.GetElement( elementIndex );
+				if( elementData != null && elementData.enabled )
+				{
+					enabled = true;
+
+					var variation = elementData.GetVariation( variationGroup, variationElement );
+					if( variation != null )
+						mesh = variation.mesh;
+				}
+			}
+
+			if( mesh == null || mesh.Result == null )
+				mesh = ResourceUtility.MeshInvalid;
 		}
 
 		public void ElementTypesCacheNeedUpdate()
@@ -2733,6 +3166,17 @@ namespace NeoAxis
 				needUpdate = false;
 				CreateSectors();
 			}
+
+			if( needUpdateStaticShadows )
+			{
+				foreach( var sector in sectors.Values )
+				{
+					//!!!!?
+					if( !sector.StaticShadowsAffectedBounds.IsCleared() )
+						sector.ResetLightStaticShadowsCache( ref sector.StaticShadowsAffectedBounds );
+				}
+				needUpdateStaticShadows = false;
+			}
 		}
 
 		private void Scene_UpdateEvent( Component sender, float delta )
@@ -2747,6 +3191,8 @@ namespace NeoAxis
 
 		private void Scene_GetRenderSceneData( Scene scene, ViewportRenderingContext context )
 		{
+			//_tempSectorsGetSceneData.Clear();
+
 #if !DEPLOY
 			var context2 = context.ObjectInSpaceRenderingContext;
 			if( context2.selectedObjects.Contains( this ) )
@@ -2764,6 +3210,23 @@ namespace NeoAxis
 			}
 #endif
 		}
+
+		//private void Scene_GetRenderSceneDataAfterObjects( Scene scene, ViewportRenderingContext context )
+		//{
+		//	if( _tempSectorsGetSceneData.Count != 0 )
+		//	{
+		//		for( int n = 0; n < _tempSectorsGetSceneData.Count; n++ )
+		//		{
+		//			ref var item = ref _tempSectorsGetSceneData.Data[ n ];
+		//			SectorGetRenderSceneData( context, item.mode, item.modeGetObjectsItem, item.sector );
+		//		}
+
+		//		//foreach( var sector in sectors )
+		//		//	SectorGetRenderSceneData( context, mode, modeGetObjectsItem, sector );
+
+		//		_tempSectorsGetSceneData.Clear();
+		//	}
+		//}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public GroupOfObjectsElement GetElement( int elementIndex )
@@ -3098,6 +3561,11 @@ namespace NeoAxis
 
 				EndUpdate();
 			}
+		}
+
+		public void NeedUpdateStaticShadows()
+		{
+			needUpdateStaticShadows = true;
 		}
 	}
 }

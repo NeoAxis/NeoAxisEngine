@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using System.Drawing;
+//using System.Drawing;
 
 namespace NeoAxis
 {
@@ -106,12 +106,13 @@ namespace NeoAxis
 				{
 					if( writer != null )
 					{
-						using( var bitmap = new Bitmap( Resolution.X, Resolution.Y, System.Drawing.Imaging.PixelFormat.Format24bppRgb ) )
-						{
-							using( var g = Graphics.FromImage( bitmap ) )
-								g.CopyFromScreen( 0, 0, 0, 0, new Size( Resolution.X, Resolution.Y ) );
-							writer.AddFrame( bitmap );
-						}
+						//!!!!надо
+						//using( var bitmap = new Bitmap( Resolution.X, Resolution.Y, System.Drawing.Imaging.PixelFormat.Format24bppRgb ) )
+						//{
+						//	using( var g = Graphics.FromImage( bitmap ) )
+						//		g.CopyFromScreen( 0, 0, 0, 0, new Size( Resolution.X, Resolution.Y ) );
+						//	writer.AddFrame( bitmap );
+						//}
 					}
 
 					remainingFrames--;

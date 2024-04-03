@@ -1,0 +1,29 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.RoadType
+{
+	WayToUse = Walking
+	LaneWidth = 1
+	RoadsideEdgeWidth = 0
+	SidewalkWidth = 0
+	SidewalkHeight = 0
+	SidewalkBorderWidth = 0
+	SurfaceMaterial
+	{
+	}
+	MarkupMaterial
+	{
+	}
+	MarkupDottedMaterial
+	{
+	}
+	ShoulderMaterial
+	{
+	}
+	SidewalkMaterial
+	{
+	}
+	SidewalkBorderMaterial
+	{
+	}
+}

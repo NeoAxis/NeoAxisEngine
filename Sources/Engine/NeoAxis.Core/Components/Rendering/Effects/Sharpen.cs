@@ -21,7 +21,7 @@ namespace NeoAxis
 		public Reference<double> Intensity
 		{
 			get { if( _intensity.BeginGet() ) Intensity = _intensity.Get( this ); return _intensity.value; }
-			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
+			set { if( _intensity.BeginSet( this, ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
 		public event Action<RenderingEffect_Sharpen> IntensityChanged;
@@ -35,7 +35,7 @@ namespace NeoAxis
 		public Reference<double> Strength
 		{
 			get { if( _strength.BeginGet() ) Strength = _strength.Get( this ); return _strength.value; }
-			set { if( _strength.BeginSet( ref value ) ) { try { StrengthChanged?.Invoke( this ); } finally { _strength.EndSet(); } } }
+			set { if( _strength.BeginSet( this, ref value ) ) { try { StrengthChanged?.Invoke( this ); } finally { _strength.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Strength"/> property value changes.</summary>
 		public event Action<RenderingEffect_Sharpen> StrengthChanged;
@@ -45,7 +45,7 @@ namespace NeoAxis
 		//public Reference<bool> Denoise
 		//{
 		//	get { if( _denoise.BeginGet() ) Denoise = _denoise.Get( this ); return _denoise.value; }
-		//	set { if( _denoise.BeginSet( ref value ) ) { try { DenoiseChanged?.Invoke( this ); } finally { _denoise.EndSet(); } } }
+		//	set { if( _denoise.BeginSet( this, ref value ) ) { try { DenoiseChanged?.Invoke( this ); } finally { _denoise.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="Denoise"/> property value changes.</summary>
 		//public event Action<RenderingEffect_ResolutionUpscale> DenoiseChanged;
@@ -181,7 +181,7 @@ namespace NeoAxis
 		//public Reference<double> SharpStrength
 		//{
 		//	get { if( _sharpStrength.BeginGet() ) SharpStrength = _sharpStrength.Get( this ); return _sharpStrength.value; }
-		//	set { if( _sharpStrength.BeginSet( ref value ) ) { try { SharpStrengthChanged?.Invoke( this ); } finally { _sharpStrength.EndSet(); } } }
+		//	set { if( _sharpStrength.BeginSet( this, ref value ) ) { try { SharpStrengthChanged?.Invoke( this ); } finally { _sharpStrength.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="SharpStrength"/> property value changes.</summary>
 		//public event Action<RenderingEffect_Sharpen> SharpStrengthChanged;
@@ -196,7 +196,7 @@ namespace NeoAxis
 		//public Reference<double> SharpClamp
 		//{
 		//	get { if( _sharpClamp.BeginGet() ) SharpClamp = _sharpClamp.Get( this ); return _sharpClamp.value; }
-		//	set { if( _sharpClamp.BeginSet( ref value ) ) { try { SharpClampChanged?.Invoke( this ); } finally { _sharpClamp.EndSet(); } } }
+		//	set { if( _sharpClamp.BeginSet( this, ref value ) ) { try { SharpClampChanged?.Invoke( this ); } finally { _sharpClamp.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="SharpClamp"/> property value changes.</summary>
 		//public event Action<RenderingEffect_Sharpen> SharpClampChanged;
@@ -211,7 +211,7 @@ namespace NeoAxis
 		//public Reference<double> OffsetBias
 		//{
 		//	get { if( _offsetBias.BeginGet() ) OffsetBias = _offsetBias.Get( this ); return _offsetBias.value; }
-		//	set { if( _offsetBias.BeginSet( ref value ) ) { try { OffsetBiasChanged?.Invoke( this ); } finally { _offsetBias.EndSet(); } } }
+		//	set { if( _offsetBias.BeginSet( this, ref value ) ) { try { OffsetBiasChanged?.Invoke( this ); } finally { _offsetBias.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="OffsetBias"/> property value changes.</summary>
 		//public event Action<RenderingEffect_Sharpen> OffsetBiasChanged;

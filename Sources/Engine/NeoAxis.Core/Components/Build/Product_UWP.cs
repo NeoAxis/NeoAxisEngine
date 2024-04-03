@@ -40,7 +40,7 @@ namespace NeoAxis
 		public Reference<string> BuildPlatform
 		{
 			get { if( _buildPlatform.BeginGet() ) BuildPlatform = _buildPlatform.Get( this ); return _buildPlatform.value; }
-			set { if( _buildPlatform.BeginSet( ref value ) ) { try { BuildPlatformChanged?.Invoke( this ); } finally { _buildPlatform.EndSet(); } } }
+			set { if( _buildPlatform.BeginSet( this, ref value ) ) { try { BuildPlatformChanged?.Invoke( this ); } finally { _buildPlatform.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BuildPlatform"/> property value changes.</summary>
 		public event Action<Product_UWP> BuildPlatformChanged;
@@ -51,7 +51,7 @@ namespace NeoAxis
 		public Reference<bool> PatchProjectFiles
 		{
 			get { if( _patchProjectFiles.BeginGet() ) PatchProjectFiles = _patchProjectFiles.Get( this ); return _patchProjectFiles.value; }
-			set { if( _patchProjectFiles.BeginSet( ref value ) ) { try { PatchProjectFilesChanged?.Invoke( this ); } finally { _patchProjectFiles.EndSet(); } } }
+			set { if( _patchProjectFiles.BeginSet( this, ref value ) ) { try { PatchProjectFilesChanged?.Invoke( this ); } finally { _patchProjectFiles.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PatchProjectFiles"/> property value changes.</summary>
 		public event Action<Product_UWP> PatchProjectFilesChanged;
@@ -66,7 +66,7 @@ namespace NeoAxis
 		public Reference<string> PackageDisplayName
 		{
 			get { if( _packageDisplayName.BeginGet() ) PackageDisplayName = _packageDisplayName.Get( this ); return _packageDisplayName.value; }
-			set { if( _packageDisplayName.BeginSet( ref value ) ) { try { PackageDisplayNameChanged?.Invoke( this ); } finally { _packageDisplayName.EndSet(); } } }
+			set { if( _packageDisplayName.BeginSet( this, ref value ) ) { try { PackageDisplayNameChanged?.Invoke( this ); } finally { _packageDisplayName.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PackageDisplayName"/> property value changes.</summary>
 		public event Action<Product_UWP> PackageDisplayNameChanged;
@@ -81,7 +81,7 @@ namespace NeoAxis
 		public Reference<string> PackageVersion
 		{
 			get { if( _packageVersion.BeginGet() ) PackageVersion = _packageVersion.Get( this ); return _packageVersion.value; }
-			set { if( _packageVersion.BeginSet( ref value ) ) { try { PackageVersionChanged?.Invoke( this ); } finally { _packageVersion.EndSet(); } } }
+			set { if( _packageVersion.BeginSet( this, ref value ) ) { try { PackageVersionChanged?.Invoke( this ); } finally { _packageVersion.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PackageVersion"/> property value changes.</summary>
 		public event Action<Product_UWP> PackageVersionChanged;
@@ -95,7 +95,7 @@ namespace NeoAxis
 		public Reference<string> PackagePublisher
 		{
 			get { if( _packagePublisher.BeginGet() ) PackagePublisher = _packagePublisher.Get( this ); return _packagePublisher.value; }
-			set { if( _packagePublisher.BeginSet( ref value ) ) { try { PackagePublisherChanged?.Invoke( this ); } finally { _packagePublisher.EndSet(); } } }
+			set { if( _packagePublisher.BeginSet( this, ref value ) ) { try { PackagePublisherChanged?.Invoke( this ); } finally { _packagePublisher.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PackagePublisher"/> property value changes.</summary>
 		public event Action<Product_UWP> PackagePublisherChanged;
@@ -121,7 +121,7 @@ namespace NeoAxis
 		//public Reference<string> PublisherCertificateFileOverride
 		//{
 		//	get { if( _publisherCertificateFileOverride.BeginGet() ) PublisherCertificateFileOverride = _publisherCertificateFileOverride.Get( this ); return _publisherCertificateFileOverride.value; }
-		//	set { if( _publisherCertificateFileOverride.BeginSet( ref value ) ) { try { PublisherCertificateFileOverrideChanged?.Invoke( this ); } finally { _publisherCertificateFileOverride.EndSet(); } } }
+		//	set { if( _publisherCertificateFileOverride.BeginSet( this, ref value ) ) { try { PublisherCertificateFileOverrideChanged?.Invoke( this ); } finally { _publisherCertificateFileOverride.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="PublisherCertificateFileOverride"/> property value changes.</summary>
 		//public event Action<Product_UWP> PublisherCertificateFileOverrideChanged;
@@ -145,7 +145,7 @@ namespace NeoAxis
 		public Reference<string> PublisherDisplayName
 		{
 			get { if( _publisherDisplayName.BeginGet() ) PublisherDisplayName = _publisherDisplayName.Get( this ); return _publisherDisplayName.value; }
-			set { if( _publisherDisplayName.BeginSet( ref value ) ) { try { PublisherDisplayNameChanged?.Invoke( this ); } finally { _publisherDisplayName.EndSet(); } } }
+			set { if( _publisherDisplayName.BeginSet( this, ref value ) ) { try { PublisherDisplayNameChanged?.Invoke( this ); } finally { _publisherDisplayName.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PublisherDisplayName"/> property value changes.</summary>
 		public event Action<Product_UWP> PublisherDisplayNameChanged;
@@ -160,7 +160,7 @@ namespace NeoAxis
 		//public Reference<bool> CreateAppxPackage
 		//{
 		//	get { if( _createAppxPackage.BeginGet() ) CreateAppxPackage = _createAppxPackage.Get( this ); return _createAppxPackage.value; }
-		//	set { if( _createAppxPackage.BeginSet( ref value ) ) { try { CreateAppxPackageChanged?.Invoke( this ); } finally { _createAppxPackage.EndSet(); } } }
+		//	set { if( _createAppxPackage.BeginSet( this, ref value ) ) { try { CreateAppxPackageChanged?.Invoke( this ); } finally { _createAppxPackage.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="CreateAppxPackage"/> property value changes.</summary>
 		//public event Action<Product_UWP> CreateAppxPackageChanged;
@@ -185,7 +185,7 @@ namespace NeoAxis
 		public Reference<string> AppDisplayName
 		{
 			get { if( _appDisplayName.BeginGet() ) AppDisplayName = _appDisplayName.Get( this ); return _appDisplayName.value; }
-			set { if( _appDisplayName.BeginSet( ref value ) ) { try { AppDisplayNameChanged?.Invoke( this ); } finally { _appDisplayName.EndSet(); } } }
+			set { if( _appDisplayName.BeginSet( this, ref value ) ) { try { AppDisplayNameChanged?.Invoke( this ); } finally { _appDisplayName.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AppDisplayName"/> property value changes.</summary>
 		public event Action<Product_UWP> AppDisplayNameChanged;
@@ -208,7 +208,7 @@ namespace NeoAxis
 				//	value = Name;//ProductName;
 				//				 //throw new Exception( "Description must not begin or end with whitespace" );
 				//}
-				if( _appDescription.BeginSet( ref value ) ) { try { AppDescriptionChanged?.Invoke( this ); } finally { _appDescription.EndSet(); } }
+				if( _appDescription.BeginSet( this, ref value ) ) { try { AppDescriptionChanged?.Invoke( this ); } finally { _appDescription.EndSet(); } }
 			}
 		}
 		/// <summary>Occurs when the <see cref="AppDescription"/> property value changes.</summary>
@@ -223,7 +223,7 @@ namespace NeoAxis
 		public Reference<string> ApplicationId
 		{
 			get { if( _applicationId.BeginGet() ) ApplicationId = _applicationId.Get( this ); return _applicationId.value; }
-			set { if( _applicationId.BeginSet( ref value ) ) { try { ApplicationIdChanged?.Invoke( this ); } finally { _applicationId.EndSet(); } } }
+			set { if( _applicationId.BeginSet( this, ref value ) ) { try { ApplicationIdChanged?.Invoke( this ); } finally { _applicationId.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ApplicationId"/> property value changes.</summary>
 		public event Action<Product_UWP> ApplicationIdChanged;
@@ -237,7 +237,7 @@ namespace NeoAxis
 		public Reference<string> EntryPoint
 		{
 			get { if( _entryPoint.BeginGet() ) EntryPoint = _entryPoint.Get( this ); return _entryPoint.value; }
-			set { if( _entryPoint.BeginSet( ref value ) ) { try { EntryPointChanged?.Invoke( this ); } finally { _entryPoint.EndSet(); } } }
+			set { if( _entryPoint.BeginSet( this, ref value ) ) { try { EntryPointChanged?.Invoke( this ); } finally { _entryPoint.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="EntryPoint"/> property value changes.</summary>
 		public event Action<Product_UWP> EntryPointChanged;
@@ -251,7 +251,7 @@ namespace NeoAxis
 		//public Reference<string> BackgroundColor
 		//{
 		//	get { if( _backgroundColor.BeginGet() ) BackgroundColor = _backgroundColor.Get( this ); return _backgroundColor.value; }
-		//	set { if( _backgroundColor.BeginSet( ref value ) ) { try { BackgroundColorChanged?.Invoke( this ); } finally { _backgroundColor.EndSet(); } } }
+		//	set { if( _backgroundColor.BeginSet( this, ref value ) ) { try { BackgroundColorChanged?.Invoke( this ); } finally { _backgroundColor.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="BackgroundColor"/> property value changes.</summary>
 		//public event Action<Product_UWP> BackgroundColorChanged;
@@ -265,7 +265,7 @@ namespace NeoAxis
 		//public Reference<string> Capabilities
 		//{
 		//	get { if( _capabilities.BeginGet() ) Capabilities = _capabilities.Get( this ); return _capabilities.value; }
-		//	set { if( _capabilities.BeginSet( ref value ) ) { try { CapabilitiesChanged?.Invoke( this ); } finally { _capabilities.EndSet(); } } }
+		//	set { if( _capabilities.BeginSet( this, ref value ) ) { try { CapabilitiesChanged?.Invoke( this ); } finally { _capabilities.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="Capabilities"/> property value changes.</summary>
 		//public event Action<Product_UWP> CapabilitiesChanged;
@@ -288,7 +288,7 @@ namespace NeoAxis
 		//public Reference<string> AssetsFolderOverride
 		//{
 		//	get { if( _assetsFolderOverride.BeginGet() ) AssetsFolderOverride = _assetsFolderOverride.Get( this ); return _assetsFolderOverride.value; }
-		//	set { if( _assetsFolderOverride.BeginSet( ref value ) ) { try { AssetsFolderChanged?.Invoke( this ); } finally { _assetsFolderOverride.EndSet(); } } }
+		//	set { if( _assetsFolderOverride.BeginSet( this, ref value ) ) { try { AssetsFolderChanged?.Invoke( this ); } finally { _assetsFolderOverride.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="AssetsFolder"/> property value changes.</summary>
 		//public event Action<Product_UWP> AssetsFolderChanged;
@@ -308,7 +308,7 @@ namespace NeoAxis
 		//public Reference<string> BuildConfiguration
 		//{
 		//	get { if( _buildConfiguration.BeginGet() ) BuildConfiguration = _buildConfiguration.Get( this ); return _buildConfiguration.value; }
-		//	set { if( _buildConfiguration.BeginSet( ref value ) ) { try { BuildConfigurationChanged?.Invoke( this ); } finally { _buildConfiguration.EndSet(); } } }
+		//	set { if( _buildConfiguration.BeginSet( this, ref value ) ) { try { BuildConfigurationChanged?.Invoke( this ); } finally { _buildConfiguration.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="BuildConfiguration"/> property value changes.</summary>
 		//public event Action<Product_UWP> BuildConfigurationChanged;
@@ -463,14 +463,14 @@ namespace NeoAxis
 			{
 				var p1 = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.UWP.csproj" );
 				var p2 = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.csproj" );
-				if( !EditorCommandLineTools.PlatformProjectPatch.Process( p1, p2, out var error, out _ ) )
+				if( !EditorAPI.EditorCommandLineTools_PlatformProjectPatch_Process( p1, p2, out var error, out _ ) )
 					throw new Exception( error );
 			}
 
 			{
 				var p1 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.UWP.csproj" );
 				var p2 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.csproj" );
-				if( !EditorCommandLineTools.PlatformProjectPatch.Process( p1, p2, out var error, out _ ) )
+				if( !EditorAPI.EditorCommandLineTools_PlatformProjectPatch_Process( p1, p2, out var error, out _ ) )
 					throw new Exception( error );
 			}
 		}
@@ -615,9 +615,10 @@ namespace NeoAxis
 			//copy managed dll references from original folder
 			CopyFiles( VirtualFileSystem.Directories.Binaries, destBinariesPath, buildInstance, new Range( 0.5, 0.6 ), "*.dll" );
 			//copy NeoAxis.DefaultSettings.config
+			Directory.CreateDirectory( Path.Combine( destBinariesPath, "NeoAxis.Internal" ) );
 			File.Copy(
-				Path.Combine( VirtualFileSystem.Directories.Binaries, "NeoAxis.DefaultSettings.config" ),
-				Path.Combine( destBinariesPath, "NeoAxis.DefaultSettings.config" ) );
+				Path.Combine( VirtualFileSystem.Directories.Binaries, "NeoAxis.Internal", "NeoAxis.DefaultSettings.config" ),
+				Path.Combine( destBinariesPath, "NeoAxis.Internal", "NeoAxis.DefaultSettings.config" ) );
 
 			//!!!!unnecessary dlls are copied? we need a list of references?
 			//copy managed dll references from UWP folder

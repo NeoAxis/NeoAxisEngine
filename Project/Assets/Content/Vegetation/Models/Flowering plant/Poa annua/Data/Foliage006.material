@@ -5,7 +5,7 @@
 	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1162, 842\"><KW V=\"1\" A=\"77931A6FD009476AA9822CB299BFEC80\"><CGD /><WS UN=\"85E7ECB256D74E1C96B023479A9B92C1\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"F229DFCD302243691A826A4410FE2128\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"77931A6FD009476AA9822CB299BFEC80\"><KP UN=\"A3A58453D63849B3AF82F3019A6E849C\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"77931A6FD009476AA9822CB299BFEC80\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BlendMode = Masked
 	TwoSided = True
-	ShadingModel = Subsurface
+	ShadingModel = Foliage
 	Thickness = 0.02
 	BaseColor
 	{

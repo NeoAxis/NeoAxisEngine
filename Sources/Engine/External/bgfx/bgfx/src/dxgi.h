@@ -1,16 +1,19 @@
 /*
- * Copyright 2011-2022 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
 #ifndef BGFX_DXGI_H_HEADER_GUARD
 #define BGFX_DXGI_H_HEADER_GUARD
 
+#include <sal.h>
+#include <unknwn.h>
+
 #if BX_PLATFORM_LINUX || BX_PLATFORM_WINDOWS || BX_PLATFORM_WINRT
-#	include <d3dcommon.h>
-#	include <dxgi1_6.h>
+#	include <dxsdk\include\d3dcommon.h>
+#	include <dxsdk\include\dxgi1_6.h>
 #else
-#	include <d3d11_x.h>
+#	include <dxsdk\include\d3d11_x.h>
 #endif // BX_PLATFORM_WINDOWS || BX_PLATFORM_WINRT
 
 namespace bgfx
@@ -53,7 +56,7 @@ namespace bgfx
 	///
 	struct Dxgi
 	{
-#if BX_PLATFORM_WINDOWS
+#if BX_PLATFORM_LINUX || BX_PLATFORM_WINDOWS
 		typedef ::IDXGIAdapter3   AdapterI;
 		typedef ::IDXGIFactory5   FactoryI;
 		typedef ::IDXGISwapChain3 SwapChainI;
@@ -85,6 +88,11 @@ namespace bgfx
 		///
 		HRESULT createSwapChain(IUnknown* _device, const SwapChainDesc& _scd, SwapChainI** _swapChain);
 
+#if BX_PLATFORM_WINRT
+		///
+		HRESULT removeSwapChain(const SwapChainDesc& _scd);
+#endif
+
 		///
 		void updateHdr10(SwapChainI* _swapChain, const SwapChainDesc& _scd);
 
@@ -95,6 +103,9 @@ namespace bgfx
 		void trim();
 
 		///
+		bool tearingSupported() const;
+
+		///
 		void* m_dxgiDll;
 		void* m_dxgiDebugDll;
 
@@ -103,6 +114,7 @@ namespace bgfx
 		FactoryI* m_factory;
 		AdapterI* m_adapter;
 		OutputI*  m_output;
+		bool m_tearingSupported;
 	};
 
 } // namespace bgfx

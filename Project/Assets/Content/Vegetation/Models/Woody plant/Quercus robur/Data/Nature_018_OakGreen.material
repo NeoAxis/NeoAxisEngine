@@ -1,10 +1,10 @@
-// Made with NeoAxis Engine 2021.3.
+// Made with NeoAxis Engine 2023.1.
 
 .component "Base\\Material templates\\Vegetation.material"
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1162, 842\"><KW V=\"1\" A=\"9B981D0F78C147ED74BA53BF81EC2A18\"><CGD /><WS UN=\"5F4388784EB64F69B39F626810700B8E\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"47E80A7ACB3044BD9DB84042C6BAD078\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"9B981D0F78C147ED74BA53BF81EC2A18\"><KP UN=\"1A69BC37AED74EE45E9B01638057B360\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"9B981D0F78C147ED74BA53BF81EC2A18\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"9B981D0F78C147ED74BA53BF81EC2A18\"><CGD /><WS UN=\"5F4388784EB64F69B39F626810700B8E\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"47E80A7ACB3044BD9DB84042C6BAD078\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"9B981D0F78C147ED74BA53BF81EC2A18\"><KP UN=\"1A69BC37AED74EE45E9B01638057B360\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"9B981D0F78C147ED74BA53BF81EC2A18\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BlendMode = Masked
-	ShadingModel = Subsurface
+	ShadingModel = Foliage
 	Thickness = 0.02
 	BaseColor
 	{
@@ -130,7 +130,7 @@
 			.component NeoAxis.InvokeMember
 			{
 				Name = Invoke Member
-				__parameter_V2 = 1 1 1
+				__parameter_V2 = 0.9 1 0.9
 				Member
 				{
 					GetByReference = "NeoAxis.ColorValue|method:op_Multiply(NeoAxis.ColorValue,NeoAxis.ColorValue)"

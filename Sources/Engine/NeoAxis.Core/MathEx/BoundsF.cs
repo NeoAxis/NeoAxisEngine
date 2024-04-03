@@ -182,12 +182,24 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void GetBoundingSphere( out SphereF result )
+		{
+			GetCenter( out var center );
+			GetSize( out var size );
+			result = new SphereF( center, size.Length() * 0.5f );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public SphereF GetBoundingSphere()
 		{
-			//!!!!slowly
+			//!!!!new
 
-			var c = GetCenter();
-			return new SphereF( c, GetRadius( c ) );
+			GetCenter( out var center );
+			GetSize( out var size );
+			return new SphereF( center, size.Length() * 0.5f );
+
+			//var c = GetCenter();
+			//return new SphereF( c, GetRadius( c ) );
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -324,6 +336,22 @@ namespace NeoAxis
 			Maximum.X += d.X;
 			Maximum.Y += d.Y;
 			Maximum.Z += d.Z;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public BoundsF GetExpanded( float d )
+		{
+			var result = this;
+			result.Expand( d );
+			return result;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public BoundsF GetExpanded( Vector3F d )
+		{
+			var result = this;
+			result.Expand( d );
+			return result;
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]

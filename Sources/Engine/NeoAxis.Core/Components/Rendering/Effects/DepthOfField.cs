@@ -23,7 +23,7 @@ namespace NeoAxis
 		public Reference<double> Intensity
 		{
 			get { if( _intensity.BeginGet() ) Intensity = _intensity.Get( this ); return _intensity.value; }
-			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
+			set { if( _intensity.BeginSet( this, ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
 		public event Action<RenderingEffect_DepthOfField> IntensityChanged;
@@ -41,7 +41,7 @@ namespace NeoAxis
 			{
 				if( value < 0 )
 					value = new Reference<double>( 0, value.GetByReference );
-				if( _focalDistance.BeginSet( ref value ) ) { try { FocalDistanceChanged?.Invoke( this ); } finally { _focalDistance.EndSet(); } }
+				if( _focalDistance.BeginSet( this, ref value ) ) { try { FocalDistanceChanged?.Invoke( this ); } finally { _focalDistance.EndSet(); } }
 			}
 		}
 		/// <summary>Occurs when the <see cref="FocalDistance"/> property value changes.</summary>
@@ -71,7 +71,7 @@ namespace NeoAxis
 			{
 				if( value < 0 )
 					value = new Reference<double>( 0, value.GetByReference );
-				if( _focalSize.BeginSet( ref value ) ) { try { FocalSizeChanged?.Invoke( this ); } finally { _focalSize.EndSet(); } }
+				if( _focalSize.BeginSet( this, ref value ) ) { try { FocalSizeChanged?.Invoke( this ); } finally { _focalSize.EndSet(); } }
 			}
 		}
 		/// <summary>Occurs when the <see cref="FocalSize"/> property value changes.</summary>
@@ -119,7 +119,7 @@ namespace NeoAxis
 			{
 				if( value < 0 )
 					value = new Reference<double>( 0, value.GetByReference );
-				if( _backgroundTransitionLength.BeginSet( ref value ) ) { try { BackgroundTransitionLengthChanged?.Invoke( this ); } finally { _backgroundTransitionLength.EndSet(); } }
+				if( _backgroundTransitionLength.BeginSet( this, ref value ) ) { try { BackgroundTransitionLengthChanged?.Invoke( this ); } finally { _backgroundTransitionLength.EndSet(); } }
 			}
 		}
 		/// <summary>Occurs when the <see cref="BackgroundTransitionLength"/> property value changes.</summary>
@@ -133,7 +133,7 @@ namespace NeoAxis
 		public Reference<bool> BlurForeground
 		{
 			get { if( _blurForeground.BeginGet() ) BlurForeground = _blurForeground.Get( this ); return _blurForeground.value; }
-			set { if( _blurForeground.BeginSet( ref value ) ) { try { BlurForegroundChanged?.Invoke( this ); } finally { _blurForeground.EndSet(); } } }
+			set { if( _blurForeground.BeginSet( this, ref value ) ) { try { BlurForegroundChanged?.Invoke( this ); } finally { _blurForeground.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BlurForeground"/> property value changes.</summary>
 		public event Action<RenderingEffect_DepthOfField> BlurForegroundChanged;
@@ -151,7 +151,7 @@ namespace NeoAxis
 			{
 				if( value < 0 )
 					value = new Reference<double>( 0, value.GetByReference );
-				if( _foregroundTransitionLength.BeginSet( ref value ) ) { try { ForegroundTransitionLengthChanged?.Invoke( this ); } finally { _foregroundTransitionLength.EndSet(); } }
+				if( _foregroundTransitionLength.BeginSet( this, ref value ) ) { try { ForegroundTransitionLengthChanged?.Invoke( this ); } finally { _foregroundTransitionLength.EndSet(); } }
 			}
 		}
 		/// <summary>Occurs when the <see cref="ForegroundTransitionLength"/> property value changes.</summary>
@@ -166,7 +166,7 @@ namespace NeoAxis
 		//public Reference<double> BlurFactor
 		//{
 		//	get { if( _blurFactor.BeginGet() ) BlurFactor = _blurFactor.Get( this ); return _blurFactor.value; }
-		//	set { if( _blurFactor.BeginSet( ref value ) ) { try { BlurFactorChanged?.Invoke( this ); } finally { _blurFactor.EndSet(); } } }
+		//	set { if( _blurFactor.BeginSet( this, ref value ) ) { try { BlurFactorChanged?.Invoke( this ); } finally { _blurFactor.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="BlurFactor"/> property value changes.</summary>
 		//public event Action<RenderingEffect_DepthOfField> BlurFactorChanged;
@@ -179,7 +179,7 @@ namespace NeoAxis
 		//public Reference<RenderingPipeline_Basic.DownscalingModeEnum> BlurDownscalingMode
 		//{
 		//	get { if( _blurDownscalingMode.BeginGet() ) BlurDownscalingMode = _blurDownscalingMode.Get( this ); return _blurDownscalingMode.value; }
-		//	set { if( _blurDownscalingMode.BeginSet( ref value ) ) { try { BlurDownscalingModeChanged?.Invoke( this ); } finally { _blurDownscalingMode.EndSet(); } } }
+		//	set { if( _blurDownscalingMode.BeginSet( this, ref value ) ) { try { BlurDownscalingModeChanged?.Invoke( this ); } finally { _blurDownscalingMode.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="BlurDownscalingMode"/> property value changes.</summary>
 		//public event Action<RenderingEffect_DepthOfField> BlurDownscalingModeChanged;
@@ -193,7 +193,7 @@ namespace NeoAxis
 		//public Reference<int> BlurDownscalingValue
 		//{
 		//	get { if( _blurDownscalingValue.BeginGet() ) BlurDownscalingValue = _blurDownscalingValue.Get( this ); return _blurDownscalingValue.value; }
-		//	set { if( _blurDownscalingValue.BeginSet( ref value ) ) { try { BlurDownscalingValueChanged?.Invoke( this ); } finally { _blurDownscalingValue.EndSet(); } } }
+		//	set { if( _blurDownscalingValue.BeginSet( this, ref value ) ) { try { BlurDownscalingValueChanged?.Invoke( this ); } finally { _blurDownscalingValue.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="BlurDownscalingValue"/> property value changes.</summary>
 		//public event Action<RenderingEffect_DepthOfField> BlurDownscalingValueChanged;
@@ -209,7 +209,7 @@ namespace NeoAxis
 		//public Reference<double> GaussianIntensity
 		//{
 		//	get { if( _gaussianIntensity.BeginGet() ) GaussianIntensity = _gaussianIntensity.Get( this ); return _gaussianIntensity.value; }
-		//	set { if( _gaussianIntensity.BeginSet( ref value ) ) { try { GaussianIntensityChanged?.Invoke( this ); } finally { _gaussianIntensity.EndSet(); } } }
+		//	set { if( _gaussianIntensity.BeginSet( this, ref value ) ) { try { GaussianIntensityChanged?.Invoke( this ); } finally { _gaussianIntensity.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="GaussianIntensity"/> property value changes.</summary>
 		//public event Action<RenderingEffect_DepthOfField> GaussianIntensityChanged;
@@ -223,7 +223,7 @@ namespace NeoAxis
 		//public Reference<double> GaussianScale
 		//{
 		//	get { if( _gaussianScale.BeginGet() ) GaussianScale = _gaussianScale.Get( this ); return _gaussianScale.value; }
-		//	set { if( _gaussianScale.BeginSet( ref value ) ) { try { GaussianScaleChanged?.Invoke( this ); } finally { _gaussianScale.EndSet(); } } }
+		//	set { if( _gaussianScale.BeginSet( this, ref value ) ) { try { GaussianScaleChanged?.Invoke( this ); } finally { _gaussianScale.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="GaussianScale"/> property value changes.</summary>
 		//public event Action<RenderingEffect_DepthOfField> GaussianScaleChanged;
@@ -314,7 +314,9 @@ namespace NeoAxis
 				return;
 
 			//need to make a copy of scene texture because child effects will dispose it
-			var currentTexture = context.RenderTarget2D_Alloc( actualTexture.Result.ResultSize, actualTexture.Result.ResultFormat );
+			var currentTexture = context.RenderTarget2D_Alloc( context.SizeInPixelsLowResolutionBeforeUpscale, actualTexture.Result.ResultFormat );
+			//var currentTexture = context.RenderTarget2D_Alloc( context.Owner.SizeInPixels, actualTexture.Result.ResultFormat );
+			//var currentTexture = context.RenderTarget2D_Alloc( actualTexture.Result.ResultSize, actualTexture.Result.ResultFormat );
 			context.SetViewport( currentTexture.Result.GetRenderTarget().Viewports[ 0 ] );
 			pipeline.CopyToCurrentViewport( context, actualTexture );
 

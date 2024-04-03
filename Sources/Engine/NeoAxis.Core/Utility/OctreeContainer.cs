@@ -122,9 +122,9 @@ namespace NeoAxis
 		public struct GetObjectsRayOutputData
 		{
 			public int ObjectIndex;
-			public double DistanceNormalized;
+			public float/*double*/ DistanceNormalized;
 
-			public GetObjectsRayOutputData( int objectIndex, double distanceNormalized )
+			public GetObjectsRayOutputData( int objectIndex, float/*double*/ distanceNormalized )
 			{
 				ObjectIndex = objectIndex;
 				DistanceNormalized = distanceNormalized;

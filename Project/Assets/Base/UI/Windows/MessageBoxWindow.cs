@@ -215,6 +215,18 @@ namespace Project
 
 			ConfigureButtons( window, results, resultData );
 
+			
+			//!!!!
+			//fix width for mobile
+			if( SystemSettings.MobileDevice )
+			{
+				var offset = 230;
+
+				var size = window.Size.Value;
+				window.Size = new UIMeasureValueVector2( size.Measure, size.Value - new Vector2( offset, 0 ) );
+			}
+
+
 			//add to parent and enable
 			parent.AddComponent( window );
 

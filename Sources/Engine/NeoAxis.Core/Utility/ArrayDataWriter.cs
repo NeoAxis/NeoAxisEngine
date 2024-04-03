@@ -133,6 +133,11 @@ namespace NeoAxis
 			}
 		}
 
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public void Write( ArraySegment<byte> source )
+		//{
+		//}
+
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( bool source )
 		{
@@ -389,6 +394,8 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( ref Vector2F source )
 		{
+			//!!!!по несколько значений можно одним вызовом
+
 			Write( source.X );
 			Write( source.Y );
 		}
@@ -665,6 +672,7 @@ namespace NeoAxis
 		/// Write Base128 encoded variable sized unsigned integer
 		/// </summary>
 		/// <returns>number of bytes written</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int WriteVariableUInt32( uint source )
 		{
 			int retval = 1;
@@ -969,6 +977,12 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public ArraySegment<byte> ToArraySegment()
+		{
+			return new ArraySegment<byte>( data, 0, length );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Write( HalfType source )
 		{
 			unsafe
@@ -1012,6 +1026,12 @@ namespace NeoAxis
 				fixed( T* pSource = &source )
 					Write( pSource, sizeof( T ) );
 			}
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void Write( QuaternionH source )
+		{
+			Write( ref source );
 		}
 
 		//!!!!more types

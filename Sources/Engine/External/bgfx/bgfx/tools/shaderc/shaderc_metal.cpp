@@ -1,9 +1,11 @@
 /*
- * Copyright 2011-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
+ * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
 #include "shaderc.h"
+
+#include <iostream> // std::cout
 
 BX_PRAGMA_DIAGNOSTIC_PUSH()
 BX_PRAGMA_DIAGNOSTIC_IGNORED_MSVC(4100) // error C4100: 'inclusionDepth' : unreferenced formal parameter
@@ -15,8 +17,9 @@ BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG_GCC("-Wshadow") // warning: declaration of 'u
 #define ENABLE_OPT 1
 #include <ShaderLang.h>
 #include <ResourceLimits.h>
-#include <SPIRV/SPVRemapper.h>
 #include <SPIRV/GlslangToSpv.h>
+#include <SPIRV/SPVRemapper.h>
+#include <SPIRV/SpvTools.h>
 #define SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS
 #include <spirv_msl.hpp>
 #include <spirv_reflect.hpp>
@@ -40,7 +43,7 @@ namespace bgfx
 #include <tinystl/vector.h>
 namespace stl = tinystl;
 
-#include "../../src/shader_spirv.h"
+#include "../../src/shader.h"
 
 namespace bgfx { namespace metal
 {
@@ -138,6 +141,15 @@ namespace bgfx { namespace metal
 		0,     // maxTaskWorkGroupSizeY_NV
 		0,     // maxTaskWorkGroupSizeZ_NV
 		0,     // maxMeshViewCountNV
+		0,     // maxMeshOutputVerticesEXT
+		0,     // maxMeshOutputPrimitivesEXT
+		0,     // maxMeshWorkGroupSizeX_EXT
+		0,     // maxMeshWorkGroupSizeY_EXT
+		0,     // maxMeshWorkGroupSizeZ_EXT
+		0,     // maxTaskWorkGroupSizeX_EXT
+		0,     // maxTaskWorkGroupSizeY_EXT
+		0,     // maxTaskWorkGroupSizeZ_EXT
+		0,     // maxMeshViewCountEXT
 		0,     // maxDualSourceDrawBuffersEXT
 
 		{ // limits
@@ -152,374 +164,6 @@ namespace bgfx { namespace metal
 			true, // generalConstantMatrixVectorIndexing
 		},
 	};
-
-	bool printAsm(uint32_t _offset, const SpvInstruction& _instruction, void* _userData)
-	{
-		BX_UNUSED(_userData);
-		char temp[512];
-		toString(temp, sizeof(temp), _instruction);
-		BX_TRACE("%5d: %s", _offset, temp);
-		return true;
-	}
-
-	struct SpvReflection
-	{
-		struct TypeId
-		{
-			enum Enum
-			{
-				Void,
-				Bool,
-				Int32,
-				Int64,
-				Uint32,
-				Uint64,
-				Float,
-				Double,
-
-				Vector,
-				Matrix,
-
-				Count
-			};
-
-			TypeId()
-				: baseType(Enum::Count)
-				, type(Enum::Count)
-				, numComponents(0)
-			{
-			}
-
-			Enum baseType;
-			Enum type;
-			uint32_t numComponents;
-
-			stl::string toString()
-			{
-				stl::string result;
-
-				switch (type)
-				{
-				case Float:
-					result.append("float");
-					break;
-
-				case Vector:
-					bx::stringPrintf(result, "vec%d"
-						, numComponents
-						);
-					break;
-
-				case Matrix:
-					bx::stringPrintf(result, "mat%d"
-						, numComponents
-						);
-
-				default:
-					break;
-				}
-
-				return result;
-			}
-		};
-
-		struct Id
-		{
-			struct Variable
-			{
-				Variable()
-					: decoration(SpvDecoration::Count)
-					, builtin(SpvBuiltin::Count)
-					, storageClass(SpvStorageClass::Count)
-					, location(UINT32_MAX)
-					, offset(UINT32_MAX)
-					, type(UINT32_MAX)
-				{
-				}
-
-				stl::string name;
-				SpvDecoration::Enum decoration;
-				SpvBuiltin::Enum builtin;
-				SpvStorageClass::Enum storageClass;
-				uint32_t location;
-				uint32_t offset;
-				uint32_t type;
-			};
-
-			typedef stl::vector<Variable> MemberArray;
-
-			Variable var;
-			MemberArray members;
-		};
-
-		typedef stl::unordered_map<uint32_t, TypeId> TypeIdMap;
-		typedef stl::unordered_map<uint32_t, Id> IdMap;
-
-		TypeIdMap typeIdMap;
-		IdMap idMap;
-
-		stl::string getTypeName(uint32_t _typeId)
-		{
-			return getTypeId(_typeId).toString();
-		}
-
-		Id& getId(uint32_t _id)
-		{
-			IdMap::iterator it = idMap.find(_id);
-			if (it == idMap.end() )
-			{
-				Id id;
-				stl::pair<IdMap::iterator, bool> result = idMap.insert(stl::make_pair(_id, id) );
-				it = result.first;
-			}
-
-			return it->second;
-		}
-
-		Id::Variable& get(uint32_t _id, uint32_t _idx)
-		{
-			Id& id = getId(_id);
-			id.members.resize(bx::uint32_max(_idx+1, uint32_t(id.members.size() ) ) );
-			return id.members[_idx];
-		}
-
-		TypeId& getTypeId(uint32_t _id)
-		{
-			TypeIdMap::iterator it = typeIdMap.find(_id);
-			if (it == typeIdMap.end() )
-			{
-				TypeId id;
-				stl::pair<TypeIdMap::iterator, bool> result = typeIdMap.insert(stl::make_pair(_id, id) );
-				it = result.first;
-			}
-
-			return it->second;
-		}
-
-		void update(uint32_t _id, const stl::string& _name)
-		{
-			getId(_id).var.name = _name;
-		}
-
-		BX_NO_INLINE void update(Id::Variable& _variable, SpvDecoration::Enum _decoration, uint32_t _literal)
-		{
-			_variable.decoration = _decoration;
-			switch (_decoration)
-			{
-			case SpvDecoration::Location:
-				_variable.location = _literal;
-				break;
-
-			case SpvDecoration::Offset:
-				_variable.offset = _literal;
-				break;
-
-			case SpvDecoration::BuiltIn:
-				_variable.builtin = SpvBuiltin::Enum(_literal);
-				break;
-
-			default:
-				break;
-			}
-		}
-
-		BX_NO_INLINE void update(Id::Variable& _variable, uint32_t _type, SpvStorageClass::Enum _storageClass)
-		{
-			_variable.type         = _type;
-			_variable.storageClass = _storageClass;
-		}
-
-		void update(uint32_t _id, SpvDecoration::Enum _decoration, uint32_t _literal)
-		{
-			update(getId(_id).var, _decoration, _literal);
-		}
-
-		void update(uint32_t _id, uint32_t _type, SpvStorageClass::Enum _storageClass)
-		{
-			update(getId(_id).var, _type, _storageClass);
-		}
-
-		void update(uint32_t _id, uint32_t _idx, const stl::string& _name)
-		{
-			Id::Variable& var = get(_id, _idx);
-			var.name = _name;
-		}
-
-		BX_NO_INLINE void update(uint32_t _id, uint32_t _idx, SpvDecoration::Enum _decoration, uint32_t _literal)
-		{
-			update(get(_id, _idx), _decoration, _literal);
-		}
-
-		void update(uint32_t _id, TypeId::Enum _type)
-		{
-			TypeId& type = getTypeId(_id);
-			type.type = _type;
-		}
-
-		void update(uint32_t _id, TypeId::Enum _type, uint32_t _baseTypeId, uint32_t _numComonents)
-		{
-			TypeId& type = getTypeId(_id);
-			type.type = _type;
-
-			type.baseType = getTypeId(_baseTypeId).type;
-			type.numComponents = _numComonents;
-		}
-	};
-
-	bool spvParse(uint32_t _offset, const SpvInstruction& _instruction, void* _userData)
-	{
-		BX_UNUSED(_offset);
-		SpvReflection* spv = (SpvReflection*)_userData;
-
-		switch (_instruction.opcode)
-		{
-		case SpvOpcode::Name:
-			spv->update(_instruction.result
-				, _instruction.operand[0].literalString
-				);
-			break;
-
-		case SpvOpcode::Decorate:
-			spv->update(_instruction.operand[0].data
-				, SpvDecoration::Enum(_instruction.operand[1].data)
-				, _instruction.operand[2].data
-				);
-			break;
-
-		case SpvOpcode::MemberName:
-			spv->update(_instruction.result
-				, _instruction.operand[0].data
-				, _instruction.operand[1].literalString
-				);
-			break;
-
-		case SpvOpcode::MemberDecorate:
-			spv->update(_instruction.operand[0].data
-				, _instruction.operand[1].data
-				, SpvDecoration::Enum(_instruction.operand[2].data)
-				, _instruction.operand[3].data
-				);
-			break;
-
-		case SpvOpcode::Variable:
-			spv->update(_instruction.result
-				, _instruction.type
-				, SpvStorageClass::Enum(_instruction.operand[0].data)
-				);
-			break;
-
-		case SpvOpcode::TypeVoid:
-			spv->update(_instruction.result, SpvReflection::TypeId::Void);
-			break;
-
-		case SpvOpcode::TypeBool:
-			spv->update(_instruction.result, SpvReflection::TypeId::Bool);
-			break;
-
-		case SpvOpcode::TypeInt:
-			spv->update(_instruction.result
-				, 32 == _instruction.operand[0].data
-				?	0 == _instruction.operand[1].data
-					? SpvReflection::TypeId::Uint32
-					: SpvReflection::TypeId::Int32
-				:	0 == _instruction.operand[1].data
-					? SpvReflection::TypeId::Uint64
-					: SpvReflection::TypeId::Int64
-				);
-			break;
-
-		case SpvOpcode::TypeFloat:
-			spv->update(_instruction.result
-				, 32 == _instruction.operand[0].data
-				? SpvReflection::TypeId::Float
-				: SpvReflection::TypeId::Double
-				);
-			break;
-
-		case SpvOpcode::TypeVector:
-			spv->update(_instruction.result
-				, SpvReflection::TypeId::Vector
-				, _instruction.operand[0].data
-				, _instruction.operand[1].data
-				);
-			break;
-
-		case SpvOpcode::TypeMatrix:
-			spv->update(_instruction.result
-				, SpvReflection::TypeId::Matrix
-				, _instruction.operand[0].data
-				, _instruction.operand[1].data
-				);
-			break;
-
-		case SpvOpcode::TypeImage:
-		case SpvOpcode::TypeSampler:
-		case SpvOpcode::TypeSampledImage:
-			break;
-
-		case SpvOpcode::TypeStruct:
-			for (uint32_t ii = 0, num = _instruction.numOperands; ii < num; ++ii)
-			{
-				SpvReflection::Id::Variable& var = spv->get(_instruction.result, ii);
-				var.type = _instruction.operand[ii].data;
-			}
-			break;
-
-		default:
-			break;
-		}
-
-		return true;
-	}
-
-#define DBG(...) // bx::debugPrintf(__VA_ARGS__)
-
-	void disassemble(bx::WriterI* _writer, bx::ReaderSeekerI* _reader, bx::Error* _err)
-	{
-		BX_UNUSED(_writer);
-
-		uint32_t magic;
-		bx::peek(_reader, magic);
-
-		SpvReflection spvx;
-
-		if (magic == SPV_CHUNK_HEADER)
-		{
-			SpirV spirv;
-			read(_reader, spirv, _err);
-			parse(spirv.shader, spvParse, &spvx, _err);
-
-			for (SpvReflection::IdMap::const_iterator it = spvx.idMap.begin(), itEnd = spvx.idMap.end(); it != itEnd; ++it)
-			{
-				const SpvReflection::Id& id = it->second;
-				uint32_t num = uint32_t(id.members.size() );
-				if (0 < num
-				&&  0 != bx::strCmp(id.var.name.c_str(), "gl_PerVertex") )
-				{
-					DBG("%3d: %s %d %s\n"
-						, it->first
-						, id.var.name.c_str()
-						, id.var.location
-						, getName(id.var.storageClass)
-						);
-					DBG("{\n");
-					for (uint32_t ii = 0; ii < num; ++ii)
-					{
-						const SpvReflection::Id::Variable& var = id.members[ii];
-						DBG("\t\t%s %s %d %s\n"
-							, spvx.getTypeName(var.type).c_str()
-							, var.name.c_str()
-							, var.offset
-							, getName(var.storageClass)
-							);
-						BX_UNUSED(var);
-					}
-					DBG("}\n");
-				}
-			}
-
-		}
-	}
 
 	static EShLanguage getLang(char _p)
 	{
@@ -584,12 +228,14 @@ namespace bgfx { namespace metal
 		"BgfxSampler2DMS",
 	};
 
-	static uint16_t writeUniformArray(bx::WriterI* _writer, const UniformArray& uniforms, bool isFragmentShader)
+	static uint16_t writeUniformArray(bx::WriterI* _shaderWriter, const UniformArray& uniforms, bool isFragmentShader)
 	{
 		uint16_t size = 0;
 
-		uint16_t count = static_cast<uint16_t>(uniforms.size() );
-		bx::write(_writer, count);
+		bx::ErrorAssert err;
+
+		uint16_t count = uint16_t(uniforms.size());
+		bx::write(_shaderWriter, count, &err);
 
 		uint32_t fragmentBit = isFragmentShader ? kUniformFragmentBit : 0;
 		for (uint16_t ii = 0; ii < count; ++ii)
@@ -599,14 +245,15 @@ namespace bgfx { namespace metal
 			size += un.regCount*16;
 
 			uint8_t nameSize = (uint8_t)un.name.size();
-			bx::write(_writer, nameSize);
-			bx::write(_writer, un.name.c_str(), nameSize);
-			bx::write(_writer, uint8_t(un.type | fragmentBit) );
-			bx::write(_writer, un.num);
-			bx::write(_writer, un.regIndex);
-			bx::write(_writer, un.regCount);
-			bx::write(_writer, un.texComponent);
-			bx::write(_writer, un.texDimension);
+			bx::write(_shaderWriter, nameSize, &err);
+			bx::write(_shaderWriter, un.name.c_str(), nameSize, &err);
+			bx::write(_shaderWriter, uint8_t(un.type | fragmentBit), &err);
+			bx::write(_shaderWriter, un.num, &err);
+			bx::write(_shaderWriter, un.regIndex, &err);
+			bx::write(_shaderWriter, un.regCount, &err);
+			bx::write(_shaderWriter, un.texComponent, &err);
+			bx::write(_shaderWriter, un.texDimension, &err);
+			bx::write(_shaderWriter, un.texFormat, &err);
 
 			BX_TRACE("%s, %s, %d, %d, %d"
 				, un.name.c_str()
@@ -619,27 +266,30 @@ namespace bgfx { namespace metal
 		return size;
 	}
 
-	static bool compile(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer, bool _firstPass)
+	static bool compile(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _shaderWriter, bx::WriterI* _messageWriter, bool _firstPass)
 	{
 		BX_UNUSED(_version);
 
-		glslang::InitializeProcess();
+		bx::ErrorAssert messageErr;
 
-		glslang::TProgram* program = new glslang::TProgram;
+		glslang::InitializeProcess();
 
 		EShLanguage stage = getLang(_options.shaderType);
 		if (EShLangCount == stage)
 		{
-			bx::printf("Error: Unknown shader type '%c'.\n", _options.shaderType);
+			bx::write(_messageWriter, &messageErr, "Error: Unknown shader type '%c'.\n", _options.shaderType);
 			return false;
 		}
-		glslang::TShader* shader = new glslang::TShader(stage);
+
+		glslang::TProgram* program = new glslang::TProgram;
+		glslang::TShader* shader   = new glslang::TShader(stage);
 
 		EShMessages messages = EShMessages(0
 			| EShMsgDefault
 			| EShMsgReadHlsl
 			| EShMsgVulkanRules
 			| EShMsgSpvRules
+			| EShMsgDebugInfo
 			);
 
 		shader->setEntryPoint("main");
@@ -694,7 +344,7 @@ namespace bgfx { namespace metal
 
 				printCode(_code.c_str(), line, start, end, column);
 
-				bx::printf("%s\n", log);
+				bx::write(_messageWriter, &messageErr, "%s\n", log);
 			}
 		}
 		else
@@ -710,7 +360,7 @@ namespace bgfx { namespace metal
 				const char* log = program->getInfoLog();
 				if (NULL != log)
 				{
-					bx::printf("%s\n", log);
+					bx::write(_messageWriter, &messageErr, "%s\n", log);
 				}
 			}
 			else
@@ -788,7 +438,9 @@ namespace bgfx { namespace metal
 					}
 
 					// recompile with the unused uniforms converted to statics
-					return compile(_options, _version, output.c_str(), _writer, false);
+					delete program;
+					delete shader;
+					return compile(_options, _version, output.c_str(), _shaderWriter, _messageWriter, false);
 				}
 
 				UniformArray uniforms;
@@ -800,6 +452,11 @@ namespace bgfx { namespace metal
 					{
 						Uniform un;
 						un.name = program->getUniformName(ii);
+
+						if (bx::hasSuffix(un.name.c_str(), ".@data") )
+						{
+							continue;
+						}
 
 						un.num = uint8_t(program->getUniformArraySize(ii) );
 						const uint32_t offset = program->getUniformBufferOffset(ii);
@@ -835,26 +492,27 @@ namespace bgfx { namespace metal
 					program->dumpReflection();
 				}
 
-				BX_UNUSED(spv::MemorySemanticsAllMemory);
-
 				glslang::TIntermediate* intermediate = program->getIntermediate(stage);
 				std::vector<uint32_t> spirv;
 
 				glslang::SpvOptions options;
-				options.disableOptimizer = false;
+				options.disableOptimizer = _options.debugInformation;
+				options.generateDebugInfo = _options.debugInformation;
+				options.emitNonSemanticShaderDebugInfo = _options.debugInformation;
+				options.emitNonSemanticShaderDebugSource = _options.debugInformation;
 
 				glslang::GlslangToSpv(*intermediate, spirv, &options);
 
 				spvtools::Optimizer opt(SPV_ENV_VULKAN_1_0);
 
-				auto print_msg_to_stderr = [](
+				auto print_msg_to_stderr = [_messageWriter, &messageErr](
 					  spv_message_level_t
 					, const char*
 					, const spv_position_t&
 					, const char* m
 					)
 				{
-					bx::printf("Error: %s\n", m);
+					bx::write(_messageWriter, &messageErr, "Error: %s\n", m);
 				};
 
 				opt.SetMessageConsumer(print_msg_to_stderr);
@@ -876,42 +534,40 @@ namespace bgfx { namespace metal
 				}
 				else
 				{
-					bx::Error err;
-					bx::WriterI* writer = bx::getDebugOut();
-					bx::MemoryReader reader(spirv.data(), uint32_t(spirv.size()*4) );
-					disassemble(writer, &reader, &err);
+					if (g_verbose)
+					{
+						glslang::SpirvToolsDisassemble(std::cout, spirv, SPV_ENV_VULKAN_1_0);
+					}
 
 					spirv_cross::CompilerReflection refl(spirv);
 					spirv_cross::ShaderResources resourcesrefl = refl.get_shader_resources();
 
 					// Loop through the separate_images, and extract the uniform names:
-					for (auto &resource : resourcesrefl.separate_images)
+					for (auto& resource : resourcesrefl.separate_images)
 					{
 						std::string name = refl.get_name(resource.id);
-						if (name.size() > 7 && 0 == bx::strCmp(name.c_str() + name.length() - 7, "Texture") )
+						if (name.size() > 7 && 0 == bx::strCmp(name.c_str() + name.length() - 7, "Texture"))
 						{
-							auto uniform_name = name.substr(0, name.length() - 7);
-
-							Uniform un;
-							un.name = uniform_name;
-							un.type = UniformType::Sampler;
-
-							un.num = 0;			// needed?
-							un.regIndex = 0;	// needed?
-							un.regCount = 0;	// needed?
-
-							uniforms.push_back(un);
+							name = name.substr(0, name.length() - 7);
 						}
+
+						Uniform un;
+						un.name = name;
+						un.type = UniformType::Sampler;
+
+						un.num = 0;			// needed?
+						un.regIndex = 0;	// needed?
+						un.regCount = 0;	// needed?
+
+						uniforms.push_back(un);
 					}
-					uint16_t size = writeUniformArray( _writer, uniforms, _options.shaderType == 'f');
+
+					uint16_t size = writeUniformArray(_shaderWriter, uniforms, _options.shaderType == 'f');
+
+					bx::Error err;
 
 					if (_version == BX_MAKEFOURCC('M', 'T', 'L', 0) )
 					{
-						if (g_verbose)
-						{
-							glslang::SpirvToolsDisassemble(std::cout, spirv);
-						}
-
 						spirv_cross::CompilerMSL msl(std::move(spirv) );
 
 						auto executionModel = msl.get_execution_model();
@@ -922,59 +578,48 @@ namespace bgfx { namespace metal
 
 						spirv_cross::SmallVector<spirv_cross::EntryPoint> entryPoints = msl.get_entry_points_and_stages();
 						if (!entryPoints.empty() )
-							msl.rename_entry_point(entryPoints[0].name, "xlatMtlMain", entryPoints[0].execution_model);
-
-						for (auto &resource : resources.uniform_buffers)
 						{
-							unsigned set = msl.get_decoration( resource.id, spv::DecorationDescriptorSet );
-							unsigned binding = msl.get_decoration( resource.id, spv::DecorationBinding );
-							newBinding.desc_set = set;
-							newBinding.binding = binding;
+							msl.rename_entry_point(
+								  entryPoints[0].name
+								, "xlatMtlMain"
+								, entryPoints[0].execution_model
+								);
+						}
+
+						for (auto& resource : resources.uniform_buffers)
+						{
+							unsigned set     = msl.get_decoration(resource.id, spv::DecorationDescriptorSet);
+							unsigned binding = msl.get_decoration(resource.id, spv::DecorationBinding);
+							newBinding.desc_set   = set;
+							newBinding.binding    = binding;
 							newBinding.msl_buffer = 0;
-							msl.add_msl_resource_binding( newBinding );
+							msl.add_msl_resource_binding(newBinding);
 
 							msl.set_name(resource.id, "_mtl_u");
 						}
 
-						for (auto &resource : resources.storage_buffers)
+						for (auto& resource : resources.storage_buffers)
 						{
-							unsigned set = msl.get_decoration( resource.id, spv::DecorationDescriptorSet );
-							unsigned binding = msl.get_decoration( resource.id, spv::DecorationBinding );
-							newBinding.desc_set = set;
-							newBinding.binding = binding;
+							unsigned set     = msl.get_decoration(resource.id, spv::DecorationDescriptorSet);
+							unsigned binding = msl.get_decoration(resource.id, spv::DecorationBinding);
+							newBinding.desc_set   = set;
+							newBinding.binding    = binding;
 							newBinding.msl_buffer = binding + 1;
-							msl.add_msl_resource_binding( newBinding );
+							msl.add_msl_resource_binding(newBinding);
 						}
 
-						for (auto &resource : resources.separate_samplers)
+						for (auto& resource : resources.separate_samplers)
 						{
-							unsigned set = msl.get_decoration( resource.id, spv::DecorationDescriptorSet );
-							unsigned binding = msl.get_decoration( resource.id, spv::DecorationBinding );
-							newBinding.desc_set = set;
-							newBinding.binding = binding;
+							unsigned set     = msl.get_decoration(resource.id, spv::DecorationDescriptorSet);
+							unsigned binding = msl.get_decoration(resource.id, spv::DecorationBinding);
+							newBinding.desc_set    = set;
+							newBinding.binding     = binding;
 							newBinding.msl_texture = binding - textureBindingOffset;
 							newBinding.msl_sampler = binding - textureBindingOffset;
-							msl.add_msl_resource_binding( newBinding );
+							msl.add_msl_resource_binding(newBinding);
 						}
 
-						for (auto &resource : resources.separate_images)
-						{
-							std::string name = msl.get_name(resource.id);
-							if (name.size() > 7 && 0 == bx::strCmp(name.c_str() + name.length() - 7, "Texture") )
-							{
-								msl.set_name(resource.id, name.substr(0, name.length() - 7) );
-							}
-
-							unsigned set = msl.get_decoration( resource.id, spv::DecorationDescriptorSet );
-							unsigned binding = msl.get_decoration( resource.id, spv::DecorationBinding );
-							newBinding.desc_set = set;
-							newBinding.binding = binding;
-							newBinding.msl_texture = binding - textureBindingOffset;
-							newBinding.msl_sampler = binding - textureBindingOffset;
-							msl.add_msl_resource_binding( newBinding );
-						}
-
-						for (auto &resource : resources.storage_images)
+						for (auto& resource : resources.separate_images)
 						{
 							std::string name = msl.get_name(resource.id);
 							if (name.size() > 7 && 0 == bx::strCmp(name.c_str() + name.length() - 7, "Texture") )
@@ -982,58 +627,88 @@ namespace bgfx { namespace metal
 								msl.set_name(resource.id, name.substr(0, name.length() - 7) );
 							}
 
-							unsigned set = msl.get_decoration( resource.id, spv::DecorationDescriptorSet );
-							unsigned binding = msl.get_decoration( resource.id, spv::DecorationBinding );
-							newBinding.desc_set = set;
-							newBinding.binding = binding;
+							unsigned set     = msl.get_decoration(resource.id, spv::DecorationDescriptorSet);
+							unsigned binding = msl.get_decoration(resource.id, spv::DecorationBinding);
+							newBinding.desc_set    = set;
+							newBinding.binding     = binding;
 							newBinding.msl_texture = binding - textureBindingOffset;
 							newBinding.msl_sampler = binding - textureBindingOffset;
-							msl.add_msl_resource_binding( newBinding );
+							msl.add_msl_resource_binding(newBinding);
+						}
+
+						for (auto& resource : resources.storage_images)
+						{
+							std::string name = msl.get_name(resource.id);
+
+							unsigned set     = msl.get_decoration(resource.id, spv::DecorationDescriptorSet);
+							unsigned binding = msl.get_decoration(resource.id, spv::DecorationBinding);
+							newBinding.desc_set    = set;
+							newBinding.binding     = binding;
+							newBinding.msl_texture = binding - textureBindingOffset;
+							newBinding.msl_sampler = binding - textureBindingOffset;
+							msl.add_msl_resource_binding(newBinding);
 						}
 
 						std::string source = msl.compile();
+
+						// fix https://github.com/bkaradzic/bgfx/issues/2822
+						// insert struct member which declares point size, defaulted to 1
+						if ('v' == _options.shaderType)
+						{
+							const bx::StringView xlatMtlMainOut("xlatMtlMain_out\n{");
+							size_t pos = source.find(xlatMtlMainOut.getPtr() );
+
+							if (pos != std::string::npos)
+							{
+								pos += xlatMtlMainOut.getLength();
+								source.insert(pos, "\n\tfloat bgfx_metal_pointSize [[point_size]] = 1;");
+							}
+						}
 
 						if ('c' == _options.shaderType)
 						{
 							for (int i = 0; i < 3; ++i)
 							{
-								uint16_t dim = (uint16_t)msl.get_execution_mode_argument(spv::ExecutionMode::ExecutionModeLocalSize, i);
-								bx::write(_writer, dim);
+								uint16_t dim = (uint16_t)msl.get_execution_mode_argument(
+									  spv::ExecutionMode::ExecutionModeLocalSize
+									, i
+									);
+								bx::write(_shaderWriter, dim, &err);
 							}
 						}
 
 						uint32_t shaderSize = (uint32_t)source.size();
-						bx::write(_writer, shaderSize);
-						bx::write(_writer, source.c_str(), shaderSize);
+						bx::write(_shaderWriter, shaderSize, &err);
+						bx::write(_shaderWriter, source.c_str(), shaderSize, &err);
 						uint8_t nul = 0;
-						bx::write(_writer, nul);
+						bx::write(_shaderWriter, nul, &err);
 					}
 					else
 					{
 						uint32_t shaderSize = (uint32_t)spirv.size() * sizeof(uint32_t);
-						bx::write(_writer, shaderSize);
-						bx::write(_writer, spirv.data(), shaderSize);
+						bx::write(_shaderWriter, shaderSize, &err);
+						bx::write(_shaderWriter, spirv.data(), shaderSize, &err);
 						uint8_t nul = 0;
-						bx::write(_writer, nul);
+						bx::write(_shaderWriter, nul, &err);
 					}
 					//
 					const uint8_t numAttr = (uint8_t)program->getNumLiveAttributes();
-					bx::write(_writer, numAttr);
+					bx::write(_shaderWriter, numAttr, &err);
 
 					for (uint8_t ii = 0; ii < numAttr; ++ii)
 					{
 						bgfx::Attrib::Enum attr = toAttribEnum(program->getAttributeName(ii) );
 						if (bgfx::Attrib::Count != attr)
 						{
-							bx::write(_writer, bgfx::attribToId(attr) );
+							bx::write(_shaderWriter, bgfx::attribToId(attr), &err);
 						}
 						else
 						{
-							bx::write(_writer, uint16_t(UINT16_MAX) );
+							bx::write(_shaderWriter, uint16_t(UINT16_MAX), &err);
 						}
 					}
 
-					bx::write(_writer, size);
+					bx::write(_shaderWriter, size, &err);
 				}
 			}
 		}
@@ -1048,9 +723,9 @@ namespace bgfx { namespace metal
 
 } // namespace metal
 
-	bool compileMetalShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer)
+	bool compileMetalShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _shaderWriter, bx::WriterI* _messageWriter)
 	{
-		return metal::compile(_options, _version, _code, _writer, true);
+		return metal::compile(_options, _version, _code, _shaderWriter, _messageWriter, true);
 	}
 
 } // namespace bgfx

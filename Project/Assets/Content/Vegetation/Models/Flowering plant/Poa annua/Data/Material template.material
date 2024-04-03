@@ -6,7 +6,7 @@
 	BlendMode = Masked
 	TwoSided = True
 	TwoSidedFlipNormals = False
-	ShadingModel = Subsurface
+	ShadingModel = Foliage
 	Thickness = 0.02
 	.component NeoAxis.FlowGraph
 	{

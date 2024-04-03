@@ -18,7 +18,7 @@ namespace NeoAxis
 		public Reference<CutVolumeShape> Shape
 		{
 			get { if( _shape.BeginGet() ) Shape = _shape.Get( this ); return _shape.value; }
-			set { if( _shape.BeginSet( ref value ) ) { try { ShapeChanged?.Invoke( this ); SpaceBoundsUpdate(); } finally { _shape.EndSet(); } } }
+			set { if( _shape.BeginSet( this, ref value ) ) { try { ShapeChanged?.Invoke( this ); SpaceBoundsUpdate(); } finally { _shape.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Shape"/> property value changes.</summary>
 		public event Action<CutVolume> ShapeChanged;
@@ -31,7 +31,7 @@ namespace NeoAxis
 		public Reference<bool> CutScene
 		{
 			get { if( _cutScene.BeginGet() ) CutScene = _cutScene.Get( this ); return _cutScene.value; }
-			set { if( _cutScene.BeginSet( ref value ) ) { try { CutSceneChanged?.Invoke( this ); } finally { _cutScene.EndSet(); } } }
+			set { if( _cutScene.BeginSet( this, ref value ) ) { try { CutSceneChanged?.Invoke( this ); } finally { _cutScene.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CutScene"/> property value changes.</summary>
 		public event Action<CutVolume> CutSceneChanged;
@@ -44,7 +44,7 @@ namespace NeoAxis
 		public Reference<bool> CutShadows
 		{
 			get { if( _cutShadows.BeginGet() ) CutShadows = _cutShadows.Get( this ); return _cutShadows.value; }
-			set { if( _cutShadows.BeginSet( ref value ) ) { try { CutShadowsChanged?.Invoke( this ); } finally { _cutShadows.EndSet(); } } }
+			set { if( _cutShadows.BeginSet( this, ref value ) ) { try { CutShadowsChanged?.Invoke( this ); } finally { _cutShadows.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CutShadows"/> property value changes.</summary>
 		public event Action<CutVolume> CutShadowsChanged;
@@ -58,7 +58,7 @@ namespace NeoAxis
 		public Reference<bool> CutSimple3DRenderer
 		{
 			get { if( _cutSimple3DRenderer.BeginGet() ) CutSimple3DRenderer = _cutSimple3DRenderer.Get( this ); return _cutSimple3DRenderer.value; }
-			set { if( _cutSimple3DRenderer.BeginSet( ref value ) ) { try { CutSimple3DRendererChanged?.Invoke( this ); } finally { _cutSimple3DRenderer.EndSet(); } } }
+			set { if( _cutSimple3DRenderer.BeginSet( this, ref value ) ) { try { CutSimple3DRendererChanged?.Invoke( this ); } finally { _cutSimple3DRenderer.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CutSimple3DRenderer"/> property value changes.</summary>
 		public event Action<CutVolume> CutSimple3DRendererChanged;

@@ -16,7 +16,7 @@ namespace NeoAxis
 		public Reference<UIMeasureValueDouble> SplitterSize
 		{
 			get { if( _splitterSize.BeginGet() ) SplitterSize = _splitterSize.Get( this ); return _splitterSize.value; }
-			set { if( _splitterSize.BeginSet( ref value ) ) { try { SplitterSizeChanged?.Invoke( this ); } finally { _splitterSize.EndSet(); } } }
+			set { if( _splitterSize.BeginSet( this, ref value ) ) { try { SplitterSizeChanged?.Invoke( this ); } finally { _splitterSize.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SplitterSize"/> property value changes.</summary>
 		public event Action<UISplitContainer> SplitterSizeChanged;
@@ -28,7 +28,7 @@ namespace NeoAxis
 			get { if( _vertical.BeginGet() ) Vertical = _vertical.Get( this ); return _vertical.value; }
 			set
 			{
-				if( _vertical.BeginSet( ref value ) )
+				if( _vertical.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -56,7 +56,7 @@ namespace NeoAxis
 		public Reference<FixedPanelEnum> FixedPanel
 		{
 			get { if( _fixedPanel.BeginGet() ) FixedPanel = _fixedPanel.Get( this ); return _fixedPanel.value; }
-			set { if( _fixedPanel.BeginSet( ref value ) ) { try { FixedPanelChanged?.Invoke( this ); } finally { _fixedPanel.EndSet(); } } }
+			set { if( _fixedPanel.BeginSet( this, ref value ) ) { try { FixedPanelChanged?.Invoke( this ); } finally { _fixedPanel.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FixedPanel"/> property value changes.</summary>
 		public event Action<UISplitContainer> FixedPanelChanged;
@@ -66,7 +66,7 @@ namespace NeoAxis
 		public Reference<UIMeasureValueDouble> Panel1MinSize
 		{
 			get { if( _panel1MinSize.BeginGet() ) Panel1MinSize = _panel1MinSize.Get( this ); return _panel1MinSize.value; }
-			set { if( _panel1MinSize.BeginSet( ref value ) ) { try { Panel1MinSizeChanged?.Invoke( this ); } finally { _panel1MinSize.EndSet(); } } }
+			set { if( _panel1MinSize.BeginSet( this, ref value ) ) { try { Panel1MinSizeChanged?.Invoke( this ); } finally { _panel1MinSize.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Panel1MinSize"/> property value changes.</summary>
 		public event Action<UISplitContainer> Panel1MinSizeChanged;
@@ -76,7 +76,7 @@ namespace NeoAxis
 		public Reference<UIMeasureValueDouble> Panel2MinSize
 		{
 			get { if( _panel2MinSize.BeginGet() ) Panel2MinSize = _panel2MinSize.Get( this ); return _panel2MinSize.value; }
-			set { if( _panel2MinSize.BeginSet( ref value ) ) { try { Panel2MinSizeChanged?.Invoke( this ); } finally { _panel2MinSize.EndSet(); } } }
+			set { if( _panel2MinSize.BeginSet( this, ref value ) ) { try { Panel2MinSizeChanged?.Invoke( this ); } finally { _panel2MinSize.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Panel2MinSize"/> property value changes.</summary>
 		public event Action<UISplitContainer> Panel2MinSizeChanged;
@@ -87,7 +87,7 @@ namespace NeoAxis
 		public Reference<double> Position
 		{
 			get { if( _position.BeginGet() ) Position = _position.Get( this ); return _position.value; }
-			set { if( _position.BeginSet( ref value ) ) { try { PositionChanged?.Invoke( this ); } finally { _position.EndSet(); } } }
+			set { if( _position.BeginSet( this, ref value ) ) { try { PositionChanged?.Invoke( this ); } finally { _position.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Position"/> property value changes.</summary>
 		public event Action<UISplitContainer> PositionChanged;

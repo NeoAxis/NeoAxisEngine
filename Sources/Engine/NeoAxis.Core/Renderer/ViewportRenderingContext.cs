@@ -1,14 +1,10 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
-using System.Drawing.Design;
-using System.ComponentModel;
-using System.Reflection;
 using Internal.SharpBgfx;
-using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace NeoAxis
 {
@@ -18,7 +14,7 @@ namespace NeoAxis
 	public class ViewportRenderingContext
 	{
 		//static
-		internal static ViewportRenderingContext current;
+		//internal static ViewportRenderingContext current;
 
 		//constants
 		internal Viewport owner;
@@ -48,6 +44,9 @@ namespace NeoAxis
 		internal RenderingPipeline_Basic renderingPipeline;//internal RenderingPipeline renderingPipeline;
 		public RenderingPipeline_Basic.FrameData FrameData;//public RenderingPipeline.IFrameData FrameData;
 		public ObjectInSpace.RenderingContext ObjectInSpaceRenderingContext;
+		public List<Matrix4F[]> AnimationBonesData = new List<Matrix4F[]>();
+		public List<Task> AnimationBonesDataTasks = new List<Task>();
+		public OcclusionCullingBuffer SceneOcclusionCullingBuffer;
 
 		//update many times during frame rendering
 		Viewport currentViewport;
@@ -64,6 +63,8 @@ namespace NeoAxis
 		//optimization
 		internal Viewport.CameraSettingsClass OwnerCameraSettings;
 		internal Vector3 OwnerCameraSettingsPosition;
+		internal Vector3 OwnerCameraSettingsPositionPrevious;
+		internal Vector3F OwnerCameraSettingsPositionPreviousChange;
 		internal float ShadowObjectVisibilityDistanceFactor = 1;
 		Curve1F getVisibilityDistanceByObjectSize;
 		Curve1F[] getVoxelLodVisibilityDistanceByObjectSize;
@@ -71,9 +72,27 @@ namespace NeoAxis
 		public bool SceneDisplayDevelopmentDataInThisApplication;
 		internal RangeI LODRange;
 		internal float LODScale;
+		internal float LODScaleShadowsSquared;
 		internal bool SmoothLOD;
+		internal float LightFarDistance;
+		internal bool DebugDrawMeshes;
+		internal bool DebugDrawVoxels;
+		internal bool DebugDrawBatchedData;
+		internal bool DebugDrawNotBatchedData;
+		internal bool StaticShadows;
+		internal int SectorsByDistance;
+		//internal float TessellationDistance;
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//static shadows
+		//key: static light counter, texture size
+		internal Dictionary<(long, int), LightStaticShadowsItem> LightStaticShadowsItems;
+		//internal Dictionary<long, LightStaticShadowsItem> LightStaticShadowsItems;
+
+		//tessellation
+		internal Dictionary<(RenderingPipeline.RenderSceneData.MeshDataRenderOperation operation, Material.CompiledMaterialData materialData), TessellationCacheItem> TessellationCacheItems;
+		internal float TessellationCacheItemsCalculatedForQuality;
+
+		/////////////////////////////////////////
 
 		public enum DynamicTextureType
 		{
@@ -82,7 +101,7 @@ namespace NeoAxis
 			ComputeWrite,
 		}
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////
 
 		class DynamicTextureItem
 		{
@@ -102,7 +121,7 @@ namespace NeoAxis
 			public bool usedLastUpdate;
 		}
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////
 
 		class OcclusionCullingBufferItem
 		{
@@ -110,7 +129,7 @@ namespace NeoAxis
 			public bool usedLastUpdate;
 		}
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////
 
 		/// <summary>
 		/// The data provided during the context update process.
@@ -120,7 +139,7 @@ namespace NeoAxis
 			public Dictionary<string, ImageComponent> namedTextures = new Dictionary<string, ImageComponent>();
 		}
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////
 
 		/// <summary>
 		/// The data with the statistics of context's working.
@@ -134,6 +153,9 @@ namespace NeoAxis
 			public int Triangles;
 			public int Lines;
 			public int DrawCalls;
+			public int DrawCallsShadows;
+			public int DrawCallsDeferred;
+			public int DrawCallsForward;
 			public int Instances;
 			public int ComputeDispatches;
 			public int RenderTargets;
@@ -142,9 +164,29 @@ namespace NeoAxis
 			public int Lights;
 			public int ReflectionProbes;
 			public int OcclusionCullingBuffers;
+
+			//
+
+			public void AddFrom( StatisticsClass from )
+			{
+				Triangles += from.Triangles;
+				Lines += from.Lines;
+				DrawCalls += from.DrawCalls;
+				DrawCallsShadows += from.DrawCallsShadows;
+				DrawCallsDeferred += from.DrawCallsDeferred;
+				DrawCallsForward += from.DrawCallsForward;
+				Instances += from.Instances;
+				ComputeDispatches += from.ComputeDispatches;
+				RenderTargets += from.RenderTargets;
+				DynamicTextures += from.DynamicTextures;
+				ComputeWriteImages += from.ComputeWriteImages;
+				Lights += from.Lights;
+				ReflectionProbes += from.ReflectionProbes;
+				OcclusionCullingBuffers += from.OcclusionCullingBuffers;
+			}
 		}
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////
 
 		/// <summary>
 		/// Represents a texture binding settings.
@@ -204,7 +246,41 @@ namespace NeoAxis
 			//}
 		}
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////
+
+		public class LightStaticShadowsItem
+		{
+			public long UniqueIdentifierForStaticShadows;
+			public ImageComponent Image;
+			public bool LastTimeIsUsed;
+			public double LastUpdateTime;
+
+			//
+
+			public void Dispose()
+			{
+				Image?.Dispose();
+			}
+		}
+
+		/////////////////////////////////////////
+
+		public class TessellationCacheItem
+		{
+			public GpuVertexBuffer VertexBuffer;
+			public GpuIndexBuffer IndexBuffer;
+			public bool LastTimeUsed;
+
+			//
+
+			public void Dispose()
+			{
+				VertexBuffer?.Dispose();
+				IndexBuffer?.Dispose();
+			}
+		}
+
+		/////////////////////////////////////////
 
 		public ViewportRenderingContext( Viewport owner )
 		{
@@ -214,10 +290,10 @@ namespace NeoAxis
 			//!!!!!resize? или еще что-то?
 		}
 
-		public static ViewportRenderingContext Current
-		{
-			get { return current; }
-		}
+		//public static ViewportRenderingContext Current
+		//{
+		//	get { return current; }
+		//}
 
 		/// <summary>
 		/// Occurs before object is disposed.
@@ -231,6 +307,20 @@ namespace NeoAxis
 			MultiRenderTarget_DestroyAll();
 			DynamicTexture_DestroyAll();
 			OcclusionCullingBuffer_DestroyAll();
+
+			if( LightStaticShadowsItems != null )
+			{
+				foreach( var item in LightStaticShadowsItems.Values )
+					item.Dispose();
+				LightStaticShadowsItems.Clear();
+			}
+
+			if( TessellationCacheItems != null )
+			{
+				foreach( var item in TessellationCacheItems.Values )
+					item.Dispose();
+				TessellationCacheItems.Clear();
+			}
 
 			foreach( var image in AnyDataAutoDispose.Values )
 				image.Dispose();
@@ -305,9 +395,8 @@ namespace NeoAxis
 			texture.CreateFSAA = fsaaLevel;
 			texture.Enabled = true;
 
-			//!!!!
-			if( type == DynamicTextureType.ComputeWrite )
-				texture.Result.PrepareNativeObject();
+			//if( type == DynamicTextureType.ComputeWrite )
+			//	texture.Result.PrepareNativeObject();
 
 			//!!!!!как проверять ошибки создания текстур? везде так
 			//if( texture == null )
@@ -317,24 +406,28 @@ namespace NeoAxis
 			//	return null;
 			//}
 
-			int faces = imageType == ImageComponent.TypeEnum.Cube ? 6 : arrayLayers;
+			int slices = ( imageType == ImageComponent.TypeEnum.Cube ? 6 : 1 ) * arrayLayers;
+			//int faces = imageType == ImageComponent.TypeEnum.Cube ? 6 : arrayLayers;
 
 			int numMips;
 			if( mipmaps )
 			{
-				float kInvLogNat2 = 1.4426950408889634073599246810019f;
-				numMips = 1 + (int)( Math.Log( size.MaxComponent() ) * kInvLogNat2 );
+				numMips = texture.Result.ResultMipLevels;
+
+				//wrong:
+				//float kInvLogNat2 = 1.4426950408889634073599246810019f;
+				//numMips = 1 + (int)( Math.Log( size.MaxComponent() ) * kInvLogNat2 );
 			}
 			else
 				numMips = 1;
 
 			if( type == DynamicTextureType.RenderTarget )
 			{
-				for( int face = 0; face < faces; face++ )
+				for( int slice = 0; slice < slices; slice++ )
 				{
 					for( int mip = 0; mip < numMips; mip++ )
 					{
-						RenderTexture renderTexture = texture.Result.GetRenderTarget( mip, face );
+						RenderTexture renderTexture = texture.Result.GetRenderTarget( mip, slice );
 						var viewport = renderTexture.AddViewport( createSimple3DRenderer, createCanvasRenderer );
 
 						viewport.RenderingPipelineCreate();
@@ -592,12 +685,12 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		OcclusionCullingBuffer OcclusionCullingBuffer_GetFree( Vector2I size )
+		OcclusionCullingBuffer OcclusionCullingBuffer_GetFree( Vector2I size, bool ortho )
 		{
 			OcclusionCullingBufferItem item = null;
 			foreach( var i in occlusionCullingBuffersFree )
 			{
-				if( i.buffer.Size == size )
+				if( i.buffer.Size == size && i.buffer.Ortho == ortho )
 				{
 					item = i;
 					break;
@@ -613,19 +706,19 @@ namespace NeoAxis
 			return null;
 		}
 
-		public OcclusionCullingBuffer OcclusionCullingBuffer_Alloc( Vector2I size )
+		public OcclusionCullingBuffer OcclusionCullingBuffer_Alloc( Vector2I size, bool ortho )
 		{
 			UpdateStatisticsCurrent.OcclusionCullingBuffers++;
 
 			//find free
 			{
-				var buffer2 = OcclusionCullingBuffer_GetFree( size );
+				var buffer2 = OcclusionCullingBuffer_GetFree( size, ortho );
 				if( buffer2 != null )
 					return buffer2;
 			}
 
 			var buffer = OcclusionCullingBuffer.Create();
-			buffer.SetResolution( size );
+			buffer.Init( size, ortho );
 
 			//add to list of allocated
 			var item = new OcclusionCullingBufferItem();
@@ -717,10 +810,16 @@ namespace NeoAxis
 			//}
 		}
 
-		public ushort CurrentViewNumber
+		public int CurrentViewNumber
 		{
-			get { return (ushort)currentViewNumber; }
+			get { return currentViewNumber; }
+			set { currentViewNumber = value; }
 		}
+
+		//public ushort CurrentViewNumber
+		//{
+		//	get { return (ushort)currentViewNumber; }
+		//}
 
 		public void ResetViews()
 		{
@@ -747,27 +846,27 @@ namespace NeoAxis
 			public Vector2F sizeInv;
 		}
 
-		public void SetViewport( Viewport viewport, Matrix4F viewMatrix, Matrix4F projectionMatrix, FrameBufferTypes clearBuffers, ColorValue clearBackgroundColor, float clearDepthValue = 1, byte clearStencilValue = 0 )
+		public void SetViewport( Viewport viewport, Matrix4F viewMatrix, Matrix4F projectionMatrix, FrameBufferTypes clearBuffers, ColorValue clearBackgroundColor, float clearDepthValue = 1, byte clearStencilValue = 0 )//, bool setInvalidFrameBuffer = false )
 		{
 			currentViewport = viewport;
 			currentViewNumber++;
 
 			//init bgfx view
 
-			Bgfx.ResetView( CurrentViewNumber );
+			Bgfx.ResetView( (ushort)CurrentViewNumber );
 
 			bool skip = false;
 			var renderWindow = currentViewport.parent as RenderWindow;
 			if( renderWindow != null && renderWindow.ThisIsApplicationWindow )
 				skip = true;
 			if( !skip )
-				Bgfx.SetViewFrameBuffer( CurrentViewNumber, currentViewport.parent.FrameBuffer );
+				Bgfx.SetViewFrameBuffer( (ushort)CurrentViewNumber, /*setInvalidFrameBuffer ? FrameBuffer.Invalid : */currentViewport.parent.FrameBuffer );
 
-			Bgfx.SetViewMode( CurrentViewNumber, ViewMode.Sequential );
-			Bgfx.SetViewRect( CurrentViewNumber, 0, 0, CurrentViewport.SizeInPixels.X, CurrentViewport.SizeInPixels.Y );
+			Bgfx.SetViewMode( (ushort)CurrentViewNumber, ViewMode.Sequential );
+			Bgfx.SetViewRect( (ushort)CurrentViewNumber, 0, 0, CurrentViewport.SizeInPixels.X, CurrentViewport.SizeInPixels.Y );
 			unsafe
 			{
-				Bgfx.SetViewTransform( CurrentViewNumber, (float*)&viewMatrix, (float*)&projectionMatrix );
+				Bgfx.SetViewTransform( (ushort)CurrentViewNumber, (float*)&viewMatrix, (float*)&projectionMatrix );
 			}
 
 			////!!!!
@@ -794,9 +893,9 @@ namespace NeoAxis
 					targets |= ClearTargets.Depth;
 				if( ( clearBuffers & FrameBufferTypes.Stencil ) != 0 )
 					targets |= ClearTargets.Stencil;
-				Bgfx.SetViewClear( CurrentViewNumber, targets, ToRGBA( clearBackgroundColor ), clearDepthValue, clearStencilValue );
+				Bgfx.SetViewClear( (ushort)CurrentViewNumber, targets, ToRGBA( clearBackgroundColor ), clearDepthValue, clearStencilValue );
 
-				Bgfx.Touch( CurrentViewNumber );
+				Bgfx.Touch( (ushort)CurrentViewNumber );
 			}
 
 			////!!!!
@@ -836,7 +935,7 @@ namespace NeoAxis
 			currentViewport = null;
 			currentViewNumber++;
 
-			Bgfx.ResetView( CurrentViewNumber );
+			Bgfx.ResetView( (ushort)CurrentViewNumber );
 		}
 
 		//public void ClearCurrentViewport( FrameBufferTypes buffers, ColorValue backgroundColor, float depth = 1, uint stencil = 0 )
@@ -860,7 +959,7 @@ namespace NeoAxis
 
 		//!!!!!как тут это всё с Viewport и multirendertarget?
 		//!!!!!для RenderQuad добавить "RectI? scissorRectangle"?
-		public void RenderQuadToCurrentViewport( CanvasRenderer.ShaderItem shader, CanvasRenderer.BlendingType blending = CanvasRenderer.BlendingType.Opaque, bool flipY = false )
+		public void RenderQuadToCurrentViewport( CanvasRenderer.ShaderItem shader, CanvasRenderer.BlendingType blending = CanvasRenderer.BlendingType.Opaque, bool flipY = false, bool registerUniformsAndSetIdentityMatrix = true )
 		{
 			if( currentViewport == null )
 				Log.Fatal( "ViewportRenderingContext: RenderQuadToCurrentViewport: CurrentViewport == null." );
@@ -876,10 +975,10 @@ namespace NeoAxis
 			renderer.PopBlendingType();
 			renderer.PopShader();
 
-			renderer.ViewportRendering_RenderToCurrentViewport( this, true, Owner.LastUpdateTime );
+			renderer.ViewportRendering_RenderToCurrentViewport( this, true, Owner.LastUpdateTime, registerUniformsAndSetIdentityMatrix );
 		}
 
-		public void RenderTrianglesToCurrentViewport( CanvasRenderer.ShaderItem shader, IList<CanvasRenderer.TriangleVertex> vertices, CanvasRenderer.BlendingType blending = CanvasRenderer.BlendingType.Opaque )
+		public void RenderTrianglesToCurrentViewport( CanvasRenderer.ShaderItem shader, IList<CanvasRenderer.TriangleVertex> vertices, CanvasRenderer.BlendingType blending = CanvasRenderer.BlendingType.Opaque, bool registerUniformsAndSetIdentityMatrix = true )
 		{
 			if( currentViewport == null )
 				Log.Fatal( "ViewportRenderingContext: RenderTrianglesToCurrentViewport: CurrentViewport == null." );
@@ -890,7 +989,7 @@ namespace NeoAxis
 			renderer.PopBlendingType();
 			renderer.PopShader();
 
-			renderer.ViewportRendering_RenderToCurrentViewport( this, true, Owner.LastUpdateTime );
+			renderer.ViewportRendering_RenderToCurrentViewport( this, true, Owner.LastUpdateTime, registerUniformsAndSetIdentityMatrix );
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -1065,7 +1164,7 @@ namespace NeoAxis
 		//	return null;
 		//}
 
-		[MethodImpl( (MethodImplOptions)512 )]
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal unsafe void BindTexture( int textureUnit, ImageComponent texture, TextureAddressingMode addressingMode, FilterOption filteringMin, FilterOption filteringMag, FilterOption filteringMip, TextureFlags additionalFlags, ref uint* writeToPointer, ref int writeToPointerCount, bool disableAnisotropic )
 		{
 			if( texture == null )
@@ -1159,7 +1258,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public void BindTexture( int textureUnit, ImageComponent texture, TextureAddressingMode addressingMode, FilterOption filteringMin, FilterOption filteringMag, FilterOption filteringMip, TextureFlags additionalFlags /* = 0 */, bool disableAnisotropic )
+		public void BindTexture( int textureUnit, ImageComponent texture, TextureAddressingMode addressingMode, FilterOption filteringMin, FilterOption filteringMag, FilterOption filteringMip, TextureFlags additionalFlags = 0, bool disableAnisotropic = false )
 		{
 			unsafe
 			{
@@ -1191,6 +1290,30 @@ namespace NeoAxis
 				var format = GpuTexture.ConvertFormat( gpuTexture.ResultFormat );
 				Bgfx.SetComputeImage( (byte)textureUnit, realObject, (byte)mip, (ComputeBufferAccess)access, format );
 			}
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void BindComputeBuffer( int textureUnit, GpuVertexBuffer buffer/*ImageComponent texture*/, ComputeBufferAccessEnum access )
+		{
+			buffer.UpdateNativeObject();
+
+			if( buffer.NativeObjectIsDynamicBuffer )
+				NativeMethods.bgfx_set_compute_dynamic_vertex_buffer( (byte)textureUnit, buffer.NativeObjectHandle, (ComputeBufferAccess)access );
+			else
+				NativeMethods.bgfx_set_compute_vertex_buffer( (byte)textureUnit, buffer.NativeObjectHandle, (ComputeBufferAccess)access );
+
+			//Bgfx.SetComputeBuffer( (byte)textureUnit, buffer, (ComputeBufferAccess)access );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void BindComputeBuffer( int textureUnit, GpuIndexBuffer buffer, ComputeBufferAccessEnum access )
+		{
+			buffer.UpdateNativeObject();
+
+			if( buffer.NativeObjectIsDynamicBuffer )
+				NativeMethods.bgfx_set_compute_dynamic_index_buffer( (byte)textureUnit, buffer.NativeObjectHandle, (ComputeBufferAccess)access );
+			else
+				NativeMethods.bgfx_set_compute_index_buffer( (byte)textureUnit, buffer.NativeObjectHandle, (ComputeBufferAccess)access );
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
@@ -1262,7 +1385,7 @@ namespace NeoAxis
 
 		//!!!!parameterContainers пока так
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public void SetPassAndSubmit( GpuMaterialPass pass, RenderOperationType renderOperation, List<ParameterContainer> parameterContainers, OcclusionQuery? occlusionQuery, bool disableAnisotropic )// = null )
+		public void SetPassAndSubmit( GpuMaterialPass pass, RenderOperationType renderOperation, List<ParameterContainer> parameterContainers, OcclusionQuery? occlusionQuery, bool disableAnisotropic, bool discardAll )// = null )
 		{
 			////set parameters
 			//unsafe
@@ -1381,18 +1504,26 @@ namespace NeoAxis
 				//	BindParameterContainer( container );
 			}
 
-			pass.RenderingProcess_SetRenderState( renderOperation, occlusionQuery == null, disableAnisotropic );
+			//pass.RenderingProcess_SetRenderState( renderOperation, occlusionQuery == null, disableAnisotropic );
 
 			var discardFlags = /*DiscardFlags.Bindings | */DiscardFlags.IndexBuffer | DiscardFlags.InstanceData | DiscardFlags.State | DiscardFlags.Transform | DiscardFlags.VertexStreams;
+			if( discardAll )
+				discardFlags = DiscardFlags.All;
 
-			if( occlusionQuery != null )
-				Bgfx.Submit( CurrentViewNumber, pass.LinkedProgram.RealObject, occlusionQuery.Value, 0, discardFlags );// DiscardFlags.All );
+			if( occlusionQuery.HasValue )
+			{
+				pass.RenderingProcess_SetRenderState( renderOperation, false, disableAnisotropic );
+				Bgfx.Submit( (ushort)CurrentViewNumber, pass.LinkedProgram.RealObject, occlusionQuery.Value, 0, discardFlags );
+			}
 			else
-				Bgfx.Submit( CurrentViewNumber, pass.LinkedProgram.RealObject, 0, discardFlags );// DiscardFlags.All );
+			{
+				pass.RenderingProcess_SetRenderState( renderOperation, true, disableAnisotropic );
+				Bgfx.Submit( (ushort)CurrentViewNumber, pass.LinkedProgram.RealObject, 0, discardFlags );
+			}
 
 			//Bgfx.Submit( CurrentViewNumber, pass.LinkedProgram.RealObject, preserveState: true );
 
-			UpdateStatisticsCurrent.DrawCalls++;
+			updateStatisticsCurrent.DrawCalls++;
 		}
 
 		public StatisticsClass UpdateStatisticsCurrent
@@ -1636,5 +1767,78 @@ namespace NeoAxis
 			return 0;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void ConvertToRelative( ref Vector3 source, out Vector3F result )
+		{
+			result.X = (float)( source.X - OwnerCameraSettingsPosition.X );
+			result.Y = (float)( source.Y - OwnerCameraSettingsPosition.Y );
+			result.Z = (float)( source.Z - OwnerCameraSettingsPosition.Z );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void ConvertToRelative( Vector3 source, out Vector3F result )
+		{
+			result.X = (float)( source.X - OwnerCameraSettingsPosition.X );
+			result.Y = (float)( source.Y - OwnerCameraSettingsPosition.Y );
+			result.Z = (float)( source.Z - OwnerCameraSettingsPosition.Z );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void ConvertToRelative( ref Matrix4 source, out Matrix4F result )
+		{
+			result.Item0.X = (float)source.Item0.X;
+			result.Item0.Y = (float)source.Item0.Y;
+			result.Item0.Z = (float)source.Item0.Z;
+			result.Item0.W = (float)source.Item0.W;
+			result.Item1.X = (float)source.Item1.X;
+			result.Item1.Y = (float)source.Item1.Y;
+			result.Item1.Z = (float)source.Item1.Z;
+			result.Item1.W = (float)source.Item1.W;
+			result.Item2.X = (float)source.Item2.X;
+			result.Item2.Y = (float)source.Item2.Y;
+			result.Item2.Z = (float)source.Item2.Z;
+			result.Item2.W = (float)source.Item2.W;
+			result.Item3.X = (float)( source.Item3.X - OwnerCameraSettingsPosition.X );
+			result.Item3.Y = (float)( source.Item3.Y - OwnerCameraSettingsPosition.Y );
+			result.Item3.Z = (float)( source.Item3.Z - OwnerCameraSettingsPosition.Z );
+			result.Item3.W = (float)source.Item3.W;
+		}
+
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public void ConvertToRelativePrevious( ref Vector3 source, out Vector3F result )
+		//{
+		//	result.X = (float)( source.X - OwnerCameraSettingsPositionPrevious.X );
+		//	result.Y = (float)( source.Y - OwnerCameraSettingsPositionPrevious.Y );
+		//	result.Z = (float)( source.Z - OwnerCameraSettingsPositionPrevious.Z );
+		//}
+
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public void ConvertToRelativePrevious( Vector3 source, out Vector3F result )
+		//{
+		//	result.X = (float)( source.X - OwnerCameraSettingsPositionPrevious.X );
+		//	result.Y = (float)( source.Y - OwnerCameraSettingsPositionPrevious.Y );
+		//	result.Z = (float)( source.Z - OwnerCameraSettingsPositionPrevious.Z );
+		//}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void ConvertToAbsolute( ref Matrix4F source, out Matrix4 result )
+		{
+			result.Item0.X = source.Item0.X;
+			result.Item0.Y = source.Item0.Y;
+			result.Item0.Z = source.Item0.Z;
+			result.Item0.W = source.Item0.W;
+			result.Item1.X = source.Item1.X;
+			result.Item1.Y = source.Item1.Y;
+			result.Item1.Z = source.Item1.Z;
+			result.Item1.W = source.Item1.W;
+			result.Item2.X = source.Item2.X;
+			result.Item2.Y = source.Item2.Y;
+			result.Item2.Z = source.Item2.Z;
+			result.Item2.W = source.Item2.W;
+			result.Item3.X = source.Item3.X + OwnerCameraSettingsPosition.X;
+			result.Item3.Y = source.Item3.Y + OwnerCameraSettingsPosition.Y;
+			result.Item3.Z = source.Item3.Z + OwnerCameraSettingsPosition.Z;
+			result.Item3.W = source.Item3.W;
+		}
 	}
 }

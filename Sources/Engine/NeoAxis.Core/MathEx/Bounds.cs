@@ -364,6 +364,22 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public Bounds GetExpanded( double d )
+		{
+			var result = this;
+			result.Expand( d );
+			return result;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public Bounds GetExpanded( Vector3 d )
+		{
+			var result = this;
+			result.Expand( d );
+			return result;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool Contains( Vector3 p )
 		{
 			if( p.X < Minimum.X || p.Y < Minimum.Y || p.Z < Minimum.Z || p.X > Maximum.X || p.Y > Maximum.Y || p.Z > Maximum.Z )

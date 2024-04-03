@@ -21,7 +21,7 @@ namespace NeoAxis
 		public Reference<double> Intensity
 		{
 			get { if( _intensity.BeginGet() ) Intensity = _intensity.Get( this ); return _intensity.value; }
-			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
+			set { if( _intensity.BeginSet( this, ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
 		public event Action<RenderingEffect_GaussianBlur> IntensityChanged;
@@ -35,7 +35,7 @@ namespace NeoAxis
 		public Reference<double> BlurFactor
 		{
 			get { if( _blurFactor.BeginGet() ) BlurFactor = _blurFactor.Get( this ); return _blurFactor.value; }
-			set { if( _blurFactor.BeginSet( ref value ) ) { try { BlurFactorChanged?.Invoke( this ); } finally { _blurFactor.EndSet(); } } }
+			set { if( _blurFactor.BeginSet( this, ref value ) ) { try { BlurFactorChanged?.Invoke( this ); } finally { _blurFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BlurFactor"/> property value changes.</summary>
 		public event Action<RenderingEffect_GaussianBlur> BlurFactorChanged;
@@ -48,7 +48,7 @@ namespace NeoAxis
 		public Reference<RenderingPipeline_Basic.DownscalingModeEnum> DownscalingMode
 		{
 			get { if( _downscalingMode.BeginGet() ) DownscalingMode = _downscalingMode.Get( this ); return _downscalingMode.value; }
-			set { if( _downscalingMode.BeginSet( ref value ) ) { try { DownscalingModeChanged?.Invoke( this ); } finally { _downscalingMode.EndSet(); } } }
+			set { if( _downscalingMode.BeginSet( this, ref value ) ) { try { DownscalingModeChanged?.Invoke( this ); } finally { _downscalingMode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DownscalingMode"/> property value changes.</summary>
 		public event Action<RenderingEffect_GaussianBlur> DownscalingModeChanged;
@@ -62,7 +62,7 @@ namespace NeoAxis
 		public Reference<int> DownscalingValue
 		{
 			get { if( _downscalingValue.BeginGet() ) DownscalingValue = _downscalingValue.Get( this ); return _downscalingValue.value; }
-			set { if( _downscalingValue.BeginSet( ref value ) ) { try { DownscalingValueChanged?.Invoke( this ); } finally { _downscalingValue.EndSet(); } } }
+			set { if( _downscalingValue.BeginSet( this, ref value ) ) { try { DownscalingValueChanged?.Invoke( this ); } finally { _downscalingValue.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DownscalingValue"/> property value changes.</summary>
 		public event Action<RenderingEffect_GaussianBlur> DownscalingValueChanged;
@@ -76,7 +76,7 @@ namespace NeoAxis
 		public Reference<double> StandardDeviation
 		{
 			get { if( _standardDeviation.BeginGet() ) StandardDeviation = _standardDeviation.Get( this ); return _standardDeviation.value; }
-			set { if( _standardDeviation.BeginSet( ref value ) ) { try { StandardDeviationChanged?.Invoke( this ); } finally { _standardDeviation.EndSet(); } } }
+			set { if( _standardDeviation.BeginSet( this, ref value ) ) { try { StandardDeviationChanged?.Invoke( this ); } finally { _standardDeviation.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="StandardDeviation"/> property value changes.</summary>
 		public event Action<RenderingEffect_GaussianBlur> StandardDeviationChanged;
@@ -96,7 +96,7 @@ namespace NeoAxis
 		//public Reference<BlurDimensionsEnum> BlurDimensions
 		//{
 		//	get { if( _blurDimensions.BeginGet() ) BlurDimensions = _blurDimensions.Get( this ); return _blurDimensions.value; }
-		//	set { if( _blurDimensions.BeginSet( ref value ) ) { try { BlurDimensionsChanged?.Invoke( this ); } finally { _blurDimensions.EndSet(); } } }
+		//	set { if( _blurDimensions.BeginSet( this, ref value ) ) { try { BlurDimensionsChanged?.Invoke( this ); } finally { _blurDimensions.EndSet(); } } }
 		//}
 		//public event Action<RenderingEffect_GaussianBlur> BlurDimensionsChanged;
 
@@ -115,10 +115,7 @@ namespace NeoAxis
 				{
 				case nameof( DownscalingValue ):
 					if( DownscalingMode.Value == RenderingPipeline_Basic.DownscalingModeEnum.Auto )
-					{
 						skip = true;
-						return;
-					}
 					break;
 				}
 			}

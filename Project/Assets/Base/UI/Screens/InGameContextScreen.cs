@@ -123,7 +123,13 @@ namespace Project
 		{
 			if( e.Key == EKeys.Return )
 			{
-				if( SendMessage() )
+				var text = GetSendMessageText();
+				if( text == "" )
+				{
+					RemoveFromParent( true );
+					handled = true;
+				}
+				else if( SendMessage() )
 					handled = true;
 			}
 		}

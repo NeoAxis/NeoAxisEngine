@@ -2,10 +2,10 @@ $input v_color0, v_texCoord0
 
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "Common.sh"
+#include "FragmentFunctions.sh"
 
 uniform vec4 u_canvasClipRectangle;
 uniform vec4/*bool, bool*/ u_bc5UNorm_L;//u_bc5UNorm
-uniform vec4 u_canvasColorMultiplier;
 
 SAMPLER2D(s_baseTexture, 0);
 
@@ -17,6 +17,27 @@ void main()
 		discard;
 	
 	vec4 rgba = texture2D(s_baseTexture, v_texCoord0);
+	
+	//!!!!test antialiasing. vogel is good?
+	/*
+#ifndef MOBILE
+	if( capsLock )
+	{
+		rgba = vec4_splat( 0 );		
+		const int sampleCount = 32;	
+		for( int n = 0; n < sampleCount; n++ )
+		{
+			//!!!!
+			vec2 scale = u_viewTexel.xy * 5;
+			
+			vec2 texCoord = v_texCoord0 + vogelDiskSample( n, sampleCount, 0.0 ) * scale;			
+			vec4 rgba2 = texture2D( s_baseTexture, texCoord );
+			rgba += rgba2;
+		}		
+		rgba /= float( sampleCount );
+	}
+#endif
+	*/
 	
 #ifndef MOBILE
 	BRANCH
@@ -32,7 +53,5 @@ void main()
 	if(u_bc5UNorm_L.y > 0.0)
 		rgba = vec4(rgba.x, rgba.x, rgba.x, 1.0);
 	
-	gl_FragColor = rgba * v_color0 * u_canvasColorMultiplier;
-	
-	//gl_FragColor = texture2D(s_baseTexture, v_texCoord0) * v_color0;
+	gl_FragColor = rgba * v_color0;
 }

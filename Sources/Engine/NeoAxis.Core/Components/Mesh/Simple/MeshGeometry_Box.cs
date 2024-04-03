@@ -33,7 +33,7 @@ namespace NeoAxis
 					if( v.Z < 0 ) v.Z = 0;
 					value = new Reference<Vector3>( v, value.GetByReference );
 				}
-				if( _dimensions.BeginSet( ref value ) )
+				if( _dimensions.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -58,7 +58,7 @@ namespace NeoAxis
 			get { if( _insideOut.BeginGet() ) InsideOut = _insideOut.Get( this ); return _insideOut.value; }
 			set
 			{
-				if( _insideOut.BeginSet( ref value ) )
+				if( _insideOut.BeginSet( this, ref value ) )
 				{
 					try
 					{

@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.IO;
-using System.Drawing.Design;
 using NeoAxis.Editor;
 
 namespace NeoAxis
@@ -27,7 +26,7 @@ namespace NeoAxis
 		public Reference<string> ExecutableName
 		{
 			get { if( _executableName.BeginGet() ) ExecutableName = _executableName.Get( this ); return _executableName.value; }
-			set { if( _executableName.BeginSet( ref value ) ) { try { ExecutableNameChanged?.Invoke( this ); } finally { _executableName.EndSet(); } } }
+			set { if( _executableName.BeginSet( this, ref value ) ) { try { ExecutableNameChanged?.Invoke( this ); } finally { _executableName.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ExecutableName"/> property value changes.</summary>
 		public event Action<Product> ExecutableNameChanged;
@@ -41,7 +40,7 @@ namespace NeoAxis
 		public Reference<bool> ImportTools
 		{
 			get { if( _importTools.BeginGet() ) ImportTools = _importTools.Get( this ); return _importTools.value; }
-			set { if( _importTools.BeginSet( ref value ) ) { try { ImportToolsChanged?.Invoke( this ); } finally { _importTools.EndSet(); } } }
+			set { if( _importTools.BeginSet( this, ref value ) ) { try { ImportToolsChanged?.Invoke( this ); } finally { _importTools.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ImportTools"/> property value changes.</summary>
 		public event Action<Product_macOS> ImportToolsChanged;
@@ -55,7 +54,7 @@ namespace NeoAxis
 		public Reference<bool> CubemapProcessingTools
 		{
 			get { if( _cubemapProcessingTools.BeginGet() ) CubemapProcessingTools = _cubemapProcessingTools.Get( this ); return _cubemapProcessingTools.value; }
-			set { if( _cubemapProcessingTools.BeginSet( ref value ) ) { try { CubemapProcessingToolsChanged?.Invoke( this ); } finally { _cubemapProcessingTools.EndSet(); } } }
+			set { if( _cubemapProcessingTools.BeginSet( this, ref value ) ) { try { CubemapProcessingToolsChanged?.Invoke( this ); } finally { _cubemapProcessingTools.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CubemapProcessingTools"/> property value changes.</summary>
 		public event Action<Product_macOS> CubemapProcessingToolsChanged;
@@ -69,7 +68,7 @@ namespace NeoAxis
 		//public Reference<bool> BuildTools
 		//{
 		//	get { if( _buildTools.BeginGet() ) BuildTools = _buildTools.Get( this ); return _buildTools.value; }
-		//	set { if( _buildTools.BeginSet( ref value ) ) { try { BuildToolsChanged?.Invoke( this ); } finally { _buildTools.EndSet(); } } }
+		//	set { if( _buildTools.BeginSet( this, ref value ) ) { try { BuildToolsChanged?.Invoke( this ); } finally { _buildTools.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="BuildTools"/> property value changes.</summary>
 		//public event Action<Product_Mac> BuildToolsChanged;
@@ -83,7 +82,7 @@ namespace NeoAxis
 		public Reference<bool> DebugFiles
 		{
 			get { if( _debugFiles.BeginGet() ) DebugFiles = _debugFiles.Get( this ); return _debugFiles.value; }
-			set { if( _debugFiles.BeginSet( ref value ) ) { try { DebugFilesChanged?.Invoke( this ); } finally { _debugFiles.EndSet(); } } }
+			set { if( _debugFiles.BeginSet( this, ref value ) ) { try { DebugFilesChanged?.Invoke( this ); } finally { _debugFiles.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DebugFiles"/> property value changes.</summary>
 		public event Action<Product_macOS> DebugFilesChanged;
@@ -98,7 +97,7 @@ namespace NeoAxis
 		public Reference<bool> UIWebBrowser
 		{
 			get { if( _uIWebBrowser.BeginGet() ) UIWebBrowser = _uIWebBrowser.Get( this ); return _uIWebBrowser.value; }
-			set { if( _uIWebBrowser.BeginSet( ref value ) ) { try { UIWebBrowserChanged?.Invoke( this ); } finally { _uIWebBrowser.EndSet(); } } }
+			set { if( _uIWebBrowser.BeginSet( this, ref value ) ) { try { UIWebBrowserChanged?.Invoke( this ); } finally { _uIWebBrowser.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UIWebBrowser"/> property value changes.</summary>
 		public event Action<Product_macOS> UIWebBrowserChanged;
@@ -112,7 +111,7 @@ namespace NeoAxis
 		public Reference<bool> SatelliteResourceLanguages
 		{
 			get { if( _satelliteResourceLanguages.BeginGet() ) SatelliteResourceLanguages = _satelliteResourceLanguages.Get( this ); return _satelliteResourceLanguages.value; }
-			set { if( _satelliteResourceLanguages.BeginSet( ref value ) ) { try { SatelliteResourceLanguagesChanged?.Invoke( this ); } finally { _satelliteResourceLanguages.EndSet(); } } }
+			set { if( _satelliteResourceLanguages.BeginSet( this, ref value ) ) { try { SatelliteResourceLanguagesChanged?.Invoke( this ); } finally { _satelliteResourceLanguages.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SatelliteResourceLanguages"/> property value changes.</summary>
 		public event Action<Product_macOS> SatelliteResourceLanguagesChanged;

@@ -235,6 +235,9 @@ namespace NeoAxis
 			//Transform
 			RegisterType( typeof( Transform ), delegate ( string value ) { return Transform.Parse( value ); }, Transform.Identity );
 
+			RegisterType( typeof( SphereF ), delegate ( string value ) { return SphereF.Parse( value ); }, SphereF.Zero );
+			RegisterType( typeof( Sphere ), delegate ( string value ) { return Sphere.Parse( value ); }, Sphere.Zero );
+
 			//UIMeasureValueDouble
 			RegisterType( typeof( UIMeasureValueDouble ), delegate ( string value ) { return UIMeasureValueDouble.Parse( value ); }, new UIMeasureValueDouble() );
 
@@ -255,6 +258,8 @@ namespace NeoAxis
 			//Line2
 			//Ray
 			//Frustum?
+
+			//half?
 
 			RegisterConvertDoubleToFloatTypes();
 		}

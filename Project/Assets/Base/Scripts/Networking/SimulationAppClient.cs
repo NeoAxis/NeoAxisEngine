@@ -78,6 +78,7 @@ namespace Project
 				EngineApp.AppCreateAfter += delegate ()
 				{
 					SimulationAppClient.InitFromCommandLine();
+					SimulationAppClient.RegisterEngineConsoleCommands();
 				};
 			}
 		}
@@ -177,6 +178,11 @@ namespace Project
 				if( SystemSettings.CommandLineParameters.TryGetValue( "-appContainer", out var appContainer ) && appContainer == "1" )
 					SystemSettings.AppContainer = true;
 
+				Log.InvisibleInfo( "SimulationAppClient: GetInitSettings: Network mode: " + networkMode.ToString() );
+				Log.InvisibleInfo( "SimulationAppClient: GetInitSettings: Server address: " + serverAddress );
+				Log.InvisibleInfo( "SimulationAppClient: GetInitSettings: Server port: " + serverPort.ToString() );
+				Log.InvisibleInfo( "SimulationAppClient: GetInitSettings: AppContainer: " + SystemSettings.AppContainer.ToString() );
+
 				if( networkMode == NetworkModeEnum.CloudProject )
 				{
 					//get verificationCode
@@ -259,7 +265,7 @@ namespace Project
 			var loginData = block.DumpToString();
 
 			//!!!!connectionTimeout
-			if( !client.BeginConnect( serverAddress, serverPort, EngineInfo.Version, loginData, 10, out error ) )
+			if( !client.BeginConnect( serverAddress, serverPort, EngineInfo.Version, loginData, 100, out error ) )
 			{
 				Destroy();
 				return false;
@@ -412,6 +418,23 @@ namespace Project
 			//ScreenMessages.Add( string.Format( "Message from server: {0}", "SceneDestroy" ) );
 
 			SimulationApp.NetworkClientSceneDestroyed();
+		}
+
+		internal static void RegisterEngineConsoleCommands()
+		{
+			EngineConsole.AddCommand( "StartNetworkProfiler", delegate ( string arguments )
+			{
+				var workingTime = float.MaxValue;
+				if( !string.IsNullOrEmpty( arguments ) && float.TryParse( arguments, out var v ) )
+					workingTime = v;
+				Client?.ProfilerStart( workingTime );
+
+			}, "Starts the network profiler. Optionally, you can specify working time in seconds." );
+
+			EngineConsole.AddCommand( "StopNetworkProfiler", delegate ( string arguments )
+			{
+				Client?.ProfilerStop( true );
+			}, "Stops the network profiler." );
 		}
 	}
 }

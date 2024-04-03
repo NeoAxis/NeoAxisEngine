@@ -18,7 +18,7 @@ namespace NeoAxis
 		public Reference<AxesEnum> Axes
 		{
 			get { if( _axes.BeginGet() ) Axes = _axes.Get( this ); return _axes.value; }
-			set { if( _axes.BeginSet( ref value ) ) { try { AxesChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _axes.EndSet(); } } }
+			set { if( _axes.BeginSet( this, ref value ) ) { try { AxesChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _axes.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Axes"/> property value changes.</summary>
 		public event Action<ParticleSizeMultiplierByTime> AxesChanged;
@@ -31,7 +31,7 @@ namespace NeoAxis
 		public Reference<TypeEnum> Type
 		{
 			get { if( _type.BeginGet() ) Type = _type.Get( this ); return _type.value; }
-			set { if( _type.BeginSet( ref value ) ) { try { TypeChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _type.EndSet(); } } }
+			set { if( _type.BeginSet( this, ref value ) ) { try { TypeChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _type.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Type"/> property value changes.</summary>
 		public event Action<ParticleSizeMultiplierByTime> TypeChanged;
@@ -44,7 +44,7 @@ namespace NeoAxis
 		public Reference<RangeF> Range
 		{
 			get { if( _range.BeginGet() ) Range = _range.Get( this ); return _range.value; }
-			set { if( _range.BeginSet( ref value ) ) { try { RangeChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _range.EndSet(); } } }
+			set { if( _range.BeginSet( this, ref value ) ) { try { RangeChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _range.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Range"/> property value changes.</summary>
 		public event Action<ParticleSizeMultiplierByTime> RangeChanged;
@@ -55,13 +55,13 @@ namespace NeoAxis
 		/// </summary>
 		[Serialize]
 		[Cloneable( CloneType.Deep )]
-		public ReferenceList<ParticleSystem.CurvePoint> Curve
+		public ReferenceList<CurvePoint1F> Curve
 		{
 			get { return _curve; }
 		}
 		public delegate void CurveChangedDelegate( ParticleSizeMultiplierByTime sender );
 		public event CurveChangedDelegate CurveChanged;
-		ReferenceList<ParticleSystem.CurvePoint> _curve;
+		ReferenceList<CurvePoint1F> _curve;
 
 		/////////////////////////////////////////
 
@@ -86,7 +86,7 @@ namespace NeoAxis
 
 		public ParticleSizeMultiplierByTime()
 		{
-			_curve = new ReferenceList<ParticleSystem.CurvePoint>( this, delegate () { CurveChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } );
+			_curve = new ReferenceList<CurvePoint1F>( this, delegate () { CurveChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } );
 		}
 
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )

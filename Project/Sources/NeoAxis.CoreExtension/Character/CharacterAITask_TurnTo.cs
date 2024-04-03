@@ -11,18 +11,18 @@ namespace NeoAxis
 	/// </summary>
 	public class CharacterAITask_TurnTo : AITask
 	{
-		/// <summary>
-		/// Whether to turn instantly without animation.
-		/// </summary>
-		[DefaultValue( false )]
-		public Reference<bool> TurnInstantly
-		{
-			get { if( _turnInstantly.BeginGet() ) TurnInstantly = _turnInstantly.Get( this ); return _turnInstantly.value; }
-			set { if( _turnInstantly.BeginSet( ref value ) ) { try { TurnInstantlyChanged?.Invoke( this ); } finally { _turnInstantly.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="TurnInstantly"/> property value changes.</summary>
-		public event Action<CharacterAITask_TurnTo> TurnInstantlyChanged;
-		ReferenceField<bool> _turnInstantly = false;
+		///// <summary>
+		///// Whether to turn instantly without animation.
+		///// </summary>
+		//[DefaultValue( false )]
+		//public Reference<bool> TurnInstantly
+		//{
+		//	get { if( _turnInstantly.BeginGet() ) TurnInstantly = _turnInstantly.Get( this ); return _turnInstantly.value; }
+		//	set { if( _turnInstantly.BeginSet( this, ref value ) ) { try { TurnInstantlyChanged?.Invoke( this ); } finally { _turnInstantly.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="TurnInstantly"/> property value changes.</summary>
+		//public event Action<CharacterAITask_TurnTo> TurnInstantlyChanged;
+		//ReferenceField<bool> _turnInstantly = false;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ namespace NeoAxis
 		public Reference<Vector3> Target
 		{
 			get { if( _target.BeginGet() ) Target = _target.Get( this ); return _target.value; }
-			set { if( _target.BeginSet( ref value ) ) { try { TargetChanged?.Invoke( this ); } finally { _target.EndSet(); } } }
+			set { if( _target.BeginSet( this, ref value ) ) { try { TargetChanged?.Invoke( this ); } finally { _target.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Target"/> property value changes.</summary>
 		public event Action<CharacterAITask_TurnToPosition> TargetChanged;
@@ -64,7 +64,7 @@ namespace NeoAxis
 		public Reference<ObjectInSpace> Target
 		{
 			get { if( _target.BeginGet() ) Target = _target.Get( this ); return _target.value; }
-			set { if( _target.BeginSet( ref value ) ) { try { TargetChanged?.Invoke( this ); } finally { _target.EndSet(); } } }
+			set { if( _target.BeginSet( this, ref value ) ) { try { TargetChanged?.Invoke( this ); } finally { _target.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Target"/> property value changes.</summary>
 		public event Action<CharacterAITask_TurnToObject> TargetChanged;

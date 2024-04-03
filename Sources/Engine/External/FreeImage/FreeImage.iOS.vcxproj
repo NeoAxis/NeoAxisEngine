@@ -860,8 +860,8 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <OutDir>$(SolutionDir)_Compilation\iOS\$(Platform)\$(MSBuildProjectName)</OutDir>
-    <IntDir>$(SolutionDir)_Compilation\iOS\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\iOS\$(Platform)\$(MSBuildProjectName)</OutDir>
+    <IntDir>$(SolutionDir)_build\iOS\$(Platform)\$(MSBuildProjectName)\</IntDir>
     <IncludePath>Source;Source/FreeImageToolkit;Source/LibJPEG;Source/LibOpenJPEG;Source/LibPNG;Source/LibRawLite;Source/LibRawLite/dcraw;Source/LibRawLite/internal;Source/LibRawLite/libraw;Source/LibRawLite/src;Source/LibTIFF;Source/LibWebP;Source/OpenEXR;Source/OpenEXR/Half;Source/OpenEXR/Iex;Source/OpenEXR/IexMath;Source/OpenEXR/IlmImf;Source/OpenEXR/IlmThread;Source/OpenEXR/Imath;Source/ZLib;Source/Freeimage</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">

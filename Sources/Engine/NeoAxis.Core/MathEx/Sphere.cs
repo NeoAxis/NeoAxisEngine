@@ -102,7 +102,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public bool Contains( Vector3 p )
+		public bool Contains( ref Vector3 p )
 		{
 			double x = p.X - Center.X;
 			double y = p.Y - Center.Y;
@@ -111,6 +111,12 @@ namespace NeoAxis
 			if( lengthSqr > Radius * Radius )
 				return false;
 			return true;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public bool Contains( Vector3 p )
+		{
+			return Contains( ref p );
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -454,9 +460,45 @@ namespace NeoAxis
 			return result;
 		}
 
-		//!!!!
-		//[AutoConvertType]
-		//Parse, ToString
+		[AutoConvertType]
+		public static Sphere Parse( string text )
+		{
+			if( string.IsNullOrEmpty( text ) )
+				throw new ArgumentNullException( "The text parameter cannot be null or zero length." );
+
+			string[] vals = text.Split( new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries );
+
+			if( vals.Length != 4 )
+				throw new FormatException( string.Format( "Cannot parse the text '{0}' because it does not have 4 parts separated by spaces in the form (x y z radius).", text ) );
+
+			try
+			{
+				return new Sphere(
+					new Vector3(
+						double.Parse( vals[ 0 ] ),
+						double.Parse( vals[ 1 ] ),
+						double.Parse( vals[ 2 ] ) ),
+					double.Parse( vals[ 3 ] ) );
+			}
+			catch( Exception )
+			{
+				throw new FormatException( "The parts of the vectors must be decimal numbers." );
+			}
+		}
+
+		[AutoConvertType]
+		public override string ToString()
+		{
+			return ToString( 17 );
+		}
+
+		public string ToString( int precision )
+		{
+			string format = "";
+			format = format.PadLeft( precision, '#' );
+			format = "{0:0." + format + "} {1:0." + format + "} {2:0." + format + "} {3:0." + format + "}";
+			return string.Format( format, Center.X, Center.Y, Center.Z, Radius );
+		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static Sphere Merge( Sphere a, Sphere b )

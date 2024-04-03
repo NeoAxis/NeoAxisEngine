@@ -14,6 +14,7 @@ namespace NeoAxis
 		//internal static ESet<GpuBuffer> buffers = new ESet<GpuBuffer>();
 
 		static Internal.SharpBgfx.VertexLayout instancingVertexDeclaration;
+		static Internal.SharpBgfx.VertexLayout giInstanceDataBufferDeclaration;
 
 		//
 
@@ -128,5 +129,30 @@ namespace NeoAxis
 				return instancingVertexDeclaration;
 			}
 		}
+
+		internal static Internal.SharpBgfx.VertexLayout GIInstanceDataBufferDeclaration
+		{
+			get
+			{
+				if( giInstanceDataBufferDeclaration == null )
+				{
+					var vertexElements = new VertexElement[] {
+						new VertexElement( 0, 0, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate7 ),
+						new VertexElement( 0, 16, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate6 ) };
+
+					//var vertexElements = new VertexElement[] {
+					//	new VertexElement( 0, 0, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate7 ),
+					//	new VertexElement( 0, 16, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate6 ),
+					//	new VertexElement( 0, 32, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate5 ) ,
+					//	new VertexElement( 0, 48, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate4 ),
+					//	new VertexElement( 0, 64, VertexElementType.Float4, VertexElementSemantic.TextureCoordinate3 ) };
+
+					giInstanceDataBufferDeclaration = vertexElements.CreateVertexDeclaration( 0 );
+				}
+
+				return giInstanceDataBufferDeclaration;
+			}
+		}
+
 	}
 }

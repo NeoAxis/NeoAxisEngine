@@ -1,14 +1,10 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
-using System.Reflection;
 using System.ComponentModel;
-using System.Drawing.Design;
-using System.IO;
 using NeoAxis.Editor;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace NeoAxis
 {
@@ -17,9 +13,9 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "objectinspace" )]
 #if !DEPLOY
-	[EditorControl( typeof( ObjectInSpaceEditor ), true )]
-	[Preview( typeof( ObjectInSpacePreview ) )]
-	[PreviewImage( typeof( ObjectInSpacePreviewImage ) )]
+	[EditorControl( "NeoAxis.Editor.ObjectInSpaceEditor", true )]
+	[Preview( "NeoAxis.Editor.ObjectInSpacePreview" )]
+	[PreviewImage( "NeoAxis.Editor.ObjectInSpacePreviewImage" )]
 #endif
 	public class ObjectInSpace : Component, IVisibleInHierarchy, ICanBeSelectedInHierarchy//, Scene_DocumentWindow.ICanDropToScene
 	{
@@ -27,8 +23,11 @@ namespace NeoAxis
 		//RigidBody cachedRigidBodyByReference;
 
 		//scene octree
-		//internal int sceneOctreeGroup;
-		internal int sceneOctreeIndex = -1;
+		internal int sceneOctreeLogicIndex = -1;
+		internal int sceneOctreeVisualIndex = -1;
+		internal int sceneOctreeVisualDynamicIndex = -1;
+		internal int sceneOctreeOccluderIndex = -1;
+		////internal int sceneOctreeIndex = -1;
 
 		IVisibleInHierarchy parentIVisibleInHierarchy;
 
@@ -55,7 +54,7 @@ namespace NeoAxis
 			get { if( _visible.BeginGet() ) Visible = _visible.Get( this ); return _visible.value; }
 			set
 			{
-				if( _visible.BeginSet( ref value ) )
+				if( _visible.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -139,7 +138,7 @@ namespace NeoAxis
 		public Reference<bool> CanBeSelected
 		{
 			get { if( _canBeSelected.BeginGet() ) CanBeSelected = _canBeSelected.Get( this ); return _canBeSelected.value; }
-			set { if( _canBeSelected.BeginSet( ref value ) ) { try { CanBeSelectedChanged?.Invoke( this ); } finally { _canBeSelected.EndSet(); } } }
+			set { if( _canBeSelected.BeginSet( this, ref value ) ) { try { CanBeSelectedChanged?.Invoke( this ); } finally { _canBeSelected.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CanBeSelected"/> property value changes.</summary>
 		public event Action<ObjectInSpace> CanBeSelectedChanged;
@@ -167,10 +166,9 @@ namespace NeoAxis
 			}
 		}
 
-		//never used
-		//protected virtual void OnTransformUpdating( ref Reference<Transform> value )
-		//{
-		//}
+		protected virtual void OnTransformUpdating( ref Reference<Transform> value )
+		{
+		}
 		//public delegate void TransformUpdatingEventDelegate( ObjectInSpace obj, ref Reference<Transform> value );
 		//public event TransformUpdatingEventDelegate TransformUpdatingEvent;
 
@@ -217,13 +215,11 @@ namespace NeoAxis
 				if( value.Value == null )
 					value = new Reference<Transform>( NeoAxis.Transform.Identity, value.GetByReference );
 
-				//never used
-				//!!!!name
-				//OnTransformUpdating( ref value );
+				OnTransformUpdating( ref value );
 				//TransformUpdatingEvent?.Invoke( this, ref value );
 
 				//!!!!works fast for same reference?
-				if( _transform.BeginSet( ref value ) )
+				if( _transform.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -267,7 +263,7 @@ namespace NeoAxis
 		public Reference<double> RemainingLifetime
 		{
 			get { if( _remainingLifetime.BeginGet() ) RemainingLifetime = _remainingLifetime.Get( this ); return _remainingLifetime.value; }
-			set { if( _remainingLifetime.BeginSet( ref value ) ) { try { RemainingLifetimeChanged?.Invoke( this ); } finally { _remainingLifetime.EndSet(); } } }
+			set { if( _remainingLifetime.BeginSet( this, ref value ) ) { try { RemainingLifetimeChanged?.Invoke( this ); } finally { _remainingLifetime.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RemainingLifetime"/> property value changes.</summary>
 		public event Action<ObjectInSpace> RemainingLifetimeChanged;
@@ -275,27 +271,9 @@ namespace NeoAxis
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		//!!!!!может лучше через виртуальную функцию? измениться в любое время тогда может
-		//!!!!
 		SpaceBounds spaceBoundsOverride;
 		static SpaceBounds spaceBoundsDefault = new SpaceBounds( /*null, */new Sphere( Vector3.Zero, .5 ) );
 		SpaceBounds spaceBounds = spaceBoundsDefault;
-		////!!!!!надо ли?
-		//int sceneGraphGroup;
-		//internal int sceneGraphIndex = -1;
-
-		//!!!!!bool sceneGraphEndLeaf;
-
-		//static ObjectInSpace()
-		//{
-		//	spaceBoundsDefault = new SpaceBoundsType();
-		//	spaceBoundsDefault.boundingSphere = new Sphere( Vec3.Zero, .5 );
-		//}
-
-		//public ObjectInSpace()
-		//{
-		//	spaceBounds = NeoAxis.SpaceBounds.Default;
-		//}
 
 		[Browsable( false )]
 		public virtual SpaceBounds SpaceBoundsOverride
@@ -303,8 +281,8 @@ namespace NeoAxis
 			get { return spaceBoundsOverride; }
 			set
 			{
-				if( spaceBoundsOverride == value )
-					return;
+				//if( spaceBoundsOverride == value )
+				//	return;
 				spaceBoundsOverride = value;
 				//do it manually because SpaceBoundsOverride can be changed inside OnTransformChanged, SpaceBoundsUpdate will already called
 				//SpaceBoundsUpdate();
@@ -331,7 +309,6 @@ namespace NeoAxis
 		///// <summary>Occurs when the <see cref="SpaceBounds"/> property value changes.</summary>
 		//public event Action<ObjectInSpace> SpaceBoundsChanged;
 
-
 		[Browsable( false )]
 		public Bounds? SpaceBoundsOctreeOverride
 		{
@@ -343,7 +320,7 @@ namespace NeoAxis
 
 		public void SpaceBoundsUpdate()
 		{
-			var oldBounds = spaceBounds;
+			//var oldBounds = spaceBounds;
 
 			//calculate
 			var newBounds = spaceBoundsOverride;
@@ -352,7 +329,6 @@ namespace NeoAxis
 				OnSpaceBoundsUpdate( ref newBounds );
 				SpaceBoundsUpdateEvent?.Invoke( this, ref newBounds );
 
-				//!!!!really need?
 				//include children
 				{
 					var include = OnSpaceBoundsUpdateIncludeChildren();
@@ -362,23 +338,17 @@ namespace NeoAxis
 						foreach( var child in GetComponents<ObjectInSpace>( onlyEnabledInHierarchy: true ) )
 						{
 							//touch Transform to update
-							var tr = child.Transform.Value;
+							child.Transform.Touch();
 
 							newBounds = SpaceBounds.Merge( newBounds, child.SpaceBounds );
 						}
 					}
 				}
 
-				//!!!!тут?
 				if( newBounds == null )
 				{
-					//!!!!от чилдов еще которые ObjectInSpace?
-					//!!!!!так медленее. целесообразности нет. может полезно выбирать чилдовые, тогда даже вредно.
-
 					//при слишком мелком значении глючит OcclusionCullingBuffer. куллит мелкие объекты такие как curve point
-					var sphere = new Sphere( Transform.Value.Position, 0.05 );
-					//var sphere = new Sphere( Transform.Value.Position, 0.1 );
-					//var sphere = new Sphere( Transform.Value.Position, 0.001 );
+					var sphere = new Sphere( Transform.Value.Position, 0.05 ); //0.001 );
 
 					newBounds = new SpaceBounds( sphere );
 
@@ -400,7 +370,7 @@ namespace NeoAxis
 			{
 				if( EnabledInHierarchy )
 				{
-					ParentScene?.ObjectsInSpace_ObjectUpdateBounds( this );
+					ParentScene?.ObjectsInSpace_ObjectUpdate( this );
 				}
 
 				//never used
@@ -494,12 +464,16 @@ namespace NeoAxis
 			if( EnabledInHierarchy )
 			{
 				//!!!!need?
-				ParentScene?.ObjectsInSpace_ObjectUpdateBounds( this );
+				ParentScene?.ObjectsInSpace_ObjectUpdate( this );
 			}
 			else
 			{
 				ParentScene?.ObjectsInSpace_ObjectRemove( this );
-				sceneOctreeIndex = -1;
+				sceneOctreeLogicIndex = -1;
+				sceneOctreeVisualIndex = -1;
+				sceneOctreeVisualDynamicIndex = -1;
+				sceneOctreeOccluderIndex = -1;
+				//sceneOctreeIndex = -1;
 			}
 		}
 
@@ -741,6 +715,7 @@ namespace NeoAxis
 		public event GetRenderSceneDataDelegate GetRenderSceneDataBefore;
 		public event GetRenderSceneDataDelegate GetRenderSceneData;
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		internal void PerformGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
 			var context2 = context.ObjectInSpaceRenderingContext;
@@ -960,6 +935,7 @@ namespace NeoAxis
 			return Scene.SceneObjectFlags.Logic | Scene.SceneObjectFlags.Visual;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal Scene.SceneObjectFlags PerformGetSceneObjectFlags()
 		{
 			return OnGetSceneObjectFlags();

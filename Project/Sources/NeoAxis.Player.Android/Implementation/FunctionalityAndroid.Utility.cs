@@ -12,16 +12,16 @@ namespace NeoAxis
 	{
 		Stopwatch stopwatch;
 
-		public override double GetSystemTime()
-		{
-			if( stopwatch == null )
-			{
-				stopwatch = new Stopwatch();
-				stopwatch.Start();
-			}
+		//public override double GetSystemTime()
+		//{
+		//	if( stopwatch == null )
+		//	{
+		//		stopwatch = new Stopwatch();
+		//		stopwatch.Start();
+		//	}
 
-			return stopwatch.Elapsed.TotalSeconds;
-		}
+		//	return stopwatch.Elapsed.TotalSeconds;
+		//}
 
 		public override string[] GetNativeModuleNames()
 		{

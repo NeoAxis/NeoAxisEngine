@@ -1,5 +1,5 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-#if !DEPLOY
+//#if !DEPLOY
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -8,10 +8,10 @@ using System.IO.Compression;
 using System.Xml;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
+#if !DEPLOY
 using System.Text.Json;
+#endif
 using NeoAxis.Editor;
 
 namespace NeoAxis
@@ -29,7 +29,7 @@ namespace NeoAxis
 		//public Reference<string> Author
 		//{
 		//	get { if( _author.BeginGet() ) Author = _author.Get( this ); return _author.value; }
-		//	set { if( _author.BeginSet( ref value ) ) { try { AuthorChanged?.Invoke( this ); } finally { _author.EndSet(); } } }
+		//	set { if( _author.BeginSet( this, ref value ) ) { try { AuthorChanged?.Invoke( this ); } finally { _author.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="Author"/> property value changes.</summary>
 		//public event Action<Product_Store> AuthorChanged;
@@ -48,7 +48,7 @@ namespace NeoAxis
 		//public Reference<ProductTypeEnum> ProductType
 		//{
 		//	get { if( _productType.BeginGet() ) ProductType = _productType.Get( this ); return _productType.value; }
-		//	set { if( _productType.BeginSet( ref value ) ) { try { ProductTypeChanged?.Invoke( this ); } finally { _productType.EndSet(); } } }
+		//	set { if( _productType.BeginSet( this, ref value ) ) { try { ProductTypeChanged?.Invoke( this ); } finally { _productType.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="ProductType"/> property value changes.</summary>
 		//public event Action<Product_Store> ProductTypeChanged;
@@ -63,7 +63,7 @@ namespace NeoAxis
 		//public Reference<bool> AddThisFolder
 		//{
 		//	get { if( _addThisFolder.BeginGet() ) AddThisFolder = _addThisFolder.Get( this ); return _addThisFolder.value; }
-		//	set { if( _addThisFolder.BeginSet( ref value ) ) { try { AddThisFolderChanged?.Invoke( this ); } finally { _addThisFolder.EndSet(); } } }
+		//	set { if( _addThisFolder.BeginSet( this, ref value ) ) { try { AddThisFolderChanged?.Invoke( this ); } finally { _addThisFolder.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="AddThisFolder"/> property value changes.</summary>
 		//public event Action<Product_Store> AddThisFolderChanged;
@@ -77,7 +77,7 @@ namespace NeoAxis
 		public Reference<bool> OriginalShaders
 		{
 			get { if( _originalShaders.BeginGet() ) OriginalShaders = _originalShaders.Get( this ); return _originalShaders.value; }
-			set { if( _originalShaders.BeginSet( ref value ) ) { try { OriginalShadersChanged?.Invoke( this ); } finally { _originalShaders.EndSet(); } } }
+			set { if( _originalShaders.BeginSet( this, ref value ) ) { try { OriginalShadersChanged?.Invoke( this ); } finally { _originalShaders.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="OriginalShaders"/> property value changes.</summary>
 		public event Action<Product_Store> OriginalShadersChanged;
@@ -90,7 +90,7 @@ namespace NeoAxis
 		//public Reference<bool> AddShaders
 		//{
 		//	get { if( _addShaders.BeginGet() ) AddShaders = _addShaders.Get( this ); return _addShaders.value; }
-		//	set { if( _addShaders.BeginSet( ref value ) ) { try { AddShadersChanged?.Invoke( this ); } finally { _addShaders.EndSet(); } } }
+		//	set { if( _addShaders.BeginSet( this, ref value ) ) { try { AddShadersChanged?.Invoke( this ); } finally { _addShaders.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="AddShaders"/> property value changes.</summary>
 		//public event Action<Product_Store> AddShadersChanged;
@@ -100,11 +100,11 @@ namespace NeoAxis
 		/// The unique identifier of the product. When the parameter is empty the identifier calculated by path name of this file.
 		/// </summary>
 		[DefaultValue( "" )]
-		[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
+		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
 		public Reference<string> Identifier
 		{
 			get { if( _identifier.BeginGet() ) Identifier = _identifier.Get( this ); return _identifier.value; }
-			set { if( _identifier.BeginSet( ref value ) ) { try { IdentifierChanged?.Invoke( this ); } finally { _identifier.EndSet(); } } }
+			set { if( _identifier.BeginSet( this, ref value ) ) { try { IdentifierChanged?.Invoke( this ); } finally { _identifier.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Identifier"/> property value changes.</summary>
 		public event Action<Product_Store> IdentifierChanged;
@@ -113,33 +113,33 @@ namespace NeoAxis
 		///// <summary>
 		///// The display name of the product.
 		///// </summary>
-		//[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
+		//[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
 		//public Reference<string> Title
 		//{
 		//	get { if( _title.BeginGet() ) Title = _title.Get( this ); return _title.value; }
-		//	set { if( _title.BeginSet( ref value ) ) { try { TitleChanged?.Invoke( this ); } finally { _title.EndSet(); } } }
+		//	set { if( _title.BeginSet( this, ref value ) ) { try { TitleChanged?.Invoke( this ); } finally { _title.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="Title"/> property value changes.</summary>
 		//public event Action<Product_Store> TitleChanged;
 		//ReferenceField<string> _title = "";
 
 		[DefaultValue( "" )]
-		[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
+		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
 		public Reference<string> ShortDescription
 		{
 			get { if( _shortDescription.BeginGet() ) ShortDescription = _shortDescription.Get( this ); return _shortDescription.value; }
-			set { if( _shortDescription.BeginSet( ref value ) ) { try { ShortDescriptionChanged?.Invoke( this ); } finally { _shortDescription.EndSet(); } } }
+			set { if( _shortDescription.BeginSet( this, ref value ) ) { try { ShortDescriptionChanged?.Invoke( this ); } finally { _shortDescription.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShortDescription"/> property value changes.</summary>
 		public event Action<Product_Store> ShortDescriptionChanged;
 		ReferenceField<string> _shortDescription = "";
 
 		[DefaultValue( "" )]
-		[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
+		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
 		public Reference<string> FullDescription
 		{
 			get { if( _fullDescription.BeginGet() ) FullDescription = _fullDescription.Get( this ); return _fullDescription.value; }
-			set { if( _fullDescription.BeginSet( ref value ) ) { try { FullDescriptionChanged?.Invoke( this ); } finally { _fullDescription.EndSet(); } } }
+			set { if( _fullDescription.BeginSet( this, ref value ) ) { try { FullDescriptionChanged?.Invoke( this ); } finally { _fullDescription.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FullDescription"/> property value changes.</summary>
 		public event Action<Product_Store> FullDescriptionChanged;
@@ -150,7 +150,7 @@ namespace NeoAxis
 		public Reference<ProjectItemCategoriesEnum> ProjectItemCategories
 		{
 			get { if( _projectItemCategories.BeginGet() ) ProjectItemCategories = _projectItemCategories.Get( this ); return _projectItemCategories.value; }
-			set { if( _projectItemCategories.BeginSet( ref value ) ) { try { ProjectItemCategoriesChanged?.Invoke( this ); } finally { _projectItemCategories.EndSet(); } } }
+			set { if( _projectItemCategories.BeginSet( this, ref value ) ) { try { ProjectItemCategoriesChanged?.Invoke( this ); } finally { _projectItemCategories.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ProjectItemCategories"/> property value changes.</summary>
 		public event Action<Product_Store> ProjectItemCategoriesChanged;
@@ -160,11 +160,11 @@ namespace NeoAxis
 		/// The list of tags. Use comma to split tags.
 		/// </summary>
 		[DefaultValue( "" )]
-		[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
+		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
 		public Reference<string> Tags
 		{
 			get { if( _tags.BeginGet() ) Tags = _tags.Get( this ); return _tags.value; }
-			set { if( _tags.BeginSet( ref value ) ) { try { TagsChanged?.Invoke( this ); } finally { _tags.EndSet(); } } }
+			set { if( _tags.BeginSet( this, ref value ) ) { try { TagsChanged?.Invoke( this ); } finally { _tags.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Tags"/> property value changes.</summary>
 		public event Action<Product_Store> TagsChanged;
@@ -174,7 +174,7 @@ namespace NeoAxis
 		public Reference<StoreProductLicense> License
 		{
 			get { if( _license.BeginGet() ) License = _license.Get( this ); return _license.value; }
-			set { if( _license.BeginSet( ref value ) ) { try { LicenseChanged?.Invoke( this ); } finally { _license.EndSet(); } } }
+			set { if( _license.BeginSet( this, ref value ) ) { try { LicenseChanged?.Invoke( this ); } finally { _license.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="License"/> property value changes.</summary>
 		public event Action<Product_Store> LicenseChanged;
@@ -184,7 +184,7 @@ namespace NeoAxis
 		public Reference<double> Cost
 		{
 			get { if( _cost.BeginGet() ) Cost = _cost.Get( this ); return _cost.value; }
-			set { if( _cost.BeginSet( ref value ) ) { try { CostChanged?.Invoke( this ); } finally { _cost.EndSet(); } } }
+			set { if( _cost.BeginSet( this, ref value ) ) { try { CostChanged?.Invoke( this ); } finally { _cost.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Cost"/> property value changes.</summary>
 		public event Action<Product_Store> CostChanged;
@@ -194,7 +194,7 @@ namespace NeoAxis
 		public Reference<string> Version
 		{
 			get { if( _version.BeginGet() ) Version = _version.Get( this ); return _version.value; }
-			set { if( _version.BeginSet( ref value ) ) { try { VersionChanged?.Invoke( this ); } finally { _version.EndSet(); } } }
+			set { if( _version.BeginSet( this, ref value ) ) { try { VersionChanged?.Invoke( this ); } finally { _version.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Version"/> property value changes.</summary>
 		public event Action<Product_Store> VersionChanged;
@@ -204,7 +204,7 @@ namespace NeoAxis
 		public Reference<bool> CreateScreenshots
 		{
 			get { if( _createScreenshots.BeginGet() ) CreateScreenshots = _createScreenshots.Get( this ); return _createScreenshots.value; }
-			set { if( _createScreenshots.BeginSet( ref value ) ) { try { CreateScreenshotsChanged?.Invoke( this ); } finally { _createScreenshots.EndSet(); } } }
+			set { if( _createScreenshots.BeginSet( this, ref value ) ) { try { CreateScreenshotsChanged?.Invoke( this ); } finally { _createScreenshots.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CreateScreenshots"/> property value changes.</summary>
 		public event Action<Product_Store> CreateScreenshotsChanged;
@@ -217,7 +217,7 @@ namespace NeoAxis
 		public Reference<ReferenceValueType_Resource> ProductLogo
 		{
 			get { if( _productLogo.BeginGet() ) ProductLogo = _productLogo.Get( this ); return _productLogo.value; }
-			set { if( _productLogo.BeginSet( ref value ) ) { try { ProductLogoChanged?.Invoke( this ); } finally { _productLogo.EndSet(); } } }
+			set { if( _productLogo.BeginSet( this, ref value ) ) { try { ProductLogoChanged?.Invoke( this ); } finally { _productLogo.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ProductLogo"/> property value changes.</summary>
 		public event Action<Product_Store> ProductLogoChanged;
@@ -228,7 +228,7 @@ namespace NeoAxis
 		public Reference<CreateProductsEnum> CreateProducts
 		{
 			get { if( _createProducts.BeginGet() ) CreateProducts = _createProducts.Get( this ); return _createProducts.value; }
-			set { if( _createProducts.BeginSet( ref value ) ) { try { CreateProductsChanged?.Invoke( this ); } finally { _createProducts.EndSet(); } } }
+			set { if( _createProducts.BeginSet( this, ref value ) ) { try { CreateProductsChanged?.Invoke( this ); } finally { _createProducts.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CreateProducts"/> property value changes.</summary>
 		public event Action<Product_Store> CreateProductsChanged;
@@ -238,12 +238,12 @@ namespace NeoAxis
 		/// The list of C# projects to add code of them. Separated by return.
 		/// </summary>
 		[DefaultValue( addCodeOfProjectsDefault )]
-		[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
+		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
 		[Category( "Code" )]
 		public Reference<string> AddCodeOfProjects
 		{
 			get { if( _addCodeOfProjects.BeginGet() ) AddCodeOfProjects = _addCodeOfProjects.Get( this ); return _addCodeOfProjects.value; }
-			set { if( _addCodeOfProjects.BeginSet( ref value ) ) { try { AddCodeOfProjectsChanged?.Invoke( this ); } finally { _addCodeOfProjects.EndSet(); } } }
+			set { if( _addCodeOfProjects.BeginSet( this, ref value ) ) { try { AddCodeOfProjectsChanged?.Invoke( this ); } finally { _addCodeOfProjects.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AddCodeOfProjects"/> property value changes.</summary>
 		public event Action<Product_Store> AddCodeOfProjectsChanged;
@@ -256,12 +256,12 @@ namespace NeoAxis
 		/// The list of referenced assembly DLL names to compile sources. Separated by return.
 		/// </summary>
 		[DefaultValue( referenceAssembliesDefault )]
-		[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
+		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
 		[Category( "Code" )]
 		public Reference<string> ReferenceAssemblies
 		{
 			get { if( _referenceAssemblies.BeginGet() ) ReferenceAssemblies = _referenceAssemblies.Get( this ); return _referenceAssemblies.value; }
-			set { if( _referenceAssemblies.BeginSet( ref value ) ) { try { ReferenceAssembliesChanged?.Invoke( this ); } finally { _referenceAssemblies.EndSet(); } } }
+			set { if( _referenceAssemblies.BeginSet( this, ref value ) ) { try { ReferenceAssembliesChanged?.Invoke( this ); } finally { _referenceAssemblies.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ReferenceAssemblies"/> property value changes.</summary>
 		public event Action<Product_Store> ReferenceAssembliesChanged;
@@ -279,7 +279,7 @@ namespace NeoAxis
 		//public Reference<bool> ObfuscateCode
 		//{
 		//	get { if( _obfuscateCode.BeginGet() ) ObfuscateCode = _obfuscateCode.Get( this ); return _obfuscateCode.value; }
-		//	set { if( _obfuscateCode.BeginSet( ref value ) ) { try { ObfuscateCodeChanged?.Invoke( this ); } finally { _obfuscateCode.EndSet(); } } }
+		//	set { if( _obfuscateCode.BeginSet( this, ref value ) ) { try { ObfuscateCodeChanged?.Invoke( this ); } finally { _obfuscateCode.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="ObfuscateCode"/> property value changes.</summary>
 		//public event Action<Product_Store> ObfuscateCodeChanged;
@@ -415,7 +415,7 @@ namespace NeoAxis
 			Mesh mesh;
 			Surface surface;
 			Material material;
-			Skybox skybox;
+			Sky sky;
 			ObjectInSpace objectInSpace;
 
 			ImageComponent texture;
@@ -427,6 +427,14 @@ namespace NeoAxis
 
 			public double CameraZoomFactor { get; set; } = 1;
 			public Vector3? CameraLookTo;
+
+			/////////////////////////////////////////
+
+			public enum ImageFormat
+			{
+				Png,
+				Jpeg,
+			}
 
 			/////////////////////////////////////////
 
@@ -520,7 +528,7 @@ namespace NeoAxis
 
 				//double cameraZoomFactor = 1;
 				SphericalDirection cameraDirection = new SphericalDirection( -3.83, -.47 );
-				if( skybox != null )
+				if( sky != null )
 					cameraDirection = new SphericalDirection( 0, 0 );
 
 				var cameraPosition = cameraLookTo - cameraDirection.GetVector() * distance * CameraZoomFactor;
@@ -616,7 +624,8 @@ namespace NeoAxis
 							var d = ( sphere.Center - viewport.CameraSettings.Position ).Length() + sphere.Radius;
 							farDistance = Math.Max( farDistance, d );
 						}
-						pipeline.ShadowFarDistance = farDistance * 1.15;
+						pipeline.ShadowDirectionalDistance = farDistance * 1.15;
+						pipeline.ShadowPointSpotlightDistance = farDistance * 1.15;
 					}
 				}
 			}
@@ -701,7 +710,7 @@ namespace NeoAxis
 				var scene = CreateScene( false );
 				if( surface != null )
 				{
-					SurfaceEditorUtility.CreatePreviewObjects( scene, surface );
+					EditorAPI.SurfaceEditorUtility_CreatePreviewObjects( scene, surface );
 
 					//enable shadows
 					var directionalLight = scene.GetComponent( "Directional Light" ) as Light;
@@ -735,14 +744,14 @@ namespace NeoAxis
 				GenerateGeneral( writeStream, writeImageFormat );// writeRealFileName );
 			}
 
-			public void Generate( Skybox skybox, Stream writeStream, ImageFormat writeImageFormat )//string writeRealFileName )
+			public void Generate( Sky sky, Stream writeStream, ImageFormat writeImageFormat )//string writeRealFileName )
 			{
-				this.skybox = skybox;
+				this.sky = sky;
 				Init();
 
 				var scene = CreateScene( false );
 
-				var instanceInScene = (Skybox)skybox.Clone();
+				var instanceInScene = (Sky)sky.Clone();
 				scene.AddComponent( instanceInScene );
 
 				scene.Enabled = true;
@@ -797,7 +806,6 @@ namespace NeoAxis
 
 			void GenerateGeneral( Stream writeStream, ImageFormat writeImageFormat )// string writeRealFileName )
 			{
-#if !DEPLOY
 				//generate an image
 				{
 					viewport.Update( true );
@@ -806,63 +814,18 @@ namespace NeoAxis
 					viewport.RenderingContext.MultiRenderTarget_DestroyAll();
 					viewport.RenderingContext.DynamicTexture_DestroyAll();
 
-					texture.Result.GetNativeObject( true ).BlitTo( viewport.RenderingContext.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
+					texture.Result.GetNativeObject( true ).BlitTo( (ushort)viewport.RenderingContext.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
 
 					var demandedFrame = textureRead.Result.GetNativeObject( true ).Read( imageData, 0 );
 
 					while( RenderingSystem.CallBgfxFrame() < demandedFrame ) { }
 				}
 
-				//write png
-				using( var bitmap = new Bitmap( imageSizeRender.X, imageSizeRender.Y, imageSizeRender.X * PixelFormatUtility.GetNumElemBytes( imageFormat ), System.Drawing.Imaging.PixelFormat.Format32bppArgb, imageData ) )
-				{
-					Bitmap ResizeImage( Image image, int width, int height )
-					{
-						Bitmap result = new Bitmap( width, height );
-						using( Graphics g = Graphics.FromImage( result ) )
-						{
-							g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-
-							//downscale and clip
-							var offsetX = (int)( (double)width * 0.05 );
-							var offsetY = (int)( (double)height * 0.05 );
-							g.DrawImage( image, -offsetX, -offsetY, width + offsetX * 2, height + offsetY * 2 );
-
-							////fix borders
-							//g.DrawImage( image, -2, -2, width + 4, height + 4 );
-							////g.DrawImage( image, 0, 0, width, height );
-						}
-						return result;
-					}
-
-					using( var resized = ResizeImage( bitmap, imageSizeOutput.X, imageSizeOutput.Y ) )
-					{
-						if( writeImageFormat == ImageFormat.Png )
-							resized.Save( writeStream, ImageFormat.Png );
-						else if( writeImageFormat == ImageFormat.Jpeg )
-						{
-							var encoder = ImageCodecInfo.GetImageEncoders().First( codec => codec.FormatID == ImageFormat.Jpeg.Guid );
-							var parameters = new EncoderParameters( 1 );
-							parameters.Param[ 0 ] = new EncoderParameter( System.Drawing.Imaging.Encoder.Quality, 95L );
-							resized.Save( writeStream, encoder, parameters );
-						}
-
-						//var ext = Path.GetExtension( writeRealFileName );
-						//if( ext == ".png" )
-						//	resized.Save( writeRealFileName, ImageFormat.Png );
-						//else if( ext == ".jpg" )
-						//{
-						//	var encoder = ImageCodecInfo.GetImageEncoders().First( codec => codec.FormatID == ImageFormat.Jpeg.Guid );
-						//	var parameters = new EncoderParameters( 1 );
-						//	parameters.Param[ 0 ] = new EncoderParameter( System.Drawing.Imaging.Encoder.Quality, 95L );
-						//	resized.Save( writeRealFileName, encoder, parameters );
-						//}
-					}
-				}
+				//write image
+				EditorAPI.Product_Store_ImageGenerator_WriteBitmapToStream( writeStream, writeImageFormat, imageSizeRender, imageSizeOutput, imageData );
 
 				DetachAndOrDestroyScene();
 				Shutdown();
-#endif
 			}
 		}
 
@@ -991,7 +954,7 @@ namespace NeoAxis
 								{
 									var t2 = t.Substring( 0, t.Length - 2 );
 
-									again:;
+again:;
 									foreach( var name in toInclude.Keys )
 									{
 										if( name.Length >= t2.Length && name.Substring( 0, t2.Length ) == t2 )
@@ -1210,6 +1173,7 @@ namespace NeoAxis
 
 		public override void BuildFunction( ProductBuildInstance buildInstance )
 		{
+#if !DEPLOY
 			var authorEmail = "";
 			var authorHash = "";
 			{
@@ -1432,6 +1396,7 @@ namespace NeoAxis
 
 			if( !buildInstance.Run )
 				ShowSuccessScreenNotification();
+#endif
 		}
 
 		[Browsable( false )]
@@ -1536,7 +1501,7 @@ namespace NeoAxis
 				} );
 			}
 
-			if( extension == ".skybox" )
+			if( extension == ".sky" || extension == ".skybox" )
 			{
 				var block = TextBlockUtility.LoadFromVirtualFile( virtualFileName );
 
@@ -1567,6 +1532,7 @@ namespace NeoAxis
 
 		bool ProjectItemBuildArchive( ProductBuildInstance buildInstance, string specifiedFile, string authorEmail, List<string> filesToUpload )
 		{
+#if !DEPLOY
 			//get info
 
 			var license = EnumUtility.GetValueDisplayName( License.Value );
@@ -1742,7 +1708,7 @@ namespace NeoAxis
 
 									var entry = archive.CreateEntry( "_ProductLogo.png" );
 									using( var entryStream = entry.Open() )
-										generator.Generate( objectInSpace, entryStream, ImageFormat.Png );
+										generator.Generate( objectInSpace, entryStream, ImageGenerator.ImageFormat.Png );
 								}
 							}
 							else if( ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Surfaces ) )
@@ -1775,7 +1741,7 @@ namespace NeoAxis
 
 										var entry = archive.CreateEntry( "_ProductLogo.png" );
 										using( var entryStream = entry.Open() )
-											generator.Generate( surface, entryStream, ImageFormat.Png );
+											generator.Generate( surface, entryStream, ImageGenerator.ImageFormat.Png );
 										//generator.Generate( surface, destFileName + ".logo.png" );
 									}
 								}
@@ -1815,7 +1781,7 @@ namespace NeoAxis
 
 											var entry = archive.CreateEntry( "_ProductLogo.png" );
 											using( var entryStream = entry.Open() )
-												generator.Generate( mesh, entryStream, ImageFormat.Png );
+												generator.Generate( mesh, entryStream, ImageGenerator.ImageFormat.Png );
 											//generator.Generate( mesh, destFileName + ".logo.png" );
 
 											//!!!!если не делаем скриншоты, тогда не будет
@@ -1858,7 +1824,7 @@ namespace NeoAxis
 
 										var entry = archive.CreateEntry( "_ProductLogo.png" );
 										using( var entryStream = entry.Open() )
-											generator.Generate( material, entryStream, ImageFormat.Png );
+											generator.Generate( material, entryStream, ImageGenerator.ImageFormat.Png );
 										//generator.Generate( material, destFileName + ".logo.png" );
 									}
 								}
@@ -1867,7 +1833,7 @@ namespace NeoAxis
 							{
 								//skybox
 
-								var resourceType = ResourceManager.GetTypeByName( "Skybox" );
+								var resourceType = ResourceManager.GetTypeByName( "Sky" );
 								var importExtensions = new ESet<string>();
 								foreach( var e in resourceType.FileExtensions )
 									importExtensions.AddWithCheckAlreadyContained( "." + e );
@@ -1886,14 +1852,14 @@ namespace NeoAxis
 
 								if( importVirtualFileNames.Count == 1 )
 								{
-									var skybox = ResourceManager.LoadResource<Skybox>( importVirtualFileNames[ 0 ] );
-									if( skybox != null )
+									var sky = ResourceManager.LoadResource<Sky>( importVirtualFileNames[ 0 ] );
+									if( sky != null )
 									{
 										var generator = new ImageGenerator();
 
 										var entry = archive.CreateEntry( "_ProductLogo.jpg" );
 										using( var entryStream = entry.Open() )
-											generator.Generate( skybox, entryStream, ImageFormat.Jpeg );
+											generator.Generate( sky, entryStream, ImageGenerator.ImageFormat.Jpeg );
 										//generator.Generate( skybox, destFileName + ".logo.jpg" );// png" );
 									}
 								}
@@ -2284,6 +2250,7 @@ namespace NeoAxis
 				buildInstance.State = ProductBuildInstance.StateEnum.Error;
 				return false;
 			}
+#endif
 
 			return true;
 		}
@@ -2310,6 +2277,11 @@ namespace NeoAxis
 			{
 				var virtualSourceDirectory = Path.GetDirectoryName( ComponentUtility.GetOwnedFileNameOfComponent( this ) );
 				//!!!!другие расширения тоже
+				foreach( var file in VirtualDirectory.GetFiles( virtualSourceDirectory, "*.sky", SearchOption.AllDirectories ) )
+				{
+					if( !ProjectItemBuildArchive( buildInstance, file, authorEmail, filesToUpload ) )
+						return false;
+				}
 				foreach( var file in VirtualDirectory.GetFiles( virtualSourceDirectory, "*.skybox", SearchOption.AllDirectories ) )
 				{
 					if( !ProjectItemBuildArchive( buildInstance, file, authorEmail, filesToUpload ) )
@@ -2380,4 +2352,4 @@ namespace NeoAxis
 		}
 	}
 }
-#endif
+//#endif

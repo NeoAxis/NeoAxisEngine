@@ -190,7 +190,7 @@ namespace NeoAxis
 			//args.Handled = handled;
 
 			//double click
-			var time = GetSystemTime();
+			var time = EngineApp.GetSystemTime();//GetSystemTime();
 			if( time - lastMouseButtonClickTimeForDoubleClickDetection[ (int)button ] < 0.5 )
 			{
 				bool handled2 = false;
@@ -525,6 +525,11 @@ namespace NeoAxis
 		public override bool IsFocused()
 		{
 			return coreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground;
+		}
+
+		public override void SetWindowVisible( bool value )
+		{
+			//!!!!impl
 		}
 	}
 }

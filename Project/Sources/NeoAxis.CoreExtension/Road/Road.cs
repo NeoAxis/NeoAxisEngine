@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using NeoAxis.Editor;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 
 //!!!!
@@ -24,6 +25,8 @@ using System.Linq;
 //aliasing in markup when looking across
 //intervals, modifiers on curve, on lane
 //each connector for each lane?
+
+//don't create walking markings when no crossing
 
 
 namespace NeoAxis
@@ -61,7 +64,7 @@ namespace NeoAxis
 		public Reference<RoadType> RoadType
 		{
 			get { if( _roadType.BeginGet() ) RoadType = _roadType.Get( this ); return _roadType.value; }
-			set { if( _roadType.BeginSet( ref value ) ) { try { RoadTypeChanged?.Invoke( this ); DataWasChanged(); } finally { _roadType.EndSet(); } } }
+			set { if( _roadType.BeginSet( this, ref value ) ) { try { RoadTypeChanged?.Invoke( this ); DataWasChanged(); } finally { _roadType.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RoadType"/> property value changes.</summary>
 		public event Action<Road> RoadTypeChanged;
@@ -76,7 +79,7 @@ namespace NeoAxis
 		public Reference<int> Lanes
 		{
 			get { if( _lanes.BeginGet() ) Lanes = _lanes.Get( this ); return _lanes.value; }
-			set { if( _lanes.BeginSet( ref value ) ) { try { LanesChanged?.Invoke( this ); DataWasChanged(); } finally { _lanes.EndSet(); } } }
+			set { if( _lanes.BeginSet( this, ref value ) ) { try { LanesChanged?.Invoke( this ); DataWasChanged(); } finally { _lanes.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Lanes"/> property value changes.</summary>
 		public event Action<Road> LanesChanged;
@@ -90,7 +93,7 @@ namespace NeoAxis
 		public Reference<bool> RoadCollision
 		{
 			get { if( _roadCollision.BeginGet() ) RoadCollision = _roadCollision.Get( this ); return _roadCollision.value; }
-			set { if( _roadCollision.BeginSet( ref value ) ) { try { RoadCollisionChanged?.Invoke( this ); DataWasChanged(); } finally { _roadCollision.EndSet(); } } }
+			set { if( _roadCollision.BeginSet( this, ref value ) ) { try { RoadCollisionChanged?.Invoke( this ); DataWasChanged(); } finally { _roadCollision.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RoadCollision"/> property value changes.</summary>
 		public event Action<Road> RoadCollisionChanged;
@@ -105,7 +108,7 @@ namespace NeoAxis
 		public Reference<ColorValue> ColorMultiplier
 		{
 			get { if( _colorMultiplier.BeginGet() ) ColorMultiplier = _colorMultiplier.Get( this ); return _colorMultiplier.value; }
-			set { if( _colorMultiplier.BeginSet( ref value ) ) { try { ColorMultiplierChanged?.Invoke( this ); DataWasChanged(); } finally { _colorMultiplier.EndSet(); } } }
+			set { if( _colorMultiplier.BeginSet( this, ref value ) ) { try { ColorMultiplierChanged?.Invoke( this ); DataWasChanged(); } finally { _colorMultiplier.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ColorMultiplier"/> property value changes.</summary>
 		public event Action<Road> ColorMultiplierChanged;
@@ -119,7 +122,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayRoadwayBorderInEditor
 		{
 			get { if( _displayRoadwayBorderInEditor.BeginGet() ) DisplayRoadwayBorderInEditor = _displayRoadwayBorderInEditor.Get( this ); return _displayRoadwayBorderInEditor.value; }
-			set { if( _displayRoadwayBorderInEditor.BeginSet( ref value ) ) { try { DisplayRoadwayBorderInEditorChanged?.Invoke( this ); } finally { _displayRoadwayBorderInEditor.EndSet(); } } }
+			set { if( _displayRoadwayBorderInEditor.BeginSet( this, ref value ) ) { try { DisplayRoadwayBorderInEditorChanged?.Invoke( this ); } finally { _displayRoadwayBorderInEditor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayRoadwayBorderInEditor"/> property value changes.</summary>
 		public event Action<Road> DisplayRoadwayBorderInEditorChanged;
@@ -133,7 +136,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayRoadwayBorderInSimulation
 		{
 			get { if( _displayRoadwayBorderInSimulation.BeginGet() ) DisplayRoadwayBorderInSimulation = _displayRoadwayBorderInSimulation.Get( this ); return _displayRoadwayBorderInSimulation.value; }
-			set { if( _displayRoadwayBorderInSimulation.BeginSet( ref value ) ) { try { DisplayRoadwayBorderInSimulationChanged?.Invoke( this ); } finally { _displayRoadwayBorderInSimulation.EndSet(); } } }
+			set { if( _displayRoadwayBorderInSimulation.BeginSet( this, ref value ) ) { try { DisplayRoadwayBorderInSimulationChanged?.Invoke( this ); } finally { _displayRoadwayBorderInSimulation.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayRoadwayBorderInSimulation"/> property value changes.</summary>
 		public event Action<Road> DisplayRoadwayBorderInSimulationChanged;
@@ -147,7 +150,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayLaneCurvesInEditor
 		{
 			get { if( _displayLaneCurvesInEditor.BeginGet() ) DisplayLaneCurvesInEditor = _displayLaneCurvesInEditor.Get( this ); return _displayLaneCurvesInEditor.value; }
-			set { if( _displayLaneCurvesInEditor.BeginSet( ref value ) ) { try { DisplayLaneCurvesInEditorChanged?.Invoke( this ); } finally { _displayLaneCurvesInEditor.EndSet(); } } }
+			set { if( _displayLaneCurvesInEditor.BeginSet( this, ref value ) ) { try { DisplayLaneCurvesInEditorChanged?.Invoke( this ); } finally { _displayLaneCurvesInEditor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayLaneCurvesInEditor"/> property value changes.</summary>
 		public event Action<Road> DisplayLaneCurvesInEditorChanged;
@@ -161,7 +164,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayLaneCurvesInSimulation
 		{
 			get { if( _displayLaneCurvesInSimulation.BeginGet() ) DisplayLaneCurvesInSimulation = _displayLaneCurvesInSimulation.Get( this ); return _displayLaneCurvesInSimulation.value; }
-			set { if( _displayLaneCurvesInSimulation.BeginSet( ref value ) ) { try { DisplayLaneCurvesInSimulationChanged?.Invoke( this ); } finally { _displayLaneCurvesInSimulation.EndSet(); } } }
+			set { if( _displayLaneCurvesInSimulation.BeginSet( this, ref value ) ) { try { DisplayLaneCurvesInSimulationChanged?.Invoke( this ); } finally { _displayLaneCurvesInSimulation.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayLaneCurvesInSimulation"/> property value changes.</summary>
 		public event Action<Road> DisplayLaneCurvesInSimulationChanged;
@@ -175,7 +178,7 @@ namespace NeoAxis
 		public Reference<RoadPoint.ModifiersEnum> PointModifiers
 		{
 			get { if( _pointModifiers.BeginGet() ) PointModifiers = _pointModifiers.Get( this ); return _pointModifiers.value; }
-			set { if( _pointModifiers.BeginSet( ref value ) ) { try { PointModifiersChanged?.Invoke( this ); DataWasChanged(); } finally { _pointModifiers.EndSet(); } } }
+			set { if( _pointModifiers.BeginSet( this, ref value ) ) { try { PointModifiersChanged?.Invoke( this ); DataWasChanged(); } finally { _pointModifiers.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PointModifiers"/> property value changes.</summary>
 		public event Action<Road> PointModifiersChanged;
@@ -187,7 +190,7 @@ namespace NeoAxis
 		//public Reference<double> PointOverpassSupportHeight
 		//{
 		//	get { if( _pointOverpassSupportHeight.BeginGet() ) PointOverpassSupportHeight = _pointOverpassSupportHeight.Get( this ); return _pointOverpassSupportHeight.value; }
-		//	set { if( _pointOverpassSupportHeight.BeginSet( ref value ) ) { try { PointOverpassSupportHeightChanged?.Invoke( this ); DataWasChanged(); } finally { _pointOverpassSupportHeight.EndSet(); } } }
+		//	set { if( _pointOverpassSupportHeight.BeginSet( this, ref value ) ) { try { PointOverpassSupportHeightChanged?.Invoke( this ); DataWasChanged(); } finally { _pointOverpassSupportHeight.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="PointOverpassSupportHeight"/> property value changes.</summary>
 		//public event Action<Road> PointOverpassSupportHeightChanged;
@@ -201,7 +204,7 @@ namespace NeoAxis
 		//public Reference<RoadPoint.SpecialtyEnum> Specialty
 		//{
 		//	get { if( _specialty.BeginGet() ) Specialty = _specialty.Get( this ); return _specialty.value; }
-		//	set { if( _specialty.BeginSet( ref value ) ) { try { SpecialtyChanged?.Invoke( this ); DataWasChanged(); } finally { _specialty.EndSet(); } } }
+		//	set { if( _specialty.BeginSet( this, ref value ) ) { try { SpecialtyChanged?.Invoke( this ); DataWasChanged(); } finally { _specialty.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="Specialty"/> property value changes.</summary>
 		//public event Action<Road> SpecialtyChanged;
@@ -213,7 +216,7 @@ namespace NeoAxis
 		//public Reference<double> OverpassSupportHeight
 		//{
 		//	get { if( _overpassSupportHeight.BeginGet() ) OverpassSupportHeight = _overpassSupportHeight.Get( this ); return _overpassSupportHeight.value; }
-		//	set { if( _overpassSupportHeight.BeginSet( ref value ) ) { try { OverpassSupportHeightChanged?.Invoke( this ); } finally { _overpassSupportHeight.EndSet(); } } }
+		//	set { if( _overpassSupportHeight.BeginSet( this, ref value ) ) { try { OverpassSupportHeightChanged?.Invoke( this ); } finally { _overpassSupportHeight.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="OverpassSupportHeight"/> property value changes.</summary>
 		//public event Action<Road> OverpassSupportHeightChanged;
@@ -227,7 +230,7 @@ namespace NeoAxis
 		public Reference<double> Age
 		{
 			get { if( _age.BeginGet() ) Age = _age.Get( this ); return _age.value; }
-			set { if( _age.BeginSet( ref value ) ) { try { AgeChanged?.Invoke( this ); NeedUpdateVisualData(); } finally { _age.EndSet(); } } }
+			set { if( _age.BeginSet( this, ref value ) ) { try { AgeChanged?.Invoke( this ); NeedUpdateVisualData(); } finally { _age.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Age"/> property value changes.</summary>
 		public event Action<Road> AgeChanged;
@@ -243,6 +246,8 @@ namespace NeoAxis
 
 		public class RoadData
 		{
+			bool disposed;
+
 			public Road Owner;
 			public Scene Scene;
 
@@ -262,8 +267,15 @@ namespace NeoAxis
 			public RoadModifier.PredefinedModifiersEnum PredefinedModifiers;
 			//public double OverpassSupportHeight;
 
-			CurveData[] BorderCurves;
-			CurveData[] LaneCurves;
+			CurveData[] borderCurves;
+			CurveData[] laneCurves;
+
+			Bounds? bounds;
+
+			//!!!!lanes
+			OctreeContainer closestCurveTimeToPositionOctree;
+			Bounds[] closestCurveTimeToPositionOctreeBounds;
+			RangeF[] closestCurveTimeToPositionOctreeTimeIntervals;
 
 			/////////////////////
 
@@ -292,6 +304,13 @@ namespace NeoAxis
 			{
 				Owner = owner;
 				Scene = Owner.ParentScene;
+			}
+
+			internal void Dispose()
+			{
+				closestCurveTimeToPositionOctree?.Dispose();
+				closestCurveTimeToPositionOctree = null;
+				disposed = true;
 			}
 
 			internal void GenerateCurveData()
@@ -392,40 +411,454 @@ namespace NeoAxis
 				}
 			}
 
-			public void GetClosestCurveTimeToPosition( Vector3 position, double timeStep, out double timeOnCurve )
+			//public void GetClosestCurveTimeToPosition( Vector3 position, double timeStep, out double timeOnCurve )
+			//{
+
+			//	//!!!!с какой стороны двигаться и как долго
+
+			//	//!!!!можно было бы детализировать на отрезке. даже рекурсивно
+
+			//	//!!!!slowly
+
+
+			//	var closestTime = 0.0;
+			//	var closestDistanceSquared = double.MaxValue;
+
+
+			//	var maxTime = LastPoint.TimeOnCurve;
+			//	var maxTime2 = maxTime + timeStep;
+
+			//	for( double time = 0; time <= maxTime2; time += timeStep )
+			//	{
+			//		var time2 = time;
+			//		if( time2 > maxTime )
+			//			time2 = maxTime;
+
+			//		var trPosition = GetPositionByTime( time2 );
+
+			//		var distanceSquared = ( trPosition - position ).LengthSquared();
+			//		if( distanceSquared < closestDistanceSquared )
+			//		{
+			//			closestTime = time;
+			//			closestDistanceSquared = distanceSquared;
+			//		}
+			//	}
+
+			//	timeOnCurve = closestTime;
+			//}
+
+			[MethodImpl( (MethodImplOptions)512 )]
+			public bool GetClosestCurveTimeToPosition( Vector3 position, double maxDistance, double distanceAccuracyThreshold, out double timeOnCurve )
 			{
 
-				//!!!!с какой стороны двигаться и как долго
+				//!!!!опционально указывать lane
 
-				//!!!!можно было бы детализировать на отрезке. даже рекурсивно
+				//!!!!can add interpolation
 
-				//!!!!slowly
+				//!!!!maybe do several iteractions with smallar maxDistance
 
-
-				var closestTime = 0.0;
-				var closestDistanceSquared = double.MaxValue;
-
-
-				var maxTime = LastPoint.TimeOnCurve;
-				var maxTime2 = maxTime + timeStep;
-
-				for( double time = 0; time <= maxTime2; time += timeStep )
+				if( !disposed )
 				{
-					var time2 = time;
-					if( time2 > maxTime )
-						time2 = maxTime;
-
-					var trPosition = GetPositionByTime( time2 );
-
-					var distanceSquared = ( trPosition - position ).LengthSquared();
-					if( distanceSquared < closestDistanceSquared )
+					//generate octree
+					if( closestCurveTimeToPositionOctree == null )
 					{
-						closestTime = time;
-						closestDistanceSquared = distanceSquared;
+
+						//!!!!good?
+						var stepMultiplier = RoadType.WayToUse.Value == RoadType.WayToUseEnum.Driving ? 16.0 : 4.0;
+
+
+						var resultBounds = new List<Bounds>( 256 );
+						var resultIntervals = new List<RangeF>( 256 );
+
+						var initSettings = new OctreeContainer.InitSettings();
+						initSettings.InitialOctreeBounds = GetBounds().GetExpanded( 0.1 );
+						closestCurveTimeToPositionOctree = new OctreeContainer( initSettings );
+
+						var timeSteps = GetCurveTimeSteps( stepMultiplier, null );
+
+						for( int n = 0; n < timeSteps.Count - 1; n++ )
+						{
+							var timeFrom = timeSteps[ n ];
+							var timeTo = timeSteps[ n + 1 ];
+
+							var timeLength = timeTo - timeFrom;
+							var timeStep = timeLength / 10;
+
+							GetPositionByTime( timeFrom, out var pFrom );
+							var b = new Bounds( pFrom );
+							//var b = new Bounds( GetPositionByTime( timeFrom ) );
+							for( var time = timeFrom + timeStep; time <= timeTo + 0.00001; time += timeStep )
+							{
+								var t = time;
+								if( t > timeTo )
+									t = timeTo;
+								GetPositionByTime( t, out var p );
+								b.Add( ref p );
+								//b.Add( GetPositionByTime( t ) );
+							}
+
+							closestCurveTimeToPositionOctree.AddObject( b, 1 );
+							resultBounds.Add( b );
+							resultIntervals.Add( new Range( timeFrom, timeTo ).ToRangeF() );
+						}
+
+						closestCurveTimeToPositionOctreeBounds = resultBounds.ToArray();
+						closestCurveTimeToPositionOctreeTimeIntervals = resultIntervals.ToArray();
+
+
+
+						//void AddInterval( Bounds b, RangeF timeInterval )
+						//{
+						//	closestCurveTimeToPositionOctree.AddObject( b, 1 );
+						//	resultIntervals.Add( timeInterval );
+						//}
+
+						////foreach( var point in Points )
+						////	AddPoint( point.Transform.Position, point.TimeOnCurve );
+
+						//var timeIntervals = new Queue<Range>();
+						//for( int n = 0; n < Points.Length - 1; n++ )
+						//	timeIntervals.Enqueue( new Range( Points[ n ].TimeOnCurve, Points[ n + 1 ].TimeOnCurve ) );
+
+						//while( timeIntervals.Count != 0 )
+						//{
+						//	var timeInterval = timeIntervals.Dequeue();
+
+						//	var p1 = GetPositionByTime( timeInterval.Minimum );
+						//	var p2 = GetPositionByTime( timeInterval.Maximum );
+
+						//	if( ( p2 - p1 ).LengthSquared() > stepLength * stepLength )
+						//	{
+						//		var centerTime = timeInterval.GetCenter();
+						//		var centerPosition = GetPositionByTime( centerTime );
+
+						//		AddPoint( centerPosition, centerTime );
+
+						//		timeIntervals.Enqueue( new Range( timeInterval.Minimum, centerTime ) );
+						//		timeIntervals.Enqueue( new Range( centerTime, timeInterval.Maximum ) );
+						//	}
+						//}
+
+						//closestCurveTimeToPositionOctreeTimeIntervals = resultIntervals.ToArray();
+
+
+
+
+						//void AddPoint( Vector3 pos, double time )
+						//{
+						//	closestCurveTimeToPositionOctree.AddObject( new Bounds( pos ), 1 );
+						//	resultPoints.Add( (float)time );
+						//}
+
+						//foreach( var point in Points )
+						//	AddPoint( point.Transform.Position, point.TimeOnCurve );
+
+						//var timeIntervals = new Queue<Range>();
+						//for( int n = 0; n < Points.Length - 1; n++ )
+						//	timeIntervals.Enqueue( new Range( Points[ n ].TimeOnCurve, Points[ n + 1 ].TimeOnCurve ) );
+
+						//while( timeIntervals.Count != 0 )
+						//{
+						//	var timeInterval = timeIntervals.Dequeue();
+
+						//	var p1 = GetPositionByTime( timeInterval.Minimum );
+						//	var p2 = GetPositionByTime( timeInterval.Maximum );
+
+						//	if( ( p2 - p1 ).LengthSquared() > stepLength * stepLength )
+						//	{
+						//		var centerTime = timeInterval.GetCenter();
+						//		var centerPosition = GetPositionByTime( centerTime );
+
+						//		AddPoint( centerPosition, centerTime );
+
+						//		timeIntervals.Enqueue( new Range( timeInterval.Minimum, centerTime ) );
+						//		timeIntervals.Enqueue( new Range( centerTime, timeInterval.Maximum ) );
+						//	}
+						//}
+
+						//closestCurveTimeToPositionOctreePoints = resultPoints.ToArray();
+					}
+
+					//get from octree
+					{
+						var closestTime = 0.0;
+						var closestDistanceSquared = double.MaxValue;
+
+						var sphere = new Sphere( position, maxDistance );
+
+						var indexes = closestCurveTimeToPositionOctree.GetObjects( sphere, 1, OctreeContainer.ModeEnum.All );
+						if( indexes.Length != 0 )
+						{
+							foreach( var intervalIndex in indexes )
+							{
+								ref var bounds = ref closestCurveTimeToPositionOctreeBounds[ intervalIndex ];
+								if( bounds.GetPointDistanceSquared( ref position ) < closestDistanceSquared )
+								{
+									var timeInterval = closestCurveTimeToPositionOctreeTimeIntervals[ intervalIndex ];
+									var timeFrom = timeInterval.Minimum;
+									var timeTo = timeInterval.Maximum;
+
+									GetPositionByTime( timeFrom, out var p1 );
+									GetPositionByTime( timeTo, out var p2 );
+									var distanceSquared1 = ( p1 - position ).LengthSquared();
+									var distanceSquared2 = ( p2 - position ).LengthSquared();
+
+									if( distanceSquared1 < closestDistanceSquared )
+									{
+										closestTime = timeFrom;
+										closestDistanceSquared = distanceSquared1;
+									}
+									if( distanceSquared2 < closestDistanceSquared )
+									{
+										closestTime = timeTo;
+										closestDistanceSquared = distanceSquared2;
+									}
+
+									var length = bounds.GetSize().Length() * 1.1;
+									if( length != 0 )
+									{
+										var steps = (int)( length / distanceAccuracyThreshold ) + 1;
+
+										var timeLength = timeTo - timeFrom;
+										var timeStep = timeLength / steps;
+
+										//for( var time = timeFrom; time <= timeTo + 0.00001; time += timeStep )
+										for( var time = timeFrom + timeStep; time < timeTo; time += timeStep )
+										{
+											var t = time;
+											//if( t > timeTo )
+											//	break;
+
+											GetPositionByTime( t, out var p );
+											var distanceSquared = ( p - position ).LengthSquared();
+											if( distanceSquared < closestDistanceSquared )
+											{
+												closestTime = t;
+												closestDistanceSquared = distanceSquared;
+											}
+										}
+									}
+
+									//var projected = MathAlgorithms.ProjectPointToLine( p1, p2, position );
+
+									//var b = new Bounds( p1 );
+									//b.Add( ref p2 );
+									//b.Expand( 0.001 );
+									//if( b.Contains( ref projected ) && projected != p1 )
+									//{
+									//	var d1 = ( projected - p1 ).Length();
+									//	var total = ( p2 - p1 ).Length();
+									//	if( total == 0 )
+									//		total = 0.000001;
+									//	var scale = MathEx.Saturate( d1 / total );
+									//	var interpolatedTime = MathEx.Lerp( timeInterval.Minimum, timeInterval.Maximum, scale );
+
+									//	{
+									//		var distanceSquared = ( projected - position ).LengthSquared();
+									//		if( distanceSquared < closestDistanceSquared )
+									//		{
+									//			closestTime = interpolatedTime;
+									//			closestDistanceSquared = distanceSquared;
+									//		}
+									//	}
+
+									//	//{
+									//	//	var p = GetPositionByTime( interpolatedTime );
+									//	//	var distanceSquared = ( p - position ).LengthSquared();
+									//	//	if( distanceSquared < closestDistanceSquared )
+									//	//	{
+									//	//		closestTime = interpolatedTime;
+									//	//		closestDistanceSquared = distanceSquared;
+									//	//	}
+									//	//}
+									//}
+
+
+
+									//if( interpolationSteps > 1 )
+									//{
+									//	var timeFrom = timeInterval.Minimum;
+									//	var timeTo = timeInterval.Maximum;
+
+									//	var timeLength = timeTo - timeFrom;
+									//	var timeStep = timeLength / interpolationSteps;
+
+									//	for( var time = timeFrom + timeStep; time <= timeTo + 0.00001; time += timeStep )
+									//	{
+									//		var t = time;
+									//		if( t > timeTo )
+									//			t = timeTo;
+
+									//		var p = GetPositionByTime( t );
+									//		var distanceSquared = ( p - position ).LengthSquared();
+									//		if( distanceSquared < closestDistanceSquared )
+									//		{
+									//			closestTime = t;
+									//			closestDistanceSquared = distanceSquared;
+									//		}
+									//	}
+
+
+									//	//var projected = MathAlgorithms.ProjectPointToLine( p1, p2, position );
+
+									//	//var b = new Bounds( p1 );
+									//	//b.Add( ref p2 );
+									//	//b.Expand( 0.001 );
+									//	//if( b.Contains( ref projected ) && projected != p1 )
+									//	//{
+									//	//	var d1 = ( projected - p1 ).Length();
+									//	//	var total = ( p2 - p1 ).Length();
+									//	//	if( total == 0 )
+									//	//		total = 0.000001;
+									//	//	var scale = MathEx.Saturate( d1 / total );
+									//	//	var interpolatedTime = MathEx.Lerp( timeInterval.Minimum, timeInterval.Maximum, scale );
+
+									//	//	{
+									//	//		var distanceSquared = ( projected - position ).LengthSquared();
+									//	//		if( distanceSquared < closestDistanceSquared )
+									//	//		{
+									//	//			closestTime = interpolatedTime;
+									//	//			closestDistanceSquared = distanceSquared;
+									//	//		}
+									//	//	}
+
+									//	//	//{
+									//	//	//	var p = GetPositionByTime( interpolatedTime );
+									//	//	//	var distanceSquared = ( p - position ).LengthSquared();
+									//	//	//	if( distanceSquared < closestDistanceSquared )
+									//	//	//	{
+									//	//	//		closestTime = interpolatedTime;
+									//	//	//		closestDistanceSquared = distanceSquared;
+									//	//	//	}
+									//	//	//}
+									//	//}
+
+									//}
+									//else
+									//{
+									//	var p1 = GetPositionByTime( timeInterval.Minimum );
+									//	var p2 = GetPositionByTime( timeInterval.Maximum );
+									//	var distanceSquared1 = ( p1 - position ).LengthSquared();
+									//	var distanceSquared2 = ( p2 - position ).LengthSquared();
+
+									//	if( distanceSquared1 < closestDistanceSquared )
+									//	{
+									//		closestTime = timeInterval.Minimum;
+									//		closestDistanceSquared = distanceSquared1;
+									//	}
+									//	if( distanceSquared2 < closestDistanceSquared )
+									//	{
+									//		closestTime = timeInterval.Maximum;
+									//		closestDistanceSquared = distanceSquared2;
+									//	}
+									//}
+								}
+							}
+
+
+							//var p1 = GetPositionByTime( timeInterval.Minimum );
+							//var p2 = GetPositionByTime( timeInterval.Maximum );
+							//var distanceSquared1 = ( p1 - position ).LengthSquared();
+							//var distanceSquared2 = ( p2 - position ).LengthSquared();
+
+
+							//if( distanceSquared1 < closestDistanceSquared || distanceSquared2 < closestDistanceSquared )
+							//{
+							//	if( interpolationSteps > 1 )
+							//	{
+							//		var timeFrom = timeInterval.Minimum;
+							//		var timeTo = timeInterval.Maximum;
+
+							//		var timeLength = timeTo - timeFrom;
+							//		var timeStep = timeLength / interpolationSteps;
+
+							//		for( var time = timeFrom + timeStep; time <= timeTo + 0.00001; time += timeStep )
+							//		{
+							//			var t = time;
+							//			if( t > timeTo )
+							//				t = timeTo;
+
+							//			var p = GetPositionByTime( t );
+							//			var distanceSquared = ( p - position ).LengthSquared();
+							//			if( distanceSquared < closestDistanceSquared )
+							//			{
+							//				closestTime = t;
+							//				closestDistanceSquared = distanceSquared;
+							//			}
+							//		}
+
+
+							//		//var projected = MathAlgorithms.ProjectPointToLine( p1, p2, position );
+
+							//		//var b = new Bounds( p1 );
+							//		//b.Add( ref p2 );
+							//		//b.Expand( 0.001 );
+							//		//if( b.Contains( ref projected ) && projected != p1 )
+							//		//{
+							//		//	var d1 = ( projected - p1 ).Length();
+							//		//	var total = ( p2 - p1 ).Length();
+							//		//	if( total == 0 )
+							//		//		total = 0.000001;
+							//		//	var scale = MathEx.Saturate( d1 / total );
+							//		//	var interpolatedTime = MathEx.Lerp( timeInterval.Minimum, timeInterval.Maximum, scale );
+
+							//		//	{
+							//		//		var distanceSquared = ( projected - position ).LengthSquared();
+							//		//		if( distanceSquared < closestDistanceSquared )
+							//		//		{
+							//		//			closestTime = interpolatedTime;
+							//		//			closestDistanceSquared = distanceSquared;
+							//		//		}
+							//		//	}
+
+							//		//	//{
+							//		//	//	var p = GetPositionByTime( interpolatedTime );
+							//		//	//	var distanceSquared = ( p - position ).LengthSquared();
+							//		//	//	if( distanceSquared < closestDistanceSquared )
+							//		//	//	{
+							//		//	//		closestTime = interpolatedTime;
+							//		//	//		closestDistanceSquared = distanceSquared;
+							//		//	//	}
+							//		//	//}
+							//		//}
+							//	}
+							//	else
+							//	{
+							//		if( distanceSquared1 < closestDistanceSquared )
+							//		{
+							//			closestTime = timeInterval.Minimum;
+							//			closestDistanceSquared = distanceSquared1;
+							//		}
+							//		if( distanceSquared2 < closestDistanceSquared )
+							//		{
+							//			closestTime = timeInterval.Maximum;
+							//			closestDistanceSquared = distanceSquared2;
+							//		}
+							//	}
+							//}
+
+
+							//foreach( var pointIndex in indexes )
+							//{
+							//	var pointTime = closestCurveTimeToPositionOctreePoints[ pointIndex ];
+							//	var pointPosition = GetPositionByTime( pointTime );
+
+							//	var distanceSquared = ( pointPosition - position ).LengthSquared();
+							//	if( distanceSquared < closestDistanceSquared )
+							//	{
+							//		closestTime = pointTime;
+							//		closestDistanceSquared = distanceSquared;
+							//	}
+							//}
+
+							timeOnCurve = closestTime;
+							return true;
+						}
 					}
 				}
 
-				timeOnCurve = closestTime;
+				timeOnCurve = 0;
+				return false;
 			}
 
 			//public bool GetCurveTimeByPosition( Vector3 position, double maxDistanceToCurve, out double timeOnCurve )
@@ -469,28 +902,58 @@ namespace NeoAxis
 			//	return false;
 			//}
 
-			public Vector3 GetPositionByTime( double time )
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			public void GetPositionByTime( double time, out Vector3 result )
 			{
-				return PositionCurve.CalculateValueByTime( time );
+				PositionCurve.CalculateValueByTime( time, out result );
 			}
 
-			public Vector3 GetUpByTime( double time )
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			public void GetUpByTime( double time, out Vector3 result )
 			{
-				return UpCurve.CalculateValueByTime( time );
+				UpCurve.CalculateValueByTime( time, out result );
 			}
 
-			public Vector3 GetDirectionByTime( double time )
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			public void GetDirectionByTime( double time, out Vector3 result )
 			{
-				Vector3 dir;
+				//!!!!0.01
 
 				if( time < 0.01 )
-					dir = GetPositionByTime( 0.01 ) - GetPositionByTime( 0 );
+				{
+					GetPositionByTime( 0.01, out var v1 );
+					GetPositionByTime( 0, out var v2 );
+					Vector3.Subtract( ref v1, ref v2, out result );
+					//dir = GetPositionByTime( 0.01 ) - GetPositionByTime( 0 );
+				}
 				else if( time > LastPoint.TimeOnCurve - 0.01 )
-					dir = GetPositionByTime( LastPoint.TimeOnCurve ) - GetPositionByTime( LastPoint.TimeOnCurve - 0.01 );
+				{
+					GetPositionByTime( LastPoint.TimeOnCurve, out var v1 );
+					GetPositionByTime( LastPoint.TimeOnCurve - 0.01, out var v2 );
+					Vector3.Subtract( ref v1, ref v2, out result );
+					//dir = GetPositionByTime( LastPoint.TimeOnCurve ) - GetPositionByTime( LastPoint.TimeOnCurve - 0.01 );
+				}
 				else
-					dir = GetPositionByTime( time + 0.01 ) - GetPositionByTime( time - 0.01 );
+				{
+					GetPositionByTime( time + 0.01, out var v1 );
+					GetPositionByTime( time - 0.01, out var v2 );
+					Vector3.Subtract( ref v1, ref v2, out result );
+					//dir = GetPositionByTime( time + 0.01 ) - GetPositionByTime( time - 0.01 );
+				}
 
-				return dir.GetNormalize();
+				result.Normalize();
+
+
+				//Vector3 dir;
+
+				//if( time < 0.01 )
+				//	dir = GetPositionByTime( 0.01 ) - GetPositionByTime( 0 );
+				//else if( time > LastPoint.TimeOnCurve - 0.01 )
+				//	dir = GetPositionByTime( LastPoint.TimeOnCurve ) - GetPositionByTime( LastPoint.TimeOnCurve - 0.01 );
+				//else
+				//	dir = GetPositionByTime( time + 0.01 ) - GetPositionByTime( time - 0.01 );
+
+				//return dir.GetNormalize();
 			}
 
 			public Point LastPoint
@@ -574,7 +1037,7 @@ namespace NeoAxis
 
 			public CurveData[] GetBorderCurves()
 			{
-				if( BorderCurves == null )
+				if( borderCurves == null )
 				{
 					////var lanes = Owner.Lanes.Value;
 					var laneWidth = RoadType.LaneWidth.Value;
@@ -593,7 +1056,7 @@ namespace NeoAxis
 
 
 					//!!!!
-					BorderCurves = new CurveData[ 2 ];
+					borderCurves = new CurveData[ 2 ];
 
 
 					for( int side = 0; side < 2; side++ )
@@ -602,7 +1065,6 @@ namespace NeoAxis
 
 						var lanes = Owner.Lanes.Value;
 						var width = lanes * laneWidth + sidewalkEdgeWidth * 2;
-
 						var widthOffset = ( side == 0 ? width : -width ) * 0.5;
 
 						var list = new List<(double time, Vector3 position, Quaternion rotation)>( timeSteps.Count );
@@ -611,9 +1073,9 @@ namespace NeoAxis
 						{
 							var time = timeSteps[ nTime ];
 
-							var pos = GetPositionByTime( time );
-							var dir = GetDirectionByTime( time );
-							var up = GetUpByTime( time );
+							GetPositionByTime( time, out var pos );
+							GetDirectionByTime( time, out var dir );
+							GetUpByTime( time, out var up );
 
 							var rot = Quaternion.LookAt( dir, up );
 
@@ -627,21 +1089,21 @@ namespace NeoAxis
 
 						item.Curve = list.ToArray();
 
-						BorderCurves[ side ] = item;
+						borderCurves[ side ] = item;
 					}
 
 				}
 
-				return BorderCurves;
+				return borderCurves;
 			}
 
 			public CurveData[] GetLaneCurves()
 			{
-				if( LaneCurves == null )
+				if( laneCurves == null )
 				{
 					var timeSteps = GetCurveTimeSteps( 4.0, null );
 
-					LaneCurves = new CurveData[ Lanes ];
+					laneCurves = new CurveData[ Lanes ];
 					for( int laneIndex = 0; laneIndex < Lanes; laneIndex++ )
 					{
 						var lane = new CurveData();
@@ -652,9 +1114,9 @@ namespace NeoAxis
 						{
 							var time = timeSteps[ nTime ];
 
-							var pos = GetPositionByTime( time );
-							var dir = GetDirectionByTime( time );
-							var up = GetUpByTime( time );
+							GetPositionByTime( time, out var pos );
+							GetDirectionByTime( time, out var dir );
+							GetUpByTime( time, out var up );
 
 							var rot = Quaternion.LookAt( dir, up );
 
@@ -665,11 +1127,33 @@ namespace NeoAxis
 
 						lane.Curve = list.ToArray();
 
-						LaneCurves[ laneIndex ] = lane;
+						laneCurves[ laneIndex ] = lane;
 					}
 				}
 
-				return LaneCurves;
+				return laneCurves;
+			}
+
+			public Bounds GetBounds()
+			{
+				if( !bounds.HasValue )
+				{
+					var result = Bounds.Cleared;
+
+					foreach( var borderCurve in GetBorderCurves() )
+					{
+						if( borderCurve.Curve != null )
+						{
+							foreach( var point in borderCurve.Curve )
+								result.Add( point.Position );
+						}
+					}
+
+					if( result.IsCleared() )
+						result = new Bounds( -1, -1, -1, 1, 1, 1 );
+					bounds = result;
+				}
+				return bounds.Value;
 			}
 		}
 
@@ -684,7 +1168,7 @@ namespace NeoAxis
 			public ESet<RoadNode.LogicalData> ConnectedNodes = new ESet<RoadNode.LogicalData>();
 			//public Dictionary<LogicalData, List<ConnectedRoadItem>> ConnectedRoads = new Dictionary<LogicalData, List<ConnectedRoadItem>>();
 
-			Range[] TimeClipRanges;
+			Range[] timeClipRanges;
 
 			public List<Scene.PhysicsWorldClass.Body> CollisionBodies = new List<Scene.PhysicsWorldClass.Body>();
 
@@ -721,12 +1205,12 @@ namespace NeoAxis
 
 			public void DropTimeClipRanges()
 			{
-				TimeClipRanges = null;
+				timeClipRanges = null;
 			}
 
 			public Range[] GetTimeClipRanges()
 			{
-				if( TimeClipRanges == null )
+				if( timeClipRanges == null )
 				{
 					//get modifiers from connected nodes
 					var modifiers = new List<Modifier>();
@@ -771,10 +1255,10 @@ namespace NeoAxis
 						}
 					}
 
-					TimeClipRanges = timeClipRanges.ToArray();
+					this.timeClipRanges = timeClipRanges.ToArray();
 				}
 
-				return TimeClipRanges;
+				return timeClipRanges;
 			}
 
 			//////////////////////////////////////////////
@@ -786,6 +1270,7 @@ namespace NeoAxis
 
 			//////////////////////////////////////////////
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			public RoadUtility.MeshData GenerateMeshData( bool generateCollision )
 			{
 				var meshData = new RoadUtility.MeshData();
@@ -809,7 +1294,7 @@ namespace NeoAxis
 							{
 								var time = timeSteps[ n ];
 
-								var v = RoadData.GetPositionByTime( time );
+								RoadData.GetPositionByTime( time, out var v );
 								if( n != 0 )
 									totalLength += ( v - previous ).Length();
 								previous = v;
@@ -1037,12 +1522,13 @@ namespace NeoAxis
 
 				if( !Owner.RoadCollision.Value )
 					return;
-				if( RoadUtility.IsAnyTransformToolInModifyingMode() )
+				if( EditorAPI.IsAnyTransformToolInModifyingMode() )
 				{
 					Owner.needUpdateLogicalDataAfterEndModifyingTransformTool = true;
 					return;
 				}
-
+				if( !RoadData.RoadType.SurfaceMaterial.ReferenceOrValueSpecified )
+					return;
 
 				//!!!!пока всё сразу. меши эстакад и другие меши юзать "Collision Definition"
 
@@ -1216,6 +1702,50 @@ namespace NeoAxis
 				//}
 				//CollisionBodies.Clear();
 			}
+
+			public ESet<Crossroad.CrossroadLogicalData.ConnectedRoadItem> GetConnectedRoadsInInterval( Range timeRange, Crossroad.CrossroadLogicalData skipCrossroad )
+			//public ESet<(LogicalData, Crossroad.CrossroadLogicalData.ConnectedRoadItem)> GetConnectedRoadsInInterval( Range timeRange, Crossroad.CrossroadLogicalData skipCrossroad )
+			{
+				var result = new ESet<Crossroad.CrossroadLogicalData.ConnectedRoadItem>();
+				//var result = new ESet<(LogicalData, Crossroad.CrossroadLogicalData.ConnectedRoadItem)>();
+
+				foreach( var connectedNode in ConnectedNodes )
+				{
+					var crossroad = connectedNode as Crossroad.CrossroadLogicalData;
+					if( crossroad != null && crossroad != skipCrossroad )
+					{
+						var addCrossroad = false;
+						foreach( var crossroadRoad in crossroad.ConnectedRoads )
+						{
+							if( crossroadRoad.ConnectedRoad == RoadData )
+							{
+								if( crossroadRoad.TimeOnCurve >= timeRange.Minimum && crossroadRoad.TimeOnCurve <= timeRange.Maximum )
+								{
+									addCrossroad = true;
+									break;
+								}
+							}
+						}
+
+						if( addCrossroad )
+						{
+							foreach( var connectedRoad in crossroad.ConnectedRoads )
+							{
+								if( connectedRoad.ConnectedRoad != RoadData )
+								{
+									result.AddWithCheckAlreadyContained( connectedRoad );
+
+									//var connectedRoadLogicalData = connectedRoad.ConnectedRoad.Owner.GetLogicalData();
+									//if( connectedRoadLogicalData != null )
+									//	result.AddWithCheckAlreadyContained( (connectedRoadLogicalData, connectedRoad) );// crossroad) );
+								}
+							}
+						}
+					}
+				}
+
+				return result;
+			}
 		}
 
 		///////////////////////////////////////////////
@@ -1272,6 +1802,10 @@ namespace NeoAxis
 		{
 			if( ( roadData == null || needUpdateRoadData ) && EnabledInHierarchyAndIsInstance /*&& canCreate*/ && ParentScene != null )
 			{
+				//dispose old
+				if( roadData != null )
+					roadData.Dispose();
+
 				roadData = new RoadData( this );
 
 				roadData.RoadType = RoadType;
@@ -1305,6 +1839,10 @@ namespace NeoAxis
 						if( roadNode != null )
 						{
 							//!!!!более точно выбирать список. сейчас все в bounds
+
+							var crossroad = roadNode as Crossroad;
+							if( crossroad != null && crossroad.WayToUse.Value != roadData.RoadType.WayToUse.Value )
+								continue;
 
 							roadNode.NeedUpdate();
 						}
@@ -1401,9 +1939,10 @@ namespace NeoAxis
 			if( visualData == null )
 			{
 				GetLogicalData();
-				if( logicalData != null && ParentScene != null )
+
+				if( logicalData != null && ParentScene != null && logicalData.RoadData.RoadType.SurfaceMaterial.ReferenceOrValueSpecified )
 				{
-					if( !RoadUtility.UpdateVisualDataInModifyingMode && RoadUtility.IsAnyTransformToolInModifyingMode() )
+					if( !RoadUtility.UpdateVisualDataInModifyingMode && EditorAPI.IsAnyTransformToolInModifyingMode() )
 					{
 						needUpdateLogicalDataAfterEndModifyingTransformTool = true;
 						return null;
@@ -1506,8 +2045,8 @@ namespace NeoAxis
 					scene.EnabledInHierarchyChanged += Scene_EnabledInHierarchyChanged;
 					scene.ViewportUpdateBefore += Scene_ViewportUpdateBefore;
 #if !DEPLOY
-					TransformTool.AllInstances_ModifyCommit += TransformTool_AllInstances_ModifyCommit;
-					TransformTool.AllInstances_ModifyCancel += TransformTool_AllInstances_ModifyCancel;
+					TransformToolUtility.AllInstances_ModifyCommit += TransformTool_AllInstances_ModifyCommit;
+					TransformToolUtility.AllInstances_ModifyCancel += TransformTool_AllInstances_ModifyCancel;
 #endif
 					if( logicalData == null )
 						Update();
@@ -1517,16 +2056,22 @@ namespace NeoAxis
 					scene.EnabledInHierarchyChanged -= Scene_EnabledInHierarchyChanged;
 					scene.ViewportUpdateBefore -= Scene_ViewportUpdateBefore;
 #if !DEPLOY
-					TransformTool.AllInstances_ModifyCommit -= TransformTool_AllInstances_ModifyCommit;
-					TransformTool.AllInstances_ModifyCancel -= TransformTool_AllInstances_ModifyCancel;
+					TransformToolUtility.AllInstances_ModifyCommit -= TransformTool_AllInstances_ModifyCommit;
+					TransformToolUtility.AllInstances_ModifyCancel -= TransformTool_AllInstances_ModifyCancel;
 #endif
 					Update();
 				}
 			}
+
+			if( !EnabledInHierarchy )
+			{
+				roadData?.Dispose();
+				roadData = null;
+			}
 		}
 
 #if !DEPLOY
-		private void TransformTool_AllInstances_ModifyCommit( TransformTool sender )
+		private void TransformTool_AllInstances_ModifyCommit( ITransformTool sender )
 		{
 			if( needUpdateLogicalDataAfterEndModifyingTransformTool )
 			{
@@ -1536,7 +2081,7 @@ namespace NeoAxis
 			}
 		}
 
-		private void TransformTool_AllInstances_ModifyCancel( TransformTool sender )
+		private void TransformTool_AllInstances_ModifyCancel( ITransformTool sender )
 		{
 			if( needUpdateLogicalDataAfterEndModifyingTransformTool )
 			{
@@ -1564,6 +2109,8 @@ namespace NeoAxis
 		protected override void OnSpaceBoundsUpdate( ref SpaceBounds newBounds )
 		{
 			base.OnSpaceBoundsUpdate( ref newBounds );
+
+			//!!!!use RoadData.Bounds?
 
 			var roadData = GetRoadData();
 			if( roadData != null && roadData.Points.Length != 0 )
@@ -1672,7 +2219,10 @@ namespace NeoAxis
 						var pos = item.Curve[ n ].Position;
 
 						if( previousPos.HasValue )
-							renderer.AddLine( previousPos.Value, pos );
+						{
+							renderer.AddLineThin( previousPos.Value, pos );
+							//renderer.AddLine( previousPos.Value, pos );
+						}
 
 						previousPos = pos;
 					}
@@ -1680,8 +2230,10 @@ namespace NeoAxis
 
 				var item0 = items[ 0 ];
 				var item1 = items[ 1 ];
-				renderer.AddLine( item0.Curve[ 0 ].Position, item1.Curve[ 0 ].Position );
-				renderer.AddLine( item0.Curve[ item0.Curve.Length - 1 ].Position, item1.Curve[ item1.Curve.Length - 1 ].Position );
+				renderer.AddLineThin( item0.Curve[ 0 ].Position, item1.Curve[ 0 ].Position );
+				renderer.AddLineThin( item0.Curve[ item0.Curve.Length - 1 ].Position, item1.Curve[ item1.Curve.Length - 1 ].Position );
+				//renderer.AddLine( item0.Curve[ 0 ].Position, item1.Curve[ 0 ].Position );
+				//renderer.AddLine( item0.Curve[ item0.Curve.Length - 1 ].Position, item1.Curve[ item1.Curve.Length - 1 ].Position );
 			}
 		}
 
@@ -1705,7 +2257,10 @@ namespace NeoAxis
 							var pos = lane.Curve[ n ].Position;
 
 							if( previousPos.HasValue )
-								renderer.AddLine( previousPos.Value, pos );
+							{
+								renderer.AddLineThin( previousPos.Value, pos );
+								//renderer.AddLine( previousPos.Value, pos );
+							}
 
 							previousPos = pos;
 						}
@@ -1790,6 +2345,8 @@ namespace NeoAxis
 					if( EngineApp.IsSimulation && DisplayLaneCurvesInSimulation )
 						display = true;
 
+					//!!!!если попал в фрустум
+
 					if( display )
 						DisplayLaneCurves( context );
 				}
@@ -1799,6 +2356,8 @@ namespace NeoAxis
 				if( visualData != null )
 				{
 					var renderer = context.Owner.Simple3DRenderer;
+
+					//!!!!если попал в фрустум
 
 					if( visualData.DebugLines.Count != 0 )
 					{
@@ -1835,5 +2394,10 @@ namespace NeoAxis
 		{
 			needUpdateVisualData = true;
 		}
+
+		//protected override bool OnIsVisualStatic()
+		//{
+		//	return true;
+		//}
 	}
 }

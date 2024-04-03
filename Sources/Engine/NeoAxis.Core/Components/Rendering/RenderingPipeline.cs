@@ -1,11 +1,8 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
-using System.Drawing.Design;
 using System.ComponentModel;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace NeoAxis
@@ -16,11 +13,16 @@ namespace NeoAxis
 	public abstract class RenderingPipeline : Component
 	{
 		public static double GlobalLODScale = 1;
+		public static double GlobalLODScaleShadows = 1;
 
 		//
 
 		[Browsable( false )]
 		public ColorValue? BackgroundColorOverride;
+
+		//[Browsable( false )]
+		//public double RenderWithoutRenderTargetsApplyScale = 1;
+		////public Vector2I? RenderWithoutRenderTargetsOverrideSize;
 
 		///// <summary>
 		///// The background clear color.
@@ -31,7 +33,7 @@ namespace NeoAxis
 		//public Reference<ColorValue> BackgroundColor
 		//{
 		//	get { if( _backgroundColor.BeginGet() ) BackgroundColor = _backgroundColor.Get( this ); return _backgroundColor.value; }
-		//	set { if( _backgroundColor.BeginSet( ref value ) ) { try { BackgroundColorChanged?.Invoke( this ); } finally { _backgroundColor.EndSet(); } } }
+		//	set { if( _backgroundColor.BeginSet( this, ref value ) ) { try { BackgroundColorChanged?.Invoke( this ); } finally { _backgroundColor.EndSet(); } } }
 		//}
 		//public event Action<RenderingPipeline> BackgroundColorChanged;
 		//ReferenceField<ColorValue> _backgroundColor = new ColorValue( 0, 0, 0 );
@@ -50,21 +52,21 @@ namespace NeoAxis
 		//public Reference<RenderingMethodEnum> RenderingMethod
 		//{
 		//	get { if( _renderingMethod.BeginGet() ) RenderingMethod = _renderingMethod.Get( this ); return _renderingMethod.value; }
-		//	set { if( _renderingMethod.BeginSet( ref value ) ) { try { RenderingMethodChanged?.Invoke( this ); } finally { _renderingMethod.EndSet(); } } }
+		//	set { if( _renderingMethod.BeginSet( this, ref value ) ) { try { RenderingMethodChanged?.Invoke( this ); } finally { _renderingMethod.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="RenderingMethod"/> property value changes.</summary>
 		//public event Action<RenderingPipeline> RenderingMethodChanged;
 		//ReferenceField<RenderingMethodEnum> _renderingMethod = RenderingMethodEnum.RealTime;
 
 		/// <summary>
-		/// Enables the deferred shading. For Auto mode deferred shading is enabled, but not for Intel GPUs. Limited devices (mobile) are not support deferred shading.
+		/// Enables the deferred shading. Limited devices (mobile) are not support deferred shading.
 		/// </summary>
 		[DefaultValue( AutoTrueFalse.Auto )]
 		[Category( "General" )]
 		public Reference<AutoTrueFalse> DeferredShading
 		{
 			get { if( _deferredShading.BeginGet() ) DeferredShading = _deferredShading.Get( this ); return _deferredShading.value; }
-			set { if( _deferredShading.BeginSet( ref value ) ) { try { DeferredShadingChanged?.Invoke( this ); } finally { _deferredShading.EndSet(); } } }
+			set { if( _deferredShading.BeginSet( this, ref value ) ) { try { DeferredShadingChanged?.Invoke( this ); } finally { _deferredShading.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DeferredShading"/> property value changes.</summary>
 		public event Action<RenderingPipeline> DeferredShadingChanged;
@@ -78,7 +80,7 @@ namespace NeoAxis
 		public Reference<AutoTrueFalse> HighDynamicRange
 		{
 			get { if( _highDynamicRange.BeginGet() ) HighDynamicRange = _highDynamicRange.Get( this ); return _highDynamicRange.value; }
-			set { if( _highDynamicRange.BeginSet( ref value ) ) { try { HighDynamicRangeChanged?.Invoke( this ); } finally { _highDynamicRange.EndSet(); } } }
+			set { if( _highDynamicRange.BeginSet( this, ref value ) ) { try { HighDynamicRangeChanged?.Invoke( this ); } finally { _highDynamicRange.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HighDynamicRange"/> property value changes.</summary>
 		public event Action<RenderingPipeline> HighDynamicRangeChanged;
@@ -92,7 +94,7 @@ namespace NeoAxis
 		public Reference<bool> UseRenderTargets
 		{
 			get { if( _useRenderTargets.BeginGet() ) UseRenderTargets = _useRenderTargets.Get( this ); return _useRenderTargets.value; }
-			set { if( _useRenderTargets.BeginSet( ref value ) ) { try { UseRenderTargetsChanged?.Invoke( this ); } finally { _useRenderTargets.EndSet(); } } }
+			set { if( _useRenderTargets.BeginSet( this, ref value ) ) { try { UseRenderTargetsChanged?.Invoke( this ); } finally { _useRenderTargets.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UseRenderTargets"/> property value changes.</summary>
 		public event Action<RenderingPipeline> UseRenderTargetsChanged;
@@ -106,11 +108,25 @@ namespace NeoAxis
 		public Reference<AutoTrueFalse> UseMultiRenderTargets
 		{
 			get { if( _useMultiRenderTargets.BeginGet() ) UseMultiRenderTargets = _useMultiRenderTargets.Get( this ); return _useMultiRenderTargets.value; }
-			set { if( _useMultiRenderTargets.BeginSet( ref value ) ) { try { UseMultiRenderTargetsChanged?.Invoke( this ); } finally { _useMultiRenderTargets.EndSet(); } } }
+			set { if( _useMultiRenderTargets.BeginSet( this, ref value ) ) { try { UseMultiRenderTargetsChanged?.Invoke( this ); } finally { _useMultiRenderTargets.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UseMultiRenderTargets"/> property value changes.</summary>
 		public event Action<RenderingPipeline> UseMultiRenderTargetsChanged;
 		ReferenceField<AutoTrueFalse> _useMultiRenderTargets = AutoTrueFalse.Auto;
+
+		///// <summary>
+		///// Whether to use order-independent transparency mode for transparent objects. It is disabled on limited devices (mobile) because MRT is not supported.
+		///// </summary>
+		//[DefaultValue( AutoTrueFalse.Auto )]
+		//[Category( "General" )]
+		//public Reference<AutoTrueFalse> OrderIndependentTransparency
+		//{
+		//	get { if( _orderIndependentTransparency.BeginGet() ) OrderIndependentTransparency = _orderIndependentTransparency.Get( this ); return _orderIndependentTransparency.value; }
+		//	set { if( _orderIndependentTransparency.BeginSet( this, ref value ) ) { try { OrderIndependentTransparencyChanged?.Invoke( this ); } finally { _orderIndependentTransparency.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="OrderIndependentTransparency"/> property value changes.</summary>
+		//public event Action<RenderingPipeline> OrderIndependentTransparencyChanged;
+		//ReferenceField<AutoTrueFalse> _orderIndependentTransparency = AutoTrueFalse.Auto;
 
 		/// <summary>
 		/// Enables antialising for simple geometry rendering. When Auto mode is enabled, antialiasing is disabled for limited devices (mobile).
@@ -120,7 +136,7 @@ namespace NeoAxis
 		public Reference<AutoTrueFalse> SimpleGeometryAntialiasing
 		{
 			get { if( _simpleGeometryAntialiasing.BeginGet() ) SimpleGeometryAntialiasing = _simpleGeometryAntialiasing.Get( this ); return _simpleGeometryAntialiasing.value; }
-			set { if( _simpleGeometryAntialiasing.BeginSet( ref value ) ) { try { SimpleGeometryAntialiasingChanged?.Invoke( this ); } finally { _simpleGeometryAntialiasing.EndSet(); } } }
+			set { if( _simpleGeometryAntialiasing.BeginSet( this, ref value ) ) { try { SimpleGeometryAntialiasingChanged?.Invoke( this ); } finally { _simpleGeometryAntialiasing.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SimpleGeometryAntialiasing"/> property value changes.</summary>
 		public event Action<RenderingPipeline> SimpleGeometryAntialiasingChanged;
@@ -136,55 +152,70 @@ namespace NeoAxis
 		public Reference<bool> Instancing
 		{
 			get { if( _instancing.BeginGet() ) Instancing = _instancing.Get( this ); return _instancing.value; }
-			set { if( _instancing.BeginSet( ref value ) ) { try { InstancingChanged?.Invoke( this ); } finally { _instancing.EndSet(); } } }
+			set { if( _instancing.BeginSet( this, ref value ) ) { try { InstancingChanged?.Invoke( this ); } finally { _instancing.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Instancing"/> property value changes.</summary>
 		public event Action<RenderingPipeline> InstancingChanged;
 		ReferenceField<bool> _instancing = true;
 
-		/// <summary>
-		/// The minimum number of objects to enable GPU instancing.
-		/// </summary>
-		[Category( "Instancing" )]
-		[DefaultValue( 4 )]
-		[Range( 2, 1000, RangeAttribute.ConvenientDistributionEnum.Exponential )]
-		public Reference<int> InstancingMinCount
-		{
-			get { if( _instancingMinCount.BeginGet() ) InstancingMinCount = _instancingMinCount.Get( this ); return _instancingMinCount.value; }
-			set { if( _instancingMinCount.BeginSet( ref value ) ) { try { InstancingMinCountChanged?.Invoke( this ); } finally { _instancingMinCount.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="InstancingMinCount"/> property value changes.</summary>
-		public event Action<RenderingPipeline> InstancingMinCountChanged;
-		ReferenceField<int> _instancingMinCount = 4;
+		//no sense because Instancing property by idea must be called DebugInstancing
+		///// <summary>
+		///// Whether to enable GPU instancing for transparent objects.
+		///// </summary>
+		//[Category( "Instancing" )]
+		//[DefaultValue( true )]
+		//public Reference<bool> InstancingTransparent
+		//{
+		//	get { if( _instancingTransparent.BeginGet() ) InstancingTransparent = _instancingTransparent.Get( this ); return _instancingTransparent.value; }
+		//	set { if( _instancingTransparent.BeginSet( this, ref value ) ) { try { InstancingTransparentChanged?.Invoke( this ); } finally { _instancingTransparent.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="InstancingTransparent"/> property value changes.</summary>
+		//public event Action<RenderingPipeline> InstancingTransparentChanged;
+		//ReferenceField<bool> _instancingTransparent = true;
+
+		///// <summary>
+		///// The minimum number of objects to enable GPU instancing.
+		///// </summary>
+		//[Category( "Instancing" )]
+		//[DefaultValue( 4 )]
+		//[Range( 2, 1000, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		//public Reference<int> InstancingMinCount
+		//{
+		//	get { if( _instancingMinCount.BeginGet() ) InstancingMinCount = _instancingMinCount.Get( this ); return _instancingMinCount.value; }
+		//	set { if( _instancingMinCount.BeginSet( this, ref value ) ) { try { InstancingMinCountChanged?.Invoke( this ); } finally { _instancingMinCount.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="InstancingMinCount"/> property value changes.</summary>
+		//public event Action<RenderingPipeline> InstancingMinCountChanged;
+		//ReferenceField<int> _instancingMinCount = 4;
 
 		/// <summary>
 		/// The maximum size of instancing buffer.
 		/// </summary>
 		[Category( "Instancing" )]
 		[DefaultValue( 250 )]
-		[Range( 2, 500, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		[Range( 2, 500 )]
 		public Reference<int> InstancingMaxCount
 		{
 			get { if( _instancingMaxCount.BeginGet() ) InstancingMaxCount = _instancingMaxCount.Get( this ); return _instancingMaxCount.value; }
-			set { if( _instancingMaxCount.BeginSet( ref value ) ) { try { InstancingMaxCountChanged?.Invoke( this ); } finally { _instancingMaxCount.EndSet(); } } }
+			set { if( _instancingMaxCount.BeginSet( this, ref value ) ) { try { InstancingMaxCountChanged?.Invoke( this ); } finally { _instancingMaxCount.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="InstancingMaxCount"/> property value changes.</summary>
 		public event Action<RenderingPipeline> InstancingMaxCountChanged;
 		ReferenceField<int> _instancingMaxCount = 250;
 
-		/// <summary>
-		/// Whether to enable GPU instancing for transparent objects.
-		/// </summary>
-		[Category( "Instancing" )]
-		[DefaultValue( true )]
-		public Reference<bool> InstancingTransparent
-		{
-			get { if( _instancingTransparent.BeginGet() ) InstancingTransparent = _instancingTransparent.Get( this ); return _instancingTransparent.value; }
-			set { if( _instancingTransparent.BeginSet( ref value ) ) { try { InstancingTransparentChanged?.Invoke( this ); } finally { _instancingTransparent.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="InstancingTransparent"/> property value changes.</summary>
-		public event Action<RenderingPipeline> InstancingTransparentChanged;
-		ReferenceField<bool> _instancingTransparent = true;
+		///// <summary>
+		///// Whether to enable GPU instancing for transparent objects.
+		///// </summary>
+		//[Category( "Instancing" )]
+		//[DefaultValue( true )]
+		//public Reference<bool> InstancingTransparent
+		//{
+		//	get { if( _instancingTransparent.BeginGet() ) InstancingTransparent = _instancingTransparent.Get( this ); return _instancingTransparent.value; }
+		//	set { if( _instancingTransparent.BeginSet( this, ref value ) ) { try { InstancingTransparentChanged?.Invoke( this ); } finally { _instancingTransparent.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="InstancingTransparent"/> property value changes.</summary>
+		//public event Action<RenderingPipeline> InstancingTransparentChanged;
+		//ReferenceField<bool> _instancingTransparent = true;
 
 		/////////////////////////////////////////
 
@@ -198,7 +229,7 @@ namespace NeoAxis
 		//public Reference<double> ProceduralGenerationQuality
 		//{
 		//	get { if( _proceduralGenerationQuality.BeginGet() ) ProceduralGenerationQuality = _proceduralGenerationQuality.Get( this ); return _proceduralGenerationQuality.value; }
-		//	set { if( _proceduralGenerationQuality.BeginSet( ref value ) ) { try { ProceduralGenerationQualityChanged?.Invoke( this ); } finally { _proceduralGenerationQuality.EndSet(); } } }
+		//	set { if( _proceduralGenerationQuality.BeginSet( this, ref value ) ) { try { ProceduralGenerationQualityChanged?.Invoke( this ); } finally { _proceduralGenerationQuality.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="ProceduralGenerationQuality"/> property value changes.</summary>
 		//public event Action<RenderingPipeline> ProceduralGenerationQualityChanged;
@@ -216,7 +247,7 @@ namespace NeoAxis
 		public Reference<double> LODScale
 		{
 			get { if( _lODScale.BeginGet() ) LODScale = _lODScale.Get( this ); return _lODScale.value; }
-			set { if( _lODScale.BeginSet( ref value ) ) { try { LODScaleChanged?.Invoke( this ); } finally { _lODScale.EndSet(); } } }
+			set { if( _lODScale.BeginSet( this, ref value ) ) { try { LODScaleChanged?.Invoke( this ); } finally { _lODScale.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODScale"/> property value changes.</summary>
 		[DisplayName( "LOD Scale Changed" )]
@@ -233,12 +264,29 @@ namespace NeoAxis
 		public Reference<RangeI> LODRange
 		{
 			get { if( _lODRange.BeginGet() ) LODRange = _lODRange.Get( this ); return _lODRange.value; }
-			set { if( _lODRange.BeginSet( ref value ) ) { try { LODRangeChanged?.Invoke( this ); } finally { _lODRange.EndSet(); } } }
+			set { if( _lODRange.BeginSet( this, ref value ) ) { try { LODRangeChanged?.Invoke( this ); } finally { _lODRange.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODRange"/> property value changes.</summary>
 		[DisplayName( "LOD Range Changed" )]
 		public event Action<RenderingPipeline> LODRangeChanged;
 		ReferenceField<RangeI> _lODRange = new RangeI( 0, 10 );
+
+		/// <summary>
+		/// The multiplier when determining the level of detail for shadows. Set 100 or more to always use the best LOD for shadows.
+		/// </summary>
+		[Category( "Level Of Detail" )]
+		[DefaultValue( 1.0 )]
+		[DisplayName( "LOD Scale Shadows" )]
+		[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
+		public Reference<double> LODScaleShadows
+		{
+			get { if( _lODScaleShadows.BeginGet() ) LODScaleShadows = _lODScaleShadows.Get( this ); return _lODScaleShadows.value; }
+			set { if( _lODScaleShadows.BeginSet( this, ref value ) ) { try { LODScaleShadowsChanged?.Invoke( this ); } finally { _lODScaleShadows.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LODScaleShadows"/> property value changes.</summary>
+		[DisplayName( "LOD Scale Shadows Changed" )]
+		public event Action<RenderingPipeline> LODScaleShadowsChanged;
+		ReferenceField<double> _lODScaleShadows = 1.0;
 
 		/// <summary>
 		/// The minimum visible size of object in pixels.
@@ -249,7 +297,7 @@ namespace NeoAxis
 		public Reference<double> MinimumVisibleSizeOfObjects
 		{
 			get { if( _minimumVisibleSizeOfObjects.BeginGet() ) MinimumVisibleSizeOfObjects = _minimumVisibleSizeOfObjects.Get( this ); return _minimumVisibleSizeOfObjects.value; }
-			set { if( _minimumVisibleSizeOfObjects.BeginSet( ref value ) ) { try { MinimumVisibleSizeOfObjectsChanged?.Invoke( this ); } finally { _minimumVisibleSizeOfObjects.EndSet(); } } }
+			set { if( _minimumVisibleSizeOfObjects.BeginSet( this, ref value ) ) { try { MinimumVisibleSizeOfObjectsChanged?.Invoke( this ); } finally { _minimumVisibleSizeOfObjects.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MinimumVisibleSizeOfObjects"/> property value changes.</summary>
 		public event Action<RenderingPipeline> MinimumVisibleSizeOfObjectsChanged;
@@ -324,26 +372,29 @@ namespace NeoAxis
 			{
 				public object Creator;
 				public object AnyData;
-				//!!!!sense? take by BoundingSphere.Origin
-				public Vector3 BoundingBoxCenter;//public Bounds BoundingBox;
+				////!!!!sense? take by BoundingSphere.Origin
+				//public Vector3 BoundingBoxCenter;//public Bounds BoundingBox;
 				public Sphere BoundingSphere;
 
 				public bool CastShadows;
 				public bool ReceiveDecals;
 				public float MotionBlurFactor;
 				public Material ReplaceMaterial;
-				public Material[] ReplaceMaterialSelectively;
+				//public Material[] ReplaceMaterialSelectively;
+				public Vector4F[] ObjectInstanceParameters;
 				public ColorValue Color;
-				public ColorByte ColorForInstancingData;
+				public uint ColorForInstancingData1;
+				public byte ColorForInstancingData2;
 				public AnimationDataClass AnimationData;
 
 				public IMeshData MeshData;
-				//!!!!new GI
-				//!!!!всем выставлять
 				public IMeshData MeshDataLOD0;
+				public IMeshData MeshDataShadows;
+				public bool MeshDataShadowsForceBestLOD;//is not used
+				public IMeshData MeshDataLastVoxelLOD;
 
-				public Matrix4F Transform;
-				public Vector3F PositionPreviousFrame;
+				public Matrix4F TransformRelative;
+				public Vector3F PreviousFramePositionChange;//PositionPreviousFrameRelative;
 
 				public bool InstancingEnabled;
 				public GpuVertexBuffer InstancingVertexBuffer;
@@ -351,6 +402,7 @@ namespace NeoAxis
 				public int InstancingStart;
 				public int InstancingCount;
 				public float InstancingMaxLocalBounds;
+				public Vector3F InstancingPositionOffsetRelative;
 
 				public float VisibilityDistance;
 				public bool OnlyForShadowGeneration;
@@ -362,20 +414,24 @@ namespace NeoAxis
 
 				public bool TransparentRenderingAddOffsetWhenSortByDistance;
 
-				//!!!!new
 				public uint CullingByCameraDirectionData;
+
+				public bool StaticShadows;
+
+				public bool Tessellation;
 
 				//bool instancingDataCached;
 				//ObjectInstanceData instancingDataCache;
 
-				//!!!!without class?
 				/// <summary>
 				/// Prepared animation data of mesh for scene rendering.
 				/// </summary>
 				public class AnimationDataClass
 				{
-					public int Mode;
-					public ImageComponent BonesTexture;
+					public int BonesIndex;
+
+					//public int Mode;
+					//public ImageComponent BonesTexture;
 				}
 
 				////////
@@ -383,12 +439,14 @@ namespace NeoAxis
 				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 				public void GetInstancingData( out ObjectInstanceData data )
 				{
-					Transform.GetTranspose( out data.Transform );
-					data.PositionPreviousFrame = PositionPreviousFrame;
+					TransformRelative.GetTranspose( out data.TransformRelative );
+					data.PreviousFramePositionChange = PreviousFramePositionChange;
 					//data.Unused = 0;
 
-					data.Color = ColorForInstancingData;
-					//data.Color = GetColorForInstancingData( ref Color );
+					data.ColorPackedValue1 = ColorForInstancingData1;
+					data.ColorPackedValue2 = ColorForInstancingData2;
+					//data.Color = ColorForInstancingData;
+					////data.Color = GetColorForInstancingData( ref Color );
 
 					//ColorValue c;
 					//c.Red = MathEx.Sqrt( Color.Red * 0.1f );
@@ -405,7 +463,7 @@ namespace NeoAxis
 					data.ReceiveDecals = ReceiveDecals ? (byte)255 : (byte)0;
 					data.MotionBlurFactor = (byte)( MotionBlurFactor * 255 );
 					data.Unused1 = 0;
-					data.Unused2 = 0;
+					//data.Unused2 = 0;
 					data.CullingByCameraDirectionData = CullingByCameraDirectionData;
 					//data.ReceiveDecals = ReceiveDecals ? 1.0f : 0.0f;
 					//data.MotionBlurFactor = MotionBlurFactor;
@@ -440,68 +498,71 @@ namespace NeoAxis
 					//data = instancingDataCache;
 				}
 
-				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-				public unsafe bool CanUseInstancingForTransparentWith( ref MeshItem meshItem )
-				{
-					//if( BoundingBoxCenter != meshItem.BoundingBoxCenter )
-					//	return false;
-					if( BoundingSphere != meshItem.BoundingSphere )
-						return false;
-					if( CastShadows != meshItem.CastShadows )
-						return false;
-					if( ReceiveDecals != meshItem.ReceiveDecals )
-						return false;
-					if( MotionBlurFactor != meshItem.MotionBlurFactor )
-						return false;
-					if( ReplaceMaterial != meshItem.ReplaceMaterial )
-						return false;
+				//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+				//public unsafe bool CanUseInstancingForTransparentWith( ref MeshItem meshItem )
+				//{
+				//	//if( BoundingBoxCenter != meshItem.BoundingBoxCenter )
+				//	//	return false;
+				//	if( BoundingSphere != meshItem.BoundingSphere )
+				//		return false;
+				//	if( CastShadows != meshItem.CastShadows )
+				//		return false;
+				//	if( ReceiveDecals != meshItem.ReceiveDecals )
+				//		return false;
+				//	if( MotionBlurFactor != meshItem.MotionBlurFactor )
+				//		return false;
+				//	if( ReplaceMaterial != meshItem.ReplaceMaterial )
+				//		return false;
 
-					if( ReplaceMaterialSelectively != null || meshItem.ReplaceMaterialSelectively != null )
-					{
-						if( ReplaceMaterialSelectively != null && meshItem.ReplaceMaterialSelectively != null )
-						{
-							if( ReplaceMaterialSelectively.Length != meshItem.ReplaceMaterialSelectively.Length )
-								return false;
+				//	if( ReplaceMaterialSelectively != null || meshItem.ReplaceMaterialSelectively != null )
+				//	{
+				//		if( ReplaceMaterialSelectively != null && meshItem.ReplaceMaterialSelectively != null )
+				//		{
+				//			if( ReplaceMaterialSelectively.Length != meshItem.ReplaceMaterialSelectively.Length )
+				//				return false;
 
-							for( int n = 0; n < ReplaceMaterialSelectively.Length; n++ )
-								if( ReplaceMaterialSelectively[ n ] != meshItem.ReplaceMaterialSelectively[ n ] )
-									return false;
-						}
-						else
-							return false;
-					}
+				//			for( int n = 0; n < ReplaceMaterialSelectively.Length; n++ )
+				//				if( ReplaceMaterialSelectively[ n ] != meshItem.ReplaceMaterialSelectively[ n ] )
+				//					return false;
+				//		}
+				//		else
+				//			return false;
+				//	}
 
-					if( AnimationData != null || meshItem.AnimationData != null )
-						return false;
-					if( MeshData != meshItem.MeshData )
-						return false;
+				//	if( AnimationData != null || meshItem.AnimationData != null )
+				//		return false;
+				//	if( MeshData != meshItem.MeshData )
+				//		return false;
 
-					//!!!!
-					if( OnlyForShadowGeneration != meshItem.OnlyForShadowGeneration )
-						return false;
+				//	//!!!!
+				//	if( OnlyForShadowGeneration != meshItem.OnlyForShadowGeneration )
+				//		return false;
 
-					//if( VisibilityDistance != meshItem.VisibilityDistance )
-					//	return false;
+				//	//if( VisibilityDistance != meshItem.VisibilityDistance )
+				//	//	return false;
 
-					//if( LODValue != meshItem.LODValue )
-					//	return false;
-					//if( LODRange != meshItem.LODRange )
-					//	return false;
-					//if( LODValue != 0 || meshItem.LODValue != 0 )
-					//	return false;
+				//	//if( LODValue != meshItem.LODValue )
+				//	//	return false;
+				//	//if( LODRange != meshItem.LODRange )
+				//	//	return false;
+				//	//if( LODValue != 0 || meshItem.LODValue != 0 )
+				//	//	return false;
 
-					if( Layers != null || meshItem.Layers != null )
-						return false;
+				//	if( Layers != null || meshItem.Layers != null )
+				//		return false;
 
-					//public GpuVertexBuffer BatchingInstanceBuffer;
+				//	if( ObjectInstanceParameters != null || meshItem.ObjectInstanceParameters != null )
+				//		return false;
 
-					//public object Creator;
-					//public object AnyData;
+				//	//public GpuVertexBuffer BatchingInstanceBuffer;
 
-					////public BillboardData[] BillboardArray;
+				//	//public object Creator;
+				//	//public object AnyData;
 
-					return true;
-				}
+				//	////public BillboardData[] BillboardArray;
+
+				//	return true;
+				//}
 			}
 
 			/// <summary>
@@ -568,6 +629,7 @@ namespace NeoAxis
 					MeshGeometryIndex = meshGeometryIndex;
 				}
 
+				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 				public bool ContainsDisposedBuffers()
 				{
 					if( VertexBuffers != null )
@@ -804,7 +866,6 @@ namespace NeoAxis
 			{
 				public object Creator;
 				public object AnyData;
-				//!!!!double
 				public Vector3 BoundingBoxCenter;//public Bounds BoundingBox;
 				public Sphere BoundingSphere;
 
@@ -813,15 +874,18 @@ namespace NeoAxis
 				public bool ReceiveDecals;
 				public float MotionBlurFactor;
 				public Material Material;
+				public Vector4F[] MaterialInstanceParameters;
 
-				public Vector3F Position;
+				public Vector3F PositionRelative;
 				public Vector2F Size;
 				public RadianF RotationAngle;
 				public QuaternionF RotationQuaternion;
 
 				public ColorValue Color;
-				public ColorByte ColorForInstancingData;
-				public Vector3F PositionPreviousFrame;
+				public uint ColorForInstancingData1;
+				public byte ColorForInstancingData2;
+				public Vector3F PreviousFramePositionChange;//public Vector3F PositionPreviousFrameRelative;
+
 				//!!!!
 				//public BillboardData[] BillboardArray;
 
@@ -834,10 +898,12 @@ namespace NeoAxis
 				//!!!!
 				public uint CullingByCameraDirectionData;
 
+				public bool AllowStaticShadows;
+
 				//
 
 				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-				public void GetWorldMatrix( out Matrix4F result )
+				public void GetWorldMatrixRelative( out Matrix4F result )
 				{
 					result.Item0.X = Size.X;
 					result.Item0.Y = RotationAngle;
@@ -851,9 +917,9 @@ namespace NeoAxis
 					result.Item2.Y = 0;
 					result.Item2.Z = Size.Y;
 					result.Item2.W = 0;
-					result.Item3.X = Position.X;
-					result.Item3.Y = Position.Y;
-					result.Item3.Z = Position.Z;
+					result.Item3.X = PositionRelative.X;
+					result.Item3.Y = PositionRelative.Y;
+					result.Item3.Z = PositionRelative.Z;
 					result.Item3.W = 1;
 
 					//Vector3F scale = new Vector3F( Size.X, 1, Size.Y );
@@ -863,20 +929,20 @@ namespace NeoAxis
 				}
 
 				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-				public void GetWorldMatrixTranspose( out Matrix3x4F result )
+				public void GetWorldMatrixTransposeRelative( out Matrix3x4F result )
 				{
 					result.Item0.X = Size.X;
 					result.Item0.Y = RotationQuaternion.Y;
 					result.Item0.Z = RotationQuaternion.W;
-					result.Item0.W = Position.X;
+					result.Item0.W = PositionRelative.X;
 					result.Item1.X = RotationAngle;
 					result.Item1.Y = 1;
 					result.Item1.Z = 0;
-					result.Item1.W = Position.Y;
+					result.Item1.W = PositionRelative.Y;
 					result.Item2.X = RotationQuaternion.X;
 					result.Item2.Y = RotationQuaternion.Z;
 					result.Item2.Z = Size.Y;
-					result.Item2.W = Position.Z;
+					result.Item2.W = PositionRelative.Z;
 
 					//GetWorldMatrix( out var worldMatrix );
 					//worldMatrix.GetTranspose( out result );
@@ -885,12 +951,14 @@ namespace NeoAxis
 				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 				public void GetInstancingData( out ObjectInstanceData data )
 				{
-					GetWorldMatrixTranspose( out data.Transform );
-					data.PositionPreviousFrame = PositionPreviousFrame;
+					GetWorldMatrixTransposeRelative( out data.TransformRelative );
+					data.PreviousFramePositionChange = PreviousFramePositionChange;
 					//data.Unused = 0;
 
-					data.Color = ColorForInstancingData;
-					//data.Color = GetColorForInstancingData( ref Color );
+					data.ColorPackedValue1 = ColorForInstancingData1;
+					data.ColorPackedValue2 = ColorForInstancingData2;
+					//data.Color = ColorForInstancingData;
+					////data.Color = GetColorForInstancingData( ref Color );
 
 					//ColorValue c;
 					//c.Red = MathEx.Sqrt( Color.Red * 0.1f );
@@ -907,7 +975,7 @@ namespace NeoAxis
 					data.ReceiveDecals = ReceiveDecals ? (byte)255 : (byte)0;
 					data.MotionBlurFactor = (byte)( MotionBlurFactor * 255 );
 					data.Unused1 = 0;
-					data.Unused2 = 0;
+					//data.Unused2 = 0;
 					data.CullingByCameraDirectionData = CullingByCameraDirectionData;
 					//data.ReceiveDecals = ReceiveDecals ? 1.0f : 0.0f;
 					//data.MotionBlurFactor = MotionBlurFactor;
@@ -927,6 +995,8 @@ namespace NeoAxis
 					if( MotionBlurFactor != billboardItem.MotionBlurFactor )
 						return false;
 					if( Material != billboardItem.Material )
+						return false;
+					if( MaterialInstanceParameters != null || billboardItem.MaterialInstanceParameters != null )
 						return false;
 
 					//if( LODRange != billboardItem.LODRange )
@@ -951,7 +1021,7 @@ namespace NeoAxis
 			public class LightItem
 			//public struct LightItem
 			{
-				public object Creator;
+				public Light/*object*/ Creator;
 				public object AnyData;
 				public Bounds BoundingBox;
 				public Sphere BoundingSphere;
@@ -970,6 +1040,7 @@ namespace NeoAxis
 				public DegreeF SpotlightOuterAngle;
 				public float SpotlightFalloff;
 				public Plane[] SpotlightClipPlanes;
+				public float StartDistance;
 				//public float SourceRadiusOrAngle;
 				public bool CastShadows;
 				public float ShadowIntensity;
@@ -977,18 +1048,17 @@ namespace NeoAxis
 				public float ShadowBias;
 				public float ShadowNormalBias;
 				public float ShadowSoftness;
+				public Light.ShadowTextureSizeType ShadowTextureSize;
+				public ShadowTextureSizeEnum ShadowTextureSizeValue;
 				public float ShadowContactLength;
-
 				public ImageComponent Mask;
-				public double MaskScale;
-				//public Vec2 maskPosition;
-				//public Vec2 maskScale;
-				//public Mat4 maskMatrix;
-				//public SpaceBounds spaceBounds;
-
+				public Transform MaskTransform;
 				//!!!!good?
 				public Component[] children;
 				//public ILightChild[] children;
+				public long UniqueIdentifierForStaticShadows;//0 means static shadows are disabled
+				public bool StaticShadows;
+				public float ShadowNearClipDistance;
 			}
 
 			/// <summary>
@@ -1002,7 +1072,10 @@ namespace NeoAxis
 
 				public Sphere Sphere;
 				public ImageComponent CubemapEnvironment;
+				public float CubemapEnvironmentMipmapsAndBlurRequired;
+				public float CubemapEnvironmentAffectLightingLodOffset;
 				public Vector4F[] HarmonicsIrradiance;//public ImageComponent CubemapIrradiance;
+				public float Intensity;
 				public QuaternionF Rotation;//public Matrix3F Rotation;
 				public Vector3F Multiplier;
 			}
@@ -1146,19 +1219,19 @@ namespace NeoAxis
 			public struct ObjectInstanceData
 			{
 				//48 bytes
-				public Matrix3x4F Transform;
+				public Matrix3x4F TransformRelative;
 
 				//16 bytes
-				public Vector3F PositionPreviousFrame;
-				public ColorByte Color;
+				public Vector3F PreviousFramePositionChange;//public Vector3F PositionPreviousFrameRelative;
+				public uint ColorPackedValue1;
 
 				//16 bytes
 				public float LodValue;
 				public float VisibilityDistance;
 				public byte ReceiveDecals;
 				public byte MotionBlurFactor;
+				public byte ColorPackedValue2;
 				public byte Unused1;
-				public byte Unused2;
 				public uint CullingByCameraDirectionData;
 
 				//public float LodValue;
@@ -1168,14 +1241,15 @@ namespace NeoAxis
 
 				//
 
-				public void Init( ref Matrix4F transform, ref Vector3F positionPreviousFrame, ref ColorValue color, float lodValue, float visibilityDistance, bool receiveDecals, float motionBlurFactor, uint cullingByCameraDirectionData )
+				public void Init( ref Matrix4F transformRelative, ref Vector3F previousFramePositionChange, ref ColorValue color, float lodValue, float visibilityDistance, bool receiveDecals, float motionBlurFactor, uint cullingByCameraDirectionData )
 				{
-					transform.GetTranspose( out Transform );
+					transformRelative.GetTranspose( out TransformRelative );
 
-					PositionPreviousFrame = positionPreviousFrame;
-					//Unused = 0;
+					PreviousFramePositionChange = previousFramePositionChange;//PositionPreviousFrameRelative = positionPreviousFrameRelative;//Unused = 0;
 
-					Color = GetColorForInstancingData( ref color );
+					GetColorForInstancingData( ref color, out ColorPackedValue1, out ColorPackedValue2 );
+					//Color = GetColorForInstancingData( ref color );
+
 					//ColorValue c;
 					//c.Red = MathEx.Sqrt( color.Red * 0.1f );
 					//c.Green = MathEx.Sqrt( color.Green * 0.1f );
@@ -1208,6 +1282,7 @@ namespace NeoAxis
 				public Material OriginalMaterial { get; }
 				public PaintLayer.BlendModeEnum BlendMode { get; }
 				public ColorValue MaterialColor { get; }
+				public float UVScale { get; }
 
 				public Surface Surface { get; }
 				public bool SurfaceObjects { get; }
@@ -1233,6 +1308,7 @@ namespace NeoAxis
 					OriginalMaterial = layer.GetMaterial();
 					BlendMode = layer.BlendMode;
 					MaterialColor = layer.MaterialColor;
+					UVScale = (float)layer.UVScale;
 
 					Surface = layer.Surface;
 					SurfaceObjects = layer.SurfaceObjects;
@@ -1279,7 +1355,7 @@ namespace NeoAxis
 					if( obj is LayerItem )
 					{
 						var obj2 = (LayerItem)obj;
-						return Mask == obj2.Mask && UniqueMaskDataCounter == obj2.UniqueMaskDataCounter && OriginalMaterial == obj2.OriginalMaterial && BlendMode == obj2.BlendMode && MaterialColor == obj2.MaterialColor && Surface == obj2.Surface && SurfaceObjects == obj2.SurfaceObjects && SurfaceObjectsDistribution == obj2.SurfaceObjectsDistribution && SurfaceObjectsScale == obj2.SurfaceObjectsScale && SurfaceObjectsColor == obj2.SurfaceObjectsColor && SurfaceObjectsVisibilityDistanceFactor == obj2.SurfaceObjectsVisibilityDistanceFactor && SurfaceObjectsCastShadows == obj2.SurfaceObjectsCastShadows && SurfaceObjectsCollision == obj2.SurfaceObjectsCollision;
+						return Mask == obj2.Mask && UniqueMaskDataCounter == obj2.UniqueMaskDataCounter && OriginalMaterial == obj2.OriginalMaterial && BlendMode == obj2.BlendMode && MaterialColor == obj2.MaterialColor && UVScale == obj2.UVScale && Surface == obj2.Surface && SurfaceObjects == obj2.SurfaceObjects && SurfaceObjectsDistribution == obj2.SurfaceObjectsDistribution && SurfaceObjectsScale == obj2.SurfaceObjectsScale && SurfaceObjectsColor == obj2.SurfaceObjectsColor && SurfaceObjectsVisibilityDistanceFactor == obj2.SurfaceObjectsVisibilityDistanceFactor && SurfaceObjectsCastShadows == obj2.SurfaceObjectsCastShadows && SurfaceObjectsCollision == obj2.SurfaceObjectsCollision;
 					}
 					else
 						return false;
@@ -1298,6 +1374,7 @@ namespace NeoAxis
 						result ^= OriginalMaterial.GetHashCode();
 					result ^= BlendMode.GetHashCode();
 					result ^= MaterialColor.GetHashCode();
+					result ^= UVScale.GetHashCode();
 					if( Surface != null )
 					{
 						result ^= Surface.GetHashCode();
@@ -1382,6 +1459,14 @@ namespace NeoAxis
 				Rotation = QuaternionF.Identity;
 				MultiplierAndAffect = new Vector4F( Vector3F.One, affect );
 			}
+
+			public static Vector4F[] GetHarmonicsToUseMap( ImageComponent map, float mipOffset )
+			{
+				float mip = map?.Result != null ? map.Result.ResultMipLevels - 3 : 0;
+				mip += mipOffset;
+
+				return new Vector4F[ 9 ] { new Vector4F( -10000, mip, 0, 0 ), Vector4F.Zero, Vector4F.Zero, Vector4F.Zero, Vector4F.Zero, Vector4F.Zero, Vector4F.Zero, Vector4F.Zero, Vector4F.Zero };
+			}
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1400,7 +1485,8 @@ namespace NeoAxis
 		static RenderingPipeline()
 		{
 			var one = ColorValue.One;
-			colorOneForInstancingData = GetColorForInstancingData( ref one );
+			GetColorForInstancingData( ref one, out colorOneForInstancingData1, out colorOneForInstancingData2 );
+			//colorOneForInstancingData = GetColorForInstancingData( ref one );
 
 			unsafe
 			{
@@ -1428,9 +1514,9 @@ namespace NeoAxis
 			{
 				switch( p.Name )
 				{
-				case nameof( InstancingMinCount ):
+				//case nameof( InstancingMinCount ):
 				case nameof( InstancingMaxCount ):
-				case nameof( InstancingTransparent ):
+				//case nameof( InstancingTransparent ):
 					if( !Instancing )
 						skip = true;
 					break;
@@ -1438,7 +1524,7 @@ namespace NeoAxis
 			}
 		}
 
-		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		[MethodImpl( (MethodImplOptions)512 )]
 		public virtual bool GetHighDynamicRange()
 		{
 			var result = HighDynamicRange.Value;
@@ -1447,7 +1533,7 @@ namespace NeoAxis
 			return result == AutoTrueFalse.True;
 		}
 
-		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		[MethodImpl( (MethodImplOptions)512 )]
 		public virtual bool GetUseMultiRenderTargets()
 		{
 			if( !UseRenderTargets.Value )
@@ -1463,7 +1549,19 @@ namespace NeoAxis
 			return result == AutoTrueFalse.True;
 		}
 
-		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//[MethodImpl( (MethodImplOptions)512 )]
+		//public virtual bool GetOrderIndependentTransparency()
+		//{
+		//	if( !GetUseMultiRenderTargets() )
+		//		return false;
+
+		//	var result = OrderIndependentTransparency.Value;
+		//	if( result == AutoTrueFalse.Auto )
+		//		result = SystemSettings.LimitedDevice ? AutoTrueFalse.False : AutoTrueFalse.True;
+		//	return result == AutoTrueFalse.True;
+		//}
+
+		[MethodImpl( (MethodImplOptions)512 )]
 		public virtual bool GetSimpleGeometryAntialiasing()
 		{
 			var result = SimpleGeometryAntialiasing.Value;
@@ -1477,7 +1575,7 @@ namespace NeoAxis
 		//{
 		//}
 
-		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		[MethodImpl( (MethodImplOptions)512 )]
 		internal protected virtual void SetCutVolumeSettingsUniforms( ViewportRenderingContext context, RenderSceneData.CutVolumeItem[] cutVolumes, bool forceUpdate ) { }
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -1497,61 +1595,93 @@ namespace NeoAxis
 			return true;
 		}
 
-
-		static float[] getColorForInstancingDataTable;
-
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		static float GetColorForInstancingData( float v )
+		public static void GetColorForInstancingData( ref ColorValue color, out uint value1, out byte value2 )
 		{
-			if( v >= 0 && v <= 0.1f )
-			{
-				var v2 = (int)( v * 10240 );
-				if( v2 >= 0 && v2 < 1024 )
-					return getColorForInstancingDataTable[ v2 ];
-			}
+			var maxComponent = color.MaxComponent();
+#if UWP || ANDROID
+			var exponent = Math.Ceiling( Math.Log( maxComponent, 2 ) );
+#else
+			var exponent = Math.Ceiling( Math.Log2( maxComponent ) );
+#endif
+			var rgba = color / (float)Math.Pow( 2, exponent );
+			value1 = rgba.ToColorPacked().PackedValue;
+			value2 = (byte)( exponent + 128 );
 
-			return MathEx.Sqrt( v );
+			//vec4 rgbe8;
+			//float maxComponent = max( max( _rgb.x, _rgb.y ), _rgb.z );
+			//float exponent = ceil( log2( maxComponent ) );
+			//rgbe8.xyz = _rgb / exp2( exponent );
+			//rgbe8.w = ( exponent + 128.0 ) / 255.0;
+			//return rgbe8;
 		}
 
-		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public static ColorByte GetColorForInstancingData( ref ColorValue color )
+
+		//static float[] getColorForInstancingDataTable;
+
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//static float GetColorForInstancingData( float v )
+		//{
+		//	if( v >= 0 && v <= 0.1f )
+		//	{
+		//		var v2 = (int)( v * 10240 );
+		//		if( v2 >= 0 && v2 < 1024 )
+		//			return getColorForInstancingDataTable[ v2 ];
+		//	}
+
+		//	return MathEx.Sqrt( v );
+		//}
+
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public static ColorByte GetColorForInstancingData( ref ColorValue color )
+		//{
+		//	//var caps = EngineApp._DebugCapsLock;
+		//	//if( caps )
+		//	//{
+
+		//	//for 0-0.1 range
+		//	if( getColorForInstancingDataTable == null )
+		//	{
+		//		var table = new float[ 1024 ];
+		//		for( int n = 0; n < 1024; n++ )
+		//			table[ n ] = MathEx.Sqrt( ( (float)n ) / 1024 * 0.1f );
+		//		getColorForInstancingDataTable = table;
+		//	}
+
+		//	ColorValue c;
+		//	c.Red = GetColorForInstancingData( color.Red * 0.1f );
+		//	c.Green = GetColorForInstancingData( color.Green * 0.1f );
+		//	c.Blue = GetColorForInstancingData( color.Blue * 0.1f );
+		//	c.Alpha = GetColorForInstancingData( color.Alpha * 0.1f );
+		//	return c.ToColorPacked();
+		//	//}
+		//	//else
+		//	//{
+		//	//	ColorValue c;
+		//	//	c.Red = MathEx.Sqrt( color.Red * 0.1f );
+		//	//	c.Green = MathEx.Sqrt( color.Green * 0.1f );
+		//	//	c.Blue = MathEx.Sqrt( color.Blue * 0.1f );
+		//	//	c.Alpha = MathEx.Sqrt( color.Alpha * 0.1f );
+		//	//	return c.ToColorPacked();
+		//	//}
+		//}
+
+		public static uint ColorOneForInstancingData1
 		{
-			//var caps = EngineApp._DebugCapsLock;
-			//if( caps )
-			//{
-
-			//for 0-0.1 range
-			if( getColorForInstancingDataTable == null )
-			{
-				var table = new float[ 1024 ];
-				for( int n = 0; n < 1024; n++ )
-					table[ n ] = MathEx.Sqrt( ( (float)n ) / 1024 * 0.1f );
-				getColorForInstancingDataTable = table;
-			}
-
-			ColorValue c;
-			c.Red = GetColorForInstancingData( color.Red * 0.1f );
-			c.Green = GetColorForInstancingData( color.Green * 0.1f );
-			c.Blue = GetColorForInstancingData( color.Blue * 0.1f );
-			c.Alpha = GetColorForInstancingData( color.Alpha * 0.1f );
-			return c.ToColorPacked();
-			//}
-			//else
-			//{
-			//	ColorValue c;
-			//	c.Red = MathEx.Sqrt( color.Red * 0.1f );
-			//	c.Green = MathEx.Sqrt( color.Green * 0.1f );
-			//	c.Blue = MathEx.Sqrt( color.Blue * 0.1f );
-			//	c.Alpha = MathEx.Sqrt( color.Alpha * 0.1f );
-			//	return c.ToColorPacked();
-			//}
+			get { return colorOneForInstancingData1; }
 		}
-
-		public static ColorByte ColorOneForInstancingData
+		public static byte ColorOneForInstancingData2
 		{
-			get { return colorOneForInstancingData; }
+			get { return colorOneForInstancingData2; }
 		}
-		static ColorByte colorOneForInstancingData;
+		static uint colorOneForInstancingData1;
+		static byte colorOneForInstancingData2;
+
+		//public static ColorByte ColorOneForInstancingData
+		//{
+		//	get { return colorOneForInstancingData; }
+		//}
+		//static ColorByte colorOneForInstancingData;
 
 		public static uint EncodeCullingByCameraDirectionData( Vector3F normal, float viewAngleFactor = 0 )
 		{

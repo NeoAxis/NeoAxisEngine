@@ -2,7 +2,6 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.IO;
 using NeoAxis.Editor;
 using Internal.SharpBgfx;
 
@@ -13,11 +12,11 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "material" )]
 #if !DEPLOY
-	[EditorControl( typeof( MaterialEditor ) )]
-	[Preview( typeof( MaterialPreview ) )]
-	[PreviewImage( typeof( MaterialPreviewImage ) )]
-	[SettingsCell( typeof( MaterialSettingsCell ) )]
-	[NewObjectSettings( typeof( NewObjectSettingsMaterial ) )]
+	[EditorControl( "NeoAxis.Editor.MaterialEditor" )]
+	[Preview( "NeoAxis.Editor.MaterialPreview" )]
+	[PreviewImage( "NeoAxis.Editor.MaterialPreviewImage" )]
+	[SettingsCell( "NeoAxis.Editor.MaterialSettingsCell" )]
+	[NewObjectSettings( "NeoAxis.Editor.MaterialNewObjectSettings" )]
 #endif
 	public partial class Material : ResultCompile<Material.CompiledMaterialData>, IEditorUpdateWhenDocumentModified
 	{
@@ -51,7 +50,7 @@ namespace NeoAxis
 			get { if( _blendMode.BeginGet() ) BlendMode = _blendMode.Get( this ); return _blendMode.value; }
 			set
 			{
-				if( _blendMode.BeginSet( ref value ) )
+				if( _blendMode.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -78,7 +77,7 @@ namespace NeoAxis
 			get { if( _twoSided.BeginGet() ) TwoSided = _twoSided.Get( this ); return _twoSided.value; }
 			set
 			{
-				if( _twoSided.BeginSet( ref value ) )
+				if( _twoSided.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -105,7 +104,7 @@ namespace NeoAxis
 			get { if( _twoSidedFlipNormals.BeginGet() ) TwoSidedFlipNormals = _twoSidedFlipNormals.Get( this ); return _twoSidedFlipNormals.value; }
 			set
 			{
-				if( _twoSidedFlipNormals.BeginSet( ref value ) )
+				if( _twoSidedFlipNormals.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -124,6 +123,7 @@ namespace NeoAxis
 		{
 			Lit,
 			Subsurface,
+			Foliage,
 			Cloth,
 			/// <summary>
 			/// Formula is BaseColor * 'light color' + Emissive. Usable for billboard materials.
@@ -144,7 +144,7 @@ namespace NeoAxis
 			get { if( _shadingModel.BeginGet() ) ShadingModel = _shadingModel.Get( this ); return _shadingModel.value; }
 			set
 			{
-				if( _shadingModel.BeginSet( ref value ) )
+				if( _shadingModel.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -169,7 +169,7 @@ namespace NeoAxis
 		public Reference<ColorValue> BaseColor
 		{
 			get { if( _baseColor.BeginGet() ) BaseColor = _baseColor.Get( this ); return _baseColor.value; }
-			set { if( _baseColor.BeginSet( ref value ) ) { try { BaseColorChanged?.Invoke( this ); } finally { _baseColor.EndSet(); } } }
+			set { if( _baseColor.BeginSet( this, ref value ) ) { try { BaseColorChanged?.Invoke( this ); } finally { _baseColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BaseColor"/> property value changes.</summary>
 		public event Action<Material> BaseColorChanged;
@@ -185,7 +185,7 @@ namespace NeoAxis
 		public Reference<double> Metallic
 		{
 			get { if( _metallic.BeginGet() ) Metallic = _metallic.Get( this ); return _metallic.value; }
-			set { if( _metallic.BeginSet( ref value ) ) { try { MetallicChanged?.Invoke( this ); } finally { _metallic.EndSet(); } } }
+			set { if( _metallic.BeginSet( this, ref value ) ) { try { MetallicChanged?.Invoke( this ); } finally { _metallic.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Metallic"/> property value changes.</summary>
 		public event Action<Material> MetallicChanged;
@@ -201,7 +201,7 @@ namespace NeoAxis
 		public Reference<double> Roughness
 		{
 			get { if( _roughness.BeginGet() ) Roughness = _roughness.Get( this ); return _roughness.value; }
-			set { if( _roughness.BeginSet( ref value ) ) { try { RoughnessChanged?.Invoke( this ); } finally { _roughness.EndSet(); } } }
+			set { if( _roughness.BeginSet( this, ref value ) ) { try { RoughnessChanged?.Invoke( this ); } finally { _roughness.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Roughness"/> property value changes.</summary>
 		public event Action<Material> RoughnessChanged;
@@ -217,7 +217,7 @@ namespace NeoAxis
 		public Reference<double> Reflectance
 		{
 			get { if( _reflectance.BeginGet() ) Reflectance = _reflectance.Get( this ); return _reflectance.value; }
-			set { if( _reflectance.BeginSet( ref value ) ) { try { ReflectanceChanged?.Invoke( this ); } finally { _reflectance.EndSet(); } } }
+			set { if( _reflectance.BeginSet( this, ref value ) ) { try { ReflectanceChanged?.Invoke( this ); } finally { _reflectance.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Reflectance"/> property value changes.</summary>
 		public event Action<Material> ReflectanceChanged;
@@ -232,11 +232,32 @@ namespace NeoAxis
 		public Reference<Vector3> Normal
 		{
 			get { if( _normal.BeginGet() ) Normal = _normal.Get( this ); return _normal.value; }
-			set { if( _normal.BeginSet( ref value ) ) { try { NormalChanged?.Invoke( this ); } finally { _normal.EndSet(); } } }
+			set { if( _normal.BeginSet( this, ref value ) ) { try { NormalChanged?.Invoke( this ); } finally { _normal.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Normal"/> property value changes.</summary>
 		public event Action<Material> NormalChanged;
 		ReferenceField<Vector3> _normal;
+
+		public enum DisplacementMethodEnum
+		{
+			DisplacementMapping,
+			Tessellation,
+		}
+
+		/// <summary>
+		/// The way to calculate height displacement. You can use displacement mapping, the data of heights are taken from Displacement property. Tessellation method is another more accurate way to render the displacement.
+		/// </summary>
+		[Category( "Shading" )]
+		[DefaultValue( DisplacementMethodEnum.DisplacementMapping )]
+		[FlowGraphBrowsable( false )]
+		public Reference<DisplacementMethodEnum> DisplacementTechnique
+		{
+			get { if( _displacementTechnique.BeginGet() ) DisplacementTechnique = _displacementTechnique.Get( this ); return _displacementTechnique.value; }
+			set { if( _displacementTechnique.BeginSet( this, ref value ) ) { try { DisplacementTechniqueChanged?.Invoke( this ); } finally { _displacementTechnique.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DisplacementTechnique"/> property value changes.</summary>
+		public event Action<Material> DisplacementTechniqueChanged;
+		ReferenceField<DisplacementMethodEnum> _displacementTechnique = DisplacementMethodEnum.DisplacementMapping;
 
 		/// <summary>
 		/// The height offset that is specified by the texture.
@@ -246,11 +267,13 @@ namespace NeoAxis
 		public Reference<double> Displacement
 		{
 			get { if( _displacement.BeginGet() ) Displacement = _displacement.Get( this ); return _displacement.value; }
-			set { if( _displacement.BeginSet( ref value ) ) { try { DisplacementChanged?.Invoke( this ); } finally { _displacement.EndSet(); } } }
+			set { if( _displacement.BeginSet( this, ref value ) ) { try { DisplacementChanged?.Invoke( this ); } finally { _displacement.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Displacement"/> property value changes.</summary>
 		public event Action<Material> DisplacementChanged;
 		ReferenceField<double> _displacement = 0.0;
+
+		//!!!!? DisplacementMultiply, DisplacementAdd
 
 		/// <summary>
 		/// The scale for Displacement.
@@ -261,11 +284,26 @@ namespace NeoAxis
 		public Reference<double> DisplacementScale
 		{
 			get { if( _displacementScale.BeginGet() ) DisplacementScale = _displacementScale.Get( this ); return _displacementScale.value; }
-			set { if( _displacementScale.BeginSet( ref value ) ) { try { DisplacementScaleChanged?.Invoke( this ); } finally { _displacementScale.EndSet(); } } }
+			set { if( _displacementScale.BeginSet( this, ref value ) ) { try { DisplacementScaleChanged?.Invoke( this ); } finally { _displacementScale.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplacementScale"/> property value changes.</summary>
 		public event Action<Material> DisplacementScaleChanged;
 		ReferenceField<double> _displacementScale = 0.05;
+
+		/// <summary>
+		/// The quality multiplier of the tessellation.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[Category( "Shading" )]
+		[Range( 0.25, 4, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		public Reference<double> TessellationQuality
+		{
+			get { if( _tessellationQuality.BeginGet() ) TessellationQuality = _tessellationQuality.Get( this ); return _tessellationQuality.value; }
+			set { if( _tessellationQuality.BeginSet( this, ref value ) ) { try { TessellationQualityChanged?.Invoke( this ); } finally { _tessellationQuality.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="TessellationQuality"/> property value changes.</summary>
+		public event Action<Material> TessellationQualityChanged;
+		ReferenceField<double> _tessellationQuality = 1.0;
 
 		/// <summary>
 		/// Defines how much of the light is accessible to a surface point.
@@ -277,7 +315,7 @@ namespace NeoAxis
 		public Reference<double> AmbientOcclusion
 		{
 			get { if( _ambientOcclusion.BeginGet() ) AmbientOcclusion = _ambientOcclusion.Get( this ); return _ambientOcclusion.value; }
-			set { if( _ambientOcclusion.BeginSet( ref value ) ) { try { AmbientOcclusionChanged?.Invoke( this ); } finally { _ambientOcclusion.EndSet(); } } }
+			set { if( _ambientOcclusion.BeginSet( this, ref value ) ) { try { AmbientOcclusionChanged?.Invoke( this ); } finally { _ambientOcclusion.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AmbientOcclusion"/> property value changes.</summary>
 		public event Action<Material> AmbientOcclusionChanged;
@@ -294,7 +332,7 @@ namespace NeoAxis
 		public Reference<ColorValuePowered> Emissive
 		{
 			get { if( _emissive.BeginGet() ) Emissive = _emissive.Get( this ); return _emissive.value; }
-			set { if( _emissive.BeginSet( ref value ) ) { try { EmissiveChanged?.Invoke( this ); } finally { _emissive.EndSet(); } } }
+			set { if( _emissive.BeginSet( this, ref value ) ) { try { EmissiveChanged?.Invoke( this ); } finally { _emissive.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Emissive"/> property value changes.</summary>
 		public event Action<Material> EmissiveChanged;
@@ -310,7 +348,7 @@ namespace NeoAxis
 		public Reference<double> Opacity
 		{
 			get { if( _opacity.BeginGet() ) Opacity = _opacity.Get( this ); return _opacity.value; }
-			set { if( _opacity.BeginSet( ref value ) ) { try { OpacityChanged?.Invoke( this ); } finally { _opacity.EndSet(); } } }
+			set { if( _opacity.BeginSet( this, ref value ) ) { try { OpacityChanged?.Invoke( this ); } finally { _opacity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Opacity"/> property value changes.</summary>
 		public event Action<Material> OpacityChanged;
@@ -327,7 +365,7 @@ namespace NeoAxis
 			get { if( _opacityDithering.BeginGet() ) OpacityDithering = _opacityDithering.Get( this ); return _opacityDithering.value; }
 			set
 			{
-				if( _opacityDithering.BeginSet( ref value ) )
+				if( _opacityDithering.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -352,7 +390,7 @@ namespace NeoAxis
 		public Reference<double> OpacityMaskThreshold
 		{
 			get { if( _opacityMaskThreshold.BeginGet() ) OpacityMaskThreshold = _opacityMaskThreshold.Get( this ); return _opacityMaskThreshold.value; }
-			set { if( _opacityMaskThreshold.BeginSet( ref value ) ) { try { OpacityMaskThresholdChanged?.Invoke( this ); } finally { _opacityMaskThreshold.EndSet(); } } }
+			set { if( _opacityMaskThreshold.BeginSet( this, ref value ) ) { try { OpacityMaskThresholdChanged?.Invoke( this ); } finally { _opacityMaskThreshold.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="OpacityMaskThreshold"/> property value changes.</summary>
 		public event Action<Material> OpacityMaskThresholdChanged;
@@ -371,7 +409,7 @@ namespace NeoAxis
 			set
 			{
 				var oldValue = _clearCoat.value.Value;
-				if( _clearCoat.BeginSet( ref value ) )
+				if( _clearCoat.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -399,7 +437,7 @@ namespace NeoAxis
 		public Reference<double> ClearCoatRoughness
 		{
 			get { if( _clearCoatRoughness.BeginGet() ) ClearCoatRoughness = _clearCoatRoughness.Get( this ); return _clearCoatRoughness.value; }
-			set { if( _clearCoatRoughness.BeginSet( ref value ) ) { try { ClearCoatRoughnessChanged?.Invoke( this ); } finally { _clearCoatRoughness.EndSet(); } } }
+			set { if( _clearCoatRoughness.BeginSet( this, ref value ) ) { try { ClearCoatRoughnessChanged?.Invoke( this ); } finally { _clearCoatRoughness.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ClearCoatRoughness"/> property value changes.</summary>
 		public event Action<Material> ClearCoatRoughnessChanged;
@@ -414,7 +452,7 @@ namespace NeoAxis
 		public Reference<Vector3> ClearCoatNormal
 		{
 			get { if( _clearCoatNormal.BeginGet() ) ClearCoatNormal = _clearCoatNormal.Get( this ); return _clearCoatNormal.value; }
-			set { if( _clearCoatNormal.BeginSet( ref value ) ) { try { ClearCoatNormalChanged?.Invoke( this ); } finally { _clearCoatNormal.EndSet(); } } }
+			set { if( _clearCoatNormal.BeginSet( this, ref value ) ) { try { ClearCoatNormalChanged?.Invoke( this ); } finally { _clearCoatNormal.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ClearCoatNormal"/> property value changes.</summary>
 		public event Action<Material> ClearCoatNormalChanged;
@@ -433,7 +471,7 @@ namespace NeoAxis
 			set
 			{
 				var oldValue = _anisotropy.value.Value;
-				if( _anisotropy.BeginSet( ref value ) )
+				if( _anisotropy.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -461,7 +499,7 @@ namespace NeoAxis
 		//public Reference<double> Anisotropy
 		//{
 		//	get { if( _anisotropy.BeginGet() ) Anisotropy = _anisotropy.Get( this ); return _anisotropy.value; }
-		//	set { if( _anisotropy.BeginSet( ref value ) ) { try { AnisotropyChanged?.Invoke( this ); } finally { _anisotropy.EndSet(); } } }
+		//	set { if( _anisotropy.BeginSet( this, ref value ) ) { try { AnisotropyChanged?.Invoke( this ); } finally { _anisotropy.EndSet(); } } }
 		//}
 		//public event Action<Material> AnisotropyChanged;
 		//ReferenceField<double> _anisotropy = 0.0;
@@ -475,7 +513,7 @@ namespace NeoAxis
 		public Reference<Vector3> AnisotropyDirection
 		{
 			get { if( _anisotropyDirection.BeginGet() ) AnisotropyDirection = _anisotropyDirection.Get( this ); return _anisotropyDirection.value; }
-			set { if( _anisotropyDirection.BeginSet( ref value ) ) { try { AnisotropyDirectionChanged?.Invoke( this ); } finally { _anisotropyDirection.EndSet(); } } }
+			set { if( _anisotropyDirection.BeginSet( this, ref value ) ) { try { AnisotropyDirectionChanged?.Invoke( this ); } finally { _anisotropyDirection.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AnisotropyDirection"/> property value changes.</summary>
 		public event Action<Material> AnisotropyDirectionChanged;
@@ -496,7 +534,7 @@ namespace NeoAxis
 		public Reference<AnisotropyDirectionBasisEnum> AnisotropyDirectionBasis
 		{
 			get { if( _anisotropyDirectionBasis.BeginGet() ) AnisotropyDirectionBasis = _anisotropyDirectionBasis.Get( this ); return _anisotropyDirectionBasis.value; }
-			set { if( _anisotropyDirectionBasis.BeginSet( ref value ) ) { try { AnisotropyDirectionBasisChanged?.Invoke( this ); } finally { _anisotropyDirectionBasis.EndSet(); } } }
+			set { if( _anisotropyDirectionBasis.BeginSet( this, ref value ) ) { try { AnisotropyDirectionBasisChanged?.Invoke( this ); } finally { _anisotropyDirectionBasis.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AnisotropyDirectionBasis"/> property value changes.</summary>
 		public event Action<Material> AnisotropyDirectionBasisChanged;
@@ -512,7 +550,7 @@ namespace NeoAxis
 		public Reference<double> Thickness
 		{
 			get { if( _thickness.BeginGet() ) Thickness = _thickness.Get( this ); return _thickness.value; }
-			set { if( _thickness.BeginSet( ref value ) ) { try { ThicknessChanged?.Invoke( this ); } finally { _thickness.EndSet(); } } }
+			set { if( _thickness.BeginSet( this, ref value ) ) { try { ThicknessChanged?.Invoke( this ); } finally { _thickness.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Thickness"/> property value changes.</summary>
 		public event Action<Material> ThicknessChanged;
@@ -528,7 +566,7 @@ namespace NeoAxis
 		public Reference<double> SubsurfacePower
 		{
 			get { if( _subsurfacePower.BeginGet() ) SubsurfacePower = _subsurfacePower.Get( this ); return _subsurfacePower.value; }
-			set { if( _subsurfacePower.BeginSet( ref value ) ) { try { SubsurfacePowerChanged?.Invoke( this ); } finally { _subsurfacePower.EndSet(); } } }
+			set { if( _subsurfacePower.BeginSet( this, ref value ) ) { try { SubsurfacePowerChanged?.Invoke( this ); } finally { _subsurfacePower.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SubsurfacePower"/> property value changes.</summary>
 		public event Action<Material> SubsurfacePowerChanged;
@@ -544,7 +582,7 @@ namespace NeoAxis
 		public Reference<ColorValue> SheenColor
 		{
 			get { if( _sheenColor.BeginGet() ) SheenColor = _sheenColor.Get( this ); return _sheenColor.value; }
-			set { if( _sheenColor.BeginSet( ref value ) ) { try { SheenColorChanged?.Invoke( this ); } finally { _sheenColor.EndSet(); } } }
+			set { if( _sheenColor.BeginSet( this, ref value ) ) { try { SheenColorChanged?.Invoke( this ); } finally { _sheenColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SheenColor"/> property value changes.</summary>
 		public event Action<Material> SheenColorChanged;
@@ -560,7 +598,7 @@ namespace NeoAxis
 		public Reference<ColorValue> SubsurfaceColor
 		{
 			get { if( _subsurfaceColor.BeginGet() ) SubsurfaceColor = _subsurfaceColor.Get( this ); return _subsurfaceColor.value; }
-			set { if( _subsurfaceColor.BeginSet( ref value ) ) { try { SubsurfaceColorChanged?.Invoke( this ); } finally { _subsurfaceColor.EndSet(); } } }
+			set { if( _subsurfaceColor.BeginSet( this, ref value ) ) { try { SubsurfaceColorChanged?.Invoke( this ); } finally { _subsurfaceColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SubsurfaceColor"/> property value changes.</summary>
 		public event Action<Material> SubsurfaceColorChanged;
@@ -577,7 +615,7 @@ namespace NeoAxis
 			get { if( _positionOffset.BeginGet() ) PositionOffset = _positionOffset.Get( this ); return _positionOffset.value; }
 			set
 			{
-				if( _positionOffset.BeginSet( ref value ) )
+				if( _positionOffset.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -592,21 +630,21 @@ namespace NeoAxis
 		public event Action<Material> PositionOffsetChanged;
 		ReferenceField<Vector3> _positionOffset;
 
-		/// <summary>
-		/// Amount of ray-tracing reflection. Used as option to use screen space or raytracing reflection technique.
-		/// </summary>
-		[DefaultValue( 0.0 )]//!!!! 1.0 )]
-		[Serialize]
-		[Category( "Shading" )]
-		[Range( 0, 1 )]
-		public Reference<double> RayTracingReflection
-		{
-			get { if( _rayTracingReflection.BeginGet() ) RayTracingReflection = _rayTracingReflection.Get( this ); return _rayTracingReflection.value; }
-			set { if( _rayTracingReflection.BeginSet( ref value ) ) { try { RayTracingReflectionChanged?.Invoke( this ); } finally { _rayTracingReflection.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="RayTracingReflection"/> property value changes.</summary>
-		public event Action<Material> RayTracingReflectionChanged;
-		ReferenceField<double> _rayTracingReflection = 0.0;//!!!! 1.0;
+		///// <summary>
+		///// Amount of ray-tracing reflection. Used as option to use screen space or raytracing reflection technique.
+		///// </summary>
+		//[DefaultValue( 0.0 )]//!!!! 1.0 )]
+		//[Serialize]
+		//[Category( "Shading" )]
+		//[Range( 0, 1 )]
+		//public Reference<double> RayTracingReflection
+		//{
+		//	get { if( _rayTracingReflection.BeginGet() ) RayTracingReflection = _rayTracingReflection.Get( this ); return _rayTracingReflection.value; }
+		//	set { if( _rayTracingReflection.BeginSet( this, ref value ) ) { try { RayTracingReflectionChanged?.Invoke( this ); } finally { _rayTracingReflection.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="RayTracingReflection"/> property value changes.</summary>
+		//public event Action<Material> RayTracingReflectionChanged;
+		//ReferenceField<double> _rayTracingReflection = 0.0;//!!!! 1.0;
 
 		/// <summary>
 		/// Whether the surface receive shadows from other sources.
@@ -620,7 +658,7 @@ namespace NeoAxis
 			get { if( _receiveShadows.BeginGet() ) ReceiveShadows = _receiveShadows.Get( this ); return _receiveShadows.value; }
 			set
 			{
-				if( _receiveShadows.BeginSet( ref value ) )
+				if( _receiveShadows.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -644,7 +682,7 @@ namespace NeoAxis
 		public Reference<bool> ReceiveDecals
 		{
 			get { if( _receiveDecals.BeginGet() ) ReceiveDecals = _receiveDecals.Get( this ); return _receiveDecals.value; }
-			set { if( _receiveDecals.BeginSet( ref value ) ) { try { ReceiveDecalsChanged?.Invoke( this ); } finally { _receiveDecals.EndSet(); } } }
+			set { if( _receiveDecals.BeginSet( this, ref value ) ) { try { ReceiveDecalsChanged?.Invoke( this ); } finally { _receiveDecals.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ReceiveDecals"/> property value changes.</summary>
 		public event Action<Material> ReceiveDecalsChanged;
@@ -659,7 +697,7 @@ namespace NeoAxis
 		public Reference<bool> UseVertexColor
 		{
 			get { if( _useVertexColor.BeginGet() ) UseVertexColor = _useVertexColor.Get( this ); return _useVertexColor.value; }
-			set { if( _useVertexColor.BeginSet( ref value ) ) { try { UseVertexColorChanged?.Invoke( this ); } finally { _useVertexColor.EndSet(); } } }
+			set { if( _useVertexColor.BeginSet( this, ref value ) ) { try { UseVertexColorChanged?.Invoke( this ); } finally { _useVertexColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UseVertexColor"/> property value changes.</summary>
 		public event Action<Material> UseVertexColorChanged;
@@ -674,7 +712,7 @@ namespace NeoAxis
 		public Reference<bool> SoftParticles
 		{
 			get { if( _softParticles.BeginGet() ) SoftParticles = _softParticles.Get( this ); return _softParticles.value; }
-			set { if( _softParticles.BeginSet( ref value ) ) { try { SoftParticlesChanged?.Invoke( this ); ShouldRecompile = true; } finally { _softParticles.EndSet(); } } }
+			set { if( _softParticles.BeginSet( this, ref value ) ) { try { SoftParticlesChanged?.Invoke( this ); ShouldRecompile = true; } finally { _softParticles.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SoftParticles"/> property value changes.</summary>
 		public event Action<Material> SoftParticlesChanged;
@@ -689,7 +727,7 @@ namespace NeoAxis
 		public Reference<double> SoftParticlesDistance
 		{
 			get { if( _softParticlesDistance.BeginGet() ) SoftParticlesDistance = _softParticlesDistance.Get( this ); return _softParticlesDistance.value; }
-			set { if( _softParticlesDistance.BeginSet( ref value ) ) { try { SoftParticlesDistanceChanged?.Invoke( this ); } finally { _softParticlesDistance.EndSet(); } } }
+			set { if( _softParticlesDistance.BeginSet( this, ref value ) ) { try { SoftParticlesDistanceChanged?.Invoke( this ); } finally { _softParticlesDistance.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SoftParticlesDistance"/> property value changes.</summary>
 		public event Action<Material> SoftParticlesDistanceChanged;
@@ -711,7 +749,7 @@ namespace NeoAxis
 		public Reference<DepthOffsetModeEnum> DepthOffsetMode
 		{
 			get { if( _depthOffsetMode.BeginGet() ) DepthOffsetMode = _depthOffsetMode.Get( this ); return _depthOffsetMode.value; }
-			set { if( _depthOffsetMode.BeginSet( ref value ) ) { try { DepthOffsetModeChanged?.Invoke( this ); } finally { _depthOffsetMode.EndSet(); } } }
+			set { if( _depthOffsetMode.BeginSet( this, ref value ) ) { try { DepthOffsetModeChanged?.Invoke( this ); } finally { _depthOffsetMode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DepthOffsetMode"/> property value changes.</summary>
 		public event Action<Material> DepthOffsetModeChanged;
@@ -725,7 +763,7 @@ namespace NeoAxis
 		public Reference<double> DepthOffset
 		{
 			get { if( _depthOffset.BeginGet() ) DepthOffset = _depthOffset.Get( this ); return _depthOffset.value; }
-			set { if( _depthOffset.BeginSet( ref value ) ) { try { DepthOffsetChanged?.Invoke( this ); } finally { _depthOffset.EndSet(); } } }
+			set { if( _depthOffset.BeginSet( this, ref value ) ) { try { DepthOffsetChanged?.Invoke( this ); } finally { _depthOffset.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DepthOffset"/> property value changes.</summary>
 		public event Action<Material> DepthOffsetChanged;
@@ -740,14 +778,11 @@ namespace NeoAxis
 		public Reference<bool> AdvancedBlending
 		{
 			get { if( _advancedBlending.BeginGet() ) AdvancedBlending = _advancedBlending.Get( this ); return _advancedBlending.value; }
-			set { if( _advancedBlending.BeginSet( ref value ) ) { try { AdvancedBlendingChanged?.Invoke( this ); } finally { _advancedBlending.EndSet(); } } }
+			set { if( _advancedBlending.BeginSet( this, ref value ) ) { try { AdvancedBlendingChanged?.Invoke( this ); } finally { _advancedBlending.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AdvancedBlending"/> property value changes.</summary>
 		public event Action<Material> AdvancedBlendingChanged;
 		ReferenceField<bool> _advancedBlending = false;
-
-		//!!!!flow graph
-		//!!!!double
 
 		/// <summary>
 		/// Whether to write the Base Color.
@@ -759,7 +794,7 @@ namespace NeoAxis
 		public Reference<int> AffectBaseColor
 		{
 			get { if( _affectBaseColor.BeginGet() ) AffectBaseColor = _affectBaseColor.Get( this ); return _affectBaseColor.value; }
-			set { if( _affectBaseColor.BeginSet( ref value ) ) { try { AffectBaseColorChanged?.Invoke( this ); } finally { _affectBaseColor.EndSet(); } } }
+			set { if( _affectBaseColor.BeginSet( this, ref value ) ) { try { AffectBaseColorChanged?.Invoke( this ); } finally { _affectBaseColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AffectBaseColor"/> property value changes.</summary>
 		public event Action<Material> AffectBaseColorChanged;
@@ -775,7 +810,7 @@ namespace NeoAxis
 		public Reference<int> AffectMetallic
 		{
 			get { if( _affectMetallic.BeginGet() ) AffectMetallic = _affectMetallic.Get( this ); return _affectMetallic.value; }
-			set { if( _affectMetallic.BeginSet( ref value ) ) { try { AffectMetallicChanged?.Invoke( this ); } finally { _affectMetallic.EndSet(); } } }
+			set { if( _affectMetallic.BeginSet( this, ref value ) ) { try { AffectMetallicChanged?.Invoke( this ); } finally { _affectMetallic.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AffectMetallic"/> property value changes.</summary>
 		public event Action<Material> AffectMetallicChanged;
@@ -791,7 +826,7 @@ namespace NeoAxis
 		public Reference<int> AffectRoughness
 		{
 			get { if( _affectRoughness.BeginGet() ) AffectRoughness = _affectRoughness.Get( this ); return _affectRoughness.value; }
-			set { if( _affectRoughness.BeginSet( ref value ) ) { try { AffectRoughnessChanged?.Invoke( this ); } finally { _affectRoughness.EndSet(); } } }
+			set { if( _affectRoughness.BeginSet( this, ref value ) ) { try { AffectRoughnessChanged?.Invoke( this ); } finally { _affectRoughness.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AffectRoughness"/> property value changes.</summary>
 		public event Action<Material> AffectRoughnessChanged;
@@ -807,7 +842,7 @@ namespace NeoAxis
 		public Reference<int> AffectReflectance
 		{
 			get { if( _affectReflectance.BeginGet() ) AffectReflectance = _affectReflectance.Get( this ); return _affectReflectance.value; }
-			set { if( _affectReflectance.BeginSet( ref value ) ) { try { AffectReflectanceChanged?.Invoke( this ); } finally { _affectReflectance.EndSet(); } } }
+			set { if( _affectReflectance.BeginSet( this, ref value ) ) { try { AffectReflectanceChanged?.Invoke( this ); } finally { _affectReflectance.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AffectReflectance"/> property value changes.</summary>
 		public event Action<Material> AffectReflectanceChanged;
@@ -823,7 +858,7 @@ namespace NeoAxis
 		public Reference<int> AffectAmbientOcclusion
 		{
 			get { if( _affectAmbientOcclusion.BeginGet() ) AffectAmbientOcclusion = _affectAmbientOcclusion.Get( this ); return _affectAmbientOcclusion.value; }
-			set { if( _affectAmbientOcclusion.BeginSet( ref value ) ) { try { AffectAmbientOcclusionChanged?.Invoke( this ); } finally { _affectAmbientOcclusion.EndSet(); } } }
+			set { if( _affectAmbientOcclusion.BeginSet( this, ref value ) ) { try { AffectAmbientOcclusionChanged?.Invoke( this ); } finally { _affectAmbientOcclusion.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AffectAmbientOcclusion"/> property value changes.</summary>
 		public event Action<Material> AffectAmbientOcclusionChanged;
@@ -839,7 +874,7 @@ namespace NeoAxis
 		public Reference<int> AffectEmissive
 		{
 			get { if( _affectEmissive.BeginGet() ) AffectEmissive = _affectEmissive.Get( this ); return _affectEmissive.value; }
-			set { if( _affectEmissive.BeginSet( ref value ) ) { try { AffectEmissiveChanged?.Invoke( this ); } finally { _affectEmissive.EndSet(); } } }
+			set { if( _affectEmissive.BeginSet( this, ref value ) ) { try { AffectEmissiveChanged?.Invoke( this ); } finally { _affectEmissive.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AffectEmissive"/> property value changes.</summary>
 		public event Action<Material> AffectEmissiveChanged;
@@ -855,7 +890,7 @@ namespace NeoAxis
 		public Reference<int> AffectGeometry
 		{
 			get { if( _affectGeometry.BeginGet() ) AffectGeometry = _affectGeometry.Get( this ); return _affectGeometry.value; }
-			set { if( _affectGeometry.BeginSet( ref value ) ) { try { AffectGeometryChanged?.Invoke( this ); } finally { _affectGeometry.EndSet(); } } }
+			set { if( _affectGeometry.BeginSet( this, ref value ) ) { try { AffectGeometryChanged?.Invoke( this ); } finally { _affectGeometry.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AffectGeometry"/> property value changes.</summary>
 		public event Action<Material> AffectGeometryChanged;
@@ -870,7 +905,7 @@ namespace NeoAxis
 		public Reference<bool> AdvancedScripting
 		{
 			get { if( _advancedScripting.BeginGet() ) AdvancedScripting = _advancedScripting.Get( this ); return _advancedScripting.value; }
-			set { if( _advancedScripting.BeginSet( ref value ) ) { try { AdvancedScriptingChanged?.Invoke( this ); ShouldRecompile = true; } finally { _advancedScripting.EndSet(); } } }
+			set { if( _advancedScripting.BeginSet( this, ref value ) ) { try { AdvancedScriptingChanged?.Invoke( this ); ShouldRecompile = true; } finally { _advancedScripting.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AdvancedScripting"/> property value changes.</summary>
 		public event Action<Material> AdvancedScriptingChanged;
@@ -883,13 +918,13 @@ namespace NeoAxis
 		[Category( "Advanced Scripting" )]
 		//!!!!
 #if !DEPLOY
-		[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
+		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
 #endif
 		[FlowGraphBrowsable( false )]
 		public Reference<string> VertexFunctions
 		{
 			get { if( _vertexFunctions.BeginGet() ) VertexFunctions = _vertexFunctions.Get( this ); return _vertexFunctions.value; }
-			set { if( _vertexFunctions.BeginSet( ref value ) ) { try { VertexFunctionsChanged?.Invoke( this ); ShouldRecompile = true; } finally { _vertexFunctions.EndSet(); } } }
+			set { if( _vertexFunctions.BeginSet( this, ref value ) ) { try { VertexFunctionsChanged?.Invoke( this ); ShouldRecompile = true; } finally { _vertexFunctions.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="VertexFunctions"/> property value changes.</summary>
 		public event Action<Material> VertexFunctionsChanged;
@@ -901,13 +936,13 @@ namespace NeoAxis
 		[DefaultValue( "" )]
 		[Category( "Advanced Scripting" )]
 #if !DEPLOY
-		[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
+		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
 #endif
 		[FlowGraphBrowsable( false )]
 		public Reference<string> VertexCode
 		{
 			get { if( _vertexCode.BeginGet() ) VertexCode = _vertexCode.Get( this ); return _vertexCode.value; }
-			set { if( _vertexCode.BeginSet( ref value ) ) { try { VertexCodeChanged?.Invoke( this ); ShouldRecompile = true; } finally { _vertexCode.EndSet(); } } }
+			set { if( _vertexCode.BeginSet( this, ref value ) ) { try { VertexCodeChanged?.Invoke( this ); ShouldRecompile = true; } finally { _vertexCode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="VertexCode"/> property value changes.</summary>
 		public event Action<Material> VertexCodeChanged;
@@ -919,13 +954,13 @@ namespace NeoAxis
 		[DefaultValue( "" )]
 		[Category( "Advanced Scripting" )]
 #if !DEPLOY
-		[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
+		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
 #endif
 		[FlowGraphBrowsable( false )]
 		public Reference<string> FragmentFunctions
 		{
 			get { if( _fragmentFunctions.BeginGet() ) FragmentFunctions = _fragmentFunctions.Get( this ); return _fragmentFunctions.value; }
-			set { if( _fragmentFunctions.BeginSet( ref value ) ) { try { FragmentFunctionsChanged?.Invoke( this ); ShouldRecompile = true; } finally { _fragmentFunctions.EndSet(); } } }
+			set { if( _fragmentFunctions.BeginSet( this, ref value ) ) { try { FragmentFunctionsChanged?.Invoke( this ); ShouldRecompile = true; } finally { _fragmentFunctions.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FragmentFunctions"/> property value changes.</summary>
 		public event Action<Material> FragmentFunctionsChanged;
@@ -937,13 +972,13 @@ namespace NeoAxis
 		[DefaultValue( "" )]
 		[Category( "Advanced Scripting" )]
 #if !DEPLOY
-		[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
+		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
 #endif
 		[FlowGraphBrowsable( false )]
 		public Reference<string> FragmentCode
 		{
 			get { if( _fragmentCode.BeginGet() ) FragmentCode = _fragmentCode.Get( this ); return _fragmentCode.value; }
-			set { if( _fragmentCode.BeginSet( ref value ) ) { try { FragmentCodeChanged?.Invoke( this ); ShouldRecompile = true; } finally { _fragmentCode.EndSet(); } } }
+			set { if( _fragmentCode.BeginSet( this, ref value ) ) { try { FragmentCodeChanged?.Invoke( this ); ShouldRecompile = true; } finally { _fragmentCode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FragmentCode"/> property value changes.</summary>
 		public event Action<Material> FragmentCodeChanged;
@@ -958,7 +993,7 @@ namespace NeoAxis
 		public Reference<Vector4> CustomParameter1
 		{
 			get { if( _customParameter1.BeginGet() ) CustomParameter1 = _customParameter1.Get( this ); return _customParameter1.value; }
-			set { if( _customParameter1.BeginSet( ref value ) ) { try { CustomParameter1Changed?.Invoke( this ); } finally { _customParameter1.EndSet(); } } }
+			set { if( _customParameter1.BeginSet( this, ref value ) ) { try { CustomParameter1Changed?.Invoke( this ); } finally { _customParameter1.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CustomParameter1"/> property value changes.</summary>
 		public event Action<Material> CustomParameter1Changed;
@@ -973,12 +1008,26 @@ namespace NeoAxis
 		public Reference<Vector4> CustomParameter2
 		{
 			get { if( _customParameter2.BeginGet() ) CustomParameter2 = _customParameter2.Get( this ); return _customParameter2.value; }
-			set { if( _customParameter2.BeginSet( ref value ) ) { try { CustomParameter2Changed?.Invoke( this ); } finally { _customParameter2.EndSet(); } } }
+			set { if( _customParameter2.BeginSet( this, ref value ) ) { try { CustomParameter2Changed?.Invoke( this ); } finally { _customParameter2.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CustomParameter2"/> property value changes.</summary>
 		public event Action<Material> CustomParameter2Changed;
 		ReferenceField<Vector4> _customParameter2;
 
+		/// <summary>
+		/// Whether to allow static shadow optimization for this material.
+		/// </summary>
+		[Category( "Optimization" )]
+		[DefaultValue( true )]
+		[FlowGraphBrowsable( false )]
+		public Reference<bool> StaticShadows
+		{
+			get { if( _staticShadows.BeginGet() ) StaticShadows = _staticShadows.Get( this ); return _staticShadows.value; }
+			set { if( _staticShadows.BeginSet( this, ref value ) ) { try { StaticShadowsChanged?.Invoke( this ); ShouldRecompile = true; } finally { _staticShadows.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="StaticShadows"/> property value changes.</summary>
+		public event Action<Material> StaticShadowsChanged;
+		ReferenceField<bool> _staticShadows = true;
 
 		//!!!!CastShadows?
 		//!!!!!!если выключен, то не нужно генерить special shadow caster data
@@ -988,292 +1037,9 @@ namespace NeoAxis
 		[DefaultValue( true )]
 		public bool EditorAutoUpdate { get; set; } = true;
 
-		/////////////////////////////////////////
-
-#if !DEPLOY
-		/// <summary>
-		/// A set of settings for <see cref="Material"/> creation in the editor.
-		/// </summary>
-		public class NewObjectSettingsMaterial : NewObjectSettings
-		{
-			NewMaterialData newMaterialData;
-			double newMaterialDataLastUpdate;
-
-			[DefaultValue( true )]
-			[Category( "Options" )]
-			[DisplayName( "Shader graph" )]
-			public bool ShaderGraph { get; set; } = true;
-
-			/// <summary>
-			/// The mode for automatic adjustment textures of a material. The texture files must be in the folder of a material. The mode does not always work, for example, when there are several files suitable for one channel texture.
-			/// </summary>
-			[DefaultValue( true )]
-			[Category( "Automatic Tuning" )]
-			[DisplayName( "Configure textures from the folder" )]
-			public bool ConfigureTexturesFromFolder { get; set; } = true;
-
-			/// <summary>
-			/// The mode for automatic adjustment textures of a material. The texture files must be in the folder of a material. The mode does not always work, for example, when there are several files suitable for one channel texture.
-			/// </summary>
-			[DefaultValue( false )]
-			[Category( "Automatic Tuning" )]
-			[DisplayName( "Configure textures from the folder" )]
-			public bool ConfigureTexturesFromFolderDisabled { get; } = false;
-
-			[DefaultValue( true )]
-			[Category( "Automatic Tuning" )]
-			public bool BaseColor { get; set; } = true;
-			[DefaultValue( false )]
-			[Category( "Automatic Tuning" )]
-			[DisplayName( "Base Color" )]
-			public bool BaseColorDisabled { get; } = false;
-
-			[DefaultValue( true )]
-			[Category( "Automatic Tuning" )]
-			public bool Metallic { get; set; } = true;
-			[DefaultValue( false )]
-			[Category( "Automatic Tuning" )]
-			[DisplayName( "Metallic" )]
-			public bool MetallicDisabled { get; } = false;
-
-			[DefaultValue( true )]
-			[Category( "Automatic Tuning" )]
-			public bool Roughness { get; set; } = true;
-			[DefaultValue( false )]
-			[Category( "Automatic Tuning" )]
-			[DisplayName( "Roughness" )]
-			public bool RoughnessDisabled { get; } = false;
-
-			[DefaultValue( true )]
-			[Category( "Automatic Tuning" )]
-			public bool AmbientOcclusion { get; set; } = true;
-			[DefaultValue( false )]
-			[Category( "Automatic Tuning" )]
-			[DisplayName( "Ambient Occlusion" )]
-			public bool AmbientOcclusionDisabled { get; } = false;
-
-			[DefaultValue( true )]
-			[Category( "Automatic Tuning" )]
-			public bool Emissive { get; set; } = true;
-			[DefaultValue( false )]
-			[Category( "Automatic Tuning" )]
-			[DisplayName( "Emissive" )]
-			public bool EmissiveDisabled { get; } = false;
-
-			[DefaultValue( true )]
-			[Category( "Automatic Tuning" )]
-			public bool Opacity { get; set; } = true;
-			[DefaultValue( false )]
-			[Category( "Automatic Tuning" )]
-			[DisplayName( "Opacity" )]
-			public bool OpacityDisabled { get; } = false;
-
-			[DefaultValue( true )]
-			[Category( "Automatic Tuning" )]
-			public bool Normal { get; set; } = true;
-			[DefaultValue( false )]
-			[Category( "Automatic Tuning" )]
-			[DisplayName( "Normal" )]
-			public bool NormalDisabled { get; } = false;
-
-			[DefaultValue( true )]
-			[Category( "Automatic Tuning" )]
-			public bool Displacement { get; set; } = true;
-			[DefaultValue( false )]
-			[Category( "Automatic Tuning" )]
-			[DisplayName( "Displacement" )]
-			public bool DisplacementDisabled { get; } = false;
-
-			//
-
-			public override bool Init( NewObjectWindow window )
-			{
-				if( !base.Init( window ) )
-					return false;
-
-				UpdateNewMaterialData();
-
-				return true;
-			}
-
-			protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
-			{
-				base.OnMetadataGetMembersFilter( context, member, ref skip );
-
-				//update new material data
-				if( EngineApp.EngineTime > newMaterialDataLastUpdate + 1.0 )
-					UpdateNewMaterialData();
-
-				if( member is Metadata.Property )
-				{
-					switch( member.Name )
-					{
-					case nameof( ConfigureTexturesFromFolder ):
-						if( !ShaderGraph || newMaterialData == null )
-							skip = true;
-						break;
-
-					case nameof( ConfigureTexturesFromFolderDisabled ):
-						if( !ShaderGraph || newMaterialData != null )
-							skip = true;
-						break;
-
-					case nameof( BaseColor ):
-					case nameof( Metallic ):
-					case nameof( Roughness ):
-					case nameof( Normal ):
-					case nameof( Displacement ):
-					case nameof( AmbientOcclusion ):
-					case nameof( Emissive ):
-					case nameof( Opacity ):
-						if( !ShaderGraph || !ConfigureTexturesFromFolder || newMaterialData == null )
-							skip = true;
-						else if( newMaterialData != null && string.IsNullOrEmpty( newMaterialData.GetTextureValueByName( member.Name ) ) )
-							skip = true;
-						break;
-
-					case nameof( BaseColorDisabled ):
-					case nameof( MetallicDisabled ):
-					case nameof( RoughnessDisabled ):
-					case nameof( NormalDisabled ):
-					case nameof( DisplacementDisabled ):
-					case nameof( AmbientOcclusionDisabled ):
-					case nameof( EmissiveDisabled ):
-					case nameof( OpacityDisabled ):
-						if( !ShaderGraph || !ConfigureTexturesFromFolder || newMaterialData == null )
-							skip = true;
-						else if( newMaterialData != null && !string.IsNullOrEmpty( newMaterialData.GetTextureValueByName( member.Name.Replace( "Disabled", "" ) ) ) )
-							skip = true;
-						break;
-					}
-				}
-			}
-
-			string DetectTextureTypeNameByFileName( string name )
-			{
-				if( name.Contains( "_albedo" ) || name.Contains( "_diffuse" ) || name.Contains( "_diff_" ) || name.Contains( "_color" ) || name.Contains( "_base_color" ) || name.Contains( "_basecolor" ) )
-					return "BaseColor";
-
-				if( name.Contains( "_metallic" ) || name.Contains( "_metalness" ) )
-					return "Metallic";
-
-				if( name.Contains( "_roughness" ) || ( name.Contains( "_rough_" ) && !name.Contains( "_rough_ao_" ) ) )
-					return "Roughness";
-
-				if( name.Contains( "_normal" ) || name.Contains( "_nor_" ) )
-					return "Normal";
-
-				if( name.Contains( "_displacement" ) || name.Contains( "_disp_" ) || name.Contains( "_height" ) )
-					return "Displacement";
-
-				if( name.Contains( "_ambientocclusion" ) || ( !name.Contains( "_rough_ao_" ) && name.Contains( "_ao" ) ) )
-					return "AmbientOcclusion";
-
-				if( name.Contains( "_emissive" ) || name.Contains( "_emission" ) )
-					return "Emissive";
-
-				if( name.Contains( "_opacity" ) )
-					return "Opacity";
-
-				return "";
-			}
-
-			void UpdateNewMaterialData()
-			{
-				NewMaterialData data = null;
-
-				try
-				{
-					var realFileName = Window.GetFileCreationRealFileName();
-					if( !string.IsNullOrEmpty( realFileName ) )
-					{
-						var virtualDirectory = VirtualPathUtility.GetVirtualPathByReal( PathUtility.GetDirectoryName( realFileName ) );
-						var paths = VirtualDirectory.GetFiles( virtualDirectory );
-
-						var imageType = ResourceManager.GetTypeByName( "Image" );
-
-						var extensions = new ESet<string>();
-						foreach( var ext in imageType.FileExtensions )
-							extensions.AddWithCheckAlreadyContained( ext );
-
-						foreach( var path in paths )
-						{
-							var lowerName = Path.GetFileName( path ).ToLower();
-							var extension = Path.GetExtension( lowerName ).Replace( ".", "" );
-							if( extensions.Contains( extension ) )
-							{
-								var textureTypeName = DetectTextureTypeNameByFileName( lowerName );
-								if( !string.IsNullOrEmpty( textureTypeName ) )
-								{
-									if( data == null )
-										data = new NewMaterialData();
-
-									//check already exists
-									if( !string.IsNullOrEmpty( data.GetTextureValueByName( textureTypeName ) ) )
-									{
-										data = null;
-										goto end;
-									}
-
-									data.SetTextureValueByName( textureTypeName, path );
-								}
-							}
-						}
-
-						end:;
-
-						if( data != null && data.GetTextureCount() == 0 )
-							data = null;
-					}
-				}
-				catch { }
-
-				newMaterialDataLastUpdate = EngineApp.EngineTime;
-				newMaterialData = data;
-			}
-
-			public override bool Creation( NewObjectCell.ObjectCreationContext context )
-			{
-				var newObject2 = (Material)context.newObject;
-
-				if( ShaderGraph )
-				{
-					UpdateNewMaterialData();
-
-					NewMaterialData data = null;
-					if( ConfigureTexturesFromFolder && newMaterialData != null )
-					{
-						data = newMaterialData.Clone();
-
-						if( !BaseColor )
-							data.SetTextureValueByName( "BaseColor", "" );
-						if( !Metallic )
-							data.SetTextureValueByName( "Metallic", "" );
-						if( !Roughness )
-							data.SetTextureValueByName( "Roughness", "" );
-						if( !Normal )
-							data.SetTextureValueByName( "Normal", "" );
-						if( !Displacement )
-							data.SetTextureValueByName( "Displacement", "" );
-						if( !AmbientOcclusion )
-							data.SetTextureValueByName( "AmbientOcclusion", "" );
-						if( !Emissive )
-							data.SetTextureValueByName( "Emissive", "" );
-						if( !Opacity )
-							data.SetTextureValueByName( "Opacity", "" );
-					}
-
-					newObject2.NewObjectCreateShaderGraph( data );
-				}
-
-				return base.Creation( context );
-			}
-		}
-#endif
-
 		///////////////////////////////////////////////
 
-		class NewMaterialData
+		public class NewMaterialData
 		{
 			//public int Index;
 			//public string Name;
@@ -1425,6 +1191,19 @@ namespace NeoAxis
 					}
 					break;
 
+				case nameof( TessellationQuality ):
+					{
+						if( DisplacementTechnique.Value != DisplacementMethodEnum.Tessellation )
+							skip = true;
+						else
+						{
+							var m = ShadingModel.Value;
+							if( m == ShadingModelEnum.Simple || m == ShadingModelEnum.Unlit )
+								skip = true;
+						}
+					}
+					break;
+
 				case nameof( Opacity ):
 					if( BlendMode.Value == BlendModeEnum.Opaque )//|| BlendMode.Value == BlendModeEnum.MaskedLayer )
 						skip = true;
@@ -1440,7 +1219,7 @@ namespace NeoAxis
 				case nameof( Reflectance ):
 					{
 						var model = ShadingModel.Value;
-						if( model != ShadingModelEnum.Lit && model != ShadingModelEnum.Subsurface )
+						if( model != ShadingModelEnum.Lit && model != ShadingModelEnum.Subsurface && model != ShadingModelEnum.Foliage )
 							skip = true;
 					}
 					break;
@@ -1490,7 +1269,7 @@ namespace NeoAxis
 
 				case nameof( Thickness ):
 				case nameof( SubsurfacePower ):
-					if( ShadingModel.Value != ShadingModelEnum.Subsurface )
+					if( ShadingModel.Value != ShadingModelEnum.Subsurface && ShadingModel.Value != ShadingModelEnum.Foliage )
 						skip = true;
 					break;
 
@@ -1502,18 +1281,18 @@ namespace NeoAxis
 				case nameof( SubsurfaceColor ):
 					{
 						var m = ShadingModel.Value;
-						if( m != ShadingModelEnum.Subsurface && m != ShadingModelEnum.Cloth )
+						if( m != ShadingModelEnum.Subsurface && m != ShadingModelEnum.Foliage && m != ShadingModelEnum.Cloth )
 							skip = true;
 					}
 					break;
 
-				case nameof( RayTracingReflection ):
-					{
-						var m = ShadingModel.Value;
-						if( m == ShadingModelEnum.Simple || m == ShadingModelEnum.Unlit )
-							skip = true;
-					}
-					break;
+				//case nameof( RayTracingReflection ):
+				//	{
+				//		var m = ShadingModel.Value;
+				//		if( m == ShadingModelEnum.Simple || m == ShadingModelEnum.Unlit )
+				//			skip = true;
+				//	}
+				//	break;
 
 				case nameof( AffectBaseColor ):
 				case nameof( AffectMetallic ):
@@ -1607,7 +1386,7 @@ namespace NeoAxis
 			////	sourceMaterials.Add( this );
 
 			{
-				int textureRegisterCounter = SystemSettings.LimitedDevice ? 9 : 12;//11;
+				int textureRegisterCounter = SystemSettings.LimitedDevice ? 11 : 18;// 12;//11;
 
 				//vertex
 				{
@@ -1709,7 +1488,7 @@ namespace NeoAxis
 				}
 
 				//displacement
-				if( Displacement.ReferenceSpecified )
+				if( Displacement.ReferenceSpecified && RenderingSystem.DisplacementMaxSteps != 0 )
 				{
 					var properties = new List<(Component, int, Metadata.Property)>();
 					properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Displacement ) )) );
@@ -1767,21 +1546,24 @@ namespace NeoAxis
 					{
 						var material = sourceMaterials[ materialIndex ];
 
-						if( RenderingSystem.MaterialShading != ProjectSettingsPage_Rendering.MaterialShadingEnum.Simple )
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Normal ) )) );
+						if( RenderingSystem.NormalMapping ) //!!!!new
+						{
+							if( RenderingSystem.MaterialShading != ProjectSettingsPage_Rendering.MaterialShadingEnum.Simple )
+								properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Normal ) )) );
+						}
 
 						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( BaseColor ) )) );
 
-						if( ( compiledData.specialMode == CompiledMaterialData.SpecialMode.PaintLayerMasked || compiledData.specialMode == CompiledMaterialData.SpecialMode.PaintLayerTransparent ) && !Opacity.ReferenceSpecified )
-						{
-							var obj = new ShaderGenerator.PaintLayerOpacityPropertyWithMask();
-							obj.Init();
-							properties.Add( (obj, materialIndex, (Metadata.Property)obj.MetadataGetMemberBySignature( "property:" + nameof( Opacity ) )) );
-						}
-						else
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Opacity ) )) );
+						//if( ( compiledData.specialMode == CompiledMaterialData.SpecialMode.PaintLayerMasked || compiledData.specialMode == CompiledMaterialData.SpecialMode.PaintLayerTransparent ) && !Opacity.ReferenceSpecified )
+						//{
+						//	var obj = new ShaderGenerator.PaintLayerOpacityPropertyWithMask();
+						//	obj.Init();
+						//	properties.Add( (obj, materialIndex, (Metadata.Property)obj.MetadataGetMemberBySignature( "property:" + nameof( Opacity ) )) );
+						//}
+						//else
+						//	properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Opacity ) )) );
 
-						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( OpacityMaskThreshold ) )) );
+						//properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( OpacityMaskThreshold ) )) );
 
 						if( RenderingSystem.MaterialShading != ProjectSettingsPage_Rendering.MaterialShadingEnum.Simple )
 						{
@@ -1801,7 +1583,7 @@ namespace NeoAxis
 							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( SubsurfaceColor ) )) );
 
 							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( AmbientOcclusion ) )) );
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( RayTracingReflection ) )) );
+							//properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( RayTracingReflection ) )) );
 						}
 
 						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Emissive ) )) );
@@ -1858,12 +1640,73 @@ namespace NeoAxis
 
 					compiledData.fragmentGeneratedCode = code;
 				}
+
+				//opacity
+				{
+					var properties = new List<(Component, int, Metadata.Property)>();
+
+					for( int materialIndex = 0; materialIndex < sourceMaterials.Count; materialIndex++ )
+					{
+						var material = sourceMaterials[ materialIndex ];
+
+						if( ( compiledData.specialMode == CompiledMaterialData.SpecialMode.PaintLayerMasked || compiledData.specialMode == CompiledMaterialData.SpecialMode.PaintLayerTransparent ) && !Opacity.ReferenceSpecified )
+						{
+							var obj = new ShaderGenerator.PaintLayerOpacityPropertyWithMask();
+							obj.Init();
+							properties.Add( (obj, materialIndex, (Metadata.Property)obj.MetadataGetMemberBySignature( "property:" + nameof( Opacity ) )) );
+						}
+						else
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Opacity ) )) );
+
+						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( OpacityMaskThreshold ) )) );
+
+						if( AdvancedScripting )
+						{
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
+						}
+					}
+
+					var generator = new ShaderGenerator();
+					var code = generator.Process( properties, "opacity_", this, compiledData.multiMaterialReferencedSeparateMaterialsOfCombinedGroup, ref textureRegisterCounter, out string error );
+
+					//process error
+					if( !string.IsNullOrEmpty( error ) )
+						return false;
+
+					if( AdvancedScripting )
+					{
+						if( !string.IsNullOrEmpty( FragmentFunctions.Value ) )
+						{
+							if( code == null )
+								code = new ShaderGenerator.ResultData();
+							if( !string.IsNullOrEmpty( code.shaderScripts ) )
+								code.shaderScripts += "\r\n";
+							code.shaderScripts += FragmentFunctions.Value;
+						}
+
+						if( !string.IsNullOrEmpty( FragmentCode.Value ) )
+						{
+							if( code == null )
+								code = new ShaderGenerator.ResultData();
+							if( !string.IsNullOrEmpty( code.codeBody ) )
+								code.codeBody += "\r\n";
+							code.codeBody += FragmentCode.Value;
+						}
+					}
+
+					//print to log
+					if( code != null && shaderGenerationPrintLog )
+						code.PrintToLog( GetDisplayName() + ", Opacity shader code" );
+
+					compiledData.opacityGeneratedCode = code;
+				}
 			}
 
 			//special shadow caster
 			if( needSpecialShadowCaster )
 			{
-				int textureRegisterCounter = SystemSettings.LimitedDevice ? 9 : 12;//11;
+				int textureRegisterCounter = SystemSettings.LimitedDevice ? 11 : 18;// 16;// 12;//11;
 
 				//////for depth texture
 				////if( SoftParticles )
@@ -1968,7 +1811,7 @@ namespace NeoAxis
 					compiledData.shadowCasterMaterialIndexGeneratedCode = code;
 				}
 
-				//fragment
+				//fragment. opacity
 				{
 					var properties = new List<(Component, int, Metadata.Property)>();
 
@@ -1976,7 +1819,16 @@ namespace NeoAxis
 					{
 						var material = sourceMaterials[ materialIndex ];
 
+						//if( ( compiledData.specialMode == CompiledMaterialData.SpecialMode.PaintLayerMasked || compiledData.specialMode == CompiledMaterialData.SpecialMode.PaintLayerTransparent ) && !Opacity.ReferenceSpecified )
+						//{
+						//	var obj = new ShaderGenerator.PaintLayerOpacityPropertyWithMask();
+						//	obj.Init();
+						//	properties.Add( (obj, materialIndex, (Metadata.Property)obj.MetadataGetMemberBySignature( "property:" + nameof( Opacity ) )) );
+						//}
+						//else
+
 						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Opacity ) )) );
+
 						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( OpacityMaskThreshold ) )) );
 
 						if( AdvancedScripting )
@@ -2024,6 +1876,7 @@ namespace NeoAxis
 
 					compiledData.shadowCasterFragmentGeneratedCode = code;
 				}
+
 			}
 
 			return true;
@@ -2059,12 +1912,14 @@ namespace NeoAxis
 			//	return "";
 
 
-			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
-				return "Android";
-			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
-				return "iOS";
-			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
-				return "Web";
+			if( !RenderingSystem.DeferredShading )
+				return "Global settings";
+			//if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
+			//	return "Android";
+			//if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
+			//	return "iOS";
+			//if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+			//	return "Web";
 
 			if( compiledData != null )
 			{
@@ -2083,6 +1938,12 @@ namespace NeoAxis
 				if( Emissive.ReferenceSpecified || Emissive.Value.ToVector3() != Vector3.Zero )
 					return "Subsurface + Emissive";
 				break;
+
+			case ShadingModelEnum.Foliage:
+				if( Emissive.ReferenceSpecified || Emissive.Value.ToVector3() != Vector3.Zero )
+					return "Foliage + Emissive";
+				break;
+
 			case ShadingModelEnum.Cloth:
 			case ShadingModelEnum.Unlit:
 				return "Shading Model";
@@ -2159,6 +2020,28 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		protected virtual string OnCheckGISupport( CompiledMaterialData compiledData )
+		{
+			if( !RenderingSystem.GlobalIllumination )
+				return "Global settings";
+
+			return "";
+		}
+
+		public delegate void CheckGISupportEventDelegate( Material sender, CompiledMaterialData compiledData, ref string reason );
+		public event CheckGISupportEventDelegate CheckGISupportEvent;
+
+		public string PerformCheckGISupport( CompiledMaterialData compiledData = null )
+		{
+			string reason = OnCheckGISupport( compiledData );
+			if( !string.IsNullOrEmpty( reason ) )
+				return reason;
+			CheckGISupportEvent?.Invoke( this, compiledData, ref reason );
+			return reason;
+		}
+
+		/////////////////////////////////////////
+
 		public virtual CompiledMaterialData Compile( CompiledMaterialData.SpecialMode specialMode, CompileExtensionData extensionData, int multiMaterialStartIndexOfCombinedGroup, CompiledMaterialData[] multiMaterialReferencedSeparateMaterialsOfCombinedGroup, Material[] multiMaterialSourceMaterialsToGetProperties, int multiSubMaterialSeparatePassIndex )
 		{
 			var optimize = true;
@@ -2212,6 +2095,16 @@ namespace NeoAxis
 			result.decalSupportReason = PerformCheckDecalSupport( result );
 			result.decalSupport = string.IsNullOrEmpty( result.decalSupportReason );
 
+			//gi
+			result.giSupportReason = PerformCheckGISupport( result );
+			result.giSupport = string.IsNullOrEmpty( result.giSupportReason );
+
+			result.staticShadows = StaticShadows;
+
+			if( DisplacementTechnique.Value == DisplacementMethodEnum.Tessellation )
+				result.tessellationQuality = (float)TessellationQuality.Value;
+			//result.tessellation = DisplacementTechnique.Value == DisplacementMethodEnum.Tessellation;
+
 			////soft particles
 			//result.softParticles = SoftParticles;
 
@@ -2237,236 +2130,512 @@ namespace NeoAxis
 				if( specialMode != CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
 				{
 					bool unlit = ShadingModel.Value == ShadingModelEnum.Unlit;
-					result.passesByLightType = new CompiledMaterialData.PassGroup[ unlit ? 1 : 4 ];
+					var receiveShadows = ReceiveShadows.Value && RenderingSystem.ShadowTechnique != ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None;
 
-					foreach( Light.TypeEnum lightType in Enum.GetValues( typeof( Light.TypeEnum ) ) )
+					var passIterations = 2;// 1;
+					if( SystemSettings.LimitedDevice )
+						passIterations += 2;
+
+					for( int nPassIteration = 0; nPassIteration < passIterations; nPassIteration++ )
 					{
-						if( unlit && lightType != Light.TypeEnum.Ambient )
-							break;
+						var voxelPass = nPassIteration == 1;
 
-						var group = new CompiledMaterialData.PassGroup();
-						result.passesByLightType[ (int)lightType ] = group;
+						if( voxelPass && !RenderingSystem.VoxelLOD )
+							continue;
+						if( nPassIteration == 2 && RenderingSystem.ShadowTechnique == ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None )
+							continue;
 
-						//one or two iterations depending Ambient light source, ReceiveShadows
-						int shadowsSupportIterations = 1;
-						if( lightType != Light.TypeEnum.Ambient && ReceiveShadows.Value && RenderingSystem.ShadowTechnique != ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None )
-							shadowsSupportIterations = 2;// 3;// 2;
-						for( int nShadowsSupportCounter = 0; nShadowsSupportCounter < shadowsSupportIterations; nShadowsSupportCounter++ )
+						////one or two iterations depending Ambient light source, ReceiveShadows
+						//int shadowsSupportIterations = 1;
+						//if( lightType != Light.TypeEnum.Ambient && ReceiveShadows.Value && RenderingSystem.ShadowTechnique != ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None )
+						//	shadowsSupportIterations = 2;// 3;// 2;
+						//for( int nShadowsSupportCounter = 0; nShadowsSupportCounter < shadowsSupportIterations; nShadowsSupportCounter++ )
+						//{
+
+						//generate compile arguments
+						var vertexDefines = new List<(string, string)>( 8 );
+						var fragmentDefines = new List<(string, string)>( 8 );
 						{
-							//generate compile arguments
-							var vertexDefines = new List<(string, string)>( 8 );
-							var fragmentDefines = new List<(string, string)>( 8 );
+							var generalDefines = new List<(string, string)>( 16 );
+							//generalDefines.Add( ("LIGHT_TYPE_" + lightType.ToString().ToUpper(), "") );
+							generalDefines.Add( ("BLEND_MODE_" + blendMode.ToString().ToUpper(), "") );
+							fragmentDefines.Add( ("SHADING_MODEL_" + ShadingModel.Value.ToString().ToUpper(), "") );
+							fragmentDefines.Add( ("SHADING_MODEL_INDEX", ( (int)ShadingModel.Value ).ToString()) );
+							if( TwoSided && TwoSidedFlipNormals )
+								fragmentDefines.Add( ("TWO_SIDED_FLIP_NORMALS", "") );
+							if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass )
+								fragmentDefines.Add( ("MULTI_MATERIAL_SEPARATE_PASS", "") );
+							if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
+								fragmentDefines.Add( ("MULTI_MATERIAL_COMBINED_PASS", "") );
+							if( voxelPass )
+								generalDefines.Add( ("VOXEL", "") );
+
+							if( ShadingModel.Value == ShadingModelEnum.Lit )
 							{
-								var generalDefines = new List<(string, string)>( 16 );
-								generalDefines.Add( ("LIGHT_TYPE_" + lightType.ToString().ToUpper(), "") );
-								generalDefines.Add( ("BLEND_MODE_" + blendMode.ToString().ToUpper(), "") );
-								fragmentDefines.Add( ("SHADING_MODEL_" + ShadingModel.Value.ToString().ToUpper(), "") );
-								fragmentDefines.Add( ("SHADING_MODEL_INDEX", ( (int)ShadingModel.Value ).ToString()) );
-								if( TwoSided && TwoSidedFlipNormals )
-									fragmentDefines.Add( ("TWO_SIDED_FLIP_NORMALS", "") );
-								if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass )
-									fragmentDefines.Add( ("MULTI_MATERIAL_SEPARATE_PASS", "") );
-								if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
-									fragmentDefines.Add( ("MULTI_MATERIAL_COMBINED_PASS", "") );
-
-								if( ShadingModel.Value == ShadingModelEnum.Lit )
-								{
-									if( ClearCoat.ReferenceSpecified || ClearCoat.Value != 0 )
-										fragmentDefines.Add( ("MATERIAL_HAS_CLEAR_COAT", "") );
-									if( Anisotropy.ReferenceSpecified || Anisotropy.Value != 0 )
-										fragmentDefines.Add( ("MATERIAL_HAS_ANISOTROPY", "") );
-								}
-
-								if( RenderingSystem.DisplacementMaxSteps > 0 && Displacement.ReferenceSpecified )
-									generalDefines.Add( ("DISPLACEMENT", "") );
-								if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
-									fragmentDefines.Add( ("OPACITY_DITHERING", "") );
-								if( SoftParticles )
-									fragmentDefines.Add( ("SOFT_PARTICLES", "") );
-
-								//receive shadows support
-								if( nShadowsSupportCounter != 0 )
-								{
-									fragmentDefines.Add( ("SHADOW_MAP", "") );
-
-									//if( nShadowsSupportCounter == 2 )
-									//	fragmentDefines.Add( ("SHADOW_MAP_HIGH", "") );
-									//else
-									//	fragmentDefines.Add( ("SHADOW_MAP_LOW", "") );
-								}
-
-								if( DepthOffsetMode.Value == DepthOffsetModeEnum.GreaterOrEqual )
-									fragmentDefines.Add( ("DEPTH_OFFSET_MODE_GREATER_EQUAL", "") );
-								else if( DepthOffsetMode.Value == DepthOffsetModeEnum.LessOrEqual )
-									fragmentDefines.Add( ("DEPTH_OFFSET_MODE_LESS_EQUAL", "") );
-
-								vertexDefines.AddRange( generalDefines );
-								fragmentDefines.AddRange( generalDefines );
-
-								if( shaderGenerationEnable )
-								{
-									//vertex
-									var vertexCode = result.vertexGeneratedCode;
-									if( vertexCode != null )
-									{
-										if( !string.IsNullOrEmpty( vertexCode.parametersBody ) )
-											vertexDefines.Add( ("VERTEX_CODE_PARAMETERS", vertexCode.parametersBody) );
-										if( !string.IsNullOrEmpty( vertexCode.samplersBody ) )
-											vertexDefines.Add( ("VERTEX_CODE_SAMPLERS", vertexCode.samplersBody) );
-										if( !string.IsNullOrEmpty( vertexCode.shaderScripts ) )
-											vertexDefines.Add( ("VERTEX_CODE_SHADER_SCRIPTS", "\r\n" + vertexCode.shaderScripts) );
-										if( !string.IsNullOrEmpty( vertexCode.codeBody ) )
-											vertexDefines.Add( ("VERTEX_CODE_BODY", "\r\n" + vertexCode.codeBody) );
-									}
-
-									//material index
-									var materialIndexCode = result.materialIndexGeneratedCode;
-									if( materialIndexCode != null )
-									{
-										if( !string.IsNullOrEmpty( materialIndexCode.parametersBody ) )
-											fragmentDefines.Add( ("MATERIAL_INDEX_CODE_PARAMETERS", materialIndexCode.parametersBody) );
-										if( !string.IsNullOrEmpty( materialIndexCode.samplersBody ) )
-											fragmentDefines.Add( ("MATERIAL_INDEX_CODE_SAMPLERS", materialIndexCode.samplersBody) );
-										if( !string.IsNullOrEmpty( materialIndexCode.shaderScripts ) )
-											fragmentDefines.Add( ("MATERIAL_INDEX_CODE_SHADER_SCRIPTS", "\r\n" + materialIndexCode.shaderScripts) );
-										if( !string.IsNullOrEmpty( materialIndexCode.codeBody ) )
-											fragmentDefines.Add( ("MATERIAL_INDEX_CODE_BODY", "\r\n" + materialIndexCode.codeBody) );
-									}
-
-									//displacement
-									var displacementCode = result.displacementGeneratedCode;
-									if( RenderingSystem.DisplacementMaxSteps > 0 && displacementCode != null )
-									{
-										if( !string.IsNullOrEmpty( displacementCode.parametersBody ) )
-											fragmentDefines.Add( ("DISPLACEMENT_CODE_PARAMETERS", displacementCode.parametersBody) );
-										if( !string.IsNullOrEmpty( displacementCode.samplersBody ) )
-											fragmentDefines.Add( ("DISPLACEMENT_CODE_SAMPLERS", displacementCode.samplersBody) );
-										if( !string.IsNullOrEmpty( displacementCode.shaderScripts ) )
-											fragmentDefines.Add( ("DISPLACEMENT_CODE_SHADER_SCRIPTS", "\r\n" + displacementCode.shaderScripts) );
-										if( !string.IsNullOrEmpty( displacementCode.codeBody ) )
-											fragmentDefines.Add( ("DISPLACEMENT_CODE_BODY", "\r\n" + displacementCode.codeBody) );
-									}
-
-									//fragment
-									var fragmentCode = result.fragmentGeneratedCode;
-									if( fragmentCode != null )
-									{
-										if( !string.IsNullOrEmpty( fragmentCode.parametersBody ) )
-											fragmentDefines.Add( ("FRAGMENT_CODE_PARAMETERS", fragmentCode.parametersBody) );
-										if( !string.IsNullOrEmpty( fragmentCode.samplersBody ) )
-											fragmentDefines.Add( ("FRAGMENT_CODE_SAMPLERS", fragmentCode.samplersBody) );
-										if( !string.IsNullOrEmpty( fragmentCode.shaderScripts ) )
-											fragmentDefines.Add( ("FRAGMENT_CODE_SHADER_SCRIPTS", "\r\n" + fragmentCode.shaderScripts) );
-										if( !string.IsNullOrEmpty( fragmentCode.codeBody ) )
-											fragmentDefines.Add( ("FRAGMENT_CODE_BODY", "\r\n" + fragmentCode.codeBody) );
-									}
-								}
+								if( ClearCoat.ReferenceSpecified || ClearCoat.Value != 0 )
+									fragmentDefines.Add( ("MATERIAL_HAS_CLEAR_COAT", "") );
+								if( Anisotropy.ReferenceSpecified || Anisotropy.Value != 0 )
+									fragmentDefines.Add( ("MATERIAL_HAS_ANISOTROPY", "") );
 							}
 
+							if( RenderingSystem.DisplacementMaxSteps > 0 && Displacement.ReferenceSpecified )
+								generalDefines.Add( ("DISPLACEMENT", "") );
+							if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
+								fragmentDefines.Add( ("OPACITY_DITHERING", "") );
+							if( SoftParticles )
+								fragmentDefines.Add( ("SOFT_PARTICLES", "") );
+
+							//receive shadows support
+							if( receiveShadows && nPassIteration != 3 )//nShadowsSupportCounter != 0 )
 							{
-								var vertexParameters = new GpuProgramManager.GetProgramItem( "Standard_Forward_Vertex_", GpuProgramType.Vertex, @"Base\Shaders\MaterialStandard_Forward_vs.sc", vertexDefines, optimize );
+								fragmentDefines.Add( ("SHADOW_MAP", "") );
 
-								var fragmentParameters = new GpuProgramManager.GetProgramItem( "Standard_Forward_Fragment_", GpuProgramType.Fragment, @"Base\Shaders\MaterialStandard_Forward_fs.sc", fragmentDefines, optimize );
+								//if( nShadowsSupportCounter == 2 )
+								//	fragmentDefines.Add( ("SHADOW_MAP_HIGH", "") );
+								//else
+								//	fragmentDefines.Add( ("SHADOW_MAP_LOW", "") );
+							}
 
-								if( collecting )
+							if( DepthOffsetMode.Value == DepthOffsetModeEnum.GreaterOrEqual )
+								fragmentDefines.Add( ("DEPTH_OFFSET_MODE_GREATER_EQUAL", "") );
+							else if( DepthOffsetMode.Value == DepthOffsetModeEnum.LessOrEqual )
+								fragmentDefines.Add( ("DEPTH_OFFSET_MODE_LESS_EQUAL", "") );
+
+							if( nPassIteration == 2 || nPassIteration == 3 )
+								fragmentDefines.Add( ("LIGHT_DIRECTIONAL_AMBIENT_ONLY", "") );
+
+							vertexDefines.AddRange( generalDefines );
+							fragmentDefines.AddRange( generalDefines );
+
+							if( shaderGenerationEnable )
+							{
+								//vertex
+								var vertexCode = result.vertexGeneratedCode;
+								if( vertexCode != null )
 								{
-									programsToCompile.Add( vertexParameters );
-									programsToCompile.Add( fragmentParameters );
+									if( !string.IsNullOrEmpty( vertexCode.parametersBody ) )
+										vertexDefines.Add( ("VERTEX_CODE_PARAMETERS", vertexCode.parametersBody) );
+									if( !string.IsNullOrEmpty( vertexCode.samplersBody ) )
+										vertexDefines.Add( ("VERTEX_CODE_SAMPLERS", vertexCode.samplersBody) );
+									if( !string.IsNullOrEmpty( vertexCode.shaderScripts ) )
+										vertexDefines.Add( ("VERTEX_CODE_SHADER_SCRIPTS", "\r\n" + vertexCode.shaderScripts) );
+									if( !string.IsNullOrEmpty( vertexCode.codeBody ) )
+										vertexDefines.Add( ("VERTEX_CODE_BODY", "\r\n" + vertexCode.codeBody) );
 								}
-								else
+
+								//material index
+								var materialIndexCode = result.materialIndexGeneratedCode;
+								if( materialIndexCode != null )
 								{
-									string error2;
+									if( !string.IsNullOrEmpty( materialIndexCode.parametersBody ) )
+										fragmentDefines.Add( ("MATERIAL_INDEX_CODE_PARAMETERS", materialIndexCode.parametersBody) );
+									if( !string.IsNullOrEmpty( materialIndexCode.samplersBody ) )
+										fragmentDefines.Add( ("MATERIAL_INDEX_CODE_SAMPLERS", materialIndexCode.samplersBody) );
+									if( !string.IsNullOrEmpty( materialIndexCode.shaderScripts ) )
+										fragmentDefines.Add( ("MATERIAL_INDEX_CODE_SHADER_SCRIPTS", "\r\n" + materialIndexCode.shaderScripts) );
+									if( !string.IsNullOrEmpty( materialIndexCode.codeBody ) )
+										fragmentDefines.Add( ("MATERIAL_INDEX_CODE_BODY", "\r\n" + materialIndexCode.codeBody) );
+								}
 
-									//vertex program
-									GpuProgram vertexProgram = GpuProgramManager.GetProgram( vertexParameters, out error2 );
-									if( !string.IsNullOrEmpty( error2 ) )
-									{
-										result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
-										Log.Warning( result.error );
-										//result.Dispose();
-										return null;
-									}
+								//displacement
+								var displacementCode = result.displacementGeneratedCode;
+								if( RenderingSystem.DisplacementMaxSteps > 0 && displacementCode != null )
+								{
+									if( !string.IsNullOrEmpty( displacementCode.parametersBody ) )
+										fragmentDefines.Add( ("DISPLACEMENT_CODE_PARAMETERS", displacementCode.parametersBody) );
+									if( !string.IsNullOrEmpty( displacementCode.samplersBody ) )
+										fragmentDefines.Add( ("DISPLACEMENT_CODE_SAMPLERS", displacementCode.samplersBody) );
+									if( !string.IsNullOrEmpty( displacementCode.shaderScripts ) )
+										fragmentDefines.Add( ("DISPLACEMENT_CODE_SHADER_SCRIPTS", "\r\n" + displacementCode.shaderScripts) );
+									if( !string.IsNullOrEmpty( displacementCode.codeBody ) )
+										fragmentDefines.Add( ("DISPLACEMENT_CODE_BODY", "\r\n" + displacementCode.codeBody) );
+								}
 
-									//fragment program
-									GpuProgram fragmentProgram = GpuProgramManager.GetProgram( fragmentParameters, out error2 );
-									if( !string.IsNullOrEmpty( error2 ) )
-									{
-										result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
-										Log.Warning( result.error );
-										//result.Dispose();
-										return null;
-									}
+								//fragment
+								var fragmentCode = result.fragmentGeneratedCode;
+								if( fragmentCode != null )
+								{
+									if( !string.IsNullOrEmpty( fragmentCode.parametersBody ) )
+										fragmentDefines.Add( ("FRAGMENT_CODE_PARAMETERS", fragmentCode.parametersBody) );
+									if( !string.IsNullOrEmpty( fragmentCode.samplersBody ) )
+										fragmentDefines.Add( ("FRAGMENT_CODE_SAMPLERS", fragmentCode.samplersBody) );
+									if( !string.IsNullOrEmpty( fragmentCode.shaderScripts ) )
+										fragmentDefines.Add( ("FRAGMENT_CODE_SHADER_SCRIPTS", "\r\n" + fragmentCode.shaderScripts) );
+									if( !string.IsNullOrEmpty( fragmentCode.codeBody ) )
+										fragmentDefines.Add( ("FRAGMENT_CODE_BODY", "\r\n" + fragmentCode.codeBody) );
+								}
 
-									var pass = new GpuMaterialPass( result, vertexProgram, fragmentProgram );
-									result.AllPasses.Add( pass );
-
-									if( nShadowsSupportCounter == 1 )
-										group.passWithShadows = pass;
-									else
-										group.passWithoutShadows = pass;
-
-									//if( nShadowsSupportCounter == 2 )
-									//	group.passWithShadowsHigh = pass;
-									//else if( nShadowsSupportCounter == 1 )
-									//	group.passWithShadowsLow = pass;
-									//else
-									//	group.passWithoutShadows = pass;
-
-									if( blendMode == BlendModeEnum.Opaque || blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer*/ )
-									{
-										if( lightType == Light.TypeEnum.Ambient )
-										{
-											pass.DepthWrite = true;
-											pass.SourceBlendFactor = SceneBlendFactor.One;
-											pass.DestinationBlendFactor = SceneBlendFactor.Zero;
-										}
-										else
-										{
-											pass.DepthWrite = false;
-											pass.SourceBlendFactor = SceneBlendFactor.One;
-											pass.DestinationBlendFactor = SceneBlendFactor.One;
-										}
-										//if( lightType != Light.TypeEnum.Ambient || usageMode == CompiledDataStandard.UsageMode.MaterialBlendNotFirst )
-										//{
-										//	pass.DepthWrite = false;
-										//	pass.SourceBlendFactor = SceneBlendFactor.One;
-										//	pass.DestinationBlendFactor = SceneBlendFactor.One;
-										//}
-										//else
-										//{
-										//	pass.DepthWrite = true;
-										//	pass.SourceBlendFactor = SceneBlendFactor.One;
-										//	pass.DestinationBlendFactor = SceneBlendFactor.Zero;
-										//}
-									}
-									else if( blendMode == BlendModeEnum.Transparent )
-									{
-										if( lightType == Light.TypeEnum.Ambient )
-										{
-											pass.DepthWrite = false;
-											pass.SourceBlendFactor = SceneBlendFactor.SourceAlpha;
-											pass.DestinationBlendFactor = SceneBlendFactor.OneMinusSourceAlpha;
-										}
-										else
-										{
-											pass.DepthWrite = false;
-											pass.SourceBlendFactor = SceneBlendFactor.SourceAlpha;
-											pass.DestinationBlendFactor = SceneBlendFactor.One;
-										}
-									}
-									else if( blendMode == BlendModeEnum.Add )
-									{
-										pass.DepthWrite = false;
-										pass.SourceBlendFactor = SceneBlendFactor.One;
-										pass.DestinationBlendFactor = SceneBlendFactor.One;
-									}
-
-									if( TwoSided )
-										pass.CullingMode = CullingMode.None;
+								//opacity
+								var opacityCode = result.opacityGeneratedCode;
+								if( opacityCode != null )
+								{
+									if( !string.IsNullOrEmpty( opacityCode.parametersBody ) )
+										fragmentDefines.Add( ("OPACITY_CODE_PARAMETERS", opacityCode.parametersBody) );
+									if( !string.IsNullOrEmpty( opacityCode.samplersBody ) )
+										fragmentDefines.Add( ("OPACITY_CODE_SAMPLERS", opacityCode.samplersBody) );
+									if( !string.IsNullOrEmpty( opacityCode.shaderScripts ) )
+										fragmentDefines.Add( ("OPACITY_CODE_SHADER_SCRIPTS", "\r\n" + opacityCode.shaderScripts) );
+									if( !string.IsNullOrEmpty( opacityCode.codeBody ) )
+										fragmentDefines.Add( ("OPACITY_CODE_BODY", "\r\n" + opacityCode.codeBody) );
 								}
 							}
 						}
+
+						{
+							var vertexParameters = new GpuProgramManager.GetProgramItem( "Standard_Forward_Vertex_", GpuProgramType.Vertex, @"Base\Shaders\MaterialStandard_Forward_vs.sc", vertexDefines, optimize );
+
+							var fragmentParameters = new GpuProgramManager.GetProgramItem( "Standard_Forward_Fragment_", GpuProgramType.Fragment, @"Base\Shaders\MaterialStandard_Forward_fs.sc", fragmentDefines, optimize );
+
+							if( collecting )
+							{
+								programsToCompile.Add( vertexParameters );
+								programsToCompile.Add( fragmentParameters );
+							}
+							else
+							{
+								string error2;
+
+								//vertex program
+								GpuProgram vertexProgram = GpuProgramManager.GetProgram( vertexParameters, out error2 );
+								if( !string.IsNullOrEmpty( error2 ) )
+								{
+									result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
+									Log.Warning( result.error );
+									//result.Dispose();
+									return null;
+								}
+
+								//fragment program
+								GpuProgram fragmentProgram = GpuProgramManager.GetProgram( fragmentParameters, out error2 );
+								if( !string.IsNullOrEmpty( error2 ) )
+								{
+									result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
+									Log.Warning( result.error );
+									//result.Dispose();
+									return null;
+								}
+
+								var pass = new GpuMaterialPass( result, vertexProgram, fragmentProgram );
+								result.AllPasses.Add( pass );
+
+								switch( nPassIteration )
+								{
+								case 0: result.forwardShadingPassUsual = pass; break;
+								case 1: result.forwardShadingPassVoxel = pass; break;
+								case 2: result.forwardShadingPassDirectionalAmbientOnly = pass; break;
+								case 3: result.forwardShadingPassDirectionalAmbientOnlyNoShadows = pass; break;
+								}
+
+								//if( nPassIteration == 2 )
+								//	result.forwardShadingPassDirectionalAmbientOnlyNoShadows = pass;
+								//else if( nPassIteration == 1 )
+								//	result.forwardShadingPassDirectionalAmbientOnly = pass;
+								//else
+								//	result.forwardShadingPass = pass;
+
+								////if( nShadowsSupportCounter == 1 )
+								////	group.passWithShadows = pass;
+								////else
+								////	group.passWithoutShadows = pass;
+
+								////if( nShadowsSupportCounter == 2 )
+								////	group.passWithShadowsHigh = pass;
+								////else if( nShadowsSupportCounter == 1 )
+								////	group.passWithShadowsLow = pass;
+								////else
+								////	group.passWithoutShadows = pass;
+
+								if( blendMode == BlendModeEnum.Opaque || blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer*/ )
+								{
+									//if( lightType == Light.TypeEnum.Ambient )
+									//{
+									pass.DepthWrite = true;
+									pass.SourceBlendFactor = SceneBlendFactor.One;
+									pass.DestinationBlendFactor = SceneBlendFactor.Zero;
+									//}
+									//else
+									//{
+									//	pass.DepthWrite = false;
+									//	pass.SourceBlendFactor = SceneBlendFactor.One;
+									//	pass.DestinationBlendFactor = SceneBlendFactor.One;
+									//}
+									////if( lightType != Light.TypeEnum.Ambient || usageMode == CompiledDataStandard.UsageMode.MaterialBlendNotFirst )
+									////{
+									////	pass.DepthWrite = false;
+									////	pass.SourceBlendFactor = SceneBlendFactor.One;
+									////	pass.DestinationBlendFactor = SceneBlendFactor.One;
+									////}
+									////else
+									////{
+									////	pass.DepthWrite = true;
+									////	pass.SourceBlendFactor = SceneBlendFactor.One;
+									////	pass.DestinationBlendFactor = SceneBlendFactor.Zero;
+									////}
+								}
+								else if( blendMode == BlendModeEnum.Transparent )
+								{
+									//!!!!OIT?
+
+									//if( lightType == Light.TypeEnum.Ambient )
+									//{
+									pass.DepthWrite = false;
+									pass.SourceBlendFactor = SceneBlendFactor.SourceAlpha;
+									pass.DestinationBlendFactor = SceneBlendFactor.OneMinusSourceAlpha;
+									//}
+									//else
+									//{
+									//	pass.DepthWrite = false;
+									//	pass.SourceBlendFactor = SceneBlendFactor.SourceAlpha;
+									//	pass.DestinationBlendFactor = SceneBlendFactor.One;
+									//}
+								}
+								else if( blendMode == BlendModeEnum.Add )
+								{
+									pass.DepthWrite = false;
+									pass.SourceBlendFactor = SceneBlendFactor.One;
+									pass.DestinationBlendFactor = SceneBlendFactor.One;
+								}
+
+								if( TwoSided )
+									pass.CullingMode = CullingMode.None;
+							}
+						}
+
+						//}
+
 					}
+
+
+					//result.passesByLightType = new CompiledMaterialData.PassGroup[ unlit ? 1 : 4 ];
+
+					//foreach( Light.TypeEnum lightType in Enum.GetValues( typeof( Light.TypeEnum ) ) )
+					//{
+					//	if( unlit && lightType != Light.TypeEnum.Ambient )
+					//		break;
+
+					//	var group = new CompiledMaterialData.PassGroup();
+					//	result.passesByLightType[ (int)lightType ] = group;
+
+					//	//one or two iterations depending Ambient light source, ReceiveShadows
+					//	int shadowsSupportIterations = 1;
+					//	if( lightType != Light.TypeEnum.Ambient && ReceiveShadows.Value && RenderingSystem.ShadowTechnique != ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None )
+					//		shadowsSupportIterations = 2;// 3;// 2;
+					//	for( int nShadowsSupportCounter = 0; nShadowsSupportCounter < shadowsSupportIterations; nShadowsSupportCounter++ )
+					//	{
+					//		//generate compile arguments
+					//		var vertexDefines = new List<(string, string)>( 8 );
+					//		var fragmentDefines = new List<(string, string)>( 8 );
+					//		{
+					//			var generalDefines = new List<(string, string)>( 16 );
+					//			generalDefines.Add( ("LIGHT_TYPE_" + lightType.ToString().ToUpper(), "") );
+					//			generalDefines.Add( ("BLEND_MODE_" + blendMode.ToString().ToUpper(), "") );
+					//			fragmentDefines.Add( ("SHADING_MODEL_" + ShadingModel.Value.ToString().ToUpper(), "") );
+					//			fragmentDefines.Add( ("SHADING_MODEL_INDEX", ( (int)ShadingModel.Value ).ToString()) );
+					//			if( TwoSided && TwoSidedFlipNormals )
+					//				fragmentDefines.Add( ("TWO_SIDED_FLIP_NORMALS", "") );
+					//			if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass )
+					//				fragmentDefines.Add( ("MULTI_MATERIAL_SEPARATE_PASS", "") );
+					//			if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
+					//				fragmentDefines.Add( ("MULTI_MATERIAL_COMBINED_PASS", "") );
+
+					//			if( ShadingModel.Value == ShadingModelEnum.Lit )
+					//			{
+					//				if( ClearCoat.ReferenceSpecified || ClearCoat.Value != 0 )
+					//					fragmentDefines.Add( ("MATERIAL_HAS_CLEAR_COAT", "") );
+					//				if( Anisotropy.ReferenceSpecified || Anisotropy.Value != 0 )
+					//					fragmentDefines.Add( ("MATERIAL_HAS_ANISOTROPY", "") );
+					//			}
+
+					//			if( RenderingSystem.DisplacementMaxSteps > 0 && Displacement.ReferenceSpecified )
+					//				generalDefines.Add( ("DISPLACEMENT", "") );
+					//			if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
+					//				fragmentDefines.Add( ("OPACITY_DITHERING", "") );
+					//			if( SoftParticles )
+					//				fragmentDefines.Add( ("SOFT_PARTICLES", "") );
+
+					//			//receive shadows support
+					//			if( nShadowsSupportCounter != 0 )
+					//			{
+					//				fragmentDefines.Add( ("SHADOW_MAP", "") );
+
+					//				//if( nShadowsSupportCounter == 2 )
+					//				//	fragmentDefines.Add( ("SHADOW_MAP_HIGH", "") );
+					//				//else
+					//				//	fragmentDefines.Add( ("SHADOW_MAP_LOW", "") );
+					//			}
+
+					//			if( DepthOffsetMode.Value == DepthOffsetModeEnum.GreaterOrEqual )
+					//				fragmentDefines.Add( ("DEPTH_OFFSET_MODE_GREATER_EQUAL", "") );
+					//			else if( DepthOffsetMode.Value == DepthOffsetModeEnum.LessOrEqual )
+					//				fragmentDefines.Add( ("DEPTH_OFFSET_MODE_LESS_EQUAL", "") );
+
+					//			vertexDefines.AddRange( generalDefines );
+					//			fragmentDefines.AddRange( generalDefines );
+
+					//			if( shaderGenerationEnable )
+					//			{
+					//				//vertex
+					//				var vertexCode = result.vertexGeneratedCode;
+					//				if( vertexCode != null )
+					//				{
+					//					if( !string.IsNullOrEmpty( vertexCode.parametersBody ) )
+					//						vertexDefines.Add( ("VERTEX_CODE_PARAMETERS", vertexCode.parametersBody) );
+					//					if( !string.IsNullOrEmpty( vertexCode.samplersBody ) )
+					//						vertexDefines.Add( ("VERTEX_CODE_SAMPLERS", vertexCode.samplersBody) );
+					//					if( !string.IsNullOrEmpty( vertexCode.shaderScripts ) )
+					//						vertexDefines.Add( ("VERTEX_CODE_SHADER_SCRIPTS", "\r\n" + vertexCode.shaderScripts) );
+					//					if( !string.IsNullOrEmpty( vertexCode.codeBody ) )
+					//						vertexDefines.Add( ("VERTEX_CODE_BODY", "\r\n" + vertexCode.codeBody) );
+					//				}
+
+					//				//material index
+					//				var materialIndexCode = result.materialIndexGeneratedCode;
+					//				if( materialIndexCode != null )
+					//				{
+					//					if( !string.IsNullOrEmpty( materialIndexCode.parametersBody ) )
+					//						fragmentDefines.Add( ("MATERIAL_INDEX_CODE_PARAMETERS", materialIndexCode.parametersBody) );
+					//					if( !string.IsNullOrEmpty( materialIndexCode.samplersBody ) )
+					//						fragmentDefines.Add( ("MATERIAL_INDEX_CODE_SAMPLERS", materialIndexCode.samplersBody) );
+					//					if( !string.IsNullOrEmpty( materialIndexCode.shaderScripts ) )
+					//						fragmentDefines.Add( ("MATERIAL_INDEX_CODE_SHADER_SCRIPTS", "\r\n" + materialIndexCode.shaderScripts) );
+					//					if( !string.IsNullOrEmpty( materialIndexCode.codeBody ) )
+					//						fragmentDefines.Add( ("MATERIAL_INDEX_CODE_BODY", "\r\n" + materialIndexCode.codeBody) );
+					//				}
+
+					//				//displacement
+					//				var displacementCode = result.displacementGeneratedCode;
+					//				if( RenderingSystem.DisplacementMaxSteps > 0 && displacementCode != null )
+					//				{
+					//					if( !string.IsNullOrEmpty( displacementCode.parametersBody ) )
+					//						fragmentDefines.Add( ("DISPLACEMENT_CODE_PARAMETERS", displacementCode.parametersBody) );
+					//					if( !string.IsNullOrEmpty( displacementCode.samplersBody ) )
+					//						fragmentDefines.Add( ("DISPLACEMENT_CODE_SAMPLERS", displacementCode.samplersBody) );
+					//					if( !string.IsNullOrEmpty( displacementCode.shaderScripts ) )
+					//						fragmentDefines.Add( ("DISPLACEMENT_CODE_SHADER_SCRIPTS", "\r\n" + displacementCode.shaderScripts) );
+					//					if( !string.IsNullOrEmpty( displacementCode.codeBody ) )
+					//						fragmentDefines.Add( ("DISPLACEMENT_CODE_BODY", "\r\n" + displacementCode.codeBody) );
+					//				}
+
+					//				//fragment
+					//				var fragmentCode = result.fragmentGeneratedCode;
+					//				if( fragmentCode != null )
+					//				{
+					//					if( !string.IsNullOrEmpty( fragmentCode.parametersBody ) )
+					//						fragmentDefines.Add( ("FRAGMENT_CODE_PARAMETERS", fragmentCode.parametersBody) );
+					//					if( !string.IsNullOrEmpty( fragmentCode.samplersBody ) )
+					//						fragmentDefines.Add( ("FRAGMENT_CODE_SAMPLERS", fragmentCode.samplersBody) );
+					//					if( !string.IsNullOrEmpty( fragmentCode.shaderScripts ) )
+					//						fragmentDefines.Add( ("FRAGMENT_CODE_SHADER_SCRIPTS", "\r\n" + fragmentCode.shaderScripts) );
+					//					if( !string.IsNullOrEmpty( fragmentCode.codeBody ) )
+					//						fragmentDefines.Add( ("FRAGMENT_CODE_BODY", "\r\n" + fragmentCode.codeBody) );
+					//				}
+					//			}
+					//		}
+
+					//		{
+					//			var vertexParameters = new GpuProgramManager.GetProgramItem( "Standard_Forward_Vertex_", GpuProgramType.Vertex, @"Base\Shaders\MaterialStandard_Forward_vs.sc", vertexDefines, optimize );
+
+					//			var fragmentParameters = new GpuProgramManager.GetProgramItem( "Standard_Forward_Fragment_", GpuProgramType.Fragment, @"Base\Shaders\MaterialStandard_Forward_fs.sc", fragmentDefines, optimize );
+
+					//			if( collecting )
+					//			{
+					//				programsToCompile.Add( vertexParameters );
+					//				programsToCompile.Add( fragmentParameters );
+					//			}
+					//			else
+					//			{
+					//				string error2;
+
+					//				//vertex program
+					//				GpuProgram vertexProgram = GpuProgramManager.GetProgram( vertexParameters, out error2 );
+					//				if( !string.IsNullOrEmpty( error2 ) )
+					//				{
+					//					result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
+					//					Log.Warning( result.error );
+					//					//result.Dispose();
+					//					return null;
+					//				}
+
+					//				//fragment program
+					//				GpuProgram fragmentProgram = GpuProgramManager.GetProgram( fragmentParameters, out error2 );
+					//				if( !string.IsNullOrEmpty( error2 ) )
+					//				{
+					//					result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
+					//					Log.Warning( result.error );
+					//					//result.Dispose();
+					//					return null;
+					//				}
+
+					//				var pass = new GpuMaterialPass( result, vertexProgram, fragmentProgram );
+					//				result.AllPasses.Add( pass );
+
+					//				if( nShadowsSupportCounter == 1 )
+					//					group.passWithShadows = pass;
+					//				else
+					//					group.passWithoutShadows = pass;
+
+					//				//if( nShadowsSupportCounter == 2 )
+					//				//	group.passWithShadowsHigh = pass;
+					//				//else if( nShadowsSupportCounter == 1 )
+					//				//	group.passWithShadowsLow = pass;
+					//				//else
+					//				//	group.passWithoutShadows = pass;
+
+					//				if( blendMode == BlendModeEnum.Opaque || blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer*/ )
+					//				{
+					//					if( lightType == Light.TypeEnum.Ambient )
+					//					{
+					//						pass.DepthWrite = true;
+					//						pass.SourceBlendFactor = SceneBlendFactor.One;
+					//						pass.DestinationBlendFactor = SceneBlendFactor.Zero;
+					//					}
+					//					else
+					//					{
+					//						pass.DepthWrite = false;
+					//						pass.SourceBlendFactor = SceneBlendFactor.One;
+					//						pass.DestinationBlendFactor = SceneBlendFactor.One;
+					//					}
+					//					//if( lightType != Light.TypeEnum.Ambient || usageMode == CompiledDataStandard.UsageMode.MaterialBlendNotFirst )
+					//					//{
+					//					//	pass.DepthWrite = false;
+					//					//	pass.SourceBlendFactor = SceneBlendFactor.One;
+					//					//	pass.DestinationBlendFactor = SceneBlendFactor.One;
+					//					//}
+					//					//else
+					//					//{
+					//					//	pass.DepthWrite = true;
+					//					//	pass.SourceBlendFactor = SceneBlendFactor.One;
+					//					//	pass.DestinationBlendFactor = SceneBlendFactor.Zero;
+					//					//}
+					//				}
+					//				else if( blendMode == BlendModeEnum.Transparent )
+					//				{
+					//					if( lightType == Light.TypeEnum.Ambient )
+					//					{
+					//						pass.DepthWrite = false;
+					//						pass.SourceBlendFactor = SceneBlendFactor.SourceAlpha;
+					//						pass.DestinationBlendFactor = SceneBlendFactor.OneMinusSourceAlpha;
+					//					}
+					//					else
+					//					{
+					//						pass.DepthWrite = false;
+					//						pass.SourceBlendFactor = SceneBlendFactor.SourceAlpha;
+					//						pass.DestinationBlendFactor = SceneBlendFactor.One;
+					//					}
+					//				}
+					//				else if( blendMode == BlendModeEnum.Add )
+					//				{
+					//					pass.DepthWrite = false;
+					//					pass.SourceBlendFactor = SceneBlendFactor.One;
+					//					pass.DestinationBlendFactor = SceneBlendFactor.One;
+					//				}
+
+					//				if( TwoSided )
+					//					pass.CullingMode = CullingMode.None;
+					//			}
+					//		}
+					//	}
+					//}
 				}
 
 
@@ -2560,6 +2729,21 @@ namespace NeoAxis
 										if( !string.IsNullOrEmpty( fragmentCode.codeBody ) )
 											fragmentDefines.Add( ("FRAGMENT_CODE_BODY", "\r\n" + fragmentCode.codeBody) );
 									}
+
+									//opacity
+									var opacityCode = result.opacityGeneratedCode;
+									if( opacityCode != null )
+									{
+										if( !string.IsNullOrEmpty( opacityCode.parametersBody ) )
+											fragmentDefines.Add( ("OPACITY_CODE_PARAMETERS", opacityCode.parametersBody) );
+										if( !string.IsNullOrEmpty( opacityCode.samplersBody ) )
+											fragmentDefines.Add( ("OPACITY_CODE_SAMPLERS", opacityCode.samplersBody) );
+										if( !string.IsNullOrEmpty( opacityCode.shaderScripts ) )
+											fragmentDefines.Add( ("OPACITY_CODE_SHADER_SCRIPTS", "\r\n" + opacityCode.shaderScripts) );
+										if( !string.IsNullOrEmpty( opacityCode.codeBody ) )
+											fragmentDefines.Add( ("OPACITY_CODE_BODY", "\r\n" + opacityCode.codeBody) );
+									}
+
 								}
 							}
 
@@ -2717,6 +2901,20 @@ namespace NeoAxis
 									if( !string.IsNullOrEmpty( fragmentCode.codeBody ) )
 										fragmentDefines.Add( ("FRAGMENT_CODE_BODY", "\r\n" + fragmentCode.codeBody) );
 								}
+
+								//opacity
+								var opacityCode = result.opacityGeneratedCode;
+								if( opacityCode != null )
+								{
+									if( !string.IsNullOrEmpty( opacityCode.parametersBody ) )
+										fragmentDefines.Add( ("OPACITY_CODE_PARAMETERS", opacityCode.parametersBody) );
+									if( !string.IsNullOrEmpty( opacityCode.samplersBody ) )
+										fragmentDefines.Add( ("OPACITY_CODE_SAMPLERS", opacityCode.samplersBody) );
+									if( !string.IsNullOrEmpty( opacityCode.shaderScripts ) )
+										fragmentDefines.Add( ("OPACITY_CODE_SHADER_SCRIPTS", "\r\n" + opacityCode.shaderScripts) );
+									if( !string.IsNullOrEmpty( opacityCode.codeBody ) )
+										fragmentDefines.Add( ("OPACITY_CODE_BODY", "\r\n" + opacityCode.codeBody) );
+								}
 							}
 						}
 
@@ -2857,6 +3055,20 @@ namespace NeoAxis
 								if( !string.IsNullOrEmpty( fragmentCode.codeBody ) )
 									fragmentDefines.Add( ("FRAGMENT_CODE_BODY", "\r\n" + fragmentCode.codeBody) );
 							}
+
+							//opacity
+							var opacityCode = result.opacityGeneratedCode;
+							if( opacityCode != null )
+							{
+								if( !string.IsNullOrEmpty( opacityCode.parametersBody ) )
+									fragmentDefines.Add( ("OPACITY_CODE_PARAMETERS", opacityCode.parametersBody) );
+								if( !string.IsNullOrEmpty( opacityCode.samplersBody ) )
+									fragmentDefines.Add( ("OPACITY_CODE_SAMPLERS", opacityCode.samplersBody) );
+								if( !string.IsNullOrEmpty( opacityCode.shaderScripts ) )
+									fragmentDefines.Add( ("OPACITY_CODE_SHADER_SCRIPTS", "\r\n" + opacityCode.shaderScripts) );
+								if( !string.IsNullOrEmpty( opacityCode.codeBody ) )
+									fragmentDefines.Add( ("OPACITY_CODE_BODY", "\r\n" + opacityCode.codeBody) );
+							}
 						}
 					}
 
@@ -2972,8 +3184,15 @@ namespace NeoAxis
 				}
 
 				//gi
-				if( result.deferredShadingSupport )
+				if( result.giSupport )
 				{
+
+					bool unlit = ShadingModel.Value == ShadingModelEnum.Unlit;
+
+					var receiveShadows = ReceiveShadows.Value && RenderingSystem.ShadowTechnique != ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None;
+
+
+					//!!!!
 					var nPassType = 1;
 					//for( int nPassType = 0; nPassType < 3; nPassType++ )//for( int nPassType = 0; nPassType < 4; nPassType++ )
 					//{
@@ -2986,6 +3205,7 @@ namespace NeoAxis
 						defines.Add( ("BLEND_MODE_" + blendMode.ToString().ToUpper(), "") );
 						defines.Add( ("SHADING_MODEL_" + ShadingModel.Value.ToString().ToUpper(), "") );
 						defines.Add( ("SHADING_MODEL_INDEX", ( (int)ShadingModel.Value ).ToString()) );
+						//!!!!
 						//if( TwoSided && TwoSidedFlipNormals )
 						//	fragmentDefines.Add( ("TWO_SIDED_FLIP_NORMALS", "") );
 						if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass )
@@ -2993,14 +3213,41 @@ namespace NeoAxis
 						if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
 							defines.Add( ("MULTI_MATERIAL_COMBINED_PASS", "") );
 
+						//!!!!
+						//if( ShadingModel.Value == ShadingModelEnum.Lit )
+						//{
+						//	if( ClearCoat.ReferenceSpecified || ClearCoat.Value != 0 )
+						//		fragmentDefines.Add( ("MATERIAL_HAS_CLEAR_COAT", "") );
+						//	if( Anisotropy.ReferenceSpecified || Anisotropy.Value != 0 )
+						//		fragmentDefines.Add( ("MATERIAL_HAS_ANISOTROPY", "") );
+						//}
+
+						//!!!!
 						//if( RenderingSystem.DisplacementMaxSteps > 0 && Displacement.ReferenceSpecified )
 						//	generalDefines.Add( ("DISPLACEMENT", "") );
+						//!!!!
 						//if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
 						//	fragmentDefines.Add( ("OPACITY_DITHERING", "") );
+						//!!!!
+						//if( SoftParticles )
+						//	fragmentDefines.Add( ("SOFT_PARTICLES", "") );
 						if( voxelPass )
 							defines.Add( ("VOXEL", "") );
 						//if( billboardPass )
 						//	generalDefines.Add( ("BILLBOARD", "") );
+
+						//receive shadows support
+						if( receiveShadows )//nShadowsSupportCounter != 0 )
+						{
+							//!!!!дефайны не разделены по типу программ
+							defines.Add( ("SHADOW_MAP", "") );
+							//fragmentDefines.Add( ("SHADOW_MAP", "") );
+
+							////if( nShadowsSupportCounter == 2 )
+							////	fragmentDefines.Add( ("SHADOW_MAP_HIGH", "") );
+							////else
+							////	fragmentDefines.Add( ("SHADOW_MAP_LOW", "") );
+						}
 
 						//if( DepthOffsetMode.Value == DepthOffsetModeEnum.GreaterEqual )
 						//	defines.Add( ("DEPTH_OFFSET_MODE_GREATER_EQUAL", "") );
@@ -3091,6 +3338,126 @@ namespace NeoAxis
 						}
 					}
 					//}
+
+
+
+					//var nPassType = 1;
+					////for( int nPassType = 0; nPassType < 3; nPassType++ )//for( int nPassType = 0; nPassType < 4; nPassType++ )
+					////{
+					//var voxelPass = nPassType == 1;
+					//var billboardPass = nPassType == 2;
+
+					////generate compile arguments
+					//var defines = new List<(string, string)>( 8 );
+					//{
+					//	defines.Add( ("BLEND_MODE_" + blendMode.ToString().ToUpper(), "") );
+					//	defines.Add( ("SHADING_MODEL_" + ShadingModel.Value.ToString().ToUpper(), "") );
+					//	defines.Add( ("SHADING_MODEL_INDEX", ( (int)ShadingModel.Value ).ToString()) );
+					//	//if( TwoSided && TwoSidedFlipNormals )
+					//	//	fragmentDefines.Add( ("TWO_SIDED_FLIP_NORMALS", "") );
+					//	if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass )
+					//		defines.Add( ("MULTI_MATERIAL_SEPARATE_PASS", "") );
+					//	if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
+					//		defines.Add( ("MULTI_MATERIAL_COMBINED_PASS", "") );
+
+					//	//if( RenderingSystem.DisplacementMaxSteps > 0 && Displacement.ReferenceSpecified )
+					//	//	generalDefines.Add( ("DISPLACEMENT", "") );
+					//	//if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
+					//	//	fragmentDefines.Add( ("OPACITY_DITHERING", "") );
+					//	if( voxelPass )
+					//		defines.Add( ("VOXEL", "") );
+					//	//if( billboardPass )
+					//	//	generalDefines.Add( ("BILLBOARD", "") );
+
+					//	//if( DepthOffsetMode.Value == DepthOffsetModeEnum.GreaterEqual )
+					//	//	defines.Add( ("DEPTH_OFFSET_MODE_GREATER_EQUAL", "") );
+					//	//else if( DepthOffsetMode.Value == DepthOffsetModeEnum.LessEqual )
+					//	//	defines.Add( ("DEPTH_OFFSET_MODE_LESS_EQUAL", "") );
+
+					//	if( shaderGenerationEnable )
+					//	{
+					//		//vertex
+					//		var vertexCode = result.vertexGeneratedCode;
+					//		if( vertexCode != null )
+					//		{
+					//			if( !string.IsNullOrEmpty( vertexCode.parametersBody ) )
+					//				defines.Add( ("VERTEX_CODE_PARAMETERS", vertexCode.parametersBody) );
+					//			if( !string.IsNullOrEmpty( vertexCode.samplersBody ) )
+					//				defines.Add( ("VERTEX_CODE_SAMPLERS", vertexCode.samplersBody) );
+					//			if( !string.IsNullOrEmpty( vertexCode.shaderScripts ) )
+					//				defines.Add( ("VERTEX_CODE_SHADER_SCRIPTS", "\r\n" + vertexCode.shaderScripts) );
+					//			if( !string.IsNullOrEmpty( vertexCode.codeBody ) )
+					//				defines.Add( ("VERTEX_CODE_BODY", "\r\n" + vertexCode.codeBody) );
+					//		}
+
+					//		//material index
+					//		var materialIndexCode = result.materialIndexGeneratedCode;
+					//		if( materialIndexCode != null )
+					//		{
+					//			if( !string.IsNullOrEmpty( materialIndexCode.parametersBody ) )
+					//				defines.Add( ("MATERIAL_INDEX_CODE_PARAMETERS", materialIndexCode.parametersBody) );
+					//			if( !string.IsNullOrEmpty( materialIndexCode.samplersBody ) )
+					//				defines.Add( ("MATERIAL_INDEX_CODE_SAMPLERS", materialIndexCode.samplersBody) );
+					//			if( !string.IsNullOrEmpty( materialIndexCode.shaderScripts ) )
+					//				defines.Add( ("MATERIAL_INDEX_CODE_SHADER_SCRIPTS", "\r\n" + materialIndexCode.shaderScripts) );
+					//			if( !string.IsNullOrEmpty( materialIndexCode.codeBody ) )
+					//				defines.Add( ("MATERIAL_INDEX_CODE_BODY", "\r\n" + materialIndexCode.codeBody) );
+					//		}
+
+					//		////displacement
+					//		//var displacementCode = result.displacementGeneratedCode;
+					//		//if( RenderingSystem.DisplacementMaxSteps > 0 && displacementCode != null )
+					//		//{
+					//		//	if( !string.IsNullOrEmpty( displacementCode.parametersBody ) )
+					//		//		fragmentDefines.Add( ("DISPLACEMENT_CODE_PARAMETERS", displacementCode.parametersBody) );
+					//		//	if( !string.IsNullOrEmpty( displacementCode.samplersBody ) )
+					//		//		fragmentDefines.Add( ("DISPLACEMENT_CODE_SAMPLERS", displacementCode.samplersBody) );
+					//		//	if( !string.IsNullOrEmpty( displacementCode.shaderScripts ) )
+					//		//		fragmentDefines.Add( ("DISPLACEMENT_CODE_SHADER_SCRIPTS", "\r\n" + displacementCode.shaderScripts) );
+					//		//	if( !string.IsNullOrEmpty( displacementCode.codeBody ) )
+					//		//		fragmentDefines.Add( ("DISPLACEMENT_CODE_BODY", "\r\n" + displacementCode.codeBody) );
+					//		//}
+
+					//		//fragment
+					//		var fragmentCode = result.fragmentGeneratedCode;
+					//		if( fragmentCode != null )
+					//		{
+					//			if( !string.IsNullOrEmpty( fragmentCode.parametersBody ) )
+					//				defines.Add( ("FRAGMENT_CODE_PARAMETERS", fragmentCode.parametersBody) );
+					//			if( !string.IsNullOrEmpty( fragmentCode.samplersBody ) )
+					//				defines.Add( ("FRAGMENT_CODE_SAMPLERS", fragmentCode.samplersBody) );
+					//			if( !string.IsNullOrEmpty( fragmentCode.shaderScripts ) )
+					//				defines.Add( ("FRAGMENT_CODE_SHADER_SCRIPTS", "\r\n" + fragmentCode.shaderScripts) );
+					//			if( !string.IsNullOrEmpty( fragmentCode.codeBody ) )
+					//				defines.Add( ("FRAGMENT_CODE_BODY", "\r\n" + fragmentCode.codeBody) );
+					//		}
+					//	}
+					//}
+
+					//{
+					//	var parameters = new GpuProgramManager.GetProgramItem( "Standard_GI_Voxel_", GpuProgramType.Compute, @"Base\Shaders\MaterialStandard_GI_Voxel.sc", defines, optimize );
+
+					//	if( collecting )
+					//		programsToCompile.Add( parameters );
+					//	else
+					//	{
+					//		string error2;
+
+					//		//vertex program
+					//		var program = GpuProgramManager.GetProgram( parameters, out error2 );
+					//		if( !string.IsNullOrEmpty( error2 ) )
+					//		{
+					//			result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
+					//			Log.Warning( result.error );
+					//			return null;
+					//		}
+
+					//		//!!!!Dispose()? who else
+					//		result.giVoxelProgram = new Program( program.RealObject );
+					//		//result.giVoxelProgram = program;
+					//	}
+					//}
+					////}
 				}
 
 
@@ -3120,7 +3487,7 @@ namespace NeoAxis
 			return result;
 		}
 
-		void NewObjectCreateShaderGraph( NewMaterialData data = null )
+		public void NewObjectCreateShaderGraph( NewMaterialData data = null )
 		{
 			var graph = CreateComponent<FlowGraph>();
 			graph.Name = "Shader graph";
@@ -3288,7 +3655,7 @@ namespace NeoAxis
 			if( Parent == null )
 			{
 				var toSelect = new Component[] { this, graph };
-				EditorDocumentConfiguration = KryptonConfigGenerator.CreateEditorDocumentXmlConfiguration( toSelect, graph );
+				EditorDocumentConfiguration = EditorAPI.CreateEditorDocumentXmlConfiguration( toSelect, graph );
 			}
 #endif
 		}

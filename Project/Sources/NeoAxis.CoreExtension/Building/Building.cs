@@ -25,9 +25,9 @@ namespace NeoAxis
 		bool needUpdate;
 		bool needUpdateAfterEndModifyingTransformTool;
 
-		Transform cachedTransform;
-		Vector3[] cachedBoxShapeVertices;
-		int[] cachedBoxShapeIndices;
+		Transform occluderCachedTransform;
+		Vector3[] occluderCachedBoxShapeVertices;
+		int[] occluderCachedBoxShapeIndices;
 
 		//
 
@@ -38,7 +38,7 @@ namespace NeoAxis
 		public Reference<BuildingType> BuildingType
 		{
 			get { if( _buildingType.BeginGet() ) BuildingType = _buildingType.Get( this ); return _buildingType.value; }
-			set { if( _buildingType.BeginSet( ref value ) ) { try { BuildingTypeChanged?.Invoke( this ); NeedUpdate(); } finally { _buildingType.EndSet(); } } }
+			set { if( _buildingType.BeginSet( this, ref value ) ) { try { BuildingTypeChanged?.Invoke( this ); NeedUpdate(); } finally { _buildingType.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BuildingType"/> property value changes.</summary>
 		public event Action<Building> BuildingTypeChanged;
@@ -51,7 +51,7 @@ namespace NeoAxis
 		public Reference<Vector3I> Size
 		{
 			get { if( _size.BeginGet() ) Size = _size.Get( this ); return _size.value; }
-			set { if( _size.BeginSet( ref value ) ) { try { SizeChanged?.Invoke( this ); NeedUpdate(); } finally { _size.EndSet(); } } }
+			set { if( _size.BeginSet( this, ref value ) ) { try { SizeChanged?.Invoke( this ); NeedUpdate(); } finally { _size.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Size"/> property value changes.</summary>
 		public event Action<Building> SizeChanged;
@@ -70,7 +70,7 @@ namespace NeoAxis
 		public Reference<CollisionModeEnum> CollisionMode
 		{
 			get { if( _collisionMode.BeginGet() ) CollisionMode = _collisionMode.Get( this ); return _collisionMode.value; }
-			set { if( _collisionMode.BeginSet( ref value ) ) { try { CollisionModeChanged?.Invoke( this ); NeedUpdate(); } finally { _collisionMode.EndSet(); } } }
+			set { if( _collisionMode.BeginSet( this, ref value ) ) { try { CollisionModeChanged?.Invoke( this ); NeedUpdate(); } finally { _collisionMode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CollisionMode"/> property value changes.</summary>
 		public event Action<Building> CollisionModeChanged;
@@ -85,14 +85,15 @@ namespace NeoAxis
 			get { if( _occluder.BeginGet() ) Occluder = _occluder.Get( this ); return _occluder.value; }
 			set
 			{
-				if( _occluder.BeginSet( ref value ) )
+				if( _occluder.BeginSet( this, ref value ) )
 				{
 					try
 					{
 						OccluderChanged?.Invoke( this );
 
-						//!!!!?
-						NeedUpdate();
+						occluderCachedTransform = null;
+						if( EnabledInHierarchy )
+							ParentScene?.ObjectsInSpace_ObjectUpdateSceneObjectFlags( this );
 					}
 					finally { _occluder.EndSet(); }
 				}
@@ -102,6 +103,55 @@ namespace NeoAxis
 		public event Action<Building> OccluderChanged;
 		ReferenceField<bool> _occluder = false;
 
+		///// <summary>
+		///// The additional height of the occluder at bottom.
+		///// </summary>
+		//[DefaultValue( 4 )]
+		//[Range( 0, 10 )]
+		//public Reference<double> OccluderExtendBottom
+		//{
+		//	get { if( _occluderExtendBottom.BeginGet() ) OccluderExtendBottom = _occluderExtendBottom.Get( this ); return _occluderExtendBottom.value; }
+		//	set
+		//	{
+		//		if( _occluderExtendBottom.BeginSet( this, ref value ) )
+		//		{
+		//			try
+		//			{
+		//				OccluderExtendBottomChanged?.Invoke( this );
+		//				occluderCachedTransform = null;
+		//			}
+		//			finally { _occluderExtendBottom.EndSet(); }
+		//		}
+		//	}
+		//}
+		///// <summary>Occurs when the <see cref="OccluderExtendBottom"/> property value changes.</summary>
+		//public event Action<Building> OccluderExtendBottomChanged;
+		//ReferenceField<double> _occluderExtendBottom = 4;
+
+		/////// <summary>
+		/////// The size of extending of the occluder.
+		/////// </summary>
+		////[DefaultValue( "-1 -1 4 -1 -1 0" )]
+		////public Reference<Bounds> OccluderExtend
+		////{
+		////	get { if( _occluderExtend.BeginGet() ) OccluderExtend = _occluderExtend.Get( this ); return _occluderExtend.value; }
+		////	set
+		////	{
+		////		if( _occluderExtend.BeginSet( this, ref value ) )
+		////		{
+		////			try
+		////			{
+		////				OccluderExtendChanged?.Invoke( this );
+		////				occluderCachedTransform = null;
+		////			}
+		////			finally { _occluderExtend.EndSet(); }
+		////		}
+		////	}
+		////}
+		/////// <summary>Occurs when the <see cref="OccluderExtend"/> property value changes.</summary>
+		////public event Action<Building> OccluderExtendChanged;
+		////ReferenceField<Bounds> _occluderExtend = new Bounds( -1, -1, 4, -1, -1, 0 );
+
 		/// <summary>
 		/// Whether to cull visibility by the camera direction.
 		/// </summary>
@@ -109,7 +159,7 @@ namespace NeoAxis
 		public Reference<bool> CullingByCameraDirection
 		{
 			get { if( _cullingByCameraDirection.BeginGet() ) CullingByCameraDirection = _cullingByCameraDirection.Get( this ); return _cullingByCameraDirection.value; }
-			set { if( _cullingByCameraDirection.BeginSet( ref value ) ) { try { CullingByCameraDirectionChanged?.Invoke( this ); NeedUpdate(); } finally { _cullingByCameraDirection.EndSet(); } } }
+			set { if( _cullingByCameraDirection.BeginSet( this, ref value ) ) { try { CullingByCameraDirectionChanged?.Invoke( this ); NeedUpdate(); } finally { _cullingByCameraDirection.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CullingByCameraDirection"/> property value changes.</summary>
 		public event Action<Building> CullingByCameraDirectionChanged;
@@ -123,7 +173,7 @@ namespace NeoAxis
 		public Reference<int> Seed
 		{
 			get { if( _seed.BeginGet() ) Seed = _seed.Get( this ); return _seed.value; }
-			set { if( _seed.BeginSet( ref value ) ) { try { SeedChanged?.Invoke( this ); NeedUpdate(); } finally { _seed.EndSet(); } } }
+			set { if( _seed.BeginSet( this, ref value ) ) { try { SeedChanged?.Invoke( this ); NeedUpdate(); } finally { _seed.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Seed"/> property value changes.</summary>
 		public event Action<Building> SeedChanged;
@@ -135,10 +185,15 @@ namespace NeoAxis
 		{
 			public Building Owner;
 			public BuildingType BuildingType;
+			public int BuildingTypeUsedVersion;
 
 			public BuildingElement[] UsedElements;
 			public RenderingItem[] RenderingItems;
 			public CollisionMeshItem[] CollisionMeshItems;
+
+			//!!!!new
+			public LevelInfo[] Levels;//public double[] LevelHeights;
+			public double TotalHeight;
 
 			public List<Scene.PhysicsWorldClass.Body> CollisionBodies = new List<Scene.PhysicsWorldClass.Body>();
 
@@ -170,13 +225,21 @@ namespace NeoAxis
 
 			/////////////////////
 
+			public struct LevelInfo
+			{
+				public double Height;
+				public double HeightFromBottom;
+			}
+
+			/////////////////////
+
 			public void UpdateCollisionBodies()
 			{
 				DestroyCollisionBodies();
 
 				if( Owner.CollisionMode.Value == CollisionModeEnum.None )
 					return;
-				if( Owner.IsAnyTransformToolInModifyingMode() )
+				if( EditorAPI.IsAnyTransformToolInModifyingMode() )
 				{
 					Owner.needUpdateAfterEndModifyingTransformTool = true;
 					return;
@@ -216,9 +279,10 @@ namespace NeoAxis
 				var ownerTransform = Owner.TransformV;
 				var elementSize = BuildingType.ElementSize.Value;
 				var elementSizeH = elementSize.X;
-				var elementSizeV = elementSize.Y;
+				//var elementSizeV = elementSize.Y;
 				var size = Owner.Size.Value;
-				var totalSize = size.ToVector3() * new Vector3( elementSizeH, elementSizeH, elementSizeV );
+				var totalSize = new Vector3( size.X * elementSizeH, size.Y * elementSizeH, TotalHeight );
+				//var totalSize = size.ToVector3() * new Vector3( elementSizeH, elementSizeH, elementSizeV );
 				var totalSizeHalf = totalSize * 0.5;
 
 				var bounds = new Bounds( -totalSizeHalf.X, -totalSizeHalf.Y, 0, totalSizeHalf.X, totalSizeHalf.Y, totalSize.Z );
@@ -228,6 +292,22 @@ namespace NeoAxis
 
 				box = new Box( ref bounds, ref position, ref matrix3 );
 				andRotation = ownerTransform.Rotation;
+			}
+
+			public double GetLevelHeight( int level )
+			{
+				var level2 = MathEx.Clamp( level, 0, Levels.Length - 1 );
+				return Levels[ level2 ].Height;
+			}
+
+			public double GetLevelHeightFromBottom( int level )
+			{
+				var level2 = MathEx.Clamp( level, 0, Levels.Length - 1 );
+				var result = Levels[ level2 ].HeightFromBottom;
+				//for roof
+				if( level == Levels.Length )
+					result += Levels[ level2 ].Height;
+				return result;
 			}
 		}
 
@@ -317,6 +397,16 @@ namespace NeoAxis
 
 				{
 					var element = CreateComponent<BuildingElement>();
+					element.Name = "Element Cell Level 1 3";
+					element.ElementType = BuildingElement.ElementTypeEnum.Cell;
+					element.Levels = new RangeI( 0, 0 );
+					element.Sides = BuildingElement.SidesEnum.PlusXMinusY | BuildingElement.SidesEnum.MinusXPlusY;
+					element.Mesh = new Reference<Mesh>( null, "Content\\Constructors\\Buildings\\Modern building\\Data\\Room 2.obj|$Mesh" );
+					element.RotationOffset = Quaternion.FromRotateByZ( Math.PI / 2 );
+				}
+
+				{
+					var element = CreateComponent<BuildingElement>();
 					element.Name = "Element Cell Level 2+ 1";
 					element.ElementType = BuildingElement.ElementTypeEnum.Cell;
 					element.Levels = new RangeI( 1, 10000 );
@@ -343,6 +433,17 @@ namespace NeoAxis
 					element.Mesh = new Reference<Mesh>( null, "Content\\Constructors\\Buildings\\Modern building\\Data\\Room 3.obj|$Mesh" );
 					element.PositionOffset = new Vector3( 0, 0, 0.4 );
 				}
+
+				{
+					var element = CreateComponent<BuildingElement>();
+					element.Name = "Element Cell Level 2+ 4";
+					element.ElementType = BuildingElement.ElementTypeEnum.Cell;
+					element.Levels = new RangeI( 1, 10000 );
+					element.Sides = BuildingElement.SidesEnum.PlusXMinusY | BuildingElement.SidesEnum.MinusXPlusY;
+					element.Mesh = new Reference<Mesh>( null, "Content\\Constructors\\Buildings\\Modern building\\Data\\Room 3.obj|$Mesh" );
+					element.PositionOffset = new Vector3( 0, 0, 0.4 );
+					element.RotationOffset = Quaternion.FromRotateByZ( Math.PI / 2 );
+				}
 			}
 		}
 
@@ -352,17 +453,51 @@ namespace NeoAxis
 		public delegate void CalculateLogicalDataAfterDelegate( Building sender, LogicalData logicalData );
 		public event CalculateLogicalDataAfterDelegate CalculateLogicalDataAfter;
 
-		static int GetSideMask( int side )
+		enum ElementSideNotMask
+		{
+			MinusX,
+			MinusY,
+			PlusX,
+			PlusY,
+			MinusXMinusY,
+			PlusXMinusY,
+			MinusXPlusY,
+			PlusXPlusY,
+		}
+
+		static int GetSideMask( ElementSideNotMask side )
 		{
 			switch( side )
 			{
-			case 0: return (int)BuildingElement.SidesEnum.MinusX;
-			case 1: return (int)BuildingElement.SidesEnum.MinusY;
-			case 2: return (int)BuildingElement.SidesEnum.PlusX;
-			case 3: return (int)BuildingElement.SidesEnum.PlusY;
+			case ElementSideNotMask.MinusX: return (int)BuildingElement.SidesEnum.MinusX;
+			case ElementSideNotMask.MinusY: return (int)BuildingElement.SidesEnum.MinusY;
+			case ElementSideNotMask.PlusX: return (int)BuildingElement.SidesEnum.PlusX;
+			case ElementSideNotMask.PlusY: return (int)BuildingElement.SidesEnum.PlusY;
+
+			case ElementSideNotMask.MinusXMinusY: return (int)BuildingElement.SidesEnum.MinusXMinusY;
+			case ElementSideNotMask.PlusXMinusY: return (int)BuildingElement.SidesEnum.PlusXMinusY;
+			case ElementSideNotMask.MinusXPlusY: return (int)BuildingElement.SidesEnum.MinusXPlusY;
+			case ElementSideNotMask.PlusXPlusY: return (int)BuildingElement.SidesEnum.PlusXPlusY;
 			}
 			return 0;
 		}
+
+		//static int GetSideMask( int side )
+		//{
+		//	switch( side )
+		//	{
+		//	case 0: return (int)BuildingElement.SidesEnum.MinusX;
+		//	case 1: return (int)BuildingElement.SidesEnum.MinusY;
+		//	case 2: return (int)BuildingElement.SidesEnum.PlusX;
+		//	case 3: return (int)BuildingElement.SidesEnum.PlusY;
+
+		//	case 4: return (int)BuildingElement.SidesEnum.MinusXMinusY;
+		//	case 5: return (int)BuildingElement.SidesEnum.PlusXMinusY;
+		//	case 6: return (int)BuildingElement.SidesEnum.MinusXPlusY;
+		//	case 7: return (int)BuildingElement.SidesEnum.PlusXPlusY;
+		//	}
+		//	return 0;
+		//}
 
 		static BuildingElement SelectElementByProbability( FastRandom random, IList<BuildingElement> elements )
 		{
@@ -386,7 +521,7 @@ namespace NeoAxis
 			return null;
 		}
 
-		static BuildingElement GetSuitableSideElement( FastRandom random, BuildingElement[] sideElements/*, BuildingModifier[] sideModifiers*/, int side, Vector2I position )
+		static BuildingElement GetSuitableSideElement( FastRandom random, BuildingElement[] sideElements/*, BuildingModifier[] sideModifiers*/, ElementSideNotMask side, Vector2I position )
 		{
 			int sideMask = GetSideMask( side );
 
@@ -414,7 +549,7 @@ namespace NeoAxis
 			return SelectElementByProbability( random, elements );
 		}
 
-		static BuildingElement GetSuitableSideEdgeElement( FastRandom random, BuildingElement[] sideEdgeElements/*, BuildingModifier[] sideEdgeModifiers*/, int side, int level )
+		static BuildingElement GetSuitableSideEdgeElement( FastRandom random, BuildingElement[] sideEdgeElements/*, BuildingModifier[] sideEdgeModifiers*/, ElementSideNotMask side, int level )
 		{
 			int sideMask = GetSideMask( side );
 
@@ -432,7 +567,7 @@ namespace NeoAxis
 			return SelectElementByProbability( random, elements );
 		}
 
-		static BuildingElement GetSuitableRoofEdgeElement( FastRandom random, BuildingElement[] roofEdgeElements/*, BuildingModifier[] roofEdgeModifiers*/ , int side, int position )
+		static BuildingElement GetSuitableRoofEdgeElement( FastRandom random, BuildingElement[] roofEdgeElements/*, BuildingModifier[] roofEdgeModifiers*/ , ElementSideNotMask side, int position )
 		{
 			int sideMask = GetSideMask( side );
 
@@ -450,7 +585,7 @@ namespace NeoAxis
 			return SelectElementByProbability( random, elements );
 		}
 
-		static BuildingElement GetSuitableRoofCornerElement( FastRandom random, BuildingElement[] roofCornerElements/*, BuildingModifier[] roofCornerModifiers*/ , int side )
+		static BuildingElement GetSuitableRoofCornerElement( FastRandom random, BuildingElement[] roofCornerElements/*, BuildingModifier[] roofCornerModifiers*/ , ElementSideNotMask side )
 		{
 			int sideMask = GetSideMask( side );
 
@@ -480,7 +615,7 @@ namespace NeoAxis
 			return SelectElementByProbability( random, elements );
 		}
 
-		static BuildingElement GetSuitableCellElement( FastRandom random, BuildingElement[] cellElements, int side, Vector2I position )
+		static BuildingElement GetSuitableCellElement( FastRandom random, BuildingElement[] cellElements, ElementSideNotMask side, Vector2I position )
 		{
 			int sideMask = GetSideMask( side );
 
@@ -533,29 +668,77 @@ namespace NeoAxis
 					var renderingItems = new OpenList<LogicalData.RenderingItem>( 512 );
 					var collisionMeshItems = new OpenList<LogicalData.CollisionMeshItem>( 512 );
 
-					//!!!!
-
 					var ownerTransform = TransformV;
 					var elementSize = logicalData.BuildingType.ElementSize.Value;
 					var elementSizeH = elementSize.X;
-					var elementSizeV = elementSize.Y;
+					//var elementSizeV = elementSize.Y;
+
 					var size = Size.Value;
-					var totalSize = size.ToVector3() * new Vector3( elementSizeH, elementSizeH, elementSizeV );
+
+					//calculate levels info
+					var levels = new LogicalData.LevelInfo[ size.Z ];//var levelHeights = new double[ size.Z ];
+					{
+						for( int n = 0; n < levels.Length; n++ )
+						{
+							ref var item = ref levels[ n ];
+							item.Height = elementSize.Y;
+						}
+
+						foreach( var element in elements )
+						{
+							if( element.OverrideHeight != 0 )
+							{
+								var range = element.Levels.Value;
+								if( range.Minimum < 0 )
+									range.Minimum = 0;
+								if( range.Maximum >= levels.Length )
+									range.Maximum = levels.Length - 1;
+
+								for( int n = range.Minimum; n <= range.Maximum; n++ )
+								{
+									ref var item = ref levels[ n ];
+									item.Height = element.OverrideHeight;
+								}
+							}
+						}
+
+						var current = 0.0;
+						for( int nLevel = 0; nLevel < levels.Length; nLevel++ )
+						{
+							ref var level = ref levels[ nLevel ];
+							level.HeightFromBottom = current;
+							current += level.Height;
+						}
+					}
+
+					var totalHeight = 0.0;
+					foreach( var item in levels )
+						totalHeight += item.Height;
+
+					logicalData.Levels = levels;
+					logicalData.TotalHeight = totalHeight;
+
+
+					var totalSize = new Vector3( size.X * elementSizeH, size.Y * elementSizeH, totalHeight );
+					//var totalSize = size.ToVector3() * new Vector3( elementSizeH, elementSizeH, elementSizeV );
 					var totalSizeHalf = totalSize * 0.5;
 
 
 					void AddItem( BuildingElement element, Vector3 localPosition, Quaternion localRotation, Vector3 cullingByCameraDirectionLocalNormal, double cullingByCameraDirectionViewAngleFactor, bool addCollision = false )
 					{
-						localPosition += element.PositionOffset.Value;
-						localRotation *= element.RotationOffset.Value;
-						localPosition -= new Vector3( totalSizeHalf.X, totalSizeHalf.Y, 0 );
+						var localPosition2 = localPosition;
+						var localRotation2 = localRotation;
+
+						localPosition2 += localRotation * element.PositionOffset.Value;
+						localRotation2 *= element.RotationOffset.Value;
+						localPosition2 -= new Vector3( totalSizeHalf.X, totalSizeHalf.Y, 0 );
 
 						var pos = ownerTransform.Position;
 						var rot = ownerTransform.Rotation;
 						var scl = ownerTransform.Scale;
 
-						pos += rot * ( localPosition * scl );
-						rot *= localRotation;
+						pos += rot * ( localPosition2 * scl );
+						rot *= localRotation2;
 						scl *= element.ScaleOffset.Value;
 
 						usedElements.AddWithCheckAlreadyContained( element );
@@ -566,7 +749,7 @@ namespace NeoAxis
 						item.Rotation = rot.ToQuaternionF();
 						item.Scale = scl.ToVector3F();
 
-						if( CullingByCameraDirection && cullingByCameraDirectionLocalNormal != Vector3F.Zero )
+						if( CullingByCameraDirection && element.CullingByCameraDirection && cullingByCameraDirectionLocalNormal != Vector3F.Zero )
 						{
 							item.CullingByCameraDirectionData = RenderingPipeline.EncodeCullingByCameraDirectionData( ( ownerTransform.Rotation * cullingByCameraDirectionLocalNormal ).ToVector3F(), (float)cullingByCameraDirectionViewAngleFactor );
 							//item.CullingByCameraDirectionData = ( ownerTransform.Rotation * cullingByCameraDirectionLocalNormal ).ToVector3F();
@@ -603,13 +786,13 @@ namespace NeoAxis
 						//2 +x
 						//3 +y
 
-						for( int side = 0; side < 4; side++ )
+						for( var side = ElementSideNotMask.MinusX; side <= ElementSideNotMask.PlusY; side++ )
 						{
 							//var sideModifiers = sidesModifiers.Where( m => m.Side.Value == side ).ToArray();
 
 							for( int level = 0; level < size.Z; level++ )
 							{
-								var maxX = ( side % 2 == 0 ) ? size.Y : size.X;
+								var maxX = ( (int)side % 2 == 0 ) ? size.Y : size.X;
 								for( int x = 0; x < maxX; x++ )
 								{
 									var element = GetSuitableSideElement( random, sideElements/*, sideModifiers*/, side, new Vector2I( x, level ) );
@@ -620,32 +803,33 @@ namespace NeoAxis
 
 										switch( side )
 										{
-										case 0:
+										case ElementSideNotMask.MinusX:
 											localPosition.X = 0;
 											localPosition.Y = totalSize.Y - elementSizeH * x - elementSizeH * 0.5;
 											//localRotation = Quaternion.FromDirectionZAxisUp( new Vector3( -1, 0, 0 ) );
 											break;
-										case 1:
+										case ElementSideNotMask.MinusY:
 											localPosition.Y = 0;
 											localPosition.X = elementSizeH * x + elementSizeH * 0.5;
 											//localRotation = Quaternion.FromDirectionZAxisUp( new Vector3( 0, -1, 0 ) );
 											break;
-										case 2:
+										case ElementSideNotMask.PlusX:
 											localPosition.X = totalSize.X;
 											localPosition.Y = elementSizeH * x + elementSizeH * 0.5;
 											//localRotation = Quaternion.FromDirectionZAxisUp( new Vector3( 1, 0, 0 ) );
 											//localRotation = Quaternion.Identity;
 											break;
-										case 3:
+										case ElementSideNotMask.PlusY:
 											localPosition.Y = totalSize.Y;
 											localPosition.X = totalSize.X - elementSizeH * x - elementSizeH * 0.5;
 											//localRotation = Quaternion.FromDirectionZAxisUp( new Vector3( 0, 1, 0 ) );
 											break;
 										}
 
-										localPosition.Z = elementSize.Y * level;
+										localPosition.Z = logicalData.GetLevelHeightFromBottom( level );
+										//localPosition.Z = elementSize.Y * level;
 
-										var localRotation = localRotations[ side ];
+										var localRotation = localRotations[ (int)side ];
 
 										//!!!!
 										var cullingByCameraDirectionLocalNormal = localRotation.GetForward();
@@ -669,7 +853,7 @@ namespace NeoAxis
 						//2 +x
 						//3 +y
 
-						for( int side = 0; side < 4; side++ )
+						for( var side = ElementSideNotMask.MinusX; side <= ElementSideNotMask.PlusY; side++ )
 						{
 							//var sideModifiers = sidesEdgeModifiers.Where( m => m.Side.Value == side ).ToArray();
 
@@ -682,27 +866,28 @@ namespace NeoAxis
 
 									switch( side )
 									{
-									case 0:
+									case ElementSideNotMask.MinusX:
 										localPosition.X = 0;
 										localPosition.Y = totalSize.Y;
 										break;
-									case 1:
+									case ElementSideNotMask.MinusY:
 										localPosition.Y = 0;
 										localPosition.X = 0;
 										break;
-									case 2:
+									case ElementSideNotMask.PlusX:
 										localPosition.X = totalSize.X;
 										localPosition.Y = 0;
 										break;
-									case 3:
+									case ElementSideNotMask.PlusY:
 										localPosition.Y = totalSize.Y;
 										localPosition.X = totalSize.X;
 										break;
 									}
 
-									localPosition.Z = elementSize.Y * level;
+									localPosition.Z = logicalData.GetLevelHeightFromBottom( level );
+									//localPosition.Z = elementSize.Y * level;
 
-									var localRotation = localRotations[ side ] * fromRotateByZ90;
+									var localRotation = localRotations[ (int)side ] * fromRotateByZ90;
 
 									//!!!!
 									var cullingByCameraDirectionLocalNormal = Vector3.Zero;
@@ -728,12 +913,12 @@ namespace NeoAxis
 							//2 +x
 							//3 +y
 
-							for( int side = 0; side < 4; side++ )
+							for( var side = ElementSideNotMask.MinusX; side <= ElementSideNotMask.PlusY; side++ )
 							{
 								//!!!!
 								//var sideModifiers = sidesModifiers.Where( m => m.Side.Value == side ).ToArray();
 
-								var maxX = ( side % 2 == 0 ) ? size.Y : size.X;
+								var maxX = ( (int)side % 2 == 0 ) ? size.Y : size.X;
 								for( int x = 0; x < maxX; x++ )
 								{
 									var element = GetSuitableRoofEdgeElement( random, roofEdgeElements, /*roofEdgeModifiers, */side, x );
@@ -743,27 +928,28 @@ namespace NeoAxis
 
 										switch( side )
 										{
-										case 0:
+										case ElementSideNotMask.MinusX:
 											localPosition.X = 0;
 											localPosition.Y = totalSize.Y - elementSizeH * x - elementSizeH * 0.5;
 											break;
-										case 1:
+										case ElementSideNotMask.MinusY:
 											localPosition.Y = 0;
 											localPosition.X = elementSizeH * x + elementSizeH * 0.5;
 											break;
-										case 2:
+										case ElementSideNotMask.PlusX:
 											localPosition.X = totalSize.X;
 											localPosition.Y = elementSizeH * x + elementSizeH * 0.5;
 											break;
-										case 3:
+										case ElementSideNotMask.PlusY:
 											localPosition.Y = totalSize.Y;
 											localPosition.X = totalSize.X - elementSizeH * x - elementSizeH * 0.5;
 											break;
 										}
 
-										localPosition.Z = elementSize.Y * size.Z;// level;
+										localPosition.Z = logicalData.GetLevelHeightFromBottom( size.Z );
+										//localPosition.Z = elementSize.Y * size.Z;// level;
 
-										var localRotation = localRotations[ side ];
+										var localRotation = localRotations[ (int)side ];
 
 										//!!!!
 										var cullingByCameraDirectionLocalNormal = Vector3.Zero;
@@ -782,27 +968,28 @@ namespace NeoAxis
 
 										switch( side )
 										{
-										case 0:
+										case ElementSideNotMask.MinusX:
 											localPosition.X = 0;
 											localPosition.Y = totalSize.Y;// - elementSizeH * 0.5;
 											break;
-										case 1:
+										case ElementSideNotMask.MinusY:
 											localPosition.Y = 0;
 											localPosition.X = 0;// elementSizeH * 0.5;
 											break;
-										case 2:
+										case ElementSideNotMask.PlusX:
 											localPosition.X = totalSize.X;
 											localPosition.Y = 0;// elementSizeH * 0.5;
 											break;
-										case 3:
+										case ElementSideNotMask.PlusY:
 											localPosition.Y = totalSize.Y;
 											localPosition.X = totalSize.X;// - elementSizeH * 0.5;
 											break;
 										}
 
-										localPosition.Z = elementSize.Y * size.Z;// level;
+										localPosition.Z = logicalData.GetLevelHeightFromBottom( size.Z );
+										//localPosition.Z = elementSize.Y * size.Z;// level;
 
-										var localRotation = localRotations[ side ] * fromRotateByZ90;
+										var localRotation = localRotations[ (int)side ] * fromRotateByZ90;
 
 										//!!!!
 										var cullingByCameraDirectionLocalNormal = Vector3.Zero;
@@ -855,49 +1042,125 @@ namespace NeoAxis
 							//2 +x
 							//3 +y
 
-							for( int side = 0; side < 4; side++ )
+							for( var side = ElementSideNotMask.MinusX; side <= ElementSideNotMask.PlusY; side++ )
 							{
 								//var sideModifiers = sidesEdgeModifiers.Where( m => m.Side.Value == side ).ToArray();
 
 								for( int level = 0; level < size.Z; level++ )
 								{
-									var maxX = ( side % 2 == 0 ) ? size.Y : size.X;
+									var maxX = ( (int)side % 2 == 0 ) ? size.Y : size.X;
+
+									//!!!!
+									maxX--;
+
 									for( int x = 0; x < maxX; x++ )
 									{
-										var element = GetSuitableCellElement( random, cellElements/*, cellModifiers*/, side, new Vector2I( x, level ) );
+										var side2 = side;
+
+										if( x == 0 )
+										{
+											switch( side )
+											{
+											case ElementSideNotMask.MinusX: side2 = ElementSideNotMask.MinusXPlusY; break;
+											case ElementSideNotMask.MinusY: side2 = ElementSideNotMask.MinusXMinusY; break;
+											case ElementSideNotMask.PlusX: side2 = ElementSideNotMask.PlusXMinusY; break;
+											case ElementSideNotMask.PlusY: side2 = ElementSideNotMask.PlusXPlusY; break;
+											}
+										}
+										//!!!!
+										//else if( x == maxX - 1 )
+										//{
+										//	switch( side )
+										//	{
+										//	case ElementSideNotMask.MinusX: side2 = ElementSideNotMask.MinusXMinusY; break;
+										//	case ElementSideNotMask.MinusY: side2 = ElementSideNotMask.PlusXMinusY; break;
+										//	case ElementSideNotMask.PlusX: side2 = ElementSideNotMask.PlusXPlusY; break;
+										//	case ElementSideNotMask.PlusY: side2 = ElementSideNotMask.MinusXPlusY; break;
+										//	}
+										//}
+
+										BuildingElement element = null;
+										//bool isCorner = false;
+
+										//try to use corner if exists or use side
+										if( side2 != side )
+										{
+											element = GetSuitableCellElement( random, cellElements/*, cellModifiers*/, side2, new Vector2I( x, level ) );
+
+											//if( element != null )
+											//	isCorner = true;
+										}
+
+										//use side
+										if( element == null )
+										{
+											element = GetSuitableCellElement( random, cellElements/*, cellModifiers*/, side, new Vector2I( x, level ) );
+										}
+
 										if( element != null )
 										{
 											var localPosition = Vector3.Zero;
 
 											switch( side )
 											{
-											case 0:
+											case ElementSideNotMask.MinusX:
 												localPosition.X = elementSizeH * 0.5;
 												localPosition.Y = totalSize.Y - elementSizeH * x - elementSizeH * 0.5;
 												break;
-											case 1:
+											case ElementSideNotMask.MinusY:
 												localPosition.Y = elementSizeH * 0.5;
 												localPosition.X = elementSizeH * x + elementSizeH * 0.5;
 												break;
-											case 2:
+											case ElementSideNotMask.PlusX:
 												localPosition.X = totalSize.X - elementSizeH * 0.5;
 												localPosition.Y = elementSizeH * x + elementSizeH * 0.5;
 												break;
-											case 3:
+											case ElementSideNotMask.PlusY:
 												localPosition.Y = totalSize.Y - elementSizeH * 0.5;
 												localPosition.X = totalSize.X - elementSizeH * x - elementSizeH * 0.5;
 												break;
 											}
 
-											localPosition.Z = elementSize.Y * level;
+											localPosition.Z = logicalData.GetLevelHeightFromBottom( level );
+											//localPosition.Z = elementSize.Y * level;
 
-											var localRotation = localRotations[ side ];
+											var localRotation = localRotations[ (int)side ];
 
-											var cullingByCameraDirectionLocalNormal = localRotation.GetForward();
-											var cullingByCameraDirectionViewAngleFactor = 0.0;
+											Vector3 cullingByCameraDirectionLocalNormal;
+											double cullingByCameraDirectionViewAngleFactor;
+											if( side2 != side )
+											{
+												//corner cell
+												switch( side2 )
+												{
+												case ElementSideNotMask.MinusXMinusY:
+													cullingByCameraDirectionLocalNormal = new Vector3( -1, -1, 0 ).GetNormalize();
+													break;
+												case ElementSideNotMask.PlusXMinusY:
+													cullingByCameraDirectionLocalNormal = new Vector3( 1, -1, 0 ).GetNormalize();
+													break;
+												case ElementSideNotMask.MinusXPlusY:
+													cullingByCameraDirectionLocalNormal = new Vector3( -1, 1, 0 ).GetNormalize();
+													break;
+												case ElementSideNotMask.PlusXPlusY:
+													cullingByCameraDirectionLocalNormal = new Vector3( 1, 1, 0 ).GetNormalize();
+													break;
+												default:
+													cullingByCameraDirectionLocalNormal = Vector3.Zero;
+													break;
+												}
+												cullingByCameraDirectionViewAngleFactor = 0.5;
+											}
+											else
+											{
+												//side cell
+												cullingByCameraDirectionLocalNormal = localRotation.GetForward();
+												cullingByCameraDirectionViewAngleFactor = 0.0;
+											}
 
 											AddItem( element, localPosition, localRotation, cullingByCameraDirectionLocalNormal, cullingByCameraDirectionViewAngleFactor );
 										}
+
 									}
 								}
 							}
@@ -1031,7 +1294,8 @@ namespace NeoAxis
 					{
 						var roofSurroundingElements = elements.Where( e => e.ElementType.Value == BuildingElement.ElementTypeEnum.RoofSurrounding );
 
-						var positionZ = elementSize.Y * size.Z;
+						var positionZ = logicalData.GetLevelHeightFromBottom( size.Z );
+						//var positionZ = elementSize.Y * size.Z;
 
 						foreach( var element in roofSurroundingElements )
 						{
@@ -1100,6 +1364,7 @@ namespace NeoAxis
 				logicalData.BuildingType = BuildingType.Value;
 				if( logicalData.BuildingType == null )
 					logicalData.BuildingType = new BuildingType();
+				logicalData.BuildingTypeUsedVersion = logicalData.BuildingType.Version;
 
 				var handled = false;
 				CalculateLogicalDataBefore?.Invoke( this, logicalData, ref handled );
@@ -1129,12 +1394,12 @@ namespace NeoAxis
 			if( manager != null )
 			{
 				group.SectorSize = manager.SectorSize;
-				group.MaxObjectsInGroup = manager.MaxObjectsInGroup;
+				//group.MaxObjectsInGroup = manager.MaxObjectsInGroup;
 			}
 			else
 			{
 				group.SectorSize = new Vector3( 200, 200, 10000 );
-				group.MaxObjectsInGroup = 1000;
+				//group.MaxObjectsInGroup = 100000;// 10000;
 			}
 		}
 
@@ -1269,6 +1534,7 @@ namespace NeoAxis
 		//	//	}
 
 		//	//	meshInSpace.Mesh = mesh;// ReferenceUtility.MakeThisReference( meshInSpace, mesh );
+		//	meshInSpace.StaticShadows = true;
 		//	//	meshInSpace.Enabled = true;
 		//	//}
 		//}
@@ -1385,8 +1651,8 @@ namespace NeoAxis
 					scene.GetRenderSceneData += Scene_GetRenderSceneData;
 					//scene.ViewportUpdateBefore += Scene_ViewportUpdateBefore;
 #if !DEPLOY
-					TransformTool.AllInstances_ModifyCommit += TransformTool_AllInstances_ModifyCommit;
-					TransformTool.AllInstances_ModifyCancel += TransformTool_AllInstances_ModifyCancel;
+					TransformToolUtility.AllInstances_ModifyCommit += TransformTool_AllInstances_ModifyCommit;
+					TransformToolUtility.AllInstances_ModifyCancel += TransformTool_AllInstances_ModifyCancel;
 #endif
 
 					if( logicalData == null )
@@ -1398,8 +1664,8 @@ namespace NeoAxis
 					scene.GetRenderSceneData -= Scene_GetRenderSceneData;
 					//scene.ViewportUpdateBefore -= Scene_ViewportUpdateBefore;
 #if !DEPLOY
-					TransformTool.AllInstances_ModifyCommit -= TransformTool_AllInstances_ModifyCommit;
-					TransformTool.AllInstances_ModifyCancel -= TransformTool_AllInstances_ModifyCancel;
+					TransformToolUtility.AllInstances_ModifyCommit -= TransformTool_AllInstances_ModifyCommit;
+					TransformToolUtility.AllInstances_ModifyCancel -= TransformTool_AllInstances_ModifyCancel;
 #endif
 
 					Update();
@@ -1409,7 +1675,7 @@ namespace NeoAxis
 
 #if !DEPLOY
 
-		private void TransformTool_AllInstances_ModifyCommit( TransformTool sender )
+		private void TransformTool_AllInstances_ModifyCommit( ITransformTool sender )
 		{
 			if( needUpdateAfterEndModifyingTransformTool )
 			{
@@ -1419,7 +1685,7 @@ namespace NeoAxis
 			}
 		}
 
-		private void TransformTool_AllInstances_ModifyCancel( TransformTool sender )
+		private void TransformTool_AllInstances_ModifyCancel( ITransformTool sender )
 		{
 			if( needUpdateAfterEndModifyingTransformTool )
 			{
@@ -1437,7 +1703,7 @@ namespace NeoAxis
 			var totalCells = size.X * size.Y * size.Z;
 			if( totalCells > 500 )
 			{
-				if( IsAnyTransformToolInModifyingMode() )
+				if( EditorAPI.IsAnyTransformToolInModifyingMode() )
 				{
 					needUpdateAfterEndModifyingTransformTool = true;
 					return;
@@ -1446,6 +1712,7 @@ namespace NeoAxis
 
 			DeleteVisualData();
 			DeleteLogicalData();
+			occluderCachedTransform = null;
 
 			if( EnabledInHierarchyAndIsInstance )
 			{
@@ -1474,6 +1741,13 @@ namespace NeoAxis
 
 			if( EnabledInHierarchyAndIsInstance )
 			{
+				if( EngineApp.IsEditor && !needUpdate )
+				{
+					var b = BuildingType.Value;
+					if( b != null && logicalData != null && ( logicalData.BuildingType != b || logicalData.BuildingTypeUsedVersion != b.Version ) )
+						needUpdate = true;
+				}
+
 				if( needUpdate )
 					Update();
 			}
@@ -1574,28 +1848,9 @@ namespace NeoAxis
 			needUpdate = true;
 		}
 
-		bool IsAnyTransformToolInModifyingMode()
-		{
-#if !DEPLOY
-			if( EngineApp.IsEditor )
-			{
-				foreach( var instance in EngineViewportControl.AllInstances )
-				{
-					if( instance.TransformTool != null )
-					{
-						var transformTool = instance.TransformTool as TransformTool;
-						if( transformTool != null && transformTool.Modifying )
-							return true;
-					}
-				}
-			}
-#endif
-			return false;
-		}
-
 		protected override Scene.SceneObjectFlags OnGetSceneObjectFlags()
 		{
-			var result = base.OnGetSceneObjectFlags();
+			var result = EngineApp.IsSimulation ? Scene.SceneObjectFlags.Logic : base.OnGetSceneObjectFlags();
 			if( Occluder )
 				result |= Scene.SceneObjectFlags.Occluder;
 			return result;
@@ -1627,26 +1882,23 @@ namespace NeoAxis
 
 			if( Occluder && IsVisualDataContainsObjects() && logicalData != null )
 			{
-				//!!!!
-
 				var tr = Transform.Value;
 
-				if( cachedTransform == null || tr != cachedTransform )
+				if( occluderCachedTransform == null || tr != occluderCachedTransform )
 				{
-
-					//!!!!slowly
-
 					logicalData.GetCellsBox( out var box, out _ );
 
+					var extendBottom = logicalData.BuildingType.OccluderExtendBottom.Value;
+					var shrinkHorizontal = logicalData.BuildingType.OccluderShrinkHorizontal.Value;
 
-					//!!!!в землю вытянуть
+					box.Extents.X -= 0.2 + shrinkHorizontal;
+					box.Extents.Y -= 0.2 + shrinkHorizontal;
+					box.Center.Z -= extendBottom * 0.5;
+					box.Extents.Z += extendBottom * 0.5;
 
-
-					//!!!!уменьшать
-					//box.Extents -= z;
-
-
-					//!!!!slowly
+					//var extend = OccluderExtend.Value;
+					//box.Center -= extend.GetCenter() * 0.5;
+					//box.Extents += extend.GetSize();
 
 					var worldMatrix = new Matrix4( box.Axis * Matrix3.FromScale( box.Extents * 2 ), box.Center );
 
@@ -1655,15 +1907,15 @@ namespace NeoAxis
 					for( int n = 0; n < vertices.Length; n++ )
 						vertices[ n ] = worldMatrix * vertices[ n ];
 
-					cachedTransform = tr;
-					cachedBoxShapeVertices = vertices;
-					cachedBoxShapeIndices = indices;
+					occluderCachedTransform = tr;
+					occluderCachedBoxShapeVertices = vertices;
+					occluderCachedBoxShapeIndices = indices;
 				}
 
 				var item = new RenderingPipeline.OccluderItem();
-				item.Center = cachedTransform.Position;
-				item.Vertices = cachedBoxShapeVertices;
-				item.Indices = cachedBoxShapeIndices;
+				item.Center = occluderCachedTransform.Position;
+				item.Vertices = occluderCachedBoxShapeVertices;
+				item.Indices = occluderCachedBoxShapeIndices;
 				occluders.Add( ref item );
 			}
 		}
@@ -1720,5 +1972,23 @@ namespace NeoAxis
 				}
 			}
 		}
+
+		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
+		{
+			base.OnMetadataGetMembersFilter( context, member, ref skip );
+
+			//var p = member as Metadata.Property;
+			//if( p != null )
+			//{
+			//	switch( p.Name )
+			//	{
+			//	case nameof( OccluderExtendBottom ):
+			//		if( !Occluder )
+			//			skip = true;
+			//		break;
+			//	}
+			//}
+		}
+
 	}
 }

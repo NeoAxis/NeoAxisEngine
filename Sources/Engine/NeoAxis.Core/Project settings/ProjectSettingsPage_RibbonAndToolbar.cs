@@ -24,9 +24,9 @@ namespace NeoAxis
 				get
 				{
 					//init default configuration
-					if( UseDefaultSettings && ribbonTabs.Count == 0 )
+					if( UseDefaultSettings && ribbonTabs.Count == 0 && EngineApp.IsEditor )
 					{
-						foreach( var tab in EditorRibbonDefaultConfiguration.Tabs )
+						foreach( var tab in EditorAPI.GetEditorRibbonDefaultConfigurationTabs() )// EditorRibbonDefaultConfiguration.Tabs )
 						{
 							var tabItem = new TabItem();
 							tabItem.Name = tab.Name;
@@ -39,7 +39,7 @@ namespace NeoAxis
 								foreach( var child in group.Children )
 								{
 									//sub group
-									var subGroup = child as EditorRibbonDefaultConfiguration.Group;
+									var subGroup = child as IEditorRibbonDefaultConfigurationGroup;// EditorRibbonDefaultConfiguration.Group;
 									if( subGroup != null )
 									{
 										var actionItem = new ActionItem();
@@ -50,12 +50,12 @@ namespace NeoAxis
 									}
 
 									//action
-									var action = child as EditorAction;
+									var action = child as IEditorAction;
 									if( action == null )
 									{
 										var actionName = child as string;
 										if( actionName != null )
-											action = EditorActions.GetByName( actionName );
+											action = EditorAPI.GetEditorActionByName( actionName );
 									}
 									if( action != null )
 									{
@@ -85,9 +85,9 @@ namespace NeoAxis
 				get
 				{
 					//init default configuration
-					if( UseDefaultSettings && toolbarActions.Count == 0 )
+					if( UseDefaultSettings && toolbarActions.Count == 0 && EngineApp.IsEditor )
 					{
-						foreach( var action in EditorActions.Actions )
+						foreach( var action in EditorAPI.GetEditorActions() )// EditorActions.Actions )
 						{
 							if( !action.CompletelyDisabled && action.QatSupport && action.QatAddByDefault )
 							{

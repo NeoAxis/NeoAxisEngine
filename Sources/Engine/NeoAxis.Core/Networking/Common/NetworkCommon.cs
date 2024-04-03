@@ -28,4 +28,11 @@ namespace NeoAxis
 			get { return networkMode; }
 		}
 	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	class NetworkUtility
+	{
+		public static Metadata.GetMembersContext metadataGetMembersContextNoFilter = new Metadata.GetMembersContext( false );
+	}
 }

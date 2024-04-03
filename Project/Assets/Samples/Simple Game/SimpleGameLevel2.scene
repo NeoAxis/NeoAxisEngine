@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2022.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.Scene
 {
@@ -26,14 +26,14 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 20000
+		Brightness = 40000
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
-		ShadowFarDistance = 20
-		ShadowDirectionalLightTextureSize = _1024
-		ShadowDirectionalLightCascades = 1
+		ShadowDirectionalDistance = 20
+		ShadowDirectionalLightTextureSize = _2048
+		ShadowPointSpotlightDistance = 20
 		.component NeoAxis.Component
 		{
 			Name = Background Effects

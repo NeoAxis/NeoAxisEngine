@@ -6,6 +6,8 @@ namespace Internal.SharpBgfx {
     /// </summary>
     public unsafe struct InstanceDataBuffer : IEquatable<InstanceDataBuffer> {
         internal NativeStruct data;
+        //!!!!betauser
+        public bool Valid;
 
         /// <summary>
         /// Represents an invalid handle.
@@ -29,6 +31,9 @@ namespace Internal.SharpBgfx {
         /// <param name="stride">The stride of each element.</param>
         public InstanceDataBuffer (int count, int stride) {
             NativeMethods.bgfx_alloc_instance_data_buffer(out data, count, (ushort)stride);
+
+            //!!!!betauser
+            Valid = data.num == count;
         }
 
         /// <summary>
@@ -123,5 +128,6 @@ namespace Internal.SharpBgfx {
             public ushort handle;
         }
 #pragma warning restore 649
+
     }
 }

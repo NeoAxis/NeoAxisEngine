@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 Copyright (c) 2019 bzt
 
 All rights reserved.
@@ -85,7 +85,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       are listed in aiScene->mRootNode->children, but all without meshes
 */
 
-static const aiImporterDesc desc = {
+static constexpr aiImporterDesc desc = {
     "Model 3D Importer",
     "",
     "",
@@ -95,11 +95,7 @@ static const aiImporterDesc desc = {
     0,
     0,
     0,
-#ifdef M3D_ASCII
     "m3d a3d"
-#else
-    "m3d"
-#endif
 };
 
 namespace Assimp {
@@ -115,38 +111,19 @@ M3DImporter::M3DImporter() :
 
 // ------------------------------------------------------------------------------------------------
 //  Returns true, if file is a binary or ASCII Model 3D file.
-bool M3DImporter::CanRead(const std::string &pFile, IOSystem *pIOHandler, bool checkSig) const {
-    const std::string extension = GetExtension(pFile);
-
-    if (extension == "m3d"
-#ifdef M3D_ASCII
-            || extension == "a3d"
-#endif
-    )
-        return true;
-    else if (!extension.length() || checkSig) {
-        if (!pIOHandler) {
-            return true;
-        }
-        /*
-         * don't use CheckMagicToken because that checks with swapped bytes too, leading to false
-         * positives. This magic is not uint32_t, but char[4], so memcmp is the best way
-
-        const char* tokens[] = {"3DMO", "3dmo"};
-        return CheckMagicToken(pIOHandler,pFile,tokens,2,0,4);
-        */
-        std::unique_ptr<IOStream> pStream(pIOHandler->Open(pFile, "rb"));
-        unsigned char data[4];
-        if (4 != pStream->Read(data, 1, 4)) {
-            return false;
-        }
-        return !memcmp(data, "3DMO", 4) /* bin */
-#ifdef M3D_ASCII
-               || !memcmp(data, "3dmo", 4) /* ASCII */
-#endif
-                ;
+bool M3DImporter::CanRead(const std::string &pFile, IOSystem *pIOHandler, bool /*checkSig*/) const {
+    // don't use CheckMagicToken because that checks with swapped bytes too, leading to false
+    // positives. This magic is not uint32_t, but char[4], so memcmp is the best way
+    std::unique_ptr<IOStream> pStream(pIOHandler->Open(pFile, "rb"));
+    unsigned char data[4];
+    if (4 != pStream->Read(data, 1, 4)) {
+        return false;
     }
-    return false;
+    return !memcmp(data, "3DMO", 4) /* bin */
+#ifdef M3D_ASCII
+        || !memcmp(data, "3dmo", 4) /* ASCII */
+#endif
+            ;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -160,28 +137,26 @@ void M3DImporter::InternReadFile(const std::string &file, aiScene *pScene, IOSys
     // Read file into memory
     std::unique_ptr<IOStream> pStream(pIOHandler->Open(file, "rb"));
     if (!pStream.get()) {
-        throw DeadlyImportError("Failed to open file " + file + ".");
+        throw DeadlyImportError("Failed to open file ", file, ".");
     }
 
     // Get the file-size and validate it, throwing an exception when fails
     size_t fileSize = pStream->FileSize();
     if (fileSize < 8) {
-        throw DeadlyImportError("M3D-file " + file + " is too small.");
+        throw DeadlyImportError("M3D-file ", file, " is too small.");
     }
     std::vector<unsigned char> buffer(fileSize);
     if (fileSize != pStream->Read(buffer.data(), 1, fileSize)) {
-        throw DeadlyImportError("Failed to read the file " + file + ".");
+        throw DeadlyImportError("Failed to read the file ", file, ".");
     }
     // extra check for binary format's first 8 bytes. Not done for the ASCII variant
     if (!memcmp(buffer.data(), "3DMO", 4) && memcmp(buffer.data() + 4, &fileSize, 4)) {
-        throw DeadlyImportError("Bad binary header in file " + file + ".");
+        throw DeadlyImportError("Bad binary header in file ", file, ".");
     }
-#ifdef M3D_ASCII
     // make sure there's a terminator zero character, as input must be ASCIIZ
     if (!memcmp(buffer.data(), "3dmo", 4)) {
         buffer.push_back(0);
     }
-#endif
 
     // Get the path for external assets
     std::string folderName("./");
@@ -194,13 +169,13 @@ void M3DImporter::InternReadFile(const std::string &file, aiScene *pScene, IOSys
     }
 
     //DefaultLogger::create("/dev/stderr", Logger::VERBOSE);
-    ASSIMP_LOG_DEBUG_F("M3D: loading ", file);
+    ASSIMP_LOG_DEBUG("M3D: loading ", file);
 
     // let the C SDK do the hard work for us
     M3DWrapper m3d(pIOHandler, buffer);
 
     if (!m3d) {
-        throw DeadlyImportError("Unable to parse " + file + " as M3D.");
+        throw DeadlyImportError("Unable to parse ", file, " as M3D.");
     }
 
     // create the root node
@@ -210,7 +185,7 @@ void M3DImporter::InternReadFile(const std::string &file, aiScene *pScene, IOSys
     pScene->mRootNode->mNumChildren = 0;
     mScene = pScene;
 
-    ASSIMP_LOG_DEBUG("M3D: root node " + m3d.Name());
+    ASSIMP_LOG_DEBUG("M3D: root node ", m3d.Name());
 
     // now we just have to fill up the Assimp structures in pScene
     importMaterials(m3d);
@@ -240,15 +215,15 @@ void M3DImporter::importMaterials(const M3DWrapper &m3d) {
     mScene->mNumMaterials = m3d->nummaterial + 1;
     mScene->mMaterials = new aiMaterial *[mScene->mNumMaterials];
 
-    ASSIMP_LOG_DEBUG_F("M3D: importMaterials ", mScene->mNumMaterials);
+    ASSIMP_LOG_DEBUG("M3D: importMaterials ", mScene->mNumMaterials);
 
     // add a default material as first
-    aiMaterial *mat = new aiMaterial;
-    mat->AddProperty(&name, AI_MATKEY_NAME);
+    aiMaterial *defaultMat = new aiMaterial;
+    defaultMat->AddProperty(&name, AI_MATKEY_NAME);
     c.a = 1.0f;
     c.b = c.g = c.r = 0.6f;
-    mat->AddProperty(&c, 1, AI_MATKEY_COLOR_DIFFUSE);
-    mScene->mMaterials[0] = mat;
+    defaultMat->AddProperty(&c, 1, AI_MATKEY_COLOR_DIFFUSE);
+    mScene->mMaterials[0] = defaultMat;
 
     if (!m3d->nummaterial || !m3d->material) {
         return;
@@ -306,16 +281,16 @@ void M3DImporter::importMaterials(const M3DWrapper &m3d) {
             }
             // texture map properties
             if (m->prop[j].type >= 128 && aiTxProps[k].pKey &&
-                    // extra check, should never happen, do we have the refered texture?
+                    // extra check, should never happen, do we have the referred texture?
                     m->prop[j].value.textureid < m3d->numtexture &&
                     m3d->texture[m->prop[j].value.textureid].name) {
                 name.Set(std::string(std::string(m3d->texture[m->prop[j].value.textureid].name) + ".png"));
-                mat->AddProperty(&name, aiTxProps[k].pKey, aiTxProps[k].type, aiTxProps[k].index);
+                newMat->AddProperty(&name, aiTxProps[k].pKey, aiTxProps[k].type, aiTxProps[k].index);
                 n = 0;
-                mat->AddProperty(&n, 1, _AI_MATKEY_UVWSRC_BASE, aiProps[k].type, aiProps[k].index);
+                newMat->AddProperty(&n, 1, _AI_MATKEY_UVWSRC_BASE, aiProps[k].type, aiProps[k].index);
             }
         }
-        mScene->mMaterials[i + 1] = mat;
+        mScene->mMaterials[i + 1] = newMat;
     }
 }
 
@@ -335,7 +310,7 @@ void M3DImporter::importTextures(const M3DWrapper &m3d) {
     ai_assert(m3d);
 
     mScene->mNumTextures = m3d->numtexture;
-    ASSIMP_LOG_DEBUG_F("M3D: importTextures ", mScene->mNumTextures);
+    ASSIMP_LOG_DEBUG("M3D: importTextures ", mScene->mNumTextures);
 
     if (!m3d->numtexture || !m3d->texture) {
         return;
@@ -390,7 +365,7 @@ void M3DImporter::importTextures(const M3DWrapper &m3d) {
 // individually. In assimp there're per mesh vertex and UV lists, and they must be
 // indexed simultaneously.
 void M3DImporter::importMeshes(const M3DWrapper &m3d) {
-    ASSIMP_LOG_DEBUG_F("M3D: importMeshes ", m3d->numface);
+    ASSIMP_LOG_DEBUG("M3D: importMeshes ", m3d->numface);
 
     if (!m3d->numface || !m3d->face || !m3d->numvertex || !m3d->vertex) {
         return;
@@ -484,7 +459,7 @@ void M3DImporter::importMeshes(const M3DWrapper &m3d) {
     mScene->mMeshes = new aiMesh *[mScene->mNumMeshes];
     std::copy(meshes->begin(), meshes->end(), mScene->mMeshes);
 
-    // create mesh indeces in root node
+    // create mesh indices in root node
     mScene->mRootNode->mNumMeshes = static_cast<unsigned int>(meshes->size());
     mScene->mRootNode->mMeshes = new unsigned int[meshes->size()];
     for (i = 0; i < meshes->size(); i++) {
@@ -509,7 +484,7 @@ void M3DImporter::importBones(const M3DWrapper &m3d, unsigned int parentid, aiNo
     ai_assert(mScene != nullptr);
     ai_assert(m3d);
 
-    ASSIMP_LOG_DEBUG_F("M3D: importBones ", m3d->numbone, " parentid ", (int)parentid);
+    ASSIMP_LOG_DEBUG("M3D: importBones ", m3d->numbone, " parentid ", (int)parentid);
 
     if (!m3d->numbone || !m3d->bone) {
         return;
@@ -550,7 +525,7 @@ void M3DImporter::importAnimations(const M3DWrapper &m3d) {
 
     mScene->mNumAnimations = m3d->numaction;
 
-    ASSIMP_LOG_DEBUG_F("M3D: importAnimations ", mScene->mNumAnimations);
+    ASSIMP_LOG_DEBUG("M3D: importAnimations ", mScene->mNumAnimations);
 
     if (!m3d->numaction || !m3d->action || !m3d->numbone || !m3d->bone || !m3d->vertex) {
         return;
@@ -618,8 +593,10 @@ aiColor4D M3DImporter::mkColor(uint32_t c) {
 void M3DImporter::convertPose(const M3DWrapper &m3d, aiMatrix4x4 *m, unsigned int posid, unsigned int orientid) {
     ai_assert(m != nullptr);
     ai_assert(m3d);
-    ai_assert(posid != M3D_UNDEF && posid < m3d->numvertex);
-    ai_assert(orientid != M3D_UNDEF && orientid < m3d->numvertex);
+    ai_assert(posid != M3D_UNDEF);
+    ai_assert(posid < m3d->numvertex);
+    ai_assert(orientid != M3D_UNDEF);
+    ai_assert(orientid < m3d->numvertex);
     if (!m3d->numvertex || !m3d->vertex)
         return;
     m3dv_t *p = &m3d->vertex[posid];
@@ -663,7 +640,7 @@ void M3DImporter::convertPose(const M3DWrapper &m3d, aiMatrix4x4 *m, unsigned in
 
 // ------------------------------------------------------------------------------------------------
 // find a node by name
-aiNode *M3DImporter::findNode(aiNode *pNode, aiString name) {
+aiNode *M3DImporter::findNode(aiNode *pNode, const aiString &name) {
     ai_assert(pNode != nullptr);
     ai_assert(mScene != nullptr);
 
@@ -696,7 +673,7 @@ void M3DImporter::calculateOffsetMatrix(aiNode *pNode, aiMatrix4x4 *m) {
 
 // ------------------------------------------------------------------------------------------------
 // because M3D has a global mesh, global vertex ids and stores materialid on the face, we need
-// temporary lists to collect data for an aiMesh, which requires local arrays and local indeces
+// temporary lists to collect data for an aiMesh, which requires local arrays and local indices
 // this function fills up an aiMesh with those temporary lists
 void M3DImporter::populateMesh(const M3DWrapper &m3d, aiMesh *pMesh, std::vector<aiFace> *faces, std::vector<aiVector3D> *vertices,
         std::vector<aiVector3D> *normals, std::vector<aiVector3D> *texcoords, std::vector<aiColor4D> *colors,
@@ -711,7 +688,7 @@ void M3DImporter::populateMesh(const M3DWrapper &m3d, aiMesh *pMesh, std::vector
     ai_assert(vertexids != nullptr);
     ai_assert(m3d);
 
-    ASSIMP_LOG_DEBUG_F("M3D: populateMesh numvertices ", vertices->size(), " numfaces ", faces->size(),
+    ASSIMP_LOG_DEBUG("M3D: populateMesh numvertices ", vertices->size(), " numfaces ", faces->size(),
             " numnormals ", normals->size(), " numtexcoord ", texcoords->size(), " numbones ", m3d->numbone);
 
     if (vertices->size() && faces->size()) {

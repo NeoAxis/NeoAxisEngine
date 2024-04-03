@@ -37,7 +37,7 @@ namespace NeoAxis
 		public Reference<SourceDataEnum> SourceData
 		{
 			get { if( _sourceData.BeginGet() ) SourceData = _sourceData.Get( this ); return _sourceData.value; }
-			set { if( _sourceData.BeginSet( ref value ) ) { try { SourceDataChanged?.Invoke( this ); } finally { _sourceData.EndSet(); } } }
+			set { if( _sourceData.BeginSet( this, ref value ) ) { try { SourceDataChanged?.Invoke( this ); } finally { _sourceData.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SourceData"/> property value changes.</summary>
 		public event Action<Sensor> SourceDataChanged;
@@ -59,7 +59,7 @@ namespace NeoAxis
 		public Reference<ShapeEnum> Shape
 		{
 			get { if( _shape.BeginGet() ) Shape = _shape.Get( this ); return _shape.value; }
-			set { if( _shape.BeginSet( ref value ) ) { try { ShapeChanged?.Invoke( this ); } finally { _shape.EndSet(); } } }
+			set { if( _shape.BeginSet( this, ref value ) ) { try { ShapeChanged?.Invoke( this ); } finally { _shape.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Shape"/> property value changes.</summary>
 		public event Action<Sensor> ShapeChanged;
@@ -72,7 +72,7 @@ namespace NeoAxis
 		public Reference<ObjectInSpace> RayTarget
 		{
 			get { if( _rayTarget.BeginGet() ) RayTarget = _rayTarget.Get( this ); return _rayTarget.value; }
-			set { if( _rayTarget.BeginSet( ref value ) ) { try { RayTargetChanged?.Invoke( this ); } finally { _rayTarget.EndSet(); } } }
+			set { if( _rayTarget.BeginSet( this, ref value ) ) { try { RayTargetChanged?.Invoke( this ); } finally { _rayTarget.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RayTarget"/> property value changes.</summary>
 		public event Action<Sensor> RayTargetChanged;
@@ -85,7 +85,7 @@ namespace NeoAxis
 		public Reference<ObjectInSpace> Target
 		{
 			get { if( _target.BeginGet() ) Target = _target.Get( this ); return _target.value; }
-			set { if( _target.BeginSet( ref value ) ) { try { TargetChanged?.Invoke( this ); } finally { _target.EndSet(); } } }
+			set { if( _target.BeginSet( this, ref value ) ) { try { TargetChanged?.Invoke( this ); } finally { _target.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Target"/> property value changes.</summary>
 		public event Action<Sensor> TargetChanged;
@@ -104,7 +104,7 @@ namespace NeoAxis
 		public Reference<ModeEnum> Mode
 		{
 			get { if( _mode.BeginGet() ) Mode = _mode.Get( this ); return _mode.value; }
-			set { if( _mode.BeginSet( ref value ) ) { try { ModeChanged?.Invoke( this ); } finally { _mode.EndSet(); } } }
+			set { if( _mode.BeginSet( this, ref value ) ) { try { ModeChanged?.Invoke( this ); } finally { _mode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Mode"/> property value changes.</summary>
 		public event Action<Sensor> ModeChanged;
@@ -118,7 +118,7 @@ namespace NeoAxis
 		public Reference<Metadata.TypeInfo> FilterByType
 		{
 			get { if( _filterByType.BeginGet() ) FilterByType = _filterByType.Get( this ); return _filterByType.value; }
-			set { if( _filterByType.BeginSet( ref value ) ) { try { FilterByTypeChanged?.Invoke( this ); } finally { _filterByType.EndSet(); } } }
+			set { if( _filterByType.BeginSet( this, ref value ) ) { try { FilterByTypeChanged?.Invoke( this ); } finally { _filterByType.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FilterByType"/> property value changes.</summary>
 		public event Action<Sensor> FilterByTypeChanged;
@@ -131,7 +131,7 @@ namespace NeoAxis
 		public Reference<int> PhysicsFilterGroup
 		{
 			get { if( _physicsFilterGroup.BeginGet() ) PhysicsFilterGroup = _physicsFilterGroup.Get( this ); return _physicsFilterGroup.value; }
-			set { if( _physicsFilterGroup.BeginSet( ref value ) ) { try { PhysicsFilterGroupChanged?.Invoke( this ); } finally { _physicsFilterGroup.EndSet(); } } }
+			set { if( _physicsFilterGroup.BeginSet( this, ref value ) ) { try { PhysicsFilterGroupChanged?.Invoke( this ); } finally { _physicsFilterGroup.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsFilterGroup"/> property value changes.</summary>
 		public event Action<Sensor> PhysicsFilterGroupChanged;
@@ -144,7 +144,7 @@ namespace NeoAxis
 		public Reference<int> PhysicsFilterMask
 		{
 			get { if( _physicsFilterMask.BeginGet() ) PhysicsFilterMask = _physicsFilterMask.Get( this ); return _physicsFilterMask.value; }
-			set { if( _physicsFilterMask.BeginSet( ref value ) ) { try { PhysicsFilterMaskChanged?.Invoke( this ); } finally { _physicsFilterMask.EndSet(); } } }
+			set { if( _physicsFilterMask.BeginSet( this, ref value ) ) { try { PhysicsFilterMaskChanged?.Invoke( this ); } finally { _physicsFilterMask.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsFilterMask"/> property value changes.</summary>
 		public event Action<Sensor> PhysicsFilterMaskChanged;
@@ -157,7 +157,7 @@ namespace NeoAxis
 		public Reference<bool> IgnoreSensors
 		{
 			get { if( _ignoreSensors.BeginGet() ) IgnoreSensors = _ignoreSensors.Get( this ); return _ignoreSensors.value; }
-			set { if( _ignoreSensors.BeginSet( ref value ) ) { try { IgnoreSensorsChanged?.Invoke( this ); } finally { _ignoreSensors.EndSet(); } } }
+			set { if( _ignoreSensors.BeginSet( this, ref value ) ) { try { IgnoreSensorsChanged?.Invoke( this ); } finally { _ignoreSensors.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="IgnoreSensors"/> property value changes.</summary>
 		public event Action<Sensor> IgnoreSensorsChanged;
@@ -179,7 +179,7 @@ namespace NeoAxis
 		public Reference<WhenUpdateEnum> WhenUpdate
 		{
 			get { if( _whenUpdate.BeginGet() ) WhenUpdate = _whenUpdate.Get( this ); return _whenUpdate.value; }
-			set { if( _whenUpdate.BeginSet( ref value ) ) { try { WhenUpdateChanged?.Invoke( this ); } finally { _whenUpdate.EndSet(); } } }
+			set { if( _whenUpdate.BeginSet( this, ref value ) ) { try { WhenUpdateChanged?.Invoke( this ); } finally { _whenUpdate.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="WhenUpdate"/> property value changes.</summary>
 		public event Action<Sensor> WhenUpdateChanged;
@@ -192,7 +192,7 @@ namespace NeoAxis
 		public Reference<ColorValue> DisplayColor
 		{
 			get { if( _displayColor.BeginGet() ) DisplayColor = _displayColor.Get( this ); return _displayColor.value; }
-			set { if( _displayColor.BeginSet( ref value ) ) { try { DisplayColorChanged?.Invoke( this ); } finally { _displayColor.EndSet(); } } }
+			set { if( _displayColor.BeginSet( this, ref value ) ) { try { DisplayColorChanged?.Invoke( this ); } finally { _displayColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayColor"/> property value changes.</summary>
 		public event Action<Sensor> DisplayColorChanged;
@@ -205,7 +205,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayObjects
 		{
 			get { if( _displayObjects.BeginGet() ) DisplayObjects = _displayObjects.Get( this ); return _displayObjects.value; }
-			set { if( _displayObjects.BeginSet( ref value ) ) { try { DisplayObjectsChanged?.Invoke( this ); } finally { _displayObjects.EndSet(); } } }
+			set { if( _displayObjects.BeginSet( this, ref value ) ) { try { DisplayObjectsChanged?.Invoke( this ); } finally { _displayObjects.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayObjects"/> property value changes.</summary>
 		public event Action<Sensor> DisplayObjectsChanged;
@@ -218,7 +218,7 @@ namespace NeoAxis
 		public Reference<ColorValue> DisplayObjectsColor
 		{
 			get { if( _displayObjectsColor.BeginGet() ) DisplayObjectsColor = _displayObjectsColor.Get( this ); return _displayObjectsColor.value; }
-			set { if( _displayObjectsColor.BeginSet( ref value ) ) { try { DisplayObjectsColorChanged?.Invoke( this ); } finally { _displayObjectsColor.EndSet(); } } }
+			set { if( _displayObjectsColor.BeginSet( this, ref value ) ) { try { DisplayObjectsColorChanged?.Invoke( this ); } finally { _displayObjectsColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayObjectsColor"/> property value changes.</summary>
 		public event Action<Sensor> DisplayObjectsColorChanged;
@@ -802,10 +802,10 @@ namespace NeoAxis
 						switch( Shape.Value )
 						{
 						case ShapeEnum.Box:
-							item = new PhysicsVolumeTestItem( GetBox(), direction, PhysicsVolumeTestItem.ModeEnum.All/*OneClosestForEach*/, PhysicsFilterGroup, PhysicsFilterMask );
+							item = new PhysicsVolumeTestItem( GetBox(), direction, PhysicsVolumeTestItem.ModeEnum.OneClosestForEach, PhysicsFilterGroup, PhysicsFilterMask );
 							break;
 						case ShapeEnum.Sphere:
-							item = new PhysicsVolumeTestItem( GetSphere(), direction, PhysicsVolumeTestItem.ModeEnum.All/*OneClosestForEach*/, PhysicsFilterGroup, PhysicsFilterMask );
+							item = new PhysicsVolumeTestItem( GetSphere(), direction, PhysicsVolumeTestItem.ModeEnum.OneClosestForEach, PhysicsFilterGroup, PhysicsFilterMask );
 							break;
 						}
 

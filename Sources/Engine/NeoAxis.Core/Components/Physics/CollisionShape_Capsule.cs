@@ -25,7 +25,7 @@ namespace NeoAxis
 					value = new Reference<int>( 0, value.GetByReference );
 				if( value > 2 )
 					value = new Reference<int>( 2, value.GetByReference );
-				if( _axis.BeginSet( ref value ) )
+				if( _axis.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -50,7 +50,7 @@ namespace NeoAxis
 			get { if( _radius.BeginGet() ) Radius = _radius.Get( this ); return _radius.value; }
 			set
 			{
-				if( _radius.BeginSet( ref value ) )
+				if( _radius.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -76,7 +76,7 @@ namespace NeoAxis
 			get { if( _height.BeginGet() ) Height = _height.Get( this ); return _height.value; }
 			set
 			{
-				if( _height.BeginSet( ref value ) )
+				if( _height.BeginSet( this, ref value ) )
 				{
 					try
 					{

@@ -12,8 +12,6 @@ namespace NeoAxis
 	//!!!!рисовать графиком количество создаваемого и освобождаемого. количество Lock и т.д. будет наглядно видно где-то что-то не так
 	//!!!!!3d gui texture filtering
 
-	//!!!!!double
-
 	/// <summary>
 	/// Specifies the horizontal alignment.
 	/// </summary>
@@ -53,6 +51,8 @@ namespace NeoAxis
 	{
 		//public static float DefaultFontSize = .02f;
 
+		public bool ScreenAntialisingForThisFrame { get; set; }
+
 		////////////////////////////////////////
 
 		/// <summary>
@@ -61,9 +61,10 @@ namespace NeoAxis
 		public enum BlendingType
 		{
 			AlphaBlend,
-			AlphaAdd,//!!!!?
+			AlphaAdd,
 			Opaque,
-			Add
+			Add,
+			//ComposeOIT
 		}
 
 		////////////////////////////////////////
@@ -147,6 +148,8 @@ namespace NeoAxis
 			public GpuProgram CompiledFragmentProgram;
 			public List<ParameterContainer> additionalParameterContainers;
 			//public List<ParameterContainer> AdditionalParameterContainers = new List<ParameterContainer>();
+
+			//!!!!don't forget about Clear()
 
 			////////////
 
@@ -262,6 +265,19 @@ namespace NeoAxis
 			{
 				get { return additionalParameterContainers != null; }
 			}
+
+			//public void Clear()
+			//{
+			//	VertexProgramFileName = @"Base\Shaders\CanvasRenderer_vs.sc";
+			//	FragmentProgramFileName = @"Base\Shaders\CanvasRenderer_fs.sc";
+			//	defines?.Clear();
+
+			//	Parameters?.Clear();
+
+			//	CompiledVertexProgram = null;
+			//	CompiledFragmentProgram = null;
+			//	additionalParameterContainers?.Clear();
+			//}
 		}
 
 		///////////////////////////////////////////
@@ -350,17 +366,21 @@ namespace NeoAxis
 		public abstract void PushColorMultiplier( ColorValue color );
 		public abstract void PopColorMultiplier();
 
+		public abstract void PushOcclusionDepthCheck( Vector2F screenPosition, float screenSize, float compareDepth );
+		public abstract void PopOcclusionDepthCheck();
+
 		/////////////////////////////////////////
 
 		public abstract void GetCurrentClipRectangle( out RectangleF result );
 		public abstract ShaderItem GetCurrentShader();
 		public abstract TextureFilteringMode GetCurrentTextureFilteringMode();
 		public abstract BlendingType GetCurrentBlendingType();
-		public abstract ColorValue GetCurrentColorMultiplier();
+		public abstract void GetCurrentColorMultiplier( out ColorValue result );
+		public abstract void GetCurrentOcclusionDepthCheck( out Vector4F result );
 
 		/////////////////////////////////////////
 
-		public abstract void ViewportRendering_RenderToCurrentViewport( ViewportRenderingContext context, bool clearData, double time );
+		public abstract void ViewportRendering_RenderToCurrentViewport( ViewportRenderingContext context, bool clearData, double time, bool registerUniformsAndSetIdentityMatrix = true );
 
 		/////////////////////////////////////////
 
@@ -447,6 +467,32 @@ namespace NeoAxis
 		public void AddQuad( Rectangle rectangle, ColorValue color )
 		{
 			AddQuad( rectangle.ToRectangleF(), new RectangleF( 0, 0, 0, 0 ), null, color, false );
+		}
+
+		public enum AddRoundedQuadMode
+		{
+			Antialiasing,
+			Fading,
+		}
+
+		/// <summary>
+		/// Adds rounded quad to rendering queue.
+		/// </summary>
+		/// <param name="rectangle"></param>
+		/// <param name="roundingSize"></param>
+		/// <param name="color"></param>
+		public abstract void AddRoundedQuad( Rectangle rectangle, Vector2 roundingSize, AddRoundedQuadMode mode, ColorValue color );
+
+		/// <summary>
+		/// Adds rounded quad to rendering queue.
+		/// </summary>
+		/// <param name="rectangle"></param>
+		/// <param name="roundingSize"></param>
+		/// <param name="color"></param>
+		public void AddRoundedQuad( Rectangle rectangle, double roundingSize, AddRoundedQuadMode mode, ColorValue color )
+		{
+			var roundingSize2 = new Vector2( AspectRatioInv * roundingSize, roundingSize );
+			AddRoundedQuad( rectangle, roundingSize2, mode, color );
 		}
 
 		/////////////////////////////////////////

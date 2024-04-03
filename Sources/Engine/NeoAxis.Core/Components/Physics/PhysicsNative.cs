@@ -46,18 +46,20 @@ namespace NeoAxis
 		public struct VolumeTestResult
 		{
 			public uint bodyId;
+			public float fraction;
+			public int/*bool*/ backFaceHit;
 		}
 
 		///////////////////////////////////////////////
 
-		[StructLayout( LayoutKind.Sequential )]
-		public struct ContactsItem
-		{
-			public Vector3 worldPositionOn1;
-			public Vector3 worldPositionOn2;
-			public uint body2Id;
-			//public IntPtr body2;
-		}
+		//[StructLayout( LayoutKind.Sequential )]
+		//public struct ContactsItem
+		//{
+		//	public Vector3 worldPositionOn1;
+		//	public Vector3 worldPositionOn2;
+		//	public uint body2Id;
+		//	//public IntPtr body2;
+		//}
 
 		///////////////////////////////////////////////
 
@@ -104,7 +106,7 @@ namespace NeoAxis
 		public static extern IntPtr JPhysicsSystem_OptimizeBroadPhase( IntPtr system );
 
 		[DllImport( library, CallingConvention = convention )]
-		public static extern IntPtr JPhysicsSystem_Update( IntPtr system, float deltaTime, int collisionSteps, int integrationSubSteps );
+		public static extern IntPtr JPhysicsSystem_Update( IntPtr system, float deltaTime, int collisionSteps/*, int integrationSubSteps*/, [MarshalAs( UnmanagedType.U1 )] bool debug );
 
 		[DllImport( library, CallingConvention = convention )]
 		public unsafe static extern void JPhysicsSystem_GetActiveBodies( IntPtr system, out int count, out uint* bodies );
@@ -119,7 +121,7 @@ namespace NeoAxis
 		//public unsafe static extern void JPhysicsSystem_DebugDrawFree( IntPtr system, DebugDrawLineItem* lines );
 
 		[DllImport( library, CallingConvention = convention )]
-		public static extern IntPtr JCreateBody( IntPtr system, IntPtr shape, int motionType, float linearDamping, float angularDamping, ref Vector3 position, ref QuaternionF rotation, [MarshalAs( UnmanagedType.U1 )] bool activate, float mass, [MarshalAs( UnmanagedType.U1 )] bool centerOfMassManual, ref Vector3F centerOfMassPosition, ref Vector3F inertiaTensorFactor, ref uint bodyId, int motionQuality );
+		public static extern IntPtr JCreateBody( IntPtr system, IntPtr shape, int motionType, float linearDamping, float angularDamping, ref Vector3 position, ref QuaternionF rotation, [MarshalAs( UnmanagedType.U1 )] bool activate, float mass, ref Vector3F centerOfMassOffset, /*[MarshalAs( UnmanagedType.U1 )] bool centerOfMassManual, ref Vector3F centerOfMassPosition, ref Vector3F inertiaTensorFactor, */ref uint bodyId, int motionQuality, [MarshalAs( UnmanagedType.U1 )] bool characterMode );
 
 		[DllImport( library, CallingConvention = convention )]
 		public static extern void JDestroyBody( IntPtr system, IntPtr body );
@@ -129,12 +131,15 @@ namespace NeoAxis
 		//public static extern void JDestroyBodies( IntPtr system, IntPtr list, int count );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		public static extern void JBody_GetData( IntPtr body, out Vector3 position, out QuaternionF rotation, out Vector3F linearVelocity, out Vector3F angularVelocity, [MarshalAs( UnmanagedType.U1 )] out bool active );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		public static extern void JBody_GetAABB( IntPtr body, out Vector3 boundsMin, out Vector3 boundsMax );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		public static extern void JBody_GetShapeCenterOfMass( IntPtr body, out Vector3F centerOfMass );
 
 		[DllImport( library, CallingConvention = convention )]
@@ -144,24 +149,31 @@ namespace NeoAxis
 		public static extern void JBody_Deactivate( IntPtr body );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		public static extern void JBody_SetLinearVelocity( IntPtr body, ref Vector3F value );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		public static extern void JBody_SetAngularVelocity( IntPtr body, ref Vector3F value );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		public static extern void JBody_SetFriction( IntPtr body, float value );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		public static extern void JBody_SetRestitution( IntPtr body, float value );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		public static extern void JBody_SetLinearDamping( IntPtr body, float value );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		public static extern void JBody_SetAngularDamping( IntPtr body, float value );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		public static extern void JBody_SetGravityFactor( IntPtr body, float value );
 
 		//[DllImport( library, CallingConvention = convention )]
@@ -177,7 +189,59 @@ namespace NeoAxis
 		public static extern void JBody_SetMotionQuality( IntPtr body, int motionQuality );
 
 		[DllImport( library, CallingConvention = convention )]
-		public static unsafe extern void JBody_GetContacts( IntPtr body, out int count, out ContactsItem* buffer );
+		[SuppressGCTransition]
+		public static unsafe extern void JBody_GetContacts( IntPtr body, out int count, out Scene.PhysicsWorldClass.ContactItem* buffer );// ContactsItem* buffer );
+
+		[return: MarshalAs( UnmanagedType.U1 )]
+		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
+		public static unsafe extern bool JBody_ContactsExist( IntPtr body );
+
+		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
+		public static unsafe extern void JBody_SetInverseInertia( IntPtr body, ref Vector3F diagonal, ref QuaternionF rotation );
+
+		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
+		public static unsafe extern void JBody_GetWorldSpaceSurfaceNormal( IntPtr body, uint subShapeID, ref Vector3 position, out Vector3F normal );
+
+		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
+		public static unsafe extern void JBody_SetCharacterMode( IntPtr body, [MarshalAs( UnmanagedType.U1 )] bool value );
+
+		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
+		public static unsafe extern void JBody_SetCharacterModeMaxStrength( IntPtr body, float value );
+
+		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
+		public static unsafe extern void JBody_SetCharacterModePredictiveContactDistance( IntPtr body, float value );
+
+		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
+		public static unsafe extern void JBody_SetCharacterModeWalkUpHeight( IntPtr body, float value );
+
+		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
+		public static unsafe extern void JBody_SetCharacterModeWalkDownHeight( IntPtr body, float value );
+
+		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
+		public static unsafe extern void JBody_SetCharacterModeMaxSlopeAngle( IntPtr body, float value );
+
+		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
+		public static unsafe extern void JBody_SetCharacterModeSetSupportingVolume( IntPtr body, float value );
+
+		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
+		public static unsafe extern void JBody_SetCharacterModeSetDesiredVelocity( IntPtr body, ref Vector2F value );
+
+		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
+		public static extern void JBody_GetCharacterModeData( IntPtr body, out Scene.PhysicsWorldClass.Body.CharacterDataGroundState groundState, out uint groundBodyID, out uint groundBodySubShapeID, out Vector3 groundPosition, out Vector3F groundNormal, out Vector3F groundVelocity, out float walkUpDownLastChange );
+
+		//////////////////////
 
 		[DllImport( library, CallingConvention = convention )]
 		public static extern IntPtr JCreateShape( [MarshalAs( UnmanagedType.U1 )] bool mutableCompoundShape );
@@ -186,19 +250,24 @@ namespace NeoAxis
 		public static extern void JDestroyShape( IntPtr shape );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		[return: MarshalAs( UnmanagedType.U1 )]
 		public static extern bool JShape_IsValid( IntPtr shape );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		public static extern void JShape_AddSphere( IntPtr shape, ref Vector3F position, ref QuaternionF rotation, float radius );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		public static extern void JShape_AddBox( IntPtr shape, ref Vector3F position, ref QuaternionF rotation, ref Vector3F dimensions, float convexRadius );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		public static extern void JShape_AddCapsule( IntPtr shape, ref Vector3F position, ref QuaternionF rotation, float halfHeightOfCylinder, float radius );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		public static extern void JShape_AddCylinder( IntPtr shape, ref Vector3F position, ref QuaternionF rotation, float halfHeightOfCylinder, float radius, float convexRadius );
 
 		//[DllImport( library, CallingConvention = convention )]
@@ -261,21 +330,27 @@ namespace NeoAxis
 		public unsafe static extern void JConstraint_DrawFree( IntPtr constraint, DebugDrawLineItem* lines );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		public unsafe static extern void JConstraint_SetCollisionsBetweenLinkedBodies( IntPtr constraint, [MarshalAs( UnmanagedType.U1 )] bool value );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		public unsafe static extern void JConstraint_SetNumVelocityStepsOverride( IntPtr constraint, int value );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		public unsafe static extern void JConstraint_SetNumPositionStepsOverride( IntPtr constraint, int value );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		public unsafe static extern void JConstraint_SetSimulate( IntPtr constraint, [MarshalAs( UnmanagedType.U1 )] bool value );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		public unsafe static extern void JSixDOFConstraint_SetLimit( IntPtr constraint, int axis, float min, float max );
 
 		[DllImport( library, CallingConvention = convention )]
+		[SuppressGCTransition]
 		public unsafe static extern void JSixDOFConstraint_SetFriction( IntPtr constraint, int axis, float value );
 
 		[DllImport( library, CallingConvention = convention )]
@@ -286,12 +361,12 @@ namespace NeoAxis
 
 		[DllImport( library, CallingConvention = convention )]
 		public unsafe static extern void JVehicleConstraint_SetDriverInput( IntPtr constraint, float forward, /*float left, */float right, float brake, float handBrake, [MarshalAs( UnmanagedType.U1 )] bool activateBody );
+		
+		//[DllImport( library, CallingConvention = convention )]
+		//public unsafe static extern void JVehicleConstraint_SetStepListenerMustBeAdded( IntPtr constraint, [MarshalAs( UnmanagedType.U1 )] bool value );
 
 		[DllImport( library, CallingConvention = convention )]
-		public unsafe static extern void JVehicleConstraint_SetStepListenerAddedMustBeAdded( IntPtr constraint, [MarshalAs( UnmanagedType.U1 )] bool value );
-
-		[DllImport( library, CallingConvention = convention )]
-		public unsafe static extern void JVehicleConstraint_GetData( IntPtr constraint, Scene.PhysicsWorldClass.VehicleWheelData* wheelsData, [MarshalAs( UnmanagedType.U1 )] out bool active );
+		public unsafe static extern void JVehicleConstraint_GetData( IntPtr constraint, Scene.PhysicsWorldClass.VehicleWheelData* wheelsData, [MarshalAs( UnmanagedType.U1 )] out bool active, out int currentGear, [MarshalAs( UnmanagedType.U1 )] out bool isSwitchingGear, out float currentRPM );
 
 		//[DllImport( library, CallingConvention = convention )]
 		//public static extern void JVehicleConstraint_GetData2( IntPtr constraint, out Vector3 wheel0, out Vector3 wheel1, out Vector3 wheel2, out Vector3 wheel3 );

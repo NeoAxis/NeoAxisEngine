@@ -1,3 +1,476 @@
+// Made with NeoAxis Engine 2024.1.
+
 .component Project.BasicSceneScreen
 {
+	Size = Parent 1 1
+	EditorScrollPosition = -0.542813748779101 0.709552227469941
+	.component NeoAxis.UIControl
+	{
+		Name = Continuous Interaction Widget
+		Size = Units 1000 530
+		HorizontalAlignment = Center
+		VerticalAlignment = Bottom
+		Margin = Units 0 350 0 120
+		BackgroundColor = 0.1 0.1 0.1
+		BackgroundRounding = Units 16
+		ColorMultiplier = 1 1 1 0.9
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+		.component NeoAxis.UIText
+		{
+			Name = Text Message
+			Text = "Message Message Message Message Message Message Message  Message  Message  Message  Message  Message  Message  Message  Message  Message  Message  Message  Message  Message  Message  Message  Message  Message "
+			Size = Units 940 130
+			HorizontalAlignment = Center
+			Margin = Units 10 30 10 0
+			EditorScrollPosition = 0 0
+			FontSize = Screen 0.03
+			TextHorizontalAlignment = Left
+			TextVerticalAlignment = Top
+			WordWrap = True
+			Shadow = True
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Answer 1
+			Text = Answer 1
+			Size = Units 960 60
+			HorizontalAlignment = Center
+			Margin = Units 0 170 0 0
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Answer 2
+			Text = Answer 2
+			Size = Units 960 60
+			HorizontalAlignment = Center
+			Margin = Units 0 240 0 0
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Answer 3
+			Text = Answer 3
+			Size = Units 960 60
+			HorizontalAlignment = Center
+			Margin = Units 0 310 0 0
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Answer 4
+			Text = Answer 4
+			Size = Units 960 60
+			HorizontalAlignment = Center
+			Margin = Units 0 380 0 0
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Answer 5
+			Text = Answer 5
+			Size = Units 960 60
+			HorizontalAlignment = Center
+			Margin = Units 0 450 0 0
+			EditorScrollPosition = 0 0
+		}
+	}
+	.component NeoAxis.UIControl
+	{
+		Name = Inventory Widget
+		Size = Units 570 80
+		HorizontalAlignment = Center
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 0 10
+		BackgroundColor = 0.3 0.3 0.3
+		BackgroundRounding = Units 12
+		ColorMultiplier = 1 1 1 0.7
+		EditorScrollPosition = 0 0
+		.component NeoAxis.UIImage
+		{
+			Name = Item 1
+			Size = Units 60 60
+			Margin = Units 10 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 1
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 2
+			Size = Units 60 60
+			Margin = Units 80 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 2
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 3
+			Size = Units 60 60
+			Margin = Units 150 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 3
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 4
+			Size = Units 60 60
+			Margin = Units 220 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 4
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 5
+			Size = Units 60 60
+			Margin = Units 290 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 5
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 6
+			Size = Units 60 60
+			Margin = Units 360 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 6
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 7
+			Size = Units 60 60
+			Margin = Units 430 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 7
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 8
+			Size = Units 60 60
+			Margin = Units 500 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 8
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Enabled = False
+		Name = __Left
+		Size = Units 200 200
+		VerticalAlignment = Bottom
+		Margin = Units 0 160 0 170
+		ColorMultiplier = 1 0.7348627 0
+		EditorScrollPosition = 0 0
+		TextureCoordinatesRotation = 180
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\Arrow.png"
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Enabled = False
+		Name = __Forward
+		Size = Units 200 200
+		VerticalAlignment = Bottom
+		Margin = Units 170 160 0 340
+		ColorMultiplier = 1 0.7348627 0
+		EditorScrollPosition = 0 0
+		TextureCoordinatesRotation = 270
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\Arrow.png"
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Enabled = False
+		Name = __Backward
+		Size = Units 200 200
+		VerticalAlignment = Bottom
+		Margin = Units 170 160 0 0
+		ColorMultiplier = 1 0.7348627 0
+		EditorScrollPosition = 0 0
+		TextureCoordinatesRotation = 90
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\Arrow.png"
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Enabled = False
+		Name = __Right
+		Size = Units 200 200
+		VerticalAlignment = Bottom
+		Margin = Units 340 0 0 170
+		ColorMultiplier = 1 0.7348627 0
+		EditorScrollPosition = 0 0
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\Arrow.png"
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Name = Jump
+		Size = Units 200 200
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 200 0
+		ColorMultiplier = 1 0.7348627 0
+		EditorScrollPosition = 0 0
+		TextureCoordinates = 0.05 0.05 0.95 0.95
+		TextureCoordinatesRotation = 270
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\Arrow.png"
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Name = Fire
+		Size = Units 200 200
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 0 0
+		ColorMultiplier = 1 0.7348627 0
+		EditorScrollPosition = 0 0
+		TextureCoordinates = -0.1 -0.1 1.1 1.1
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\Circle.png"
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Name = Fire 2
+		Size = Units 200 200
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 0 200
+		ColorMultiplier = 1 0.7348627 0
+		EditorScrollPosition = 0 0
+		TextureCoordinates = 0.15 0.15 0.85 0.85
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\ComboBoxButton.png"
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Name = Interact
+		Size = Units 200 200
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 0 400
+		ColorMultiplier = 1 0.7348627 0
+		EditorScrollPosition = 0 0
+		TextureCoordinates = -0.15 -0.15 1.15 1.15
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\Square.png"
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Name = Camera
+		Size = Units 200 200
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 1540 0
+		ColorMultiplier = 1 0.7348627 0
+		EditorScrollPosition = 0 0
+		TextureCoordinates = -0.15 -0.15 1.15 1.15
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\Square.png"
+		}
+	}
 }

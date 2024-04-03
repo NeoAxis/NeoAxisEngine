@@ -29,7 +29,7 @@ namespace NeoAxis
 					value = new Reference<int>( 0, value.GetByReference );
 				if( value > 2 )
 					value = new Reference<int>( 2, value.GetByReference );
-				if( _axis.BeginSet( ref value ) )
+				if( _axis.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -62,7 +62,7 @@ namespace NeoAxis
 					if( v.Y < 0 ) v.Y = 0;
 					value = new Reference<Vector2>( v, value.GetByReference );
 				}
-				if( _dimensions.BeginSet( ref value ) )
+				if( _dimensions.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -95,7 +95,7 @@ namespace NeoAxis
 					if( v.Y < 1 ) v.Y = 1;
 					value = new Reference<Vector2I>( v, value.GetByReference );
 				}
-				if( _segments.BeginSet( ref value ) )
+				if( _segments.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -122,7 +122,7 @@ namespace NeoAxis
 			get { if( _uvTilesPerUnit.BeginGet() ) UVTilesPerUnit = _uvTilesPerUnit.Get( this ); return _uvTilesPerUnit.value; }
 			set
 			{
-				if( _uvTilesPerUnit.BeginSet( ref value ) )
+				if( _uvTilesPerUnit.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -149,7 +149,7 @@ namespace NeoAxis
 			get { if( _uvTilesInTotal.BeginGet() ) UVTilesInTotal = _uvTilesInTotal.Get( this ); return _uvTilesInTotal.value; }
 			set
 			{
-				if( _uvTilesInTotal.BeginSet( ref value ) )
+				if( _uvTilesInTotal.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -173,7 +173,7 @@ namespace NeoAxis
 		public Reference<Vector2> UVOffset
 		{
 			get { if( _uVOffset.BeginGet() ) UVOffset = _uVOffset.Get( this ); return _uVOffset.value; }
-			set { if( _uVOffset.BeginSet( ref value ) ) { try { UVOffsetChanged?.Invoke( this ); ShouldRecompileMesh(); } finally { _uVOffset.EndSet(); } } }
+			set { if( _uVOffset.BeginSet( this, ref value ) ) { try { UVOffsetChanged?.Invoke( this ); ShouldRecompileMesh(); } finally { _uVOffset.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UVOffset"/> property value changes.</summary>
 		public event Action<MeshGeometry_Plane> UVOffsetChanged;
@@ -194,7 +194,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _insideOut.BeginSet( ref value ) )
+		//		if( _insideOut.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{

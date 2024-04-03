@@ -44,12 +44,12 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		public delegate void PickInteractiveObjectEventDelegate( CameraManagement sender, GameMode gameMode, Viewport viewport, ref InteractiveObject result );
+		public delegate void PickInteractiveObjectEventDelegate( CameraManagement sender, GameMode gameMode, Viewport viewport, ref InteractiveObjectInterface result );
 		public event PickInteractiveObjectEventDelegate PickInteractiveObjectEvent;
 
-		public virtual InteractiveObject PickInteractiveObject( GameMode gameMode, Viewport viewport )
+		public virtual InteractiveObjectInterface PickInteractiveObject( GameMode gameMode, Viewport viewport )
 		{
-			InteractiveObject result = null;
+			InteractiveObjectInterface result = null;
 			PickInteractiveObjectEvent?.Invoke( this, gameMode, viewport, ref result );
 
 			return result;

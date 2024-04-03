@@ -23,7 +23,7 @@ namespace NeoAxis
 		public Reference<double> Intensity
 		{
 			get { if( _intensity.BeginGet() ) Intensity = _intensity.Get( this ); return _intensity.value; }
-			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
+			set { if( _intensity.BeginSet( this, ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
 		public event Action<RenderingEffect_Outline> IntensityChanged;
@@ -37,7 +37,7 @@ namespace NeoAxis
 		public Reference<double> Scale
 		{
 			get { if( _scale.BeginGet() ) Scale = _scale.Get( this ); return _scale.value; }
-			set { if( _scale.BeginSet( ref value ) ) { try { ScaleChanged?.Invoke( this ); } finally { _scale.EndSet(); } } }
+			set { if( _scale.BeginSet( this, ref value ) ) { try { ScaleChanged?.Invoke( this ); } finally { _scale.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Scale"/> property value changes.</summary>
 		public event Action<RenderingEffect_Outline> ScaleChanged;
@@ -50,7 +50,7 @@ namespace NeoAxis
 		public Reference<RangeI> GroupsInterval
 		{
 			get { if( _groupsInterval.BeginGet() ) GroupsInterval = _groupsInterval.Get( this ); return _groupsInterval.value; }
-			set { if( _groupsInterval.BeginSet( ref value ) ) { try { GroupsIntervalChanged?.Invoke( this ); } finally { _groupsInterval.EndSet(); } } }
+			set { if( _groupsInterval.BeginSet( this, ref value ) ) { try { GroupsIntervalChanged?.Invoke( this ); } finally { _groupsInterval.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="GroupsInterval"/> property value changes.</summary>
 		public event Action<RenderingEffect_Outline> GroupsIntervalChanged;
@@ -108,6 +108,8 @@ namespace NeoAxis
 			if( scissor.IsCleared() )
 				return;
 
+			scissor.Expand( 10 );
+
 			var scaleSizeInPixels = (int)( scaleV * (float)context.CurrentViewport.SizeInPixels.Y );
 			scissor.Expand( scaleSizeInPixels );
 
@@ -122,7 +124,7 @@ namespace NeoAxis
 			var targetSize = ( actualTexture.Result.ResultSize.ToVector2() * sizeMultiplier ).ToVector2I();
 
 			var maskTexture = context.RenderTarget2D_Alloc( targetSize, PixelFormat.A8R8G8B8 );
-			var depthTexture = context.RenderTarget2D_Alloc( targetSize, PixelFormat.Depth24S8, 0 );
+			var depthTexture = context.RenderTarget2D_Alloc( targetSize, RenderingSystem.DepthBuffer32Float ? PixelFormat.Depth32F : PixelFormat.Depth24S8, 0 );
 
 			//render objects to the mask texture
 			{
@@ -140,29 +142,31 @@ namespace NeoAxis
 					mrt = context.MultiRenderTarget_Create( items.ToArray() );
 				}
 
-				//!!!!double
-				Matrix4F viewMatrix = owner.CameraSettings.ViewMatrix.ToMatrix4F();
-				Matrix4F projectionMatrix = owner.CameraSettings.ProjectionMatrix.ToMatrix4F();
+				var viewMatrix = owner.CameraSettings.ViewMatrixRelative;
+				var projectionMatrix = owner.CameraSettings.ProjectionMatrix;
 
 				context.SetViewport( mrt.Viewports[ 0 ], viewMatrix, projectionMatrix, FrameBufferTypes.All, ColorValue.Zero );
 
 				//bind textures for all render operations
 				pipeline.BindMaterialsTexture( context, frameData );
+				pipeline.BindBonesTexture( context, frameData );
 				pipeline.BindBrdfLUT( context );
 				pipeline.BindSamplersForTextureOnlySlots( context, true, false );
 				pipeline.BindMaterialData( context, null, false, false );
+				pipeline.BindForwardLightAndShadows( context, frameData );
+
 
 				//use debug mode to detect pixels of the object
 				pipeline.SetViewportOwnerSettingsUniform( context, RenderingPipeline_Basic.DebugModeEnum.Normal );
 
 				if( frameData.LightsInFrustumSorted.Length != 0 )
 				{
-					//use ambient light pass
-					var lightIndex = frameData.LightsInFrustumSorted[ 0 ];
-					var lightItem = frameData.Lights[ lightIndex ];
+					////use ambient light pass
+					//var lightIndex = frameData.LightsInFrustumSorted[ 0 ];
+					//var lightItem = frameData.Lights[ lightIndex ];
 
-					//set lightItem uniforms
-					lightItem.Bind( pipeline, context );
+					////set lightItem uniforms
+					//lightItem.Bind( pipeline, context );
 
 					//process objects
 					for( int nRenderableItem = 0; nRenderableItem < renderableItems.Count; nRenderableItem++ )
@@ -188,29 +192,33 @@ namespace NeoAxis
 										pipeline.BindMaterialData( context, materialData, false, voxelRendering );
 										pipeline.BindSamplersForTextureOnlySlots( context, false, voxelRendering );
 
-										GpuMaterialPass pass = null;
-										if( materialData.passesByLightType != null )
-										{
-											var passesGroup = materialData.passesByLightType[ (int)Light.TypeEnum.Ambient ];
-											pass = passesGroup.passWithoutShadows;
-										}
-										else
-										{
-											if( materialData.deferredShadingSupport )
-												pass = materialData.deferredShadingPass.Get( false/*, false*/, true );
-										}
+										var pass = materialData.GetForwardShadingPass( false, false, voxelRendering );// materialData.forwardShadingPass;
+										if( pass == null && materialData.deferredShadingSupport )
+											pass = materialData.deferredShadingPass.Get( false/*, false*/, false );
+
+										//GpuMaterialPass pass = null;
+										//if( materialData.passesByLightType != null )
+										//{
+										//	var passesGroup = materialData.passesByLightType[ (int)Light.TypeEnum.Ambient ];
+										//	pass = passesGroup.passWithoutShadows;
+										//}
+										//else
+										//{
+										//	if( materialData.deferredShadingSupport )
+										//		pass = materialData.deferredShadingPass.Get( false/*, false*/, true );
+										//}
 
 										if( pass != null )
 										{
 											var receiveShadows = false;
 
-											if( materialData.passesByLightType != null )
-												pipeline.ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true );
+											//if( materialData.passesByLightType != null )
+											pipeline.ForwardBindGeneralTexturesUniforms( context, frameData/*, ref meshItem.BoundingSphere, lightItem*/, receiveShadows );//, true );
 
-											pipeline.BindRenderOperationData( context, frameData, materialData, meshItem.InstancingEnabled, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, oper.UnwrappedUV, ref meshItem.Color, oper.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, oper.VoxelDataImage, oper.VoxelDataInfo );
+											pipeline.BindRenderOperationData( context, frameData, materialData, meshItem.InstancingEnabled, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, oper.UnwrappedUV, ref meshItem.Color, oper.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, oper.VoxelDataImage, oper.VoxelDataInfo, null, 0, ref meshItem.InstancingPositionOffsetRelative );
 
 											if( !meshItem.InstancingEnabled )
-												fixed( Matrix4F* p = &meshItem.Transform )
+												fixed( Matrix4F* p = &meshItem.TransformRelative )
 													Bgfx.SetTransform( (float*)p );
 
 											pipeline.RenderOperation( context, oper, pass, null, meshItem.CutVolumes, meshItem.InstancingEnabled, meshItem.InstancingVertexBuffer, ref meshItem.InstancingDataBuffer, meshItem.InstancingStart, meshItem.InstancingCount );
@@ -238,28 +246,32 @@ namespace NeoAxis
 										pipeline.BindMaterialData( context, materialData, false, voxelRendering );
 										pipeline.BindSamplersForTextureOnlySlots( context, false, voxelRendering );
 
-										GpuMaterialPass pass = null;
-										if( materialData.passesByLightType != null )
-										{
-											var passesGroup = materialData.passesByLightType[ (int)Light.TypeEnum.Ambient ];
-											pass = passesGroup.passWithoutShadows;
-										}
-										else
-										{
-											if( materialData.deferredShadingSupport )
-												pass = materialData.deferredShadingPass.Get( false/*, false*/, true );
-										}
+										var pass = materialData.GetForwardShadingPass( false, false, voxelRendering ); //materialData.forwardShadingPass;
+										if( pass == null && materialData.deferredShadingSupport )
+											pass = materialData.deferredShadingPass.Get( false/*, false*/, true );
+
+										//GpuMaterialPass pass = null;
+										//if( materialData.passesByLightType != null )
+										//{
+										//	var passesGroup = materialData.passesByLightType[ (int)Light.TypeEnum.Ambient ];
+										//	pass = passesGroup.passWithoutShadows;
+										//}
+										//else
+										//{
+										//	if( materialData.deferredShadingSupport )
+										//		pass = materialData.deferredShadingPass.Get( false/*, false*/, true );
+										//}
 
 										if( pass != null )
 										{
 											var receiveShadows = false;
 
-											if( materialData.passesByLightType != null )
-												pipeline.ForwardBindGeneralTexturesUniforms( context, frameData, ref billboardItem.BoundingSphere, lightItem, receiveShadows, nRenderableItem == 0 );
+											//if( materialData.passesByLightType != null )
+											pipeline.ForwardBindGeneralTexturesUniforms( context, frameData/*, ref billboardItem.BoundingSphere, lightItem*/, receiveShadows );//, nRenderableItem == 0 );
 
-											pipeline.BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, 0, oper.UnwrappedUV, ref billboardItem.Color, oper.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, null, null );
+											pipeline.BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PreviousFramePositionChange, 0, oper.UnwrappedUV, ref billboardItem.Color, oper.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, null, null, null, 0, ref RenderingPipeline_Basic.vector3FZero );
 
-											billboardItem.GetWorldMatrix( out var worldMatrix );
+											billboardItem.GetWorldMatrixRelative( out var worldMatrix );
 											Bgfx.SetTransform( (float*)&worldMatrix );
 
 											pipeline.RenderOperation( context, oper, pass, null, billboardItem.CutVolumes );
@@ -336,9 +348,13 @@ namespace NeoAxis
 				Bgfx.SetScissor( -1 );
 			}
 
+			Bgfx.Discard( DiscardFlags.All );
+
 			//clear temp render targets
 			context.DynamicTexture_Free( maskTexture );
 			context.DynamicTexture_Free( outlineTexture );
+
+			//#endif
 		}
 
 		void ProcessEffect( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent actualTexture )

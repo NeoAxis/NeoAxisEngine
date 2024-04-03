@@ -24,7 +24,7 @@ namespace NeoAxis
 		public Reference<object> Source
 		{
 			get { if( _source.BeginGet() ) Source = _source.Get( this ); return _source.value; }
-			set { if( _source.BeginSet( ref value ) ) { try { SourceChanged?.Invoke( this ); } finally { _source.EndSet(); } } }
+			set { if( _source.BeginSet( this, ref value ) ) { try { SourceChanged?.Invoke( this ); } finally { _source.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Source"/> property value changes.</summary>
 		public event Action<FlowConvertTo> SourceChanged;
@@ -37,7 +37,7 @@ namespace NeoAxis
 		public Reference<Metadata.TypeInfo> DestinationType
 		{
 			get { if( _destinationType.BeginGet() ) DestinationType = _destinationType.Get( this ); return _destinationType.value; }
-			set { if( _destinationType.BeginSet( ref value ) ) { try { DestinationTypeChanged?.Invoke( this ); } finally { _destinationType.EndSet(); } } }
+			set { if( _destinationType.BeginSet( this, ref value ) ) { try { DestinationTypeChanged?.Invoke( this ); } finally { _destinationType.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DestinationType"/> property value changes.</summary>
 		public event Action<FlowConvertTo> DestinationTypeChanged;

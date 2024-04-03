@@ -1,0 +1,292 @@
+{
+    "asset" : {
+        "generator" : "Khronos glTF Blender I/O v3.4.49",
+        "version" : "2.0"
+    },
+    "scene" : 0,
+    "scenes" : [
+        {
+            "name" : "Scene",
+            "nodes" : [
+                4
+            ]
+        }
+    ],
+    "nodes" : [
+        {
+            "mesh" : 0,
+            "name" : "Object_4",
+            "rotation" : [
+                -0.0818011537194252,
+                0.17283381521701813,
+                -0.005622378550469875,
+                0.9815322160720825
+            ],
+            "translation" : [
+                3.814697265625e-06,
+                0,
+                -3.4809112548828125e-05
+            ]
+        },
+        {
+            "children" : [
+                0
+            ],
+            "name" : "SM_Flashlight_V01_0",
+            "rotation" : [
+                0.18980908393859863,
+                -0.8072691559791565,
+                -0.11059197038412094,
+                0.54777592420578
+            ],
+            "scale" : [
+                9.011539805214852e-05,
+                9.01153907761909e-05,
+                9.01153907761909e-05
+            ],
+            "translation" : [
+                -0.04470348358154297,
+                0.011974104680120945,
+                -0.018116241320967674
+            ]
+        },
+        {
+            "children" : [
+                1
+            ],
+            "name" : "GLTF_SceneRootNode",
+            "rotation" : [
+                0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ]
+        },
+        {
+            "children" : [
+                2
+            ],
+            "name" : "root"
+        },
+        {
+            "children" : [
+                3
+            ],
+            "name" : "Sketchfab_model",
+            "rotation" : [
+                -0.70710688829422,
+                0,
+                0,
+                0.7071066498756409
+            ]
+        }
+    ],
+    "materials" : [
+        {
+            "alphaMode" : "BLEND",
+            "doubleSided" : true,
+            "emissiveFactor" : [
+                1,
+                1,
+                1
+            ],
+            "emissiveTexture" : {
+                "index" : 0
+            },
+            "name" : "M_Flashlight_V01",
+            "normalTexture" : {
+                "index" : 1
+            },
+            "pbrMetallicRoughness" : {
+                "baseColorTexture" : {
+                    "index" : 2
+                },
+                "metallicRoughnessTexture" : {
+                    "index" : 3
+                }
+            }
+        }
+    ],
+    "meshes" : [
+        {
+            "name" : "Object_0",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 0,
+                        "TEXCOORD_0" : 1,
+                        "TEXCOORD_1" : 2,
+                        "TEXCOORD_2" : 3,
+                        "TEXCOORD_3" : 4,
+                        "TEXCOORD_4" : 5,
+                        "NORMAL" : 6
+                    },
+                    "indices" : 7,
+                    "material" : 0
+                }
+            ]
+        }
+    ],
+    "textures" : [
+        {
+            "sampler" : 0,
+            "source" : 0
+        },
+        {
+            "sampler" : 0,
+            "source" : 1
+        },
+        {
+            "sampler" : 0,
+            "source" : 2
+        },
+        {
+            "sampler" : 0,
+            "source" : 3
+        }
+    ],
+    "images" : [
+        {
+            "mimeType" : "image/png",
+            "name" : "M_Flashlight_V01_emissive",
+            "uri" : "M_Flashlight_V01_emissive.png"
+        },
+        {
+            "mimeType" : "image/png",
+            "name" : "M_Flashlight_V01_normal",
+            "uri" : "M_Flashlight_V01_normal.png"
+        },
+        {
+            "mimeType" : "image/png",
+            "name" : "M_Flashlight_V01_baseColor",
+            "uri" : "M_Flashlight_V01_baseColor.png"
+        },
+        {
+            "mimeType" : "image/png",
+            "name" : "M_Flashlight_V01_metallicRoughness",
+            "uri" : "M_Flashlight_V01_metallicRoughness.png"
+        }
+    ],
+    "accessors" : [
+        {
+            "bufferView" : 0,
+            "componentType" : 5126,
+            "count" : 970,
+            "max" : [
+                166.48138427734375,
+                168.81900024414062,
+                -1.2118500471115112
+            ],
+            "min" : [
+                -169.5749969482422,
+                -168.81900024414062,
+                -1443.6500244140625
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 1,
+            "componentType" : 5126,
+            "count" : 970,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 2,
+            "componentType" : 5126,
+            "count" : 970,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 3,
+            "componentType" : 5126,
+            "count" : 970,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 4,
+            "componentType" : 5126,
+            "count" : 970,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 5,
+            "componentType" : 5126,
+            "count" : 970,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 6,
+            "componentType" : 5126,
+            "count" : 970,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 7,
+            "componentType" : 5123,
+            "count" : 4392,
+            "type" : "SCALAR"
+        }
+    ],
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 11640,
+            "byteOffset" : 0,
+            "target" : 34962
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 7760,
+            "byteOffset" : 11640,
+            "target" : 34962
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 7760,
+            "byteOffset" : 19400,
+            "target" : 34962
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 7760,
+            "byteOffset" : 27160,
+            "target" : 34962
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 7760,
+            "byteOffset" : 34920,
+            "target" : 34962
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 7760,
+            "byteOffset" : 42680,
+            "target" : 34962
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 11640,
+            "byteOffset" : 50440,
+            "target" : 34962
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 8784,
+            "byteOffset" : 62080,
+            "target" : 34963
+        }
+    ],
+    "samplers" : [
+        {
+            "magFilter" : 9729,
+            "minFilter" : 9987
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 70864,
+            "uri" : "scene.bin"
+        }
+    ]
+}

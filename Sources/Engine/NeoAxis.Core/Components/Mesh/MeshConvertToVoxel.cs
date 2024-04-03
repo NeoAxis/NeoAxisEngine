@@ -1,11 +1,11 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using NeoAxis.Editor;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using NeoAxis.Editor;
 
 namespace NeoAxis
 {
@@ -32,6 +32,7 @@ namespace NeoAxis
 
 			public int[] Indices;
 
+			//for baking opacity
 			public Material Material;
 			object opacityTextureProcessLock = new object();
 			bool opacityTextureProcessed;
@@ -39,7 +40,7 @@ namespace NeoAxis
 
 			//
 
-			ImageUtility.Image2D GetOpacityTexture()
+			public ImageUtility.Image2D GetOpacityTexture()
 			{
 				lock( opacityTextureProcessLock )
 				{
@@ -172,6 +173,24 @@ namespace NeoAxis
 			public override bool Equals( object obj )
 			{
 				return ( obj is VoxelWithData && this == (VoxelWithData)obj );
+			}
+
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			public bool Equals( ref VoxelWithData v, float epsilon )
+			{
+				if( !Normal.Equals( ref v.Normal, epsilon ) )
+					return false;
+				if( !Tangent.Equals( ref v.Tangent, epsilon ) )
+					return false;
+				if( !Color0.Equals( ref v.Color0, epsilon ) )
+					return false;
+				if( !TexCoord0.Equals( ref v.TexCoord0, epsilon ) )
+					return false;
+				if( !TexCoord1.Equals( ref v.TexCoord1, epsilon ) )
+					return false;
+				if( !TexCoord2.Equals( ref v.TexCoord2, epsilon ) )
+					return false;
+				return true;
 			}
 
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -316,6 +335,12 @@ namespace NeoAxis
 			}
 		}
 
+		class ReduceVoxelPositionItem
+		{
+			public List<Vector3F> Normals = new List<Vector3F>();
+			public Vector3F ResultOffset;
+		}
+
 		[MethodImpl( (MethodImplOptions)512 )]
 		unsafe byte[] CreateVoxelData( MeshGeometry[] geometries, out BoundsF meshBoundsOut )
 		{
@@ -327,31 +352,59 @@ namespace NeoAxis
 
 				byte[] resultData;
 
-				//select format
+				//detect format
 				var fullFormat = false;
-				foreach( var geometry in geometries )
+				var transparent = false;
 				{
-					var structure = geometry.VertexStructure.Value;
-					if( structure != null )
+					foreach( var geometry in geometries )
 					{
-						if( structure.GetElementBySemantic( VertexElementSemantic.Color0, out _ ) )
-							fullFormat = true;
-						else if( structure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate1, out _ ) )
-							fullFormat = true;
-						else if( structure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate2, out _ ) )
-							fullFormat = true;
+						var structure = geometry.VertexStructure.Value;
+						if( structure != null )
+						{
+							if( structure.GetElementBySemantic( VertexElementSemantic.Color0, out _ ) )
+								fullFormat = true;
+							else if( structure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate1, out _ ) )
+								fullFormat = true;
+							else if( structure.GetElementBySemantic( VertexElementSemantic.TextureCoordinate2, out _ ) )
+								fullFormat = true;
+						}
+
+						if( BakeMaterialOpacity )
+						{
+							var material = geometry.Material.Value;
+							if( material != null )
+							{
+								var blendMode = material.BlendMode.Value;
+								if( blendMode == Material.BlendModeEnum.Masked || blendMode == Material.BlendModeEnum.Transparent )
+								{
+									fullFormat = true;
+									transparent = true;
+								}
+							}
+						}
 					}
 				}
+				VoxelFormatEnum format = 0;
+				//if( transparent )
+				//	format = VoxelFormatEnum.FullTransparent;
+				//else
+				if( fullFormat )
+					format |= VoxelFormatEnum.Full;
+				//else
+				//	format = VoxelFormatEnum.Basic;
+				if( BakeMaterialOpacity && transparent )
+					format |= VoxelFormatEnum.BakedOpacity;
 
-				//get geometry data
-
-				var geometryDatas = new VoxelizeMeshGeometryData[ geometries.Length ];
-				var meshBounds = BoundsF.Cleared;
 
 				MeshTest meshTest = null;
 
 				try
 				{
+					//get geometry data
+
+					var geometryDatas = new VoxelizeMeshGeometryData[ geometries.Length ];
+					var meshBounds = BoundsF.Cleared;
+
 					for( int n = 0; n < geometries.Length; n++ )
 					{
 						var geometry = geometries[ n ];
@@ -372,14 +425,114 @@ namespace NeoAxis
 						meshBounds.Add( geometryData.Position );
 					}
 
+
+					////портит геометрию. внутренние части вылазят наружу
+					////decrease mesh geometry to half of cell size
+					//if( !meshBounds.IsCleared() && EngineApp._DebugCapsLock )
+					//{
+					//	var maxSide2 = meshBounds.GetSize().MaxComponent();
+					//	var estimatedCellSize = maxSide2 / InitialGridSize;
+
+					//	var initSettings = new OctreeContainer.InitSettings();
+					//	initSettings.InitialOctreeBounds = meshBounds.GetExpanded( 0.001f );
+					//	initSettings.MinNodeSize = meshBounds.GetSize() / 50;
+					//	using( var octree = new OctreeContainer( initSettings ) )
+					//	{
+					//		var positionItems = new List<ReduceVoxelPositionItem>( 8192 );
+
+					//		//collect triangle normals in position items
+					//		for( int nGeometry = 0; nGeometry < geometries.Length; nGeometry++ )
+					//		{
+					//			var geometryData = geometryDatas[ nGeometry ];
+
+					//			for( int tri = 0; tri < geometryData.Indices.Length / 3; tri++ )
+					//			{
+					//				var position0 = geometryData.Position[ geometryData.Indices[ tri * 3 + 0 ] ];
+					//				var position1 = geometryData.Position[ geometryData.Indices[ tri * 3 + 1 ] ];
+					//				var position2 = geometryData.Position[ geometryData.Indices[ tri * 3 + 2 ] ];
+
+					//				var triangleNormal = MathAlgorithms.CalculateTriangleNormal( position0, position1, position2 );
+
+					//				var positions = new Vector3F[] { position0, position1, position2 };
+					//				foreach( var position in positions )
+					//				{
+					//					var b = new Bounds( position ).GetExpanded( 0.0001 );
+					//					var objects = octree.GetObjects( b, 1, OctreeContainer.ModeEnum.One );
+					//					if( objects.Length != 0 )
+					//					{
+					//						var objectIndex = objects[ 0 ];
+					//						var positionItem = positionItems[ objectIndex ];
+					//						positionItem.Normals.Add( triangleNormal );
+					//					}
+					//					else
+					//					{
+					//						var objectIndex = octree.AddObject( new Bounds( position ), 1 );
+					//						var positionItem = new ReduceVoxelPositionItem();
+					//						positionItems.Add( positionItem );
+					//						positionItem.Normals.Add( triangleNormal );
+					//					}
+					//				}
+					//			}
+					//		}
+
+					//		//calculate result normals
+					//		foreach( var positionItem in positionItems )
+					//		{
+					//			var b = BoundsF.Cleared;
+					//			foreach( var normal in positionItem.Normals )
+					//				b.Add( -normal );
+
+					//			var center = b.GetCenter();
+					//			if( center != Vector3F.Zero )
+					//				positionItem.ResultOffset = center.GetNormalize() * estimatedCellSize * 0.5f * 1.2f;// 1.41f;
+
+
+					//			//var v = Vector3F.Zero;
+					//			//foreach( var normal in positionItem.Normals )
+					//			//	v += -normal;
+
+					//			//var center = v / positionItem.Normals.Count;
+					//			//if( center != Vector3F.Zero )
+					//			//	positionItem.ResultOffset = center.GetNormalize() * estimatedCellSize * 0.5f * 1.2f;// 1.41f;
+					//		}
+
+					//		//apply offset to positions
+					//		for( int nGeometry = 0; nGeometry < geometries.Length; nGeometry++ )
+					//		{
+					//			var geometryData = geometryDatas[ nGeometry ];
+
+					//			for( int nPosition = 0; nPosition < geometryData.Position.Length; nPosition++ )
+					//			{
+					//				var position = geometryData.Position[ nPosition ];
+
+					//				var b = new Bounds( position ).GetExpanded( 0.0001 );
+					//				var objects = octree.GetObjects( b, 1, OctreeContainer.ModeEnum.One );
+					//				if( objects.Length != 0 )
+					//				{
+					//					var objectIndex = objects[ 0 ];
+					//					var positionItem = positionItems[ objectIndex ];
+					//					geometryData.Position[ nPosition ] += positionItem.ResultOffset;
+					//				}
+					//			}
+					//		}
+					//	}
+
+					//	//calculate new meshBounds
+					//	{
+					//		meshBounds = BoundsF.Cleared;
+					//		foreach( var geometryData in geometryDatas )
+					//			meshBounds.Add( geometryData.Position );
+					//	}
+					//}
+
+
 					//epsilon bounds expand
 					if( !meshBounds.IsCleared() )
 						meshBounds.Expand( meshBounds.GetSize() * 0.001f );
 
-
 					meshBoundsOut = meshBounds;
 
-
+					//merge all geometries
 					Vector3F[] allVertices;
 					int[] allIndices;
 					(int, int)[] meshTestItemByTriangle;
@@ -475,8 +628,11 @@ namespace NeoAxis
 						var lockIntersectedTriangles = new object();
 
 						var triangleCount = geometryData.Indices.Length / 3;
+
+						//preload opacity because loading can freeze
+						geometryData.GetOpacityTexture();
+
 						Parallel.For( 0, triangleCount, delegate ( int nTriangle )
-						//for( int nTriangle = 0; nTriangle < geometryData.Indices.Length / 3; nTriangle++ )
 						{
 							var index0 = geometryData.Indices[ nTriangle * 3 + 0 ];
 							var index1 = geometryData.Indices[ nTriangle * 3 + 1 ];
@@ -530,7 +686,7 @@ namespace NeoAxis
 													if( blendMode == Material.BlendModeEnum.Masked || blendMode == Material.BlendModeEnum.Transparent )
 													{
 
-														//calculate only TexCoor0 for opacity
+														//calculate only TexCoord0 for opacity
 
 														var voxelData = new VoxelWithData();
 														//voxelData.Index = new Vector3I( x, y, z );
@@ -609,46 +765,45 @@ namespace NeoAxis
 														{
 															opacity = material.Opacity.Value;
 
-															//apply pattern
-															if( blendMode == Material.BlendModeEnum.Transparent && opacity > 0 && opacity < 1 )
-															{
-																//x, y, z
+															////apply pattern
+															//if( blendMode == Material.BlendModeEnum.Transparent && opacity > 0 && opacity < 1 )
+															//{
+															//	//x, y, z
 
 
-																var c = 0.0;
-																if( x % 2 == 1 )
-																	c += 1.0 / 3.0;
-																if( y % 2 == 1 )
-																	c += 1.0 / 3.0;
-																if( z % 2 == 0 )
-																	c += 1.0 / 3.0;
+															//	var c = 0.0;
+															//	if( x % 2 == 1 )
+															//		c += 1.0 / 3.0;
+															//	if( y % 2 == 1 )
+															//		c += 1.0 / 3.0;
+															//	if( z % 2 == 0 )
+															//		c += 1.0 / 3.0;
 
-																//!!!!1.5. без этого часто стекло будет совсем без вокселей (пустым)
-																opacity *= c * 1.5;
+															//	//!!!!1.5. без этого часто стекло будет совсем без вокселей (пустым)
+															//	opacity *= c * 1.5;
 
 
 
-																////Log.Info( opacity.ToString() + " " + c.ToString() );
+															//	////Log.Info( opacity.ToString() + " " + c.ToString() );
 
-																////opacity *= c;
+															//	////opacity *= c;
 
-																////var xx = x % 2 == 0;
-																////var yy = y % 2 == 0;
-																////var zz = z % 2 == 0;
+															//	////var xx = x % 2 == 0;
+															//	////var yy = y % 2 == 0;
+															//	////var zz = z % 2 == 0;
 
-																////if( z % 2 == 0 )
-																////	opacity = 1;
-																////else
-																////	opacity = 0;
+															//	////if( z % 2 == 0 )
+															//	////	opacity = 1;
+															//	////else
+															//	////	opacity = 0;
 
-															}
+															//}
 														}
 														else
 														{
 															//!!!!material.Opacity.GetByReference
 															opacity = geometryData.GetMaterialOpacity( ref voxelData, material.Opacity.GetByReference );
 														}
-
 
 														if( blendMode == Material.BlendModeEnum.Masked )
 														{
@@ -657,8 +812,8 @@ namespace NeoAxis
 														}
 														else
 														{
-															//!!!!
-															if( opacity < 0.5 )
+															//!!!!new
+															if( opacity < 0.001 ) //if( opacity < 0.5 )
 																add = false;
 														}
 													}
@@ -838,7 +993,7 @@ namespace NeoAxis
 										//!!!!twoSided
 
 
-										var rayCastResults = meshTest.RayCast( ray, MeshTest.Mode.OneClosest, false );
+										var rayCastResults = meshTest.RayCast( ray, MeshTest.Mode.OneClosest, false, 64 );
 
 										foreach( var rayCastResult in rayCastResults )
 										{
@@ -847,9 +1002,9 @@ namespace NeoAxis
 											var containsIntersected = voxel.IntersectedTriangles.Contains( item );
 											if( containsIntersected )
 											{
-												var p = ray.GetPointOnRay( rayCastResult.Scale );
+												ray.GetPointOnRay( rayCastResult.Scale, out var p );
 
-												if( cellBounds.Contains( p ) )
+												if( cellBounds.Contains( ref p ) )
 												{
 													if( !bestTriangleFound || rayCastResult.Scale > bestTriangleScale )
 													{
@@ -969,6 +1124,41 @@ namespace NeoAxis
 								else
 									voxelData.Color0 = ColorValue.One;
 
+								//bake opacity to Color0
+								if( BakeMaterialOpacity && geometryData.Material != null )
+								{
+									var opacity = 1.0;
+
+									var material = geometryData.Material;
+
+									var blendMode = material.BlendMode.Value;
+									if( blendMode == Material.BlendModeEnum.Masked || blendMode == Material.BlendModeEnum.Transparent )
+									{
+										if( !material.Opacity.ReferenceSpecified )
+										{
+											opacity = material.Opacity.Value;
+										}
+										else
+										{
+											//!!!!material.Opacity.GetByReference
+											opacity = geometryData.GetMaterialOpacity( ref voxelData, material.Opacity.GetByReference );
+										}
+
+										//if( blendMode == Material.BlendModeEnum.Masked )
+										//{
+										//	if( opacity < material.OpacityMaskThreshold.Value )
+										//		add = false;
+										//}
+										//else
+										//{
+										//	//!!!!new
+										//	if( opacity < 0.01 ) //if( opacity < 0.5 )
+										//		add = false;
+										//}
+									}
+
+									voxelData.Color0.Alpha *= (float)opacity;
+								}
 
 								lock( voxelsWithDataOnTriangle )
 								{
@@ -1084,7 +1274,7 @@ namespace NeoAxis
 												}
 											}
 										}
-										end:;
+end:;
 									}
 
 									if( !existsNearestInside )
@@ -1153,6 +1343,9 @@ namespace NeoAxis
 							voxelsWithoutData.Add( index );
 					}
 					var voxelsWithoutDataArray = voxelsWithoutData.ToArray();
+
+
+					//!!!!slowly. можно в несколько итераций увеличивать радиус, скорее всего что-то попадется. не будет смысла все блоки перебирать
 
 
 					var sectors = new Dictionary<Vector3I, VoxelWithDataSector>( 256 );
@@ -1237,8 +1430,39 @@ namespace NeoAxis
 					} );
 
 
+					//merge equal voxel data
+					{
+						var remap = new Dictionary<int, int>( voxelsWithDataResult.Count );
+						var newList = new EDictionary<VoxelWithData, int>( voxelsWithDataResult.Count );
 
-					//!!!!было. но мало смысла
+						for( int n = 0; n < voxelsWithDataResult.Count; n++ )
+						{
+							var fixedVoxel = voxelsWithDataResult.Data[ n ];
+							//clear Index
+							fixedVoxel.Index = Vector3I.Zero;
+
+							if( !newList.TryGetValue( fixedVoxel, out var index ) )
+							{
+								index = newList.Count;
+								newList.Add( fixedVoxel, index );
+							}
+							remap[ n ] = index;
+						}
+
+						//get updated list
+						voxelsWithDataResult = new OpenList<VoxelWithData>( newList.Keys.ToArray() );
+
+						//apply remap
+						foreach( var index3 in voxelIndexes )
+						{
+							ref var voxel = ref voxels[ index3.X, index3.Y, index3.Z ];
+
+							if( voxel.DataIndexInListResult != -1 )
+								voxel.DataIndexInListResult = remap[ voxel.DataIndexInListResult ];
+						}
+					}
+
+					////портит качество
 					////merge equal voxel data
 					//{
 					//	var remap = new Dictionary<int, int>( voxelsWithDataResult.Count );
@@ -1249,6 +1473,16 @@ namespace NeoAxis
 					//		var fixedVoxel = voxelsWithDataResult.Data[ n ];
 					//		//clear Index
 					//		fixedVoxel.Index = Vector3I.Zero;
+
+					//		//discrete to make better merging
+					//		{
+					//			fixedVoxel.Normal = ( ( fixedVoxel.Normal * 100 ).ToVector3I().ToVector3F() / 100 ).GetNormalize();
+					//			fixedVoxel.Tangent = new Vector4F( ( ( fixedVoxel.Tangent.ToVector3F() * 100 ).ToVector3I().ToVector3F() / 100 ).GetNormalize(), fixedVoxel.Tangent.W );
+					//			fixedVoxel.Color0 = ( ( fixedVoxel.Color0 * 255 ).ToVector4F().ToVector4I() / 255 ).ToVector4F().ToColorValue();
+					//			fixedVoxel.TexCoord0 = ( fixedVoxel.TexCoord0 * 500 ).ToVector2I().ToVector2F() / 500;
+					//			fixedVoxel.TexCoord1 = ( fixedVoxel.TexCoord1 * 500 ).ToVector2I().ToVector2F() / 500;
+					//			fixedVoxel.TexCoord2 = ( fixedVoxel.TexCoord2 * 500 ).ToVector2I().ToVector2F() / 500;
+					//		}
 
 					//		if( !newList.TryGetValue( fixedVoxel, out var index ) )
 					//		{
@@ -1294,7 +1528,7 @@ namespace NeoAxis
 						header->GridSize = size;
 						header->BoundsMin = meshBounds.Minimum;
 						header->CellSize = cellSize;
-						header->Format = fullFormat ? 1 : 0;
+						header->Format = format;//fullFormat ? 1 : 0;
 						header->VoxelCount = voxelsWithDataResult.Count;
 						header->FillHolesDistance = (float)FillHolesDistance;
 
@@ -1408,6 +1642,13 @@ namespace NeoAxis
 
 			//Subsurface + Emissive
 			if( material.ShadingModel.Value == Material.ShadingModelEnum.Subsurface )
+			{
+				if( material.Emissive.ReferenceSpecified || material.Emissive.Value.ToVector3() != Vector3.Zero )
+					material.ShadingModel = Material.ShadingModelEnum.Lit;
+			}
+
+			//Foliage + Emissive
+			if( material.ShadingModel.Value == Material.ShadingModelEnum.Foliage )
 			{
 				if( material.Emissive.ReferenceSpecified || material.Emissive.Value.ToVector3() != Vector3.Zero )
 					material.ShadingModel = Material.ShadingModelEnum.Lit;

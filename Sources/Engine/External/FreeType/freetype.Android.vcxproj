@@ -114,28 +114,28 @@
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <IntDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
-    <OutDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <IntDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
-    <OutDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
-    <OutDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <IntDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
-    <OutDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -145,7 +145,7 @@
       <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <PostBuildEvent>
-      <Command>set LibOutDir=$(SolutionDir)Engine\Lib\Android\$(Platform)
+      <Command>set LibOutDir=$(SolutionDir)Sources\Engine\Lib\Android\$(Platform)
 
 if not exist "%LibOutDir%" mkdir  "%LibOutDir%"
 if errorlevel 1 goto VCEnd
@@ -164,7 +164,7 @@ if errorlevel 1 goto VCEnd</Command>
       <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <PostBuildEvent>
-      <Command>set LibOutDir=$(SolutionDir)Engine\Lib\Android\$(Platform)
+      <Command>set LibOutDir=$(SolutionDir)Sources\Engine\Lib\Android\$(Platform)
 
 if not exist "%LibOutDir%" mkdir  "%LibOutDir%"
 if errorlevel 1 goto VCEnd
@@ -183,7 +183,7 @@ if errorlevel 1 goto VCEnd</Command>
       <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <PostBuildEvent>
-      <Command>set LibOutDir=$(SolutionDir)Engine\Lib\Android\$(Platform)
+      <Command>set LibOutDir=$(SolutionDir)Sources\Engine\Lib\Android\$(Platform)
 
 if not exist "%LibOutDir%" mkdir  "%LibOutDir%"
 if errorlevel 1 goto VCEnd
@@ -199,7 +199,7 @@ if errorlevel 1 goto VCEnd</Command>
       <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <PostBuildEvent>
-      <Command>set LibOutDir=$(SolutionDir)Engine\Lib\Android\$(Platform)
+      <Command>set LibOutDir=$(SolutionDir)Sources\Engine\Lib\Android\$(Platform)
 
 if not exist "%LibOutDir%" mkdir  "%LibOutDir%"
 if errorlevel 1 goto VCEnd
@@ -215,7 +215,7 @@ if errorlevel 1 goto VCEnd</Command>
       <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <PostBuildEvent>
-      <Command>set LibOutDir=$(SolutionDir)Engine\Lib\Android\$(Platform)
+      <Command>set LibOutDir=$(SolutionDir)Sources\Engine\Lib\Android\$(Platform)
 
 if not exist "%LibOutDir%" mkdir  "%LibOutDir%"
 if errorlevel 1 goto VCEnd
@@ -231,7 +231,7 @@ if errorlevel 1 goto VCEnd</Command>
       <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <PostBuildEvent>
-      <Command>set LibOutDir=$(SolutionDir)Engine\Lib\Android\$(Platform)
+      <Command>set LibOutDir=$(SolutionDir)Sources\Engine\Lib\Android\$(Platform)
 
 if not exist "%LibOutDir%" mkdir  "%LibOutDir%"
 if errorlevel 1 goto VCEnd

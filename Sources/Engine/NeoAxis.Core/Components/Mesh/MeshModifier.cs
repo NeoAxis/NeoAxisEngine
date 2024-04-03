@@ -11,7 +11,7 @@ namespace NeoAxis
 	/// Declares modifier of the mesh. Using mesh modifiers, you can change the output data provided by the mesh; they do not change the original mesh data.
 	/// </summary>
 #if !DEPLOY
-	[SettingsCell( typeof( MeshModifierSettingsCell ) )]
+	[SettingsCell( "NeoAxis.Editor.MeshModifierSettingsCell" )]
 	[AddToResourcesWindow( @"Base\Scene common\Mesh modifiers\Mesh Modifier", -10000 )]
 #endif
 	public class MeshModifier : Component
@@ -68,14 +68,14 @@ namespace NeoAxis
 			}
 		}
 
-		protected virtual void OnBakeIntoMesh( DocumentInstance document, UndoMultiAction undoMultiAction )
+		protected virtual void OnBakeIntoMesh( IDocumentInstance document, UndoMultiAction undoMultiAction )
 		{
 		}
 
-		public delegate void BakeIntoMeshEventDelegate( MeshModifier sender, DocumentInstance document, UndoMultiAction undoMultiAction );
+		public delegate void BakeIntoMeshEventDelegate( MeshModifier sender, IDocumentInstance document, UndoMultiAction undoMultiAction );
 		public event BakeIntoMeshEventDelegate BakeIntoMeshEvent;
 
-		static void ConvertProceduralMeshGeometries( DocumentInstance document, Mesh mesh, UndoMultiAction undoMultiAction, ref bool needUndoForNextActions )
+		static void ConvertProceduralMeshGeometries( IDocumentInstance document, Mesh mesh, UndoMultiAction undoMultiAction, ref bool needUndoForNextActions )
 		{
 			//needUndoForNextActions = true;
 
@@ -140,7 +140,7 @@ namespace NeoAxis
 			}
 		}
 
-		public void BakeIntoMesh( DocumentInstance document, UndoMultiAction undoMultiAction )
+		public void BakeIntoMesh( IDocumentInstance document, UndoMultiAction undoMultiAction )
 		{
 			var mesh = Parent as Mesh;
 			if( mesh != null )

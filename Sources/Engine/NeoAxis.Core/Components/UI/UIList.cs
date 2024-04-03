@@ -24,7 +24,7 @@ namespace NeoAxis
 		public Reference<UIMeasureValueDouble> ItemSize
 		{
 			get { if( _itemSize.BeginGet() ) ItemSize = _itemSize.Get( this ); return _itemSize.value; }
-			set { if( _itemSize.BeginSet( ref value ) ) { try { ItemSizeChanged?.Invoke( this ); } finally { _itemSize.EndSet(); } } }
+			set { if( _itemSize.BeginSet( this, ref value ) ) { try { ItemSizeChanged?.Invoke( this ); } finally { _itemSize.EndSet(); } } }
 		}
 		public event Action<UIList> ItemSizeChanged;
 		ReferenceField<UIMeasureValueDouble> _itemSize = new UIMeasureValueDouble( UIMeasure.Screen, 0.022 );
@@ -36,7 +36,7 @@ namespace NeoAxis
 		public Reference<FontComponent> Font
 		{
 			get { if( _font.BeginGet() ) Font = _font.Get( this ); return _font.value; }
-			set { if( _font.BeginSet( ref value ) ) { try { FontChanged?.Invoke( this ); } finally { _font.EndSet(); } } }
+			set { if( _font.BeginSet( this, ref value ) ) { try { FontChanged?.Invoke( this ); } finally { _font.EndSet(); } } }
 		}
 		public event Action<UIList> FontChanged;
 		ReferenceField<FontComponent> _font = null;
@@ -48,7 +48,7 @@ namespace NeoAxis
 		public Reference<UIMeasureValueDouble> FontSize
 		{
 			get { if( _fontSize.BeginGet() ) FontSize = _fontSize.Get( this ); return _fontSize.value; }
-			set { if( _fontSize.BeginSet( ref value ) ) { try { FontSizeChanged?.Invoke( this ); } finally { _fontSize.EndSet(); } } }
+			set { if( _fontSize.BeginSet( this, ref value ) ) { try { FontSizeChanged?.Invoke( this ); } finally { _fontSize.EndSet(); } } }
 		}
 		public event Action<UIList> FontSizeChanged;
 		ReferenceField<UIMeasureValueDouble> _fontSize = new UIMeasureValueDouble( UIMeasure.Screen, 0.02 );
@@ -60,7 +60,7 @@ namespace NeoAxis
 		public Reference<bool> AlwaysShowScroll
 		{
 			get { if( _alwaysShowScroll.BeginGet() ) AlwaysShowScroll = _alwaysShowScroll.Get( this ); return _alwaysShowScroll.value; }
-			set { if( _alwaysShowScroll.BeginSet( ref value ) ) { try { AlwaysShowScrollChanged?.Invoke( this ); } finally { _alwaysShowScroll.EndSet(); } } }
+			set { if( _alwaysShowScroll.BeginSet( this, ref value ) ) { try { AlwaysShowScrollChanged?.Invoke( this ); } finally { _alwaysShowScroll.EndSet(); } } }
 		}
 		public event Action<UIList> AlwaysShowScrollChanged;
 		ReferenceField<bool> _alwaysShowScroll = false;
@@ -74,7 +74,7 @@ namespace NeoAxis
 		//public Reference<bool> HideSelectionWhenDisabled
 		//{
 		//	get { if( _hideSelectionWhenDisabled.BeginGet() ) HideSelectionWhenDisabled = _hideSelectionWhenDisabled.Get( this ); return _hideSelectionWhenDisabled.value; }
-		//	set { if( _hideSelectionWhenDisabled.BeginSet( ref value ) ) { try { HideSelectionWhenDisabledChanged?.Invoke( this ); } finally { _hideSelectionWhenDisabled.EndSet(); } } }
+		//	set { if( _hideSelectionWhenDisabled.BeginSet( this, ref value ) ) { try { HideSelectionWhenDisabledChanged?.Invoke( this ); } finally { _hideSelectionWhenDisabled.EndSet(); } } }
 		//}
 		//public event Action<UIList> HideSelectionWhenDisabledChanged;
 		//ReferenceField<bool> _hideSelectionWhenDisabled = false;
@@ -432,7 +432,8 @@ namespace NeoAxis
 			if( !( new Rectangle( Vector2.Zero, new Vector2( 1, 1 ) ) ).Contains( MousePosition ) )
 				return false;
 
-			if( ParentContainer != null && ParentContainer.IsControlCursorCoveredByOther( this ) )
+			//!!!!new: && !TopMost. to fix combo box over another list box
+			if( ParentContainer != null && ParentContainer.IsControlCursorCoveredByOther( this ) && !TopMost )
 				return false;
 
 			return true;
@@ -514,13 +515,18 @@ namespace NeoAxis
 			case TouchData.ActionEnum.Down:
 				if( VisibleInHierarchy && EnabledInHierarchy && !ReadOnlyInHierarchy && touchDown == null )
 				{
+					if( ParentContainer != null && ParentContainer.IsControlCursorCoveredByOther( this ) )
+						break;
+
 					GetScreenRectangle( out var rect );
 					var rectInPixels = rect * ParentContainer.Viewport.SizeInPixels.ToVector2();
 					var distanceInPixels = rectInPixels.GetPointDistance( e.PositionInPixels.ToVector2() );
 
-					var item = new TouchData.TouchDownRequestToProcessTouch( this, 1, distanceInPixels, null,
+					var item = new TouchData.TouchDownRequestToProcessTouch( this, 0/*1*/, distanceInPixels, null,
 						delegate ( UIControl sender, TouchData touchData, object anyData )
 						{
+							Focus();
+
 							//start touch
 							touchDown = e.PointerIdentifier;
 							var index = GetListItemIndexByScreenPosition( e.Position );

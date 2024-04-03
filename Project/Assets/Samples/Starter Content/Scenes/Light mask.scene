@@ -1,10 +1,9 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1146, 842\"><KW V=\"1\" A=\"BCA52DF15A69481CB1A4E4952BAD03AB\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"ABE5E46721694418CDA665770640AB27\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"BCA52DF15A69481CB1A4E4952BAD03AB\"><KP UN=\"BCA52DF15A69481CB1A4E4952BAD03AB\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"1DA4CFCDC01548FCEB821DEAD055F32E\" S=\"False\"><CPD ObjPath=\"$Light4\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"BCA52DF15A69481CB1A4E4952BAD03AB\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"ABE5E46721694418CDA665770640AB27\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"BCA52DF15A69481CB1A4E4952BAD03AB\"><KP UN=\"BCA52DF15A69481CB1A4E4952BAD03AB\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"1DA4CFCDC01548FCEB821DEAD055F32E\" S=\"False\"><CPD ObjPath=\"$Light4\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BackgroundColor = 0.3077647 0.4585882 0.7294118
-	DisplayDevelopmentDataInSimulation = True
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -17,7 +16,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "-70.9013913716563 114.639481381158 37.7723438888126; -0.267990327195843 -0.114145118217103 0.880126595517435 -0.374872314768054; 1 1 1"
+		Transform = "-70.9506745137315 108.156723659588 40.8915469185829; -0.300919797403896 -0.108098075326116 0.891713600853591 -0.320326295664139; 1 1 1"
 	}
 	.component NeoAxis.Light
 	{
@@ -29,8 +28,14 @@
 	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
-		ShadowFarDistance = 200
+		Shadows = False
+		ShadowDirectionalDistance = 200
 		ShadowDirectionalLightCascades = 1
+		ShadowPointSpotlightDistance = 200
+		ShadowPointLightMaxCount = 2
+		ShadowPointLightTextureSize = _256
+		ShadowSpotlightMaxCount = 2
+		ShadowSpotlightTextureSize = _512
 		.component NeoAxis.Component
 		{
 			Name = Background Effects
@@ -65,17 +70,19 @@
 	.component NeoAxis.Light
 	{
 		Name = Light1
-		Transform = "-67.3559686436172 -24.6930832758389 30.8437317105508; -0.150389792056384 -0.860501251044365 0.0460004842907831 -0.484566262590921; 1 1 1"
+		Transform = "-108.120749983094 38.7129427596178 30.8437317105508; -0.150389792056384 -0.860501251044365 0.0460004842907831 -0.484566262590921; 1 1 1"
 		Type = Directional
 		Brightness = 346459.78125
+		Color = 0.5083529 0.5333334 0.09701961
 		AttenuationFar = 100
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 90
-		MaskScale = 257.5
+		Shadows = False
+		MaskTransform = "0 0 0; 0 0 0 1; 0.2 0.2 0.2"
 		Mask
 		{
-			GetByReference = "Samples\\Starter Content\\Textures\\LightMaskClouds.jpg"
+			GetByReference = "Samples\\Starter Content\\Textures\\LightMask.jpg"
 		}
 	}
 	.component NeoAxis.Material
@@ -123,7 +130,7 @@
 	{
 		Name = Mesh in Space 31
 		CanBeSelected = False
-		Transform = "0 0 0; 0 0 0 1; 1 1 1"
+		Transform = "-206.229114737365 0 0; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -145,7 +152,8 @@
 			.component NeoAxis.MeshGeometry_Plane
 			{
 				Name = Mesh Geometry
-				Dimensions = 500 500
+				Dimensions = 800 800
+				Segments = 10 10
 				UVTilesPerUnit = 0.333 0.333
 				Material
 				{
@@ -181,7 +189,7 @@
 	{
 		Name = Light3
 		ScreenLabel = AlwaysDisplay
-		Transform = "-82.6535699370552 38.7595784460135 24.8282799303187; -0.419969590310942 0.267715788723468 0.716474231527964 0.488485900757277; 0.616521903392183 0.616521903392183 0.616521903392183"
+		Transform = "-77.7015919378536 40.3017765590512 24.8282799303187; -0.419969590310942 0.267715788723468 0.716474231527964 0.488485900757277; 0.616521903392183 0.616521903392183 0.616521903392183"
 		Type = Spotlight
 		Brightness = 998973.4375
 		AttenuationFar = 132.496
@@ -193,23 +201,10 @@
 	}
 	.component NeoAxis.Light
 	{
+		Enabled = False
 		Name = Light5
 		ScreenLabel = AlwaysDisplay
-		Transform = "-128.118355031951 37.6431220337831 21.342214262845; -0.194358291401609 0.527609564202491 0.553746526614363 0.614180581415626; 0.616521903392183 0.616521903392183 0.616521903392183"
-		Type = Spotlight
-		Brightness = 998973.4375
-		AttenuationFar = 132.496
-		AttenuationPower = 1.06929
-		SpotlightOuterAngle = 23.607
-		Mask
-		{
-			GetByReference = "Samples\\Starter Content\\Textures\\LightMask.jpg"
-		}
-	}
-	.component NeoAxis.Light
-	{
-		Name = Light 2
-		Transform = "-30.3295601368147 118.247458659107 0.606010282982297; 0.0597407172860572 0.232551729581539 0.858265643937736 0.45357559921465; 0.616521903392183 0.616521903392183 0.616521903392183"
+		Transform = "-83.3314780688728 70.4324755139858 21.342214262845; -0.194358291401609 0.527609564202491 0.553746526614363 0.614180581415626; 0.616521903392183 0.616521903392183 0.616521903392183"
 		Type = Spotlight
 		Brightness = 998973.4375
 		AttenuationFar = 132.496
@@ -224,7 +219,7 @@
 	{
 		Name = Light4
 		ScreenLabel = AlwaysDisplay
-		Transform = "-121.483039294596 95.7365175420483 10.5607987376299; 0 0 0.375904439210285 0.926658433610789; 0.456621010112085 0.456621010112085 0.456621010112085"
+		Transform = "-143.694883030573 51.6707628412071 10.5607987376299; 0 0 0.999984510657198 0.00556582839151318; 0.456621010112085 0.456621010112085 0.456621010112085"
 		Type = Point
 		Brightness = 1389918
 		AttenuationFar = 93.025
@@ -232,6 +227,46 @@
 		Mask
 		{
 			GetByReference = "Samples\\Starter Content\\Textures\\CubeDDS.dds"
+		}
+		.component NeoAxis.CSharpScript
+		{
+			Name = C# Script
+			Code = "public void Light4_UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\tvar obj = (ObjectInSpace)sender;\r\n\tvar tr = obj.TransformV;\r\n\tobj.Transform = new Transform(tr.Position, Quaternion.FromRotateByZ(Time.Current * 0.25), tr.Scale);\r\n}\r\n"
+			__parameter_Delta = 0
+			Exit
+			{
+			}
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler UpdateEvent
+				WhenEnable = Editor, Simulation, Instance
+				Event
+				{
+					GetByReference = "this:..\\..\\event:UpdateEvent"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\method:Light4_UpdateEvent(NeoAxis.Component,System.Single)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Light
+	{
+		Name = Light 3
+		ScreenLabel = AlwaysDisplay
+		Transform = "-119.520996473399 100.655659190103 10.5607987376299; 0 0 0.999984510657198 0.00556582839151318; 0.456621010112085 0.456621010112085 0.456621010112085"
+		Type = Point
+		Brightness = 1389918
+		Color = 0.2309412 0.649098 1
+		AttenuationFar = 93.025
+		AttenuationPower = 1.10889
+		Mask
+		{
+			GetByReference = "Samples\\Starter Content\\Textures\\LightMask.jpg"
 		}
 		.component NeoAxis.CSharpScript
 		{
@@ -1543,62 +1578,6 @@
 	{
 		Name = Mesh in Space8
 		Transform = "-41.3289992302882 -25.1994820377259 1.77477962885267; 0 0 0 1; 3.40499993205071 3.40499993205071 3.40499993205071"
-		Mesh
-		{
-			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.Mesh
-		{
-			Name = Mesh
-			.component NeoAxis.MeshGeometry_Box
-			{
-				Name = Mesh Geometry
-			}
-		}
-	}
-	.component NeoAxis.MeshInSpace
-	{
-		Name = Mesh in Space13
-		Transform = "-72.6289948308845 -52.4491406561662 1.77477962885267; 0 0 0 1; 15.1268528396158 15.1268528396158 3.40499993205071"
-		Mesh
-		{
-			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.Mesh
-		{
-			Name = Mesh
-			.component NeoAxis.MeshGeometry_Box
-			{
-				Name = Mesh Geometry
-			}
-		}
-	}
-	.component NeoAxis.MeshInSpace
-	{
-		Name = Mesh in Space70
-		Transform = "-72.6289948308845 -52.4491406561662 24.560530762012; 0 0 0 1; 12.7733942430819 12.7733942430819 3.40499993205071"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -4479,57 +4458,10 @@
 			}
 		}
 	}
-	.component NeoAxis.Sensor
+	.component NeoAxis.Fog
 	{
-		Name = Sensor
-		Transform = "-6.56793552395121 15.7083687743473 2.05914410858189; 0 0 -0.358854398435252 0.933393550826056; 38.5867285127539 38.5867285127539 2.84999995864928"
-		DisplayObjects = True
-		FilterByType
-		{
-			GetByReference = NeoAxis.MeshInSpace
-		}
-		Objects
-		{
-			Count = 4
-			0 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
-			{
-				GetByReference = "root:$Mesh in Space 4"
-			}
-			1 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
-			{
-				GetByReference = "root:$Mesh in Space 2"
-			}
-			2 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
-			{
-				GetByReference = "root:$Mesh in Space 5"
-			}
-			3 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
-			{
-				GetByReference = "root:$Mesh in Space 11"
-			}
-		}
-	}
-	.component NeoAxis.Sensor
-	{
-		Name = Sensor 2
-		Transform = "102.270511077309 38.9998977886398 1.59048472834603; 0 0 0.98887598176335 0.14874237019616; 123.039267603751 123.039267603751 118.565525241004"
-		Shape = Ray
-		DisplayObjects = True
-		FilterByType
-		{
-			GetByReference = NeoAxis.MeshInSpace
-		}
-		Objects
-		{
-			Count = 2
-			0 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
-			{
-				GetByReference = "root:$Mesh in Space 15"
-			}
-			1 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
-			{
-				GetByReference = "root:$Mesh in Space4"
-			}
-		}
+		Name = Fog
+		Color = 0.7990196 0.872 0.812
+		Density = 0.005
 	}
 }

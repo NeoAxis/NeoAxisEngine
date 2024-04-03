@@ -60,35 +60,64 @@ namespace NeoAxis
 			internal static string binaries;
 			internal static string engineInternal;
 			internal static string platformSpecific;
+			internal static string allFiles;
 
+			//
+
+			/// <summary>
+			/// The full path to project folder. It is one level upper more than Assets folder.
+			/// </summary>
 			public static string Project
 			{
 				get { return project; }
 			}
 
+			/// <summary>
+			/// The full path to Assets folder.
+			/// </summary>
 			public static string Assets
 			{
 				get { return assets; }
 			}
 
+			/// <summary>
+			/// The full path to updatable user settings and logs.
+			/// </summary>
 			public static string UserSettings
 			{
 				get { return userSettings; }
 			}
 
+			/// <summary>
+			/// The full path to managed binaries.
+			/// </summary>
 			public static string Binaries
 			{
 				get { return binaries; }
 			}
 
+			/// <summary>
+			/// The full path to internal data and native binaries on some platforms.
+			/// </summary>
 			public static string EngineInternal
 			{
 				get { return engineInternal; }
 			}
 
+			/// <summary>
+			/// The full path to native binaries of current platform.
+			/// </summary>
 			public static string PlatformSpecific
 			{
 				get { return platformSpecific; }
+			}
+
+			/// <summary>
+			/// The full path to top folder, it includes Project and Sources folders. It is one level upper more than Project folder and two levels upper more than Assets folder.
+			/// </summary>
+			public static string AllFiles
+			{
+				get { return allFiles; }
 			}
 		}
 
@@ -148,8 +177,7 @@ namespace NeoAxis
 			return path;
 		}
 
-		public static bool Init( string logFileName, bool setCurrentDirectory, string projectDirectory,
-			string userSettingsDirectory, string overrideBinariesDirectory = null )
+		public static bool Init( string logFileName, bool setCurrentDirectory, string projectDirectory, string userSettingsDirectory, string overrideBinariesDirectory = null )
 		{
 			if( initialized )
 			{
@@ -224,6 +252,12 @@ namespace NeoAxis
 					//!!!!ARM
 					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 						Directories.platformSpecific = Path.Combine( Directories.platformSpecific, "x64" );
+
+					//!!!!ARM
+					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
+						Directories.platformSpecific = Path.Combine( Directories.platformSpecific, "x64" );
+
+					Directories.allFiles = Path.GetDirectoryName( Directories.Project );
 				}
 
 				//!!!!new
@@ -243,10 +277,11 @@ namespace NeoAxis
 				if( setCurrentDirectory )
 					CorrectCurrentDirectory();
 
-#if !DEPLOY
-				if( EngineApp.IsEditor )
-					Editor.PackageManager.DeleteFilesAsStartup();
-#endif
+				//now in the EditorForm
+				//#if !DEPLOY
+				//				if( EngineApp.IsEditor )
+				//					Editor.PackageManager.DeleteFilesAsStartup();
+				//#endif
 
 				NativeUtility.PreloadLibrary( "NeoAxisCoreNative" );
 
@@ -735,7 +770,7 @@ namespace NeoAxis
 		{
 			if( defaultSettingsConfig == null )
 			{
-				string realFileName = Path.Combine( Directories.Binaries, "NeoAxis.DefaultSettings.config" );
+				string realFileName = Path.Combine( Directories.Binaries, "NeoAxis.Internal", "NeoAxis.DefaultSettings.config" );
 				if( File.Exists( realFileName ) )
 					defaultSettingsConfig = TextBlockUtility.LoadFromRealFile( realFileName );
 				else
@@ -757,6 +792,13 @@ namespace NeoAxis
 			//NeoAxis.Core.dll
 			AssemblyUtility.RegisterAssembly( Assembly.GetExecutingAssembly(), "" );
 
+			//NeoAxis.Core.Editor.dll
+			if( EngineApp.IsEditor )
+			{
+				string fullPath = Path.Combine( Directories.Binaries, "NeoAxis.Core.Editor.dll" );
+				AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true );
+			}
+
 			//auto load
 			foreach( var b in DefaultSettingsConfig.Children )
 			{
@@ -773,7 +815,13 @@ namespace NeoAxis
 						{
 							var files = Directory.GetFiles( Directories.Binaries, name, SearchOption.TopDirectoryOnly );
 							foreach( var fullPath in files )
+							{
+								//skip addons for editor in simulation
+								if( !EngineApp.IsEditor && Path.GetFileName( fullPath ).Contains( "NeoAxis.Addon.Editor" ) )
+									continue;
+
 								AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true );
+							}
 						}
 						else
 						{
@@ -849,7 +897,8 @@ namespace NeoAxis
 
 		static void InitCloudProjectInfo()
 		{
-			var fullPath = Path.Combine( Directories.Project, "CloudProject.info" );
+			var fullPath = Path.Combine( Path.GetDirectoryName( Directories.Project ), "CloudProject.info" );
+			//var fullPath = Path.Combine( Directories.Project, "CloudProject.info" );
 			if( File.Exists( fullPath ) )
 			{
 				var block = TextBlockUtility.LoadFromRealFile( fullPath );
@@ -857,7 +906,7 @@ namespace NeoAxis
 				{
 					if( !long.TryParse( block.GetAttribute( "ID" ), out var id ) )
 					{
-						Log.Warning( "VirtualFileSystem: InitCloudProjectInfo: Unable to parse project ID from \'CloudProject.info\'." );
+						Log.Warning( "VirtualFileSystem: InitCloudProjectInfo: Unable to parse project ID from \"CloudProject.info\"." );
 						return;
 					}
 

@@ -20,6 +20,7 @@
 		EditorScrollPosition = 0 0
 		.component NeoAxis.UIControl
 		{
+			Enabled = False
 			Name = Control
 			Size = Units 852 200
 			VerticalAlignment = Bottom
@@ -28,6 +29,7 @@
 		}
 		.component NeoAxis.UIText
 		{
+			Enabled = False
 			Name = Text Messages
 			Text = "Messages:"
 			Size = Units 140 30

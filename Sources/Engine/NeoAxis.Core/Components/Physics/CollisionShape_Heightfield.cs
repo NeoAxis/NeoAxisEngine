@@ -6,7 +6,6 @@
 //using System.Runtime.InteropServices;
 //using System.Reflection;
 //using System.IO;
-//using System.Drawing.Design;
 //using BulletSharp;
 //using BulletSharp.Math;
 
@@ -31,7 +30,7 @@
 //			get { if( _vertexCount.BeginGet() ) VertexCount = _vertexCount.Get( this ); return _vertexCount.value; }
 //			set
 //			{
-//				if( _vertexCount.BeginSet( ref value ) )
+//				if( _vertexCount.BeginSet( this, ref value ) )
 //				{
 //					try
 //					{
@@ -60,7 +59,7 @@
 //			get { if( _heights.BeginGet() ) Heights = _heights.Get( this ); return _heights.value; }
 //			set
 //			{
-//				if( _heights.BeginSet( ref value ) )
+//				if( _heights.BeginSet( this, ref value ) )
 //				{
 //					try
 //					{

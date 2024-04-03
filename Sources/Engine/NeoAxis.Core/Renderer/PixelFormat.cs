@@ -287,6 +287,9 @@ namespace NeoAxis
 		/// 3Dc pixel format.
 		_3DC = 95,
 
+		/// <summary>Depth texture format.</summary>
+		Depth32F = 96,
+
 		//// Number of pixel formats currently defined
 		//Count = 96
 	}

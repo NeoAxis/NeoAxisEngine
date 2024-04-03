@@ -11,6 +11,7 @@
 
 JPH_NAMESPACE_BEGIN
 
+class BodyID;
 class IslandBuilder;
 class LargeIslandSplitter;
 class BodyManager;
@@ -62,10 +63,10 @@ enum class EConstraintSpace
 };
 
 /// Class used to store the configuration of a constraint. Allows run-time creation of constraints.
-class ConstraintSettings : public SerializableObject, public RefTarget<ConstraintSettings>
+class JPH_EXPORT ConstraintSettings : public SerializableObject, public RefTarget<ConstraintSettings>
 {
 public:
-	JPH_DECLARE_SERIALIZABLE_VIRTUAL(ConstraintSettings)
+	JPH_DECLARE_SERIALIZABLE_VIRTUAL(JPH_EXPORT, ConstraintSettings)
 
 	using ConstraintResult = Result<Ref<ConstraintSettings>>;
 
@@ -96,7 +97,7 @@ protected:
 };
 
 /// Base class for all physics constraints. A constraint removes one or more degrees of freedom for a rigid body.
-class Constraint : public RefTarget<Constraint>, public NonCopyable
+class JPH_EXPORT Constraint : public RefTarget<Constraint>, public NonCopyable
 {
 public:
 	JPH_OVERRIDE_NEW_DELETE
@@ -143,6 +144,12 @@ public:
 	uint64						GetUserData() const							{ return mUserData; }
 	void						SetUserData(uint64 inUserData)				{ mUserData = inUserData; }
 
+	/// Notify the constraint that the shape of a body has changed and that its center of mass has moved by inDeltaCOM.
+	/// Bodies don't know which constraints are connected to them so the user is responsible for notifying the relevant constraints when a body changes.
+	/// @param inBodyID ID of the body that has changed
+	/// @param inDeltaCOM The delta of the center of mass of the body (shape->GetCenterOfMass() - shape_before_change->GetCenterOfMass())
+	virtual void				NotifyShapeChanged(const BodyID &inBodyID, Vec3Arg inDeltaCOM) = 0;
+
 	///@name Solver interface
 	///@{
 	virtual bool				IsActive() const							{ return mEnabled; }
@@ -161,8 +168,8 @@ public:
 #ifdef JPH_DEBUG_RENDERER
 	// Drawing interface
 	virtual void				DrawConstraint(DebugRenderer *inRenderer) const = 0;
-	virtual void				DrawConstraintLimits(DebugRenderer *inRenderer) const { }
-	virtual void				DrawConstraintReferenceFrame(DebugRenderer *inRenderer) const { }
+	virtual void				DrawConstraintLimits([[maybe_unused]] DebugRenderer *inRenderer) const { }
+	virtual void				DrawConstraintReferenceFrame([[maybe_unused]] DebugRenderer *inRenderer) const { }
 
 	/// Size of constraint when drawing it through the debug renderer
 	float						GetDrawConstraintSize() const				{ return mDrawConstraintSize; }

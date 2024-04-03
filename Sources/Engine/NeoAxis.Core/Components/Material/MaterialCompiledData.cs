@@ -39,22 +39,29 @@ namespace NeoAxis
 			internal ShaderGenerator.ResultData materialIndexGeneratedCode;
 			internal ShaderGenerator.ResultData displacementGeneratedCode;
 			internal ShaderGenerator.ResultData fragmentGeneratedCode;
+			internal ShaderGenerator.ResultData opacityGeneratedCode;
 
 			internal ShaderGenerator.ResultData shadowCasterVertexGeneratedCode;
 			internal ShaderGenerator.ResultData shadowCasterMaterialIndexGeneratedCode;
 			internal ShaderGenerator.ResultData shadowCasterFragmentGeneratedCode;
 
-			/// <summary>
-			/// Group of passes for <see cref="CompiledMaterialData"/>.
-			/// </summary>
-			public class PassGroup
-			{
-				public GpuMaterialPass passWithoutShadows;
-				public GpuMaterialPass passWithShadows;
-				//public GpuMaterialPass passWithShadowsLow;
-				//public GpuMaterialPass passWithShadowsHigh;
-			}
-			public PassGroup[] passesByLightType;
+			public GpuMaterialPass forwardShadingPassUsual;
+			public GpuMaterialPass forwardShadingPassVoxel;
+			//for mobile
+			public GpuMaterialPass forwardShadingPassDirectionalAmbientOnly;
+			public GpuMaterialPass forwardShadingPassDirectionalAmbientOnlyNoShadows;
+
+			///// <summary>
+			///// Group of passes for <see cref="CompiledMaterialData"/>.
+			///// </summary>
+			//public class PassGroup
+			//{
+			//	public GpuMaterialPass passWithoutShadows;
+			//	public GpuMaterialPass passWithShadows;
+			//	//public GpuMaterialPass passWithShadowsLow;
+			//	//public GpuMaterialPass passWithShadowsHigh;
+			//}
+			//public PassGroup[] passesByLightType;
 
 			public RenderingPipeline.ShadowCasterData specialShadowCasterData;
 
@@ -70,9 +77,9 @@ namespace NeoAxis
 			//!!!!GpuMaterialPassGroup?
 			public GpuMaterialPass decalShadingPass;
 
-			//giClearGBufferGridProgram = new Program( program.RealObject );
-			public Program? giVoxelProgram;
-			//public GpuProgram giVoxelProgram;
+			public bool giSupport;
+			public string giSupportReason;
+			public Program giVoxelProgram;
 
 			//public bool softParticles;
 
@@ -91,6 +98,8 @@ namespace NeoAxis
 			public bool multiMaterial;
 			public CompiledMaterialData[] multiSeparatePasses;//for deferred disabled
 			public CompiledMaterialData[] multiCombinedPasses;//for deferred enabled. can contain separate passes when it not combined with another
+															  //!!!!
+			public CompiledMaterialData[] multiPassesGI;
 
 			//it is sub material created by multi material
 			public int multiMaterialStartIndexOfCombinedGroup;
@@ -98,6 +107,11 @@ namespace NeoAxis
 			public int multiSubMaterialSeparatePassIndex;
 
 			CompiledMaterialData[] thisAsArray;
+
+			public bool staticShadows;
+
+			public float tessellationQuality;
+			//public bool tessellation;
 
 			/////////////////////////////////////
 
@@ -128,7 +142,7 @@ namespace NeoAxis
 				SubsurfacePower = 1 << 11,
 				SubsurfaceColor = 1 << 12,
 				SheenColor = 1 << 13,
-				RayTracingReflection = 1 << 14,
+				//RayTracingReflection = 1 << 14,
 				Emissive = 1 << 15,
 				AnisotropyDirectionBasis = 1 << 16,
 				DisplacementScale = 1 << 17,
@@ -173,13 +187,13 @@ namespace NeoAxis
 
 				//6
 				public HalfType subsurfacePower;
-				public HalfType rayTracingReflection;
+				public HalfType shadingModel; //public HalfType rayTracingReflection;
 				public HalfType anisotropyDirectionBasis;
 				public HalfType multiSubMaterialSeparatePassIndex;
 
 				//7
 				public HalfType displacementScale;
-				public HalfType receiveDecals;
+				public HalfType receiveDecals; //public HalfType receiveDecalsAndShadingModel; //public HalfType receiveDecals;
 				public HalfType useVertexColor;
 				public HalfType softParticlesDistance;
 			}
@@ -251,7 +265,7 @@ namespace NeoAxis
 								materialDataDynamicParametersToUpdate |= DynamicParametersUniformToUpdate.AnisotropyDirectionBasis;
 						}
 					}
-					else if( owner.ShadingModel.Value == ShadingModelEnum.Subsurface )
+					else if( owner.ShadingModel.Value == ShadingModelEnum.Subsurface || owner.ShadingModel.Value == ShadingModelEnum.Foliage )
 					{
 						if( !owner.Thickness.ReferenceSpecified )
 							materialDataDynamicParametersToUpdate |= DynamicParametersUniformToUpdate.Thickness;
@@ -269,8 +283,8 @@ namespace NeoAxis
 					}
 				}
 
-				if( !owner.RayTracingReflection.ReferenceSpecified )
-					materialDataDynamicParametersToUpdate |= DynamicParametersUniformToUpdate.RayTracingReflection;
+				//if( !owner.RayTracingReflection.ReferenceSpecified )
+				//	materialDataDynamicParametersToUpdate |= DynamicParametersUniformToUpdate.RayTracingReflection;
 				if( !owner.Emissive.ReferenceSpecified )
 					materialDataDynamicParametersToUpdate |= DynamicParametersUniformToUpdate.Emissive;
 				if( !owner.SoftParticlesDistance.ReferenceSpecified )
@@ -303,8 +317,12 @@ namespace NeoAxis
 
 				if( ( materialDataDynamicParametersToUpdate & DynamicParametersUniformToUpdate.BaseColor ) != 0 )
 					materialDataDynamicParametersData.baseColor = owner.BaseColor.Value.ToVector3H();
+
 				if( ( materialDataDynamicParametersToUpdate & DynamicParametersUniformToUpdate.Opacity ) != 0 )
 					materialDataDynamicParametersData.opacity = ToHalf( owner.Opacity );
+				else
+					materialDataDynamicParametersData.opacity = HalfType.One;//for multimaterials for getMaterialData for voxel lod transparency
+
 				if( ( materialDataDynamicParametersToUpdate & DynamicParametersUniformToUpdate.OpacityMaskThreshold ) != 0 )
 					materialDataDynamicParametersData.opacityMaskThreshold = ToHalf( owner.OpacityMaskThreshold );
 				if( ( materialDataDynamicParametersToUpdate & DynamicParametersUniformToUpdate.Metallic ) != 0 )
@@ -334,8 +352,13 @@ namespace NeoAxis
 				if( ( materialDataDynamicParametersToUpdate & DynamicParametersUniformToUpdate.SubsurfaceColor ) != 0 )
 					materialDataDynamicParametersData.subsurfaceColor = owner.SubsurfaceColor.Value.ToVector3H();
 
-				if( ( materialDataDynamicParametersToUpdate & DynamicParametersUniformToUpdate.RayTracingReflection ) != 0 )
-					materialDataDynamicParametersData.rayTracingReflection = ToHalf( owner.RayTracingReflection );
+				//!!!!DynamicParametersUniformToUpdate.ShadingModel
+				//!!!!DynamicParametersUniformToUpdate.ReceiveDecals
+				//!!!!DynamicParametersUniformToUpdate.UseVertexColor
+
+				materialDataDynamicParametersData.shadingModel = ToHalf( (int)owner.ShadingModel.Value );
+				//if( ( materialDataDynamicParametersToUpdate & DynamicParametersUniformToUpdate.RayTracingReflection ) != 0 )
+				//	materialDataDynamicParametersData.rayTracingReflection = ToHalf( owner.RayTracingReflection );
 				if( ( materialDataDynamicParametersToUpdate & DynamicParametersUniformToUpdate.Emissive ) != 0 )
 					materialDataDynamicParametersData.emissive = owner.Emissive.Value.ToVector3H();
 
@@ -343,6 +366,12 @@ namespace NeoAxis
 					materialDataDynamicParametersData.displacementScale = ToHalf( owner.DisplacementScale.Value );
 
 				materialDataDynamicParametersData.receiveDecals = owner.ReceiveDecals ? HalfType.One : HalfType.Zero;
+				//var receiveDecalsAndShadingModel = (int)owner.ShadingModel.Value + 1;
+				//if( owner.ReceiveDecals )
+				//	receiveDecalsAndShadingModel = -receiveDecalsAndShadingModel;
+				//materialDataDynamicParametersData.receiveDecalsAndShadingModel = ToHalf( receiveDecalsAndShadingModel );
+				////materialDataDynamicParametersData.receiveDecals = owner.ReceiveDecals ? HalfType.One : HalfType.Zero;
+
 				materialDataDynamicParametersData.useVertexColor = owner.UseVertexColor ? HalfType.One : HalfType.Zero;
 
 				if( ( materialDataDynamicParametersToUpdate & DynamicParametersUniformToUpdate.SoftParticlesDistance ) != 0 )
@@ -554,6 +583,8 @@ namespace NeoAxis
 							codes.Add( displacementGeneratedCode );
 						if( fragmentGeneratedCode != null )
 							codes.Add( fragmentGeneratedCode );
+						if( opacityGeneratedCode != null )
+							codes.Add( opacityGeneratedCode );
 					}
 
 					for( int nCode = 0; nCode < codes.Count; nCode++ )//foreach( var code in codes )
@@ -793,7 +824,7 @@ namespace NeoAxis
 								if( texture == null )
 									texture = ResourceUtility.WhiteTexture2D;
 
-								var minMag = RenderingSystem.AnisotropicFiltering/* EngineApp.InitSettings.AnisotropicFiltering*/ ? FilterOption.Anisotropic : FilterOption.Linear;
+								var minMag = RenderingSystem.AnisotropicFiltering ? FilterOption.Anisotropic : FilterOption.Linear;
 								var textureValue = new ViewportRenderingContext.BindTextureData( item.textureRegister, texture, TextureAddressingMode.Wrap, minMag, minMag, FilterOption.Linear );
 
 								if( data.Textures == null )
@@ -838,11 +869,11 @@ namespace NeoAxis
 				if( data.FallbackUniformContainer != null )
 					context.BindParameterContainer( data.FallbackUniformContainer, disableAnisotropic );
 
-				//!!!!by idea it better transfer via Materials texture, but Materials texture size is 8x4, then will be 10x4 what is not best
+				//!!!!transfer via Materials texture? yes, in the future
 				//set uniforms of custom parameters (Advanced Scripting)
 				if( owner.AdvancedScripting )
 				{
-					if( u_materialCustomParameters == null )
+					if( !u_materialCustomParameters.HasValue )
 						u_materialCustomParameters = GpuProgramManager.RegisterUniform( "u_materialCustomParameters", UniformType.Vector4, 2 );
 
 					var parameters = stackalloc Vector4F[ 2 ];
@@ -853,7 +884,7 @@ namespace NeoAxis
 
 				if( multiMaterialReferencedSeparateMaterialsOfCombinedGroup != null )
 				{
-					if( u_multiMaterialCombinedInfo == null )
+					if( !u_multiMaterialCombinedInfo.HasValue )
 					{
 						u_multiMaterialCombinedInfo = GpuProgramManager.RegisterUniform( "u_multiMaterialCombinedInfo", UniformType.Vector4, 1 );
 						u_multiMaterialCombinedMaterials = GpuProgramManager.RegisterUniform( "u_multiMaterialCombinedMaterials", UniformType.Vector4, 8 );
@@ -911,7 +942,7 @@ namespace NeoAxis
 			{
 				if( mask?.Result != null )
 				{
-					for( int nCode = 0; nCode < 4; nCode++ )
+					for( int nCode = 0; nCode < 5; nCode++ )
 					{
 						//!!!!shadow casters?
 
@@ -922,6 +953,7 @@ namespace NeoAxis
 						case 1: generatedCode = materialIndexGeneratedCode; break;
 						case 2: generatedCode = displacementGeneratedCode; break;
 						case 3: generatedCode = fragmentGeneratedCode; break;
+						case 4: generatedCode = opacityGeneratedCode; break;
 						}
 
 						if( generatedCode != null )
@@ -955,12 +987,21 @@ namespace NeoAxis
 			//}
 
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-			public CompiledMaterialData[] GetOutputMaterials( bool multiMaterialGetCombined )
+			public CompiledMaterialData[] GetOutputMaterials( bool multiMaterialGetCombined, bool gi )
 			{
 				if( multiMaterial )
 				{
 					//multi material
-					if( multiMaterialGetCombined )
+					if( gi )
+					{
+						//!!!!
+
+						return new CompiledMaterialData[] { ResourceUtility.MaterialNull.Result };
+
+						//return multiPassesGI;
+
+					}
+					else if( multiMaterialGetCombined )
 						return multiCombinedPasses;
 					else
 						return multiSeparatePasses;
@@ -972,6 +1013,43 @@ namespace NeoAxis
 						thisAsArray = new CompiledMaterialData[] { this };
 					return thisAsArray;
 				}
+
+				//if( multiMaterial )
+				//{
+				//	//multi material
+				//	if( multiMaterialGetCombined )
+				//		return multiCombinedPasses;
+				//	else
+				//		return multiSeparatePasses;
+				//}
+				//else
+				//{
+				//	//usual material
+				//	if( thisAsArray == null )
+				//		thisAsArray = new CompiledMaterialData[] { this };
+				//	return thisAsArray;
+				//}
+			}
+
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			public GpuMaterialPass GetForwardShadingPass( bool directionalAmbientOnly, bool directionalAmbientOnlyPrepareShadows, bool voxelPass )
+			{
+				if( voxelPass )
+				{
+					//!!!!мобилки
+
+					return forwardShadingPassVoxel;
+				}
+
+				if( directionalAmbientOnly )
+				{
+					if( directionalAmbientOnlyPrepareShadows )
+						return forwardShadingPassDirectionalAmbientOnly ?? forwardShadingPassUsual;
+					else
+						return forwardShadingPassDirectionalAmbientOnlyNoShadows ?? forwardShadingPassUsual;
+				}
+				else
+					return forwardShadingPassUsual;
 			}
 		}
 	}

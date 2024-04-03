@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 using Internal.Lidgren.Network;
 
 namespace NeoAxis.Networking
@@ -69,12 +70,18 @@ namespace NeoAxis.Networking
 			config.PingInterval = 1;
 			config.ConnectionTimeout = connectionTimeout;
 
-			//!!!!
 			config.ReceiveBufferSize = 131071 * 10;
 			config.SendBufferSize = 131071 * 10;
+			config.AutoExpandMTU = true;//with it much faster
 
-			//!!!!!!new
-			//config.AutoExpandMTU = true;
+			//!!!!?
+			//m_useMessageRecycling = true;
+			//m_recycledCacheMaxCount = 64;
+			//m_resendHandshakeInterval = 3.0f;
+			//m_maximumHandshakeAttempts = 5;
+			//m_autoFlushSendQueue = true;
+			//m_suppressUnreliableUnorderedAcks = false;
+
 
 			//create server
 			server = new NetServer( config );
@@ -411,13 +418,15 @@ namespace NeoAxis.Networking
 			servicesByIdentifier[ service.Identifier ] = service;
 		}
 
-		internal override NetworkService GetService( byte identifier )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		internal override NetworkService GetService( int identifier )
 		{
 			if( identifier >= servicesByIdentifier.Length )
 				return null;
 			return servicesByIdentifier[ identifier ];
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		internal override NetworkService GetService( string name )
 		{
 			foreach( ServerNetworkService service in services )
@@ -453,6 +462,7 @@ namespace NeoAxis.Networking
 		//	set { serverPassword = value; }
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ConnectedNode[] GetConnectedNodesArray()
 		{
 			if( connectedNodesArray == null )

@@ -1,36 +1,46 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
+	<CheckEolTargetFramework>false</CheckEolTargetFramework>
 	<UseWindowsForms>true</UseWindowsForms>
 	<UseWPF>true</UseWPF>
 	<EnableDefaultPageItems>false</EnableDefaultPageItems>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputType>Library</OutputType>
 	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-    <RootNamespace>NeoAxis</RootNamespace>
+    <RootNamespace>NeoAxis.Editor</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\..\..\Project\Binaries\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;WINDOWS;NET_2_0;WINDOWS_FORMS_SWITCHES;WINFORMS_NAMESPACE;HAVE_APP_DOMAIN;HAVE_PROCESS;HAVE_ENVIRONMENT;HAVE_LOCK;HAVE_THREAD_ID;HAVE_ATTR_DEFINED;HAVE_ADO_NET;HAVE_APP_DOMAIN;HAVE_ASYNC;HAVE_BINARY_FORMATTER;HAVE_BINARY_SERIALIZATION;HAVE_BINARY_EXCEPTION_SERIALIZATION;HAVE_CAS;HAVE_CHAR_TO_LOWER_WITH_CULTURE;HAVE_CHAR_TO_STRING_WITH_CULTURE;HAVE_COM_ATTRIBUTES;HAVE_COMPONENT_MODEL;HAVE_CONCURRENT_COLLECTIONS;HAVE_COVARIANT_GENERICS;HAVE_DATE_TIME_OFFSET;HAVE_DB_NULL_TYPE_CODE;HAVE_DYNAMIC;HAVE_EMPTY_TYPES;HAVE_ENTITY_FRAMEWORK;HAVE_EXPRESSIONS;HAVE_FAST_REVERSE;HAVE_FSHARP_TYPES;HAVE_FULL_REFLECTION;HAVE_GUID_TRY_PARSE;HAVE_HASH_SET;HAVE_ICLONEABLE;HAVE_ICONVERTIBLE;HAVE_INOTIFY_COLLECTION_CHANGED;HAVE_INOTIFY_PROPERTY_CHANGING;HAVE_ISET;HAVE_LINQ;HAVE_MEMORY_BARRIER;HAVE_METHOD_IMPL_ATTRIBUTE;HAVE_NON_SERIALIZED_ATTRIBUTE;HAVE_READ_ONLY_COLLECTIONS;HAVE_REFLECTION_EMIT;HAVE_SECURITY_SAFE_CRITICAL_ATTRIBUTE;HAVE_SERIALIZATION_BINDER_BIND_TO_NAME;HAVE_STREAM_READER_WRITER_CLOSE;HAVE_STRING_JOIN_WITH_ENUMERABLE;HAVE_TIME_SPAN_PARSE_WITH_CULTURE;HAVE_TIME_SPAN_TO_STRING_WITH_CULTURE;HAVE_TIME_ZONE_INFO;HAVE_TRACE_WRITER;HAVE_TYPE_DESCRIPTOR;HAVE_UNICODE_SURROGATE_DETECTION;HAVE_VARIANT_TYPE_PARAMETERS;HAVE_VERSION_TRY_PARSE;HAVE_XML_DOCUMENT;HAVE_XML_DOCUMENT_TYPE;HAVE_CONCURRENT_DICTIONARY;NET45;CLOUD</DefineConstants>	
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <DocumentationFile>..\..\..\Project\Binaries\NeoAxis.Core.Editor.xml</DocumentationFile>
-    <NoWarn>CS0618;CS1591;CS0108</NoWarn>
+    <NoWarn>CS0618;CS1591;CS0108;CS1570;CS0414;CS1587;CS1572;MSB3042;CS0067;CA1416;SYSLIB0011;SYSLIB0003;CS8073</NoWarn>
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>false</Optimize>
     <OutputPath>..\..\..\Project\Binaries\</OutputPath>
+    <DefineConstants>TRACE;WINDOWS;NET_2_0;WINDOWS_FORMS_SWITCHES;WINFORMS_NAMESPACE;HAVE_APP_DOMAIN;HAVE_PROCESS;HAVE_ENVIRONMENT;HAVE_LOCK;HAVE_THREAD_ID;HAVE_ATTR_DEFINED;HAVE_ADO_NET;HAVE_APP_DOMAIN;HAVE_ASYNC;HAVE_BINARY_FORMATTER;HAVE_BINARY_SERIALIZATION;HAVE_BINARY_EXCEPTION_SERIALIZATION;HAVE_CAS;HAVE_CHAR_TO_LOWER_WITH_CULTURE;HAVE_CHAR_TO_STRING_WITH_CULTURE;HAVE_COM_ATTRIBUTES;HAVE_COMPONENT_MODEL;HAVE_CONCURRENT_COLLECTIONS;HAVE_COVARIANT_GENERICS;HAVE_DATE_TIME_OFFSET;HAVE_DB_NULL_TYPE_CODE;HAVE_DYNAMIC;HAVE_EMPTY_TYPES;HAVE_ENTITY_FRAMEWORK;HAVE_EXPRESSIONS;HAVE_FAST_REVERSE;HAVE_FSHARP_TYPES;HAVE_FULL_REFLECTION;HAVE_GUID_TRY_PARSE;HAVE_HASH_SET;HAVE_ICLONEABLE;HAVE_ICONVERTIBLE;HAVE_INOTIFY_COLLECTION_CHANGED;HAVE_INOTIFY_PROPERTY_CHANGING;HAVE_ISET;HAVE_LINQ;HAVE_MEMORY_BARRIER;HAVE_METHOD_IMPL_ATTRIBUTE;HAVE_NON_SERIALIZED_ATTRIBUTE;HAVE_READ_ONLY_COLLECTIONS;HAVE_REFLECTION_EMIT;HAVE_SECURITY_SAFE_CRITICAL_ATTRIBUTE;HAVE_SERIALIZATION_BINDER_BIND_TO_NAME;HAVE_STREAM_READER_WRITER_CLOSE;HAVE_STRING_JOIN_WITH_ENUMERABLE;HAVE_TIME_SPAN_PARSE_WITH_CULTURE;HAVE_TIME_SPAN_TO_STRING_WITH_CULTURE;HAVE_TIME_ZONE_INFO;HAVE_TRACE_WRITER;HAVE_TYPE_DESCRIPTOR;HAVE_UNICODE_SURROGATE_DETECTION;HAVE_VARIANT_TYPE_PARAMETERS;HAVE_VERSION_TRY_PARSE;HAVE_XML_DOCUMENT;HAVE_XML_DOCUMENT_TYPE;HAVE_CONCURRENT_DICTIONARY;NET45;CLOUD</DefineConstants>	
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoWarn>CS0618;CS1591;CS0108</NoWarn>
-    <DocumentationFile>..\..\..\Project\Binaries\NeoAxis.Core.Editor.xml</DocumentationFile>
+    <NoWarn>CS0618;CS1591;CS0108;CS1570;CS0414;CS1587;CS1572;MSB3042;CS0067;CA1416;SYSLIB0011;SYSLIB0003;CS8073</NoWarn>
+    <DocumentationFile>NeoAxis.Core.Editor.xml</DocumentationFile>
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Libraries\Aga.Controls\.editorconfig" />
+    <None Remove="Libraries\Krypton\.editorconfig" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Components\Font\FontPreview.designer.cs">
+      <DependentUpon>FontPreview.cs</DependentUpon>
+    </Compile>
     <Compile Update="Components\Scripting\CSharpScriptEditor.cs" />
     <Compile Update="Components\Scripting\CSharpScriptEditor.designer.cs">
       <DependentUpon>CSharpScriptEditor.cs</DependentUpon>
@@ -42,6 +52,21 @@
     <Compile Update="Components\ShaderScript\ShaderScriptEditor.cs" />
     <Compile Update="Components\ShaderScript\ShaderScriptEditor.designer.cs">
       <DependentUpon>ShaderScriptEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Components\Sprite\SpriteEditor.designer.cs">
+      <DependentUpon>SpriteEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\BackstageMenu.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Editor\BackstageMenu.designer.cs">
+      <DependentUpon>BackstageMenu.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\BordersContainer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Editor\CancelForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Update="Editor\ColorValue\ColorGradientControl.cs">
       <SubType>UserControl</SubType>
@@ -57,16 +82,527 @@
     <Compile Update="Editor\ColorValue\ColorWheel.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Editor\ComponentTypeSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Editor\ComponentTypeSettingsForm.Designer.cs">
+      <DependentUpon>ComponentTypeSettingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\ContentBrowser.designer.cs">
+      <DependentUpon>ContentBrowser.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\ContentBrowserOptionsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Editor\ContentBrowserOptionsForm.Designer.cs">
+      <DependentUpon>ContentBrowserOptionsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\ContentBrowserSearchForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Editor\ContentBrowserSearchForm.Designer.cs">
+      <DependentUpon>ContentBrowserSearchForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\DebugInfoWindow.designer.cs">
+      <DependentUpon>DebugInfoWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\DockWindow.designer.cs">
+      <DependentUpon>DockWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\DocumentWindow.designer.cs">
+      <DependentUpon>DocumentWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\DocumentWindowWithViewport.designer.cs">
+      <DependentUpon>DocumentWindowWithViewport.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\EditorForm.cs" />
+    <Compile Update="Editor\EditorForm.designer.cs">
+      <DependentUpon>EditorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\EngineForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Editor\EngineForm.Designer.cs">
+      <DependentUpon>EngineForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\EngineProgressBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Editor\EngineScrollBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Editor\EngineToolStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Editor\EngineToolTip\EngineToolTipForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Editor\ForeachDocumentWindowContainer.designer.cs">
+      <DependentUpon>ForeachDocumentWindowContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\DropDownEditors\EnumDropDownControl.designer.cs">
+      <DependentUpon>EnumDropDownControl.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\DropDownEditors\MultilineTextDropDownControl.designer.cs">
+      <DependentUpon>MultilineTextDropDownControl.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\DropDownEditors\RangeDropDownControl.designer.cs">
+      <DependentUpon>RangeDropDownControl.cs</DependentUpon>
+    </Compile>
     <Compile Update="Editor\HierarchicalContainer\DropDownEditors\ScriptDropDownControl.cs" />
     <Compile Update="Editor\HierarchicalContainer\DropDownEditors\ScriptDropDownControl.designer.cs">
       <DependentUpon>ScriptDropDownControl.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\DropDownHolder\HCFormDropDownHolder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridCheckBox.Designer.cs">
+      <DependentUpon>HCGridCheckBox.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridCollection.Designer.cs">
+      <DependentUpon>HCGridCollection.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridColorValue.Designer.cs">
+      <DependentUpon>HCGridColorValue.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridColorValuePowered.Designer.cs">
+      <DependentUpon>HCGridColorValuePowered.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridDropDownButton.Designer.cs">
+      <DependentUpon>HCGridDropDownButton.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridEvent.Designer.cs">
+      <DependentUpon>HCGridEvent.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridGroup.Designer.cs">
+      <DependentUpon>HCGridGroup.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridLabel.Designer.cs">
+      <DependentUpon>HCGridLabel.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridProperty.Designer.cs">
+      <DependentUpon>HCGridProperty.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBox.Designer.cs">
+      <DependentUpon>HCGridTextBox.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxNumeric.Designer.cs">
+      <DependentUpon>HCGridTextBoxNumeric.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxSelect.Designer.cs">
+      <DependentUpon>HCGridTextBoxSelect.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\HierarchicalContainer\HierarchicalContainer.designer.cs">
+      <DependentUpon>HierarchicalContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\ImportWindow.Designer.cs">
+      <DependentUpon>ImportWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\KryptonRibbonGroupListBox.Designer.cs">
+      <DependentUpon>KryptonRibbonGroupListBox.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\KryptonRibbonGroupListBoxControl.Designer.cs">
+      <DependentUpon>KryptonRibbonGroupListBoxControl.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\KryptonRibbonGroupSlider.Designer.cs">
+      <DependentUpon>KryptonRibbonGroupSlider.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\KryptonRibbonGroupSliderControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Editor\KryptonRibbonGroupSliderControl.Designer.cs">
+      <DependentUpon>KryptonRibbonGroupSliderControl.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\LabelExtended.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Editor\MessageLogOptionsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Editor\MessageLogOptionsForm.Designer.cs">
+      <DependentUpon>MessageLogOptionsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\MessageLogWindow.designer.cs">
+      <DependentUpon>MessageLogWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\Networking\Launcher\LauncherEditRepositoryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Editor\Networking\RepositoryItemsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Editor\NewObjectCell.designer.cs">
+      <DependentUpon>NewObjectCell.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\NewObjectSettingsCell.designer.cs">
+      <DependentUpon>NewObjectSettingsCell.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\NewObjectWindow.Designer.cs">
+      <DependentUpon>NewObjectWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\ObjectSettingsHeader.designer.cs">
+      <DependentUpon>ObjectSettingsHeader.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\ObjectSettingsHeader_ObjectInfo.designer.cs">
+      <DependentUpon>ObjectSettingsHeader_ObjectInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\ObjectSettingsWindow.designer.cs">
+      <DependentUpon>ObjectSettingsWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\ObjectsWindow.designer.cs">
+      <DependentUpon>ObjectsWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\OKCancelTextBoxForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Editor\OKCancelTextBoxForm.designer.cs">
+      <DependentUpon>OKCancelTextBoxForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\OutputWindow.designer.cs">
+      <DependentUpon>OutputWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\PreviewControl.designer.cs">
+      <DependentUpon>PreviewControl.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\PreviewControlWithViewport.designer.cs">
+      <DependentUpon>PreviewControlWithViewport.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\PreviewWindow.designer.cs">
+      <DependentUpon>PreviewWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\Project settings\HCItemProjectRibbonAndToolbarActionsForm.Designer.cs">
+      <DependentUpon>HCItemProjectRibbonAndToolbarActionsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\Project settings\HCItemProjectShortcutsForm.Designer.cs">
+      <DependentUpon>HCItemProjectShortcutsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\ResourcesToCreate\NewResourceType_CSharpClassLibrary_Cell.designer.cs">
+      <DependentUpon>NewResourceType_CSharpClassLibrary_Cell.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\ResourcesToCreate\NewResourceType_FlowGraphLibrary_Cell.designer.cs">
+      <DependentUpon>NewResourceType_FlowGraphLibrary_Cell.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\ResourcesToCreate\NewResourceType_TextFile_Cell.designer.cs">
+      <DependentUpon>NewResourceType_TextFile_Cell.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\ResourcesWindow.designer.cs">
+      <DependentUpon>ResourcesWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\ScreenNotifications\ScreenNotificationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Editor\ScreenNotifications\ScreenNotificationForm.designer.cs">
+      <DependentUpon>ScreenNotificationForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\SelectTypeWindow.Designer.cs">
+      <DependentUpon>SelectTypeWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\SetReferenceWindow.Designer.cs">
+      <DependentUpon>SetReferenceWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\SettingsCell.designer.cs">
+      <DependentUpon>SettingsCell.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\SettingsCellProcedureUI2.designer.cs">
+      <DependentUpon>SettingsCellProcedureUI2.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\SettingsCell_Properties.designer.cs">
+      <DependentUpon>SettingsCell_Properties.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\SettingsHeader.designer.cs">
+      <DependentUpon>SettingsHeader.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\SettingsHeader_Components.designer.cs">
+      <DependentUpon>SettingsHeader_Components.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\SettingsHeader_ObjectInfo.designer.cs">
+      <DependentUpon>SettingsHeader_ObjectInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\SettingsLevel2Window.designer.cs">
+      <DependentUpon>SettingsLevel2Window.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\SettingsWindow.designer.cs">
+      <DependentUpon>SettingsWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\SolutionExplorer.designer.cs">
+      <DependentUpon>SolutionExplorer.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\SpecifyParametersForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Editor\SpecifyParametersForm.designer.cs">
+      <DependentUpon>SpecifyParametersForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\SplashForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Editor\SplashForm.Designer.cs">
+      <DependentUpon>SplashForm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\StartPageWindow.designer.cs">
+      <DependentUpon>StartPageWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\Store\StoreDocumentWindow.designer.cs">
+      <DependentUpon>StoreDocumentWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\Store\StoresWindow.designer.cs">
+      <DependentUpon>StoresWindow.cs</DependentUpon>
     </Compile>
     <Compile Update="Editor\TextEditorDocumentWindow.cs" />
     <Compile Update="Editor\TextEditorDocumentWindow.designer.cs">
       <DependentUpon>TextEditorDocumentWindow.cs</DependentUpon>
     </Compile>
+    <Compile Update="Editor\TipsWindow.designer.cs">
+      <DependentUpon>TipsWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Editor\WorkspaceWindow.designer.cs">
+      <DependentUpon>WorkspaceWindow.cs</DependentUpon>
+    </Compile>
     <Compile Update="Editor\WPFApp\WPFApp.xaml.cs">
       <DependentUpon>WPFApp.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\NumericTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Properties\Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\NodeControls\BaseTextControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\NodeControls\BindableControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\NodeControls\EditableControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\NodeControls\ExpandingIcon.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\NodeControls\InteractiveControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\NodeControls\NodeCheckBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\NodeControls\NodeComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\NodeControls\NodeControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\NodeControls\NodeDecimalTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\NodeControls\NodeIcon.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\NodeControls\NodeIntegerTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\NodeControls\NodeNumericUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\NodeControls\NodePlusMinus.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\NodeControls\NodeStateIcon.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\NodeControls\NodeTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\TreeColumn.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\TreeViewAdv.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\TreeViewAdv.Draw.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\TreeViewAdv.Editor.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\TreeViewAdv.Input.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\TreeViewAdv.Properties.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Base\DockingElement.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Base\DockingElementClosedCollection.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Docking\Elements Base\DockingElementOpenCollection.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Docking\General\ObscureControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Docking\Properties\Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavClose.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavContext.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavFixed.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavigator.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavNext.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Navigator\ButtonSpecs\ButtonSpecNavPrevious.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DropDockingIndicatorsSquare.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Dragging\DropSolidWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Properties\Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecAppMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecExpandRibbon.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecMdiChildClose.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecMdiChildFixed.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecMdiChildMin.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecMdiChildRestore.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\ButtonSpec\ButtonSpecMinimizeRibbon.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\BackstageAppMenu.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Controls Visuals\KeyTipControl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Properties\Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpec.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecAny.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecFormFixed.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecFormWindowClose.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecFormWindowMax.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecFormWindowMin.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ButtonSpec\ButtonSpecHeaderGroup.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\ContextMenu\KryptonContextMenuItemBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonBreadCrumbItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonListItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Toolkit\KryptonManager.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\ShadowsV2\DropShadow.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupShadow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualPopupSimpleShadow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Controls Visuals\VisualTaskDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\General\ModalWaitDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Builtin\PaletteBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Builtin\PaletteNeoAxisBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Builtin\PaletteNeoAxisBlack.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Palette Builtin\PaletteNeoAxisBlue.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Properties\Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderNeoAxis.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderOffice2010.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderProfessional.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Rendering\RenderStandard.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\View Base\ViewControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Workspace\Properties\Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Update="Modules\ScriptingCSharp\Editor\TextEditorControl.cs" />
     <Compile Update="Modules\ScriptingCSharp\Editor\CSharpDocumentWindow.cs" />
@@ -74,6 +610,23 @@
       <DependentUpon>CSharpDocumentWindow.cs</DependentUpon>
     </Compile>
     <Compile Update="Modules\ScriptingCSharp\Editor\ScriptEditorControl.cs" />
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="WinForms\EngineViewportControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="WinForms\EngineViewportControl.designer.cs">
+      <DependentUpon>EngineViewportControl.cs</DependentUpon>
+    </Compile>
+    <Compile Update="WinForms\EUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="WinForms\EUserControl.designer.cs">
+      <DependentUpon>EUserControl.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj" />
@@ -106,11 +659,248 @@
     <EmbeddedResource Update="Components\ShaderScript\ShaderScriptEditor.resx">
       <DependentUpon>ShaderScriptEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Update="Editor\BackstageMenu.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>BackstageMenu.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\ComponentTypeSettingsForm.resx">
+      <DependentUpon>ComponentTypeSettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\ContentBrowser.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ContentBrowser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\ContentBrowserOptionsForm.resx">
+      <DependentUpon>ContentBrowserOptionsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\ContentBrowserSearchForm.resx">
+      <DependentUpon>ContentBrowserSearchForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\DebugInfoWindow.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DebugInfoWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\DockWindow.resx">
+      <DependentUpon>DockWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\DocumentWindow.resx">
+      <DependentUpon>DocumentWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\DocumentWindowWithViewport.resx">
+      <DependentUpon>DocumentWindowWithViewport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\EditorForm.resx">
+      <DependentUpon>EditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\EngineScrollBar.resx">
+      <DependentUpon>EngineScrollBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\ForeachDocumentWindowContainer.resx">
+      <DependentUpon>ForeachDocumentWindowContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\HierarchicalContainer\DropDownEditors\EnumDropDownControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>EnumDropDownControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\HierarchicalContainer\DropDownEditors\RangeDropDownControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>RangeDropDownControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Update="Editor\HierarchicalContainer\DropDownEditors\ScriptDropDownControl.resx">
       <DependentUpon>ScriptDropDownControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Update="Editor\HierarchicalContainer\DropDownHolder\HCFormDropDownHolder.resx">
+      <DependentUpon>HCFormDropDownHolder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridCheckBox.resx">
+      <DependentUpon>HCGridCheckBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridCollection.resx">
+      <DependentUpon>HCGridCollection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridColorValue.resx">
+      <DependentUpon>HCGridColorValue.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridColorValuePowered.resx">
+      <DependentUpon>HCGridColorValuePowered.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridDropDownButton.resx">
+      <DependentUpon>HCGridDropDownButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridEvent.resx">
+      <DependentUpon>HCGridEvent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridGroup.resx">
+      <DependentUpon>HCGridGroup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridLabel.resx">
+      <DependentUpon>HCGridLabel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridProperty.resx">
+      <DependentUpon>HCGridProperty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBox.resx">
+      <DependentUpon>HCGridTextBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxNumeric.resx">
+      <DependentUpon>HCGridTextBoxNumeric.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\HierarchicalContainer\Grid mode\HCGridTextBoxSelect.resx">
+      <DependentUpon>HCGridTextBoxSelect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\ImportWindow.resx">
+      <DependentUpon>ImportWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\KryptonRibbonGroupListBoxControl.resx">
+      <DependentUpon>KryptonRibbonGroupListBoxControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\KryptonRibbonGroupSliderControl.resx">
+      <DependentUpon>KryptonRibbonGroupSliderControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\MessageLogOptionsForm.resx">
+      <DependentUpon>MessageLogOptionsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\MessageLogWindow.resx">
+      <DependentUpon>MessageLogWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\NewObjectCell.resx">
+      <DependentUpon>NewObjectCell.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\NewObjectSettingsCell.resx">
+      <DependentUpon>NewObjectSettingsCell.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\NewObjectWindow.resx">
+      <DependentUpon>NewObjectWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\ObjectSettingsHeader.resx">
+      <DependentUpon>ObjectSettingsHeader.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\ObjectSettingsHeader_ObjectInfo.resx">
+      <DependentUpon>ObjectSettingsHeader_ObjectInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\ObjectSettingsWindow.resx">
+      <DependentUpon>ObjectSettingsWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\ObjectsWindow.resx">
+      <DependentUpon>ObjectsWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\OKCancelTextBoxForm.resx">
+      <DependentUpon>OKCancelTextBoxForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\PreviewControl.resx">
+      <DependentUpon>PreviewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\PreviewControlWithViewport.resx">
+      <DependentUpon>PreviewControlWithViewport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\PreviewWindow.resx">
+      <DependentUpon>PreviewWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\Project settings\HCItemProjectRibbonAndToolbarActionsForm.resx">
+      <DependentUpon>HCItemProjectRibbonAndToolbarActionsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\Project settings\HCItemProjectShortcutsForm.resx">
+      <DependentUpon>HCItemProjectShortcutsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\ResourcesToCreate\NewResourceType_CSharpClassLibrary_Cell.resx">
+      <DependentUpon>NewResourceType_CSharpClassLibrary_Cell.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\ResourcesToCreate\NewResourceType_FlowGraphLibrary_Cell.resx">
+      <DependentUpon>NewResourceType_FlowGraphLibrary_Cell.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\ResourcesToCreate\NewResourceType_TextFile_Cell.resx">
+      <DependentUpon>NewResourceType_TextFile_Cell.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\ResourcesWindow.resx">
+      <DependentUpon>ResourcesWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\SelectTypeWindow.resx">
+      <DependentUpon>SelectTypeWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\SetReferenceWindow.resx">
+      <DependentUpon>SetReferenceWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\SettingsCell.resx">
+      <DependentUpon>SettingsCell.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\SettingsCellProcedureUI2.resx">
+      <DependentUpon>SettingsCellProcedureUI2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\SettingsHeader.resx">
+      <DependentUpon>SettingsHeader.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\SettingsHeader_Components.resx">
+      <DependentUpon>SettingsHeader_Components.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\SettingsHeader_ObjectInfo.resx">
+      <DependentUpon>SettingsHeader_ObjectInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\SettingsLevel2Window.resx">
+      <DependentUpon>SettingsLevel2Window.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\SettingsWindow.resx">
+      <DependentUpon>SettingsWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\SolutionExplorer.resx">
+      <DependentUpon>SolutionExplorer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\SpecifyParametersForm.resx">
+      <DependentUpon>SpecifyParametersForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\SplashForm.resx">
+      <DependentUpon>SplashForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\StartPageWindow.resx">
+      <DependentUpon>StartPageWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\Store\StoreDocumentWindow.resx">
+      <DependentUpon>StoreDocumentWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Update="Editor\TextEditorDocumentWindow.resx">
       <DependentUpon>TextEditorDocumentWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\TipsWindow.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TipsWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\WorkspaceWindow.resx">
+      <DependentUpon>WorkspaceWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Libraries\Aga.Controls\Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <CustomToolNamespace>Internal.Aga.Controls.Properties</CustomToolNamespace>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Libraries\Krypton\ComponentFactory.Krypton.Docking\Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <CustomToolNamespace>Internal.ComponentFactory.Krypton.Docking.Properties</CustomToolNamespace>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <CustomToolNamespace>Internal.ComponentFactory.Krypton.Navigator.Properties</CustomToolNamespace>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <CustomToolNamespace>Internal.ComponentFactory.Krypton.Ribbon.Properties</CustomToolNamespace>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <CustomToolNamespace>Internal.ComponentFactory.Krypton.Toolkit.Properties</CustomToolNamespace>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Libraries\Krypton\ComponentFactory.Krypton.Workspace\Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <CustomToolNamespace>Internal.ComponentFactory.Krypton.Workspace.Properties</CustomToolNamespace>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Modules\ScriptingCSharp\Editor\CSharpDocumentWindow.resx">
       <DependentUpon>CSharpDocumentWindow.cs</DependentUpon>
@@ -121,8 +911,20 @@
     <EmbeddedResource Update="Modules\ScriptingCSharp\Editor\TextEditorControl.resx">
       <DependentUpon>TextEditorControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="WinForms\EngineViewportControl.resx">
+      <DependentUpon>EngineViewportControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="WinForms\EUserControl.resx">
+      <DependentUpon>EUserControl.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.ComponentModel.Composition" Version="4.7.0" />
   </ItemGroup>

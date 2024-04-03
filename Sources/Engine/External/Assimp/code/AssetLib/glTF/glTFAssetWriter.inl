@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -39,14 +39,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ----------------------------------------------------------------------
 */
 
+#include <assimp/Base64.hpp>
+
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/prettywriter.h>
 
-#ifdef _WIN32
+#if _MSC_VER
 #    pragma warning(push)
 #    pragma warning( disable : 4706)
-#endif // _WIN32
+#endif // _MSC_VER
 
 namespace glTF {
 
@@ -237,7 +239,7 @@ namespace glTF {
         else if (img.HasData()) {
             uri = "data:" + (img.mimeType.empty() ? "application/octet-stream" : img.mimeType);
             uri += ";base64,";
-            glTFCommon::Util::EncodeBase64(img.GetData(), img.GetDataLength(), uri);
+            Base64::Encode(img.GetData(), img.GetDataLength(), uri);
         }
         else {
             uri = img.uri;
@@ -305,11 +307,11 @@ namespace glTF {
 			Value json_extensions;
 
 			json_extensions.SetObject();
+#ifdef ASSIMP_IMPORTER_GLTF_USE_OPEN3DGC
 			for(Mesh::SExtension* ptr_ext : m.Extension)
 			{
 				switch(ptr_ext->Type)
 				{
-#ifdef ASSIMP_IMPORTER_GLTF_USE_OPEN3DGC
 					case Mesh::SExtension::EType::Compression_Open3DGC:
 						{
 							Value json_comp_data;
@@ -339,11 +341,11 @@ namespace glTF {
 						}
 
 						break;
-#endif
 					default:
 						throw DeadlyImportError("GLTF: Can not write mesh: unknown mesh extension, only Open3DGC is supported.");
 				}// switch(ptr_ext->Type)
 			}// for(Mesh::SExtension* ptr_ext : m.Extension)
+#endif
 
 			// Add extensions to mesh
 			obj.AddMember("extensions", json_extensions, w.mAl);
@@ -523,7 +525,7 @@ namespace glTF {
     {
         std::unique_ptr<IOStream> jsonOutFile(mAsset.OpenFile(path, "wt", true));
 
-        if (jsonOutFile == 0) {
+        if (jsonOutFile == nullptr) {
             throw DeadlyExportError("Could not open output file: " + std::string(path));
         }
 
@@ -546,7 +548,7 @@ namespace glTF {
 
             std::unique_ptr<IOStream> binOutFile(mAsset.OpenFile(binPath, "wb", true));
 
-            if (binOutFile == 0) {
+            if (binOutFile == nullptr) {
                 throw DeadlyExportError("Could not open output file: " + binPath);
             }
 
@@ -562,7 +564,7 @@ namespace glTF {
     {
         std::unique_ptr<IOStream> outfile(mAsset.OpenFile(path, "wb", true));
 
-        if (outfile == 0) {
+        if (outfile == nullptr) {
             throw DeadlyExportError("Could not open output file: " + std::string(path));
         }
 
@@ -707,7 +709,7 @@ namespace glTF {
         w.WriteObjects(d);
     }
 
-#ifdef _WIN32
+#if _MSC_VER
 #    pragma warning(pop)
 #endif // _WIN32
 

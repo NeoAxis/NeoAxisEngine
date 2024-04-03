@@ -9,10 +9,10 @@
 JPH_NAMESPACE_BEGIN
 
 /// Class that constructs a SphereShape
-class SphereShapeSettings final : public ConvexShapeSettings
+class JPH_EXPORT SphereShapeSettings final : public ConvexShapeSettings
 {
 public:
-	JPH_DECLARE_SERIALIZABLE_VIRTUAL(SphereShapeSettings)
+	JPH_DECLARE_SERIALIZABLE_VIRTUAL(JPH_EXPORT, SphereShapeSettings)
 
 	/// Default constructor for deserialization
 							SphereShapeSettings() = default;
@@ -28,7 +28,7 @@ public:
 
 /// A sphere, centered around the origin.
 /// Note that it is implemented as a point with convex radius.
-class SphereShape final : public ConvexShape
+class JPH_EXPORT SphereShape final : public ConvexShape
 {
 public:
 	JPH_OVERRIDE_NEW_DELETE
@@ -60,7 +60,7 @@ public:
 	virtual Vec3			GetSurfaceNormal(const SubShapeID &inSubShapeID, Vec3Arg inLocalSurfacePosition) const override;
 
 	// See Shape::GetSupportingFace
-	virtual void			GetSupportingFace(const SubShapeID &inSubShapeID, Vec3Arg inDirection, Vec3Arg inScale, Mat44Arg inCenterOfMassTransform, SupportingFace &outVertices) const override { /* Hit is always a single point, no point in returning anything */ }
+	virtual void			GetSupportingFace([[maybe_unused]] const SubShapeID &inSubShapeID, [[maybe_unused]] Vec3Arg inDirection, [[maybe_unused]] Vec3Arg inScale, [[maybe_unused]] Mat44Arg inCenterOfMassTransform, [[maybe_unused]] SupportingFace &outVertices) const override { /* Hit is always a single point, no point in returning anything */ }
 
 	// See ConvexShape::GetSupportFunction
 	virtual const Support *	GetSupportFunction(ESupportMode inMode, SupportBuffer &inBuffer, Vec3Arg inScale) const override;

@@ -8,11 +8,11 @@ SAMPLER2D(s_depthTexture, 1);
 
 void main()
 {
-	/*
-	vec3 color = texture2D(s_colorTexture, v_texCoord0).rgb;
-	float depth =  texture2D(s_depthTexture, v_texCoord0).r;
-	gl_FragColor = vec4(unpackRgbaToFloat(encodeRGBE8(color)), depth);
-	*/
+	gl_FragColor = vec4( texture2D( s_colorTexture, v_texCoord0 ).rgb, texture2D( s_depthTexture, v_texCoord0 ).r );
+
+	//not enough color precision
 	
-	gl_FragColor = vec4(texture2D(s_colorTexture, v_texCoord0).rgb, texture2D(s_depthTexture, v_texCoord0).r);
+	//vec3 color = texture2D( s_colorTexture, v_texCoord0 ).rgb;
+	//float depth =  texture2D( s_depthTexture, v_texCoord0 ).r;
+	//gl_FragColor = vec4( packColor( color ), depth, 0, 0 );
 }

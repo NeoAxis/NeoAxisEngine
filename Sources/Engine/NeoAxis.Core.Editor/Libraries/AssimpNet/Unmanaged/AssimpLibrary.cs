@@ -36,9 +36,9 @@ namespace Internal.Assimp.Unmanaged
 		/// <summary>
 		/// Default name of the unmanaged library. Based on runtime implementation the prefix ("lib" on non-windows) and extension (.dll, .so, .dylib) will be appended automatically.
 		/// </summary>
-		private const String DefaultLibName = "assimp-vc141-mt";// assimp";
+		private const String DefaultLibName = "assimp-vc143-mt";//"assimp-vc141-mt";// assimp";
 
-        private static AssimpLibrary s_instance;
+		private static AssimpLibrary s_instance;
 
         private bool m_enableVerboseLogging = false;
 

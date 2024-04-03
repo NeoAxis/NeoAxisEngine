@@ -1,0 +1,17 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.Weapon2DType
+{
+	FiringBeginSound
+	{
+		GetByReference = "Content\\Weapons 2D\\Default\\Fire.ogg"
+	}
+	IdleAnimation
+	{
+		GetByReference = "Content\\Weapons 2D\\Default\\Animation Idle.component"
+	}
+	InventoryImage
+	{
+		GetByReference = "Content\\Weapons 2D\\Default\\Weapon.png"
+	}
+}

@@ -16,10 +16,10 @@ JPH_NAMESPACE_BEGIN
 class PhysicsSystem;
 
 /// WheelSettings object specifically for WheeledVehicleController
-class WheelSettingsWV : public WheelSettings
+class JPH_EXPORT WheelSettingsWV : public WheelSettings
 {
 public:
-	JPH_DECLARE_SERIALIZABLE_VIRTUAL(WheelSettingsWV)
+	JPH_DECLARE_SERIALIZABLE_VIRTUAL(JPH_EXPORT, WheelSettingsWV)
 
 	/// Constructor
 								WheelSettingsWV();
@@ -38,7 +38,7 @@ public:
 };
 
 /// Wheel object specifically for WheeledVehicleController
-class WheelWV : public Wheel
+class JPH_EXPORT WheelWV : public Wheel
 {
 public:
 	JPH_OVERRIDE_NEW_DELETE
@@ -68,10 +68,10 @@ public:
 /// 
 /// The properties in this controller are largely based on "Car Physics for Games" by Marco Monster.
 /// See: https://www.asawicki.info/Mirror/Car%20Physics%20for%20Games/Car%20Physics%20for%20Games.html
-class WheeledVehicleControllerSettings : public VehicleControllerSettings
+class JPH_EXPORT WheeledVehicleControllerSettings : public VehicleControllerSettings
 {
 public:
-	JPH_DECLARE_SERIALIZABLE_VIRTUAL(WheeledVehicleControllerSettings)
+	JPH_DECLARE_SERIALIZABLE_VIRTUAL(JPH_EXPORT, WheeledVehicleControllerSettings)
 
 	// See: VehicleControllerSettings
 	virtual VehicleController *	ConstructController(VehicleConstraint &inConstraint) const override;
@@ -85,7 +85,7 @@ public:
 };
 
 /// Runtime controller class
-class WheeledVehicleController : public VehicleController
+class JPH_EXPORT WheeledVehicleController : public VehicleController
 {
 public:
 	JPH_OVERRIDE_NEW_DELETE
@@ -125,6 +125,9 @@ public:
 	float						GetDifferentialLimitedSlipRatio() const		{ return mDifferentialLimitedSlipRatio; }
 	void						SetDifferentialLimitedSlipRatio(float inV)	{ mDifferentialLimitedSlipRatio = inV; }
 
+	/// Get the average wheel speed of all driven wheels (measured at the clutch)
+	float						GetWheelSpeedAtClutch() const;
+
 #ifdef JPH_DEBUG_RENDERER
 	/// Debug drawing of RPM meter
 	void						SetRPMMeter(Vec3Arg inPosition, float inSize) { mRPMMeterPosition = inPosition; mRPMMeterSize = inSize; }
@@ -133,7 +136,7 @@ public:
 protected:
 	// See: VehicleController
 	virtual Wheel *				ConstructWheel(const WheelSettings &inWheel) const override { JPH_ASSERT(IsKindOf(&inWheel, JPH_RTTI(WheelSettingsWV))); return new WheelWV(static_cast<const WheelSettingsWV &>(inWheel)); }
-	virtual bool				AllowSleep() const override					{ return mForwardInput == 0.0f; }
+	virtual bool				AllowSleep() const override;
 	virtual void				PreCollide(float inDeltaTime, PhysicsSystem &inPhysicsSystem) override;
 	virtual void				PostCollide(float inDeltaTime, PhysicsSystem &inPhysicsSystem) override;
 	virtual bool				SolveLongitudinalAndLateralConstraints(float inDeltaTime) override;
@@ -154,6 +157,7 @@ protected:
 	VehicleTransmission			mTransmission;								///< Transmission state of the vehicle
 	Differentials				mDifferentials;								///< Differential states of the vehicle
 	float						mDifferentialLimitedSlipRatio;				///< Ratio max / min average wheel speed of each differential (measured at the clutch).
+	float						mPreviousDeltaTime = 0.0f;					///< Delta time of the last step
 
 #ifdef JPH_DEBUG_RENDERER
 	// Debug settings

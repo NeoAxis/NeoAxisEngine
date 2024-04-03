@@ -10,7 +10,7 @@ namespace NeoAxis
 	/// Component for setting item type of <see cref="GroupOfObjects"/>.
 	/// </summary>
 #if !DEPLOY
-	[SettingsCell( typeof( GroupOfObjectsElementSettingsCell ) )]
+	[SettingsCell( "NeoAxis.Editor.GroupOfObjectsElementSettingsCell" )]
 #endif
 	public abstract class GroupOfObjectsElement : Component
 	{
@@ -21,7 +21,7 @@ namespace NeoAxis
 		public Reference<int> Index
 		{
 			get { if( _index.BeginGet() ) Index = _index.Get( this ); return _index.value; }
-			set { if( _index.BeginSet( ref value ) ) { try { IndexChanged?.Invoke( this ); } finally { _index.EndSet(); } } }
+			set { if( _index.BeginSet( this, ref value ) ) { try { IndexChanged?.Invoke( this ); } finally { _index.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Index"/> property value changes.</summary>
 		public event Action<GroupOfObjectsElement> IndexChanged;
@@ -34,7 +34,7 @@ namespace NeoAxis
 		public Reference<bool> AutoAlign
 		{
 			get { if( _autoAlign.BeginGet() ) AutoAlign = _autoAlign.Get( this ); return _autoAlign.value; }
-			set { if( _autoAlign.BeginSet( ref value ) ) { try { AutoAlignChanged?.Invoke( this ); } finally { _autoAlign.EndSet(); } } }
+			set { if( _autoAlign.BeginSet( this, ref value ) ) { try { AutoAlignChanged?.Invoke( this ); } finally { _autoAlign.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AutoAlign"/> property value changes.</summary>
 		public event Action<GroupOfObjectsElement> AutoAlignChanged;
@@ -135,12 +135,14 @@ namespace NeoAxis
 			get { if( _mesh.BeginGet() ) Mesh = _mesh.Get( this ); return _mesh.value; }
 			set
 			{
-				if( _mesh.BeginSet( ref value ) )
+				if( _mesh.BeginSet( this, ref value ) )
 				{
 					try
 					{
 						MeshChanged?.Invoke( this );
 						( Parent as GroupOfObjects )?.ElementTypesCacheNeedUpdate();
+						if( StaticShadows )
+							( Parent as GroupOfObjects )?.NeedUpdateStaticShadows();
 					}
 					finally { _mesh.EndSet(); }
 				}
@@ -160,12 +162,14 @@ namespace NeoAxis
 			get { if( _replaceMaterial.BeginGet() ) ReplaceMaterial = _replaceMaterial.Get( this ); return _replaceMaterial.value; }
 			set
 			{
-				if( _replaceMaterial.BeginSet( ref value ) )
+				if( _replaceMaterial.BeginSet( this, ref value ) )
 				{
 					try
 					{
 						ReplaceMaterialChanged?.Invoke( this );
 						( Parent as GroupOfObjects )?.ElementTypesCacheNeedUpdate();
+						if( StaticShadows )
+							( Parent as GroupOfObjects )?.NeedUpdateStaticShadows();
 					}
 					finally { _replaceMaterial.EndSet(); }
 				}
@@ -185,7 +189,7 @@ namespace NeoAxis
 			get { if( _visibilityDistanceFactor.BeginGet() ) VisibilityDistanceFactor = _visibilityDistanceFactor.Get( this ); return _visibilityDistanceFactor.value; }
 			set
 			{
-				if( _visibilityDistanceFactor.BeginSet( ref value ) )
+				if( _visibilityDistanceFactor.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -210,7 +214,7 @@ namespace NeoAxis
 		//	get { if( _visibilityDistance.BeginGet() ) VisibilityDistance = _visibilityDistance.Get( this ); return _visibilityDistance.value; }
 		//	set
 		//	{
-		//		if( _visibilityDistance.BeginSet( ref value ) )
+		//		if( _visibilityDistance.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -234,12 +238,14 @@ namespace NeoAxis
 			get { if( _castShadows.BeginGet() ) CastShadows = _castShadows.Get( this ); return _castShadows.value; }
 			set
 			{
-				if( _castShadows.BeginSet( ref value ) )
+				if( _castShadows.BeginSet( this, ref value ) )
 				{
 					try
 					{
 						CastShadowsChanged?.Invoke( this );
 						( Parent as GroupOfObjects )?.ElementTypesCacheNeedUpdate();
+						if( StaticShadows )
+							( Parent as GroupOfObjects )?.NeedUpdateStaticShadows();
 					}
 					finally { _castShadows.EndSet(); }
 				}
@@ -258,7 +264,7 @@ namespace NeoAxis
 			get { if( _receiveDecals.BeginGet() ) ReceiveDecals = _receiveDecals.Get( this ); return _receiveDecals.value; }
 			set
 			{
-				if( _receiveDecals.BeginSet( ref value ) )
+				if( _receiveDecals.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -283,7 +289,7 @@ namespace NeoAxis
 			get { if( _motionBlurFactor.BeginGet() ) MotionBlurFactor = _motionBlurFactor.Get( this ); return _motionBlurFactor.value; }
 			set
 			{
-				if( _motionBlurFactor.BeginSet( ref value ) )
+				if( _motionBlurFactor.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -299,6 +305,30 @@ namespace NeoAxis
 		ReferenceField<double> _motionBlurFactor = 1.0;
 
 		/// <summary>
+		/// Whether to enable the static shadows optimization.
+		/// </summary>
+		[DefaultValue( true )]
+		public Reference<bool> StaticShadows
+		{
+			get { if( _staticShadows.BeginGet() ) StaticShadows = _staticShadows.Get( this ); return _staticShadows.value; }
+			set
+			{
+				if( _staticShadows.BeginSet( this, ref value ) )
+				{
+					try
+					{
+						StaticShadowsChanged?.Invoke( this );
+						( Parent as GroupOfObjects )?.NeedUpdate();
+					}
+					finally { _staticShadows.EndSet(); }
+				}
+			}
+		}
+		/// <summary>Occurs when the <see cref="StaticShadows"/> property value changes.</summary>
+		public event Action<GroupOfObjectsElement_Mesh> StaticShadowsChanged;
+		ReferenceField<bool> _staticShadows = true;
+
+		/// <summary>
 		/// Whether to enable a collision detection. A collision rigidbody of the mesh is used.
 		/// </summary>
 		[DefaultValue( false )]
@@ -307,7 +337,7 @@ namespace NeoAxis
 			get { if( _collision.BeginGet() ) Collision = _collision.Get( this ); return _collision.value; }
 			set
 			{
-				if( _collision.BeginSet( ref value ) )
+				if( _collision.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -389,12 +419,14 @@ namespace NeoAxis
 			get { if( _surface.BeginGet() ) Surface = _surface.Get( this ); return _surface.value; }
 			set
 			{
-				if( _surface.BeginSet( ref value ) )
+				if( _surface.BeginSet( this, ref value ) )
 				{
 					try
 					{
 						SurfaceChanged?.Invoke( this );
 						( Parent as GroupOfObjects )?.ElementTypesCacheNeedUpdate();
+						//if( StaticShadows )
+						( Parent as GroupOfObjects )?.NeedUpdateStaticShadows();
 					}
 					finally { _surface.EndSet(); }
 				}
@@ -414,7 +446,7 @@ namespace NeoAxis
 			get { if( _visibilityDistanceFactor.BeginGet() ) VisibilityDistanceFactor = _visibilityDistanceFactor.Get( this ); return _visibilityDistanceFactor.value; }
 			set
 			{
-				if( _visibilityDistanceFactor.BeginSet( ref value ) )
+				if( _visibilityDistanceFactor.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -438,12 +470,14 @@ namespace NeoAxis
 			get { if( _castShadows.BeginGet() ) CastShadows = _castShadows.Get( this ); return _castShadows.value; }
 			set
 			{
-				if( _castShadows.BeginSet( ref value ) )
+				if( _castShadows.BeginSet( this, ref value ) )
 				{
 					try
 					{
 						CastShadowsChanged?.Invoke( this );
 						( Parent as GroupOfObjects )?.ElementTypesCacheNeedUpdate();
+						//if( StaticShadows )
+						( Parent as GroupOfObjects )?.NeedUpdateStaticShadows();
 					}
 					finally { _castShadows.EndSet(); }
 				}
@@ -462,7 +496,7 @@ namespace NeoAxis
 			get { if( _collision.BeginGet() ) Collision = _collision.Get( this ); return _collision.value; }
 			set
 			{
-				if( _collision.BeginSet( ref value ) )
+				if( _collision.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -657,7 +691,7 @@ namespace NeoAxis
 	//	public Reference<Material> Material
 	//	{
 	//		get { if( _material.BeginGet() ) Material = _material.Get( this ); return _material.value; }
-	//		set { if( _material.BeginSet( ref value ) ) { try { MaterialChanged?.Invoke( this ); } finally { _material.EndSet(); } } }
+	//		set { if( _material.BeginSet( this, ref value ) ) { try { MaterialChanged?.Invoke( this ); } finally { _material.EndSet(); } } }
 	//	}
 	//	public event Action<GroupOfObjectsElement_Billboard> MaterialChanged;
 	//	ReferenceField<Material> _material = null;

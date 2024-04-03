@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -30,67 +30,89 @@ namespace bx
 	}
 
 	template<>
+	inline int32_t compareAscending<StringLiteral>(const void* _lhs, const void* _rhs)
+	{
+		return strCmp(*(const StringLiteral*)_lhs, *(const StringLiteral*)_rhs);
+	}
+
+	template<>
 	inline int32_t compareAscending<StringView>(const void* _lhs, const void* _rhs)
 	{
 		return strCmp(*(const StringView*)_lhs, *(const StringView*)_rhs);
 	}
 
 	template<typename Ty>
-	void quickSort(Ty* _data, uint32_t _num, const ComparisonFn _fn)
+	inline void quickSort(void* _data, uint32_t _num, uint32_t _stride, const ComparisonFn _fn)
 	{
-		quickSort( (void*)_data, _num, sizeof(Ty), _fn);
-	}
-
-	template<typename Ty>
-	void quickSort(void* _data, uint32_t _num, uint32_t _stride, const ComparisonFn _fn)
-	{
+		BX_STATIC_ASSERT(isTriviallyMoveAssignable<Ty>(), "Element type must be trivially move assignable");
 		quickSort(_data, _num, _stride, _fn);
 	}
 
 	template<typename Ty>
-	uint32_t lowerBound(const Ty& _key, const Ty* _data, uint32_t _num, const ComparisonFn _fn)
+	inline void quickSort(Ty* _data, uint32_t _num, const ComparisonFn _fn)
+	{
+		BX_STATIC_ASSERT(isTriviallyMoveAssignable<Ty>(), "Element type must be trivially move assignable");
+		quickSort( (void*)_data, _num, sizeof(Ty), _fn);
+	}
+
+	template<typename Ty>
+	inline uint32_t unique(void* _data, uint32_t _num, uint32_t _stride, const ComparisonFn _fn)
+	{
+		BX_STATIC_ASSERT(isTriviallyMoveAssignable<Ty>(), "Element type must be trivially move assignable");
+		return unique(_data, _num, _stride, _fn);
+	}
+
+	template<typename Ty>
+	inline uint32_t unique(Ty* _data, uint32_t _num, const ComparisonFn _fn)
+	{
+		BX_STATIC_ASSERT(isTriviallyMoveAssignable<Ty>(), "Element type must be trivially move assignable");
+		return unique( (void*)_data, _num, sizeof(Ty), _fn);
+	}
+
+	template<typename Ty>
+	inline uint32_t lowerBound(const Ty& _key, const Ty* _data, uint32_t _num, const ComparisonFn _fn)
 	{
 		return lowerBound( (const void*)&_key, _data, _num, sizeof(Ty), _fn);
 	}
 
 	template<typename Ty>
-	uint32_t lowerBound(const Ty& _key, const void* _data, uint32_t _num, uint32_t _stride, const ComparisonFn _fn)
+	inline uint32_t lowerBound(const Ty& _key, const void* _data, uint32_t _num, uint32_t _stride, const ComparisonFn _fn)
 	{
 		return lowerBound( (const void*)&_key, _data, _num, _stride, _fn);
 	}
 
 	template<typename Ty>
-	uint32_t upperBound(const Ty& _key, const Ty* _data, uint32_t _num, const ComparisonFn _fn)
+	inline uint32_t upperBound(const Ty& _key, const Ty* _data, uint32_t _num, const ComparisonFn _fn)
 	{
 		return upperBound( (const void*)&_key, _data, _num, sizeof(Ty), _fn);
 	}
 
 	template<typename Ty>
-	uint32_t upperBound(const Ty& _key, const void* _data, uint32_t _num, uint32_t _stride, const ComparisonFn _fn)
+	inline uint32_t upperBound(const Ty& _key, const void* _data, uint32_t _num, uint32_t _stride, const ComparisonFn _fn)
 	{
 		return upperBound( (const void*)&_key, _data, _num, _stride, _fn);
 	}
 
 	template<typename Ty>
-	bool isSorted(const Ty* _data, uint32_t _num, const ComparisonFn _fn)
+	inline bool isSorted(const Ty* _data, uint32_t _num, const ComparisonFn _fn)
 	{
 		return isSorted(_data, _num, sizeof(Ty), _fn);
 	}
 
 	template<typename Ty>
-	bool isSorted(const void* _data, uint32_t _num, uint32_t _stride, const ComparisonFn _fn)
+	inline bool isSorted(const void* _data, uint32_t _num, uint32_t _stride, const ComparisonFn _fn)
 	{
 		return isSorted(_data, _num, _stride, _fn);
 	}
 
 	template<typename Ty>
-	int32_t binarySearch(const Ty& _key, const Ty* _data, uint32_t _num, const ComparisonFn _fn)
+	inline int32_t binarySearch(const Ty& _key, const Ty* _data, uint32_t _num, const ComparisonFn _fn)
 	{
 		return binarySearch( (const void*)&_key, _data, _num, sizeof(Ty), _fn);
 	}
 
 	template<typename Ty>
-	int32_t binarySearch(const Ty& _key, const void* _data, uint32_t _num, uint32_t _stride, const ComparisonFn _fn)
+	inline int32_t binarySearch(const Ty& _key, const void* _data, uint32_t _num, uint32_t _stride, const ComparisonFn _fn)
 	{
 		return binarySearch( (const void*)&_key, _data, _num, _stride, _fn);
 	}
@@ -167,6 +189,8 @@ done:
 	template <typename Ty>
 	inline void radixSort(uint32_t* _keys, uint32_t* _tempKeys, Ty* _values, Ty* _tempValues, uint32_t _size)
 	{
+		BX_STATIC_ASSERT(isTriviallyMoveAssignable<Ty>(), "Sort element type must be trivially move assignable");
+
 		uint32_t* keys = _keys;
 		uint32_t* tempKeys = _tempKeys;
 		Ty* values = _values;
@@ -301,6 +325,8 @@ done:
 	template <typename Ty>
 	inline void radixSort(uint64_t* _keys, uint64_t* _tempKeys, Ty* _values, Ty* _tempValues, uint32_t _size)
 	{
+		BX_STATIC_ASSERT(isTriviallyMoveAssignable<Ty>(), "Sort element type must be trivially move assignable");
+
 		uint64_t* keys = _keys;
 		uint64_t* tempKeys = _tempKeys;
 		Ty* values = _values;

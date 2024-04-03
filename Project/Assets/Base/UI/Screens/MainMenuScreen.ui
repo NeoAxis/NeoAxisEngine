@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component Project.MainMenuScreen
 {
@@ -10,7 +10,7 @@
 	}
 	BackgroundSceneLimitedDevice
 	{
-		GetByReference = "Samples\\Starter Content\\Scenes\\Mesh in space animation.scene"
+		GetByReference = "Samples\\Spaceship Game\\Spaceship Game.scene"
 	}
 	.component NeoAxis.UIControl
 	{
@@ -25,7 +25,7 @@
 	{
 		Name = Button Scenes
 		Text = Scenes
-		Size = Units 150 40
+		Size = Units 180 40
 		VerticalAlignment = Bottom
 		Margin = Units 10 10 10 10
 		EditorScrollPosition = 0 0
@@ -40,7 +40,7 @@
 		Text = Press ~ or F12 to show the developer console
 		Size = Units 430 30
 		VerticalAlignment = Bottom
-		Margin = Units 650 960 0 10
+		Margin = Units 390 960 0 10
 		EditorScrollPosition = 0 0
 		FontSize = Screen 0.015
 		TextHorizontalAlignment = Left
@@ -51,9 +51,9 @@
 	{
 		Name = Button Options
 		Text = Options
-		Size = Units 150 40
+		Size = Units 180 40
 		VerticalAlignment = Bottom
-		Margin = Units 170 10 10 10
+		Margin = Units 200 10 10 10
 		EditorScrollPosition = 0 0
 		Style
 		{
@@ -64,9 +64,9 @@
 	{
 		Name = Button Multiplayer Create
 		Text = Create Server
-		Size = Units 150 40
+		Size = Units 180 40
 		VerticalAlignment = Bottom
-		Margin = Units 330 10 10 10
+		Margin = Units 200 10 10 130
 		EditorScrollPosition = 0 0
 		Style
 		{
@@ -92,9 +92,9 @@
 	{
 		Name = Button Multiplayer Join
 		Text = Join Server
-		Size = Units 150 40
+		Size = Units 180 40
 		VerticalAlignment = Bottom
-		Margin = Units 490 10 10 10
+		Margin = Units 200 10 10 80
 		EditorScrollPosition = 0 0
 		Style
 		{
@@ -120,7 +120,7 @@
 	{
 		Name = Button Exit
 		Text = Exit
-		Size = Units 150 40
+		Size = Units 180 40
 		HorizontalAlignment = Right
 		VerticalAlignment = Bottom
 		Margin = Units 0 0 10 10
@@ -134,7 +134,7 @@
 	{
 		Name = Button Play City Demo
 		Text = City Demo
-		Size = Units 200 40
+		Size = Units 180 40
 		Margin = Units 10 580 130 318.058171164124
 		EditorScrollPosition = 0 0
 		Style
@@ -146,7 +146,7 @@
 	{
 		Name = Button Play Nature Demo
 		Text = Nature Demo
-		Size = Units 200 40
+		Size = Units 180 40
 		Margin = Units 10 630 130 318.058171164124
 		EditorScrollPosition = 0 0
 		Style
@@ -158,7 +158,7 @@
 	{
 		Name = Button Play Battle Demo
 		Text = Battle Demo
-		Size = Units 200 40
+		Size = Units 180 40
 		Margin = Units 10 680 130 318.058171164124
 		EditorScrollPosition = 0 0
 		Style
@@ -170,7 +170,7 @@
 	{
 		Name = Button Play Simple Game
 		Text = Simple Game
-		Size = Units 200 40
+		Size = Units 180 40
 		Margin = Units 10 780 130 318.058171164124
 		EditorScrollPosition = 0 0
 		Style
@@ -182,7 +182,7 @@
 	{
 		Name = Button Play Character Scene
 		Text = Character scene
-		Size = Units 200 40
+		Size = Units 180 40
 		Margin = Units 10 730 130 318.058171164124
 		EditorScrollPosition = 0 0
 		Style
@@ -194,7 +194,7 @@
 	{
 		Name = Button Play Spaceship Game
 		Text = Spaceship Game
-		Size = Units 200 40
+		Size = Units 180 40
 		Margin = Units 10 830 130 318.058171164124
 		EditorScrollPosition = 0 0
 		Style
@@ -206,7 +206,7 @@
 	{
 		Name = Button Play Platform Game
 		Text = Platform Game
-		Size = Units 200 40
+		Size = Units 180 40
 		Margin = Units 10 880 130 318.058171164124
 		EditorScrollPosition = 0 0
 		Style

@@ -28,23 +28,22 @@
 
 <h2>Building (very easy)</h2>
 
-For Windows:
+Compile for Windows:
 <ul>
-<li>You need Visual Studio 2019 with .NET Core 3.1. Use NeoAxis.Managed.Sources.sln.</li>
-<li>The native core for Windows is already compiled.</li>
+<li>You need Visual Studio 2019 with .NET 5.0 or Visual Studio 2022. Use NeoAxis.Windows.ManagedOnly.sln to compile only managed assemblies. The native code for Windows is already compiled.</li>
 <li>Download City Demo, Nature Demo and other content from the Asset Store window inside the editor.</li>
 </ul>
 
 More:
 <ul>
-<li>How build for other platforms see https://www.neoaxis.com/docs/html/Platforms.htm.</li>
-<li>To compile project assemblies you can use Visual Studio Code or another C# IDE. Use NeoAxis.Managed.ProjectOnly.AnyIDE.sln.</li>
+<li>How build for other platforms please check https://www.neoaxis.com/docs/html/Platforms.htm.</li>
+<li>To compile project assemblies you can use Visual Studio Code or another C# IDE. Use NeoAxis.ProjectOnly.AnyIDE.sln.</li>
 </ul>
 
 <h2>Programming tips</h2>
 <ul>
 <li>Set up NeoAxis.Editor assembly as StartUp project to make run with debugger.</li>
-<li>Add a new code to the NeoAxis.CoreExtension by default. Project assembly is also good.</li>
+<li>Add a new code to the NeoAxis.CoreExtension by default. Project assembly is also good. Source code of Project assembly can be changed in the NeoAxis Editor.</li>
 <li>Use English code page for your project if it possible: https://github.com/NeoAxis/NeoAxisEngine/issues/1</li>
 </ul>
 

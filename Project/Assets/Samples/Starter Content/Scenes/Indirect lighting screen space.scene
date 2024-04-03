@@ -1,0 +1,570 @@
+// Made with NeoAxis Engine 2024.1.
+
+.component NeoAxis.Scene
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"2C240F26F2654EFEDFB5EC1A9243C6A6\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"45C28AC0AA1E4CB4D18A3D229EC0E452\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"2C240F26F2654EFEDFB5EC1A9243C6A6\"><KP UN=\"2C240F26F2654EFEDFB5EC1A9243C6A6\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"CEDEB39BEA424621AD9D1A56B0BA2AF9\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP><KP UN=\"12750E2CBB88463FF2A85A61AD60CD75\" S=\"False\"><CPD ObjPath=\"$Rendering Pipeline\\$Scene Effects\\$Indirect Lighting\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	BackgroundColor = 0.6666667 0.6666667 0.6666667
+	RenderingPipeline
+	{
+		GetByReference = "root:$Rendering Pipeline"
+	}
+	CameraEditor
+	{
+		GetByReference = "this:$Camera Editor"
+	}
+	.component NeoAxis.Camera
+	{
+		Name = Camera Editor
+		Visible = False
+		Transform = "14.4468066804452 -2.2046606008322 -14.1586885802124; -0.152885337552734 0.0545874770427762 0.929277634671618 0.331797164862231; 1 1 1"
+	}
+	.component NeoAxis.Light
+	{
+		Name = Ambient Light
+		Transform = "-27.7871391969358 37.4683781031502 14.686420383686; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
+		Type = Ambient
+		Brightness = 7290
+	}
+	.component NeoAxis.RenderingPipeline_Basic
+	{
+		Name = Rendering Pipeline
+		ShadowDirectionalDistance = 50
+		ShadowDirectionalLightCascades = 1
+		ShadowPointSpotlightDistance = 50
+		ShadowSpotlightTextureSize = _2048
+		RemoveTextureTiling = 0
+		.component NeoAxis.Component
+		{
+			Name = Background Effects
+		}
+		.component NeoAxis.Component
+		{
+			Name = Scene Effects
+			.component NeoAxis.RenderingEffect_IndirectLighting
+			{
+				Name = Indirect Lighting
+				Intensity = 0
+				Multiplier = 0.3
+				Normals = False
+				.component NeoAxis.CSharpScript
+				{
+					Name = C# Script
+					Code = "public void IndirectLighting_UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\tvar effect = sender as RenderingEffect_IndirectLighting;\r\n\tif(effect != null)\r\n\t\teffect.Intensity = (Time.Current % 8.0) > 4 ? 1 : 0;\r\n}\r\n"
+					__parameter_Delta = 0
+					Exit
+					{
+					}
+					.component NeoAxis.EventHandlerComponent
+					{
+						Name = Event Handler UpdateEvent
+						WhenEnable = Editor, Simulation, Instance
+						Event
+						{
+							GetByReference = "this:..\\..\\event:UpdateEvent"
+						}
+						HandlerMethod
+						{
+							GetByReference = "this:..\\method:IndirectLighting_UpdateEvent(NeoAxis.Component,System.Single)"
+						}
+						HandlerFlow
+						{
+						}
+					}
+				}
+			}
+			.component NeoAxis.RenderingEffect_AmbientOcclusion
+			{
+				Name = Ambient Occlusion
+				Intensity = 0.8
+				Radius = 3
+			}
+			.component NeoAxis.RenderingEffect_Bloom
+			{
+				Enabled = False
+				Name = Bloom
+			}
+			.component NeoAxis.RenderingEffect_ToLDR
+			{
+				Name = To LDR
+			}
+			.component NeoAxis.RenderingEffect_Antialiasing
+			{
+				Name = Antialiasing
+			}
+			.component NeoAxis.RenderingEffect_ResolutionUpscale
+			{
+				Name = Resolution Upscale
+			}
+			.component NeoAxis.RenderingEffect_Sharpen
+			{
+				Name = Sharpen
+			}
+		}
+	}
+	.component NeoAxis.GameMode
+	{
+		Name = Game Mode
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
+	}
+	.component NeoAxis.Light
+	{
+		Name = Light1
+		Transform = "21.096603415861 -4.02738720650646 -4.54723975048288; -0.385544653371362 -0.735088364894102 0.426206952042812 -0.359649899324952; 1 1 1"
+		Type = Spotlight
+		Brightness = 346459.78125
+		AttenuationFar = 100
+		AttenuationPower = 1.5
+		SpotlightInnerAngle = 30
+		SpotlightOuterAngle = 110
+	}
+	.component NeoAxis.Light
+	{
+		Name = Light2
+		Transform = "16.2614505529656 1.98343514224467 -13.6195803875689; 0 0 0 1; 1 1 1"
+		Type = Point
+		Brightness = 279839.871757908
+		AttenuationFar = 20
+	}
+	.component NeoAxis.Light
+	{
+		Name = Light3
+		Transform = "9.45344240293682 -4.18588145995731 -13.760985157176; 0 0 0 1; 1 1 1"
+		Type = Point
+		Brightness = 106423.382038007
+		AttenuationFar = 20
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 31
+		CanBeSelected = False
+		Transform = "12.4214674037176 0.248415906223993 -16.7808109194805; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 10 10
+				Material
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Concrete\\Concrete Floor 01.material"
+				}
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform
+			{
+				GetByReference = "this:..\\Transform"
+			}
+			.component NeoAxis.CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 2
+		CanBeSelected = False
+		Transform = "12.4214674037176 0.248415906223993 -17.5120932635607; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 150 150
+				Material
+				{
+					GetByReference = "Base\\Materials\\Gray.material"
+				}
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 20
+		CanBeSelected = False
+		Transform = "12.3837951266935 5.18211380366376 -13.8391352068506; 0.707106781186547 0 0 0.707106781186548; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 10 6
+				UVTilesPerUnit = 0.5 0.5
+				Material
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Brick\\Yellow Brick.material"
+				}
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform
+			{
+				GetByReference = "this:..\\Transform"
+			}
+			.component NeoAxis.CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 21
+		CanBeSelected = False
+		Transform = "7.43501064695957 0.272948256138564 -13.8541381866406; -0.5 0.5 -0.5 0.5; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 10 6
+				UVTilesPerUnit = 0.5 0.5
+				Material
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Brick\\Yellow Brick.material"
+				}
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform
+			{
+				GetByReference = "this:..\\Transform"
+			}
+			.component NeoAxis.CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space
+		Transform
+		{
+			GetByReference = "root:$C# Script\\Method"
+		}
+		Mesh
+		{
+			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space3
+		Transform = "13.4078080707687 3.3617734604721 -15.6060938455259; 0 0 -0.828200876772728 0.560431358609495; 1 1 1"
+		Mesh
+		{
+			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Materials\\$Sci-fi Drone Red"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space2
+		Transform = "9.68772464379571 -2.40282421997848 -15.5510906128757; 0 0 0.27145995818091 0.96244973432612; 1 1 1"
+		Mesh
+		{
+			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Materials\\$Sci-fi Drone Blue"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 3
+		Transform = "11.7374839124827 -0.05177675032439 -16.0092755825092; 0 0 -0.331515423839943 0.943449799277218; 1 1 1"
+		Mesh
+		{
+			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Emission"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+	}
+	.component NeoAxis.CSharpScript
+	{
+		Name = C# Script
+		Code = "Transform Method()\r\n{\r\n\tvar angle = EngineApp.EngineTime * 0.3;\r\n\tvar offset = new Vector3(Math.Cos(angle), Math.Sin(angle), 0) * 2.5;\r\n\tvar lookTo = new Vector3(11.7374839124827, -0.05177675032439, -15.5092755825092);\r\n\tvar lookAt = Quaternion.LookAt(-offset, new Vector3(0,0,1));\r\n\t\r\n\treturn new Transform( lookTo + offset, lookAt, Vector3.One );\r\n}\r\n"
+		Exit
+		{
+		}
+	}
+	.component NeoAxis.Material
+	{
+		Name = Material Emission
+		Emissive = "0.8216078 0.07447059 1; 3.49"
+		.component NeoAxis.FlowGraph
+		{
+			Name = Shader graph
+			EditorScrollPosition = 0 0
+			Specialization
+			{
+				GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+			}
+			.component NeoAxis.FlowGraphNode
+			{
+				Name = Node Material Emission
+				Position = 10 -7
+				ControlledObject
+				{
+					GetByReference = "this:..\\.."
+				}
+			}
+		}
+	}
+	.component NeoAxis.Material
+	{
+		Name = Material Emission 2
+		Emissive = "1 0.1007059 0.007372549; 10"
+		.component NeoAxis.FlowGraph
+		{
+			Name = Shader graph
+			EditorScrollPosition = 0 0
+			Specialization
+			{
+				GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+			}
+			.component NeoAxis.FlowGraphNode
+			{
+				Name = Node Material Emission
+				Position = 10 -7
+				ControlledObject
+				{
+					GetByReference = "this:..\\.."
+				}
+			}
+		}
+	}
+	.component NeoAxis.Light
+	{
+		Name = Light
+		Transform = "15.6111591916718 2.33218545335632 -14.4280717761837; 0 0 -1 0.00000000000000006; 1 1 1"
+		Type = Spotlight
+		Brightness = 1000000
+		Color = 0 1 0.04290196
+		AttenuationFar = 138.38400000000001
+		SpotlightInnerAngle = 20
+		SpotlightOuterAngle = 30
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Capsule
+		Transform = "7.59223279480325 -1.32652271537986 -15.6786029045751; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Emission 2"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Capsule
+			{
+				Name = Mesh Geometry
+				Radius = 0.1
+				Height = 2
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Capsule 2
+		Transform = "12.5073134695107 5.04732964063298 -15.6501072806751; -0.707106781186548 0.707106781186548 0 0; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Emission 2"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Capsule
+			{
+				Name = Mesh Geometry
+				Radius = 0.1
+				Height = 2
+			}
+		}
+	}
+}

@@ -98,7 +98,7 @@ namespace NeoAxis.Editor
 
 			timer1.Start();
 
-			Document.UndoSystem.ListOfActionsChanged += UndoSystem_ListOfActionsChanged;
+			Document2.UndoSystem.ListOfActionsChanged += UndoSystem_ListOfActionsChanged;
 		}
 
 		//private void Editor_PreviewKeyDown( object sender, System.Windows.Input.KeyEventArgs e )
@@ -115,7 +115,7 @@ namespace NeoAxis.Editor
 			get { return scriptEditorControl; }
 		}
 
-		public override void EditorActionGetState( EditorAction.GetStateContext context )
+		public override void EditorActionGetState( EditorActionGetStateContext context )
 		{
 			switch( context.Action.Name )
 			{
@@ -151,7 +151,7 @@ namespace NeoAxis.Editor
 			base.EditorActionGetState( context );
 		}
 
-		public override void EditorActionClick( EditorAction.ClickContext context )
+		public override void EditorActionClick( EditorActionClickContext context )
 		{
 			switch( context.Action.Name )
 			{
@@ -247,7 +247,7 @@ namespace NeoAxis.Editor
 						typeof( CSharpScript ) ).MetadataGetMemberBySignature( "property:Code" );
 					undoItems.Add( new UndoActionPropertiesChange.Item( Script, property, oldValue ) );
 					var undoAction = new UndoActionPropertiesChange( undoItems );
-					Document.CommitUndoAction( undoAction );
+					Document2.CommitUndoAction( undoAction );
 				}
 			}
 

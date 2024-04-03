@@ -31,7 +31,8 @@ namespace NeoAxis
 		//!!!!impl
 		Transform transform3D;
 
-		double lastMouseMoveTime;
+		Vector2I tooltipMousePositionInPixels;
+		double tooltipLastMouseMoveTimeOutsideThreshold;
 
 		Rectangle lastCursorRectangle;
 
@@ -91,7 +92,8 @@ namespace NeoAxis
 			catch { }
 		}
 
-		public bool IsControlCursorCoveredByOther( UIControl controlToCheck )
+		//!!!!new
+		public bool IsControlCoveredByOther( UIControl controlToCheck, Vector2 screenPosition )
 		{
 			if( cachedCoverControls.Count != 0 )
 			{
@@ -101,17 +103,42 @@ namespace NeoAxis
 					if( controlToCheck.cachedIndexInHierarchyToImplementCovering < cachedControl.cachedIndexInHierarchyToImplementCovering )
 					{
 						//check control is not child
-						if( !controlToCheck.GetAllParents( false ).Contains( controlToCheck ) )
+						if( !controlToCheck.GetAllParents().Contains( controlToCheck ) )
 						{
 							if( cachedControl.CoverOtherControls == CoverOtherControlsEnum.AllPreviousInHierarchy )
 								return true;
-							if( cachedControl.GetScreenRectangle().Contains( MousePosition ) )
+							if( cachedControl.GetScreenRectangle().Contains( screenPosition ) )
 								return true;
 						}
 					}
 				}
 			}
 			return false;
+		}
+
+		public bool IsControlCursorCoveredByOther( UIControl controlToCheck )
+		{
+			return IsControlCoveredByOther( controlToCheck, MousePosition );
+
+			//if( cachedCoverControls.Count != 0 )
+			//{
+			//	foreach( var cachedControl in cachedCoverControls )
+			//	{
+			//		//check control before
+			//		if( controlToCheck.cachedIndexInHierarchyToImplementCovering < cachedControl.cachedIndexInHierarchyToImplementCovering )
+			//		{
+			//			//check control is not child
+			//			if( !controlToCheck.GetAllParents().Contains( controlToCheck ) )
+			//			{
+			//				if( cachedControl.CoverOtherControls == CoverOtherControlsEnum.AllPreviousInHierarchy )
+			//					return true;
+			//				if( cachedControl.GetScreenRectangle().Contains( MousePosition ) )
+			//					return true;
+			//			}
+			//		}
+			//	}
+			//}
+			//return false;
 		}
 
 		public bool IsControlCoveredByOther( UIControl controlToCheck )
@@ -124,7 +151,7 @@ namespace NeoAxis
 					if( controlToCheck.cachedIndexInHierarchyToImplementCovering < cachedControl.cachedIndexInHierarchyToImplementCovering )
 					{
 						//check control is not child
-						if( !controlToCheck.GetAllParents( false ).Contains( controlToCheck ) )
+						if( !controlToCheck.GetAllParents().Contains( controlToCheck ) )
 						{
 							if( cachedControl.CoverOtherControls == CoverOtherControlsEnum.AllPreviousInHierarchy )
 								return true;
@@ -137,15 +164,20 @@ namespace NeoAxis
 			return false;
 		}
 
+		void UpdateCapturedAndFocusedControls()
+		{
+			if( capturedControl != null && ( capturedControl.ParentContainer == null || !capturedControl.EnabledInHierarchy || !capturedControl.VisibleInHierarchy ) )
+				capturedControl = null;
+
+			if( focusedControl != null && ( focusedControl.ParentContainer == null || !focusedControl.EnabledInHierarchy || !focusedControl.VisibleInHierarchy ) )
+				focusedControl = null;
+		}
+
 		public bool PerformKeyDown( KeyEvent e )
 		{
 			CheckCachedParameters();
 			UpdateCachedCoverControls();
-
-			if( capturedControl != null && capturedControl.ParentContainer == null )
-				capturedControl = null;
-			if( focusedControl != null && focusedControl.ParentContainer == null )
-				focusedControl = null;
+			UpdateCapturedAndFocusedControls();
 
 			if( focusedControl != null )
 			{
@@ -167,11 +199,7 @@ namespace NeoAxis
 		{
 			CheckCachedParameters();
 			UpdateCachedCoverControls();
-
-			if( capturedControl != null && capturedControl.ParentContainer == null )
-				capturedControl = null;
-			if( focusedControl != null && focusedControl.ParentContainer == null )
-				focusedControl = null;
+			UpdateCapturedAndFocusedControls();
 
 			if( focusedControl != null )
 				return focusedControl.CallKeyPress( e );
@@ -183,11 +211,7 @@ namespace NeoAxis
 		{
 			CheckCachedParameters();
 			UpdateCachedCoverControls();
-
-			if( capturedControl != null && capturedControl.ParentContainer == null )
-				capturedControl = null;
-			if( focusedControl != null && focusedControl.ParentContainer == null )
-				focusedControl = null;
+			UpdateCapturedAndFocusedControls();
 
 			if( focusedControl != null )
 				return focusedControl.CallKeyUp( e );
@@ -201,11 +225,7 @@ namespace NeoAxis
 		{
 			CheckCachedParameters();
 			UpdateCachedCoverControls();
-
-			if( capturedControl != null && capturedControl.ParentContainer == null )
-				capturedControl = null;
-			if( focusedControl != null && focusedControl.ParentContainer == null )
-				focusedControl = null;
+			UpdateCapturedAndFocusedControls();
 
 			if( capturedControl != null )
 				return capturedControl.CallMouseDown( button, false, true );
@@ -226,11 +246,7 @@ namespace NeoAxis
 		{
 			CheckCachedParameters();
 			UpdateCachedCoverControls();
-
-			if( capturedControl != null && capturedControl.ParentContainer == null )
-				capturedControl = null;
-			if( focusedControl != null && focusedControl.ParentContainer == null )
-				focusedControl = null;
+			UpdateCapturedAndFocusedControls();
 
 			if( capturedControl != null )
 				return capturedControl.CallMouseUp( button, false, true );
@@ -247,11 +263,7 @@ namespace NeoAxis
 		{
 			CheckCachedParameters();
 			UpdateCachedCoverControls();
-
-			if( capturedControl != null && capturedControl.ParentContainer == null )
-				capturedControl = null;
-			if( focusedControl != null && focusedControl.ParentContainer == null )
-				focusedControl = null;
+			UpdateCapturedAndFocusedControls();
 
 			if( capturedControl != null )
 				return capturedControl.CallMouseDoubleClick( button, false, true );
@@ -266,15 +278,17 @@ namespace NeoAxis
 
 		public void PerformMouseMove( Vector2 mouse )
 		{
-			lastMouseMoveTime = EngineApp.EngineTime;
+			//tooltips
+			var mousePositionInPixels = ( viewport.SizeInPixels.ToVector2() * mouse ).ToVector2I();
+			if( Math.Abs( tooltipMousePositionInPixels.X - mousePositionInPixels.X ) > 3 || Math.Abs( tooltipMousePositionInPixels.Y - mousePositionInPixels.Y ) > 3 )
+			{
+				tooltipLastMouseMoveTimeOutsideThreshold = EngineApp.EngineTime;
+				tooltipMousePositionInPixels = mousePositionInPixels;
+			}
 
 			CheckCachedParameters();
 			UpdateCachedCoverControls();
-
-			if( capturedControl != null && capturedControl.ParentContainer == null )
-				capturedControl = null;
-			if( focusedControl != null && focusedControl.ParentContainer == null )
-				focusedControl = null;
+			UpdateCapturedAndFocusedControls();
 
 			//if( capture != null )
 			//{
@@ -292,11 +306,7 @@ namespace NeoAxis
 		{
 			CheckCachedParameters();
 			UpdateCachedCoverControls();
-
-			if( capturedControl != null && capturedControl.ParentContainer == null )
-				capturedControl = null;
-			if( focusedControl != null && focusedControl.ParentContainer == null )
-				focusedControl = null;
+			UpdateCapturedAndFocusedControls();
 
 			if( focusedControl != null )
 				return focusedControl.CallMouseWheel( delta );
@@ -308,11 +318,7 @@ namespace NeoAxis
 		{
 			CheckCachedParameters();
 			UpdateCachedCoverControls();
-
-			if( capturedControl != null && capturedControl.ParentContainer == null )
-				capturedControl = null;
-			if( focusedControl != null && focusedControl.ParentContainer == null )
-				focusedControl = null;
+			UpdateCapturedAndFocusedControls();
 
 			if( capturedControl != null )
 				return capturedControl.CallJoystickEvent( e );
@@ -324,27 +330,24 @@ namespace NeoAxis
 		{
 			CheckCachedParameters();
 			UpdateCachedCoverControls();
-
-			if( capturedControl != null && capturedControl.ParentContainer == null )
-				capturedControl = null;
-			if( focusedControl != null && focusedControl.ParentContainer == null )
-				focusedControl = null;
+			UpdateCapturedAndFocusedControls();
 
 			if( capturedControl != null )
-				return capturedControl.CallTouch( e );
+				return capturedControl.CallTouch( e, false, true );
 
-			return CallTouch( e );
+			if( CallTouch( e, true, false ) )
+				return true;
+			if( CallTouch( e, false, false ) )
+				return true;
+			return false;
+			//return CallTouch( e );
 		}
 
 		public bool PerformSpecialInputDeviceEvent( InputEvent e )
 		{
 			CheckCachedParameters();
 			UpdateCachedCoverControls();
-
-			if( capturedControl != null && capturedControl.ParentContainer == null )
-				capturedControl = null;
-			if( focusedControl != null && focusedControl.ParentContainer == null )
-				focusedControl = null;
+			UpdateCapturedAndFocusedControls();
 
 			if( capturedControl != null )
 				return capturedControl.CallSpecialInputDeviceEvent( e );
@@ -352,17 +355,13 @@ namespace NeoAxis
 			return CallSpecialInputDeviceEvent( e );
 		}
 
-		internal override void OnUpdateBefore( float delta )
+		internal override void OnUpdateBefore( float delta, ref bool childrenUpdate )
 		{
-			base.OnUpdateBefore( delta );
+			base.OnUpdateBefore( delta, ref childrenUpdate );
 
 			CheckCachedParameters();
 			UpdateCachedCoverControls();
-
-			if( capturedControl != null && capturedControl.ParentContainer == null )
-				capturedControl = null;
-			if( focusedControl != null && focusedControl.ParentContainer == null )
-				focusedControl = null;
+			UpdateCapturedAndFocusedControls();
 		}
 
 		////Tick
@@ -496,7 +495,7 @@ namespace NeoAxis
 				return;
 
 			//!!!!attachedToScene
-			var channel = SoundWorld.SoundPlay( null, sound, EngineApp.DefaultSoundChannelGroup, 0.5, true );
+			var channel = SoundWorld.SoundPlay( null, sound, EngineApp.DefaultSoundChannelGroup, 0.5, 1, true );
 			if( channel != null )
 			{
 				if( Transform3D != null )
@@ -516,7 +515,7 @@ namespace NeoAxis
 				return;
 
 			//!!!!attachedToScene
-			var channel = SoundWorld.SoundPlay( null, sound2, EngineApp.DefaultSoundChannelGroup, 0.5, true );
+			var channel = SoundWorld.SoundPlay( null, sound2, EngineApp.DefaultSoundChannelGroup, 0.5, 1, true );
 			if( channel != null )
 			{
 				if( Transform3D != null )
@@ -643,8 +642,13 @@ namespace NeoAxis
 				var tooltip = control.GetComponent<UITooltip>( onlyEnabledInHierarchy: true );
 				if( tooltip != null )
 				{
-					if( EngineApp.EngineTime - lastMouseMoveTime > tooltip.InitialDelay )
-						GetStyle().PerformRenderComponent( tooltip, renderer );
+					if( EngineApp.EngineTime - tooltipLastMouseMoveTimeOutsideThreshold > tooltip.InitialDelay )
+					{
+						var c = tooltip.Parent as UIControl;
+						if( c == null )
+							c = this;
+						c.GetStyle().PerformRenderComponent( tooltip, renderer );
+					}
 				}
 			}
 		}

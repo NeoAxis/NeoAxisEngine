@@ -36,7 +36,7 @@ namespace NeoAxis
 		public Reference<string> Selection
 		{
 			get { if( _selection.BeginGet() ) Selection = _selection.Get( this ); return _selection.value; }
-			set { if( _selection.BeginSet( ref value ) ) { try { SelectionChanged?.Invoke( this ); } finally { _selection.EndSet(); } } }
+			set { if( _selection.BeginSet( this, ref value ) ) { try { SelectionChanged?.Invoke( this ); } finally { _selection.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Selection"/> property value changes.</summary>
 		public event Action<FlowSwitch> SelectionChanged;

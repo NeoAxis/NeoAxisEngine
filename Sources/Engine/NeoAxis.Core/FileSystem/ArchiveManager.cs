@@ -85,7 +85,8 @@ namespace NeoAxis
 				using( var stream = entry.Open() )
 				{
 					var bytes = new byte[ entry.Length ];
-					stream.Read( bytes, 0, bytes.Length );
+					IOUtility.ReadGuaranteed( stream, bytes );
+					//stream.Read( bytes, 0, bytes.Length );
 
 					//decode
 					for( int n = 0; n < bytes.Length; n++ )

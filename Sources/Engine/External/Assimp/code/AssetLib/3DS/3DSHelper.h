@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 
 All rights reserved.
@@ -53,7 +53,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <assimp/light.h>
 #include <assimp/material.h>
 #include <assimp/qnan.h>
-#include <stdio.h> //sprintf
+#include <cstdio> //sprintf
 
 namespace Assimp {
 namespace D3DS {
@@ -61,20 +61,10 @@ namespace D3DS {
 #include <assimp/Compiler/pushpack1.h>
 
 // ---------------------------------------------------------------------------
-/** Discreet3DS class: Helper class for loading 3ds files. Defines chunks
-*  and data structures.
+/** Defines chunks and data structures.
 */
-class Discreet3DS {
-private:
-    Discreet3DS() AI_NO_EXCEPT {
-        // empty
-    }
+namespace Discreet3DS {
 
-    ~Discreet3DS() {
-        // empty
-    }
-
-public:
     //! data structure for a single chunk in a .3ds file
     struct Chunk {
         uint16_t Flag;
@@ -269,7 +259,7 @@ public:
         // Specifies the file name of a texture
         CHUNK_MAPFILE = 0xA300,
 
-        // Specifies whether a materail requires two-sided rendering
+        // Specifies whether a material requires two-sided rendering
         CHUNK_MAT_TWO_SIDE = 0xA081,
         // ********************************************************************
 
@@ -314,16 +304,17 @@ public:
         // camera sub-chunks
         CHUNK_CAM_RANGES = 0x4720
     };
-};
+}
 
 // ---------------------------------------------------------------------------
 /** Helper structure representing a 3ds mesh face */
 struct Face : public FaceWithSmoothingGroup {
 };
 
-#ifdef _WIN32
+#ifdef _MSC_VER
+#pragma warning(push)
 #pragma warning(disable : 4315)
-#endif
+#endif // _MSC_VER
 
 // ---------------------------------------------------------------------------
 /** Helper structure representing a texture */
@@ -331,7 +322,6 @@ struct Texture {
     //! Default constructor
     Texture() AI_NO_EXCEPT
             : mTextureBlend(0.0f),
-              mMapName(),
               mOffsetU(0.0),
               mOffsetV(0.0),
               mScaleU(1.0),
@@ -343,51 +333,11 @@ struct Texture {
         mTextureBlend = get_qnan();
     }
 
-    Texture(const Texture &other) :
-            mTextureBlend(other.mTextureBlend),
-            mMapName(other.mMapName),
-            mOffsetU(other.mOffsetU),
-            mOffsetV(other.mOffsetV),
-            mScaleU(other.mScaleU),
-            mScaleV(other.mScaleV),
-            mRotation(other.mRotation),
-            mMapMode(other.mMapMode),
-            bPrivate(other.bPrivate),
-            iUVSrc(other.iUVSrc) {
-        // empty
-    }
+    Texture(const Texture &other) = default;
 
-    Texture(Texture &&other) AI_NO_EXCEPT : mTextureBlend(std::move(other.mTextureBlend)),
-                                            mMapName(std::move(other.mMapName)),
-                                            mOffsetU(std::move(other.mOffsetU)),
-                                            mOffsetV(std::move(other.mOffsetV)),
-                                            mScaleU(std::move(other.mScaleU)),
-                                            mScaleV(std::move(other.mScaleV)),
-                                            mRotation(std::move(other.mRotation)),
-                                            mMapMode(std::move(other.mMapMode)),
-                                            bPrivate(std::move(other.bPrivate)),
-                                            iUVSrc(std::move(other.iUVSrc)) {
-        // empty
-    }
+    Texture(Texture &&other) AI_NO_EXCEPT = default;
 
-    Texture &operator=(Texture &&other) AI_NO_EXCEPT {
-        if (this == &other) {
-            return *this;
-        }
-
-        mTextureBlend = std::move(other.mTextureBlend);
-        mMapName = std::move(other.mMapName);
-        mOffsetU = std::move(other.mOffsetU);
-        mOffsetV = std::move(other.mOffsetV);
-        mScaleU = std::move(other.mScaleU);
-        mScaleV = std::move(other.mScaleV);
-        mRotation = std::move(other.mRotation);
-        mMapMode = std::move(other.mMapMode);
-        bPrivate = std::move(other.bPrivate);
-        iUVSrc = std::move(other.iUVSrc);
-
-        return *this;
-    }
+    Texture &operator=(Texture &&other) AI_NO_EXCEPT = default;
 
     //! Specifies the blend factor for the texture
     ai_real mTextureBlend;
@@ -411,6 +361,10 @@ struct Texture {
 };
 
 #include <assimp/Compiler/poppack1.h>
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif // _MSC_VER
 
 // ---------------------------------------------------------------------------
 /** Helper structure representing a 3ds material */
@@ -441,85 +395,9 @@ struct Material {
         // empty
     }
 
-    Material(const Material &other) :
-            mName(other.mName),
-            mDiffuse(other.mDiffuse),
-            mSpecularExponent(other.mSpecularExponent),
-            mShininessStrength(other.mShininessStrength),
-            mSpecular(other.mSpecular),
-            mAmbient(other.mAmbient),
-            mShading(other.mShading),
-            mTransparency(other.mTransparency),
-            sTexDiffuse(other.sTexDiffuse),
-            sTexOpacity(other.sTexOpacity),
-            sTexSpecular(other.sTexSpecular),
-            sTexReflective(other.sTexReflective),
-            sTexBump(other.sTexBump),
-            sTexEmissive(other.sTexEmissive),
-            sTexShininess(other.sTexShininess),
-            mBumpHeight(other.mBumpHeight),
-            mEmissive(other.mEmissive),
-            sTexAmbient(other.sTexAmbient),
-            mTwoSided(other.mTwoSided) {
-        // empty
+    Material(const Material &other) = default;
 
-    }
-
-    //! Move constructor. This is explicitly written because MSVC doesn't support defaulting it
-    Material(Material &&other) AI_NO_EXCEPT :
-            mName(std::move(other.mName)),
-            mDiffuse(std::move(other.mDiffuse)),
-            mSpecularExponent(std::move(other.mSpecularExponent)),
-            mShininessStrength(std::move(other.mShininessStrength)),
-            mSpecular(std::move(other.mSpecular)),
-            mAmbient(std::move(other.mAmbient)),
-            mShading(std::move(other.mShading)),
-            mTransparency(std::move(other.mTransparency)),
-            sTexDiffuse(std::move(other.sTexDiffuse)),
-            sTexOpacity(std::move(other.sTexOpacity)),
-            sTexSpecular(std::move(other.sTexSpecular)),
-            sTexReflective(std::move(other.sTexReflective)),
-            sTexBump(std::move(other.sTexBump)),
-            sTexEmissive(std::move(other.sTexEmissive)),
-            sTexShininess(std::move(other.sTexShininess)),
-            mBumpHeight(std::move(other.mBumpHeight)),
-            mEmissive(std::move(other.mEmissive)),
-            sTexAmbient(std::move(other.sTexAmbient)),
-            mTwoSided(std::move(other.mTwoSided)) {
-        // empty
-    }
-
-    Material &operator=(Material &&other) AI_NO_EXCEPT {
-        if (this == &other) {
-            return *this;
-        }
-
-        mName = std::move(other.mName);
-        mDiffuse = std::move(other.mDiffuse);
-        mSpecularExponent = std::move(other.mSpecularExponent);
-        mShininessStrength = std::move(other.mShininessStrength),
-        mSpecular = std::move(other.mSpecular);
-        mAmbient = std::move(other.mAmbient);
-        mShading = std::move(other.mShading);
-        mTransparency = std::move(other.mTransparency);
-        sTexDiffuse = std::move(other.sTexDiffuse);
-        sTexOpacity = std::move(other.sTexOpacity);
-        sTexSpecular = std::move(other.sTexSpecular);
-        sTexReflective = std::move(other.sTexReflective);
-        sTexBump = std::move(other.sTexBump);
-        sTexEmissive = std::move(other.sTexEmissive);
-        sTexShininess = std::move(other.sTexShininess);
-        mBumpHeight = std::move(other.mBumpHeight);
-        mEmissive = std::move(other.mEmissive);
-        sTexAmbient = std::move(other.sTexAmbient);
-        mTwoSided = std::move(other.mTwoSided);
-
-        return *this;
-    }
-
-    virtual ~Material() {
-        // empty
-    }
+    virtual ~Material() = default;
 
     //! Name of the material
     std::string mName;
@@ -615,7 +493,12 @@ struct Node {
     Node() = delete;
 
     explicit Node(const std::string &name) :
-            mParent(NULL), mName(name), mInstanceNumber(0), mHierarchyPos(0), mHierarchyIndex(0), mInstanceCount(1) {
+            mParent(nullptr),
+            mName(name),
+            mInstanceNumber(0),
+            mHierarchyPos(0),
+            mHierarchyIndex(0),
+            mInstanceCount(1) {
         aRotationKeys.reserve(20);
         aPositionKeys.reserve(20);
         aScalingKeys.reserve(20);

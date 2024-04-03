@@ -29,7 +29,7 @@ namespace NeoAxis
 		public Reference<double> Amount
 		{
 			get { if( _amount.BeginGet() ) Amount = _amount.Get( this ); return _amount.value; }
-			set { if( _amount.BeginSet( ref value ) ) { try { AmountChanged?.Invoke( this ); } finally { _amount.EndSet(); } } }
+			set { if( _amount.BeginSet( this, ref value ) ) { try { AmountChanged?.Invoke( this ); } finally { _amount.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Amount"/> property value changes.</summary>
 		public event Action<RenderingEffect_ChromaticAberration> AmountChanged;

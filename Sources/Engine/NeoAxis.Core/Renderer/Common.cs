@@ -201,17 +201,30 @@ namespace NeoAxis
 		_16,
 		_32,
 		_64,
+		_75,
+		_100,
 		_128,
-		//_256, it is too long to calculate
-		//to add 512 need to change more code (256 multiplier)
+		_150,
+		_200,
+		//_256,// it is too long to calculate. need improve calculation code
+		//to add more than 256 need to change a lot of code (1 byte for index is used)
 	}
 
-	public enum VertexFormatEnum
+	[Flags]
+	public enum VoxelFormatEnum
 	{
-		Auto,
-		Basic,
-		Full,
+		Basic = 0, //None
+		Full = 1,
+		BakedOpacity = 2
 	}
+
+	//public enum VoxelFormatEnum
+	//{
+	//	//Auto,
+	//	Basic,
+	//	Full,
+	//	//FullTransparent,
+	//}
 
 	[Flags]
 	public enum CutVolumeFlags
@@ -250,4 +263,17 @@ namespace NeoAxis
 		ReadWrite
 	}
 
+	public enum ShadowTextureSizeEnum
+	{
+		//update GetShadowTextureSizeEnumAsInteger when changed
+
+		_128,
+		_256,
+		_512,
+		_1024,
+		_2048,
+		_4096,
+		_8192,
+		//_16384, //replace also "ShadowTextureSize._8192"
+	}
 }

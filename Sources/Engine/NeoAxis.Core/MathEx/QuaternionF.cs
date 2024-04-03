@@ -10,7 +10,7 @@ namespace NeoAxis
 {
 	//[TypeConverter( typeof( _QuatFAsAnglesConverter ) )]
 	/// <summary>
-	/// Represents a double single precision four-dimensional mathematical quaternion.
+	/// Represents a single precision four-dimensional mathematical quaternion.
 	/// </summary>
 	[StructLayout( LayoutKind.Sequential )]
 	[HCExpandable]
@@ -57,8 +57,7 @@ namespace NeoAxis
 			if( string.IsNullOrEmpty( text ) )
 				throw new ArgumentNullException( "The text parameter cannot be null or zero length." );
 
-			string[] vals = text.Split( new char[] { ' ' },
-				StringSplitOptions.RemoveEmptyEntries );
+			string[] vals = text.Split( new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries );
 
 			//parse from Angles (special case).
 			if( vals.Length == 3 )
@@ -540,11 +539,20 @@ namespace NeoAxis
 			float omega, cosom, sinom, scale0, scale1;
 
 			if( t <= 0.0f )
+			{
 				result = from;
+				return;
+			}
 			if( t >= 1.0f )
+			{
 				result = to;
+				return;
+			}
 			if( from == to )
+			{
 				result = to;
+				return;
+			}
 
 			cosom = from.X * to.X + from.Y * to.Y + from.Z * to.Z + from.W * to.W;
 			if( cosom < 0.0f )
@@ -744,6 +752,18 @@ namespace NeoAxis
 			return result;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		[AutoConvertType]
+		public QuaternionH ToQuaternionH()
+		{
+			QuaternionH result;
+			result.X = new HalfType( X );
+			result.Y = new HalfType( Y );
+			result.Z = new HalfType( Z );
+			result.W = new HalfType( W );
+			return result;
+		}
+
 #if !DISABLE_IMPLICIT
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Quaternion( QuaternionF v )
@@ -753,9 +773,18 @@ namespace NeoAxis
 #endif
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static void LookAt( ref Vector3F direction, ref Vector3F up, out QuaternionF result )
+		{
+			Matrix3F.LookAt( ref direction, ref up, out var matrix );
+			matrix.ToQuaternion( out result );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static QuaternionF LookAt( Vector3F direction, Vector3F up )
 		{
-			return Matrix3F.LookAt( direction, up ).ToQuaternion();
+			LookAt( ref direction, ref up, out var result );
+			return result;
+			//return Matrix3F.LookAt( direction, up ).ToQuaternion();
 		}
 
 		/////////////////////////////////////////
@@ -812,6 +841,13 @@ namespace NeoAxis
 		public static bool Equals( ref QuaternionF v1, ref QuaternionF v2 )
 		{
 			return v1.X == v2.X && v1.Y == v2.Y && v1.Z == v2.Z && v1.W == v2.W;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		[AutoConvertType]
+		public Vector4F ToVector4()
+		{
+			return new Vector4F( X, Y, Z, W );
 		}
 	}
 }

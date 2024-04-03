@@ -1,0 +1,38 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.WeaponType
+{
+	WayToUse = OneHandedMelee
+	Mode1FiringTotalTime = 1.6
+	Mode1FiringFireTime = 0.5
+	Mode1MaxRecoilOffset = 0
+	Mode1MaxRecoilOffsetTime = 0
+	Mode1FiringDistance = 0 2
+	Mode1MeleeDamage = 1
+	Mode2Enabled = False
+	Mesh
+	{
+		GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Medieval Sword\\Data\\scene.gltf|$Mesh"
+	}
+	Mode1BulletType
+	{
+	}
+	Mode1FiringBeginSound
+	{
+	}
+	Mode1FireSound
+	{
+		GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Medieval Sword\\Data\\Attack.ogg"
+	}
+	Mode1FireMuzzleFlashParticle
+	{
+	}
+	Mode1MeleeCollisionSound
+	{
+		GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Medieval Sword\\Data\\Collision.ogg"
+	}
+	InventoryImage
+	{
+		GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Medieval Sword\\Data\\Inventory.png"
+	}
+}

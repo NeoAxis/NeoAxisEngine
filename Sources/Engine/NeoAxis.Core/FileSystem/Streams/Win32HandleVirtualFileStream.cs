@@ -1,9 +1,7 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-#if WINDOWS || UWP
+//#if WINDOWS || UWP
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -18,16 +16,13 @@ namespace NeoAxis
 		///////////////////////////////////////////
 
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true ), SuppressUnmanagedCodeSecurity]
-		static extern IntPtr CreateFile( string lpFileName, int dwDesiredAccess,
-			FileShare dwShareMode, IntPtr securityAttrs, FileMode dwCreationDisposition,
-			int dwFlagsAndAttributes, IntPtr hTemplateFile );
+		static extern IntPtr CreateFile( string lpFileName, int dwDesiredAccess, FileShare dwShareMode, IntPtr securityAttrs, FileMode dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile );
 
 		[DllImport( "kernel32.dll", SetLastError = true ), SuppressUnmanagedCodeSecurity]
 		static extern bool CloseHandle( IntPtr handle );
 
 		[DllImport( "kernel32.dll", SetLastError = true ), SuppressUnmanagedCodeSecurity]
-		static extern int ReadFile( IntPtr handle, IntPtr buffer, int numBytesToRead,
-			out int numBytesRead, IntPtr overlapped );
+		static extern int ReadFile( IntPtr handle, IntPtr buffer, int numBytesToRead, out int numBytesRead, IntPtr overlapped );
 
 		[DllImport( "kernel32.dll", SetLastError = true ), SuppressUnmanagedCodeSecurity]
 		static extern int GetFileSize( IntPtr handle, out int highSize );
@@ -54,8 +49,7 @@ namespace NeoAxis
 
 		public Win32HandleVirtualFileStream( string realPath )
 		{
-			handle = CreateFile( realPath, GENERIC_READ, FileShare.Read, IntPtr.Zero,
-				FileMode.Open, 0, IntPtr.Zero );
+			handle = CreateFile( realPath, GENERIC_READ, FileShare.Read, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
 
 			if( handle == (IntPtr)( -1 ) )
 			{
@@ -114,9 +108,7 @@ namespace NeoAxis
 				if( handle == IntPtr.Zero )
 					throw new ObjectDisposedException( null );
 
-				int highSize = 0;
-				int fileSize = 0;
-				fileSize = GetFileSize( handle, out highSize );
+				var fileSize = GetFileSize( handle, out var highSize );
 				if( fileSize == -1 )
 				{
 					int errorCode = Marshal.GetLastWin32Error();
@@ -124,7 +116,6 @@ namespace NeoAxis
 						throw new IOException( "Getting file length failed." );
 				}
 
-				//!!!!так?
 				long length = ( highSize << 0x20 ) | fileSize;
 				return length;
 			}
@@ -179,7 +170,7 @@ namespace NeoAxis
 			int ret;
 			unsafe
 			{
-				fixed ( byte* pBuffer = buffer )
+				fixed( byte* pBuffer = buffer )
 				{
 					ret = ReadUnmanaged( (IntPtr)( pBuffer + offset ), count );
 				}
@@ -230,4 +221,4 @@ namespace NeoAxis
 		}
 	}
 }
-#endif
+//#endif

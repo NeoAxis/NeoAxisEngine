@@ -18,7 +18,7 @@ namespace NeoAxis
 		public Reference<double> Maximum
 		{
 			get { if( _maximum.BeginGet() ) Maximum = _maximum.Get( this ); return _maximum.value; }
-			set { if( _maximum.BeginSet( ref value ) ) { try { MaximumChanged?.Invoke( this ); } finally { _maximum.EndSet(); } } }
+			set { if( _maximum.BeginSet( this, ref value ) ) { try { MaximumChanged?.Invoke( this ); } finally { _maximum.EndSet(); } } }
 		}
 		public event Action<UIProgress> MaximumChanged;
 		ReferenceField<double> _maximum = 100.0;
@@ -31,7 +31,7 @@ namespace NeoAxis
 		public Reference<double> Value
 		{
 			get { if( _value.BeginGet() ) Value = _value.Get( this ); return _value.value; }
-			set { if( _value.BeginSet( ref value ) ) { try { ValueChanged?.Invoke( this ); } finally { _value.EndSet(); } } }
+			set { if( _value.BeginSet( this, ref value ) ) { try { ValueChanged?.Invoke( this ); } finally { _value.EndSet(); } } }
 		}
 		public event Action<UIProgress> ValueChanged;
 		ReferenceField<double> _value = 0.0;

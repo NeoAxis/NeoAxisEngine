@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2022 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -81,7 +81,7 @@ typedef enum bgfx_fatal
 typedef enum bgfx_renderer_type
 {
     BGFX_RENDERER_TYPE_NOOP,                  /** ( 0) No rendering.                  */
-    BGFX_RENDERER_TYPE_DIRECT3D9,             /** ( 1) Direct3D 9.0                   */
+    BGFX_RENDERER_TYPE_AGC,                   /** ( 1) AGC                            */
     BGFX_RENDERER_TYPE_DIRECT3D11,            /** ( 2) Direct3D 11.0                  */
     BGFX_RENDERER_TYPE_DIRECT3D12,            /** ( 3) Direct3D 12.0                  */
     BGFX_RENDERER_TYPE_GNM,                   /** ( 4) GNM                            */
@@ -90,7 +90,6 @@ typedef enum bgfx_renderer_type
     BGFX_RENDERER_TYPE_OPENGLES,              /** ( 7) OpenGL ES 2.0+                 */
     BGFX_RENDERER_TYPE_OPENGL,                /** ( 8) OpenGL 2.1+                    */
     BGFX_RENDERER_TYPE_VULKAN,                /** ( 9) Vulkan                         */
-    BGFX_RENDERER_TYPE_WEBGPU,                /** (10) WebGPU                         */
 
     BGFX_RENDERER_TYPE_COUNT
 
@@ -193,70 +192,81 @@ typedef enum bgfx_texture_format
     BGFX_TEXTURE_FORMAT_ATCE,                 /** (18) ATCE RGBA 8 BPP explicit alpha */
     BGFX_TEXTURE_FORMAT_ATCI,                 /** (19) ATCI RGBA 8 BPP interpolated alpha */
     BGFX_TEXTURE_FORMAT_ASTC4X4,              /** (20) ASTC 4x4 8.0 BPP               */
-    BGFX_TEXTURE_FORMAT_ASTC5X5,              /** (21) ASTC 5x5 5.12 BPP              */
-    BGFX_TEXTURE_FORMAT_ASTC6X6,              /** (22) ASTC 6x6 3.56 BPP              */
-    BGFX_TEXTURE_FORMAT_ASTC8X5,              /** (23) ASTC 8x5 3.20 BPP              */
-    BGFX_TEXTURE_FORMAT_ASTC8X6,              /** (24) ASTC 8x6 2.67 BPP              */
-    BGFX_TEXTURE_FORMAT_ASTC10X5,             /** (25) ASTC 10x5 2.56 BPP             */
-    BGFX_TEXTURE_FORMAT_UNKNOWN,              /** (26) Compressed formats above.      */
-    BGFX_TEXTURE_FORMAT_R1,                   /** (27)                                */
-    BGFX_TEXTURE_FORMAT_A8,                   /** (28)                                */
-    BGFX_TEXTURE_FORMAT_R8,                   /** (29)                                */
-    BGFX_TEXTURE_FORMAT_R8I,                  /** (30)                                */
-    BGFX_TEXTURE_FORMAT_R8U,                  /** (31)                                */
-    BGFX_TEXTURE_FORMAT_R8S,                  /** (32)                                */
-    BGFX_TEXTURE_FORMAT_R16,                  /** (33)                                */
-    BGFX_TEXTURE_FORMAT_R16I,                 /** (34)                                */
-    BGFX_TEXTURE_FORMAT_R16U,                 /** (35)                                */
-    BGFX_TEXTURE_FORMAT_R16F,                 /** (36)                                */
-    BGFX_TEXTURE_FORMAT_R16S,                 /** (37)                                */
-    BGFX_TEXTURE_FORMAT_R32I,                 /** (38)                                */
-    BGFX_TEXTURE_FORMAT_R32U,                 /** (39)                                */
-    BGFX_TEXTURE_FORMAT_R32F,                 /** (40)                                */
-    BGFX_TEXTURE_FORMAT_RG8,                  /** (41)                                */
-    BGFX_TEXTURE_FORMAT_RG8I,                 /** (42)                                */
-    BGFX_TEXTURE_FORMAT_RG8U,                 /** (43)                                */
-    BGFX_TEXTURE_FORMAT_RG8S,                 /** (44)                                */
-    BGFX_TEXTURE_FORMAT_RG16,                 /** (45)                                */
-    BGFX_TEXTURE_FORMAT_RG16I,                /** (46)                                */
-    BGFX_TEXTURE_FORMAT_RG16U,                /** (47)                                */
-    BGFX_TEXTURE_FORMAT_RG16F,                /** (48)                                */
-    BGFX_TEXTURE_FORMAT_RG16S,                /** (49)                                */
-    BGFX_TEXTURE_FORMAT_RG32I,                /** (50)                                */
-    BGFX_TEXTURE_FORMAT_RG32U,                /** (51)                                */
-    BGFX_TEXTURE_FORMAT_RG32F,                /** (52)                                */
-    BGFX_TEXTURE_FORMAT_RGB8,                 /** (53)                                */
-    BGFX_TEXTURE_FORMAT_RGB8I,                /** (54)                                */
-    BGFX_TEXTURE_FORMAT_RGB8U,                /** (55)                                */
-    BGFX_TEXTURE_FORMAT_RGB8S,                /** (56)                                */
-    BGFX_TEXTURE_FORMAT_RGB9E5F,              /** (57)                                */
-    BGFX_TEXTURE_FORMAT_BGRA8,                /** (58)                                */
-    BGFX_TEXTURE_FORMAT_RGBA8,                /** (59)                                */
-    BGFX_TEXTURE_FORMAT_RGBA8I,               /** (60)                                */
-    BGFX_TEXTURE_FORMAT_RGBA8U,               /** (61)                                */
-    BGFX_TEXTURE_FORMAT_RGBA8S,               /** (62)                                */
-    BGFX_TEXTURE_FORMAT_RGBA16,               /** (63)                                */
-    BGFX_TEXTURE_FORMAT_RGBA16I,              /** (64)                                */
-    BGFX_TEXTURE_FORMAT_RGBA16U,              /** (65)                                */
-    BGFX_TEXTURE_FORMAT_RGBA16F,              /** (66)                                */
-    BGFX_TEXTURE_FORMAT_RGBA16S,              /** (67)                                */
-    BGFX_TEXTURE_FORMAT_RGBA32I,              /** (68)                                */
-    BGFX_TEXTURE_FORMAT_RGBA32U,              /** (69)                                */
-    BGFX_TEXTURE_FORMAT_RGBA32F,              /** (70)                                */
-    BGFX_TEXTURE_FORMAT_R5G6B5,               /** (71)                                */
-    BGFX_TEXTURE_FORMAT_RGBA4,                /** (72)                                */
-    BGFX_TEXTURE_FORMAT_RGB5A1,               /** (73)                                */
-    BGFX_TEXTURE_FORMAT_RGB10A2,              /** (74)                                */
-    BGFX_TEXTURE_FORMAT_RG11B10F,             /** (75)                                */
-    BGFX_TEXTURE_FORMAT_UNKNOWNDEPTH,         /** (76) Depth formats below.           */
-    BGFX_TEXTURE_FORMAT_D16,                  /** (77)                                */
-    BGFX_TEXTURE_FORMAT_D24,                  /** (78)                                */
-    BGFX_TEXTURE_FORMAT_D24S8,                /** (79)                                */
-    BGFX_TEXTURE_FORMAT_D32,                  /** (80)                                */
-    BGFX_TEXTURE_FORMAT_D16F,                 /** (81)                                */
-    BGFX_TEXTURE_FORMAT_D24F,                 /** (82)                                */
-    BGFX_TEXTURE_FORMAT_D32F,                 /** (83)                                */
-    BGFX_TEXTURE_FORMAT_D0S8,                 /** (84)                                */
+    BGFX_TEXTURE_FORMAT_ASTC5X4,              /** (21) ASTC 5x4 6.40 BPP              */
+    BGFX_TEXTURE_FORMAT_ASTC5X5,              /** (22) ASTC 5x5 5.12 BPP              */
+    BGFX_TEXTURE_FORMAT_ASTC6X5,              /** (23) ASTC 6x5 4.27 BPP              */
+    BGFX_TEXTURE_FORMAT_ASTC6X6,              /** (24) ASTC 6x6 3.56 BPP              */
+    BGFX_TEXTURE_FORMAT_ASTC8X5,              /** (25) ASTC 8x5 3.20 BPP              */
+    BGFX_TEXTURE_FORMAT_ASTC8X6,              /** (26) ASTC 8x6 2.67 BPP              */
+    BGFX_TEXTURE_FORMAT_ASTC8X8,              /** (27) ASTC 8x8 2.00 BPP              */
+    BGFX_TEXTURE_FORMAT_ASTC10X5,             /** (28) ASTC 10x5 2.56 BPP             */
+    BGFX_TEXTURE_FORMAT_ASTC10X6,             /** (29) ASTC 10x6 2.13 BPP             */
+    BGFX_TEXTURE_FORMAT_ASTC10X8,             /** (30) ASTC 10x8 1.60 BPP             */
+    BGFX_TEXTURE_FORMAT_ASTC10X10,            /** (31) ASTC 10x10 1.28 BPP            */
+    BGFX_TEXTURE_FORMAT_ASTC12X10,            /** (32) ASTC 12x10 1.07 BPP            */
+    BGFX_TEXTURE_FORMAT_ASTC12X12,            /** (33) ASTC 12x12 0.89 BPP            */
+    BGFX_TEXTURE_FORMAT_UNKNOWN,              /** (34) Compressed formats above.      */
+    BGFX_TEXTURE_FORMAT_R1,                   /** (35)                                */
+    BGFX_TEXTURE_FORMAT_A8,                   /** (36)                                */
+    BGFX_TEXTURE_FORMAT_R8,                   /** (37)                                */
+    BGFX_TEXTURE_FORMAT_R8I,                  /** (38)                                */
+    BGFX_TEXTURE_FORMAT_R8U,                  /** (39)                                */
+    BGFX_TEXTURE_FORMAT_R8S,                  /** (40)                                */
+    BGFX_TEXTURE_FORMAT_R16,                  /** (41)                                */
+    BGFX_TEXTURE_FORMAT_R16I,                 /** (42)                                */
+    BGFX_TEXTURE_FORMAT_R16U,                 /** (43)                                */
+    BGFX_TEXTURE_FORMAT_R16F,                 /** (44)                                */
+    BGFX_TEXTURE_FORMAT_R16S,                 /** (45)                                */
+    BGFX_TEXTURE_FORMAT_R32I,                 /** (46)                                */
+    BGFX_TEXTURE_FORMAT_R32U,                 /** (47)                                */
+    BGFX_TEXTURE_FORMAT_R32F,                 /** (48)                                */
+    BGFX_TEXTURE_FORMAT_RG8,                  /** (49)                                */
+    BGFX_TEXTURE_FORMAT_RG8I,                 /** (50)                                */
+    BGFX_TEXTURE_FORMAT_RG8U,                 /** (51)                                */
+    BGFX_TEXTURE_FORMAT_RG8S,                 /** (52)                                */
+    BGFX_TEXTURE_FORMAT_RG16,                 /** (53)                                */
+    BGFX_TEXTURE_FORMAT_RG16I,                /** (54)                                */
+    BGFX_TEXTURE_FORMAT_RG16U,                /** (55)                                */
+    BGFX_TEXTURE_FORMAT_RG16F,                /** (56)                                */
+    BGFX_TEXTURE_FORMAT_RG16S,                /** (57)                                */
+    BGFX_TEXTURE_FORMAT_RG32I,                /** (58)                                */
+    BGFX_TEXTURE_FORMAT_RG32U,                /** (59)                                */
+    BGFX_TEXTURE_FORMAT_RG32F,                /** (60)                                */
+    BGFX_TEXTURE_FORMAT_RGB8,                 /** (61)                                */
+    BGFX_TEXTURE_FORMAT_RGB8I,                /** (62)                                */
+    BGFX_TEXTURE_FORMAT_RGB8U,                /** (63)                                */
+    BGFX_TEXTURE_FORMAT_RGB8S,                /** (64)                                */
+    BGFX_TEXTURE_FORMAT_RGB9E5F,              /** (65)                                */
+    BGFX_TEXTURE_FORMAT_BGRA8,                /** (66)                                */
+    BGFX_TEXTURE_FORMAT_RGBA8,                /** (67)                                */
+    BGFX_TEXTURE_FORMAT_RGBA8I,               /** (68)                                */
+    BGFX_TEXTURE_FORMAT_RGBA8U,               /** (69)                                */
+    BGFX_TEXTURE_FORMAT_RGBA8S,               /** (70)                                */
+    BGFX_TEXTURE_FORMAT_RGBA16,               /** (71)                                */
+    BGFX_TEXTURE_FORMAT_RGBA16I,              /** (72)                                */
+    BGFX_TEXTURE_FORMAT_RGBA16U,              /** (73)                                */
+    BGFX_TEXTURE_FORMAT_RGBA16F,              /** (74)                                */
+    BGFX_TEXTURE_FORMAT_RGBA16S,              /** (75)                                */
+    BGFX_TEXTURE_FORMAT_RGBA32I,              /** (76)                                */
+    BGFX_TEXTURE_FORMAT_RGBA32U,              /** (77)                                */
+    BGFX_TEXTURE_FORMAT_RGBA32F,              /** (78)                                */
+    BGFX_TEXTURE_FORMAT_B5G6R5,               /** (79)                                */
+    BGFX_TEXTURE_FORMAT_R5G6B5,               /** (80)                                */
+    BGFX_TEXTURE_FORMAT_BGRA4,                /** (81)                                */
+    BGFX_TEXTURE_FORMAT_RGBA4,                /** (82)                                */
+    BGFX_TEXTURE_FORMAT_BGR5A1,               /** (83)                                */
+    BGFX_TEXTURE_FORMAT_RGB5A1,               /** (84)                                */
+    BGFX_TEXTURE_FORMAT_RGB10A2,              /** (85)                                */
+    BGFX_TEXTURE_FORMAT_RG11B10F,             /** (86)                                */
+    BGFX_TEXTURE_FORMAT_UNKNOWNDEPTH,         /** (87) Depth formats below.           */
+    BGFX_TEXTURE_FORMAT_D16,                  /** (88)                                */
+    BGFX_TEXTURE_FORMAT_D24,                  /** (89)                                */
+    BGFX_TEXTURE_FORMAT_D24S8,                /** (90)                                */
+    BGFX_TEXTURE_FORMAT_D32,                  /** (91)                                */
+    BGFX_TEXTURE_FORMAT_D16F,                 /** (92)                                */
+    BGFX_TEXTURE_FORMAT_D24F,                 /** (93)                                */
+    BGFX_TEXTURE_FORMAT_D32F,                 /** (94)                                */
+    BGFX_TEXTURE_FORMAT_D0S8,                 /** (95)                                */
 
     BGFX_TEXTURE_FORMAT_COUNT
 
@@ -378,6 +388,19 @@ typedef enum bgfx_view_mode
     BGFX_VIEW_MODE_COUNT
 
 } bgfx_view_mode_t;
+
+/**
+ * Native window handle type.
+ *
+ */
+typedef enum bgfx_native_window_handle_type
+{
+    BGFX_NATIVE_WINDOW_HANDLE_TYPE_DEFAULT,   /** ( 0) Platform default handle type (X11 on Linux). */
+    BGFX_NATIVE_WINDOW_HANDLE_TYPE_WAYLAND,   /** ( 1) Wayland. */
+
+    BGFX_NATIVE_WINDOW_HANDLE_TYPE_COUNT
+
+} bgfx_native_window_handle_type_t;
 
 /**
  * Render frame enum.
@@ -554,8 +577,10 @@ typedef struct bgfx_caps_s
      *   - `BGFX_CAPS_FORMAT_TEXTURE_CUBE_SRGB` - Texture as sRGB format is supported.
      *   - `BGFX_CAPS_FORMAT_TEXTURE_CUBE_EMULATED` - Texture format is emulated.
      *   - `BGFX_CAPS_FORMAT_TEXTURE_VERTEX` - Texture format can be used from vertex shader.
-     *   - `BGFX_CAPS_FORMAT_TEXTURE_IMAGE` - Texture format can be used as image from compute
-     *     shader.
+     *   - `BGFX_CAPS_FORMAT_TEXTURE_IMAGE_READ` - Texture format can be used as image
+     *     and read from.
+     *   - `BGFX_CAPS_FORMAT_TEXTURE_IMAGE_WRITE` - Texture format can be used as image
+     *     and written to.
      *   - `BGFX_CAPS_FORMAT_TEXTURE_FRAMEBUFFER` - Texture format can be used as frame
      *     buffer.
      *   - `BGFX_CAPS_FORMAT_TEXTURE_FRAMEBUFFER_MSAA` - Texture format can be used as MSAA
@@ -611,6 +636,11 @@ typedef struct bgfx_platform_data_s
      */
     void*                backBufferDS;
 
+    /**
+     * Handle type. Needed for platforms having more than one option.
+     */
+     bgfx_native_window_handle_type_t type;
+
 } bgfx_platform_data_t;
 
 /**
@@ -625,6 +655,7 @@ typedef struct bgfx_resolution_s
     uint32_t             reset;              /** Reset parameters.                        */
     uint8_t              numBackBuffers;     /** Number of back buffers.                  */
     uint8_t              maxFrameLatency;    /** Maximum frame latency.                   */
+    uint8_t              debugTextScale;     /** Scale factor for debug text.             */
 
 } bgfx_resolution_t;
 
@@ -673,7 +704,8 @@ typedef struct bgfx_init_s
      * matching ID.
      */
     uint16_t             deviceId;
-    bool                 debug;              /** Enable device for debuging.              */
+    uint64_t             capabilities;       /** Capabilities initialization mask (default: UINT64_MAX). */
+    bool                 debug;              /** Enable device for debugging.             */
     bool                 profile;            /** Enable device for profiling.             */
     bgfx_platform_data_t platformData;       /** Platform data.                           */
     bgfx_resolution_t    resolution;         /** Backbuffer resolution and reset parameters. See: `bgfx::Resolution`. */
@@ -716,6 +748,7 @@ typedef struct bgfx_transient_index_buffer_s
     uint32_t             size;               /** Data size.                               */
     uint32_t             startIndex;         /** First index.                             */
     bgfx_index_buffer_handle_t handle;       /** Index buffer handle.                     */
+    bool                 isIndex16;          /** Index buffer format is 16-bits if true, otherwise it is 32-bit. */
 
 } bgfx_transient_index_buffer_t;
 
@@ -785,10 +818,11 @@ typedef struct bgfx_uniform_info_s
  */
 typedef struct bgfx_attachment_s
 {
-    bgfx_access_t        access;             /** Attachement access. See `Access::Enum`.  */
+    bgfx_access_t        access;             /** Attachment access. See `Access::Enum`.   */
     bgfx_texture_handle_t handle;            /** Render target texture handle.            */
     uint16_t             mip;                /** Mip level.                               */
     uint16_t             layer;              /** Cubemap side or depth layer/slice to use. */
+    uint16_t             numLayers;          /** Number of texture layer/slice(s) in array to use. */
     uint8_t              resolve;            /** Resolve flags. See: `BGFX_RESOLVE_*`     */
 
 } bgfx_attachment_t;
@@ -816,6 +850,7 @@ typedef struct bgfx_view_stats_s
     int64_t              cpuTimeEnd;         /** CPU (submit) end time.                   */
     int64_t              gpuTimeBegin;       /** GPU begin time.                          */
     int64_t              gpuTimeEnd;         /** GPU end time.                            */
+    uint32_t             gpuFrameNum;        /** Frame which generated gpuTimeBegin, gpuTimeEnd. */
 
 } bgfx_view_stats_t;
 
@@ -851,6 +886,7 @@ typedef struct bgfx_stats_s
     uint32_t             numCompute;         /** Number of compute calls submitted.       */
     uint32_t             numBlit;            /** Number of blit calls submitted.          */
     uint32_t             maxGpuLatency;      /** GPU driver latency.                      */
+    uint32_t             gpuFrameNum;        /** Frame which generated gpuTimeBegin, gpuTimeEnd. */
     uint16_t             numDynamicIndexBuffers; /** Number of used dynamic index buffers.    */
     uint16_t             numDynamicVertexBuffers; /** Number of used dynamic vertex buffers.   */
     uint16_t             numFrameBuffers;    /** Number of used frame buffers.            */
@@ -914,7 +950,7 @@ typedef struct bgfx_encoder_s bgfx_encoder_t;
  * @param[in] _resolve Resolve flags. See: `BGFX_RESOLVE_*`
  *
  */
-BGFX_C_API void bgfx_attachment_init(bgfx_attachment_t* _this, bgfx_texture_handle_t _handle, bgfx_access_t _access, uint16_t _layer, uint16_t _mip, uint8_t _resolve);
+BGFX_C_API void bgfx_attachment_init(bgfx_attachment_t* _this, bgfx_texture_handle_t _handle, bgfx_access_t _access, uint16_t _layer, uint16_t _numLayers, uint16_t _mip, uint8_t _resolve);
 
 /**
  * Start VertexLayout.
@@ -1526,7 +1562,7 @@ BGFX_C_API void bgfx_destroy_dynamic_vertex_buffer(bgfx_dynamic_vertex_buffer_ha
  * @returns Number of requested or maximum available indices.
  *
  */
-BGFX_C_API uint32_t bgfx_get_avail_transient_index_buffer(uint32_t _num);
+BGFX_C_API uint32_t bgfx_get_avail_transient_index_buffer(uint32_t _num, bool _index32);
 
 /**
  * Returns number of requested or maximum available vertices.
@@ -1560,7 +1596,7 @@ BGFX_C_API uint32_t bgfx_get_avail_instance_data_buffer(uint32_t _num, uint16_t 
  * @param[in] _index32 Set to `true` if input indices will be 32-bit.
  *
  */
-BGFX_C_API void bgfx_alloc_transient_index_buffer(bgfx_transient_index_buffer_t* _tib, uint32_t _num);
+BGFX_C_API void bgfx_alloc_transient_index_buffer(bgfx_transient_index_buffer_t* _tib, uint32_t _num, bool _index32);
 
 /**
  * Allocate transient vertex buffer.
@@ -1591,7 +1627,7 @@ BGFX_C_API void bgfx_alloc_transient_vertex_buffer(bgfx_transient_vertex_buffer_
  * @param[in] _index32 Set to `true` if input indices will be 32-bit.
  *
  */
-BGFX_C_API bool bgfx_alloc_transient_buffers(bgfx_transient_vertex_buffer_t* _tvb, const bgfx_vertex_layout_t * _layout, uint32_t _numVertices, bgfx_transient_index_buffer_t* _tib, uint32_t _numIndices);
+BGFX_C_API bool bgfx_alloc_transient_buffers(bgfx_transient_vertex_buffer_t* _tvb, const bgfx_vertex_layout_t * _layout, uint32_t _numVertices, bgfx_transient_index_buffer_t* _tib, uint32_t _numIndices, bool _index32);
 
 /**
  * Allocate instance data buffer.
@@ -1625,6 +1661,8 @@ BGFX_C_API void bgfx_destroy_indirect_buffer(bgfx_indirect_buffer_handle_t _hand
 
 /**
  * Create shader from memory buffer.
+ * @remarks
+ *   Shader binary is obtained by compiling shader offline with shaderc command line tool.
  *
  * @param[in] _mem Shader binary.
  *
@@ -1713,6 +1751,17 @@ BGFX_C_API void bgfx_destroy_program(bgfx_program_handle_t _handle);
  *
  */
 BGFX_C_API bool bgfx_is_texture_valid(uint16_t _depth, bool _cubeMap, uint16_t _numLayers, bgfx_texture_format_t _format, uint64_t _flags);
+
+/**
+ * Validate frame buffer parameters.
+ *
+ * @param[in] _num Number of attachments.
+ * @param[in] _attachment Attachment texture info. See: `bgfx::Attachment`.
+ *
+ * @returns True if a frame buffer with the same parameters can be created.
+ *
+ */
+BGFX_C_API bool bgfx_is_frame_buffer_valid(uint8_t _num, const bgfx_attachment_t* _attachment);
 
 /**
  * Calculate amount of memory required for texture.
@@ -2484,12 +2533,23 @@ BGFX_C_API void bgfx_encoder_set_transient_index_buffer(bgfx_encoder_t* _this, c
  * @param[in] _handle Vertex buffer.
  * @param[in] _startVertex First vertex to render.
  * @param[in] _numVertices Number of vertices to render.
+ *
+ */
+BGFX_C_API void bgfx_encoder_set_vertex_buffer(bgfx_encoder_t* _this, uint8_t _stream, bgfx_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _numVertices);
+
+/**
+ * Set vertex buffer for draw primitive.
+ *
+ * @param[in] _stream Vertex stream.
+ * @param[in] _handle Vertex buffer.
+ * @param[in] _startVertex First vertex to render.
+ * @param[in] _numVertices Number of vertices to render.
  * @param[in] _layoutHandle Vertex layout for aliasing vertex buffer. If invalid
  *  handle is used, vertex layout used for creation
  *  of vertex buffer will be used.
  *
  */
-BGFX_C_API void bgfx_encoder_set_vertex_buffer(bgfx_encoder_t* _this, uint8_t _stream, bgfx_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _numVertices, bgfx_vertex_layout_handle_t _layoutHandle);
+BGFX_C_API void bgfx_encoder_set_vertex_buffer_with_layout(bgfx_encoder_t* _this, uint8_t _stream, bgfx_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _numVertices, bgfx_vertex_layout_handle_t _layoutHandle);
 
 /**
  * Set vertex buffer for draw primitive.
@@ -2498,12 +2558,21 @@ BGFX_C_API void bgfx_encoder_set_vertex_buffer(bgfx_encoder_t* _this, uint8_t _s
  * @param[in] _handle Dynamic vertex buffer.
  * @param[in] _startVertex First vertex to render.
  * @param[in] _numVertices Number of vertices to render.
- * @param[in] _layoutHandle Vertex layout for aliasing vertex buffer. If invalid
- *  handle is used, vertex layout used for creation
- *  of vertex buffer will be used.
  *
  */
-BGFX_C_API void bgfx_encoder_set_dynamic_vertex_buffer(bgfx_encoder_t* _this, uint8_t _stream, bgfx_dynamic_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _numVertices, bgfx_vertex_layout_handle_t _layoutHandle);
+BGFX_C_API void bgfx_encoder_set_dynamic_vertex_buffer(bgfx_encoder_t* _this, uint8_t _stream, bgfx_dynamic_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _numVertices);
+BGFX_C_API void bgfx_encoder_set_dynamic_vertex_buffer_with_layout(bgfx_encoder_t* _this, uint8_t _stream, bgfx_dynamic_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _numVertices, bgfx_vertex_layout_handle_t _layoutHandle);
+
+/**
+ * Set vertex buffer for draw primitive.
+ *
+ * @param[in] _stream Vertex stream.
+ * @param[in] _tvb Transient vertex buffer.
+ * @param[in] _startVertex First vertex to render.
+ * @param[in] _numVertices Number of vertices to render.
+ *
+ */
+BGFX_C_API void bgfx_encoder_set_transient_vertex_buffer(bgfx_encoder_t* _this, uint8_t _stream, const bgfx_transient_vertex_buffer_t* _tvb, uint32_t _startVertex, uint32_t _numVertices);
 
 /**
  * Set vertex buffer for draw primitive.
@@ -2517,7 +2586,7 @@ BGFX_C_API void bgfx_encoder_set_dynamic_vertex_buffer(bgfx_encoder_t* _this, ui
  *  of vertex buffer will be used.
  *
  */
-BGFX_C_API void bgfx_encoder_set_transient_vertex_buffer(bgfx_encoder_t* _this, uint8_t _stream, const bgfx_transient_vertex_buffer_t* _tvb, uint32_t _startVertex, uint32_t _numVertices, bgfx_vertex_layout_handle_t _layoutHandle);
+BGFX_C_API void bgfx_encoder_set_transient_vertex_buffer_with_layout(bgfx_encoder_t* _this, uint8_t _stream, const bgfx_transient_vertex_buffer_t* _tvb, uint32_t _startVertex, uint32_t _numVertices, bgfx_vertex_layout_handle_t _layoutHandle);
 
 /**
  * Set number of vertices for auto generated vertices use in conjunction
@@ -2545,7 +2614,6 @@ BGFX_C_API void bgfx_encoder_set_instance_data_buffer(bgfx_encoder_t* _this, con
  * @param[in] _handle Vertex buffer.
  * @param[in] _startVertex First instance data.
  * @param[in] _num Number of data instances.
- *  Set instance data buffer for draw primitive.
  *
  */
 BGFX_C_API void bgfx_encoder_set_instance_data_from_vertex_buffer(bgfx_encoder_t* _this, bgfx_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _num);
@@ -2625,17 +2693,37 @@ BGFX_C_API void bgfx_encoder_submit_occlusion_query(bgfx_encoder_t* _this, bgfx_
 /**
  * Submit primitive for rendering with index and instance data info from
  * indirect buffer.
+ * @attention Availability depends on: `BGFX_CAPS_DRAW_INDIRECT`.
  *
  * @param[in] _id View id.
  * @param[in] _program Program.
  * @param[in] _indirectHandle Indirect buffer.
  * @param[in] _start First element in indirect buffer.
- * @param[in] _num Number of dispatches.
+ * @param[in] _num Number of draws.
  * @param[in] _depth Depth for sorting.
  * @param[in] _flags Discard or preserve states. See `BGFX_DISCARD_*`.
  *
  */
 BGFX_C_API void bgfx_encoder_submit_indirect(bgfx_encoder_t* _this, bgfx_view_id_t _id, bgfx_program_handle_t _program, bgfx_indirect_buffer_handle_t _indirectHandle, uint16_t _start, uint16_t _num, uint32_t _depth, uint8_t _flags);
+
+/**
+ * Submit primitive for rendering with index and instance data info and
+ * draw count from indirect buffers.
+ * @attention Availability depends on: `BGFX_CAPS_DRAW_INDIRECT_COUNT`.
+ *
+ * @param[in] _id View id.
+ * @param[in] _program Program.
+ * @param[in] _indirectHandle Indirect buffer.
+ * @param[in] _start First element in indirect buffer.
+ * @param[in] _numHandle Buffer for number of draws. Must be
+ *    created with `BGFX_BUFFER_INDEX32` and `BGFX_BUFFER_DRAW_INDIRECT`.
+ * @param[in] _numIndex Element in number buffer.
+ * @param[in] _numMax Max number of draws.
+ * @param[in] _depth Depth for sorting.
+ * @param[in] _flags Discard or preserve states. See `BGFX_DISCARD_*`.
+ *
+ */
+BGFX_C_API void bgfx_encoder_submit_indirect_count(bgfx_encoder_t* _this, bgfx_view_id_t _id, bgfx_program_handle_t _program, bgfx_indirect_buffer_handle_t _indirectHandle, uint16_t _start, bgfx_index_buffer_handle_t _numHandle, uint32_t _numIndex, uint16_t _numMax, uint32_t _depth, uint8_t _flags);
 
 /**
  * Set compute index buffer.
@@ -3023,12 +3111,40 @@ BGFX_C_API void bgfx_set_vertex_buffer(uint8_t _stream, bgfx_vertex_buffer_handl
  * Set vertex buffer for draw primitive.
  *
  * @param[in] _stream Vertex stream.
+ * @param[in] _handle Vertex buffer.
+ * @param[in] _startVertex First vertex to render.
+ * @param[in] _numVertices Number of vertices to render.
+ * @param[in] _layoutHandle Vertex layout for aliasing vertex buffer. If invalid
+ *  handle is used, vertex layout used for creation
+ *  of vertex buffer will be used.
+ *
+ */
+BGFX_C_API void bgfx_set_vertex_buffer_with_layout(uint8_t _stream, bgfx_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _numVertices, bgfx_vertex_layout_handle_t _layoutHandle);
+
+/**
+ * Set vertex buffer for draw primitive.
+ *
+ * @param[in] _stream Vertex stream.
  * @param[in] _handle Dynamic vertex buffer.
  * @param[in] _startVertex First vertex to render.
  * @param[in] _numVertices Number of vertices to render.
  *
  */
 BGFX_C_API void bgfx_set_dynamic_vertex_buffer(uint8_t _stream, bgfx_dynamic_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _numVertices);
+
+/**
+ * Set vertex buffer for draw primitive.
+ *
+ * @param[in] _stream Vertex stream.
+ * @param[in] _handle Dynamic vertex buffer.
+ * @param[in] _startVertex First vertex to render.
+ * @param[in] _numVertices Number of vertices to render.
+ * @param[in] _layoutHandle Vertex layout for aliasing vertex buffer. If invalid
+ *  handle is used, vertex layout used for creation
+ *  of vertex buffer will be used.
+ *
+ */
+BGFX_C_API void bgfx_set_dynamic_vertex_buffer_with_layout(uint8_t _stream, bgfx_dynamic_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _numVertices, bgfx_vertex_layout_handle_t _layoutHandle);
 
 /**
  * Set vertex buffer for draw primitive.
@@ -3042,7 +3158,21 @@ BGFX_C_API void bgfx_set_dynamic_vertex_buffer(uint8_t _stream, bgfx_dynamic_ver
 BGFX_C_API void bgfx_set_transient_vertex_buffer(uint8_t _stream, const bgfx_transient_vertex_buffer_t* _tvb, uint32_t _startVertex, uint32_t _numVertices);
 
 /**
- * Set number of vertices for auto generated vertices use in conjuction
+ * Set vertex buffer for draw primitive.
+ *
+ * @param[in] _stream Vertex stream.
+ * @param[in] _tvb Transient vertex buffer.
+ * @param[in] _startVertex First vertex to render.
+ * @param[in] _numVertices Number of vertices to render.
+ * @param[in] _layoutHandle Vertex layout for aliasing vertex buffer. If invalid
+ *  handle is used, vertex layout used for creation
+ *  of vertex buffer will be used.
+ *
+ */
+BGFX_C_API void bgfx_set_transient_vertex_buffer_with_layout(uint8_t _stream, const bgfx_transient_vertex_buffer_t* _tvb, uint32_t _startVertex, uint32_t _numVertices, bgfx_vertex_layout_handle_t _layoutHandle);
+
+/**
+ * Set number of vertices for auto generated vertices use in conjunction
  * with gl_VertexID.
  * @attention Availability depends on: `BGFX_CAPS_VERTEX_ID`.
  *
@@ -3067,7 +3197,6 @@ BGFX_C_API void bgfx_set_instance_data_buffer(const bgfx_instance_data_buffer_t*
  * @param[in] _handle Vertex buffer.
  * @param[in] _startVertex First instance data.
  * @param[in] _num Number of data instances.
- *  Set instance data buffer for draw primitive.
  *
  */
 BGFX_C_API void bgfx_set_instance_data_from_vertex_buffer(bgfx_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _num);
@@ -3148,17 +3277,37 @@ BGFX_C_API void bgfx_submit_occlusion_query(bgfx_view_id_t _id, bgfx_program_han
 /**
  * Submit primitive for rendering with index and instance data info from
  * indirect buffer.
+ * @attention Availability depends on: `BGFX_CAPS_DRAW_INDIRECT`.
  *
  * @param[in] _id View id.
  * @param[in] _program Program.
  * @param[in] _indirectHandle Indirect buffer.
  * @param[in] _start First element in indirect buffer.
- * @param[in] _num Number of dispatches.
+ * @param[in] _num Number of draws.
  * @param[in] _depth Depth for sorting.
  * @param[in] _flags Which states to discard for next draw. See `BGFX_DISCARD_*`.
  *
  */
 BGFX_C_API void bgfx_submit_indirect(bgfx_view_id_t _id, bgfx_program_handle_t _program, bgfx_indirect_buffer_handle_t _indirectHandle, uint16_t _start, uint16_t _num, uint32_t _depth, uint8_t _flags);
+
+/**
+ * Submit primitive for rendering with index and instance data info and
+ * draw count from indirect buffers.
+ * @attention Availability depends on: `BGFX_CAPS_DRAW_INDIRECT_COUNT`.
+ *
+ * @param[in] _id View id.
+ * @param[in] _program Program.
+ * @param[in] _indirectHandle Indirect buffer.
+ * @param[in] _start First element in indirect buffer.
+ * @param[in] _numHandle Buffer for number of draws. Must be
+ *    created with `BGFX_BUFFER_INDEX32` and `BGFX_BUFFER_DRAW_INDIRECT`.
+ * @param[in] _numIndex Element in number buffer.
+ * @param[in] _numMax Max number of draws.
+ * @param[in] _depth Depth for sorting.
+ * @param[in] _flags Which states to discard for next draw. See `BGFX_DISCARD_*`.
+ *
+ */
+BGFX_C_API void bgfx_submit_indirect_count(bgfx_view_id_t _id, bgfx_program_handle_t _program, bgfx_indirect_buffer_handle_t _indirectHandle, uint16_t _start, bgfx_index_buffer_handle_t _numHandle, uint32_t _numIndex, uint16_t _numMax, uint32_t _depth, uint8_t _flags);
 
 /**
  * Set compute index buffer.
@@ -3352,6 +3501,7 @@ typedef enum bgfx_function_id
     BGFX_FUNCTION_ID_CREATE_COMPUTE_PROGRAM,
     BGFX_FUNCTION_ID_DESTROY_PROGRAM,
     BGFX_FUNCTION_ID_IS_TEXTURE_VALID,
+    BGFX_FUNCTION_ID_IS_FRAME_BUFFER_VALID,
     BGFX_FUNCTION_ID_CALC_TEXTURE_SIZE,
     BGFX_FUNCTION_ID_CREATE_TEXTURE,
     BGFX_FUNCTION_ID_CREATE_TEXTURE_2D,
@@ -3408,8 +3558,11 @@ typedef enum bgfx_function_id
     BGFX_FUNCTION_ID_ENCODER_SET_DYNAMIC_INDEX_BUFFER,
     BGFX_FUNCTION_ID_ENCODER_SET_TRANSIENT_INDEX_BUFFER,
     BGFX_FUNCTION_ID_ENCODER_SET_VERTEX_BUFFER,
+    BGFX_FUNCTION_ID_ENCODER_SET_VERTEX_BUFFER_WITH_LAYOUT,
     BGFX_FUNCTION_ID_ENCODER_SET_DYNAMIC_VERTEX_BUFFER,
+    BGFX_FUNCTION_ID_ENCODER_SET_DYNAMIC_VERTEX_BUFFER_WITH_LAYOUT,
     BGFX_FUNCTION_ID_ENCODER_SET_TRANSIENT_VERTEX_BUFFER,
+    BGFX_FUNCTION_ID_ENCODER_SET_TRANSIENT_VERTEX_BUFFER_WITH_LAYOUT,
     BGFX_FUNCTION_ID_ENCODER_SET_VERTEX_COUNT,
     BGFX_FUNCTION_ID_ENCODER_SET_INSTANCE_DATA_BUFFER,
     BGFX_FUNCTION_ID_ENCODER_SET_INSTANCE_DATA_FROM_VERTEX_BUFFER,
@@ -3420,6 +3573,7 @@ typedef enum bgfx_function_id
     BGFX_FUNCTION_ID_ENCODER_SUBMIT,
     BGFX_FUNCTION_ID_ENCODER_SUBMIT_OCCLUSION_QUERY,
     BGFX_FUNCTION_ID_ENCODER_SUBMIT_INDIRECT,
+    BGFX_FUNCTION_ID_ENCODER_SUBMIT_INDIRECT_COUNT,
     BGFX_FUNCTION_ID_ENCODER_SET_COMPUTE_INDEX_BUFFER,
     BGFX_FUNCTION_ID_ENCODER_SET_COMPUTE_VERTEX_BUFFER,
     BGFX_FUNCTION_ID_ENCODER_SET_COMPUTE_DYNAMIC_INDEX_BUFFER,
@@ -3450,8 +3604,11 @@ typedef enum bgfx_function_id
     BGFX_FUNCTION_ID_SET_DYNAMIC_INDEX_BUFFER,
     BGFX_FUNCTION_ID_SET_TRANSIENT_INDEX_BUFFER,
     BGFX_FUNCTION_ID_SET_VERTEX_BUFFER,
+    BGFX_FUNCTION_ID_SET_VERTEX_BUFFER_WITH_LAYOUT,
     BGFX_FUNCTION_ID_SET_DYNAMIC_VERTEX_BUFFER,
+    BGFX_FUNCTION_ID_SET_DYNAMIC_VERTEX_BUFFER_WITH_LAYOUT,
     BGFX_FUNCTION_ID_SET_TRANSIENT_VERTEX_BUFFER,
+    BGFX_FUNCTION_ID_SET_TRANSIENT_VERTEX_BUFFER_WITH_LAYOUT,
     BGFX_FUNCTION_ID_SET_VERTEX_COUNT,
     BGFX_FUNCTION_ID_SET_INSTANCE_DATA_BUFFER,
     BGFX_FUNCTION_ID_SET_INSTANCE_DATA_FROM_VERTEX_BUFFER,
@@ -3462,6 +3619,7 @@ typedef enum bgfx_function_id
     BGFX_FUNCTION_ID_SUBMIT,
     BGFX_FUNCTION_ID_SUBMIT_OCCLUSION_QUERY,
     BGFX_FUNCTION_ID_SUBMIT_INDIRECT,
+    BGFX_FUNCTION_ID_SUBMIT_INDIRECT_COUNT,
     BGFX_FUNCTION_ID_SET_COMPUTE_INDEX_BUFFER,
     BGFX_FUNCTION_ID_SET_COMPUTE_VERTEX_BUFFER,
     BGFX_FUNCTION_ID_SET_COMPUTE_DYNAMIC_INDEX_BUFFER,
@@ -3480,7 +3638,7 @@ typedef enum bgfx_function_id
 /**/
 struct bgfx_interface_vtbl
 {
-    void (*attachment_init)(bgfx_attachment_t* _this, bgfx_texture_handle_t _handle, bgfx_access_t _access, uint16_t _layer, uint16_t _mip, uint8_t _resolve);
+    void (*attachment_init)(bgfx_attachment_t* _this, bgfx_texture_handle_t _handle, bgfx_access_t _access, uint16_t _layer, uint16_t _numLayers, uint16_t _mip, uint8_t _resolve);
     bgfx_vertex_layout_t* (*vertex_layout_begin)(bgfx_vertex_layout_t* _this, bgfx_renderer_type_t _rendererType);
     bgfx_vertex_layout_t* (*vertex_layout_add)(bgfx_vertex_layout_t* _this, bgfx_attrib_t _attrib, uint8_t _num, bgfx_attrib_type_t _type, bool _normalized, bool _asInt);
     void (*vertex_layout_decode)(const bgfx_vertex_layout_t* _this, bgfx_attrib_t _attrib, uint8_t * _num, bgfx_attrib_type_t * _type, bool * _normalized, bool * _asInt);
@@ -3528,12 +3686,12 @@ struct bgfx_interface_vtbl
     bgfx_dynamic_vertex_buffer_handle_t (*create_dynamic_vertex_buffer_mem)(const bgfx_memory_t* _mem, const bgfx_vertex_layout_t* _layout, uint16_t _flags);
     void (*update_dynamic_vertex_buffer)(bgfx_dynamic_vertex_buffer_handle_t _handle, uint32_t _startVertex, const bgfx_memory_t* _mem);
     void (*destroy_dynamic_vertex_buffer)(bgfx_dynamic_vertex_buffer_handle_t _handle);
-    uint32_t (*get_avail_transient_index_buffer)(uint32_t _num);
+    uint32_t (*get_avail_transient_index_buffer)(uint32_t _num, bool _index32);
     uint32_t (*get_avail_transient_vertex_buffer)(uint32_t _num, const bgfx_vertex_layout_t * _layout);
     uint32_t (*get_avail_instance_data_buffer)(uint32_t _num, uint16_t _stride);
-    void (*alloc_transient_index_buffer)(bgfx_transient_index_buffer_t* _tib, uint32_t _num);
+    void (*alloc_transient_index_buffer)(bgfx_transient_index_buffer_t* _tib, uint32_t _num, bool _index32);
     void (*alloc_transient_vertex_buffer)(bgfx_transient_vertex_buffer_t* _tvb, uint32_t _num, const bgfx_vertex_layout_t * _layout);
-    bool (*alloc_transient_buffers)(bgfx_transient_vertex_buffer_t* _tvb, const bgfx_vertex_layout_t * _layout, uint32_t _numVertices, bgfx_transient_index_buffer_t* _tib, uint32_t _numIndices);
+    bool (*alloc_transient_buffers)(bgfx_transient_vertex_buffer_t* _tvb, const bgfx_vertex_layout_t * _layout, uint32_t _numVertices, bgfx_transient_index_buffer_t* _tib, uint32_t _numIndices, bool _index32);
     void (*alloc_instance_data_buffer)(bgfx_instance_data_buffer_t* _idb, uint32_t _num, uint16_t _stride);
     bgfx_indirect_buffer_handle_t (*create_indirect_buffer)(uint32_t _num);
     void (*destroy_indirect_buffer)(bgfx_indirect_buffer_handle_t _handle);
@@ -3545,6 +3703,7 @@ struct bgfx_interface_vtbl
     bgfx_program_handle_t (*create_compute_program)(bgfx_shader_handle_t _csh, bool _destroyShaders);
     void (*destroy_program)(bgfx_program_handle_t _handle);
     bool (*is_texture_valid)(uint16_t _depth, bool _cubeMap, uint16_t _numLayers, bgfx_texture_format_t _format, uint64_t _flags);
+    bool (*is_frame_buffer_valid)(uint8_t _num, const bgfx_attachment_t* _attachment);
     void (*calc_texture_size)(bgfx_texture_info_t * _info, uint16_t _width, uint16_t _height, uint16_t _depth, bool _cubeMap, bool _hasMips, uint16_t _numLayers, bgfx_texture_format_t _format);
     bgfx_texture_handle_t (*create_texture)(const bgfx_memory_t* _mem, uint64_t _flags, uint8_t _skip, bgfx_texture_info_t* _info);
     bgfx_texture_handle_t (*create_texture_2d)(uint16_t _width, uint16_t _height, bool _hasMips, uint16_t _numLayers, bgfx_texture_format_t _format, uint64_t _flags, const bgfx_memory_t* _mem);
@@ -3600,9 +3759,12 @@ struct bgfx_interface_vtbl
     void (*encoder_set_index_buffer)(bgfx_encoder_t* _this, bgfx_index_buffer_handle_t _handle, uint32_t _firstIndex, uint32_t _numIndices);
     void (*encoder_set_dynamic_index_buffer)(bgfx_encoder_t* _this, bgfx_dynamic_index_buffer_handle_t _handle, uint32_t _firstIndex, uint32_t _numIndices);
     void (*encoder_set_transient_index_buffer)(bgfx_encoder_t* _this, const bgfx_transient_index_buffer_t* _tib, uint32_t _firstIndex, uint32_t _numIndices);
-    void (*encoder_set_vertex_buffer)(bgfx_encoder_t* _this, uint8_t _stream, bgfx_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _numVertices, bgfx_vertex_layout_handle_t _layoutHandle);
-    void (*encoder_set_dynamic_vertex_buffer)(bgfx_encoder_t* _this, uint8_t _stream, bgfx_dynamic_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _numVertices, bgfx_vertex_layout_handle_t _layoutHandle);
-    void (*encoder_set_transient_vertex_buffer)(bgfx_encoder_t* _this, uint8_t _stream, const bgfx_transient_vertex_buffer_t* _tvb, uint32_t _startVertex, uint32_t _numVertices, bgfx_vertex_layout_handle_t _layoutHandle);
+    void (*encoder_set_vertex_buffer)(bgfx_encoder_t* _this, uint8_t _stream, bgfx_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _numVertices);
+    void (*encoder_set_vertex_buffer_with_layout)(bgfx_encoder_t* _this, uint8_t _stream, bgfx_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _numVertices, bgfx_vertex_layout_handle_t _layoutHandle);
+    void (*encoder_set_dynamic_vertex_buffer)(bgfx_encoder_t* _this, uint8_t _stream, bgfx_dynamic_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _numVertices);
+    void (*encoder_set_dynamic_vertex_buffer_with_layout)(bgfx_encoder_t* _this, uint8_t _stream, bgfx_dynamic_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _numVertices, bgfx_vertex_layout_handle_t _layoutHandle);
+    void (*encoder_set_transient_vertex_buffer)(bgfx_encoder_t* _this, uint8_t _stream, const bgfx_transient_vertex_buffer_t* _tvb, uint32_t _startVertex, uint32_t _numVertices);
+    void (*encoder_set_transient_vertex_buffer_with_layout)(bgfx_encoder_t* _this, uint8_t _stream, const bgfx_transient_vertex_buffer_t* _tvb, uint32_t _startVertex, uint32_t _numVertices, bgfx_vertex_layout_handle_t _layoutHandle);
     void (*encoder_set_vertex_count)(bgfx_encoder_t* _this, uint32_t _numVertices);
     void (*encoder_set_instance_data_buffer)(bgfx_encoder_t* _this, const bgfx_instance_data_buffer_t* _idb, uint32_t _start, uint32_t _num);
     void (*encoder_set_instance_data_from_vertex_buffer)(bgfx_encoder_t* _this, bgfx_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _num);
@@ -3613,6 +3775,7 @@ struct bgfx_interface_vtbl
     void (*encoder_submit)(bgfx_encoder_t* _this, bgfx_view_id_t _id, bgfx_program_handle_t _program, uint32_t _depth, uint8_t _flags);
     void (*encoder_submit_occlusion_query)(bgfx_encoder_t* _this, bgfx_view_id_t _id, bgfx_program_handle_t _program, bgfx_occlusion_query_handle_t _occlusionQuery, uint32_t _depth, uint8_t _flags);
     void (*encoder_submit_indirect)(bgfx_encoder_t* _this, bgfx_view_id_t _id, bgfx_program_handle_t _program, bgfx_indirect_buffer_handle_t _indirectHandle, uint16_t _start, uint16_t _num, uint32_t _depth, uint8_t _flags);
+    void (*encoder_submit_indirect_count)(bgfx_encoder_t* _this, bgfx_view_id_t _id, bgfx_program_handle_t _program, bgfx_indirect_buffer_handle_t _indirectHandle, uint16_t _start, bgfx_index_buffer_handle_t _numHandle, uint32_t _numIndex, uint16_t _numMax, uint32_t _depth, uint8_t _flags);
     void (*encoder_set_compute_index_buffer)(bgfx_encoder_t* _this, uint8_t _stage, bgfx_index_buffer_handle_t _handle, bgfx_access_t _access);
     void (*encoder_set_compute_vertex_buffer)(bgfx_encoder_t* _this, uint8_t _stage, bgfx_vertex_buffer_handle_t _handle, bgfx_access_t _access);
     void (*encoder_set_compute_dynamic_index_buffer)(bgfx_encoder_t* _this, uint8_t _stage, bgfx_dynamic_index_buffer_handle_t _handle, bgfx_access_t _access);
@@ -3643,8 +3806,11 @@ struct bgfx_interface_vtbl
     void (*set_dynamic_index_buffer)(bgfx_dynamic_index_buffer_handle_t _handle, uint32_t _firstIndex, uint32_t _numIndices);
     void (*set_transient_index_buffer)(const bgfx_transient_index_buffer_t* _tib, uint32_t _firstIndex, uint32_t _numIndices);
     void (*set_vertex_buffer)(uint8_t _stream, bgfx_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _numVertices);
+    void (*set_vertex_buffer_with_layout)(uint8_t _stream, bgfx_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _numVertices, bgfx_vertex_layout_handle_t _layoutHandle);
     void (*set_dynamic_vertex_buffer)(uint8_t _stream, bgfx_dynamic_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _numVertices);
+    void (*set_dynamic_vertex_buffer_with_layout)(uint8_t _stream, bgfx_dynamic_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _numVertices, bgfx_vertex_layout_handle_t _layoutHandle);
     void (*set_transient_vertex_buffer)(uint8_t _stream, const bgfx_transient_vertex_buffer_t* _tvb, uint32_t _startVertex, uint32_t _numVertices);
+    void (*set_transient_vertex_buffer_with_layout)(uint8_t _stream, const bgfx_transient_vertex_buffer_t* _tvb, uint32_t _startVertex, uint32_t _numVertices, bgfx_vertex_layout_handle_t _layoutHandle);
     void (*set_vertex_count)(uint32_t _numVertices);
     void (*set_instance_data_buffer)(const bgfx_instance_data_buffer_t* _idb, uint32_t _start, uint32_t _num);
     void (*set_instance_data_from_vertex_buffer)(bgfx_vertex_buffer_handle_t _handle, uint32_t _startVertex, uint32_t _num);
@@ -3655,6 +3821,7 @@ struct bgfx_interface_vtbl
     void (*submit)(bgfx_view_id_t _id, bgfx_program_handle_t _program, uint32_t _depth, uint8_t _flags);
     void (*submit_occlusion_query)(bgfx_view_id_t _id, bgfx_program_handle_t _program, bgfx_occlusion_query_handle_t _occlusionQuery, uint32_t _depth, uint8_t _flags);
     void (*submit_indirect)(bgfx_view_id_t _id, bgfx_program_handle_t _program, bgfx_indirect_buffer_handle_t _indirectHandle, uint16_t _start, uint16_t _num, uint32_t _depth, uint8_t _flags);
+    void (*submit_indirect_count)(bgfx_view_id_t _id, bgfx_program_handle_t _program, bgfx_indirect_buffer_handle_t _indirectHandle, uint16_t _start, bgfx_index_buffer_handle_t _numHandle, uint32_t _numIndex, uint16_t _numMax, uint32_t _depth, uint8_t _flags);
     void (*set_compute_index_buffer)(uint8_t _stage, bgfx_index_buffer_handle_t _handle, bgfx_access_t _access);
     void (*set_compute_vertex_buffer)(uint8_t _stage, bgfx_vertex_buffer_handle_t _handle, bgfx_access_t _access);
     void (*set_compute_dynamic_index_buffer)(uint8_t _stage, bgfx_dynamic_index_buffer_handle_t _handle, bgfx_access_t _access);

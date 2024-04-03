@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -265,28 +265,25 @@ namespace bx
 	};
 
 	/// Read data.
-	int32_t read(ReaderI* _reader, void* _data, int32_t _size, Error* _err = ErrorIgnore());
+	int32_t read(ReaderI* _reader, void* _data, int32_t _size, Error* _err);
 
 	/// Read value.
 	template<typename Ty>
-	int32_t read(ReaderI* _reader, Ty& _value, Error* _err = ErrorIgnore());
+	int32_t read(ReaderI* _reader, Ty& _value, Error* _err);
 
 	/// Read value and converts it to host endianness. _fromLittleEndian specifies
 	/// underlying stream endianness.
 	template<typename Ty>
-	int32_t readHE(ReaderI* _reader, Ty& _value, bool _fromLittleEndian, Error* _err = ErrorIgnore());
+	int32_t readHE(ReaderI* _reader, Ty& _value, bool _fromLittleEndian, Error* _err);
 
 	/// Write data.
-	int32_t write(WriterI* _writer, const void* _data, int32_t _size, Error* _err = ErrorIgnore());
+	int32_t write(WriterI* _writer, const void* _data, int32_t _size, Error* _err);
 
 	/// Write C string.
-	int32_t write(WriterI* _writer, const char* _str, Error* _err = ErrorIgnore());
-
-	/// Write string view.
-	int32_t write(WriterI* _writer, const StringView& _str, Error* _err = ErrorIgnore());
+	int32_t write(WriterI* _writer, const char* _str, Error* _err);
 
 	/// Write formatted string.
-	int32_t write(WriterI* _writer, const StringView& _format, va_list _argList, Error* _err = ErrorIgnore());
+	int32_t write(WriterI* _writer, const StringView& _format, va_list _argList, Error* _err);
 
 	/// Write formatted string.
 	int32_t write(WriterI* _writer, Error* _err, const StringView* _format, ...);
@@ -295,19 +292,19 @@ namespace bx
 	int32_t write(WriterI* _writer, Error* _err, const char* _format, ...);
 
 	/// Write repeat the same value.
-	int32_t writeRep(WriterI* _writer, uint8_t _byte, int32_t _size, Error* _err = ErrorIgnore());
+	int32_t writeRep(WriterI* _writer, uint8_t _byte, int32_t _size, Error* _err);
 
 	/// Write value.
 	template<typename Ty>
-	int32_t write(WriterI* _writer, const Ty& _value, Error* _err = ErrorIgnore());
+	int32_t write(WriterI* _writer, const Ty& _value, Error* _err);
 
 	/// Write value as little endian.
 	template<typename Ty>
-	int32_t writeLE(WriterI* _writer, const Ty& _value, Error* _err = ErrorIgnore());
+	int32_t writeLE(WriterI* _writer, const Ty& _value, Error* _err);
 
 	/// Write value as big endian.
 	template<typename Ty>
-	int32_t writeBE(WriterI* _writer, const Ty& _value, Error* _err = ErrorIgnore());
+	int32_t writeBE(WriterI* _writer, const Ty& _value, Error* _err);
 
 	/// Skip _offset bytes forward.
 	int64_t skip(SeekerI* _seeker, int64_t _offset);
@@ -322,17 +319,17 @@ namespace bx
 	int64_t getRemain(SeekerI* _seeker);
 
 	/// Peek data.
-	int32_t peek(ReaderSeekerI* _reader, void* _data, int32_t _size, Error* _err = ErrorIgnore());
+	int32_t peek(ReaderSeekerI* _reader, void* _data, int32_t _size, Error* _err);
 
 	/// Peek value.
 	template<typename Ty>
-	int32_t peek(ReaderSeekerI* _reader, Ty& _value, Error* _err = ErrorIgnore());
+	int32_t peek(ReaderSeekerI* _reader, Ty& _value, Error* _err);
 
 	/// Align reader stream.
-	int32_t align(ReaderSeekerI* _reader, uint32_t _alignment, Error* _err = ErrorIgnore());
+	int32_t align(ReaderSeekerI* _reader, uint32_t _alignment, Error* _err);
 
 	/// Align writer stream (pads stream with zeros).
-	int32_t align(WriterSeekerI* _writer, uint32_t _alignment, Error* _err = ErrorIgnore());
+	int32_t align(WriterSeekerI* _writer, uint32_t _alignment, Error* _err);
 
 	/// Open for read.
 	bool open(ReaderOpenI* _reader, const FilePath& _filePath, Error* _err = ErrorIgnore{});

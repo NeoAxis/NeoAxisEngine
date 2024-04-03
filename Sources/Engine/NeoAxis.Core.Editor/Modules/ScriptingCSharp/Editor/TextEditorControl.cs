@@ -303,7 +303,7 @@ namespace NeoAxis.Editor
 			engineScrollBarVertical.Scroll += EngineScrollBarVertical_Scroll;
 			engineScrollBarHorizontal.Scroll += EngineScrollBarHorizontal_Scroll;
 
-			if( EditorAPI.DarkTheme )
+			if( EditorAPI2.DarkTheme )
 			{
 				kryptonSplitContainerSub1.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb( 40, 40, 40 );
 				kryptonSplitContainerSub2.StateCommon.Back.Color1 = System.Drawing.Color.FromArgb( 47, 47, 47 );
@@ -432,7 +432,7 @@ namespace NeoAxis.Editor
 		void UpdateBackgroundForeground()
 		{
 			{
-				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditor.TextEditorBackgroundColorDarkTheme : ProjectSettings.Get.TextEditor.TextEditorBackgroundColorLightTheme;
+				var color = EditorAPI2.DarkTheme ? ProjectSettings.Get.TextEditor.TextEditorBackgroundColorDarkTheme : ProjectSettings.Get.TextEditor.TextEditorBackgroundColorLightTheme;
 				if( backgroundColor != color )
 				{
 					backgroundColor = color;
@@ -442,7 +442,7 @@ namespace NeoAxis.Editor
 			}
 
 			{
-				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditor.TextEditorForegroundColorDarkTheme : ProjectSettings.Get.TextEditor.TextEditorForegroundColorLightTheme;
+				var color = EditorAPI2.DarkTheme ? ProjectSettings.Get.TextEditor.TextEditorForegroundColorDarkTheme : ProjectSettings.Get.TextEditor.TextEditorForegroundColorLightTheme;
 				if( cursorColor != color )
 				{
 					cursorColor = color;
@@ -452,7 +452,7 @@ namespace NeoAxis.Editor
 			}
 
 			{
-				var color = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditor.TextEditorSearchBackgroundDarkTheme.Value : ProjectSettings.Get.TextEditor.TextEditorSearchBackgroundLightTheme.Value;
+				var color = EditorAPI2.DarkTheme ? ProjectSettings.Get.TextEditor.TextEditorSearchBackgroundDarkTheme.Value : ProjectSettings.Get.TextEditor.TextEditorSearchBackgroundLightTheme.Value;
 				var packed = color.ToColorPacked();
 				Editor.TextArea.SearchBackgroundBrush = new System.Windows.Media.SolidColorBrush( System.Windows.Media.Color.FromArgb( packed.Alpha, packed.Red, packed.Green, packed.Blue ) );
 			}
@@ -482,7 +482,7 @@ namespace NeoAxis.Editor
 				catch { }
 			}
 
-			var selectionBackground = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditor.TextEditorSelectionBackgroundDarkTheme.Value : ProjectSettings.Get.TextEditor.TextEditorSelectionBackgroundLightTheme.Value;
+			var selectionBackground = EditorAPI2.DarkTheme ? ProjectSettings.Get.TextEditor.TextEditorSelectionBackgroundDarkTheme.Value : ProjectSettings.Get.TextEditor.TextEditorSelectionBackgroundLightTheme.Value;
 			if( currentSelectionBackground != selectionBackground )
 			{
 				currentSelectionBackground = selectionBackground;
@@ -495,7 +495,7 @@ namespace NeoAxis.Editor
 				catch { }
 			}
 
-			var selectionForeground = EditorAPI.DarkTheme ? ProjectSettings.Get.TextEditor.TextEditorSelectionForegroundDarkTheme.Value : ProjectSettings.Get.TextEditor.TextEditorSelectionForegroundLightTheme.Value;
+			var selectionForeground = EditorAPI2.DarkTheme ? ProjectSettings.Get.TextEditor.TextEditorSelectionForegroundDarkTheme.Value : ProjectSettings.Get.TextEditor.TextEditorSelectionForegroundLightTheme.Value;
 			if( currentSelectionForeground != selectionForeground )
 			{
 				currentSelectionForeground = selectionForeground;
@@ -531,7 +531,7 @@ namespace NeoAxis.Editor
 
 			if( Border )
 			{
-				var color = EditorAPI.DarkTheme ? System.Drawing.Color.FromArgb( 80, 80, 80 ) : System.Drawing.Color.FromArgb( 213, 213, 213 );
+				var color = EditorAPI2.DarkTheme ? System.Drawing.Color.FromArgb( 80, 80, 80 ) : System.Drawing.Color.FromArgb( 213, 213, 213 );
 				ControlPaint.DrawBorder( e.Graphics, this.ClientRectangle, color, ButtonBorderStyle.Solid );
 			}
 		}

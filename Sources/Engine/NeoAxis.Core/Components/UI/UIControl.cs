@@ -1,12 +1,7 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Collections;
-using System.Diagnostics;
 using System.ComponentModel;
-using System.Reflection;
-using System.Drawing;
-using System.Drawing.Design;
 using NeoAxis.Editor;
 
 namespace NeoAxis
@@ -16,7 +11,7 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "ui" )]
 #if !DEPLOY
-	[EditorControl( typeof( UIControlEditor ) )]
+	[EditorControl( "NeoAxis.Editor.UIControlEditor" )]
 	//[EditorNewObjectSettings( typeof( UIControl_NewObjectSettings ) )]
 #endif
 	public class UIControl : Component, IVisibleInHierarchy//, ICanBeSelectedInHierarchy
@@ -87,7 +82,7 @@ namespace NeoAxis
 		[DefaultValue( "" )]
 		[Category( "Common" )]
 #if !DEPLOY
-		[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
+		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
 #endif
 		public Reference<string> Text
 		{
@@ -96,7 +91,7 @@ namespace NeoAxis
 			{
 				if( value.Value == null )
 					value.Value = "";
-				if( _text.BeginSet( ref value ) ) { try { TextChanged?.Invoke( this ); } finally { _text.EndSet(); } }
+				if( _text.BeginSet( this, ref value ) ) { try { TextChanged?.Invoke( this ); } finally { _text.EndSet(); } }
 			}
 		}
 		public event Action<UIControl> TextChanged;
@@ -112,7 +107,7 @@ namespace NeoAxis
 			get { if( _visible.BeginGet() ) Visible = _visible.Get( this ); return _visible.value; }
 			set
 			{
-				if( _visible.BeginSet( ref value ) )
+				if( _visible.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -141,7 +136,7 @@ namespace NeoAxis
 		public Reference<bool> ReadOnly
 		{
 			get { if( _readOnly.BeginGet() ) ReadOnly = _readOnly.Get( this ); return _readOnly.value; }
-			set { if( _readOnly.BeginSet( ref value ) ) { try { ReadOnlyChanged?.Invoke( this ); } finally { _readOnly.EndSet(); } } }
+			set { if( _readOnly.BeginSet( this, ref value ) ) { try { ReadOnlyChanged?.Invoke( this ); } finally { _readOnly.EndSet(); } } }
 		}
 		public event Action<UIControl> ReadOnlyChanged;
 		ReferenceField<bool> _readOnly = false;
@@ -154,7 +149,7 @@ namespace NeoAxis
 		public Reference<bool> CanBeSelected
 		{
 			get { if( _canBeSelected.BeginGet() ) CanBeSelected = _canBeSelected.Get( this ); return _canBeSelected.value; }
-			set { if( _canBeSelected.BeginSet( ref value ) ) { try { CanBeSelectedChanged?.Invoke( this ); } finally { _canBeSelected.EndSet(); } } }
+			set { if( _canBeSelected.BeginSet( this, ref value ) ) { try { CanBeSelectedChanged?.Invoke( this ); } finally { _canBeSelected.EndSet(); } } }
 		}
 		public event Action<UIControl> CanBeSelectedChanged;
 		ReferenceField<bool> _canBeSelected = true;
@@ -203,7 +198,7 @@ namespace NeoAxis
 		//public Reference<bool> MouseCover
 		//{
 		//	get { if( _mouseCover.BeginGet() ) MouseCover = _mouseCover.Get( this ); return _mouseCover.value; }
-		//	set { if( _mouseCover.BeginSet( ref value ) ) { try { MouseCoverChanged?.Invoke( this ); } finally { _mouseCover.EndSet(); } } }
+		//	set { if( _mouseCover.BeginSet( this, ref value ) ) { try { MouseCoverChanged?.Invoke( this ); } finally { _mouseCover.EndSet(); } } }
 		//}
 		//public event Action<UIControl> MouseCoverChanged;
 		//ReferenceField<bool> _mouseCover = false;
@@ -218,7 +213,7 @@ namespace NeoAxis
 			get { if( _size.BeginGet() ) Size = _size.Get( this ); return _size.value; }
 			set
 			{
-				if( _size.BeginSet( ref value ) )
+				if( _size.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -239,7 +234,7 @@ namespace NeoAxis
 		//	get { if( _sizeType.BeginGet() ) SizeType = _sizeType.Get( this ); return _sizeType.value; }
 		//	set
 		//	{
-		//		if( _sizeType.BeginSet( ref value ) )
+		//		if( _sizeType.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -260,7 +255,7 @@ namespace NeoAxis
 		//	get { if( _sizeValue.BeginGet() ) SizeValue = _sizeValue.Get( this ); return _sizeValue.value; }
 		//	set
 		//	{
-		//		if( _sizeValue.BeginSet( ref value ) )
+		//		if( _sizeValue.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -284,7 +279,7 @@ namespace NeoAxis
 			get { if( _horizontalAlign.BeginGet() ) HorizontalAlignment = _horizontalAlign.Get( this ); return _horizontalAlign.value; }
 			set
 			{
-				if( _horizontalAlign.BeginSet( ref value ) )
+				if( _horizontalAlign.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -308,7 +303,7 @@ namespace NeoAxis
 			get { if( _verticalAlign.BeginGet() ) VerticalAlignment = _verticalAlign.Get( this ); return _verticalAlign.value; }
 			set
 			{
-				if( _verticalAlign.BeginSet( ref value ) )
+				if( _verticalAlign.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -332,7 +327,7 @@ namespace NeoAxis
 			get { if( _margin.BeginGet() ) Margin = _margin.Get( this ); return _margin.value; }
 			set
 			{
-				if( _margin.BeginSet( ref value ) )
+				if( _margin.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -353,7 +348,7 @@ namespace NeoAxis
 		//	get { if( _marginType.BeginGet() ) MarginType = _marginType.Get( this ); return _marginType.value; }
 		//	set
 		//	{
-		//		if( _marginType.BeginSet( ref value ) )
+		//		if( _marginType.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -374,7 +369,7 @@ namespace NeoAxis
 		//	get { if( _marginValue.BeginGet() ) MarginValue = _marginValue.Get( this ); return _marginValue.value; }
 		//	set
 		//	{
-		//		if( _marginValue.BeginSet( ref value ) )
+		//		if( _marginValue.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -397,7 +392,7 @@ namespace NeoAxis
 		//public Reference<int> ZOrder
 		//{
 		//	get { if( _zOrder.BeginGet() ) ZOrder = _zOrder.Get( this ); return _zOrder.value; }
-		//	set { if( _zOrder.BeginSet( ref value ) ) { try { ZOrderChanged?.Invoke( this ); } finally { _zOrder.EndSet(); } } }
+		//	set { if( _zOrder.BeginSet( this, ref value ) ) { try { ZOrderChanged?.Invoke( this ); } finally { _zOrder.EndSet(); } } }
 		//}
 		//public event Action<UIControl> ZOrderChanged;
 		//ReferenceField<int> _zOrder = 0;
@@ -410,7 +405,7 @@ namespace NeoAxis
 		public Reference<bool> TopMost
 		{
 			get { if( _topMost.BeginGet() ) TopMost = _topMost.Get( this ); return _topMost.value; }
-			set { if( _topMost.BeginSet( ref value ) ) { try { TopMostChanged?.Invoke( this ); } finally { _topMost.EndSet(); } } }
+			set { if( _topMost.BeginSet( this, ref value ) ) { try { TopMostChanged?.Invoke( this ); } finally { _topMost.EndSet(); } } }
 		}
 		public event Action<UIControl> TopMostChanged;
 		ReferenceField<bool> _topMost = false;
@@ -700,7 +695,7 @@ namespace NeoAxis
 		public Reference<UIStyle> Style
 		{
 			get { if( _style.BeginGet() ) Style = _style.Get( this ); return _style.value; }
-			set { if( _style.BeginSet( ref value ) ) { try { StyleChanged?.Invoke( this ); } finally { _style.EndSet(); } } }
+			set { if( _style.BeginSet( this, ref value ) ) { try { StyleChanged?.Invoke( this ); } finally { _style.EndSet(); } } }
 		}
 		public event Action<UIControl> StyleChanged;
 		ReferenceField<UIStyle> _style = null;
@@ -713,10 +708,23 @@ namespace NeoAxis
 		public Reference<ColorValue> BackgroundColor
 		{
 			get { if( _backgroundColor.BeginGet() ) BackgroundColor = _backgroundColor.Get( this ); return _backgroundColor.value; }
-			set { if( _backgroundColor.BeginSet( ref value ) ) { try { BackgroundColorChanged?.Invoke( this ); } finally { _backgroundColor.EndSet(); } } }
+			set { if( _backgroundColor.BeginSet( this, ref value ) ) { try { BackgroundColorChanged?.Invoke( this ); } finally { _backgroundColor.EndSet(); } } }
 		}
 		public event Action<UIControl> BackgroundColorChanged;
 		ReferenceField<ColorValue> _backgroundColor = ColorValue.Zero;
+
+		/// <summary>
+		/// The background rounding size.
+		/// </summary>
+		[DefaultValue( "Units 0" )]
+		[Category( "Appearance" )]
+		public Reference<UIMeasureValueDouble> BackgroundRounding
+		{
+			get { if( _backgroundRounding.BeginGet() ) BackgroundRounding = _backgroundRounding.Get( this ); return _backgroundRounding.value; }
+			set { if( _backgroundRounding.BeginSet( this, ref value ) ) { try { BackgroundRoundingChanged?.Invoke( this ); } finally { _backgroundRounding.EndSet(); } } }
+		}
+		public event Action<UIControl> BackgroundRoundingChanged;
+		ReferenceField<UIMeasureValueDouble> _backgroundRounding = new UIMeasureValueDouble( UIMeasure.Units, 0 );
 
 		/// <summary>
 		/// The extra color multiplier applied to the control.
@@ -726,7 +734,7 @@ namespace NeoAxis
 		public Reference<ColorValue> ColorMultiplier
 		{
 			get { if( _colorMultiplier.BeginGet() ) ColorMultiplier = _colorMultiplier.Get( this ); return _colorMultiplier.value; }
-			set { if( _colorMultiplier.BeginSet( ref value ) ) { try { ColorMultiplierChanged?.Invoke( this ); } finally { _colorMultiplier.EndSet(); } } }
+			set { if( _colorMultiplier.BeginSet( this, ref value ) ) { try { ColorMultiplierChanged?.Invoke( this ); } finally { _colorMultiplier.EndSet(); } } }
 		}
 		public event Action<UIControl> ColorMultiplierChanged;
 		ReferenceField<ColorValue> _colorMultiplier = new ColorValue( 1, 1, 1 );
@@ -1608,18 +1616,18 @@ namespace NeoAxis
 			if( !topMostStep && TopMost && !alwaysPass )
 				return false;
 
+			var alwaysPass2 = alwaysPass;
 			if( topMostStep && TopMost )
-				alwaysPass = true;
-
+				alwaysPass2 = true;
 
 			foreach( UIControl control in GetControls( true ) )
 			{
 				if( control.EnabledInHierarchy && !control.RemoveFromParentQueued && control.Visible )
-					if( control.CallMouseDown( button, topMostStep, alwaysPass ) )
+					if( control.CallMouseDown( button, topMostStep, alwaysPass2 ) )
 						return true;
 			}
 
-			if( !topMostStep || alwaysPass )
+			if( !topMostStep || alwaysPass2 )
 			{
 				if( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) || MouseRelativeMode )
 				{
@@ -1668,18 +1676,18 @@ namespace NeoAxis
 			if( !topMostStep && TopMost && !alwaysPass )
 				return false;
 
+			var alwaysPass2 = alwaysPass;
 			if( topMostStep && TopMost )
-				alwaysPass = true;
-
+				alwaysPass2 = true;
 
 			foreach( UIControl control in GetControls( true ) )
 			{
 				if( control.EnabledInHierarchy && !control.RemoveFromParentQueued && control.Visible )
-					if( control.CallMouseUp( button, topMostStep, alwaysPass ) )
+					if( control.CallMouseUp( button, topMostStep, alwaysPass2 ) )
 						return false;
 			}
 
-			if( !topMostStep || alwaysPass )
+			if( !topMostStep || alwaysPass2 )
 			{
 				if( OnMouseUpBefore( button ) )
 					return true;
@@ -1713,18 +1721,18 @@ namespace NeoAxis
 			if( !topMostStep && TopMost && !alwaysPass )
 				return false;
 
+			var alwaysPass2 = alwaysPass;
 			if( topMostStep && TopMost )
-				alwaysPass = true;
-
+				alwaysPass2 = true;
 
 			foreach( UIControl control in GetControls( true ) )
 			{
 				if( control.EnabledInHierarchy && !control.RemoveFromParentQueued && control.Visible )
-					if( control.CallMouseDoubleClick( button, topMostStep, alwaysPass ) )
+					if( control.CallMouseDoubleClick( button, topMostStep, alwaysPass2 ) )
 						return true;
 			}
 
-			if( !topMostStep || alwaysPass )
+			if( !topMostStep || alwaysPass2 )
 			{
 				if( new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) || MouseRelativeMode )
 				{
@@ -1886,25 +1894,86 @@ namespace NeoAxis
 		//public event TouchDelegate TouchBefore;
 		public event TouchDelegate Touch;
 
-		internal bool CallTouch( TouchData e )
+		internal bool CallTouch( TouchData e, bool topMostStep, bool alwaysPass )
 		{
+			if( !topMostStep && TopMost && !alwaysPass )
+				return false;
+
+			var alwaysPass2 = alwaysPass;
+			if( topMostStep && TopMost )
+				alwaysPass2 = true;
+
 			foreach( UIControl control in GetControls( true ) )
 			{
 				if( control.EnabledInHierarchy && !control.RemoveFromParentQueued && control.Visible )
-					if( control.CallTouch( e ) )
+					if( control.CallTouch( e, topMostStep, alwaysPass2 ) )
 						return true;
 			}
 
-			if( OnTouch( e ) )
-				return true;
+			if( !topMostStep || alwaysPass2 )
+			{
+				//GetScreenRectangle( out var screenRectangle );
 
-			bool handled = false;
-			Touch?.Invoke( this, e, ref handled );
-			if( handled )
-				return true;
+				////add border
+				//var viewport = ParentContainer?.Viewport;
+				//if( viewport != null )
+				//{
+				//	//!!!!
+				//	int maxDistance = viewport.SizeInPixels.MinComponent() / 30;
+
+				//	var border = ConvertOffset( new UIMeasureValueVector2( UIMeasure.Pixels, new Vector2( maxDistance, maxDistance ) ), UIMeasure.Screen );
+				//	screenRectangle.Expand( border );
+				//}
+
+				//if( screenRectangle.Contains( ref e.Position ) || e.Action == TouchData.ActionEnum.Move || e.Action == TouchData.ActionEnum.Up )
+				{
+					//if( OnMouseDownBefore( button ) )
+					//	return true;
+
+					bool handled = false;
+					//MouseDownBefore?.Invoke( this, button, ref handled );
+					//if( handled )
+					//	return true;
+
+					if( OnTouch( e ) )
+						return true;
+
+					Touch?.Invoke( this, e, ref handled );
+					if( handled )
+						return true;
+				}
+
+				if( CoverOtherControls == CoverOtherControlsEnum.OnlyBehind && GetScreenRectangle().Contains( ref e.Position ) )
+					return false;
+				//if( CoverOtherControls == CoverOtherControlsEnum.OnlyBehind && screenRectangle.Contains( ref e.Position ) )
+				//	return false;
+
+				if( CoverOtherControls == CoverOtherControlsEnum.AllPreviousInHierarchy )
+					return false;
+			}
 
 			return false;
 		}
+
+		//internal bool CallTouch( TouchData e )
+		//{
+		//	foreach( UIControl control in GetControls( true ) )
+		//	{
+		//		if( control.EnabledInHierarchy && !control.RemoveFromParentQueued && control.Visible )
+		//			if( control.CallTouch( e ) )
+		//				return true;
+		//	}
+
+		//	if( OnTouch( e ) )
+		//		return true;
+
+		//	bool handled = false;
+		//	Touch?.Invoke( this, e, ref handled );
+		//	if( handled )
+		//		return true;
+
+		//	return false;
+		//}
 
 		/////////////////////////////////////////
 

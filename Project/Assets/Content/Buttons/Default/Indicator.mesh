@@ -1,0 +1,18 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.Mesh
+{
+	EditorCameraTransform = "0.137704294775238 -0.113284101713684 0.0905772570758135; -0.2191854566202 0.0785722056997891 0.915470996498287 0.328172208860071; 1 1 1"
+	.component NeoAxis.MeshGeometry_Cylinder
+	{
+		Name = Mesh Geometry
+		Axis = 0
+		Radius = 0.02
+		Height = 0.02
+		Segments = 16
+		Material
+		{
+			GetByReference = "Base\\Materials\\Gray.material"
+		}
+	}
+}

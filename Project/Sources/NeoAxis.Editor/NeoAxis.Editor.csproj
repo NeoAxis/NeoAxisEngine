@@ -1,6 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
+	<CheckEolTargetFramework>false</CheckEolTargetFramework>
 	<UseWindowsForms>true</UseWindowsForms>
 	<UseWPF>true</UseWPF>	
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
@@ -46,7 +47,7 @@
     <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
     <PackageReference Include="Microsoft.Build" Version="16.6.0" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.6.0" />
     <PackageReference Include="System.Management" Version="4.7.0" />
@@ -56,6 +57,11 @@
     <Reference Include="NeoAxis.Core">
       <HintPath>..\..\Binaries\NeoAxis.Core.dll</HintPath>
     </Reference>
+    <Reference Include="NeoAxis.Core.Editor">
+      <HintPath>..\..\Binaries\NeoAxis.Core.Editor.dll</HintPath>
+    </Reference>
   </ItemGroup>
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
 </Project>

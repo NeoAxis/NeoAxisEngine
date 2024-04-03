@@ -34,6 +34,7 @@ namespace NeoAxis
 			Init( data, startPosition, length );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Init( byte[] data, int startPosition, int length )
 		{
 			this.data = data;
@@ -131,6 +132,8 @@ namespace NeoAxis
 					*(ulong*)destination = *(ulong*)p;
 				else if( length == 4 )
 					*(uint*)destination = *(uint*)p;
+				else if( length == 2 )
+					*(ushort*)destination = *(ushort*)p;
 				else
 					Buffer.MemoryCopy( p, destination, length, length );
 			}
@@ -759,7 +762,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public QuaternionF ReadQuatertionF()
+		public QuaternionF ReadQuaternionF()
 		{
 			return new QuaternionF( ReadSingle(), ReadSingle(), ReadSingle(), ReadSingle() );
 		}
@@ -1072,6 +1075,46 @@ namespace NeoAxis
 		public DateTime ReadDateTime()
 		{
 			return new DateTime( ReadInt64() );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public unsafe Vector2H ReadVector2H()
+		{
+			Vector2H result;
+			ReadBuffer( &result, sizeof( Vector2H ) );
+			return result;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public unsafe Vector3H ReadVector3H()
+		{
+			Vector3H result;
+			ReadBuffer( &result, sizeof( Vector3H ) );
+			return result;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public unsafe Vector4H ReadVector4H()
+		{
+			Vector4H result;
+			ReadBuffer( &result, sizeof( Vector4H ) );
+			return result;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public unsafe QuaternionH ReadQuaternionH()
+		{
+			QuaternionH result;
+			ReadBuffer( &result, sizeof( QuaternionH ) );
+			return result;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public unsafe HalfType ReadHalf()
+		{
+			HalfType result;
+			ReadBuffer( &result, sizeof( HalfType ) );
+			return result;
 		}
 
 		//!!!!more types

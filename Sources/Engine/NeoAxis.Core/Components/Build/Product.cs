@@ -13,8 +13,8 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "product" )]
 #if !DEPLOY
-	[EditorControl( typeof( ProductEditor ) )]
-	[SettingsCell( typeof( ProductSettingsCell ) )]
+	[EditorControl( "NeoAxis.Editor.ProductEditor" )]
+	[SettingsCell( "NeoAxis.Editor.ProductSettingsCell" )]
 #endif
 	public abstract class Product : Component
 	{
@@ -26,30 +26,31 @@ namespace NeoAxis
 		public Reference<double> SortOrder
 		{
 			get { if( _sortOrder.BeginGet() ) SortOrder = _sortOrder.Get( this ); return _sortOrder.value; }
-			set { if( _sortOrder.BeginSet( ref value ) ) { try { SortOrderChanged?.Invoke( this ); } finally { _sortOrder.EndSet(); } } }
+			set { if( _sortOrder.BeginSet( this, ref value ) ) { try { SortOrderChanged?.Invoke( this ); } finally { _sortOrder.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SortOrder"/> property value changes.</summary>
 		public event Action<Product> SortOrderChanged;
 		ReferenceField<double> _sortOrder = 0.0;
 
-		//!!!!make SelectFiles window
+		const string pathsDefault = "Assets\r\n\r\nexclude:Assets\\Base\\Build\r\nexclude:Assets\\Base\\Tools\r\nexclude:Assets\\Base\\Learning\r\nexclude:Assets\\Base\\Fonts\\FlowGraphEditor.ttf\r\nexclude:Assets\\Base\\Fonts\\FlowGraphEditor.ttf.settings";
+
+		//!!!!make SelectFiles window?
 		/// <summary>
-		/// The list of folders and files to add. It is specified by the list, list items are separated by return. The item can have a prefix 'exclude:' to remove selected path.
+		/// The list of folders and files to add. Items are separated by return or semicolon. The item can have a prefix 'exclude:' to remove selected path.
 		/// </summary>
 		[DefaultValue( pathsDefault )]
 		[Category( "Files" )]
 #if !DEPLOY
-		[Editor( typeof( HCItemTextBoxDropMultiline ), typeof( object ) )]
+		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
 #endif
 		public Reference<string> Paths
 		{
 			get { if( _paths.BeginGet() ) Paths = _paths.Get( this ); return _paths.value; }
-			set { if( _paths.BeginSet( ref value ) ) { try { PathsChanged?.Invoke( this ); } finally { _paths.EndSet(); } } }
+			set { if( _paths.BeginSet( this, ref value ) ) { try { PathsChanged?.Invoke( this ); } finally { _paths.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Paths"/> property value changes.</summary>
 		public event Action<Product> PathsChanged;
 		ReferenceField<string> _paths = pathsDefault;
-		const string pathsDefault = "Assets\r\n\r\nexclude:Assets\\Base\\Build\r\nexclude:Assets\\Base\\Tools\r\nexclude:Assets\\Base\\Learning\r\nexclude:Assets\\Base\\Fonts\\FlowGraphEditor.ttf\r\nexclude:Assets\\Base\\Fonts\\FlowGraphEditor.ttf.settings";
 
 		/// <summary>
 		/// Whether to include the cache of auto-compressed images.
@@ -59,7 +60,7 @@ namespace NeoAxis
 		public Reference<bool> FileCache
 		{
 			get { if( _fileCache.BeginGet() ) FileCache = _fileCache.Get( this ); return _fileCache.value; }
-			set { if( _fileCache.BeginSet( ref value ) ) { try { FileCacheChanged?.Invoke( this ); } finally { _fileCache.EndSet(); } } }
+			set { if( _fileCache.BeginSet( this, ref value ) ) { try { FileCacheChanged?.Invoke( this ); } finally { _fileCache.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FileCache"/> property value changes.</summary>
 		public event Action<Product> FileCacheChanged;
@@ -73,11 +74,64 @@ namespace NeoAxis
 		public Reference<bool> ShaderCache
 		{
 			get { if( _shaderCache.BeginGet() ) ShaderCache = _shaderCache.Get( this ); return _shaderCache.value; }
-			set { if( _shaderCache.BeginSet( ref value ) ) { try { ShaderCacheChanged?.Invoke( this ); } finally { _shaderCache.EndSet(); } } }
+			set { if( _shaderCache.BeginSet( this, ref value ) ) { try { ShaderCacheChanged?.Invoke( this ); } finally { _shaderCache.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShaderCache"/> property value changes.</summary>
 		public event Action<Product> ShaderCacheChanged;
 		ReferenceField<bool> _shaderCache = true;
+
+		const string skipFilesWithExtensionDefault = "blend;blend1;bin";
+
+		/// <summary>
+		/// The list of file extensions to remove. Items are separated by return or semicolon.
+		/// </summary>
+		[DefaultValue( skipFilesWithExtensionDefault )]
+		[Category( "Files" )]
+#if !DEPLOY
+		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
+#endif
+		public Reference<string> SkipFilesWithExtension
+		{
+			get { if( _skipFilesWithExtension.BeginGet() ) SkipFilesWithExtension = _skipFilesWithExtension.Get( this ); return _skipFilesWithExtension.value; }
+			set { if( _skipFilesWithExtension.BeginSet( this, ref value ) ) { try { SkipFilesWithExtensionChanged?.Invoke( this ); } finally { _skipFilesWithExtension.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="SkipFilesWithExtension"/> property value changes.</summary>
+		public event Action<Product> SkipFilesWithExtensionChanged;
+		ReferenceField<string> _skipFilesWithExtension = skipFilesWithExtensionDefault;
+
+		const string clearFilesWithExtensionDefault = "fbx;3d;3ds;ac;ac3d;acc;ase;ask;b3d;bvh;cob;csm;dae;dxf;enff;hmp;ifc;lwo;lws;lxo;mot;ms3d;ndo;nff;obj;off;pk3;ply;x;q3d;q3s;gltf;glb";
+
+		/// <summary>
+		/// The list of file extensions to clear. Items are separated by return or semicolon. Clearing of files is used for source 3D models, because the actual data of 3D models is stored in settings files. It is enough to save empty original files.
+		/// </summary>
+		[DefaultValue( clearFilesWithExtensionDefault )]
+		[Category( "Files" )]
+#if !DEPLOY
+		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
+#endif
+		public Reference<string> ClearFilesWithExtension
+		{
+			get { if( _clearFilesWithExtension.BeginGet() ) ClearFilesWithExtension = _clearFilesWithExtension.Get( this ); return _clearFilesWithExtension.value; }
+			set { if( _clearFilesWithExtension.BeginSet( this, ref value ) ) { try { ClearFilesWithExtensionChanged?.Invoke( this ); } finally { _clearFilesWithExtension.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ClearFilesWithExtension"/> property value changes.</summary>
+		public event Action<Product> ClearFilesWithExtensionChanged;
+		ReferenceField<string> _clearFilesWithExtension = clearFilesWithExtensionDefault;
+
+		///// <summary>
+		///// Whether to clear source 3D files such as FBX, GLTF, etc. The actual data of 3D models is stored in settings files.
+		///// </summary>
+		//[DefaultValue( true )]
+		//[DisplayName( "Clear Import 3D Files" )]
+		//[Category( "Files" )]
+		//public Reference<bool> ClearImport3DFiles
+		//{
+		//	get { if( _clearImport3DFiles.BeginGet() ) ClearImport3DFiles = _clearImport3DFiles.Get( this ); return _clearImport3DFiles.value; }
+		//	set { if( _clearImport3DFiles.BeginSet( this, ref value ) ) { try { ClearImport3DFilesChanged?.Invoke( this ); } finally { _clearImport3DFiles.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="ClearImport3DFiles"/> property value changes.</summary>
+		//public event Action<Product> ClearImport3DFilesChanged;
+		//ReferenceField<bool> _clearImport3DFiles = true;
 
 
 		//!!!!code build events and build events like Visual Studio
@@ -117,23 +171,32 @@ namespace NeoAxis
 			Directory.CreateDirectory( destFolder );
 
 			var allFiles = new DirectoryInfo( sourceFolder ).GetFiles( searchPattern, SearchOption.TopDirectoryOnly );
-
 			long totalLength = allFiles.Sum( f => f.Length );
 
 			long processedLength = 0;
 			foreach( var fileInfo in allFiles )
 			{
-				if( File.Exists( fileInfo.FullName ) )
-					File.Copy( fileInfo.FullName, fileInfo.FullName.Replace( sourceFolder, destFolder ), true );
-
-				if( buildInstance.RequestCancel )
+				if( !buildInstance.NeedSkipFile( fileInfo.FullName ) )
 				{
-					buildInstance.State = ProductBuildInstance.StateEnum.Cancelled;
-					return;
-				}
+					if( File.Exists( fileInfo.FullName ) )
+					{
+						var destFile = fileInfo.FullName.Replace( sourceFolder, destFolder );
 
-				processedLength += fileInfo.Length;
-				buildInstance.SetProgressWithRange( (double)processedLength / (double)totalLength, progressRange );
+						if( buildInstance.NeedClearFile( destFile ) )
+							File.WriteAllBytes( destFile, new byte[ 0 ] );
+						else
+							File.Copy( fileInfo.FullName, destFile, true );
+					}
+
+					if( buildInstance.RequestCancel )
+					{
+						buildInstance.State = ProductBuildInstance.StateEnum.Cancelled;
+						return;
+					}
+
+					processedLength += fileInfo.Length;
+					buildInstance.SetProgressWithRange( (double)processedLength / (double)totalLength, progressRange );
+				}
 			}
 		}
 
@@ -157,7 +220,10 @@ namespace NeoAxis
 
 			long totalLength = 0;
 			foreach( var fileInfo in allFiles )
-				totalLength += fileInfo.Length;
+			{
+				if( !buildInstance.NeedSkipFile( fileInfo.FullName ) )
+					totalLength += fileInfo.Length;
+			}
 
 			foreach( string dirPath in allDirs )
 			{
@@ -168,17 +234,27 @@ namespace NeoAxis
 			long processedLength = 0;
 			foreach( var fileInfo in allFiles )
 			{
-				if( File.Exists( fileInfo.FullName ) )
-					File.Copy( fileInfo.FullName, fileInfo.FullName.Replace( sourceFolder, destFolder ), true );
-
-				if( buildInstance.RequestCancel )
+				if( !buildInstance.NeedSkipFile( fileInfo.FullName ) )
 				{
-					buildInstance.State = ProductBuildInstance.StateEnum.Cancelled;
-					return;
-				}
+					if( File.Exists( fileInfo.FullName ) )
+					{
+						var destFile = fileInfo.FullName.Replace( sourceFolder, destFolder );
 
-				processedLength += fileInfo.Length;
-				buildInstance.SetProgressWithRange( (double)processedLength / (double)totalLength, progressRange );
+						if( buildInstance.NeedClearFile( destFile ) )
+							File.WriteAllBytes( destFile, new byte[ 0 ] );
+						else
+							File.Copy( fileInfo.FullName, destFile, true );
+					}
+
+					if( buildInstance.RequestCancel )
+					{
+						buildInstance.State = ProductBuildInstance.StateEnum.Cancelled;
+						return;
+					}
+
+					processedLength += fileInfo.Length;
+					buildInstance.SetProgressWithRange( (double)processedLength / (double)totalLength, progressRange );
+				}
 			}
 		}
 
@@ -318,10 +394,17 @@ namespace NeoAxis
 
 					if( File.Exists( sourcePath ) )
 					{
-						var directoryName = Path.GetDirectoryName( destPath );
-						if( !Directory.Exists( directoryName ) )
-							Directory.CreateDirectory( directoryName );
-						File.Copy( sourcePath, destPath, true );
+						if( !buildInstance.NeedSkipFile( sourcePath ) )
+						{
+							var directoryName = Path.GetDirectoryName( destPath );
+							if( !Directory.Exists( directoryName ) )
+								Directory.CreateDirectory( directoryName );
+
+							if( buildInstance.NeedClearFile( destPath ) )
+								File.WriteAllBytes( destPath, new byte[ 0 ] );
+							else
+								File.Copy( sourcePath, destPath, true );
+						}
 					}
 					else
 						CopyFolder( sourcePath, destPath, buildInstance, percentRange, excludePathsRooted );
@@ -337,9 +420,9 @@ namespace NeoAxis
 		protected virtual void OnGetPaths( List<string> paths )
 		{
 			//Paths
-			foreach( var path in Paths.Value.Split( '\n', StringSplitOptions.RemoveEmptyEntries ) )
+			foreach( var path in Paths.Value.Split( new char[] { '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries ) )
 			{
-				var path2 = path.Replace( "\r", "" );
+				var path2 = path;//.Replace( "\r", "" );
 
 				//comment support
 				var index = path2.IndexOf( "//" );

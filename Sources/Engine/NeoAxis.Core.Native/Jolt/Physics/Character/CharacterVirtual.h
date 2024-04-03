@@ -16,7 +16,7 @@ JPH_NAMESPACE_BEGIN
 class CharacterVirtual;
 
 /// Contains the configuration of a character
-class CharacterVirtualSettings : public CharacterBaseSettings
+class JPH_EXPORT CharacterVirtualSettings : public CharacterBaseSettings
 {
 public:
 	JPH_OVERRIDE_NEW_DELETE
@@ -52,7 +52,7 @@ public:
 };
 
 /// This class receives callbacks when a virtual character hits something.
-class CharacterContactListener
+class JPH_EXPORT CharacterContactListener
 {
 public:
 	/// Destructor
@@ -92,7 +92,7 @@ public:
 /// The advantage of this is that you can determine when the character moves in the frame (usually this has to happen at a very particular point in the frame)
 /// but the downside is that other objects don't see this virtual character. In order to make this work it is recommended to pair a CharacterVirtual with a Character that
 /// moves along. This Character should be keyframed (or at least have no gravity) and move along with the CharacterVirtual so that other rigid bodies can collide with it.
-class CharacterVirtual : public CharacterBase
+class JPH_EXPORT CharacterVirtual : public CharacterBase
 {
 public:
 	JPH_OVERRIDE_NEW_DELETE
@@ -239,7 +239,10 @@ public:
 	/// @param inBodyFilter Filter that is used to check if a character collides with a body.
 	/// @param inShapeFilter Filter that is used to check if a character collides with a subshape.
 	/// @param inAllocator An allocator for temporary allocations. All memory will be freed by the time this function returns.
-	void								ExtendedUpdate(float inDeltaTime, Vec3Arg inGravity, const ExtendedUpdateSettings &inSettings, const BroadPhaseLayerFilter &inBroadPhaseLayerFilter, const ObjectLayerFilter &inObjectLayerFilter, const BodyFilter &inBodyFilter, const ShapeFilter &inShapeFilter, TempAllocator &inAllocator);
+	
+	//!!!!betauser. positionBeforeWalkUpDown
+
+	void								ExtendedUpdate(float inDeltaTime, Vec3Arg inGravity, const ExtendedUpdateSettings &inSettings, const BroadPhaseLayerFilter &inBroadPhaseLayerFilter, const ObjectLayerFilter &inObjectLayerFilter, const BodyFilter &inBodyFilter, const ShapeFilter &inShapeFilter, TempAllocator &inAllocator, RVec3& positionBeforeWalkUpDown);
 
 	/// This function can be used after a character has teleported to determine the new contacts with the world.
 	void								RefreshContacts(const BroadPhaseLayerFilter &inBroadPhaseLayerFilter, const ObjectLayerFilter &inObjectLayerFilter, const BodyFilter &inBodyFilter, const ShapeFilter &inShapeFilter, TempAllocator &inAllocator);
@@ -393,7 +396,7 @@ private:
 	void								RemoveConflictingContacts(TempContactList &ioContacts, IgnoredContactList &outIgnoredContacts) const;
 
 	// Convert contacts into constraints. The character is assumed to start at the origin and the constraints are planes around the origin that confine the movement of the character.
-	void								DetermineConstraints(TempContactList &inContacts, ConstraintList &outConstraints) const;
+	void								DetermineConstraints(TempContactList &inContacts, float inDeltaTime, ConstraintList &outConstraints) const;
 
 	// Use the constraints to solve the displacement of the character. This will slide the character on the planes around the origin for as far as possible.
 	void								SolveConstraints(Vec3Arg inVelocity, float inDeltaTime, float inTimeRemaining, ConstraintList &ioConstraints, IgnoredContactList &ioIgnoredContacts, float &outTimeSimulated, Vec3 &outDisplacement, TempAllocator &inAllocator
@@ -436,6 +439,10 @@ private:
 
 	// Movement settings
 	EBackFaceMode						mBackFaceMode;											// When colliding with back faces, the character will not be able to move through back facing triangles. Use this if you have triangles that need to collide on both sides.
+
+	//!!!!betauser. to update mPredictiveContactDistance
+	public:
+
 	float								mPredictiveContactDistance;								// How far to scan outside of the shape for predictive contacts. A value of 0 will most likely cause the character to get stuck as it properly calculate a sliding direction anymore. A value that's too high will cause ghost collisions.
 	uint								mMaxCollisionIterations;								// Max amount of collision loops
 	uint								mMaxConstraintIterations;								// How often to try stepping in the constraint solving

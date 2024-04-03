@@ -18,6 +18,10 @@ namespace NeoAxis
 	[EditorControl( typeof( PlantEditor ) )]
 	public class PlantType : Component
 	{
+		internal int EditorPreviewUpdateCounter;
+
+		///////////////////////////////////////////////
+
 		public delegate void GenerateStageDelegate( PlantType sender, PlantGenerator generator, PlantGenerator.ElementTypeEnum stage );
 		public event GenerateStageDelegate GenerateStage;
 
@@ -36,7 +40,7 @@ namespace NeoAxis
 		public Reference<double> MatureAge
 		{
 			get { if( _matureAge.BeginGet() ) MatureAge = _matureAge.Get( this ); return _matureAge.value; }
-			set { if( _matureAge.BeginSet( ref value ) ) { try { MatureAgeChanged?.Invoke( this ); } finally { _matureAge.EndSet(); } } }
+			set { if( _matureAge.BeginSet( this, ref value ) ) { try { MatureAgeChanged?.Invoke( this ); } finally { _matureAge.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MatureAge"/> property value changes.</summary>
 		public event Action<PlantType> MatureAgeChanged;
@@ -50,7 +54,7 @@ namespace NeoAxis
 		public Reference<Range> MatureHeight
 		{
 			get { if( _matureHeight.BeginGet() ) MatureHeight = _matureHeight.Get( this ); return _matureHeight.value; }
-			set { if( _matureHeight.BeginSet( ref value ) ) { try { MatureHeightChanged?.Invoke( this ); } finally { _matureHeight.EndSet(); } } }
+			set { if( _matureHeight.BeginSet( this, ref value ) ) { try { MatureHeightChanged?.Invoke( this ); } finally { _matureHeight.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MatureHeight"/> property value changes.</summary>
 		public event Action<PlantType> MatureHeightChanged;
@@ -75,7 +79,7 @@ namespace NeoAxis
 		public Reference<PredefinedConfigurationEnum> PredefinedConfiguration
 		{
 			get { if( _predefinedConfiguration.BeginGet() ) PredefinedConfiguration = _predefinedConfiguration.Get( this ); return _predefinedConfiguration.value; }
-			set { if( _predefinedConfiguration.BeginSet( ref value ) ) { try { PredefinedConfigurationChanged?.Invoke( this ); } finally { _predefinedConfiguration.EndSet(); } } }
+			set { if( _predefinedConfiguration.BeginSet( this, ref value ) ) { try { PredefinedConfigurationChanged?.Invoke( this ); } finally { _predefinedConfiguration.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PredefinedConfiguration"/> property value changes.</summary>
 		public event Action<PlantType> PredefinedConfigurationChanged;
@@ -89,7 +93,7 @@ namespace NeoAxis
 		public Reference<bool> GenerateIndividuals
 		{
 			get { if( _generateIndividuals.BeginGet() ) GenerateIndividuals = _generateIndividuals.Get( this ); return _generateIndividuals.value; }
-			set { if( _generateIndividuals.BeginSet( ref value ) ) { try { GenerateIndividualsChanged?.Invoke( this ); } finally { _generateIndividuals.EndSet(); } } }
+			set { if( _generateIndividuals.BeginSet( this, ref value ) ) { try { GenerateIndividualsChanged?.Invoke( this ); } finally { _generateIndividuals.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="GenerateIndividuals"/> property value changes.</summary>
 		public event Action<PlantType> GenerateIndividualsChanged;
@@ -103,7 +107,7 @@ namespace NeoAxis
 		public Reference<bool> GenerateGroups
 		{
 			get { if( _generateGroups.BeginGet() ) GenerateGroups = _generateGroups.Get( this ); return _generateGroups.value; }
-			set { if( _generateGroups.BeginSet( ref value ) ) { try { GenerateGroupsChanged?.Invoke( this ); } finally { _generateGroups.EndSet(); } } }
+			set { if( _generateGroups.BeginSet( this, ref value ) ) { try { GenerateGroupsChanged?.Invoke( this ); } finally { _generateGroups.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="GenerateGroups"/> property value changes.</summary>
 		public event Action<PlantType> GenerateGroupsChanged;
@@ -117,7 +121,7 @@ namespace NeoAxis
 		public Reference<int> GroupSize
 		{
 			get { if( _groupSize.BeginGet() ) GroupSize = _groupSize.Get( this ); return _groupSize.value; }
-			set { if( _groupSize.BeginSet( ref value ) ) { try { GroupSizeChanged?.Invoke( this ); } finally { _groupSize.EndSet(); } } }
+			set { if( _groupSize.BeginSet( this, ref value ) ) { try { GroupSizeChanged?.Invoke( this ); } finally { _groupSize.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="GroupSize"/> property value changes.</summary>
 		public event Action<PlantType> GroupSizeChanged;
@@ -131,7 +135,7 @@ namespace NeoAxis
 		public Reference<double> GroupRadius
 		{
 			get { if( _groupRadius.BeginGet() ) GroupRadius = _groupRadius.Get( this ); return _groupRadius.value; }
-			set { if( _groupRadius.BeginSet( ref value ) ) { try { GroupRadiusChanged?.Invoke( this ); } finally { _groupRadius.EndSet(); } } }
+			set { if( _groupRadius.BeginSet( this, ref value ) ) { try { GroupRadiusChanged?.Invoke( this ); } finally { _groupRadius.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="GroupRadius"/> property value changes.</summary>
 		public event Action<PlantType> GroupRadiusChanged;
@@ -145,7 +149,7 @@ namespace NeoAxis
 		public Reference<Degree> GroupMaxIncline
 		{
 			get { if( _groupMaxIncline.BeginGet() ) GroupMaxIncline = _groupMaxIncline.Get( this ); return _groupMaxIncline.value; }
-			set { if( _groupMaxIncline.BeginSet( ref value ) ) { try { GroupMaxInclineChanged?.Invoke( this ); } finally { _groupMaxIncline.EndSet(); } } }
+			set { if( _groupMaxIncline.BeginSet( this, ref value ) ) { try { GroupMaxInclineChanged?.Invoke( this ); } finally { _groupMaxIncline.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="GroupMaxIncline"/> property value changes.</summary>
 		public event Action<PlantType> GroupMaxInclineChanged;
@@ -159,7 +163,7 @@ namespace NeoAxis
 		public Reference<Degree> GroupMaxInclineFromCenter
 		{
 			get { if( _groupMaxInclineFromCenter.BeginGet() ) GroupMaxInclineFromCenter = _groupMaxInclineFromCenter.Get( this ); return _groupMaxInclineFromCenter.value; }
-			set { if( _groupMaxInclineFromCenter.BeginSet( ref value ) ) { try { GroupMaxInclineFromCenterChanged?.Invoke( this ); } finally { _groupMaxInclineFromCenter.EndSet(); } } }
+			set { if( _groupMaxInclineFromCenter.BeginSet( this, ref value ) ) { try { GroupMaxInclineFromCenterChanged?.Invoke( this ); } finally { _groupMaxInclineFromCenter.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="GroupMaxInclineFromCenter"/> property value changes.</summary>
 		public event Action<PlantType> GroupMaxInclineFromCenterChanged;
@@ -173,7 +177,7 @@ namespace NeoAxis
 		public Reference<int> Variations
 		{
 			get { if( _variations.BeginGet() ) Variations = _variations.Get( this ); return _variations.value; }
-			set { if( _variations.BeginSet( ref value ) ) { try { VariationsChanged?.Invoke( this ); } finally { _variations.EndSet(); } } }
+			set { if( _variations.BeginSet( this, ref value ) ) { try { VariationsChanged?.Invoke( this ); } finally { _variations.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Variations"/> property value changes.</summary>
 		public event Action<PlantType> VariationsChanged;
@@ -197,7 +201,7 @@ namespace NeoAxis
 		public Reference<AgesEnum> Ages
 		{
 			get { if( _ages.BeginGet() ) Ages = _ages.Get( this ); return _ages.value; }
-			set { if( _ages.BeginSet( ref value ) ) { try { AgesChanged?.Invoke( this ); } finally { _ages.EndSet(); } } }
+			set { if( _ages.BeginSet( this, ref value ) ) { try { AgesChanged?.Invoke( this ); } finally { _ages.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Ages"/> property value changes.</summary>
 		public event Action<PlantType> AgesChanged;
@@ -212,7 +216,7 @@ namespace NeoAxis
 		public Reference<double> SegmentsByMeter
 		{
 			get { if( _segmentsByMeter.BeginGet() ) SegmentsByMeter = _segmentsByMeter.Get( this ); return _segmentsByMeter.value; }
-			set { if( _segmentsByMeter.BeginSet( ref value ) ) { try { SegmentsByMeterChanged?.Invoke( this ); } finally { _segmentsByMeter.EndSet(); } } }
+			set { if( _segmentsByMeter.BeginSet( this, ref value ) ) { try { SegmentsByMeterChanged?.Invoke( this ); } finally { _segmentsByMeter.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SegmentsByMeter"/> property value changes.</summary>
 		public event Action<PlantType> SegmentsByMeterChanged;
@@ -226,7 +230,7 @@ namespace NeoAxis
 		public Reference<int> SegmentsByCircle
 		{
 			get { if( _segmentsByCircle.BeginGet() ) SegmentsByCircle = _segmentsByCircle.Get( this ); return _segmentsByCircle.value; }
-			set { if( _segmentsByCircle.BeginSet( ref value ) ) { try { SegmentsByCircleChanged?.Invoke( this ); } finally { _segmentsByCircle.EndSet(); } } }
+			set { if( _segmentsByCircle.BeginSet( this, ref value ) ) { try { SegmentsByCircleChanged?.Invoke( this ); } finally { _segmentsByCircle.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SegmentsByCircle"/> property value changes.</summary>
 		public event Action<PlantType> SegmentsByCircleChanged;
@@ -242,7 +246,7 @@ namespace NeoAxis
 		public Reference<int> LODLevels
 		{
 			get { if( _lODLevels.BeginGet() ) LODLevels = _lODLevels.Get( this ); return _lODLevels.value; }
-			set { if( _lODLevels.BeginSet( ref value ) ) { try { LODLevelsChanged?.Invoke( this ); } finally { _lODLevels.EndSet(); } } }
+			set { if( _lODLevels.BeginSet( this, ref value ) ) { try { LODLevelsChanged?.Invoke( this ); } finally { _lODLevels.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODLevels"/> property value changes.</summary>
 		[DisplayName( "LOD Levels Changed" )]
@@ -259,7 +263,7 @@ namespace NeoAxis
 		public Reference<double> LODDistance
 		{
 			get { if( _lODDistance.BeginGet() ) LODDistance = _lODDistance.Get( this ); return _lODDistance.value; }
-			set { if( _lODDistance.BeginSet( ref value ) ) { try { LODDistanceChanged?.Invoke( this ); } finally { _lODDistance.EndSet(); } } }
+			set { if( _lODDistance.BeginSet( this, ref value ) ) { try { LODDistanceChanged?.Invoke( this ); } finally { _lODDistance.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODDistance"/> property value changes.</summary>
 		[DisplayName( "LOD Distance Changed" )]
@@ -267,14 +271,49 @@ namespace NeoAxis
 		ReferenceField<double> _lODDistance = 10.0;
 
 		/// <summary>
+		/// The distance multiplier when determining the level of detail.
+		/// </summary>
+		[Category( "Output" )]
+		[DefaultValue( 1.0 )]
+		[DisplayName( "LOD Scale" )]
+		[Range( 0, 6, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		public Reference<double> LODScale
+		{
+			get { if( _lODScale.BeginGet() ) LODScale = _lODScale.Get( this ); return _lODScale.value; }
+			set { if( _lODScale.BeginSet( this, ref value ) ) { try { LODScaleChanged?.Invoke( this ); } finally { _lODScale.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LODScale"/> property value changes.</summary>
+		[DisplayName( "LOD Scale Changed" )]
+		public event Action<PlantType> LODScaleChanged;
+		ReferenceField<double> _lODScale = 1.0;
+
+		/// <summary>
+		/// The distance multiplier when determining the level of detail for shadows. Set 100 or more to always use the best LOD for shadows.
+		/// </summary>
+		[Category( "Output" )]
+		[DefaultValue( 1.0 )]
+		[DisplayName( "LOD Scale Shadows" )]
+		[Range( 0, 6, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		public Reference<double> LODScaleShadows
+		{
+			get { if( _lODScaleShadows.BeginGet() ) LODScaleShadows = _lODScaleShadows.Get( this ); return _lODScaleShadows.value; }
+			set { if( _lODScaleShadows.BeginSet( this, ref value ) ) { try { LODScaleShadowsChanged?.Invoke( this ); } finally { _lODScaleShadows.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LODScaleShadows"/> property value changes.</summary>
+		[DisplayName( "LOD Scale Shadows Changed" )]
+		public event Action<PlantType> LODScaleShadowsChanged;
+		ReferenceField<double> _lODScaleShadows = 1.0;
+
+		/// <summary>
 		/// Whether to generate a voxel grid for a last LOD.
 		/// </summary>
+		[Category( "Output" )]
 		[DefaultValue( true )]
 		[DisplayName( "LOD Voxels" )]
 		public Reference<bool> LODVoxels
 		{
 			get { if( _lODVoxels.BeginGet() ) LODVoxels = _lODVoxels.Get( this ); return _lODVoxels.value; }
-			set { if( _lODVoxels.BeginSet( ref value ) ) { try { LODVoxelsChanged?.Invoke( this ); } finally { _lODVoxels.EndSet(); } } }
+			set { if( _lODVoxels.BeginSet( this, ref value ) ) { try { LODVoxelsChanged?.Invoke( this ); } finally { _lODVoxels.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODVoxels"/> property value changes.</summary>
 		[DisplayName( "LOD Voxels Changed" )]
@@ -284,29 +323,31 @@ namespace NeoAxis
 		/// <summary>
 		/// The size of a voxel grid of a last LOD.
 		/// </summary>
-		[DefaultValue( VoxelGridSizeEnum._64 )]
+		[Category( "Output" )]
+		[DefaultValue( VoxelGridSizeEnum._128 )]// _64
 		[DisplayName( "LOD Voxel Grid" )]
 		public Reference<VoxelGridSizeEnum> LODVoxelGrid
 		{
 			get { if( _lODVoxelGrid.BeginGet() ) LODVoxelGrid = _lODVoxelGrid.Get( this ); return _lODVoxelGrid.value; }
-			set { if( _lODVoxelGrid.BeginSet( ref value ) ) { try { LODVoxelGridChanged?.Invoke( this ); } finally { _lODVoxelGrid.EndSet(); } } }
+			set { if( _lODVoxelGrid.BeginSet( this, ref value ) ) { try { LODVoxelGridChanged?.Invoke( this ); } finally { _lODVoxelGrid.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODVoxelGrid"/> property value changes.</summary>
 		[DisplayName( "LOD Voxel Grid Changed" )]
 		public event Action<PlantType> LODVoxelGridChanged;
-		ReferenceField<VoxelGridSizeEnum> _lODVoxelGrid = VoxelGridSizeEnum._64;
+		ReferenceField<VoxelGridSizeEnum> _lODVoxelGrid = VoxelGridSizeEnum._128;// _64
 
 		//!!!!default
 		/// <summary>
 		/// The factor to changing the visibility of thin objects. It is also useful when your model has holes in its shape, the algorithm thinks your model is empty inside.
 		/// </summary>
+		[Category( "Output" )]
 		[DefaultValue( 0.5 )]
 		[Range( 0, 1 )]
 		[DisplayName( "LOD Voxel Thin Factor" )]
 		public Reference<double> LODVoxelThinFactor
 		{
 			get { if( _lODVoxelThinFactor.BeginGet() ) LODVoxelThinFactor = _lODVoxelThinFactor.Get( this ); return _lODVoxelThinFactor.value; }
-			set { if( _lODVoxelThinFactor.BeginSet( ref value ) ) { try { LODVoxelThinFactorChanged?.Invoke( this ); } finally { _lODVoxelThinFactor.EndSet(); } } }
+			set { if( _lODVoxelThinFactor.BeginSet( this, ref value ) ) { try { LODVoxelThinFactorChanged?.Invoke( this ); } finally { _lODVoxelThinFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODVoxelThinFactor"/> property value changes.</summary>
 		[DisplayName( "LOD Voxel Thin Factor Changed" )]
@@ -316,14 +357,15 @@ namespace NeoAxis
 		/// <summary>
 		/// The maximal distance to fill holes, which happens when ray matching can't find the result because reach max steps limitations.
 		/// </summary>
+		[Category( "Output" )]
 		[DisplayName( "LOD Voxel Fill Holes Distance" )]
-		[Category( "Geometry" )]
+		//[Category( "Geometry" )]
 		[DefaultValue( 1.1 )]
 		[Range( 0, 1000, RangeAttribute.ConvenientDistributionEnum.Exponential, 5 )]
 		public Reference<double> LODVoxelFillHolesDistance
 		{
 			get { if( _lODVoxelFillHolesDistance.BeginGet() ) LODVoxelFillHolesDistance = _lODVoxelFillHolesDistance.Get( this ); return _lODVoxelFillHolesDistance.value; }
-			set { if( _lODVoxelFillHolesDistance.BeginSet( ref value ) ) { try { LODVoxelFillHolesDistanceChanged?.Invoke( this ); } finally { _lODVoxelFillHolesDistance.EndSet(); } } }
+			set { if( _lODVoxelFillHolesDistance.BeginSet( this, ref value ) ) { try { LODVoxelFillHolesDistanceChanged?.Invoke( this ); } finally { _lODVoxelFillHolesDistance.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODVoxelFillHolesDistance"/> property value changes.</summary>
 		[DisplayName( "LOD Voxel Fill Holes Distance Changed" )]
@@ -338,7 +380,7 @@ namespace NeoAxis
 		public Reference<bool> Collision
 		{
 			get { if( _collision.BeginGet() ) Collision = _collision.Get( this ); return _collision.value; }
-			set { if( _collision.BeginSet( ref value ) ) { try { CollisionChanged?.Invoke( this ); } finally { _collision.EndSet(); } } }
+			set { if( _collision.BeginSet( this, ref value ) ) { try { CollisionChanged?.Invoke( this ); } finally { _collision.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Collision"/> property value changes.</summary>
 		public event Action<PlantType> CollisionChanged;
@@ -395,9 +437,30 @@ namespace NeoAxis
 			//levelOfDetail.Distance = m.VisibilityDistance.Value * ( (double)lod / 4.0 );
 		}
 
-		public bool ExportToMeshes( string writeToFolder, bool getFileNamesMode, List<string> fileNames, out string error )
+		static int/*VoxelGridSizeEnum*/ GetClosestVoxelGridSize( int size )
+		{
+			var closest = 16;//VoxelGridSizeEnum closest = VoxelGridSizeEnum._16;
+			var closestDiff = int.MaxValue;
+
+			foreach( var v in Enum.GetValues( typeof( VoxelGridSizeEnum ) ) )
+			{
+				var value = int.Parse( v.ToString().Replace( "_", "" ) );
+
+				var diff = Math.Abs( value - size );
+				if( diff < closestDiff )
+				{
+					closest = value;// (VoxelGridSizeEnum)v;
+					closestDiff = diff;
+				}
+			}
+
+			return closest;
+		}
+
+		public bool ExportToMeshes( string writeToFolder, bool getFileNamesMode, List<string> outputFileNames, bool meshPreviewMode, out Mesh meshPreviewModeMesh, out string error )
 		{
 			error = "";
+			meshPreviewModeMesh = null;
 
 			var typeFileName = ComponentUtility.GetOwnedFileNameOfComponent( this );
 
@@ -420,6 +483,9 @@ namespace NeoAxis
 
 				for( int variation = 0; variation < Variations.Value; variation++ )
 				{
+					if( meshPreviewMode && variation != 0 )
+						continue;
+
 					//for( int live = 0; live < 3; live++ )
 					//{
 					//	var dead = live == 1 ? 1.0 : 0.0;
@@ -457,6 +523,8 @@ namespace NeoAxis
 							break;
 						}
 
+						if( meshPreviewMode && ageNumber != 2 )
+							continue;
 
 						var ageStrings = new[] { "Very young", "Young", "Mature", "Old" };
 						string ageString = ageStrings[ ageNumber ];
@@ -478,7 +546,7 @@ namespace NeoAxis
 						if( getFileNamesMode )
 						{
 							//only get file names
-							fileNames.Add( realFileName );
+							outputFileNames.Add( realFileName );
 						}
 						else
 						{
@@ -567,60 +635,67 @@ namespace NeoAxis
 								//m.VisibilityDistance = plantType.CalculateVisibilityDistance( bounds );
 
 								m.MergeGeometriesWithEqualVertexStructureAndMaterial();
+								m.LODScale = LODScale;
+								m.LODScaleShadows = LODScaleShadows;
 
 								meshes.Add( m );
 							}
 
-
-							for( int lodIndex = 1; lodIndex < LODLevels; lodIndex++ )
+							if( !meshPreviewMode )
 							{
-								var lod = m.CreateComponent<MeshLevelOfDetail>();
-								lod.Name = "LOD " + lodIndex.ToString();
-
-								var lodMesh = lod.CreateComponent<Mesh>();
-								lodMesh.Name = "Mesh";
-
-								for( var groupElement = 0; groupElement < groupSize; groupElement++ )
+								for( int lodIndex = 1; lodIndex < LODLevels; lodIndex++ )
 								{
-									var worldTransform = worldTransforms[ groupElement ];
-									var seed = variation + 10 + ( variation + 1 ) * ( groupElement + 1 );
+									var lod = m.CreateComponent<MeshLevelOfDetail>();
+									lod.Name = "LOD " + lodIndex.ToString();
 
-									var generator2 = new PlantGenerator( this, seed, age/*, dead, fired, season*/, lodIndex == voxelLodIndex ? 0 : lodIndex, worldTransform, null, lodMesh );
-									generator2.MeshRealFileName = realFileName;
-									generator2.Generate();
-								}
+									var lodMesh = lod.CreateComponent<Mesh>();
+									lodMesh.Name = "Mesh";
 
-								lodMesh.MergeGeometriesWithEqualVertexStructureAndMaterial();
-
-								lod.Mesh = ReferenceUtility.MakeThisReference( lod, lodMesh );
-								lod.Distance = CalculateLODDistance( bounds, lodIndex );
-								//levelOfDetail.Distance = generator0.CalculateLODDistance( lod );
-
-								//if( voxelLodIndex == lodIndex )
-								//	lod.Distance = 100000.0;
-
-								meshes.Add( lodMesh );
-							}
-
-							//convert last lod mesh to voxel
-							if( voxelLodIndex != -1 )
-							{
-								var mesh = meshes[ voxelLodIndex ];
-
-								var imageSize = int.Parse( LODVoxelGrid.Value.ToString().Replace( "_", "" ) );
-
-								//smaller image for very young and individual
-								if( individualOrGroup == 0 )
-								{
-									if( ageNumber == 0 )
+									for( var groupElement = 0; groupElement < groupSize; groupElement++ )
 									{
-										imageSize /= 2;
-										if( imageSize < 8 )
-											imageSize = 8;
+										var worldTransform = worldTransforms[ groupElement ];
+										var seed = variation + 10 + ( variation + 1 ) * ( groupElement + 1 );
+
+										var generator2 = new PlantGenerator( this, seed, age/*, dead, fired, season*/, lodIndex == voxelLodIndex ? 0 : lodIndex, worldTransform, null, lodMesh );
+										generator2.MeshRealFileName = realFileName;
+										generator2.Generate();
 									}
+
+									lodMesh.MergeGeometriesWithEqualVertexStructureAndMaterial();
+									lodMesh.LODScale = LODScale;
+									lodMesh.LODScaleShadows = LODScaleShadows;
+
+									lod.Mesh = ReferenceUtility.MakeThisReference( lod, lodMesh );
+									lod.Distance = CalculateLODDistance( bounds, lodIndex );
+									//levelOfDetail.Distance = generator0.CalculateLODDistance( lod );
+
+									//if( voxelLodIndex == lodIndex )
+									//	lod.Distance = 100000.0;
+
+									meshes.Add( lodMesh );
 								}
 
-								mesh.ConvertToVoxel( imageSize, LODVoxelThinFactor, true, false, LODVoxelFillHolesDistance );
+								//convert last lod mesh to voxel
+								if( voxelLodIndex != -1 )
+								{
+									var mesh = meshes[ voxelLodIndex ];
+
+									var imageSize = int.Parse( LODVoxelGrid.Value.ToString().Replace( "_", "" ) );
+
+									//smaller image for very young and individual
+									if( individualOrGroup == 0 )
+									{
+										if( ageNumber == 0 )
+										{
+											imageSize = GetClosestVoxelGridSize( imageSize / 2 );
+
+											//if( imageSize < 8 )
+											//	imageSize = 8;
+										}
+									}
+
+									mesh.ConvertToVoxel( imageSize, LODVoxelThinFactor, true, false, LODVoxelFillHolesDistance );
+								}
 							}
 
 							//collision
@@ -649,14 +724,23 @@ namespace NeoAxis
 
 							m.Enabled = true;
 
-							try
+							if( meshPreviewMode )
 							{
-								if( !ComponentUtility.SaveComponentToFile( m, realFileName, null, out error ) )
-									return false;
+								//set output mesh component
+								meshPreviewModeMesh = m;
 							}
-							finally
+							else
 							{
-								m.Dispose();
+								//write meshes
+								try
+								{
+									if( !ComponentUtility.SaveComponentToFile( m, realFileName, null, out error ) )
+										return false;
+								}
+								finally
+								{
+									m.Dispose();
+								}
 							}
 						}
 					}

@@ -3,7 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -54,9 +54,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <assimp/DefaultLogger.hpp>
 #include <assimp/IOSystem.hpp>
 
-using namespace Assimp;
+namespace Assimp {
 
-static const aiImporterDesc desc = {
+static constexpr aiImporterDesc desc = {
     "Discreet 3DS Importer",
     "",
     "",
@@ -104,27 +104,10 @@ Discreet3DSImporter::Discreet3DSImporter() :
 }
 
 // ------------------------------------------------------------------------------------------------
-// Destructor, private as well
-Discreet3DSImporter::~Discreet3DSImporter() {
-    // empty
-}
-
-// ------------------------------------------------------------------------------------------------
 // Returns whether the class can handle the format of the given file.
-bool Discreet3DSImporter::CanRead(const std::string &pFile, IOSystem *pIOHandler, bool checkSig) const {
-    std::string extension = GetExtension(pFile);
-    if (extension == "3ds" || extension == "prj") {
-        return true;
-    }
-
-    if (!extension.length() || checkSig) {
-        uint16_t token[3];
-        token[0] = 0x4d4d;
-        token[1] = 0x3dc2;
-        //token[2] = 0x3daa;
-        return CheckMagicToken(pIOHandler, pFile, token, 2, 0, 2);
-    }
-    return false;
+bool Discreet3DSImporter::CanRead(const std::string &pFile, IOSystem *pIOHandler, bool /*checkSig*/) const {
+    static const uint16_t token[] = { 0x4d4d, 0x3dc2 /*, 0x3daa */ };
+    return CheckMagicToken(pIOHandler, pFile, token, AI_COUNT_OF(token), 0, sizeof token[0]);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -143,11 +126,17 @@ void Discreet3DSImporter::SetupProperties(const Importer * /*pImp*/) {
 // Imports the given file into the given scene structure.
 void Discreet3DSImporter::InternReadFile(const std::string &pFile,
         aiScene *pScene, IOSystem *pIOHandler) {
-    StreamReaderLE theStream(pIOHandler->Open(pFile, "rb"));
+
+    auto theFile = pIOHandler->Open(pFile, "rb");
+    if (!theFile) {
+        throw DeadlyImportError("3DS: Could not open ", pFile);
+    }
+
+    StreamReaderLE theStream(theFile);
 
     // We should have at least one chunk
     if (theStream.GetRemainingSize() < 16) {
-        throw DeadlyImportError("3DS file is either empty or corrupt: " + pFile);
+        throw DeadlyImportError("3DS file is either empty or corrupt: ", pFile);
     }
     this->stream = &theStream;
 
@@ -164,7 +153,7 @@ void Discreet3DSImporter::InternReadFile(const std::string &pFile,
     mRootNode->mHierarchyIndex = -1;
     mRootNode->mParent = nullptr;
     mMasterScale = 1.0f;
-    mBackgroundImage = "";
+    mBackgroundImage = std::string();
     bHasBG = false;
     bIsPrj = false;
 
@@ -178,7 +167,7 @@ void Discreet3DSImporter::InternReadFile(const std::string &pFile,
     // file.
     for (auto &mesh : mScene->mMeshes) {
         if (mesh.mFaces.size() > 0 && mesh.mPositions.size() == 0) {
-            throw DeadlyImportError("3DS file contains faces but no vertices: " + pFile);
+            throw DeadlyImportError("3DS file contains faces but no vertices: ", pFile);
         }
         CheckIndices(mesh);
         MakeUnique(mesh);
@@ -266,14 +255,22 @@ void Discreet3DSImporter::ParseMainChunk() {
 
     case Discreet3DS::CHUNK_PRJ:
         bIsPrj = true;
+        break;
     case Discreet3DS::CHUNK_MAIN:
         ParseEditorChunk();
         break;
     };
 
     ASSIMP_3DS_END_CHUNK();
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunreachable-code-return"
+#endif
     // recursively continue processing this hierarchy level
     return ParseMainChunk();
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -298,7 +295,7 @@ void Discreet3DSImporter::ParseEditorChunk() {
         // print the version number
         char buff[10];
         ASSIMP_itoa10(buff, stream->GetI2());
-        ASSIMP_LOG_INFO_F(std::string("3DS file format version: "), buff);
+        ASSIMP_LOG_INFO("3DS file format version: ", buff);
     } break;
     };
     ASSIMP_3DS_END_CHUNK();
@@ -323,7 +320,7 @@ void Discreet3DSImporter::ParseObjectChunk() {
     case Discreet3DS::CHUNK_MAT_MATERIAL:
 
         // Add a new material to the list
-        mScene->mMaterials.push_back(D3DS::Material(std::string("UNNAMED_" + to_string(mScene->mMaterials.size()))));
+        mScene->mMaterials.emplace_back(std::string("UNNAMED_" + ai_to_string(mScene->mMaterials.size())));
         ParseMaterialChunk();
         break;
 
@@ -368,13 +365,13 @@ void Discreet3DSImporter::ParseChunk(const char *name, unsigned int num) {
     // IMPLEMENTATION NOTE;
     // Cameras or lights define their transformation in their parent node and in the
     // corresponding light or camera chunks. However, we read and process the latter
-    // to to be able to return valid cameras/lights even if no scenegraph is given.
+    // to be able to return valid cameras/lights even if no scenegraph is given.
 
     // get chunk type
     switch (chunk.Flag) {
     case Discreet3DS::CHUNK_TRIMESH: {
         // this starts a new triangle mesh
-        mScene->mMeshes.push_back(D3DS::Mesh(std::string(name, num)));
+        mScene->mMeshes.emplace_back(std::string(name, num));
 
         // Read mesh chunks
         ParseMeshChunk();
@@ -442,7 +439,7 @@ void Discreet3DSImporter::ParseChunk(const char *name, unsigned int num) {
         // Read the lense angle
         camera->mHorizontalFOV = AI_DEG_TO_RAD(stream->GetF4());
         if (camera->mHorizontalFOV < 0.001f) {
-            camera->mHorizontalFOV = AI_DEG_TO_RAD(45.f);
+            camera->mHorizontalFOV = float(AI_DEG_TO_RAD(45.f));
         }
 
         // Now check for further subchunks
@@ -927,7 +924,7 @@ void Discreet3DSImporter::ParseFaceChunk() {
             }
         }
         if (0xcdcdcdcd == idx) {
-            ASSIMP_LOG_ERROR_F("3DS: Unknown material: ", sz);
+            ASSIMP_LOG_ERROR("3DS: Unknown material: ", sz);
         }
 
         // Now continue and read all material indices
@@ -1003,7 +1000,7 @@ void Discreet3DSImporter::ParseMeshChunk() {
         mMesh.mFaces.reserve(num);
         while (num-- > 0) {
             // 3DS faces are ALWAYS triangles
-            mMesh.mFaces.push_back(D3DS::Face());
+            mMesh.mFaces.emplace_back();
             D3DS::Face &sFace = mMesh.mFaces.back();
 
             sFace.mIndices[0] = (uint16_t)stream->GetI2();
@@ -1288,7 +1285,7 @@ void Discreet3DSImporter::ParseColorChunk(aiColor3D *out, bool acceptPercent) {
     switch (chunk.Flag) {
     case Discreet3DS::CHUNK_LINRGBF:
         bGamma = true;
-
+    // fallthrough
     case Discreet3DS::CHUNK_RGBF:
         if (sizeof(float) * 3 > diff) {
             *out = clrError;
@@ -1301,6 +1298,7 @@ void Discreet3DSImporter::ParseColorChunk(aiColor3D *out, bool acceptPercent) {
 
     case Discreet3DS::CHUNK_LINRGBB:
         bGamma = true;
+            // fallthrough
     case Discreet3DS::CHUNK_RGBB: {
         if (sizeof(char) * 3 > diff) {
             *out = clrError;
@@ -1336,5 +1334,7 @@ void Discreet3DSImporter::ParseColorChunk(aiColor3D *out, bool acceptPercent) {
     };
     (void)bGamma;
 }
+
+} // namespace Assimp
 
 #endif // !! ASSIMP_BUILD_NO_3DS_IMPORTER

@@ -3,7 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -53,9 +53,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <assimp/IOSystem.hpp>
 #include <memory>
 
-using namespace ::Assimp;
+namespace Assimp {
 
-static const aiImporterDesc desc = {
+static constexpr aiImporterDesc desc = {
     "Stanford Polygon Library (PLY) Importer",
     "",
     "",
@@ -71,16 +71,16 @@ static const aiImporterDesc desc = {
 // ------------------------------------------------------------------------------------------------
 // Internal stuff
 namespace {
-// ------------------------------------------------------------------------------------------------
-// Checks that property index is within range
-template <class T>
-inline const T &GetProperty(const std::vector<T> &props, int idx) {
-    if (static_cast<size_t>(idx) >= props.size()) {
-        throw DeadlyImportError("Invalid .ply file: Property index is out of range.");
-    }
+    // ------------------------------------------------------------------------------------------------
+    // Checks that property index is within range
+    template <class T>
+    inline const T &GetProperty(const std::vector<T> &props, int idx) {
+        if (static_cast<size_t>(idx) >= props.size()) {
+            throw DeadlyImportError("Invalid .ply file: Property index is out of range.");
+        }
 
-    return props[idx];
-}
+        return props[idx];
+    }
 } // namespace
 
 // ------------------------------------------------------------------------------------------------
@@ -93,31 +93,10 @@ PLYImporter::PLYImporter() :
 }
 
 // ------------------------------------------------------------------------------------------------
-// Destructor, private as well
-PLYImporter::~PLYImporter() {
-    // empty
-}
-
-// ------------------------------------------------------------------------------------------------
 // Returns whether the class can handle the format of the given file.
-bool PLYImporter::CanRead(const std::string &pFile, IOSystem *pIOHandler, bool checkSig) const {
-    const std::string extension = GetExtension(pFile);
-
-    if (extension == "ply") {
-        return true;
-    }
-
-    if (!extension.length() || checkSig) {
-        if (!pIOHandler) {
-            return true;
-        }
-        static const char *tokens[] = {
-            "ply"
-        };
-        return SearchFileHeaderForToken(pIOHandler, pFile, tokens, 1);
-    }
-
-    return false;
+bool PLYImporter::CanRead(const std::string &pFile, IOSystem *pIOHandler, bool /*checkSig*/) const {
+    static const char *tokens[] = { "ply" };
+    return SearchFileHeaderForToken(pIOHandler, pFile, tokens, AI_COUNT_OF(tokens));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -150,14 +129,14 @@ static bool isBigEndian(const char *szMe) {
 void PLYImporter::InternReadFile(const std::string &pFile, aiScene *pScene, IOSystem *pIOHandler) {
     const std::string mode = "rb";
     std::unique_ptr<IOStream> fileStream(pIOHandler->Open(pFile, mode));
-    if (!fileStream.get()) {
-        throw DeadlyImportError("Failed to open file " + pFile + ".");
+    if (!fileStream) {
+        throw DeadlyImportError("Failed to open file ", pFile, ".");
     }
 
     // Get the file-size
     const size_t fileSize(fileStream->FileSize());
     if (0 == fileSize) {
-        throw DeadlyImportError("File " + pFile + " is empty.");
+        throw DeadlyImportError("File ", pFile, " is empty.");
     }
 
     IOStreamBuffer<char> streamedBuffer(1024 * 1024);
@@ -172,7 +151,7 @@ void PLYImporter::InternReadFile(const std::string &pFile, aiScene *pScene, IOSy
             (headerCheck[1] != 'L' && headerCheck[1] != 'l') ||
             (headerCheck[2] != 'Y' && headerCheck[2] != 'y')) {
         streamedBuffer.close();
-        throw DeadlyImportError("Invalid .ply file: Magic number \'ply\' is no there");
+        throw DeadlyImportError("Invalid .ply file: Incorrect magic number (expected 'ply' or 'PLY').");
     }
 
     std::vector<char> mBuffer2;
@@ -232,7 +211,7 @@ void PLYImporter::InternReadFile(const std::string &pFile, aiScene *pScene, IOSy
         throw DeadlyImportError("Invalid .ply file: Missing format specification");
     }
 
-    //free the file buffer
+    // free the file buffer
     streamedBuffer.close();
 
     if (mGeneratedMesh == nullptr) {
@@ -393,7 +372,7 @@ void PLYImporter::LoadVertex(const PLY::Element *pcElement, const PLY::ElementIn
             haveNormal = true;
         }
 
-        //Colors
+        // Colors
         aiColor4D cOut;
         bool haveColor = false;
         if (0xFFFFFFFF != aiColors[0]) {
@@ -432,7 +411,7 @@ void PLYImporter::LoadVertex(const PLY::Element *pcElement, const PLY::ElementIn
             haveColor = true;
         }
 
-        //Texture coordinates
+        // Texture coordinates
         aiVector3D tOut;
         tOut.z = 0;
         bool haveTextureCoords = false;
@@ -448,7 +427,7 @@ void PLYImporter::LoadVertex(const PLY::Element *pcElement, const PLY::ElementIn
             haveTextureCoords = true;
         }
 
-        //create aiMesh if needed
+        // create aiMesh if needed
         if (nullptr == mGeneratedMesh) {
             mGeneratedMesh = new aiMesh();
             mGeneratedMesh->mMaterialIndex = 0;
@@ -529,8 +508,8 @@ void PLYImporter::LoadFace(const PLY::Element *pcElement, const PLY::ElementInst
     bool bIsTriStrip = false;
 
     // index of the material index property
-    //unsigned int iMaterialIndex = 0xFFFFFFFF;
-    //PLY::EDataType eType2 = EDT_Char;
+    // unsigned int iMaterialIndex = 0xFFFFFFFF;
+    // PLY::EDataType eType2 = EDT_Char;
 
     // texture coordinates
     unsigned int iTextureCoord = 0xFFFFFFFF;
@@ -612,7 +591,7 @@ void PLYImporter::LoadFace(const PLY::Element *pcElement, const PLY::ElementInst
             if (0xFFFFFFFF != iTextureCoord) {
                 const unsigned int iNum = (unsigned int)GetProperty(instElement->alProperties, iTextureCoord).avList.size();
 
-                //should be 6 coords
+                // should be 6 coords
                 std::vector<PLY::PropertyInstance::ValueUnion>::const_iterator p =
                         GetProperty(instElement->alProperties, iTextureCoord).avList.begin();
 
@@ -642,7 +621,7 @@ void PLYImporter::LoadFace(const PLY::Element *pcElement, const PLY::ElementInst
             // a value of -1 indicates a restart of the strip
             bool flip = false;
             const std::vector<PLY::PropertyInstance::ValueUnion> &quak = GetProperty(instElement->alProperties, iProperty).avList;
-            //pvOut->reserve(pvOut->size() + quak.size() + (quak.size()>>2u)); //Limits memory consumption
+            // pvOut->reserve(pvOut->size() + quak.size() + (quak.size()>>2u)); //Limits memory consumption
 
             int aiTable[2] = { -1, -1 };
             for (std::vector<PLY::PropertyInstance::ValueUnion>::const_iterator a = quak.begin(); a != quak.end(); ++a) {
@@ -693,7 +672,7 @@ void PLYImporter::GetMaterialColor(const std::vector<PLY::PropertyInstance> &avL
         unsigned int aiPositions[4],
         PLY::EDataType aiTypes[4],
         aiColor4D *clrOut) {
-    ai_assert(NULL != clrOut);
+    ai_assert(nullptr != clrOut);
 
     if (0xFFFFFFFF == aiPositions[0])
         clrOut->r = 0.0f;
@@ -736,7 +715,7 @@ void PLYImporter::GetMaterialColor(const std::vector<PLY::PropertyInstance> &avL
 // ------------------------------------------------------------------------------------------------
 // Extract a material from the PLY DOM
 void PLYImporter::LoadMaterial(std::vector<aiMaterial *> *pvOut, std::string &defaultTexture, const bool pointsOnly) {
-    ai_assert(NULL != pvOut);
+    ai_assert(nullptr != pvOut);
 
     // diffuse[4], specular[4], ambient[4]
     // rgba order
@@ -752,7 +731,7 @@ void PLYImporter::LoadMaterial(std::vector<aiMaterial *> *pvOut, std::string &de
         { EDT_Char, EDT_Char, EDT_Char, EDT_Char },
         { EDT_Char, EDT_Char, EDT_Char, EDT_Char }
     };
-    PLY::ElementInstanceList *pcList = NULL;
+    PLY::ElementInstanceList *pcList = nullptr;
 
     unsigned int iPhong = 0xFFFFFFFF;
     PLY::EDataType ePhong = EDT_Char;
@@ -835,7 +814,7 @@ void PLYImporter::LoadMaterial(std::vector<aiMaterial *> *pvOut, std::string &de
         }
     }
     // check whether we have a valid source for the material data
-    if (NULL != pcList) {
+    if (nullptr != pcList) {
         for (std::vector<ElementInstance>::const_iterator i = pcList->alInstances.begin(); i != pcList->alInstances.end(); ++i) {
             aiColor4D clrOut;
             aiMaterial *pcHelper = new aiMaterial();
@@ -880,7 +859,7 @@ void PLYImporter::LoadMaterial(std::vector<aiMaterial *> *pvOut, std::string &de
             const int two_sided = 1;
             pcHelper->AddProperty(&two_sided, 1, AI_MATKEY_TWOSIDED);
 
-            //default texture
+            // default texture
             if (!defaultTexture.empty()) {
                 const aiString name(defaultTexture.c_str());
                 pcHelper->AddProperty(&name, _AI_MATKEY_TEXTURE_BASE, aiTextureType_DIFFUSE, 0);
@@ -890,7 +869,7 @@ void PLYImporter::LoadMaterial(std::vector<aiMaterial *> *pvOut, std::string &de
                 pcHelper->AddProperty(&two_sided, 1, AI_MATKEY_TWOSIDED);
             }
 
-            //set to wireframe, so when using this material info we can switch to points rendering
+            // set to wireframe, so when using this material info we can switch to points rendering
             if (pointsOnly) {
                 const int wireframe = 1;
                 pcHelper->AddProperty(&wireframe, 1, AI_MATKEY_ENABLE_WIREFRAME);
@@ -907,7 +886,7 @@ void PLYImporter::LoadMaterial(std::vector<aiMaterial *> *pvOut, std::string &de
         int iMode = (int)aiShadingMode_Gouraud;
         pcHelper->AddProperty<int>(&iMode, 1, AI_MATKEY_SHADING_MODEL);
 
-        //generate white material most 3D engine just multiply ambient / diffuse color with actual ambient / light color
+        // generate white material most 3D engine just multiply ambient / diffuse color with actual ambient / light color
         aiColor3D clr;
         clr.b = clr.g = clr.r = 1.0f;
         pcHelper->AddProperty<aiColor3D>(&clr, 1, AI_MATKEY_COLOR_DIFFUSE);
@@ -923,13 +902,13 @@ void PLYImporter::LoadMaterial(std::vector<aiMaterial *> *pvOut, std::string &de
             pcHelper->AddProperty(&two_sided, 1, AI_MATKEY_TWOSIDED);
         }
 
-        //default texture
+        // default texture
         if (!defaultTexture.empty()) {
             const aiString name(defaultTexture.c_str());
             pcHelper->AddProperty(&name, _AI_MATKEY_TEXTURE_BASE, aiTextureType_DIFFUSE, 0);
         }
 
-        //set to wireframe, so when using this material info we can switch to points rendering
+        // set to wireframe, so when using this material info we can switch to points rendering
         if (pointsOnly) {
             const int wireframe = 1;
             pcHelper->AddProperty(&wireframe, 1, AI_MATKEY_ENABLE_WIREFRAME);
@@ -938,5 +917,7 @@ void PLYImporter::LoadMaterial(std::vector<aiMaterial *> *pvOut, std::string &de
         pvOut->push_back(pcHelper);
     }
 }
+
+} // namespace Assimp
 
 #endif // !! ASSIMP_BUILD_NO_PLY_IMPORTER

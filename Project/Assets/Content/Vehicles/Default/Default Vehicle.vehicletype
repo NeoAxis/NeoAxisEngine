@@ -1,28 +1,120 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.VehicleType
 {
-	FrontWheelPosition = 1.38 0.9 0.02
-	FrontWheelDiameter = 0.678
-	FrontWheelWidth = 0.321
-	FrontWheelSuspensionMinLength = 0.25
-	FrontWheelSuspensionMaxLength = 0.45
-	RearWheelPosition = -1.45 0.9 0.05
-	RearWheelDiameter = 0.743
-	RearWheelWidth = 0.375
-	RearWheelSuspensionMinLength = 0.28
-	RearWheelSuspensionMaxLength = 0.48
-	Mesh
+	EditorCameraTransform = "3.93874605732143 -4.44238685636965 3.02180266602717; -0.23191741782092 0.10959403012299 0.873881557550656 0.412958210047358; 1 1 1"
+	RearWheelPosition = -1.32 0.8 -0.08
+	FrontWheelLongitudinalFriction
 	{
-		GetByReference = "Content\\Vehicles\\Default\\scene.gltf|$Mesh"
+		Count = 3
+		0
+		{
+			Value
+			{
+				Point = 0
+				Value = 0
+			}
+		}
+		1
+		{
+			Value
+			{
+				Point = 0.06
+				Value = 3.6
+			}
+		}
+		2
+		{
+			Value
+			{
+				Point = 0.2
+				Value = 3
+			}
+		}
 	}
-	FrontWheelMesh
+	FrontWheelLateralFriction
 	{
-		GetByReference = "Content\\Vehicles\\Default\\Front wheel.gltf|$Mesh"
+		Count = 3
+		0
+		{
+			Value
+			{
+				Point = 0
+				Value = 0
+			}
+		}
+		1
+		{
+			Value
+			{
+				Point = 3
+				Value = 3.6
+			}
+		}
+		2
+		{
+			Value
+			{
+				Point = 20
+				Value = 3
+			}
+		}
 	}
-	RearWheelMesh
+	RearWheelLongitudinalFriction
 	{
-		GetByReference = "Content\\Vehicles\\Default\\Rear wheel.gltf|$Mesh"
+		Count = 3
+		0
+		{
+			Value
+			{
+				Point = 0
+				Value = 0
+			}
+		}
+		1
+		{
+			Value
+			{
+				Point = 0.06
+				Value = 3.6
+			}
+		}
+		2
+		{
+			Value
+			{
+				Point = 0.2
+				Value = 3
+			}
+		}
+	}
+	RearWheelLateralFriction
+	{
+		Count = 3
+		0
+		{
+			Value
+			{
+				Point = 0
+				Value = 0
+			}
+		}
+		1
+		{
+			Value
+			{
+				Point = 3
+				Value = 3.6
+			}
+		}
+		2
+		{
+			Value
+			{
+				Point = 20
+				Value = 3
+			}
+		}
 	}
 	TransmissionGearRatios
 	{
@@ -40,9 +132,78 @@
 			.elements = -2.9
 		}
 	}
-	.component NeoAxis.VehicleSeat
+	MotorOnSound
+	{
+		GetByReference = "Content\\Vehicles\\Default\\Sounds\\MotorOn.ogg"
+	}
+	MotorOffSound
+	{
+		GetByReference = "Content\\Vehicles\\Default\\Sounds\\MotorOff.ogg"
+	}
+	GearSounds
+	{
+		Count = 3
+		0 "NeoAxis.Reference<NeoAxis.Sound>"
+		{
+			GetByReference = "Content\\Vehicles\\Default\\Sounds\\MotorRun.ogg"
+		}
+		1 "NeoAxis.Reference<NeoAxis.Sound>"
+		{
+			GetByReference = "Content\\Vehicles\\Default\\Sounds\\MotorIdle.ogg"
+		}
+		2 "NeoAxis.Reference<NeoAxis.Sound>"
+		{
+			GetByReference = "Content\\Vehicles\\Default\\Sounds\\MotorRun.ogg"
+		}
+	}
+	.component NeoAxis.SeatItem
 	{
 		Name = Vehicle Seat
-		Transform = "0 0.38 0.1; 0 0 0 1; 1 1 1"
+		Transform = "0.4 0.38 0.05; 0 -0.17364817766693 0 0.984807753012208; 1 1 1"
+		SpineAngle = 30
+		LegsAngle = 50
+		ExitTransform = "0 2 -0.2; 0 0 0 1; 1 1 1"
+	}
+	.component NeoAxis.Light
+	{
+		Name = Headlight Left
+		Transform = "2.45 0.7 0.22; 0 0 0 1; 1 1 1"
+		Type = Spotlight
+		Brightness = 500000
+		Color = 0.987098 1 0.683647
+		AttenuationFar = 43.263999999999996
+		SpotlightInnerAngle = 63
+		SpotlightOuterAngle = 66
+		StartDistance = 0.3
+		ShadowNearClipDistance = 0.2
+		FlareColor = "0.987098 1 0.812; 1.5"
+		FlareSize = 0.8 0.8
+		FlareSizeFadeByDistance = True
+		FlareDepthCheckOffset = 0.2
+		FlareImage
+		{
+			GetByReference = "Base\\Images\\Lens flares\\sparkle_blurred.png"
+		}
+	}
+	.component NeoAxis.Light
+	{
+		Name = Headlight Right
+		Transform = "2.45 -0.7 0.22; 0 0 0 1; 1 1 1"
+		Type = Spotlight
+		Brightness = 500000
+		Color = 0.987098 1 0.683647
+		AttenuationFar = 43.263999999999996
+		SpotlightInnerAngle = 63
+		SpotlightOuterAngle = 66
+		StartDistance = 0.3
+		ShadowNearClipDistance = 0.2
+		FlareColor = "0.987098 1 0.812; 1.5"
+		FlareSize = 0.8 0.8
+		FlareSizeFadeByDistance = True
+		FlareDepthCheckOffset = 0.2
+		FlareImage
+		{
+			GetByReference = "Base\\Images\\Lens flares\\sparkle_blurred.png"
+		}
 	}
 }

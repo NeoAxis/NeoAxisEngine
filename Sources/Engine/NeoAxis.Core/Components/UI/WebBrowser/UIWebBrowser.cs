@@ -2,17 +2,17 @@
 using System;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
-using System.Drawing;
+//using System.Drawing;
 using System.Collections.Generic;
 using System.IO;
 #if !NO_UI_WEB_BROWSER
 using Internal.Xilium.CefGlue;
 using NeoAxis.UIWebBrowserControl;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 #endif
 
-#pragma warning disable CS0169
-#pragma warning disable CS0067
+//#pragma warning disable CS0169
+//#pragma warning disable CS0067
 
 namespace NeoAxis
 {
@@ -46,7 +46,8 @@ namespace NeoAxis
 		bool renderBufferNeedUpdate;
 
 #if !NO_UI_WEB_BROWSER
-		volatile Cursor currentCursor;
+		//!!!!было
+		//volatile Cursor currentCursor;
 #endif
 
 		/////////////////////////////////////////
@@ -62,7 +63,7 @@ namespace NeoAxis
 			get { if( _startURL.BeginGet() ) StartURL = _startURL.Get( this ); return _startURL.value; }
 			set
 			{
-				if( _startURL.BeginSet( ref value ) )
+				if( _startURL.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -87,7 +88,7 @@ namespace NeoAxis
 			get { if( _startFile.BeginGet() ) StartFile = _startFile.Get( this ); return _startFile.value; }
 			set
 			{
-				if( _startFile.BeginSet( ref value ) )
+				if( _startFile.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -112,7 +113,7 @@ namespace NeoAxis
 			get { if( _startString.BeginGet() ) StartString = _startString.Get( this ); return _startString.value; }
 			set
 			{
-				if( _startString.BeginSet( ref value ) )
+				if( _startString.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -135,7 +136,7 @@ namespace NeoAxis
 		public Reference<double> Zoom
 		{
 			get { if( _zoom.BeginGet() ) Zoom = _zoom.Get( this ); return _zoom.value; }
-			set { if( _zoom.BeginSet( ref value ) ) { try { ZoomChanged?.Invoke( this ); UpdateZoom(); } finally { _zoom.EndSet(); } } }
+			set { if( _zoom.BeginSet( this, ref value ) ) { try { ZoomChanged?.Invoke( this ); UpdateZoom(); } finally { _zoom.EndSet(); } } }
 		}
 		public event Action<UIWebBrowser> ZoomChanged;
 		ReferenceField<double> _zoom = 1.0;
@@ -147,7 +148,7 @@ namespace NeoAxis
 		public Reference<bool> AllowZoomByKeysAndMouse
 		{
 			get { if( _allowZoomByKeysAndMouse.BeginGet() ) AllowZoomByKeysAndMouse = _allowZoomByKeysAndMouse.Get( this ); return _allowZoomByKeysAndMouse.value; }
-			set { if( _allowZoomByKeysAndMouse.BeginSet( ref value ) ) { try { AllowZoomByKeysAndMouseChanged?.Invoke( this ); } finally { _allowZoomByKeysAndMouse.EndSet(); } } }
+			set { if( _allowZoomByKeysAndMouse.BeginSet( this, ref value ) ) { try { AllowZoomByKeysAndMouseChanged?.Invoke( this ); } finally { _allowZoomByKeysAndMouse.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AllowZoomByKeysAndMouse"/> property value changes.</summary>
 		public event Action<UIWebBrowser> AllowZoomByKeysAndMouseChanged;
@@ -576,7 +577,7 @@ namespace NeoAxis
 
 		internal void GetScreenPoint( int viewX, int viewY, ref int screenX, ref int screenY )
 		{
-			Point ptScreen = new Point();
+			var ptScreen = new Vector2I();//Point ptScreen = new Point();
 
 			//_mainUiDispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate
 			//{
@@ -1429,18 +1430,20 @@ namespace NeoAxis
 #if !NO_UI_WEB_BROWSER
 			try
 			{
-				currentCursor = new Cursor( cursorHandle );
+				//!!!!было
+				//currentCursor = new Cursor( cursorHandle );
 			}
 			catch { }
 #endif
 		}
 
 #if !NO_UI_WEB_BROWSER
-		[Browsable( false )]
-		public Cursor CurrentCursor
-		{
-			get { return currentCursor; }
-		}
+		//!!!!было
+		//[Browsable( false )]
+		//public Cursor CurrentCursor
+		//{
+		//	get { return currentCursor; }
+		//}
 #endif
 
 		public delegate void DownloadBeforeDelegate( UIWebBrowser sender, object/*CefDownloadItem*/ cefDownloadItem, string suggestedName, object/*CefBeforeDownloadCallback*/ cefBeforeDownloadCallback );
@@ -1479,5 +1482,5 @@ namespace NeoAxis
 	}
 }
 
-#pragma warning restore CS0169
-#pragma warning restore CS0067
+//#pragma warning restore CS0169
+//#pragma warning restore CS0067

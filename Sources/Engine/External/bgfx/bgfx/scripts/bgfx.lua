@@ -1,6 +1,6 @@
 --
--- Copyright 2010-2020 Branimir Karadzic. All rights reserved.
--- License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
+-- Copyright 2010-2023 Branimir Karadzic. All rights reserved.
+-- License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
 --
 
 function filesexist(_srcPath, _dstPath, _files)
@@ -46,7 +46,6 @@ function bgfxProjectBase(_kind, _defines)
 
 		links {
 			"bimg",
-			"bx",
 		}
 
 		configuration { "vs20* or mingw*" }
@@ -95,15 +94,12 @@ function bgfxProjectBase(_kind, _defines)
 
 	includedirs {
 		path.join(BGFX_DIR, "3rdparty"),
-		path.join(BX_DIR,   "include"),
 		path.join(BIMG_DIR, "include"),
 	}
 
 	defines (_defines)
 
-	links {
-		"bx",
-	}
+	using_bx()
 
 	if _OPTIONS["with-glfw"] then
 		defines {
@@ -111,14 +107,16 @@ function bgfxProjectBase(_kind, _defines)
 		}
 	end
 
-	configuration { "Debug" }
-		defines {
-			"BGFX_CONFIG_DEBUG=1",
+	configuration { "linux-*" }
+		includedirs {
+			path.join(BGFX_DIR, "3rdparty/directx-headers/include/directx"),
+			path.join(BGFX_DIR, "3rdparty/directx-headers/include"),
+			path.join(BGFX_DIR, "3rdparty/directx-headers/include/wsl/stubs"),
 		}
 
 	configuration { "vs* or mingw*", "not durango" }
 		includedirs {
-			path.join(BGFX_DIR, "3rdparty/dxsdk/include"),
+			path.join(BGFX_DIR, "3rdparty/directx-headers/include/directx"),
 		}
 
 	configuration { "android*" }
@@ -138,12 +136,13 @@ function bgfxProjectBase(_kind, _defines)
 			"-Wno-microsoft-const-init", -- default initialization of an object of const type '' without a user-provided default constructor is a Microsoft extension
 		}
 
-	configuration { "osx" }
+	configuration { "osx*" }
 		buildoptions { "-x objective-c++" }  -- additional build option for osx
 		linkoptions {
 			"-framework Cocoa",
-			"-framework QuartzCore",
+			"-framework IOKit",
 			"-framework OpenGL",
+			"-framework QuartzCore",
 			"-weak_framework Metal",
 			"-weak_framework MetalKit",
 		}
@@ -171,6 +170,11 @@ function bgfxProjectBase(_kind, _defines)
 		path.join(BGFX_DIR, "src/**.bin.h"),
 	}
 
+	overridefiles(BGFX_DIR, path.join(BGFX_DIR, "../bgfx-agc"), {
+		path.join(BGFX_DIR, "src/renderer_agc.cpp"),
+		path.join(BGFX_DIR, "src/renderer_agc.h"),
+	})
+
 	overridefiles(BGFX_DIR, path.join(BGFX_DIR, "../bgfx-gnm"), {
 		path.join(BGFX_DIR, "src/renderer_gnm.cpp"),
 		path.join(BGFX_DIR, "src/renderer_gnm.h"),
@@ -180,42 +184,6 @@ function bgfxProjectBase(_kind, _defines)
 		path.join(BGFX_DIR, "src/renderer_nvn.cpp"),
 		path.join(BGFX_DIR, "src/renderer_nvn.h"),
 	})
-
-	if _OPTIONS["with-webgpu"] then
-		defines {
-			"BGFX_CONFIG_RENDERER_WEBGPU=1",
-		}
-
-		local generator = "out/VS2019"
-
-		configuration { "wasm*" }
-			defines {
-				"BGFX_CONFIG_RENDERER_OPENGL=0",
-				"BGFX_CONFIG_RENDERER_OPENGLES=0",
-			}
-
-		configuration { "not wasm*" }
-			includedirs {
-				path.join(DAWN_DIR, "src"),
-				path.join(DAWN_DIR, "src/include"),
-				path.join(DAWN_DIR, "third_party/vulkan-headers/include"),
-				path.join(DAWN_DIR, generator, "gen/src"),
-				path.join(DAWN_DIR, generator, "gen/src/include"),
-			}
-
-		configuration { "vs*" }
-			defines {
-				"NTDDI_VERSION=NTDDI_WIN10_RS2",
-
-				-- We can't say `=_WIN32_WINNT_WIN10` here because some files do
-				-- `#if WINVER < 0x0600` without including windows.h before,
-				-- and then _WIN32_WINNT_WIN10 isn't yet known to be 0x0A00.
-				"_WIN32_WINNT=0x0A00",
-				"WINVER=0x0A00",
-			}
-
-		configuration {}
-    end
 
 	if _OPTIONS["with-amalgamated"] then
 		excludes {
@@ -232,18 +200,17 @@ function bgfxProjectBase(_kind, _defines)
 			path.join(BGFX_DIR, "src/vertexlayout.cpp"),
 		}
 
-		configuration { "xcode* or osx or ios*" }
+		configuration { "xcode* or osx* or ios*" }
 			files {
 				path.join(BGFX_DIR, "src/amalgamated.mm"),
 			}
 
 			excludes {
-				path.join(BGFX_DIR, "src/glcontext_**.mm"),
 				path.join(BGFX_DIR, "src/renderer_**.mm"),
 				path.join(BGFX_DIR, "src/amalgamated.cpp"),
 			}
 
-		configuration { "not (xcode* or osx or ios*)" }
+		configuration { "not (xcode* or osx* or ios*)" }
 			excludes {
 				path.join(BGFX_DIR, "src/**.mm"),
 			}
@@ -251,9 +218,8 @@ function bgfxProjectBase(_kind, _defines)
 		configuration {}
 
 	else
-		configuration { "xcode* or osx or ios*" }
+		configuration { "xcode* or osx* or ios*" }
 			files {
-				path.join(BGFX_DIR, "src/glcontext_**.mm"),
 				path.join(BGFX_DIR, "src/renderer_**.mm"),
 			}
 
@@ -287,60 +253,4 @@ function bgfxProject(_name, _kind, _defines)
 		bgfxProjectBase(_kind, _defines)
 
 		copyLib()
-end
-
-if _OPTIONS["with-webgpu"] then
-	function usesWebGPU()
-		configuration { "wasm*" }
-			linkoptions {
-				"-s USE_WEBGPU=1",
-			}
-
-		configuration { "not wasm*" }
-			--local generator = "out/Default"
-			local generator = "out/VS2019"
-
-			includedirs {
-				path.join(DAWN_DIR, "src"),
-				path.join(DAWN_DIR, "src/include"),
-				path.join(DAWN_DIR, generator, "gen/src"),
-				path.join(DAWN_DIR, generator, "gen/src/include"),
-			}
-
-			libdirs {
-				path.join(DAWN_DIR, generator),
-				path.join(DAWN_DIR, generator, "lib/Debug"),
-			}
-
-			files {
-				path.join(DAWN_DIR, generator, "gen/src/dawn/webgpu_cpp.cpp"),
-			}
-
-			links {
-				-- shared
-				"dawn_proc_shared",
-				"dawn_native_shared",
-				"shaderc_spvc_shared",
-				-- static
-				--"dawn_common",
-				--"dawn_proc",
-				--"dawn_native",
-				--"dawn_platform",
-				------"shaderc",
-				--"shaderc_spvc",
-				--"SPIRV-tools",
-				--"SPIRV-tools-opt",
-				--"spirv-cross-cored",
-				--"spirv-cross-hlsld",
-				--"spirv-cross-glsld",
-				--"spirv-cross-msld",
-				--"spirv-cross-reflectd",
-			}
-
-			removeflags {
-				"FatalWarnings",
-			}
-
-		configuration {}
-	end
 end

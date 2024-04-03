@@ -162,7 +162,7 @@ namespace NeoAxis.Editor
 				//}
 				//else
 				//{
-				if( EditorAPI.DarkTheme )
+				if( EditorAPI2.DarkTheme )
 					brush = new SolidBrush( Color.FromArgb( 140, 140, 140 ) );
 				else
 					brush = Brushes.Black;
@@ -180,7 +180,7 @@ namespace NeoAxis.Editor
 				Point c2 = new Point( Width - 1 - c1.X, c1.Y );
 				g.FillPolygon( brush, new Point[] { a2, b2, c2, a2 } );
 
-				if( EditorAPI.DarkTheme )
+				if( EditorAPI2.DarkTheme )
 					brush.Dispose();
 			}
 #endif //!ANDROID

@@ -26,11 +26,14 @@ namespace NeoAxis
 
 		//
 
+		/// <summary>
+		/// The type of the pipe.
+		/// </summary>
 		[DefaultValue( null )]
 		public Reference<PipeType> PipeType
 		{
 			get { if( _pipeType.BeginGet() ) PipeType = _pipeType.Get( this ); return _pipeType.value; }
-			set { if( _pipeType.BeginSet( ref value ) ) { try { PipeTypeChanged?.Invoke( this ); DataWasChanged(); } finally { _pipeType.EndSet(); } } }
+			set { if( _pipeType.BeginSet( this, ref value ) ) { try { PipeTypeChanged?.Invoke( this ); DataWasChanged(); } finally { _pipeType.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PipeType"/> property value changes.</summary>
 		public event Action<Pipe> PipeTypeChanged;
@@ -44,7 +47,7 @@ namespace NeoAxis
 		public Reference<bool> PipeCollision
 		{
 			get { if( _pipeCollision.BeginGet() ) PipeCollision = _pipeCollision.Get( this ); return _pipeCollision.value; }
-			set { if( _pipeCollision.BeginSet( ref value ) ) { try { PipeCollisionChanged?.Invoke( this ); DataWasChanged(); } finally { _pipeCollision.EndSet(); } } }
+			set { if( _pipeCollision.BeginSet( this, ref value ) ) { try { PipeCollisionChanged?.Invoke( this ); DataWasChanged(); } finally { _pipeCollision.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PipeCollision"/> property value changes.</summary>
 		public event Action<Pipe> PipeCollisionChanged;
@@ -58,7 +61,7 @@ namespace NeoAxis
 		public Reference<PipePoint.SpecialtyEnum> PointSpecialty
 		{
 			get { if( _pointSpecialty.BeginGet() ) PointSpecialty = _pointSpecialty.Get( this ); return _pointSpecialty.value; }
-			set { if( _pointSpecialty.BeginSet( ref value ) ) { try { PointSpecialtyChanged?.Invoke( this ); DataWasChanged(); } finally { _pointSpecialty.EndSet(); } } }
+			set { if( _pointSpecialty.BeginSet( this, ref value ) ) { try { PointSpecialtyChanged?.Invoke( this ); DataWasChanged(); } finally { _pointSpecialty.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PointSpecialty"/> property value changes.</summary>
 		public event Action<Pipe> PointSpecialtyChanged;
@@ -72,7 +75,7 @@ namespace NeoAxis
 		public Reference<Material> PipeReplaceMaterial
 		{
 			get { if( _pipeReplaceMaterial.BeginGet() ) PipeReplaceMaterial = _pipeReplaceMaterial.Get( this ); return _pipeReplaceMaterial.value; }
-			set { if( _pipeReplaceMaterial.BeginSet( ref value ) ) { try { PipeReplaceMaterialChanged?.Invoke( this ); needUpdateVisualData = true; } finally { _pipeReplaceMaterial.EndSet(); } } }
+			set { if( _pipeReplaceMaterial.BeginSet( this, ref value ) ) { try { PipeReplaceMaterialChanged?.Invoke( this ); needUpdateVisualData = true; } finally { _pipeReplaceMaterial.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PipeReplaceMaterial"/> property value changes.</summary>
 		public event Action<Pipe> PipeReplaceMaterialChanged;
@@ -86,7 +89,7 @@ namespace NeoAxis
 		public Reference<ColorValue> PipeColor
 		{
 			get { if( _pipeColor.BeginGet() ) PipeColor = _pipeColor.Get( this ); return _pipeColor.value; }
-			set { if( _pipeColor.BeginSet( ref value ) ) { try { PipeColorChanged?.Invoke( this ); needUpdateVisualData = true; } finally { _pipeColor.EndSet(); } } }
+			set { if( _pipeColor.BeginSet( this, ref value ) ) { try { PipeColorChanged?.Invoke( this ); needUpdateVisualData = true; } finally { _pipeColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PipeColor"/> property value changes.</summary>
 		public event Action<Pipe> PipeColorChanged;
@@ -100,7 +103,7 @@ namespace NeoAxis
 		public Reference<Material> MeshesReplaceMaterial
 		{
 			get { if( _meshesReplaceMaterial.BeginGet() ) MeshesReplaceMaterial = _meshesReplaceMaterial.Get( this ); return _meshesReplaceMaterial.value; }
-			set { if( _meshesReplaceMaterial.BeginSet( ref value ) ) { try { MeshesReplaceMaterialChanged?.Invoke( this ); needUpdateVisualData = true; } finally { _meshesReplaceMaterial.EndSet(); } } }
+			set { if( _meshesReplaceMaterial.BeginSet( this, ref value ) ) { try { MeshesReplaceMaterialChanged?.Invoke( this ); needUpdateVisualData = true; } finally { _meshesReplaceMaterial.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MeshesReplaceMaterial"/> property value changes.</summary>
 		public event Action<Pipe> MeshesReplaceMaterialChanged;
@@ -114,7 +117,7 @@ namespace NeoAxis
 		public Reference<ColorValue> MeshesColor
 		{
 			get { if( _meshesColor.BeginGet() ) MeshesColor = _meshesColor.Get( this ); return _meshesColor.value; }
-			set { if( _meshesColor.BeginSet( ref value ) ) { try { MeshesColorChanged?.Invoke( this ); needUpdateVisualData = true; } finally { _meshesColor.EndSet(); } } }
+			set { if( _meshesColor.BeginSet( this, ref value ) ) { try { MeshesColorChanged?.Invoke( this ); needUpdateVisualData = true; } finally { _meshesColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MeshesColor"/> property value changes.</summary>
 		public event Action<Pipe> MeshesColorChanged;
@@ -312,25 +315,12 @@ namespace NeoAxis
 				list.Add( item );
 			}
 
-			bool IsAnyTransformToolInModifyingMode()
-			{
-#if !DEPLOY
-				foreach( var instance in EngineViewportControl.AllInstances )
-				{
-					var transformTool = instance.TransformTool as TransformTool;
-					if( transformTool != null && transformTool.Modifying )
-						return true;
-				}
-#endif
-				return false;
-			}
-
 			internal void ConnectPipes( LogicalData connectOnlyToThisPipe )
 			{
 				if( Points.Length < 2 )
 					return;
 
-				if( IsAnyTransformToolInModifyingMode() )
+				if( EditorAPI.IsAnyTransformToolInModifyingMode() )
 				{
 					Owner.needUpdateAfterEndModifyingTransformTool = true;
 					return;
@@ -627,7 +617,7 @@ namespace NeoAxis
 
 				if( !Owner.PipeCollision.Value )
 					return;
-				if( IsAnyTransformToolInModifyingMode() )
+				if( EditorAPI.IsAnyTransformToolInModifyingMode() )
 				{
 					Owner.needUpdateAfterEndModifyingTransformTool = true;
 					return;
@@ -1254,8 +1244,8 @@ namespace NeoAxis
 				meshInSpace.Transform = transform;
 				meshInSpace.ReplaceMaterial = replaceMaterial;
 				meshInSpace.Color = color;
-
 				meshInSpace.Mesh = mesh;// ReferenceUtility.MakeThisReference( meshInSpace, mesh );
+				meshInSpace.StaticShadows = true;
 				meshInSpace.Enabled = true;
 			}
 		}
@@ -1344,8 +1334,8 @@ namespace NeoAxis
 				{
 					scene.ViewportUpdateBefore += Scene_ViewportUpdateBefore;
 #if !DEPLOY
-					TransformTool.AllInstances_ModifyCommit += TransformTool_AllInstances_ModifyCommit;
-					TransformTool.AllInstances_ModifyCancel += TransformTool_AllInstances_ModifyCancel;
+					TransformToolUtility.AllInstances_ModifyCommit += TransformTool_AllInstances_ModifyCommit;
+					TransformToolUtility.AllInstances_ModifyCancel += TransformTool_AllInstances_ModifyCancel;
 #endif
 					if( logicalData == null )
 						Update();
@@ -1354,8 +1344,8 @@ namespace NeoAxis
 				{
 					scene.ViewportUpdateBefore -= Scene_ViewportUpdateBefore;
 #if !DEPLOY
-					TransformTool.AllInstances_ModifyCommit -= TransformTool_AllInstances_ModifyCommit;
-					TransformTool.AllInstances_ModifyCancel -= TransformTool_AllInstances_ModifyCancel;
+					TransformToolUtility.AllInstances_ModifyCommit -= TransformTool_AllInstances_ModifyCommit;
+					TransformToolUtility.AllInstances_ModifyCancel -= TransformTool_AllInstances_ModifyCancel;
 #endif
 					Update();
 				}
@@ -1363,7 +1353,7 @@ namespace NeoAxis
 		}
 
 #if !DEPLOY
-		private void TransformTool_AllInstances_ModifyCommit( TransformTool sender )
+		private void TransformTool_AllInstances_ModifyCommit( ITransformTool sender )
 		{
 			if( needUpdateAfterEndModifyingTransformTool )
 			{
@@ -1372,7 +1362,7 @@ namespace NeoAxis
 			}
 		}
 
-		private void TransformTool_AllInstances_ModifyCancel( TransformTool sender )
+		private void TransformTool_AllInstances_ModifyCancel( ITransformTool sender )
 		{
 			if( needUpdateAfterEndModifyingTransformTool )
 			{

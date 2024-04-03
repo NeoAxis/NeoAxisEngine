@@ -16,7 +16,7 @@ namespace NeoAxis
 		const double totalTime = 2;
 		const double clickTime = 1;
 		const double clickPressingMoveTime = 0.4;
-		const double clickPressingOffset = 0.3;
+		const double clickPressingOffset = 0.2;//0.3;
 		const double buttonPressOffset = 0.05;
 		const double handBoneOffset = 0.2;
 
@@ -31,14 +31,14 @@ namespace NeoAxis
 		/// The target object.
 		/// </summary>
 		[DefaultValue( null )]
-		public Reference<ButtonInSpace> Target
+		public Reference<Button> Target
 		{
 			get { if( _target.BeginGet() ) Target = _target.Get( this ); return _target.value; }
-			set { if( _target.BeginSet( ref value ) ) { try { TargetChanged?.Invoke( this ); } finally { _target.EndSet(); } } }
+			set { if( _target.BeginSet( this, ref value ) ) { try { TargetChanged?.Invoke( this ); } finally { _target.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Target"/> property value changes.</summary>
 		public event Action<CharacterAITask_PressButton> TargetChanged;
-		ReferenceField<ButtonInSpace> _target = null;
+		ReferenceField<Button> _target = null;
 
 		///////////////////////////////////////////////
 

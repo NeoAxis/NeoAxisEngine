@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -18,17 +19,21 @@ namespace NeoAxis
 	/// A component to make instance of a vehicle in the scene.
 	/// </summary>
 	[AddToResourcesWindow( @"Addons\Vehicle\Vehicle", 22002 )]
-	public class Vehicle : MeshInSpace, InteractiveObject, IProcessDamage
+	public class Vehicle : MeshInSpace, InteractiveObjectInterface, IProcessDamage
 	{
-		static FastRandom boundsPredictionAndUpdateRandom = new FastRandom( 0 );
+		static FastRandom staticRandom = new FastRandom( 0 );
 
 		//
 
-		DynamicData dynamicData;
+		DynamicDataClass dynamicData;
 		bool needRecreateDynamicData;
 
+		//to optimize hardware cache, OnSimulationStep doing access to many pointers. call less often code in OnSimulationStep
+		float fullyDisabledRemainingTime;
+
+		float mustBeDynamicRemainingTime;
+
 		//bool needBeActiveBecauseDriverInput;
-		double cannotBeStaticRemainingTime;
 
 		//!!!!by idea it must by solved inside Jolt
 		////going sleep after 10 seconds. fix for Jolt
@@ -46,19 +51,38 @@ namespace NeoAxis
 		Vector3[] groundRelativeVelocitySmoothArray;
 		Vector3 groundRelativeVelocitySmooth;
 
-		bool duringTransformUpdateWithoutRecrecting;
+		bool duringTransformUpdateWithoutRecreating;
 
 		bool driverInputNeedUpdate = true;
 
 		double currentSteering;
 
-		float remainingTimeToUpdateObjectsOnSeat;
+		//float remainingTimeToUpdateObjectsOnSeat;
 
+		float visualHeadlights;
+		float visualBrake;
+
+		//VehicleInputProcessing inputProcessingCached;
 		//!!!!
 		//double allowToSleepTime;
 
 		//[FieldSerialize( FieldSerializeSerializationTypes.World )]
 		//Vector3 linearVelocityForSerialization;
+
+		float motorOnRemainingTime;
+		bool? motorOnPrevious;
+		Sound currentMotorSound;
+		SoundVirtualChannel motorSoundChannel;
+
+		int currentGearSoundPlayed;
+
+		//motor state. sent to clients
+		bool sentToClientsMotorOn;
+		int sentToClientsCurrentGear;
+		float sentToClientsCurrentRPM;
+
+		////!!!!fix internal Jolt issue
+		//float skipFirstUpdateFromLibrary = 0.1f;
 
 		/////////////////////////////////////////
 		//Basic
@@ -70,7 +94,7 @@ namespace NeoAxis
 		public Reference<VehicleType> VehicleType
 		{
 			get { if( _vehicleType.BeginGet() ) VehicleType = _vehicleType.Get( this ); return _vehicleType.value; }
-			set { if( _vehicleType.BeginSet( ref value ) ) { try { VehicleTypeChanged?.Invoke( this ); NeedRecreateDynamicData(); } finally { _vehicleType.EndSet(); } } }
+			set { if( _vehicleType.BeginSet( this, ref value ) ) { try { VehicleTypeChanged?.Invoke( this ); NeedRecreateDynamicData(); } finally { _vehicleType.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="VehicleType"/> property value changes.</summary>
 		public event Action<Vehicle> VehicleTypeChanged;
@@ -82,7 +106,7 @@ namespace NeoAxis
 		public Reference<PhysicsModeEnum> PhysicsMode
 		{
 			get { if( _physicsMode.BeginGet() ) PhysicsMode = _physicsMode.Get( this ); return _physicsMode.value; }
-			set { if( _physicsMode.BeginSet( ref value ) ) { try { PhysicsModeChanged?.Invoke( this ); NeedRecreateDynamicData(); } finally { _physicsMode.EndSet(); } } }
+			set { if( _physicsMode.BeginSet( this, ref value ) ) { try { PhysicsModeChanged?.Invoke( this ); NeedRecreateDynamicData(); } finally { _physicsMode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PhysicsMode"/> property value changes.</summary>
 		public event Action<Vehicle> PhysicsModeChanged;
@@ -98,7 +122,7 @@ namespace NeoAxis
 		public Reference<bool> DebugVisualization
 		{
 			get { if( _debugVisualization.BeginGet() ) DebugVisualization = _debugVisualization.Get( this ); return _debugVisualization.value; }
-			set { if( _debugVisualization.BeginSet( ref value ) ) { try { DebugVisualizationChanged?.Invoke( this ); } finally { _debugVisualization.EndSet(); } } }
+			set { if( _debugVisualization.BeginSet( this, ref value ) ) { try { DebugVisualizationChanged?.Invoke( this ); } finally { _debugVisualization.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DebugVisualization"/> property value changes.</summary>
 		public event Action<Vehicle> DebugVisualizationChanged;
@@ -122,61 +146,80 @@ namespace NeoAxis
 		/// The throttle parameter to control the vehicle.
 		/// </summary>
 		[Category( "Control" )]
-		[DefaultValue( 0.0 )]
+		[DefaultValue( 0.0f )]
 		[Range( -1, 1 )]
-		public Reference<double> Throttle
+		//[NetworkSynchronize( false )]
+		public Reference<float> Throttle
 		{
 			get { if( _throttle.BeginGet() ) Throttle = _throttle.Get( this ); return _throttle.value; }
-			set { if( _throttle.BeginSet( ref value ) ) { try { ThrottleChanged?.Invoke( this ); driverInputNeedUpdate = true; } finally { _throttle.EndSet(); } } }
+			set { if( _throttle.BeginSet( this, ref value ) ) { try { ThrottleChanged?.Invoke( this ); driverInputNeedUpdate = true; } finally { _throttle.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Throttle"/> property value changes.</summary>
 		public event Action<Vehicle> ThrottleChanged;
-		ReferenceField<double> _throttle = 0.0;
+		ReferenceField<float> _throttle = 0.0f;
 
 		/// <summary>
 		/// The brake parameter to control the vehicle.
 		/// </summary>
 		[Category( "Control" )]
-		[DefaultValue( 0.0 )]
+		[DefaultValue( 0.0f )]
 		[Range( 0, 1 )]
-		public Reference<double> Brake
+		//[NetworkSynchronize( false )]
+		public Reference<float> Brake
 		{
 			get { if( _brake.BeginGet() ) Brake = _brake.Get( this ); return _brake.value; }
-			set { if( _brake.BeginSet( ref value ) ) { try { BrakeChanged?.Invoke( this ); driverInputNeedUpdate = true; } finally { _brake.EndSet(); } } }
+			set { if( _brake.BeginSet( this, ref value ) ) { try { BrakeChanged?.Invoke( this ); driverInputNeedUpdate = true; } finally { _brake.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Brake"/> property value changes.</summary>
 		public event Action<Vehicle> BrakeChanged;
-		ReferenceField<double> _brake = 0.0;
+		ReferenceField<float> _brake = 0.0f;
 
 		/// <summary>
 		/// The hand brake parameter to control the vehicle.
 		/// </summary>
 		[Category( "Control" )]
-		[DefaultValue( 1.0 )]
+		[DefaultValue( 1.0f )]
 		[Range( 0, 1 )]
-		public Reference<double> HandBrake
+		//[NetworkSynchronize( false )]
+		public Reference<float> HandBrake
 		{
 			get { if( _handHandBrake.BeginGet() ) HandBrake = _handHandBrake.Get( this ); return _handHandBrake.value; }
-			set { if( _handHandBrake.BeginSet( ref value ) ) { try { HandBrakeChanged?.Invoke( this ); driverInputNeedUpdate = true; } finally { _handHandBrake.EndSet(); } } }
+			set { if( _handHandBrake.BeginSet( this, ref value ) ) { try { HandBrakeChanged?.Invoke( this ); driverInputNeedUpdate = true; } finally { _handHandBrake.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HandBrake"/> property value changes.</summary>
 		public event Action<Vehicle> HandBrakeChanged;
-		ReferenceField<double> _handHandBrake = 1.0;
+		ReferenceField<float> _handHandBrake = 1.0f;
 
 		/// <summary>
 		/// The steering parameter to control the vehicle.
 		/// </summary>
 		[Category( "Control" )]
-		[DefaultValue( 0.0 )]
+		[DefaultValue( 0.0f )]
 		[Range( -1, 1 )]
-		public Reference<double> Steering
+		[NetworkSynchronize( false )]
+		public Reference<float> Steering
 		{
 			get { if( _steering.BeginGet() ) Steering = _steering.Get( this ); return _steering.value; }
-			set { if( _steering.BeginSet( ref value ) ) { try { SteeringChanged?.Invoke( this ); driverInputNeedUpdate = true; } finally { _steering.EndSet(); } } }
+			set { if( _steering.BeginSet( this, ref value ) ) { try { SteeringChanged?.Invoke( this ); driverInputNeedUpdate = true; } finally { _steering.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Steering"/> property value changes.</summary>
 		public event Action<Vehicle> SteeringChanged;
-		ReferenceField<double> _steering = 0.0;
+		ReferenceField<float> _steering = 0.0f;
+
+		[DefaultValue( 0.0f )]
+		[Range( 0, 1 )]
+		public Reference<float> Headlights
+		{
+			get { if( _headlights.BeginGet() ) Headlights = _headlights.Get( this ); return _headlights.value; }
+			set { if( _headlights.BeginSet( this, ref value ) ) { try { HeadlightsChanged?.Invoke( this ); } finally { _headlights.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Headlights"/> property value changes.</summary>
+		public event Action<Vehicle> HeadlightsChanged;
+		ReferenceField<float> _headlights = 0.0f;
+
+		//network: no sense to send to clients
+		[Browsable( false )]
+		public Vector3? RequiredLookToPosition { get; set; }
 
 		/////////////////////////////////////////
 
@@ -184,15 +227,15 @@ namespace NeoAxis
 		/// The health of the vehicle.
 		/// </summary>
 		[Category( "Game Framework" )]
-		[DefaultValue( 0.0 )]
-		public Reference<double> Health
+		[DefaultValue( 0.0f )]
+		public Reference<float> Health
 		{
 			get { if( _health.BeginGet() ) Health = _health.Get( this ); return _health.value; }
-			set { if( _health.BeginSet( ref value ) ) { try { HealthChanged?.Invoke( this ); driverInputNeedUpdate = true; } finally { _health.EndSet(); } } }
+			set { if( _health.BeginSet( this, ref value ) ) { try { HealthChanged?.Invoke( this ); driverInputNeedUpdate = true; } finally { _health.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Health"/> property value changes.</summary>
 		public event Action<Vehicle> HealthChanged;
-		ReferenceField<double> _health = 0.0;
+		ReferenceField<float> _health = 0.0f;
 
 		/// <summary>
 		/// The team index of the object.
@@ -202,7 +245,7 @@ namespace NeoAxis
 		public Reference<int> Team
 		{
 			get { if( _team.BeginGet() ) Team = _team.Get( this ); return _team.value; }
-			set { if( _team.BeginSet( ref value ) ) { try { TeamChanged?.Invoke( this ); } finally { _team.EndSet(); } } }
+			set { if( _team.BeginSet( this, ref value ) ) { try { TeamChanged?.Invoke( this ); } finally { _team.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Team"/> property value changes.</summary>
 		public event Action<Vehicle> TeamChanged;
@@ -215,7 +258,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		internal class DynamicData
+		public class DynamicDataClass
 		{
 			public VehicleType VehicleType;
 			public PhysicsModeEnum PhysicsMode;
@@ -226,8 +269,15 @@ namespace NeoAxis
 			public float LocalBoundsDefaultBoundingRadius;
 
 			public WheelItem[] Wheels;
-			public SeatItem[] Seats;
+			public SeatItemData[] Seats;
 			public Scene.PhysicsWorldClass.VehicleConstraint constraint;
+
+			public TurretItem[] Turrets;
+			public LightItem[] Lights;
+
+			public int CurrentGear;
+			public bool IsSwitchingGear;
+			public float CurrentRPM;
 
 			/////////////////////
 
@@ -253,6 +303,9 @@ namespace NeoAxis
 
 				//dynamic data
 				public Vector3F CurrentPosition;
+				////!!!!fix internal Jolt issue
+				//public float[] LastPositions;
+
 				public QuaternionF CurrentRotation;
 
 				////RealPhysics mode
@@ -292,14 +345,42 @@ namespace NeoAxis
 
 			/////////////////////
 
-			public class SeatItem
+			public class SeatItemData
 			{
-				public VehicleSeat SeatComponent;
+				public SeatItem SeatComponent;
 
 				//!!!!need make copy? in type can be with reference
 				public Transform Transform;
-				public Vector3 EyeOffset;
+				public Degree SpineAngle;
+				public Degree LegsAngle;
+
+				//public Vector3 EyeOffset;
 				public Transform ExitTransform;
+			}
+
+			/////////////////////
+
+			public class TurretItem
+			{
+				public Transform InitialTransform;
+				//public Vector3F InitialPosition;
+				public Turret Turret;
+
+				//can add other types of constructions (side turrets)
+
+				public Constraint_SixDOF HorizontalConstraint;
+				public Weapon Weapon;
+				public Constraint_SixDOF VerticalConstraint;
+
+				public SoundVirtualChannel TurretTurnSoundChannel;
+			}
+
+			/////////////////////
+
+			public class LightItem
+			{
+				public Light LightType;
+				public Light Light;
 			}
 		}
 
@@ -343,18 +424,34 @@ namespace NeoAxis
 				//!!!!что еще восстанавливать помимо скорости
 				//if( mainBody != null )
 				//	mainBody.LinearVelocity = linearVelocityForSerialization;
+
+				//not works
+				//Static = !IsMustBeDynamic();
+
+
+				var updated = false;
+				SimulateVisualHeadlights( ref updated, true );
+				SimulateVisualBrake( ref updated, true );
 			}
 			else
+			{
+				if( motorSoundChannel != null )
+				{
+					motorSoundChannel.Stop();
+					motorSoundChannel = null;
+				}
+
 				DestroyDynamicData();
+			}
 		}
 
 		public void SetTransform( Transform value, bool recreate )
 		{
 			if( !recreate )
-				duringTransformUpdateWithoutRecrecting = true;
+				duringTransformUpdateWithoutRecreating = true;
 			Transform = value;
 			if( !recreate )
-				duringTransformUpdateWithoutRecrecting = false;
+				duringTransformUpdateWithoutRecreating = false;
 		}
 
 		//public void SetTransform( Transform value, bool recreate )
@@ -434,8 +531,7 @@ namespace NeoAxis
 			if( driverInputNeedUpdate || activateBody || lastSteering != currentSteering )
 			{
 				dynamicData.constraint.SetDriverInput( (float)Throttle, (float)currentSteering, (float)Brake, (float)HandBrake, activateBody );
-				cannotBeStaticRemainingTime = initialization ? 0 : 3.0;
-
+				mustBeDynamicRemainingTime = initialization ? 0 : 3.0f;
 				//needBeActiveBecauseDriverInput = true;
 			}
 			//else
@@ -444,450 +540,303 @@ namespace NeoAxis
 			driverInputNeedUpdate = false;
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		void UpdateObjectsOnSeats( ref bool updated )
+		{
+			if( dynamicData != null )
+			{
+				//when update not each time?
+
+				//remainingTimeToUpdateObjectsOnSeat -= delta;
+				//if( remainingTimeToUpdateObjectsOnSeat <= 0 )
+				//{
+				//remainingTimeToUpdateObjectsOnSeat = 0.25f + boundsPredictionAndUpdateRandom.Next( 0.05f );
+
+				for( int seatIndex = 0; seatIndex < dynamicData.Seats.Length; seatIndex++ )
+					UpdateObjectOnSeat( seatIndex, ref updated );
+
+				//}
+			}
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected override void OnSimulationStep()
 		{
 			base.OnSimulationStep();
 
-			if( dynamicData != null && dynamicData.constraint != null )
+			if( fullyDisabledRemainingTime > 0 )
 			{
-				//update cannotBeStaticReamainingTime
-				if( cannotBeStaticRemainingTime > 0 )
+				fullyDisabledRemainingTime -= Time.SimulationDelta;
+				if( fullyDisabledRemainingTime < 0 )
+					fullyDisabledRemainingTime = 0;
+			}
+			else
+			{
+				var updated = false;
+
+				var constraint = dynamicData?.constraint;
+				if( constraint != null )
 				{
-					cannotBeStaticRemainingTime -= Time.SimulationDelta;
-					if( cannotBeStaticRemainingTime < 0 )
-						cannotBeStaticRemainingTime = 0;
-				}
-
-				var mustBeDynamic = IsMustBeDynamic();
-
-
-				//update driver input
-				if( mustBeDynamic || driverInputNeedUpdate )
-				{
-					var lastSteering = currentSteering;
-
-					var steering = Steering.Value;
-					if( currentSteering != steering )
+					//update mustBeDynamicRemainingTime
+					if( mustBeDynamicRemainingTime > 0 )
 					{
-						if( currentSteering > steering )
-						{
-							currentSteering -= Time.SimulationDelta / dynamicData.VehicleType.FrontWheelSteeringTime;
-							if( currentSteering < steering )
-								currentSteering = steering;
-							if( currentSteering < -1 )
-								currentSteering = -1;
-						}
-						else
-						{
-							currentSteering += Time.SimulationDelta / dynamicData.VehicleType.FrontWheelSteeringTime;
-							if( currentSteering > steering )
-								currentSteering = steering;
-							if( currentSteering > 1 )
-								currentSteering = 1;
-						}
+						mustBeDynamicRemainingTime -= Time.SimulationDelta;
+						if( mustBeDynamicRemainingTime < 0 )
+							mustBeDynamicRemainingTime = 0;
 					}
 
-					SetDriverInput( lastSteering, false );
-
-					//var activateBody = Throttle != 0 || currentSteering != 0;
-					//if( driverInputNeedUpdate || activateBody || lastSteering != currentSteering )
-					//{
-					//	dynamicData.constraint.SetDriverInput( (float)Throttle, (float)currentSteering, (float)Brake, (float)HandBrake, activateBody );
-					//	cannotBeStaticRemainingTime = 3.0;
-					//	//needBeActiveBecauseDriverInput = true;
-					//}
-					////else
-					////	needBeActiveBecauseDriverInput = false;
-
-					//driverInputNeedUpdate = false;
-				}
-
-				dynamicData.constraint.SetStepListenerAddedMustBeAdded( mustBeDynamic );
-
-				if( mustBeDynamic )//if( PhysicalBody != null && PhysicalBody.Active )
-				{
-					CalculateGroundRelativeVelocity();
-
-					//var tr = TransformV;
-					//needBeActiveBecauseTransformChange = lastTransformToCalculateDynamicState.Equals(
-					//lastTransformToCalculateDynamicState = tr;
-
-					//var trPosition = TransformV.Position;
-					//if( lastTransformPosition.HasValue )
-					//	lastLinearVelocity = ( trPosition - lastTransformPosition.Value ) / Time.SimulationDelta;
-					//else
-					//	lastLinearVelocity = Vector3.Zero;
-					//lastTransformPosition = trPosition;
-				}
-				//else
-				//{
-				//	//needBeActiveBecausePhysicsVelocity;
-				//	lastTransformToCalculateDynamicState = TransformV;
-				//	needBeActiveBecauseTransformChange = false;
-				//}
-
-				//if( mustBeDynamic )//if( PhysicalBody != null && PhysicalBody.Active )
-				//{
-				//	CalculateGroundRelativeVelocity();
-
-				//	var tr = TransformV;
-				//	needBeActiveBecauseTransformChange = lastTransformToCalculateDynamicState.Equals(
-				//	lastTransformToCalculateDynamicState = tr;
-
-				//	//var trPosition = TransformV.Position;
-				//	//if( lastTransformPosition.HasValue )
-				//	//	lastLinearVelocity = ( trPosition - lastTransformPosition.Value ) / Time.SimulationDelta;
-				//	//else
-				//	//	lastLinearVelocity = Vector3.Zero;
-				//	//lastTransformPosition = trPosition;
-				//}
-				//else
-				//{
-				//	lastTransformToCalculateDynamicState = TransformV;
-				//	needBeActiveBecauseTransformChange = false;
-				//}
-
-				////if( PhysicalBody != null && PhysicalBody.Active )//if( !Static )//&& false )
-				////{
-				////	CalculateGroundRelativeVelocity();
-
-				////	var trPosition = TransformV.Position;
-				////	if( lastTransformPosition.HasValue )
-				////		lastLinearVelocity = ( trPosition - lastTransformPosition.Value ) / Time.SimulationDelta;
-				////	else
-				////		lastLinearVelocity = Vector3.Zero;
-				////	lastTransformPosition = trPosition;
-				////}
-
-				var needStatic = !mustBeDynamic;// !IsMustBeDynamic();
-				if( needStatic != Static )
-				{
-					//can't be static some time after change from static to dynamic
+					var mustBeDynamic = IsMustBeDynamic();
 					if( mustBeDynamic )
-						cannotBeStaticRemainingTime = 3.0;
+						updated = true;
 
-					//if( needStatic )
+					//update driver input
+					if( mustBeDynamic || driverInputNeedUpdate )
+					{
+						updated = true;
+
+						var lastSteering = currentSteering;
+
+						var steering = Steering.Value;
+						if( currentSteering != steering )
+						{
+							if( currentSteering > steering )
+							{
+								currentSteering -= Time.SimulationDelta / dynamicData.VehicleType.FrontWheelSteeringTime;
+								if( currentSteering < steering )
+									currentSteering = steering;
+								if( currentSteering < -1 )
+									currentSteering = -1;
+							}
+							else
+							{
+								currentSteering += Time.SimulationDelta / dynamicData.VehicleType.FrontWheelSteeringTime;
+								if( currentSteering > steering )
+									currentSteering = steering;
+								if( currentSteering > 1 )
+									currentSteering = 1;
+							}
+						}
+
+						SetDriverInput( lastSteering, false );
+					}
+
+					//constraint.SetStepListenerMustBeAdded( mustBeDynamic );
+
+					if( mustBeDynamic )
+					{
+						CalculateGroundRelativeVelocity();
+
+						//var tr = TransformV;
+						//needBeActiveBecauseTransformChange = lastTransformToCalculateDynamicState.Equals(
+						//lastTransformToCalculateDynamicState = tr;
+
+						//var trPosition = TransformV.Position;
+						//if( lastTransformPosition.HasValue )
+						//	lastLinearVelocity = ( trPosition - lastTransformPosition.Value ) / Time.SimulationDelta;
+						//else
+						//	lastLinearVelocity = Vector3.Zero;
+						//lastTransformPosition = trPosition;
+					}
+					//else
 					//{
+					//	//needBeActiveBecausePhysicsVelocity;
 					//	lastTransformToCalculateDynamicState = TransformV;
 					//	needBeActiveBecauseTransformChange = false;
 					//}
-					//else
-					//	cannotBeStaticRemainingTime = 1.0;
 
-					Static = needStatic;
+					var needStatic = !mustBeDynamic;
 
-					//ScreenMessages.Add( "STATIC update" );
-				}
-
-				//ScreenMessages.Add( "Static: " + Static.ToString() );
-
-
-				//!!!!by idea it must by solved inside Jolt
-				////to sleep after 10 seconds of anactivity (fix for Jolt)
-				//if( needStatic )
-				//	needStaticTotalTime += Time.SimulationDelta;
-				//else
-				//	needStaticTotalTime = 0;
-				//if( PhysicalBody != null && PhysicalBody.Active && needStaticTotalTime > 10.0 )
-				//	PhysicalBody.Active = false;
-
-
-				//update additional items
-				if( mustBeDynamic && PhysicalBody != null && PhysicalBody.Active && dynamicData.Wheels != null )
-				{
-					unsafe
+					if( needStatic != Static.Value )
 					{
-						var wheelsData = stackalloc Scene.PhysicsWorldClass.VehicleWheelData[ dynamicData.Wheels.Length ];
-						dynamicData.constraint.GetData( wheelsData, out var active );
+						updated = true;
 
-						for( int n = 0; n < dynamicData.Wheels.Length; n++ )
-						{
-							ref var wheel = ref dynamicData.Wheels[ n ];
-							var wheelData = wheelsData + n;
+						//can't be static some time after change from static to dynamic
+						if( mustBeDynamic )
+							mustBeDynamicRemainingTime = 0.5f;// 3.0;
 
-							wheel.CurrentPosition = wheel.InitialPosition;
-							wheel.CurrentPosition.Z = wheelData->Position;// = wheelData->SuspensionLength - wheel.Diameter * 0.5f;
-							wheel.CurrentRotation = QuaternionF.FromRotateByZ( -wheelData->SteerAngle ) * QuaternionF.FromRotateByY( -wheelData->RotationAngle );
-							//!!!!use angular veclocity for motion blur?
-							//wheelData->AngularVelocity
+						//if( needStatic )
+						//{
+						//	lastTransformToCalculateDynamicState = TransformV;
+						//	needBeActiveBecauseTransformChange = false;
+						//}
+						//else
+						//	cannotBeStaticRemainingTime = 1.0;
 
-							Scene.PhysicsWorldClass.Body contactBody = null;
-							if( wheelData->ContactBody != 0xffffffff )
-							{
-								var physicsWorldData = dynamicData.constraint.PhysicsWorld;
-								contactBody = physicsWorldData.GetBodyById( wheelData->ContactBody );
-							}
-
-							wheel.ContactBody = contactBody;
-
-							//no sense
-							//wheel.ContactBodyTimeUpdated = EngineApp.EngineTime;
-							//wheel.LastGroundTime
-						}
+						Static = needStatic;
+						StaticShadows = false;
 					}
 
-					UpdateAdditionalItems();
+					//update additional items
+					if( mustBeDynamic && PhysicalBody != null && PhysicalBody.Active && dynamicData.Wheels != null )//&& skipFirstUpdateFromLibrary == 0 )
+					{
+						unsafe
+						{
+							var wheelsData = stackalloc Scene.PhysicsWorldClass.VehicleWheelData[ dynamicData.Wheels.Length ];
+							dynamicData.constraint.GetData( wheelsData, out var active, out dynamicData.CurrentGear, out dynamicData.IsSwitchingGear, out dynamicData.CurrentRPM );
+
+							for( int nWheel = 0; nWheel < dynamicData.Wheels.Length; nWheel++ )
+							{
+								ref var wheel = ref dynamicData.Wheels[ nWheel ];
+								var wheelData = wheelsData + nWheel;
+
+								//fix "max suspension" issue
+								if( PhysicalBody.ActiveUpdateCount > 2 )
+								{
+									wheel.CurrentPosition = wheel.InitialPosition;
+
+									////!!!!fix internal Jolt issue
+									//if( wheel.LastPositions == null )
+									//{
+									//	wheel.LastPositions = new float[ 5 ];
+									//	for( int n = 0; n < wheel.LastPositions.Length; n++ )
+									//		wheel.LastPositions[ n ] = wheelData->Position;
+									//}
+									//for( int n = 0; n < wheel.LastPositions.Length - 1; n++ )
+									//	wheel.LastPositions[ n ] = wheel.LastPositions[ n + 1 ];
+									//wheel.LastPositions[ wheel.LastPositions.Length - 1 ] = wheelData->Position;
+
+									//wheel.CurrentPosition.Z = wheel.LastPositions[ 0 ];
+									//for( int n = 1; n < wheel.LastPositions.Length; n++ )
+									//{
+									//	if( wheel.CurrentPosition.Z > wheel.LastPositions[ n ] )
+									//		wheel.CurrentPosition.Z = wheel.LastPositions[ n ];
+									//}
+
+									//for without issue:
+									wheel.CurrentPosition.Z = wheelData->Position;// = wheelData->SuspensionLength - wheel.Diameter * 0.5f;
+								}
+
+
+								wheel.CurrentRotation = QuaternionF.FromRotateByZ( -wheelData->SteerAngle ) * QuaternionF.FromRotateByY( -wheelData->RotationAngle );
+								//!!!!use angular veclocity for motion blur?
+								//wheelData->AngularVelocity
+
+								Scene.PhysicsWorldClass.Body contactBody = null;
+								if( wheelData->ContactBody != 0xffffffff )
+								{
+									var physicsWorldData = dynamicData.constraint.PhysicsWorld;
+									contactBody = physicsWorldData.GetBodyById( wheelData->ContactBody );
+								}
+
+								wheel.ContactBody = contactBody;
+
+								//no sense
+								//wheel.ContactBodyTimeUpdated = EngineApp.EngineTime;
+								//wheel.LastGroundTime
+							}
+						}
+
+						//networking: send update to clients
+						if( NetworkIsServer )
+						{
+							var writer = BeginNetworkMessageToEveryone( "UpdateWheels" );
+
+							//!!!!реже высылать, не высылать тоже самое, дискретизация, интерполировать
+
+							writer.Write( (byte)dynamicData.Wheels.Length );
+							for( int n = 0; n < dynamicData.Wheels.Length; n++ )
+							{
+								ref var wheel = ref dynamicData.Wheels[ n ];
+
+								writer.Write( new HalfType( wheel.CurrentPosition.Z ) );
+								writer.Write( wheel.CurrentRotation.ToQuaternionH() );
+
+								//!!!!send contact body?
+							}
+
+							EndNetworkMessage();
+						}
+
+						UpdateAdditionalItems();
+					}
+
+					//if( mustBeDynamic && skipFirstUpdateFromLibrary > 0 )
+					//{
+					//	skipFirstUpdateFromLibrary -= Time.SimulationDelta;
+					//	if( skipFirstUpdateFromLibrary < 0 )
+					//		skipFirstUpdateFromLibrary = 0;
+					//}
 				}
+
+				UpdateObjectsOnSeats( ref updated );
+				UpdateTurrets( ref updated );
+				SimulateMotorOn( ref updated );
+				SimulateMotorSound( ref updated );
+				SimulateCurrentGearSound( ref updated );
+
+				if( NetworkIsSingle )
+				{
+					SimulateVisualHeadlights( ref updated );
+					SimulateVisualBrake( ref updated );
+				}
+
+				//!!!!merge with UpdateWheels?
+				if( NetworkIsServer && dynamicData != null )
+				{
+					if( MotorOn != sentToClientsMotorOn || dynamicData.CurrentGear != sentToClientsCurrentGear || dynamicData.CurrentRPM != sentToClientsCurrentRPM )
+					{
+						sentToClientsMotorOn = MotorOn;
+						sentToClientsCurrentGear = dynamicData.CurrentGear;
+						sentToClientsCurrentRPM = dynamicData.CurrentRPM;
+
+						var writer = BeginNetworkMessageToEveryone( "MotorState" );
+						writer.Write( MotorOn );
+						writer.WriteVariableInt32( dynamicData.CurrentGear );
+						writer.Write( dynamicData.CurrentRPM );
+						EndNetworkMessage();
+					}
+				}
+
+				if( !updated )
+					fullyDisabledRemainingTime = 2.0f + staticRandom.Next( 0.1f );
 			}
-
-
-
-
-
-
-			//if( Static != CanBeStatic() )
-			//	SetStatic( !Static );
-
-			////if( !Static )
-			////{
-			////	if( CanSwitchToStaticState() )
-			////		SetStatic( true );
-			////}
-			////else
-			////{
-			////	if( !CanSwitchToStaticState() )
-			////		SetStatic( false );
-			////}
-
-
-			////update
-			//if( dynamicData != null && dynamicData.MainBody != null && dynamicData.Wheels != null )
-			//{
-			//	var type = dynamicData.VehicleType;
-
-			//	var tr = TransformV;
-			//	var mainBody = dynamicData.MainBody;
-
-			//	var throttle = Throttle.Value;
-			//	var brake = Brake.Value;
-			//	var steering = Steering.Value;
-
-			//	//!!!!still need?
-			//	//!!!!engine bug fix. motor doesn't wake up rigid body
-			//	if( throttle != 0 || /*brake != 0 || */steering != 0 )
-			//		dynamicData.MainBody.Activate();
-
-			//	for( int nWheel = 0; nWheel < dynamicData.Wheels.Length; nWheel++ )
-			//	//foreach( var wheel in dynamicData.Wheels )
-			//	{
-			//		var wheel = dynamicData.Wheels[ nWheel ];
-
-			//		//SimplePhysics mode
-			//		if( dynamicData.SimulationMode == SimulationModeEnum.RealPhysics )
-			//		{
-			//			var c = wheel.Constraint;
-			//			if( c != null )
-			//			{
-			//				//!!!!impl
-			//				////suspension
-			//				//if( c.InternalConstraintRigid != null )
-			//				//{
-			//				//	//!!!!
-
-			//				//	var offset = c.InternalConstraintRigid.GetRelativePivotPosition( 2 );
-
-			//				//	var suspensionTravel = SuspensionTravel.Value;
-
-			//				//	//!!!!
-			//				//	//if( nWheel == 0 )
-			//				//	{
-			//				//		var travelCenter = suspensionTravel.GetCenter();
-			//				//		var diff = offset - travelCenter;
-
-			//				//		//if( offset > 0 && suspensionTravel.Maximum > 0 )
-			//				//		if( diff > 0 && suspensionTravel.Maximum != suspensionTravel.Minimum )
-			//				//		{
-			//				//			var factor = diff / ( suspensionTravel.Maximum - suspensionTravel.Minimum );
-
-			//				//			//apply to chassis
-			//				//			{
-			//				//				//var offsetFactor = offset / suspensionTravel.Maximum;
-
-			//				//				//!!!!
-			//				//				//Log.Info( offsetFactor.ToString() );
-
-
-			//				//				//!!!!в 4 раза мньше нужно
-
-
-			//				//				var force = 10.0 * factor * mainBody.Mass.Value;
-			//				//				//var force = 7000.0 * factor;
-
-			//				//				//var force = 5000.0 * offsetFactor;
-
-			//				//				var forceVector = tr.Rotation.GetUp();
-
-			//				//				mainBody.ApplyForce( forceVector * force, wheel.LocalPosition );
-			//				//			}
-
-			//				//			//apply to wheel
-			//				//			if( wheel.RigidBody != null )
-			//				//			{
-			//				//				//!!!!
-			//				//				var force = 2.0 * factor * wheel.RigidBody.Mass.Value;
-
-			//				//				var forceVector = -tr.Rotation.GetUp();
-
-			//				//				wheel.RigidBody.ApplyForce( forceVector * force, Vector3.Zero );
-			//				//			}
-
-			//				//		}
-			//				//	}
-
-			//				//	//Log.Info( offset.ToString() );
-
-
-			//				//	//!!!!
-			//				//	//SpringRate
-
-			//				//	//if( offset > 0 )
-			//				//	//	c.LinearAxisZMotorMaxForce = SpringRate * -offset * 300;
-			//				//	//else
-			//				//	//	c.LinearAxisZMotorMaxForce = 0;
-
-			//				//	//c.LinearAxisZMotorTargetVelocity = 0.5;
-
-			//				//	//c.LinearAxisZMotorMaxForce = SpringRate * -offset * 200;
-			//				//	//c.LinearAxisZMotorTargetVelocity = 0.5;
-			//				//}
-
-			//				//throttle, brake
-			//				if( brake != 0 )
-			//				{
-			//					c.AngularAxisXMotorTargetVelocity = 0;
-			//					c.AngularAxisXMotorMaxForce = type.BrakeForce * brake;
-			//				}
-			//				else
-			//				{
-			//					if( wheel.WheelDrive )
-			//					{
-			//						//!!!!
-			//						c.AngularAxisXMotorTargetVelocity = -type.ThrottleTargetVelocity * throttle;
-			//						//c.AngularAxisXMotorTargetVelocity = ThrottleTargetVelocity * throttle;
-			//						//!!!!
-			//						c.AngularAxisXMotorMaxForce = throttle != 0 ? type.ThrottleForce : 0;
-			//					}
-			//					else
-			//					{
-			//						c.AngularAxisXMotorTargetVelocity = 0;
-			//						c.AngularAxisXMotorMaxForce = 0;
-			//					}
-			//				}
-
-			//				//steering
-			//				if( wheel.Front )
-			//				{
-			//					c.AngularAxisZServoTarget = c.AngularAxisZLimitHigh.Value * steering;
-			//					c.AngularAxisZMotorTargetVelocity = 1;
-			//					c.AngularAxisZMotorMaxForce = type.SteeringForce;
-			//				}
-			//			}
-			//		}
-
-			//		////Raycast mode
-			//		//if( dynamicData.SimulationMode == SimulationModeEnum.Raycast )
-			//		//{
-			//		//	var vehicle = dynamicData.raycastVehicle;
-			//		//	if( vehicle != null )
-			//		//	{
-			//		//		var wheelInfo = vehicle.GetWheelInfo( nWheel );
-
-			//		//		if( wheel.WheelDrive )
-			//		//		{
-			//		//			//!!!!не так, не только это
-
-			//		//			wheelInfo.EngineForce = ThrottleForce * 100;
-
-			//		//		}
-
-			//		//		//!!!!
-			//		//		//wheelInfo.Brake = zzzzz;
-
-			//		//		//EngineForce *= ( 1.0f - timeStep );
-
-			//		//		//vehicle.ApplyEngineForce( EngineForce, 2 );
-			//		//		//vehicle.SetBrake( BreakingForce, 2 );
-			//		//		//vehicle.SetSteeringValue( VehicleSteering, 0 );
-
-			//		//		if( wheel.Front )
-			//		//		{
-			//		//			//!!!!
-			//		//			//wheelInfo.Steering = zzzzz;
-			//		//		}
-
-			//		//	}
-			//		//}
-
-
-			//		//!!!!need
-
-
-			//		////update LastContactsBodies
-			//		//wheel.LastContactBodies?.Clear();
-			//		//var contacts = wheel.RigidBody?.ContactsData;
-			//		//if( contacts != null )
-			//		//{
-			//		//	for( int n = 0; n < contacts.Count; n++ )
-			//		//	{
-			//		//		ref var contact = ref contacts.Data[ n ];
-
-			//		//		var bodyB = contact.BodyB;
-
-			//		//		if( bodyB == null )
-			//		//			continue;
-			//		//		if( bodyB == dynamicData.MainBody )
-			//		//			continue;
-			//		//		//!!!!only static?
-			//		//		if( bodyB.MotionType.Value != PhysicsMotionType.Static )
-			//		//			continue;
-
-			//		//		if( wheel.LastContactBodies == null )
-			//		//			wheel.LastContactBodies = new ESet<RigidBody>();
-			//		//		wheel.LastContactBodies.AddWithCheckAlreadyContained( bodyB );
-			//		//	}
-			//		//}
-
-			//		if( wheel.LastContactBodies != null && wheel.LastContactBodies.Count != 0 )
-			//			wheel.LastGroundTime = EngineApp.EngineTime;
-			//	}
-			//}
-
-
-			//ScreenMessages.Add( "speed: " + IsOnGround().ToString() + " " + GroundRelativeVelocitySmooth.ToVector2().Length().ToString() );
 		}
 
 		protected override void OnSimulationStepClient()
 		{
 			base.OnSimulationStepClient();
 
-			//!!!!?
+			var updated = false;
+
+			UpdateObjectsOnSeats( ref updated );
+			UpdateTurrets( ref updated );
+			SimulateMotorSound( ref updated );
+			SimulateCurrentGearSound( ref updated );
+			SimulateVisualHeadlights( ref updated );
+			SimulateVisualBrake( ref updated );
 		}
 
-		void UpdateObjectOnSeat( int seatIndex )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		void UpdateObjectOnSeat( int seatIndex, ref bool updated )
 		{
 			var objectOnSeat = GetObjectOnSeat( seatIndex );
 			if( objectOnSeat != null )
 			{
+				updated = true;
+
 				var seatItem = dynamicData.Seats[ seatIndex ];
 
-				//!!!!animation
-
-				objectOnSeat.Visible = seatItem.SeatComponent.Visible && Visible;
-
-
-				//!!!!slowly. update not each call
+				objectOnSeat.Visible = seatItem.SeatComponent.DisplayObject && Visible;
 
 				var character = objectOnSeat as Character;
 				if( character != null )
 				{
 					character.Collision = false;
-					//character.DestroyCollisionBody();
+					character.Sitting = true;
+					character.SittingSpineAngle = seatItem.SpineAngle;
+					character.SittingLegsAngle = seatItem.LegsAngle;
 
-					character.SetTransformAndTurnToDirectionInstantly( TransformV * seatItem.Transform );
+					if( NetworkIsSingleOrClient )
+					{
+						var seatTransform = seatItem.Transform;
+						seatTransform = seatTransform.UpdatePosition( seatTransform.Position + new Vector3( 0, 0, -character.TypeCached.SitButtHeight ) );
+						character.SetTransformAndTurnToDirectionInstantly( TransformV * seatTransform );
+					}
 				}
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected override void OnUpdate( float delta )
 		{
 			base.OnUpdate( delta );
@@ -895,17 +844,11 @@ namespace NeoAxis
 			if( needRecreateDynamicData )
 				CreateDynamicData();
 
-			//update objects on seats
-			if( dynamicData != null && !NetworkIsClient )
+			if( EngineApp.IsEditor )
 			{
-				remainingTimeToUpdateObjectsOnSeat -= delta;
-				if( remainingTimeToUpdateObjectsOnSeat <= 0 )
-				{
-					remainingTimeToUpdateObjectsOnSeat = 0.25f + boundsPredictionAndUpdateRandom.Next( 0.05f );
-
-					for( int seatIndex = 0; seatIndex < dynamicData.Seats.Length; seatIndex++ )
-						UpdateObjectOnSeat( seatIndex );
-				}
+				var updated = false;
+				SimulateVisualHeadlights( ref updated, true );
+				SimulateVisualBrake( ref updated, true );
 			}
 		}
 
@@ -915,10 +858,11 @@ namespace NeoAxis
 
 			base.OnTransformChanged();
 
-			if( EngineApp.IsEditor && !duringTransformUpdateWithoutRecrecting )
+			if( EngineApp.IsEditor && !duringTransformUpdateWithoutRecreating )
 				NeedRecreateDynamicData();
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected override void OnSpaceBoundsUpdate( ref SpaceBounds newBounds )
 		{
 			//base.OnSpaceBoundsUpdate( ref newBounds );
@@ -926,16 +870,11 @@ namespace NeoAxis
 			GetBox( out var box );
 			box.ToBounds( out var realBounds );
 
-			if( !IsMustBeDynamic() )
-			{
-				newBounds = new SpaceBounds( realBounds );
-				SpaceBoundsOctreeOverride = null;
-			}
-			else
+			if( IsMustBeDynamic() )
 			{
 				if( dynamicData != null )
 				{
-					//here is a bounds prediction to skip small updates in future steps
+					//bounds prediction to skip small updates in future steps
 
 					////calculate actual bounds
 					//var radius = dynamicData.LocalBoundsDefaultBoundingRadius;
@@ -946,7 +885,7 @@ namespace NeoAxis
 					newBounds = new SpaceBounds( realBounds );
 
 					//check for update extended bounds
-					if( !SpaceBoundsOctreeOverride.HasValue || !SpaceBoundsOctreeOverride.Value.Contains( realBounds ) )
+					if( !SpaceBoundsOctreeOverride.HasValue || !SpaceBoundsOctreeOverride.Value.Contains( ref realBounds ) )
 					{
 						//calculate extended bounds
 
@@ -954,7 +893,7 @@ namespace NeoAxis
 						var tr = TransformV;
 
 						//update each 2-3 seconds
-						var extendForSeconds = 2.0f + boundsPredictionAndUpdateRandom.Next( 0.0f, 1.0f );
+						var extendForSeconds = 2.0f + staticRandom.Next( 0.0f, 1.0f );
 						var radiusExtended = radius * 1.1f;
 
 						Vector3 velocity;
@@ -977,6 +916,11 @@ namespace NeoAxis
 					}
 				}
 			}
+			else
+			{
+				newBounds = new SpaceBounds( realBounds );
+				SpaceBoundsOctreeOverride = null;
+			}
 
 			//GetBox( out var box );
 			//box.ToBounds( out var bounds );
@@ -993,6 +937,7 @@ namespace NeoAxis
 				context.thisObjectResultRayScale = Math.Min( scale1, scale2 );
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void CalculateGroundRelativeVelocity()
 		{
 			groundRelativeVelocity = GetLinearVelocity();
@@ -1034,6 +979,7 @@ namespace NeoAxis
 			get { return groundRelativeVelocitySmooth; }
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector3 GetLinearVelocity()
 		{
 			if( PhysicalBody != null )
@@ -1049,6 +995,7 @@ namespace NeoAxis
 			//return Vector3.Zero;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void GetBox( out Box box )
 		{
 			var tr = TransformV;
@@ -1059,6 +1006,13 @@ namespace NeoAxis
 				box = new Box( ref dynamicData.LocalBoundsDefault, ref trPosition, ref rot );
 			else
 				box = new Box( trPosition, Vector3.One, rot );
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		public Box GetBox()
+		{
+			GetBox( out var box );
+			return box;
 		}
 
 		void DebugDraw( Viewport viewport )
@@ -1098,7 +1052,7 @@ namespace NeoAxis
 			//renderer.AddLine( points[ 3 ], points[ 7 ], -1 );
 		}
 
-		void DebugRenderSeat( ViewportRenderingContext context, DynamicData.SeatItem seatItem )
+		void DebugRenderSeat( ViewportRenderingContext context, DynamicDataClass.SeatItemData seatItem )
 		{
 			var renderer = context.Owner.Simple3DRenderer;
 			var vehicleTransform = TransformV;
@@ -1109,7 +1063,7 @@ namespace NeoAxis
 				renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 				var tr = vehicleTransform * seatItem.Transform;
 				var p = tr * new Vector3( 0, 0, 0 );
-				renderer.AddSphere( new Sphere( p, 0.1 ), 16 );
+				renderer.AddSphere( new Sphere( p, 0.02 ), 16 );
 				renderer.AddArrow( p, tr * new Vector3( 1, 0, 0 ) );
 			}
 
@@ -1119,11 +1073,12 @@ namespace NeoAxis
 				renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 				var tr = vehicleTransform * seatItem.ExitTransform;
 				var p = tr * new Vector3( 0, 0, 0 );
-				renderer.AddSphere( new Sphere( p, 0.1 ), 16 );
+				renderer.AddSphere( new Sphere( p, 0.02 ), 16 );
 				renderer.AddArrow( p, tr * new Vector3( 1, 0, 0 ) );
 			}
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
 			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
@@ -1137,10 +1092,10 @@ namespace NeoAxis
 				if( DebugVisualization )
 				{
 					var scene = context.Owner.AttachedScene;
+					var renderer = context.Owner.Simple3DRenderer;
 
 					if( scene != null && context.SceneDisplayDevelopmentDataInThisApplication && dynamicData != null )//!!!! scene.DisplayPhysicalObjects )
 					{
-						var renderer = context.Owner.Simple3DRenderer;
 						var tr = TransformV;
 
 						//wheels
@@ -1233,6 +1188,16 @@ namespace NeoAxis
 							DebugRenderSeat( context, seatItem );
 						}
 
+						//lights
+						if( dynamicData.Lights != null )
+						{
+							var color = ProjectSettings.Get.Colors.SceneShowLightColor.Value;
+							color.Alpha *= 0.25f;
+							renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
+							foreach( var lightItem in dynamicData.Lights )
+								lightItem.Light?.DebugDraw( context.Owner );
+						}
+
 						//!!!!
 
 						//var tr = GetTransform();
@@ -1243,6 +1208,12 @@ namespace NeoAxis
 						////eye position
 						//renderer.SetColor( new ColorValue( 0, 1, 0, 1 ) );
 						//renderer.AddSphere( new Sphere( TransformV * EyePosition.Value, .05f ), 16 );
+					}
+
+					if( RequiredLookToPosition.HasValue )
+					{
+						renderer.SetColor( new ColorValue( 1, 0, 0 ) );
+						renderer.AddSphere( new Sphere( RequiredLookToPosition.Value, .05 ) );
 					}
 				}
 
@@ -1326,31 +1297,33 @@ namespace NeoAxis
 			forward = vehicleTransform.Rotation.GetForward();
 			up = vehicleTransform.Rotation.GetUp();
 
-
-			//var positionCalculated = false;
-
-			////get eyes position from skeleton
-			//if( useEyesPositionOfModel )
-			//{
-			//	if( GetEyesPosition( out position ) )
-			//		positionCalculated = true;
-			//}
-
-			////calculate position
-			//if( !positionCalculated )
-			//{
-
-
-			//!!!!select seat
-
-			if( dynamicData != null )
+			if( useEyesPositionOfModel )
 			{
-				var seatItem = dynamicData.Seats[ 0 ];
 
-				//!!!!slowly
+				//!!!!select seat
 
-				var seatTransform = seatItem.Transform;
-				position = vehicleTransform * ( seatTransform * seatItem.EyeOffset );
+				//!!!!turn head support
+
+
+				if( dynamicData != null && dynamicData.Seats.Length != 0 )
+				{
+					var seatIndex = 0;
+
+					var objectOnSeat = GetObjectOnSeat( seatIndex );
+					if( objectOnSeat != null )
+					{
+						//var seatItem = dynamicData.Seats[ seatIndex ];
+
+						var character = objectOnSeat as Character;
+						if( character != null )
+						{
+							character.GetFirstPersonCameraPosition( true, out position, out forward, out up );
+
+							//var seatTransform = seatItem.Transform;
+							//position = vehicleTransform * ( seatTransform * seatItem.EyeOffset );
+						}
+					}
+				}
 			}
 		}
 
@@ -1359,23 +1332,18 @@ namespace NeoAxis
 		//	return TransformV.Position + GetSmoothCameraOffset();
 		//}
 
-		public void SoundPlay( Sound sound )
+		public delegate void SoundPlayBeforeDelegate( Vehicle sender, ref Sound sound, ref bool handled );
+		public event SoundPlayBeforeDelegate SoundPlayBefore;
+
+		public virtual void SoundPlay( Sound sound )
 		{
+			var handled = false;
+			SoundPlayBefore?.Invoke( this, ref sound, ref handled );
+			if( handled )
+				return;
+
 			ParentScene?.SoundPlay( sound, TransformV.Position );
 		}
-
-		//public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow = false )
-		//{
-		//	if( Components.Count == 0 )
-		//	{
-		//		//var inputProcessing = CreateComponent<VehicleInputProcessing>();
-		//		//inputProcessing.Name = "Vehicle Input Processing";
-
-		//		//var ai = CreateComponent<VehicleAI>();
-		//		//ai.Name = "Vehicle AI";
-		//		//ai.NetworkMode = NetworkModeEnum.False;
-		//	}
-		//}
 
 		public void NeedRecreateDynamicData()
 		{
@@ -1388,8 +1356,8 @@ namespace NeoAxis
 
 			if( !EnabledInHierarchyAndIsInstance )
 				return;
-			if( NetworkIsClient )
-				return;
+			//if( NetworkIsClient )
+			//	return;
 
 			//const bool displayInEditor = false;// true;
 
@@ -1401,7 +1369,7 @@ namespace NeoAxis
 			if( type == null )
 				return;
 
-			dynamicData = new DynamicData();
+			dynamicData = new DynamicDataClass();
 			dynamicData.VehicleType = type;
 			dynamicData.PhysicsMode = PhysicsMode;
 			dynamicData.Mesh = type.Mesh;
@@ -1419,7 +1387,7 @@ namespace NeoAxis
 			//create wheels
 			if( type.Chassis.Value == NeoAxis.VehicleType.ChassisEnum._4Wheels )
 			{
-				dynamicData.Wheels = new DynamicData.WheelItem[ 4 ];
+				dynamicData.Wheels = new DynamicDataClass.WheelItem[ 4 ];
 
 				//var wheelDrive = type.WheelDrive.Value;
 				//var frontDrive = wheelDrive == NeoAxis.VehicleType.WheelDriveEnum.Front || wheelDrive == NeoAxis.VehicleType.WheelDriveEnum.All;
@@ -1428,7 +1396,7 @@ namespace NeoAxis
 				for( int n = 0; n < dynamicData.Wheels.Length; n++ )
 				{
 					ref var wheel = ref dynamicData.Wheels[ n ];
-					wheel.Which = (DynamicData.WhichWheel)n;
+					wheel.Which = (DynamicDataClass.WhichWheel)n;
 
 					//if( ( wheel.Which == DynamicData.WhichWheel.FrontLeft || wheel.Which == DynamicData.WhichWheel.FrontRight ) && frontDrive )
 					//	wheel.WheelDrive = true;
@@ -1437,25 +1405,25 @@ namespace NeoAxis
 
 					switch( wheel.Which )
 					{
-					case DynamicData.WhichWheel.FrontLeft:
+					case DynamicDataClass.WhichWheel.FrontLeft:
 						wheel.InitialPosition = type.FrontWheelPosition.Value.ToVector3F();
 						if( wheel.InitialPosition.Y < 0 )
 							wheel.InitialPosition.Y = -wheel.InitialPosition.Y;
 						break;
 
-					case DynamicData.WhichWheel.FrontRight:
+					case DynamicDataClass.WhichWheel.FrontRight:
 						wheel.InitialPosition = type.FrontWheelPosition.Value.ToVector3F();
 						if( wheel.InitialPosition.Y > 0 )
 							wheel.InitialPosition.Y = -wheel.InitialPosition.Y;
 						break;
 
-					case DynamicData.WhichWheel.RearLeft:
+					case DynamicDataClass.WhichWheel.RearLeft:
 						wheel.InitialPosition = type.RearWheelPosition.Value.ToVector3F();
 						if( wheel.InitialPosition.Y < 0 )
 							wheel.InitialPosition.Y = -wheel.InitialPosition.Y;
 						break;
 
-					case DynamicData.WhichWheel.RearRight:
+					case DynamicDataClass.WhichWheel.RearRight:
 						wheel.InitialPosition = type.RearWheelPosition.Value.ToVector3F();
 						if( wheel.InitialPosition.Y > 0 )
 							wheel.InitialPosition.Y = -wheel.InitialPosition.Y;
@@ -1467,14 +1435,14 @@ namespace NeoAxis
 
 					switch( wheel.Which )
 					{
-					case DynamicData.WhichWheel.FrontLeft:
-					case DynamicData.WhichWheel.FrontRight:
+					case DynamicDataClass.WhichWheel.FrontLeft:
+					case DynamicDataClass.WhichWheel.FrontRight:
 						wheel.Diameter = (float)type.FrontWheelDiameter.Value;
 						wheel.Width = (float)type.FrontWheelWidth.Value;
 						break;
 
-					case DynamicData.WhichWheel.RearLeft:
-					case DynamicData.WhichWheel.RearRight:
+					case DynamicDataClass.WhichWheel.RearLeft:
+					case DynamicDataClass.WhichWheel.RearRight:
 						wheel.Diameter = (float)type.RearWheelDiameter.Value;
 						wheel.Width = (float)type.RearWheelWidth.Value;
 						break;
@@ -1751,22 +1719,24 @@ namespace NeoAxis
 			//create constraint
 			if( dynamicData.PhysicsMode == PhysicsModeEnum.Basic && type.Chassis.Value == NeoAxis.VehicleType.ChassisEnum._4Wheels && PhysicalBody != null && !PhysicalBody.Disposed && PhysicalBody.MotionType == PhysicsMotionType.Dynamic )
 			{
-				//!!!!center offset
+				//!!!!center offset?
 
 				var physicsWorldData = PhysicalBody.PhysicsWorld;
 				if( physicsWorldData != null )
 				{
 					unsafe
 					{
+						var toNativeFree = new List<IntPtr>();
+
 						var wheelsSettings = stackalloc Scene.PhysicsWorldClass.VehicleWheelSettings[ dynamicData.Wheels.Length ];
 
-						for( int n = 0; n < dynamicData.Wheels.Length; n++ )
+						for( int nWheel = 0; nWheel < dynamicData.Wheels.Length; nWheel++ )
 						{
-							var which = (DynamicData.WhichWheel)n;
-							var isFront = which == DynamicData.WhichWheel.FrontLeft || which == DynamicData.WhichWheel.FrontRight;
+							var which = (DynamicDataClass.WhichWheel)nWheel;
+							var isFront = which == DynamicDataClass.WhichWheel.FrontLeft || which == DynamicDataClass.WhichWheel.FrontRight;
 
-							ref var wheel = ref dynamicData.Wheels[ n ];
-							ref var wheelSettings = ref wheelsSettings[ n ];
+							ref var wheel = ref dynamicData.Wheels[ nWheel ];
+							ref var wheelSettings = ref wheelsSettings[ nWheel ];
 
 							wheelSettings.Position = wheel.InitialPosition + new Vector3F( 0, 0, wheel.Diameter * 0.5f );
 							//wheelSettings.Position = wheel.InitialPosition;
@@ -1798,6 +1768,71 @@ namespace NeoAxis
 
 							if( isFront )
 							{
+								{
+									wheelSettings.LongitudinalFrictionCount = type.FrontWheelLongitudinalFriction.Count;
+
+									var data = NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Physics, wheelSettings.LongitudinalFrictionCount * 2 * sizeof( float ) );
+									toNativeFree.Add( data );
+
+									wheelSettings.LongitudinalFrictionData = (float*)data;
+									for( int n = 0; n < wheelSettings.LongitudinalFrictionCount; n++ )
+									{
+										var item = type.FrontWheelLongitudinalFriction[ n ].Value;
+										wheelSettings.LongitudinalFrictionData[ n * 2 + 0 ] = item.Point;
+										wheelSettings.LongitudinalFrictionData[ n * 2 + 1 ] = item.Value;
+									}
+								}
+
+								{
+									wheelSettings.LateralFrictionCount = type.FrontWheelLateralFriction.Count;
+
+									var data = NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Physics, wheelSettings.LateralFrictionCount * 2 * sizeof( float ) );
+									toNativeFree.Add( data );
+
+									wheelSettings.LateralFrictionData = (float*)data;
+									for( int n = 0; n < wheelSettings.LateralFrictionCount; n++ )
+									{
+										var item = type.FrontWheelLateralFriction[ n ].Value;
+										wheelSettings.LateralFrictionData[ n * 2 + 0 ] = item.Point;
+										wheelSettings.LateralFrictionData[ n * 2 + 1 ] = item.Value;
+									}
+								}
+							}
+							else
+							{
+								{
+									wheelSettings.LongitudinalFrictionCount = type.RearWheelLongitudinalFriction.Count;
+
+									var data = NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Physics, wheelSettings.LongitudinalFrictionCount * 2 * sizeof( float ) );
+									toNativeFree.Add( data );
+
+									wheelSettings.LongitudinalFrictionData = (float*)data;
+									for( int n = 0; n < wheelSettings.LongitudinalFrictionCount; n++ )
+									{
+										var item = type.RearWheelLongitudinalFriction[ n ].Value;
+										wheelSettings.LongitudinalFrictionData[ n * 2 + 0 ] = item.Point;
+										wheelSettings.LongitudinalFrictionData[ n * 2 + 1 ] = item.Value;
+									}
+								}
+
+								{
+									wheelSettings.LateralFrictionCount = type.RearWheelLateralFriction.Count;
+
+									var data = NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Physics, wheelSettings.LateralFrictionCount * 2 * sizeof( float ) );
+									toNativeFree.Add( data );
+
+									wheelSettings.LateralFrictionData = (float*)data;
+									for( int n = 0; n < wheelSettings.LateralFrictionCount; n++ )
+									{
+										var item = type.RearWheelLateralFriction[ n ].Value;
+										wheelSettings.LateralFrictionData[ n * 2 + 0 ] = item.Point;
+										wheelSettings.LateralFrictionData[ n * 2 + 1 ] = item.Value;
+									}
+								}
+							}
+
+							if( isFront )
+							{
 								wheelSettings.MaxSteerAngle = (float)type.FrontWheelMaxSteeringAngle.Value.InRadians();
 								wheelSettings.MaxBrakeTorque = (float)type.FrontWheelMaxBrakeTorque;
 								wheelSettings.MaxHandBrakeTorque = (float)type.FrontWheelMaxHandBrakeTorque;
@@ -1820,10 +1855,174 @@ namespace NeoAxis
 							var visualScale = Vector3F.One;
 							dynamicData.constraint = physicsWorldData.CreateConstraintVehicle( this, PhysicalBody, dynamicData.Wheels.Length, wheelsSettings, ref visualScale, (float)type.FrontWheelAntiRollBarStiffness, (float)type.RearWheelAntiRollBarStiffness, (float)type.MaxPitchRollAngle.Value.InRadians(), (float)type.EngineMaxTorque, (float)type.EngineMinRPM, (float)type.EngineMaxRPM, type.TransmissionAuto, transmissionGearRatios.Length, pTransmissionGearRatios, transmissionReverseGearRatios.Length, pTransmissionReverseGearRatios, (float)type.TransmissionSwitchTime, (float)type.TransmissionClutchReleaseTime, (float)type.TransmissionSwitchLatency, (float)type.TransmissionShiftUpRPM, (float)type.TransmissionShiftDownRPM, (float)type.TransmissionClutchStrength, type.FrontWheelDrive, type.RearWheelDrive, (float)type.FrontWheelDifferentialRatio, (float)type.FrontWheelDifferentialLeftRightSplit, (float)type.FrontWheelDifferentialLimitedSlipRatio, (float)type.FrontWheelDifferentialEngineTorqueRatio, (float)type.RearWheelDifferentialRatio, (float)type.RearWheelDifferentialLeftRightSplit, (float)type.RearWheelDifferentialLimitedSlipRatio, (float)type.RearWheelDifferentialEngineTorqueRatio, type.MaxSlopeAngle.Value.InRadians().ToRadianF() );
 						}
+
+						foreach( var pointer in toNativeFree )
+							NativeUtility.Free( pointer );
 					}
 				}
 			}
 
+			//!!!!slowly. make caching in the VehicleType
+			var seatComponents = dynamicData.VehicleType.GetComponents<SeatItem>();
+			if( seatComponents.Length != 0 )
+			{
+				var seatItems = new List<DynamicDataClass.SeatItemData>( seatComponents.Length );
+
+				foreach( var seatComponent in seatComponents )
+				{
+					if( seatComponent.Enabled )
+					{
+						var seatItem = new DynamicDataClass.SeatItemData();
+						seatItem.SeatComponent = seatComponent;
+						seatItem.Transform = seatComponent.Transform;
+						seatItem.SpineAngle = seatComponent.SpineAngle;
+						seatItem.LegsAngle = seatComponent.LegsAngle;
+						//seatItem.EyeOffset = seatComponent.EyeOffset;
+						seatItem.ExitTransform = seatComponent.ExitTransform;
+
+						seatItems.Add( seatItem );
+					}
+				}
+
+				if( seatItems.Count != 0 )
+					dynamicData.Seats = seatItems.ToArray();
+			}
+
+			//also can take seats from Vehicle component
+
+			if( dynamicData.Seats == null )
+				dynamicData.Seats = Array.Empty<DynamicDataClass.SeatItemData>();
+
+			UpdateAdditionalItems();
+
+			//turrets
+			if( !NetworkIsClient )
+			{
+				//network single or server
+				//create turrets and other object in space from type
+
+				var turrets = new List<DynamicDataClass.TurretItem>();
+				//var lights = new List<DynamicDataClass.LightItem>();
+
+				foreach( var objectInSpaceType in dynamicData.VehicleType.GetComponents<ObjectInSpace>() )
+				{
+					var turretType = objectInSpaceType as Turret;
+					if( turretType != null )
+					{
+						var obj = (Turret)turretType.Clone();
+						obj.Enabled = false;
+						obj.SaveSupport = false;
+						obj.CanBeSelected = false;
+
+						AddComponent( obj );
+
+						//apply world transform
+						obj.Transform = TransformV * obj.TransformV;
+						foreach( var objectInSpace2 in obj.GetComponents<ObjectInSpace>( checkChildren: true ) )
+							objectInSpace2.Transform = TransformV * objectInSpace2.TransformV;
+
+						var turretItem = new DynamicDataClass.TurretItem();
+						turretItem.InitialTransform = objectInSpaceType.TransformV;
+						turretItem.Turret = obj;
+
+						//can add other types of constructions (side turrets)
+
+						var horizontalConstraint = obj.GetComponent<Constraint_SixDOF>();
+						if( horizontalConstraint != null )
+						{
+							turretItem.HorizontalConstraint = horizontalConstraint;
+
+							//configure constraint
+							//BodyA
+							if( !horizontalConstraint.BodyA.ReferenceOrValueSpecified )
+								horizontalConstraint.BodyA = this;
+							//BodyB. reset reference to optimize
+							horizontalConstraint.BodyB = horizontalConstraint.BodyB.Value;
+
+							var weapon = obj.GetComponent<Weapon>();
+							if( weapon != null )
+							{
+								turretItem.Weapon = weapon;
+								var verticalConstraint = weapon.GetComponent<Constraint_SixDOF>();
+								if( verticalConstraint != null )
+								{
+									turretItem.VerticalConstraint = verticalConstraint;
+
+									//configure constraint
+									//BodyB. reset reference to optimize
+									verticalConstraint.BodyA = verticalConstraint.BodyA.Value;
+									//BodyB. reset reference to optimize
+									verticalConstraint.BodyB = verticalConstraint.BodyB.Value;
+								}
+							}
+						}
+
+						turrets.Add( turretItem );
+
+						obj.Enabled = true;
+					}
+
+					//if( NetworkIsSingle )
+					//{
+					//	var lightType = objectInSpaceType as Light;
+					//	if( lightType != null )
+					//	{
+					//		var lightItem = new DynamicDataClass.LightItem();
+					//		lightItem.LightType = lightType;
+					//		lights.Add( lightItem );
+					//	}
+					//}
+				}
+
+				if( turrets.Count != 0 )
+					dynamicData.Turrets = turrets.ToArray();
+				//if( lights.Count != 0 )
+				//	dynamicData.Lights = lights.ToArray();
+			}
+			else
+			{
+				//network client
+
+				//get synced turrets and weapons
+				{
+					var turrets = new List<DynamicDataClass.TurretItem>();
+
+					foreach( var turret in GetComponents<Turret>() )
+					{
+						var turretItem = new DynamicDataClass.TurretItem();
+						turretItem.Turret = turret;
+
+						var weapon = turret.GetComponent<Weapon>();
+						if( weapon != null )
+							turretItem.Weapon = weapon;
+
+						turrets.Add( turretItem );
+					}
+
+					if( turrets.Count != 0 )
+						dynamicData.Turrets = turrets.ToArray();
+				}
+			}
+
+			//lights
+			if( NetworkIsSingleOrClient )
+			{
+				var lights = new List<DynamicDataClass.LightItem>();
+
+				foreach( var objectInSpaceType in dynamicData.VehicleType.GetComponents<ObjectInSpace>() )
+				{
+					var lightType = objectInSpaceType as Light;
+					if( lightType != null )
+					{
+						var lightItem = new DynamicDataClass.LightItem();
+						lightItem.LightType = lightType;
+						lights.Add( lightItem );
+					}
+				}
+
+				if( lights.Count != 0 )
+					dynamicData.Lights = lights.ToArray();
+			}
 
 			//LocalBoundsDefault
 			{
@@ -1832,6 +2031,7 @@ namespace NeoAxis
 				{
 					dynamicData.LocalBoundsDefault = meshResult.SpaceBounds.BoundingBox;
 
+					//add local bounds of wheels
 					if( dynamicData.Wheels != null )
 					{
 						for( int n = 0; n < dynamicData.Wheels.Length; n++ )
@@ -1841,6 +2041,41 @@ namespace NeoAxis
 							var minZ = wheel.InitialPosition.Z - wheel.Diameter * 0.5f;
 							if( minZ < dynamicData.LocalBoundsDefault.Minimum.Z )
 								dynamicData.LocalBoundsDefault.Minimum.Z = minZ;
+						}
+					}
+
+					//add local bounds of turrets
+					if( !NetworkIsClient )
+					{
+						//network single or server
+						if( dynamicData.Turrets != null )
+						{
+							foreach( var turretItem in dynamicData.Turrets )
+							{
+								var turretMeshResult = turretItem.Turret.Mesh.Value?.Result;
+								if( turretMeshResult != null )
+								{
+									var b = turretItem.InitialTransform * turretMeshResult.SpaceBounds.BoundingBox;
+									dynamicData.LocalBoundsDefault.Add( ref b );
+								}
+							}
+						}
+					}
+					else
+					{
+						//network client
+						foreach( var objectInSpaceType in dynamicData.VehicleType.GetComponents<ObjectInSpace>() )
+						{
+							var turretType = objectInSpaceType as Turret;
+							if( turretType != null )
+							{
+								var turretMeshResult = turretType.Mesh.Value?.Result;
+								if( turretMeshResult != null )
+								{
+									var b = turretType.TransformV * turretMeshResult.SpaceBounds.BoundingBox;
+									dynamicData.LocalBoundsDefault.Add( ref b );
+								}
+							}
 						}
 					}
 				}
@@ -1855,37 +2090,6 @@ namespace NeoAxis
 				}
 			}
 
-			//!!!!slowly. make caching in the VehicleType
-			var seatComponents = dynamicData.VehicleType.GetComponents<VehicleSeat>();
-			if( seatComponents.Length != 0 )
-			{
-				var seatItems = new List<DynamicData.SeatItem>( seatComponents.Length );
-
-				foreach( var seatComponent in seatComponents )
-				{
-					if( seatComponent.Enabled )
-					{
-						var seatItem = new DynamicData.SeatItem();
-						seatItem.SeatComponent = seatComponent;
-						seatItem.Transform = seatComponent.Transform;
-						seatItem.EyeOffset = seatComponent.EyeOffset;
-						seatItem.ExitTransform = seatComponent.ExitTransform;
-
-						seatItems.Add( seatItem );
-					}
-				}
-
-				if( seatItems.Count != 0 )
-					dynamicData.Seats = seatItems.ToArray();
-			}
-
-			//also can take seats from Vehicle component
-
-			if( dynamicData.Seats == null )
-				dynamicData.Seats = Array.Empty<DynamicData.SeatItem>();
-
-			UpdateAdditionalItems();
-
 			//UpdateSpaceBoundsOverride();
 			SpaceBoundsUpdate();
 
@@ -1896,12 +2100,29 @@ namespace NeoAxis
 
 			driverInputNeedUpdate = true;
 			needRecreateDynamicData = false;
+			fullyDisabledRemainingTime = 0;
+			//skipFirstUpdateFromLibrary = 0.1f;
 		}
 
 		public void DestroyDynamicData()
 		{
 			if( dynamicData != null )
 			{
+				if( dynamicData.Turrets != null )
+				{
+					foreach( var turretItem in dynamicData.Turrets )
+					{
+						if( turretItem.TurretTurnSoundChannel != null )
+						{
+							turretItem.TurretTurnSoundChannel.Stop();
+							turretItem.TurretTurnSoundChannel = null;
+						}
+					}
+				}
+
+				foreach( var turret in GetComponents<Turret>() )
+					turret.RemoveFromParent( false );
+
 				AdditionalItems = null;
 
 				//if( dynamicData.Wheels != null )
@@ -1958,26 +2179,38 @@ namespace NeoAxis
 			return -1;
 		}
 
-		public void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
+		public delegate void ObjectInteractionGetInfoEventDelegate( Vehicle sender, GameMode gameMode, ref InteractiveObjectObjectInfo info );
+		public event ObjectInteractionGetInfoEventDelegate ObjectInteractionGetInfoEvent;
+
+		public virtual void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
 		{
 			//control by a character
 			var character = gameMode.ObjectControlledByPlayer.Value as Character;
-			if( character != null )
+			if( character != null && !character.Sitting )
 			{
-				var seatIndex = GetFreeSeat();// character );
+				var seatIndex = GetFreeSeat();
 				if( seatIndex != -1 )
 				{
 					info = new InteractiveObjectObjectInfo();
 					info.AllowInteract = true;
-					info.SelectionTextInfo.Add( Name );
 
-					//!!!!!too hardcoded EKeys and code
+					var keyString = gameMode.KeyInteract1.Value.ToString();
+					if( SystemSettings.MobileDevice )
+						keyString = "Interact";
+					info.Text = $"Press {keyString} to control the vehicle";
 
-					info.SelectionTextInfo.Add( "Press E to control the vehicle." );
+					//!!!!impl mobile
+					if( !SystemSettings.MobileDevice )
+					{
+						if( dynamicData?.VehicleType?.GetComponent<Light>() != null )
+							info.Text += $"\n{gameMode.KeyHeadlights1.Value} to use headlights";
+					}
 				}
 			}
+			ObjectInteractionGetInfoEvent?.Invoke( this, gameMode, ref info );
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ObjectInSpace GetObjectOnSeat( int seatIndex )
 		{
 			if( seatIndex < ObjectsOnSeats.Count )
@@ -1990,9 +2223,7 @@ namespace NeoAxis
 			var keyDown = message as InputMessageKeyDown;
 			if( keyDown != null )
 			{
-				//!!!!too hardcoded EKeys and code
-
-				if( keyDown.Key == EKeys.E )
+				if( keyDown.Key == gameMode.KeyInteract1 || keyDown.Key == gameMode.KeyInteract2 )
 				{
 					//start control by a character
 					var character = gameMode.ObjectControlledByPlayer.Value as Character;
@@ -2001,15 +2232,6 @@ namespace NeoAxis
 						var seatIndex = GetFreeSeat();
 						if( seatIndex != -1 )
 						{
-							//create VehicleInputProcessing if not exists
-							{
-								//!!!!check for networking
-
-								var inputProcessing = GetComponent<VehicleInputProcessing>();
-								if( inputProcessing == null )
-									inputProcessing = CreateComponent<VehicleInputProcessing>();
-							}
-
 							if( NetworkIsClient )
 							{
 								var writer = BeginNetworkMessageToServer( "PutObjectToSeat" );
@@ -2022,7 +2244,7 @@ namespace NeoAxis
 							}
 							else
 							{
-								PutObjectToSeat( seatIndex, character );
+								PutObjectToSeat( gameMode, seatIndex, character );
 								gameMode.ObjectControlledByPlayer = ReferenceUtility.MakeRootReference( this );
 								GameMode.PlayScreen?.ParentContainer?.Viewport?.NotifyInstantCameraMovement();
 							}
@@ -2061,15 +2283,15 @@ namespace NeoAxis
 			return false;
 		}
 
-		public void ObjectInteractionEnter( ObjectInteractionContext context )
+		public virtual void ObjectInteractionEnter( ObjectInteractionContext context )
 		{
 		}
 
-		public void ObjectInteractionExit( ObjectInteractionContext context )
+		public virtual void ObjectInteractionExit( ObjectInteractionContext context )
 		{
 		}
 
-		public void ObjectInteractionUpdate( ObjectInteractionContext context )
+		public virtual void ObjectInteractionUpdate( ObjectInteractionContext context )
 		{
 		}
 
@@ -2095,8 +2317,12 @@ namespace NeoAxis
 					var networkLogic = NetworkLogicUtility.GetNetworkLogic( obj );
 					if( networkLogic != null )
 					{
-						PutObjectToSeat( seatIndex, obj );
-						networkLogic.ServerChangeObjectControlled( client.User, this );
+						var gameMode = ParentScene?.GetComponent<GameMode>();
+						if( gameMode != null )
+						{
+							PutObjectToSeat( gameMode, seatIndex, obj );
+							networkLogic.ServerChangeObjectControlled( client.User, this );
+						}
 					}
 				}
 			}
@@ -2104,22 +2330,40 @@ namespace NeoAxis
 			return true;
 		}
 
-		public virtual void PutObjectToSeat( int seatIndex, ObjectInSpace obj )
+		public virtual void PutObjectToSeat( GameMode gameMode, int seatIndex, ObjectInSpace obj )
 		{
+			//!!!!always need to create?
+			//create VehicleInputProcessing if not exists
+			{
+				var inputProcessing = GetComponent<VehicleInputProcessing>();
+				if( inputProcessing == null )
+					inputProcessing = CreateComponent<VehicleInputProcessing>();
+			}
+
 			while( seatIndex >= ObjectsOnSeats.Count )
 				ObjectsOnSeats.Add( null );
 			ObjectsOnSeats[ seatIndex ] = ReferenceUtility.MakeRootReference( obj );
 
-			UpdateObjectOnSeat( seatIndex );
+			//deactivate active items for character
+			var character = obj as Character;
+			if( character != null )
+				character.DeactivateAllItems( gameMode );
 
-			remainingTimeToUpdateObjectsOnSeat = 0;
+			if( NetworkIsSingleOrClient )//!!!!?
+			{
+				var updated = false;
+				UpdateObjectOnSeat( seatIndex, ref updated );
+			}
+
+			//remainingTimeToUpdateObjectsOnSeat = 0;
+			fullyDisabledRemainingTime = 0;
 		}
 
 		public virtual void RemoveObjectFromSeat( int seatIndex, bool resetDriverInput )
 		{
 			if( dynamicData != null )
 			{
-				DynamicData.SeatItem seatItem = null;
+				DynamicDataClass.SeatItemData seatItem = null;
 				if( seatIndex < dynamicData.Seats.Length )
 					seatItem = dynamicData.Seats[ seatIndex ];
 
@@ -2131,10 +2375,25 @@ namespace NeoAxis
 						var character = objectOnSeat as Character;
 						if( character != null && !character.Disposed )
 						{
+							character.Sitting = false;
 							character.Collision = true;
-							//character.UpdateCollisionBody();
 							character.Visible = true;
-							character.SetTransformAndTurnToDirectionInstantly( TransformV * seatItem.ExitTransform );
+
+							var tr = TransformV * seatItem.ExitTransform;
+							var scaleFactor = character.GetScaleFactor();
+							if( !CharacterUtility.FindFreePlace( character, tr.Position, character.TypeCached.Radius * scaleFactor * 3, -character.TypeCached.Height * scaleFactor / 3, character.TypeCached.Height * scaleFactor / 10, out var freePlacePosition ) )
+							{
+								if( !CharacterUtility.FindFreePlace( character, tr.Position, character.TypeCached.Radius * scaleFactor * 3, -character.TypeCached.Height * scaleFactor / 3, character.TypeCached.Height * scaleFactor / 3, out freePlacePosition ) )
+								{
+									if( !CharacterUtility.FindFreePlace( character, tr.Position, character.TypeCached.Radius * scaleFactor * 5, -character.TypeCached.Height * scaleFactor, character.TypeCached.Height * scaleFactor, out freePlacePosition ) )
+									{
+										freePlacePosition = tr.Position + new Vector3( 0, 0, character.TypeCached.Height * scaleFactor );
+									}
+								}
+							}
+							tr = tr.UpdatePosition( freePlacePosition );
+							character.SetTransformAndTurnToDirectionInstantly( tr );
+							character.NotifyInstantMovement();
 						}
 					}
 
@@ -2150,9 +2409,11 @@ namespace NeoAxis
 				Steering = 0;
 			}
 
-			remainingTimeToUpdateObjectsOnSeat = 0;
+			//remainingTimeToUpdateObjectsOnSeat = 0;
+			fullyDisabledRemainingTime = 0;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		void UpdateAdditionalItems()
 		{
 			if( dynamicData.Wheels != null )
@@ -2205,14 +2466,25 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		bool IsMustBeDynamic()
 		{
-			if( /*needBeActiveBecauseDriverInput || */cannotBeStaticRemainingTime > 0 )
+			if( /*needBeActiveBecauseDriverInput || */mustBeDynamicRemainingTime > 0 )
 				return true;
 
 			var body = PhysicalBody;
 			if( body != null && body.Active && ( body.LinearVelocity != Vector3F.Zero || body.AngularVelocity != Vector3F.Zero ) )
 				return true;
+
+			if( Headlights > 0 )
+				return true;
+
+			if( MotorOn )
+				return true;
+			//if( inputProcessingCached == null || inputProcessingCached.Parent != this )
+			//	inputProcessingCached = GetComponent<VehicleInputProcessing>();
+			//if( inputProcessingCached != null && inputProcessingCached.InputEnabled )
+			//	return true;
 
 			return false;
 
@@ -2233,17 +2505,19 @@ namespace NeoAxis
 					angularVelocity = Vector3F.Zero;
 				}
 			}
+
+			fullyDisabledRemainingTime = 0;
 		}
 
-		public delegate void ProcessDamageBeforeDelegate( Vehicle sender, long whoFired, ref double damage, ref object anyData, ref bool handled );
+		public delegate void ProcessDamageBeforeDelegate( Vehicle sender, long whoFired, ref float damage, ref object anyData, ref bool handled );
 		public event ProcessDamageBeforeDelegate ProcessDamageBefore;
 		public static event ProcessDamageBeforeDelegate ProcessDamageBeforeAll;
 
-		public delegate void ProcessDamageAfterDelegate( Vehicle sender, long whoFired, double damage, object anyData, double oldHealth );
+		public delegate void ProcessDamageAfterDelegate( Vehicle sender, long whoFired, float damage, object anyData, double oldHealth );
 		public event ProcessDamageAfterDelegate ProcessDamageAfter;
 		public static event ProcessDamageAfterDelegate ProcessDamageAfterAll;
 
-		public void ProcessDamage( long whoFired, double damage, object anyData )
+		public void ProcessDamage( long whoFired, float damage, object anyData )
 		{
 			var oldHealth = Health.Value;
 
@@ -2268,6 +2542,195 @@ namespace NeoAxis
 			ProcessDamageAfter?.Invoke( this, whoFired, damage2, anyData2, oldHealth );
 			ProcessDamageAfterAll?.Invoke( this, whoFired, damage2, anyData2, oldHealth );
 		}
+
+		protected override bool OnReceiveNetworkMessageFromServer( string message, ArrayDataReader reader )
+		{
+			if( !base.OnReceiveNetworkMessageFromServer( message, reader ) )
+				return false;
+
+			if( message == "UpdateWheels" )
+			{
+				var count = reader.ReadByte();
+
+				var wheels = dynamicData?.Wheels;
+				if( wheels != null && count == wheels.Length )
+				{
+					for( int n = 0; n < wheels.Length; n++ )
+					{
+						ref var wheel = ref dynamicData.Wheels[ n ];
+
+						wheel.CurrentPosition.Z = reader.ReadHalf();
+						wheel.CurrentRotation = reader.ReadQuaternionH().ToQuaternionF();
+					}
+
+					if( !reader.Complete() )
+						return false;
+
+					//!!!!here? maybe to OnSimulationStepClient
+					UpdateAdditionalItems();
+				}
+			}
+			else if( message == "MotorState" )
+			{
+				var motorOn = reader.ReadBoolean();
+				var currentGear = reader.ReadVariableInt32();
+				var currentRPM = reader.ReadSingle();
+
+				if( !reader.Complete() )
+					return false;
+
+				if( dynamicData != null )
+				{
+					SetMotorOn( motorOn );
+					dynamicData.CurrentGear = currentGear;
+					dynamicData.CurrentRPM = currentRPM;
+				}
+			}
+
+			return true;
+		}
+
+		public void LookToPosition( Vector3? value )//, bool turnInstantly )
+		{
+			RequiredLookToPosition = value;
+
+			//wake up
+			if( RequiredLookToPosition.HasValue )
+			{
+				if( PhysicalBody != null )
+					PhysicalBody.Active = true;
+			}
+
+			//!!!!
+			//if( turnInstantly )
+			//{
+			//	CurrentLookToPosition = RequiredLookToPosition;
+			//	RequiredLookToPosition = null;
+			//}
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		void UpdateTurrets( ref bool updated )
+		{
+			var turrets = dynamicData?.Turrets;
+
+			if( turrets != null )//&& RequiredLookToPosition.HasValue )
+			{
+				for( int nTurret = 0; nTurret < turrets.Length; nTurret++ )
+				{
+					var turretItem = turrets[ nTurret ];
+
+					var weapon = turretItem.Weapon;
+					if( weapon != null )
+					{
+						if( RequiredLookToPosition.HasValue )
+						{
+							updated = true;
+
+							//control turret (horizontal)
+							var horizontalConstraint = turretItem.HorizontalConstraint;
+							if( horizontalConstraint != null && horizontalConstraint.AngularZAxis.Value != PhysicsAxisMode.Locked )
+							{
+								var worldDirection = RequiredLookToPosition.Value - weapon.TransformV.Position;
+								var localDirection = TransformV.Rotation.GetInverse() * worldDirection;
+
+								var direction2D = localDirection.ToVector2();
+								if( direction2D != Vector2.Zero )
+								{
+									direction2D.Normalize();
+									var horizontal = Math.Atan2( direction2D.Y, direction2D.X );
+
+									horizontalConstraint.AngularZAxisMotorTarget = MathEx.RadianToDegree( horizontal );
+								}
+							}
+
+							//control weapon (vertical)
+							var verticalConstraint = turretItem.VerticalConstraint;
+							if( verticalConstraint != null && verticalConstraint.AngularYAxis.Value != PhysicsAxisMode.Locked )
+							{
+								var worldDirection = RequiredLookToPosition.Value - weapon.TransformV.Position;
+								var localDirection = turretItem.Turret.TransformV.Rotation.GetInverse() * worldDirection;
+
+								var direction2D = new Vector2( localDirection.X, localDirection.Z );
+								if( direction2D != Vector2.Zero )
+								{
+									direction2D.Normalize();
+									var vertical = Math.Atan2( direction2D.Y, direction2D.X );
+
+									//Log.Info( MathEx.RadianToDegree( vertical ).ToString() );
+
+									verticalConstraint.AngularYAxisMotorTarget = MathEx.RadianToDegree( -vertical );
+								}
+
+								//var direction2D = localDirection.ToVector2();
+								//if( direction2D != Vector2.Zero )
+								//{
+								//	direction2D.Normalize();
+								//	var horizontal = Math.Atan2( direction2D.Y, direction2D.X );
+
+								//	verticalConstraint.AngularZAxisMotorTarget = MathEx.RadianToDegree( horizontal );
+								//}
+							}
+						}
+
+						//turret turn sound
+						{
+							var needPlaySound = false;
+							if( RequiredLookToPosition.HasValue )
+							{
+								var requiredDirection = ( RequiredLookToPosition.Value - weapon.TransformV.Position ).GetNormalize();
+								var currentDirection = weapon.TransformV.Rotation.GetForward();
+								needPlaySound = !requiredDirection.Equals( currentDirection, 0.03 );
+							}
+
+							if( needPlaySound )
+							{
+								if( turretItem.TurretTurnSoundChannel == null )
+								{
+									var turnTurretSound = dynamicData.VehicleType.TurretTurnSound.Value;
+									turretItem.TurretTurnSoundChannel = ParentScene.SoundPlay( turnTurretSound, TransformV.Position, 0.3, 1, true );
+								}
+							}
+							else
+							{
+								if( turretItem.TurretTurnSoundChannel != null )
+								{
+									turretItem.TurretTurnSoundChannel.Stop();
+									turretItem.TurretTurnSoundChannel = null;
+								}
+							}
+
+							if( turretItem.TurretTurnSoundChannel != null )
+								updated = true;
+
+							//if( NetworkIsServer )
+							//{
+							//	zzzz;
+							//}
+						}
+					}
+				}
+			}
+		}
+
+		[Browsable( false )]
+		public DynamicDataClass DynamicData
+		{
+			get { return dynamicData; }
+		}
+
+		protected override void OnGetRenderSceneDataAddToFrameData( ViewportRenderingContext context, GetRenderSceneDataMode mode, ref RenderingPipeline.RenderSceneData.MeshItem item, ref bool skip )
+		{
+			base.OnGetRenderSceneDataAddToFrameData( context, mode, ref item, ref skip );
+
+			if( visualHeadlights != 0 || visualBrake != 0 )
+			{
+				item.ObjectInstanceParameters = new Vector4F[ 2 ];
+				item.ObjectInstanceParameters[ 0 ].X = visualHeadlights;
+				item.ObjectInstanceParameters[ 0 ].Y = visualBrake;
+			}
+		}
+
 
 		//bool CanBeStatic()
 		//{
@@ -2326,5 +2789,206 @@ namespace NeoAxis
 		//		//!!!!what else to reset
 		//	}
 		//}
+
+		void SimulateMotorOn( ref bool updated )
+		{
+			if( motorOnRemainingTime > 0 )
+			{
+				updated = true;
+
+				motorOnRemainingTime -= Time.SimulationDelta;
+				if( motorOnRemainingTime < 0 )
+					motorOnRemainingTime = 0;
+			}
+		}
+
+		public void SetMotorOn( bool value = true )
+		{
+			motorOnRemainingTime = value ? 2 : 0;
+		}
+
+		[Browsable( false )]
+		public bool MotorOn
+		{
+			get { return motorOnRemainingTime > 0; }
+		}
+
+		void SimulateMotorSound( ref bool updated )
+		{
+			if( dynamicData == null || SoundWorld.BackendNull )
+				return;
+
+			//motor on, off
+			if( motorOnPrevious.HasValue && MotorOn != motorOnPrevious.Value )
+			{
+				updated = true;
+
+				if( MotorOn )
+					SoundPlay( dynamicData.VehicleType.MotorOnSound );
+				else
+					SoundPlay( dynamicData.VehicleType.MotorOffSound );
+			}
+
+			Sound needSound = null;
+			if( MotorOn )
+				needSound = dynamicData.VehicleType.GetGearSound( dynamicData.CurrentGear );
+
+			if( needSound != currentMotorSound )
+			{
+				//change motor sound
+
+				updated = true;
+
+				if( motorSoundChannel != null )
+				{
+					motorSoundChannel.Stop();
+					motorSoundChannel = null;
+				}
+
+				if( needSound != null )
+					motorSoundChannel = ParentScene.SoundPlay( needSound, TransformV.Position, 0.3, 1, true );
+
+				currentMotorSound = needSound;
+			}
+
+			//update motor channel position and pitch
+			if( motorSoundChannel != null )
+			{
+				updated = true;
+
+				var min = dynamicData.VehicleType.EngineMinRPM.Value;
+				var max = dynamicData.VehicleType.EngineMaxRPM.Value;
+
+				if( min != max )
+				{
+					var factor = ( dynamicData.CurrentRPM - min ) / ( max - min );
+					motorSoundChannel.Pitch = factor + 0.5;
+				}
+				motorSoundChannel.Position = TransformV.Position;
+			}
+
+			motorOnPrevious = MotorOn;
+		}
+
+		void SimulateCurrentGearSound( ref bool updated )
+		{
+			if( dynamicData == null || SoundWorld.BackendNull )
+				return;
+
+			if( currentGearSoundPlayed != dynamicData.CurrentGear )
+			{
+				updated = true;
+
+				if( MotorOn )
+				{
+					if( dynamicData.CurrentGear > currentGearSoundPlayed )
+						ParentScene.SoundPlay( dynamicData.VehicleType.GearUpSound, TransformV.Position );
+					else
+						ParentScene.SoundPlay( dynamicData.VehicleType.GearDownSound, TransformV.Position );
+				}
+
+				currentGearSoundPlayed = dynamicData.CurrentGear;
+			}
+		}
+
+		void SimulateVisualHeadlights( ref bool updated, bool immediate = false )
+		{
+			var headlights = Headlights.Value;
+			if( visualHeadlights != headlights )
+			{
+				updated = true;
+
+				if( visualHeadlights < headlights )
+				{
+					visualHeadlights += immediate ? 10000 : Time.SimulationDelta * 10;
+					if( visualHeadlights > headlights )
+						visualHeadlights = headlights;
+				}
+				else
+				{
+					visualHeadlights -= immediate ? 10000 : Time.SimulationDelta * 2;
+					if( visualHeadlights < headlights )
+						visualHeadlights = headlights;
+				}
+
+				if( dynamicData?.Lights != null )
+				{
+					foreach( var lightItem in dynamicData.Lights )
+					{
+						if( visualHeadlights > 0 )
+						{
+							if( lightItem.Light == null )
+							{
+								var obj = (Light)lightItem.LightType.Clone();
+								lightItem.Light = obj;
+								obj.Enabled = false;
+								obj.SaveSupport = false;
+								obj.CanBeSelected = false;
+
+								AddComponent( obj );
+
+								//apply world transform
+								obj.Transform = TransformV * obj.TransformV;
+								foreach( var objectInSpace2 in obj.GetComponents<ObjectInSpace>( checkChildren: true ) )
+									objectInSpace2.Transform = TransformV * objectInSpace2.TransformV;
+
+								ObjectInSpaceUtility.Attach( this, obj, TransformOffset.ModeEnum.Elements );
+
+								obj.Enabled = true;
+							}
+
+							lightItem.Light.Brightness = visualHeadlights * lightItem.LightType.Brightness;
+							lightItem.Light.Transform.Touch();
+						}
+						else
+						{
+							if( lightItem.Light != null )
+							{
+								lightItem.Light.RemoveFromParent( false );
+								lightItem.Light = null;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		void SimulateVisualBrake( ref bool updated, bool immediate = false )
+		{
+			var brake = Brake.Value;
+			if( Throttle < 0 )
+				brake = Math.Max( brake, -Throttle.Value );
+			if( visualBrake != brake )
+			{
+				updated = true;
+
+				if( visualBrake < brake )
+				{
+					visualBrake += immediate ? 10000 : Time.SimulationDelta * 10;
+					if( visualBrake > brake )
+						visualBrake = brake;
+				}
+				else
+				{
+					visualBrake -= immediate ? 10000 : Time.SimulationDelta * 2;
+					if( visualBrake < brake )
+						visualBrake = brake;
+				}
+			}
+		}
+
+		protected override void OnClientConnectedAfterRootComponentEnabled( ServerNetworkService_Components.ClientItem client )
+		{
+			base.OnClientConnectedAfterRootComponentEnabled( client );
+
+			if( dynamicData != null )
+			{
+				var writer = BeginNetworkMessage( client, "MotorState" );
+				writer.Write( MotorOn );
+				writer.WriteVariableInt32( dynamicData.CurrentGear );
+				writer.Write( dynamicData.CurrentRPM );
+				EndNetworkMessage();
+			}
+		}
 	}
 }

@@ -1,6 +1,7 @@
+// Made with NeoAxis Engine 2024.1.
+
 .component NeoAxis.Scene
 {
-	BackgroundColorAffectLighting = 1
 	DisplayDevelopmentDataInSimulation = True
 	DisplayLights = True
 	DisplayReflectionProbes = True
@@ -16,7 +17,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "-20.5930851190385 -18.6448712086957 11.3390167022518; -0.237301319695413 0.00501526300953766 0.971206266841312 0.0205260336140244; 1 1 1"
+		Transform = "-19.7092132979513 -20.8957693055694 15.3398321524616; -0.356535235100715 0.0291208840458016 0.930728549316547 0.0760195220399688; 1 1 1"
 	}
 	.component NeoAxis.Light
 	{
@@ -35,7 +36,6 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 90
-		MaskScale = 257.5
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
@@ -69,13 +69,18 @@
 			.component NeoAxis.RenderingEffect_Sharpen
 			{
 				Name = Sharpen
-				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
 			}
 		}
 	}
 	.component NeoAxis.GameMode
 	{
 		Name = Game Mode
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
 	}
 	.component NeoAxis.Material
 	{
@@ -131,6 +136,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Mesh
 		{
 			Name = Mesh
@@ -185,6 +197,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Mesh
 		{
 			Name = Mesh
@@ -209,6 +228,13 @@
 		ReplaceMaterialSelectively
 		{
 			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Mesh
 		{
@@ -235,6 +261,13 @@
 		{
 			Count = 0
 		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
 		.component NeoAxis.Mesh
 		{
 			Name = Mesh
@@ -247,12 +280,20 @@
 	.component NeoAxis.ReflectionProbe
 	{
 		Name = Reflection Probe
-		Transform = "-38.617541207262 -7.68485834503863 2.06189155977484; 0 0 0 1; 12.3095996403784 12.3095996403784 12.3095996403784"
+		Transform = "-35.749352479094 -8.49698458959867 7.11352506576382; 0 0 0 1; 12.3095996403784 12.3095996403784 12.3095996403784"
 	}
-	.component NeoAxis.Skybox
+	.component NeoAxis.ReflectionProbe
 	{
-		Name = Skybox
-		AffectLighting = 1
+		Name = Reflection Probe 2
+		Transform = "-35.9954335149967 -31.5580979149314 2.06189155977484; 0 0 0 1; 12.3095996403784 12.3095996403784 12.3095996403784"
+		Cubemap
+		{
+			GetByReference = "Content\\Environments\\Base\\Gradient.image"
+		}
+	}
+	.component NeoAxis.Sky
+	{
+		Name = Sky
 		Cubemap
 		{
 			GetByReference = "Content\\Environments\\Base\\Gradient.image"

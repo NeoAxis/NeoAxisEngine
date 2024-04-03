@@ -39,6 +39,42 @@ vec3 decodeRGBE8(vec4 _rgbe8)
 	return rgb;
 }
 
+/*
+float packColor( vec3 color )
+{
+    return color.r + color.g * 256.0 + color.b * 256.0 * 256.0;
+}
+
+vec3 unpackColor( float f )
+{
+    vec3 color;
+    color.b = floor(f / 256.0 / 256.0);
+    color.g = floor((f - color.b * 256.0 * 256.0) / 256.0);
+    color.r = floor(f - color.b * 256.0 * 256.0 - color.g * 256.0);
+    return color / 255.0;
+}
+*/
+
+#if HLSL || SPIRV
+
+float packTwoHalfs( vec2 v )
+{
+	uint a16 = f32tof16( v.x );
+	uint b16 = f32tof16( v.y );
+	uint packed = ( a16 << 16 ) | b16;
+	return asfloat( packed );
+}
+
+vec2 unpackTwoHalfs( float v )
+{
+	uint v2 = asuint( v );
+	float a = f16tof32( v2 >> 16 );
+	float b = f16tof32( v2 & 0xffff ); //f16tof32( v2 );
+	return vec2( a, b );
+}
+
+#endif
+
 vec3 encodeNormalUint(vec3 _normal)
 {
 	return _normal * 0.5 + 0.5;
@@ -336,6 +372,20 @@ vec3 adjustHue(vec3 _rgb, float _hue)
 }
 */
 
+vec4 packFloatToRgba( float _value )
+{
+	vec4 result = vec4( 1.0, 255.0, 65025.0, 16581375.0 ) * _value;
+	result = fract( result );
+	result -= result.yzww * vec4( 1.0 / 255.0, 1.0 / 255.0, 1.0 / 255.0, 0.0 );
+	return result;
+}
+
+float unpackRgbaToFloat( vec4 _rgba )
+{
+	return dot( _rgba, vec4( 1.0, 1.0 / 255.0, 1.0 / 65025.0, 1.0 / 16581375.0 ) );
+}
+
+/*
 vec4 packFloatToRgba(float _value)
 {
 	const vec4 shift = vec4(256 * 256 * 256, 256 * 256, 256, 1.0);
@@ -350,6 +400,7 @@ float unpackRgbaToFloat(vec4 _rgba)
 	const vec4 shift = vec4(1.0 / (256.0 * 256.0 * 256.0), 1.0 / (256.0 * 256.0), 1.0 / 256.0, 1.0);
 	return dot(_rgba, shift);
 }
+*/
 
 vec2 packHalfFloat(float _value)
 {

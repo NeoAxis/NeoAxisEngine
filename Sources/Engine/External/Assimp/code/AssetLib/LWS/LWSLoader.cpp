@@ -3,7 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -63,7 +63,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using namespace Assimp;
 
-static const aiImporterDesc desc = {
+static constexpr aiImporterDesc desc = {
     "LightWave Scene Importer",
     "",
     "",
@@ -90,7 +90,7 @@ void LWS::Element::Parse(const char *&buffer) {
         } else if (*buffer == '}')
             return;
 
-        children.push_back(Element());
+        children.emplace_back();
 
         // copy data line - read token per token
 
@@ -140,27 +140,13 @@ LWSImporter::LWSImporter() :
 }
 
 // ------------------------------------------------------------------------------------------------
-// Destructor, private as well
-LWSImporter::~LWSImporter() {
-    // nothing to do here
-}
-
-// ------------------------------------------------------------------------------------------------
 // Returns whether the class can handle the format of the given file.
-bool LWSImporter::CanRead(const std::string &pFile, IOSystem *pIOHandler, bool checkSig) const {
-    const std::string extension = GetExtension(pFile);
-    if (extension == "lws" || extension == "mot") {
-        return true;
-    }
-
-    // if check for extension is not enough, check for the magic tokens LWSC and LWMO
-    if (!extension.length() || checkSig) {
-        uint32_t tokens[2];
-        tokens[0] = AI_MAKE_MAGIC("LWSC");
-        tokens[1] = AI_MAKE_MAGIC("LWMO");
-        return CheckMagicToken(pIOHandler, pFile, tokens, 2);
-    }
-    return false;
+bool LWSImporter::CanRead(const std::string &pFile, IOSystem *pIOHandler, bool /*checkSig*/) const {
+    static const uint32_t tokens[] = {
+        AI_MAKE_MAGIC("LWSC"),
+        AI_MAKE_MAGIC("LWMO")
+    };
+    return CheckMagicToken(pIOHandler, pFile, tokens, AI_COUNT_OF(tokens));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -200,14 +186,14 @@ void LWSImporter::ReadEnvelope(const LWS::Element &dad, LWO::Envelope &fill) {
 
     // reserve enough storage
     std::list<LWS::Element>::const_iterator it = dad.children.begin();
-    
+
     fill.keys.reserve(strtoul10(it->tokens[1].c_str()));
 
     for (++it; it != dad.children.end(); ++it) {
         const char *c = (*it).tokens[1].c_str();
 
         if ((*it).tokens[0] == "Key") {
-            fill.keys.push_back(LWO::Key());
+            fill.keys.emplace_back();
             LWO::Key &key = fill.keys.back();
 
             float f;
@@ -270,7 +256,7 @@ void LWSImporter::ReadEnvelope_Old(
     num = strtoul10((*it).tokens[0].c_str());
     for (unsigned int i = 0; i < num; ++i) {
 
-        nodes.channels.push_back(LWO::Envelope());
+        nodes.channels.emplace_back();
         LWO::Envelope &envl = nodes.channels.back();
 
         envl.index = i;
@@ -318,9 +304,12 @@ void LWSImporter::SetupNodeName(aiNode *nd, LWS::NodeDesc &src) {
             } else {
                 ++s;
             }
-            std::string::size_type t = src.path.substr(s).find_last_of(".");
+            std::string::size_type t = src.path.substr(s).find_last_of('.');
 
             nd->mName.length = ::ai_snprintf(nd->mName.data, MAXLEN, "%s_(%08X)", src.path.substr(s).substr(0, t).c_str(), combined);
+            if (nd->mName.length > MAXLEN) {
+                nd->mName.length = MAXLEN;
+            }
             return;
         }
     }
@@ -342,11 +331,11 @@ void LWSImporter::BuildGraph(aiNode *nd, LWS::NodeDesc &src, std::vector<Attachm
     if (src.type == LWS::NodeDesc::OBJECT) {
 
         // If the object is from an external file, get it
-        aiScene *obj = NULL;
+        aiScene *obj = nullptr;
         if (src.path.length()) {
             obj = batch.GetImport(src.id);
             if (!obj) {
-                ASSIMP_LOG_ERROR("LWS: Failed to read external file " + src.path);
+                ASSIMP_LOG_ERROR("LWS: Failed to read external file ", src.path);
             } else {
                 if (obj->mRootNode->mNumChildren == 1) {
 
@@ -359,7 +348,7 @@ void LWSImporter::BuildGraph(aiNode *nd, LWS::NodeDesc &src, std::vector<Attachm
 
                     //Remove first node from obj (the old pivot), reset transform of second node (the mesh node)
                     aiNode *newRootNode = obj->mRootNode->mChildren[0];
-                    obj->mRootNode->mChildren[0] = NULL;
+                    obj->mRootNode->mChildren[0] = nullptr;
                     delete obj->mRootNode;
 
                     obj->mRootNode = newRootNode;
@@ -389,7 +378,7 @@ void LWSImporter::BuildGraph(aiNode *nd, LWS::NodeDesc &src, std::vector<Attachm
 
         //Push attachment, if the object came from an external file
         if (obj) {
-            attach.push_back(AttachmentInfo(obj, nd));
+            attach.emplace_back(obj, nd);
         }
     }
 
@@ -466,7 +455,7 @@ std::string LWSImporter::FindLWOFile(const std::string &in) {
     std::string tmp(in);
     if (in.length() > 3 && in[1] == ':' && in[2] != '\\' && in[2] != '/') {
         tmp = in[0] + (std::string(":\\") + in.substr(2));
-    } 
+    }
 
     if (io->Exists(tmp)) {
         return in;
@@ -501,8 +490,8 @@ void LWSImporter::InternReadFile(const std::string &pFile, aiScene *pScene, IOSy
     std::unique_ptr<IOStream> file(pIOHandler->Open(pFile, "rb"));
 
     // Check whether we can read from the file
-    if (file.get() == nullptr) {
-        throw DeadlyImportError("Failed to open LWS file " + pFile + ".");
+    if (file == nullptr) {
+        throw DeadlyImportError("Failed to open LWS file ", pFile, ".");
     }
 
     // Allocate storage and copy the contents of the file to a memory buffer
@@ -521,7 +510,7 @@ void LWSImporter::InternReadFile(const std::string &pFile, aiScene *pScene, IOSy
     std::list<LWS::NodeDesc> nodes;
 
     unsigned int cur_light = 0, cur_camera = 0, cur_object = 0;
-    unsigned int num_light = 0, num_camera = 0, num_object = 0;
+    unsigned int num_light = 0, num_camera = 0;
 
     // check magic identifier, 'LWSC'
     bool motion_file = false;
@@ -537,8 +526,13 @@ void LWSImporter::InternReadFile(const std::string &pFile, aiScene *pScene, IOSy
 
     // get file format version and print to log
     ++it;
+
+    if (it == root.children.end() || (*it).tokens[0].empty()) {
+        ASSIMP_LOG_ERROR("Invalid LWS file detectedm abort import.");
+        return;
+    }
     unsigned int version = strtoul10((*it).tokens[0].c_str());
-    ASSIMP_LOG_INFO("LWS file format version is " + (*it).tokens[0]);
+    ASSIMP_LOG_INFO("LWS file format version is ", (*it).tokens[0]);
     first = 0.;
     last = 60.;
     fps = 25.; // seems to be a good default frame rate
@@ -586,7 +580,6 @@ void LWSImporter::InternReadFile(const std::string &pFile, aiScene *pScene, IOSy
             d.id = batch.AddLoadRequest(path, 0, &props);
 
             nodes.push_back(d);
-            ++num_object;
         } else if ((*it).tokens[0] == "LoadObject") { // 'LoadObject': load a LWO file into the scene-graph
 
             // add node to list
@@ -600,11 +593,10 @@ void LWSImporter::InternReadFile(const std::string &pFile, aiScene *pScene, IOSy
                 d.number = cur_object++;
             }
             std::string path = FindLWOFile(c);
-            d.id = batch.AddLoadRequest(path, 0, NULL);
+            d.id = batch.AddLoadRequest(path, 0, nullptr);
 
             d.path = path;
             nodes.push_back(d);
-            ++num_object;
         } else if ((*it).tokens[0] == "AddNullObject") { // 'AddNullObject': add a dummy node to the hierarchy
 
             // add node to list
@@ -618,8 +610,6 @@ void LWSImporter::InternReadFile(const std::string &pFile, aiScene *pScene, IOSy
             }
             d.name = c;
             nodes.push_back(d);
-
-            num_object++;
         }
         // 'NumChannels': Number of envelope channels assigned to last layer
         else if ((*it).tokens[0] == "NumChannels") {
@@ -638,18 +628,17 @@ void LWSImporter::InternReadFile(const std::string &pFile, aiScene *pScene, IOSy
                     nodes.push_back(d);
                 }
                 ASSIMP_LOG_ERROR("LWS: Unexpected keyword: \'Channel\'");
+            } else {
+                // important: index of channel
+                nodes.back().channels.emplace_back();
+                LWO::Envelope &env = nodes.back().channels.back();
+
+                env.index = strtoul10(c);
+
+                // currently we can just interpret the standard channels 0...9
+                // (hack) assume that index-i yields the binary channel type from LWO
+                env.type = (LWO::EnvelopeType)(env.index + 1);
             }
-
-            // important: index of channel
-            nodes.back().channels.push_back(LWO::Envelope());
-            LWO::Envelope &env = nodes.back().channels.back();
-
-            env.index = strtoul10(c);
-
-            // currently we can just interpret the standard channels 0...9
-            // (hack) assume that index-i yields the binary channel type from LWO
-            env.type = (LWO::EnvelopeType)(env.index + 1);
-
         }
         // 'Envelope': a single animation channel
         else if ((*it).tokens[0] == "Envelope") {
@@ -750,12 +739,17 @@ void LWSImporter::InternReadFile(const std::string &pFile, aiScene *pScene, IOSy
         }
         // 'LightIntensity': set intensity of currently active light
         else if ((*it).tokens[0] == "LightIntensity" || (*it).tokens[0] == "LgtIntensity") {
-            if (nodes.empty() || nodes.back().type != LWS::NodeDesc::LIGHT)
+            if (nodes.empty() || nodes.back().type != LWS::NodeDesc::LIGHT) {
                 ASSIMP_LOG_ERROR("LWS: Unexpected keyword: \'LightIntensity\'");
-
-            else
-                fast_atoreal_move<float>(c, nodes.back().lightIntensity);
-
+            } else {
+                const std::string env = "(envelope)";
+                if (0 == strncmp(c, env.c_str(), env.size())) {
+                    ASSIMP_LOG_ERROR("LWS: envelopes for  LightIntensity not supported, set to 1.0");
+                    nodes.back().lightIntensity = (ai_real)1.0;
+                } else {
+                    fast_atoreal_move<float>(c, nodes.back().lightIntensity);
+                }
+            }
         }
         // 'LightType': set type of currently active light
         else if ((*it).tokens[0] == "LightType") {

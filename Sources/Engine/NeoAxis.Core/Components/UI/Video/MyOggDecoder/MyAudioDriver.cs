@@ -60,7 +60,7 @@ namespace MyOggDecoder
 				return;
 
 			//!!!!attachedToScene
-			channel = SoundWorld.SoundPlay( null, sound, EngineApp.DefaultSoundChannelGroup, 1, true );
+			channel = SoundWorld.SoundPlay( null, sound, EngineApp.DefaultSoundChannelGroup, 1, 1, true );
 
 			if( channel != null )
 			{

@@ -28,7 +28,7 @@
 //		public Reference<PartEnum> Part
 //		{
 //			get { if( _part.BeginGet() ) Part = _part.Get( this ); return _part.value; }
-//			set { if( _part.BeginSet( ref value ) ) { try { PartChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _part.EndSet(); } } }
+//			set { if( _part.BeginSet( this, ref value ) ) { try { PartChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _part.EndSet(); } } }
 //		}
 //		/// <summary>Occurs when the <see cref="Part"/> property value changes.</summary>
 //		public event Action<BuildingModifier> PartChanged;
@@ -38,7 +38,7 @@
 //		public Reference<Vector3I> CellPosition
 //		{
 //			get { if( _cellPosition.BeginGet() ) CellPosition = _cellPosition.Get( this ); return _cellPosition.value; }
-//			set { if( _cellPosition.BeginSet( ref value ) ) { try { CellPositionChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _cellPosition.EndSet(); } } }
+//			set { if( _cellPosition.BeginSet( this, ref value ) ) { try { CellPositionChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _cellPosition.EndSet(); } } }
 //		}
 //		/// <summary>Occurs when the <see cref="CellPosition"/> property value changes.</summary>
 //		public event Action<BuildingModifier> CellPositionChanged;
@@ -48,7 +48,7 @@
 //		public Reference<int> Side
 //		{
 //			get { if( _side.BeginGet() ) Side = _side.Get( this ); return _side.value; }
-//			set { if( _side.BeginSet( ref value ) ) { try { SideChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _side.EndSet(); } } }
+//			set { if( _side.BeginSet( this, ref value ) ) { try { SideChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _side.EndSet(); } } }
 //		}
 //		/// <summary>Occurs when the <see cref="Side"/> property value changes.</summary>
 //		public event Action<BuildingModifier> SideChanged;
@@ -59,7 +59,7 @@
 //		public Reference<Vector2I> Position
 //		{
 //			get { if( _position.BeginGet() ) Position = _position.Get( this ); return _position.value; }
-//			set { if( _position.BeginSet( ref value ) ) { try { PositionChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _position.EndSet(); } } }
+//			set { if( _position.BeginSet( this, ref value ) ) { try { PositionChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _position.EndSet(); } } }
 //		}
 //		/// <summary>Occurs when the <see cref="Position"/> property value changes.</summary>
 //		public event Action<BuildingModifier> PositionChanged;
@@ -72,7 +72,7 @@
 //		//public Reference<Vector3I> Position
 //		//{
 //		//	get { if( _position.BeginGet() ) Position = _position.Get( this ); return _position.value; }
-//		//	set { if( _position.BeginSet( ref value ) ) { try { PositionChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _position.EndSet(); } } }
+//		//	set { if( _position.BeginSet( this, ref value ) ) { try { PositionChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _position.EndSet(); } } }
 //		//}
 //		///// <summary>Occurs when the <see cref="Position"/> property value changes.</summary>
 //		//public event Action<BuildingModifier> PositionChanged;
@@ -82,7 +82,7 @@
 //		public Reference<BuildingElement> Element
 //		{
 //			get { if( _element.BeginGet() ) Element = _element.Get( this ); return _element.value; }
-//			set { if( _element.BeginSet( ref value ) ) { try { ElementChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _element.EndSet(); } } }
+//			set { if( _element.BeginSet( this, ref value ) ) { try { ElementChanged?.Invoke( this ); ParentNeedUpdate(); } finally { _element.EndSet(); } } }
 //		}
 //		/// <summary>Occurs when the <see cref="Element"/> property value changes.</summary>
 //		public event Action<BuildingModifier> ElementChanged;

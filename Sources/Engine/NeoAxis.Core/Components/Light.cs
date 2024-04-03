@@ -2,19 +2,20 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.IO;
-using System.Drawing.Design;
+using System.Runtime.CompilerServices;
+using NeoAxis.Editor;
 
 namespace NeoAxis
 {
 	/// <summary>
 	/// The light source in the scene.
 	/// </summary>
-	public class Light : ObjectInSpace//ResultCompile<LightSource.ResultDataClass>
+	public class Light : ObjectInSpace
 	{
+		static long uniqueIdentifierCounterForStaticShadows = 1L;
+		static object uniqueIdentifierLockForStaticShadows = new object();
+		long? uniqueIdentifierForStaticShadows;
+
 		//RenderSceneData renderSceneDataCached;
 		//int _internalRenderSceneIndex = -1;
 
@@ -52,12 +53,24 @@ namespace NeoAxis
 			get { if( _type.BeginGet() ) Type = _type.Get( this ); return _type.value; }
 			set
 			{
-				if( _type.BeginSet( ref value ) )
+				if( _type.BeginSet( this, ref value ) )
 				{
 					try
 					{
 						TypeChanged?.Invoke( this );
 						SpaceBoundsUpdate();
+
+						//rendering pipeline optimization
+						var scene = ParentScene;
+						if( scene != null )
+						{
+							if( EnabledInHierarchyAndIsInstance )
+							{
+								scene.CachedDirectionalLightsToFastFindByRenderingPipeline.Remove( this );
+								if( _type.value == TypeEnum.Directional )
+									scene.CachedDirectionalLightsToFastFindByRenderingPipeline.AddWithCheckAlreadyContained( this );
+							}
+						}
 					}
 					finally { _type.EndSet(); }
 				}
@@ -71,14 +84,11 @@ namespace NeoAxis
 		/// The light's brightness.
 		/// </summary>
 		[DefaultValue( 100000.0 )]
-		//!!!!max value
-		[Range( 0, 1000000, RangeAttribute.ConvenientDistributionEnum.Exponential, 4 )]
-		//[Range( 0, 10000000, RangeAttribute.ConvenientDistributionEnum.Exponential, 6 )]
-		//!!!!?[ApplicableRange( 0, 200000, ApplicableRangeAttribute.ConvenientDistributionEnum.Exponential, 4 )]
+		[Range( 0, 10000000, RangeAttribute.ConvenientDistributionEnum.Exponential, 5 )]
 		public Reference<double> Brightness
 		{
 			get { if( _brightness.BeginGet() ) Brightness = _brightness.Get( this ); return _brightness.value; }
-			set { if( _brightness.BeginSet( ref value ) ) { try { BrightnessChanged?.Invoke( this ); } finally { _brightness.EndSet(); } } }
+			set { if( _brightness.BeginSet( this, ref value ) ) { try { BrightnessChanged?.Invoke( this ); } finally { _brightness.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Brightness"/> property value changes.</summary>
 		public event Action<Light> BrightnessChanged;
@@ -92,7 +102,7 @@ namespace NeoAxis
 		public Reference<ColorValue> Color
 		{
 			get { if( _color.BeginGet() ) Color = _color.Get( this ); return _color.value; }
-			set { if( _color.BeginSet( ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
+			set { if( _color.BeginSet( this, ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Color"/> property value changes.</summary>
 		public event Action<Light> ColorChanged;
@@ -109,7 +119,7 @@ namespace NeoAxis
 		//public Reference<ColorValuePowered> Power
 		//{
 		//	get { if( _power.BeginGet() ) Power = _power.Get( this ); return _power.value; }
-		//	set { if( _power.BeginSet( ref value ) ) { try { PowerChanged?.Invoke( this ); } finally { _power.EndSet(); } } }
+		//	set { if( _power.BeginSet( this, ref value ) ) { try { PowerChanged?.Invoke( this ); } finally { _power.EndSet(); } } }
 		//}
 		//public event Action<Light> PowerChanged;
 		//ReferenceField<ColorValuePowered> _power = new ColorValuePowered( 1, 1, 1 );
@@ -122,7 +132,7 @@ namespace NeoAxis
 		public Reference<double> AttenuationNear
 		{
 			get { if( _attenuationNear.BeginGet() ) AttenuationNear = _attenuationNear.Get( this ); return _attenuationNear.value; }
-			set { if( _attenuationNear.BeginSet( ref value ) ) { try { AttenuationNearChanged?.Invoke( this ); } finally { _attenuationNear.EndSet(); } } }
+			set { if( _attenuationNear.BeginSet( this, ref value ) ) { try { AttenuationNearChanged?.Invoke( this ); } finally { _attenuationNear.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AttenuationNear"/> property value changes.</summary>
 		public event Action<Light> AttenuationNearChanged;
@@ -138,7 +148,7 @@ namespace NeoAxis
 			get { if( _attenuationFar.BeginGet() ) AttenuationFar = _attenuationFar.Get( this ); return _attenuationFar.value; }
 			set
 			{
-				if( _attenuationFar.BeginSet( ref value ) )
+				if( _attenuationFar.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -163,7 +173,7 @@ namespace NeoAxis
 			get { if( _attenuationPower.BeginGet() ) AttenuationPower = _attenuationPower.Get( this ); return _attenuationPower.value; }
 			set
 			{
-				if( _attenuationPower.BeginSet( ref value ) )
+				if( _attenuationPower.BeginSet( this, ref value ) )
 				{
 					try { AttenuationPowerChanged?.Invoke( this ); }
 					finally { _attenuationPower.EndSet(); }
@@ -184,7 +194,7 @@ namespace NeoAxis
 			get { if( _spotlightInnerAngle.BeginGet() ) SpotlightInnerAngle = _spotlightInnerAngle.Get( this ); return _spotlightInnerAngle.value; }
 			set
 			{
-				if( _spotlightInnerAngle.BeginSet( ref value ) )
+				if( _spotlightInnerAngle.BeginSet( this, ref value ) )
 				{
 					try { SpotlightInnerAngleChanged?.Invoke( this ); }
 					finally { _spotlightInnerAngle.EndSet(); }
@@ -205,7 +215,7 @@ namespace NeoAxis
 			get { if( _spotlightOuterAngle.BeginGet() ) SpotlightOuterAngle = _spotlightOuterAngle.Get( this ); return _spotlightOuterAngle.value; }
 			set
 			{
-				if( _spotlightOuterAngle.BeginSet( ref value ) )
+				if( _spotlightOuterAngle.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -228,11 +238,25 @@ namespace NeoAxis
 		public Reference<double> SpotlightFalloff
 		{
 			get { if( _spotlightFalloff.BeginGet() ) SpotlightFalloff = _spotlightFalloff.Get( this ); return _spotlightFalloff.value; }
-			set { if( _spotlightFalloff.BeginSet( ref value ) ) { try { SpotlightFalloffChanged?.Invoke( this ); } finally { _spotlightFalloff.EndSet(); } } }
+			set { if( _spotlightFalloff.BeginSet( this, ref value ) ) { try { SpotlightFalloffChanged?.Invoke( this ); } finally { _spotlightFalloff.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SpotlightFalloff"/> property value changes.</summary>
 		public event Action<Light> SpotlightFalloffChanged;
 		ReferenceField<double> _spotlightFalloff = 1;
+
+		/// <summary>
+		/// The distance of lighting effect from the light position.
+		/// </summary>
+		[DefaultValue( 0.0 )]
+		[Range( 0.0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 4 )]
+		public Reference<double> StartDistance
+		{
+			get { if( _startDistance.BeginGet() ) StartDistance = _startDistance.Get( this ); return _startDistance.value; }
+			set { if( _startDistance.BeginSet( this, ref value ) ) { try { StartDistanceChanged?.Invoke( this ); } finally { _startDistance.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="StartDistance"/> property value changes.</summary>
+		public event Action<Light> StartDistanceChanged;
+		ReferenceField<double> _startDistance = 0.0;
 
 		//!!!!impl
 
@@ -245,7 +269,7 @@ namespace NeoAxis
 		//public Reference<double> SourceRadius
 		//{
 		//	get { if( _sourceRadius.BeginGet() ) SourceRadius = _sourceRadius.Get( this ); return _sourceRadius.value; }
-		//	set { if( _sourceRadius.BeginSet( ref value ) ) { try { SourceRadiusChanged?.Invoke( this ); } finally { _sourceRadius.EndSet(); } } }
+		//	set { if( _sourceRadius.BeginSet( this, ref value ) ) { try { SourceRadiusChanged?.Invoke( this ); } finally { _sourceRadius.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="SourceRadius"/> property value changes.</summary>
 		//public event Action<Light> SourceRadiusChanged;
@@ -260,20 +284,67 @@ namespace NeoAxis
 		//public Reference<Degree> SourceAngle
 		//{
 		//	get { if( _sourceAngle.BeginGet() ) SourceAngle = _sourceAngle.Get( this ); return _sourceAngle.value; }
-		//	set { if( _sourceAngle.BeginSet( ref value ) ) { try { SourceAngleChanged?.Invoke( this ); } finally { _sourceAngle.EndSet(); } } }
+		//	set { if( _sourceAngle.BeginSet( this, ref value ) ) { try { SourceAngleChanged?.Invoke( this ); } finally { _sourceAngle.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="SourceAngle"/> property value changes.</summary>
 		//public event Action<Light> SourceAngleChanged;
 		//ReferenceField<Degree> _sourceAngle = new Degree( 1.0 );
 
 		/// <summary>
+		/// The light mask used by the light source.
+		/// </summary>
+		[DefaultValue( null )]
+		public Reference<ImageComponent> Mask
+		{
+			get { if( _mask.BeginGet() ) Mask = _mask.Get( this ); return _mask.value; }
+			set { if( _mask.BeginSet( this, ref value ) ) { try { MaskChanged?.Invoke( this ); } finally { _mask.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Mask"/> property value changes.</summary>
+		public event Action<Light> MaskChanged;
+		ReferenceField<ImageComponent> _mask;
+
+		/// <summary>
+		/// The position, rotation and scale of the light mask.
+		/// </summary>
+		[DefaultValue( NeoAxis.Transform.IdentityAsString )]
+		public Reference<Transform> MaskTransform
+		{
+			get { if( _maskTransform.BeginGet() ) Transform = _maskTransform.Get( this ); return _maskTransform.value; }
+			set
+			{
+				//fix invalid value
+				if( value.Value == null )
+					value = new Reference<Transform>( NeoAxis.Transform.Identity, value.GetByReference );
+				if( _maskTransform.BeginSet( this, ref value ) ) { try { MaskTransformChanged?.Invoke( this ); } finally { _maskTransform.EndSet(); } }
+			}
+		}
+		/// <summary>Occurs when the <see cref="Transform"/> property value changes.</summary>
+		public event Action<ObjectInSpace> MaskTransformChanged;
+		ReferenceField<Transform> _maskTransform = new Transform( Vector3.Zero, Quaternion.Identity, Vector3.One );
+
+		///// <summary>
+		///// The scale of the light mask.
+		///// </summary>
+		//[DefaultValue( 100.0 )]
+		//[Range( 10, 1000, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		//public Reference<double> MaskScale
+		//{
+		//	get { if( _maskScale.BeginGet() ) MaskScale = _maskScale.Get( this ); return _maskScale.value; }
+		//	set { if( _maskScale.BeginSet( this, ref value ) ) { try { MaskScaleChanged?.Invoke( this ); } finally { _maskScale.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="MaskScale"/> property value changes.</summary>
+		//public event Action<Light> MaskScaleChanged;
+		//ReferenceField<double> _maskScale = 100;
+
+		/// <summary>
 		/// If active, the light will cast shadows on the surfaces.
 		/// </summary>
 		[DefaultValue( true )]
+		[Category( "Shadows" )]
 		public Reference<bool> Shadows
 		{
 			get { if( _shadows.BeginGet() ) Shadows = _shadows.Get( this ); return _shadows.value; }
-			set { if( _shadows.BeginSet( ref value ) ) { try { ShadowsChanged?.Invoke( this ); } finally { _shadows.EndSet(); } } }
+			set { if( _shadows.BeginSet( this, ref value ) ) { try { ShadowsChanged?.Invoke( this ); } finally { _shadows.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Shadows"/> property value changes.</summary>
 		public event Action<Light> ShadowsChanged;
@@ -284,10 +355,11 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( 1.0 )]
 		[Range( 0, 1 )]
+		[Category( "Shadows" )]
 		public Reference<double> ShadowIntensity
 		{
 			get { if( _shadowIntensity.BeginGet() ) ShadowIntensity = _shadowIntensity.Get( this ); return _shadowIntensity.value; }
-			set { if( _shadowIntensity.BeginSet( ref value ) ) { try { ShadowIntensityChanged?.Invoke( this ); } finally { _shadowIntensity.EndSet(); } } }
+			set { if( _shadowIntensity.BeginSet( this, ref value ) ) { try { ShadowIntensityChanged?.Invoke( this ); } finally { _shadowIntensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShadowIntensity"/> property value changes.</summary>
 		public event Action<Light> ShadowIntensityChanged;
@@ -301,7 +373,7 @@ namespace NeoAxis
 		//public Reference<double> ShadowSoftness
 		//{
 		//	get { if( _shadowSoftness.BeginGet() ) ShadowSoftness = _shadowSoftness.Get( this ); return _shadowSoftness.value; }
-		//	set { if( _shadowSoftness.BeginSet( ref value ) ) { try { ShadowSoftnessChanged?.Invoke( this ); } finally { _shadowSoftness.EndSet(); } } }
+		//	set { if( _shadowSoftness.BeginSet( this, ref value ) ) { try { ShadowSoftnessChanged?.Invoke( this ); } finally { _shadowSoftness.EndSet(); } } }
 		//}
 		//public event Action<Light> ShadowSoftnessChanged;
 		//ReferenceField<double> _shadowSoftness = 1.0;
@@ -310,11 +382,12 @@ namespace NeoAxis
 		/// Shadow bias moves the shadow away from the light source. Adjusting it may help to fix shadow artifacts.
 		/// </summary>
 		[DefaultValue( 0.5 )]
-		[Range( 0, 1 )]
+		[Range( 0, 4, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		[Category( "Shadows" )]
 		public Reference<double> ShadowBias
 		{
 			get { if( _shadowBias.BeginGet() ) ShadowBias = _shadowBias.Get( this ); return _shadowBias.value; }
-			set { if( _shadowBias.BeginSet( ref value ) ) { try { ShadowBiasChanged?.Invoke( this ); } finally { _shadowBias.EndSet(); } } }
+			set { if( _shadowBias.BeginSet( this, ref value ) ) { try { ShadowBiasChanged?.Invoke( this ); } finally { _shadowBias.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShadowBias"/> property value changes.</summary>
 		public event Action<Light> ShadowBiasChanged;
@@ -323,39 +396,95 @@ namespace NeoAxis
 		/// <summary>
 		/// Normal bias moves the shadow perpendicular to the shadowed surface. Adjusting it may help to fix shadow artifacts.
 		/// </summary>
-		[DefaultValue( 0.5 )]
-		[Range( 0, 1 )]
+		[DefaultValue( 1.0 )]//0.5 )]
+		[Range( 0, 4, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		[Category( "Shadows" )]
 		public Reference<double> ShadowNormalBias
 		{
 			get { if( _shadowNormalBias.BeginGet() ) ShadowNormalBias = _shadowNormalBias.Get( this ); return _shadowNormalBias.value; }
-			set { if( _shadowNormalBias.BeginSet( ref value ) ) { try { ShadowNormalBiasChanged?.Invoke( this ); } finally { _shadowNormalBias.EndSet(); } } }
+			set { if( _shadowNormalBias.BeginSet( this, ref value ) ) { try { ShadowNormalBiasChanged?.Invoke( this ); } finally { _shadowNormalBias.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShadowNormalBias"/> property value changes.</summary>
 		public event Action<Light> ShadowNormalBiasChanged;
-		ReferenceField<double> _shadowNormalBias = 0.5;
+		ReferenceField<double> _shadowNormalBias = 1.0;//0.5;
 
 		/// <summary>
 		/// The softness multiplier of shadows.
 		/// </summary>
 		[DefaultValue( 1.5 )]
 		[Range( 0, 3 )]
+		[Category( "Shadows" )]
 		public Reference<double> ShadowSoftness
 		{
 			get { if( _shadowSoftness.BeginGet() ) ShadowSoftness = _shadowSoftness.Get( this ); return _shadowSoftness.value; }
-			set { if( _shadowSoftness.BeginSet( ref value ) ) { try { ShadowSoftnessChanged?.Invoke( this ); } finally { _shadowSoftness.EndSet(); } } }
+			set { if( _shadowSoftness.BeginSet( this, ref value ) ) { try { ShadowSoftnessChanged?.Invoke( this ); } finally { _shadowSoftness.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShadowSoftness"/> property value changes.</summary>
 		public event Action<Light> ShadowSoftnessChanged;
 		ReferenceField<double> _shadowSoftness = 1.5;
 
+		public enum ShadowTextureSizeType
+		{
+			Default,
+			Value,
+			Quarter,
+			Half,
+			x2,
+			x4,
+		}
+
+		/// <summary>
+		/// A method to get the size of a shadow map.
+		/// </summary>
+		[DefaultValue( ShadowTextureSizeType.Default )]
+		[Category( "Shadows" )]
+		public Reference<ShadowTextureSizeType> ShadowTextureSize
+		{
+			get { if( _shadowTextureSize.BeginGet() ) ShadowTextureSize = _shadowTextureSize.Get( this ); return _shadowTextureSize.value; }
+			set { if( _shadowTextureSize.BeginSet( this, ref value ) ) { try { ShadowTextureSizeChanged?.Invoke( this ); } finally { _shadowTextureSize.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ShadowTextureSize"/> property value changes.</summary>
+		public event Action<Light> ShadowTextureSizeChanged;
+		ReferenceField<ShadowTextureSizeType> _shadowTextureSize = ShadowTextureSizeType.Default;
+
+		/// <summary>
+		/// The size of a shadow texture.
+		/// </summary>
+		[DefaultValue( ShadowTextureSizeEnum._1024 )]
+		[Category( "Shadows" )]
+		public Reference<ShadowTextureSizeEnum> ShadowTextureSizeValue
+		{
+			get { if( _shadowTextureSizeValue.BeginGet() ) ShadowTextureSizeValue = _shadowTextureSizeValue.Get( this ); return _shadowTextureSizeValue.value; }
+			set { if( _shadowTextureSizeValue.BeginSet( this, ref value ) ) { try { ShadowTextureSizeValueChanged?.Invoke( this ); } finally { _shadowTextureSizeValue.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ShadowTextureSizeValue"/> property value changes.</summary>
+		public event Action<Light> ShadowTextureSizeValueChanged;
+		ReferenceField<ShadowTextureSizeEnum> _shadowTextureSizeValue = ShadowTextureSizeEnum._1024;
+
+		/// <summary>
+		/// The minimal distance from the light source to generate shadows.
+		/// </summary>
+		[DefaultValue( 0.1 )]
+		[Range( 0.01, 1, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		[Category( "Shadows" )]
+		public Reference<double> ShadowNearClipDistance
+		{
+			get { if( _shadowNearClipDistance.BeginGet() ) ShadowNearClipDistance = _shadowNearClipDistance.Get( this ); return _shadowNearClipDistance.value; }
+			set { if( _shadowNearClipDistance.BeginSet( this, ref value ) ) { try { ShadowNearClipDistanceChanged?.Invoke( this ); } finally { _shadowNearClipDistance.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ShadowNearClipDistance"/> property value changes.</summary>
+		public event Action<Light> ShadowNearClipDistanceChanged;
+		ReferenceField<double> _shadowNearClipDistance = 0.1;
+
 		/// <summary>
 		/// Whether to detail the shadows by means the screen-space contact shadows technique. The contact shadows works only for deferred shading.
 		/// </summary>
 		[DefaultValue( false )]
+		[Category( "Shadows" )]
 		public Reference<bool> ShadowContact
 		{
 			get { if( _shadowContact.BeginGet() ) ShadowContact = _shadowContact.Get( this ); return _shadowContact.value; }
-			set { if( _shadowContact.BeginSet( ref value ) ) { try { ShadowContactChanged?.Invoke( this ); } finally { _shadowContact.EndSet(); } } }
+			set { if( _shadowContact.BeginSet( this, ref value ) ) { try { ShadowContactChanged?.Invoke( this ); } finally { _shadowContact.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShadowContact"/> property value changes.</summary>
 		public event Action<Light> ShadowContactChanged;
@@ -366,118 +495,142 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( 0.1 )]
 		[Range( 0, 1.0, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
+		[Category( "Shadows" )]
 		public Reference<double> ShadowContactLength
 		{
 			get { if( _shadowContactLength.BeginGet() ) ShadowContactLength = _shadowContactLength.Get( this ); return _shadowContactLength.value; }
-			set { if( _shadowContactLength.BeginSet( ref value ) ) { try { ShadowContactLengthChanged?.Invoke( this ); } finally { _shadowContactLength.EndSet(); } } }
+			set { if( _shadowContactLength.BeginSet( this, ref value ) ) { try { ShadowContactLengthChanged?.Invoke( this ); } finally { _shadowContactLength.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ShadowContactLength"/> property value changes.</summary>
 		public event Action<Light> ShadowContactLengthChanged;
 		ReferenceField<double> _shadowContactLength = 0.1;
 
 		/// <summary>
-		/// The light mask used by the light source.
+		/// Whether to enable static shadow optimization for this light. Only for Point and Spot lights.
 		/// </summary>
-		[DefaultValue( null )]
-		public Reference<ImageComponent> Mask
+		[DefaultValue( false )]
+		[Category( "Shadows" )]
+		public Reference<bool> ShadowStatic
 		{
-			get { if( _mask.BeginGet() ) Mask = _mask.Get( this ); return _mask.value; }
-			set { if( _mask.BeginSet( ref value ) ) { try { MaskChanged?.Invoke( this ); } finally { _mask.EndSet(); } } }
+			get { if( _shadowStatic.BeginGet() ) ShadowStatic = _shadowStatic.Get( this ); return _shadowStatic.value; }
+			set
+			{
+				if( _shadowStatic.BeginSet( this, ref value ) )
+				{
+					try
+					{
+						ShadowStaticChanged?.Invoke( this );
+						uniqueIdentifierForStaticShadows = null;
+					}
+					finally { _shadowStatic.EndSet(); }
+				}
+			}
 		}
-		/// <summary>Occurs when the <see cref="Mask"/> property value changes.</summary>
-		public event Action<Light> MaskChanged;
-		ReferenceField<ImageComponent> _mask;
+		/// <summary>Occurs when the <see cref="ShadowStatic"/> property value changes.</summary>
+		public event Action<Light> ShadowStaticChanged;
+		ReferenceField<bool> _shadowStatic = false;
+
+
+		//!!!!можно было бы материал, не только текстурой
+
 
 		/// <summary>
-		/// The scale of the light mask.
+		/// The image of the flare.
 		/// </summary>
-		[DefaultValue( 100.0 )]
-		[Range( 10, 1000, RangeAttribute.ConvenientDistributionEnum.Exponential )]
-		public Reference<double> MaskScale
+		[DefaultValue( null )]
+		[Category( "Flare" )]
+		public Reference<ImageComponent> FlareImage
 		{
-			get { if( _maskScale.BeginGet() ) MaskScale = _maskScale.Get( this ); return _maskScale.value; }
-			set { if( _maskScale.BeginSet( ref value ) ) { try { MaskScaleChanged?.Invoke( this ); } finally { _maskScale.EndSet(); } } }
+			get { if( _flareImage.BeginGet() ) FlareImage = _flareImage.Get( this ); return _flareImage.value; }
+			set { if( _flareImage.BeginSet( this, ref value ) ) { try { FlareImageChanged?.Invoke( this ); } finally { _flareImage.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="MaskScale"/> property value changes.</summary>
-		public event Action<Light> MaskScaleChanged;
-		ReferenceField<double> _maskScale = 100;
+		/// <summary>Occurs when the <see cref="FlareImage"/> property value changes.</summary>
+		public event Action<Light> FlareImageChanged;
+		ReferenceField<ImageComponent> _flareImage = null;
 
-		////MaskPosition
-		//ReferenceField<Vec2> _maskPosition = Vec2.Zero;
-		//[DefaultValue( "0 0" )]
-		//[ApplicableRange( 0, 100, ApplicableRangeAttribute.ConvenientDistributionEnum.Exponential )]
-		//public Reference<Vec2> MaskPosition
-		//{
-		//	get { if( _maskPosition.BeginGet() ) MaskPosition = _maskPosition.Get( this ); return _maskPosition.value; }
-		//	set { if( _maskPosition.BeginSet( ref value ) ) { try { MaskPositionChanged?.Invoke( this ); } finally { _maskPosition.EndSet(); } } }
-		//}
-		//public event Action<Light> MaskPositionChanged;
+		/// <summary>
+		/// The method of drawing the image of the flare on the screen.
+		/// </summary>
+		[DefaultValue( CanvasRenderer.BlendingType.AlphaAdd )]
+		[Category( "Flare" )]
+		public Reference<CanvasRenderer.BlendingType> FlareBlending
+		{
+			get { if( _flareBlending.BeginGet() ) FlareBlending = _flareBlending.Get( this ); return _flareBlending.value; }
+			set { if( _flareBlending.BeginSet( this, ref value ) ) { try { FlareBlendingChanged?.Invoke( this ); } finally { _flareBlending.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="FlareBlending"/> property value changes.</summary>
+		public event Action<Light> FlareBlendingChanged;
+		ReferenceField<CanvasRenderer.BlendingType> _flareBlending = CanvasRenderer.BlendingType.AlphaAdd;
 
-		////MaskScale
-		//ReferenceField<Vec2> _maskScale = new Vec2( 100, 100 );
-		//[DefaultValue( "100 100" )]
-		//[ApplicableRange( 10, 1000, ApplicableRangeAttribute.ConvenientDistributionEnum.Exponential )]
-		//public Reference<Vec2> MaskScale
-		//{
-		//	get { if( _maskScale.BeginGet() ) MaskScale = _maskScale.Get( this ); return _maskScale.value; }
-		//	set { if( _maskScale.BeginSet( ref value ) ) { try { MaskScaleChanged?.Invoke( this ); } finally { _maskScale.EndSet(); } } }
-		//}
-		//public event Action<Light> MaskScaleChanged;
+		/// <summary>
+		/// The color of the flare.
+		/// </summary>
+		[DefaultValue( "1 1 1" )]
+		[Category( "Flare" )]
+		public Reference<ColorValuePowered> FlareColor
+		{
+			get { if( _flareColor.BeginGet() ) FlareColor = _flareColor.Get( this ); return _flareColor.value; }
+			set { if( _flareColor.BeginSet( this, ref value ) ) { try { FlareColorChanged?.Invoke( this ); } finally { _flareColor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="FlareColor"/> property value changes.</summary>
+		public event Action<Light> FlareColorChanged;
+		ReferenceField<ColorValuePowered> _flareColor = ColorValuePowered.One;
 
-		////MaskPosition
-		//ReferenceField<Vec3> _maskPosition = Vec3.Zero;
-		//[DefaultValue( "0 0 0" )]
-		//public Reference<Vec3> MaskPosition
-		//{
-		//	get { if( _maskPosition.BeginGet() ) MaskPosition = _maskPosition.Get( this ); return _maskPosition.value; }
-		//	set { if( _maskPosition.BeginSet( ref value ) ) { try { MaskPositionChanged?.Invoke( this ); } finally { _maskPosition.EndSet(); } } }
-		//}
-		//public event Action<Light> MaskPositionChanged;
+		/// <summary>
+		/// The position of the flare.
+		/// </summary>
+		[DefaultValue( 1 )]
+		[Range( -10, 1, RangeAttribute.ConvenientDistributionEnum.Exponential, 0.2 )]
+		[Category( "Flare" )]
+		public Reference<double> FlarePosition
+		{
+			get { if( _flarePosition.BeginGet() ) FlarePosition = _flarePosition.Get( this ); return _flarePosition.value; }
+			set { if( _flarePosition.BeginSet( this, ref value ) ) { try { FlarePositionChanged?.Invoke( this ); } finally { _flarePosition.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="FlarePosition"/> property value changes.</summary>
+		public event Action<Light> FlarePositionChanged;
+		ReferenceField<double> _flarePosition = 1;
 
-		////MaskScale
-		//ReferenceField<Vec3> _maskScale = new Vec3( 1, 1, 1 );
-		//[DefaultValue( "1 1 1" )]
-		//public Reference<Vec3> MaskScale
-		//{
-		//	get { if( _maskScale.BeginGet() ) MaskScale = _maskScale.Get( this ); return _maskScale.value; }
-		//	set { if( _maskScale.BeginSet( ref value ) ) { try { MaskScaleChanged?.Invoke( this ); } finally { _maskScale.EndSet(); } } }
-		//}
-		//public event Action<Light> MaskScaleChanged;
+		/// <summary>
+		/// The size of the flare. It is indicated as a ratio of screen size vertically.
+		/// </summary>
+		[DefaultValue( "0.1 0.1" )]
+		[Range( 0, 0.5 )]
+		[Category( "Flare" )]
+		public Reference<Vector2> FlareSize
+		{
+			get { if( _flareSize.BeginGet() ) FlareSize = _flareSize.Get( this ); return _flareSize.value; }
+			set { if( _flareSize.BeginSet( this, ref value ) ) { try { FlareSizeChanged?.Invoke( this ); } finally { _flareSize.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="FlareSize"/> property value changes.</summary>
+		public event Action<Light> FlareSizeChanged;
+		ReferenceField<Vector2> _flareSize = new Vector2( 0.1, 0.1 );
 
-		////MaskMatrix
+		[DefaultValue( false )]
+		[Category( "Flare" )]
+		public Reference<bool> FlareSizeFadeByDistance
+		{
+			get { if( _flareSizeFadeByDistance.BeginGet() ) FlareSizeFadeByDistance = _flareSizeFadeByDistance.Get( this ); return _flareSizeFadeByDistance.value; }
+			set { if( _flareSizeFadeByDistance.BeginSet( this, ref value ) ) { try { FlareSizeFadeByDistanceChanged?.Invoke( this ); } finally { _flareSizeFadeByDistance.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="FlareSizeFadeByDistance"/> property value changes.</summary>
+		public event Action<Light> FlareSizeFadeByDistanceChanged;
+		ReferenceField<bool> _flareSizeFadeByDistance = false;
 
-		//ReferenceField<Mat4> _maskMatrix = Mat4.Zero;
-		//[DefaultValue( "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" )]
-		//public Reference<Mat4> MaskMatrix
-		//{
-		//	get { if( _maskMatrix.BeginGet() ) MaskMatrix = _maskMatrix.Get( this ); return _maskMatrix.value; }
-		//	set { if( _maskMatrix.BeginSet( ref value ) ) { try { MaskMatrixChanged?.Invoke( this ); } finally { _maskMatrix.EndSet(); } } }
-		//}
-		//public event Action<Light> MaskMatrixChanged;
+		[DefaultValue( 0.1 )]
+		[Range( 0, 2, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		[Category( "Flare" )]
+		public Reference<double> FlareDepthCheckOffset
+		{
+			get { if( _flareDepthCheckOffset.BeginGet() ) FlareDepthCheckOffset = _flareDepthCheckOffset.Get( this ); return _flareDepthCheckOffset.value; }
+			set { if( _flareDepthCheckOffset.BeginSet( this, ref value ) ) { try { FlareDepthCheckOffsetChanged?.Invoke( this ); } finally { _flareDepthCheckOffset.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="FlareDepthCheckOffset"/> property value changes.</summary>
+		public event Action<Light> FlareDepthCheckOffsetChanged;
+		ReferenceField<double> _flareDepthCheckOffset = 0.1;
 
-		//!!!!draw as billboard. в каких то случаях типа как лод?
 
 		//!!!!volume. чтобы directional ограничивать. да и просто ограничивать?
-
-
-		//!!!!!может это материал, а не текстура. скорее даже так. можно как минимум процедурно считать через параметры. ну а это удобная частность. так-то норм вроде
-		//Reference<string> maskTexture = "";
-		//Reference<double> maskTextureDirectionalLightScale = .01f;
-
-
-
-		//Sun. !!!!хотя и у обычного может быть билборд? как делать?
-
-		//!!!!!defaults
-
-		////!!!!дефолтный какой-то таки поставить? может легкий такой, еле заметный? кому надо - уберут.
-		////!!!!!!тут зависит какой источник. может тогда только при создании? ведь они разные для каждого типа источника.
-		//Reference<string> billboardTexture = "";//"Base\\Types\\Lighting\\Sun\\SunDefault.png";
-		//Reference<ColorValue> billboardColor = new ColorValue( 1, 1, 1 );
-		//Reference<double> billboardPower = 1;
-		////!!!!!defaults
-		//Reference<double> billboardSize = 1;
-		//Reference<Vec3> billboardOverridePosition = Vec3.Zero;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -564,12 +717,12 @@ namespace NeoAxis
 		//	data = renderSceneDataCached;
 		//}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
 			if( EnabledInHierarchy && VisibleInHierarchy && mode == GetRenderSceneDataMode.InsideFrustum )
 			{
 				var power = Color.Value.ToVector3() * Brightness.Value;// / 100000.0;
-
 				if( power != Vector3.Zero )
 				{
 					var item = new RenderingPipeline.RenderSceneData.LightItem();
@@ -583,52 +736,94 @@ namespace NeoAxis
 					item.Scale = tr.Scale.ToVector3F();
 
 					item.Type = Type;
-					//!!!!
 					item.Power = power.ToVector3F();
 					//renderSceneDataCached.power = Power.Value.ToVec3();
 
-					var scale = item.Scale.MaxComponent();
-					item.AttenuationNear = (float)AttenuationNear * scale;
-					item.AttenuationFar = (float)AttenuationFar * scale;
-					item.AttenuationPower = (float)AttenuationPower;
-					if( item.Type == TypeEnum.Spotlight )
+					var skipByDistance = false;
+					if( context.LightFarDistance < 100000.0f && ( item.Type == TypeEnum.Point || item.Type == TypeEnum.Spotlight ) )
 					{
-						item.SpotlightInnerAngle = SpotlightInnerAngle.Value.ToDegreeF();
-						item.SpotlightOuterAngle = SpotlightOuterAngle.Value.ToDegreeF();
-						item.SpotlightFalloff = (float)SpotlightFalloff;
-						item.SpotlightClipPlanes = SpotlightClipPlanes;
-					}
-					if( item.Type != TypeEnum.Ambient )
-					{
-						item.CastShadows = Shadows;
-						item.ShadowIntensity = (float)ShadowIntensity;
-						//item.ShadowSoftness = (float)ShadowSoftness;
-						item.ShadowBias = (float)ShadowBias;
-						item.ShadowNormalBias = (float)ShadowNormalBias;
-						item.ShadowSoftness = (float)ShadowSoftness;
-						//item.ShadowContact = ShadowContact;
-						if( ShadowContact )
-							item.ShadowContactLength = (float)ShadowContactLength;
-
-						//if( item.Type == TypeEnum.Spotlight || item.Type == TypeEnum.Point )
-						//	item.SourceRadiusOrAngle = (float)SourceRadius;
-						//else if( item.Type == TypeEnum.Directional )
-						//	item.SourceRadiusOrAngle = SourceAngle.Value.ToDegreeF();
+						var length = ( context.OwnerCameraSettings.position - item.BoundingSphere.Center ).Length();
+						var diff = length - context.LightFarDistance;
+						if( diff < item.BoundingSphere.Radius && item.BoundingSphere.Radius > 0 )
+						{
+							if( diff > 0 )
+							{
+								var factor = (float)( diff / item.BoundingSphere.Radius );
+								var powerScale = MathEx.Saturate( 1.0f - factor );
+								if( powerScale > 0 )
+									item.Power *= powerScale;
+								else
+									skipByDistance = true;
+							}
+						}
+						else
+							skipByDistance = true;
 					}
 
-					item.Mask = Mask;
-					//renderSceneDataCached.maskPosition = MaskPosition;
-					item.MaskScale = MaskScale;
-					//renderSceneDataCached.maskMatrix = MaskMatrix;
-					//item.SpaceBounds = SpaceBounds;
-
-					if( Components.Count != 0 )
+					if( !skipByDistance )
 					{
-						item.children = GetComponents( onlyEnabledInHierarchy: true );
-						//item.children = GetComponents<ILightChild>( onlyEnabledInHierarchy: true );
-					}
+						var scale = item.Scale.MaxComponent();
+						item.AttenuationNear = (float)AttenuationNear * scale;
+						item.AttenuationFar = (float)AttenuationFar * scale;
+						item.AttenuationPower = (float)AttenuationPower;
+						if( item.Type == TypeEnum.Spotlight )
+						{
+							item.SpotlightInnerAngle = SpotlightInnerAngle.Value.ToDegreeF();
+							item.SpotlightOuterAngle = SpotlightOuterAngle.Value.ToDegreeF();
+							item.SpotlightFalloff = (float)SpotlightFalloff;
+							item.SpotlightClipPlanes = SpotlightClipPlanes;
+						}
+						item.StartDistance = (float)StartDistance;
 
-					context.FrameData.RenderSceneData.Lights.Add( item );
+						if( item.Type != TypeEnum.Ambient )
+						{
+							item.CastShadows = Shadows;
+							if( item.CastShadows )
+							{
+								item.ShadowIntensity = (float)ShadowIntensity;
+								//item.ShadowSoftness = (float)ShadowSoftness;
+								item.ShadowBias = (float)ShadowBias;
+								item.ShadowNormalBias = (float)ShadowNormalBias;
+								item.ShadowSoftness = (float)ShadowSoftness;
+								item.ShadowTextureSize = ShadowTextureSize;
+								if( item.ShadowTextureSize == ShadowTextureSizeType.Value )
+									item.ShadowTextureSizeValue = ShadowTextureSizeValue;
+								//item.ShadowContact = ShadowContact;
+								if( ShadowContact )
+									item.ShadowContactLength = (float)ShadowContactLength;
+							}
+
+							//if( item.Type == TypeEnum.Spotlight || item.Type == TypeEnum.Point )
+							//	item.SourceRadiusOrAngle = (float)SourceRadius;
+							//else if( item.Type == TypeEnum.Directional )
+							//	item.SourceRadiusOrAngle = SourceAngle.Value.ToDegreeF();
+						}
+
+						item.Mask = Mask;
+						if( item.Type == TypeEnum.Directional && item.Mask != null )
+							item.MaskTransform = MaskTransform;
+						//item.MaskScale = MaskScale;
+
+						//renderSceneDataCached.maskPosition = MaskPosition;
+						//renderSceneDataCached.maskMatrix = MaskMatrix;
+						//item.SpaceBounds = SpaceBounds;
+
+						if( Components.Count != 0 )
+						{
+							item.children = GetComponents( onlyEnabledInHierarchy: true );
+							//item.children = GetComponents<ILightChild>( onlyEnabledInHierarchy: true );
+						}
+
+						if( ( item.Type == TypeEnum.Point || item.Type == TypeEnum.Spotlight ) && context.StaticShadows && ShadowStatic )
+						{
+							item.StaticShadows = true;
+							//item.UniqueIdentifierForStaticShadows = GetUniqueIdentifierForStaticShadows();
+						}
+
+						item.ShadowNearClipDistance = (float)ShadowNearClipDistance;
+
+						context.FrameData.RenderSceneData.Lights.Add( ref item );
+					}
 				}
 
 				//display editor selection
@@ -889,6 +1084,8 @@ namespace NeoAxis
 				}
 				break;
 			}
+
+			uniqueIdentifierForStaticShadows = null;
 		}
 
 		protected override bool OnEnabledSelectionByCursor()
@@ -904,8 +1101,6 @@ namespace NeoAxis
 		{
 			base.OnMetadataGetMembersFilter( context, member, ref skip );
 
-			//!!!!slowly?
-			//!!!!так?
 			var p = member as Metadata.Property;
 			if( p != null )
 			{
@@ -928,6 +1123,7 @@ namespace NeoAxis
 					}
 					break;
 
+				case nameof( StartDistance ):
 				case nameof( Shadows ):
 					if( Type.Value == TypeEnum.Ambient )
 						skip = true;
@@ -938,12 +1134,24 @@ namespace NeoAxis
 				case nameof( ShadowNormalBias ):
 				case nameof( ShadowSoftness ):
 				case nameof( ShadowContact ):
+				case nameof( ShadowTextureSize ):
+				case nameof( ShadowNearClipDistance ):
 					if( Type.Value == TypeEnum.Ambient || !Shadows )
+						skip = true;
+					break;
+
+				case nameof( ShadowTextureSizeValue ):
+					if( Type.Value == TypeEnum.Ambient || !Shadows || ShadowTextureSize.Value != ShadowTextureSizeType.Value )
 						skip = true;
 					break;
 
 				case nameof( ShadowContactLength ):
 					if( Type.Value == TypeEnum.Ambient || !Shadows || !ShadowContact )
+						skip = true;
+					break;
+
+				case nameof( ShadowStatic ):
+					if( Type.Value == TypeEnum.Ambient || Type.Value == TypeEnum.Directional || !Shadows )
 						skip = true;
 					break;
 
@@ -962,9 +1170,24 @@ namespace NeoAxis
 						skip = true;
 					break;
 
-				//case nameof( MaskPosition ):
-				case nameof( MaskScale ):
+				case nameof( MaskTransform ):
+					//case nameof( MaskScale ):
 					if( Mask.Value == null || Type.Value != TypeEnum.Directional )
+						skip = true;
+					break;
+
+				case nameof( FlareImage ):
+					if( Type.Value == TypeEnum.Ambient )
+						skip = true;
+					break;
+
+				case nameof( FlareBlending ):
+				case nameof( FlareColor ):
+				case nameof( FlarePosition ):
+				case nameof( FlareSize ):
+				case nameof( FlareSizeFadeByDistance ):
+				case nameof( FlareDepthCheckOffset ):
+					if( FlareImage.Value == null || Type.Value == TypeEnum.Ambient )
 						skip = true;
 					break;
 
@@ -975,35 +1198,6 @@ namespace NeoAxis
 				}
 			}
 		}
-
-		/////// <summary>
-		/////// Gets or sets the light type.
-		/////// </summary>
-		////[Description( "The type of light." )]
-		////[Category( "Light" )]
-		//[DefaultValue( TypeEnum.Point )]
-		//[RefreshProperties( RefreshProperties.Repaint )]
-		//public Reference<TypeEnum> LightType
-		//{
-		//	get { return lightType; }
-		//	set
-		//	{
-		//		if( lightType == value )
-		//			return;
-		//		lightType = value;
-
-		//		//!!!!эвент или что-то обновить? везде так
-
-		//		//if( renderLight != null )
-		//		//	renderLight.Type = lightType.Get();
-		//		//UpdateRenderLightMaskTexture();
-
-		//		////!!!!что еще обновлять?
-		//		////!!!!что с билбордом?
-
-		//		//CreateBillboardObject();
-		//	}
-		//}
 
 		///// <summary>
 		///// A value indicating whether the inclusion in the process of calculating a static lighting enabled.
@@ -1046,45 +1240,6 @@ namespace NeoAxis
 
 		//		if( renderLight != null )
 		//			renderLight.CustomShaderParameter = customShaderParameter;
-		//	}
-		//}
-
-		///// <summary>
-		///// Texture which applied as a template. For Point light sources it must be cube texture. For Point and Directional light sources 2D texture is used.
-		///// </summary>
-		////[Category( "Light" )]
-		//[Description( "Texture which applied as a template. For Point light sources it must be cube texture. For Point and Directional light sources 2D texture is used." )]
-		////!!!!![Editor( typeof( EditorTextureUITypeEditor ), typeof( UITypeEditor ) )]
-		//[DefaultValue( "" )]
-		//public Reference<string> MaskTexture
-		//{
-		//	get { return maskTexture; }
-		//	set
-		//	{
-		//		if( maskTexture == value )
-		//			return;
-		//		maskTexture = value;
-		//		//UpdateRenderLightMaskTexture();
-		//	}
-		//}
-
-		///// <summary>
-		///// The scale multiplier when calculated matrix for MaskTexture of the directional light.
-		///// </summary>
-		////[Category( "Light" )]
-		//[Description( "The scale multiplier when calculated matrix for MaskTexture of the directional light." )]
-		//[DefaultValue( .01 )]
-		//public Reference<double> MaskTextureDirectionalLightScale
-		//{
-		//	get { return maskTextureDirectionalLightScale; }
-		//	set
-		//	{
-		//		if( maskTextureDirectionalLightScale == value )
-		//			return;
-		//		maskTextureDirectionalLightScale = value;
-
-		//		//if( renderLight != null )
-		//		//	renderLight.MaskTextureMatrixUpdateAutomaticallyDirectionalLightScale = maskTextureDirectionalLightScale.Get();
 		//	}
 		//}
 
@@ -1407,13 +1562,20 @@ namespace NeoAxis
 			base.OnEnabledInHierarchyChanged();
 
 			//rendering pipeline optimization
-			var scene = FindParent<Scene>();
+			var scene = ParentScene;//FindParent<Scene>();
 			if( scene != null )
 			{
 				if( EnabledInHierarchyAndIsInstance )
+				{
 					scene.CachedObjectsInSpaceToFastFindByRenderingPipeline.Add( this );
+					if( Type.Value == TypeEnum.Directional )
+						scene.CachedDirectionalLightsToFastFindByRenderingPipeline.AddWithCheckAlreadyContained( this );
+				}
 				else
+				{
 					scene.CachedObjectsInSpaceToFastFindByRenderingPipeline.Remove( this );
+					scene.CachedDirectionalLightsToFastFindByRenderingPipeline.Remove( this );
+				}
 			}
 		}
 
@@ -1427,6 +1589,95 @@ namespace NeoAxis
 		public override ScreenLabelInfo GetScreenLabelInfo()
 		{
 			return new ScreenLabelInfo( "Light", Type.Value <= TypeEnum.Directional );
+		}
+
+		internal long GetUniqueIdentifierForStaticShadows()
+		{
+			if( !uniqueIdentifierForStaticShadows.HasValue )
+			{
+				lock( uniqueIdentifierLockForStaticShadows )
+				{
+					unchecked
+					{
+						uniqueIdentifierCounterForStaticShadows++;
+						uniqueIdentifierForStaticShadows = uniqueIdentifierCounterForStaticShadows;
+					}
+				}
+
+				//Log.Info( uniqueIdentifierForStaticShadows.Value.ToString() );
+
+			}
+			return uniqueIdentifierForStaticShadows.Value;
+		}
+
+		protected override void OnTransformChanged()
+		{
+			base.OnTransformChanged();
+
+			uniqueIdentifierForStaticShadows = null;
+		}
+
+		public void ResetStaticShadowsCache()
+		{
+			uniqueIdentifierForStaticShadows = null;
+		}
+
+		internal void RenderFlare( ViewportRenderingContext context, CanvasRenderer renderer, RenderingPipeline.RenderSceneData.LightItem lightItem, Viewport viewport, double intensity, bool occlusionDepthCheck )
+		{
+			var image = FlareImage.Value;
+			if( image != null )
+			{
+				var lightPosition = lightItem.Position;
+
+				if( viewport.CameraSettings.ProjectToScreenCoordinates( lightPosition, out var screenLightPosition ) )
+				{
+					var cameraPosition = viewport.CameraSettings.Position;
+					var pipeline = context.RenderingPipeline;
+					var minimumVisibleSizeOfObjects = pipeline.MinimumVisibleSizeOfObjects.Value;
+
+					var flareVector = screenLightPosition - new Vector2( 0.5, 0.5 );
+					var flarePosition = new Vector2( 0.5, 0.5 ) + flareVector * FlarePosition;
+
+					var size = FlareSize.Value;
+					if( FlareSizeFadeByDistance )
+					{
+						Vector3.Lerp( ref cameraPosition, ref lightPosition, FlarePosition, out var flarePosition3D );
+
+						double distance = ( flarePosition3D - viewport.CameraSettings.Position ).Length();
+						if( distance != 0 )
+							size *= 1.0 / distance;
+					}
+
+					var flareSize = new Vector2( size.X * renderer.AspectRatioInv, size.Y );
+
+					//cull by size
+					var flareSizeInPixels = flareSize * viewport.SizeInPixels.ToVector2();
+					if( flareSizeInPixels.MaxComponent() >= minimumVisibleSizeOfObjects )
+					{
+						var rectangle = new Rectangle( flarePosition - flareSize * 0.5, flarePosition + flareSize * 0.5 );
+						var flareColor = Color.Value * FlareColor.Value.ToColorValue();// * new ColorValue( 1, 1, 1, intensity );
+						flareColor.Alpha *= (float)intensity;
+						if( flareColor.Alpha > 0 )
+						{
+							if( occlusionDepthCheck )
+							{
+								//!!!!
+								var screenSize = flareSize.Y / 20;
+
+								var compareDepth = ( cameraPosition - lightPosition ).Length() - FlareDepthCheckOffset.Value;
+								renderer.PushOcclusionDepthCheck( screenLightPosition.ToVector2F(), (float)screenSize, (float)compareDepth );
+							}
+
+							renderer.PushBlendingType( FlareBlending.Value );
+							renderer.AddQuad( rectangle, new RectangleF( 0, 0, 1, 1 ), image, flareColor, true );
+							renderer.PopBlendingType();
+
+							if( occlusionDepthCheck )
+								renderer.PopOcclusionDepthCheck();
+						}
+					}
+				}
+			}
 		}
 	}
 }

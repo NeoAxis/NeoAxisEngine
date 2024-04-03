@@ -31,14 +31,29 @@ ShapeSettings::ShapeResult StaticCompoundShapeSettings::Create(TempAllocator &in
 		}
 		else if (mSubShapes.size() == 1)
 		{
-			// If there's only 1 part, we can use a RotatedTranslatedShape instead
-			RotatedTranslatedShapeSettings settings;
+			// If there's only 1 part we don't need a StaticCompoundShape
 			const SubShapeSettings &s = mSubShapes[0];
-			settings.mPosition = s.mPosition;
-			settings.mRotation = s.mRotation;
-			settings.mInnerShape = s.mShape;
-			settings.mInnerShapePtr = s.mShapePtr;
-			Ref<Shape> shape = new RotatedTranslatedShape(settings, mCachedResult);
+			if (s.mPosition == Vec3::sZero()
+				&& s.mRotation == Quat::sIdentity())
+			{
+				// No rotation or translation, we can use the shape directly
+				if (s.mShapePtr != nullptr)
+					mCachedResult.Set(const_cast<Shape *>(s.mShapePtr.GetPtr()));
+				else if (s.mShape != nullptr)
+					mCachedResult = s.mShape->Create();
+				else
+					mCachedResult.SetError("Sub shape is null!");
+			}
+			else
+			{
+				// We can use a RotatedTranslatedShape instead
+				RotatedTranslatedShapeSettings settings;
+				settings.mPosition = s.mPosition;
+				settings.mRotation = s.mRotation;
+				settings.mInnerShape = s.mShape;
+				settings.mInnerShapePtr = s.mShapePtr;
+				Ref<Shape> shape = new RotatedTranslatedShape(settings, mCachedResult);
+			}
 		}
 		else
 		{
@@ -504,7 +519,7 @@ void StaticCompoundShape::sCastShapeVsCompound(const ShapeCast &inShapeCast, con
 
 		JPH_INLINE bool		ShouldVisitNode(int inStackTop) const
 		{
-			return mDistanceStack[inStackTop] < mCollector.GetEarlyOutFraction();
+			return mDistanceStack[inStackTop] < mCollector.GetPositiveEarlyOutFraction();
 		}
 
 		JPH_INLINE int		VisitNodes(Vec4Arg inBoundsMinX, Vec4Arg inBoundsMinY, Vec4Arg inBoundsMinZ, Vec4Arg inBoundsMaxX, Vec4Arg inBoundsMaxY, Vec4Arg inBoundsMaxZ, UVec4 &ioProperties, int inStackTop) 
@@ -513,7 +528,7 @@ void StaticCompoundShape::sCastShapeVsCompound(const ShapeCast &inShapeCast, con
 			Vec4 distance = TestBounds(inBoundsMinX, inBoundsMinY, inBoundsMinZ, inBoundsMaxX, inBoundsMaxY, inBoundsMaxZ);
 	
 			// Sort so that highest values are first (we want to first process closer hits and we process stack top to bottom)
-			return SortReverseAndStore(distance, mCollector.GetEarlyOutFraction(), ioProperties, &mDistanceStack[inStackTop]);
+			return SortReverseAndStore(distance, mCollector.GetPositiveEarlyOutFraction(), ioProperties, &mDistanceStack[inStackTop]);
 		}
 
 		float				mDistanceStack[cStackSize];

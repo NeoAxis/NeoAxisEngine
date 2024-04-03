@@ -19,7 +19,7 @@ namespace NeoAxis
 		public Reference<Metadata.TypeInfo> ObjectTypeControlledByPlayer
 		{
 			get { if( _objectTypeControlledByPlayer.BeginGet() ) ObjectTypeControlledByPlayer = _objectTypeControlledByPlayer.Get( this ); return _objectTypeControlledByPlayer.value; }
-			set { if( _objectTypeControlledByPlayer.BeginSet( ref value ) ) { try { ObjectTypeControlledByPlayerChanged?.Invoke( this ); } finally { _objectTypeControlledByPlayer.EndSet(); } } }
+			set { if( _objectTypeControlledByPlayer.BeginSet( this, ref value ) ) { try { ObjectTypeControlledByPlayerChanged?.Invoke( this ); } finally { _objectTypeControlledByPlayer.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ObjectTypeControlledByPlayer"/> property value changes.</summary>
 		public event Action<DemoMode> ObjectTypeControlledByPlayerChanged;
@@ -27,15 +27,15 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		enum WalkMode
-		{
-			None,
-			FirstPerson,
-			ThirdPerson,
-		}
+		//enum WalkMode
+		//{
+		//	None,
+		//	FirstPerson,
+		//	ThirdPerson,
+		//}
 
 		bool showKeys = true;
-		WalkMode walkMode = WalkMode.None;
+		//WalkMode walkMode = WalkMode.None;
 		Viewport.CameraSettingsClass lastCameraSettings;
 
 		/////////////////////////////////////////
@@ -55,6 +55,9 @@ namespace NeoAxis
 						gameMode.InputMessageEvent += GameMode_InputMessageEvent;
 						gameMode.GetCameraSettingsEvent += GameMode_GetCameraSettingsEvent;
 						gameMode.RenderUI += GameMode_RenderUI;
+
+						//reset camera
+						gameMode.UseBuiltInCamera = GameMode.BuiltInCameraEnum.None;
 					}
 				}
 			}
@@ -72,27 +75,27 @@ namespace NeoAxis
 					return;
 				}
 
-				if( keyDown.Key == EKeys.F )
-				{
-					if( walkMode != WalkMode.FirstPerson )
-						walkMode = WalkMode.FirstPerson;
-					else
-						walkMode = WalkMode.None;
-					UpdateWalkMode();
-					message.Handled = true;
-					return;
-				}
+				//if( keyDown.Key == EKeys.F )
+				//{
+				//	if( walkMode != WalkMode.FirstPerson )
+				//		walkMode = WalkMode.FirstPerson;
+				//	else
+				//		walkMode = WalkMode.None;
+				//	UpdateWalkMode();
+				//	message.Handled = true;
+				//	return;
+				//}
 
-				if( keyDown.Key == EKeys.H )
-				{
-					if( walkMode != WalkMode.ThirdPerson )
-						walkMode = WalkMode.ThirdPerson;
-					else
-						walkMode = WalkMode.None;
-					UpdateWalkMode();
-					message.Handled = true;
-					return;
-				}
+				//if( keyDown.Key == EKeys.H )
+				//{
+				//	if( walkMode != WalkMode.ThirdPerson )
+				//		walkMode = WalkMode.ThirdPerson;
+				//	else
+				//		walkMode = WalkMode.None;
+				//	UpdateWalkMode();
+				//	message.Handled = true;
+				//	return;
+				//}
 			}
 		}
 
@@ -112,15 +115,21 @@ namespace NeoAxis
 			{
 				var lines = new List<string>();
 
-				lines.Add( "K - show keys" );
-				//lines.Add( "" );
-				lines.Add( "F - walk first person" );
-				lines.Add( "H - walk third person" );
-				//lines.Add( "" );
+				lines.Add( "F6 - first or third person camera" );
 				lines.Add( "F7 - free camera" );
-				lines.Add( "W A S D Q E - camera control" );
-				//lines.Add( "" );
-				//lines.Add( "Esc - menu" );
+				lines.Add( "W A S D Q E Shift - camera control" );
+				lines.Add( "K - show keys" );
+
+				//lines.Add( "K - show keys" );
+				////lines.Add( "" );
+				////lines.Add( "F6 - first or third person camera" );
+				//lines.Add( "F - walk first person" );
+				//lines.Add( "H - walk third person" );
+				////lines.Add( "" );
+				//lines.Add( "F7 - free camera" );
+				//lines.Add( "W A S D Q E - camera control" );
+				////lines.Add( "" );
+				////lines.Add( "Esc - menu" );
 
 				ShowKeysEvent?.Invoke( this, lines );
 
@@ -129,7 +138,7 @@ namespace NeoAxis
 			}
 		}
 
-		void UpdateWalkMode()
+		public void UpdateWalkMode()
 		{
 			var scene = FindParent<Scene>();
 			if( scene != null )
@@ -143,7 +152,8 @@ namespace NeoAxis
 						var position = lastCameraSettings.Position;
 						var direction = lastCameraSettings.Direction;
 
-						if( walkMode != WalkMode.None )
+						//if( walkMode != WalkMode.None )
+						if( gameMode.UseBuiltInCamera.Value != GameMode.BuiltInCameraEnum.None )
 						{
 							var obj = gameMode.ObjectControlledByPlayer.Value;
 							if( obj == null )
@@ -154,37 +164,12 @@ namespace NeoAxis
 
 								obj = scene.CreateComponent( objectType, enabled: false, setUniqueName: true );
 								obj.NewObjectSetDefaultConfiguration();
-
-								//character settings
-								//if( obj is Character character )
-								//{
-								//	var avatarSettings = GetUserAvatarSettings( userItem );
-
-								//	var path = avatarSettings.GetAttribute( "Mesh" );
-								//	//var path = "Content\\Characters\\Kachujin\\Kachujin G Rosales.fbx|$Mesh";
-
-								//	var meshInSpace = character.GetComponent<MeshInSpace>();
-								//	if( meshInSpace != null )
-								//		meshInSpace.Mesh = new ReferenceNoValue( path );
-
-								//	character.IdleAnimation = new ReferenceNoValue( path + "\\$Animations\\$Idle" );
-								//	character.WalkAnimation = new ReferenceNoValue( path + "\\$Animations\\$Walk" );
-								//	character.RunAnimation = new ReferenceNoValue( path + "\\$Animations\\$Run" );
-								//	character.FlyAnimation = new ReferenceNoValue( path + "\\$Animations\\$Fly" );
-								//	character.JumpAnimation = new ReferenceNoValue( path + "\\$Animations\\$Jump" );
-								//	character.LeftTurnAnimation = new ReferenceNoValue( path + "\\$Animations\\$Left Turn" );
-								//	character.RightTurnAnimation = new ReferenceNoValue( path + "\\$Animations\\$Right Turn" );
-								//}
-
 								obj.Enabled = true;
 
 								if( obj is Character character2 )
 								{
 									//Character specific
-
 									character2.SetTransformAndTurnToDirectionInstantly( new Transform( position, Quaternion.FromDirectionZAxisUp( direction ) ) );
-									//character2.SetTransform( new Transform( position ), true );
-									//character2.TurnToDirection( direction.ToVector3F(), true );
 								}
 								//else if( obj is Vehicle vehicle )
 								//{
@@ -212,22 +197,23 @@ namespace NeoAxis
 						}
 					}
 
-					//update camera type
-					switch( walkMode )
-					{
-					case WalkMode.None:
-						gameMode.UseBuiltInCamera = GameMode.BuiltInCameraEnum.None;
-						break;
-					case WalkMode.FirstPerson:
-						gameMode.UseBuiltInCamera = GameMode.BuiltInCameraEnum.FirstPerson;
-						break;
-					case WalkMode.ThirdPerson:
-						gameMode.UseBuiltInCamera = GameMode.BuiltInCameraEnum.ThirdPerson;
-						break;
-					}
+					////update camera type
+					//switch( walkMode )
+					//{
+					//case WalkMode.None:
+					//	gameMode.UseBuiltInCamera = GameMode.BuiltInCameraEnum.None;
+					//	break;
+					//case WalkMode.FirstPerson:
+					//	gameMode.UseBuiltInCamera = GameMode.BuiltInCameraEnum.FirstPerson;
+					//	break;
+					//case WalkMode.ThirdPerson:
+					//	gameMode.UseBuiltInCamera = GameMode.BuiltInCameraEnum.ThirdPerson;
+					//	break;
+					//}
 
-					var viewport = GameMode.PlayScreen?.ParentContainer?.Viewport;
-					viewport?.NotifyInstantCameraMovement();
+					//var viewport = GameMode.PlayScreen?.ParentContainer?.Viewport;
+					//viewport?.KeysAndMouseButtonUpAll();
+					//viewport?.NotifyInstantCameraMovement();
 				}
 			}
 		}

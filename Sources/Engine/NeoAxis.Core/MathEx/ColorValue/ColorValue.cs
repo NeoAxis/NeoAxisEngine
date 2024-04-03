@@ -1,11 +1,8 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
-using System.Diagnostics;
-using System.ComponentModel;
-using System.Drawing.Design;
 using System.Runtime.InteropServices;
 using NeoAxis.Editor;
-using System.Drawing;
+//using System.Drawing;
 using System.Runtime.CompilerServices;
 
 namespace NeoAxis
@@ -117,14 +114,14 @@ namespace NeoAxis
 			Alpha = (float)source.Alpha / 255;
 		}
 
-		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public ColorValue( Color source )
-		{
-			Red = (float)source.R / 255;
-			Green = (float)source.G / 255;
-			Blue = (float)source.B / 255;
-			Alpha = (float)source.A / 255;
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public ColorValue( Color source )
+		//{
+		//	Red = (float)source.R / 255;
+		//	Green = (float)source.G / 255;
+		//	Blue = (float)source.B / 255;
+		//	Alpha = (float)source.A / 255;
+		//}
 
 		//[ShaderGenerationFunction( "{this}.r" )]
 		//public float Red
@@ -659,15 +656,15 @@ namespace NeoAxis
 			return new ColorValuePowered( this );
 		}
 
-		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public Color ToColor()
-		{
-			return Color.FromArgb(
-				(int)MathEx.Clamp( Alpha * 255, 0, 255 ),
-				(int)MathEx.Clamp( Red * 255, 0, 255 ),
-				(int)MathEx.Clamp( Green * 255, 0, 255 ),
-				(int)MathEx.Clamp( Blue * 255, 0, 255 ) );
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public Color ToColor()
+		//{
+		//	return Color.FromArgb(
+		//		(int)MathEx.Clamp( Alpha * 255, 0, 255 ),
+		//		(int)MathEx.Clamp( Red * 255, 0, 255 ),
+		//		(int)MathEx.Clamp( Green * 255, 0, 255 ),
+		//		(int)MathEx.Clamp( Blue * 255, 0, 255 ) );
+		//}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public ColorByte ToColorPacked()
@@ -729,6 +726,16 @@ namespace NeoAxis
 			result.Z = new HalfType( Blue );
 			result.W = new HalfType( Alpha );
 			return result;
+		}
+
+		/// <summary>
+		/// Returns the value of the largest component of the current instance of <see cref="ColorValue"/>.
+		/// </summary>
+		/// <returns>The value of the largest component of the current instance of <see cref="ColorValue"/>.</returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public float MaxComponent()
+		{
+			return Math.Max( Math.Max( Red, Green ), Math.Max( Blue, Alpha ) );
 		}
 	}
 }

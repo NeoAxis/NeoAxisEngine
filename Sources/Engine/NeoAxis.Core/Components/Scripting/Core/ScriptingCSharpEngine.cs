@@ -44,18 +44,27 @@ namespace NeoAxis
 						scriptAssemblyNameResolver = new ScriptAssemblyNameResolver();
 						scriptAssemblyNameResolver.AddSearchDirectory( VirtualFileSystem.Directories.Binaries );
 
+						//{
+						//	var folder = PathUtility.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet5\shared\Microsoft.WindowsDesktop.App\5.0.17" );
+						//	if( Directory.Exists( folder ) )
+						//		scriptAssemblyNameResolver.AddSearchDirectory( folder );
+						//}
 						{
-							var folder = PathUtility.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet\shared\Microsoft.WindowsDesktop.App\3.1.6" );
+							var folder = PathUtility.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet5\shared\Microsoft.NETCore.App\5.0.17" );
 							if( Directory.Exists( folder ) )
 								scriptAssemblyNameResolver.AddSearchDirectory( folder );
 						}
-						{
-							var folder = PathUtility.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet\shared\Microsoft.NETCore.App\3.1.6" );
-							if( Directory.Exists( folder ) )
-								scriptAssemblyNameResolver.AddSearchDirectory( folder );
-						}
-						//scriptAssemblyNameResolver.AddSearchDirectory( Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet\shared\Microsoft.WindowsDesktop.App\3.1.6" ) );
-						//scriptAssemblyNameResolver.AddSearchDirectory( Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet\shared\Microsoft.NETCore.App\3.1.6" ) );
+
+						//{
+						//	var folder = PathUtility.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet\shared\Microsoft.WindowsDesktop.App\3.1.6" );
+						//	if( Directory.Exists( folder ) )
+						//		scriptAssemblyNameResolver.AddSearchDirectory( folder );
+						//}
+						//{
+						//	var folder = PathUtility.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet\shared\Microsoft.NETCore.App\3.1.6" );
+						//	if( Directory.Exists( folder ) )
+						//		scriptAssemblyNameResolver.AddSearchDirectory( folder );
+						//}
 
 						InitReferenceAssemblies();
 						InitUsingNamespaces();

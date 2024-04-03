@@ -2,7 +2,7 @@
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"F4DB533C31C040B98A98FB78DE86F73F\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"CDCAFC612A604332059A8B71DEDA5F9D\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"F4DB533C31C040B98A98FB78DE86F73F\"><KP UN=\"F4DB533C31C040B98A98FB78DE86F73F\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"74B2358CD86F4C7AF2925B9F78248F9C\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP><KP UN=\"CF86492588AE41BC15A0C88B38B4D44B\" S=\"False\"><CPD ObjPath=\"$C# Script 2\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"F4DB533C31C040B98A98FB78DE86F73F\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"CDCAFC612A604332059A8B71DEDA5F9D\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"F4DB533C31C040B98A98FB78DE86F73F\"><KP UN=\"F4DB533C31C040B98A98FB78DE86F73F\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"74B2358CD86F4C7AF2925B9F78248F9C\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP><KP UN=\"CF86492588AE41BC15A0C88B38B4D44B\" S=\"False\"><CPD ObjPath=\"$C# Script 2\" /></KP><KP UN=\"3E2592181BA44A46F6930B2D0FF177B9\" S=\"False\"><CPD ObjPath=\"$C# Script 3\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BackgroundColor = 0.6666667 0.6666667 0.6666667
 	DisplayDevelopmentDataInEditor = False
 	DisplayTextInfo = True
@@ -64,7 +64,7 @@
 			.component NeoAxis.RenderingEffect_MotionBlur
 			{
 				Name = Motion Blur
-				Multiplier = 3
+				Multiplier = 2
 			}
 		}
 	}
@@ -401,6 +401,30 @@
 			}
 		}
 	}
+	.component NeoAxis.MeshInSpace
+	{
+		Enabled = False
+		Name = Spaceship
+		Transform
+		{
+			GetByReference = "root:$C# Script 3\\Method"
+		}
+		Mesh
+		{
+			GetByReference = "Samples\\Starter Content\\Models\\Spaceship\\Spaceship.fbx|$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+	}
 	.component NeoAxis.CSharpScript
 	{
 		Name = C# Script
@@ -413,6 +437,14 @@
 	{
 		Name = C# Script 2
 		Code = "Transform Method()\r\n{\r\n\tvar angle = EngineApp.EngineTime * 1.3;\r\n\tvar offset = new Vector3(Math.Cos(angle), Math.Sin(angle), 0) * 2.0;\r\n\tvar lookTo = new Vector3(11.7374839124827, -0.05177675032439, -15.5092755825092);\r\n\tvar lookAt = Quaternion.LookAt(-offset, new Vector3(0,0,1));\r\n\t\r\n\treturn new Transform( lookTo + offset, lookAt, new Vector3(0.5,0.5,0.5) );\r\n}\r\n"
+		Exit
+		{
+		}
+	}
+	.component NeoAxis.CSharpScript
+	{
+		Name = C# Script 3
+		Code = "Transform Method()\r\n{\r\n\tvar angle = EngineApp.EngineTime * 5;\r\n\tvar rotation = Quaternion.FromRotateByZ(angle);\r\n\r\n\treturn new Transform(new Vector3(11.7374, -0.0517, -16.3071), rotation, new Vector3(0.4, 0.4, 0.4));\r\n}\r\n"
 		Exit
 		{
 		}

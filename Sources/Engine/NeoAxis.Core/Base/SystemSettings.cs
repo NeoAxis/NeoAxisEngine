@@ -12,7 +12,7 @@ using Microsoft.Win32;
 namespace NeoAxis
 {
 	/// <summary>
-	/// Class for getting information about the operating system.
+	/// A class for getting information about the operating system.
 	/// </summary>
 	public static class SystemSettings
 	{
@@ -30,7 +30,9 @@ namespace NeoAxis
 
 		static string cpuDescription;
 
-		//static bool? appContainer;
+		static float dpiScaleCached;
+
+		//static bool? wine;
 
 		///////////////////////////////////////////
 
@@ -42,11 +44,10 @@ namespace NeoAxis
 			Android,
 			iOS,
 			Web,
+			Linux,
 
 			//!!!!
 			Store,
-
-			//!!!!Special,
 		}
 
 		///////////////////////////////////////////
@@ -139,43 +140,43 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
-		static class UWPHelper
-		{
-			const long APPMODEL_ERROR_NO_PACKAGE = 15700L;
+		//static class UWPHelper
+		//{
+		//	const long APPMODEL_ERROR_NO_PACKAGE = 15700L;
 
-			[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-			static extern int GetCurrentPackageFullName( ref int packageFullNameLength, StringBuilder packageFullName );
+		//	[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
+		//	static extern int GetCurrentPackageFullName( ref int packageFullNameLength, StringBuilder packageFullName );
 
-			public static bool IsRunningAsUwp()
-			{
-				if( IsWindows7OrLower )
-				{
-					return false;
-				}
-				else
-				{
-					int length = 0;
-					StringBuilder sb = new StringBuilder( 0 );
-					int result = GetCurrentPackageFullName( ref length, sb );
+		//	public static bool IsRunningAsUwp()
+		//	{
+		//		if( IsWindows7OrLower )
+		//		{
+		//			return false;
+		//		}
+		//		else
+		//		{
+		//			int length = 0;
+		//			StringBuilder sb = new StringBuilder( 0 );
+		//			int result = GetCurrentPackageFullName( ref length, sb );
 
-					sb = new StringBuilder( length );
-					result = GetCurrentPackageFullName( ref length, sb );
+		//			sb = new StringBuilder( length );
+		//			result = GetCurrentPackageFullName( ref length, sb );
 
-					return result != APPMODEL_ERROR_NO_PACKAGE;
-				}
-			}
+		//			return result != APPMODEL_ERROR_NO_PACKAGE;
+		//		}
+		//	}
 
-			private static bool IsWindows7OrLower
-			{
-				get
-				{
-					int versionMajor = Environment.OSVersion.Version.Major;
-					int versionMinor = Environment.OSVersion.Version.Minor;
-					double version = versionMajor + (double)versionMinor / 10;
-					return version <= 6.1;
-				}
-			}
-		}
+		//	private static bool IsWindows7OrLower
+		//	{
+		//		get
+		//		{
+		//			int versionMajor = Environment.OSVersion.Version.Major;
+		//			int versionMinor = Environment.OSVersion.Version.Minor;
+		//			double version = versionMajor + (double)versionMinor / 10;
+		//			return version <= 6.1;
+		//		}
+		//	}
+		//}
 
 		///////////////////////////////////////////
 
@@ -185,8 +186,10 @@ namespace NeoAxis
 			platform = Platform.Android;
 #elif IOS
 			platform = Platform.iOS;
+#elif UWP
+			platform = Platform.UWP;
 #else
-			if( Environment.OSVersion.Platform == PlatformID.Unix )
+			if( RuntimeInformation.IsOSPlatform( OSPlatform.OSX ) ) //if( Environment.OSVersion.Platform == PlatformID.Unix )
 			{
 				platform = Platform.macOS;
 				//try
@@ -196,8 +199,12 @@ namespace NeoAxis
 				//}
 				//catch { }
 			}
-			else if( UWPHelper.IsRunningAsUwp() )
-				platform = Platform.UWP;
+			else if( RuntimeInformation.IsOSPlatform( OSPlatform.Linux ) )
+			{
+				platform = Platform.Linux;
+			}
+			//else if( UWPHelper.IsRunningAsUwp() )
+			//	platform = Platform.UWP;
 			else
 				platform = Platform.Windows;
 #endif
@@ -387,7 +394,7 @@ namespace NeoAxis
 		{
 			var result = new Dictionary<string, string>();
 
-			if( CurrentPlatform == Platform.Windows || CurrentPlatform == Platform.macOS )
+			if( CurrentPlatform == Platform.Windows || CurrentPlatform == Platform.macOS || CurrentPlatform == Platform.Linux )
 			{
 				try
 				{
@@ -432,6 +439,17 @@ namespace NeoAxis
 			get { return mobileDevice; }
 		}
 
+		//!!!!
+		//public static bool TouchInputDevice
+		//{
+		//	get
+		//	{
+		//		//!!!!web
+
+		//		return MobileDevice;
+		//	}
+		//} 
+
 		public static bool AppContainer
 		{
 			get; set;
@@ -465,16 +483,23 @@ namespace NeoAxis
 		//	}
 		//}
 
+		public static bool? DarkModeOverride { get; set; }
+
 		public static bool DarkMode
 		{
 			get
 			{
+				if( DarkModeOverride.HasValue )
+					return DarkModeOverride.Value;
+
 #if !DEPLOY
 				if( CurrentPlatform == Platform.Windows )
 				{
 					try
 					{
-						int res = (int)Registry.GetValue( "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", -1 );
+						int res = (int)PlatformSpecificUtility.Instance.GetRegistryValue( "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", -1 );
+
+						//int res = (int)Registry.GetValue( "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", -1 );
 
 						if( res == 0 )
 							return true;
@@ -505,17 +530,77 @@ namespace NeoAxis
 			}
 		}
 
+		//Windows specific
+		[DllImport( "user32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true )]
+		static extern IntPtr GetDC( IntPtr hWnd );
+		[DllImport( "user32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true )]
+		static extern int ReleaseDC( IntPtr hWnd, IntPtr hDC );
+		[DllImport( "gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true )]
+		static extern int GetDeviceCaps( IntPtr hDC, int nIndex );
+		const int LOGPIXELSY = 90;
+
 		public static float DPIScale
 		{
 			get
 			{
-#if !DEPLOY
-				//!!!!not editor
-				return Editor.EditorAPI.DPIScale;
-#else
+				//if( EngineApp.IsEditor )
+				//	return Editor.EditorAPI.DPIScale;
+				//else
+				//{
+
+				if( CurrentPlatform == Platform.Windows || CurrentPlatform == Platform.UWP )
+				{
+					if( dpiScaleCached == 0 )
+					{
+						try
+						{
+							IntPtr hDC = GetDC( IntPtr.Zero );
+							var height = GetDeviceCaps( hDC, LOGPIXELSY );
+							ReleaseDC( IntPtr.Zero, hDC );
+
+							dpiScaleCached = height / 96.0f;
+						}
+						catch { }
+					}
+
+					if( dpiScaleCached != 0 )
+						return dpiScaleCached;
+				}
+
 				return 1;
-#endif
 			}
 		}
+
+		////Windows specific
+		//[DllImport( "kernel32.dll", CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true )]
+		//internal static extern IntPtr GetProcAddress( IntPtr hModule, string procName );
+		//[DllImport( "kernel32.dll", CharSet = CharSet.Unicode )]
+		//public static extern IntPtr GetModuleHandle( string lpModuleName );
+
+		//public static bool Wine
+		//{
+		//	get
+		//	{
+		//		if( !wine.HasValue )
+		//		{
+		//			var value = false;
+
+		//			try
+		//			{
+		//				if( CurrentPlatform == Platform.Windows || CurrentPlatform == Platform.UWP )
+		//				{
+		//					IntPtr hModule = GetModuleHandle( "ntdll.dll" );
+		//					if( hModule != IntPtr.Zero && GetProcAddress( hModule, "wine_get_version" ) != IntPtr.Zero )
+		//						value = true;
+		//				}
+		//			}
+		//			catch { }
+
+		//			wine = value;
+		//		}
+
+		//		return wine.Value;
+		//	}
+		//}
 	}
 }

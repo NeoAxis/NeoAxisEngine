@@ -19,8 +19,8 @@
 		.component NeoAxis.UIText
 		{
 			Name = Text 2
-			Text = "Current game:"
-			Size = Units 180 30
+			Text = ShooterInGameContextScreen.ui
+			Size = Units 310 30
 			Margin = Units 10 10 0 0
 			EditorScrollPosition = 0 0
 			TextHorizontalAlignment = Left
@@ -29,10 +29,10 @@
 		{
 			Name = Text Game Info
 			Text = "Game info\r\nGame info\r\nGame info"
-			Size = Units 530 590
+			Size = Units 370 630
 			HorizontalAlignment = Stretch
 			VerticalAlignment = Stretch
-			Margin = Units 10 50 10 60
+			Margin = Units 10 50 170 20
 			EditorScrollPosition = 0 0
 			TextHorizontalAlignment = Left
 			TextVerticalAlignment = Top
@@ -44,8 +44,8 @@
 			Name = Button Add Bot Level 1
 			Text = Add Bot Level 1
 			Size = Units 150 40
-			VerticalAlignment = Bottom
-			Margin = Units 10 510 0 10
+			HorizontalAlignment = Right
+			Margin = Units 10 10 10 10
 			EditorScrollPosition = 0 0
 			.component NeoAxis.EventHandlerComponent
 			{
@@ -68,8 +68,8 @@
 			Name = Button Add Bot Level 2
 			Text = Add Bot Level 2
 			Size = Units 150 40
-			VerticalAlignment = Bottom
-			Margin = Units 170 510 0 10
+			HorizontalAlignment = Right
+			Margin = Units 990 60 10 80
 			EditorScrollPosition = 0 0
 			.component NeoAxis.EventHandlerComponent
 			{
@@ -92,8 +92,8 @@
 			Name = Button Add Bot Level 3
 			Text = Add Bot Level 3
 			Size = Units 150 40
-			VerticalAlignment = Bottom
-			Margin = Units 330 510 0 10
+			HorizontalAlignment = Right
+			Margin = Units 330 110 10 10
 			EditorScrollPosition = 0 0
 			.component NeoAxis.EventHandlerComponent
 			{
@@ -116,8 +116,8 @@
 			Name = Button Delete Bot
 			Text = Delete Bot
 			Size = Units 150 40
-			VerticalAlignment = Bottom
-			Margin = Units 490 510 0 10
+			HorizontalAlignment = Right
+			Margin = Units 490 160 10 10
 			EditorScrollPosition = 0 0
 			.component NeoAxis.EventHandlerComponent
 			{
@@ -134,6 +134,16 @@
 				{
 				}
 			}
+		}
+		.component NeoAxis.UIControl
+		{
+			Name = Control
+			Size = Units 100 10
+			HorizontalAlignment = Stretch
+			VerticalAlignment = Bottom
+			Margin = Units 0 350 0 0
+			BackgroundColor = 0.5 0.5 0.5 0.5019608
+			EditorScrollPosition = 0 0
 		}
 	}
 }

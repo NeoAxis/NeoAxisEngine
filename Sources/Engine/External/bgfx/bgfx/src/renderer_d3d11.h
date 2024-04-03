@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2022 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -18,13 +18,16 @@ BX_PRAGMA_DIAGNOSTIC_PUSH();
 BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG("-Wunknown-pragmas" );
 BX_PRAGMA_DIAGNOSTIC_IGNORED_GCC("-Wpragmas");
 BX_PRAGMA_DIAGNOSTIC_IGNORED_MSVC(4005) // warning C4005: '' : macro redefinition
+
 #include <sal.h>
+#include <unknwn.h>
+
 #define D3D11_NO_HELPERS
 #if BX_PLATFORM_LINUX || BX_PLATFORM_WINDOWS
-#   include <d3d11_3.h>
+#   include <dxsdk\include\d3d11_3.h>
 #elif BX_PLATFORM_WINRT
 #   define __D3D10_1SHADER_H__ // BK - not used keep quiet!
-#   include <d3d11_3.h>
+#   include <dxsdk\include\d3d11_3.h>
 #else
 #   if !BGFX_CONFIG_DEBUG
 #      define D3DCOMPILE_NO_DEBUG_AND_ALL_FAST_SEMANTICS 1
@@ -287,7 +290,7 @@ namespace bgfx { namespace d3d11
 		void overrideInternal(uintptr_t _ptr);
 		void update(uint8_t _side, uint8_t _mip, const Rect& _rect, uint16_t _z, uint16_t _depth, uint16_t _pitch, const Memory* _mem);
 		void commit(uint8_t _stage, uint32_t _flags, const float _palette[][4]);
-		void resolve(uint8_t _resolve) const;
+		void resolve(uint8_t _resolve, uint32_t _layer, uint32_t _numLayers, uint32_t _mip) const;
 		TextureHandle getHandle() const;
 		DXGI_FORMAT getSrvFormat() const;
 
@@ -371,7 +374,7 @@ namespace bgfx { namespace d3d11
 
 		void postReset();
 		void preReset();
-		uint32_t begin(uint32_t _resultIdx);
+		uint32_t begin(uint32_t _resultIdx, uint32_t _frameNum);
 		void end(uint32_t _idx);
 		bool update();
 
@@ -381,6 +384,7 @@ namespace bgfx { namespace d3d11
 			ID3D11Query* m_begin;
 			ID3D11Query* m_end;
 			uint32_t     m_resultIdx;
+			uint32_t     m_frameNum;
 			bool         m_ready;
 		};
 
@@ -392,12 +396,14 @@ namespace bgfx { namespace d3d11
 				m_end       = 0;
 				m_frequency = 1;
 				m_pending   = 0;
+				m_frameNum  = 0;
 			}
 
 			uint64_t m_begin;
 			uint64_t m_end;
 			uint64_t m_frequency;
 			uint32_t m_pending;
+			uint32_t m_frameNum;
 		};
 
 		Result m_result[BGFX_CONFIG_MAX_VIEWS+1];

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -40,6 +40,11 @@
 #ifndef BX_CRT_NONE
 #	define BX_CRT_NONE 0
 #endif // BX_CRT_NONE
+
+// Language standard version
+#define BX_LANGUAGE_CPP17 201703L
+#define BX_LANGUAGE_CPP20 202002L
+#define BX_LANGUAGE_CPP23 202207L
 
 // Platform
 #define BX_PLATFORM_ANDROID    0
@@ -154,7 +159,7 @@
 #		define NOMINMAX
 #	endif // NOMINMAX
 //  If _USING_V110_SDK71_ is defined it means we are using the v110_xp or v120_xp toolset.
-#	if defined(_MSC_VER) && (_MSC_VER >= 1700) && (!_USING_V110_SDK71_)
+#	if defined(_MSC_VER) && (_MSC_VER >= 1700) && !defined(_USING_V110_SDK71_)
 #		include <winapifamily.h>
 #	endif // defined(_MSC_VER) && (_MSC_VER >= 1700) && (!_USING_V110_SDK71_)
 #	if !defined(WINAPI_FAMILY) || (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP)
@@ -195,8 +200,9 @@
 #	undef  BX_PLATFORM_OSX
 #	define BX_PLATFORM_OSX __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__
 #elif defined(__EMSCRIPTEN__)
+#	include <emscripten/version.h>
 #	undef  BX_PLATFORM_EMSCRIPTEN
-#	define BX_PLATFORM_EMSCRIPTEN 1
+#	define BX_PLATFORM_EMSCRIPTEN (__EMSCRIPTEN_major__ * 10000 + __EMSCRIPTEN_minor__ * 100 + __EMSCRIPTEN_tiny__)
 #elif defined(__ORBIS__)
 #	undef  BX_PLATFORM_PS4
 #	define BX_PLATFORM_PS4 1
@@ -364,7 +370,7 @@
 #elif BX_PLATFORM_BSD
 #	define BX_PLATFORM_NAME "BSD"
 #elif BX_PLATFORM_EMSCRIPTEN
-#	define BX_PLATFORM_NAME "asm.js "          \
+#	define BX_PLATFORM_NAME "Emscripten "      \
 		BX_STRINGIZE(__EMSCRIPTEN_major__) "." \
 		BX_STRINGIZE(__EMSCRIPTEN_minor__) "." \
 		BX_STRINGIZE(__EMSCRIPTEN_tiny__)
@@ -439,13 +445,15 @@
 #endif // BX_ARCH_
 
 #if defined(__cplusplus)
-#	if __cplusplus < 201402L
+#	if   __cplusplus < BX_LANGUAGE_CPP14
 //!!!!betauser
 //#		error "C++14 standard support is required to build."
-#	elif __cplusplus < 201703L
+#	elif __cplusplus < BX_LANGUAGE_CPP17
 #		define BX_CPP_NAME "C++14"
-#	elif __cplusplus < 201704L
+#	elif __cplusplus < BX_LANGUAGE_CPP20
 #		define BX_CPP_NAME "C++17"
+#	elif __cplusplus < BX_LANGUAGE_CPP23
+#		define BX_CPP_NAME "C++20"
 #	else
 // See: https://gist.github.com/bkaradzic/2e39896bc7d8c34e042b#orthodox-c
 #		define BX_CPP_NAME "C++WayTooModern"
@@ -453,5 +461,32 @@
 #else
 #	define BX_CPP_NAME "C++Unknown"
 #endif // defined(__cplusplus)
+
+#if BX_PLATFORM_OSX && BX_PLATFORM_OSX < 130000
+//#error "Minimum supported macOS version is 13.00.\n"
+#elif BX_PLATFORM_IOS && BX_PLATFORM_IOS < 160000
+//#error "Minimum supported macOS version is 16.00.\n"
+#endif // BX_PLATFORM_OSX < 130000
+
+#if BX_CPU_ENDIAN_BIG
+static_assert(false, "\n\n"
+	"\t** IMPORTANT! **\n\n"
+	"\tThe code was not tested for big endian, and big endian CPU is considered unsupported.\n"
+	"\t\n");
+#endif // BX_CPU_ENDIAN_BIG
+
+#if BX_PLATFORM_BSD   \
+ || BX_PLATFORM_HAIKU \
+ || BX_PLATFORM_HURD
+static_assert(false, "\n\n"
+	"\t** IMPORTANT! **\n\n"
+	"\tYou're compiling for unsupported platform!\n"
+	"\tIf you wish to support this platform, make your own fork, and modify code for _yourself_.\n"
+	"\t\n"
+	"\tDo not submit PR to main repo, it won't be considered, and it would code rot anyway. I have no ability\n"
+	"\tto test on these platforms, and over years there wasn't any serious contributor who wanted to take\n"
+	"\tburden of maintaining code for these platforms.\n"
+	"\t\n");
+#endif // BX_PLATFORM_*
 
 #endif // BX_PLATFORM_H_HEADER_GUARD

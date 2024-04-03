@@ -180,7 +180,7 @@ OGG_FORCEINLINE void* _ogg_calloc2(size_t num, size_t size, char* fileName, int 
    typedef long long int ogg_int64_t;
 
 //!!!!dr
-#elif defined(ANDROID) /* MacOS X Framework build */
+#elif defined(ANDROID) || defined(LINUX) /* MacOS X Framework build */
 
 #  include <sys/types.h>
    typedef int16_t ogg_int16_t;

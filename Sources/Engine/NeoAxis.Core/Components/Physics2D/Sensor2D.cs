@@ -37,7 +37,7 @@ namespace NeoAxis
 		public Reference<SourceDataEnum> SourceData
 		{
 			get { if( _sourceData.BeginGet() ) SourceData = _sourceData.Get( this ); return _sourceData.value; }
-			set { if( _sourceData.BeginSet( ref value ) ) { try { SourceDataChanged?.Invoke( this ); } finally { _sourceData.EndSet(); } } }
+			set { if( _sourceData.BeginSet( this, ref value ) ) { try { SourceDataChanged?.Invoke( this ); } finally { _sourceData.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SourceData"/> property value changes.</summary>
 		public event Action<Sensor2D> SourceDataChanged;
@@ -61,7 +61,7 @@ namespace NeoAxis
 		public Reference<ShapeEnum> Shape
 		{
 			get { if( _shape.BeginGet() ) Shape = _shape.Get( this ); return _shape.value; }
-			set { if( _shape.BeginSet( ref value ) ) { try { ShapeChanged?.Invoke( this ); } finally { _shape.EndSet(); } } }
+			set { if( _shape.BeginSet( this, ref value ) ) { try { ShapeChanged?.Invoke( this ); } finally { _shape.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Shape"/> property value changes.</summary>
 		public event Action<Sensor2D> ShapeChanged;
@@ -75,7 +75,7 @@ namespace NeoAxis
 		public Reference<ObjectInSpace> RayTarget
 		{
 			get { if( _rayTarget.BeginGet() ) RayTarget = _rayTarget.Get( this ); return _rayTarget.value; }
-			set { if( _rayTarget.BeginSet( ref value ) ) { try { RayTargetChanged?.Invoke( this ); } finally { _rayTarget.EndSet(); } } }
+			set { if( _rayTarget.BeginSet( this, ref value ) ) { try { RayTargetChanged?.Invoke( this ); } finally { _rayTarget.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RayTarget"/> property value changes.</summary>
 		public event Action<Sensor2D> RayTargetChanged;
@@ -89,7 +89,7 @@ namespace NeoAxis
 		//public Reference<ObjectInSpace> ConvexSweepTarget
 		//{
 		//	get { if( _convexSweepTarget.BeginGet() ) ConvexSweepTarget = _convexSweepTarget.Get( this ); return _convexSweepTarget.value; }
-		//	set { if( _convexSweepTarget.BeginSet( ref value ) ) { try { ConvexSweepTargetChanged?.Invoke( this ); } finally { _convexSweepTarget.EndSet(); } } }
+		//	set { if( _convexSweepTarget.BeginSet( this, ref value ) ) { try { ConvexSweepTargetChanged?.Invoke( this ); } finally { _convexSweepTarget.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="ConvexSweepTarget"/> property value changes.</summary>
 		//public event Action<Sensor2D> ConvexSweepTargetChanged;
@@ -109,7 +109,7 @@ namespace NeoAxis
 		public Reference<ModeEnum> Mode
 		{
 			get { if( _mode.BeginGet() ) Mode = _mode.Get( this ); return _mode.value; }
-			set { if( _mode.BeginSet( ref value ) ) { try { ModeChanged?.Invoke( this ); } finally { _mode.EndSet(); } } }
+			set { if( _mode.BeginSet( this, ref value ) ) { try { ModeChanged?.Invoke( this ); } finally { _mode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Mode"/> property value changes.</summary>
 		public event Action<Sensor2D> ModeChanged;
@@ -124,7 +124,7 @@ namespace NeoAxis
 		public Reference<Metadata.TypeInfo> FilterByType
 		{
 			get { if( _filterByType.BeginGet() ) FilterByType = _filterByType.Get( this ); return _filterByType.value; }
-			set { if( _filterByType.BeginSet( ref value ) ) { try { FilterByTypeChanged?.Invoke( this ); } finally { _filterByType.EndSet(); } } }
+			set { if( _filterByType.BeginSet( this, ref value ) ) { try { FilterByTypeChanged?.Invoke( this ); } finally { _filterByType.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FilterByType"/> property value changes.</summary>
 		public event Action<Sensor2D> FilterByTypeChanged;
@@ -138,7 +138,7 @@ namespace NeoAxis
 		public Reference<Physics2DCategories> CollisionCategories
 		{
 			get { if( _collisionCategories.BeginGet() ) CollisionCategories = _collisionCategories.Get( this ); return _collisionCategories.value; }
-			set { if( _collisionCategories.BeginSet( ref value ) ) { try { CollisionCategoriesChanged?.Invoke( this ); } finally { _collisionCategories.EndSet(); } } }
+			set { if( _collisionCategories.BeginSet( this, ref value ) ) { try { CollisionCategoriesChanged?.Invoke( this ); } finally { _collisionCategories.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CollisionCategories"/> property value changes.</summary>
 		public event Action<Sensor2D> CollisionCategoriesChanged;
@@ -152,7 +152,7 @@ namespace NeoAxis
 		public Reference<Physics2DCategories> CollidesWith
 		{
 			get { if( _collidesWith.BeginGet() ) CollidesWith = _collidesWith.Get( this ); return _collidesWith.value; }
-			set { if( _collidesWith.BeginSet( ref value ) ) { try { CollidesWithChanged?.Invoke( this ); } finally { _collidesWith.EndSet(); } } }
+			set { if( _collidesWith.BeginSet( this, ref value ) ) { try { CollidesWithChanged?.Invoke( this ); } finally { _collidesWith.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CollidesWith"/> property value changes.</summary>
 		public event Action<Sensor2D> CollidesWithChanged;
@@ -166,7 +166,7 @@ namespace NeoAxis
 		public Reference<int> CollisionGroup
 		{
 			get { if( _collisionGroup.BeginGet() ) CollisionGroup = _collisionGroup.Get( this ); return _collisionGroup.value; }
-			set { if( _collisionGroup.BeginSet( ref value ) ) { try { CollisionGroupChanged?.Invoke( this ); } finally { _collisionGroup.EndSet(); } } }
+			set { if( _collisionGroup.BeginSet( this, ref value ) ) { try { CollisionGroupChanged?.Invoke( this ); } finally { _collisionGroup.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CollisionGroup"/> property value changes.</summary>
 		public event Action<Sensor2D> CollisionGroupChanged;
@@ -180,7 +180,7 @@ namespace NeoAxis
 		public Reference<bool> IgnoreSensors
 		{
 			get { if( _ignoreSensors.BeginGet() ) IgnoreSensors = _ignoreSensors.Get( this ); return _ignoreSensors.value; }
-			set { if( _ignoreSensors.BeginSet( ref value ) ) { try { IgnoreSensorsChanged?.Invoke( this ); } finally { _ignoreSensors.EndSet(); } } }
+			set { if( _ignoreSensors.BeginSet( this, ref value ) ) { try { IgnoreSensorsChanged?.Invoke( this ); } finally { _ignoreSensors.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="IgnoreSensors"/> property value changes.</summary>
 		public event Action<Sensor2D> IgnoreSensorsChanged;
@@ -203,7 +203,7 @@ namespace NeoAxis
 		public Reference<WhenUpdateEnum> WhenUpdate
 		{
 			get { if( _whenUpdate.BeginGet() ) WhenUpdate = _whenUpdate.Get( this ); return _whenUpdate.value; }
-			set { if( _whenUpdate.BeginSet( ref value ) ) { try { WhenUpdateChanged?.Invoke( this ); } finally { _whenUpdate.EndSet(); } } }
+			set { if( _whenUpdate.BeginSet( this, ref value ) ) { try { WhenUpdateChanged?.Invoke( this ); } finally { _whenUpdate.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="WhenUpdate"/> property value changes.</summary>
 		public event Action<Sensor2D> WhenUpdateChanged;
@@ -217,7 +217,7 @@ namespace NeoAxis
 		public Reference<ColorValue> DisplayColor
 		{
 			get { if( _displayColor.BeginGet() ) DisplayColor = _displayColor.Get( this ); return _displayColor.value; }
-			set { if( _displayColor.BeginSet( ref value ) ) { try { DisplayColorChanged?.Invoke( this ); } finally { _displayColor.EndSet(); } } }
+			set { if( _displayColor.BeginSet( this, ref value ) ) { try { DisplayColorChanged?.Invoke( this ); } finally { _displayColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayColor"/> property value changes.</summary>
 		public event Action<Sensor2D> DisplayColorChanged;
@@ -231,7 +231,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayObjects
 		{
 			get { if( _displayObjects.BeginGet() ) DisplayObjects = _displayObjects.Get( this ); return _displayObjects.value; }
-			set { if( _displayObjects.BeginSet( ref value ) ) { try { DisplayObjectsChanged?.Invoke( this ); } finally { _displayObjects.EndSet(); } } }
+			set { if( _displayObjects.BeginSet( this, ref value ) ) { try { DisplayObjectsChanged?.Invoke( this ); } finally { _displayObjects.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayObjects"/> property value changes.</summary>
 		public event Action<Sensor2D> DisplayObjectsChanged;
@@ -245,7 +245,7 @@ namespace NeoAxis
 		public Reference<ColorValue> DisplayObjectsColor
 		{
 			get { if( _displayObjectsColor.BeginGet() ) DisplayObjectsColor = _displayObjectsColor.Get( this ); return _displayObjectsColor.value; }
-			set { if( _displayObjectsColor.BeginSet( ref value ) ) { try { DisplayObjectsColorChanged?.Invoke( this ); } finally { _displayObjectsColor.EndSet(); } } }
+			set { if( _displayObjectsColor.BeginSet( this, ref value ) ) { try { DisplayObjectsColorChanged?.Invoke( this ); } finally { _displayObjectsColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayObjectsColor"/> property value changes.</summary>
 		public event Action<Sensor2D> DisplayObjectsColorChanged;

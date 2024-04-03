@@ -74,13 +74,13 @@ namespace NeoAxis
 			}
 		}
 
-		public static Bitmap GetSplashLogoImage( ProjectSettingsPage_General.EngineSplashScreenStyleEnum style )
-		{
-			if( style == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.WhiteBackground )
-				return Properties.Resources.PoweredBy_WhiteBackground;
-			else
-				return Properties.Resources.PoweredBy_BlackBackground;
-		}
+		//public static Bitmap GetSplashLogoImage( ProjectSettingsPage_General.EngineSplashScreenStyleEnum style )
+		//{
+		//	if( style == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.WhiteBackground )
+		//		return Properties.Resources.PoweredBy_WhiteBackground;
+		//	else
+		//		return Properties.Resources.PoweredBy_BlackBackground;
+		//}
 
 		public static string ReplaceNameWithoutVersion { get; set; } = "";
 		public static string ReplaceNameWithVersion { get; set; } = "";

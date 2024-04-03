@@ -2,7 +2,8 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using Internal.ComponentFactory.Krypton.Toolkit;
+using NeoAxis.Editor;
+//using Internal.ComponentFactory.Krypton.Toolkit;
 
 namespace NeoAxis
 {
@@ -20,7 +21,7 @@ namespace NeoAxis
 		public Reference<double> SceneEditorStepMovement
 		{
 			get { if( _sceneEditorStepMovement.BeginGet() ) SceneEditorStepMovement = _sceneEditorStepMovement.Get( this ); return _sceneEditorStepMovement.value; }
-			set { if( _sceneEditorStepMovement.BeginSet( ref value ) ) { try { SceneEditorStepMovementChanged?.Invoke( this ); } finally { _sceneEditorStepMovement.EndSet(); } } }
+			set { if( _sceneEditorStepMovement.BeginSet( this, ref value ) ) { try { SceneEditorStepMovementChanged?.Invoke( this ); } finally { _sceneEditorStepMovement.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SceneEditorStepMovement"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> SceneEditorStepMovementChanged;
@@ -35,7 +36,7 @@ namespace NeoAxis
 		public Reference<Degree> SceneEditorStepRotation
 		{
 			get { if( _sceneEditorStepRotation.BeginGet() ) SceneEditorStepRotation = _sceneEditorStepRotation.Get( this ); return _sceneEditorStepRotation.value; }
-			set { if( _sceneEditorStepRotation.BeginSet( ref value ) ) { try { SceneEditorStepRotationChanged?.Invoke( this ); } finally { _sceneEditorStepRotation.EndSet(); } } }
+			set { if( _sceneEditorStepRotation.BeginSet( this, ref value ) ) { try { SceneEditorStepRotationChanged?.Invoke( this ); } finally { _sceneEditorStepRotation.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SceneEditorStepRotation"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> SceneEditorStepRotationChanged;
@@ -50,7 +51,7 @@ namespace NeoAxis
 		public Reference<double> SceneEditorStepScaling
 		{
 			get { if( _sceneEditorStepScaling.BeginGet() ) SceneEditorStepScaling = _sceneEditorStepScaling.Get( this ); return _sceneEditorStepScaling.value; }
-			set { if( _sceneEditorStepScaling.BeginSet( ref value ) ) { try { SceneEditorStepScalingChanged?.Invoke( this ); } finally { _sceneEditorStepScaling.EndSet(); } } }
+			set { if( _sceneEditorStepScaling.BeginSet( this, ref value ) ) { try { SceneEditorStepScalingChanged?.Invoke( this ); } finally { _sceneEditorStepScaling.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SceneEditorStepScaling"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> SceneEditorStepScalingChanged;
@@ -70,7 +71,7 @@ namespace NeoAxis
 		public Reference<double> TransformToolRotationSensitivity
 		{
 			get { if( _transformToolRotationSensitivity.BeginGet() ) TransformToolRotationSensitivity = _transformToolRotationSensitivity.Get( this ); return _transformToolRotationSensitivity.value; }
-			set { if( _transformToolRotationSensitivity.BeginSet( ref value ) ) { try { TransformToolRotationSensitivityChanged?.Invoke( this ); } finally { _transformToolRotationSensitivity.EndSet(); } } }
+			set { if( _transformToolRotationSensitivity.BeginSet( this, ref value ) ) { try { TransformToolRotationSensitivityChanged?.Invoke( this ); } finally { _transformToolRotationSensitivity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TransformToolRotationSensitivity"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> TransformToolRotationSensitivityChanged;
@@ -87,7 +88,7 @@ namespace NeoAxis
 		public Reference<int> TransformToolSize
 		{
 			get { if( _transformToolSize.BeginGet() ) TransformToolSize = _transformToolSize.Get( this ); return _transformToolSize.value; }
-			set { if( _transformToolSize.BeginSet( ref value ) ) { try { TransformToolSizeChanged?.Invoke( this ); } finally { _transformToolSize.EndSet(); } } }
+			set { if( _transformToolSize.BeginSet( this, ref value ) ) { try { TransformToolSizeChanged?.Invoke( this ); } finally { _transformToolSize.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TransformToolSize"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> TransformToolSizeChanged;
@@ -98,16 +99,14 @@ namespace NeoAxis
 			get
 			{
 				var result = (double)TransformToolSize;
-#if !DEPLOY
 				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
 				{
 					try
 					{
-						result *= DpiHelper.Default.DpiScaleFactor;
+						result *= SystemSettings.DPIScale;//EditorAPI.DPIScale;//DpiHelper.Default.DpiScaleFactor;
 					}
 					catch { }
 				}
-#endif
 				return result;
 			}
 		}
@@ -124,7 +123,7 @@ namespace NeoAxis
 		public Reference<double> TransformToolLineThickness
 		{
 			get { if( _transformToolLineThickness.BeginGet() ) TransformToolLineThickness = _transformToolLineThickness.Get( this ); return _transformToolLineThickness.value; }
-			set { if( _transformToolLineThickness.BeginSet( ref value ) ) { try { TransformToolLineThicknessChanged?.Invoke( this ); } finally { _transformToolLineThickness.EndSet(); } } }
+			set { if( _transformToolLineThickness.BeginSet( this, ref value ) ) { try { TransformToolLineThicknessChanged?.Invoke( this ); } finally { _transformToolLineThickness.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TransformToolLineThickness"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> TransformToolLineThicknessChanged;
@@ -135,16 +134,14 @@ namespace NeoAxis
 			get
 			{
 				var result = (double)TransformToolLineThickness;
-#if !DEPLOY
 				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
 				{
 					try
 					{
-						result *= DpiHelper.Default.DpiScaleFactor;
+						result *= SystemSettings.DPIScale;//EditorAPI.DPIScale;//DpiHelper.Default.DpiScaleFactor;
 					}
 					catch { }
 				}
-#endif
 				return result;
 			}
 		}
@@ -161,7 +158,7 @@ namespace NeoAxis
 		public Reference<double> TransformToolShadowIntensity
 		{
 			get { if( _transformToolShadowIntensity.BeginGet() ) TransformToolShadowIntensity = _transformToolShadowIntensity.Get( this ); return _transformToolShadowIntensity.value; }
-			set { if( _transformToolShadowIntensity.BeginSet( ref value ) ) { try { TransformToolShadowIntensityChanged?.Invoke( this ); } finally { _transformToolShadowIntensity.EndSet(); } } }
+			set { if( _transformToolShadowIntensity.BeginSet( this, ref value ) ) { try { TransformToolShadowIntensityChanged?.Invoke( this ); } finally { _transformToolShadowIntensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TransformToolShadowIntensity"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> TransformToolShadowIntensityChanged;
@@ -180,7 +177,7 @@ namespace NeoAxis
 		public Reference<double> CameraKeyboardMovementSpeedNormal
 		{
 			get { if( _cameraKeyboardMovementSpeedNormal.BeginGet() ) CameraKeyboardMovementSpeedNormal = _cameraKeyboardMovementSpeedNormal.Get( this ); return _cameraKeyboardMovementSpeedNormal.value; }
-			set { if( _cameraKeyboardMovementSpeedNormal.BeginSet( ref value ) ) { try { CameraKeyboardMovementSpeedNormalChanged?.Invoke( this ); } finally { _cameraKeyboardMovementSpeedNormal.EndSet(); } } }
+			set { if( _cameraKeyboardMovementSpeedNormal.BeginSet( this, ref value ) ) { try { CameraKeyboardMovementSpeedNormalChanged?.Invoke( this ); } finally { _cameraKeyboardMovementSpeedNormal.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CameraKeyboardMovementSpeedNormal"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> CameraKeyboardMovementSpeedNormalChanged;
@@ -197,7 +194,7 @@ namespace NeoAxis
 		public Reference<double> CameraKeyboardMovementSpeedFast
 		{
 			get { if( _cameraKeyboardMovementSpeedFast.BeginGet() ) CameraKeyboardMovementSpeedFast = _cameraKeyboardMovementSpeedFast.Get( this ); return _cameraKeyboardMovementSpeedFast.value; }
-			set { if( _cameraKeyboardMovementSpeedFast.BeginSet( ref value ) ) { try { CameraKeyboardMovementSpeedFastChanged?.Invoke( this ); } finally { _cameraKeyboardMovementSpeedFast.EndSet(); } } }
+			set { if( _cameraKeyboardMovementSpeedFast.BeginSet( this, ref value ) ) { try { CameraKeyboardMovementSpeedFastChanged?.Invoke( this ); } finally { _cameraKeyboardMovementSpeedFast.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CameraKeyboardMovementSpeedFast"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> CameraKeyboardMovementSpeedFastChanged;
@@ -214,7 +211,7 @@ namespace NeoAxis
 		public Reference<Degree> CameraKeyboardRotationSpeedNormal
 		{
 			get { if( _cameraKeyboardRotationSpeedNormal.BeginGet() ) CameraKeyboardRotationSpeedNormal = _cameraKeyboardRotationSpeedNormal.Get( this ); return _cameraKeyboardRotationSpeedNormal.value; }
-			set { if( _cameraKeyboardRotationSpeedNormal.BeginSet( ref value ) ) { try { CameraKeyboardRotationSpeedNormalChanged?.Invoke( this ); } finally { _cameraKeyboardRotationSpeedNormal.EndSet(); } } }
+			set { if( _cameraKeyboardRotationSpeedNormal.BeginSet( this, ref value ) ) { try { CameraKeyboardRotationSpeedNormalChanged?.Invoke( this ); } finally { _cameraKeyboardRotationSpeedNormal.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CameraKeyboardRotationSpeedNormal"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> CameraKeyboardRotationSpeedNormalChanged;
@@ -231,7 +228,7 @@ namespace NeoAxis
 		public Reference<Degree> CameraKeyboardRotationSpeedFast
 		{
 			get { if( _cameraKeyboardRotationSpeedFast.BeginGet() ) CameraKeyboardRotationSpeedFast = _cameraKeyboardRotationSpeedFast.Get( this ); return _cameraKeyboardRotationSpeedFast.value; }
-			set { if( _cameraKeyboardRotationSpeedFast.BeginSet( ref value ) ) { try { CameraKeyboardRotationSpeedFastChanged?.Invoke( this ); } finally { _cameraKeyboardRotationSpeedFast.EndSet(); } } }
+			set { if( _cameraKeyboardRotationSpeedFast.BeginSet( this, ref value ) ) { try { CameraKeyboardRotationSpeedFastChanged?.Invoke( this ); } finally { _cameraKeyboardRotationSpeedFast.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CameraKeyboardRotationSpeedFast"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> CameraKeyboardRotationSpeedFastChanged;
@@ -248,7 +245,7 @@ namespace NeoAxis
 		public Reference<double> CameraMouseMovementSensitivityNormal
 		{
 			get { if( _cameraMouseMovementSensitivityNormal.BeginGet() ) CameraMouseMovementSensitivityNormal = _cameraMouseMovementSensitivityNormal.Get( this ); return _cameraMouseMovementSensitivityNormal.value; }
-			set { if( _cameraMouseMovementSensitivityNormal.BeginSet( ref value ) ) { try { CameraMouseMovementSensitivityNormalChanged?.Invoke( this ); } finally { _cameraMouseMovementSensitivityNormal.EndSet(); } } }
+			set { if( _cameraMouseMovementSensitivityNormal.BeginSet( this, ref value ) ) { try { CameraMouseMovementSensitivityNormalChanged?.Invoke( this ); } finally { _cameraMouseMovementSensitivityNormal.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CameraMouseMovementSensitivityNormal"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> CameraMouseMovementSensitivityNormalChanged;
@@ -265,7 +262,7 @@ namespace NeoAxis
 		public Reference<double> CameraMouseMovementSensitivityFast
 		{
 			get { if( _cameraMouseMovementSensitivityFast.BeginGet() ) CameraMouseMovementSensitivityFast = _cameraMouseMovementSensitivityFast.Get( this ); return _cameraMouseMovementSensitivityFast.value; }
-			set { if( _cameraMouseMovementSensitivityFast.BeginSet( ref value ) ) { try { CameraMouseMovementSensitivityFastChanged?.Invoke( this ); } finally { _cameraMouseMovementSensitivityFast.EndSet(); } } }
+			set { if( _cameraMouseMovementSensitivityFast.BeginSet( this, ref value ) ) { try { CameraMouseMovementSensitivityFastChanged?.Invoke( this ); } finally { _cameraMouseMovementSensitivityFast.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CameraMouseMovementSensitivityFast"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> CameraMouseMovementSensitivityFastChanged;
@@ -282,7 +279,7 @@ namespace NeoAxis
 		public Reference<double> CameraMouseRotationSensitivityHorizontal
 		{
 			get { if( _cameraMouseRotationSensitivityHorizontal.BeginGet() ) CameraMouseRotationSensitivityHorizontal = _cameraMouseRotationSensitivityHorizontal.Get( this ); return _cameraMouseRotationSensitivityHorizontal.value; }
-			set { if( _cameraMouseRotationSensitivityHorizontal.BeginSet( ref value ) ) { try { CameraMouseRotationSensitivityHorizontalChanged?.Invoke( this ); } finally { _cameraMouseRotationSensitivityHorizontal.EndSet(); } } }
+			set { if( _cameraMouseRotationSensitivityHorizontal.BeginSet( this, ref value ) ) { try { CameraMouseRotationSensitivityHorizontalChanged?.Invoke( this ); } finally { _cameraMouseRotationSensitivityHorizontal.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CameraMouseRotationSensitivityHorizontal"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> CameraMouseRotationSensitivityHorizontalChanged;
@@ -296,7 +293,7 @@ namespace NeoAxis
 		//public Reference<double> CameraMouseRotationSensitivityHorizontalNormal
 		//{
 		//	get { if( _cameraMouseRotationSensitivityHorizontalNormal.BeginGet() ) CameraMouseRotationSensitivityHorizontalNormal = _cameraMouseRotationSensitivityHorizontalNormal.Get( this ); return _cameraMouseRotationSensitivityHorizontalNormal.value; }
-		//	set { if( _cameraMouseRotationSensitivityHorizontalNormal.BeginSet( ref value ) ) { try { CameraMouseRotationSensitivityHorizontalNormalChanged?.Invoke( this ); } finally { _cameraMouseRotationSensitivityHorizontalNormal.EndSet(); } } }
+		//	set { if( _cameraMouseRotationSensitivityHorizontalNormal.BeginSet( this, ref value ) ) { try { CameraMouseRotationSensitivityHorizontalNormalChanged?.Invoke( this ); } finally { _cameraMouseRotationSensitivityHorizontalNormal.EndSet(); } } }
 		//}
 		//public event Action<ProjectSettingsComponentPage_SceneEditor> CameraMouseRotationSensitivityHorizontalNormalChanged;
 
@@ -309,7 +306,7 @@ namespace NeoAxis
 		//public Reference<double> CameraMouseRotationSensitivityHorizontalFast
 		//{
 		//	get { if( _cameraMouseRotationSensitivityHorizontalFast.BeginGet() ) CameraMouseRotationSensitivityHorizontalFast = _cameraMouseRotationSensitivityHorizontalFast.Get( this ); return _cameraMouseRotationSensitivityHorizontalFast.value; }
-		//	set { if( _cameraMouseRotationSensitivityHorizontalFast.BeginSet( ref value ) ) { try { CameraMouseRotationSensitivityHorizontalFastChanged?.Invoke( this ); } finally { _cameraMouseRotationSensitivityHorizontalFast.EndSet(); } } }
+		//	set { if( _cameraMouseRotationSensitivityHorizontalFast.BeginSet( this, ref value ) ) { try { CameraMouseRotationSensitivityHorizontalFastChanged?.Invoke( this ); } finally { _cameraMouseRotationSensitivityHorizontalFast.EndSet(); } } }
 		//}
 		//public event Action<ProjectSettingsComponentPage_SceneEditor> CameraMouseRotationSensitivityHorizontalFastChanged;
 
@@ -325,7 +322,7 @@ namespace NeoAxis
 		public Reference<double> CameraMouseRotationSensitivityVertical
 		{
 			get { if( _cameraMouseRotationSensitivityVertical.BeginGet() ) CameraMouseRotationSensitivityVertical = _cameraMouseRotationSensitivityVertical.Get( this ); return _cameraMouseRotationSensitivityVertical.value; }
-			set { if( _cameraMouseRotationSensitivityVertical.BeginSet( ref value ) ) { try { CameraMouseRotationSensitivityVerticalChanged?.Invoke( this ); } finally { _cameraMouseRotationSensitivityVertical.EndSet(); } } }
+			set { if( _cameraMouseRotationSensitivityVertical.BeginSet( this, ref value ) ) { try { CameraMouseRotationSensitivityVerticalChanged?.Invoke( this ); } finally { _cameraMouseRotationSensitivityVertical.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CameraMouseRotationSensitivityVertical"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> CameraMouseRotationSensitivityVerticalChanged;
@@ -339,7 +336,7 @@ namespace NeoAxis
 		//public Reference<double> CameraMouseRotationSensitivityVerticalNormal
 		//{
 		//	get { if( _cameraMouseRotationSensitivityVerticalNormal.BeginGet() ) CameraMouseRotationSensitivityVerticalNormal = _cameraMouseRotationSensitivityVerticalNormal.Get( this ); return _cameraMouseRotationSensitivityVerticalNormal.value; }
-		//	set { if( _cameraMouseRotationSensitivityVerticalNormal.BeginSet( ref value ) ) { try { CameraMouseRotationSensitivityVerticalNormalChanged?.Invoke( this ); } finally { _cameraMouseRotationSensitivityVerticalNormal.EndSet(); } } }
+		//	set { if( _cameraMouseRotationSensitivityVerticalNormal.BeginSet( this, ref value ) ) { try { CameraMouseRotationSensitivityVerticalNormalChanged?.Invoke( this ); } finally { _cameraMouseRotationSensitivityVerticalNormal.EndSet(); } } }
 		//}
 		//public event Action<ProjectSettingsComponentPage_SceneEditor> CameraMouseRotationSensitivityVerticalNormalChanged;
 
@@ -352,7 +349,7 @@ namespace NeoAxis
 		//public Reference<double> CameraMouseRotationSensitivityVerticalFast
 		//{
 		//	get { if( _cameraMouseRotationSensitivityVerticalFast.BeginGet() ) CameraMouseRotationSensitivityVerticalFast = _cameraMouseRotationSensitivityVerticalFast.Get( this ); return _cameraMouseRotationSensitivityVerticalFast.value; }
-		//	set { if( _cameraMouseRotationSensitivityVerticalFast.BeginSet( ref value ) ) { try { CameraMouseRotationSensitivityVerticalFastChanged?.Invoke( this ); } finally { _cameraMouseRotationSensitivityVerticalFast.EndSet(); } } }
+		//	set { if( _cameraMouseRotationSensitivityVerticalFast.BeginSet( this, ref value ) ) { try { CameraMouseRotationSensitivityVerticalFastChanged?.Invoke( this ); } finally { _cameraMouseRotationSensitivityVerticalFast.EndSet(); } } }
 		//}
 		//public event Action<ProjectSettingsComponentPage_SceneEditor> CameraMouseRotationSensitivityVerticalFastChanged;
 
@@ -368,7 +365,7 @@ namespace NeoAxis
 		public Reference<double> CameraMouseTrackMovementSensitivityNormal
 		{
 			get { if( _cameraMouseTrackMovementSensitivityNormal.BeginGet() ) CameraMouseTrackMovementSensitivityNormal = _cameraMouseTrackMovementSensitivityNormal.Get( this ); return _cameraMouseTrackMovementSensitivityNormal.value; }
-			set { if( _cameraMouseTrackMovementSensitivityNormal.BeginSet( ref value ) ) { try { CameraMouseTrackMovementSensitivityNormalChanged?.Invoke( this ); } finally { _cameraMouseTrackMovementSensitivityNormal.EndSet(); } } }
+			set { if( _cameraMouseTrackMovementSensitivityNormal.BeginSet( this, ref value ) ) { try { CameraMouseTrackMovementSensitivityNormalChanged?.Invoke( this ); } finally { _cameraMouseTrackMovementSensitivityNormal.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CameraMouseTrackMovementSensitivityNormal"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> CameraMouseTrackMovementSensitivityNormalChanged;
@@ -383,7 +380,7 @@ namespace NeoAxis
 		public Reference<double> CameraMouseTrackMovementSensitivityFast
 		{
 			get { if( _cameraMouseTrackMovementSensitivityFast.BeginGet() ) CameraMouseTrackMovementSensitivityFast = _cameraMouseTrackMovementSensitivityFast.Get( this ); return _cameraMouseTrackMovementSensitivityFast.value; }
-			set { if( _cameraMouseTrackMovementSensitivityFast.BeginSet( ref value ) ) { try { CameraMouseTrackMovementSensitivityFastChanged?.Invoke( this ); } finally { _cameraMouseTrackMovementSensitivityFast.EndSet(); } } }
+			set { if( _cameraMouseTrackMovementSensitivityFast.BeginSet( this, ref value ) ) { try { CameraMouseTrackMovementSensitivityFastChanged?.Invoke( this ); } finally { _cameraMouseTrackMovementSensitivityFast.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CameraMouseTrackMovementSensitivityFast"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> CameraMouseTrackMovementSensitivityFastChanged;
@@ -399,7 +396,7 @@ namespace NeoAxis
 		public Reference<double> CameraMouseWheelMovementSensitivityNormal
 		{
 			get { if( _cameraMouseWheelMovementSensitivityNormal.BeginGet() ) CameraMouseWheelMovementSensitivityNormal = _cameraMouseWheelMovementSensitivityNormal.Get( this ); return _cameraMouseWheelMovementSensitivityNormal.value; }
-			set { if( _cameraMouseWheelMovementSensitivityNormal.BeginSet( ref value ) ) { try { CameraMouseWheelMovementSensitivityNormalChanged?.Invoke( this ); } finally { _cameraMouseWheelMovementSensitivityNormal.EndSet(); } } }
+			set { if( _cameraMouseWheelMovementSensitivityNormal.BeginSet( this, ref value ) ) { try { CameraMouseWheelMovementSensitivityNormalChanged?.Invoke( this ); } finally { _cameraMouseWheelMovementSensitivityNormal.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CameraMouseWheelMovementSensitivityNormal"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> CameraMouseWheelMovementSensitivityNormalChanged;
@@ -415,7 +412,7 @@ namespace NeoAxis
 		public Reference<double> CameraMouseWheelMovementSensitivityFast
 		{
 			get { if( _cameraMouseWheelMovementSensitivityFast.BeginGet() ) CameraMouseWheelMovementSensitivityFast = _cameraMouseWheelMovementSensitivityFast.Get( this ); return _cameraMouseWheelMovementSensitivityFast.value; }
-			set { if( _cameraMouseWheelMovementSensitivityFast.BeginSet( ref value ) ) { try { CameraMouseWheelMovementSensitivityFastChanged?.Invoke( this ); } finally { _cameraMouseWheelMovementSensitivityFast.EndSet(); } } }
+			set { if( _cameraMouseWheelMovementSensitivityFast.BeginSet( this, ref value ) ) { try { CameraMouseWheelMovementSensitivityFastChanged?.Invoke( this ); } finally { _cameraMouseWheelMovementSensitivityFast.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CameraMouseWheelMovementSensitivityFast"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> CameraMouseWheelMovementSensitivityFastChanged;
@@ -433,7 +430,7 @@ namespace NeoAxis
 		public Reference<double> SceneEditorSelectByDoubleClickRadius
 		{
 			get { if( _sceneEditorSelectByDoubleClickRadius.BeginGet() ) SceneEditorSelectByDoubleClickRadius = _sceneEditorSelectByDoubleClickRadius.Get( this ); return _sceneEditorSelectByDoubleClickRadius.value; }
-			set { if( _sceneEditorSelectByDoubleClickRadius.BeginSet( ref value ) ) { try { SceneEditorSelectByDoubleClickRadiusChanged?.Invoke( this ); } finally { _sceneEditorSelectByDoubleClickRadius.EndSet(); } } }
+			set { if( _sceneEditorSelectByDoubleClickRadius.BeginSet( this, ref value ) ) { try { SceneEditorSelectByDoubleClickRadiusChanged?.Invoke( this ); } finally { _sceneEditorSelectByDoubleClickRadius.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SceneEditorSelectByDoubleClickRadius"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> SceneEditorSelectByDoubleClickRadiusChanged;
@@ -448,7 +445,7 @@ namespace NeoAxis
 		public Reference<bool> SceneEditorSelectOutlineEffectEnabled
 		{
 			get { if( _sceneEditorSelectOutlineEffectEnabled.BeginGet() ) SceneEditorSelectOutlineEffectEnabled = _sceneEditorSelectOutlineEffectEnabled.Get( this ); return _sceneEditorSelectOutlineEffectEnabled.value; }
-			set { if( _sceneEditorSelectOutlineEffectEnabled.BeginSet( ref value ) ) { try { SceneEditorSelectOutlineEffectEnabledChanged?.Invoke( this ); } finally { _sceneEditorSelectOutlineEffectEnabled.EndSet(); } } }
+			set { if( _sceneEditorSelectOutlineEffectEnabled.BeginSet( this, ref value ) ) { try { SceneEditorSelectOutlineEffectEnabledChanged?.Invoke( this ); } finally { _sceneEditorSelectOutlineEffectEnabled.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SceneEditorSelectOutlineEffectEnabled"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> SceneEditorSelectOutlineEffectEnabledChanged;
@@ -464,7 +461,7 @@ namespace NeoAxis
 		public Reference<double> SceneEditorSelectOutlineEffectScale
 		{
 			get { if( _sceneEditorSelectOutlineEffectScale.BeginGet() ) SceneEditorSelectOutlineEffectScale = _sceneEditorSelectOutlineEffectScale.Get( this ); return _sceneEditorSelectOutlineEffectScale.value; }
-			set { if( _sceneEditorSelectOutlineEffectScale.BeginSet( ref value ) ) { try { SceneEditorSelectOutlineEffectScaleChanged?.Invoke( this ); } finally { _sceneEditorSelectOutlineEffectScale.EndSet(); } } }
+			set { if( _sceneEditorSelectOutlineEffectScale.BeginSet( this, ref value ) ) { try { SceneEditorSelectOutlineEffectScaleChanged?.Invoke( this ); } finally { _sceneEditorSelectOutlineEffectScale.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SceneEditorSelectOutlineEffectScale"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> SceneEditorSelectOutlineEffectScaleChanged;
@@ -481,7 +478,7 @@ namespace NeoAxis
 		public Reference<double> ScreenLabelMaxSize
 		{
 			get { if( _screenLabelMaxSize.BeginGet() ) ScreenLabelMaxSize = _screenLabelMaxSize.Get( this ); return _screenLabelMaxSize.value; }
-			set { if( _screenLabelMaxSize.BeginSet( ref value ) ) { try { ScreenLabelMaxSizeChanged?.Invoke( this ); } finally { _screenLabelMaxSize.EndSet(); } } }
+			set { if( _screenLabelMaxSize.BeginSet( this, ref value ) ) { try { ScreenLabelMaxSizeChanged?.Invoke( this ); } finally { _screenLabelMaxSize.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ScreenLabelMaxSize"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> ScreenLabelMaxSizeChanged;
@@ -496,7 +493,7 @@ namespace NeoAxis
 		public Reference<double> ScreenLabelMinSizeFactor
 		{
 			get { if( _screenLabelMinSizeFactor.BeginGet() ) ScreenLabelMinSizeFactor = _screenLabelMinSizeFactor.Get( this ); return _screenLabelMinSizeFactor.value; }
-			set { if( _screenLabelMinSizeFactor.BeginSet( ref value ) ) { try { ScreenLabelMinSizeFactorChanged?.Invoke( this ); } finally { _screenLabelMinSizeFactor.EndSet(); } } }
+			set { if( _screenLabelMinSizeFactor.BeginSet( this, ref value ) ) { try { ScreenLabelMinSizeFactorChanged?.Invoke( this ); } finally { _screenLabelMinSizeFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ScreenLabelMinSizeFactor"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> ScreenLabelMinSizeFactorChanged;
@@ -511,7 +508,7 @@ namespace NeoAxis
 		public Reference<double> ScreenLabelMaxDistance
 		{
 			get { if( _screenLabelMaxDistance.BeginGet() ) ScreenLabelMaxDistance = _screenLabelMaxDistance.Get( this ); return _screenLabelMaxDistance.value; }
-			set { if( _screenLabelMaxDistance.BeginSet( ref value ) ) { try { ScreenLabelMaxDistanceChanged?.Invoke( this ); } finally { _screenLabelMaxDistance.EndSet(); } } }
+			set { if( _screenLabelMaxDistance.BeginSet( this, ref value ) ) { try { ScreenLabelMaxDistanceChanged?.Invoke( this ); } finally { _screenLabelMaxDistance.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ScreenLabelMaxDistance"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> ScreenLabelMaxDistanceChanged;
@@ -525,7 +522,7 @@ namespace NeoAxis
 		public Reference<ColorValue> ScreenLabelColor
 		{
 			get { if( _screenLabelColor.BeginGet() ) ScreenLabelColor = _screenLabelColor.Get( this ); return _screenLabelColor.value; }
-			set { if( _screenLabelColor.BeginSet( ref value ) ) { try { ScreenLabelColorChanged?.Invoke( this ); } finally { _screenLabelColor.EndSet(); } } }
+			set { if( _screenLabelColor.BeginSet( this, ref value ) ) { try { ScreenLabelColorChanged?.Invoke( this ); } finally { _screenLabelColor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ScreenLabelColor"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> ScreenLabelColorChanged;
@@ -539,7 +536,7 @@ namespace NeoAxis
 		public Reference<bool> ScreenLabelDisplayIcons
 		{
 			get { if( _screenLabelDisplayIcons.BeginGet() ) ScreenLabelDisplayIcons = _screenLabelDisplayIcons.Get( this ); return _screenLabelDisplayIcons.value; }
-			set { if( _screenLabelDisplayIcons.BeginSet( ref value ) ) { try { ScreenLabelDisplayIconsChanged?.Invoke( this ); } finally { _screenLabelDisplayIcons.EndSet(); } } }
+			set { if( _screenLabelDisplayIcons.BeginSet( this, ref value ) ) { try { ScreenLabelDisplayIconsChanged?.Invoke( this ); } finally { _screenLabelDisplayIcons.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ScreenLabelDisplayIcons"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_SceneEditor> ScreenLabelDisplayIconsChanged;

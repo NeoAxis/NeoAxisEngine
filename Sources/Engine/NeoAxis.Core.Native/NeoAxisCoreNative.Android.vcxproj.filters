@@ -420,9 +420,6 @@
     <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\tokenize.c">
       <Filter>ogg</Filter>
     </ClCompile>
-    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\tone.c">
-      <Filter>ogg</Filter>
-    </ClCompile>
     <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\vorbisenc.c">
       <Filter>ogg</Filter>
     </ClCompile>
@@ -478,9 +475,6 @@
       <Filter>Physics\Jolt</Filter>
     </ClCompile>
     <ClCompile Include="Jolt\Geometry\OrientedBox.cpp">
-      <Filter>Physics\Jolt</Filter>
-    </ClCompile>
-    <ClCompile Include="Jolt\Math\UVec4.cpp">
       <Filter>Physics\Jolt</Filter>
     </ClCompile>
     <ClCompile Include="Jolt\Math\Vec3.cpp">
@@ -820,6 +814,15 @@
       <Filter>Physics\Jolt</Filter>
     </ClCompile>
     <ClCompile Include="Jolt\Physics\LargeIslandSplitter.cpp">
+      <Filter>Physics\Jolt</Filter>
+    </ClCompile>
+    <ClCompile Include="Jolt\Physics\Constraints\SpringSettings.cpp">
+      <Filter>Physics\Jolt</Filter>
+    </ClCompile>
+    <ClCompile Include="Jolt\Core\JobSystemSingleThreaded.cpp">
+      <Filter>Physics\Jolt</Filter>
+    </ClCompile>
+    <ClCompile Include="Jolt\Physics\Vehicle\MotorcycleController.cpp">
       <Filter>Physics\Jolt</Filter>
     </ClCompile>
   </ItemGroup>
@@ -2088,6 +2091,21 @@
       <Filter>Physics\Jolt</Filter>
     </ClInclude>
     <ClInclude Include="Jolt\Physics\LargeIslandSplitter.h">
+      <Filter>Physics\Jolt</Filter>
+    </ClInclude>
+    <ClInclude Include="Jolt\Physics\EPhysicsUpdateError.h">
+      <Filter>Physics\Jolt</Filter>
+    </ClInclude>
+    <ClInclude Include="Jolt\Core\JobSystemSingleThreaded.h">
+      <Filter>Physics\Jolt</Filter>
+    </ClInclude>
+    <ClInclude Include="Jolt\Physics\Body\AllowedDOFs.h">
+      <Filter>Physics\Jolt</Filter>
+    </ClInclude>
+    <ClInclude Include="Jolt\Physics\Constraints\SpringSettings.h">
+      <Filter>Physics\Jolt</Filter>
+    </ClInclude>
+    <ClInclude Include="Jolt\Physics\Vehicle\MotorcycleController.h">
       <Filter>Physics\Jolt</Filter>
     </ClInclude>
   </ItemGroup>

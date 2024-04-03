@@ -96,7 +96,8 @@ struct CustomDataTypeDescription {
         *           other (like CD_ORCO, ...) uses arrays of rawtypes or even arrays of Structures
         *           use a special readfunction for that cases
         */
-std::array<CustomDataTypeDescription, CD_NUMTYPES> customDataTypeDescriptions = { { DECL_STRUCT_CUSTOMDATATYPEDESCRIPTION(MVert),
+static std::array<CustomDataTypeDescription, CD_NUMTYPES> customDataTypeDescriptions = { {
+        DECL_STRUCT_CUSTOMDATATYPEDESCRIPTION(MVert),
         DECL_UNSUPPORTED_CUSTOMDATATYPEDESCRIPTION,
         DECL_UNSUPPORTED_CUSTOMDATATYPEDESCRIPTION,
         DECL_STRUCT_CUSTOMDATATYPEDESCRIPTION(MEdge),
@@ -149,7 +150,7 @@ bool isValidCustomDataType(const int cdtype) {
 
 bool readCustomData(std::shared_ptr<ElemBase> &out, const int cdtype, const size_t cnt, const FileDatabase &db) {
     if (!isValidCustomDataType(cdtype)) {
-        throw Error((Formatter::format(), "CustomData.type ", cdtype, " out of index"));
+        throw Error("CustomData.type ", cdtype, " out of index");
     }
 
     const CustomDataTypeDescription cdtd = customDataTypeDescriptions[cdtype];

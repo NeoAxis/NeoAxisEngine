@@ -25,7 +25,7 @@ namespace NeoAxis
 			NetworkNode.ConnectedNode connectedNode;
 
 			long botUserID;
-			string botUsername;
+			string botUsername = "";
 
 			//
 
@@ -91,14 +91,17 @@ namespace NeoAxis
 				get { return connectedNode == null; }
 			}
 
+			//custom data
 			public object AnyData { get; set; }
+			public string DirectServerAvatar { get; set; } = "";
+			public string ReferenceToObjectControlledByPlayer { get; set; } = "";
 		}
 
 		///////////////////////////////////////////
 
 		public delegate void AddRemoveUserDelegate( ServerNetworkService_Users sender, UserInfo user );
-		public event AddRemoveUserDelegate AddUserEvent;
-		public event AddRemoveUserDelegate RemoveUserEvent;
+		public event AddRemoveUserDelegate UserAdded;
+		public event AddRemoveUserDelegate UserRemoved;
 
 		//public delegate void UpdateUserDelegate( ServerNetworkService_Users sender, UserInfo user, ref string name );
 		//public event UpdateUserDelegate UpdateUserEvent;
@@ -111,6 +114,7 @@ namespace NeoAxis
 			//register message types
 			RegisterMessageType( "AddUserToClient", 1 );
 			RegisterMessageType( "RemoveUserToClient", 2 );
+			RegisterMessageType( "UpdateObjectControlledByPlayerToClient", 3 );
 			//RegisterMessageType( "UpdateUserToClient", 3 );
 		}
 
@@ -186,6 +190,10 @@ namespace NeoAxis
 						writer.Write( newUser.Username );
 						writer.Write( newUser.Bot );
 						writer.Write( thisUserFlag );
+
+						//custom data
+						writer.Write( newUser.ReferenceToObjectControlledByPlayer );
+
 						EndMessage();
 					}
 				}
@@ -205,12 +213,16 @@ namespace NeoAxis
 						writer.Write( user.Username );
 						writer.Write( user.Bot );
 						writer.Write( false );//this user flag
+
+						//custom data
+						writer.Write( user.ReferenceToObjectControlledByPlayer );
+
 						EndMessage();
 					}
 				}
 			}
 
-			AddUserEvent?.Invoke( this, newUser );
+			UserAdded?.Invoke( this, newUser );
 
 			return newUser;
 		}
@@ -254,7 +266,7 @@ namespace NeoAxis
 				}
 			}
 
-			AddUserEvent?.Invoke( this, newUser );
+			UserAdded?.Invoke( this, newUser );
 
 			return newUser;
 		}
@@ -281,7 +293,7 @@ namespace NeoAxis
 			//if( !usersByID.ContainsValue( user ) )
 			//	return;
 
-			RemoveUserEvent?.Invoke( this, user );
+			UserRemoved?.Invoke( this, user );
 
 			//remove user
 			usersByID.Remove( user.UserID );
@@ -315,6 +327,32 @@ namespace NeoAxis
 			{
 				if( GetUser( userID ) == null )
 					return userID;
+			}
+		}
+
+		public void UpdateObjectControlledByPlayerToClient( UserInfo user, string referenceToObjectControlledByPlayer )
+		{
+			//update on the server
+			user.ReferenceToObjectControlledByPlayer = referenceToObjectControlledByPlayer;
+
+			//send update to clients
+			{
+				//!!!!можно отправлять не всем
+
+				//!!!!всем сразу отправлять одним BeginMessage. где еще так
+
+				var messageType = GetMessageType( "UpdateObjectControlledByPlayerToClient" );
+
+				foreach( var toUser in Users )
+				{
+					if( toUser.ConnectedNode != null )
+					{
+						var writer = BeginMessage( toUser.ConnectedNode, messageType );
+						writer.Write( user.UserID );
+						writer.Write( referenceToObjectControlledByPlayer );
+						EndMessage();
+					}
+				}
 			}
 		}
 
@@ -362,6 +400,9 @@ namespace NeoAxis
 			string username;
 			bool bot;
 
+			//custom data
+			internal string referenceToObjectControlledByPlayer = "";
+
 			//
 
 			internal UserInfo( long userID, string username, bool bot )
@@ -391,6 +432,11 @@ namespace NeoAxis
 			{
 				return Username;
 			}
+
+			public string ReferenceToObjectControlledByPlayer
+			{
+				get { return referenceToObjectControlledByPlayer; }
+			}
 		}
 
 		///////////////////////////////////////////
@@ -408,6 +454,8 @@ namespace NeoAxis
 			//register message types
 			RegisterMessageType( "AddUserToClient", 1, ReceiveMessage_AddUserToClient );
 			RegisterMessageType( "RemoveUserToClient", 2, ReceiveMessage_RemoveUserToClient );
+			RegisterMessageType( "UpdateObjectControlledByPlayerToClient", 3, ReceiveMessage_UpdateObjectControlledByPlayerToClient );
+
 			//RegisterMessageType( "UpdateUserToClient", 3, ReceiveMessage_UpdateUserToClient );
 		}
 
@@ -442,10 +490,15 @@ namespace NeoAxis
 			var username = reader.ReadString();
 			var bot = reader.ReadBoolean();
 			bool thisUserFlag = reader.ReadBoolean();
+
+			//custom data
+			var referenceToObjectControlledByPlayer = reader.ReadString();
+
 			if( !reader.Complete() )
 				return false;
 
-			AddUser( userID, username, bot, thisUserFlag );
+			var user = AddUser( userID, username, bot, thisUserFlag );
+			user.referenceToObjectControlledByPlayer = referenceToObjectControlledByPlayer;
 
 			return true;
 		}
@@ -481,7 +534,7 @@ namespace NeoAxis
 		//	return true;
 		//}
 
-		void AddUser( long userID, string username, bool bot, bool thisUserFlag )
+		UserInfo AddUser( long userID, string username, bool bot, bool thisUserFlag )
 		{
 			var user = new UserInfo( userID, username, bot );
 			usersByID.Add( userID, user );
@@ -490,6 +543,8 @@ namespace NeoAxis
 				thisUser = user;
 
 			AddUserEvent?.Invoke( this, user );
+
+			return user;
 		}
 
 		void RemoveUser( UserInfo user )
@@ -505,6 +560,32 @@ namespace NeoAxis
 		public UserInfo ThisUser
 		{
 			get { return thisUser; }
+		}
+
+		bool ReceiveMessage_UpdateObjectControlledByPlayerToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		{
+			//get data from message
+			var userID = reader.ReadInt64();
+			var referenceToObjectControlledByPlayer = reader.ReadString();
+			if( !reader.Complete() )
+				return false;
+
+			if( usersByID.TryGetValue( userID, out var user ) )
+				user.referenceToObjectControlledByPlayer = referenceToObjectControlledByPlayer;
+
+			return true;
+		}
+
+		public UserInfo GetUserByObjectControlledByPlayer( string referenceToObjectControlledByPlayer )
+		{
+			//!!!!slowly?
+
+			foreach( var user in usersByID.Values )
+			{
+				if( user.ReferenceToObjectControlledByPlayer == referenceToObjectControlledByPlayer )
+					return user;
+			}
+			return null;
 		}
 	}
 }

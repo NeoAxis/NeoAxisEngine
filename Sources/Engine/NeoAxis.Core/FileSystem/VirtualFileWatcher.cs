@@ -26,7 +26,7 @@ namespace NeoAxis
 			{
 				var folder = "";
 				if( EngineApp.IsEditor )
-					folder = VirtualFileSystem.Directories.Project;
+					folder = VirtualFileSystem.Directories.AllFiles;//Project;
 				else
 					folder = VirtualFileSystem.Directories.Assets;
 

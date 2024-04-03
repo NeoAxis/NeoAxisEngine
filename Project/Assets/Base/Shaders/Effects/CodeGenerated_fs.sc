@@ -8,7 +8,8 @@ SAMPLER2D(s_sourceTexture, 0);
 uniform vec4/*float*/ intensity;
 uniform vec4 u_paramColor;
 #ifndef GLSL
-SAMPLER2D(s_linearSamplerFragment, 10);
+	SAMPLER2D(s_linearSamplerFragment, 9);
+	//SAMPLER2D(s_linearSamplerFragment, 10);
 #endif
 
 #ifdef FRAGMENT_CODE_PARAMETERS
@@ -28,12 +29,11 @@ void main()
 	vec2 texCoord0 = v_texCoord0;
 	vec4 color0 = sourceColor;
 	vec4 color = u_paramColor;
+
 #ifdef FRAGMENT_CODE_BODY
-	#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(makeSampler(s_linearSamplerFragment, _sampler), _uv, 0, 0)
-	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_removeTextureTiling)
+	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_removeTextureTiling, 0.0)
 	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2D(makeSampler(s_linearSamplerFragment, _sampler), _uv)
 	FRAGMENT_CODE_BODY
-	#undef CODE_BODY_TEXTURE2D_MASK_OPACITY
 	#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 	#undef CODE_BODY_TEXTURE2D
 #endif

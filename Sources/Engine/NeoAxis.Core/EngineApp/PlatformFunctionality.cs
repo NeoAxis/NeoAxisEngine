@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Drawing;
+//using System.Drawing;
 using NeoAxis;
 
 namespace Internal//NeoAxis
@@ -45,7 +45,7 @@ namespace Internal//NeoAxis
 		public abstract Vector2I GetScreenSize();
 		public abstract int GetScreenBitsPerPixel();
 		//public abstract int GetMonitorCount();
-		public abstract double GetSystemTime();
+		//public abstract double GetSystemTime();
 		public abstract Vector2I GetSmallIconSize();
 
 		public virtual void FullscreenFadeOut( bool exitApplication ) { }
@@ -61,7 +61,7 @@ namespace Internal//NeoAxis
 		public abstract bool IsWindowInitialized();
 
 		public abstract void CreatedWindow_UpdateWindowTitle( string title );
-		public virtual void CreatedWindow_UpdateWindowIcon( Icon smallIcon, Icon icon ) { }
+		public virtual void CreatedWindow_UpdateWindowIcon( /*object smallIcon, */ object icon, string iconFilePath ) { }
 
 		public abstract RectangleI CreatedWindow_GetWindowRectangle();
 		public abstract RectangleI CreatedWindow_GetClientRectangle();
@@ -82,6 +82,7 @@ namespace Internal//NeoAxis
 		//!!!!!CreatedWindow_?
 		public abstract WindowState GetWindowState();
 		public abstract void SetWindowState( WindowState value );
+		public abstract void SetWindowVisible( bool value );
 		//public abstract void SetWindowBorderStyle( WindowBorderStyles value );
 		//public abstract void SetWindowTopMost( bool value );
 
@@ -142,8 +143,14 @@ namespace Internal//NeoAxis
 				{
 					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
 					{
-#if WINDOWS
+#if !ANDROID && !IOS && !WEB && !UWP
 						instance = new WindowsPlatformFunctionality();
+#endif
+					}
+					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
+					{
+#if !ANDROID && !IOS && !WEB && !UWP
+						instance = new LinuxPlatformFunctionality();
 #endif
 					}
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )

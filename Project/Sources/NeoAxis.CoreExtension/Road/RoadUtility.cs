@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using NeoAxis.Editor;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -147,7 +148,7 @@ namespace NeoAxis
 				return (ushort)element.Index.Value;
 			}
 
-			public unsafe void CreateMeshObject( Mesh mesh, Transform transform/*, bool useGroupOfObjects, RenderingPipeline.RenderSceneData.CutVolumeItem[] cutVolumes*/, ColorValue color )
+			public unsafe void CreateMeshObject( Mesh mesh, Transform transform/*, bool useGroupOfObjects, RenderingPipeline.RenderSceneData.CutVolumeItem[] cutVolumes*/, ColorValue color, MeshInSpace.AdditionalItem[] additionalItems = null, bool collision = false )
 			{
 				//if( useGroupOfObjects && cutVolumes == null )
 				//{
@@ -170,6 +171,7 @@ namespace NeoAxis
 				//}
 				//else
 				//{
+
 				//need set ShowInEditor = false before AddComponent
 				var meshInSpace = ComponentUtility.CreateComponent<MeshInSpace>( null, false, false );
 				//generator.MeshInSpace = meshInSpace;
@@ -184,20 +186,19 @@ namespace NeoAxis
 				meshInSpace.Transform = transform;
 				meshInSpace.Color = color;
 				//meshInSpace.CutVolumes = cutVolumes;
-
 				meshInSpace.Mesh = mesh;// ReferenceUtility.MakeThisReference( meshInSpace, mesh );
+				meshInSpace.StaticShadows = true;
+				meshInSpace.AdditionalItems = additionalItems;
+				meshInSpace.Collision = collision;
 				meshInSpace.Enabled = true;
 
 				MeshesInSpace.Add( meshInSpace );
+
 				//}
 			}
 
 			public void CreateObjectsFromMeshData( MeshData meshData, Transform transform, ColorValue color )
 			{
-
-				//!!!!DepthSortingLevel может лучше в MeshGeometry
-
-
 				var meshes = new Dictionary<Vector2I, Mesh>();
 
 				var vertexStructure = StandardVertex.MakeStructure( StandardVertex.Components.StaticOneTexCoord, true, out int vertexSize );
@@ -347,25 +348,6 @@ namespace NeoAxis
 			return result;
 		}
 
-		public static bool IsAnyTransformToolInModifyingMode()
-		{
-#if !DEPLOY
-			if( EngineApp.IsEditor )
-			{
-				foreach( var instance in EngineViewportControl.AllInstances )
-				{
-					if( instance.TransformTool != null )
-					{
-						var transformTool = instance.TransformTool as TransformTool;
-						if( transformTool != null && transformTool.Modifying )
-							return true;
-					}
-				}
-			}
-#endif
-			return false;
-		}
-
 		///////////////////////////////////////////////
 
 		public class MeshData
@@ -440,35 +422,67 @@ namespace NeoAxis
 
 			/////////////////////
 
-			public Vector3 GetPositionByTime( double time )
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			public void GetPositionByTime( double time, out Vector3 result )
 			{
-				return PositionCurve.CalculateValueByTime( time );
+				PositionCurve.CalculateValueByTime( time, out result );
 			}
 
-			public Vector3 GetUpByTime( double time )
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			public void GetUpByTime( double time, out Vector3 result )
 			{
-				return UpCurve.CalculateValueByTime( time );
+				UpCurve.CalculateValueByTime( time, out result );
 			}
 
-			public Vector3 GetDirectionByTime( double time )
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			public void GetDirectionByTime( double time, out Vector3 result )
 			{
 				var lastPointTime = PositionCurve.Points[ PositionCurve.Points.Count - 1 ].Time;
-				//LastPoint.TimeOnCurve
-
-				Vector3 dir;
 
 				//!!!!0.01
 
 				if( time < 0.01 )
-					dir = GetPositionByTime( 0.01 ) - GetPositionByTime( 0 );
+				{
+					GetPositionByTime( 0.01, out var v1 );
+					GetPositionByTime( 0, out var v2 );
+					Vector3.Subtract( ref v1, ref v2, out result );
+					//dir = GetPositionByTime( 0.01 ) - GetPositionByTime( 0 );
+				}
 				else if( time > lastPointTime - 0.01 )
-					dir = GetPositionByTime( lastPointTime ) - GetPositionByTime( lastPointTime - 0.01 );
+				{
+					GetPositionByTime( lastPointTime, out var v1 );
+					GetPositionByTime( lastPointTime - 0.01, out var v2 );
+					Vector3.Subtract( ref v1, ref v2, out result );
+					//dir = GetPositionByTime( lastPointTime ) - GetPositionByTime( lastPointTime - 0.01 );
+				}
 				else
-					dir = GetPositionByTime( time + 0.01 ) - GetPositionByTime( time - 0.01 );
+				{
+					GetPositionByTime( time + 0.01, out var v1 );
+					GetPositionByTime( time - 0.01, out var v2 );
+					Vector3.Subtract( ref v1, ref v2, out result );
+					//dir = GetPositionByTime( time + 0.01 ) - GetPositionByTime( time - 0.01 );
+				}
 
-				return dir.GetNormalize();
+				result.Normalize();
+
+
+				//var lastPointTime = PositionCurve.Points[ PositionCurve.Points.Count - 1 ].Time;
+
+				//Vector3 dir;
+
+				////!!!!0.01
+
+				//if( time < 0.01 )
+				//	dir = GetPositionByTime( 0.01 ) - GetPositionByTime( 0 );
+				//else if( time > lastPointTime - 0.01 )
+				//	dir = GetPositionByTime( lastPointTime ) - GetPositionByTime( lastPointTime - 0.01 );
+				//else
+				//	dir = GetPositionByTime( time + 0.01 ) - GetPositionByTime( time - 0.01 );
+
+				//return dir.GetNormalize();
 			}
 
+			[MethodImpl( (MethodImplOptions)512 )]
 			public void GenerateRoadMeshData( Vector3 ownerPosition, List<double> timeSteps, double totalLength, GeneratePartEnum generatePart, List<MeshGeometryItem> meshGeometries, double markupOffset = 0, bool markupRoadside = false, bool markupSolid = false )
 			{
 				var generatorData = this;
@@ -489,6 +503,7 @@ namespace NeoAxis
 					segmentsLength = 0.001;
 
 
+				var tiling = RoadType.SidewalkUVTilingEnum.AlongRoad;
 				double uvTilesLength = 0;
 
 				if( generatePart == GeneratePartEnum.Surface )
@@ -504,12 +519,18 @@ namespace NeoAxis
 				else if( generatePart == GeneratePartEnum.SidewalkLeft1 || generatePart == GeneratePartEnum.SidewalkLeft2 || generatePart == GeneratePartEnum.SidewalkLeft4 || generatePart == GeneratePartEnum.SidewalkLeft5 )
 					uvTilesLength = roadType.SidewalkBorderUVTilesLength.Value;
 				else if( generatePart == GeneratePartEnum.SidewalkLeft3 )
+				{
 					uvTilesLength = roadType.SidewalkUVTilesLength.Value;
+					tiling = RoadType.SidewalkUVTilingEnum.HorizontalTiling;
+				}
 
 				else if( generatePart == GeneratePartEnum.SidewalkRight1 || generatePart == GeneratePartEnum.SidewalkRight2 || generatePart == GeneratePartEnum.SidewalkRight4 || generatePart == GeneratePartEnum.SidewalkRight5 )
 					uvTilesLength = roadType.SidewalkBorderUVTilesLength.Value;
 				else if( generatePart == GeneratePartEnum.SidewalkRight3 )
+				{
 					uvTilesLength = roadType.SidewalkUVTilesLength.Value;
+					tiling = RoadType.SidewalkUVTilingEnum.HorizontalTiling;
+				}
 
 				else //if( generatePart == GeneratePartEnum.Overpass )
 					uvTilesLength = 0;//!!!! roadType.OverpassUVTilesLength.Value;
@@ -527,10 +548,19 @@ namespace NeoAxis
 				int lengthStepsAdded = 0;
 
 				double currentLength = 0;
+
 				//!!!!
-				var previousPosition = generatorData.GetPositionByTime( timeSteps[ 0 ] );
-				var previousVector = ( generatorData.GetPositionByTime( timeSteps[ 0 ] + 0.01 ) - previousPosition ).GetNormalize();
-				var currentUp = generatorData.GetUpByTime( timeSteps[ 0 ] );
+
+				generatorData.GetPositionByTime( timeSteps[ 0 ], out var previousPosition );
+				generatorData.GetPositionByTime( timeSteps[ 0 ] + 0.01, out var previousPosition2 );
+				Vector3.Subtract( ref previousPosition2, ref previousPosition, out var previousVector );
+				previousVector.Normalize();
+				generatorData.GetUpByTime( timeSteps[ 0 ], out var currentUp );
+
+				//var previousPosition = generatorData.GetPositionByTime( timeSteps[ 0 ] );
+				//var previousVector = ( generatorData.GetPositionByTime( timeSteps[ 0 ] + 0.01 ) - previousPosition ).GetNormalize();
+				//var currentUp = generatorData.GetUpByTime( timeSteps[ 0 ] );
+
 				//var previousPosition = logicalData.GetPositionByTime( points[ 0 ].TimeOnCurve );
 				//var previousVector = ( logicalData.GetPositionByTime( points[ 0 ].TimeOnCurve + 0.01 ) - previousPosition ).GetNormalize();
 				//var currentUp = points[ 0 ].Transform.Rotation.GetUp();
@@ -557,7 +587,7 @@ namespace NeoAxis
 
 					//!!!!может быть поворот в несколько шагов с одинаковым position. тогда совсем иначе всё
 
-					var position = generatorData.GetPositionByTime( time );
+					generatorData.GetPositionByTime( time, out var position );
 
 					//!!!!
 					double stepLength = 0;
@@ -573,13 +603,10 @@ namespace NeoAxis
 					//else
 					//	vector = previousVector;
 
-					var vector = generatorData.GetDirectionByTime( time );
-					var up = generatorData.GetUpByTime( time );
+					generatorData.GetDirectionByTime( time, out var vector );
+					generatorData.GetUpByTime( time, out var up );
 
-					var rotation = Quaternion.LookAt( vector, up );
-					//var rotation = Quaternion.LookAt( vector, Vector3.ZAxis );
-					////var rotation = Quaternion.LookAt( vector, currentUp );
-
+					Quaternion.LookAt( ref vector, ref up, out var rotation );
 
 					bool skip = false;
 					if( !firstStep && !lastStep )
@@ -672,6 +699,7 @@ namespace NeoAxis
 							////}
 
 							double heightOffset = 0;
+
 							if( generatePart == GeneratePartEnum.Markup )
 							{
 								//heightOffset = 0.03;
@@ -689,6 +717,11 @@ namespace NeoAxis
 							{
 								if( widthStep == 1 )
 									heightOffset = sidewalkHeight;
+
+								//!!!!maybe add property
+								//underground
+								if( widthStep == 0 )
+									heightOffset = -sidewalkHeight;
 							}
 							else if( generatePart == GeneratePartEnum.SidewalkRight1 )
 							{
@@ -703,6 +736,11 @@ namespace NeoAxis
 							{
 								if( widthStep == 0 )
 									heightOffset = sidewalkHeight;
+
+								//!!!!maybe add property
+								//underground
+								if( widthStep == 1 )
+									heightOffset = -sidewalkHeight;
 							}
 							//!!!!
 							//else if( generatePart == GeneratePartEnum.OverpassSideLeft )
@@ -744,9 +782,16 @@ namespace NeoAxis
 							//else if( generatePart == GeneratePartEnum.OverpassBottom )
 							//	normal *= -1;
 
-
 							normals.Add( normal.ToVector3F() );
-							tangents.Add( new Vector4F( vector.ToVector3F(), -1 ) );
+
+
+							var tangent = new Vector4F( vector.ToVector3F(), -1 );
+
+							if( tiling == RoadType.SidewalkUVTilingEnum.HorizontalTiling )
+								tangent = new Vector4F( Vector3F.XAxis, -1 );
+
+							tangents.Add( tangent );
+
 
 							//!!!!double. относительное смещение. чтобы значения не были слишком большие?
 
@@ -777,8 +822,17 @@ namespace NeoAxis
 							//else if( generatePart == GeneratePartEnum.OverpassSideRight )
 							//	texCoordX += heightOffset;
 
+							if( tiling == RoadType.SidewalkUVTilingEnum.HorizontalTiling )
+							{
+								//!!!!очень большое значение будет?
 
-							texCoords0.Add( new Vector2( texCoordX * uvTilesLength, currentLength * uvTilesLength ).ToVector2F() );
+								var pos2 = position + offset;
+								texCoords0.Add( new Vector2( pos2.X * uvTilesLength, pos2.Y * uvTilesLength ).ToVector2F() );
+							}
+							else
+							{
+								texCoords0.Add( new Vector2( texCoordX * uvTilesLength, currentLength * uvTilesLength ).ToVector2F() );
+							}
 
 							//texCoords1.Add( new Vector2F( (float)currentLength, widthStep == 0 ? 0 : 1 ) );
 						}
@@ -889,6 +943,12 @@ namespace NeoAxis
 					meshGeometries.Add( meshGeometryItem );
 				}
 			}
+
+			//!!!!
+			//[MethodImpl( (MethodImplOptions)512 )]
+			//public void GenerateCrossingMarkingsMeshData( Vector3 ownerPosition, List<MeshGeometryItem> meshGeometries )
+			//{
+			//}
 		}
 
 		///////////////////////////////////////////////
@@ -1090,5 +1150,7 @@ namespace NeoAxis
 
 			return data;
 		}
+
+
 	}
 }

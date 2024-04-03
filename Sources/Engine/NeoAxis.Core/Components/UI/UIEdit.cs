@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
+using Internal;
 
 namespace NeoAxis
 {
@@ -24,7 +25,7 @@ namespace NeoAxis
 			get { if( _maxCharacterCount.BeginGet() ) MaxCharacterCount = _maxCharacterCount.Get( this ); return _maxCharacterCount.value; }
 			set
 			{
-				if( _maxCharacterCount.BeginSet( ref value ) )
+				if( _maxCharacterCount.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -50,7 +51,7 @@ namespace NeoAxis
 		public Reference<char> PasswordCharacter
 		{
 			get { if( _passwordCharacter.BeginGet() ) PasswordCharacter = _passwordCharacter.Get( this ); return _passwordCharacter.value; }
-			set { if( _passwordCharacter.BeginSet( ref value ) ) { try { PasswordCharacterChanged?.Invoke( this ); } finally { _passwordCharacter.EndSet(); } } }
+			set { if( _passwordCharacter.BeginSet( this, ref value ) ) { try { PasswordCharacterChanged?.Invoke( this ); } finally { _passwordCharacter.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PasswordCharacter"/> property value changes.</summary>
 		public event Action<UIEdit> PasswordCharacterChanged;
@@ -63,7 +64,7 @@ namespace NeoAxis
 		public Reference<string> HintWhenEmpty
 		{
 			get { if( _hintWhenEmpty.BeginGet() ) HintWhenEmpty = _hintWhenEmpty.Get( this ); return _hintWhenEmpty.value; }
-			set { if( _hintWhenEmpty.BeginSet( ref value ) ) { try { HintWhenEmptyChanged?.Invoke( this ); } finally { _hintWhenEmpty.EndSet(); } } }
+			set { if( _hintWhenEmpty.BeginSet( this, ref value ) ) { try { HintWhenEmptyChanged?.Invoke( this ); } finally { _hintWhenEmpty.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HintWhenEmpty"/> property value changes.</summary>
 		public event Action<UIEdit> HintWhenEmptyChanged;
@@ -73,7 +74,7 @@ namespace NeoAxis
 		public Reference<int> SelectionStart
 		{
 			get { if( _selectionStart.BeginGet() ) SelectionStart = _selectionStart.Get( this ); return _selectionStart.value; }
-			set { if( _selectionStart.BeginSet( ref value ) ) { try { SelectionStartChanged?.Invoke( this ); } finally { _selectionStart.EndSet(); } } }
+			set { if( _selectionStart.BeginSet( this, ref value ) ) { try { SelectionStartChanged?.Invoke( this ); } finally { _selectionStart.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SelectionStart"/> property value changes.</summary>
 		public event Action<UIEdit> SelectionStartChanged;
@@ -83,7 +84,7 @@ namespace NeoAxis
 		public Reference<int> SelectionLength
 		{
 			get { if( _selectionLength.BeginGet() ) SelectionLength = _selectionLength.Get( this ); return _selectionLength.value; }
-			set { if( _selectionLength.BeginSet( ref value ) ) { try { SelectionLengthChanged?.Invoke( this ); } finally { _selectionLength.EndSet(); } } }
+			set { if( _selectionLength.BeginSet( this, ref value ) ) { try { SelectionLengthChanged?.Invoke( this ); } finally { _selectionLength.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SelectionLength"/> property value changes.</summary>
 		public event Action<UIEdit> SelectionLengthChanged;
@@ -93,7 +94,7 @@ namespace NeoAxis
 		public Reference<int> CaretPosition
 		{
 			get { if( _caretPosition.BeginGet() ) CaretPosition = _caretPosition.Get( this ); return _caretPosition.value; }
-			set { if( _caretPosition.BeginSet( ref value ) ) { try { CaretPositionChanged?.Invoke( this ); } finally { _caretPosition.EndSet(); } } }
+			set { if( _caretPosition.BeginSet( this, ref value ) ) { try { CaretPositionChanged?.Invoke( this ); } finally { _caretPosition.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CaretPosition"/> property value changes.</summary>
 		public event Action<UIEdit> CaretPositionChanged;
@@ -546,106 +547,114 @@ namespace NeoAxis
 							EditingLastTime = EngineApp.EngineTime;
 						}
 						return true;
+					}
 
-#if WINDOWS
-
-					case EKeys.X:
-						if( !ReadOnlyInHierarchy && ParentContainer.Viewport.IsKeyPressed( EKeys.Control ) )
+					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+					{
+						switch( e.Key )
 						{
-							try
+						case EKeys.X:
+							if( !ReadOnlyInHierarchy && ParentContainer.Viewport.IsKeyPressed( EKeys.Control ) )
+							{
+								try
+								{
+									GetSelection( out var start, out var length );
+									if( length != 0 )
+									{
+										PlatformSpecificUtility.Instance.SetClipboardText( SelectedText );
+										//System.Windows.Forms.Clipboard.SetText( SelectedText );
+
+										Text = Text.Value.Remove( start, length );
+										CaretPosition = start;
+										DeselectAll();
+									}
+								}
+								catch { }
+
+								DeselectAll();
+								EditingLastTime = EngineApp.EngineTime;
+								return true;
+							}
+							break;
+
+						case EKeys.C:
+							if( ParentContainer.Viewport.IsKeyPressed( EKeys.Control ) )
+							{
+								try
+								{
+									GetSelection( out var start, out var length );
+									if( length != 0 )
+									{
+										PlatformSpecificUtility.Instance.SetClipboardText( SelectedText );
+										//System.Windows.Forms.Clipboard.SetText( SelectedText );
+									}
+								}
+								catch { }
+
+								EditingLastTime = EngineApp.EngineTime;
+								return true;
+							}
+							break;
+
+						case EKeys.V:
+							if( !ReadOnlyInHierarchy && ParentContainer.Viewport.IsKeyPressed( EKeys.Control ) )
 							{
 								GetSelection( out var start, out var length );
 								if( length != 0 )
 								{
-									System.Windows.Forms.Clipboard.SetText( SelectedText );
-
 									Text = Text.Value.Remove( start, length );
 									CaretPosition = start;
 									DeselectAll();
 								}
-							}
-							catch { }
 
-							DeselectAll();
-							EditingLastTime = EngineApp.EngineTime;
-							return true;
-						}
-						break;
-
-					case EKeys.C:
-						if( ParentContainer.Viewport.IsKeyPressed( EKeys.Control ) )
-						{
-							try
-							{
-								GetSelection( out var start, out var length );
-								if( length != 0 )
-									System.Windows.Forms.Clipboard.SetText( SelectedText );
-							}
-							catch { }
-
-							EditingLastTime = EngineApp.EngineTime;
-							return true;
-						}
-						break;
-
-					case EKeys.V:
-						if( !ReadOnlyInHierarchy && ParentContainer.Viewport.IsKeyPressed( EKeys.Control ) )
-						{
-							GetSelection( out var start, out var length );
-							if( length != 0 )
-							{
-								Text = Text.Value.Remove( start, length );
-								CaretPosition = start;
-								DeselectAll();
-							}
-
-							try
-							{
-								var text = System.Windows.Forms.Clipboard.GetText();
-								if( !string.IsNullOrEmpty( text ) )
+								try
 								{
-									var font = GetFont();
-
-									var caret = GetCaretPosition();
-
-									var newText = Text.Value;
-
-									foreach( var c in text )
+									var text = PlatformSpecificUtility.Instance.GetClipboardText();
+									//var text = System.Windows.Forms.Clipboard.GetText();
+									if( !string.IsNullOrEmpty( text ) )
 									{
-										if( IsAllowCharacter( font, c ) && OnTextTypingFilter( e.Key, c, newText ) )
+										var font = GetFont();
+
+										var caret = GetCaretPosition();
+
+										var newText = Text.Value;
+
+										foreach( var c in text )
 										{
-											newText = newText.Insert( caret, c.ToString() );
-											caret++;
+											if( IsAllowCharacter( font, c ) && OnTextTypingFilter( e.Key, c, newText ) )
+											{
+												newText = newText.Insert( caret, c.ToString() );
+												caret++;
+											}
 										}
+
+										Text = newText;
+
+										if( caret == Text.Value.Length )
+											caret = -1;
+										CaretPosition = caret;
 									}
-
-									Text = newText;
-
-									if( caret == Text.Value.Length )
-										caret = -1;
-									CaretPosition = caret;
 								}
+								catch { }
+
+								DeselectAll();
+								EditingLastTime = EngineApp.EngineTime;
+								return true;
 							}
-							catch { }
+							break;
 
-							DeselectAll();
-							EditingLastTime = EngineApp.EngineTime;
-							return true;
+						case EKeys.A:
+							if( ParentContainer.Viewport.IsKeyPressed( EKeys.Control ) )
+							{
+								SelectAll();
+								EditingLastTime = EngineApp.EngineTime;
+								return true;
+							}
+							break;
 						}
-						break;
-
-					case EKeys.A:
-						if( ParentContainer.Viewport.IsKeyPressed( EKeys.Control ) )
-						{
-							SelectAll();
-							EditingLastTime = EngineApp.EngineTime;
-							return true;
-						}
-						break;
-
-#endif
-
 					}
+
+					//!!!!other platforms specific
 
 				}
 			}
@@ -940,6 +949,47 @@ namespace NeoAxis
 		public void DeselectAll()
 		{
 			Select( 0, 0 );
+		}
+
+		protected override bool OnTouch( TouchData e )
+		{
+			//!!!!положение курсора выставлять куда нажали
+
+			switch( e.Action )
+			{
+			case TouchData.ActionEnum.Down:
+				if( VisibleInHierarchy && EnabledInHierarchy && !ReadOnlyInHierarchy )
+				{
+					if( ParentContainer != null && ParentContainer.IsControlCoveredByOther( this, e.Position ) )
+						break;
+
+					GetScreenRectangle( out var rect );
+					var rectInPixels = rect * ParentContainer.Viewport.SizeInPixels.ToVector2();
+					var distanceInPixels = rectInPixels.GetPointDistance( e.PositionInPixels.ToVector2() );
+
+					var item = new TouchData.TouchDownRequestToProcessTouch( this, 0, distanceInPixels, null,
+						delegate ( UIControl sender, TouchData touchData, object anyData )
+						{
+							//focus
+							if( CanFocus )
+							{
+								bool intoArea = rect.Contains( e.Position );
+								if( intoArea && EnabledInHierarchy )
+								{
+									Focus();
+									//return true;
+								}
+								else
+									Unfocus();
+							}
+
+						} );
+					e.TouchDownRequestToControlActions.Add( item );
+				}
+				break;
+			}
+
+			return base.OnTouch( e );
 		}
 
 	}

@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\common.props" />
   <PropertyGroup>
     <OutputType>Library</OutputType>
 	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
+	<CheckEolTargetFramework>false</CheckEolTargetFramework>
 	<EnableDefaultPageItems>false</EnableDefaultPageItems>
 	<UseWindowsForms>true</UseWindowsForms>
 	<UseWPF>true</UseWPF>	
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <PackageTargetFallback>$(PackageTargetFallback);portable-net45+win8+wp8+wpa81;</PackageTargetFallback>
     <RootNamespace>RoslynPad.Roslyn</RootNamespace>
     <Version>$(RoslynAssemblyVersion)</Version>
     <PackageVersion>$(RoslynPackageVersion)</PackageVersion>

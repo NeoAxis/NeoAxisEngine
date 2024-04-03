@@ -1,5 +1,6 @@
 ﻿#if !UWP
 using System;
+using System.Threading;
 
 namespace Internal.Lidgren.Network
 {
@@ -67,6 +68,11 @@ namespace Internal.Lidgren.Network
 			m_peer.SendPacket(len, m_remoteEndPoint, 1, out connectionReset);
 
 			m_statistics.PacketSent(len, 1);
+
+			//!!!!betauser
+			if( StatisticsCalculation != null )
+				Interlocked.Add( ref StatisticsCalculation.Sent, len );
+
 			m_peer.Recycle(om);
 		}
 
@@ -85,6 +91,11 @@ namespace Internal.Lidgren.Network
 			m_peer.SendPacket(len, m_remoteEndPoint, 1, out connectionReset);
 
 			m_statistics.PacketSent(len, 1);
+
+			//!!!!betauser
+			if( StatisticsCalculation != null )
+				Interlocked.Add( ref StatisticsCalculation.Sent, len );
+
 			m_peer.Recycle(om);
 		}
 

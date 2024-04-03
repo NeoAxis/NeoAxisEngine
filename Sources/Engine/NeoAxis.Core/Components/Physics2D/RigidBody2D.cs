@@ -48,7 +48,7 @@ namespace NeoAxis
 			get { if( _motionType.BeginGet() ) MotionType = _motionType.Get( this ); return _motionType.value; }
 			set
 			{
-				if( _motionType.BeginSet( ref value ) )
+				if( _motionType.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -76,7 +76,7 @@ namespace NeoAxis
 			{
 				if( value < 0 )
 					value = new Reference<double>( 0, value.GetByReference );
-				if( _mass.BeginSet( ref value ) )
+				if( _mass.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -103,7 +103,7 @@ namespace NeoAxis
 			get { if( _inertia.BeginGet() ) Inertia = _inertia.Get( this ); return _inertia.value; }
 			set
 			{
-				if( _inertia.BeginSet( ref value ) )
+				if( _inertia.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -129,7 +129,7 @@ namespace NeoAxis
 			get { if( _localCenter.BeginGet() ) LocalCenter = _localCenter.Get( this ); return _localCenter.value; }
 			set
 			{
-				if( _localCenter.BeginSet( ref value ) )
+				if( _localCenter.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -155,7 +155,7 @@ namespace NeoAxis
 			get { if( _enableGravity.BeginGet() ) EnableGravity = _enableGravity.Get( this ); return _enableGravity.value; }
 			set
 			{
-				if( _enableGravity.BeginSet( ref value ) )
+				if( _enableGravity.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -177,12 +177,13 @@ namespace NeoAxis
 		[DefaultValue( 0.05 )]//1 )]
 		[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
 		[Category( "Rigid Body 2D" )]
+		[NetworkSynchronize( false )]
 		public Reference<double> LinearDamping
 		{
 			get { if( _linearDamping.BeginGet() ) LinearDamping = _linearDamping.Get( this ); return _linearDamping.value; }
 			set
 			{
-				if( _linearDamping.BeginSet( ref value ) )
+				if( _linearDamping.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -204,12 +205,13 @@ namespace NeoAxis
 		[DefaultValue( 0.05 )]//1 )]
 		[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
 		[Category( "Rigid Body 2D" )]
+		[NetworkSynchronize( false )]
 		public Reference<double> AngularDamping
 		{
 			get { if( _angularDamping.BeginGet() ) AngularDamping = _angularDamping.Get( this ); return _angularDamping.value; }
 			set
 			{
-				if( _angularDamping.BeginSet( ref value ) )
+				if( _angularDamping.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -236,7 +238,7 @@ namespace NeoAxis
 			get { if( _fixedRotation.BeginGet() ) FixedRotation = _fixedRotation.Get( this ); return _fixedRotation.value; }
 			set
 			{
-				if( _fixedRotation.BeginSet( ref value ) )
+				if( _fixedRotation.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -262,7 +264,7 @@ namespace NeoAxis
 			get { if( _allowSleep.BeginGet() ) AllowSleep = _allowSleep.Get( this ); return _allowSleep.value; }
 			set
 			{
-				if( _allowSleep.BeginSet( ref value ) )
+				if( _allowSleep.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -289,7 +291,7 @@ namespace NeoAxis
 			get { if( _ccd.BeginGet() ) CCD = _ccd.Get( this ); return _ccd.value; }
 			set
 			{
-				if( _ccd.BeginSet( ref value ) )
+				if( _ccd.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -310,12 +312,13 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( "0 0" )]
 		[Category( "Velocity" )]
+		[NetworkSynchronize( false )]
 		public Reference<Vector2> LinearVelocity
 		{
 			get { if( _linearVelocity.BeginGet() ) LinearVelocity = _linearVelocity.Get( this ); return _linearVelocity.value; }
 			set
 			{
-				if( _linearVelocity.BeginSet( ref value ) )
+				if( _linearVelocity.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -338,12 +341,13 @@ namespace NeoAxis
 		[DefaultValue( 0.0 )]
 		[Category( "Velocity" )]
 		[Range( -360, 360 )]
+		[NetworkSynchronize( false )]
 		public Reference<double> AngularVelocity
 		{
 			get { if( _angularVelocity.BeginGet() ) AngularVelocity = _angularVelocity.Get( this ); return _angularVelocity.value; }
 			set
 			{
-				if( _angularVelocity.BeginSet( ref value ) )
+				if( _angularVelocity.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -368,7 +372,7 @@ namespace NeoAxis
 		public Reference<bool> ContactsDisplay
 		{
 			get { if( _contactsDisplay.BeginGet() ) ContactsDisplay = _contactsDisplay.Get( this ); return _contactsDisplay.value; }
-			set { if( _contactsDisplay.BeginSet( ref value ) ) { try { ContactsDisplayChanged?.Invoke( this ); } finally { _contactsDisplay.EndSet(); } } }
+			set { if( _contactsDisplay.BeginSet( this, ref value ) ) { try { ContactsDisplayChanged?.Invoke( this ); } finally { _contactsDisplay.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ContactsDisplay"/> property value changes.</summary>
 		public event Action<RigidBody2D> ContactsDisplayChanged;

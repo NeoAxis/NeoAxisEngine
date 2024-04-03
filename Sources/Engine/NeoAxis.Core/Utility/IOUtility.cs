@@ -62,13 +62,27 @@ namespace NeoAxis
 			}
 		}
 
-		public static byte[] Zip( byte[] data )
+		//ZipArchive in .NET 6 now returns stream.Read not more 32kb per call
+		public static int ReadGuaranteed( Stream stream, byte[] array )
 		{
-			using( var memoryStream = new MemoryStream() )
+			var current = 0;
+			while( current < array.Length )
+			{
+				var bytes = stream.Read( array, current, array.Length - current );
+				if( bytes == 0 )
+					break;
+				current += bytes;
+			}
+			return current;
+		}
+
+		public static byte[] Zip( byte[] data, CompressionLevel compressionLevel )
+		{
+			using( var memoryStream = new MemoryStream( data.Length + 200 ) )
 			{
 				using( var zipArchive = new ZipArchive( memoryStream, ZipArchiveMode.Create, true ) )
 				{
-					var file = zipArchive.CreateEntry( "file" );
+					var file = zipArchive.CreateEntry( "file", compressionLevel );
 					using( var entryStream = file.Open() )
 						entryStream.Write( data, 0, data.Length );
 				}
@@ -86,14 +100,20 @@ namespace NeoAxis
 					using( var stream = entry.Open() )
 					{
 						var result = new byte[ entry.Length ];
-						stream.Read( result, 0, result.Length );
+						ReadGuaranteed( stream, result );
 						return result;
 
-						//using( var memoryStream = new MemoryStream( (int)entry.Length ) )
-						//{
-						//	stream.CopyTo( memoryStream );
-						//	return memoryStream.ToArray();
-						//}
+						//it not work on .NET 6. Maximal size per call is 32kb
+						//var result = new byte[ entry.Length ];
+						//stream.Read( result, 0, result.Length );
+						//return result;
+
+
+						////using( var memoryStream = new MemoryStream( (int)entry.Length ) )
+						////{
+						////	stream.CopyTo( memoryStream );
+						////	return memoryStream.ToArray();
+						////}
 					}
 				}
 			}

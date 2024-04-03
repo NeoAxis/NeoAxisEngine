@@ -76,8 +76,8 @@
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\..\..\..\..\..\..\_Compilation\Win64\bgfx\bin\</OutDir>
-    <IntDir>..\..\..\..\..\..\..\_Compilation\Win64\bgfx\obj\x64\Debug\bimg\</IntDir>
+    <OutDir>..\..\..\..\..\..\..\..\_build\Win64\bgfx\bin\</OutDir>
+    <IntDir>..\..\..\..\..\..\..\..\_build\Win64\bgfx\obj\x64\Debug\bimg\</IntDir>
     <TargetName>bimgDebug</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
@@ -88,8 +88,8 @@
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\..\..\..\..\..\..\_Compilation\Win64\bgfx\bin\</OutDir>
-    <IntDir>..\..\..\..\..\..\..\_Compilation\Win64\bgfx\obj\x64\Release\bimg\</IntDir>
+    <OutDir>..\..\..\..\..\..\..\..\_build\Win64\bgfx\bin\</OutDir>
+    <IntDir>..\..\..\..\..\..\..\..\_build\Win64\bgfx\obj\x64\Release\bimg\</IntDir>
     <TargetName>bimgRelease</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
@@ -135,7 +135,7 @@
     <ClCompile>
       <AdditionalOptions>/wd4201 /wd4324 /Ob2  %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty\astc-codec;..\..\..\..\bimg\3rdparty\astc-codec\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty\astc-encoder;..\..\..\..\bimg\3rdparty\astc-encoder\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;_DEBUG;WIN32;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_WIN64;BX_CONFIG_DEBUG=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -145,7 +145,7 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
@@ -213,7 +213,7 @@
     <ClCompile>
       <AdditionalOptions>/wd4201 /wd4324 /Ob2  %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MinSpace</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty\astc-codec;..\..\..\..\bimg\3rdparty\astc-codec\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty\astc-encoder;..\..\..\..\bimg\3rdparty\astc-encoder\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;NDEBUG;WIN32;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_WIN64;BX_CONFIG_DEBUG=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
@@ -224,7 +224,7 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
@@ -254,47 +254,47 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\include\astcenc.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_diagnostic_trace.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_internal.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_internal_entry.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_mathlib.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_avx2_8.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_common_4.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_neon_4.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_none_4.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_sse_4.h" />
     <ClInclude Include="..\..\..\..\bimg\include\bimg\bimg.h" />
     <ClInclude Include="..\..\..\..\bimg\include\bimg\decode.h" />
     <ClInclude Include="..\..\..\..\bimg\include\bimg\encode.h" />
-    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\astc_file.h" />
-    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\codec.h" />
-    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\endpoint_codec.h" />
-    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\footprint.h" />
-    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\integer_sequence_codec.h" />
-    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\intermediate_astc_block.h" />
-    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\logical_astc_block.h" />
-    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\partition.h" />
-    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\physical_astc_block.h" />
-    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\quantization.h" />
-    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\weight_infill.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_averages_and_directions.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_block_sizes.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_color_quantize.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_color_unquantize.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_compress_symbolic.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_compute_variance.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_decompress_symbolic.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_diagnostic_trace.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_entry.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_find_best_partitioning.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_ideal_endpoints_and_weights.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_image.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_integer_sequence.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_mathlib.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_mathlib_softfloat.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_partition_tables.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_percentile_tables.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_pick_best_endpoint_format.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_quantization.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_symbolic_physical.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_weight_align.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_weight_quant_xfer_tables.cpp" />
     <ClCompile Include="..\..\..\..\bimg\src\image.cpp">
     </ClCompile>
     <ClCompile Include="..\..\..\..\bimg\src\image_gnf.cpp">
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\astc_file.cc">
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\codec.cc">
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\endpoint_codec.cc">
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\footprint.cc">
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\integer_sequence_codec.cc">
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\intermediate_astc_block.cc">
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\logical_astc_block.cc">
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\partition.cc">
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\physical_astc_block.cc">
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\quantization.cc">
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-codec\src\decoder\weight_infill.cc">
     </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

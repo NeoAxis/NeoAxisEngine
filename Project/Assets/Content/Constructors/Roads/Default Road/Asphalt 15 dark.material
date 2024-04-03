@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.Material
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1146, 842\"><KW V=\"1\" A=\"D5D5A1B336AD40C8D0A08D66F114962D\"><CGD /><WS UN=\"85EC3A53466946DD518F10E1F3875F6A\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"F8C118FAC3F44DCD63AA60B7088168BE\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"D5D5A1B336AD40C8D0A08D66F114962D\"><KP UN=\"2111C250FF1B4DB3EFBC2688DEB4B200\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"D5D5A1B336AD40C8D0A08D66F114962D\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"D5D5A1B336AD40C8D0A08D66F114962D\"><CGD /><WS UN=\"85EC3A53466946DD518F10E1F3875F6A\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"F8C118FAC3F44DCD63AA60B7088168BE\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"D5D5A1B336AD40C8D0A08D66F114962D\"><KP UN=\"2111C250FF1B4DB3EFBC2688DEB4B200\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"D5D5A1B336AD40C8D0A08D66F114962D\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RayTracingReflection = 1
 	BaseColor
 	{
@@ -10,7 +10,11 @@
 	}
 	Roughness
 	{
-		GetByReference = "this:$Shader graph\\$Node Texture Sample Roughness\\$Shader Texture Sample\\R"
+		GetByReference = "this:$Shader graph\\$Node Invoke Member 2\\$Invoke Member\\__parameter_ReturnValue"
+	}
+	Reflectance
+	{
+		GetByReference = "this:$Shader graph\\$Node Invoke Member 4\\$Invoke Member\\__parameter_ReturnValue"
 	}
 	Normal
 	{
@@ -19,7 +23,7 @@
 	.component NeoAxis.FlowGraph
 	{
 		Name = Shader graph
-		EditorScrollPosition = 0 0
+		EditorScrollPosition = 0.764705882352924 -2.23529411764706
 		Specialization
 		{
 			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
@@ -36,7 +40,7 @@
 		.component NeoAxis.FlowGraphNode
 		{
 			Name = Node Texture Sample BaseColor
-			Position = -20 -18
+			Position = -20 -22
 			ControlledObject
 			{
 				GetByReference = "this:$Shader Texture Sample"
@@ -56,7 +60,7 @@
 		.component NeoAxis.FlowGraphNode
 		{
 			Name = Node Texture Sample Roughness
-			Position = -20 -9
+			Position = -20 -11
 			ControlledObject
 			{
 				GetByReference = "this:$Shader Texture Sample"
@@ -75,7 +79,7 @@
 		.component NeoAxis.FlowGraphNode
 		{
 			Name = Node Texture Sample Normal
-			Position = -20 0
+			Position = -20 7
 			ControlledObject
 			{
 				GetByReference = "this:$Shader Texture Sample"
@@ -95,7 +99,7 @@
 		.component NeoAxis.FlowGraphNode
 		{
 			Name = Node Invoke Member 1
-			Position = -5 -13
+			Position = -7 -20
 			ControlledObject
 			{
 				GetByReference = "this:$Invoke Member"
@@ -114,6 +118,81 @@
 				__parameter_V1
 				{
 					GetByReference = "this:..\\..\\$Node Texture Sample BaseColor\\$Shader Texture Sample\\RGBA"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Invoke Member 2
+			Position = -5 -8
+			ControlledObject
+			{
+				GetByReference = "this:$Invoke Member"
+			}
+			.component NeoAxis.InvokeMember
+			{
+				Name = Invoke Member
+				__parameter_V2 = 0.05
+				Member
+				{
+					GetByReference = "NeoAxis.MathEx|method:Lerp(System.Double,System.Double,System.Double)"
+				}
+				Exit
+				{
+				}
+				__parameter_V1
+				{
+					GetByReference = "this:..\\..\\$Node Texture Sample Roughness\\$Shader Texture Sample\\R"
+				}
+				__parameter_Amount
+				{
+					GetByReference = "this:..\\..\\$Node Invoke Member 3\\$Invoke Member\\__value_Value"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Invoke Member 4
+			Position = -5 -1
+			ControlledObject
+			{
+				GetByReference = "this:$Invoke Member"
+			}
+			.component NeoAxis.InvokeMember
+			{
+				Name = Invoke Member
+				__parameter_V1 = 0.2
+				__parameter_V2 = 0.9
+				Member
+				{
+					GetByReference = "NeoAxis.MathEx|method:Lerp(System.Double,System.Double,System.Double)"
+				}
+				Exit
+				{
+				}
+				__parameter_Amount
+				{
+					GetByReference = "this:..\\..\\$Node Invoke Member 3\\$Invoke Member\\__value_Value"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Invoke Member 3
+			Position = -20 0
+			ControlledObject
+			{
+				GetByReference = "this:$Invoke Member"
+			}
+			.component NeoAxis.InvokeMember
+			{
+				Name = Invoke Member
+				Member
+				{
+					GetByReference = "NeoAxis.ShaderConstants|property:PrecipitationFallen"
+				}
+				Exit
+				{
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -149,18 +149,19 @@ namespace bx
 
 	/// Count number of bits set.
 	///
-	template<typename Ty>
-	BX_CONSTEXPR_FUNC uint32_t uint32_cntbits(Ty _val);
+	BX_CONSTEXPR_FUNC uint32_t uint32_cntbits(uint32_t _val);
 
 	/// Count number of leading zeros.
 	///
-	template<typename Ty>
-	BX_CONSTEXPR_FUNC uint32_t uint32_cntlz(Ty _val);
+	BX_CONSTEXPR_FUNC uint32_t uint32_cntlz(uint32_t _val);
 
 	/// Count number of trailing zeros.
 	///
-	template<typename Ty>
-	BX_CONSTEXPR_FUNC uint32_t uint32_cnttz(Ty _val);
+	BX_CONSTEXPR_FUNC uint32_t uint32_cnttz(uint32_t _val);
+
+	/// Find first set.
+	///
+	BX_CONSTEXPR_FUNC uint32_t uint32_ffs(uint32_t _val);
 
 	///
 	BX_CONSTEXPR_FUNC uint32_t uint32_part1by1(uint32_t _a);
@@ -234,6 +235,15 @@ namespace bx
 	///
 	BX_CONSTEXPR_FUNC uint64_t uint64_mul(uint64_t _a, uint64_t _b);
 
+	///
+	BX_CONSTEXPR_FUNC uint64_t uint64_cntbits(uint64_t _val);
+
+	///
+	BX_CONSTEXPR_FUNC uint64_t uint64_cntlz(uint64_t _val);
+
+	///
+	BX_CONSTEXPR_FUNC uint64_t uint64_cnttz(uint64_t _val);
+
 	/// Greatest common divisor.
 	///
 	BX_CONSTEXPR_FUNC uint32_t uint32_gcd(uint32_t _a, uint32_t _b);
@@ -252,40 +262,40 @@ namespace bx
 	BX_CONSTEXPR_FUNC uint32_t strideAlign(uint32_t _offset, uint32_t _stride);
 
 	///
-	template <typename Ty>
-	bool isAligned(Ty _a, int32_t _align);
+	template<typename Ty>
+	BX_CONSTEXPR_FUNC bool isAligned(Ty _a, int32_t _align);
 
 	///
-	template <typename Ty>
-	bool isAligned(void* _ptr, int32_t _align);
+	template<typename Ty>
+	BX_CONSTEXPR_FUNC bool isAligned(Ty* _ptr, int32_t _align);
 
 	///
-	template <typename Ty>
-	bool isAligned(const void* _ptr, int32_t _align);
+	template<typename Ty>
+	BX_CONSTEXPR_FUNC bool isAligned(const Ty* _ptr, int32_t _align);
 
 	///
-	template <typename Ty>
-	Ty alignDown(Ty _a, int32_t _align);
+	template<typename Ty>
+	BX_CONSTEXPR_FUNC Ty alignDown(Ty _a, int32_t _align);
 
 	///
-	template <typename Ty>
-	Ty* alignDown(Ty* _ptr, int32_t _align);
+	template<typename Ty>
+	BX_CONSTEXPR_FUNC Ty* alignDown(Ty* _ptr, int32_t _align);
 
 	///
-	template <typename Ty>
-	const Ty* alignDown(const Ty* _ptr, int32_t _align);
+	template<typename Ty>
+	BX_CONSTEXPR_FUNC const Ty* alignDown(const Ty* _ptr, int32_t _align);
 
 	///
-	template <typename Ty>
-	Ty alignUp(Ty _a, int32_t _align);
+	template<typename Ty>
+	BX_CONSTEXPR_FUNC Ty alignUp(Ty _a, int32_t _align);
 
 	///
-	template <typename Ty>
-	Ty* alignUp(Ty* _ptr, int32_t _align);
+	template<typename Ty>
+	BX_CONSTEXPR_FUNC Ty* alignUp(Ty* _ptr, int32_t _align);
 
 	///
-	template <typename Ty>
-	const Ty* alignUp(const Ty* _ptr, int32_t _align);
+	template<typename Ty>
+	BX_CONSTEXPR_FUNC const Ty* alignUp(const Ty* _ptr, int32_t _align);
 
 	/// Convert float to half-float.
 	///

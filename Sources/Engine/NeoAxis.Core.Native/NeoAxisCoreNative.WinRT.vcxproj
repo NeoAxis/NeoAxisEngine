@@ -59,6 +59,7 @@
     <ClCompile Include="Jolt\Core\Color.cpp" />
     <ClCompile Include="Jolt\Core\Factory.cpp" />
     <ClCompile Include="Jolt\Core\IssueReporting.cpp" />
+    <ClCompile Include="Jolt\Core\JobSystemSingleThreaded.cpp" />
     <ClCompile Include="Jolt\Core\JobSystemThreadPool.cpp" />
     <ClCompile Include="Jolt\Core\JobSystemWithBarrier.cpp" />
     <ClCompile Include="Jolt\Core\LinearCurve.cpp" />
@@ -72,7 +73,6 @@
     <ClCompile Include="Jolt\Geometry\ConvexHullBuilder2D.cpp" />
     <ClCompile Include="Jolt\Geometry\Indexify.cpp" />
     <ClCompile Include="Jolt\Geometry\OrientedBox.cpp" />
-    <ClCompile Include="Jolt\Math\UVec4.cpp" />
     <ClCompile Include="Jolt\Math\Vec3.cpp" />
     <ClCompile Include="Jolt\NeoAxisPhysicsNative.cpp" />
     <ClCompile Include="Jolt\ObjectStream\ObjectStream.cpp" />
@@ -147,6 +147,7 @@
     <ClCompile Include="Jolt\Physics\Constraints\RackAndPinionConstraint.cpp" />
     <ClCompile Include="Jolt\Physics\Constraints\SixDOFConstraint.cpp" />
     <ClCompile Include="Jolt\Physics\Constraints\SliderConstraint.cpp" />
+    <ClCompile Include="Jolt\Physics\Constraints\SpringSettings.cpp" />
     <ClCompile Include="Jolt\Physics\Constraints\SwingTwistConstraint.cpp" />
     <ClCompile Include="Jolt\Physics\Constraints\TwoBodyConstraint.cpp" />
     <ClCompile Include="Jolt\Physics\DeterminismLog.cpp" />
@@ -330,6 +331,7 @@
     <ClInclude Include="Jolt\Core\InsertionSort.h" />
     <ClInclude Include="Jolt\Core\IssueReporting.h" />
     <ClInclude Include="Jolt\Core\JobSystem.h" />
+    <ClInclude Include="Jolt\Core\JobSystemSingleThreaded.h" />
     <ClInclude Include="Jolt\Core\JobSystemThreadPool.h" />
     <ClInclude Include="Jolt\Core\JobSystemWithBarrier.h" />
     <ClInclude Include="Jolt\Core\LinearCurve.h" />
@@ -530,6 +532,7 @@
     <ClInclude Include="Jolt\Physics\Constraints\RackAndPinionConstraint.h" />
     <ClInclude Include="Jolt\Physics\Constraints\SixDOFConstraint.h" />
     <ClInclude Include="Jolt\Physics\Constraints\SliderConstraint.h" />
+    <ClInclude Include="Jolt\Physics\Constraints\SpringSettings.h" />
     <ClInclude Include="Jolt\Physics\Constraints\SwingTwistConstraint.h" />
     <ClInclude Include="Jolt\Physics\Constraints\TwoBodyConstraint.h" />
     <ClInclude Include="Jolt\Physics\DeterminismLog.h" />
@@ -684,8 +687,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)_Compilation\UWP\$(Platform)\$(MSBuildProjectName)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)_Compilation\UWP\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)_build\UWP\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)_build\UWP\$(Platform)\$(MSBuildProjectName)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
@@ -703,7 +706,7 @@
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>ImageLibrary;..\NativeMemoryManager;..\External\FreeImage\Source;..\External\FreeType\include;NeoAxis;NeoAxis\hacd\HACD_Lib\inc;NativeWrapper;MemoryManager;MaskedOcclusionCulling;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;_WINRT_DLL;NATIVEMEMORYMANAGER_EXPORTS;JPH_DOUBLE_PRECISION;JPH_DEBUG_RENDERER;JPH_USE_SSE4_1;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;_HAS_STD_BYTE 0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;_WINRT_DLL;NATIVEMEMORYMANAGER_EXPORTS;JPH_DOUBLE_PRECISION;JPH_DEBUG_RENDERER;JPH_USE_SSE4_1;JPH_FLOA_______disabled_______TING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;_HAS_STD_BYTE 0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -722,7 +725,7 @@
       <Version>
       </Version>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)Engine\Lib\UWP\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Sources\Engine\Lib\UWP\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -736,7 +739,7 @@
       <ModuleDefinitionFile>Export.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(OutDir)$(TargetName).lib" "$(SolutionDir)Engine\Lib\UWP\$(Platform)"
+      <Command>copy "$(OutDir)$(TargetName).lib" "$(SolutionDir)Sources\Engine\Lib\UWP\$(Platform)"
 if not exist "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)" mkdir "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)"
 copy "$(OutDir)$(TargetName)$(TargetExt)" "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)"</Command>
     </PostBuildEvent>

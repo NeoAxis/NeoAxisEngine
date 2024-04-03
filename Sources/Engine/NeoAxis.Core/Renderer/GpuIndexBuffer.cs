@@ -1,6 +1,7 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Internal.SharpBgfx;
 
 namespace NeoAxis
@@ -165,19 +166,19 @@ namespace NeoAxis
 			indexCountActual = indexCount;
 		}
 
+		[MethodImpl( (MethodImplOptions)512 )]
 		unsafe internal void UpdateNativeObject()
-		//unsafe internal IDisposable GetNativeObject()
 		{
 			if( Disposed )
 				Log.Fatal( "GpuIndexBuffer: GetNativeObject: Disposed." );
-
-			EngineThreading.CheckMainThread();
 
 			if( ( Flags & ( GpuBufferFlags.Dynamic | GpuBufferFlags.ComputeWrite ) ) != 0 )
 			//if( ( ( Flags & GpuBufferFlags.Dynamic ) != 0 ) || ( ( Flags & GpuBufferFlags.ComputeWrite ) != 0 ) )
 			{
 				if( nativeObjectHandle == ushort.MaxValue )
 				{
+					EngineThreading.CheckMainThread();
+
 					BufferFlags nativeFlags = 0;
 					if( ( Flags & GpuBufferFlags.ComputeRead ) != 0 )
 						nativeFlags |= BufferFlags.ComputeRead;// | SharpBgfx.BufferFlags.ComputeTypeFloat;
@@ -186,7 +187,7 @@ namespace NeoAxis
 					//dynamic buffers are always 32-bit
 					nativeFlags |= BufferFlags.Index32;
 
-					nativeObjectHandle = NativeMethods.bgfx_create_dynamic_index_buffer( indices.Length, nativeFlags );
+					nativeObjectHandle = NativeMethods.bgfx_create_dynamic_index_buffer( indexCount/*indices.Length*/, nativeFlags );
 					nativeObjectIsDynamicBuffer = true;
 
 					//nativeObject = new DynamicIndexBuffer( indices.Length, nativeFlags );
@@ -252,6 +253,8 @@ namespace NeoAxis
 			{
 				if( nativeObjectHandle == ushort.MaxValue )// if( nativeObject == null )
 				{
+					EngineThreading.CheckMainThread();
+
 					bool use16Bit = true;
 					if( indices.Length > 65000 )//fast skip
 						use16Bit = false;

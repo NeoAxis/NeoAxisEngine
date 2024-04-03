@@ -17,7 +17,7 @@ namespace NeoAxis
 		public Reference<TextureTypeEnum> TextureType
 		{
 			get { if( _textureType.BeginGet() ) TextureType = _textureType.Get( this ); return _textureType.value; }
-			set { if( _textureType.BeginSet( ref value ) ) { try { TextureTypeChanged?.Invoke( this ); } finally { _textureType.EndSet(); } } }
+			set { if( _textureType.BeginSet( this, ref value ) ) { try { TextureTypeChanged?.Invoke( this ); } finally { _textureType.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TextureType"/> property value changes.</summary>
 		public event Action<ShaderTextureSample> TextureTypeChanged;
@@ -27,7 +27,7 @@ namespace NeoAxis
 		public Reference<ImageComponent> Texture
 		{
 			get { if( _texture.BeginGet() ) Texture = _texture.Get( this ); return _texture.value; }
-			set { if( _texture.BeginSet( ref value ) ) { try { TextureChanged?.Invoke( this ); } finally { _texture.EndSet(); } } }
+			set { if( _texture.BeginSet( this, ref value ) ) { try { TextureChanged?.Invoke( this ); } finally { _texture.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Texture"/> property value changes.</summary>
 		public event Action<ShaderTextureSample> TextureChanged;
@@ -41,7 +41,7 @@ namespace NeoAxis
 		public Reference<bool> RemoveTiling
 		{
 			get { if( _removeTiling.BeginGet() ) RemoveTiling = _removeTiling.Get( this ); return _removeTiling.value; }
-			set { if( _removeTiling.BeginSet( ref value ) ) { try { RemoveTilingChanged?.Invoke( this ); } finally { _removeTiling.EndSet(); } } }
+			set { if( _removeTiling.BeginSet( this, ref value ) ) { try { RemoveTilingChanged?.Invoke( this ); } finally { _removeTiling.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RemoveTiling"/> property value changes.</summary>
 		public event Action<ShaderTextureSample> RemoveTilingChanged;
@@ -56,7 +56,7 @@ namespace NeoAxis
 		public Reference<Vector2> Location2
 		{
 			get { if( _location2.BeginGet() ) Location2 = _location2.Get( this ); return _location2.value; }
-			set { if( _location2.BeginSet( ref value ) ) { try { Location2Changed?.Invoke( this ); } finally { _location2.EndSet(); } } }
+			set { if( _location2.BeginSet( this, ref value ) ) { try { Location2Changed?.Invoke( this ); } finally { _location2.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Location2"/> property value changes.</summary>
 		public event Action<ShaderTextureSample> Location2Changed;
@@ -67,7 +67,7 @@ namespace NeoAxis
 		public Reference<Vector3> Location3
 		{
 			get { if( _location3.BeginGet() ) Location3 = _location3.Get( this ); return _location3.value; }
-			set { if( _location3.BeginSet( ref value ) ) { try { Location3Changed?.Invoke( this ); } finally { _location3.EndSet(); } } }
+			set { if( _location3.BeginSet( this, ref value ) ) { try { Location3Changed?.Invoke( this ); } finally { _location3.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Location3"/> property value changes.</summary>
 		public event Action<ShaderTextureSample> Location3Changed;

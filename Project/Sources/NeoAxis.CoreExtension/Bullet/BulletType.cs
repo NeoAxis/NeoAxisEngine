@@ -21,6 +21,8 @@ namespace NeoAxis
 	{
 		int version;
 
+		internal bool? existsCollisionCached;
+
 		//
 
 		//!!!!
@@ -36,7 +38,7 @@ namespace NeoAxis
 		public Reference<Mesh> Mesh
 		{
 			get { if( _mesh.BeginGet() ) Mesh = _mesh.Get( this ); return _mesh.value; }
-			set { if( _mesh.BeginSet( ref value ) ) { try { MeshChanged?.Invoke( this ); DataWasChanged(); } finally { _mesh.EndSet(); } } }
+			set { if( _mesh.BeginSet( this, ref value ) ) { try { MeshChanged?.Invoke( this ); DataWasChanged(); } finally { _mesh.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Mesh"/> property value changes.</summary>
 		public event Action<BulletType> MeshChanged;
@@ -50,7 +52,7 @@ namespace NeoAxis
 		public Reference<double> GravityFactorNoPhysicalBodyMode
 		{
 			get { if( _gravityFactorNoPhysicalBodyMode.BeginGet() ) GravityFactorNoPhysicalBodyMode = _gravityFactorNoPhysicalBodyMode.Get( this ); return _gravityFactorNoPhysicalBodyMode.value; }
-			set { if( _gravityFactorNoPhysicalBodyMode.BeginSet( ref value ) ) { try { GravityFactorNoPhysicalBodyModeChanged?.Invoke( this ); DataWasChanged(); } finally { _gravityFactorNoPhysicalBodyMode.EndSet(); } } }
+			set { if( _gravityFactorNoPhysicalBodyMode.BeginSet( this, ref value ) ) { try { GravityFactorNoPhysicalBodyModeChanged?.Invoke( this ); DataWasChanged(); } finally { _gravityFactorNoPhysicalBodyMode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="GravityFactorNoPhysicalBodyMode"/> property value changes.</summary>
 		public event Action<BulletType> GravityFactorNoPhysicalBodyModeChanged;
@@ -63,7 +65,7 @@ namespace NeoAxis
 		public Reference<double> MassNoPhysicalBodyMode
 		{
 			get { if( _massNoPhysicalBodyMode.BeginGet() ) MassNoPhysicalBodyMode = _massNoPhysicalBodyMode.Get( this ); return _massNoPhysicalBodyMode.value; }
-			set { if( _massNoPhysicalBodyMode.BeginSet( ref value ) ) { try { MassNoPhysicalBodyModeChanged?.Invoke( this ); DataWasChanged(); } finally { _massNoPhysicalBodyMode.EndSet(); } } }
+			set { if( _massNoPhysicalBodyMode.BeginSet( this, ref value ) ) { try { MassNoPhysicalBodyModeChanged?.Invoke( this ); DataWasChanged(); } finally { _massNoPhysicalBodyMode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="MassNoPhysicalBodyMode"/> property value changes.</summary>
 		public event Action<BulletType> MassNoPhysicalBodyModeChanged;
@@ -76,7 +78,7 @@ namespace NeoAxis
 		public Reference<bool> DestroyOnHit
 		{
 			get { if( _destroyOnHit.BeginGet() ) DestroyOnHit = _destroyOnHit.Get( this ); return _destroyOnHit.value; }
-			set { if( _destroyOnHit.BeginSet( ref value ) ) { try { DestroyOnHitChanged?.Invoke( this ); DataWasChanged(); } finally { _destroyOnHit.EndSet(); } } }
+			set { if( _destroyOnHit.BeginSet( this, ref value ) ) { try { DestroyOnHitChanged?.Invoke( this ); DataWasChanged(); } finally { _destroyOnHit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DestroyOnHit"/> property value changes.</summary>
 		public event Action<BulletType> DestroyOnHitChanged;
@@ -89,7 +91,7 @@ namespace NeoAxis
 		public Reference<double> HitDamage
 		{
 			get { if( _hitDamage.BeginGet() ) HitDamage = _hitDamage.Get( this ); return _hitDamage.value; }
-			set { if( _hitDamage.BeginSet( ref value ) ) { try { HitDamageChanged?.Invoke( this ); DataWasChanged(); } finally { _hitDamage.EndSet(); } } }
+			set { if( _hitDamage.BeginSet( this, ref value ) ) { try { HitDamageChanged?.Invoke( this ); DataWasChanged(); } finally { _hitDamage.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HitDamage"/> property value changes.</summary>
 		public event Action<BulletType> HitDamageChanged;
@@ -102,7 +104,7 @@ namespace NeoAxis
 		public Reference<Sound> HitSound
 		{
 			get { if( _hitSound.BeginGet() ) HitSound = _hitSound.Get( this ); return _hitSound.value; }
-			set { if( _hitSound.BeginSet( ref value ) ) { try { HitSoundChanged?.Invoke( this ); DataWasChanged(); } finally { _hitSound.EndSet(); } } }
+			set { if( _hitSound.BeginSet( this, ref value ) ) { try { HitSoundChanged?.Invoke( this ); DataWasChanged(); } finally { _hitSound.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HitSound"/> property value changes.</summary>
 		public event Action<BulletType> HitSoundChanged;
@@ -119,7 +121,7 @@ namespace NeoAxis
 		public Reference<ParticleSystem> HitParticle
 		{
 			get { if( _hitParticle.BeginGet() ) HitParticle = _hitParticle.Get( this ); return _hitParticle.value; }
-			set { if( _hitParticle.BeginSet( ref value ) ) { try { HitParticleChanged?.Invoke( this ); DataWasChanged(); } finally { _hitParticle.EndSet(); } } }
+			set { if( _hitParticle.BeginSet( this, ref value ) ) { try { HitParticleChanged?.Invoke( this ); DataWasChanged(); } finally { _hitParticle.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HitParticle"/> property value changes.</summary>
 		public event Action<BulletType> HitParticleChanged;
@@ -129,7 +131,7 @@ namespace NeoAxis
 		public Reference<double> HitParticleLifetime
 		{
 			get { if( _hitParticleLifetime.BeginGet() ) HitParticleLifetime = _hitParticleLifetime.Get( this ); return _hitParticleLifetime.value; }
-			set { if( _hitParticleLifetime.BeginSet( ref value ) ) { try { HitParticleLifetimeChanged?.Invoke( this ); DataWasChanged(); } finally { _hitParticleLifetime.EndSet(); } } }
+			set { if( _hitParticleLifetime.BeginSet( this, ref value ) ) { try { HitParticleLifetimeChanged?.Invoke( this ); DataWasChanged(); } finally { _hitParticleLifetime.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HitParticleLifetime"/> property value changes.</summary>
 		public event Action<BulletType> HitParticleLifetimeChanged;
@@ -139,7 +141,7 @@ namespace NeoAxis
 		public Reference<bool> HitParticleApplyHitNormal
 		{
 			get { if( _hitParticleApplyHitNormal.BeginGet() ) HitParticleApplyHitNormal = _hitParticleApplyHitNormal.Get( this ); return _hitParticleApplyHitNormal.value; }
-			set { if( _hitParticleApplyHitNormal.BeginSet( ref value ) ) { try { HitParticleApplyHitNormalChanged?.Invoke( this ); } finally { _hitParticleApplyHitNormal.EndSet(); } } }
+			set { if( _hitParticleApplyHitNormal.BeginSet( this, ref value ) ) { try { HitParticleApplyHitNormalChanged?.Invoke( this ); } finally { _hitParticleApplyHitNormal.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HitParticleApplyHitNormal"/> property value changes.</summary>
 		public event Action<BulletType> HitParticleApplyHitNormalChanged;
@@ -149,7 +151,7 @@ namespace NeoAxis
 		public Reference<bool> HitDecal
 		{
 			get { if( _hitDecal.BeginGet() ) HitDecal = _hitDecal.Get( this ); return _hitDecal.value; }
-			set { if( _hitDecal.BeginSet( ref value ) ) { try { HitDecalChanged?.Invoke( this ); } finally { _hitDecal.EndSet(); } } }
+			set { if( _hitDecal.BeginSet( this, ref value ) ) { try { HitDecalChanged?.Invoke( this ); } finally { _hitDecal.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HitDecal"/> property value changes.</summary>
 		public event Action<BulletType> HitDecalChanged;
@@ -159,7 +161,7 @@ namespace NeoAxis
 		public Reference<Vector3> HitDecalScale
 		{
 			get { if( _hitDecalScale.BeginGet() ) HitDecalScale = _hitDecalScale.Get( this ); return _hitDecalScale.value; }
-			set { if( _hitDecalScale.BeginSet( ref value ) ) { try { HitDecalScaleChanged?.Invoke( this ); } finally { _hitDecalScale.EndSet(); } } }
+			set { if( _hitDecalScale.BeginSet( this, ref value ) ) { try { HitDecalScaleChanged?.Invoke( this ); } finally { _hitDecalScale.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HitDecalScale"/> property value changes.</summary>
 		public event Action<BulletType> HitDecalScaleChanged;
@@ -169,7 +171,7 @@ namespace NeoAxis
 		public Reference<double> HitDecalLifetime
 		{
 			get { if( _hitDecalLifetime.BeginGet() ) HitDecalLifetime = _hitDecalLifetime.Get( this ); return _hitDecalLifetime.value; }
-			set { if( _hitDecalLifetime.BeginSet( ref value ) ) { try { HitDecalLifetimeChanged?.Invoke( this ); } finally { _hitDecalLifetime.EndSet(); } } }
+			set { if( _hitDecalLifetime.BeginSet( this, ref value ) ) { try { HitDecalLifetimeChanged?.Invoke( this ); } finally { _hitDecalLifetime.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HitDecalLifetime"/> property value changes.</summary>
 		public event Action<BulletType> HitDecalLifetimeChanged;
@@ -180,7 +182,7 @@ namespace NeoAxis
 		public Reference<double> HitDecalVisibilityDistanceFactor
 		{
 			get { if( _hitDecalVisibilityDistanceFactor.BeginGet() ) HitDecalVisibilityDistanceFactor = _hitDecalVisibilityDistanceFactor.Get( this ); return _hitDecalVisibilityDistanceFactor.value; }
-			set { if( _hitDecalVisibilityDistanceFactor.BeginSet( ref value ) ) { try { HitDecalVisibilityDistanceFactorChanged?.Invoke( this ); } finally { _hitDecalVisibilityDistanceFactor.EndSet(); } } }
+			set { if( _hitDecalVisibilityDistanceFactor.BeginSet( this, ref value ) ) { try { HitDecalVisibilityDistanceFactorChanged?.Invoke( this ); } finally { _hitDecalVisibilityDistanceFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HitDecalVisibilityDistanceFactor"/> property value changes.</summary>
 		public event Action<BulletType> HitDecalVisibilityDistanceFactorChanged;
@@ -191,7 +193,7 @@ namespace NeoAxis
 		public Reference<Material> HitDecalMaterial
 		{
 			get { if( _hitDecalMaterial.BeginGet() ) HitDecalMaterial = _hitDecalMaterial.Get( this ); return _hitDecalMaterial.value; }
-			set { if( _hitDecalMaterial.BeginSet( ref value ) ) { try { HitDecalMaterialChanged?.Invoke( this ); } finally { _hitDecalMaterial.EndSet(); } } }
+			set { if( _hitDecalMaterial.BeginSet( this, ref value ) ) { try { HitDecalMaterialChanged?.Invoke( this ); } finally { _hitDecalMaterial.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HitDecalMaterial"/> property value changes.</summary>
 		public event Action<BulletType> HitDecalMaterialChanged;
@@ -220,7 +222,7 @@ namespace NeoAxis
 		public Reference<double> HitVolumeRadius
 		{
 			get { if( _hitVolumeRadius.BeginGet() ) HitVolumeRadius = _hitVolumeRadius.Get( this ); return _hitVolumeRadius.value; }
-			set { if( _hitVolumeRadius.BeginSet( ref value ) ) { try { HitVolumeRadiusChanged?.Invoke( this ); } finally { _hitVolumeRadius.EndSet(); } } }
+			set { if( _hitVolumeRadius.BeginSet( this, ref value ) ) { try { HitVolumeRadiusChanged?.Invoke( this ); } finally { _hitVolumeRadius.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HitVolumeRadius"/> property value changes.</summary>
 		public event Action<BulletType> HitVolumeRadiusChanged;
@@ -230,7 +232,7 @@ namespace NeoAxis
 		public Reference<double> HitVolumeImpulse
 		{
 			get { if( _hitVolumeImpulse.BeginGet() ) HitVolumeImpulse = _hitVolumeImpulse.Get( this ); return _hitVolumeImpulse.value; }
-			set { if( _hitVolumeImpulse.BeginSet( ref value ) ) { try { HitVolumeImpulseChanged?.Invoke( this ); } finally { _hitVolumeImpulse.EndSet(); } } }
+			set { if( _hitVolumeImpulse.BeginSet( this, ref value ) ) { try { HitVolumeImpulseChanged?.Invoke( this ); } finally { _hitVolumeImpulse.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HitVolumeImpulse"/> property value changes.</summary>
 		public event Action<BulletType> HitVolumeImpulseChanged;
@@ -240,7 +242,7 @@ namespace NeoAxis
 		public Reference<double> HitVolumeDamage
 		{
 			get { if( _hitVolumeDamage.BeginGet() ) HitVolumeDamage = _hitVolumeDamage.Get( this ); return _hitVolumeDamage.value; }
-			set { if( _hitVolumeDamage.BeginSet( ref value ) ) { try { HitVolumeDamageChanged?.Invoke( this ); } finally { _hitVolumeDamage.EndSet(); } } }
+			set { if( _hitVolumeDamage.BeginSet( this, ref value ) ) { try { HitVolumeDamageChanged?.Invoke( this ); } finally { _hitVolumeDamage.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HitVolumeDamage"/> property value changes.</summary>
 		public event Action<BulletType> HitVolumeDamageChanged;

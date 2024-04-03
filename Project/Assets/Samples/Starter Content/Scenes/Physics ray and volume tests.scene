@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1146, 842\"><KW V=\"1\" A=\"5764BE5FC5314DDD74A0CA95C1A44AF4\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"1DF809CF5B8B468161AEDC4404B322F8\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"5764BE5FC5314DDD74A0CA95C1A44AF4\"><KP UN=\"5764BE5FC5314DDD74A0CA95C1A44AF4\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"226874B46A29499F3AA0101170C9018E\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"5764BE5FC5314DDD74A0CA95C1A44AF4\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"1DF809CF5B8B468161AEDC4404B322F8\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"5764BE5FC5314DDD74A0CA95C1A44AF4\"><KP UN=\"5764BE5FC5314DDD74A0CA95C1A44AF4\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"226874B46A29499F3AA0101170C9018E\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP><KP UN=\"96D920724C4D4499E7B56C2894B3AC1F\" S=\"False\"><CPD ObjPath=\"$Box 10\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	DisplayDevelopmentDataInSimulation = True
 	DisplaySensors = True
 	RenderingPipeline
@@ -21,7 +21,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "1.75584830966489 -5.16071197473696 11.2297881267152; -0.294515721995533 0.296607873664919 0.64009472287705 0.644641764488136; 1 1 1"
+		Transform = "1.69386030829246 -4.93229891687399 14.5044125982864; -0.311716860402551 0.316019982713056 0.629267783180263 0.637954564618996; 1 1 1"
 	}
 	.component NeoAxis.Camera
 	{
@@ -53,7 +53,9 @@
 	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
-		ShadowFarDistance = 50
+		ShadowDirectionalDistance = 50
+		ShadowPointSpotlightDistance = 50
+		ShadowStatic = False
 		.component NeoAxis.Component
 		{
 			Name = Background Effects
@@ -94,6 +96,14 @@
 			{
 				Name = Motion Blur
 			}
+			.component NeoAxis.RenderingEffect_ShowRenderTarget
+			{
+				Enabled = False
+				Name = Show Render Target
+				Intensity = 0.391
+				Texture = ShadowDirectionalLightSplit2
+				DepthMultiplier = 22.848399999999998
+			}
 		}
 		.component NeoAxis.Component
 		{
@@ -119,10 +129,15 @@
 		Name = Ground
 		CanBeSelected = False
 		Transform = "0 0 0; 0 0 0 1; 1 1 1"
+		Color = 0.8823529 0.4521961 0.2481569
 		Collision = True
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\White.material"
 		}
 		ReplaceMaterialSelectively
 		{
@@ -446,15 +461,11 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Sphere 3
-		Transform = "-1.08631105883867 5.44350814401687 1.01309323555532; 0 0 0 1; 1 1 1"
+		Transform = "-1.08630068136141 5.44350765447057 0.743034510280252; -0.00000091202093699 -0.00000161479533745 0.00000065253556158 1; 1.5 1.5 1.5"
 		Collision = True
 		Mesh
 		{
-			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterial
-		{
-			GetByReference = "Base\\Materials\\Yellow.material"
+			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Box\\SFCrate1.fbx|$Mesh"
 		}
 		ReplaceMaterialSelectively
 		{
@@ -467,13 +478,25 @@
 				Count = 0
 			}
 		}
-		.component NeoAxis.Mesh
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Sphere 13
+		Transform = "4.59504407640245 16.2878386325698 0.739999997445152; 0.0000000013351027 0.00000000922602794 -0.212696999311447 0.977118253707886; 1.5 1.5 1.5"
+		Collision = True
+		Mesh
 		{
-			Name = Mesh
-			.component NeoAxis.MeshGeometry_Sphere
+			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Box\\SFCrate1.fbx|$Mesh"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
 			{
-				Name = Mesh Geometry
-				Radius = 1
+				Count = 0
 			}
 		}
 	}
@@ -609,6 +632,65 @@
 			.component NeoAxis.MeshGeometry_Box
 			{
 				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 10
+		Transform = "-2.00124111794449 10.4762314244209 0.735368469918527; 0 0 0.8960851387205 -0.443882218797129; 1.48999998904765 1.48999998904765 1.48999998904765"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\Green.material"
+		}
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.CSharpScript
+		{
+			Name = C# Script
+			NetworkMode = False
+			Code = "public void Box10_UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\tvar obj = (ObjectInSpace)sender;\r\n\r\n\tvar tr = obj.TransformV;\r\n\tvar newTr = tr.UpdateRotation(Quaternion.FromRotateByZ(EngineApp.EngineTime / 2));\r\n\tobj.Transform = newTr;\r\n}\r\n"
+			__parameter_Delta = 0
+			Exit
+			{
+			}
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler UpdateEvent
+				WhenEnable = Editor, Simulation, Instance
+				Event
+				{
+					GetByReference = "this:..\\..\\event:UpdateEvent"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\method:Box10_UpdateEvent(NeoAxis.Component,System.Single)"
+				}
+				HandlerFlow
+				{
+				}
 			}
 		}
 	}
@@ -1360,6 +1442,7 @@
 		Transform = "-3.90312085199922 -2.5689122526631 0.500803206829817; 0 0 0.707106781186548 0.707106781186548; 30 30 30"
 		SourceData = PhysicsObjects
 		Shape = Ray
+		Mode = OneClosestObject
 		DisplayObjects = True
 		Objects
 		{
@@ -1376,21 +1459,14 @@
 		Transform = "-6.30312085199922 -2.5689122526631 0.500803206829817; 0 0 0.707106781186548 0.707106781186548; 30 30 30"
 		SourceData = PhysicsObjects
 		Shape = Ray
+		Mode = OneClosestObject
 		DisplayObjects = True
 		Objects
 		{
-			Count = 3
+			Count = 1
 			0 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
 			{
 				GetByReference = "root:$Cylinder 11"
-			}
-			1 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
-			{
-				GetByReference = "root:$Cylinder 12"
-			}
-			2 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
-			{
-				GetByReference = "root:$Cylinder 8"
 			}
 		}
 	}
@@ -1400,21 +1476,14 @@
 		Transform = "-1.70312085199922 -2.5689122526631 0.500803206829817; 0 0 0.707106781186548 0.707106781186548; 30 30 30"
 		SourceData = PhysicsObjects
 		Shape = Ray
+		Mode = OneClosestObject
 		DisplayObjects = True
 		Objects
 		{
-			Count = 3
+			Count = 1
 			0 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
 			{
 				GetByReference = "root:$Cylinder 2"
-			}
-			1 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
-			{
-				GetByReference = "root:$Sphere 3"
-			}
-			2 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
-			{
-				GetByReference = "root:$Box 6"
 			}
 		}
 	}
@@ -1423,6 +1492,7 @@
 		Name = Sensor 5
 		Transform = "4.09687914800078 -2.5689122526631 0.500803206829817; 0 -0 0 1; 1 1 1"
 		SourceData = PhysicsObjects
+		Mode = OneClosestObject
 		DisplayObjects = True
 		Target
 		{
@@ -1430,14 +1500,10 @@
 		}
 		Objects
 		{
-			Count = 2
+			Count = 1
 			0 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
 			{
 				GetByReference = "root:$Cylinder 3"
-			}
-			1 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
-			{
-				GetByReference = "root:$Box"
 			}
 		}
 	}
@@ -1447,6 +1513,7 @@
 		Transform = "8.09687914800078 -2.5689122526631 0.500803206829817; 0 -0 0 1; 1 1 1"
 		SourceData = PhysicsObjects
 		Shape = Sphere
+		Mode = OneClosestObject
 		DisplayObjects = True
 		Target
 		{
@@ -1454,18 +1521,10 @@
 		}
 		Objects
 		{
-			Count = 3
+			Count = 1
 			0 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
 			{
 				GetByReference = "root:$Box 9"
-			}
-			1 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
-			{
-				GetByReference = "root:$Sphere 4"
-			}
-			2 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
-			{
-				GetByReference = "root:$Sphere 6"
 			}
 		}
 	}
@@ -1482,7 +1541,7 @@
 	.component NeoAxis.CSharpScript
 	{
 		Name = C# Script
-		Code = "public void _UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\ttry //!!!!remove\r\n\t{\r\n\t\tvar all = Time.Current % 4 > 2.0;\r\n\t\t\r\n\t\tforeach(var sensor in sender.GetComponents<Sensor>())\r\n\t\t{\r\n\t\t\tsensor.Mode = all ? Sensor.ModeEnum.AllObjects : Sensor.ModeEnum.OneClosestObject;\r\n\t\t}\r\n\t}\r\n\tcatch(Exception e)\r\n\t{\r\n\t\tLog.Warning(e.Message);\r\n\t}\t\r\n}\r\n"
+		Code = "public void _UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\ttry\r\n\t{\r\n\t\tvar all = Time.Current % 8 > 4.0;\r\n\t\t\r\n\t\tforeach(var sensor in sender.GetComponents<Sensor>())\r\n\t\t{\r\n\t\t\tsensor.Mode = all ? Sensor.ModeEnum.AllObjects : Sensor.ModeEnum.OneClosestObject;\r\n\t\t}\r\n\t}\r\n\tcatch(Exception e)\r\n\t{\r\n\t\tLog.Warning(e.Message);\r\n\t}\t\r\n}\r\n"
 		__parameter_Delta = 0
 		Exit
 		{
@@ -1502,6 +1561,48 @@
 			HandlerFlow
 			{
 			}
+		}
+	}
+	.component NeoAxis.Character
+	{
+		Name = Character
+		Transform = "-1.76844600047308 14.8383238170201 0.00000011803135536; 0 0 -0.291830705435556 0.956469988742452; 1 1 1"
+		Collision = True
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.MeshInSpaceAnimationController
+		{
+			Name = Animation Controller
+		}
+	}
+	.component NeoAxis.Character
+	{
+		Name = Character 2
+		Transform = "8.14425288541925 23.1770269684083 0.00000011803135536; 0 0 -0.884149410664932 0.467204258992632; 1 1 1"
+		Collision = True
+		ReplaceMaterialSelectively
+		{
+			Count = 0
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.MeshInSpaceAnimationController
+		{
+			Name = Animation Controller
 		}
 	}
 }

@@ -96,14 +96,31 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public virtual Vector3 CalculateValueByTime( double time )
+		public virtual void CalculateValueByTime( double time, out Vector3 result )
 		{
 			int i = GetIndexForTime( time );
 			if( i >= points.Count )
-				return points[ points.Count - 1 ].value;
+				result = points[ points.Count - 1 ].value;
 			else
-				return points[ i ].value;
+				result = points[ i ].value;
 		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public Vector3 CalculateValueByTime( double time )
+		{
+			CalculateValueByTime( time, out var result );
+			return result;
+		}
+
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public virtual Vector3 CalculateValueByTime( double time )
+		//{
+		//	int i = GetIndexForTime( time );
+		//	if( i >= points.Count )
+		//		return points[ points.Count - 1 ].value;
+		//	else
+		//		return points[ i ].value;
+		//}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public virtual Vector3 GetCurrentFirstDerivative( double time )

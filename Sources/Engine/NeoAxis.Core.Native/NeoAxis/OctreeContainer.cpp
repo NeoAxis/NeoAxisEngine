@@ -5,6 +5,8 @@
 #include "MaskedOcclusionCulling.h"
 #include <mutex>
 #include <thread>
+#include <atomic>
+#include <memory>
 
 using namespace Ogre;
 
@@ -23,18 +25,17 @@ enum class ThreadingModeEnum
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//!!!!double
-void GetBoundsGeometryVertices(const BoundsD& bounds, Vector3* positions)
-{
-	positions[0] = Vector3(bounds.maximum.x, bounds.minimum.y, bounds.minimum.z);
-	positions[1] = Vector3(bounds.maximum.x, bounds.minimum.y, bounds.maximum.z);
-	positions[2] = Vector3(bounds.maximum.x, bounds.maximum.y, bounds.minimum.z);
-	positions[3] = Vector3(bounds.maximum.x, bounds.maximum.y, bounds.maximum.z);
-	positions[4] = Vector3(bounds.minimum.x, bounds.minimum.y, bounds.minimum.z);
-	positions[5] = Vector3(bounds.minimum.x, bounds.minimum.y, bounds.maximum.z);
-	positions[6] = Vector3(bounds.minimum.x, bounds.maximum.y, bounds.minimum.z);
-	positions[7] = Vector3(bounds.minimum.x, bounds.maximum.y, bounds.maximum.z);
-}
+//void GetBoundsGeometryVertices(const BoundsD& bounds, Vector3* positions)
+//{
+//	positions[0] = Vector3(bounds.maximum.x, bounds.minimum.y, bounds.minimum.z);
+//	positions[1] = Vector3(bounds.maximum.x, bounds.minimum.y, bounds.maximum.z);
+//	positions[2] = Vector3(bounds.maximum.x, bounds.maximum.y, bounds.minimum.z);
+//	positions[3] = Vector3(bounds.maximum.x, bounds.maximum.y, bounds.maximum.z);
+//	positions[4] = Vector3(bounds.minimum.x, bounds.minimum.y, bounds.minimum.z);
+//	positions[5] = Vector3(bounds.minimum.x, bounds.minimum.y, bounds.maximum.z);
+//	positions[6] = Vector3(bounds.minimum.x, bounds.maximum.y, bounds.minimum.z);
+//	positions[7] = Vector3(bounds.minimum.x, bounds.maximum.y, bounds.maximum.z);
+//}
 
 static const unsigned int boundsGeometryIndices[36] = {
 	0, 3, 1,
@@ -196,6 +197,7 @@ public:
 	{
 		//int Mode;
 		void* occlusionCullingBuffer;
+		Vector3D cameraPosition;
 		Ogre::Matrix4 viewProjectionMatrix;
 		//can use flags
 		int occlusionCullingBufferCullNodes;
@@ -225,7 +227,7 @@ public:
 	struct GetObjectsContext
 	{
 		std::vector<bool>* getObjectsChecked;
-		std::vector<int> getObjectsCheckedList;
+		std::vector<int>* getObjectsCheckedList2;//std::vector<int> getObjectsCheckedList;
 		GetObjectsExtensionData* extensionData;
 	};
 
@@ -234,9 +236,9 @@ public:
 	struct GetObjectsRayOutputData
 	{
 		int objectIndex;
-		double distanceNormalized;
+		float/*double*/ distanceNormalized;
 
-		GetObjectsRayOutputData( int objectIndex, double distanceNormalized )
+		GetObjectsRayOutputData( int objectIndex, float/*double*/ distanceNormalized )
 		{
 			this->objectIndex = objectIndex;
 			this->distanceNormalized = distanceNormalized;
@@ -290,6 +292,8 @@ public:
 
 	std::stack<std::vector<bool>*> getObjectsFreeCheckedLists;
 	std::mutex getObjectsFreeCheckedListsMutex;
+	std::stack<std::vector<int>*> getObjectsFreeCheckedLists2;
+	std::mutex getObjectsFreeCheckedListsMutex2;
 
 	std::mutex updateMutex;
 
@@ -351,6 +355,12 @@ public:
 		{
 			delete getObjectsFreeCheckedLists.top();
 			getObjectsFreeCheckedLists.pop();
+		}
+
+		while (getObjectsFreeCheckedLists2.size() != 0)
+		{
+			delete getObjectsFreeCheckedLists2.top();
+			getObjectsFreeCheckedLists2.pop();
 		}
 
 		//remove all objects
@@ -1056,9 +1066,22 @@ public:
 			MaskedOcclusionCulling* buffer = (MaskedOcclusionCulling*)data->occlusionCullingBuffer;
 			float* modelToClipMatrix = (float*)&data->viewProjectionMatrix;
 
-			//!!!!double
+			auto minRelativeD = bounds.minimum - data->cameraPosition;
+			auto maxRelativeD = bounds.maximum - data->cameraPosition;
+			auto minRelative = Vector3(minRelativeD.x, minRelativeD.y, minRelativeD.z);
+			auto maxRelative = Vector3(maxRelativeD.x, maxRelativeD.y, maxRelativeD.z);
+
 			Vector3 positions[8];
-			GetBoundsGeometryVertices(bounds, positions);
+			positions[0] = Vector3(maxRelative.x, minRelative.y, minRelative.z);
+			positions[1] = Vector3(maxRelative.x, minRelative.y, maxRelative.z);
+			positions[2] = Vector3(maxRelative.x, maxRelative.y, minRelative.z);
+			positions[3] = Vector3(maxRelative.x, maxRelative.y, maxRelative.z);
+			positions[4] = Vector3(minRelative.x, minRelative.y, minRelative.z);
+			positions[5] = Vector3(minRelative.x, minRelative.y, maxRelative.z);
+			positions[6] = Vector3(minRelative.x, maxRelative.y, minRelative.z);
+			positions[7] = Vector3(minRelative.x, maxRelative.y, maxRelative.z);
+
+			//GetBoundsGeometryVertices(bounds, positions);
 
 			////for (int n = 0; n < 8; n++)
 			////{
@@ -1072,16 +1095,23 @@ public:
 			////for (int n = 1; n < 8; n++)
 			////	b.add(positions[n]);
 
+
 			//works with bugs when BACKFACE_CW
-			MaskedOcclusionCulling::CullingResult result = buffer->TestTriangles((float*)&positions[0], &boundsGeometryIndices[0], 12, modelToClipMatrix, MaskedOcclusionCulling::BACKFACE_NONE, MaskedOcclusionCulling::CLIP_PLANE_ALL, MaskedOcclusionCulling::VertexLayout(12, 4, 8));
+
+			//!!!!CLIP_PLANE_ALL?
+
+			MaskedOcclusionCulling::CullingResult result = buffer->TestTriangles((float*)&positions[0], &boundsGeometryIndices[0], 12, modelToClipMatrix, MaskedOcclusionCulling::BACKFACE_NONE, MaskedOcclusionCulling::CLIP_PLANE_SIDES/*CLIP_PLANE_ALL*/, MaskedOcclusionCulling::VertexLayout(12, 4, 8));
+
 			//MaskedOcclusionCulling::CullingResult result = buffer->TestTriangles((float*)&positions[0], &boundsGeometryIndices[0], 12, modelToClipMatrix, MaskedOcclusionCulling::BACKFACE_CW, MaskedOcclusionCulling::CLIP_PLANE_ALL, MaskedOcclusionCulling::VertexLayout(12, 4, 8));
 			// 
 			////MaskedOcclusionCulling::CullingResult result = buffer->TestRect(b.minimum.x, b.minimum.y, b.maximum.x, b.maximum.y, b.maximum.z);
 
-			if (result == MaskedOcclusionCulling::OCCLUDED)
-				return false;
-			else
-				return true;
+			return (result & MaskedOcclusionCulling::OCCLUDED) == 0;
+
+			////if (result & MaskedOcclusionCulling::OCCLUDED)//if (result == MaskedOcclusionCulling::OCCLUDED)
+			////	return false;
+			////else
+			////	return true;
 		}
 
 		return true;
@@ -1131,7 +1161,7 @@ public:
 				}
 
 				(*context->getObjectsChecked)[objectData->index] = true;
-				context->getObjectsCheckedList.push_back(objectData->index);
+				context->getObjectsCheckedList2->push_back(objectData->index);
 			}
 		}
 
@@ -1160,7 +1190,7 @@ public:
 				}
 
 				(*context->getObjectsChecked)[objectData->index] = true;
-				context->getObjectsCheckedList.push_back(objectData->index);
+				context->getObjectsCheckedList2->push_back(objectData->index);
 			}
 		}
 
@@ -1223,12 +1253,35 @@ public:
 		getObjectsFreeCheckedListsMutex.unlock();
 	}
 
+	std::vector<int>* GetObjectsFreeCheckedList2()
+	{
+		getObjectsFreeCheckedListsMutex2.lock();
+
+		if (getObjectsFreeCheckedLists2.size() == 0)
+			getObjectsFreeCheckedLists2.push(new std::vector<int>());
+
+		std::vector<int>* result = getObjectsFreeCheckedLists2.top();
+		getObjectsFreeCheckedLists2.pop();
+
+		getObjectsFreeCheckedListsMutex2.unlock();
+
+		return result;
+	}
+
+	void FreeGetObjectsFreeCheckedList2(std::vector<int>* list)
+	{
+		list->clear();
+		getObjectsFreeCheckedListsMutex2.lock();
+		getObjectsFreeCheckedLists2.push(list);
+		getObjectsFreeCheckedListsMutex2.unlock();
+	}
+
 	int GetObjects( const GetObjectsInputData& inputData, int* outputArray, int outputArraySize )
 	{
-		GetObjectsContext* context = new GetObjectsContext();
-		context->getObjectsChecked = GetObjectsFreeCheckedList();
-		context->getObjectsCheckedList.reserve(objects.size());
-		context->extensionData = inputData.extensionData;
+		GetObjectsContext context;//GetObjectsContext* context = new GetObjectsContext();
+		context.getObjectsChecked = GetObjectsFreeCheckedList();
+		context.getObjectsCheckedList2 = GetObjectsFreeCheckedList2();//context->getObjectsCheckedList.reserve(objects.size());
+		context.extensionData = inputData.extensionData;
 
 		////rebuild tree if need
 		//CheckForRebuildTree();
@@ -1308,7 +1361,7 @@ public:
 
 			bool skipBoundsCheck = checkShape->Contains( nodesBounds );
 			int nodesProcessed = 0;
-			GetObjectsNodeRecursive( context, rootNode, checkShape, skipBoundsCheck, inputData.groupMask, inputData.mode, outputArray, outputArraySize, 
+			GetObjectsNodeRecursive( &context, rootNode, checkShape, skipBoundsCheck, inputData.groupMask, inputData.mode, outputArray, outputArraySize, 
 				resultCount, outputArrayIndex, nodesProcessed );
 		}
 
@@ -1319,9 +1372,9 @@ public:
 			{
 				ObjectData* objectData = *it;
 
-				if ( (inputData.groupMask & objectData->groupMask) != 0 && !(*context->getObjectsChecked)[objectData->index])
+				if ( (inputData.groupMask & objectData->groupMask) != 0 && !(*context.getObjectsChecked)[objectData->index])
 				{
-					if( checkShape->Intersects( objectData->bounds, objectData->boundsCenter, objectData->boundsHalfSize ) && ExtensionDataIntersects( context, objectData->bounds, false ))
+					if( checkShape->Intersects( objectData->bounds, objectData->boundsCenter, objectData->boundsHalfSize ) && ExtensionDataIntersects( &context, objectData->bounds, false ))
 					{
 						if (inputData.mode == ModeEnum_One && resultCount != 0)
 							break;
@@ -1338,19 +1391,20 @@ public:
 							break;
 					}
 
-					(*context->getObjectsChecked)[objectData->index] = true;
-					context->getObjectsCheckedList.push_back(objectData->index);
+					(*context.getObjectsChecked)[objectData->index] = true;
+					context.getObjectsCheckedList2->push_back(objectData->index);
 				}
 			}
 		}
 
 		//clear checked list and free
-		for( int n = 0; n < context->getObjectsCheckedList.size(); n++ )
-			(*context->getObjectsChecked)[context->getObjectsCheckedList[n]] = false;
-		FreeGetObjectsFreeCheckedList(context->getObjectsChecked);
+		for( int n = 0; n < context.getObjectsCheckedList2->size(); n++ )
+			(*context.getObjectsChecked)[(*context.getObjectsCheckedList2)[n]] = false;
+		FreeGetObjectsFreeCheckedList(context.getObjectsChecked);
+		FreeGetObjectsFreeCheckedList2(context.getObjectsCheckedList2);
 
 		delete checkShape;
-		delete context;
+		//delete context;
 
 		return resultCount;
 	}
@@ -1384,7 +1438,7 @@ public:
 				}
 
 				(*context->getObjectsChecked)[objectData->index] = true;
-				context->getObjectsCheckedList.push_back(objectData->index);
+				context->getObjectsCheckedList2->push_back(objectData->index);
 			}
 		}
 
@@ -1413,7 +1467,7 @@ public:
 				}
 
 				(*context->getObjectsChecked)[objectData->index] = true;
-				context->getObjectsCheckedList.push_back(objectData->index);
+				context->getObjectsCheckedList2->push_back(objectData->index);
 			}
 		}
 
@@ -1439,10 +1493,10 @@ public:
 
 	int GetObjectsRay( const GetObjectsInputData& inputData, GetObjectsRayOutputData* outputArray, int outputArraySize )
 	{
-		GetObjectsContext* context = new GetObjectsContext();
-		context->getObjectsChecked = GetObjectsFreeCheckedList();
-		context->getObjectsCheckedList.reserve(objects.size());
-		context->extensionData = inputData.extensionData;
+		GetObjectsContext context;//GetObjectsContext* context = new GetObjectsContext();
+		context.getObjectsChecked = GetObjectsFreeCheckedList();
+		context.getObjectsCheckedList2 = GetObjectsFreeCheckedList2();//context->getObjectsCheckedList.reserve(objects.size());
+		context.extensionData = inputData.extensionData;
 
 		////rebuild tree if need
 		//CheckForRebuildTree();
@@ -1464,7 +1518,7 @@ public:
 		if( intersects )
 		{
 			int nodesProcessed = 0;
-			GetObjectsRayNodeRecursive( context, rootNode, inputData.ray, inputData.groupMask, rayBounds, outputArray, 
+			GetObjectsRayNodeRecursive( &context, rootNode, inputData.ray, inputData.groupMask, rayBounds, outputArray, 
 				outputArraySize, resultCount, outputArrayIndex, nodesProcessed );
 		}
 
@@ -1476,7 +1530,7 @@ public:
 			{
 				ObjectData* objectData = *it;
 
-				if ( (inputData.groupMask & objectData->groupMask) != 0 && !(*context->getObjectsChecked)[objectData->index])
+				if ( (inputData.groupMask & objectData->groupMask) != 0 && !(*context.getObjectsChecked)[objectData->index])
 				{
 					if( rayBounds.intersects( objectData->bounds ) )
 					{
@@ -1494,8 +1548,8 @@ public:
 						}
 					}
 
-					(*context->getObjectsChecked)[objectData->index] = true;
-					context->getObjectsCheckedList.push_back(objectData->index);
+					(*context.getObjectsChecked)[objectData->index] = true;
+					context.getObjectsCheckedList2->push_back(objectData->index);
 				}
 			}
 		}
@@ -1508,11 +1562,12 @@ public:
 		}
 
 		//clear checked list and free
-		for (int n = 0; n < context->getObjectsCheckedList.size(); n++)
-			(*context->getObjectsChecked)[context->getObjectsCheckedList[n]] = false;
-		FreeGetObjectsFreeCheckedList(context->getObjectsChecked);
+		for (int n = 0; n < context.getObjectsCheckedList2->size(); n++)
+			(*context.getObjectsChecked)[(*context.getObjectsCheckedList2)[n]] = false;
+		FreeGetObjectsFreeCheckedList(context.getObjectsChecked);
+		FreeGetObjectsFreeCheckedList2(context.getObjectsCheckedList2);
 
-		delete context;
+		//delete context;
 
 		return resultCount;
 	}
@@ -1588,6 +1643,11 @@ public:
 		{
 			delete getObjectsFreeCheckedLists.top();
 			getObjectsFreeCheckedLists.pop();
+		}
+		while (getObjectsFreeCheckedLists2.size() != 0)
+		{
+			delete getObjectsFreeCheckedLists2.top();
+			getObjectsFreeCheckedLists2.pop();
 		}
 
 		lastRebuildTime = engineTimeToGetStatistics.load();

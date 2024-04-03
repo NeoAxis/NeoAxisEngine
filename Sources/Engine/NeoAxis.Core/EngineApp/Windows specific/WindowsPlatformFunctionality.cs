@@ -1,5 +1,5 @@
-#if WINDOWS
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+#if !ANDROID && !IOS && !WEB && !UWP
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,12 +7,12 @@ using System.Diagnostics;
 using System.Threading;
 using System.Globalization;
 using System.Runtime.InteropServices;
-using System.ComponentModel;
-using System.Drawing;
-using System.Reflection;
+//using System.Drawing;
 using System.IO;
 using DirectInput;
 using NeoAxis;
+using System.Reflection;
+using System.Linq;
 
 namespace Internal//NeoAxis
 {
@@ -107,8 +107,7 @@ namespace Internal//NeoAxis
 		static extern bool SetWindowText( IntPtr hWnd, string text );
 
 		[DllImport( "user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true )]
-		static extern bool SetWindowPos( IntPtr hWnd, IntPtr hWndInsertAfter,
-			int x, int y, int cx, int cy, int flags );
+		static extern bool SetWindowPos( IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, int flags );
 		const int SWP_NOSIZE = 0x0001;
 		const int SWP_NOMOVE = 0x0002;
 		const int SWP_NOZORDER = 0x0004;
@@ -776,75 +775,75 @@ namespace Internal//NeoAxis
 		//   return GetSystemMetrics( SM_CMONITORS );
 		//}
 
-		public override double GetSystemTime()
-		{
-			//!!!!never call
+		//public override double GetSystemTime()
+		//{
+		//	//!!!!never call
 
-			long time = Stopwatch.GetTimestamp();
-			double elapsedSeconds = time * ( 1.0 / Stopwatch.Frequency );
-			return elapsedSeconds;
+		//	long time = Stopwatch.GetTimestamp();
+		//	double elapsedSeconds = time * ( 1.0 / Stopwatch.Frequency );
+		//	return elapsedSeconds;
 
-			//!!!!slow
+		//	//!!!!slow
 
-			//if( !perfCounterInitialized )
-			//{
-			//	QueryPerformanceFrequency( ref perfCounterFrequency );
-			//	QueryPerformanceCounter( ref perfCounterStartTime );
-			//	perfCounterStartTick = GetTickCount();
-			//	perfCounterInitialized = true;
-			//}
+		//	//if( !perfCounterInitialized )
+		//	//{
+		//	//	QueryPerformanceFrequency( ref perfCounterFrequency );
+		//	//	QueryPerformanceCounter( ref perfCounterStartTime );
+		//	//	perfCounterStartTick = GetTickCount();
+		//	//	perfCounterInitialized = true;
+		//	//}
 
-			//long currentTime = 0;
-			//{
-			//	Process Proc = Process.GetCurrentProcess();
-			//	long oldAffinityMask = (long)Proc.ProcessorAffinity;
-			//	long affinityMask = oldAffinityMask;
-			//	affinityMask &= 0x0001; // use only first processor
-			//	Proc.ProcessorAffinity = (IntPtr)affinityMask;
+		//	//long currentTime = 0;
+		//	//{
+		//	//	Process Proc = Process.GetCurrentProcess();
+		//	//	long oldAffinityMask = (long)Proc.ProcessorAffinity;
+		//	//	long affinityMask = oldAffinityMask;
+		//	//	affinityMask &= 0x0001; // use only first processor
+		//	//	Proc.ProcessorAffinity = (IntPtr)affinityMask;
 
-			//	QueryPerformanceCounter( ref currentTime );
+		//	//	QueryPerformanceCounter( ref currentTime );
 
-			//	Proc.ProcessorAffinity = (IntPtr)oldAffinityMask;
+		//	//	Proc.ProcessorAffinity = (IntPtr)oldAffinityMask;
 
-			//	//IntPtr mask = (IntPtr)1;
+		//	//	//IntPtr mask = (IntPtr)1;
 
-			//	////find the lowest core that this process uses
-			//	//IntPtr processMask;
-			//	//IntPtr systemMask;
-			//	//if( GetProcessAffinityMask( Process.GetCurrentProcess().Handle, out processMask, out systemMask ) )
-			//	//{
-			//	//	while( ( (int)mask & (int)processMask ) == 0 )
-			//	//		mask = (IntPtr)( (int)mask << 1 );
-			//	//}
+		//	//	////find the lowest core that this process uses
+		//	//	//IntPtr processMask;
+		//	//	//IntPtr systemMask;
+		//	//	//if( GetProcessAffinityMask( Process.GetCurrentProcess().Handle, out processMask, out systemMask ) )
+		//	//	//{
+		//	//	//	while( ( (int)mask & (int)processMask ) == 0 )
+		//	//	//		mask = (IntPtr)( (int)mask << 1 );
+		//	//	//}
 
-			//	//IntPtr thread = GetCurrentThread();
-			//	//IntPtr oldMask = SetThreadAffinityMask( thread, mask );
-			//	//QueryPerformanceCounter( ref currentTime );
-			//	//SetThreadAffinityMask( thread, oldMask );
-			//}
+		//	//	//IntPtr thread = GetCurrentThread();
+		//	//	//IntPtr oldMask = SetThreadAffinityMask( thread, mask );
+		//	//	//QueryPerformanceCounter( ref currentTime );
+		//	//	//SetThreadAffinityMask( thread, oldMask );
+		//	//}
 
-			//long newTime = currentTime - perfCounterStartTime;
+		//	//long newTime = currentTime - perfCounterStartTime;
 
-			//// scale by 1000 for milliseconds
-			//uint newTicks = (uint)( 1000 * newTime / perfCounterFrequency );
+		//	//// scale by 1000 for milliseconds
+		//	//uint newTicks = (uint)( 1000 * newTime / perfCounterFrequency );
 
-			//// detect and compensate for performance counter leaps
-			//// (surprisingly common, see Microsoft KB: Q274323)
-			//uint check = GetTickCount() - perfCounterStartTick;
-			//int msecOff = (int)( newTicks - check );
-			//if( msecOff < -100 || msecOff > 100 )
-			//{
-			//	// We must keep the timer running forward :)
-			//	long adjust = Math.Min( msecOff * perfCounterFrequency / 1000, newTime - perfCounterLastTime );
-			//	perfCounterStartTime += adjust;
-			//	newTime -= adjust;
-			//}
+		//	//// detect and compensate for performance counter leaps
+		//	//// (surprisingly common, see Microsoft KB: Q274323)
+		//	//uint check = GetTickCount() - perfCounterStartTick;
+		//	//int msecOff = (int)( newTicks - check );
+		//	//if( msecOff < -100 || msecOff > 100 )
+		//	//{
+		//	//	// We must keep the timer running forward :)
+		//	//	long adjust = Math.Min( msecOff * perfCounterFrequency / 1000, newTime - perfCounterLastTime );
+		//	//	perfCounterStartTime += adjust;
+		//	//	newTime -= adjust;
+		//	//}
 
-			//// Record last time for adjust
-			//perfCounterLastTime = newTime;
+		//	//// Record last time for adjust
+		//	//perfCounterLastTime = newTime;
 
-			//return (double)newTime / perfCounterFrequency;
-		}
+		//	//return (double)newTime / perfCounterFrequency;
+		//}
 
 		public override Vector2I GetSmallIconSize()
 		{
@@ -1029,7 +1028,10 @@ namespace Internal//NeoAxis
 					break;
 
 				case WM_CLOSE:
-					PostQuitMessage( 0 );
+					if( EngineApp.CreatedInsideEngineWindow.HideOnClose )
+						ShowWindow( hWnd, SW_HIDE );
+					else
+						PostQuitMessage( 0 );
 					return IntPtr.Zero;
 
 				case WM_ENTERSIZEMOVE:
@@ -1052,7 +1054,15 @@ namespace Internal//NeoAxis
 					unsafe
 					{
 						MINMAXINFO* info = (MINMAXINFO*)lParam;
-						info->ptMinTrackSize = new Vector2I( 100, 100 );
+						var size = new Vector2I( 100, 100 );
+						if( ProjectSettings.Initialized )
+						{
+							size = ProjectSettings.Get.General.WindowSizeMinimal.Value;
+							if( ProjectSettings.Get.General.WindowSizeApplySystemFontScale )
+								size = ( size.ToVector2() * SystemSettings.DPIScale ).ToVector2I();
+							info->ptMinTrackSize = size;
+						}
+						info->ptMinTrackSize = size;
 					}
 					return IntPtr.Zero;
 				}
@@ -1510,124 +1520,130 @@ namespace Internal//NeoAxis
 							return r;
 						}
 
-						//draw splash screen
-						var drawSplashScreen = EngineApp.DrawSplashScreen;
-						if( drawSplashScreen != ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled )
+						////draw splash screen
+						//var drawSplashScreen = EngineApp.DrawSplashScreen;
+
+						//if( drawSplashScreen != ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled )
+						//{
+						//var hdc = BeginPaint( hWnd, out var ps );
+
+						////int COLOR_WINDOW = 3;// 5;
+						////FillRect( hdc, ref ps.rcPaint, (IntPtr)( COLOR_WINDOW + 1 ) );
+						////FillRect( hdc, out ps.rcPaint, (HBRUSH)( COLOR_WINDOW + 1 ) );
+
+						//using( var bitmap = EngineInfo.GetSplashLogoImage( drawSplashScreen ) )
+						//{
+						//	var screenRect = instance.CreatedWindow_GetClientRectangle();
+						//	var screenSize = screenRect.Size;
+						//	var center = screenRect.GetCenter();
+
+						//	Bitmap bitmap2 = null;
+
+						//	var imageSize = new Vector2I( bitmap.Size.Width, bitmap.Size.Height );
+						//	if( imageSize.X > screenSize.X )
+						//	{
+						//		double factor = (double)screenSize.X / (double)imageSize.X;
+						//		imageSize = ( imageSize.ToVector2() * factor ).ToVector2I();
+						//		bitmap2 = Win32Utility.ResizeImage( bitmap, imageSize.X, imageSize.Y );
+						//	}
+
+						//	var splashBitmap = ( bitmap2 ?? bitmap ).GetHbitmap();
+						//	if( splashBitmap != IntPtr.Zero )
+						//	{
+						//		var hdcMem = CreateCompatibleDC( hdc );
+						//		var oldBitmap = SelectObject( hdcMem, splashBitmap );
+
+						//		var destRect = new System.Drawing.Rectangle( center.X - imageSize.X / 2, center.Y - imageSize.Y / 2, imageSize.X, imageSize.Y );
+
+						//		//draw background
+						//		{
+						//			var color = drawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.WhiteBackground ? Color.White : Color.Black;
+
+						//			//!!!!
+						//			//color = Color.Gray;
+
+						//			var brush = CreateSolidBrush( (uint)ColorTranslator.ToWin32( color ) );
+
+						//			if( destRect.Left > 0 )
+						//			{
+						//				RECT r = MakeRECT( 0, 0, destRect.Left, screenSize.Y );
+						//				FillRect( hdc, ref r, brush );
+						//			}
+						//			if( destRect.Right < screenSize.X )
+						//			{
+						//				RECT r = MakeRECT( destRect.Right, 0, screenSize.X - destRect.Right, screenSize.Y );
+						//				FillRect( hdc, ref r, brush );
+						//			}
+						//			if( destRect.Top > 0 )
+						//			{
+						//				RECT r = MakeRECT( 0, 0, screenSize.X, destRect.Top );
+						//				FillRect( hdc, ref r, brush );
+						//			}
+						//			if( destRect.Bottom < screenSize.Y )
+						//			{
+						//				RECT r = MakeRECT( 0, destRect.Bottom, screenSize.X, screenSize.Y - destRect.Bottom );
+						//				FillRect( hdc, ref r, brush );
+						//			}
+
+						//			DeleteObject( brush );
+						//		}
+
+						//		////!!!!
+						//		//{
+						//		//	var text = new StringBuilder( "Test test" );
+
+						//		//	var rect = MakeRECT( 0, 0, 500, 500 );
+						//		//	var format = DT_CENTER | DT_VCENTER | DT_SINGLELINE;
+
+						//		//	SetTextColor( hdc, ColorTranslator.ToWin32( Color.FromArgb( 255, 0, 0 ) ) );
+
+						//		//	DrawTextEx( hdc, text, text.Length, ref rect, format, IntPtr.Zero );
+						//		//}
+
+						//		//if( stretch )
+						//		//{
+						//		//	StretchBlt( hdc, destRect.Left, destRect.Top, destRect.Width, destRect.Height, hdcMem, 0, 0, bitmap.Size.Width, bitmap.Size.Height, TernaryRasterOperations.SRCCOPY );
+						//		//}
+						//		//else
+						//		//{
+
+						//		BitBlt( hdc, destRect.Left, destRect.Top, destRect.Width, destRect.Height, hdcMem, 0, 0, TernaryRasterOperations.SRCCOPY );
+
+						//		//}
+
+						//		SelectObject( hdcMem, oldBitmap );
+						//		DeleteDC( hdcMem );
+
+						//	}
+
+						//	bitmap2?.Dispose();
+						//}
+
+						//EndPaint( hWnd, ref ps );
+
+						//	return IntPtr.Zero;
+						//}
+
+						if( SystemSettings.CommandLineParameters.TryGetValue( "-server", out var projectServer ) && projectServer == "1" && RenderingSystem.BackendNull )
 						{
-							var hdc = BeginPaint( hWnd, out var ps );
-
-							//int COLOR_WINDOW = 3;// 5;
-							//FillRect( hdc, ref ps.rcPaint, (IntPtr)( COLOR_WINDOW + 1 ) );
-							//FillRect( hdc, out ps.rcPaint, (HBRUSH)( COLOR_WINDOW + 1 ) );
-
-							using( var bitmap = EngineInfo.GetSplashLogoImage( drawSplashScreen ) )
+							int ToWin32( int r, int g, int b )
 							{
-								var screenRect = instance.CreatedWindow_GetClientRectangle();
-								var screenSize = screenRect.Size;
-								var center = screenRect.GetCenter();
-
-								Bitmap bitmap2 = null;
-
-								var imageSize = new Vector2I( bitmap.Size.Width, bitmap.Size.Height );
-								if( imageSize.X > screenSize.X )
-								{
-									double factor = (double)screenSize.X / (double)imageSize.X;
-									imageSize = ( imageSize.ToVector2() * factor ).ToVector2I();
-									bitmap2 = Win32Utility.ResizeImage( bitmap, imageSize.X, imageSize.Y );
-								}
-
-								var splashBitmap = ( bitmap2 ?? bitmap ).GetHbitmap();
-								if( splashBitmap != IntPtr.Zero )
-								{
-									var hdcMem = CreateCompatibleDC( hdc );
-									var oldBitmap = SelectObject( hdcMem, splashBitmap );
-
-									var destRect = new System.Drawing.Rectangle( center.X - imageSize.X / 2, center.Y - imageSize.Y / 2, imageSize.X, imageSize.Y );
-
-									//draw background
-									{
-										var color = drawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.WhiteBackground ? Color.White : Color.Black;
-
-										//!!!!
-										//color = Color.Gray;
-
-										var brush = CreateSolidBrush( (uint)ColorTranslator.ToWin32( color ) );
-
-										if( destRect.Left > 0 )
-										{
-											RECT r = MakeRECT( 0, 0, destRect.Left, screenSize.Y );
-											FillRect( hdc, ref r, brush );
-										}
-										if( destRect.Right < screenSize.X )
-										{
-											RECT r = MakeRECT( destRect.Right, 0, screenSize.X - destRect.Right, screenSize.Y );
-											FillRect( hdc, ref r, brush );
-										}
-										if( destRect.Top > 0 )
-										{
-											RECT r = MakeRECT( 0, 0, screenSize.X, destRect.Top );
-											FillRect( hdc, ref r, brush );
-										}
-										if( destRect.Bottom < screenSize.Y )
-										{
-											RECT r = MakeRECT( 0, destRect.Bottom, screenSize.X, screenSize.Y - destRect.Bottom );
-											FillRect( hdc, ref r, brush );
-										}
-
-										DeleteObject( brush );
-									}
-
-									////!!!!
-									//{
-									//	var text = new StringBuilder( "Test test" );
-
-									//	var rect = MakeRECT( 0, 0, 500, 500 );
-									//	var format = DT_CENTER | DT_VCENTER | DT_SINGLELINE;
-
-									//	SetTextColor( hdc, ColorTranslator.ToWin32( Color.FromArgb( 255, 0, 0 ) ) );
-
-									//	DrawTextEx( hdc, text, text.Length, ref rect, format, IntPtr.Zero );
-									//}
-
-									//if( stretch )
-									//{
-									//	StretchBlt( hdc, destRect.Left, destRect.Top, destRect.Width, destRect.Height, hdcMem, 0, 0, bitmap.Size.Width, bitmap.Size.Height, TernaryRasterOperations.SRCCOPY );
-									//}
-									//else
-									//{
-
-									BitBlt( hdc, destRect.Left, destRect.Top, destRect.Width, destRect.Height, hdcMem, 0, 0, TernaryRasterOperations.SRCCOPY );
-
-									//}
-
-									SelectObject( hdcMem, oldBitmap );
-									DeleteDC( hdcMem );
-
-								}
-
-								bitmap2?.Dispose();
+								return ( b << 16 ) | ( g << 8 ) | r;
 							}
 
-							EndPaint( hWnd, ref ps );
-
-							return IntPtr.Zero;
-						}
-
-						if( SystemSettings.CommandLineParameters.TryGetValue( "-server", out var projectServer ) && projectServer == "1" &&
-							RenderingSystem.BackendNull )
-						{
 							var hdc = BeginPaint( hWnd, out var ps );
 
 							{
 								var screenRect = instance.CreatedWindow_GetClientRectangle();
 								var screenSize = screenRect.Size;
 
-								var textColor = Color.White;
-								var backColor = Color.Black;
+								//var textColor = Color.White;
+								//var backColor = Color.Black;
 
 								//draw background
 								{
-									var brush = CreateSolidBrush( (uint)ColorTranslator.ToWin32( backColor ) );
+									var brush = CreateSolidBrush( (uint)ToWin32( 0, 0, 0 ) );
+									//var brush = CreateSolidBrush( (uint)ColorTranslator.ToWin32( backColor ) );
 
 									var rect = MakeRECT( 0, 0, screenSize.X, screenSize.Y );
 									FillRect( hdc, ref rect, brush );
@@ -1640,11 +1656,14 @@ namespace Internal//NeoAxis
 									var text = new StringBuilder( "Server mode" );
 
 									var rect = MakeRECT( 10, 10, screenSize.X, screenSize.Y );
-									var format = DT_LEFT | DT_TOP;//DT_BOTTOM;// | DT_SINGLELINE;
-																  //var format = DT_CENTER | DT_VCENTER;// | DT_SINGLELINE;
+									var format = DT_LEFT | DT_TOP;
+									//var format = DT_CENTER | DT_VCENTER;// | DT_SINGLELINE;
 
-									SetTextColor( hdc, ColorTranslator.ToWin32( textColor ) );
-									SetBkColor( hdc, ColorTranslator.ToWin32( backColor ) );
+									SetTextColor( hdc, ToWin32( 255, 255, 255 ) );
+									SetBkColor( hdc, ToWin32( 0, 0, 0 ) );
+
+									//SetTextColor( hdc, ColorTranslator.ToWin32( textColor ) );
+									//SetBkColor( hdc, ColorTranslator.ToWin32( backColor ) );
 
 									DrawTextEx( hdc, text, text.Length, ref rect, format, IntPtr.Zero );
 								}
@@ -1809,17 +1828,97 @@ namespace Internal//NeoAxis
 				SetWindowText( EngineApp.ApplicationWindowHandle, title );
 		}
 
-		public override void CreatedWindow_UpdateWindowIcon( Icon smallIcon, Icon icon )
+		static Assembly GetAssemblyByName( string name )
 		{
-			if( smallIcon != null )
-				SendMessage( EngineApp.ApplicationWindowHandle, WM_SETICON, (IntPtr)ICON_SMALL, smallIcon.Handle );
-			else
-				SendMessage( EngineApp.ApplicationWindowHandle, WM_SETICON, (IntPtr)ICON_SMALL, IntPtr.Zero );
+			return AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault( assembly => assembly.GetName().Name == name );
+		}
 
+		static Assembly winFormsAssembly;
+
+		static Type GetIconType()
+		{
+			if( winFormsAssembly == null )
+				winFormsAssembly = GetAssemblyByName( "System.Drawing.Common" );
+			return winFormsAssembly.GetType( "System.Drawing.Icon" );
+		}
+
+		//save icon objects in memory. maybe no sense
+		static object currentIcon;
+		static object currentSmallIcon;
+
+		[DllImport( "user32.dll", SetLastError = true, CharSet = CharSet.Auto )]
+		static extern IntPtr LoadImage( IntPtr hinst, string lpszName, uint uType, int cxDesired, int cyDesired, uint fuLoad );
+
+		const uint IMAGE_ICON = 1;
+
+		const uint LR_LOADFROMFILE = 0x00000010;
+
+		public override void CreatedWindow_UpdateWindowIcon( /*object smallIcon,*/ object icon, string iconFilePath )
+		{
+			//use icon object (System.Drawing.Icon)
 			if( icon != null )
-				SendMessage( EngineApp.ApplicationWindowHandle, WM_SETICON, (IntPtr)ICON_BIG, icon.Handle );
-			else
-				SendMessage( EngineApp.ApplicationWindowHandle, WM_SETICON, (IntPtr)ICON_BIG, IntPtr.Zero );
+			{
+				//make small icon
+				object smallIcon = null;
+
+				var smallIconSize = EngineApp.GetSystemSmallIconSize();
+
+				try
+				{
+					//!!!!
+					//temporary uses Winforms. can do resize by means native code
+
+					var iconType = GetIconType();
+					var constructor = iconType.GetConstructor( new Type[] { iconType, typeof( int ), typeof( int ) } );
+					smallIcon = constructor.Invoke( new object[] { icon, smallIconSize.X, smallIconSize.Y } );
+
+					//var smallIcon = new Icon( icon, new Size( smallIconSize.X, smallIconSize.Y ) );
+				}
+				catch { }
+
+				if( smallIcon != null )
+				{
+					var handle = (IntPtr)ObjectEx.PropertyGet( smallIcon, "Handle" );
+					SendMessage( EngineApp.ApplicationWindowHandle, WM_SETICON, (IntPtr)ICON_SMALL, handle );
+					//SendMessage( EngineApp.ApplicationWindowHandle, WM_SETICON, (IntPtr)ICON_SMALL, smallIcon.Handle );
+				}
+				else
+					SendMessage( EngineApp.ApplicationWindowHandle, WM_SETICON, (IntPtr)ICON_SMALL, IntPtr.Zero );
+
+				if( icon != null )
+				{
+					var handle = (IntPtr)ObjectEx.PropertyGet( icon, "Handle" );
+					SendMessage( EngineApp.ApplicationWindowHandle, WM_SETICON, (IntPtr)ICON_BIG, handle );
+					//SendMessage( EngineApp.ApplicationWindowHandle, WM_SETICON, (IntPtr)ICON_BIG, icon.Handle );
+				}
+				else
+					SendMessage( EngineApp.ApplicationWindowHandle, WM_SETICON, (IntPtr)ICON_BIG, IntPtr.Zero );
+
+				currentIcon = icon;
+				currentSmallIcon = smallIcon;
+			}
+
+			//use file path to icon
+			if( !string.IsNullOrEmpty( iconFilePath ) )
+			{
+				try
+				{
+					{
+						var smallIconSize = EngineApp.GetSystemSmallIconSize();
+
+						var handle = LoadImage( IntPtr.Zero, iconFilePath, IMAGE_ICON, smallIconSize.X, smallIconSize.Y, LR_LOADFROMFILE );
+						if( handle != IntPtr.Zero )
+							SendMessage( EngineApp.ApplicationWindowHandle, WM_SETICON, (IntPtr)ICON_SMALL, handle );
+					}
+
+					{
+						var handle = LoadImage( IntPtr.Zero, iconFilePath, IMAGE_ICON, 0, 0, LR_LOADFROMFILE );
+						if( handle != IntPtr.Zero )
+							SendMessage( EngineApp.ApplicationWindowHandle, WM_SETICON, (IntPtr)ICON_BIG, handle );
+					}
+				}
+				catch { }
+			}
 		}
 
 		public override RectangleI CreatedWindow_GetWindowRectangle()
@@ -1942,6 +2041,19 @@ namespace Internal//NeoAxis
 				}
 
 				SetWindowLong( EngineApp.ApplicationWindowHandle, GWL_STYLE, (IntPtr)(int)style );
+			}
+		}
+
+		public override void SetWindowVisible( bool value )
+		{
+			if( EngineApp.ApplicationWindowHandle != IntPtr.Zero )
+			{
+				int show;
+				if( value )
+					show = SW_SHOW;
+				else
+					show = SW_HIDE;
+				ShowWindow( EngineApp.ApplicationWindowHandle, show );
 			}
 		}
 

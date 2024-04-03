@@ -77,8 +77,8 @@ namespace NeoAxis.Editor
 			if( textChangedEventDisabled )
 				return;
 
-			if( !string.IsNullOrEmpty( Document.RealFileName ) )
-				Document.Modified = true;
+			if( !string.IsNullOrEmpty( Document2.RealFileName ) )
+				Document2.Modified = true;
 		}
 
 		public override void InitDocumentWindow( DocumentInstance document, object objectOfWindow, bool openAsSettings, Dictionary<string, object> windowTypeSpecificOptions )
@@ -102,7 +102,7 @@ namespace NeoAxis.Editor
 
 		private void TextEditorDocumentWindow_Load( object sender, EventArgs e )
 		{
-			var realFileName = Document.RealFileName;
+			var realFileName = Document2.RealFileName;
 
 			if( string.IsNullOrEmpty( Data ) && !string.IsNullOrEmpty( realFileName ) )
 			{
@@ -119,7 +119,7 @@ namespace NeoAxis.Editor
 			}
 		}
 
-		public override void EditorActionGetState( EditorAction.GetStateContext context )
+		public override void EditorActionGetState( EditorActionGetStateContext context )
 		{
 			switch( context.Action.Name )
 			{
@@ -135,7 +135,7 @@ namespace NeoAxis.Editor
 			base.EditorActionGetState( context );
 		}
 
-		public override void EditorActionClick( EditorAction.ClickContext context )
+		public override void EditorActionClick( EditorActionClickContext context )
 		{
 			switch( context.Action.Name )
 			{
@@ -156,7 +156,7 @@ namespace NeoAxis.Editor
 			if( Destroyed )
 				return;
 
-			var realFileName = Document.RealFileName;
+			var realFileName = Document2.RealFileName;
 
 			if( !string.IsNullOrEmpty( realFileName ) )
 			{
@@ -184,7 +184,7 @@ namespace NeoAxis.Editor
 
 			if( args.KeyCode != Keys.None )
 			{
-				if( EditorAPI.ProcessShortcuts( args.KeyCode, false ) )
+				if( EditorAPI2.ProcessShortcuts( args.KeyCode, false ) )
 				{
 					e.Handled = true;
 					return;
@@ -302,7 +302,7 @@ namespace NeoAxis.Editor
 			if( !loadedHighlightingDefinitions.TryGetValue( HighlightingScheme, out var definition ) )
 			{
 				string path;
-				if( EditorAPI.DarkTheme )
+				if( EditorAPI2.DarkTheme )
 					path = string.Format( @"Base\Tools\Highlighting\{0}Dark.xshd", HighlightingScheme );
 				else
 					path = string.Format( @"Base\Tools\Highlighting\{0}Light.xshd", HighlightingScheme );

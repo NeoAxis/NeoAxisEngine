@@ -29,7 +29,7 @@ namespace NeoAxis
 		public Reference<Animation> PlayAnimation
 		{
 			get { if( _playAnimation.BeginGet() ) PlayAnimation = _playAnimation.Get( this ); return _playAnimation.value; }
-			set { if( _playAnimation.BeginSet( ref value ) ) { try { PlayAnimationChanged?.Invoke( this ); ResetTime(); } finally { _playAnimation.EndSet(); } } }
+			set { if( _playAnimation.BeginSet( this, ref value ) ) { try { PlayAnimationChanged?.Invoke( this ); ResetTime(); } finally { _playAnimation.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PlayAnimation"/> property value changes.</summary>
 		public event Action<SpriteAnimationController> PlayAnimationChanged;
@@ -43,7 +43,7 @@ namespace NeoAxis
 		public Reference<double> Speed
 		{
 			get { if( _speed.BeginGet() ) Speed = _speed.Get( this ); return _speed.value; }
-			set { if( _speed.BeginSet( ref value ) ) { try { SpeedChanged?.Invoke( this ); } finally { _speed.EndSet(); } } }
+			set { if( _speed.BeginSet( this, ref value ) ) { try { SpeedChanged?.Invoke( this ); } finally { _speed.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Speed"/> property value changes.</summary>
 		public event Action<SpriteAnimationController> SpeedChanged;
@@ -56,7 +56,7 @@ namespace NeoAxis
 		public Reference<bool> AutoRewind
 		{
 			get { if( _autoRewind.BeginGet() ) AutoRewind = _autoRewind.Get( this ); return _autoRewind.value; }
-			set { if( _autoRewind.BeginSet( ref value ) ) { try { AutoRewindChanged?.Invoke( this ); } finally { _autoRewind.EndSet(); } } }
+			set { if( _autoRewind.BeginSet( this, ref value ) ) { try { AutoRewindChanged?.Invoke( this ); } finally { _autoRewind.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AutoRewind"/> property value changes.</summary>
 		public event Action<SpriteAnimationController> AutoRewindChanged;
@@ -102,7 +102,7 @@ namespace NeoAxis
 		//{
 		//}
 
-		private void ParentSprite_GetRenderSceneDataAddToFrameData( MeshInSpace sender, ViewportRenderingContext context, GetRenderSceneDataMode mode, ref RenderingPipeline.RenderSceneData.MeshItem item )
+		private void ParentSprite_GetRenderSceneDataAddToFrameData( MeshInSpace sender, ViewportRenderingContext context, GetRenderSceneDataMode mode, ref RenderingPipeline.RenderSceneData.MeshItem item, ref bool skip )
 		{
 			Material material = null;
 
@@ -123,7 +123,7 @@ namespace NeoAxis
 			}
 
 			item.ReplaceMaterial = material;
-			item.ReplaceMaterialSelectively = null;
+			//item.ReplaceMaterialSelectively = null;
 		}
 
 		void ResetTime()

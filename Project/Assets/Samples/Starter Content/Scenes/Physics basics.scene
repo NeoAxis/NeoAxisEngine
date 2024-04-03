@@ -208,7 +208,7 @@
 	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body
-		Transform = "-3 7.5 2; 0 0 0 1; 1 1 1"
+		Transform = "-3 7.5 7.23607697775192; 0 0 0 1; 1 1 1"
 		MotionType = Dynamic
 		DisplayContacts = True
 		.component NeoAxis.CollisionShape_Box
@@ -219,7 +219,7 @@
 	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 2
-		Transform = "-1.54361093497453 7.43285947388595 2.10750293479415; 0 0 0 1; 1 1 1"
+		Transform = "-1.54361093497453 7.43285947388595 7.34357991254607; 0 0 0 1; 1 1 1"
 		MotionType = Dynamic
 		DisplayContacts = True
 		.component NeoAxis.CollisionShape_Sphere
@@ -230,7 +230,7 @@
 	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 3
-		Transform = "-0.0783333224026297 7.40330881413925 2.10750293479414; 0 0 0 1; 1 1 1"
+		Transform = "-0.0783333224026297 7.40330881413925 7.34357991254606; 0 0 0 1; 1 1 1"
 		MotionType = Dynamic
 		DisplayContacts = True
 		.component NeoAxis.CollisionShape_Cylinder
@@ -241,7 +241,7 @@
 	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 4
-		Transform = "1.66638533901543 7.41488277620394 2.18750293479414; 0 0 0 1; 1 1 1"
+		Transform = "1.66638533901543 7.41488277620394 7.42357991254606; 0 0 0 1; 1 1 1"
 		MotionType = Dynamic
 		DisplayContacts = True
 		.component NeoAxis.CollisionShape_Cone
@@ -252,7 +252,7 @@
 	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 5
-		Transform = "3.46763937539752 7.37194656425445 2.10750293479415; 0 0.0928862048196649 0 0.995676731150326; 1 1 1"
+		Transform = "3.46763937539752 7.37194656425445 7.34357991254607; 0 0.0928862048196649 0 0.995676731150326; 1 1 1"
 		MotionType = Dynamic
 		DisplayContacts = True
 		.component NeoAxis.CollisionShape_Capsule
@@ -263,7 +263,7 @@
 	.component NeoAxis.RigidBody
 	{
 		Name = Rigid Body 6
-		Transform = "6.06156429911388 7.44171170839531 1.76559014553686; -0.131153892610201 0 0 0.991362020885; 1 1 1"
+		Transform = "6.06156429911388 7.44171170839531 7.00166712328878; -0.131153892610201 0 0 0.991362020885; 1 1 1"
 		MotionType = Dynamic
 		DisplayContacts = True
 		.component NeoAxis.CollisionShape_Box
@@ -372,7 +372,7 @@
 	.component "Samples\\Starter Content\\Models\\Sci-fi Box\\Sci-fi Box.objectinspace"
 	{
 		Name = Sci-fi Box
-		Transform = "9.31056359491575 7.45710675328792 1.77827728639033; 0 0 0 1; 1 1 1"
+		Transform = "9.31056359491575 7.45710675328792 7.01435426414225; 0 0 0 1; 1 1 1"
 		ReplaceMaterialSelectively
 		{
 			Count = 0

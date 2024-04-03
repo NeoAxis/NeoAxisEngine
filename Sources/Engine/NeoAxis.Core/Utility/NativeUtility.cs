@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using Internal;
 using System.Runtime.CompilerServices;
+using System.Reflection;
 
 namespace NeoAxis
 {
@@ -136,6 +137,7 @@ namespace NeoAxis
 		//}
 
 		[DllImport( library, CallingConvention = convention ), SuppressUnmanagedCodeSecurity]
+		[SuppressGCTransition]
 		static extern int NativeUtils_CompareMemory( IntPtr buffer1, IntPtr buffer2, int length );
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static int CompareMemory( IntPtr buffer1, IntPtr buffer2, int length )
@@ -150,28 +152,49 @@ namespace NeoAxis
 		}
 
 		[DllImport( library, CallingConvention = convention ), SuppressUnmanagedCodeSecurity]
+		[SuppressGCTransition]
 		static extern void NativeUtils_ZeroMemory( IntPtr buffer, int length );
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void ZeroMemory( IntPtr buffer, int length )
 		{
+#if !UWP && !ANDROID
+			unsafe
+			{
+				Unsafe.InitBlockUnaligned( (void*)buffer, 0, (uint)length );
+			}
+#else
 			LoadUtilsNativeWrapperLibrary();
 			NativeUtils_ZeroMemory( buffer, length );
+#endif
 		}
 		public unsafe static void ZeroMemory( void* buffer, int length )
 		{
+#if !UWP && !ANDROID
+			Unsafe.InitBlockUnaligned( buffer, 0, (uint)length );
+#else
 			LoadUtilsNativeWrapperLibrary();
 			NativeUtils_ZeroMemory( (IntPtr)buffer, length );
+#endif
 		}
 
 		[DllImport( library, CallingConvention = convention ), SuppressUnmanagedCodeSecurity]
+		[SuppressGCTransition]
 		static extern void NativeUtils_FillMemory( IntPtr buffer, int length, byte value );
 		public static void FillMemory( IntPtr buffer, int length, byte value )
 		{
+#if !UWP && !ANDROID
+			unsafe
+			{
+				Unsafe.InitBlockUnaligned( (void*)buffer, value, (uint)length );
+			}
+#else
 			LoadUtilsNativeWrapperLibrary();
 			NativeUtils_FillMemory( buffer, length, value );
+#endif
 		}
 
 		[DllImport( library, CallingConvention = convention ), SuppressUnmanagedCodeSecurity]
+		[SuppressGCTransition]
 		static extern int NativeUtils_CalculateHash( IntPtr buffer, int length );
 		public static int CalculateHash( IntPtr buffer, int length )
 		{
@@ -185,6 +208,55 @@ namespace NeoAxis
 		}
 
 		///////////////////////////////////////////
+
+		//Linux
+#if !UWP && !ANDROID
+		static bool dllImportResolverInitialized;
+
+		static IntPtr DllImportResolver( string libraryName, Assembly assembly, DllImportSearchPath? searchPath )
+		{
+			IntPtr libHandle = IntPtr.Zero;
+
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
+			{
+				//!!!!maybe rename libraries to remove adding "lib" prefix
+
+				if( libraryName == "NeoAxisCoreNative" || libraryName == "bgfx" || libraryName == "shaderc" )
+				{
+					var path = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "lib" + libraryName + ".so" );
+					NativeLibrary.TryLoad( path, out libHandle );
+				}
+				else if( libraryName == "OpenAL32" )
+				{
+					var path = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "libOpenAL.so" );
+					NativeLibrary.TryLoad( path, out libHandle );
+				}
+			}
+			return libHandle;
+
+			//IntPtr libHandle = IntPtr.Zero;
+			////you can add here different loading logic
+			//if( libraryName == NativeLib && RuntimeInformation.IsOSPlatform( OSPlatform.Windows ) && Environment.Is64BitProcess )
+			//{
+			//	NativeLibrary.TryLoad( "./runtimes/win-x64/native/somelib.dll", out libHandle );
+			//}
+			//else
+			//if( libraryName == NativeLib )
+			//{
+			//	NativeLibrary.TryLoad( "libsomelibrary.so", assembly, DllImportSearchPath.ApplicationDirectory, out libHandle );
+			//}
+			//return libHandle;
+		}
+
+		static void InitDllImportResolver()
+		{
+			if( !dllImportResolverInitialized )
+			{
+				dllImportResolverInitialized = true;
+				NativeLibrary.SetDllImportResolver( typeof( NativeUtility ).Assembly, DllImportResolver );
+			}
+		}
+#endif
 
 		public static IntPtr PreloadLibrary( string baseName, string overrideSetCurrentDirectory = "", bool errorFatal = true )
 		{
@@ -206,6 +278,21 @@ namespace NeoAxis
 						baseName += ".bundle";
 					else
 						baseName += ".dylib";
+				}
+				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
+				{
+#if !UWP && !ANDROID
+					InitDllImportResolver();
+#endif
+
+					//!!!!
+					return IntPtr.Zero;
+
+					////remove ".dll"
+					//if( Path.GetExtension( baseName ) != ".dll" )
+					//	baseName = Path.ChangeExtension( baseName, null );
+
+					//baseName += ".so";
 				}
 				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
 				{

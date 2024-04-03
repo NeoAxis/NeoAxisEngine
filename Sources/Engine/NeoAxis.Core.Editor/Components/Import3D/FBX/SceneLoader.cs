@@ -90,7 +90,7 @@ namespace NeoAxis.Import.FBX
 				LoadSkinsFromNodeRecursive( pNode.GetChild( i ), skinsResult );
 		}
 
-		bool HasSceneSkeleton( FbxNode pNode )
+		public static bool HasSceneSkeleton( FbxNode pNode )
 		{
 			if( Skeleton.IsNodeSkeleton( pNode ) )
 				return true;

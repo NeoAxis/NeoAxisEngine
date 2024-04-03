@@ -35,7 +35,7 @@ namespace NeoAxis
 		public Reference<string> Text
 		{
 			get { if( _text.BeginGet() ) Text = _text.Get( this ); return _text.value; }
-			set { if( _text.BeginSet( ref value ) ) { try { TextChanged?.Invoke( this ); DataWasChanged(); } finally { _text.EndSet(); } } }
+			set { if( _text.BeginSet( this, ref value ) ) { try { TextChanged?.Invoke( this ); DataWasChanged(); } finally { _text.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Text"/> property value changes.</summary>
 		public event Action<Text3D> TextChanged;
@@ -50,7 +50,7 @@ namespace NeoAxis
 		//public Reference<bool> Multiline
 		//{
 		//	get { if( _multiline.BeginGet() ) Multiline = _multiline.Get( this ); return _multiline.value; }
-		//	set { if( _multiline.BeginSet( ref value ) ) { try { MultilineChanged?.Invoke( this ); DataWasChanged(); } finally { _multiline.EndSet(); } } }
+		//	set { if( _multiline.BeginSet( this, ref value ) ) { try { MultilineChanged?.Invoke( this ); DataWasChanged(); } finally { _multiline.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="Multiline"/> property value changes.</summary>
 		//public event Action<Text3D> MultilineChanged;
@@ -63,7 +63,7 @@ namespace NeoAxis
 		//public Reference<EHorizontalAlignment> TextHorizontalAlignment
 		//{
 		//	get { if( _textHorizontalAlignment.BeginGet() ) TextHorizontalAlignment = _textHorizontalAlignment.Get( this ); return _textHorizontalAlignment.value; }
-		//	set { if( _textHorizontalAlignment.BeginSet( ref value ) ) { try { TextHorizontalAlignmentChanged?.Invoke( this ); DataWasChanged(); } finally { _textHorizontalAlignment.EndSet(); } } }
+		//	set { if( _textHorizontalAlignment.BeginSet( this, ref value ) ) { try { TextHorizontalAlignmentChanged?.Invoke( this ); DataWasChanged(); } finally { _textHorizontalAlignment.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="TextHorizontalAlignment"/> property value changes.</summary>
 		//public event Action<Text3D> TextHorizontalAlignmentChanged;
@@ -76,7 +76,7 @@ namespace NeoAxis
 		//public Reference<UIMeasureValueDouble> VerticalIndention
 		//{
 		//	get { if( _verticalIndention.BeginGet() ) VerticalIndention = _verticalIndention.Get( this ); return _verticalIndention.value; }
-		//	set { if( _verticalIndention.BeginSet( ref value ) ) { try { VerticalIndentionChanged?.Invoke( this ); DataWasChanged(); } finally { _verticalIndention.EndSet(); } } }
+		//	set { if( _verticalIndention.BeginSet( this, ref value ) ) { try { VerticalIndentionChanged?.Invoke( this ); DataWasChanged(); } finally { _verticalIndention.EndSet(); } } }
 		//}
 		//public event Action<Text3D> VerticalIndentionChanged;
 		//ReferenceField<UIMeasureValueDouble> _verticalIndention = new UIMeasureValueDouble( UIMeasure.Units, 0 );
@@ -89,7 +89,7 @@ namespace NeoAxis
 		public Reference<FontComponent> Font
 		{
 			get { if( _font.BeginGet() ) Font = _font.Get( this ); return _font.value; }
-			set { if( _font.BeginSet( ref value ) ) { try { FontChanged?.Invoke( this ); DataWasChanged(); } finally { _font.EndSet(); } } }
+			set { if( _font.BeginSet( this, ref value ) ) { try { FontChanged?.Invoke( this ); DataWasChanged(); } finally { _font.EndSet(); } } }
 		}
 		public event Action<Text3D> FontChanged;
 		ReferenceField<FontComponent> _font = null;
@@ -104,7 +104,7 @@ namespace NeoAxis
 		public Reference<double> Thickness
 		{
 			get { if( _thickness.BeginGet() ) Thickness = _thickness.Get( this ); return _thickness.value; }
-			set { if( _thickness.BeginSet( ref value ) ) { try { ThicknessChanged?.Invoke( this ); DataWasChanged(); } finally { _thickness.EndSet(); } } }
+			set { if( _thickness.BeginSet( this, ref value ) ) { try { ThicknessChanged?.Invoke( this ); DataWasChanged(); } finally { _thickness.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Thickness"/> property value changes.</summary>
 		public event Action<Text3D> ThicknessChanged;
@@ -119,7 +119,7 @@ namespace NeoAxis
 		public Reference<int> Tesselation
 		{
 			get { if( _tesselation.BeginGet() ) Tesselation = _tesselation.Get( this ); return _tesselation.value; }
-			set { if( _tesselation.BeginSet( ref value ) ) { try { TesselationChanged?.Invoke( this ); DataWasChanged(); } finally { _tesselation.EndSet(); } } }
+			set { if( _tesselation.BeginSet( this, ref value ) ) { try { TesselationChanged?.Invoke( this ); DataWasChanged(); } finally { _tesselation.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Tesselation"/> property value changes.</summary>
 		public event Action<Text3D> TesselationChanged;
@@ -133,7 +133,7 @@ namespace NeoAxis
 		public Reference<EHorizontalAlignment> HorizontalAlignment
 		{
 			get { if( _horizontalAlignment.BeginGet() ) HorizontalAlignment = _horizontalAlignment.Get( this ); return _horizontalAlignment.value; }
-			set { if( _horizontalAlignment.BeginSet( ref value ) ) { try { HorizontalAlignmentChanged?.Invoke( this ); DataWasChanged(); } finally { _horizontalAlignment.EndSet(); } } }
+			set { if( _horizontalAlignment.BeginSet( this, ref value ) ) { try { HorizontalAlignmentChanged?.Invoke( this ); DataWasChanged(); } finally { _horizontalAlignment.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="HorizontalAlignment"/> property value changes.</summary>
 		public event Action<Text3D> HorizontalAlignmentChanged;
@@ -147,7 +147,7 @@ namespace NeoAxis
 		public Reference<EVerticalAlignment> VerticalAlignment
 		{
 			get { if( _verticalAlignment.BeginGet() ) VerticalAlignment = _verticalAlignment.Get( this ); return _verticalAlignment.value; }
-			set { if( _verticalAlignment.BeginSet( ref value ) ) { try { VerticalAlignmentChanged?.Invoke( this ); DataWasChanged(); } finally { _verticalAlignment.EndSet(); } } }
+			set { if( _verticalAlignment.BeginSet( this, ref value ) ) { try { VerticalAlignmentChanged?.Invoke( this ); DataWasChanged(); } finally { _verticalAlignment.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="VerticalAlignment"/> property value changes.</summary>
 		public event Action<Text3D> VerticalAlignmentChanged;

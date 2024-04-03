@@ -38,7 +38,7 @@ namespace NeoAxis.Editor
 				var scene = CreateScene( false );
 				CreateObject();
 				Scene.DisplayDevelopmentDataInEditor = true;
-				Scene.DisplayPhysicalObjects = true;
+				//Scene.DisplayPhysicalObjects = true;
 				scene.Enabled = true;
 
 				if( Document != null )
@@ -85,6 +85,9 @@ namespace NeoAxis.Editor
 				Viewport.CameraSettings = new Viewport.CameraSettingsClass( Viewport, Scene.CameraEditor );
 			}
 
+			if( WeaponType != null && Scene.CameraEditor.Value != null )
+				WeaponType.EditorCameraTransform = Scene.CameraEditor.Value.Transform;
+
 			firstCameraUpdate = false;
 		}
 
@@ -113,7 +116,11 @@ namespace NeoAxis.Editor
 			camera.NearClipPlane = Math.Max( distance / 10000, 0.01 );
 			camera.FarClipPlane = Math.Max( 1000, distance * 2 );
 
-			camera.Transform = new Transform( from, Quaternion.LookAt( ( to - from ).GetNormalize(), Vector3.ZAxis ) );
+			if( WeaponType != null && WeaponType.EditorCameraTransform != null )
+				camera.Transform = WeaponType.EditorCameraTransform;
+			else
+				camera.Transform = new Transform( from, Quaternion.LookAt( ( to - from ).GetNormalize(), Vector3.ZAxis ) );
+
 			camera.FixedUp = Vector3.ZAxis;
 		}
 

@@ -18,7 +18,7 @@ namespace NeoAxis
 	/// Represents font import settings.
 	/// </summary>
 #if !DEPLOY
-	[Preview( typeof( FontPreview ) )]
+	[Preview( "NeoAxis.Editor.FontPreview" )]
 #endif
 	public class FontComponent : Component
 	{
@@ -44,7 +44,7 @@ namespace NeoAxis
 		public Reference<List<RangeI>> CharacterRanges
 		{
 			get { if( _characterRanges.BeginGet() ) CharacterRanges = _characterRanges.Get( this ); return _characterRanges.value; }
-			set { if( _characterRanges.BeginSet( ref value ) ) { try { CharacterRangesChanged?.Invoke( this ); } finally { _characterRanges.EndSet(); } } }
+			set { if( _characterRanges.BeginSet( this, ref value ) ) { try { CharacterRangesChanged?.Invoke( this ); } finally { _characterRanges.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CharacterRanges"/> property value changes.</summary>
 		public event Action<FontComponent> CharacterRangesChanged;
@@ -58,7 +58,7 @@ namespace NeoAxis
 		public Reference<string> CharacterString
 		{
 			get { if( _characterString.BeginGet() ) CharacterString = _characterString.Get( this ); return _characterString.value; }
-			set { if( _characterString.BeginSet( ref value ) ) { try { CharacterStringChanged?.Invoke( this ); } finally { _characterString.EndSet(); } } }
+			set { if( _characterString.BeginSet( this, ref value ) ) { try { CharacterStringChanged?.Invoke( this ); } finally { _characterString.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CharacterString"/> property value changes.</summary>
 		public event Action<FontComponent> CharacterStringChanged;
@@ -74,7 +74,7 @@ namespace NeoAxis
 		public Reference<Vector2> SizeMultiplier
 		{
 			get { if( _sizeMultiplier.BeginGet() ) SizeMultiplier = _sizeMultiplier.Get( this ); return _sizeMultiplier.value; }
-			set { if( _sizeMultiplier.BeginSet( ref value ) ) { try { SizeMultiplierChanged?.Invoke( this ); } finally { _sizeMultiplier.EndSet(); } } }
+			set { if( _sizeMultiplier.BeginSet( this, ref value ) ) { try { SizeMultiplierChanged?.Invoke( this ); } finally { _sizeMultiplier.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="SizeMultiplier"/> property value changes.</summary>
 		public event Action<FontComponent> SizeMultiplierChanged;
@@ -90,7 +90,7 @@ namespace NeoAxis
 		public Reference<double> AdvanceMultiplier
 		{
 			get { if( _advanceMultiplier.BeginGet() ) AdvanceMultiplier = _advanceMultiplier.Get( this ); return _advanceMultiplier.value; }
-			set { if( _advanceMultiplier.BeginSet( ref value ) ) { try { AdvanceMultiplierChanged?.Invoke( this ); } finally { _advanceMultiplier.EndSet(); } } }
+			set { if( _advanceMultiplier.BeginSet( this, ref value ) ) { try { AdvanceMultiplierChanged?.Invoke( this ); } finally { _advanceMultiplier.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="AdvanceMultiplier"/> property value changes.</summary>
 		public event Action<FontComponent> AdvanceMultiplierChanged;
@@ -105,7 +105,7 @@ namespace NeoAxis
 		public Reference<double> DrawOffsetY
 		{
 			get { if( _drawOffsetY.BeginGet() ) DrawOffsetY = _drawOffsetY.Get( this ); return _drawOffsetY.value; }
-			set { if( _drawOffsetY.BeginSet( ref value ) ) { try { DrawOffsetYChanged?.Invoke( this ); } finally { _drawOffsetY.EndSet(); } } }
+			set { if( _drawOffsetY.BeginSet( this, ref value ) ) { try { DrawOffsetYChanged?.Invoke( this ); } finally { _drawOffsetY.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DrawOffsetY"/> property value changes.</summary>
 		public event Action<FontComponent> DrawOffsetYChanged;
@@ -120,7 +120,7 @@ namespace NeoAxis
 		public Reference<int> BakingMaxCharacterSizeInPixels
 		{
 			get { if( _bakingMaxCharacterSizeInPixels.BeginGet() ) BakingMaxCharacterSizeInPixels = _bakingMaxCharacterSizeInPixels.Get( this ); return _bakingMaxCharacterSizeInPixels.value; }
-			set { if( _bakingMaxCharacterSizeInPixels.BeginSet( ref value ) ) { try { BakingMaxCharacterSizeInPixelsChanged?.Invoke( this ); } finally { _bakingMaxCharacterSizeInPixels.EndSet(); } } }
+			set { if( _bakingMaxCharacterSizeInPixels.BeginSet( this, ref value ) ) { try { BakingMaxCharacterSizeInPixelsChanged?.Invoke( this ); } finally { _bakingMaxCharacterSizeInPixels.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BakingMaxCharacterSizeInPixels"/> property value changes.</summary>
 		public event Action<FontComponent> BakingMaxCharacterSizeInPixelsChanged;

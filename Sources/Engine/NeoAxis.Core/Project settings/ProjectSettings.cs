@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 
 namespace NeoAxis
 {
@@ -21,7 +22,7 @@ namespace NeoAxis
 
 		public static ProjectSettingsPage_General.ThemeEnum DefaultThemeWhenNoFile = ProjectSettingsPage_General.ThemeEnum.Dark;
 
-		public static bool WriteDefaultProjectSettingsFile( string realFileName, string autorunScene, out string error )
+		public static bool WriteDefaultProjectSettingsFile( string realFileName, string sceneAutoPlay, out string error )
 		{
 			error = "";
 
@@ -47,10 +48,10 @@ namespace NeoAxis
 				}
 				catch { }
 
-				if( !string.IsNullOrEmpty( autorunScene ) )
+				if( !string.IsNullOrEmpty( sceneAutoPlay ) )
 				{
-					var b = block.AddChild( "AutorunScene" );
-					b.SetAttribute( "GetByReference", autorunScene );
+					var b = block.AddChild( "SceneAutoPlay" );
+					b.SetAttribute( "GetByReference", sceneAutoPlay );
 				}
 			}
 
@@ -104,10 +105,10 @@ namespace NeoAxis
 				block.SetAttribute( "Name", "Rendering" );
 			}
 
-			//{
-			//	var block = rootBlock.AddChild( ".component", "NeoAxis.ProjectSettingsPage_CustomSplashScreen" );
-			//	block.SetAttribute( "Name", "Custom Splash Screen" );
-			//}
+			{
+				var block = rootBlock.AddChild( ".component", "NeoAxis.ProjectSettingsPage_Repository" );
+				block.SetAttribute( "Name", "Repository" );
+			}
 
 			if( !TextBlockUtility.SaveToRealFile( fileBlock, realFileName, out error ) )
 				return false;
@@ -120,6 +121,11 @@ namespace NeoAxis
 			//}
 
 			return true;
+		}
+
+		internal static bool Initialized
+		{
+			get { return settingsComponent != null; }
 		}
 
 		/// <summary>
@@ -261,34 +267,162 @@ namespace NeoAxis
 
 				//reload
 				_SettingsComponentSetNull();
-
 			}
 			catch { }
 		}
 
 		/// <summary>
-		/// Reads a value from \'ProjectSettings.component\' without loading it as component. The method can be used to load data before engine initialized.
+		/// Reads a value from \"ProjectSettings.component\" without loading it as component. The method can be used to load data before engine initialized.
 		/// </summary>
-		/// <param name="parameter"></param>
-		/// <returns></returns>
-		public static string ReadParameterFromFile( string parameter, string defaultValue = "" )
+		public static string ReadParameterDirectly( string pageName, string parameter, string defaultValue )
 		{
 			if( VirtualFile.Exists( FileName ) )
 			{
 				try
 				{
-					var key = parameter + " = ";
-
-					foreach( var line in VirtualFile.ReadAllLines( FileName ) )
+					var block = TextBlockUtility.LoadFromVirtualFile( FileName, out _ );
+					if( block != null && block.Children.Count == 1 )
 					{
-						var index = line.IndexOf( key );
-						if( index != -1 )
-							return line.Substring( index + key.Length );
+						var rootBlock = block.Children[ 0 ];
+
+						foreach( var childBlock in rootBlock.Children )
+						{
+							if( childBlock.GetAttribute( "Name" ) == pageName )
+								return childBlock.GetAttribute( parameter, defaultValue );
+						}
+					}
+				}
+				catch { }
+			}
+
+			return defaultValue;
+		}
+
+		/// <summary>
+		/// Reads a set of values from \"ProjectSettings.component\" without loading it as component. The method can be used to load data before engine initialized.
+		/// </summary>
+		public static string[] ReadParametersDirectly( string pageName, string[] parameters, string[] defaultValues )
+		{
+			var result = new string[ parameters.Length ];
+			for( int n = 0; n < parameters.Length; n++ )
+				result[ n ] = defaultValues != null ? defaultValues[ n ] : null;
+
+			if( VirtualFile.Exists( FileName ) )
+			{
+				try
+				{
+					var block = TextBlockUtility.LoadFromVirtualFile( FileName, out _ );
+					if( block != null && block.Children.Count == 1 )
+					{
+						var rootBlock = block.Children[ 0 ];
+
+						foreach( var childBlock in rootBlock.Children )
+						{
+							if( childBlock.GetAttribute( "Name" ) == pageName )
+							{
+								for( int n = 0; n < parameters.Length; n++ )
+								{
+									if( childBlock.AttributeExists( parameters[ n ] ) )
+										result[ n ] = childBlock.GetAttribute( parameters[ n ] );
+								}
+								return result;
+							}
+						}
+					}
+				}
+				catch { }
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// Reads a value from \"ProjectSettings.component\" without loading it as component. The method can be used to load data before engine initialized.
+		/// </summary>
+		public static string ReadParameterDirectlyByRealPath( string settingsRealFilePath, string pageName, string parameter, string defaultValue )
+		{
+			if( File.Exists( settingsRealFilePath ) )
+			{
+				try
+				{
+					var block = TextBlockUtility.LoadFromRealFile( settingsRealFilePath, out _ );
+					if( block != null && block.Children.Count == 1 )
+					{
+						var rootBlock = block.Children[ 0 ];
+
+						foreach( var childBlock in rootBlock.Children )
+						{
+							if( childBlock.GetAttribute( "Name" ) == pageName )
+								return childBlock.GetAttribute( parameter, defaultValue );
+						}
 					}
 				}
 				catch { }
 			}
 			return defaultValue;
 		}
+
+		/// <summary>
+		/// Reads a set of values from \"ProjectSettings.component\" without loading it as component. The method can be used to load data before engine initialized.
+		/// </summary>
+		public static string[] ReadParametersDirectlyByRealPath( string settingsRealFilePath, string pageName, string[] parameters, string[] defaultValues )
+		{
+			var result = new string[ parameters.Length ];
+			for( int n = 0; n < parameters.Length; n++ )
+				result[ n ] = defaultValues != null ? defaultValues[ n ] : null;
+
+			if( File.Exists( settingsRealFilePath ) )
+			{
+				try
+				{
+					var block = TextBlockUtility.LoadFromRealFile( settingsRealFilePath, out _ );
+					if( block != null && block.Children.Count == 1 )
+					{
+						var rootBlock = block.Children[ 0 ];
+
+						foreach( var childBlock in rootBlock.Children )
+						{
+							if( childBlock.GetAttribute( "Name" ) == pageName )
+							{
+								for( int n = 0; n < parameters.Length; n++ )
+								{
+									if( childBlock.AttributeExists( parameters[ n ] ) )
+										result[ n ] = childBlock.GetAttribute( parameters[ n ] );
+								}
+								return result;
+							}
+						}
+					}
+				}
+				catch { }
+			}
+
+			return result;
+		}
+
+		///// <summary>
+		///// Reads a value from \'ProjectSettings.component\' without loading it as component. The method can be used to load data before engine initialized.
+		///// </summary>
+		///// <param name="parameter"></param>
+		///// <returns></returns>
+		//public static string ReadParameterFromFile( string parameter, string defaultValue = "" )
+		//{
+		//	if( VirtualFile.Exists( FileName ) )
+		//	{
+		//		try
+		//		{
+		//			var key = parameter + " = ";
+
+		//			foreach( var line in VirtualFile.ReadAllLines( FileName ) )
+		//			{
+		//				var index = line.IndexOf( key );
+		//				if( index != -1 )
+		//					return line.Substring( index + key.Length );
+		//			}
+		//		}
+		//		catch { }
+		//	}
+		//	return defaultValue;
+		//}
 	}
 }

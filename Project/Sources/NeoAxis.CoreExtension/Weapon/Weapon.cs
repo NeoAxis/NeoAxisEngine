@@ -11,16 +11,16 @@ namespace NeoAxis
 	/// </summary>
 	[AddToResourcesWindow( @"Addons\Weapon\Weapon", 22101 )]
 	[NewObjectDefaultName( "Weapon" )]
-	public class Weapon : MeshInSpace, IGameFrameworkItem, InteractiveObject
+	public class Weapon : MeshInSpace, ItemInterface, InteractiveObjectInterface
 	{
-		static FastRandom staticRandom = null;
+		static FastRandom staticRandom = new FastRandom( 0 );
 
 		WeaponType typeCached = new WeaponType();
 
 		bool[] firing = new bool[ 3 ];
 		float[] firingCurrentTime = new float[ 3 ];
-		//network UserID
-		long[] firingWhoFired = new long[ 3 ];
+		long[] firingWhoFired = new long[ 3 ];//network UserID
+		bool[] firingMeleeCollided = new bool[ 3 ];
 
 		//play one animation
 		Animation playOneAnimation = null;
@@ -32,28 +32,31 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		const string weaponTypeDefault = @"Content\Weapons\Default\Default Weapon.weapontype";
+		public const string WeaponTypeDefault = @"Content\Weapons\Default\Default Weapon.weapontype";
 
 		/// <summary>
 		/// The type of the weapon.
 		/// </summary>
-		[DefaultValueReference( weaponTypeDefault )]
+		[DefaultValueReference( WeaponTypeDefault )]
 		public Reference<WeaponType> WeaponType
 		{
 			get { if( _weaponType.BeginGet() ) WeaponType = _weaponType.Get( this ); return _weaponType.value; }
 			set
 			{
-				if( _weaponType.BeginSet( ref value ) )
+				if( _weaponType.BeginSet( this, ref value ) )
 				{
 					try
 					{
 						WeaponTypeChanged?.Invoke( this );
 
-						//update cached type and mesh
+						//update cached type
 						typeCached = _weaponType.value;
 						if( typeCached == null )
 							typeCached = new WeaponType();
-						UpdateMesh();
+
+						//update mesh
+						if( EnabledInHierarchyAndIsInstance )
+							UpdateMesh();
 					}
 					finally { _weaponType.EndSet(); }
 				}
@@ -61,7 +64,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="WeaponType"/> property value changes.</summary>
 		public event Action<Weapon> WeaponTypeChanged;
-		ReferenceField<WeaponType> _weaponType = new Reference<WeaponType>( null, weaponTypeDefault );
+		ReferenceField<WeaponType> _weaponType = new Reference<WeaponType>( null, WeaponTypeDefault );
 
 		/// <summary>
 		/// Whether to display initial position and direction of a bullet and places of hands.
@@ -70,7 +73,7 @@ namespace NeoAxis
 		public Reference<bool> DebugVisualization
 		{
 			get { if( _debugVisualization.BeginGet() ) DebugVisualization = _debugVisualization.Get( this ); return _debugVisualization.value; }
-			set { if( _debugVisualization.BeginSet( ref value ) ) { try { DebugVisualizationChanged?.Invoke( this ); } finally { _debugVisualization.EndSet(); } } }
+			set { if( _debugVisualization.BeginSet( this, ref value ) ) { try { DebugVisualizationChanged?.Invoke( this ); } finally { _debugVisualization.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DebugVisualization"/> property value changes.</summary>
 		public event Action<Weapon> DebugVisualizationChanged;
@@ -79,7 +82,7 @@ namespace NeoAxis
 		/////////////////////////////////////////
 
 		[Browsable( false )]
-		public WeaponType WeaponTypeCached
+		public WeaponType TypeCached
 		{
 			get { return typeCached; }
 		}
@@ -102,24 +105,26 @@ namespace NeoAxis
 
 		void UpdateMesh()
 		{
-			Mesh = typeCached.Mesh;
+			Mesh = TypeCached.Mesh;
 
-			//!!!!
-			//Collision = 
+			//enable collision when collision definiation is exists and when not taken by character or other object
+			var meshValue = Mesh.Value;
+
+			//!!!!Parent as Character == null
+
+			Collision = meshValue != null && meshValue.GetComponent<RigidBody>( "Collision Definition" ) != null && Parent as Character == null;
+			//Collision = meshValue != null && meshValue.GetComponent<RigidBody>( "Collision Definition" ) != null && Parent as ObjectInSpace == null;
 		}
 
 		protected override void OnEnabledInHierarchyChanged()
 		{
 			animationControllerCached = null;
+			WeaponType.Touch();
 
 			base.OnEnabledInHierarchyChanged();
 
 			if( EnabledInHierarchyAndIsInstance )
 			{
-				//update cached type and mesh
-				typeCached = WeaponType.Value;
-				if( typeCached == null )
-					typeCached = new WeaponType();
 				UpdateMesh();
 
 				if( EngineApp.IsSimulation )
@@ -136,12 +141,17 @@ namespace NeoAxis
 
 		public bool IsModeEnabled( int mode )
 		{
-			return mode == 1 ? typeCached.Mode1Enabled.Value : typeCached.Mode2Enabled.Value;
+			return mode == 1 ? TypeCached.Mode1Enabled.Value : TypeCached.Mode2Enabled.Value;
 		}
 
 		public bool IsFiring( int mode )
 		{
 			return firing[ mode - 1 ];
+		}
+
+		public bool IsFiringAnyMode()
+		{
+			return IsFiring( 1 ) || IsFiring( 2 );
 		}
 
 		public double GetFiringCurrentTime( int mode )
@@ -154,10 +164,18 @@ namespace NeoAxis
 			return firingWhoFired[ mode - 1 ];
 		}
 
+		public bool IsFiringMeleeCollided( int mode )
+		{
+			return firingMeleeCollided[ mode - 1 ];
+		}
+
 		protected virtual void OnCanFire( int mode, ref bool canFire )
 		{
-			if( ( mode == 1 ? typeCached.Mode1BulletType.Value : typeCached.Mode2BulletType.Value ) == null )
-				canFire = false;
+			if( TypeCached.WayToUse.Value == NeoAxis.WeaponType.WayToUseEnum.Rifle )
+			{
+				if( ( mode == 1 ? TypeCached.Mode1BulletType.Value : TypeCached.Mode2BulletType.Value ) == null )
+					canFire = false;
+			}
 		}
 
 		public delegate void CanFireDelegate( Weapon sender, int mode, ref bool canFire );
@@ -177,127 +195,115 @@ namespace NeoAxis
 		[MethodImpl( (MethodImplOptions)512 )]
 		protected virtual void OnFire( int mode )
 		{
-			var bulletTypeReference = mode == 1 ? typeCached.Mode1BulletType : typeCached.Mode2BulletType;
-			//var bulletType = mode == 1 ? typeCached.Mode1BulletType.Value : typeCached.Mode2BulletType.Value;
-			if( bulletTypeReference.Value != null )
+			var bulletTypeReference = mode == 1 ? TypeCached.Mode1BulletType : TypeCached.Mode2BulletType;
+			//var bulletType = mode == 1 ? TypeCached.Mode1BulletType.Value : TypeCached.Mode2BulletType.Value;
+			var bulletType = bulletTypeReference.Value;
+			if( bulletType != null )
 			{
-				var bulletCount = mode == 1 ? typeCached.Mode1BulletCount.Value : typeCached.Mode2BulletCount.Value;
-				var bulletSpeed = mode == 1 ? typeCached.Mode1BulletSpeed.Value : typeCached.Mode2BulletSpeed.Value;
-				var dispersionAngle = mode == 1 ? typeCached.Mode1BulletDispersionAngle.Value : typeCached.Mode2BulletDispersionAngle.Value;
+				var bulletCount = mode == 1 ? TypeCached.Mode1BulletCount.Value : TypeCached.Mode2BulletCount.Value;
+				var bulletSpeed = mode == 1 ? TypeCached.Mode1BulletSpeed.Value : TypeCached.Mode2BulletSpeed.Value;
+				var dispersionAngle = mode == 1 ? TypeCached.Mode1BulletDispersionAngle.Value : TypeCached.Mode2BulletDispersionAngle.Value;
 
-				for( int nCount = 0; nCount < bulletCount; nCount++ )
+
+				var initialTransform = GetBulletWorldInitialTransform( mode );
+
+				var initialTransformFixed = initialTransform;
+
+				//fix direction for character in first person camera
 				{
-
-					//!!!!event to create, to update
-
-					//!!!!network: alot of transfer (GetByReference string)
-
-					var component = ParentScene.CreateComponent<Bullet>( enabled: false );
-					component.BulletType = bulletTypeReference;
-					//component.BulletType = bulletType;
-					////var component = Parent.CreateComponent( bulletType, enabled: false );
-
-					var objectInSpace = component;// as ObjectInSpace;
-					if( objectInSpace != null )
+					var character = Parent as Character;
+					if( character != null && character.CurrentLookToPosition.HasValue )
 					{
-						//creation parameters
-						var transform = GetBulletWorldInitialTransform( mode );
-
-						//dispersion angle
-						if( dispersionAngle != new Degree( 0 ) )
-						{
-							if( staticRandom == null )
-								staticRandom = new FastRandom();
-
-							Matrix3F.FromRotateByX( staticRandom.NextFloat() * MathEx.PI * 2, out var matrix2 );
-							Matrix3F.FromRotateByZ( staticRandom.NextFloat() * (float)dispersionAngle.InRadians(), out var matrix3 );
-							Matrix3F.Multiply( ref matrix2, ref matrix3, out var matrix );
-							matrix.ToQuaternion( out var rot );
-
-							transform = transform.UpdateRotation( transform.Rotation * rot );
-						}
-
-						var velocity = transform.Rotation.GetForward() * bulletSpeed;
-
-						//!!!!no sense now
-						////configure transform and velocity
-						//var collisionBody = objectInSpace.GetComponent<RigidBody>();
-						//if( collisionBody != null )
-						//{
-						//	collisionBody.Transform = transform;
-						//	collisionBody.LinearVelocity = velocity;
-						//}
-						//else
-						objectInSpace.Transform = transform;
-
-						var meshInSpace = objectInSpace as MeshInSpace;
-						if( meshInSpace != null && meshInSpace.Collision )
-							meshInSpace.PhysicalBodyLinearVelocity = velocity;
-
-						//configure Bullet component
-						var bullet = objectInSpace;// as Bullet;
-						if( bullet != null )
-						{
-							////make a reference path from the root component (scene)
-							bullet.WhoFired = GetFiringWhoFired( mode );//bullet.OriginalCreator = ReferenceUtility.MakeRootReference( this );
-							bullet.SetLinearVelocity( velocity );
-						}
-
-						if( NetworkIsSingle )
-							CreateMuzzleFlash( mode, transform );
-
-						//!!!!maybe merge with FireSound message
-						if( NetworkIsServer && ( mode == 1 ? typeCached.Mode1FireMuzzleFlashParticle : typeCached.Mode2FireMuzzleFlashParticle ).ReferenceOrValueSpecified )
-						{
-							var writer = BeginNetworkMessageToEveryone( "MuzzleFlash" );
-							writer.WriteVariableInt32( mode );
-							EndNetworkMessage();
-						}
-
-						////muzzle flash
-						//var muzzleFlashParticle = mode == 1 ? typeCached.Mode1FireMuzzleFlashParticle.Value : typeCached.Mode2FireMuzzleFlashParticle.Value;
-						//if( muzzleFlashParticle != null )
-						//{
-						//	var obj = Parent.CreateComponent<ParticleSystemInSpace>( enabled: false );
-						//	obj.ParticleSystem = muzzleFlashParticle;
-						//	obj.MergeSimulationSteps = 1;
-
-						//	var totalFiringTime = mode == 1 ? typeCached.Mode1FiringTotalTime.Value : typeCached.Mode2FiringTotalTime.Value;
-						//	obj.RemainingLifetime = totalFiringTime * 2;
-
-						//	if( staticRandom == null )
-						//		staticRandom = new FastRandom();
-
-						//	obj.Transform = new Transform( transform.Position, transform.Rotation, obj.TransformV.Scale );
-
-
-						//	//!!!!slowly GC update manually
-						//	ObjectInSpaceUtility.Attach( this, obj, TransformOffset.ModeEnum.Elements );
-
-
-						//	obj.Enabled = true;
-						//}
+						var rot = Quaternion.FromDirectionZAxisUp( character.CurrentLookToPosition.Value - initialTransform.Position );
+						initialTransformFixed = initialTransformFixed.UpdateRotation( rot );
 					}
-
-					component.Enabled = true;
 				}
+
+
+				if( !NetworkIsClient )
+				{
+					for( int nCount = 0; nCount < bulletCount; nCount++ )
+					{
+
+						//!!!!event to create, to update
+
+						//!!!!network: alot of transfer (GetByReference string)
+
+						var component = ParentScene.CreateComponent<Bullet>( enabled: false );
+						component.BulletType = bulletTypeReference;
+						//component.BulletType = bulletType;
+						////var component = Parent.CreateComponent( bulletType, enabled: false );
+
+						//set Collision
+						if( !bulletType.existsCollisionCached.HasValue )
+							bulletType.existsCollisionCached = bulletType.Mesh.Value?.GetComponent<RigidBody>( "Collision Definition" ) != null;
+						if( bulletType.existsCollisionCached.Value )
+							component.Collision = true;
+
+						var objectInSpace = component;// as ObjectInSpace;
+						if( objectInSpace != null )
+						{
+							//creation parameters
+							var transform = initialTransformFixed;
+
+							//dispersion angle
+							if( dispersionAngle != new Degree( 0 ) )
+							{
+								Matrix3F.FromRotateByX( staticRandom.NextFloat() * MathEx.PI * 2, out var matrix2 );
+								Matrix3F.FromRotateByZ( staticRandom.NextFloat() * (float)dispersionAngle.InRadians(), out var matrix3 );
+								Matrix3F.Multiply( ref matrix2, ref matrix3, out var matrix );
+								matrix.ToQuaternion( out var rot );
+
+								transform = transform.UpdateRotation( transform.Rotation * rot );
+							}
+
+							var velocity = transform.Rotation.GetForward() * bulletSpeed;
+
+							//no sense now
+							////configure transform and velocity
+							//var collisionBody = objectInSpace.GetComponent<RigidBody>();
+							//if( collisionBody != null )
+							//{
+							//	collisionBody.Transform = transform;
+							//	collisionBody.LinearVelocity = velocity;
+							//}
+							//else
+							objectInSpace.Transform = transform;
+
+							var meshInSpace = objectInSpace as MeshInSpace;
+							if( meshInSpace != null && meshInSpace.Collision )
+								meshInSpace.PhysicalBodyLinearVelocity = velocity;
+
+							//configure Bullet component
+							var bullet = objectInSpace;// as Bullet;
+							if( bullet != null )
+							{
+								////make a reference path from the root component (scene)
+								bullet.WhoFired = GetFiringWhoFired( mode );//bullet.OriginalCreator = ReferenceUtility.MakeRootReference( this );
+								bullet.SetLinearVelocity( velocity );
+							}
+						}
+
+						component.Enabled = true;
+					}
+				}
+
+				if( NetworkIsSingle || NetworkIsClient )
+					CreateMuzzleFlash( mode, initialTransform );
 			}
 		}
 
 		void CreateMuzzleFlash( int mode, Transform transform )
 		{
-			var muzzleFlashParticle = mode == 1 ? typeCached.Mode1FireMuzzleFlashParticle.Value : typeCached.Mode2FireMuzzleFlashParticle.Value;
+			var muzzleFlashParticle = mode == 1 ? TypeCached.Mode1FireMuzzleFlashParticle.Value : TypeCached.Mode2FireMuzzleFlashParticle.Value;
 			if( muzzleFlashParticle != null )
 			{
 				var obj = Parent.CreateComponent<ParticleSystemInSpace>( enabled: false );
 				obj.ParticleSystem = muzzleFlashParticle;
 				obj.MergeSimulationSteps = 1;
 
-				var totalFiringTime = mode == 1 ? typeCached.Mode1FiringTotalTime.Value : typeCached.Mode2FiringTotalTime.Value;
+				var totalFiringTime = mode == 1 ? TypeCached.Mode1FiringTotalTime.Value : TypeCached.Mode2FiringTotalTime.Value;
 				obj.RemainingLifetime = totalFiringTime * 2;
-
-				if( staticRandom == null )
-					staticRandom = new FastRandom();
 
 				obj.Transform = new Transform( transform.Position, transform.Rotation, obj.TransformV.Scale );
 
@@ -318,13 +324,7 @@ namespace NeoAxis
 			if( !PerformCanFire( mode ) )
 				return false;
 
-			SoundPlay( mode == 1 ? typeCached.Mode1FireSound : typeCached.Mode2FireSound );
-			if( NetworkIsServer && ( mode == 1 ? typeCached.Mode1FireSound : typeCached.Mode2FireSound ).ReferenceOrValueSpecified )
-			{
-				var writer = BeginNetworkMessageToEveryone( "FireSound" );
-				writer.WriteVariableInt32( mode );
-				EndNetworkMessage();
-			}
+			SoundPlay( mode == 1 ? TypeCached.Mode1FireSound : TypeCached.Mode2FireSound );
 
 			OnFire( mode );
 			Fire?.Invoke( this, mode );
@@ -346,9 +346,14 @@ namespace NeoAxis
 			firing[ mode - 1 ] = true;
 			firingCurrentTime[ mode - 1 ] = 0;
 			firingWhoFired[ mode - 1 ] = whoFired;
+			firingMeleeCollided[ mode - 1 ] = false;
 
-			StartPlayOneAnimation( mode == 1 ? typeCached.Mode1FireAnimation : typeCached.Mode2FireAnimation, mode == 1 ? typeCached.Mode1FireAnimationSpeed : typeCached.Mode2FireAnimationSpeed );
-			SoundPlay( mode == 1 ? typeCached.Mode1FiringBeginSound : typeCached.Mode2FiringBeginSound );
+			StartPlayOneAnimation( mode == 1 ? TypeCached.Mode1FireAnimation : TypeCached.Mode2FireAnimation, mode == 1 ? TypeCached.Mode1FireAnimationSpeed : TypeCached.Mode2FireAnimationSpeed );
+			SoundPlay( mode == 1 ? TypeCached.Mode1FiringBeginSound : TypeCached.Mode2FiringBeginSound );
+
+			var character = Parent as Character;
+			if( character != null )
+				character.WeaponFiringBegin( this, mode );
 
 			if( NetworkIsServer )
 			{
@@ -362,6 +367,21 @@ namespace NeoAxis
 			return true;
 		}
 
+		//!!!!send often. need know network loop time to send only at end of firing. or send start and end
+		public void FiringBeginClient( int mode )
+		{
+			//!!!!
+			//if( IsFiring( mode ) )
+			//	return;
+
+			var writer = BeginNetworkMessageToServer( "FiringBeginFromClient" );
+			if( writer != null )
+			{
+				writer.WriteVariableInt32( mode );
+				EndNetworkMessage();
+			}
+		}
+
 		public void FiringEnd( int mode )
 		{
 			if( !IsFiring( mode ) )
@@ -370,6 +390,7 @@ namespace NeoAxis
 			firing[ mode - 1 ] = false;
 			firingCurrentTime[ mode - 1 ] = 0;
 			firingWhoFired[ mode - 1 ] = 0;
+			firingMeleeCollided[ mode - 1 ] = false;
 
 			//SoundPlay( mode == 1 ? Mode1FiringEndSound : Mode2FiringEndSound );
 			FiringEndEvent?.Invoke( this, mode );
@@ -382,8 +403,8 @@ namespace NeoAxis
 			{
 				if( IsFiring( mode ) )
 				{
-					var firingFireTime = mode == 1 ? typeCached.Mode1FiringFireTime : typeCached.Mode2FiringFireTime;
-					var firingTotalTime = mode == 1 ? typeCached.Mode1FiringTotalTime : typeCached.Mode2FiringTotalTime;
+					var firingFireTime = mode == 1 ? TypeCached.Mode1FiringFireTime : TypeCached.Mode2FiringFireTime;
+					var firingTotalTime = mode == 1 ? TypeCached.Mode1FiringTotalTime : TypeCached.Mode2FiringTotalTime;
 
 					var before = GetFiringCurrentTime( mode ) < firingFireTime || ( GetFiringCurrentTime( mode ) == 0 && firingFireTime == 0 );
 					firingCurrentTime[ mode - 1 ] += delta;
@@ -393,18 +414,118 @@ namespace NeoAxis
 						PerformFire( mode );
 
 					if( GetFiringCurrentTime( mode ) >= firingTotalTime )
+						FiringEnd( mode );
+
+
+					//melee weapon
+					if( TypeCached.WayToUse.Value == NeoAxis.WeaponType.WayToUseEnum.OneHandedMelee && IsFiring( mode ) && GetFiringCurrentTime( mode ) >= firingFireTime && !IsFiringMeleeCollided( mode ) )
 					{
-						if( NetworkIsClient )
+						var scene = ParentScene;
+						var mesh = Mesh.Value;
+
+						if( scene != null )
 						{
-							var writer = BeginNetworkMessageToServer( "FiringEnd" );
-							if( writer != null )
+							PhysicsVolumeTestItem volumeTestItem = null;
+							Vector3 applyForceCenter = Vector3.Zero;
+							Vector3 applyForceDirection = Vector3.Zero;
+
+							var detectionMode = mode == 1 ? TypeCached.Mode1MeleeCollisionDetectionMethod.Value : TypeCached.Mode2MeleeCollisionDetectionMethod.Value;
+
+							if( detectionMode == NeoAxis.WeaponType.MeleeCollisionDetectionMethodEnum.Mesh )
 							{
-								writer.WriteVariableInt32( mode );
-								EndNetworkMessage();
+								//mesh collision detection mode
+
+								if( mesh?.Result != null )
+								{
+									var localBox = new Box( mesh.Result.SpaceBounds.BoundingBox );
+									var worldBox = localBox * TransformV.ToMatrix4();
+									volumeTestItem = new PhysicsVolumeTestItem( worldBox, Vector3.Zero, PhysicsVolumeTestItem.ModeEnum.OneForEach );
+
+									applyForceCenter = worldBox.Center;
+									//!!!!impl
+									applyForceDirection = Vector3.Zero;
+								}
+							}
+							else if( detectionMode == NeoAxis.WeaponType.MeleeCollisionDetectionMethodEnum.Volume )
+							{
+								//sphere volume collision detection mode
+
+								var character = Parent as Character;
+								if( character != null )
+								{
+									var localSphere = mode == 1 ? TypeCached.Mode1MeleeCollisionVolume.Value : TypeCached.Mode2MeleeCollisionVolume.Value;
+
+									var center = character.TransformV * localSphere.Center;
+									var radius = localSphere.Radius * character.GetScaleFactor();
+
+									var sphere = new Sphere( center, radius );
+
+									volumeTestItem = new PhysicsVolumeTestItem( sphere, Vector3.Zero, PhysicsVolumeTestItem.ModeEnum.OneForEach );
+
+									applyForceCenter = center;
+									applyForceDirection = character.TransformV.Rotation.GetForward();
+								}
+							}
+
+							if( volumeTestItem != null )
+							{
+								scene.PhysicsVolumeTest( volumeTestItem );
+
+								Scene.PhysicsWorldClass.Body collidedBody = null;
+								IProcessDamage collidedObject = null;
+
+								foreach( var resultItem in volumeTestItem.Result )
+								{
+									if( resultItem.Body.Owner == this || resultItem.Body.Owner == Parent )
+										continue;
+
+									collidedBody = resultItem.Body;
+
+									var owner = resultItem.Body.Owner as Component;
+									if( owner != null )
+									{
+										var processDamage = owner as IProcessDamage;
+										if( processDamage == null )
+											processDamage = owner.Parent as IProcessDamage;
+
+										if( processDamage != null && processDamage != Parent )
+										{
+											collidedObject = processDamage;
+											break;
+										}
+									}
+								}
+
+								if( collidedBody != null )
+								{
+									//collision sound
+									SoundPlay( mode == 1 ? TypeCached.Mode1MeleeCollisionSound : TypeCached.Mode2MeleeCollisionSound );
+
+									//impulse
+									var impulse = mode == 1 ? TypeCached.Mode1MeleeImpulse.Value : TypeCached.Mode2MeleeImpulse.Value;
+									if( applyForceDirection != Vector3.Zero && impulse != 0 )
+									{
+										var tr = new Matrix4( collidedBody.Rotation.ToMatrix3(), collidedBody.Position );
+										tr.GetInverse( out var invertTr );
+										var localPosition = invertTr * applyForceCenter;
+
+										//!!!!impl affect characters
+
+										collidedBody.ApplyForce( ( applyForceDirection * impulse ).ToVector3F(), localPosition.ToVector3F() );
+									}
+
+									//damage
+									if( collidedObject != null )
+									{
+										var damage = mode == 1 ? TypeCached.Mode1MeleeDamage.Value : TypeCached.Mode2MeleeDamage.Value;
+										if( damage != 0 )
+											collidedObject.ProcessDamage( GetFiringWhoFired( mode ), (float)damage, null );
+									}
+
+									firingMeleeCollided[ mode - 1 ] = true;
+								}
 							}
 						}
-						else
-							FiringEnd( mode );
 					}
 				}
 			}
@@ -417,21 +538,23 @@ namespace NeoAxis
 			Simulate( Time.SimulationDelta );
 		}
 
-		//public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow = false )
-		//{
-		//	if( Components.Count == 0 && !Mesh.ReferenceSpecified )
-		//	{
-		//		//Animation controller
-		//		{
-		//			var controller = CreateComponent<MeshInSpaceAnimationController>();
-		//			controller.Name = "Mesh In Space Animation Controller";
-		//			controller.InterpolationTime = 0.05;
-		//		}
-		//	}
-		//}
-
-		public void SoundPlay( Sound sound )
+		protected override void OnSimulationStepClient()
 		{
+			base.OnSimulationStepClient();
+
+			Simulate( Time.SimulationDelta );
+		}
+
+		public delegate void SoundPlayBeforeDelegate( Weapon sender, ref Sound sound, ref bool handled );
+		public event SoundPlayBeforeDelegate SoundPlayBefore;
+
+		public virtual void SoundPlay( Sound sound )
+		{
+			var handled = false;
+			SoundPlayBefore?.Invoke( this, ref sound, ref handled );
+			if( handled )
+				return;
+
 			ParentScene?.SoundPlay( sound, TransformV.Position );
 		}
 
@@ -440,21 +563,22 @@ namespace NeoAxis
 			return true;
 		}
 
-		public void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
+		public delegate void ObjectInteractionGetInfoEventDelegate( Weapon sender, GameMode gameMode, ref InteractiveObjectObjectInfo info );
+		public event ObjectInteractionGetInfoEventDelegate ObjectInteractionGetInfoEvent;
+
+		public virtual void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
 		{
-			//take by a character
+			//enable an interaction context to take the object by a character
 			var character = gameMode.ObjectControlledByPlayer.Value as Character;
-			if( character != null && character.ItemGetEnabledFirst() == null )
+			if( character != null && character.ItemCanTake( gameMode, this ) )
 			{
-				//disable taking from another character or vehicle
-				if( Parent as Scene != null )
-				{
-					info = new InteractiveObjectObjectInfo();
-					info.AllowInteract = true;//CanTake;
-					info.SelectionTextInfo.Add( Name );
-					info.SelectionTextInfo.Add( "Click mouse button to take. Press T to drop." );
-				}
+				info = new InteractiveObjectObjectInfo();
+				info.AllowInteract = true;
+				//info.Text.Add( "Take the item" );
+				//info.Text.Add( Name );
+				//info.Text.Add( $"Click to take. Press {gameMode.KeyDrop1.Value} to drop." );
 			}
+			ObjectInteractionGetInfoEvent?.Invoke( this, gameMode, ref info );
 		}
 
 		public virtual bool ObjectInteractionInputMessage( GameMode gameMode, InputMessage message )
@@ -464,25 +588,23 @@ namespace NeoAxis
 			{
 				if( mouseDown.Button == EMouseButtons.Left || mouseDown.Button == EMouseButtons.Right )
 				{
-					//take by a character
+					//process an interaction context to take the object by a character
 					var character = gameMode.ObjectControlledByPlayer.Value as Character;
-					if( character != null && character.ItemGetEnabledFirst() == null )
+					if( character != null && character.ItemCanTake( gameMode, this ) )
 					{
 						if( NetworkIsClient )
 						{
-							var writer = character.BeginNetworkMessageToServer( "ItemTakeAndActivate" );
-							if( writer != null )
-							{
-								writer.WriteVariableUInt64( (ulong)NetworkID );
-								character.EndNetworkMessage();
-							}
+							var activate = character.GetActiveItem() == null;
+							character.ItemTakeAndActivateClient( this, activate );
 						}
 						else
 						{
-							character.ItemTake( this );
-							character.ItemActivate( this );
+							if( character.ItemTake( gameMode, this ) )
+							{
+								if( character.GetActiveItem() == null )
+									character.ItemActivate( gameMode, this );
+							}
 						}
-
 						return true;
 					}
 				}
@@ -491,15 +613,15 @@ namespace NeoAxis
 			return false;
 		}
 
-		public void ObjectInteractionEnter( ObjectInteractionContext context )
+		public virtual void ObjectInteractionEnter( ObjectInteractionContext context )
 		{
 		}
 
-		public void ObjectInteractionExit( ObjectInteractionContext context )
+		public virtual void ObjectInteractionExit( ObjectInteractionContext context )
 		{
 		}
 
-		public void ObjectInteractionUpdate( ObjectInteractionContext context )
+		public virtual void ObjectInteractionUpdate( ObjectInteractionContext context )
 		{
 		}
 
@@ -508,27 +630,11 @@ namespace NeoAxis
 
 		public virtual Transform GetBulletWorldInitialTransform( int mode )
 		{
-			var transform = mode == 1 ? typeCached.Mode1BulletTransform.Value : typeCached.Mode2BulletTransform.Value;
+			var transform = mode == 1 ? TypeCached.Mode1BulletTransform.Value : TypeCached.Mode2BulletTransform.Value;
 
+			//!!!!also add event for type?
 			var result = Transform.Value * transform;
 			GetBulletWorldInitialTransformEvent?.Invoke( this, ref result );
-			return result;
-		}
-
-		Transform GetHandTransform( HandEnum hand )
-		{
-			return hand == HandEnum.Left ? typeCached.LeftHandTransform.Value : typeCached.RightHandTransform.Value;
-		}
-
-		public delegate void GetHandWorldTransformEventDelegate( Weapon sender, HandEnum hand, ref Transform transform );
-		public event GetHandWorldTransformEventDelegate GetHandWorldTransformEvent;
-
-		public virtual Transform GetHandWorldTransform( HandEnum hand )
-		{
-			var transform = GetHandTransform( hand );
-
-			var result = Transform.Value * transform;
-			GetHandWorldTransformEvent?.Invoke( this, hand, ref result );
 			return result;
 		}
 
@@ -536,16 +642,12 @@ namespace NeoAxis
 		{
 			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
-			if( mode == GetRenderSceneDataMode.InsideFrustum )
+			if( mode == GetRenderSceneDataMode.InsideFrustum && DebugVisualization )
 			{
-				//var context2 = context.ObjectInSpaceRenderingContext;
-
-				//bool show = ( context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this ) || DebugVisualization;
-				//if( show )
-				if( DebugVisualization )
+				var renderer = context.Owner.Simple3DRenderer;
+				if( renderer != null )
 				{
-					var renderer = context.Owner.Simple3DRenderer;
-					if( renderer != null )
+					if( TypeCached.WayToUse.Value == NeoAxis.WeaponType.WayToUseEnum.Rifle )
 					{
 						for( int weaponMode = 1; weaponMode <= 2; weaponMode++ )
 						{
@@ -559,33 +661,31 @@ namespace NeoAxis
 							}
 						}
 
-						for( var hand = HandEnum.Left; hand <= HandEnum.Right; hand++ )
 						{
-							var tr = GetHandWorldTransform( hand );
-							if( tr != NeoAxis.Transform.Zero )
-							{
-								{
-									var ray = new Ray( tr.Position, tr.Rotation.GetForward() * 0.1 );
-									renderer.SetColor( new ColorValue( 1, 0, 0 ) );
-									renderer.AddArrow( ray.Origin, ray.GetEndPoint() );
-								}
+							var tr = TransformV;
 
-								{
-									var ray = new Ray( tr.Position, tr.Rotation.GetUp() * -0.1 );
-									renderer.SetColor( new ColorValue( 0, 0, 1 ) );
-									renderer.AddArrow( ray.Origin, ray.GetEndPoint() );
-								}
-							}
+							renderer.SetColor( new ColorValue( 0, 1, 0 ) );
+							if( TypeCached.PistolGripBottom.Value != TypeCached.PistolGripTop.Value )
+								renderer.AddLine( tr * TypeCached.PistolGripBottom.Value, tr * TypeCached.PistolGripTop.Value );
+							if( TypeCached.HandguardNear.Value != TypeCached.HandguardFar.Value )
+								renderer.AddLine( tr * TypeCached.HandguardNear.Value, tr * TypeCached.HandguardFar.Value );
 						}
 					}
 				}
 			}
 		}
 
-		public MeshInSpaceAnimationController GetAnimationController()
+		public MeshInSpaceAnimationController GetAnimationController( bool createInSimulationIfNotExists )
 		{
 			if( animationControllerCached == null )
-				animationControllerCached = GetComponent<MeshInSpaceAnimationController>( onlyEnabledInHierarchy: true );
+			{
+				animationControllerCached = GetComponent<MeshInSpaceAnimationController>();
+				if( animationControllerCached == null && !NetworkIsClient && EngineApp.IsSimulation && createInSimulationIfNotExists )
+				{
+					animationControllerCached = CreateComponent<MeshInSpaceAnimationController>();
+					animationControllerCached.Name = "Animation Controller";
+				}
+			}
 			return animationControllerCached;
 		}
 
@@ -599,42 +699,49 @@ namespace NeoAxis
 					StartPlayOneAnimation( null );
 			}
 
-			var controller = GetAnimationController();
-			if( controller != null )
+			//get current animation
+
+			MeshInSpaceAnimationController.AnimationStateClass state = null;
+
+			var character = Parent as Character;
+			if( character != null )
 			{
-				var character = Parent as Character;
-				if( character != null )
+				Animation animation = null;
+				float speed = 1;
+				bool autoRewind = true;
+
+				if( animation == null )
+					animation = TypeCached.IdleAnimation;
+
+				//play one animation
+				if( playOneAnimation != null )
 				{
-					Animation animation = null;
-					float speed = 1;
-					bool autoRewind = true;
-
-					if( animation == null )
-						animation = typeCached.IdleAnimation;
-
-					//play one animation
-					if( playOneAnimation != null )
-					{
-						animation = playOneAnimation;
-						speed = playOneAnimationSpeed;
-						autoRewind = false;
-					}
-
-					//!!!!GC
-
-					var state = new MeshInSpaceAnimationController.AnimationStateClass();
-					state.Animations.Add( new MeshInSpaceAnimationController.AnimationStateClass.AnimationItem() { Animation = animation, Speed = speed, AutoRewind = autoRewind } );
-
-					//update controller
-					controller.SetAnimationState( state, true );
+					animation = playOneAnimation;
+					speed = playOneAnimationSpeed;
+					autoRewind = false;
 				}
-				else
-					controller.SetAnimationState( null, false );
+
+				//!!!!GC
+
+				state = new MeshInSpaceAnimationController.AnimationStateClass();
+				state.Animations.Add( new MeshInSpaceAnimationController.AnimationStateClass.AnimationItem() { Animation = animation, Speed = speed, AutoRewind = autoRewind } );
 			}
+
+			//update controller
+			var controller = GetAnimationController( state != null );
+			controller?.SetAnimationState( state, true );
 		}
 
-		public void StartPlayOneAnimation( Animation animation, double speed = 1.0, bool resetSameAnimation = false )
+		public delegate void StartPlayOneAnimationBeforeDelegate( Weapon sender, ref Animation animation, ref double speed, ref bool resetSameAnimation, ref bool handled );
+		public event StartPlayOneAnimationBeforeDelegate StartPlayOneAnimationBefore;
+
+		public virtual void StartPlayOneAnimation( Animation animation, double speed = 1.0, bool resetSameAnimation = false )
 		{
+			var handled = false;
+			StartPlayOneAnimationBefore?.Invoke( this, ref animation, ref speed, ref resetSameAnimation, ref handled );
+			if( handled )
+				return;
+
 			if( !resetSameAnimation && animation != null && playOneAnimation == animation && playOneAnimationSpeed == speed )
 				return;
 
@@ -647,7 +754,7 @@ namespace NeoAxis
 			{
 				playOneAnimationRemainingTime = (float)playOneAnimation.Length / playOneAnimationSpeed;
 
-				var controller = GetAnimationController();
+				var controller = GetAnimationController( true );
 				if( controller != null && playOneAnimationRemainingTime > controller.InterpolationTime.Value )
 					playOneAnimationRemainingTime -= (float)controller.InterpolationTime.Value;
 			}
@@ -678,28 +785,12 @@ namespace NeoAxis
 			if( !base.OnReceiveNetworkMessageFromServer( message, reader ) )
 				return false;
 
-			if( message == "FireSound" )
+			if( message == "FiringBegin" )
 			{
 				var mode = reader.ReadVariableInt32();
 				if( !reader.Complete() )
 					return false;
-				SoundPlay( mode == 1 ? typeCached.Mode1FireSound : typeCached.Mode2FireSound );
-			}
-			else if( message == "FiringBegin" )
-			{
-				var mode = reader.ReadVariableInt32();
-				if( !reader.Complete() )
-					return false;
-				StartPlayOneAnimation( mode == 1 ? typeCached.Mode1FireAnimation : typeCached.Mode2FireAnimation, mode == 1 ? typeCached.Mode1FireAnimationSpeed : typeCached.Mode2FireAnimationSpeed );
-				SoundPlay( mode == 1 ? typeCached.Mode1FiringBeginSound : typeCached.Mode2FiringBeginSound );
-			}
-			else if( message == "MuzzleFlash" )
-			{
-				var mode = reader.ReadVariableInt32();
-				if( !reader.Complete() )
-					return false;
-				var transform = GetBulletWorldInitialTransform( mode );
-				CreateMuzzleFlash( mode, transform );
+				FiringBegin( mode, 0 );
 			}
 
 			return true;
@@ -714,21 +805,14 @@ namespace NeoAxis
 			{
 				//security check the object is controlled by the player
 				var networkLogic = NetworkLogicUtility.GetNetworkLogic( this );
-				if( networkLogic != null && networkLogic.ServerGetObjectControlledByUser( client.User, true ) == Parent )
+				if( networkLogic != null && GetAllParents().Contains( networkLogic.ServerGetObjectControlledByUser( client.User, true ) ) )
 				{
-					if( message == "FiringBegin" )
+					if( message == "FiringBeginFromClient" )
 					{
 						var mode = reader.ReadVariableInt32();
 						if( !reader.Complete() )
 							return false;
 						FiringBegin( mode, client.User.UserID );
-					}
-					else if( message == "FiringEnd" )
-					{
-						var mode = reader.ReadVariableInt32();
-						if( !reader.Complete() )
-							return false;
-						FiringEnd( mode );
 					}
 				}
 			}
@@ -742,6 +826,19 @@ namespace NeoAxis
 
 			if( animationControllerCached == component )
 				animationControllerCached = null;
+		}
+
+		public virtual void GetInventoryImage( out ImageComponent image, out object anyData )
+		{
+			image = TypeCached.InventoryImage;
+			anyData = null;
+		}
+
+		[Browsable( false )]
+		public Reference<double> ItemCount
+		{
+			get { return 1.0; }
+			set { }
 		}
 	}
 }

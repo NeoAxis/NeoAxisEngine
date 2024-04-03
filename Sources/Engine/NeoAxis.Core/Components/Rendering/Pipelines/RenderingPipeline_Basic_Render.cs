@@ -14,6 +14,7 @@ namespace NeoAxis
 	{
 		// Don't add many non static fields. Rendering pipeline is created for each temporary render target during frame rendering.
 
+		static Uniform? u_environmentLightParams;
 		static Uniform? u_reflectionProbeData;
 		static Uniform? u_deferredEnvironmentData;
 		static Uniform? u_deferredEnvironmentIrradiance;
@@ -31,14 +32,19 @@ namespace NeoAxis
 		//static Uniform? u_environmentTexture2MultiplierAndAffect;
 		//static Uniform? u_environmentBlendingFactor;
 
-		static Uniform? u_renderOperationData;
+		static Uniform u_renderOperationData;
 		//static RenderOperationDataStructure renderOperationDataCurrent;
 
 		static Uniform? u_viewportCutVolumeSettings;
 		static Uniform? u_viewportCutVolumeData;
 
-		static ImageComponent nullShadowTexture2D;
-		static ImageComponent nullShadowTextureCube;
+		static Uniform? u_prepareShadowsSettings;
+
+		static Uniform u_objectInstanceParameters;
+		static Vector4F objectInstanceParametersLast1;
+		static Vector4F objectInstanceParametersLast2;
+		static bool objectInstanceParametersIsNull;
+
 		static ImageComponent brdfLUT;
 
 		static ShadowCasterData defaultShadowCasterData;
@@ -46,27 +52,35 @@ namespace NeoAxis
 		static Mesh decalMesh;
 
 		static List<OutputInstancingManager> outputInstancingManagers = new List<OutputInstancingManager>();
-		//static OutputInstancingManager outputInstancingManager = new OutputInstancingManager();
 
-		static byte[] prepareMaterialsTempBuffer;
+		static byte[] prepareMaterialsBonesLightsTempBuffer;
 
 		static bool duringRenderShadows;
 		static bool duringRenderSimple3DRenderer;
 
+		internal static Vector3F vector3FZero;
+
+		static bool[] pointLightShadowGenerationAddFaces = new bool[ 6 ];
+
+		static Program? lightGridGenerateProgram;
+		//static Program? blurCubemapProgram;
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		public delegate void InitLightDataBuffersEventDelegate( RenderingPipeline_Basic sender, ViewportRenderingContext context, LightItem lightItem );
-		public event InitLightDataBuffersEventDelegate InitLightDataBuffersEvent;
+		////!!!!remove?
+		//public delegate void InitLightDataBuffersEventDelegate( RenderingPipeline_Basic sender, ViewportRenderingContext context, LightItem lightItem );
+		//public event InitLightDataBuffersEventDelegate InitLightDataBuffersEvent;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		class DeferredShadingData
 		{
-			public PassItem[] passesPerLightWithoutShadows = new PassItem[ 4 ];
-			public PassItem[] passesPerLightWithShadows = new PassItem[ 4 ];
-			public PassItem[] passesPerLightWithShadowsContactShadows = new PassItem[ 4 ];
-			//public PassItem[] passesPerLightWithShadowsLow = new PassItem[ 4 ];
-			//public PassItem[] passesPerLightWithShadowsHigh = new PassItem[ 4 ];
+			public PassItem ambientPass;
+			//public PassItem[] passesPerLightWithoutShadows = new PassItem[ 4 ];
+			//public PassItem[] passesPerLightWithShadows = new PassItem[ 4 ];
+			//public PassItem[] passesPerLightWithShadowsContactShadows = new PassItem[ 4 ];
+			////public PassItem[] passesPerLightWithShadowsLow = new PassItem[ 4 ];
+			////public PassItem[] passesPerLightWithShadowsHigh = new PassItem[ 4 ];
 
 			public Mesh clearBackgroundMesh;
 			public GpuMaterialPass clearBackgroundPass;
@@ -84,11 +98,12 @@ namespace NeoAxis
 
 			public void Dispose()
 			{
-				passesPerLightWithoutShadows = null;
-				passesPerLightWithShadows = null;
-				passesPerLightWithShadowsContactShadows = null;
-				//passesPerLightWithShadowsLow = null;
-				//passesPerLightWithShadowsHigh = null;
+				ambientPass = null;
+				//passesPerLightWithoutShadows = null;
+				//passesPerLightWithShadows = null;
+				//passesPerLightWithShadowsContactShadows = null;
+				////passesPerLightWithShadowsLow = null;
+				////passesPerLightWithShadowsHigh = null;
 
 				//clearBackgroundPass?.Dispose();
 				clearBackgroundPass = null;
@@ -124,11 +139,29 @@ namespace NeoAxis
 
 			public Sky Sky;
 			public Fog Fog;
-			public RenderingEffect_IndirectLighting.FrameData IndirectLightingFrameData;
+			//public RenderingEffect_IndirectLighting.FrameData IndirectLightingFrameData;
 
 			public OpenList<Material.CompiledMaterialData> Materials;
 			public ImageComponent MaterialsTexture;
 
+			public ImageComponent BonesTexture;
+
+			public ImageComponent LightsTexture;
+			public ImageComponent LightGrid;
+
+			public ImageComponent ShadowTextureArrayDirectional;
+			public ImageComponent ShadowTextureArraySpot;
+			public ImageComponent ShadowTextureArrayPoint;
+			//for mobile
+			public int ShadowTextureArrayDirectionalUsedForShadows;
+			public int ShadowTextureArraySpotUsedForShadows;
+			public int ShadowTextureArrayPointUsedForShadows;
+
+			public ImageComponent MaskTextureArrayDirectional;
+			public ImageComponent MaskTextureArraySpot;
+			public ImageComponent MaskTextureArrayPoint;
+
+			public GIData GIData;
 
 			//!!!!don't forget to Clear() new fields
 
@@ -160,9 +193,9 @@ namespace NeoAxis
 			{
 				public FlagsEnum Flags;
 				public float DistanceToCameraSquared;
-				public int PointSpotLightCount;
-				public unsafe fixed int PointSpotLightsFixed[ 6 ];
-				public List<int> PointSpotLightsMore;
+				//public int PointSpotLightCount;
+				//public unsafe fixed int PointSpotLightsFixed[ 6 ];
+				//public List<int> PointSpotLightsMore;
 
 				//
 
@@ -176,73 +209,35 @@ namespace NeoAxis
 					ContainsForwardOpaqueLayersOnOpaqueBaseObjects = 16,
 					ContainsTransparentLayersOnOpaqueBaseObjects = 32,
 					ContainsTransparentLayersOnTransparentBaseObjects = 64,
-					CalculateAffectedLights = 128,
+					UseGI = 128,
+					//CalculateAffectedLights = 128,
 				}
 
 				//
 
-				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-				public unsafe void AddPointSpotLight( int lightIndex )
-				{
-					if( PointSpotLightCount < 6 )
-					{
-						fixed( int* p = PointSpotLightsFixed )
-							p[ PointSpotLightCount ] = lightIndex;
-					}
-					else if( PointSpotLightCount == 6 )
-					{
-						PointSpotLightsMore = new List<int>();
-						PointSpotLightsMore.Add( lightIndex );
-					}
-					else
-						PointSpotLightsMore.Add( lightIndex );
-					PointSpotLightCount++;
-				}
+				//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+				//public unsafe bool CanUseInstancingForTransparentWith( ref MeshItem meshItem )
+				//{
+				//	//!!!!need?
+				//	if( Flags != meshItem.Flags )
+				//		return false;
 
-				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-				public unsafe int GetPointSpotLight( int n )
-				{
-					if( n < 6 )
-					{
-						fixed( int* p = PointSpotLightsFixed )
-							return p[ n ];
-					}
-					else
-						return PointSpotLightsMore[ n - 6 ];
-				}
+				//	//if( PointSpotLightCount != meshItem.PointSpotLightCount )
+				//	//	return false;
 
-				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-				public bool ContainsPointOrSpotLight( int lightIndex )
-				{
-					for( int n = 0; n < PointSpotLightCount; n++ )
-						if( GetPointSpotLight( n ) == lightIndex )
-							return true;
-					return false;
-				}
+				//	//for( int n = 0; n < Math.Min( PointSpotLightCount, 6 ); n++ )
+				//	//	if( PointSpotLightsFixed[ n ] != meshItem.PointSpotLightsFixed[ n ] )
+				//	//		return false;
 
-				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-				public unsafe bool CanUseInstancingForTransparentWith( ref MeshItem meshItem )
-				{
-					//!!!!need?
-					if( Flags != meshItem.Flags )
-						return false;
+				//	//if( PointSpotLightsMore != null )
+				//	//{
+				//	//	for( int n = 0; n < PointSpotLightsMore.Count; n++ )
+				//	//		if( PointSpotLightsMore[ n ] != meshItem.PointSpotLightsMore[ n ] )
+				//	//			return false;
+				//	//}
 
-					if( PointSpotLightCount != meshItem.PointSpotLightCount )
-						return false;
-
-					for( int n = 0; n < Math.Min( PointSpotLightCount, 6 ); n++ )
-						if( PointSpotLightsFixed[ n ] != meshItem.PointSpotLightsFixed[ n ] )
-							return false;
-
-					if( PointSpotLightsMore != null )
-					{
-						for( int n = 0; n < PointSpotLightsMore.Count; n++ )
-							if( PointSpotLightsMore[ n ] != meshItem.PointSpotLightsMore[ n ] )
-								return false;
-					}
-
-					return true;
-				}
+				//	return true;
+				//}
 			}
 
 			////////////
@@ -254,9 +249,9 @@ namespace NeoAxis
 			{
 				public FlagsEnum Flags;
 				public float DistanceToCameraSquared;
-				public int PointSpotLightCount;
-				public unsafe fixed int PointSpotLightsFixed[ 6 ];
-				public List<int> PointSpotLightsMore;
+				//public int PointSpotLightCount;
+				//public unsafe fixed int PointSpotLightsFixed[ 6 ];
+				//public List<int> PointSpotLightsMore;
 
 				//
 
@@ -267,73 +262,74 @@ namespace NeoAxis
 					UseDeferred = 2,
 					UseForwardOpaque = 4,
 					UseForwardTransparent = 8,
-					CalculateAffectedLights = 16,
+					UseGI = 16,
+					//CalculateAffectedLights = 16,
 				}
 
 				//
 
-				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-				public unsafe void AddPointSpotLight( int lightIndex )
-				{
-					if( PointSpotLightCount < 6 )
-					{
-						fixed( int* p = PointSpotLightsFixed )
-							p[ PointSpotLightCount ] = lightIndex;
-					}
-					else if( PointSpotLightCount == 6 )
-					{
-						PointSpotLightsMore = new List<int>();
-						PointSpotLightsMore.Add( lightIndex );
-					}
-					else
-						PointSpotLightsMore.Add( lightIndex );
-					PointSpotLightCount++;
-				}
+				//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+				//public unsafe void AddPointSpotLight( int lightIndex )
+				//{
+				//	if( PointSpotLightCount < 6 )
+				//	{
+				//		fixed( int* p = PointSpotLightsFixed )
+				//			p[ PointSpotLightCount ] = lightIndex;
+				//	}
+				//	else if( PointSpotLightCount == 6 )
+				//	{
+				//		PointSpotLightsMore = new List<int>();
+				//		PointSpotLightsMore.Add( lightIndex );
+				//	}
+				//	else
+				//		PointSpotLightsMore.Add( lightIndex );
+				//	PointSpotLightCount++;
+				//}
 
-				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-				public unsafe int GetPointSpotLight( int n )
-				{
-					if( n < 6 )
-					{
-						fixed( int* p = PointSpotLightsFixed )
-							return p[ n ];
-					}
-					else
-						return PointSpotLightsMore[ n - 6 ];
-				}
+				//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+				//public unsafe int GetPointSpotLight( int n )
+				//{
+				//	if( n < 6 )
+				//	{
+				//		fixed( int* p = PointSpotLightsFixed )
+				//			return p[ n ];
+				//	}
+				//	else
+				//		return PointSpotLightsMore[ n - 6 ];
+				//}
 
-				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-				public bool ContainsPointOrSpotLight( int lightIndex )
-				{
-					for( int n = 0; n < PointSpotLightCount; n++ )
-						if( GetPointSpotLight( n ) == lightIndex )
-							return true;
-					return false;
-				}
+				//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+				//public bool ContainsPointOrSpotLight( int lightIndex )
+				//{
+				//	for( int n = 0; n < PointSpotLightCount; n++ )
+				//		if( GetPointSpotLight( n ) == lightIndex )
+				//			return true;
+				//	return false;
+				//}
 
-				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-				public unsafe bool CanUseInstancingForTransparentWith( ref BillboardItem billboardItem )
-				{
-					//!!!!need?
-					if( Flags != billboardItem.Flags )
-						return false;
+				//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+				//public unsafe bool CanUseInstancingForTransparentWith( ref BillboardItem billboardItem )
+				//{
+				//	//!!!!need?
+				//	if( Flags != billboardItem.Flags )
+				//		return false;
 
-					if( PointSpotLightCount != billboardItem.PointSpotLightCount )
-						return false;
+				//	//if( PointSpotLightCount != billboardItem.PointSpotLightCount )
+				//	//	return false;
 
-					for( int n = 0; n < Math.Min( PointSpotLightCount, 6 ); n++ )
-						if( PointSpotLightsFixed[ n ] != billboardItem.PointSpotLightsFixed[ n ] )
-							return false;
+				//	//for( int n = 0; n < Math.Min( PointSpotLightCount, 6 ); n++ )
+				//	//	if( PointSpotLightsFixed[ n ] != billboardItem.PointSpotLightsFixed[ n ] )
+				//	//		return false;
 
-					if( PointSpotLightsMore != null )
-					{
-						for( int n = 0; n < PointSpotLightsMore.Count; n++ )
-							if( PointSpotLightsMore[ n ] != billboardItem.PointSpotLightsMore[ n ] )
-								return false;
-					}
+				//	//if( PointSpotLightsMore != null )
+				//	//{
+				//	//	for( int n = 0; n < PointSpotLightsMore.Count; n++ )
+				//	//		if( PointSpotLightsMore[ n ] != billboardItem.PointSpotLightsMore[ n ] )
+				//	//			return false;
+				//	//}
 
-					return true;
-				}
+				//	return true;
+				//}
 			}
 
 			////////////
@@ -371,9 +367,22 @@ namespace NeoAxis
 				RenderableGroupsForGI.Clear();
 				Sky = null;
 				Fog = null;
-				IndirectLightingFrameData = null;
+				//IndirectLightingFrameData = null;
 				Materials.Clear();
 				MaterialsTexture = null;
+				BonesTexture = null;
+				LightsTexture = null;
+				LightGrid = null;
+				ShadowTextureArrayDirectional = null;
+				ShadowTextureArraySpot = null;
+				ShadowTextureArrayPoint = null;
+				ShadowTextureArrayDirectionalUsedForShadows = 0;
+				ShadowTextureArraySpotUsedForShadows = 0;
+				ShadowTextureArrayPointUsedForShadows = 0;
+				MaskTextureArrayDirectional = null;
+				MaskTextureArraySpot = null;
+				MaskTextureArrayPoint = null;
+				GIData = null;
 			}
 
 			[MethodImpl( (MethodImplOptions)512 )]
@@ -383,15 +392,29 @@ namespace NeoAxis
 				{
 					ref var meshItem = ref RenderSceneData.Meshes.Data[ n ];
 					var meshData = meshItem.MeshData;
+					var meshDataShadows = meshItem.MeshDataShadows;
 
 					var data = new MeshItem();
 
-					//!!!!так?
-					//meshItem.BoundingBoxCenter.GetCenter( out var center );
-					data.DistanceToCameraSquared = (float)( meshItem.BoundingBoxCenter - context.OwnerCameraSettingsPosition ).LengthSquared();
+					//calculate DistanceToCameraSquared
+					{
+						var lengthSqr = ( context.OwnerCameraSettingsPosition - meshItem.BoundingSphere.Center ).LengthSquared();
+						if( lengthSqr < meshItem.BoundingSphere.Radius * meshItem.BoundingSphere.Radius )
+							data.DistanceToCameraSquared = 0;
+						else
+							data.DistanceToCameraSquared = (float)lengthSqr;
+
+						//if( meshItem.BoundingSphere.Contains( ref context.OwnerCameraSettingsPosition ) )
+						//	data.DistanceToCameraSquared = 0;
+						//else
+						//	data.DistanceToCameraSquared = (float)( context.OwnerCameraSettingsPosition - meshItem.BoundingSphere.Center ).LengthSquared();
+
+						//data.DistanceToCameraSquared = (float)( meshItem.BoundingBoxCenter - context.OwnerCameraSettingsPosition ).LengthSquared();
+						////meshItem.BoundingBoxCenter.GetCenter( out var center );
+					}
 
 					//Flags
-					bool lit = false;
+					//bool lit = false;
 
 					//add materials of mesh item
 					for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
@@ -418,12 +441,34 @@ namespace NeoAxis
 									data.Flags |= MeshItem.FlagsEnum.UseForwardOpaque;
 							}
 
-							if( materialData.ShadingModel != Material.ShadingModelEnum.Unlit )
-								lit = true;
+							if( materialData.giSupport )
+								data.Flags |= MeshItem.FlagsEnum.UseGI;
+
+							//if( materialData.ShadingModel != Material.ShadingModelEnum.Unlit )
+							//	lit = true;
 
 							//add material
 							if( !addMaterialsAddOnlySpecialShadowCasters || ( addMaterialsAddOnlySpecialShadowCasters && materialData.specialShadowCasterData != null ) )
 								AddMaterial( context, materialData );
+						}
+					}
+
+					//!!!!always need to add?
+					//add materials of mesh item for shadows
+					if( meshDataShadows != null )
+					{
+						for( int nOperation = 0; nOperation < meshDataShadows.RenderOperations.Count; nOperation++ )
+						{
+							var oper = meshDataShadows.RenderOperations[ nOperation ];
+							if( oper.ContainsDisposedBuffers() )
+								continue;
+
+							foreach( var materialData in GetMeshMaterialData( ref meshItem, oper, nOperation, false, context.DeferredShading ) )
+							{
+								//add material
+								if( !addMaterialsAddOnlySpecialShadowCasters || ( addMaterialsAddOnlySpecialShadowCasters && materialData.specialShadowCasterData != null ) )
+									AddMaterial( context, materialData );
+							}
 						}
 					}
 
@@ -472,8 +517,11 @@ namespace NeoAxis
 									}
 								}
 
-								if( materialData.ShadingModel != Material.ShadingModelEnum.Unlit )
-									lit = true;
+								if( materialData.giSupport )
+									data.Flags |= MeshItem.FlagsEnum.UseGI;
+
+								//if( materialData.ShadingModel != Material.ShadingModelEnum.Unlit )
+								//	lit = true;
 
 								//add material
 								if( !addMaterialsAddOnlySpecialShadowCasters || ( addMaterialsAddOnlySpecialShadowCasters && materialData.specialShadowCasterData != null ) )
@@ -483,9 +531,9 @@ namespace NeoAxis
 						}
 					}
 
-					//CalculateAffectedLights
-					if( lit && ( ( data.Flags & MeshItem.FlagsEnum.UseForwardOpaque ) != 0 || ( data.Flags & MeshItem.FlagsEnum.UseForwardTransparent ) != 0 ) )
-						data.Flags |= MeshItem.FlagsEnum.CalculateAffectedLights;
+					////CalculateAffectedLights
+					//if( lit && ( ( data.Flags & MeshItem.FlagsEnum.UseForwardOpaque ) != 0 || ( data.Flags & MeshItem.FlagsEnum.UseForwardTransparent ) != 0 ) )
+					//	data.Flags |= MeshItem.FlagsEnum.CalculateAffectedLights;
 
 					Meshes.Add( ref data );
 				}
@@ -497,10 +545,20 @@ namespace NeoAxis
 					//data2.BoundingBox.GetCenter( out var center );
 
 					var data = new BillboardItem();
-					data.DistanceToCameraSquared = (float)( data2.BoundingBoxCenter - context.OwnerCameraSettingsPosition ).LengthSquared();
 
-					//Flags
-					bool lit = false;
+					//calculate DistanceToCameraSquared
+					{
+						var lengthSqr = ( context.OwnerCameraSettingsPosition - data2.BoundingSphere.Center ).LengthSquared();
+						if( lengthSqr < data2.BoundingSphere.Radius * data2.BoundingSphere.Radius )
+							data.DistanceToCameraSquared = 0;
+						else
+							data.DistanceToCameraSquared = (float)lengthSqr;
+
+						//data.DistanceToCameraSquared = (float)( data2.BoundingBoxCenter - context.OwnerCameraSettingsPosition ).LengthSquared();
+					}
+
+					////Flags
+					//bool lit = false;
 
 					foreach( var materialData in GetBillboardMaterialData( ref data2, false, context.DeferredShading ) )
 					{
@@ -520,12 +578,15 @@ namespace NeoAxis
 								data.Flags |= BillboardItem.FlagsEnum.UseForwardOpaque;
 						}
 
-						if( materialData.ShadingModel != Material.ShadingModelEnum.Unlit )
-							lit = true;
+						if( materialData.giSupport )
+							data.Flags |= BillboardItem.FlagsEnum.UseGI;
 
-						//CalculateAffectedLights
-						if( lit && ( ( data.Flags & BillboardItem.FlagsEnum.UseForwardOpaque ) != 0 || ( data.Flags & BillboardItem.FlagsEnum.UseForwardTransparent ) != 0 ) )
-							data.Flags |= BillboardItem.FlagsEnum.CalculateAffectedLights;
+						//if( materialData.ShadingModel != Material.ShadingModelEnum.Unlit )
+						//	lit = true;
+
+						////CalculateAffectedLights
+						//if( lit && ( ( data.Flags & BillboardItem.FlagsEnum.UseForwardOpaque ) != 0 || ( data.Flags & BillboardItem.FlagsEnum.UseForwardTransparent ) != 0 ) )
+						//	data.Flags |= BillboardItem.FlagsEnum.CalculateAffectedLights;
 
 						Billboards.Add( ref data );
 
@@ -579,18 +640,74 @@ namespace NeoAxis
 				int decals2 = RenderSceneData.Decals.Count;
 
 				AddItems( context, meshes, meshes2, billboards, billboards2, lights, lights2, reflectionProbes, reflectionProbes2, decals, decals2, false );
-
-				//!!!!? what with shadows?
-				//for( int n = meshes; n < meshes2; n++ )
-				//	RenderableGroupsInFrustum.Add( new Vector2I( 0, n ) );
 			}
+
+			//public void SceneGetRenderSceneDataAfterObjects( ViewportRenderingContext context, Scene scene )
+			//{
+			//	int meshes = RenderSceneData.Meshes.Count;
+			//	int billboards = RenderSceneData.Billboards.Count;
+			//	int lights = RenderSceneData.Lights.Count;
+			//	int reflectionProbes = RenderSceneData.ReflectionProbes.Count;
+			//	int decals = RenderSceneData.Decals.Count;
+
+			//	ComponentsHidePublic.PerformGetRenderSceneDataAfterObjects( scene, context );
+
+			//	int meshes2 = RenderSceneData.Meshes.Count;
+			//	int billboards2 = RenderSceneData.Billboards.Count;
+			//	int lights2 = RenderSceneData.Lights.Count;
+			//	int reflectionProbes2 = RenderSceneData.ReflectionProbes.Count;
+			//	int decals2 = RenderSceneData.Decals.Count;
+
+			//	AddItems( context, meshes, meshes2, billboards, billboards2, lights, lights2, reflectionProbes, reflectionProbes2, decals, decals2, false );
+
+			//	////use ObjectInSpaceItem because useful
+			//	//var data = new ObjectInSpaceItem();
+			//	////data.ObjectInSpace = objectInSpace;
+
+			//	//if( meshes2 > meshes )
+			//	//{
+			//	//	data.MeshRange = new RangeI( meshes, meshes2 );
+			//	//	data.ContainsData = true;
+			//	//}
+			//	//if( billboards2 > billboards )
+			//	//{
+			//	//	data.BillboardRange = new RangeI( billboards, billboards2 );
+			//	//	data.ContainsData = true;
+			//	//}
+
+			//	//if( !data.ContainsData )
+			//	//	data.ContainsData = lights2 > lights || reflectionProbes2 > reflectionProbes || decals2 > decals;
+
+			//	//var insideFrustum = mode == GetRenderSceneDataMode.InsideFrustum;//insideFrustum;
+
+			//	////ObjectInSpaces.Add( ref data );
+			//	////ComponentsHidePublic.SetRenderSceneIndex( objectInSpace, ObjectInSpaces.Count - 1 );
+
+			//	////RenderableGroupsInFrustum
+			//	//if( data.ContainsData && data.InsideFrustum )
+			//	//{
+			//	//	for( int n = data.MeshRange.Minimum; n < data.MeshRange.Maximum; n++ )
+			//	//		RenderableGroupsInFrustum.Add( new Vector2I( 0, n ) );
+			//	//	for( int n = data.BillboardRange.Minimum; n < data.BillboardRange.Maximum; n++ )
+			//	//		RenderableGroupsInFrustum.Add( new Vector2I( 1, n ) );
+			//	//}
+
+			//	////RenderableGroupsForGI
+			//	//if( data.ContainsData && mode == GetRenderSceneDataMode.GlobalIllumination )
+			//	//{
+			//	//	for( int n = data.MeshRange.Minimum; n < data.MeshRange.Maximum; n++ )
+			//	//		RenderableGroupsForGI.Add( new Vector2I( 0, n ) );
+			//	//	for( int n = data.BillboardRange.Minimum; n < data.BillboardRange.Maximum; n++ )
+			//	//		RenderableGroupsForGI.Add( new Vector2I( 1, n ) );
+			//	//}
+			//}
 
 			public void AddZeroAmbientLight( ViewportRenderingContext context )
 			{
 				int lights = RenderSceneData.Lights.Count;
 
 				var item = new RenderSceneData.LightItem();
-				item.Creator = this;
+				//item.Creator = this;
 				item.Type = Light.TypeEnum.Ambient;
 				context.FrameData.RenderSceneData.Lights.Add( ref item );
 
@@ -698,7 +815,7 @@ namespace NeoAxis
 			{
 				switch( index.X )
 				{
-				case 0: center = RenderSceneData.Meshes.Data[ index.Y ].BoundingBoxCenter; return true;
+				case 0: center = RenderSceneData.Meshes.Data[ index.Y ].BoundingSphere.Center/*BoundingBoxCenter*/; return true;
 				case 1: center = RenderSceneData.Billboards.Data[ index.Y ].BoundingBoxCenter; return true;
 					//case 2: center = RenderSceneData.Lights[ index.Y ].
 					//case 3: center = RenderSceneData.ReflectionProbes[ index.Y ].distanceToCamera;
@@ -715,14 +832,28 @@ namespace NeoAxis
 				case 0:
 					{
 						ref var data = ref RenderSceneData.Meshes.Data[ index.Y ];
-						//data.BoundingBox.GetCenter( out var center );
-						return (float)( data.BoundingBoxCenter - point ).LengthSquared();
+
+						var lengthSqr = ( point - data.BoundingSphere.Center ).LengthSquared();
+						if( lengthSqr < data.BoundingSphere.Radius * data.BoundingSphere.Radius )
+							return 0;
+						else
+							return (float)lengthSqr;
+
+						//return (float)( data.BoundingBoxCenter - point ).LengthSquared();
+						////data.BoundingBox.GetCenter( out var center );
 					}
 				case 1:
 					{
 						ref var data = ref RenderSceneData.Billboards.Data[ index.Y ];
-						//data.BoundingBox.GetCenter( out var center );
-						return (float)( data.BoundingBoxCenter - point ).LengthSquared();
+
+						var lengthSqr = ( point - data.BoundingSphere.Center ).LengthSquared();
+						if( lengthSqr < data.BoundingSphere.Radius * data.BoundingSphere.Radius )
+							return 0;
+						else
+							return (float)lengthSqr;
+
+						//return (float)( data.BoundingBoxCenter - point ).LengthSquared();
+						////data.BoundingBox.GetCenter( out var center );
 					}
 				case 2:
 					return (float)( Lights[ index.Y ].data.Position - point ).LengthSquared();
@@ -787,39 +918,94 @@ namespace NeoAxis
 
 			//shadows
 			public bool prepareShadows;
-			public ImageComponent shadowTexture;
+			public int shadowMapIndex;
+			public Viewport.CameraSettingsClass shadowCameraSettings;
+			public int shadowSourceTextureSize;
+			//public ImageComponent shadowTexture;
 			public (Matrix4F, Matrix4F)[] shadowCascadesProjectionViewMatrices;
 
 			public OpenListNative<Vector2I>[] shadowsAffectedRenderableGroups;
 			//public List<Vector2I>[] shadowsAffectedRenderableGroups;
 
-			//data for GPU
-			public LightDataVertex lightDataVertex;
-			public LightDataFragment lightDataFragment;
-			public bool lightDataBuffersInitialized;
+			public int lightMaskIndex = -1;
 
-			//uniforms
-			public static Uniform? u_lightDataVertex;
-			public static Uniform? u_lightDataFragment;
+			////data for GPU
+			////public LightDataVertex lightDataVertex;
+			//public LightDataFragment lightDataFragment;
+			//public bool lightDataBuffersInitialized;
+
+			////uniforms
+			////public static Uniform? u_lightDataVertex;
+			//public static Uniform? u_lightDataFragment;
 
 			/////////////////////////////////////
 
-			//!!!!need?
-			/// <summary>
-			/// Represents data of light for a vertex shader.
-			/// </summary>
-			[StructLayout( LayoutKind.Sequential )]
-			public struct LightDataVertex
-			{
-				public Vector4F lightPosition;
+			/////// <summary>
+			/////// Represents data of light for a vertex shader.
+			/////// </summary>
+			////[StructLayout( LayoutKind.Sequential )]
+			////public struct LightDataVertex
+			////{
+			////	public Vector4F lightPosition;
 
-				////!!!!теперь не надо. делаетс€ в пиксельном шейдере
-				////!!!!если нет теней, то не надо
-				//public Vec4F lightShadowTextureViewProjMatrix0_0;
-				//public Vec4F lightShadowTextureViewProjMatrix0_1;
-				//public Vec4F lightShadowTextureViewProjMatrix0_2;
-				//public Vec4F lightShadowTextureViewProjMatrix0_3;
-			}
+			////	////!!!!теперь не надо. делаетс€ в пиксельном шейдере
+			////	////!!!!если нет теней, то не надо
+			////	//public Vec4F lightShadowTextureViewProjMatrix0_0;
+			////	//public Vec4F lightShadowTextureViewProjMatrix0_1;
+			////	//public Vec4F lightShadowTextureViewProjMatrix0_2;
+			////	//public Vec4F lightShadowTextureViewProjMatrix0_3;
+			////}
+
+			/////////////////////////////////////
+
+			///// <summary>
+			///// Represents data of light for a fragment shader.
+			///// </summary>
+			//[StructLayout( LayoutKind.Sequential )]
+			//public struct LightDataFragment
+			//{
+			//	//general parameters
+			//	public Vector4F lightPosition;
+			//	public Vector3F lightDirection;
+			//	public float startDistance;
+			//	public Vector3F lightPower;
+			//	public float unused;// public float lightShadowCascadeOverlapping;
+			//	public Vector4F lightAttenuation;
+			//	public Vector4F lightSpot;
+
+			//	public float lightShadowIntensity;
+			//	public float lightShadowTextureSize;
+			//	public float lightShadowMapFarClipDistance;
+			//	public float lightShadowCascadesVisualize;
+			//	public Matrix4F lightShadowTextureViewProjMatrix0;
+			//	public Matrix4F lightShadowTextureViewProjMatrix1;
+			//	public Matrix4F lightShadowTextureViewProjMatrix2;
+			//	public Matrix4F lightShadowTextureViewProjMatrix3;
+			//	public Vector4F lightShadowCascades;
+
+			//	public Matrix4F lightMaskMatrix;
+
+			//	public Vector4F unitDistanceWorldShadowTexelSizes;
+
+			//	public float lightShadowBias;
+			//	public float lightShadowNormalBias;
+			//	public float lightShadowSoftness;//public float lightSourceRadiusOrAngle;
+			//	public float lightShadowContactLength;
+
+			//	//
+
+			//	[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			//	public void SetLightShadowTextureViewProjMatrix( int index, ref Matrix4F value )
+			//	{
+			//		switch( index )
+			//		{
+			//		case 0: lightShadowTextureViewProjMatrix0 = value; break;
+			//		case 1: lightShadowTextureViewProjMatrix1 = value; break;
+			//		case 2: lightShadowTextureViewProjMatrix2 = value; break;
+			//		case 3: lightShadowTextureViewProjMatrix3 = value; break;
+			//		}
+			//	}
+			//}
 
 			/////////////////////////////////////
 
@@ -827,35 +1013,62 @@ namespace NeoAxis
 			/// Represents data of light for a fragment shader.
 			/// </summary>
 			[StructLayout( LayoutKind.Sequential )]
-			public struct LightDataFragment
+			public struct LightDataFragmentMultiLight
 			{
-				//general parameters
-				public Vector4F lightPosition;
-				public Vector4F/*Vec3F*/ lightDirection;
-				public Vector4F/*Vec3F*/ lightPower;
-				public Vector4F lightAttenuation;
-				public Vector4F lightSpot;
+				//0
+				public Vector3F lightPosition;
+				public float lightBoundingRadius;
 
-				//shadows
+				//1
+				public Vector3F lightDirection;
+				public float startDistance;
+
+				//2
+				public Vector3F lightPower;
+				public float lightType;// public float lightShadowCascadeOverlapping;
+
+				//3
+				public Vector3F lightAttenuation;
+				public float lightMaskIndex;
+
+				//4
+				public Vector3F lightSpot;//public Vector4F lightSpot;
+				public float shadowMapIndex;
+
+				//5, 6, 7, 8
+				public Matrix4F lightMaskMatrix;
+
+				//9
 				public float lightShadowIntensity;
 				public float lightShadowTextureSize;
 				public float lightShadowMapFarClipDistance;
 				public float lightShadowCascadesVisualize;
-				public Matrix4F lightShadowTextureViewProjMatrix0;
-				public Matrix4F lightShadowTextureViewProjMatrix1;
-				public Matrix4F lightShadowTextureViewProjMatrix2;
-				public Matrix4F lightShadowTextureViewProjMatrix3;
-				public Vector4F lightShadowCascades;
 
-				//mask
-				public Matrix4F lightMaskMatrix;
-
-				public Vector4F unitDistanceWorldShadowTexelSizes;
-
+				//10
 				public float lightShadowBias;
 				public float lightShadowNormalBias;
 				public float lightShadowSoftness;//public float lightSourceRadiusOrAngle;
 				public float lightShadowContactLength;
+
+				//11
+				public Vector4F unitDistanceWorldShadowTexelSizes;
+
+				//12, 13, 14, 15
+				public Matrix4F lightShadowTextureViewProjMatrix0;
+				//16, 17, 18, 19
+				public Matrix4F lightShadowTextureViewProjMatrix1;
+				//20, 21, 22, 23
+				public Matrix4F lightShadowTextureViewProjMatrix2;
+				//24, 25, 26, 27
+				public Matrix4F lightShadowTextureViewProjMatrix3;
+
+				//28
+				public Vector4F lightShadowCascades;
+
+				//public float unused1;
+				//public float unused2;
+				//public float unused3;
+				//public float unused4;
 
 				//
 
@@ -881,12 +1094,15 @@ namespace NeoAxis
 				if( data.Type == Light.TypeEnum.Directional )
 					distanceToCameraSquared = 10000000000.0f;
 				else //if( data.transform != null )
+				{
+					//!!!!может провер€ть по сфере с учетом радиуса как у мешей и билбордов
+
 					distanceToCameraSquared = (float)( context.OwnerCameraSettingsPosition - data.Position ).LengthSquared();
+				}
 			}
 
-			//!!!!
 			[MethodImpl( (MethodImplOptions)512 )]
-			static Matrix4 MakeProjectionMatrixForSpotlight( Radian outerAngle )
+			static void MakeProjectionMatrixForSpotlight( Radian outerAngle, out Matrix4F result )
 			{
 				//?
 				double mNearDist = .1f;
@@ -899,8 +1115,7 @@ namespace NeoAxis
 					double tanThetaY = Math.Tan( thetaY );
 					double tanThetaX = tanThetaY * 1;// mAspect;
 
-					double nearFocal = mNearDist;// / mFocalLength;
-
+					//double nearFocal = mNearDist;// / mFocalLength;
 					//double nearOffsetX = 0;// mFrustumOffset.x* nearFocal;
 					//double nearOffsetY = 0;// mFrustumOffset.y* nearFocal;
 
@@ -946,20 +1161,91 @@ namespace NeoAxis
 				// q = - (far + near) / (far - near)
 				// qn = - 2 * (far * near) / (far - near)
 
-				Matrix4 result = Matrix4.Zero;
-				result[ 0, 0 ] = A;
-				result[ 2, 0 ] = C;
-				result[ 1, 1 ] = B;
-				result[ 2, 1 ] = D;
-				result[ 2, 2 ] = q;
-				result[ 3, 2 ] = qn;
+				result = Matrix4F.Zero;
+				result[ 0, 0 ] = (float)A;
+				result[ 2, 0 ] = (float)C;
+				result[ 1, 1 ] = (float)B;
+				result[ 2, 1 ] = (float)D;
+				result[ 2, 2 ] = (float)q;
+				result[ 3, 2 ] = (float)qn;
 				result[ 2, 3 ] = -1;
-
-				return result;
 			}
 
+			//[MethodImpl( (MethodImplOptions)512 )]
+			//static Matrix4 MakeProjectionMatrixForSpotlight( Radian outerAngle )
+			//{
+			//	//?
+			//	double mNearDist = .1f;
+			//	double mFarDist = 100;
+
+			//	// Common calcs
+			//	double left, right, bottom, top;
+			//	{
+			//		Radian thetaY = outerAngle * 0.5;
+			//		double tanThetaY = Math.Tan( thetaY );
+			//		double tanThetaX = tanThetaY * 1;// mAspect;
+
+			//		double nearFocal = mNearDist;// / mFocalLength;
+
+			//		//double nearOffsetX = 0;// mFrustumOffset.x* nearFocal;
+			//		//double nearOffsetY = 0;// mFrustumOffset.y* nearFocal;
+
+			//		double half_w = tanThetaX * mNearDist;
+			//		double half_h = tanThetaY * mNearDist;
+
+			//		left = -half_w;// +nearOffsetX;
+			//		right = +half_w;// +nearOffsetX;
+			//		bottom = -half_h;// +nearOffsetY;
+			//		top = +half_h;// +nearOffsetY;
+			//	}
+
+			//	// The code below will dealing with general projection 
+			//	// parameters, similar glFrustum and glOrtho.
+			//	// Doesn't optimise manually except division operator, so the 
+			//	// code more self-explaining.
+
+			//	double inv_w = 1.0f / ( right - left );
+			//	double inv_h = 1.0f / ( top - bottom );
+			//	double inv_d = 1.0f / ( mFarDist - mNearDist );
+
+			//	// Calc matrix elements
+			//	double A = 2.0f * mNearDist * inv_w;
+			//	double B = 2.0f * mNearDist * inv_h;
+			//	double C = ( right + left ) * inv_w;
+			//	double D = ( top + bottom ) * inv_h;
+
+			//	double q = -( mFarDist + mNearDist ) * inv_d;
+			//	double qn = -2.0f * ( mFarDist * mNearDist ) * inv_d;
+
+			//	// NB: This creates 'uniform' perspective projection matrix,
+			//	// which depth range [-1,1], right-handed rules
+			//	//
+			//	// [ A   0   C   0  ]
+			//	// [ 0   B   D   0  ]
+			//	// [ 0   0   q   qn ]
+			//	// [ 0   0   -1  0  ]
+			//	//
+			//	// A = 2 * near / (right - left)
+			//	// B = 2 * near / (top - bottom)
+			//	// C = (right + left) / (right - left)
+			//	// D = (top + bottom) / (top - bottom)
+			//	// q = - (far + near) / (far - near)
+			//	// qn = - 2 * (far * near) / (far - near)
+
+			//	Matrix4 result = Matrix4.Zero;
+			//	result[ 0, 0 ] = A;
+			//	result[ 2, 0 ] = C;
+			//	result[ 1, 1 ] = B;
+			//	result[ 2, 1 ] = D;
+			//	result[ 2, 2 ] = q;
+			//	result[ 3, 2 ] = qn;
+			//	result[ 2, 3 ] = -1;
+
+			//	return result;
+			//}
+
 			[MethodImpl( (MethodImplOptions)512 )]
-			static Matrix4 MakeViewMatrixForSpotlight( Vector3 position, QuaternionF rotation )
+			static void MakeViewMatrixForSpotlight( ref Vector3F position, ref QuaternionF rotation, out Matrix4F result )
 			{
 				// View matrix is:
 				//
@@ -970,73 +1256,541 @@ namespace NeoAxis
 				//
 				// Where T = -(Transposed(Rot) * Pos)
 
-				Matrix3 rotationMatrix = rotation.ToMatrix3();
-				rotationMatrix *= Matrix3.FromRotateByY( MathEx.PI / 2 );
+				Matrix3F rotationMatrix = rotation.ToMatrix3();
+				rotationMatrix *= Matrix3F.FromRotateByY( MathEx.PI / 2 );
 
 				// Make the translation relative to new axes
-				Matrix3 rotationMatrixT = rotationMatrix.GetTranspose();
-				Vector3 trans = -( rotationMatrixT ) * position;
+				var rotationMatrixT = rotationMatrix.GetTranspose();
+				var trans = -( rotationMatrixT ) * position;
 
-				return new Matrix4( rotationMatrixT, trans );
+				result = new Matrix4F( ref rotationMatrixT, ref trans );
 			}
 
+			////[MethodImpl( (MethodImplOptions)512 )]
+			////static Matrix4 MakeViewMatrixForSpotlight( Vector3 position, QuaternionF rotation )
+			////{
+			////	// View matrix is:
+			////	//
+			////	//  [ Lx  Uy  Dz  Tx  ]
+			////	//  [ Lx  Uy  Dz  Ty  ]
+			////	//  [ Lx  Uy  Dz  Tz  ]
+			////	//  [ 0   0   0   1   ]
+			////	//
+			////	// Where T = -(Transposed(Rot) * Pos)
+
+			////	Matrix3 rotationMatrix = rotation.ToMatrix3();
+			////	rotationMatrix *= Matrix3.FromRotateByY( MathEx.PI / 2 );
+
+			////	// Make the translation relative to new axes
+			////	Matrix3 rotationMatrixT = rotationMatrix.GetTranspose();
+			////	Vector3 trans = -( rotationMatrixT ) * position;
+
+			////	return new Matrix4( rotationMatrixT, trans );
+			////}
+
+			//[MethodImpl( (MethodImplOptions)512 )]
+			//void InitLightDataBuffers( RenderingPipeline_Basic pipeline, ViewportRenderingContext context )//, double shadowIntensity )
+			//{
+			//	//!!!!!кешировать и раньше рассчитывать. в RenderSceneData по идее
+
+			//	Vector3F direction;
+			//	if( data.Type != Light.TypeEnum.Ambient )
+			//		direction = data.Rotation.GetForward();
+			//	else
+			//		direction = Vector3F.XAxis;
+
+			//	Vector4F position;
+			//	if( data.Type != Light.TypeEnum.Ambient )
+			//	{
+			//		if( data.Type == Light.TypeEnum.Directional )
+			//			position = new Vector4F( -direction, 0 );
+			//		else
+			//		{
+			//			//!!!!
+			//			context.ConvertToRelative( ref data.Position, out var position3 );
+			//			position = new Vector4F( position3, 1 );
+			//			//position = new Vector4( data.Position, 1 );
+			//		}
+			//	}
+			//	else
+			//		position = Vector4F.Zero;
+
+			//	//lightDataVertex.lightPosition = position;
+			//	lightDataFragment.lightPosition = position;
+			//	//lightDataVertex.lightPosition = position.ToVector4F();
+			//	//lightDataFragment.lightPosition = position.ToVector4F();
+			//	lightDataFragment.lightDirection = direction;
+			//	lightDataFragment.startDistance = data.StartDistance;
+			//	lightDataFragment.lightPower = data.Power;
+
+			//	var near = data.AttenuationNear;
+			//	var far = data.AttenuationFar;
+			//	near = MathEx.Clamp( near, 0, far - MathEx.Epsilon );
+			//	var power = MathEx.Clamp( data.AttenuationPower, MathEx.Epsilon, data.AttenuationPower );
+			//	lightDataFragment.lightAttenuation = new Vector4( near, far, power, far - near ).ToVector4F();
+
+			//	Vector4 spot;
+			//	if( data.Type == Light.TypeEnum.Spotlight )
+			//	{
+			//		double inner = data.SpotlightInnerAngle.InRadians();
+			//		double outer = data.SpotlightOuterAngle.InRadians();
+			//		outer = MathEx.Clamp( outer, .01, Math.PI );
+			//		inner = MathEx.Clamp( inner, 0, outer - .0001 );
+
+			//		spot = new Vector4(
+			//			Math.Cos( inner * .5 ),
+			//			Math.Cos( outer * .5 ),
+			//			MathEx.Clamp( data.SpotlightFalloff, MathEx.Epsilon, 1 ),
+			//			1 );
+			//	}
+			//	else
+			//		spot = new Vector4( 1, 0, 0, 1 );
+			//	lightDataFragment.lightSpot = spot.ToVector4F();
+
+			//	//shadows
+			//	if( shadowTexture != null )
+			//	{
+			//		var shadowViewport = shadowTexture.Result.GetRenderTarget().Viewports[ 0 ];
+
+			//		lightDataFragment.lightShadowIntensity = MathEx.Saturate( (float)( pipeline.ShadowIntensity.Value * data.ShadowIntensity ) );
+			//		lightDataFragment.lightShadowTextureSize = shadowTexture.CreateSize.Value.X;
+			//		lightDataFragment.lightShadowMapFarClipDistance = (float)shadowViewport.CameraSettings.FarClipDistance;
+			//		lightDataFragment.lightShadowCascadesVisualize = pipeline.ShadowDirectionalLightCascadeVisualize ? 1 : -1;
+			//		//lightDataFragment.lightShadowCascadeOverlapping = (float)pipeline.ShadowDirectionalLightCascadeOverlapping;
+
+			//		//lightShadowTextureViewProjMatrix
+			//		if( data.Type == Light.TypeEnum.Spotlight || data.Type == Light.TypeEnum.Directional )
+			//		{
+			//			//PC: OriginBottomLeft = false, HomogeneousDepth = false
+			//			//Android: OriginBottomLeft = true, HomogeneousDepth = true
+			//			var caps = RenderingSystem.Capabilities;
+			//			float sy = caps.OriginBottomLeft ? 0.5f : -0.5f;
+			//			float sz = /*caps.HomogeneousDepth ? 0.5f :*/ 1.0f;
+			//			float tz = /*caps.HomogeneousDepth ? 0.5f :*/ 0.0f;
+
+			//			var toImageSpace = new Matrix4F(
+			//				0.5f, 0, 0, 0,
+			//				0, sy, 0, 0,
+			//				0, 0, sz, 0,
+			//				0.5f, 0.5f, tz, 1 );
+
+			//			if( data.Type == Light.TypeEnum.Directional )
+			//			{
+			//				for( int n = 0; n < shadowCascadesProjectionViewMatrices.Length; n++ )
+			//				{
+			//					ref var item = ref shadowCascadesProjectionViewMatrices[ n ];
+			//					ref Matrix4F shadowProjectionMatrix = ref item.Item1;
+			//					ref Matrix4F shadowViewMatrix = ref item.Item2;
+
+			//					var mat = toImageSpace * shadowProjectionMatrix * shadowViewMatrix;
+			//					mat.Transpose();
+
+			//					lightDataFragment.SetLightShadowTextureViewProjMatrix( n, ref mat );
+			//					lightDataFragment.unitDistanceWorldShadowTexelSizes[ n ] =
+			//						1.414213562f // sqrt(2), texel diagonal (maximum) size
+			//						* ( 2.0f / shadowProjectionMatrix[ 0 ][ 0 ] ) // r - l
+			//						/ lightDataFragment.lightShadowTextureSize; // how many texels in shadow map side
+
+			//				}
+			//			}
+			//			else // Spot light
+			//			{
+			//				var shadowViewMatrix = shadowViewport.CameraSettings.ViewMatrixRelative;
+			//				var shadowProjectionMatrix = shadowViewport.CameraSettings.ProjectionMatrix;
+
+			//				var mat = toImageSpace * shadowProjectionMatrix * shadowViewMatrix;
+			//				mat.Transpose();
+
+			//				lightDataFragment.lightShadowTextureViewProjMatrix0 = mat;
+			//				lightDataFragment.unitDistanceWorldShadowTexelSizes[ 0 ] =
+			//					1.414213562f // sqrt(2), texel diagonal (maximum) size
+			//					* ( 2.0f / shadowProjectionMatrix[ 0 ][ 0 ] ) // (r - l) / (near), world X texel size at unit distance
+			//					/ lightDataFragment.lightShadowTextureSize; // how many texels in shadow map side
+			//			}
+			//		}
+
+			//		if( data.Type == Light.TypeEnum.Point )
+			//		{
+			//			var shadowProjectionMatrix = shadowViewport.CameraSettings.ProjectionMatrix;
+
+			//			lightDataFragment.unitDistanceWorldShadowTexelSizes[ 0 ] =
+			//				1.414213562f // sqrt(2), texel diagonal (maximum) size
+			//				* ( 2.0f / shadowProjectionMatrix[ 0 ][ 0 ] ) // (r - l) / (near), world X texel size at unit distance
+			//				/ lightDataFragment.lightShadowTextureSize; // how many texels in shadow map side
+			//		}
+
+			//		//lightShadowCascades
+			//		if( data.Type == Light.TypeEnum.Directional )
+			//		{
+			//			lightDataFragment.lightShadowCascades = Vector4F.Zero;
+			//			lightDataFragment.lightShadowCascades[ 0 ] = pipeline.ShadowDirectionalLightCascades;
+			//			var splitDistances = pipeline.GetShadowCascadeSplitDistances( context );
+
+			//			if( pipeline.ShadowDirectionalLightCascades >= 2 )
+			//				lightDataFragment.lightShadowCascades[ 1 ] = (float)splitDistances[ 1 ];
+			//			else
+			//				lightDataFragment.lightShadowCascades[ 1 ] = (float)pipeline.ShadowDirectionalDistance;
+
+			//			if( pipeline.ShadowDirectionalLightCascades >= 3 )
+			//				lightDataFragment.lightShadowCascades[ 2 ] = (float)splitDistances[ 2 ];
+			//			else
+			//				lightDataFragment.lightShadowCascades[ 2 ] = (float)pipeline.ShadowDirectionalDistance;
+
+			//			if( pipeline.ShadowDirectionalLightCascades >= 4 )
+			//				lightDataFragment.lightShadowCascades[ 3 ] = (float)splitDistances[ 3 ];
+			//			else
+			//				lightDataFragment.lightShadowCascades[ 3 ] = (float)pipeline.ShadowDirectionalDistance;
+			//		}
+			//	}
+
+			//	//mask
+			//	if( RenderingSystem.LightMask )
+			//	{
+			//		if( data.Mask != null )
+			//		{
+			//			Matrix4F matrix;
+
+			//			switch( data.Type )
+			//			{
+			//			case Light.TypeEnum.Directional:
+			//				{
+			//					var maskTransform = data.MaskTransform;
+
+			//					var offset = context.OwnerCameraSettingsPosition * maskTransform.Scale;
+			//					var maskTransformWithOffset = maskTransform.UpdatePosition( new Vector3( offset ) );
+			//					maskTransformWithOffset.ToMatrix4().ToMatrix4F( out matrix );
+
+			//					//Vector3F dir = -data.Rotation.GetForward();
+			//					//double s = 0;
+			//					//if( data.MaskScale != 0 )
+			//					//	s = 1.0 / data.MaskScale;
+			//					//Matrix4 m = new Matrix4(
+			//					//	s, 0, dir.X * s, -data.Position.X * s,
+			//					//	0, s, dir.Y * s, -data.Position.Y * s,
+			//					//	0, 0, 1, 0,
+			//					//	0, 0, 0, 1 );
+			//					//mat = m.GetTranspose().ToMatrix4F();
+			//				}
+			//				break;
+
+			//			case Light.TypeEnum.Point:
+			//				{
+			//					//!!!!slowly
+
+			//					Matrix3 m = data.Rotation.ToMatrix3().GetTranspose();
+			//					//!!!!fix flipped cubemaps
+			//					//dir = double3( -dir.y, dir.z, dir.x );
+			//					Matrix3 flipMatrix = new Matrix3(
+			//						0, -1, 0,
+			//						0, 0, 1,
+			//						1, 0, 0 );
+
+			//					matrix = ( flipMatrix.GetTranspose() * m ).ToMatrix4().ToMatrix4F();
+
+
+			//					//Matrix3 m = data.Rotation.ToMatrix3().GetTranspose();
+			//					////!!!!fix flipped cubemaps
+			//					////dir = double3( -dir.y, dir.z, dir.x );
+			//					//Matrix3 flipMatrix = new Matrix3(
+			//					//	0, -1, 0,
+			//					//	0, 0, 1,
+			//					//	1, 0, 0 );
+
+			//					////!!!!double
+			//					//mat = ( flipMatrix.GetTranspose() * m ).ToMatrix4().ToMatrix4F();
+			//				}
+			//				break;
+
+			//			case Light.TypeEnum.Spotlight:
+			//				{
+			//					//!!!!slowly
+
+			//					context.ConvertToRelative( ref data.Position, out var position3 );
+
+			//					var projectionClipSpace2DToImageSpace = new Matrix4F(
+			//						0.5f, 0, 0, 0,
+			//						0, -0.5f, 0, 0,
+			//						0, 0, 1, 0,
+			//						0.5f, 0.5f, 0, 1 );
+			//					MakeProjectionMatrixForSpotlight( data.SpotlightOuterAngle.InRadians(), out var projectionMatrix );
+			//					MakeViewMatrixForSpotlight( ref position3, ref data.Rotation, out var viewMatrix );
+
+			//					matrix = projectionClipSpace2DToImageSpace * projectionMatrix * viewMatrix;
+
+
+			//					//Matrix4 projectionClipSpace2DToImageSpace = new Matrix4(
+			//					//	0.5f, 0, 0, 0,
+			//					//	0, -0.5f, 0, 0,
+			//					//	0, 0, 1, 0,
+			//					//	0.5f, 0.5f, 0, 1 );
+			//					//Matrix4 projectionMatrix = MakeProjectionMatrixForSpotlight( data.SpotlightOuterAngle.InRadians() );
+			//					//Matrix4 viewMatrix = MakeViewMatrixForSpotlight( data.Position, data.Rotation );
+
+			//					////!!!!double
+			//					//mat = ( projectionClipSpace2DToImageSpace * projectionMatrix * viewMatrix ).ToMatrix4F();
+			//				}
+			//				break;
+
+			//			default:
+			//				matrix = Matrix4F.Zero;
+			//				break;
+			//			}
+
+			//			matrix.Transpose();
+			//			lightDataFragment.lightMaskMatrix = matrix;
+			//		}
+			//		else
+			//			lightDataFragment.lightMaskMatrix = Matrix4F.Zero;
+			//	}
+
+			//	lightDataFragment.lightShadowBias = data.ShadowBias;
+			//	lightDataFragment.lightShadowNormalBias = data.ShadowNormalBias;
+			//	lightDataFragment.lightShadowSoftness = data.ShadowSoftness;
+			//	//lightDataFragment.lightSourceRadiusOrAngle = data.SourceRadiusOrAngle;
+			//	lightDataFragment.lightShadowContactLength = data.ShadowContactLength;
+			//	//lightDataFragment.lightShadowQuality = pipeline.ShadowQuality.Value == ShadowQualityEnum.High ? 1 : 0;
+
+			//	//pipeline.InitLightDataBuffersEvent?.Invoke( pipeline, context, this );
+			//}
+
+			//[MethodImpl( (MethodImplOptions)512 )]
+			//public unsafe void Bind( RenderingPipeline_Basic pipeline, ViewportRenderingContext context )
+			//{
+			//	//init
+			//	if( !lightDataBuffersInitialized )
+			//	{
+			//		InitLightDataBuffers( pipeline, context );
+			//		lightDataBuffersInitialized = true;
+			//	}
+
+			//	////set vertex data uniform
+			//	//{
+			//	//	int vec4Count = sizeof( LightDataVertex ) / sizeof( Vector4F );
+			//	//	if( vec4Count != 1 )
+			//	//		Log.Fatal( "ViewportRenderingContext: SetUniforms: vec4Count != 1." );
+			//	//	if( !u_lightDataVertex.HasValue )
+			//	//		u_lightDataVertex = GpuProgramManager.RegisterUniform( "u_lightDataVertex", UniformType.Vector4, vec4Count );
+			//	//	fixed( LightDataVertex* p = &lightDataVertex )
+			//	//		Bgfx.SetUniform( u_lightDataVertex.Value, p, vec4Count );
+			//	//}
+
+			//	//set fragment data uniform
+			//	{
+			//		int vec4Count = sizeof( LightDataFragment ) / sizeof( Vector4F );
+			//		if( vec4Count != 29 )
+			//			Log.Fatal( "ViewportRenderingContext: SetUniforms: vec4Count != 29." );
+			//		if( !u_lightDataFragment.HasValue )
+			//			u_lightDataFragment = GpuProgramManager.RegisterUniform( "u_lightDataFragment", UniformType.Vector4, vec4Count );
+			//		fixed( LightDataFragment* p = &lightDataFragment )
+			//			Bgfx.SetUniform( u_lightDataFragment.Value, p, vec4Count );
+			//	}
+			//}
+
 			[MethodImpl( (MethodImplOptions)512 )]
-			void InitLightDataBuffers( RenderingPipeline_Basic pipeline, ViewportRenderingContext context )//, double shadowIntensity )
+			public unsafe void InitLightDataBuffersMultiLight( RenderingPipeline_Basic pipeline, ViewportRenderingContext context, LightDataFragmentMultiLight* output )
 			{
-				//!!!!double
+				//!!!!!может что-то кешировать, раньше рассчитывать. в RenderSceneData по идее
 
-				//!!!!!кешировать и раньше рассчитывать. в RenderSceneData по идее
+				output->lightType = (float)data.Type;
+				if( prepareShadows )
+					output->shadowMapIndex = shadowMapIndex;
+				else
+					output->shadowMapIndex = -1;
 
-				Vector3F direction = Vector3F.XAxis;
+				output->lightMaskIndex = lightMaskIndex;
+
+
+				if( data.Type == Light.TypeEnum.Directional || data.Type == Light.TypeEnum.Ambient )
+					output->lightBoundingRadius = 1000000.0f;
+				else
+					output->lightBoundingRadius = data.AttenuationFar;
+
+
+				Vector3F direction;
 				if( data.Type != Light.TypeEnum.Ambient )
 					direction = data.Rotation.GetForward();
+				else
+					direction = Vector3F.XAxis;
 
-				Vector4 position = Vector4.Zero;
+				Vector4F position;
 				if( data.Type != Light.TypeEnum.Ambient )
 				{
 					if( data.Type == Light.TypeEnum.Directional )
-						position = new Vector4( -direction, 0 );
+						position = new Vector4F( -direction, 0 );
 					else
-						position = new Vector4( data.Position, 1 );
-				}
-				lightDataVertex.lightPosition = position.ToVector4F();
-				lightDataFragment.lightPosition = position.ToVector4F();
-				lightDataFragment.lightDirection = new Vector4F( direction, 0 );
-				lightDataFragment.lightPower = new Vector4F( data.Power, 0 );
-
-				var near = data.AttenuationNear;
-				var far = data.AttenuationFar;
-				near = MathEx.Clamp( near, 0, far - MathEx.Epsilon );
-				var power = MathEx.Clamp( data.AttenuationPower, MathEx.Epsilon, data.AttenuationPower );
-				lightDataFragment.lightAttenuation = new Vector4( near, far, power, far - near ).ToVector4F();
-
-				Vector4 spot;
-				if( data.Type == Light.TypeEnum.Spotlight )
-				{
-					double inner = data.SpotlightInnerAngle.InRadians();
-					double outer = data.SpotlightOuterAngle.InRadians();
-					outer = MathEx.Clamp( outer, .01, Math.PI );
-					inner = MathEx.Clamp( inner, 0, outer - .0001 );
-
-					spot = new Vector4(
-						Math.Cos( inner * .5 ),
-						Math.Cos( outer * .5 ),
-						MathEx.Clamp( data.SpotlightFalloff, MathEx.Epsilon, 1 ),
-						1 );
+					{
+						context.ConvertToRelative( ref data.Position, out var position3 );
+						position = new Vector4F( position3, 1 );
+						//position = new Vector4( data.Position, 1 );
+					}
 				}
 				else
-					spot = new Vector4( 1, 0, 0, 1 );
-				lightDataFragment.lightSpot = spot.ToVector4F();
+					position = Vector4F.Zero;
+
+				//lightDataVertex.lightPosition = position;
+				output->lightPosition = position.ToVector3F();
+				//lightDataVertex.lightPosition = position.ToVector4F();
+				//output->lightPosition = position.ToVector4F();
+				output->lightDirection = direction;
+				output->startDistance = data.StartDistance;
+				output->lightPower = data.Power / 10000.0f;
+
+				if( data.Type == Light.TypeEnum.Spotlight || data.Type == Light.TypeEnum.Point )
+				{
+					var near = data.AttenuationNear;
+					var far = data.AttenuationFar;
+					near = MathEx.Clamp( near, 0, far - MathEx.Epsilon );
+					var power = MathEx.Clamp( data.AttenuationPower, MathEx.Epsilon, data.AttenuationPower );
+					output->lightAttenuation = new Vector3F( near, power, far - near );
+					//output->lightAttenuation = new Vector4( near, far, power, far - near ).ToVector4F();
+				}
+				else
+					output->lightAttenuation = Vector3F.Zero;
+
+				if( data.Type == Light.TypeEnum.Spotlight )
+				{
+					float inner = data.SpotlightInnerAngle.InRadians();
+					float outer = data.SpotlightOuterAngle.InRadians();
+					outer = MathEx.Clamp( outer, .01f, MathEx.PI );
+					inner = MathEx.Clamp( inner, 0, outer - .0001f );
+
+					output->lightSpot = new Vector3F(
+						MathEx.Cos( inner * 0.5f ),
+						MathEx.Cos( outer * 0.5f ),
+						MathEx.Clamp( data.SpotlightFalloff, MathEx.Epsilon, 1 ) );
+				}
+				else
+					output->lightSpot = Vector3F.Zero;
+
+				//Vector4 spot;
+				//if( data.Type == Light.TypeEnum.Spotlight )
+				//{
+				//	double inner = data.SpotlightInnerAngle.InRadians();
+				//	double outer = data.SpotlightOuterAngle.InRadians();
+				//	outer = MathEx.Clamp( outer, .01, Math.PI );
+				//	inner = MathEx.Clamp( inner, 0, outer - .0001 );
+
+				//	spot = new Vector4(
+				//		Math.Cos( inner * .5 ),
+				//		Math.Cos( outer * .5 ),
+				//		MathEx.Clamp( data.SpotlightFalloff, MathEx.Epsilon, 1 ),
+				//		1 );
+				//}
+				//else
+				//	spot = new Vector4( 1, 0, 0, 1 );
+				//output->lightSpot = spot.ToVector4F();
+
+				//mask
+				if( RenderingSystem.LightMask )
+				{
+					if( data.Mask != null && output->lightMaskIndex >= 0 )
+					{
+						Matrix4F matrix;
+
+						switch( data.Type )
+						{
+						case Light.TypeEnum.Directional:
+							{
+								var maskTransform = data.MaskTransform;
+
+								var offset = context.OwnerCameraSettingsPosition * maskTransform.Scale;
+								var maskTransformWithOffset = maskTransform.UpdatePosition( new Vector3( offset ) );
+								maskTransformWithOffset.ToMatrix4().ToMatrix4F( out matrix );
+
+								//Vector3F dir = -data.Rotation.GetForward();
+								//double s = 0;
+								//if( data.MaskScale != 0 )
+								//	s = 1.0 / data.MaskScale;
+								//Matrix4 m = new Matrix4(
+								//	s, 0, dir.X * s, -data.Position.X * s,
+								//	0, s, dir.Y * s, -data.Position.Y * s,
+								//	0, 0, 1, 0,
+								//	0, 0, 0, 1 );
+								//mat = m.GetTranspose().ToMatrix4F();
+							}
+							break;
+
+						case Light.TypeEnum.Point:
+							{
+								//!!!!slowly
+
+								Matrix3 m = data.Rotation.ToMatrix3().GetTranspose();
+								//!!!!fix flipped cubemaps
+								//dir = double3( -dir.y, dir.z, dir.x );
+								Matrix3 flipMatrix = new Matrix3(
+									0, -1, 0,
+									0, 0, 1,
+									1, 0, 0 );
+
+								matrix = ( flipMatrix.GetTranspose() * m ).ToMatrix4().ToMatrix4F();
+
+
+								//Matrix3 m = data.Rotation.ToMatrix3().GetTranspose();
+								////!!!!fix flipped cubemaps
+								////dir = double3( -dir.y, dir.z, dir.x );
+								//Matrix3 flipMatrix = new Matrix3(
+								//	0, -1, 0,
+								//	0, 0, 1,
+								//	1, 0, 0 );
+
+								////!!!!double
+								//mat = ( flipMatrix.GetTranspose() * m ).ToMatrix4().ToMatrix4F();
+							}
+							break;
+
+						case Light.TypeEnum.Spotlight:
+							{
+								//!!!!slowly
+
+								context.ConvertToRelative( ref data.Position, out var position3 );
+
+								var projectionClipSpace2DToImageSpace = new Matrix4F(
+									0.5f, 0, 0, 0,
+									0, -0.5f, 0, 0,
+									0, 0, 1, 0,
+									0.5f, 0.5f, 0, 1 );
+								MakeProjectionMatrixForSpotlight( data.SpotlightOuterAngle.InRadians(), out var projectionMatrix );
+								MakeViewMatrixForSpotlight( ref position3, ref data.Rotation, out var viewMatrix );
+
+								matrix = projectionClipSpace2DToImageSpace * projectionMatrix * viewMatrix;
+
+
+								//Matrix4 projectionClipSpace2DToImageSpace = new Matrix4(
+								//	0.5f, 0, 0, 0,
+								//	0, -0.5f, 0, 0,
+								//	0, 0, 1, 0,
+								//	0.5f, 0.5f, 0, 1 );
+								//Matrix4 projectionMatrix = MakeProjectionMatrixForSpotlight( data.SpotlightOuterAngle.InRadians() );
+								//Matrix4 viewMatrix = MakeViewMatrixForSpotlight( data.Position, data.Rotation );
+
+								////!!!!double
+								//mat = ( projectionClipSpace2DToImageSpace * projectionMatrix * viewMatrix ).ToMatrix4F();
+							}
+							break;
+
+						default:
+							matrix = Matrix4F.Zero;
+							break;
+						}
+
+						matrix.GetTranspose( out output->lightMaskMatrix );
+						//matrix.Transpose();
+						//output->lightMaskMatrix = matrix;
+					}
+					//else
+					//	output->lightMaskMatrix = Matrix4F.Zero;
+				}
 
 				//shadows
-				if( shadowTexture != null )
+				if( /*shadowTexture != null &&*/ output->shadowMapIndex >= 0 && shadowCameraSettings != null )
 				{
-					Viewport shadowViewport = shadowTexture.Result.GetRenderTarget().Viewports[ 0 ];
+					//var shadowViewport = shadowTexture.Result.GetRenderTarget().Viewports[ 0 ];
 
-					lightDataFragment.lightShadowIntensity = MathEx.Saturate( (float)( pipeline.ShadowIntensity.Value * data.ShadowIntensity ) );
-					lightDataFragment.lightShadowTextureSize = shadowTexture.CreateSize.Value.X;
-					lightDataFragment.lightShadowMapFarClipDistance = (float)shadowViewport.CameraSettings.FarClipDistance;
-					lightDataFragment.lightShadowCascadesVisualize = pipeline.ShadowDirectionalLightCascadeVisualize ? 1 : -1;
+					output->lightShadowIntensity = MathEx.Saturate( (float)( pipeline.ShadowIntensity.Value * data.ShadowIntensity ) );
+					output->lightShadowTextureSize = shadowSourceTextureSize;//shadowTexture.CreateSize.Value.X;
+					output->lightShadowMapFarClipDistance = (float)shadowCameraSettings/*shadowViewport.CameraSettings*/.FarClipDistance;
+					output->lightShadowCascadesVisualize = pipeline.ShadowDirectionalLightCascadeVisualize ? 1 : -1;
+					//output->lightShadowCascadeOverlapping = (float)pipeline.ShadowDirectionalLightCascadeOverlapping;
 
 					//lightShadowTextureViewProjMatrix
 					if( data.Type == Light.TypeEnum.Spotlight || data.Type == Light.TypeEnum.Directional )
@@ -1065,181 +1819,72 @@ namespace NeoAxis
 								var mat = toImageSpace * shadowProjectionMatrix * shadowViewMatrix;
 								mat.Transpose();
 
-								lightDataFragment.SetLightShadowTextureViewProjMatrix( n, ref mat );
-								lightDataFragment.unitDistanceWorldShadowTexelSizes[ n ] =
+								output->SetLightShadowTextureViewProjMatrix( n, ref mat );
+								output->unitDistanceWorldShadowTexelSizes[ n ] =
 									1.414213562f // sqrt(2), texel diagonal (maximum) size
 									* ( 2.0f / shadowProjectionMatrix[ 0 ][ 0 ] ) // r - l
-									/ lightDataFragment.lightShadowTextureSize; // how many texels in shadow map side
+									/ output->lightShadowTextureSize; // how many texels in shadow map side
 
 							}
 						}
 						else // Spot light
 						{
-							//!!!!double
-							Matrix4F shadowViewMatrix = shadowViewport.CameraSettings.ViewMatrix.ToMatrix4F();
-							Matrix4F shadowProjectionMatrix = shadowViewport.CameraSettings.ProjectionMatrix.ToMatrix4F();
+							var shadowViewMatrix = shadowCameraSettings/*shadowViewport.CameraSettings*/.ViewMatrixRelative;
+							var shadowProjectionMatrix = shadowCameraSettings/*shadowViewport.CameraSettings*/.ProjectionMatrix;
 
 							var mat = toImageSpace * shadowProjectionMatrix * shadowViewMatrix;
 							mat.Transpose();
 
-							lightDataFragment.lightShadowTextureViewProjMatrix0 = mat;
-							lightDataFragment.unitDistanceWorldShadowTexelSizes[ 0 ] =
+							output->lightShadowTextureViewProjMatrix0 = mat;
+							output->unitDistanceWorldShadowTexelSizes[ 0 ] =
 								1.414213562f // sqrt(2), texel diagonal (maximum) size
 								* ( 2.0f / shadowProjectionMatrix[ 0 ][ 0 ] ) // (r - l) / (near), world X texel size at unit distance
-								/ lightDataFragment.lightShadowTextureSize; // how many texels in shadow map side
+								/ output->lightShadowTextureSize; // how many texels in shadow map side
 						}
 					}
 
 					if( data.Type == Light.TypeEnum.Point )
 					{
-						Matrix4F shadowProjectionMatrix = shadowViewport.CameraSettings.ProjectionMatrix.ToMatrix4F();
+						var shadowProjectionMatrix = shadowCameraSettings/*shadowViewport.CameraSettings*/.ProjectionMatrix;
 
-						lightDataFragment.unitDistanceWorldShadowTexelSizes[ 0 ] =
+						output->unitDistanceWorldShadowTexelSizes[ 0 ] =
 							1.414213562f // sqrt(2), texel diagonal (maximum) size
 							* ( 2.0f / shadowProjectionMatrix[ 0 ][ 0 ] ) // (r - l) / (near), world X texel size at unit distance
-							/ lightDataFragment.lightShadowTextureSize; // how many texels in shadow map side
+							/ output->lightShadowTextureSize; // how many texels in shadow map side
 					}
 
 					//lightShadowCascades
 					if( data.Type == Light.TypeEnum.Directional )
 					{
-						lightDataFragment.lightShadowCascades = Vector4F.Zero;
-						lightDataFragment.lightShadowCascades[ 0 ] = pipeline.ShadowDirectionalLightCascades;
+						output->lightShadowCascades = Vector4F.Zero;
+						output->lightShadowCascades[ 0 ] = pipeline.ShadowDirectionalLightCascades;
 						var splitDistances = pipeline.GetShadowCascadeSplitDistances( context );
 
 						if( pipeline.ShadowDirectionalLightCascades >= 2 )
-							lightDataFragment.lightShadowCascades[ 1 ] = (float)splitDistances[ 1 ];
+							output->lightShadowCascades[ 1 ] = (float)splitDistances[ 1 ];
 						else
-							lightDataFragment.lightShadowCascades[ 1 ] = (float)pipeline.ShadowFarDistance;
+							output->lightShadowCascades[ 1 ] = (float)pipeline.ShadowDirectionalDistance;
 
 						if( pipeline.ShadowDirectionalLightCascades >= 3 )
-							lightDataFragment.lightShadowCascades[ 2 ] = (float)splitDistances[ 2 ];
+							output->lightShadowCascades[ 2 ] = (float)splitDistances[ 2 ];
 						else
-							lightDataFragment.lightShadowCascades[ 2 ] = (float)pipeline.ShadowFarDistance;
+							output->lightShadowCascades[ 2 ] = (float)pipeline.ShadowDirectionalDistance;
 
 						if( pipeline.ShadowDirectionalLightCascades >= 4 )
-							lightDataFragment.lightShadowCascades[ 3 ] = (float)splitDistances[ 3 ];
+							output->lightShadowCascades[ 3 ] = (float)splitDistances[ 3 ];
 						else
-							lightDataFragment.lightShadowCascades[ 3 ] = (float)pipeline.ShadowFarDistance;
+							output->lightShadowCascades[ 3 ] = (float)pipeline.ShadowDirectionalDistance;
 					}
 				}
 
-				//mask
-				if( RenderingSystem.LightMask )
-				{
-					if( data.Mask != null )
-					{
-						//!!!!если .Zero
+				output->lightShadowBias = data.ShadowBias;
+				output->lightShadowNormalBias = data.ShadowNormalBias;
+				output->lightShadowSoftness = data.ShadowSoftness;
+				//output->lightSourceRadiusOrAngle = data.SourceRadiusOrAngle;
+				output->lightShadowContactLength = data.ShadowContactLength;
+				//output->lightShadowQuality = pipeline.ShadowQuality.Value == ShadowQualityEnum.High ? 1 : 0;
 
-						Matrix4F mat = Matrix4F.Zero;
-
-						switch( data.Type )
-						{
-						case Light.TypeEnum.Directional:
-							{
-								//!!!!double
-
-								Vector3F dir = -data.Rotation.GetForward();
-								double s = 0;
-								if( data.MaskScale != 0 )
-									s = 1.0 / data.MaskScale;
-								Matrix4 m = new Matrix4(
-									s, 0, dir.X * s, -data.Position.X * s,
-									0, s, dir.Y * s, -data.Position.Y * s,
-									0, 0, 1, 0,
-									0, 0, 0, 1 );
-								mat = m.GetTranspose().ToMatrix4F();
-
-								//var m = new Mat4( Mat3.FromScale( data.maskScale ), data.maskPosition );
-								//mat = m.ToMat4F();
-
-								//Vec2 scale = Vec2.Zero;
-								//if( data.maskScale.X != 0 )
-								//	scale.X = 1.0 / data.maskScale.X;
-								//if( data.maskScale.Y != 0 )
-								//	scale.Y = 1.0 / data.maskScale.Y;
-								//var m = new Mat4( Mat3.FromScale( new Vec3( scale, 1 ) ), new Vec3( data.maskPosition, 0 ) );
-								//mat = m.ToMat4F();
-							}
-							break;
-
-						case Light.TypeEnum.Point:
-							{
-								Matrix3 m = data.Rotation.ToMatrix3().GetTranspose();
-								//!!!!fix flipped cubemaps
-								//dir = double3( -dir.y, dir.z, dir.x );
-								Matrix3 flipMatrix = new Matrix3(
-									0, -1, 0,
-									0, 0, 1,
-									1, 0, 0 );
-								//!!!!double
-								mat = ( flipMatrix.GetTranspose() * m ).ToMatrix4().ToMatrix4F();
-							}
-							break;
-
-						case Light.TypeEnum.Spotlight:
-							{
-								Matrix4 projectionClipSpace2DToImageSpace = new Matrix4(
-									0.5f, 0, 0, 0,
-									0, -0.5f, 0, 0,
-									0, 0, 1, 0,
-									0.5f, 0.5f, 0, 1 );
-								Matrix4 projectionMatrix = MakeProjectionMatrixForSpotlight( data.SpotlightOuterAngle.InRadians() );
-								Matrix4 viewMatrix = MakeViewMatrixForSpotlight( data.Position, data.Rotation );
-								//!!!!double
-								//!!!!не наоборот projectionMatrix * viewMatrix?
-								mat = ( projectionClipSpace2DToImageSpace * projectionMatrix * viewMatrix ).ToMatrix4F();
-							}
-							break;
-						}
-
-						mat.Transpose();
-						lightDataFragment.lightMaskMatrix = mat;
-					}
-					else
-						lightDataFragment.lightMaskMatrix = Matrix4F.Zero;
-				}
-
-				lightDataFragment.lightShadowBias = data.ShadowBias;
-				lightDataFragment.lightShadowNormalBias = data.ShadowNormalBias;
-				lightDataFragment.lightShadowSoftness = data.ShadowSoftness;
-				//lightDataFragment.lightSourceRadiusOrAngle = data.SourceRadiusOrAngle;
-				lightDataFragment.lightShadowContactLength = data.ShadowContactLength;
-				//lightDataFragment.lightShadowQuality = pipeline.ShadowQuality.Value == ShadowQualityEnum.High ? 1 : 0;
-
-				pipeline.InitLightDataBuffersEvent?.Invoke( pipeline, context, this );
-			}
-
-			public unsafe void Bind( RenderingPipeline_Basic pipeline, ViewportRenderingContext context )
-			{
-				//init
-				if( !lightDataBuffersInitialized )
-				{
-					InitLightDataBuffers( pipeline, context );
-					lightDataBuffersInitialized = true;
-				}
-
-				//set vertex data uniform
-				{
-					int vec4Count = sizeof( LightDataVertex ) / sizeof( Vector4F );
-					if( vec4Count != 1 )
-						Log.Fatal( "ViewportRenderingContext: SetUniforms: vec4Count != 1." );
-					if( u_lightDataVertex == null )
-						u_lightDataVertex = GpuProgramManager.RegisterUniform( "u_lightDataVertex", UniformType.Vector4, vec4Count );
-					fixed( LightDataVertex* p = &lightDataVertex )
-						Bgfx.SetUniform( u_lightDataVertex.Value, p, vec4Count );
-				}
-
-				//set fragment data uniform
-				{
-					int vec4Count = sizeof( LightDataFragment ) / sizeof( Vector4F );
-					if( vec4Count != 29 )
-						Log.Fatal( "ViewportRenderingContext: SetUniforms: vec4Count != 29." );
-					if( u_lightDataFragment == null )
-						u_lightDataFragment = GpuProgramManager.RegisterUniform( "u_lightDataFragment", UniformType.Vector4, vec4Count );
-					fixed( LightDataFragment* p = &lightDataFragment )
-						Bgfx.SetUniform( u_lightDataFragment.Value, p, vec4Count );
-				}
+				//pipeline.InitLightDataBuffersEvent?.Invoke( pipeline, context, this );
 			}
 		}
 
@@ -1253,6 +1898,8 @@ namespace NeoAxis
 		{
 			public RenderSceneData.ReflectionProbeItem data;
 			public float distanceToCameraSquared;
+
+			public ImageComponent CubemapEnvironmentWithMipmapsAndBlur;
 
 			////uniforms
 			////public static Uniform reflectionProbeDataVertexUniform;
@@ -1416,6 +2063,7 @@ namespace NeoAxis
 			}
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		unsafe static bool Intersects( Plane* frustumPlanes, Vector3* points, int pointCount )
 		//unsafe static bool Intersects( Plane[] frustumPlanes, Vector3* points, int pointCount )
 		{
@@ -1566,16 +2214,18 @@ namespace NeoAxis
 				outputItems = new OpenList<OutputItem>( 128 * multiplier );
 			}
 
-			public void Init( RenderingPipeline pipeline )
+			public void Init( RenderingPipeline pipeline, bool forGI )
 			{
+				var demandedInstancingMaxCount = forGI ? 64 : pipeline.InstancingMaxCount.Value;
+
 				//drop renderableItemArrays when InstancingMaxCount was changed
-				if( instancingMaxCount != pipeline.InstancingMaxCount )
+				if( instancingMaxCount != demandedInstancingMaxCount )
 				{
 					while( renderableItemArrays.Count != 0 )
 						NativeUtility.Free( renderableItemArrays.Pop() );
 				}
 
-				instancingMaxCount = pipeline.InstancingMaxCount;
+				instancingMaxCount = demandedInstancingMaxCount;
 			}
 
 			public void Dispose()
@@ -1702,13 +2352,14 @@ namespace NeoAxis
 						else
 						{
 							//create new output item
-							var outputItem = new OutputItem();
+							ref var outputItem = ref outputItems.AddNotInitialized(); //var outputItem = new OutputItem();
 							outputItem.operation = item.operation;
 							outputItem.materialData = item.materialData;
 							outputItem.allowInstancing = true;
 							outputItem.renderableItemFirst = new Vector3I( item.renderableGroup, item.operationIndex );
 							outputItem.renderableItemsCount = 1;
-							outputItems.Add( ref outputItem );
+							outputItem.renderableItems = null;
+							//outputItems.Add( ref outputItem );
 
 							//add to the table
 							notCompletedOutputItemsTable[ tableIndex ] = outputItems.Count - 1;
@@ -1718,13 +2369,14 @@ namespace NeoAxis
 					else
 					{
 						//without instancing
-						var outputItem = new OutputItem();
+						ref var outputItem = ref outputItems.AddNotInitialized(); //var outputItem = new OutputItem();
 						outputItem.operation = item.operation;
 						outputItem.materialData = item.materialData;
 						outputItem.allowInstancing = false;
 						outputItem.renderableItemFirst = new Vector3I( item.renderableGroup, item.operationIndex );
 						outputItem.renderableItemsCount = 1;
-						outputItems.Add( ref outputItem );
+						outputItem.renderableItems = null;
+						//outputItems.Add( ref outputItem );
 					}
 				}
 
@@ -1763,7 +2415,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		[StructLayout( LayoutKind.Sequential )]
+		[StructLayout( LayoutKind.Sequential, Pack = 1 )]
 		struct RenderOperationDataStructure
 		{
 			public Vector4F data0;
@@ -1773,6 +2425,9 @@ namespace NeoAxis
 			public ColorValue data4;
 			public Vector4F data5;
 			public Vector4F data6;
+
+			public Vector3F data71;
+			public float data72;
 		}
 
 		/////////////////////////////////////////
@@ -1783,25 +2438,15 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		protected virtual void PrepareListsOfObjects( ViewportRenderingContext context, FrameData frameData )
+		void PrepareSoftwareOcclusionBuffer( ViewportRenderingContext context, Scene scene, Viewport.CameraSettingsClass cameraSettings, bool sceneOccluder, out OcclusionCullingBuffer sceneOcclusionCullingBuffer, out bool occlusionCullingBufferRendered )
 		{
-			Viewport viewportOwner = context.Owner;
-			var renderSceneData = frameData.RenderSceneData;
+			sceneOcclusionCullingBuffer = null;
+			occlusionCullingBufferRendered = false;
 
-			var scene = viewportOwner.AttachedScene;
-			if( scene == null || !scene.EnabledInHierarchy )
-				return;
-
-			OcclusionCullingBuffer sceneOcclusionCullingBuffer = null;
-
-			//init occlusion culling buffer for main viewport and get occluders
-			var occlusionCullingBufferRendered = false;
-			if( OcclusionCullingBuffer && NeoAxis.OcclusionCullingBuffer.Supported && OcclusionCullingBufferSize.Value > 0 )
+			if( OcclusionCullingBuffer.Supported && OcclusionCullingBufferSize.Value > 0 )
 			{
-				var cameraFrustum = viewportOwner.CameraSettings.Frustum;
-
-				var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, false, cameraFrustum );
-				getObjectsItem.GroupMask = (uint)Scene.SceneObjectFlags.Occluder;// 0x2;
+				var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, false, cameraSettings.Frustum );
+				getObjectsItem.GetFromOctree = Scene.SceneObjectFlags.Occluder;
 				scene.GetObjectsInSpace( getObjectsItem );
 
 				var occluders = new OpenList<OccluderItem>( getObjectsItem.Result.Length );
@@ -1815,16 +2460,41 @@ namespace NeoAxis
 
 				if( occluders.Count != 0 )
 				{
-					var demandedSize = NeoAxis.OcclusionCullingBuffer.GetSizeByHeight( context.Owner.SizeInPixels, OcclusionCullingBufferSize );
-					var buffer = context.OcclusionCullingBuffer_Alloc( demandedSize );
+					var demandedSize = OcclusionCullingBuffer.GetSizeByHeight( context.Owner.SizeInPixels, OcclusionCullingBufferSize );
+					var buffer = context.OcclusionCullingBuffer_Alloc( demandedSize, cameraSettings.Projection == ProjectionType.Orthographic );
 
-					OcclusionCullingBuffer_RenderOccluders( context, /*frameData, */context.Owner.CameraSettings, buffer, occluders, true, ref occlusionCullingBufferRendered );
+					OcclusionCullingBuffer_RenderOccluders( context, cameraSettings, buffer, occluders, sceneOccluder, ref occlusionCullingBufferRendered );
 
 					sceneOcclusionCullingBuffer = buffer;
 				}
 			}
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		protected virtual void PrepareListsOfObjects( ViewportRenderingContext context, FrameData frameData )
+		{
+			Viewport viewportOwner = context.Owner;
+			var renderSceneData = frameData.RenderSceneData;
+
+			var frameDataMeshes = frameData.Meshes;
+			var frameDataBillboards = frameData.Billboards;
+			var renderSceneDataMeshes = renderSceneData.Meshes;
+			var renderSceneDataBillboards = renderSceneData.Billboards;
+
+			var scene = viewportOwner.AttachedScene;
+			if( scene == null || !scene.EnabledInHierarchy )
+				return;
+
+			OcclusionCullingBuffer sceneOcclusionCullingBuffer = null;
+			var occlusionCullingBufferRendered = false;
+			if( OcclusionCullingBufferScene )
+			{
+				PrepareSoftwareOcclusionBuffer( context, scene, viewportOwner.CameraSettings, true, out sceneOcclusionCullingBuffer, out occlusionCullingBufferRendered );
+			}
 			if( !occlusionCullingBufferRendered && DebugMode.Value == DebugModeEnum.OcclusionCullingBuffer )
 				context.Owner.CanvasRenderer.AddQuad( new Rectangle( 0, 0, 1, 1 ), new ColorValue( 0, 0, 0 ) );
+
+			context.SceneOcclusionCullingBuffer = sceneOcclusionCullingBuffer;
 
 			//find sky, fog. ambient, directional lights
 			var ambientDirectionalLights = new List<Light>();
@@ -1851,6 +2521,7 @@ namespace NeoAxis
 				}
 			}// );
 
+#if __
 			//find indirect lighting component. full mode
 			if( context.DeferredShading && DebugIndirectLighting )
 			{
@@ -1901,28 +2572,26 @@ namespace NeoAxis
 					}
 				}
 			}
+#endif
 
 			//Scene.GetRenderSceneData
 			frameData.SceneGetRenderSceneData( context, scene );
 
+			//get objects
 			{
 				var cameraSettings = context.Owner.CameraSettings;
 				var cameraFrustum = viewportOwner.CameraSettings.Frustum;
 				var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, cameraFrustum );
-				getObjectsItem.GroupMask = (uint)Scene.SceneObjectFlags.Visual;
+				getObjectsItem.GetFromOctree = Scene.SceneObjectFlags.Visual;
 
 				var extensionData = new Scene.GetObjectsInSpaceItem.ExtensionDataStructure();
 				if( sceneOcclusionCullingBuffer != null )
 				{
 					extensionData.OcclusionCullingBuffer = sceneOcclusionCullingBuffer.NativeObject;
-
-					var viewProjectionMatrix = cameraSettings.GetViewProjectionMatrix();
-					//!!!!double
-					viewProjectionMatrix.ToMatrix4F( out extensionData.ViewProjectionMatrix );
-
+					extensionData.CameraPosition = context.OwnerCameraSettingsPosition;
+					extensionData.ViewProjectionMatrix = cameraSettings.GetViewProjectionMatrixRelative();
 					extensionData.OcclusionCullingBufferCullNodes = OcclusionCullingBufferCullNodes.Value ? 1 : 0;
 					extensionData.OcclusionCullingBufferCullObjects = OcclusionCullingBufferCullObjects.Value ? 1 : 0;
-
 					unsafe
 					{
 						getObjectsItem.ExtensionData = new IntPtr( &extensionData );
@@ -1935,8 +2604,6 @@ namespace NeoAxis
 
 				//get visible objects
 				{
-					//!!!!
-
 					//if( EngineApp._DebugCapsLock )
 					//{
 
@@ -2023,6 +2690,10 @@ namespace NeoAxis
 				}
 			}
 
+			////Scene.GetRenderSceneDataAfterObjects
+			//frameData.SceneGetRenderSceneDataAfterObjects( context, scene );
+
+
 			//update ambient lights
 			int[] disableLights = null;
 			{
@@ -2057,6 +2728,14 @@ namespace NeoAxis
 				{
 					for( int lightIndex = 0; lightIndex < frameData.Lights.Count; lightIndex++ )
 					{
+						//remove all except ambient light for debug modes
+						if( DebugMode.Value != DebugModeEnum.None && DebugMode.Value != DebugModeEnum.Wireframe )
+						{
+							var lightItem = frameData.Lights[ lightIndex ];
+							if( lightItem.data.Type != Light.TypeEnum.Ambient )
+								continue;
+						}
+
 						if( disableLights == null || !disableLights.Contains( lightIndex ) )
 							list.Add( lightIndex );
 					}
@@ -2064,9 +2743,6 @@ namespace NeoAxis
 					frameData.LightsInFrustumSorted = list.ToArray();
 				}
 
-				//frameData.LightsSorted = new int[ frameData.Lights.Count ];
-				//for( int n = 0; n < frameData.LightsSorted.Length; n++ )
-				//frameData.LightsSorted[ n ] = n;
 				CollectionUtility.MergeSortUnmanaged( frameData.LightsInFrustumSorted, delegate ( int index1, int index2 )
 				{
 					var light1 = frameData.Lights[ index1 ];
@@ -2081,18 +2757,30 @@ namespace NeoAxis
 						return 1;
 					return 0;
 				}, true );
+
+				//max light count
+				if( frameData.LightsInFrustumSorted.Length > LightMaxCount )
+				{
+					var old = frameData.LightsInFrustumSorted;
+					frameData.LightsInFrustumSorted = new int[ LightMaxCount ];
+					Array.Copy( old, 0, frameData.LightsInFrustumSorted, 0, frameData.LightsInFrustumSorted.Length );
+				}
 			}
 
 			//LightItem.prepareShadows
 			if( Shadows && GlobalShadowQuality > 0 && ShadowIntensity > 0 && UseRenderTargets && DebugMode.Value == DebugModeEnum.None && RenderingSystem.ShadowTechnique != ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None && DebugDrawShadows )
 			{
 				int[] remains = new int[ 4 ];
-				remains[ (int)Light.TypeEnum.Directional ] = ShadowDirectionalLightMaxCount;
+				remains[ (int)Light.TypeEnum.Directional ] = 1;//ShadowDirectionalLightMaxCount;
 				remains[ (int)Light.TypeEnum.Point ] = ShadowPointLightMaxCount;
 				remains[ (int)Light.TypeEnum.Spotlight ] = ShadowSpotlightMaxCount;
 
 				var cameraPosition = viewportOwner.CameraSettings.Position;
-				double shadowFarDistance = ShadowFarDistance;
+				double shadowPointSpotlightDistance = ShadowPointSpotlightDistance;
+
+				var shadowMapIndexCounterDirectional = 0;
+				var shadowMapIndexCounterSpot = 0;
+				var shadowMapIndexCounterPoint = 0;
 
 				//!!!!так распредел€ть? просто по рассто€нию от центра
 				foreach( var lightIndex in frameData.LightsInFrustumSorted )
@@ -2104,13 +2792,12 @@ namespace NeoAxis
 						bool skip = false;
 						if( item.data.Type == Light.TypeEnum.Point )
 						{
-							if( ( cameraPosition - item.data.Position ).LengthSquared() >
-								( shadowFarDistance + item.data.AttenuationFar ) * ( shadowFarDistance + item.data.AttenuationFar ) )
+							if( ( cameraPosition - item.data.Position ).LengthSquared() > ( shadowPointSpotlightDistance + item.data.AttenuationFar ) * ( shadowPointSpotlightDistance + item.data.AttenuationFar ) )
 								skip = true;
 						}
 						else if( item.data.Type == Light.TypeEnum.Spotlight )
 						{
-							if( item.data.BoundingBox.GetPointDistance( cameraPosition ) > shadowFarDistance )
+							if( item.data.BoundingBox.GetPointDistance( cameraPosition ) > shadowPointSpotlightDistance )
 								skip = true;
 						}
 
@@ -2118,6 +2805,13 @@ namespace NeoAxis
 						{
 							item.prepareShadows = true;
 							remains[ (int)item.data.Type ] = remains[ (int)item.data.Type ] - 1;
+
+							if( item.data.Type == Light.TypeEnum.Directional )
+								item.shadowMapIndex = shadowMapIndexCounterDirectional++;
+							else if( item.data.Type == Light.TypeEnum.Spotlight )
+								item.shadowMapIndex = shadowMapIndexCounterSpot++;
+							else
+								item.shadowMapIndex = shadowMapIndexCounterPoint++;
 						}
 					}
 				}
@@ -2150,7 +2844,62 @@ namespace NeoAxis
 									GetDirectionalLightShadowsCascadeHullPlanes( context, lightItem, nIteration, out var planes, out var bounds );
 
 									var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, planes, bounds );
-									getObjectsItem.GroupMask = (uint)Scene.SceneObjectFlags.Visual;
+									getObjectsItem.GetFromOctree = Scene.SceneObjectFlags.Visual;
+
+
+									//software occlusion buffer
+									if( OcclusionCullingBufferDirectionalLight )
+									{
+										//!!!!threading?
+
+										//!!!!copy code
+
+										var lightData = lightItem.data;
+
+										Vector3 dir = lightData.Rotation.GetForward();
+										Vector3[] cornerPoints = GetDirectionalLightShadowsCameraCornerPoints( context, nIteration );
+										Vector3 destinationPoint = GetDirectionalLightCameraDestinationPoint( context, cornerPoints );
+
+										var pos = destinationPoint - dir * ShadowDirectionalLightExtrusionDistance;
+
+										//!!!!пока так
+										var up = Vector3.ZAxis;
+										if( Math.Abs( Vector3.Dot( up, dir ) ) >= .99f )
+											up = Vector3.YAxis;
+										//up = lightData.transform.Rotation.GetUp();
+
+										double maxDistance = 0;
+										foreach( Vector3 point in cornerPoints )
+										{
+											double distance = ( point - destinationPoint ).Length();
+											if( distance > maxDistance )
+												maxDistance = distance;
+										}
+
+										var orthoSize = maxDistance * 2 * 1.05f;
+										//fix epsilon error
+										orthoSize = ( (int)( orthoSize / 5 ) ) * 5 + 5;
+
+										double shadowMapFarClipDistance = ShadowDirectionalLightExtrusionDistance * 2;
+
+										var cascadeCameraSettings = new Viewport.CameraSettingsClass( context.OwnerCameraSettingsPosition, null, 1, 90, lightData.ShadowNearClipDistance/*shadowMapFarClipDistance / 1000.0*/, shadowMapFarClipDistance, pos, dir, up, ProjectionType.Orthographic, orthoSize, 0, 0 );
+
+										PrepareSoftwareOcclusionBuffer( context, scene, cascadeCameraSettings, false, out var cascadeOcclusionCullingBuffer, out var cascadeOcclusionCullingBufferRendered );
+
+										var extensionData = new Scene.GetObjectsInSpaceItem.ExtensionDataStructure();
+										if( cascadeOcclusionCullingBuffer != null )
+										{
+											extensionData.OcclusionCullingBuffer = cascadeOcclusionCullingBuffer.NativeObject;
+											extensionData.CameraPosition = context.OwnerCameraSettingsPosition;
+											extensionData.ViewProjectionMatrix = cascadeCameraSettings.GetViewProjectionMatrixRelative();
+											extensionData.OcclusionCullingBufferCullNodes = OcclusionCullingBufferCullNodes.Value ? 1 : 0;
+											extensionData.OcclusionCullingBufferCullObjects = OcclusionCullingBufferCullObjects.Value ? 1 : 0;
+											unsafe
+											{
+												getObjectsItem.ExtensionData = new IntPtr( &extensionData );
+											}
+										}
+									}
 
 									item.SetItem( nIteration, getObjectsItem );
 									lightAffectedObjectsGetObjectsList.Add( getObjectsItem );
@@ -2163,26 +2912,34 @@ namespace NeoAxis
 						{
 							//Point light
 
-							var sphere = new Sphere( lightItem.data.Position, lightItem.data.AttenuationFar );
-							var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, sphere );
-							getObjectsItem.GroupMask = (uint)Scene.SceneObjectFlags.Visual;
+							//!!!!new
+							if( lightItem.prepareShadows )
+							{
+								var sphere = new Sphere( lightItem.data.Position, lightItem.data.AttenuationFar );
+								var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, sphere );
+								getObjectsItem.GetFromOctree = Scene.SceneObjectFlags.Visual;
 
-							var item = new LightAffectedObjectsItem();
-							item.SetItem( 0, getObjectsItem );
-							lightAffectedObjects[ lightIndex ] = item;
-							lightAffectedObjectsGetObjectsList.Add( getObjectsItem );
+								var item = new LightAffectedObjectsItem();
+								item.SetItem( 0, getObjectsItem );
+								lightAffectedObjects[ lightIndex ] = item;
+								lightAffectedObjectsGetObjectsList.Add( getObjectsItem );
+							}
 						}
 						else if( lightItem.data.Type == Light.TypeEnum.Spotlight )
 						{
 							//Spotlight
 
-							var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, lightItem.data.SpotlightClipPlanes, lightItem.data.BoundingBox );
-							getObjectsItem.GroupMask = (uint)Scene.SceneObjectFlags.Visual;
+							//!!!!new
+							if( lightItem.prepareShadows )
+							{
+								var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, lightItem.data.SpotlightClipPlanes, lightItem.data.BoundingBox );
+								getObjectsItem.GetFromOctree = Scene.SceneObjectFlags.Visual;
 
-							var item = new LightAffectedObjectsItem();
-							item.SetItem( 0, getObjectsItem );
-							lightAffectedObjects[ lightIndex ] = item;
-							lightAffectedObjectsGetObjectsList.Add( getObjectsItem );
+								var item = new LightAffectedObjectsItem();
+								item.SetItem( 0, getObjectsItem );
+								lightAffectedObjects[ lightIndex ] = item;
+								lightAffectedObjectsGetObjectsList.Add( getObjectsItem );
+							}
 						}
 					}
 				}
@@ -2239,7 +2996,6 @@ namespace NeoAxis
 										}
 									}
 
-
 									unsafe void Calculate( int nObject )
 									{
 										ref var objectData = ref objectsData.Data[ nObject ];
@@ -2287,6 +3043,48 @@ namespace NeoAxis
 												points[ n + 4 ] = points[ n ] + offset;
 										}
 
+
+										//!!!!толку в этом всЄм мало. да и глючит либа на больших объектах
+										//!!!!
+										//{
+										//	if( sceneOcclusionCullingBuffer != null && EngineApp._DebugCapsLock )
+										//	{
+
+										//		//!!!!
+										//		if( radius < 5 )
+										//		{
+
+										//			//!!!!отсекать в группе объектов. только мелкие объекты?
+
+										//			//!!!!как индексы
+
+
+										//			Vector3F* pointsRelative = stackalloc Vector3F[ 8 ];
+										//			for( int n = 0; n < 8; n++ )
+										//				context.ConvertToRelative( ref points[ n ], out pointsRelative[ n ] );
+
+										//			var m = context.OwnerCameraSettings.GetViewProjectionMatrixRelative();
+										//			float* modelToClipMatrix = (float*)&m;
+
+										//			//fixed( Vector3F* pPositions = positions2 )
+										//			{
+										//				fixed( int* pIndices = boxIndices )
+										//				{
+
+										//					var result = sceneOcclusionCullingBuffer.TestTriangles( (float*)pointsRelative, (uint*)pIndices, boxIndices.Length / 3, modelToClipMatrix );
+
+										//					//!!!!билборды тоже
+
+										//					if( ( result & NeoAxis.OcclusionCullingBuffer.CullingResult.Occluded ) != 0 )
+										//						return;
+										//				}
+										//			}
+										//		}
+										//	}
+										//}
+
+
+
 										var cascadeFrustumPlanes = cascadeFrustum.Planes;
 										unsafe
 										{
@@ -2297,20 +3095,21 @@ namespace NeoAxis
 											}
 										}
 
-										//viewportOwner.Simple3DRenderer.SetColor( new ColorValue( 1, 0, 0 ) );
-										//foreach( var p in points )
-										//	viewportOwner.Simple3DRenderer.AddSphere( new Sphere( p, .1 ), 8, false, -1 );
-
-										//var center = position + lightDirection.ToVector3() * ( shadowMapFarClipDistance / 2 );
-										//var extents = new Vector3( shadowMapFarClipDistance * 0.5 + radius, radius, radius );
-										//var box = new Box( center, extents, lightRotationMatrix );
 
 										////viewportOwner.Simple3DRenderer.SetColor( new ColorValue( 1, 0, 0 ) );
-										////viewportOwner.Simple3DRenderer.AddBox( box, false, -1 );
+										////foreach( var p in points )
+										////	viewportOwner.Simple3DRenderer.AddSphere( new Sphere( p, .1 ), 8, false, -1 );
 
-										//if( !cascadeFrustum.Intersects( box ) )
-										//	continue;
-										//}
+										////var center = position + lightDirection.ToVector3() * ( shadowMapFarClipDistance / 2 );
+										////var extents = new Vector3( shadowMapFarClipDistance * 0.5 + radius, radius, radius );
+										////var box = new Box( center, extents, lightRotationMatrix );
+
+										//////viewportOwner.Simple3DRenderer.SetColor( new ColorValue( 1, 0, 0 ) );
+										//////viewportOwner.Simple3DRenderer.AddBox( box, false, -1 );
+
+										////if( !cascadeFrustum.Intersects( box ) )
+										////	continue;
+										////}
 
 									}
 
@@ -2336,9 +3135,44 @@ namespace NeoAxis
 												{
 													for( int n = data.MeshRange.Minimum; n < data.MeshRange.Maximum; n++ )
 													{
-														ref var item = ref renderSceneData.Meshes.Data[ n ];
+														ref var item = ref renderSceneDataMeshes.Data[ n ];
 														if( item.CastShadows )
 														{
+															//!!!!толку в этом всЄм мало. да и глючит либа на больших объектах
+
+															//!!!!достаточно геометрии котора€ к камере обращена
+															//!!!!может где-то делаетс€ така€ форма
+															//!!!!threading
+															//!!!!свойством, а то вдруг глючить будет
+
+
+															//if( sceneOcclusionCullingBuffer != null && EngineApp._DebugCapsLock )
+															//{
+															//	SimpleMeshGenerator.GenerateBox( item.BoundingSphere.ToBounds(), out var positions, out var indices );
+
+															//	var positions2 = new Vector3F[ positions.Length ];
+															//	for( int n2 = 0; n2 < positions2.Length; n2++ )
+															//		context.ConvertToRelative( positions[ n2 ], out positions2[ n2 ] );
+
+															//	var m = context.OwnerCameraSettings.GetViewProjectionMatrixRelative();
+															//	float* modelToClipMatrix = (float*)&m;
+
+															//	fixed( Vector3F* pPositions = positions2 )
+															//	{
+															//		fixed( int* pIndices = indices )
+															//		{
+
+															//			var result = sceneOcclusionCullingBuffer.TestTriangles( (float*)pPositions, (uint*)pIndices, indices.Length / 3, modelToClipMatrix );
+
+															//			//!!!!билборды тоже
+
+															//			if( ( result & NeoAxis.OcclusionCullingBuffer.CullingResult.Occluded ) != 0 )
+															//				continue;
+
+															//		}
+															//	}
+															//}
+
 															if( lightItem.shadowsAffectedRenderableGroups == null )
 																lightItem.shadowsAffectedRenderableGroups = new OpenListNative<Vector2I>[ ShadowDirectionalLightCascades ];
 															if( lightItem.shadowsAffectedRenderableGroups[ nIteration ] == null )
@@ -2348,7 +3182,7 @@ namespace NeoAxis
 													}
 													for( int n = data.BillboardRange.Minimum; n < data.BillboardRange.Maximum; n++ )
 													{
-														ref var item = ref renderSceneData.Billboards.Data[ n ];
+														ref var item = ref renderSceneDataBillboards.Data[ n ];
 														if( item.CastShadows )
 														{
 															if( lightItem.shadowsAffectedRenderableGroups == null )
@@ -2470,72 +3304,76 @@ namespace NeoAxis
 					{
 						//Point light
 
-						var getObjectsItem = lightAffectedObjects[ lightIndex ].GetItem( 0 );
-						//var sphere = new Sphere( lightItem.data.Position, lightItem.data.AttenuationFar );
-						//var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, sphere );
-						//scene.GetObjectsInSpace( getObjectsItem );
-
-						bool[] addFaces = new bool[ 6 ];
-
-						for( int nObject = 0; nObject < getObjectsItem.Result.Length; nObject++ )
+						//!!!!new
+						if( lightItem.prepareShadows )
 						{
-							var obj = getObjectsItem.Result[ nObject ].Object;
-							if( obj.VisibleInHierarchy )
+							var getObjectsItem = lightAffectedObjects[ lightIndex ].GetItem( 0 );
+							//var sphere = new Sphere( lightItem.data.Position, lightItem.data.AttenuationFar );
+							//var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, sphere );
+							//scene.GetObjectsInSpace( getObjectsItem );
+
+							//bool[] addFaces = new bool[ 6 ];
+
+							for( int nObject = 0; nObject < getObjectsItem.Result.Length; nObject++ )
 							{
-								var objIndex = frameData.RegisterObjectInSpace( context, obj, GetRenderSceneDataMode.ShadowCasterOutsideFrustum, getObjectsItem );//, false );
-								ref var data = ref frameData.ObjectInSpaces.Data[ objIndex ];
-
-								if( data.ContainsData )
+								var obj = getObjectsItem.Result[ nObject ].Object;
+								if( obj.VisibleInHierarchy )
 								{
-									for( int n = data.MeshRange.Minimum; n < data.MeshRange.Maximum; n++ )
+									var objIndex = frameData.RegisterObjectInSpace( context, obj, GetRenderSceneDataMode.ShadowCasterOutsideFrustum, getObjectsItem );//, false );
+									ref var data = ref frameData.ObjectInSpaces.Data[ objIndex ];
+
+									if( data.ContainsData )
 									{
-										ref var item = ref renderSceneData.Meshes.Data[ n ];
-										ref var data2 = ref frameData.Meshes.Data[ n ];
-
-										if( ( data2.Flags & FrameData.MeshItem.FlagsEnum.CalculateAffectedLights ) != 0 )
-											data2.AddPointSpotLight( lightIndex );
-
-										//LightItem.shadowsAffectedRenderableGroups
-										if( item.CastShadows && lightItem.prepareShadows )
+										for( int n = data.MeshRange.Minimum; n < data.MeshRange.Maximum; n++ )
 										{
-											PointLightShadowGenerationCheckAddFaces( ref lightItem.data.Position, ref item.BoundingSphere, addFaces );
+											ref var item = ref renderSceneDataMeshes.Data[ n ];
+											ref var data2 = ref frameDataMeshes.Data[ n ];
 
-											for( int nFace = 0; nFace < 6; nFace++ )
+											//if( ( data2.Flags & FrameData.MeshItem.FlagsEnum.CalculateAffectedLights ) != 0 )
+											//	data2.AddPointSpotLight( lightIndex );
+
+											//LightItem.shadowsAffectedRenderableGroups
+											if( item.CastShadows )//&& lightItem.prepareShadows )
 											{
-												if( addFaces[ nFace ] )
+												PointLightShadowGenerationCheckAddFaces( ref lightItem.data.Position, ref item.BoundingSphere, pointLightShadowGenerationAddFaces );
+
+												for( int nFace = 0; nFace < 6; nFace++ )
 												{
-													if( lightItem.shadowsAffectedRenderableGroups == null )
-														lightItem.shadowsAffectedRenderableGroups = new OpenListNative<Vector2I>[ 6 ];
-													if( lightItem.shadowsAffectedRenderableGroups[ nFace ] == null )
-														lightItem.shadowsAffectedRenderableGroups[ nFace ] = new OpenListNative<Vector2I>( getObjectsItem.Result.Length + 128 );
-													lightItem.shadowsAffectedRenderableGroups[ nFace ].Add( new Vector2I( 0, n ) );
+													if( pointLightShadowGenerationAddFaces[ nFace ] )
+													{
+														if( lightItem.shadowsAffectedRenderableGroups == null )
+															lightItem.shadowsAffectedRenderableGroups = new OpenListNative<Vector2I>[ 6 ];
+														if( lightItem.shadowsAffectedRenderableGroups[ nFace ] == null )
+															lightItem.shadowsAffectedRenderableGroups[ nFace ] = new OpenListNative<Vector2I>( getObjectsItem.Result.Length + 128 );
+														lightItem.shadowsAffectedRenderableGroups[ nFace ].Add( new Vector2I( 0, n ) );
+													}
 												}
 											}
 										}
-									}
-									for( int n = data.BillboardRange.Minimum; n < data.BillboardRange.Maximum; n++ )
-									{
-										ref var item = ref renderSceneData.Billboards.Data[ n ];
-										ref var data2 = ref frameData.Billboards.Data[ n ];
-
-										if( ( data2.Flags & FrameData.BillboardItem.FlagsEnum.CalculateAffectedLights ) != 0 )
-											data2.AddPointSpotLight( lightIndex );
-
-										//LightItem.shadowsAffectedRenderableGroups
-										if( item.CastShadows && lightItem.prepareShadows )
+										for( int n = data.BillboardRange.Minimum; n < data.BillboardRange.Maximum; n++ )
 										{
-											Sphere meshSphere = item.BoundingSphere;// meshInSpace.SpaceBounds.CalculatedBoundingSphere;
-											PointLightShadowGenerationCheckAddFaces( ref lightItem.data.Position, ref meshSphere, addFaces );
+											ref var item = ref renderSceneDataBillboards.Data[ n ];
+											ref var data2 = ref frameDataBillboards.Data[ n ];
 
-											for( int nFace = 0; nFace < 6; nFace++ )
+											//if( ( data2.Flags & FrameData.BillboardItem.FlagsEnum.CalculateAffectedLights ) != 0 )
+											//	data2.AddPointSpotLight( lightIndex );
+
+											//LightItem.shadowsAffectedRenderableGroups
+											if( item.CastShadows )//&& lightItem.prepareShadows )
 											{
-												if( addFaces[ nFace ] )
+												//Sphere meshSphere = item.BoundingSphere;// meshInSpace.SpaceBounds.CalculatedBoundingSphere;
+												PointLightShadowGenerationCheckAddFaces( ref lightItem.data.Position, ref item.BoundingSphere/*meshSphere*/, pointLightShadowGenerationAddFaces );
+
+												for( int nFace = 0; nFace < 6; nFace++ )
 												{
-													if( lightItem.shadowsAffectedRenderableGroups == null )
-														lightItem.shadowsAffectedRenderableGroups = new OpenListNative<Vector2I>[ 6 ];
-													if( lightItem.shadowsAffectedRenderableGroups[ nFace ] == null )
-														lightItem.shadowsAffectedRenderableGroups[ nFace ] = new OpenListNative<Vector2I>( getObjectsItem.Result.Length + 128 );
-													lightItem.shadowsAffectedRenderableGroups[ nFace ].Add( new Vector2I( 1, n ) );
+													if( pointLightShadowGenerationAddFaces[ nFace ] )
+													{
+														if( lightItem.shadowsAffectedRenderableGroups == null )
+															lightItem.shadowsAffectedRenderableGroups = new OpenListNative<Vector2I>[ 6 ];
+														if( lightItem.shadowsAffectedRenderableGroups[ nFace ] == null )
+															lightItem.shadowsAffectedRenderableGroups[ nFace ] = new OpenListNative<Vector2I>( getObjectsItem.Result.Length + 128 );
+														lightItem.shadowsAffectedRenderableGroups[ nFace ].Add( new Vector2I( 1, n ) );
+													}
 												}
 											}
 										}
@@ -2548,54 +3386,58 @@ namespace NeoAxis
 					{
 						//Spotlight
 
-						var getObjectsItem = lightAffectedObjects[ lightIndex ].GetItem( 0 );
-						//var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, lightItem.data.SpotlightClipPlanes, lightItem.data.BoundingBox );
-						//scene.GetObjectsInSpace( getObjectsItem );
-
-						for( int nObject = 0; nObject < getObjectsItem.Result.Length; nObject++ )
+						//!!!!new
+						if( lightItem.prepareShadows )
 						{
-							var obj = getObjectsItem.Result[ nObject ].Object;
-							if( obj.VisibleInHierarchy )
+							var getObjectsItem = lightAffectedObjects[ lightIndex ].GetItem( 0 );
+							//var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, lightItem.data.SpotlightClipPlanes, lightItem.data.BoundingBox );
+							//scene.GetObjectsInSpace( getObjectsItem );
+
+							for( int nObject = 0; nObject < getObjectsItem.Result.Length; nObject++ )
 							{
-								var objIndex = frameData.RegisterObjectInSpace( context, obj, GetRenderSceneDataMode.ShadowCasterOutsideFrustum, getObjectsItem );//, false );
-								ref var data = ref frameData.ObjectInSpaces.Data[ objIndex ];
-
-								if( data.ContainsData )
+								var obj = getObjectsItem.Result[ nObject ].Object;
+								if( obj.VisibleInHierarchy )
 								{
-									for( int n = data.MeshRange.Minimum; n < data.MeshRange.Maximum; n++ )
+									var objIndex = frameData.RegisterObjectInSpace( context, obj, GetRenderSceneDataMode.ShadowCasterOutsideFrustum, getObjectsItem );//, false );
+									ref var data = ref frameData.ObjectInSpaces.Data[ objIndex ];
+
+									if( data.ContainsData )
 									{
-										ref var item = ref renderSceneData.Meshes.Data[ n ];
-										ref var data2 = ref frameData.Meshes.Data[ n ];
-
-										if( ( data2.Flags & FrameData.MeshItem.FlagsEnum.CalculateAffectedLights ) != 0 )
-											data2.AddPointSpotLight( lightIndex );
-
-										//LightItem.shadowsAffectedRenderableGroups
-										if( item.CastShadows && lightItem.prepareShadows )
+										for( int n = data.MeshRange.Minimum; n < data.MeshRange.Maximum; n++ )
 										{
-											if( lightItem.shadowsAffectedRenderableGroups == null )
-												lightItem.shadowsAffectedRenderableGroups = new OpenListNative<Vector2I>[ 1 ];
-											if( lightItem.shadowsAffectedRenderableGroups[ 0 ] == null )
-												lightItem.shadowsAffectedRenderableGroups[ 0 ] = new OpenListNative<Vector2I>( getObjectsItem.Result.Length + 128 );
-											lightItem.shadowsAffectedRenderableGroups[ 0 ].Add( new Vector2I( 0, n ) );
+											ref var item = ref renderSceneDataMeshes.Data[ n ];
+											ref var data2 = ref frameDataMeshes.Data[ n ];
+
+											//if( ( data2.Flags & FrameData.MeshItem.FlagsEnum.CalculateAffectedLights ) != 0 )
+											//	data2.AddPointSpotLight( lightIndex );
+
+											//LightItem.shadowsAffectedRenderableGroups
+											if( item.CastShadows )//&& lightItem.prepareShadows )
+											{
+												if( lightItem.shadowsAffectedRenderableGroups == null )
+													lightItem.shadowsAffectedRenderableGroups = new OpenListNative<Vector2I>[ 1 ];
+												if( lightItem.shadowsAffectedRenderableGroups[ 0 ] == null )
+													lightItem.shadowsAffectedRenderableGroups[ 0 ] = new OpenListNative<Vector2I>( getObjectsItem.Result.Length + 128 );
+												lightItem.shadowsAffectedRenderableGroups[ 0 ].Add( new Vector2I( 0, n ) );
+											}
 										}
-									}
-									for( int n = data.BillboardRange.Minimum; n < data.BillboardRange.Maximum; n++ )
-									{
-										ref var item = ref renderSceneData.Billboards.Data[ n ];
-										ref var data2 = ref frameData.Billboards.Data[ n ];
-
-										if( ( data2.Flags & FrameData.BillboardItem.FlagsEnum.CalculateAffectedLights ) != 0 )
-											data2.AddPointSpotLight( lightIndex );
-
-										//LightItem.shadowsAffectedRenderableGroups
-										if( item.CastShadows && lightItem.prepareShadows )
+										for( int n = data.BillboardRange.Minimum; n < data.BillboardRange.Maximum; n++ )
 										{
-											if( lightItem.shadowsAffectedRenderableGroups == null )
-												lightItem.shadowsAffectedRenderableGroups = new OpenListNative<Vector2I>[ 1 ];
-											if( lightItem.shadowsAffectedRenderableGroups[ 0 ] == null )
-												lightItem.shadowsAffectedRenderableGroups[ 0 ] = new OpenListNative<Vector2I>( getObjectsItem.Result.Length + 128 );
-											lightItem.shadowsAffectedRenderableGroups[ 0 ].Add( new Vector2I( 1, n ) );
+											ref var item = ref renderSceneDataBillboards.Data[ n ];
+											ref var data2 = ref frameDataBillboards.Data[ n ];
+
+											//if( ( data2.Flags & FrameData.BillboardItem.FlagsEnum.CalculateAffectedLights ) != 0 )
+											//	data2.AddPointSpotLight( lightIndex );
+
+											//LightItem.shadowsAffectedRenderableGroups
+											if( item.CastShadows )//&& lightItem.prepareShadows )
+											{
+												if( lightItem.shadowsAffectedRenderableGroups == null )
+													lightItem.shadowsAffectedRenderableGroups = new OpenListNative<Vector2I>[ 1 ];
+												if( lightItem.shadowsAffectedRenderableGroups[ 0 ] == null )
+													lightItem.shadowsAffectedRenderableGroups[ 0 ] = new OpenListNative<Vector2I>( getObjectsItem.Result.Length + 128 );
+												lightItem.shadowsAffectedRenderableGroups[ 0 ].Add( new Vector2I( 1, n ) );
+											}
 										}
 									}
 								}
@@ -2606,20 +3448,25 @@ namespace NeoAxis
 			}
 
 			//get objects for GI
-			if( frameData.IndirectLightingFrameData != null )
+			if( frameData.GIData != null )
 			{
-				var indirectFrameData = frameData.IndirectLightingFrameData;
 
 				//!!!!threading. split to sectors or threading inside GetObjectsInSpace
 
+				var giData = frameData.GIData;
 				var cameraSettings = viewportOwner.CameraSettings;
 
 				//!!!!sphere shape?
 
-				//!!!!levels. partial update
+				//!!!!cascades
+				var cascade = 0;
 
-				var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, indirectFrameData.TotalGridBounds );
-				getObjectsItem.GroupMask = (uint)Scene.SceneObjectFlags.Visual;
+				//!!!!cascades partial update
+
+				var cascadeItem = giData.Cascades[ cascade ];
+
+				var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, cascadeItem.BoundsWorld );
+				getObjectsItem.GetFromOctree = Scene.SceneObjectFlags.Visual;
 
 				//var r = frameData.IndirectLighting.Radius;
 				//var bounds = new Bounds( cameraSettings.Position - new Vector3( r, r, r ), cameraSettings.Position + new Vector3( r, r, r ) );
@@ -2641,13 +3488,47 @@ namespace NeoAxis
 				}
 			}
 
+			////get objects for GI
+			//if( frameData.IndirectLightingFrameData != null )
+			//{
+			//	var indirectFrameData = frameData.IndirectLightingFrameData;
+
+			//	//!!!!threading. split to sectors or threading inside GetObjectsInSpace
+
+			//	var cameraSettings = viewportOwner.CameraSettings;
+
+			//	//!!!!sphere shape?
+
+			//	//!!!!levels. partial update
+
+			//	var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, indirectFrameData.TotalGridBounds );
+			//	getObjectsItem.GetFromOctree = Scene.SceneObjectFlags.Visual;
+
+			//	//var r = frameData.IndirectLighting.Radius;
+			//	//var bounds = new Bounds( cameraSettings.Position - new Vector3( r, r, r ), cameraSettings.Position + new Vector3( r, r, r ) );
+
+			//	//var sphere = new Sphere( cameraSettings.Position, frameData.IndirectLighting.Radius );
+			//	//var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, sphere );
+
+			//	scene.GetObjectsInSpace( getObjectsItem );
+
+			//	for( int nObject = 0; nObject < getObjectsItem.Result.Length; nObject++ )
+			//	{
+			//		var obj = getObjectsItem.Result[ nObject ].Object;
+			//		if( obj.VisibleInHierarchy )//!!!!? && obj.SpaceBounds.CalculatedBoundingSphere.Intersects( ref sphere ) )
+			//		{
+			//			//!!!!как еще отсечь?
+
+			//			var objIndex = frameData.RegisterObjectInSpace( context, obj, GetRenderSceneDataMode.GlobalIllumination, getObjectsItem );
+			//		}
+			//	}
+			//}
+
 			//All data are prepared for rendering
 
 			context.UpdateStatisticsCurrent.Lights = frameData.LightsInFrustumSorted.Length;
 			context.UpdateStatisticsCurrent.ReflectionProbes = frameData.ReflectionProbes.Count;
 
-			//!!!!
-			// пока так, потом, видимо так же как источники света сортировать
 			//sort. from biggest radius to smallest
 			CollectionUtility.MergeSort( frameData.ReflectionProbes, ( x, y ) => y.data.Sphere.Radius.CompareTo( x.data.Sphere.Radius ) );
 			//frameData.ReflectionProbes.Sort( ( x, y ) => y.data.Sphere.Radius.CompareTo( x.data.Sphere.Radius ) );
@@ -2701,7 +3582,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		void SetVertexIndexBuffers( ViewportRenderingContext context, RenderSceneData.MeshDataRenderOperation op, GpuMaterialPass pass, out int outputTriangleCount )
+		void SetVertexIndexBuffers( ViewportRenderingContext context, RenderSceneData.MeshDataRenderOperation op, GpuMaterialPass pass, ViewportRenderingContext.TessellationCacheItem tessellationItem, out int outputTriangleCount )
 		{
 			var indexStartOffset = op.IndexStartOffset;
 			var indexTo = op.IndexCount - indexStartOffset;
@@ -2746,97 +3627,118 @@ namespace NeoAxis
 				}
 			}
 
-			for( int n = 0; n < op.VertexBuffers.Length; n++ )
-				context.SetVertexBuffer( n, op.VertexBuffers[ n ], op.VertexStartOffset, op.VertexCount );
-
-			var indexBuffer = op.IndexBuffer;
-			if( indexBuffer != null )
+			if( tessellationItem != null )
 			{
-				var indexCount = indexTo - indexStartOffset;
-				context.SetIndexBuffer( indexBuffer, indexStartOffset, indexCount );
-
-				outputTriangleCount = indexCount / 3;
+				context.SetVertexBuffer( 0, tessellationItem.VertexBuffer );
+				context.SetIndexBuffer( tessellationItem.IndexBuffer );
+				outputTriangleCount = tessellationItem.IndexBuffer.IndexCount / 3;
 			}
 			else
-				outputTriangleCount = op.VertexCount / 3;
+			{
+				for( int n = 0; n < op.VertexBuffers.Length; n++ )
+					context.SetVertexBuffer( n, op.VertexBuffers[ n ], op.VertexStartOffset, op.VertexCount );
+
+				var indexBuffer = op.IndexBuffer;
+				if( indexBuffer != null )
+				{
+					var indexCount = indexTo - indexStartOffset;
+					context.SetIndexBuffer( indexBuffer, indexStartOffset, indexCount );
+
+					outputTriangleCount = indexCount / 3;
+				}
+				else
+					outputTriangleCount = op.VertexCount / 3;
+			}
 		}
 
-		[MethodImpl( (MethodImplOptions)512 )]
-		public void RenderOperation( ViewportRenderingContext context, RenderSceneData.MeshDataRenderOperation op, GpuMaterialPass pass, List<ParameterContainer> parameterContainers, RenderSceneData.CutVolumeItem[] cutVolumes, bool instancingEnabled, GpuVertexBuffer instancingBuffer, ref InstanceDataBuffer instancingDataBuffer, int instancingStart, int instancingCount )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void RenderOperation( ViewportRenderingContext context, RenderSceneData.MeshDataRenderOperation op, GpuMaterialPass pass, List<ParameterContainer> parameterContainers, RenderSceneData.CutVolumeItem[] cutVolumes, bool instancingEnabled, GpuVertexBuffer instancingBuffer, ref InstanceDataBuffer instancingDataBuffer, int instancingStart, int instancingCount, ViewportRenderingContext.TessellationCacheItem tessellationItem = null )
 		{
 			if( ContainsDisposedVertexIndexBuffers( op ) )
 				return;
-			if( instancingBuffer != null && instancingBuffer.Disposed )
-				return;
+			//if( instancingBuffer != null && instancingBuffer.Disposed )
+			//	return;
 
-			if( !DebugDrawMeshes && op.VoxelDataInfo == null )
+			if( !context.DebugDrawMeshes && op.VoxelDataInfo == null )
 				return;
-			if( !DebugDrawVoxels && op.VoxelDataInfo != null )
+			if( !context.DebugDrawVoxels && op.VoxelDataInfo != null )
 				return;
-			if( !DebugDrawBatchedData && instancingBuffer != null )
-				return;
-			if( !DebugDrawNotBatchedData && instancingBuffer == null )
-				return;
+			//if( !DebugDrawBatchedData && instancingBuffer != null )
+			//	return;
+			//if( !DebugDrawNotBatchedData && instancingBuffer == null )
+			//	return;
 
 			//!!!!можно склеить PInvoke вызовы
 
 			SetCutVolumeSettingsUniforms( context, cutVolumes, false );
-			SetVertexIndexBuffers( context, op, pass, out var triangleCount );
+			SetVertexIndexBuffers( context, op, pass, tessellationItem, out var triangleCount );
 
-			var statistics = context.UpdateStatisticsCurrent;
+			var statistics = context.updateStatisticsCurrent;
 
 			if( instancingEnabled )
 			{
 				if( instancingBuffer != null )
 				{
+					if( instancingBuffer.Disposed )
+						return;
+					if( !context.DebugDrawBatchedData )
+						return;
+
 					var instancingCount2 = instancingCount;
 					if( instancingCount2 == -1 )
 						instancingCount2 = instancingBuffer.VertexCount - instancingStart;
 					context.SetInstanceDataBuffer( instancingBuffer, instancingStart, instancingCount2 );
-					context.SetPassAndSubmit( pass, RenderOperationType.TriangleList, parameterContainers, null, op.VoxelDataInfo != null );
+					context.SetPassAndSubmit( pass, RenderOperationType.TriangleList, parameterContainers, null, op.VoxelDataInfo != null, false );
 					statistics.Triangles += triangleCount * instancingCount2;
 					statistics.Instances += instancingCount2;
 				}
 				else
 				{
+					if( !context.DebugDrawNotBatchedData )
+						return;
+
 					var instancingCount2 = instancingCount;
 					if( instancingCount2 == -1 )
 						instancingCount2 = instancingDataBuffer.Size - instancingStart;
 					Bgfx.SetInstanceDataBuffer( ref instancingDataBuffer, instancingStart, instancingCount2 );// instancingCount );
-					context.SetPassAndSubmit( pass, RenderOperationType.TriangleList, parameterContainers, null, op.VoxelDataInfo != null );
+					context.SetPassAndSubmit( pass, RenderOperationType.TriangleList, parameterContainers, null, op.VoxelDataInfo != null, false );
 					statistics.Triangles += triangleCount * instancingCount2;
 					statistics.Instances += instancingCount2;
 				}
 			}
 			else
 			{
-				context.SetPassAndSubmit( pass, RenderOperationType.TriangleList, parameterContainers, null, op.VoxelDataInfo != null );
+				if( !context.DebugDrawNotBatchedData )
+					return;
+
+				context.SetPassAndSubmit( pass, RenderOperationType.TriangleList, parameterContainers, null, op.VoxelDataInfo != null, false );
 				statistics.Triangles += triangleCount;
 				statistics.Instances++;
 			}
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		public void RenderOperation( ViewportRenderingContext context, RenderSceneData.MeshDataRenderOperation op, GpuMaterialPass pass, List<ParameterContainer> parameterContainers, RenderSceneData.CutVolumeItem[] cutVolumes = null )
+		public void RenderOperation( ViewportRenderingContext context, RenderSceneData.MeshDataRenderOperation op, GpuMaterialPass pass, List<ParameterContainer> parameterContainers, RenderSceneData.CutVolumeItem[] cutVolumes = null, ViewportRenderingContext.TessellationCacheItem tessellationItem = null )
 		{
 			if( ContainsDisposedVertexIndexBuffers( op ) )
 				return;
 
-			if( !DebugDrawMeshes && op.VoxelDataInfo == null )
+			if( !context.DebugDrawMeshes && op.VoxelDataInfo == null )
 				return;
-			if( !DebugDrawVoxels && op.VoxelDataInfo != null )
+			if( !context.DebugDrawVoxels && op.VoxelDataInfo != null )
 				return;
-			if( !DebugDrawNotBatchedData )
+			if( !context.DebugDrawNotBatchedData )
 				return;
 
 			//!!!!можно склеить PInvoke вызовы
 
 			SetCutVolumeSettingsUniforms( context, cutVolumes, false );
-			SetVertexIndexBuffers( context, op, pass, out var triangleCount );
+			SetVertexIndexBuffers( context, op, pass, tessellationItem, out var triangleCount );
 
-			context.SetPassAndSubmit( pass, RenderOperationType.TriangleList, parameterContainers, null, op.VoxelDataInfo != null );
-			context.UpdateStatisticsCurrent.Triangles += triangleCount;
-			context.UpdateStatisticsCurrent.Instances++;
+			context.SetPassAndSubmit( pass, RenderOperationType.TriangleList, parameterContainers, null, op.VoxelDataInfo != null, false );
+			var statistics = context.updateStatisticsCurrent;
+			statistics.Triangles += triangleCount;
+			statistics.Instances++;
 
 			//var instancingDataBuffer = new InstanceDataBuffer();
 			//RenderOperation( context, op, pass, parameterContainers, cutVolumes, false, null, ref instancingDataBuffer, 0, -1 );
@@ -2914,13 +3816,13 @@ namespace NeoAxis
 		////}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		static Material.CompiledMaterialData[] GetCommonMaterialData( /*ViewportRenderingContext context, */Material.CompiledMaterialData materialData, bool materialDataMustBePrepared, bool deferredShading )
+		static Material.CompiledMaterialData[] GetCommonMaterialData( /*ViewportRenderingContext context, */Material.CompiledMaterialData materialData, bool materialDataMustBePrepared, bool deferredShading, bool gi )
 		{
 			//null material
 			if( materialData == null )
 				return new Material.CompiledMaterialData[] { ResourceUtility.MaterialNull.Result };
 
-			var output = materialData.GetOutputMaterials( deferredShading );// getForwardRenderingData ? false : context.DeferredShading );
+			var output = materialData.GetOutputMaterials( deferredShading, gi );// getForwardRenderingData ? false : context.DeferredShading );
 
 			var changed = false;
 			for( int n = 0; n < output.Length; n++ )
@@ -2935,7 +3837,7 @@ namespace NeoAxis
 				}
 
 				//invalid material
-				if( !string.IsNullOrEmpty( materialData2.error ) )
+				if( materialData2.error != null ) //if( !string.IsNullOrEmpty( materialData2.error ) )
 				{
 					changed = true;
 					break;
@@ -2959,7 +3861,7 @@ namespace NeoAxis
 						materialData2 = ResourceUtility.MaterialNull.Result;
 
 					//invalid material
-					if( !string.IsNullOrEmpty( materialData2.error ) )
+					if( materialData2.error != null )//if( !string.IsNullOrEmpty( materialData2.error ) )
 						materialData2 = ResourceUtility.MaterialInvalid.Result;
 
 					newOutput[ n ] = materialData2;
@@ -2974,12 +3876,12 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static Material GetMeshMaterial2( ref RenderSceneData.MeshItem meshItem, RenderSceneData.MeshDataRenderOperation operation, int operationIndex )
 		{
-			if( meshItem.ReplaceMaterialSelectively != null && operationIndex < meshItem.ReplaceMaterialSelectively.Length )
-			{
-				var m = meshItem.ReplaceMaterialSelectively[ operationIndex ];
-				if( m != null )
-					return m;
-			}
+			//if( meshItem.ReplaceMaterialSelectively != null && operationIndex < meshItem.ReplaceMaterialSelectively.Length )
+			//{
+			//	var m = meshItem.ReplaceMaterialSelectively[ operationIndex ];
+			//	if( m != null )
+			//		return m;
+			//}
 
 			if( meshItem.ReplaceMaterial != null )
 				return meshItem.ReplaceMaterial;
@@ -3017,10 +3919,10 @@ namespace NeoAxis
 		//}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public static Material.CompiledMaterialData[] GetMeshMaterialData( /*ViewportRenderingContext context, */ref RenderSceneData.MeshItem meshItem, RenderSceneData.MeshDataRenderOperation operation, int operationIndex, bool materialDataMustBePrepared, bool deferredShading )
+		public static Material.CompiledMaterialData[] GetMeshMaterialData( /*ViewportRenderingContext context, */ref RenderSceneData.MeshItem meshItem, RenderSceneData.MeshDataRenderOperation operation, int operationIndex, bool materialDataMustBePrepared, bool deferredShading, bool gi = false )
 		{
 			var materialData = GetMeshMaterial2( ref meshItem, operation, operationIndex )?.Result;
-			return GetCommonMaterialData( /*context, */materialData, materialDataMustBePrepared, deferredShading );
+			return GetCommonMaterialData( /*context, */materialData, materialDataMustBePrepared, deferredShading, gi );
 
 
 			//var materialData = GetMeshMaterial2( ref meshItem, operation, operationIndex )?.Result;
@@ -3074,10 +3976,10 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public static Material.CompiledMaterialData[] GetBillboardMaterialData( /*ViewportRenderingContext context, */ref RenderSceneData.BillboardItem billboardItem, bool materialDataMustBePrepared, bool deferredShading )
+		public static Material.CompiledMaterialData[] GetBillboardMaterialData( /*ViewportRenderingContext context, */ref RenderSceneData.BillboardItem billboardItem, bool materialDataMustBePrepared, bool deferredShading, bool gi = false )
 		{
 			var materialData = GetBillboardMaterial2( ref billboardItem )?.Result;
-			return GetCommonMaterialData( /*context, */materialData, materialDataMustBePrepared, deferredShading );
+			return GetCommonMaterialData( /*context, */materialData, materialDataMustBePrepared, deferredShading, gi );
 
 			////check for updated during rendering frame
 			//if( materialData != null && materialDataMustBePrepared && materialData.currentFrameIndex == -1 )
@@ -3101,10 +4003,10 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		static Material.CompiledMaterialData[] GetDecalMaterialData( /*ViewportRenderingContext context, */ref RenderSceneData.DecalItem decalItem, bool materialDataMustBePrepared, bool deferredShading )
+		static Material.CompiledMaterialData[] GetDecalMaterialData( /*ViewportRenderingContext context, */ref RenderSceneData.DecalItem decalItem, bool materialDataMustBePrepared, bool deferredShading, bool gi = false )
 		{
 			var materialData = GetDecalMaterial2( ref decalItem )?.Result;
-			return GetCommonMaterialData( /*context, */materialData, materialDataMustBePrepared, deferredShading );
+			return GetCommonMaterialData( /*context, */materialData, materialDataMustBePrepared, deferredShading, gi );
 
 			////check for updated during rendering frame
 			//if( materialData != null && materialDataMustBePrepared && materialData.currentFrameIndex == -1 )
@@ -3128,7 +4030,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		static Material.CompiledMaterialData[] GetLayerMaterialData( /*ViewportRenderingContext context, */ref RenderSceneData.LayerItem layerItem, bool materialDataMustBePrepared, bool deferredShading )
+		static Material.CompiledMaterialData[] GetLayerMaterialData( /*ViewportRenderingContext context, */ref RenderSceneData.LayerItem layerItem, bool materialDataMustBePrepared, bool deferredShading, bool gi = false )
 		{
 			var materialData = GetLayerMaterial2( ref layerItem );//?.Result;
 
@@ -3136,7 +4038,7 @@ namespace NeoAxis
 			if( materialData == null )
 				return Array.Empty<Material.CompiledMaterialData>();
 
-			return GetCommonMaterialData( /*context, */materialData, materialDataMustBePrepared, deferredShading );
+			return GetCommonMaterialData( /*context, */materialData, materialDataMustBePrepared, deferredShading, gi );
 
 			////check for updated during rendering frame
 			//if( materialData != null && materialDataMustBePrepared && materialData.currentFrameIndex == -1 )
@@ -3159,56 +4061,221 @@ namespace NeoAxis
 			public float DistanceSquared;
 		}
 
-		static ShadowTextureSize GetMin( ShadowTextureSize v1, ShadowTextureSize v2 )
+		static ShadowTextureSizeEnum GetMin( ShadowTextureSizeEnum v1, ShadowTextureSizeEnum v2 )
 		{
-			return (ShadowTextureSize)Math.Min( (int)v1, (int)v2 );
+			return (ShadowTextureSizeEnum)Math.Min( (int)v1, (int)v2 );
+		}
+
+		static int GetShadowTextureSizeEnumAsInteger( ShadowTextureSizeEnum value )
+		{
+			return 128 << (int)value;
+		}
+
+		[StructLayout( LayoutKind.Sequential )]
+		struct PrepareShadowsSettingsUniform
+		{
+			public Vector3F cameraPosition;
+			public float startDistance;
+			public float farClipDistance;
+			public float nearClipDistance;
+			public float shadowMaterialOpacityMaskThresholdFactor;
+			public float shadowTexelOffset;
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		unsafe void LightPrepareShadows( ViewportRenderingContext context, FrameData frameData, LightItem lightItem )
+		int GetShadowMapSize( LightItem lightItem )
 		{
-			var sectorsByDistance = SectorsByDistance.Value;
-
-			//var useEVSM = RenderingSystem.ShadowTechnique == ProjectSettingsPage_Rendering.ShadowTechniqueEnum.ExponentialVarianceShadowMaps;
-
-			//init default shadow caster
-			InitDefaultShadowCasterData();
-
 			var lightData = lightItem.data;
 
-			//texture size
 			int textureSize;
+
+			ShadowTextureSizeEnum textureSizeEnum;
+			if( lightData.ShadowTextureSize == Light.ShadowTextureSizeType.Value )
 			{
-				ShadowTextureSize textureSizeEnum;
+				if( lightData.Type == Light.TypeEnum.Spotlight )
+					textureSizeEnum = GetMin( lightData.ShadowTextureSizeValue, RenderingSystem.ShadowMaxTextureSizeSpotLight );
+				else if( lightData.Type == Light.TypeEnum.Point )
+					textureSizeEnum = GetMin( lightData.ShadowTextureSizeValue, RenderingSystem.ShadowMaxTextureSizePointLight );
+				else
+					textureSizeEnum = GetMin( lightData.ShadowTextureSizeValue, RenderingSystem.ShadowMaxTextureSizeDirectionalLight );
+			}
+			else
+			{
 				if( lightData.Type == Light.TypeEnum.Spotlight )
 					textureSizeEnum = GetMin( ShadowSpotlightTextureSize.Value, RenderingSystem.ShadowMaxTextureSizeSpotLight );
 				else if( lightData.Type == Light.TypeEnum.Point )
 					textureSizeEnum = GetMin( ShadowPointLightTextureSize.Value, RenderingSystem.ShadowMaxTextureSizePointLight );
 				else
 					textureSizeEnum = GetMin( ShadowDirectionalLightTextureSize.Value, RenderingSystem.ShadowMaxTextureSizeDirectionalLight );
-				textureSize = int.Parse( textureSizeEnum.ToString().Replace( "_", "" ) );
-
-				if( GlobalShadowQuality != 1 )
-					textureSize = MathEx.NextPowerOfTwo( (int)( textureSize * GlobalShadowQuality ) );
 			}
 
-			//texture format
+			textureSize = GetShadowTextureSizeEnumAsInteger( textureSizeEnum );
+			//textureSize = int.Parse( textureSizeEnum.ToString().Replace( "_", "" ) );
+
+			if( lightData.ShadowTextureSize != Light.ShadowTextureSizeType.Default )
+			{
+				if( lightData.ShadowTextureSize == Light.ShadowTextureSizeType.x2 )
+					textureSize *= 2;
+				else if( lightData.ShadowTextureSize == Light.ShadowTextureSizeType.x4 )
+					textureSize *= 4;
+				else if( lightData.ShadowTextureSize == Light.ShadowTextureSizeType.Half )
+					textureSize /= 2;
+				else if( lightData.ShadowTextureSize == Light.ShadowTextureSizeType.Quarter )
+					textureSize /= 4;
+			}
+
+			if( GlobalShadowQuality != 1 )
+				textureSize = MathEx.NextPowerOfTwo( (int)( textureSize * GlobalShadowQuality ) );
+
+			//!!!!new
+			{
+				if( lightData.Type == Light.TypeEnum.Spotlight )
+					textureSize = Math.Min( textureSize, GetShadowMapSizeMultiLightSpot() );
+				else if( lightData.Type == Light.TypeEnum.Point )
+					textureSize = Math.Min( textureSize, GetShadowMapSizeMultiLightPoint() );
+				//else
+			}
+
+			if( textureSize > RenderingSystem.Capabilities.MaxTextureSize )
+				textureSize = RenderingSystem.Capabilities.MaxTextureSize;
+
+			return textureSize;
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		int GetShadowMapSizeMultiLightSpot()
+		{
+			var textureSize = GetShadowTextureSizeEnumAsInteger( ShadowSpotlightTextureSize );
+
+			if( GlobalShadowQuality != 1 )
+				textureSize = MathEx.NextPowerOfTwo( (int)( textureSize * GlobalShadowQuality ) );
+
+			if( textureSize > RenderingSystem.Capabilities.MaxTextureSize )
+				textureSize = RenderingSystem.Capabilities.MaxTextureSize;
+
+			return textureSize;
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		int GetShadowMapSizeMultiLightPoint()
+		{
+			var textureSize = GetShadowTextureSizeEnumAsInteger( ShadowPointLightTextureSize );
+
+			if( GlobalShadowQuality != 1 )
+				textureSize = MathEx.NextPowerOfTwo( (int)( textureSize * GlobalShadowQuality ) );
+
+			if( textureSize > RenderingSystem.Capabilities.MaxTextureSize )
+				textureSize = RenderingSystem.Capabilities.MaxTextureSize;
+
+			return textureSize;
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		static ViewportRenderingContext.LightStaticShadowsItem GetStaticShadowsFreeItem( Dictionary<int, Stack<ViewportRenderingContext.LightStaticShadowsItem>> staticShadowsFreeItems, int key )
+		{
+			if( staticShadowsFreeItems.TryGetValue( key, out var stack ) )
+			{
+				if( stack.Count > 0 )
+					return stack.Pop();
+			}
+			return null;
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		unsafe ImageComponent LightPrepareShadows( ViewportRenderingContext context, FrameData frameData, LightItem lightItem, ViewportRenderingContext.LightStaticShadowsItem lightStaticShadowsItem, bool needStaticShadows, Dictionary<int, Stack<ViewportRenderingContext.LightStaticShadowsItem>> staticShadowsFreeItems, ImageComponent overrideShadowTexture )//, ref int staticShadowsLimit )
+		{
+			var lightData = lightItem.data;
+
+			var sectorsByDistance = context.SectorsByDistance;// SectorsByDistance.Value;
+			if( lightData.Type == Light.TypeEnum.Spotlight || lightData.Type == Light.TypeEnum.Point )
+			{
+				if( sectorsByDistance > 2 )
+					sectorsByDistance = 2;
+			}
+
+			var frameDataRenderSceneDataMeshes = frameData.RenderSceneData.Meshes;
+			var frameDataRenderSceneDataBillboards = frameData.RenderSceneData.Billboards;
+			var staticShadowsMode = lightStaticShadowsItem != null;
+
+			//var useEVSM = RenderingSystem.ShadowTechnique == ProjectSettingsPage_Rendering.ShadowTechniqueEnum.ExponentialVarianceShadowMaps;
+
+			//init default shadow caster
+			InitDefaultShadowCasterData();
+
+			int textureSize = GetShadowMapSize( lightItem );
 			var textureFormat = RenderingSystem.ShadowTextureFormat == ProjectSettingsPage_Rendering.ShadowTextureFormatEnum.Byte4 ? PixelFormat.A8R8G8B8 : PixelFormat.Float32R;
 			//var textureFormat = /*useEVSM ? PixelFormat.Float32GR :*/ PixelFormat.Float32R;
 
 			//create render target
-			ImageComponent shadowTexture = null;
-			if( lightData.Type == Light.TypeEnum.Point )
-				shadowTexture = context.RenderTargetCube_Alloc( new Vector2I( textureSize, textureSize ), textureFormat );
-			else if( lightData.Type == Light.TypeEnum.Spotlight )
-				shadowTexture = context.RenderTarget2D_Alloc( new Vector2I( textureSize, textureSize ), textureFormat );
-			else if( lightData.Type == Light.TypeEnum.Directional )
-				shadowTexture = context.RenderTarget2D_Alloc( new Vector2I( textureSize, textureSize ), textureFormat, arrayLayers: ShadowDirectionalLightCascades );
+			ImageComponent shadowTexture = overrideShadowTexture;
+			if( shadowTexture == null )
+			{
+				if( staticShadowsMode )
+				{
+					var isPointLight = lightData.Type == Light.TypeEnum.Point;
+					var staticShadowsFreeItemsKey = textureSize * ( isPointLight ? 1 : -1 );
+
+					var staticShadowsFreeItem = GetStaticShadowsFreeItem( staticShadowsFreeItems, staticShadowsFreeItemsKey );
+					if( staticShadowsFreeItem != null )
+					{
+						shadowTexture = staticShadowsFreeItem.Image;
+					}
+					else
+					{
+						var texture = ComponentUtility.CreateComponent<ImageComponent>( null, true, false );
+						texture.CreateType = ImageComponent.TypeEnum._2D;
+						texture.CreateSize = new Vector2I( textureSize, textureSize );
+						texture.CreateArrayLayers = lightData.Type == Light.TypeEnum.Point ? 6 : 1;
+						texture.CreateMipmaps = false;
+						texture.CreateFormat = textureFormat;
+						texture.CreateUsage = ImageComponent.Usages.RenderTarget;
+						texture.Enabled = true;
+
+						int faces = lightData.Type == Light.TypeEnum.Point ? 6 : 1;
+						for( int face = 0; face < faces; face++ )
+						{
+							RenderTexture renderTexture = texture.Result.GetRenderTarget( 0, face );
+							var viewport = renderTexture.AddViewport( false, false );
+
+							viewport.RenderingPipelineCreate();
+							viewport.RenderingPipelineCreated.UseRenderTargets = false;
+						}
+
+						shadowTexture = texture;
+					}
+				}
+				else
+				{
+					if( lightData.Type == Light.TypeEnum.Point )
+						shadowTexture = context.RenderTarget2D_Alloc( new Vector2I( textureSize, textureSize ), textureFormat, arrayLayers: 6 );
+					else if( lightData.Type == Light.TypeEnum.Spotlight )
+						shadowTexture = context.RenderTarget2D_Alloc( new Vector2I( textureSize, textureSize ), textureFormat );
+					else if( lightData.Type == Light.TypeEnum.Directional )
+					{
+						frameData.ShadowTextureArrayDirectionalUsedForShadows = ShadowDirectionalLightCascades.Value;
+
+						if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
+						{
+							//!!!!workaround for Android. 1 depth arrays are not arrays
+
+							//also add slices for masks
+							var count = ShadowDirectionalLightCascades.Value;
+							count += GetAttachedToShadowMapsMaskCount( frameData, Light.TypeEnum.Directional );
+
+							shadowTexture = context.RenderTarget2D_Alloc( new Vector2I( textureSize, textureSize ), textureFormat, arrayLayers: Math.Max( count, 2 ) );
+						}
+						else
+						{
+							shadowTexture = context.RenderTarget2D_Alloc( new Vector2I( textureSize, textureSize ), textureFormat, arrayLayers: ShadowDirectionalLightCascades );
+						}
+					}
+				}
+			}
 
 			//create depth texture
-			var shadowTextureDepth = context.RenderTarget2D_Alloc( new Vector2I( textureSize, textureSize ), PixelFormat.Depth24S8 );
+			var shadowTextureDepth = context.RenderTarget2D_Alloc( new Vector2I( textureSize, textureSize ), RenderingSystem.DepthBuffer32Float ? PixelFormat.Depth32F : PixelFormat.Depth24S8 );
 
-			if( lightItem.data.Type == Light.TypeEnum.Directional )
+			if( lightData.Type == Light.TypeEnum.Directional )
 				lightItem.shadowCascadesProjectionViewMatrices = new (Matrix4F, Matrix4F)[ ShadowDirectionalLightCascades ];
 
 			int iterationCount = 1;
@@ -3219,7 +4286,7 @@ namespace NeoAxis
 
 			for( int nIteration = 0; nIteration < iterationCount; nIteration++ )
 			{
-				Viewport shadowViewport = shadowTexture.Result.GetRenderTarget( 0, nIteration ).Viewports[ 0 ];
+				var shadowViewport = shadowTexture.Result.GetRenderTarget( 0, nIteration ).Viewports[ 0 ];
 
 				//camera settings
 				if( lightData.Type == Light.TypeEnum.Spotlight )
@@ -3231,7 +4298,9 @@ namespace NeoAxis
 					Vector3 dir = lightData.Rotation.GetForward();
 					Vector3 up = lightData.Rotation.GetUp();
 
-					shadowViewport.CameraSettings = new Viewport.CameraSettingsClass( shadowViewport, 1, fov, context.Owner.CameraSettings.NearClipDistance, lightData.AttenuationFar * 1.05, lightData.Position, dir, up, ProjectionType.Perspective, 1, 0, 0 );
+					//!!!!context.Owner.CameraSettings.NearClipDistance?
+
+					shadowViewport.CameraSettings = new Viewport.CameraSettingsClass( context.OwnerCameraSettingsPosition, shadowViewport, 1, fov, lightData.ShadowNearClipDistance/*context.Owner.CameraSettings.NearClipDistance*/, lightData.AttenuationFar * 1.05, lightData.Position, dir, up, ProjectionType.Perspective, 1, 0, 0 );
 				}
 				else if( lightData.Type == Light.TypeEnum.Point )
 				{
@@ -3263,7 +4332,7 @@ namespace NeoAxis
 						}
 					}
 
-					shadowViewport.CameraSettings = new Viewport.CameraSettingsClass( shadowViewport, 1, 90, context.Owner.CameraSettings.NearClipDistance, lightData.AttenuationFar * 1.05, lightData.Position, dir, up, ProjectionType.Perspective, 1, 0, 0 );
+					shadowViewport.CameraSettings = new Viewport.CameraSettingsClass( context.OwnerCameraSettingsPosition, shadowViewport, 1, 90, lightData.ShadowNearClipDistance/*context.Owner.CameraSettings.NearClipDistance*/, lightData.AttenuationFar * 1.05, lightData.Position, dir, up, ProjectionType.Perspective, 1, 0, 0 );
 				}
 				else
 				{
@@ -3294,7 +4363,7 @@ namespace NeoAxis
 					orthoSize = ( (int)( orthoSize / 5 ) ) * 5 + 5;
 
 					//fix jittering
-				{
+					{
 						//!!!!good?
 						Quaternion lightRotation = Quaternion.FromDirectionZAxisUp( dir );
 						//Quat lightRotation = lightData.transform.Rotation;
@@ -3314,78 +4383,96 @@ namespace NeoAxis
 
 					double shadowMapFarClipDistance = ShadowDirectionalLightExtrusionDistance * 2;
 
-					shadowViewport.CameraSettings = new Viewport.CameraSettingsClass( shadowViewport, 1, 90,
-						context.Owner.CameraSettings.NearClipDistance, shadowMapFarClipDistance, pos, dir, up,
-						ProjectionType.Orthographic, orthoSize, 0, 0 );
+					shadowViewport.CameraSettings = new Viewport.CameraSettingsClass( context.OwnerCameraSettingsPosition, shadowViewport, 1, 90, lightData.ShadowNearClipDistance/*shadowMapFarClipDistance / 1000.0*/ /*context.Owner.CameraSettings.NearClipDistance*/, shadowMapFarClipDistance, pos, dir, up, ProjectionType.Orthographic, orthoSize, 0, 0 );
 
-					//!!!!double
-					lightItem.shadowCascadesProjectionViewMatrices[ nIteration ] =
-						(shadowViewport.CameraSettings.ProjectionMatrix.ToMatrix4F(), shadowViewport.CameraSettings.ViewMatrix.ToMatrix4F());
+					lightItem.shadowCascadesProjectionViewMatrices[ nIteration ] = (shadowViewport.CameraSettings.ProjectionMatrix, shadowViewport.CameraSettings.ViewMatrixRelative);
 				}
 
 				//set viewport
-				//!!!!double
-				Matrix4F viewMatrix = shadowViewport.CameraSettings.ViewMatrix.ToMatrix4F();
-				Matrix4F projectionMatrix = shadowViewport.CameraSettings.ProjectionMatrix.ToMatrix4F();
+				var viewMatrix = shadowViewport.CameraSettings.ViewMatrixRelative;
+				var projectionMatrix = shadowViewport.CameraSettings.ProjectionMatrix;
 
 				//create target
+				//!!!!call Free for mrt?
 				var mrt = context.MultiRenderTarget_Create( new[] {
 					new MultiRenderTarget.Item( shadowTexture, 0, nIteration ),
 					new MultiRenderTarget.Item( shadowTextureDepth ) } );
-				context.SetViewport( mrt.Viewports[ 0 ], viewMatrix, projectionMatrix, FrameBufferTypes.All, new ColorValue( 1, 1, 1 ) );
+				context.SetViewport( mrt.Viewports[ 0 ], viewMatrix, projectionMatrix, FrameBufferTypes.All, new ColorValue( 1, 1, 1 ), RenderingSystem.ReversedZ ? 0 : 1 );
 				//context.SetViewport( shadowViewport, viewMatrix, projectionMatrix, FrameBufferTypes.All, new ColorValue( 1, 1, 1 ) );
+
+
+				////skip static shadows update because frame limit
+				//if( staticShadowsMode && staticShadowsLimit <= 0 )
+				//	continue;
 
 
 				//bind textures for all render operations
 				BindMaterialsTexture( context, frameData );
+				BindBonesTexture( context, frameData );
 				BindSamplersForTextureOnlySlots( context, true, false );
 				BindMaterialData( context, null, false, false );
 
 
 				//bind general parameters
 				{
-					var container = new ParameterContainer();
+					var settings = new PrepareShadowsSettingsUniform();
 
-					//Mat4F worldViewProjMatrix = projectionMatrix * viewMatrix * worldMatrix;
-					//Mat4F viewProjMatrix = projectionMatrix * viewMatrix;
+					context.ConvertToRelative( shadowViewport.CameraSettings.Position, out settings.cameraPosition );
+					//settings.cameraPosition = shadowViewport.CameraSettings.Position.ToVector3F();
 
-					//!!!!
-					Vector2F texelOffsets = new Vector2F( -0.5f, -0.5f ) / textureSize;
+					settings.startDistance = lightData.StartDistance;
+					settings.farClipDistance = (float)shadowViewport.CameraSettings.FarClipDistance;
+					settings.nearClipDistance = (float)shadowViewport.CameraSettings.NearClipDistance;
+					settings.shadowMaterialOpacityMaskThresholdFactor = (float)ShadowMaterialOpacityMaskThresholdFactor.Value;
+					settings.shadowTexelOffset = -0.5f / textureSize;
 
-					//!!!!
-					//texelOffsets *= lightData.ShadowNormalBias;
+					if( !u_prepareShadowsSettings.HasValue )
+						u_prepareShadowsSettings = GpuProgramManager.RegisterUniform( "u_prepareShadowsSettings", UniformType.Vector4, 2 );
+					Bgfx.SetUniform( u_prepareShadowsSettings.Value, &settings, 2 );
+
+
+					//var container = new ParameterContainer();
+
+					////Mat4F worldViewProjMatrix = projectionMatrix * viewMatrix * worldMatrix;
+					////Mat4F viewProjMatrix = projectionMatrix * viewMatrix;
+
 					////!!!!
-					//texelOffsets = Vec2F.Zero;
+					//Vector2F texelOffsets = new Vector2F( -0.5f, -0.5f ) / textureSize;
 
-					container.Set( "u_shadowTexelOffsets", ParameterType.Vector2, 1, &texelOffsets, sizeof( Vector2F ) );
-					//Vec2F texelOffsets = new Vec2F( -0.5f, -0.5f );
-					//Vec4F texelOffsets2 = new Vec4F( texelOffsets.X, texelOffsets.Y, texelOffsets.X / textureSize, texelOffsets.Y / textureSize );
-					//generalContainer.Set( "texelOffsets", ParameterType.Vector4, 1, &texelOffsets, sizeof( Vec4F ) );
+					////!!!!
+					////texelOffsets *= lightData.ShadowNormalBias;
+					//////!!!!
+					////texelOffsets = Vec2F.Zero;
 
-					//!!!!double
-					Vector3F cameraPosition = shadowViewport.CameraSettings.Position.ToVector3F();
-					container.Set( "u_cameraPosition", ParameterType.Vector3, 1, &cameraPosition, sizeof( Vector3F ) );
+					//container.Set( "u_shadowTexelOffsets", ParameterType.Vector2, 1, &texelOffsets, sizeof( Vector2F ) );
+					////Vec2F texelOffsets = new Vec2F( -0.5f, -0.5f );
+					////Vec4F texelOffsets2 = new Vec4F( texelOffsets.X, texelOffsets.Y, texelOffsets.X / textureSize, texelOffsets.Y / textureSize );
+					////generalContainer.Set( "texelOffsets", ParameterType.Vector4, 1, &texelOffsets, sizeof( Vec4F ) );
 
-					float farClipDistance = (float)shadowViewport.CameraSettings.FarClipDistance;
-					container.Set( "u_farClipDistance", ParameterType.Float, 1, &farClipDistance, sizeof( float ) );
+					////!!!!double
+					//Vector3F cameraPosition = shadowViewport.CameraSettings.Position.ToVector3F();
+					//container.Set( "u_cameraPosition", ParameterType.Vector3, 1, &cameraPosition, sizeof( Vector3F ) );
 
-					float nearClipDistance = (float)shadowViewport.CameraSettings.NearClipDistance;
-					container.Set( "u_nearClipDistance", ParameterType.Float, 1, &nearClipDistance, sizeof( float ) );
+					//float farClipDistance = (float)shadowViewport.CameraSettings.FarClipDistance;
+					//container.Set( "u_farClipDistance", ParameterType.Float, 1, &farClipDistance, sizeof( float ) );
 
-					var maskFactor = (float)ShadowMaterialOpacityMaskThresholdFactor;
-					container.Set( "u_shadowMaterialOpacityMaskThresholdFactor", ParameterType.Float, 1, &maskFactor, sizeof( float ) );
+					//float nearClipDistance = (float)shadowViewport.CameraSettings.NearClipDistance;
+					//container.Set( "u_nearClipDistance", ParameterType.Float, 1, &nearClipDistance, sizeof( float ) );
 
-					//generalContainer.Set( "u_shadowBias", ParameterType.Vector2, 1, &shadowBias, sizeof( Vector2F ) );
-					//Vec2F bias;
-					//if( lightItem.data.type == Light.TypeEnum.Spotlight )
-					//	bias = shadowLightBiasSpotLight.ToVec2F();
-					//else if( lightItem.data.type == Light.TypeEnum.Point )
-					//	bias = shadowLightBiasPointLight.ToVec2F();
-					//else
-					//	bias = shadowLightBiasDirectionalLight.ToVec2F();
-					//generalContainer.Set( "u_shadowBias", ParameterType.Vector2, 1, &bias, sizeof( Vec2F ) );
+					//var maskFactor = (float)ShadowMaterialOpacityMaskThresholdFactor;
+					//container.Set( "u_shadowMaterialOpacityMaskThresholdFactor", ParameterType.Float, 1, &maskFactor, sizeof( float ) );
 
-					context.BindParameterContainer( container, false );
+					////generalContainer.Set( "u_shadowBias", ParameterType.Vector2, 1, &shadowBias, sizeof( Vector2F ) );
+					////Vec2F bias;
+					////if( lightItem.data.type == Light.TypeEnum.Spotlight )
+					////	bias = shadowLightBiasSpotLight.ToVec2F();
+					////else if( lightItem.data.type == Light.TypeEnum.Point )
+					////	bias = shadowLightBiasPointLight.ToVec2F();
+					////else
+					////	bias = shadowLightBiasDirectionalLight.ToVec2F();
+					////generalContainer.Set( "u_shadowBias", ParameterType.Vector2, 1, &bias, sizeof( Vec2F ) );
+
+					//context.BindParameterContainer( container, false );
 				}
 
 				if( lightItem.shadowsAffectedRenderableGroups != null && lightItem.shadowsAffectedRenderableGroups[ nIteration ] != null )
@@ -3397,13 +4484,13 @@ namespace NeoAxis
 					//using( var shadowsAffectedRenderableGroups = lightItem.shadowsAffectedRenderableGroups[ nIteration ].Clone() )
 					{
 						Vector3 lightPosition;
-						if( lightItem.data.Type == Light.TypeEnum.Directional )
+						if( lightData.Type == Light.TypeEnum.Directional )
 						{
-							lightPosition = context.Owner.CameraSettings.Position - lightItem.data.Rotation.ToQuaternion().GetForward() * 10000.0;
+							lightPosition = context.Owner.CameraSettings.Position - lightData.Rotation.ToQuaternion().GetForward() * 10000.0;
 							//lightPosition = -lightItem.data.Rotation.ToQuaternion().GetForward() * 1000000.0;
 						}
 						else
-							lightPosition = lightItem.data.Position;
+							lightPosition = lightData.Position;
 
 
 						for( int n = 0; n < sourceList.Count; n++ )
@@ -3496,24 +4583,38 @@ namespace NeoAxis
 								{
 									//meshes
 
-									ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ renderableGroup.RenderableGroup.Y ];
-									var meshData = meshItem.MeshData;
+									ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup.RenderableGroup.Y ];
+
+									RenderSceneData.IMeshData meshData;
+									meshData = meshItem.MeshDataShadows ?? meshItem.MeshData;
+									//if( staticShadowsMode && !meshItem.MeshDataShadowsForceBestLOD )
+									//	meshData = meshItem.MeshDataLastVoxelLOD ?? meshItem.MeshDataShadows ?? meshItem.MeshData;
+									//else
+									//	meshData = meshItem.MeshDataShadows ?? meshItem.MeshData;
+									////if( staticShadowsMode )
+									////	meshData = meshItem.MeshDataLOD0 ?? meshItem.MeshData;
+									////else
+									////	meshData = meshItem.MeshDataShadows ?? meshItem.MeshData;
 
 									for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
 									{
 										var oper = meshData.RenderOperations[ nOperation ];
 
-										//!!!!все ли операции рисуют тени?
-
 										//get special shadow caster if available
-										foreach( var materialData in GetMeshMaterialData( ref meshItem, oper, nOperation, true, context.DeferredShading ) )
+										foreach( var materialData in GetMeshMaterialData( ref meshItem, oper, nOperation, true, context.DeferredShading, false ) )
 										{
 											var materialData2 = materialData;
-											if( materialData2.specialShadowCasterData == null )
+											if( materialData2.specialShadowCasterData == null && !meshItem.Tessellation )
 												materialData2 = ResourceUtility.MaterialNull.Result;
 
-											bool instancing = Instancing && meshItem.AnimationData == null && !meshItem.InstancingEnabled && meshItem.CutVolumes == null;
-											manager.Add( renderableGroup.RenderableGroup, nOperation, oper, materialData2, instancing );
+											//what else or apply before in the meshItem.StaticShadows
+											var allowStaticShadows = meshItem.StaticShadows && materialData.staticShadows && meshItem.AnimationData == null;
+
+											if( allowStaticShadows == staticShadowsMode || !needStaticShadows )// !context.StaticShadows )
+											{
+												bool instancing = Instancing && meshItem.AnimationData == null && !meshItem.InstancingEnabled && meshItem.CutVolumes == null && meshItem.ObjectInstanceParameters == null && !meshItem.Tessellation;
+												manager.Add( renderableGroup.RenderableGroup, nOperation, oper, materialData2, instancing );
+											}
 										}
 									}
 								}
@@ -3521,7 +4622,7 @@ namespace NeoAxis
 								{
 									//billboards
 
-									ref var billboardItem = ref frameData.RenderSceneData.Billboards.Data[ renderableGroup.RenderableGroup.Y ];
+									ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableGroup.RenderableGroup.Y ];
 									var meshData = Billboard.GetBillboardMesh().Result.MeshData;
 
 									for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
@@ -3534,9 +4635,14 @@ namespace NeoAxis
 											if( materialData2.specialShadowCasterData == null )
 												materialData2 = ResourceUtility.MaterialNull.Result;
 
-											//!!!!или если уже собран из GroupOfObjects
-											bool instancing = Instancing && billboardItem.CutVolumes == null;
-											manager.Add( renderableGroup.RenderableGroup, nOperation, oper, materialData2, instancing );
+											var allowStaticShadows = billboardItem.AllowStaticShadows && materialData.staticShadows;
+
+											if( allowStaticShadows == staticShadowsMode || !needStaticShadows ) // !context.StaticShadows )
+											{
+												//!!!!или если уже собран из GroupOfObjects
+												bool instancing = Instancing && billboardItem.CutVolumes == null && billboardItem.MaterialInstanceParameters == null;
+												manager.Add( renderableGroup.RenderableGroup, nOperation, oper, materialData2, instancing );
+											}
 										}
 									}
 								}
@@ -3562,7 +4668,9 @@ namespace NeoAxis
 								{
 									ref var outputItem = ref outputItems.Data[ nOutputItem ];
 									var materialData = outputItem.materialData;
-									var voxelRendering = outputItem.operation.VoxelDataInfo != null;
+									var outputItemoperation = outputItem.operation;
+									var outputItemoperationVoxelDataInfo = outputItemoperation.VoxelDataInfo;
+									var voxelRendering = outputItemoperationVoxelDataInfo != null;
 
 									//get shadow caster data
 									var specialShadowCasterData = materialData.specialShadowCasterData;
@@ -3572,7 +4680,7 @@ namespace NeoAxis
 									var passGroup = shadowCasterData.passByLightType[ (int)lightData.Type ];
 
 									//render operation
-									if( Instancing && outputItem.renderableItemsCount >= InstancingMinCount )
+									if( Instancing && outputItem.renderableItemsCount >= 2 )//InstancingMinCount )
 									{
 										//with instancing
 
@@ -3588,20 +4696,30 @@ namespace NeoAxis
 										if( firstRenderableItem.X == 0 )
 										{
 											//meshes
-											ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ firstRenderableItem.Y ];
-											var meshData = meshItem.MeshData;
+											ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ firstRenderableItem.Y ];
 
-											BindRenderOperationData( context, frameData, specialShadowCasterData != null ? materialData : null, true, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, outputItem.operation.VoxelDataImage, outputItem.operation.VoxelDataInfo );
+											RenderSceneData.IMeshData meshData;
+											meshData = meshItem.MeshDataShadows ?? meshItem.MeshData;
+											//if( staticShadowsMode && !meshItem.MeshDataShadowsForceBestLOD )
+											//	meshData = meshItem.MeshDataLastVoxelLOD ?? meshItem.MeshDataShadows ?? meshItem.MeshData;
+											//else
+											//	meshData = meshItem.MeshDataShadows ?? meshItem.MeshData;
+											////if( staticShadowsMode )
+											////	meshData = meshItem.MeshDataLOD0 ?? meshItem.MeshData;
+											////else
+											////	meshData = meshItem.MeshDataShadows ?? meshItem.MeshData;
 
-											pass = passGroup.Get( outputItem.operation.VoxelDataInfo != null/*, outputItem.operation.VirtualizedData != null*/, meshData.BillboardMode != 0 );
+											BindRenderOperationData( context, frameData, specialShadowCasterData != null ? materialData : null, true, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, outputItemoperation.UnwrappedUV, ref meshItem.Color, outputItemoperation.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, null, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
+
+											pass = passGroup.Get( outputItemoperationVoxelDataInfo != null/*, outputItemoperation.VirtualizedData != null*/, meshData.BillboardMode != 0 );
 										}
 										else if( firstRenderableItem.X == 1 )
 										{
 											//billboards
-											ref var billboardItem = ref frameData.RenderSceneData.Billboards.Data[ firstRenderableItem.Y ];
+											ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ firstRenderableItem.Y ];
 											var meshData = Billboard.GetBillboardMesh().Result.MeshData;
 
-											BindRenderOperationData( context, frameData, specialShadowCasterData != null ? materialData : null, true, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, 0, outputItem.operation.UnwrappedUV, ref billboardItem.Color, outputItem.operation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, outputItem.operation.VoxelDataImage, outputItem.operation.VoxelDataInfo );
+											BindRenderOperationData( context, frameData, specialShadowCasterData != null ? materialData : null, true, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PreviousFramePositionChange, 0, outputItemoperation.UnwrappedUV, ref billboardItem.Color, outputItemoperation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, null, 0, ref vector3FZero );
 
 											pass = passGroup.Billboard;
 										}
@@ -3610,10 +4728,9 @@ namespace NeoAxis
 										int instanceStride = sizeof( RenderSceneData.ObjectInstanceData );
 										int instanceCount = outputItem.renderableItemsCount;
 
-										if( InstanceDataBuffer.GetAvailableSpace( instanceCount, instanceStride ) == instanceCount )
+										var instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
+										if( instanceBuffer.Valid )
 										{
-											var instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
-
 											//get instancing matrices
 											RenderSceneData.ObjectInstanceData* instancingData = (RenderSceneData.ObjectInstanceData*)instanceBuffer.Data;
 											int currentMatrix = 0;
@@ -3624,21 +4741,19 @@ namespace NeoAxis
 												if( renderableItem.X == 0 )
 												{
 													//meshes
-													ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ renderableItem.Y ];
+													ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableItem.Y ];
 													meshItem.GetInstancingData( out instancingData[ currentMatrix++ ] );
 												}
 												else if( renderableItem.X == 1 )
 												{
 													//billboards
-													ref var billboardItem = ref frameData.RenderSceneData.Billboards.Data[ renderableItem.Y ];
+													ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableItem.Y ];
 													billboardItem.GetInstancingData( out instancingData[ currentMatrix++ ] );
 												}
 											}
 
-											RenderOperation( context, outputItem.operation, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
+											RenderOperation( context, outputItemoperation, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
 										}
-										//else
-										//	Log.Fatal( "InstanceDataBuffer.GetAvailableSpace( instanceCount, instanceStride ) != instanceCount." );
 									}
 									else
 									{
@@ -3661,33 +4776,45 @@ namespace NeoAxis
 											if( renderableItem.X == 0 )
 											{
 												//meshes
-												ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ renderableItem.Y ];
-												var meshData = meshItem.MeshData;
+												ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableItem.Y ];
 
-												BindRenderOperationData( context, frameData, specialShadowCasterData != null ? materialData : null, meshItem.InstancingEnabled, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, outputItem.operation.VoxelDataImage, outputItem.operation.VoxelDataInfo );
+												RenderSceneData.IMeshData meshData;
+												meshData = meshItem.MeshDataShadows ?? meshItem.MeshData;
+												//if( staticShadowsMode && !meshItem.MeshDataShadowsForceBestLOD )
+												//	meshData = meshItem.MeshDataLastVoxelLOD ?? meshItem.MeshDataShadows ?? meshItem.MeshData;
+												//else
+												//	meshData = meshItem.MeshDataShadows ?? meshItem.MeshData;
+												////if( staticShadowsMode )
+												////	meshData = meshItem.MeshDataLOD0 ?? meshItem.MeshData;
+												////else
+												////	meshData = meshItem.MeshDataShadows ?? meshItem.MeshData;
+
+												BindRenderOperationData( context, frameData, specialShadowCasterData != null ? materialData : null, meshItem.InstancingEnabled, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, outputItemoperation.UnwrappedUV, ref meshItem.Color, outputItemoperation.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, meshItem.ObjectInstanceParameters, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
 
 												if( !meshItem.InstancingEnabled )
-													fixed( Matrix4F* p = &meshItem.Transform )
+													fixed( Matrix4F* p = &meshItem.TransformRelative )
 														Bgfx.SetTransform( (float*)p );
 
-												var pass = passGroup.Get( outputItem.operation.VoxelDataInfo != null/*, outputItem.operation.VirtualizedData != null*/, meshData.BillboardMode != 0 );
+												var pass = passGroup.Get( outputItemoperationVoxelDataInfo != null/*, outputItemoperation.VirtualizedData != null*/, meshData.BillboardMode != 0 );
 
-												RenderOperation( context, outputItem.operation, pass, null, meshItem.CutVolumes, meshItem.InstancingEnabled, meshItem.InstancingVertexBuffer, ref meshItem.InstancingDataBuffer, meshItem.InstancingStart, meshItem.InstancingCount );
+												var tessItem = meshItem.Tessellation ? TessellationGetItem( context, outputItemoperation, materialData ) : null;
+
+												RenderOperation( context, outputItemoperation, pass, null, meshItem.CutVolumes, meshItem.InstancingEnabled, meshItem.InstancingVertexBuffer, ref meshItem.InstancingDataBuffer, meshItem.InstancingStart, meshItem.InstancingCount, tessItem );
 											}
 											else if( renderableItem.X == 1 )
 											{
 												//billboards
-												ref var billboardItem = ref frameData.RenderSceneData.Billboards.Data[ renderableItem.Y ];
+												ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableItem.Y ];
 												var meshData = Billboard.GetBillboardMesh().Result.MeshData;
 
-												BindRenderOperationData( context, frameData, specialShadowCasterData != null ? materialData : null, false, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, 0, outputItem.operation.UnwrappedUV, ref billboardItem.Color, outputItem.operation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, outputItem.operation.VoxelDataImage, outputItem.operation.VoxelDataInfo );
+												BindRenderOperationData( context, frameData, specialShadowCasterData != null ? materialData : null, false, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PreviousFramePositionChange, 0, outputItemoperation.UnwrappedUV, ref billboardItem.Color, outputItemoperation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, billboardItem.MaterialInstanceParameters, 0, ref vector3FZero );
 
-												billboardItem.GetWorldMatrix( out var worldMatrix );
+												billboardItem.GetWorldMatrixRelative( out var worldMatrix );
 												Bgfx.SetTransform( (float*)&worldMatrix );
 
 												var pass = passGroup.Billboard;
 
-												RenderOperation( context, outputItem.operation, pass, null, billboardItem.CutVolumes );
+												RenderOperation( context, outputItemoperation, pass, null, billboardItem.CutVolumes );
 											}
 										}
 									}
@@ -3740,25 +4867,14 @@ namespace NeoAxis
 			//	}
 			//}
 
-			//add to namedTextures
-			{
-				var prefix = "shadow" + lightData.Type.ToString();
-				for( int counter = 1; ; counter++ )
-				{
-					var name = prefix + counter.ToString();
-					if( !context.ObjectsDuringUpdate.namedTextures.ContainsKey( name ) )
-					{
-						context.ObjectsDuringUpdate.namedTextures[ name ] = shadowTexture;
-						break;
-					}
-				}
-			}
-
-			//connect the shadow texture with the light
-			lightItem.shadowTexture = shadowTexture;
-
+			Bgfx.Discard( DiscardFlags.All );
 
 			context.DynamicTexture_Free( shadowTextureDepth );
+
+			//if( staticShadowsMode )
+			//	staticShadowsLimit--;
+
+			return shadowTexture;
 		}
 
 		protected unsafe virtual void RenderSky( ViewportRenderingContext context, FrameData frameData )
@@ -3770,7 +4886,12 @@ namespace NeoAxis
 		protected unsafe virtual void Render3DSceneDeferred( ViewportRenderingContext context, FrameData frameData )
 		{
 			var viewportOwner = context.Owner;
-			var sectorsByDistance = SectorsByDistance.Value;
+			var sectorsByDistance = context.SectorsByDistance;// SectorsByDistance.Value;
+
+			var frameDataRenderSceneDataMeshes = frameData.RenderSceneData.Meshes;
+			var frameDataRenderSceneDataBillboards = frameData.RenderSceneData.Billboards;
+			var frameDataMeshes = frameData.Meshes;
+			var frameDataBillboards = frameData.Billboards;
 
 			using( var renderableGroupsToDraw = new OpenListNative<RenderableGroupWithDistance>( frameData.RenderableGroupsInFrustum.Count ) )
 			{
@@ -3780,11 +4901,11 @@ namespace NeoAxis
 
 					if( renderableGroup.X == 0 )
 					{
-						ref var data = ref frameData.Meshes.Data[ renderableGroup.Y ];
+						ref var data = ref frameDataMeshes.Data[ renderableGroup.Y ];
 						if( ( data.Flags & FrameData.MeshItem.FlagsEnum.UseDeferred ) != 0 )
 						{
 							//!!!!need?
-							ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ renderableGroup.Y ];
+							ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup.Y ];
 							if( !meshItem.OnlyForShadowGeneration )
 								add = true;
 						}
@@ -3792,7 +4913,7 @@ namespace NeoAxis
 					}
 					else
 					{
-						ref var data = ref frameData.Billboards.Data[ renderableGroup.Y ];
+						ref var data = ref frameDataBillboards.Data[ renderableGroup.Y ];
 						add = ( data.Flags & FrameData.BillboardItem.FlagsEnum.UseDeferred ) != 0;
 					}
 
@@ -3820,12 +4941,6 @@ namespace NeoAxis
 				}, true );
 
 
-				//bind textures for all render operations
-				BindMaterialsTexture( context, frameData );
-				BindSamplersForTextureOnlySlots( context, true, false );
-				BindMaterialData( context, null, false, false );
-
-
 				//prepare outputInstancingManagers
 				Parallel.For( 0, sectorsByDistance, delegate ( int nSector )
 				{
@@ -3845,7 +4960,7 @@ namespace NeoAxis
 						{
 							//meshes
 
-							ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ renderableGroup.RenderableGroup.Y ];
+							ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup.RenderableGroup.Y ];
 							var meshData = meshItem.MeshData;
 
 							//if( !meshItem.OnlyForShadowGeneration )
@@ -3858,7 +4973,7 @@ namespace NeoAxis
 								{
 									if( materialData.deferredShadingSupport )
 									{
-										bool instancing = Instancing && meshItem.AnimationData == null && !meshItem.InstancingEnabled && meshItem.CutVolumes == null;
+										bool instancing = Instancing && meshItem.AnimationData == null && !meshItem.InstancingEnabled && meshItem.CutVolumes == null && meshItem.ObjectInstanceParameters == null && !meshItem.Tessellation;
 										manager.Add( renderableGroup.RenderableGroup, nOperation, oper, materialData, instancing );
 									}
 								}
@@ -3869,7 +4984,7 @@ namespace NeoAxis
 						{
 							//billboards
 
-							ref var billboardItem = ref frameData.RenderSceneData.Billboards.Data[ renderableGroup.RenderableGroup.Y ];
+							ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableGroup.RenderableGroup.Y ];
 							var meshData = Billboard.GetBillboardMesh().Result.MeshData;
 
 							for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
@@ -3880,7 +4995,7 @@ namespace NeoAxis
 								{
 									if( materialData.deferredShadingSupport )
 									{
-										bool instancing = Instancing && billboardItem.CutVolumes == null;
+										bool instancing = Instancing && billboardItem.CutVolumes == null && billboardItem.MaterialInstanceParameters == null;
 										manager.Add( renderableGroup.RenderableGroup, nOperation, oper, materialData, instancing );
 									}
 								}
@@ -3891,9 +5006,40 @@ namespace NeoAxis
 					manager.Prepare();
 				} );
 
+				////!!!!temp
+				//var sector = -1;
+				//var mainViewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+				//if( mainViewport.IsKeyPressed( EKeys.P ) )
+				//	sector = 0;
+				//if( mainViewport.IsKeyPressed( EKeys.L ) )
+				//	sector = 1;
+				//if( mainViewport.IsKeyPressed( EKeys.O ) )
+				//	sector = 2;
+				//if( mainViewport.IsKeyPressed( EKeys.K ) )
+				//	sector = 3;
+				//if( mainViewport.IsKeyPressed( EKeys.M ) )
+				//	sector = 4;
+				//if( mainViewport.IsKeyPressed( EKeys.I ) )
+				//	sector = 5;
+				//if( mainViewport.IsKeyPressed( EKeys.J ) )
+				//	sector = 6;
+				//if( mainViewport.IsKeyPressed( EKeys.N ) )
+				//	sector = 7;
+
+
+				//bind textures for all render operations
+				BindMaterialsTexture( context, frameData );
+				BindBonesTexture( context, frameData );
+				BindSamplersForTextureOnlySlots( context, true, false );
+				BindMaterialData( context, null, false, false );
+
 				//push to GPU
 				for( int nSector = 0; nSector < sectorsByDistance; nSector++ )
 				{
+					////!!!!temp
+					//if( sector != -1 && sector != nSector )
+					//	continue;
+
 					var manager = outputInstancingManagers[ nSector ];
 
 					int indexFrom = (int)( (float)renderableGroupsToDraw.Count * nSector / sectorsByDistance );
@@ -3908,9 +5054,11 @@ namespace NeoAxis
 						{
 							ref var outputItem = ref outputItems.Data[ nOutputItem ];
 							var materialData = outputItem.materialData;
-							var voxelRendering = outputItem.operation.VoxelDataInfo != null;
+							var outputItemoperation = outputItem.operation;
+							var outputItemoperationVoxelDataInfo = outputItemoperation.VoxelDataInfo;
+							var voxelRendering = outputItemoperationVoxelDataInfo != null;
 
-							if( Instancing && outputItem.renderableItemsCount >= InstancingMinCount )
+							if( Instancing && outputItem.renderableItemsCount >= 2 )//InstancingMinCount )
 							{
 								//with instancing
 
@@ -3925,20 +5073,20 @@ namespace NeoAxis
 								if( firstRenderableItem.X == 0 )
 								{
 									//meshes
-									ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ firstRenderableItem.Y ];
+									ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ firstRenderableItem.Y ];
 									var meshData = meshItem.MeshData;
 
-									BindRenderOperationData( context, frameData, materialData, true, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, outputItem.operation.VoxelDataImage, outputItem.operation.VoxelDataInfo );
+									BindRenderOperationData( context, frameData, materialData, true, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, outputItemoperation.UnwrappedUV, ref meshItem.Color, outputItemoperation.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, null, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
 
-									pass = materialData.deferredShadingPass.Get( outputItem.operation.VoxelDataInfo != null/*, outputItem.operation.VirtualizedData != null*/, meshData.BillboardMode != 0 );
+									pass = materialData.deferredShadingPass.Get( outputItemoperationVoxelDataInfo != null/*, outputItemoperation.VirtualizedData != null*/, meshData.BillboardMode != 0 );
 								}
 								else if( firstRenderableItem.X == 1 )
 								{
 									//billboards
-									ref var billboardItem = ref frameData.RenderSceneData.Billboards.Data[ firstRenderableItem.Y ];
+									ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ firstRenderableItem.Y ];
 									var meshData = Billboard.GetBillboardMesh().Result.MeshData;
 
-									BindRenderOperationData( context, frameData, materialData, true, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, 0, outputItem.operation.UnwrappedUV, ref billboardItem.Color, outputItem.operation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, outputItem.operation.VoxelDataImage, outputItem.operation.VoxelDataInfo );
+									BindRenderOperationData( context, frameData, materialData, true, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PreviousFramePositionChange, 0, outputItemoperation.UnwrappedUV, ref billboardItem.Color, outputItemoperation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, null, 0, ref vector3FZero );
 
 									pass = materialData.deferredShadingPass.Billboard;
 								}
@@ -3946,10 +5094,9 @@ namespace NeoAxis
 								int instanceStride = sizeof( RenderSceneData.ObjectInstanceData );
 								int instanceCount = outputItem.renderableItemsCount;
 
-								if( InstanceDataBuffer.GetAvailableSpace( instanceCount, instanceStride ) == instanceCount )
+								var instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
+								if( instanceBuffer.Valid )
 								{
-									var instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
-
 									//get instancing matrices
 									RenderSceneData.ObjectInstanceData* instancingData = (RenderSceneData.ObjectInstanceData*)instanceBuffer.Data;
 									int currentMatrix = 0;
@@ -3960,22 +5107,20 @@ namespace NeoAxis
 										if( renderableItem.X == 0 )
 										{
 											//meshes
-											ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ renderableItem.Y ];
+											ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableItem.Y ];
 											//!!!!slowly because no threading? where else
 											meshItem.GetInstancingData( out instancingData[ currentMatrix++ ] );
 										}
 										else if( renderableItem.X == 1 )
 										{
 											//billboards
-											ref var billboardItem = ref frameData.RenderSceneData.Billboards.Data[ renderableItem.Y ];
+											ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableItem.Y ];
 											billboardItem.GetInstancingData( out instancingData[ currentMatrix++ ] );
 										}
 									}
 
-									RenderOperation( context, outputItem.operation, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
+									RenderOperation( context, outputItemoperation, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
 								}
-								//else
-								//	Log.Fatal( "InstanceDataBuffer.GetAvailableSpace( instanceCount, instanceStride ) != instanceCount." );
 							}
 							else
 							{
@@ -3997,7 +5142,7 @@ namespace NeoAxis
 									if( renderableItem.X == 0 )
 									{
 										//meshes
-										ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ renderableItem.Y ];
+										ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableItem.Y ];
 										var meshData = meshItem.MeshData;
 
 
@@ -4098,13 +5243,13 @@ namespace NeoAxis
 
 										//			//for( int n = 0; n < voxelCount; n++ )
 										//			//{
-										//			//	var voxelIndex = new Vector3I( zz );
+										//			//	var voxelIndex = new Vector3I(  );
 
 										//			//	var worldPosition = z;
 
 										//			//	var gridPosition = z;
 
-										//			//	var gridIndex = new Vector3I( zzz );
+										//			//	var gridIndex = new Vector3I(  );
 
 
 										//			//	fixed( byte* pGridData = data.GridData )
@@ -4436,31 +5581,32 @@ namespace NeoAxis
 
 										//}
 
-
-										BindRenderOperationData( context, frameData, materialData, meshItem.InstancingEnabled, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, outputItem.operation.VoxelDataImage, outputItem.operation.VoxelDataInfo );
+										BindRenderOperationData( context, frameData, materialData, meshItem.InstancingEnabled, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, outputItemoperation.UnwrappedUV, ref meshItem.Color, outputItemoperation.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, meshItem.ObjectInstanceParameters, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
 
 										if( !meshItem.InstancingEnabled )
-											fixed( Matrix4F* p = &meshItem.Transform )
+											fixed( Matrix4F* p = &meshItem.TransformRelative )
 												Bgfx.SetTransform( (float*)p );
 
-										var pass = materialData.deferredShadingPass.Get( outputItem.operation.VoxelDataInfo != null/*, outputItem.operation.VirtualizedData != null*/, meshData.BillboardMode != 0 );
+										var pass = materialData.deferredShadingPass.Get( outputItemoperationVoxelDataInfo != null/*, outputItemoperation.VirtualizedData != null*/, meshData.BillboardMode != 0 );
 
-										RenderOperation( context, outputItem.operation, pass, null, meshItem.CutVolumes, meshItem.InstancingEnabled, meshItem.InstancingVertexBuffer, ref meshItem.InstancingDataBuffer, meshItem.InstancingStart, meshItem.InstancingCount );
+										var tessItem = meshItem.Tessellation ? TessellationGetItem( context, outputItemoperation, materialData ) : null;
+
+										RenderOperation( context, outputItemoperation, pass, null, meshItem.CutVolumes, meshItem.InstancingEnabled, meshItem.InstancingVertexBuffer, ref meshItem.InstancingDataBuffer, meshItem.InstancingStart, meshItem.InstancingCount, tessItem );
 									}
 									else if( renderableItem.X == 1 )
 									{
 										//billboards
-										ref var billboardItem = ref frameData.RenderSceneData.Billboards.Data[ renderableItem.Y ];
+										ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableItem.Y ];
 										var meshData = Billboard.GetBillboardMesh().Result.MeshData;
 
-										BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, 0, outputItem.operation.UnwrappedUV, ref billboardItem.Color, outputItem.operation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, outputItem.operation.VoxelDataImage, outputItem.operation.VoxelDataInfo );
+										BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PreviousFramePositionChange, 0, outputItemoperation.UnwrappedUV, ref billboardItem.Color, outputItemoperation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, billboardItem.MaterialInstanceParameters, 0, ref vector3FZero );
 
-										billboardItem.GetWorldMatrix( out var worldMatrix );
+										billboardItem.GetWorldMatrixRelative( out var worldMatrix );
 										Bgfx.SetTransform( (float*)&worldMatrix );
 
 										var pass = materialData.deferredShadingPass.Billboard;
 
-										RenderOperation( context, outputItem.operation, pass, null, billboardItem.CutVolumes );
+										RenderOperation( context, outputItemoperation, pass, null, billboardItem.CutVolumes );
 									}
 								}
 							}
@@ -4478,7 +5624,7 @@ namespace NeoAxis
 							{
 								//meshes
 
-								ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ renderableGroup.RenderableGroup.Y ];
+								ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup.RenderableGroup.Y ];
 								var meshData = meshItem.MeshData;
 
 								if( meshItem.Layers != null )
@@ -4491,7 +5637,7 @@ namespace NeoAxis
 											if( materialData.deferredShadingPass.Usual != null )
 											{
 												if( !meshItem.InstancingEnabled )
-													fixed( Matrix4F* p = &meshItem.Transform )
+													fixed( Matrix4F* p = &meshItem.TransformRelative )
 														Bgfx.SetTransform( (float*)p );
 
 												var color = /*meshItem.Color * */ layer.MaterialColor;
@@ -4506,7 +5652,7 @@ namespace NeoAxis
 													BindSamplersForTextureOnlySlots( context, false, voxelRendering );
 													materialData.BindCurrentFrameDataMaskTextures( context, layer.Mask );
 
-													BindRenderOperationData( context, frameData, materialData, meshItem.InstancingEnabled, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, layer.MaskFormat == PaintLayer.MaskFormatEnum.Triangles, null, oper.VoxelDataInfo );
+													BindRenderOperationData( context, frameData, materialData, meshItem.InstancingEnabled, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, layer.MaskFormat == PaintLayer.MaskFormatEnum.Triangles, null, oper.VoxelDataInfo, meshItem.ObjectInstanceParameters, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative, layer.UVScale );
 
 													var pass = materialData.deferredShadingPass.Get( oper.VoxelDataInfo != null/*, oper.VirtualizedData != null*/, meshData.BillboardMode != 0 );
 
@@ -4525,6 +5671,8 @@ namespace NeoAxis
 				foreach( var manager in outputInstancingManagers )
 					manager.Clear();
 			}
+
+			Bgfx.Discard( DiscardFlags.All );
 		}
 
 		void InitDecalMesh()
@@ -4582,6 +5730,7 @@ namespace NeoAxis
 
 			//bind textures for all render operations
 			BindMaterialsTexture( context, frameData );
+			BindBonesTexture( context, frameData );
 			BindSamplersForTextureOnlySlots( context, true, false );
 			BindMaterialData( context, null, false, false );
 
@@ -4609,25 +5758,45 @@ namespace NeoAxis
 
 							var zeroVector = Vector3F.Zero;
 
-							BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, false/*receiveAnotherDecals*/, ref zeroVector, 0, oper.UnwrappedUV, ref decalData.Color, oper.VertexStructureContainsColor, false, decalData.VisibilityDistance, 1.0f, false, null, oper.VoxelDataInfo );
+							BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, false/*receiveAnotherDecals*/, ref zeroVector, 0, oper.UnwrappedUV, ref decalData.Color, oper.VertexStructureContainsColor, false, decalData.VisibilityDistance, 1.0f, false, null, oper.VoxelDataInfo, null, 0, ref vector3FZero );
 
-							//!!!!double
+							var worldMatrixAbsolute = new Matrix4( decalData.Rotation.ToMatrix3() * Matrix3F.FromScale( decalData.Scale ), decalData.Position );
+							context.ConvertToRelative( ref worldMatrixAbsolute, out var worldMatrixRelative );
+							Bgfx.SetTransform( (float*)&worldMatrixRelative );
 
-							var worldMatrix = new Matrix4F( decalData.Rotation.ToMatrix3() * Matrix3F.FromScale( decalData.Scale ), decalData.Position.ToVector3F() );
-							Bgfx.SetTransform( (float*)&worldMatrix );
-							//fixed ( Matrix4F* p = &meshItem.MeshInstanceOne )
-							//	Bgfx.SetTransform( (float*)p );
+							//var worldMatrixAbsolute = new Matrix4F( decalData.Rotation.ToMatrix3() * Matrix3F.FromScale( decalData.Scale ), decalData.Position.ToVector3F() );
+							//Bgfx.SetTransform( (float*)&worldMatrix );
 
 							//u_decalMatrix
 							{
 								//!!!!slowly
+
 								Matrix3F.FromRotateByY( MathEx.PI / 2, out var rotate3 );
 								rotate3.ToMatrix4( out var rotate4 );
-								worldMatrix.GetInverse( out var inverse );
-								Matrix4F.Multiply( ref rotate4, ref inverse, out var decalMatrix );
+								worldMatrixRelative.GetInverse( out var inverse );
+								Matrix4F.Multiply( ref rotate4, ref inverse, out var decalMatrixRelative );
 								//Matrix4F decalMatrix = Matrix3F.FromRotateByY( MathEx.PI / 2 ).ToMatrix4() * worldMatrix.GetInverse();
 
-								Bgfx.SetUniform( u_decalMatrix, &decalMatrix );
+								Bgfx.SetUniform( u_decalMatrix, &decalMatrixRelative );
+
+
+								//Matrix3.FromRotateByY( MathEx.PI / 2, out var rotate3 );
+								//rotate3.ToMatrix4( out var rotate4 );
+								//worldMatrixAbsolute.GetInverse( out var inverse );
+								//Matrix4.Multiply( ref rotate4, ref inverse, out var decalMatrixAbsolute );
+								////Matrix4F decalMatrix = Matrix3F.FromRotateByY( MathEx.PI / 2 ).ToMatrix4() * worldMatrix.GetInverse();
+
+								//context.ConvertToRelative( ref decalMatrixAbsolute, out var decalMatrix );
+								//Bgfx.SetUniform( u_decalMatrix, &decalMatrix );
+
+								////!!!!slowly
+								//Matrix3F.FromRotateByY( MathEx.PI / 2, out var rotate3 );
+								//rotate3.ToMatrix4( out var rotate4 );
+								//worldMatrix.GetInverse( out var inverse );
+								//Matrix4F.Multiply( ref rotate4, ref inverse, out var decalMatrix );
+								////Matrix4F decalMatrix = Matrix3F.FromRotateByY( MathEx.PI / 2 ).ToMatrix4() * worldMatrix.GetInverse();
+
+								//Bgfx.SetUniform( u_decalMatrix, &decalMatrix );
 							}
 
 							//u_decalNormalTangent
@@ -4663,7 +5832,7 @@ namespace NeoAxis
 							//motionAndObjectIdTexture
 							//context.BindTexture( 7/* "gBuffer6TextureCopy"*/, gBuffer6TextureCopy, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point, 0, false );
 
-							RenderOperation( context, oper, materialData.decalShadingPass, null, null );
+							RenderOperation( context, oper, materialData.decalShadingPass, null );
 
 							////!!!!или если уже собран из GroupOfObjects
 							//bool instancing = Instancing && meshItem.AnimationData == null;
@@ -4672,6 +5841,8 @@ namespace NeoAxis
 					}
 				}
 			}
+
+			Bgfx.Discard( DiscardFlags.All );
 		}
 
 		void InitDeferredShadingData()
@@ -4730,109 +5901,109 @@ namespace NeoAxis
 				////if( TwoSided )
 				////	pass.CullingMode = CullingMode.None;
 
-				deferredShadingData.passesPerLightWithoutShadows[ 0 ] = passItem;
+				deferredShadingData.ambientPass = passItem;
+				//deferredShadingData.passesPerLightWithoutShadows[ 0 ] = passItem;
 			}
 
-			//direct lights
-			for( int nShadows = 0; nShadows < 3; nShadows++ )
+			////direct lights
 			//for( int nShadows = 0; nShadows < 3; nShadows++ )
-			{
-				var shadows = nShadows != 0;
-				var contactShadows = nShadows == 2;
+			//{
+			//	var shadows = nShadows != 0;
+			//	var contactShadows = nShadows == 2;
 
-				if( RenderingSystem.ShadowTechnique == ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None && shadows )
-					continue;
+			//	if( RenderingSystem.ShadowTechnique == ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None && shadows )
+			//		continue;
 
-				for( int nLight = 1; nLight < 4; nLight++ )//for( int nLight = 0; nLight < 4; nLight++ )
-				{
-					var lightType = (Light.TypeEnum)nLight;
-					//if( shadows && lightType == Light.TypeEnum.Ambient )
-					//	continue;
+			//	for( int nLight = 1; nLight < 4; nLight++ )//for( int nLight = 0; nLight < 4; nLight++ )
+			//	{
+			//		var lightType = (Light.TypeEnum)nLight;
+			//		//if( shadows && lightType == Light.TypeEnum.Ambient )
+			//		//	continue;
 
-					//generate compile arguments
-					var vertexDefines = new List<(string, string)>();
-					var fragmentDefines = new List<(string, string)>();
-					{
-						var generalDefines = new List<(string, string)>();
-						generalDefines.Add( ("LIGHT_TYPE_" + lightType.ToString().ToUpper(), "") );
+			//		//generate compile arguments
+			//		var vertexDefines = new List<(string, string)>();
+			//		var fragmentDefines = new List<(string, string)>();
+			//		{
+			//			var generalDefines = new List<(string, string)>();
+			//			generalDefines.Add( ("LIGHT_TYPE_" + lightType.ToString().ToUpper(), "") );
 
-						//receive shadows support
-						if( shadows )
-						{
-							fragmentDefines.Add( ("SHADOW_MAP", "") );
-							if( contactShadows )
-								fragmentDefines.Add( ("SHADOW_CONTACT", "") );
+			//			//receive shadows support
+			//			if( shadows )
+			//			{
+			//				fragmentDefines.Add( ("SHADOW_MAP", "") );
+			//				if( contactShadows )
+			//					fragmentDefines.Add( ("SHADOW_CONTACT", "") );
 
-							//if( nShadows == 2 )
-							//	fragmentDefines.Add( ("SHADOW_MAP_HIGH", "") );
-							//else
-							//	fragmentDefines.Add( ("SHADOW_MAP_LOW", "") );
-						}
+			//				//if( nShadows == 2 )
+			//				//	fragmentDefines.Add( ("SHADOW_MAP_HIGH", "") );
+			//				//else
+			//				//	fragmentDefines.Add( ("SHADOW_MAP_LOW", "") );
+			//			}
 
-						vertexDefines.AddRange( generalDefines );
-						fragmentDefines.AddRange( generalDefines );
-					}
+			//			vertexDefines.AddRange( generalDefines );
+			//			fragmentDefines.AddRange( generalDefines );
+			//		}
 
-					string error2;
+			//		string error2;
 
-					//vertex program
-					GpuProgram vertexProgram = GpuProgramManager.GetProgram( "DeferredDirectLight_",
-						GpuProgramType.Vertex, @"Base\Shaders\DeferredDirectLight_vs.sc", vertexDefines, true, out error2 );
-					if( !string.IsNullOrEmpty( error2 ) )
-					{
-						Log.Fatal( error2 );
-						return;
-					}
+			//		//vertex program
+			//		GpuProgram vertexProgram = GpuProgramManager.GetProgram( "DeferredDirectLight_",
+			//			GpuProgramType.Vertex, @"Base\Shaders\DeferredDirectLight_vs.sc", vertexDefines, true, out error2 );
+			//		if( !string.IsNullOrEmpty( error2 ) )
+			//		{
+			//			Log.Fatal( error2 );
+			//			return;
+			//		}
 
-					//fragment program
-					GpuProgram fragmentProgram = GpuProgramManager.GetProgram( "DeferredDirectLight_",
-						GpuProgramType.Fragment, @"Base\Shaders\DeferredDirectLight_fs.sc", fragmentDefines, true, out error2 );
-					if( !string.IsNullOrEmpty( error2 ) )
-					{
-						Log.Fatal( error2 );
-						return;
-					}
+			//		//fragment program
+			//		GpuProgram fragmentProgram = GpuProgramManager.GetProgram( "DeferredDirectLight_",
+			//			GpuProgramType.Fragment, @"Base\Shaders\DeferredDirectLight_fs.sc", fragmentDefines, true, out error2 );
+			//		if( !string.IsNullOrEmpty( error2 ) )
+			//		{
+			//			Log.Fatal( error2 );
+			//			return;
+			//		}
 
-					var passItem = new DeferredShadingData.PassItem();
-					passItem.vertexProgram = vertexProgram;
-					passItem.fragmentProgram = fragmentProgram;
-					//deferredShadingData.passesPerLightWithoutShadows[ nLight ] = passItem;
+			//		var passItem = new DeferredShadingData.PassItem();
+			//		passItem.vertexProgram = vertexProgram;
+			//		passItem.fragmentProgram = fragmentProgram;
+			//		//deferredShadingData.passesPerLightWithoutShadows[ nLight ] = passItem;
 
-					//!!!!
-					//var pass = GpuMaterialPass.CreatePass( vertexProgram, fragmentProgram );
-					////!!!!
-					//pass.DepthCheck = false;
-					//pass.DepthWrite = false;
-					//pass.SourceBlendFactor = SceneBlendFactor.One;
-					//pass.DestBlendFactor = SceneBlendFactor.One;
+			//		//!!!!
+			//		//var pass = GpuMaterialPass.CreatePass( vertexProgram, fragmentProgram );
+			//		////!!!!
+			//		//pass.DepthCheck = false;
+			//		//pass.DepthWrite = false;
+			//		//pass.SourceBlendFactor = SceneBlendFactor.One;
+			//		//pass.DestBlendFactor = SceneBlendFactor.One;
 
-					////!!!!
-					////pass.CullingMode = CullingMode.None;
-					////!!!!с дептом тогда не то
-					////pass.CullingMode = CullingMode.Anticlockwise;
+			//		////!!!!
+			//		////pass.CullingMode = CullingMode.None;
+			//		////!!!!с дептом тогда не то
+			//		////pass.CullingMode = CullingMode.Anticlockwise;
 
-					////if( TwoSided )
-					////	pass.CullingMode = CullingMode.None;
+			//		////if( TwoSided )
+			//		////	pass.CullingMode = CullingMode.None;
 
-					if( nShadows == 2 )
-						deferredShadingData.passesPerLightWithShadowsContactShadows[ nLight ] = passItem;
-					else if( nShadows == 1 )
-						deferredShadingData.passesPerLightWithShadows[ nLight ] = passItem;
-					else
-						deferredShadingData.passesPerLightWithoutShadows[ nLight ] = passItem;
+			//		if( nShadows == 2 )
+			//			deferredShadingData.passesPerLightWithShadowsContactShadows[ nLight ] = passItem;
+			//		else if( nShadows == 1 )
+			//			deferredShadingData.passesPerLightWithShadows[ nLight ] = passItem;
+			//		else
+			//			deferredShadingData.passesPerLightWithoutShadows[ nLight ] = passItem;
 
-					//if( nShadows == 2 )
-					//	deferredShadingData.passesPerLightWithShadowsHigh[ nLight ] = passItem;
-					//if( nShadows == 1 )
-					//	deferredShadingData.passesPerLightWithShadowsLow[ nLight ] = passItem;
-					//else
-					//	deferredShadingData.passesPerLightWithoutShadows[ nLight ] = passItem;
-				}
-			}
+			//		//if( nShadows == 2 )
+			//		//	deferredShadingData.passesPerLightWithShadowsHigh[ nLight ] = passItem;
+			//		//if( nShadows == 1 )
+			//		//	deferredShadingData.passesPerLightWithShadowsLow[ nLight ] = passItem;
+			//		//else
+			//		//	deferredShadingData.passesPerLightWithoutShadows[ nLight ] = passItem;
+			//	}
+			//}
 		}
 
 		[StructLayout( LayoutKind.Sequential )]
-		struct DeferredEnvironmentDataUniform
+		internal struct DeferredEnvironmentDataUniform
 		{
 			public QuaternionF rotation;
 			public Vector4F multiplierAndAffect;
@@ -4843,38 +6014,37 @@ namespace NeoAxis
 		[MethodImpl( (MethodImplOptions)512 )]
 		unsafe void RenderEnvironmentLightDeferred( ViewportRenderingContext context, FrameData frameData, ImageComponent sceneTexture, ImageComponent normalTexture, ImageComponent gBuffer2Texture, ImageComponent gBuffer3Texture, ImageComponent gBuffer4Texture, ImageComponent gBuffer5Texture, ImageComponent depthTexture )
 		{
-			var ambientLight = frameData.Lights[ frameData.LightsInFrustumSorted[ 0 ] ];
-			ambientLight.Bind( this, context );
+			//var ambientLight = frameData.Lights[ frameData.LightsInFrustumSorted[ 0 ] ];
+			//ambientLight.Bind( this, context );
 
-			var passItem = deferredShadingData.passesPerLightWithoutShadows[ 0 ];
+			var passItem = deferredShadingData.ambientPass;
+			//var passItem = deferredShadingData.passesPerLightWithoutShadows[ 0 ];
+
+			context.ObjectsDuringUpdate.namedTextures.TryGetValue( "ssr", out var ssrTexture );
 
 			var generalContainer = new ParameterContainer();
 			{
-				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 0/* "sceneTexture"*/,
-					sceneTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 0/* "sceneTexture"*/, sceneTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
 
-				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 1/* "normalTexture"*/,
-					normalTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 1/* "normalTexture"*/, normalTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
 
-				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 2/* "gBuffer2Texture"*/,
-					gBuffer2Texture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 2/* "gBuffer2Texture"*/, gBuffer2Texture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
 
-				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 9/* "gBuffer3Texture"*/,
-					gBuffer3Texture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 9/* "gBuffer3Texture"*/, gBuffer3Texture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
 
-				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 3/* "depthTexture"*/,
-					depthTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 3/* "depthTexture"*/, depthTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
 
-				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 10/* "gBuffer4Texture"*/,
-					gBuffer4Texture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 10/* "gBuffer4Texture"*/, gBuffer4Texture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
 
-				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 11/* "gBuffer5Texture"*/,
-					gBuffer5Texture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 11/* "gBuffer5Texture"*/, gBuffer5Texture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
 
-				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 8/*"s_brdfLUT"*/,
-					BrdfLUT, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 8/*"s_brdfLUT"*/, BrdfLUT, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+
+				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 12, ssrTexture ?? ResourceUtility.DummyTexture2DArrayARGB8, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.None ) );
 			}
 
+			if( u_environmentLightParams == null )
+				u_environmentLightParams = GpuProgramManager.RegisterUniform( "u_environmentLightParams", UniformType.Vector4, 1 );
 			if( u_reflectionProbeData == null )
 				u_reflectionProbeData = GpuProgramManager.RegisterUniform( "u_reflectionProbeData", UniformType.Vector4, 1 );
 			if( u_deferredEnvironmentData == null )
@@ -4890,6 +6060,14 @@ namespace NeoAxis
 
 			GetBackgroundEnvironmentData( context, frameData, out var ambientLightTexture, out var ambientLightIrradiance );
 
+			//u_environmentLightParams
+			{
+				var ambientLight = frameData.Lights[ frameData.LightsInFrustumSorted[ 0 ] ];
+
+				var parameters = new Vector4F( ambientLight.data.Power, ssrTexture != null ? 1 : 0 );
+				Bgfx.SetUniform( u_environmentLightParams.Value, &parameters, 1 );
+			}
+
 			//ambient light
 			{
 				//set u_reflectionProbeData
@@ -4900,21 +6078,20 @@ namespace NeoAxis
 
 				//bind env textures, parameters
 				{
-					container.Set( new ViewportRenderingContext.BindTextureData( 6/*"s_environmentTexture"*/,
-						ambientLightTexture.Value.Texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+					container.Set( new ViewportRenderingContext.BindTextureData( 6/*"s_environmentTexture"*/, ambientLightTexture.Texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
 
 					//container.Set( new ViewportRenderingContext.BindTextureData( 7/*"environmentTextureIBL"*/,
 					//	ambientLightIrradiance.Value.texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
 
 					var data = new DeferredEnvironmentDataUniform();
-					data.rotation = ambientLightTexture.Value.Rotation;
-					data.multiplierAndAffect = ambientLightTexture.Value.MultiplierAndAffect;
-					data.iblRotation = ambientLightIrradiance.Value.Rotation;
-					data.iblMultiplierAndAffect = ambientLightIrradiance.Value.MultiplierAndAffect;
+					data.rotation = ambientLightTexture.Rotation;
+					data.multiplierAndAffect = ambientLightTexture.MultiplierAndAffect;
+					data.iblRotation = ambientLightIrradiance.Rotation;
+					data.iblMultiplierAndAffect = ambientLightIrradiance.MultiplierAndAffect;
 					Bgfx.SetUniform( u_deferredEnvironmentData.Value, &data, 4 );
 
-					fixed( Vector4F* harmonics = ambientLightIrradiance.Value.Harmonics ?? EnvironmentIrradianceData.GrayHarmonics )
-						Bgfx.SetUniform( u_deferredEnvironmentIrradiance.Value, harmonics, 9 );
+					fixed( Vector4F* harmonics2 = ambientLightIrradiance.Harmonics ?? EnvironmentIrradianceData.GrayHarmonics )
+						Bgfx.SetUniform( u_deferredEnvironmentIrradiance.Value, harmonics2, 9 );
 
 					//var environmentTextureRotation = ambientLightTexture.Value.Rotation;
 					//var environmentTextureIBLRotation = ambientLightIrradiance.Value.Rotation;
@@ -4932,15 +6109,22 @@ namespace NeoAxis
 				shader.AdditionalParameterContainers.Add( generalContainer );
 				shader.AdditionalParameterContainers.Add( container );
 
+				//program already compiled
+				//if( ssrMin != null )
+				//	shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "SSR" ) );
+
 				context.RenderQuadToCurrentViewport( shader, CanvasRenderer.BlendingType.Add );
 			}
+
+			var harmonics = stackalloc Vector4F[ 9 ];
 
 			//reflection probes
 			foreach( var item in frameData.ReflectionProbes )
 			{
 				//set u_reflectionProbeData
-				//!!!!double
-				var reflectionProbeData = new Vector4F( item.data.Sphere.Center.ToVector3F(), (float)item.data.Sphere.Radius );
+				context.ConvertToRelative( ref item.data.Sphere.Center, out var center );
+				var reflectionProbeData = new Vector4F( center, (float)item.data.Sphere.Radius );
+				//var reflectionProbeData = new Vector4F( item.data.Sphere.Center.ToVector3F(), (float)item.data.Sphere.Radius );
 				Bgfx.SetUniform( u_reflectionProbeData.Value, &reflectionProbeData, 1 );
 				//reflectionProbeItem.Bind( this, context );
 
@@ -4949,7 +6133,7 @@ namespace NeoAxis
 				//bind env textures, parameters
 				{
 					//use reflection from the reflection probe
-					container.Set( new ViewportRenderingContext.BindTextureData( 6/*"s_environmentTexture"*/, item.data.CubemapEnvironment ?? ResourceUtility.GrayTextureCube, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+					container.Set( new ViewportRenderingContext.BindTextureData( 6/*"s_environmentTexture"*/, item.CubemapEnvironmentWithMipmapsAndBlur ?? item.data.CubemapEnvironment ?? ResourceUtility.GrayTextureCube, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
 
 					////use lighting from the ambient light
 					//container.Set( new ViewportRenderingContext.BindTextureData( 7/*"environmentTextureIBL"*/,
@@ -4957,15 +6141,31 @@ namespace NeoAxis
 
 					var data = new DeferredEnvironmentDataUniform();
 					data.rotation = item.data.Rotation;
-					data.iblRotation = ambientLightIrradiance.Value.Rotation;
-					data.multiplierAndAffect = new Vector4F( item.data.Multiplier, 1 );
-					data.iblMultiplierAndAffect = ambientLightIrradiance.Value.MultiplierAndAffect;
+					data.iblRotation = ambientLightIrradiance.Rotation;
+					data.multiplierAndAffect = new Vector4F( item.data.Multiplier, item.data.Intensity );
+					data.iblMultiplierAndAffect = ambientLightIrradiance.MultiplierAndAffect;
 					Bgfx.SetUniform( u_deferredEnvironmentData.Value, &data, 4 );
 
-					fixed( Vector4F* harmonics = ambientLightIrradiance.Value.Harmonics ?? EnvironmentIrradianceData.GrayHarmonics )
-						Bgfx.SetUniform( u_deferredEnvironmentIrradiance.Value, harmonics, 9 );
+					{
+						Vector4F[] h1;
+						if( item.CubemapEnvironmentWithMipmapsAndBlur != null )
+							h1 = EnvironmentIrradianceData.GetHarmonicsToUseMap( item.CubemapEnvironmentWithMipmapsAndBlur, item.data.CubemapEnvironmentAffectLightingLodOffset );
+						else
+							h1 = item.data.HarmonicsIrradiance ?? EnvironmentIrradianceData.GrayHarmonics;
+
+						var h2 = ambientLightIrradiance.Harmonics;
+						for( int n = 0; n < h1.Length; n++ )
+							harmonics[ n ] = Vector4F.Lerp( h2[ n ], h1[ n ], item.data.Intensity );
+					}
+
+					Bgfx.SetUniform( u_deferredEnvironmentIrradiance.Value, harmonics, 9 );
+
+
 					//fixed( Vector4F* harmonics = item.data.HarmonicsIrradiance ?? EnvironmentIrradianceData.GrayHarmonics )
 					//	Bgfx.SetUniform( u_deferredEnvironmentIrradiance.Value, harmonics, 9 );
+
+					////fixed( Vector4F* harmonics = ambientLightIrradiance.Harmonics ?? EnvironmentIrradianceData.GrayHarmonics )
+					////	Bgfx.SetUniform( u_deferredEnvironmentIrradiance.Value, harmonics, 9 );
 
 					//var environmentTextureRotation = item.data.Rotation;
 					//var environmentTextureIBLRotation = ambientLightIrradiance.Value.Rotation;
@@ -4983,6 +6183,9 @@ namespace NeoAxis
 				shader.AdditionalParameterContainers.Add( generalContainer );
 				shader.AdditionalParameterContainers.Add( container );
 
+				//if( ssrMin != null )
+				//	shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "SSR" ) );
+
 				//!!!!triangles
 
 				//if (screenTriangles != null)
@@ -4992,356 +6195,631 @@ namespace NeoAxis
 			}
 		}
 
+		//static List<CanvasRenderer.TriangleVertex> tempScreenTrianglesForDeferred;
+		static ParameterContainer tempGeneralContainerForDeferred = new ParameterContainer();
+		////static CanvasRenderer.ShaderItem tempShaderForDeferred;
+
+		//[MethodImpl( (MethodImplOptions)512 )]
+		//unsafe void RenderDirectLightDeferred( ViewportRenderingContext context, FrameData frameData, ImageComponent sceneTexture, ImageComponent normalTexture, ImageComponent gBuffer2Texture, ImageComponent gBuffer3Texture, ImageComponent gBuffer4Texture, ImageComponent gBuffer5Texture, ImageComponent depthTexture, LightItem lightItem, bool firstDeferredLight )
+		//{
+		//	var viewportOwner = context.Owner;
+
+		//	bool skip = false;
+
+		//	//!!!!можно рисовать 3D геометрией если камера за пределами источника. тогда будет depth test
+		//	//!!!!!!нужно кешировать меши источников
+
+		//	if( tempScreenTrianglesForDeferred == null )
+		//		tempScreenTrianglesForDeferred = new List<CanvasRenderer.TriangleVertex>();
+		//	tempScreenTrianglesForDeferred.Clear();
+		//	//List<CanvasRenderer.TriangleVertex> screenTriangles = null;
+		//	var screenTriangles = tempScreenTrianglesForDeferred;
+
+
+		//	//Point, Spotlight
+		//	if( lightItem.data.Type == Light.TypeEnum.Point || lightItem.data.Type == Light.TypeEnum.Spotlight )
+		//	{
+		//		Vector3[] positions;
+		//		int[] indices;
+
+		//		//!!!!GC
+
+		//		if( lightItem.data.Type == Light.TypeEnum.Point )
+		//		{
+		//			//Point
+
+		//			//!!!!maybe sphere
+
+		//			var b = new Bounds( lightItem.data.Position );
+		//			b.Expand( lightItem.data.AttenuationFar * 1.01 );
+		//			SimpleMeshGenerator.GenerateBox( b, out positions, out indices );
+
+		//			//var radius = lightItem.data.AttenuationFar * 1.1;
+		//			//SimpleMeshGenerator.GenerateSphere( radius, 8, 8, false, out positions, out indices );
+		//			//for( int n = 0; n < positions.Length; n++ )
+		//			//	positions[ n ] += lightItem.data.Position;
+		//		}
+		//		else
+		//		{
+		//			//!!!!can be less amount of triangles
+
+		//			//Spotlight
+		//			var outer = lightItem.data.SpotlightOuterAngle;
+		//			if( outer > 179 )
+		//				outer = 179;
+		//			var radius = lightItem.data.AttenuationFar * Math.Tan( outer.InRadians() / 2 );
+		//			var height = lightItem.data.AttenuationFar;
+		//			SimpleMeshGenerator.GenerateCone( 0, SimpleMeshGenerator.ConeOrigin.Center, radius, height, 16, true, true, out positions, out indices );
+
+		//			var mat = new Matrix4(
+		//				lightItem.data.Rotation.ToMatrix3() * Matrix3.FromRotateByY( Math.PI ) * Matrix3.FromScale( new Vector3( 1.1, 1.1, 1.1 ) ),
+		//				lightItem.data.Position + lightItem.data.Rotation.GetForward() * lightItem.data.AttenuationFar / 2 );
+
+		//			for( int n = 0; n < positions.Length; n++ )
+		//				positions[ n ] = mat * positions[ n ];
+		//		}
+
+		//		////var screenPositions = new Vector2F[ positions.Length ];
+		//		////for( int n = 0; n < screenPositions.Length; n++ )
+		//		////{
+		//		////	context.Owner.CameraSettings.ProjectToScreenCoordinates( positions[ n ], out var screen, false );
+		//		////	screenPositions[ n ] = screen.ToVector2F();
+		//		////	//if( context.Owner.CameraSettings.ProjectToScreenCoordinates( positions[ n ], out var screen ) )
+		//		////	//	screenPositions[ n ] = screen.ToVec2F();
+		//		////	//else
+		//		////	//	screenPositions[ n ] = new Vec2F( float.NaN, float.NaN );
+		//		////}
+
+		//		//screenTriangles = new List<CanvasRenderer.TriangleVertex>( indices.Length / 2 );
+
+		//		var planes = viewportOwner.CameraSettings.Frustum.Planes;
+
+		//		for( int nTriangle = 0; nTriangle < indices.Length / 3; nTriangle++ )
+		//		{
+		//			var polygon = new Vector3[ 3 ];
+		//			polygon[ 0 ] = positions[ indices[ nTriangle * 3 + 0 ] ];
+		//			polygon[ 1 ] = positions[ indices[ nTriangle * 3 + 1 ] ];
+		//			polygon[ 2 ] = positions[ indices[ nTriangle * 3 + 2 ] ];
+
+		//			//clamp by frustum side planes
+		//			for( int nPlane = 2; nPlane < 6; nPlane++ )
+		//			{
+		//				ref var plane = ref planes[ nPlane ];
+		//				polygon = MathAlgorithms.ClipPolygonByPlane( polygon, -plane );
+		//			}
+
+		//			//convert world to screen coordinates
+		//			var screenPolygon = new Vector2[ polygon.Length ];
+		//			for( int n = 0; n < screenPolygon.Length; n++ )
+		//				context.Owner.CameraSettings.ProjectToScreenCoordinates( polygon[ n ], out screenPolygon[ n ], false );
+
+		//			//triangulate
+		//			for( int n = 1; n < screenPolygon.Length - 1; n++ )
+		//			{
+		//				var p0 = screenPolygon[ 0 ].ToVector2F();
+		//				var p1 = screenPolygon[ n ].ToVector2F();
+		//				var p2 = screenPolygon[ n + 1 ].ToVector2F();
+
+		//				if( ( ( p1.Y - p0.Y ) * ( p2.X - p1.X ) - ( p2.Y - p1.Y ) * ( p1.X - p0.X ) ) < 0 )
+		//				{
+		//					screenTriangles.Add( new CanvasRenderer.TriangleVertex( p0, ColorValue.One, p0 ) );
+		//					screenTriangles.Add( new CanvasRenderer.TriangleVertex( p1, ColorValue.One, p1 ) );
+		//					screenTriangles.Add( new CanvasRenderer.TriangleVertex( p2, ColorValue.One, p2 ) );
+		//				}
+		//			}
+		//		}
+
+		//		////var screenPositions = new Vector2F[ positions.Length ];
+		//		////for( int n = 0; n < screenPositions.Length; n++ )
+		//		////{
+		//		////	context.Owner.CameraSettings.ProjectToScreenCoordinates( positions[ n ], out var screen, false );
+		//		////	screenPositions[ n ] = screen.ToVector2F();
+		//		////	//if( context.Owner.CameraSettings.ProjectToScreenCoordinates( positions[ n ], out var screen ) )
+		//		////	//	screenPositions[ n ] = screen.ToVec2F();
+		//		////	//else
+		//		////	//	screenPositions[ n ] = new Vec2F( float.NaN, float.NaN );
+		//		////}
+
+		//		////screenTriangles = new List<CanvasRenderer.TriangleVertex>( indices.Length / 2 );
+
+		//		////for( int nTriangle = 0; nTriangle < indices.Length / 3; nTriangle++ )
+		//		////{
+		//		////	var p0 = screenPositions[ indices[ nTriangle * 3 + 0 ] ];
+		//		////	var p1 = screenPositions[ indices[ nTriangle * 3 + 1 ] ];
+		//		////	var p2 = screenPositions[ indices[ nTriangle * 3 + 2 ] ];
+
+		//		////	if( !float.IsNaN( p0.X ) && !float.IsNaN( p1.X ) && !float.IsNaN( p2.X ) )
+		//		////	{
+		//		////		if( ( ( p1.Y - p0.Y ) * ( p2.X - p1.X ) - ( p2.Y - p1.Y ) * ( p1.X - p0.X ) ) < 0 )
+		//		////		{
+		//		////			if( !( p0.X < 0 && p1.X < 0 && p2.X < 0 ) && !( p0.X > 1 && p1.X > 1 && p2.X > 1 ) )
+		//		////			{
+		//		////				if( !( p0.Y < 0 && p1.Y < 0 && p2.Y < 0 ) && !( p0.Y > 1 && p1.Y > 1 && p2.Y > 1 ) )
+		//		////				{
+		//		////					//context.Owner.CanvasRenderer.AddLine( p0, p1, ColorValue.One );
+		//		////					//context.Owner.CanvasRenderer.AddLine( p1, p2, ColorValue.One );
+		//		////					//context.Owner.CanvasRenderer.AddLine( p2, p0, ColorValue.One );
+
+		//		////					screenTriangles.Add( new CanvasRenderer.TriangleVertex( p0, ColorValue.One, p0 ) );
+		//		////					screenTriangles.Add( new CanvasRenderer.TriangleVertex( p1, ColorValue.One, p1 ) );
+		//		////					screenTriangles.Add( new CanvasRenderer.TriangleVertex( p2, ColorValue.One, p2 ) );
+		//		////				}
+		//		////			}
+		//		////		}
+		//		////	}
+		//		////}
+
+		//		//////check to use fullscreen quad and skip light
+		//		////if( screenTriangles.Count != 0 )
+		//		////{
+		//		////	var plane = viewportOwner.CameraSettings.Frustum.Planes[ 0 ];
+
+		//		////	int backsideCount = 0;
+		//		////	foreach( var pos in positions )
+		//		////	{
+		//		////		if( plane.GetSide( pos ) == Plane.Side.Positive )
+		//		////			backsideCount++;
+		//		////	}
+
+		//		////	//all backside
+		//		////	if( backsideCount == positions.Length )
+		//		////		skip = true;
+		//		////	//use fullscreen quad when exists points backward camera
+		//		////	if( backsideCount != 0 )
+		//		////		screenTriangles = null;
+		//		////}
+
+		//		//all triangles outside screen
+		//		if( /*screenTriangles != null &&*/ screenTriangles.Count == 0 )
+		//			skip = true;
+		//	}
+
+
+		//	if( !skip )
+		//	{
+		//		lightItem.Bind( this, context );
+
+		//		//pass
+		//		//GpuMaterialPass pass;
+		//		DeferredShadingData.PassItem passItem;
+		//		{
+		//			if( lightItem.prepareShadows )
+		//			{
+		//				if( lightItem.data.ShadowContactLength > 0 )
+		//					passItem = deferredShadingData.passesPerLightWithShadowsContactShadows[ (int)lightItem.data.Type ];
+		//				else
+		//					passItem = deferredShadingData.passesPerLightWithShadows[ (int)lightItem.data.Type ];
+
+		//				//if( ShadowQuality.Value == ShadowQualityEnum.High )
+		//				//	passItem = deferredShadingData.passesPerLightWithShadowsHigh[ (int)lightItem.data.Type ];
+		//				//else
+		//				//	passItem = deferredShadingData.passesPerLightWithShadowsLow[ (int)lightItem.data.Type ];
+		//			}
+		//			else
+		//				passItem = deferredShadingData.passesPerLightWithoutShadows[ (int)lightItem.data.Type ];
+		//		}
+
+		//		{
+		//			if( tempGeneralContainerForDeferred == null )
+		//				tempGeneralContainerForDeferred = new ParameterContainer();
+		//			tempGeneralContainerForDeferred.Clear();
+		//			var generalContainer = tempGeneralContainerForDeferred;//var generalContainer = new ParameterContainer();
+
+		//			{
+		//				//bind textures
+
+		//				//!!!!firstDeferredLight
+
+		//				//if( firstDeferredLight )not works
+		//				//{
+
+		//				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 0/* "sceneTexture"*/, sceneTexture,
+		//					TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+		//				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 1/* "normalTexture"*/, normalTexture,
+		//					TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+		//				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 2/* "gBuffer2Texture"*/, gBuffer2Texture,
+		//					TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+		//				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 8/*"s_brdfLUT"*/, BrdfLUT,
+		//					TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+
+		//				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 9/* "gBuffer2Texture"*/, gBuffer3Texture,
+		//					TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+		//				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 3/* "depthTexture"*/, depthTexture,
+		//					TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+		//				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 10/* "gBuffer4Texture"*/, gBuffer4Texture,
+		//					TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+		//				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 11/* "gBuffer5Texture"*/, gBuffer5Texture,
+		//					TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+		//				//}
+
+		//				//light mask
+		//				if( RenderingSystem.LightMask && lightItem.data.Type != Light.TypeEnum.Ambient )
+		//				{
+		//					if( lightItem.data.Type == Light.TypeEnum.Point )
+		//					{
+		//						var texture = lightItem.data.Mask;
+		//						if( texture?.Result == null || texture.Result.TextureType != ImageComponent.TypeEnum.Cube )
+		//							texture = ResourceUtility.WhiteTextureCube;
+
+		//						//!!!!anisotropic? где еще
+
+		//						generalContainer.Set( new ViewportRenderingContext.BindTextureData( 4/*"s_lightMask"*/, texture,
+		//							TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+		//						//var textureValue = new GpuMaterialPass.TextureParameterValue( texture,
+		//						//	TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear );
+		//						//generalContainer.Set( "4"/*"s_lightMask"*/, textureValue, ParameterType.TextureCube );
+		//					}
+		//					else
+		//					{
+		//						var texture = lightItem.data.Mask;
+		//						if( texture?.Result == null || texture.Result.TextureType != ImageComponent.TypeEnum._2D )
+		//							texture = ResourceUtility.WhiteTexture2D;
+
+		//						var clamp = lightItem.data.Type == Light.TypeEnum.Spotlight;
+
+		//						generalContainer.Set( new ViewportRenderingContext.BindTextureData( 4/*"s_lightMask"*/, texture,
+		//							clamp ? TextureAddressingMode.Clamp : TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+		//					}
+		//				}
+
+		//				//if( lightItem.prepareShadows )
+		//				{
+		//					//Viewport shadowViewport = lightItem.shadowTexture.Result.GetRenderTarget().Viewports[ 0 ];
+
+		//					//shadowMap
+		//					{
+
+		//						ImageComponent texture;
+		//						if( lightItem.prepareShadows )
+		//							texture = lightItem.shadowTexture;
+		//						else
+		//							texture = lightItem.data.Type == Light.TypeEnum.Point ? nullShadowTextureCube : nullShadowTexture2D;
+
+		//						ViewportRenderingContext.BindTextureData textureValue;
+		//						if( RenderingSystem.ShadowTextureFormat == ProjectSettingsPage_Rendering.ShadowTextureFormatEnum.Byte4 )
+		//						{
+		//							textureValue = new ViewportRenderingContext.BindTextureData( 5/*"s_shadowMap"*/, texture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.None );
+		//						}
+		//						else
+		//						{
+		//							textureValue = new ViewportRenderingContext.BindTextureData( 5/*"s_shadowMap"*/, texture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.None, TextureFlags.CompareLessEqual );
+		//						}
+
+		//						generalContainer.Set( ref textureValue );
+		//					}
+
+		//					//Vector2F shadowBias = new Vector2F( lightItem.data.ShadowBias, lightItem.data.ShadowNormalBias );
+		//					//generalContainer.Set( "u_shadowBias", ParameterType.Vector2, 1, &shadowBias, sizeof( Vector2F ) );
+		//				}
+		//			}
+
+		//			{
+		//				//caching is not works
+		//				//if( tempShaderForDeferred == null )
+		//				//	tempShaderForDeferred = new CanvasRenderer.ShaderItem();
+		//				//tempShaderForDeferred.Clear();
+
+		//				//var shader = tempShaderForDeferred;//var shader = new CanvasRenderer.ShaderItem();
+		//				var shader = new CanvasRenderer.ShaderItem();
+		//				shader.CompiledVertexProgram = passItem.vertexProgram;
+		//				shader.CompiledFragmentProgram = passItem.fragmentProgram;
+		//				shader.AdditionalParameterContainers.Add( generalContainer );
+
+		//				if( screenTriangles.Count != 0 /*screenTriangles != null*/ )
+		//					context.RenderTrianglesToCurrentViewport( shader, screenTriangles, CanvasRenderer.BlendingType.Add, registerUniformsAndSetIdentityMatrix: firstDeferredLight );
+		//				else
+		//					context.RenderQuadToCurrentViewport( shader, CanvasRenderer.BlendingType.Add, registerUniformsAndSetIdentityMatrix: firstDeferredLight );
+		//			}
+		//		}
+		//	}
+		//}
+
 		[MethodImpl( (MethodImplOptions)512 )]
-		unsafe void RenderDirectLightDeferred( ViewportRenderingContext context, FrameData frameData, ImageComponent sceneTexture, ImageComponent normalTexture, ImageComponent gBuffer2Texture, ImageComponent gBuffer3Texture, ImageComponent gBuffer4Texture, ImageComponent gBuffer5Texture, ImageComponent depthTexture, LightItem lightItem )
+		unsafe void RenderDirectLightsDeferredMultiLight( ViewportRenderingContext context, FrameData frameData, ImageComponent sceneTexture, ImageComponent normalTexture, ImageComponent gBuffer2Texture, ImageComponent gBuffer3Texture, ImageComponent gBuffer4Texture, ImageComponent gBuffer5Texture, ImageComponent depthTexture )
 		{
-			Viewport viewportOwner = context.Owner;
+			//var viewportOwner = context.Owner;
 
-			bool skip = false;
+			if( sizeof( LightItem.LightDataFragmentMultiLight ) / sizeof( Vector4F ) != 29 )
+				Log.Fatal( "RenderingPipeline_Basic: RenderDirectLightsDeferredMultiLight: Internal error." );
 
-			List<CanvasRenderer.TriangleVertex> screenTriangles = null;
+			var shader = new CanvasRenderer.ShaderItem();
 
-			//Point, Spotlight
-			if( lightItem.data.Type == Light.TypeEnum.Point || lightItem.data.Type == Light.TypeEnum.Spotlight )
+			////pass
+			////GpuMaterialPass pass;
+			//DeferredShadingData.PassItem passItem;
+			//{
+			//	if( lightItem.prepareShadows )
+			//	{
+			//		if( lightItem.data.ShadowContactLength > 0 )
+			//			passItem = deferredShadingData.passesPerLightWithShadowsContactShadows[ (int)lightItem.data.Type ];
+			//		else
+			//			passItem = deferredShadingData.passesPerLightWithShadows[ (int)lightItem.data.Type ];
+
+			//		//if( ShadowQuality.Value == ShadowQualityEnum.High )
+			//		//	passItem = deferredShadingData.passesPerLightWithShadowsHigh[ (int)lightItem.data.Type ];
+			//		//else
+			//		//	passItem = deferredShadingData.passesPerLightWithShadowsLow[ (int)lightItem.data.Type ];
+			//	}
+			//	else
+			//		passItem = deferredShadingData.passesPerLightWithoutShadows[ (int)lightItem.data.Type ];
+			//}
+
+			//{
+			if( tempGeneralContainerForDeferred == null )
+				tempGeneralContainerForDeferred = new ParameterContainer();
+			tempGeneralContainerForDeferred.Clear();
+			var generalContainer = tempGeneralContainerForDeferred;//var generalContainer = new ParameterContainer();
+
+			//bind textures
+
+			generalContainer.Set( new ViewportRenderingContext.BindTextureData( 0/* "sceneTexture"*/, sceneTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+			generalContainer.Set( new ViewportRenderingContext.BindTextureData( 1/* "normalTexture"*/, normalTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+			generalContainer.Set( new ViewportRenderingContext.BindTextureData( 2/* "gBuffer2Texture"*/, gBuffer2Texture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+			generalContainer.Set( new ViewportRenderingContext.BindTextureData( 8/*"s_brdfLUT"*/, BrdfLUT, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+
+			generalContainer.Set( new ViewportRenderingContext.BindTextureData( 16/*9*/ /* "gBuffer3Texture"*/, gBuffer3Texture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+			generalContainer.Set( new ViewportRenderingContext.BindTextureData( 3/* "depthTexture"*/, depthTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+			generalContainer.Set( new ViewportRenderingContext.BindTextureData( 17/*10*//* "gBuffer4Texture"*/, gBuffer4Texture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+			generalContainer.Set( new ViewportRenderingContext.BindTextureData( 11/* "gBuffer5Texture"*/, gBuffer5Texture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+			generalContainer.Set( new ViewportRenderingContext.BindTextureData( 4/* "s_lightsTexture"*/, frameData.LightsTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+			generalContainer.Set( new ViewportRenderingContext.BindTextureData( 15/* "s_lightGrid"*/, frameData.LightGrid ?? ResourceUtility.DummyTexture3DFloat32RGBA, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+			//gi
+			var giData = frameData.GIData;
+			if( giData != null )
 			{
-				Vector3[] positions;
-				int[] indices;
+				shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "GI_GRID" ) );
 
-				if( lightItem.data.Type == Light.TypeEnum.Point )
-				{
-					//Point
-					var radius = lightItem.data.AttenuationFar * 1.1;
-					SimpleMeshGenerator.GenerateSphere( radius, 8, 8, false, out positions, out indices );
-					for( int n = 0; n < positions.Length; n++ )
-						positions[ n ] += lightItem.data.Position;
-				}
-				else
-				{
-					//!!!!не оптимально. генерировать округлый конус
+				generalContainer.Set( new ViewportRenderingContext.BindTextureData( 9/* "s_giGrid1"*/, frameData.GIData.Grid1Texture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
 
-					//Spotlight
-					var outer = lightItem.data.SpotlightOuterAngle;
-					if( outer > 179 )
-						outer = 179;
-					var radius = lightItem.data.AttenuationFar * Math.Tan( outer.InRadians() / 2 );
-					var height = lightItem.data.AttenuationFar;
-					SimpleMeshGenerator.GenerateCone( 0, SimpleMeshGenerator.ConeOrigin.Center, radius, height, 16, true, true, out positions, out indices );
+				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 10/* "s_giGrid2"*/, frameData.GIData.Grid2TextureIndirected ?? frameData.GIData.Grid2Texture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
 
-					var mat = new Matrix4(
-						lightItem.data.Rotation.ToMatrix3() * Matrix3.FromRotateByY( Math.PI ) * Matrix3.FromScale( new Vector3( 1.1, 1.1, 1.1 ) ),
-						lightItem.data.Position + lightItem.data.Rotation.GetForward() * lightItem.data.AttenuationFar / 2 );
+				GISetRayCastInfoUniform( context, true );
 
-					for( int n = 0; n < positions.Length; n++ )
-						positions[ n ] = mat * positions[ n ];
-				}
+				////!!!!cascades
 
-				//var screenPositions = new Vector2F[ positions.Length ];
-				//for( int n = 0; n < screenPositions.Length; n++ )
-				//{
-				//	context.Owner.CameraSettings.ProjectToScreenCoordinates( positions[ n ], out var screen, false );
-				//	screenPositions[ n ] = screen.ToVector2F();
-				//	//if( context.Owner.CameraSettings.ProjectToScreenCoordinates( positions[ n ], out var screen ) )
-				//	//	screenPositions[ n ] = screen.ToVec2F();
-				//	//else
-				//	//	screenPositions[ n ] = new Vec2F( float.NaN, float.NaN );
-				//}
+				//var cascadeItem = giData.Cascades[ 0 ];
 
-				screenTriangles = new List<CanvasRenderer.TriangleVertex>( indices.Length / 2 );
+				////var cascadeBounds = giData.CascadesBoundsRelative[ 0 ];
 
-				var planes = viewportOwner.CameraSettings.Frustum.Planes;
+				////!!!!
+				//var gridPosition = cascadeItem.BoundsRelative.Minimum;//.ToVector3F();
+				//													  //var gridPosition = cascadeBounds.Minimum.ToVector3F();
+				//var gridSize = giData.GridSize;
+				////var cellSize = cascadeBounds.GetSize().X / gridSize;
+				////!!!!
+				//var cascade = 0;
 
-				for( int nTriangle = 0; nTriangle < indices.Length / 3; nTriangle++ )
-				{
-					var polygon = new Vector3[ 3 ];
-					polygon[ 0 ] = positions[ indices[ nTriangle * 3 + 0 ] ];
-					polygon[ 1 ] = positions[ indices[ nTriangle * 3 + 1 ] ];
-					polygon[ 2 ] = positions[ indices[ nTriangle * 3 + 2 ] ];
+				//var p0 = new Vector4F( gridPosition, gridSize );
+				//var p1 = new Vector4F( cascadeItem.CellSize, cascade, 0, 0 );
 
-					//clamp by frustum side planes
-					for( int nPlane = 2; nPlane < 6; nPlane++ )
-					{
-						ref var plane = ref planes[ nPlane ];
-						polygon = MathAlgorithms.ClipPolygonByPlane( polygon, -plane );
-					}
-
-					//convert world to screen coordinates
-					var screenPolygon = new Vector2[ polygon.Length ];
-					for( int n = 0; n < screenPolygon.Length; n++ )
-						context.Owner.CameraSettings.ProjectToScreenCoordinates( polygon[ n ], out screenPolygon[ n ], false );
-
-					//triangulate
-					for( int n = 1; n < screenPolygon.Length - 1; n++ )
-					{
-						var p0 = screenPolygon[ 0 ].ToVector2F();
-						var p1 = screenPolygon[ n ].ToVector2F();
-						var p2 = screenPolygon[ n + 1 ].ToVector2F();
-
-						if( ( ( p1.Y - p0.Y ) * ( p2.X - p1.X ) - ( p2.Y - p1.Y ) * ( p1.X - p0.X ) ) < 0 )
-						{
-							screenTriangles.Add( new CanvasRenderer.TriangleVertex( p0, ColorValue.One, p0 ) );
-							screenTriangles.Add( new CanvasRenderer.TriangleVertex( p1, ColorValue.One, p1 ) );
-							screenTriangles.Add( new CanvasRenderer.TriangleVertex( p2, ColorValue.One, p2 ) );
-						}
-					}
-				}
-
-				//var screenPositions = new Vector2F[ positions.Length ];
-				//for( int n = 0; n < screenPositions.Length; n++ )
-				//{
-				//	context.Owner.CameraSettings.ProjectToScreenCoordinates( positions[ n ], out var screen, false );
-				//	screenPositions[ n ] = screen.ToVector2F();
-				//	//if( context.Owner.CameraSettings.ProjectToScreenCoordinates( positions[ n ], out var screen ) )
-				//	//	screenPositions[ n ] = screen.ToVec2F();
-				//	//else
-				//	//	screenPositions[ n ] = new Vec2F( float.NaN, float.NaN );
-				//}
-
-				//screenTriangles = new List<CanvasRenderer.TriangleVertex>( indices.Length / 2 );
-
-				//for( int nTriangle = 0; nTriangle < indices.Length / 3; nTriangle++ )
-				//{
-				//	var p0 = screenPositions[ indices[ nTriangle * 3 + 0 ] ];
-				//	var p1 = screenPositions[ indices[ nTriangle * 3 + 1 ] ];
-				//	var p2 = screenPositions[ indices[ nTriangle * 3 + 2 ] ];
-
-				//	if( !float.IsNaN( p0.X ) && !float.IsNaN( p1.X ) && !float.IsNaN( p2.X ) )
-				//	{
-				//		if( ( ( p1.Y - p0.Y ) * ( p2.X - p1.X ) - ( p2.Y - p1.Y ) * ( p1.X - p0.X ) ) < 0 )
-				//		{
-				//			if( !( p0.X < 0 && p1.X < 0 && p2.X < 0 ) && !( p0.X > 1 && p1.X > 1 && p2.X > 1 ) )
-				//			{
-				//				if( !( p0.Y < 0 && p1.Y < 0 && p2.Y < 0 ) && !( p0.Y > 1 && p1.Y > 1 && p2.Y > 1 ) )
-				//				{
-				//					//context.Owner.CanvasRenderer.AddLine( p0, p1, ColorValue.One );
-				//					//context.Owner.CanvasRenderer.AddLine( p1, p2, ColorValue.One );
-				//					//context.Owner.CanvasRenderer.AddLine( p2, p0, ColorValue.One );
-
-				//					screenTriangles.Add( new CanvasRenderer.TriangleVertex( p0, ColorValue.One, p0 ) );
-				//					screenTriangles.Add( new CanvasRenderer.TriangleVertex( p1, ColorValue.One, p1 ) );
-				//					screenTriangles.Add( new CanvasRenderer.TriangleVertex( p2, ColorValue.One, p2 ) );
-				//				}
-				//			}
-				//		}
-				//	}
-				//}
-
-				////check to use fullscreen quad and skip light
-				//if( screenTriangles.Count != 0 )
-				//{
-				//	var plane = viewportOwner.CameraSettings.Frustum.Planes[ 0 ];
-
-				//	int backsideCount = 0;
-				//	foreach( var pos in positions )
-				//	{
-				//		if( plane.GetSide( pos ) == Plane.Side.Positive )
-				//			backsideCount++;
-				//	}
-
-				//	//all backside
-				//	if( backsideCount == positions.Length )
-				//		skip = true;
-				//	//use fullscreen quad when exists points backward camera
-				//	if( backsideCount != 0 )
-				//		screenTriangles = null;
-				//}
-
-				//all triangles outside screen
-				if( screenTriangles != null && screenTriangles.Count == 0 )
-					skip = true;
+				//shader.Parameters.Set( "showRenderTargetGI0", p0 );
+				//shader.Parameters.Set( "showRenderTargetGI1", p1 );
 			}
 
-			if( !skip )
+			//shadows
 			{
-				//set lightItem uniforms
-				//if( lightItemBinded != lightItem )
+				var isByte4Format = RenderingSystem.ShadowTextureFormat == ProjectSettingsPage_Rendering.ShadowTextureFormatEnum.Byte4;
+				var filtering = isByte4Format ? FilterOption.Point : FilterOption.Linear;
+				////too chaotic
+				//////to make linear light masks on mobile
+				////var filtering = FilterOption.Linear;
+				var textureFlags = isByte4Format ? 0 : TextureFlags.CompareLessEqual;
+
+				//shadow map directional
+				{
+					var shadowMap = frameData.ShadowTextureArrayDirectional;
+					if( shadowMap == null )
+						shadowMap = isByte4Format ? ResourceUtility.DummyTexture2DArrayARGB8 : ResourceUtility.DummyShadowMap2DArrayFloat32R;
+
+					var wrap = isByte4Format;
+
+					var textureValue = new ViewportRenderingContext.BindTextureData( 5/*s_shadowMapShadowDirectional*/, shadowMap, wrap ? TextureAddressingMode.Wrap : TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
+					generalContainer.Set( ref textureValue );
+				}
+
+				//shadow map array spot
+				{
+					var shadowMap = frameData.ShadowTextureArraySpot;
+					if( shadowMap == null )
+						shadowMap = isByte4Format ? ResourceUtility.DummyTexture2DArrayARGB8 : ResourceUtility.DummyShadowMap2DArrayFloat32R;
+
+					var textureValue = new ViewportRenderingContext.BindTextureData( 6/*s_shadowMapShadowSpot*/, shadowMap, TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
+					generalContainer.Set( ref textureValue );
+				}
+
+				//shadow map array point
+				{
+					var shadowMap = frameData.ShadowTextureArrayPoint;
+					if( shadowMap == null )
+						shadowMap = isByte4Format ? ResourceUtility.DummyTextureCubeArrayARGB8/*WhiteTextureCube*/ : ResourceUtility.DummyShadowMapCubeArrayFloat32R;
+
+					var textureValue = new ViewportRenderingContext.BindTextureData( 7/*s_shadowMapShadowPoint*/, shadowMap, TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
+					generalContainer.Set( ref textureValue );
+				}
+			}
+
+			//light masks
+			if( RenderingSystem.LightMask )
+			{
+				//mask array directional
+				{
+					var texture = frameData.MaskTextureArrayDirectional ?? ResourceUtility.WhiteTexture2D;
+					generalContainer.Set( new ViewportRenderingContext.BindTextureData( 12/*s_lightMaskDirectional*/, texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+				}
+
+				//mask array spot
+				{
+					var texture = frameData.MaskTextureArraySpot ?? ResourceUtility.WhiteTexture2D;
+					generalContainer.Set( new ViewportRenderingContext.BindTextureData( 13/*s_lightMaskSpot*/, texture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+				}
+
+				//mask array point
+				{
+					var texture = frameData.MaskTextureArrayPoint ?? ResourceUtility.WhiteTextureCube;
+					generalContainer.Set( new ViewportRenderingContext.BindTextureData( 14/*s_lightMaskPoint*/, texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+				}
+
+
+				////ImageComponent shadowMapDirectional = null;
+				//ImageComponent maskDirectional = null;
+
+				//foreach( var lightIndex in frameData.LightsInFrustumSorted )
 				//{
-				lightItem.Bind( this, context );
-				//, ShadowIntensity );
-				//	lightItemBinded = lightItem;
+				//	var lightItem = frameData.Lights[ lightIndex ];
+
+				//	if( lightItem.data.Type == Light.TypeEnum.Directional )
+				//	{
+				//		//!!!!
+				//		maskDirectional = lightItem.data.Mask;
+				//	}
 				//}
 
-				//pass
-				//GpuMaterialPass pass;
-				DeferredShadingData.PassItem passItem;
+				////if( shadowMapDirectional == null )
+				////	shadowMapDirectional = nullShadowTexture2D;
+
+				////!!!!
+				//if( maskDirectional?.Result == null || maskDirectional.Result.TextureType != ImageComponent.TypeEnum._2D )
+				//	maskDirectional = ResourceUtility.WhiteTexture2D;
+
+
+				//{
+				//	//		var clamp = lightItem.data.Type == Light.TypeEnum.Spotlight;
+
+				//	//		generalContainer.Set( new ViewportRenderingContext.BindTextureData( 4/*"s_lightMask"*/, texture,
+				//	//			clamp ? TextureAddressingMode.Clamp : TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+
+				//	//!!!!
+				//	var clamp = false;
+				//	//var clamp = lightItem.data.Type == Light.TypeEnum.Spotlight;
+
+				//	generalContainer.Set( new ViewportRenderingContext.BindTextureData( 7/*"s_lightMaskDirectional"*/, maskDirectional, clamp ? TextureAddressingMode.Clamp : TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+				//}
+
+
+
+				//!!!!
+				////light mask
+				//if( RenderingSystem.LightMask && lightItem.data.Type != Light.TypeEnum.Ambient )
+				//{
+				//	if( lightItem.data.Type == Light.TypeEnum.Point )
+				//	{
+				//		var texture = lightItem.data.Mask;
+				//		if( texture?.Result == null || texture.Result.TextureType != ImageComponent.TypeEnum.Cube )
+				//			texture = ResourceUtility.WhiteTextureCube;
+
+				//		//!!!!anisotropic? где еще
+
+				//		generalContainer.Set( new ViewportRenderingContext.BindTextureData( 4/*"s_lightMask"*/, texture,
+				//			TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+				//		//var textureValue = new GpuMaterialPass.TextureParameterValue( texture,
+				//		//	TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear );
+				//		//generalContainer.Set( "4"/*"s_lightMask"*/, textureValue, ParameterType.TextureCube );
+				//	}
+				//	else
+				//	{
+				//		var texture = lightItem.data.Mask;
+				//		if( texture?.Result == null || texture.Result.TextureType != ImageComponent.TypeEnum._2D )
+				//			texture = ResourceUtility.WhiteTexture2D;
+
+				//		var clamp = lightItem.data.Type == Light.TypeEnum.Spotlight;
+
+				//		generalContainer.Set( new ViewportRenderingContext.BindTextureData( 4/*"s_lightMask"*/, texture,
+				//			clamp ? TextureAddressingMode.Clamp : TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+				//	}
+				//}
+
+
+
+				////ImageComponent shadowMapDirectional = null;
+				//ImageComponent maskDirectional = null;
+
+				//foreach( var lightIndex in frameData.LightsInFrustumSorted )
+				//{
+				//	var lightItem = frameData.Lights[ lightIndex ];
+
+				//	if( lightItem.data.Type == Light.TypeEnum.Directional )
+				//	{
+				//		//if( lightItem.prepareShadows )
+				//		//{
+				//		//	shadowMapDirectional = lightItem.shadowTexture;
+				//		//	//break;
+				//		//}
+
+				//		//!!!!
+				//		maskDirectional = lightItem.data.Mask;
+				//	}
+				//}
+
+				////if( shadowMapDirectional == null )
+				////	shadowMapDirectional = nullShadowTexture2D;
+
+				////!!!!
+				//if( maskDirectional?.Result == null || maskDirectional.Result.TextureType != ImageComponent.TypeEnum._2D )
+				//	maskDirectional = ResourceUtility.WhiteTexture2D;
+
+
+				//{
+				//	//		var clamp = lightItem.data.Type == Light.TypeEnum.Spotlight;
+
+				//	//		generalContainer.Set( new ViewportRenderingContext.BindTextureData( 4/*"s_lightMask"*/, texture,
+				//	//			clamp ? TextureAddressingMode.Clamp : TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+
+				//	//!!!!
+				//	var clamp = false;
+				//	//var clamp = lightItem.data.Type == Light.TypeEnum.Spotlight;
+
+				//	generalContainer.Set( new ViewportRenderingContext.BindTextureData( 7/*"s_lightMaskDirectional"*/, maskDirectional, clamp ? TextureAddressingMode.Clamp : TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+				//}
+			}
+
+
+			//!!!!forward
+			var existsPrepareShadows = false;
+			var existsContactShadows = false;
+			{
+				foreach( var lightIndex in frameData.LightsInFrustumSorted )
 				{
+					var lightItem = frameData.Lights[ lightIndex ];
+					var lightData = lightItem.data;
+
 					if( lightItem.prepareShadows )
 					{
-						if( lightItem.data.ShadowContactLength > 0 )
-							passItem = deferredShadingData.passesPerLightWithShadowsContactShadows[ (int)lightItem.data.Type ];
-						else
-							passItem = deferredShadingData.passesPerLightWithShadows[ (int)lightItem.data.Type ];
-
-						//if( ShadowQuality.Value == ShadowQualityEnum.High )
-						//	passItem = deferredShadingData.passesPerLightWithShadowsHigh[ (int)lightItem.data.Type ];
-						//else
-						//	passItem = deferredShadingData.passesPerLightWithShadowsLow[ (int)lightItem.data.Type ];
-					}
-					else
-						passItem = deferredShadingData.passesPerLightWithoutShadows[ (int)lightItem.data.Type ];
-				}
-
-				{
-					//var item = mesh.Result.RenderOperations[ 0 ];
-					//var operation = item.operation;
-
-					var generalContainer = new ParameterContainer();
-
-					{
-						//bind textures
-						generalContainer.Set( new ViewportRenderingContext.BindTextureData( 0/* "sceneTexture"*/, sceneTexture,
-							TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
-
-						generalContainer.Set( new ViewportRenderingContext.BindTextureData( 1/* "normalTexture"*/, normalTexture,
-							TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
-
-						generalContainer.Set( new ViewportRenderingContext.BindTextureData( 2/* "gBuffer2Texture"*/, gBuffer2Texture,
-							TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
-
-						generalContainer.Set( new ViewportRenderingContext.BindTextureData( 8/*"s_brdfLUT"*/, BrdfLUT,
-							TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
-
-						generalContainer.Set( new ViewportRenderingContext.BindTextureData( 9/* "gBuffer2Texture"*/, gBuffer3Texture,
-							TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
-
-						generalContainer.Set( new ViewportRenderingContext.BindTextureData( 3/* "depthTexture"*/, depthTexture,
-							TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
-
-						generalContainer.Set( new ViewportRenderingContext.BindTextureData( 10/* "gBuffer4Texture"*/, gBuffer4Texture,
-							TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
-
-						generalContainer.Set( new ViewportRenderingContext.BindTextureData( 11/* "gBuffer5Texture"*/, gBuffer5Texture,
-							TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
-
-						//light mask
-						if( RenderingSystem.LightMask && lightItem.data.Type != Light.TypeEnum.Ambient )
+						existsPrepareShadows = true;
+						if( lightData.ShadowContactLength != 0 )
 						{
-							if( lightItem.data.Type == Light.TypeEnum.Point )
-							{
-								var texture = lightItem.data.Mask;
-								if( texture?.Result == null || texture.Result.TextureType != ImageComponent.TypeEnum.Cube )
-									texture = ResourceUtility.WhiteTextureCube;
-
-								//!!!!anisotropic? где еще
-
-								generalContainer.Set( new ViewportRenderingContext.BindTextureData( 4/*"s_lightMask"*/, texture,
-									TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
-								//var textureValue = new GpuMaterialPass.TextureParameterValue( texture,
-								//	TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear );
-								//generalContainer.Set( "4"/*"s_lightMask"*/, textureValue, ParameterType.TextureCube );
-							}
-							else
-							{
-								var texture = lightItem.data.Mask;
-								if( texture?.Result == null || texture.Result.TextureType != ImageComponent.TypeEnum._2D )
-									texture = ResourceUtility.WhiteTexture2D;
-
-								var clamp = lightItem.data.Type == Light.TypeEnum.Spotlight;
-
-								generalContainer.Set( new ViewportRenderingContext.BindTextureData( 4/*"s_lightMask"*/, texture,
-									clamp ? TextureAddressingMode.Clamp : TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
-							}
+							existsContactShadows = true;
+							break;
 						}
-
-						//if( lightItem.prepareShadows )
-						{
-							//Viewport shadowViewport = lightItem.shadowTexture.Result.GetRenderTarget().Viewports[ 0 ];
-
-							//shadowMap
-							{
-								ImageComponent texture;
-								if( lightItem.prepareShadows )
-								{
-									texture = lightItem.shadowTexture;
-								}
-								else
-								{
-									if( lightItem.data.Type == Light.TypeEnum.Point )
-										texture = nullShadowTextureCube;
-									else
-										texture = nullShadowTexture2D;
-								}
-
-								ViewportRenderingContext.BindTextureData textureValue;
-								if( RenderingSystem.ShadowTextureFormat == ProjectSettingsPage_Rendering.ShadowTextureFormatEnum.Byte4 )
-								{
-									textureValue = new ViewportRenderingContext.BindTextureData( 5/*"s_shadowMap"*/, texture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.None );
-								}
-								else
-								{
-									textureValue = new ViewportRenderingContext.BindTextureData( 5/*"s_shadowMap"*/, texture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.None, TextureFlags.CompareLessEqual );
-								}
-
-								generalContainer.Set( ref textureValue );
-
-								//{
-								//	//!!!!как дл€ forward делать?
-
-								//	var textureValue2 = new ViewportRenderingContext.BindTextureData( 6/*"s_shadowMap"*/, texture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None );
-
-								//	generalContainer.Set( ref textureValue2 );
-								//}
-
-							}
-
-							//Vector2F shadowBias = new Vector2F( lightItem.data.ShadowBias, lightItem.data.ShadowNormalBias );
-							//generalContainer.Set( "u_shadowBias", ParameterType.Vector2, 1, &shadowBias, sizeof( Vector2F ) );
-						}
-					}
-
-					//List<ParameterContainer> containers = new List<ParameterContainer>();
-					//containers.Add( generalContainer );
-
-					{
-						var shader = new CanvasRenderer.ShaderItem();
-						shader.CompiledVertexProgram = passItem.vertexProgram;
-						shader.CompiledFragmentProgram = passItem.fragmentProgram;
-						//shader.CompiledVertexProgram = pass.Programs[ (int)GpuProgramType.Vertex ];
-						//shader.CompiledFragmentProgram = pass.Programs[ (int)GpuProgramType.Fragment ];
-						shader.AdditionalParameterContainers.Add( generalContainer );
-						//shader.AdditionalParameterContainers.AddRange( containers );
-
-						if( lightItem.data.ShadowContactLength > 0 )
-						{
-							//Vector3 cameraPos = context.Owner.CameraSettings.Position;
-							////!!!!double
-							//Vector3F cameraPosition = cameraPos.ToVector3F();
-
-							//!!!!double
-							Matrix4F projectionMatrix = context.Owner.CameraSettings.ProjectionMatrix.ToMatrix4F();
-							Matrix4F viewMatrix = context.Owner.CameraSettings.ViewMatrix.ToMatrix4F();
-
-							Matrix4F viewProjMatrix = projectionMatrix * viewMatrix;
-							viewProjMatrix.GetInverse( out var invViewProjMatrix );
-
-							//float aspectRatio = (float)context.Owner.CameraSettings.AspectRatio;
-							//float fov = (float)context.Owner.CameraSettings.FieldOfView;
-							//float zNear = (float)context.Owner.CameraSettings.NearClipDistance;
-							//float zFar = (float)context.Owner.CameraSettings.FarClipDistance;
-
-							//shader.Parameters.Set( "viewMatrix", viewMatrix );
-							//shader.Parameters.Set( "projMatrix", projectionMatrix );
-
-							shader.Parameters.Set( "viewProj", viewProjMatrix );
-							shader.Parameters.Set( "invViewProj", invViewProjMatrix );
-							//shader.Parameters.Set( "cameraPosition", cameraPosition );
-							//shader.Parameters.Set( "edgeFactorPower", (float)EdgeFactorPower );
-							//shader.Parameters.Set( "initialStepScale", (float)InitialStepScale.Value );
-							//shader.Parameters.Set( "worldThickness", (float)WorldThickness.Value );
-
-							//shader.Parameters.Set( "colorTextureSize", new Vector4F( (float)actualTexture.Result.ResultSize.X, (float)actualTexture.Result.ResultSize.Y, 0.0f, 0.0f ) );
-							//shader.Parameters.Set( "zNear", zNear );
-							//shader.Parameters.Set( "zFar", zFar );
-							//shader.Parameters.Set( "fov", fov );
-							//shader.Parameters.Set( "aspectRatio", aspectRatio );
-						}
-
-						if( screenTriangles != null )
-							context.RenderTrianglesToCurrentViewport( shader, screenTriangles, CanvasRenderer.BlendingType.Add );
-						else
-							context.RenderQuadToCurrentViewport( shader, CanvasRenderer.BlendingType.Add );
 					}
 				}
 			}
+
+			if( existsPrepareShadows )
+				shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "SHADOW_MAP" ) );
+			if( existsContactShadows )
+				shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "SHADOW_CONTACT" ) );
+
+			shader.VertexProgramFileName = @"Base\Shaders\DeferredDirectLight_vs.sc";
+			shader.FragmentProgramFileName = @"Base\Shaders\DeferredDirectLight_fs.sc";
+			shader.AdditionalParameterContainers.Add( generalContainer );
+			context.RenderQuadToCurrentViewport( shader, CanvasRenderer.BlendingType.Add );
+			//}
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
@@ -5350,24 +6828,45 @@ namespace NeoAxis
 			if( deferredShadingData == null )
 				InitDeferredShadingData();
 
-			////!!!!temp
-			////save depth buffer to texture
-			//PhysicallyCorrectRendering_RenderLightsDeferred( context, out var handled );
-			//if( handled )
-			//	return;
+			//if( MultiLightOptimization )
+			//{
 
-			//!!!!
-			//? stencil optimization. сначала проход заполнить стенсиль провер€€ depth. второй проход с проверкой
-
-			foreach( var lightIndex in frameData.LightsInFrustumSorted )
+			//ambient lighting
+			if( frameData.LightsInFrustumSorted.Length > 0 )
 			{
+				var lightIndex = frameData.LightsInFrustumSorted[ 0 ];
 				var lightItem = frameData.Lights[ lightIndex ];
 
-				if( lightItem.data.Type == Light.TypeEnum.Ambient )
-					RenderEnvironmentLightDeferred( context, frameData, sceneTexture, normalTexture, gBuffer2Texture, gBuffer3Texture, gBuffer4Texture, gBuffer5Texture, depthTexture );
-				else
-					RenderDirectLightDeferred( context, frameData, sceneTexture, normalTexture, gBuffer2Texture, gBuffer3Texture, gBuffer4Texture, gBuffer5Texture, depthTexture, lightItem );
+				if( lightItem.data.Type != Light.TypeEnum.Ambient )
+					Log.Fatal( "RenderingPipeline_Basic: RenderLightsDeferred: Internal error. lightItem.data.Type != Light.TypeEnum.Ambient" );
+
+				RenderEnvironmentLightDeferred( context, frameData, sceneTexture, normalTexture, gBuffer2Texture, gBuffer3Texture, gBuffer4Texture, gBuffer5Texture, depthTexture );
 			}
+
+			//direct lighting
+			if( frameData.LightsInFrustumSorted.Length > 1 )
+			{
+				RenderDirectLightsDeferredMultiLight( context, frameData, sceneTexture, normalTexture, gBuffer2Texture, gBuffer3Texture, gBuffer4Texture, gBuffer5Texture, depthTexture );
+			}
+
+			//}
+			//else
+			//{
+			//	var firstDeferredLight = true;
+
+			//	foreach( var lightIndex in frameData.LightsInFrustumSorted )
+			//	{
+			//		var lightItem = frameData.Lights[ lightIndex ];
+
+			//		if( lightItem.data.Type == Light.TypeEnum.Ambient )
+			//			RenderEnvironmentLightDeferred( context, frameData, sceneTexture, normalTexture, gBuffer2Texture, gBuffer3Texture, gBuffer4Texture, gBuffer5Texture, depthTexture );
+			//		else
+			//		{
+			//			RenderDirectLightDeferred( context, frameData, sceneTexture, normalTexture, gBuffer2Texture, gBuffer3Texture, gBuffer4Texture, gBuffer5Texture, depthTexture, lightItem, firstDeferredLight );
+			//			firstDeferredLight = false;
+			//		}
+			//	}
+			//}
 		}
 
 		[StructLayout( LayoutKind.Sequential )]
@@ -5383,41 +6882,55 @@ namespace NeoAxis
 			public float unused3;
 		}
 
-		public unsafe void ForwardBindGeneralTexturesUniforms( ViewportRenderingContext context, FrameData frameData, ref Sphere objectSphere, LightItem lightItem, bool receiveShadows, bool setUniforms, bool bindBrdfLUT = true )
+		static EnvironmentTextureData forwardBindTexture1;
+		static EnvironmentIrradianceData forwardBindHarmonics1;
+		static EnvironmentTextureData forwardBindTexture2;
+		static EnvironmentIrradianceData forwardBindHarmonics2;
+
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		public unsafe void ForwardBindGeneralTexturesUniforms( ViewportRenderingContext context, FrameData frameData/*, ref Sphere objectSphere, LightItem lightItem, bool receiveShadows*/, bool setUniforms )//, bool bindBrdfLUT = true )
 		{
-			GetEnvironmentTexturesByBoundingSphereIntersection( context, frameData, ref objectSphere/*meshItem.BoundingSphere*/, out var texture1, out var harmonics1, out var texture2, out var harmonics2, out var environmentBlendingFactor );
+
+			//!!!!why bind each call
+
+			//!!!!
+			var objectSphere = new Sphere( Vector3.Zero, 1000000 );
+
+			GetEnvironmentTexturesByBoundingSphereIntersection( context, frameData, ref objectSphere/*meshItem.BoundingSphere*/, ref forwardBindTexture1, ref forwardBindHarmonics1, ref forwardBindTexture2, ref forwardBindHarmonics2, out var environmentBlendingFactor );
+			//GetEnvironmentTexturesByBoundingSphereIntersection( context, frameData, ref objectSphere/*meshItem.BoundingSphere*/, out var texture1, out var harmonics1, out var texture2, out var harmonics2, out var environmentBlendingFactor );
 
 			//environment map
 			{
-				context.BindTexture( 3/*"environmentTexture1"*/, texture1.Value.Texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear, 0, false );
+				context.BindTexture( 3/*"environmentTexture1"*/, forwardBindTexture1.Texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear, 0, false );
 
 				//context.BindTexture( new ViewportRenderingContext.BindTextureData( 3/*"environmentTextureIBL1"*/, harmonics1.Value.Texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
 
-				context.BindTexture( 4/*"environmentTexture2"*/, texture2.Value.Texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear, 0, false );
+				context.BindTexture( 4/*"environmentTexture2"*/, forwardBindTexture2.Texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear, 0, false );
 
 				//context.BindTexture( new ViewportRenderingContext.BindTextureData( 5/*"environmentTextureIBL2"*/, harmonics2.Value.Texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
 
 				if( setUniforms )
 				{
-					if( u_forwardEnvironmentData == null )
+					if( !u_forwardEnvironmentData.HasValue )
+					{
 						u_forwardEnvironmentData = GpuProgramManager.RegisterUniform( "u_forwardEnvironmentData", UniformType.Vector4, 5 );
-					if( u_forwardEnvironmentIrradiance1 == null )
 						u_forwardEnvironmentIrradiance1 = GpuProgramManager.RegisterUniform( "u_forwardEnvironmentIrradiance1", UniformType.Vector4, 9 );
-					if( u_forwardEnvironmentIrradiance2 == null )
 						u_forwardEnvironmentIrradiance2 = GpuProgramManager.RegisterUniform( "u_forwardEnvironmentIrradiance2", UniformType.Vector4, 9 );
+					}
 
 					var data = new ForwardEnvironmentDataUniform();
-					data.rotation1 = texture1.Value.Rotation;
-					data.multiplierAndAffect1 = texture1.Value.MultiplierAndAffect;
-					data.rotation2 = texture2.Value.Rotation;
-					data.multiplierAndAffect2 = texture2.Value.MultiplierAndAffect;
+					data.rotation1 = forwardBindTexture1.Rotation;
+					data.multiplierAndAffect1 = forwardBindTexture1.MultiplierAndAffect;
+					data.rotation2 = forwardBindTexture2.Rotation;
+					data.multiplierAndAffect2 = forwardBindTexture2.MultiplierAndAffect;
 					data.blendingFactor = environmentBlendingFactor;
 					Bgfx.SetUniform( u_forwardEnvironmentData.Value, &data, 5 );
 
-					fixed( Vector4F* harmonics = harmonics1.Value.Harmonics ?? EnvironmentIrradianceData.GrayHarmonics )
+					fixed( Vector4F* harmonics = forwardBindHarmonics1.Harmonics ?? EnvironmentIrradianceData.GrayHarmonics )
 						Bgfx.SetUniform( u_forwardEnvironmentIrradiance1.Value, harmonics, 9 );
 
-					fixed( Vector4F* harmonics = harmonics2.Value.Harmonics ?? EnvironmentIrradianceData.GrayHarmonics )
+					fixed( Vector4F* harmonics = forwardBindHarmonics2.Harmonics ?? EnvironmentIrradianceData.GrayHarmonics )
 						Bgfx.SetUniform( u_forwardEnvironmentIrradiance2.Value, harmonics, 9 );
 				}
 
@@ -5451,93 +6964,281 @@ namespace NeoAxis
 				//}
 			}
 
-			//s_brdfLUT
-			if( bindBrdfLUT )
-				BindBrdfLUT( context );
+			////s_brdfLUT
+			//if( bindBrdfLUT )
+			//	BindBrdfLUT( context );
 
-			//light mask
-			if( RenderingSystem.LightMask && lightItem.data.Type != Light.TypeEnum.Ambient )
-			{
-				if( lightItem.data.Type == Light.TypeEnum.Point )
-				{
-					var texture = lightItem.data.Mask;
-					if( texture == null || texture.Result.TextureType != ImageComponent.TypeEnum.Cube )
-						texture = ResourceUtility.WhiteTextureCube;
 
-					//!!!!anisotropic? где еще
-
-					context.BindTexture( 7/*"s_lightMask"*/,
-						texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear, 0, false );
-				}
-				else
-				{
-					var texture = lightItem.data.Mask;
-					if( texture == null || texture.Result.TextureType != ImageComponent.TypeEnum._2D )
-						texture = ResourceUtility.WhiteTexture2D;
-
-					var clamp = lightItem.data.Type == Light.TypeEnum.Spotlight;
-					context.BindTexture( 7/*"s_lightMask"*/,
-						texture, clamp ? TextureAddressingMode.Clamp : TextureAddressingMode.Wrap,
-						FilterOption.Linear, FilterOption.Linear, FilterOption.Linear, 0, false );
-				}
-			}
-
-			//receive shadows
-			//if( receiveShadows )
-			{
-				//Viewport shadowViewport = lightItem.shadowTexture.Result.GetRenderTarget().Viewports[ 0 ];
-
-				//shadowMap
-				{
-					ImageComponent texture;
-					if( receiveShadows )
-					{
-						texture = lightItem.shadowTexture;
-					}
-					else
-					{
-						if( lightItem.data.Type == Light.TypeEnum.Point )
-							texture = nullShadowTextureCube;
-						else
-							texture = nullShadowTexture2D;
-					}
-
-					if( RenderingSystem.ShadowTextureFormat == ProjectSettingsPage_Rendering.ShadowTextureFormatEnum.Byte4 )
-					{
-						context.BindTexture( 8/*"g_shadowMap"*/, texture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.None, 0, false );
-					}
-					else
-					{
-						context.BindTexture( 8/*"g_shadowMap"*/, texture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.None, TextureFlags.CompareLessEqual, false );
-					}
-
-					//var textureValue = new ViewportRenderingContext.BindTextureData( 8/*"g_shadowMap"*/,
-					//	texture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear,
-					//	FilterOption.None );
-					//textureValue.AdditionalFlags |= TextureFlags.CompareLessEqual;
-					//context.BindTexture( ref textureValue );
-				}
-
-				//Vector2F shadowBias = new Vector2F( lightItem.data.ShadowBias, lightItem.data.ShadowNormalBias );
-				//generalContainer.Set( "u_shadowBias", ParameterType.Vector2, 1, &shadowBias, sizeof( Vector2F ) );
-			}
-
-			////set u_environmentBlendingFactor
-			//if( setUniforms )
+			////light mask
+			//if( RenderingSystem.LightMask && lightItem.data.Type != Light.TypeEnum.Ambient )
 			//{
-			//	if( u_environmentBlendingFactor == null )
-			//		u_environmentBlendingFactor = GpuProgramManager.RegisterUniform( "u_environmentBlendingFactor", UniformType.Vector4, 1 );
+			//	if( lightItem.data.Type == Light.TypeEnum.Point )
+			//	{
+			//		var texture = lightItem.data.Mask;
+			//		if( texture == null || texture.Result.TextureType != ImageComponent.TypeEnum.Cube )
+			//			texture = ResourceUtility.WhiteTextureCube;
 
-			//	var value = new Vector4F( environmentBlendingFactor, 0, 0, 0 );
-			//	Bgfx.SetUniform( u_environmentBlendingFactor.Value, &value, 1 );
+			//		//!!!!anisotropic? где еще
+
+			//		context.BindTexture( 7/*"s_lightMask"*/,
+			//			texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear, 0, false );
+			//	}
+			//	else
+			//	{
+			//		var texture = lightItem.data.Mask;
+			//		if( texture == null || texture.Result.TextureType != ImageComponent.TypeEnum._2D )
+			//			texture = ResourceUtility.WhiteTexture2D;
+
+			//		var clamp = lightItem.data.Type == Light.TypeEnum.Spotlight;
+			//		context.BindTexture( 7/*"s_lightMask"*/,
+			//			texture, clamp ? TextureAddressingMode.Clamp : TextureAddressingMode.Wrap,
+			//			FilterOption.Linear, FilterOption.Linear, FilterOption.Linear, 0, false );
+			//	}
 			//}
+
+
+			////receive shadows
+			////if( receiveShadows )
+			//{
+			//	//Viewport shadowViewport = lightItem.shadowTexture.Result.GetRenderTarget().Viewports[ 0 ];
+
+			//	//shadowMap
+			//	{
+			//		ImageComponent texture;
+			//		if( receiveShadows )
+			//		{
+			//			texture = lightItem.shadowTexture;
+			//		}
+			//		else
+			//		{
+			//			if( lightItem.data.Type == Light.TypeEnum.Point )
+			//				texture = nullShadowTextureCube;
+			//			else
+			//				texture = nullShadowTexture2D;
+			//		}
+
+			//		if( RenderingSystem.ShadowTextureFormat == ProjectSettingsPage_Rendering.ShadowTextureFormatEnum.Byte4 )
+			//		{
+			//			context.BindTexture( 8/*"g_shadowMap"*/, texture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.None, 0, false );
+			//		}
+			//		else
+			//		{
+			//			context.BindTexture( 8/*"g_shadowMap"*/, texture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.None, TextureFlags.CompareLessEqual, false );
+			//		}
+
+			//		//var textureValue = new ViewportRenderingContext.BindTextureData( 8/*"g_shadowMap"*/,
+			//		//	texture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear,
+			//		//	FilterOption.None );
+			//		//textureValue.AdditionalFlags |= TextureFlags.CompareLessEqual;
+			//		//context.BindTexture( ref textureValue );
+			//	}
+
+			//	//Vector2F shadowBias = new Vector2F( lightItem.data.ShadowBias, lightItem.data.ShadowNormalBias );
+			//	//generalContainer.Set( "u_shadowBias", ParameterType.Vector2, 1, &shadowBias, sizeof( Vector2F ) );
+			//}
+
+			//////set u_environmentBlendingFactor
+			////if( setUniforms )
+			////{
+			////	if( u_environmentBlendingFactor == null )
+			////		u_environmentBlendingFactor = GpuProgramManager.RegisterUniform( "u_environmentBlendingFactor", UniformType.Vector4, 1 );
+
+			////	var value = new Vector4F( environmentBlendingFactor, 0, 0, 0 );
+			////	Bgfx.SetUniform( u_environmentBlendingFactor.Value, &value, 1 );
+			////}
+		}
+
+
+		//[MethodImpl( (MethodImplOptions)512 )]
+		//public unsafe void ForwardBindGeneralTexturesUniforms( ViewportRenderingContext context, FrameData frameData, ref Sphere objectSphere, LightItem lightItem, bool receiveShadows, bool setUniforms, bool bindBrdfLUT = true )
+		//{
+		//	GetEnvironmentTexturesByBoundingSphereIntersection( context, frameData, ref objectSphere/*meshItem.BoundingSphere*/, ref forwardBindTexture1, ref forwardBindHarmonics1, ref forwardBindTexture2, ref forwardBindHarmonics2, out var environmentBlendingFactor );
+		//	//GetEnvironmentTexturesByBoundingSphereIntersection( context, frameData, ref objectSphere/*meshItem.BoundingSphere*/, out var texture1, out var harmonics1, out var texture2, out var harmonics2, out var environmentBlendingFactor );
+
+		//	//environment map
+		//	{
+		//		context.BindTexture( 3/*"environmentTexture1"*/, forwardBindTexture1.Texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear, 0, false );
+
+		//		//context.BindTexture( new ViewportRenderingContext.BindTextureData( 3/*"environmentTextureIBL1"*/, harmonics1.Value.Texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+
+		//		context.BindTexture( 4/*"environmentTexture2"*/, forwardBindTexture2.Texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear, 0, false );
+
+		//		//context.BindTexture( new ViewportRenderingContext.BindTextureData( 5/*"environmentTextureIBL2"*/, harmonics2.Value.Texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+
+		//		if( setUniforms )
+		//		{
+		//			if( !u_forwardEnvironmentData.HasValue )
+		//			{
+		//				u_forwardEnvironmentData = GpuProgramManager.RegisterUniform( "u_forwardEnvironmentData", UniformType.Vector4, 5 );
+		//				u_forwardEnvironmentIrradiance1 = GpuProgramManager.RegisterUniform( "u_forwardEnvironmentIrradiance1", UniformType.Vector4, 9 );
+		//				u_forwardEnvironmentIrradiance2 = GpuProgramManager.RegisterUniform( "u_forwardEnvironmentIrradiance2", UniformType.Vector4, 9 );
+		//			}
+
+		//			var data = new ForwardEnvironmentDataUniform();
+		//			data.rotation1 = forwardBindTexture1.Rotation;
+		//			data.multiplierAndAffect1 = forwardBindTexture1.MultiplierAndAffect;
+		//			data.rotation2 = forwardBindTexture2.Rotation;
+		//			data.multiplierAndAffect2 = forwardBindTexture2.MultiplierAndAffect;
+		//			data.blendingFactor = environmentBlendingFactor;
+		//			Bgfx.SetUniform( u_forwardEnvironmentData.Value, &data, 5 );
+
+		//			fixed( Vector4F* harmonics = forwardBindHarmonics1.Harmonics ?? EnvironmentIrradianceData.GrayHarmonics )
+		//				Bgfx.SetUniform( u_forwardEnvironmentIrradiance1.Value, harmonics, 9 );
+
+		//			fixed( Vector4F* harmonics = forwardBindHarmonics2.Harmonics ?? EnvironmentIrradianceData.GrayHarmonics )
+		//				Bgfx.SetUniform( u_forwardEnvironmentIrradiance2.Value, harmonics, 9 );
+		//		}
+
+		//		//context.BindTexture( new ViewportRenderingContext.BindTextureData( 2/*"environmentTexture1"*/, texture1.Value.Texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+
+		//		//context.BindTexture( new ViewportRenderingContext.BindTextureData( 3/*"environmentTextureIBL1"*/, harmonics1.Value.Texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+
+		//		//context.BindTexture( new ViewportRenderingContext.BindTextureData( 4/*"environmentTexture2"*/, texture2.Value.Texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+
+		//		//context.BindTexture( new ViewportRenderingContext.BindTextureData( 5/*"environmentTextureIBL2"*/, harmonics2.Value.Texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+
+		//		//if( setUniforms )
+		//		//{
+		//		//	if( u_environmentTexture1Rotation == null )
+		//		//		u_environmentTexture1Rotation = GpuProgramManager.RegisterUniform( "u_environmentTexture1Rotation", UniformType.Matrix3x3, 1 );
+		//		//	if( u_environmentTexture2Rotation == null )
+		//		//		u_environmentTexture2Rotation = GpuProgramManager.RegisterUniform( "u_environmentTexture2Rotation", UniformType.Matrix3x3, 1 );
+		//		//	if( u_environmentTexture1MultiplierAndAffect == null )
+		//		//		u_environmentTexture1MultiplierAndAffect = GpuProgramManager.RegisterUniform( "u_environmentTexture1MultiplierAndAffect", UniformType.Vector4, 1 );
+		//		//	if( u_environmentTexture2MultiplierAndAffect == null )
+		//		//		u_environmentTexture2MultiplierAndAffect = GpuProgramManager.RegisterUniform( "u_environmentTexture2MultiplierAndAffect", UniformType.Vector4, 1 );
+
+		//		//	var rotation1 = texture1.Value.Rotation;
+		//		//	var rotation2 = texture2.Value.Rotation;
+		//		//	var multiplier1 = texture1.Value.MultiplierAndAffect;
+		//		//	var multiplier2 = texture2.Value.MultiplierAndAffect;
+		//		//	Bgfx.SetUniform( u_environmentTexture1Rotation.Value, &rotation1, 1 );
+		//		//	Bgfx.SetUniform( u_environmentTexture2Rotation.Value, &rotation2, 1 );
+		//		//	Bgfx.SetUniform( u_environmentTexture1MultiplierAndAffect.Value, &multiplier1, 1 );
+		//		//	Bgfx.SetUniform( u_environmentTexture2MultiplierAndAffect.Value, &multiplier2, 1 );
+		//		//}
+		//	}
+
+		//	//s_brdfLUT
+		//	if( bindBrdfLUT )
+		//		BindBrdfLUT( context );
+
+		//	//light mask
+		//	if( RenderingSystem.LightMask && lightItem.data.Type != Light.TypeEnum.Ambient )
+		//	{
+		//		if( lightItem.data.Type == Light.TypeEnum.Point )
+		//		{
+		//			var texture = lightItem.data.Mask;
+		//			if( texture == null || texture.Result.TextureType != ImageComponent.TypeEnum.Cube )
+		//				texture = ResourceUtility.WhiteTextureCube;
+
+		//			//!!!!anisotropic? где еще
+
+		//			context.BindTexture( 7/*"s_lightMask"*/,
+		//				texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear, 0, false );
+		//		}
+		//		else
+		//		{
+		//			var texture = lightItem.data.Mask;
+		//			if( texture == null || texture.Result.TextureType != ImageComponent.TypeEnum._2D )
+		//				texture = ResourceUtility.WhiteTexture2D;
+
+		//			var clamp = lightItem.data.Type == Light.TypeEnum.Spotlight;
+		//			context.BindTexture( 7/*"s_lightMask"*/,
+		//				texture, clamp ? TextureAddressingMode.Clamp : TextureAddressingMode.Wrap,
+		//				FilterOption.Linear, FilterOption.Linear, FilterOption.Linear, 0, false );
+		//		}
+		//	}
+
+		//	//receive shadows
+		//	//if( receiveShadows )
+		//	{
+		//		//Viewport shadowViewport = lightItem.shadowTexture.Result.GetRenderTarget().Viewports[ 0 ];
+
+		//		//shadowMap
+		//		{
+		//			ImageComponent texture;
+		//			if( receiveShadows )
+		//			{
+		//				texture = lightItem.shadowTexture;
+		//			}
+		//			else
+		//			{
+		//				if( lightItem.data.Type == Light.TypeEnum.Point )
+		//					texture = nullShadowTextureCube;
+		//				else
+		//					texture = nullShadowTexture2D;
+		//			}
+
+		//			if( RenderingSystem.ShadowTextureFormat == ProjectSettingsPage_Rendering.ShadowTextureFormatEnum.Byte4 )
+		//			{
+		//				context.BindTexture( 8/*"g_shadowMap"*/, texture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.None, 0, false );
+		//			}
+		//			else
+		//			{
+		//				context.BindTexture( 8/*"g_shadowMap"*/, texture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.None, TextureFlags.CompareLessEqual, false );
+		//			}
+
+		//			//var textureValue = new ViewportRenderingContext.BindTextureData( 8/*"g_shadowMap"*/,
+		//			//	texture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear,
+		//			//	FilterOption.None );
+		//			//textureValue.AdditionalFlags |= TextureFlags.CompareLessEqual;
+		//			//context.BindTexture( ref textureValue );
+		//		}
+
+		//		//Vector2F shadowBias = new Vector2F( lightItem.data.ShadowBias, lightItem.data.ShadowNormalBias );
+		//		//generalContainer.Set( "u_shadowBias", ParameterType.Vector2, 1, &shadowBias, sizeof( Vector2F ) );
+		//	}
+
+		//	////set u_environmentBlendingFactor
+		//	//if( setUniforms )
+		//	//{
+		//	//	if( u_environmentBlendingFactor == null )
+		//	//		u_environmentBlendingFactor = GpuProgramManager.RegisterUniform( "u_environmentBlendingFactor", UniformType.Vector4, 1 );
+
+		//	//	var value = new Vector4F( environmentBlendingFactor, 0, 0, 0 );
+		//	//	Bgfx.SetUniform( u_environmentBlendingFactor.Value, &value, 1 );
+		//	//}
+		//}
+
+		static bool IsDirectionalAmbientOnlyModeEnabled( ViewportRenderingContext context, out bool prepareShadows )
+		{
+			if( SystemSettings.LimitedDevice )
+			{
+				var frameData = context.FrameData;
+
+				if( frameData.LightsInFrustumSorted.Length <= 1 )
+				{
+					prepareShadows = false;
+					return true;
+				}
+
+				if( frameData.LightsInFrustumSorted.Length == 2 )
+				{
+					var lightItem = frameData.Lights[ frameData.LightsInFrustumSorted[ 1 ] ];
+
+					if( lightItem.data.Type == Light.TypeEnum.Directional )
+					{
+						prepareShadows = lightItem.prepareShadows;
+						return true;
+					}
+				}
+			}
+
+			prepareShadows = false;
+			return false;
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
 		protected unsafe virtual void Render3DSceneForwardOpaque( ViewportRenderingContext context, FrameData frameData )
 		{
 			Viewport viewportOwner = context.Owner;
-			var sectorsByDistance = SectorsByDistance.Value;
+			var sectorsByDistance = context.SectorsByDistance;// SectorsByDistance.Value;
+
+			var frameDataRenderSceneDataMeshes = frameData.RenderSceneData.Meshes;
+			var frameDataRenderSceneDataBillboards = frameData.RenderSceneData.Billboards;
+			var frameDataMeshes = frameData.Meshes;
+			var frameDataBillboards = frameData.Billboards;
 
 			using( var renderableGroupsToDraw = new OpenListNative<RenderableGroupWithDistance>( frameData.RenderableGroupsInFrustum.Count ) )
 			{
@@ -5547,10 +7248,10 @@ namespace NeoAxis
 
 					if( renderableGroup.X == 0 )
 					{
-						ref var data = ref frameData.Meshes.Data[ renderableGroup.Y ];
+						ref var data = ref frameDataMeshes.Data[ renderableGroup.Y ];
 						if( ( data.Flags & FrameData.MeshItem.FlagsEnum.UseForwardOpaque ) != 0 )
 						{
-							ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ renderableGroup.Y ];
+							ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup.Y ];
 							if( !meshItem.OnlyForShadowGeneration )
 								add = true;
 						}
@@ -5558,7 +7259,7 @@ namespace NeoAxis
 					}
 					else
 					{
-						ref var data = ref frameData.Billboards.Data[ renderableGroup.Y ];
+						ref var data = ref frameDataBillboards.Data[ renderableGroup.Y ];
 						add = ( data.Flags & FrameData.BillboardItem.FlagsEnum.UseForwardOpaque ) != 0;
 					}
 
@@ -5588,19 +7289,15 @@ namespace NeoAxis
 				//bind textures for all render operations
 				BindBrdfLUT( context );
 				BindMaterialsTexture( context, frameData );
+				BindBonesTexture( context, frameData );
 				BindSamplersForTextureOnlySlots( context, true, false );
 				BindMaterialData( context, null, false, false );
+				BindForwardLightAndShadows( context, frameData );
 
+				var directionalAmbientOnly = IsDirectionalAmbientOnlyModeEnabled( context, out var directionalAmbientOnlyPrepareShadows );
 
-				LightItem lightItemBinded = null;
-
-				for( int nLightsInFrustumSorted = 0; nLightsInFrustumSorted < frameData.LightsInFrustumSorted.Length; nLightsInFrustumSorted++ )
 				{
-					var lightIndex = frameData.LightsInFrustumSorted[ nLightsInFrustumSorted ];
-					var lightItem = frameData.Lights[ lightIndex ];
-
-					int sectorCount = nLightsInFrustumSorted == 0 ? sectorsByDistance : 1;
-
+					int sectorCount = sectorsByDistance;// nLightsInFrustumSorted == 0 ? sectorsByDistance : 1;
 
 					//prepare outputInstancingManagers
 					Parallel.For( 0, sectorCount, delegate ( int nSector )
@@ -5621,37 +7318,27 @@ namespace NeoAxis
 							{
 								//meshes
 
-								ref var meshItem2 = ref frameData.Meshes.Data[ renderableGroup.RenderableGroup.Y ];
+								ref var meshItem2 = ref frameDataMeshes.Data[ renderableGroup.RenderableGroup.Y ];
 
-								bool affectedByLight;
-								var lightType = lightItem.data.Type;
-								if( lightType == Light.TypeEnum.Point || lightType == Light.TypeEnum.Spotlight )
-									affectedByLight = meshItem2.ContainsPointOrSpotLight( lightIndex );
-								else
-									affectedByLight = true;
+								ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup.RenderableGroup.Y ];
+								var meshData = meshItem.MeshData;
 
-								if( affectedByLight )
+								if( !meshItem.OnlyForShadowGeneration )
 								{
-									ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ renderableGroup.RenderableGroup.Y ];
-									var meshData = meshItem.MeshData;
-
-									if( !meshItem.OnlyForShadowGeneration )
+									for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
 									{
-										for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+										var oper = meshData.RenderOperations[ nOperation ];
+										foreach( var materialData in GetMeshMaterialData( ref meshItem, oper, nOperation, true, false ) )
 										{
-											var oper = meshData.RenderOperations[ nOperation ];
-											foreach( var materialData in GetMeshMaterialData( ref meshItem, oper, nOperation, true, false ) )
+											bool add = !materialData.Transparent;
+											if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+												add = false;
+											if( add )
 											{
-												bool add = !materialData.Transparent;
-												if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
-													add = false;
-												if( add )
+												if( materialData.AllPasses.Count != 0 )//&& (int)lightItem.data.Type < materialData.passesByLightType.Length )
 												{
-													if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
-													{
-														bool instancing = Instancing && meshItem.AnimationData == null && !meshItem.InstancingEnabled && meshItem.CutVolumes == null;
-														manager.Add( renderableGroup.RenderableGroup, nOperation, oper, materialData, instancing );
-													}
+													bool instancing = Instancing && meshItem.AnimationData == null && !meshItem.InstancingEnabled && meshItem.CutVolumes == null && meshItem.ObjectInstanceParameters == null && !meshItem.Tessellation;
+													manager.Add( renderableGroup.RenderableGroup, nOperation, oper, materialData, instancing );
 												}
 											}
 										}
@@ -5662,36 +7349,26 @@ namespace NeoAxis
 							{
 								//billboards
 
-								ref var billboardItem2 = ref frameData.Billboards.Data[ renderableGroup.RenderableGroup.Y ];
+								ref var billboardItem2 = ref frameDataBillboards.Data[ renderableGroup.RenderableGroup.Y ];
 
-								bool affectedByLight;
-								var lightType = lightItem.data.Type;
-								if( lightType == Light.TypeEnum.Point || lightType == Light.TypeEnum.Spotlight )
-									affectedByLight = billboardItem2.ContainsPointOrSpotLight( lightIndex );
-								else
-									affectedByLight = true;
+								ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableGroup.RenderableGroup.Y ];
+								var meshData = Billboard.GetBillboardMesh().Result.MeshData;
 
-								if( affectedByLight )
+								for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
 								{
-									ref var billboardItem = ref frameData.RenderSceneData.Billboards.Data[ renderableGroup.RenderableGroup.Y ];
-									var meshData = Billboard.GetBillboardMesh().Result.MeshData;
-
-									for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+									var oper = meshData.RenderOperations[ nOperation ];
+									foreach( var materialData in GetBillboardMaterialData( ref billboardItem, true, false ) )
 									{
-										var oper = meshData.RenderOperations[ nOperation ];
-										foreach( var materialData in GetBillboardMaterialData( ref billboardItem, true, false ) )
+										bool add = !materialData.Transparent;
+										if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+											add = false;
+										if( add )
 										{
-											bool add = !materialData.Transparent;
-											if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
-												add = false;
-											if( add )
+											if( materialData.AllPasses.Count != 0 )//&& (int)lightItem.data.Type < materialData.passesByLightType.Length )
 											{
-												if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
-												{
-													//!!!!или если уже собран из GroupOfObjects
-													bool instancing = Instancing && billboardItem.CutVolumes == null;
-													manager.Add( renderableGroup.RenderableGroup, nOperation, oper, materialData, instancing );
-												}
+												//!!!!или если уже собран из GroupOfObjects
+												bool instancing = Instancing && billboardItem.CutVolumes == null && billboardItem.MaterialInstanceParameters == null;
+												manager.Add( renderableGroup.RenderableGroup, nOperation, oper, materialData, instancing );
 											}
 										}
 									}
@@ -5719,31 +7396,29 @@ namespace NeoAxis
 							{
 								ref var outputItem = ref outputItems.Data[ nOutputItem ];
 								var materialData = outputItem.materialData;
-								var voxelRendering = outputItem.operation.VoxelDataInfo != null;
+								var outputItemoperation = outputItem.operation;
+								var outputItemoperationVoxelDataInfo = outputItemoperation.VoxelDataInfo;
+								var voxelRendering = outputItemoperationVoxelDataInfo != null;
 
-								//set lightItem uniforms
-								if( lightItemBinded != lightItem )
-								{
-									lightItem.Bind( this, context );
-									lightItemBinded = lightItem;
-								}
+								var pass = materialData.GetForwardShadingPass( directionalAmbientOnly, directionalAmbientOnlyPrepareShadows, voxelRendering );
+								//var pass = materialData.forwardShadingPass;
 
-								var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
-								bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+								//var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+								//bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
 
-								GpuMaterialPass pass;
-								if( receiveShadows )
-								{
-									pass = passesGroup.passWithShadows;
-									//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
-									//	pass = passesGroup.passWithShadowsHigh;
-									//else
-									//	pass = passesGroup.passWithShadowsLow;
-								}
-								else
-									pass = passesGroup.passWithoutShadows;
+								//GpuMaterialPass pass;
+								//if( receiveShadows )
+								//{
+								//	pass = passesGroup.passWithShadows;
+								//	//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+								//	//	pass = passesGroup.passWithShadowsHigh;
+								//	//else
+								//	//	pass = passesGroup.passWithShadowsLow;
+								//}
+								//else
+								//	pass = passesGroup.passWithoutShadows;
 
-								if( Instancing && outputItem.renderableItemsCount >= InstancingMinCount )
+								if( Instancing && outputItem.renderableItemsCount >= 2 )//InstancingMinCount )
 								{
 									//with instancing
 
@@ -5756,31 +7431,30 @@ namespace NeoAxis
 									if( firstRenderableItem.X == 0 )
 									{
 										//meshes
-										ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ firstRenderableItem.Y ];
+										ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ firstRenderableItem.Y ];
 										var meshData = meshItem.MeshData;
 
-										ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true, false );
+										ForwardBindGeneralTexturesUniforms( context, frameData/*, ref meshItem.BoundingSphere, lightItem, receiveShadows*/, true );
 
-										BindRenderOperationData( context, frameData, materialData, true, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, outputItem.operation.VoxelDataImage, outputItem.operation.VoxelDataInfo );
+										BindRenderOperationData( context, frameData, materialData, true, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, outputItemoperation.UnwrappedUV, ref meshItem.Color, outputItemoperation.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, null, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
 									}
 									else if( firstRenderableItem.X == 1 )
 									{
 										//billboards
-										ref var billboardItem = ref frameData.RenderSceneData.Billboards.Data[ firstRenderableItem.Y ];
+										ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ firstRenderableItem.Y ];
 										var meshData = Billboard.GetBillboardMesh().Result.MeshData;
 
-										ForwardBindGeneralTexturesUniforms( context, frameData, ref billboardItem.BoundingSphere, lightItem, receiveShadows, true, false );
+										ForwardBindGeneralTexturesUniforms( context, frameData/*, ref billboardItem.BoundingSphere, lightItem, receiveShadows*/, true );
 
-										BindRenderOperationData( context, frameData, materialData, true, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, 0, outputItem.operation.UnwrappedUV, ref billboardItem.Color, outputItem.operation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, outputItem.operation.VoxelDataImage, outputItem.operation.VoxelDataInfo );
+										BindRenderOperationData( context, frameData, materialData, true, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PreviousFramePositionChange, 0, outputItemoperation.UnwrappedUV, ref billboardItem.Color, outputItemoperation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, null, 0, ref vector3FZero );
 									}
 
 									int instanceStride = sizeof( RenderSceneData.ObjectInstanceData );
 									int instanceCount = outputItem.renderableItemsCount;
 
-									if( InstanceDataBuffer.GetAvailableSpace( instanceCount, instanceStride ) == instanceCount )
+									var instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
+									if( instanceBuffer.Valid )
 									{
-										var instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
-
 										//get instancing matrices
 										RenderSceneData.ObjectInstanceData* instancingData = (RenderSceneData.ObjectInstanceData*)instanceBuffer.Data;
 										int currentMatrix = 0;
@@ -5791,21 +7465,19 @@ namespace NeoAxis
 											if( renderableItem.X == 0 )
 											{
 												//meshes
-												ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ renderableItem.Y ];
+												ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableItem.Y ];
 												meshItem.GetInstancingData( out instancingData[ currentMatrix++ ] );
 											}
 											else if( renderableItem.X == 1 )
 											{
 												//billboards
-												ref var billboardItem = ref frameData.RenderSceneData.Billboards.Data[ renderableItem.Y ];
+												ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableItem.Y ];
 												billboardItem.GetInstancingData( out instancingData[ currentMatrix++ ] );
 											}
 										}
 
-										RenderOperation( context, outputItem.operation, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
+										RenderOperation( context, outputItemoperation, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
 									}
-									//else
-									//	Log.Fatal( "InstanceDataBuffer.GetAvailableSpace( instanceCount, instanceStride ) != instanceCount." );
 								}
 								else
 								{
@@ -5827,33 +7499,35 @@ namespace NeoAxis
 										if( renderableItem.X == 0 )
 										{
 											//meshes
-											ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ renderableItem.Y ];
+											ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableItem.Y ];
 											var meshData = meshItem.MeshData;
 
-											ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, nRenderableItem == 0, false );
+											ForwardBindGeneralTexturesUniforms( context, frameData/*, ref meshItem.BoundingSphere, lightItem, receiveShadows*/, nRenderableItem == 0 );
 
-											BindRenderOperationData( context, frameData, materialData, meshItem.InstancingEnabled, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, outputItem.operation.UnwrappedUV, ref meshItem.Color, outputItem.operation.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, outputItem.operation.VoxelDataImage, outputItem.operation.VoxelDataInfo );
+											BindRenderOperationData( context, frameData, materialData, meshItem.InstancingEnabled, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, outputItemoperation.UnwrappedUV, ref meshItem.Color, outputItemoperation.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, meshItem.ObjectInstanceParameters, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
 
 											if( !meshItem.InstancingEnabled )
-												fixed( Matrix4F* p = &meshItem.Transform )
+												fixed( Matrix4F* p = &meshItem.TransformRelative )
 													Bgfx.SetTransform( (float*)p );
 
-											RenderOperation( context, outputItem.operation, pass, null, meshItem.CutVolumes, meshItem.InstancingEnabled, meshItem.InstancingVertexBuffer, ref meshItem.InstancingDataBuffer, meshItem.InstancingStart, meshItem.InstancingCount );
+											var tessItem = meshItem.Tessellation ? TessellationGetItem( context, outputItemoperation, materialData ) : null;
+
+											RenderOperation( context, outputItemoperation, pass, null, meshItem.CutVolumes, meshItem.InstancingEnabled, meshItem.InstancingVertexBuffer, ref meshItem.InstancingDataBuffer, meshItem.InstancingStart, meshItem.InstancingCount, tessItem );
 										}
 										else if( renderableItem.X == 1 )
 										{
 											//billboards
-											ref var billboardItem = ref frameData.RenderSceneData.Billboards.Data[ renderableItem.Y ];
+											ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableItem.Y ];
 											var meshData = Billboard.GetBillboardMesh().Result.MeshData;
 
-											ForwardBindGeneralTexturesUniforms( context, frameData, ref billboardItem.BoundingSphere, lightItem, receiveShadows, nRenderableItem == 0, false );
+											ForwardBindGeneralTexturesUniforms( context, frameData/*, ref billboardItem.BoundingSphere, lightItem, receiveShadows*/, nRenderableItem == 0 );
 
-											BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, 0, outputItem.operation.UnwrappedUV, ref billboardItem.Color, outputItem.operation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, outputItem.operation.VoxelDataImage, outputItem.operation.VoxelDataInfo );
+											BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PreviousFramePositionChange, 0, outputItemoperation.UnwrappedUV, ref billboardItem.Color, outputItemoperation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, billboardItem.MaterialInstanceParameters, 0, ref vector3FZero );
 
-											billboardItem.GetWorldMatrix( out var worldMatrix );
+											billboardItem.GetWorldMatrixRelative( out var worldMatrix );
 											Bgfx.SetTransform( (float*)&worldMatrix );
 
-											RenderOperation( context, outputItem.operation, pass, null, billboardItem.CutVolumes );
+											RenderOperation( context, outputItemoperation, pass, null, billboardItem.CutVolumes );
 										}
 									}
 								}
@@ -5891,81 +7565,67 @@ namespace NeoAxis
 								{
 									//meshes
 
-									ref var meshItem2 = ref frameData.Meshes.Data[ renderableGroup.RenderableGroup.Y ];
+									ref var meshItem2 = ref frameDataMeshes.Data[ renderableGroup.RenderableGroup.Y ];
 
 									if( ( meshItem2.Flags & FrameData.MeshItem.FlagsEnum.ContainsForwardOpaqueLayersOnOpaqueBaseObjects ) != 0 )
 									{
-										bool affectedByLight;
-										var lightType = lightItem.data.Type;
-										if( lightType == Light.TypeEnum.Point || lightType == Light.TypeEnum.Spotlight )
-											affectedByLight = meshItem2.ContainsPointOrSpotLight( lightIndex );
-										else
-											affectedByLight = true;
+										ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup.RenderableGroup.Y ];
+										var meshData = meshItem.MeshData;
 
-										if( affectedByLight )
+										for( int nLayer = 0; nLayer < meshItem.Layers.Length; nLayer++ )
 										{
-											ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ renderableGroup.RenderableGroup.Y ];
-											var meshData = meshItem.MeshData;
-
-											for( int nLayer = 0; nLayer < meshItem.Layers.Length; nLayer++ )
+											ref var layer = ref meshItem.Layers[ nLayer ];
+											foreach( var materialData in GetLayerMaterialData( ref layer, true, false ) )
 											{
-												ref var layer = ref meshItem.Layers[ nLayer ];
-												foreach( var materialData in GetLayerMaterialData( ref layer, true, false ) )
+												bool add = !materialData.Transparent;
+												if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+													add = false;
+												if( add )
 												{
-													bool add = !materialData.Transparent;
-													if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
-														add = false;
-													if( add )
+													if( materialData.AllPasses.Count != 0 )
 													{
-														if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+														//bind material data
+
+														var pass = materialData.GetForwardShadingPass( directionalAmbientOnly, directionalAmbientOnlyPrepareShadows, false );
+														//var pass = materialData.forwardShadingPass;
+
+														//var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+														//bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+
+														//GpuMaterialPass pass;
+														//if( receiveShadows )
+														//{
+														//	pass = passesGroup.passWithShadows;
+														//	//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+														//	//	pass = passesGroup.passWithShadowsHigh;
+														//	//else
+														//	//	pass = passesGroup.passWithShadowsLow;
+														//}
+														//else
+														//	pass = passesGroup.passWithoutShadows;
+
+														ForwardBindGeneralTexturesUniforms( context, frameData/*, ref meshItem.BoundingSphere, lightItem, receiveShadows*/, true );
+
+														if( !meshItem.InstancingEnabled )
+															fixed( Matrix4F* p = &meshItem.TransformRelative )
+																Bgfx.SetTransform( (float*)p );
+
+														var color = /*meshItem.Color * */ layer.MaterialColor;
+
+														for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
 														{
-															//set lightItem uniforms
-															if( lightItemBinded != lightItem )
-															{
-																lightItem.Bind( this, context );
-																lightItemBinded = lightItem;
-															}
+															var oper = meshData.RenderOperations[ nOperation ];
+															var voxelRendering = oper.VoxelDataInfo != null;
 
-															//bind material data
+															BindMaterialData( context, materialData, false, voxelRendering );
+															BindSamplersForTextureOnlySlots( context, false, oper.VoxelDataInfo != null );
+															materialData.BindCurrentFrameDataMaskTextures( context, layer.Mask );
 
-															var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
-															bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+															BindRenderOperationData( context, frameData, materialData, meshItem.InstancingEnabled, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, layer.MaskFormat == PaintLayer.MaskFormatEnum.Triangles, oper.VoxelDataImage, oper.VoxelDataInfo, null, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative, layer.UVScale );
 
-															GpuMaterialPass pass;
-															if( receiveShadows )
-															{
-																pass = passesGroup.passWithShadows;
-																//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
-																//	pass = passesGroup.passWithShadowsHigh;
-																//else
-																//	pass = passesGroup.passWithShadowsLow;
-															}
-															else
-																pass = passesGroup.passWithoutShadows;
-
-															ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true, false );
-
-															if( !meshItem.InstancingEnabled )
-																fixed( Matrix4F* p = &meshItem.Transform )
-																	Bgfx.SetTransform( (float*)p );
-
-															var color = /*meshItem.Color * */ layer.MaterialColor;
-
-															for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
-															{
-																var oper = meshData.RenderOperations[ nOperation ];
-																var voxelRendering = oper.VoxelDataInfo != null;
-
-																BindMaterialData( context, materialData, false, voxelRendering );
-																BindSamplersForTextureOnlySlots( context, false, oper.VoxelDataInfo != null );
-																materialData.BindCurrentFrameDataMaskTextures( context, layer.Mask );
-
-																BindRenderOperationData( context, frameData, materialData, meshItem.InstancingEnabled, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, layer.MaskFormat == PaintLayer.MaskFormatEnum.Triangles, oper.VoxelDataImage, oper.VoxelDataInfo );
-
-																RenderOperation( context, oper, pass, null, meshItem.CutVolumes, meshItem.InstancingEnabled, meshItem.InstancingVertexBuffer, ref meshItem.InstancingDataBuffer, meshItem.InstancingStart, meshItem.InstancingCount );
-															}
-
+															RenderOperation( context, oper, pass, null, meshItem.CutVolumes, meshItem.InstancingEnabled, meshItem.InstancingVertexBuffer, ref meshItem.InstancingDataBuffer, meshItem.InstancingStart, meshItem.InstancingCount );
 														}
+
 													}
 												}
 											}
@@ -5977,12 +7637,471 @@ namespace NeoAxis
 					}
 				}
 			}
+
+			Bgfx.Discard( DiscardFlags.All );
 		}
+
+		//[MethodImpl( (MethodImplOptions)512 )]
+		//protected unsafe virtual void Render3DSceneForwardOpaque( ViewportRenderingContext context, FrameData frameData )
+		//{
+		//	Viewport viewportOwner = context.Owner;
+		//	var sectorsByDistance = SectorsByDistance.Value;
+
+		//	var frameDataRenderSceneDataMeshes = frameData.RenderSceneData.Meshes;
+		//	var frameDataRenderSceneDataBillboards = frameData.RenderSceneData.Billboards;
+		//	var frameDataMeshes = frameData.Meshes;
+		//	var frameDataBillboards = frameData.Billboards;
+
+		//	using( var renderableGroupsToDraw = new OpenListNative<RenderableGroupWithDistance>( frameData.RenderableGroupsInFrustum.Count ) )
+		//	{
+		//		foreach( var renderableGroup in frameData.RenderableGroupsInFrustum )
+		//		{
+		//			bool add = false;
+
+		//			if( renderableGroup.X == 0 )
+		//			{
+		//				ref var data = ref frameDataMeshes.Data[ renderableGroup.Y ];
+		//				if( ( data.Flags & FrameData.MeshItem.FlagsEnum.UseForwardOpaque ) != 0 )
+		//				{
+		//					ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup.Y ];
+		//					if( !meshItem.OnlyForShadowGeneration )
+		//						add = true;
+		//				}
+		//				//add = ( data.Flags & FrameData.MeshItem.FlagsEnum.UseForwardOpaque ) != 0;
+		//			}
+		//			else
+		//			{
+		//				ref var data = ref frameDataBillboards.Data[ renderableGroup.Y ];
+		//				add = ( data.Flags & FrameData.BillboardItem.FlagsEnum.UseForwardOpaque ) != 0;
+		//			}
+
+		//			if( add )
+		//			{
+		//				var item = new RenderableGroupWithDistance();
+		//				item.RenderableGroup = renderableGroup;
+		//				item.DistanceSquared = frameData.GetObjectGroupDistanceToCameraSquared( ref item.RenderableGroup );
+		//				renderableGroupsToDraw.Add( ref item );
+		//			}
+		//		}
+
+		//		if( renderableGroupsToDraw.Count == 0 )
+		//			return;
+
+		//		//sort by distance
+		//		CollectionUtility.MergeSortUnmanaged( renderableGroupsToDraw.Data, renderableGroupsToDraw.Count, delegate ( RenderableGroupWithDistance* a, RenderableGroupWithDistance* b )
+		//		{
+		//			if( a->DistanceSquared < b->DistanceSquared )
+		//				return -1;
+		//			if( a->DistanceSquared > b->DistanceSquared )
+		//				return 1;
+		//			return 0;
+		//		}, true );
+
+
+		//		//bind textures for all render operations
+		//		BindBrdfLUT( context );
+		//		BindMaterialsTexture( context, frameData );
+		//		BindBonesTexture( context, frameData );
+		//		BindSamplersForTextureOnlySlots( context, true, false );
+		//		BindMaterialData( context, null, false, false );
+
+
+		//		LightItem lightItemBinded = null;
+
+		//		for( int nLightsInFrustumSorted = 0; nLightsInFrustumSorted < frameData.LightsInFrustumSorted.Length; nLightsInFrustumSorted++ )
+		//		{
+		//			var lightIndex = frameData.LightsInFrustumSorted[ nLightsInFrustumSorted ];
+		//			var lightItem = frameData.Lights[ lightIndex ];
+
+		//			int sectorCount = nLightsInFrustumSorted == 0 ? sectorsByDistance : 1;
+
+
+		//			//prepare outputInstancingManagers
+		//			Parallel.For( 0, sectorCount, delegate ( int nSector )
+		//			{
+		//				var manager = outputInstancingManagers[ nSector ];
+
+		//				int indexFrom = (int)( (float)renderableGroupsToDraw.Count * nSector / sectorCount );
+		//				int indexTo = (int)( (float)renderableGroupsToDraw.Count * ( nSector + 1 ) / sectorCount );
+		//				if( nSector == sectorCount - 1 )
+		//					indexTo = renderableGroupsToDraw.Count;
+
+		//				//fill output manager
+		//				for( int nRenderableGroup = indexFrom; nRenderableGroup < indexTo; nRenderableGroup++ )
+		//				{
+		//					var renderableGroup = renderableGroupsToDraw[ nRenderableGroup ];
+
+		//					if( renderableGroup.RenderableGroup.X == 0 )
+		//					{
+		//						//meshes
+
+		//						ref var meshItem2 = ref frameDataMeshes.Data[ renderableGroup.RenderableGroup.Y ];
+
+		//						bool affectedByLight;
+		//						var lightType = lightItem.data.Type;
+		//						if( lightType == Light.TypeEnum.Point || lightType == Light.TypeEnum.Spotlight )
+		//							affectedByLight = meshItem2.ContainsPointOrSpotLight( lightIndex );
+		//						else
+		//							affectedByLight = true;
+
+		//						if( affectedByLight )
+		//						{
+		//							ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup.RenderableGroup.Y ];
+		//							var meshData = meshItem.MeshData;
+
+		//							if( !meshItem.OnlyForShadowGeneration )
+		//							{
+		//								for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+		//								{
+		//									var oper = meshData.RenderOperations[ nOperation ];
+		//									foreach( var materialData in GetMeshMaterialData( ref meshItem, oper, nOperation, true, false ) )
+		//									{
+		//										bool add = !materialData.Transparent;
+		//										if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+		//											add = false;
+		//										if( add )
+		//										{
+		//											if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+		//											{
+		//												bool instancing = Instancing && meshItem.AnimationData == null && !meshItem.InstancingEnabled && meshItem.CutVolumes == null && meshItem.MaterialInstanceParameters == null;
+		//												manager.Add( renderableGroup.RenderableGroup, nOperation, oper, materialData, instancing );
+		//											}
+		//										}
+		//									}
+		//								}
+		//							}
+		//						}
+		//					}
+		//					else if( renderableGroup.RenderableGroup.X == 1 )
+		//					{
+		//						//billboards
+
+		//						ref var billboardItem2 = ref frameDataBillboards.Data[ renderableGroup.RenderableGroup.Y ];
+
+		//						bool affectedByLight;
+		//						var lightType = lightItem.data.Type;
+		//						if( lightType == Light.TypeEnum.Point || lightType == Light.TypeEnum.Spotlight )
+		//							affectedByLight = billboardItem2.ContainsPointOrSpotLight( lightIndex );
+		//						else
+		//							affectedByLight = true;
+
+		//						if( affectedByLight )
+		//						{
+		//							ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableGroup.RenderableGroup.Y ];
+		//							var meshData = Billboard.GetBillboardMesh().Result.MeshData;
+
+		//							for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+		//							{
+		//								var oper = meshData.RenderOperations[ nOperation ];
+		//								foreach( var materialData in GetBillboardMaterialData( ref billboardItem, true, false ) )
+		//								{
+		//									bool add = !materialData.Transparent;
+		//									if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+		//										add = false;
+		//									if( add )
+		//									{
+		//										if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+		//										{
+		//											//!!!!или если уже собран из GroupOfObjects
+		//											bool instancing = Instancing && billboardItem.CutVolumes == null && billboardItem.MaterialInstanceParameters == null;
+		//											manager.Add( renderableGroup.RenderableGroup, nOperation, oper, materialData, instancing );
+		//										}
+		//									}
+		//								}
+		//							}
+		//						}
+		//					}
+		//				}
+
+		//				manager.Prepare();
+		//			} );
+
+		//			//push to GPU
+		//			for( int nSector = 0; nSector < sectorCount; nSector++ )
+		//			{
+		//				var manager = outputInstancingManagers[ nSector ];
+
+		//				int indexFrom = (int)( (float)renderableGroupsToDraw.Count * nSector / sectorCount );
+		//				int indexTo = (int)( (float)renderableGroupsToDraw.Count * ( nSector + 1 ) / sectorCount );
+		//				if( nSector == sectorCount - 1 )
+		//					indexTo = renderableGroupsToDraw.Count;
+
+		//				//render output items
+		//				{
+		//					var outputItems = manager.outputItems;
+		//					for( int nOutputItem = 0; nOutputItem < outputItems.Count; nOutputItem++ )
+		//					{
+		//						ref var outputItem = ref outputItems.Data[ nOutputItem ];
+		//						var materialData = outputItem.materialData;
+		//						var outputItemoperation = outputItem.operation;
+		//						var outputItemoperationVoxelDataInfo = outputItemoperation.VoxelDataInfo;
+		//						var voxelRendering = outputItemoperationVoxelDataInfo != null;
+
+		//						//set lightItem uniforms
+		//						if( lightItemBinded != lightItem )
+		//						{
+		//							lightItem.Bind( this, context );
+		//							lightItemBinded = lightItem;
+		//						}
+
+		//						var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+		//						bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+
+		//						GpuMaterialPass pass;
+		//						if( receiveShadows )
+		//						{
+		//							pass = passesGroup.passWithShadows;
+		//							//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+		//							//	pass = passesGroup.passWithShadowsHigh;
+		//							//else
+		//							//	pass = passesGroup.passWithShadowsLow;
+		//						}
+		//						else
+		//							pass = passesGroup.passWithoutShadows;
+
+		//						if( Instancing && outputItem.renderableItemsCount >= 2 )//InstancingMinCount )
+		//						{
+		//							//with instancing
+
+		//							//bind material data
+		//							BindMaterialData( context, materialData, false, voxelRendering );
+		//							BindSamplersForTextureOnlySlots( context, false, voxelRendering );
+
+		//							//bind operation data
+		//							var firstRenderableItem = outputItem.renderableItemFirst;
+		//							if( firstRenderableItem.X == 0 )
+		//							{
+		//								//meshes
+		//								ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ firstRenderableItem.Y ];
+		//								var meshData = meshItem.MeshData;
+
+		//								ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true, false );
+
+		//								BindRenderOperationData( context, frameData, materialData, true, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, outputItemoperation.UnwrappedUV, ref meshItem.Color, outputItemoperation.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, null, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
+		//							}
+		//							else if( firstRenderableItem.X == 1 )
+		//							{
+		//								//billboards
+		//								ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ firstRenderableItem.Y ];
+		//								var meshData = Billboard.GetBillboardMesh().Result.MeshData;
+
+		//								ForwardBindGeneralTexturesUniforms( context, frameData, ref billboardItem.BoundingSphere, lightItem, receiveShadows, true, false );
+
+		//								BindRenderOperationData( context, frameData, materialData, true, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PreviousFramePositionChange, 0, outputItemoperation.UnwrappedUV, ref billboardItem.Color, outputItemoperation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, null, 0, ref vector3FZero );
+		//							}
+
+		//							int instanceStride = sizeof( RenderSceneData.ObjectInstanceData );
+		//							int instanceCount = outputItem.renderableItemsCount;
+
+		//							var instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
+		//							if( instanceBuffer.Valid )
+		//							{
+		//								//get instancing matrices
+		//								RenderSceneData.ObjectInstanceData* instancingData = (RenderSceneData.ObjectInstanceData*)instanceBuffer.Data;
+		//								int currentMatrix = 0;
+		//								for( int nRenderableItem = 0; nRenderableItem < instanceCount; nRenderableItem++ )
+		//								{
+		//									var renderableItem = outputItem.renderableItems[ nRenderableItem ];
+
+		//									if( renderableItem.X == 0 )
+		//									{
+		//										//meshes
+		//										ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableItem.Y ];
+		//										meshItem.GetInstancingData( out instancingData[ currentMatrix++ ] );
+		//									}
+		//									else if( renderableItem.X == 1 )
+		//									{
+		//										//billboards
+		//										ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableItem.Y ];
+		//										billboardItem.GetInstancingData( out instancingData[ currentMatrix++ ] );
+		//									}
+		//								}
+
+		//								RenderOperation( context, outputItemoperation, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
+		//							}
+		//						}
+		//						else
+		//						{
+		//							//without instancing
+
+		//							for( int nRenderableItem = 0; nRenderableItem < outputItem.renderableItemsCount; nRenderableItem++ )
+		//							{
+		//								Vector3I renderableItem;
+		//								if( nRenderableItem != 0 )
+		//									renderableItem = outputItem.renderableItems[ nRenderableItem ];
+		//								else
+		//									renderableItem = outputItem.renderableItemFirst;
+
+		//								//bind material data
+		//								BindMaterialData( context, materialData, false, voxelRendering );
+		//								BindSamplersForTextureOnlySlots( context, false, voxelRendering );
+
+		//								//bind render operation data, set matrix
+		//								if( renderableItem.X == 0 )
+		//								{
+		//									//meshes
+		//									ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableItem.Y ];
+		//									var meshData = meshItem.MeshData;
+
+		//									ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, nRenderableItem == 0, false );
+
+		//									BindRenderOperationData( context, frameData, materialData, meshItem.InstancingEnabled, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, outputItemoperation.UnwrappedUV, ref meshItem.Color, outputItemoperation.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, meshItem.MaterialInstanceParameters, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
+
+		//									if( !meshItem.InstancingEnabled )
+		//										fixed( Matrix4F* p = &meshItem.TransformRelative )
+		//											Bgfx.SetTransform( (float*)p );
+
+		//									RenderOperation( context, outputItemoperation, pass, null, meshItem.CutVolumes, meshItem.InstancingEnabled, meshItem.InstancingVertexBuffer, ref meshItem.InstancingDataBuffer, meshItem.InstancingStart, meshItem.InstancingCount );
+		//								}
+		//								else if( renderableItem.X == 1 )
+		//								{
+		//									//billboards
+		//									ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableItem.Y ];
+		//									var meshData = Billboard.GetBillboardMesh().Result.MeshData;
+
+		//									ForwardBindGeneralTexturesUniforms( context, frameData, ref billboardItem.BoundingSphere, lightItem, receiveShadows, nRenderableItem == 0, false );
+
+		//									BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PreviousFramePositionChange, 0, outputItemoperation.UnwrappedUV, ref billboardItem.Color, outputItemoperation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, billboardItem.MaterialInstanceParameters, 0, ref vector3FZero );
+
+		//									billboardItem.GetWorldMatrixRelative( out var worldMatrix );
+		//									Bgfx.SetTransform( (float*)&worldMatrix );
+
+		//									RenderOperation( context, outputItemoperation, pass, null, billboardItem.CutVolumes );
+		//								}
+		//							}
+		//						}
+		//					}
+		//				}
+		//			}
+
+		//			//clear outputInstancingManagers
+		//			foreach( var manager in outputInstancingManagers )
+		//				manager.Clear();
+		//		}
+
+		//		//render layers
+		//		if( DebugDrawLayers )
+		//		{
+		//			for( int nLightsInFrustumSorted = 0; nLightsInFrustumSorted < frameData.LightsInFrustumSorted.Length; nLightsInFrustumSorted++ )
+		//			{
+		//				var lightIndex = frameData.LightsInFrustumSorted[ nLightsInFrustumSorted ];
+		//				var lightItem = frameData.Lights[ lightIndex ];
+
+		//				int sectorCount = nLightsInFrustumSorted == 0 ? sectorsByDistance : 1;
+		//				for( int nSector = 0; nSector < sectorCount; nSector++ )
+		//				{
+		//					int indexFrom = (int)( (float)renderableGroupsToDraw.Count * nSector / sectorCount );
+		//					int indexTo = (int)( (float)renderableGroupsToDraw.Count * ( nSector + 1 ) / sectorCount );
+		//					if( nSector == sectorCount - 1 )
+		//						indexTo = renderableGroupsToDraw.Count;
+
+
+		//					for( int nRenderableGroup = indexFrom; nRenderableGroup < indexTo; nRenderableGroup++ )
+		//					{
+		//						var renderableGroup = renderableGroupsToDraw[ nRenderableGroup ];
+
+		//						if( renderableGroup.RenderableGroup.X == 0 )
+		//						{
+		//							//meshes
+
+		//							ref var meshItem2 = ref frameDataMeshes.Data[ renderableGroup.RenderableGroup.Y ];
+
+		//							if( ( meshItem2.Flags & FrameData.MeshItem.FlagsEnum.ContainsForwardOpaqueLayersOnOpaqueBaseObjects ) != 0 )
+		//							{
+		//								bool affectedByLight;
+		//								var lightType = lightItem.data.Type;
+		//								if( lightType == Light.TypeEnum.Point || lightType == Light.TypeEnum.Spotlight )
+		//									affectedByLight = meshItem2.ContainsPointOrSpotLight( lightIndex );
+		//								else
+		//									affectedByLight = true;
+
+		//								if( affectedByLight )
+		//								{
+		//									ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup.RenderableGroup.Y ];
+		//									var meshData = meshItem.MeshData;
+
+		//									for( int nLayer = 0; nLayer < meshItem.Layers.Length; nLayer++ )
+		//									{
+		//										ref var layer = ref meshItem.Layers[ nLayer ];
+		//										foreach( var materialData in GetLayerMaterialData( ref layer, true, false ) )
+		//										{
+		//											bool add = !materialData.Transparent;
+		//											if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+		//												add = false;
+		//											if( add )
+		//											{
+		//												if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+		//												{
+		//													//set lightItem uniforms
+		//													if( lightItemBinded != lightItem )
+		//													{
+		//														lightItem.Bind( this, context );
+		//														lightItemBinded = lightItem;
+		//													}
+
+		//													//bind material data
+
+		//													var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+		//													bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+
+		//													GpuMaterialPass pass;
+		//													if( receiveShadows )
+		//													{
+		//														pass = passesGroup.passWithShadows;
+		//														//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+		//														//	pass = passesGroup.passWithShadowsHigh;
+		//														//else
+		//														//	pass = passesGroup.passWithShadowsLow;
+		//													}
+		//													else
+		//														pass = passesGroup.passWithoutShadows;
+
+		//													ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true, false );
+
+		//													if( !meshItem.InstancingEnabled )
+		//														fixed( Matrix4F* p = &meshItem.TransformRelative )
+		//															Bgfx.SetTransform( (float*)p );
+
+		//													var color = /*meshItem.Color * */ layer.MaterialColor;
+
+		//													for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+		//													{
+		//														var oper = meshData.RenderOperations[ nOperation ];
+		//														var voxelRendering = oper.VoxelDataInfo != null;
+
+		//														BindMaterialData( context, materialData, false, voxelRendering );
+		//														BindSamplersForTextureOnlySlots( context, false, oper.VoxelDataInfo != null );
+		//														materialData.BindCurrentFrameDataMaskTextures( context, layer.Mask );
+
+		//														BindRenderOperationData( context, frameData, materialData, meshItem.InstancingEnabled, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, layer.MaskFormat == PaintLayer.MaskFormatEnum.Triangles, oper.VoxelDataImage, oper.VoxelDataInfo, null, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
+
+		//														RenderOperation( context, oper, pass, null, meshItem.CutVolumes, meshItem.InstancingEnabled, meshItem.InstancingVertexBuffer, ref meshItem.InstancingDataBuffer, meshItem.InstancingStart, meshItem.InstancingCount );
+		//													}
+
+		//												}
+		//											}
+		//										}
+		//									}
+		//								}
+		//							}
+		//						}
+		//					}
+		//				}
+		//			}
+		//		}
+		//	}
+		//}
+
 
 		[MethodImpl( (MethodImplOptions)512 )]
 		protected unsafe virtual void RenderTransparentLayersOnOpaqueBaseObjectsForward( ViewportRenderingContext context, FrameData frameData )
 		{
 			Viewport viewportOwner = context.Owner;
+
+			var frameDataRenderSceneDataMeshes = frameData.RenderSceneData.Meshes;
+			var frameDataRenderSceneDataBillboards = frameData.RenderSceneData.Billboards;
+			var frameDataMeshes = frameData.Meshes;
+			var frameDataBillboards = frameData.Billboards;
 
 			using( var renderableGroupsToDraw = new OpenListNative<Vector2I>( frameData.RenderableGroupsInFrustum.Count ) )
 			{
@@ -5992,7 +8111,7 @@ namespace NeoAxis
 
 					if( renderableGroup.X == 0 )
 					{
-						ref var data = ref frameData.Meshes.Data[ renderableGroup.Y ];
+						ref var data = ref frameDataMeshes.Data[ renderableGroup.Y ];
 						add = ( data.Flags & FrameData.MeshItem.FlagsEnum.ContainsTransparentLayersOnOpaqueBaseObjects ) != 0;
 					}
 					//else
@@ -6022,33 +8141,16 @@ namespace NeoAxis
 					return 0;
 				}, true );
 
-				LightItem lightItemBinded = null;
-				Material.CompiledMaterialData materialBinded = null;
-
-				int ambientDirectionalLightCount = 0;
-				foreach( var lightIndex in frameData.LightsInFrustumSorted )
-				{
-					var lightItem = frameData.Lights[ lightIndex ];
-					if( lightItem.data.Type == Light.TypeEnum.Point || lightItem.data.Type == Light.TypeEnum.Spotlight )
-						break;
-					ambientDirectionalLightCount++;
-				}
-
-				int[] tempIntArray = Array.Empty<int>();
-				int[] GetTempIntArray( int minSize )
-				{
-					if( tempIntArray.Length < minSize )
-						tempIntArray = new int[ minSize ];
-					return tempIntArray;
-				}
-
 
 				//bind textures for all render operations
 				BindBrdfLUT( context );
 				BindMaterialsTexture( context, frameData );
+				BindBonesTexture( context, frameData );
 				BindSamplersForTextureOnlySlots( context, true, false );
 				BindMaterialData( context, null, false, false );
+				BindForwardLightAndShadows( context, frameData );
 
+				var directionalAmbientOnly = IsDirectionalAmbientOnlyModeEnabled( context, out var directionalAmbientOnlyPrepareShadows );
 
 				//draw
 				foreach( var renderableGroup in renderableGroupsToDraw )
@@ -6057,17 +8159,9 @@ namespace NeoAxis
 					{
 						//Mesh rendering
 
-						ref var meshItem2 = ref frameData.Meshes.Data[ renderableGroup.Y ];
-						ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ renderableGroup.Y ];
+						ref var meshItem2 = ref frameDataMeshes.Data[ renderableGroup.Y ];
+						ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup.Y ];
 						var meshData = meshItem.MeshData;
-
-						//!!!!не всегда нужно
-						var affectedLightsCount = ambientDirectionalLightCount + meshItem2.PointSpotLightCount;
-						var affectedLights = GetTempIntArray( affectedLightsCount );//var affectedLights = stackalloc int[ affectedLightsCount ];
-						for( int n = 0; n < ambientDirectionalLightCount; n++ )
-							affectedLights[ n ] = frameData.LightsInFrustumSorted[ n ];
-						for( int n = 0; n < meshItem2.PointSpotLightCount; n++ )
-							affectedLights[ ambientDirectionalLightCount + n ] = meshItem2.GetPointSpotLight( n );
 
 						//render layers
 						if( meshItem.Layers != null )
@@ -6086,41 +8180,33 @@ namespace NeoAxis
 									if( !add )
 										continue;
 
-									for( int nAffectedLightIndex = 0; nAffectedLightIndex < affectedLightsCount; nAffectedLightIndex++ )
 									{
-										var lightIndex = affectedLights[ nAffectedLightIndex ];
-										var lightItem = frameData.Lights[ lightIndex ];
-
-										if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+										if( materialData.AllPasses.Count != 0 )
 										{
-											//set lightItem uniforms
-											if( lightItemBinded != lightItem )
-											{
-												lightItem.Bind( this, context );
-												lightItemBinded = lightItem;
-											}
+											var pass = materialData.GetForwardShadingPass( directionalAmbientOnly, directionalAmbientOnlyPrepareShadows, false );
+											//var pass = materialData.forwardShadingPass;
 
-											var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
-											bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+											//var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+											//bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
 
-											GpuMaterialPass pass;
-											if( receiveShadows )
-											{
-												pass = passesGroup.passWithShadows;
-												//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
-												//	pass = passesGroup.passWithShadowsHigh;
-												//else
-												//	pass = passesGroup.passWithShadowsLow;
-											}
-											else
-												pass = passesGroup.passWithoutShadows;
+											//GpuMaterialPass pass;
+											//if( receiveShadows )
+											//{
+											//	pass = passesGroup.passWithShadows;
+											//	//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+											//	//	pass = passesGroup.passWithShadowsHigh;
+											//	//else
+											//	//	pass = passesGroup.passWithShadowsLow;
+											//}
+											//else
+											//	pass = passesGroup.passWithoutShadows;
 
-											ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true, false );
+											ForwardBindGeneralTexturesUniforms( context, frameData/*, ref meshItem.BoundingSphere, lightItem, receiveShadows*/, true );
 
-											bool materialWasChanged = materialBinded != materialData;
-											materialBinded = materialData;
+											//bool materialWasChanged = materialBinded != materialData;
+											//materialBinded = materialData;
 
-											fixed( Matrix4F* p = &meshItem.Transform )
+											fixed( Matrix4F* p = &meshItem.TransformRelative )
 												Bgfx.SetTransform( (float*)p );
 
 											var color = /*meshItem.Color * */ layer.MaterialColor;
@@ -6135,7 +8221,7 @@ namespace NeoAxis
 												BindSamplersForTextureOnlySlots( context, false, voxelRendering );
 												materialData.BindCurrentFrameDataMaskTextures( context, layer.Mask );
 
-												BindRenderOperationData( context, frameData, materialData, false, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, layer.MaskFormat == PaintLayer.MaskFormatEnum.Triangles, oper.VoxelDataImage, oper.VoxelDataInfo );
+												BindRenderOperationData( context, frameData, materialData, false, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, layer.MaskFormat == PaintLayer.MaskFormatEnum.Triangles, oper.VoxelDataImage, oper.VoxelDataInfo, meshItem.ObjectInstanceParameters, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative, layer.UVScale );
 
 												RenderOperation( context, oper, pass, null, meshItem.CutVolumes );
 											}
@@ -6148,11 +8234,193 @@ namespace NeoAxis
 					}
 				}
 			}
+
+			Bgfx.Discard( DiscardFlags.All );
 		}
+
+		//[MethodImpl( (MethodImplOptions)512 )]
+		//protected unsafe virtual void RenderTransparentLayersOnOpaqueBaseObjectsForward( ViewportRenderingContext context, FrameData frameData )
+		//{
+		//	Viewport viewportOwner = context.Owner;
+
+		//	var frameDataRenderSceneDataMeshes = frameData.RenderSceneData.Meshes;
+		//	var frameDataRenderSceneDataBillboards = frameData.RenderSceneData.Billboards;
+		//	var frameDataMeshes = frameData.Meshes;
+		//	var frameDataBillboards = frameData.Billboards;
+
+		//	using( var renderableGroupsToDraw = new OpenListNative<Vector2I>( frameData.RenderableGroupsInFrustum.Count ) )
+		//	{
+		//		foreach( var renderableGroup in frameData.RenderableGroupsInFrustum )
+		//		{
+		//			bool add = false;
+
+		//			if( renderableGroup.X == 0 )
+		//			{
+		//				ref var data = ref frameDataMeshes.Data[ renderableGroup.Y ];
+		//				add = ( data.Flags & FrameData.MeshItem.FlagsEnum.ContainsTransparentLayersOnOpaqueBaseObjects ) != 0;
+		//			}
+		//			//else
+		//			//{
+		//			//	ref var data = ref frameData.Billboards.Data[ renderableGroup.Y ];
+		//			//	add = ( data.Flags & FrameData.BillboardItem.FlagsEnum.ContainsTransparentLayersOnOpaqueBaseObjects ) != 0;
+		//			//}
+
+		//			if( add )
+		//				renderableGroupsToDraw.Add( renderableGroup );
+		//		}
+
+		//		if( renderableGroupsToDraw.Count == 0 )
+		//			return;
+
+		//		//!!!!slowly
+
+		//		//sort by distance
+		//		CollectionUtility.MergeSortUnmanaged( renderableGroupsToDraw.Data, renderableGroupsToDraw.Count, delegate ( Vector2I a, Vector2I b )
+		//		{
+		//			var distanceASquared = frameData.GetObjectGroupDistanceToCameraSquared( ref a );
+		//			var distanceBSquared = frameData.GetObjectGroupDistanceToCameraSquared( ref b );
+		//			if( distanceASquared > distanceBSquared )
+		//				return -1;
+		//			if( distanceASquared < distanceBSquared )
+		//				return 1;
+		//			return 0;
+		//		}, true );
+
+		//		LightItem lightItemBinded = null;
+		//		Material.CompiledMaterialData materialBinded = null;
+
+		//		int ambientDirectionalLightCount = 0;
+		//		foreach( var lightIndex in frameData.LightsInFrustumSorted )
+		//		{
+		//			var lightItem = frameData.Lights[ lightIndex ];
+		//			if( lightItem.data.Type == Light.TypeEnum.Point || lightItem.data.Type == Light.TypeEnum.Spotlight )
+		//				break;
+		//			ambientDirectionalLightCount++;
+		//		}
+
+		//		int[] tempIntArray = Array.Empty<int>();
+		//		int[] GetTempIntArray( int minSize )
+		//		{
+		//			if( tempIntArray.Length < minSize )
+		//				tempIntArray = new int[ minSize ];
+		//			return tempIntArray;
+		//		}
+
+
+		//		//bind textures for all render operations
+		//		BindBrdfLUT( context );
+		//		BindMaterialsTexture( context, frameData );
+		//		BindBonesTexture( context, frameData );
+		//		BindSamplersForTextureOnlySlots( context, true, false );
+		//		BindMaterialData( context, null, false, false );
+
+
+		//		//draw
+		//		foreach( var renderableGroup in renderableGroupsToDraw )
+		//		{
+		//			if( renderableGroup.X == 0 )
+		//			{
+		//				//Mesh rendering
+
+		//				ref var meshItem2 = ref frameDataMeshes.Data[ renderableGroup.Y ];
+		//				ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup.Y ];
+		//				var meshData = meshItem.MeshData;
+
+		//				//!!!!не всегда нужно
+		//				var affectedLightsCount = ambientDirectionalLightCount + meshItem2.PointSpotLightCount;
+		//				var affectedLights = GetTempIntArray( affectedLightsCount );//var affectedLights = stackalloc int[ affectedLightsCount ];
+		//				for( int n = 0; n < ambientDirectionalLightCount; n++ )
+		//					affectedLights[ n ] = frameData.LightsInFrustumSorted[ n ];
+		//				for( int n = 0; n < meshItem2.PointSpotLightCount; n++ )
+		//					affectedLights[ ambientDirectionalLightCount + n ] = meshItem2.GetPointSpotLight( n );
+
+		//				//render layers
+		//				if( meshItem.Layers != null )
+		//				{
+		//					for( int nLayer = 0; nLayer < meshItem.Layers.Length; nLayer++ )
+		//					{
+		//						ref var layer = ref meshItem.Layers[ nLayer ];
+		//						foreach( var materialData in GetLayerMaterialData( ref layer, true, false ) )
+		//						{
+		//							//if( materialData == null )
+		//							//	continue;
+
+		//							bool add = materialData.Transparent;
+		//							if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+		//								add = false;
+		//							if( !add )
+		//								continue;
+
+		//							for( int nAffectedLightIndex = 0; nAffectedLightIndex < affectedLightsCount; nAffectedLightIndex++ )
+		//							{
+		//								var lightIndex = affectedLights[ nAffectedLightIndex ];
+		//								var lightItem = frameData.Lights[ lightIndex ];
+
+		//								if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+		//								{
+		//									//set lightItem uniforms
+		//									if( lightItemBinded != lightItem )
+		//									{
+		//										lightItem.Bind( this, context );
+		//										lightItemBinded = lightItem;
+		//									}
+
+		//									var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+		//									bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+
+		//									GpuMaterialPass pass;
+		//									if( receiveShadows )
+		//									{
+		//										pass = passesGroup.passWithShadows;
+		//										//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+		//										//	pass = passesGroup.passWithShadowsHigh;
+		//										//else
+		//										//	pass = passesGroup.passWithShadowsLow;
+		//									}
+		//									else
+		//										pass = passesGroup.passWithoutShadows;
+
+		//									ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true, false );
+
+		//									bool materialWasChanged = materialBinded != materialData;
+		//									materialBinded = materialData;
+
+		//									fixed( Matrix4F* p = &meshItem.TransformRelative )
+		//										Bgfx.SetTransform( (float*)p );
+
+		//									var color = /*meshItem.Color * */ layer.MaterialColor;
+
+		//									for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+		//									{
+		//										var oper = meshData.RenderOperations[ nOperation ];
+		//										var voxelRendering = oper.VoxelDataInfo != null;
+
+		//										//bind material data
+		//										BindMaterialData( context, materialData, false, voxelRendering );
+		//										BindSamplersForTextureOnlySlots( context, false, voxelRendering );
+		//										materialData.BindCurrentFrameDataMaskTextures( context, layer.Mask );
+
+		//										BindRenderOperationData( context, frameData, materialData, false, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, layer.MaskFormat == PaintLayer.MaskFormatEnum.Triangles, oper.VoxelDataImage, oper.VoxelDataInfo, meshItem.MaterialInstanceParameters, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
+
+		//										RenderOperation( context, oper, pass, null, meshItem.CutVolumes );
+		//									}
+		//								}
+		//							}
+		//						}
+		//					}
+		//				}
+
+		//			}
+		//		}
+		//	}
+		//}
 
 		[MethodImpl( (MethodImplOptions)512 )]
 		void ApplyTransparentRenderingAddOffsetWhenSortByDistance( FrameData frameData, ref RenderableGroupWithDistance item )
 		{
+			var frameDataRenderSceneDataMeshes = frameData.RenderSceneData.Meshes;
+			//var frameDataRenderSceneDataBillboards = frameData.RenderSceneData.Billboards;
+
 			bool applied = false;
 
 			//!!!!slowly. много раз вызываетс€ при сортировке
@@ -6161,7 +8429,7 @@ namespace NeoAxis
 			switch( item.RenderableGroup.X )
 			{
 			case 0:
-				if( frameData.RenderSceneData.Meshes.Data[ item.RenderableGroup.Y ].TransparentRenderingAddOffsetWhenSortByDistance )
+				if( frameDataRenderSceneDataMeshes.Data[ item.RenderableGroup.Y ].TransparentRenderingAddOffsetWhenSortByDistance )
 				{
 					//!!!!good?
 					item.DistanceSquared += 10000000;
@@ -6194,10 +8462,1779 @@ namespace NeoAxis
 			}
 		}
 
+
+
+		//!!!!not finished, something wrong with writing to image/buffer from pixel shader. implement oit on dx12, vulkan level
+		//[MethodImpl( (MethodImplOptions)512 )]
+		//protected unsafe virtual void Render3DSceneForwardTransparentWithOIT( ViewportRenderingContext context, FrameData frameData, ImageComponent colorDepthTextureCopy, MultiRenderTarget sceneMotionDepthMRT, ref Matrix4F viewMatrix, ref Matrix4F projectionMatrix, ImageComponent sceneTexture )
+		//{
+		//	var frameDataRenderSceneDataMeshes = frameData.RenderSceneData.Meshes;
+		//	var frameDataRenderSceneDataBillboards = frameData.RenderSceneData.Billboards;
+		//	var frameDataMeshes = frameData.Meshes;
+		//	var frameDataBillboards = frameData.Billboards;
+
+		//	var viewportOwner = context.Owner;
+
+		//	using( var renderableGroupsToDraw = new OpenListNative<Vector2I>( frameData.RenderableGroupsInFrustum.Count ) )
+		//	{
+		//		foreach( var renderableGroup in frameData.RenderableGroupsInFrustum )
+		//		{
+		//			bool add = false;
+
+		//			if( renderableGroup.X == 0 )
+		//			{
+		//				ref var data = ref frameDataMeshes.Data[ renderableGroup.Y ];
+		//				add = ( data.Flags & FrameData.MeshItem.FlagsEnum.UseForwardTransparent ) != 0;
+		//			}
+		//			else
+		//			{
+		//				ref var data = ref frameDataBillboards.Data[ renderableGroup.Y ];
+		//				add = ( data.Flags & FrameData.BillboardItem.FlagsEnum.UseForwardTransparent ) != 0;
+		//			}
+
+		//			if( add )
+		//				renderableGroupsToDraw.Add( renderableGroup );
+		//		}
+
+		//		if( renderableGroupsToDraw.Count == 0 )
+		//			return;
+
+
+
+		//		//!!!!максимальный размер
+
+		//		//prepare oit buffers
+		//		ImageComponent oitScreen;
+		//		ImageComponent oitLists;
+		//		{
+		//			//!!!!на буферах может быстрее? дл€ буферов нет манагера
+
+		//			//!!!!
+		//			var oitScreenSize = context.CurrentViewport.SizeInPixels;
+		//			//var oitScreenSize = context.CurrentViewport.SizeInPixels + new Vector2I( 1, 0 );
+
+		//			//oitScreen = context.RenderTarget2D_Alloc( oitScreenSize, PixelFormat.A8B8G8R8 );
+		//			//oitScreen = context.RenderTarget2D_Alloc( oitScreenSize, PixelFormat.R32_UInt );
+
+		//			oitScreen = context.DynamicTexture_Alloc( ViewportRenderingContext.DynamicTextureType.ComputeWrite, ImageComponent.TypeEnum._2D, oitScreenSize, PixelFormat.A8B8G8R8, 0, false );
+		//			//oitScreen = context.DynamicTexture_Alloc( ViewportRenderingContext.DynamicTextureType.ComputeWrite, ImageComponent.TypeEnum._2D, oitScreenSize, PixelFormat.A8R8G8B8, 0, false );
+
+		//			//oitScreen = context.DynamicTexture_Alloc( ViewportRenderingContext.DynamicTextureType.ComputeWrite, ImageComponent.TypeEnum._2D, oitScreenSize, PixelFormat.A8B8G8R8, 0, false );
+		//			//oitScreen = context.DynamicTexture_Alloc( ViewportRenderingContext.DynamicTextureType.ComputeWrite, ImageComponent.TypeEnum._2D, oitScreenSize, PixelFormat.R32_UInt, 0, false );
+
+		//			//!!!!
+		//			var oitListsSize = context.CurrentViewport.SizeInPixels * new Vector2I( 1, 2 );
+		//			//oitLists = context.RenderTarget2D_Alloc( oitListsSize, PixelFormat.Float32RGBA );
+
+		//			////!!!!
+		//			//var oitListsSize = context.CurrentViewport.SizeInPixels * new Vector2I( 1, 2 );
+		//			//oitLists = context.DynamicTexture_Alloc( ViewportRenderingContext.DynamicTextureType.ComputeWrite, ImageComponent.TypeEnum._2D, oitListsSize, PixelFormat.Float32RGBA, 0, false );
+
+		//			//clear screen buffer
+		//			//!!!!
+		//			//context.SetViewport( oitScreen.Result.GetRenderTarget().Viewports[ 0 ], Matrix4F.Identity, Matrix4F.Identity, FrameBufferTypes.Color, ColorValue.Zero );
+
+
+		//			//var oitBufferVertexDeclaration = new VertexElement[] { new VertexElement( 0, 0, VertexElementType.Float4, VertexElementSemantic.Position ) }.CreateVertexDeclaration( 0 );
+		//			//var oitBuffer = GpuBufferManager.CreateVertexBuffer( destVertexCount, oitBufferVertexDeclaration, GpuBufferFlags.ComputeWrite );
+
+		//		}
+
+
+		//		{
+		//			//!!!!temp
+		//			context.SetViewport( sceneTexture.Result.GetRenderTarget().Viewports[ 0 ] );
+		//			//context.SetViewport( sceneMotionDepthMRT.Viewports[ 0 ] );
+
+		//			context.BindComputeImage( 1, oitScreen, 0, ComputeBufferAccessEnum.ReadWrite );
+
+		//			var shader = new CanvasRenderer.ShaderItem();
+		//			shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+		//			shader.FragmentProgramFileName = @"Base\Shaders\ComposeOIT_Test_fs.sc";
+
+		//			//shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0, oitScreen, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
+
+		//			//shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1, oitLists, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
+
+		//			//context.BindComputeImage( 0, oitScreen, 0, ComputeBufferAccessEnum.ReadWrite );
+		//			//context.BindComputeImage( 0, oitScreen, 0, ComputeBufferAccessEnum.Read );
+
+		//			//context.BindComputeImage( 1, oitLists, 0, ComputeBufferAccessEnum.Read );
+
+		//			//shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"colorTexture"*/, colorTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+		//			//shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1/*"secondTexture"*/, secondTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+		//			context.RenderQuadToCurrentViewport( shader );
+
+		//		}
+
+
+		//		//draw scene objects
+		//		if( false )
+		//		{
+
+		//			//!!!!set invalid
+		//			//context.SetViewport( sceneMotionDepthMRT.Viewports[ 0 ], viewMatrix, projectionMatrix, 0, ColorValue.Zero, setInvalidFrameBuffer: true );
+		//			context.SetViewport( sceneMotionDepthMRT.Viewports[ 0 ], viewMatrix, projectionMatrix, 0, ColorValue.Zero );
+
+		//			//bind textures for all render operations
+		//			context.BindTexture( 5/*"s_colorDepthTextureCopy"*/, colorDepthTextureCopy ?? ResourceUtility.BlackTexture2D, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None, 0, false );
+		//			BindBrdfLUT( context );
+		//			BindMaterialsTexture( context, frameData );
+		//			BindBonesTexture( context, frameData );
+		//			BindSamplersForTextureOnlySlots( context, true, false );
+		//			BindMaterialData( context, null, false, false );
+		//			BindForwardLightAndShadows( context, frameData );
+
+
+		//			//!!!!переименовать метод
+		//			context.BindComputeImage( 3, oitScreen, 0, ComputeBufferAccessEnum.ReadWrite );
+		//			//context.BindComputeImage( 4, oitLists, 0, ComputeBufferAccessEnum.Write );
+
+
+
+		//			var directionalAmbientOnly = IsDirectionalAmbientOnlyModeEnabled( context, out var directionalAmbientOnlyPrepareShadows );
+
+		//			{
+		//				//more sectors to optimize CPU because parallel, but get more draw calls
+		//				int sectorCount = context.SectorsByDistance; //int sectorCount = Math.Min( context.SectorsByDistance, 4 ); //2 );
+
+		//				//prepare outputInstancingManagers
+		//				Parallel.For( 0, sectorCount, delegate ( int nSector )
+		//				{
+		//					var manager = outputInstancingManagers[ nSector ];
+
+		//					int indexFrom = (int)( (float)renderableGroupsToDraw.Count * nSector / sectorCount );
+		//					int indexTo = (int)( (float)renderableGroupsToDraw.Count * ( nSector + 1 ) / sectorCount );
+		//					if( nSector == sectorCount - 1 )
+		//						indexTo = renderableGroupsToDraw.Count;
+
+		//					//fill output manager
+		//					for( int nRenderableGroup = indexFrom; nRenderableGroup < indexTo; nRenderableGroup++ )
+		//					{
+		//						var renderableGroup = renderableGroupsToDraw[ nRenderableGroup ];
+
+		//						if( renderableGroup.X == 0 )
+		//						{
+		//							//meshes
+
+		//							ref var meshItem2 = ref frameDataMeshes.Data[ renderableGroup.Y ];
+
+		//							ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup.Y ];
+		//							var meshData = meshItem.MeshData;
+
+		//							if( !meshItem.OnlyForShadowGeneration )
+		//							{
+		//								for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+		//								{
+		//									var oper = meshData.RenderOperations[ nOperation ];
+		//									foreach( var materialData in GetMeshMaterialData( ref meshItem, oper, nOperation, true, false ) )
+		//									{
+		//										if( materialData.Transparent && materialData.AllPasses.Count != 0 )
+		//										{
+		//											bool instancing = Instancing /*&& InstancingTransparent */&& meshItem.AnimationData == null && !meshItem.InstancingEnabled && meshItem.CutVolumes == null && meshItem.ObjectInstanceParameters == null && !meshItem.Tessellation;
+		//											manager.Add( renderableGroup, nOperation, oper, materialData, instancing );
+		//										}
+		//									}
+		//								}
+		//							}
+		//						}
+		//						else if( renderableGroup.X == 1 )
+		//						{
+		//							//billboards
+
+		//							ref var billboardItem2 = ref frameDataBillboards.Data[ renderableGroup.Y ];
+
+		//							ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableGroup.Y ];
+		//							var meshData = Billboard.GetBillboardMesh().Result.MeshData;
+
+		//							for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+		//							{
+		//								var oper = meshData.RenderOperations[ nOperation ];
+		//								foreach( var materialData in GetBillboardMaterialData( ref billboardItem, true, false ) )
+		//								{
+		//									if( materialData.Transparent && materialData.AllPasses.Count != 0 )
+		//									{
+		//										//!!!!или если уже собран из GroupOfObjects
+		//										bool instancing = Instancing && billboardItem.CutVolumes == null && billboardItem.MaterialInstanceParameters == null;
+		//										manager.Add( renderableGroup, nOperation, oper, materialData, instancing );
+		//									}
+		//								}
+		//							}
+		//						}
+		//					}
+
+		//					manager.Prepare();
+		//				} );
+
+
+		//				//push to GPU
+		//				for( int nSector = 0; nSector < sectorCount; nSector++ )
+		//				{
+		//					var manager = outputInstancingManagers[ nSector ];
+
+		//					int indexFrom = (int)( (float)renderableGroupsToDraw.Count * nSector / sectorCount );
+		//					int indexTo = (int)( (float)renderableGroupsToDraw.Count * ( nSector + 1 ) / sectorCount );
+		//					if( nSector == sectorCount - 1 )
+		//						indexTo = renderableGroupsToDraw.Count;
+
+		//					//render output items
+		//					{
+		//						var outputItems = manager.outputItems;
+		//						for( int nOutputItem = 0; nOutputItem < outputItems.Count; nOutputItem++ )
+		//						{
+		//							ref var outputItem = ref outputItems.Data[ nOutputItem ];
+		//							var materialData = outputItem.materialData;
+		//							var outputItemoperation = outputItem.operation;
+		//							var outputItemoperationVoxelDataInfo = outputItemoperation.VoxelDataInfo;
+		//							var voxelRendering = outputItemoperationVoxelDataInfo != null;
+
+		//							var pass = materialData.GetForwardShadingPass( directionalAmbientOnly, directionalAmbientOnlyPrepareShadows, voxelRendering );
+
+		//							if( Instancing /*&& InstancingTransparent */&& outputItem.renderableItemsCount >= 2 )
+		//							{
+		//								//with instancing
+
+		//								//bind material data
+		//								BindMaterialData( context, materialData, false, voxelRendering );
+		//								BindSamplersForTextureOnlySlots( context, false, voxelRendering );
+
+		//								//bind operation data
+		//								var firstRenderableItem = outputItem.renderableItemFirst;
+		//								if( firstRenderableItem.X == 0 )
+		//								{
+		//									//meshes
+		//									ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ firstRenderableItem.Y ];
+		//									var meshData = meshItem.MeshData;
+
+		//									ForwardBindGeneralTexturesUniforms( context, frameData, true, true );
+
+		//									BindRenderOperationData( context, frameData, materialData, true, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, outputItemoperation.UnwrappedUV, ref meshItem.Color, outputItemoperation.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, null, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
+		//								}
+		//								else if( firstRenderableItem.X == 1 )
+		//								{
+		//									//billboards
+		//									ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ firstRenderableItem.Y ];
+		//									var meshData = Billboard.GetBillboardMesh().Result.MeshData;
+
+		//									ForwardBindGeneralTexturesUniforms( context, frameData/*, ref billboardItem.BoundingSphere, lightItem, receiveShadows*/, true, true );
+
+		//									BindRenderOperationData( context, frameData, materialData, true, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PreviousFramePositionChange, 0, outputItemoperation.UnwrappedUV, ref billboardItem.Color, outputItemoperation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, null, 0, ref vector3FZero );
+		//								}
+
+		//								int instanceStride = sizeof( RenderSceneData.ObjectInstanceData );
+		//								int instanceCount = outputItem.renderableItemsCount;
+
+		//								var instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
+		//								if( instanceBuffer.Valid )
+		//								{
+		//									//get instancing matrices
+		//									RenderSceneData.ObjectInstanceData* instancingData = (RenderSceneData.ObjectInstanceData*)instanceBuffer.Data;
+		//									int currentMatrix = 0;
+		//									for( int nRenderableItem = 0; nRenderableItem < instanceCount; nRenderableItem++ )
+		//									{
+		//										var renderableItem = outputItem.renderableItems[ nRenderableItem ];
+
+		//										if( renderableItem.X == 0 )
+		//										{
+		//											//meshes
+		//											ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableItem.Y ];
+		//											meshItem.GetInstancingData( out instancingData[ currentMatrix++ ] );
+		//										}
+		//										else if( renderableItem.X == 1 )
+		//										{
+		//											//billboards
+		//											ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableItem.Y ];
+		//											billboardItem.GetInstancingData( out instancingData[ currentMatrix++ ] );
+		//										}
+		//									}
+
+		//									RenderOperation( context, outputItemoperation, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
+		//								}
+		//							}
+		//							else
+		//							{
+		//								//without instancing
+
+		//								for( int nRenderableItem = 0; nRenderableItem < outputItem.renderableItemsCount; nRenderableItem++ )
+		//								{
+		//									Vector3I renderableItem;
+		//									if( nRenderableItem != 0 )
+		//										renderableItem = outputItem.renderableItems[ nRenderableItem ];
+		//									else
+		//										renderableItem = outputItem.renderableItemFirst;
+
+		//									//bind material data
+		//									BindMaterialData( context, materialData, false, voxelRendering );
+		//									BindSamplersForTextureOnlySlots( context, false, voxelRendering );
+
+		//									//bind render operation data, set matrix
+		//									if( renderableItem.X == 0 )
+		//									{
+		//										//meshes
+		//										ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableItem.Y ];
+		//										var meshData = meshItem.MeshData;
+
+		//										ForwardBindGeneralTexturesUniforms( context, frameData/*, ref meshItem.BoundingSphere, lightItem, receiveShadows*/, nRenderableItem == 0, true );
+
+		//										BindRenderOperationData( context, frameData, materialData, meshItem.InstancingEnabled, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, outputItemoperation.UnwrappedUV, ref meshItem.Color, outputItemoperation.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, meshItem.ObjectInstanceParameters, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
+
+		//										if( !meshItem.InstancingEnabled )
+		//											fixed( Matrix4F* p = &meshItem.TransformRelative )
+		//												Bgfx.SetTransform( (float*)p );
+
+		//										var tessItem = meshItem.Tessellation ? TessellationGetItem( context, outputItemoperation, materialData ) : null;
+
+		//										RenderOperation( context, outputItemoperation, pass, null, meshItem.CutVolumes, meshItem.InstancingEnabled, meshItem.InstancingVertexBuffer, ref meshItem.InstancingDataBuffer, meshItem.InstancingStart, meshItem.InstancingCount, tessItem );
+		//									}
+		//									else if( renderableItem.X == 1 )
+		//									{
+		//										//billboards
+		//										ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableItem.Y ];
+		//										var meshData = Billboard.GetBillboardMesh().Result.MeshData;
+
+		//										ForwardBindGeneralTexturesUniforms( context, frameData/*, ref billboardItem.BoundingSphere, lightItem, receiveShadows*/, nRenderableItem == 0, true );
+
+		//										BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PreviousFramePositionChange, 0, outputItemoperation.UnwrappedUV, ref billboardItem.Color, outputItemoperation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, billboardItem.MaterialInstanceParameters, 0, ref vector3FZero );
+
+		//										billboardItem.GetWorldMatrixRelative( out var worldMatrix );
+		//										Bgfx.SetTransform( (float*)&worldMatrix );
+
+		//										RenderOperation( context, outputItemoperation, pass, null, billboardItem.CutVolumes );
+		//									}
+		//								}
+		//							}
+		//						}
+		//					}
+		//				}
+
+
+		//				//clear outputInstancingManagers
+		//				foreach( var manager in outputInstancingManagers )
+		//					manager.Clear();
+		//			}
+
+		//			Bgfx.Discard( DiscardFlags.All );
+		//		}
+
+
+		//		//final pass
+		//		{
+
+		//			//!!!!temp
+		//			context.SetViewport( sceneTexture.Result.GetRenderTarget().Viewports[ 0 ] );
+		//			//context.SetViewport( sceneMotionDepthMRT.Viewports[ 0 ] );
+
+		//			var shader = new CanvasRenderer.ShaderItem();
+		//			shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+		//			shader.FragmentProgramFileName = @"Base\Shaders\ComposeOIT_fs.sc";
+
+		//			shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0, oitScreen, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
+		//			//shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1, oitLists, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
+
+		//			//context.BindComputeImage( 0, oitScreen, 0, ComputeBufferAccessEnum.ReadWrite );
+		//			//context.BindComputeImage( 0, oitScreen, 0, ComputeBufferAccessEnum.Read );
+
+		//			//context.BindComputeImage( 1, oitLists, 0, ComputeBufferAccessEnum.Read );
+
+		//			//shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"colorTexture"*/, colorTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+		//			//shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1/*"secondTexture"*/, secondTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+		//			context.RenderQuadToCurrentViewport( shader, CanvasRenderer.BlendingType.AlphaBlend );
+		//		}
+
+
+		//		//!!!!удалить буферы
+
+		//	}
+
+		//	Bgfx.Discard( DiscardFlags.All );
+		//}
+
+
+
+		////push to GPU
+		//for( int nSector = 0; nSector < sectorCount; nSector++ )
+		//{
+		//	var manager = outputInstancingManagers[ nSector ];
+
+		//	int indexFrom = (int)( (float)renderableGroupsToDraw.Count * nSector / sectorCount );
+		//	int indexTo = (int)( (float)renderableGroupsToDraw.Count * ( nSector + 1 ) / sectorCount );
+		//	if( nSector == sectorCount - 1 )
+		//		indexTo = renderableGroupsToDraw.Count;
+
+		//	//render output items
+		//	{
+		//		var outputItems = manager.outputItems;
+		//		for( int nOutputItem = 0; nOutputItem < outputItems.Count; nOutputItem++ )
+		//		{
+		//			ref var outputItem = ref outputItems.Data[ nOutputItem ];
+		//			var materialData = outputItem.materialData;
+		//			var outputItemoperation = outputItem.operation;
+		//			var outputItemoperationVoxelDataInfo = outputItemoperation.VoxelDataInfo;
+		//			var voxelRendering = outputItemoperationVoxelDataInfo != null;
+
+		//			var pass = materialData.GetForwardShadingPass( directionalAmbientOnly, directionalAmbientOnlyPrepareShadows, voxelRendering );
+		//			//var pass = materialData.forwardShadingPass;
+
+		//			//var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+		//			//bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+
+		//			//GpuMaterialPass pass;
+		//			//if( receiveShadows )
+		//			//{
+		//			//	pass = passesGroup.passWithShadows;
+		//			//	//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+		//			//	//	pass = passesGroup.passWithShadowsHigh;
+		//			//	//else
+		//			//	//	pass = passesGroup.passWithShadowsLow;
+		//			//}
+		//			//else
+		//			//	pass = passesGroup.passWithoutShadows;
+
+		//			if( Instancing && outputItem.renderableItemsCount >= 2 )//InstancingMinCount )
+		//			{
+		//				//with instancing
+
+		//				//bind material data
+		//				BindMaterialData( context, materialData, false, voxelRendering );
+		//				BindSamplersForTextureOnlySlots( context, false, voxelRendering );
+
+		//				//bind operation data
+		//				var firstRenderableItem = outputItem.renderableItemFirst;
+		//				if( firstRenderableItem.X == 0 )
+		//				{
+		//					//meshes
+		//					ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ firstRenderableItem.Y ];
+		//					var meshData = meshItem.MeshData;
+
+		//					ForwardBindGeneralTexturesUniforms( context, frameData/*, ref meshItem.BoundingSphere, lightItem, receiveShadows*/, true );
+
+		//					BindRenderOperationData( context, frameData, materialData, true, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, outputItemoperation.UnwrappedUV, ref meshItem.Color, outputItemoperation.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, null, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
+		//				}
+		//				else if( firstRenderableItem.X == 1 )
+		//				{
+		//					//billboards
+		//					ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ firstRenderableItem.Y ];
+		//					var meshData = Billboard.GetBillboardMesh().Result.MeshData;
+
+		//					ForwardBindGeneralTexturesUniforms( context, frameData/*, ref billboardItem.BoundingSphere, lightItem, receiveShadows*/, true );
+
+		//					BindRenderOperationData( context, frameData, materialData, true, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PreviousFramePositionChange, 0, outputItemoperation.UnwrappedUV, ref billboardItem.Color, outputItemoperation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, null, 0, ref vector3FZero );
+		//				}
+
+		//				int instanceStride = sizeof( RenderSceneData.ObjectInstanceData );
+		//				int instanceCount = outputItem.renderableItemsCount;
+
+		//				var instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
+		//				if( instanceBuffer.Valid )
+		//				{
+		//					//get instancing matrices
+		//					RenderSceneData.ObjectInstanceData* instancingData = (RenderSceneData.ObjectInstanceData*)instanceBuffer.Data;
+		//					int currentMatrix = 0;
+		//					for( int nRenderableItem = 0; nRenderableItem < instanceCount; nRenderableItem++ )
+		//					{
+		//						var renderableItem = outputItem.renderableItems[ nRenderableItem ];
+
+		//						if( renderableItem.X == 0 )
+		//						{
+		//							//meshes
+		//							ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableItem.Y ];
+		//							meshItem.GetInstancingData( out instancingData[ currentMatrix++ ] );
+		//						}
+		//						else if( renderableItem.X == 1 )
+		//						{
+		//							//billboards
+		//							ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableItem.Y ];
+		//							billboardItem.GetInstancingData( out instancingData[ currentMatrix++ ] );
+		//						}
+		//					}
+
+		//					RenderOperation( context, outputItemoperation, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
+		//				}
+		//			}
+		//			else
+		//			{
+		//				//without instancing
+
+		//				for( int nRenderableItem = 0; nRenderableItem < outputItem.renderableItemsCount; nRenderableItem++ )
+		//				{
+		//					Vector3I renderableItem;
+		//					if( nRenderableItem != 0 )
+		//						renderableItem = outputItem.renderableItems[ nRenderableItem ];
+		//					else
+		//						renderableItem = outputItem.renderableItemFirst;
+
+		//					//bind material data
+		//					BindMaterialData( context, materialData, false, voxelRendering );
+		//					BindSamplersForTextureOnlySlots( context, false, voxelRendering );
+
+		//					//bind render operation data, set matrix
+		//					if( renderableItem.X == 0 )
+		//					{
+		//						//meshes
+		//						ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableItem.Y ];
+		//						var meshData = meshItem.MeshData;
+
+		//						ForwardBindGeneralTexturesUniforms( context, frameData/*, ref meshItem.BoundingSphere, lightItem, receiveShadows*/, nRenderableItem == 0 );
+
+		//						BindRenderOperationData( context, frameData, materialData, meshItem.InstancingEnabled, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, outputItemoperation.UnwrappedUV, ref meshItem.Color, outputItemoperation.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, meshItem.ObjectInstanceParameters, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
+
+		//						if( !meshItem.InstancingEnabled )
+		//							fixed( Matrix4F* p = &meshItem.TransformRelative )
+		//								Bgfx.SetTransform( (float*)p );
+
+		//						var tessItem = meshItem.Tessellation ? TessellationGetItem( context, outputItemoperation, materialData ) : null;
+
+		//						RenderOperation( context, outputItemoperation, pass, null, meshItem.CutVolumes, meshItem.InstancingEnabled, meshItem.InstancingVertexBuffer, ref meshItem.InstancingDataBuffer, meshItem.InstancingStart, meshItem.InstancingCount, tessItem );
+		//					}
+		//					else if( renderableItem.X == 1 )
+		//					{
+		//						//billboards
+		//						ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableItem.Y ];
+		//						var meshData = Billboard.GetBillboardMesh().Result.MeshData;
+
+		//						ForwardBindGeneralTexturesUniforms( context, frameData/*, ref billboardItem.BoundingSphere, lightItem, receiveShadows*/, nRenderableItem == 0 );
+
+		//						BindRenderOperationData( context, frameData, materialData, false, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PreviousFramePositionChange, 0, outputItemoperation.UnwrappedUV, ref billboardItem.Color, outputItemoperation.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, billboardItem.MaterialInstanceParameters, 0, ref vector3FZero );
+
+		//						billboardItem.GetWorldMatrixRelative( out var worldMatrix );
+		//						Bgfx.SetTransform( (float*)&worldMatrix );
+
+		//						RenderOperation( context, outputItemoperation, pass, null, billboardItem.CutVolumes );
+		//					}
+		//				}
+		//			}
+		//		}
+		//	}
+		//}
+
+
+
+		//InstanceDataBuffer instanceBuffer = InstanceDataBuffer.Invalid;
+
+
+		////draw
+		//for( int nRenderableGroupsToDraw = 0; nRenderableGroupsToDraw < renderableGroupsToDraw.Count; nRenderableGroupsToDraw++ )
+		//{
+		//	var renderableGroup = renderableGroupsToDraw[ nRenderableGroupsToDraw ].RenderableGroup;
+
+		//	if( renderableGroup.X == 0 )
+		//	{
+		//		//Mesh rendering
+
+		//		ref var meshItem2 = ref frameDataMeshes.Data[ renderableGroup.Y ];
+		//		ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup.Y ];
+		//		var meshData = meshItem.MeshData;
+
+		//		//get data for instancing
+		//		int additionInstancingRendered = 0;
+
+		//		//!!!!need?
+		//		//!!!!need?
+		//		//!!!!need?
+
+		//		//!!!!
+		//		//if( Instancing && InstancingTransparent )
+		//		//{
+		//		//	int nRenderableGroupsToDraw2 = nRenderableGroupsToDraw + 1;
+		//		//	while( nRenderableGroupsToDraw2 < renderableGroupsToDraw.Count )
+		//		//	{
+		//		//		if( additionInstancingRendered >= InstancingMaxCount )
+		//		//			break;
+
+
+		//		//		//!!!!probes?
+
+
+		//		//		var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw2 ].RenderableGroup;
+		//		//		if( renderableGroup2.X == 0 )
+		//		//		{
+		//		//			ref var meshItem2_2 = ref frameDataMeshes.Data[ renderableGroup2.Y ];
+		//		//			if( meshItem2.CanUseInstancingForTransparentWith( ref meshItem2_2 ) )
+		//		//			{
+		//		//				ref var meshItem_2 = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup2.Y ];
+		//		//				if( meshItem.CanUseInstancingForTransparentWith( ref meshItem_2 ) )
+		//		//				{
+		//		//					additionInstancingRendered++;
+		//		//					nRenderableGroupsToDraw2++;
+		//		//					continue;
+		//		//				}
+		//		//			}
+		//		//		}
+
+		//		//		break;
+		//		//	}
+
+		//		//	if( additionInstancingRendered < 2/*InstancingMinCount*/ )
+		//		//		additionInstancingRendered = 0;
+		//		//}
+		//		bool instancing = additionInstancingRendered != 0;
+
+
+		//		//init instance buffer
+		//		int instanceCount = 0;
+		//		//InstanceDataBuffer instanceBuffer = InstanceDataBuffer.Invalid;
+		//		if( instancing )
+		//		{
+		//			int instanceStride = sizeof( RenderSceneData.ObjectInstanceData );
+		//			instanceCount = additionInstancingRendered + 1;
+
+		//			instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
+		//			if( instanceBuffer.Valid )
+		//			{
+		//				//get instancing matrices
+		//				RenderSceneData.ObjectInstanceData* instancingData = (RenderSceneData.ObjectInstanceData*)instanceBuffer.Data;
+		//				int currentMatrix = 0;
+		//				for( int n = 0; n < instanceCount; n++ )
+		//				{
+		//					var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw + n ].RenderableGroup;
+
+		//					ref var meshItem_2 = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup2.Y ];
+		//					meshItem_2.GetInstancingData( out instancingData[ currentMatrix++ ] );
+		//				}
+		//			}
+		//		}
+
+
+		//		//render mesh item
+		//		if( !meshItem.OnlyForShadowGeneration )
+		//		{
+		//			for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+		//			{
+		//				var oper = meshData.RenderOperations[ nOperation ];
+		//				var voxelRendering = oper.VoxelDataImage != null;
+
+		//				foreach( var materialData in GetMeshMaterialData( ref meshItem, oper, nOperation, true, false ) )
+		//				{
+		//					bool add = materialData.Transparent;
+		//					if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+		//						add = false;
+		//					if( !add )
+		//						continue;
+
+		//					if( materialData.AllPasses.Count != 0 )
+		//					{
+		//						var pass = materialData.GetForwardShadingPass( directionalAmbientOnly, directionalAmbientOnlyPrepareShadows, voxelRendering );
+		//						//var pass = materialData.forwardShadingPass;
+
+		//						//var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+		//						//bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+
+		//						//GpuMaterialPass pass;
+		//						//if( receiveShadows )
+		//						//{
+		//						//	pass = passesGroup.passWithShadows;
+		//						//	//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+		//						//	//	pass = passesGroup.passWithShadowsHigh;
+		//						//	//else
+		//						//	//	pass = passesGroup.passWithShadowsLow;
+		//						//}
+		//						//else
+		//						//	pass = passesGroup.passWithoutShadows;
+
+		//						ForwardBindGeneralTexturesUniforms( context, frameData/*, ref meshItem.BoundingSphere, lightItem, receiveShadows*/, true );
+
+		//						BindMaterialData( context, materialData, false, voxelRendering );
+		//						BindSamplersForTextureOnlySlots( context, false, oper.VoxelDataInfo != null );
+		//						//materialData.BindCurrentFrameDataDepthTexture( context, depthTextureCopy );
+
+		//						BindRenderOperationData( context, frameData, materialData, instancing, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, oper.UnwrappedUV, ref meshItem.Color, oper.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, oper.VoxelDataImage, oper.VoxelDataInfo, instancing ? null : meshItem.ObjectInstanceParameters, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
+
+		//						if( instancing )
+		//						{
+		//							if( instanceBuffer.Valid )
+		//								RenderOperation( context, oper, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
+		//						}
+		//						else
+		//						{
+		//							var tessItem = meshItem.Tessellation ? TessellationGetItem( context, oper, materialData ) : null;
+
+		//							fixed( Matrix4F* p = &meshItem.TransformRelative )
+		//								Bgfx.SetTransform( (float*)p );
+		//							RenderOperation( context, oper, pass, null, meshItem.CutVolumes, tessItem );
+		//						}
+		//					}
+		//					//}
+		//				}
+		//			}
+
+		//			//render layers
+		//			if( ( ( meshItem2.Flags & FrameData.MeshItem.FlagsEnum.ContainsTransparentLayersOnTransparentBaseObjects ) != 0 ) && DebugDrawLayers )
+		//			{
+		//				if( meshItem.Layers != null )
+		//				{
+		//					for( int nLayer = 0; nLayer < meshItem.Layers.Length; nLayer++ )
+		//					{
+		//						ref var layer = ref meshItem.Layers[ nLayer ];
+		//						foreach( var materialData in GetLayerMaterialData( ref layer, true, false ) )
+		//						{
+		//							//if( materialData == null )
+		//							//	continue;
+
+		//							bool add = materialData.Transparent;
+		//							if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+		//								add = false;
+		//							if( !add )
+		//								continue;
+
+		//							if( materialData.AllPasses.Count != 0 )
+		//							{
+		//								var pass = materialData.GetForwardShadingPass( directionalAmbientOnly, directionalAmbientOnlyPrepareShadows, false );
+		//								//var pass = materialData.forwardShadingPass;
+
+		//								//var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+		//								//bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+
+		//								//GpuMaterialPass pass;
+		//								//if( receiveShadows )
+		//								//{
+		//								//	pass = passesGroup.passWithShadows;
+		//								//	//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+		//								//	//	pass = passesGroup.passWithShadowsHigh;
+		//								//	//else
+		//								//	//	pass = passesGroup.passWithShadowsLow;
+		//								//}
+		//								//else
+		//								//	pass = passesGroup.passWithoutShadows;
+
+		//								ForwardBindGeneralTexturesUniforms( context, frameData/*, ref meshItem.BoundingSphere, lightItem, receiveShadows*/, true );
+
+		//								fixed( Matrix4F* p = &meshItem.TransformRelative )
+		//									Bgfx.SetTransform( (float*)p );
+
+		//								var color = /*meshItem.Color * */ layer.MaterialColor;
+
+		//								for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+		//								{
+		//									var oper = meshData.RenderOperations[ nOperation ];
+		//									var voxelRendering = oper.VoxelDataInfo != null;
+
+		//									//bind material data
+		//									BindMaterialData( context, materialData, false, voxelRendering );
+		//									BindSamplersForTextureOnlySlots( context, false, voxelRendering );
+		//									materialData.BindCurrentFrameDataMaskTextures( context, layer.Mask );
+		//									//materialData.BindCurrentFrameDataDepthTexture( context, depthTextureCopy );
+
+		//									BindRenderOperationData( context, frameData, materialData, false, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, layer.MaskFormat == PaintLayer.MaskFormatEnum.Triangles, oper.VoxelDataImage, oper.VoxelDataInfo, meshItem.ObjectInstanceParameters, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative, layer.UVScale );
+
+		//									RenderOperation( context, oper, pass, null, meshItem.CutVolumes );
+		//								}
+		//							}
+		//							//}
+		//						}
+		//					}
+		//				}
+		//			}
+		//		}
+
+		//		nRenderableGroupsToDraw += additionInstancingRendered;
+		//	}
+		//	else if( renderableGroup.X == 1 )
+		//	{
+		//		//Billboard rendering
+
+		//		ref var billboardItem2 = ref frameDataBillboards.Data[ renderableGroup.Y ];
+		//		ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableGroup.Y ];
+
+		//		var meshData = Billboard.GetBillboardMesh().Result.MeshData;
+
+		//		//get data for instancing
+		//		int additionInstancingRendered = 0;
+
+		//		//!!!!need?
+		//		//!!!!need?
+		//		//!!!!need?
+
+		//		//if( Instancing && InstancingTransparent )
+		//		//{
+		//		//	int nRenderableGroupsToDraw2 = nRenderableGroupsToDraw + 1;
+		//		//	while( nRenderableGroupsToDraw2 < renderableGroupsToDraw.Count )
+		//		//	{
+		//		//		if( additionInstancingRendered >= InstancingMaxCount )
+		//		//			break;
+
+		//		//		var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw2 ].RenderableGroup;
+		//		//		if( renderableGroup2.X == 1 )
+		//		//		{
+		//		//			ref var billboardItem2_2 = ref frameDataBillboards.Data[ renderableGroup2.Y ];
+		//		//			if( billboardItem2.CanUseInstancingForTransparentWith( ref billboardItem2_2 ) )
+		//		//			{
+		//		//				ref var billboardItem_2 = ref frameDataRenderSceneDataBillboards.Data[ renderableGroup2.Y ];
+		//		//				if( billboardItem.CanUseInstancingForTransparentWith( ref billboardItem_2 ) )
+		//		//				{
+		//		//					additionInstancingRendered++;
+		//		//					nRenderableGroupsToDraw2++;
+		//		//					continue;
+		//		//				}
+		//		//			}
+		//		//		}
+
+		//		//		break;
+		//		//	}
+
+		//		//	if( additionInstancingRendered < 2/*InstancingMinCount*/ )
+		//		//		additionInstancingRendered = 0;
+		//		//}
+		//		bool instancing = additionInstancingRendered != 0;
+
+
+		//		//init instance buffer
+		//		int instanceCount = 0;
+		//		//InstanceDataBuffer instanceBuffer = InstanceDataBuffer.Invalid;
+		//		if( instancing )
+		//		{
+		//			int instanceStride = sizeof( RenderSceneData.ObjectInstanceData );
+		//			instanceCount = additionInstancingRendered + 1;
+
+		//			instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
+		//			if( instanceBuffer.Valid )
+		//			{
+		//				//get instancing matrices
+		//				RenderSceneData.ObjectInstanceData* instancingData = (RenderSceneData.ObjectInstanceData*)instanceBuffer.Data;
+		//				int currentMatrix = 0;
+		//				for( int n = 0; n < instanceCount; n++ )
+		//				{
+		//					var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw + n ].RenderableGroup;
+
+		//					ref var billboardItem_2 = ref frameDataRenderSceneDataBillboards.Data[ renderableGroup2.Y ];
+		//					billboardItem_2.GetInstancingData( out instancingData[ currentMatrix++ ] );
+		//				}
+		//			}
+		//		}
+
+
+		//		for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+		//		{
+		//			var oper = meshData.RenderOperations[ nOperation ];
+		//			var voxelRendering = oper.VoxelDataInfo != null;
+
+		//			foreach( var materialData in GetBillboardMaterialData( ref billboardItem, true, false ) )
+		//			{
+		//				bool add = materialData.Transparent;
+		//				if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+		//					add = false;
+		//				if( !add )
+		//					continue;
+
+		//				if( materialData.AllPasses.Count != 0 )
+		//				{
+		//					var pass = materialData.GetForwardShadingPass( directionalAmbientOnly, directionalAmbientOnlyPrepareShadows, voxelRendering );
+		//					//var pass = materialData.forwardShadingPass;
+
+		//					//var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+		//					//bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+
+		//					//GpuMaterialPass pass;
+		//					//if( receiveShadows )
+		//					//{
+		//					//	pass = passesGroup.passWithShadows;
+		//					//	//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+		//					//	//	pass = passesGroup.passWithShadowsHigh;
+		//					//	//else
+		//					//	//	pass = passesGroup.passWithShadowsLow;
+		//					//}
+		//					//else
+		//					//	pass = passesGroup.passWithoutShadows;
+
+		//					ForwardBindGeneralTexturesUniforms( context, frameData/*, ref billboardItem.BoundingSphere, lightItem, receiveShadows*/, true );
+
+		//					BindMaterialData( context, materialData, false, voxelRendering );
+		//					BindSamplersForTextureOnlySlots( context, false, oper.VoxelDataInfo != null );
+		//					//materialData.BindCurrentFrameDataDepthTexture( context, depthTextureCopy );
+
+		//					BindRenderOperationData( context, frameData, materialData, instancing, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PreviousFramePositionChange, 0, oper.UnwrappedUV, ref billboardItem.Color, oper.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, oper.VoxelDataImage, oper.VoxelDataInfo, instancing ? null : billboardItem.MaterialInstanceParameters, 0, ref vector3FZero );
+
+		//					if( instancing )
+		//					{
+		//						if( instanceBuffer.Valid )
+		//							RenderOperation( context, oper, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
+		//					}
+		//					else
+		//					{
+		//						billboardItem.GetWorldMatrixRelative( out var worldMatrix );
+		//						Bgfx.SetTransform( (float*)&worldMatrix );
+		//						RenderOperation( context, oper, pass, null, null );
+		//					}
+		//				}
+		//			}
+		//		}
+
+		//		nRenderableGroupsToDraw += additionInstancingRendered;
+		//	}
+		//}
+
+
+
+
+		//[MethodImpl( (MethodImplOptions)512 )]
+		//protected unsafe virtual void Render3DSceneForwardTransparentWithOIT( ViewportRenderingContext context, FrameData frameData, ImageComponent colorDepthTextureCopy )
+		//{
+
+
+
+		//		//Material.CompiledMaterialData materialBinded = null;
+
+
+		//		//draw
+		//		for( int nRenderableGroupsToDraw = 0; nRenderableGroupsToDraw < renderableGroupsToDraw.Count; nRenderableGroupsToDraw++ )
+		//		{
+		//			var renderableGroup = renderableGroupsToDraw[ nRenderableGroupsToDraw ].RenderableGroup;
+
+		//			if( renderableGroup.X == 0 )
+		//			{
+		//				//Mesh rendering
+
+		//				ref var meshItem2 = ref frameDataMeshes.Data[ renderableGroup.Y ];
+		//				ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup.Y ];
+		//				var meshData = meshItem.MeshData;
+
+		//				//get data for instancing
+		//				int additionInstancingRendered = 0;
+		//				if( Instancing && InstancingTransparent )
+		//				{
+		//					int nRenderableGroupsToDraw2 = nRenderableGroupsToDraw + 1;
+		//					while( nRenderableGroupsToDraw2 < renderableGroupsToDraw.Count )
+		//					{
+		//						if( additionInstancingRendered >= InstancingMaxCount )
+		//							break;
+
+
+		//						//!!!!probes?
+
+
+		//						var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw2 ].RenderableGroup;
+		//						if( renderableGroup2.X == 0 )
+		//						{
+		//							ref var meshItem2_2 = ref frameDataMeshes.Data[ renderableGroup2.Y ];
+		//							if( meshItem2.CanUseInstancingForTransparentWith( ref meshItem2_2 ) )
+		//							{
+		//								ref var meshItem_2 = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup2.Y ];
+		//								if( meshItem.CanUseInstancingForTransparentWith( ref meshItem_2 ) )
+		//								{
+		//									additionInstancingRendered++;
+		//									nRenderableGroupsToDraw2++;
+		//									continue;
+		//								}
+		//							}
+		//						}
+
+		//						break;
+		//					}
+
+		//					if( additionInstancingRendered < 2/*InstancingMinCount*/ )
+		//						additionInstancingRendered = 0;
+		//				}
+		//				bool instancing = additionInstancingRendered != 0;
+
+
+		//				//init instance buffer
+		//				int instanceCount = 0;
+		//				//InstanceDataBuffer instanceBuffer = InstanceDataBuffer.Invalid;
+		//				if( instancing )
+		//				{
+		//					int instanceStride = sizeof( RenderSceneData.ObjectInstanceData );
+		//					instanceCount = additionInstancingRendered + 1;
+
+		//					instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
+		//					if( instanceBuffer.Valid )
+		//					{
+		//						//get instancing matrices
+		//						RenderSceneData.ObjectInstanceData* instancingData = (RenderSceneData.ObjectInstanceData*)instanceBuffer.Data;
+		//						int currentMatrix = 0;
+		//						for( int n = 0; n < instanceCount; n++ )
+		//						{
+		//							var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw + n ].RenderableGroup;
+
+		//							ref var meshItem_2 = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup2.Y ];
+		//							meshItem_2.GetInstancingData( out instancingData[ currentMatrix++ ] );
+		//						}
+		//					}
+		//				}
+
+
+		//				//render mesh item
+		//				if( !meshItem.OnlyForShadowGeneration )
+		//				{
+		//					for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+		//					{
+		//						var oper = meshData.RenderOperations[ nOperation ];
+		//						var voxelRendering = oper.VoxelDataImage != null;
+
+		//						foreach( var materialData in GetMeshMaterialData( ref meshItem, oper, nOperation, true, false ) )
+		//						{
+		//							bool add = materialData.Transparent;
+		//							if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+		//								add = false;
+		//							if( !add )
+		//								continue;
+
+		//							for( int nAffectedLightIndex = 0; nAffectedLightIndex < affectedLightsCount; nAffectedLightIndex++ )
+		//							{
+		//								var lightIndex = affectedLights[ nAffectedLightIndex ];
+		//								var lightItem = frameData.Lights[ lightIndex ];
+
+		//								if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+		//								{
+		//									//set lightItem uniforms
+		//									if( lightItemBinded != lightItem )
+		//									{
+		//										lightItem.Bind( this, context );
+		//										lightItemBinded = lightItem;
+		//									}
+
+		//									var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+		//									bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+
+		//									GpuMaterialPass pass;
+		//									if( receiveShadows )
+		//									{
+		//										pass = passesGroup.passWithShadows;
+		//										//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+		//										//	pass = passesGroup.passWithShadowsHigh;
+		//										//else
+		//										//	pass = passesGroup.passWithShadowsLow;
+		//									}
+		//									else
+		//										pass = passesGroup.passWithoutShadows;
+
+		//									ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true, false );
+
+		//									BindMaterialData( context, materialData, false, voxelRendering );
+		//									BindSamplersForTextureOnlySlots( context, false, oper.VoxelDataInfo != null );
+		//									//materialData.BindCurrentFrameDataDepthTexture( context, depthTextureCopy );
+
+		//									BindRenderOperationData( context, frameData, materialData, instancing, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, oper.UnwrappedUV, ref meshItem.Color, oper.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, oper.VoxelDataImage, oper.VoxelDataInfo, instancing ? null : meshItem.MaterialInstanceParameters, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
+
+		//									if( instancing )
+		//									{
+		//										if( instanceBuffer.Valid )
+		//											RenderOperation( context, oper, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
+		//									}
+		//									else
+		//									{
+		//										fixed( Matrix4F* p = &meshItem.TransformRelative )
+		//											Bgfx.SetTransform( (float*)p );
+		//										RenderOperation( context, oper, pass, null, meshItem.CutVolumes );
+		//									}
+		//								}
+		//							}
+		//						}
+		//					}
+
+		//					//render layers
+		//					if( ( ( meshItem2.Flags & FrameData.MeshItem.FlagsEnum.ContainsTransparentLayersOnTransparentBaseObjects ) != 0 ) && DebugDrawLayers )
+		//					{
+		//						if( meshItem.Layers != null )
+		//						{
+		//							for( int nLayer = 0; nLayer < meshItem.Layers.Length; nLayer++ )
+		//							{
+		//								ref var layer = ref meshItem.Layers[ nLayer ];
+		//								foreach( var materialData in GetLayerMaterialData( ref layer, true, false ) )
+		//								{
+		//									//if( materialData == null )
+		//									//	continue;
+
+		//									bool add = materialData.Transparent;
+		//									if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+		//										add = false;
+		//									if( !add )
+		//										continue;
+
+		//									for( int nAffectedLightIndex = 0; nAffectedLightIndex < affectedLightsCount; nAffectedLightIndex++ )
+		//									{
+		//										var lightIndex = affectedLights[ nAffectedLightIndex ];
+		//										var lightItem = frameData.Lights[ lightIndex ];
+
+		//										if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+		//										{
+		//											//set lightItem uniforms
+		//											if( lightItemBinded != lightItem )
+		//											{
+		//												lightItem.Bind( this, context );
+		//												lightItemBinded = lightItem;
+		//											}
+
+		//											var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+		//											bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+
+		//											GpuMaterialPass pass;
+		//											if( receiveShadows )
+		//											{
+		//												pass = passesGroup.passWithShadows;
+		//												//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+		//												//	pass = passesGroup.passWithShadowsHigh;
+		//												//else
+		//												//	pass = passesGroup.passWithShadowsLow;
+		//											}
+		//											else
+		//												pass = passesGroup.passWithoutShadows;
+
+		//											ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true, false );
+
+		//											fixed( Matrix4F* p = &meshItem.TransformRelative )
+		//												Bgfx.SetTransform( (float*)p );
+
+		//											var color = /*meshItem.Color * */ layer.MaterialColor;
+
+		//											for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+		//											{
+		//												var oper = meshData.RenderOperations[ nOperation ];
+		//												var voxelRendering = oper.VoxelDataInfo != null;
+
+		//												//bind material data
+		//												BindMaterialData( context, materialData, false, voxelRendering );
+		//												BindSamplersForTextureOnlySlots( context, false, voxelRendering );
+		//												materialData.BindCurrentFrameDataMaskTextures( context, layer.Mask );
+		//												//materialData.BindCurrentFrameDataDepthTexture( context, depthTextureCopy );
+
+		//												BindRenderOperationData( context, frameData, materialData, false, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, layer.MaskFormat == PaintLayer.MaskFormatEnum.Triangles, oper.VoxelDataImage, oper.VoxelDataInfo, meshItem.MaterialInstanceParameters, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
+
+		//												RenderOperation( context, oper, pass, null, meshItem.CutVolumes );
+		//											}
+		//										}
+		//									}
+		//								}
+		//							}
+		//						}
+		//					}
+		//				}
+
+		//				nRenderableGroupsToDraw += additionInstancingRendered;
+		//			}
+		//			else if( renderableGroup.X == 1 )
+		//			{
+		//				//Billboard rendering
+
+		//				ref var billboardItem2 = ref frameDataBillboards.Data[ renderableGroup.Y ];
+		//				ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableGroup.Y ];
+
+		//				var meshData = Billboard.GetBillboardMesh().Result.MeshData;
+
+		//				//get data for instancing
+		//				int additionInstancingRendered = 0;
+		//				if( Instancing && InstancingTransparent )
+		//				{
+		//					int nRenderableGroupsToDraw2 = nRenderableGroupsToDraw + 1;
+		//					while( nRenderableGroupsToDraw2 < renderableGroupsToDraw.Count )
+		//					{
+		//						if( additionInstancingRendered >= InstancingMaxCount )
+		//							break;
+
+		//						var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw2 ].RenderableGroup;
+		//						if( renderableGroup2.X == 1 )
+		//						{
+		//							ref var billboardItem2_2 = ref frameDataBillboards.Data[ renderableGroup2.Y ];
+		//							if( billboardItem2.CanUseInstancingForTransparentWith( ref billboardItem2_2 ) )
+		//							{
+		//								ref var billboardItem_2 = ref frameDataRenderSceneDataBillboards.Data[ renderableGroup2.Y ];
+		//								if( billboardItem.CanUseInstancingForTransparentWith( ref billboardItem_2 ) )
+		//								{
+		//									additionInstancingRendered++;
+		//									nRenderableGroupsToDraw2++;
+		//									continue;
+		//								}
+		//							}
+		//						}
+
+		//						break;
+		//					}
+
+		//					if( additionInstancingRendered < 2/*InstancingMinCount*/ )
+		//						additionInstancingRendered = 0;
+		//				}
+		//				bool instancing = additionInstancingRendered != 0;
+
+
+		//				//init instance buffer
+		//				int instanceCount = 0;
+		//				//InstanceDataBuffer instanceBuffer = InstanceDataBuffer.Invalid;
+		//				if( instancing )
+		//				{
+		//					int instanceStride = sizeof( RenderSceneData.ObjectInstanceData );
+		//					instanceCount = additionInstancingRendered + 1;
+
+		//					instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
+		//					if( instanceBuffer.Valid )
+		//					{
+		//						//get instancing matrices
+		//						RenderSceneData.ObjectInstanceData* instancingData = (RenderSceneData.ObjectInstanceData*)instanceBuffer.Data;
+		//						int currentMatrix = 0;
+		//						for( int n = 0; n < instanceCount; n++ )
+		//						{
+		//							var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw + n ].RenderableGroup;
+
+		//							ref var billboardItem_2 = ref frameDataRenderSceneDataBillboards.Data[ renderableGroup2.Y ];
+		//							billboardItem_2.GetInstancingData( out instancingData[ currentMatrix++ ] );
+		//						}
+		//					}
+		//				}
+
+
+		//				for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+		//				{
+		//					var oper = meshData.RenderOperations[ nOperation ];
+		//					var voxelRendering = oper.VoxelDataInfo != null;
+
+		//					foreach( var materialData in GetBillboardMaterialData( ref billboardItem, true, false ) )
+		//					{
+		//						bool add = materialData.Transparent;
+		//						if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+		//							add = false;
+		//						if( !add )
+		//							continue;
+
+		//						for( int nAffectedLightIndex = 0; nAffectedLightIndex < affectedLightsCount; nAffectedLightIndex++ )
+		//						{
+		//							var lightIndex = affectedLights[ nAffectedLightIndex ];
+		//							var lightItem = frameData.Lights[ lightIndex ];
+
+		//							if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+		//							{
+		//								//set lightItem uniforms
+		//								if( lightItemBinded != lightItem )
+		//								{
+		//									lightItem.Bind( this, context );
+		//									lightItemBinded = lightItem;
+		//								}
+
+		//								var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+		//								bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+
+		//								GpuMaterialPass pass;
+		//								if( receiveShadows )
+		//								{
+		//									pass = passesGroup.passWithShadows;
+		//									//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+		//									//	pass = passesGroup.passWithShadowsHigh;
+		//									//else
+		//									//	pass = passesGroup.passWithShadowsLow;
+		//								}
+		//								else
+		//									pass = passesGroup.passWithoutShadows;
+
+		//								ForwardBindGeneralTexturesUniforms( context, frameData, ref billboardItem.BoundingSphere, lightItem, receiveShadows, true, false );
+
+		//								BindMaterialData( context, materialData, false, voxelRendering );
+		//								BindSamplersForTextureOnlySlots( context, false, oper.VoxelDataInfo != null );
+		//								//materialData.BindCurrentFrameDataDepthTexture( context, depthTextureCopy );
+
+		//								BindRenderOperationData( context, frameData, materialData, instancing, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PreviousFramePositionChange, 0, oper.UnwrappedUV, ref billboardItem.Color, oper.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, oper.VoxelDataImage, oper.VoxelDataInfo, instancing ? null : billboardItem.MaterialInstanceParameters, 0, ref vector3FZero );
+
+		//								if( instancing )
+		//								{
+		//									if( instanceBuffer.Valid )
+		//										RenderOperation( context, oper, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
+		//								}
+		//								else
+		//								{
+		//									billboardItem.GetWorldMatrixRelative( out var worldMatrix );
+		//									Bgfx.SetTransform( (float*)&worldMatrix );
+		//									RenderOperation( context, oper, pass, null, null );
+		//								}
+		//							}
+		//						}
+		//					}
+		//				}
+
+		//				nRenderableGroupsToDraw += additionInstancingRendered;
+		//			}
+		//		}
+		//	}
+		//}
+
+
+
+
+
+
+		////[MethodImpl( (MethodImplOptions)512 )]
+		////protected unsafe virtual void Render3DSceneForwardTransparentWithOIT( ViewportRenderingContext context, FrameData frameData, ImageComponent colorDepthTextureCopy )
+		////{
+
+		////	var frameDataRenderSceneDataMeshes = frameData.RenderSceneData.Meshes;
+		////	var frameDataRenderSceneDataBillboards = frameData.RenderSceneData.Billboards;
+		////	var frameDataMeshes = frameData.Meshes;
+		////	var frameDataBillboards = frameData.Billboards;
+
+		////	var viewportOwner = context.Owner;
+
+		////	using( var renderableGroupsToDraw = new OpenListNative<RenderableGroupWithDistance>( frameData.RenderableGroupsInFrustum.Count ) )
+		////	{
+		////		foreach( var renderableGroup in frameData.RenderableGroupsInFrustum )
+		////		{
+		////			bool add = false;
+
+		////			if( renderableGroup.X == 0 )
+		////			{
+		////				ref var data = ref frameDataMeshes.Data[ renderableGroup.Y ];
+		////				add = ( data.Flags & FrameData.MeshItem.FlagsEnum.UseForwardTransparent ) != 0;
+		////			}
+		////			else
+		////			{
+		////				ref var data = ref frameDataBillboards.Data[ renderableGroup.Y ];
+		////				add = ( data.Flags & FrameData.BillboardItem.FlagsEnum.UseForwardTransparent ) != 0;
+		////			}
+
+		////			if( add )
+		////			{
+		////				var item = new RenderableGroupWithDistance();
+		////				item.RenderableGroup = renderableGroup;
+
+		////				//!!!!need?
+
+		////				item.DistanceSquared = frameData.GetObjectGroupDistanceToCameraSquared( ref item.RenderableGroup );
+		////				//no sense to sort
+		////				//ApplyTransparentRenderingAddOffsetWhenSortByDistance( frameData, ref item );
+		////				renderableGroupsToDraw.Add( item );
+		////			}
+		////		}
+
+		////		if( renderableGroupsToDraw.Count == 0 )
+		////			return;
+
+		////		//no sense to sort
+		////		////sort by distance
+		////		//CollectionUtility.MergeSortUnmanaged( renderableGroupsToDraw.Data, renderableGroupsToDraw.Count, delegate ( RenderableGroupWithDistance* a, RenderableGroupWithDistance* b )
+		////		//{
+		////		//	if( a->DistanceSquared > b->DistanceSquared )
+		////		//		return -1;
+		////		//	if( a->DistanceSquared < b->DistanceSquared )
+		////		//		return 1;
+		////		//	return 0;
+		////		//}, true );
+
+
+		////		LightItem lightItemBinded = null;
+		////		//Material.CompiledMaterialData materialBinded = null;
+
+		////		int ambientDirectionalLightCount = 0;
+		////		foreach( var lightIndex in frameData.LightsInFrustumSorted )
+		////		{
+		////			var lightItem = frameData.Lights[ lightIndex ];
+		////			if( lightItem.data.Type == Light.TypeEnum.Point || lightItem.data.Type == Light.TypeEnum.Spotlight )
+		////				break;
+		////			ambientDirectionalLightCount++;
+		////		}
+
+		////		int[] tempIntArray = null;
+		////		int[] GetTempIntArray( int minSize )
+		////		{
+		////			if( tempIntArray == null || tempIntArray.Length < minSize )
+		////				tempIntArray = new int[ minSize ];
+		////			return tempIntArray;
+		////		}
+
+
+		////		//bind textures for all render operations
+		////		context.BindTexture( 5/*"s_colorDepthTextureCopy"*/, colorDepthTextureCopy ?? ResourceUtility.BlackTexture2D, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None, 0, false );
+		////		//context.BindTexture( 5/*"s_colorDepthTextureCopy"*/, colorDepthTextureCopy ?? ResourceUtility.BlackTexture2D, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point );
+		////		BindBrdfLUT( context );
+		////		BindMaterialsTexture( context, frameData );
+		////		BindBonesTexture( context, frameData );
+		////		BindSamplersForTextureOnlySlots( context, true, false );
+		////		BindMaterialData( context, null, false, false );
+
+		////		InstanceDataBuffer instanceBuffer = InstanceDataBuffer.Invalid;
+
+
+		////		//!!!!
+		////		//инстансить
+		////		//что про секторы
+
+
+		////		//draw
+		////		for( int nRenderableGroupsToDraw = 0; nRenderableGroupsToDraw < renderableGroupsToDraw.Count; nRenderableGroupsToDraw++ )
+		////		{
+		////			var renderableGroup = renderableGroupsToDraw[ nRenderableGroupsToDraw ].RenderableGroup;
+
+		////			if( renderableGroup.X == 0 )
+		////			{
+		////				//Mesh rendering
+
+		////				ref var meshItem2 = ref frameDataMeshes.Data[ renderableGroup.Y ];
+		////				ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup.Y ];
+		////				var meshData = meshItem.MeshData;
+
+		////				//!!!!не всегда нужно
+		////				var affectedLightsCount = ambientDirectionalLightCount + meshItem2.PointSpotLightCount;
+		////				var affectedLights = GetTempIntArray( affectedLightsCount );//var affectedLights = stackalloc int[ affectedLightsCount ];
+		////				for( int n = 0; n < ambientDirectionalLightCount; n++ )
+		////					affectedLights[ n ] = frameData.LightsInFrustumSorted[ n ];
+		////				for( int n = 0; n < meshItem2.PointSpotLightCount; n++ )
+		////					affectedLights[ ambientDirectionalLightCount + n ] = meshItem2.GetPointSpotLight( n );
+
+		////				//get data for instancing
+		////				int additionInstancingRendered = 0;
+		////				if( Instancing && InstancingTransparent )
+		////				{
+		////					int nRenderableGroupsToDraw2 = nRenderableGroupsToDraw + 1;
+		////					while( nRenderableGroupsToDraw2 < renderableGroupsToDraw.Count )
+		////					{
+		////						if( additionInstancingRendered >= InstancingMaxCount )
+		////							break;
+
+
+		////						//!!!!probes?
+
+
+		////						var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw2 ].RenderableGroup;
+		////						if( renderableGroup2.X == 0 )
+		////						{
+		////							ref var meshItem2_2 = ref frameDataMeshes.Data[ renderableGroup2.Y ];
+		////							if( meshItem2.CanUseInstancingForTransparentWith( ref meshItem2_2 ) )
+		////							{
+		////								ref var meshItem_2 = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup2.Y ];
+		////								if( meshItem.CanUseInstancingForTransparentWith( ref meshItem_2 ) )
+		////								{
+		////									additionInstancingRendered++;
+		////									nRenderableGroupsToDraw2++;
+		////									continue;
+		////								}
+		////							}
+		////						}
+
+		////						break;
+		////					}
+
+		////					if( additionInstancingRendered < 2/*InstancingMinCount*/ )
+		////						additionInstancingRendered = 0;
+		////				}
+		////				bool instancing = additionInstancingRendered != 0;
+
+
+		////				//init instance buffer
+		////				int instanceCount = 0;
+		////				//InstanceDataBuffer instanceBuffer = InstanceDataBuffer.Invalid;
+		////				if( instancing )
+		////				{
+		////					int instanceStride = sizeof( RenderSceneData.ObjectInstanceData );
+		////					instanceCount = additionInstancingRendered + 1;
+
+		////					instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
+		////					if( instanceBuffer.Valid )
+		////					{
+		////						//get instancing matrices
+		////						RenderSceneData.ObjectInstanceData* instancingData = (RenderSceneData.ObjectInstanceData*)instanceBuffer.Data;
+		////						int currentMatrix = 0;
+		////						for( int n = 0; n < instanceCount; n++ )
+		////						{
+		////							var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw + n ].RenderableGroup;
+
+		////							ref var meshItem_2 = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup2.Y ];
+		////							meshItem_2.GetInstancingData( out instancingData[ currentMatrix++ ] );
+		////						}
+		////					}
+		////				}
+
+
+		////				//render mesh item
+		////				if( !meshItem.OnlyForShadowGeneration )
+		////				{
+		////					for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+		////					{
+		////						var oper = meshData.RenderOperations[ nOperation ];
+		////						var voxelRendering = oper.VoxelDataImage != null;
+
+		////						foreach( var materialData in GetMeshMaterialData( ref meshItem, oper, nOperation, true, false ) )
+		////						{
+		////							bool add = materialData.Transparent;
+		////							if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+		////								add = false;
+		////							if( !add )
+		////								continue;
+
+		////							for( int nAffectedLightIndex = 0; nAffectedLightIndex < affectedLightsCount; nAffectedLightIndex++ )
+		////							{
+		////								var lightIndex = affectedLights[ nAffectedLightIndex ];
+		////								var lightItem = frameData.Lights[ lightIndex ];
+
+		////								if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+		////								{
+		////									//set lightItem uniforms
+		////									if( lightItemBinded != lightItem )
+		////									{
+		////										lightItem.Bind( this, context );
+		////										lightItemBinded = lightItem;
+		////									}
+
+		////									var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+		////									bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+
+		////									GpuMaterialPass pass;
+		////									if( receiveShadows )
+		////									{
+		////										pass = passesGroup.passWithShadows;
+		////										//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+		////										//	pass = passesGroup.passWithShadowsHigh;
+		////										//else
+		////										//	pass = passesGroup.passWithShadowsLow;
+		////									}
+		////									else
+		////										pass = passesGroup.passWithoutShadows;
+
+		////									ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true, false );
+
+		////									BindMaterialData( context, materialData, false, voxelRendering );
+		////									BindSamplersForTextureOnlySlots( context, false, oper.VoxelDataInfo != null );
+		////									//materialData.BindCurrentFrameDataDepthTexture( context, depthTextureCopy );
+
+		////									BindRenderOperationData( context, frameData, materialData, instancing, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, oper.UnwrappedUV, ref meshItem.Color, oper.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, oper.VoxelDataImage, oper.VoxelDataInfo, instancing ? null : meshItem.MaterialInstanceParameters, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
+
+		////									if( instancing )
+		////									{
+		////										if( instanceBuffer.Valid )
+		////											RenderOperation( context, oper, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
+		////									}
+		////									else
+		////									{
+		////										fixed( Matrix4F* p = &meshItem.TransformRelative )
+		////											Bgfx.SetTransform( (float*)p );
+		////										RenderOperation( context, oper, pass, null, meshItem.CutVolumes );
+		////									}
+		////								}
+		////							}
+		////						}
+		////					}
+
+		////					//render layers
+		////					if( ( ( meshItem2.Flags & FrameData.MeshItem.FlagsEnum.ContainsTransparentLayersOnTransparentBaseObjects ) != 0 ) && DebugDrawLayers )
+		////					{
+		////						if( meshItem.Layers != null )
+		////						{
+		////							for( int nLayer = 0; nLayer < meshItem.Layers.Length; nLayer++ )
+		////							{
+		////								ref var layer = ref meshItem.Layers[ nLayer ];
+		////								foreach( var materialData in GetLayerMaterialData( ref layer, true, false ) )
+		////								{
+		////									//if( materialData == null )
+		////									//	continue;
+
+		////									bool add = materialData.Transparent;
+		////									if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+		////										add = false;
+		////									if( !add )
+		////										continue;
+
+		////									for( int nAffectedLightIndex = 0; nAffectedLightIndex < affectedLightsCount; nAffectedLightIndex++ )
+		////									{
+		////										var lightIndex = affectedLights[ nAffectedLightIndex ];
+		////										var lightItem = frameData.Lights[ lightIndex ];
+
+		////										if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+		////										{
+		////											//set lightItem uniforms
+		////											if( lightItemBinded != lightItem )
+		////											{
+		////												lightItem.Bind( this, context );
+		////												lightItemBinded = lightItem;
+		////											}
+
+		////											var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+		////											bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+
+		////											GpuMaterialPass pass;
+		////											if( receiveShadows )
+		////											{
+		////												pass = passesGroup.passWithShadows;
+		////												//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+		////												//	pass = passesGroup.passWithShadowsHigh;
+		////												//else
+		////												//	pass = passesGroup.passWithShadowsLow;
+		////											}
+		////											else
+		////												pass = passesGroup.passWithoutShadows;
+
+		////											ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true, false );
+
+		////											fixed( Matrix4F* p = &meshItem.TransformRelative )
+		////												Bgfx.SetTransform( (float*)p );
+
+		////											var color = /*meshItem.Color * */ layer.MaterialColor;
+
+		////											for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+		////											{
+		////												var oper = meshData.RenderOperations[ nOperation ];
+		////												var voxelRendering = oper.VoxelDataInfo != null;
+
+		////												//bind material data
+		////												BindMaterialData( context, materialData, false, voxelRendering );
+		////												BindSamplersForTextureOnlySlots( context, false, voxelRendering );
+		////												materialData.BindCurrentFrameDataMaskTextures( context, layer.Mask );
+		////												//materialData.BindCurrentFrameDataDepthTexture( context, depthTextureCopy );
+
+		////												BindRenderOperationData( context, frameData, materialData, false, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, layer.MaskFormat == PaintLayer.MaskFormatEnum.Triangles, oper.VoxelDataImage, oper.VoxelDataInfo, meshItem.MaterialInstanceParameters, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
+
+		////												RenderOperation( context, oper, pass, null, meshItem.CutVolumes );
+		////											}
+		////										}
+		////									}
+		////								}
+		////							}
+		////						}
+		////					}
+		////				}
+
+		////				nRenderableGroupsToDraw += additionInstancingRendered;
+		////			}
+		////			else if( renderableGroup.X == 1 )
+		////			{
+		////				//Billboard rendering
+
+		////				ref var billboardItem2 = ref frameDataBillboards.Data[ renderableGroup.Y ];
+		////				ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableGroup.Y ];
+
+		////				//!!!!не всегда нужно
+		////				var affectedLightsCount = ambientDirectionalLightCount + billboardItem2.PointSpotLightCount;
+		////				var affectedLights = GetTempIntArray( affectedLightsCount );//var affectedLights = stackalloc int[ affectedLightsCount ];
+		////				for( int n = 0; n < ambientDirectionalLightCount; n++ )
+		////					affectedLights[ n ] = frameData.LightsInFrustumSorted[ n ];
+		////				for( int n = 0; n < billboardItem2.PointSpotLightCount; n++ )
+		////					affectedLights[ ambientDirectionalLightCount + n ] = billboardItem2.GetPointSpotLight( n );
+
+		////				var meshData = Billboard.GetBillboardMesh().Result.MeshData;
+
+		////				//get data for instancing
+		////				int additionInstancingRendered = 0;
+		////				if( Instancing && InstancingTransparent )
+		////				{
+		////					int nRenderableGroupsToDraw2 = nRenderableGroupsToDraw + 1;
+		////					while( nRenderableGroupsToDraw2 < renderableGroupsToDraw.Count )
+		////					{
+		////						if( additionInstancingRendered >= InstancingMaxCount )
+		////							break;
+
+		////						var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw2 ].RenderableGroup;
+		////						if( renderableGroup2.X == 1 )
+		////						{
+		////							ref var billboardItem2_2 = ref frameDataBillboards.Data[ renderableGroup2.Y ];
+		////							if( billboardItem2.CanUseInstancingForTransparentWith( ref billboardItem2_2 ) )
+		////							{
+		////								ref var billboardItem_2 = ref frameDataRenderSceneDataBillboards.Data[ renderableGroup2.Y ];
+		////								if( billboardItem.CanUseInstancingForTransparentWith( ref billboardItem_2 ) )
+		////								{
+		////									additionInstancingRendered++;
+		////									nRenderableGroupsToDraw2++;
+		////									continue;
+		////								}
+		////							}
+		////						}
+
+		////						break;
+		////					}
+
+		////					if( additionInstancingRendered < 2/*InstancingMinCount*/ )
+		////						additionInstancingRendered = 0;
+		////				}
+		////				bool instancing = additionInstancingRendered != 0;
+
+
+		////				//init instance buffer
+		////				int instanceCount = 0;
+		////				//InstanceDataBuffer instanceBuffer = InstanceDataBuffer.Invalid;
+		////				if( instancing )
+		////				{
+		////					int instanceStride = sizeof( RenderSceneData.ObjectInstanceData );
+		////					instanceCount = additionInstancingRendered + 1;
+
+		////					instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
+		////					if( instanceBuffer.Valid )
+		////					{
+		////						//get instancing matrices
+		////						RenderSceneData.ObjectInstanceData* instancingData = (RenderSceneData.ObjectInstanceData*)instanceBuffer.Data;
+		////						int currentMatrix = 0;
+		////						for( int n = 0; n < instanceCount; n++ )
+		////						{
+		////							var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw + n ].RenderableGroup;
+
+		////							ref var billboardItem_2 = ref frameDataRenderSceneDataBillboards.Data[ renderableGroup2.Y ];
+		////							billboardItem_2.GetInstancingData( out instancingData[ currentMatrix++ ] );
+		////						}
+		////					}
+		////				}
+
+
+		////				for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+		////				{
+		////					var oper = meshData.RenderOperations[ nOperation ];
+		////					var voxelRendering = oper.VoxelDataInfo != null;
+
+		////					foreach( var materialData in GetBillboardMaterialData( ref billboardItem, true, false ) )
+		////					{
+		////						bool add = materialData.Transparent;
+		////						if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+		////							add = false;
+		////						if( !add )
+		////							continue;
+
+		////						for( int nAffectedLightIndex = 0; nAffectedLightIndex < affectedLightsCount; nAffectedLightIndex++ )
+		////						{
+		////							var lightIndex = affectedLights[ nAffectedLightIndex ];
+		////							var lightItem = frameData.Lights[ lightIndex ];
+
+		////							if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+		////							{
+		////								//set lightItem uniforms
+		////								if( lightItemBinded != lightItem )
+		////								{
+		////									lightItem.Bind( this, context );
+		////									lightItemBinded = lightItem;
+		////								}
+
+		////								var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+		////								bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+
+		////								GpuMaterialPass pass;
+		////								if( receiveShadows )
+		////								{
+		////									pass = passesGroup.passWithShadows;
+		////									//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+		////									//	pass = passesGroup.passWithShadowsHigh;
+		////									//else
+		////									//	pass = passesGroup.passWithShadowsLow;
+		////								}
+		////								else
+		////									pass = passesGroup.passWithoutShadows;
+
+		////								ForwardBindGeneralTexturesUniforms( context, frameData, ref billboardItem.BoundingSphere, lightItem, receiveShadows, true, false );
+
+		////								BindMaterialData( context, materialData, false, voxelRendering );
+		////								BindSamplersForTextureOnlySlots( context, false, oper.VoxelDataInfo != null );
+		////								//materialData.BindCurrentFrameDataDepthTexture( context, depthTextureCopy );
+
+		////								BindRenderOperationData( context, frameData, materialData, instancing, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PreviousFramePositionChange, 0, oper.UnwrappedUV, ref billboardItem.Color, oper.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, oper.VoxelDataImage, oper.VoxelDataInfo, instancing ? null : billboardItem.MaterialInstanceParameters, 0, ref vector3FZero );
+
+		////								if( instancing )
+		////								{
+		////									if( instanceBuffer.Valid )
+		////										RenderOperation( context, oper, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
+		////								}
+		////								else
+		////								{
+		////									billboardItem.GetWorldMatrixRelative( out var worldMatrix );
+		////									Bgfx.SetTransform( (float*)&worldMatrix );
+		////									RenderOperation( context, oper, pass, null, null );
+		////								}
+		////							}
+		////						}
+		////					}
+		////				}
+
+		////				nRenderableGroupsToDraw += additionInstancingRendered;
+		////			}
+		////		}
+		////	}
+		////}
+
 		[MethodImpl( (MethodImplOptions)512 )]
-		protected unsafe virtual void Render3DSceneForwardTransparent( ViewportRenderingContext context, FrameData frameData, ImageComponent colorDepthTextureCopy )
+		protected unsafe virtual void Render3DSceneForwardTransparentWithoutOIT( ViewportRenderingContext context, FrameData frameData, ImageComponent colorDepthTextureCopy )
 		{
-			Viewport viewportOwner = context.Owner;
+			var frameDataRenderSceneDataMeshes = frameData.RenderSceneData.Meshes;
+			var frameDataRenderSceneDataBillboards = frameData.RenderSceneData.Billboards;
+			var frameDataMeshes = frameData.Meshes;
+			var frameDataBillboards = frameData.Billboards;
+
+			var viewportOwner = context.Owner;
 
 			using( var renderableGroupsToDraw = new OpenListNative<RenderableGroupWithDistance>( frameData.RenderableGroupsInFrustum.Count ) )
 			{
@@ -6207,12 +10244,12 @@ namespace NeoAxis
 
 					if( renderableGroup.X == 0 )
 					{
-						ref var data = ref frameData.Meshes.Data[ renderableGroup.Y ];
+						ref var data = ref frameDataMeshes.Data[ renderableGroup.Y ];
 						add = ( data.Flags & FrameData.MeshItem.FlagsEnum.UseForwardTransparent ) != 0;
 					}
 					else
 					{
-						ref var data = ref frameData.Billboards.Data[ renderableGroup.Y ];
+						ref var data = ref frameDataBillboards.Data[ renderableGroup.Y ];
 						add = ( data.Flags & FrameData.BillboardItem.FlagsEnum.UseForwardTransparent ) != 0;
 					}
 
@@ -6222,7 +10259,7 @@ namespace NeoAxis
 						item.RenderableGroup = renderableGroup;
 						item.DistanceSquared = frameData.GetObjectGroupDistanceToCameraSquared( ref item.RenderableGroup );
 						ApplyTransparentRenderingAddOffsetWhenSortByDistance( frameData, ref item );
-						renderableGroupsToDraw.Add( item );
+						renderableGroupsToDraw.Add( ref item );
 					}
 				}
 
@@ -6239,36 +10276,18 @@ namespace NeoAxis
 					return 0;
 				}, true );
 
-
-				LightItem lightItemBinded = null;
-				//Material.CompiledMaterialData materialBinded = null;
-
-				int ambientDirectionalLightCount = 0;
-				foreach( var lightIndex in frameData.LightsInFrustumSorted )
-				{
-					var lightItem = frameData.Lights[ lightIndex ];
-					if( lightItem.data.Type == Light.TypeEnum.Point || lightItem.data.Type == Light.TypeEnum.Spotlight )
-						break;
-					ambientDirectionalLightCount++;
-				}
-
-				int[] tempIntArray = null;
-				int[] GetTempIntArray( int minSize )
-				{
-					if( tempIntArray == null || tempIntArray.Length < minSize )
-						tempIntArray = new int[ minSize ];
-					return tempIntArray;
-				}
-
-
 				//bind textures for all render operations
 				context.BindTexture( 5/*"s_colorDepthTextureCopy"*/, colorDepthTextureCopy ?? ResourceUtility.BlackTexture2D, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None, 0, false );
-				//context.BindTexture( 5/*"s_colorDepthTextureCopy"*/, colorDepthTextureCopy ?? ResourceUtility.BlackTexture2D, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point );
 				BindBrdfLUT( context );
 				BindMaterialsTexture( context, frameData );
+				BindBonesTexture( context, frameData );
 				BindSamplersForTextureOnlySlots( context, true, false );
 				BindMaterialData( context, null, false, false );
+				BindForwardLightAndShadows( context, frameData );
 
+				var directionalAmbientOnly = IsDirectionalAmbientOnlyModeEnabled( context, out var directionalAmbientOnlyPrepareShadows );
+
+				InstanceDataBuffer instanceBuffer = InstanceDataBuffer.Invalid;
 
 				//draw
 				for( int nRenderableGroupsToDraw = 0; nRenderableGroupsToDraw < renderableGroupsToDraw.Count; nRenderableGroupsToDraw++ )
@@ -6279,65 +10298,59 @@ namespace NeoAxis
 					{
 						//Mesh rendering
 
-						ref var meshItem2 = ref frameData.Meshes.Data[ renderableGroup.Y ];
-						ref var meshItem = ref frameData.RenderSceneData.Meshes.Data[ renderableGroup.Y ];
+						ref var meshItem2 = ref frameDataMeshes.Data[ renderableGroup.Y ];
+						ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup.Y ];
 						var meshData = meshItem.MeshData;
-
-						//!!!!не всегда нужно
-						var affectedLightsCount = ambientDirectionalLightCount + meshItem2.PointSpotLightCount;
-						var affectedLights = GetTempIntArray( affectedLightsCount );//var affectedLights = stackalloc int[ affectedLightsCount ];
-						for( int n = 0; n < ambientDirectionalLightCount; n++ )
-							affectedLights[ n ] = frameData.LightsInFrustumSorted[ n ];
-						for( int n = 0; n < meshItem2.PointSpotLightCount; n++ )
-							affectedLights[ ambientDirectionalLightCount + n ] = meshItem2.GetPointSpotLight( n );
 
 						//get data for instancing
 						int additionInstancingRendered = 0;
-						if( Instancing && InstancingTransparent )
-						{
-							int nRenderableGroupsToDraw2 = nRenderableGroupsToDraw + 1;
-							while( nRenderableGroupsToDraw2 < renderableGroupsToDraw.Count )
-							{
-								if( additionInstancingRendered >= InstancingMaxCount )
-									break;
+						//instancing works when OIT is enabled
+						////if( Instancing && InstancingTransparent )
+						////{
+						////	int nRenderableGroupsToDraw2 = nRenderableGroupsToDraw + 1;
+						////	while( nRenderableGroupsToDraw2 < renderableGroupsToDraw.Count )
+						////	{
+						////		if( additionInstancingRendered >= InstancingMaxCount )
+						////			break;
 
-								var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw2 ].RenderableGroup;
-								if( renderableGroup2.X == 0 )
-								{
-									ref var meshItem2_2 = ref frameData.Meshes.Data[ renderableGroup2.Y ];
-									if( meshItem2.CanUseInstancingForTransparentWith( ref meshItem2_2 ) )
-									{
-										ref var meshItem_2 = ref frameData.RenderSceneData.Meshes.Data[ renderableGroup2.Y ];
-										if( meshItem.CanUseInstancingForTransparentWith( ref meshItem_2 ) )
-										{
-											additionInstancingRendered++;
-											nRenderableGroupsToDraw2++;
-											continue;
-										}
-									}
-								}
+						////		//!!!!probes?
 
-								break;
-							}
+						////		var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw2 ].RenderableGroup;
+						////		if( renderableGroup2.X == 0 )
+						////		{
+						////			ref var meshItem2_2 = ref frameDataMeshes.Data[ renderableGroup2.Y ];
+						////			if( meshItem2.CanUseInstancingForTransparentWith( ref meshItem2_2 ) )
+						////			{
+						////				ref var meshItem_2 = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup2.Y ];
+						////				if( meshItem.CanUseInstancingForTransparentWith( ref meshItem_2 ) )
+						////				{
+						////					additionInstancingRendered++;
+						////					nRenderableGroupsToDraw2++;
+						////					continue;
+						////				}
+						////			}
+						////		}
 
-							if( additionInstancingRendered < InstancingMinCount )
-								additionInstancingRendered = 0;
-						}
+						////		break;
+						////	}
+
+						////	if( additionInstancingRendered < 2/*InstancingMinCount*/ )
+						////		additionInstancingRendered = 0;
+						////}
 						bool instancing = additionInstancingRendered != 0;
 
 
 						//init instance buffer
 						int instanceCount = 0;
-						InstanceDataBuffer instanceBuffer = InstanceDataBuffer.Invalid;
+						//InstanceDataBuffer instanceBuffer = InstanceDataBuffer.Invalid;
 						if( instancing )
 						{
 							int instanceStride = sizeof( RenderSceneData.ObjectInstanceData );
 							instanceCount = additionInstancingRendered + 1;
 
-							if( InstanceDataBuffer.GetAvailableSpace( instanceCount, instanceStride ) == instanceCount )
+							instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
+							if( instanceBuffer.Valid )
 							{
-								instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
-
 								//get instancing matrices
 								RenderSceneData.ObjectInstanceData* instancingData = (RenderSceneData.ObjectInstanceData*)instanceBuffer.Data;
 								int currentMatrix = 0;
@@ -6345,12 +10358,10 @@ namespace NeoAxis
 								{
 									var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw + n ].RenderableGroup;
 
-									ref var meshItem_2 = ref frameData.RenderSceneData.Meshes.Data[ renderableGroup2.Y ];
+									ref var meshItem_2 = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup2.Y ];
 									meshItem_2.GetInstancingData( out instancingData[ currentMatrix++ ] );
 								}
 							}
-							//else
-							//	Log.Fatal( "InstanceDataBuffer.GetAvailableSpace( instanceCount, instanceStride ) != instanceCount." );
 						}
 
 
@@ -6370,56 +10381,49 @@ namespace NeoAxis
 									if( !add )
 										continue;
 
-									for( int nAffectedLightIndex = 0; nAffectedLightIndex < affectedLightsCount; nAffectedLightIndex++ )
+									if( materialData.AllPasses.Count != 0 )
 									{
-										var lightIndex = affectedLights[ nAffectedLightIndex ];
-										var lightItem = frameData.Lights[ lightIndex ];
+										var pass = materialData.GetForwardShadingPass( directionalAmbientOnly, directionalAmbientOnlyPrepareShadows, voxelRendering );
+										//var pass = materialData.forwardShadingPass;
 
-										if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+										//var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+										//bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+
+										//GpuMaterialPass pass;
+										//if( receiveShadows )
+										//{
+										//	pass = passesGroup.passWithShadows;
+										//	//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+										//	//	pass = passesGroup.passWithShadowsHigh;
+										//	//else
+										//	//	pass = passesGroup.passWithShadowsLow;
+										//}
+										//else
+										//	pass = passesGroup.passWithoutShadows;
+
+										ForwardBindGeneralTexturesUniforms( context, frameData/*, ref meshItem.BoundingSphere, lightItem, receiveShadows*/, true );
+
+										BindMaterialData( context, materialData, false, voxelRendering );
+										BindSamplersForTextureOnlySlots( context, false, oper.VoxelDataInfo != null );
+										//materialData.BindCurrentFrameDataDepthTexture( context, depthTextureCopy );
+
+										BindRenderOperationData( context, frameData, materialData, instancing, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, oper.UnwrappedUV, ref meshItem.Color, oper.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, oper.VoxelDataImage, oper.VoxelDataInfo, instancing ? null : meshItem.ObjectInstanceParameters, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
+
+										if( instancing )
 										{
-											//set lightItem uniforms
-											if( lightItemBinded != lightItem )
-											{
-												lightItem.Bind( this, context );
-												lightItemBinded = lightItem;
-											}
+											if( instanceBuffer.Valid )
+												RenderOperation( context, oper, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
+										}
+										else
+										{
+											var tessItem = meshItem.Tessellation ? TessellationGetItem( context, oper, materialData ) : null;
 
-											var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
-											bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
-
-											GpuMaterialPass pass;
-											if( receiveShadows )
-											{
-												pass = passesGroup.passWithShadows;
-												//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
-												//	pass = passesGroup.passWithShadowsHigh;
-												//else
-												//	pass = passesGroup.passWithShadowsLow;
-											}
-											else
-												pass = passesGroup.passWithoutShadows;
-
-											ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true, false );
-
-											BindMaterialData( context, materialData, false, voxelRendering );
-											BindSamplersForTextureOnlySlots( context, false, oper.VoxelDataInfo != null );
-											//materialData.BindCurrentFrameDataDepthTexture( context, depthTextureCopy );
-
-											BindRenderOperationData( context, frameData, materialData, instancing, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, oper.UnwrappedUV, ref meshItem.Color, oper.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, oper.VoxelDataImage, oper.VoxelDataInfo );
-
-											if( instancing )
-											{
-												if( instanceBuffer != InstanceDataBuffer.Invalid )
-													RenderOperation( context, oper, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
-											}
-											else
-											{
-												fixed( Matrix4F* p = &meshItem.Transform )
-													Bgfx.SetTransform( (float*)p );
-												RenderOperation( context, oper, pass, null, meshItem.CutVolumes );
-											}
+											fixed( Matrix4F* p = &meshItem.TransformRelative )
+												Bgfx.SetTransform( (float*)p );
+											RenderOperation( context, oper, pass, null, meshItem.CutVolumes, tessItem );
 										}
 									}
+									//}
 								}
 							}
 
@@ -6442,59 +10446,50 @@ namespace NeoAxis
 											if( !add )
 												continue;
 
-											for( int nAffectedLightIndex = 0; nAffectedLightIndex < affectedLightsCount; nAffectedLightIndex++ )
+											if( materialData.AllPasses.Count != 0 )
 											{
-												var lightIndex = affectedLights[ nAffectedLightIndex ];
-												var lightItem = frameData.Lights[ lightIndex ];
+												var pass = materialData.GetForwardShadingPass( directionalAmbientOnly, directionalAmbientOnlyPrepareShadows, false );
+												//var pass = materialData.forwardShadingPass;
 
-												if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+												//var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+												//bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+
+												//GpuMaterialPass pass;
+												//if( receiveShadows )
+												//{
+												//	pass = passesGroup.passWithShadows;
+												//	//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+												//	//	pass = passesGroup.passWithShadowsHigh;
+												//	//else
+												//	//	pass = passesGroup.passWithShadowsLow;
+												//}
+												//else
+												//	pass = passesGroup.passWithoutShadows;
+
+												ForwardBindGeneralTexturesUniforms( context, frameData/*, ref meshItem.BoundingSphere, lightItem, receiveShadows*/, true );
+
+												fixed( Matrix4F* p = &meshItem.TransformRelative )
+													Bgfx.SetTransform( (float*)p );
+
+												var color = /*meshItem.Color * */ layer.MaterialColor;
+
+												for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
 												{
-													//set lightItem uniforms
-													if( lightItemBinded != lightItem )
-													{
-														lightItem.Bind( this, context );
-														lightItemBinded = lightItem;
-													}
+													var oper = meshData.RenderOperations[ nOperation ];
+													var voxelRendering = oper.VoxelDataInfo != null;
 
-													var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
-													bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+													//bind material data
+													BindMaterialData( context, materialData, false, voxelRendering );
+													BindSamplersForTextureOnlySlots( context, false, voxelRendering );
+													materialData.BindCurrentFrameDataMaskTextures( context, layer.Mask );
+													//materialData.BindCurrentFrameDataDepthTexture( context, depthTextureCopy );
 
-													GpuMaterialPass pass;
-													if( receiveShadows )
-													{
-														pass = passesGroup.passWithShadows;
-														//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
-														//	pass = passesGroup.passWithShadowsHigh;
-														//else
-														//	pass = passesGroup.passWithShadowsLow;
-													}
-													else
-														pass = passesGroup.passWithoutShadows;
+													BindRenderOperationData( context, frameData, materialData, false, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, layer.MaskFormat == PaintLayer.MaskFormatEnum.Triangles, oper.VoxelDataImage, oper.VoxelDataInfo, meshItem.ObjectInstanceParameters, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative, layer.UVScale );
 
-													ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true, false );
-
-													fixed( Matrix4F* p = &meshItem.Transform )
-														Bgfx.SetTransform( (float*)p );
-
-													var color = /*meshItem.Color * */ layer.MaterialColor;
-
-													for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
-													{
-														var oper = meshData.RenderOperations[ nOperation ];
-														var voxelRendering = oper.VoxelDataInfo != null;
-
-														//bind material data
-														BindMaterialData( context, materialData, false, voxelRendering );
-														BindSamplersForTextureOnlySlots( context, false, voxelRendering );
-														materialData.BindCurrentFrameDataMaskTextures( context, layer.Mask );
-														//materialData.BindCurrentFrameDataDepthTexture( context, depthTextureCopy );
-
-														BindRenderOperationData( context, frameData, materialData, false, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PositionPreviousFrame, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, layer.MaskFormat == PaintLayer.MaskFormatEnum.Triangles, oper.VoxelDataImage, oper.VoxelDataInfo );
-
-														RenderOperation( context, oper, pass, null, meshItem.CutVolumes );
-													}
+													RenderOperation( context, oper, pass, null, meshItem.CutVolumes );
 												}
 											}
+											//}
 										}
 									}
 								}
@@ -6507,66 +10502,62 @@ namespace NeoAxis
 					{
 						//Billboard rendering
 
-						ref var billboardItem2 = ref frameData.Billboards.Data[ renderableGroup.Y ];
-						ref var billboardItem = ref frameData.RenderSceneData.Billboards.Data[ renderableGroup.Y ];
-
-						//!!!!не всегда нужно
-						var affectedLightsCount = ambientDirectionalLightCount + billboardItem2.PointSpotLightCount;
-						var affectedLights = GetTempIntArray( affectedLightsCount );//var affectedLights = stackalloc int[ affectedLightsCount ];
-						for( int n = 0; n < ambientDirectionalLightCount; n++ )
-							affectedLights[ n ] = frameData.LightsInFrustumSorted[ n ];
-						for( int n = 0; n < billboardItem2.PointSpotLightCount; n++ )
-							affectedLights[ ambientDirectionalLightCount + n ] = billboardItem2.GetPointSpotLight( n );
+						ref var billboardItem2 = ref frameDataBillboards.Data[ renderableGroup.Y ];
+						ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableGroup.Y ];
 
 						var meshData = Billboard.GetBillboardMesh().Result.MeshData;
 
 						//get data for instancing
 						int additionInstancingRendered = 0;
-						if( Instancing && InstancingTransparent )
-						{
-							int nRenderableGroupsToDraw2 = nRenderableGroupsToDraw + 1;
-							while( nRenderableGroupsToDraw2 < renderableGroupsToDraw.Count )
-							{
-								if( additionInstancingRendered >= InstancingMaxCount )
-									break;
 
-								var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw2 ].RenderableGroup;
-								if( renderableGroup2.X == 1 )
-								{
-									ref var billboardItem2_2 = ref frameData.Billboards.Data[ renderableGroup2.Y ];
-									if( billboardItem2.CanUseInstancingForTransparentWith( ref billboardItem2_2 ) )
-									{
-										ref var billboardItem_2 = ref frameData.RenderSceneData.Billboards.Data[ renderableGroup2.Y ];
-										if( billboardItem.CanUseInstancingForTransparentWith( ref billboardItem_2 ) )
-										{
-											additionInstancingRendered++;
-											nRenderableGroupsToDraw2++;
-											continue;
-										}
-									}
-								}
+						//!!!!need?
+						//!!!!need?
+						//!!!!need?
 
-								break;
-							}
+						//if( Instancing && InstancingTransparent )
+						//{
+						//	int nRenderableGroupsToDraw2 = nRenderableGroupsToDraw + 1;
+						//	while( nRenderableGroupsToDraw2 < renderableGroupsToDraw.Count )
+						//	{
+						//		if( additionInstancingRendered >= InstancingMaxCount )
+						//			break;
 
-							if( additionInstancingRendered < InstancingMinCount )
-								additionInstancingRendered = 0;
-						}
+						//		var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw2 ].RenderableGroup;
+						//		if( renderableGroup2.X == 1 )
+						//		{
+						//			ref var billboardItem2_2 = ref frameDataBillboards.Data[ renderableGroup2.Y ];
+						//			if( billboardItem2.CanUseInstancingForTransparentWith( ref billboardItem2_2 ) )
+						//			{
+						//				ref var billboardItem_2 = ref frameDataRenderSceneDataBillboards.Data[ renderableGroup2.Y ];
+						//				if( billboardItem.CanUseInstancingForTransparentWith( ref billboardItem_2 ) )
+						//				{
+						//					additionInstancingRendered++;
+						//					nRenderableGroupsToDraw2++;
+						//					continue;
+						//				}
+						//			}
+						//		}
+
+						//		break;
+						//	}
+
+						//	if( additionInstancingRendered < 2/*InstancingMinCount*/ )
+						//		additionInstancingRendered = 0;
+						//}
 						bool instancing = additionInstancingRendered != 0;
 
 
 						//init instance buffer
 						int instanceCount = 0;
-						InstanceDataBuffer instanceBuffer = InstanceDataBuffer.Invalid;
+						//InstanceDataBuffer instanceBuffer = InstanceDataBuffer.Invalid;
 						if( instancing )
 						{
 							int instanceStride = sizeof( RenderSceneData.ObjectInstanceData );
 							instanceCount = additionInstancingRendered + 1;
 
-							if( InstanceDataBuffer.GetAvailableSpace( instanceCount, instanceStride ) == instanceCount )
+							instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
+							if( instanceBuffer.Valid )
 							{
-								instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
-
 								//get instancing matrices
 								RenderSceneData.ObjectInstanceData* instancingData = (RenderSceneData.ObjectInstanceData*)instanceBuffer.Data;
 								int currentMatrix = 0;
@@ -6574,12 +10565,10 @@ namespace NeoAxis
 								{
 									var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw + n ].RenderableGroup;
 
-									ref var billboardItem_2 = ref frameData.RenderSceneData.Billboards.Data[ renderableGroup2.Y ];
+									ref var billboardItem_2 = ref frameDataRenderSceneDataBillboards.Data[ renderableGroup2.Y ];
 									billboardItem_2.GetInstancingData( out instancingData[ currentMatrix++ ] );
 								}
 							}
-							//else
-							//	Log.Fatal( "InstanceDataBuffer.GetAvailableSpace( instanceCount, instanceStride ) != instanceCount." );
 						}
 
 
@@ -6596,54 +10585,44 @@ namespace NeoAxis
 								if( !add )
 									continue;
 
-								for( int nAffectedLightIndex = 0; nAffectedLightIndex < affectedLightsCount; nAffectedLightIndex++ )
+								if( materialData.AllPasses.Count != 0 )
 								{
-									var lightIndex = affectedLights[ nAffectedLightIndex ];
-									var lightItem = frameData.Lights[ lightIndex ];
+									var pass = materialData.GetForwardShadingPass( directionalAmbientOnly, directionalAmbientOnlyPrepareShadows, voxelRendering );
+									//var pass = materialData.forwardShadingPass;
 
-									if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+									//var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+									//bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+
+									//GpuMaterialPass pass;
+									//if( receiveShadows )
+									//{
+									//	pass = passesGroup.passWithShadows;
+									//	//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+									//	//	pass = passesGroup.passWithShadowsHigh;
+									//	//else
+									//	//	pass = passesGroup.passWithShadowsLow;
+									//}
+									//else
+									//	pass = passesGroup.passWithoutShadows;
+
+									ForwardBindGeneralTexturesUniforms( context, frameData/*, ref billboardItem.BoundingSphere, lightItem, receiveShadows*/, true );
+
+									BindMaterialData( context, materialData, false, voxelRendering );
+									BindSamplersForTextureOnlySlots( context, false, oper.VoxelDataInfo != null );
+									//materialData.BindCurrentFrameDataDepthTexture( context, depthTextureCopy );
+
+									BindRenderOperationData( context, frameData, materialData, instancing, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PreviousFramePositionChange, 0, oper.UnwrappedUV, ref billboardItem.Color, oper.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, oper.VoxelDataImage, oper.VoxelDataInfo, instancing ? null : billboardItem.MaterialInstanceParameters, 0, ref vector3FZero );
+
+									if( instancing )
 									{
-										//set lightItem uniforms
-										if( lightItemBinded != lightItem )
-										{
-											lightItem.Bind( this, context );
-											lightItemBinded = lightItem;
-										}
-
-										var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
-										bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
-
-										GpuMaterialPass pass;
-										if( receiveShadows )
-										{
-											pass = passesGroup.passWithShadows;
-											//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
-											//	pass = passesGroup.passWithShadowsHigh;
-											//else
-											//	pass = passesGroup.passWithShadowsLow;
-										}
-										else
-											pass = passesGroup.passWithoutShadows;
-
-										ForwardBindGeneralTexturesUniforms( context, frameData, ref billboardItem.BoundingSphere, lightItem, receiveShadows, true, false );
-
-										BindMaterialData( context, materialData, false, voxelRendering );
-										BindSamplersForTextureOnlySlots( context, false, oper.VoxelDataInfo != null );
-										//materialData.BindCurrentFrameDataDepthTexture( context, depthTextureCopy );
-
-										BindRenderOperationData( context, frameData, materialData, instancing, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PositionPreviousFrame, 0, oper.UnwrappedUV, ref billboardItem.Color, oper.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, oper.VoxelDataImage, oper.VoxelDataInfo );
-
-										if( instancing )
-										{
-											if( instanceBuffer != InstanceDataBuffer.Invalid )
-												RenderOperation( context, oper, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
-										}
-										else
-										{
-											billboardItem.GetWorldMatrix( out var worldMatrix );
-											Bgfx.SetTransform( (float*)&worldMatrix );
-											RenderOperation( context, oper, pass, null, null );
-										}
+										if( instanceBuffer.Valid )
+											RenderOperation( context, oper, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
+									}
+									else
+									{
+										billboardItem.GetWorldMatrixRelative( out var worldMatrix );
+										Bgfx.SetTransform( (float*)&worldMatrix );
+										RenderOperation( context, oper, pass, null, null );
 									}
 								}
 							}
@@ -6653,35 +10632,519 @@ namespace NeoAxis
 					}
 				}
 			}
+
+			Bgfx.Discard( DiscardFlags.All );
 		}
+
+		//[MethodImpl( (MethodImplOptions)512 )]
+		//protected unsafe virtual void Render3DSceneForwardTransparentWithoutOIT( ViewportRenderingContext context, FrameData frameData, ImageComponent colorDepthTextureCopy )
+		//{
+		//	var frameDataRenderSceneDataMeshes = frameData.RenderSceneData.Meshes;
+		//	var frameDataRenderSceneDataBillboards = frameData.RenderSceneData.Billboards;
+		//	var frameDataMeshes = frameData.Meshes;
+		//	var frameDataBillboards = frameData.Billboards;
+
+		//	var viewportOwner = context.Owner;
+
+		//	using( var renderableGroupsToDraw = new OpenListNative<RenderableGroupWithDistance>( frameData.RenderableGroupsInFrustum.Count ) )
+		//	{
+		//		foreach( var renderableGroup in frameData.RenderableGroupsInFrustum )
+		//		{
+		//			bool add = false;
+
+		//			if( renderableGroup.X == 0 )
+		//			{
+		//				ref var data = ref frameDataMeshes.Data[ renderableGroup.Y ];
+		//				add = ( data.Flags & FrameData.MeshItem.FlagsEnum.UseForwardTransparent ) != 0;
+		//			}
+		//			else
+		//			{
+		//				ref var data = ref frameDataBillboards.Data[ renderableGroup.Y ];
+		//				add = ( data.Flags & FrameData.BillboardItem.FlagsEnum.UseForwardTransparent ) != 0;
+		//			}
+
+		//			if( add )
+		//			{
+		//				var item = new RenderableGroupWithDistance();
+		//				item.RenderableGroup = renderableGroup;
+		//				item.DistanceSquared = frameData.GetObjectGroupDistanceToCameraSquared( ref item.RenderableGroup );
+		//				ApplyTransparentRenderingAddOffsetWhenSortByDistance( frameData, ref item );
+		//				renderableGroupsToDraw.Add( item );
+		//			}
+		//		}
+
+		//		if( renderableGroupsToDraw.Count == 0 )
+		//			return;
+
+		//		//sort by distance
+		//		CollectionUtility.MergeSortUnmanaged( renderableGroupsToDraw.Data, renderableGroupsToDraw.Count, delegate ( RenderableGroupWithDistance* a, RenderableGroupWithDistance* b )
+		//		{
+		//			if( a->DistanceSquared > b->DistanceSquared )
+		//				return -1;
+		//			if( a->DistanceSquared < b->DistanceSquared )
+		//				return 1;
+		//			return 0;
+		//		}, true );
+
+
+		//		LightItem lightItemBinded = null;
+		//		//Material.CompiledMaterialData materialBinded = null;
+
+		//		int ambientDirectionalLightCount = 0;
+		//		foreach( var lightIndex in frameData.LightsInFrustumSorted )
+		//		{
+		//			var lightItem = frameData.Lights[ lightIndex ];
+		//			if( lightItem.data.Type == Light.TypeEnum.Point || lightItem.data.Type == Light.TypeEnum.Spotlight )
+		//				break;
+		//			ambientDirectionalLightCount++;
+		//		}
+
+		//		int[] tempIntArray = null;
+		//		int[] GetTempIntArray( int minSize )
+		//		{
+		//			if( tempIntArray == null || tempIntArray.Length < minSize )
+		//				tempIntArray = new int[ minSize ];
+		//			return tempIntArray;
+		//		}
+
+
+		//		//bind textures for all render operations
+		//		context.BindTexture( 5/*"s_colorDepthTextureCopy"*/, colorDepthTextureCopy ?? ResourceUtility.BlackTexture2D, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None, 0, false );
+		//		//context.BindTexture( 5/*"s_colorDepthTextureCopy"*/, colorDepthTextureCopy ?? ResourceUtility.BlackTexture2D, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point );
+		//		BindBrdfLUT( context );
+		//		BindMaterialsTexture( context, frameData );
+		//		BindBonesTexture( context, frameData );
+		//		BindSamplersForTextureOnlySlots( context, true, false );
+		//		BindMaterialData( context, null, false, false );
+
+		//		InstanceDataBuffer instanceBuffer = InstanceDataBuffer.Invalid;
+
+		//		//draw
+		//		for( int nRenderableGroupsToDraw = 0; nRenderableGroupsToDraw < renderableGroupsToDraw.Count; nRenderableGroupsToDraw++ )
+		//		{
+		//			var renderableGroup = renderableGroupsToDraw[ nRenderableGroupsToDraw ].RenderableGroup;
+
+		//			if( renderableGroup.X == 0 )
+		//			{
+		//				//Mesh rendering
+
+		//				ref var meshItem2 = ref frameDataMeshes.Data[ renderableGroup.Y ];
+		//				ref var meshItem = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup.Y ];
+		//				var meshData = meshItem.MeshData;
+
+		//				//!!!!не всегда нужно
+		//				var affectedLightsCount = ambientDirectionalLightCount + meshItem2.PointSpotLightCount;
+		//				var affectedLights = GetTempIntArray( affectedLightsCount );//var affectedLights = stackalloc int[ affectedLightsCount ];
+		//				for( int n = 0; n < ambientDirectionalLightCount; n++ )
+		//					affectedLights[ n ] = frameData.LightsInFrustumSorted[ n ];
+		//				for( int n = 0; n < meshItem2.PointSpotLightCount; n++ )
+		//					affectedLights[ ambientDirectionalLightCount + n ] = meshItem2.GetPointSpotLight( n );
+
+		//				//get data for instancing
+		//				int additionInstancingRendered = 0;
+		//				if( Instancing && InstancingTransparent )
+		//				{
+		//					int nRenderableGroupsToDraw2 = nRenderableGroupsToDraw + 1;
+		//					while( nRenderableGroupsToDraw2 < renderableGroupsToDraw.Count )
+		//					{
+		//						if( additionInstancingRendered >= InstancingMaxCount )
+		//							break;
+
+
+		//						//!!!!probes?
+
+
+		//						var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw2 ].RenderableGroup;
+		//						if( renderableGroup2.X == 0 )
+		//						{
+		//							ref var meshItem2_2 = ref frameDataMeshes.Data[ renderableGroup2.Y ];
+		//							if( meshItem2.CanUseInstancingForTransparentWith( ref meshItem2_2 ) )
+		//							{
+		//								ref var meshItem_2 = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup2.Y ];
+		//								if( meshItem.CanUseInstancingForTransparentWith( ref meshItem_2 ) )
+		//								{
+		//									additionInstancingRendered++;
+		//									nRenderableGroupsToDraw2++;
+		//									continue;
+		//								}
+		//							}
+		//						}
+
+		//						break;
+		//					}
+
+		//					if( additionInstancingRendered < 2/*InstancingMinCount*/ )
+		//						additionInstancingRendered = 0;
+		//				}
+		//				bool instancing = additionInstancingRendered != 0;
+
+
+		//				//init instance buffer
+		//				int instanceCount = 0;
+		//				//InstanceDataBuffer instanceBuffer = InstanceDataBuffer.Invalid;
+		//				if( instancing )
+		//				{
+		//					int instanceStride = sizeof( RenderSceneData.ObjectInstanceData );
+		//					instanceCount = additionInstancingRendered + 1;
+
+		//					instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
+		//					if( instanceBuffer.Valid )
+		//					{
+		//						//get instancing matrices
+		//						RenderSceneData.ObjectInstanceData* instancingData = (RenderSceneData.ObjectInstanceData*)instanceBuffer.Data;
+		//						int currentMatrix = 0;
+		//						for( int n = 0; n < instanceCount; n++ )
+		//						{
+		//							var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw + n ].RenderableGroup;
+
+		//							ref var meshItem_2 = ref frameDataRenderSceneDataMeshes.Data[ renderableGroup2.Y ];
+		//							meshItem_2.GetInstancingData( out instancingData[ currentMatrix++ ] );
+		//						}
+		//					}
+		//				}
+
+
+		//				//render mesh item
+		//				if( !meshItem.OnlyForShadowGeneration )
+		//				{
+		//					for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+		//					{
+		//						var oper = meshData.RenderOperations[ nOperation ];
+		//						var voxelRendering = oper.VoxelDataImage != null;
+
+		//						foreach( var materialData in GetMeshMaterialData( ref meshItem, oper, nOperation, true, false ) )
+		//						{
+		//							bool add = materialData.Transparent;
+		//							if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+		//								add = false;
+		//							if( !add )
+		//								continue;
+
+		//							for( int nAffectedLightIndex = 0; nAffectedLightIndex < affectedLightsCount; nAffectedLightIndex++ )
+		//							{
+		//								var lightIndex = affectedLights[ nAffectedLightIndex ];
+		//								var lightItem = frameData.Lights[ lightIndex ];
+
+		//								if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+		//								{
+		//									//set lightItem uniforms
+		//									if( lightItemBinded != lightItem )
+		//									{
+		//										lightItem.Bind( this, context );
+		//										lightItemBinded = lightItem;
+		//									}
+
+		//									var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+		//									bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+
+		//									GpuMaterialPass pass;
+		//									if( receiveShadows )
+		//									{
+		//										pass = passesGroup.passWithShadows;
+		//										//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+		//										//	pass = passesGroup.passWithShadowsHigh;
+		//										//else
+		//										//	pass = passesGroup.passWithShadowsLow;
+		//									}
+		//									else
+		//										pass = passesGroup.passWithoutShadows;
+
+		//									ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true, false );
+
+		//									BindMaterialData( context, materialData, false, voxelRendering );
+		//									BindSamplersForTextureOnlySlots( context, false, oper.VoxelDataInfo != null );
+		//									//materialData.BindCurrentFrameDataDepthTexture( context, depthTextureCopy );
+
+		//									BindRenderOperationData( context, frameData, materialData, instancing, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, oper.UnwrappedUV, ref meshItem.Color, oper.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, oper.VoxelDataImage, oper.VoxelDataInfo, instancing ? null : meshItem.MaterialInstanceParameters, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
+
+		//									if( instancing )
+		//									{
+		//										if( instanceBuffer.Valid )
+		//											RenderOperation( context, oper, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
+		//									}
+		//									else
+		//									{
+		//										fixed( Matrix4F* p = &meshItem.TransformRelative )
+		//											Bgfx.SetTransform( (float*)p );
+		//										RenderOperation( context, oper, pass, null, meshItem.CutVolumes );
+		//									}
+		//								}
+		//							}
+		//						}
+		//					}
+
+		//					//render layers
+		//					if( ( ( meshItem2.Flags & FrameData.MeshItem.FlagsEnum.ContainsTransparentLayersOnTransparentBaseObjects ) != 0 ) && DebugDrawLayers )
+		//					{
+		//						if( meshItem.Layers != null )
+		//						{
+		//							for( int nLayer = 0; nLayer < meshItem.Layers.Length; nLayer++ )
+		//							{
+		//								ref var layer = ref meshItem.Layers[ nLayer ];
+		//								foreach( var materialData in GetLayerMaterialData( ref layer, true, false ) )
+		//								{
+		//									//if( materialData == null )
+		//									//	continue;
+
+		//									bool add = materialData.Transparent;
+		//									if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+		//										add = false;
+		//									if( !add )
+		//										continue;
+
+		//									for( int nAffectedLightIndex = 0; nAffectedLightIndex < affectedLightsCount; nAffectedLightIndex++ )
+		//									{
+		//										var lightIndex = affectedLights[ nAffectedLightIndex ];
+		//										var lightItem = frameData.Lights[ lightIndex ];
+
+		//										if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+		//										{
+		//											//set lightItem uniforms
+		//											if( lightItemBinded != lightItem )
+		//											{
+		//												lightItem.Bind( this, context );
+		//												lightItemBinded = lightItem;
+		//											}
+
+		//											var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+		//											bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+
+		//											GpuMaterialPass pass;
+		//											if( receiveShadows )
+		//											{
+		//												pass = passesGroup.passWithShadows;
+		//												//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+		//												//	pass = passesGroup.passWithShadowsHigh;
+		//												//else
+		//												//	pass = passesGroup.passWithShadowsLow;
+		//											}
+		//											else
+		//												pass = passesGroup.passWithoutShadows;
+
+		//											ForwardBindGeneralTexturesUniforms( context, frameData, ref meshItem.BoundingSphere, lightItem, receiveShadows, true, false );
+
+		//											fixed( Matrix4F* p = &meshItem.TransformRelative )
+		//												Bgfx.SetTransform( (float*)p );
+
+		//											var color = /*meshItem.Color * */ layer.MaterialColor;
+
+		//											for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+		//											{
+		//												var oper = meshData.RenderOperations[ nOperation ];
+		//												var voxelRendering = oper.VoxelDataInfo != null;
+
+		//												//bind material data
+		//												BindMaterialData( context, materialData, false, voxelRendering );
+		//												BindSamplersForTextureOnlySlots( context, false, voxelRendering );
+		//												materialData.BindCurrentFrameDataMaskTextures( context, layer.Mask );
+		//												//materialData.BindCurrentFrameDataDepthTexture( context, depthTextureCopy );
+
+		//												BindRenderOperationData( context, frameData, materialData, false, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, oper.UnwrappedUV, ref color, oper.VertexStructureContainsColor, true, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, layer.MaskFormat == PaintLayer.MaskFormatEnum.Triangles, oper.VoxelDataImage, oper.VoxelDataInfo, meshItem.MaterialInstanceParameters, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
+
+		//												RenderOperation( context, oper, pass, null, meshItem.CutVolumes );
+		//											}
+		//										}
+		//									}
+		//								}
+		//							}
+		//						}
+		//					}
+		//				}
+
+		//				nRenderableGroupsToDraw += additionInstancingRendered;
+		//			}
+		//			else if( renderableGroup.X == 1 )
+		//			{
+		//				//Billboard rendering
+
+		//				ref var billboardItem2 = ref frameDataBillboards.Data[ renderableGroup.Y ];
+		//				ref var billboardItem = ref frameDataRenderSceneDataBillboards.Data[ renderableGroup.Y ];
+
+		//				//!!!!не всегда нужно
+		//				var affectedLightsCount = ambientDirectionalLightCount + billboardItem2.PointSpotLightCount;
+		//				var affectedLights = GetTempIntArray( affectedLightsCount );//var affectedLights = stackalloc int[ affectedLightsCount ];
+		//				for( int n = 0; n < ambientDirectionalLightCount; n++ )
+		//					affectedLights[ n ] = frameData.LightsInFrustumSorted[ n ];
+		//				for( int n = 0; n < billboardItem2.PointSpotLightCount; n++ )
+		//					affectedLights[ ambientDirectionalLightCount + n ] = billboardItem2.GetPointSpotLight( n );
+
+		//				var meshData = Billboard.GetBillboardMesh().Result.MeshData;
+
+		//				//get data for instancing
+		//				int additionInstancingRendered = 0;
+		//				if( Instancing && InstancingTransparent )
+		//				{
+		//					int nRenderableGroupsToDraw2 = nRenderableGroupsToDraw + 1;
+		//					while( nRenderableGroupsToDraw2 < renderableGroupsToDraw.Count )
+		//					{
+		//						if( additionInstancingRendered >= InstancingMaxCount )
+		//							break;
+
+		//						var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw2 ].RenderableGroup;
+		//						if( renderableGroup2.X == 1 )
+		//						{
+		//							ref var billboardItem2_2 = ref frameDataBillboards.Data[ renderableGroup2.Y ];
+		//							if( billboardItem2.CanUseInstancingForTransparentWith( ref billboardItem2_2 ) )
+		//							{
+		//								ref var billboardItem_2 = ref frameDataRenderSceneDataBillboards.Data[ renderableGroup2.Y ];
+		//								if( billboardItem.CanUseInstancingForTransparentWith( ref billboardItem_2 ) )
+		//								{
+		//									additionInstancingRendered++;
+		//									nRenderableGroupsToDraw2++;
+		//									continue;
+		//								}
+		//							}
+		//						}
+
+		//						break;
+		//					}
+
+		//					if( additionInstancingRendered < 2/*InstancingMinCount*/ )
+		//						additionInstancingRendered = 0;
+		//				}
+		//				bool instancing = additionInstancingRendered != 0;
+
+
+		//				//init instance buffer
+		//				int instanceCount = 0;
+		//				//InstanceDataBuffer instanceBuffer = InstanceDataBuffer.Invalid;
+		//				if( instancing )
+		//				{
+		//					int instanceStride = sizeof( RenderSceneData.ObjectInstanceData );
+		//					instanceCount = additionInstancingRendered + 1;
+
+		//					instanceBuffer = new InstanceDataBuffer( instanceCount, instanceStride );
+		//					if( instanceBuffer.Valid )
+		//					{
+		//						//get instancing matrices
+		//						RenderSceneData.ObjectInstanceData* instancingData = (RenderSceneData.ObjectInstanceData*)instanceBuffer.Data;
+		//						int currentMatrix = 0;
+		//						for( int n = 0; n < instanceCount; n++ )
+		//						{
+		//							var renderableGroup2 = renderableGroupsToDraw[ nRenderableGroupsToDraw + n ].RenderableGroup;
+
+		//							ref var billboardItem_2 = ref frameDataRenderSceneDataBillboards.Data[ renderableGroup2.Y ];
+		//							billboardItem_2.GetInstancingData( out instancingData[ currentMatrix++ ] );
+		//						}
+		//					}
+		//				}
+
+
+		//				for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
+		//				{
+		//					var oper = meshData.RenderOperations[ nOperation ];
+		//					var voxelRendering = oper.VoxelDataInfo != null;
+
+		//					foreach( var materialData in GetBillboardMaterialData( ref billboardItem, true, false ) )
+		//					{
+		//						bool add = materialData.Transparent;
+		//						if( materialData.deferredShadingSupport && context.DeferredShading && UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+		//							add = false;
+		//						if( !add )
+		//							continue;
+
+		//						for( int nAffectedLightIndex = 0; nAffectedLightIndex < affectedLightsCount; nAffectedLightIndex++ )
+		//						{
+		//							var lightIndex = affectedLights[ nAffectedLightIndex ];
+		//							var lightItem = frameData.Lights[ lightIndex ];
+
+		//							if( materialData.AllPasses.Count != 0 && (int)lightItem.data.Type < materialData.passesByLightType.Length )
+		//							{
+		//								//set lightItem uniforms
+		//								if( lightItemBinded != lightItem )
+		//								{
+		//									lightItem.Bind( this, context );
+		//									lightItemBinded = lightItem;
+		//								}
+
+		//								var passesGroup = materialData.passesByLightType[ (int)lightItem.data.Type ];
+		//								bool receiveShadows = lightItem.prepareShadows && passesGroup.passWithShadows != null;
+
+		//								GpuMaterialPass pass;
+		//								if( receiveShadows )
+		//								{
+		//									pass = passesGroup.passWithShadows;
+		//									//if( ShadowQuality.Value == ShadowQualityEnum.High && passesGroup.passWithShadowsHigh != null )
+		//									//	pass = passesGroup.passWithShadowsHigh;
+		//									//else
+		//									//	pass = passesGroup.passWithShadowsLow;
+		//								}
+		//								else
+		//									pass = passesGroup.passWithoutShadows;
+
+		//								ForwardBindGeneralTexturesUniforms( context, frameData, ref billboardItem.BoundingSphere, lightItem, receiveShadows, true, false );
+
+		//								BindMaterialData( context, materialData, false, voxelRendering );
+		//								BindSamplersForTextureOnlySlots( context, false, oper.VoxelDataInfo != null );
+		//								//materialData.BindCurrentFrameDataDepthTexture( context, depthTextureCopy );
+
+		//								BindRenderOperationData( context, frameData, materialData, instancing, null, meshData.BillboardMode, billboardItem.ShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, billboardItem.ReceiveDecals, ref billboardItem.PreviousFramePositionChange, 0, oper.UnwrappedUV, ref billboardItem.Color, oper.VertexStructureContainsColor, false, billboardItem.VisibilityDistance, billboardItem.MotionBlurFactor, false, oper.VoxelDataImage, oper.VoxelDataInfo, instancing ? null : billboardItem.MaterialInstanceParameters, 0, ref vector3FZero );
+
+		//								if( instancing )
+		//								{
+		//									if( instanceBuffer.Valid )
+		//										RenderOperation( context, oper, pass, null, null, true, null, ref instanceBuffer, 0, instanceCount );
+		//								}
+		//								else
+		//								{
+		//									billboardItem.GetWorldMatrixRelative( out var worldMatrix );
+		//									Bgfx.SetTransform( (float*)&worldMatrix );
+		//									RenderOperation( context, oper, pass, null, null );
+		//								}
+		//							}
+		//						}
+		//					}
+		//				}
+
+		//				nRenderableGroupsToDraw += additionInstancingRendered;
+		//			}
+		//		}
+		//	}
+		//}
 
 		void RenderEffectsInternal( ViewportRenderingContext context, FrameData frameData, string groupName, ref ImageComponent actualTexture, bool onlyAO )
 		{
 			var group = GetComponent( groupName, true );
 			if( group != null )
 			{
+				var rendered = false;
+
 				foreach( var effect in group.GetComponents<RenderingEffect>( false, false, true ) )
 				{
 					if( effect.IsSupported )
 					{
 						bool isAO = effect is RenderingEffect_AmbientOcclusion;
 						if( onlyAO && isAO || !onlyAO && !isAO )
+						{
 							effect.Render( context, frameData, ref actualTexture );
+							rendered = true;
+						}
 					}
 				}
+
+				if( rendered )
+					Bgfx.Discard( DiscardFlags.All );
 			}
 		}
 
-		public void CopyToCurrentViewport( ViewportRenderingContext context, ImageComponent sourceTexture, CanvasRenderer.BlendingType blending = CanvasRenderer.BlendingType.Opaque, bool flipY = false )
+		public void CopyToCurrentViewport( ViewportRenderingContext context, ImageComponent sourceTexture, CanvasRenderer.BlendingType blending = CanvasRenderer.BlendingType.Opaque, FilterOption filtering = FilterOption.Point, bool flipY = false, bool sourceIs2DArray = false, int arrayIndex = 0 )
 		{
-			CanvasRenderer.ShaderItem shader = new CanvasRenderer.ShaderItem();
+			var shader = new CanvasRenderer.ShaderItem();
 			shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
 			shader.FragmentProgramFileName = @"Base\Shaders\Copy_fs.sc";
 
-			//bind textures
+			//bind textures, defines
 			{
-				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/,
-					sourceTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+				//var filter = context.CurrentViewport.SizeInPixels != sourceTexture.Result.ResultSize ? FilterOption.Linear : FilterOption.Point;
+
+				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, sourceTexture, TextureAddressingMode.Clamp, filtering, filtering, FilterOption.Point ) );
+
+				if( sourceIs2DArray )
+				{
+					shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "SOURCE_IS_2D_ARRAY" ) );
+					shader.Parameters.Set( "u_copyArrayIndex", new Vector4F( arrayIndex, 0, 0, 0 ) );
+				}
+
 				//var textureValue = new GpuMaterialPass.TextureParameterValue( sourceTexture,
 				//	TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point );
 				//shader.Parameters.Set( "0"/* "sourceTexture"*/, textureValue, ParameterType.Texture2D );
@@ -6753,8 +11216,9 @@ namespace NeoAxis
 				else
 					scale = 1.1;
 
-				//!!!!double
-				var worldMatrix = new Matrix4F( Matrix3F.FromScale( (float)scale ), cameraSettings.Position.ToVector3F() );
+				context.ConvertToRelative( cameraSettings.Position, out var positionRelative );
+				var worldMatrix = new Matrix4F( Matrix3F.FromScale( (float)scale ), positionRelative );
+				//var worldMatrix = new Matrix4F( Matrix3F.FromScale( (float)scale ), cameraSettings.Position.ToVector3F() );
 
 				foreach( var item in deferredShadingData.clearBackgroundMesh.Result.MeshData.RenderOperations )
 				{
@@ -6766,12 +11230,16 @@ namespace NeoAxis
 
 					Bgfx.SetTransform( (float*)&worldMatrix );
 					RenderOperation( context, item, deferredShadingData.clearBackgroundPass, containers, null );
+					Bgfx.Discard( DiscardFlags.All );
 				}
 			}
 		}
 
-		public delegate void RenderDeferredShadingEndDelegate( RenderingPipeline_Basic sender, ViewportRenderingContext context, FrameData frameData, ref ImageComponent sceneTexture );
-		public event RenderDeferredShadingEndDelegate RenderDeferredShadingEnd;
+		public delegate void RenderDeferredShadingGBufferReadyDelegate( RenderingPipeline_Basic sender, ViewportRenderingContext context, FrameData frameData, ref ImageComponent sceneTexture );
+		public event RenderDeferredShadingGBufferReadyDelegate RenderDeferredShadingGBufferReady;
+
+		//public delegate void RenderDeferredShadingEndDelegate( RenderingPipeline_Basic sender, ViewportRenderingContext context, FrameData frameData, ref ImageComponent sceneTexture );
+		//public event RenderDeferredShadingEndDelegate RenderDeferredShadingEnd;
 
 		public T GetSceneEffect<T>() where T : RenderingEffect
 		{
@@ -6781,27 +11249,1097 @@ namespace NeoAxis
 			return null;
 		}
 
+		//!!!!
+		//TAA jittering test
+		//static long jitteringCounter;
+
+		//Android only
+		[MethodImpl( (MethodImplOptions)512 )]
+		int GetAttachedToShadowMapsMaskCount( FrameData frameData, Light.TypeEnum lightType )
+		{
+			if( RenderingSystem.LightMask )
+			{
+				var dictionary = new EDictionary<ImageComponent, int>();
+				//var maxSize = 0;
+
+				foreach( var lightIndex in frameData.LightsInFrustumSorted )
+				{
+					var lightItem = frameData.Lights[ lightIndex ];
+					var lightData = lightItem.data;
+
+					if( lightData.Type == lightType )
+					{
+						//lightItem.lightMaskIndex = -1;
+
+						var mask = lightData.Mask;
+						if( mask?.Result != null )
+						{
+							if( !dictionary.TryGetValue( mask, out var index ) )
+							{
+								index = dictionary.Count;
+								dictionary[ mask ] = index;
+								//var size = mask.Result.ResultSize.X;
+								//if( size > maxSize )
+								//	maxSize = size;
+							}
+							//lightItem.lightMaskIndex = index;
+						}
+					}
+				}
+
+				return dictionary.Count;
+			}
+
+			return 0;
+		}
+
 		[MethodImpl( (MethodImplOptions)512 )]
 		protected virtual void RenderWithRenderTargets( ViewportRenderingContext context, FrameData frameData )
 		{
 			var owner = context.Owner;
 
+			//prepare tessellation
+			TessellationPrepare( context );
+
 			/////////////////////////////////////
 			//prepare shadows
 			{
-				duringRenderShadows = true;
-				SetCutVolumeSettingsUniforms( context, null, true );
-
-				foreach( var lightIndex in frameData.LightsInFrustumSorted )
+				var existsShadows = false;
 				{
-					var item = frameData.Lights[ lightIndex ];
-					if( item.prepareShadows )
-						LightPrepareShadows( context, frameData, item );
+					foreach( var lightIndex in frameData.LightsInFrustumSorted )
+					{
+						var lightItem = frameData.Lights[ lightIndex ];
+						if( lightItem.prepareShadows )
+						{
+							existsShadows = true;
+							break;
+						}
+					}
 				}
 
-				duringRenderShadows = false;
-				SetCutVolumeSettingsUniforms( context, null, true );
+				if( existsShadows )
+				{
+					var drawCallsBeforeShadows = context.updateStatisticsCurrent.DrawCalls;
+
+					duringRenderShadows = true;
+					SetCutVolumeSettingsUniforms( context, null, true );
+
+					//allocate shadow arrays for point, spotlights
+					{
+						var textureFormat = RenderingSystem.ShadowTextureFormat == ProjectSettingsPage_Rendering.ShadowTextureFormatEnum.Byte4 ? PixelFormat.A8R8G8B8 : PixelFormat.Float32R;
+
+						var spotCount = ShadowSpotlightMaxCount.Value;
+						var pointCount = ShadowPointLightMaxCount.Value;
+
+						frameData.ShadowTextureArraySpotUsedForShadows = spotCount;
+						frameData.ShadowTextureArrayPointUsedForShadows = pointCount;
+
+
+						//var spotCount = int.MaxValue;
+						//var pointCount = int.MaxValue;
+
+						////minimize memory use on limited device
+						//if( SystemSettings.LimitedDevice )
+						//{
+						//	foreach( var lightIndex in frameData.LightsInFrustumSorted )
+						//	{
+						//		var item = frameData.Lights[ lightIndex ];
+						//		if( item.prepareShadows )
+						//		{
+						//			if( item.data.Type == Light.TypeEnum.Spotlight )
+						//				spotCount++;
+						//			else if( item.data.Type == Light.TypeEnum.Point )
+						//				pointCount++;
+						//		}
+						//	}
+
+						//	//var realSpotCount = 0;
+						//	//var realPointCount = 0;
+
+						//	//foreach( var lightIndex in frameData.LightsInFrustumSorted )
+						//	//{
+						//	//	var item = frameData.Lights[ lightIndex ];
+						//	//	if( item.prepareShadows )
+						//	//	{
+						//	//		if( item.data.Type == Light.TypeEnum.Spotlight )
+						//	//			realSpotCount++;
+						//	//		else if( item.data.Type == Light.TypeEnum.Point )
+						//	//			realPointCount++;
+						//	//	}
+						//	//}
+
+						//	//if( realSpotCount < 1 )
+						//	//	realSpotCount = 1;
+						//	//if( realPointCount < 1 )
+						//	//	realPointCount = 1;
+
+						//	//if( realSpotCount < spotCount )
+						//	//	spotCount = realSpotCount;
+						//	//if( realPointCount < pointCount )
+						//	//	pointCount = realPointCount;
+						//}
+
+						//spotCount = Math.Min( spotCount, ShadowSpotlightMaxCount.Value );
+						//pointCount = Math.Min( pointCount, ShadowPointLightMaxCount.Value );
+
+
+						//add slices for masks
+						if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
+						{
+							spotCount += GetAttachedToShadowMapsMaskCount( frameData, Light.TypeEnum.Spotlight );
+							pointCount += GetAttachedToShadowMapsMaskCount( frameData, Light.TypeEnum.Point );
+						}
+
+
+						//!!!!workaround for Android. 1 depth arrays are not arrays
+
+						if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
+						{
+							if( spotCount == 1 )
+								spotCount = 2;
+							if( pointCount == 1 )
+								pointCount = 2;
+						}
+
+
+						if( spotCount != 0 )
+						{
+							var textureSize = GetShadowMapSizeMultiLightSpot();
+							frameData.ShadowTextureArraySpot = context.RenderTarget2D_Alloc( new Vector2I( textureSize, textureSize ), textureFormat, arrayLayers: spotCount );
+						}
+
+						if( pointCount != 0 )
+						{
+							var textureSize = GetShadowMapSizeMultiLightPoint();
+							frameData.ShadowTextureArrayPoint = context.RenderTargetCube_Alloc( new Vector2I( textureSize, textureSize ), textureFormat, arrayLayers: pointCount );
+						}
+					}
+
+					//update Light.UniqueIdentifierForStaticShadows
+					foreach( var lightIndex in frameData.LightsInFrustumSorted )
+					{
+						var lightItem = frameData.Lights[ lightIndex ];
+						var lightData = lightItem.data;
+
+						if( lightData.StaticShadows )
+						{
+							var light = lightData.Creator;// as Light;
+							if( light != null )
+								lightData.UniqueIdentifierForStaticShadows = light.GetUniqueIdentifierForStaticShadows();
+						}
+					}
+
+					//static shadows
+					if( context.LightStaticShadowsItems == null )
+						context.LightStaticShadowsItems = new Dictionary<(long, int), ViewportRenderingContext.LightStaticShadowsItem>();
+
+					//static shadows. update LastTimeIsUsed
+					{
+						foreach( var item in context.LightStaticShadowsItems.Values )
+							item.LastTimeIsUsed = false;
+
+						//process per light
+						foreach( var lightIndex in frameData.LightsInFrustumSorted )
+						{
+							var item = frameData.Lights[ lightIndex ];
+							if( item.prepareShadows )
+							{
+								var needStaticShadows = item.data.UniqueIdentifierForStaticShadows != 0L;
+								if( needStaticShadows )
+								{
+									var key = (item.data.UniqueIdentifierForStaticShadows, GetShadowMapSize( item ));
+
+									if( context.LightStaticShadowsItems.TryGetValue( key, out var lightStaticShadowsItem ) )
+										lightStaticShadowsItem.LastTimeIsUsed = true;
+								}
+							}
+						}
+					}
+
+					//static shadows. select static shadows items which can be reused
+					//key is size. +size is for point lights, -size for spolights
+					var staticShadowsFreeItems = new Dictionary<int, Stack<ViewportRenderingContext.LightStaticShadowsItem>>( context.LightStaticShadowsItems.Count );
+					{
+						List<(long, int)> toRemove = null;
+
+						foreach( var item in context.LightStaticShadowsItems.Values )
+						{
+							if( !item.LastTimeIsUsed )
+							{
+								var textureSize = item.Image.Result.ResultSize.X;
+								var isPointLight = item.Image.Result.ArrayLayers == 6;
+
+								if( toRemove == null )
+									toRemove = new List<(long, int)>();
+								toRemove.Add( (item.UniqueIdentifierForStaticShadows, textureSize) );
+
+								var key = textureSize * ( isPointLight ? 1 : -1 );
+								if( !staticShadowsFreeItems.TryGetValue( key, out var stack ) )
+								{
+									stack = new Stack<ViewportRenderingContext.LightStaticShadowsItem>();
+									staticShadowsFreeItems[ key ] = stack;
+								}
+								stack.Push( item );
+							}
+						}
+
+						if( toRemove != null )
+						{
+							foreach( var key in toRemove )
+							{
+								if( !context.LightStaticShadowsItems.Remove( key ) )
+									Log.Fatal( "RenderingPipeline: RenderWithRenderTargets: Internal error." );
+							}
+						}
+					}
+
+					//select one static shadows item to update depending update time. it is periodical update to refresh with better lods
+					ViewportRenderingContext.LightStaticShadowsItem forceUpdateStaticShadowsItem = null;
+					{
+						foreach( var item in context.LightStaticShadowsItems.Values )
+						{
+							if( forceUpdateStaticShadowsItem == null || item.LastUpdateTime < forceUpdateStaticShadowsItem.LastUpdateTime )
+								forceUpdateStaticShadowsItem = item;
+
+							//if( forceUpdateStaticShadowsItem == null || item.LastUpdateTime > forceUpdateStaticShadowsItem.LastUpdateTime )
+							//	forceUpdateStaticShadowsItem = item;
+						}
+					}
+
+					//var staticShadowsLimit = 3;
+
+					//process per light
+					foreach( var lightIndex in frameData.LightsInFrustumSorted )
+					{
+						var item = frameData.Lights[ lightIndex ];
+						if( item.prepareShadows )
+						{
+							var lightData = item.data;
+							var needStaticShadows = item.data.UniqueIdentifierForStaticShadows != 0L;
+
+							//prepare dynamic shadows
+							var dynamicShadowTexture = LightPrepareShadows( context, frameData, item, null, needStaticShadows, null, null );//, ref staticShadowsLimit );
+
+							if( needStaticShadows )
+							{
+								//mix dynamic and static shadows
+
+								//prepare static shadows
+								var lightStaticShadowsItemKey = (item.data.UniqueIdentifierForStaticShadows, GetShadowMapSize( item ));
+								if( !context.LightStaticShadowsItems.TryGetValue( lightStaticShadowsItemKey, out var lightStaticShadowsItem ) )
+								{
+									lightStaticShadowsItem = new ViewportRenderingContext.LightStaticShadowsItem();
+									context.LightStaticShadowsItems[ lightStaticShadowsItemKey ] = lightStaticShadowsItem;
+
+									lightStaticShadowsItem.UniqueIdentifierForStaticShadows = item.data.UniqueIdentifierForStaticShadows;
+									lightStaticShadowsItem.Image = LightPrepareShadows( context, frameData, item, lightStaticShadowsItem, needStaticShadows, staticShadowsFreeItems, null );//, ref staticShadowsLimit );
+
+									lightStaticShadowsItem.LastUpdateTime = EngineApp.EngineTime;
+								}
+								else
+								{
+									//update already created early static shadows item
+									if( forceUpdateStaticShadowsItem != null && forceUpdateStaticShadowsItem == lightStaticShadowsItem )
+									{
+										LightPrepareShadows( context, frameData, item, lightStaticShadowsItem, needStaticShadows, null, lightStaticShadowsItem.Image );//, ref staticShadowsLimit );
+
+										lightStaticShadowsItem.LastUpdateTime = EngineApp.EngineTime;
+									}
+								}
+
+								lightStaticShadowsItem.LastTimeIsUsed = true;
+								//lightStaticShadowsItem.LastUpdateTime = EngineApp.EngineTime;
+
+
+								//merge spot
+								if( lightData.Type == Light.TypeEnum.Spotlight && frameData.ShadowTextureArraySpot != null )
+								{
+									var slice = item.shadowMapIndex;
+									if( slice >= 0 )
+									{
+										var shadowViewport = frameData.ShadowTextureArraySpot.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ];
+										context.SetViewport( shadowViewport );
+
+										var shader = new CanvasRenderer.ShaderItem();
+										shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+										shader.FragmentProgramFileName = @"Base\Shaders\MergeShadows_fs.sc";
+
+										shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0, dynamicShadowTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+										shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1, lightStaticShadowsItem.Image, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+										shader.Parameters.Set( "u_mergeShadowsParams", new Vector4F( 0, 0, 0, 0 ) );
+
+										context.RenderQuadToCurrentViewport( shader );
+
+
+										item.shadowCameraSettings = dynamicShadowTexture.Result.GetRenderTarget().Viewports[ 0 ].CameraSettings;
+										item.shadowSourceTextureSize = dynamicShadowTexture.Result.ResultSize.X;
+									}
+								}
+
+								//merge point
+								if( lightData.Type == Light.TypeEnum.Point && frameData.ShadowTextureArrayPoint != null )
+								{
+									if( item.shadowMapIndex >= 0 )
+									{
+										for( int face = 0; face < 6; face++ )
+										{
+											var slice = item.shadowMapIndex * 6 + face;
+											var shadowViewport = frameData.ShadowTextureArrayPoint.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ];
+											context.SetViewport( shadowViewport );
+
+											var shader = new CanvasRenderer.ShaderItem();
+											shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+											shader.FragmentProgramFileName = @"Base\Shaders\MergeShadows_fs.sc";
+
+											shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0, dynamicShadowTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+											shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1, lightStaticShadowsItem.Image, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+											shader.Parameters.Set( "u_mergeShadowsParams", new Vector4F( face, 0, 0, 0 ) );
+
+											context.RenderQuadToCurrentViewport( shader );
+										}
+
+
+										//for point light camera settings used only to get the projection matrix. face 0 is ok
+										item.shadowCameraSettings = dynamicShadowTexture.Result.GetRenderTarget().Viewports[ 0 ].CameraSettings;
+										item.shadowSourceTextureSize = dynamicShadowTexture.Result.ResultSize.X;
+									}
+								}
+
+
+								////int faces = lightData.Type == Light.TypeEnum.Point ? 6 : 1;
+								////for( int face = 0; face < faces; face++ )
+								////{
+								////	var mergedViewport = merged.Result.GetRenderTarget( 0, face ).Viewports[ 0 ];
+								////	var dynamicShadowTextureViewport = dynamicShadowTexture.Result.GetRenderTarget( 0, face ).Viewports[ 0 ];
+
+								////	//copy data
+								////	{
+								////		context.SetViewport( mergedViewport );
+
+								////		var shader = new CanvasRenderer.ShaderItem();
+								////		shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+								////		shader.FragmentProgramFileName = @"Base\Shaders\MergeShadows_fs.sc";
+
+								////		shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0, dynamicShadowTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+								////		shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1, lightStaticShadowsItem.Image, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+								////		//shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "POINT_LIGHT" ) );
+
+								////		shader.Parameters.Set( "u_mergeShadowsParams", new Vector4F( face, 0, 0, 0 ) );
+
+								////		context.RenderQuadToCurrentViewport( shader );
+								////	}
+
+								////	//copy camera settings
+								////	mergedViewport.CameraSettings = dynamicShadowTextureViewport.CameraSettings;
+								////}
+
+
+
+								////shadowTexture = merged;
+
+
+								////ImageComponent merged;
+								////if( lightData.Type == Light.TypeEnum.Point )
+								////{
+								////	merged = context.RenderTarget2D_Alloc( dynamicShadowTexture.Result.ResultSize, dynamicShadowTexture.Result.ResultFormat, arrayLayers: 6 );
+								////	//merged = context.RenderTargetCube_Alloc( dynamicShadowTexture.Result.ResultSize, dynamicShadowTexture.Result.ResultFormat );
+								////}
+								////else
+								////	merged = context.RenderTarget2D_Alloc( dynamicShadowTexture.Result.ResultSize, dynamicShadowTexture.Result.ResultFormat );
+
+								////int faces = lightData.Type == Light.TypeEnum.Point ? 6 : 1;
+								////for( int face = 0; face < faces; face++ )
+								////{
+								////	var mergedViewport = merged.Result.GetRenderTarget( 0, face ).Viewports[ 0 ];
+								////	var dynamicShadowTextureViewport = dynamicShadowTexture.Result.GetRenderTarget( 0, face ).Viewports[ 0 ];
+
+								////	//copy data
+								////	{
+								////		context.SetViewport( mergedViewport );
+
+								////		var shader = new CanvasRenderer.ShaderItem();
+								////		shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+								////		shader.FragmentProgramFileName = @"Base\Shaders\MergeShadows_fs.sc";
+
+								////		shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0, dynamicShadowTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+								////		shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1, lightStaticShadowsItem.Image, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+								////		//shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "POINT_LIGHT" ) );
+
+								////		shader.Parameters.Set( "u_mergeShadowsParams", new Vector4F( face, 0, 0, 0 ) );
+
+								////		context.RenderQuadToCurrentViewport( shader );
+								////	}
+
+								////	//copy camera settings
+								////	mergedViewport.CameraSettings = dynamicShadowTextureViewport.CameraSettings;
+								////}
+
+								////shadowTexture = merged;
+								////}
+
+								context.DynamicTexture_Free( dynamicShadowTexture );
+							}
+							else
+							{
+								//dynamic shadows only
+
+								if( lightData.Type == Light.TypeEnum.Directional )
+								{
+									frameData.ShadowTextureArrayDirectional = dynamicShadowTexture;
+
+									item.shadowCameraSettings = dynamicShadowTexture.Result.GetRenderTarget().Viewports[ 0 ].CameraSettings;
+									item.shadowSourceTextureSize = dynamicShadowTexture.Result.ResultSize.X;
+								}
+
+								if( lightData.Type == Light.TypeEnum.Spotlight && frameData.ShadowTextureArraySpot != null )
+								{
+									var slice = item.shadowMapIndex;
+									if( slice >= 0 )
+									{
+										var shadowViewport = frameData.ShadowTextureArraySpot.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ];
+										context.SetViewport( shadowViewport );
+										CopyToCurrentViewport( context, dynamicShadowTexture );
+
+										item.shadowCameraSettings = dynamicShadowTexture.Result.GetRenderTarget().Viewports[ 0 ].CameraSettings;
+										item.shadowSourceTextureSize = dynamicShadowTexture.Result.ResultSize.X;
+									}
+
+									context.DynamicTexture_Free( dynamicShadowTexture );
+								}
+
+								if( lightData.Type == Light.TypeEnum.Point && frameData.ShadowTextureArrayPoint != null )
+								{
+									if( item.shadowMapIndex >= 0 )
+									{
+										for( int face = 0; face < 6; face++ )
+										{
+											var slice = item.shadowMapIndex * 6 + face;
+											var shadowViewport = frameData.ShadowTextureArrayPoint.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ];
+											context.SetViewport( shadowViewport );
+											CopyToCurrentViewport( context, dynamicShadowTexture, sourceIs2DArray: true, arrayIndex: face );
+										}
+
+										//for point light camera settings used only to get the projection matrix. face 0 is ok
+										item.shadowCameraSettings = dynamicShadowTexture.Result.GetRenderTarget().Viewports[ 0 ].CameraSettings;
+										item.shadowSourceTextureSize = dynamicShadowTexture.Result.ResultSize.X;
+									}
+
+									context.DynamicTexture_Free( dynamicShadowTexture );
+								}
+							}
+
+
+							////if( lightData.Type == Light.TypeEnum.Spotlight && shadowTexture != null )
+							////{
+							////	if( item.prepareShadows && frameData.ShadowTextureArraySpot != null )
+							////	{
+							////		var slice = item.shadowMapIndex;
+							////		if( slice >= 0 )
+							////		{
+							////			var shadowViewport = frameData.ShadowTextureArraySpot.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ];
+							////			context.SetViewport( shadowViewport );
+							////			CopyToCurrentViewport( context, shadowTexture );
+
+							////			item.shadowCameraSettings = shadowTexture.Result.GetRenderTarget().Viewports[ 0 ].CameraSettings;
+							////			item.shadowSourceTextureSize = shadowTexture.Result.ResultSize.X;
+							////		}
+							////	}
+
+							////	context.DynamicTexture_Free( shadowTexture );
+							////}
+
+							////if( lightData.Type == Light.TypeEnum.Point && shadowTexture != null )
+							////{
+							////	if( item.prepareShadows && frameData.ShadowTextureArrayPoint != null )
+							////	{
+							////		if( item.shadowMapIndex >= 0 )
+							////		{
+							////			for( int face = 0; face < 6; face++ )
+							////			{
+							////				var slice = item.shadowMapIndex * 6 + face;
+							////				var shadowViewport = frameData.ShadowTextureArrayPoint.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ];
+							////				context.SetViewport( shadowViewport );
+
+							////				CopyToCurrentViewport( context, shadowTexture, arrayIndex: face );
+
+							////				//for point light camera settings used only to get the projection matrix. face 0 is ok
+							////				item.shadowCameraSettings = shadowTexture.Result.GetRenderTarget().Viewports[ 0 ].CameraSettings;
+							////				item.shadowSourceTextureSize = shadowTexture.Result.ResultSize.X;
+							////			}
+							////		}
+							////	}
+
+							////	context.DynamicTexture_Free( shadowTexture );
+							////}
+
+
+							//////add to namedTextures
+							////{
+							////	var prefix = "shadow" + lightData.Type.ToString();
+							////	for( int counter = 1; ; counter++ )
+							////	{
+							////		var name = prefix + counter.ToString();
+							////		if( !context.ObjectsDuringUpdate.namedTextures.ContainsKey( name ) )
+							////		{
+							////			context.ObjectsDuringUpdate.namedTextures[ name ] = shadowTexture;
+							////			break;
+							////		}
+							////	}
+							////}
+
+							//////connect the shadow texture with the light
+							////item.shadowTexture = shadowTexture;
+						}
+					}
+
+					//remove unused static shadows items
+					foreach( var stack in staticShadowsFreeItems.Values )
+					{
+						foreach( var item in stack )
+							item.Dispose();
+					}
+
+
+
+					//////about static shadows
+					////if( context.LightStaticShadowsItems == null )
+					////	context.LightStaticShadowsItems = new Dictionary<long, ViewportRenderingContext.LightStaticShadowsItem>();
+					////foreach( var item in context.LightStaticShadowsItems.Values )
+					////	item.LastTimeIsUsed = false;
+
+					//////process per light
+					////foreach( var lightIndex in frameData.LightsInFrustumSorted )
+					////{
+					////	var item = frameData.Lights[ lightIndex ];
+					////	if( item.prepareShadows )
+					////	{
+					////		var lightData = item.data;
+					////		var needStaticShadows = item.data.UniqueIdentifierForStaticShadows != 0L;
+
+					////		//dynamic shadows
+					////		var dynamicShadowTexture = LightPrepareShadows( context, frameData, item, null, needStaticShadows );
+
+					////		ImageComponent shadowTexture;
+
+					////		if( needStaticShadows )
+					////		{
+					////			//static shadows
+
+					////			if( !context.LightStaticShadowsItems.TryGetValue( item.data.UniqueIdentifierForStaticShadows, out var lightStaticShadowsItem ) )
+					////			{
+					////				lightStaticShadowsItem?.Dispose();
+
+					////				lightStaticShadowsItem = new ViewportRenderingContext.LightStaticShadowsItem();
+					////				context.LightStaticShadowsItems[ item.data.UniqueIdentifierForStaticShadows ] = lightStaticShadowsItem;
+
+					////				lightStaticShadowsItem.UniqueIdentifierForStaticShadows = item.data.UniqueIdentifierForStaticShadows;
+					////				lightStaticShadowsItem.Image = LightPrepareShadows( context, frameData, item, lightStaticShadowsItem, needStaticShadows );
+					////			}
+
+					////			lightStaticShadowsItem.LastTimeIsUsed = true;
+
+					////			//merge
+					////			{
+					////				ImageComponent merged;
+					////				if( lightData.Type == Light.TypeEnum.Point )
+					////					merged = context.RenderTargetCube_Alloc( dynamicShadowTexture.Result.ResultSize, dynamicShadowTexture.Result.ResultFormat );
+					////				else
+					////					merged = context.RenderTarget2D_Alloc( dynamicShadowTexture.Result.ResultSize, dynamicShadowTexture.Result.ResultFormat );
+
+					////				int faces = lightData.Type == Light.TypeEnum.Point ? 6 : 1;
+					////				for( int face = 0; face < faces; face++ )
+					////				{
+					////					var mergedViewport = merged.Result.GetRenderTarget( 0, face ).Viewports[ 0 ];
+					////					var dynamicShadowTextureViewport = dynamicShadowTexture.Result.GetRenderTarget( 0, face ).Viewports[ 0 ];
+
+					////					//copy data
+					////					{
+					////						context.SetViewport( mergedViewport );
+
+					////						var shader = new CanvasRenderer.ShaderItem();
+					////						shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+					////						shader.FragmentProgramFileName = @"Base\Shaders\MergeShadows_fs.sc";
+
+					////						shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0, dynamicShadowTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+					////						shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1, lightStaticShadowsItem.Image, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+					////						shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "POINT_LIGHT" ) );
+
+					////						shader.Parameters.Set( "u_mergeShadowsParams", new Vector4F( face, 0, 0, 0 ) );
+
+					////						context.RenderQuadToCurrentViewport( shader );
+					////					}
+
+					////					//copy camera settings
+					////					mergedViewport.CameraSettings = dynamicShadowTextureViewport.CameraSettings;
+					////				}
+
+					////				shadowTexture = merged;
+					////			}
+
+					////			context.DynamicTexture_Free( dynamicShadowTexture );
+					////		}
+					////		else
+					////		{
+					////			//dynamic shadows only
+					////			shadowTexture = dynamicShadowTexture;
+					////		}
+
+					////		//add to namedTextures
+					////		{
+					////			var prefix = "shadow" + lightData.Type.ToString();
+					////			for( int counter = 1; ; counter++ )
+					////			{
+					////				var name = prefix + counter.ToString();
+					////				if( !context.ObjectsDuringUpdate.namedTextures.ContainsKey( name ) )
+					////				{
+					////					context.ObjectsDuringUpdate.namedTextures[ name ] = shadowTexture;
+					////					break;
+					////				}
+					////			}
+					////		}
+					////		//connect the shadow texture with the light
+					////		item.shadowTexture = shadowTexture;
+					////	}
+					////}
+
+					//////remove unused static shadows items
+					////{
+					////	//!!!!может полезно чтобы не дребежжало (часто не создавалось, удал€лось). добавить врем€ неиспользовани€
+
+					////	List<ViewportRenderingContext.LightStaticShadowsItem> toRemove = null;
+
+					////	foreach( var item in context.LightStaticShadowsItems.Values )
+					////	{
+					////		if( !item.LastTimeIsUsed )
+					////		{
+					////			if( toRemove == null )
+					////				toRemove = new List<ViewportRenderingContext.LightStaticShadowsItem>();
+					////			toRemove.Add( item );
+					////		}
+					////	}
+
+					////	if( toRemove != null )
+					////	{
+					////		foreach( var item in toRemove )
+					////		{
+					////			context.LightStaticShadowsItems.Remove( item.UniqueIdentifierForStaticShadows );
+					////			item.Dispose();
+					////		}
+					////	}
+					////}
+
+					duringRenderShadows = false;
+					SetCutVolumeSettingsUniforms( context, null, true );
+
+					context.updateStatisticsCurrent.DrawCallsShadows = context.updateStatisticsCurrent.DrawCalls - drawCallsBeforeShadows;
+				}
 			}
+
+			/////////////////////////////////////
+			//prepare light masks
+
+			var lightMasks = RenderingSystem.LightMask;
+			if( lightMasks && owner.Mode == Viewport.ModeEnum.ReflectionProbeCubemap )
+			{
+				var probe = context.Owner.AnyData as ReflectionProbe;
+				if( probe != null && !probe.LightMasks )
+					lightMasks = false;
+			}
+
+			if( lightMasks )// RenderingSystem.LightMask )
+			{
+
+				//!!!!for modern graphics API use dynamic texture indexing
+
+
+				if( SystemSettings.MobileDevice )
+				{
+					//mobile specific. on limited devices masks and shadow maps are managed inside one shadow map array
+
+					for( var lightType = Light.TypeEnum.Directional; lightType <= Light.TypeEnum.Spotlight; lightType++ )
+					{
+						var dictionary = new EDictionary<ImageComponent, int>();
+						var maxSize = 0;
+
+						foreach( var lightIndex in frameData.LightsInFrustumSorted )
+						{
+							var lightItem = frameData.Lights[ lightIndex ];
+							var lightData = lightItem.data;
+
+							if( lightData.Type == lightType )
+							{
+								lightItem.lightMaskIndex = -1;
+
+								var mask = lightData.Mask;
+								if( mask?.Result != null )
+								{
+									if( !dictionary.TryGetValue( mask, out var index ) )
+									{
+										index = dictionary.Count;
+										dictionary[ mask ] = index;
+										var size = mask.Result.ResultSize.X;
+										if( size > maxSize )
+											maxSize = size;
+									}
+									lightItem.lightMaskIndex = index;
+
+									//add offset used by shadow maps
+									{
+										switch( lightType )
+										{
+										case Light.TypeEnum.Directional:
+											lightItem.lightMaskIndex += frameData.ShadowTextureArrayDirectionalUsedForShadows;
+											break;
+										case Light.TypeEnum.Spotlight:
+											lightItem.lightMaskIndex += frameData.ShadowTextureArraySpotUsedForShadows;
+											break;
+										case Light.TypeEnum.Point:
+											lightItem.lightMaskIndex += frameData.ShadowTextureArrayPointUsedForShadows;
+											break;
+										}
+									}
+								}
+							}
+						}
+
+						if( dictionary.Count > 0 )
+						{
+							if( maxSize > RenderingSystem.Capabilities.MaxTextureSize )
+								maxSize = RenderingSystem.Capabilities.MaxTextureSize;
+
+							if( lightType == Light.TypeEnum.Point )
+							{
+								//point
+
+								//create array if no shadows
+								if( frameData.ShadowTextureArrayPoint == null )
+								{
+									//!!!!workaround for Android. 1 depth arrays are not arrays
+									frameData.ShadowTextureArrayPoint = context.RenderTargetCube_Alloc( new Vector2I( maxSize, maxSize ), PixelFormat.A8R8G8B8, arrayLayers: Math.Max( dictionary.Count, 2 ) );
+								}
+
+								var arrayTexture = frameData.ShadowTextureArrayPoint;
+								if( arrayTexture != null )
+								{
+									var index = frameData.ShadowTextureArrayPointUsedForShadows;
+
+									foreach( var mask in dictionary.Keys )
+									{
+										if( mask.Result.TextureType == ImageComponent.TypeEnum._2D )
+										{
+											//when mask is 2D texture
+
+											for( int face = 0; face < 6; face++ )
+											{
+												var slice = index * 6 + face;
+												var viewport = arrayTexture.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ];
+												context.SetViewport( viewport );
+												CopyToCurrentViewport( context, mask );
+											}
+										}
+										else if( mask.Result.TextureType == ImageComponent.TypeEnum.Cube )
+										{
+											//when mask is cube texture
+
+											for( int face = 0; face < 6; face++ )
+											{
+												var slice = index * 6 + face;
+												var viewport = arrayTexture.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ];
+												context.SetViewport( viewport );
+
+												//!!!!GC. where else
+												//!!!!also can copy with one draw call, use mrt or compute
+												//but it only for current gen, for modern gen use dynamic indexing
+
+												var shader = new CanvasRenderer.ShaderItem();
+												shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+												shader.FragmentProgramFileName = @"Base\Shaders\CopyCubemapFace_fs.sc";
+
+												shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, mask, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
+
+												shader.Parameters.Set( "u_copyCubemapFaceIndex", new Vector4F( face, 0, 0, 0 ) );
+
+												context.RenderQuadToCurrentViewport( shader );
+
+												//CopyToCurrentViewport( context, mask );
+											}
+										}
+
+										index++;
+									}
+								}
+							}
+							else if( lightType == Light.TypeEnum.Spotlight )
+							{
+								//spot
+
+								//create array if no shadows
+								if( frameData.ShadowTextureArraySpot == null )
+								{
+									//!!!!workaround for Android. 1 depth arrays are not arrays
+									frameData.ShadowTextureArraySpot = context.RenderTarget2D_Alloc( new Vector2I( maxSize, maxSize ), PixelFormat.A8R8G8B8, arrayLayers: Math.Max( dictionary.Count, 2 ) );
+								}
+
+								var arrayTexture = frameData.ShadowTextureArraySpot;
+								if( arrayTexture != null )
+								{
+									var index = frameData.ShadowTextureArraySpotUsedForShadows;
+									foreach( var mask in dictionary.Keys )
+									{
+										var viewport = arrayTexture.Result.GetRenderTarget( slice: index ).Viewports[ 0 ];
+										context.SetViewport( viewport );
+										CopyToCurrentViewport( context, mask );
+										index++;
+									}
+								}
+							}
+							else
+							{
+								//directional
+
+								//create array if no shadows
+								if( frameData.ShadowTextureArrayDirectional == null )
+								{
+									//!!!!workaround for Android. 1 depth arrays are not arrays
+									frameData.ShadowTextureArrayDirectional = context.RenderTarget2D_Alloc( new Vector2I( maxSize, maxSize ), PixelFormat.A8R8G8B8, arrayLayers: Math.Max( dictionary.Count, 2 ) );
+								}
+
+								var arrayTexture = frameData.ShadowTextureArrayDirectional;
+								if( arrayTexture != null )
+								{
+									var index = frameData.ShadowTextureArrayDirectionalUsedForShadows;
+									foreach( var mask in dictionary.Keys )
+									{
+										var viewport = arrayTexture.Result.GetRenderTarget( slice: index ).Viewports[ 0 ];
+										context.SetViewport( viewport );
+										CopyToCurrentViewport( context, mask );
+										index++;
+									}
+								}
+							}
+						}
+					}
+				}
+				else
+				{
+					//basic device
+
+					for( var lightType = Light.TypeEnum.Directional; lightType <= Light.TypeEnum.Spotlight; lightType++ )
+					{
+						var dictionary = new EDictionary<ImageComponent, int>();
+						var maxSize = 0;
+
+						foreach( var lightIndex in frameData.LightsInFrustumSorted )
+						{
+							var lightItem = frameData.Lights[ lightIndex ];
+							var lightData = lightItem.data;
+
+							if( lightData.Type == lightType )
+							{
+								lightItem.lightMaskIndex = -1;
+
+								var mask = lightData.Mask;
+								if( mask?.Result != null )
+								{
+									if( !dictionary.TryGetValue( mask, out var index ) )
+									{
+										index = dictionary.Count;
+										dictionary[ mask ] = index;
+										var size = mask.Result.ResultSize.X;
+										if( size > maxSize )
+											maxSize = size;
+									}
+									lightItem.lightMaskIndex = index;
+								}
+							}
+						}
+
+						if( dictionary.Count > 0 )
+						{
+							ImageComponent arrayTexture;
+
+							if( lightType == Light.TypeEnum.Point )
+							{
+								//point
+
+								arrayTexture = context.RenderTargetCube_Alloc( new Vector2I( maxSize, maxSize ), PixelFormat.Float16RGBA, arrayLayers: dictionary.Count );
+
+								var index = 0;
+
+								foreach( var mask in dictionary.Keys )
+								{
+									if( mask.Result.TextureType == ImageComponent.TypeEnum._2D )
+									{
+										//when mask is 2D texture
+
+										for( int face = 0; face < 6; face++ )
+										{
+											var slice = index * 6 + face;
+											var viewport = arrayTexture.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ];
+											context.SetViewport( viewport );
+											CopyToCurrentViewport( context, mask );
+										}
+									}
+									else if( mask.Result.TextureType == ImageComponent.TypeEnum.Cube )
+									{
+										//when mask is cube texture
+
+										for( int face = 0; face < 6; face++ )
+										{
+											var slice = index * 6 + face;
+											var viewport = arrayTexture.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ];
+											context.SetViewport( viewport );
+
+											//!!!!GC. where else
+											//!!!!also can copy with one draw call, use mrt or compute
+											//but it only for current gen, for modern gen use dynamic indexing
+
+											var shader = new CanvasRenderer.ShaderItem();
+											shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+											shader.FragmentProgramFileName = @"Base\Shaders\CopyCubemapFace_fs.sc";
+
+											shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, mask, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
+
+											shader.Parameters.Set( "u_copyCubemapFaceIndex", new Vector4F( face, 0, 0, 0 ) );
+
+											context.RenderQuadToCurrentViewport( shader );
+
+											//CopyToCurrentViewport( context, mask );
+										}
+									}
+
+									index++;
+								}
+							}
+							else
+							{
+								//directional, spot
+
+								if( dictionary.Count == 1 )
+								{
+									arrayTexture = dictionary.Keys.First();
+								}
+								else
+								{
+									arrayTexture = context.RenderTarget2D_Alloc( new Vector2I( maxSize, maxSize ), PixelFormat.Float16RGBA, arrayLayers: dictionary.Count );
+
+									var index = 0;
+
+									foreach( var mask in dictionary.Keys )
+									{
+										var viewport = arrayTexture.Result.GetRenderTarget( slice: index ).Viewports[ 0 ];
+										context.SetViewport( viewport );
+										CopyToCurrentViewport( context, mask );
+
+										index++;
+									}
+								}
+							}
+
+							if( lightType == Light.TypeEnum.Directional )
+								frameData.MaskTextureArrayDirectional = arrayTexture;
+							else if( lightType == Light.TypeEnum.Spotlight )
+								frameData.MaskTextureArraySpot = arrayTexture;
+							else
+								frameData.MaskTextureArrayPoint = arrayTexture;
+						}
+					}
+				}
+			}
+
+			//prepare dynamic textures
+			PrepareLightsTexture( context, frameData );
+			unsafe
+			{
+				var parameters = new Vector4F( frameData.LightsInFrustumSorted.Length, 0, 0, 0 );
+				context.SetUniform( "u_multiLightParams", ParameterType.Vector4, 1, &parameters );
+			}
+
+
+			//compute operations
+			//enable view for compute operations
+			context.SetComputePass();
+			//var computePassActivated = false;
+
+			//prepare light grid
+			unsafe
+			{
+				var lightGridInitialized = false;
+
+				var lightGrid = RenderingSystem.LightGrid && GetUseMultiRenderTargets() && LightGrid.Value != AutoTrueFalse.False;
+				if( lightGrid )
+				{
+					var gridSize = int.Parse( LightGridResolution.Value.ToString().Replace( "_", "" ) );
+
+					var maxLength = (float)owner.CameraSettings.FarClipDistance;
+
+					//#define d_lightGridEnabled lightGridParams.x
+					//#define d_lightGridSize lightGridParams.y
+					//#define d_lightGridStart lightGridParams.z
+					//#define d_lightGridCellSize lightGridParams.w
+
+					var cellSize = maxLength * 2 / gridSize;
+					var lightGridParams = new Vector4F( 1, gridSize, -maxLength, cellSize );
+					context.SetUniform( "u_lightGridParams", ParameterType.Vector4, 1, &lightGridParams );
+					frameData.LightGrid = context.DynamicTexture_Alloc( ViewportRenderingContext.DynamicTextureType.ComputeWrite, new Vector3I( gridSize, gridSize, 8 ), PixelFormat.Float32RGBA, 0, false );
+
+					if( frameData.LightGrid != null )
+					{
+						lightGridInitialized = true;
+
+						////enable view for compute operations
+						//if( !computePassActivated )
+						//{
+						//	context.SetComputePass();
+						//	computePassActivated = true;
+						//}
+
+						context.BindComputeImage( 0, frameData.LightGrid, 0, ComputeBufferAccessEnum.Write );
+						context.BindTexture( 1/* "s_lightsTexture"*/, frameData.LightsTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point, 0, false );
+
+						if( lightGridGenerateProgram == null )
+						{
+							var program = GpuProgramManager.GetProgram( "LightGrid", GpuProgramType.Compute, @"Base\Shaders\LightGrid.sc", null, true, out var error2 );
+							if( !string.IsNullOrEmpty( error2 ) )
+								Log.Fatal( "RenderingPipeline_Basic: RenderWithRenderTargets: " + error2 );
+							else
+								lightGridGenerateProgram = new Program( program.RealObject );
+						}
+
+						var jobSize = new Vector3I( (int)Math.Ceiling( gridSize / 32.0 ), (int)Math.Ceiling( gridSize / 32.0 ), 1 );
+						//var jobSize = new Vector3I( (int)Math.Ceiling( gridSize / 8.0 ), (int)Math.Ceiling( gridSize / 8.0 ), 1 );
+
+						Bgfx.Dispatch( (ushort)context.CurrentViewNumber, lightGridGenerateProgram.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
+						context.UpdateStatisticsCurrent.ComputeDispatches++;
+					}
+				}
+
+				if( !lightGridInitialized )
+				{
+					var lightGridParams = new Vector4F( 0, 0, 0, 0 );
+					context.SetUniform( "u_lightGridParams", ParameterType.Vector4, 1, &lightGridParams );
+				}
+			}
+
+			//prepare global illumination
+			if( frameData.GIData != null )
+			{
+				//if( !computePassActivated )
+				//{
+				//	context.SetComputePass();
+				//	computePassActivated = true;
+				//}
+
+				GIPrepare( context );
+			}
+
+			//end of compute
+
 
 			/////////////////////////////////////
 			//detect destination size, SizeInPixelsLowResolutionBeforeUpscale, antialiasing and resolution upscale techniques
@@ -6847,6 +12385,59 @@ namespace NeoAxis
 				//}
 			}
 
+
+			////!!!!
+			////TAA jittering test
+			//unsafe
+			//{
+			//	var jitteringTest = new Vector4F( 0, 0, 0, 0 );
+
+			//	//if( !EngineApp._DebugCapsLock )
+			//	if( false )
+			//	{
+			//		var values = new Vector2[ 16 ];
+			//		values[ 0 ] = new Vector2( 0.500000, 0.333333 );
+			//		values[ 1 ] = new Vector2( 0.250000, 0.666667 );
+			//		values[ 2 ] = new Vector2( 0.750000, 0.111111 );
+			//		values[ 3 ] = new Vector2( 0.125000, 0.444444 );
+			//		values[ 4 ] = new Vector2( 0.625000, 0.777778 );
+			//		values[ 5 ] = new Vector2( 0.375000, 0.222222 );
+			//		values[ 6 ] = new Vector2( 0.875000, 0.555556 );
+			//		values[ 7 ] = new Vector2( 0.062500, 0.888889 );
+			//		values[ 8 ] = new Vector2( 0.562500, 0.037037 );
+			//		values[ 9 ] = new Vector2( 0.312500, 0.370370 );
+			//		values[ 10 ] = new Vector2( 0.812500, 0.703704 );
+			//		values[ 11 ] = new Vector2( 0.187500, 0.148148 );
+			//		values[ 12 ] = new Vector2( 0.687500, 0.481481 );
+			//		values[ 13 ] = new Vector2( 0.437500, 0.814815 );
+			//		values[ 14 ] = new Vector2( 0.937500, 0.259259 );
+			//		values[ 15 ] = new Vector2( 0.031250, 0.592593 );
+
+			//		//if( !EngineApp._DebugCapsLock )
+			//		{
+			//			unchecked
+			//			{
+			//				jitteringCounter++;
+			//			}
+			//			var value = values[ jitteringCounter % 16 ];
+
+			//			var size = destinationSize;// context.Owner.SizeInPixels.ToVector2F();
+
+			//			jitteringTest.X = ( ( (float)value.X - 0.5f ) / size.X ) * 2;
+			//			jitteringTest.Y = ( ( (float)value.Y - 0.5f ) / size.Y ) * 2;
+
+			//			////!!!!
+			//			//if( EngineApp._DebugCapsLock )
+			//			//{
+			//			//	jitteringTest.X = ( ( (float)value.X - 0.5f ) / size.X ) * 1;
+			//			//	jitteringTest.Y = ( ( (float)value.Y - 0.5f ) / size.Y ) * 1;
+			//			//}
+			//		}
+			//	}
+
+			//	context.SetUniform( "jitteringTest", ParameterType.Vector4, 1, &jitteringTest );
+			//}
+
 			/////////////////////////////////////
 			//create scene texture, draw background effects
 
@@ -6881,7 +12472,7 @@ namespace NeoAxis
 
 			/////////////////////////////////////
 			//create depth texture
-			var depthTexture = context.RenderTarget2D_Alloc( destinationSize, PixelFormat.Depth24S8, msaaLevel );
+			var depthTexture = context.RenderTarget2D_Alloc( destinationSize, RenderingSystem.DepthBuffer32Float ? PixelFormat.Depth32F : PixelFormat.Depth24S8, msaaLevel );
 			context.ObjectsDuringUpdate.namedTextures[ "depthTexture" ] = depthTexture;
 
 			/////////////////////////////////////
@@ -6898,23 +12489,24 @@ namespace NeoAxis
 					normalMotionDepthMRT = context.MultiRenderTarget_Create( items.ToArray() );
 				}
 
-				context.SetViewport( normalMotionDepthMRT.Viewports[ 0 ], Matrix4F.Identity, Matrix4F.Identity, FrameBufferTypes.All, ColorValue.Zero );
+				context.SetViewport( normalMotionDepthMRT.Viewports[ 0 ], Matrix4F.Identity, Matrix4F.Identity, FrameBufferTypes.All, ColorValue.Zero, RenderingSystem.ReversedZ ? 0 : 1 );
 			}
 			else
 			{
 				var sceneDepthMRT = context.MultiRenderTarget_Create( new[] {
 					new MultiRenderTarget.Item( sceneTexture ),
 					new MultiRenderTarget.Item( depthTexture ) } );
-				context.SetViewport( sceneDepthMRT.Viewports[ 0 ], Matrix4F.Identity, Matrix4F.Identity, FrameBufferTypes.Depth, ColorValue.Zero );
+				context.SetViewport( sceneDepthMRT.Viewports[ 0 ], Matrix4F.Identity, Matrix4F.Identity, FrameBufferTypes.Depth, ColorValue.Zero, RenderingSystem.ReversedZ ? 0 : 1 );
 			}
 
-			//!!!!double
-			var viewMatrix = owner.CameraSettings.ViewMatrix.ToMatrix4F();
-			var projectionMatrix = owner.CameraSettings.ProjectionMatrix.ToMatrix4F();
+			var viewMatrix = owner.CameraSettings.ViewMatrixRelative;
+			var projectionMatrix = owner.CameraSettings.ProjectionMatrix;
 
 			//deferred shading
 			if( GetDeferredShading() && DebugDrawDeferredPass )
 			{
+				var drawCallsBeforeDeferred = context.updateStatisticsCurrent.DrawCalls;
+
 				context.ObjectsDuringUpdate.namedTextures[ "gBuffer0Texture" ] = sceneTexture;
 				context.ObjectsDuringUpdate.namedTextures[ "gBuffer1Texture" ] = normalTexture;
 
@@ -7009,6 +12601,8 @@ namespace NeoAxis
 					context.DynamicTexture_Free( gBuffer5TextureCopy );
 				}
 
+				//prepare SSR before lighting pass
+				RenderDeferredShadingGBufferReady?.Invoke( this, context, frameData, ref sceneTexture );
 
 				////!!!!temp
 				////save depth buffer to texture
@@ -7022,23 +12616,27 @@ namespace NeoAxis
 				if( DebugDirectLighting )
 					RenderLightsDeferred( context, frameData, sceneTexture, normalTexture, gBuffer2Texture, gBuffer3Texture, gBuffer4Texture, gBuffer5Texture, depthTexture );
 
-				//indirect lighting full mode
-				if( frameData.IndirectLightingFrameData != null )
-				{
-					//!!!!только дл€ deferred? как на forward вли€ет?
+				////indirect lighting full mode
+				//if( frameData.IndirectLightingFrameData != null )
+				//{
+				//	//!!!!только дл€ deferred? как на forward вли€ет?
 
-					RenderIndirectLightingFullTechnique( context, frameData, ref deferredLightTexture, normalTexture, gBuffer2Texture, gBuffer3Texture, gBuffer4Texture, gBuffer5Texture, motionAndObjectIdTexture, depthTexture );
-				}
+				//	RenderIndirectLightingFullTechnique( context, frameData, ref deferredLightTexture, normalTexture, gBuffer2Texture, gBuffer3Texture, gBuffer4Texture, gBuffer5Texture, motionAndObjectIdTexture, depthTexture );
+				//}
 
 				//copy result of deferred shading to sceneTexture. save gBuffer0Texture
 				sceneTexture = deferredLightTexture;
 				//context.SetViewport( sceneTexture.Result.GetRenderTarget().Viewports[ 0 ] );
 				//CopyToCurrentViewport( context, deferredLightTexture );
 
-				RenderDeferredShadingEnd?.Invoke( this, context, frameData, ref sceneTexture );
+				//RenderDeferredShadingEnd?.Invoke( this, context, frameData, ref sceneTexture );
 
 				//context.RenderTarget_Free( deferredLightTexture );
+
+				context.updateStatisticsCurrent.DrawCallsDeferred = context.updateStatisticsCurrent.DrawCalls - drawCallsBeforeDeferred;
 			}
+
+			var drawCallsBeforeForward = context.updateStatisticsCurrent.DrawCalls;
 
 			//render opaque objects (forward)
 			if( DebugDrawForwardOpaquePass && DebugDirectLighting )
@@ -7143,9 +12741,13 @@ namespace NeoAxis
 				ImageComponent colorDepthTextureCopy = null;
 				if( IsProvideColorDepthTextureCopy() )
 				{
-					//!!!!no sense to use Float32 for color, but depth must be Float32
 					colorDepthTextureCopy = context.RenderTarget2D_Alloc( sceneTexture.Result.ResultSize, PixelFormat.Float32RGBA );
+
+					//not enough color precision
+					////r: color. packed to one float
+					////g: depth
 					//colorDepthTextureCopy = context.RenderTarget2D_Alloc( sceneTexture.Result.ResultSize, PixelFormat.Float32GR );
+
 					context.SetViewport( colorDepthTextureCopy.Result.GetRenderTarget().Viewports[ 0 ] );
 
 					CanvasRenderer.ShaderItem shader = new CanvasRenderer.ShaderItem();
@@ -7168,6 +12770,7 @@ namespace NeoAxis
 				//	CopyToCurrentViewport( context, depthTexture );
 				//}
 
+				//use dummy texture to disable writing to normalTexture
 				ImageComponent dummyNormalTexture = null;
 				if( GetUseMultiRenderTargets() )
 					dummyNormalTexture = context.RenderTarget2D_Alloc( normalTexture.Result.ResultSize, normalTexture.Result.ResultFormat );
@@ -7187,20 +12790,182 @@ namespace NeoAxis
 					sceneMotionDepthMRT = context.MultiRenderTarget_Create( items.ToArray() );
 				}
 
-				////create scene, depth MRT
-				//var sceneDepthMRT = context.MultiRenderTarget_Create( new[] {
-				//	new MultiRenderTarget.Item( sceneTexture ),
-				//	new MultiRenderTarget.Item( depthTexture ) } );
-
-				context.SetViewport( sceneMotionDepthMRT.Viewports[ 0 ], viewMatrix, projectionMatrix );
-				Render3DSceneForwardTransparent( context, frameData, colorDepthTextureCopy );
-
-				if( colorDepthTextureCopy != null )
-					context.DynamicTexture_Free( colorDepthTextureCopy );
+				//if( GetOrderIndependentTransparency() )
+				//{
+				//	Render3DSceneForwardTransparentWithOIT( context, frameData, colorDepthTextureCopy, sceneMotionDepthMRT, ref viewMatrix, ref projectionMatrix, sceneTexture );
+				//}
+				//else
+				{
+					context.SetViewport( sceneMotionDepthMRT.Viewports[ 0 ], viewMatrix, projectionMatrix );
+					Render3DSceneForwardTransparentWithoutOIT( context, frameData, colorDepthTextureCopy );
+				}
 
 				if( dummyNormalTexture != null )
 					context.DynamicTexture_Free( dummyNormalTexture );
+				if( colorDepthTextureCopy != null )
+					context.DynamicTexture_Free( colorDepthTextureCopy );
+
+				////OIT second pass
+				//if( GetOrderIndependentTransparency() )
+				//{
+
+
+
+				//context.SetViewport( sceneTexture.Result.GetRenderTarget().Viewports[ 0 ] );
+
+				//var shader = new CanvasRenderer.ShaderItem();
+				//shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+				//shader.FragmentProgramFileName = @"Base\Shaders\ComposeOIT_fs.sc";
+
+				//shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"colorTexture"*/, colorTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+				//shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1/*"secondTexture"*/, secondTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+				//context.RenderQuadToCurrentViewport( shader, CanvasRenderer.BlendingType.ComposeOIT );
+
+
+
+
+
+
+				////!!!!ResultFormat? rgba16f
+				//var colorTexture = context.RenderTarget2D_Alloc( sceneTexture.Result.ResultSize, sceneTexture.Result.ResultFormat );
+				//var secondTexture = context.RenderTarget2D_Alloc( sceneTexture.Result.ResultSize, PixelFormat.Float16R );
+
+				////clear
+				//context.SetViewport( colorTexture.Result.GetRenderTarget().Viewports[ 0 ], Matrix4F.Identity, Matrix4F.Identity, FrameBufferTypes.Color, ColorValue.Zero );
+				//context.SetViewport( secondTexture.Result.GetRenderTarget().Viewports[ 0 ], Matrix4F.Identity, Matrix4F.Identity, FrameBufferTypes.Color, ColorValue.One );
+
+				////create scene, motion, depth MRT
+				//MultiRenderTarget sceneMotionDepthMRT;
+				//{
+				//	var items = new List<MultiRenderTarget.Item>();
+				//	items.Add( new MultiRenderTarget.Item( colorTexture ) );
+				//	items.Add( new MultiRenderTarget.Item( secondTexture ) );
+				//	if( motionAndObjectIdTexture != null )
+				//		items.Add( new MultiRenderTarget.Item( motionAndObjectIdTexture ) );
+				//	items.Add( new MultiRenderTarget.Item( depthTexture ) );
+				//	sceneMotionDepthMRT = context.MultiRenderTarget_Create( items.ToArray() );
+				//}
+
+
+
+				////enable oit
+				//GpuMaterialPass.GlobalComposeOIT = true;
+				//unsafe
+				//{
+				//	var forwardOIT = new Vector4F( 1, 0, 0, 0 );
+				//	context.SetUniform( "u_forwardOIT", ParameterType.Vector4, 1, &forwardOIT );
+				//}
+
+				//context.SetViewport( sceneMotionDepthMRT.Viewports[ 0 ], viewMatrix, projectionMatrix );
+				//Render3DSceneForwardTransparentWithOIT( context, frameData, colorDepthTextureCopy );
+
+				////disable oit
+				//GpuMaterialPass.GlobalComposeOIT = false;
+				//unsafe
+				//{
+				//	var forwardOIT = new Vector4F( 0, 0, 0, 0 );
+				//	context.SetUniform( "u_forwardOIT", ParameterType.Vector4, 1, &forwardOIT );
+				//}
+
+				//context.DynamicTexture_Free( colorTexture );
+				//context.DynamicTexture_Free( secondTexture );
+
+
+
+
+				////!!!!ResultFormat? rgba16f
+				//var colorTexture = context.RenderTarget2D_Alloc( sceneTexture.Result.ResultSize, sceneTexture.Result.ResultFormat );
+				//var secondTexture = context.RenderTarget2D_Alloc( sceneTexture.Result.ResultSize, PixelFormat.Float16R );
+
+				////clear
+				//context.SetViewport( colorTexture.Result.GetRenderTarget().Viewports[ 0 ], Matrix4F.Identity, Matrix4F.Identity, FrameBufferTypes.Color, ColorValue.Zero );
+				//context.SetViewport( secondTexture.Result.GetRenderTarget().Viewports[ 0 ], Matrix4F.Identity, Matrix4F.Identity, FrameBufferTypes.Color, ColorValue.One );
+
+				////enable oit
+				//GpuMaterialPass.GlobalComposeOIT = true;
+				//unsafe
+				//{
+				//	var forwardOIT = new Vector4F( 1, 0, 0, 0 );
+				//	context.SetUniform( "u_forwardOIT", ParameterType.Vector4, 1, &forwardOIT );
+				//}
+
+				////create scene, motion, depth MRT
+				//MultiRenderTarget sceneMotionDepthMRT;
+				//{
+				//	var items = new List<MultiRenderTarget.Item>();
+				//	items.Add( new MultiRenderTarget.Item( colorTexture ) );
+				//	items.Add( new MultiRenderTarget.Item( secondTexture ) );
+				//	if( motionAndObjectIdTexture != null )
+				//		items.Add( new MultiRenderTarget.Item( motionAndObjectIdTexture ) );
+				//	items.Add( new MultiRenderTarget.Item( depthTexture ) );
+				//	sceneMotionDepthMRT = context.MultiRenderTarget_Create( items.ToArray() );
+				//}
+
+				//context.SetViewport( sceneMotionDepthMRT.Viewports[ 0 ], viewMatrix, projectionMatrix );
+				////!!!!
+				//Render3DSceneForwardTransparentWithoutOIT( context, frameData, colorDepthTextureCopy );
+				////Render3DSceneForwardTransparentWithOIT( context, frameData, colorDepthTextureCopy );
+
+				////disable oit
+				//GpuMaterialPass.GlobalComposeOIT = false;
+				//unsafe
+				//{
+				//	var forwardOIT = new Vector4F( 0, 0, 0, 0 );
+				//	context.SetUniform( "u_forwardOIT", ParameterType.Vector4, 1, &forwardOIT );
+				//}
+
+				////second pass
+				//{
+				//	context.SetViewport( sceneTexture.Result.GetRenderTarget().Viewports[ 0 ] );
+
+				//	var shader = new CanvasRenderer.ShaderItem();
+				//	shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+				//	shader.FragmentProgramFileName = @"Base\Shaders\ComposeOIT_fs.sc";
+
+				//	shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"colorTexture"*/, colorTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+				//	shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1/*"secondTexture"*/, secondTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
+
+				//	context.RenderQuadToCurrentViewport( shader, CanvasRenderer.BlendingType.ComposeOIT );
+				//}
+
+				//context.DynamicTexture_Free( colorTexture );
+				//context.DynamicTexture_Free( secondTexture );
+
+				//}
+
+				//else
+				//{
+				////create scene, motion, depth MRT
+				//MultiRenderTarget sceneMotionDepthMRT;
+				//{
+				//	var items = new List<MultiRenderTarget.Item>();
+				//	items.Add( new MultiRenderTarget.Item( sceneTexture ) );
+				//	if( GetUseMultiRenderTargets() )
+				//	{
+				//		items.Add( new MultiRenderTarget.Item( dummyNormalTexture ) );// normalTexture ) );
+				//		if( motionAndObjectIdTexture != null )
+				//			items.Add( new MultiRenderTarget.Item( motionAndObjectIdTexture ) );
+				//	}
+				//	items.Add( new MultiRenderTarget.Item( depthTexture ) );
+				//	sceneMotionDepthMRT = context.MultiRenderTarget_Create( items.ToArray() );
+				//}
+
+				//////create scene, depth MRT
+				////var sceneDepthMRT = context.MultiRenderTarget_Create( new[] {
+				////	new MultiRenderTarget.Item( sceneTexture ),
+				////	new MultiRenderTarget.Item( depthTexture ) } );
+
+				//context.SetViewport( sceneMotionDepthMRT.Viewports[ 0 ], viewMatrix, projectionMatrix );
+				//Render3DSceneForwardTransparentWithoutOIT( context, frameData, colorDepthTextureCopy );
+
+				//if( dummyNormalTexture != null )
+				//	context.DynamicTexture_Free( dummyNormalTexture );
+				//}
+
 			}
+
+			context.updateStatisticsCurrent.DrawCallsForward = context.updateStatisticsCurrent.DrawCalls - drawCallsBeforeForward;
 
 			//Scene effects (skip AO)
 			if( owner.Mode == Viewport.ModeEnum.Default )
@@ -7301,8 +13066,44 @@ namespace NeoAxis
 			//GUI
 			if( DebugDrawUI && owner.CanvasRenderer != null )
 			{
-				context.SetViewport( sceneTexture.Result.GetRenderTarget().Viewports[ 0 ] );
-				owner.CanvasRenderer.ViewportRendering_RenderToCurrentViewport( context, false, owner.LastUpdateTime );
+				//antialiasing. it makes texts blurry
+				if( owner.CanvasRenderer.ScreenAntialisingForThisFrame )
+				{
+					var simpleDataTexture = context.RenderTarget2D_Alloc( owner.SizeInPixels * 2, PixelFormat.A8R8G8B8 );
+					context.SetViewport( simpleDataTexture.Result.GetRenderTarget().Viewports[ 0 ], viewMatrix, projectionMatrix, FrameBufferTypes.Color, new ColorValue( 0, 0, 0, 0 ) );
+
+					CopyToCurrentViewport( context, sceneTexture );
+
+					//render UI
+					owner.CanvasRenderer.ViewportRendering_RenderToCurrentViewport( context, false, owner.LastUpdateTime );
+
+					//copy to scene texture with downscale
+					{
+						context.SetViewport( sceneTexture.Result.GetRenderTarget().Viewports[ 0 ] );
+
+						CanvasRenderer.ShaderItem shader = new CanvasRenderer.ShaderItem();
+						shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+						shader.FragmentProgramFileName = @"Base\Shaders\Effects\Downscale2_fs.sc";
+
+						shader.Parameters.Set( "sourceSizeInv", new Vector2F( 1, 1 ) / simpleDataTexture.Result.ResultSize.ToVector2F() );
+
+						//bind textures
+						{
+							shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, simpleDataTexture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
+							//FilterOption.Point, FilterOption.Point, FilterOption.Point
+						}
+
+						//context.RenderQuadToCurrentViewport( shader, CanvasRenderer.BlendingType.AlphaBlend );
+						context.RenderQuadToCurrentViewport( shader );
+					}
+
+					context.DynamicTexture_Free( simpleDataTexture );
+				}
+				else
+				{
+					context.SetViewport( sceneTexture.Result.GetRenderTarget().Viewports[ 0 ] );
+					owner.CanvasRenderer.ViewportRendering_RenderToCurrentViewport( context, false, owner.LastUpdateTime );
+				}
 			}
 			//Texture guiTexture;
 			//{
@@ -7327,7 +13128,7 @@ namespace NeoAxis
 
 			/////////////////////////////////////
 			//Copy to output target
-			context.SetViewport( owner );
+			context.SetViewport( owner.OutputViewport ?? owner );
 			CopyToCurrentViewport( context, sceneTexture, flipY: owner.OutputFlipY );
 
 			///////////////////////////////////////
@@ -7335,36 +13136,73 @@ namespace NeoAxis
 			//RenderVideoToFile( context, sceneTexture );
 
 			//clear or destroy something maybe
+
+			Bgfx.Discard( DiscardFlags.All );
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
 		protected virtual void RenderWithoutRenderTargets( ViewportRenderingContext context, FrameData frameData )
 		{
 			var owner = context.Owner;
+			var viewMatrix = owner.CameraSettings.ViewMatrixRelative;
+			var projectionMatrix = owner.CameraSettings.ProjectionMatrix;
+
+			//reset disabled light settings
+			{
+				foreach( var lightIndex in frameData.LightsInFrustumSorted )
+				{
+					var lightItem = frameData.Lights[ lightIndex ];
+					lightItem.lightMaskIndex = -1;
+					lightItem.shadowMapIndex = -1;
+				}
+			}
+
+			//prepare dynamic textures
+			PrepareLightsTexture( context, frameData );
+			unsafe
+			{
+				var parameters = new Vector4F( frameData.LightsInFrustumSorted.Length, 0, 0, 0 );
+				context.SetUniform( "u_multiLightParams", ParameterType.Vector4, 1, &parameters );
+			}
+
+			//light grid
+			unsafe
+			{
+				var lightGridParams = new Vector4F( 0, 0, 0, 0 );
+				context.SetUniform( "u_lightGridParams", ParameterType.Vector4, 1, &lightGridParams );
+			}
+
+			//prepare tessellation
+			TessellationPrepare( context );
 
 			if( context.Owner.Parent is RenderTexture renderTexture )
 			{
 				//render to RenderTexture
 				//for rendering to texture anyway must use additional targets, or depth will be broken
 
-				Matrix4F viewMatrix = owner.CameraSettings.ViewMatrix.ToMatrix4F();
-				Matrix4F projectionMatrix = owner.CameraSettings.ProjectionMatrix.ToMatrix4F();
-
 				var backgroundColor = context.GetBackgroundColor();
 				if( DebugMode.Value != DebugModeEnum.None )
 					backgroundColor = new ColorValue( 0, 0, 0 );
 
 				//create scene texture
-				var sceneTexture = context.RenderTarget2D_Alloc( context.owner.SizeInPixels, renderTexture.Creator.ResultFormat, 0 );
+				var overrideSize = owner.SizeInPixels;
+				//if( RenderWithoutRenderTargetsApplyScale != 1.0 )
+				//	overrideSize = ( overrideSize.ToVector2() * RenderWithoutRenderTargetsApplyScale ).ToVector2I();
+				////var overrideSize = RenderWithoutRenderTargetsOverrideSize ?? context.owner.SizeInPixels;
+				if( overrideSize.X < 1 )
+					overrideSize.X = 1;
+				if( overrideSize.Y < 1 )
+					overrideSize.Y = 1;
+				var sceneTexture = context.RenderTarget2D_Alloc( overrideSize/*owner.SizeInPixels*/, renderTexture.Creator.ResultFormat, 0 );
 
 				//create depth texture
-				var depthTexture = context.RenderTarget2D_Alloc( owner.SizeInPixels, PixelFormat.Depth24S8, 0 );
+				var depthTexture = context.RenderTarget2D_Alloc( overrideSize/*owner.SizeInPixels*/, RenderingSystem.DepthBuffer32Float ? PixelFormat.Depth32F : PixelFormat.Depth24S8, 0 );
 				context.ObjectsDuringUpdate.namedTextures[ "depthTexture" ] = depthTexture;
 
 				var sceneDepthMRT = context.MultiRenderTarget_Create( new[] {
 					new MultiRenderTarget.Item( sceneTexture ),
 					new MultiRenderTarget.Item( depthTexture ) } );
-				context.SetViewport( sceneDepthMRT.Viewports[ 0 ], viewMatrix, projectionMatrix, FrameBufferTypes.All, backgroundColor );
+				context.SetViewport( sceneDepthMRT.Viewports[ 0 ], viewMatrix, projectionMatrix, FrameBufferTypes.All, backgroundColor, RenderingSystem.ReversedZ ? 0 : 1 );
 
 				/////////////////////////////////////
 				//Scene
@@ -7374,7 +13212,7 @@ namespace NeoAxis
 						Render3DSceneForwardOpaque( context, frameData );
 					RenderSky( context, frameData );
 					if( DebugDrawForwardTransparentPass )
-						Render3DSceneForwardTransparent( context, frameData, null );
+						Render3DSceneForwardTransparentWithoutOIT( context, frameData, null );
 				}
 
 				/////////////////////////////////////
@@ -7407,21 +13245,18 @@ namespace NeoAxis
 
 				/////////////////////////////////////
 				//Copy to output target
-				context.SetViewport( owner );
+				context.SetViewport( owner.OutputViewport ?? owner );
 				CopyToCurrentViewport( context, sceneTexture, flipY: owner.OutputFlipY );
 			}
 			else
 			{
 				//render to RenderWindow
 
-				Matrix4F viewMatrix = owner.CameraSettings.ViewMatrix.ToMatrix4F();
-				Matrix4F projectionMatrix = owner.CameraSettings.ProjectionMatrix.ToMatrix4F();
-
 				var backgroundColor = context.GetBackgroundColor();
 				if( DebugMode.Value != DebugModeEnum.None )
 					backgroundColor = new ColorValue( 0, 0, 0 );
 
-				context.SetViewport( owner, viewMatrix, projectionMatrix, FrameBufferTypes.All, backgroundColor );
+				context.SetViewport( owner, viewMatrix, projectionMatrix, FrameBufferTypes.All, backgroundColor, RenderingSystem.ReversedZ ? 0 : 1 );
 
 				/////////////////////////////////////
 				//Scene
@@ -7431,7 +13266,7 @@ namespace NeoAxis
 						Render3DSceneForwardOpaque( context, frameData );
 					RenderSky( context, frameData );
 					if( DebugDrawForwardTransparentPass )
-						Render3DSceneForwardTransparent( context, frameData, null );
+						Render3DSceneForwardTransparentWithoutOIT( context, frameData, null );
 				}
 
 				/////////////////////////////////////
@@ -7454,6 +13289,24 @@ namespace NeoAxis
 					owner.CanvasRenderer.ViewportRendering_RenderToCurrentViewport( context, false, owner.LastUpdateTime );
 				}
 			}
+
+			//remove unused static shadows items when it switched from RenderWithRenderTargets
+			if( context.LightStaticShadowsItems != null )
+			{
+				foreach( var item in context.LightStaticShadowsItems.Values )
+					item.Dispose();
+				context.LightStaticShadowsItems.Clear();
+			}
+
+			////remove unused tessellation items when it switched from RenderWithRenderTargets
+			//if( context.TessellationCacheItems != null )
+			//{
+			//	foreach( var item in context.TessellationCacheItems.Values )
+			//		item.Dispose();
+			//	context.TessellationCacheItems.Clear();
+			//}
+
+			Bgfx.Discard( DiscardFlags.All );
 		}
 
 		public delegate void RenderBeginDelegate( RenderingPipeline_Basic sender, ViewportRenderingContext context, FrameData frameData );
@@ -7465,6 +13318,9 @@ namespace NeoAxis
 		[MethodImpl( (MethodImplOptions)512 )]
 		public override void Render( ViewportRenderingContext context )
 		{
+			u_renderOperationData = GpuProgramManager.RegisterUniform( "u_renderOperationData", UniformType.Vector4, 8 );
+			u_objectInstanceParameters = GpuProgramManager.RegisterUniform( "u_objectInstanceParameters", UniformType.Vector4, 2 );
+
 			if( context.FrameData == null )
 				context.FrameData = new FrameData();
 			var frameData = context.FrameData;
@@ -7472,6 +13328,8 @@ namespace NeoAxis
 			context.SizeInPixelsLowResolutionBeforeUpscale = context.Owner.SizeInPixels;
 			context.OwnerCameraSettings = context.Owner.CameraSettings;
 			context.OwnerCameraSettingsPosition = context.OwnerCameraSettings.Position;
+			context.OwnerCameraSettingsPositionPrevious = context.Owner.PreviousFramePosition ?? context.OwnerCameraSettingsPosition;
+			context.OwnerCameraSettingsPositionPreviousChange = context.Owner.PreviousFramePositionChange;
 			context.ShadowObjectVisibilityDistanceFactor = (float)ShadowObjectVisibilityDistanceFactor.Value;
 			context.UpdateGetVisibilityDistanceByObjectSize();
 			context.UpdateVoxelLodVisibilityDistanceByObjectSize();
@@ -7479,9 +13337,19 @@ namespace NeoAxis
 			if( context.Owner.AttachedScene != null )
 				context.SceneDisplayDevelopmentDataInThisApplication = context.Owner.AttachedScene.GetDisplayDevelopmentDataInThisApplication();
 			context.LODRange = LODRange.Value;
-			//!!!!new. additional 1.5 multiplier to add more quality
+			//additional 1.5 multiplier to add more quality
 			context.LODScale = (float)( LODScale.Value * GlobalLODScale * 1.5f );
+			context.LODScaleShadowsSquared = (float)( LODScaleShadows.Value * GlobalLODScaleShadows );
+			context.LODScaleShadowsSquared *= context.LODScaleShadowsSquared;
 			context.SmoothLOD = RenderingSystem.SmoothLOD;
+			context.LightFarDistance = (float)LightMaxDistance;
+			context.DebugDrawMeshes = DebugDrawMeshes;
+			context.DebugDrawVoxels = DebugDrawVoxels;
+			context.DebugDrawBatchedData = DebugDrawBatchedData;
+			context.DebugDrawNotBatchedData = DebugDrawNotBatchedData;
+			context.StaticShadows = RenderingSystem.StaticShadows && ShadowStatic;
+			context.SectorsByDistance = MathEx.Clamp( SectorsByDistance.Value, 1, 16 );
+			//context.TessellationDistance = RenderingSystem.Tessellation ? (float)TessellationDistance : -1;
 
 			duringRenderShadows = false;
 			duringRenderSimple3DRenderer = false;
@@ -7490,13 +13358,14 @@ namespace NeoAxis
 
 			//set viewport to give the ability to use compute shaders
 			{
-				//!!!!double
 				var owner = context.Owner;
-				Matrix4F viewMatrix = owner.CameraSettings.ViewMatrix.ToMatrix4F();
-				Matrix4F projectionMatrix = owner.CameraSettings.ProjectionMatrix.ToMatrix4F();
+				var viewMatrix = owner.CameraSettings.ViewMatrixRelative;
+				var projectionMatrix = owner.CameraSettings.ProjectionMatrix;
 
 				context.SetViewport( owner, viewMatrix, projectionMatrix, 0, ColorValue.Zero );
 			}
+
+			GIInit( context );
 
 			SetViewportOwnerSettingsUniform( context );
 
@@ -7536,16 +13405,37 @@ namespace NeoAxis
 			//render UI. must call before PrepareListsOfObjects.
 			context.Owner.PerformUpdateBeforeOutputEvents();
 
-			//prepare materials
+			//!!!!parallel?
+			//prepare dynamic textures
 			PrepareMaterialsTexture( context, frameData );
+			PrepareBonesTexture( context, frameData );
+			PrepareReflectionProbesCubemapEnvironmentMipmapsAndBlur( context, frameData );
 
-			//set view, projection matrices previous frame
+			//set u_viewportOwnerMatrices
 			unsafe
 			{
-				var viewProjMatrix = context.Owner.ProjectionMatrixPreviousFrame * context.Owner.ViewMatrixPreviousFrame;
-				//!!!!double
-				var matrixF = viewProjMatrix.ToMatrix4F();
-				context.SetUniform( "u_viewProjPrevious", ParameterType.Matrix4x4, 1, &matrixF );
+				var cameraSettings = context.Owner.CameraSettings;
+				var viewProjection = cameraSettings.ProjectionMatrix * cameraSettings.ViewMatrixRelative;
+
+				Matrix4F* matrices = stackalloc Matrix4F[ 7 ];
+
+				matrices[ 0 ] = viewProjection;
+				matrices[ 1 ] = cameraSettings.ViewMatrixRelative;
+				matrices[ 2 ] = cameraSettings.ProjectionMatrix;
+				matrices[ 3 ] = context.Owner.PreviousFrameProjectionMatrix * context.Owner.PreviousFrameViewMatrixRelative;
+				cameraSettings.ViewMatrixRelative.GetInverse( out matrices[ 4 ] );
+				cameraSettings.ProjectionMatrix.GetInverse( out matrices[ 5 ] );
+				viewProjection.GetInverse( out matrices[ 6 ] );
+
+				context.SetUniform( "u_viewportOwnerViewProjection", ParameterType.Matrix4x4, 1, &matrices[ 0 ] );
+				context.SetUniform( "u_viewportOwnerView", ParameterType.Matrix4x4, 1, &matrices[ 1 ] );
+				context.SetUniform( "u_viewportOwnerProjection", ParameterType.Matrix4x4, 1, &matrices[ 2 ] );
+				context.SetUniform( "u_viewportOwnerViewProjectionPrevious", ParameterType.Matrix4x4, 1, &matrices[ 3 ] );
+				context.SetUniform( "u_viewportOwnerViewInverse", ParameterType.Matrix4x4, 1, &matrices[ 4 ] );
+				context.SetUniform( "u_viewportOwnerProjectionInverse", ParameterType.Matrix4x4, 1, &matrices[ 5 ] );
+				context.SetUniform( "u_viewportOwnerViewProjectionInverse", ParameterType.Matrix4x4, 1, &matrices[ 6 ] );
+
+				//context.SetUniform( "u_viewportOwnerMatrices", ParameterType.Matrix4x4, 7, matrices );
 			}
 
 			SetFogUniform( context, frameData.Fog );
@@ -7553,22 +13443,31 @@ namespace NeoAxis
 
 			Bgfx.SetDebugFeatures( DebugMode.Value == DebugModeEnum.Wireframe ? DebugFeatures.Wireframe : DebugFeatures.None );
 
-			UpdateNullShadowTextures();
+			unsafe
+			{
+				var forwardOIT = new Vector4F( 0, 0, 0, 0 );
+				context.SetUniform( "u_forwardOIT", ParameterType.Vector4, 1, &forwardOIT );
+			}
 
+			//!!!!new
+			context.Owner.AttachedScene?.PerformRenderAfterSetCommonUniforms( this, context, frameData );
 
 			//init outputInstancingManagers
-			var sectorsByDistance = SectorsByDistance.Value;
-			while( sectorsByDistance < outputInstancingManagers.Count )
 			{
-				var manager = outputInstancingManagers[ outputInstancingManagers.Count - 1 ];
-				outputInstancingManagers.RemoveAt( outputInstancingManagers.Count - 1 );
-				manager.Dispose();
-			}
-			while( sectorsByDistance > outputInstancingManagers.Count )
-				outputInstancingManagers.Add( new OutputInstancingManager( outputInstancingManagers.Count ) );
-			foreach( var manager in outputInstancingManagers )
-				manager.Init( this );
+				//!!!!они статичные. что тут
 
+				var sectorsByDistance = context.SectorsByDistance;// SectorsByDistance.Value;
+				while( sectorsByDistance < outputInstancingManagers.Count )
+				{
+					var manager = outputInstancingManagers[ outputInstancingManagers.Count - 1 ];
+					outputInstancingManagers.RemoveAt( outputInstancingManagers.Count - 1 );
+					manager.Dispose();
+				}
+				while( sectorsByDistance > outputInstancingManagers.Count )
+					outputInstancingManagers.Add( new OutputInstancingManager( outputInstancingManagers.Count ) );
+				foreach( var manager in outputInstancingManagers )
+					manager.Init( this, false );
+			}
 
 			if( UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
 				RenderWithRenderTargets( context, frameData );
@@ -7581,14 +13480,16 @@ namespace NeoAxis
 			context.FrameData.Clear();//context.FrameData = null;
 
 			//clear or destroy something maybe
+			if( context.Owner.CanvasRenderer != null )
+				context.Owner.CanvasRenderer.ScreenAntialisingForThisFrame = false;
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		[StructLayout( LayoutKind.Sequential )]
+		[StructLayout( LayoutKind.Sequential, Pack = 1 )]
 		struct ViewportOwnerSettingsUniform
 		{
-			public Vector3F cameraPosition;
+			public Vector3F cameraPositionSinglePrecision;//public Vector3F cameraPosition;
 			public float nearClipDistance;
 
 			public float farClipDistance;
@@ -7596,7 +13497,7 @@ namespace NeoAxis
 			public float debugMode;
 			public float emissiveMaterialsFactor;//public float cameraEv100;//public float unused1;
 
-			public Vector3F shadowFarDistance;
+			public Vector3F shadowDirectionalDistance;
 			public float cameraExposure;
 
 			public float displacementScale;
@@ -7608,11 +13509,24 @@ namespace NeoAxis
 			public float engineTime;
 
 			public Vector3F cameraUp;
-			public float mipBias;
+			//mip bias is disabled
+			public float unused; //public float mipBias;
 
 			public Vector2F windSpeed;
 			public float shadowObjectVisibilityDistanceFactor;
-			public float unused1;
+			public float debugCapsLock;
+
+			public Vector3F cameraPositionPreviousFrameChange;
+			public float temperature;
+
+			public Vector3F cameraPositionDivide987654Remainder;
+			public float precipitationFalling;
+
+			public Vector3F shadowPointSpotlightDistance;
+			//!!!!
+			public HalfType precipitationFallen;
+			public HalfType timeOfDay;
+			//public float precipitationFallen;
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
@@ -7620,22 +13534,34 @@ namespace NeoAxis
 		{
 			var cameraSettings = context.Owner.CameraSettings;
 
-			//!!!!double
-
 			var data = new ViewportOwnerSettingsUniform();
-			data.cameraPosition = cameraSettings.Position.ToVector3F();
+
+			data.cameraPositionSinglePrecision = cameraSettings.Position.ToVector3F();
+
 			data.nearClipDistance = (float)cameraSettings.NearClipDistance;
 			data.farClipDistance = (float)cameraSettings.FarClipDistance;
 			data.fieldOfView = (float)cameraSettings.FieldOfView.InRadians();
 			data.debugMode = (float)( overrideDebugMode.HasValue ? overrideDebugMode.Value : DebugMode.Value );
 
-			//shadowFarDistance
+			//shadowDirectionalDistance
 			{
-				float farDistance = (float)ShadowFarDistance;
+				float farDistance = (float)ShadowDirectionalDistance;
 				//!!!!?
 				float shadowTextureFadeStart = .9f;
 				float fadeMinDistance = farDistance * shadowTextureFadeStart;
-				data.shadowFarDistance = new Vector3F(
+				data.shadowDirectionalDistance = new Vector3F(
+					farDistance,
+					farDistance - fadeMinDistance * 2.0f,
+					1.0f / ( Math.Max( farDistance - fadeMinDistance, .0001f ) ) );
+			}
+
+			//shadowPointSpotlightDistance
+			{
+				float farDistance = (float)ShadowPointSpotlightDistance;
+				//!!!!?
+				float shadowTextureFadeStart = .9f;
+				float fadeMinDistance = farDistance * shadowTextureFadeStart;
+				data.shadowPointSpotlightDistance = new Vector3F(
 					farDistance,
 					farDistance - fadeMinDistance * 2.0f,
 					1.0f / ( Math.Max( farDistance - fadeMinDistance, .0001f ) ) );
@@ -7655,19 +13581,37 @@ namespace NeoAxis
 
 			data.cameraUp = cameraSettings.Rotation.GetUp().ToVector3F();
 
-			var resolutionUpscale = GetSceneEffect<RenderingEffect_ResolutionUpscale>();
-			if( resolutionUpscale != null )
-				data.mipBias = (float)resolutionUpscale.GetMipBias();
+			//mip bias is disabled
+			//var resolutionUpscale = GetSceneEffect<RenderingEffect_ResolutionUpscale>();
+			//if( resolutionUpscale != null )
+			//	data.mipBias = (float)resolutionUpscale.GetMipBias();
 
 			var scene = context.Owner.AttachedScene;
 			if( scene != null )
 				data.windSpeed = scene.GetWindSpeedVector().ToVector2F();
 
 			data.shadowObjectVisibilityDistanceFactor = (float)ShadowObjectVisibilityDistanceFactor;
+			data.debugCapsLock = EngineApp._DebugCapsLock ? 1 : 0;
+
+			data.cameraPositionPreviousFrameChange = ( context.OwnerCameraSettingsPosition - context.OwnerCameraSettingsPositionPrevious ).ToVector3F();
+			data.temperature = scene != null ? (float)scene.Temperature : 20;
+
+			data.cameraPositionDivide987654Remainder.X = (float)( cameraSettings.Position.X % 987654.0 );
+			data.cameraPositionDivide987654Remainder.Y = (float)( cameraSettings.Position.Y % 987654.0 );
+			data.cameraPositionDivide987654Remainder.Z = (float)( cameraSettings.Position.Z % 987654.0 );
+			if( scene != null )
+				data.precipitationFalling = (float)scene.PrecipitationFalling;
+
+			if( scene != null )
+			{
+				data.precipitationFallen = new HalfType( scene.PrecipitationFallen.Value );
+				data.timeOfDay = new HalfType( scene.TimeOfDay.Value );
+				//data.precipitationFallen = (float)scene.PrecipitationFallen;
+			}
 
 			int vec4Count = sizeof( ViewportOwnerSettingsUniform ) / sizeof( Vector4F );
-			if( vec4Count != 7 )
-				Log.Fatal( "RenderingPipeline: Render: vec4Count != 7." );
+			if( vec4Count != 10 || sizeof( ViewportOwnerSettingsUniform ) != sizeof( Vector4F ) * 10 )
+				Log.Fatal( "RenderingPipeline: Render: vec4Count != 10 || sizeof( ViewportOwnerSettingsUniform ) != sizeof( Vector4F ) * 10." );
 			context.SetUniform( "u_viewportOwnerSettings", ParameterType.Vector4, vec4Count, &data );
 		}
 
@@ -7692,6 +13636,7 @@ namespace NeoAxis
 
 			context.CurrentCutVolumes = cutVolumes;
 
+			//merge scene, object cut volumes
 			var list = context.FrameData.RenderSceneData.CutVolumes;
 			if( cutVolumes != null && cutVolumes.Length != 0 )
 			{
@@ -7737,11 +13682,13 @@ namespace NeoAxis
 					//else
 					//{
 
-					//!!!!slowly?
+					//!!!!slowly? precalculate
 
-					item.Transform.ToMatrix4().GetInverse( out var inv );
-					//!!!!double
-					inv.ToMatrix4F( out data[ count ] );
+					context.ConvertToRelative( ref item.Transform.ToMatrix4(), out var relative );
+					relative.GetInverse( out data[ count ] );
+
+					//item.Transform.ToMatrix4().GetInverse( out var inv );
+					//inv.ToMatrix4F( out data[ count ] );
 
 					//}
 
@@ -7773,35 +13720,19 @@ namespace NeoAxis
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		public virtual void GetBackgroundEnvironmentData( ViewportRenderingContext context, FrameData frameData, out EnvironmentTextureData? texture, out EnvironmentIrradianceData? harmonics )
+		public virtual void GetBackgroundEnvironmentData( ViewportRenderingContext context, FrameData frameData, out EnvironmentTextureData texture, out EnvironmentIrradianceData harmonics )
+		//public virtual void GetBackgroundEnvironmentData( ViewportRenderingContext context, FrameData frameData, out EnvironmentTextureData? texture, out EnvironmentIrradianceData? harmonics )
 		{
 			//Sky
 			if( context.Owner.AttachedScene != null && frameData.Sky != null )
 			{
-				if( frameData.Sky.GetEnvironmentTextureData( out var texture2, out var textureIBL2 ) )
-				{
-					texture = texture2;
-					harmonics = textureIBL2;
+				if( frameData.Sky.GetEnvironmentTextureData( out texture, out harmonics ) )
 					return;
-				}
 
-				//var skybox = frameData.Sky as Skybox;
-				//if( skybox != null )
+				//if( frameData.Sky.GetEnvironmentTextureData( out var texture2, out var textureIBL2 ) )
 				//{
-				//	skybox.GetEnvironmentCubemaps( out var environmentCubemap, out var irradianceCubemap );
-				//	skybox.GetRotationMatrix( out var rotation );
-				//	var multiplier = skybox.Multiplier.Value.ToVector3F() * skybox.MultiplierReflection.Value.ToVector3F();
-
-				//	if( environmentCubemap != null )
-				//		texture = new EnvironmentTextureData( environmentCubemap, ref rotation, ref multiplier );
-				//	else
-				//		texture = new EnvironmentTextureData( ResourceUtility.GrayTextureCube );
-
-				//	if( irradianceCubemap != null )
-				//		textureIBL = new EnvironmentTextureData( irradianceCubemap, ref rotation, ref multiplier );
-				//	else
-				//		textureIBL = new EnvironmentTextureData( ResourceUtility.GrayTextureCube );
-
+				//	texture = texture2;
+				//	harmonics = textureIBL2;
 				//	return;
 				//}
 			}
@@ -7830,14 +13761,22 @@ namespace NeoAxis
 
 		[MethodImpl( (MethodImplOptions)512 )]
 		void GetEnvironmentTexturesByBoundingSphereIntersection( ViewportRenderingContext context, FrameData frameData, ref Sphere objectSphere,
-			out EnvironmentTextureData? texture1, out EnvironmentIrradianceData? harmonics1,
-			out EnvironmentTextureData? texture2, out EnvironmentIrradianceData? harmonics2,
+			ref EnvironmentTextureData texture1, ref EnvironmentIrradianceData harmonics1,
+			ref EnvironmentTextureData texture2, ref EnvironmentIrradianceData harmonics2,
 			out float blendingFactor )
+		//void GetEnvironmentTexturesByBoundingSphereIntersection( ViewportRenderingContext context, FrameData frameData, ref Sphere objectSphere,
+		//	out EnvironmentTextureData? texture1, out EnvironmentIrradianceData? harmonics1,
+		//	out EnvironmentTextureData? texture2, out EnvironmentIrradianceData? harmonics2,
+		//	out float blendingFactor )
 		{
-			texture1 = null;
-			harmonics1 = null;
-			texture2 = null;
-			harmonics2 = null;
+			var texture1Set = false;
+			var harmonics1Set = false;
+			var texture2Set = false;
+			var harmonics2Set = false;
+			//texture1 = null;
+			//harmonics1 = null;
+			//texture2 = null;
+			//harmonics2 = null;
 			blendingFactor = 1;
 
 			if( context.Owner.AttachedScene != null )
@@ -7864,12 +13803,12 @@ namespace NeoAxis
 							if( probe1 == null )
 							{
 								probe1 = probe;
-								probe1Intensity = intensity;
+								probe1Intensity = intensity * probe.data.Intensity;
 							}
 							else
 							{
 								probe2 = probe;
-								probe2Intensity = intensity;
+								probe2Intensity = intensity * probe.data.Intensity;
 								break;
 							}
 						}
@@ -7878,36 +13817,103 @@ namespace NeoAxis
 
 				if( probe1 != null && probe2 != null )
 				{
-					if( probe1.data.CubemapEnvironment != null )
-						texture1 = new EnvironmentTextureData( probe1.data.CubemapEnvironment, 1, ref probe1.data.Rotation, ref probe1.data.Multiplier );
-					if( probe1.data.HarmonicsIrradiance != null )
-						harmonics1 = new EnvironmentIrradianceData( probe1.data.HarmonicsIrradiance, 1, ref probe1.data.Rotation, ref probe1.data.Multiplier );
-					if( probe2.data.CubemapEnvironment != null )
-						texture2 = new EnvironmentTextureData( probe2.data.CubemapEnvironment, 1, ref probe2.data.Rotation, ref probe2.data.Multiplier );
-					if( probe2.data.HarmonicsIrradiance != null )
-						harmonics2 = new EnvironmentIrradianceData( probe2.data.HarmonicsIrradiance, 1, ref probe2.data.Rotation, ref probe2.data.Multiplier );
-					blendingFactor = (float)( probe1Intensity / ( probe1Intensity + probe2Intensity ) );
+					if( probe1.CubemapEnvironmentWithMipmapsAndBlur != null )
+					{
+						texture1 = new EnvironmentTextureData( probe1.CubemapEnvironmentWithMipmapsAndBlur, 1, ref probe1.data.Rotation, ref probe1.data.Multiplier );
+						texture1Set = true;
+
+						harmonics1 = new EnvironmentIrradianceData( EnvironmentIrradianceData.GetHarmonicsToUseMap( probe1.CubemapEnvironmentWithMipmapsAndBlur, probe1.data.CubemapEnvironmentAffectLightingLodOffset ), 1, ref probe1.data.Rotation, ref probe1.data.Multiplier );
+						harmonics1Set = true;
+					}
+					else
+					{
+						if( probe1.data.CubemapEnvironment != null )
+						{
+							texture1 = new EnvironmentTextureData( probe1.data.CubemapEnvironment, 1, ref probe1.data.Rotation, ref probe1.data.Multiplier );
+							texture1Set = true;
+						}
+						if( probe1.data.HarmonicsIrradiance != null )
+						{
+							harmonics1 = new EnvironmentIrradianceData( probe1.data.HarmonicsIrradiance, 1, ref probe1.data.Rotation, ref probe1.data.Multiplier );
+							harmonics1Set = true;
+						}
+					}
+
+					if( probe2.CubemapEnvironmentWithMipmapsAndBlur != null )
+					{
+						texture2 = new EnvironmentTextureData( probe2.CubemapEnvironmentWithMipmapsAndBlur, 1, ref probe2.data.Rotation, ref probe2.data.Multiplier );
+						texture2Set = true;
+
+						harmonics2 = new EnvironmentIrradianceData( EnvironmentIrradianceData.GetHarmonicsToUseMap( probe2.CubemapEnvironmentWithMipmapsAndBlur, probe2.data.CubemapEnvironmentAffectLightingLodOffset ), 1, ref probe2.data.Rotation, ref probe2.data.Multiplier );
+						harmonics2Set = true;
+					}
+					else
+					{
+						if( probe2.data.CubemapEnvironment != null )
+						{
+							texture2 = new EnvironmentTextureData( probe2.data.CubemapEnvironment, 1, ref probe2.data.Rotation, ref probe2.data.Multiplier );
+							texture2Set = true;
+						}
+						if( probe2.data.HarmonicsIrradiance != null )
+						{
+							harmonics2 = new EnvironmentIrradianceData( probe2.data.HarmonicsIrradiance, 1, ref probe2.data.Rotation, ref probe2.data.Multiplier );
+							harmonics2Set = true;
+						}
+					}
+
+					var sum = probe1Intensity + probe2Intensity;
+					if( sum < 0.0001 )
+						sum = 0.0001;
+					blendingFactor = MathEx.Saturate( (float)( probe1Intensity / sum ) );
 				}
 				else if( probe1 != null )
 				{
-					if( probe1.data.CubemapEnvironment != null )
-						texture1 = new EnvironmentTextureData( probe1.data.CubemapEnvironment, 1, ref probe1.data.Rotation, ref probe1.data.Multiplier );
-					if( probe1.data.HarmonicsIrradiance != null )
-						harmonics1 = new EnvironmentIrradianceData( probe1.data.HarmonicsIrradiance, 1, ref probe1.data.Rotation, ref probe1.data.Multiplier );
-					blendingFactor = (float)probe1Intensity;
+					if( probe1.CubemapEnvironmentWithMipmapsAndBlur != null )
+					{
+						texture1 = new EnvironmentTextureData( probe1.CubemapEnvironmentWithMipmapsAndBlur, 1, ref probe1.data.Rotation, ref probe1.data.Multiplier );
+						texture1Set = true;
+
+						harmonics1 = new EnvironmentIrradianceData( EnvironmentIrradianceData.GetHarmonicsToUseMap( probe1.CubemapEnvironmentWithMipmapsAndBlur, probe1.data.CubemapEnvironmentAffectLightingLodOffset ), 1, ref probe1.data.Rotation, ref probe1.data.Multiplier );
+						harmonics1Set = true;
+					}
+					else
+					{
+						if( probe1.data.CubemapEnvironment != null )
+						{
+							texture1 = new EnvironmentTextureData( probe1.data.CubemapEnvironment, 1, ref probe1.data.Rotation, ref probe1.data.Multiplier );
+							texture1Set = true;
+						}
+						if( probe1.data.HarmonicsIrradiance != null )
+						{
+							harmonics1 = new EnvironmentIrradianceData( probe1.data.HarmonicsIrradiance, 1, ref probe1.data.Rotation, ref probe1.data.Multiplier );
+							harmonics1Set = true;
+						}
+					}
+
+					blendingFactor = MathEx.Saturate( (float)probe1Intensity );
 				}
 			}
 
 			//init nulls by sky texture or white cube
 			GetBackgroundEnvironmentData( context, frameData, out var backgroundTexture, out var backgroundTextureIBL );
-			if( texture1 == null )
+
+			if( !texture1Set )
 				texture1 = backgroundTexture;
-			if( texture2 == null )
+			if( !texture2Set )
 				texture2 = backgroundTexture;
-			if( harmonics1 == null )
+			if( !harmonics1Set )
 				harmonics1 = backgroundTextureIBL;
-			if( harmonics2 == null )
+			if( !harmonics2Set )
 				harmonics2 = backgroundTextureIBL;
+
+			//if( texture1 == null )
+			//	texture1 = backgroundTexture;
+			//if( texture2 == null )
+			//	texture2 = backgroundTexture;
+			//if( harmonics1 == null )
+			//	harmonics1 = backgroundTextureIBL;
+			//if( harmonics2 == null )
+			//	harmonics2 = backgroundTextureIBL;
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -7928,7 +13934,8 @@ namespace NeoAxis
 
 			public float height;
 			public float heightScale;
-			public Vector2F unused;
+			public float affectBackground;
+			public float unused;
 		}
 
 		public delegate void FogExtensionGetUniformDataDelegate( ViewportRenderingContext context, Fog fog, IntPtr data, int dataSizeInBytes );
@@ -7992,6 +13999,7 @@ namespace NeoAxis
 					data->heightMode = 1;
 				data->height = (float)fog.Height;
 				data->heightScale = (float)fog.HeightScale;
+				data->affectBackground = (float)fog.AffectBackground;
 			}
 			if( fogExtensionEnabled && fogExtensionGetUniformData != null )
 				fogExtensionGetUniformData( context, fog, uniformData, size );
@@ -8001,74 +14009,22 @@ namespace NeoAxis
 			NativeUtility.Free( uniformData );
 		}
 
-		void UpdateNullShadowTextures()
-		{
-			if( nullShadowTexture2D == null || nullShadowTexture2D.Disposed )
-				nullShadowTexture2D = null;
-			if( nullShadowTextureCube == null || nullShadowTextureCube.Disposed )
-				nullShadowTextureCube = null;
-
-			if( nullShadowTexture2D == null )
-			{
-				var texture = ComponentUtility.CreateComponent<ImageComponent>( null, true, false );
-				texture.CreateType = ImageComponent.TypeEnum._2D;
-				texture.CreateSize = new Vector2I( 1, 1 );
-				texture.CreateMipmaps = false;
-				texture.CreateFormat = RenderingSystem.ShadowTextureFormat == ProjectSettingsPage_Rendering.ShadowTextureFormatEnum.Byte4 ? PixelFormat.A8R8G8B8 : PixelFormat.Float32R;
-				texture.CreateUsage = ImageComponent.Usages.WriteOnly;
-				texture.Enabled = true;
-
-				if( texture.Result != null )
-				{
-					var data = new byte[ 4 ];
-					var d = new GpuTexture.SurfaceData[] { new GpuTexture.SurfaceData( data ) };
-					texture.Result.SetData( d );
-				}
-
-				nullShadowTexture2D = texture;
-			}
-
-			if( nullShadowTextureCube == null )
-			{
-				var texture = ComponentUtility.CreateComponent<ImageComponent>( null, true, false );
-				texture.CreateType = ImageComponent.TypeEnum.Cube;
-				texture.CreateSize = new Vector2I( 1, 1 );
-				texture.CreateMipmaps = false;
-				texture.CreateFormat = RenderingSystem.ShadowTextureFormat == ProjectSettingsPage_Rendering.ShadowTextureFormatEnum.Byte4 ? PixelFormat.A8R8G8B8 : PixelFormat.Float32R;
-				texture.CreateUsage = ImageComponent.Usages.WriteOnly;
-				texture.Enabled = true;
-
-				if( texture.Result != null )
-				{
-					var data = new byte[ 4 ];
-					var d = new GpuTexture.SurfaceData[ 6 ];
-					for( int n = 0; n < 6; n++ )
-						d[ n ] = new GpuTexture.SurfaceData( data );
-					texture.Result.SetData( d );
-				}
-
-				nullShadowTextureCube = texture;
-			}
-		}
-
-		[MethodImpl( (MethodImplOptions)512 )]
-		public unsafe void BindRenderOperationData( ViewportRenderingContext context, FrameData frameData, Material.CompiledMaterialData materialData, bool instancing, RenderSceneData.MeshItem.AnimationDataClass meshItemAnimationData, int billboardMode, double billboardRadius, bool receiveDecals, ref Vector3F previousWorldPosition, float lodValue, UnwrappedUVEnum unwrappedUV, ref ColorValue color, bool vertexStructureContainsColor, bool isLayer, float visibilityDistance, float motionBlurFactor, bool layerMaskFormatTriangles, ImageComponent voxelDataImage, Vector4F[] voxelDataInfo/*, ImageComponent virtualizedDataImage, Vector4F[] virtualizedDataInfo*/ )// int objectIdStart = 0 )
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public unsafe void BindRenderOperationData( ViewportRenderingContext context, FrameData frameData, Material.CompiledMaterialData materialData, bool instancing, RenderSceneData.MeshItem.AnimationDataClass meshItemAnimationData, int billboardMode, double billboardRadius, bool receiveDecals, ref Vector3F previousFramePositionChange, float lodValue, UnwrappedUVEnum unwrappedUV, ref ColorValue color, bool vertexStructureContainsColor, bool isLayer, float visibilityDistance, float motionBlurFactor, bool layerMaskFormatTriangles, ImageComponent voxelDataImage, Vector4F[] voxelDataInfo, Vector4F[] objectInstanceParameters, uint cullingByCameraDirectionData, ref Vector3F instancingPositionOffsetRelative/*, bool computeGI = false*/, float uvScale = 1.0f )//, ViewportRenderingContext.TessellationCacheItem tessItem = null, int tessIteration = 0 )
 		{
 			//can merge some parameters
 
+			//!!!!without zero memory
+			//var data44 = stackalloc RenderOperationDataStructure[1];
+
 			var data = new RenderOperationDataStructure();
-			//Vector4F data0 = Vector4F.Zero;
-			//Vector4F data1 = Vector4F.Zero;
-			//Vector4F data2 = Vector4F.Zero;
-			//Vector4F data3 = Vector4F.Zero;
-			////Vector4F data4;
 
 			if( materialData != null )
 				data.data0.X = materialData.currentFrameIndex;
 			if( instancing )
 				data.data0.Y = -1;
-			if( meshItemAnimationData != null )
-				data.data0.Y = meshItemAnimationData.Mode;
+			else if( meshItemAnimationData != null )
+				data.data0.Y = meshItemAnimationData.BonesIndex + 1;//data.data0.Y = meshItemAnimationData.Mode;
 			if( billboardMode != 0 )
 			{
 				data.data0.Z = billboardMode;
@@ -8081,13 +14037,19 @@ namespace NeoAxis
 			data.data1.Z = motionBlurFactor;
 			data.data1.W = voxelDataInfo != null ? 1 : 0;
 
-			data.data2 = new Vector4F( previousWorldPosition, lodValue );
+			data.data2 = new Vector4F( previousFramePositionChange, lodValue );
 
 			data.data3.X = (int)unwrappedUV;
 			if( vertexStructureContainsColor )
 				data.data3.Y = 1;
 			if( isLayer )
 				data.data3.Z = layerMaskFormatTriangles ? 2 : 1;
+
+			unsafe
+			{
+				*(uint*)&data.data3.W = cullingByCameraDirectionData;
+			}
+
 			//if( isLayer )
 			//	data3.Z = 1;
 			//data.data3.W = depthSortingLevel;
@@ -8109,12 +14071,25 @@ namespace NeoAxis
 			//	//data.data6 = virtualizedDataInfo[ 1 ];
 			//}
 
+			if( instancing )
+				data.data71 = instancingPositionOffsetRelative;
+
+			data.data72 = uvScale;
+
+			//if( tessItem != null )
+			//{
+			//	if( tessIteration == 0 )
+			//		data.data72 = context.TessellationDistance;
+			//	else
+			//		data.data72 = -context.TessellationDistance;
+			//	//data.data72 = tessIteration + 1;
+			//}
 
 			//set u_renderOperationData
 
-			if( u_renderOperationData == null )
-				u_renderOperationData = GpuProgramManager.RegisterUniform( "u_renderOperationData", UniformType.Vector4, 7 );
-			Bgfx.SetUniform( u_renderOperationData.Value, &data, 7 );
+			//if( !u_renderOperationData.HasValue )
+			//	u_renderOperationData = GpuProgramManager.RegisterUniform( "u_renderOperationData", UniformType.Vector4, 7 );
+			Bgfx.SetUniform( u_renderOperationData, &data, 8 );
 
 			//it is slower because mostly 95%+ next render operation will be different
 
@@ -8143,12 +14118,13 @@ namespace NeoAxis
 			//		Bgfx.SetUniform( u_renderOperationData.Value, pData, 5 );
 			//}
 
-			//bind bones texture
-			var bonesTexture = meshItemAnimationData?.BonesTexture;
-			if( bonesTexture != null )
-			{
-				context.BindTexture( 0/*"s_bones"*/, bonesTexture, TextureAddressingMode.Clamp, FilterOption.None, FilterOption.None, FilterOption.None, 0, false );
-			}
+
+			////bind bones texture
+			//var bonesTexture = meshItemAnimationData?.BonesTexture;
+			//if( bonesTexture != null )
+			//{
+			//	context.BindTexture( 0/*"s_bones"*/, bonesTexture, TextureAddressingMode.Clamp, FilterOption.None, FilterOption.None, FilterOption.None, 0, false );
+			//}
 
 			////bind materials data texture
 			//if( bindMaterialsTexture && materialData != null )
@@ -8161,9 +14137,44 @@ namespace NeoAxis
 			//}
 
 			//bind voxel data
-			if( voxelDataImage != null )
+			//if( voxelDataImage != null )
 			{
-				context.BindTexture( 2/*"s_voxelData"*/, voxelDataImage, TextureAddressingMode.Clamp, FilterOption.None, FilterOption.None, FilterOption.None, 0, false );
+				//!!!!slowly? когда null остаетс€ может не обновл€ть
+
+				//!!!!
+				context.BindTexture( 2/*"s_voxelData"*/, voxelDataImage ?? ResourceUtility.BlackTexture2D, TextureAddressingMode.Clamp, FilterOption.None, FilterOption.None, FilterOption.None, 0, false );
+				//context.BindTexture( computeGI ? 17 : 2/*"s_voxelData"*/, voxelDataImage ?? ResourceUtility.BlackTexture2D, TextureAddressingMode.Clamp, FilterOption.None, FilterOption.None, FilterOption.None, 0, false );
+			}
+
+			//set uniforms of object instance parameters
+			{
+				//if( !u_materialInstanceParameters.HasValue )
+				//	u_materialInstanceParameters = GpuProgramManager.RegisterUniform( "u_materialInstanceParameters", UniformType.Vector4, 2 );
+
+				if( objectInstanceParameters != null )
+				{
+					if( objectInstanceParametersIsNull || objectInstanceParametersLast1 != objectInstanceParameters[ 0 ] || objectInstanceParametersLast2 != objectInstanceParameters[ 1 ] )
+					{
+						objectInstanceParametersLast1 = objectInstanceParameters[ 0 ];
+						objectInstanceParametersLast2 = objectInstanceParameters[ 1 ];
+						objectInstanceParametersIsNull = false;
+
+						fixed( Vector4F* parameters = objectInstanceParameters )
+							Bgfx.SetUniform( u_objectInstanceParameters, parameters, 2 );
+					}
+				}
+				else
+				{
+					if( !objectInstanceParametersIsNull )
+					{
+						objectInstanceParametersIsNull = true;
+
+						var parameters = stackalloc Vector4F[ 2 ];
+						parameters[ 0 ] = Vector4F.Zero;
+						parameters[ 1 ] = Vector4F.Zero;
+						Bgfx.SetUniform( u_objectInstanceParameters, parameters, 2 );
+					}
+				}
 			}
 
 			////bind virtualized data
@@ -8194,27 +14205,25 @@ namespace NeoAxis
 
 			//prepare texture
 
-			int horizontalCount = 64;
 
-			Vector2I size = new Vector2I( horizontalCount * 8, Math.Max( 32, MathEx.NextPowerOfTwo( frameData.Materials.Count / horizontalCount + 1 ) ) );
+			var materialCount = frameData.Materials.Count;
+			if( materialCount > RenderingSystem.Capabilities.MaxTextureSize )
+				materialCount = RenderingSystem.Capabilities.MaxTextureSize;
+
+			var size = new Vector2I( 8, MathEx.NextPowerOfTwo( materialCount ) );
 			if( size.Y > RenderingSystem.Capabilities.MaxTextureSize )
 				size.Y = RenderingSystem.Capabilities.MaxTextureSize;
-			int totalCount = horizontalCount * size.Y;
 
-			//can use static temp array becayse SetData loads data to Gpu immediately
-
-			int bufferSize = size.X * size.Y * 8;//16
-			if( prepareMaterialsTempBuffer == null || bufferSize > prepareMaterialsTempBuffer.Length )
-				prepareMaterialsTempBuffer = new byte[ bufferSize ];
-			var data = prepareMaterialsTempBuffer;
+			//it is ok to use static temp array because SetData loads data to Gpu immediately
+			int bufferSize = size.X * size.Y * 8;
+			if( prepareMaterialsBonesLightsTempBuffer == null || bufferSize > prepareMaterialsBonesLightsTempBuffer.Length )
+				prepareMaterialsBonesLightsTempBuffer = new byte[ bufferSize ];
+			var data = prepareMaterialsBonesLightsTempBuffer;
 
 			fixed( byte* pData = data )
 			{
-				for( int n = 0; n < frameData.Materials.Count; n++ )
+				for( int n = 0; n < materialCount; n++ )
 				{
-					if( n >= totalCount )
-						break;
-
 					var materialData = frameData.Materials.Data[ n ];
 
 					materialData.UpdateDynamicParametersFragmentUniformData( context );
@@ -8225,8 +14234,201 @@ namespace NeoAxis
 				}
 			}
 
+
+
+			//int horizontalCount = 64;
+
+			//Vector2I size = new Vector2I( horizontalCount * 8, Math.Max( 32, MathEx.NextPowerOfTwo( frameData.Materials.Count / horizontalCount + 1 ) ) );
+			//if( size.Y > RenderingSystem.Capabilities.MaxTextureSize )
+			//	size.Y = RenderingSystem.Capabilities.MaxTextureSize;
+			//int totalCount = horizontalCount * size.Y;
+
+			////it is ok to use static temp array because SetData loads data to Gpu immediately
+			//int bufferSize = size.X * size.Y * 8;
+			//if( prepareMaterialsBonesLightsTempBuffer == null || bufferSize > prepareMaterialsBonesLightsTempBuffer.Length )
+			//	prepareMaterialsBonesLightsTempBuffer = new byte[ bufferSize ];
+			//var data = prepareMaterialsBonesLightsTempBuffer;
+
+			//fixed( byte* pData = data )
+			//{
+			//	for( int n = 0; n < frameData.Materials.Count; n++ )
+			//	{
+			//		if( n >= totalCount )
+			//			break;
+
+			//		var materialData = frameData.Materials.Data[ n ];
+
+			//		materialData.UpdateDynamicParametersFragmentUniformData( context );
+
+			//		var pData2 = pData + n * sizeof( Material.CompiledMaterialData.DynamicParametersFragmentUniform );
+			//		var pData3 = (Material.CompiledMaterialData.DynamicParametersFragmentUniform*)pData2;
+			//		*pData3 = materialData.materialDataDynamicParametersData;
+			//	}
+			//}
+
 			frameData.MaterialsTexture = context.DynamicTexture_Alloc( ViewportRenderingContext.DynamicTextureType.DynamicTexture, ImageComponent.TypeEnum._2D, size, PixelFormat.Float16RGBA, 0, false );
 			frameData.MaterialsTexture.Result.SetData( new GpuTexture.SurfaceData[] { new GpuTexture.SurfaceData( new ArraySegment<byte>( data, 0, bufferSize ) ) } );
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		unsafe void PrepareBonesTexture( ViewportRenderingContext context, FrameData frameData )
+		{
+			if( context.AnimationBonesData.Count != 0 )
+			{
+				if( context.AnimationBonesDataTasks.Count != 0 )
+					Task.WaitAll( context.AnimationBonesDataTasks.ToArray() );
+
+				var maxCount = 0;
+				foreach( var bones in context.AnimationBonesData )
+				{
+					if( bones.Length > maxCount )
+						maxCount = bones.Length;
+				}
+
+				var sizeX = MathEx.NextPowerOfTwo( maxCount * 4 );
+				var sizeY = MathEx.NextPowerOfTwo( context.AnimationBonesData.Count );
+				if( sizeY > RenderingSystem.Capabilities.MaxTextureSize )
+					sizeY = RenderingSystem.Capabilities.MaxTextureSize;
+				var size = new Vector2I( sizeX, sizeY );
+
+
+				//use half on mobile
+				if( SystemSettings.LimitedDevice )
+				{
+					//half
+
+					var bufferSize = sizeX * sizeY * 8;
+					if( prepareMaterialsBonesLightsTempBuffer == null || bufferSize > prepareMaterialsBonesLightsTempBuffer.Length )
+						prepareMaterialsBonesLightsTempBuffer = new byte[ bufferSize ];
+					var data = prepareMaterialsBonesLightsTempBuffer;
+
+					fixed( byte* pData = data )
+					{
+						for( int nBones = 0; nBones < context.AnimationBonesData.Count; nBones++ )
+						{
+							if( nBones >= size.Y )
+								break;
+
+							var bones = context.AnimationBonesData[ nBones ];
+							//fixed( Matrix4F* pBones = bones )
+							//{
+							var pData2 = pData + nBones * sizeX * 8;
+							Matrix4H* pData3 = (Matrix4H*)pData2;
+
+							for( int n = 0; n < bones.Length; n++ )
+								bones[ n ].ToMatrix4H( out pData3[ n ] );
+							//}
+						}
+					}
+
+					frameData.BonesTexture = context.DynamicTexture_Alloc( ViewportRenderingContext.DynamicTextureType.DynamicTexture, ImageComponent.TypeEnum._2D, size, PixelFormat.Float16RGBA, 0, false );
+					frameData.BonesTexture.Result.SetData( new GpuTexture.SurfaceData[] { new GpuTexture.SurfaceData( new ArraySegment<byte>( data, 0, bufferSize ) ) } );
+				}
+				else
+				{
+					//float
+
+					var bufferSize = sizeX * sizeY * 16;
+					if( prepareMaterialsBonesLightsTempBuffer == null || bufferSize > prepareMaterialsBonesLightsTempBuffer.Length )
+						prepareMaterialsBonesLightsTempBuffer = new byte[ bufferSize ];
+					var data = prepareMaterialsBonesLightsTempBuffer;
+
+					fixed( byte* pData = data )
+					{
+						for( int nBones = 0; nBones < context.AnimationBonesData.Count; nBones++ )
+						{
+							if( nBones >= size.Y )
+								break;
+
+							var bones = context.AnimationBonesData[ nBones ];
+							fixed( Matrix4F* pBones = bones )
+							{
+								var pData2 = pData + nBones * sizeX * 16;
+								NativeUtility.CopyMemory( pData2, pBones, bones.Length * sizeof( Matrix4F ) );
+							}
+						}
+					}
+
+					frameData.BonesTexture = context.DynamicTexture_Alloc( ViewportRenderingContext.DynamicTextureType.DynamicTexture, ImageComponent.TypeEnum._2D, size, PixelFormat.Float32RGBA, 0, false );
+					frameData.BonesTexture.Result.SetData( new GpuTexture.SurfaceData[] { new GpuTexture.SurfaceData( new ArraySegment<byte>( data, 0, bufferSize ) ) } );
+				}
+			}
+			else
+				frameData.BonesTexture = ResourceUtility.BlackTexture2D;
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		unsafe void PrepareLightsTexture( ViewportRenderingContext context, FrameData frameData )
+		{
+			if( sizeof( LightItem.LightDataFragmentMultiLight ) > 512 )
+				Log.Fatal( "RenderingPipeline_Basic: PrepareLightsTexture: sizeof( LightItem.LightDataFragmentMultiLight ) > 512." );
+
+			//!!!!можно в р€д тоже выкладывать
+
+			var size = new Vector2I( 32, Math.Max( 32, MathEx.NextPowerOfTwo( frameData.LightsInFrustumSorted.Length ) ) );
+			if( size.Y > RenderingSystem.Capabilities.MaxTextureSize )
+				size.Y = RenderingSystem.Capabilities.MaxTextureSize;
+
+			int lightCountToWrite = Math.Min( frameData.LightsInFrustumSorted.Length, size.Y );
+
+			//use half on mobile
+			if( SystemSettings.LimitedDevice ) // !Texture.IsValid( 1, false, 1, TextureFormat.RGBA32F ) )
+			{
+				//half
+
+				//it is ok to use static temp array because SetData loads data to Gpu immediately
+				int bufferSize = size.X * size.Y * 8;
+				if( prepareMaterialsBonesLightsTempBuffer == null || bufferSize > prepareMaterialsBonesLightsTempBuffer.Length )
+					prepareMaterialsBonesLightsTempBuffer = new byte[ bufferSize ];
+				var data = prepareMaterialsBonesLightsTempBuffer;
+
+				fixed( byte* pData = data )
+				{
+					for( int n = 0; n < lightCountToWrite; n++ )
+					{
+						var lightIndex = frameData.LightsInFrustumSorted[ n ];
+						var lightItem = frameData.Lights[ lightIndex ];
+
+						var pData2 = (HalfType*)( pData + n * 256 );
+
+						LightItem.LightDataFragmentMultiLight data3;
+						lightItem.InitLightDataBuffersMultiLight( this, context, &data3 );
+						float* pData3 = (float*)&data3;
+
+						var count = sizeof( LightItem.LightDataFragmentMultiLight ) / 4;
+						for( int z = 0; z < count; z++ )
+							*( pData2 + z ) = new HalfType( *( pData3 + z ) );
+					}
+				}
+
+				frameData.LightsTexture = context.DynamicTexture_Alloc( ViewportRenderingContext.DynamicTextureType.DynamicTexture, ImageComponent.TypeEnum._2D, size, PixelFormat.Float16RGBA, 0, false );
+				frameData.LightsTexture.Result.SetData( new GpuTexture.SurfaceData[] { new GpuTexture.SurfaceData( new ArraySegment<byte>( data, 0, bufferSize ) ) } );
+			}
+			else
+			{
+				//float
+
+				//it is ok to use static temp array because SetData loads data to Gpu immediately
+				int bufferSize = size.X * size.Y * 16;
+				if( prepareMaterialsBonesLightsTempBuffer == null || bufferSize > prepareMaterialsBonesLightsTempBuffer.Length )
+					prepareMaterialsBonesLightsTempBuffer = new byte[ bufferSize ];
+				var data = prepareMaterialsBonesLightsTempBuffer;
+
+				fixed( byte* pData = data )
+				{
+					for( int n = 0; n < lightCountToWrite; n++ )
+					{
+						var lightIndex = frameData.LightsInFrustumSorted[ n ];
+						var lightItem = frameData.Lights[ lightIndex ];
+
+						var pData2 = pData + n * 512;
+						lightItem.InitLightDataBuffersMultiLight( this, context, (LightItem.LightDataFragmentMultiLight*)pData2 );
+					}
+				}
+
+				frameData.LightsTexture = context.DynamicTexture_Alloc( ViewportRenderingContext.DynamicTextureType.DynamicTexture, ImageComponent.TypeEnum._2D, size, PixelFormat.Float32RGBA, 0, false );
+				frameData.LightsTexture.Result.SetData( new GpuTexture.SurfaceData[] { new GpuTexture.SurfaceData( new ArraySegment<byte>( data, 0, bufferSize ) ) } );
+			}
 		}
 
 		//static bool? isIntelGPU;
@@ -8234,6 +14436,9 @@ namespace NeoAxis
 		bool GetDeferredShading()
 		{
 			if( !GetUseMultiRenderTargets() )
+				return false;
+
+			if( !RenderingSystem.DeferredShading )
 				return false;
 
 			//deferred shading is not supported on limited devices
@@ -8245,6 +14450,10 @@ namespace NeoAxis
 			if( result == AutoTrueFalse.Auto )
 			{
 				result = AutoTrueFalse.True;
+
+				//!!!!temp
+				//if( EngineApp._DebugCapsLock )
+				//	result = AutoTrueFalse.False;
 
 				//disable deferred on Intel by default
 
@@ -8297,24 +14506,44 @@ namespace NeoAxis
 		//}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public void BindMaterialsTexture( ViewportRenderingContext context, FrameData frameData, bool compute = false )
+		public void BindMaterialsTexture( ViewportRenderingContext context, FrameData frameData )//, bool compute = false )
 		{
-			//!!!!compute
-
-			if( compute )
-			{
-				context.BindTexture( 3, frameData.MaterialsTexture, TextureAddressingMode.Clamp, FilterOption.None, FilterOption.None, FilterOption.None, 0, false );
-			}
-			else
-			{
-				context.BindTexture( 1, frameData.MaterialsTexture, TextureAddressingMode.Clamp, FilterOption.None, FilterOption.None, FilterOption.None, 0, false );
-			}
+			//if( compute )
+			//{
+			//	context.BindTexture( 1, frameData.MaterialsTexture, TextureAddressingMode.Clamp, FilterOption.None, FilterOption.None, FilterOption.None, 0, false );
+			//}
+			//else
+			//{
+			context.BindTexture( 1, frameData.MaterialsTexture, TextureAddressingMode.Clamp, FilterOption.None, FilterOption.None, FilterOption.None, 0, false );
+			//}
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public void BindBrdfLUT( ViewportRenderingContext context )
+		public void BindBonesTexture( ViewportRenderingContext context, FrameData frameData )//, bool compute = false )
 		{
+			//if( compute )
+			//{
+			//	context.BindTexture( 0, frameData.BonesTexture, TextureAddressingMode.Clamp, FilterOption.None, FilterOption.None, FilterOption.None, 0, false );
+			//}
+			//else
+			//{
+			context.BindTexture( 0, frameData.BonesTexture, TextureAddressingMode.Clamp, FilterOption.None, FilterOption.None, FilterOption.None, 0, false );
+			//}
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void BindBrdfLUT( ViewportRenderingContext context )//not good sampler (clamp), bool computeGI = false )
+		{
+			//if( computeGI )
+			//{
+			//	context.BindTexture( 17/*"s_brdfLUT"*/, BrdfLUT, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear, 0, false );
+			//}
+			//else
+			//{
+
 			context.BindTexture( 6/*"s_brdfLUT"*/, BrdfLUT, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear, 0, false );
+
+			//}
 		}
 
 		static bool currentBindSamplersForTextureOnlySlotsVoxelRendering;
@@ -8330,12 +14559,12 @@ namespace NeoAxis
 
 					var filtering = ( !disableAnisotropic && RenderingSystem.AnisotropicFiltering ) ? FilterOption.Anisotropic : FilterOption.Linear;
 
-					//!!!!use one?
 					context.BindTexture( 9/*"s_linearSamplerVertex"*/, ResourceUtility.WhiteTexture2D, TextureAddressingMode.Wrap, filtering, filtering, FilterOption.Linear, 0, disableAnisotropic );
-					context.BindTexture( 10/*"s_linearSamplerFragment"*/, ResourceUtility.WhiteTexture2D, TextureAddressingMode.Wrap, filtering, filtering, FilterOption.Linear, 0, disableAnisotropic );
 
-					//context.BindTexture( 9/*"s_linearSamplerVertex"*/, ResourceUtility.WhiteTexture2D, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear );
-					//context.BindTexture( 10/*"s_linearSamplerFragment"*/, ResourceUtility.WhiteTexture2D, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear );
+					//context.BindTexture( 10/*"s_linearSamplerFragment"*/, ResourceUtility.WhiteTexture2D, TextureAddressingMode.Wrap, filtering, filtering, FilterOption.Linear, 0, disableAnisotropic );
+
+					////context.BindTexture( 9/*"s_linearSamplerVertex"*/, ResourceUtility.WhiteTexture2D, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear );
+					////context.BindTexture( 10/*"s_linearSamplerFragment"*/, ResourceUtility.WhiteTexture2D, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear );
 				}
 			}
 		}
@@ -8346,7 +14575,6 @@ namespace NeoAxis
 			if( !SystemSettings.LimitedDevice )
 			{
 				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 9/*"s_linearSamplerVertex"*/, ResourceUtility.WhiteTexture2D, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
-				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 10/*"s_linearSamplerFragment"*/, ResourceUtility.WhiteTexture2D, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
 			}
 		}
 
@@ -8361,6 +14589,87 @@ namespace NeoAxis
 				materialData?.BindCurrentFrameData( context, specialShadowCaster, disableAnisotropic );
 			}
 		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		public void BindForwardLightAndShadows( ViewportRenderingContext context, FrameData frameData, bool giCompute = false )
+		{
+			//lights texture
+			if( giCompute )
+			{
+				context.BindTexture( 16/* "s_lightsTexture"*/, frameData.LightsTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point );
+			}
+			else
+			{
+				context.BindTexture( 7/* "s_lightsTexture"*/, frameData.LightsTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point );
+			}
+
+			//light grid
+			if( RenderingSystem.LightGrid )
+				context.BindTexture( 8/* "s_lightGrid"*/, frameData.LightGrid ?? ResourceUtility.DummyTexture3DFloat32RGBA, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point );
+
+			//shadows
+			{
+				var isByte4Format = RenderingSystem.ShadowTextureFormat == ProjectSettingsPage_Rendering.ShadowTextureFormatEnum.Byte4;
+				var filtering = isByte4Format ? FilterOption.Point : FilterOption.Linear;
+				////too chaotic
+				//////to make linear light masks on mobile
+				////var filtering = FilterOption.Linear;
+				var textureFlags = isByte4Format ? 0 : TextureFlags.CompareLessEqual;
+
+				//shadow map directional
+				{
+					var shadowMap = frameData.ShadowTextureArrayDirectional;
+					if( shadowMap == null )
+						shadowMap = isByte4Format ? ResourceUtility.DummyTexture2DArrayARGB8 : ResourceUtility.DummyShadowMap2DArrayFloat32R;
+
+					var wrap = isByte4Format;
+
+					context.BindTexture( SystemSettings.LimitedDevice ? 8 : 10/*s_shadowMapShadowDirectional*/, shadowMap, wrap ? TextureAddressingMode.Wrap : TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
+				}
+
+				//shadow map array spot
+				{
+					var shadowMap = frameData.ShadowTextureArraySpot;
+					if( shadowMap == null )
+						shadowMap = isByte4Format ? ResourceUtility.DummyTexture2DArrayARGB8 : ResourceUtility.DummyShadowMap2DArrayFloat32R;
+
+					context.BindTexture( SystemSettings.LimitedDevice ? 9 : 11/*s_shadowMapShadowSpot*/, shadowMap, TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
+				}
+
+				//shadow map array point
+				{
+					var shadowMap = frameData.ShadowTextureArrayPoint;
+					if( shadowMap == null )
+						shadowMap = isByte4Format ? ResourceUtility.DummyTextureCubeArrayARGB8 : ResourceUtility.DummyShadowMapCubeArrayFloat32R;
+
+					context.BindTexture( SystemSettings.LimitedDevice ? 10 : 12/*s_shadowMapShadowPoint*/, shadowMap, TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
+				}
+			}
+
+			//light masks
+			//mobile specific. on limited devices masks and shadow maps are managed inside one shadow map array
+			if( RenderingSystem.LightMask && !SystemSettings.MobileDevice )
+			{
+				//mask array directional
+				{
+					var texture = frameData.MaskTextureArrayDirectional ?? ResourceUtility.WhiteTexture2D;
+					context.BindTexture( 13/*s_lightMaskDirectional*/, texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear );
+				}
+
+				//mask array spot
+				{
+					var texture = frameData.MaskTextureArraySpot ?? ResourceUtility.WhiteTexture2D;
+					context.BindTexture( 14/*s_lightMaskSpot*/, texture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear );
+				}
+
+				//mask array point
+				{
+					var texture = frameData.MaskTextureArrayPoint ?? ResourceUtility.WhiteTextureCube;
+					context.BindTexture( 15/*s_lightMaskPoint*/, texture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear );
+				}
+			}
+		}
+
 
 		//void RenderVideoToFile( ViewportRenderingContext context, ImageComponent sceneTexture )
 		//{
@@ -8440,7 +14749,7 @@ namespace NeoAxis
 		//}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		unsafe void RenderOccluder( OcclusionCullingBuffer buffer, ref OccluderItem occluderItem, Matrix4F* viewProjMatrixFloat )
+		unsafe void RenderOccluder( ViewportRenderingContext context, OcclusionCullingBuffer buffer, ref OccluderItem occluderItem, Matrix4F* viewProjMatrixFloat )
 		{
 			var vertices = occluderItem.Vertices;
 			var indices = occluderItem.Indices;
@@ -8452,9 +14761,8 @@ namespace NeoAxis
 			fixed( Vector3F* verticesFloat = vertices.Length < 512 ? stackalloc Vector3F[ vertices.Length ] : new Vector3F[ vertices.Length ] )
 #endif
 			{
-				//!!!!double
 				for( int n = 0; n < vertices.Length; n++ )
-					verticesFloat[ n ] = vertices[ n ].ToVector3F();
+					context.ConvertToRelative( ref vertices[ n ], out verticesFloat[ n ] );
 
 				fixed( int* pIndices = indices )
 					buffer.RenderTriangles( (float*)verticesFloat, (uint*)pIndices, indices.Length / 3, (float*)viewProjMatrixFloat );
@@ -8464,7 +14772,6 @@ namespace NeoAxis
 		[MethodImpl( (MethodImplOptions)512 )]
 		unsafe void OcclusionCullingBuffer_RenderOccluders( ViewportRenderingContext context, /*FrameData frameData, */Viewport.CameraSettingsClass cameraSettings, OcclusionCullingBuffer buffer, OpenList<OccluderItem> occluders, bool sceneOccluder, ref bool occlusionCullingBufferRendered )
 		{
-			//var cameraSettings = context.Owner.CameraSettings;
 			var cameraPosition = cameraSettings.Position;
 
 			//sort occluders by distance. it changes items of the input list
@@ -8493,9 +14800,7 @@ namespace NeoAxis
 
 			//render to the buffer
 
-			var viewProjectionMatrix = cameraSettings.GetViewProjectionMatrix();
-			//!!!!double
-			viewProjectionMatrix.ToMatrix4F( out var viewProjMatrixFloat );
+			var viewProjMatrixFloat = cameraSettings.GetViewProjectionMatrixRelative();
 
 			buffer.ClearBuffer();
 
@@ -8507,7 +14812,7 @@ namespace NeoAxis
 					break;
 
 				ref var occluderItem = ref occluders.Data[ occluderIndices[ nOccluder ] ];
-				RenderOccluder( buffer, ref occluderItem, &viewProjMatrixFloat );
+				RenderOccluder( context, buffer, ref occluderItem, &viewProjMatrixFloat );
 
 				//var vertices = occluderItem.Vertices;
 				//var indices = occluderItem.Indices;
@@ -8545,6 +14850,124 @@ namespace NeoAxis
 				context.Owner.CanvasRenderer.AddQuad( new Rectangle( 0, 0, 1, 1 ), new RectangleF( 0, 0, 1, 1 ), texture );
 
 				occlusionCullingBufferRendered = true;
+			}
+		}
+
+		protected override void OnEnabledInHierarchyChanged()
+		{
+			base.OnEnabledInHierarchyChanged();
+
+			if( !EnabledInHierarchy )
+			{
+				//they are static
+
+				//while( outputInstancingManagers.Count != 0 )
+				//{
+				//	var manager = outputInstancingManagers[ outputInstancingManagers.Count - 1 ];
+				//	outputInstancingManagers.RemoveAt( outputInstancingManagers.Count - 1 );
+				//	manager.Dispose();
+				//}
+			}
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		unsafe void PrepareReflectionProbesCubemapEnvironmentMipmapsAndBlur( ViewportRenderingContext context, FrameData frameData )
+		{
+			foreach( var item in frameData.ReflectionProbes )
+			{
+				if( item.data.CubemapEnvironmentMipmapsAndBlurRequired > 0 )
+				{
+					var sourceTexture = item.data.CubemapEnvironment;
+					var blurFactor = item.data.CubemapEnvironmentMipmapsAndBlurRequired;
+
+					var settings = new GaussianBlurSettings();
+					settings.SourceTexture = sourceTexture;
+					settings.BlurFactor = blurFactor;
+					settings.DownscalingMode = DownscalingModeEnum.Manual;
+					settings.DownscalingValue = 0;
+					settings.GenerateMips = true;
+
+					item.CubemapEnvironmentWithMipmapsAndBlur = GaussianBlur( context, settings );
+
+
+
+
+
+					//item.CubemapEnvironmentWithMipmapsAndBlur = GaussianBlur( context, sourceTexture, blurFactor, DownscalingModeEnum.Manual, 0 );
+
+
+					//var textureSize = sourceTexture.Result.ResultSize.X;
+
+					//item.CubemapEnvironmentWithMipmapsAndBlur = context.DynamicTexture_Alloc( ViewportRenderingContext.DynamicTextureType.RenderTarget, ImageComponent.TypeEnum.Cube, new Vector2I( textureSize, textureSize ), sourceTexture.Result.ResultFormat, 0, false );
+
+					//for( var face = 0; face < 6; face++ )
+					//{
+					//	var slice = face;// index * 6 + face;
+
+					//	var viewport = item.CubemapEnvironmentWithMipmapsAndBlur.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ];
+					//	context.SetViewport( viewport );
+
+					//	//!!!!GC. where else
+					//	//!!!!also can copy with one draw call, use mrt or compute
+
+					//	var shader = new CanvasRenderer.ShaderItem();
+					//	shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+					//	shader.FragmentProgramFileName = @"Base\Shaders\BlurCubemap_fs.sc";
+
+					//	shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, sourceTexture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
+
+					//	//!!!!
+					//	var sourceMip = 0;
+
+					//	shader.Parameters.Set( "u_blurCubemapParameters", new Vector4F( face, sourceMip, 0, 0 ) );
+
+					//	context.RenderQuadToCurrentViewport( shader );
+					//}
+
+
+
+
+
+
+
+					//!!!!how to write to cubemap
+
+
+					//context.SetComputePass();
+
+					////!!!!mips
+
+					//item.CubemapEnvironmentWithMipmapsAndBlur = context.DynamicTexture_Alloc( ViewportRenderingContext.DynamicTextureType.ComputeWrite, ImageComponent.TypeEnum.Cube, new Vector2I( textureSize, textureSize ), sourceTexture.Result.ResultFormat, 0, false );
+
+
+					//for( var face = 0; face < 6; face++ )
+					//{
+					//	qqvar v = new Vector4F( face, 0, 0, 0 );
+					//	context.SetUniform( "u_blurCubemapFaceIndex", ParameterType.Vector4, 1, &v );
+
+					//	//!!!!
+					//	var mip = face;
+
+					//	context.BindComputeImage( 0, item.CubemapEnvironmentWithMipmapsAndBlur, mip, ComputeBufferAccessEnum.Write );
+
+					//	context.BindTexture( 1/* "s_sourceTexture"*/, sourceTexture, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Point );
+
+					//	if( blurCubemapProgram == null )
+					//	{
+					//		var program = GpuProgramManager.GetProgram( "BlurCubemap", GpuProgramType.Compute, @"Base\Shaders\BlurCubemap.sc", null, true, out var error2 );
+					//		if( !string.IsNullOrEmpty( error2 ) )
+					//			Log.Fatal( "RenderingPipeline_Basic: PrepareReflectionProbesCubemapEnvironmentMipmapsAndBlur: " + error2 );
+					//		else
+					//			blurCubemapProgram = new Program( program.RealObject );
+					//	}
+
+					//	var jobSize = new Vector3I( (int)Math.Ceiling( textureSize / 32.0 ), (int)Math.Ceiling( textureSize / 32.0 ), 1 );
+
+					//	Bgfx.Dispatch( context.CurrentViewNumber, blurCubemapProgram.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
+					//	context.UpdateStatisticsCurrent.ComputeDispatches++;
+					//}
+
+				}
 			}
 		}
 	}

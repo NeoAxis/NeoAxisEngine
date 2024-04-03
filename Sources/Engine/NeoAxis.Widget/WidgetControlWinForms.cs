@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using NeoAxis.Editor;
 
 namespace NeoAxis.Widget
@@ -26,7 +27,7 @@ namespace NeoAxis.Widget
 			InitializeComponent();
 
 			if( MainWidget )
-				disableRecreationRenderWindow = true;
+				DisableRecreationRenderWindow = true;
 		}
 
 		[Browsable( false )]
@@ -54,14 +55,14 @@ namespace NeoAxis.Widget
 				}
 
 				//set viewport control to manage application render window
-				renderWindow = RenderingSystem.ApplicationRenderTarget;
-				viewport = renderWindow.Viewports[ 0 ];
+				RenderWindow = RenderingSystem.ApplicationRenderTarget;
+				Viewport = RenderWindow.Viewports[ 0 ];
 				PerformResize();
 			}
 
 			try
 			{
-				if( ProjectSettings.Get.General.EngineSplashScreenStyle.Value == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.WhiteBackground )
+				if( ProjectSettings.Get.General.EngineSplashScreenStyle.Value == ProjectSettingsPage_General.EngineSplashScreenStyleEnumWithoutDisabled.WhiteBackground || ProjectSettings.Get.General.EngineSplashScreenStyle.Value == ProjectSettingsPage_General.EngineSplashScreenStyleEnumWithoutDisabled.WhiteBackgroundSmall )
 					BackColor = Color.White;
 			}
 			catch { }

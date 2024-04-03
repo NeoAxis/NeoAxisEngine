@@ -2,8 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
-
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -47,12 +46,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef AI_IRRMESHLOADER_H_INCLUDED
 #define AI_IRRMESHLOADER_H_INCLUDED
 
-#include <assimp/BaseImporter.h>
 #include "IRRShared.h"
+#include <assimp/BaseImporter.h>
 
 #ifndef ASSIMP_BUILD_NO_IRRMESH_IMPORTER
 
-namespace Assimp    {
+namespace Assimp {
 
 // ---------------------------------------------------------------------------
 /** IrrMesh importer class.
@@ -61,37 +60,44 @@ namespace Assimp    {
  * irrEdit. As IrrEdit itself is capable of importing quite many file formats,
  * it might be a good file format for data exchange.
  */
-class IRRMeshImporter : public BaseImporter, public IrrlichtBase
-{
+class IRRMeshImporter : public BaseImporter, public IrrlichtBase {
 public:
     IRRMeshImporter();
-    ~IRRMeshImporter();
-
-
-public:
+    ~IRRMeshImporter() override;
 
     // -------------------------------------------------------------------
     /** Returns whether the class can handle the format of the given file.
      *  See BaseImporter::CanRead() for details.
      */
-    bool CanRead( const std::string& pFile, IOSystem* pIOHandler,
-        bool checkSig) const;
+    bool CanRead(const std::string &pFile, IOSystem *pIOHandler,
+            bool checkSig) const override;
 
 protected:
-
     // -------------------------------------------------------------------
     /** Return importer meta information.
      * See #BaseImporter::GetInfo for the details
      */
-    const aiImporterDesc* GetInfo () const;
+    const aiImporterDesc *GetInfo() const override;
 
     // -------------------------------------------------------------------
     /** Imports the given file into the given scene structure.
      * See BaseImporter::InternReadFile() for details
      */
-    void InternReadFile( const std::string& pFile, aiScene* pScene,
-        IOSystem* pIOHandler);
+    void InternReadFile(const std::string &pFile, aiScene *pScene,
+            IOSystem *pIOHandler) override;
 
+private:
+    enum class VertexFormat {
+        standard = 0, // "standard" - also noted as 'normal' format elsewhere
+        t2coord = 1, // "2tcoord" - standard + 2 UV maps
+        tangent = 2, // "tangents" - standard + tangents and bitangents
+    };
+
+    void ParseBufferVertices(const char *sz, VertexFormat vertexFormat,
+            std::vector<aiVector3D> &vertices, std::vector<aiVector3D> &normals,
+            std::vector<aiVector3D> &tangents, std::vector<aiVector3D> &bitangents,
+            std::vector<aiVector3D> &UVs, std::vector<aiVector3D> &UV2s,
+            std::vector<aiColor4D> &colors, bool &useColors);
 };
 
 } // end of namespace Assimp

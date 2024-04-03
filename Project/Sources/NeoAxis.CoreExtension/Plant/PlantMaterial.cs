@@ -8,7 +8,7 @@ using System.Linq;
 namespace NeoAxis
 {
 	/// <summary>
-	/// Represents a material to configure plant type.
+	/// Represents a material definition for plant type.
 	/// </summary>
 	[AddToResourcesWindow( @"Addons\Plant\Plant Material", 10010 )]
 	public class PlantMaterial : Component
@@ -22,7 +22,7 @@ namespace NeoAxis
 		public Reference<double> Probability
 		{
 			get { if( _probability.BeginGet() ) Probability = _probability.Get( this ); return _probability.value; }
-			set { if( _probability.BeginSet( ref value ) ) { try { ProbabilityChanged?.Invoke( this ); } finally { _probability.EndSet(); } } }
+			set { if( _probability.BeginSet( this, ref value ) ) { try { ProbabilityChanged?.Invoke( this ); } finally { _probability.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Probability"/> property value changes.</summary>
 		public event Action<PlantMaterial> ProbabilityChanged;
@@ -36,7 +36,7 @@ namespace NeoAxis
 		public Reference<Material> Material
 		{
 			get { if( _material.BeginGet() ) Material = _material.Get( this ); return _material.value; }
-			set { if( _material.BeginSet( ref value ) ) { try { MaterialChanged?.Invoke( this ); } finally { _material.EndSet(); } } }
+			set { if( _material.BeginSet( this, ref value ) ) { try { MaterialChanged?.Invoke( this ); } finally { _material.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Material"/> property value changes.</summary>
 		public event Action<PlantMaterial> MaterialChanged;
@@ -58,7 +58,7 @@ namespace NeoAxis
 		public Reference<PartTypeEnum> PartType
 		{
 			get { if( _partType.BeginGet() ) PartType = _partType.Get( this ); return _partType.value; }
-			set { if( _partType.BeginSet( ref value ) ) { try { PartTypeChanged?.Invoke( this ); } finally { _partType.EndSet(); } } }
+			set { if( _partType.BeginSet( this, ref value ) ) { try { PartTypeChanged?.Invoke( this ); } finally { _partType.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PartType"/> property value changes.</summary>
 		public event Action<PlantMaterial> PartTypeChanged;
@@ -72,7 +72,7 @@ namespace NeoAxis
 		public Reference<int> LeafCount
 		{
 			get { if( _leafCount.BeginGet() ) LeafCount = _leafCount.Get( this ); return _leafCount.value; }
-			set { if( _leafCount.BeginSet( ref value ) ) { try { LeafCountChanged?.Invoke( this ); } finally { _leafCount.EndSet(); } } }
+			set { if( _leafCount.BeginSet( this, ref value ) ) { try { LeafCountChanged?.Invoke( this ); } finally { _leafCount.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LeafCount"/> property value changes.</summary>
 		public event Action<PlantMaterial> LeafCountChanged;
@@ -87,7 +87,7 @@ namespace NeoAxis
 		public Reference<double> Age
 		{
 			get { if( _age.BeginGet() ) Age = _age.Get( this ); return _age.value; }
-			set { if( _age.BeginSet( ref value ) ) { try { AgeChanged?.Invoke( this ); } finally { _age.EndSet(); } } }
+			set { if( _age.BeginSet( this, ref value ) ) { try { AgeChanged?.Invoke( this ); } finally { _age.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Age"/> property value changes.</summary>
 		public event Action<PlantMaterial> AgeChanged;
@@ -102,7 +102,7 @@ namespace NeoAxis
 		public Reference<double> Season
 		{
 			get { if( _season.BeginGet() ) Season = _season.Get( this ); return _season.value; }
-			set { if( _season.BeginSet( ref value ) ) { try { SeasonChanged?.Invoke( this ); } finally { _season.EndSet(); } } }
+			set { if( _season.BeginSet( this, ref value ) ) { try { SeasonChanged?.Invoke( this ); } finally { _season.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Season"/> property value changes.</summary>
 		public event Action<PlantMaterial> SeasonChanged;
@@ -117,7 +117,7 @@ namespace NeoAxis
 		public Reference<double> Dead
 		{
 			get { if( _dead.BeginGet() ) Dead = _dead.Get( this ); return _dead.value; }
-			set { if( _dead.BeginSet( ref value ) ) { try { DeadChanged?.Invoke( this ); } finally { _dead.EndSet(); } } }
+			set { if( _dead.BeginSet( this, ref value ) ) { try { DeadChanged?.Invoke( this ); } finally { _dead.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Dead"/> property value changes.</summary>
 		public event Action<PlantMaterial> DeadChanged;
@@ -132,7 +132,7 @@ namespace NeoAxis
 		public Reference<double> Fired
 		{
 			get { if( _fired.BeginGet() ) Fired = _fired.Get( this ); return _fired.value; }
-			set { if( _fired.BeginSet( ref value ) ) { try { FiredChanged?.Invoke( this ); } finally { _fired.EndSet(); } } }
+			set { if( _fired.BeginSet( this, ref value ) ) { try { FiredChanged?.Invoke( this ); } finally { _fired.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Fired"/> property value changes.</summary>
 		public event Action<PlantMaterial> FiredChanged;
@@ -144,7 +144,7 @@ namespace NeoAxis
 		//public Reference<double> Lichen
 		//{
 		//	get { if( _lichen.BeginGet() ) Lichen = _lichen.Get( this ); return _lichen.value; }
-		//	set { if( _lichen.BeginSet( ref value ) ) { try { LichenChanged?.Invoke( this ); } finally { _lichen.EndSet(); } } }
+		//	set { if( _lichen.BeginSet( this, ref value ) ) { try { LichenChanged?.Invoke( this ); } finally { _lichen.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="Lichen"/> property value changes.</summary>
 		//public event Action<PlantMaterial> LichenChanged;
@@ -158,7 +158,7 @@ namespace NeoAxis
 		public Reference<double> RealLength
 		{
 			get { if( _realLength.BeginGet() ) RealLength = _realLength.Get( this ); return _realLength.value; }
-			set { if( _realLength.BeginSet( ref value ) ) { try { RealLengthChanged?.Invoke( this ); } finally { _realLength.EndSet(); } } }
+			set { if( _realLength.BeginSet( this, ref value ) ) { try { RealLengthChanged?.Invoke( this ); } finally { _realLength.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RealLength"/> property value changes.</summary>
 		public event Action<PlantMaterial> RealLengthChanged;
@@ -170,7 +170,7 @@ namespace NeoAxis
 		//public Reference<double> BarkLength
 		//{
 		//	get { if( _barkLength.BeginGet() ) BarkLength = _barkLength.Get( this ); return _barkLength.value; }
-		//	set { if( _barkLength.BeginSet( ref value ) ) { try { BarkLengthChanged?.Invoke( this ); } finally { _barkLength.EndSet(); } } }
+		//	set { if( _barkLength.BeginSet( this, ref value ) ) { try { BarkLengthChanged?.Invoke( this ); } finally { _barkLength.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="BarkLength"/> property value changes.</summary>
 		//public event Action<PlantMaterial> BarkLengthChanged;
@@ -182,7 +182,7 @@ namespace NeoAxis
 		//public Reference<double> BarkWidth
 		//{
 		//	get { if( _barkWidth.BeginGet() ) BarkWidth = _barkWidth.Get( this ); return _barkWidth.value; }
-		//	set { if( _barkWidth.BeginSet( ref value ) ) { try { BarkWidthChanged?.Invoke( this ); } finally { _barkWidth.EndSet(); } } }
+		//	set { if( _barkWidth.BeginSet( this, ref value ) ) { try { BarkWidthChanged?.Invoke( this ); } finally { _barkWidth.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="BarkWidth"/> property value changes.</summary>
 		//public event Action<PlantMaterial> BarkWidthChanged;
@@ -205,7 +205,7 @@ namespace NeoAxis
 		public Reference<UVModeEnum> UVMode
 		{
 			get { if( _uVMode.BeginGet() ) UVMode = _uVMode.Get( this ); return _uVMode.value; }
-			set { if( _uVMode.BeginSet( ref value ) ) { try { UVModeChanged?.Invoke( this ); } finally { _uVMode.EndSet(); } } }
+			set { if( _uVMode.BeginSet( this, ref value ) ) { try { UVModeChanged?.Invoke( this ); } finally { _uVMode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UVMode"/> property value changes.</summary>
 		public event Action<PlantMaterial> UVModeChanged;
@@ -221,7 +221,7 @@ namespace NeoAxis
 		public Reference<Vector2> UVFrontPosition
 		{
 			get { if( _uVFrontPosition.BeginGet() ) UVFrontPosition = _uVFrontPosition.Get( this ); return _uVFrontPosition.value; }
-			set { if( _uVFrontPosition.BeginSet( ref value ) ) { try { UVFrontPositionChanged?.Invoke( this ); } finally { _uVFrontPosition.EndSet(); } } }
+			set { if( _uVFrontPosition.BeginSet( this, ref value ) ) { try { UVFrontPositionChanged?.Invoke( this ); } finally { _uVFrontPosition.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UVFrontPosition"/> property value changes.</summary>
 		public event Action<PlantMaterial> UVFrontPositionChanged;
@@ -237,7 +237,7 @@ namespace NeoAxis
 		public Reference<Degree> UVFrontDirection
 		{
 			get { if( _uVFrontDirection.BeginGet() ) UVFrontDirection = _uVFrontDirection.Get( this ); return _uVFrontDirection.value; }
-			set { if( _uVFrontDirection.BeginSet( ref value ) ) { try { UVFrontDirectionChanged?.Invoke( this ); } finally { _uVFrontDirection.EndSet(); } } }
+			set { if( _uVFrontDirection.BeginSet( this, ref value ) ) { try { UVFrontDirectionChanged?.Invoke( this ); } finally { _uVFrontDirection.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UVFrontDirection"/> property value changes.</summary>
 		public event Action<PlantMaterial> UVFrontDirectionChanged;
@@ -253,7 +253,7 @@ namespace NeoAxis
 		public Reference<Range> UVLengthRange
 		{
 			get { if( _uVLengthRange.BeginGet() ) UVLengthRange = _uVLengthRange.Get( this ); return _uVLengthRange.value; }
-			set { if( _uVLengthRange.BeginSet( ref value ) ) { try { UVLengthRangeChanged?.Invoke( this ); } finally { _uVLengthRange.EndSet(); } } }
+			set { if( _uVLengthRange.BeginSet( this, ref value ) ) { try { UVLengthRangeChanged?.Invoke( this ); } finally { _uVLengthRange.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UVLengthRange"/> property value changes.</summary>
 		public event Action<PlantMaterial> UVLengthRangeChanged;
@@ -269,7 +269,7 @@ namespace NeoAxis
 		public Reference<double> UVWidth
 		{
 			get { if( _uVWidth.BeginGet() ) UVWidth = _uVWidth.Get( this ); return _uVWidth.value; }
-			set { if( _uVWidth.BeginSet( ref value ) ) { try { UVWidthChanged?.Invoke( this ); } finally { _uVWidth.EndSet(); } } }
+			set { if( _uVWidth.BeginSet( this, ref value ) ) { try { UVWidthChanged?.Invoke( this ); } finally { _uVWidth.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UVWidth"/> property value changes.</summary>
 		public event Action<PlantMaterial> UVWidthChanged;
@@ -285,7 +285,7 @@ namespace NeoAxis
 		public Reference<double> UVRadius
 		{
 			get { if( _uVRadius.BeginGet() ) UVRadius = _uVRadius.Get( this ); return _uVRadius.value; }
-			set { if( _uVRadius.BeginSet( ref value ) ) { try { UVRadiusChanged?.Invoke( this ); } finally { _uVRadius.EndSet(); } } }
+			set { if( _uVRadius.BeginSet( this, ref value ) ) { try { UVRadiusChanged?.Invoke( this ); } finally { _uVRadius.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UVRadius"/> property value changes.</summary>
 		public event Action<PlantMaterial> UVRadiusChanged;
@@ -297,7 +297,7 @@ namespace NeoAxis
 		//public Reference<Range> UVFrontWidthRange
 		//{
 		//	get { if( _uVFrontWidthRange.BeginGet() ) UVFrontWidthRange = _uVFrontWidthRange.Get( this ); return _uVFrontWidthRange.value; }
-		//	set { if( _uVFrontWidthRange.BeginSet( ref value ) ) { try { UVFrontWidthRangeChanged?.Invoke( this ); } finally { _uVFrontWidthRange.EndSet(); } } }
+		//	set { if( _uVFrontWidthRange.BeginSet( this, ref value ) ) { try { UVFrontWidthRangeChanged?.Invoke( this ); } finally { _uVFrontWidthRange.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="UVFrontWidthRange"/> property value changes.</summary>
 		//public event Action<PlantMaterial> UVFrontWidthRangeChanged;
@@ -312,7 +312,7 @@ namespace NeoAxis
 		public Reference<bool> UVBack
 		{
 			get { if( _uVBack.BeginGet() ) UVBack = _uVBack.Get( this ); return _uVBack.value; }
-			set { if( _uVBack.BeginSet( ref value ) ) { try { UVBackChanged?.Invoke( this ); } finally { _uVBack.EndSet(); } } }
+			set { if( _uVBack.BeginSet( this, ref value ) ) { try { UVBackChanged?.Invoke( this ); } finally { _uVBack.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UVBack"/> property value changes.</summary>
 		public event Action<PlantMaterial> UVBackChanged;
@@ -328,7 +328,7 @@ namespace NeoAxis
 		public Reference<Vector2> UVBackPosition
 		{
 			get { if( _uVBackPosition.BeginGet() ) UVBackPosition = _uVBackPosition.Get( this ); return _uVBackPosition.value; }
-			set { if( _uVBackPosition.BeginSet( ref value ) ) { try { UVBackPositionChanged?.Invoke( this ); } finally { _uVBackPosition.EndSet(); } } }
+			set { if( _uVBackPosition.BeginSet( this, ref value ) ) { try { UVBackPositionChanged?.Invoke( this ); } finally { _uVBackPosition.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UVBackPosition"/> property value changes.</summary>
 		public event Action<PlantMaterial> UVBackPositionChanged;
@@ -344,7 +344,7 @@ namespace NeoAxis
 		public Reference<Degree> UVBackDirection
 		{
 			get { if( _uVBackDirection.BeginGet() ) UVBackDirection = _uVBackDirection.Get( this ); return _uVBackDirection.value; }
-			set { if( _uVBackDirection.BeginSet( ref value ) ) { try { UVBackDirectionChanged?.Invoke( this ); } finally { _uVBackDirection.EndSet(); } } }
+			set { if( _uVBackDirection.BeginSet( this, ref value ) ) { try { UVBackDirectionChanged?.Invoke( this ); } finally { _uVBackDirection.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UVBackDirection"/> property value changes.</summary>
 		public event Action<PlantMaterial> UVBackDirectionChanged;
@@ -357,7 +357,7 @@ namespace NeoAxis
 		//public Reference<Range> LeafBackLengthRange
 		//{
 		//	get { if( _leafBackLengthRange.BeginGet() ) LeafBackLengthRange = _leafBackLengthRange.Get( this ); return _leafBackLengthRange.value; }
-		//	set { if( _leafBackLengthRange.BeginSet( ref value ) ) { try { LeafBackLengthRangeChanged?.Invoke( this ); } finally { _leafBackLengthRange.EndSet(); } } }
+		//	set { if( _leafBackLengthRange.BeginSet( this, ref value ) ) { try { LeafBackLengthRangeChanged?.Invoke( this ); } finally { _leafBackLengthRange.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="LeafBackLengthRange"/> property value changes.</summary>
 		//public event Action<PlantMaterial> LeafBackLengthRangeChanged;
@@ -369,7 +369,7 @@ namespace NeoAxis
 		//public Reference<Range> LeafBackWidthRange
 		//{
 		//	get { if( _leafBackWidthRange.BeginGet() ) LeafBackWidthRange = _leafBackWidthRange.Get( this ); return _leafBackWidthRange.value; }
-		//	set { if( _leafBackWidthRange.BeginSet( ref value ) ) { try { LeafBackWidthRangeChanged?.Invoke( this ); } finally { _leafBackWidthRange.EndSet(); } } }
+		//	set { if( _leafBackWidthRange.BeginSet( this, ref value ) ) { try { LeafBackWidthRangeChanged?.Invoke( this ); } finally { _leafBackWidthRange.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="LeafBackWidthRange"/> property value changes.</summary>
 		//public event Action<PlantMaterial> LeafBackWidthRangeChanged;

@@ -6,6 +6,7 @@
 
 #include <Jolt/Core/StaticArray.h>
 #include <Jolt/Core/LockFreeHashMap.h>
+#include <Jolt/Physics/EPhysicsUpdateError.h>
 #include <Jolt/Physics/Body/BodyPair.h>
 #include <Jolt/Physics/Collision/Shape/SubShapeIDPair.h>
 #include <Jolt/Physics/Collision/ManifoldBetweenTwoFaces.h>
@@ -23,7 +24,7 @@ JPH_NAMESPACE_BEGIN
 struct PhysicsSettings;
 class PhysicsUpdateContext;
 
-class ContactConstraintManager : public NonCopyable
+class JPH_EXPORT ContactConstraintManager : public NonCopyable
 {
 public:
 	JPH_OVERRIDE_NEW_DELETE
@@ -80,6 +81,7 @@ public:
 
 		uint					mNumBodyPairs = 0;													///< Total number of body pairs added using this allocator
 		uint					mNumManifolds = 0;													///< Total number of manifolds added using this allocator
+		EPhysicsUpdateError		mErrors = EPhysicsUpdateError::None;								///< Errors reported on this allocator
 	};
 
 	/// Get a new allocator context for storing contacts. Note that you should call this once and then add multiple contacts using the context.
@@ -163,9 +165,6 @@ public:
 		outBody1 = constraint.mBody1;
 		outBody2 = constraint.mBody2;
 	}
-
-	/// AddContactConstraint will also setup the velocity constraints for the first sub step. For subsequent sub steps this function must be called prior to warm starting the constraint.
-	void						SetupVelocityConstraints(const uint32 *inConstraintIdxBegin, const uint32 *inConstraintIdxEnd, float inDeltaTime);
 
 	/// Apply last frame's impulses as an initial guess for this frame's impulses
 	void						WarmStartVelocityConstraints(const uint32 *inConstraintIdxBegin, const uint32 *inConstraintIdxEnd, float inWarmStartImpulseRatio);
@@ -419,9 +418,10 @@ private:
 	{
 	public:
 		/// Calculate constraint properties below
-		void					CalculateNonPenetrationConstraintProperties(float inDeltaTime, const Body &inBody1, const Body &inBody2, RVec3Arg inWorldSpacePosition1, RVec3Arg inWorldSpacePosition2, Vec3Arg inWorldSpaceNormal);
+		void					CalculateNonPenetrationConstraintProperties(const Body &inBody1, const Body &inBody2, RVec3Arg inWorldSpacePosition1, RVec3Arg inWorldSpacePosition2, Vec3Arg inWorldSpaceNormal);
+
 		template <EMotionType Type1, EMotionType Type2>
-		JPH_INLINE void			CalculateFrictionAndNonPenetrationConstraintProperties(float inDeltaTime, const Body &inBody1, const Body &inBody2, Mat44Arg inInvI1, Mat44Arg inInvI2, RVec3Arg inWorldSpacePosition1, RVec3Arg inWorldSpacePosition2, Vec3Arg inWorldSpaceNormal, Vec3Arg inWorldSpaceTangent1, Vec3Arg inWorldSpaceTangent2, float inCombinedRestitution, float inCombinedFriction, float inMinVelocityForRestitution);
+		JPH_INLINE void			TemplatedCalculateFrictionAndNonPenetrationConstraintProperties(float inDeltaTime, const Body &inBody1, const Body &inBody2, float inInvM1, float inInvM2, Mat44Arg inInvI1, Mat44Arg inInvI2, RVec3Arg inWorldSpacePosition1, RVec3Arg inWorldSpacePosition2, Vec3Arg inWorldSpaceNormal, Vec3Arg inWorldSpaceTangent1, Vec3Arg inWorldSpaceTangent2, const ContactSettings &inSettings, float inMinVelocityForRestitution);
 
 		/// The constraint parts
 		AxisConstraintPart		mNonPenetrationConstraint;
@@ -443,32 +443,38 @@ private:
 		void					Draw(DebugRenderer *inRenderer, ColorArg inManifoldColor) const;
 	#endif // JPH_DEBUG_RENDERER
 
+		/// Convert the world space normal to a Vec3
+		JPH_INLINE Vec3			GetWorldSpaceNormal() const
+		{
+			return Vec3::sLoadFloat3Unsafe(mWorldSpaceNormal);
+		}
+
 		/// Get the tangents for this contact constraint
 		JPH_INLINE void			GetTangents(Vec3 &outTangent1, Vec3 &outTangent2) const
 		{
-			outTangent1 = mWorldSpaceNormal.GetNormalizedPerpendicular();
-			outTangent2 = mWorldSpaceNormal.Cross(outTangent1);
+			Vec3 ws_normal = GetWorldSpaceNormal();
+			outTangent1 = ws_normal.GetNormalizedPerpendicular();
+			outTangent2 = ws_normal.Cross(outTangent1);
 		}
 
-		Vec3					mWorldSpaceNormal;
 		Body *					mBody1;
 		Body *					mBody2;
 		uint64					mSortKey;
+		Float3					mWorldSpaceNormal;
 		float					mCombinedFriction;
-		float					mCombinedRestitution;
 		WorldContactPoints		mContactPoints;
 	};
 
 	/// Internal helper function to calculate the friction and non-penetration constraint properties. Templated to the motion type to reduce the amount of branches and calculations.
 	template <EMotionType Type1, EMotionType Type2>
-	JPH_INLINE void				TemplatedCalculateFrictionAndNonPenetrationConstraintProperties(ContactConstraint &ioConstraint, float inDeltaTime, RMat44Arg inTransformBody1, RMat44Arg inTransformBody2, const Body &inBody1, const Body &inBody2, Mat44Arg inInvI1, Mat44Arg inInvI2);
+	JPH_INLINE void				TemplatedCalculateFrictionAndNonPenetrationConstraintProperties(ContactConstraint &ioConstraint, const ContactSettings &inSettings, float inDeltaTime, RMat44Arg inTransformBody1, RMat44Arg inTransformBody2, const Body &inBody1, const Body &inBody2);
 
 	/// Internal helper function to calculate the friction and non-penetration constraint properties.
-	inline void					CalculateFrictionAndNonPenetrationConstraintProperties(ContactConstraint &ioConstraint, float inDeltaTime, RMat44Arg inTransformBody1, RMat44Arg inTransformBody2, const Body &inBody1, const Body &inBody2);
+	inline void					CalculateFrictionAndNonPenetrationConstraintProperties(ContactConstraint &ioConstraint, const ContactSettings &inSettings, float inDeltaTime, RMat44Arg inTransformBody1, RMat44Arg inTransformBody2, const Body &inBody1, const Body &inBody2);
 
 	/// Internal helper function to add a contact constraint. Templated to the motion type to reduce the amount of branches and calculations.
 	template <EMotionType Type1, EMotionType Type2>
-	bool						TemplatedAddContactConstraint(ContactAllocator &ioContactAllocator, BodyPairHandle inBodyPairHandle, Body &inBody1, Body &inBody2, const ContactManifold &inManifold, Mat44Arg inInvI1, Mat44Arg inInvI2);
+	bool						TemplatedAddContactConstraint(ContactAllocator &ioContactAllocator, BodyPairHandle inBodyPairHandle, Body &inBody1, Body &inBody2, const ContactManifold &inManifold);
 
 	/// Internal helper function to warm start contact constraint. Templated to the motion type to reduce the amount of branches and calculations.
 	template <EMotionType Type1, EMotionType Type2>

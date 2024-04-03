@@ -10,11 +10,11 @@ vec2 getParallaxOcclusionMappingOffset(vec2 texCoord, vec3 eye, vec3 normal, flo
 		float displacementScale = materialDisplacementScale;//u_materialDisplacementScale;
 		vec4 customParameter1 = u_materialCustomParameters[0];
 		vec4 customParameter2 = u_materialCustomParameters[1];
-		#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(makeSampler(s_linearSamplerFragment, _sampler), _uv, 0, 0)
+		vec4 instanceParameter1 = u_objectInstanceParameters[0];
+		vec4 instanceParameter2 = u_objectInstanceParameters[1];
 		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_mipBias)
 		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_mipBias)
 		DISPLACEMENT_CODE_BODY
-		#undef CODE_BODY_TEXTURE2D_MASK_OPACITY
 		#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 		#undef CODE_BODY_TEXTURE2D
 		heightScale = displacementScale;
@@ -141,11 +141,11 @@ vec2 getParallaxOcclusionMappingOffset(vec2 texCoord, vec3 eye, vec3 normal, flo
 		float displacementScale = 0.0;//dummy
 		vec4 customParameter1 = u_materialCustomParameters[0];
 		vec4 customParameter2 = u_materialCustomParameters[1];
-		#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(makeSampler(s_linearSamplerFragment, _sampler), _uv, 0, 0)
+		vec4 instanceParameter1 = u_objectInstanceParameters[0];
+		vec4 instanceParameter2 = u_objectInstanceParameters[1];
 		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DGrad(makeSampler(s_linearSamplerFragment, _sampler), _uv, dx, dy)
 		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DGrad(makeSampler(s_linearSamplerFragment, _sampler), _uv, dx, dy)
 		DISPLACEMENT_CODE_BODY
-		#undef CODE_BODY_TEXTURE2D_MASK_OPACITY
 		#undef CODE_BODY_TEXTURE2D_REMOVE_TILING
 		#undef CODE_BODY_TEXTURE2D
 		float currHeight = displacement;

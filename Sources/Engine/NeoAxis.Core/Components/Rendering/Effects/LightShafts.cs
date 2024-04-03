@@ -22,7 +22,7 @@ namespace NeoAxis
 		public Reference<double> Intensity
 		{
 			get { if( _intensity.BeginGet() ) Intensity = _intensity.Get( this ); return _intensity.value; }
-			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
+			set { if( _intensity.BeginSet( this, ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
 		public event Action<RenderingEffect_LightShafts> IntensityChanged;
@@ -36,7 +36,7 @@ namespace NeoAxis
 		public Reference<ColorValue> Color
 		{
 			get { if( _color.BeginGet() ) Color = _color.Get( this ); return _color.value; }
-			set { if( _color.BeginSet( ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
+			set { if( _color.BeginSet( this, ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Color"/> property value changes.</summary>
 		public event Action<RenderingEffect_LightShafts> ColorChanged;
@@ -50,7 +50,7 @@ namespace NeoAxis
 		public Reference<double> Decay
 		{
 			get { if( _decay.BeginGet() ) Decay = _decay.Get( this ); return _decay.value; }
-			set { if( _decay.BeginSet( ref value ) ) { try { DecayChanged?.Invoke( this ); } finally { _decay.EndSet(); } } }
+			set { if( _decay.BeginSet( this, ref value ) ) { try { DecayChanged?.Invoke( this ); } finally { _decay.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Decay"/> property value changes.</summary>
 		public event Action<RenderingEffect_LightShafts> DecayChanged;
@@ -64,7 +64,7 @@ namespace NeoAxis
 		public Reference<double> Density
 		{
 			get { if( _density.BeginGet() ) Density = _density.Get( this ); return _density.value; }
-			set { if( _density.BeginSet( ref value ) ) { try { DensityChanged?.Invoke( this ); } finally { _density.EndSet(); } } }
+			set { if( _density.BeginSet( this, ref value ) ) { try { DensityChanged?.Invoke( this ); } finally { _density.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Density"/> property value changes.</summary>
 		public event Action<RenderingEffect_LightShafts> DensityChanged;
@@ -79,7 +79,7 @@ namespace NeoAxis
 		public Reference<double> BlurFactor
 		{
 			get { if( _blurFactor.BeginGet() ) BlurFactor = _blurFactor.Get( this ); return _blurFactor.value; }
-			set { if( _blurFactor.BeginSet( ref value ) ) { try { BlurFactorChanged?.Invoke( this ); } finally { _blurFactor.EndSet(); } } }
+			set { if( _blurFactor.BeginSet( this, ref value ) ) { try { BlurFactorChanged?.Invoke( this ); } finally { _blurFactor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="BlurFactor"/> property value changes.</summary>
 		public event Action<RenderingEffect_LightShafts> BlurFactorChanged;
@@ -93,7 +93,7 @@ namespace NeoAxis
 		public Reference<int> Resolution
 		{
 			get { if( _resolution.BeginGet() ) Resolution = _resolution.Get( this ); return _resolution.value; }
-			set { if( _resolution.BeginSet( ref value ) ) { try { ResolutionChanged?.Invoke( this ); } finally { _resolution.EndSet(); } } }
+			set { if( _resolution.BeginSet( this, ref value ) ) { try { ResolutionChanged?.Invoke( this ); } finally { _resolution.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Resolution"/> property value changes.</summary>
 		public event Action<RenderingEffect_LightShafts> ResolutionChanged;
@@ -106,7 +106,7 @@ namespace NeoAxis
 		public Reference<Light> Light
 		{
 			get { if( _light.BeginGet() ) Light = _light.Get( this ); return _light.value; }
-			set { if( _light.BeginSet( ref value ) ) { try { LightChanged?.Invoke( this ); } finally { _light.EndSet(); } } }
+			set { if( _light.BeginSet( this, ref value ) ) { try { LightChanged?.Invoke( this ); } finally { _light.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Light"/> property value changes.</summary>
 		public event Action<RenderingEffect_LightShafts> LightChanged;
@@ -119,7 +119,7 @@ namespace NeoAxis
 		public Reference<Vector3> OverrideDirection
 		{
 			get { if( _overrideDirection.BeginGet() ) OverrideDirection = _overrideDirection.Get( this ); return _overrideDirection.value; }
-			set { if( _overrideDirection.BeginSet( ref value ) ) { try { OverrideDirectionChanged?.Invoke( this ); } finally { _overrideDirection.EndSet(); } } }
+			set { if( _overrideDirection.BeginSet( this, ref value ) ) { try { OverrideDirectionChanged?.Invoke( this ); } finally { _overrideDirection.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="OverrideDirection"/> property value changes.</summary>
 		public event Action<RenderingEffect_LightShafts> OverrideDirectionChanged;
@@ -188,9 +188,9 @@ namespace NeoAxis
 				return;
 
 			//calculate intensity factor by the sun position on the screen.
-			double demandIntensityFactor = 0;
+			double demandIntensityFactor;
 			{
-				Degree angle = 0;
+				Degree angle;
 				if( lightPosition != cameraSettings.Position )
 				{
 					angle = MathAlgorithms.GetVectorsAngle( cameraSettings.Rotation.GetForward(),

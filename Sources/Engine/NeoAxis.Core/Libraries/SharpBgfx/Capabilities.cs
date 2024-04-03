@@ -965,6 +965,7 @@ namespace Internal.SharpBgfx {
             public ulong CpuTimeEnd;     //!< CPU (submit) end time.
             public ulong GpuTimeBegin;   //!< GPU begin time.
             public ulong GpuTimeEnd;     //!< GPU end time.
+            public uint GpuFrameNum;     //!< Frame which generated gpuTimeBegin, gpuTimeEnd.
         }
 
         internal struct EncoderStatsNative {
@@ -992,6 +993,7 @@ namespace Internal.SharpBgfx {
             public int NumCompute;
             public int NumBlit;
             public int MaxGpuLatency;
+            public uint GpuFrameNum;
 
             public ushort NumDynamicIndexBuffers;
             public ushort NumDynamicVertexBuffers;
@@ -1151,6 +1153,7 @@ namespace Internal.SharpBgfx {
             public uint Flags;
             public byte NumBackBuffers;
             public byte MaxFrameLatency;
+            public byte DebugTextScale;    //!< Scale factor for debug text.
         }
 
         internal struct InitLimits {
@@ -1164,6 +1167,7 @@ namespace Internal.SharpBgfx {
             public RendererBackend Backend;
             public ushort VendorId;
             public ushort DeviceId;
+            public ulong Capabilities; //!< Capabilities initialization mask (default: UINT64_MAX).
             public byte Debug;
             public byte Profiling;
             public PlatformData PlatformData;

@@ -16,7 +16,7 @@ namespace Project
 		{
 			var scene = GetScene();
 			if( scene != null )
-				return scene.GetComponent<GameMode>();
+				return (GameMode)scene.GetGameMode();
 			return null;
 		}
 

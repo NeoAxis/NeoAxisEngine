@@ -1,22 +1,38 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.IO;
+using System.ComponentModel;
+using NeoAxis.Editor;
 
 namespace NeoAxis
 {
 	/// <summary>
 	/// Represents mesh skeleton as a collection of bones. Used for a mesh animation.
 	/// </summary>
+#if !DEPLOY
+	[EditorControl( "NeoAxis.Editor.SkeletonEditor" )]
+	//[Preview( "NeoAxis.Editor.SkeletonPreview" )]
+#endif
 	public class Skeleton : Component
 	{
 		SkeletonBone[] bonesCache;
+		Dictionary<string, int> boneByNameCache;
+		int[] boneParentsCache;
 
 		/////////////////////////////////////////
+
+		///// <summary>
+		///// Whether the skeleton has normalized. In this mode Rotation and Scale of bones are applied to key frames.
+		///// </summary>
+		//[DefaultValue( false )]
+		//public Reference<bool> Normalized
+		//{
+		//	get { if( _normalized.BeginGet() ) Normalized = _normalized.Get( this ); return _normalized.value; }
+		//	set { if( _normalized.BeginSet( this, ref value ) ) { try { NormalizedChanged?.Invoke( this ); } finally { _normalized.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="Normalized"/> property value changes.</summary>
+		//public event Action<Skeleton> NormalizedChanged;
+		//ReferenceField<bool> _normalized = false;
 
 		//public enum SkinningModeEnum
 		//{
@@ -35,74 +51,46 @@ namespace NeoAxis
 		//public Reference<SkinningModeEnum> SkinningMode
 		//{
 		//	get { if( _skinningMode.BeginGet() ) SkinningMode = _skinningMode.Get( this ); return _skinningMode.value; }
-		//	set { if( _skinningMode.BeginSet( ref value ) ) { try { SkinningModeChanged?.Invoke( this ); } finally { _skinningMode.EndSet(); } } }
+		//	set { if( _skinningMode.BeginSet( this, ref value ) ) { try { SkinningModeChanged?.Invoke( this ); } finally { _skinningMode.EndSet(); } } }
 		//}
 		//public event Action<Skeleton> SkinningModeChanged;
 		//ReferenceField<SkinningModeEnum> _skinningMode = SkinningModeEnum.Auto;
 
 		/////////////////////////////////////////
 
-		public SkeletonBone[] GetBones( bool forceUpdate = false )
+		public void GetBones( bool forceUpdate, out SkeletonBone[] bones, out Dictionary<string, int> boneByName, out int[] boneParents )
 		{
 			if( bonesCache == null || forceUpdate )
+			{
 				bonesCache = GetComponents<SkeletonBone>( checkChildren: true );
-			return bonesCache;
+
+				boneByNameCache = new Dictionary<string, int>( bonesCache.Length );
+				for( int n = 0; n < bonesCache.Length; n++ )
+					boneByNameCache[ bonesCache[ n ].Name ] = n;
+
+				boneParentsCache = new int[ bonesCache.Length ];
+				for( int n = 0; n < bonesCache.Length; n++ )
+				{
+					var parentBone = bonesCache[ n ].Parent as SkeletonBone;
+					if( parentBone != null )
+					{
+						if( !boneByNameCache.TryGetValue( parentBone.Name, out boneParentsCache[ n ] ) )
+							boneParentsCache[ n ] = -1;
+					}
+					else
+						boneParentsCache[ n ] = -1;
+				}
+			}
+
+			bones = bonesCache;
+			boneByName = boneByNameCache;
+			boneParents = boneParentsCache;
 		}
 
-		//_ResultCompile<Skeleton.CompiledData>
-
-		/////////////////////////////////////////
-
-		//public class CompiledData// : IDisposable
-		//{
-		//	//cached bones with indexes
-		//	//index in the array correspond to Bone.BoneIndex
-		//	public SkeletonBone[] bones;
-		//}
-
-		/////////////////////////////////////////
-
-		//protected override void OnResultCompile()
-		//{
-		//	if( Result == null )
-		//	{
-		//		var compiledData = new CompiledData();
-		//		compiledData.bones = GetComponents<SkeletonBone>( false, true );
-		//		//compiledData.bones = GetComponents<SkeletonBone>( false, true, true );
-		//		Result = compiledData;
-		//	}
-		//}
-
-		////!!!!надо ли
-		//public Bone[] GetAllBones()
-		//{
-		//	//!!!!slowly
-
-		//	return GetComponents<Bone>( false, true );
-		//}
-
-		//public Bone GetBoneByIndex( int index )
-		//{
-		//	//!!!!slowly
-
-		//	var all = GetAllBones();
-		//	if( index >= 0 || index < all.Length )
-		//		return all[ index ];
-		//	return null;
-		//}
-
-		////!!!!надо ли
-		//public Animation FindAnimation( string name )
-		//{
-		//	//!!!!slowly. кешировать
-		//	//!!!!если !Enabled, то что тогда. с костями тоже так
-
-		//	return GetComponentByName( name ) as Animation;
-		//}
-
-		//public BoneTransformItem[] CalculateBoneTransforms( AnimationStateItem[] optionalAnimationState )
-		//{
-		//	return null;
-		//}
+		public SkeletonBone[] GetBones( bool forceUpdate = false )
+		{
+			GetBones( forceUpdate, out var bones, out _, out _ );
+			return bones;
+		}
 	}
 }

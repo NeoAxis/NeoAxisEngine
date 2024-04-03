@@ -10,8 +10,8 @@ namespace NeoAxis
 	/// The component for creation custom fullscreen rendering effects.
 	/// </summary>
 #if !DEPLOY
-	[NewObjectSettings( typeof( NewObjectSettingsEffect ) )]
-	[SettingsCell( typeof( RenderingEffect_Script_SettingsCell ) )]
+	[NewObjectSettings( "NeoAxis.Editor.RenderingEffect_Script_NewObjectSettings" )]
+	[SettingsCell( "NeoAxis.Editor.RenderingEffect_Script_SettingsCell" )]
 #endif
 	public class RenderingEffect_Script : RenderingEffect, IEditorUpdateWhenDocumentModified
 	{
@@ -32,7 +32,7 @@ namespace NeoAxis
 		public Reference<double> Intensity
 		{
 			get { if( _intensity.BeginGet() ) Intensity = _intensity.Get( this ); return _intensity.value; }
-			set { if( _intensity.BeginSet( ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
+			set { if( _intensity.BeginSet( this, ref value ) ) { try { IntensityChanged?.Invoke( this ); } finally { _intensity.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Intensity"/> property value changes.</summary>
 		public event Action<RenderingEffect_Script> IntensityChanged;
@@ -53,7 +53,7 @@ namespace NeoAxis
 			get { if( _shaderFile.BeginGet() ) ShaderFile = _shaderFile.Get( this ); return _shaderFile.value; }
 			set
 			{
-				if( _shaderFile.BeginSet( ref value ) )
+				if( _shaderFile.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -75,7 +75,7 @@ namespace NeoAxis
 		public Reference<ColorValue> Color
 		{
 			get { if( _color.BeginGet() ) Color = _color.Get( this ); return _color.value; }
-			set { if( _color.BeginSet( ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
+			set { if( _color.BeginSet( this, ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Color"/> property value changes.</summary>
 		public event Action<RenderingEffect_Script> ColorChanged;
@@ -102,31 +102,6 @@ namespace NeoAxis
 
 			public string error;
 		}
-
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-#if !DEPLOY
-		/// <summary>
-		/// A set of settings for creation <see cref="RenderingEffect_Script"/> in the editor.
-		/// </summary>
-		public class NewObjectSettingsEffect : NewObjectSettings
-		{
-			[DefaultValue( true )]
-			[Category( "Options" )]
-			[DisplayName( "Shader graph" )]
-			public bool ShaderGraph { get; set; } = true;
-
-			public override bool Creation( NewObjectCell.ObjectCreationContext context )
-			{
-				var newObject2 = (RenderingEffect_Script)context.newObject;
-
-				if( ShaderGraph )
-					newObject2.NewObjectCreateShaderGraph();
-
-				return base.Creation( context );
-			}
-		}
-#endif
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -189,7 +164,7 @@ namespace NeoAxis
 				shader.Parameters.Set( "u_paramColor", ParameterType.Vector4, 1, &value, sizeof( Vector4F ) );
 			}
 
-		
+
 
 			//!!!!пока так
 			if( result.fragmentGeneratedCode != null )
@@ -434,7 +409,7 @@ namespace NeoAxis
 			Result = result;
 		}
 
-		void NewObjectCreateShaderGraph()
+		public void NewObjectCreateShaderGraph()
 		{
 			var graph = CreateComponent<FlowGraph>();
 			graph.Name = "Shader graph";
@@ -450,7 +425,7 @@ namespace NeoAxis
 			if( Parent == null )
 			{
 				var toSelect = new Component[] { this, graph };
-				EditorDocumentConfiguration = KryptonConfigGenerator.CreateEditorDocumentXmlConfiguration( toSelect, graph );
+				EditorDocumentConfiguration = EditorAPI.CreateEditorDocumentXmlConfiguration( toSelect, graph );
 			}
 #endif
 		}

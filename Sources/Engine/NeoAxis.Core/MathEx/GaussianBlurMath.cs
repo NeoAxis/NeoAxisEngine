@@ -97,8 +97,11 @@ namespace NeoAxis
 				float total = 0;
 				foreach( var v in sampleWeights )
 					total += v.X;
-				for( int n = 0; n < sampleWeights.Length; n++ )
-					sampleWeights[ n ] = new Vector4F( sampleWeights[ n ].ToVector3F() * ( 1.0f / total ), sampleWeights[ n ].W );
+				if( total != 0 )
+				{
+					for( int n = 0; n < sampleWeights.Length; n++ )
+						sampleWeights[ n ] = new Vector4F( sampleWeights[ n ].ToVector3F() * ( 1.0f / total ), sampleWeights[ n ].W );
+				}
 
 				//Log.Info( total.ToString() );
 

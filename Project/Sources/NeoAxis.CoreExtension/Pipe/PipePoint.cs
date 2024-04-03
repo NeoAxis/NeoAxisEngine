@@ -28,7 +28,7 @@ namespace NeoAxis
 		public Reference<SpecialtyEnum> Specialty
 		{
 			get { if( _specialty.BeginGet() ) Specialty = _specialty.Get( this ); return _specialty.value; }
-			set { if( _specialty.BeginSet( ref value ) ) { try { SpecialtyChanged?.Invoke( this ); DataWasChanged(); } finally { _specialty.EndSet(); } } }
+			set { if( _specialty.BeginSet( this, ref value ) ) { try { SpecialtyChanged?.Invoke( this ); DataWasChanged(); } finally { _specialty.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Specialty"/> property value changes.</summary>
 		public event Action<PipePoint> SpecialtyChanged;

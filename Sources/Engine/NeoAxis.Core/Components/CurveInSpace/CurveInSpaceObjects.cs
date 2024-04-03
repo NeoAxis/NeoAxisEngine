@@ -27,7 +27,7 @@ namespace NeoAxis
 		public Reference<Mesh> Mesh
 		{
 			get { if( _mesh.BeginGet() ) Mesh = _mesh.Get( this ); return _mesh.value; }
-			set { if( _mesh.BeginSet( ref value ) ) { try { MeshChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _mesh.EndSet(); } } }
+			set { if( _mesh.BeginSet( this, ref value ) ) { try { MeshChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _mesh.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Mesh"/> property value changes.</summary>
 		public event Action<CurveInSpaceObjects> MeshChanged;
@@ -41,7 +41,7 @@ namespace NeoAxis
 		public Reference<ObjectInSpace> ObjectInSpace
 		{
 			get { if( _objectInSpace.BeginGet() ) ObjectInSpace = _objectInSpace.Get( this ); return _objectInSpace.value; }
-			set { if( _objectInSpace.BeginSet( ref value ) ) { try { ObjectInSpaceChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _objectInSpace.EndSet(); } } }
+			set { if( _objectInSpace.BeginSet( this, ref value ) ) { try { ObjectInSpaceChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _objectInSpace.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ObjectInSpace"/> property value changes.</summary>
 		public event Action<CurveInSpaceObjects> ObjectInSpaceChanged;
@@ -58,7 +58,7 @@ namespace NeoAxis
 			get { if( _replaceMaterial.BeginGet() ) ReplaceMaterial = _replaceMaterial.Get( this ); return _replaceMaterial.value; }
 			set
 			{
-				if( _replaceMaterial.BeginSet( ref value ) )
+				if( _replaceMaterial.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -106,7 +106,7 @@ namespace NeoAxis
 			get { if( _color.BeginGet() ) Color = _color.Get( this ); return _color.value; }
 			set
 			{
-				if( _color.BeginSet( ref value ) )
+				if( _color.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -140,7 +140,7 @@ namespace NeoAxis
 			get { if( _visibilityDistanceFactor.BeginGet() ) VisibilityDistanceFactor = _visibilityDistanceFactor.Get( this ); return _visibilityDistanceFactor.value; }
 			set
 			{
-				if( _visibilityDistanceFactor.BeginSet( ref value ) )
+				if( _visibilityDistanceFactor.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -175,7 +175,7 @@ namespace NeoAxis
 		//	get { if( _visibilityDistance.BeginGet() ) VisibilityDistance = _visibilityDistance.Get( this ); return _visibilityDistance.value; }
 		//	set
 		//	{
-		//		if( _visibilityDistance.BeginSet( ref value ) )
+		//		if( _visibilityDistance.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -209,7 +209,7 @@ namespace NeoAxis
 			get { if( _castShadows.BeginGet() ) CastShadows = _castShadows.Get( this ); return _castShadows.value; }
 			set
 			{
-				if( _castShadows.BeginSet( ref value ) )
+				if( _castShadows.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -243,7 +243,7 @@ namespace NeoAxis
 			get { if( _receiveDecals.BeginGet() ) ReceiveDecals = _receiveDecals.Get( this ); return _receiveDecals.value; }
 			set
 			{
-				if( _receiveDecals.BeginSet( ref value ) )
+				if( _receiveDecals.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -275,7 +275,7 @@ namespace NeoAxis
 		//public Reference<List<ObjectSpecialRenderingEffect>> SpecialEffects
 		//{
 		//	get { if( _specialEffects.BeginGet() ) SpecialEffects = _specialEffects.Get( this ); return _specialEffects.value; }
-		//	set { if( _specialEffects.BeginSet( ref value ) ) { try { SpecialEffectsChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _specialEffects.EndSet(); } } }
+		//	set { if( _specialEffects.BeginSet( this, ref value ) ) { try { SpecialEffectsChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _specialEffects.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="SpecialEffects"/> property value changes.</summary>
 		//public event Action<CurveInSpaceObjects> SpecialEffectsChanged;
@@ -333,7 +333,7 @@ namespace NeoAxis
 		public Reference<StepMeasureEnum> StepMeasure
 		{
 			get { if( _stepMeasure.BeginGet() ) StepMeasure = _stepMeasure.Get( this ); return _stepMeasure.value; }
-			set { if( _stepMeasure.BeginSet( ref value ) ) { try { StepMeasureChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _stepMeasure.EndSet(); } } }
+			set { if( _stepMeasure.BeginSet( this, ref value ) ) { try { StepMeasureChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _stepMeasure.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="StepMeasure"/> property value changes.</summary>
 		public event Action<CurveInSpaceObjects> StepMeasureChanged;
@@ -348,7 +348,7 @@ namespace NeoAxis
 		public Reference<double> Step
 		{
 			get { if( _step.BeginGet() ) Step = _step.Get( this ); return _step.value; }
-			set { if( _step.BeginSet( ref value ) ) { try { StepChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _step.EndSet(); } } }
+			set { if( _step.BeginSet( this, ref value ) ) { try { StepChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _step.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Step"/> property value changes.</summary>
 		public event Action<CurveInSpaceObjects> StepChanged;
@@ -363,7 +363,7 @@ namespace NeoAxis
 		public Reference<Vector3> PositionOffset
 		{
 			get { if( _positionOffset.BeginGet() ) PositionOffset = _positionOffset.Get( this ); return _positionOffset.value; }
-			set { if( _positionOffset.BeginSet( ref value ) ) { try { PositionOffsetChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _positionOffset.EndSet(); } } }
+			set { if( _positionOffset.BeginSet( this, ref value ) ) { try { PositionOffsetChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _positionOffset.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PositionOffset"/> property value changes.</summary>
 		public event Action<CurveInSpaceObjects> PositionOffsetChanged;
@@ -378,7 +378,7 @@ namespace NeoAxis
 		public Reference<Vector3> PositionOffsetRandom
 		{
 			get { if( _positionOffsetRandom.BeginGet() ) PositionOffsetRandom = _positionOffsetRandom.Get( this ); return _positionOffsetRandom.value; }
-			set { if( _positionOffsetRandom.BeginSet( ref value ) ) { try { PositionOffsetRandomChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _positionOffsetRandom.EndSet(); } } }
+			set { if( _positionOffsetRandom.BeginSet( this, ref value ) ) { try { PositionOffsetRandomChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _positionOffsetRandom.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="PositionOffsetRandom"/> property value changes.</summary>
 		public event Action<CurveInSpaceObjects> PositionOffsetRandomChanged;
@@ -392,7 +392,7 @@ namespace NeoAxis
 		public Reference<Angles> RotationOffset
 		{
 			get { if( _rotationOffset.BeginGet() ) RotationOffset = _rotationOffset.Get( this ); return _rotationOffset.value; }
-			set { if( _rotationOffset.BeginSet( ref value ) ) { try { RotationOffsetChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _rotationOffset.EndSet(); } } }
+			set { if( _rotationOffset.BeginSet( this, ref value ) ) { try { RotationOffsetChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _rotationOffset.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RotationOffset"/> property value changes.</summary>
 		public event Action<CurveInSpaceObjects> RotationOffsetChanged;
@@ -406,7 +406,7 @@ namespace NeoAxis
 		public Reference<Angles> RotationOffsetByTime
 		{
 			get { if( _rotationOffsetByTime.BeginGet() ) RotationOffsetByTime = _rotationOffsetByTime.Get( this ); return _rotationOffsetByTime.value; }
-			set { if( _rotationOffsetByTime.BeginSet( ref value ) ) { try { RotationOffsetByTimeChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _rotationOffsetByTime.EndSet(); } } }
+			set { if( _rotationOffsetByTime.BeginSet( this, ref value ) ) { try { RotationOffsetByTimeChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _rotationOffsetByTime.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RotationOffsetByTime"/> property value changes.</summary>
 		public event Action<CurveInSpaceObjects> RotationOffsetByTimeChanged;
@@ -420,7 +420,7 @@ namespace NeoAxis
 		public Reference<Angles> RotationOffsetRandom
 		{
 			get { if( _rotationOffsetRandom.BeginGet() ) RotationOffsetRandom = _rotationOffsetRandom.Get( this ); return _rotationOffsetRandom.value; }
-			set { if( _rotationOffsetRandom.BeginSet( ref value ) ) { try { RotationOffsetRandomChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _rotationOffsetRandom.EndSet(); } } }
+			set { if( _rotationOffsetRandom.BeginSet( this, ref value ) ) { try { RotationOffsetRandomChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _rotationOffsetRandom.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RotationOffsetRandom"/> property value changes.</summary>
 		public event Action<CurveInSpaceObjects> RotationOffsetRandomChanged;
@@ -435,7 +435,7 @@ namespace NeoAxis
 		public Reference<Range> ScaleRandom
 		{
 			get { if( _scaleRandom.BeginGet() ) ScaleRandom = _scaleRandom.Get( this ); return _scaleRandom.value; }
-			set { if( _scaleRandom.BeginSet( ref value ) ) { try { ScaleRandomChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _scaleRandom.EndSet(); } } }
+			set { if( _scaleRandom.BeginSet( this, ref value ) ) { try { ScaleRandomChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _scaleRandom.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="ScaleRandom"/> property value changes.</summary>
 		public event Action<CurveInSpaceObjects> ScaleRandomChanged;
@@ -450,7 +450,7 @@ namespace NeoAxis
 		public Reference<int> RandomSeed
 		{
 			get { if( _randomSeed.BeginGet() ) RandomSeed = _randomSeed.Get( this ); return _randomSeed.value; }
-			set { if( _randomSeed.BeginSet( ref value ) ) { try { RandomSeedChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _randomSeed.EndSet(); } } }
+			set { if( _randomSeed.BeginSet( this, ref value ) ) { try { RandomSeedChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _randomSeed.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RandomSeed"/> property value changes.</summary>
 		public event Action<CurveInSpaceObjects> RandomSeedChanged;
@@ -464,7 +464,7 @@ namespace NeoAxis
 		public Reference<bool> Collision
 		{
 			get { if( _collision.BeginGet() ) Collision = _collision.Get( this ); return _collision.value; }
-			set { if( _collision.BeginSet( ref value ) ) { try { CollisionChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _collision.EndSet(); } } }
+			set { if( _collision.BeginSet( this, ref value ) ) { try { CollisionChanged?.Invoke( this ); NeedUpdateObjects(); } finally { _collision.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Collision"/> property value changes.</summary>
 		public event Action<CurveInSpaceObjects> CollisionChanged;
@@ -478,7 +478,7 @@ namespace NeoAxis
 		public Reference<PhysicalMaterial> CollisionMaterial
 		{
 			get { if( _collisionMaterial.BeginGet() ) CollisionMaterial = _collisionMaterial.Get( this ); return _collisionMaterial.value; }
-			set { if( _collisionMaterial.BeginSet( ref value ) ) { try { CollisionMaterialChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionMaterial.EndSet(); } } }
+			set { if( _collisionMaterial.BeginSet( this, ref value ) ) { try { CollisionMaterialChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionMaterial.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CollisionMaterial"/> property value changes.</summary>
 		public event Action<CurveInSpaceObjects> CollisionMaterialChanged;
@@ -493,7 +493,7 @@ namespace NeoAxis
 		//public Reference<PhysicalMaterial.FrictionModeEnum> CollisionFrictionMode
 		//{
 		//	get { if( _collisionFrictionMode.BeginGet() ) CollisionFrictionMode = _collisionFrictionMode.Get( this ); return _collisionFrictionMode.value; }
-		//	set { if( _collisionFrictionMode.BeginSet( ref value ) ) { try { CollisionFrictionModeChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionFrictionMode.EndSet(); } } }
+		//	set { if( _collisionFrictionMode.BeginSet( this, ref value ) ) { try { CollisionFrictionModeChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionFrictionMode.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="CollisionFrictionMode"/> property value changes.</summary>
 		//public event Action<CurveInSpaceObjects> CollisionFrictionModeChanged;
@@ -508,7 +508,7 @@ namespace NeoAxis
 		public Reference<double> CollisionFriction
 		{
 			get { if( _collisionFriction.BeginGet() ) CollisionFriction = _collisionFriction.Get( this ); return _collisionFriction.value; }
-			set { if( _collisionFriction.BeginSet( ref value ) ) { try { CollisionFrictionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionFriction.EndSet(); } } }
+			set { if( _collisionFriction.BeginSet( this, ref value ) ) { try { CollisionFrictionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionFriction.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CollisionFriction"/> property value changes.</summary>
 		public event Action<CurveInSpaceObjects> CollisionFrictionChanged;
@@ -523,7 +523,7 @@ namespace NeoAxis
 		//public Reference<Vector3> CollisionAnisotropicFriction
 		//{
 		//	get { if( _collisionAnisotropicFriction.BeginGet() ) CollisionAnisotropicFriction = _collisionAnisotropicFriction.Get( this ); return _collisionAnisotropicFriction.value; }
-		//	set { if( _collisionAnisotropicFriction.BeginSet( ref value ) ) { try { CollisionAnisotropicFrictionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionAnisotropicFriction.EndSet(); } } }
+		//	set { if( _collisionAnisotropicFriction.BeginSet( this, ref value ) ) { try { CollisionAnisotropicFrictionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionAnisotropicFriction.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="CollisionAnisotropicFriction"/> property value changes.</summary>
 		//public event Action<CurveInSpaceObjects> CollisionAnisotropicFrictionChanged;
@@ -539,7 +539,7 @@ namespace NeoAxis
 		//public Reference<double> CollisionSpinningFriction
 		//{
 		//	get { if( _collisionSpinningFriction.BeginGet() ) CollisionSpinningFriction = _collisionSpinningFriction.Get( this ); return _collisionSpinningFriction.value; }
-		//	set { if( _collisionSpinningFriction.BeginSet( ref value ) ) { try { CollisionSpinningFrictionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionSpinningFriction.EndSet(); } } }
+		//	set { if( _collisionSpinningFriction.BeginSet( this, ref value ) ) { try { CollisionSpinningFrictionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionSpinningFriction.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="CollisionSpinningFriction"/> property value changes.</summary>
 		//public event Action<CurveInSpaceObjects> CollisionSpinningFrictionChanged;
@@ -555,7 +555,7 @@ namespace NeoAxis
 		//public Reference<double> CollisionRollingFriction
 		//{
 		//	get { if( _collisionRollingFriction.BeginGet() ) CollisionRollingFriction = _collisionRollingFriction.Get( this ); return _collisionRollingFriction.value; }
-		//	set { if( _collisionRollingFriction.BeginSet( ref value ) ) { try { CollisionRollingFrictionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionRollingFriction.EndSet(); } } }
+		//	set { if( _collisionRollingFriction.BeginSet( this, ref value ) ) { try { CollisionRollingFrictionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionRollingFriction.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="CollisionRollingFriction"/> property value changes.</summary>
 		//public event Action<CurveInSpaceObjects> CollisionRollingFrictionChanged;
@@ -570,7 +570,7 @@ namespace NeoAxis
 		public Reference<double> CollisionRestitution
 		{
 			get { if( _collisionRestitution.BeginGet() ) CollisionRestitution = _collisionRestitution.Get( this ); return _collisionRestitution.value; }
-			set { if( _collisionRestitution.BeginSet( ref value ) ) { try { CollisionRestitutionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionRestitution.EndSet(); } } }
+			set { if( _collisionRestitution.BeginSet( this, ref value ) ) { try { CollisionRestitutionChanged?.Invoke( this ); UpdateCollisionMaterial(); } finally { _collisionRestitution.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CollisionRestitution"/> property value changes.</summary>
 		public event Action<CurveInSpaceObjects> CollisionRestitutionChanged;

@@ -33,7 +33,7 @@ namespace NeoAxis
 			get { if( _sound.BeginGet() ) Sound = _sound.Get( this ); return _sound.value; }
 			set
 			{
-				if( _sound.BeginSet( ref value ) )
+				if( _sound.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -60,7 +60,7 @@ namespace NeoAxis
 			get { if( _volume.BeginGet() ) Volume = _volume.Get( this ); return _volume.value; }
 			set
 			{
-				if( _volume.BeginSet( ref value ) )
+				if( _volume.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -88,7 +88,7 @@ namespace NeoAxis
 			get { if( _pitch.BeginGet() ) Pitch = _pitch.Get( this ); return _pitch.value; }
 			set
 			{
-				if( _pitch.BeginSet( ref value ) )
+				if( _pitch.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -103,6 +103,20 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="Pitch"/> property value changes.</summary>
 		public event Action<SoundSource> PitchChanged;
 		ReferenceField<double> _pitch = 1.0;
+
+		/// <summary>
+		/// Whether to play in 3D mode.
+		/// </summary>
+		[DefaultValue( true )]
+		[DisplayName( "Mode 3D" )]
+		public Reference<bool> Mode3D
+		{
+			get { if( _mode3D.BeginGet() ) Mode3D = _mode3D.Get( this ); return _mode3D.value; }
+			set { if( _mode3D.BeginSet( this, ref value ) ) { try { Mode3DChanged?.Invoke( this ); Play(); } finally { _mode3D.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Mode3D"/> property value changes.</summary>
+		public event Action<SoundSource> Mode3DChanged;
+		ReferenceField<bool> _mode3D = true;
 
 		public enum RolloffModeEnum
 		{
@@ -124,7 +138,7 @@ namespace NeoAxis
 			get { if( _rolloffMode.BeginGet() ) RolloffMode = _rolloffMode.Get( this ); return _rolloffMode.value; }
 			set
 			{
-				if( _rolloffMode.BeginSet( ref value ) )
+				if( _rolloffMode.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -140,43 +154,17 @@ namespace NeoAxis
 		ReferenceField<RolloffModeEnum> _rolloffMode = RolloffModeEnum.Logarithmic;
 
 		/// <summary>
-		/// Damping factor for the logarithmic rolloff mode.
-		/// </summary>
-		[DefaultValue( 1.0 )]
-		[Serialize]
-		[Range( 0.1, 10 )]
-		public Reference<double> RolloffLogarithmicFactor
-		{
-			get { if( _rolloffLogarithmicFactor.BeginGet() ) RolloffLogarithmicFactor = _rolloffLogarithmicFactor.Get( this ); return _rolloffLogarithmicFactor.value; }
-			set
-			{
-				if( _rolloffLogarithmicFactor.BeginSet( ref value ) )
-				{
-					try
-					{
-						RolloffLogarithmicFactorChanged?.Invoke( this );
-						UpdateChannelRolloffGraph();
-					}
-					finally { _rolloffLogarithmicFactor.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="RolloffLogarithmicFactor"/> property value changes.</summary>
-		public event Action<SoundSource> RolloffLogarithmicFactorChanged;
-		ReferenceField<double> _rolloffLogarithmicFactor = 1.0;
-
-		/// <summary>
 		/// The minimum distance from the listener, after which the sound begins to weaken.
 		/// </summary>
 		[DefaultValue( 5.0 )]
 		[Serialize]
-		[Range( 0, 100, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		[Range( 0, 100, RangeAttribute.ConvenientDistributionEnum.Exponential, 4 )]
 		public Reference<double> AttenuationNear
 		{
 			get { if( _attenuationNear.BeginGet() ) AttenuationNear = _attenuationNear.Get( this ); return _attenuationNear.value; }
 			set
 			{
-				if( _attenuationNear.BeginSet( ref value ) )
+				if( _attenuationNear.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -194,15 +182,15 @@ namespace NeoAxis
 		/// <summary>
 		/// The maximum distance from the listener, after which no sound is heard.
 		/// </summary>
-		[DefaultValue( 50.0 )]
+		[DefaultValue( 100.0 )]
 		[Serialize]
-		[Range( 0, 1000, RangeAttribute.ConvenientDistributionEnum.Exponential, 2 )]
+		[Range( 0, 1000, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
 		public Reference<double> AttenuationFar
 		{
 			get { if( _attenuationFar.BeginGet() ) AttenuationFar = _attenuationFar.Get( this ); return _attenuationFar.value; }
 			set
 			{
-				if( _attenuationFar.BeginSet( ref value ) )
+				if( _attenuationFar.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -215,7 +203,33 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="AttenuationFar"/> property value changes.</summary>
 		public event Action<SoundSource> AttenuationFarChanged;
-		ReferenceField<double> _attenuationFar = 50.0;
+		ReferenceField<double> _attenuationFar = 100.0;
+
+		/// <summary>
+		/// Damping factor for the logarithmic rolloff mode.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[Serialize]
+		[Range( 0.1, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 4 )]
+		public Reference<double> RolloffLogarithmicFactor
+		{
+			get { if( _rolloffLogarithmicFactor.BeginGet() ) RolloffLogarithmicFactor = _rolloffLogarithmicFactor.Get( this ); return _rolloffLogarithmicFactor.value; }
+			set
+			{
+				if( _rolloffLogarithmicFactor.BeginSet( this, ref value ) )
+				{
+					try
+					{
+						RolloffLogarithmicFactorChanged?.Invoke( this );
+						UpdateChannelRolloffGraph();
+					}
+					finally { _rolloffLogarithmicFactor.EndSet(); }
+				}
+			}
+		}
+		/// <summary>Occurs when the <see cref="RolloffLogarithmicFactor"/> property value changes.</summary>
+		public event Action<SoundSource> RolloffLogarithmicFactorChanged;
+		ReferenceField<double> _rolloffLogarithmicFactor = 1.0;
 
 		/// <summary>
 		/// The delay between the completion of playing sound and playing it again.
@@ -230,7 +244,7 @@ namespace NeoAxis
 			{
 				var oldValue = _replayDelay.value;
 
-				if( _replayDelay.BeginSet( ref value ) )
+				if( _replayDelay.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -274,7 +288,7 @@ namespace NeoAxis
 			get { if( _streaming.BeginGet() ) Streaming = _streaming.Get( this ); return _streaming.value; }
 			set
 			{
-				if( _streaming.BeginSet( ref value ) )
+				if( _streaming.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -303,7 +317,7 @@ namespace NeoAxis
 			get { if( _priority.BeginGet() ) Priority = _priority.Get( this ); return _priority.value; }
 			set
 			{
-				if( _priority.BeginSet( ref value ) )
+				if( _priority.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -330,8 +344,15 @@ namespace NeoAxis
 			{
 				switch( p.Name )
 				{
+				case nameof( RolloffMode ):
+				case nameof( AttenuationNear ):
+				case nameof( AttenuationFar ):
+					if( !Mode3D.Value )
+						skip = true;
+					break;
+
 				case nameof( RolloffLogarithmicFactor ):
-					if( RolloffMode.Value != RolloffModeEnum.Logarithmic )
+					if( !Mode3D.Value || RolloffMode.Value != RolloffModeEnum.Logarithmic )
 						skip = true;
 					break;
 				}
@@ -359,8 +380,9 @@ namespace NeoAxis
 		void Update()//float delta )
 		{
 			//!!!!так?
-			double delta = EngineApp.EngineTime - lastUpdateEngineTime;
-			lastUpdateEngineTime = EngineApp.EngineTime;
+			var time = EngineApp.EngineTime;
+			var delta = time - lastUpdateEngineTime;
+			lastUpdateEngineTime = time;
 
 			if( ReplayDelay != 0 )
 			{
@@ -516,9 +538,6 @@ namespace NeoAxis
 		{
 			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
-			//if( EnabledInHierarchyAndIsInstance )
-			//	Update();
-
 			if( mode == GetRenderSceneDataMode.InsideFrustum )
 			{
 				var context2 = context.ObjectInSpaceRenderingContext;
@@ -623,7 +642,9 @@ namespace NeoAxis
 							break;
 						}
 
-						SoundModes mode = SoundModes.Mode3D;
+						SoundModes mode = 0;
+						if( Mode3D )
+							mode |= SoundModes.Mode3D;
 						if( ReplayDelay == 0 || streaming )//if( replayDelay == 0 )
 							mode |= SoundModes.Loop;
 						if( streaming )
@@ -632,11 +653,10 @@ namespace NeoAxis
 						sound = soundComponent.Result.LoadSoundByMode( mode );
 						if( sound != null )
 						{
-							channel = SoundWorld.SoundPlay( ParentScene, sound, EngineApp.DefaultSoundChannelGroup, Priority, true );
+							channel = SoundWorld.SoundPlay( ParentScene, sound, EngineApp.DefaultSoundChannelGroup, Priority, Volume, true );
 							if( channel != null )
 							{
 								channel.Position = Transform.Value.Position;
-								channel.Volume = Volume;
 								UpdateChannelRolloffGraph();
 								channel.Pitch = Pitch;
 

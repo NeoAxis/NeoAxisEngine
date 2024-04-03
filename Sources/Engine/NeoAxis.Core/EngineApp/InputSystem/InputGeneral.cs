@@ -162,7 +162,6 @@ namespace NeoAxis
 		}
 		public ActionEnum Action;
 
-		//!!!!
 		public class TouchDownRequestToProcessTouch
 		{
 			public UIControl Sender;

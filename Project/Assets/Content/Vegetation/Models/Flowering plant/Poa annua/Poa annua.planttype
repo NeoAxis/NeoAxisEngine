@@ -1,15 +1,15 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.PlantType
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"D311CF077AC34E5CA4A1B5195DBA745E\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"8631A922B9E64C763C9DB8903868FA34\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"D311CF077AC34E5CA4A1B5195DBA745E\"><KP UN=\"746481D48F8041BE96BE35BCEF36BA7F\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"D311CF077AC34E5CA4A1B5195DBA745E\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"746481D48F8041BE96BE35BCEF36BA7F\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"8631A922B9E64C763C9DB8903868FA34\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"746481D48F8041BE96BE35BCEF36BA7F\"><KP UN=\"746481D48F8041BE96BE35BCEF36BA7F\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"D311CF077AC34E5CA4A1B5195DBA745E\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	MatureAge = 0.25
 	MatureHeight = 0.2 0.3
 	GenerateIndividuals = False
 	GenerateGroups = True
-	GroupSize = 15
+	GroupSize = 25
 	GroupRadius = 0.6
-	GroupMaxIncline = 45
+	GroupMaxIncline = 70
 	GroupMaxInclineFromCenter = 5
 	Variations = 1
 	Ages = Young, Mature
@@ -17,6 +17,7 @@
 	SegmentsByCircle = 6
 	LODLevels = 2
 	LODDistance = 30
+	LODVoxelGrid = _100
 	LODVoxelThinFactor = 0.25
 	.component NeoAxis.PlantMaterial
 	{

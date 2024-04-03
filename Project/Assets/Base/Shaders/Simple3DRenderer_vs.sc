@@ -5,7 +5,7 @@ $output v_worldPosition_depth, v_colorVisible, v_colorInvisible
 #include "Common.sh"
 #include "VertexFunctions.sh"
 
-uniform vec4/*vec3*/ u_cameraPosition;
+//uniform vec4/*vec3*/ u_cameraPosition;
 
 uniform vec4 u_simple3DRendererVertex[3];
 #define u_color u_simple3DRendererVertex[0]
@@ -17,14 +17,15 @@ uniform vec4 u_simple3DRendererVertex[3];
 void main()
 {
 	mat4 worldMatrix = u_model[0];
-	vec4 renderOperationData[7];	
+	vec4 renderOperationData[8];	
 	renderOperationData[0] = vec4(0,0,u_billboardMode,0);
 	renderOperationData[1] = vec4_splat(0);
 	renderOperationData[2] = vec4_splat(0);
 	renderOperationData[3] = vec4_splat(0);
-	renderOperationData[4] = vec4_splat(0);	
-	renderOperationData[5] = vec4_splat(0);	
-	renderOperationData[6] = vec4_splat(0);	
+	renderOperationData[4] = vec4_splat(0);
+	renderOperationData[5] = vec4_splat(0);
+	renderOperationData[6] = vec4_splat(0);
+	renderOperationData[7] = vec4_splat(0);	
 	//vec4 renderOperationData = vec4(0,0,u_billboardMode,0);
 	vec4 billboardRotation;
 	billboardRotateWorldMatrix(renderOperationData, worldMatrix, false, vec3_splat(0), billboardRotation);
@@ -37,7 +38,7 @@ void main()
 	//worldPosition.xyz += dir * depthOffset;
 	gl_Position = mul(u_viewProj, worldPosition);
 	v_worldPosition_depth.w = gl_Position.z;
-
+	
 	//gl_Position = mul(u_modelViewProj, vec4(a_position, 1.0));
 
 	if(u_useColorFromUniform > 0.0)

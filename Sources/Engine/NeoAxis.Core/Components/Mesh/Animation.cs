@@ -12,6 +12,7 @@ namespace NeoAxis
 	/// <summary>
 	/// Represents mesh animation.
 	/// </summary>
+	[ResourceFileExtension( "animation" )]
 	public class Animation : Component
 	{
 		/// <summary>
@@ -21,7 +22,7 @@ namespace NeoAxis
 		public Reference<double> Length
 		{
 			get { if( _length.BeginGet() ) Length = _length.Get( this ); return _length.value; }
-			set { if( _length.BeginSet( ref value ) ) { try { LengthChanged?.Invoke( this ); } finally { _length.EndSet(); } } }
+			set { if( _length.BeginSet( this, ref value ) ) { try { LengthChanged?.Invoke( this ); } finally { _length.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Length"/> property value changes.</summary>
 		public event Action<Animation> LengthChanged;

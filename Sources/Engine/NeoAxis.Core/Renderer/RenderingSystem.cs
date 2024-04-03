@@ -188,8 +188,8 @@ namespace NeoAxis
 				Debug.Write( text );
 				if( errorType == ErrorType.DebugCheck )
 				{
-					if( EngineApp.InitSettings.RendererReportDebugToLog ) //!!!! should we use RendererReportDebugToLog ? this is important warning/error.
-						Log.Warning( "Renderer: Bgfx: " + text ); //TODO: replace to Log.Warn
+					if( EngineApp.InitSettings.RendererReportDebugToLog )
+						Log.Warning( "Renderer: Bgfx: " + text );
 
 					// Debug.Fail terminate app in UWP
 					if( SystemSettings.CurrentPlatform != SystemSettings.Platform.UWP )
@@ -557,6 +557,11 @@ namespace NeoAxis
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 				EngineApp.InitSettings.RendererBackend = RendererBackend.OpenGLES;
 
+			unsafe
+			{
+				NativeMethods.bgfx_check_wrapper( sizeof( InitSettings.Native ), sizeof( PlatformData ), sizeof( FrameBuffer.NativeAttachment ) );
+			}
+
 			//set platform data
 			if( ( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS || SystemSettings.CurrentPlatform == SystemSettings.Platform.Web ) && EngineApp.InitSettings.RendererBackend == RendererBackend.OpenGLES )
 			{
@@ -582,7 +587,16 @@ namespace NeoAxis
 				//ResetFlags = ResetFlags.MSAA8x,
 			};
 
-			Bgfx.Init( initSettings );
+			//!!!!configurable to NeoAxis.DefaultSettings.config?
+			//initSettings.BackBufferCount = ;
+			//initSettings.MaxFrameLatency = ;
+
+
+			if( !Bgfx.Init( initSettings ) )
+			{
+				Log.Error( "Unable to initialize Bgfx." );
+				return false;
+			}
 
 			Bgfx.Reset( initialWindowSize.X, initialWindowSize.Y, GetApplicationWindowResetFlags() );
 
@@ -855,6 +869,8 @@ namespace NeoAxis
 				attachment.Texture = item.texture.Result.GetNativeObject( true );
 				attachment.Mip = item.mip;
 				attachment.Layer = item.layer;
+				//!!!!
+				attachment.NumLayers = 1;
 				attachment.Access = ComputeBufferAccess.Write;
 				attachments[ n ] = attachment;
 			}
@@ -1129,7 +1145,7 @@ namespace NeoAxis
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( shadowTechnique == null )
+				if( !shadowTechnique.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
 						shadowTechnique = ProjectSettings.Get.Rendering.ShadowTechniqueLimitedDevice;
@@ -1146,7 +1162,7 @@ namespace NeoAxis
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( shadowTextureFormat == null )
+				if( !shadowTextureFormat.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
 						shadowTextureFormat = ProjectSettings.Get.Rendering.ShadowTextureFormatLimitedDevice;
@@ -1157,52 +1173,69 @@ namespace NeoAxis
 			}
 		}
 
-		static RenderingPipeline_Basic.ShadowTextureSize? shadowMaxTextureSizeDirectionalLight;
-		public static RenderingPipeline_Basic.ShadowTextureSize ShadowMaxTextureSizeDirectionalLight
+		static bool? staticShadows;
+		public static bool StaticShadows
 		{
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( shadowMaxTextureSizeDirectionalLight == null )
+				if( !staticShadows.HasValue )
+				{
+					if( SystemSettings.LimitedDevice )
+						staticShadows = ProjectSettings.Get.Rendering.StaticShadowsLimitedDevice;
+					else
+						staticShadows = ProjectSettings.Get.Rendering.StaticShadows;
+				}
+				return staticShadows.Value;
+			}
+		}
+
+		static ShadowTextureSizeEnum? shadowMaxTextureSizeDirectionalLight;
+		public static ShadowTextureSizeEnum ShadowMaxTextureSizeDirectionalLight
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get
+			{
+				if( !shadowMaxTextureSizeDirectionalLight.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
 						shadowMaxTextureSizeDirectionalLight = ProjectSettings.Get.Rendering.ShadowMaxTextureSizeDirectionalLightLimitedDevice;
 					else
-						shadowMaxTextureSizeDirectionalLight = RenderingPipeline_Basic.ShadowTextureSize._8192;// ProjectSettings.Get.Rendering.ShadowMaxTextureSizeDirectionalLight;
+						shadowMaxTextureSizeDirectionalLight = ShadowTextureSizeEnum._8192;// ProjectSettings.Get.Rendering.ShadowMaxTextureSizeDirectionalLight;
 				}
 				return shadowMaxTextureSizeDirectionalLight.Value;
 			}
 		}
 
-		static RenderingPipeline_Basic.ShadowTextureSize? shadowMaxTextureSizePointLight;
-		public static RenderingPipeline_Basic.ShadowTextureSize ShadowMaxTextureSizePointLight
+		static ShadowTextureSizeEnum? shadowMaxTextureSizePointLight;
+		public static ShadowTextureSizeEnum ShadowMaxTextureSizePointLight
 		{
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( shadowMaxTextureSizePointLight == null )
+				if( !shadowMaxTextureSizePointLight.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
 						shadowMaxTextureSizePointLight = ProjectSettings.Get.Rendering.ShadowMaxTextureSizePointLightLimitedDevice;
 					else
-						shadowMaxTextureSizePointLight = RenderingPipeline_Basic.ShadowTextureSize._8192;// ProjectSettings.Get.Rendering.ShadowMaxTextureSizePointLight;
+						shadowMaxTextureSizePointLight = ShadowTextureSizeEnum._8192;// ProjectSettings.Get.Rendering.ShadowMaxTextureSizePointLight;
 				}
 				return shadowMaxTextureSizePointLight.Value;
 			}
 		}
 
-		static RenderingPipeline_Basic.ShadowTextureSize? shadowMaxTextureSizeSpotLight;
-		public static RenderingPipeline_Basic.ShadowTextureSize ShadowMaxTextureSizeSpotLight
+		static ShadowTextureSizeEnum? shadowMaxTextureSizeSpotLight;
+		public static ShadowTextureSizeEnum ShadowMaxTextureSizeSpotLight
 		{
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( shadowMaxTextureSizeSpotLight == null )
+				if( !shadowMaxTextureSizeSpotLight.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
 						shadowMaxTextureSizeSpotLight = ProjectSettings.Get.Rendering.ShadowMaxTextureSizeSpotLightLimitedDevice;
 					else
-						shadowMaxTextureSizeSpotLight = RenderingPipeline_Basic.ShadowTextureSize._8192;// ProjectSettings.Get.Rendering.ShadowMaxTextureSizeSpotLight;
+						shadowMaxTextureSizeSpotLight = ShadowTextureSizeEnum._8192;// ProjectSettings.Get.Rendering.ShadowMaxTextureSizeSpotLight;
 				}
 				return shadowMaxTextureSizeSpotLight.Value;
 			}
@@ -1230,7 +1263,7 @@ namespace NeoAxis
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( debugMode == null )
+				if( !debugMode.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
 						debugMode = ProjectSettings.Get.Rendering.DebugModeLimitedDevice;
@@ -1247,7 +1280,7 @@ namespace NeoAxis
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( lightMask == null )
+				if( !lightMask.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
 						lightMask = ProjectSettings.Get.Rendering.LightMaskLimitedDevice;
@@ -1258,13 +1291,34 @@ namespace NeoAxis
 			}
 		}
 
+		static bool? lightGrid;
+		public static bool LightGrid
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get
+			{
+				if( !lightGrid.HasValue )
+				{
+					if( SystemSettings.LimitedDevice )
+					{
+						//!!!!disabled because samplers limit
+						lightGrid = false;
+						//lightGrid = ProjectSettings.Get.Rendering.LightGridLimitedDevice;
+					}
+					else
+						lightGrid = ProjectSettings.Get.Rendering.LightGrid;
+				}
+				return lightGrid.Value;
+			}
+		}
+
 		static int? displacementMaxSteps;
 		public static int DisplacementMaxSteps
 		{
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( displacementMaxSteps == null )
+				if( !displacementMaxSteps.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
 						displacementMaxSteps = ProjectSettings.Get.Rendering.DisplacementMaxStepsLimitedDevice;
@@ -1275,13 +1329,30 @@ namespace NeoAxis
 			}
 		}
 
+		static bool? tessellation;
+		public static bool Tessellation
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get
+			{
+				if( !tessellation.HasValue )
+				{
+					if( SystemSettings.LimitedDevice )
+						tessellation = ProjectSettings.Get.Rendering.TessellationLimitedDevice;
+					else
+						tessellation = ProjectSettings.Get.Rendering.Tessellation;
+				}
+				return tessellation.Value;
+			}
+		}
+
 		static bool? removeTextureTiling;
 		public static bool RemoveTextureTiling
 		{
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( removeTextureTiling == null )
+				if( !removeTextureTiling.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
 						removeTextureTiling = ProjectSettings.Get.Rendering.RemoveTextureTilingLimitedDevice;
@@ -1298,10 +1369,10 @@ namespace NeoAxis
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( motionVector == null )
+				if( !motionVector.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
-						motionVector = ProjectSettings.Get.Rendering.MotionVectorLimitedDevice;
+						motionVector = false;//ProjectSettings.Get.Rendering.MotionVectorLimitedDevice;
 					else
 						motionVector = ProjectSettings.Get.Rendering.MotionVector;
 				}
@@ -1332,7 +1403,7 @@ namespace NeoAxis
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( cutVolumeMaxAmount == null )
+				if( !cutVolumeMaxAmount.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
 						cutVolumeMaxAmount = ProjectSettings.Get.Rendering.CutVolumeMaxAmountLimitedDevice;
@@ -1349,7 +1420,7 @@ namespace NeoAxis
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( fadeByVisibilityDistance == null )
+				if( !fadeByVisibilityDistance.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
 						fadeByVisibilityDistance = ProjectSettings.Get.Rendering.FadeByVisibilityDistanceLimitedDevice;
@@ -1366,7 +1437,7 @@ namespace NeoAxis
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( fog == null )
+				if( !fog.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
 						fog = ProjectSettings.Get.Rendering.FogLimitedDevice;
@@ -1383,7 +1454,7 @@ namespace NeoAxis
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( smoothLOD == null )
+				if( !smoothLOD.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
 						smoothLOD = ProjectSettings.Get.Rendering.SmoothLODLimitedDevice;
@@ -1400,7 +1471,7 @@ namespace NeoAxis
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( normalMapping == null )
+				if( !normalMapping.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
 						normalMapping = ProjectSettings.Get.Rendering.NormalMappingLimitedDevice;
@@ -1417,7 +1488,7 @@ namespace NeoAxis
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( skeletalAnimation == null )
+				if( !skeletalAnimation.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
 						skeletalAnimation = ProjectSettings.Get.Rendering.SkeletalAnimationLimitedDevice;
@@ -1434,10 +1505,10 @@ namespace NeoAxis
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( voxelLOD == null )
+				if( !voxelLOD.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
-						voxelLOD = ProjectSettings.Get.Rendering.VoxelLODLimitedDevice;
+						voxelLOD = false;//ProjectSettings.Get.Rendering.VoxelLODLimitedDevice;
 					else
 						voxelLOD = ProjectSettings.Get.Rendering.VoxelLOD;
 				}
@@ -1451,10 +1522,10 @@ namespace NeoAxis
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( voxelLODMaxSteps == null )
+				if( !voxelLODMaxSteps.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
-						voxelLODMaxSteps = ProjectSettings.Get.Rendering.VoxelLODMaxStepsLimitedDevice;
+						voxelLODMaxSteps = 1;//ProjectSettings.Get.Rendering.VoxelLODMaxStepsLimitedDevice;
 					else
 						voxelLODMaxSteps = ProjectSettings.Get.Rendering.VoxelLODMaxSteps;
 				}
@@ -1484,7 +1555,7 @@ namespace NeoAxis
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( materialShading == null )
+				if( !materialShading.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
 						materialShading = ProjectSettings.Get.Rendering.MaterialShadingLimitedDevice;
@@ -1501,7 +1572,9 @@ namespace NeoAxis
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( anisotropicFiltering == null )
+				//!!!!slowly проверять HasValue? везде так
+
+				if( !anisotropicFiltering.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
 						anisotropicFiltering = ProjectSettings.Get.Rendering.AnisotropicFilteringLimitedDevice;
@@ -1512,5 +1585,86 @@ namespace NeoAxis
 			}
 		}
 
+		static bool? deferredShading;
+		public static bool DeferredShading
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get
+			{
+				if( !deferredShading.HasValue )
+				{
+					if( SystemSettings.LimitedDevice )
+						deferredShading = false;//ProjectSettings.Get.Rendering.DeferredShadingLimitedDevice;
+					else
+						deferredShading = ProjectSettings.Get.Rendering.DeferredShading;
+				}
+				return deferredShading.Value;
+			}
+		}
+
+		//static bool? globalIllumination;
+		public static bool GlobalIllumination
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get
+			{
+				//!!!!temp gi
+				return false;
+
+				//if( !globalIllumination.HasValue )
+				//{
+				//	if( SystemSettings.LimitedDevice )
+				//		globalIllumination = ProjectSettings.Get.Rendering.GlobalIlluminationLimitedDevice;
+				//	else
+				//		globalIllumination = ProjectSettings.Get.Rendering.GlobalIllumination;
+				//}
+				//return globalIllumination.Value;
+			}
+		}
+
+		static bool? environmentMapMixing;
+		public static bool EnvironmentMapMixing
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get
+			{
+				if( !environmentMapMixing.HasValue )
+				{
+					if( SystemSettings.LimitedDevice )
+						environmentMapMixing = ProjectSettings.Get.Rendering.EnvironmentMapMixingLimitedDevice;
+					else
+						environmentMapMixing = ProjectSettings.Get.Rendering.EnvironmentMapMixing;
+				}
+				return environmentMapMixing.Value;
+			}
+		}
+
+		static int? limitTextureSize;
+		public static int LimitTextureSize
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get
+			{
+				if( !limitTextureSize.HasValue )
+				{
+					if( SystemSettings.LimitedDevice )
+						limitTextureSize = ProjectSettings.Get.Rendering.LimitTextureSizeLimitedDevice;
+					else
+						limitTextureSize = ProjectSettings.Get.Rendering.LimitTextureSize;
+				}
+				return limitTextureSize.Value;
+			}
+		}
+
+		public static bool ReversedZ
+		{
+			get { return false; }
+			//get { return Capabilities.Backend == RendererBackend.Direct3D11 || Capabilities.Backend == RendererBackend.Direct3D12; }
+		}
+
+		public static bool DepthBuffer32Float
+		{
+			get { return Capabilities.Backend == RendererBackend.Direct3D11 || Capabilities.Backend == RendererBackend.Direct3D12; }
+		}
 	}
 }

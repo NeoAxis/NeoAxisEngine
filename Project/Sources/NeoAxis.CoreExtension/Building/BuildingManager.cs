@@ -24,7 +24,7 @@ namespace NeoAxis
 		public Reference<bool> Collision
 		{
 			get { if( _collision.BeginGet() ) Collision = _collision.Get( this ); return _collision.value; }
-			set { if( _collision.BeginSet( ref value ) ) { try { CollisionChanged?.Invoke( this ); BuildingsNeedUpdate(); } finally { _collision.EndSet(); } } }
+			set { if( _collision.BeginSet( this, ref value ) ) { try { CollisionChanged?.Invoke( this ); BuildingsNeedUpdate(); } finally { _collision.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Collision"/> property value changes.</summary>
 		public event Action<BuildingManager> CollisionChanged;
@@ -38,7 +38,7 @@ namespace NeoAxis
 		public Reference<bool> Display
 		{
 			get { if( _display.BeginGet() ) Display = _display.Get( this ); return _display.value; }
-			set { if( _display.BeginSet( ref value ) ) { try { DisplayChanged?.Invoke( this ); BuildingsNeedUpdate(); } finally { _display.EndSet(); } } }
+			set { if( _display.BeginSet( this, ref value ) ) { try { DisplayChanged?.Invoke( this ); BuildingsNeedUpdate(); } finally { _display.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Display"/> property value changes.</summary>
 		public event Action<BuildingManager> DisplayChanged;
@@ -52,7 +52,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayFacade
 		{
 			get { if( _displayFacade.BeginGet() ) DisplayFacade = _displayFacade.Get( this ); return _displayFacade.value; }
-			set { if( _displayFacade.BeginSet( ref value ) ) { try { DisplayFacadeChanged?.Invoke( this ); BuildingsNeedUpdate(); } finally { _displayFacade.EndSet(); } } }
+			set { if( _displayFacade.BeginSet( this, ref value ) ) { try { DisplayFacadeChanged?.Invoke( this ); BuildingsNeedUpdate(); } finally { _displayFacade.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayFacade"/> property value changes.</summary>
 		public event Action<BuildingManager> DisplayFacadeChanged;
@@ -66,7 +66,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayCells
 		{
 			get { if( _displayCells.BeginGet() ) DisplayCells = _displayCells.Get( this ); return _displayCells.value; }
-			set { if( _displayCells.BeginSet( ref value ) ) { try { DisplayCellsChanged?.Invoke( this ); BuildingsNeedUpdate(); } finally { _displayCells.EndSet(); } } }
+			set { if( _displayCells.BeginSet( this, ref value ) ) { try { DisplayCellsChanged?.Invoke( this ); BuildingsNeedUpdate(); } finally { _displayCells.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayCells"/> property value changes.</summary>
 		public event Action<BuildingManager> DisplayCellsChanged;
@@ -80,7 +80,7 @@ namespace NeoAxis
 		public Reference<bool> DisplaySurrounding
 		{
 			get { if( _displaySurrounding.BeginGet() ) DisplaySurrounding = _displaySurrounding.Get( this ); return _displaySurrounding.value; }
-			set { if( _displaySurrounding.BeginSet( ref value ) ) { try { DisplaySurroundingChanged?.Invoke( this ); BuildingsNeedUpdate(); } finally { _displaySurrounding.EndSet(); } } }
+			set { if( _displaySurrounding.BeginSet( this, ref value ) ) { try { DisplaySurroundingChanged?.Invoke( this ); BuildingsNeedUpdate(); } finally { _displaySurrounding.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplaySurrounding"/> property value changes.</summary>
 		public event Action<BuildingManager> DisplaySurroundingChanged;
@@ -89,7 +89,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The size of the sector in the scene. The sector size allows to optimize the culling and rendering of objects.
 		/// </summary>
-		[DefaultValue( "150 150 10000" )]
+		[DefaultValue( "200 200 10000" )]//[DefaultValue( "100 100 10000" )]
 		[Category( "Optimization" )]
 		public Reference<Vector3> SectorSize
 		{
@@ -104,27 +104,27 @@ namespace NeoAxis
 					if( v.Z < 1.0 ) v.Z = 1.0;
 					value = new Reference<Vector3>( v, value.GetByReference );
 				}
-				if( _sectorSize.BeginSet( ref value ) ) { try { SectorSizeChanged?.Invoke( this ); UpdateGroupOfObjects(); } finally { _sectorSize.EndSet(); } }
+				if( _sectorSize.BeginSet( this, ref value ) ) { try { SectorSizeChanged?.Invoke( this ); UpdateGroupOfObjects(); } finally { _sectorSize.EndSet(); } }
 			}
 		}
 		/// <summary>Occurs when the <see cref="SectorSize"/> property value changes.</summary>
 		public event Action<BuildingManager> SectorSizeChanged;
-		ReferenceField<Vector3> _sectorSize = new Vector3( 150, 150, 10000 );
+		ReferenceField<Vector3> _sectorSize = new Vector3( 200, 200, 10000 ); //new Vector3( 100, 100, 10000 );
 
-		//!!!!default
-		/// <summary>
-		/// The maximal amount of objects in one group/batch.
-		/// </summary>
-		[DefaultValue( 100000 )]
-		[Category( "Optimization" )]
-		public Reference<int> MaxObjectsInGroup
-		{
-			get { if( _maxObjectsInGroup.BeginGet() ) MaxObjectsInGroup = _maxObjectsInGroup.Get( this ); return _maxObjectsInGroup.value; }
-			set { if( _maxObjectsInGroup.BeginSet( ref value ) ) { try { MaxObjectsInGroupChanged?.Invoke( this ); UpdateGroupOfObjects(); } finally { _maxObjectsInGroup.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="MaxObjectsInGroup"/> property value changes.</summary>
-		public event Action<BuildingManager> MaxObjectsInGroupChanged;
-		ReferenceField<int> _maxObjectsInGroup = 100000;
+		////!!!!default
+		///// <summary>
+		///// The maximal amount of objects in one group/batch.
+		///// </summary>
+		//[DefaultValue( 100000 )]
+		//[Category( "Optimization" )]
+		//public Reference<int> MaxObjectsInGroup
+		//{
+		//	get { if( _maxObjectsInGroup.BeginGet() ) MaxObjectsInGroup = _maxObjectsInGroup.Get( this ); return _maxObjectsInGroup.value; }
+		//	set { if( _maxObjectsInGroup.BeginSet( this, ref value ) ) { try { MaxObjectsInGroupChanged?.Invoke( this ); UpdateGroupOfObjects(); } finally { _maxObjectsInGroup.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="MaxObjectsInGroup"/> property value changes.</summary>
+		//public event Action<BuildingManager> MaxObjectsInGroupChanged;
+		//ReferenceField<int> _maxObjectsInGroup = 100000;
 
 		///////////////////////////////////////////////
 

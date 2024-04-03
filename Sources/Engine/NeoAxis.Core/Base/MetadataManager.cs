@@ -590,6 +590,9 @@ namespace NeoAxis
 					result[ "NeoAxis.RenderingEffect_CodeGenerated" ] = "NeoAxis.RenderingEffect_Script";
 					result[ "NeoAxis.RenderingEffect_ScreenSpaceReflection" ] = "NeoAxis.RenderingEffect_Reflection";
 
+					result[ "NeoAxis.Skybox" ] = "NeoAxis.Sky";
+					result[ "NeoAxis.Component_Skybox" ] = "NeoAxis.Sky";
+
 					renamedTypeNames = result;
 				}
 

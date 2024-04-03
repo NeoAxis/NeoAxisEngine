@@ -11,6 +11,7 @@ namespace NeoAxis
 		/// </summary>
 		public class CameraSettingsClass
 		{
+			Vector3? ownerViewportCameraPosition;
 			Viewport viewport;
 			//Camera sourceCamera;
 			bool frustumCullingTest;
@@ -36,11 +37,15 @@ namespace NeoAxis
 			internal Vector3 right;
 
 			Frustum frustum;
-			Matrix4 viewMatrix;
-			Matrix4 projectionMatrix;
+			Matrix4 viewMatrixAbsolute;
+			Matrix4F viewMatrixRelative;
+			Matrix4F projectionMatrix;
 
-			bool viewProjectionMatrixCalculated;
-			Matrix4 viewProjectionMatrix;
+			bool viewProjectionMatrixAbsoluteCalculated;
+			Matrix4 viewProjectionMatrixAbsolute;
+
+			bool viewProjectionMatrixRelativeCalculated;
+			Matrix4F viewProjectionMatrixRelative;
 
 			bool viewProjectionInverseMatrixCalculated;
 			Matrix4 viewProjectionInverseMatrix;
@@ -55,7 +60,7 @@ namespace NeoAxis
 
 				Transform t = camera.Transform;
 
-				Init( viewport, /*camera, */frustumCullingTest, camera.AspectRatio, camera.FieldOfView, camera.NearClipPlane, camera.FarClipPlane, t.Position, t.Rotation.GetForward()/* camera.Direction*/, camera.FixedUp, camera.Projection, camera.Height, camera.Exposure, camera.EmissiveFactor, false, new Plane(), camera.RenderingPipelineOverride, true );
+				Init( null, viewport, /*camera, */frustumCullingTest, camera.AspectRatio, camera.FieldOfView, camera.NearClipPlane, camera.FarClipPlane, t.Position, t.Rotation.GetForward()/* camera.Direction*/, camera.FixedUp, camera.Projection, camera.Height, camera.Exposure, camera.EmissiveFactor, false, new Plane(), camera.RenderingPipelineOverride, true );
 			}
 
 			public CameraSettingsClass( Viewport viewport, Camera camera, RenderingPipeline renderingPipelineOverride, bool frustumCullingTest = false )
@@ -64,14 +69,22 @@ namespace NeoAxis
 
 				Transform t = camera.Transform;
 
-				Init( viewport, /*camera, */frustumCullingTest, camera.AspectRatio, camera.FieldOfView, camera.NearClipPlane, camera.FarClipPlane, t.Position, t.Rotation.GetForward()/* camera.Direction*/, camera.FixedUp, camera.Projection, camera.Height, camera.Exposure, camera.EmissiveFactor, false, new Plane(), renderingPipelineOverride, true );
+				Init( null, viewport, /*camera, */frustumCullingTest, camera.AspectRatio, camera.FieldOfView, camera.NearClipPlane, camera.FarClipPlane, t.Position, t.Rotation.GetForward()/* camera.Direction*/, camera.FixedUp, camera.Projection, camera.Height, camera.Exposure, camera.EmissiveFactor, false, new Plane(), renderingPipelineOverride, true );
 			}
 
 			public CameraSettingsClass( Viewport viewport, double aspectRatio, Degree fieldOfView, double nearClipDistance, double farClipDistance,
 				Vector3 position, Vector3 direction, Vector3 fixedUp, ProjectionType projection, double height, double exposure, double emissiveFactor, bool reflectionEnabled = false, Plane reflectionPlane = new Plane(), bool frustumCullingTest = false, RenderingPipeline renderingPipelineOverride = null, bool renderSky = true )
 			{
-				Init( viewport, /*null, */frustumCullingTest, aspectRatio, fieldOfView, nearClipDistance, farClipDistance, position, direction, fixedUp, projection, height, exposure, emissiveFactor, reflectionEnabled, reflectionPlane, renderingPipelineOverride, renderSky );
+				Init( null, viewport, /*null, */frustumCullingTest, aspectRatio, fieldOfView, nearClipDistance, farClipDistance, position, direction, fixedUp, projection, height, exposure, emissiveFactor, reflectionEnabled, reflectionPlane, renderingPipelineOverride, renderSky );
 			}
+
+			//for shadows
+			internal CameraSettingsClass( Vector3 ownerViewportCameraPosition, Viewport viewport, double aspectRatio, Degree fieldOfView, double nearClipDistance, double farClipDistance,
+	Vector3 position, Vector3 direction, Vector3 fixedUp, ProjectionType projection, double height, double exposure, double emissiveFactor, bool reflectionEnabled = false, Plane reflectionPlane = new Plane(), bool frustumCullingTest = false, RenderingPipeline renderingPipelineOverride = null, bool renderSky = true )
+			{
+				Init( ownerViewportCameraPosition, viewport, /*null, */frustumCullingTest, aspectRatio, fieldOfView, nearClipDistance, farClipDistance, position, direction, fixedUp, projection, height, exposure, emissiveFactor, reflectionEnabled, reflectionPlane, renderingPipelineOverride, renderSky );
+			}
+
 
 			//public CameraSettingsClass( Viewport viewport, double aspectRatio, Degree fieldOfView, double nearClipDistance, double farClipDistance,
 			//	Vector3 position, Vector3 direction, Vector3 fixedUp, ProjectionType projection = ProjectionType.Perspective,
@@ -89,8 +102,9 @@ namespace NeoAxis
 			//		projection, height, reflectionEnabled, reflectionPlane );
 			//}
 
-			void Init( Viewport viewport, /*Camera sourceCamera, */bool frustumCullingTest, double aspectRatio, Degree fieldOfView, double nearClipDistance, double farClipDistance, Vector3 position, Vector3 direction, Vector3 fixedUp, ProjectionType projection, double height, double exposure, double emissiveFactor, bool reflectionEnabled, Plane reflectionPlane, RenderingPipeline renderingPipelineOverride, bool renderSky )
+			void Init( Vector3? ownerViewportCameraPosition, Viewport viewport, /*Camera sourceCamera, */bool frustumCullingTest, double aspectRatio, Degree fieldOfView, double nearClipDistance, double farClipDistance, Vector3 position, Vector3 direction, Vector3 fixedUp, ProjectionType projection, double height, double exposure, double emissiveFactor, bool reflectionEnabled, Plane reflectionPlane, RenderingPipeline renderingPipelineOverride, bool renderSky )
 			{
+				this.ownerViewportCameraPosition = ownerViewportCameraPosition;
 				this.viewport = viewport;
 				//this.sourceCamera = sourceCamera;
 				this.frustumCullingTest = frustumCullingTest;
@@ -329,15 +343,17 @@ namespace NeoAxis
 			//	get { return derivedRotation; }
 			//}
 
-
-			//!!!!slow?
-			public Matrix4 ViewMatrix
+			public Matrix4 ViewMatrixAbsolute
 			{
-				get { return viewMatrix; }
+				get { return viewMatrixAbsolute; }
 			}
 
-			//!!!!slow?
-			public Matrix4 ProjectionMatrix
+			public Matrix4F ViewMatrixRelative
+			{
+				get { return viewMatrixRelative; }
+			}
+
+			public Matrix4F ProjectionMatrix
 			{
 				get { return projectionMatrix; }
 			}
@@ -396,17 +412,22 @@ namespace NeoAxis
 					double tanThetaY = Math.Tan( thetaY );
 					double tanThetaX = tanThetaY * aspectRatio;
 
-					double nearFocal = nearClipDistance;// / mFocalLength;
-					double nearOffsetX = 0;// mFrustumOffset.x * nearFocal;
-					double nearOffsetY = 0;// mFrustumOffset.y * nearFocal;
+					//double nearFocal = nearClipDistance;// / mFocalLength;
+					//double nearOffsetX = 0;// mFrustumOffset.x * nearFocal;
+					//double nearOffsetY = 0;// mFrustumOffset.y * nearFocal;
 
 					double half_w = tanThetaX * nearClipDistance;
 					double half_h = tanThetaY * nearClipDistance;
 
-					left = -half_w + nearOffsetX;
-					right = +half_w + nearOffsetX;
-					bottom = -half_h + nearOffsetY;
-					top = +half_h + nearOffsetY;
+					left = -half_w;
+					right = half_w;
+					bottom = -half_h;
+					top = half_h;
+
+					//left = -half_w + nearOffsetX;
+					//right = +half_w + nearOffsetX;
+					//bottom = -half_h + nearOffsetY;
+					//top = +half_h + nearOffsetY;
 				}
 				else
 				{
@@ -440,89 +461,430 @@ namespace NeoAxis
 
 			void CalculateMatrices()
 			{
-				double left, right, bottom, top;
-				CalcProjectionParameters( out left, out right, out bottom, out top );
+				//!!!!
 
-				double inv_w = 1.0 / ( right - left );
-				double inv_h = 1.0 / ( top - bottom );
-				double inv_d = 1.0 / ( farClipDistance - nearClipDistance );
 
-				if( projection == ProjectionType.Perspective )
+
+				//{
+				//	double left, right, bottom, top;
+				//	CalcProjectionParameters( out left, out right, out bottom, out top );
+
+				//	double inv_w = 1.0 / ( right - left );
+				//	double inv_h = 1.0 / ( top - bottom );
+				//	double inv_d = 1.0 / ( farClipDistance - nearClipDistance );
+
+				//	if( projection == ProjectionType.Perspective )
+				//	{
+
+				//		//!!!!
+
+				//		var fovy = fieldOfView.InRadians();
+				//		var znear = nearClipDistance;
+				//		var zfar = farClipDistance;
+
+				//		var h = 1.0 / Math.Tan( fovy * 0.5 );
+				//		var w = h / aspectRatio;
+				//		//var a = zfar / ( zfar - znear );
+				//		//var b = ( -znear * zfar ) / ( zfar - znear );
+
+				//		//var h = 1.0 / Math.Tan( fovy * 0.5 );
+				//		//var w = h / aspectRatio;
+				//		//var a = zfar / ( zfar - znear );
+				//		//var b = ( -znear * zfar ) / ( zfar - znear );
+
+
+				//		//if( RenderingSystem.ReversedZ )
+				//		//{
+				//		//	q = -q;// - 1;
+				//		//	qn = -qn;
+				//		//}
+
+				//		projectionMatrix = Matrix4.Zero;
+				//		projectionMatrix.Item0.X = w;
+				//		projectionMatrix.Item1.Y = h;
+				//		//projectionMatrix.Item2.Z = a;
+				//		projectionMatrix.Item2.W = znear;
+				//		projectionMatrix.Item3.Z = -1;
+
+				//		//!!!!
+				//		projectionMatrix.Transpose();
+				//	}
+				//	else
+				//	{
+				//		double A = 2.0 * inv_w;
+				//		double B = 2.0 * inv_h;
+				//		double C = -( right + left ) * inv_w;
+				//		double D = -( top + bottom ) * inv_h;
+				//		double q = -2.0 * inv_d;
+				//		double qn = -( farClipDistance + nearClipDistance ) * inv_d;
+
+				//		// NB: This creates 'uniform' orthographic projection matrix,
+				//		// which depth range [-1,1], right-handed rules
+				//		//
+				//		// [ A   0   0   C  ]
+				//		// [ 0   B   0   D  ]
+				//		// [ 0   0   q   qn ]
+				//		// [ 0   0   0   1  ]
+				//		//
+				//		// A = 2 * / (right - left)
+				//		// B = 2 * / (top - bottom)
+				//		// C = - (right + left) / (right - left)
+				//		// D = - (top + bottom) / (top - bottom)
+				//		// q = - 2 / (far - near)
+				//		// qn = - (far + near) / (far - near)
+
+				//		//if( RenderingSystem.ReversedZ )
+				//		//{
+				//		//	q = -q;// - 1;
+				//		//	qn = -qn;
+				//		//}
+
+				//		projectionMatrix = Matrix4.Zero;
+				//		projectionMatrix.Item0.X = A;
+				//		projectionMatrix.Item0.Z = C;
+				//		projectionMatrix.Item1.Y = B;
+				//		projectionMatrix.Item1.W = D;
+				//		projectionMatrix.Item2.Z = q;
+				//		projectionMatrix.Item2.W = qn;
+				//		projectionMatrix.Item3.W = 1;
+				//		projectionMatrix.Transpose();
+				//	}
+
+				//	//!!!!
+				//	//// Convert depth range from [-1,+1] to [0,1]
+				//	//projectionMatrix.Transpose();
+				//	//projectionMatrix.Item2 = ( projectionMatrix.Item2 + projectionMatrix.Item3 ) / 2;
+				//	//projectionMatrix.Transpose();
+
+				//	viewMatrix = LookAt( position, position + direction, up );
+				//	viewMatrixRelative = qqqqq;
+
+				//	return;
+				//}
+
+
+				//!!!!
+
+				//{
+				//	double left, right, bottom, top;
+				//	CalcProjectionParameters( out left, out right, out bottom, out top );
+
+				//	double inv_w = 1.0 / ( right - left );
+				//	double inv_h = 1.0 / ( top - bottom );
+				//	double inv_d = 1.0 / ( farClipDistance - nearClipDistance );
+
+				//	if( projection == ProjectionType.Perspective )
+				//	{
+				//		// Calc matrix elements
+				//		double A = 2.0 * nearClipDistance * inv_w;
+				//		double B = 2.0 * nearClipDistance * inv_h;
+				//		double C = ( right + left ) * inv_w;
+				//		double D = ( top + bottom ) * inv_h;
+				//		double q = -( farClipDistance + nearClipDistance ) * inv_d;
+				//		double qn = -2.0 * ( farClipDistance * nearClipDistance ) * inv_d;
+
+				//		// NB: This creates 'uniform' perspective projection matrix,
+				//		// which depth range [-1,1], right-handed rules
+				//		//
+				//		// [ A   0   C   0  ]
+				//		// [ 0   B   D   0  ]
+				//		// [ 0   0   q   qn ]
+				//		// [ 0   0   -1  0  ]
+				//		//
+				//		// A = 2 * near / (right - left)
+				//		// B = 2 * near / (top - bottom)
+				//		// C = (right + left) / (right - left)
+				//		// D = (top + bottom) / (top - bottom)
+				//		// q = - (far + near) / (far - near)
+				//		// qn = - 2 * (far * near) / (far - near)
+
+				//		if( RenderingSystem.ReversedZ )
+				//		{
+				//			q = -q;// - 1;
+				//			qn = -qn;
+				//		}
+
+				//		projectionMatrix = Matrix4.Zero;
+				//		projectionMatrix.Item0.X = A;
+				//		projectionMatrix.Item0.Z = C;
+				//		projectionMatrix.Item1.Y = B;
+				//		projectionMatrix.Item1.Z = D;
+				//		projectionMatrix.Item2.Z = q;
+				//		projectionMatrix.Item2.W = qn;
+				//		projectionMatrix.Item3.Z = -1;
+				//		projectionMatrix.Transpose();
+				//	}
+				//	else
+				//	{
+				//		double A = 2.0 * inv_w;
+				//		double B = 2.0 * inv_h;
+				//		double C = -( right + left ) * inv_w;
+				//		double D = -( top + bottom ) * inv_h;
+				//		double q = -2.0 * inv_d;
+				//		double qn = -( farClipDistance + nearClipDistance ) * inv_d;
+
+				//		// NB: This creates 'uniform' orthographic projection matrix,
+				//		// which depth range [-1,1], right-handed rules
+				//		//
+				//		// [ A   0   0   C  ]
+				//		// [ 0   B   0   D  ]
+				//		// [ 0   0   q   qn ]
+				//		// [ 0   0   0   1  ]
+				//		//
+				//		// A = 2 * / (right - left)
+				//		// B = 2 * / (top - bottom)
+				//		// C = - (right + left) / (right - left)
+				//		// D = - (top + bottom) / (top - bottom)
+				//		// q = - 2 / (far - near)
+				//		// qn = - (far + near) / (far - near)
+
+				//		if( RenderingSystem.ReversedZ )
+				//		{
+				//			q = -q;// - 1;
+				//			qn = -qn;
+				//		}
+
+				//		projectionMatrix = Matrix4.Zero;
+				//		projectionMatrix.Item0.X = A;
+				//		projectionMatrix.Item0.Z = C;
+				//		projectionMatrix.Item1.Y = B;
+				//		projectionMatrix.Item1.W = D;
+				//		projectionMatrix.Item2.Z = q;
+				//		projectionMatrix.Item2.W = qn;
+				//		projectionMatrix.Item3.W = 1;
+				//		projectionMatrix.Transpose();
+				//	}
+
+				//	// Convert depth range from [-1,+1] to [0,1]
+				//	projectionMatrix.Transpose();
+				//	projectionMatrix.Item2 = ( projectionMatrix.Item2 + projectionMatrix.Item3 ) / 2;
+				//	projectionMatrix.Transpose();
+
+				//	viewMatrix = LookAt( position, position + direction, up );
+				//	viewMatrixRelative = qqqqq;
+
+				//	return;
+				//}
+
+
+				//!!!!
+
+				//if( RenderingSystem.ReversedZ )
+				//{
+				//	double left, right, bottom, top;
+				//	CalcProjectionParameters2( out left, out right, out bottom, out top );
+
+				//	var nearClipDistance2 = farClipDistance;
+				//	var farClipDistance2 = nearClipDistance;
+
+
+				//	double inv_w = 1.0 / ( right - left );
+				//	double inv_h = 1.0 / ( top - bottom );
+				//	double inv_d = 1.0 / ( farClipDistance2 - nearClipDistance2 );
+
+				//	if( projection == ProjectionType.Perspective )
+				//	{
+				//		// Calc matrix elements
+				//		double A = 2.0 * nearClipDistance2 * inv_w;
+				//		double B = 2.0 * nearClipDistance2 * inv_h;
+				//		double C = ( right + left ) * inv_w;
+				//		double D = ( top + bottom ) * inv_h;
+				//		double q = -( farClipDistance2 + nearClipDistance2 ) * inv_d;
+				//		double qn = -2.0 * ( farClipDistance2 * nearClipDistance2 ) * inv_d;
+
+				//		// NB: This creates 'uniform' perspective projection matrix,
+				//		// which depth range [-1,1], right-handed rules
+				//		//
+				//		// [ A   0   C   0  ]
+				//		// [ 0   B   D   0  ]
+				//		// [ 0   0   q   qn ]
+				//		// [ 0   0   -1  0  ]
+				//		//
+				//		// A = 2 * near / (right - left)
+				//		// B = 2 * near / (top - bottom)
+				//		// C = (right + left) / (right - left)
+				//		// D = (top + bottom) / (top - bottom)
+				//		// q = - (far + near) / (far - near)
+				//		// qn = - 2 * (far * near) / (far - near)
+
+				//		//if( RenderingSystem.ReversedZ )
+				//		//{
+				//		//	q = -q;// - 1;
+				//		//	qn = -qn;
+				//		//}
+
+				//		projectionMatrix = Matrix4.Zero;
+				//		projectionMatrix.Item0.X = A;
+				//		projectionMatrix.Item0.Z = C;
+				//		projectionMatrix.Item1.Y = B;
+				//		projectionMatrix.Item1.Z = D;
+				//		projectionMatrix.Item2.Z = q;
+				//		projectionMatrix.Item2.W = qn;
+				//		projectionMatrix.Item3.Z = -1;
+				//		projectionMatrix.Transpose();
+				//	}
+				//	else
+				//	{
+				//		double A = 2.0 * inv_w;
+				//		double B = 2.0 * inv_h;
+				//		double C = -( right + left ) * inv_w;
+				//		double D = -( top + bottom ) * inv_h;
+				//		double q = -2.0 * inv_d;
+				//		double qn = -( farClipDistance2 + nearClipDistance2 ) * inv_d;
+
+				//		// NB: This creates 'uniform' orthographic projection matrix,
+				//		// which depth range [-1,1], right-handed rules
+				//		//
+				//		// [ A   0   0   C  ]
+				//		// [ 0   B   0   D  ]
+				//		// [ 0   0   q   qn ]
+				//		// [ 0   0   0   1  ]
+				//		//
+				//		// A = 2 * / (right - left)
+				//		// B = 2 * / (top - bottom)
+				//		// C = - (right + left) / (right - left)
+				//		// D = - (top + bottom) / (top - bottom)
+				//		// q = - 2 / (far - near)
+				//		// qn = - (far + near) / (far - near)
+
+				//		//if( RenderingSystem.ReversedZ )
+				//		//{
+				//		//	q = -q;// - 1;
+				//		//	qn = -qn;
+				//		//}
+
+				//		projectionMatrix = Matrix4.Zero;
+				//		projectionMatrix.Item0.X = A;
+				//		projectionMatrix.Item0.Z = C;
+				//		projectionMatrix.Item1.Y = B;
+				//		projectionMatrix.Item1.W = D;
+				//		projectionMatrix.Item2.Z = q;
+				//		projectionMatrix.Item2.W = qn;
+				//		projectionMatrix.Item3.W = 1;
+				//		projectionMatrix.Transpose();
+				//	}
+
+				//	// Convert depth range from [-1,+1] to [0,1]
+				//	projectionMatrix.Transpose();
+				//	projectionMatrix.Item2 = ( projectionMatrix.Item2 + projectionMatrix.Item3 ) / 2;
+				//	projectionMatrix.Transpose();
+
+				//	viewMatrix = LookAt( position, position + direction, up );
+				//	viewMatrixRelative = qqqqq;
+
+				//	return;
+				//}
+
+
+
 				{
-					// Calc matrix elements
-					double A = 2.0 * nearClipDistance * inv_w;
-					double B = 2.0 * nearClipDistance * inv_h;
-					double C = ( right + left ) * inv_w;
-					double D = ( top + bottom ) * inv_h;
-					double q = -( farClipDistance + nearClipDistance ) * inv_d;
-					double qn = -2.0 * ( farClipDistance * nearClipDistance ) * inv_d;
+					double left, right, bottom, top;
+					CalcProjectionParameters( out left, out right, out bottom, out top );
 
-					// NB: This creates 'uniform' perspective projection matrix,
-					// which depth range [-1,1], right-handed rules
-					//
-					// [ A   0   C   0  ]
-					// [ 0   B   D   0  ]
-					// [ 0   0   q   qn ]
-					// [ 0   0   -1  0  ]
-					//
-					// A = 2 * near / (right - left)
-					// B = 2 * near / (top - bottom)
-					// C = (right + left) / (right - left)
-					// D = (top + bottom) / (top - bottom)
-					// q = - (far + near) / (far - near)
-					// qn = - 2 * (far * near) / (far - near)
+					double inv_w = 1.0 / ( right - left );
+					double inv_h = 1.0 / ( top - bottom );
+					double inv_d = 1.0 / ( farClipDistance - nearClipDistance );
 
-					projectionMatrix = Matrix4.Zero;
-					projectionMatrix.Item0.X = A;
-					projectionMatrix.Item0.Z = C;
-					projectionMatrix.Item1.Y = B;
-					projectionMatrix.Item1.Z = D;
-					projectionMatrix.Item2.Z = q;
-					projectionMatrix.Item2.W = qn;
-					projectionMatrix.Item3.Z = -1;
+					if( projection == ProjectionType.Perspective )
+					{
+						// Calc matrix elements
+						double A = 2.0 * nearClipDistance * inv_w;
+						double B = 2.0 * nearClipDistance * inv_h;
+						double C = ( right + left ) * inv_w;
+						double D = ( top + bottom ) * inv_h;
+						double q = -( farClipDistance + nearClipDistance ) * inv_d;
+						double qn = -2.0 * ( farClipDistance * nearClipDistance ) * inv_d;
+
+						// NB: This creates 'uniform' perspective projection matrix,
+						// which depth range [-1,1], right-handed rules
+						//
+						// [ A   0   C   0  ]
+						// [ 0   B   D   0  ]
+						// [ 0   0   q   qn ]
+						// [ 0   0   -1  0  ]
+						//
+						// A = 2 * near / (right - left)
+						// B = 2 * near / (top - bottom)
+						// C = (right + left) / (right - left)
+						// D = (top + bottom) / (top - bottom)
+						// q = - (far + near) / (far - near)
+						// qn = - 2 * (far * near) / (far - near)
+
+						if( RenderingSystem.ReversedZ )
+						{
+							q = -q;// - 1;
+							qn = -qn;
+						}
+
+						projectionMatrix = Matrix4F.Zero;
+						projectionMatrix.Item0.X = (float)A;
+						projectionMatrix.Item0.Z = (float)C;
+						projectionMatrix.Item1.Y = (float)B;
+						projectionMatrix.Item1.Z = (float)D;
+						projectionMatrix.Item2.Z = (float)q;
+						projectionMatrix.Item2.W = (float)qn;
+						projectionMatrix.Item3.Z = -1;
+						projectionMatrix.Transpose();
+					}
+					else
+					{
+						double A = 2.0 * inv_w;
+						double B = 2.0 * inv_h;
+						double C = -( right + left ) * inv_w;
+						double D = -( top + bottom ) * inv_h;
+						double q = -2.0 * inv_d;
+						double qn = -( farClipDistance + nearClipDistance ) * inv_d;
+
+						// NB: This creates 'uniform' orthographic projection matrix,
+						// which depth range [-1,1], right-handed rules
+						//
+						// [ A   0   0   C  ]
+						// [ 0   B   0   D  ]
+						// [ 0   0   q   qn ]
+						// [ 0   0   0   1  ]
+						//
+						// A = 2 * / (right - left)
+						// B = 2 * / (top - bottom)
+						// C = - (right + left) / (right - left)
+						// D = - (top + bottom) / (top - bottom)
+						// q = - 2 / (far - near)
+						// qn = - (far + near) / (far - near)
+
+						if( RenderingSystem.ReversedZ )
+						{
+							q = -q;// - 1;
+							qn = -qn;
+						}
+
+						projectionMatrix = Matrix4F.Zero;
+						projectionMatrix.Item0.X = (float)A;
+						projectionMatrix.Item0.Z = (float)C;
+						projectionMatrix.Item1.Y = (float)B;
+						projectionMatrix.Item1.W = (float)D;
+						projectionMatrix.Item2.Z = (float)q;
+						projectionMatrix.Item2.W = (float)qn;
+						projectionMatrix.Item3.W = 1;
+						projectionMatrix.Transpose();
+					}
+
+					// Convert depth range from [-1,+1] to [0,1]
 					projectionMatrix.Transpose();
-				}
-				else
-				{
-					double A = 2.0 * inv_w;
-					double B = 2.0 * inv_h;
-					double C = -( right + left ) * inv_w;
-					double D = -( top + bottom ) * inv_h;
-					double q = -2.0 * inv_d;
-					double qn = -( farClipDistance + nearClipDistance ) * inv_d;
-
-					// NB: This creates 'uniform' orthographic projection matrix,
-					// which depth range [-1,1], right-handed rules
-					//
-					// [ A   0   0   C  ]
-					// [ 0   B   0   D  ]
-					// [ 0   0   q   qn ]
-					// [ 0   0   0   1  ]
-					//
-					// A = 2 * / (right - left)
-					// B = 2 * / (top - bottom)
-					// C = - (right + left) / (right - left)
-					// D = - (top + bottom) / (top - bottom)
-					// q = - 2 / (far - near)
-					// qn = - (far + near) / (far - near)
-
-					projectionMatrix = Matrix4.Zero;
-					projectionMatrix.Item0.X = A;
-					projectionMatrix.Item0.Z = C;
-					projectionMatrix.Item1.Y = B;
-					projectionMatrix.Item1.W = D;
-					projectionMatrix.Item2.Z = q;
-					projectionMatrix.Item2.W = qn;
-					projectionMatrix.Item3.W = 1;
+					projectionMatrix.Item2 = ( projectionMatrix.Item2 + projectionMatrix.Item3 ) / 2;
 					projectionMatrix.Transpose();
+
+					viewMatrixAbsolute = LookAt( position, position + direction, up );
+
+					if( !ownerViewportCameraPosition.HasValue )
+					{
+						viewMatrixRelative = LookAt( Vector3.Zero, direction, up ).ToMatrix4F();
+					}
+					else
+					{
+						//for shadows
+						var pos = position - ownerViewportCameraPosition.Value;
+						viewMatrixRelative = LookAt( pos, pos + direction, up ).ToMatrix4F();
+					}
 				}
-
-				// Convert depth range from [-1,+1] to [0,1]
-				projectionMatrix.Transpose();
-				projectionMatrix.Item2 = ( projectionMatrix.Item2 + projectionMatrix.Item3 ) / 2;
-				projectionMatrix.Transpose();
-
-				viewMatrix = LookAt( position, position + direction, up );
 			}
 
 			static void MultiplyProjectWTo1( ref Matrix4 m, ref Vector3 v, out Vector3 result )
@@ -533,6 +895,16 @@ namespace NeoAxis
 				double invW = 1.0 / del;
 				//double invW = 1.0 / ( m.Item0.W * v.X + m.Item1.W * v.Y + m.Item2.W * v.Z + m.Item3.W );
 				result = ( m * v ) * invW;
+			}
+
+			static void MultiplyProjectWTo1( ref Matrix4F m, ref Vector3 v, out Vector3 result )
+			{
+				var del = m.Item0.W * v.X + m.Item1.W * v.Y + m.Item2.W * v.Z + m.Item3.W;
+				if( del == 0 )
+					del = 0.000001;
+				double invW = 1.0 / del;
+				//double invW = 1.0 / ( m.Item0.W * v.X + m.Item1.W * v.Y + m.Item2.W * v.Z + m.Item3.W );
+				result = ( m * v.ToVector3F() ) * (float)invW;
 			}
 
 			/// <summary>
@@ -548,7 +920,7 @@ namespace NeoAxis
 				screenPosition = new Vector2( -1, -1 );
 
 				// Don't use getViewMatrix here, incase overrided by camera and return a cull frustum view matrix
-				Matrix4.Multiply( ref viewMatrix, ref position, out var eyeSpacePos );
+				Matrix4.Multiply( ref viewMatrixAbsolute, ref position, out var eyeSpacePos );
 				//Vector3 eyeSpacePos = viewMatrix * position;
 				//Vec3 eyeSpacePos = viewMatrix.transformAffine( position );
 
@@ -587,7 +959,7 @@ namespace NeoAxis
 			/// <returns>The ray.</returns>
 			public void GetRayByScreenCoordinates( ref Vector2 screenPosition, out Ray result )
 			{
-				var inverseViewProjection = GetViewProjectionInverseMatrix();
+				var inverseViewProjection = GetViewProjectionInverseMatrixAbsolute();
 				//if( inverseViewProjectionNeedUpdate )
 				//{
 				//	( projectionMatrix * viewMatrix ).GetInverse( out inverseViewProjection );
@@ -635,21 +1007,32 @@ namespace NeoAxis
 				return result;
 			}
 
-			public ref Matrix4 GetViewProjectionMatrix()
+			public ref Matrix4 GetViewProjectionMatrixAbsolute()
 			{
-				if( !viewProjectionMatrixCalculated )
+				if( !viewProjectionMatrixAbsoluteCalculated )
 				{
-					Matrix4.Multiply( ref projectionMatrix, ref viewMatrix, out viewProjectionMatrix );
-					viewProjectionMatrixCalculated = true;
+					projectionMatrix.ToMatrix4( out var p2 );
+					Matrix4.Multiply( ref p2, ref viewMatrixAbsolute, out viewProjectionMatrixAbsolute );
+					viewProjectionMatrixAbsoluteCalculated = true;
 				}
-				return ref viewProjectionMatrix;
+				return ref viewProjectionMatrixAbsolute;
 			}
 
-			public ref Matrix4 GetViewProjectionInverseMatrix()
+			public ref Matrix4F GetViewProjectionMatrixRelative()
+			{
+				if( !viewProjectionMatrixRelativeCalculated )
+				{
+					Matrix4F.Multiply( ref projectionMatrix, ref viewMatrixRelative, out viewProjectionMatrixRelative );
+					viewProjectionMatrixRelativeCalculated = true;
+				}
+				return ref viewProjectionMatrixRelative;
+			}
+
+			public ref Matrix4 GetViewProjectionInverseMatrixAbsolute()
 			{
 				if( !viewProjectionInverseMatrixCalculated )
 				{
-					GetViewProjectionMatrix().GetInverse( out viewProjectionInverseMatrix );
+					GetViewProjectionMatrixAbsolute().GetInverse( out viewProjectionInverseMatrix );
 					viewProjectionInverseMatrixCalculated = true;
 				}
 				return ref viewProjectionInverseMatrix;

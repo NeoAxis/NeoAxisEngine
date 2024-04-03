@@ -38,14 +38,14 @@ namespace NeoAxis
 		/// The target object.
 		/// </summary>
 		[DefaultValue( null )]
-		public Reference<RegulatorSwitchInSpace> Target
+		public Reference<Regulator> Target
 		{
 			get { if( _target.BeginGet() ) Target = _target.Get( this ); return _target.value; }
-			set { if( _target.BeginSet( ref value ) ) { try { TargetChanged?.Invoke( this ); } finally { _target.EndSet(); } } }
+			set { if( _target.BeginSet( this, ref value ) ) { try { TargetChanged?.Invoke( this ); } finally { _target.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Target"/> property value changes.</summary>
 		public event Action<CharacterAITask_TurnSwitch> TargetChanged;
-		ReferenceField<RegulatorSwitchInSpace> _target = null;
+		ReferenceField<Regulator> _target = null;
 
 		/// <summary>
 		/// Required value to be set by the character.
@@ -54,7 +54,7 @@ namespace NeoAxis
 		public Reference<double> RequiredValue
 		{
 			get { if( _requiredValue.BeginGet() ) RequiredValue = _requiredValue.Get( this ); return _requiredValue.value; }
-			set { if( _requiredValue.BeginSet( ref value ) ) { try { RequiredValueChanged?.Invoke( this ); } finally { _requiredValue.EndSet(); } } }
+			set { if( _requiredValue.BeginSet( this, ref value ) ) { try { RequiredValueChanged?.Invoke( this ); } finally { _requiredValue.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RequiredValue"/> property value changes.</summary>
 		public event Action<CharacterAITask_TurnSwitch> RequiredValueChanged;
@@ -67,7 +67,7 @@ namespace NeoAxis
 		public Reference<bool> TwoHands
 		{
 			get { if( _twoHands.BeginGet() ) TwoHands = _twoHands.Get( this ); return _twoHands.value; }
-			set { if( _twoHands.BeginSet( ref value ) ) { try { TwoHandsChanged?.Invoke( this ); } finally { _twoHands.EndSet(); } } }
+			set { if( _twoHands.BeginSet( this, ref value ) ) { try { TwoHandsChanged?.Invoke( this ); } finally { _twoHands.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TwoHands"/> property value changes.</summary>
 		public event Action<CharacterAITask_TurnSwitch> TwoHandsChanged;
@@ -75,7 +75,7 @@ namespace NeoAxis
 
 		///////////////////////////////////////////////
 
-		void GetHandPositions( RegulatorSwitchInSpace target, bool forward, out double handsFactor, out Transform leftHandTransform, out Transform rightHandTransform, out bool idling )
+		void GetHandPositions( Regulator target, bool forward, out double handsFactor, out Transform leftHandTransform, out Transform rightHandTransform, out bool idling )
 		{
 			handsFactor = 0;
 			leftHandTransform = Transform.Identity;
@@ -87,7 +87,7 @@ namespace NeoAxis
 				handsFactor = MathEx.Saturate( currentTimeToGetWorkingState / totalTimeToGetWorkingState );
 
 				var tr = target.TransformV;
-				var center = tr.Position + tr.Rotation * new Vector3( target.ValveOffset, 0, 0 );
+				var center = tr.Position + tr.Rotation * new Vector3( target.TypeCached.ValveOffset, 0, 0 );
 
 				double time;
 				{
@@ -117,7 +117,7 @@ namespace NeoAxis
 				var angleRange = new Range( new Degree( 60 ).InRadians(), new Degree( -60 ).InRadians() );
 				var angle = MathEx.Lerp( angleRange.Minimum, angleRange.Maximum, angleFactor );
 
-				var offset = tr.Rotation * new Vector3( 0, Math.Cos( angle ), Math.Sin( angle ) ) * target.ValveRadius;
+				var offset = tr.Rotation * new Vector3( 0, Math.Cos( angle ), Math.Sin( angle ) ) * target.TypeCached.ValveRadius;
 
 				var leftHandPosition = center - offset;
 				var rightHandPosition = center + offset;
@@ -170,7 +170,7 @@ namespace NeoAxis
 
 					case StateEnum.Working:
 						if( !idling )
-							target.SumulateRequiredValue( RequiredValue, Time.SimulationDelta );
+							target.SimulateRequiredValue( RequiredValue, Time.SimulationDelta );
 						if( target.Value == RequiredValue )
 							currentState = StateEnum.Finishing;
 						break;

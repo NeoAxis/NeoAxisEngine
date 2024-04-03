@@ -11,9 +11,11 @@ namespace NeoAxis
 	/// </summary>
 	public class CurveSpline1 : Curve1
 	{
-#if WINDOWS
-		[MethodImpl( (MethodImplOptions)512 )]
-#endif
+		public CurveSpline1( int initialCapacity = 4 )
+			: base( initialCapacity )
+		{
+		}
+
 		protected double GetValueForIndex( int index )
 		{
 			int n = points.Count - 1;
@@ -25,9 +27,6 @@ namespace NeoAxis
 			return points[ index ].value;
 		}
 
-#if WINDOWS
-		[MethodImpl( (MethodImplOptions)512 )]
-#endif
 		protected double GetTimeForIndex( int index )
 		{
 			int n = points.Count - 1;

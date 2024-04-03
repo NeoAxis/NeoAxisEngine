@@ -19,7 +19,7 @@ namespace NeoAxis
 		public Reference<double> UIEditorAspectRatio
 		{
 			get { if( _uiEditorAspectRatio.BeginGet() ) UIEditorAspectRatio = _uiEditorAspectRatio.Get( this ); return _uiEditorAspectRatio.value; }
-			set { if( _uiEditorAspectRatio.BeginSet( ref value ) ) { try { UIEditorAspectRatioChanged?.Invoke( this ); } finally { _uiEditorAspectRatio.EndSet(); } } }
+			set { if( _uiEditorAspectRatio.BeginSet( this, ref value ) ) { try { UIEditorAspectRatioChanged?.Invoke( this ); } finally { _uiEditorAspectRatio.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UIEditorAspectRatio"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_UIEditor> UIEditorAspectRatioChanged;
@@ -34,7 +34,7 @@ namespace NeoAxis
 		public Reference<bool> UIEditorDisplayGrid
 		{
 			get { if( _uIEditorDisplayGrid.BeginGet() ) UIEditorDisplayGrid = _uIEditorDisplayGrid.Get( this ); return _uIEditorDisplayGrid.value; }
-			set { if( _uIEditorDisplayGrid.BeginSet( ref value ) ) { try { UIEditorDisplayGridChanged?.Invoke( this ); } finally { _uIEditorDisplayGrid.EndSet(); } } }
+			set { if( _uIEditorDisplayGrid.BeginSet( this, ref value ) ) { try { UIEditorDisplayGridChanged?.Invoke( this ); } finally { _uIEditorDisplayGrid.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UIEditorDisplayGrid"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_UIEditor> UIEditorDisplayGridChanged;
@@ -51,7 +51,7 @@ namespace NeoAxis
 		public Reference<double> UIEditorParentMeasureStepMovement
 		{
 			get { if( _uIEditorParentMeasureStepMovement.BeginGet() ) UIEditorParentMeasureStepMovement = _uIEditorParentMeasureStepMovement.Get( this ); return _uIEditorParentMeasureStepMovement.value; }
-			set { if( _uIEditorParentMeasureStepMovement.BeginSet( ref value ) ) { try { UIEditorParentMeasureStepMovementChanged?.Invoke( this ); } finally { _uIEditorParentMeasureStepMovement.EndSet(); } } }
+			set { if( _uIEditorParentMeasureStepMovement.BeginSet( this, ref value ) ) { try { UIEditorParentMeasureStepMovementChanged?.Invoke( this ); } finally { _uIEditorParentMeasureStepMovement.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UIEditorParentMeasureStepMovement"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_UIEditor> UIEditorParentMeasureStepMovementChanged;
@@ -66,7 +66,7 @@ namespace NeoAxis
 		public Reference<double> UIEditorUnitsMeasureStepMovement
 		{
 			get { if( _uIEditorUnitsMeasureStepMovement.BeginGet() ) UIEditorUnitsMeasureStepMovement = _uIEditorUnitsMeasureStepMovement.Get( this ); return _uIEditorUnitsMeasureStepMovement.value; }
-			set { if( _uIEditorUnitsMeasureStepMovement.BeginSet( ref value ) ) { try { UIEditorUnitsMeasureStepMovementChanged?.Invoke( this ); } finally { _uIEditorUnitsMeasureStepMovement.EndSet(); } } }
+			set { if( _uIEditorUnitsMeasureStepMovement.BeginSet( this, ref value ) ) { try { UIEditorUnitsMeasureStepMovementChanged?.Invoke( this ); } finally { _uIEditorUnitsMeasureStepMovement.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UIEditorUnitsMeasureStepMovement"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_UIEditor> UIEditorUnitsMeasureStepMovementChanged;
@@ -81,7 +81,7 @@ namespace NeoAxis
 		public Reference<double> UIEditorPixelsMeasureStepMovement
 		{
 			get { if( _uIEditorPixelsMeasureStepMovement.BeginGet() ) UIEditorPixelsMeasureStepMovement = _uIEditorPixelsMeasureStepMovement.Get( this ); return _uIEditorPixelsMeasureStepMovement.value; }
-			set { if( _uIEditorPixelsMeasureStepMovement.BeginSet( ref value ) ) { try { UIEditorPixelsMeasureStepMovementChanged?.Invoke( this ); } finally { _uIEditorPixelsMeasureStepMovement.EndSet(); } } }
+			set { if( _uIEditorPixelsMeasureStepMovement.BeginSet( this, ref value ) ) { try { UIEditorPixelsMeasureStepMovementChanged?.Invoke( this ); } finally { _uIEditorPixelsMeasureStepMovement.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UIEditorPixelsMeasureStepMovement"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_UIEditor> UIEditorPixelsMeasureStepMovementChanged;
@@ -96,7 +96,7 @@ namespace NeoAxis
 		public Reference<double> UIEditorScreenMeasureStepMovement
 		{
 			get { if( _uIEditorScreenMeasureStepMovement.BeginGet() ) UIEditorScreenMeasureStepMovement = _uIEditorScreenMeasureStepMovement.Get( this ); return _uIEditorScreenMeasureStepMovement.value; }
-			set { if( _uIEditorScreenMeasureStepMovement.BeginSet( ref value ) ) { try { UIEditorScreenMeasureStepMovementChanged?.Invoke( this ); } finally { _uIEditorScreenMeasureStepMovement.EndSet(); } } }
+			set { if( _uIEditorScreenMeasureStepMovement.BeginSet( this, ref value ) ) { try { UIEditorScreenMeasureStepMovementChanged?.Invoke( this ); } finally { _uIEditorScreenMeasureStepMovement.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="UIEditorScreenMeasureStepMovement"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_UIEditor> UIEditorScreenMeasureStepMovementChanged;

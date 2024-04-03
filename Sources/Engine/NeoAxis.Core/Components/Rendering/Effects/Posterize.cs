@@ -29,7 +29,7 @@ namespace NeoAxis
 		public Reference<double> Levels
 		{
 			get { if( _levels.BeginGet() ) Levels = _levels.Get( this ); return _levels.value; }
-			set { if( _levels.BeginSet( ref value ) ) { try { LevelsChanged?.Invoke( this ); } finally { _levels.EndSet(); } } }
+			set { if( _levels.BeginSet( this, ref value ) ) { try { LevelsChanged?.Invoke( this ); } finally { _levels.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Levels"/> property value changes.</summary>
 		public event Action<RenderingEffect_Posterize> LevelsChanged;

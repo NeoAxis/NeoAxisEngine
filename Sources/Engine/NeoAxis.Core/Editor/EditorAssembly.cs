@@ -1,12 +1,9 @@
-﻿#if !DEPLOY
+﻿//#if !DEPLOY
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Reflection;
-using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
 
 namespace NeoAxis.Editor
 {
@@ -76,15 +73,76 @@ namespace NeoAxis.Editor
 
 		/////////////////////////////////////////
 
+#if !DEPLOY
 		public abstract void ImportFBX( ImportGeneral.Settings settings, out string error );
 		public abstract void ImportAssimp( ImportGeneral.Settings settings, out string error );
 		public abstract bool ExportToFBX( Mesh sourceMesh, string realFileName, out string error );
+#endif
 
 		/////////////////////////////////////////
 
-		public abstract HCDropDownControl CreateColorValuePoweredSelectControl( HCItemProperty itemProperty );
-		public abstract bool ColorValuePoweredSelectFormShowDialog( Point location, ColorValuePowered initialColor, out ColorValuePowered resultColor );
+		//public abstract HCDropDownControl CreateColorValuePoweredSelectControl( HCItemProperty itemProperty );
+		//public abstract bool ColorValuePoweredSelectFormShowDialog( Point location, ColorValuePowered initialColor, out ColorValuePowered resultColor );
+
+		/////////////////////////////////////////
+
+		public abstract EDialogResult ShowQuestion( string text, EMessageBoxButtons buttons, string caption = null );
+		public abstract void ShowWarning( string text, string caption = null );
+		public abstract void ShowInfo( string text, string caption = null );
+
+		//public abstract float GetDPI();
+		//public abstract float GetDPIScale();
+
+		public abstract IDocumentInstance GetDocumentByComponent( Component component );
+		public abstract IDocumentInstance GetDocumentByObject( object obj );
+		public abstract string CreateEditorDocumentXmlConfiguration( IEnumerable<Component> components, Component selected = null );
+
+		public abstract bool GetDarkTheme();
+
+		public abstract string Translate( string group, string text );
+
+		public abstract IDocumentWindow[] FindDocumentWindowsWithObject( object obj );
+		public abstract void CloseAllDocumentWindowsOnSecondLevelWithDeletedObjects( IDocumentInstance document );
+		public abstract ScreenNotifications.IStickyNotificationItem ShowScreenNotification( string text, bool error, bool sticky );
+		public abstract void SelectDockWindow( IDockWindow window );
+		public abstract IDocumentWindow OpenDocumentWindowForObject( IDocumentInstance document, object obj );
+		public abstract IEditorAction[] GetEditorActions();
+		public abstract FlowGraphNodeStyle Get_FlowGraphNodeStyle_Rectangle_Instance();
+
+		public abstract bool EditorCommandLineTools_PlatformProjectPatch_Process( string destFile, string baseProjectFileName, out string error, out bool changed );
+
+		public abstract void RegisterEditorAsembly( Assembly assembly, Type[] exportedTypes );
+		public abstract void UnregisterEditorAsembly( Assembly assembly );
+
+		public abstract IDocumentWindow[] GetAllDocumentWindowsOfDocument( IDocumentInstance document );
+
+		public abstract void ContentBrowserUtility_AllContentBrowsers_SuspendChildrenChangedEvent();
+		public abstract void ContentBrowserUtility_AllContentBrowsers_ResumeChildrenChangedEvent();
+
+		public abstract IEditorAction GetEditorActionByName( string name );
+
+		public abstract IEditorRibbonDefaultConfigurationTab[] GetEditorRibbonDefaultConfigurationTabs();
+
+		public abstract void SurfaceEditorUtility_CreatePreviewObjects( Scene scene, Surface surface );
+
+		public abstract bool IsAnyTransformToolInModifyingMode();
+
+		public abstract void PreviewImagesManager_RegisterResourceType( string typeName );
+
+		public abstract void XmlDocumentationFiles_Load( string xmlFile );
+
+		public abstract void DocumentationLinksManager_AddNameByType( Type type, string name );
+
+		public abstract void OpenSelectTypeWindow( SelectTypeWindowInitData initData );
+
+		public abstract void Product_Store_ImageGenerator_WriteBitmapToStream( Stream writeStream, Product_Store.ImageGenerator.ImageFormat writeImageFormat, Vector2I imageSizeRender, Vector2I imageSizeOutput, IntPtr imageData );
+
+#if !DEPLOY
+		public abstract EditorContextMenu.Item EditorContextMenuNewItem( string text, EventHandler clickHandler );
+		public abstract EditorContextMenu.Separator EditorContextMenuNewSeparator();
+		public abstract void EditorContextMenuShow( ICollection<EditorContextMenu.ItemBase> items, Vector2I? screenPosition );
+#endif
 	}
 }
 
-#endif
+//#endif

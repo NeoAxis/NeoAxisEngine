@@ -17,7 +17,7 @@ namespace NeoAxis
 		public Reference<bool> Run
 		{
 			get { if( _run.BeginGet() ) Run = _run.Get( this ); return _run.value; }
-			set { if( _run.BeginSet( ref value ) ) { try { RunChanged?.Invoke( this ); } finally { _run.EndSet(); } } }
+			set { if( _run.BeginSet( this, ref value ) ) { try { RunChanged?.Invoke( this ); } finally { _run.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Run"/> property value changes.</summary>
 		public event Action<CharacterAITask_MoveTo> RunChanged;
@@ -31,7 +31,7 @@ namespace NeoAxis
 		public Reference<double> DistanceToReach
 		{
 			get { if( _distanceToReach.BeginGet() ) DistanceToReach = _distanceToReach.Get( this ); return _distanceToReach.value; }
-			set { if( _distanceToReach.BeginSet( ref value ) ) { try { DistanceToReachChanged?.Invoke( this ); } finally { _distanceToReach.EndSet(); } } }
+			set { if( _distanceToReach.BeginSet( this, ref value ) ) { try { DistanceToReachChanged?.Invoke( this ); } finally { _distanceToReach.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DistanceToReach"/> property value changes.</summary>
 		public event Action<CharacterAITask_MoveTo> DistanceToReachChanged;
@@ -54,7 +54,7 @@ namespace NeoAxis
 		public Reference<Vector3> Target
 		{
 			get { if( _target.BeginGet() ) Target = _target.Get( this ); return _target.value; }
-			set { if( _target.BeginSet( ref value ) ) { try { TargetChanged?.Invoke( this ); } finally { _target.EndSet(); } } }
+			set { if( _target.BeginSet( this, ref value ) ) { try { TargetChanged?.Invoke( this ); } finally { _target.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Target"/> property value changes.</summary>
 		public event Action<CharacterAITask_MoveToPosition> TargetChanged;
@@ -77,7 +77,7 @@ namespace NeoAxis
 		public Reference<ObjectInSpace> Target
 		{
 			get { if( _target.BeginGet() ) Target = _target.Get( this ); return _target.value; }
-			set { if( _target.BeginSet( ref value ) ) { try { TargetChanged?.Invoke( this ); } finally { _target.EndSet(); } } }
+			set { if( _target.BeginSet( this, ref value ) ) { try { TargetChanged?.Invoke( this ); } finally { _target.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Target"/> property value changes.</summary>
 		public event Action<CharacterAITask_MoveToObject> TargetChanged;

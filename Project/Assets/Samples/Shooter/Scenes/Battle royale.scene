@@ -107,6 +107,8 @@
 	{
 		Name = Game Mode
 		UseBuiltInCamera = FirstPerson
+		ThirdPersonCameraHorizontalAngle = -89.99999999999993
+		InventoryWidget = True
 		CutsceneStarted = False
 		CutsceneGuiFadingFactor = 0
 		CutsceneGuiFadingSpeed = 0

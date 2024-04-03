@@ -17,7 +17,7 @@ namespace NeoAxis
 		public Reference<TypeEnum> Type
 		{
 			get { if( _type.BeginGet() ) Type = _type.Get( this ); return _type.value; }
-			set { if( _type.BeginSet( ref value ) ) { try { TypeChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _type.EndSet(); } } }
+			set { if( _type.BeginSet( this, ref value ) ) { try { TypeChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _type.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Type"/> property value changes.</summary>
 		public event Action<ParticleAccelerationByTime> TypeChanged;
@@ -31,7 +31,7 @@ namespace NeoAxis
 		public Reference<Vector3F> Constant
 		{
 			get { if( _constant.BeginGet() ) Constant = _constant.Get( this ); return _constant.value; }
-			set { if( _constant.BeginSet( ref value ) ) { try { ConstantChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _constant.EndSet(); } } }
+			set { if( _constant.BeginSet( this, ref value ) ) { try { ConstantChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _constant.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Constant"/> property value changes.</summary>
 		public event Action<ParticleAccelerationByTime> ConstantChanged;
@@ -45,7 +45,7 @@ namespace NeoAxis
 		public Reference<RangeVector3F> Range
 		{
 			get { if( _range.BeginGet() ) Range = _range.Get( this ); return _range.value; }
-			set { if( _range.BeginSet( ref value ) ) { try { RangeChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _range.EndSet(); } } }
+			set { if( _range.BeginSet( this, ref value ) ) { try { RangeChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } finally { _range.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Range"/> property value changes.</summary>
 		public event Action<ParticleAccelerationByTime> RangeChanged;
@@ -56,44 +56,44 @@ namespace NeoAxis
 		/// </summary>
 		[Serialize]
 		[Cloneable( CloneType.Deep )]
-		public ReferenceList<ParticleSystem.CurvePoint> CurveX
+		public ReferenceList<CurvePoint1F> CurveX
 		{
 			get { return _curveX; }
 		}
 		public delegate void CurveChangedDelegate( ParticleAccelerationByTime sender );
 		public event CurveChangedDelegate CurveXChanged;
-		ReferenceList<ParticleSystem.CurvePoint> _curveX;
+		ReferenceList<CurvePoint1F> _curveX;
 
 		/// <summary>
 		/// A value specified by the curve for Y axis over time.
 		/// </summary>
 		[Serialize]
 		[Cloneable( CloneType.Deep )]
-		public ReferenceList<ParticleSystem.CurvePoint> CurveY
+		public ReferenceList<CurvePoint1F> CurveY
 		{
 			get { return _curveY; }
 		}
 		public event CurveChangedDelegate CurveYChanged;
-		ReferenceList<ParticleSystem.CurvePoint> _curveY;
+		ReferenceList<CurvePoint1F> _curveY;
 
 		/// <summary>
 		/// A value specified by the curve for Z axis over time.
 		/// </summary>
 		[Serialize]
 		[Cloneable( CloneType.Deep )]
-		public ReferenceList<ParticleSystem.CurvePoint> CurveZ
+		public ReferenceList<CurvePoint1F> CurveZ
 		{
 			get { return _curveZ; }
 		}
 		public event CurveChangedDelegate CurveZChanged;
-		ReferenceList<ParticleSystem.CurvePoint> _curveZ;
+		ReferenceList<CurvePoint1F> _curveZ;
 
 		//!!!!its need for "Start" Acceleration
 		//[DefaultValue( LockedAxesEnum.None )]
 		//public Reference<LockedAxesEnum> LockedAxes
 		//{
 		//	get { if( _lockedAxes.BeginGet() ) LockedAxes = _lockedAxes.Get( this ); return _lockedAxes.value; }
-		//	set { if( _lockedAxes.BeginSet( ref value ) ) { try { LockedAxesChanged?.Invoke( this ); } finally { _lockedAxes.EndSet(); } } }
+		//	set { if( _lockedAxes.BeginSet( this, ref value ) ) { try { LockedAxesChanged?.Invoke( this ); } finally { _lockedAxes.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="LockedAxes"/> property value changes.</summary>
 		//public event Action<ParticleAccelerationByTime> LockedAxesChanged;
@@ -123,9 +123,9 @@ namespace NeoAxis
 
 		public ParticleAccelerationByTime()
 		{
-			_curveX = new ReferenceList<ParticleSystem.CurvePoint>( this, delegate () { CurveXChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } );
-			_curveY = new ReferenceList<ParticleSystem.CurvePoint>( this, delegate () { CurveYChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } );
-			_curveZ = new ReferenceList<ParticleSystem.CurvePoint>( this, delegate () { CurveZChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } );
+			_curveX = new ReferenceList<CurvePoint1F>( this, delegate () { CurveXChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } );
+			_curveY = new ReferenceList<CurvePoint1F>( this, delegate () { CurveYChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } );
+			_curveZ = new ReferenceList<CurvePoint1F>( this, delegate () { CurveZChanged?.Invoke( this ); ShouldRecompileParticleSystem(); } );
 		}
 
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )

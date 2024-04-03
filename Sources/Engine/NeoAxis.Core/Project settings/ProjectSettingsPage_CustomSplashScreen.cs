@@ -28,7 +28,7 @@
 //		public Reference<EngineSplashScreenStyleEnum> EngineSplashScreenStyle
 //		{
 //			get { if( _engineSplashScreenStyle.BeginGet() ) EngineSplashScreenStyle = _engineSplashScreenStyle.Get( this ); return _engineSplashScreenStyle.value; }
-//			set { if( _engineSplashScreenStyle.BeginSet( ref value ) ) { try { EngineSplashScreenStyleChanged?.Invoke( this ); } finally { _engineSplashScreenStyle.EndSet(); } } }
+//			set { if( _engineSplashScreenStyle.BeginSet( this, ref value ) ) { try { EngineSplashScreenStyleChanged?.Invoke( this ); } finally { _engineSplashScreenStyle.EndSet(); } } }
 //		}
 //		/// <summary>Occurs when the <see cref="EngineSplashScreenStyle"/> property value changes.</summary>
 //		public event Action<ProjectSettingsPage_CustomSplashScreen> EngineSplashScreenStyleChanged;
@@ -58,7 +58,7 @@
 //		//public Reference<double> EngineSplashScreenTime
 //		//{
 //		//	get { if( _engineSplashScreenTime.BeginGet() ) EngineSplashScreenTime = _engineSplashScreenTime.Get( this ); return _engineSplashScreenTime.value; }
-//		//	set { if( _engineSplashScreenTime.BeginSet( ref value ) ) { try { EngineSplashScreenTimeChanged?.Invoke( this ); } finally { _engineSplashScreenTime.EndSet(); } } }
+//		//	set { if( _engineSplashScreenTime.BeginSet( this, ref value ) ) { try { EngineSplashScreenTimeChanged?.Invoke( this ); } finally { _engineSplashScreenTime.EndSet(); } } }
 //		//}
 //		///// <summary>Occurs when the <see cref="EngineSplashScreenTime"/> property value changes.</summary>
 //		//public event Action<ProjectSettingsComponentPage_CustomSplashScreen> EngineSplashScreenTimeChanged;
@@ -74,7 +74,7 @@
 //		//public Reference<bool> CustomizeSplashScreen
 //		//{
 //		//	get { if( _customizeSplashScreen.BeginGet() ) CustomizeSplashScreen = _customizeSplashScreen.Get( this ); return _customizeSplashScreen.value; }
-//		//	set { if( _customizeSplashScreen.BeginSet( ref value ) ) { try { CustomizeSplashScreenChanged?.Invoke( this ); } finally { _customizeSplashScreen.EndSet(); } } }
+//		//	set { if( _customizeSplashScreen.BeginSet( this, ref value ) ) { try { CustomizeSplashScreenChanged?.Invoke( this ); } finally { _customizeSplashScreen.EndSet(); } } }
 //		//}
 //		///// <summary>Occurs when the <see cref="CustomizeSplashScreen"/> property value changes.</summary>
 //		//public event Action<ProjectSettingsComponentPage_CustomSplashScreen> CustomizeSplashScreenChanged;
@@ -90,7 +90,7 @@
 //		//public Reference<Image> SplashScreenImage
 //		//{
 //		//	get { if( _splashScreenImage.BeginGet() ) SplashScreenImage = _splashScreenImage.Get( this ); return _splashScreenImage.value; }
-//		//	set { if( _splashScreenImage.BeginSet( ref value ) ) { try { SplashScreenImageChanged?.Invoke( this ); } finally { _splashScreenImage.EndSet(); } } }
+//		//	set { if( _splashScreenImage.BeginSet( this, ref value ) ) { try { SplashScreenImageChanged?.Invoke( this ); } finally { _splashScreenImage.EndSet(); } } }
 //		//}
 //		///// <summary>Occurs when the <see cref="SplashScreenImage"/> property value changes.</summary>
 //		//public event Action<ProjectSettingsComponentPage_CustomSplashScreen> SplashScreenImageChanged;

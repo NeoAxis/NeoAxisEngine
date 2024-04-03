@@ -14,6 +14,7 @@ using System.Threading;
 
 #if !__NOIPENDPOINT__
 using NetEndPoint = System.Net.IPEndPoint;
+using System.Runtime.CompilerServices;
 #endif
 
 namespace Internal.Lidgren.Network
@@ -404,6 +405,7 @@ namespace Internal.Lidgren.Network
 		/// <summary>
 		/// Reads a variable sized UInt32 written using WriteVariableUInt32()
 		/// </summary>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		[CLSCompliant(false)]
 		public uint ReadVariableUInt32()
 		{
@@ -423,8 +425,33 @@ namespace Internal.Lidgren.Network
 		}
 
 		/// <summary>
+		/// Reads a variable sized UInt32 written using WriteVariableUInt32()
+		/// </summary>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		[CLSCompliant( false )]
+		public uint ReadVariableUInt32WithBytesReaded( out int bytesReaded )
+		{
+			bytesReaded = 0;
+			int num1 = 0;
+			int num2 = 0;
+			while( m_bitLength - m_readPosition >= 8 )
+			{
+				byte num3 = this.ReadByte();
+				bytesReaded++;
+				num1 |= ( num3 & 0x7f ) << num2;
+				num2 += 7;
+				if( ( num3 & 0x80 ) == 0 )
+					return (uint)num1;
+			}
+
+			// ouch; failed to find enough bytes; malformed variable length number?
+			return (uint)num1;
+		}
+
+		/// <summary>
 		/// Reads a variable sized UInt32 written using WriteVariableUInt32() and returns true for success
 		/// </summary>
+		[MethodImpl(MethodImplOptions.AggressiveInlining| (MethodImplOptions)512 )]
 		[CLSCompliant(false)]
 		public bool ReadVariableUInt32(out uint result)
 		{
@@ -453,6 +480,7 @@ namespace Internal.Lidgren.Network
 		/// <summary>
 		/// Reads a variable sized Int32 written using WriteVariableInt32()
 		/// </summary>
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public int ReadVariableInt32()
 		{
 			uint n = ReadVariableUInt32();

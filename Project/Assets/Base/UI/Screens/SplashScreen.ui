@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2022.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component Project.SplashScreen
 {
@@ -6,26 +6,26 @@
 	EditorScrollPosition = 0 0
 	.component NeoAxis.UIImage
 	{
-		Name = PoweredBy_BlackBackground
-		Size = Units 666 260
+		Name = NeoAxisLogo_DarkBackground
+		Size = Units 485 200
 		HorizontalAlignment = Center
 		VerticalAlignment = Center
 		EditorScrollPosition = 0 0
 		SourceImage
 		{
-			GetByReference = "Base\\UI\\Images\\PoweredBy_BlackBackground.png"
+			GetByReference = "Base\\UI\\Images\\NeoAxisLogo_DarkBackground.png"
 		}
 	}
 	.component NeoAxis.UIImage
 	{
-		Name = PoweredBy_WhiteBackground
-		Size = Units 666 260
+		Name = NeoAxisLogo_LightBackground
+		Size = Units 485 200
 		HorizontalAlignment = Center
 		VerticalAlignment = Center
 		EditorScrollPosition = 0 0
 		SourceImage
 		{
-			GetByReference = "Base\\UI\\Images\\PoweredBy_WhiteBackground.png"
+			GetByReference = "Base\\UI\\Images\\NeoAxisLogo_LightBackground.png"
 		}
 	}
 	.component NeoAxis.UIImage
@@ -38,6 +38,30 @@
 		SourceImage
 		{
 			GetByReference = "Base\\UI\\Images\\Project.png"
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Name = NeoAxisLogo_DarkBackground_Small
+		Size = Units 121 50
+		VerticalAlignment = Bottom
+		Margin = Units 25 0 0 25
+		EditorScrollPosition = 0 0
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\NeoAxisLogo_DarkBackground_Small.png"
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Name = NeoAxisLogo_LightBackground_Small
+		Size = Units 121 50
+		VerticalAlignment = Bottom
+		Margin = Units 25 0 0 25
+		EditorScrollPosition = 0 0
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\NeoAxisLogo_LightBackground_Small.png"
 		}
 	}
 }

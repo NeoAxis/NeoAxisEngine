@@ -27,7 +27,7 @@ namespace NeoAxis
 		public Reference<IList> Collection
 		{
 			get { if( _collection.BeginGet() ) Collection = _collection.Get( this ); return _collection.value; }
-			set { if( _collection.BeginSet( ref value ) ) { try { CollectionChanged?.Invoke( this ); } finally { _collection.EndSet(); } } }
+			set { if( _collection.BeginSet( this, ref value ) ) { try { CollectionChanged?.Invoke( this ); } finally { _collection.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Collection"/> property value changes.</summary>
 		public event Action<FlowFor> CollectionChanged;
@@ -40,7 +40,7 @@ namespace NeoAxis
 		public Reference<int> FirstIndex
 		{
 			get { if( _firstIndex.BeginGet() ) FirstIndex = _firstIndex.Get( this ); return _firstIndex.value; }
-			set { if( _firstIndex.BeginSet( ref value ) ) { try { FirstIndexChanged?.Invoke( this ); } finally { _firstIndex.EndSet(); } } }
+			set { if( _firstIndex.BeginSet( this, ref value ) ) { try { FirstIndexChanged?.Invoke( this ); } finally { _firstIndex.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FirstIndex"/> property value changes.</summary>
 		public event Action<FlowFor> FirstIndexChanged;
@@ -53,7 +53,7 @@ namespace NeoAxis
 		public Reference<int> LastIndex
 		{
 			get { if( _lastIndex.BeginGet() ) LastIndex = _lastIndex.Get( this ); return _lastIndex.value; }
-			set { if( _lastIndex.BeginSet( ref value ) ) { try { LastIndexChanged?.Invoke( this ); } finally { _lastIndex.EndSet(); } } }
+			set { if( _lastIndex.BeginSet( this, ref value ) ) { try { LastIndexChanged?.Invoke( this ); } finally { _lastIndex.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LastIndex"/> property value changes.</summary>
 		public event Action<FlowFor> LastIndexChanged;
@@ -66,7 +66,7 @@ namespace NeoAxis
 		public Reference<FlowInput> LoopBody
 		{
 			get { if( _loopBody.BeginGet() ) LoopBody = _loopBody.Get( this ); return _loopBody.value; }
-			set { if( _loopBody.BeginSet( ref value ) ) { try { LoopBodyChanged?.Invoke( this ); } finally { _loopBody.EndSet(); } } }
+			set { if( _loopBody.BeginSet( this, ref value ) ) { try { LoopBodyChanged?.Invoke( this ); } finally { _loopBody.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LoopBody"/> property value changes.</summary>
 		public event Action<FlowFor> LoopBodyChanged;
@@ -94,7 +94,7 @@ namespace NeoAxis
 		public Reference<FlowInput> Exit
 		{
 			get { if( _exit.BeginGet() ) Exit = _exit.Get( this ); return _exit.value; }
-			set { if( _exit.BeginSet( ref value ) ) { try { ExitChanged?.Invoke( this ); } finally { _exit.EndSet(); } } }
+			set { if( _exit.BeginSet( this, ref value ) ) { try { ExitChanged?.Invoke( this ); } finally { _exit.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Exit"/> property value changes.</summary>
 		public event Action<FlowFor> ExitChanged;

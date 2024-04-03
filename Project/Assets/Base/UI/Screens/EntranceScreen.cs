@@ -9,8 +9,7 @@ namespace Project
 {
 	public class EntranceScreen : NeoAxis.UIControl
 	{
-		//!!!!
-		//AvatarScreen avatarScreen;
+		AvatarWindow avatarWindow;
 
 		double requestEntranceScreenInfoRemainingTime = 5;
 
@@ -38,10 +37,9 @@ namespace Project
 
 			UpdateDescriptionAndStatus();
 
-			//!!!!
-			//var clientLogic = GetNetworkLogic();
-			//if( clientLogic != null )
-			//	GetButtonAvatar().Enabled = clientLogic.Avatars;
+			var clientLogic = GetNetworkLogic();
+			if( clientLogic != null )
+				GetButtonAvatar().Enabled = clientLogic.AvatarWindow;
 
 			RequestEntranceScreenInfo();
 		}
@@ -74,41 +72,37 @@ namespace Project
 			}
 		}
 
-		//!!!!
-		//void AvatarScreenCreate()
-		//{
-		//	AvatarScreenDestroy();
+		void AvatarWindowCreate()
+		{
+			AvatarWindowDestroy();
 
-		//	var fileName = @"Base\UI\Screens\AvatarScreen.ui";
-		//	if( !string.IsNullOrEmpty( fileName ) && VirtualFile.Exists( fileName ) )
-		//	{
-		//		var screen = ResourceManager.LoadSeparateInstance<AvatarScreen>( fileName, false, true );
-		//		if( screen != null )
-		//		{
-		//			avatarScreen = screen;
-		//			AddComponent( avatarScreen );
-		//		}
-		//	}
-		//}
+			var fileName = @"Base\UI\Screens\AvatarWindow.ui";
+			if( !string.IsNullOrEmpty( fileName ) && VirtualFile.Exists( fileName ) )
+			{
+				var screen = ResourceManager.LoadSeparateInstance<AvatarWindow>( fileName, false, true );
+				if( screen != null )
+				{
+					avatarWindow = screen;
+					AddComponent( avatarWindow );
+				}
+			}
+		}
 
-		//!!!!
-		//void AvatarScreenDestroy()
-		//{
-		//	avatarScreen?.Dispose();
-		//	avatarScreen = null;
-		//}
+		void AvatarWindowDestroy()
+		{
+			avatarWindow?.Dispose();
+			avatarWindow = null;
+		}
 
 		public void ButtonAvatar_Click( NeoAxis.UIButton sender )
 		{
-			//!!!!
+			if( avatarWindow != null && avatarWindow.Parent == null )
+				avatarWindow = null;
 
-			//if( avatarScreen != null && avatarScreen.Parent == null )
-			//	avatarScreen = null;
-
-			//if( avatarScreen == null )
-			//	AvatarScreenCreate();
-			//else
-			//	AvatarScreenDestroy();
+			if( avatarWindow == null )
+				AvatarWindowCreate();
+			else
+				AvatarWindowDestroy();
 		}
 
 		public Scene GetScene()

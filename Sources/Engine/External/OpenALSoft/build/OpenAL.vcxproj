@@ -135,12 +135,12 @@
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\..\..\..\_Compilation\Win64\OpenAL\</OutDir>
-    <IntDir>..\..\..\..\_Compilation\Win64\OpenAL\</IntDir>
+    <OutDir>..\..\..\..\..\_build\Win64\OpenAL\</OutDir>
+    <IntDir>..\..\..\..\..\_build\Win64\OpenAL\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\..\..\..\_Compilation\Win64\OpenAL\</OutDir>
-    <IntDir>..\..\..\..\_Compilation\Win64\OpenAL\</IntDir>
+    <OutDir>..\..\..\..\..\_build\Win64\OpenAL\</OutDir>
+    <IntDir>..\..\..\..\..\_build\Win64\OpenAL\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -190,7 +190,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\include;..\build;..;..\alc;..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\build;..;..\alc;..\common;..\al;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>Debug/</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -235,7 +235,7 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <PostBuildEvent>
-      <Command>copy ..\..\..\..\_Compilation\Win64\OpenAL\OpenAL32.dll "..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows"</Command>
+      <Command>copy ..\..\..\..\..\_build\Win64\OpenAL\OpenAL32.dll "..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -286,7 +286,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\include;..\build;..;..\alc;..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\build;..;..\alc;..\common;..\al;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>Release/</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <DisableSpecificWarnings>4065;4200</DisableSpecificWarnings>
@@ -334,7 +334,7 @@
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <PostBuildEvent>
-      <Command>copy ..\..\..\..\_Compilation\Win64\OpenAL\OpenAL32.dll "..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows"</Command>
+      <Command>copy ..\..\..\..\..\_build\Win64\OpenAL\OpenAL32.dll "..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">

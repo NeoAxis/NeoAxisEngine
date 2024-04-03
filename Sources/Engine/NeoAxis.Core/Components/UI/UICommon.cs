@@ -1,9 +1,7 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
-using System.Drawing.Design;
 using NeoAxis.Editor;
 
 namespace NeoAxis

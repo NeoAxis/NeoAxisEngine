@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2022.2.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.Scene
 {
@@ -79,8 +79,9 @@
 	{
 		Name = Rendering Pipeline
 		Shadows = False
-		ShadowFarDistance = 15
+		ShadowDirectionalDistance = 15
 		ShadowDirectionalLightCascades = 1
+		ShadowPointSpotlightDistance = 15
 		.component NeoAxis.Component
 		{
 			Name = Background Effects
@@ -1323,6 +1324,7 @@
 	{
 		Name = Plane 3
 		Transform = "-0.0118632137564482 -1.02908551068884 -10; 0 0 0 1; 2 2 2"
+		Color = 0.9 0.9 0.9
 		Mesh
 		{
 			GetByReference = "this:$Mesh"

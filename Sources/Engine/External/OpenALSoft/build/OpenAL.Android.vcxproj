@@ -242,10 +242,10 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">false</LinkIncremental>
@@ -273,8 +273,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">false</LinkIncremental>
@@ -309,15 +309,15 @@
     <TargetName>$(ProjectName)</TargetName>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
     <PackageDebugSymbols>true</PackageDebugSymbols>
-    <IntDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
-    <OutDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <TargetName>$(ProjectName)</TargetName>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
     <PackageDebugSymbols>true</PackageDebugSymbols>
-    <IntDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
-    <OutDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>$(ProjectName)</TargetName>
@@ -328,15 +328,15 @@
     <TargetName>$(ProjectName)</TargetName>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
     <PackageDebugSymbols>true</PackageDebugSymbols>
-    <OutDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <TargetName>$(ProjectName)</TargetName>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
     <PackageDebugSymbols>true</PackageDebugSymbols>
-    <IntDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
-    <OutDir>$(SolutionDir)_Compilation\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\Android\$(Platform)\$(MSBuildProjectName)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -372,8 +372,8 @@
     </Link>
     <PostBuildEvent />
     <PostBuildEvent>
-      <Command>copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\libNativeMemoryManager.so "..\..\..\Project\Sources\NeoAxis.Player.Android\lib\x64\"
-rem copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\libNativeMemoryManager.a ..\Lib\Android\$(Platform)\</Command>
+      <Command>copy "$(SolutionDir)_build\Android\x64\NativeMemoryManager.Android\libNativeMemoryManager.so" "$(SolutionDir)Project\Sources\NeoAxis.Player.Android\lib\x64\"
+rem copy ..\..\_build\Android\x64\NativeMemoryManager.Android\libNativeMemoryManager.a ..\Lib\Android\$(Platform)\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
@@ -384,7 +384,7 @@ rem copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\libNativeMem
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>false</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>./;../include;../alc;../common;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../include;../alc;../common;..;../al;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__ANDROID__;ANDROID;_DEBUG;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;AL_NO_UID_DEFS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -412,8 +412,8 @@ rem copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\libNativeMem
     </Link>
     <PostBuildEvent />
     <PostBuildEvent>
-      <Command>copy "..\..\..\..\_Compilation\Android\$(Platform)\OpenAL.Android\libOpenAL.so" "..\..\..\..\..\Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"
-rem copy "..\..\_Compilation\Android\$(Platform)\NativeMemoryManager.Android\libNativeMemoryManager.a" "..\Lib\Android\$(Platform)"</Command>
+      <Command>copy "$(SolutionDir)_build\Android\$(Platform)\OpenAL.Android\libOpenAL.so" "$(SolutionDir)Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"
+rem copy "..\..\_build\Android\$(Platform)\NativeMemoryManager.Android\libNativeMemoryManager.a" "..\Lib\Android\$(Platform)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
@@ -424,7 +424,7 @@ rem copy "..\..\_Compilation\Android\$(Platform)\NativeMemoryManager.Android\lib
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>false</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>./;../include;../alc;../common;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../include;../alc;../common;..;../al;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__ANDROID__;ANDROID;_DEBUG;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;AL_NO_UID_DEFS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -452,8 +452,8 @@ rem copy "..\..\_Compilation\Android\$(Platform)\NativeMemoryManager.Android\lib
     </Link>
     <PostBuildEvent />
     <PostBuildEvent>
-      <Command>copy "..\..\..\..\_Compilation\Android\$(Platform)\OpenAL.Android\libOpenAL.so" "..\..\..\..\..\Project\Sources\NeoAxis.Player.Android\lib\armeabi-v7a\"
-rem copy "..\..\_Compilation\Android\$(Platform)\NativeMemoryManager.Android\libNativeMemoryManager.a" "..\Lib\Android\$(Platform)"</Command>
+      <Command>copy "$(SolutionDir)_build\Android\$(Platform)\OpenAL.Android\libOpenAL.so" "$(SolutionDir)Project\Sources\NeoAxis.Player.Android\lib\armeabi-v7a\"
+rem copy "..\..\_build\Android\$(Platform)\NativeMemoryManager.Android\libNativeMemoryManager.a" "..\Lib\Android\$(Platform)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -491,7 +491,7 @@ rem copy "..\..\_Compilation\Android\$(Platform)\NativeMemoryManager.Android\lib
       <VerboseOutput>false</VerboseOutput>
     </Link>
     <PostBuildEvent>
-      <Command>copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\libNativeMemoryManager.a "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Android"
+      <Command>copy "$(SolutionDir)_build\Android\x64\NativeMemoryManager.Android\libNativeMemoryManager.a" "$(SolutionDir)Project\Binaries\NeoAxis.Internal\Platforms\Android"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -529,7 +529,7 @@ rem copy "..\..\_Compilation\Android\$(Platform)\NativeMemoryManager.Android\lib
       <VerboseOutput>false</VerboseOutput>
     </Link>
     <PostBuildEvent>
-      <Command>copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\libNativeMemoryManager.a "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Android"
+      <Command>copy "$(SolutionDir)_build\Android\x64\NativeMemoryManager.Android\libNativeMemoryManager.a" "$(SolutionDir)Project\Binaries\NeoAxis.Internal\Platforms\Android"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -567,7 +567,7 @@ rem copy "..\..\_Compilation\Android\$(Platform)\NativeMemoryManager.Android\lib
       <VerboseOutput>false</VerboseOutput>
     </Link>
     <PostBuildEvent>
-      <Command>copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\libNativeMemoryManager.a "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Android"
+      <Command>copy "$(SolutionDir)_build\Android\x64\NativeMemoryManager.Android\libNativeMemoryManager.a" "$(SolutionDir)Project\Binaries\NeoAxis.Internal\Platforms\Android"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -603,8 +603,8 @@ rem copy "..\..\_Compilation\Android\$(Platform)\NativeMemoryManager.Android\lib
       <DebuggerSymbolInformation>OmitAllSymbolInformation</DebuggerSymbolInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\libNativeMemoryManager.so "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Android\$(Platform)"
-rem copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\libNativeMemoryManager.a ..\Lib\Android\$(Platform)
+      <Command>copy "$(SolutionDir)_build\Android\x64\NativeMemoryManager.Android\libNativeMemoryManager.so" "$(SolutionDir)Project\Binaries\NeoAxis.Internal\Platforms\Android\$(Platform)"
+rem copy ..\..\_build\Android\x64\NativeMemoryManager.Android\libNativeMemoryManager.a ..\Lib\Android\$(Platform)
 
 
 </Command>
@@ -618,7 +618,7 @@ rem copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\libNativeMem
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>./;../include;../alc;../common;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../include;../alc;../common;..;../al;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__ANDROID__;ANDROID;NDEBUG;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;AL_NO_UID_DEFS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -644,7 +644,7 @@ rem copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\libNativeMem
       <AdditionalOptions>-lm %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>copy "..\..\..\..\_Compilation\Android\$(Platform)\OpenAL.Android\libOpenAL.so" "..\..\..\..\..\Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"</Command>
+      <Command>copy "$(SolutionDir)_build\Android\$(Platform)\OpenAL.Android\libOpenAL.so" "$(SolutionDir)Project\Sources\NeoAxis.Player.Android\lib\arm64-v8a\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -655,7 +655,7 @@ rem copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\libNativeMem
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <AdditionalIncludeDirectories>./;../include;../alc;../common;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./;../include;../alc;../common;..;../al;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__ANDROID__;ANDROID;NDEBUG;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;AL_NO_UID_DEFS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -681,7 +681,7 @@ rem copy ..\..\_Compilation\Android\x64\NativeMemoryManager.Android\libNativeMem
       <AdditionalOptions>-lm %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>copy "..\..\..\..\_Compilation\Android\$(Platform)\OpenAL.Android\libOpenAL.so" "..\..\..\..\..\Project\Sources\NeoAxis.Player.Android\lib\armeabi-v7a\"</Command>
+      <Command>copy "$(SolutionDir)_build\Android\$(Platform)\OpenAL.Android\libOpenAL.so" "$(SolutionDir)Project\Sources\NeoAxis.Player.Android\lib\armeabi-v7a\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

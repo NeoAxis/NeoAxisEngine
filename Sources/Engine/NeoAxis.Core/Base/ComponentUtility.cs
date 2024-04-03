@@ -521,37 +521,48 @@ namespace NeoAxis
 			if( componentCreateHierarchyController )
 				CreateHierarchyControllerForRootComponent( component, createdByResource, false );//, true );
 
-			//create context, init tree structure of components
-			context.RootComponentItem = new Metadata.LoadContext.ComponentItem();
-			context.RootComponentItem.TextBlock = componentBlock;
-
-			if( !LoadContext_InitComponentItemsRecursive( context, context.RootComponentItem, out error ) )
-			{
-				component?.Dispose();
-				return null;
-			}
-
-			//processing
-			context.RootComponentItem.Component = component;
-			if( !LoadContext_ProcessComponentItems( context, out error ) )
-			{
-				component?.Dispose();
-				return null;
-			}
-
-			if( !context.RootComponentItem.Loaded )
-			{
-				error = "Root component is not loaded.";
-				component?.Dispose();
-				return null;
-			}
-
-			//set Enabled
-			if( componentSetEnabled != null )
-				component.Enabled = componentSetEnabled.Value;
-			//enable hierarchy controller
 			if( component.HierarchyController != null )
-				component.HierarchyController.HierarchyEnabled = true;
+				component.HierarchyController.loading = true;
+
+			try
+			{
+				//create context, init tree structure of components
+				context.RootComponentItem = new Metadata.LoadContext.ComponentItem();
+				context.RootComponentItem.TextBlock = componentBlock;
+
+				if( !LoadContext_InitComponentItemsRecursive( context, context.RootComponentItem, out error ) )
+				{
+					component?.Dispose();
+					return null;
+				}
+
+				//processing
+				context.RootComponentItem.Component = component;
+				if( !LoadContext_ProcessComponentItems( context, out error ) )
+				{
+					component?.Dispose();
+					return null;
+				}
+
+				if( !context.RootComponentItem.Loaded )
+				{
+					error = "Root component is not loaded.";
+					component?.Dispose();
+					return null;
+				}
+
+				//set Enabled
+				if( componentSetEnabled != null )
+					component.Enabled = componentSetEnabled.Value;
+				//enable hierarchy controller
+				if( component.HierarchyController != null )
+					component.HierarchyController.HierarchyEnabled = true;
+			}
+			finally
+			{
+				if( component.HierarchyController != null )
+					component.HierarchyController.loading = false;
+			}
 
 			return component;
 		}
@@ -857,7 +868,7 @@ namespace NeoAxis
 
 			var parents = new ICollection<Component>[ components.Count ];
 			for( int n = 0; n < parents.Length; n++ )
-				parents[ n ] = components[ n ].GetAllParents( false );
+				parents[ n ] = components[ n ].GetAllParents();
 
 			foreach( var parent in parents[ 0 ] )
 			{
@@ -1007,7 +1018,7 @@ namespace NeoAxis
 
 			foreach( var obj in list )
 			{
-				var allParents = obj.GetAllParents( false );
+				var allParents = obj.GetAllParents();
 
 				if( !allParents.Any( p => set.Contains( p ) ) )
 					newList.Add( obj );

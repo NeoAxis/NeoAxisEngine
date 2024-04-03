@@ -1,13 +1,11 @@
 /*
- * Copyright 2010-2022 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
 #include <bx/allocator.h>
 
-#ifndef IOS
 #include <malloc.h>
-#endif
 
 //!!!!betauser
 #if BX_PLATFORM_WINDOWS //#ifndef __ANDROID__
@@ -32,7 +30,7 @@ namespace bx
 	{
 	}
 
-	void* DefaultAllocator::realloc(void* _ptr, size_t _size, size_t _align, const char* _file, uint32_t _line)
+	void* DefaultAllocator::realloc(void* _ptr, size_t _size, size_t _align, const char* _filePath, uint32_t _line)
 	{
 		//!!!!betauser
 #ifdef USE_NATIVE_MEMORY_MANAGER
@@ -52,7 +50,7 @@ namespace bx
 //				BX_UNUSED(_file, _line);
 //				Memory_FreeAligned(_ptr);
 //#	else
-				bx::alignedFree(this, _ptr, _align, _file, _line);
+				bx::alignedFree(this, _ptr, _align, Location(_filePath, _line));
 //#	endif // BX_
 			}
 
@@ -69,7 +67,7 @@ namespace bx
 //			BX_UNUSED(_file, _line);
 //			return Memory_AllocAligned(MemoryAllocationType_Renderer, _size, _align, __FILE__, __LINE__);
 //#	else
-			return bx::alignedAlloc(this, _size, _align, _file, _line);
+			return bx::alignedAlloc(this, _size, _align, Location(_filePath, _line));
 //#	endif // BX_
 		}
 
@@ -82,7 +80,7 @@ namespace bx
 //		BX_UNUSED(_file, _line);
 //		return Memory_ReallocAligned(MemoryAllocationType_Renderer, _ptr, _size, _align, __FILE__, __LINE__);
 //#	else
-		return bx::alignedRealloc(this, _ptr, _size, _align, _file, _line);
+		return bx::alignedRealloc(this, _ptr, _size, _align, Location(_filePath, _line));
 //#	endif // BX_
 
 
@@ -100,10 +98,10 @@ namespace bx
 				}
 
 #	if BX_COMPILER_MSVC
-				BX_UNUSED(_file, _line);
+				BX_UNUSED(_filePath, _line);
 				_aligned_free(_ptr);
 #	else
-				bx::alignedFree(this, _ptr, _align, _file, _line);
+				alignedFree(this, _ptr, _align, Location(_filePath, _line) );
 #	endif // BX_
 			}
 
@@ -117,10 +115,10 @@ namespace bx
 			}
 
 #	if BX_COMPILER_MSVC
-			BX_UNUSED(_file, _line);
+			BX_UNUSED(_filePath, _line);
 			return _aligned_malloc(_size, _align);
 #	else
-			return bx::alignedAlloc(this, _size, _align, _file, _line);
+			return alignedAlloc(this, _size, _align, Location(_filePath, _line) );
 #	endif // BX_
 		}
 
@@ -130,10 +128,10 @@ namespace bx
 		}
 
 #	if BX_COMPILER_MSVC
-		BX_UNUSED(_file, _line);
+		BX_UNUSED(_filePath, _line);
 		return _aligned_realloc(_ptr, _size, _align);
 #	else
-		return bx::alignedRealloc(this, _ptr, _size, _align, _file, _line);
+		return alignedRealloc(this, _ptr, _size, _align, Location(_filePath, _line) );
 #	endif // BX_
 
 

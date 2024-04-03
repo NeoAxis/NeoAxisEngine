@@ -28,7 +28,7 @@ namespace NeoAxis
 		public Reference<int> Number
 		{
 			get { if( _number.BeginGet() ) Number = _number.Get( this ); return _number.value; }
-			set { if( _number.BeginSet( ref value ) ) { try { NumberChanged?.Invoke( this ); } finally { _number.EndSet(); } } }
+			set { if( _number.BeginSet( this, ref value ) ) { try { NumberChanged?.Invoke( this ); } finally { _number.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Number"/> property value changes.</summary>
 		public event Action<FlowDoNumber> NumberChanged;
@@ -51,7 +51,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _loopBody.BeginSet( ref value ) )
+				if( _loopBody.BeginSet( this, ref value ) )
 				{
 					try { LoopBodyChanged?.Invoke( this ); }
 					finally { _loopBody.EndSet(); }
@@ -93,7 +93,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _exit.BeginSet( ref value ) )
+				if( _exit.BeginSet( this, ref value ) )
 				{
 					try { ExitChanged?.Invoke( this ); }
 					finally { _exit.EndSet(); }

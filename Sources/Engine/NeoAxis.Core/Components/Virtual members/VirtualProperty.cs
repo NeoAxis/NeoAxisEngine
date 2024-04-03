@@ -2,11 +2,6 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.IO;
-using System.Drawing.Design;
 using System.Text;
 using System.Collections.Concurrent;
 
@@ -38,7 +33,7 @@ namespace NeoAxis
 			get { if( _type.BeginGet() ) Type = _type.Get( this ); return _type.value; }
 			set
 			{
-				if( _type.BeginSet( ref value ) )
+				if( _type.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -72,7 +67,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _referenceSupport.BeginSet( ref value ) )
+				if( _referenceSupport.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -169,7 +164,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _readOnly.BeginSet( ref value ) )
+				if( _readOnly.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -201,7 +196,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _browsable.BeginSet( ref value ) )
+				if( _browsable.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -235,7 +230,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _category.BeginSet( ref value ) )
+				if( _category.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -262,7 +257,7 @@ namespace NeoAxis
 			get { if( _serializable.BeginGet() ) Serializable = _serializable.Get( this ); return _serializable.value; }
 			set
 			{
-				if( _serializable.BeginSet( ref value ) )
+				if( _serializable.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -298,7 +293,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _cloneable.BeginSet( ref value ) )
+				if( _cloneable.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -331,7 +326,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _getAccessor.BeginSet( ref value ) )
+		//		if( _getAccessor.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -362,7 +357,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _setAccessor.BeginSet( ref value ) )
+		//		if( _setAccessor.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{
@@ -396,7 +391,7 @@ namespace NeoAxis
 			//!!!!
 			//set
 			//{
-			//	if( _changedEvent.BeginSet( ref value ) )
+			//	if( _changedEvent.BeginSet( this, ref value ) )
 			//	{
 			//		try
 			//		{
@@ -428,7 +423,7 @@ namespace NeoAxis
 			}
 			set
 			{
-				if( _defaultValueSpecified.BeginSet( ref value ) )
+				if( _defaultValueSpecified.BeginSet( this, ref value ) )
 				{
 					try
 					{
@@ -461,7 +456,7 @@ namespace NeoAxis
 		//	}
 		//	set
 		//	{
-		//		if( _defaultValue.BeginSet( ref value ) )
+		//		if( _defaultValue.BeginSet( this, ref value ) )
 		//		{
 		//			try
 		//			{

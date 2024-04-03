@@ -86,6 +86,9 @@ namespace OpenALSoundSystem
 				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 				{
 				}
+				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
+				{
+				}
 				else
 				{
 					Log.Fatal( "OpenALSoundWorld: InitLibrary: Unknown platform." );
@@ -275,11 +278,20 @@ namespace OpenALSoundSystem
 			{
 				bool initialized;
 
-				if( ( mode & SoundModes.Stream ) == 0 )
+
+				//!!!!temp
+				//but maybe is good for mobile devices
+				var allowStreaming = true;
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
+					allowStreaming = false;
+
+
+				if( ( mode & SoundModes.Stream ) == 0 || !allowStreaming )
 				{
 					//read whole file to a memory stream
 					var bytes = new byte[ stream.Length ];
-					stream.Read( bytes, 0, bytes.Length );
+					IOUtility.ReadGuaranteed( stream, bytes );
+					//stream.Read( bytes, 0, bytes.Length );
 					var memoryStream = new MemoryVirtualFileStream( bytes );
 
 					sound = new OpenALSampleSoundData( memoryStream, SoundType.Unknown, name, mode, out initialized );
@@ -377,7 +389,6 @@ namespace OpenALSoundSystem
 			criticalSection.Enter();
 
 			//!!!!double
-
 			Al.alListener3f( Al.AL_POSITION, (float)position.X, (float)position.Y, (float)position.Z );
 			Al.alListener3f( Al.AL_VELOCITY, (float)velocity.X, (float)velocity.Y, (float)velocity.Z );
 

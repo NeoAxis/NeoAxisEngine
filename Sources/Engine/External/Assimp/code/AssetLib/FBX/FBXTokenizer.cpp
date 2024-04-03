@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 
 All rights reserved.
@@ -79,9 +79,7 @@ Token::Token(const char* sbegin, const char* send, TokenType type, unsigned int 
 }
 
 // ------------------------------------------------------------------------------------------------
-Token::~Token()
-{
-}
+
 
 namespace {
 
@@ -90,13 +88,14 @@ namespace {
 AI_WONT_RETURN void TokenizeError(const std::string& message, unsigned int line, unsigned int column) AI_WONT_RETURN_SUFFIX;
 AI_WONT_RETURN void TokenizeError(const std::string& message, unsigned int line, unsigned int column)
 {
-    throw DeadlyImportError(Util::AddLineAndColumn("FBX-Tokenize",message,line,column));
+    throw DeadlyImportError("FBX-Tokenize", Util::GetLineAndColumnText(line,column), message);
 }
 
 
 // process a potential data token up to 'cur', adding it to 'output_tokens'.
 // ------------------------------------------------------------------------------------------------
-void ProcessDataToken( TokenList& output_tokens, const char*& start, const char*& end,
+void ProcessDataToken(TokenList &output_tokens, StackAllocator &token_allocator,
+                      const char*& start, const char*& end,
                       unsigned int line,
                       unsigned int column,
                       TokenType type = TokenType_DATA,
@@ -127,14 +126,13 @@ void ProcessDataToken( TokenList& output_tokens, const char*& start, const char*
         TokenizeError("unexpected character, expected data token", line, column);
     }
 
-    start = end = NULL;
+    start = end = nullptr;
 }
 
 }
 
 // ------------------------------------------------------------------------------------------------
-void Tokenize(TokenList& output_tokens, const char* input)
-{
+void Tokenize(TokenList &output_tokens, const char *input, StackAllocator &token_allocator) {
 	ai_assert(input);
 	ASSIMP_LOG_DEBUG("Tokenizing ASCII FBX file");
 
@@ -146,7 +144,7 @@ void Tokenize(TokenList& output_tokens, const char* input)
     bool in_double_quotes = false;
     bool pending_data_token = false;
 
-    const char* token_begin = NULL, *token_end = NULL;
+    const char *token_begin = nullptr, *token_end = nullptr;
     for (const char* cur = input;*cur;column += (*cur == '\t' ? ASSIMP_FBX_TAB_WIDTH : 1), ++cur) {
         const char c = *cur;
 
@@ -166,7 +164,7 @@ void Tokenize(TokenList& output_tokens, const char* input)
                 in_double_quotes = false;
                 token_end = cur;
 
-                ProcessDataToken(output_tokens,token_begin,token_end,line,column);
+                ProcessDataToken(output_tokens, token_allocator, token_begin, token_end, line, column);
                 pending_data_token = false;
             }
             continue;
@@ -183,30 +181,30 @@ void Tokenize(TokenList& output_tokens, const char* input)
             continue;
 
         case ';':
-            ProcessDataToken(output_tokens,token_begin,token_end,line,column);
+            ProcessDataToken(output_tokens, token_allocator, token_begin, token_end, line, column);
             comment = true;
             continue;
 
         case '{':
-            ProcessDataToken(output_tokens,token_begin,token_end, line, column);
+            ProcessDataToken(output_tokens, token_allocator, token_begin, token_end, line, column);
             output_tokens.push_back(new_Token(cur,cur+1,TokenType_OPEN_BRACKET,line,column));
             continue;
 
         case '}':
-            ProcessDataToken(output_tokens,token_begin,token_end,line,column);
+            ProcessDataToken(output_tokens, token_allocator, token_begin, token_end, line, column);
             output_tokens.push_back(new_Token(cur,cur+1,TokenType_CLOSE_BRACKET,line,column));
             continue;
 
         case ',':
             if (pending_data_token) {
-                ProcessDataToken(output_tokens,token_begin,token_end,line,column,TokenType_DATA,true);
+                ProcessDataToken(output_tokens, token_allocator, token_begin, token_end, line, column, TokenType_DATA, true);
             }
             output_tokens.push_back(new_Token(cur,cur+1,TokenType_COMMA,line,column));
             continue;
 
         case ':':
             if (pending_data_token) {
-                ProcessDataToken(output_tokens,token_begin,token_end,line,column,TokenType_KEY,true);
+                ProcessDataToken(output_tokens, token_allocator, token_begin, token_end, line, column, TokenType_KEY, true);
             }
             else {
                 TokenizeError("unexpected colon", line, column);
@@ -228,7 +226,7 @@ void Tokenize(TokenList& output_tokens, const char* input)
                     }
                 }
 
-                ProcessDataToken(output_tokens,token_begin,token_end,line,column,type);
+                ProcessDataToken(output_tokens, token_allocator, token_begin, token_end, line, column, type);
             }
 
             pending_data_token = false;

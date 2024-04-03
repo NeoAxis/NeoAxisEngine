@@ -1,116 +1,60 @@
-.component NeoAxis.Component_Material
+// Made with NeoAxis Engine 2024.1.
+
+.component NeoAxis.Material
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1170, 842\"><KW V=\"1\" A=\"D46A7294F7C84707688C9533211B7AB1\"><CGD /><WS UN=\"4DBB1C1A44DA461178800F1C9B817A40\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"9ED339A724B748A821BAE02224504AF9\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"D46A7294F7C84707688C9533211B7AB1\"><KP UN=\"A0CDCF3EEC93480013875F01FFEE17A8\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"D46A7294F7C84707688C9533211B7AB1\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP><KP UN=\"DFB0EC6EE7664F5AECAAA855F34A9D0D\" S=\"False\"><CPD ObjPath=\"$Shader graph\\$Node Shader 1\\$Shader\" /></KP><KP UN=\"93BCB50497CD481E2183B664966108F0\" S=\"False\"><CPD ObjPath=\"$Shader graph\\$Node Shader 2\\$Shader\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
-	Roughness = 0.2
-	Opacity = 0.8
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"9F4987AF0665476F12837F6774367A45\"><CGD /><WS UN=\"5850E79002F94BC681A8EE1EFEA06095\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"CA6D6B2140EF469ED2A43A3993DC134C\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"9F4987AF0665476F12837F6774367A45\"><KP UN=\"F42177DB0B994FE4D3A8F79976E48079\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"9F4987AF0665476F12837F6774367A45\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP><KP UN=\"3F51A0E5A7D44EEBAE94F29F68D067C7\" S=\"False\"><CPD ObjPath=\"$Fragment code\" /></KP><KP UN=\"87BD6F41023F4C84458A917A6A69E5F9\" S=\"False\"><CPD ObjPath=\"$Shader graph\\$Node Shader 3\\$Shader\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	ShadingModel = Subsurface
+	BaseColor = 0.1931765 0.6351373 0.7098039
+	Roughness = 0
+	Reflectance = 1
+	SubsurfaceColor = 0 0.6892941 1
 	RayTracingReflection = 1
-	BaseColor
-	{
-		GetByReference = "this:$Shader graph\\$Node Invoke Member 2\\$Invoke Member\\__parameter_ReturnValue"
-	}
+	AdvancedScripting = True
 	Normal
 	{
-		GetByReference = "this:$Shader graph\\$Node Invoke Member 6\\$Invoke Member\\__parameter_ReturnValue"
+		GetByReference = "this:$Shader graph\\$Node Shader 3\\$Shader\\__parameter_ReturnValue"
 	}
-	.component NeoAxis.Component_FlowGraph
+	FragmentFunctions
+	{
+		GetByReference = "this:$Fragment functions\\Code"
+	}
+	FragmentCode
+	{
+		GetByReference = "this:$Fragment code\\Code"
+	}
+	.component NeoAxis.FlowGraph
 	{
 		Name = Shader graph
-		EditorScrollPosition = -0.499765582482691 5.31769416029533
-		EditorZoomIndex = 4
+		EditorScrollPosition = -1.08963693614674 -10.7422980183518
+		EditorZoomIndex = 5
 		Specialization
 		{
 			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
 		}
-		.component NeoAxis.Component_FlowGraphNode
+		.component NeoAxis.FlowGraphNode
 		{
-			Name = "Node "
-			Position = 27 -4
+			Name = Node
+			Position = 25 -17
 			ControlledObject
 			{
 				GetByReference = "this:..\\.."
 			}
 		}
-		.component NeoAxis.Component_FlowGraphNode
-		{
-			Name = Node Texture Sample 1
-			Position = -21 -17
-			ControlledObject
-			{
-				GetByReference = "this:$Texture Sample"
-			}
-			.component NeoAxis.Component_ShaderTextureSample
-			{
-				Name = Texture Sample
-				Location3 = 0 0 0
-				Texture
-				{
-					GetByReference = "Base\\Components\\Liquid Volume\\Textures\\Water.png"
-				}
-				Location2
-				{
-					GetByReference = "this:..\\..\\$Node Shader 1\\$Shader\\__parameter_ReturnValue"
-				}
-			}
-		}
-		.component NeoAxis.Component_FlowGraphNode
-		{
-			Name = Node Texture Sample 4
-			Position = -21 4
-			ControlledObject
-			{
-				GetByReference = "this:$Texture Sample"
-			}
-			.component NeoAxis.Component_ShaderTextureSample
-			{
-				Name = Texture Sample
-				Location3 = 0 0 0
-				Texture
-				{
-					GetByReference = "Base\\Components\\Liquid Volume\\Textures\\Water.png"
-				}
-				Location2
-				{
-					GetByReference = "this:..\\..\\$Node Shader 2\\$Shader\\__parameter_ReturnValue"
-				}
-			}
-		}
-		.component NeoAxis.Component_FlowGraphNode
+		.component NeoAxis.FlowGraphNode
 		{
 			Name = Node Texture Sample 2
-			Position = -21 -8
+			Position = -11 -38
 			ControlledObject
 			{
 				GetByReference = "this:$Texture Sample"
 			}
-			.component NeoAxis.Component_ShaderTextureSample
+			.component NeoAxis.ShaderTextureSample
 			{
 				Name = Texture Sample
 				Location3 = 0 0 0
 				Texture
 				{
-					GetByReference = "Base\\Components\\Liquid Volume\\Textures\\NormalMap.png"
-				}
-				Location2
-				{
-					GetByReference = "this:..\\..\\$Node Shader 1\\$Shader\\__parameter_ReturnValue"
-				}
-			}
-		}
-		.component NeoAxis.Component_FlowGraphNode
-		{
-			Name = Node Texture Sample 5
-			Position = -21 13
-			ControlledObject
-			{
-				GetByReference = "this:$Texture Sample"
-			}
-			.component NeoAxis.Component_ShaderTextureSample
-			{
-				Name = Texture Sample
-				Location3 = 0 0 0
-				Texture
-				{
-					GetByReference = "Base\\Components\\Liquid Volume\\Textures\\NormalMap.png"
+					GetByReference = "Base\\Components\\Liquid Volume\\Normal.png"
 				}
 				Location2
 				{
@@ -118,248 +62,293 @@
 				}
 			}
 		}
-		.component NeoAxis.Component_FlowGraphNode
-		{
-			Name = Node Shader Parameter 1
-			Position = -53 -3
-			ControlledObject
-			{
-				GetByReference = "this:$Shader Parameter"
-			}
-			.component NeoAxis.Component_ShaderParameter
-			{
-				Name = Shader Parameter
-				Source
-				{
-					GetByReference = NeoAxis.Time|Current
-				}
-			}
-		}
-		.component NeoAxis.Component_FlowGraphNode
-		{
-			Name = Node Shader 1
-			Position = -37 -5
-			ControlledObject
-			{
-				GetByReference = "this:$Shader"
-			}
-			.component NeoAxis.Component_ShaderScript
-			{
-				Name = Shader
-				Code = "/*!public*/ vec2 FlowA(vec2 texCoord, float time, vec4 flowAndNoise)\r\n{\r\n\tbool flowB = false;\r\n\r\n\tfloat noise = flowAndNoise.a;\r\n\tfloat time2 = time * 0.15 + noise;\r\n\tfloat flowOffset = 0.0;\r\n\tfloat tiling = 1.0;\r\n\tfloat jump = 1.0;\r\n\tvec2 flowVector2 = flowAndNoise.xy * 2.0 - 1.0;\r\n\r\n\tfloat phaseOffset = flowB ? 0.5 : 0.0;\r\n\tfloat progress = frac(time2 + phaseOffset);\r\n\tfloat3 uvw;\r\n\tuvw.xy = texCoord - flowVector2 * (progress + flowOffset);\r\n\tuvw.xy *= tiling;\r\n\tuvw.xy += phaseOffset;\r\n\tuvw.xy += (time2 - progress) * jump;\r\n\tuvw.z = 1.0 - abs(1.0 - 2.0 * progress);\r\n\t\r\n\treturn uvw.xy;\r\n\t//return uvw;\r\n}\r\n"
-				__parameter_TexCoord
-				{
-					GetByReference = "this:..\\..\\$Node Invoke Member 1\\$Invoke Member\\__value_Value"
-				}
-				__parameter_Time
-				{
-					GetByReference = "this:..\\..\\$Node Shader Parameter 1\\$Shader Parameter\\Output"
-				}
-				__parameter_FlowAndNoise
-				{
-					GetByReference = "this:..\\..\\$Node Texture Sample 3\\$Texture Sample\\RGBA"
-				}
-			}
-		}
-		.component NeoAxis.Component_FlowGraphNode
-		{
-			Name = Node Shader 2
-			Position = -37 4
-			ControlledObject
-			{
-				GetByReference = "this:$Shader"
-			}
-			.component NeoAxis.Component_ShaderScript
-			{
-				Name = Shader
-				Code = "/*!public*/ vec2 FlowB(vec2 texCoord, float time, vec4 flowAndNoise)\r\n{\r\n\tbool flowB = true;\r\n\r\n\tfloat noise = flowAndNoise.a;\r\n\tfloat time2 = time * 0.15 + noise;\r\n\tfloat flowOffset = 0.0;\r\n\tfloat tiling = 1.0;\r\n\tfloat jump = 1.0;\r\n\tvec2 flowVector2 = flowAndNoise.xy * 2.0 - 1.0;\r\n\r\n\tfloat phaseOffset = flowB ? 0.5 : 0.0;\r\n\tfloat progress = frac(time2 + phaseOffset);\r\n\tfloat3 uvw;\r\n\tuvw.xy = texCoord - flowVector2 * (progress + flowOffset);\r\n\tuvw.xy *= tiling;\r\n\tuvw.xy += phaseOffset;\r\n\tuvw.xy += (time2 - progress) * jump;\r\n\tuvw.z = 1.0 - abs(1.0 - 2.0 * progress);\r\n\t\r\n\treturn uvw.xy;\r\n\t//return uvw;\r\n}\r\n"
-				__parameter_TexCoord
-				{
-					GetByReference = "this:..\\..\\$Node Invoke Member 1\\$Invoke Member\\__value_Value"
-				}
-				__parameter_Time
-				{
-					GetByReference = "this:..\\..\\$Node Shader Parameter 1\\$Shader Parameter\\Output"
-				}
-				__parameter_FlowAndNoise
-				{
-					GetByReference = "this:..\\..\\$Node Texture Sample 3\\$Texture Sample\\RGBA"
-				}
-			}
-		}
-		.component NeoAxis.Component_FlowGraphNode
-		{
-			Name = Node Invoke Member 1
-			Position = -53 -6
-			ControlledObject
-			{
-				GetByReference = "this:$Invoke Member"
-			}
-			.component NeoAxis.Component_InvokeMember
-			{
-				Name = Invoke Member
-				Member
-				{
-					GetByReference = "NeoAxis.ShaderConstants|property:TexCoord0"
-				}
-				Exit
-				{
-				}
-			}
-		}
-		.component NeoAxis.Component_FlowGraphNode
+		.component NeoAxis.FlowGraphNode
 		{
 			Name = Node Texture Sample 3
-			Position = -53 2
+			Position = -11 -29
 			ControlledObject
 			{
 				GetByReference = "this:$Texture Sample"
 			}
-			.component NeoAxis.Component_ShaderTextureSample
+			.component NeoAxis.ShaderTextureSample
 			{
 				Name = Texture Sample
-				Location2 = 0 0
 				Location3 = 0 0 0
 				Texture
 				{
-					GetByReference = "Base\\Components\\Liquid Volume\\Textures\\FlowMapWithNoiseInAlpha.png"
+					GetByReference = "Base\\Components\\Liquid Volume\\Normal.png"
+				}
+				Location2
+				{
+					GetByReference = "this:..\\..\\$Node Shader 4\\$Shader\\__parameter_ReturnValue"
 				}
 			}
 		}
-		.component NeoAxis.Component_FlowGraphNode
+		.component NeoAxis.FlowGraphNode
 		{
-			Name = Node Invoke Member 2
-			Position = 11 -4
+			Name = Node Texture Sample 4
+			Position = -11 -20
 			ControlledObject
 			{
-				GetByReference = "this:$Invoke Member"
+				GetByReference = "this:$Texture Sample"
 			}
-			.component NeoAxis.Component_InvokeMember
+			.component NeoAxis.ShaderTextureSample
 			{
-				Name = Invoke Member
-				Member
+				Name = Texture Sample
+				Location3 = 0 0 0
+				Texture
 				{
-					GetByReference = "NeoAxis.ColorValue|method:op_Multiply(NeoAxis.ColorValue,NeoAxis.ColorValue)"
+					GetByReference = "Base\\Components\\Liquid Volume\\Normal.png"
 				}
-				Exit
+				Location2
 				{
-				}
-				__parameter_V1
-				{
-					GetByReference = "this:..\\..\\$Node Invoke Member 3\\$Invoke Member\\__parameter_ReturnValue"
-				}
-				__parameter_V2
-				{
-					GetByReference = "this:..\\..\\$Node Shader Parameter 2\\$Shader Parameter\\Output"
+					GetByReference = "this:..\\..\\$Node Shader 5\\$Shader\\__parameter_ReturnValue"
 				}
 			}
 		}
-		.component NeoAxis.Component_FlowGraphNode
+		.component NeoAxis.FlowGraphNode
 		{
-			Name = Node Invoke Member 5
-			Position = -5 4
+			Name = Node Texture Sample 6
+			Position = -11 -2
 			ControlledObject
 			{
-				GetByReference = "this:$Invoke Member"
+				GetByReference = "this:$Texture Sample"
 			}
-			.component NeoAxis.Component_InvokeMember
+			.component NeoAxis.ShaderTextureSample
 			{
-				Name = Invoke Member
-				Member
+				Name = Texture Sample
+				Location3 = 0 0 0
+				Texture
 				{
-					GetByReference = "NeoAxis.Vector3|method:op_Addition(NeoAxis.Vector3,NeoAxis.Vector3)"
+					GetByReference = "Base\\Components\\Liquid Volume\\Normal.png"
 				}
-				Exit
+				Location2
 				{
+					GetByReference = "this:..\\..\\$Node Shader 7\\$Shader\\__parameter_ReturnValue"
 				}
-				__parameter_V1
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample 5
+			Position = -11 -11
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Base\\Components\\Liquid Volume\\Normal.png"
+				}
+				Location2
+				{
+					GetByReference = "this:..\\..\\$Node Shader 6\\$Shader\\__parameter_ReturnValue"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Texture Sample 7
+			Position = -11 7
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Base\\Components\\Liquid Volume\\Normal.png"
+				}
+				Location2
+				{
+					GetByReference = "this:..\\..\\$Node Shader 8\\$Shader\\__parameter_ReturnValue"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Shader 2
+			Position = -27 -38
+			ControlledObject
+			{
+				GetByReference = "this:$Shader"
+			}
+			.component NeoAxis.ShaderScript
+			{
+				Name = Shader
+				Code = "public vec2 Method1(vec3 worldPosition)\r\n{\r\n\tvec2 windSpeed = u_windSpeed;\r\n\tfloat waveScale = 1.0;\r\n\tfloat time = u_engineTime;\r\n\t\r\n\tvec3 worldPosition2 = u_viewportOwnerCameraPositionSinglePrecision + worldPosition;\r\n\r\n\tvec2 nCoord = worldPosition2.xy * waveScale * 0.04 + windSpeed * time * 0.04;\r\n\treturn nCoord + vec2(-time * 0.015, -time * 0.005);\t\r\n}\r\n"
+				__parameter_WorldPosition
+				{
+					GetByReference = "this:..\\..\\$Node Invoke Member 3\\$Invoke Member\\__value_Value"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Shader 4
+			Position = -27 -29
+			ControlledObject
+			{
+				GetByReference = "this:$Shader"
+			}
+			.component NeoAxis.ShaderScript
+			{
+				Name = Shader
+				Code = "public vec2 Method2(vec3 worldPosition)\r\n{\r\n\tvec2 windSpeed = u_windSpeed;\r\n\tfloat waveScale = 1.0;\r\n\tfloat time = u_engineTime;\r\n\t\r\n\tvec3 worldPosition2 = u_viewportOwnerCameraPositionSinglePrecision + worldPosition;\r\n\r\n\tvec2 nCoord = worldPosition2.xy * waveScale * 0.1 + windSpeed * time * 0.08;\r\n\treturn nCoord + vec2(time * 0.020, time * 0.015);\r\n}\r\n"
+				__parameter_WorldPosition
+				{
+					GetByReference = "this:..\\..\\$Node Invoke Member 3\\$Invoke Member\\__value_Value"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Shader 5
+			Position = -27 -20
+			ControlledObject
+			{
+				GetByReference = "this:$Shader"
+			}
+			.component NeoAxis.ShaderScript
+			{
+				Name = Shader
+				Code = "public vec2 Method3(vec3 worldPosition)\r\n{\r\n\tvec2 windSpeed = u_windSpeed;\r\n\tfloat waveScale = 1.0;\r\n\tfloat time = u_engineTime;\r\n\t\r\n\tvec3 worldPosition2 = u_viewportOwnerCameraPositionSinglePrecision + worldPosition;\r\n\r\n\tvec2 nCoord = worldPosition2.xy * waveScale * 0.25 + windSpeed * time * 0.07;\r\n\treturn nCoord + vec2(-time * 0.04, -time * 0.03);\r\n}\r\n"
+				__parameter_WorldPosition
+				{
+					GetByReference = "this:..\\..\\$Node Invoke Member 3\\$Invoke Member\\__value_Value"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Shader 7
+			Position = -27 -2
+			ControlledObject
+			{
+				GetByReference = "this:$Shader"
+			}
+			.component NeoAxis.ShaderScript
+			{
+				Name = Shader
+				Code = "public vec2 Method5(vec3 worldPosition)\r\n{\r\n\tvec2 windSpeed = u_windSpeed;\r\n\tfloat waveScale = 1.0;\r\n\tfloat time = u_engineTime;\r\n\t\r\n\tvec3 worldPosition2 = u_viewportOwnerCameraPositionSinglePrecision + worldPosition;\r\n\r\n\tvec2 nCoord = worldPosition2.xy * waveScale * 1.0 + windSpeed * time * 0.4;\r\n\treturn nCoord + vec2(-time * 0.02, time * 0.1);\r\n}\r\n"
+				__parameter_WorldPosition
+				{
+					GetByReference = "this:..\\..\\$Node Invoke Member 3\\$Invoke Member\\__value_Value"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Shader 6
+			Position = -27 -11
+			ControlledObject
+			{
+				GetByReference = "this:$Shader"
+			}
+			.component NeoAxis.ShaderScript
+			{
+				Name = Shader
+				Code = "public vec2 Method4(vec3 worldPosition)\r\n{\r\n\tvec2 windSpeed = u_windSpeed;\r\n\tfloat waveScale = 1.0;\r\n\tfloat time = u_engineTime;\r\n\t\r\n\tvec3 worldPosition2 = u_viewportOwnerCameraPositionSinglePrecision + worldPosition;\r\n\r\n\tvec2 nCoord = worldPosition2.xy * waveScale * 0.5 + windSpeed * time * 0.09;\r\n\treturn nCoord + vec2(time * 0.03, time * 0.04);\r\n}\r\n"
+				__parameter_WorldPosition
+				{
+					GetByReference = "this:..\\..\\$Node Invoke Member 3\\$Invoke Member\\__value_Value"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Shader 8
+			Position = -27 7
+			ControlledObject
+			{
+				GetByReference = "this:$Shader"
+			}
+			.component NeoAxis.ShaderScript
+			{
+				Name = Shader
+				Code = "public vec2 Method6(vec3 worldPosition)\r\n{\r\n\tvec2 windSpeed = u_windSpeed;\r\n\tfloat waveScale = 1.0;\r\n\tfloat time = u_engineTime;\r\n\t\r\n\tvec3 worldPosition2 = u_viewportOwnerCameraPositionSinglePrecision + worldPosition;\r\n\r\n\tvec2 nCoord = worldPosition2.xy * waveScale * 2.0 + windSpeed * time * 0.7;\r\n\treturn nCoord + vec2(time * 0.1, -time * 0.06);\r\n}\r\n"
+				__parameter_WorldPosition
+				{
+					GetByReference = "this:..\\..\\$Node Invoke Member 3\\$Invoke Member\\__value_Value"
+				}
+			}
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node Shader 3
+			Position = 8 -38
+			ControlledObject
+			{
+				GetByReference = "this:$Shader"
+			}
+			.component NeoAxis.ShaderScript
+			{
+				Name = Shader
+				Code = "public vec3 GetNormal(vec4 sample1, vec4 sample2, vec4 sample3, vec4 sample4, vec4 sample5, vec4 sample6)\r\n{\r\n\tconst vec2 bigWaves = vec2(0.3, 0.3); // strength of big waves\r\n\tconst vec2 midWaves = vec2(0.3, 0.15); // strength of middle sized waves\r\n\tconst vec2 smallWaves = vec2(0.15, 0.1); // strength of small waves\r\n\r\n\tvec3 normal0 = 2.0 * sample1.xyz - 1.0;\r\n\tvec3 normal1 = 2.0 * sample2.xyz - 1.0;\r\n\tvec3 normal2 = 2.0 * sample3.xyz - 1.0;\r\n\tvec3 normal3 = 2.0 * sample4.xyz - 1.0;\r\n\tvec3 normal4 = 2.0 * sample5.xyz - 1.0;\r\n\tvec3 normal5 = 2.0 * sample6.xyz - 1.0;\r\n\t\r\n\tvec3 normal = normalize(\r\n\t\tnormal0 * bigWaves.x + normal1 * bigWaves.y + \r\n\t\tnormal2 * midWaves.x + normal3 * midWaves.y +\r\n\t\tnormal4 * smallWaves.x + normal5 * smallWaves.y);\r\n\t\t\r\n\t//!!!!?\r\n\tnormal = normal * 0.5 + 0.5; \r\n\t\t\r\n\treturn normal;\r\n}\r\n"
+				__parameter_Sample1
 				{
 					GetByReference = "this:..\\..\\$Node Texture Sample 2\\$Texture Sample\\RGBA"
 				}
-				__parameter_V2
+				__parameter_Sample2
 				{
-					GetByReference = "this:..\\..\\$Node Texture Sample 5\\$Texture Sample\\RGBA"
+					GetByReference = "this:..\\..\\$Node Texture Sample 3\\$Texture Sample\\RGBA"
 				}
-			}
-		}
-		.component NeoAxis.Component_FlowGraphNode
-		{
-			Name = Node Invoke Member 6
-			Position = 11 5
-			ControlledObject
-			{
-				GetByReference = "this:$Invoke Member"
-			}
-			.component NeoAxis.Component_InvokeMember
-			{
-				Name = Invoke Member
-				Member
-				{
-					GetByReference = "NeoAxis.Vector3|method:GetNormalize()"
-				}
-				Exit
-				{
-				}
-				__this_This
-				{
-					GetByReference = "this:..\\..\\$Node Invoke Member 5\\$Invoke Member\\__parameter_ReturnValue"
-				}
-			}
-		}
-		.component NeoAxis.Component_FlowGraphNode
-		{
-			Name = Node Invoke Member 3
-			Position = -5 -4
-			ControlledObject
-			{
-				GetByReference = "this:$Invoke Member"
-			}
-			.component NeoAxis.Component_InvokeMember
-			{
-				Name = Invoke Member
-				Member
-				{
-					GetByReference = "NeoAxis.ColorValue|method:op_Addition(NeoAxis.ColorValue,NeoAxis.ColorValue)"
-				}
-				Exit
-				{
-				}
-				__parameter_V1
-				{
-					GetByReference = "this:..\\..\\$Node Texture Sample 1\\$Texture Sample\\RGBA"
-				}
-				__parameter_V2
+				__parameter_Sample3
 				{
 					GetByReference = "this:..\\..\\$Node Texture Sample 4\\$Texture Sample\\RGBA"
 				}
+				__parameter_Sample4
+				{
+					GetByReference = "this:..\\..\\$Node Texture Sample 5\\$Texture Sample\\RGBA"
+				}
+				__parameter_Sample5
+				{
+					GetByReference = "this:..\\..\\$Node Texture Sample 6\\$Texture Sample\\RGBA"
+				}
+				__parameter_Sample6
+				{
+					GetByReference = "this:..\\..\\$Node Texture Sample 7\\$Texture Sample\\RGBA"
+				}
 			}
 		}
-		.component NeoAxis.Component_FlowGraphNode
+		.component NeoAxis.FlowGraphNode
 		{
-			Name = Node Shader Parameter 2
-			Position = 41 9
+			Name = Node Invoke Member 3
+			Position = -43 -38
 			ControlledObject
 			{
-				GetByReference = "this:$Shader Parameter"
+				GetByReference = "this:$Invoke Member"
 			}
-			.component NeoAxis.Component_ShaderParameter
+			.component NeoAxis.InvokeMember
 			{
-				Name = Shader Parameter
-				Source
+				Name = Invoke Member
+				Member
 				{
-					GetByReference = "this:..\\..\\..\\Color"
+					GetByReference = "NeoAxis.ShaderConstants|property:FragmentWorldPosition"
+				}
+				Exit
+				{
 				}
 			}
 		}
 	}
-	.component NeoAxis.Component_Property
+	.component NeoAxis.ShaderScript
 	{
-		Name = Color
-		DefaultValueSpecified = True
-		DefaultValue = 0.2218431 0.4580392 0.5568628
-		Type
-		{
-			GetByReference = NeoAxis.ColorValue
-		}
+		Name = Fragment functions
+		Type = Embedded
+		Code = "//source:\r\n//MIT https://github.com/muckSponge/Optically-Realistic-Water\r\n//CC-BY https://devlog-martinsh.blogspot.com/2013/09/waterunderwater-sky-shader-update-02.html\r\n//CC-BY https://www.blendswap.com/blend/9572\r\n/*\r\nfloat fresnel_dielectric(vec3 incoming, vec3 normal, float eta)\r\n{\r\n\tfloat c = abs(dot(incoming, normal));\r\n\tfloat g = eta * eta - 1.0 + c * c;\r\n\tif(g > 0.0)\r\n\t{\r\n\t\tg = sqrt(g);\r\n\t\tfloat A = (g - c) / (g + c);\r\n\t\tfloat B = (c * (g + c) - 1.0) / (c * (g - c) + 1.0);\r\n\t\treturn 0.5 * A * A * (1.0 + B * B);\r\n\t}\r\n\treturn 1.0;\r\n}\r\n*/"
+	}
+	.component NeoAxis.ShaderScript
+	{
+		Name = Fragment code
+		Type = Embedded
+		Code = "//source:\r\n//MIT https://github.com/muckSponge/Optically-Realistic-Water\r\n//CC-BY https://devlog-martinsh.blogspot.com/2013/09/waterunderwater-sky-shader-update-02.html\r\n//CC-BY https://www.blendswap.com/blend/9572\r\n\r\n//#ifdef FORWARD\r\n#ifdef DEFERRED\r\n#ifndef VOXEL_LOD_GET_OPACITY\r\n\r\n//baseColor = vec3(1,0,0);\r\n\r\n/*\r\n{\r\n\tconst vec2 bigWaves = vec2(0.3, 0.3); // strength of big waves\r\n\tconst vec2 midWaves = vec2(0.3, 0.15); // strength of middle sized waves\r\n\tconst vec2 smallWaves = vec2(0.15, 0.1); // strength of small waves\r\n\r\n\r\n\tvec2 windSpeed = u_windSpeed;\r\n\tfloat waveScale = 1.0;\r\n\tfloat time = u_engineTime;\r\n\r\n\r\n\t//!!!!\r\n\t\r\n\t//float2 fragCoord = i.sPosition.xy / i.sPosition.w;\r\n\t//fragCoord = clamp(fragCoord, 0.002, 0.998);\r\n\t\r\n\t//!!!!bool aboveWater = _WorldSpaceCameraPos.y > 0.0;\r\n\t\r\n\t//!!!!float normalFade = 1.0 - min(exp(-i.sPosition.w / 40), 1);           \r\n\r\n\t//get not relative to camera world position\t\r\n\tvec3 worldPosition2 = u_viewportOwnerCameraPositionSinglePrecision + worldPosition;\r\n\r\n\t//!!!!\r\n\t#define NORMAL_SAMPLE( _texCoord ) bgfxTexture2DBias(makeSampler(s_linearSamplerFragment, fragment_texture_18), ( _texCoord ), 0.0)\r\n\r\n\tvec2 nCoord = worldPosition2.xy * waveScale * 0.04 + windSpeed * time * 0.04;\r\n\tvec3 normal0 = 2.0 * NORMAL_SAMPLE( nCoord + vec2(-time * 0.015, -time * 0.005)).xyz - 1.0;\r\n\tnCoord = worldPosition2.xy * waveScale * 0.1 + windSpeed * time * 0.08;\r\n\tvec3 normal1 = 2.0 * NORMAL_SAMPLE( nCoord + vec2(time * 0.020, time * 0.015)).xyz - 1.0;\r\n\r\n\tnCoord = worldPosition2.xy * waveScale * 0.25 + windSpeed * time * 0.07;\r\n\tvec3 normal2 = 2.0 * NORMAL_SAMPLE( nCoord + vec2(-time * 0.04, -time * 0.03)).xyz - 1.0;\r\n\tnCoord = worldPosition2.xy * waveScale * 0.5 + windSpeed * time * 0.09;\r\n\tvec3 normal3 = 2.0 * NORMAL_SAMPLE( nCoord + vec2(time * 0.03, time * 0.04)).xyz - 1.0;\r\n\r\n\tnCoord = worldPosition2.xy * waveScale * 1.0 + windSpeed * time * 0.4;\r\n\tvec3 normal4 = 2.0 * NORMAL_SAMPLE( nCoord + vec2(-time * 0.02, time * 0.1)).xyz - 1.0;  \r\n\tnCoord = worldPosition2.xy * waveScale * 2.0 + windSpeed * time * 0.7;\r\n\tvec3 normal5 = 2.0 * NORMAL_SAMPLE( nCoord + vec2(time * 0.1, -time * 0.06)).xyz - 1.0;\t\r\n\t\r\n\t#undef NORMAL_SAMPLE\r\n\t\r\n\r\n\t//!!!!\r\n\r\n\r\n\tvec3 normal = normalize(\r\n\t\tnormal0 * bigWaves.x + normal1 * bigWaves.y +\r\n\t\tnormal2 * midWaves.x + normal3 * midWaves.y +\r\n\t\tnormal4 * smallWaves.x + normal5 * smallWaves.y);\r\n\r\n\t//baseColor = normal + 1.0 * 0.5;\r\n\r\n\t//return vec4(normal + 1.0 * 0.5, 1);\r\n\r\n\t//return vec4(1,0,0,1);\r\n}\r\n*/\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n//!!!!refraction example\r\n/*\r\n{\r\n\r\n\tfloat infiltration = 1;//0.5;//customParameter1.x;\r\n\tfloat blur = 1.0;//customParameter1.y;\r\n\tfloat intensity = 0.5;\r\n\t\r\n\tvec2 texCoord = fragCoord.xy * u_viewportSizeInv;\r\n\tfloat aspectRatio = float(u_viewportSize.y) / float(u_viewportSize.x); \r\n\t\r\n\tconst int sampleCount = 64;\r\n\t\r\n\tvec3 color = vec3_splat(0);\r\n\t//float divide = 0;\r\n\t\r\n\tfor(int n = 0; n < sampleCount; n++)\r\n\t{\r\n\t\t//!!!!\r\n\t\tfloat scale = 0.005;\r\n\t\t\r\n\t\tvec2 offset = vogelDiskSample(n, sampleCount, 0.0);\r\n\t\tvec2 texCoord2 = texCoord + offset * blur * vec2(aspectRatio * scale, scale);\r\n\t\r\n\t\t//color += unpackColor(texture2D(s_colorDepthTextureCopy, texCoord2).r);\r\n\t\tcolor += texture2D(s_colorDepthTextureCopy, texCoord2).rgb;\r\n\t\r\n\t\t//float factor = 1.0 - length(offset);\r\n\t\t//vec2 texCoord2 = texCoord + vogelDiskSample(n, sampleCount, 0.0) * blur * scale;\r\n\t\t//color += texture2D(s_colorDepthTextureCopy, texCoord2).rgb * factor;\r\n\t\t//divide += factor;\r\n\t}\r\n\t\r\n\tcolor /= float(sampleCount);\r\n\t//color /= float(divide);\r\n\t\r\n\tbaseColor = lerp(baseColor, color, infiltration);\r\n}\r\n*/\r\n\r\n\r\n#endif\r\n#endif\r\n\r\n"
 	}
 }

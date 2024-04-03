@@ -3,7 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2020, assimp team
+Copyright (c) 2006-2022, assimp team
 
 All rights reserved.
 
@@ -60,9 +60,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <assimp/Importer.hpp>
 #include <memory>
 
-using namespace Assimp;
+namespace Assimp {
 
-static const aiImporterDesc desc = {
+static constexpr aiImporterDesc desc = {
     "AC3D Importer",
     "",
     "",
@@ -116,7 +116,7 @@ inline const char *TAcCheckedLoadFloatArray(const char *buffer, const char *name
     buffer = AcSkipToNextToken(buffer);
     if (0 != name_length) {
         if (0 != strncmp(buffer, name, name_length) || !IsSpace(buffer[name_length])) {
-            ASSIMP_LOG_ERROR("AC3D: Unexpexted token. " + std::string(name) + " was expected.");
+            ASSIMP_LOG_ERROR("AC3D: Unexpected token. ", name, " was expected.");
             return buffer;
         }
         buffer += name_length + 1;
@@ -146,24 +146,13 @@ AC3DImporter::AC3DImporter() :
 
 // ------------------------------------------------------------------------------------------------
 // Destructor, private as well
-AC3DImporter::~AC3DImporter() {
-    // nothing to be done here
-}
+AC3DImporter::~AC3DImporter() = default;
 
 // ------------------------------------------------------------------------------------------------
 // Returns whether the class can handle the format of the given file.
-bool AC3DImporter::CanRead(const std::string &pFile, IOSystem *pIOHandler, bool checkSig) const {
-    std::string extension = GetExtension(pFile);
-
-    // fixme: are acc and ac3d *really* used? Some sources say they are
-    if (extension == "ac" || extension == "ac3d" || extension == "acc") {
-        return true;
-    }
-    if (!extension.length() || checkSig) {
-        uint32_t token = AI_MAKE_MAGIC("AC3D");
-        return CheckMagicToken(pIOHandler, pFile, &token, 1, 0);
-    }
-    return false;
+bool AC3DImporter::CanRead(const std::string &pFile, IOSystem *pIOHandler, bool /*checkSig*/) const {
+    static const uint32_t tokens[] = { AI_MAKE_MAGIC("AC3D") };
+    return CheckMagicToken(pIOHandler, pFile, tokens, AI_COUNT_OF(tokens));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -189,7 +178,7 @@ void AC3DImporter::LoadObjectSection(std::vector<Object> &objects) {
 
     ++mNumMeshes;
 
-    objects.push_back(Object());
+    objects.emplace_back();
     Object &obj = objects.back();
 
     aiLight *light = nullptr;
@@ -238,7 +227,9 @@ void AC3DImporter::LoadObjectSection(std::vector<Object> &objects) {
             }
         } else if (TokenMatch(buffer, "texture", 7)) {
             SkipSpaces(&buffer);
-            buffer = AcGetString(buffer, obj.texture);
+            std::string texture;
+            buffer = AcGetString(buffer, texture);
+            obj.textures.push_back(texture);
         } else if (TokenMatch(buffer, "texrep", 6)) {
             SkipSpaces(&buffer);
             buffer = TAcCheckedLoadFloatArray(buffer, "", 0, 2, &obj.texRepeat);
@@ -276,7 +267,7 @@ void AC3DImporter::LoadObjectSection(std::vector<Object> &objects) {
                     --buffer; // make sure the line is processed a second time
                     break;
                 }
-                obj.vertices.push_back(aiVector3D());
+                obj.vertices.emplace_back();
                 aiVector3D &v = obj.vertices.back();
                 buffer = TAcCheckedLoadFloatArray(buffer, "", 0, 3, &v.x);
             }
@@ -302,11 +293,11 @@ void AC3DImporter::LoadObjectSection(std::vector<Object> &objects) {
                     Q3DWorkAround = true;
                 }
                 SkipSpaces(&buffer);
-                obj.surfaces.push_back(Surface());
+                obj.surfaces.emplace_back();
                 Surface &surf = obj.surfaces.back();
                 surf.flags = strtoul_cppstyle(buffer);
 
-                while (1) {
+                while (true) {
                     if (!GetNextLine()) {
                         throw DeadlyImportError("AC3D: Unexpected EOF: surface is incomplete");
                     }
@@ -333,7 +324,7 @@ void AC3DImporter::LoadObjectSection(std::vector<Object> &objects) {
                                 ASSIMP_LOG_ERROR("AC3D: Unexpected EOF: surface references are incomplete");
                                 break;
                             }
-                            surf.entries.push_back(Surface::SurfaceEntry());
+                            surf.entries.emplace_back();
                             Surface::SurfaceEntry &entry = surf.entries.back();
 
                             entry.first = strtoul10(buffer, &buffer);
@@ -362,8 +353,8 @@ void AC3DImporter::ConvertMaterial(const Object &object,
         s.Set(matSrc.name);
         matDest.AddProperty(&s, AI_MATKEY_NAME);
     }
-    if (object.texture.length()) {
-        s.Set(object.texture);
+    if (!object.textures.empty()) {
+        s.Set(object.textures[0]);
         matDest.AddProperty(&s, AI_MATKEY_TEXTURE_DIFFUSE(0));
 
         // UV transformation
@@ -471,26 +462,33 @@ aiNode *AC3DImporter::ConvertObjectSection(Object &object,
                     ++node->mNumMeshes;
                 }
 
-                switch ((*it).flags & 0xf) {
+                switch ((*it).GetType()) {
                     // closed line
-                case 0x1:
+                case Surface::ClosedLine:
                     needMat[idx].first += (unsigned int)(*it).entries.size();
                     needMat[idx].second += (unsigned int)(*it).entries.size() << 1u;
                     break;
 
                     // unclosed line
-                case 0x2:
+                case Surface::OpenLine:
                     needMat[idx].first += (unsigned int)(*it).entries.size() - 1;
                     needMat[idx].second += ((unsigned int)(*it).entries.size() - 1) << 1u;
                     break;
 
-                    // 0 == polygon, else unknown
-                default:
-                    if ((*it).flags & 0xf) {
-                        ASSIMP_LOG_WARN("AC3D: The type flag of a surface is unknown");
-                        (*it).flags &= ~(0xf);
-                    }
+                    // triangle strip
+                case Surface::TriangleStrip:
+                    needMat[idx].first += (unsigned int)(*it).entries.size() - 2;
+                    needMat[idx].second += ((unsigned int)(*it).entries.size() - 2) * 3;
+                    break;
 
+                default:
+                    // Coerce unknowns to a polygon and warn
+                    ASSIMP_LOG_WARN("AC3D: The type flag of a surface is unknown: ", (*it).flags);
+                    (*it).flags &= ~(Surface::Mask);
+                    // fallthrough
+
+                    // polygon
+                case Surface::Polygon:
                     // the number of faces increments by one, the number
                     // of vertices by surface.numref.
                     needMat[idx].first++;
@@ -536,7 +534,7 @@ aiNode *AC3DImporter::ConvertObjectSection(Object &object,
                 // allocate UV coordinates, but only if the texture name for the
                 // surface is not empty
                 aiVector3D *uv = nullptr;
-                if (object.texture.length()) {
+                if (!object.textures.empty()) {
                     uv = mesh->mTextureCoords[0] = new aiVector3D[mesh->mNumVertices];
                     mesh->mNumUVComponents[0] = 2;
                 }
@@ -546,8 +544,8 @@ aiNode *AC3DImporter::ConvertObjectSection(Object &object,
                         const Surface &src = *it;
 
                         // closed polygon
-                        unsigned int type = (*it).flags & 0xf;
-                        if (!type) {
+                        uint8_t type = (*it).GetType();
+                        if (type == Surface::Polygon) {
                             aiFace &face = *faces++;
                             face.mNumIndices = (unsigned int)src.entries.size();
                             if (0 != face.mNumIndices) {
@@ -570,13 +568,71 @@ aiNode *AC3DImporter::ConvertObjectSection(Object &object,
                                     }
                                 }
                             }
+                        } else if (type == Surface::TriangleStrip) {
+                            for (unsigned int i = 0; i < (unsigned int)src.entries.size() - 2; ++i) {
+                                const Surface::SurfaceEntry &entry1 = src.entries[i];
+                                const Surface::SurfaceEntry &entry2 = src.entries[i + 1];
+                                const Surface::SurfaceEntry &entry3 = src.entries[i + 2];
+
+                                // skip degenerate triangles
+                                if (object.vertices[entry1.first] == object.vertices[entry2.first] ||
+                                        object.vertices[entry1.first] == object.vertices[entry3.first] ||
+                                        object.vertices[entry2.first] == object.vertices[entry3.first]) {
+                                    mesh->mNumFaces--;
+                                    mesh->mNumVertices -= 3;
+                                    continue;
+                                }
+
+                                aiFace &face = *faces++;
+                                face.mNumIndices = 3;
+                                face.mIndices = new unsigned int[face.mNumIndices];
+                                face.mIndices[0] = cur++;
+                                face.mIndices[1] = cur++;
+                                face.mIndices[2] = cur++;
+                                if (!(i & 1)) {
+                                    *vertices++ = object.vertices[entry1.first] + object.translation;
+                                    if (uv) {
+                                        uv->x = entry1.second.x;
+                                        uv->y = entry1.second.y;
+                                        ++uv;
+                                    }
+                                    *vertices++ = object.vertices[entry2.first] + object.translation;
+                                    if (uv) {
+                                        uv->x = entry2.second.x;
+                                        uv->y = entry2.second.y;
+                                        ++uv;
+                                    }
+                                } else {
+                                    *vertices++ = object.vertices[entry2.first] + object.translation;
+                                    if (uv) {
+                                        uv->x = entry2.second.x;
+                                        uv->y = entry2.second.y;
+                                        ++uv;
+                                    }
+                                    *vertices++ = object.vertices[entry1.first] + object.translation;
+                                    if (uv) {
+                                        uv->x = entry1.second.x;
+                                        uv->y = entry1.second.y;
+                                        ++uv;
+                                    }
+                                }
+                                if (static_cast<unsigned>(vertices - mesh->mVertices) >= mesh->mNumVertices) {
+                                    throw DeadlyImportError("AC3D: Invalid number of vertices");
+                                }
+                                *vertices++ = object.vertices[entry3.first] + object.translation;
+                                if (uv) {
+                                    uv->x = entry3.second.x;
+                                    uv->y = entry3.second.y;
+                                    ++uv;
+                                }
+                            }
                         } else {
 
                             it2 = (*it).entries.begin();
 
                             // either a closed or an unclosed line
                             unsigned int tmp = (unsigned int)(*it).entries.size();
-                            if (0x2 == type) --tmp;
+                            if (Surface::OpenLine == type) --tmp;
                             for (unsigned int m = 0; m < tmp; ++m) {
                                 aiFace &face = *faces++;
 
@@ -599,7 +655,7 @@ aiNode *AC3DImporter::ConvertObjectSection(Object &object,
                                     ++uv;
                                 }
 
-                                if (0x1 == type && tmp - 1 == m) {
+                                if (Surface::ClosedLine == type && tmp - 1 == m) {
                                     // if this is a closed line repeat its beginning now
                                     it2 = (*it).entries.begin();
                                 } else
@@ -625,15 +681,15 @@ aiNode *AC3DImporter::ConvertObjectSection(Object &object,
             if (object.subDiv) {
                 if (configEvalSubdivision) {
                     std::unique_ptr<Subdivider> div(Subdivider::Create(Subdivider::CATMULL_CLARKE));
-                    ASSIMP_LOG_INFO("AC3D: Evaluating subdivision surface: " + object.name);
+                    ASSIMP_LOG_INFO("AC3D: Evaluating subdivision surface: ", object.name);
 
-                    std::vector<aiMesh *> cpy(meshes.size() - oldm, NULL);
+                    std::vector<aiMesh *> cpy(meshes.size() - oldm, nullptr);
                     div->Subdivide(&meshes[oldm], cpy.size(), &cpy.front(), object.subDiv, true);
                     std::copy(cpy.begin(), cpy.end(), meshes.begin() + oldm);
 
                     // previous meshes are deleted vy Subdivide().
                 } else {
-                    ASSIMP_LOG_INFO("AC3D: Letting the subdivision surface untouched due to my configuration: " + object.name);
+                    ASSIMP_LOG_INFO("AC3D: Letting the subdivision surface untouched due to my configuration: ", object.name);
                 }
             }
         }
@@ -696,8 +752,8 @@ void AC3DImporter::InternReadFile(const std::string &pFile,
     std::unique_ptr<IOStream> file(pIOHandler->Open(pFile, "rb"));
 
     // Check whether we can read from the file
-    if (file.get() == nullptr) {
-        throw DeadlyImportError("Failed to open AC3D file " + pFile + ".");
+    if (file == nullptr) {
+        throw DeadlyImportError("Failed to open AC3D file ", pFile, ".");
     }
 
     // allocate storage and copy the contents of the file to a memory buffer
@@ -717,7 +773,7 @@ void AC3DImporter::InternReadFile(const std::string &pFile,
     unsigned int version = HexDigitToDecimal(buffer[4]);
     char msg[3];
     ASSIMP_itoa10(msg, 3, version);
-    ASSIMP_LOG_INFO_F("AC3D file format version: ", msg);
+    ASSIMP_LOG_INFO("AC3D file format version: ", msg);
 
     std::vector<Material> materials;
     materials.reserve(5);
@@ -730,7 +786,7 @@ void AC3DImporter::InternReadFile(const std::string &pFile,
 
     while (GetNextLine()) {
         if (TokenMatch(buffer, "MATERIAL", 8)) {
-            materials.push_back(Material());
+            materials.emplace_back();
             Material &mat = materials.back();
 
             // manually parse the material ... sscanf would use the buldin atof ...
@@ -757,7 +813,7 @@ void AC3DImporter::InternReadFile(const std::string &pFile,
     }
     if (materials.empty()) {
         ASSIMP_LOG_WARN("AC3D: No material has been found");
-        materials.push_back(Material());
+        materials.emplace_back();
     }
 
     mNumMeshes += (mNumMeshes >> 2u) + 1;
@@ -805,5 +861,7 @@ void AC3DImporter::InternReadFile(const std::string &pFile,
         ::memcpy(pScene->mLights, &lights[0], lights.size() * sizeof(void *));
     }
 }
+
+} // namespace Assimp
 
 #endif //!defined ASSIMP_BUILD_NO_AC_IMPORTER

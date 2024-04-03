@@ -17,7 +17,7 @@ namespace NeoAxis
 		//public Reference<string> CSharpEditorBuildConfiguration
 		//{
 		//	get { if( _cSharpEditorBuildConfiguration.BeginGet() ) CSharpEditorBuildConfiguration = _cSharpEditorBuildConfiguration.Get( this ); return _cSharpEditorBuildConfiguration.value; }
-		//	set { if( _cSharpEditorBuildConfiguration.BeginSet( ref value ) ) { try { CSharpEditorBuildConfigurationChanged?.Invoke( this ); } finally { _cSharpEditorBuildConfiguration.EndSet(); } } }
+		//	set { if( _cSharpEditorBuildConfiguration.BeginSet( this, ref value ) ) { try { CSharpEditorBuildConfigurationChanged?.Invoke( this ); } finally { _cSharpEditorBuildConfiguration.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="CSharpEditorBuildConfiguration"/> property value changes.</summary>
 		//public event Action<ProjectSettingsComponentPage_CSharpEditor> CSharpEditorBuildConfigurationChanged;
@@ -32,7 +32,7 @@ namespace NeoAxis
 		public Reference<bool> CSharpEditorDisplayLineNumbers
 		{
 			get { if( _cSharpEditorDisplayLineNumbers.BeginGet() ) CSharpEditorDisplayLineNumbers = _cSharpEditorDisplayLineNumbers.Get( this ); return _cSharpEditorDisplayLineNumbers.value; }
-			set { if( _cSharpEditorDisplayLineNumbers.BeginSet( ref value ) ) { try { CSharpEditorDisplayLineNumbersChanged?.Invoke( this ); } finally { _cSharpEditorDisplayLineNumbers.EndSet(); } } }
+			set { if( _cSharpEditorDisplayLineNumbers.BeginSet( this, ref value ) ) { try { CSharpEditorDisplayLineNumbersChanged?.Invoke( this ); } finally { _cSharpEditorDisplayLineNumbers.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CSharpEditorDisplayLineNumbers"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorDisplayLineNumbersChanged;
@@ -47,7 +47,7 @@ namespace NeoAxis
 		public Reference<bool> CSharpEditorDisplayInfoMarkers
 		{
 			get { if( _cSharpEditorDisplayInfoMarkers.BeginGet() ) CSharpEditorDisplayInfoMarkers = _cSharpEditorDisplayInfoMarkers.Get( this ); return _cSharpEditorDisplayInfoMarkers.value; }
-			set { if( _cSharpEditorDisplayInfoMarkers.BeginSet( ref value ) ) { try { CSharpEditorDisplayInfoMarkersChanged?.Invoke( this ); } finally { _cSharpEditorDisplayInfoMarkers.EndSet(); } } }
+			set { if( _cSharpEditorDisplayInfoMarkers.BeginSet( this, ref value ) ) { try { CSharpEditorDisplayInfoMarkersChanged?.Invoke( this ); } finally { _cSharpEditorDisplayInfoMarkers.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CSharpEditorDisplayInfoMarkers"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorDisplayInfoMarkersChanged;
@@ -62,7 +62,7 @@ namespace NeoAxis
 		public Reference<bool> CSharpEditorDisplayWarningMarkers
 		{
 			get { if( _cSharpEditorDisplayWarningMarkers.BeginGet() ) CSharpEditorDisplayWarningMarkers = _cSharpEditorDisplayWarningMarkers.Get( this ); return _cSharpEditorDisplayWarningMarkers.value; }
-			set { if( _cSharpEditorDisplayWarningMarkers.BeginSet( ref value ) ) { try { CSharpEditorDisplayWarningMarkersChanged?.Invoke( this ); } finally { _cSharpEditorDisplayWarningMarkers.EndSet(); } } }
+			set { if( _cSharpEditorDisplayWarningMarkers.BeginSet( this, ref value ) ) { try { CSharpEditorDisplayWarningMarkersChanged?.Invoke( this ); } finally { _cSharpEditorDisplayWarningMarkers.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CSharpEditorDisplayWarningMarkers"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorDisplayWarningMarkersChanged;
@@ -77,7 +77,7 @@ namespace NeoAxis
 		public Reference<bool> CSharpEditorDisplayErrorMarkers
 		{
 			get { if( _cSharpEditorDisplayErrorMarkers.BeginGet() ) CSharpEditorDisplayErrorMarkers = _cSharpEditorDisplayErrorMarkers.Get( this ); return _cSharpEditorDisplayErrorMarkers.value; }
-			set { if( _cSharpEditorDisplayErrorMarkers.BeginSet( ref value ) ) { try { CSharpEditorDisplayErrorMarkersChanged?.Invoke( this ); } finally { _cSharpEditorDisplayErrorMarkers.EndSet(); } } }
+			set { if( _cSharpEditorDisplayErrorMarkers.BeginSet( this, ref value ) ) { try { CSharpEditorDisplayErrorMarkersChanged?.Invoke( this ); } finally { _cSharpEditorDisplayErrorMarkers.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CSharpEditorDisplayErrorMarkers"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorDisplayErrorMarkersChanged;
@@ -92,7 +92,7 @@ namespace NeoAxis
 		public Reference<bool> CSharpEditorDisplayQuickActions
 		{
 			get { if( _cSharpEditorDisplayQuickActions.BeginGet() ) CSharpEditorDisplayQuickActions = _cSharpEditorDisplayQuickActions.Get( this ); return _cSharpEditorDisplayQuickActions.value; }
-			set { if( _cSharpEditorDisplayQuickActions.BeginSet( ref value ) ) { try { CSharpEditorDisplayQuickActionsChanged?.Invoke( this ); } finally { _cSharpEditorDisplayQuickActions.EndSet(); } } }
+			set { if( _cSharpEditorDisplayQuickActions.BeginSet( this, ref value ) ) { try { CSharpEditorDisplayQuickActionsChanged?.Invoke( this ); } finally { _cSharpEditorDisplayQuickActions.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CSharpEditorDisplayQuickActions"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorDisplayQuickActionsChanged;
@@ -107,7 +107,7 @@ namespace NeoAxis
 		public Reference<bool> CSharpEditorWordWrap
 		{
 			get { if( _cSharpEditorWordWrap.BeginGet() ) CSharpEditorWordWrap = _cSharpEditorWordWrap.Get( this ); return _cSharpEditorWordWrap.value; }
-			set { if( _cSharpEditorWordWrap.BeginSet( ref value ) ) { try { CSharpEditorWordWrapChanged?.Invoke( this ); } finally { _cSharpEditorWordWrap.EndSet(); } } }
+			set { if( _cSharpEditorWordWrap.BeginSet( this, ref value ) ) { try { CSharpEditorWordWrapChanged?.Invoke( this ); } finally { _cSharpEditorWordWrap.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CSharpEditorWordWrap"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorWordWrapChanged;
@@ -122,7 +122,7 @@ namespace NeoAxis
 		public Reference<bool> CSharpEditorBraceCompletion
 		{
 			get { if( _cSharpEditorBraceCompletion.BeginGet() ) CSharpEditorBraceCompletion = _cSharpEditorBraceCompletion.Get( this ); return _cSharpEditorBraceCompletion.value; }
-			set { if( _cSharpEditorBraceCompletion.BeginSet( ref value ) ) { try { CSharpEditorBraceCompletionChanged?.Invoke( this ); } finally { _cSharpEditorBraceCompletion.EndSet(); } } }
+			set { if( _cSharpEditorBraceCompletion.BeginSet( this, ref value ) ) { try { CSharpEditorBraceCompletionChanged?.Invoke( this ); } finally { _cSharpEditorBraceCompletion.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CSharpEditorBraceCompletion"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorBraceCompletionChanged;
@@ -137,7 +137,7 @@ namespace NeoAxis
 		public Reference<bool> CSharpEditorAutomaticallyFormatStatementOnSemicolon
 		{
 			get { if( _cSharpEditorAutomaticallyFormatStatementOnSemicolon.BeginGet() ) CSharpEditorAutomaticallyFormatStatementOnSemicolon = _cSharpEditorAutomaticallyFormatStatementOnSemicolon.Get( this ); return _cSharpEditorAutomaticallyFormatStatementOnSemicolon.value; }
-			set { if( _cSharpEditorAutomaticallyFormatStatementOnSemicolon.BeginSet( ref value ) ) { try { CSharpEditorAutomaticallyFormatStatementOnSemicolonChanged?.Invoke( this ); } finally { _cSharpEditorAutomaticallyFormatStatementOnSemicolon.EndSet(); } } }
+			set { if( _cSharpEditorAutomaticallyFormatStatementOnSemicolon.BeginSet( this, ref value ) ) { try { CSharpEditorAutomaticallyFormatStatementOnSemicolonChanged?.Invoke( this ); } finally { _cSharpEditorAutomaticallyFormatStatementOnSemicolon.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CSharpEditorAutomaticallyFormatStatementOnSemicolon"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorAutomaticallyFormatStatementOnSemicolonChanged;
@@ -152,7 +152,7 @@ namespace NeoAxis
 		public Reference<bool> CSharpEditorAutomaticallyFormatBlockOnBracket
 		{
 			get { if( _cSharpEditorAutomaticallyFormatBlockOnBracket.BeginGet() ) CSharpEditorAutomaticallyFormatBlockOnBracket = _cSharpEditorAutomaticallyFormatBlockOnBracket.Get( this ); return _cSharpEditorAutomaticallyFormatBlockOnBracket.value; }
-			set { if( _cSharpEditorAutomaticallyFormatBlockOnBracket.BeginSet( ref value ) ) { try { CSharpEditorAutomaticallyFormatBlockOnBracketChanged?.Invoke( this ); } finally { _cSharpEditorAutomaticallyFormatBlockOnBracket.EndSet(); } } }
+			set { if( _cSharpEditorAutomaticallyFormatBlockOnBracket.BeginSet( this, ref value ) ) { try { CSharpEditorAutomaticallyFormatBlockOnBracketChanged?.Invoke( this ); } finally { _cSharpEditorAutomaticallyFormatBlockOnBracket.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CSharpEditorAutomaticallyFormatBlockOnBracket"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorAutomaticallyFormatBlockOnBracketChanged;
@@ -165,7 +165,7 @@ namespace NeoAxis
 		//public Reference<ColorValue> CSharpEditorDefaultTextColorLightTheme
 		//{
 		//	get { if( _cSharpEditorDefaultTextColorLightTheme.BeginGet() ) CSharpEditorDefaultTextColorLightTheme = _cSharpEditorDefaultTextColorLightTheme.Get( this ); return _cSharpEditorDefaultTextColorLightTheme.value; }
-		//	set { if( _cSharpEditorDefaultTextColorLightTheme.BeginSet( ref value ) ) { try { CSharpEditorDefaultTextColorLightThemeChanged?.Invoke( this ); } finally { _cSharpEditorDefaultTextColorLightTheme.EndSet(); } } }
+		//	set { if( _cSharpEditorDefaultTextColorLightTheme.BeginSet( this, ref value ) ) { try { CSharpEditorDefaultTextColorLightThemeChanged?.Invoke( this ); } finally { _cSharpEditorDefaultTextColorLightTheme.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="CSharpEditorDefaultTextColorLightTheme"/> property value changes.</summary>
 		//public event Action<ProjectSettingsComponentPage_CSharpEditor> CSharpEditorDefaultTextColorLightThemeChanged;
@@ -180,7 +180,7 @@ namespace NeoAxis
 		public Reference<string> CSharpEditorFont
 		{
 			get { if( _cSharpEditorFont.BeginGet() ) CSharpEditorFont = _cSharpEditorFont.Get( this ); return _cSharpEditorFont.value; }
-			set { if( _cSharpEditorFont.BeginSet( ref value ) ) { try { CSharpEditorFontChanged?.Invoke( this ); } finally { _cSharpEditorFont.EndSet(); } } }
+			set { if( _cSharpEditorFont.BeginSet( this, ref value ) ) { try { CSharpEditorFontChanged?.Invoke( this ); } finally { _cSharpEditorFont.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CSharpEditorFont"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorFontChanged;
@@ -196,7 +196,7 @@ namespace NeoAxis
 		public Reference<double> CSharpEditorFontSize
 		{
 			get { if( _cSharpEditorFontSize.BeginGet() ) CSharpEditorFontSize = _cSharpEditorFontSize.Get( this ); return _cSharpEditorFontSize.value; }
-			set { if( _cSharpEditorFontSize.BeginSet( ref value ) ) { try { CSharpEditorFontSizeChanged?.Invoke( this ); } finally { _cSharpEditorFontSize.EndSet(); } } }
+			set { if( _cSharpEditorFontSize.BeginSet( this, ref value ) ) { try { CSharpEditorFontSizeChanged?.Invoke( this ); } finally { _cSharpEditorFontSize.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CSharpEditorFontSize"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorFontSizeChanged;
@@ -212,7 +212,7 @@ namespace NeoAxis
 		public Reference<ColorValue> CSharpEditorBackgroundColorLightTheme
 		{
 			get { if( _cSharpEditorBackgroundColorLightTheme.BeginGet() ) CSharpEditorBackgroundColorLightTheme = _cSharpEditorBackgroundColorLightTheme.Get( this ); return _cSharpEditorBackgroundColorLightTheme.value; }
-			set { if( _cSharpEditorBackgroundColorLightTheme.BeginSet( ref value ) ) { try { CSharpEditorBackgroundColorLightThemeChanged?.Invoke( this ); } finally { _cSharpEditorBackgroundColorLightTheme.EndSet(); } } }
+			set { if( _cSharpEditorBackgroundColorLightTheme.BeginSet( this, ref value ) ) { try { CSharpEditorBackgroundColorLightThemeChanged?.Invoke( this ); } finally { _cSharpEditorBackgroundColorLightTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CSharpEditorBackgroundColorLightTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorBackgroundColorLightThemeChanged;
@@ -228,7 +228,7 @@ namespace NeoAxis
 		public Reference<ColorValue> CSharpEditorBackgroundColorDarkTheme
 		{
 			get { if( _cSharpEditorBackgroundColorDarkTheme.BeginGet() ) CSharpEditorBackgroundColorDarkTheme = _cSharpEditorBackgroundColorDarkTheme.Get( this ); return _cSharpEditorBackgroundColorDarkTheme.value; }
-			set { if( _cSharpEditorBackgroundColorDarkTheme.BeginSet( ref value ) ) { try { CSharpEditorBackgroundColorDarkThemeChanged?.Invoke( this ); } finally { _cSharpEditorBackgroundColorDarkTheme.EndSet(); } } }
+			set { if( _cSharpEditorBackgroundColorDarkTheme.BeginSet( this, ref value ) ) { try { CSharpEditorBackgroundColorDarkThemeChanged?.Invoke( this ); } finally { _cSharpEditorBackgroundColorDarkTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CSharpEditorBackgroundColorDarkTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorBackgroundColorDarkThemeChanged;
@@ -244,7 +244,7 @@ namespace NeoAxis
 		public Reference<ColorValue> CSharpEditorSelectionBackgroundLightTheme
 		{
 			get { if( _cSharpEditorSelectionBackgroundLightTheme.BeginGet() ) CSharpEditorSelectionBackgroundLightTheme = _cSharpEditorSelectionBackgroundLightTheme.Get( this ); return _cSharpEditorSelectionBackgroundLightTheme.value; }
-			set { if( _cSharpEditorSelectionBackgroundLightTheme.BeginSet( ref value ) ) { try { CSharpEditorSelectionBackgroundLightThemeChanged?.Invoke( this ); } finally { _cSharpEditorSelectionBackgroundLightTheme.EndSet(); } } }
+			set { if( _cSharpEditorSelectionBackgroundLightTheme.BeginSet( this, ref value ) ) { try { CSharpEditorSelectionBackgroundLightThemeChanged?.Invoke( this ); } finally { _cSharpEditorSelectionBackgroundLightTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CSharpEditorSelectionBackgroundLightTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorSelectionBackgroundLightThemeChanged;
@@ -260,7 +260,7 @@ namespace NeoAxis
 		public Reference<ColorValue> CSharpEditorSelectionForegroundLightTheme
 		{
 			get { if( _cSharpEditorSelectionForegroundLightTheme.BeginGet() ) CSharpEditorSelectionForegroundLightTheme = _cSharpEditorSelectionForegroundLightTheme.Get( this ); return _cSharpEditorSelectionForegroundLightTheme.value; }
-			set { if( _cSharpEditorSelectionForegroundLightTheme.BeginSet( ref value ) ) { try { CSharpEditorSelectionForegroundLightThemeChanged?.Invoke( this ); } finally { _cSharpEditorSelectionForegroundLightTheme.EndSet(); } } }
+			set { if( _cSharpEditorSelectionForegroundLightTheme.BeginSet( this, ref value ) ) { try { CSharpEditorSelectionForegroundLightThemeChanged?.Invoke( this ); } finally { _cSharpEditorSelectionForegroundLightTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CSharpEditorSelectionForegroundLightTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorSelectionForegroundLightThemeChanged;
@@ -276,7 +276,7 @@ namespace NeoAxis
 		public Reference<ColorValue> CSharpEditorSelectionBackgroundDarkTheme
 		{
 			get { if( _cSharpEditorSelectionBackgroundDarkTheme.BeginGet() ) CSharpEditorSelectionBackgroundDarkTheme = _cSharpEditorSelectionBackgroundDarkTheme.Get( this ); return _cSharpEditorSelectionBackgroundDarkTheme.value; }
-			set { if( _cSharpEditorSelectionBackgroundDarkTheme.BeginSet( ref value ) ) { try { CSharpEditorSelectionBackgroundDarkThemeChanged?.Invoke( this ); } finally { _cSharpEditorSelectionBackgroundDarkTheme.EndSet(); } } }
+			set { if( _cSharpEditorSelectionBackgroundDarkTheme.BeginSet( this, ref value ) ) { try { CSharpEditorSelectionBackgroundDarkThemeChanged?.Invoke( this ); } finally { _cSharpEditorSelectionBackgroundDarkTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CSharpEditorSelectionBackgroundDarkTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorSelectionBackgroundDarkThemeChanged;
@@ -292,7 +292,7 @@ namespace NeoAxis
 		public Reference<ColorValue> CSharpEditorSelectionForegroundDarkTheme
 		{
 			get { if( _cSharpEditorSelectionForegroundDarkTheme.BeginGet() ) CSharpEditorSelectionForegroundDarkTheme = _cSharpEditorSelectionForegroundDarkTheme.Get( this ); return _cSharpEditorSelectionForegroundDarkTheme.value; }
-			set { if( _cSharpEditorSelectionForegroundDarkTheme.BeginSet( ref value ) ) { try { CSharpEditorSelectionForegroundDarkThemeChanged?.Invoke( this ); } finally { _cSharpEditorSelectionForegroundDarkTheme.EndSet(); } } }
+			set { if( _cSharpEditorSelectionForegroundDarkTheme.BeginSet( this, ref value ) ) { try { CSharpEditorSelectionForegroundDarkThemeChanged?.Invoke( this ); } finally { _cSharpEditorSelectionForegroundDarkTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CSharpEditorSelectionForegroundDarkTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorSelectionForegroundDarkThemeChanged;
@@ -308,7 +308,7 @@ namespace NeoAxis
 		public Reference<ColorValue> CSharpEditorSearchBackgroundLightTheme
 		{
 			get { if( _cSharpEditorSearchBackgroundLightTheme.BeginGet() ) CSharpEditorSearchBackgroundLightTheme = _cSharpEditorSearchBackgroundLightTheme.Get( this ); return _cSharpEditorSearchBackgroundLightTheme.value; }
-			set { if( _cSharpEditorSearchBackgroundLightTheme.BeginSet( ref value ) ) { try { CSharpEditorSearchBackgroundLightThemeChanged?.Invoke( this ); } finally { _cSharpEditorSearchBackgroundLightTheme.EndSet(); } } }
+			set { if( _cSharpEditorSearchBackgroundLightTheme.BeginSet( this, ref value ) ) { try { CSharpEditorSearchBackgroundLightThemeChanged?.Invoke( this ); } finally { _cSharpEditorSearchBackgroundLightTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CSharpEditorSearchBackgroundLightTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorSearchBackgroundLightThemeChanged;
@@ -324,7 +324,7 @@ namespace NeoAxis
 		public Reference<ColorValue> CSharpEditorSearchBackgroundDarkTheme
 		{
 			get { if( _cSharpEditorSearchBackgroundDarkTheme.BeginGet() ) CSharpEditorSearchBackgroundDarkTheme = _cSharpEditorSearchBackgroundDarkTheme.Get( this ); return _cSharpEditorSearchBackgroundDarkTheme.value; }
-			set { if( _cSharpEditorSearchBackgroundDarkTheme.BeginSet( ref value ) ) { try { CSharpEditorSearchBackgroundDarkThemeChanged?.Invoke( this ); } finally { _cSharpEditorSearchBackgroundDarkTheme.EndSet(); } } }
+			set { if( _cSharpEditorSearchBackgroundDarkTheme.BeginSet( this, ref value ) ) { try { CSharpEditorSearchBackgroundDarkThemeChanged?.Invoke( this ); } finally { _cSharpEditorSearchBackgroundDarkTheme.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CSharpEditorSearchBackgroundDarkTheme"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_CSharpEditor> CSharpEditorSearchBackgroundDarkThemeChanged;
@@ -337,7 +337,7 @@ namespace NeoAxis
 		//public Reference<ColorValue> CSharpEditorDefaultTextColorDarkTheme
 		//{
 		//	get { if( _cSharpEditorDefaultTextColorDarkTheme.BeginGet() ) CSharpEditorDefaultTextColorDarkTheme = _cSharpEditorDefaultTextColorDarkTheme.Get( this ); return _cSharpEditorDefaultTextColorDarkTheme.value; }
-		//	set { if( _cSharpEditorDefaultTextColorDarkTheme.BeginSet( ref value ) ) { try { CSharpEditorDefaultTextColorDarkThemeChanged?.Invoke( this ); } finally { _cSharpEditorDefaultTextColorDarkTheme.EndSet(); } } }
+		//	set { if( _cSharpEditorDefaultTextColorDarkTheme.BeginSet( this, ref value ) ) { try { CSharpEditorDefaultTextColorDarkThemeChanged?.Invoke( this ); } finally { _cSharpEditorDefaultTextColorDarkTheme.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="CSharpEditorDefaultTextColorDarkTheme"/> property value changes.</summary>
 		//public event Action<ProjectSettingsComponentPage_CSharpEditor> CSharpEditorDefaultTextColorDarkThemeChanged;
@@ -356,7 +356,7 @@ namespace NeoAxis
 		//public Reference<string> CSharpEditorHighlightingSchemeLightTheme
 		//{
 		//	get { if( _cSharpEditorHighlightingSchemeLightTheme.BeginGet() ) CSharpEditorHighlightingSchemeLightTheme = _cSharpEditorHighlightingSchemeLightTheme.Get( this ); return _cSharpEditorHighlightingSchemeLightTheme.value; }
-		//	set { if( _cSharpEditorHighlightingSchemeLightTheme.BeginSet( ref value ) ) { try { CSharpEditorHighlightingSchemeLightThemeChanged?.Invoke( this ); } finally { _cSharpEditorHighlightingSchemeLightTheme.EndSet(); } } }
+		//	set { if( _cSharpEditorHighlightingSchemeLightTheme.BeginSet( this, ref value ) ) { try { CSharpEditorHighlightingSchemeLightThemeChanged?.Invoke( this ); } finally { _cSharpEditorHighlightingSchemeLightTheme.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="CSharpEditorHighlightingSchemeLightTheme"/> property value changes.</summary>
 		//public event Action<ProjectSettingsComponentPage_CSharpEditor> CSharpEditorHighlightingSchemeLightThemeChanged;
@@ -367,7 +367,7 @@ namespace NeoAxis
 		//public Reference<ReferenceValueType_Resource> CSharpEditorHighlightingLightTheme
 		//{
 		//	get { if( _cSharpEditorHighlightingLightTheme.BeginGet() ) CSharpEditorHighlightingLightTheme = _cSharpEditorHighlightingLightTheme.Get( this ); return _cSharpEditorHighlightingLightTheme.value; }
-		//	set { if( _cSharpEditorHighlightingLightTheme.BeginSet( ref value ) ) { try { CSharpEditorHighlightingLightThemeChanged?.Invoke( this ); } finally { _cSharpEditorHighlightingLightTheme.EndSet(); } } }
+		//	set { if( _cSharpEditorHighlightingLightTheme.BeginSet( this, ref value ) ) { try { CSharpEditorHighlightingLightThemeChanged?.Invoke( this ); } finally { _cSharpEditorHighlightingLightTheme.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="CSharpEditorHighlightingLightTheme"/> property value changes.</summary>
 		//public event Action<ProjectSettingsComponentPage_CSharpEditor> CSharpEditorHighlightingLightThemeChanged;

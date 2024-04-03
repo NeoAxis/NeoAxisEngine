@@ -14,7 +14,7 @@ namespace NeoAxis
 	/// A tool for rendering a scene to a file. It intended to create screenshots and to create materials.
 	/// </summary>
 #if !DEPLOY
-	[SettingsCell( typeof( RenderToFileSettingsCell ) )]
+	[SettingsCell( "NeoAxis.Editor.RenderToFileSettingsCell" )]
 #endif
 	[AddToResourcesWindow( @"Base\Scene objects\Additional\Render To File", 0 )]
 	public class RenderToFile : Component
@@ -33,7 +33,7 @@ namespace NeoAxis
 		public Reference<ModeEnum> Mode
 		{
 			get { if( _mode.BeginGet() ) Mode = _mode.Get( this ); return _mode.value; }
-			set { if( _mode.BeginSet( ref value ) ) { try { ModeChanged?.Invoke( this ); } finally { _mode.EndSet(); } } }
+			set { if( _mode.BeginSet( this, ref value ) ) { try { ModeChanged?.Invoke( this ); } finally { _mode.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Mode"/> property value changes.</summary>
 		public event Action<RenderToFile> ModeChanged;
@@ -47,7 +47,7 @@ namespace NeoAxis
 		public Reference<Vector2I> Resolution
 		{
 			get { if( _resolution.BeginGet() ) Resolution = _resolution.Get( this ); return _resolution.value; }
-			set { if( _resolution.BeginSet( ref value ) ) { try { ResolutionChanged?.Invoke( this ); } finally { _resolution.EndSet(); } } }
+			set { if( _resolution.BeginSet( this, ref value ) ) { try { ResolutionChanged?.Invoke( this ); } finally { _resolution.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Resolution"/> property value changes.</summary>
 		public event Action<RenderToFile> ResolutionChanged;
@@ -60,7 +60,7 @@ namespace NeoAxis
 		public Reference<string> OutputFileName
 		{
 			get { if( _outputFileName.BeginGet() ) OutputFileName = _outputFileName.Get( this ); return _outputFileName.value; }
-			set { if( _outputFileName.BeginSet( ref value ) ) { try { OutputFileNameChanged?.Invoke( this ); } finally { _outputFileName.EndSet(); } } }
+			set { if( _outputFileName.BeginSet( this, ref value ) ) { try { OutputFileNameChanged?.Invoke( this ); } finally { _outputFileName.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="OutputFileName"/> property value changes.</summary>
 		public event Action<RenderToFile> OutputFileNameChanged;
@@ -73,7 +73,7 @@ namespace NeoAxis
 		public Reference<Camera> Camera
 		{
 			get { if( _camera.BeginGet() ) Camera = _camera.Get( this ); return _camera.value; }
-			set { if( _camera.BeginSet( ref value ) ) { try { CameraChanged?.Invoke( this ); } finally { _camera.EndSet(); } } }
+			set { if( _camera.BeginSet( this, ref value ) ) { try { CameraChanged?.Invoke( this ); } finally { _camera.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Camera"/> property value changes.</summary>
 		public event Action<RenderToFile> CameraChanged;
@@ -86,7 +86,7 @@ namespace NeoAxis
 		public Reference<RenderingPipeline> RenderingPipeline
 		{
 			get { if( _renderingPipeline.BeginGet() ) RenderingPipeline = _renderingPipeline.Get( this ); return _renderingPipeline.value; }
-			set { if( _renderingPipeline.BeginSet( ref value ) ) { try { RenderingPipelineChanged?.Invoke( this ); } finally { _renderingPipeline.EndSet(); } } }
+			set { if( _renderingPipeline.BeginSet( this, ref value ) ) { try { RenderingPipelineChanged?.Invoke( this ); } finally { _renderingPipeline.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="RenderingPipeline"/> property value changes.</summary>
 		public event Action<RenderToFile> RenderingPipelineChanged;
@@ -99,7 +99,7 @@ namespace NeoAxis
 		public Reference<bool> DisplayDevelopmentData
 		{
 			get { if( _displayDevelopmentData.BeginGet() ) DisplayDevelopmentData = _displayDevelopmentData.Get( this ); return _displayDevelopmentData.value; }
-			set { if( _displayDevelopmentData.BeginSet( ref value ) ) { try { DisplayDevelopmentDataChanged?.Invoke( this ); } finally { _displayDevelopmentData.EndSet(); } } }
+			set { if( _displayDevelopmentData.BeginSet( this, ref value ) ) { try { DisplayDevelopmentDataChanged?.Invoke( this ); } finally { _displayDevelopmentData.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayDevelopmentData"/> property value changes.</summary>
 		public event Action<RenderToFile> DisplayDevelopmentDataChanged;
@@ -113,7 +113,7 @@ namespace NeoAxis
 		public Reference<Material> Template
 		{
 			get { if( _template.BeginGet() ) Template = _template.Get( this ); return _template.value; }
-			set { if( _template.BeginSet( ref value ) ) { try { TemplateChanged?.Invoke( this ); } finally { _template.EndSet(); } } }
+			set { if( _template.BeginSet( this, ref value ) ) { try { TemplateChanged?.Invoke( this ); } finally { _template.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Template"/> property value changes.</summary>
 		public event Action<RenderToFile> TemplateChanged;
@@ -127,7 +127,7 @@ namespace NeoAxis
 		public Reference<bool> FillTransparentPixelsByNearPixels
 		{
 			get { if( _fillTransparentPixelsByNearPixels.BeginGet() ) FillTransparentPixelsByNearPixels = _fillTransparentPixelsByNearPixels.Get( this ); return _fillTransparentPixelsByNearPixels.value; }
-			set { if( _fillTransparentPixelsByNearPixels.BeginSet( ref value ) ) { try { FillTransparentPixelsByNearPixelsChanged?.Invoke( this ); } finally { _fillTransparentPixelsByNearPixels.EndSet(); } } }
+			set { if( _fillTransparentPixelsByNearPixels.BeginSet( this, ref value ) ) { try { FillTransparentPixelsByNearPixelsChanged?.Invoke( this ); } finally { _fillTransparentPixelsByNearPixels.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FillTransparentPixelsByNearPixels"/> property value changes.</summary>
 		public event Action<RenderToFile> FillTransparentPixelsByNearPixelsChanged;
@@ -140,7 +140,7 @@ namespace NeoAxis
 		public Reference<int> FramesPerSecond
 		{
 			get { if( _framesPerSecond.BeginGet() ) FramesPerSecond = _framesPerSecond.Get( this ); return _framesPerSecond.value; }
-			set { if( _framesPerSecond.BeginSet( ref value ) ) { try { FramesPerSecondChanged?.Invoke( this ); } finally { _framesPerSecond.EndSet(); } } }
+			set { if( _framesPerSecond.BeginSet( this, ref value ) ) { try { FramesPerSecondChanged?.Invoke( this ); } finally { _framesPerSecond.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FramesPerSecond"/> property value changes.</summary>
 		public event Action<RenderToFile> FramesPerSecondChanged;
@@ -153,7 +153,7 @@ namespace NeoAxis
 		public Reference<double> Length
 		{
 			get { if( _length.BeginGet() ) Length = _length.Get( this ); return _length.value; }
-			set { if( _length.BeginSet( ref value ) ) { try { LengthChanged?.Invoke( this ); } finally { _length.EndSet(); } } }
+			set { if( _length.BeginSet( this, ref value ) ) { try { LengthChanged?.Invoke( this ); } finally { _length.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Length"/> property value changes.</summary>
 		public event Action<RenderToFile> LengthChanged;
@@ -176,7 +176,7 @@ namespace NeoAxis
 		public Reference<FormatEnum> Format
 		{
 			get { if( _format.BeginGet() ) Format = _format.Get( this ); return _format.value; }
-			set { if( _format.BeginSet( ref value ) ) { try { FormatChanged?.Invoke( this ); } finally { _format.EndSet(); } } }
+			set { if( _format.BeginSet( this, ref value ) ) { try { FormatChanged?.Invoke( this ); } finally { _format.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="Format"/> property value changes.</summary>
 		public event Action<RenderToFile> FormatChanged;
@@ -189,7 +189,7 @@ namespace NeoAxis
 		public Reference<string> FormatFourCC
 		{
 			get { if( _formatFourCC.BeginGet() ) FormatFourCC = _formatFourCC.Get( this ); return _formatFourCC.value; }
-			set { if( _formatFourCC.BeginSet( ref value ) ) { try { FormatFourCCChanged?.Invoke( this ); } finally { _formatFourCC.EndSet(); } } }
+			set { if( _formatFourCC.BeginSet( this, ref value ) ) { try { FormatFourCCChanged?.Invoke( this ); } finally { _formatFourCC.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FormatFourCC"/> property value changes.</summary>
 		public event Action<RenderToFile> FormatFourCCChanged;
@@ -204,7 +204,7 @@ namespace NeoAxis
 		public Reference<CaptureMethodEnum> CaptureMethod
 		{
 			get { if( _captureMethod.BeginGet() ) CaptureMethod = _captureMethod.Get( this ); return _captureMethod.value; }
-			set { if( _captureMethod.BeginSet( ref value ) ) { try { CaptureMethodChanged?.Invoke( this ); } finally { _captureMethod.EndSet(); } } }
+			set { if( _captureMethod.BeginSet( this, ref value ) ) { try { CaptureMethodChanged?.Invoke( this ); } finally { _captureMethod.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CaptureMethod"/> property value changes.</summary>
 		public event Action<RenderToFile> CaptureMethodChanged;
