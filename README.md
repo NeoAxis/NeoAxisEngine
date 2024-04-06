@@ -8,15 +8,14 @@
 
 <h2>Supported platforms by the editor</h2>
 <ul>
-<li>Windows 7+ x64</li>
+<li>Windows 10+ x64</li>
 </ul>
 
 <h2>Target supported platforms</h2>
 <ul>
-<li>Windows 7+ x64</li>
+<li>Windows 10+ x64</li>
 <li>Android 8.0+ ARM32 and ARM64</li>
 <li>UWP x64 (Universal Windows, Xbox)</li>
-<li>iOS and other coming soon.</li>
 </ul>
 
 <h2>Building (very easy)</h2>
@@ -56,4 +55,4 @@ Yes. If you encounter problems, please report it as soon as possible.</li>
 
 </ul>
 
-<div class="image" align="center"><a href="https://www.neoaxis.com/images/2023_1/NeoAxisEngine2023_Levels1.jpg"><img src="https://www.neoaxis.com/images/2023_1/NeoAxisEngine2023_Levels1.jpg" alt="" width="1000" vspace="10"></a></div>
+<div class="image" align="center"><a href="https://www.neoaxis.com/images/2024_1/NeoAxisEngine_2024_1_CityDemo1.jpg"><img src="https://www.neoaxis.com/images/2024_1/NeoAxisEngine_2024_1_CityDemo1.jpg" alt="" width="1000" vspace="10"></a></div>
