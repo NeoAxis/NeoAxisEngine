@@ -51974,6 +51974,31 @@
             Gets or sets the number of failed expand mtu attempts to perform before setting final MTU
             </summary>
         </member>
+        <member name="P:Internal.Lidgren.Network.NetPeerConfiguration.SimulatedLoss">
+            <summary>
+            Gets or sets the simulated amount of sent packets lost from 0.0f to 1.0f
+            </summary>
+        </member>
+        <member name="P:Internal.Lidgren.Network.NetPeerConfiguration.SimulatedMinimumLatency">
+            <summary>
+            Gets or sets the minimum simulated amount of one way latency for sent packets in seconds
+            </summary>
+        </member>
+        <member name="P:Internal.Lidgren.Network.NetPeerConfiguration.SimulatedRandomLatency">
+            <summary>
+            Gets or sets the simulated added random amount of one way latency for sent packets in seconds
+            </summary>
+        </member>
+        <member name="P:Internal.Lidgren.Network.NetPeerConfiguration.SimulatedAverageLatency">
+            <summary>
+            Gets the average simulated one way latency in seconds
+            </summary>
+        </member>
+        <member name="P:Internal.Lidgren.Network.NetPeerConfiguration.SimulatedDuplicatesChance">
+            <summary>
+            Gets or sets the simulated amount of duplicated packets from 0.0f to 1.0f
+            </summary>
+        </member>
         <member name="M:Internal.Lidgren.Network.NetPeerConfiguration.Clone">
             <summary>
             Creates a memberwise shallow clone of this configuration

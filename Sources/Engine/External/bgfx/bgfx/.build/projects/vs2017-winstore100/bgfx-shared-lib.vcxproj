@@ -480,6 +480,7 @@ copy ..\..\win64_vs2017-winstore100\bin\bgfx-shared-libRelease.dll "..\..\..\..\
     <ClCompile Include="..\..\..\tools\shaderc\LibraryBase.cpp" />
     <ClCompile Include="..\..\..\tools\shaderc\shaderc.cpp" />
     <ClCompile Include="..\..\..\tools\shaderc\shaderc_hlsl.cpp" />
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc_hlsl_dx12.cpp" />
     <ClCompile Include="..\..\..\tools\shaderc\shaderc_spirv.cpp" />
   </ItemGroup>
   <ItemGroup>

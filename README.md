@@ -16,13 +16,15 @@
 <li>Windows 10+ x64</li>
 <li>Android 8.0+ ARM32 and ARM64</li>
 <li>UWP x64 (Universal Windows, Xbox)</li>
+<li>Linux. For a server, no rendering.</li>
 </ul>
 
 <h2>Building (very easy)</h2>
 
 Compile for Windows:
 <ul>
-<li>You need Visual Studio 2019 with .NET 5.0 or Visual Studio 2022. Use NeoAxis.Windows.ManagedOnly.sln to compile only managed assemblies. The native code for Windows is already compiled.</li>
+<li>You need Visual Studio 2022 or Visual Studio 2019 with .NET 5.0. Use NeoAxis.Windows.sln.</li>
+<li>Use NeoAxis.Windows.ManagedOnly.sln to compile only managed assemblies. The native code for Windows is already compiled.</li>
 <li>Download City Demo, Nature Demo and other content from the Asset Store window inside the editor.</li>
 </ul>
 

@@ -8,7 +8,7 @@
 
 #include "../../src/bgfx_p.h"
 
-#if SHADERC_CONFIG_HLSL
+#if defined( SHADERC_CONFIG_HLSL ) && !defined( BX_PLATFORM_WINRT ) //#if SHADERC_CONFIG_HLSL
 
 #include "../../src/renderer_d3d12.h"
 

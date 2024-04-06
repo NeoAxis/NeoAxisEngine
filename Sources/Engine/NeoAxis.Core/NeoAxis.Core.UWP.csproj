@@ -1595,7 +1595,6 @@
     <Compile Include="Networking\NetworkService_FileSync.cs" />
     <Compile Include="Networking\NetworkService_Messages.cs" />
     <Compile Include="Networking\NetworkService_Users.cs" />
-    <Compile Include="SoundSystem\NullSoundWorld.cs" />
     <Compile Include="Components\Build\Product_Web.cs" />
     <Compile Include="Editor\HierarchicalContainer\HCCommon.cs" />
     <Compile Include="Editor\ScreenNotifications\ScreenNotifications.cs" />
@@ -1649,6 +1648,9 @@
     <Compile Include="Components\Rendering\Sky.cs" />
     <Compile Include="EngineApp\Linux specific\LinuxPlatformFunctionality.cs" />
     <Compile Include="Components\Rendering\Pipelines\RenderingPipeline_Basic_Tessellation.cs" />
+    <Compile Include="Renderer\ComputeProgramManager.cs" />
+    <Compile Include="SoundSystem\NoneSoundWorld.cs" />
+    <Compile Include="Components\Rendering\Effects\MicroparticlesInAir.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Addon_16.png" />

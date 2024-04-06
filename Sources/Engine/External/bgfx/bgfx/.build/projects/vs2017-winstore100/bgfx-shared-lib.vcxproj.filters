@@ -208,6 +208,9 @@
     <ClCompile Include="..\..\..\tools\shaderc\shaderc_spirv.cpp">
       <Filter>shaderc</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc_hlsl_dx12.cpp">
+      <Filter>shaderc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="..\..\..\scripts\bgfx.natvis">
