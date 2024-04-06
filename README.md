@@ -37,7 +37,7 @@ More:
 <li>Set up NeoAxis.Editor assembly as StartUp project to make run with debugger.</li>
 <li>Add a new code to the NeoAxis.CoreExtension by default. Project assembly is also good. Source code of Project assembly can be changed in the NeoAxis Editor.</li>
 <li>Consider the using of built-in editor C# scripting to make scene and GUI scripts. https://www.neoaxis.com/docs/html/Scripting_Overview.htm</li>
-<li>Use English code page for your project if it possible: https://github.com/NeoAxis/NeoAxisEngine/issues/1</li>
+<li>Use English code page for your project if it possible.</li>
 </ul>
 
 <h2>License</h2>
