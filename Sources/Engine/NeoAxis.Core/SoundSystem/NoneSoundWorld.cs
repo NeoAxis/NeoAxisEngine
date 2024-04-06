@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace NeoAxis
 {
-	class NullSoundWorld : SoundWorld
+	class NoneSoundWorld : SoundWorld
 	{
 		protected override bool InitLibrary( IntPtr hWnd, int maxReal2DChannels, int maxReal3DChannels )
 		{

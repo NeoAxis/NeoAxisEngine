@@ -80,11 +80,11 @@ namespace NeoAxis
 			{
 				Shutdown();
 
-				instance = new NullSoundWorld();
+				instance = new NoneSoundWorld();
 				instance.InitLibrary( mainWindowHandle, maxReal2DChannels, maxReal3DChannels );
 			}
 
-			if( instance is NullSoundWorld )
+			if( instance is NoneSoundWorld )
 			{
 				maxReal2DChannels = 0;
 				maxReal3DChannels = 0;
