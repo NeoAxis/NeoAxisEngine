@@ -23,8 +23,9 @@
 
 Compile for Windows:
 <ul>
-<li>You need Visual Studio 2022 or Visual Studio 2019 with .NET 5.0. Use NeoAxis.Windows.sln.</li>
-<li>Use NeoAxis.Windows.ManagedOnly.sln to compile only managed assemblies. The native code for Windows is already compiled.</li>
+<li>You need Visual Studio 2022 or Visual Studio 2019 with .NET 5.0.<\li>
+<li>Use NeoAxis.Windows.sln.</li>
+<li>Or use NeoAxis.Windows.ManagedOnly.sln to compile only managed assemblies. The native code for Windows is already compiled.</li>
 <li>Download City Demo, Nature Demo and other content from the Asset Store window inside the editor.</li>
 </ul>
 
