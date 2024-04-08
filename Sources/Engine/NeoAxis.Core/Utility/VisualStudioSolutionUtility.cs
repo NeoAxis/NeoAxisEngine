@@ -38,10 +38,9 @@ namespace NeoAxis
 				builder.Append( $" --configuration {BuildConfiguration}" );
 
 				//!!!!можно узнавать значение из csproj файла
-				builder.Append( $" --framework net5.0-windows" );
+				//builder.Append( $" --framework net5.0-windows" );
 				//builder.Append( $" --framework net5.0" );
-
-				//builder.Append( $" --framework netcoreapp3.1" );
+				////builder.Append( $" --framework netcoreapp3.1" );
 
 				if( !string.IsNullOrEmpty( outputDirectoryOptional ) )
 					builder.Append( $" --output \"{outputDirectoryOptional}\"" );

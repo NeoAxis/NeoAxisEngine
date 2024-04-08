@@ -3638,5 +3638,88 @@ public class DynamicClassA3F9F3F05204E8C18ADBDB48055280F635894F4F2E82161F2EA6F8C
         }
     }
 }
+
+[CSharpScriptGeneratedAttribute("CnN0YXRpYyBib29sIG5lYXJDYW1lcmE7CnN0YXRpYyBib29sIGFkZGl0aW9uYWxMaWdodHMgPSB0cnVlOwpzdGF0aWMgYm9vbCBzaGFkb3dzID0gdHJ1ZTsKCnB1YmxpYyB2b2lkIEdhbWVNb2RlX1JlbmRlclVJKE5lb0F4aXMuR2FtZU1vZGUgc2VuZGVyLCBOZW9BeGlzLkNhbnZhc1JlbmRlcmVyIHJlbmRlcmVyKQp7Cgl2YXIgbGluZXMgPSBuZXcgTGlzdDxzdHJpbmc+KCk7CgoJbGluZXMuQWRkKCJDIC0gc3dpdGNoIGNhbWVyYSIpOwoJbGluZXMuQWRkKCJMIC0gYWRkaXRpb25hbCBsaWdodHMiKTsKCWxpbmVzLkFkZCgiSCAtIHNoYWRvd3MiKTsKCWxpbmVzLkFkZCgiIik7CglsaW5lcy5BZGQoIkY3IC0gZnJlZSBjYW1lcmEiKTsKCWxpbmVzLkFkZCgiVyBBIFMgRCBRIEUgLSBmcmVlIGNhbWVyYSBjb250cm9sIik7CglsaW5lcy5BZGQoIiIpOwoJbGluZXMuQWRkKCJZb3UgYWxzbyBjYW4gcGxheSB3aXRoIGFudGlhbGlhc2luZyBhbmQgb3RoZXIgc2V0dGluZ3MgZnJvbSBPcHRpb25zIChFc2MpIik7CgoJdmFyIGZvbnRTaXplID0gcmVuZGVyZXIuRGVmYXVsdEZvbnRTaXplOwoJdmFyIG9mZnNldCA9IG5ldyBWZWN0b3IyKGZvbnRTaXplICogcmVuZGVyZXIuQXNwZWN0UmF0aW9JbnYgKiAwLjgsIDAuOCk7CgoJLy9kcmF3IGJhY2tncm91bmQKCXsKCQl2YXIgbWF4TGVuZ3RoID0gMC4wOwoJCWZvcmVhY2ggKHZhciBsaW5lIGluIGxpbmVzKQoJCXsKCQkJdmFyIGxlbmd0aCA9IHJlbmRlcmVyLkRlZmF1bHRGb250LkdldFRleHRMZW5ndGgoZm9udFNpemUsIHJlbmRlcmVyLCBsaW5lKTsKCQkJaWYgKGxlbmd0aCA+IG1heExlbmd0aCkKCQkJCW1heExlbmd0aCA9IGxlbmd0aDsKCQl9CgkJdmFyIHJlY3QgPSBvZmZzZXQgKyBuZXcgUmVjdGFuZ2xlKDAsIDAsIG1heExlbmd0aCwgZm9udFNpemUgKiBsaW5lcy5Db3VudCk7CgkJcmVjdC5FeHBhbmQobmV3IFZlY3RvcjIoZm9udFNpemUgKiAwLjIsIGZvbnRTaXplICogMC4yICogcmVuZGVyZXIuQXNwZWN0UmF0aW8pKTsKCQlyZW5kZXJlci5BZGRRdWFkKHJlY3QsIG5ldyBDb2xvclZhbHVlKDAsIDAsIDAsIDAuNzUpKTsKCX0KCgkvL2RyYXcgdGV4dCAKCUNhbnZhc1JlbmRlcmVyVXRpbGl0eS5BZGRUZXh0TGluZXNXaXRoU2hhZG93KHJlbmRlcmVyLlZpZXdwb3J0Rm9yU2NyZWVuQ2FudmFzUmVuZGVyZXIsIHJlbmRlcmVyLkRlZmF1bHRGb250LCByZW5kZXJlci5EZWZhdWx0Rm9udFNpemUsIGxpbmVzLCBuZXcgUmVjdGFuZ2xlKG9mZnNldC5YLCBvZmZzZXQuWSwgMSwgMSksIEVIb3Jpem9udGFsQWxpZ25tZW50LkxlZnQsIEVWZXJ0aWNhbEFsaWdubWVudC5Ub3AsIG5ldyBDb2xvclZhbHVlKDEsIDEsIDEpKTsKfQoKcHVibGljIHZvaWQgR2FtZU1vZGVfSW5wdXRNZXNzYWdlRXZlbnQoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuSW5wdXRNZXNzYWdlIG1lc3NhZ2UpCnsKCXZhciBrZXlEb3duID0gbWVzc2FnZSBhcyBJbnB1dE1lc3NhZ2VLZXlEb3duOwoJaWYgKGtleURvd24gIT0gbnVsbCkKCXsKCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuQykKCQl7CgkJCS8vdXBkYXRlIGNhbWVyYSBzZXR0aW5ncwoJCQluZWFyQ2FtZXJhID0gIW5lYXJDYW1lcmE7CgoJCQkvL3VwZGF0ZSBjYW1lcmEKCQkJdmFyIHNjZW5lID0gc2VuZGVyLkZpbmRQYXJlbnQ8U2NlbmU+KCk7CgkJCXNjZW5lLkNhbWVyYURlZmF1bHQgPSBzY2VuZS5HZXRDb21wb25lbnQ8Q2FtZXJhPihuZWFyQ2FtZXJhID8gIkNhbWVyYSBOZWFyIiA6ICJDYW1lcmEgRmFyIik7CgkJCVNpbXVsYXRpb25BcHAuTWFpblZpZXdwb3J0Lk5vdGlmeUluc3RhbnRDYW1lcmFNb3ZlbWVudCgpOwoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkwpCgkJewoJCQlhZGRpdGlvbmFsTGlnaHRzID0gIWFkZGl0aW9uYWxMaWdodHM7CgoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuRmluZFBhcmVudDxTY2VuZT4oKTsKCgkJCWZvcmVhY2ggKHZhciBsaWdodCBpbiBzY2VuZS5HZXRDb21wb25lbnRzPExpZ2h0PigpKQoJCQl7CgkJCQlpZiAobGlnaHQuTmFtZSA9PSAiTGlnaHQiIHx8IGxpZ2h0Lk5hbWUuQ29udGFpbnMoIkxpZ2h0ICIpKQoJCQkJCWxpZ2h0LkVuYWJsZWQgPSBhZGRpdGlvbmFsTGlnaHRzOwoJCQl9CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoKCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuSCkKCQl7CgkJCXNoYWRvd3MgPSAhc2hhZG93czsKCgkJCXZhciBzY2VuZSA9IHNlbmRlci5GaW5kUGFyZW50PFNjZW5lPigpOwoJCQl2YXIgcGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCk7CgkJCXBpcGVsaW5lLlNoYWRvd3MgPSBzaGFkb3dzOwoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCX0KfQo=")]
+public class DynamicClass203766919532FBDF7507EA0AB541C9E0FA1FA638235567EA048A6D2163EDC889
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool nearCamera;
+    static bool additionalLights = true;
+    static bool shadows = true;
+    public void GameMode_RenderUI(NeoAxis.GameMode sender, NeoAxis.CanvasRenderer renderer)
+    {
+        var lines = new List<string>();
+        lines.Add("C - switch camera");
+        lines.Add("L - additional lights");
+        lines.Add("H - shadows");
+        lines.Add("");
+        lines.Add("F7 - free camera");
+        lines.Add("W A S D Q E - free camera control");
+        lines.Add("");
+        lines.Add("You also can play with antialiasing and other settings from Options (Esc)");
+        var fontSize = renderer.DefaultFontSize;
+        var offset = new Vector2(fontSize * renderer.AspectRatioInv * 0.8, 0.8);
+        //draw background
+        {
+            var maxLength = 0.0;
+            foreach (var line in lines)
+            {
+                var length = renderer.DefaultFont.GetTextLength(fontSize, renderer, line);
+                if (length > maxLength)
+                    maxLength = length;
+            }
+
+            var rect = offset + new Rectangle(0, 0, maxLength, fontSize * lines.Count);
+            rect.Expand(new Vector2(fontSize * 0.2, fontSize * 0.2 * renderer.AspectRatio));
+            renderer.AddQuad(rect, new ColorValue(0, 0, 0, 0.75));
+        }
+
+        //draw text 
+        CanvasRendererUtility.AddTextLinesWithShadow(renderer.ViewportForScreenCanvasRenderer, renderer.DefaultFont, renderer.DefaultFontSize, lines, new Rectangle(offset.X, offset.Y, 1, 1), EHorizontalAlignment.Left, EVerticalAlignment.Top, new ColorValue(1, 1, 1));
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null)
+        {
+            if (keyDown.Key == EKeys.C)
+            {
+                //update camera settings
+                nearCamera = !nearCamera;
+                //update camera
+                var scene = sender.FindParent<Scene>();
+                scene.CameraDefault = scene.GetComponent<Camera>(nearCamera ? "Camera Near" : "Camera Far");
+                SimulationApp.MainViewport.NotifyInstantCameraMovement();
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.L)
+            {
+                additionalLights = !additionalLights;
+                var scene = sender.FindParent<Scene>();
+                foreach (var light in scene.GetComponents<Light>())
+                {
+                    if (light.Name == "Light" || light.Name.Contains("Light "))
+                        light.Enabled = additionalLights;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.H)
+            {
+                shadows = !shadows;
+                var scene = sender.FindParent<Scene>();
+                var pipeline = scene.GetComponent<RenderingPipeline_Basic>();
+                pipeline.Shadows = shadows;
+                message.Handled = true;
+                return;
+            }
+        }
+    }
+}
 }
 #endif
