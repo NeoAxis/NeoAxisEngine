@@ -15,10 +15,11 @@ namespace bgfx
 #	define SHADERC_CONFIG_HLSL BX_PLATFORM_WINDOWS || BX_PLATFORM_WINRT //!!!!betauser
 #endif // SHADERC_CONFIG_HLSL
 
-//!!!!betauser
-#ifndef SHADERC_CONFIG_SPIRV
-#	define SHADERC_CONFIG_SPIRV BX_PLATFORM_WINDOWS
-#endif // SHADERC_CONFIG_HLSL
+//!!!!disabled. hard to compile, compilation error long path on spirv-opt. 
+////!!!!betauser
+//#ifndef SHADERC_CONFIG_SPIRV
+//#	define SHADERC_CONFIG_SPIRV BX_PLATFORM_WINDOWS
+//#endif // SHADERC_CONFIG_HLSL
 
 #include <alloca.h>
 #include <stdint.h>

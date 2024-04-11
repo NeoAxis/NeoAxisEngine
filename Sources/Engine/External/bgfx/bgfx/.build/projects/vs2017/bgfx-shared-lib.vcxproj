@@ -171,7 +171,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)bgfx-shared-libDebug.pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>gdi32.lib;psapi.lib;NeoAxisCoreNative.lib;spirv-optDebug.lib;spirv-crossDebug.lib;dxcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gdi32.lib;psapi.lib;NeoAxisCoreNative.lib;dxcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\..\3rdparty\lib\win64_vs2017;..\..\..\3rdparty\nvidia-vxgi\lib;..\..\..\..\..\..\Lib\Windows_x64;..\..\..\..\..\..\..\..\_build\Win64\bgfx\bin;..\..\..\3rdparty\dxc\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)bgfx-shared-libDebug.dll</OutputFile>
       <ImportLibrary>..\..\win64_vs2017\bin\bgfx-shared-libDebug.lib</ImportLibrary>
@@ -262,7 +262,7 @@
       <ProgramDatabaseFile>$(OutDir)bgfx-shared-libRelease.pdb</ProgramDatabaseFile>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>gdi32.lib;psapi.lib;NeoAxisCoreNative.lib;spirv-optRelease.lib;spirv-crossRelease.lib;dxcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gdi32.lib;psapi.lib;NeoAxisCoreNative.lib;dxcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\..\3rdparty\lib\win64_vs2017;..\..\..\3rdparty\nvidia-vxgi\lib;..\..\..\..\..\..\Lib\Windows_x64;..\..\..\..\..\..\..\..\_build\Win64\bgfx\bin;..\..\..\3rdparty\dxc\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)bgfx-shared-libRelease.dll</OutputFile>
       <ImportLibrary>..\..\win64_vs2017\bin\bgfx-shared-libRelease.lib</ImportLibrary>
@@ -378,12 +378,6 @@
     </ProjectReference>
     <ProjectReference Include="glslang.vcxproj">
       <Project>{0d19b900-79f8-379c-8210-c372ee6e9efd}</Project>
-    </ProjectReference>
-    <ProjectReference Include="spirv-cross.vcxproj">
-      <Project>{f0e19980-5c97-1276-e58b-0c4d5140097a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="spirv-opt.vcxproj">
-      <Project>{f952d147-65bd-85be-aefb-36641aa56313}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

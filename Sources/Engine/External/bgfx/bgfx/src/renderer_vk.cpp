@@ -27,6 +27,16 @@
 #define LOG_ANDROID_INFO(T) __android_log_print(ANDROID_LOG_INFO, "bgfx", T)
 #endif
 
+
+//!!!!
+
+//spirv-optRelease.lib
+//spirv-crossRelease.lib
+
+//spirv-optDebug.lib
+//spirv-crossDebug.lib
+
+
 namespace bgfx { namespace vk
 {
 	static char s_viewName[BGFX_CONFIG_MAX_VIEWS][BGFX_CONFIG_MAX_VIEW_NAME];

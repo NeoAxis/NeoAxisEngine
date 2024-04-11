@@ -23,7 +23,7 @@
 #if BX_PLATFORM_WINDOWS
 	#define BGFX_CONFIG_RENDERER_DIRECT3D11 1
 	#define BGFX_CONFIG_RENDERER_DIRECT3D12 1
-	#define BGFX_CONFIG_RENDERER_VULKAN 1
+	//!!!!disabled. hard to compile, compilation error long path on spirv-opt. #define BGFX_CONFIG_RENDERER_VULKAN 1
 #endif
 #if BX_PLATFORM_WINRT
 	#define BGFX_CONFIG_RENDERER_DIRECT3D11 1
