@@ -1585,16 +1585,19 @@ again:;
 
 				using( var archive = ZipFile.Open( destFileName, ZipArchiveMode.Create ) )
 				{
-
 					//add files
 					foreach( var file in files )
 					{
 						if( Path.GetExtension( file ) == ".product" )
 							continue;
+						if( buildInstance.NeedSkipFile( file ) )
+							continue;
 
-						var entryName = file.Substring( VirtualFileSystem.Directories.Project.Length + 1 );
-						//var entryName = file.Substring( sourceDirectory.Length + 1 );
-						archive.CreateEntryFromFile( file, entryName );
+						var entryName = file.Substring( VirtualFileSystem.Directories.Project.Length + 1 ); // sourceDirectory.Length + 1 );
+						if( buildInstance.NeedClearFile( file ) )
+							archive.CreateEntry( entryName );
+						else
+							archive.CreateEntryFromFile( file, entryName );
 					}
 
 

@@ -969,6 +969,12 @@ namespace NeoAxis
 					//generalContainer.Set( "u_skyLuminanceXYZ", new Vector4F( skyLimunance.Red, skyLimunance.Green, skyLimunance.Blue, 0 ) );
 
 
+
+					//!!!!to make changes to procedural sky you can make your own component based on Sky.
+					//How to initialize your uniforms: override Render method in your Sky based component, set uniforms by means context.SetUniform method before call base.Render.
+
+
+
 					ImageComponent tex = null;
 					////!!!!hack. by idea need mirror 6-sided loaded cubemaps
 					//bool flipCubemap = false;
