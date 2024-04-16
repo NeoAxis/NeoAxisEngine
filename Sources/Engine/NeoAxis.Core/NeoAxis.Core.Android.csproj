@@ -1646,6 +1646,7 @@
     <Compile Include="Renderer\ComputeProgramManager.cs" />
     <Compile Include="Components\Rendering\Effects\MicroparticlesInAir.cs" />
     <Compile Include="SoundSystem\NoneSoundWorld.cs" />
+    <Compile Include="Components\Terrain\TerrainUndo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

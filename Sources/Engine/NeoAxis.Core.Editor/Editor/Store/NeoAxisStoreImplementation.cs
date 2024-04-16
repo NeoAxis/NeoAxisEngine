@@ -11,6 +11,7 @@ using System.Xml;
 using System.Linq;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
+using Downloader;
 
 namespace NeoAxis.Editor
 {
@@ -228,24 +229,29 @@ namespace NeoAxis.Editor
 		{
 			var state = data.State;
 
-			using( WebClient client = new WebClient() )
+			var downloaderOptions = new DownloadConfiguration();
+			long chunkSize = 30 * 1024 * 1024;
+			if( data.Package.Size > chunkSize )
+				downloaderOptions.ChunkCount = (int)Math.Max( data.Package.Size / chunkSize + 1, 1 );
+
+			using( var downloader = new DownloadService( downloaderOptions ) )
 			{
-				state.downloadingClient = client;
+				state.downloadingDownloader = downloader;
 
 				var tempFileName = Path.Combine( Path.GetTempPath(), "Temp5" + Path.GetRandomFileName() );
 				//var tempFileName = Path.GetTempFileName();
 
-				client.DownloadProgressChanged += delegate ( object sender, DownloadProgressChangedEventArgs e )
+				downloader.DownloadProgressChanged += delegate ( object sender, Downloader.DownloadProgressChangedEventArgs e )
 				{
 					//check already ended
 					if( data.Cancelled )
 						return;
 
 					if( e.TotalBytesToReceive != 0 )
-						state.downloadProgress = MathEx.Saturate( (float)e.BytesReceived / (float)e.TotalBytesToReceive );
+						state.downloadProgress = MathEx.Saturate( (float)e.ReceivedBytesSize / (float)e.TotalBytesToReceive );
 				};
 
-				client.DownloadFileCompleted += delegate ( object sender, AsyncCompletedEventArgs e )
+				downloader.DownloadFileCompleted += delegate ( object sender, AsyncCompletedEventArgs e )
 				{
 					//check already ended
 					if( !data.Cancelled )
@@ -270,18 +276,75 @@ namespace NeoAxis.Editor
 					catch { }
 				};
 
-				using( var task = client.DownloadFileTaskAsync( new Uri( state.downloadingAddress ), tempFileName ) )
+				using( var task = downloader.DownloadFileTaskAsync( state.downloadingAddress, tempFileName ) )
 				{
 					while( !string.IsNullOrEmpty( state.downloadingAddress ) && !task.Wait( 10 ) )
 					{
 					}
 				}
 
-				state.downloadingClient = null;
+				state.downloadingDownloader = null;
 			}
 
 			if( data.Cancelled || data.Error != null )
 				return;
+
+
+
+			//using( WebClient client = new WebClient() )
+			//{
+			//	state.downloadingClient = client;
+
+			//	var tempFileName = Path.Combine( Path.GetTempPath(), "Temp5" + Path.GetRandomFileName() );
+			//	//var tempFileName = Path.GetTempFileName();
+
+			//	client.DownloadProgressChanged += delegate ( object sender, DownloadProgressChangedEventArgs e )
+			//	{
+			//		//check already ended
+			//		if( data.Cancelled )
+			//			return;
+
+			//		if( e.TotalBytesToReceive != 0 )
+			//			state.downloadProgress = MathEx.Saturate( (float)e.BytesReceived / (float)e.TotalBytesToReceive );
+			//	};
+
+			//	client.DownloadFileCompleted += delegate ( object sender, AsyncCompletedEventArgs e )
+			//	{
+			//		//check already ended
+			//		if( !data.Cancelled )
+			//		{
+			//			//releases blocked thread
+			//			lock( e.UserState )
+			//				Monitor.Pulse( e.UserState );
+
+			//			data.Cancelled = e.Cancelled;
+			//			data.Error = e.Error;
+
+			//			//copy to destination path
+			//			if( !data.Cancelled && data.Error == null )
+			//				File.Copy( tempFileName, state.downloadingDestinationPath, true );
+			//		}
+
+			//		try
+			//		{
+			//			if( File.Exists( tempFileName ) )
+			//				File.Delete( tempFileName );
+			//		}
+			//		catch { }
+			//	};
+
+			//	using( var task = client.DownloadFileTaskAsync( new Uri( state.downloadingAddress ), tempFileName ) )
+			//	{
+			//		while( !string.IsNullOrEmpty( state.downloadingAddress ) && !task.Wait( 10 ) )
+			//		{
+			//		}
+			//	}
+
+			//	state.downloadingClient = null;
+			//}
+
+			//if( data.Cancelled || data.Error != null )
+			//	return;
 
 
 			//update Package.info in the the archive

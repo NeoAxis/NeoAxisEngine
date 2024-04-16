@@ -12,6 +12,7 @@ using NeoAxis.Editor;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Text;
+using Downloader;
 
 namespace NeoAxis
 {
@@ -132,7 +133,7 @@ namespace NeoAxis
 					url += "&restricted=true";
 
 
-				goNext:;
+goNext:;
 
 				var jsonString = "";
 
@@ -257,9 +258,9 @@ namespace NeoAxis
 					return;
 
 
-				//next
+//next
 
-				checkNext:;
+checkNext:;
 
 				bool needGetNext;
 				lock( StoreManager.needGetNextItemsForStores )
@@ -408,23 +409,31 @@ namespace NeoAxis
 
 			try
 			{
+
 				//download
 				{
-					using( WebClient client = new WebClient() )
-					{
-						state.downloadingClient = client;
+					var downloaderOptions = new DownloadConfiguration();
 
-						client.DownloadProgressChanged += delegate ( object sender, DownloadProgressChangedEventArgs e )
+					//can use more than one chunk?
+					//long chunkSize = 30 * 1024 * 1024;
+					//if( data.Package.Size > chunkSize )
+					//	downloaderOptions.ChunkCount = (int)Math.Max( data.Package.Size / chunkSize + 1, 1 );
+
+					using( var downloader = new DownloadService( downloaderOptions ) )
+					{
+						state.downloadingDownloader = downloader;
+
+						downloader.DownloadProgressChanged += delegate ( object sender, Downloader.DownloadProgressChangedEventArgs e )
 						{
 							//check already ended
 							if( data.Cancelled )
 								return;
 
 							if( e.TotalBytesToReceive != 0 )
-								state.downloadProgress = MathEx.Saturate( (float)e.BytesReceived / (float)e.TotalBytesToReceive );
+								state.downloadProgress = MathEx.Saturate( (float)e.ReceivedBytesSize / (float)e.TotalBytesToReceive );
 						};
 
-						client.DownloadFileCompleted += delegate ( object sender, AsyncCompletedEventArgs e )
+						downloader.DownloadFileCompleted += delegate ( object sender, AsyncCompletedEventArgs e )
 						{
 							//check already ended
 							if( !data.Cancelled )
@@ -438,19 +447,65 @@ namespace NeoAxis
 							}
 						};
 
-						using( var task = client.DownloadFileTaskAsync( new Uri( downloadLink ), tempDownloadedFileName ) )
+						using( var task = downloader.DownloadFileTaskAsync( downloadLink, tempDownloadedFileName ) )
 						{
 							while( !string.IsNullOrEmpty( state.downloadingAddress ) && !task.Wait( 10 ) )
 							{
 							}
 						}
 
-						state.downloadingClient = null;
+						state.downloadingDownloader = null;
 					}
 
 					if( data.Cancelled || data.Error != null )
 						return;
 				}
+
+
+
+				////download
+				//{
+				//	using( WebClient client = new WebClient() )
+				//	{
+				//		state.downloadingClient = client;
+
+				//		client.DownloadProgressChanged += delegate ( object sender, DownloadProgressChangedEventArgs e )
+				//		{
+				//			//check already ended
+				//			if( data.Cancelled )
+				//				return;
+
+				//			if( e.TotalBytesToReceive != 0 )
+				//				state.downloadProgress = MathEx.Saturate( (float)e.BytesReceived / (float)e.TotalBytesToReceive );
+				//		};
+
+				//		client.DownloadFileCompleted += delegate ( object sender, AsyncCompletedEventArgs e )
+				//		{
+				//			//check already ended
+				//			if( !data.Cancelled )
+				//			{
+				//				//releases blocked thread
+				//				lock( e.UserState )
+				//					Monitor.Pulse( e.UserState );
+
+				//				data.Cancelled = e.Cancelled;
+				//				data.Error = e.Error;
+				//			}
+				//		};
+
+				//		using( var task = client.DownloadFileTaskAsync( new Uri( downloadLink ), tempDownloadedFileName ) )
+				//		{
+				//			while( !string.IsNullOrEmpty( state.downloadingAddress ) && !task.Wait( 10 ) )
+				//			{
+				//			}
+				//		}
+
+				//		state.downloadingClient = null;
+				//	}
+
+				//	if( data.Cancelled || data.Error != null )
+				//		return;
+				//}
 
 
 				//process downloaded file

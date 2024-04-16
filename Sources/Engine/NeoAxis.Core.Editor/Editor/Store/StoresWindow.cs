@@ -221,7 +221,8 @@ namespace NeoAxis.Editor
 			public volatile string downloadingDestinationPath = "";
 			public volatile float downloadProgress;
 			public volatile bool downloadingInstallAfterDownload;
-			public volatile WebClient downloadingClient;
+			//public volatile WebClient downloadingClient;
+			public volatile Downloader.DownloadService downloadingDownloader;
 
 			//
 
@@ -941,7 +942,7 @@ namespace NeoAxis.Editor
 		{
 			var current = category;
 
-			next:
+next:
 			if( groupItemByCategory.TryGetValue( current, out var item ) )
 				return item;
 
@@ -1300,7 +1301,9 @@ namespace NeoAxis.Editor
 		{
 			var state = GetPackageState( packageId );
 
-			state.downloadingClient?.CancelAsync();
+			//state.downloadingClient?.CancelAsync();
+			state.downloadingDownloader?.CancelAsync();
+
 			//state.downloadingCancel = true;
 			//Thread.Sleep( 500 );
 
@@ -1308,7 +1311,8 @@ namespace NeoAxis.Editor
 			//state.downloadingDestinationPath = "";
 			state.downloadProgress = 0;
 			state.downloadingInstallAfterDownload = false;
-			state.downloadingClient = null;
+			//state.downloadingClient = null;
+			state.downloadingDownloader = null;
 			//state.downloadingCancel = false;
 		}
 
@@ -1374,7 +1378,8 @@ namespace NeoAxis.Editor
 				state.downloadingDestinationPath = "";
 				state.downloadProgress = 0;
 				state.downloadingInstallAfterDownload = false;
-				state.downloadingClient = null;
+				//state.downloadingClient = null;
+				state.downloadingDownloader = null;
 				//state.downloadingCancel = false;
 
 				//auto install after download
@@ -1829,7 +1834,8 @@ namespace NeoAxis.Editor
 				{
 					try
 					{
-						state.downloadingClient?.CancelAsync();
+						//state.downloadingClient?.CancelAsync();
+						state.downloadingDownloader?.CancelAsync();
 					}
 					catch { }
 				}
