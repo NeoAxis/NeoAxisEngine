@@ -18,7 +18,7 @@
 		.component NeoAxis.Component_CSharpScript
 		{
 			Name = C# Script
-			Code = "public void Button1_Click(NeoAxis.UIButton sender)\r\n{\r\n\t//get UIControl\r\n\tvar control = sender.ParentRoot as UIControl;\r\n\r\n\t//show message box\r\n\tMessageBoxWindow.ShowInfo(control, \"The text of the message.\", \"Message\");\r\n}\r\n"
+			Code = "public void Button1_Click(NeoAxis.UIButton sender)\r\n{\r\n\t//get UIControl\r\n\tvar control = sender.ParentRoot as UIControl;\r\n\r\n\t//show message box\r\n\tMessageBoxWindow.Show(control, \"The text of the message.\", \"Message\");\r\n}\r\n"
 			Exit
 			{
 			}
