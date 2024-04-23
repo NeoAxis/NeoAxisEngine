@@ -4,11 +4,12 @@
 
 [![Join the chat at https://discord.gg/NdCej26](https://img.shields.io/discord/639722941411753984?color=%237289DA&label=neoaxis&logo=discord&logoColor=white)](https://discord.gg/NdCej26)
 
-<div class="image" align="center"><a href="https://www.neoaxis.com/images/2021_2/NeoAxis_2021_2_CharacterScene2.png"><img src="https://www.neoaxis.com/images/2021_2/NeoAxis_2021_2_CharacterScene2.jpg" alt="" width="1000" vspace="10"></a></div>
-
-<h2>Supported platforms by the editor</h2>
+<h2>Key features</h2>
 <ul>
-<li>Windows 10+ x64</li>
+<li>Provided with full source code from the start.</li>
+<li>A large set of popular game components.</li>
+<li>API for integration of third-party services and stores.</li>
+<li>The ability to create any product, including a modified engine and editor.</li>
 </ul>
 
 <h2>Target supported platforms</h2>
@@ -17,6 +18,11 @@
 <li>Android 8.0+ ARM32 and ARM64</li>
 <li>UWP x64 (Universal Windows, Xbox)</li>
 <li>Linux. For a server, no rendering.</li>
+</ul>
+
+<h2>Supported platforms by the editor</h2>
+<ul>
+<li>Windows 10+ x64</li>
 </ul>
 
 <h2>Building (very easy)</h2>
