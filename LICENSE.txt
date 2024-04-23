@@ -20,7 +20,7 @@ C. You agree to pay the Licensor a royalty equal to 3% of all worldwide gross re
 
 D. A product that uses Engine Code must display the Engine Logo upon startup for at least 3 seconds. Engine Logo of NeoAxis Engine must be original, clearly readable, and be at least 1/15 of the horizontal or vertical size of the screen. Check Engine Logo definition for more details. Engine Logo can be displayed as a primary logo or as a secondary logo in additional to other information on the screen. You can run NeoAxis Player (Binaries/NeoAxis.Player.exe) to see the demonstration. To configure the logo use the project settings of the editor.
 
-E. The product information must indicate that it is powered by NeoAxis Engine and with a link to website www.neoaxis.com. Example: “Made with NeoAxis Engine. www.neoaxis.com."
+E. The product information must indicate that it is powered by NeoAxis Engine and with a link to website www.neoaxis.com. Example: "Made with NeoAxis Engine. www.neoaxis.com."
 
 F. Additional Content which is provided for an additional fee, can be redistributed in their Source Code form only to those that have purchased the same products. It cannot be distributed in their Source Code form with a Product.
 

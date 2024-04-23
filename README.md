@@ -4,7 +4,7 @@
 
 [![Join the chat at https://discord.gg/NdCej26](https://img.shields.io/discord/639722941411753984?color=%237289DA&label=neoaxis&logo=discord&logoColor=white)](https://discord.gg/NdCej26)
 
-<div class="image" align="center"><a href="https://www.neoaxis.com/images/2021_2/NeoAxis_2021_2_CharacterScene.png"><img src="https://www.neoaxis.com/images/2021_2/NeoAxis_2021_2_CharacterScene.jpg" alt="" width="1000" vspace="10"></a></div>
+<div class="image" align="center"><a href="https://www.neoaxis.com/images/2021_2/NeoAxis_2021_2_CharacterScene2.png"><img src="https://www.neoaxis.com/images/2021_2/NeoAxis_2021_2_CharacterScene2.jpg" alt="" width="1000" vspace="10"></a></div>
 
 <h2>Supported platforms by the editor</h2>
 <ul>
