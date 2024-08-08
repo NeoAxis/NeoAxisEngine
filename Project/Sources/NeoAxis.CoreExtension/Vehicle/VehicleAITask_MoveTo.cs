@@ -56,7 +56,7 @@ namespace NeoAxis
 	/// <summary>
 	/// The task of the vehicle to move to the specified position in the scene.
 	/// </summary>
-	[AddToResourcesWindow( @"Addons\Vehicle\Vehicle AI Move To Position", 22005 )]
+	[AddToResourcesWindow( @"Addons\Vehicle\Vehicle AI Move To Position", 22006 )]
 	[NewObjectDefaultName( "Move To Position" )]
 	public class VehicleAITask_MoveToPosition : VehicleAITask_MoveTo
 	{
@@ -79,7 +79,7 @@ namespace NeoAxis
 	/// <summary>
 	/// The task of the vehicle to move to the specified object in the scene.
 	/// </summary>
-	[AddToResourcesWindow( @"Addons\Vehicle\Vehicle AI Move To Object", 22006 )]
+	[AddToResourcesWindow( @"Addons\Vehicle\Vehicle AI Move To Object", 22007 )]
 	[NewObjectDefaultName( "Move To Object" )]
 	public class VehicleAITask_MoveToObject : VehicleAITask_MoveTo
 	{

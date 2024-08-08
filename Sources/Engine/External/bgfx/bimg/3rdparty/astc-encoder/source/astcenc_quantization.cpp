@@ -1,3 +1,6 @@
+//!!!!betauser. android compiler crash
+#ifndef __ANDROID__
+
 // SPDX-License-Identifier: Apache-2.0
 // ----------------------------------------------------------------------------
 // Copyright 2011-2023 Arm Limited
@@ -901,3 +904,5 @@ const int8_t quant_mode_table[10][128] {
          14, 14, 15, 15, 15, 15, 15, 16, 16, 16, 16, 16, 16, 16, 17, 17
     }
 };
+
+#endif

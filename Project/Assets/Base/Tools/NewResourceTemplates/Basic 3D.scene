@@ -2,7 +2,7 @@
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"256C67A18D664B0E39BBE68CF4257695\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"195C129810504C44FB9460EF63604BF0\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"256C67A18D664B0E39BBE68CF4257695\"><KP UN=\"256C67A18D664B0E39BBE68CF4257695\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"807D4402F5F044BD20A33FBD57F87B60\" S=\"False\"><CPD ObjPath=\"$Button\\$C# Script\" /></KP><KP UN=\"7E31A4CB945041FD8788F1C45EF827C0\" S=\"False\"><CPD ObjPath=\"$Regulator\\$C# Script\" /></KP><KP UN=\"D9CD5B53C89443169D9923C591371B7B\" S=\"False\"><CPD ObjPath=\"$Character NPC\\$Character AI\\$Flow Graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1144, 842\"><KW V=\"1\" A=\"256C67A18D664B0E39BBE68CF4257695\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"195C129810504C44FB9460EF63604BF0\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"256C67A18D664B0E39BBE68CF4257695\"><KP UN=\"256C67A18D664B0E39BBE68CF4257695\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"807D4402F5F044BD20A33FBD57F87B60\" S=\"False\"><CPD ObjPath=\"$Button\\$C# Script\" /></KP><KP UN=\"7E31A4CB945041FD8788F1C45EF827C0\" S=\"False\"><CPD ObjPath=\"$Regulator\\$C# Script\" /></KP><KP UN=\"D9CD5B53C89443169D9923C591371B7B\" S=\"False\"><CPD ObjPath=\"$Character NPC\\$Character AI\\$Flow Graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -143,10 +143,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -196,10 +192,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -241,10 +233,6 @@
 		{
 			GetByReference = "Base\\Materials\\White.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -280,10 +268,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -327,10 +311,6 @@
 		Name = Character
 		Transform = "2.50185359899021 -1.22914356831118 0; 0 0 0.707106781186547 0.707106781186548; 1 1 1"
 		Collision = True
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -363,10 +343,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -391,10 +367,6 @@
 		{
 			GetByReference = "Content\\Buttons\\Default\\Base.mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -406,7 +378,7 @@
 		{
 			Name = C# Script
 			NetworkMode = False
-			Code = "public void Button_Click(NeoAxis.Button sender)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\tvar ground = scene.GetComponent(\"Ground\") as MeshInSpace;\r\n\tif (ground != null)\r\n\t{\r\n\t\tif (!ground.ReplaceMaterial.ReferenceSpecified)\r\n\t\t{\r\n\t\t\tground.ReplaceMaterial = ReferenceUtility.MakeReference(\r\n\t\t\t\t@\"Content\\Materials\\Basic Library\\Concrete\\Concrete Floor 01.material\");\r\n\t\t}\r\n\t\telse\r\n\t\t\tground.ReplaceMaterial = null;\r\n\t}\r\n}\r\n"
+			Code = "public void Button_Click(NeoAxis.Button sender, NeoAxis.Component initiator)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\tvar ground = scene.GetComponent(\"Ground\") as MeshInSpace;\r\n\tif (ground != null)\r\n\t{\r\n\t\tif (!ground.ReplaceMaterial.ReferenceSpecified)\r\n\t\t{\r\n\t\t\tground.ReplaceMaterial = ReferenceUtility.MakeReference(\r\n\t\t\t\t@\"Content\\Materials\\Basic Library\\Concrete\\Concrete Floor 01.material\");\r\n\t\t}\r\n\t\telse\r\n\t\t\tground.ReplaceMaterial = null;\r\n\t}\r\n}\r\n"
 			Exit
 			{
 			}
@@ -419,7 +391,7 @@
 				}
 				HandlerMethod
 				{
-					GetByReference = "this:..\\method:Button_Click(NeoAxis.Button)"
+					GetByReference = "this:..\\method:Button_Click(NeoAxis.Button,NeoAxis.Component)"
 				}
 				HandlerFlow
 				{
@@ -434,10 +406,6 @@
 		Mesh
 		{
 			GetByReference = "Content\\Regulators\\Default\\Base.mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -476,10 +444,6 @@
 		Name = Character NPC
 		Transform = "-1.16870246935174 9.72036562647116 0.00000017460560819; 0 0 -0.481296986341476 0.876557588577271; 1 1 1"
 		Collision = True
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -591,10 +555,6 @@
 		Name = Vehicle
 		Transform = "9.20677056119239 10.127465989562 0.415897374942352; 0.00055347185104824 0.00120065743435513 0.422617042881232 -0.906307410674722; 1 1 1"
 		Collision = True
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -615,10 +575,6 @@
 		Mesh
 		{
 			GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{

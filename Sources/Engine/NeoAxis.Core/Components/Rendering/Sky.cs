@@ -95,9 +95,21 @@ namespace NeoAxis
 		//public event Action<Sky> ProceduralIntensityChanged;
 		//ReferenceField<double> _proceduralIntensity = 0.0;
 
+		[DefaultValue( 1.0 )]
+		[Category( "Atmosphere" )]
+		[Range( 0, 1 )]
+		public Reference<double> ProceduralAtmosphere
+		{
+			get { if( _proceduralAtmosphere.BeginGet() ) ProceduralAtmosphere = _proceduralAtmosphere.Get( this ); return _proceduralAtmosphere.value; }
+			set { if( _proceduralAtmosphere.BeginSet( this, ref value ) ) { try { ProceduralAtmosphereChanged?.Invoke( this ); } finally { _proceduralAtmosphere.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ProceduralAtmosphere"/> property value changes.</summary>
+		public event Action<Sky> ProceduralAtmosphereChanged;
+		ReferenceField<double> _proceduralAtmosphere = 1.0;
+
 		[DefaultValue( "0.6 0.7 1" )]
 		[ColorValueNoAlpha]
-		[Category( "Procedural" )]
+		[Category( "Atmosphere" )]
 		public Reference<ColorValuePowered> ProceduralLuminance
 		{
 			get { if( _proceduralLuminance.BeginGet() ) ProceduralLuminance = _proceduralLuminance.Get( this ); return _proceduralLuminance.value; }
@@ -108,7 +120,7 @@ namespace NeoAxis
 		ReferenceField<ColorValuePowered> _proceduralLuminance = new ColorValuePowered( 0.6, 0.7, 1 );
 
 		[DefaultValue( true )]
-		[Category( "Procedural" )]
+		[Category( "Atmosphere" )]
 		public Reference<bool> ProceduralApplySunPower
 		{
 			get { if( _proceduralApplySunPower.BeginGet() ) ProceduralApplySunPower = _proceduralApplySunPower.Get( this ); return _proceduralApplySunPower.value; }
@@ -120,7 +132,7 @@ namespace NeoAxis
 
 		[DefaultValue( 2.15 )]
 		[Range( 1.9, 10.0, RangeAttribute.ConvenientDistributionEnum.Exponential )]
-		[Category( "Procedural" )]
+		[Category( "Atmosphere" )]
 		public Reference<double> ProceduralTurbidity
 		{
 			get { if( _proceduralTurbidity.BeginGet() ) ProceduralTurbidity = _proceduralTurbidity.Get( this ); return _proceduralTurbidity.value; }
@@ -131,7 +143,7 @@ namespace NeoAxis
 		ReferenceField<double> _proceduralTurbidity = 2.15;
 
 		[DefaultValue( 0.02 )]
-		[Category( "Procedural" )]
+		[Category( "Atmosphere" )]
 		[Range( 0.0, 0.1, RangeAttribute.ConvenientDistributionEnum.Exponential )]
 		public Reference<double> ProceduralSunSize
 		{
@@ -143,7 +155,7 @@ namespace NeoAxis
 		ReferenceField<double> _proceduralSunSize = 0.02;
 
 		[DefaultValue( 3.0 )]
-		[Category( "Procedural" )]
+		[Category( "Atmosphere" )]
 		[Range( 0.0, 10 )]
 		public Reference<double> ProceduralSunBloom
 		{
@@ -155,7 +167,7 @@ namespace NeoAxis
 		ReferenceField<double> _proceduralSunBloom = 3.0;
 
 		[DefaultValue( 0.1 )]
-		[Category( "Procedural" )]
+		[Category( "Atmosphere" )]
 		[Range( 0.0, 1, RangeAttribute.ConvenientDistributionEnum.Exponential )]
 		public Reference<double> ProceduralExposition
 		{
@@ -167,7 +179,7 @@ namespace NeoAxis
 		ReferenceField<double> _proceduralExposition = 0.1;
 
 		[DefaultValue( true )]
-		[Category( "Procedural" )]
+		[Category( "Atmosphere" )]
 		public Reference<bool> ProceduralPreventBanding
 		{
 			get { if( _proceduralPreventBanding.BeginGet() ) ProceduralPreventBanding = _proceduralPreventBanding.Get( this ); return _proceduralPreventBanding.value; }
@@ -209,7 +221,7 @@ namespace NeoAxis
 		/// The resolution of the texture for the procedural mode.
 		/// </summary>
 		[DefaultValue( ResolutionEnum._512 )]
-		[Category( "Procedural" )]
+		//[Category( "Procedural" )]
 		public Reference<ResolutionEnum> ProceduralResolution
 		{
 			get { if( _proceduralResolution.BeginGet() ) ProceduralResolution = _proceduralResolution.Get( this ); return _proceduralResolution.value; }
@@ -218,6 +230,119 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="ProceduralResolution"/> property value changes.</summary>
 		public event Action<Sky> ProceduralResolutionChanged;
 		ReferenceField<ResolutionEnum> _proceduralResolution = ResolutionEnum._512;
+
+		//stars
+
+		[DefaultValue( 0.005 )]//0.01 )]
+		[Category( "Stars" )]
+		[Range( 0, 0.1, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
+		public Reference<double> ProceduralStarSize
+		{
+			get { if( _proceduralStarSize.BeginGet() ) ProceduralStarSize = _proceduralStarSize.Get( this ); return _proceduralStarSize.value; }
+			set { if( _proceduralStarSize.BeginSet( this, ref value ) ) { try { ProceduralStarSizeChanged?.Invoke( this ); } finally { _proceduralStarSize.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ProceduralStarSize"/> property value changes.</summary>
+		public event Action<Sky> ProceduralStarSizeChanged;
+		ReferenceField<double> _proceduralStarSize = 0.005;//0.01;
+
+		[DefaultValue( 0.09 )]
+		[Category( "Stars" )]
+		[Range( 0, 1, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
+		public Reference<double> ProceduralStarDensity
+		{
+			get { if( _proceduralStarDensity.BeginGet() ) ProceduralStarDensity = _proceduralStarDensity.Get( this ); return _proceduralStarDensity.value; }
+			set { if( _proceduralStarDensity.BeginSet( this, ref value ) ) { try { ProceduralStarDensityChanged?.Invoke( this ); } finally { _proceduralStarDensity.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ProceduralStarDensity"/> property value changes.</summary>
+		public event Action<Sky> ProceduralStarDensityChanged;
+		ReferenceField<double> _proceduralStarDensity = 0.09;
+
+		[DefaultValue( 0.1 )]
+		[Category( "Stars" )]
+		[Range( 0, 1, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
+		public Reference<double> ProceduralStarClusterStrength
+		{
+			get { if( _proceduralStarClusterStrength.BeginGet() ) ProceduralStarClusterStrength = _proceduralStarClusterStrength.Get( this ); return _proceduralStarClusterStrength.value; }
+			set { if( _proceduralStarClusterStrength.BeginSet( this, ref value ) ) { try { ProceduralStarClusterStrengthChanged?.Invoke( this ); } finally { _proceduralStarClusterStrength.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ProceduralStarClusterStrength"/> property value changes.</summary>
+		public event Action<Sky> ProceduralStarClusterStrengthChanged;
+		ReferenceField<double> _proceduralStarClusterStrength = 0.1;
+
+		[DefaultValue( 0.2 )]
+		[Category( "Stars" )]
+		[Range( 0, 2, RangeAttribute.ConvenientDistributionEnum.Exponential, 3 )]
+		public Reference<double> ProceduralStarClusterSize
+		{
+			get { if( _proceduralStarClusterSize.BeginGet() ) ProceduralStarClusterSize = _proceduralStarClusterSize.Get( this ); return _proceduralStarClusterSize.value; }
+			set { if( _proceduralStarClusterSize.BeginSet( this, ref value ) ) { try { ProceduralStarClusterSizeChanged?.Invoke( this ); } finally { _proceduralStarClusterSize.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ProceduralStarClusterSize"/> property value changes.</summary>
+		public event Action<Sky> ProceduralStarClusterSizeChanged;
+		ReferenceField<double> _proceduralStarClusterSize = 0.2;
+
+		[DefaultValue( "1 1 1" )]//[DefaultValue( "1 1 1; 0.5" )]
+		[Category( "Stars" )]
+		public Reference<ColorValuePowered> ProceduralStarColor
+		{
+			get { if( _proceduralStarColor.BeginGet() ) ProceduralStarColor = _proceduralStarColor.Get( this ); return _proceduralStarColor.value; }
+			set { if( _proceduralStarColor.BeginSet( this, ref value ) ) { try { ProceduralStarColorChanged?.Invoke( this ); } finally { _proceduralStarColor.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ProceduralStarColor"/> property value changes.</summary>
+		public event Action<Sky> ProceduralStarColorChanged;
+		ReferenceField<ColorValuePowered> _proceduralStarColor = new ColorValuePowered( 1, 1, 1, 1, 1 );//0.5 );
+
+		//aurora
+
+		/// <summary>
+		/// The factor of the aurora effect.
+		/// </summary>
+		[DefaultValue( 0.0 )]
+		[Range( 0, 1 )]
+		[Category( "Aurora" )]
+		public Reference<double> ProceduralAurora
+		{
+			get { if( _proceduralAurora.BeginGet() ) ProceduralAurora = _proceduralAurora.Get( this ); return _proceduralAurora.value; }
+			set { if( _proceduralAurora.BeginSet( this, ref value ) ) { try { ProceduralAuroraChanged?.Invoke( this ); } finally { _proceduralAurora.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ProceduralAurora"/> property value changes.</summary>
+		public event Action<Sky> ProceduralAuroraChanged;
+		ReferenceField<double> _proceduralAurora = 0.0;
+
+		[DefaultValue( 2.0 )]
+		[Range( 0, 10, RangeAttribute.ConvenientDistributionEnum.Exponential, 4 )]
+		[Category( "Aurora" )]
+		public Reference<double> ProceduralAuroraFrequency
+		{
+			get { if( _proceduralAuroraFrequency.BeginGet() ) ProceduralAuroraFrequency = _proceduralAuroraFrequency.Get( this ); return _proceduralAuroraFrequency.value; }
+			set { if( _proceduralAuroraFrequency.BeginSet( this, ref value ) ) { try { ProceduralAuroraFrequencyChanged?.Invoke( this ); } finally { _proceduralAuroraFrequency.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ProceduralAuroraFrequency"/> property value changes.</summary>
+		public event Action<Sky> ProceduralAuroraFrequencyChanged;
+		ReferenceField<double> _proceduralAuroraFrequency = 2.0;
+
+		[DefaultValue( "0.05 0.1 0.18" )]
+		[Category( "Aurora" )]
+		public Reference<ColorValue> ProceduralAuroraColor1
+		{
+			get { if( _proceduralAuroraColor1.BeginGet() ) ProceduralAuroraColor1 = _proceduralAuroraColor1.Get( this ); return _proceduralAuroraColor1.value; }
+			set { if( _proceduralAuroraColor1.BeginSet( this, ref value ) ) { try { ProceduralAuroraColor1Changed?.Invoke( this ); } finally { _proceduralAuroraColor1.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ProceduralAuroraColor1"/> property value changes.</summary>
+		public event Action<Sky> ProceduralAuroraColor1Changed;
+		ReferenceField<ColorValue> _proceduralAuroraColor1 = new ColorValue( 0.05, 0.1, 0.18 );
+
+		[DefaultValue( "0.06 0.52 0.5" )]
+		[Category( "Aurora" )]
+		public Reference<ColorValue> ProceduralAuroraColor2
+		{
+			get { if( _proceduralAuroraColor2.BeginGet() ) ProceduralAuroraColor2 = _proceduralAuroraColor2.Get( this ); return _proceduralAuroraColor2.value; }
+			set { if( _proceduralAuroraColor2.BeginSet( this, ref value ) ) { try { ProceduralAuroraColor2Changed?.Invoke( this ); } finally { _proceduralAuroraColor2.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ProceduralAuroraColor2"/> property value changes.</summary>
+		public event Action<Sky> ProceduralAuroraColor2Changed;
+		ReferenceField<ColorValue> _proceduralAuroraColor2 = new ColorValue( 0.06, 0.52, 0.5 );
+
 
 		///// <summary>
 		///// The time between procedural mode updates in seconds.
@@ -697,10 +822,24 @@ namespace NeoAxis
 				case nameof( ProceduralPreventBanding ):
 				//case nameof( ProceduralAffectLighting ):
 				case nameof( ProceduralResolution ):
+				case nameof( ProceduralAtmosphere )://case nameof( ProceduralStars ):
+				case nameof( ProceduralStarSize ):
+				case nameof( ProceduralStarDensity ):
+				case nameof( ProceduralStarClusterStrength ):
+				case nameof( ProceduralStarClusterSize ):
+				case nameof( ProceduralStarColor ):
+				case nameof( ProceduralAurora ):
 					//case nameof( ProceduralUpdateTime ):
 					//case nameof( Time ):
 					//case nameof( Month ):
 					if( Mode.Value == ModeEnum.Resource )
+						skip = true;
+					break;
+
+				case nameof( ProceduralAuroraFrequency ):
+				case nameof( ProceduralAuroraColor1 ):
+				case nameof( ProceduralAuroraColor2 ):
+					if( Mode.Value == ModeEnum.Resource || ProceduralAurora.Value <= 0 )
 						skip = true;
 					break;
 
@@ -936,7 +1075,7 @@ namespace NeoAxis
 					generalContainer.Set( "u_skyCubemapRotation", rotation );// Matrix3.FromRotateByZ( Rotation.Value.InRadians() ).ToMatrix3F() );
 					generalContainer.Set( "u_skyCubemapStretch", (float)CubemapStretch.Value );
 
-					generalContainer.Set( "u_skyParams1", new Vector4( GetProceduralIntensity(), ProceduralPreventBanding ? 1 : 0, 0/*reflectionCubemapGeneration ? 1 : 0*/, 0 ).ToVector4F() );
+					generalContainer.Set( "u_skyParams1", new Vector4( GetProceduralIntensity(), ProceduralPreventBanding ? 1 : 0, ProceduralAtmosphere/*reflectionCubemapGeneration ? 1 : 0*/, 0 ).ToVector4F() );
 					generalContainer.Set( "u_skyParams2", new Vector4( ProceduralSunSize.Value, ProceduralSunBloom, ProceduralExposition, 0 ).ToVector4F() );
 
 					var lightDirection = new Vector3F( 1, 0, 0 );
@@ -965,14 +1104,20 @@ namespace NeoAxis
 					}
 					generalContainer.Set( "u_skyColorxyY", new Vector4( skyColorxyY.X, skyColorxyY.Y, skyColorxyY.Z, 0 ).ToVector4F() );
 
-					//var skyLimunance = GetSkyLuminance( (float)Time.Value );
-					//generalContainer.Set( "u_skyLuminanceXYZ", new Vector4F( skyLimunance.Red, skyLimunance.Green, skyLimunance.Blue, 0 ) );
+					//stars
+					generalContainer.Set( "u_skyStars1", new Vector4( ProceduralStarSize, ProceduralStarDensity, ProceduralStarClusterStrength, ProceduralStarClusterSize ).ToVector4F() );
+					generalContainer.Set( "u_skyStars2", ProceduralStarColor.Value.ToVector4F() );
+
+					//aurora
+					generalContainer.Set( "u_skyAuroraParams", new Vector4( ProceduralAurora, ProceduralAuroraFrequency, 0, 0 ).ToVector4F() );
+					generalContainer.Set( "u_skyAuroraColor1", ProceduralAuroraColor1.Value.ToVector4F() );
+					generalContainer.Set( "u_skyAuroraColor2", ProceduralAuroraColor2.Value.ToVector4F() );
 
 
-
-					//!!!!to make changes to procedural sky you can make your own component based on Sky.
-					//How to initialize your uniforms: override Render method in your Sky based component, set uniforms by means context.SetUniform method before call base.Render.
-
+					//public Reference<double> ProceduralAurora
+					//public Reference<double> ProceduralAuroraFrequency
+					//public Reference<ColorValue> ProceduralAuroraColor1
+					//public Reference<ColorValue> ProceduralAuroraColor2
 
 
 					ImageComponent tex = null;

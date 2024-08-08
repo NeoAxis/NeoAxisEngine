@@ -13,6 +13,7 @@ using NeoAxis.Import;
 using Internal.ComponentFactory.Krypton.Toolkit;
 using System.Linq;
 using System.Drawing.Imaging;
+using System.Diagnostics;
 
 namespace NeoAxis.Editor
 {
@@ -253,7 +254,48 @@ namespace NeoAxis.Editor
 
 		public override bool EditorCommandLineTools_PlatformProjectPatch_Process( string destFile, string baseProjectFileName, out string error, out bool changed )
 		{
-			return EditorCommandLineTools.PlatformProjectPatch.Process( destFile, baseProjectFileName, out error, out changed );
+			error = "";
+
+			//!!!!not implemented, not used
+			changed = false;
+
+			var exeFileName = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "CommandLineTools\\CommandLineTools.exe" );
+			var parameters = string.Format( "-platformProjectPatch \"{0}\" -baseProject \"{1}\"", destFile, baseProjectFileName );
+
+			var processStartInfo = new ProcessStartInfo
+			{
+				FileName = exeFileName,
+				Arguments = parameters,
+				UseShellExecute = false,
+				//CreateNoWindow = true
+			};
+
+			try
+			{
+				using( Process process = new Process() )
+				{
+					process.StartInfo = processStartInfo;
+
+					process.Start();
+					process.WaitForExit();
+
+					int exitCode = process.ExitCode;
+					if( exitCode != 0 )
+					{
+						error = "Exit code is " + exitCode.ToString() + ".";
+						return false;
+					}
+
+					return true;
+				}
+			}
+			catch( Exception ex )
+			{
+				error = ex.Message;
+				return false;
+			}
+
+			//return EditorCommandLineTools.PlatformProjectPatch.Process( destFile, baseProjectFileName, out error, out changed );
 		}
 
 		public override void RegisterEditorAsembly( Assembly assembly, Type[] exportedTypes )
@@ -427,6 +469,11 @@ namespace NeoAxis.Editor
 			var menu = new KryptonContextMenu();
 			menu.Items.Add( new KryptonContextMenuItems( realItems.ToArray() ) );
 			menu.Show( EditorForm.Instance, new Point( screenPosition2.X, screenPosition2.Y ) );
+		}
+
+		public override void AfterFatalShowDialogAndSaveDocuments( string errorText, ref bool skipLogFatal )
+		{
+			EditorForm.Instance?.AfterFatalShowDialogAndSaveDocuments( errorText, ref skipLogFatal );
 		}
 	}
 }

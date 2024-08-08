@@ -12314,8 +12314,9 @@ namespace NeoAxis
 						var jobSize = new Vector3I( (int)Math.Ceiling( gridSize / 32.0 ), (int)Math.Ceiling( gridSize / 32.0 ), 1 );
 						//var jobSize = new Vector3I( (int)Math.Ceiling( gridSize / 8.0 ), (int)Math.Ceiling( gridSize / 8.0 ), 1 );
 
-						Bgfx.Dispatch( (ushort)context.CurrentViewNumber, lightGridGenerateProgram.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
-						context.UpdateStatisticsCurrent.ComputeDispatches++;
+						context.Dispatch( lightGridGenerateProgram.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
+						//Bgfx.Dispatch( (ushort)context.CurrentViewNumber, lightGridGenerateProgram.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
+						//context.UpdateStatisticsCurrent.ComputeDispatches++;
 					}
 				}
 

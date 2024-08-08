@@ -3018,6 +3018,26 @@ namespace NeoAxis
 			if( !clipRectangle.IsCleared() )
 			{
 				var clipRectangle2 = clipRectangle;
+
+				if( viewportForScreenCanvasRenderer != null )
+				{
+					clipRectangle2.Top *= viewportForScreenCanvasRenderer.SizeInPixels.Y;
+					clipRectangle2.Top = (int)clipRectangle2.Top;
+					clipRectangle2.Top /= viewportForScreenCanvasRenderer.SizeInPixels.Y;
+
+					clipRectangle2.Bottom *= viewportForScreenCanvasRenderer.SizeInPixels.Y;
+					clipRectangle2.Bottom = (int)clipRectangle2.Bottom;
+					clipRectangle2.Bottom /= viewportForScreenCanvasRenderer.SizeInPixels.Y;
+
+					clipRectangle2.Left *= viewportForScreenCanvasRenderer.SizeInPixels.X;
+					clipRectangle2.Left = (int)clipRectangle2.Left;
+					clipRectangle2.Left /= viewportForScreenCanvasRenderer.SizeInPixels.X;
+
+					clipRectangle2.Right *= viewportForScreenCanvasRenderer.SizeInPixels.X;
+					clipRectangle2.Right = (int)clipRectangle2.Right;
+					clipRectangle2.Right /= viewportForScreenCanvasRenderer.SizeInPixels.X;
+				}
+
 				if( clipRectangle2.Right <= 0 )
 				{
 					clipRectangle2.Left = 0;

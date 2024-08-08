@@ -1,0 +1,360 @@
+// Made with NeoAxis Engine 2024.1.
+
+.component NeoAxis.VehicleType
+{
+	EditorCameraTransform = "2.04180638205498 -3.79977324699086 2.70359258505927; -0.264832821370578 0.16367486452846 0.808376384769323 0.499601577253084; 1 1 1"
+	EngineMaxTorque = 300
+	EngineMaxRPM = 3000
+	EditorDisplayPhysics = False
+	Mesh
+	{
+		GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Data\\Body.gltf|$Mesh"
+	}
+	EngineNormalizedTorque
+	{
+		Count = 3
+		0
+		{
+			Value
+			{
+				Point = 0
+				Value = 0.8
+			}
+		}
+		1
+		{
+			Value
+			{
+				Point = 0.66
+				Value = 1
+			}
+		}
+		2
+		{
+			Value
+			{
+				Point = 1
+				Value = 0.8
+			}
+		}
+	}
+	TransmissionGearRatios
+	{
+		Value
+		{
+			Length = 5
+			.elements = 2.66 1.78 1.3 1 0.74
+		}
+	}
+	TransmissionReverseGearRatios
+	{
+		Value
+		{
+			Length = 1
+			.elements = -2.9
+		}
+	}
+	MotorOnSound
+	{
+		GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Sounds\\MotorOn.ogg"
+	}
+	MotorOffSound
+	{
+		GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Sounds\\MotorOff.ogg"
+	}
+	GearSounds
+	{
+		Count = 3
+		0 "NeoAxis.Reference<NeoAxis.Sound>"
+		{
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Sounds\\MotorRun.ogg"
+		}
+		1 "NeoAxis.Reference<NeoAxis.Sound>"
+		{
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Sounds\\MotorIdle.ogg"
+		}
+		2 "NeoAxis.Reference<NeoAxis.Sound>"
+		{
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Sounds\\MotorRun.ogg"
+		}
+	}
+	GearUpSound
+	{
+		GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Sounds\\GearUp.ogg"
+	}
+	GearDownSound
+	{
+		GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Sounds\\GearDown.ogg"
+	}
+	TurretTurnSound
+	{
+		GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Sounds\\TurretTurn.ogg"
+	}
+	.component NeoAxis.VehicleTypeWheel
+	{
+		Name = Wheel Front
+		Position = 1.21 0.69 -0.34
+		Diameter = 0.86
+		Width = 0.22
+		SuspensionMinLength = 0.35
+		SuspensionMaxLength = 0.55
+		MaxSteeringAngle = 35
+		SteeringTime = 1
+		Mesh
+		{
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Data\\Wheel.gltf|$Mesh"
+		}
+		LongitudinalFriction
+		{
+			Count = 3
+			0
+			{
+				Value
+				{
+					Point = 0
+					Value = 0
+				}
+			}
+			1
+			{
+				Value
+				{
+					Point = 0.06
+					Value = 2.6
+				}
+			}
+			2
+			{
+				Value
+				{
+					Point = 0.2
+					Value = 2
+				}
+			}
+		}
+		LateralFriction
+		{
+			Count = 3
+			0
+			{
+				Value
+				{
+					Point = 0
+					Value = 0
+				}
+			}
+			1
+			{
+				Value
+				{
+					Point = 3
+					Value = 2.6
+				}
+			}
+			2
+			{
+				Value
+				{
+					Point = 20
+					Value = 2
+				}
+			}
+		}
+	}
+	.component NeoAxis.VehicleTypeWheel
+	{
+		Name = Wheel Rear
+		Position = -1.02 0.69 -0.34
+		Diameter = 0.86
+		Width = 0.22
+		SuspensionMinLength = 0.35
+		SuspensionMaxLength = 0.55
+		Mesh
+		{
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Data\\Wheel.gltf|$Mesh"
+		}
+		LongitudinalFriction
+		{
+			Count = 3
+			0
+			{
+				Value
+				{
+					Point = 0
+					Value = 0
+				}
+			}
+			1
+			{
+				Value
+				{
+					Point = 0.06
+					Value = 2.6
+				}
+			}
+			2
+			{
+				Value
+				{
+					Point = 0.2
+					Value = 2
+				}
+			}
+		}
+		LateralFriction
+		{
+			Count = 3
+			0
+			{
+				Value
+				{
+					Point = 0
+					Value = 0
+				}
+			}
+			1
+			{
+				Value
+				{
+					Point = 3
+					Value = 2.6
+				}
+			}
+			2
+			{
+				Value
+				{
+					Point = 20
+					Value = 2
+				}
+			}
+		}
+	}
+	.component NeoAxis.SeatItem
+	{
+		Name = Seat
+		Transform = "1.2 0 0.2; 0 -0 0 1; 1 1 1"
+		SpineAngle = 30
+		LegsAngle = 30
+		ExitTransform = "0.5 1.6 -0.9; 0 0 0 1; 1 1 1"
+		DisplayObject = False
+	}
+	.component NeoAxis.Turret
+	{
+		Name = Turret
+		Transform = "0.18 0 0.64; 0 0 0 1; 1 1 1"
+		Collision = True
+		Mesh
+		{
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Data\\Turret.gltf|$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Constraint_SixDOF
+		{
+			Name = Constraint SixDOF
+			NetworkMode = False
+			Transform = "0.18 0 0.64; 0 0 0 1; 1 1 1"
+			CollisionsBetweenLinkedBodies = False
+			AngularZAxis = Free
+			AngularZAxisFriction = 5
+			AngularZAxisMotor = Position
+			AngularZAxisMotorDamping = 2
+			AngularZAxisMotorLimit = -300 300
+			BodyB
+			{
+				GetByReference = "this:.."
+			}
+		}
+		.component NeoAxis.Weapon
+		{
+			Name = Weapon
+			Transform = "0.55 -0.15 0.78; 0 0 0 1; 1 1 1"
+			Collision = True
+			Mesh
+			{
+				GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Data\\Weapon.gltf|$Mesh"
+			}
+			SpecialEffects
+			{
+				Value
+				{
+					Count = 0
+				}
+			}
+			WeaponType
+			{
+				GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Machine gun\\Machine gun.weapontype"
+			}
+			.component NeoAxis.Constraint_SixDOF
+			{
+				Name = Constraint SixDOF
+				NetworkMode = False
+				Transform = "0.55 -0.15 0.78; 0 -0 0 1; 1 1 1"
+				CollisionsBetweenLinkedBodies = False
+				AngularYAxis = Limited
+				AngularYAxisLimit = -25 25
+				AngularYAxisFriction = 5
+				AngularYAxisMotor = Position
+				AngularYAxisMotorFrequency = 20
+				AngularYAxisMotorDamping = 2
+				AngularYAxisMotorLimit = -100 100
+				BodyA
+				{
+					GetByReference = "this:..\\.."
+				}
+				BodyB
+				{
+					GetByReference = "this:.."
+				}
+			}
+		}
+	}
+	.component NeoAxis.Light
+	{
+		Name = Headlight Low Left
+		Transform = "1.62393839859369 0.53 0.26085662047027; 0 0.0871557427476582 0 0.996194698091746; 1 1 1"
+		Type = Spotlight
+		Brightness = 250000
+		Color = 0.987098 1 0.683647
+		AttenuationFar = 43.263999999999996
+		SpotlightInnerAngle = 63
+		SpotlightOuterAngle = 66
+		StartDistance = 0.3
+		ShadowNearClipDistance = 0.2
+		FlareColor = "0.987098 1 0.812; 1.5"
+		FlareSize = 0.8 0.8
+		FlareSizeFadeByDistance = True
+		FlareDepthCheckOffset = 0.2
+		FlareImage
+		{
+			GetByReference = "Base\\Images\\Lens flares\\sparkle_blurred.png"
+		}
+	}
+	.component NeoAxis.Light
+	{
+		Name = Headlight Low Right
+		Transform = "1.62393839859369 -0.53 0.26085662047027; 0 0.0871557427476582 0 0.996194698091746; 1 1 1"
+		Type = Spotlight
+		Brightness = 250000
+		Color = 0.987098 1 0.683647
+		AttenuationFar = 43.263999999999996
+		SpotlightInnerAngle = 63
+		SpotlightOuterAngle = 66
+		StartDistance = 0.3
+		ShadowNearClipDistance = 0.2
+		FlareColor = "0.987098 1 0.812; 1.5"
+		FlareSize = 0.8 0.8
+		FlareSizeFadeByDistance = True
+		FlareDepthCheckOffset = 0.2
+		FlareImage
+		{
+			GetByReference = "Base\\Images\\Lens flares\\sparkle_blurred.png"
+		}
+	}
+}

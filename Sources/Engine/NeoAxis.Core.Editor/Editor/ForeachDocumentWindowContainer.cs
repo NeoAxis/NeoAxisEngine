@@ -31,7 +31,7 @@ namespace NeoAxis.Editor
 			public EUserControl control;
 		}
 		List<PanelData> panels = new List<PanelData>();
-		EDictionary<DocumentWindow, PanelData> panelByDocumentWindow = new EDictionary<DocumentWindow, PanelData>();
+		EDictionary<IDocumentWindow, PanelData> panelByDocumentWindow = new EDictionary<IDocumentWindow, PanelData>();
 
 		PanelData selectedPanel;
 
@@ -42,7 +42,7 @@ namespace NeoAxis.Editor
 			InitializeComponent();
 		}
 
-		public PanelData GetPanel( DocumentWindow documentWindow )
+		public PanelData GetPanel( IDocumentWindow documentWindow )
 		{
 			if( documentWindow != null )
 			{

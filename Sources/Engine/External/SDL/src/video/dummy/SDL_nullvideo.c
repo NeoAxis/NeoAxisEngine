@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /*
   Simple DirectMedia Layer
   Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
@@ -142,3 +145,5 @@ DUMMY_VideoQuit(_THIS)
 #endif /* SDL_VIDEO_DRIVER_DUMMY */
 
 /* vi: set ts=4 sw=4 expandtab: */
+
+#endif

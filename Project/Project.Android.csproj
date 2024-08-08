@@ -96,7 +96,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>if EXIST "$(ProjectDir)Project.csproj" ( if EXIST "$(ProjectDir)Binaries\NeoAxis.Editor.exe" ( "$(ProjectDir)Binaries\NeoAxis.Editor.exe" -platformProjectPatch "$(ProjectDir)Project.Android.csproj" -baseProject "$(ProjectDir)Project.csproj" ) )
+    <PreBuildEvent>if EXIST "$(ProjectDir)Project.csproj" ( if EXIST "$(ProjectDir)Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" ( "$(ProjectDir)Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -platformProjectPatch "$(ProjectDir)Project.Android.csproj" -baseProject "$(ProjectDir)Project.csproj" ) )
 </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

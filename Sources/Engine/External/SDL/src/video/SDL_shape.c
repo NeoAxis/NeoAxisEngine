@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /*
   Simple DirectMedia Layer
   Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
@@ -307,3 +310,5 @@ SDL_GetShapedWindowMode(SDL_Window *window,SDL_WindowShapeMode *shape_mode)
         /* The window given is not a valid shapeable window. */
         return SDL_NONSHAPEABLE_WINDOW;
 }
+
+#endif

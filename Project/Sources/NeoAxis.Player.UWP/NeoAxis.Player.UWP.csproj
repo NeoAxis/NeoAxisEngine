@@ -151,7 +151,7 @@
     </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>if EXIST "$(ProjectDir)Project.csproj" ( if EXIST "$(ProjectDir)Binaries\NeoAxis.Editor.exe" ( "$(ProjectDir)Binaries\NeoAxis.Editor.exe" -platformProjectPatch "$(ProjectDir)Project.UWP.csproj" -baseProject "$(ProjectDir)Project.csproj" ) )</PreBuildEvent>
+    <PreBuildEvent>if EXIST "$(ProjectDir)Project.csproj" ( if EXIST "$(ProjectDir)Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" ( "$(ProjectDir)Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -platformProjectPatch "$(ProjectDir)Project.UWP.csproj" -baseProject "$(ProjectDir)Project.csproj" ) )</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

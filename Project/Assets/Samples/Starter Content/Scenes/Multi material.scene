@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1146, 842\"><KW V=\"1\" A=\"86F4BE7C88194BC3E6823986EF278CF6\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WS UN=\"1FDE5F7D67FC49055FACFC5E977F204D\" S=\"T,0,50:T,0,50\" D=\"Vertical\"><WC UN=\"D8003A824C484FB4B6913E7046F9C6BD\" S=\"T,0,50:T,0,532\" NM=\"BarTabGroup\" AR=\"True\" SP=\"86F4BE7C88194BC3E6823986EF278CF6\"><KP UN=\"86F4BE7C88194BC3E6823986EF278CF6\" S=\"False\"><CPD ObjPath=\"\" /></KP></WC><WS UN=\"F201D64518C5464248A5460E8D3C1361\" S=\"T,0,50:T,0,305\" D=\"Horizontal\"><WC UN=\"770249101E6041D38BA5391371EAA1ED\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"59AFFE97B28C4D4606B4890A2396B908\"><KP UN=\"59AFFE97B28C4D4606B4890A2396B908\" S=\"False\"><CPD ObjPath=\"$Multi Material\\$Shader graph\" /></KP></WC><WC UN=\"BB6C43AD2795490743B25FCBBCF6B4CA\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"24A40D4A01FB4D7B68871E89F63A7620\"><KP UN=\"24A40D4A01FB4D7B68871E89F63A7620\" S=\"False\"><CPD ObjPath=\"$Multi Material\\$Shader graph\\$Node Shader 1\\$Shader\" /></KP></WC></WS></WS></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1144, 842\"><KW V=\"1\" A=\"86F4BE7C88194BC3E6823986EF278CF6\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WS UN=\"1FDE5F7D67FC49055FACFC5E977F204D\" S=\"T,0,50:T,0,50\" D=\"Vertical\"><WC UN=\"D8003A824C484FB4B6913E7046F9C6BD\" S=\"T,0,50:T,0,532\" NM=\"BarTabGroup\" AR=\"True\" SP=\"86F4BE7C88194BC3E6823986EF278CF6\"><KP UN=\"86F4BE7C88194BC3E6823986EF278CF6\" S=\"False\"><CPD ObjPath=\"\" /></KP></WC><WS UN=\"F201D64518C5464248A5460E8D3C1361\" S=\"T,0,50:T,0,305\" D=\"Horizontal\"><WC UN=\"770249101E6041D38BA5391371EAA1ED\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"59AFFE97B28C4D4606B4890A2396B908\"><KP UN=\"59AFFE97B28C4D4606B4890A2396B908\" S=\"False\"><CPD ObjPath=\"$Multi Material\\$Shader graph\" /></KP></WC><WC UN=\"BB6C43AD2795490743B25FCBBCF6B4CA\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"24A40D4A01FB4D7B68871E89F63A7620\"><KP UN=\"24A40D4A01FB4D7B68871E89F63A7620\" S=\"False\"><CPD ObjPath=\"$Multi Material\\$Shader graph\\$Node Shader 1\\$Shader\" /></KP></WC></WS></WS></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -36,13 +36,14 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 50000
+		Brightness = 60000
 	}
 	.component NeoAxis.Light
 	{
 		Name = Directional Light
 		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
 		Type = Directional
+		Brightness = 150000
 		AttenuationFar = 100
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
@@ -120,10 +121,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -174,10 +171,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "this:..\\$Multi Material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{

@@ -21,7 +21,7 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 30000
+		Brightness = 50000
 	}
 	.component NeoAxis.Light
 	{
@@ -113,10 +113,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -168,10 +164,6 @@
 		{
 			GetByReference = "Base\\Materials\\Yellow.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -199,10 +191,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Yellow.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -232,10 +220,6 @@
 		{
 			GetByReference = "Base\\Materials\\Red.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -263,10 +247,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Red.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -309,10 +289,6 @@
 		{
 			GetByReference = "Base\\Materials\\Gray.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -368,7 +344,7 @@
 					Value
 					{
 						Length = 7680
-						.elements = "UEsDBBQAAAAIANpjaVhpMWu+qQIAAAAeAAAEAAAAZmlsZdWYzXHCQAyF1QNpIScudIAP6YMLfUBl4JZSgTPS6mF5AcdP68CEmYwTM1+kffq1RbpepOtEZC9yvkr5nEXOe/9dyn39O/7g2xt/beB7EVmTV58Z/9V+PD/L1/oxfOf66/nhM6M/eI+PxYXlcf6s/Zpnz4/4wz7Lq/5RP4bX/Hf7qh1q4BYLvxdzP36ntbMK72dP21de4+41HH3Ue0/9x/lbebWbte/xM/2hg18Rk1n/vf5SfKift/JV3Kj4raEfen/Id9VDP7P5A/1a+FB/0V6xvsB+C4/8z/qP+ZnloV/M99jLf9Mf9pP8rhfZhfox/V9q/7I9qu//1H/bfzT/0v63nd/mzyR+w3Ai4qexn8af5S/bo+b+7fwcf5uf4H13Wdz/6voh+V1X+U/yzfrf1R+jX8mdlvjd5y9jX8T6xyT/Wb7Of5YvPlj+ncvEwK6waH6g/2v+0fzm8KHxw/lpvuyOtj8i/9UNon7v6ofkrf7hvwv2WvtV/b3U/83ho+5/rfVP8Q/ql+JL757UP8nf9S+KX0G/WH+J/GvLX9c/nf+P6p/rX5P+a/2D4Sv/aR758/X9eUG3ZOx7/+8aeK2/voG3/tvAr2G/5fz9OP9s5wkzBBGZe/4q87ecP837/rgKH2o45X+Gd/3N/wzv+Zfjq/il7Pv7x2oHWKSfzS+Pf3wGjf9r5v1P3H/x7kjtTrSY5cfnhxw/zn/jNf99BqXOn+G9/6ftR56Nf3P8xv6Z0z/sryHuVPxD/waHq+XS0/yp5hdtv5X3+Zf23+ff2/nx+Ru64zqvf7W/0Pr7+cP8Qw4us+/xC+8vOB72w/m9B+bsD8NJeab/2PM79g+Wr/dnlsf5YZ9//2/7czp+tf+s/RXqt9r/EHdc/zz/Q/+GLbsunr/j/OT5Vv1/AFBLAQIUABQAAAAIANpjaVhpMWu+qQIAAAAeAAAEAAAAAAAAAAAAAAAAAAAAAABmaWxlUEsFBgAAAAABAAEAMgAAAMsCAAAAAA=="
+						.elements = "UEsDBBQAAAAIAKkO/FhpMWu+qQIAAAAeAAAEAAAAZmlsZdWYzXHCQAyF1QNpIScudIAP6YMLfUBl4JZSgTPS6mF5AcdP68CEmYwTM1+kffq1RbpepOtEZC9yvkr5nEXOe/9dyn39O/7g2xt/beB7EVmTV58Z/9V+PD/L1/oxfOf66/nhM6M/eI+PxYXlcf6s/Zpnz4/4wz7Lq/5RP4bX/Hf7qh1q4BYLvxdzP36ntbMK72dP21de4+41HH3Ue0/9x/lbebWbte/xM/2hg18Rk1n/vf5SfKift/JV3Kj4raEfen/Id9VDP7P5A/1a+FB/0V6xvsB+C4/8z/qP+ZnloV/M99jLf9Mf9pP8rhfZhfox/V9q/7I9qu//1H/bfzT/0v63nd/mzyR+w3Ai4qexn8af5S/bo+b+7fwcf5uf4H13Wdz/6voh+V1X+U/yzfrf1R+jX8mdlvjd5y9jX8T6xyT/Wb7Of5YvPlj+ncvEwK6waH6g/2v+0fzm8KHxw/lpvuyOtj8i/9UNon7v6ofkrf7hvwv2WvtV/b3U/83ho+5/rfVP8Q/ql+JL757UP8nf9S+KX0G/WH+J/GvLX9c/nf+P6p/rX5P+a/2D4Sv/aR758/X9eUG3ZOx7/+8aeK2/voG3/tvAr2G/5fz9OP9s5wkzBBGZe/4q87ecP837/rgKH2o45X+Gd/3N/wzv+Zfjq/il7Pv7x2oHWKSfzS+Pf3wGjf9r5v1P3H/x7kjtTrSY5cfnhxw/zn/jNf99BqXOn+G9/6ftR56Nf3P8xv6Z0z/sryHuVPxD/waHq+XS0/yp5hdtv5X3+Zf23+ff2/nx+Ru64zqvf7W/0Pr7+cP8Qw4us+/xC+8vOB72w/m9B+bsD8NJeab/2PM79g+Wr/dnlsf5YZ9//2/7czp+tf+s/RXqt9r/EHdc/zz/Q/+GLbsunr/j/OT5Vv1/AFBLAQIUABQAAAAIAKkO/FhpMWu+qQIAAAAeAAAEAAAAAAAAAAAAAAAAAAAAAABmaWxlUEsFBgAAAAABAAEAMgAAAMsCAAAAAA=="
 						.elementsZip = True
 					}
 				}
@@ -401,10 +377,6 @@
 		{
 			GetByReference = "Base\\Materials\\Gray.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -460,7 +432,7 @@
 					Value
 					{
 						Length = 7680
-						.elements = "UEsDBBQAAAAIANpjaVhpMWu+qQIAAAAeAAAEAAAAZmlsZdWYzXHCQAyF1QNpIScudIAP6YMLfUBl4JZSgTPS6mF5AcdP68CEmYwTM1+kffq1RbpepOtEZC9yvkr5nEXOe/9dyn39O/7g2xt/beB7EVmTV58Z/9V+PD/L1/oxfOf66/nhM6M/eI+PxYXlcf6s/Zpnz4/4wz7Lq/5RP4bX/Hf7qh1q4BYLvxdzP36ntbMK72dP21de4+41HH3Ue0/9x/lbebWbte/xM/2hg18Rk1n/vf5SfKift/JV3Kj4raEfen/Id9VDP7P5A/1a+FB/0V6xvsB+C4/8z/qP+ZnloV/M99jLf9Mf9pP8rhfZhfox/V9q/7I9qu//1H/bfzT/0v63nd/mzyR+w3Ai4qexn8af5S/bo+b+7fwcf5uf4H13Wdz/6voh+V1X+U/yzfrf1R+jX8mdlvjd5y9jX8T6xyT/Wb7Of5YvPlj+ncvEwK6waH6g/2v+0fzm8KHxw/lpvuyOtj8i/9UNon7v6ofkrf7hvwv2WvtV/b3U/83ho+5/rfVP8Q/ql+JL757UP8nf9S+KX0G/WH+J/GvLX9c/nf+P6p/rX5P+a/2D4Sv/aR758/X9eUG3ZOx7/+8aeK2/voG3/tvAr2G/5fz9OP9s5wkzBBGZe/4q87ecP837/rgKH2o45X+Gd/3N/wzv+Zfjq/il7Pv7x2oHWKSfzS+Pf3wGjf9r5v1P3H/x7kjtTrSY5cfnhxw/zn/jNf99BqXOn+G9/6ftR56Nf3P8xv6Z0z/sryHuVPxD/waHq+XS0/yp5hdtv5X3+Zf23+ff2/nx+Ru64zqvf7W/0Pr7+cP8Qw4us+/xC+8vOB72w/m9B+bsD8NJeab/2PM79g+Wr/dnlsf5YZ9//2/7czp+tf+s/RXqt9r/EHdc/zz/Q/+GLbsunr/j/OT5Vv1/AFBLAQIUABQAAAAIANpjaVhpMWu+qQIAAAAeAAAEAAAAAAAAAAAAAAAAAAAAAABmaWxlUEsFBgAAAAABAAEAMgAAAMsCAAAAAA=="
+						.elements = "UEsDBBQAAAAIAKkO/FhpMWu+qQIAAAAeAAAEAAAAZmlsZdWYzXHCQAyF1QNpIScudIAP6YMLfUBl4JZSgTPS6mF5AcdP68CEmYwTM1+kffq1RbpepOtEZC9yvkr5nEXOe/9dyn39O/7g2xt/beB7EVmTV58Z/9V+PD/L1/oxfOf66/nhM6M/eI+PxYXlcf6s/Zpnz4/4wz7Lq/5RP4bX/Hf7qh1q4BYLvxdzP36ntbMK72dP21de4+41HH3Ue0/9x/lbebWbte/xM/2hg18Rk1n/vf5SfKift/JV3Kj4raEfen/Id9VDP7P5A/1a+FB/0V6xvsB+C4/8z/qP+ZnloV/M99jLf9Mf9pP8rhfZhfox/V9q/7I9qu//1H/bfzT/0v63nd/mzyR+w3Ai4qexn8af5S/bo+b+7fwcf5uf4H13Wdz/6voh+V1X+U/yzfrf1R+jX8mdlvjd5y9jX8T6xyT/Wb7Of5YvPlj+ncvEwK6waH6g/2v+0fzm8KHxw/lpvuyOtj8i/9UNon7v6ofkrf7hvwv2WvtV/b3U/83ho+5/rfVP8Q/ql+JL757UP8nf9S+KX0G/WH+J/GvLX9c/nf+P6p/rX5P+a/2D4Sv/aR758/X9eUG3ZOx7/+8aeK2/voG3/tvAr2G/5fz9OP9s5wkzBBGZe/4q87ecP837/rgKH2o45X+Gd/3N/wzv+Zfjq/il7Pv7x2oHWKSfzS+Pf3wGjf9r5v1P3H/x7kjtTrSY5cfnhxw/zn/jNf99BqXOn+G9/6ftR56Nf3P8xv6Z0z/sryHuVPxD/waHq+XS0/yp5hdtv5X3+Zf23+ff2/nx+Ru64zqvf7W/0Pr7+cP8Qw4us+/xC+8vOB72w/m9B+bsD8NJeab/2PM79g+Wr/dnlsf5YZ9//2/7czp+tf+s/RXqt9r/EHdc/zz/Q/+GLbsunr/j/OT5Vv1/AFBLAQIUABQAAAAIAKkO/FhpMWu+qQIAAAAeAAAEAAAAAAAAAAAAAAAAAAAAAABmaWxlUEsFBgAAAAABAAEAMgAAAMsCAAAAAA=="
 						.elementsZip = True
 					}
 				}
@@ -495,10 +467,6 @@
 			Mesh
 			{
 				GetByReference = "this:$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
 			}
 			SpecialEffects
 			{
@@ -550,10 +518,6 @@
 			Mesh
 			{
 				GetByReference = "this:$Mesh"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
 			}
 			SpecialEffects
 			{

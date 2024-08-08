@@ -221,6 +221,29 @@ namespace NeoAxis
 		public event Action<FenceType> PanelReplaceMaterialChanged;
 		ReferenceField<Material> _panelReplaceMaterial = null;
 
+
+		//[DefaultValue( null )]
+		//[Category( "Gate" )]
+		//public Reference<GateType> GatePreview
+		//{
+		//	get { if( _gatePreview.BeginGet() ) GatePreview = _gatePreview.Get( this ); return _gatePreview.value; }
+		//	set { if( _gatePreview.BeginSet( this, ref value ) ) { try { GatePreviewChanged?.Invoke( this ); } finally { _gatePreview.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="GatePreview"/> property value changes.</summary>
+		//public event Action<FenceType> GatePreviewChanged;
+		//ReferenceField<GateType> _gatePreview = null;
+
+		//[DefaultValue( 4.0 )]
+		//[Category( "Gate" )]
+		//public Reference<double> GatePreviewLength
+		//{
+		//	get { if( _gatePreviewLength.BeginGet() ) GatePreviewLength = _gatePreviewLength.Get( this ); return _gatePreviewLength.value; }
+		//	set { if( _gatePreviewLength.BeginSet( this, ref value ) ) { try { GatePreviewLengthChanged?.Invoke( this ); } finally { _gatePreviewLength.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="GatePreviewLength"/> property value changes.</summary>
+		//public event Action<FenceType> GatePreviewLengthChanged;
+		//ReferenceField<double> _gatePreviewLength = 4.0;
+
 		//
 
 		int version;
@@ -237,6 +260,22 @@ namespace NeoAxis
 			{
 				version++;
 			}
+		}
+
+		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
+		{
+			base.OnMetadataGetMembersFilter( context, member, ref skip );
+
+			//if( member is Metadata.Property )
+			//{
+			//	switch( member.Name )
+			//	{
+			//	case nameof( GatePreviewLength ):
+			//		if( !GatePreview.ReferenceSpecified )
+			//			skip = true;
+			//		break;
+			//	}
+			//}
 		}
 	}
 }

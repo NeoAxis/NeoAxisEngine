@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.Scene
 {
@@ -35,13 +35,14 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 50000
+		Brightness = 60000
 	}
 	.component NeoAxis.Light
 	{
 		Name = Directional Light
 		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
 		Type = Directional
+		Brightness = 150000
 		AttenuationFar = 100
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
@@ -50,8 +51,9 @@
 	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
-		ShadowFarDistance = 30
 		ShadowIntensity = 0.5
+		ShadowDirectionalDistance = 30
+		ShadowPointSpotlightDistance = 30
 		.component NeoAxis.Component
 		{
 			Name = Background Effects
@@ -102,6 +104,7 @@
 	{
 		Name = Game Mode
 		UseBuiltInCamera = FirstPerson
+		ThirdPersonCameraHorizontalAngle = 88.6939252994952
 		CutsceneStarted = False
 		CutsceneGuiFadingFactor = 0
 		CutsceneGuiFadingSpeed = 0
@@ -121,10 +124,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -180,10 +179,6 @@
 		{
 			GetByReference = "Base\\Material templates\\Simple refraction.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -220,10 +215,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -262,10 +253,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -302,10 +289,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -356,10 +339,6 @@
 		{
 			GetByReference = "Base\\Material templates\\Blurry transparent.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -381,14 +360,6 @@
 		Name = Character
 		Transform = "0.45325922957528 1.52722388721052 0.0125239255813865; 0 0 0 1; 1 1 1"
 		Collision = True
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -410,14 +381,6 @@
 		Name = Character 2
 		Transform = "3.78776064804008 -3.9414240562647 0.00000006061691971; 0 0 0.699001669883728 0.715120077133179; 1 1 1"
 		Collision = True
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value

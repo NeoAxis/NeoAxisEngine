@@ -1,0 +1,38 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.WeaponType
+{
+	WayToUse = OneHandedMelee
+	Mode1FiringTotalTime = 2.21
+	Mode1FiringFireTime = 1
+	Mode1MaxRecoilOffset = 0
+	Mode1MaxRecoilOffsetTime = 0
+	Mode1FiringDistance = 0 2.2
+	Mode1MeleeCollisionDetectionMethod = Volume
+	Mode1MeleeCollisionVolume = 1.5 0 0.5 0.3
+	Mode1MeleeDamage = 4
+	Mode1MeleeImpulse = 400
+	Mode1StopMovementWhenFiring = True
+	Mode2Enabled = False
+	Mode2MeleeCollisionVolume = 0 0 0 0
+	Mesh
+	{
+	}
+	Mode1BulletType
+	{
+	}
+	Mode1FiringBeginSound
+	{
+	}
+	Mode1FireSound
+	{
+		GetByReference = "Content\\Characters\\NeoAxis\\Polar bear\\Data\\Attack.ogg"
+	}
+	Mode1FireMuzzleFlashParticle
+	{
+	}
+	Mode1MeleeCollisionSound
+	{
+		GetByReference = "Content\\Characters\\NeoAxis\\Polar bear\\Data\\AttackCollision.ogg"
+	}
+}

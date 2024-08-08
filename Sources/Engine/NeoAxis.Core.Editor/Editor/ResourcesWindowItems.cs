@@ -274,6 +274,7 @@ namespace NeoAxis.Editor
 				var group = @"Base\Scene objects";
 
 				AddItem( new Item( group + @"\Object In Space", typeof( ObjectInSpace ) ) );
+				AddItem( new Item( group + @"\Mesh In Space", typeof( MeshInSpace ) ) );
 				AddItem( new Item( group + @"\Group Of Objects", typeof( GroupOfObjects ) ) );
 				AddItem( new Item( group + @"\Layer", typeof( Layer ) ) );
 				AddItem( new Item( group + @"\Sky", typeof( Sky ) ) );

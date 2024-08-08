@@ -14,6 +14,8 @@ using Internal.ComponentFactory.Krypton.Navigator;
 using Internal.ComponentFactory.Krypton.Docking;
 using Internal.ComponentFactory.Krypton.Workspace;
 using System.IO;
+using Internal.Fbx;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace NeoAxis.Editor
 {
@@ -127,7 +129,7 @@ namespace NeoAxis.Editor
 				{
 					string current = reference;
 
-					again:;
+again:;
 
 					int splitIndex = current.LastIndexOfAny( new char[] { '\\', '/', '|' } );
 					if( splitIndex != -1 )
@@ -222,6 +224,12 @@ namespace NeoAxis.Editor
 					{
 						//!!!!multiselection
 						var obj = setReferenceModeData.propertyOwners[ 0 ];
+
+						//when inside ReferenceList
+						var objType = obj.GetType();
+						var isReferenceList = objType.Name == "ReferenceList`1";//typeof( ReferenceList<> ).IsAssignableFrom( objType );
+						if( isReferenceList )
+							obj = ObjectEx.PropertyGet( obj, "Owner" );
 
 						var component = obj as Component;
 						if( component != null )

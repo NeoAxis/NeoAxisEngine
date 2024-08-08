@@ -1,0 +1,23 @@
+// Made with NeoAxis Engine 2024.1.
+
+.component NeoAxis.GateType
+{
+	EditorCameraTransform = "0.165252137759531 -3.54451176464443 2.92160424984139; -0.167497292430188 0.148120188295157 0.730142714188864 0.64567537026348; 1 1 1"
+	OpeningType = HingeSide
+	Door1ConstraintPosition = -1 0 1.125
+	Door2ConstraintPosition = 1 0 1.125
+	DoorAngularLimit = -10 130
+	DoorOpenAngle = 110
+	BaseMesh
+	{
+		GetByReference = "Content\\Gates\\NeoAxis\\Hinge Side Kinematic Gate\\Base.mesh"
+	}
+	Door1Mesh
+	{
+		GetByReference = "Content\\Gates\\NeoAxis\\Hinge Side Kinematic Gate\\Door.mesh"
+	}
+	Door2Mesh
+	{
+		GetByReference = "Content\\Gates\\NeoAxis\\Hinge Side Kinematic Gate\\Door.mesh"
+	}
+}

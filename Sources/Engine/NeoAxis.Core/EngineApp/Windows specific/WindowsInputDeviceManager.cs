@@ -10,7 +10,7 @@ using XInputNativeWrapper;
 namespace NeoAxis
 {
 	/// <summary>
-	/// Describes singleton class for managing input devices
+	/// Describes singleton class for managing input devices on Windows.
 	/// </summary>
 	internal class WindowsInputDeviceManager : InputDeviceManager
 	{

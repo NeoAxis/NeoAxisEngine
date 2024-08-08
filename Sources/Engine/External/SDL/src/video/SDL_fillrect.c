@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /*
   Simple DirectMedia Layer
   Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
@@ -341,3 +344,5 @@ SDL_FillRects(SDL_Surface * dst, const SDL_Rect * rects, int count,
 }
 
 /* vi: set ts=4 sw=4 expandtab: */
+
+#endif

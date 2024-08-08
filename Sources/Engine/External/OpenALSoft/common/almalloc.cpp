@@ -11,8 +11,11 @@
 #include <malloc.h>
 #endif
 
-
+#ifdef PLATFORM_ANDROID
+#define ALIGNED_ALLOC_AVAILABLE 0
+#else
 #define ALIGNED_ALLOC_AVAILABLE (__STDC_VERSION__ >= 201112L || __cplusplus >= 201703L)
+#endif
 
 void *al_malloc(size_t alignment, size_t size)
 {

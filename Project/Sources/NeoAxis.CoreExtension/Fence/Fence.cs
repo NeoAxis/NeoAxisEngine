@@ -5,11 +5,6 @@ using System.Collections.Generic;
 using NeoAxis.Editor;
 using System.Linq;
 
-
-//!!!!
-//castles
-
-
 namespace NeoAxis
 {
 	/// <summary>
@@ -28,7 +23,7 @@ namespace NeoAxis
 
 		//
 
-		const string defaultFenceType = @"Content\Constructors\Fences\Wood fence\Brown 1.fencetype";
+		const string defaultFenceType = @"Content\Fences\NeoAxis\Woodfence\Brown.fencetype";
 
 		/// <summary>
 		/// The type of the fence.
@@ -72,17 +67,76 @@ namespace NeoAxis
 		ReferenceField<ColorValue> _colorMultiplier = ColorValue.One;
 
 		/// <summary>
-		/// Whether to add special mesh to the point.
+		/// Whether to enable the post.
 		/// </summary>
-		[DefaultValue( FencePoint.SpecialtyEnum.None )]
-		public Reference<FencePoint.SpecialtyEnum> PointSpecialty
+		[DefaultValue( true )]
+		[Category( "Fence Point" )]
+		public Reference<bool> PointPostMeshEnable
 		{
-			get { if( _pointSpecialty.BeginGet() ) PointSpecialty = _pointSpecialty.Get( this ); return _pointSpecialty.value; }
-			set { if( _pointSpecialty.BeginSet( this, ref value ) ) { try { PointSpecialtyChanged?.Invoke( this ); DataWasChanged(); } finally { _pointSpecialty.EndSet(); } } }
+			get { if( _pointPostMeshEnable.BeginGet() ) PointPostMeshEnable = _pointPostMeshEnable.Get( this ); return _pointPostMeshEnable.value; }
+			set { if( _pointPostMeshEnable.BeginSet( this, ref value ) ) { try { PointPostMeshEnableChanged?.Invoke( this ); DataWasChanged(); } finally { _pointPostMeshEnable.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="PointSpecialty"/> property value changes.</summary>
-		public event Action<Fence> PointSpecialtyChanged;
-		ReferenceField<FencePoint.SpecialtyEnum> _pointSpecialty = FencePoint.SpecialtyEnum.None;
+		/// <summary>Occurs when the <see cref="PointPostMeshEnable"/> property value changes.</summary>
+		public event Action<Fence> PointPostMeshEnableChanged;
+		ReferenceField<bool> _pointPostMeshEnable = true;
+
+		//!!!!maybe optimize like MeshInSpace
+		/// <summary>
+		/// Replaces the post mesh for the point.
+		/// </summary>
+		[DefaultValue( null )]
+		[Category( "Fence Point" )]
+		public Reference<Mesh> PointPostMeshReplace
+		{
+			get { if( _pointPostMeshReplace.BeginGet() ) PointPostMeshReplace = _pointPostMeshReplace.Get( this ); return _pointPostMeshReplace.value; }
+			set { if( _pointPostMeshReplace.BeginSet( this, ref value ) ) { try { PointPostMeshReplaceChanged?.Invoke( this ); DataWasChanged(); } finally { _pointPostMeshReplace.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PointPostMeshReplace"/> property value changes.</summary>
+		public event Action<Fence> PointPostMeshReplaceChanged;
+		ReferenceField<Mesh> _pointPostMeshReplace = null;
+
+		/// <summary>
+		/// Whether to enable the panel between current and next point.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Fence Point" )]
+		public Reference<bool> PointPanelMeshEnable
+		{
+			get { if( _pointPanelMeshEnable.BeginGet() ) PointPanelMeshEnable = _pointPanelMeshEnable.Get( this ); return _pointPanelMeshEnable.value; }
+			set { if( _pointPanelMeshEnable.BeginSet( this, ref value ) ) { try { PointPanelMeshEnableChanged?.Invoke( this ); DataWasChanged(); } finally { _pointPanelMeshEnable.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PointPanelMeshEnable"/> property value changes.</summary>
+		public event Action<Fence> PointPanelMeshEnableChanged;
+		ReferenceField<bool> _pointPanelMeshEnable = true;
+
+		/// <summary>
+		/// Replaces the panel mesh between current and next point.
+		/// </summary>
+		[DefaultValue( null )]
+		[Category( "Fence Point" )]
+		public Reference<Mesh> PointPanelMeshReplace
+		{
+			get { if( _pointPanelMeshReplace.BeginGet() ) PointPanelMeshReplace = _pointPanelMeshReplace.Get( this ); return _pointPanelMeshReplace.value; }
+			set { if( _pointPanelMeshReplace.BeginSet( this, ref value ) ) { try { PointPanelMeshReplaceChanged?.Invoke( this ); } finally { _pointPanelMeshReplace.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PointPanelMeshReplace"/> property value changes.</summary>
+		public event Action<Fence> PointPanelMeshReplaceChanged;
+		ReferenceField<Mesh> _pointPanelMeshReplace = null;
+
+
+		///// <summary>
+		///// Whether to add special mesh to the point.
+		///// </summary>
+		//[DefaultValue( FencePoint.SpecialtyEnum.None )]
+		//public Reference<FencePoint.SpecialtyEnum> PointSpecialty
+		//{
+		//	get { if( _pointSpecialty.BeginGet() ) PointSpecialty = _pointSpecialty.Get( this ); return _pointSpecialty.value; }
+		//	set { if( _pointSpecialty.BeginSet( this, ref value ) ) { try { PointSpecialtyChanged?.Invoke( this ); DataWasChanged(); } finally { _pointSpecialty.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="PointSpecialty"/> property value changes.</summary>
+		//public event Action<Fence> PointSpecialtyChanged;
+		//ReferenceField<FencePoint.SpecialtyEnum> _pointSpecialty = FencePoint.SpecialtyEnum.None;
+
 
 		[Serialize]
 		[Browsable( false )]
@@ -114,7 +168,12 @@ namespace NeoAxis
 			{
 				public Transform Transform;
 				internal double _curveTimeOnlyToSort;
-				public FencePoint.SpecialtyEnum Specialty;
+
+				public bool PostMeshEnable;
+				public Mesh PostMeshReplace;
+				public bool PanelMeshEnable;
+				public Mesh PanelMeshReplace;
+				//public FencePoint.SpecialtyEnum Specialty;
 
 				public double TimeOnCurve;
 			}
@@ -139,12 +198,20 @@ namespace NeoAxis
 				var pointComponents = Owner.GetComponents<FencePoint>( onlyEnabledInHierarchy: true );
 
 				Points = new Point[ 1 + pointComponents.Length ];
-				Points[ 0 ] = new Point() { Transform = Owner.Transform, _curveTimeOnlyToSort = Owner.Time, Specialty = Owner.PointSpecialty };
+
+				Points[ 0 ] = new Point() { Transform = Owner.Transform, _curveTimeOnlyToSort = Owner.Time, PostMeshEnable = Owner.PointPostMeshEnable, PostMeshReplace = Owner.PointPostMeshReplace, PanelMeshEnable = Owner.PointPanelMeshEnable, PanelMeshReplace = Owner.PointPanelMeshReplace };
 				for( int n = 0; n < pointComponents.Length; n++ )
 				{
 					var pointComponent = pointComponents[ n ];
-					Points[ n + 1 ] = new Point() { Transform = pointComponent.Transform, _curveTimeOnlyToSort = pointComponent.Time, Specialty = pointComponent.Specialty };
+					Points[ n + 1 ] = new Point() { Transform = pointComponent.Transform, _curveTimeOnlyToSort = pointComponent.Time, PostMeshEnable = pointComponent.PostMeshEnable, PostMeshReplace = pointComponent.PostMeshReplace, PanelMeshEnable = pointComponent.PanelMeshEnable, PanelMeshReplace = pointComponent.PanelMeshReplace };
 				}
+
+				//Points[ 0 ] = new Point() { Transform = Owner.Transform, _curveTimeOnlyToSort = Owner.Time, Specialty = Owner.PointSpecialty };
+				//for( int n = 0; n < pointComponents.Length; n++ )
+				//{
+				//	var pointComponent = pointComponents[ n ];
+				//	Points[ n + 1 ] = new Point() { Transform = pointComponent.Transform, _curveTimeOnlyToSort = pointComponent.Time, Specialty = pointComponent.Specialty };
+				//}
 
 				//sort by time
 				bool allPointsZeroTime = Points.All( p => p._curveTimeOnlyToSort == 0 );
@@ -377,7 +444,7 @@ namespace NeoAxis
 				get { return Points[ Points.Length - 1 ]; }
 			}
 
-			public List<(Mesh mesh, Transform transform, double? clipDistancePanelLength, double? clipDistanceFactor, Material replaceMaterial)> GetMeshesToCreate()
+			public virtual List<(Mesh mesh, Transform transform, double? clipDistancePanelLength, double? clipDistanceFactor, Material replaceMaterial)> GetMeshesToCreate()
 			{
 				var result = new List<(Mesh mesh, Transform transform, double? clipDistancePanelLength, double? clipDistanceFactor, Material replaceMaterial)>();
 
@@ -390,39 +457,43 @@ namespace NeoAxis
 				{
 					var point = points[ nPoint ];
 
-					if( point.Specialty != FencePoint.SpecialtyEnum.NoPost )
+					//!!!!if( point.Specialty != FencePoint.SpecialtyEnum.NoPost )
+					if( point.PostMeshEnable )
 					{
-						Mesh mesh = null;
+						Mesh mesh = point.PostMeshReplace;// null;
 
-						if( nPoint == 0 || nPoint == points.Length - 1 )
+						if( mesh == null )
 						{
-							bool skip = false;
-							foreach( var itemsList in ConnectedFences.Values )
+							if( nPoint == 0 || nPoint == points.Length - 1 )
 							{
-								foreach( var item in itemsList )
+								bool skip = false;
+								foreach( var itemsList in ConnectedFences.Values )
 								{
-									var pointIndex = item.ConnectedFence.GetPointByPosition( point.Transform.Position, 0.1 );
-									if( pointIndex != -1 )
+									foreach( var item in itemsList )
 									{
-										skip = true;
-										break;
+										var pointIndex = item.ConnectedFence.GetPointByPosition( point.Transform.Position, 0.1 );
+										if( pointIndex != -1 )
+										{
+											skip = true;
+											break;
+										}
 									}
 								}
+
+								if( !skip )
+									mesh = fenceType.EndPost.Value;
 							}
-
-							if( !skip )
-								mesh = fenceType.EndPost.Value;
-						}
-						else
-						{
-							var vector1 = points[ nPoint ].Transform.Position - points[ nPoint - 1 ].Transform.Position;
-							var vector2 = points[ nPoint + 1 ].Transform.Position - points[ nPoint ].Transform.Position;
-							var line = MathAlgorithms.GetVectorsAngle( vector1, vector2 ).InDegrees() < 1;
-
-							if( line )
-								mesh = fenceType.LinePost.Value;
 							else
-								mesh = fenceType.CornerPost.Value;
+							{
+								var vector1 = points[ nPoint ].Transform.Position - points[ nPoint - 1 ].Transform.Position;
+								var vector2 = points[ nPoint + 1 ].Transform.Position - points[ nPoint ].Transform.Position;
+								var line = MathAlgorithms.GetVectorsAngle( vector1, vector2 ).InDegrees() < 1;
+
+								if( line )
+									mesh = fenceType.LinePost.Value;
+								else
+									mesh = fenceType.CornerPost.Value;
+							}
 						}
 
 						if( mesh != null )
@@ -442,13 +513,26 @@ namespace NeoAxis
 					var pointFrom = points[ nPoint ];
 					var pointTo = points[ nPoint + 1 ];
 
+					if( !pointFrom.PanelMeshEnable )
+						continue;
+
 					var panelLengthScaled = panelLength * pointFrom.Transform.Scale.MaxComponent();
+					//anti freeze
+					if( panelLengthScaled < 0.01 )
+						panelLengthScaled = 0.01;
 
 					var from = pointFrom.Transform.Position;
 					var to = pointTo.Transform.Position;
+					if( from == to )
+						to += new Vector3( 0.001, 0, 0 );
 
 					var direction = ( to - from ).GetNormalize();
-					var direction2 = ( to.ToVector2() - from.ToVector2() ).GetNormalize();
+					var diff2 = to.ToVector2() - from.ToVector2();
+					if( diff2 == Vector2.Zero )
+						diff2.X += 0.001;
+					var direction2 = diff2.GetNormalize();
+					//var direction2 = ( to.ToVector2() - from.ToVector2() ).GetNormalize();
+
 					//var length = ( to - from ).Length();
 					var length2 = ( to.ToVector2() - from.ToVector2() ).Length();
 
@@ -456,6 +540,14 @@ namespace NeoAxis
 					var halfPanel = fenceType.HalfPanel.Value;
 					var quarterPanel = fenceType.QuarterPanel.Value;
 					var stepPost = fenceType.StepPost.Value;
+
+					if( pointFrom.PanelMeshReplace != null )
+					{
+						fullPanel = pointFrom.PanelMeshReplace;
+						halfPanel = null;
+						quarterPanel = null;
+						//stepPost = null;
+					}
 
 					double lengthPos = 0;
 
@@ -469,6 +561,10 @@ namespace NeoAxis
 						for( ; lengthPos <= length2 - panelLengthScaled + 0.01; lengthPos += panelLengthScaled )
 						{
 							var tr = new Transform( from + new Vector3( direction2 * lengthPos, direction.Z * lengthPos ), rot, pointFrom.Transform.Scale );
+
+							if( double.IsNaN( tr.Position.X ) )
+								Log.Fatal( "Fence: LogicalData: GetMeshesToCreate: float.IsNaN( tr.Position.X )." );
+
 							result.Add( (fullPanel, tr, null, null, fenceType.PanelReplaceMaterial) );
 							if( lengthPos != 0 && stepPost != null )
 								result.Add( (stepPost, tr, null, null, fenceType.PostReplaceMaterial) );
@@ -522,6 +618,9 @@ namespace NeoAxis
 						{
 							var tr = new Transform( from + new Vector3( direction2 * lengthPos, direction.Z * lengthPos ), rot, pointFrom.Transform.Scale );
 
+							if( double.IsNaN( tr.Position.X ) )
+								Log.Fatal( "Fence: LogicalData: GetMeshesToCreate: float.IsNaN( tr.Position.X )." );
+
 							result.Add( (panel, tr, length, factor, fenceType.PanelReplaceMaterial) );
 
 							if( lengthPos != 0 && stepPost != null )
@@ -533,7 +632,7 @@ namespace NeoAxis
 				return result;
 			}
 
-			public void UpdateCollisionBodies()
+			public virtual void UpdateCollisionBodies()
 			{
 				DestroyCollisionBodies();
 
@@ -597,7 +696,7 @@ namespace NeoAxis
 			//	}
 			//}
 
-			public void DestroyCollisionBodies()
+			public virtual void DestroyCollisionBodies()
 			{
 				foreach( var body in CollisionBodies )
 					body.Dispose();
@@ -618,6 +717,10 @@ namespace NeoAxis
 
 		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow )
 		{
+			var type = FenceType.Value;
+			if( type != null && !string.IsNullOrEmpty( type.Name ) )
+				Name = type.Name;
+
 			var point = CreateComponent<FencePoint>();
 			point.Name = point.BaseType.GetUserFriendlyNameForInstance();
 			point.Transform = new Transform( Transform.Value.Position + new Vector3( 1, 0, 0 ), Quaternion.Identity );
@@ -646,11 +749,26 @@ namespace NeoAxis
 			}
 		}
 
+		//need?
+		//with the event can change behaviour of the object in the scene without recreation object, but need configure event handler
+		//public delegate void NewLogicalDataDelegate( Fence sender, ref LogicalData logicalData );
+		//public event NewLogicalDataDelegate NewLogicalData;
+
+		protected virtual LogicalData OnNewLogicalData()
+		{
+			return new LogicalData();
+		}
+
 		public LogicalData GetLogicalData( bool canCreate = true )
 		{
 			if( logicalData == null && EnabledInHierarchyAndIsInstance && canCreate )
 			{
-				logicalData = new LogicalData();
+				logicalData = null;
+				//NewLogicalData?.Invoke( this, ref logicalData );
+				if( logicalData == null )
+					logicalData = OnNewLogicalData();
+				//logicalData = new LogicalData();
+
 				logicalData.Owner = this;
 				logicalData.FenceType = FenceType;
 				if( logicalData.FenceType == null )
@@ -779,6 +897,9 @@ namespace NeoAxis
 					var pos = transform.Position;
 					var rot = transform.Rotation.ToQuaternionF();
 					var scl = transform.Scale.ToVector3F();
+
+					if( double.IsNaN( pos.X ) )
+						Log.Fatal( "Fence: CreateMeshObject: float.IsNaN( pos.X )." );
 
 					var obj = new GroupOfObjects.Object( elementIndex, 0, 0, GroupOfObjects.Object.FlagsEnum.Enabled | GroupOfObjects.Object.FlagsEnum.Visible, pos, rot, scl, Vector4F.Zero, ColorMultiplier, Vector4F.Zero, Vector4F.Zero, 0 );
 

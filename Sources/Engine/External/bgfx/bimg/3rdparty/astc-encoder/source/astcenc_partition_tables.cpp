@@ -1,3 +1,6 @@
+//!!!!betauser. android compiler crash
+#ifndef __ANDROID__
+
 // SPDX-License-Identifier: Apache-2.0
 // ----------------------------------------------------------------------------
 // Copyright 2011-2023 Arm Limited
@@ -479,3 +482,5 @@ void init_partition_tables(
 
 	delete[] canonical_patterns;
 }
+
+#endif

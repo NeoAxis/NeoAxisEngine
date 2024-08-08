@@ -37,6 +37,7 @@ namespace NeoAxis
 		static volatile bool created;
 		static volatile bool closing;
 		static volatile bool needExit;
+		static volatile bool afterFatalOperations;
 
 		//config
 		static volatile bool needSaveConfig;
@@ -527,16 +528,16 @@ namespace NeoAxis
 			//	get { return smallIcon; }
 			//}
 
-					//public void SetIcon( object icon, object smallIcon )
-					//{
-					//	if( this.icon == icon && this.smallIcon == smallIcon )
-					//		return;
-					//	this.icon = icon;
-					//	this.smallIcon = smallIcon;
+			//public void SetIcon( object icon, object smallIcon )
+			//{
+			//	if( this.icon == icon && this.smallIcon == smallIcon )
+			//		return;
+			//	this.icon = icon;
+			//	this.smallIcon = smallIcon;
 
-					//	if( Created && !Closing )
-					//		UpdateIcon();
-					//}
+			//	if( Created && !Closing )
+			//		UpdateIcon();
+			//}
 
 			public string Title
 			{
@@ -776,7 +777,7 @@ namespace NeoAxis
 					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
 						operationSystemDisplayName = "Microsoft Windows";
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
-						operationSystemDisplayName = "Apple Mac OS X";
+						operationSystemDisplayName = "Apple macOS";
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
 						operationSystemDisplayName = "Linux";
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
@@ -787,7 +788,6 @@ namespace NeoAxis
 						operationSystemDisplayName = "Web";
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 					{
-						//!!!!
 						operationSystemDisplayName = "UWP";
 						//#if W__!!__INDOWS_UWP
 						//var deviceFamily = Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily;
@@ -1116,7 +1116,7 @@ namespace NeoAxis
 
 				InitSettings.Language = "English";
 
-				end:;
+end:;
 			}
 
 			//init parameters
@@ -1316,8 +1316,9 @@ namespace NeoAxis
 					}
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 					{
-						Log.Fatal( "MacInputDeviceManager impl." );
-						//instance = new MacInputDeviceManager();
+#if !ANDROID && !IOS && !WEB && !UWP
+						instance = new MacOSInputDeviceManager( applicationWindowHandle );
+#endif
 					}
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 					{
@@ -1645,7 +1646,7 @@ namespace NeoAxis
 
 		static void Log_AfterFatal()
 		{
-			if( Instance != null )
+			if( Instance != null && !AfterFatalOperations )
 				Destroy();
 		}
 
@@ -1681,7 +1682,7 @@ namespace NeoAxis
 
 		static public /*internal */void CreatedWindowApplicationIdle( bool doTickOnly )
 		{
-			if( created && !closing )
+			if( created && !closing && !afterFatalOperations )
 			{
 				//change video mode
 				if( mustChangeVideoMode && !doTickOnly && !InitSettings.MultiMonitorMode.Value )
@@ -1737,6 +1738,12 @@ namespace NeoAxis
 		{
 			get { return needExit; }
 			set { needExit = value; }
+		}
+
+		public static bool AfterFatalOperations
+		{
+			get { return afterFatalOperations; }
+			set { afterFatalOperations = value; }
 		}
 
 		public static void Destroy()
@@ -2063,6 +2070,10 @@ namespace NeoAxis
 						interval = InitSettings.AutoUnloadGpuResourcesNotUsedForLongTimeInSecondsInEditor;
 					else
 						interval = InitSettings.AutoUnloadGpuResourcesNotUsedForLongTimeInSecondsInSimulation;
+
+					//interval = 100000000;
+					//if( EngineApp._DebugCapsLock )
+					//	interval = -1;
 
 					GpuTexture.UnloadNotUsedForLongTime( interval );
 					GpuBufferManager.DestroyNativeObjectsNotUsedForLongTime( interval );
@@ -2629,7 +2640,7 @@ namespace NeoAxis
 		}
 
 		/// <summary>
-		/// Gets the current time in the engine.
+		/// Gets the current time in the engine. The engine time is updated once before a simulation step or before a frame update if it is an editor.
 		/// </summary>
 		public static double EngineTime
 		{

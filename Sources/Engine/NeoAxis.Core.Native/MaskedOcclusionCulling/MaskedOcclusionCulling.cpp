@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#if defined(PLATFORM_WINDOWS) || defined(PLATFORM_WINRT)
+
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright 2017 Intel Corporation
 //
@@ -457,3 +460,5 @@ void MaskedOcclusionCulling::Destroy(MaskedOcclusionCulling *moc)
 	moc->~MaskedOcclusionCulling();
 	alignedFreeCallback(moc);
 }
+
+#endif

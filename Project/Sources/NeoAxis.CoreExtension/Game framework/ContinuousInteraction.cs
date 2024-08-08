@@ -21,7 +21,7 @@ namespace NeoAxis
 		/// <summary>
 		/// Who creates the interaction.
 		/// </summary>
-		[ DefaultValue( null )]
+		[DefaultValue( null )]
 		public Reference<Component> Creator
 		{
 			get { if( _creator.BeginGet() ) Creator = _creator.Get( this ); return _creator.value; }
@@ -89,8 +89,11 @@ namespace NeoAxis
 			if( NetworkIsClient )
 			{
 				var writer = BeginNetworkMessageToServer( "MessageFromParticipant" );
-				writer.Write( message );
-				EndNetworkMessage();
+				if( writer != null )
+				{
+					writer.Write( message );
+					EndNetworkMessage();
+				}
 			}
 			else
 			{

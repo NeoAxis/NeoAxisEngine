@@ -253,6 +253,21 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_General> RunPlayerFromEditorInFullscreenChanged;
 		ReferenceField<bool> _runPlayerFromEditorInFullscreen = false;
 
+		/// <summary>
+		/// Whether to enable auto import for 3D models.
+		/// </summary>
+		[DefaultValue( false )]
+		[Category( "Editor" )]
+		[DisplayName( "Auto Import 3D Models" )]
+		public Reference<bool> AutoImport3DModels
+		{
+			get { if( _autoImport3DModels.BeginGet() ) AutoImport3DModels = _autoImport3DModels.Get( this ); return _autoImport3DModels.value; }
+			set { if( _autoImport3DModels.BeginSet( this, ref value ) ) { try { AutoImport3DModelsChanged?.Invoke( this ); } finally { _autoImport3DModels.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="AutoImport3DModels"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_General> AutoImport3DModelsChanged;
+		ReferenceField<bool> _autoImport3DModels = false;
+
 		/////////////////////////////////////////
 
 		/// <summary>
@@ -424,6 +439,48 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="EngineSplashScreenStyle"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_General> EngineSplashScreenStyleChanged;
 		ReferenceField<EngineSplashScreenStyleEnumWithoutDisabled> _engineSplashScreenStyle = EngineSplashScreenStyleEnumWithoutDisabled.BlackBackground;//WhiteBackground;
+
+		///// <summary>
+		///// Whether to enable an auto importing tool. The tool listen specific folder, usually it is Downloads folder of the user. When new 3D models are appeared, the tool will import it.
+		///// </summary>
+		//[DefaultValue( false )]
+		//[Category( "Auto Import")]
+		//public Reference<bool> AutoImportEnabled
+		//{
+		//	get { if( _autoImportEnabled.BeginGet() ) AutoImportEnabled = _autoImportEnabled.Get( this ); return _autoImportEnabled.value; }
+		//	set { if( _autoImportEnabled.BeginSet( this, ref value ) ) { try { AutoImportEnabledChanged?.Invoke( this ); } finally { _autoImportEnabled.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="AutoImportEnabled"/> property value changes.</summary>
+		//public event Action<ProjectSettingsPage_General> AutoImportEnabledChanged;
+		//ReferenceField<bool> _autoImportEnabled = false;
+
+		///// <summary>
+		///// The folder to get updates. By default it is Downloads folder of the user in the system.
+		///// </summary>
+		//[DefaultValue( "" )]
+		//[Category( "Auto Import" )]
+		//public Reference<string> AutoImportSourceFolder
+		//{
+		//	get { if( _autoImportSourceFolder.BeginGet() ) AutoImportSourceFolder = _autoImportSourceFolder.Get( this ); return _autoImportSourceFolder.value; }
+		//	set { if( _autoImportSourceFolder.BeginSet( this, ref value ) ) { try { AutoImportSourceFolderChanged?.Invoke( this ); } finally { _autoImportSourceFolder.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="AutoImportSourceFolder"/> property value changes.</summary>
+		//public event Action<ProjectSettingsPage_General> AutoImportSourceFolderChanged;
+		//ReferenceField<string> _autoImportSourceFolder = "";
+
+		///// <summary>
+		///// The output folder when 3D model is imported.
+		///// </summary>
+		//[DefaultValue( @"Content\Models\Auto" )] //!!!!without Models?
+		//[Category( "Auto Import" )]
+		//public Reference<string> AutoImportDestinationFolder
+		//{
+		//	get { if( _autoImportDestinationFolder.BeginGet() ) AutoImportDestinationFolder = _autoImportDestinationFolder.Get( this ); return _autoImportDestinationFolder.value; }
+		//	set { if( _autoImportDestinationFolder.BeginSet( this, ref value ) ) { try { AutoImportDestinationFolderChanged?.Invoke( this ); } finally { _autoImportDestinationFolder.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="AutoImportDestinationFolder"/> property value changes.</summary>
+		//public event Action<ProjectSettingsPage_General> AutoImportDestinationFolderChanged;
+		//ReferenceField<string> _autoImportDestinationFolder = @"Content\Models\Auto";
 
 		///////////////////////////////////////////////
 

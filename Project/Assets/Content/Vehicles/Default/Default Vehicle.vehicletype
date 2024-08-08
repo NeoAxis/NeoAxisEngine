@@ -2,9 +2,9 @@
 
 .component NeoAxis.VehicleType
 {
-	EditorCameraTransform = "3.93874605732143 -4.44238685636965 3.02180266602717; -0.23191741782092 0.10959403012299 0.873881557550656 0.412958210047358; 1 1 1"
-	RearWheelPosition = -1.32 0.8 -0.08
-	FrontWheelLongitudinalFriction
+	EditorCameraTransform = "3.05401675652276 -3.92508394098382 3.28813519497449; -0.284399487554256 0.155144608287704 0.830528406456321 0.45306693552637; 1 1 1"
+	EditorDisplayPhysics = False
+	EngineNormalizedTorque
 	{
 		Count = 3
 		0
@@ -12,107 +12,23 @@
 			Value
 			{
 				Point = 0
-				Value = 0
+				Value = 0.8
 			}
 		}
 		1
 		{
 			Value
 			{
-				Point = 0.06
-				Value = 3.6
+				Point = 0.66
+				Value = 1
 			}
 		}
 		2
 		{
 			Value
 			{
-				Point = 0.2
-				Value = 3
-			}
-		}
-	}
-	FrontWheelLateralFriction
-	{
-		Count = 3
-		0
-		{
-			Value
-			{
-				Point = 0
-				Value = 0
-			}
-		}
-		1
-		{
-			Value
-			{
-				Point = 3
-				Value = 3.6
-			}
-		}
-		2
-		{
-			Value
-			{
-				Point = 20
-				Value = 3
-			}
-		}
-	}
-	RearWheelLongitudinalFriction
-	{
-		Count = 3
-		0
-		{
-			Value
-			{
-				Point = 0
-				Value = 0
-			}
-		}
-		1
-		{
-			Value
-			{
-				Point = 0.06
-				Value = 3.6
-			}
-		}
-		2
-		{
-			Value
-			{
-				Point = 0.2
-				Value = 3
-			}
-		}
-	}
-	RearWheelLateralFriction
-	{
-		Count = 3
-		0
-		{
-			Value
-			{
-				Point = 0
-				Value = 0
-			}
-		}
-		1
-		{
-			Value
-			{
-				Point = 3
-				Value = 3.6
-			}
-		}
-		2
-		{
-			Value
-			{
-				Point = 20
-				Value = 3
+				Point = 1
+				Value = 0.8
 			}
 		}
 	}
@@ -132,14 +48,6 @@
 			.elements = -2.9
 		}
 	}
-	MotorOnSound
-	{
-		GetByReference = "Content\\Vehicles\\Default\\Sounds\\MotorOn.ogg"
-	}
-	MotorOffSound
-	{
-		GetByReference = "Content\\Vehicles\\Default\\Sounds\\MotorOff.ogg"
-	}
 	GearSounds
 	{
 		Count = 3
@@ -156,18 +64,207 @@
 			GetByReference = "Content\\Vehicles\\Default\\Sounds\\MotorRun.ogg"
 		}
 	}
+	.component NeoAxis.VehicleTypeWheel
+	{
+		Name = Wheel Front
+		Position = 1.58 0.8 -0.08
+		MaxSteeringAngle = 45
+		LongitudinalFriction
+		{
+			Count = 3
+			0
+			{
+				Value
+				{
+					Point = 0
+					Value = 0
+				}
+			}
+			1
+			{
+				Value
+				{
+					Point = 0.06
+					Value = 3.6
+				}
+			}
+			2
+			{
+				Value
+				{
+					Point = 0.2
+					Value = 3
+				}
+			}
+		}
+		LateralFriction
+		{
+			Count = 3
+			0
+			{
+				Value
+				{
+					Point = 0
+					Value = 0
+				}
+			}
+			1
+			{
+				Value
+				{
+					Point = 3
+					Value = 3.6
+				}
+			}
+			2
+			{
+				Value
+				{
+					Point = 20
+					Value = 3
+				}
+			}
+		}
+	}
+	.component NeoAxis.VehicleTypeWheel
+	{
+		Name = Wheel Rear
+		Position = -1.32 0.8 -0.08
+		LongitudinalFriction
+		{
+			Count = 3
+			0
+			{
+				Value
+				{
+					Point = 0
+					Value = 0
+				}
+			}
+			1
+			{
+				Value
+				{
+					Point = 0.06
+					Value = 3.6
+				}
+			}
+			2
+			{
+				Value
+				{
+					Point = 0.2
+					Value = 3
+				}
+			}
+		}
+		LateralFriction
+		{
+			Count = 3
+			0
+			{
+				Value
+				{
+					Point = 0
+					Value = 0
+				}
+			}
+			1
+			{
+				Value
+				{
+					Point = 3
+					Value = 3.6
+				}
+			}
+			2
+			{
+				Value
+				{
+					Point = 20
+					Value = 3
+				}
+			}
+		}
+	}
 	.component NeoAxis.SeatItem
 	{
-		Name = Vehicle Seat
+		Name = Seat
 		Transform = "0.4 0.38 0.05; 0 -0.17364817766693 0 0.984807753012208; 1 1 1"
 		SpineAngle = 30
 		LegsAngle = 50
 		ExitTransform = "0 2 -0.2; 0 0 0 1; 1 1 1"
 	}
+	.component NeoAxis.SeatItem
+	{
+		Name = Seat 2
+		Transform = "0.4 -0.38 0.05; 0 -0.17364817766693 0 0.984807753012208; 1 1 1"
+		SpineAngle = 30
+		LegsAngle = 50
+		ExitTransform = "0 -2 -0.2; 0 0 0 1; 1 1 1"
+	}
+	.component NeoAxis.SeatItem
+	{
+		Name = Seat 3
+		Transform = "-0.5 0.38 0.05; 0 -0.17364817766693 0 0.984807753012208; 1 1 1"
+		SpineAngle = 30
+		LegsAngle = 50
+		ExitTransform = "-1 2 -0.2; 0 0 0 1; 1 1 1"
+	}
+	.component NeoAxis.SeatItem
+	{
+		Name = Seat 4
+		Transform = "-0.5 -0.38 0.05; 0 -0.17364817766693 0 0.984807753012208; 1 1 1"
+		SpineAngle = 30
+		LegsAngle = 50
+		ExitTransform = "-1 -2 -0.2; 0 0 0 1; 1 1 1"
+	}
 	.component NeoAxis.Light
 	{
-		Name = Headlight Left
-		Transform = "2.45 0.7 0.22; 0 0 0 1; 1 1 1"
+		Name = Headlight Low Left
+		Transform = "2.45 0.77 0.22; 0 0.0871557427476582 0 0.996194698091746; 1 1 1"
+		Type = Spotlight
+		Brightness = 250000
+		Color = 0.987098 1 0.683647
+		AttenuationFar = 43.263999999999996
+		SpotlightInnerAngle = 63
+		SpotlightOuterAngle = 66
+		StartDistance = 0.3
+		ShadowNearClipDistance = 0.2
+		FlareColor = "0.987098 1 0.812; 1.5"
+		FlareSize = 0.8 0.8
+		FlareSizeFadeByDistance = True
+		FlareDepthCheckOffset = 0.2
+		FlareImage
+		{
+			GetByReference = "Base\\Images\\Lens flares\\sparkle_blurred.png"
+		}
+	}
+	.component NeoAxis.Light
+	{
+		Name = Headlight Low Right
+		Transform = "2.45 -0.77 0.22; 0 0.0871557427476582 0 0.996194698091746; 1 1 1"
+		Type = Spotlight
+		Brightness = 250000
+		Color = 0.987098 1 0.683647
+		AttenuationFar = 43.263999999999996
+		SpotlightInnerAngle = 63
+		SpotlightOuterAngle = 66
+		StartDistance = 0.3
+		ShadowNearClipDistance = 0.2
+		FlareColor = "0.987098 1 0.812; 1.5"
+		FlareSize = 0.8 0.8
+		FlareSizeFadeByDistance = True
+		FlareDepthCheckOffset = 0.2
+		FlareImage
+		{
+			GetByReference = "Base\\Images\\Lens flares\\sparkle_blurred.png"
+		}
+	}
+	.component NeoAxis.Light
+	{
+		Name = Headlight High Left
+		Transform = "2.45 0.6 0.22; 0 0 0 1; 1 1 1"
 		Type = Spotlight
 		Brightness = 500000
 		Color = 0.987098 1 0.683647
@@ -187,8 +284,8 @@
 	}
 	.component NeoAxis.Light
 	{
-		Name = Headlight Right
-		Transform = "2.45 -0.7 0.22; 0 0 0 1; 1 1 1"
+		Name = Headlight High Right
+		Transform = "2.45 -0.6 0.22; 0 0 0 1; 1 1 1"
 		Type = Spotlight
 		Brightness = 500000
 		Color = 0.987098 1 0.683647
@@ -205,5 +302,93 @@
 		{
 			GetByReference = "Base\\Images\\Lens flares\\sparkle_blurred.png"
 		}
+	}
+	.component NeoAxis.Light
+	{
+		Name = Brake Rear Left
+		Transform = "-2.6 0.66 0.14; 0 0 1 0.00000000000000006; 1 1 1"
+		Type = Point
+		Brightness = 300000
+		Color = 1 0 0
+		AttenuationFar = 2
+		ShadowTextureSize = Quarter
+		ShadowNearClipDistance = 0.01
+	}
+	.component NeoAxis.Light
+	{
+		Name = Brake Rear Right
+		Transform = "-2.6 -0.66 0.14; 0 0 1 0.00000000000000006; 1 1 1"
+		Type = Point
+		Brightness = 300000
+		Color = 1 0 0
+		AttenuationFar = 2
+		ShadowTextureSize = Quarter
+		ShadowNearClipDistance = 0.01
+	}
+	.component NeoAxis.Light
+	{
+		Name = Left Turn Side Front
+		Transform = "2.10735010271322 0.981560659104948 0.0535234996763719; 0 0 1 0.00000000000000006; 1 1 1"
+		Type = Point
+		Brightness = 300000
+		Color = 1 0.5 0
+		AttenuationFar = 2
+		ShadowTextureSize = Quarter
+		ShadowNearClipDistance = 0.01
+	}
+	.component NeoAxis.Light
+	{
+		Name = Left Turn Side Rear
+		Transform = "-2.22725503941756 0.908838484278114 0.0713794921731388; 0 0 1 0.00000000000000006; 1 1 1"
+		Type = Point
+		Brightness = 300000
+		Color = 1 0.5 0
+		AttenuationFar = 2
+		ShadowTextureSize = Quarter
+		ShadowNearClipDistance = 0.01
+	}
+	.component NeoAxis.Light
+	{
+		Name = Left Turn Rear
+		Transform = "-2.59095581981435 0.659870319365266 0.241680694912894; 0 0 1 0.00000000000000006; 1 1 1"
+		Type = Point
+		Brightness = 300000
+		Color = 1 0 0
+		AttenuationFar = 2
+		ShadowTextureSize = Quarter
+		ShadowNearClipDistance = 0.01
+	}
+	.component NeoAxis.Light
+	{
+		Name = Right Turn Side Front
+		Transform = "2.10735010271322 -0.981560659104948 0.0535234996763719; 0 0 1 0.00000000000000006; 1 1 1"
+		Type = Point
+		Brightness = 300000
+		Color = 1 0.5 0
+		AttenuationFar = 2
+		ShadowTextureSize = Quarter
+		ShadowNearClipDistance = 0.01
+	}
+	.component NeoAxis.Light
+	{
+		Name = Right Turn Side Rear
+		Transform = "-2.22725503941756 -0.908838484278114 0.0713794921731388; 0 0 1 0.00000000000000006; 1 1 1"
+		Type = Point
+		Brightness = 300000
+		Color = 1 0.5 0
+		AttenuationFar = 2
+		ShadowTextureSize = Quarter
+		ShadowNearClipDistance = 0.01
+	}
+	.component NeoAxis.Light
+	{
+		Name = Right Turn Rear
+		Transform = "-2.59095581981435 -0.659870319365266 0.241680694912894; 0 0 1 0.00000000000000006; 1 1 1"
+		Type = Point
+		Brightness = 300000
+		Color = 1 0 0
+		AttenuationFar = 2
+		ShadowTextureSize = Quarter
+		ShadowNearClipDistance = 0.01
 	}
 }

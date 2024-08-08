@@ -11,6 +11,7 @@
 
 //!!!!betauser
 extern bool global_tripleBuffering;
+extern void add_last_warning(const char* error);
 
 namespace bgfx { namespace d3d11
 {
@@ -2178,7 +2179,8 @@ namespace bgfx { namespace d3d11
 				break;
 
 			case Handle::Texture:
-				setDebugObjectName(m_textures[_handle.idx].m_ptr, "%.*s", _len, _name);
+				if(m_textures[_handle.idx].m_ptr)//!!!!betauser
+					setDebugObjectName(m_textures[_handle.idx].m_ptr, "%.*s", _len, _name);
 				break;
 
 			case Handle::VertexBuffer:
@@ -4947,7 +4949,14 @@ namespace bgfx { namespace d3d11
 					}
 					else
 					{
-						DX_CHECK(s_renderD3D11->m_device->CreateTexture2D(&desc, kk == 0 ? NULL : srd, &m_texture2d) );
+						//!!!!betauser
+						HRESULT hResult = s_renderD3D11->m_device->CreateTexture2D(&desc, kk == 0 ? NULL : srd, &m_texture2d);
+						if (FAILED(hResult))
+						{
+							add_last_warning("CreateTexture2D error.");
+							goto end;
+						}
+						//DX_CHECK(s_renderD3D11->m_device->CreateTexture2D(&desc, kk == 0 ? NULL : srd, &m_texture2d) );
 					}
 				}
 				break;
@@ -4996,7 +5005,14 @@ namespace bgfx { namespace d3d11
 					}
 					else
 					{
-						DX_CHECK(s_renderD3D11->m_device->CreateTexture3D(&desc, kk == 0 ? NULL : srd, &m_texture3d) );
+						//!!!!betauser
+						HRESULT hResult = s_renderD3D11->m_device->CreateTexture3D(&desc, kk == 0 ? NULL : srd, &m_texture3d);
+						if (FAILED(hResult))
+						{
+							add_last_warning("CreateTexture3D error.");
+							goto end;
+						}
+						//DX_CHECK(s_renderD3D11->m_device->CreateTexture3D(&desc, kk == 0 ? NULL : srd, &m_texture3d) );
 					}
 				}
 				break;
@@ -5011,6 +5027,9 @@ namespace bgfx { namespace d3d11
 			{
 				DX_CHECK(s_renderD3D11->m_device->CreateUnorderedAccessView(m_ptr, NULL, &m_uav) );
 			}
+
+			//!!!!betauser
+		end:;
 
 			if (temp != NULL)
 			{
@@ -5330,6 +5349,10 @@ namespace bgfx { namespace d3d11
 				if (isValid(at.handle) )
 				{
 					const TextureD3D11& texture = s_renderD3D11->m_textures[at.handle.idx];
+
+					//!!!!betauser
+					if (texture.m_ptr == NULL)
+						break;
 
 					if (0 == m_width)
 					{
@@ -5887,8 +5910,21 @@ namespace bgfx { namespace d3d11
 		}
 	}
 
+	////!!!!
+	//static int totalCounter = 0;
+
 	void RendererContextD3D11::submit(Frame* _render, ClearQuad& _clearQuad, TextVideoMemBlitter& _textVideoMemBlitter)
 	{
+		////!!!!
+		//{
+		//	totalCounter++;
+		//	if (totalCounter > 1000)
+		//	{
+		//		int* q = 0;
+		//		*q = 100;
+		//	}
+		//}
+
 		if (m_lost)
 		{
 			return;

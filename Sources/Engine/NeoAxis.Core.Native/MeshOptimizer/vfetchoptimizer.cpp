@@ -1,3 +1,5 @@
+#if (defined( __WIN32__ ) || defined( _WIN32 ))
+
 // This file is part of meshoptimizer library; see meshoptimizer.h for version/license details
 #include "meshoptimizer.h"
 
@@ -73,3 +75,5 @@ size_t meshopt_optimizeVertexFetch(void* destination, unsigned int* indices, siz
 
 	return next_vertex;
 }
+
+#endif

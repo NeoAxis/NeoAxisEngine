@@ -1244,5 +1244,15 @@ namespace NeoAxis
 		{
 			return new HalfType( Math.Max( X, Y ) );
 		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public float PackTwoHalfsToFloat()
+		{
+			unsafe
+			{
+				var v = this;
+				return *(float*)&v;
+			}
+		}
 	}
 }

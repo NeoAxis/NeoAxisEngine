@@ -1,6 +1,8 @@
+// Made with NeoAxis Engine 2024.1.
+
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1205, 842\"><KW V=\"1\" A=\"C40228283138419F958633B26D98AF94\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"D17AB664BA074A629A89680592587ED9\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"C40228283138419F958633B26D98AF94\"><KP UN=\"C40228283138419F958633B26D98AF94\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"A928D9D40B0A48694B9D78C4472AEEE0\" S=\"False\"><CPD ObjPath=\"$Material Stone Wall\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1144, 842\"><KW V=\"1\" A=\"C40228283138419F958633B26D98AF94\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"D17AB664BA074A629A89680592587ED9\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"C40228283138419F958633B26D98AF94\"><KP UN=\"C40228283138419F958633B26D98AF94\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"A928D9D40B0A48694B9D78C4472AEEE0\" S=\"False\"><CPD ObjPath=\"$Material Stone Wall\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -20,7 +22,7 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 3201.078401357
+		Brightness = 10000
 	}
 	.component NeoAxis.Light
 	{
@@ -75,7 +77,6 @@
 			.component NeoAxis.RenderingEffect_Sharpen
 			{
 				Name = Sharpen
-				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
 			}
 		}
 		.component NeoAxis.Component
@@ -86,6 +87,12 @@
 	.component NeoAxis.GameMode
 	{
 		Name = Game Mode
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
 	}
 	.component NeoAxis.Light
 	{
@@ -107,9 +114,12 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
+		SpecialEffects
 		{
-			Count = 0
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Mesh
 		{
@@ -155,9 +165,12 @@
 		{
 			GetByReference = "this:..\\$Material Stone Wall"
 		}
-		ReplaceMaterialSelectively
+		SpecialEffects
 		{
-			Count = 0
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Mesh
 		{

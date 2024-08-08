@@ -137,6 +137,11 @@ namespace NeoAxis
 			{
 				if( settingsComponent == null )
 				{
+					//!!!!new
+					//anti crash
+					if( Editor.EditorAPI.ClosingApplication )
+						return new ProjectSettingsComponent();
+
 					//create default settings
 					if( !VirtualFile.Exists( FileName ) )
 					{

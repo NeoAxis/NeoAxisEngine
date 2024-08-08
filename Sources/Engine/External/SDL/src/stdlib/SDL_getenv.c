@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /*
   Simple DirectMedia Layer
   Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
@@ -313,3 +316,5 @@ main(int argc, char *argv[])
 #endif /* TEST_MAIN */
 
 /* vi: set ts=4 sw=4 expandtab: */
+
+#endif

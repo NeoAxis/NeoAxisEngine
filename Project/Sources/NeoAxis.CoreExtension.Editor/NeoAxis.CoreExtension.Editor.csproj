@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+	<CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputType>Library</OutputType>
+	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <RootNamespace>NeoAxis</RootNamespace>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\..\Binaries\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>..\..\Binaries\NeoAxis.CoreExtension.Editor.xml</DocumentationFile>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <NoWarn>CS1591;CS1573;CS0649;CS0414;CS1589;CS1574;CS1587;CS1572</NoWarn>
+    <LangVersion>latest</LangVersion>
+    <CodeAnalysisRuleSet />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\Binaries\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <NoWarn>CS1591;CS1573;CS0649;CS0414;CS1589;CS1574;CS1587;CS1572</NoWarn>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <DocumentationFile>..\..\Binaries\NeoAxis.CoreExtension.Editor.xml</DocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
+    <CodeAnalysisRuleSet />
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="obj\**" />
+    <EmbeddedResource Remove="obj\**" />
+    <None Remove="obj\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NeoAxis.CoreExtension\NeoAxis.CoreExtension.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="NeoAxis.Core">
+      <HintPath>..\..\Binaries\NeoAxis.Core.dll</HintPath>
+      <SpecificVersion>false</SpecificVersion>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="NeoAxis.Core.Editor">
+      <HintPath>..\..\Binaries\NeoAxis.Core.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing.Common">
+      <HintPath>..\..\Binaries\System.Drawing.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <HintPath>..\..\Binaries\System.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms.Primitives">
+      <HintPath>..\..\Binaries\System.Windows.Forms.Primitives.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

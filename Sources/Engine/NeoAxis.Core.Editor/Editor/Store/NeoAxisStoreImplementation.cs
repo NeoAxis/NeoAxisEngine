@@ -19,6 +19,8 @@ namespace NeoAxis.Editor
 	{
 		ThreadItem currentThread;
 
+		static ESet<string> featuredStoreItems = new ESet<string>();
+
 		///////////////////////////////////////////////
 
 		class ThreadItem
@@ -30,6 +32,11 @@ namespace NeoAxis.Editor
 		}
 
 		///////////////////////////////////////////////
+
+		public static ESet<string> FeaturedStoreItems
+		{
+			get { return featuredStoreItems; }
+		}
 
 		void ThreadGetStoreItems( object threadItem2 )
 		{
@@ -54,21 +61,18 @@ namespace NeoAxis.Editor
 					url += "&license_mit=true";
 				if( filter.CCAttribution )
 					url += "&license_cc_attribution=true";
-				//if( filter.CCAttributionBYSA )
-				//	licenses.Add( "by-sa" );
-				//if( filter.CCAttributionBYND )
-				//	licenses.Add( "by-nd" );
-				//if( filter.CCAttributionBYNC )
-				//	licenses.Add( "by-nc" );
-				//if( filter.CCAttributionBYNCSA )
-				//	licenses.Add( "by-nc-sa" );
-				//if( filter.CCAttributionBYNCND )
-				//	licenses.Add( "by-nc-nd" );
-				//if( filter.CC0 )
-				//	licenses.Add( "cc0" );
-
-				//!!!!FreeToUse
-
+				if( filter.CCAttributionBYSA )
+					url += "&license_cc_attribution_by_sa=true";
+				if( filter.CCAttributionBYND )
+					url += "&license_cc_attribution_by_nd=true";
+				if( filter.CCAttributionBYNC )
+					url += "&license_cc_attribution_by_nc=true";
+				if( filter.CCAttributionBYNCSA )
+					url += "&license_cc_attribution_by_nc_sa=true";
+				if( filter.CCAttributionBYNCND )
+					url += "&license_cc_attribution_by_nc_nd=true";
+				if( filter.CC0 )
+					url += "&license_cc0=true";
 				if( filter.FreeToUseWithNeoAxis )
 					url += "&license_free_to_use_with_neoaxis=true";
 				if( filter.PaidPerSeat )
@@ -79,14 +83,50 @@ namespace NeoAxis.Editor
 				////if( filter.SortBy == FilterSettingsClass.SortByEnum.Relevance )
 				////	url += "&sort_by=-relevance";
 
+				//!!!!
+				//staff picked
+				//animated
+				//show restricted
+
+				var useZip = true;
+
+				if( useZip )
+					url += "&zip=true";
+
+				if( StoreManager.ModeratorMode && LoginUtility.GetCurrentLicense( out var email, out var hash ) )
+				{
+					var email64 = StringUtility.EncodeToBase64URL( email );
+					var hash64 = StringUtility.EncodeToBase64URL( hash );
+					url += $"&moderator_mode=true&email={email64}&hash={hash64}";
+				}
 
 
 				var request = (HttpWebRequest)WebRequest.Create( url );
 
-				using( var response = (HttpWebResponse)request.GetResponse() )
-				using( var stream = response.GetResponseStream() )
-				using( var reader = new StreamReader( stream ) )
-					xml = reader.ReadToEnd();
+
+				if( useZip )
+				{
+					//read data transfered in zip archive
+					using( var response = (HttpWebResponse)request.GetResponse() )
+					using( var stream = response.GetResponseStream() )
+					{
+						byte[] bytes;
+						using( var memoryStream = new MemoryStream() )
+						{
+							stream.CopyTo( memoryStream );
+							bytes = memoryStream.ToArray();
+						}
+						var data = IOUtility.Unzip( bytes );
+						xml = Encoding.ASCII.GetString( data );
+					}
+				}
+				else
+				{
+					using( var response = (HttpWebResponse)request.GetResponse() )
+					using( var stream = response.GetResponseStream() )
+					using( var reader = new StreamReader( stream ) )
+						xml = reader.ReadToEnd();
+				}
 
 				if( threadItem.needStop || EditorAPI.ClosingApplication )
 					return;
@@ -98,8 +138,6 @@ namespace NeoAxis.Editor
 					return;
 
 				var packages = new List<PackageManager.PackageInfo>();
-				//!!!!
-				//var featuredItems = "";
 
 				foreach( XmlNode itemNode in xDoc.GetElementsByTagName( "item" ) )
 				{
@@ -177,6 +215,36 @@ namespace NeoAxis.Editor
 							Enum.TryParse<StoreProductLicense>( text, out var value );
 							info.License = value;
 						}
+					}
+
+					//featured
+					foreach( XmlNode child in itemNode.ChildNodes )
+					{
+						if( child.Name == "featured" )
+							featuredStoreItems.AddWithCheckAlreadyContained( info.Identifier );
+					}
+
+					//calculate short description
+					if( string.IsNullOrEmpty( info.ShortDescription ) && !string.IsNullOrEmpty( info.FullDescription ) )
+					{
+						try
+						{
+							var text = info.FullDescription;
+
+							var index = info.FullDescription.IndexOf( "<img" );
+							if( index != -1 )
+								text = text.Substring( 0, index ).Trim();
+
+							text = Regex.Replace( text, "<.*?>", string.Empty );
+
+							text = Regex.Replace( text, @"(?<=[.?!])(?=[^\s])", " " );
+
+							if( text.Length > 80 )
+								text = text.Substring( 0, 80 ) + "...";
+
+							info.ShortDescription = text;
+						}
+						catch { }
 					}
 
 					////skip for cloud project mode
@@ -348,6 +416,8 @@ namespace NeoAxis.Editor
 
 
 			//update Package.info in the the archive
+			if( File.Exists( state.downloadingDestinationPath ) && new FileInfo( state.downloadingDestinationPath ).Length != 0 )
+			{
 			using( var archive = ZipFile.Open( state.downloadingDestinationPath, ZipArchiveMode.Update ) )
 			{
 				var entry = archive.GetEntry( "Package.info" );
@@ -393,6 +463,7 @@ namespace NeoAxis.Editor
 					using( var writer = new StreamWriter( stream ) )
 						writer.Write( block.DumpToString() );
 				}
+			}
 			}
 
 		}

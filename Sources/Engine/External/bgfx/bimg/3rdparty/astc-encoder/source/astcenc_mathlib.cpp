@@ -1,3 +1,6 @@
+//!!!!betauser. android compiler crash
+#ifndef __ANDROID__
+
 // SPDX-License-Identifier: Apache-2.0
 // ----------------------------------------------------------------------------
 // Copyright 2011-2021 Arm Limited
@@ -46,3 +49,5 @@ uint64_t astc::rand(uint64_t state[2])
 	state[1] = rotl(s1, 37);
 	return res;
 }
+
+#endif

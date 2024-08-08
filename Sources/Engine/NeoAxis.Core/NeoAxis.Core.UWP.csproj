@@ -1654,6 +1654,9 @@
     <Compile Include="SoundSystem\NoneSoundWorld.cs" />
     <Compile Include="Components\Rendering\Effects\MicroparticlesInAir.cs" />
     <Compile Include="Components\Terrain\TerrainUndo.cs" />
+    <Compile Include="EngineApp\macOS specific\MacOSInputDeviceManager.cs" />
+    <Compile Include="EngineApp\macOS specific\MacOSJoystickInputDevice.cs" />
+    <Compile Include="EngineApp\macOS specific\MacOSPlatformFunctionality.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Addon_16.png" />
@@ -2144,7 +2147,7 @@
     </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>if EXIST "$(ProjectDir)NeoAxis.Core.csproj" ( if EXIST "$(ProjectDir)..\..\..\Project\Binaries\NeoAxis.Editor.exe" ( "$(ProjectDir)..\..\..\Project\Binaries\NeoAxis.Editor.exe" -platformProjectPatch "$(ProjectDir)NeoAxis.Core.UWP.csproj" -baseProject "$(ProjectDir)NeoAxis.Core.csproj" ) )</PreBuildEvent>
+    <PreBuildEvent>if EXIST "$(ProjectDir)NeoAxis.Core.csproj" ( if EXIST "$(ProjectDir)..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" ( "$(ProjectDir)..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -platformProjectPatch "$(ProjectDir)NeoAxis.Core.UWP.csproj" -baseProject "$(ProjectDir)NeoAxis.Core.csproj" ) )</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

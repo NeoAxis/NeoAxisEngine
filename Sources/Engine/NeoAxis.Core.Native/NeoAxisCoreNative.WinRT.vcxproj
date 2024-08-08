@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Release|x64">
@@ -8,6 +8,1655 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImageLibrary\NULLRenderSystem.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\DeprecationManager\Deprecated.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\DeprecationManager\DeprecationMgr.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Background.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\BSplineRotate.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Channels.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\ClassicRotate.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Colors.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\CopyPaste.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Display.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Flip.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\JPEGTransform.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\MultigridPoissonSolver.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Rescale.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Resize.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\BitmapAccess.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\CacheFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ColorLookup.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion16_555.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion16_565.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion24.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion32.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion4.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion8.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionFloat.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionRGB16.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionRGBA16.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionRGBAF.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionRGBF.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionType.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionUINT16.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\FreeImage.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\FreeImageIO.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\GetType.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Halftoning.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\J2KHelper.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\LFPQuantizer.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\MemoryIO.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\MNGHelper.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\MultiPage.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\NNQuantizer.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PixelAccess.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Plugin.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginBMP.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginCUT.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginDDS.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginEXR.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginG3.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginGIF.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginHDR.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginICO.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginIFF.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginJ2K.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginJNG.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginJP2.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginJPEG.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginKOALA.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginMNG.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPCD.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPCX.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPFM.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPICT.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPNG.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPNM.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPSD.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginRAS.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginRAW.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginSGI.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginTARGA.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginTIFF.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginWBMP.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginWebP.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginXBM.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginXPM.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PSDParser.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\TIFFLogLuv.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\tmoColorConvert.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\tmoDrago03.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\tmoFattal02.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\tmoReinhard05.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ToneMapping.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\WuQuantizer.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ZLibInterface.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jaricom.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcapimin.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcapistd.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcarith.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jccoefct.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jccolor.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcdctmgr.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jchuff.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcinit.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcmainct.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcmarker.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcmaster.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcomapi.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcparam.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcprepct.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcsample.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jctrans.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdapimin.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdapistd.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdarith.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdatadst.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdatasrc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdcoefct.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdcolor.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jddctmgr.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdhuff.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdinput.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdmainct.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdmarker.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdmaster.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdmerge.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdpostct.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdsample.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdtrans.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jerror.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jfdctflt.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jfdctfst.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jfdctint.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jidctflt.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jidctfst.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jidctint.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jmemmgr.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jmemnobs.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jquant1.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jquant2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jutils.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\transupp.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_callback_xs.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_chunk_descr.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_chunk_io.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_chunk_prc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_chunk_xs.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_cms.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_display.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_dither.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_error.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_filter.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_hlapi.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_jpeg.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_object_prc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_pixels.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_prop_xs.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_read.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_trace.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_write.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_zlib.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\bio.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\cidx_manager.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\cio.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\dwt.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\event.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\function_list.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\image.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\invert.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\j2k.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\jp2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\mct.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\mqc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\openjpeg.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\opj_clock.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\phix_manager.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\pi.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\ppix_manager.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\raw.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\t1.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\t2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\tcd.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\tgt.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\thix_manager.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\tpix_manager.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\example.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\png.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngerror.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngget.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngmem.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngpread.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngread.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngrio.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngrtran.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngrutil.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngset.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngtrans.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngwio.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngwrite.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngwtran.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngwutil.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\internal\dcraw_common.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\internal\dcraw_fileio.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\internal\demosaic_packs.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\libraw_cxx.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\libraw_c_api.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\libraw_datastream.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_aux.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_close.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_codec.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_color.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_compress.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_dir.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_dirinfo.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_dirread.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_dirwrite.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_dumpmode.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_error.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_extension.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_fax3.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_fax3sm.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_flush.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_getimage.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_jpeg.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_jpeg_12.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_luv.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_lzma.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_lzw.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_next.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_ojpeg.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_open.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_packbits.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_pixarlog.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_predict.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_print.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_read.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_strip.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_swab.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_thunder.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_tile.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_version.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_warning.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_write.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_zip.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.alpha.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.buffer.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.frame.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.idec.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.io.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.quant.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.tree.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.vp8.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.vp8l.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.webp.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\demux\demux.anim_decode.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\demux\demux.demux.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.alpha_processing.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.alpha_processing_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.alpha_processing_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.alpha_processing_sse41.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.argb.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.argb_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.argb_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.cost.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.cost_mips32.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.cost_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.cost_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.cpu.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_clip_tables.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_mips32.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_neon.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_sse41.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_avx2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_mips32.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_neon.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_sse41.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.filters.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.filters_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.filters_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc_mips32.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc_neon.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc_sse41.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_neon.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.rescaler.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.rescaler_mips32.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.rescaler_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.rescaler_neon.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.rescaler_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.upsampling.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.upsampling_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.upsampling_neon.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.upsampling_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.yuv.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.yuv_mips32.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.yuv_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.yuv_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.alpha.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.analysis.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.backward_references.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.config.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.cost.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.delta_palettization.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.filter.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.frame.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.histogram.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.iterator.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.near_lossless.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.picture.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.picture_csp.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.picture_psnr.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.picture_rescale.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.picture_tools.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.quant.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.syntax.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.token.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.tree.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.vp8l.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.webpenc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\extras\extras.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\mux\mux.anim_encode.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\mux\mux.muxedit.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\mux\mux.muxinternal.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\mux\mux.muxread.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.bit_reader.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.bit_writer.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.color_cache.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.filters.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.huffman.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.huffman_encode.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.quant_levels.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.quant_levels_dec.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.random.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.rescaler.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.thread.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.utils.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\Exif.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\FIRational.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\FreeImageTag.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\IPTC.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\TagConversion.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\TagLib.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\XTIFF.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Half\half.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IexMath\IexMathFloatExc.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IexMath\IexMathFpu.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Iex\IexBaseExc.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Iex\IexThrowErrnoExc.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\dwaLookups.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfAcesFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfB44Compressor.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfBoxAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfChannelList.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfChannelListAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfChromaticities.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfChromaticitiesAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfCompositeDeepScanLine.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfCompressionAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfCompressor.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfConvert.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfCRgbaFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepCompositing.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepFrameBuffer.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepImageStateAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepScanLineInputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepScanLineInputPart.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepScanLineOutputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepScanLineOutputPart.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepTiledInputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepTiledInputPart.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepTiledOutputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepTiledOutputPart.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDoubleAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDwaCompressor.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfEnvmap.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfEnvmapAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfFastHuf.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfFloatAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfFloatVectorAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfFrameBuffer.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfFramesPerSecond.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfGenericInputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfGenericOutputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfHeader.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfHuf.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfInputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfInputPart.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfInputPartData.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfIntAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfIO.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfKeyCode.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfKeyCodeAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfLineOrderAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfLut.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfMatrixAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfMisc.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfMultiPartInputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfMultiPartOutputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfMultiView.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfOpaqueAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfOutputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfOutputPart.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfOutputPartData.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPartType.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPizCompressor.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPreviewImage.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPreviewImageAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPxr24Compressor.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRational.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRationalAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRgbaFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRgbaYca.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRle.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRleCompressor.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfScanLineInputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfStandardAttributes.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfStdIO.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfStringAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfStringVectorAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfSystemSpecific.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTestFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfThreading.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTileDescriptionAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledInputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledInputPart.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledMisc.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledOutputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledOutputPart.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledRgbaFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTileOffsets.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTimeCode.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTimeCodeAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfVecAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfVersion.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfWav.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfZip.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfZipCompressor.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThread.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadMutex.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadPool.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadSemaphore.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathBox.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathColorAlgo.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathFun.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathMatrixAlgo.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathRandom.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathShear.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathVec.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\adler32.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\compress.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\crc32.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\deflate.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\gzclose.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\gzlib.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\gzread.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\gzwrite.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\infback.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\inffast.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\inflate.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\inftrees.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\trees.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\uncompr.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\zutil.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\autofit\autofit.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftbase.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftbbox.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftbitmap.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftfstype.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftgasp.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftglyph.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftinit.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftmm.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftpfr.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftstroke.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftsynth.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftsystem.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\fttype1.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftwinfnt.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\bdf\bdf.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\bzip2\ftbzip2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\cache\ftcache.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\cff\cff.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\cid\type1cid.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\gzip\ftgzip.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\lzw\ftlzw.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\pcf\pcf.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\pfr\pfr.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\psaux\psaux.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\pshinter\pshinter.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\psnames\psmodule.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\raster\raster.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\sfnt\sfnt.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\smooth\smooth.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\truetype\truetype.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\type1\type1.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\type42\type42.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\winfonts\winfnt.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libogg\src\bitwise.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libogg\src\framing.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\analyze.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\apiwrapper.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\bitpack.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\cpu.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\decapiwrapper.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\decinfo.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\decode.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\dequant.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\encapiwrapper.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\encfrag.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\encinfo.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\encode.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\enquant.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\fdct.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\fragment.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\huffdec.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\huffenc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\idct.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\internal.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\mathops.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\mcenc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\quant.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\rate.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\state.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\theora_info.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\tokenize.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\mmxencfrag.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\mmxfdct.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\mmxfrag.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\mmxidct.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\mmxstate.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\x86enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\x86state.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\analysis.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\bitrate.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\block.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\codebook.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\envelope.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\floor0.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\floor1.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\info.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\lookup.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\lpc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\lsp.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\mapping0.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\mdct.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\psy.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\registry.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\res0.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\sharedbook.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\smallft.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\synthesis.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\vorbisenc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\vorbisfile.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\Lib\Window.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\alc.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\alconfig.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\alu.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\ambdec.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\base.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\dsound.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\loopback.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\null_backend.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\sdl2.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\wasapi.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\wave.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\winmm.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\bformatdec.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\bs2b.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\converter.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\autowah.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\chorus.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\compressor.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\dedicated.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\distortion.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\echo.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\equalizer.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\fshifter.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\modulator.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\null_effects.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\pshifter.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\reverb.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\vmorpher.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\filters\biquad.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\filters\nfc.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\filters\splitter.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\helpers.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\hrtf.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\mastering.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\mixer\mixer_c.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\mixer\mixer_sse.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\mixer\mixer_sse2.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\mixer\mixer_sse3.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\mixer\mixer_sse41.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\mixvoice.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\panning.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\ringbuffer.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\uhjfilter.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\uiddefs.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\al\auxeffectslot.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\al\buffer.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\al\effect.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\al\error.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\al\event_renamed.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\al\extension.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\al\filter.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\al\listener.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\al\source.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\al\state_renamed.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\common\alcomplex.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\common\alexcpt.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\common\almalloc.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\common\dynload.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\common\strutils.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\common\threads.cpp" />
+    <ClCompile Include="..\External\SDL\src\atomic\SDL_atomic.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\atomic\SDL_spinlock.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\audio\disk\SDL_diskaudio.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\audio\dummy\SDL_dummyaudio.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\audio\SDL_audio.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\audio\SDL_audiocvt.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\audio\SDL_audiodev.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\audio\SDL_audiotypecvt.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\audio\SDL_mixer.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\audio\SDL_wave.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\audio\wasapi\SDL_wasapi.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\audio\wasapi\SDL_wasapi_winrt.cpp">
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\core\windows\SDL_windows.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\core\windows\SDL_xinput.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\core\winrt\SDL_winrtapp_common.cpp">
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\core\winrt\SDL_winrtapp_direct3d.cpp">
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\core\winrt\SDL_winrtapp_xaml.cpp">
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\cpuinfo\SDL_cpuinfo.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\dynapi\SDL_dynapi.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\events\SDL_clipboardevents.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\events\SDL_displayevents.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\events\SDL_dropevents.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\events\SDL_events.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\events\SDL_gesture.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\events\SDL_keyboard.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\events\SDL_mouse.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\events\SDL_quit.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\events\SDL_touch.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\events\SDL_windowevents.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\filesystem\winrt\SDL_sysfilesystem.cpp">
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\file\SDL_rwops.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\haptic\dummy\SDL_syshaptic.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\haptic\SDL_haptic.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\haptic\windows\SDL_dinputhaptic.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\haptic\windows\SDL_windowshaptic.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\haptic\windows\SDL_xinputhaptic.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\joystick\dummy\SDL_sysjoystick.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\joystick\SDL_gamecontroller.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\joystick\SDL_joystick.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\joystick\windows\SDL_dinputjoystick.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\joystick\windows\SDL_windowsjoystick.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\joystick\windows\SDL_xinputjoystick.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\loadso\windows\SDL_sysloadso.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\power\SDL_power.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\power\winrt\SDL_syspower.cpp" />
+    <ClCompile Include="..\External\SDL\src\render\direct3d11\SDL_render_d3d11.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\direct3d11\SDL_render_winrt.cpp">
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\direct3d11\SDL_shaders_d3d11.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\opengles2\SDL_render_gles2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\opengles2\SDL_shaders_gles2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\SDL_d3dmath.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\SDL_render.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\SDL_yuv_sw.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_blendfillrect.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_blendline.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_blendpoint.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_drawline.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_drawpoint.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_render_sw.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_rotate.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\SDL.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\SDL_assert.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\SDL_dataqueue.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\SDL_error.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\SDL_hints.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\SDL_log.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\sensor\dummy\SDL_dummysensor.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\sensor\SDL_sensor.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\stdlib\SDL_getenv.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\stdlib\SDL_iconv.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\stdlib\SDL_malloc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\stdlib\SDL_qsort.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\stdlib\SDL_stdlib.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\stdlib\SDL_string.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\thread\generic\SDL_syssem.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\thread\SDL_thread.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\thread\stdcpp\SDL_syscond.cpp" />
+    <ClCompile Include="..\External\SDL\src\thread\stdcpp\SDL_sysmutex.cpp" />
+    <ClCompile Include="..\External\SDL\src\thread\stdcpp\SDL_systhread.cpp" />
+    <ClCompile Include="..\External\SDL\src\timer\SDL_timer.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\timer\windows\SDL_systimer.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\dummy\SDL_nullevents.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\dummy\SDL_nullframebuffer.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\dummy\SDL_nullvideo.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_0.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_1.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_A.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_auto.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_copy.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_N.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_slow.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_bmp.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_clipboard.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_egl.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_fillrect.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_pixels.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_rect.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_RLEaccel.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_shape.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_stretch.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_surface.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_video.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_yuv.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtevents.cpp">
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtgamebar.cpp">
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtkeyboard.cpp">
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtmessagebox.cpp">
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtmouse.cpp">
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtopengles.cpp">
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtpointerinput.cpp">
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtvideo.cpp">
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</CompileAsWinRT>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\yuv2rgb\yuv_rgb.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
     <ClCompile Include="ImageLibrary\OgreAlignedAllocator.cpp" />
     <ClCompile Include="ImageLibrary\OgreArchiveManager.cpp" />
     <ClCompile Include="ImageLibrary\OgreAxisAlignedBox.cpp" />
@@ -59,7 +1708,6 @@
     <ClCompile Include="Jolt\Core\Color.cpp" />
     <ClCompile Include="Jolt\Core\Factory.cpp" />
     <ClCompile Include="Jolt\Core\IssueReporting.cpp" />
-    <ClCompile Include="Jolt\Core\JobSystemSingleThreaded.cpp" />
     <ClCompile Include="Jolt\Core\JobSystemThreadPool.cpp" />
     <ClCompile Include="Jolt\Core\JobSystemWithBarrier.cpp" />
     <ClCompile Include="Jolt\Core\LinearCurve.cpp" />
@@ -195,6 +1843,9 @@
     <ClCompile Include="MemoryManager\PagedMemoryManager.cpp" />
     <ClCompile Include="MemoryManager\SimpleMemoryManager.cpp" />
     <ClCompile Include="MemoryManager\TCMallocMemoryManager.cpp" />
+    <ClCompile Include="MeshOptimizer\overdrawoptimizer.cpp" />
+    <ClCompile Include="MeshOptimizer\vcacheoptimizer.cpp" />
+    <ClCompile Include="MeshOptimizer\vfetchoptimizer.cpp" />
     <ClCompile Include="NativeWrapper\FreeType_Wrapper.cpp" />
     <ClCompile Include="NativeWrapper\MiniDump.cpp" />
     <ClCompile Include="NativeWrapper\MyOgreLogListener.cpp" />
@@ -226,435 +1877,17 @@
     <ClCompile Include="NeoAxis\vhacd\src\vhacdMesh.cpp" />
     <ClCompile Include="NeoAxis\vhacd\src\vhacdRaycastMesh.cpp" />
     <ClCompile Include="NeoAxis\vhacd\src\vhacdVolume.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="ImageLibrary\DataReaderWriter.h" />
-    <ClInclude Include="ImageLibrary\NULLPrerequisites.h" />
-    <ClInclude Include="ImageLibrary\NULLRenderSystem.h" />
-    <ClInclude Include="ImageLibrary\Ogre.h" />
-    <ClInclude Include="ImageLibrary\OgreAlignedAllocator.h" />
-    <ClInclude Include="ImageLibrary\OgreArchive.h" />
-    <ClInclude Include="ImageLibrary\OgreArchiveFactory.h" />
-    <ClInclude Include="ImageLibrary\OgreArchiveManager.h" />
-    <ClInclude Include="ImageLibrary\OgreAtomicWrappers.h" />
-    <ClInclude Include="ImageLibrary\OgreAxisAlignedBox.h" />
-    <ClInclude Include="ImageLibrary\OgreAxisAlignedBoxD.h" />
-    <ClInclude Include="ImageLibrary\OgreBitwise.h" />
-    <ClInclude Include="ImageLibrary\OgreBlendMode.h" />
-    <ClInclude Include="ImageLibrary\OgreCodec.h" />
-    <ClInclude Include="ImageLibrary\OgreColourValue.h" />
-    <ClInclude Include="ImageLibrary\OgreCommon.h" />
-    <ClInclude Include="ImageLibrary\OgreConfig.h" />
-    <ClInclude Include="ImageLibrary\OgreConfigOptionMap.h" />
-    <ClInclude Include="ImageLibrary\OgreDataStream.h" />
-    <ClInclude Include="ImageLibrary\OgreDDSCodec.h" />
-    <ClInclude Include="ImageLibrary\OgreDebugKeys.h" />
-    <ClInclude Include="ImageLibrary\OgreDynLib.h" />
-    <ClInclude Include="ImageLibrary\OgreDynLibManager.h" />
-    <ClInclude Include="ImageLibrary\OgreException.h" />
-    <ClInclude Include="ImageLibrary\OgreFactoryObj.h" />
-    <ClInclude Include="ImageLibrary\OgreFreeImageCodec.h" />
-    <ClInclude Include="ImageLibrary\OgreHeaderPrefix.h" />
-    <ClInclude Include="ImageLibrary\OgreHeaderSuffix.h" />
-    <ClInclude Include="ImageLibrary\OgreImage.h" />
-    <ClInclude Include="ImageLibrary\OgreImageCodec.h" />
-    <ClInclude Include="ImageLibrary\OgreImageResampler.h" />
-    <ClInclude Include="ImageLibrary\OgreIteratorRange.h" />
-    <ClInclude Include="ImageLibrary\OgreIteratorWrapper.h" />
-    <ClInclude Include="ImageLibrary\OgreIteratorWrappers.h" />
-    <ClInclude Include="ImageLibrary\OgreLog.h" />
-    <ClInclude Include="ImageLibrary\OgreLogManager.h" />
-    <ClInclude Include="ImageLibrary\OgreMath.h" />
-    <ClInclude Include="ImageLibrary\OgreMathD.h" />
-    <ClInclude Include="ImageLibrary\OgreMatrix3.h" />
-    <ClInclude Include="ImageLibrary\OgreMatrix3D.h" />
-    <ClInclude Include="ImageLibrary\OgreMatrix4.h" />
-    <ClInclude Include="ImageLibrary\OgreMemoryAllocatedObject.h" />
-    <ClInclude Include="ImageLibrary\OgreMemoryAllocatorConfig.h" />
-    <ClInclude Include="ImageLibrary\OgreMemoryStdAlloc.h" />
-    <ClInclude Include="ImageLibrary\OgreMemorySTLAllocator.h" />
-    <ClInclude Include="ImageLibrary\OgreOptimisedUtil.h" />
-    <ClInclude Include="ImageLibrary\OgrePixelConversions.h" />
-    <ClInclude Include="ImageLibrary\OgrePixelFormat.h" />
-    <ClInclude Include="ImageLibrary\OgrePixelFormatDescriptions.h" />
-    <ClInclude Include="ImageLibrary\OgrePlane.h" />
-    <ClInclude Include="ImageLibrary\OgrePlaneBoundedVolume.h" />
-    <ClInclude Include="ImageLibrary\OgrePlaneD.h" />
-    <ClInclude Include="ImageLibrary\OgrePlatform.h" />
-    <ClInclude Include="ImageLibrary\OgrePlatformInformation.h" />
-    <ClInclude Include="ImageLibrary\OgrePrerequisites.h" />
-    <ClInclude Include="ImageLibrary\OgrePVRTCCodec.h" />
-    <ClInclude Include="ImageLibrary\OgreQuaternion.h" />
-    <ClInclude Include="ImageLibrary\OgreRay.h" />
-    <ClInclude Include="ImageLibrary\OgreRayD.h" />
-    <ClInclude Include="ImageLibrary\OgreRectangle.h" />
-    <ClInclude Include="ImageLibrary\OgreRenderSystem.h" />
-    <ClInclude Include="ImageLibrary\OgreRenderSystemCapabilities.h" />
-    <ClInclude Include="ImageLibrary\OgreResource.h" />
-    <ClInclude Include="ImageLibrary\OgreResourceGroupManager.h" />
-    <ClInclude Include="ImageLibrary\OgreResourceManager.h" />
-    <ClInclude Include="ImageLibrary\OgreRoot.h" />
-    <ClInclude Include="ImageLibrary\OgreSceneManager.h" />
-    <ClInclude Include="ImageLibrary\OgreSharedPtr.h" />
-    <ClInclude Include="ImageLibrary\OgreSIMDHelper.h" />
-    <ClInclude Include="ImageLibrary\OgreSingleton.h" />
-    <ClInclude Include="ImageLibrary\OgreSphere.h" />
-    <ClInclude Include="ImageLibrary\OgreSphereD.h" />
-    <ClInclude Include="ImageLibrary\OgreStableHeaders.h" />
-    <ClInclude Include="ImageLibrary\OgreStdHeaders.h" />
-    <ClInclude Include="ImageLibrary\OgreString.h" />
-    <ClInclude Include="ImageLibrary\OgreStringConverter.h" />
-    <ClInclude Include="ImageLibrary\OgreStringInterface.h" />
-    <ClInclude Include="ImageLibrary\OgreStringVector.h" />
-    <ClInclude Include="ImageLibrary\OgreThreadDefines.h" />
-    <ClInclude Include="ImageLibrary\OgreThreadDefinesNone.h" />
-    <ClInclude Include="ImageLibrary\OgreVector2.h" />
-    <ClInclude Include="ImageLibrary\OgreVector3.h" />
-    <ClInclude Include="ImageLibrary\OgreVector3D.h" />
-    <ClInclude Include="ImageLibrary\OgreVector4.h" />
-    <ClInclude Include="ImageLibrary\YUVToRGBConverter.h" />
-    <ClInclude Include="Jolt\AABBTree\AABBTreeBuilder.h" />
-    <ClInclude Include="Jolt\AABBTree\AABBTreeToBuffer.h" />
-    <ClInclude Include="Jolt\AABBTree\NodeCodec\NodeCodecQuadTreeHalfFloat.h" />
-    <ClInclude Include="Jolt\AABBTree\TriangleCodec\TriangleCodecIndexed8BitPackSOA4Flags.h" />
-    <ClInclude Include="Jolt\Core\ARMNeon.h" />
-    <ClInclude Include="Jolt\Core\Atomics.h" />
-    <ClInclude Include="Jolt\Core\ByteBuffer.h" />
-    <ClInclude Include="Jolt\Core\Color.h" />
-    <ClInclude Include="Jolt\Core\Core.h" />
-    <ClInclude Include="Jolt\Core\Factory.h" />
-    <ClInclude Include="Jolt\Core\FixedSizeFreeList.h" />
-    <ClInclude Include="Jolt\Core\FPControlWord.h" />
-    <ClInclude Include="Jolt\Core\FPException.h" />
-    <ClInclude Include="Jolt\Core\FPFlushDenormals.h" />
-    <ClInclude Include="Jolt\Core\HashCombine.h" />
-    <ClInclude Include="Jolt\Core\InsertionSort.h" />
-    <ClInclude Include="Jolt\Core\IssueReporting.h" />
-    <ClInclude Include="Jolt\Core\JobSystem.h" />
-    <ClInclude Include="Jolt\Core\JobSystemSingleThreaded.h" />
-    <ClInclude Include="Jolt\Core\JobSystemThreadPool.h" />
-    <ClInclude Include="Jolt\Core\JobSystemWithBarrier.h" />
-    <ClInclude Include="Jolt\Core\LinearCurve.h" />
-    <ClInclude Include="Jolt\Core\LockFreeHashMap.h" />
-    <ClInclude Include="Jolt\Core\Memory.h" />
-    <ClInclude Include="Jolt\Core\Mutex.h" />
-    <ClInclude Include="Jolt\Core\MutexArray.h" />
-    <ClInclude Include="Jolt\Core\NonCopyable.h" />
-    <ClInclude Include="Jolt\Core\Profiler.h" />
-    <ClInclude Include="Jolt\Core\QuickSort.h" />
-    <ClInclude Include="Jolt\Core\Reference.h" />
-    <ClInclude Include="Jolt\Core\Result.h" />
-    <ClInclude Include="Jolt\Core\RTTI.h" />
-    <ClInclude Include="Jolt\Core\Semaphore.h" />
-    <ClInclude Include="Jolt\Core\StaticArray.h" />
-    <ClInclude Include="Jolt\Core\STLAlignedAllocator.h" />
-    <ClInclude Include="Jolt\Core\STLAllocator.h" />
-    <ClInclude Include="Jolt\Core\STLTempAllocator.h" />
-    <ClInclude Include="Jolt\Core\StreamIn.h" />
-    <ClInclude Include="Jolt\Core\StreamOut.h" />
-    <ClInclude Include="Jolt\Core\StreamWrapper.h" />
-    <ClInclude Include="Jolt\Core\StringTools.h" />
-    <ClInclude Include="Jolt\Core\TempAllocator.h" />
-    <ClInclude Include="Jolt\Core\TickCounter.h" />
-    <ClInclude Include="Jolt\Core\UnorderedMap.h" />
-    <ClInclude Include="Jolt\Core\UnorderedSet.h" />
-    <ClInclude Include="Jolt\Geometry\AABox.h" />
-    <ClInclude Include="Jolt\Geometry\AABox4.h" />
-    <ClInclude Include="Jolt\Geometry\ClipPoly.h" />
-    <ClInclude Include="Jolt\Geometry\ClosestPoint.h" />
-    <ClInclude Include="Jolt\Geometry\ConvexHullBuilder.h" />
-    <ClInclude Include="Jolt\Geometry\ConvexHullBuilder2D.h" />
-    <ClInclude Include="Jolt\Geometry\ConvexSupport.h" />
-    <ClInclude Include="Jolt\Geometry\Ellipse.h" />
-    <ClInclude Include="Jolt\Geometry\EPAConvexHullBuilder.h" />
-    <ClInclude Include="Jolt\Geometry\EPAPenetrationDepth.h" />
-    <ClInclude Include="Jolt\Geometry\GJKClosestPoint.h" />
-    <ClInclude Include="Jolt\Geometry\IndexedTriangle.h" />
-    <ClInclude Include="Jolt\Geometry\Indexify.h" />
-    <ClInclude Include="Jolt\Geometry\MortonCode.h" />
-    <ClInclude Include="Jolt\Geometry\OrientedBox.h" />
-    <ClInclude Include="Jolt\Geometry\Plane.h" />
-    <ClInclude Include="Jolt\Geometry\RayAABox.h" />
-    <ClInclude Include="Jolt\Geometry\RayAABox8.h" />
-    <ClInclude Include="Jolt\Geometry\RayCapsule.h" />
-    <ClInclude Include="Jolt\Geometry\RayCylinder.h" />
-    <ClInclude Include="Jolt\Geometry\RaySphere.h" />
-    <ClInclude Include="Jolt\Geometry\RayTriangle.h" />
-    <ClInclude Include="Jolt\Geometry\RayTriangle8.h" />
-    <ClInclude Include="Jolt\Geometry\Sphere.h" />
-    <ClInclude Include="Jolt\Geometry\Triangle.h" />
-    <ClInclude Include="Jolt\Jolt.h" />
-    <ClInclude Include="Jolt\Math\DMat44.h" />
-    <ClInclude Include="Jolt\Math\Double3.h" />
-    <ClInclude Include="Jolt\Math\DVec3.h" />
-    <ClInclude Include="Jolt\Math\DynMatrix.h" />
-    <ClInclude Include="Jolt\Math\EigenValueSymmetric.h" />
-    <ClInclude Include="Jolt\Math\FindRoot.h" />
-    <ClInclude Include="Jolt\Math\Float2.h" />
-    <ClInclude Include="Jolt\Math\Float3.h" />
-    <ClInclude Include="Jolt\Math\Float4.h" />
-    <ClInclude Include="Jolt\Math\GaussianElimination.h" />
-    <ClInclude Include="Jolt\Math\HalfFloat.h" />
-    <ClInclude Include="Jolt\Math\Mat44.h" />
-    <ClInclude Include="Jolt\Math\Math.h" />
-    <ClInclude Include="Jolt\Math\MathTypes.h" />
-    <ClInclude Include="Jolt\Math\Matrix.h" />
-    <ClInclude Include="Jolt\Math\Quat.h" />
-    <ClInclude Include="Jolt\Math\Real.h" />
-    <ClInclude Include="Jolt\Math\Swizzle.h" />
-    <ClInclude Include="Jolt\Math\Trigonometry.h" />
-    <ClInclude Include="Jolt\Math\UVec4.h" />
-    <ClInclude Include="Jolt\Math\UVec8.h" />
-    <ClInclude Include="Jolt\Math\Vec3.h" />
-    <ClInclude Include="Jolt\Math\Vec4.h" />
-    <ClInclude Include="Jolt\Math\Vec8.h" />
-    <ClInclude Include="Jolt\Math\Vector.h" />
-    <ClInclude Include="Jolt\NeoAxisPhysicsNative.h" />
-    <ClInclude Include="Jolt\ObjectStream\GetPrimitiveTypeOfType.h" />
-    <ClInclude Include="Jolt\ObjectStream\ObjectStream.h" />
-    <ClInclude Include="Jolt\ObjectStream\ObjectStreamBinaryIn.h" />
-    <ClInclude Include="Jolt\ObjectStream\ObjectStreamBinaryOut.h" />
-    <ClInclude Include="Jolt\ObjectStream\ObjectStreamIn.h" />
-    <ClInclude Include="Jolt\ObjectStream\ObjectStreamOut.h" />
-    <ClInclude Include="Jolt\ObjectStream\ObjectStreamTextIn.h" />
-    <ClInclude Include="Jolt\ObjectStream\ObjectStreamTextOut.h" />
-    <ClInclude Include="Jolt\ObjectStream\ObjectStreamTypes.h" />
-    <ClInclude Include="Jolt\ObjectStream\SerializableAttribute.h" />
-    <ClInclude Include="Jolt\ObjectStream\SerializableAttributeEnum.h" />
-    <ClInclude Include="Jolt\ObjectStream\SerializableAttributeTyped.h" />
-    <ClInclude Include="Jolt\ObjectStream\SerializableObject.h" />
-    <ClInclude Include="Jolt\ObjectStream\TypeDeclarations.h" />
-    <ClInclude Include="Jolt\Physics\Body\Body.h" />
-    <ClInclude Include="Jolt\Physics\Body\BodyAccess.h" />
-    <ClInclude Include="Jolt\Physics\Body\BodyActivationListener.h" />
-    <ClInclude Include="Jolt\Physics\Body\BodyCreationSettings.h" />
-    <ClInclude Include="Jolt\Physics\Body\BodyFilter.h" />
-    <ClInclude Include="Jolt\Physics\Body\BodyID.h" />
-    <ClInclude Include="Jolt\Physics\Body\BodyInterface.h" />
-    <ClInclude Include="Jolt\Physics\Body\BodyLock.h" />
-    <ClInclude Include="Jolt\Physics\Body\BodyLockInterface.h" />
-    <ClInclude Include="Jolt\Physics\Body\BodyLockMulti.h" />
-    <ClInclude Include="Jolt\Physics\Body\BodyManager.h" />
-    <ClInclude Include="Jolt\Physics\Body\BodyPair.h" />
-    <ClInclude Include="Jolt\Physics\Body\MassProperties.h" />
-    <ClInclude Include="Jolt\Physics\Body\MotionProperties.h" />
-    <ClInclude Include="Jolt\Physics\Body\MotionQuality.h" />
-    <ClInclude Include="Jolt\Physics\Body\MotionType.h" />
-    <ClInclude Include="Jolt\Physics\Character\Character.h" />
-    <ClInclude Include="Jolt\Physics\Character\CharacterBase.h" />
-    <ClInclude Include="Jolt\Physics\Character\CharacterVirtual.h" />
-    <ClInclude Include="Jolt\Physics\Collision\AABoxCast.h" />
-    <ClInclude Include="Jolt\Physics\Collision\ActiveEdgeMode.h" />
-    <ClInclude Include="Jolt\Physics\Collision\ActiveEdges.h" />
-    <ClInclude Include="Jolt\Physics\Collision\BackFaceMode.h" />
-    <ClInclude Include="Jolt\Physics\Collision\BroadPhase\BroadPhase.h" />
-    <ClInclude Include="Jolt\Physics\Collision\BroadPhase\BroadPhaseBruteForce.h" />
-    <ClInclude Include="Jolt\Physics\Collision\BroadPhase\BroadPhaseLayer.h" />
-    <ClInclude Include="Jolt\Physics\Collision\BroadPhase\BroadPhaseQuadTree.h" />
-    <ClInclude Include="Jolt\Physics\Collision\BroadPhase\BroadPhaseQuery.h" />
-    <ClInclude Include="Jolt\Physics\Collision\BroadPhase\QuadTree.h" />
-    <ClInclude Include="Jolt\Physics\Collision\CastConvexVsTriangles.h" />
-    <ClInclude Include="Jolt\Physics\Collision\CastResult.h" />
-    <ClInclude Include="Jolt\Physics\Collision\CastSphereVsTriangles.h" />
-    <ClInclude Include="Jolt\Physics\Collision\CollectFacesMode.h" />
-    <ClInclude Include="Jolt\Physics\Collision\CollideConvexVsTriangles.h" />
-    <ClInclude Include="Jolt\Physics\Collision\CollidePointResult.h" />
-    <ClInclude Include="Jolt\Physics\Collision\CollideShape.h" />
-    <ClInclude Include="Jolt\Physics\Collision\CollideSphereVsTriangles.h" />
-    <ClInclude Include="Jolt\Physics\Collision\CollisionCollector.h" />
-    <ClInclude Include="Jolt\Physics\Collision\CollisionCollectorImpl.h" />
-    <ClInclude Include="Jolt\Physics\Collision\CollisionDispatch.h" />
-    <ClInclude Include="Jolt\Physics\Collision\CollisionGroup.h" />
-    <ClInclude Include="Jolt\Physics\Collision\ContactListener.h" />
-    <ClInclude Include="Jolt\Physics\Collision\GroupFilter.h" />
-    <ClInclude Include="Jolt\Physics\Collision\GroupFilterTable.h" />
-    <ClInclude Include="Jolt\Physics\Collision\ManifoldBetweenTwoFaces.h" />
-    <ClInclude Include="Jolt\Physics\Collision\NarrowPhaseQuery.h" />
-    <ClInclude Include="Jolt\Physics\Collision\NarrowPhaseStats.h" />
-    <ClInclude Include="Jolt\Physics\Collision\ObjectLayer.h" />
-    <ClInclude Include="Jolt\Physics\Collision\PhysicsMaterial.h" />
-    <ClInclude Include="Jolt\Physics\Collision\PhysicsMaterialSimple.h" />
-    <ClInclude Include="Jolt\Physics\Collision\RayCast.h" />
-    <ClInclude Include="Jolt\Physics\Collision\ShapeCast.h" />
-    <ClInclude Include="Jolt\Physics\Collision\ShapeFilter.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\BoxShape.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\CapsuleShape.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\CompoundShape.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\CompoundShapeVisitors.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\ConvexHullShape.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\ConvexShape.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\CylinderShape.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\DecoratedShape.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\GetTrianglesContext.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\HeightFieldShape.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\MeshShape.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\MutableCompoundShape.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\OffsetCenterOfMassShape.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\PolyhedronSubmergedVolumeCalculator.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\RotatedTranslatedShape.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\ScaledShape.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\ScaleHelpers.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\Shape.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\SphereShape.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\StaticCompoundShape.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\SubShapeID.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\SubShapeIDPair.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\TaperedCapsuleShape.h" />
-    <ClInclude Include="Jolt\Physics\Collision\Shape\TriangleShape.h" />
-    <ClInclude Include="Jolt\Physics\Collision\SortReverseAndStore.h" />
-    <ClInclude Include="Jolt\Physics\Collision\TransformedShape.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\ConeConstraint.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\Constraint.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintManager.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\AngleConstraintPart.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\AxisConstraintPart.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\DualAxisConstraintPart.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\GearConstraintPart.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\HingeRotationConstraintPart.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\IndependentAxisConstraintPart.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\PointConstraintPart.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\RackAndPinionConstraintPart.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\RotationEulerConstraintPart.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\RotationQuatConstraintPart.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\SpringPart.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\SwingTwistConstraintPart.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\ContactConstraintManager.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\DistanceConstraint.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\FixedConstraint.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\GearConstraint.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\HingeConstraint.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\MotorSettings.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\PathConstraint.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\PathConstraintPath.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\PathConstraintPathHermite.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\PointConstraint.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\PulleyConstraint.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\RackAndPinionConstraint.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\SixDOFConstraint.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\SliderConstraint.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\SpringSettings.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\SwingTwistConstraint.h" />
-    <ClInclude Include="Jolt\Physics\Constraints\TwoBodyConstraint.h" />
-    <ClInclude Include="Jolt\Physics\DeterminismLog.h" />
-    <ClInclude Include="Jolt\Physics\EActivation.h" />
-    <ClInclude Include="Jolt\Physics\IslandBuilder.h" />
-    <ClInclude Include="Jolt\Physics\LargeIslandSplitter.h" />
-    <ClInclude Include="Jolt\Physics\PhysicsLock.h" />
-    <ClInclude Include="Jolt\Physics\PhysicsScene.h" />
-    <ClInclude Include="Jolt\Physics\PhysicsSettings.h" />
-    <ClInclude Include="Jolt\Physics\PhysicsStepListener.h" />
-    <ClInclude Include="Jolt\Physics\PhysicsSystem.h" />
-    <ClInclude Include="Jolt\Physics\PhysicsUpdateContext.h" />
-    <ClInclude Include="Jolt\Physics\Ragdoll\Ragdoll.h" />
-    <ClInclude Include="Jolt\Physics\StateRecorder.h" />
-    <ClInclude Include="Jolt\Physics\StateRecorderImpl.h" />
-    <ClInclude Include="Jolt\Physics\Vehicle\TrackedVehicleController.h" />
-    <ClInclude Include="Jolt\Physics\Vehicle\VehicleAntiRollBar.h" />
-    <ClInclude Include="Jolt\Physics\Vehicle\VehicleCollisionTester.h" />
-    <ClInclude Include="Jolt\Physics\Vehicle\VehicleConstraint.h" />
-    <ClInclude Include="Jolt\Physics\Vehicle\VehicleController.h" />
-    <ClInclude Include="Jolt\Physics\Vehicle\VehicleDifferential.h" />
-    <ClInclude Include="Jolt\Physics\Vehicle\VehicleEngine.h" />
-    <ClInclude Include="Jolt\Physics\Vehicle\VehicleTrack.h" />
-    <ClInclude Include="Jolt\Physics\Vehicle\VehicleTransmission.h" />
-    <ClInclude Include="Jolt\Physics\Vehicle\Wheel.h" />
-    <ClInclude Include="Jolt\Physics\Vehicle\WheeledVehicleController.h" />
-    <ClInclude Include="Jolt\RegisterTypes.h" />
-    <ClInclude Include="Jolt\Renderer\DebugRenderer.h" />
-    <ClInclude Include="Jolt\Renderer\DebugRendererPlayback.h" />
-    <ClInclude Include="Jolt\Renderer\DebugRendererRecorder.h" />
-    <ClInclude Include="Jolt\Skeleton\SkeletalAnimation.h" />
-    <ClInclude Include="Jolt\Skeleton\Skeleton.h" />
-    <ClInclude Include="Jolt\Skeleton\SkeletonMapper.h" />
-    <ClInclude Include="Jolt\Skeleton\SkeletonPose.h" />
-    <ClInclude Include="Jolt\TriangleGrouper\TriangleGrouper.h" />
-    <ClInclude Include="Jolt\TriangleGrouper\TriangleGrouperClosestCentroid.h" />
-    <ClInclude Include="Jolt\TriangleGrouper\TriangleGrouperMorton.h" />
-    <ClInclude Include="Jolt\TriangleSplitter\TriangleSplitter.h" />
-    <ClInclude Include="Jolt\TriangleSplitter\TriangleSplitterBinning.h" />
-    <ClInclude Include="Jolt\TriangleSplitter\TriangleSplitterFixedLeafSize.h" />
-    <ClInclude Include="Jolt\TriangleSplitter\TriangleSplitterLongestAxis.h" />
-    <ClInclude Include="Jolt\TriangleSplitter\TriangleSplitterMean.h" />
-    <ClInclude Include="Jolt\TriangleSplitter\TriangleSplitterMorton.h" />
-    <ClInclude Include="MaskedOcclusionCulling\FrameRecorder.h" />
-    <ClInclude Include="MaskedOcclusionCulling\MaskedOcclusionCulling.h" />
-    <ClInclude Include="MemoryManager\MemoryManager.h" />
-    <ClInclude Include="MemoryManager\MemoryManagerInternal.h" />
-    <ClInclude Include="MemoryManager\MemoryManagerInternal_precompiled.h" />
-    <ClInclude Include="MemoryManager\MemoryManager_ManageNew.h" />
-    <ClInclude Include="MemoryManager\MemoryManager_SimpleNew.h" />
-    <ClInclude Include="NativeWrapper\AdditionalMathFunctions.h" />
-    <ClInclude Include="NativeWrapper\FreeType_Wrapper.h" />
-    <ClInclude Include="NativeWrapper\MiniDump.h" />
-    <ClInclude Include="NativeWrapper\MyOgreLogListener.h" />
-    <ClInclude Include="NativeWrapper\MyOgreSceneManager.h" />
-    <ClInclude Include="NativeWrapper\MyOgreVirtualFileSystem.h" />
-    <ClInclude Include="NativeWrapper\OgreArchiveManager_Wrapper.h" />
-    <ClInclude Include="NativeWrapper\OgreImageManager_Wrapper.h" />
-    <ClInclude Include="NativeWrapper\OgreLogManager_Wrapper.h" />
-    <ClInclude Include="NativeWrapper\OgreNameValuePairList_Wrapper.h" />
-    <ClInclude Include="NativeWrapper\OgreNativeWrapper.h" />
-    <ClInclude Include="NativeWrapper\OgreNativeWrapperGeneral.h" />
-    <ClInclude Include="NativeWrapper\OgrePixelFormat_Wrapper.h" />
-    <ClInclude Include="NativeWrapper\OgreResourceGroupManager_Wrapper.h" />
-    <ClInclude Include="NativeWrapper\OgreRoot_Wrapper.h" />
-    <ClInclude Include="NativeWrapper\OgreStringInterface_Wrapper.h" />
-    <ClInclude Include="NativeWrapper\YUVToRGBConverter_Wrapper.h" />
-    <ClInclude Include="NeoAxis\AxisAlignedBoxI.h" />
-    <ClInclude Include="NeoAxis\Bounds.h" />
-    <ClInclude Include="NeoAxis\BoundsD.h" />
-    <ClInclude Include="NeoAxis\BoundsI.h" />
-    <ClInclude Include="NeoAxis\DirectInputNativeWrapper.h" />
-    <ClInclude Include="NeoAxis\NativeImpl.h" />
-    <ClInclude Include="NeoAxis\NativeMemoryDictionary.h" />
-    <ClInclude Include="NeoAxis\NeoAxisCoreNative.h" />
-    <ClInclude Include="NeoAxis\OBB.h" />
-    <ClInclude Include="NeoAxis\OBBD.h" />
-    <ClInclude Include="NeoAxis\OctreeContainer.h" />
-    <ClInclude Include="NeoAxis\StringUtils.h" />
-    <ClInclude Include="NeoAxis\UtilsNativeWrapper.h" />
-    <ClInclude Include="NeoAxis\Vector3I.h" />
-    <ClInclude Include="NeoAxis\vhacd\src\btAlignedAllocator.h" />
-    <ClInclude Include="NeoAxis\vhacd\src\btAlignedObjectArray.h" />
-    <ClInclude Include="NeoAxis\vhacd\src\btConvexHullComputer.h" />
-    <ClInclude Include="NeoAxis\vhacd\src\btMinMax.h" />
-    <ClInclude Include="NeoAxis\vhacd\src\btScalar.h" />
-    <ClInclude Include="NeoAxis\vhacd\src\btVector3.h" />
-    <ClInclude Include="NeoAxis\vhacd\src\FloatMath.h" />
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdCircularList.h" />
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdICHull.h" />
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdManifoldMesh.h" />
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdMesh.h" />
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdMutex.h" />
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdRaycastMesh.h" />
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdSArray.h" />
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdTimer.h" />
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdVector.h" />
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdVHACD.h" />
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdVolume.h" />
-    <ClInclude Include="NeoAxis\vhacd\VHACD.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Jolt\Core\FixedSizeFreeList.inl" />
-    <None Include="Jolt\Core\JobSystem.inl" />
-    <None Include="Jolt\Core\LockFreeHashMap.inl" />
-    <None Include="Jolt\Core\Profiler.inl" />
-    <None Include="Jolt\Math\DMat44.inl" />
-    <None Include="Jolt\Math\DVec3.inl" />
-    <None Include="Jolt\Math\Mat44.inl" />
-    <None Include="Jolt\Math\Quat.inl" />
-    <None Include="Jolt\Math\UVec4.inl" />
-    <None Include="Jolt\Math\UVec8.inl" />
-    <None Include="Jolt\Math\Vec3.inl" />
-    <None Include="Jolt\Math\Vec4.inl" />
-    <None Include="Jolt\Math\Vec8.inl" />
-    <None Include="Jolt\Physics\Body\Body.inl" />
-    <None Include="Jolt\Physics\Body\MotionProperties.inl" />
-    <None Include="MaskedOcclusionCulling\CompilerSpecific.inl" />
-    <None Include="MaskedOcclusionCulling\MaskedOcclusionCullingCommon.inl" />
-    <None Include="NeoAxis\vhacd\src\FloatMath.inl" />
-    <None Include="NeoAxis\vhacd\src\vhacdCircularList.inl" />
-    <None Include="NeoAxis\vhacd\src\vhacdVector.inl" />
+    <ClCompile Include="SimpleTrayIcon\dllapi.cpp" />
+    <ClCompile Include="SimpleTrayIcon\dllmain.cpp" />
+    <ClCompile Include="SimpleTrayIcon\MyTrayMenu.cpp" />
+    <ClCompile Include="SimpleTrayIcon\TrayIcon.cpp" />
+    <ClCompile Include="SimpleTrayIcon\TrayIconManager.cpp" />
+    <ClCompile Include="SimpleTrayIcon\TrayMenuItem.cpp" />
+    <ClCompile Include="SimpleTrayIcon\TrayMenuItemBase.cpp" />
+    <ClCompile Include="SimpleTrayIcon\TrayMenuPopup.cpp" />
+    <ClCompile Include="SimpleTrayIcon\TrayMenuSeparator.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\alsa.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\opensl.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A49B1604-5C02-3455-8543-8A45A6E6C450}</ProjectGuid>
@@ -705,8 +1938,8 @@
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>ImageLibrary;..\NativeMemoryManager;..\External\FreeImage\Source;..\External\FreeType\include;NeoAxis;NeoAxis\hacd\HACD_Lib\inc;NativeWrapper;MemoryManager;MaskedOcclusionCulling;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;_WINRT_DLL;NATIVEMEMORYMANAGER_EXPORTS;JPH_DOUBLE_PRECISION;JPH_DEBUG_RENDERER;JPH_USE_SSE4_1;JPH_FLOA_______disabled_______TING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;_HAS_STD_BYTE 0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>ImageLibrary;..\NativeMemoryManager;..\External\FreeImage\Source;..\External\FreeType\include;NeoAxis;NeoAxis\hacd\HACD_Lib\inc;NativeWrapper;MemoryManager;MaskedOcclusionCulling;.\;..\External\OggVorbisTheora\libogg\include;..\External\OggVorbisTheora\libtheora\include;..\External\OggVorbisTheora\libvorbis\include;..\External\OggVorbisTheora\libvorbisfile\include;..\External\FreeImage\Source\FreeImageToolkit;..\External\FreeImage\Source\LibJPEG;include;..\External\FreeImage\Source\LibOpenJPEG;..\External\FreeImage\Source\LibPNG;..\External\FreeImage\Source\LibRawLite;..\External\FreeImage\Source\LibRawLite\dcraw;..\External\FreeImage\Source\LibRawLite\internal;..\External\FreeImage\Source\LibRawLite\libraw;..\External\FreeImage\Source\LibRawLite\src;..\External\FreeImage\Source\LibTIFF;..\External\FreeImage\Source\LibWebP;..\External\FreeImage\Source\OpenEXR;..\External\FreeImage\Source\OpenEXR\Half;..\External\FreeImage\Source\OpenEXR\Iex;..\External\FreeImage\Source\OpenEXR\IexMath;..\External\FreeImage\Source\OpenEXR\IlmImf;..\External\FreeImage\Source\OpenEXR\IlmThread;..\External\FreeImage\Source\OpenEXR\Imath;..\External\FreeImage\Source\ZLib;..\External\OpenALSoft;..\External\OpenALSoft\include;..\External\OpenALSoft\build;..\External\OpenALSoft\alc;..\External\OpenALSoft\common;..\External\OpenALSoft\al;..\External\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;_WINRT_DLL;NATIVEMEMORYMANAGER_EXPORTS;JPH_DOUBLE_PRECISION;JPH_DEBUG_RENDERER;JPH_USE_SSE4_1;JPH_FLOA_______disabled_______TING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;_HAS_STD_BYTE=0;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;FT2_BUILD_LIBRARY;OPJ_STATIC;LIBRAW_NODLL;LIBRAW_LIBRARY_BUILD;USE_JPIP;DISABLE_PERF_MEASUREMENT;_HAS_AUTO_PTR_ETC=1;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;_LARGEFILE_SOURCE;_LARGE_FILES;_CRT_SECURE_NO_WARNINGS;strcasecmp=_stricmp;strncasecmp=_strnicmp;OpenAL_EXPORTS;NOMINMAX;SDL_BUILDING_WINRT=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -720,7 +1953,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>freeimage.lib;FreeType.lib;libogg.lib;libtheora.lib;libvorbis.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <Version>
       </Version>
@@ -737,12 +1970,17 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(OutDir)NeoAxisCoreNative.lib</ImportLibrary>
       <ModuleDefinitionFile>Export.def</ModuleDefinitionFile>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+      <AdditionalOptions>/nodefaultlib:vccorlib /nodefaultlib:msvcrt vccorlib.lib msvcrt.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(OutDir)$(TargetName).lib" "$(SolutionDir)Sources\Engine\Lib\UWP\$(Platform)"
 if not exist "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)" mkdir "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)"
 copy "$(OutDir)$(TargetName)$(TargetExt)" "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>if EXIST "$(ProjectDir)NeoAxisCoreNative_x64.vcxproj" ( if EXIST "$(ProjectDir)..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" ( "$(ProjectDir)..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -platformProjectPatch "$(ProjectDir)NeoAxisCoreNative.WinRT.vcxproj" -baseProject "$(ProjectDir)NeoAxisCoreNative_x64.vcxproj" ) )</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

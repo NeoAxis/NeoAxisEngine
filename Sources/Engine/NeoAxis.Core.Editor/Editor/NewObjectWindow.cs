@@ -232,6 +232,21 @@ namespace NeoAxis.Editor
 
 		string GetDefaultName()
 		{
+			////specific for Product_Store
+			//if( IsFileCreation() )
+			//{
+			//	if( creationData.initLockType != null && creationData.initLockType.IsAssignableFrom( MetadataManager.GetTypeOfNetType( typeof( Product_Store ) ) ) )
+			//	{
+			//		try
+			//		{
+			//			var name = Path.GetFileName( creationData.initFileCreationDirectory );
+			//			if( !string.IsNullOrEmpty( name ) )
+			//				return name;
+			//		}
+			//		catch { }
+			//	}
+			//}
+
 			//default object name from attribute
 			var ar = selectedType.GetNetType().GetCustomAttributes( typeof( NewObjectDefaultNameAttribute ), true );
 			if( ar.Length != 0 )

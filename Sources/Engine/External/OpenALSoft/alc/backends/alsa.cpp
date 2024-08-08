@@ -19,6 +19,7 @@
  */
 
 #include "config.h"
+#ifdef HAVE_ALSA
 
 #include "backends/alsa.h"
 
@@ -1286,3 +1287,4 @@ BackendFactory &AlsaBackendFactory::getFactory()
     static AlsaBackendFactory factory{};
     return factory;
 }
+#endif

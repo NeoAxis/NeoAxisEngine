@@ -9,6 +9,7 @@ using System.Xml;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
+using Internal.tainicom.Aether.Physics2D.Dynamics;
 #if !DEPLOY
 using System.Text.Json;
 #endif
@@ -20,6 +21,7 @@ namespace NeoAxis
 	/// Represents the product build settings for NeoAxis Store.
 	/// </summary>
 	//[NewObjectSettings( typeof( NewObjectSettingsProductStore ) )]
+	[NewObjectDefaultName( "Store" )] ////used specific code in NewObjectWindow.cs, GetDefaultName() method. [NewObjectDefaultName( "Store" )]
 	public class Product_Store : Product
 	{
 		///// <summary>
@@ -123,28 +125,45 @@ namespace NeoAxis
 		//public event Action<Product_Store> TitleChanged;
 		//ReferenceField<string> _title = "";
 
+		/// <summary>
+		/// The description of the product.
+		/// </summary>
 		[DefaultValue( "" )]
 		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
-		public Reference<string> ShortDescription
+		public Reference<string> Description
 		{
-			get { if( _shortDescription.BeginGet() ) ShortDescription = _shortDescription.Get( this ); return _shortDescription.value; }
-			set { if( _shortDescription.BeginSet( this, ref value ) ) { try { ShortDescriptionChanged?.Invoke( this ); } finally { _shortDescription.EndSet(); } } }
+			get { if( _description.BeginGet() ) Description = _description.Get( this ); return _description.value; }
+			set { if( _description.BeginSet( this, ref value ) ) { try { DescriptionChanged?.Invoke( this ); } finally { _description.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="ShortDescription"/> property value changes.</summary>
-		public event Action<Product_Store> ShortDescriptionChanged;
-		ReferenceField<string> _shortDescription = "";
+		/// <summary>Occurs when the <see cref="Description"/> property value changes.</summary>
+		public event Action<Product_Store> DescriptionChanged;
+		ReferenceField<string> _description = "";
 
-		[DefaultValue( "" )]
-		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
-		public Reference<string> FullDescription
-		{
-			get { if( _fullDescription.BeginGet() ) FullDescription = _fullDescription.Get( this ); return _fullDescription.value; }
-			set { if( _fullDescription.BeginSet( this, ref value ) ) { try { FullDescriptionChanged?.Invoke( this ); } finally { _fullDescription.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="FullDescription"/> property value changes.</summary>
-		public event Action<Product_Store> FullDescriptionChanged;
-		ReferenceField<string> _fullDescription = "";
+		//[DefaultValue( "" )]
+		//[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
+		//public Reference<string> ShortDescription
+		//{
+		//	get { if( _shortDescription.BeginGet() ) ShortDescription = _shortDescription.Get( this ); return _shortDescription.value; }
+		//	set { if( _shortDescription.BeginSet( this, ref value ) ) { try { ShortDescriptionChanged?.Invoke( this ); } finally { _shortDescription.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="ShortDescription"/> property value changes.</summary>
+		//public event Action<Product_Store> ShortDescriptionChanged;
+		//ReferenceField<string> _shortDescription = "";
 
+		//[DefaultValue( "" )]
+		//[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
+		//public Reference<string> FullDescription
+		//{
+		//	get { if( _fullDescription.BeginGet() ) FullDescription = _fullDescription.Get( this ); return _fullDescription.value; }
+		//	set { if( _fullDescription.BeginSet( this, ref value ) ) { try { FullDescriptionChanged?.Invoke( this ); } finally { _fullDescription.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="FullDescription"/> property value changes.</summary>
+		//public event Action<Product_Store> FullDescriptionChanged;
+		//ReferenceField<string> _fullDescription = "";
+
+		/// <summary>
+		/// The list of categories of the product.
+		/// </summary>
 		[DefaultValue( ProjectItemCategoriesEnum.Uncategorized )]
 		[DisplayName( "Categories" )]
 		public Reference<ProjectItemCategoriesEnum> ProjectItemCategories
@@ -170,6 +189,9 @@ namespace NeoAxis
 		public event Action<Product_Store> TagsChanged;
 		ReferenceField<string> _tags = "";
 
+		/// <summary>
+		/// The license of the product.
+		/// </summary>
 		[DefaultValue( StoreProductLicense.None )]
 		public Reference<StoreProductLicense> License
 		{
@@ -200,18 +222,21 @@ namespace NeoAxis
 		public event Action<Product_Store> VersionChanged;
 		ReferenceField<string> _version = "1.0.0.0";
 
+		/// <summary>
+		/// Creates a screenshot to use it as a product logo.
+		/// </summary>
 		[DefaultValue( true )]
-		public Reference<bool> CreateScreenshots
+		public Reference<bool> PrepareScreenshot
 		{
-			get { if( _createScreenshots.BeginGet() ) CreateScreenshots = _createScreenshots.Get( this ); return _createScreenshots.value; }
-			set { if( _createScreenshots.BeginSet( this, ref value ) ) { try { CreateScreenshotsChanged?.Invoke( this ); } finally { _createScreenshots.EndSet(); } } }
+			get { if( _prepareScreenshot.BeginGet() ) PrepareScreenshot = _prepareScreenshot.Get( this ); return _prepareScreenshot.value; }
+			set { if( _prepareScreenshot.BeginSet( this, ref value ) ) { try { PrepareScreenshotChanged?.Invoke( this ); } finally { _prepareScreenshot.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="CreateScreenshots"/> property value changes.</summary>
-		public event Action<Product_Store> CreateScreenshotsChanged;
-		ReferenceField<bool> _createScreenshots = true;
+		/// <summary>Occurs when the <see cref="PrepareScreenshot"/> property value changes.</summary>
+		public event Action<Product_Store> PrepareScreenshotChanged;
+		ReferenceField<bool> _prepareScreenshot = true;
 
 		/// <summary>
-		/// The logo of the product. 1000x562 size. 127, 127, 127 background. PNG or JPG format.
+		/// The logo of the product. {127, 127, 127} for background is the best. PNG, JPG formats are supported.
 		/// </summary>
 		[DefaultValue( null )]
 		public Reference<ReferenceValueType_Resource> ProductLogo
@@ -223,8 +248,24 @@ namespace NeoAxis
 		public event Action<Product_Store> ProductLogoChanged;
 		ReferenceField<ReferenceValueType_Resource> _productLogo = null;
 
+		/// <summary>
+		/// The list of images of the product. PNG, JPG formats are supported.
+		/// </summary>
+		[Cloneable( CloneType.Deep )]
+		[Serialize]
+		public ReferenceList<ReferenceValueType_Resource> Images
+		{
+			get { return _images; }
+		}
+		public delegate void ObjectsOnSeatsChangedDelegate( Product_Store sender );
+		public event ObjectsOnSeatsChangedDelegate ImagesChanged;
+		ReferenceList<ReferenceValueType_Resource> _images;
 
+		/// <summary>
+		/// The mode allows you to create multiple products.
+		/// </summary>
 		[DefaultValue( CreateProductsEnum.MainProduct )]
+		[Category( "Advanced" )]
 		public Reference<CreateProductsEnum> CreateProducts
 		{
 			get { if( _createProducts.BeginGet() ) CreateProducts = _createProducts.Get( this ); return _createProducts.value; }
@@ -814,11 +855,11 @@ namespace NeoAxis
 					viewport.RenderingContext.MultiRenderTarget_DestroyAll();
 					viewport.RenderingContext.DynamicTexture_DestroyAll();
 
-					texture.Result.GetNativeObject( true ).BlitTo( (ushort)viewport.RenderingContext.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
+					texture.Result.GetNativeObject( true ).BlitTo( (ushort)RenderingSystem.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
+					//texture.Result.GetNativeObject( true ).BlitTo( (ushort)viewport.RenderingContext.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
 
 					var demandedFrame = textureRead.Result.GetNativeObject( true ).Read( imageData, 0 );
-
-					while( RenderingSystem.CallBgfxFrame() < demandedFrame ) { }
+					while( RenderingSystem.CallFrame() < demandedFrame ) { }
 				}
 
 				//write image
@@ -830,6 +871,11 @@ namespace NeoAxis
 		}
 
 		///////////////////////////////////////////////
+
+		public Product_Store()
+		{
+			_images = new ReferenceList<ReferenceValueType_Resource>( this, () => ImagesChanged?.Invoke( this ) );
+		}
 
 		public override SystemSettings.Platform Platform
 		{
@@ -861,14 +907,14 @@ namespace NeoAxis
 						skip = true;
 					break;
 
-				case nameof( CreateScreenshots ):
+				case nameof( PrepareScreenshot ):
 				case nameof( CreateProducts ):
 					if( !ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Surfaces ) && !CategoryIsModel( ProjectItemCategories ) && !ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Materials ) && !ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Environments ) )
 						skip = true;
 					break;
 
 				case nameof( ProductLogo ):
-					if( CreateScreenshots )
+					if( PrepareScreenshot )
 						skip = true;
 					break;
 
@@ -1195,7 +1241,19 @@ again:;
 				return;
 			}
 
-
+			//check settings
+			{
+				if( License.Value == StoreProductLicense.None )
+				{
+					EditorMessageBox.ShowWarning( "The license is not specified." );
+					return;
+				}
+				if( ProjectItemCategories.Value == ProjectItemCategoriesEnum.Uncategorized )
+				{
+					EditorMessageBox.ShowWarning( "None of the categories are selected." );
+					return;
+				}
+			}
 
 			if( ProductType.Value == ProductTypeEnum.ProjectItem )
 			{
@@ -1256,6 +1314,7 @@ again:;
 							if( resultString == "" )
 								resultString = "Unable to upload. No error message.";
 							ScreenNotifications.Show( resultString, true );
+							Log.Warning( resultString );
 						}
 					}
 				}
@@ -1290,12 +1349,15 @@ again:;
 						var block = new TextBlock();
 
 						//block.SetAttribute( "Identifier", GetIdentifier() );
-						block.SetAttribute( "Title", Name );
+						block.SetAttribute( "Title", GetName() );
 						block.SetAttribute( "Version", GetVersion() );
 						//block.SetAttribute( "Author", authorEmail );// "NeoAxis" );
-						block.SetAttribute( "Description", ShortDescription );
-						//"ShortDescription"
-						block.SetAttribute( "FullDescription", FullDescription.Value );
+
+						block.SetAttribute( "FullDescription", Description );
+						//block.SetAttribute( "Description", ShortDescription );
+						////"ShortDescription"
+						//block.SetAttribute( "FullDescription", FullDescription.Value );
+
 						block.SetAttribute( "License", license );
 
 						if( License.Value == StoreProductLicense.PaidPerSeat )
@@ -1346,14 +1408,16 @@ again:;
 
 								writer.WriteString( "Author", authorEmail );// "NeoAxis" );
 								writer.WriteString( "Identifier", GetIdentifier() );
-								writer.WriteString( "Title", Name );
+								writer.WriteString( "Title", GetName() );
 								writer.WriteString( "License", license );
 
 								if( License.Value == StoreProductLicense.PaidPerSeat )
 									writer.WriteString( "Cost", Cost.Value.ToString() );
 
-								writer.WriteString( "ShortDescription", ShortDescription.Value );
-								writer.WriteString( "FullDescription", FullDescription.Value );
+								writer.WriteString( "FullDescription", Description.Value );
+								//writer.WriteString( "ShortDescription", ShortDescription.Value );
+								//writer.WriteString( "FullDescription", FullDescription.Value );
+
 								writer.WriteString( "Categories", ProductType.Value.ToString() + "s" );
 
 								if( !string.IsNullOrEmpty( Tags.Value ) )
@@ -1436,13 +1500,13 @@ again:;
 			}
 		}
 
-		public string GetIdentifier()
+		public virtual string GetIdentifier()
 		{
 			var result = Identifier.Value;
 
 			if( string.IsNullOrEmpty( result ) )
 			{
-				result = Name.Replace( ' ', '_' ).Replace( '-', '_' ).Replace( '(', '_' ).Replace( ')', '_' );
+				result = GetName().Replace( ' ', '_' ).Replace( '-', '_' ).Replace( '(', '_' ).Replace( ')', '_' );
 
 				var fileName = ComponentUtility.GetOwnedFileNameOfComponent( this );
 				if( !string.IsNullOrEmpty( fileName ) )
@@ -1541,7 +1605,7 @@ again:;
 			if( !string.IsNullOrEmpty( specifiedFile ) )
 				identifier += "_" + Path.GetFileNameWithoutExtension( specifiedFile ).Replace( ' ', '_' );
 
-			var title = Name;// Title.Value;
+			var title = GetName();// Title.Value;
 			if( !string.IsNullOrEmpty( specifiedFile ) )
 				title = Path.GetFileNameWithoutExtension( specifiedFile );
 
@@ -1585,15 +1649,50 @@ again:;
 
 				using( var archive = ZipFile.Open( destFileName, ZipArchiveMode.Create ) )
 				{
+					//get images and product logo info
+					var imagesResourceName = new ESet<string>();
+					var imagesAndLogoResourceNameWithAssetsFolder = new ESet<string>();
+					{
+						for( int n = 0; n < Images.Count; n++ )
+						{
+							var resourceName = Images[ n ].Value?.ResourceName;
+							if( !string.IsNullOrEmpty( resourceName ) )
+							{
+								var extension = VirtualPathUtility.NormalizePath( Path.GetExtension( resourceName ).ToLower() );
+								if( extension == ".png" || extension == ".jpg" )
+								{
+									imagesResourceName.AddWithCheckAlreadyContained( resourceName );
+									imagesAndLogoResourceNameWithAssetsFolder.AddWithCheckAlreadyContained( Path.Combine( "Assets", resourceName ) );
+								}
+							}
+						}
+
+						if( !PrepareScreenshot )
+						{
+							var resourceName = ProductLogo.Value?.ResourceName;
+							if( !string.IsNullOrEmpty( resourceName ) )
+								imagesAndLogoResourceNameWithAssetsFolder.AddWithCheckAlreadyContained( Path.Combine( "Assets", resourceName ) );
+						}
+					}
+
 					//add files
 					foreach( var file in files )
 					{
-						if( Path.GetExtension( file ) == ".product" )
-							continue;
+						//skip
+						//if( Path.GetExtension( file ) == ".product" )
+						//	continue;
 						if( buildInstance.NeedSkipFile( file ) )
 							continue;
 
 						var entryName = file.Substring( VirtualFileSystem.Directories.Project.Length + 1 ); // sourceDirectory.Length + 1 );
+
+						//skip when in Images
+						if( buildInstance.SkipFilesByExtension.Contains( "product" ) )
+						{
+							if( imagesAndLogoResourceNameWithAssetsFolder.Contains( entryName ) )
+								continue;
+						}
+
 						if( buildInstance.NeedClearFile( file ) )
 							archive.CreateEntry( entryName );
 						else
@@ -1609,10 +1708,12 @@ again:;
 						block.SetAttribute( "Title", title );// Title.Value );
 						block.SetAttribute( "Version", GetVersion() );
 						//block.SetAttribute( "Author", authorEmail );//, "NeoAxis" );
-						block.SetAttribute( "Description", ShortDescription );
-						//"ShortDescription"
 
-						block.SetAttribute( "FullDescription", FullDescription.Value );
+						block.SetAttribute( "FullDescription", Description );
+						//block.SetAttribute( "Description", Description );
+						//block.SetAttribute( "Description", ShortDescription );
+						////"ShortDescription"
+						//block.SetAttribute( "FullDescription", FullDescription.Value );
 
 						block.SetAttribute( "License", license );
 
@@ -1662,7 +1763,7 @@ again:;
 					int vertices = 0;
 
 					//try to create screenshots
-					if( CreateScreenshots )
+					if( PrepareScreenshot )
 					{
 						bool handled = false;
 						CreateScreenshot?.Invoke( this, files, archive, ref handled );
@@ -1887,6 +1988,39 @@ again:;
 						}
 					}
 
+					//Images
+					{
+						var counter = 1;
+						foreach( var resourceName in imagesResourceName )
+						{
+							var extension = Path.GetExtension( resourceName ).ToLower();
+							var entry = archive.CreateEntry( "_Image" + counter.ToString() + extension );
+							var data = VirtualFile.ReadAllBytes( resourceName );
+							using( var entryStream = entry.Open() )
+								entryStream.Write( data );
+							counter++;
+						}
+					}
+					//if( Images.Count > 0 )
+					//{
+					//	var counter = 1;
+					//	for( int n = 0; n < Images.Count; n++ )
+					//	{
+					//		var resourceName = Images[ n ].Value?.ResourceName;
+					//		if( !string.IsNullOrEmpty( resourceName ) )
+					//		{
+					//			var extension = Path.GetExtension( resourceName ).ToLower();
+					//			if( extension == ".png" || extension == ".jpg" )
+					//			{
+					//				var entry = archive.CreateEntry( "_Image" + counter.ToString() + extension );
+					//				var data = VirtualFile.ReadAllBytes( resourceName );
+					//				using( var entryStream = entry.Open() )
+					//					entryStream.Write( data );
+					//				counter++;
+					//			}
+					//		}
+					//	}
+					//}
 
 					//write info json
 					{
@@ -1915,8 +2049,10 @@ again:;
 								if( License.Value == StoreProductLicense.PaidPerSeat )
 									writer.WriteString( "Cost", Cost.Value.ToString() );
 
-								writer.WriteString( "ShortDescription", ShortDescription.Value );
-								writer.WriteString( "FullDescription", FullDescription.Value );
+								writer.WriteString( "FullDescription", Description.Value );
+								//writer.WriteString( "Description", Description.Value );
+								//writer.WriteString( "ShortDescription", ShortDescription.Value );
+								//writer.WriteString( "FullDescription", FullDescription.Value );
 
 								{
 									var s = "";
@@ -2352,6 +2488,37 @@ again:;
 
 				return base.CanBuildFromThread;
 			}
+		}
+
+		protected override bool OnLoad( Metadata.LoadContext context, TextBlock block, out string error )
+		{
+			if( !base.OnLoad( context, block, out error ) )
+				return false;
+
+			//old version compatibility
+			if( block.AttributeExists( "ShortDescription" ) )
+				Description = block.GetAttribute( "ShortDescription" );
+			if( block.AttributeExists( "FullDescription" ) )
+				Description = block.GetAttribute( "FullDescription" );
+			if( block.AttributeExists( "CreateScreenshots" ) )
+			{
+				try
+				{
+					PrepareScreenshot = bool.Parse( block.GetAttribute( "CreateScreenshots" ) );
+				}
+				catch { }
+			}
+
+			return true;
+		}
+
+		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow = false )
+		{
+			base.NewObjectSetDefaultConfiguration( createdFromNewObjectWindow );
+
+			//by default skip product file for the Store, and skip attached images
+			SkipFilesWithExtension = "product";
+			ClearFilesWithExtension = "";
 		}
 	}
 }

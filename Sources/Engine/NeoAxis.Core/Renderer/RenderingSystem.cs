@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using Internal.SharpBgfx;
 using System.Runtime.CompilerServices;
+using NeoAxis.Editor;
 
 namespace NeoAxis
 {
@@ -156,6 +157,7 @@ namespace NeoAxis
 		}
 		static List<OcclusionQueryItem> occlusionQueries = new List<OcclusionQueryItem>();
 
+		internal static int currentViewNumber = -1;
 		static int lastFrameNumber;
 
 		///////////////////////////////////////////////
@@ -183,26 +185,52 @@ namespace NeoAxis
 
 			public void ReportError( string fileName, int line, ErrorType errorType, string message )
 			{
+				if( EngineApp.AfterFatalOperations )
+					return;
+
 				string text = $"{fileName} ({line})  {errorType}: {message}";
 
 				Debug.Write( text );
-				if( errorType == ErrorType.DebugCheck )
-				{
-					if( EngineApp.InitSettings.RendererReportDebugToLog )
-						Log.Warning( "Renderer: Bgfx: " + text );
+				Log.InvisibleInfo( text );
 
-					// Debug.Fail terminate app in UWP
-					if( SystemSettings.CurrentPlatform != SystemSettings.Platform.UWP )
-					{
-						Debug.Fail( text ); // thread independed, debug only message box.
-					}
-				}
-				else
+				var skipLogFatal = false;
+				if( EngineApp.IsEditor && !EngineApp.Closing && EditorAssemblyInterface.Instance != null )
 				{
-					Log.Fatal( $"Renderer: Bgfx fatal error: " + text );
-					Debug.Fail( text ); // thread independed, debug only message box.
-										//Environment.Exit( 1 ); ?
+					//switch to after crash mode
+					EngineApp.AfterFatalOperations = true;
+					EditorAssemblyInterface.Instance.AfterFatalShowDialogAndSaveDocuments( text, ref skipLogFatal );
 				}
+
+				if( !skipLogFatal )
+					Log.Fatal( $"Renderer: Fatal error: " + text );
+
+
+				//if( errorType == ErrorType.DebugCheck )
+				//{
+				//	if( EngineApp.InitSettings.RendererReportDebugToLog )
+				//		Log.Warning( "Renderer: Bgfx: " + text );
+
+				//	if( EngineApp.IsEditor && !EngineApp.Closing && EditorAssemblyInterface.Instance != null )
+				//	{
+				//		//switch to after crash mode
+				//		EngineApp.AfterFatalOperations = true;
+				//		EditorAssemblyInterface.Instance.AfterFatalShowDialogAndSaveDocuments( text );
+				//	}
+				//	else
+				//	{
+				//		//!!!!
+
+				//		// Debug.Fail terminate app in UWP
+				//		if( SystemSettings.CurrentPlatform != SystemSettings.Platform.UWP )
+				//			Debug.Fail( text ); // thread independed, debug only message box.
+				//	}
+				//}
+				//else
+				//{
+				//	Log.Fatal( $"Renderer: Bgfx fatal error: " + text );
+				//	Debug.Fail( text ); // thread independed, debug only message box.
+				//						//Environment.Exit( 1 ); ?
+				//}
 			}
 
 			public void SaveScreenShot( string path, int width, int height, int pitch, IntPtr data, int size, bool flipVertical ) { }
@@ -1076,11 +1104,30 @@ namespace NeoAxis
 			return ConvertColorValue( ref color );
 		}
 
-		public static int CallBgfxFrame()
+		public static int CurrentViewNumber
+		{
+			get { return currentViewNumber; }
+			set { currentViewNumber = value; }
+		}
+
+		//public static void ResetViews()
+		//{
+		//	for( int n = 0; n < currentViewNumber; n++ )
+		//		Bgfx.ResetView( (ushort)n );
+		//	currentViewNumber = -1;
+		//}
+
+		public static int CallFrame()
 		{
 			int result = Bgfx.Frame();
 			lastFrameNumber = result;
 			UpdateOcclusionQuery();
+
+			//reset views
+			for( int n = 0; n < currentViewNumber; n++ )
+				Bgfx.ResetView( (ushort)n );
+			currentViewNumber = -1;
+
 			return result;
 		}
 

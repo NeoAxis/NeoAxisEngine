@@ -21,118 +21,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\src\glcontext_eagl.mm">
-      <Filter>src</Filter>
-    </None>
-    <None Include="..\..\..\src\glcontext_nsgl.mm">
-      <Filter>src</Filter>
-    </None>
-    <None Include="..\..\..\src\renderer_mtl.mm">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\include\bgfx\bgfx.h">
-      <Filter>include\bgfx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\bgfx\defines.h">
-      <Filter>include\bgfx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\bgfx\embedded_shader.h">
-      <Filter>include\bgfx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\bgfx\platform.h">
-      <Filter>include\bgfx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\bgfx\c99\bgfx.h">
-      <Filter>include\bgfx\c99</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\bgfx\c99\platform.h">
-      <Filter>include\bgfx\c99</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\bgfx_p.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\charset.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\config.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\debug_renderdoc.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\dxgi.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\glcontext_eagl.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\glcontext_egl.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\glcontext_nsgl.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\glcontext_wgl.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\glimports.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\nvapi.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\renderer.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\renderer_d3d.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\renderer_d3d11.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\renderer_d3d12.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\renderer_gl.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\renderer_mtl.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\renderer_vk.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\shader.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\shader_dxbc.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\shader_spirv.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\topology.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\special.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\vertexlayout.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\tools\shaderc\LibraryBase.h">
-      <Filter>shaderc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\tools\shaderc\shaderc.h">
-      <Filter>shaderc</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\src\amalgamated.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\bgfx.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -211,10 +99,56 @@
     <ClCompile Include="..\..\..\tools\shaderc\shaderc_hlsl_dx12.cpp">
       <Filter>shaderc</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="..\..\..\scripts\bgfx.natvis">
-      <Filter>scripts</Filter>
-    </Natvis>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_averages_and_directions.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_block_sizes.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_color_quantize.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_color_unquantize.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_compress_symbolic.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_compute_variance.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_decompress_symbolic.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_diagnostic_trace.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_entry.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_find_best_partitioning.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_ideal_endpoints_and_weights.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_image.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_integer_sequence.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_mathlib.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_mathlib_softfloat.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_partition_tables.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_percentile_tables.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_pick_best_endpoint_format.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_quantization.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_symbolic_physical.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_weight_align.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_weight_quant_xfer_tables.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\src\image.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\src\image_gnf.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\allocator.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\bx.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\commandline.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\crtnone.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\debug.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\dtoa.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\easing.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\file.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\filepath.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\hash.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\math.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\mutex.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\os.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\process.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\semaphore.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\settings.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\sort.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\string.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\thread.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\timer.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\url.cpp" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp1.c" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp2.c" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp3.c" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp4.c" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp5.c" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp6.c" />
   </ItemGroup>
 </Project>

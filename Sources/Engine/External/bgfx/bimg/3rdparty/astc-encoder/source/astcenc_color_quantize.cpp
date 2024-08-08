@@ -1,3 +1,6 @@
+//!!!!betauser. android compiler crash
+#ifndef __ANDROID__
+
 // SPDX-License-Identifier: Apache-2.0
 // ----------------------------------------------------------------------------
 // Copyright 2011-2023 Arm Limited
@@ -2145,5 +2148,7 @@ uint8_t pack_color_endpoints(
 
 	return retval;
 }
+
+#endif
 
 #endif

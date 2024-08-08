@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /*
   Simple DirectMedia Layer
   Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
@@ -428,3 +431,5 @@ SDL_bool WINRT_IsScreenKeyboardShown(_THIS, SDL_Window *window)
 #endif  // NTDDI_VERSION >= ...
 
 #endif // SDL_VIDEO_DRIVER_WINRT
+
+#endif

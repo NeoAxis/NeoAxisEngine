@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /*
   Simple DirectMedia Layer
   Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
@@ -87,3 +90,5 @@ void SDL_DUMMY_DestroyWindowFramebuffer(_THIS, SDL_Window * window)
 #endif /* SDL_VIDEO_DRIVER_DUMMY */
 
 /* vi: set ts=4 sw=4 expandtab: */
+
+#endif

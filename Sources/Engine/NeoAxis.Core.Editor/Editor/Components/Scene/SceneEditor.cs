@@ -306,7 +306,7 @@ namespace NeoAxis.Editor
 			if( handled )
 				return;
 
-			//Inside only Espace key is processed.
+			//Inside only Escape key is processed.
 			transformTool.PerformKeyDown( e, ref handled );
 			if( handled )
 				return;
@@ -2063,8 +2063,6 @@ namespace NeoAxis.Editor
 
 		private void Scene_DocumentWindow_DragEnter( object sender, DragEventArgs e )
 		{
-			//createByDropEntered = true;
-
 			if( /*CreateObjectsMode == CreateObjectsModeEnum.Drop &&*/ ( WorkareaMode == null || WorkareaMode.AllowCreateObjectsByDrop ) )
 			{
 				createByDropEntered = true;
@@ -4314,6 +4312,14 @@ end:;
 													{
 														var position2 = toolPosition.ToVector2() + offset;
 
+														var regularAlignment = surfaceGroup.RegularAlignment;
+														if( regularAlignment != 0 )
+														{
+															position2 /= regularAlignment;
+															position2 = new Vector2( (int)position2.X, (int)position2.Y );
+															position2 *= regularAlignment;
+														}
+
 														var result = SceneUtility.CalculateObjectPositionZ( Scene, toGroupOfObjects, toolPosition.Z, position2, destinationCachedBaseObjects );
 														if( result.found )
 														{
@@ -4599,6 +4605,14 @@ end:;
 												if( length <= toolRadius && random.NextDouble() <= GetHardnessFactor( length ) )
 												{
 													var position2 = toolPosition.ToVector2() + offset;
+
+													var regularAlignment = surfaceGroup.RegularAlignment;
+													if( regularAlignment != 0 )
+													{
+														position2 /= regularAlignment;
+														position2 = new Vector2( (int)position2.X, (int)position2.Y );
+														position2 *= regularAlignment;
+													}
 
 													//!!!!
 													var result = SceneUtility.CalculateObjectPositionZ( Scene, null, toolPosition.Z, position2 );

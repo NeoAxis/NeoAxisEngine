@@ -212,6 +212,13 @@ namespace NeoAxis.Editor
 					if( !string.IsNullOrEmpty( text ) )
 						lines.Add( string.Format( "{0}: {1}", text, totalBounds.GetSize().ToString( 3 ) ) );
 				}
+
+				if( Import.Components.Count == 0 && !ProjectSettings.Get.General.AutoImport3DModels )
+				{
+					lines.Add( "" );
+					lines.Add( "Click the \"Re-import\" button to import the model." );
+					lines.Add( "You can enable auto-import in the editor settings. General -> Editor -> Auto Import 3D Models." );
+				}
 			}
 		}
 

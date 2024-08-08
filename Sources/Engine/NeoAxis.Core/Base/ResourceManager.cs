@@ -594,6 +594,7 @@ namespace NeoAxis
 			return type;
 		}
 
+		//this property is intended to get the list without engine initialization
 		public static string[] Import3DFileExtensions
 		{
 			get

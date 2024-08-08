@@ -691,6 +691,2193 @@
     <ClCompile Include="SimpleTrayIcon\TrayMenuSeparator.cpp">
       <Filter>SimpleTrayIcon</Filter>
     </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libogg\src\bitwise.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libogg\src\framing.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\analyze.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\apiwrapper.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\bitpack.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\cpu.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\decapiwrapper.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\decinfo.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\decode.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\dequant.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\encapiwrapper.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\encfrag.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\encinfo.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\encode.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\enquant.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\fdct.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\fragment.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\huffdec.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\huffenc.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\idct.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\internal.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\mathops.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\mcenc.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\mmxencfrag.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\mmxfdct.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\mmxfrag.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\mmxidct.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\mmxstate.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\quant.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\rate.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\state.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\theora_info.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\tokenize.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\x86enc.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\x86state.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\analysis.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\bitrate.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\block.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\codebook.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\envelope.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\floor0.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\floor1.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\info.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\lookup.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\lpc.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\lsp.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\mapping0.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\mdct.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\psy.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\registry.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\res0.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\sharedbook.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\smallft.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\synthesis.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\vorbisenc.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\Lib\Window.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\vorbisfile.c">
+      <Filter>ogg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\autofit\autofit.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\bdf\bdf.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\cff\cff.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftbase.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftbbox.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftbitmap.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\bzip2\ftbzip2.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\cache\ftcache.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftfstype.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftgasp.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftglyph.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\gzip\ftgzip.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftinit.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\lzw\ftlzw.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftmm.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftpfr.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftstroke.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftsynth.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftsystem.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\fttype1.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\base\ftwinfnt.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\pcf\pcf.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\pfr\pfr.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\psaux\psaux.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\pshinter\pshinter.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\psnames\psmodule.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\raster\raster.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\sfnt\sfnt.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\smooth\smooth.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\truetype\truetype.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\type1\type1.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\cid\type1cid.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\type42\type42.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\winfonts\winfnt.c">
+      <Filter>FreeType</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\adler32.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Background.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\bio.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\BitmapAccess.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\BSplineRotate.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\CacheFile.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Channels.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\cidx_manager.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\cio.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\ClassicRotate.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ColorLookup.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Colors.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\compress.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion4.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion8.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion16_555.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion16_565.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion24.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion32.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionFloat.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionRGB16.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionRGBA16.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionRGBAF.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionRGBF.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionType.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionUINT16.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\CopyPaste.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\crc32.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\internal\dcraw_common.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\internal\dcraw_fileio.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.alpha.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.buffer.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.frame.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.idec.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.io.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.quant.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.tree.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.vp8.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.vp8l.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.webp.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\deflate.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\internal\demosaic_packs.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\demux\demux.anim_decode.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\demux\demux.demux.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\DeprecationManager\Deprecated.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\DeprecationManager\DeprecationMgr.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Display.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.alpha_processing.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.alpha_processing_mips_dsp_r2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.alpha_processing_sse2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.alpha_processing_sse41.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.argb.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.argb_mips_dsp_r2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.argb_sse2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.cost.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.cost_mips_dsp_r2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.cost_mips32.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.cost_sse2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.cpu.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_clip_tables.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_mips_dsp_r2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_mips32.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_neon.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_sse2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_sse41.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_avx2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_mips_dsp_r2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_mips32.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_neon.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_sse2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_sse41.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.filters.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.filters_mips_dsp_r2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.filters_sse2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc_mips_dsp_r2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc_mips32.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc_neon.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc_sse2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc_sse41.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_mips_dsp_r2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_neon.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_sse2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.rescaler.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.rescaler_mips_dsp_r2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.rescaler_mips32.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.rescaler_neon.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.rescaler_sse2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.upsampling.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.upsampling_mips_dsp_r2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.upsampling_neon.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.upsampling_sse2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.yuv.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.yuv_mips_dsp_r2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.yuv_mips32.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.yuv_sse2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\dwaLookups.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\dwt.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.alpha.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.analysis.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.backward_references.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.config.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.cost.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.delta_palettization.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.filter.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.frame.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.histogram.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.iterator.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.near_lossless.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.picture.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.picture_csp.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.picture_psnr.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.picture_rescale.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.picture_tools.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.quant.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.syntax.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.token.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.tree.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.vp8l.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.webpenc.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\event.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\example.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\Exif.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\extras\extras.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\FIRational.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Flip.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\FreeImage.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\FreeImageIO.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\FreeImageTag.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\function_list.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\GetType.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\gzclose.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\gzlib.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\gzread.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\gzwrite.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Half\half.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Halftoning.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Iex\IexBaseExc.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IexMath\IexMathFloatExc.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IexMath\IexMathFpu.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Iex\IexThrowErrnoExc.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThread.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadMutex.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadPool.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadSemaphore.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\image.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathBox.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathColorAlgo.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathFun.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathMatrixAlgo.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathRandom.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathShear.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathVec.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfAcesFile.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfB44Compressor.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfBoxAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfChannelList.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfChannelListAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfChromaticities.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfChromaticitiesAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfCompositeDeepScanLine.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfCompressionAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfCompressor.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfConvert.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfCRgbaFile.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepCompositing.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepFrameBuffer.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepImageStateAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepScanLineInputFile.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepScanLineInputPart.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepScanLineOutputFile.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepScanLineOutputPart.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepTiledInputFile.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepTiledInputPart.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepTiledOutputFile.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepTiledOutputPart.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDoubleAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDwaCompressor.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfEnvmap.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfEnvmapAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfFastHuf.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfFloatAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfFloatVectorAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfFrameBuffer.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfFramesPerSecond.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfGenericInputFile.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfGenericOutputFile.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfHeader.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfHuf.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfInputFile.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfInputPart.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfInputPartData.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfIntAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfIO.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfKeyCode.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfKeyCodeAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfLineOrderAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfLut.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfMatrixAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfMisc.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfMultiPartInputFile.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfMultiPartOutputFile.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfMultiView.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfOpaqueAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfOutputFile.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfOutputPart.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfOutputPartData.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPartType.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPizCompressor.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPreviewImage.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPreviewImageAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPxr24Compressor.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRational.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRationalAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRgbaFile.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRgbaYca.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRle.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRleCompressor.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfScanLineInputFile.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfStandardAttributes.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfStdIO.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfStringAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfStringVectorAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfSystemSpecific.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTestFile.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfThreading.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTileDescriptionAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledInputFile.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledInputPart.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledMisc.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledOutputFile.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledOutputPart.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledRgbaFile.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTileOffsets.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTimeCode.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTimeCodeAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfVecAttribute.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfVersion.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfWav.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfZip.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfZipCompressor.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\infback.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\inffast.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\inflate.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\inftrees.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\invert.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\IPTC.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\j2k.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\J2KHelper.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jaricom.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcapimin.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcapistd.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcarith.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jccoefct.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jccolor.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcdctmgr.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jchuff.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcinit.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcmainct.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcmarker.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcmaster.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcomapi.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcparam.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcprepct.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcsample.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jctrans.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdapimin.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdapistd.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdarith.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdatadst.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdatasrc.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdcoefct.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdcolor.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jddctmgr.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdhuff.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdinput.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdmainct.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdmarker.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdmaster.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdmerge.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdpostct.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdsample.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdtrans.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jerror.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jfdctflt.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jfdctfst.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jfdctint.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jidctflt.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jidctfst.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jidctint.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jmemmgr.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jmemnobs.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\jp2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\JPEGTransform.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jquant1.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jquant2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jutils.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\LFPQuantizer.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_callback_xs.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_chunk_descr.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_chunk_io.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_chunk_prc.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_chunk_xs.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_cms.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_display.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_dither.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_error.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_filter.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_hlapi.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_jpeg.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_object_prc.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_pixels.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_prop_xs.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_read.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_trace.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_write.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_zlib.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\libraw_c_api.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\libraw_datastream.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\mct.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\MemoryIO.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\MNGHelper.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\mqc.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\MultigridPoissonSolver.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\MultiPage.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\mux\mux.anim_encode.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\mux\mux.muxedit.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\mux\mux.muxinternal.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\mux\mux.muxread.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\NNQuantizer.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\openjpeg.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\opj_clock.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\phix_manager.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\pi.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PixelAccess.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Plugin.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginBMP.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginCUT.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginDDS.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginEXR.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginG3.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginGIF.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginHDR.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginICO.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginIFF.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginJ2K.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginJNG.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginJP2.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginJPEG.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginKOALA.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginMNG.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPCD.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPCX.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPFM.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPICT.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPNG.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPNM.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPSD.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginRAS.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginRAW.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginSGI.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginTARGA.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginTIFF.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginWBMP.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginWebP.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginXBM.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginXPM.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\png.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngerror.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngget.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngmem.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngpread.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngread.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngrio.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngrtran.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngrutil.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngset.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngtrans.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngwio.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngwrite.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngwtran.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngwutil.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\ppix_manager.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PSDParser.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\raw.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Rescale.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Resize.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\t1.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\t2.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\TagConversion.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\TagLib.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\tcd.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\tgt.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\thix_manager.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_aux.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_close.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_codec.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_color.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_compress.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_dir.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_dirinfo.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_dirread.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_dirwrite.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_dumpmode.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_error.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_extension.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_fax3.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_fax3sm.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_flush.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_getimage.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_jpeg.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_jpeg_12.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_luv.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_lzma.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_lzw.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_next.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_ojpeg.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_open.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_packbits.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_pixarlog.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_predict.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_print.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_read.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_strip.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_swab.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_thunder.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_tile.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_version.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_warning.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_write.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_zip.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\TIFFLogLuv.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\tmoColorConvert.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\tmoDrago03.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\tmoFattal02.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\tmoReinhard05.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ToneMapping.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\tpix_manager.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\transupp.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\trees.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\uncompr.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.bit_reader.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.bit_writer.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.color_cache.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.filters.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.huffman.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.huffman_encode.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.quant_levels.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.quant_levels_dec.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.random.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.rescaler.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.thread.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.utils.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\WuQuantizer.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\XTIFF.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ZLibInterface.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\zutil.c">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\libraw_cxx.cpp">
+      <Filter>FreeImage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\alc.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\common\alcomplex.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\alconfig.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\common\alexcpt.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\common\almalloc.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\alu.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\ambdec.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\autowah.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\al\auxeffectslot.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\base.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\bformatdec.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\filters\biquad.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\bs2b.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\al\buffer.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\chorus.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\compressor.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\converter.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\dedicated.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\distortion.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\dsound.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\common\dynload.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\echo.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\al\effect.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\equalizer.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\al\error.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\al\extension.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\al\filter.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\fshifter.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\helpers.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\hrtf.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\al\listener.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\loopback.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\mastering.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\mixer\mixer_c.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\mixer\mixer_sse.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\mixer\mixer_sse2.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\mixer\mixer_sse3.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\mixer\mixer_sse41.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\mixvoice.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\modulator.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\filters\nfc.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\panning.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\pshifter.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\reverb.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\ringbuffer.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\al\source.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\filters\splitter.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\common\strutils.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\common\threads.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\uhjfilter.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\uiddefs.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\vmorpher.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\wasapi.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\wave.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\winmm.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\al\state_renamed.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\al\event_renamed.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\null_backend.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\null_effects.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\SDL.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\SDL_assert.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\atomic\SDL_atomic.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\audio\SDL_audio.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\audio\SDL_audiocvt.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\audio\SDL_audiodev.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\audio\SDL_audiotypecvt.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_blendfillrect.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_blendline.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_blendpoint.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_0.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_1.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_A.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_auto.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_copy.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_N.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_slow.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_bmp.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_clipboard.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\events\SDL_clipboardevents.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\cpuinfo\SDL_cpuinfo.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\SDL_d3dmath.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\SDL_dataqueue.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\haptic\windows\SDL_dinputhaptic.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\joystick\windows\SDL_dinputjoystick.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\audio\disk\SDL_diskaudio.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\events\SDL_displayevents.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_drawline.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_drawpoint.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\events\SDL_dropevents.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\audio\dummy\SDL_dummyaudio.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\sensor\dummy\SDL_dummysensor.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\dynapi\SDL_dynapi.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_egl.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\SDL_error.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\events\SDL_events.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_fillrect.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\joystick\SDL_gamecontroller.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\events\SDL_gesture.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\stdlib\SDL_getenv.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\haptic\SDL_haptic.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\SDL_hints.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\stdlib\SDL_iconv.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\joystick\SDL_joystick.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\events\SDL_keyboard.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\SDL_log.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\stdlib\SDL_malloc.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\audio\SDL_mixer.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\events\SDL_mouse.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\dummy\SDL_nullevents.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\dummy\SDL_nullframebuffer.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\dummy\SDL_nullvideo.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_pixels.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\power\SDL_power.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\stdlib\SDL_qsort.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\events\SDL_quit.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_rect.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\SDL_render.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\direct3d11\SDL_render_d3d11.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\opengles2\SDL_render_gles2.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_render_sw.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\direct3d11\SDL_render_winrt.cpp">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_RLEaccel.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_rotate.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\file\SDL_rwops.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\sensor\SDL_sensor.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\direct3d11\SDL_shaders_d3d11.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\opengles2\SDL_shaders_gles2.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_shape.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\atomic\SDL_spinlock.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\stdlib\SDL_stdlib.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_stretch.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\stdlib\SDL_string.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_surface.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\thread\stdcpp\SDL_syscond.cpp">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\filesystem\winrt\SDL_sysfilesystem.cpp">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\haptic\dummy\SDL_syshaptic.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\joystick\dummy\SDL_sysjoystick.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\loadso\windows\SDL_sysloadso.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\thread\stdcpp\SDL_sysmutex.cpp">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\power\winrt\SDL_syspower.cpp">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\thread\generic\SDL_syssem.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\thread\stdcpp\SDL_systhread.cpp">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\timer\windows\SDL_systimer.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\thread\SDL_thread.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\timer\SDL_timer.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\events\SDL_touch.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_video.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\audio\wasapi\SDL_wasapi.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\audio\wasapi\SDL_wasapi_winrt.cpp">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\audio\SDL_wave.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\events\SDL_windowevents.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\core\windows\SDL_windows.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\haptic\windows\SDL_windowshaptic.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\joystick\windows\SDL_windowsjoystick.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\core\winrt\SDL_winrtapp_common.cpp">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\core\winrt\SDL_winrtapp_direct3d.cpp">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\core\winrt\SDL_winrtapp_xaml.cpp">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtevents.cpp">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtgamebar.cpp">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtkeyboard.cpp">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtmessagebox.cpp">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtmouse.cpp">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtopengles.cpp">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtpointerinput.cpp">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtvideo.cpp">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\core\windows\SDL_xinput.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\haptic\windows\SDL_xinputhaptic.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\joystick\windows\SDL_xinputjoystick.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\SDL_yuv.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\render\SDL_yuv_sw.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\SDL\src\video\yuv2rgb\yuv_rgb.c">
+      <Filter>SDL2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\sdl2.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\opensl.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\alsa.cpp">
+      <Filter>OpenAL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MemoryManager\MemoryManager.h">
@@ -1941,6 +4128,1581 @@
     <ClInclude Include="SimpleTrayIcon\Win32Exception.h">
       <Filter>SimpleTrayIcon</Filter>
     </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\freetype.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\ft2build.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftadvanc.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftbbox.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftbdf.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftbitmap.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftbzip2.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftcache.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftchapters.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftcid.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\config\ftconfig.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\fterrdef.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\fterrors.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftgasp.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftglyph.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftgxval.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftgzip.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\config\ftheader.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftimage.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftincrem.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftlcdfil.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftlist.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftlzw.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftmac.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftmm.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftmodapi.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftmoderr.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\config\ftmodule.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\config\ftoption.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftotval.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftoutln.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftpfr.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftrender.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftsizes.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftsnames.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\config\ftstdlib.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftstroke.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftsynth.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftsystem.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\fttrigon.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\fttypes.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftwinfnt.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ftxf86.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\t1tables.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ttnameid.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\tttables.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\tttags.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeType\include\freetype\ttunpat.h">
+      <Filter>FreeType</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\dec\alphai.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\enc\backward_references.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\bio.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\utils\bit_reader.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\utils\bit_reader_inl.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\utils\bit_writer.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\CacheFile.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\cidx_manager.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\cio.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\utils\color_cache.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\dec\common.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\dsp\common_sse2.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\enc\cost.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\ZLib\crc32.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\webp\decode.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\dec\decode_vp8.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibRawLite\internal\defines.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\ZLib\deflate.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\enc\delta_palettization.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\webp\demux.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\DeprecationManager\DeprecationMgr.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\dwaLookups.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\dwt.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Half\eLut.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\webp\encode.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\utils\endian_inl.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\event.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\webp\extras.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\utils\filters.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\FreeImageToolkit\Filters.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\Metadata\FIRational.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\webp\format_constants.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\FreeImage.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\FreeImageIO.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\Metadata\FreeImageTag.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\function_list.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\ZLib\gzguts.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Half\half.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Half\halfExport.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Half\halfFunction.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Half\halfLimits.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\enc\histogram.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\utils\huffman.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\utils\huffman_encode.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Iex\Iex.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Iex\IexBaseExc.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Iex\IexErrnoExc.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Iex\IexExport.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Iex\IexForward.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Iex\IexMacros.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Iex\IexMathExc.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IexMath\IexMathFloatExc.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IexMath\IexMathFpu.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IexMath\IexMathIeeeExc.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Iex\IexNamespace.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Iex\IexThrowErrnoExc.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmBaseConfig.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThread.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadExport.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadForward.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadMutex.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadNamespace.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadPool.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadSemaphore.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\image.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathBox.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathBoxAlgo.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathColor.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathColorAlgo.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathEuler.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathExc.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathExport.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathForward.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathFrame.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathFrustum.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathFrustumTest.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathFun.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathGL.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathGLU.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathHalfLimits.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathInt64.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathInterval.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathLimits.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathLine.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathLineAlgo.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathMath.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathMatrix.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathMatrixAlgo.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathNamespace.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathPlane.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathPlatform.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathQuat.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathRandom.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathRoots.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathShear.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathSphere.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathVec.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathVecAlgo.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfAcesFile.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfArray.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfAutoArray.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfB44Compressor.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfBoxAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfChannelList.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfChannelListAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfChromaticities.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfChromaticitiesAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfCompositeDeepScanLine.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfCompression.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfCompressionAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfCompressor.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfConvert.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfCRgbaFile.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepCompositing.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepFrameBuffer.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepImageState.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepImageStateAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepScanLineInputFile.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepScanLineInputPart.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepScanLineOutputFile.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepScanLineOutputPart.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepTiledInputFile.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepTiledInputPart.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepTiledOutputFile.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepTiledOutputPart.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDoubleAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDwaCompressor.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDwaCompressorSimd.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfEnvmap.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfEnvmapAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfExport.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfFastHuf.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfFloatAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfFloatVectorAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfForward.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfFrameBuffer.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfFramesPerSecond.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfGenericInputFile.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfGenericOutputFile.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfHeader.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfHuf.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfInputFile.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfInputPart.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfInputPartData.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfInputStreamMutex.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfInt64.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfIntAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfIO.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfKeyCode.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfKeyCodeAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfLineOrder.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfLineOrderAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfLut.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfMatrixAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfMisc.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfMultiPartInputFile.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfMultiPartOutputFile.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfMultiView.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfName.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfNamespace.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfOpaqueAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfOptimizedPixelReading.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfOutputFile.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfOutputPart.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfOutputPartData.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfOutputStreamMutex.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPartHelper.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPartType.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPixelType.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPizCompressor.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPreviewImage.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPreviewImageAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPxr24Compressor.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRational.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRationalAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRgba.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRgbaFile.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRgbaYca.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRle.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRleCompressor.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfScanLineInputFile.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfSimd.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfStandardAttributes.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfStdIO.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfStringAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfStringVectorAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfSystemSpecific.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTestFile.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfThreading.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTileDescription.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTileDescriptionAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledInputFile.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledInputPart.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledMisc.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledOutputFile.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledOutputPart.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledRgbaFile.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTileOffsets.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTimeCode.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTimeCodeAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfVecAttribute.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfVersion.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfWav.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfXdr.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfZip.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfZipCompressor.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\indexbox_manager.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\ZLib\inffast.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\ZLib\inffixed.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\ZLib\inflate.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\ZLib\inftrees.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\invert.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\j2k.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\FreeImage\J2KHelper.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibJPEG\jconfig.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibJPEG\jdct.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibJPEG\jerror.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibJPEG\jinclude.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibJPEG\jmemsys.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibJPEG\jmorecfg.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\jp2.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibJPEG\jpegint.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibJPEG\jpeglib.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibJPEG\jversion.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_chunk_descr.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_chunk_io.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_chunk_prc.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_chunks.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_cms.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_conf.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_data.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_display.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_dither.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_error.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_filter.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_jpeg.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_memory.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_object_prc.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_objects.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_pixels.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_read.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_trace.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_types.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_write.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibMNG\libmng_zlib.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibRawLite\libraw\libraw.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibRawLite\libraw\libraw_alloc.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibRawLite\libraw\libraw_const.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibRawLite\libraw\libraw_datastream.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibRawLite\libraw\libraw_internal.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibRawLite\internal\libraw_internal_funcs.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibRawLite\libraw\libraw_types.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibRawLite\libraw\libraw_version.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\dsp\lossless.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\MapIntrospector.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\mct.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\dsp\mips_macro.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\mqc.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\webp\mux.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\webp\mux_types.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\mux\muxi.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\dsp\neon.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\OpenEXRConfig.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\openjpeg.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\opj_clock.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\opj_codec.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\opj_config.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\opj_config_private.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\opj_includes.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\opj_intmath.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\opj_inttypes.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\opj_malloc.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\opj_stdint.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\pi.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\Plugin.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibPNG\png.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibPNG\pngconf.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibPNG\pngdebug.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibPNG\pnginfo.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibPNG\pnglibconf.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibPNG\pngpriv.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibPNG\pngstruct.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\FreeImage\PSDParser.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\utils\quant_levels.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\utils\quant_levels_dec.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\Quantizers.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\utils\random.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\raw.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\utils\rescaler.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\FreeImageToolkit\Resize.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\t1.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\t1_luts.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\t2.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibTIFF4\t4.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\tcd.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibOpenJPEG\tgt.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\utils\thread.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibTIFF4\tif_config.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibTIFF4\tif_dir.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibTIFF4\tif_fax3.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibTIFF4\tif_predict.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibTIFF4\tiff.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibTIFF4\tiffio.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibTIFF4\tiffiop.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibTIFF4\tiffvers.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\OpenEXR\Half\toFloat.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\ToneMapping.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibJPEG\transupp.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\ZLib\trees.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\webp\types.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\Utilities.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibTIFF4\uvcode.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibRawLite\internal\var_defines.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\enc\vp8enci.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\dec\vp8i.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\dec\vp8li.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\enc\vp8li.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\dec\webpi.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\LibWebP\src\dsp\yuv.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\ZLib\zconf.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\ZLib\zlib.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\FreeImage\Source\ZLib\zutil.h">
+      <Filter>FreeImage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\common\albyte.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\alcmain.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\common\alcomplex.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\alconfig.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\alcontext.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\common\alexcpt.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\common\almalloc.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\common\alnumeric.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\common\aloptional.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\common\alspan.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\alu.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\ambdec.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\ambidefs.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\common\atomic.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\al\auxeffectslot.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\effects\base.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\backends\base.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\bformatdec.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\filters\biquad.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\bs2b.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\build\bsinc_inc.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\al\buffer.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\compat.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\build\config.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\converter.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\cpu_caps.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\build\default-44100.mhr.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\build\default-48000.mhr.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\mixer\defs.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\devformat.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\backends\dsound.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\common\dynload.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\al\effect.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\common\endiantest.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\al\event.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\al\filter.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\fpu_modes.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\hrtf.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\mixer\hrtfbase.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\inprogext.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\common\intrusive_ptr.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\al\listener.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\logging.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\backends\loopback.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\mastering.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\common\math_defs.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\filters\nfc.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\backends\null.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\common\opthelpers.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\ringbuffer.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\al\source.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\filters\splitter.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\common\strutils.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\common\threads.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\uhjfilter.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\common\vecmat.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\common\vector.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\backends\wasapi.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\backends\wave.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\backends\winmm.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\events\blank_cursor.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\events\default_cursor.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\SDL_assert_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\audio\SDL_audio_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\audio\SDL_audiodev_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\render\software\SDL_blendfillrect.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\render\software\SDL_blendline.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\render\software\SDL_blendpoint.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\SDL_blit.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\SDL_blit_auto.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\SDL_blit_copy.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\SDL_blit_slow.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\events\SDL_clipboardevents_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\render\SDL_d3dmath.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\SDL_dataqueue.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\haptic\windows\SDL_dinputhaptic_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\joystick\windows\SDL_dinputjoystick_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\core\windows\SDL_directx.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\audio\disk\SDL_diskaudio.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\events\SDL_displayevents_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\render\software\SDL_draw.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\render\software\SDL_drawline.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\render\software\SDL_drawpoint.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\events\SDL_dropevents_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\audio\dummy\SDL_dummyaudio.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\sensor\dummy\SDL_dummysensor.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\dynapi\SDL_dynapi.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\dynapi\SDL_dynapi_overrides.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\dynapi\SDL_dynapi_procs.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\SDL_egl_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\SDL_error_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\events\SDL_events_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\SDL_fatal.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\render\opengles2\SDL_gles2funcs.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\haptic\SDL_haptic_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\SDL_hints_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\SDL_internal.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\joystick\SDL_joystick_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\events\SDL_keyboard_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\events\SDL_mouse_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\dummy\SDL_nullevents_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\dummy\SDL_nullframebuffer_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\dummy\SDL_nullvideo.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\SDL_pixels_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\SDL_rect_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\render\software\SDL_render_sw_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\render\direct3d11\SDL_render_winrt.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\SDL_RLEaccel_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\render\software\SDL_rotate.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\sensor\SDL_sensor_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\render\direct3d11\SDL_shaders_d3d11.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\render\opengles2\SDL_shaders_gles2.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\SDL_shape_internals.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\audio\SDL_sysaudio.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\events\SDL_sysevents.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\haptic\SDL_syshaptic.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\joystick\SDL_sysjoystick.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\thread\stdcpp\SDL_sysmutex_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\render\SDL_sysrender.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\sensor\SDL_syssensor.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\thread\SDL_systhread.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\thread\stdcpp\SDL_systhread_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\SDL_sysvideo.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\thread\SDL_thread_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\timer\SDL_timer_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\events\SDL_touch_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\audio\wasapi\SDL_wasapi.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\audio\SDL_wave.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\events\SDL_windowevents_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\core\windows\SDL_windows.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\haptic\windows\SDL_windowshaptic_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\joystick\windows\SDL_windowsjoystick_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\core\winrt\SDL_winrtapp_common.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\core\winrt\SDL_winrtapp_direct3d.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\core\winrt\SDL_winrtapp_xaml.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\winrt\SDL_winrtevents_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\winrt\SDL_winrtgamebar_cpp.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\winrt\SDL_winrtmessagebox.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\winrt\SDL_winrtmouse_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\winrt\SDL_winrtopengles.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\winrt\SDL_winrtvideo_cpp.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\core\windows\SDL_xinput.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\haptic\windows\SDL_xinputhaptic_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\joystick\windows\SDL_xinputjoystick_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\SDL_yuv_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\render\SDL_yuv_sw_c.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\SDL\src\video\yuv2rgb\yuv_rgb.h">
+      <Filter>SDL2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\OpenALSoft\alc\backends\opensl.h">
+      <Filter>OpenAL</Filter>
+    </ClInclude>
+    <ClInclude Include="NeoAxis\macOS\MacAppNativeWrapper.h">
+      <Filter>NeoAxis\macOS</Filter>
+    </ClInclude>
+    <ClInclude Include="NeoAxis\macOS\Joystick.h">
+      <Filter>NeoAxis\macOS</Filter>
+    </ClInclude>
+    <ClInclude Include="NeoAxis\macOS\KeyCodes.h">
+      <Filter>NeoAxis\macOS</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MemoryManager">
@@ -1958,9 +5720,6 @@
     <Filter Include="NeoAxis\vhacd">
       <UniqueIdentifier>{d0468eb4-eed8-487e-8e42-4dd9b9904992}</UniqueIdentifier>
     </Filter>
-    <Filter Include="XAtlas">
-      <UniqueIdentifier>{4e040daf-5699-49e2-a3f1-1f1d74d3487a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="MeshOptimizer">
       <UniqueIdentifier>{54d2fec4-56cb-4aaa-a817-496829cd0354}</UniqueIdentifier>
     </Filter>
@@ -1975,6 +5734,24 @@
     </Filter>
     <Filter Include="SimpleTrayIcon">
       <UniqueIdentifier>{74e69e42-6b88-4181-96c0-e6a7dd16c51d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ogg">
+      <UniqueIdentifier>{d2936131-223b-493c-8e11-85e1a53ba9ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FreeType">
+      <UniqueIdentifier>{0f0918a9-79b1-4d9d-9334-59a36efd1594}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FreeImage">
+      <UniqueIdentifier>{29e42000-d194-4ef2-a8de-2162dcd0eea8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenAL">
+      <UniqueIdentifier>{4d2d9258-4e1a-49b0-8cde-8decd7a6777f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDL2">
+      <UniqueIdentifier>{142d8bac-1d9f-44d1-b5b6-755cb435700a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NeoAxis\macOS">
+      <UniqueIdentifier>{bb0fb36f-86fa-4f42-bcf9-5f753722f7fd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2038,5 +5815,31 @@
     <None Include="Jolt\Math\Vec8.inl">
       <Filter>Physics\Jolt</Filter>
     </None>
+    <None Include="..\External\OggVorbisTheora\libogg\win32\ogg.def">
+      <Filter>ogg</Filter>
+    </None>
+    <None Include="..\External\OggVorbisTheora\libtheora\win32\libtheora.def">
+      <Filter>ogg</Filter>
+    </None>
+    <None Include="..\External\OggVorbisTheora\libvorbis\win32\vorbis.def">
+      <Filter>ogg</Filter>
+    </None>
+    <None Include="..\External\OggVorbisTheora\libvorbis\win32\vorbisfile.def">
+      <Filter>ogg</Filter>
+    </None>
+    <None Include="..\External\FreeImage\Source\LibWebP\src\file_rename.bat">
+      <Filter>FreeImage</Filter>
+    </None>
+    <None Include="..\External\FreeImage\Source\LibRawLite\internal\preprocess.pl">
+      <Filter>FreeImage</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\External\OpenALSoft\build\CMakeFiles\394239626b048b73cb3908ac6ca8d7c5\bsinc_inc.h.rule">
+      <Filter>OpenAL</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\External\OpenALSoft\CMakeLists.txt">
+      <Filter>OpenAL</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

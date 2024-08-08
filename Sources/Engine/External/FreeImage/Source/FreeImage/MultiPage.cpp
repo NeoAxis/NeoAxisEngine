@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef ___
+
 // ==========================================================
 // Multi-Page functions
 //
@@ -895,3 +898,6 @@ FreeImage_SaveMultiBitmapToMemory(FREE_IMAGE_FORMAT fif, FIMULTIBITMAP *bitmap, 
 
 	return FALSE;
 }
+
+//!!!!betauser
+#endif

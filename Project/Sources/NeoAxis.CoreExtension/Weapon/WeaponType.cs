@@ -300,6 +300,18 @@ namespace NeoAxis
 		public event Action<WeaponType> Mode1MaxRecoilOffsetTimeChanged;
 		ReferenceField<double> _mode1MaxRecoilOffsetTime = 0.03;
 
+		[DefaultValue( 0.0 )]
+		[DisplayName( "Mode 1 Recoil Force" )]
+		[Category( "Mode 1" )]
+		public Reference<double> Mode1RecoilForce
+		{
+			get { if( _mode1RecoilForce.BeginGet() ) Mode1RecoilForce = _mode1RecoilForce.Get( this ); return _mode1RecoilForce.value; }
+			set { if( _mode1RecoilForce.BeginSet( this, ref value ) ) { try { Mode1RecoilForceChanged?.Invoke( this ); } finally { _mode1RecoilForce.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Mode1RecoilForce"/> property value changes.</summary>
+		public event Action<WeaponType> Mode1RecoilForceChanged;
+		ReferenceField<double> _mode1RecoilForce = 0.0;
+
 		[DefaultValue( "1 50" )]
 		[DisplayName( "Mode 1 Firing Distance" )]
 		[Category( "Mode 1" )]
@@ -631,6 +643,18 @@ namespace NeoAxis
 		public event Action<WeaponType> Mode2MaxRecoilOffsetTimeChanged;
 		ReferenceField<double> _mode2MaxRecoilOffsetTime = 0.05;
 
+		[DefaultValue( 0.0 )]
+		[DisplayName( "Mode 2 Recoil Force" )]
+		[Category( "Mode 2" )]
+		public Reference<double> Mode2RecoilForce
+		{
+			get { if( _mode2RecoilForce.BeginGet() ) Mode2RecoilForce = _mode2RecoilForce.Get( this ); return _mode2RecoilForce.value; }
+			set { if( _mode2RecoilForce.BeginSet( this, ref value ) ) { try { Mode2RecoilForceChanged?.Invoke( this ); } finally { _mode2RecoilForce.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Mode2RecoilForce"/> property value changes.</summary>
+		public event Action<WeaponType> Mode2RecoilForceChanged;
+		ReferenceField<double> _mode2RecoilForce = 0.0;
+
 		[DefaultValue( "1 50" )]
 		[DisplayName( "Mode 2 Firing Distance" )]
 		[Category( "Mode 2" )]
@@ -824,6 +848,7 @@ namespace NeoAxis
 				case nameof( Mode1FireMuzzleFlashParticle ):
 				case nameof( Mode1MaxRecoilOffset ):
 				case nameof( Mode1MaxRecoilOffsetTime ):
+				case nameof( Mode1RecoilForce ):
 				case nameof( Mode1FiringDistance ):
 				case nameof( Mode1StopMovementWhenFiring ):
 					//case nameof( Mode1FiringEndSound ):
@@ -866,6 +891,7 @@ namespace NeoAxis
 				case nameof( Mode2FireMuzzleFlashParticle ):
 				case nameof( Mode2MaxRecoilOffset ):
 				case nameof( Mode2MaxRecoilOffsetTime ):
+				case nameof( Mode2RecoilForce ):
 				case nameof( Mode2FiringDistance ):
 				case nameof( Mode2StopMovementWhenFiring ):
 					//case nameof( Mode2FiringEndSound ):

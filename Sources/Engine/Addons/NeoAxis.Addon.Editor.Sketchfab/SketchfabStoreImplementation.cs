@@ -181,7 +181,18 @@ goNext:;
 					//remove tags
 					try
 					{
-						info.ShortDescription = Regex.Replace( info.ShortDescription, "<.*?>", string.Empty );
+						var text = Regex.Replace( info.ShortDescription, "<.*?>", string.Empty );
+
+						text = text.Replace( "  ", " " );
+
+						text = Regex.Replace( text, @"(?<=[.?!])(?=[^\s])", " " );
+
+						if( text.Length > 80 )
+							text = text.Substring( 0, 80 ) + "...";
+
+						info.ShortDescription = text;
+
+						//info.ShortDescription = Regex.Replace( info.ShortDescription, "<.*?>", string.Empty );
 					}
 					catch { }
 
@@ -390,7 +401,8 @@ checkNext:;
 			var namePath = package.Identifier.Replace( '_', ' ' );
 			foreach( char c in new string( Path.GetInvalidFileNameChars() ) + new string( Path.GetInvalidPathChars() ) )
 				namePath = namePath.Replace( c.ToString(), "_" );
-			return @$"Content\Models\Authors\{package.Author}\{namePath}";
+			return @$"Content\Models\{package.Author}\{namePath}";
+			//return @$"Content\Models\Authors\{package.Author}\{namePath}";
 		}
 
 		public override void ThreadDownloadBody( StoresWindow.ThreadDownloadData data )
@@ -627,16 +639,28 @@ checkNext:;
 					{
 						var product = ComponentUtility.CreateComponent<Product_Store>( null, true, true );
 						product.Name = package.Title;
-						product.ShortDescription = package.ShortDescription;
+
+						product.Description = package.ShortDescription;
 
 						{
 							var index = licenseTxtText.IndexOf( "this credit wherever you share it:" );
 							if( index != -1 )
 							{
 								index += "this credit wherever you share it:".Length + 1;
-								product.FullDescription = licenseTxtText.Substring( index ).Trim( new char[] { ' ', '\n', '\r' } );
+								product.Description = licenseTxtText.Substring( index ).Trim( new char[] { ' ', '\n', '\r' } );
 							}
 						}
+
+						//product.ShortDescription = package.ShortDescription;
+
+						//{
+						//	var index = licenseTxtText.IndexOf( "this credit wherever you share it:" );
+						//	if( index != -1 )
+						//	{
+						//		index += "this credit wherever you share it:".Length + 1;
+						//		product.FullDescription = licenseTxtText.Substring( index ).Trim( new char[] { ' ', '\n', '\r' } );
+						//	}
+						//}
 
 						product.ProjectItemCategories = Product_Store.ProjectItemCategoriesEnum.Models;
 

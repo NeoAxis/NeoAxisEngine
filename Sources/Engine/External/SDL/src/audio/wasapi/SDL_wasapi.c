@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /*
   Simple DirectMedia Layer
   Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
@@ -767,3 +770,5 @@ AudioBootStrap WASAPI_bootstrap = {
 #endif  /* SDL_AUDIO_DRIVER_WASAPI */
 
 /* vi: set ts=4 sw=4 expandtab: */
+
+#endif

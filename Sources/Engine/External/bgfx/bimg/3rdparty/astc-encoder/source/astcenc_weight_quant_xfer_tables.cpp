@@ -1,3 +1,6 @@
+//!!!!betauser. android compiler crash
+#ifndef __ANDROID__
+
 // SPDX-License-Identifier: Apache-2.0
 // ----------------------------------------------------------------------------
 // Copyright 2011-2021 Arm Limited
@@ -145,3 +148,5 @@ const quant_and_transfer_table quant_and_xfer_tables[12] {
 		 0x403c,_,0x403e}
 	}
 };
+
+#endif

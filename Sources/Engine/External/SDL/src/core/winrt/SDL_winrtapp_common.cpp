@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /*
   Simple DirectMedia Layer
   Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
@@ -65,3 +68,5 @@ SDL_WinRTGetDeviceFamily()
 
     return SDL_WINRT_DEVICEFAMILY_UNKNOWN;
 }
+
+#endif

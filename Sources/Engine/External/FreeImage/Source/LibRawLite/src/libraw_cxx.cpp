@@ -2655,7 +2655,7 @@ int LibRaw::phase_one_subtract_black(ushort *src, ushort *dest)
         {
           if (!imgdata.rawdata.ph1_cblack || !imgdata.rawdata.ph1_rblack)
             {
-              register int bl = imgdata.color.phase_one_data.t_black;
+              /*register*/ int bl = imgdata.color.phase_one_data.t_black;
               for (int row = 0; row < S.raw_height; row++)
                 {
                   checkCancel();
@@ -2669,7 +2669,7 @@ int LibRaw::phase_one_subtract_black(ushort *src, ushort *dest)
             }
           else
             {
-              register int bl = imgdata.color.phase_one_data.t_black;
+              /*register*/ int bl = imgdata.color.phase_one_data.t_black;
               for (int row = 0; row < S.raw_height; row++)
                 {
                   checkCancel();
@@ -5100,7 +5100,7 @@ static char *utf2char(utf16_t *str, char *buffer)
 
 static void *lr_memmem(const void *l, size_t l_len, const void *s, size_t s_len)
 {
-	register char *cur, *last;
+    /*register*/ char *cur, *last;
 	const char *cl = (const char *)l;
 	const char *cs = (const char *)s;
 

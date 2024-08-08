@@ -3,22 +3,14 @@ using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Linq;
 
 namespace NeoAxis
 {
-	//Car
-	//Truck
-	//Tractor
-	//Tank
-	//Airplane with wheels
-	//Helicopter
-	//Bike
-	//Three wheel bike
-
 	/// <summary>
 	/// A component to make instance of a vehicle in the scene.
 	/// </summary>
-	[AddToResourcesWindow( @"Addons\Vehicle\Vehicle", 22002 )]
+	[AddToResourcesWindow( @"Addons\Vehicle\Vehicle", 22003 )]
 	public class Vehicle : MeshInSpace, InteractiveObjectInterface, IProcessDamage
 	{
 		static FastRandom staticRandom = new FastRandom( 0 );
@@ -59,8 +51,12 @@ namespace NeoAxis
 
 		//float remainingTimeToUpdateObjectsOnSeat;
 
-		float visualHeadlights;
+		float visualHeadlightLow;
+		float visualHeadlightHigh;
 		float visualBrake;
+		float visualLeftTurnSignal;
+		float visualRightTurnSignal;
+		//!!!!add more
 
 		//VehicleInputProcessing inputProcessingCached;
 		//!!!!
@@ -80,6 +76,14 @@ namespace NeoAxis
 		bool sentToClientsMotorOn;
 		int sentToClientsCurrentGear;
 		float sentToClientsCurrentRPM;
+
+		//tracks
+		Curve lastTrackFragmentsCurveLeft;
+		Curve lastTrackFragmentsCurveRight;
+		double trackFragmentsLinearVelocityLeft;
+		double trackFragmentsLinearVelocityRight;
+		double trackFragmentsLinearPositionLeft;
+		double trackFragmentsLinearPositionRight;
 
 		////!!!!fix internal Jolt issue
 		//float skipFirstUpdateFromLibrary = 0.1f;
@@ -139,8 +143,6 @@ namespace NeoAxis
 		ReferenceList<ObjectInSpace> _objectsOnSeats;
 
 		/////////////////////////////////////////
-
-		//!!!!Tracked chassis
 
 		/// <summary>
 		/// The throttle parameter to control the vehicle.
@@ -206,16 +208,52 @@ namespace NeoAxis
 		public event Action<Vehicle> SteeringChanged;
 		ReferenceField<float> _steering = 0.0f;
 
+		[Category( "Lights" )]
 		[DefaultValue( 0.0f )]
 		[Range( 0, 1 )]
-		public Reference<float> Headlights
+		public Reference<float> HeadlightsLow
 		{
-			get { if( _headlights.BeginGet() ) Headlights = _headlights.Get( this ); return _headlights.value; }
-			set { if( _headlights.BeginSet( this, ref value ) ) { try { HeadlightsChanged?.Invoke( this ); } finally { _headlights.EndSet(); } } }
+			get { if( _headlightsLow.BeginGet() ) HeadlightsLow = _headlightsLow.Get( this ); return _headlightsLow.value; }
+			set { if( _headlightsLow.BeginSet( this, ref value ) ) { try { HeadlightsLowChanged?.Invoke( this ); } finally { _headlightsLow.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="Headlights"/> property value changes.</summary>
-		public event Action<Vehicle> HeadlightsChanged;
-		ReferenceField<float> _headlights = 0.0f;
+		/// <summary>Occurs when the <see cref="HeadlightsLow"/> property value changes.</summary>
+		public event Action<Vehicle> HeadlightsLowChanged;
+		ReferenceField<float> _headlightsLow = 0.0f;
+
+		[Category( "Lights" )]
+		[DefaultValue( 0.0f )]
+		[Range( 0, 1 )]
+		public Reference<float> HeadlightsHigh
+		{
+			get { if( _headlightsHigh.BeginGet() ) HeadlightsHigh = _headlightsHigh.Get( this ); return _headlightsHigh.value; }
+			set { if( _headlightsHigh.BeginSet( this, ref value ) ) { try { HeadlightsHighChanged?.Invoke( this ); } finally { _headlightsHigh.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="HeadlightsHigh"/> property value changes.</summary>
+		public event Action<Vehicle> HeadlightsHighChanged;
+		ReferenceField<float> _headlightsHigh = 0.0f;
+
+		[Category( "Lights" )]
+		[DefaultValue( 0.0f )]
+		[Range( 0, 1 )]
+		public Reference<float> LeftTurnSignal
+		{
+			get { if( _leftTurnSignal.BeginGet() ) LeftTurnSignal = _leftTurnSignal.Get( this ); return _leftTurnSignal.value; }
+			set { if( _leftTurnSignal.BeginSet( this, ref value ) ) { try { LeftTurnSignalChanged?.Invoke( this ); } finally { _leftTurnSignal.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LeftTurnSignal"/> property value changes.</summary>
+		public event Action<Vehicle> LeftTurnSignalChanged;
+		ReferenceField<float> _leftTurnSignal = 0.0f;
+
+		[Category( "Lights" )]
+		[DefaultValue( 0.0f )]
+		public Reference<float> RightTurnSignal
+		{
+			get { if( _rightTurnSignal.BeginGet() ) RightTurnSignal = _rightTurnSignal.Get( this ); return _rightTurnSignal.value; }
+			set { if( _rightTurnSignal.BeginSet( this, ref value ) ) { try { RightTurnSignalChanged?.Invoke( this ); } finally { _rightTurnSignal.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RightTurnSignal"/> property value changes.</summary>
+		public event Action<Vehicle> RightTurnSignalChanged;
+		ReferenceField<float> _rightTurnSignal = 0.0f;
 
 		//network: no sense to send to clients
 		[Browsable( false )]
@@ -261,10 +299,12 @@ namespace NeoAxis
 		public class DynamicDataClass
 		{
 			public VehicleType VehicleType;
+			public VehicleTypeWheel[] VehicleTypeWheels;
+			public int CreatedVersionOfType;
 			public PhysicsModeEnum PhysicsMode;
 			public Mesh Mesh;
-			public Mesh FrontWheelMesh;
-			public Mesh RearWheelMesh;
+			//public Mesh FrontWheelMesh;
+			//public Mesh RearWheelMesh;
 			public Bounds LocalBoundsDefault;
 			public float LocalBoundsDefaultBoundingRadius;
 
@@ -274,19 +314,30 @@ namespace NeoAxis
 
 			public TurretItem[] Turrets;
 			public LightItem[] Lights;
+			//!!!!
+			//public AeroEngineItem[] AeroEngines;
 
 			public int CurrentGear;
 			public bool IsSwitchingGear;
 			public float CurrentRPM;
 
+			public Mesh TrackFragmentMesh;
+			//public TrackItem[] Tracks;
+
 			/////////////////////
 
 			public enum WhichWheel
 			{
+				//Wheels mode
 				FrontLeft,
 				FrontRight,
 				RearLeft,
 				RearRight,
+
+				//Tracks mode
+				TrackLeft,
+				TrackRight,
+
 				//Custom1, Custom2, etc
 			}
 
@@ -296,10 +347,13 @@ namespace NeoAxis
 			{
 				//static data
 				public WhichWheel Which;
+				public int WhichIndex;
+
 				//public bool WheelDrive;
 				public float Diameter;
 				public float Width;
 				public Vector3F InitialPosition;
+				public Mesh Mesh;
 
 				//dynamic data
 				public Vector3F CurrentPosition;
@@ -307,6 +361,7 @@ namespace NeoAxis
 				//public float[] LastPositions;
 
 				public QuaternionF CurrentRotation;
+				public float AngularVelocity;
 
 				////RealPhysics mode
 				//public RigidBody RigidBody;
@@ -377,11 +432,56 @@ namespace NeoAxis
 
 			/////////////////////
 
+			public enum LightTypePurpose
+			{
+				Unknown,
+
+				Headlight_Low,
+				Headlight_High,
+				Brake,
+				Left_Turn,
+				Right_Turn,
+
+				//!!!!impl
+				//Front_Fog,
+				//Move_Back,
+				//Daytime_Running
+			}
+
+			/////////////////////
+
 			public class LightItem
 			{
 				public Light LightType;
+				public LightTypePurpose LightTypePurpose;
+
 				public Light Light;
 			}
+
+			/////////////////////
+
+			//!!!!
+			//public class AeroEngineItem
+			//{
+			//	public VehicleAeroEngine EngineType;
+
+			//	public VehicleAeroEngine Engine;
+			//}
+
+			/////////////////////
+
+			//public struct TrackFragmentItem
+			//{
+			//	public Vector3F Position;
+			//	public QuaternionF Rotation;
+			//}
+
+			/////////////////////
+
+			//public class TrackItem
+			//{
+			//	public TrackFragmentItem[] Fragments;
+			//}
 		}
 
 		/////////////////////////////////////////
@@ -432,6 +532,8 @@ namespace NeoAxis
 				var updated = false;
 				SimulateVisualHeadlights( ref updated, true );
 				SimulateVisualBrake( ref updated, true );
+				SimulateVisualTurnSignals( ref updated, true );
+				UpdateLightComponents();
 			}
 			else
 			{
@@ -530,7 +632,32 @@ namespace NeoAxis
 			var activateBody = Throttle != 0 || currentSteering != 0;
 			if( driverInputNeedUpdate || activateBody || lastSteering != currentSteering )
 			{
-				dynamicData.constraint.SetDriverInput( (float)Throttle, (float)currentSteering, (float)Brake, (float)HandBrake, activateBody );
+				var type = dynamicData.VehicleType;
+				var tracks = type != null && type.Chassis.Value == NeoAxis.VehicleType.ChassisEnum.Tracks;
+				var wheels = !tracks;
+
+				if( wheels )
+					dynamicData.constraint.SetDriverInput( (float)Throttle, 0, (float)currentSteering, (float)Brake, (float)HandBrake, activateBody );
+
+				if( tracks )
+				{
+					var forward = MathEx.Clamp( Math.Abs( Throttle ) + Math.Abs( currentSteering ), 0, 1 );
+					if( Throttle < 0 )
+						forward = -forward;
+
+					var left = MathEx.Clamp( 1.0f + currentSteering, 0.01f, 1.0f );
+					var right = MathEx.Clamp( 1.0f - currentSteering, 0.01f, 1.0f );
+
+					var brake = MathEx.Saturate( Brake.Value + HandBrake.Value );
+
+					// Set input from driver
+					// @param inForward Value between -1 and 1 for auto transmission and value between 0 and 1 indicating desired driving direction and amount the gas pedal is pressed
+					// @param inLeftRatio Value between -1 and 1 indicating an extra multiplier to the rotation rate of the left track (used for steering)
+					// @param inRightRatio Value between -1 and 1 indicating an extra multiplier to the rotation rate of the right track (used for steering)
+					// @param inBrake Value between 0 and 1 indicating how strong the brake pedal is pressed
+					dynamicData.constraint.SetDriverInput( (float)forward, (float)left, (float)right, (float)brake, 0, activateBody );
+				}
+
 				mustBeDynamicRemainingTime = initialization ? 0 : 3.0f;
 				//needBeActiveBecauseDriverInput = true;
 			}
@@ -599,9 +726,18 @@ namespace NeoAxis
 						var steering = Steering.Value;
 						if( currentSteering != steering )
 						{
+							double steeringTime;
+							if( dynamicData.VehicleTypeWheels[ 0 ].MaxSteeringAngle.Value > 0 )
+								steeringTime = dynamicData.VehicleTypeWheels[ 0 ].SteeringTime;
+							else
+								steeringTime = dynamicData.VehicleTypeWheels[ 1 ].SteeringTime;
+							if( steeringTime == 0 )
+								steeringTime = 0.000001;
+
 							if( currentSteering > steering )
 							{
-								currentSteering -= Time.SimulationDelta / dynamicData.VehicleType.FrontWheelSteeringTime;
+								currentSteering -= Time.SimulationDelta / steeringTime;
+								//currentSteering -= Time.SimulationDelta / dynamicData.VehicleType.FrontWheelSteeringTime;
 								if( currentSteering < steering )
 									currentSteering = steering;
 								if( currentSteering < -1 )
@@ -609,7 +745,8 @@ namespace NeoAxis
 							}
 							else
 							{
-								currentSteering += Time.SimulationDelta / dynamicData.VehicleType.FrontWheelSteeringTime;
+								currentSteering += Time.SimulationDelta / steeringTime;
+								//currentSteering += Time.SimulationDelta / dynamicData.VehicleType.FrontWheelSteeringTime;
 								if( currentSteering > steering )
 									currentSteering = steering;
 								if( currentSteering > 1 )
@@ -706,10 +843,10 @@ namespace NeoAxis
 									wheel.CurrentPosition.Z = wheelData->Position;// = wheelData->SuspensionLength - wheel.Diameter * 0.5f;
 								}
 
-
 								wheel.CurrentRotation = QuaternionF.FromRotateByZ( -wheelData->SteerAngle ) * QuaternionF.FromRotateByY( -wheelData->RotationAngle );
+
 								//!!!!use angular veclocity for motion blur?
-								//wheelData->AngularVelocity
+								wheel.AngularVelocity = wheelData->AngularVelocity;
 
 								Scene.PhysicsWorldClass.Body contactBody = null;
 								if( wheelData->ContactBody != 0xffffffff )
@@ -740,6 +877,8 @@ namespace NeoAxis
 
 								writer.Write( new HalfType( wheel.CurrentPosition.Z ) );
 								writer.Write( wheel.CurrentRotation.ToQuaternionH() );
+								//for tracks
+								writer.Write( wheel.AngularVelocity );
 
 								//!!!!send contact body?
 							}
@@ -766,9 +905,20 @@ namespace NeoAxis
 
 				if( NetworkIsSingle )
 				{
-					SimulateVisualHeadlights( ref updated );
-					SimulateVisualBrake( ref updated );
+					var lightsUpdated = false;
+					SimulateVisualHeadlights( ref lightsUpdated );
+					SimulateVisualBrake( ref lightsUpdated );
+					SimulateVisualTurnSignals( ref lightsUpdated );
+					if( lightsUpdated )
+					{
+						updated = true;
+						UpdateLightComponents();
+					}
 				}
+
+				SimulateAeroEngines();
+
+				SimulateTrackFragmentsLinearPositions();
 
 				//!!!!merge with UpdateWheels?
 				if( NetworkIsServer && dynamicData != null )
@@ -802,8 +952,18 @@ namespace NeoAxis
 			UpdateTurrets( ref updated );
 			SimulateMotorSound( ref updated );
 			SimulateCurrentGearSound( ref updated );
-			SimulateVisualHeadlights( ref updated );
-			SimulateVisualBrake( ref updated );
+
+			var lightsUpdated = false;
+			SimulateVisualHeadlights( ref lightsUpdated );
+			SimulateVisualBrake( ref lightsUpdated );
+			SimulateVisualTurnSignals( ref lightsUpdated );
+			if( lightsUpdated )
+			{
+				updated = true;
+				UpdateLightComponents();
+			}
+
+			SimulateTrackFragmentsLinearPositions();
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -846,9 +1006,16 @@ namespace NeoAxis
 
 			if( EngineApp.IsEditor )
 			{
-				var updated = false;
-				SimulateVisualHeadlights( ref updated, true );
-				SimulateVisualBrake( ref updated, true );
+				var lightsUpdated = false;
+				SimulateVisualHeadlights( ref lightsUpdated, true );
+				SimulateVisualBrake( ref lightsUpdated, true );
+				SimulateVisualTurnSignals( ref lightsUpdated, true );
+				if( lightsUpdated )
+					UpdateLightComponents();
+
+				//update when Version of type is updated
+				if( dynamicData != null && dynamicData.CreatedVersionOfType != dynamicData.VehicleType.Version )
+					needRecreateDynamicData = true;
 			}
 		}
 
@@ -1099,7 +1266,7 @@ namespace NeoAxis
 						var tr = TransformV;
 
 						//wheels
-						if( dynamicData.Wheels != null )
+						if( dynamicData.Wheels != null && ( !EngineApp.IsEditor || dynamicData.VehicleType.EditorDisplayWheels ) )
 						{
 							//foreach( var wheel in dynamicData.Wheels )
 							for( int nWheel = 0; nWheel < dynamicData.Wheels.Length; nWheel++ )
@@ -1109,8 +1276,6 @@ namespace NeoAxis
 								{
 									var color = new ColorValue( 1, 0, 0 );
 									renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
-
-									//!!!!slowly
 
 									var m1 = new Matrix4( wheel.CurrentRotation.ToMatrix3(), wheel.CurrentPosition + new Vector3( 0, -wheel.Width * 0.5, 0 ) );
 									var m2 = new Matrix4( wheel.CurrentRotation.ToMatrix3(), wheel.CurrentPosition + new Vector3( 0, wheel.Width * 0.5, 0 ) );
@@ -1182,14 +1347,17 @@ namespace NeoAxis
 						}
 
 						//seats
-						for( int n = 0; n < dynamicData.Seats.Length; n++ )
+						if( dynamicData.Seats != null && ( !EngineApp.IsEditor || dynamicData.VehicleType.EditorDisplaySeats ) )
 						{
-							var seatItem = dynamicData.Seats[ n ];
-							DebugRenderSeat( context, seatItem );
+							for( int n = 0; n < dynamicData.Seats.Length; n++ )
+							{
+								var seatItem = dynamicData.Seats[ n ];
+								DebugRenderSeat( context, seatItem );
+							}
 						}
 
 						//lights
-						if( dynamicData.Lights != null )
+						if( dynamicData.Lights != null && ( !EngineApp.IsEditor || dynamicData.VehicleType.EditorDisplayLights ) )
 						{
 							var color = ProjectSettings.Get.Colors.SceneShowLightColor.Value;
 							color.Alpha *= 0.25f;
@@ -1197,8 +1365,6 @@ namespace NeoAxis
 							foreach( var lightItem in dynamicData.Lights )
 								lightItem.Light?.DebugDraw( context.Owner );
 						}
-
-						//!!!!
 
 						//var tr = GetTransform();
 						//var scaleFactor = tr.Scale.MaxComponent();
@@ -1215,6 +1381,29 @@ namespace NeoAxis
 						renderer.SetColor( new ColorValue( 1, 0, 0 ) );
 						renderer.AddSphere( new Sphere( RequiredLookToPosition.Value, .05 ) );
 					}
+
+					//track fragments curve
+					if( dynamicData != null && dynamicData.VehicleType.Chassis.Value == NeoAxis.VehicleType.ChassisEnum.Tracks && ( !EngineApp.IsEditor || dynamicData.VehicleType.EditorDisplayWheels ) ) // Tracks != null )
+					{
+						for( int n = 0; n < 2; n++ )
+						{
+							var curve = n == 0 ? lastTrackFragmentsCurveLeft : lastTrackFragmentsCurveRight;
+							if( curve != null )
+							{
+								var step = 0.2;
+
+								renderer.SetColor( new ColorValue( 1, 0, 0 ) );
+								var previousValue = Vector3.Zero;
+								for( var t = 0.0; t < curve.Points[ curve.Points.Count - 1 ].Time; t += step )
+								{
+									var v = curve.CalculateValueByTime( t );
+									if( t != 0 )
+										renderer.AddLine( TransformV * previousValue, TransformV * v );
+									previousValue = v;
+								}
+							}
+						}
+					}
 				}
 
 				//!!!!
@@ -1223,7 +1412,7 @@ namespace NeoAxis
 					context2.disableShowingLabelForThisObject = true;
 
 #if !DEPLOY
-				//draw selection
+				//draw selection, touch Mesh of type
 				if( EngineApp.IsEditor )
 				{
 					if( context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) )
@@ -1241,8 +1430,30 @@ namespace NeoAxis
 						viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 						DebugDraw( viewport );
 					}
+
+					//touch Mesh of type
+					if( dynamicData != null )
+					{
+						var type = dynamicData?.VehicleType;
+						if( type != null )
+						{
+							dynamicData.VehicleType.Mesh.Touch();
+							foreach( var wheel in dynamicData.VehicleTypeWheels )
+								wheel.Mesh.Touch();
+							//if( dynamicData.Tracks != null )
+							dynamicData.VehicleType.TrackFragmentMesh.Touch();
+						}
+					}
+					//var type = dynamicData?.VehicleType;
+					//if( type != null )
+					//{
+					//	type.Mesh.Touch();
+					//	type.FrontWheelMesh.Touch();
+					//	type.RearWheelMesh.Touch();
+					//}
 				}
 #endif
+
 			}
 		}
 
@@ -1350,6 +1561,201 @@ namespace NeoAxis
 			needRecreateDynamicData = true;
 		}
 
+		static void CalculateWheelWhichIndexByIndex( DynamicDataClass dynamicData /*VehicleType type, VehicleTypeWheel[] typeTrackWheels*/, int index, out DynamicDataClass.WhichWheel which, out int whichIndex )
+		{
+			var type = dynamicData.VehicleType;
+
+			if( type.Chassis.Value == NeoAxis.VehicleType.ChassisEnum.Wheels )
+			{
+				var typeFrontWheel = dynamicData.VehicleTypeWheels[ 0 ];
+				var typeRearWheel = dynamicData.VehicleTypeWheels[ 1 ];
+
+				int currentIndex = 0;
+
+				for( int n = 0; n < typeFrontWheel.Count; n++ )
+				{
+					if( index == currentIndex )
+					{
+						which = DynamicDataClass.WhichWheel.FrontLeft;
+						whichIndex = n;
+						return;
+					}
+					currentIndex++;
+				}
+
+				if( typeFrontWheel.Pair )
+				{
+					for( int n = 0; n < typeFrontWheel.Count; n++ )
+					{
+						if( index == currentIndex )
+						{
+							which = DynamicDataClass.WhichWheel.FrontRight;
+							whichIndex = n;
+							return;
+						}
+						currentIndex++;
+					}
+				}
+
+				for( int n = 0; n < typeRearWheel.Count; n++ )
+				{
+					if( index == currentIndex )
+					{
+						which = DynamicDataClass.WhichWheel.RearLeft;
+						whichIndex = n;
+						return;
+					}
+					currentIndex++;
+				}
+
+				if( typeRearWheel.Pair )
+				{
+					for( int n = 0; n < typeRearWheel.Count; n++ )
+					{
+						if( index == currentIndex )
+						{
+							which = DynamicDataClass.WhichWheel.RearRight;
+							whichIndex = n;
+							return;
+						}
+						currentIndex++;
+					}
+				}
+			}
+			else if( type.Chassis.Value == NeoAxis.VehicleType.ChassisEnum.Tracks )
+			{
+				var typeWheels = dynamicData.VehicleTypeWheels;
+
+				int currentIndex = 0;
+
+				for( int n = 0; n < typeWheels.Length; n++ )
+				{
+					if( index == currentIndex )
+					{
+						which = DynamicDataClass.WhichWheel.TrackLeft;
+						whichIndex = n;
+						return;
+					}
+					currentIndex++;
+				}
+
+				for( int n = 0; n < typeWheels.Length; n++ )
+				{
+					if( index == currentIndex )
+					{
+						which = DynamicDataClass.WhichWheel.TrackRight;
+						whichIndex = n;
+						return;
+					}
+					currentIndex++;
+				}
+
+				//var leftIndex = 0;
+				//for( int n = 0; n < typeWheels.Length; n++ )
+				//{
+				//	for( int n2 = 0; n2 < typeWheels[ n ].Count; n2++ )
+				//	{
+				//		if( index == currentIndex )
+				//		{
+				//			which = DynamicDataClass.WhichWheel.TrackLeft;
+				//			whichIndex = leftIndex;// n;
+				//			return;
+				//		}
+				//		currentIndex++;
+				//		leftIndex++;
+				//	}
+				//}
+
+				//var rightIndex = 0;
+				//for( int n = 0; n < typeWheels.Length; n++ )
+				//{
+				//	for( int n2 = 0; n2 < typeWheels[ n ].Count; n2++ )
+				//	{
+				//		if( index == currentIndex )
+				//		{
+				//			which = DynamicDataClass.WhichWheel.TrackRight;
+				//			whichIndex = rightIndex;// n;
+				//			return;
+				//		}
+				//		currentIndex++;
+				//		rightIndex++;
+				//	}
+				//}
+			}
+
+			which = 0;
+			whichIndex = 0;
+		}
+
+		static int CalculateWheelIndex( DynamicDataClass dynamicData /*VehicleType type, VehicleTypeWheel[] typeTrackWheels*/, DynamicDataClass.WhichWheel which, int whichIndex )
+		{
+			var type = dynamicData.VehicleType;
+
+			if( type.Chassis.Value == NeoAxis.VehicleType.ChassisEnum.Wheels )
+			{
+				var typeFrontWheel = dynamicData.VehicleTypeWheels[ 0 ];
+				var typeRearWheel = dynamicData.VehicleTypeWheels[ 1 ];
+
+				int currentIndex = 0;
+
+				for( int n = 0; n < typeFrontWheel.Count; n++ )
+				{
+					if( which == DynamicDataClass.WhichWheel.FrontLeft && whichIndex == n )
+						return currentIndex;
+					currentIndex++;
+				}
+
+				if( typeFrontWheel.Pair )
+				{
+					for( int n = 0; n < typeFrontWheel.Count; n++ )
+					{
+						if( which == DynamicDataClass.WhichWheel.FrontRight && whichIndex == n )
+							return currentIndex;
+						currentIndex++;
+					}
+				}
+
+				for( int n = 0; n < typeRearWheel.Count; n++ )
+				{
+					if( which == DynamicDataClass.WhichWheel.RearLeft && whichIndex == n )
+						return currentIndex;
+					currentIndex++;
+				}
+
+				if( typeRearWheel.Pair )
+				{
+					for( int n = 0; n < typeRearWheel.Count; n++ )
+					{
+						if( which == DynamicDataClass.WhichWheel.RearRight && whichIndex == n )
+							return currentIndex;
+						currentIndex++;
+					}
+				}
+			}
+			else if( type.Chassis.Value == NeoAxis.VehicleType.ChassisEnum.Tracks )
+			{
+				var typeWheels = dynamicData.VehicleTypeWheels;
+
+				int currentIndex = 0;
+
+				for( int n = 0; n < typeWheels.Length; n++ )
+				{
+					if( which == DynamicDataClass.WhichWheel.TrackLeft && whichIndex == n )
+						return currentIndex;
+					currentIndex++;
+				}
+
+				for( int n = 0; n < typeWheels.Length; n++ )
+				{
+					if( which == DynamicDataClass.WhichWheel.TrackRight && whichIndex == n )
+						return currentIndex;
+					currentIndex++;
+				}
+			}
+
+			return 0;
+		}
+
 		public void CreateDynamicData()
 		{
 			DestroyDynamicData();
@@ -1369,12 +1775,34 @@ namespace NeoAxis
 			if( type == null )
 				return;
 
+			var wheels = type.Chassis.Value == NeoAxis.VehicleType.ChassisEnum.Wheels;
+			var tracks = type.Chassis.Value == NeoAxis.VehicleType.ChassisEnum.Tracks;
+
+			//!!!!GC
+			var typeWheels = type.GetComponents<VehicleTypeWheel>().Where( w => w.Enabled ).ToArray();
+
+			//for Wheels mode must be two VehicleTypeWheel components
+			if( wheels && typeWheels.Length != 2 )
+				return;
+			if( tracks && typeWheels.Length < 2 )
+				return;
+
 			dynamicData = new DynamicDataClass();
 			dynamicData.VehicleType = type;
+			dynamicData.VehicleTypeWheels = typeWheels;
+			dynamicData.CreatedVersionOfType = type.Version;
 			dynamicData.PhysicsMode = PhysicsMode;
 			dynamicData.Mesh = type.Mesh;
-			dynamicData.FrontWheelMesh = type.FrontWheelMesh;
-			dynamicData.RearWheelMesh = type.RearWheelMesh;
+			//dynamicData.FrontWheelMesh = type.FrontWheelMesh;
+			//dynamicData.RearWheelMesh = type.RearWheelMesh;
+
+			VehicleTypeWheel typeFrontWheel = null;
+			VehicleTypeWheel typeRearWheel = null;
+			if( wheels )
+			{
+				typeFrontWheel = dynamicData.VehicleTypeWheels[ 0 ];
+				typeRearWheel = dynamicData.VehicleTypeWheels[ 1 ];
+			}
 
 			var tr = TransformV;
 
@@ -1384,47 +1812,40 @@ namespace NeoAxis
 			if( dynamicData.PhysicsMode == PhysicsModeEnum.Basic )
 				Collision = true;
 
-			//create wheels
-			if( type.Chassis.Value == NeoAxis.VehicleType.ChassisEnum._4Wheels )
+			//create wheels for Wheels mode
+			if( wheels )
 			{
-				dynamicData.Wheels = new DynamicDataClass.WheelItem[ 4 ];
-
-				//var wheelDrive = type.WheelDrive.Value;
-				//var frontDrive = wheelDrive == NeoAxis.VehicleType.WheelDriveEnum.Front || wheelDrive == NeoAxis.VehicleType.WheelDriveEnum.All;
-				//var rearDrive = wheelDrive == NeoAxis.VehicleType.WheelDriveEnum.Rear || wheelDrive == NeoAxis.VehicleType.WheelDriveEnum.All;
+				var totalCount = typeFrontWheel.Count.Value * ( typeFrontWheel.Pair ? 2 : 1 ) + typeRearWheel.Count.Value * ( typeRearWheel.Pair ? 2 : 1 );
+				dynamicData.Wheels = new DynamicDataClass.WheelItem[ totalCount ];
 
 				for( int n = 0; n < dynamicData.Wheels.Length; n++ )
 				{
 					ref var wheel = ref dynamicData.Wheels[ n ];
-					wheel.Which = (DynamicDataClass.WhichWheel)n;
 
-					//if( ( wheel.Which == DynamicData.WhichWheel.FrontLeft || wheel.Which == DynamicData.WhichWheel.FrontRight ) && frontDrive )
-					//	wheel.WheelDrive = true;
-					//if( ( wheel.Which == DynamicData.WhichWheel.RearLeft || wheel.Which == DynamicData.WhichWheel.RearRight ) && rearDrive )
-					//	wheel.WheelDrive = true;
+					CalculateWheelWhichIndexByIndex( dynamicData, n, out wheel.Which, out wheel.WhichIndex );
 
 					switch( wheel.Which )
 					{
 					case DynamicDataClass.WhichWheel.FrontLeft:
-						wheel.InitialPosition = type.FrontWheelPosition.Value.ToVector3F();
+						wheel.InitialPosition = ( typeFrontWheel.Position.Value + new Vector3( -typeFrontWheel.Distance.Value, 0, 0 ) * wheel.WhichIndex ).ToVector3F();
 						if( wheel.InitialPosition.Y < 0 )
 							wheel.InitialPosition.Y = -wheel.InitialPosition.Y;
 						break;
 
 					case DynamicDataClass.WhichWheel.FrontRight:
-						wheel.InitialPosition = type.FrontWheelPosition.Value.ToVector3F();
+						wheel.InitialPosition = ( typeFrontWheel.Position.Value + new Vector3( -typeFrontWheel.Distance.Value, 0, 0 ) * wheel.WhichIndex ).ToVector3F();
 						if( wheel.InitialPosition.Y > 0 )
 							wheel.InitialPosition.Y = -wheel.InitialPosition.Y;
 						break;
 
 					case DynamicDataClass.WhichWheel.RearLeft:
-						wheel.InitialPosition = type.RearWheelPosition.Value.ToVector3F();
+						wheel.InitialPosition = ( typeRearWheel.Position.Value + new Vector3( -typeRearWheel.Distance.Value, 0, 0 ) * wheel.WhichIndex ).ToVector3F();
 						if( wheel.InitialPosition.Y < 0 )
 							wheel.InitialPosition.Y = -wheel.InitialPosition.Y;
 						break;
 
 					case DynamicDataClass.WhichWheel.RearRight:
-						wheel.InitialPosition = type.RearWheelPosition.Value.ToVector3F();
+						wheel.InitialPosition = ( typeRearWheel.Position.Value + new Vector3( -typeRearWheel.Distance.Value, 0, 0 ) * wheel.WhichIndex ).ToVector3F();
 						if( wheel.InitialPosition.Y > 0 )
 							wheel.InitialPosition.Y = -wheel.InitialPosition.Y;
 						break;
@@ -1437,287 +1858,79 @@ namespace NeoAxis
 					{
 					case DynamicDataClass.WhichWheel.FrontLeft:
 					case DynamicDataClass.WhichWheel.FrontRight:
-						wheel.Diameter = (float)type.FrontWheelDiameter.Value;
-						wheel.Width = (float)type.FrontWheelWidth.Value;
+						wheel.Diameter = (float)typeFrontWheel.Diameter.Value;
+						wheel.Width = (float)typeFrontWheel.Width.Value;
+						wheel.Mesh = typeFrontWheel.Mesh;
 						break;
 
 					case DynamicDataClass.WhichWheel.RearLeft:
 					case DynamicDataClass.WhichWheel.RearRight:
-						wheel.Diameter = (float)type.RearWheelDiameter.Value;
-						wheel.Width = (float)type.RearWheelWidth.Value;
+						wheel.Diameter = (float)typeRearWheel.Diameter.Value;
+						wheel.Width = (float)typeRearWheel.Width.Value;
+						wheel.Mesh = typeRearWheel.Mesh;
+						break;
+					}
+				}
+			}
+
+			//create wheels for Tracks mode
+			if( tracks )
+			{
+				dynamicData.Wheels = new DynamicDataClass.WheelItem[ typeWheels.Length * 2 ];
+
+				//Count is not supported for tracks. with Count it harder to understand WhichIndex
+				//for( int n = 0; n < typeWheels.Length; n++ )
+				//	totalCount += typeWheels[ n ].Count.Value * 2;
+				//dynamicData.Wheels = new DynamicDataClass.WheelItem[ totalCount ]; //typeWheels.Length * 2 ];
+
+				for( int n = 0; n < dynamicData.Wheels.Length; n++ )
+				{
+					ref var wheel = ref dynamicData.Wheels[ n ];
+
+					CalculateWheelWhichIndexByIndex( dynamicData, n, out wheel.Which, out wheel.WhichIndex );
+					var trackWheel = typeWheels[ wheel.WhichIndex ];
+
+					switch( wheel.Which )
+					{
+					case DynamicDataClass.WhichWheel.TrackLeft:
+						wheel.InitialPosition = trackWheel.Position.Value.ToVector3F();
+						if( wheel.InitialPosition.Y < 0 )
+							wheel.InitialPosition.Y = -wheel.InitialPosition.Y;
+						break;
+
+					case DynamicDataClass.WhichWheel.TrackRight:
+						wheel.InitialPosition = trackWheel.Position.Value.ToVector3F();
+						if( wheel.InitialPosition.Y > 0 )
+							wheel.InitialPosition.Y = -wheel.InitialPosition.Y;
 						break;
 					}
 
-
-
-
-					////init physics
-
-					//if( dynamicData.MainBody != null )
+					//switch( wheel.Which )
 					//{
-					//	//SimplePhysics mode
-					//	if( dynamicData.SimulationMode == SimulationModeEnum.RealPhysics )
-					//	{
-					//		//create a rigid body of wheel
-					//		{
-					//			//need set ShowInEditor = false before AddComponent
-					//			var body = ComponentUtility.CreateComponent<RigidBody>( null, false, false );
-					//			body.DisplayInEditor = displayInEditor;
-					//			AddComponent( body );
-					//			//var body = CreateComponent<RigidBody>( enabled: false );
+					//case DynamicDataClass.WhichWheel.TrackLeft:
+					//	wheel.InitialPosition = ( trackWheel.Position.Value + new Vector3( -trackWheel.Distance.Value, 0, 0 ) * wheel.WhichIndex ).ToVector3F();
+					//	if( wheel.InitialPosition.Y < 0 )
+					//		wheel.InitialPosition.Y = -wheel.InitialPosition.Y;
+					//	break;
 
-					//			body.CanBeSelected = false;
-					//			body.SaveSupport = false;
-					//			body.CloneSupport = false;
-
-					//			body.Name = "Wheel " + wheel.Which.ToString() + " Collision Body";
-					//			body.MotionType = PhysicsMotionType.Dynamic;
-					//			body.Mass = wheel.Front ? type.FrontWheelMass : type.RearWheelMass;
-
-					//			body.MaterialFriction = type.WheelFriction;
-					//			//!!!!
-					//			//body.MaterialFrictionMode = PhysicalMaterial.FrictionModeEnum.AnisotropicRolling;
-					//			//MaterialAnisotropicFriction
-					//			//MaterialSpinningFriction
-					//			//MaterialRollingFriction
-					//			//body.MaterialRestitution
-
-					//			body.Transform = tr * new Transform( wheel.LocalPosition, Quaternion.Identity );
-
-
-					//			//!!!!instancing geometry
-					//			//!!!!round
-					//			//!!!!more segments
-
-					//			SimpleMeshGenerator.GenerateCylinder( 1, wheel.Diameter / 2, wheel.Width, 64, true, true, true, out Vector3F[] vertices, out var indices );
-
-					//			var shape = body.CreateComponent<CollisionShape_Mesh>();
-					//			shape.Vertices = vertices;
-					//			shape.Indices = indices;
-					//			shape.ShapeType = CollisionShape_Mesh.ShapeTypeEnum.Convex;
-
-					//			//var shape = body.CreateComponent<CollisionShape_Sphere>();
-					//			//shape.Radius = wheel.Diameter / 2;
-
-					//			//body.ContactsCollect = true;
-
-					//			body.Enabled = true;
-
-					//			wheel.RigidBody = body;
-					//		}
-
-					//		//create constraint
-					//		if( wheel.RigidBody != null )
-					//		{
-					//			//need set ShowInEditor = false before AddComponent
-					//			var c = ComponentUtility.CreateComponent<Constraint>( null, false, false );
-					//			c.DisplayInEditor = displayInEditor;
-					//			AddComponent( c );
-					//			//var body = CreateComponent<RigidBody>( enabled: false );
-
-					//			c.CanBeSelected = false;
-					//			c.SaveSupport = false;
-					//			c.CloneSupport = false;
-
-					//			c.Name = "Wheel " + wheel.Which.ToString() + " Constraint";
-					//			c.CollisionsBetweenLinkedBodies = false;
-					//			c.BodyA = ReferenceUtility.MakeThisReference( c, dynamicData.MainBody );
-					//			c.BodyB = ReferenceUtility.MakeThisReference( c, wheel.RigidBody );
-
-					//			c.Transform = new Transform( wheel.RigidBody.TransformV.Position, tr.Rotation * Quaternion.FromRotateByZ( -Math.PI / 2 ) );
-					//			//c.Transform = new Transform( wheel.RigidBody.TransformV.Position, tr.Rotation * Quaternion.FromRotateByZ( Math.PI / 2 ) );
-
-
-					//			//!!!!need
-
-					//			//c.AngularAxisX = PhysicsAxisMode.Free;
-					//			//c.AngularAxisXMotor = true;
-
-
-					//			//steering
-					//			if( wheel.Which == DynamicData.WhichWheel.FrontLeft || wheel.Which == DynamicData.WhichWheel.FrontRight )
-					//			{
-					//				c.AngularAxisZ = PhysicsAxisMode.Limited;
-					//				c.AngularAxisZLimitLow = -type.MaxSteeringAngle.Value;
-					//				c.AngularAxisZLimitHigh = type.MaxSteeringAngle.Value;
-					//				c.AngularAxisZMotor = true;
-					//				c.AngularAxisZServo = true;
-					//			}
-
-					//			//!!!!impl
-					//			////suspension
-					//			//c.LinearAxisZ = PhysicsAxisMode.Limited;
-					//			//c.LinearAxisZLimitHigh = SuspensionTravel.Value.Maximum;
-					//			//c.LinearAxisZLimitLow = SuspensionTravel.Value.Minimum;
-
-					//			////!!!!
-					//			//c.LinearAxisZLimitHigh = 0;
-					//			//c.LinearAxisZLimitLow = 0;
-
-					//			//c.LinearAxisZLimitHigh = -0.2;// 0.1;
-					//			//c.LinearAxisZLimitLow = 0.1;
-
-					//			//c.LinearAxisZMotor = true;
-					//			//c.LinearAxisZMotorMaxForce = 0;
-					//			//c.LinearAxisZMotorTargetVelocity = 0;
-
-					//			//c.LinearAxisZSpring = true;
-					//			//c.LinearAxisZSpringStiffness = 1000000000;
-					//			//c.LinearAxisZSpringDamping = 0;
-
-					//			//!!!!засыпать
-					//			//c.AutoActivateBodies = true;
-
-					//			c.Enabled = true;
-
-					//			wheel.Constraint = c;
-					//		}
-					//	}
-
-					//	////Raycast mode
-					//	//if( dynamicData.SimulationMode == SimulationModeEnum.Raycast )
-					//	//{
-					//	//	var vehicle = dynamicData.raycastVehicle;
-
-					//	//	//!!!!
-					//	//	float suspensionRestLength = 0.6f;
-
-					//	//	//!!!!
-					//	//	//const float connectionHeight = 1.2f;
-
-					//	//	//!!!!
-					//	//	//float wheelRadius = 0.7f;
-					//	//	//float wheelWidth = 0.4f;
-
-					//	//	var connectionPoint = BulletPhysicsUtility.Convert( wheel.LocalPosition );
-					//	//	//var connectionPoint = BulletPhysicsUtility.Convert( new Vector3( 1.0 - ( 0.3f * wheelWidth ), connectionHeight, 2 * 1.0 - wheelRadius ) );
-
-					//	//	//!!!!
-					//	//	var wheelDirection = BulletPhysicsUtility.Convert( new Vector3( 0, 0, -1 ) );
-					//	//	//var wheelAxle = BulletPhysicsUtility.Convert( new Vector3( 1, 0, 0 ) );
-					//	//	var wheelAxle = BulletPhysicsUtility.Convert( new Vector3( 0, -1, 0 ) );
-
-					//	//	var wheelInfo = vehicle.AddWheel( connectionPoint, wheelDirection, wheelAxle, suspensionRestLength, wheel.Diameter / 2, vehicleTuning, wheel.Front );
-
-
-					//	//	//Vector3 wheelDirection = Vector3.Zero;
-					//	//	//Vector3 wheelAxle = Vector3.Zero;
-
-					//	//	//wheelDirection[ upIndex ] = -1;
-					//	//	//wheelAxle[ rightIndex ] = -1;
-
-
-					//	//	//bool isFrontWheel = true;
-					//	//	//var connectionPoint = new Vector3( CUBE_HALF_EXTENTS - ( 0.3f * wheelWidth ), connectionHeight, 2 * CUBE_HALF_EXTENTS - wheelRadius );
-					//	//	//vehicle.AddWheel( connectionPoint, wheelDirection, wheelAxle, suspensionRestLength, wheelRadius, tuning, isFrontWheel );
-
-					//	//	//connectionPoint = new Vector3( -CUBE_HALF_EXTENTS + ( 0.3f * wheelWidth ), connectionHeight, 2 * CUBE_HALF_EXTENTS - wheelRadius );
-					//	//	//vehicle.AddWheel( connectionPoint, wheelDirection, wheelAxle, suspensionRestLength, wheelRadius, tuning, isFrontWheel );
-
-					//	//	//isFrontWheel = false;
-					//	//	//connectionPoint = new Vector3( -CUBE_HALF_EXTENTS + ( 0.3f * wheelWidth ), connectionHeight, -2 * CUBE_HALF_EXTENTS + wheelRadius );
-					//	//	//vehicle.AddWheel( connectionPoint, wheelDirection, wheelAxle, suspensionRestLength, wheelRadius, tuning, isFrontWheel );
-
-					//	//	//connectionPoint = new Vector3( CUBE_HALF_EXTENTS - ( 0.3f * wheelWidth ), connectionHeight, -2 * CUBE_HALF_EXTENTS + wheelRadius );
-					//	//	//vehicle.AddWheel( connectionPoint, wheelDirection, wheelAxle, suspensionRestLength, wheelRadius, tuning, isFrontWheel );
-
-
-					//	//	//!!!!
-					//	//	float wheelFriction = 1000; //float.MaxValue
-					//	//	float suspensionStiffness = 20.0f;
-					//	//	float suspensionDamping = 2.3f;
-					//	//	float suspensionCompression = 4.4f;
-					//	//	float rollInfluence = 0.1f; //1.0f;
-
-
-					//	//	//for( int i = 0; i < vehicle.NumWheels; i++ )
-					//	//	//{
-					//	//	//	WheelInfo wheelInfo = vehicle.GetWheelInfo( i );
-					//	//	wheelInfo.SuspensionStiffness = suspensionStiffness;
-					//	//	wheelInfo.WheelsDampingRelaxation = suspensionDamping;
-					//	//	wheelInfo.WheelsDampingCompression = suspensionCompression;
-					//	//	wheelInfo.FrictionSlip = wheelFriction;
-					//	//	wheelInfo.RollInfluence = rollInfluence;
-					//	//	//}
-
-
-					//	//}
+					//case DynamicDataClass.WhichWheel.TrackRight:
+					//	wheel.InitialPosition = ( trackWheel.Position.Value + new Vector3( -trackWheel.Distance.Value, 0, 0 ) * wheel.WhichIndex ).ToVector3F();
+					//	if( wheel.InitialPosition.Y > 0 )
+					//		wheel.InitialPosition.Y = -wheel.InitialPosition.Y;
+					//	break;
 					//}
 
+					wheel.CurrentPosition = wheel.InitialPosition;
+					wheel.CurrentRotation = QuaternionF.Identity;
 
-					//!!!!
-
-
-					////create mesh in space
-					//{
-					//	//need set ShowInEditor = false before AddComponent
-					//	var meshInSpace = ComponentUtility.CreateComponent<MeshInSpace>( null, false, false );
-					//	meshInSpace.DisplayInEditor = displayInEditor;
-					//	AddComponent( meshInSpace, -1 );
-					//	//var meshInSpace = CreateComponent<MeshInSpace>( enabled: false );
-
-					//	meshInSpace.CanBeSelected = false;
-					//	meshInSpace.SaveSupport = false;
-					//	meshInSpace.CloneSupport = false;
-
-					//	meshInSpace.Name = "Wheel " + wheel.Which.ToString() + " Mesh In Space";
-					//	meshInSpace.Mesh = wheel.Front ? type.FrontWheelMesh : type.RearWheelMesh;
-
-					//	//SimplePhysics mode
-					//	if( dynamicData.SimulationMode == SimulationModeEnum.RealPhysics )
-					//	{
-					//		//attach to the body
-					//		if( wheel.RigidBody != null )
-					//		{
-					//			if( wheel.Right )
-					//			{
-					//				var offset = meshInSpace.CreateComponent<TransformOffset>();
-					//				offset.Name = "Transform Offset";
-					//				offset.RotationOffset = Quaternion.FromRotateByZ( Math.PI );
-					//				offset.Source = ReferenceUtility.MakeThisReference( offset, wheel.RigidBody, "Transform" );
-
-					//				meshInSpace.Transform = ReferenceUtility.MakeThisReference( meshInSpace, offset, "Result" );
-					//			}
-					//			else
-					//				meshInSpace.Transform = ReferenceUtility.MakeThisReference( meshInSpace, wheel.RigidBody, "Transform" );
-					//		}
-					//	}
-
-					//	////Raycast mode
-					//	//if( dynamicData.SimulationMode == SimulationModeEnum.Raycast )
-					//	//{
-
-					//	//	//!!!!
-
-					//	//}
-
-
-					//	//else
-					//	//{
-					//	//	//var offset = meshInSpace.CreateComponent<TransformOffset>();
-					//	//	//offset.Name = "Transform Offset";
-					//	//	//offset.PositionOffset = wheel.LocalPosition;
-
-					//	//	////!!!!может тело повернуть
-					//	//	////if(wheel.Right)
-					//	//	////offset.RotationOffset = z;
-
-					//	//	//offset.Source = ReferenceUtility.MakeThisReference( offset, this, "Transform" );
-
-					//	//	////!!!!slowly maybe. where else
-					//	//	//meshInSpace.Transform = ReferenceUtility.MakeThisReference( meshInSpace, offset, "Result" );
-					//	//}
-
-					//	meshInSpace.Enabled = true;
-
-					//	wheel.MeshInSpace = meshInSpace;
-					//}
-
+					wheel.Diameter = (float)trackWheel.Diameter;
+					wheel.Width = (float)trackWheel.Width;
+					wheel.Mesh = trackWheel.Mesh;
 				}
 			}
 
 			//create constraint
-			if( dynamicData.PhysicsMode == PhysicsModeEnum.Basic && type.Chassis.Value == NeoAxis.VehicleType.ChassisEnum._4Wheels && PhysicalBody != null && !PhysicalBody.Disposed && PhysicalBody.MotionType == PhysicsMotionType.Dynamic )
+			if( dynamicData.PhysicsMode == PhysicsModeEnum.Basic && ( wheels || tracks ) && PhysicalBody != null && !PhysicalBody.Disposed && PhysicalBody.MotionType == PhysicsMotionType.Dynamic )
 			{
 				//!!!!center offset?
 
@@ -1732,128 +1945,230 @@ namespace NeoAxis
 
 						for( int nWheel = 0; nWheel < dynamicData.Wheels.Length; nWheel++ )
 						{
-							var which = (DynamicDataClass.WhichWheel)nWheel;
-							var isFront = which == DynamicDataClass.WhichWheel.FrontLeft || which == DynamicDataClass.WhichWheel.FrontRight;
-
 							ref var wheel = ref dynamicData.Wheels[ nWheel ];
 							ref var wheelSettings = ref wheelsSettings[ nWheel ];
 
+							//!!!!maybe change?
 							wheelSettings.Position = wheel.InitialPosition + new Vector3F( 0, 0, wheel.Diameter * 0.5f );
 							//wheelSettings.Position = wheel.InitialPosition;
 							wheelSettings.Direction = new Vector3F( 0, 0, -1 );
 
-							if( isFront )
-							{
-								wheelSettings.SuspensionMinLength = (float)type.FrontWheelSuspensionMinLength;
-								wheelSettings.SuspensionMaxLength = (float)type.FrontWheelSuspensionMaxLength;
-								wheelSettings.SuspensionPreloadLength = (float)type.FrontWheelSuspensionPreloadLength;
-								wheelSettings.SuspensionFrequency = (float)type.FrontWheelSuspensionFrequency;
-								wheelSettings.SuspensionDamping = (float)type.FrontWheelSuspensionDamping;
-							}
-							else
-							{
-								wheelSettings.SuspensionMinLength = (float)type.RearWheelSuspensionMinLength;
-								wheelSettings.SuspensionMaxLength = (float)type.RearWheelSuspensionMaxLength;
-								wheelSettings.SuspensionPreloadLength = (float)type.RearWheelSuspensionPreloadLength;
-								wheelSettings.SuspensionFrequency = (float)type.RearWheelSuspensionFrequency;
-								wheelSettings.SuspensionDamping = (float)type.RearWheelSuspensionDamping;
-							}
-
 							wheelSettings.Radius = wheel.Diameter * 0.5f;
 							wheelSettings.Width = wheel.Width;
 
-							//Wheeled specific
-							double mass = isFront ? type.FrontWheelMass.Value : type.RearWheelMass.Value;
-							wheelSettings.Inertia = 0.5f * (float)mass * wheelSettings.Radius * wheelSettings.Radius;
-
-							if( isFront )
+							//Wheels mode
+							if( wheels )
 							{
+								var isFront = wheel.Front;
+
+								if( isFront )
 								{
-									wheelSettings.LongitudinalFrictionCount = type.FrontWheelLongitudinalFriction.Count;
+									wheelSettings.SuspensionMinLength = (float)typeFrontWheel.SuspensionMinLength;
+									wheelSettings.SuspensionMaxLength = (float)typeFrontWheel.SuspensionMaxLength;
+									wheelSettings.SuspensionPreloadLength = (float)typeFrontWheel.SuspensionPreloadLength;
+									wheelSettings.SuspensionFrequency = (float)typeFrontWheel.SuspensionFrequency;
+									wheelSettings.SuspensionDamping = (float)typeFrontWheel.SuspensionDamping;
+								}
+								else
+								{
+									wheelSettings.SuspensionMinLength = (float)typeRearWheel.SuspensionMinLength;
+									wheelSettings.SuspensionMaxLength = (float)typeRearWheel.SuspensionMaxLength;
+									wheelSettings.SuspensionPreloadLength = (float)typeRearWheel.SuspensionPreloadLength;
+									wheelSettings.SuspensionFrequency = (float)typeRearWheel.SuspensionFrequency;
+									wheelSettings.SuspensionDamping = (float)typeRearWheel.SuspensionDamping;
+								}
 
-									var data = NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Physics, wheelSettings.LongitudinalFrictionCount * 2 * sizeof( float ) );
-									toNativeFree.Add( data );
+								//Wheels specific
 
-									wheelSettings.LongitudinalFrictionData = (float*)data;
-									for( int n = 0; n < wheelSettings.LongitudinalFrictionCount; n++ )
+								double mass = isFront ? typeFrontWheel.Mass.Value : typeRearWheel.Mass.Value;
+								wheelSettings.Inertia = 0.5f * (float)mass * wheelSettings.Radius * wheelSettings.Radius;
+
+								if( isFront )
+								{
 									{
-										var item = type.FrontWheelLongitudinalFriction[ n ].Value;
-										wheelSettings.LongitudinalFrictionData[ n * 2 + 0 ] = item.Point;
-										wheelSettings.LongitudinalFrictionData[ n * 2 + 1 ] = item.Value;
+										wheelSettings.LongitudinalFrictionCount = typeFrontWheel.LongitudinalFriction.Count;
+
+										var data = NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Physics, wheelSettings.LongitudinalFrictionCount * 2 * sizeof( float ) );
+										toNativeFree.Add( data );
+
+										wheelSettings.LongitudinalFrictionData = (float*)data;
+										for( int n = 0; n < wheelSettings.LongitudinalFrictionCount; n++ )
+										{
+											var item = typeFrontWheel.LongitudinalFriction[ n ].Value;
+											wheelSettings.LongitudinalFrictionData[ n * 2 + 0 ] = item.Point;
+											wheelSettings.LongitudinalFrictionData[ n * 2 + 1 ] = item.Value;
+										}
+									}
+
+									{
+										wheelSettings.LateralFrictionCount = typeFrontWheel.LateralFriction.Count;
+
+										var data = NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Physics, wheelSettings.LateralFrictionCount * 2 * sizeof( float ) );
+										toNativeFree.Add( data );
+
+										wheelSettings.LateralFrictionData = (float*)data;
+										for( int n = 0; n < wheelSettings.LateralFrictionCount; n++ )
+										{
+											var item = typeFrontWheel.LateralFriction[ n ].Value;
+											wheelSettings.LateralFrictionData[ n * 2 + 0 ] = item.Point;
+											wheelSettings.LateralFrictionData[ n * 2 + 1 ] = item.Value;
+										}
+									}
+								}
+								else
+								{
+									{
+										wheelSettings.LongitudinalFrictionCount = typeRearWheel.LongitudinalFriction.Count;
+
+										var data = NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Physics, wheelSettings.LongitudinalFrictionCount * 2 * sizeof( float ) );
+										toNativeFree.Add( data );
+
+										wheelSettings.LongitudinalFrictionData = (float*)data;
+										for( int n = 0; n < wheelSettings.LongitudinalFrictionCount; n++ )
+										{
+											var item = typeRearWheel.LongitudinalFriction[ n ].Value;
+											wheelSettings.LongitudinalFrictionData[ n * 2 + 0 ] = item.Point;
+											wheelSettings.LongitudinalFrictionData[ n * 2 + 1 ] = item.Value;
+										}
+									}
+
+									{
+										wheelSettings.LateralFrictionCount = typeRearWheel.LateralFriction.Count;
+
+										var data = NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Physics, wheelSettings.LateralFrictionCount * 2 * sizeof( float ) );
+										toNativeFree.Add( data );
+
+										wheelSettings.LateralFrictionData = (float*)data;
+										for( int n = 0; n < wheelSettings.LateralFrictionCount; n++ )
+										{
+											var item = typeRearWheel.LateralFriction[ n ].Value;
+											wheelSettings.LateralFrictionData[ n * 2 + 0 ] = item.Point;
+											wheelSettings.LateralFrictionData[ n * 2 + 1 ] = item.Value;
+										}
 									}
 								}
 
+								if( isFront )
 								{
-									wheelSettings.LateralFrictionCount = type.FrontWheelLateralFriction.Count;
-
-									var data = NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Physics, wheelSettings.LateralFrictionCount * 2 * sizeof( float ) );
-									toNativeFree.Add( data );
-
-									wheelSettings.LateralFrictionData = (float*)data;
-									for( int n = 0; n < wheelSettings.LateralFrictionCount; n++ )
-									{
-										var item = type.FrontWheelLateralFriction[ n ].Value;
-										wheelSettings.LateralFrictionData[ n * 2 + 0 ] = item.Point;
-										wheelSettings.LateralFrictionData[ n * 2 + 1 ] = item.Value;
-									}
+									wheelSettings.MaxSteerAngle = (float)typeFrontWheel.MaxSteeringAngle.Value.InRadians();
+									wheelSettings.MaxBrakeTorque = (float)typeFrontWheel.MaxBrakeTorque;
+									wheelSettings.MaxHandBrakeTorque = (float)typeFrontWheel.MaxHandBrakeTorque;
+									wheelSettings.AngularDamping = (float)typeFrontWheel.AngularDamping;
 								}
-							}
-							else
-							{
+								else
 								{
-									wheelSettings.LongitudinalFrictionCount = type.RearWheelLongitudinalFriction.Count;
-
-									var data = NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Physics, wheelSettings.LongitudinalFrictionCount * 2 * sizeof( float ) );
-									toNativeFree.Add( data );
-
-									wheelSettings.LongitudinalFrictionData = (float*)data;
-									for( int n = 0; n < wheelSettings.LongitudinalFrictionCount; n++ )
-									{
-										var item = type.RearWheelLongitudinalFriction[ n ].Value;
-										wheelSettings.LongitudinalFrictionData[ n * 2 + 0 ] = item.Point;
-										wheelSettings.LongitudinalFrictionData[ n * 2 + 1 ] = item.Value;
-									}
-								}
-
-								{
-									wheelSettings.LateralFrictionCount = type.RearWheelLateralFriction.Count;
-
-									var data = NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Physics, wheelSettings.LateralFrictionCount * 2 * sizeof( float ) );
-									toNativeFree.Add( data );
-
-									wheelSettings.LateralFrictionData = (float*)data;
-									for( int n = 0; n < wheelSettings.LateralFrictionCount; n++ )
-									{
-										var item = type.RearWheelLateralFriction[ n ].Value;
-										wheelSettings.LateralFrictionData[ n * 2 + 0 ] = item.Point;
-										wheelSettings.LateralFrictionData[ n * 2 + 1 ] = item.Value;
-									}
+									wheelSettings.MaxSteerAngle = (float)typeRearWheel.MaxSteeringAngle.Value.InRadians();
+									wheelSettings.MaxBrakeTorque = (float)typeRearWheel.MaxBrakeTorque;
+									wheelSettings.MaxHandBrakeTorque = (float)typeRearWheel.MaxHandBrakeTorque;
+									wheelSettings.AngularDamping = (float)typeRearWheel.AngularDamping;
 								}
 							}
 
-							if( isFront )
+							//Tracks mode
+							if( tracks )
 							{
-								wheelSettings.MaxSteerAngle = (float)type.FrontWheelMaxSteeringAngle.Value.InRadians();
-								wheelSettings.MaxBrakeTorque = (float)type.FrontWheelMaxBrakeTorque;
-								wheelSettings.MaxHandBrakeTorque = (float)type.FrontWheelMaxHandBrakeTorque;
-								wheelSettings.AngularDamping = (float)type.FrontWheelAngularDamping;
+								if( wheel.WhichIndex < typeWheels.Length )
+								{
+									var trackWheel = typeWheels[ wheel.WhichIndex ];
+
+									wheelSettings.SuspensionMinLength = (float)trackWheel.SuspensionMinLength;
+									wheelSettings.SuspensionMaxLength = (float)trackWheel.SuspensionMaxLength;
+									wheelSettings.SuspensionPreloadLength = (float)trackWheel.SuspensionPreloadLength;
+									wheelSettings.SuspensionFrequency = (float)trackWheel.SuspensionFrequency;
+									wheelSettings.SuspensionDamping = (float)trackWheel.SuspensionDamping;
+
+									//Tracks specific
+									wheelSettings.TrackLongitudinalFriction = (float)trackWheel.TracksLongitudinalFriction;
+									wheelSettings.TrackLateralFriction = (float)trackWheel.TracksLateralFriction;
+								}
 							}
-							else
-							{
-								wheelSettings.MaxSteerAngle = (float)type.RearWheelMaxSteeringAngle.Value.InRadians();
-								wheelSettings.MaxBrakeTorque = (float)type.RearWheelMaxBrakeTorque;
-								wheelSettings.MaxHandBrakeTorque = (float)type.RearWheelMaxHandBrakeTorque;
-								wheelSettings.AngularDamping = (float)type.RearWheelAngularDamping;
-							}
+						}
+
+						var engineNormalizedTorque = new float[ type.EngineNormalizedTorque.Count * 2 ];
+						for( int n = 0; n < type.EngineNormalizedTorque.Count; n++ )
+						{
+							var item = type.EngineNormalizedTorque[ n ].Value;
+							engineNormalizedTorque[ n * 2 + 0 ] = item.Point;
+							engineNormalizedTorque[ n * 2 + 1 ] = item.Value;
 						}
 
 						var transmissionGearRatios = type.TransmissionGearRatios.Value;
 						var transmissionReverseGearRatios = type.TransmissionReverseGearRatios.Value;
 
+						var antiRollbars = new OpenList<float>( 6 );
+						{
+							if( wheels )
+							{
+								if( typeFrontWheel.AntiRollBarStiffness != 0 && typeFrontWheel.Pair )
+								{
+									for( int n = 0; n < typeFrontWheel.Count; n++ )
+									{
+										antiRollbars.Add( CalculateWheelIndex( dynamicData, DynamicDataClass.WhichWheel.FrontLeft, n ) );
+										antiRollbars.Add( CalculateWheelIndex( dynamicData, DynamicDataClass.WhichWheel.FrontRight, n ) );
+										antiRollbars.Add( (float)typeFrontWheel.AntiRollBarStiffness );
+									}
+								}
+								if( typeRearWheel.AntiRollBarStiffness != 0 && typeRearWheel.Pair )
+								{
+									for( int n = 0; n < typeRearWheel.Count; n++ )
+									{
+										antiRollbars.Add( CalculateWheelIndex( dynamicData, DynamicDataClass.WhichWheel.RearLeft, n ) );
+										antiRollbars.Add( CalculateWheelIndex( dynamicData, DynamicDataClass.WhichWheel.RearRight, n ) );
+										antiRollbars.Add( (float)typeRearWheel.AntiRollBarStiffness );
+									}
+								}
+							}
+
+							if( tracks )
+							{
+								//!!!!?
+							}
+						}
+
+						var differentials = new OpenList<float>( 12 );
+						if( wheels )
+						{
+							if( typeFrontWheel.Drive )
+							{
+								for( int n = 0; n < typeFrontWheel.Count; n++ )
+								{
+									differentials.Add( CalculateWheelIndex( dynamicData, DynamicDataClass.WhichWheel.FrontLeft, n ) );
+									if( typeFrontWheel.Pair )
+										differentials.Add( CalculateWheelIndex( dynamicData, DynamicDataClass.WhichWheel.FrontRight, n ) );
+									else
+										differentials.Add( -1 );
+									differentials.Add( (float)typeFrontWheel.DifferentialRatio );
+									differentials.Add( (float)typeFrontWheel.DifferentialLeftRightSplit );
+									differentials.Add( (float)typeFrontWheel.DifferentialLimitedSlipRatio );
+									differentials.Add( (float)typeFrontWheel.DifferentialEngineTorqueRatio );
+								}
+							}
+
+							if( typeRearWheel.Drive )
+							{
+								for( int n = 0; n < typeRearWheel.Count; n++ )
+								{
+									differentials.Add( CalculateWheelIndex( dynamicData, DynamicDataClass.WhichWheel.RearLeft, n ) );
+									if( typeRearWheel.Pair )
+										differentials.Add( CalculateWheelIndex( dynamicData, DynamicDataClass.WhichWheel.RearRight, n ) );
+									else
+										differentials.Add( -1 );
+									differentials.Add( (float)typeRearWheel.DifferentialRatio );
+									differentials.Add( (float)typeRearWheel.DifferentialLeftRightSplit );
+									differentials.Add( (float)typeRearWheel.DifferentialLimitedSlipRatio );
+									differentials.Add( (float)typeRearWheel.DifferentialEngineTorqueRatio );
+								}
+							}
+						}
+
 						fixed( double* pTransmissionGearRatios = transmissionGearRatios, pTransmissionReverseGearRatios = transmissionReverseGearRatios )
 						{
-							var visualScale = Vector3F.One;
-							dynamicData.constraint = physicsWorldData.CreateConstraintVehicle( this, PhysicalBody, dynamicData.Wheels.Length, wheelsSettings, ref visualScale, (float)type.FrontWheelAntiRollBarStiffness, (float)type.RearWheelAntiRollBarStiffness, (float)type.MaxPitchRollAngle.Value.InRadians(), (float)type.EngineMaxTorque, (float)type.EngineMinRPM, (float)type.EngineMaxRPM, type.TransmissionAuto, transmissionGearRatios.Length, pTransmissionGearRatios, transmissionReverseGearRatios.Length, pTransmissionReverseGearRatios, (float)type.TransmissionSwitchTime, (float)type.TransmissionClutchReleaseTime, (float)type.TransmissionSwitchLatency, (float)type.TransmissionShiftUpRPM, (float)type.TransmissionShiftDownRPM, (float)type.TransmissionClutchStrength, type.FrontWheelDrive, type.RearWheelDrive, (float)type.FrontWheelDifferentialRatio, (float)type.FrontWheelDifferentialLeftRightSplit, (float)type.FrontWheelDifferentialLimitedSlipRatio, (float)type.FrontWheelDifferentialEngineTorqueRatio, (float)type.RearWheelDifferentialRatio, (float)type.RearWheelDifferentialLeftRightSplit, (float)type.RearWheelDifferentialLimitedSlipRatio, (float)type.RearWheelDifferentialEngineTorqueRatio, type.MaxSlopeAngle.Value.InRadians().ToRadianF() );
+							fixed( float* pAntiRollbars = antiRollbars.Data, pEngineNormalizedTorque = engineNormalizedTorque, pDifferentials = differentials.Data )
+							{
+								var visualScale = Vector3F.One;
+
+								dynamicData.constraint = physicsWorldData.CreateConstraintVehicle( this, PhysicalBody, dynamicData.Wheels.Length, wheelsSettings, ref visualScale, (float)( typeFrontWheel != null ? typeFrontWheel.AntiRollBarStiffness : 0 ), (float)( typeRearWheel != null ? typeRearWheel.AntiRollBarStiffness : 0 ), (float)type.MaxPitchRollAngle.Value.InRadians(), (float)type.EngineMaxTorque, (float)type.EngineMinRPM, (float)type.EngineMaxRPM, type.TransmissionAuto, transmissionGearRatios.Length, pTransmissionGearRatios, transmissionReverseGearRatios.Length, pTransmissionReverseGearRatios, (float)type.TransmissionSwitchTime, (float)type.TransmissionClutchReleaseTime, (float)type.TransmissionSwitchLatency, (float)type.TransmissionShiftUpRPM, (float)type.TransmissionShiftDownRPM, (float)type.TransmissionClutchStrength,/* type.FrontWheelDrive, type.RearWheelDrive, (float)type.FrontWheelDifferentialRatio, (float)type.FrontWheelDifferentialLeftRightSplit, (float)type.FrontWheelDifferentialLimitedSlipRatio, (float)type.FrontWheelDifferentialEngineTorqueRatio, (float)type.RearWheelDifferentialRatio, (float)type.RearWheelDifferentialLeftRightSplit, (float)type.RearWheelDifferentialLimitedSlipRatio, (float)type.RearWheelDifferentialEngineTorqueRatio, */type.MaxSlopeAngle.Value.InRadians().ToRadianF(), tracks, antiRollbars.Count / 3, pAntiRollbars, (float)type.DifferentialLimitedSlipRatio, type.EngineNormalizedTorque.Count, pEngineNormalizedTorque, (float)type.EngineInertia, (float)type.EngineAngularDamping, differentials.Count / 6, pDifferentials, type.TrackDrivenWheel, (float)type.TrackInertia, (float)type.TrackAngularDamping, (float)type.TrackMaxBrakeTorque, (float)type.TrackDifferentialRatio );
+							}
 						}
 
 						foreach( var pointer in toNativeFree )
@@ -1863,7 +2178,9 @@ namespace NeoAxis
 			}
 
 			//!!!!slowly. make caching in the VehicleType
-			var seatComponents = dynamicData.VehicleType.GetComponents<SeatItem>();
+
+			//!!!!GC
+			var seatComponents = dynamicData.VehicleType.GetComponents<SeatItem>().Where( w => w.Enabled ).ToArray();
 			if( seatComponents.Length != 0 )
 			{
 				var seatItems = new List<DynamicDataClass.SeatItemData>( seatComponents.Length );
@@ -1893,6 +2210,39 @@ namespace NeoAxis
 			if( dynamicData.Seats == null )
 				dynamicData.Seats = Array.Empty<DynamicDataClass.SeatItemData>();
 
+			//track fragments
+			if( tracks )
+			{
+				dynamicData.TrackFragmentMesh = type.TrackFragmentMesh.Value;
+
+				//if( dynamicData.TrackFragmentMesh != null )
+				//{
+				//	dynamicData.Tracks = new DynamicDataClass.TrackItem[ 2 ];
+				//	for( int nTrack = 0; nTrack < 2; nTrack++ )
+				//	{
+				//		var trackItem = new DynamicDataClass.TrackItem();
+				//		dynamicData.Tracks[ nTrack ] = trackItem;
+
+
+				//		//!!!!calculate count at initialization?
+
+				//		trackItem.Fragments = new DynamicDataClass.TrackFragmentItem[ 30 ];
+
+
+				//		for( int nFragment = 0; nFragment < trackItem.Fragments.Length; nFragment++ )
+				//		{
+				//			ref var fragment = ref trackItem.Fragments[ nFragment ];
+				//			fragment.Position = new Vector3F( (float)nFragment / 4, nTrack == 0 ? -2 : 2, 0 );
+				//			fragment.Rotation = QuaternionF.Identity;
+				//		}
+
+				//		//!!!!
+				//		//trackItem.Curve = new CurveBezier();
+
+				//	}
+				//}
+			}
+
 			UpdateAdditionalItems();
 
 			//turrets
@@ -1906,72 +2256,75 @@ namespace NeoAxis
 
 				foreach( var objectInSpaceType in dynamicData.VehicleType.GetComponents<ObjectInSpace>() )
 				{
-					var turretType = objectInSpaceType as Turret;
-					if( turretType != null )
+					if( objectInSpaceType.Enabled )
 					{
-						var obj = (Turret)turretType.Clone();
-						obj.Enabled = false;
-						obj.SaveSupport = false;
-						obj.CanBeSelected = false;
-
-						AddComponent( obj );
-
-						//apply world transform
-						obj.Transform = TransformV * obj.TransformV;
-						foreach( var objectInSpace2 in obj.GetComponents<ObjectInSpace>( checkChildren: true ) )
-							objectInSpace2.Transform = TransformV * objectInSpace2.TransformV;
-
-						var turretItem = new DynamicDataClass.TurretItem();
-						turretItem.InitialTransform = objectInSpaceType.TransformV;
-						turretItem.Turret = obj;
-
-						//can add other types of constructions (side turrets)
-
-						var horizontalConstraint = obj.GetComponent<Constraint_SixDOF>();
-						if( horizontalConstraint != null )
+						var turretType = objectInSpaceType as Turret;
+						if( turretType != null )
 						{
-							turretItem.HorizontalConstraint = horizontalConstraint;
+							var obj = (Turret)turretType.Clone();
+							obj.Enabled = false;
+							obj.SaveSupport = false;
+							obj.CanBeSelected = false;
 
-							//configure constraint
-							//BodyA
-							if( !horizontalConstraint.BodyA.ReferenceOrValueSpecified )
-								horizontalConstraint.BodyA = this;
-							//BodyB. reset reference to optimize
-							horizontalConstraint.BodyB = horizontalConstraint.BodyB.Value;
+							AddComponent( obj );
 
-							var weapon = obj.GetComponent<Weapon>();
-							if( weapon != null )
+							//apply world transform
+							obj.Transform = TransformV * obj.TransformV;
+							foreach( var objectInSpace2 in obj.GetComponents<ObjectInSpace>( checkChildren: true ) )
+								objectInSpace2.Transform = TransformV * objectInSpace2.TransformV;
+
+							var turretItem = new DynamicDataClass.TurretItem();
+							turretItem.InitialTransform = objectInSpaceType.TransformV;
+							turretItem.Turret = obj;
+
+							//can add other types of constructions (side turrets)
+
+							var horizontalConstraint = obj.GetComponent<Constraint_SixDOF>();
+							if( horizontalConstraint != null )
 							{
-								turretItem.Weapon = weapon;
-								var verticalConstraint = weapon.GetComponent<Constraint_SixDOF>();
-								if( verticalConstraint != null )
-								{
-									turretItem.VerticalConstraint = verticalConstraint;
+								turretItem.HorizontalConstraint = horizontalConstraint;
 
-									//configure constraint
-									//BodyB. reset reference to optimize
-									verticalConstraint.BodyA = verticalConstraint.BodyA.Value;
-									//BodyB. reset reference to optimize
-									verticalConstraint.BodyB = verticalConstraint.BodyB.Value;
+								//configure constraint
+								//BodyA
+								if( !horizontalConstraint.BodyA.ReferenceOrValueSpecified )
+									horizontalConstraint.BodyA = this;
+								//BodyB. reset reference to optimize
+								horizontalConstraint.BodyB = horizontalConstraint.BodyB.Value;
+
+								var weapon = obj.GetComponent<Weapon>();
+								if( weapon != null )
+								{
+									turretItem.Weapon = weapon;
+									var verticalConstraint = weapon.GetComponent<Constraint_SixDOF>();
+									if( verticalConstraint != null )
+									{
+										turretItem.VerticalConstraint = verticalConstraint;
+
+										//configure constraint
+										//BodyB. reset reference to optimize
+										verticalConstraint.BodyA = verticalConstraint.BodyA.Value;
+										//BodyB. reset reference to optimize
+										verticalConstraint.BodyB = verticalConstraint.BodyB.Value;
+									}
 								}
 							}
+
+							turrets.Add( turretItem );
+
+							obj.Enabled = true;
 						}
 
-						turrets.Add( turretItem );
-
-						obj.Enabled = true;
+						//if( NetworkIsSingle )
+						//{
+						//	var lightType = objectInSpaceType as Light;
+						//	if( lightType != null )
+						//	{
+						//		var lightItem = new DynamicDataClass.LightItem();
+						//		lightItem.LightType = lightType;
+						//		lights.Add( lightItem );
+						//	}
+						//}
 					}
-
-					//if( NetworkIsSingle )
-					//{
-					//	var lightType = objectInSpaceType as Light;
-					//	if( lightType != null )
-					//	{
-					//		var lightItem = new DynamicDataClass.LightItem();
-					//		lightItem.LightType = lightType;
-					//		lights.Add( lightItem );
-					//	}
-					//}
 				}
 
 				if( turrets.Count != 0 )
@@ -2009,20 +2362,105 @@ namespace NeoAxis
 			{
 				var lights = new List<DynamicDataClass.LightItem>();
 
-				foreach( var objectInSpaceType in dynamicData.VehicleType.GetComponents<ObjectInSpace>() )
+				foreach( var lightType in dynamicData.VehicleType.GetComponents<Light>() )
 				{
-					var lightType = objectInSpaceType as Light;
-					if( lightType != null )
+					if( lightType.Enabled )
 					{
+						var lowerName = lightType.Name.ToLower();
+
 						var lightItem = new DynamicDataClass.LightItem();
 						lightItem.LightType = lightType;
+
+						//detect purpose by component name
+						foreach( var enumValue in Enum.GetValues( typeof( DynamicDataClass.LightTypePurpose ) ) )
+						//foreach( var enumValue in Enum.GetValues<DynamicDataClass.LightTypePurpose>() )
+						{
+							var enumString = enumValue.ToString().ToLower().Replace( "_", " " );
+							if( lowerName.Contains( enumString ) )
+							{
+								lightItem.LightTypePurpose = (DynamicDataClass.LightTypePurpose)enumValue;
+								break;
+							}
+						}
+
 						lights.Add( lightItem );
 					}
 				}
 
+				//foreach( var objectInSpaceType in dynamicData.VehicleType.GetComponents<ObjectInSpace>() )
+				//{
+				//	if( objectInSpaceType.Enabled )
+				//	{
+				//		var lightType = objectInSpaceType as Light;
+				//		if( lightType != null )
+				//		{
+				//			var lowerName = lightType.Name.ToLower();
+
+				//			var lightItem = new DynamicDataClass.LightItem();
+				//			lightItem.LightType = lightType;
+
+				//			//detect purpose by component name
+				//			foreach( var enumValue in Enum.GetValues<DynamicDataClass.LightTypePurpose>() )
+				//			{
+				//				var enumString = enumValue.ToString().ToLower().Replace( "_", " " );
+				//				if( lowerName.Contains( enumString ) )
+				//				{
+				//					lightItem.LightTypePurpose = enumValue;
+				//					break;
+				//				}
+				//			}
+
+				//			lights.Add( lightItem );
+				//		}
+				//	}
+				//}
+
 				if( lights.Count != 0 )
 					dynamicData.Lights = lights.ToArray();
 			}
+
+			//!!!!
+			////aero engines
+			//{
+			//	var aeroEngines = new List<DynamicDataClass.AeroEngineItem>();
+
+			//	foreach( var engineType in dynamicData.VehicleType.GetComponents<VehicleAeroEngine>() )
+			//	{
+			//		if( engineType.Enabled )
+			//		{
+			//			var engineItem = new DynamicDataClass.AeroEngineItem();
+			//			engineItem.EngineType = engineType;
+
+			//			//create engine instance
+			//			{
+			//				var obj = (VehicleAeroEngine)engineItem.EngineType.Clone();
+			//				engineItem.Engine = obj;
+			//				obj.Enabled = false;
+			//				obj.SaveSupport = false;
+			//				obj.CanBeSelected = false;
+
+			//				AddComponent( obj );
+
+			//				//apply world transform
+			//				obj.Transform = TransformV * obj.TransformV;
+			//				foreach( var objectInSpace2 in obj.GetComponents<ObjectInSpace>( checkChildren: true ) )
+			//					objectInSpace2.Transform = TransformV * objectInSpace2.TransformV;
+
+			//				ObjectInSpaceUtility.Attach( this, obj, TransformOffset.ModeEnum.Elements );
+
+			//				obj.Enabled = true;
+
+			//				//!!!!?
+			//				//lightItem.Light.Transform.Touch();
+			//			}
+
+			//			aeroEngines.Add( engineItem );
+			//		}
+			//	}
+
+			//	if( aeroEngines.Count != 0 )
+			//		dynamicData.AeroEngines = aeroEngines.ToArray();
+			//}
 
 			//LocalBoundsDefault
 			{
@@ -2123,6 +2561,10 @@ namespace NeoAxis
 				foreach( var turret in GetComponents<Turret>() )
 					turret.RemoveFromParent( false );
 
+				//!!!!
+				//foreach( var engine in GetComponents<VehicleAeroEngine>() )
+				//	engine.RemoveFromParent( false );
+
 				AdditionalItems = null;
 
 				//if( dynamicData.Wheels != null )
@@ -2179,10 +2621,10 @@ namespace NeoAxis
 			return -1;
 		}
 
-		public delegate void ObjectInteractionGetInfoEventDelegate( Vehicle sender, GameMode gameMode, ref InteractiveObjectObjectInfo info );
-		public event ObjectInteractionGetInfoEventDelegate ObjectInteractionGetInfoEvent;
+		public delegate void InteractionGetInfoEventDelegate( Vehicle sender, GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info );
+		public event InteractionGetInfoEventDelegate InteractionGetInfoEvent;
 
-		public virtual void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
+		public virtual void InteractionGetInfo( GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info )
 		{
 			//control by a character
 			var character = gameMode.ObjectControlledByPlayer.Value as Character;
@@ -2197,17 +2639,27 @@ namespace NeoAxis
 					var keyString = gameMode.KeyInteract1.Value.ToString();
 					if( SystemSettings.MobileDevice )
 						keyString = "Interact";
-					info.Text = $"Press {keyString} to control the vehicle";
+					info.Text = $"Press {keyString} to control the vehicle.";
 
 					//!!!!impl mobile
 					if( !SystemSettings.MobileDevice )
 					{
-						if( dynamicData?.VehicleType?.GetComponent<Light>() != null )
-							info.Text += $"\n{gameMode.KeyHeadlights1.Value} to use headlights";
+						var lights = dynamicData.Lights;
+						if( lights != null )
+						{
+							if( lights.FirstOrDefault( l => l.LightTypePurpose == DynamicDataClass.LightTypePurpose.Headlight_Low ) != null )
+								info.Text += $"\n{gameMode.KeyHeadlightsLow1.Value} to use headlights low.";
+							if( lights.FirstOrDefault( l => l.LightTypePurpose == DynamicDataClass.LightTypePurpose.Headlight_High ) != null )
+								info.Text += $"\n{gameMode.KeyHeadlightsHigh1.Value} to use headlights high.";
+							if( lights.FirstOrDefault( l => l.LightTypePurpose == DynamicDataClass.LightTypePurpose.Left_Turn ) != null )
+								info.Text += $"\n{gameMode.KeyLeftTurnSignal1.Value} to use the left turn signal.";
+							if( lights.FirstOrDefault( l => l.LightTypePurpose == DynamicDataClass.LightTypePurpose.Right_Turn ) != null )
+								info.Text += $"\n{gameMode.KeyRightTurnSignal1.Value} to use the right turn signal.";
+						}
 					}
 				}
 			}
-			ObjectInteractionGetInfoEvent?.Invoke( this, gameMode, ref info );
+			InteractionGetInfoEvent?.Invoke( this, gameMode, initiator, ref info );
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -2218,7 +2670,7 @@ namespace NeoAxis
 			return null;
 		}
 
-		public virtual bool ObjectInteractionInputMessage( GameMode gameMode, InputMessage message )
+		public virtual bool InteractionInputMessage( GameMode gameMode, Component initiator, InputMessage message )
 		{
 			var keyDown = message as InputMessageKeyDown;
 			if( keyDown != null )
@@ -2283,15 +2735,15 @@ namespace NeoAxis
 			return false;
 		}
 
-		public virtual void ObjectInteractionEnter( ObjectInteractionContext context )
+		public virtual void InteractionEnter( ObjectInteractionContext context )
 		{
 		}
 
-		public virtual void ObjectInteractionExit( ObjectInteractionContext context )
+		public virtual void InteractionExit( ObjectInteractionContext context )
 		{
 		}
 
-		public virtual void ObjectInteractionUpdate( ObjectInteractionContext context )
+		public virtual void InteractionUpdate( ObjectInteractionContext context )
 		{
 		}
 
@@ -2346,7 +2798,7 @@ namespace NeoAxis
 
 			//deactivate active items for character
 			var character = obj as Character;
-			if( character != null )
+			if( character != null && gameMode != null )
 				character.DeactivateAllItems( gameMode );
 
 			if( NetworkIsSingleOrClient )//!!!!?
@@ -2420,14 +2872,199 @@ namespace NeoAxis
 			{
 				var wheelCount = dynamicData.Wheels.Length;
 
+				//track fragments
+				var fragmentCountLeft = 0;
+				//var fragmentTotalTimeLeft = 0.0;
+				var fragmentCountRight = 0;
+				//var fragmentTotalTimeRight = 0.0;
+				if( dynamicData.TrackFragmentMesh != null )
+				{
+					for( int nTrack = 0; nTrack < 2; nTrack++ )
+					{
+						//var trackItem = dynamicData.Tracks[ nTrack ];
+
+						int wheelFrom;
+						int wheelTo;
+						if( nTrack == 0 )
+						{
+							wheelFrom = 0;
+							wheelTo = wheelCount / 2;
+						}
+						else
+						{
+							wheelFrom = wheelCount / 2;
+							wheelTo = wheelCount;
+						}
+
+						ref var firstWheel = ref dynamicData.Wheels[ wheelFrom ];
+						ref var lastWheel = ref dynamicData.Wheels[ wheelTo - 1 ];
+
+
+						Curve curve;
+						if( nTrack == 0 )
+						{
+							//optimization: can use float 2D curve
+							if( lastTrackFragmentsCurveLeft == null )
+								lastTrackFragmentsCurveLeft = new CurveCubicSpline();
+							curve = lastTrackFragmentsCurveLeft;
+						}
+						else
+						{
+							if( lastTrackFragmentsCurveRight == null )
+								lastTrackFragmentsCurveRight = new CurveCubicSpline();
+							curve = lastTrackFragmentsCurveRight;
+						}
+						curve.Clear();
+
+
+						var time = 0.0;
+						var previousPoint = new Vector3( -10000, 0, 0 );
+
+						//bottom points. start from second
+						for( int n = wheelFrom + 1; n < wheelTo; n++ )
+						{
+							ref var wheel = ref dynamicData.Wheels[ n ];
+
+							var p = wheel.CurrentPosition + new Vector3F( 0, 0, -wheel.Diameter * 0.5f );
+
+							if( previousPoint == new Vector3( -10000, 0, 0 ) )
+								previousPoint = p;
+							time += ( p - previousPoint ).Length();
+							previousPoint = p;
+
+							curve.AddPoint( time, p );
+						}
+
+						//last wheel
+						{
+							var p = lastWheel.CurrentPosition + new Vector3F( -lastWheel.Diameter * 0.5f, 0, -lastWheel.Diameter * 0.5f ).GetNormalize() * ( lastWheel.Diameter * 0.5f );
+							time += 2.0 * Math.PI * lastWheel.Diameter * 0.5 * 0.125;
+							previousPoint = p;
+
+							curve.AddPoint( time, p );
+						}
+						{
+							var p = lastWheel.CurrentPosition + new Vector3F( -lastWheel.Diameter * 0.5f, 0, 0 );
+							time += 2.0 * Math.PI * lastWheel.Diameter * 0.5 * 0.125;
+							previousPoint = p;
+
+							curve.AddPoint( time, p );
+						}
+						{
+							var p = lastWheel.CurrentPosition + new Vector3F( -lastWheel.Diameter * 0.5f, 0, lastWheel.Diameter * 0.5f ).GetNormalize() * ( lastWheel.Diameter * 0.5f );
+							time += 2.0 * Math.PI * lastWheel.Diameter * 0.5 * 0.125;
+							previousPoint = p;
+
+							curve.AddPoint( time, p );
+						}
+
+						//top points
+						for( int n = wheelTo - 1; n >= wheelFrom; n-- )
+						{
+							ref var wheel = ref dynamicData.Wheels[ n ];
+
+							var p = wheel.CurrentPosition + new Vector3F( 0, 0, wheel.Diameter * 0.5f );
+							if( n == wheelTo - 1 )
+								time += 2.0 * Math.PI * lastWheel.Diameter * 0.5 * 0.125;
+							else
+								time += ( p - previousPoint ).Length();
+							previousPoint = p;
+
+							curve.AddPoint( time, p );
+						}
+
+						//first wheel
+						{
+							var p = firstWheel.CurrentPosition + new Vector3F( firstWheel.Diameter * 0.5f, 0, firstWheel.Diameter * 0.5f ).GetNormalize() * ( lastWheel.Diameter * 0.5f );
+							time += 2.0 * Math.PI * lastWheel.Diameter * 0.5 * 0.125;
+							previousPoint = p;
+
+							curve.AddPoint( time, p );
+						}
+						{
+							var p = firstWheel.CurrentPosition + new Vector3F( firstWheel.Diameter * 0.5f, 0, 0 );
+							time += 2.0 * Math.PI * lastWheel.Diameter * 0.5 * 0.125;
+							previousPoint = p;
+
+							curve.AddPoint( time, p );
+						}
+						{
+							var p = firstWheel.CurrentPosition + new Vector3F( firstWheel.Diameter * 0.5f, 0, -firstWheel.Diameter * 0.5f ).GetNormalize() * ( lastWheel.Diameter * 0.5f );
+							time += 2.0 * Math.PI * lastWheel.Diameter * 0.5 * 0.125;
+							previousPoint = p;
+
+							curve.AddPoint( time, p );
+						}
+
+						//bottom point
+						{
+							ref var wheel = ref dynamicData.Wheels[ wheelFrom ];
+
+							var p = wheel.CurrentPosition + new Vector3F( 0, 0, -wheel.Diameter * 0.5f );
+							time += 2.0 * Math.PI * lastWheel.Diameter * 0.5 * 0.125;
+							previousPoint = p;
+
+							curve.AddPoint( time, p );
+						}
+
+						//another bottom point
+						{
+							ref var wheel = ref dynamicData.Wheels[ wheelFrom + 1 ];
+
+							var p = wheel.CurrentPosition + new Vector3F( 0, 0, -wheel.Diameter * 0.5f );
+							time += ( p - previousPoint ).Length();
+							previousPoint = p;
+
+							curve.AddPoint( time, p );
+						}
+
+
+						var totalTime = time;
+
+						int fragmentCount;
+						{
+							var step = dynamicData.VehicleType.TrackFragmentLength.Value;
+							//anti freeze
+							if( step <= 0.01 )
+								step = 0.01;
+							fragmentCount = (int)( totalTime / step ) + 1;
+						}
+
+						if( nTrack == 0 )
+						{
+							fragmentCountLeft = fragmentCount;
+							//fragmentTotalTimeLeft = totalTime;
+						}
+						else
+						{
+							fragmentCountRight = fragmentCount;
+							//fragmentTotalTimeRight = totalTime;
+						}
+
+						//!!!!strange DegreeToRadian
+
+						if( nTrack == 0 )
+							trackFragmentsLinearVelocityLeft = MathEx.DegreeToRadian( firstWheel.AngularVelocity ) * firstWheel.Diameter * 0.5;
+						else
+							trackFragmentsLinearVelocityRight = MathEx.DegreeToRadian( firstWheel.AngularVelocity ) * firstWheel.Diameter * 0.5;
+
+						//if( nTrack == 0 )
+						//	trackFragmentsLinearVelocityLeft = firstWheel.AngularVelocity * firstWheel.Diameter * 0.5;
+						//else
+						//	trackFragmentsLinearVelocityRight = firstWheel.AngularVelocity * firstWheel.Diameter * 0.5;
+					}
+				}
+
+				//calculate total additional items count
 				var itemCount = 0;
 				for( int n = 0; n < wheelCount; n++ )
 				{
 					ref var wheel = ref dynamicData.Wheels[ n ];
-					var mesh = wheel.Front ? dynamicData.FrontWheelMesh : dynamicData.RearWheelMesh;
-					if( mesh != null )
+					if( wheel.Mesh != null )
 						itemCount++;
 				}
+				if( dynamicData.TrackFragmentMesh != null )
+					itemCount += fragmentCountLeft + fragmentCountRight; //itemCount += dynamicData.Tracks[ 0 ].Fragments.Length * 2;
 
 				var currentAdditionalItems = AdditionalItems;
 				if( currentAdditionalItems == null || currentAdditionalItems.Length != itemCount )
@@ -2438,31 +3075,243 @@ namespace NeoAxis
 						currentAdditionalItems = null;
 				}
 
+				//wheels
 				var currentIndex = 0;
 				for( int n = 0; n < wheelCount; n++ )
 				{
 					ref var wheel = ref dynamicData.Wheels[ n ];
-					var mesh = wheel.Front ? dynamicData.FrontWheelMesh : dynamicData.RearWheelMesh;
-
-					if( mesh != null )
+					if( wheel.Mesh != null )
 					{
 						ref var item = ref currentAdditionalItems[ currentIndex++ ];
 
-						item.Mesh = wheel.Front ? dynamicData.FrontWheelMesh : dynamicData.RearWheelMesh;
+						item.Mesh = wheel.Mesh;
 						item.Position = wheel.CurrentPosition;
-						item.Rotation = wheel.CurrentRotation;
-
 						if( wheel.Right )
 							item.Rotation = wheel.CurrentRotation * Quaternion.FromRotateByZ( Math.PI );
 						else
 							item.Rotation = wheel.CurrentRotation;
-
 						item.Scale = Vector3.One;
 						item.Color = ColorValue.One;
+
+						if( double.IsNaN( item.Rotation.X ) )
+							Log.Fatal( "Vehicle: UpdateAdditionalItems: double.IsNaN( item.Rotation.X )." );
+					}
+				}
+
+				//track fragments
+				if( dynamicData.TrackFragmentMesh != null && itemCount != 0 )
+				{
+					for( int nTrack = 0; nTrack < 2; nTrack++ )
+					{
+						var curve = nTrack == 0 ? lastTrackFragmentsCurveLeft : lastTrackFragmentsCurveRight;
+						//var totalTime = nTrack == 0 ? fragmentTotalTimeLeft : fragmentTotalTimeRight;
+						var fragmentCount = nTrack == 0 ? fragmentCountLeft : fragmentCountRight;
+						var trackFragmentsLinearPosition = nTrack == 0 ? trackFragmentsLinearPositionLeft : trackFragmentsLinearPositionRight;
+
+						var step = dynamicData.VehicleType.TrackFragmentLength.Value;
+						//anti freeze
+						if( step <= 0.01 )
+							step = 0.01;
+
+						var t = trackFragmentsLinearPosition % step;
+						//var t = 0.0;
+
+						for( int n = 0; n < fragmentCount; n++ ) //for( var t = 0.0; t < totalTime; t += step )
+						{
+							var p = curve.CalculateValueByTime( t );
+
+							if( currentIndex >= currentAdditionalItems.Length )
+								Log.Fatal( "currentIndex >= currentAdditionalItems.Length." );
+
+							ref var item = ref currentAdditionalItems[ currentIndex++ ];
+							item.Mesh = dynamicData.TrackFragmentMesh;
+							item.Position = p;
+
+							//!!!!slowly? maybe use Quaternion.FromRotateBy()
+
+							double t2 = t;
+							if( n < fragmentCount / 2 )
+								t2 += 0.01;
+							else
+								t2 -= 0.01;
+							var p2 = curve.CalculateValueByTime( t2 );
+
+							var p3 = ( p2 - p ).GetNormalize();
+							var up = Vector3.Cross( p3, new Vector3( 0, 1, 0 ) );
+
+							item.Rotation = new Matrix3( p3, new Vector3( 0, 1, 0 ), up ).ToQuaternion();
+
+							if( double.IsNaN( item.Rotation.X ) )
+								Log.Fatal( "Vehicle: UpdateAdditionalItems: double.IsNaN( item.Rotation.X )." );
+
+							item.Scale = Vector3.One;
+							item.Color = ColorValue.One;
+
+							t += step;
+						}
+
+
+
+						//for( int nFragment = 0; nFragment < trackItem.Fragments.Length; nFragment++ )
+						//{
+						//	ref var fragment = ref trackItem.Fragments[ nFragment ];
+
+						//	ref var item = ref currentAdditionalItems[ currentIndex++ ];
+						//	item.Mesh = dynamicData.TrackFragmentMesh;
+
+						//	//!!!!
+						//	item.Position = fragment.Position;
+						//	item.Rotation = Quaternion.Identity;
+
+
+						//	//item.Position = wheel.CurrentPosition;
+						//	//if( wheel.Right )
+						//	//	item.Rotation = wheel.CurrentRotation * Quaternion.FromRotateByZ( Math.PI );
+						//	//else
+						//	//	item.Rotation = wheel.CurrentRotation;
+
+						//	item.Scale = Vector3.One;
+						//	item.Color = ColorValue.One;
+						//}
+
+
+
+
+						////var currentIndex = 0;
+
+						////for( int n = 0; n < wheelCount; n++ )
+						////{
+						////	ref var wheel = ref dynamicData.Wheels[ n ];
+
+						////	if( nTrack == 0 && wheel.Which == DynamicDataClass.WhichWheel.TrackLeft || nTrack == 1 && wheel.Which == DynamicDataClass.WhichWheel.TrackRight )
+						////	{
+						////		//wheel.CurrentPosition
+						////		//wheel.Diameter
+
+						////		curve.AddPoint( 0, wheel.CurrentPosition - new Vector3F( 0, 0, wheel.Diameter * 0.5f ) );
+
+						////	}
+
+						////	//if( wheel.Mesh != null )
+						////	//{
+						////	//	ref var item = ref currentAdditionalItems[ currentIndex++ ];
+
+						////	//	item.Mesh = wheel.Mesh;
+						////	//	item.Position = wheel.CurrentPosition;
+						////	//	if( wheel.Right )
+						////	//		item.Rotation = wheel.CurrentRotation * Quaternion.FromRotateByZ( Math.PI );
+						////	//	else
+						////	//		item.Rotation = wheel.CurrentRotation;
+						////	//	item.Scale = Vector3.One;
+						////	//	item.Color = ColorValue.One;
+						////	//}
+						////}
+
+
+
+						////dynamicData.Wheels[0];
+
+						////trackItem
+
+						////curve.CalculateValueByTime
+
+						////for( int nFragment = 0; nFragment < trackItem.Fragments.Length; nFragment++ )
+						////{
+						////	ref var fragment = ref trackItem.Fragments[ nFragment ];
+
+						////	ref var item = ref currentAdditionalItems[ currentIndex++ ];
+						////	item.Mesh = dynamicData.TrackFragmentMesh;
+
+						////	//!!!!
+						////	item.Position = fragment.Position;
+						////	item.Rotation = Quaternion.Identity;
+
+
+						////	//item.Position = wheel.CurrentPosition;
+						////	//if( wheel.Right )
+						////	//	item.Rotation = wheel.CurrentRotation * Quaternion.FromRotateByZ( Math.PI );
+						////	//else
+						////	//	item.Rotation = wheel.CurrentRotation;
+
+						////	item.Scale = Vector3.One;
+						////	item.Color = ColorValue.One;
+						////}
+
+
+
+						//for( int nFragment = 0; nFragment < trackItem.Fragments.Length; nFragment++ )
+						//{
+						//	ref var fragment = ref trackItem.Fragments[ nFragment ];
+
+						//	ref var item = ref currentAdditionalItems[ currentIndex++ ];
+						//	item.Mesh = dynamicData.TrackFragmentMesh;
+
+						//	//!!!!
+						//	item.Position = fragment.Position;
+						//	item.Rotation = Quaternion.Identity;
+
+
+						//	//item.Position = wheel.CurrentPosition;
+						//	//if( wheel.Right )
+						//	//	item.Rotation = wheel.CurrentRotation * Quaternion.FromRotateByZ( Math.PI );
+						//	//else
+						//	//	item.Rotation = wheel.CurrentRotation;
+
+						//	item.Scale = Vector3.One;
+						//	item.Color = ColorValue.One;
+						//}
+
 					}
 				}
 
 				AdditionalItems = currentAdditionalItems;
+
+
+				//var wheelCount = dynamicData.Wheels.Length;
+
+				//var itemCount = 0;
+				//for( int n = 0; n < wheelCount; n++ )
+				//{
+				//	ref var wheel = ref dynamicData.Wheels[ n ];
+				//	var mesh = wheel.Front ? dynamicData.FrontWheelMesh : dynamicData.RearWheelMesh;
+				//	if( mesh != null )
+				//		itemCount++;
+				//}
+
+				//var currentAdditionalItems = AdditionalItems;
+				//if( currentAdditionalItems == null || currentAdditionalItems.Length != itemCount )
+				//{
+				//	if( itemCount != 0 )
+				//		currentAdditionalItems = new AdditionalItem[ itemCount ];
+				//	else
+				//		currentAdditionalItems = null;
+				//}
+
+				//var currentIndex = 0;
+				//for( int n = 0; n < wheelCount; n++ )
+				//{
+				//	ref var wheel = ref dynamicData.Wheels[ n ];
+				//	var mesh = wheel.Front ? dynamicData.FrontWheelMesh : dynamicData.RearWheelMesh;
+
+				//	if( mesh != null )
+				//	{
+				//		ref var item = ref currentAdditionalItems[ currentIndex++ ];
+
+				//		item.Mesh = wheel.Front ? dynamicData.FrontWheelMesh : dynamicData.RearWheelMesh;
+				//		item.Position = wheel.CurrentPosition;
+				//		item.Rotation = wheel.CurrentRotation;
+
+				//		if( wheel.Right )
+				//			item.Rotation = wheel.CurrentRotation * Quaternion.FromRotateByZ( Math.PI );
+				//		else
+				//			item.Rotation = wheel.CurrentRotation;
+
+				//		item.Scale = Vector3.One;
+				//		item.Color = ColorValue.One;
+				//	}
+				//}
+
+				//AdditionalItems = currentAdditionalItems;
 			}
 		}
 
@@ -2476,7 +3325,7 @@ namespace NeoAxis
 			if( body != null && body.Active && ( body.LinearVelocity != Vector3F.Zero || body.AngularVelocity != Vector3F.Zero ) )
 				return true;
 
-			if( Headlights > 0 )
+			if( HeadlightsLow > 0 || HeadlightsHigh > 0 )
 				return true;
 
 			if( MotorOn )
@@ -2561,6 +3410,8 @@ namespace NeoAxis
 
 						wheel.CurrentPosition.Z = reader.ReadHalf();
 						wheel.CurrentRotation = reader.ReadQuaternionH().ToQuaternionF();
+						//for tracks
+						wheel.AngularVelocity = reader.ReadSingle();
 					}
 
 					if( !reader.Complete() )
@@ -2705,7 +3556,6 @@ namespace NeoAxis
 
 							//if( NetworkIsServer )
 							//{
-							//	zzzz;
 							//}
 						}
 					}
@@ -2723,11 +3573,32 @@ namespace NeoAxis
 		{
 			base.OnGetRenderSceneDataAddToFrameData( context, mode, ref item, ref skip );
 
-			if( visualHeadlights != 0 || visualBrake != 0 )
+			if( visualHeadlightLow != 0 || visualHeadlightHigh != 0 || visualBrake != 0 || visualLeftTurnSignal != 0 || visualRightTurnSignal != 0 )
 			{
-				item.ObjectInstanceParameters = new Vector4F[ 2 ];
-				item.ObjectInstanceParameters[ 0 ].X = visualHeadlights;
-				item.ObjectInstanceParameters[ 0 ].Y = visualBrake;
+				//format of shader parameters. use material in "Content\Vehicles\Default\Body.gltf" as example.
+
+				//[ 0 ].X - packed two halfs
+				//X - Headlight low beam. 0 - 1 interval.
+				//Y - Headlight high beam. 0 - 1 interval.
+
+				//[ 0 ].Y - packed two halfs
+				//X - Brake. 0 - 1 interval.
+				//Y - Left turn signal. 0 - 1 interval.
+
+				//[ 0 ].Z - packed two halfs
+				//X - Right turn signal. 0 - 1 interval.
+
+				//!!!!impl
+				////Y - Front fog light. 0 - 1 interval.
+				////X - Move back signals. 0 - 1 interval.
+				////Y - Daytime running lights. 0 - 1 interval.
+
+				var p = new Vector4F[ 2 ];
+				p[ 0 ].X = HalfType.PackTwoHalfsToFloat( visualHeadlightLow, visualHeadlightHigh );
+				p[ 0 ].Y = HalfType.PackTwoHalfsToFloat( visualBrake, GetVisualLightFactorByPurpose( DynamicDataClass.LightTypePurpose.Left_Turn ) );
+				p[ 0 ].Z = HalfType.PackTwoHalfsToFloat( GetVisualLightFactorByPurpose( DynamicDataClass.LightTypePurpose.Right_Turn ), 0 );
+
+				item.ObjectInstanceParameters = p;
 			}
 		}
 
@@ -2893,65 +3764,116 @@ namespace NeoAxis
 
 		void SimulateVisualHeadlights( ref bool updated, bool immediate = false )
 		{
-			var headlights = Headlights.Value;
-			if( visualHeadlights != headlights )
 			{
-				updated = true;
+				var headlights = HeadlightsLow.Value;
+				if( visualHeadlightLow != headlights )
+				{
+					updated = true;
 
-				if( visualHeadlights < headlights )
-				{
-					visualHeadlights += immediate ? 10000 : Time.SimulationDelta * 10;
-					if( visualHeadlights > headlights )
-						visualHeadlights = headlights;
-				}
-				else
-				{
-					visualHeadlights -= immediate ? 10000 : Time.SimulationDelta * 2;
-					if( visualHeadlights < headlights )
-						visualHeadlights = headlights;
-				}
-
-				if( dynamicData?.Lights != null )
-				{
-					foreach( var lightItem in dynamicData.Lights )
+					if( visualHeadlightLow < headlights )
 					{
-						if( visualHeadlights > 0 )
-						{
-							if( lightItem.Light == null )
-							{
-								var obj = (Light)lightItem.LightType.Clone();
-								lightItem.Light = obj;
-								obj.Enabled = false;
-								obj.SaveSupport = false;
-								obj.CanBeSelected = false;
+						visualHeadlightLow += immediate ? 10000 : Time.SimulationDelta * 10;
+						if( visualHeadlightLow > headlights )
+							visualHeadlightLow = headlights;
+					}
+					else
+					{
+						visualHeadlightLow -= immediate ? 10000 : Time.SimulationDelta * 2;
+						if( visualHeadlightLow < headlights )
+							visualHeadlightLow = headlights;
+					}
+				}
+			}
 
-								AddComponent( obj );
+			{
+				var headlights = HeadlightsHigh.Value;
+				if( visualHeadlightHigh != headlights )
+				{
+					updated = true;
 
-								//apply world transform
-								obj.Transform = TransformV * obj.TransformV;
-								foreach( var objectInSpace2 in obj.GetComponents<ObjectInSpace>( checkChildren: true ) )
-									objectInSpace2.Transform = TransformV * objectInSpace2.TransformV;
-
-								ObjectInSpaceUtility.Attach( this, obj, TransformOffset.ModeEnum.Elements );
-
-								obj.Enabled = true;
-							}
-
-							lightItem.Light.Brightness = visualHeadlights * lightItem.LightType.Brightness;
-							lightItem.Light.Transform.Touch();
-						}
-						else
-						{
-							if( lightItem.Light != null )
-							{
-								lightItem.Light.RemoveFromParent( false );
-								lightItem.Light = null;
-							}
-						}
+					if( visualHeadlightHigh < headlights )
+					{
+						visualHeadlightHigh += immediate ? 10000 : Time.SimulationDelta * 10;
+						if( visualHeadlightHigh > headlights )
+							visualHeadlightHigh = headlights;
+					}
+					else
+					{
+						visualHeadlightHigh -= immediate ? 10000 : Time.SimulationDelta * 2;
+						if( visualHeadlightHigh < headlights )
+							visualHeadlightHigh = headlights;
 					}
 				}
 			}
 		}
+
+		//old
+		//void SimulateVisualHeadlights( ref bool updated, bool immediate = false )
+		//{
+		//	var headlights = Headlights.Value;
+		//	if( visualHeadlights != headlights )
+		//	{
+		//		updated = true;
+
+		//		if( visualHeadlights < headlights )
+		//		{
+		//			visualHeadlights += immediate ? 10000 : Time.SimulationDelta * 10;
+		//			if( visualHeadlights > headlights )
+		//				visualHeadlights = headlights;
+		//		}
+		//		else
+		//		{
+		//			visualHeadlights -= immediate ? 10000 : Time.SimulationDelta * 2;
+		//			if( visualHeadlights < headlights )
+		//				visualHeadlights = headlights;
+		//		}
+
+
+		//		if( dynamicData?.Lights != null )
+		//		{
+		//			foreach( var lightItem in dynamicData.Lights )
+		//			{
+		//				//!!!!Headlights_High
+		//				if( lightItem.LightTypePurpose == DynamicDataClass.LightTypePurpose.Headlight_High )
+		//				{
+		//					if( visualHeadlights > 0 )
+		//					{
+		//						if( lightItem.Light == null )
+		//						{
+		//							var obj = (Light)lightItem.LightType.Clone();
+		//							lightItem.Light = obj;
+		//							obj.Enabled = false;
+		//							obj.SaveSupport = false;
+		//							obj.CanBeSelected = false;
+
+		//							AddComponent( obj );
+
+		//							//apply world transform
+		//							obj.Transform = TransformV * obj.TransformV;
+		//							foreach( var objectInSpace2 in obj.GetComponents<ObjectInSpace>( checkChildren: true ) )
+		//								objectInSpace2.Transform = TransformV * objectInSpace2.TransformV;
+
+		//							ObjectInSpaceUtility.Attach( this, obj, TransformOffset.ModeEnum.Elements );
+
+		//							obj.Enabled = true;
+		//						}
+
+		//						lightItem.Light.Brightness = visualHeadlights * lightItem.LightType.Brightness;
+		//						lightItem.Light.Transform.Touch();
+		//					}
+		//					else
+		//					{
+		//						if( lightItem.Light != null )
+		//						{
+		//							lightItem.Light.RemoveFromParent( false );
+		//							lightItem.Light = null;
+		//						}
+		//					}
+		//				}
+		//			}
+		//		}
+		//	}
+		//}
 
 		void SimulateVisualBrake( ref bool updated, bool immediate = false )
 		{
@@ -2977,6 +3899,176 @@ namespace NeoAxis
 			}
 		}
 
+		void SimulateVisualTurnSignals( ref bool updated, bool immediate = false )
+		{
+			{
+				var signal = LeftTurnSignal.Value;
+				if( visualLeftTurnSignal != signal )
+				{
+					updated = true;
+
+					if( visualLeftTurnSignal < signal )
+					{
+						visualLeftTurnSignal += immediate ? 10000 : Time.SimulationDelta * 10;
+						if( visualLeftTurnSignal > signal )
+							visualLeftTurnSignal = signal;
+					}
+					else
+					{
+						visualLeftTurnSignal -= immediate ? 10000 : Time.SimulationDelta * 2;
+						if( visualLeftTurnSignal < signal )
+							visualLeftTurnSignal = signal;
+					}
+				}
+			}
+
+			{
+				var signal = RightTurnSignal.Value;
+				if( visualRightTurnSignal != signal )
+				{
+					updated = true;
+
+					if( visualRightTurnSignal < signal )
+					{
+						visualRightTurnSignal += immediate ? 10000 : Time.SimulationDelta * 10;
+						if( visualRightTurnSignal > signal )
+							visualRightTurnSignal = signal;
+					}
+					else
+					{
+						visualRightTurnSignal -= immediate ? 10000 : Time.SimulationDelta * 2;
+						if( visualRightTurnSignal < signal )
+							visualRightTurnSignal = signal;
+					}
+				}
+			}
+
+			//set updated because of blinking
+			if( visualLeftTurnSignal > 0 || visualRightTurnSignal > 0 )
+				updated = true;
+		}
+
+		float GetTurnBlinkingFactor()
+		{
+			double time;
+			{
+				var contoller = ParentRoot.HierarchyController;
+				if( contoller != null )
+					time = contoller.SimulationTime;
+				else
+					time = EngineApp.EngineTime;
+			}
+
+			//!!!!configure settings
+			var factor = MathEx.Saturate( (float)MathEx.Sin( time * 4 ) + 0.5f );
+
+			return factor;
+		}
+
+		float GetVisualLightFactorByPurpose( DynamicDataClass.LightTypePurpose purpose )
+		{
+			switch( purpose )
+			{
+			case DynamicDataClass.LightTypePurpose.Headlight_Low: return visualHeadlightLow;
+			case DynamicDataClass.LightTypePurpose.Headlight_High: return visualHeadlightHigh;
+			case DynamicDataClass.LightTypePurpose.Brake: return visualBrake;
+			case DynamicDataClass.LightTypePurpose.Left_Turn:
+				{
+					var v = visualLeftTurnSignal;
+					if( v > 0 )
+						v *= GetTurnBlinkingFactor();
+					return v;
+				}
+
+			case DynamicDataClass.LightTypePurpose.Right_Turn:
+				{
+					var v = visualRightTurnSignal;
+					if( v > 0 )
+						v *= GetTurnBlinkingFactor();
+					return v;
+				}
+			}
+
+			return 0;
+		}
+
+		void UpdateLightComponents()
+		{
+			if( dynamicData?.Lights != null )
+			{
+				foreach( var lightItem in dynamicData.Lights )
+				{
+					var factor = GetVisualLightFactorByPurpose( lightItem.LightTypePurpose );
+
+					if( factor > 0 )
+					{
+						if( lightItem.Light == null )
+						{
+							var obj = (Light)lightItem.LightType.Clone();
+							lightItem.Light = obj;
+							obj.Enabled = false;
+							obj.SaveSupport = false;
+							obj.CanBeSelected = false;
+
+							AddComponent( obj );
+
+							//apply world transform
+							obj.Transform = TransformV * obj.TransformV;
+							foreach( var objectInSpace2 in obj.GetComponents<ObjectInSpace>( checkChildren: true ) )
+								objectInSpace2.Transform = TransformV * objectInSpace2.TransformV;
+
+							ObjectInSpaceUtility.Attach( this, obj, TransformOffset.ModeEnum.Elements );
+
+							obj.Enabled = true;
+						}
+
+						lightItem.Light.Color = lightItem.LightType.Color * new ColorValue( factor, factor, factor );
+						//lightItem.Light.Brightness = factor * lightItem.LightType.Brightness;
+
+						lightItem.Light.Transform.Touch();
+					}
+					else
+					{
+						if( lightItem.Light != null )
+						{
+							lightItem.Light.RemoveFromParent( false );
+							lightItem.Light = null;
+						}
+					}
+				}
+			}
+		}
+
+		protected virtual void SimulateAeroEngines()
+		{
+			//!!!!
+			//if( dynamicData?.AeroEngines != null )
+			//{
+			//	foreach( var engineItem in dynamicData.AeroEngines )
+			//	{
+			//		if( PhysicalBody != null )
+			//		{
+			//			var engine = engineItem.Engine;
+
+			//			var force = engine.Force.Value * Throttle * Time.SimulationDelta;
+			//			if( force > 0 )
+			//			{
+			//				//simple implementation
+
+			//				PhysicalBody.ApplyForce( ( engine.TransformV.Rotation * new Vector3( force, 0, 0 ) ).ToVector3F(), Vector3F.Zero );
+
+
+			//				//var bodyTransform = new Matrix4( PhysicalBody.Rotation.ToMatrix3(), PhysicalBody.Position );
+			//				//var engineTransform = engine.TransformV.ToMatrix4();
+			//				//var relativeTransform = bodyTransform * engineTransform.GetInverse();
+			//				//relativeTransform.Decompose( out var pos, out Quaternion _, out _ );
+			//				//PhysicalBody.ApplyForce( PhysicalBody.Rotation * new Vector3F( (float)force, 0, 0 ), pos.ToVector3F() );
+			//			}
+			//		}
+			//	}
+			//}
+		}
+
 		protected override void OnClientConnectedAfterRootComponentEnabled( ServerNetworkService_Components.ClientItem client )
 		{
 			base.OnClientConnectedAfterRootComponentEnabled( client );
@@ -2988,6 +4080,15 @@ namespace NeoAxis
 				writer.WriteVariableInt32( dynamicData.CurrentGear );
 				writer.Write( dynamicData.CurrentRPM );
 				EndNetworkMessage();
+			}
+		}
+
+		void SimulateTrackFragmentsLinearPositions()
+		{
+			if( dynamicData?.TrackFragmentMesh != null )
+			{
+				trackFragmentsLinearPositionLeft += trackFragmentsLinearVelocityLeft;
+				trackFragmentsLinearPositionRight += trackFragmentsLinearVelocityRight;
 			}
 		}
 	}

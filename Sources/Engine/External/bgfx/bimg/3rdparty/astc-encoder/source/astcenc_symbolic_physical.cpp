@@ -1,3 +1,6 @@
+//!!!!betauser. android compiler crash
+#ifndef __ANDROID__
+
 // SPDX-License-Identifier: Apache-2.0
 // ----------------------------------------------------------------------------
 // Copyright 2011-2023 Arm Limited
@@ -539,3 +542,5 @@ void physical_to_symbolic(
 		scb.plane2_component = static_cast<int8_t>(read_bits(2, below_weights_pos - 2, pcb));
 	}
 }
+
+#endif

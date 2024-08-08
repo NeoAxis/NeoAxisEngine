@@ -535,7 +535,7 @@ namespace NeoAxis.Editor
 						}
 					}
 
-					string packageName = packageComponent.Name;//ProductName.Value;
+					string packageName = packageComponent.GetName();//ProductName.Value;
 					if( string.IsNullOrEmpty( packageName ) )
 						packageName = "\'No name\'";
 
@@ -572,7 +572,7 @@ namespace NeoAxis.Editor
 				if( order1 > order2 )
 					return 1;
 
-				return string.Compare( c1.Name, c2.Name );
+				return string.Compare( c1.GetName(), c2.GetName() );
 			} );
 
 			contentBrowserPackage.SetData( items, false );

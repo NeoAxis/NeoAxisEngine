@@ -1,0 +1,95 @@
+// Made with NeoAxis Engine 2024.1.
+
+.component NeoAxis.Import3D
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1165, 842\"><KW V=\"1\" A=\"FC7324CEE17548FFF3BB707ACF86E226\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"63AA3F50010341CA08A82FB32D5B8118\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"FC7324CEE17548FFF3BB707ACF86E226\"><KP UN=\"E1D61506E5184D6391A6CD75452ADAC9\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"D6CC7B8CD0BB47A115A4CB921DFD3C3C\" S=\"False\"><CPD ObjPath=\"$Materials\\$Material\\$Material shader graph\" /></KP><KP UN=\"FC7324CEE17548FFF3BB707ACF86E226\" S=\"False\"><CPD ObjPath=\"$Mesh\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorCameraTransform = "1.37704294775239 -1.13284101713683 0.905772570758137; -0.2191854566202 0.0785722056997891 0.915470996498287 0.328172208860071; 1 1 1"
+	LODs = False
+	.component NeoAxis.Component
+	{
+		Name = Materials
+		.component NeoAxis.Material
+		{
+			Name = Material
+			BaseColor = 0.8 0.8 0.8
+			.component NeoAxis.FlowGraph
+			{
+				Name = Material shader graph
+				EditorScrollPosition = 0 0
+				Specialization
+				{
+					GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+				}
+				.component NeoAxis.FlowGraphNode
+				{
+					Name = Node Material
+					Position = 10 -7
+					ControlledObject
+					{
+						GetByReference = "this:..\\.."
+					}
+				}
+			}
+		}
+	}
+	.component NeoAxis.Mesh
+	{
+		Name = Mesh
+		EditorCameraTransform = "0.721236099192266 -0.609926964088673 0.909440372166162; -0.389347598580336 0.136576144337604 0.859559368235299 0.301517987451054; 1 1 1"
+		.component NeoAxis.MeshGeometry
+		{
+			Name = Cube.003
+			VertexStructure
+			{
+				Value
+				{
+					Length = 4
+					0
+					{
+						Offset = 0
+						Type = Float3
+						Semantic = Position
+					}
+					1
+					{
+						Offset = 12
+						Type = Float3
+						Semantic = Normal
+					}
+					2
+					{
+						Offset = 24
+						Type = Half4
+						Semantic = Tangent
+					}
+					3
+					{
+						Offset = 32
+						Type = Half2
+						Semantic = TextureCoordinate0
+					}
+				}
+			}
+			Vertices
+			{
+				Value
+				{
+					Length = 144
+					.elements = "AAAAPwAAAD8AAAAAAAAAAAAAAAAAAIA/ALwAAAAAADwANgA6AAAAvwAAAD8AAAAAAAAAAAAAAAAAAIA/ALwAAAAAADwAOwA6AAAAvwAAAL8AAAAAAAAAAAAAAAAAAIA/ALwAAAAAADwAOwA0AAAAPwAAAL8AAAAAAAAAAAAAAAAAAIA/ALwAAAAAADwANgA0"
+				}
+			}
+			Indices
+			{
+				Value
+				{
+					Length = 6
+					.elements = 0 1 2 0 2 3
+				}
+			}
+			Material
+			{
+				GetByReference = "Content\\Materials\\Basic Library\\Wood\\Wood Floor 039.material"
+			}
+		}
+	}
+}

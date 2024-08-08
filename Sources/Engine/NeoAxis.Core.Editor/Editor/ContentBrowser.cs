@@ -4235,7 +4235,7 @@ namespace NeoAxis.Editor
 		//		return NodePosition.Inside;
 		//}
 
-		internal static DragDropItemData GetDroppingItemData( IDataObject data )
+		public /*internal */static DragDropItemData GetDroppingItemData( IDataObject data )
 		{
 			if( data is EngineListView.DragData listViewData )
 			{
@@ -4755,7 +4755,7 @@ namespace NeoAxis.Editor
 								if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
 								{
 									//!!!!multiselection
-									CutCopyFiles( new string[] { droppingFileItem.FullPath }, !copy, targetFolder );
+									ContentBrowserUtility.CutCopyFiles( new string[] { droppingFileItem.FullPath }, !copy, targetFolder );
 								}
 							}
 
@@ -5046,99 +5046,13 @@ namespace NeoAxis.Editor
 			return false;
 		}
 
-		static void CopyRealFileDirectoryRecursive( string sourceDirectory, string destDirectory )
-		{
-			string[] directories = Directory.GetDirectories( sourceDirectory );
-			Directory.CreateDirectory( destDirectory );
-			foreach( string childDirectory in directories )
-				CopyRealFileDirectoryRecursive( childDirectory, Path.Combine( destDirectory, Path.GetFileName( childDirectory ) ) );
-			foreach( string fileName in Directory.GetFiles( sourceDirectory ) )
-				File.Copy( fileName, Path.Combine( destDirectory, Path.GetFileName( fileName ) ) );
-		}
-
-		void CutCopyFiles( string[] filePaths, bool cut, string destinationFolder )
-		{
-			//!!!!потом заимплементить, чтобы было с диалогом виндовса.
-
-			foreach( string realFilePath in filePaths )
-			{
-				try
-				{
-					string newRealFilePath = Path.Combine( destinationFolder, Path.GetFileName( realFilePath ) );
-
-					//rename if put to same directory and file already exists
-					if( File.Exists( realFilePath ) )
-					{
-						if( string.Compare( destinationFolder, Path.GetDirectoryName( realFilePath ), true ) == 0 )
-						{
-							for( int counter = 1; ; counter++ )
-							{
-								string checkRealFilePath = destinationFolder + Path.DirectorySeparatorChar;
-								checkRealFilePath += Path.GetFileNameWithoutExtension( realFilePath );
-								if( counter != 1 )
-									checkRealFilePath += counter.ToString();
-								if( Path.GetExtension( realFilePath ) != null )
-									checkRealFilePath += Path.GetExtension( realFilePath );
-
-								//file
-								if( !File.Exists( checkRealFilePath ) )
-								{
-									newRealFilePath = checkRealFilePath;
-									break;
-								}
-							}
-						}
-
-						//create
-						if( cut )
-							File.Move( realFilePath, newRealFilePath );
-						else
-							File.Copy( realFilePath, newRealFilePath );
-
-						continue;
-					}
-
-					//rename if put to same directory and directory already exists
-					if( Directory.Exists( realFilePath ) )
-					{
-						for( int counter = 1; ; counter++ )
-						{
-							string checkRealFilePath = Path.GetDirectoryName( newRealFilePath ) + Path.DirectorySeparatorChar;
-							checkRealFilePath += Path.GetFileName( newRealFilePath );
-							if( counter != 1 )
-								checkRealFilePath += counter.ToString();
-
-							//directory
-							if( !Directory.Exists( checkRealFilePath ) )
-							{
-								newRealFilePath = checkRealFilePath;
-								break;
-							}
-						}
-
-						//create
-						CopyRealFileDirectoryRecursive( realFilePath, newRealFilePath );
-						if( cut )
-							Directory.Delete( realFilePath, true );
-
-						continue;
-					}
-				}
-				catch( Exception e )
-				{
-					Log.Error( e.Message );
-					return;
-				}
-			}
-		}
-
 		public void Paste()
 		{
 			if( CanPaste( out string[] filePaths, out bool cut, out string destinationFolder, out Component destinationParent ) )
 			{
 				//_File
 				if( filePaths != null )
-					CutCopyFiles( filePaths, cut, destinationFolder );
+					ContentBrowserUtility.CutCopyFiles( filePaths, cut, destinationFolder );
 
 				//_Component
 				if( destinationParent != null )

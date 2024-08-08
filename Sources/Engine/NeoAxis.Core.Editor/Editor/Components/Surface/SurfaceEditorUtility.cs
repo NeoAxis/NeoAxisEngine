@@ -118,6 +118,14 @@ namespace NeoAxis.Editor
 						{
 							var position2 = center.ToVector2() + offset;
 
+							var regularAlignment = surfaceGroup.RegularAlignment;//groups[ groupIndex ].RegularAlignment;
+							if( regularAlignment != 0 )
+							{
+								position2 /= regularAlignment;
+								position2 = new Vector2( (int)position2.X, (int)position2.Y );
+								position2 *= regularAlignment;
+							}
+
 							//var result = Scene_Utility.CalculateObjectPositionZ( Scene, toGroupOfObjects, center.Z, position2, destinationCachedBaseObjects );
 							//if( result.found )
 							//{

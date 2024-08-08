@@ -142,6 +142,8 @@ namespace NeoAxis.Editor
 		public abstract EditorContextMenu.Separator EditorContextMenuNewSeparator();
 		public abstract void EditorContextMenuShow( ICollection<EditorContextMenu.ItemBase> items, Vector2I? screenPosition );
 #endif
+
+		public abstract void AfterFatalShowDialogAndSaveDocuments( string errorText, ref bool skipLogFatal );
 	}
 }
 

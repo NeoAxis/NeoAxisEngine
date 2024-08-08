@@ -1,0 +1,32 @@
+.component NeoAxis.Component_FenceType
+{
+	PanelLength = 2
+	EndPost
+	{
+		GetByReference = "Content\\Fences\\NeoAxis\\Safety railing\\Data\\Post.fbx|$Mesh"
+	}
+	LinePost
+	{
+		GetByReference = "Content\\Fences\\NeoAxis\\Safety railing\\Data\\Post.fbx|$Mesh"
+	}
+	CornerPost
+	{
+		GetByReference = "Content\\Fences\\NeoAxis\\Safety railing\\Data\\Post.fbx|$Mesh"
+	}
+	StepPost
+	{
+		GetByReference = "Content\\Fences\\NeoAxis\\Safety railing\\Data\\Post.fbx|$Mesh"
+	}
+	FullPanel
+	{
+		GetByReference = "Content\\Fences\\NeoAxis\\Safety railing\\Data\\Full panel.fbx|$Mesh"
+	}
+	HalfPanel
+	{
+		GetByReference = "Content\\Fences\\NeoAxis\\Safety railing\\Data\\Half panel.fbx|$Mesh"
+	}
+	QuarterPanel
+	{
+		GetByReference = "Content\\Fences\\NeoAxis\\Safety railing\\Data\\Quater panel.fbx|$Mesh"
+	}
+}

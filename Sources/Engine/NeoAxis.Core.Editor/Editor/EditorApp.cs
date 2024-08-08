@@ -38,10 +38,10 @@ namespace NeoAxis.Editor
 
 		static void Main2()
 		{
-#if !DEPLOY
-			if( EditorCommandLineTools.Process() )
-				return;
-#endif
+			//#if !DEPLOY
+			//			if( EditorCommandLineTools.Process() )
+			//				return;
+			//#endif
 
 			if( Environment.OSVersion.Version.Major >= 6 )
 			{

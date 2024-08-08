@@ -315,7 +315,9 @@
 #endif
 
 #ifndef NINCLUDE
-#define NINCLUDE		  20
+//!!!!betauser
+#define NINCLUDE		  64
+//#define NINCLUDE		  20
 #endif
 
 #ifndef NPARMWORK

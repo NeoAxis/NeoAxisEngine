@@ -226,11 +226,11 @@ namespace NeoAxis
 					var path = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "lib" + libraryName + ".so" );
 					NativeLibrary.TryLoad( path, out libHandle );
 				}
-				else if( libraryName == "OpenAL32" )
-				{
-					var path = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "libOpenAL.so" );
-					NativeLibrary.TryLoad( path, out libHandle );
-				}
+				//else if( libraryName == "OpenAL32" )
+				//{
+				//	var path = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "libOpenAL.so" );
+				//	NativeLibrary.TryLoad( path, out libHandle );
+				//}
 			}
 			return libHandle;
 

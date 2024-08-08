@@ -6,14 +6,14 @@ using System.Text;
 namespace NeoAxis
 {
 	/// <summary>
-	/// Class for working with time in the engine.
+	/// A class for working with time in the engine.
 	/// </summary>
 	public static class Time
 	{
 		static float simulationDeltaCached;
 
 		/// <summary>
-		/// Gets simulation time step.
+		/// Gets the time step of the simulation.
 		/// </summary>
 		public static float SimulationDelta
 		{
@@ -26,7 +26,7 @@ namespace NeoAxis
 		}
 
 		/// <summary>
-		/// Gets the current time in the engine.
+		/// Gets the current time in the engine. The engine time is updated once before a simulation step or before a frame update if it is an editor.
 		/// </summary>
 		public static double Current
 		{

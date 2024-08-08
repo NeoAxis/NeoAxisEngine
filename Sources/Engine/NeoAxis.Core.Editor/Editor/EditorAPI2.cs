@@ -83,7 +83,7 @@ namespace NeoAxis.Editor
 		}
 
 		//!!!!по сути не надо указывать documentWindow
-		public static void SelectComponentsInMainObjectsWindow( DocumentWindow documentWindow, Component[] components )
+		public static void SelectComponentsInMainObjectsWindow( IDocumentWindow documentWindow, Component[] components )
 		//public static void SelectComponentsInMainObjectsWindow( DocumentInstance document, Component[] components )
 		{
 			if( documentWindow == null || components.Length == 0 )
@@ -226,9 +226,9 @@ namespace NeoAxis.Editor
 		//		window.Close();
 		//}
 
-		public static void SelectDockWindow( DockWindow window )
+		public static void SelectDockWindow( IDockWindow window )
 		{
-			EditorForm.Instance.WorkspaceController.SelectDockWindow( window );
+			EditorForm.Instance.WorkspaceController.SelectDockWindow( (DockWindow)window );
 		}
 
 		//!!!!good? игнорирует OpenAsSettings
@@ -1580,6 +1580,17 @@ namespace NeoAxis.Editor
 					return document;
 			}
 			return null;
+		}
+
+		public static bool IsModifierKeyPressed( EKeys key )
+		{
+			switch( key )
+			{
+			case EKeys.Shift: return ( Control.ModifierKeys & Keys.Shift ) != 0;
+			case EKeys.Control: return ( Control.ModifierKeys & Keys.Control ) != 0;
+			case EKeys.Alt: return ( Control.ModifierKeys & Keys.Alt ) != 0;
+			}
+			return false;
 		}
 	}
 }

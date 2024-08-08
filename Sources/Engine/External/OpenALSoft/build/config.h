@@ -20,7 +20,9 @@
 #elif defined( __APPLE_CC__)
 #define PLATFORM_MACOS
 #elif defined(__ANDROID__)
+#ifndef PLATFORM_ANDROID
 #define PLATFORM_ANDROID
+#endif
 #elif defined(__linux__)
 #define PLATFORM_LINUX
 #else
@@ -68,7 +70,7 @@
 
 /* Define if we have the ALSA backend */
 #ifdef PLATFORM_LINUX
-#define HAVE_ALSA
+//!!!!#define HAVE_ALSA
 #endif
 /* #undef HAVE_ALSA */
 

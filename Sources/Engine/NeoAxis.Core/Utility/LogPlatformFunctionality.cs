@@ -32,12 +32,7 @@ namespace Internal//NeoAxis
 				if( instance == null )
 				{
 					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
-					{
-						//#if MACOS
-						Log.Fatal( "LogPlatformFunctionality: Instance: impl." );
-						//instance = new LogPlatformFunctionalityMacOSX();
-						//#endif
-					}
+						instance = new LogPlatformFunctionalityMacOS();
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
 						Log.Fatal( "LogPlatformFunctionality: Get: Instance must be already initialized." );
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
@@ -75,16 +70,56 @@ namespace Internal//NeoAxis
 
 		public override EDialogResult ShowMessageBox( string text, string caption, EMessageBoxButtons buttons )
 		{
-			while( ShowCursor( 1 ) < 0 ) { }
+			{
+				var counter = 0;
+				while( ShowCursor( 1 ) < 0 && counter < 100 ) { counter++; }
+			}
 
-			IntPtr hwnd = IntPtr.Zero;
-			if( EngineApp.IsSimulation && EngineApp.CreatedInsideEngineWindow != null )
-				hwnd = EngineApp.CreatedInsideEngineWindow.Handle;
-			if( EngineApp.IsEditor && Process.GetCurrentProcess().MainWindowHandle != IntPtr.Zero )
-				hwnd = Process.GetCurrentProcess().MainWindowHandle;
+			if( EngineApp.IsEditor )
+			{
+				if( buttons != EMessageBoxButtons.OK )
+					return EditorMessageBox.ShowQuestion( text, buttons, caption );
+				else
+				{
+					EditorMessageBox.ShowWarning( text, caption );
+					return EDialogResult.OK;
+				}
+			}
+			else
+			{
+				IntPtr hwnd = IntPtr.Zero;
+				if( EngineApp.IsSimulation && EngineApp.CreatedInsideEngineWindow != null )
+					hwnd = EngineApp.CreatedInsideEngineWindow.Handle;
+				if( EngineApp.IsEditor && Process.GetCurrentProcess().MainWindowHandle != IntPtr.Zero )
+					hwnd = Process.GetCurrentProcess().MainWindowHandle;
 
-			return (EDialogResult)MessageBox( hwnd, text, caption, (int)buttons | MB_ICONEXCLAMATION );
-			//MessageBox( hwnd, text, caption, MB_OK | MB_ICONEXCLAMATION );
+				return (EDialogResult)MessageBox( hwnd, text, caption, (int)buttons | MB_ICONEXCLAMATION );
+			}
+
+
+			//if( EngineApp.IsEditor )
+			//{
+			//	if( buttons != EMessageBoxButtons.OK )
+			//		return EditorMessageBox.ShowQuestion( text, buttons, caption );
+			//	else
+			//	{
+			//		EditorMessageBox.ShowWarning( text, caption );
+			//		return EDialogResult.OK;
+			//	}
+			//}
+			//else
+			//{
+			//	while( ShowCursor( 1 ) < 0 ) { }
+
+			//	IntPtr hwnd = IntPtr.Zero;
+			//	if( EngineApp.IsSimulation && EngineApp.CreatedInsideEngineWindow != null )
+			//		hwnd = EngineApp.CreatedInsideEngineWindow.Handle;
+			//	if( EngineApp.IsEditor && Process.GetCurrentProcess().MainWindowHandle != IntPtr.Zero )
+			//		hwnd = Process.GetCurrentProcess().MainWindowHandle;
+
+			//	return (EDialogResult)MessageBox( hwnd, text, caption, (int)buttons | MB_ICONEXCLAMATION );
+			//	//MessageBox( hwnd, text, caption, MB_OK | MB_ICONEXCLAMATION );
+			//}
 		}
 	}
 	//#endif
@@ -117,22 +152,21 @@ namespace Internal//NeoAxis
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
-	//#if MACOS
-	//	class LogPlatformFunctionalityMacOSX : LogPlatformFunctionality
-	//	{
-	//		struct MacAppNativeWrapper
-	//		{
-	//			[DllImport( "NeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_MessageBox",
-	//				CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode )]
-	//			public static extern void MessageBox( string text, string caption );
-	//		}
+	class LogPlatformFunctionalityMacOS : LogPlatformFunctionality
+	{
+		struct MacAppNativeWrapper
+		{
+			[DllImport( "NeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_MessageBox", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode )]
+			public static extern void MessageBox( string text, string caption );
+		}
 
-	//		public override EDialogResult ShowMessageBox( string text, string caption, EMessageBoxButtons buttons )
-	//		{
-	//			//!!!!buttons, result
-	//			MacAppNativeWrapper.MessageBox( text, caption );
-	//			return EDialogResult.OK;
-	//		}
-	//	}
-	//#endif
+		public override EDialogResult ShowMessageBox( string text, string caption, EMessageBoxButtons buttons )
+		{
+			Console.WriteLine( "MESSAGE:\n" + caption + ":" + text );
+
+			//!!!!buttons, result
+			MacAppNativeWrapper.MessageBox( text, caption );
+			return EDialogResult.OK;
+		}
+	}
 }

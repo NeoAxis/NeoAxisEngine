@@ -1635,21 +1635,19 @@ namespace NeoAxis
 		//	return item;
 		//}
 
-		public void Render( ViewportRenderingContext context, bool renderActive, bool renderSelected, bool renderCanSelect, Transform bodyTransform, ref int verticesRendered )
+		public static void Render( ViewportRenderingContext context, bool renderActive, bool renderSelected, bool renderCanSelect, Transform bodyTransform, ref int verticesRendered, RigidBody body, Scene.PhysicsWorldClass.Body physicalBody )
 		{
-			//verticesRendered = 0;
-
 			var context2 = context.ObjectInSpaceRenderingContext;
+
+			var viewport = context.Owner;
+			var renderer = viewport.Simple3DRenderer;
 
 			//var scene = ParentScene;
 
 			//bool show = ( scene.GetDisplayDevelopmentDataInThisApplication() && scene.DisplayPhysicalObjects ) ||
 			//	context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.dragDropCreateObject == this;
-			if( /*show && */ /*rigidBody != null && */context.Owner.Simple3DRenderer != null )
+			if( /*show && */ /*rigidBody != null && */renderer != null )
 			{
-				var viewport = context.Owner;
-				var renderer = viewport.Simple3DRenderer;
-
 				//!!!!
 				//if( context2.displayPhysicalObjectsCounter < context2.displayPhysicalObjectsMax )
 				//{
@@ -1658,7 +1656,7 @@ namespace NeoAxis
 				//draw body
 				{
 					ColorValue color;
-					if( MotionType.Value == PhysicsMotionType.Static )
+					if( body.MotionType.Value == PhysicsMotionType.Static )
 						color = ProjectSettings.Get.Colors.SceneShowPhysicsStaticColor;
 					else if( renderActive )// Active )
 						color = ProjectSettings.Get.Colors.SceneShowPhysicsDynamicActiveColor;
@@ -1666,7 +1664,7 @@ namespace NeoAxis
 						color = ProjectSettings.Get.Colors.SceneShowPhysicsDynamicInactiveColor;
 					viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 
-					foreach( var shape in GetComponents<CollisionShape>() )
+					foreach( var shape in body.GetComponents<CollisionShape>() )
 					{
 						if( shape.Enabled )
 							shape.Render( viewport, bodyTransform, false, ref verticesRendered );
@@ -1677,26 +1675,58 @@ namespace NeoAxis
 					////	shape.Render( viewport, Transform, false, ref verticesRendered );
 
 					//center of mass
-					if( MotionType.Value == PhysicsMotionType.Dynamic )
+					if( body.MotionType.Value == PhysicsMotionType.Dynamic && physicalBody != null )
 					{
-						//!!!!impl
+						//!!!!
 
-						//var center = rigidBody.CenterOfMassPosition;
-						//double radius = SpaceBounds.CalculatedBoundingSphere.Radius / 16;
+						Vector3 centerOfMass;
+						//if( physicalBody != null )
+						//{
+						physicalBody.GetShapeCenterOfMass( out var centerOfMassF );
+						centerOfMass = centerOfMassF.ToVector3();
+						//}
+						//else
+						//	centerOfMass = body.CenterOfMassOffset;
 
-						//var item = GetCenterOfMassGeometry( (float)radius );
-						//var transform = Matrix4.FromTranslate( BulletPhysicsUtility.Convert( center ) );
-						//context.Owner.Simple3DRenderer.AddTriangles( item.positions, item.indices, ref transform, false, true );
-						////context.viewport.Simple3DRenderer.AddSphere( BulletPhysicsUtility.Convert( center ), radius, 16, true );
+						renderer.SetColor( new ColorValue( 1, 0, 0 ), new ColorValue( 1, 0, 0 ) );//, 0.5f ) );
 
-						////Vector3 center = Vector3.Zero;
-						////double radius = 1.0;
-						////rigidBody.CollisionShape.GetBoundingSphere( out center, out radius );
-						////center = rigidBody.CenterOfMassPosition;
-						////radius /= 16.0;
-						////context.viewport.DebugGeometry.AddSphere( BulletUtils.Convert( center ), radius );
+						var size3 = body.SpaceBounds.BoundingBox.GetSize();
+						var halfSize = size3.MaxComponent() / 30; //var halfSize = size3.MinComponent() / 10;
 
-						//verticesRendered += item.positions.Length;
+						Matrix4 t = bodyTransform.ToMatrix4();
+						t *= new Matrix4( Matrix3.Identity, centerOfMass );
+						t.GetTranslation( out var pos );
+
+						renderer.AddLineThin( pos + new Vector3( -halfSize, 0, 0 ), pos + new Vector3( halfSize, 0, 0 ) );
+						renderer.AddLineThin( pos + new Vector3( 0, -halfSize, 0 ), pos + new Vector3( 0, halfSize, 0 ) );
+						renderer.AddLineThin( pos + new Vector3( 0, 0, -halfSize ), pos + new Vector3( 0, 0, halfSize ) );
+
+						verticesRendered += 6;
+
+
+						////Vector3 centerOfMass;
+						////if( physicalBody != null )
+						////{
+						////	physicalBody.GetShapeCenterOfMass( out var centerOfMassF );
+						////	centerOfMass = centerOfMassF.ToVector3();
+						////}
+						////else
+						////	centerOfMass = body.CenterOfMassOffset;
+
+						////renderer.SetColor( new ColorValue( 1, 0, 0 ), new ColorValue( 1, 0, 0 ) );//, 0.5f ) );
+
+						////var size3 = body.SpaceBounds.BoundingBox.GetSize();
+						////var halfSize = size3.MaxComponent() / 30; //var halfSize = size3.MinComponent() / 10;
+
+						////Matrix4 t = bodyTransform.ToMatrix4();
+						////t *= new Matrix4( Matrix3.Identity, centerOfMass );
+						////t.GetTranslation( out var pos );
+
+						////renderer.AddLineThin( pos + new Vector3( -halfSize, 0, 0 ), pos + new Vector3( halfSize, 0, 0 ) );
+						////renderer.AddLineThin( pos + new Vector3( 0, -halfSize, 0 ), pos + new Vector3( 0, halfSize, 0 ) );
+						////renderer.AddLineThin( pos + new Vector3( 0, 0, -halfSize ), pos + new Vector3( 0, 0, halfSize ) );
+
+						////verticesRendered += 6;
 					}
 
 					//!!!!impl
@@ -1735,7 +1765,7 @@ namespace NeoAxis
 					color.Alpha *= .5f;
 					viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 
-					foreach( var shape in GetComponents<CollisionShape>() )
+					foreach( var shape in body.GetComponents<CollisionShape>() )
 					{
 						if( shape.Enabled )
 							shape.Render( viewport, bodyTransform, true, ref verticesRendered );
@@ -1749,14 +1779,14 @@ namespace NeoAxis
 				}
 
 				//display collision contacts
-				if( DisplayContacts && PhysicalBody != null )
+				if( body.DisplayContacts && physicalBody != null ) //PhysicalBody != null )
 				{
 					unsafe
 					{
-						PhysicalBody.GetContacts( out var itemCount, out var itemBuffer );
+						physicalBody.GetContacts( out var itemCount, out var itemBuffer );
 						if( itemCount != 0 )
 						{
-							var size3 = SpaceBounds.BoundingBox.GetSize();
+							var size3 = body.SpaceBounds.BoundingBox.GetSize();
 							var scale = size3.MinComponent() / 30;
 
 							renderer.SetColor( new ColorValue( 1, 0, 0 ) );
@@ -1858,7 +1888,7 @@ namespace NeoAxis
 				if( show && physicalBody != null )
 				{
 					var verticesRendered = 0;
-					Render( context, Active, context2.selectedObjects.Contains( this ), context2.canSelectObjects.Contains( this ), Transform, ref verticesRendered );
+					Render( context, Active, context2.selectedObjects.Contains( this ), context2.canSelectObjects.Contains( this ), Transform, ref verticesRendered, this, PhysicalBody );
 				}
 
 				var showLabels = /*show &&*/ physicalBody == null;

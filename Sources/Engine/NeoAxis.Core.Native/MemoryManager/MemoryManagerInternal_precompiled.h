@@ -32,8 +32,12 @@
 #endif
 
 #if defined(PLATFORM_WINDOWS) || defined(PLATFORM_WINRT)
-	#define _CRT_SECURE_NO_WARNINGS
-	#define NOMINMAX
+	#ifndef _CRT_SECURE_NO_WARNINGS
+		#define _CRT_SECURE_NO_WARNINGS
+	#endif
+	#ifndef NOMINMAX
+		#define NOMINMAX
+	#endif
 	#include <windows.h>
 #endif
 

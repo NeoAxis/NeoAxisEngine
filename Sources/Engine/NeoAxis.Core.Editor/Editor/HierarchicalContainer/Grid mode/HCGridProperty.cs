@@ -100,8 +100,10 @@ namespace NeoAxis.Editor
 
 		public void LabelNameSetToolTip( string value )
 		{
-			if( propertyToolTip.GetToolTip( labelName ) == string.Empty )
+			if( propertyToolTip.GetToolTip( labelName ) != value )
 				propertyToolTip.SetToolTip( labelName, value );
+			//if( propertyToolTip.GetToolTip( labelName ) == string.Empty )
+			//	propertyToolTip.SetToolTip( labelName, value );
 		}
 
 		public void ButtonExpandInit()

@@ -1,4 +1,5 @@
-#if (defined( __WIN32__ ) || defined( _WIN32 ))
+#include "OgreStableHeaders.h"
+#ifdef PLATFORM_WINDOWS //#if (defined( __WIN32__ ) || defined( _WIN32 ))
 
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "pch.h"

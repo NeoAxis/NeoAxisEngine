@@ -109,6 +109,8 @@ namespace NeoAxis
 				public bool RotateAroundItsAxis;
 				public RadianF MaxIncline;
 				public RangeF ScaleRange;
+				public float RegularAlignment;
+
 				public GroupElementItem[] Elements;
 			}
 
@@ -329,6 +331,7 @@ end:;
 							groupItem.RotateAroundItsAxis = group.RotateAroundItsAxis;
 							groupItem.MaxIncline = group.MaxIncline.Value.InRadians().ToRadianF();
 							groupItem.ScaleRange = group.ScaleRange.Value.ToRangeF();
+							groupItem.RegularAlignment = (float)group.RegularAlignment.Value;
 
 							var elements = group.GetComponents<SurfaceElement>();
 

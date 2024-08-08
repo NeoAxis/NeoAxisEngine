@@ -1,0 +1,95 @@
+// Made with NeoAxis Engine 2024.1.
+
+.component NeoAxis.Import3D
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1165, 842\"><KW V=\"1\" A=\"758C8D196AC8483AD4B67B85E9FCC0ED\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"2D20BDF7D2374FD93CAB704B411CD119\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"758C8D196AC8483AD4B67B85E9FCC0ED\"><KP UN=\"30AC9857B423426D45B80473D1648D35\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"3AD0007E54ED459951AEFD2DDBAB13C9\" S=\"False\"><CPD ObjPath=\"$Materials\\$Material\\$Material shader graph\" /></KP><KP UN=\"758C8D196AC8483AD4B67B85E9FCC0ED\" S=\"False\"><CPD ObjPath=\"$Mesh\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorCameraTransform = "1.37704294775239 -1.13284101713683 0.905772570758137; -0.2191854566202 0.0785722056997891 0.915470996498287 0.328172208860071; 1 1 1"
+	LODs = False
+	.component NeoAxis.Component
+	{
+		Name = Materials
+		.component NeoAxis.Material
+		{
+			Name = Material
+			BaseColor = 0 0.8 0
+			.component NeoAxis.FlowGraph
+			{
+				Name = Material shader graph
+				EditorScrollPosition = 0 0
+				Specialization
+				{
+					GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+				}
+				.component NeoAxis.FlowGraphNode
+				{
+					Name = Node Material
+					Position = 10 -7
+					ControlledObject
+					{
+						GetByReference = "this:..\\.."
+					}
+				}
+			}
+		}
+	}
+	.component NeoAxis.Mesh
+	{
+		Name = Mesh
+		EditorCameraTransform = "1.91539154673096 -2.15557575735306 2.99336985255522; -0.216432922917088 0.121633161706441 0.844471265592614 0.47458449768115; 1 1 1"
+		.component NeoAxis.MeshGeometry
+		{
+			Name = Cube
+			VertexStructure
+			{
+				Value
+				{
+					Length = 4
+					0
+					{
+						Offset = 0
+						Type = Float3
+						Semantic = Position
+					}
+					1
+					{
+						Offset = 12
+						Type = Float3
+						Semantic = Normal
+					}
+					2
+					{
+						Offset = 24
+						Type = Half4
+						Semantic = Tangent
+					}
+					3
+					{
+						Offset = 32
+						Type = Half2
+						Semantic = TextureCoordinate0
+					}
+				}
+			}
+			Vertices
+			{
+				Value
+				{
+					Length = 144
+					.elements = AACAPwAAAAAAAAAAAAAAAAAAgL8AAAAAALwAAAAAADwAMAAAAACAPwAAAAAzMzNAAAAAAAAAgL8AAAAAALwAAAAAADwAMLA5AAAAAAAAAAAzMzNAAAAAAAAAgL8AAAAAALwAAAAAADwANrA5AAAAAAAAAAAAAAAAAAAAAAAAgL8AAAAAALwAAAAAADwANgAA
+				}
+			}
+			Indices
+			{
+				Value
+				{
+					Length = 6
+					.elements = 0 1 2 0 2 3
+				}
+			}
+			Material
+			{
+				GetByReference = "Content\\Materials\\Basic Library\\Brick\\Green Bricks.material"
+			}
+		}
+	}
+}

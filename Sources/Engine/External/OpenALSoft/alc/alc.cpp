@@ -199,7 +199,7 @@ BackendInfo BackendList[] = {
 #ifdef HAVE_SDL2
     { "sdl2", SDL2BackendFactory::getFactory },
 #endif
-    //{ "null", NullBackendFactory::getFactory },
+    { "null", NullBackendFactory::getFactory },
 #ifdef HAVE_WAVE
     { "wave", WaveBackendFactory::getFactory },
 #endif
@@ -1231,24 +1231,24 @@ LogLevel gLogLevel{LogError};
 #define PLATFORM_WINDOWS
 #endif
 
-#ifdef PLATFORM_WINDOWS
-
-BOOL APIENTRY DllMain(HINSTANCE module, DWORD reason, LPVOID /*reserved*/)
-{
-    switch(reason)
-    {
-        case DLL_PROCESS_ATTACH:
-            /* Pin the DLL so we won't get unloaded until the process terminates */
-            GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_PIN | GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
-                               (WCHAR*)module, &module);
-            break;
-
-        case DLL_PROCESS_DETACH:
-            break;
-    }
-    return TRUE;
-}
-#endif
+//#ifdef PLATFORM_WINDOWS
+//
+//BOOL APIENTRY DllMain(HINSTANCE module, DWORD reason, LPVOID /*reserved*/)
+//{
+//    switch(reason)
+//    {
+//        case DLL_PROCESS_ATTACH:
+//            /* Pin the DLL so we won't get unloaded until the process terminates */
+//            GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_PIN | GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
+//                               (WCHAR*)module, &module);
+//            break;
+//
+//        case DLL_PROCESS_DETACH:
+//            break;
+//    }
+//    return TRUE;
+//}
+//#endif
 #endif
 
 /************************************************

@@ -11,7 +11,7 @@ namespace NeoAxis
 	/// An instance of building.
 	/// </summary>
 	[ResourceFileExtension( "building" )]
-	[AddToResourcesWindow( @"Addons\Building\Building", 310 )]
+	[AddToResourcesWindow( @"Addons\Building\Building", 320 )]
 #if !DEPLOY
 	[SettingsCell( typeof( BuildingSettingsCell ) )]
 	//[EditorControl( typeof( Editor.BuildingEditor ), true )]

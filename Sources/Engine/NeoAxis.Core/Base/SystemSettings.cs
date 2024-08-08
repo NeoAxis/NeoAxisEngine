@@ -120,15 +120,15 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
-		struct MacOSXUtilsNativeWrapper
-		{
-			[DllImport( "UtilsNativeWrapper", EntryPoint = "UtilsNativeWrapper_GetOSVersion", CallingConvention = CallingConvention.Cdecl )]
-			public static extern void GetOSVersion( out int major, out int minor, out int bugFix );
+		//struct MacOSXUtilsNativeWrapper
+		//{
+		//	[DllImport( "UtilsNativeWrapper", EntryPoint = "UtilsNativeWrapper_GetOSVersion", CallingConvention = CallingConvention.Cdecl )]
+		//	public static extern void GetOSVersion( out int major, out int minor, out int bugFix );
 
-			[return: MarshalAs( UnmanagedType.U1 )]
-			[DllImport( "UtilsNativeWrapper", EntryPoint = "UtilsNativeWrapper_IsSystem64Bit", CallingConvention = CallingConvention.Cdecl )]
-			public static extern bool IsSystem64Bit();
-		}
+		//	[return: MarshalAs( UnmanagedType.U1 )]
+		//	[DllImport( "UtilsNativeWrapper", EntryPoint = "UtilsNativeWrapper_IsSystem64Bit", CallingConvention = CallingConvention.Cdecl )]
+		//	public static extern bool IsSystem64Bit();
+		//}
 
 		///////////////////////////////////////////
 
@@ -224,20 +224,22 @@ namespace NeoAxis
 		{
 			get
 			{
-				if( CurrentPlatform == Platform.macOS )
-				{
-					int major, minor, bugFix;
-					MacOSXUtilsNativeWrapper.GetOSVersion( out major, out minor, out bugFix );
-					return new Version( major, minor, bugFix );
-				}
-				//else if( Platform == Platforms.Android )
+				//!!!!было в 3.5
+				//if( CurrentPlatform == Platform.macOS )
+				//{
+				//	int major, minor, bugFix;
+				//	MacOSXUtilsNativeWrapper.GetOSVersion( out major, out minor, out bugFix );
+				//	return new Version( major, minor, bugFix );
+				//}
+
+				//if( Platform == Platforms.Android )
 				//{
 				//   int major, minor, bugFix;
 				//   AndroidAppNativeWrapper.GetOSVersion( out major, out minor, out bugFix );
 				//   return new Version( major, minor, bugFix );
 				//}
-				else
-					return Environment.OSVersion.Version;
+
+				return Environment.OSVersion.Version;
 			}
 		}
 

@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /*
   Simple DirectMedia Layer
   Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
@@ -932,3 +935,5 @@ SDL_iconv_string(const char *tocode, const char *fromcode, const char *inbuf,
 }
 
 /* vi: set ts=4 sw=4 expandtab: */
+
+#endif

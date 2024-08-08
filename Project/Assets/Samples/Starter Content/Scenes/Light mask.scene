@@ -2,8 +2,10 @@
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"BCA52DF15A69481CB1A4E4952BAD03AB\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"ABE5E46721694418CDA665770640AB27\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"BCA52DF15A69481CB1A4E4952BAD03AB\"><KP UN=\"BCA52DF15A69481CB1A4E4952BAD03AB\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"1DA4CFCDC01548FCEB821DEAD055F32E\" S=\"False\"><CPD ObjPath=\"$Light4\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1144, 842\"><KW V=\"1\" A=\"BCA52DF15A69481CB1A4E4952BAD03AB\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"ABE5E46721694418CDA665770640AB27\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"BCA52DF15A69481CB1A4E4952BAD03AB\"><KP UN=\"BCA52DF15A69481CB1A4E4952BAD03AB\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"1DA4CFCDC01548FCEB821DEAD055F32E\" S=\"False\"><CPD ObjPath=\"$Light4\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BackgroundColor = 0.3077647 0.4585882 0.7294118
+	DisplayDevelopmentDataInSimulation = True
+	DisplayLights = True
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -16,19 +18,18 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "-70.9506745137315 108.156723659588 40.8915469185829; -0.300919797403896 -0.108098075326116 0.891713600853591 -0.320326295664139; 1 1 1"
+		Transform = "-50.2383199497201 111.825990938013 59.0962625697848; -0.338020477799869 -0.0811036113240326 0.911759982052888 -0.218764933079013; 1 1 1"
 	}
 	.component NeoAxis.Light
 	{
 		Name = Ambient Light
 		Transform = "-38.9672666736033 4.93840505726751 24.8527169920668; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 20000
+		Brightness = 50000
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
-		Shadows = False
 		ShadowDirectionalDistance = 200
 		ShadowDirectionalLightCascades = 1
 		ShadowPointSpotlightDistance = 200
@@ -72,18 +73,12 @@
 		Name = Light1
 		Transform = "-108.120749983094 38.7129427596178 30.8437317105508; -0.150389792056384 -0.860501251044365 0.0460004842907831 -0.484566262590921; 1 1 1"
 		Type = Directional
-		Brightness = 346459.78125
-		Color = 0.5083529 0.5333334 0.09701961
+		Brightness = 200000.78125
 		AttenuationFar = 100
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 90
-		Shadows = False
-		MaskTransform = "0 0 0; 0 0 0 1; 0.2 0.2 0.2"
-		Mask
-		{
-			GetByReference = "Samples\\Starter Content\\Textures\\LightMask.jpg"
-		}
+		MaskTransform = "0 0 0; 0 0 0 1; 0.02 0.02 0.02"
 	}
 	.component NeoAxis.Material
 	{
@@ -134,10 +129,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -219,7 +210,7 @@
 	{
 		Name = Light4
 		ScreenLabel = AlwaysDisplay
-		Transform = "-143.694883030573 51.6707628412071 10.5607987376299; 0 0 0.999984510657198 0.00556582839151318; 0.456621010112085 0.456621010112085 0.456621010112085"
+		Transform = "-143.694883030573 51.6707628412071 10.5607987376299; 0 0 0.96049258366912 -0.27830558154054; 0.456621010112085 0.456621010112085 0.456621010112085"
 		Type = Point
 		Brightness = 1389918
 		AttenuationFar = 93.025
@@ -258,7 +249,7 @@
 	{
 		Name = Light 3
 		ScreenLabel = AlwaysDisplay
-		Transform = "-119.520996473399 100.655659190103 10.5607987376299; 0 0 0.999984510657198 0.00556582839151318; 0.456621010112085 0.456621010112085 0.456621010112085"
+		Transform = "-119.520996473399 100.655659190103 10.5607987376299; 0 0 0.96049258366912 -0.27830558154054; 0.456621010112085 0.456621010112085 0.456621010112085"
 		Type = Point
 		Brightness = 1389918
 		Color = 0.2309412 0.649098 1
@@ -302,10 +293,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -321,10 +308,6 @@
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -342,10 +325,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -361,10 +340,6 @@
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -382,10 +357,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -401,10 +372,6 @@
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -422,10 +389,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -442,10 +405,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -461,10 +420,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -490,10 +445,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -517,10 +468,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -546,10 +493,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -573,10 +516,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -602,10 +541,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -629,10 +564,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -658,10 +589,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -685,10 +612,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -714,10 +637,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -741,10 +660,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -770,10 +685,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -797,10 +708,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -826,10 +733,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -853,10 +756,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -882,10 +781,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -909,10 +804,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -938,10 +829,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -965,10 +852,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -994,10 +877,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1021,10 +900,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1050,10 +925,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1077,10 +948,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1106,10 +973,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1133,10 +996,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1162,10 +1021,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1189,10 +1044,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1218,10 +1069,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1245,10 +1092,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1274,10 +1117,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1301,10 +1140,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1330,10 +1165,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1357,10 +1188,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1386,10 +1213,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1413,10 +1236,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1442,10 +1261,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1469,10 +1284,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1498,10 +1309,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1525,10 +1332,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1554,10 +1357,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1581,10 +1380,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1610,10 +1405,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1637,10 +1428,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1666,10 +1453,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1693,10 +1476,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1722,10 +1501,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1749,10 +1524,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1778,10 +1549,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1805,10 +1572,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1834,10 +1597,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1861,10 +1620,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1890,10 +1645,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1917,10 +1668,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1946,10 +1693,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1973,10 +1716,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -2002,10 +1741,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2029,10 +1764,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -2058,10 +1789,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2085,10 +1812,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -2114,10 +1837,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2141,10 +1860,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -2170,10 +1885,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2197,10 +1908,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -2226,10 +1933,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2253,10 +1956,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -2282,10 +1981,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2309,10 +2004,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -2338,10 +2029,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2365,10 +2052,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -2394,10 +2077,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2421,10 +2100,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -2450,10 +2125,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2477,10 +2148,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -2506,10 +2173,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2533,10 +2196,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -2562,10 +2221,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2589,10 +2244,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -2618,10 +2269,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2645,10 +2292,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -2674,10 +2317,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2701,10 +2340,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -2730,10 +2365,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2757,10 +2388,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -2786,10 +2413,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2813,10 +2436,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -2842,10 +2461,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2869,10 +2484,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -2898,10 +2509,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2925,10 +2532,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -2954,10 +2557,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2981,10 +2580,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -3010,10 +2605,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3037,10 +2628,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -3066,10 +2653,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3093,10 +2676,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -3122,10 +2701,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3149,10 +2724,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -3178,10 +2749,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3205,10 +2772,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -3234,10 +2797,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3261,10 +2820,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -3290,10 +2845,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3317,10 +2868,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -3346,10 +2893,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3373,10 +2916,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -3402,10 +2941,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3429,10 +2964,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -3458,10 +2989,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3485,10 +3012,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -3514,10 +3037,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3541,10 +3060,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -3570,10 +3085,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3597,10 +3108,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -3626,10 +3133,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3653,10 +3156,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -3682,10 +3181,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3709,10 +3204,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -3738,10 +3229,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3765,10 +3252,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -3794,10 +3277,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3821,10 +3300,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -3850,10 +3325,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3877,10 +3348,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -3906,10 +3373,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3933,10 +3396,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -3962,10 +3421,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3989,10 +3444,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -4018,10 +3469,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -4045,10 +3492,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -4074,10 +3517,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -4101,10 +3540,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -4130,10 +3565,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -4157,10 +3588,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -4186,10 +3613,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -4213,10 +3636,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -4242,10 +3661,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -4269,10 +3684,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -4298,10 +3709,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -4325,10 +3732,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -4354,10 +3757,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -4381,10 +3780,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -4410,10 +3805,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -4437,10 +3828,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{

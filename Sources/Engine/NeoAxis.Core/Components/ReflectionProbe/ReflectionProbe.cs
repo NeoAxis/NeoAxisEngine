@@ -911,7 +911,8 @@ namespace NeoAxis
 					viewport.RenderingContext.MultiRenderTarget_DestroyAll();
 					viewport.RenderingContext.DynamicTexture_DestroyAll();
 
-					texture.Result.GetNativeObject( true ).BlitTo( (ushort)viewport.RenderingContext.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
+					texture.Result.GetNativeObject( true ).BlitTo( (ushort)RenderingSystem.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
+					//texture.Result.GetNativeObject( true ).BlitTo( (ushort)viewport.RenderingContext.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
 
 					//get data
 					var totalBytes = PixelFormatUtility.GetNumElemBytes( format ) * size * size;
@@ -921,10 +922,7 @@ namespace NeoAxis
 						fixed( byte* pBytes = data )
 						{
 							var demandedFrame = textureRead.Result.GetNativeObject( true ).Read( (IntPtr)pBytes, 0 );
-
-							while( RenderingSystem.CallBgfxFrame() < demandedFrame )
-							{
-							}
+							while( RenderingSystem.CallFrame() < demandedFrame ) { }
 						}
 					}
 
@@ -1411,14 +1409,15 @@ namespace NeoAxis
 							//createdViewport.BackgroundColorDefault = BackgroundColor;
 
 
-							//firstViewport.OutputViewport = faceViewport;
-							faceViewport/*firstViewport*/.CameraSettings = cameraSettings;
+							faceViewport.CameraSettings = cameraSettings;
 
-							faceViewport/*firstViewport*/.Update( false, cameraSettings, viewport.RenderingContext.CurrentViewNumber );
-							viewport.RenderingContext.CurrentViewNumber = faceViewport.RenderingContext.CurrentViewNumber;
+							faceViewport.Update( false, cameraSettings );
 							viewport.RenderingContext.UpdateStatisticsCurrent.AddFrom( faceViewport.RenderingContext.UpdateStatisticsCurrent );
+							//faceViewport.Update( false, cameraSettings, viewport.RenderingContext.CurrentViewNumber );
+							//viewport.RenderingContext.CurrentViewNumber = faceViewport.RenderingContext.CurrentViewNumber;
+							//viewport.RenderingContext.UpdateStatisticsCurrent.AddFrom( faceViewport.RenderingContext.UpdateStatisticsCurrent );
 
-							//faceViewport/*firstViewport*/.Update( true, cameraSettings );
+							////faceViewport/*firstViewport*/.Update( true, cameraSettings );
 						}
 
 						createdImageAtLeastOneTimeUpdated = true;

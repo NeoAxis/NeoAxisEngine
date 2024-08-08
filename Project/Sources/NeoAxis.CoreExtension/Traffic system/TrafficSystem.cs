@@ -498,7 +498,7 @@ namespace NeoAxis
 					var element = CreateComponent<TrafficSystemElement>();
 					element.Name = element.BaseType.GetUserFriendlyNameForInstance() + " 2";
 					element.Roles = TrafficSystemElement.RolesEnum.Ground;
-					element.ObjectType = new Reference<Component>( null, @"Content\Characters\Authors\NeoAxis\Bryce\Bryce.charactertype" );
+					element.ObjectType = new Reference<Component>( null, @"Content\Characters\NeoAxis\Bryce\Bryce.charactertype" );
 					//element.ObjectType = new Reference<Component>( null, @"Content\Characters\Default\Default.charactertype" );
 				}
 			}

@@ -401,8 +401,9 @@ namespace NeoAxis
 					else
 						jobSize = new Vector3I( (int)Math.Ceiling( addTextureSize.X / 16.0 ), (int)Math.Ceiling( addTextureSize.Y / 16.0 ), 1 );
 
-					Bgfx.Dispatch( (ushort)context.CurrentViewNumber, program, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
-					context.UpdateStatisticsCurrent.ComputeDispatches++;
+					context.Dispatch( program, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
+					//Bgfx.Dispatch( (ushort)context.CurrentViewNumber, program, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
+					//context.UpdateStatisticsCurrent.ComputeDispatches++;
 				}
 
 				ImageComponent blurred;

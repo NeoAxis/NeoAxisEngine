@@ -39,7 +39,7 @@ namespace NeoAxis
 		{
 			base.NewObjectSetDefaultConfiguration( createdFromNewObjectWindow );
 
-			ItemType = new ReferenceNoValue( @"Content\Items\Authors\NeoAxis\Flashlight\Flashlight.itemtype" );
+			ItemType = new ReferenceNoValue( @"Content\Items\NeoAxis\Flashlight\Flashlight.itemtype" );
 		}
 
 		public bool IsActive()

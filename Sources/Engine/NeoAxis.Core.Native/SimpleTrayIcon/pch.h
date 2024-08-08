@@ -1,4 +1,5 @@
-#if (defined( __WIN32__ ) || defined( _WIN32 ))
+#include "OgreStableHeaders.h"
+#ifdef PLATFORM_WINDOWS //#if (defined( __WIN32__ ) || defined( _WIN32 ))
 
 // pch.h: This is a precompiled header file.
 // Files listed below are compiled only once, improving build performance for future builds.

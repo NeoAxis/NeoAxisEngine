@@ -2,7 +2,7 @@
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"2CABB93EFA594714F0AE454C73589B95\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"3380822B186E41A3B0AF1BCE3A2E7635\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"2CABB93EFA594714F0AE454C73589B95\"><KP UN=\"2CABB93EFA594714F0AE454C73589B95\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"2FC76A6B8D48421BCAA3FD59DD0F7CB3\" S=\"False\"><CPD ObjPath=\"$Button\\$C# Script\" /></KP><KP UN=\"BF7F219544234EEACA946AE1342D9CB4\" S=\"False\"><CPD ObjPath=\"$Regulator\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1165, 842\"><KW V=\"1\" A=\"2CABB93EFA594714F0AE454C73589B95\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"3380822B186E41A3B0AF1BCE3A2E7635\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"2CABB93EFA594714F0AE454C73589B95\"><KP UN=\"2CABB93EFA594714F0AE454C73589B95\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"2FC76A6B8D48421BCAA3FD59DD0F7CB3\" S=\"False\"><CPD ObjPath=\"$Button\\$C# Script\" /></KP><KP UN=\"BF7F219544234EEACA946AE1342D9CB4\" S=\"False\"><CPD ObjPath=\"$Regulator\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -22,14 +22,14 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 50000
+		Brightness = 60000
 	}
 	.component NeoAxis.Light
 	{
 		Name = Directional Light
 		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
 		Type = Directional
-		Brightness = 130000
+		Brightness = 150000
 		AttenuationFar = 100
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
@@ -146,10 +146,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -213,10 +209,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -255,10 +247,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -294,10 +282,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -336,10 +320,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -396,7 +376,7 @@
 					Value
 					{
 						Length = 2304
-						.elements = "UEsDBBQAAAAIAHBkc1g+AW2lXgEAAAAJAAAEAAAAZmlsZa2VQU7DMBBF5wTZcR5vuAgSW8QOscOcgE3PwrLpYXoMpKKf+d+xQ9J4IiJVbpN5mT/jP+7wfBnNLD2cvs5mGd9xZS78jfs5tR+PGMibGWKCfE7kwQV517PBu7iiZ01/yy/q7+TNVH+cZ4rPa0L/Uf/t9oEVl/rP39v6jfzL23uK82bkxzhPpZ5/yfMheoxrTT9DyC/q58M9PifVH+fb/Xf/Seu0ai/u6C/56d8I7/nr/nvRmiHVrncyvpnDdv+O8Jof969yTWtH/cX/B+r3HJof9X/2sPogTWv1l/OD55dZjC/9S/A/MvXziP7L+xmJB3v6Ha/963e07z38XL/615/f+7nsPzXwvKfGzfkt/kfvdPZX83KP535W86/o+bzQHfRibf9L/yv/gVH8Pi//x/X7u/+rf/Df0/B9xlt/Hl/5X9utf/J/jG/0j5j/OF/8d5ivz79Y/sY/0/zGebNfUEsBAhQAFAAAAAgAcGRzWD4BbaVeAQAAAAkAAAQAAAAAAAAAAAAAAAAAAAAAAGZpbGVQSwUGAAAAAAEAAQAyAAAAgAEAAAAA"
+						.elements = "UEsDBBQAAAAIADcpAVk+AW2lXgEAAAAJAAAEAAAAZmlsZa2VQU7DMBBF5wTZcR5vuAgSW8QOscOcgE3PwrLpYXoMpKKf+d+xQ9J4IiJVbpN5mT/jP+7wfBnNLD2cvs5mGd9xZS78jfs5tR+PGMibGWKCfE7kwQV517PBu7iiZ01/yy/q7+TNVH+cZ4rPa0L/Uf/t9oEVl/rP39v6jfzL23uK82bkxzhPpZ5/yfMheoxrTT9DyC/q58M9PifVH+fb/Xf/Seu0ai/u6C/56d8I7/nr/nvRmiHVrncyvpnDdv+O8Jof969yTWtH/cX/B+r3HJof9X/2sPogTWv1l/OD55dZjC/9S/A/MvXziP7L+xmJB3v6Ha/963e07z38XL/615/f+7nsPzXwvKfGzfkt/kfvdPZX83KP535W86/o+bzQHfRibf9L/yv/gVH8Pi//x/X7u/+rf/Df0/B9xlt/Hl/5X9utf/J/jG/0j5j/OF/8d5ivz79Y/sY/0/zGebNfUEsBAhQAFAAAAAgANykBWT4BbaVeAQAAAAkAAAQAAAAAAAAAAAAAAAAAAAAAAGZpbGVQSwUGAAAAAAEAAQAyAAAAgAEAAAAA"
 						.elementsZip = True
 					}
 				}
@@ -449,10 +429,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -490,10 +466,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -533,10 +505,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -574,10 +542,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -618,10 +582,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -660,10 +620,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -704,10 +660,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -745,10 +697,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -796,10 +744,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -845,10 +789,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -896,10 +836,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -945,10 +881,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -996,10 +928,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1045,10 +973,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1096,10 +1020,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1145,10 +1065,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1196,10 +1112,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1245,10 +1157,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1296,10 +1204,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1345,10 +1249,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1396,10 +1296,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1435,10 +1331,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1478,10 +1370,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1518,10 +1406,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1552,10 +1436,6 @@
 		Transform = "0.632965084713378 -3.78106249089289 0.00000011926564869; 0 0 0.563756048679352 0.825941324234009; 1 1 1"
 		Collision = True
 		Health = 5
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1578,10 +1458,6 @@
 		Transform = "15.786695407959 7.4742008743822 1.3658803415712; 0 0 -0.997290015220642 0.0735703855752945; 1 1 1"
 		Collision = True
 		Health = 5
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1618,10 +1494,6 @@
 		Transform = "-3.59658122421581 -2.03978963605217 0.00000015272833886; 0 0 0.364465594291687 0.931216835975647; 1 1 1"
 		Collision = True
 		Health = 5
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1647,10 +1519,6 @@
 		{
 			GetByReference = "Content\\Buttons\\Default\\Base.mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1664,7 +1532,7 @@
 		.component NeoAxis.CSharpScript
 		{
 			Name = C# Script
-			Code = "public void Button_Click(NeoAxis.Button sender)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\t// Get object type.\r\n\tvar resourceName = @\"Samples\\Starter Content\\Models\\Sci-fi Box\\Sci-fi Box.objectinspace\";\r\n\tvar boxType = MetadataManager.GetType(resourceName);\r\n\tif(boxType == null)\r\n\t{\r\n\t\tLog.Warning(\"Object type is null.\");\r\n\t\treturn;\r\n\t}\r\n\t\r\n\t// Create the object without enabling.\r\n\tvar box = (MeshInSpace)scene.CreateComponent(boxType, enabled: false);\r\n\t//var obj = scene.CreateComponent<MeshInSpace>(enabled: false);\r\n\r\n\t// Set initial position.\r\n\tvar random = new FastRandom();\r\n\tbox.Transform = new Transform(\r\n\t\tnew Vector3(2 + random.Next(0.0, 4.0), 8 + random.Next(0.0, 4.0), 10 + random.Next(0.0, 4.0)), \r\n\t\tnew Angles(random.Next(360.0), random.Next(360.0), random.Next(360.0)));\r\n\t\r\n\t// Enable the object in the scene.\r\n\tbox.Enabled = true;\r\n\r\n\t//var light = scene.GetComponent(\"Directional Light\") as Light;\r\n\t//if (light != null)\r\n\t//\tlight.Enabled = sender.Activated;\r\n}\r\n"
+			Code = "public void Button_Click(NeoAxis.Button sender, NeoAxis.Component initiator)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\t// Get object type.\r\n\tvar resourceName = @\"Samples\\Starter Content\\Models\\Sci-fi Box\\Sci-fi Box.objectinspace\";\r\n\tvar boxType = MetadataManager.GetType(resourceName);\r\n\tif(boxType == null)\r\n\t{\r\n\t\tLog.Warning(\"Object type is null.\");\r\n\t\treturn;\r\n\t}\r\n\t\r\n\t// Create the object without enabling.\r\n\tvar box = (MeshInSpace)scene.CreateComponent(boxType, enabled: false);\r\n\t//var obj = scene.CreateComponent<MeshInSpace>(enabled: false);\r\n\r\n\t// Set initial position.\r\n\tvar random = new FastRandom();\r\n\tbox.Transform = new Transform(\r\n\t\tnew Vector3(2 + random.Next(0.0, 4.0), 8 + random.Next(0.0, 4.0), 10 + random.Next(0.0, 4.0)), \r\n\t\tnew Angles(random.Next(360.0), random.Next(360.0), random.Next(360.0)));\r\n\t\r\n\t// Enable the object in the scene.\r\n\tbox.Enabled = true;\r\n\r\n\t//var light = scene.GetComponent(\"Directional Light\") as Light;\r\n\t//if (light != null)\r\n\t//\tlight.Enabled = sender.Activated;\r\n}\r\n"
 			Exit
 			{
 			}
@@ -1677,7 +1545,7 @@
 				}
 				HandlerMethod
 				{
-					GetByReference = "this:..\\method:Button_Click(NeoAxis.Button)"
+					GetByReference = "this:..\\method:Button_Click(NeoAxis.Button,NeoAxis.Component)"
 				}
 				HandlerFlow
 				{
@@ -1692,10 +1560,6 @@
 		Mesh
 		{
 			GetByReference = "Content\\Regulators\\Default\\Base.mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1737,10 +1601,6 @@
 		{
 			GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1753,10 +1613,6 @@
 	{
 		Name = Sci-fi Box
 		Transform = "-5.73488851923461 7.87123211702811 0.900349974274148; 0.00000017830917898 0.00000056350592104 -0.00000058714186935 1; 1 1 1"
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1769,10 +1625,6 @@
 	{
 		Name = Sci-fi Box 2
 		Transform = "-3.98058455404844 13.2386638439516 0.499999424017937; -0.00000023778984826 0.00000014240963253 0.127696394920349 0.991813361644745; 1 1 1"
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1792,10 +1644,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1835,10 +1683,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1877,10 +1721,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1918,15 +1758,11 @@
 		Collision = True
 		Mesh
 		{
-			GetByReference = "Content\\Items\\Authors\\NeoAxis\\Flashlight\\Data\\scene.gltf|$Mesh"
+			GetByReference = "Content\\Items\\NeoAxis\\Flashlight\\Data\\scene.gltf|$Mesh"
 		}
 		ReplaceMaterial
 		{
-			GetByReference = "Content\\Items\\Authors\\NeoAxis\\Flashlight\\Data\\scene.gltf|$Materials\\$M_Flashlight_V01 Inactive"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
+			GetByReference = "Content\\Items\\NeoAxis\\Flashlight\\Data\\scene.gltf|$Materials\\$M_Flashlight_V01 Inactive"
 		}
 		SpecialEffects
 		{
@@ -1937,7 +1773,7 @@
 		}
 		ItemType
 		{
-			GetByReference = "Content\\Items\\Authors\\NeoAxis\\Flashlight\\Flashlight.itemtype"
+			GetByReference = "Content\\Items\\NeoAxis\\Flashlight\\Flashlight.itemtype"
 		}
 	}
 	.component NeoAxis.Constraint_SixDOF
@@ -1964,11 +1800,7 @@
 		Collision = True
 		Mesh
 		{
-			GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Medieval Sword\\Data\\scene.gltf|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
+			GetByReference = "Content\\Weapons\\NeoAxis\\Medieval Sword\\Data\\scene.gltf|$Mesh"
 		}
 		SpecialEffects
 		{
@@ -1979,7 +1811,7 @@
 		}
 		WeaponType
 		{
-			GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Medieval Sword\\Medieval Sword.weapontype"
+			GetByReference = "Content\\Weapons\\NeoAxis\\Medieval Sword\\Medieval Sword.weapontype"
 		}
 	}
 }

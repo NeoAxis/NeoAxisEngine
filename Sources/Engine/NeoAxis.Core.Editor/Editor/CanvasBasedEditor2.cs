@@ -261,5 +261,32 @@ namespace NeoAxis.Editor
 		{
 			editor.PerformSelectedObjectsChanged( oldSelectedObjects );
 		}
+
+		public override void EditorActionGetState( EditorActionGetStateContext context )
+		{
+			editor.PerformOnEditorActionGetState( context );
+		}
+		public void PerformEditorActionGetState( EditorActionGetStateContext context )
+		{
+			base.EditorActionGetState( context );
+		}
+
+		public override void EditorActionClick( EditorActionClickContext context )
+		{
+			editor.PerformOnEditorActionClick( context );
+		}
+		public void PerformEditorActionClick( EditorActionClickContext context )
+		{
+			base.EditorActionClick( context );
+		}
+
+		public override void EditorActionClick2( EditorActionClickContext context )
+		{
+			editor.PerformOnEditorActionClick2( context );
+		}
+		public void PerformEditorActionClick2( EditorActionClickContext context )
+		{
+			base.EditorActionClick2( context );
+		}
 	}
 }

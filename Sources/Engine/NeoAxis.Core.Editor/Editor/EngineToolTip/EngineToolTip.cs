@@ -88,6 +88,12 @@ namespace NeoAxis.Editor
 				EngineToolTipManager.Hide( control );
 		}
 
+		//public void Hide( IEngineViewportControl control )
+		//{
+		//	if( control != null )
+		//		EngineToolTipManager.Hide( (EngineViewportControl)control );
+		//}
+
 		void Update( out bool remove )
 		{
 			lock( controls )

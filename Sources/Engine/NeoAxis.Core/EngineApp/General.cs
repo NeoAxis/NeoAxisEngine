@@ -953,7 +953,8 @@ namespace NeoAxis
 		/// </summary>
 		RCommand = 259,
 
-		//Android        
+
+		//Android start
 
 		/// <summary>
 		/// The media eject key (Android).
@@ -1204,6 +1205,11 @@ namespace NeoAxis
 		/// The window key. On TV remotes, toggles picture-in-picture mode or other windowing functions (Android)
 		/// </summary>
 		Window = 309,
+
+		//Android end
+
+		
+		Count = 310,
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -194,7 +194,7 @@
     <ClCompile>
       <AdditionalOptions>/wd4201 /wd4324 /Ob2 /wd4530  %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\3rdparty;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\3rdparty\dxsdk\include;..\..\..\3rdparty\khronos;..\..\..\include;..\..\..\3rdparty\fcpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\3rdparty;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\3rdparty\dxsdk\include;..\..\..\3rdparty\khronos;..\..\..\include;..\..\..\3rdparty\fcpp;..\..\..\..\bimg\3rdparty\astc-encoder;..\..\..\..\bimg\3rdparty\astc-encoder\include;..\..\..\..\..\..\NeoAxis.Core.Native\MemoryManager;..\..\..\..\bx\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;_DEBUG;WIN32;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_WIN64;BGFX_SHARED_LIB_BUILD=1;BGFX_CONFIG_DEBUG=1;BGFX_CONFIG_DEBUG_UNIFORM=0;BX_CONFIG_DEBUG=1;BX_CONFIG_DEBUG_UNIFORM=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -211,6 +211,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ProgramDataBaseFileName>$(IntDir)bgfx-shared-libDebug.compile.pdb</ProgramDataBaseFileName>
       <OmitFramePointers>true</OmitFramePointers>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;_DEBUG;WIN32;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_WIN64;BGFX_SHARED_LIB_BUILD=1;BGFX_CONFIG_DEBUG=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -231,6 +232,9 @@
       <Command>if not exist "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)" mkdir "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)"
 copy ..\..\win64_vs2017-winstore100\bin\bgfx-shared-libDebug.dll "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)\bgfx.dll"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>if EXIST "$(ProjectDir)..\vs2017\bgfx-shared-lib.vcxproj" ( if EXIST "$(ProjectDir)..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" ( "$(ProjectDir)..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -platformProjectPatch "$(ProjectDir)bgfx-shared-lib.vcxproj" -baseProject "$(ProjectDir)..\vs2017\bgfx-shared-lib.vcxproj" ) )</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
@@ -314,7 +318,7 @@ copy ..\..\win64_vs2017-winstore100\bin\bgfx-shared-libDebug.dll "..\..\..\..\..
     <ClCompile>
       <AdditionalOptions>/wd4201 /wd4324 /Ob2 /wd4530  %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\3rdparty;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\3rdparty\dxsdk\include;..\..\..\3rdparty\khronos;..\..\..\include;..\..\..\3rdparty\fcpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\3rdparty;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\3rdparty\dxsdk\include;..\..\..\3rdparty\khronos;..\..\..\include;..\..\..\3rdparty\fcpp;..\..\..\..\bimg\3rdparty\astc-encoder;..\..\..\..\bimg\3rdparty\astc-encoder\include;..\..\..\..\..\..\NeoAxis.Core.Native\MemoryManager;..\..\..\..\bx\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;NDEBUG;WIN32;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_WIN64;BGFX_SHARED_LIB_BUILD=1;BGFX_CONFIG_DEBUG=0;BGFX_CONFIG_DEBUG_UNIFORM=0;BX_CONFIG_DEBUG=0;BX_CONFIG_DEBUG_UNIFORM=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
@@ -324,7 +328,7 @@ copy ..\..\win64_vs2017-winstore100\bin\bgfx-shared-libDebug.dll "..\..\..\..\..
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
@@ -334,6 +338,7 @@ copy ..\..\win64_vs2017-winstore100\bin\bgfx-shared-libDebug.dll "..\..\..\..\..
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;NDEBUG;WIN32;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_WIN64;BGFX_SHARED_LIB_BUILD=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -356,6 +361,9 @@ copy ..\..\win64_vs2017-winstore100\bin\bgfx-shared-libDebug.dll "..\..\..\..\..
       <Command>if not exist "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)" mkdir "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)"
 copy ..\..\win64_vs2017-winstore100\bin\bgfx-shared-libRelease.dll "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)\bgfx.dll"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>if EXIST "$(ProjectDir)..\vs2017\bgfx-shared-lib.vcxproj" ( if EXIST "$(ProjectDir)..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" ( "$(ProjectDir)..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -platformProjectPatch "$(ProjectDir)bgfx-shared-lib.vcxproj" -baseProject "$(ProjectDir)..\vs2017\bgfx-shared-lib.vcxproj" ) )</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
@@ -397,109 +405,96 @@ copy ..\..\win64_vs2017-winstore100\bin\bgfx-shared-libRelease.dll "..\..\..\..\
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\include\bgfx\bgfx.h" />
-    <ClInclude Include="..\..\..\include\bgfx\defines.h" />
-    <ClInclude Include="..\..\..\include\bgfx\embedded_shader.h" />
-    <ClInclude Include="..\..\..\include\bgfx\platform.h" />
-    <ClInclude Include="..\..\..\include\bgfx\c99\bgfx.h" />
-    <ClInclude Include="..\..\..\include\bgfx\c99\platform.h" />
-    <ClInclude Include="..\..\..\src\bgfx_p.h" />
-    <ClInclude Include="..\..\..\src\charset.h" />
-    <ClInclude Include="..\..\..\src\config.h" />
-    <ClInclude Include="..\..\..\src\debug_renderdoc.h" />
-    <ClInclude Include="..\..\..\src\dxgi.h" />
-    <ClInclude Include="..\..\..\src\glcontext_eagl.h" />
-    <ClInclude Include="..\..\..\src\glcontext_egl.h" />
-    <ClInclude Include="..\..\..\src\glcontext_nsgl.h" />
-    <ClInclude Include="..\..\..\src\glcontext_wgl.h" />
-    <ClInclude Include="..\..\..\src\glimports.h" />
-    <ClInclude Include="..\..\..\src\nvapi.h" />
-    <ClInclude Include="..\..\..\src\renderer.h" />
-    <ClInclude Include="..\..\..\src\renderer_d3d.h" />
-    <ClInclude Include="..\..\..\src\renderer_d3d11.h" />
-    <ClInclude Include="..\..\..\src\renderer_d3d12.h" />
-    <ClInclude Include="..\..\..\src\renderer_gl.h" />
-    <ClInclude Include="..\..\..\src\renderer_mtl.h" />
-    <ClInclude Include="..\..\..\src\renderer_vk.h" />
-    <ClInclude Include="..\..\..\src\shader.h" />
-    <ClInclude Include="..\..\..\src\shader_dxbc.h" />
-    <ClInclude Include="..\..\..\src\shader_spirv.h" />
-    <ClInclude Include="..\..\..\src\special.h" />
-    <ClInclude Include="..\..\..\src\topology.h" />
-    <ClInclude Include="..\..\..\src\vertexlayout.h" />
-    <ClInclude Include="..\..\..\tools\shaderc\LibraryBase.h" />
-    <ClInclude Include="..\..\..\tools\shaderc\shaderc.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\src\amalgamated.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\bgfx.cpp">
     </ClCompile>
-    <ClCompile Include="..\..\..\src\debug_renderdoc.cpp">
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_averages_and_directions.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_block_sizes.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_color_quantize.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_color_unquantize.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_compress_symbolic.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_compute_variance.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_decompress_symbolic.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_diagnostic_trace.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_entry.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_find_best_partitioning.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_ideal_endpoints_and_weights.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_image.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_integer_sequence.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_mathlib.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_mathlib_softfloat.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_partition_tables.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_percentile_tables.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_pick_best_endpoint_format.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_quantization.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_symbolic_physical.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_weight_align.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_weight_quant_xfer_tables.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\src\image.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\src\image_gnf.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\allocator.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\bx.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\commandline.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\crtnone.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\debug.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\dtoa.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\easing.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\file.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\filepath.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\hash.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\math.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\mutex.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\os.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\process.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\semaphore.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\settings.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\sort.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\string.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\thread.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\timer.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\url.cpp" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp1.c">
+      <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\dxgi.cpp">
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp2.c">
+      <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\glcontext_egl.cpp">
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp3.c">
+      <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\glcontext_wgl.cpp">
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp4.c">
+      <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\nvapi.cpp">
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp5.c">
+      <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp6.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\debug_renderdoc.cpp" />
+    <ClCompile Include="..\..\..\src\dxgi.cpp" />
+    <ClCompile Include="..\..\..\src\glcontext_egl.cpp" />
+    <ClCompile Include="..\..\..\src\glcontext_wgl.cpp" />
+    <ClCompile Include="..\..\..\src\nvapi.cpp" />
     <ClCompile Include="..\..\..\src\renderer_agc.cpp" />
-    <ClCompile Include="..\..\..\src\renderer_d3d11.cpp">
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\renderer_d3d12.cpp">
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\renderer_gl.cpp">
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\renderer_gnm.cpp">
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\renderer_noop.cpp">
-    </ClCompile>
+    <ClCompile Include="..\..\..\src\renderer_d3d11.cpp" />
+    <ClCompile Include="..\..\..\src\renderer_d3d12.cpp" />
+    <ClCompile Include="..\..\..\src\renderer_gl.cpp" />
+    <ClCompile Include="..\..\..\src\renderer_gnm.cpp" />
+    <ClCompile Include="..\..\..\src\renderer_noop.cpp" />
     <ClCompile Include="..\..\..\src\renderer_nvn.cpp" />
-    <ClCompile Include="..\..\..\src\renderer_vk.cpp">
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\shader.cpp">
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\shader_dxbc.cpp">
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\shader_spirv.cpp">
-    </ClCompile>
+    <ClCompile Include="..\..\..\src\renderer_vk.cpp" />
+    <ClCompile Include="..\..\..\src\shader.cpp" />
+    <ClCompile Include="..\..\..\src\shader_dxbc.cpp" />
+    <ClCompile Include="..\..\..\src\shader_spirv.cpp" />
     <ClCompile Include="..\..\..\src\special.cpp" />
-    <ClCompile Include="..\..\..\src\topology.cpp">
-    </ClCompile>
-    <ClCompile Include="..\..\..\src\vertexlayout.cpp">
-    </ClCompile>
+    <ClCompile Include="..\..\..\src\topology.cpp" />
+    <ClCompile Include="..\..\..\src\vertexlayout.cpp" />
     <ClCompile Include="..\..\..\tools\shaderc\Library.cpp" />
     <ClCompile Include="..\..\..\tools\shaderc\LibraryBase.cpp" />
     <ClCompile Include="..\..\..\tools\shaderc\shaderc.cpp" />
     <ClCompile Include="..\..\..\tools\shaderc\shaderc_hlsl.cpp" />
     <ClCompile Include="..\..\..\tools\shaderc\shaderc_hlsl_dx12.cpp" />
     <ClCompile Include="..\..\..\tools\shaderc\shaderc_spirv.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\src\glcontext_eagl.mm" />
-    <None Include="..\..\..\src\glcontext_nsgl.mm" />
-    <None Include="..\..\..\src\renderer_mtl.mm" />
-  </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="..\..\..\scripts\bgfx.natvis" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="bimg.vcxproj">
-      <Project>{C499947C-B0D0-950D-59BD-7B1045D3110F}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="bx.vcxproj">
-      <Project>{5F775900-4B03-880B-B4B1-880BA05C880B}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

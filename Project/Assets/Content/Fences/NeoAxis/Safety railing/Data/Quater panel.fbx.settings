@@ -1,0 +1,138 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.Import3D
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1146, 842\"><KW V=\"1\" A=\"1B26F07387E04B71E9B38D75BEEAEBAD\"><CGD /><WS UN=\"A6DC168599DF4B2A0C8D1E5130D51A51\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"8E3F6AE4B0384F9BA5ACD8A31FAE95E4\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"1B26F07387E04B71E9B38D75BEEAEBAD\"><KP UN=\"35F3516ED4C24492D5A5DFFB9B88838F\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"1B26F07387E04B71E9B38D75BEEAEBAD\" S=\"False\"><CPD ObjPath=\"$Mesh\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	LODLevels = 2
+	.component NeoAxis.Mesh
+	{
+		Name = Mesh
+		EditorCameraTransform = "2.08400800321016 -1.52933531911666 1.84779290349102; -0.2191854566202 0.0785722056997891 0.915470996498287 0.328172208860071; 1 1 1"
+		EditorDisplayCollision = True
+		.component NeoAxis.MeshGeometry
+		{
+			Name = Cube.002 + 3 merged
+			VertexStructure
+			{
+				Value
+				{
+					Length = 4
+					0
+					{
+						Offset = 0
+						Type = Float3
+						Semantic = Position
+					}
+					1
+					{
+						Offset = 12
+						Type = Float3
+						Semantic = Normal
+					}
+					2
+					{
+						Offset = 24
+						Type = Half4
+						Semantic = Tangent
+					}
+					3
+					{
+						Offset = 32
+						Type = Half2
+						Semantic = TextureCoordinate0
+					}
+				}
+			}
+			Vertices
+			{
+				Value
+				{
+					Length = 3456
+					.elements = "UEsDBBQAAAAIAG8FK1YJi/pRrgIAAIANAAAEAAAAZmlsZYWWv27UQBDG54J0L5CKdCiRrsWJlbNs61xQUIaWKqLgpEi8Qy6UkUgT0EERQPxNhTglDXASXZq4QEJAk4KCN4De7Nje9dzczmx9v/tm9pvZb11V1ejPz/X5Rn/tbO/Gq63N6NEbgMlXyHsTAJj3hxDv7V9Fd3+t5xerz70MbENSGZ3IMIpO8uHkNPpiaik68TWA4ndZ5uPxu8IwZ4bZMExBdNLb5wezt2U5lxijk6POZ4UxOjnAt8E/pZbRSZHBWlX1osBesW9kze9I1D3TfrzMTYhpLYFJ7p0fRMgotRLqD/aKvyNXMznkH5PDzJ4d4KWXeZ1MM6sjM52OXGuaWX+irb+jkD/3x/2gPwrj/FFqJeD86Xt7/j48ND0359psdJaYT0M8V6MjM52OXKvzp6p2g/tTlg+C/igM2R+xlvOn1Vnq+U7SnavVWWJu1XNvdGSm05FrTTOaCZI/O/tXM2SePLs+kvx5fHI6w4xSmITmmOYP5tjTRqft+aHreXV4lNHM9DEX28cZzUM/c1T7gzpyrWPnM3oYykOJwTykswjloaKT0rsjvRf0nkrvBb1f0ntBsyX0XmCONbs1KX4MLgf1iYkOyfklBs/F3h2fTkrzmTPm/y6f6buD/RrmvWWMDtA3xcfYc9kMF3QW3h3OtOcC7jPteYX5g9nrY+zcba4KOs4fOy/K9MjcbWbynnvMn1ZniUF/2B76dBbeHc6sMH8wx0L7094L7/6wexrYH38t6o+9g3ymi/uzK83d+SMx1B+pFvrDv+v4TNEfmr3C3FOaq4JOyr8zfftDs1eaO30vhP0B9i0q7pjNZ3lXF+6Fms92D7V8VnRcPis6Lp/tjmn5LDE0nxUdl8+KTszm7vVnh81L8ofOwucP20OvPyxXA/40Oe/zh787uj+iTvwfUEsBAhQAFAAAAAgAbwUrVgmL+lGuAgAAgA0AAAQAAAAAAAAAAAAAAAAAAAAAAGZpbGVQSwUGAAAAAAEAAQAyAAAA0AIAAAAA"
+					.elementsZip = True
+				}
+			}
+			Indices
+			{
+				Value
+				{
+					Length = 144
+					.elements = 0 1 2 1 0 3 4 5 6 5 4 7 8 9 10 8 10 11 12 13 14 13 12 15 16 17 18 16 18 19 20 21 22 21 20 23 24 25 26 24 26 27 28 29 30 29 28 31 32 33 34 32 34 35 36 37 38 37 36 39 40 41 42 41 40 43 44 45 46 45 44 47 48 49 50 49 48 51 52 53 54 53 52 55 56 57 58 57 56 59 60 61 62 61 60 63 64 65 66 65 64 67 68 69 70 69 68 71 72 73 74 73 72 75 76 77 78 77 76 79 80 81 82 81 80 83 84 85 86 85 84 87 88 89 90 89 88 91 92 93 94 93 92 95
+				}
+			}
+			Material
+			{
+				GetByReference = "Content\\Fences\\NeoAxis\\Safety railing\\Data\\Material.material"
+			}
+		}
+		.component NeoAxis.MeshLevelOfDetail
+		{
+			Name = LOD 1
+			Distance = 0
+			Mesh
+			{
+				GetByReference = "root:$Mesh\\$LOD 1\\$Mesh"
+			}
+			.component NeoAxis.Mesh
+			{
+				Name = Mesh
+				.component NeoAxis.MeshGeometry
+				{
+					Name = Cube.002 + 3 merged
+					VertexStructure
+					{
+						Value
+						{
+							Length = 1
+							0
+							{
+								Offset = 0
+								Type = Float3
+								Semantic = Position
+							}
+						}
+					}
+					Vertices
+					{
+						Value
+						{
+							Length = 96
+							.elements = "yCAAP5Y1zbw8Z6q6yCAAP9A1zTz/kKY/yCAAP5Y1zbz/kKY/yCAAP9A1zTw8Z6q64BIDutA1zTw8Z6q64BIDupY1zbw8Z6q64BIDutA1zTz/kKY/4BIDupY1zbz/kKY/"
+						}
+					}
+					Indices
+					{
+						Value
+						{
+							Length = 36
+							.elements = 0 1 2 0 3 1 1 3 4 5 3 0 5 4 3 2 5 0 1 4 6 2 1 6 5 6 4 2 6 7 5 7 6 7 5 2
+						}
+					}
+					Material
+					{
+						GetByReference = "Content\\Fences\\NeoAxis\\Safety railing\\Data\\Material.material"
+					}
+					VoxelData
+					{
+						Value
+						{
+							Length = 36444
+							.elements = "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"
+							.elementsZip = True
+						}
+					}
+				}
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Definition
+			Transform = "0 0 0; 0 0 0 1; 1 1 1"
+			.component NeoAxis.CollisionShape_Box
+			{
+				LocalTransform = "0.25 0 0.65; 0 0 0 1; 1 1 1"
+				Dimensions = 0.5 0.05 1.3
+			}
+		}
+	}
+}

@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 // Copyright 2016 Adrien Descamps
 // Distributed under BSD 3-Clause License
 #include "../../SDL_internal.h"
@@ -685,3 +688,4 @@ void rgb24_yuv420_sseu(uint32_t width, uint32_t height,
 
 #endif //__SSE2__
 
+#endif

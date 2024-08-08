@@ -259,7 +259,7 @@ namespace NeoAxis
 					initSettings.objectCountThresholdToCreateChildNodes,
 					initSettings.maxNodeCount,
 					initSettings.threadingMode,
-					sizeof( GetObjectsInputData ), 
+					sizeof( GetObjectsInputData ),
 					EngineApp.EngineTime );
 			}
 		}
@@ -289,6 +289,8 @@ namespace NeoAxis
 		{
 			if( bounds.IsCleared() )
 				Log.Fatal( "OctreeContainer: AddObject: Invalid bounds." );
+			if( double.IsNaN( bounds.Minimum.X ) || double.IsNaN( bounds.Maximum.X ) )
+				Log.Fatal( "OctreeContainer: AddObject: double.IsNaN( bounds.Minimum.X ) || double.IsNaN( bounds.Maximum.X )." );
 
 			return OctreeContainer_AddObject( nativeObject, ref bounds.Minimum, ref bounds.Maximum, groupMask );
 		}
@@ -310,6 +312,8 @@ namespace NeoAxis
 		{
 			if( bounds.IsCleared() )
 				Log.Fatal( "OctreeContainer: UpdateObjectBounds: Invalid bounds." );
+			if( double.IsNaN( bounds.Minimum.X ) || double.IsNaN( bounds.Maximum.X ) )
+				Log.Fatal( "OctreeContainer: UpdateObjectBounds: double.IsNaN( bounds.Minimum.X ) || double.IsNaN( bounds.Maximum.X )." );
 
 			OctreeContainer_UpdateObjectBounds( nativeObject, objectIndex, ref bounds.Minimum, ref bounds.Maximum );
 		}

@@ -53,48 +53,48 @@ namespace NeoAxis
 
 		///////////////////////////////////////////////
 
-		public delegate void ObjectInteractionGetInfoEventDelegate( AI sender, GameMode gameMode, ref InteractiveObjectObjectInfo info );
-		public event ObjectInteractionGetInfoEventDelegate ObjectInteractionGetInfoEvent;
+		public delegate void InteractionGetInfoEventDelegate( AI sender, GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info );
+		public event InteractionGetInfoEventDelegate InteractionGetInfoEvent;
 
-		public delegate void ObjectInteractionInputMessageEventDelegate( AI sender, GameMode gameMode, InputMessage message, ref bool handled );
-		public event ObjectInteractionInputMessageEventDelegate ObjectInteractionInputMessageEvent;
+		public delegate void InteractionInputMessageEventDelegate( AI sender, GameMode gameMode, Component initiator, InputMessage message, ref bool handled );
+		public event InteractionInputMessageEventDelegate InteractionInputMessageEvent;
 
-		public delegate void ObjectInteractionEnterEventDelegate( AI sender, ObjectInteractionContext context );
-		public event ObjectInteractionEnterEventDelegate ObjectInteractionEnterEvent;
+		public delegate void InteractionEnterEventDelegate( AI sender, ObjectInteractionContext context );
+		public event InteractionEnterEventDelegate InteractionEnterEvent;
 
-		public delegate void ObjectInteractionExitEventDelegate( AI sender, ObjectInteractionContext context );
-		public event ObjectInteractionExitEventDelegate ObjectInteractionExitEvent;
+		public delegate void InteractionExitEventDelegate( AI sender, ObjectInteractionContext context );
+		public event InteractionExitEventDelegate InteractionExitEvent;
 
-		public delegate void ObjectInteractionUpdateEventDelegate( AI sender, ObjectInteractionContext context );
-		public event ObjectInteractionUpdateEventDelegate ObjectInteractionUpdateEvent;
+		public delegate void InteractionUpdateEventDelegate( AI sender, ObjectInteractionContext context );
+		public event InteractionUpdateEventDelegate InteractionUpdateEvent;
 
 		///////////////////////////////////////////////
 
-		public virtual void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
+		public virtual void InteractionGetInfo( GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info )
 		{
-			ObjectInteractionGetInfoEvent?.Invoke( this, gameMode, ref info );
+			InteractionGetInfoEvent?.Invoke( this, gameMode, initiator, ref info );
 		}
 
-		public virtual bool ObjectInteractionInputMessage( GameMode gameMode, InputMessage message )
+		public virtual bool InteractionInputMessage( GameMode gameMode, Component initiator, InputMessage message )
 		{
 			var handled = false;
-			ObjectInteractionInputMessageEvent?.Invoke( this, gameMode, message, ref handled );
+			InteractionInputMessageEvent?.Invoke( this, gameMode, initiator, message, ref handled );
 			return handled;
 		}
 
-		public virtual void ObjectInteractionEnter( ObjectInteractionContext context )
+		public virtual void InteractionEnter( ObjectInteractionContext context )
 		{
-			ObjectInteractionEnterEvent?.Invoke( this, context );
+			InteractionEnterEvent?.Invoke( this, context );
 		}
 
-		public virtual void ObjectInteractionExit( ObjectInteractionContext context )
+		public virtual void InteractionExit( ObjectInteractionContext context )
 		{
-			ObjectInteractionExitEvent?.Invoke( this, context );
+			InteractionExitEvent?.Invoke( this, context );
 		}
 
-		public virtual void ObjectInteractionUpdate( ObjectInteractionContext context )
+		public virtual void InteractionUpdate( ObjectInteractionContext context )
 		{
-			ObjectInteractionUpdateEvent?.Invoke( this, context );
+			InteractionUpdateEvent?.Invoke( this, context );
 		}
 	}
 }

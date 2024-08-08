@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Reflection;
+using System.Threading;
 using NeoAxis.Editor;
 
 namespace NeoAxis.Widget
@@ -139,8 +140,10 @@ namespace NeoAxis.Widget
 
 				if( callFrame )
 				{
-					RenderingSystem.CallBgfxFrame();
-					RenderingSystem.CallBgfxFrame();
+					RenderingSystem.CallFrame();
+					Thread.Sleep( 10 );
+					RenderingSystem.CallFrame();
+					Thread.Sleep( 10 );
 				}
 
 				//render

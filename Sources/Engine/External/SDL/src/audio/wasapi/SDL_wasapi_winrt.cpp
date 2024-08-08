@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /*
   Simple DirectMedia Layer
   Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
@@ -283,3 +286,5 @@ WASAPI_PlatformThreadDeinit(_THIS)
 #endif  // SDL_AUDIO_DRIVER_WASAPI && defined(__WINRT__)
 
 /* vi: set ts=4 sw=4 expandtab: */
+
+#endif

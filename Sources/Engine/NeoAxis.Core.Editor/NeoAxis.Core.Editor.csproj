@@ -378,9 +378,7 @@
     <Compile Update="Libraries\Aga.Controls\Tree\NodeControls\EditableControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Update="Libraries\Aga.Controls\Tree\NodeControls\ExpandingIcon.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\NodeControls\ExpandingIcon.cs" />
     <Compile Update="Libraries\Aga.Controls\Tree\NodeControls\InteractiveControl.cs">
       <SubType>Component</SubType>
     </Compile>

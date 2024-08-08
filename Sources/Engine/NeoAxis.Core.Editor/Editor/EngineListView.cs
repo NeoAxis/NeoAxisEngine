@@ -260,41 +260,80 @@ namespace NeoAxis.Editor
 
 					if( Owner.CheckBoxes && image == null )
 					{
+						Color color;
 						if( item.Checked )
+							color = EditorAPI2.DarkTheme ? Color.FromArgb( 230, 230, 230 ) : Color.FromArgb( 80, 80, 80 );
+						else
+							color = EditorAPI2.DarkTheme ? Color.FromArgb( 60, 60, 60 ) : Color.FromArgb( 230, 230, 230 );
+						//var color = EditorAPI2.DarkTheme ? Color.FromArgb( 230, 230, 230 ) : Color.FromArgb( 50, 50, 50 );
+
+						using( var brush = new SolidBrush( color ) )
 						{
-							var color = EditorAPI2.DarkTheme ? Color.FromArgb( 230, 230, 230 ) : Color.FromArgb( 50, 50, 50 );
-							using( var brush = new SolidBrush( color ) )
+							var points = new Vector2[]
 							{
-								var points = new Vector2[]
-								{
-									new Vector2( 290.04, 33.286 ),
-									new Vector2( 118.861, 204.427 ),
-									new Vector2( 52.32, 137.907 ),
-									new Vector2( 0, 190.226 ),
-									new Vector2( 118.861, 309.071 ),
-									new Vector2( 342.357, 85.606 ),
-								};
-								var points2 = new Vector2[ points.Length ];
-								for( int n = 0; n < points2.Length; n++ )
-									points2[ n ] = points[ n ] / new Vector2( 342.357, 342.357 );
+								new Vector2( 290.04, 33.286 ),
+								new Vector2( 118.861, 204.427 ),
+								new Vector2( 52.32, 137.907 ),
+								new Vector2( 0, 190.226 ),
+								new Vector2( 118.861, 309.071 ),
+								new Vector2( 342.357, 85.606 ),
+							};
+							var points2 = new Vector2[ points.Length ];
+							for( int n = 0; n < points2.Length; n++ )
+								points2[ n ] = points[ n ] / new Vector2( 342.357, 342.357 );
 
 
-								float left = rect.Left + offset;
-								float top = rect.Top + ( ItemSize.Y - ImageSize.Y ) / 2;
+							float left = rect.Left + offset;
+							float top = rect.Top + ( ItemSize.Y - ImageSize.Y ) / 2;
 
-								left += (float)ImageSize.X * 0.1f;
-								top += (float)ImageSize.X * 0.1f;
+							left += (float)ImageSize.X * 0.1f;
+							top += (float)ImageSize.X * 0.1f;
 
-								var points3 = new PointF[ points.Length ];
-								for( int n = 0; n < points3.Length; n++ )
-								{
-									var p = points2[ n ];
-									points3[ n ] = new PointF( left + (float)p.X * ImageSize.X * 0.8f, top + (float)p.Y * ImageSize.Y * 0.8f );
-								}
-
-								e.Graphics.FillPolygon( brush, points3 );
+							var points3 = new PointF[ points.Length ];
+							for( int n = 0; n < points3.Length; n++ )
+							{
+								var p = points2[ n ];
+								points3[ n ] = new PointF( left + (float)p.X * ImageSize.X * 0.8f, top + (float)p.Y * ImageSize.Y * 0.8f );
 							}
+
+							e.Graphics.FillPolygon( brush, points3 );
 						}
+
+						//if( item.Checked )
+						//{
+						//	var color = EditorAPI2.DarkTheme ? Color.FromArgb( 230, 230, 230 ) : Color.FromArgb( 50, 50, 50 );
+						//	using( var brush = new SolidBrush( color ) )
+						//	{
+						//		var points = new Vector2[]
+						//		{
+						//			new Vector2( 290.04, 33.286 ),
+						//			new Vector2( 118.861, 204.427 ),
+						//			new Vector2( 52.32, 137.907 ),
+						//			new Vector2( 0, 190.226 ),
+						//			new Vector2( 118.861, 309.071 ),
+						//			new Vector2( 342.357, 85.606 ),
+						//		};
+						//		var points2 = new Vector2[ points.Length ];
+						//		for( int n = 0; n < points2.Length; n++ )
+						//			points2[ n ] = points[ n ] / new Vector2( 342.357, 342.357 );
+
+
+						//		float left = rect.Left + offset;
+						//		float top = rect.Top + ( ItemSize.Y - ImageSize.Y ) / 2;
+
+						//		left += (float)ImageSize.X * 0.1f;
+						//		top += (float)ImageSize.X * 0.1f;
+
+						//		var points3 = new PointF[ points.Length ];
+						//		for( int n = 0; n < points3.Length; n++ )
+						//		{
+						//			var p = points2[ n ];
+						//			points3[ n ] = new PointF( left + (float)p.X * ImageSize.X * 0.8f, top + (float)p.Y * ImageSize.Y * 0.8f );
+						//		}
+
+						//		e.Graphics.FillPolygon( brush, points3 );
+						//	}
+						//}
 					}
 					else
 					{

@@ -37,8 +37,9 @@ namespace NeoAxis.Editor
 
 			if( Product != null )
 			{
-				if( !string.IsNullOrEmpty( Product.Name ) )
-					lines.Add( Product.Name );
+				var name = Product.GetName();
+				if( !string.IsNullOrEmpty( name ) )
+					lines.Add( name );
 				else
 					lines.Add( "{NO NAME}" );
 				lines.Add( "" );
@@ -48,18 +49,32 @@ namespace NeoAxis.Editor
 				if( productStore != null )
 				{
 					lines.Add( "Product Type: " + productStore.ProductType.Value.ToString() );
-					lines.Add( "Categories: " + productStore.ProjectItemCategories.Value.ToString() );
 
-					lines.Add( "License: " + productStore.License.Value.ToString() );
+					var categories = productStore.ProjectItemCategories.Value.ToString();
+					if( productStore.ProjectItemCategories.Value == Product_Store.ProjectItemCategoriesEnum.Uncategorized )
+						categories = categories.ToUpper() + " - " + Translate( "None of the categories are selected." ).ToUpper();
+					lines.Add( "Categories: " + categories );
+					//lines.Add( "Categories: " + productStore.ProjectItemCategories.Value.ToString() );
+
+					var license = productStore.License.Value.ToString();
+					if( productStore.License.Value == StoreProductLicense.None )
+						license = license.ToUpper() + " - " + Translate( "The license is not specified." ).ToUpper();
+					lines.Add( "License: " + license );
+					//lines.Add( "License: " + productStore.License.Value.ToString() );
+
 					lines.Add( "Identifier: " + productStore.GetIdentifier() );
 					lines.Add( "" );
 
-					lines.Add( "Short description:" );
-					lines.AddRange( productStore.ShortDescription.Value.Trim().Replace( "\r", "" ).Split( new char[] { '\n' } ) );
+					lines.Add( "Description:" );
+					lines.AddRange( productStore.Description.Value.Trim().Replace( "\r", "" ).Split( new char[] { '\n' } ) );
 					lines.Add( "" );
 
-					lines.Add( "Full description:" );
-					lines.AddRange( productStore.FullDescription.Value.Trim().Replace( "\r", "" ).Split( new char[] { '\n' } ) );
+					//lines.Add( "Short description:" );
+					//lines.AddRange( productStore.ShortDescription.Value.Trim().Replace( "\r", "" ).Split( new char[] { '\n' } ) );
+					//lines.Add( "" );
+
+					//lines.Add( "Full description:" );
+					//lines.AddRange( productStore.FullDescription.Value.Trim().Replace( "\r", "" ).Split( new char[] { '\n' } ) );
 				}
 
 

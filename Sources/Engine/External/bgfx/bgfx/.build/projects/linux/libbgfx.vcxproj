@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|ARM">
@@ -83,7 +83,6 @@
     <ClCompile Include="..\..\..\src\bgfx.cpp" />
     <ClCompile Include="..\..\..\src\dxgi.cpp" />
     <ClCompile Include="..\..\..\src\glcontext_egl.cpp" />
-    <ClCompile Include="..\..\..\src\glcontext_html5.cpp" />
     <ClCompile Include="..\..\..\src\glcontext_wgl.cpp" />
     <ClCompile Include="..\..\..\src\nvapi.cpp" />
     <ClCompile Include="..\..\..\src\renderer_agc.cpp" />
@@ -104,6 +103,27 @@
     <ClCompile Include="..\..\..\tools\shaderc\LibraryBase.cpp" />
     <ClCompile Include="..\..\..\tools\shaderc\shaderc.cpp" />
     <ClCompile Include="..\..\..\tools\shaderc\shaderc_spirv.cpp" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp1.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp3.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp4.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp5.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp6.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\debug_renderdoc.cpp" />
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc_hlsl.cpp" />
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc_hlsl_dx12.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\..\bx\include\bx\inline\allocator.inl" />
@@ -286,6 +306,9 @@
     <PostBuildEvent>
       <Command>copy "$(SolutionDir)_build\Linux\$(Platform)\libbgfx\libbgfx.so" "$(SolutionDir)Project\Binaries\NeoAxis.Internal\Platforms\Linux\$(Platform)\libbgfx.so"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>if EXIST "$(ProjectDir)..\vs2017\bgfx-shared-lib.vcxproj" ( if EXIST "$(ProjectDir)..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" ( "$(ProjectDir)..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -platformProjectPatch "$(ProjectDir)libbgfx.vcxproj" -baseProject "$(ProjectDir)..\vs2017\bgfx-shared-lib.vcxproj" ) )</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -297,6 +320,9 @@
     <PostBuildEvent>
       <Command>copy "$(SolutionDir)_build\Linux\$(Platform)\libbgfx\libbgfx.so" "$(SolutionDir)Project\Binaries\NeoAxis.Internal\Platforms\Linux\$(Platform)\libbgfx.so"</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>if EXIST "$(ProjectDir)..\vs2017\bgfx-shared-lib.vcxproj" ( if EXIST "$(ProjectDir)..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" ( "$(ProjectDir)..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -platformProjectPatch "$(ProjectDir)libbgfx.vcxproj" -baseProject "$(ProjectDir)..\vs2017\bgfx-shared-lib.vcxproj" ) )</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

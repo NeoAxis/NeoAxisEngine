@@ -689,7 +689,6 @@ namespace Internal.SharpBgfx {
         public static extern void bgfx_set_triple_buffering();
 
         //!!!!betauser
-        //!!!!temp
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         public unsafe static extern void bgfx_get_gpu_description( int bufferSize, byte* result );
 
@@ -701,6 +700,11 @@ namespace Internal.SharpBgfx {
         //!!!!betauser
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         public static extern void bgfx_check_wrapper( int initSettings, int platformData, int nativeAttachment );
+
+        //!!!!betauser
+        [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
+        [return: MarshalAs( UnmanagedType.U1 )]
+        public unsafe static extern bool bgfx_get_last_warning( /*int bufferSize,*/ byte* result );
 
         ////!!!!betauser
         //[DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]

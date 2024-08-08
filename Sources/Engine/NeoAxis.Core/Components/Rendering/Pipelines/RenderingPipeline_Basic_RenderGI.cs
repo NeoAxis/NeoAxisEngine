@@ -287,7 +287,8 @@ namespace NeoAxis
 
 				var jobSize = new Vector3I( gridSize * cascades.Length / 8, gridSize / 8, gridSize / 8 );
 
-				Bgfx.Dispatch( (ushort)context.CurrentViewNumber, giClearGridsProgram.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
+				//!!!!change to use context.Dispatch
+				Bgfx.Dispatch( (ushort)RenderingSystem.CurrentViewNumber, giClearGridsProgram.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
 				context.UpdateStatisticsCurrent.ComputeDispatches++;
 			}
 
@@ -298,7 +299,7 @@ namespace NeoAxis
 
 				var jobSize = new Vector3I( gridSize * cascades.Length / 8, gridSize / 8, gridSize / 8 );
 
-				Bgfx.Dispatch( (ushort)context.CurrentViewNumber, giClearGridsProgram.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
+				Bgfx.Dispatch( (ushort)RenderingSystem.CurrentViewNumber, giClearGridsProgram.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
 				context.UpdateStatisticsCurrent.ComputeDispatches++;
 			}
 		}
@@ -374,7 +375,7 @@ namespace NeoAxis
 				var discardFlags = DiscardFlags.None;// /*DiscardFlags.Bindings | */DiscardFlags.IndexBuffer | DiscardFlags.InstanceData | DiscardFlags.State | DiscardFlags.Transform | DiscardFlags.VertexStreams;
 
 				var jobSizeX = (int)Math.Ceiling( instanceCount / 32.0 );
-				Bgfx.Dispatch( (ushort)context.CurrentViewNumber, giStandardGIVoxelPrepareProgram.Value, jobSizeX, 1, 1, discardFlags );
+				Bgfx.Dispatch( (ushort)RenderingSystem.CurrentViewNumber, giStandardGIVoxelPrepareProgram.Value, jobSizeX, 1, 1, discardFlags );
 				context.UpdateStatisticsCurrent.ComputeDispatches++;
 
 				//restore bindings
@@ -398,7 +399,7 @@ namespace NeoAxis
 
 				var discardFlags = /*DiscardFlags.Bindings | */DiscardFlags.IndexBuffer | DiscardFlags.InstanceData | DiscardFlags.State | DiscardFlags.Transform | DiscardFlags.VertexStreams;
 
-				Bgfx.Dispatch( (ushort)context.CurrentViewNumber, giVoxelProgram, jobSize.X, jobSize.Y, jobSize.Z, discardFlags );
+				Bgfx.Dispatch( (ushort)RenderingSystem.CurrentViewNumber, giVoxelProgram, jobSize.X, jobSize.Y, jobSize.Z, discardFlags );
 				context.UpdateStatisticsCurrent.ComputeDispatches++;
 
 				//Bgfx.Dispatch( context.CurrentViewNumber, giVoxelProgram.Value, indirectBuffer, 0, instanceCount, discardFlags );
@@ -1263,7 +1264,7 @@ namespace NeoAxis
 
 				var jobSize = new Vector3I( smallGridSize / 8, smallGridSize / 8, smallGridSize / 8 );
 
-				Bgfx.Dispatch( (ushort)context.CurrentViewNumber, giCalculateSmallGridProgram.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
+				Bgfx.Dispatch( (ushort)RenderingSystem.CurrentViewNumber, giCalculateSmallGridProgram.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
 				context.UpdateStatisticsCurrent.ComputeDispatches++;
 			}
 
@@ -1283,7 +1284,7 @@ namespace NeoAxis
 
 				var jobSize = new Vector3I( verySmallGridSize / 8, verySmallGridSize / 8, verySmallGridSize / 8 );
 
-				Bgfx.Dispatch( (ushort)context.CurrentViewNumber, giCalculateVerySmallGridProgram.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
+				Bgfx.Dispatch( (ushort)RenderingSystem.CurrentViewNumber, giCalculateVerySmallGridProgram.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
 				context.UpdateStatisticsCurrent.ComputeDispatches++;
 			}
 
@@ -1306,7 +1307,7 @@ namespace NeoAxis
 
 				var jobSize = new Vector3I( sdf4Size / 8, sdf4Size / 8, sdf4Size / 8 );
 
-				Bgfx.Dispatch( (ushort)context.CurrentViewNumber, giCalculateSDF4Program.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
+				Bgfx.Dispatch( (ushort)RenderingSystem.CurrentViewNumber, giCalculateSDF4Program.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
 				context.UpdateStatisticsCurrent.ComputeDispatches++;
 			}
 
@@ -1358,7 +1359,7 @@ namespace NeoAxis
 
 				var jobSize = new Vector3I( gridSize / 8, gridSize / 8, gridSize / 8 );
 
-				Bgfx.Dispatch( (ushort)context.CurrentViewNumber, giCalculateSDFProgram.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
+				Bgfx.Dispatch( (ushort)RenderingSystem.CurrentViewNumber, giCalculateSDFProgram.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
 				context.UpdateStatisticsCurrent.ComputeDispatches++;
 			}
 
@@ -1422,7 +1423,7 @@ namespace NeoAxis
 
 			var jobSize = new Vector3I( gridSize / 8, gridSize / 8, gridSize / 8 );
 
-			Bgfx.Dispatch( (ushort)context.CurrentViewNumber, giCalculateIndirectLightingProgram.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
+			Bgfx.Dispatch( (ushort)RenderingSystem.CurrentViewNumber, giCalculateIndirectLightingProgram.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
 			context.UpdateStatisticsCurrent.ComputeDispatches++;
 		}
 
@@ -1446,7 +1447,7 @@ namespace NeoAxis
 
 			var jobSize = new Vector3I( gridSize * cascades.Length / 8, gridSize / 8, gridSize / 8 );
 
-			Bgfx.Dispatch( (ushort)context.CurrentViewNumber, giCopyToPreviousGridProgram.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
+			Bgfx.Dispatch( (ushort)RenderingSystem.CurrentViewNumber, giCopyToPreviousGridProgram.Value, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
 			context.UpdateStatisticsCurrent.ComputeDispatches++;
 		}
 	}

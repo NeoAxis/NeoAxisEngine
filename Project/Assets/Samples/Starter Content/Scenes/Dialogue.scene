@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"256C67A18D664B0E39BBE68CF4257695\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"195C129810504C44FB9460EF63604BF0\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"256C67A18D664B0E39BBE68CF4257695\"><KP UN=\"256C67A18D664B0E39BBE68CF4257695\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"D9CD5B53C89443169D9923C591371B7B\" S=\"False\"><CPD ObjPath=\"$Character NPC\\$Character AI\\$Flow Graph\" /></KP><KP UN=\"DFA5B071C37B4A7424AB983EE2B2F7B5\" S=\"False\"><CPD ObjPath=\"$Character NPC 2\\$Character AI\\$C# Script\" /></KP><KP UN=\"68E8D0CDBE8546ABFD963DD7C4C33764\" S=\"False\"><CPD ObjPath=\"$Character NPC 3\\$Character AI\\$Flow Graph\" /></KP><KP UN=\"74C93459BDB64C4ECC935E32D66038F8\" S=\"False\"><CPD ObjPath=\"$Character NPC 3\\$Character AI\\$Flow Graph\\$Node C# Script 1\\$C# Script Condition\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1144, 842\"><KW V=\"1\" A=\"256C67A18D664B0E39BBE68CF4257695\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"195C129810504C44FB9460EF63604BF0\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"256C67A18D664B0E39BBE68CF4257695\"><KP UN=\"256C67A18D664B0E39BBE68CF4257695\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"D9CD5B53C89443169D9923C591371B7B\" S=\"False\"><CPD ObjPath=\"$Character NPC\\$Character AI\\$Flow Graph\" /></KP><KP UN=\"DFA5B071C37B4A7424AB983EE2B2F7B5\" S=\"False\"><CPD ObjPath=\"$Character NPC 2\\$Character AI\\$C# Script\" /></KP><KP UN=\"68E8D0CDBE8546ABFD963DD7C4C33764\" S=\"False\"><CPD ObjPath=\"$Character NPC 3\\$Character AI\\$Flow Graph\" /></KP><KP UN=\"74C93459BDB64C4ECC935E32D66038F8\" S=\"False\"><CPD ObjPath=\"$Character NPC 3\\$Character AI\\$Flow Graph\\$Node C# Script 1\\$C# Script Condition\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -36,13 +36,14 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 50000
+		Brightness = 60000
 	}
 	.component NeoAxis.Light
 	{
 		Name = Directional Light
 		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
 		Type = Directional
+		Brightness = 150000
 		AttenuationFar = 100
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
@@ -51,8 +52,9 @@
 	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
-		ShadowFarDistance = 50
 		ShadowIntensity = 0.5
+		ShadowDirectionalDistance = 50
+		ShadowPointSpotlightDistance = 50
 		.component NeoAxis.Component
 		{
 			Name = Background Effects
@@ -135,10 +137,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -167,10 +165,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -204,11 +198,7 @@
 		Collision = True
 		Mesh
 		{
-			GetByReference = "Content\\Items\\Authors\\NeoAxis\\Key\\Data\\scene.gltf|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
+			GetByReference = "Content\\Items\\NeoAxis\\Key\\Data\\scene.gltf|$Mesh"
 		}
 		SpecialEffects
 		{
@@ -219,7 +209,7 @@
 		}
 		ItemType
 		{
-			GetByReference = "Content\\Items\\Authors\\NeoAxis\\Key\\Key.itemtype"
+			GetByReference = "Content\\Items\\NeoAxis\\Key\\Key.itemtype"
 		}
 	}
 	.component NeoAxis.GroupOfObjects
@@ -239,14 +229,6 @@
 		Name = Character
 		Transform = "2.50185359899021 -1.22914356831118 0; 0 0 0.707106781186547 0.707106781186548; 1 1 1"
 		Collision = True
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -274,14 +256,6 @@
 		Name = Character NPC
 		Transform = "-1.75609749473424 4.48044548455324 0.00000017460560819; 0 0 -0.481296986341476 0.876557588577271; 1 1 1"
 		Collision = True
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -393,14 +367,6 @@
 		Name = Character NPC 2
 		Transform = "2.46674974021676 12.0283360637464 -0.0099996738078667; 0 0 -0.704319579337445 0.709883026561272; 1 1 1"
 		Collision = True
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -422,7 +388,7 @@
 			.component NeoAxis.CSharpScript
 			{
 				Name = C# Script
-				Code = "public void CharacterAI_ObjectInteractionInputMessageEvent(NeoAxis.AI sender, NeoAxis.GameMode gameMode, NeoAxis.InputMessage message, ref bool handled)\r\n{\r\n\t//var keyDown = message as InputMessageKeyDown;\r\n\t//if (keyDown != null && (keyDown.Key == gameMode.KeyInteract1 || keyDown.Key == gameMode.KeyInteract2))\r\n\tvar buttonDown = message as InputMessageMouseButtonDown;\r\n\tif (buttonDown != null)\r\n\t{\r\n\t\t//no network support. for networking support is easier to use Flow Graph based variant\r\n\r\n\t\t//create interaction\r\n\t\tvar interaction = gameMode.CreateComponent<ContinuousInteraction>(enabled: false);\r\n\t\tinteraction.Creator = sender;\r\n\t\tinteraction.SecondParticipant = gameMode.ObjectControlledByPlayer.Value;\r\n\t\t\r\n\t\t//set up the first message from NPC and possible answers\r\n\t\tvar block = new TextBlock();\r\n\t\tblock.SetAttribute(\"MessageID\", \"1\");\r\n\t\tblock.SetAttribute(\"Message\", \"Hi! How can I help you?\");\r\n\t\tblock.SetAttribute(\"Answer 1\", \"Say something else\");\r\n\t\tblock.SetAttribute(\"Answer 2\", \"Bye\");\r\n\t\tinteraction.CurrentMessageFromCreator = block.DumpToString();\r\n\r\n\t\tinteraction.MessageFromParticipantEvent += delegate (ContinuousInteraction sender2, string message2)\r\n\t\t{\r\n\t\t\t//process messages from NPC\r\n\t\t\t\r\n\t\t\tvar block2 = TextBlock.Parse(message2, out _);\r\n\t\t\tif (block2 != null)\r\n\t\t\t{\r\n\t\t\t\tvar messageID = block2.GetAttribute(\"MessageID\");\r\n\t\t\t\tvar answer = block2.GetAttribute(\"Answer\");\r\n\t\t\t\t//Log.Info(answer);\r\n\t\t\t\t\r\n\t\t\t\t//generate answers to message 1 \r\n\t\t\t\tif(messageID == \"1\")\r\n\t\t\t\t{\r\n\t\t\t\t\tif (answer == \"1\")\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\tvar block3 = new TextBlock();\r\n\t\t\t\t\t\tblock3.SetAttribute(\"MessageID\", \"2\");\r\n\t\t\t\t\t\tblock3.SetAttribute(\"Message\", \"No problem :)\");\r\n\t\t\t\t\t\tblock3.SetAttribute(\"Answer 1\", \"Bye\");\r\n\t\t\t\t\t\tinteraction.CurrentMessageFromCreator = block3.DumpToString();\r\n\t\t\t\t\t}\r\n\t\t\t\t\tif (answer == \"2\")\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\tsender2.RemoveFromParent(true);\r\n\t\t\t\t\t}\r\n\t\t\t\t}\r\n\r\n\t\t\t\t//generate answers to message 2 \r\n\t\t\t\tif(messageID == \"2\")\r\n\t\t\t\t{\r\n\t\t\t\t\tif (answer == \"1\")\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\tsender2.RemoveFromParent(true);\r\n\t\t\t\t\t}\r\n\t\t\t\t}\r\n\t\t\t}\r\n\t\t};\r\n\r\n\t\tinteraction.Enabled = true;\r\n\r\n\t\thandled = true;\r\n\t}\r\n}\r\n"
+				Code = "public void CharacterAI_ObjectInteractionInputMessageEvent(NeoAxis.AI sender, NeoAxis.GameMode gameMode, Component initiator, NeoAxis.InputMessage message, ref bool handled)\r\n{\r\n\t//var keyDown = message as InputMessageKeyDown;\r\n\t//if (keyDown != null && (keyDown.Key == gameMode.KeyInteract1 || keyDown.Key == gameMode.KeyInteract2))\r\n\tvar buttonDown = message as InputMessageMouseButtonDown;\r\n\tif (buttonDown != null)\r\n\t{\r\n\t\t//no network support. for networking support is easier to use Flow Graph based variant\r\n\r\n\t\t//create interaction\r\n\t\tvar interaction = gameMode.CreateComponent<ContinuousInteraction>(enabled: false);\r\n\t\tinteraction.Creator = sender;\r\n\t\tinteraction.SecondParticipant = gameMode.ObjectControlledByPlayer.Value;\r\n\t\t\r\n\t\t//set up the first message from NPC and possible answers\r\n\t\tvar block = new TextBlock();\r\n\t\tblock.SetAttribute(\"MessageID\", \"1\");\r\n\t\tblock.SetAttribute(\"Message\", \"Hi! How can I help you?\");\r\n\t\tblock.SetAttribute(\"Answer 1\", \"Say something else\");\r\n\t\tblock.SetAttribute(\"Answer 2\", \"Bye\");\r\n\t\tinteraction.CurrentMessageFromCreator = block.DumpToString();\r\n\r\n\t\tinteraction.MessageFromParticipantEvent += delegate (ContinuousInteraction sender2, string message2)\r\n\t\t{\r\n\t\t\t//process messages from NPC\r\n\t\t\t\r\n\t\t\tvar block2 = TextBlock.Parse(message2, out _);\r\n\t\t\tif (block2 != null)\r\n\t\t\t{\r\n\t\t\t\tvar messageID = block2.GetAttribute(\"MessageID\");\r\n\t\t\t\tvar answer = block2.GetAttribute(\"Answer\");\r\n\t\t\t\t//Log.Info(answer);\r\n\t\t\t\t\r\n\t\t\t\t//generate answers to message 1 \r\n\t\t\t\tif(messageID == \"1\")\r\n\t\t\t\t{\r\n\t\t\t\t\tif (answer == \"1\")\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\tvar block3 = new TextBlock();\r\n\t\t\t\t\t\tblock3.SetAttribute(\"MessageID\", \"2\");\r\n\t\t\t\t\t\tblock3.SetAttribute(\"Message\", \"No problem :)\");\r\n\t\t\t\t\t\tblock3.SetAttribute(\"Answer 1\", \"Bye\");\r\n\t\t\t\t\t\tinteraction.CurrentMessageFromCreator = block3.DumpToString();\r\n\t\t\t\t\t}\r\n\t\t\t\t\tif (answer == \"2\")\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\tsender2.RemoveFromParent(true);\r\n\t\t\t\t\t}\r\n\t\t\t\t}\r\n\r\n\t\t\t\t//generate answers to message 2 \r\n\t\t\t\tif(messageID == \"2\")\r\n\t\t\t\t{\r\n\t\t\t\t\tif (answer == \"1\")\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\tsender2.RemoveFromParent(true);\r\n\t\t\t\t\t}\r\n\t\t\t\t}\r\n\t\t\t}\r\n\t\t};\r\n\r\n\t\tinteraction.Enabled = true;\r\n\r\n\t\thandled = true;\r\n\t}\r\n}\r\n"
 				Exit
 				{
 				}
@@ -434,11 +400,11 @@
 					Name = Event Handler ObjectInteractionInputMessageEvent
 					Event
 					{
-						GetByReference = "this:..\\..\\event:ObjectInteractionInputMessageEvent"
+						GetByReference = "this:..\\..\\event:InteractionInputMessageEvent"
 					}
 					HandlerMethod
 					{
-						GetByReference = "this:..\\method:CharacterAI_ObjectInteractionInputMessageEvent(NeoAxis.AI,NeoAxis.GameMode,NeoAxis.InputMessage,ref System.Boolean)"
+						GetByReference = "this:..\\method:CharacterAI_ObjectInteractionInputMessageEvent(NeoAxis.AI,NeoAxis.GameMode,NeoAxis.Component,NeoAxis.InputMessage,ref System.Boolean)"
 					}
 					HandlerFlow
 					{
@@ -452,14 +418,6 @@
 		Name = Character NPC 3
 		Transform = "6.81894426083197 4.65589894971923 0.00000017460560819; 0 0 -0.842785295569207 0.538249886879794; 1 1 1"
 		Collision = True
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -582,7 +540,7 @@
 					{
 						Name = C# Script Condition
 						NetworkMode = False
-						Code = "bool Method()\r\n{\r\n\t//prevent execution the script in the editor and when loading\r\n\tif(EngineApp.IsSimulation && !Owner.ParentRoot.HierarchyController.Loading)\r\n\t{\r\n\t\t//get current interaction\r\n\t\tvar interaction = ContinuousInteraction.Latest;\r\n\r\n\t\t//get a character of the player\r\n\t\tvar playerCharacter = (Character)interaction.SecondParticipant.Value;\r\n\r\n\t\t//checks player\'s character has a key\r\n\t\tvar item = playerCharacter.GetItemByResourceName(@\"Content\\Items\\Authors\\NeoAxis\\Key\\Key.itemtype\");\r\n\t\tif (item != null)\r\n\t\t\treturn true;\r\n\t}\r\n\t\r\n\treturn false;\r\n}\r\n"
+						Code = "bool Method()\r\n{\r\n\t//prevent execution the script in the editor and when loading\r\n\tif(EngineApp.IsSimulation && !Owner.ParentRoot.HierarchyController.Loading)\r\n\t{\r\n\t\t//get current interaction\r\n\t\tvar interaction = ContinuousInteraction.Latest;\r\n\r\n\t\t//get a character of the player\r\n\t\tvar playerCharacter = (Character)interaction.SecondParticipant.Value;\r\n\r\n\t\t//checks player\'s character has a key\r\n\t\tvar item = playerCharacter.GetItemByResourceName(@\"Content\\Items\\NeoAxis\\Key\\Key.itemtype\");\r\n\t\tif (item != null)\r\n\t\t\treturn true;\r\n\t}\r\n\t\r\n\treturn false;\r\n}\r\n"
 						Exit
 						{
 						}

@@ -4,13 +4,10 @@ using System;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
-using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Internal.ComponentFactory.Krypton.Toolkit;
-using System.Drawing.Drawing2D;
 
 namespace NeoAxis.Editor
 {
@@ -29,8 +26,8 @@ namespace NeoAxis.Editor
 		//breaking when it in designer code
 		private NeoAxis.Editor.EngineToolTip toolTip1;
 
-		//hardcoded store items
-		ESet<string> featuredStoreItemIdentifiers = new ESet<string>();
+		//store items
+		//ESet<string> featuredStoreItemIdentifiers = new ESet<string>();
 		bool featuredStoreItemsWereUpdated;
 
 		//
@@ -171,15 +168,13 @@ namespace NeoAxis.Editor
 
 			//install store items
 			{
-				//!!!!положиь список на сайт. //var featuredItems = "";
-
-				featuredStoreItemIdentifiers.Add( "City_Demo" );
-				//featuredStoreItemIdentifiers.Add( "Sci_fi_Demo" );
-				featuredStoreItemIdentifiers.Add( "Nature_Demo" );
-				featuredStoreItemIdentifiers.Add( "Basic_Materials_2K" );
-				featuredStoreItemIdentifiers.Add( "Basic_Environments_4K" );
-				if( EngineInfo.EngineMode == EngineInfo.EngineModeEnum.Standalone )
-					featuredStoreItemIdentifiers.Add( "Platform_Tools" );
+				//featuredStoreItemIdentifiers.Add( "City_Demo" );
+				////featuredStoreItemIdentifiers.Add( "Sci_fi_Demo" );
+				//featuredStoreItemIdentifiers.Add( "Nature_Demo" );
+				//featuredStoreItemIdentifiers.Add( "Basic_Materials_2K" );
+				//featuredStoreItemIdentifiers.Add( "Basic_Environments_4K" );
+				//if( EngineInfo.EngineMode == EngineInfo.EngineModeEnum.Standalone )
+				//	featuredStoreItemIdentifiers.Add( "Platform_Tools" );
 
 				contentBrowserStoreItems.Options.PanelMode = ContentBrowser.PanelModeEnum.List;
 				contentBrowserStoreItems.Options.ListMode = ContentBrowser.ListModeEnum.Tiles;
@@ -235,15 +230,19 @@ namespace NeoAxis.Editor
 
 		void UpdateControls()
 		{
-			buttonCreateScene.Enabled = contentBrowserNewScene.SelectedItemsOnlyListView.Length == 1;
-			kryptonButtonInstallStoreItem.Enabled = contentBrowserStoreItems.SelectedItemsOnlyListView.Length == 1;
-			kryptonButtonOpenScene.Enabled = contentBrowserOpenScene.SelectedItems.Length == 1;
+			try //was exception on exit
+			{
+				buttonCreateScene.Enabled = contentBrowserNewScene.SelectedItemsOnlyListView.Length == 1;
+				kryptonButtonInstallStoreItem.Enabled = contentBrowserStoreItems.SelectedItemsOnlyListView.Length == 1;
+				kryptonButtonOpenScene.Enabled = contentBrowserOpenScene.SelectedItems.Length == 1;
 
-			kryptonButtonLightTheme.Enabled = ProjectSettings.Get.General.Theme.Value != ProjectSettingsPage_General.ThemeEnum.Light;
-			kryptonButtonDarkTheme.Enabled = ProjectSettings.Get.General.Theme.Value != ProjectSettingsPage_General.ThemeEnum.Dark;
+				kryptonButtonLightTheme.Enabled = ProjectSettings.Get.General.Theme.Value != ProjectSettingsPage_General.ThemeEnum.Light;
+				kryptonButtonDarkTheme.Enabled = ProjectSettings.Get.General.Theme.Value != ProjectSettingsPage_General.ThemeEnum.Dark;
 
-			kryptonCheckBoxMinimizeRibbon.Checked = EditorForm.Instance.kryptonRibbon.MinimizedMode;
-			kryptonCheckBoxShowQATBelowRibbon.Checked = EditorForm.Instance.kryptonRibbon.QATLocation == Internal.ComponentFactory.Krypton.Ribbon.QATLocation.Below;
+				kryptonCheckBoxMinimizeRibbon.Checked = EditorForm.Instance.kryptonRibbon.MinimizedMode;
+				kryptonCheckBoxShowQATBelowRibbon.Checked = EditorForm.Instance.kryptonRibbon.QATLocation == Internal.ComponentFactory.Krypton.Ribbon.QATLocation.Below;
+			}
+			catch { }
 		}
 
 		string Translate( string text )
@@ -572,17 +571,16 @@ namespace NeoAxis.Editor
 				foreach( var packageId in packages )
 					packagesSet.AddWithCheckAlreadyContained( packageId );
 
-
 				var items = new List<ContentBrowser.Item>();
 
-				foreach( var packageId in featuredStoreItemIdentifiers )
-				//foreach( var packageId in packages )
+				foreach( var packageId in NeoAxisStoreImplementation.FeaturedStoreItems )
 				{
+					if( packageId == "Platform_Tools" && EngineInfo.EngineMode != EngineInfo.EngineModeEnum.Standalone )
+						continue;
+
 					if( packagesSet.Contains( packageId ) )
-					//if( featuredStoreItemIdentifiers.Contains( packageId ) )
 					{
 						var package = StoreManager.GetPackageInfo( packageId, false );
-						//var package = GetPackage( packageId, false );
 
 						if( package != null )
 						{
@@ -594,6 +592,26 @@ namespace NeoAxis.Editor
 						}
 					}
 				}
+
+				//foreach( var packageId in featuredStoreItemIdentifiers )
+				////foreach( var packageId in packages )
+				//{
+				//	if( packagesSet.Contains( packageId ) )
+				//	//if( featuredStoreItemIdentifiers.Contains( packageId ) )
+				//	{
+				//		var package = StoreManager.GetPackageInfo( packageId, false );
+				//		//var package = GetPackage( packageId, false );
+
+				//		if( package != null )
+				//		{
+				//			var item = new ContentBrowserItem_Virtual( contentBrowserNewScene, null, package.Title );
+				//			item.Tag = package.Identifier;
+				//			item.imageKey = "Default_512";
+				//			item.Description = package.GetTooltipDescription();
+				//			items.Add( item );
+				//		}
+				//	}
+				//}
 
 				//UpdateNewScenes?.Invoke( ref items );
 

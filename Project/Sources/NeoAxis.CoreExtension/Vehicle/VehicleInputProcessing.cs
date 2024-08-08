@@ -8,7 +8,7 @@ namespace NeoAxis
 	/// <summary>
 	/// An object to process input from a player to a vehicle.
 	/// </summary>
-	[AddToResourcesWindow( @"Addons\Vehicle\Vehicle Input Processing", 22003 )]
+	[AddToResourcesWindow( @"Addons\Vehicle\Vehicle Input Processing", 22004 )]
 	public class VehicleInputProcessing : InputProcessing
 	{
 		bool[] firing = new bool[ 3 ];
@@ -257,13 +257,13 @@ namespace NeoAxis
 							////}
 						}
 
-						if( keyDown.Key == gameMode.KeyHeadlights1 || keyDown.Key == gameMode.KeyHeadlights2 )
+						if( keyDown.Key == gameMode.KeyHeadlightsLow1 || keyDown.Key == gameMode.KeyHeadlightsLow2 )
 						{
-							var value = vehicle.Headlights.Value > 0.5f ? 0.0f : 1.0f;
+							var value = vehicle.HeadlightsLow.Value > 0.5f ? 0.0f : 1.0f;
 
 							if( NetworkIsClient )
 							{
-								var writer = BeginNetworkMessageToServer( "Headlights" );
+								var writer = BeginNetworkMessageToServer( "HeadlightsLow" );
 								if( writer != null )
 								{
 									writer.Write( value );
@@ -271,7 +271,68 @@ namespace NeoAxis
 								}
 							}
 							else
-								vehicle.Headlights = value;
+							{
+								vehicle.HeadlightsLow = value;
+								//reset high
+								if( value != 0 )
+									vehicle.HeadlightsHigh = 0;
+							}
+						}
+
+						if( keyDown.Key == gameMode.KeyHeadlightsHigh1 || keyDown.Key == gameMode.KeyHeadlightsHigh2 )
+						{
+							var value = vehicle.HeadlightsHigh.Value > 0.5f ? 0.0f : 1.0f;
+
+							if( NetworkIsClient )
+							{
+								var writer = BeginNetworkMessageToServer( "HeadlightsHigh" );
+								if( writer != null )
+								{
+									writer.Write( value );
+									EndNetworkMessage();
+								}
+							}
+							else
+							{
+								vehicle.HeadlightsHigh = value;
+								//reset low
+								if( value != 0 )
+									vehicle.HeadlightsLow = 0;
+							}
+						}
+
+						if( keyDown.Key == gameMode.KeyLeftTurnSignal1 || keyDown.Key == gameMode.KeyLeftTurnSignal2 )
+						{
+							var value = vehicle.LeftTurnSignal.Value > 0.5f ? 0.0f : 1.0f;
+
+							if( NetworkIsClient )
+							{
+								var writer = BeginNetworkMessageToServer( "LeftTurnSignal" );
+								if( writer != null )
+								{
+									writer.Write( value );
+									EndNetworkMessage();
+								}
+							}
+							else
+								vehicle.LeftTurnSignal = value;
+						}
+
+						if( keyDown.Key == gameMode.KeyRightTurnSignal1 || keyDown.Key == gameMode.KeyRightTurnSignal2 )
+						{
+							var value = vehicle.RightTurnSignal.Value > 0.5f ? 0.0f : 1.0f;
+
+							if( NetworkIsClient )
+							{
+								var writer = BeginNetworkMessageToServer( "RightTurnSignal" );
+								if( writer != null )
+								{
+									writer.Write( value );
+									EndNetworkMessage();
+								}
+							}
+							else
+								vehicle.RightTurnSignal = value;
 						}
 					}
 
@@ -552,12 +613,39 @@ namespace NeoAxis
 							//}
 						}
 					}
-					else if( message == "Headlights" )
+					else if( message == "HeadlightsLow" )
 					{
 						var value = reader.ReadSingle();
 						if( !reader.Complete() )
 							return false;
-						vehicle.Headlights = value;
+						vehicle.HeadlightsLow = value;
+						//reset high
+						if( value != 0 )
+							vehicle.HeadlightsHigh = 0;
+					}
+					else if( message == "HeadlightsHigh" )
+					{
+						var value = reader.ReadSingle();
+						if( !reader.Complete() )
+							return false;
+						vehicle.HeadlightsHigh = value;
+						//reset low
+						if( value != 0 )
+							vehicle.HeadlightsLow = 0;
+					}
+					else if( message == "LeftTurnSignal" )
+					{
+						var value = reader.ReadSingle();
+						if( !reader.Complete() )
+							return false;
+						vehicle.LeftTurnSignal = value;
+					}
+					else if( message == "RightTurnSignal" )
+					{
+						var value = reader.ReadSingle();
+						if( !reader.Complete() )
+							return false;
+						vehicle.RightTurnSignal = value;
 					}
 				}
 			}

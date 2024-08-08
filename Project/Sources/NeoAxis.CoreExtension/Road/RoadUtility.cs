@@ -1009,6 +1009,8 @@ namespace NeoAxis
 					if( fillPatternSize.Y == 0.0 )
 						fillPatternSize.Y = 0.01;
 
+					var groups = surface.Groups;
+
 					//if( groupOfObjects == null )
 					//	groupOfObjects = owner.GetOrCreateGroupOfObjects( true );
 					//var element = GetOrCreateElement( groupOfObjects, surface );
@@ -1062,12 +1064,20 @@ namespace NeoAxis
 								var positionXY = new Vector2( x, y ) + objectItem.Position * objectsDistribution;
 								var groupIndex = objectItem.Group;
 
+								var regularAlignment = groups[ groupIndex ].RegularAlignment;
+								if( regularAlignment != 0 )
+								{
+									positionXY /= regularAlignment;
+									positionXY = new Vector2( (int)positionXY.X, (int)positionXY.Y );
+									positionXY *= regularAlignment;
+								}
+
 								objectsToCreate[ counter++ ] = (positionXY, groupIndex);
 							}
 						}
 					}
 
-					var touchGroups = surface.Groups;
+					//var touchGroups = surface.Groups;
 
 					//calculate item.ObjectsMaxSize
 					float checkRadius;

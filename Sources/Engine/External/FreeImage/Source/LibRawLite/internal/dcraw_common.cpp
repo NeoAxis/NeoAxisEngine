@@ -64,7 +64,8 @@ size_t strnlen(const char *s, size_t n)
 #include <asm/byteorder.h> 
 
 //!!!!betauser
-void swab2(const void *from, void*to, ssize_t n)//void swab(const void *from, void*to, ssize_t n)
+void swab(const void* from, void* to, ssize_t n)
+//void swab2(const void *from, void*to, ssize_t n)//void swab(const void *from, void*to, ssize_t n)
 {
     if(n < 0)
         return;
@@ -83,6 +84,8 @@ void swab2(const void *from, void*to, ssize_t n)//void swab(const void *from, vo
 		#endif
     }
 }
+//!!!!betauser
+#define swab2 swab
 //!!!!betauser
 #else
    #define swab2 swab
@@ -4643,22 +4646,22 @@ void CLASS vng_interpolate()
     -2,+0,+0,-1,0,0x06, -2,+0,+0,+0,1,0x02, -2,+0,+0,+1,0,0x03,
     -2,+1,-1,+0,0,0x04, -2,+1,+0,-1,1,0x04, -2,+1,+0,+0,0,0x06,
     -2,+1,+0,+1,0,0x02, -2,+2,+0,+0,1,0x04, -2,+2,+0,+1,0,0x04,
-    -1,-2,-1,+0,0,0x80, -1,-2,+0,-1,0,0x01, -1,-2,+1,-1,0,0x01,
-    -1,-2,+1,+0,1,0x01, -1,-1,-1,+1,0,0x88, -1,-1,+1,-2,0,0x40,
+    -1,-2,-1,+0,0,(signed char)0x80, -1,-2,+0,-1,0,0x01, -1,-2,+1,-1,0,0x01,
+    -1,-2,+1,+0,1,0x01, -1,-1,-1,+1,0,(signed char)0x88, -1,-1,+1,-2,0,0x40,
     -1,-1,+1,-1,0,0x22, -1,-1,+1,+0,0,0x33, -1,-1,+1,+1,1,0x11,
     -1,+0,-1,+2,0,0x08, -1,+0,+0,-1,0,0x44, -1,+0,+0,+1,0,0x11,
-    -1,+0,+1,-2,1,0x40, -1,+0,+1,-1,0,0x66, -1,+0,+1,+0,1,0x22,
+    -1,+0,+1,-2,1,0x40, -1,+0,+1,-1,0,(signed char)0x66, -1,+0,+1,+0,1,0x22,
     -1,+0,+1,+1,0,0x33, -1,+0,+1,+2,1,0x10, -1,+1,+1,-1,1,0x44,
-    -1,+1,+1,+0,0,0x66, -1,+1,+1,+1,0,0x22, -1,+1,+1,+2,0,0x10,
+    -1,+1,+1,+0,0,(signed char)0x66, -1,+1,+1,+1,0,0x22, -1,+1,+1,+2,0,0x10,
     -1,+2,+0,+1,0,0x04, -1,+2,+1,+0,1,0x04, -1,+2,+1,+1,0,0x04,
-    +0,-2,+0,+0,1,0x80, +0,-1,+0,+1,1,0x88, +0,-1,+1,-2,0,0x40,
+    +0,-2,+0,+0,1,(signed char)0x80, +0,-1,+0,+1,1,(signed char)0x88, +0,-1,+1,-2,0,0x40,
     +0,-1,+1,+0,0,0x11, +0,-1,+2,-2,0,0x40, +0,-1,+2,-1,0,0x20,
     +0,-1,+2,+0,0,0x30, +0,-1,+2,+1,1,0x10, +0,+0,+0,+2,1,0x08,
-    +0,+0,+2,-2,1,0x40, +0,+0,+2,-1,0,0x60, +0,+0,+2,+0,1,0x20,
+    +0,+0,+2,-2,1,0x40, +0,+0,+2,-1,0,(signed char)0x60, +0,+0,+2,+0,1,0x20,
     +0,+0,+2,+1,0,0x30, +0,+0,+2,+2,1,0x10, +0,+1,+1,+0,0,0x44,
     +0,+1,+1,+2,0,0x10, +0,+1,+2,-1,1,0x40, +0,+1,+2,+0,0,0x60,
-    +0,+1,+2,+1,0,0x20, +0,+1,+2,+2,0,0x10, +1,-2,+1,+0,0,0x80,
-    +1,-1,+1,+1,0,0x88, +1,+0,+1,+2,0,0x08, +1,+0,+2,-1,0,0x40,
+    +0,+1,+2,+1,0,0x20, +0,+1,+2,+2,0,0x10, +1,-2,+1,+0,0,(signed char)0x80,
+    +1,-1,+1,+1,0,(signed char)0x88, +1,+0,+1,+2,0,0x08, +1,+0,+2,-1,0,(signed char)0x40,
     +1,+0,+2,+1,0,0x10
   }, chood[] = { -1,-1, -1,0, -1,+1, 0,+1, +1,+1, +1,0, +1,-1, 0,-1 };
   ushort (*brow[5])[4], *pix;
@@ -6277,7 +6280,7 @@ void CLASS PentaxLensInfo (unsigned id, unsigned len)	// tag 0x0207
 		if (table_buf[iLensData+9] &&
 			(fabs(imgdata.lens.makernotes.CurFocal) < 0.1f))
 		  imgdata.lens.makernotes.CurFocal =
-			10*(table_buf[iLensData+9]>>2) * powf64(4, (table_buf[iLensData+9] & 0x03)-2);
+			10*(table_buf[iLensData+9]>>2) * powf64((float)4, (table_buf[iLensData+9] & 0x03)-2);
 		if (table_buf[iLensData+10] & 0xf0)
 		  imgdata.lens.makernotes.MaxAp4CurFocal =
 			powf64(2.0f, (float)((table_buf[iLensData+10] & 0xf0) >>4)/4.0f);
@@ -6722,11 +6725,11 @@ void CLASS process_Sony_0x9050 (uchar * buf, unsigned id)
     {
       if (buf[0])
         imgdata.lens.makernotes.MaxAp4CurFocal =
-          my_roundf(powf64(2.0f, ((float)SonySubstitution[buf[0]] / 8.0 - 1.06f) / 2.0f)*10.0f) / 10.0f;
+          my_roundf(powf64(2.0f, ((float)SonySubstitution[buf[0]] / 8.0f - 1.06f) / 2.0f)*10.0f) / 10.0f;
 
       if (buf[1])
         imgdata.lens.makernotes.MinAp4CurFocal =
-          my_roundf(powf64(2.0f, ((float)SonySubstitution[buf[1]] / 8.0 - 1.06f) / 2.0f)*10.0f) / 10.0f;
+          my_roundf(powf64(2.0f, ((float)SonySubstitution[buf[1]] / 8.0f - 1.06f) / 2.0f)*10.0f) / 10.0f;
     }
 
   if (imgdata.lens.makernotes.CameraMount != LIBRAW_MOUNT_FixedLens)
@@ -7161,7 +7164,7 @@ void CLASS parse_makernote_0xc634(int base, int uptag, unsigned dng_writer)
           }
           break;
         case 0x1002:
-          imgdata.lens.makernotes.CurAp = powf64(2.0f, getreal(type)/2);
+          imgdata.lens.makernotes.CurAp = powf64(2.0f, (float)getreal(type)/2);
           break;
         case 0x20100201:
           imgdata.lens.makernotes.LensID =
@@ -7953,7 +7956,7 @@ void CLASS parse_makernote (int base, int uptag)
           }
           break;
         case 0x1002:
-          imgdata.lens.makernotes.CurAp = powf64(2.0f, getreal(type)/2);
+          imgdata.lens.makernotes.CurAp = powf64(2.0f, (float)getreal(type)/2);
           break;
         case 0x20401112:
           imgdata.sizes.OlympusCropID = get2();
@@ -8420,7 +8423,7 @@ void CLASS parse_makernote (int base, int uptag)
       {
         unsigned char cc;
         fread(&cc,1,1,ifp);
-        iso_speed = int(100.0 * powf64(2.0f,float(cc)/12.0-5.0));
+        iso_speed = int(100.0 * powf64(2.0f,float(cc)/12.0f-5.0f));
       }
     if (tag == 4 && len > 26 && len < 35) {
       if ((i=(get4(),get2())) != 0x7fff && (!iso_speed || iso_speed == 65535))
@@ -9147,7 +9150,7 @@ void CLASS parse_exif (int base)
         imgdata.lens.Lens[0] = 0;
       break;
     case 0x9205:
-      imgdata.lens.EXIF_MaxAp = powf64(2.0f, (getreal(type) / 2.0f));
+      imgdata.lens.EXIF_MaxAp = powf64(2.0f, (float)(getreal(type) / 2.0f));
       break;
 #endif
       case 33434:  tiff_ifd[tiff_nifds-1].t_shutter =
@@ -9967,7 +9970,7 @@ int CLASS parse_tiff_ifd (int base)
         imgdata.lens.Lens[0] = 0;
       break;
     case 0x9205:
-				imgdata.lens.EXIF_MaxAp = powf64(2.0f, (getreal(type) / 2.0f));
+				imgdata.lens.EXIF_MaxAp = powf64(2.0f, (float)(getreal(type) / 2.0f));
       break;
 // IB end
 #endif
@@ -11153,7 +11156,7 @@ void CLASS parse_phase_one (int base)
       break;
     case 0x0401:
       if (type == 4) imgdata.lens.makernotes.CurAp =  powf64(2.0f, (int_to_float(data)/2.0f));
-      else imgdata.lens.makernotes.CurAp = powf64(2.0f, (getreal(type)/2.0f));
+      else imgdata.lens.makernotes.CurAp = powf64(2.0f, (float)(getreal(type)/2.0f));
       break;
     case 0x0403:
       if (type == 4) imgdata.lens.makernotes.CurFocal =  int_to_float(data);
@@ -11169,14 +11172,14 @@ void CLASS parse_phase_one (int base)
       if (type == 4) {
       	imgdata.lens.makernotes.MaxAp4CurFocal = powf64(2.0f, (int_to_float(data)/2.0f));
       } else {
-        imgdata.lens.makernotes.MaxAp4CurFocal = powf64(2.0f, (getreal(type) / 2.0f));
+        imgdata.lens.makernotes.MaxAp4CurFocal = powf64(2.0f, (float)(getreal(type) / 2.0f));
       }
       break;
     case 0x0415:
       if (type == 4) {
       	imgdata.lens.makernotes.MinAp4CurFocal = powf64(2.0f, (int_to_float(data)/2.0f));
       } else {
-        imgdata.lens.makernotes.MinAp4CurFocal = powf64(2.0f, (getreal(type) / 2.0f));
+        imgdata.lens.makernotes.MinAp4CurFocal = powf64(2.0f, (float)(getreal(type) / 2.0f));
       }
       break;
     case 0x0416:

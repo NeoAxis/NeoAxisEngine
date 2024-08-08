@@ -1,9 +1,9 @@
-﻿#if !DEPLOY
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Security.AccessControl;
 using System.Text;
 
 namespace NeoAxis.Editor
@@ -11,7 +11,7 @@ namespace NeoAxis.Editor
 	/// <summary>
 	/// Auxiliary class for <see cref="ContentBrowser"/>.
 	/// </summary>
-	static class ContentBrowserUtility
+	public static class ContentBrowserUtility
 	{
 		static ContainsComponentClassesData containsComponentClassesData = new ContainsComponentClassesData();
 
@@ -711,7 +711,269 @@ namespace NeoAxis.Editor
 				browser.Item_ChildrenChanged( item );
 			}
 		}
+
+		/////////////////////////////////////////
+
+		static void FileCopyWithReplaceReferences( string sourceFileName, string destFileName, CutCopyFilesReplaceReferencesInfo info )
+		{
+			if( info != null && info.AffectedFiles.Contains( sourceFileName ) )
+			{
+				//encoding?
+
+				var text = File.ReadAllText( sourceFileName );
+				text = text.Replace( info.ReplaceFromText, info.ReplaceToText );
+				File.WriteAllText( destFileName, text );
+			}
+			else
+				File.Copy( sourceFileName, destFileName );
+		}
+
+		static void CopyRealFileDirectoryRecursive( string sourceDirectory, string destDirectory, CutCopyFilesReplaceReferencesInfo info )
+		{
+			string[] directories = Directory.GetDirectories( sourceDirectory );
+			Directory.CreateDirectory( destDirectory );
+			foreach( string childDirectory in directories )
+				CopyRealFileDirectoryRecursive( childDirectory, Path.Combine( destDirectory, Path.GetFileName( childDirectory ) ), info );
+			foreach( string fileName in Directory.GetFiles( sourceDirectory ) )
+			{
+				FileCopyWithReplaceReferences( fileName, Path.Combine( destDirectory, Path.GetFileName( fileName ) ), info );
+				//File.Copy( fileName, Path.Combine( destDirectory, Path.GetFileName( fileName ) ) );
+			}
+		}
+
+		class CutCopyFilesReplaceReferencesInfo
+		{
+			public string ReplaceFrom = "";
+			public string ReplaceTo = "";
+
+			public string ReplaceFromText = "";
+			public string ReplaceToText = "";
+
+			public ESet<string> AffectedFiles = new ESet<string>();
+		}
+
+		static bool ReplaceReferencesIsAllowedFileExtension( string realFilePath )
+		{
+			var extension = Path.GetExtension( realFilePath ).Replace( ".", "" ).ToLower();
+			var type = ResourceManager.GetTypeByFileExtension( extension );
+
+			if( ( type != null && type.Name != "Assembly" && type.Name != "Image" && type.Name != "Sound" && type.Name != "Font" && type.Name != "Import 3D" ) || extension == "settings" )
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		static bool ReplaceReferencesIsAffectedFile( string realFilePath, CutCopyFilesReplaceReferencesInfo info )
+		{
+			var text = File.ReadAllText( realFilePath );
+			return text.Contains( info.ReplaceFromText );
+		}
+
+		static bool CutCopyFilesGetReplaceReferencesInfo( string[] filePaths, string destinationFolder, out CutCopyFilesReplaceReferencesInfo info )
+		{
+			info = new CutCopyFilesReplaceReferencesInfo();
+
+			var virtualDestinationFolder = VirtualPathUtility.GetVirtualPathByReal( destinationFolder );
+			if( string.IsNullOrEmpty( virtualDestinationFolder ) )
+				return false;
+
+			try
+			{
+				//calculate ReplaceFrom
+				var replaceFrom = "";
+				foreach( string realFilePath in filePaths )
+				{
+					if( File.Exists( realFilePath ) )
+					{
+						var folderName = Path.GetDirectoryName( realFilePath );
+						if( replaceFrom != "" )
+						{
+							if( replaceFrom != folderName )
+								return false;
+						}
+						else
+							replaceFrom = folderName;
+					}
+					else if( Directory.Exists( realFilePath ) )
+					{
+						var folderName = Path.GetDirectoryName( realFilePath );
+						if( replaceFrom != "" )
+						{
+							if( replaceFrom != folderName )
+								return false;
+						}
+						else
+							replaceFrom = folderName;
+					}
+				}
+				if( replaceFrom == "" )
+					return false;
+
+
+				info.ReplaceFrom = VirtualPathUtility.GetVirtualPathByReal( replaceFrom );
+
+				//copy from another project folder
+				if( string.IsNullOrEmpty( info.ReplaceFrom ) )
+				{
+					var index = replaceFrom.IndexOf( "\\Assets" );
+					if( index != -1 )
+						info.ReplaceFrom = replaceFrom.Substring( index + "\\Assets".Length + 1 );
+				}
+
+				if( string.IsNullOrEmpty( info.ReplaceFrom ) )
+					return false;
+
+
+				info.ReplaceTo = virtualDestinationFolder;
+				info.ReplaceFromText = info.ReplaceFrom.Replace( "\\", "\\\\" );
+				info.ReplaceToText = info.ReplaceTo.Replace( "\\", "\\\\" );
+
+
+				//calculate AffectedFiles
+				foreach( string realFilePath in filePaths )
+				{
+					if( File.Exists( realFilePath ) )
+					{
+						if( ReplaceReferencesIsAllowedFileExtension( realFilePath ) && ReplaceReferencesIsAffectedFile( realFilePath, info ) )
+							info.AffectedFiles.AddWithCheckAlreadyContained( realFilePath );
+					}
+					else if( Directory.Exists( realFilePath ) )
+					{
+						foreach( var realFilePath2 in Directory.GetFiles( realFilePath, "*.*", SearchOption.AllDirectories ) )
+						{
+							if( ReplaceReferencesIsAllowedFileExtension( realFilePath2 ) && ReplaceReferencesIsAffectedFile( realFilePath2, info ) )
+								info.AffectedFiles.AddWithCheckAlreadyContained( realFilePath2 );
+						}
+					}
+				}
+
+				return info.ReplaceFrom != "" && info.AffectedFiles.Count != 0;
+
+			}
+			catch( Exception e )
+			{
+				Log.Error( e.Message );
+				return false;
+			}
+		}
+
+		internal static void CutCopyFiles( string[] filePaths, bool cut, string destinationFolder )
+		{
+			if( CutCopyFilesGetReplaceReferencesInfo( filePaths, destinationFolder, out var info ) )
+			{
+				var affectedFiles = info.AffectedFiles;
+
+				var text = string.Format( "Replace references from \"{0}\" to \"{1}\"?\n\n", info.ReplaceFrom, info.ReplaceTo );
+
+				if( affectedFiles.Count == 1 )
+					text += "1 file will updated. Source files:\n";
+				else
+					text += string.Format( "{0} files will updated. Source files:\n", affectedFiles.Count.ToString() );
+
+				var counter = 0;
+				foreach( var affectedFile in affectedFiles )
+				{
+					if( counter >= 8 )
+					{
+						text += "...";
+						break;
+					}
+
+					var affectedFile2 = affectedFile;
+					{
+						var index = affectedFile2.IndexOf( info.ReplaceFrom );
+						if( index != -1 )
+							affectedFile2 = affectedFile2.Substring( index + info.ReplaceFrom.Length + 1 );
+					}
+					text += string.Format( "- {0}\n", affectedFile2 );
+
+					counter++;
+				}
+
+				var result = EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNoCancel );
+				if( result == EDialogResult.Cancel )
+					return;
+
+				if( result == EDialogResult.No )
+					info = null;
+			}
+
+			foreach( string realFilePath in filePaths )
+			{
+				try
+				{
+					string newRealFilePath = Path.Combine( destinationFolder, Path.GetFileName( realFilePath ) );
+
+					//rename if put to same directory and file already exists
+					if( File.Exists( realFilePath ) )
+					{
+						if( string.Compare( destinationFolder, Path.GetDirectoryName( realFilePath ), true ) == 0 )
+						{
+							for( int counter = 1; ; counter++ )
+							{
+								string checkRealFilePath = destinationFolder + Path.DirectorySeparatorChar;
+								checkRealFilePath += Path.GetFileNameWithoutExtension( realFilePath );
+								if( counter != 1 )
+									checkRealFilePath += counter.ToString();
+								if( Path.GetExtension( realFilePath ) != null )
+									checkRealFilePath += Path.GetExtension( realFilePath );
+
+								//file
+								if( !File.Exists( checkRealFilePath ) )
+								{
+									newRealFilePath = checkRealFilePath;
+									break;
+								}
+							}
+						}
+
+						//create
+						FileCopyWithReplaceReferences( realFilePath, newRealFilePath, info );
+						if( cut )
+							File.Delete( realFilePath );
+
+						//if( cut )
+						//	File.Move( realFilePath, newRealFilePath );
+						//else
+						//	File.Copy( realFilePath, newRealFilePath );
+
+						continue;
+					}
+
+					//rename if put to same directory and directory already exists
+					if( Directory.Exists( realFilePath ) )
+					{
+						for( int counter = 1; ; counter++ )
+						{
+							string checkRealFilePath = Path.GetDirectoryName( newRealFilePath ) + Path.DirectorySeparatorChar;
+							checkRealFilePath += Path.GetFileName( newRealFilePath );
+							if( counter != 1 )
+								checkRealFilePath += counter.ToString();
+
+							//directory
+							if( !Directory.Exists( checkRealFilePath ) )
+							{
+								newRealFilePath = checkRealFilePath;
+								break;
+							}
+						}
+
+						//create
+						CopyRealFileDirectoryRecursive( realFilePath, newRealFilePath, info );
+						if( cut )
+							Directory.Delete( realFilePath, true );
+
+						continue;
+					}
+				}
+				catch( Exception e )
+				{
+					Log.Error( e.Message );
+					return;
+				}
+			}
+		}
 	}
 }
-
-#endif

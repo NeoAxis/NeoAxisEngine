@@ -264,7 +264,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -296,7 +296,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -328,7 +328,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -360,7 +360,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -392,7 +392,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -424,7 +424,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -456,7 +456,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -488,7 +488,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -520,7 +520,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -552,7 +552,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -584,7 +584,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -616,7 +616,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -648,7 +648,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -680,7 +680,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -712,7 +712,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -744,7 +744,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -776,7 +776,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -808,7 +808,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -840,7 +840,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -872,7 +872,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -904,7 +904,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -936,7 +936,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -968,7 +968,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1000,7 +1000,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1032,7 +1032,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1064,7 +1064,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1096,7 +1096,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1128,7 +1128,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1160,7 +1160,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1192,7 +1192,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1224,7 +1224,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1256,7 +1256,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1288,7 +1288,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1320,7 +1320,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1352,7 +1352,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1384,7 +1384,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1416,7 +1416,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1448,7 +1448,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1480,7 +1480,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1512,7 +1512,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1544,7 +1544,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1576,7 +1576,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1608,7 +1608,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1640,7 +1640,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1672,7 +1672,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1704,7 +1704,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1736,7 +1736,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1768,7 +1768,7 @@
 		}
 		VehicleType
 		{
-			GetByReference = "Content\\Vehicles\\Authors\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
+			GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Ferret Scout Car.vehicletype"
 		}
 		ObjectsOnSeats
 		{
@@ -1816,7 +1816,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -1831,7 +1831,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -1887,7 +1887,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -1902,7 +1902,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -1958,7 +1958,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -1973,7 +1973,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -2029,7 +2029,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -2044,7 +2044,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -2100,7 +2100,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -2115,7 +2115,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -2171,7 +2171,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -2186,7 +2186,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -2242,7 +2242,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -2257,7 +2257,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -2313,7 +2313,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -2328,7 +2328,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -2384,7 +2384,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -2399,7 +2399,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -2455,7 +2455,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -2470,7 +2470,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -2526,7 +2526,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Medieval Sword\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Medieval Sword\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -2541,7 +2541,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Medieval Sword\\Medieval Sword.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Medieval Sword\\Medieval Sword.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -2598,7 +2598,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Medieval Sword\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Medieval Sword\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -2613,7 +2613,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Medieval Sword\\Medieval Sword.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Medieval Sword\\Medieval Sword.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -2670,7 +2670,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -2685,7 +2685,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -2741,7 +2741,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -2756,7 +2756,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -2812,7 +2812,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -2827,7 +2827,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -2883,7 +2883,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -2898,7 +2898,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -2954,7 +2954,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -2969,7 +2969,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -3025,7 +3025,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -3040,7 +3040,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -3096,7 +3096,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -3111,7 +3111,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -3167,7 +3167,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -3182,7 +3182,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -3238,7 +3238,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -3253,7 +3253,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -3309,7 +3309,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -3324,7 +3324,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Colt xm177e1.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -3380,7 +3380,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Medieval Sword\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Medieval Sword\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -3395,7 +3395,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Medieval Sword\\Medieval Sword.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Medieval Sword\\Medieval Sword.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -3452,7 +3452,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Medieval Sword\\Data\\scene.gltf|$Mesh"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Medieval Sword\\Data\\scene.gltf|$Mesh"
 			}
 			ReplaceMaterialSelectively
 			{
@@ -3467,7 +3467,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Weapons\\Authors\\NeoAxis\\Medieval Sword\\Medieval Sword.weapontype"
+				GetByReference = "Content\\Weapons\\NeoAxis\\Medieval Sword\\Medieval Sword.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -3498,7 +3498,7 @@
 		Team = 1
 		Mesh
 		{
-			GetByReference = "Content\\Characters\\Authors\\NeoAxis\\Polar bear\\Data\\PolarBearALL.fbx|$Mesh"
+			GetByReference = "Content\\Characters\\NeoAxis\\Polar bear\\Data\\PolarBearALL.fbx|$Mesh"
 		}
 		ReplaceMaterialSelectively
 		{
@@ -3513,7 +3513,7 @@
 		}
 		CharacterType
 		{
-			GetByReference = "Content\\Characters\\Authors\\NeoAxis\\Polar bear\\Polar bear.charactertype"
+			GetByReference = "Content\\Characters\\NeoAxis\\Polar bear\\Polar bear.charactertype"
 		}
 		.component NeoAxis.MeshInSpaceAnimationController
 		{
@@ -3540,7 +3540,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Characters\\Authors\\NeoAxis\\Polar bear\\Weapon.weapontype"
+				GetByReference = "Content\\Characters\\NeoAxis\\Polar bear\\Weapon.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -3569,7 +3569,7 @@
 		Team = 1
 		Mesh
 		{
-			GetByReference = "Content\\Characters\\Authors\\NeoAxis\\Polar bear\\Data\\PolarBearALL.fbx|$Mesh"
+			GetByReference = "Content\\Characters\\NeoAxis\\Polar bear\\Data\\PolarBearALL.fbx|$Mesh"
 		}
 		ReplaceMaterialSelectively
 		{
@@ -3584,7 +3584,7 @@
 		}
 		CharacterType
 		{
-			GetByReference = "Content\\Characters\\Authors\\NeoAxis\\Polar bear\\Polar bear.charactertype"
+			GetByReference = "Content\\Characters\\NeoAxis\\Polar bear\\Polar bear.charactertype"
 		}
 		.component NeoAxis.MeshInSpaceAnimationController
 		{
@@ -3611,7 +3611,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Characters\\Authors\\NeoAxis\\Polar bear\\Weapon.weapontype"
+				GetByReference = "Content\\Characters\\NeoAxis\\Polar bear\\Weapon.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -3640,7 +3640,7 @@
 		Team = 2
 		Mesh
 		{
-			GetByReference = "Content\\Characters\\Authors\\NeoAxis\\Polar bear\\Data\\PolarBearALL.fbx|$Mesh"
+			GetByReference = "Content\\Characters\\NeoAxis\\Polar bear\\Data\\PolarBearALL.fbx|$Mesh"
 		}
 		ReplaceMaterialSelectively
 		{
@@ -3655,7 +3655,7 @@
 		}
 		CharacterType
 		{
-			GetByReference = "Content\\Characters\\Authors\\NeoAxis\\Polar bear\\Polar bear.charactertype"
+			GetByReference = "Content\\Characters\\NeoAxis\\Polar bear\\Polar bear.charactertype"
 		}
 		.component NeoAxis.MeshInSpaceAnimationController
 		{
@@ -3682,7 +3682,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Characters\\Authors\\NeoAxis\\Polar bear\\Weapon.weapontype"
+				GetByReference = "Content\\Characters\\NeoAxis\\Polar bear\\Weapon.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{
@@ -3711,7 +3711,7 @@
 		Team = 2
 		Mesh
 		{
-			GetByReference = "Content\\Characters\\Authors\\NeoAxis\\Polar bear\\Data\\PolarBearALL.fbx|$Mesh"
+			GetByReference = "Content\\Characters\\NeoAxis\\Polar bear\\Data\\PolarBearALL.fbx|$Mesh"
 		}
 		ReplaceMaterialSelectively
 		{
@@ -3726,7 +3726,7 @@
 		}
 		CharacterType
 		{
-			GetByReference = "Content\\Characters\\Authors\\NeoAxis\\Polar bear\\Polar bear.charactertype"
+			GetByReference = "Content\\Characters\\NeoAxis\\Polar bear\\Polar bear.charactertype"
 		}
 		.component NeoAxis.MeshInSpaceAnimationController
 		{
@@ -3753,7 +3753,7 @@
 			}
 			WeaponType
 			{
-				GetByReference = "Content\\Characters\\Authors\\NeoAxis\\Polar bear\\Weapon.weapontype"
+				GetByReference = "Content\\Characters\\NeoAxis\\Polar bear\\Weapon.weapontype"
 			}
 			.component NeoAxis.TransformOffset
 			{

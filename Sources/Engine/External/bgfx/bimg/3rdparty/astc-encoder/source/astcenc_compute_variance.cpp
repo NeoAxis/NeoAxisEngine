@@ -1,3 +1,6 @@
+//!!!!betauser. android compiler crash
+#ifndef __ANDROID__
+
 // SPDX-License-Identifier: Apache-2.0
 // ----------------------------------------------------------------------------
 // Copyright 2011-2022 Arm Limited
@@ -468,5 +471,7 @@ unsigned int init_compute_averages(
 	unsigned int y_tasks = (size_y + max_blk_size_xy - 1) / max_blk_size_xy;
 	return z_tasks * y_tasks;
 }
+
+#endif
 
 #endif

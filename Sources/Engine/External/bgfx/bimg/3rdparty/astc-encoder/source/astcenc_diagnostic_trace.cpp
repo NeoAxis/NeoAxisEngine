@@ -1,3 +1,6 @@
+//!!!!betauser. android compiler crash
+#ifndef __ANDROID__
+
 // SPDX-License-Identifier: Apache-2.0
 // ----------------------------------------------------------------------------
 // Copyright 2021-2023 Arm Limited
@@ -241,5 +244,7 @@ void trace_add_data(
 	TraceNode* node = g_TraceLog->get_current_leaf();
 	node->add_attrib("int", key, std::to_string(value));
 }
+
+#endif
 
 #endif

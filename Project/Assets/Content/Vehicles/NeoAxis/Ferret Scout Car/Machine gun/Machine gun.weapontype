@@ -1,0 +1,25 @@
+// Made with NeoAxis Engine 2024.1.
+
+.component NeoAxis.WeaponType
+{
+	EditorCameraTransform = "1.5770971881654 -1.13279083561387 0.905577520146045; -0.2191854566202 0.0785722056997891 0.915470996498287 0.328172208860071; 1 1 1"
+	Mode1FiringTotalTime = 0.2
+	Mode1BulletTransform = "0.5 0 0; 0 -0.0174524064372835 0 0.999847695156391; 1 1 1"
+	Mode1BulletSpeed = 90
+	Mode1RecoilForce = 10000
+	Mode1MeleeCollisionVolume = 0 0 0 0
+	Mode2Enabled = False
+	Mode2MeleeCollisionVolume = 0 0 0 0
+	Mesh
+	{
+		GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Data\\Weapon.gltf|$Mesh"
+	}
+	Mode1BulletType
+	{
+		GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Machine gun\\Bullet.bullettype"
+	}
+	Mode1FireMuzzleFlashParticle
+	{
+		GetByReference = "Content\\Vehicles\\NeoAxis\\Ferret Scout Car\\Machine gun\\Muzzle flash\\Muzzle flash.particle"
+	}
+}

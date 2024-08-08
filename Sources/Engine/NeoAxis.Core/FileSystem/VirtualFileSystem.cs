@@ -816,9 +816,13 @@ namespace NeoAxis
 							var files = Directory.GetFiles( Directories.Binaries, name, SearchOption.TopDirectoryOnly );
 							foreach( var fullPath in files )
 							{
-								//skip addons for editor in simulation
-								if( !EngineApp.IsEditor && Path.GetFileName( fullPath ).Contains( "NeoAxis.Addon.Editor" ) )
+								//skip NeoAxis.CoreExtension.Editor.dll, addons for editor in simulation
+								if( !EngineApp.IsEditor && Path.GetFileName( fullPath ).Contains( ".Editor" ) )
 									continue;
+
+								////skip addons for editor in simulation
+								//if( !EngineApp.IsEditor && Path.GetFileName( fullPath ).Contains( "NeoAxis.Addon.Editor" ) )
+								//	continue;
 
 								AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true );
 							}
@@ -826,7 +830,10 @@ namespace NeoAxis
 						else
 						{
 							string fullPath = Path.Combine( Directories.Binaries, name );
-							AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true );
+
+							//skip NeoAxis.CoreExtension.Editor.dll, addons for editor in simulation
+							if( EngineApp.IsEditor || !Path.GetFileName( fullPath ).Contains( ".Editor" ) )
+								AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true );
 						}
 					}
 				}

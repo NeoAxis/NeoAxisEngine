@@ -80,7 +80,8 @@ namespace NeoAxis
 		public event Action<Product> ShaderCacheChanged;
 		ReferenceField<bool> _shaderCache = true;
 
-		const string skipFilesWithExtensionDefault = "blend;blend1;bin";
+		const string skipFilesWithExtensionDefault = "blend;blend1;product";
+		//const string skipFilesWithExtensionDefault = "blend;blend1;bin";
 
 		/// <summary>
 		/// The list of file extensions to remove. Items are separated by return or semicolon.
@@ -99,7 +100,8 @@ namespace NeoAxis
 		public event Action<Product> SkipFilesWithExtensionChanged;
 		ReferenceField<string> _skipFilesWithExtension = skipFilesWithExtensionDefault;
 
-		const string clearFilesWithExtensionDefault = "fbx;3d;3ds;ac;ac3d;acc;ase;ask;b3d;bvh;cob;csm;dae;dxf;enff;hmp;ifc;lwo;lws;lxo;mot;ms3d;ndo;nff;obj;off;pk3;ply;x;q3d;q3s;gltf;glb";
+		const string clearFilesWithExtensionDefault = "fbx;3d;3ds;ac;ac3d;acc;ase;ask;b3d;bvh;cob;csm;dae;dxf;enff;hmp;ifc;lwo;lws;lxo;mot;ms3d;ndo;nff;obj;off;pk3;ply;x;q3d;q3s;gltf;glb;bin";
+		//const string clearFilesWithExtensionDefault = "fbx;3d;3ds;ac;ac3d;acc;ase;ask;b3d;bvh;cob;csm;dae;dxf;enff;hmp;ifc;lwo;lws;lxo;mot;ms3d;ndo;nff;obj;off;pk3;ply;x;q3d;q3s;gltf;glb";
 
 		/// <summary>
 		/// The list of file extensions to clear. Items are separated by return or semicolon. Clearing of files is used for source 3D models, because the actual data of 3D models is stored in settings files. It is enough to save empty original files.
@@ -476,5 +478,18 @@ namespace NeoAxis
 			return true;
 		}
 
+		public virtual string GetName()
+		{
+			var result = Name;
+
+			if( string.IsNullOrEmpty( result ) )
+			{
+				var fileName = ComponentUtility.GetOwnedFileNameOfComponent( this );
+				if( !string.IsNullOrEmpty( fileName ) )
+					result = Path.GetFileNameWithoutExtension( fileName );
+			}
+
+			return result;
+		}
 	}
 }

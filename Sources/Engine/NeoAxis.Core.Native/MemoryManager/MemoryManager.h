@@ -28,9 +28,13 @@ extern "C" {
 		#error "Unknown Apple platform"
 	#endif
 #elif defined(__ANDROID__)
+	#ifndef PLATFORM_ANDROID
 	#define PLATFORM_ANDROID
+	#endif
 #elif defined(__linux__)
+	#ifndef PLATFORM_LINUX
 	#define PLATFORM_LINUX
+	#endif
 #else
 	#error Platform is not supported.
 #endif

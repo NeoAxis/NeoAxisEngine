@@ -1184,13 +1184,12 @@ namespace NeoAxis
 				if( RenderingSystem.Disposed )
 					Log.Fatal( "GpuTexture: Dispose after shutdown." );
 
-				//!!!!везде такое
-				EngineThreading.ExecuteFromMainThreadLater( delegate ( Texture nativeObject2, List<RenderTargetItem> renderTargets2 )
+				EngineThreading.ExecuteFromMainThreadLater( delegate ( Texture nativeObject2, RenderTargetItem[] renderTargets2 )
 				{
 					foreach( var target in renderTargets2 )
 						target.RenderTarget.DisposeInternal();
 					nativeObject2.Dispose();
-				}, nativeObject, renderTargets );
+				}, nativeObject, renderTargets.ToArray() );
 
 				nativeObject = null;
 				renderTargets.Clear();
@@ -1576,6 +1575,8 @@ namespace NeoAxis
 			nativeObjectUnloaded = true;
 		}
 
+		//public static Random testRandom = new Random();
+
 		/// <summary>
 		/// A method to temporary unload textures which are not used long time.
 		/// </summary>
@@ -1587,7 +1588,10 @@ namespace NeoAxis
 				if( texture.nativeObjectUnloadSupport && !texture.nativeObjectUnloaded )
 				{
 					if( EngineApp.EngineTime - texture.nativeObjectLastUsedTime > howLongHasNotBeenUsedInSeconds )
+					{
+						//if( testRandom.NextDouble() > 0.5 )
 						texture.Unload();
+					}
 				}
 			}
 		}

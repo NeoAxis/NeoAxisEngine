@@ -336,20 +336,20 @@ namespace NeoAxis
 			newBounds = new SpaceBounds( new Sphere( TransformV.Position, BoundingRadius ) );
 		}
 
-		public delegate void RenderBeforeDelegate( Text2D sender, ViewportRenderingContext context, Vector2 screenPosition, ref bool handled );
+		public delegate void RenderBeforeDelegate( Text2D sender, ViewportRenderingContext context, Vector2 screenPosition, double alphaMultiplier, ref bool handled );
 		public event RenderBeforeDelegate RenderBefore;
 
-		public delegate void RenderAfterDelegate( Text2D sender, ViewportRenderingContext context, Vector2 screenPosition );
+		public delegate void RenderAfterDelegate( Text2D sender, ViewportRenderingContext context, Vector2 screenPosition, double alphaMultiplier );
 		public event RenderAfterDelegate RenderAfter;
 
-		protected virtual void Render( ViewportRenderingContext context, Vector2 screenPosition )
+		protected virtual void Render( ViewportRenderingContext context, Vector2 screenPosition, double alphaMultiplier )
 		{
 			if( !string.IsNullOrEmpty( Text ) )
 			{
 				if( Multiline )
-					RenderMultilineEnabled( context, screenPosition );
+					RenderMultilineEnabled( context, screenPosition, alphaMultiplier );
 				else
-					RenderMultilineDisabled( context, screenPosition );
+					RenderMultilineDisabled( context, screenPosition, alphaMultiplier );
 			}
 		}
 
@@ -365,12 +365,19 @@ namespace NeoAxis
 				{
 					if( context.Owner.CameraSettings.ProjectToScreenCoordinates( TransformV.Position, out var screenPosition ) )
 					{
+						var distance = ( TransformV.Position - cameraPosition ).Length();
+						var startFading = VisibilityDistance * 0.9;
+						var div = VisibilityDistance - startFading;
+						if( div == 0 )
+							div = 0.00001;
+						var alphaMultiplier = 1.0 - MathEx.Saturate( ( distance - startFading ) / div );
+
 						bool handled = false;
-						RenderBefore?.Invoke( this, context, screenPosition, ref handled );
+						RenderBefore?.Invoke( this, context, screenPosition, alphaMultiplier, ref handled );
 						if( !handled )
 						{
-							Render( context, screenPosition );
-							RenderAfter?.Invoke( this, context, screenPosition );
+							Render( context, screenPosition, alphaMultiplier );
+							RenderAfter?.Invoke( this, context, screenPosition, alphaMultiplier );
 						}
 					}
 				}
@@ -470,11 +477,11 @@ namespace NeoAxis
 			}
 		}
 
-		protected virtual void RenderBack( ViewportRenderingContext context, Rectangle rectangle )
+		protected virtual void RenderBack( ViewportRenderingContext context, Rectangle rectangle, double alphaMultiplier )
 		{
 			var context2 = context.ObjectInSpaceRenderingContext;
 
-			RenderBackRectangle( context, rectangle, BackColor );
+			RenderBackRectangle( context, rectangle, BackColor * new ColorValue( 1, 1, 1, alphaMultiplier ) );
 
 			//selection rectangle
 			if( context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) )
@@ -491,7 +498,7 @@ namespace NeoAxis
 			}
 		}
 
-		void RenderBack2( ViewportRenderingContext context, Rectangle rectangle )
+		void RenderBack2( ViewportRenderingContext context, Rectangle rectangle, double alphaMultiplier )
 		{
 			var renderer = context.Owner.CanvasRenderer;
 			var context2 = context.ObjectInSpaceRenderingContext;
@@ -508,7 +515,7 @@ namespace NeoAxis
 				RenderBackBefore?.Invoke( this, context, rect2, ref handled );
 				if( !handled )
 				{
-					RenderBack( context, rect2 );
+					RenderBack( context, rect2, alphaMultiplier );
 					RenderBackAfter?.Invoke( this, context, rect2 );
 				}
 			}
@@ -526,7 +533,7 @@ namespace NeoAxis
 			}
 		}
 
-		void RenderMultilineDisabled( ViewportRenderingContext context, Vector2 screenPosition )
+		void RenderMultilineDisabled( ViewportRenderingContext context, Vector2 screenPosition, double alphaMultiplier )
 		{
 			var text = Text.Value.Replace( '\n', ' ' ).Replace( "\r", "" );
 
@@ -570,12 +577,13 @@ namespace NeoAxis
 				}
 
 				var rect = new Rectangle( pos - offset, pos + offset );
-				RenderBack2( context, rect );
+				RenderBack2( context, rect, alphaMultiplier );
 			}
 
 			if( Shadow )
 			{
-				ColorValue color = ShadowColor.Value.GetSaturate();
+				ColorValue color = ShadowColor.Value.GetSaturate() * new ColorValue( 1, 1, 1, Color.Value.Alpha * alphaMultiplier );
+				//ColorValue color = ShadowColor.Value.GetSaturate();
 				renderer.AddText( font, fontSize, text,
 					screenPosition + ConvertOffsetToScreen( context, ShadowOffset ),
 					HorizontalAlignment, VerticalAlignment, color, options );
@@ -595,7 +603,7 @@ namespace NeoAxis
 			}
 		}
 
-		void RenderMultilineEnabled( ViewportRenderingContext context, Vector2 screenPosition )
+		void RenderMultilineEnabled( ViewportRenderingContext context, Vector2 screenPosition, double alphaMultiplier )
 		{
 			var renderer = context.Owner.CanvasRenderer;
 			var text = Text.Value;
@@ -624,8 +632,9 @@ namespace NeoAxis
 
 			if( lines.Count != 0 )
 			{
-				var shadowColor = ShadowColor.Value;
-				var textColor = Color.Value;
+				var shadowColor = ShadowColor.Value * new ColorValue( 1, 1, 1, Color.Value.Alpha * alphaMultiplier );
+				//var shadowColor = ShadowColor.Value;
+				var textColor = Color.Value * new ColorValue( 1, 1, 1, alphaMultiplier );
 				var shadowScreenOffset = Shadow ? ConvertOffsetToScreen( context, ShadowOffset ) : Vector2.Zero;
 
 				var screenSize = 0.0;
@@ -667,7 +676,7 @@ namespace NeoAxis
 				double stepY = fontSize + screenVerticalIndention;
 
 				//Back
-				RenderBack2( context, rect );
+				RenderBack2( context, rect, alphaMultiplier );
 
 				//text
 				for( int nStep = Shadow ? 0 : 1; nStep < 2; nStep++ )

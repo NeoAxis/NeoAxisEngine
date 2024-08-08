@@ -165,7 +165,8 @@ namespace NeoAxis.Editor
 						viewport.RenderingContext.MultiRenderTarget_DestroyAll();
 						viewport.RenderingContext.DynamicTexture_DestroyAll();
 
-						texture.Result.GetNativeObject( true ).BlitTo( (ushort)viewport.RenderingContext.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
+						texture.Result.GetNativeObject( true ).BlitTo( (ushort)RenderingSystem.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
+						//texture.Result.GetNativeObject( true ).BlitTo( (ushort)viewport.RenderingContext.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
 
 						demandedFrame = textureRead.Result.GetNativeObject( true ).Read( imageData, 0 );
 					}

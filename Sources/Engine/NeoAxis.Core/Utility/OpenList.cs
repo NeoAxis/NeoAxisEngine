@@ -7,7 +7,7 @@ using System.Text;
 namespace NeoAxis
 {
 	/// <summary>
-	/// A list that has the ability to directly work with elements of an array. For example you can access to item by reference.
+	/// A list that has the ability to directly manipulate array elements. For example, you can access an element by reference.
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	public class OpenList<T>

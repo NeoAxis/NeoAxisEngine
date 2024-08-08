@@ -72,7 +72,7 @@
 					EditorZoomIndex = 8
 					Title = Getting Started
 					Description = An initial overview of the editor. Getting an idea of the purpose of the editor windows.
-					"Learn Link" = "https://www.neoaxis.com/docs/html/Editor.htm"
+					"Learn Link" = "https://www.neoaxis.com/docs/html/Getting_Started.htm"
 					.component NeoAxis.CSharpScript
 					{
 						CreatedByBaseType = True

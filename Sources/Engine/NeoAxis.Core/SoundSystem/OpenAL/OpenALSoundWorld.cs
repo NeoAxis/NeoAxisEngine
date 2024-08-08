@@ -65,43 +65,43 @@ namespace OpenALSoundSystem
 			//NativeLibraryManager.PreloadLibrary( "libvorbis" );
 			//NativeLibraryManager.PreloadLibrary( "libvorbisfile" );
 
-			//preload dlls
-			{
-				var fileNames = new List<string>();
-				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
-					fileNames.Add( "OpenAL32.dll" );
-				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
-				{
-					fileNames.Add( "SDL2.dll" );
-					fileNames.Add( "OpenAL32.dll" );
-				}
-				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
-					fileNames.Add( "OpenAL32.dylib" );
-				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
-				{
-				}
-				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
-				{
-				}
-				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
-				{
-				}
-				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
-				{
-				}
-				else
-				{
-					Log.Fatal( "OpenALSoundWorld: InitLibrary: Unknown platform." );
-					return false;
-				}
+			////preload dlls
+			//{
+			//	var fileNames = new List<string>();
+			//	if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
+			//		fileNames.Add( "OpenAL32.dll" );
+			//	else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+			//	{
+			//		fileNames.Add( "SDL2.dll" );
+			//		fileNames.Add( "OpenAL32.dll" );
+			//	}
+			//	else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
+			//		fileNames.Add( "OpenAL32.dylib" );
+			//	else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
+			//	{
+			//	}
+			//	else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
+			//	{
+			//	}
+			//	else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+			//	{
+			//	}
+			//	else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
+			//	{
+			//	}
+			//	else
+			//	{
+			//		Log.Fatal( "OpenALSoundWorld: InitLibrary: Unknown platform." );
+			//		return false;
+			//	}
 
-				foreach( var fileName in fileNames )
-				{
-					var path = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, fileName );
-					if( File.Exists( path ) )
-						NativeUtility.PreloadLibrary( fileName );
-				}
-			}
+			//	foreach( var fileName in fileNames )
+			//	{
+			//		var path = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, fileName );
+			//		if( File.Exists( path ) )
+			//			NativeUtility.PreloadLibrary( fileName );
+			//	}
+			//}
 
 			criticalSection = CriticalSection.Create();
 

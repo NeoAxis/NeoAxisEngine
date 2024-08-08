@@ -1,3 +1,5 @@
+#if (defined( __WIN32__ ) || defined( _WIN32 ))
+
 // This file is part of meshoptimizer library; see meshoptimizer.h for version/license details
 #include "meshoptimizer.h"
 
@@ -331,3 +333,5 @@ void meshopt_optimizeOverdraw(unsigned int* destination, const unsigned int* ind
 
 	assert(offset == index_count);
 }
+
+#endif

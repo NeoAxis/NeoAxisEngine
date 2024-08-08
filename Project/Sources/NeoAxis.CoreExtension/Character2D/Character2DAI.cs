@@ -132,7 +132,7 @@ namespace NeoAxis
 			return task;
 		}
 
-		public override void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
+		public override void InteractionGetInfo( GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info )
 		{
 			if( AllowInteract )
 			{
@@ -147,7 +147,7 @@ namespace NeoAxis
 				}
 			}
 
-			base.ObjectInteractionGetInfo( gameMode, ref info );
+			base.InteractionGetInfo( gameMode, initiator, ref info );
 		}
 
 		bool StartDialogueFlow( GameMode gameMode, Component secondParticipant, ServerNetworkService_Components.ClientItem sendToSpecifiedClient )
@@ -197,7 +197,7 @@ namespace NeoAxis
 			return false;
 		}
 
-		public override bool ObjectInteractionInputMessage( GameMode gameMode, InputMessage message )
+		public override bool InteractionInputMessage( GameMode gameMode, Component initiator, InputMessage message )
 		{
 			//entry to dialogue flow
 			var buttonDown = message as InputMessageMouseButtonDown;
@@ -217,22 +217,22 @@ namespace NeoAxis
 				}
 			}
 
-			return base.ObjectInteractionInputMessage( gameMode, message );
+			return base.InteractionInputMessage( gameMode, initiator, message );
 		}
 
-		public override void ObjectInteractionEnter( ObjectInteractionContext context )
+		public override void InteractionEnter( ObjectInteractionContext context )
 		{
-			base.ObjectInteractionEnter( context );
+			base.InteractionEnter( context );
 		}
 
-		public override void ObjectInteractionExit( ObjectInteractionContext context )
+		public override void InteractionExit( ObjectInteractionContext context )
 		{
-			base.ObjectInteractionExit( context );
+			base.InteractionExit( context );
 		}
 
-		public override void ObjectInteractionUpdate( ObjectInteractionContext context )
+		public override void InteractionUpdate( ObjectInteractionContext context )
 		{
-			base.ObjectInteractionUpdate( context );
+			base.InteractionUpdate( context );
 		}
 
 		protected override bool OnReceiveNetworkMessageFromClient( ServerNetworkService_Components.ClientItem client, string message, ArrayDataReader reader )

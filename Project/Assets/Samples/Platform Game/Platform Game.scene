@@ -1154,7 +1154,7 @@
 		.component NeoAxis.CSharpScript
 		{
 			Name = C# Script
-			Code = "public void Button_Click(NeoAxis.Button sender)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\tvar light = scene.GetComponent(\"Ambient Light\") as Light;\r\n\tif (light != null)\r\n\t\tlight.Enabled = sender.Activated;\t\r\n}\r\n"
+			Code = "public void Button_Click(NeoAxis.Button sender, NeoAxis.Component initiator)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\tvar light = scene.GetComponent(\"Ambient Light\") as Light;\r\n\tif (light != null)\r\n\t\tlight.Enabled = sender.Activated;\t\r\n}\r\n"
 			Exit
 			{
 			}
@@ -1167,7 +1167,7 @@
 				}
 				HandlerMethod
 				{
-					GetByReference = "this:..\\method:Button_Click(NeoAxis.Button)"
+					GetByReference = "this:..\\method:Button_Click(NeoAxis.Button,NeoAxis.Component)"
 				}
 				HandlerFlow
 				{
@@ -1235,7 +1235,7 @@
 		}
 		ItemType
 		{
-			GetByReference = "Content\\Items 2D\\Authors\\NeoAxis\\Key\\Key.item2dtype"
+			GetByReference = "Content\\Items 2D\\NeoAxis\\Key\\Key.item2dtype"
 		}
 		.component NeoAxis.SpriteAnimationController
 		{
@@ -1259,7 +1259,7 @@
 		}
 		ItemType
 		{
-			GetByReference = "Content\\Items 2D\\Authors\\NeoAxis\\Key\\Key.item2dtype"
+			GetByReference = "Content\\Items 2D\\NeoAxis\\Key\\Key.item2dtype"
 		}
 		.component NeoAxis.SpriteAnimationController
 		{

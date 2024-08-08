@@ -89,7 +89,6 @@
     </Compile>
     <Compile Include="Components\DestroyingSensor.cs" />
     <Compile Include="Components\DestroyingSensor2D.cs" />
-    <Compile Include="Components\Grid.cs" />
     <Compile Include="Components\LiquidVolume.cs" />
     <Compile Include="Components\MeasuringTool.cs" />
     <Compile Include="Components\RenderTargetInSpace.cs" />
@@ -221,7 +220,6 @@
     <Compile Include="Vehicle\VehicleType.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Vehicle\VehicleTypeEditor.cs" />
     <Compile Include="Vehicle\VehicleTypePreview.cs" />
     <Compile Include="Vehicle\VehicleTypePreviewImage.cs" />
     <Compile Include="Weapon\Weapon.cs" />
@@ -415,12 +413,22 @@
     <Compile Include="Character\Maker\CharacterMaker.cs" />
     <Compile Include="Character\Maker\CharacterMakerEditor.cs" />
     <Compile Include="Character\Maker\CharacterMakerSettingsCell.cs" />
+    <Compile Include="Components\MeasuringGrid.cs" />
+    <Compile Include="Gate\Gate.cs" />
+    <Compile Include="Gate\GateAssemblyRegistration.cs" />
+    <Compile Include="Gate\GateSettingsCell.cs" />
+    <Compile Include="Gate\GateType.cs" />
+    <Compile Include="Gate\GateTypeEditor.cs" />
+    <Compile Include="Gate\GateTypePreview.cs" />
+    <Compile Include="Gate\GateTypePreviewImage.cs" />
+    <Compile Include="Vehicle\VehicleAeroEngine.cs" />
+    <Compile Include="Vehicle\VehicleTypeWheel.cs" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>if EXIST "$(ProjectDir)NeoAxis.CoreExtension.csproj" ( if EXIST "$(ProjectDir)..\..\Binaries\NeoAxis.Editor.exe" ( "$(ProjectDir)..\..\Binaries\NeoAxis.Editor.exe" -platformProjectPatch "$(ProjectDir)NeoAxis.CoreExtension.Android.csproj" -baseProject "$(ProjectDir)NeoAxis.CoreExtension.csproj" ) )</PreBuildEvent>
+    <PreBuildEvent>if EXIST "$(ProjectDir)NeoAxis.CoreExtension.csproj" ( if EXIST "$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" ( "$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -platformProjectPatch "$(ProjectDir)NeoAxis.CoreExtension.Android.csproj" -baseProject "$(ProjectDir)NeoAxis.CoreExtension.csproj" ) )</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

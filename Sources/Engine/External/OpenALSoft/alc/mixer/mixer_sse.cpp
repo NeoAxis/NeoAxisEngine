@@ -1,4 +1,5 @@
 #include "config.h"
+#ifdef HAVE_SSE
 
 #include <xmmintrin.h>
 
@@ -258,3 +259,5 @@ void MixRow_<SSETag>(FloatBufferLine &OutBuffer, const ALfloat *Gains,
             OutBuffer[pos] += src[pos]*gain;
     }
 }
+
+#endif

@@ -402,7 +402,9 @@ namespace NeoAxis
 					if( shapeInfoBody != null )
 					{
 						var tr = new Transform( Position, Rotation, shape.scale );
-						shapeInfoBody.Render( context, Active, false, false, tr, ref verticesRendered );
+
+						RigidBody.Render( context, Active, false, false, tr, ref verticesRendered, shapeInfoBody, this );
+						//shapeInfoBody.Render( context, Active, false, false, tr, ref verticesRendered );
 
 						//GetData( out var pos, out var rot, out _, out _, out _ );
 						//var tr = new Transform( pos, rot, shape.scale );
@@ -959,7 +961,8 @@ namespace NeoAxis
 				public float MaxHandBrakeTorque;// = 4000.0f;
 
 				//Tracked specific
-				//!!!!
+				public float TrackLongitudinalFriction;
+				public float TrackLateralFriction;
 			}
 
 			/////////////////////
@@ -988,9 +991,9 @@ namespace NeoAxis
 
 				public Body Body { get { return body; } }
 
-				public void SetDriverInput( float forward, /*float left, */float right, float brake, float handBrake, bool activateBody )
+				public void SetDriverInput( float forward, float leftTracksOnly, float right, float brake, float handBrake, bool activateBody )
 				{
-					PhysicsNative.JVehicleConstraint_SetDriverInput( constraint, forward, /*left, */right, brake, handBrake, activateBody );
+					PhysicsNative.JVehicleConstraint_SetDriverInput( constraint, forward, leftTracksOnly, right, brake, handBrake, activateBody );
 				}
 
 				//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -1574,7 +1577,7 @@ namespace NeoAxis
 			//	return item;
 			//}
 
-			public unsafe VehicleConstraint CreateConstraintVehicle( object owner, Body body, int wheelCount, VehicleWheelSettings* wheelsSettings, ref Vector3F visualScale, float frontWheelAntiRollBarStiffness, float rearWheelAntiRollBarStiffness, float maxPitchRollAngle, float engineMaxTorque, float engineMinRPM, float engineMaxRPM, [MarshalAs( UnmanagedType.U1 )] bool transmissionAuto, int transmissionGearRatiosCount, double* transmissionGearRatios, int transmissionReverseGearRatiosCount, double* transmissionReverseGearRatios, float transmissionSwitchTime, float transmissionClutchReleaseTime, float transmissionSwitchLatency, float transmissionShiftUpRPM, float transmissionShiftDownRPM, float transmissionClutchStrength, bool frontWheelDrive, bool rearWheelDrive, float frontWheelDifferentialRatio, float frontWheelDifferentialLeftRightSplit, float frontWheelDifferentialLimitedSlipRatio, float frontWheelDifferentialEngineTorqueRatio, float rearWheelDifferentialRatio, float rearWheelDifferentialLeftRightSplit, float rearWheelDifferentialLimitedSlipRatio, float rearWheelDifferentialEngineTorqueRatio, RadianF maxSlopeAngle )
+			public unsafe VehicleConstraint CreateConstraintVehicle( object owner, Body body, int wheelCount, VehicleWheelSettings* wheelsSettings, ref Vector3F visualScale, float frontWheelAntiRollBarStiffness, float rearWheelAntiRollBarStiffness, float maxPitchRollAngle, float engineMaxTorque, float engineMinRPM, float engineMaxRPM, [MarshalAs( UnmanagedType.U1 )] bool transmissionAuto, int transmissionGearRatiosCount, double* transmissionGearRatios, int transmissionReverseGearRatiosCount, double* transmissionReverseGearRatios, float transmissionSwitchTime, float transmissionClutchReleaseTime, float transmissionSwitchLatency, float transmissionShiftUpRPM, float transmissionShiftDownRPM, float transmissionClutchStrength, /*bool frontWheelDrive, bool rearWheelDrive, float frontWheelDifferentialRatio, float frontWheelDifferentialLeftRightSplit, float frontWheelDifferentialLimitedSlipRatio, float frontWheelDifferentialEngineTorqueRatio, float rearWheelDifferentialRatio, float rearWheelDifferentialLeftRightSplit, float rearWheelDifferentialLimitedSlipRatio, float rearWheelDifferentialEngineTorqueRatio, */RadianF maxSlopeAngle, bool tracks, int antiRollbarsCount, float* antiRollbars, float differentialLimitedSlipRatio, int engineNormalizedTorqueCount, float* engineNormalizedTorque, float engineInertia, float engineAngularDamping, int differentialsCount, float* differentials, int trackDrivenWheel, float trackInertia, float trackAngularDamping, float trackMaxBrakeTorque, float trackDifferentialRatio )
 			{
 				var constraint = new VehicleConstraint();
 				constraint.physicsWorld = this;
@@ -1582,7 +1585,7 @@ namespace NeoAxis
 				constraint.body = body;
 				constraint.visualScale = visualScale;
 
-				constraint.constraint = PhysicsNative.JCreateConstraintVehicle( physicsSystem, body.body, wheelCount, wheelsSettings, frontWheelAntiRollBarStiffness, rearWheelAntiRollBarStiffness, maxPitchRollAngle, engineMaxTorque, engineMinRPM, engineMaxRPM, transmissionAuto, transmissionGearRatiosCount, transmissionGearRatios, transmissionReverseGearRatiosCount, transmissionReverseGearRatios, transmissionSwitchTime, transmissionClutchReleaseTime, transmissionSwitchLatency, transmissionShiftUpRPM, transmissionShiftDownRPM, transmissionClutchStrength, frontWheelDrive, rearWheelDrive, frontWheelDifferentialRatio, frontWheelDifferentialLeftRightSplit, frontWheelDifferentialLimitedSlipRatio, frontWheelDifferentialEngineTorqueRatio, rearWheelDifferentialRatio, rearWheelDifferentialLeftRightSplit, rearWheelDifferentialLimitedSlipRatio, rearWheelDifferentialEngineTorqueRatio, maxSlopeAngle );
+				constraint.constraint = PhysicsNative.JCreateConstraintVehicle( physicsSystem, body.body, wheelCount, wheelsSettings, frontWheelAntiRollBarStiffness, rearWheelAntiRollBarStiffness, maxPitchRollAngle, engineMaxTorque, engineMinRPM, engineMaxRPM, transmissionAuto, transmissionGearRatiosCount, transmissionGearRatios, transmissionReverseGearRatiosCount, transmissionReverseGearRatios, transmissionSwitchTime, transmissionClutchReleaseTime, transmissionSwitchLatency, transmissionShiftUpRPM, transmissionShiftDownRPM, transmissionClutchStrength, /*frontWheelDrive, rearWheelDrive, frontWheelDifferentialRatio, frontWheelDifferentialLeftRightSplit, frontWheelDifferentialLimitedSlipRatio, frontWheelDifferentialEngineTorqueRatio, rearWheelDifferentialRatio, rearWheelDifferentialLeftRightSplit, rearWheelDifferentialLimitedSlipRatio, rearWheelDifferentialEngineTorqueRatio, */maxSlopeAngle, tracks, antiRollbarsCount, antiRollbars, differentialLimitedSlipRatio, engineNormalizedTorqueCount, engineNormalizedTorque, engineInertia, engineAngularDamping, differentialsCount, differentials, trackDrivenWheel, trackInertia, trackAngularDamping, trackMaxBrakeTorque, trackDifferentialRatio );
 
 				if( constraint.body != null )
 				{
@@ -1947,14 +1950,24 @@ namespace NeoAxis
 					Log.Fatal( "Scene: PhysicsWorldCreate: sizeof( PhysicsNative.VolumeTestResult ) != 12." );
 				if( sizeof( IntPtr ) == 8 )
 				{
-					if( sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 22 * 4 + 8 )
-						Log.Fatal( "Scene: PhysicsWorldCreate: sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 22 * 4 + 8." );
+					if( sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 24 * 4 + 8 )
+						Log.Fatal( "Scene: PhysicsWorldCreate: sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 24 * 4 + 8." );
 				}
 				else
 				{
-					if( sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 22 * 4 )
-						Log.Fatal( "Scene: PhysicsWorldCreate: sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 22 * 4." );
+					if( sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 24 * 4 )
+						Log.Fatal( "Scene: PhysicsWorldCreate: sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 24 * 4." );
 				}
+				//if( sizeof( IntPtr ) == 8 )
+				//{
+				//	if( sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 22 * 4 + 8 )
+				//		Log.Fatal( "Scene: PhysicsWorldCreate: sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 22 * 4 + 8." );
+				//}
+				//else
+				//{
+				//	if( sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 22 * 4 )
+				//		Log.Fatal( "Scene: PhysicsWorldCreate: sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 22 * 4." );
+				//}
 				if( sizeof( PhysicsWorldClass.VehicleWheelData ) != 5 * 4 )
 					Log.Fatal( "Scene: PhysicsWorldCreate: sizeof( PhysicsWorldClass.VehicleWheelData ) != 5 * 4." );
 				if( sizeof( PhysicsWorldClass.ContactItem ) != 224 )

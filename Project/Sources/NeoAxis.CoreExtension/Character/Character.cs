@@ -98,7 +98,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		const string characterTypeDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Bryce.charactertype";
+		const string characterTypeDefault = @"Content\Characters\NeoAxis\Bryce\Bryce.charactertype";
 		//const string characterTypeDefault = @"Content\Characters\Default\Default.charactertype";
 
 		[DefaultValueReference( characterTypeDefault )]
@@ -768,7 +768,8 @@ namespace NeoAxis
 
 			//!!!!apply scale. where else
 
-			body.CenterOfMassOffset = new Vector3( 0, 0, height * 0.5 );
+			//!!!!new disabled
+			//body.CenterOfMassOffset = new Vector3( 0, 0, height * 0.5 );
 
 			var capsuleShape = body.CreateComponent<CollisionShape_Capsule>();
 			capsuleShape.Height = length;
@@ -4992,36 +4993,36 @@ namespace NeoAxis
 			ProcessDamageAfterAll?.Invoke( this, whoFired, damage2, anyData2, oldHealth );
 		}
 
-		public delegate void ObjectInteractionGetInfoEventDelegate( Character sender, GameMode gameMode, ref InteractiveObjectObjectInfo info );
-		public event ObjectInteractionGetInfoEventDelegate ObjectInteractionGetInfoEvent;
+		public delegate void ObjectInteractionGetInfoEventDelegate( Character sender, GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info );
+		public event ObjectInteractionGetInfoEventDelegate InteractionGetInfoEvent;
 
-		public virtual void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
+		public virtual void InteractionGetInfo( GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info )
 		{
-			GetComponent<AI>()?.ObjectInteractionGetInfo( gameMode, ref info );
-			ObjectInteractionGetInfoEvent?.Invoke( this, gameMode, ref info );
+			GetComponent<AI>()?.InteractionGetInfo( gameMode, initiator, ref info );
+			InteractionGetInfoEvent?.Invoke( this, gameMode, initiator, ref info );
 		}
 
-		public virtual bool ObjectInteractionInputMessage( GameMode gameMode, InputMessage message )
+		public virtual bool InteractionInputMessage( GameMode gameMode, Component initiator, InputMessage message )
 		{
 			var ai = GetComponent<AI>();
-			if( ai != null && ai.ObjectInteractionInputMessage( gameMode, message ) )
+			if( ai != null && ai.InteractionInputMessage( gameMode, initiator, message ) )
 				return true;
 			return false;
 		}
 
-		public virtual void ObjectInteractionEnter( ObjectInteractionContext context )
+		public virtual void InteractionEnter( ObjectInteractionContext context )
 		{
-			GetComponent<AI>()?.ObjectInteractionEnter( context );
+			GetComponent<AI>()?.InteractionEnter( context );
 		}
 
-		public virtual void ObjectInteractionExit( ObjectInteractionContext context )
+		public virtual void InteractionExit( ObjectInteractionContext context )
 		{
-			GetComponent<AI>()?.ObjectInteractionExit( context );
+			GetComponent<AI>()?.InteractionExit( context );
 		}
 
-		public virtual void ObjectInteractionUpdate( ObjectInteractionContext context )
+		public virtual void InteractionUpdate( ObjectInteractionContext context )
 		{
-			GetComponent<AI>()?.ObjectInteractionUpdate( context );
+			GetComponent<AI>()?.InteractionUpdate( context );
 		}
 
 		protected override void OnComponentRemoved( Component component )

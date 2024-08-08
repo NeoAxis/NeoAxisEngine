@@ -1,0 +1,27 @@
+// Made with NeoAxis Engine 2024.1.
+
+.component NeoAxis.Mesh
+{
+	EditorCameraTransform = "3.09834663244287 -2.54889228855788 2.03798828420581; -0.2191854566202 0.0785722056997892 0.915470996498287 0.328172208860071; 1 1 1"
+	EditorDisplayCollision = True
+	.component NeoAxis.MeshGeometry_Box
+	{
+		Name = Mesh Geometry
+		Dimensions = 1 0.1 2.25
+		Material
+		{
+			GetByReference = "Base\\Materials\\Yellow.material"
+		}
+	}
+	.component NeoAxis.RigidBody
+	{
+		Name = Collision Definition
+		Transform = "0 0 0; 0 0 0 1; 1 1 1"
+		MotionType = Kinematic
+		.component NeoAxis.CollisionShape_Box
+		{
+			Name = Shape
+			Dimensions = 0.99 0.100000001490116 2.23
+		}
+	}
+}

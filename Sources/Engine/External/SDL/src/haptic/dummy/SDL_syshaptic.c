@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /*
   Simple DirectMedia Layer
   Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
@@ -184,3 +187,5 @@ SDL_SYS_HapticStopAll(SDL_Haptic * haptic)
 #endif /* SDL_HAPTIC_DUMMY || SDL_HAPTIC_DISABLED */
 
 /* vi: set ts=4 sw=4 expandtab: */
+
+#endif

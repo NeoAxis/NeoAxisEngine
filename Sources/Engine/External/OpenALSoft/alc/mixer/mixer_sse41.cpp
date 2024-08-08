@@ -1,4 +1,3 @@
-#ifdef HAVE_SSE41
 /**
  * OpenAL cross platform audio library
  * Copyright (C) 2014 by Timothy Arceri <t_arceri@yahoo.com.au>.
@@ -20,6 +19,7 @@
  */
 
 #include "config.h"
+#ifdef HAVE_SSE41
 
 #include <xmmintrin.h>
 #include <emmintrin.h>

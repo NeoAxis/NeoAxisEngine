@@ -166,29 +166,6 @@
     <Compile Include="MathEx\PlaneF.cs" />
     <Compile Include="MathEx\Quaternion.cs" />
     <Compile Include="MathEx\QuaternionF.cs" />
-    <Compile Include="MathEx\Radian.cs" />
-    <Compile Include="MathEx\RadianF.cs" />
-    <Compile Include="MathEx\Range.cs" />
-    <Compile Include="MathEx\RangeAttribute.cs" />
-    <Compile Include="MathEx\RangeI.cs" />
-    <Compile Include="MathEx\Ray.cs" />
-    <Compile Include="MathEx\Ray2.cs" />
-    <Compile Include="MathEx\Ray2F.cs" />
-    <Compile Include="MathEx\RayF.cs" />
-    <Compile Include="MathEx\Rectangle.cs" />
-    <Compile Include="MathEx\RectangleF.cs" />
-    <Compile Include="MathEx\RectangleI.cs" />
-    <Compile Include="MathEx\SpaceBounds.cs" />
-    <Compile Include="MathEx\Sphere.cs" />
-    <Compile Include="MathEx\SphereF.cs" />
-    <Compile Include="MathEx\SphericalDirection.cs" />
-    <Compile Include="MathEx\SphericalDirectionF.cs" />
-    <Compile Include="MathEx\StandardVertex.cs" />
-    <Compile Include="MathEx\Transform.cs" />
-    <Compile Include="MathEx\Triangle.cs" />
-    <Compile Include="MathEx\Triangle2.cs" />
-    <Compile Include="MathEx\Triangle2F.cs" />
-    <Compile Include="MathEx\TriangleF.cs" />
     <Compile Include="MathEx\Vector2.cs" />
     <Compile Include="MathEx\Vector2F.cs" />
     <Compile Include="MathEx\Vector2I.cs" />
@@ -1647,13 +1624,39 @@
     <Compile Include="Components\Rendering\Effects\MicroparticlesInAir.cs" />
     <Compile Include="SoundSystem\NoneSoundWorld.cs" />
     <Compile Include="Components\Terrain\TerrainUndo.cs" />
+    <Compile Include="EngineApp\macOS specific\MacOSInputDeviceManager.cs" />
+    <Compile Include="EngineApp\macOS specific\MacOSJoystickInputDevice.cs" />
+    <Compile Include="EngineApp\macOS specific\MacOSPlatformFunctionality.cs" />
+    <Compile Include="MathEx\Radian.cs" />
+    <Compile Include="MathEx\RadianF.cs" />
+    <Compile Include="MathEx\Range.cs" />
+    <Compile Include="MathEx\RangeAttribute.cs" />
+    <Compile Include="MathEx\RangeI.cs" />
+    <Compile Include="MathEx\Ray.cs" />
+    <Compile Include="MathEx\Ray2.cs" />
+    <Compile Include="MathEx\Ray2F.cs" />
+    <Compile Include="MathEx\RayF.cs" />
+    <Compile Include="MathEx\Rectangle.cs" />
+    <Compile Include="MathEx\RectangleF.cs" />
+    <Compile Include="MathEx\RectangleI.cs" />
+    <Compile Include="MathEx\SpaceBounds.cs" />
+    <Compile Include="MathEx\Sphere.cs" />
+    <Compile Include="MathEx\SphereF.cs" />
+    <Compile Include="MathEx\SphericalDirection.cs" />
+    <Compile Include="MathEx\SphericalDirectionF.cs" />
+    <Compile Include="MathEx\StandardVertex.cs" />
+    <Compile Include="MathEx\Transform.cs" />
+    <Compile Include="MathEx\Triangle.cs" />
+    <Compile Include="MathEx\Triangle2.cs" />
+    <Compile Include="MathEx\Triangle2F.cs" />
+    <Compile Include="MathEx\TriangleF.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>if EXIST "$(ProjectDir)NeoAxis.Core.csproj" ( if EXIST "$(ProjectDir)..\..\..\Project\Binaries\NeoAxis.Editor.exe" ( "$(ProjectDir)..\..\..\Project\Binaries\NeoAxis.Editor.exe" -platformProjectPatch "$(ProjectDir)NeoAxis.Core.Android.csproj" -baseProject "$(ProjectDir)NeoAxis.Core.csproj" ) )</PreBuildEvent>
+    <PreBuildEvent>if EXIST "$(ProjectDir)NeoAxis.Core.csproj" ( if EXIST "$(ProjectDir)..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" ( "$(ProjectDir)..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -platformProjectPatch "$(ProjectDir)NeoAxis.Core.Android.csproj" -baseProject "$(ProjectDir)NeoAxis.Core.csproj" ) )</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

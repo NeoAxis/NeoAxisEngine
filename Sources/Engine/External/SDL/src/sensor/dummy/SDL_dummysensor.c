@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /*
   Simple DirectMedia Layer
   Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
@@ -108,3 +111,5 @@ SDL_SensorDriver SDL_DUMMY_SensorDriver =
 #endif /* SDL_SENSOR_DUMMY || SDL_SENSOR_DISABLED */
 
 /* vi: set ts=4 sw=4 expandtab: */
+
+#endif

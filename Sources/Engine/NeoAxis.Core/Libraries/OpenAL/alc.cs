@@ -55,11 +55,13 @@ namespace Tao.OpenAl
 		/// <remarks>
 		///     Specifies OpenAl32.dll everywhere; will be mapped via .config for mono.
 		/// </remarks>
-#if ANDROID || IOS
-		private const string ALC_NATIVE_LIBRARY = "OpenAL";
-#else
-		private const string ALC_NATIVE_LIBRARY = "OpenAL32";
-#endif
+
+		private const string ALC_NATIVE_LIBRARY = "NeoAxisCoreNative";
+//#if ANDROID || IOS
+//		private const string ALC_NATIVE_LIBRARY = "OpenAL";
+//#else
+//		private const string ALC_NATIVE_LIBRARY = "OpenAL32";
+//#endif
 		#endregion string ALC_NATIVE_LIBRARY
 
 		#region CallingConvention CALLING_CONVENTION

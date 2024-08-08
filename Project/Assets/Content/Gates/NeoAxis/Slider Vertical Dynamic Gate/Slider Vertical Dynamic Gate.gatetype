@@ -1,0 +1,23 @@
+// Made with NeoAxis Engine 2024.1.
+
+.component NeoAxis.GateType
+{
+	EditorCameraTransform = "0.0927801820512781 -2.62420846866934 1.66633288588414; -0.0770222350561358 0.073743938460607 0.718193249825412 0.687624797947608; 1 1 1"
+	OpeningType = SliderVertical
+	Door1Position = 0 0 1.125
+	Door1ConstraintPosition = 0 0 2.25
+	Door2ConstraintPosition = 1 0 1.125
+	DoorLinearLimit = 0 2.5
+	DoorOpenOffset = 2.25
+	BaseMesh
+	{
+		GetByReference = "Content\\Gates\\NeoAxis\\Slider Vertical Dynamic Gate\\Base.mesh"
+	}
+	Door1Mesh
+	{
+		GetByReference = "Content\\Gates\\NeoAxis\\Slider Vertical Dynamic Gate\\Door.mesh"
+	}
+	Door2Mesh
+	{
+	}
+}

@@ -119,10 +119,10 @@ namespace NeoAxis
 			anyData = null;
 		}
 
-		public delegate void ObjectInteractionGetInfoEventDelegate( Item sender, GameMode gameMode, ref InteractiveObjectObjectInfo info );
-		public event ObjectInteractionGetInfoEventDelegate ObjectInteractionGetInfoEvent;
+		public delegate void ObjectInteractionGetInfoEventDelegate( Item sender, GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info );
+		public event ObjectInteractionGetInfoEventDelegate InteractionGetInfoEvent;
 
-		public virtual void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
+		public virtual void InteractionGetInfo( GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info )
 		{
 			//enable an interaction context to take the object by a character
 			var character = gameMode.ObjectControlledByPlayer.Value as Character;
@@ -134,10 +134,10 @@ namespace NeoAxis
 				//info.Text.Add( Name );
 				//info.Text.Add( $"Click to take. Press {gameMode.KeyDrop1.Value} to drop." );
 			}
-			ObjectInteractionGetInfoEvent?.Invoke( this, gameMode, ref info );
+			InteractionGetInfoEvent?.Invoke( this, gameMode, initiator, ref info );
 		}
 
-		public virtual bool ObjectInteractionInputMessage( GameMode gameMode, InputMessage message )
+		public virtual bool InteractionInputMessage( GameMode gameMode, Component initiator, InputMessage message )
 		{
 			var mouseDown = message as InputMessageMouseButtonDown;
 			if( mouseDown != null )
@@ -169,15 +169,15 @@ namespace NeoAxis
 			return false;
 		}
 
-		public virtual void ObjectInteractionEnter( ObjectInteractionContext context )
+		public virtual void InteractionEnter( ObjectInteractionContext context )
 		{
 		}
 
-		public virtual void ObjectInteractionExit( ObjectInteractionContext context )
+		public virtual void InteractionExit( ObjectInteractionContext context )
 		{
 		}
 
-		public virtual void ObjectInteractionUpdate( ObjectInteractionContext context )
+		public virtual void InteractionUpdate( ObjectInteractionContext context )
 		{
 		}
 	}

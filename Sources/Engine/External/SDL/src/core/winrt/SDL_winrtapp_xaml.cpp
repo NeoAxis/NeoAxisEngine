@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /*
   Simple DirectMedia Layer
   Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
@@ -158,3 +161,5 @@ SDL_WinRTInitXAMLApp(int (*mainFunction)(int, char **), void * backgroundPanelAs
     return 0;
 #endif // WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP  /  else
 }
+
+#endif

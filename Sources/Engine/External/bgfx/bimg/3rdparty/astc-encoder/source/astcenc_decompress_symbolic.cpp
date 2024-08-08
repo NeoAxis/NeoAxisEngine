@@ -1,3 +1,6 @@
+//!!!!betauser. android compiler crash
+#ifndef __ANDROID__
+
 // SPDX-License-Identifier: Apache-2.0
 // ----------------------------------------------------------------------------
 // Copyright 2011-2023 Arm Limited
@@ -619,5 +622,7 @@ float compute_symbolic_block_difference_1plane_1partition(
 
 	return hadd_s(summav);
 }
+
+#endif
 
 #endif

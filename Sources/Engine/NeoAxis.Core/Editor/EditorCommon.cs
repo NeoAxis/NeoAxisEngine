@@ -265,6 +265,8 @@ namespace NeoAxis.Editor
 		CCAttributionBYNCSA,
 		[DisplayNameEnum( "CC Attribution BY-NC-ND" )]
 		CCAttributionBYNCND,
+		[DisplayNameEnum( "CC0" )]
+		CC0,
 		FreeToUse,
 		[DisplayNameEnum( "Free To Use With NeoAxis" )]
 		FreeToUseWithNeoAxis,

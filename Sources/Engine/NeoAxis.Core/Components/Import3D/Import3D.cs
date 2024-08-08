@@ -631,6 +631,21 @@ namespace NeoAxis
 		ReferenceField<bool> _compress = true;
 
 		///// <summary>
+		///// Converts PNG to JPG when the texture has no alpha channel.
+		///// </summary>
+		//[DefaultValue( true )]
+		//[Category( "Advanced" )]
+		//public Reference<bool> OptimizeTextures
+		//{
+		//	get { if( _optimizeTextures.BeginGet() ) OptimizeTextures = _optimizeTextures.Get( this ); return _optimizeTextures.value; }
+		//	set { if( _optimizeTextures.BeginSet( this, ref value ) ) { try { OptimizeTexturesChanged?.Invoke( this ); } finally { _optimizeTextures.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="OptimizeTextures"/> property value changes.</summary>
+		//public event Action<Import3D> OptimizeTexturesChanged;
+		//ReferenceField<bool> _optimizeTextures = true;
+
+
+		///// <summary>
 		///// Whether to reset rotation and scale of bones and apply to key frames.
 		///// </summary>
 		//[DefaultValue( true )]
@@ -720,54 +735,93 @@ namespace NeoAxis
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			//autoupdate is disabled because big files take a lot of time
-			//if( !insideDoUpdate && EnabledInHierarchy && IsNeedUpdate() )
-			//{
-			//	if( !DoUpdate( null, out string error ) )
-			//	{
-			//		var virtualFileName = ParentRoot.HierarchyController?.CreatedByResource?.Owner.Name;
-			//		if( string.IsNullOrEmpty( virtualFileName ) )
-			//			virtualFileName = "NO FILE NAME";
-			//		var error2 = $"Unable to load or import resource \"{virtualFileName}\".\r\n\r\n" + error;
-			//		Log.Error( error2 );
-			//		return;
-			//	}
+			//autoupdate is disabled by default, big files take a lot of time
+			if( ProjectSettings.Get.General.AutoImport3DModels )
+				DoAutoUpdate();
 
-			//	//save to file
-			//	if( HierarchyController != null && HierarchyController.CreatedByResource != null &&
-			//		HierarchyController.CreatedByResource.InstanceType == Resource.InstanceType.Resource &&
-			//		HierarchyController.CreatedByResource.Owner.LoadFromFile )
-			//	{
-			//		var resource = HierarchyController.CreatedByResource.Owner;
-			//		string virtualPath = resource.Name + resource.GetSaveAddFileExtension();
-			//		string realPath = VirtualPathUtility.GetRealPathByVirtual( virtualPath );
+			////autoupdate is disabled because big files take a lot of time
+			////if( !insideDoUpdate && EnabledInHierarchy && IsNeedUpdate() )
+			////{
+			////	if( !DoUpdate( null, out string error ) )
+			////	{
+			////		var virtualFileName = ParentRoot.HierarchyController?.CreatedByResource?.Owner.Name;
+			////		if( string.IsNullOrEmpty( virtualFileName ) )
+			////			virtualFileName = "NO FILE NAME";
+			////		var error2 = $"Unable to load or import resource \"{virtualFileName}\".\r\n\r\n" + error;
+			////		Log.Error( error2 );
+			////		return;
+			////	}
 
-			//		if( !File.Exists( realPath ) && Components.Count != 0 )
-			//		{
-			//			if( !ComponentUtility.SaveComponentToFile( this, realPath, null, out error ) )
-			//			{
-			//				Log.Warning( error );
-			//				return;
-			//			}
-			//		}
-			//	}
-			//}
+			////	//save to file
+			////	if( HierarchyController != null && HierarchyController.CreatedByResource != null &&
+			////		HierarchyController.CreatedByResource.InstanceType == Resource.InstanceType.Resource &&
+			////		HierarchyController.CreatedByResource.Owner.LoadFromFile )
+			////	{
+			////		var resource = HierarchyController.CreatedByResource.Owner;
+			////		string virtualPath = resource.Name + resource.GetSaveAddFileExtension();
+			////		string realPath = VirtualPathUtility.GetRealPathByVirtual( virtualPath );
+
+			////		if( !File.Exists( realPath ) && Components.Count != 0 )
+			////		{
+			////			if( !ComponentUtility.SaveComponentToFile( this, realPath, null, out error ) )
+			////			{
+			////				Log.Warning( error );
+			////				return;
+			////			}
+			////		}
+			////	}
+			////}
 		}
 
-		//public bool IsNeedUpdate()
-		//{
-		//	if( EngineApp.IsEditor )
-		//	{
-		//		if( Parent == null )
-		//		{
-		//			if( Components.Count == 0 )
-		//				return true;
+		public bool IsNeedUpdate()
+		{
+			if( EngineApp.IsEditor )
+			{
+				if( Parent == null )
+				{
+					if( Components.Count == 0 )
+						return true;
 
-		//			//!!!!хотя проверять тоже долго ведь. варианты: в дейплойменте сорцы удалить (сделать пустые файлы)
-		//		}
-		//	}
-		//	return false;
-		//}
+					//!!!!хотя проверять тоже долго ведь. варианты: в дейплойменте сорцы удалить (сделать пустые файлы)
+				}
+			}
+			return false;
+		}
+
+		public void DoAutoUpdate()
+		{
+			if( !insideDoUpdate && EnabledInHierarchy && IsNeedUpdate() )
+			{
+				if( !DoUpdate( null, out string error ) )
+				{
+					var virtualFileName = ParentRoot.HierarchyController?.CreatedByResource?.Owner.Name;
+					if( string.IsNullOrEmpty( virtualFileName ) )
+						virtualFileName = "NO FILE NAME";
+					var error2 = $"Unable to load or import resource \"{virtualFileName}\".\r\n\r\n" + error;
+					Log.Error( error2 );
+					return;
+				}
+
+				//save to file
+				if( HierarchyController != null && HierarchyController.CreatedByResource != null &&
+					HierarchyController.CreatedByResource.InstanceType == Resource.InstanceType.Resource &&
+					HierarchyController.CreatedByResource.Owner.LoadFromFile )
+				{
+					var resource = HierarchyController.CreatedByResource.Owner;
+					string virtualPath = resource.Name + resource.GetSaveAddFileExtension();
+					string realPath = VirtualPathUtility.GetRealPathByVirtual( virtualPath );
+
+					if( !File.Exists( realPath ) && Components.Count != 0 )
+					{
+						if( !ComponentUtility.SaveComponentToFile( this, realPath, null, out error ) )
+						{
+							Log.Warning( error );
+							return;
+						}
+					}
+				}
+			}
+		}
 
 		/// <summary>
 		/// Represents settings for reimporting data of <see cref="Import3D"/>.

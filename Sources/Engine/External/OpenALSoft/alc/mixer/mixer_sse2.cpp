@@ -19,6 +19,7 @@
  */
 
 #include "config.h"
+#ifdef HAVE_SSE2
 
 #include <xmmintrin.h>
 #include <emmintrin.h>
@@ -82,3 +83,5 @@ const ALfloat *Resample_<LerpTag,SSE2Tag>(const InterpState*, const ALfloat *RES
     }
     return dst;
 }
+
+#endif

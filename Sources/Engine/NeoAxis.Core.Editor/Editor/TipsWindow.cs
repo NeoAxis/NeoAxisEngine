@@ -20,7 +20,9 @@ namespace NeoAxis.Editor
 		UIControl backstage;
 
 		List<string> tips;
-		int currentTip;
+		//int currentTip;
+		[EngineConfig( "TipsWindow", "currentTip" )]
+		public static int currentTip;
 
 		bool initialized;
 
@@ -35,6 +37,8 @@ namespace NeoAxis.Editor
 
 		public TipsWindow()
 		{
+			EngineConfig.RegisterClassParameters( typeof( TipsWindow ) );
+
 			InitializeComponent();
 
 			if( WinFormsUtility.IsDesignerHosted( this ) )
@@ -67,7 +71,10 @@ namespace NeoAxis.Editor
 			timer1.Start();
 
 			tips = GetTipFiles();
-			ShowTip( 0 );
+			if( currentTip >= tips.Count )
+				currentTip = tips.Count - 1;
+			ShowTip( currentTip );
+			//ShowTip( 0 );
 
 			initialized = true;
 		}

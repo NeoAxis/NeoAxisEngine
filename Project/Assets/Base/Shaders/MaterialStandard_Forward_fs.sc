@@ -22,6 +22,8 @@ SAMPLER2D(s_materials, 1);
 //	SAMPLER2D(s_virtualizedData, 11);
 //#endif
 
+#include "CustomFunctions.sh"
+
 #ifdef DISPLACEMENT_CODE_PARAMETERS
 	DISPLACEMENT_CODE_PARAMETERS
 #endif

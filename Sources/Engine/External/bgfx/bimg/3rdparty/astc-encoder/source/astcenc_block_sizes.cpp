@@ -1,3 +1,6 @@
+//!!!!betauser. android compiler crash
+#ifndef __ANDROID__
+
 // SPDX-License-Identifier: Apache-2.0
 // ----------------------------------------------------------------------------
 // Copyright 2011-2023 Arm Limited
@@ -1182,3 +1185,5 @@ void init_block_size_descriptor(
 
 	init_partition_tables(bsd, can_omit_modes, partition_count_cutoff);
 }
+
+#endif

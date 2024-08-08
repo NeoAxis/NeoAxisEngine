@@ -1,0 +1,21 @@
+// Made with NeoAxis Engine 2024.1.
+
+.component NeoAxis.Surface
+{
+	EditorCameraTransform = "6.18980805671322 -5.09212037743188 4.07144770987688; -0.2191854566202 0.0785722056997891 0.915470996498287 0.328172208860071; 1 1 1"
+	.component NeoAxis.SurfaceGroupOfElements
+	{
+		Name = Group 1
+		OccupiedAreaRadius = 0.5
+		PositionZRange = 0.01 0.01
+		RegularAlignment = 1
+		.component NeoAxis.SurfaceElement_Mesh
+		{
+			Name = Mesh 1
+			Mesh
+			{
+				GetByReference = "Content\\Constructors\\Rooms\\Wood style rooms\\Floor.gltf|$Mesh"
+			}
+		}
+	}
+}

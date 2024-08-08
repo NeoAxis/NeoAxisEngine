@@ -14,7 +14,7 @@ namespace NeoAxis.Editor
 
 		protected override void OnUpdate()
 		{
-			var Button = ObjectOfPreview as ButtonType;
+			var type = ObjectOfPreview as ButtonType;
 
 			//create scene
 			{
@@ -25,7 +25,7 @@ namespace NeoAxis.Editor
 			//create object
 			{
 				var objectInSpace = Scene.CreateComponent<Button>( enabled: false );
-				objectInSpace.ButtonType = Button;
+				objectInSpace.ButtonType = type;
 				objectInSpace.Enabled = true;
 			}
 

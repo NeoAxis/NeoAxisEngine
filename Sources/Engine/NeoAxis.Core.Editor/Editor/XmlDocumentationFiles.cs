@@ -19,6 +19,8 @@ namespace NeoAxis.Editor
 		static ESet<Assembly> parsedAssemblies = new ESet<Assembly>();
 		static ESet<string> triedLoadFiles = new ESet<string>();
 
+		static int documentationXmlVersion;
+
 		//
 
 		public static void Load( string xmlFile )
@@ -124,6 +126,8 @@ namespace NeoAxis.Editor
 					Log.Warning( "XmlDocumentationData: Load: Unable to parse file \'{0}\'. Error: \'{1}\'", path, e.Message );
 				}
 			}
+
+			documentationXmlVersion++;
 		}
 
 		public static void PreloadBaseAssemblies()
@@ -294,6 +298,11 @@ namespace NeoAxis.Editor
 
 			if( titleWasAdded )
 				Log.InvisibleInfo( "-----------------------------" );
+		}
+
+		public static int DocumentationXmlVersion
+		{
+			get { return documentationXmlVersion; }
 		}
 	}
 }

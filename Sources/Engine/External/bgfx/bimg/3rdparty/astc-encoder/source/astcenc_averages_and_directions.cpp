@@ -1,3 +1,6 @@
+//!!!!betauser. android compiler crash
+#ifndef __ANDROID__
+
 // SPDX-License-Identifier: Apache-2.0
 // ----------------------------------------------------------------------------
 // Copyright 2011-2023 Arm Limited
@@ -944,5 +947,7 @@ void compute_error_squared_rgb(
 	uncor_error = hadd_s(uncor_errorsumv);
 	samec_error = hadd_s(samec_errorsumv);
 }
+
+#endif
 
 #endif

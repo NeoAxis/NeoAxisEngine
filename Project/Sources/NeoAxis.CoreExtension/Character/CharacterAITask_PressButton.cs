@@ -104,7 +104,7 @@ namespace NeoAxis
 					{
 						//click the button
 						if( currentTime >= clickTime && previousTime < clickTime )
-							target.ClickingBegin();
+							target.TryClick( character );//target.ClickingBegin();
 					}
 				}
 			}

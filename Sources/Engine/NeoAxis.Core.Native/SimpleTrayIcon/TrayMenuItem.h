@@ -1,4 +1,5 @@
-#if (defined( __WIN32__ ) || defined( _WIN32 ))
+#include "OgreStableHeaders.h"
+#ifdef PLATFORM_WINDOWS //#if (defined( __WIN32__ ) || defined( _WIN32 ))
 
 #pragma once
 #include "TrayMenuItemBase.h"

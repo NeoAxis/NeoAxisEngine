@@ -913,7 +913,10 @@ namespace NeoAxis
 			if( nativeObjectHandle != ushort.MaxValue ) //if( nativeObject != null )
 			{
 				if( EngineApp.EngineTime - nativeObjectLastUsedTime > howLongHasNotBeenUsedInSeconds )
+				{
+					//if( GpuTexture.testRandom.NextDouble() > 0.5 )
 					DestroyNativeObject();
+				}
 			}
 		}
 

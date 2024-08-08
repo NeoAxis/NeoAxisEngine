@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /*
   Simple DirectMedia Layer
   Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
@@ -112,3 +115,5 @@ SDL_DrawPoints(SDL_Surface * dst, const SDL_Point * points, int count,
 #endif /* !SDL_RENDER_DISABLED */
 
 /* vi: set ts=4 sw=4 expandtab: */
+
+#endif

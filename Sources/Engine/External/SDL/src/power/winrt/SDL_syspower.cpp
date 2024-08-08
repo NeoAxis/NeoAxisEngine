@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /*
   Simple DirectMedia Layer
   Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
@@ -42,3 +45,5 @@ SDL_GetPowerInfo_WinRT(SDL_PowerState * state, int *seconds, int *percent)
 #endif /* SDL_POWER_DISABLED */
 
 /* vi: set ts=4 sw=4 expandtab: */
+
+#endif

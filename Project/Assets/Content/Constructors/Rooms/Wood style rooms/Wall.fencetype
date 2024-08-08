@@ -1,0 +1,9 @@
+// Made with NeoAxis Engine 2024.1.
+
+.component NeoAxis.FenceType
+{
+	FullPanel
+	{
+		GetByReference = "Content\\Constructors\\Rooms\\Wood style rooms\\Wall.gltf|$Mesh"
+	}
+}

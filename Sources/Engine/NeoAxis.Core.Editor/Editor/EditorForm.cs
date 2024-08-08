@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Text;
 using System.Linq;
@@ -14,6 +13,7 @@ using Microsoft.Win32;
 using Internal.ComponentFactory.Krypton.Ribbon;
 using System.Diagnostics;
 using NeoAxis.Networking;
+using System.Threading;
 
 namespace NeoAxis.Editor
 {
@@ -423,9 +423,56 @@ namespace NeoAxis.Editor
 			}
 		}
 
+		static void AfterFatalRestartApp()
+		{
+			EditorAPI2.BeginRestartApplication();
+
+			//restart the app
+			EditorAPI2.GetRestartApplication( out var needRestart, out _ );
+			if( needRestart )
+			{
+				string fullPath = Process.GetCurrentProcess().MainModule.FileName;
+				Process.Start( new ProcessStartInfo( fullPath ) { UseShellExecute = true } );
+			}
+
+			//kill this app
+			Process process = Process.GetCurrentProcess();
+			process.Kill();
+		}
+
+		public void AfterFatalShowDialogAndSaveDocuments( string errorText, ref bool skipLogFatal )
+		{
+			var cancel = ShowDialogAndSaveDocuments( workspaceController.GetDockWindows(), out var modifiedDocumentsWereSaved, true, errorText );
+			if( !cancel )
+			{
+				if( modifiedDocumentsWereSaved )
+				{
+					skipLogFatal = true;
+					ProcessConfigAutoSave( true );
+					AfterFatalRestartApp();
+				}
+				else
+				{
+					var text = "";
+					var errorText2 = errorText;
+					if( errorText2.Length > 500 )
+						errorText2 = errorText2.Substring( 0, 500 ) + "...";
+					text += "RENDERING FATAL ERROR!\n\n" + errorText2 + "\n\n";
+					text += EditorLocalization2.Translate( "General", "Restart the editor?" );
+
+					if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
+					{
+						skipLogFatal = true;
+						ProcessConfigAutoSave( true );
+						AfterFatalRestartApp();
+					}
+				}
+			}
+		}
+
 		private void EditorForm_FormClosing( object sender, FormClosingEventArgs e )
 		{
-			if( ShowDialogAndSaveDocuments( workspaceController.GetDockWindows() ) )
+			if( ShowDialogAndSaveDocuments( workspaceController.GetDockWindows(), out _, false ) )
 			{
 				e.Cancel = true;
 				return;
@@ -472,8 +519,10 @@ namespace NeoAxis.Editor
 		// сохранить только выбранные окна. не обязательно все. например может использоваться
 		// из метода "Закрыть все окна кроме текущего".
 		//return: Cancel
-		bool ShowDialogAndSaveDocuments( IEnumerable<DockWindow> windows )
+		bool ShowDialogAndSaveDocuments( IEnumerable<DockWindow> windows, out bool modifiedDocumentsWereSaved, bool afterFatal = false, string errorText = "" )
 		{
+			modifiedDocumentsWereSaved = false;
+
 			var unsavedDocs = new List<DocumentInstance>();
 
 			foreach( var wnd in windows )
@@ -485,17 +534,39 @@ namespace NeoAxis.Editor
 			if( unsavedDocs.Count == 0 )
 				return false;
 
-			var text = EditorLocalization2.Translate( "General", "Save changes to the following files?" ) + "\n";
+			var text = "";
+			if( afterFatal )
+			{
+				var errorText2 = errorText;
+				if( errorText2.Length > 500 )
+					errorText2 = errorText2.Substring( 0, 500 ) + "...";
+				text += "RENDERING FATAL ERROR!\n\n" + errorText2 + "\n\n";
+			}
+
+			text += EditorLocalization2.Translate( "General", "Save changes to the following files?" );
+			text += "\n";
 			foreach( var doc in unsavedDocs )
 				text += "\n" + doc.Name;
 
-			switch( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNoCancel ) )
+
+			//var basicText = "Save changes to the following files?";
+
+			//var text = EditorLocalization2.Translate( "General", basicText ) + "\n";
+			//foreach( var doc in unsavedDocs )
+			//	text += "\n" + doc.Name;
+
+			//if( !string.IsNullOrEmpty( errorText ) )
+			//	text += " \n\nError: " + errorText;
+
+
+			switch( EditorMessageBox.ShowQuestion( text, afterFatal ? EMessageBoxButtons.YesNo : EMessageBoxButtons.YesNoCancel ) )
 			{
 			case EDialogResult.Cancel:
 				return true;
 			case EDialogResult.Yes:
-				//!!!!check error, return null
+				//!!!!check for errors?
 				unsavedDocs.ForEach( doc => doc.Save() );
+				modifiedDocumentsWereSaved = true;
 				return false;
 			case EDialogResult.No:
 				return false;
@@ -713,7 +784,7 @@ namespace NeoAxis.Editor
 					EngineToolTipManager.Update();
 
 				if( !needClose && canSaveConfig )
-					ProcessConfigAutoSave();
+					ProcessConfigAutoSave( false );
 
 				if( EditorAPI2.needShowProjectSettings )
 				{
@@ -787,6 +858,9 @@ namespace NeoAxis.Editor
 		{
 			existActiveViewports = false;
 
+			if( EngineApp.AfterFatalOperations )
+				return;
+
 			//!!!!
 
 			//!!!!каким-то не нужно часто обновляться
@@ -818,8 +892,10 @@ namespace NeoAxis.Editor
 
 				if( existsToDispose )
 				{
-					RenderingSystem.CallBgfxFrame();
-					RenderingSystem.CallBgfxFrame();
+					RenderingSystem.CallFrame();
+					Thread.Sleep( 10 );
+					RenderingSystem.CallFrame();
+					Thread.Sleep( 10 );
 				}
 
 				//destroy render targets for unvisible controls
@@ -847,8 +923,11 @@ namespace NeoAxis.Editor
 
 				if( existsToDispose )
 				{
-					RenderingSystem.CallBgfxFrame();
-					RenderingSystem.CallBgfxFrame();
+					Thread.Sleep( 10 );
+					RenderingSystem.CallFrame();
+					Thread.Sleep( 10 );
+					RenderingSystem.CallFrame();
+					Thread.Sleep( 10 );
 				}
 
 				//preview images
@@ -2258,13 +2337,13 @@ namespace NeoAxis.Editor
 			needRecreateQATButtons = true;
 		}
 
-		void ProcessConfigAutoSave()
+		void ProcessConfigAutoSave( bool forceUpdate )
 		{
 			if( configAutoSaveLastTime == 0 )
 				configAutoSaveLastTime = EngineApp.EngineTime;
 
 			//3 minutes
-			if( EngineApp.EngineTime > configAutoSaveLastTime + 60.0 * 3.0 )
+			if( EngineApp.EngineTime > configAutoSaveLastTime + 60.0 * 3.0 || forceUpdate )
 			{
 				configAutoSaveLastTime = EngineApp.EngineTime;
 
@@ -2275,4 +2354,3 @@ namespace NeoAxis.Editor
 		}
 	}
 }
-#endif

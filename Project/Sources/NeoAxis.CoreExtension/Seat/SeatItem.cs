@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace NeoAxis
 {
 	/// <summary>
-	/// A seat item for a character or other object in the seat.
+	/// A seat item for a character, a vehicle or other object in the seat.
 	/// </summary>
 	[AddToResourcesWindow( @"Addons\Seat\Seat Item", 10578 )]
 	public class SeatItem : Component

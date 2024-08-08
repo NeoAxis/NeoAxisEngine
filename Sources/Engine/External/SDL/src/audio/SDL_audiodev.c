@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /*
   Simple DirectMedia Layer
   Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
@@ -122,3 +125,5 @@ SDL_EnumUnixAudioDevices(const int classic, int (*test)(int))
 #endif /* Audio driver selection */
 
 /* vi: set ts=4 sw=4 expandtab: */
+
+#endif

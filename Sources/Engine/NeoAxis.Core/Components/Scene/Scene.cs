@@ -37,6 +37,10 @@ namespace NeoAxis
 		//sound
 		internal CurveCubicSpline1 soundDefaultRolloffGraph;
 
+		//!!!!ideally to remove
+		//optimization
+		internal ESet<MeshInSpace> meshInSpaces = new ESet<MeshInSpace>();
+
 		//!!!!
 		//Particles freeParticles;
 
@@ -3027,6 +3031,15 @@ namespace NeoAxis
 			}
 			else
 				AllScenes_GetRenderSceneData?.Invoke( this, context );
+
+			//optimization
+			//enumerate all MeshInSpace
+			try
+			{
+				foreach( var meshInSpace in meshInSpaces )
+					meshInSpace.Scene_GetRenderSceneData2ForGroupOfObjects();
+			}
+			catch { }
 
 			//process group of objects queued actions
 			if( EngineApp.IsEditor )

@@ -1,0 +1,16 @@
+.component NeoAxis.Component_PipeType
+{
+	OutsideDiameter = 1
+	CurvatureRadius = 1.2
+	SegmentsLength = 0.2
+	SegmentsCircle = 32
+	UVTilesLength = 0.25
+	Material
+	{
+		GetByReference = "Content\\Materials\\Basic Library\\Metal\\Brushed Iron 01.material"
+	}
+	Holder
+	{
+		GetByReference = "Content\\Pipes\\NeoAxis\\Iron pipe 1 m\\Data\\Holder 1.fbx|$Mesh"
+	}
+}

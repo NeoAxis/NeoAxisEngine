@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /**
  * OpenAL cross platform audio library
  * Copyright (C) 2018 by authors.
@@ -224,3 +227,5 @@ BackendPtr SDL2BackendFactory::createBackend(ALCdevice *device, BackendType type
         return BackendPtr{new Sdl2Backend{device}};
     return nullptr;
 }
+
+#endif

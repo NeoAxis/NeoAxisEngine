@@ -23,6 +23,8 @@
 
 //!!!!betauser
 #include "special.h"
+#include <queue>
+#include <string>
 //#include <bx/float4x4_t.h>
 
 ////!!!!betauser
@@ -6032,6 +6034,35 @@ BGFX_C_API void bgfx_check_wrapper(int initSettings, int platformData, int nativ
 		Fatal("bgfx_check_wrapper: sizeof(bgfx_platform_data_t) != platformData.");
 	if (sizeof(bgfx::Attachment) != nativeAttachment)
 		Fatal("bgfx_check_wrapper: sizeof(bgfx::Attachment) != nativeAttachment.");
+}
+
+//!!!!betauser
+std::queue<std::string> lastWarnings;
+bx::Mutex lastWarningsMutex;
+
+BGFX_C_API bool bgfx_get_last_warning(/*int bufferSize, */char* result)
+{
+	bx::MutexScope scope(lastWarningsMutex);
+
+	if (!lastWarnings.empty())
+	{
+		std::string text = lastWarnings.front();
+		lastWarnings.pop();
+		if (text.size() > 1024)
+			text = text.substr(0, 1024);
+		strcpy(result, text.c_str());
+		return true;
+	}
+	else
+		return false;
+}
+
+void add_last_warning(const char* error)
+{
+	bx::MutexScope scope(lastWarningsMutex);
+
+	if (lastWarnings.size() < 100)
+		lastWarnings.push(error);
 }
 
 ////!!!!betauser

@@ -1,3 +1,6 @@
+//!!!!betauser. android compiler crash
+#ifndef __ANDROID__
+
 // SPDX-License-Identifier: Apache-2.0
 // ----------------------------------------------------------------------------
 // Copyright 2011-2022 Arm Limited
@@ -1249,3 +1252,5 @@ bool is_legal_3d_block_size(
 
 	return false;
 }
+
+#endif

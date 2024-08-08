@@ -11,9 +11,25 @@ namespace NeoAxis
 	public class ProjectSettingsPage_ShaderEditor : ProjectSettingsPage
 	{
 		/// <summary>
+		/// The time between last shader code changes and auto complation of the shader.
+		/// </summary>
+		[Category( "Shader Editor: Compilation" )]
+		[DisplayName( "Auto Compile Time In Seconds" )]
+		[DefaultValue( 10.0 )]
+		[Range( 5, 200, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		public Reference<double> ShaderEditorAutoCompileTimeInSeconds
+		{
+			get { if( _shaderEditorAutoCompileTimeInSeconds.BeginGet() ) ShaderEditorAutoCompileTimeInSeconds = _shaderEditorAutoCompileTimeInSeconds.Get( this ); return _shaderEditorAutoCompileTimeInSeconds.value; }
+			set { if( _shaderEditorAutoCompileTimeInSeconds.BeginSet( this, ref value ) ) { try { ShaderEditorAutoCompileTimeInSecondsChanged?.Invoke( this ); } finally { _shaderEditorAutoCompileTimeInSeconds.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ShaderEditorAutoCompileTimeInSeconds"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorAutoCompileTimeInSecondsChanged;
+		ReferenceField<double> _shaderEditorAutoCompileTimeInSeconds = 10.0;
+
+		/// <summary>
 		/// Whether to display line numbers.
 		/// </summary>
-		[Category( "Shader Editor" )]
+		[Category( "Shader Editor: Display" )]
 		[DisplayName( "Display Line Numbers" )]
 		[DefaultValue( false )]
 		public Reference<bool> ShaderEditorDisplayLineNumbers
@@ -28,7 +44,7 @@ namespace NeoAxis
 		/// <summary>
 		/// Whether to wrap words.
 		/// </summary>
-		[Category( "Shader Editor" )]
+		[Category( "Shader Editor: Display" )]
 		[DisplayName( "Word Wrap" )]
 		[DefaultValue( true )]
 		public Reference<bool> ShaderEditorWordWrap
@@ -43,7 +59,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The background color for the light theme.
 		/// </summary>
-		[Category( "Shader Editor" )]
+		[Category( "Shader Editor: Display" )]
 		[DisplayName( "Background Color for Light Theme" )]
 		[DefaultValue( "0.98 0.98 0.98" )]
 		[ColorValueNoAlpha]
@@ -56,7 +72,7 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorBackgroundColorLightThemeChanged;
 		ReferenceField<ColorValue> _shaderEditorBackgroundColorLightTheme = new ColorValue( 0.98, 0.98, 0.98 );
 
-		//[Category( "Shader Editor" )]
+		//[Category( "Shader Editor: Display" )]
 		//[DisplayName( "Default Text Color for Light Theme" )]
 		//[DefaultValue( "0.1 0.1 0.1" )]
 		//[ColorValueNoAlpha]
@@ -72,7 +88,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The name of the font.
 		/// </summary>
-		[Category( "Shader Editor" )]
+		[Category( "Shader Editor: Display" )]
 		[DisplayName( "Font" )]
 		[DefaultValue( "Consolas" )]
 		public Reference<string> ShaderEditorFont
@@ -87,7 +103,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The size of the font.
 		/// </summary>
-		[Category( "Shader Editor" )]
+		[Category( "Shader Editor: Display" )]
 		[DisplayName( "Font Size" )]
 		[DefaultValue( 13.0 )]
 		[Range( 6, 40 )]
@@ -103,7 +119,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The background color for the dark theme.
 		/// </summary>
-		[Category( "Shader Editor" )]
+		[Category( "Shader Editor: Display" )]
 		[DisplayName( "Background Color for Dark Theme" )]
 		[DefaultValue( "0.1 0.1 0.1" )]
 		[ColorValueNoAlpha]
@@ -119,7 +135,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The background color of selected text for the light theme.
 		/// </summary>
-		[Category( "Shader Editor" )]
+		[Category( "Shader Editor: Display" )]
 		[DisplayName( "Selection Background for Light Theme" )]
 		[DefaultValue( "0.4 0.6 1" )]
 		[ColorValueNoAlpha]
@@ -135,7 +151,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The foreground color of selected text for the light theme.
 		/// </summary>
-		[Category( "Shader Editor" )]
+		[Category( "Shader Editor: Display" )]
 		[DisplayName( "Selection Foreground for Light Theme" )]
 		[DefaultValue( "0.1 0.1 0.1" )]
 		[ColorValueNoAlpha]
@@ -151,7 +167,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The background color of selected text for the dark theme.
 		/// </summary>
-		[Category( "Shader Editor" )]
+		[Category( "Shader Editor: Display" )]
 		[DisplayName( "Selection Background for Dark Theme" )]
 		[DefaultValue( "0.25 0.37 0.62" )]
 		[ColorValueNoAlpha]
@@ -167,7 +183,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The foreground color of selected text for the dark theme.
 		/// </summary>
-		[Category( "Shader Editor" )]
+		[Category( "Shader Editor: Display" )]
 		[DisplayName( "Selection Foreground for Dark Theme" )]
 		[DefaultValue( "0.9 0.9 0.9" )]
 		[ColorValueNoAlpha]
@@ -183,7 +199,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The background color of search text for the light theme.
 		/// </summary>
-		[Category( "Shader Editor" )]
+		[Category( "Shader Editor: Display" )]
 		[DisplayName( "Search Background for Light Theme" )]
 		[DefaultValue( "1 0 0" )]
 		[ColorValueNoAlpha]
@@ -199,7 +215,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The background color of search text for the dark theme.
 		/// </summary>
-		[Category( "Shader Editor" )]
+		[Category( "Shader Editor: Display" )]
 		[DisplayName( "Search Background for Dark Theme" )]
 		[DefaultValue( "0.8 0.16 0.16" )]
 		[ColorValueNoAlpha]
@@ -212,7 +228,7 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_ShaderEditor> ShaderEditorSearchBackgroundDarkThemeChanged;
 		ReferenceField<ColorValue> _shaderEditorSearchBackgroundDarkTheme = new ColorValue( 0.8, 0.16, 0.16 );
 
-		//[Category( "Shader Editor" )]
+		//[Category( "Shader Editor: Display" )]
 		//[DisplayName( "Default Text Color for Dark Theme" )]
 		//[DefaultValue( "0.9 0.9 0.9" )]
 		//[ColorValueNoAlpha]
@@ -225,7 +241,7 @@ namespace NeoAxis
 		//public event Action<ProjectSettingsComponentPage_ShaderEditor> ShaderEditorDefaultTextColorDarkThemeChanged;
 		//ReferenceField<ColorValue> _shaderEditorDefaultTextColorDarkTheme = new ColorValue( 0.9, 0.9, 0.9 );
 
-		[Category( "Shader Editor" )]
+		[Category( "Shader Editor: Display" )]
 		[DisplayName( "Highlighting Scheme" )]
 		public string ShaderEditorHighlightingScheme
 		{

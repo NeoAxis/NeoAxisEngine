@@ -1947,7 +1947,7 @@ namespace NeoAxis.Import
 							data.Opacity = aiMaterial.Opacity;
 
 						//Transmission factor
-						if( data.Opacity == 1 && transmissionFactor.HasValue )
+						if( data.Opacity == 1 && transmissionFactor.HasValue && transmissionFactor.Value > 0 )
 						{
 							//!!!!not right?
 							data.Opacity = MathEx.Saturate( 1.0f - MathEx.Sqrt( transmissionFactor.Value ) );

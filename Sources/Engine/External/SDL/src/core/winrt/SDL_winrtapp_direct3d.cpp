@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /*
   Simple DirectMedia Layer
   Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
@@ -853,3 +856,5 @@ void SDL_WinRTApp::OnGamepadAdded(Platform::Object ^sender, Windows::Gaming::Inp
 #endif
 
 /* vi: set ts=4 sw=4 expandtab: */
+
+#endif

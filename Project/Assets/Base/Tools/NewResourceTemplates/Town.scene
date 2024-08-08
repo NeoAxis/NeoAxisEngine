@@ -383,7 +383,7 @@
 		Transform = "-10.5 17.5 0; 0 0 0 1; 1 1 1"
 		FenceType
 		{
-			GetByReference = "Content\\Fences\\Authors\\NeoAxis\\Wood fence\\Brown 1.fencetype"
+			GetByReference = "Content\\Fences\\NeoAxis\\Wood fence\\Brown 1.fencetype"
 		}
 		.component NeoAxis.FencePoint
 		{
@@ -402,7 +402,7 @@
 		Transform = "-12.5 17.5 0; 0 0 0 1; 1 1 1"
 		FenceType
 		{
-			GetByReference = "Content\\Fences\\Authors\\NeoAxis\\Wood fence\\Brown 1.fencetype"
+			GetByReference = "Content\\Fences\\NeoAxis\\Wood fence\\Brown 1.fencetype"
 		}
 		.component NeoAxis.FencePoint
 		{
@@ -532,7 +532,7 @@
 			}
 		}
 	}
-	.component "Content\\Fences\\Authors\\NeoAxis\\Wood fence\\Brown 1 entrance.objectinspace"
+	.component "Content\\Fences\\NeoAxis\\Wood fence\\Brown 1 entrance.objectinspace"
 	{
 		Name = 
 		Transform = "-10.5 17.5 0; 0 0 1 0.00000000000000006; 1 1 1"
@@ -548,7 +548,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Fences\\Authors\\NeoAxis\\Wood fence\\Data\\Brown\\Entrance 1 hinge left.fbx|$Mesh"
+				GetByReference = "Content\\Fences\\NeoAxis\\Wood fence\\Data\\Brown\\Entrance 1 hinge left.fbx|$Mesh"
 			}
 			SpecialEffects
 			{
@@ -626,7 +626,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Fences\\Authors\\NeoAxis\\Wood fence\\Data\\Brown\\Entrance 1 door left.fbx|$Mesh"
+				GetByReference = "Content\\Fences\\NeoAxis\\Wood fence\\Data\\Brown\\Entrance 1 door left.fbx|$Mesh"
 			}
 			SpecialEffects
 			{
@@ -659,7 +659,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Fences\\Authors\\NeoAxis\\Wood fence\\Data\\Brown\\Entrance 1 hinge right.fbx|$Mesh"
+				GetByReference = "Content\\Fences\\NeoAxis\\Wood fence\\Data\\Brown\\Entrance 1 hinge right.fbx|$Mesh"
 			}
 			SpecialEffects
 			{
@@ -737,7 +737,7 @@
 			}
 			Mesh
 			{
-				GetByReference = "Content\\Fences\\Authors\\NeoAxis\\Wood fence\\Data\\Brown\\Entrance 1 door right.fbx|$Mesh"
+				GetByReference = "Content\\Fences\\NeoAxis\\Wood fence\\Data\\Brown\\Entrance 1 door right.fbx|$Mesh"
 			}
 			SpecialEffects
 			{

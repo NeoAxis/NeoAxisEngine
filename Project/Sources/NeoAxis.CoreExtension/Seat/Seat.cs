@@ -69,7 +69,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		internal class DynamicData
+		public class DynamicData
 		{
 			public SeatType SeatType;
 			public Mesh Mesh;
@@ -329,6 +329,11 @@ namespace NeoAxis
 			needRecreateDynamicData = true;
 		}
 
+		protected virtual DynamicData OnNewDynamicData()
+		{
+			return new DynamicData();
+		}
+
 		public void CreateDynamicData()
 		{
 			DestroyDynamicData();
@@ -344,7 +349,7 @@ namespace NeoAxis
 			if( type == null )
 				return;
 
-			dynamicData = new DynamicData();
+			dynamicData = OnNewDynamicData();//new DynamicData();
 			dynamicData.SeatType = type;
 			dynamicData.Mesh = type.Mesh;
 
@@ -428,10 +433,10 @@ namespace NeoAxis
 			return -1;
 		}
 
-		public delegate void ObjectInteractionGetInfoEventDelegate( Seat sender, GameMode gameMode, ref InteractiveObjectObjectInfo info );
-		public event ObjectInteractionGetInfoEventDelegate ObjectInteractionGetInfoEvent;
+		public delegate void InteractionGetInfoEventDelegate( Seat sender, GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info );
+		public event InteractionGetInfoEventDelegate InteractionGetInfoEvent;
 
-		public virtual void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
+		public virtual void InteractionGetInfo( GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info )
 		{
 			//control by a character
 			var character = gameMode.ObjectControlledByPlayer.Value as Character;
@@ -445,7 +450,7 @@ namespace NeoAxis
 					info.Text = $"Press {gameMode.KeyInteract1.Value} to sit";
 				}
 			}
-			ObjectInteractionGetInfoEvent?.Invoke( this, gameMode, ref info );
+			InteractionGetInfoEvent?.Invoke( this, gameMode, initiator, ref info );
 		}
 
 		public ObjectInSpace GetObjectOnSeat( int seatIndex )
@@ -455,7 +460,7 @@ namespace NeoAxis
 			return null;
 		}
 
-		public virtual bool ObjectInteractionInputMessage( GameMode gameMode, InputMessage message )
+		public virtual bool InteractionInputMessage( GameMode gameMode, Component initiator, InputMessage message )
 		{
 			var keyDown = message as InputMessageKeyDown;
 			if( keyDown != null )
@@ -494,15 +499,15 @@ namespace NeoAxis
 			return false;
 		}
 
-		public virtual void ObjectInteractionEnter( ObjectInteractionContext context )
+		public virtual void InteractionEnter( ObjectInteractionContext context )
 		{
 		}
 
-		public virtual void ObjectInteractionExit( ObjectInteractionContext context )
+		public virtual void InteractionExit( ObjectInteractionContext context )
 		{
 		}
 
-		public virtual void ObjectInteractionUpdate( ObjectInteractionContext context )
+		public virtual void InteractionUpdate( ObjectInteractionContext context )
 		{
 		}
 

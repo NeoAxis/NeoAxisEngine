@@ -678,1290 +678,747 @@
     <ClCompile Include="Jolt\Physics\LargeIslandSplitter.cpp">
       <Filter>Physics\Jolt</Filter>
     </ClCompile>
-    <ClCompile Include="Jolt\Core\JobSystemSingleThreaded.cpp">
-      <Filter>Physics\Jolt</Filter>
-    </ClCompile>
     <ClCompile Include="Jolt\Physics\Constraints\SpringSettings.cpp">
       <Filter>Physics\Jolt</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="ImageLibrary\DataReaderWriter.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\NULLPrerequisites.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\NULLRenderSystem.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\Ogre.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreAlignedAllocator.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreArchive.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreArchiveFactory.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreArchiveManager.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreAtomicWrappers.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreAxisAlignedBox.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreAxisAlignedBoxD.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreBitwise.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreBlendMode.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreCodec.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreColourValue.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreCommon.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreConfig.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreConfigOptionMap.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreDataStream.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreDDSCodec.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreDebugKeys.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreDynLib.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreDynLibManager.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreException.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreFactoryObj.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreFreeImageCodec.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreHeaderPrefix.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreHeaderSuffix.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreImage.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreImageCodec.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreImageResampler.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreIteratorRange.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreIteratorWrapper.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreIteratorWrappers.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreLog.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreLogManager.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreMath.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreMathD.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreMatrix3.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreMatrix3D.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreMatrix4.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreMemoryAllocatedObject.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreMemoryAllocatorConfig.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreMemoryStdAlloc.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreMemorySTLAllocator.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreOptimisedUtil.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgrePixelConversions.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgrePixelFormat.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgrePixelFormatDescriptions.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgrePlane.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgrePlaneBoundedVolume.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgrePlaneD.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgrePlatform.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgrePlatformInformation.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgrePrerequisites.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgrePVRTCCodec.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreQuaternion.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreRay.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreRayD.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreRectangle.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreRenderSystem.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreRenderSystemCapabilities.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreResource.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreResourceGroupManager.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreResourceManager.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreRoot.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreSceneManager.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreSharedPtr.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreSIMDHelper.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreSingleton.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreSphere.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreSphereD.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreStableHeaders.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreStdHeaders.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreString.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreStringConverter.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreStringInterface.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreStringVector.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreThreadDefines.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreThreadDefinesNone.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreVector2.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreVector3.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreVector3D.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreVector4.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\YUVToRGBConverter.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="MemoryManager\MemoryManager.h">
-      <Filter>MemoryManager</Filter>
-    </ClInclude>
-    <ClInclude Include="MemoryManager\MemoryManager_ManageNew.h">
-      <Filter>MemoryManager</Filter>
-    </ClInclude>
-    <ClInclude Include="MemoryManager\MemoryManager_SimpleNew.h">
-      <Filter>MemoryManager</Filter>
-    </ClInclude>
-    <ClInclude Include="MemoryManager\MemoryManagerInternal.h">
-      <Filter>MemoryManager</Filter>
-    </ClInclude>
-    <ClInclude Include="MemoryManager\MemoryManagerInternal_precompiled.h">
-      <Filter>MemoryManager</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\AdditionalMathFunctions.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\FreeType_Wrapper.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\MiniDump.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\MyOgreLogListener.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\MyOgreSceneManager.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\MyOgreVirtualFileSystem.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\OgreArchiveManager_Wrapper.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\OgreImageManager_Wrapper.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\OgreLogManager_Wrapper.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\OgreNameValuePairList_Wrapper.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\OgreNativeWrapper.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\OgreNativeWrapperGeneral.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\OgrePixelFormat_Wrapper.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\OgreResourceGroupManager_Wrapper.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\OgreRoot_Wrapper.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\OgreStringInterface_Wrapper.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\YUVToRGBConverter_Wrapper.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\AxisAlignedBoxI.h">
-      <Filter>NeoAxis</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\Bounds.h">
-      <Filter>NeoAxis</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\BoundsD.h">
-      <Filter>NeoAxis</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\BoundsI.h">
-      <Filter>NeoAxis</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\DirectInputNativeWrapper.h">
-      <Filter>NeoAxis</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\NativeImpl.h">
-      <Filter>NeoAxis</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\NativeMemoryDictionary.h">
-      <Filter>NeoAxis</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\NeoAxisCoreNative.h">
-      <Filter>NeoAxis</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\OBB.h">
-      <Filter>NeoAxis</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\OBBD.h">
-      <Filter>NeoAxis</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\OctreeContainer.h">
-      <Filter>NeoAxis</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\StringUtils.h">
-      <Filter>NeoAxis</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\UtilsNativeWrapper.h">
-      <Filter>NeoAxis</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\Vector3I.h">
-      <Filter>NeoAxis</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\vhacd\VHACD.h">
-      <Filter>NeoAxis\vhacd</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\vhacd\src\btAlignedAllocator.h">
-      <Filter>NeoAxis\vhacd</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\vhacd\src\btAlignedObjectArray.h">
-      <Filter>NeoAxis\vhacd</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\vhacd\src\btConvexHullComputer.h">
-      <Filter>NeoAxis\vhacd</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\vhacd\src\btMinMax.h">
-      <Filter>NeoAxis\vhacd</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\vhacd\src\btScalar.h">
-      <Filter>NeoAxis\vhacd</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\vhacd\src\btVector3.h">
-      <Filter>NeoAxis\vhacd</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\vhacd\src\FloatMath.h">
-      <Filter>NeoAxis\vhacd</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdCircularList.h">
-      <Filter>NeoAxis\vhacd</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdICHull.h">
-      <Filter>NeoAxis\vhacd</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdManifoldMesh.h">
-      <Filter>NeoAxis\vhacd</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdMesh.h">
-      <Filter>NeoAxis\vhacd</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdMutex.h">
-      <Filter>NeoAxis\vhacd</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdRaycastMesh.h">
-      <Filter>NeoAxis\vhacd</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdSArray.h">
-      <Filter>NeoAxis\vhacd</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdTimer.h">
-      <Filter>NeoAxis\vhacd</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdVector.h">
-      <Filter>NeoAxis\vhacd</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdVHACD.h">
-      <Filter>NeoAxis\vhacd</Filter>
-    </ClInclude>
-    <ClInclude Include="NeoAxis\vhacd\src\vhacdVolume.h">
-      <Filter>NeoAxis\vhacd</Filter>
-    </ClInclude>
-    <ClInclude Include="MaskedOcclusionCulling\FrameRecorder.h">
-      <Filter>MaskedOcclusionCulling</Filter>
-    </ClInclude>
-    <ClInclude Include="MaskedOcclusionCulling\MaskedOcclusionCulling.h">
-      <Filter>MaskedOcclusionCulling</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\NeoAxisPhysicsNative.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\AABBTree\NodeCodec\NodeCodecQuadTreeHalfFloat.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\AABBTree\TriangleCodec\TriangleCodecIndexed8BitPackSOA4Flags.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\AABBTree\AABBTreeBuilder.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\AABBTree\AABBTreeToBuffer.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\ARMNeon.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\Atomics.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\ByteBuffer.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\Color.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\Core.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\Factory.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\FixedSizeFreeList.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\FPControlWord.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\FPException.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\FPFlushDenormals.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\HashCombine.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\InsertionSort.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\IssueReporting.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\JobSystem.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\JobSystemThreadPool.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\LinearCurve.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\LockFreeHashMap.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\Memory.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\Mutex.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\MutexArray.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\NonCopyable.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\Profiler.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\QuickSort.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\Reference.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\Result.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\RTTI.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\StaticArray.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\STLAlignedAllocator.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\STLAllocator.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\STLTempAllocator.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\StreamIn.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\StreamOut.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\StreamWrapper.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\StringTools.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\TempAllocator.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\TickCounter.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\UnorderedMap.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\UnorderedSet.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\AABox.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\AABox4.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\ClipPoly.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\ClosestPoint.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\ConvexHullBuilder.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\ConvexHullBuilder2D.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\ConvexSupport.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\Ellipse.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\EPAConvexHullBuilder.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\EPAPenetrationDepth.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\GJKClosestPoint.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\IndexedTriangle.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\Indexify.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\MortonCode.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\OrientedBox.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\Plane.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\RayAABox.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\RayAABox8.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\RayCapsule.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\RayCylinder.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\RaySphere.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\RayTriangle.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\RayTriangle8.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\Sphere.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Geometry\Triangle.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\DMat44.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\Double3.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\DVec3.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\DynMatrix.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\EigenValueSymmetric.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\FindRoot.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\Float2.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\Float3.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\Float4.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\GaussianElimination.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\HalfFloat.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\Mat44.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\Math.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\MathTypes.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\Matrix.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\Quat.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\Real.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\Swizzle.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\Trigonometry.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\UVec4.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\UVec8.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\Vec3.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\Vec4.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\Vec8.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Math\Vector.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\ObjectStream\GetPrimitiveTypeOfType.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\ObjectStream\ObjectStream.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\ObjectStream\ObjectStreamBinaryIn.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\ObjectStream\ObjectStreamBinaryOut.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\ObjectStream\ObjectStreamIn.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\ObjectStream\ObjectStreamOut.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\ObjectStream\ObjectStreamTextIn.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\ObjectStream\ObjectStreamTextOut.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\ObjectStream\ObjectStreamTypes.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\ObjectStream\SerializableAttribute.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\ObjectStream\SerializableAttributeEnum.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\ObjectStream\SerializableAttributeTyped.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\ObjectStream\SerializableObject.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\ObjectStream\TypeDeclarations.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Body\Body.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Body\BodyAccess.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Body\BodyActivationListener.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Body\BodyCreationSettings.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Body\BodyFilter.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Body\BodyID.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Body\BodyInterface.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Body\BodyLock.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Body\BodyLockInterface.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Body\BodyLockMulti.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Body\BodyManager.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Body\BodyPair.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Body\MassProperties.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Body\MotionProperties.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Body\MotionQuality.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Body\MotionType.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Character\Character.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Character\CharacterBase.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Character\CharacterVirtual.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\BroadPhase\BroadPhase.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\BroadPhase\BroadPhaseBruteForce.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\BroadPhase\BroadPhaseLayer.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\BroadPhase\BroadPhaseQuadTree.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\BroadPhase\BroadPhaseQuery.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\BroadPhase\QuadTree.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\BoxShape.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\CapsuleShape.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\CompoundShape.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\CompoundShapeVisitors.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\ConvexHullShape.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\ConvexShape.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\CylinderShape.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\DecoratedShape.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\GetTrianglesContext.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\HeightFieldShape.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\MeshShape.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\MutableCompoundShape.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\OffsetCenterOfMassShape.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\PolyhedronSubmergedVolumeCalculator.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\RotatedTranslatedShape.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\ScaledShape.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\ScaleHelpers.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\Shape.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\SphereShape.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\StaticCompoundShape.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\SubShapeID.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\SubShapeIDPair.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\TaperedCapsuleShape.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\Shape\TriangleShape.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\AABoxCast.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\ActiveEdgeMode.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\ActiveEdges.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\BackFaceMode.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\CastConvexVsTriangles.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\CastResult.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\CastSphereVsTriangles.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\CollectFacesMode.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\CollideConvexVsTriangles.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\CollidePointResult.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\CollideShape.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\CollideSphereVsTriangles.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\CollisionCollector.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\CollisionCollectorImpl.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\CollisionDispatch.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\CollisionGroup.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\ContactListener.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\GroupFilter.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\GroupFilterTable.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\ManifoldBetweenTwoFaces.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\NarrowPhaseQuery.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\NarrowPhaseStats.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\ObjectLayer.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\PhysicsMaterial.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\PhysicsMaterialSimple.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\RayCast.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\ShapeCast.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\ShapeFilter.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\SortReverseAndStore.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Collision\TransformedShape.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\AngleConstraintPart.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\AxisConstraintPart.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\DualAxisConstraintPart.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\GearConstraintPart.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\HingeRotationConstraintPart.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\IndependentAxisConstraintPart.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\PointConstraintPart.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\RackAndPinionConstraintPart.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\RotationEulerConstraintPart.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\RotationQuatConstraintPart.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\SpringPart.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintPart\SwingTwistConstraintPart.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\ConeConstraint.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\Constraint.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\ConstraintManager.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\ContactConstraintManager.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\DistanceConstraint.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\FixedConstraint.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\GearConstraint.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\HingeConstraint.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\MotorSettings.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\PathConstraint.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\PathConstraintPath.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\PathConstraintPathHermite.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\PointConstraint.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\PulleyConstraint.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\RackAndPinionConstraint.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\SixDOFConstraint.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\SliderConstraint.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\SwingTwistConstraint.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\TwoBodyConstraint.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Ragdoll\Ragdoll.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Vehicle\TrackedVehicleController.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Vehicle\VehicleAntiRollBar.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Vehicle\VehicleCollisionTester.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Vehicle\VehicleConstraint.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Vehicle\VehicleController.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Vehicle\VehicleDifferential.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Vehicle\VehicleEngine.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Vehicle\VehicleTrack.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Vehicle\VehicleTransmission.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Vehicle\Wheel.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Vehicle\WheeledVehicleController.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\DeterminismLog.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\EActivation.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\IslandBuilder.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\PhysicsLock.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\PhysicsScene.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\PhysicsSettings.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\PhysicsStepListener.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\PhysicsSystem.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\PhysicsUpdateContext.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\StateRecorder.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\StateRecorderImpl.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Renderer\DebugRenderer.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Renderer\DebugRendererPlayback.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Renderer\DebugRendererRecorder.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Skeleton\SkeletalAnimation.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Skeleton\Skeleton.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Skeleton\SkeletonMapper.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Skeleton\SkeletonPose.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\TriangleGrouper\TriangleGrouper.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\TriangleGrouper\TriangleGrouperClosestCentroid.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\TriangleGrouper\TriangleGrouperMorton.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\TriangleSplitter\TriangleSplitter.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\TriangleSplitter\TriangleSplitterBinning.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\TriangleSplitter\TriangleSplitterFixedLeafSize.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\TriangleSplitter\TriangleSplitterLongestAxis.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\TriangleSplitter\TriangleSplitterMean.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\TriangleSplitter\TriangleSplitterMorton.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Jolt.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\RegisterTypes.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\JobSystemWithBarrier.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\Semaphore.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\LargeIslandSplitter.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Core\JobSystemSingleThreaded.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-    <ClInclude Include="Jolt\Physics\Constraints\SpringSettings.h">
-      <Filter>Physics\Jolt</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="NeoAxis\vhacd\src\FloatMath.inl">
-      <Filter>NeoAxis\vhacd</Filter>
-    </None>
-    <None Include="NeoAxis\vhacd\src\vhacdCircularList.inl">
-      <Filter>NeoAxis\vhacd</Filter>
-    </None>
-    <None Include="NeoAxis\vhacd\src\vhacdVector.inl">
-      <Filter>NeoAxis\vhacd</Filter>
-    </None>
-    <None Include="MaskedOcclusionCulling\CompilerSpecific.inl">
-      <Filter>MaskedOcclusionCulling</Filter>
-    </None>
-    <None Include="MaskedOcclusionCulling\MaskedOcclusionCullingCommon.inl">
-      <Filter>MaskedOcclusionCulling</Filter>
-    </None>
-    <None Include="Jolt\Core\FixedSizeFreeList.inl">
-      <Filter>Physics\Jolt</Filter>
-    </None>
-    <None Include="Jolt\Core\JobSystem.inl">
-      <Filter>Physics\Jolt</Filter>
-    </None>
-    <None Include="Jolt\Core\LockFreeHashMap.inl">
-      <Filter>Physics\Jolt</Filter>
-    </None>
-    <None Include="Jolt\Core\Profiler.inl">
-      <Filter>Physics\Jolt</Filter>
-    </None>
-    <None Include="Jolt\Math\DMat44.inl">
-      <Filter>Physics\Jolt</Filter>
-    </None>
-    <None Include="Jolt\Math\DVec3.inl">
-      <Filter>Physics\Jolt</Filter>
-    </None>
-    <None Include="Jolt\Math\Mat44.inl">
-      <Filter>Physics\Jolt</Filter>
-    </None>
-    <None Include="Jolt\Math\Quat.inl">
-      <Filter>Physics\Jolt</Filter>
-    </None>
-    <None Include="Jolt\Math\UVec4.inl">
-      <Filter>Physics\Jolt</Filter>
-    </None>
-    <None Include="Jolt\Math\UVec8.inl">
-      <Filter>Physics\Jolt</Filter>
-    </None>
-    <None Include="Jolt\Math\Vec3.inl">
-      <Filter>Physics\Jolt</Filter>
-    </None>
-    <None Include="Jolt\Math\Vec4.inl">
-      <Filter>Physics\Jolt</Filter>
-    </None>
-    <None Include="Jolt\Math\Vec8.inl">
-      <Filter>Physics\Jolt</Filter>
-    </None>
-    <None Include="Jolt\Physics\Body\Body.inl">
-      <Filter>Physics\Jolt</Filter>
-    </None>
-    <None Include="Jolt\Physics\Body\MotionProperties.inl">
-      <Filter>Physics\Jolt</Filter>
-    </None>
+    <ClCompile Include="..\External\FreeImage\Source\DeprecationManager\Deprecated.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\DeprecationManager\DeprecationMgr.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Background.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\BSplineRotate.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Channels.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\ClassicRotate.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Colors.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\CopyPaste.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Display.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Flip.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\JPEGTransform.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\MultigridPoissonSolver.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Rescale.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Resize.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\BitmapAccess.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\CacheFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ColorLookup.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion16_555.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion16_565.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion24.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion32.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion4.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Conversion8.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionFloat.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionRGB16.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionRGBA16.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionRGBAF.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionRGBF.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionType.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ConversionUINT16.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\FreeImage.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\FreeImageIO.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\GetType.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Halftoning.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\J2KHelper.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\LFPQuantizer.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\MemoryIO.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\MNGHelper.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\MultiPage.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\NNQuantizer.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PixelAccess.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\Plugin.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginBMP.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginCUT.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginDDS.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginEXR.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginG3.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginGIF.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginHDR.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginICO.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginIFF.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginJ2K.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginJNG.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginJP2.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginJPEG.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginKOALA.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginMNG.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPCD.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPCX.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPFM.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPICT.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPNG.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPNM.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginPSD.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginRAS.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginRAW.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginSGI.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginTARGA.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginTIFF.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginWBMP.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginWebP.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginXBM.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PluginXPM.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\PSDParser.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\TIFFLogLuv.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\tmoColorConvert.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\tmoDrago03.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\tmoFattal02.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\tmoReinhard05.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ToneMapping.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\WuQuantizer.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\ZLibInterface.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jaricom.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcapimin.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcapistd.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcarith.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jccoefct.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jccolor.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcdctmgr.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jchuff.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcinit.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcmainct.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcmarker.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcmaster.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcomapi.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcparam.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcprepct.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jcsample.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jctrans.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdapimin.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdapistd.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdarith.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdatadst.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdatasrc.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdcoefct.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdcolor.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jddctmgr.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdhuff.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdinput.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdmainct.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdmarker.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdmaster.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdmerge.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdpostct.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdsample.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jdtrans.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jerror.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jfdctflt.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jfdctfst.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jfdctint.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jidctflt.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jidctfst.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jidctint.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jmemmgr.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jmemnobs.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jquant1.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jquant2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jutils.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\transupp.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_callback_xs.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_chunk_descr.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_chunk_io.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_chunk_prc.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_chunk_xs.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_cms.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_display.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_dither.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_error.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_filter.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_hlapi.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_jpeg.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_object_prc.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_pixels.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_prop_xs.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_read.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_trace.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_write.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_zlib.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\bio.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\cidx_manager.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\cio.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\dwt.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\event.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\function_list.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\image.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\invert.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\j2k.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\jp2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\mct.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\mqc.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\openjpeg.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\opj_clock.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\phix_manager.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\pi.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\ppix_manager.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\raw.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\t1.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\t2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\tcd.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\tgt.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\thix_manager.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\tpix_manager.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\example.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\png.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngerror.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngget.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngmem.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngpread.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngread.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngrio.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngrtran.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngrutil.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngset.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngtrans.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngwio.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngwrite.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngwtran.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngwutil.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\internal\dcraw_common.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\internal\dcraw_fileio.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\internal\demosaic_packs.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\libraw_cxx.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\libraw_c_api.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\libraw_datastream.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_aux.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_close.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_codec.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_color.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_compress.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_dir.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_dirinfo.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_dirread.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_dirwrite.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_dumpmode.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_error.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_extension.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_fax3.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_fax3sm.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_flush.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_getimage.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_jpeg.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_jpeg_12.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_luv.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_lzma.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_lzw.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_next.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_ojpeg.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_open.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_packbits.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_pixarlog.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_predict.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_print.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_read.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_strip.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_swab.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_thunder.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_tile.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_version.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_warning.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_write.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_zip.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.alpha.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.buffer.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.frame.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.idec.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.io.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.quant.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.tree.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.vp8.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.vp8l.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.webp.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\demux\demux.anim_decode.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\demux\demux.demux.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.alpha_processing.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.alpha_processing_mips_dsp_r2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.alpha_processing_sse2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.alpha_processing_sse41.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.argb.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.argb_mips_dsp_r2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.argb_sse2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.cost.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.cost_mips32.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.cost_mips_dsp_r2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.cost_sse2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.cpu.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_clip_tables.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_mips32.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_mips_dsp_r2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_neon.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_sse2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_sse41.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_avx2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_mips32.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_mips_dsp_r2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_neon.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_sse2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_sse41.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.filters.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.filters_mips_dsp_r2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.filters_sse2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc_mips32.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc_mips_dsp_r2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc_neon.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc_sse2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc_sse41.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_mips_dsp_r2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_neon.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_sse2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.rescaler.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.rescaler_mips32.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.rescaler_mips_dsp_r2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.rescaler_neon.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.rescaler_sse2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.upsampling.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.upsampling_mips_dsp_r2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.upsampling_neon.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.upsampling_sse2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.yuv.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.yuv_mips32.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.yuv_mips_dsp_r2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.yuv_sse2.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.alpha.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.analysis.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.backward_references.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.config.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.cost.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.delta_palettization.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.filter.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.frame.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.histogram.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.iterator.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.near_lossless.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.picture.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.picture_csp.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.picture_psnr.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.picture_rescale.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.picture_tools.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.quant.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.syntax.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.token.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.tree.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.vp8l.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.webpenc.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\extras\extras.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\mux\mux.anim_encode.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\mux\mux.muxedit.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\mux\mux.muxinternal.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\mux\mux.muxread.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.bit_reader.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.bit_writer.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.color_cache.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.filters.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.huffman.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.huffman_encode.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.quant_levels.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.quant_levels_dec.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.random.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.rescaler.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.thread.c" />
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.utils.c" />
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\Exif.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\FIRational.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\FreeImageTag.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\IPTC.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\TagConversion.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\TagLib.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\Metadata\XTIFF.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Half\half.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IexMath\IexMathFloatExc.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IexMath\IexMathFpu.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Iex\IexBaseExc.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Iex\IexThrowErrnoExc.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\dwaLookups.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfAcesFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfB44Compressor.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfBoxAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfChannelList.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfChannelListAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfChromaticities.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfChromaticitiesAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfCompositeDeepScanLine.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfCompressionAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfCompressor.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfConvert.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfCRgbaFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepCompositing.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepFrameBuffer.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepImageStateAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepScanLineInputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepScanLineInputPart.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepScanLineOutputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepScanLineOutputPart.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepTiledInputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepTiledInputPart.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepTiledOutputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDeepTiledOutputPart.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDoubleAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfDwaCompressor.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfEnvmap.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfEnvmapAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfFastHuf.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfFloatAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfFloatVectorAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfFrameBuffer.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfFramesPerSecond.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfGenericInputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfGenericOutputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfHeader.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfHuf.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfInputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfInputPart.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfInputPartData.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfIntAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfIO.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfKeyCode.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfKeyCodeAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfLineOrderAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfLut.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfMatrixAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfMisc.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfMultiPartInputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfMultiPartOutputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfMultiView.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfOpaqueAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfOutputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfOutputPart.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfOutputPartData.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPartType.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPizCompressor.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPreviewImage.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPreviewImageAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfPxr24Compressor.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRational.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRationalAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRgbaFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRgbaYca.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRle.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfRleCompressor.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfScanLineInputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfStandardAttributes.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfStdIO.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfStringAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfStringVectorAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfSystemSpecific.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTestFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfThreading.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTileDescriptionAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledInputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledInputPart.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledMisc.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledOutputFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledOutputPart.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTiledRgbaFile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTileOffsets.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTimeCode.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfTimeCodeAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfVecAttribute.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfVersion.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfWav.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfZip.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfZipCompressor.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThread.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadMutex.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadPool.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadSemaphore.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathBox.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathColorAlgo.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathFun.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathMatrixAlgo.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathRandom.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathShear.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathVec.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\adler32.c" />
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\compress.c" />
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\crc32.c" />
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\deflate.c" />
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\gzclose.c" />
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\gzlib.c" />
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\gzread.c" />
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\gzwrite.c" />
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\infback.c" />
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\inffast.c" />
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\inflate.c" />
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\inftrees.c" />
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\trees.c" />
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\uncompr.c" />
+    <ClCompile Include="..\External\FreeImage\Source\ZLib\zutil.c" />
+    <ClCompile Include="..\External\FreeType\src\autofit\autofit.c" />
+    <ClCompile Include="..\External\FreeType\src\base\ftbase.c" />
+    <ClCompile Include="..\External\FreeType\src\base\ftbbox.c" />
+    <ClCompile Include="..\External\FreeType\src\base\ftbitmap.c" />
+    <ClCompile Include="..\External\FreeType\src\base\ftfstype.c" />
+    <ClCompile Include="..\External\FreeType\src\base\ftgasp.c" />
+    <ClCompile Include="..\External\FreeType\src\base\ftglyph.c" />
+    <ClCompile Include="..\External\FreeType\src\base\ftinit.c" />
+    <ClCompile Include="..\External\FreeType\src\base\ftmm.c" />
+    <ClCompile Include="..\External\FreeType\src\base\ftpfr.c" />
+    <ClCompile Include="..\External\FreeType\src\base\ftstroke.c" />
+    <ClCompile Include="..\External\FreeType\src\base\ftsynth.c" />
+    <ClCompile Include="..\External\FreeType\src\base\ftsystem.c" />
+    <ClCompile Include="..\External\FreeType\src\base\fttype1.c" />
+    <ClCompile Include="..\External\FreeType\src\base\ftwinfnt.c" />
+    <ClCompile Include="..\External\FreeType\src\bdf\bdf.c" />
+    <ClCompile Include="..\External\FreeType\src\bzip2\ftbzip2.c" />
+    <ClCompile Include="..\External\FreeType\src\cache\ftcache.c" />
+    <ClCompile Include="..\External\FreeType\src\cff\cff.c" />
+    <ClCompile Include="..\External\FreeType\src\cid\type1cid.c" />
+    <ClCompile Include="..\External\FreeType\src\gzip\ftgzip.c" />
+    <ClCompile Include="..\External\FreeType\src\lzw\ftlzw.c" />
+    <ClCompile Include="..\External\FreeType\src\pcf\pcf.c" />
+    <ClCompile Include="..\External\FreeType\src\pfr\pfr.c" />
+    <ClCompile Include="..\External\FreeType\src\psaux\psaux.c" />
+    <ClCompile Include="..\External\FreeType\src\pshinter\pshinter.c" />
+    <ClCompile Include="..\External\FreeType\src\psnames\psmodule.c" />
+    <ClCompile Include="..\External\FreeType\src\raster\raster.c" />
+    <ClCompile Include="..\External\FreeType\src\sfnt\sfnt.c" />
+    <ClCompile Include="..\External\FreeType\src\smooth\smooth.c" />
+    <ClCompile Include="..\External\FreeType\src\truetype\truetype.c" />
+    <ClCompile Include="..\External\FreeType\src\type1\type1.c" />
+    <ClCompile Include="..\External\FreeType\src\type42\type42.c" />
+    <ClCompile Include="..\External\FreeType\src\winfonts\winfnt.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libogg\src\bitwise.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libogg\src\framing.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\analyze.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\apiwrapper.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\bitpack.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\cpu.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\decapiwrapper.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\decinfo.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\decode.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\dequant.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\encapiwrapper.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\encfrag.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\encinfo.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\encode.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\enquant.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\fdct.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\fragment.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\huffdec.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\huffenc.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\idct.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\internal.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\mathops.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\mcenc.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\quant.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\rate.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\state.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\theora_info.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\tokenize.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\mmxencfrag.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\mmxfdct.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\mmxfrag.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\mmxidct.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\mmxstate.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\x86enc.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libtheora\lib\x86_vc\x86state.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\analysis.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\bitrate.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\block.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\codebook.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\envelope.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\floor0.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\floor1.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\info.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\lookup.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\lpc.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\lsp.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\mapping0.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\mdct.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\psy.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\registry.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\res0.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\sharedbook.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\smallft.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\synthesis.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\vorbisenc.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\lib\vorbisfile.c" />
+    <ClCompile Include="..\External\OggVorbisTheora\libvorbis\Lib\Window.c" />
+    <ClCompile Include="..\External\OpenALSoft\alc\alc.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\alconfig.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\alu.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\ambdec.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\base.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\dsound.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\loopback.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\null_backend.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\sdl2.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\wasapi.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\wave.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\winmm.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\bformatdec.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\bs2b.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\converter.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\autowah.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\chorus.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\compressor.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\dedicated.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\distortion.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\echo.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\equalizer.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\fshifter.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\modulator.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\null_effects.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\pshifter.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\reverb.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\effects\vmorpher.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\filters\biquad.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\filters\nfc.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\filters\splitter.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\helpers.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\hrtf.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\mastering.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\mixer\mixer_c.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\mixer\mixer_sse.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\mixer\mixer_sse2.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\mixer\mixer_sse3.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\mixer\mixer_sse41.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\mixvoice.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\panning.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\ringbuffer.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\uhjfilter.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\uiddefs.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\al\auxeffectslot.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\al\buffer.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\al\effect.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\al\error.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\al\event_renamed.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\al\extension.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\al\filter.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\al\listener.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\al\source.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\al\state_renamed.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\common\alcomplex.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\common\alexcpt.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\common\almalloc.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\common\dynload.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\common\strutils.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\common\threads.cpp" />
+    <ClCompile Include="..\External\SDL\src\atomic\SDL_atomic.c" />
+    <ClCompile Include="..\External\SDL\src\atomic\SDL_spinlock.c" />
+    <ClCompile Include="..\External\SDL\src\audio\disk\SDL_diskaudio.c" />
+    <ClCompile Include="..\External\SDL\src\audio\dummy\SDL_dummyaudio.c" />
+    <ClCompile Include="..\External\SDL\src\audio\SDL_audio.c" />
+    <ClCompile Include="..\External\SDL\src\audio\SDL_audiocvt.c" />
+    <ClCompile Include="..\External\SDL\src\audio\SDL_audiodev.c" />
+    <ClCompile Include="..\External\SDL\src\audio\SDL_audiotypecvt.c" />
+    <ClCompile Include="..\External\SDL\src\audio\SDL_mixer.c" />
+    <ClCompile Include="..\External\SDL\src\audio\SDL_wave.c" />
+    <ClCompile Include="..\External\SDL\src\audio\wasapi\SDL_wasapi.c" />
+    <ClCompile Include="..\External\SDL\src\audio\wasapi\SDL_wasapi_winrt.cpp" />
+    <ClCompile Include="..\External\SDL\src\core\windows\SDL_windows.c" />
+    <ClCompile Include="..\External\SDL\src\core\windows\SDL_xinput.c" />
+    <ClCompile Include="..\External\SDL\src\core\winrt\SDL_winrtapp_common.cpp" />
+    <ClCompile Include="..\External\SDL\src\core\winrt\SDL_winrtapp_direct3d.cpp" />
+    <ClCompile Include="..\External\SDL\src\core\winrt\SDL_winrtapp_xaml.cpp" />
+    <ClCompile Include="..\External\SDL\src\cpuinfo\SDL_cpuinfo.c" />
+    <ClCompile Include="..\External\SDL\src\dynapi\SDL_dynapi.c" />
+    <ClCompile Include="..\External\SDL\src\events\SDL_clipboardevents.c" />
+    <ClCompile Include="..\External\SDL\src\events\SDL_displayevents.c" />
+    <ClCompile Include="..\External\SDL\src\events\SDL_dropevents.c" />
+    <ClCompile Include="..\External\SDL\src\events\SDL_events.c" />
+    <ClCompile Include="..\External\SDL\src\events\SDL_gesture.c" />
+    <ClCompile Include="..\External\SDL\src\events\SDL_keyboard.c" />
+    <ClCompile Include="..\External\SDL\src\events\SDL_mouse.c" />
+    <ClCompile Include="..\External\SDL\src\events\SDL_quit.c" />
+    <ClCompile Include="..\External\SDL\src\events\SDL_touch.c" />
+    <ClCompile Include="..\External\SDL\src\events\SDL_windowevents.c" />
+    <ClCompile Include="..\External\SDL\src\filesystem\winrt\SDL_sysfilesystem.cpp" />
+    <ClCompile Include="..\External\SDL\src\file\SDL_rwops.c" />
+    <ClCompile Include="..\External\SDL\src\haptic\dummy\SDL_syshaptic.c" />
+    <ClCompile Include="..\External\SDL\src\haptic\SDL_haptic.c" />
+    <ClCompile Include="..\External\SDL\src\haptic\windows\SDL_dinputhaptic.c" />
+    <ClCompile Include="..\External\SDL\src\haptic\windows\SDL_windowshaptic.c" />
+    <ClCompile Include="..\External\SDL\src\haptic\windows\SDL_xinputhaptic.c" />
+    <ClCompile Include="..\External\SDL\src\joystick\dummy\SDL_sysjoystick.c" />
+    <ClCompile Include="..\External\SDL\src\joystick\SDL_gamecontroller.c" />
+    <ClCompile Include="..\External\SDL\src\joystick\SDL_joystick.c" />
+    <ClCompile Include="..\External\SDL\src\joystick\windows\SDL_dinputjoystick.c" />
+    <ClCompile Include="..\External\SDL\src\joystick\windows\SDL_windowsjoystick.c" />
+    <ClCompile Include="..\External\SDL\src\joystick\windows\SDL_xinputjoystick.c" />
+    <ClCompile Include="..\External\SDL\src\loadso\windows\SDL_sysloadso.c" />
+    <ClCompile Include="..\External\SDL\src\power\SDL_power.c" />
+    <ClCompile Include="..\External\SDL\src\power\winrt\SDL_syspower.cpp" />
+    <ClCompile Include="..\External\SDL\src\render\direct3d11\SDL_render_d3d11.c" />
+    <ClCompile Include="..\External\SDL\src\render\direct3d11\SDL_render_winrt.cpp" />
+    <ClCompile Include="..\External\SDL\src\render\direct3d11\SDL_shaders_d3d11.c" />
+    <ClCompile Include="..\External\SDL\src\render\opengles2\SDL_render_gles2.c" />
+    <ClCompile Include="..\External\SDL\src\render\opengles2\SDL_shaders_gles2.c" />
+    <ClCompile Include="..\External\SDL\src\render\SDL_d3dmath.c" />
+    <ClCompile Include="..\External\SDL\src\render\SDL_render.c" />
+    <ClCompile Include="..\External\SDL\src\render\SDL_yuv_sw.c" />
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_blendfillrect.c" />
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_blendline.c" />
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_blendpoint.c" />
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_drawline.c" />
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_drawpoint.c" />
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_render_sw.c" />
+    <ClCompile Include="..\External\SDL\src\render\software\SDL_rotate.c" />
+    <ClCompile Include="..\External\SDL\src\SDL.c" />
+    <ClCompile Include="..\External\SDL\src\SDL_assert.c" />
+    <ClCompile Include="..\External\SDL\src\SDL_dataqueue.c" />
+    <ClCompile Include="..\External\SDL\src\SDL_error.c" />
+    <ClCompile Include="..\External\SDL\src\SDL_hints.c" />
+    <ClCompile Include="..\External\SDL\src\SDL_log.c" />
+    <ClCompile Include="..\External\SDL\src\sensor\dummy\SDL_dummysensor.c" />
+    <ClCompile Include="..\External\SDL\src\sensor\SDL_sensor.c" />
+    <ClCompile Include="..\External\SDL\src\stdlib\SDL_getenv.c" />
+    <ClCompile Include="..\External\SDL\src\stdlib\SDL_iconv.c" />
+    <ClCompile Include="..\External\SDL\src\stdlib\SDL_malloc.c" />
+    <ClCompile Include="..\External\SDL\src\stdlib\SDL_qsort.c" />
+    <ClCompile Include="..\External\SDL\src\stdlib\SDL_stdlib.c" />
+    <ClCompile Include="..\External\SDL\src\stdlib\SDL_string.c" />
+    <ClCompile Include="..\External\SDL\src\thread\generic\SDL_syssem.c" />
+    <ClCompile Include="..\External\SDL\src\thread\SDL_thread.c" />
+    <ClCompile Include="..\External\SDL\src\thread\stdcpp\SDL_syscond.cpp" />
+    <ClCompile Include="..\External\SDL\src\thread\stdcpp\SDL_sysmutex.cpp" />
+    <ClCompile Include="..\External\SDL\src\thread\stdcpp\SDL_systhread.cpp" />
+    <ClCompile Include="..\External\SDL\src\timer\SDL_timer.c" />
+    <ClCompile Include="..\External\SDL\src\timer\windows\SDL_systimer.c" />
+    <ClCompile Include="..\External\SDL\src\video\dummy\SDL_nullevents.c" />
+    <ClCompile Include="..\External\SDL\src\video\dummy\SDL_nullframebuffer.c" />
+    <ClCompile Include="..\External\SDL\src\video\dummy\SDL_nullvideo.c" />
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit.c" />
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_0.c" />
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_1.c" />
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_A.c" />
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_auto.c" />
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_copy.c" />
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_N.c" />
+    <ClCompile Include="..\External\SDL\src\video\SDL_blit_slow.c" />
+    <ClCompile Include="..\External\SDL\src\video\SDL_bmp.c" />
+    <ClCompile Include="..\External\SDL\src\video\SDL_clipboard.c" />
+    <ClCompile Include="..\External\SDL\src\video\SDL_egl.c" />
+    <ClCompile Include="..\External\SDL\src\video\SDL_fillrect.c" />
+    <ClCompile Include="..\External\SDL\src\video\SDL_pixels.c" />
+    <ClCompile Include="..\External\SDL\src\video\SDL_rect.c" />
+    <ClCompile Include="..\External\SDL\src\video\SDL_RLEaccel.c" />
+    <ClCompile Include="..\External\SDL\src\video\SDL_shape.c" />
+    <ClCompile Include="..\External\SDL\src\video\SDL_stretch.c" />
+    <ClCompile Include="..\External\SDL\src\video\SDL_surface.c" />
+    <ClCompile Include="..\External\SDL\src\video\SDL_video.c" />
+    <ClCompile Include="..\External\SDL\src\video\SDL_yuv.c" />
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtevents.cpp" />
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtgamebar.cpp" />
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtkeyboard.cpp" />
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtmessagebox.cpp" />
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtmouse.cpp" />
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtopengles.cpp" />
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtpointerinput.cpp" />
+    <ClCompile Include="..\External\SDL\src\video\winrt\SDL_winrtvideo.cpp" />
+    <ClCompile Include="..\External\SDL\src\video\yuv2rgb\yuv_rgb.c" />
+    <ClCompile Include="MeshOptimizer\overdrawoptimizer.cpp" />
+    <ClCompile Include="MeshOptimizer\vcacheoptimizer.cpp" />
+    <ClCompile Include="MeshOptimizer\vfetchoptimizer.cpp" />
+    <ClCompile Include="SimpleTrayIcon\dllapi.cpp" />
+    <ClCompile Include="SimpleTrayIcon\dllmain.cpp" />
+    <ClCompile Include="SimpleTrayIcon\MyTrayMenu.cpp" />
+    <ClCompile Include="SimpleTrayIcon\TrayIcon.cpp" />
+    <ClCompile Include="SimpleTrayIcon\TrayIconManager.cpp" />
+    <ClCompile Include="SimpleTrayIcon\TrayMenuItem.cpp" />
+    <ClCompile Include="SimpleTrayIcon\TrayMenuItemBase.cpp" />
+    <ClCompile Include="SimpleTrayIcon\TrayMenuPopup.cpp" />
+    <ClCompile Include="SimpleTrayIcon\TrayMenuSeparator.cpp" />
   </ItemGroup>
 </Project>

@@ -46,5 +46,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Character\Maker\CharacterMaker.cs" />
+    <Compile Update="Door\ButtonType.cs">
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
 </Project>

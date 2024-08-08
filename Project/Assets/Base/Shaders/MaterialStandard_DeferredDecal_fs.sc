@@ -25,6 +25,8 @@ SAMPLER2D(s_gBuffer1TextureCopy, 4);
 SAMPLER2D(s_gBuffer4TextureCopy, 5);
 SAMPLER2D(s_gBuffer5TextureCopy, 6);
 
+#include "CustomFunctions.sh"
+
 #ifdef DISPLACEMENT_CODE_PARAMETERS
 	DISPLACEMENT_CODE_PARAMETERS
 #endif

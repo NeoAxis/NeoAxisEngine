@@ -1376,17 +1376,17 @@
         </member>
         <member name="T:NeoAxis.Time">
             <summary>
-            Class for working with time in the engine.
+            A class for working with time in the engine.
             </summary>
         </member>
         <member name="P:NeoAxis.Time.SimulationDelta">
             <summary>
-            Gets simulation time step.
+            Gets the time step of the simulation.
             </summary>
         </member>
         <member name="P:NeoAxis.Time.Current">
             <summary>
-            Gets the current time in the engine.
+            Gets the current time in the engine. The engine time is updated once before a simulation step or before a frame update if it is an editor.
             </summary>
         </member>
         <member name="T:NeoAxis.TypeUtility">
@@ -1783,11 +1783,18 @@
         <member name="E:NeoAxis.Product_Store.IdentifierChanged">
             <summary>Occurs when the <see cref="P:NeoAxis.Product_Store.Identifier"/> property value changes.</summary>
         </member>
-        <member name="E:NeoAxis.Product_Store.ShortDescriptionChanged">
-            <summary>Occurs when the <see cref="P:NeoAxis.Product_Store.ShortDescription"/> property value changes.</summary>
+        <member name="P:NeoAxis.Product_Store.Description">
+            <summary>
+            The description of the product.
+            </summary>
         </member>
-        <member name="E:NeoAxis.Product_Store.FullDescriptionChanged">
-            <summary>Occurs when the <see cref="P:NeoAxis.Product_Store.FullDescription"/> property value changes.</summary>
+        <member name="E:NeoAxis.Product_Store.DescriptionChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Product_Store.Description"/> property value changes.</summary>
+        </member>
+        <member name="P:NeoAxis.Product_Store.ProjectItemCategories">
+            <summary>
+            The list of categories of the product.
+            </summary>
         </member>
         <member name="E:NeoAxis.Product_Store.ProjectItemCategoriesChanged">
             <summary>Occurs when the <see cref="P:NeoAxis.Product_Store.ProjectItemCategories"/> property value changes.</summary>
@@ -1800,6 +1807,11 @@
         <member name="E:NeoAxis.Product_Store.TagsChanged">
             <summary>Occurs when the <see cref="P:NeoAxis.Product_Store.Tags"/> property value changes.</summary>
         </member>
+        <member name="P:NeoAxis.Product_Store.License">
+            <summary>
+            The license of the product.
+            </summary>
+        </member>
         <member name="E:NeoAxis.Product_Store.LicenseChanged">
             <summary>Occurs when the <see cref="P:NeoAxis.Product_Store.License"/> property value changes.</summary>
         </member>
@@ -1809,16 +1821,31 @@
         <member name="E:NeoAxis.Product_Store.VersionChanged">
             <summary>Occurs when the <see cref="P:NeoAxis.Product_Store.Version"/> property value changes.</summary>
         </member>
-        <member name="E:NeoAxis.Product_Store.CreateScreenshotsChanged">
-            <summary>Occurs when the <see cref="P:NeoAxis.Product_Store.CreateScreenshots"/> property value changes.</summary>
+        <member name="P:NeoAxis.Product_Store.PrepareScreenshot">
+            <summary>
+            Creates a screenshot to use it as a product logo.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.Product_Store.PrepareScreenshotChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Product_Store.PrepareScreenshot"/> property value changes.</summary>
         </member>
         <member name="P:NeoAxis.Product_Store.ProductLogo">
             <summary>
-            The logo of the product. 1000x562 size. 127, 127, 127 background. PNG or JPG format.
+            The logo of the product. {127, 127, 127} for background is the best. PNG, JPG formats are supported.
             </summary>
         </member>
         <member name="E:NeoAxis.Product_Store.ProductLogoChanged">
             <summary>Occurs when the <see cref="P:NeoAxis.Product_Store.ProductLogo"/> property value changes.</summary>
+        </member>
+        <member name="P:NeoAxis.Product_Store.Images">
+            <summary>
+            The list of images of the product. PNG, JPG formats are supported.
+            </summary>
+        </member>
+        <member name="P:NeoAxis.Product_Store.CreateProducts">
+            <summary>
+            The mode allows you to create multiple products.
+            </summary>
         </member>
         <member name="E:NeoAxis.Product_Store.CreateProductsChanged">
             <summary>Occurs when the <see cref="P:NeoAxis.Product_Store.CreateProducts"/> property value changes.</summary>
@@ -4961,7 +4988,7 @@
         </member>
         <member name="T:NeoAxis.MeshInSpace">
             <summary>
-            Mesh in the scene.
+            A mesh instance in the scene.
             </summary>
         </member>
         <member name="P:NeoAxis.MeshInSpace.Mesh">
@@ -6293,7 +6320,7 @@
         </member>
         <member name="T:NeoAxis.ObjectInSpace">
             <summary>
-            Abstract object in the scene.
+            The base component of an object in the scene.
             </summary>
         </member>
         <member name="P:NeoAxis.ObjectInSpace.Visible">
@@ -11254,6 +11281,9 @@
         <member name="E:NeoAxis.Sky.MixedModeProceduralFactorChanged">
             <summary>Occurs when the <see cref="P:NeoAxis.Sky.MixedModeProceduralFactor"/> property value changes.</summary>
         </member>
+        <member name="E:NeoAxis.Sky.ProceduralAtmosphereChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Sky.ProceduralAtmosphere"/> property value changes.</summary>
+        </member>
         <member name="E:NeoAxis.Sky.ProceduralLuminanceChanged">
             <summary>Occurs when the <see cref="P:NeoAxis.Sky.ProceduralLuminance"/> property value changes.</summary>
         </member>
@@ -11282,6 +11312,38 @@
         </member>
         <member name="E:NeoAxis.Sky.ProceduralResolutionChanged">
             <summary>Occurs when the <see cref="P:NeoAxis.Sky.ProceduralResolution"/> property value changes.</summary>
+        </member>
+        <member name="E:NeoAxis.Sky.ProceduralStarSizeChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Sky.ProceduralStarSize"/> property value changes.</summary>
+        </member>
+        <member name="E:NeoAxis.Sky.ProceduralStarDensityChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Sky.ProceduralStarDensity"/> property value changes.</summary>
+        </member>
+        <member name="E:NeoAxis.Sky.ProceduralStarClusterStrengthChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Sky.ProceduralStarClusterStrength"/> property value changes.</summary>
+        </member>
+        <member name="E:NeoAxis.Sky.ProceduralStarClusterSizeChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Sky.ProceduralStarClusterSize"/> property value changes.</summary>
+        </member>
+        <member name="E:NeoAxis.Sky.ProceduralStarColorChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Sky.ProceduralStarColor"/> property value changes.</summary>
+        </member>
+        <member name="P:NeoAxis.Sky.ProceduralAurora">
+            <summary>
+            The factor of the aurora effect.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.Sky.ProceduralAuroraChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Sky.ProceduralAurora"/> property value changes.</summary>
+        </member>
+        <member name="E:NeoAxis.Sky.ProceduralAuroraFrequencyChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Sky.ProceduralAuroraFrequency"/> property value changes.</summary>
+        </member>
+        <member name="E:NeoAxis.Sky.ProceduralAuroraColor1Changed">
+            <summary>Occurs when the <see cref="P:NeoAxis.Sky.ProceduralAuroraColor1"/> property value changes.</summary>
+        </member>
+        <member name="E:NeoAxis.Sky.ProceduralAuroraColor2Changed">
+            <summary>Occurs when the <see cref="P:NeoAxis.Sky.ProceduralAuroraColor2"/> property value changes.</summary>
         </member>
         <member name="P:NeoAxis.Sky.Cubemap">
             <summary>
@@ -12070,7 +12132,7 @@
         </member>
         <member name="T:NeoAxis.Scene.GetObjectsInSpaceItem">
             <summary>
-            Represents an item for <see cref="!:Scene.GetObjectsInSpace(IList&lt;GetObjectsInSpaceItem&gt;)"/> method.
+            Represents an item for Scene.GetObjectsInSpace method.
             </summary>
         </member>
         <member name="T:NeoAxis.Scene.GetObjectsInSpaceItem.ResultItem">
@@ -12795,6 +12857,14 @@
         <member name="E:NeoAxis.SurfaceGroupOfElements.ScaleRangeChanged">
             <summary>Occurs when the <see cref="P:NeoAxis.SurfaceGroupOfElements.ScaleRange"/> property value changes.</summary>
         </member>
+        <member name="P:NeoAxis.SurfaceGroupOfElements.RegularAlignment">
+            <summary>
+            The step of the tiling when this regular alignment mode is enabled.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.SurfaceGroupOfElements.RegularAlignmentChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.SurfaceGroupOfElements.RegularAlignment"/> property value changes.</summary>
+        </member>
         <member name="T:NeoAxis.Terrain">
             <summary>
             A heightmap based terrain.
@@ -13081,7 +13151,7 @@
         </member>
         <member name="T:NeoAxis.TransformOffset">
             <summary>
-            Represents object transformation. Can be used in pair with other transformations to calculate resulting offset of position, rotation, scale.
+            Represents the transformation of an object. It can be used in combination with other transformations to calculate the resulting position offset, rotation, scale. 
             </summary>
         </member>
         <member name="P:NeoAxis.TransformOffset.Source">
@@ -14257,7 +14327,7 @@
         </member>
         <member name="P:NeoAxis.EngineApp.EngineTime">
             <summary>
-            Gets the current time in the engine.
+            Gets the current time in the engine. The engine time is updated once before a simulation step or before a frame update if it is an editor.
             </summary>
         </member>
         <member name="P:NeoAxis.EngineApp.MaxFPS">
@@ -15730,6 +15800,11 @@
             A pressed gesture has moved.
             </summary>
         </member>
+        <member name="T:NeoAxis.MacOSInputDeviceManager">
+            <summary>
+            Describes singleton class for managing input devices on macOS.
+            </summary>
+        </member>
         <member name="T:NeoAxis.AVIWriter">
             <summary>
             AVI files writing using Video for Windows interface.
@@ -16467,7 +16542,7 @@
         </member>
         <member name="T:NeoAxis.WindowsInputDeviceManager">
             <summary>
-            Describes singleton class for managing input devices
+            Describes singleton class for managing input devices on Windows.
             </summary>
         </member>
         <member name="T:NeoAxis.MemoryVirtualFileStream">
@@ -32202,6 +32277,14 @@
         <member name="E:NeoAxis.ProjectSettingsPage_General.RunPlayerFromEditorInFullscreenChanged">
             <summary>Occurs when the <see cref="P:NeoAxis.ProjectSettingsPage_General.RunPlayerFromEditorInFullscreen"/> property value changes.</summary>
         </member>
+        <member name="P:NeoAxis.ProjectSettingsPage_General.AutoImport3DModels">
+            <summary>
+            Whether to enable auto import for 3D models.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.ProjectSettingsPage_General.AutoImport3DModelsChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.ProjectSettingsPage_General.AutoImport3DModels"/> property value changes.</summary>
+        </member>
         <member name="P:NeoAxis.ProjectSettingsPage_General.SimulationStepsPerSecond">
             <summary>
             The number of simulation steps per second.
@@ -32960,6 +33043,14 @@
             <summary>
             Represents a Shader Editor page of the project settings.
             </summary>
+        </member>
+        <member name="P:NeoAxis.ProjectSettingsPage_ShaderEditor.ShaderEditorAutoCompileTimeInSeconds">
+            <summary>
+            The time between last shader code changes and auto complation of the shader.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.ProjectSettingsPage_ShaderEditor.ShaderEditorAutoCompileTimeInSecondsChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.ProjectSettingsPage_ShaderEditor.ShaderEditorAutoCompileTimeInSeconds"/> property value changes.</summary>
         </member>
         <member name="P:NeoAxis.ProjectSettingsPage_ShaderEditor.ShaderEditorDisplayLineNumbers">
             <summary>
@@ -34874,7 +34965,7 @@
             Gets the parent render target.
             </summary>
         </member>
-        <member name="M:NeoAxis.Viewport.Update(System.Boolean,NeoAxis.Viewport.CameraSettingsClass,System.Int32)">
+        <member name="M:NeoAxis.Viewport.Update(System.Boolean,NeoAxis.Viewport.CameraSettingsClass)">
             <summary>
             Updates viewport with the rendering of attached map and GUI rendering.
             </summary>
@@ -35715,7 +35806,7 @@
         </member>
         <member name="T:NeoAxis.OpenList`1">
             <summary>
-            A list that has the ability to directly work with elements of an array. For example you can access to item by reference.
+            A list that has the ability to directly manipulate array elements. For example, you can access an element by reference.
             </summary>
             <typeparam name="T"></typeparam>
         </member>

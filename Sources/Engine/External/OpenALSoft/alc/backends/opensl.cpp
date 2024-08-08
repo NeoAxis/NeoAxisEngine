@@ -21,6 +21,8 @@
 
 #include "config.h"
 
+#ifdef PLATFORM_ANDROID
+
 #include "backends/opensl.h"
 
 #include <stdlib.h>
@@ -935,3 +937,5 @@ BackendFactory &OSLBackendFactory::getFactory()
     static OSLBackendFactory factory{};
     return factory;
 }
+
+#endif

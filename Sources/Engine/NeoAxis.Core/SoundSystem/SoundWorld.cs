@@ -101,53 +101,56 @@ namespace NeoAxis
 		{
 			if( string.Compare( EngineApp.InitSettings.SoundSystem, "null", true ) != 0 )
 			{
-				string fullPath = "";
-				if( !string.IsNullOrEmpty( EngineApp.InitSettings.SoundSystem ) )
-				{
-					string fullPath2 = Path.Combine( VirtualFileSystem.Directories.Binaries, EngineApp.InitSettings.SoundSystem );
-					if( File.Exists( fullPath2 ) )
-						fullPath = fullPath2;
-				}
+				//default sound system
+				instance = new OpenALSoundSystem.OpenALSoundWorld();
 
-				if( fullPath != "" )
-				{
-					try
-					{
-						Assembly assembly = Internal.AssemblyUtility.LoadAssemblyByRealFileName( fullPath, false );
+				//string fullPath = "";
+				//if( !string.IsNullOrEmpty( EngineApp.InitSettings.SoundSystem ) )
+				//{
+				//	string fullPath2 = Path.Combine( VirtualFileSystem.Directories.Binaries, EngineApp.InitSettings.SoundSystem );
+				//	if( File.Exists( fullPath2 ) )
+				//		fullPath = fullPath2;
+				//}
 
-						Type foundType = null;
-						foreach( Type type in assembly.GetTypes() )
-						{
-							if( !type.IsAbstract && typeof( SoundWorld ).IsAssignableFrom( type ) )
-							{
-								foundType = type;
-								break;
-							}
-						}
+				//if( fullPath != "" )
+				//{
+				//	try
+				//	{
+				//		Assembly assembly = Internal.AssemblyUtility.LoadAssemblyByRealFileName( fullPath, false );
 
-						if( foundType == null )
-						{
-							Log.Fatal( "SoundWorld: CreateSoundWorldInstance: SoundWorld based class is not available in the assembly \'{0}\'.", assembly.FullName );
-						}
+				//		Type foundType = null;
+				//		foreach( Type type in assembly.GetTypes() )
+				//		{
+				//			if( !type.IsAbstract && typeof( SoundWorld ).IsAssignableFrom( type ) )
+				//			{
+				//				foundType = type;
+				//				break;
+				//			}
+				//		}
 
-						ConstructorInfo constructor = foundType.GetConstructor( new Type[ 0 ] { } );
-						instance = (SoundWorld)constructor.Invoke( null );
-					}
-					catch( Exception e )
-					{
-						Log.Fatal( "SoundWorld: CreateSoundWorldInstance: Loading assembly failed \'{0}\' ({1}).", fullPath, e.Message );
-					}
-				}
-				else
-				{
-					//if( SystemSettings.CurrentPlatform != SystemSettings.Platform.UWP )
-					//{
+				//		if( foundType == null )
+				//		{
+				//			Log.Fatal( "SoundWorld: CreateSoundWorldInstance: SoundWorld based class is not available in the assembly \'{0}\'.", assembly.FullName );
+				//		}
 
-					//default sound system
-					instance = new OpenALSoundSystem.OpenALSoundWorld();
+				//		ConstructorInfo constructor = foundType.GetConstructor( new Type[ 0 ] { } );
+				//		instance = (SoundWorld)constructor.Invoke( null );
+				//	}
+				//	catch( Exception e )
+				//	{
+				//		Log.Fatal( "SoundWorld: CreateSoundWorldInstance: Loading assembly failed \'{0}\' ({1}).", fullPath, e.Message );
+				//	}
+				//}
+				//else
+				//{
+				//	//if( SystemSettings.CurrentPlatform != SystemSettings.Platform.UWP )
+				//	//{
 
-					//}
-				}
+				//	//default sound system
+				//	instance = new OpenALSoundSystem.OpenALSoundWorld();
+
+				//	//}
+				//}
 			}
 		}
 

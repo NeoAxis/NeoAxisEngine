@@ -33,6 +33,7 @@ namespace NeoAxis.Editor
 		bool needUpdateListReset;
 		bool needUpdateListRefreshFromStores;
 
+		//never cleared
 		Dictionary<string, PackageState> packageStates = new Dictionary<string, PackageState>();
 
 		string needSelectPackage;
@@ -124,7 +125,7 @@ namespace NeoAxis.Editor
 					{
 						var state = storesWindow.GetPackageState( packageId );
 						if( state == null || ( !state.Installed && !state.Downloaded ) )
-							storesWindow.StartDownload( package.Identifier, true, false );
+							storesWindow.StartDownload( package.Identifier, true, false, true );
 					}
 
 					return result;
@@ -223,6 +224,8 @@ namespace NeoAxis.Editor
 			public volatile bool downloadingInstallAfterDownload;
 			//public volatile WebClient downloadingClient;
 			public volatile Downloader.DownloadService downloadingDownloader;
+
+			public bool AutoImport;
 
 			//
 
@@ -1189,6 +1192,9 @@ next:
 			{
 				if( LoginUtility.GetRequestedFullLicenseInfo( out var license, out var purchasedProducts, /*out _,*/ out _ ) )
 				{
+					if( StoreManager.ModeratorMode )
+						return true;
+
 					if( !string.IsNullOrEmpty( license ) )
 						return purchasedProducts.Contains( productIdentifier );
 				}
@@ -1237,12 +1243,13 @@ next:
 		//	//return dt.ToString();
 		//}
 
-		void StartDownload( string packageId, bool installAfterDownload, bool openAfterInstall )
+		void StartDownload( string packageId, bool installAfterDownload, bool openAfterInstall, bool autoImport = false )
 		{
 			var package = GetPackage( packageId, true );
 			if( package == null )
 				return;
 			var state = GetPackageState( packageId );
+			state.AutoImport = autoImport;
 
 			//check already downloading
 			if( !string.IsNullOrEmpty( state.downloadingAddress ) )
@@ -1322,6 +1329,7 @@ next:
 			public PackageState State;
 			public bool Cancelled;
 			public Exception Error;
+			public bool ShowWarningAnyway;
 		}
 
 		void ThreadDownload( object obj )
@@ -1356,6 +1364,9 @@ next:
 						{
 							File.Delete( state.downloadingDestinationPath );
 							data.Cancelled = true;
+
+								data.Error = new Exception( "Invalid package (empty file)." );
+								data.ShowWarningAnyway = true;
 						}
 					}
 					if( !data.Cancelled && !File.Exists( state.downloadingDestinationPath ) )
@@ -1369,7 +1380,7 @@ next:
 				}
 				catch { }
 
-				if( data.Error != null && !data.Cancelled )
+				if( data.Error != null && !data.Cancelled || data.ShowWarningAnyway )
 					Log.Warning( ( data.Error.InnerException ?? data.Error ).Message );
 
 				var installAfterDownload = state.downloadingInstallAfterDownload;
@@ -1490,7 +1501,6 @@ next:
 				//process updated files by file watcher
 				Thread.Sleep( 1000 );
 				VirtualFileWatcher.ProcessEvents();
-
 			}
 			catch( Exception e2 )
 			{
@@ -1601,6 +1611,36 @@ next:
 				var text2 = EditorLocalization2.Translate( "General", "To apply changes need restart the editor. Restart?" );
 				if( EditorMessageBox.ShowQuestion( text2, EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
 					EditorAPI2.BeginRestartApplication();
+			}
+
+			//auto import when drop to scene
+			var state = GetPackageState( packageId );
+			if( state != null && state.AutoImport )
+			{
+				try
+				{
+					foreach( var file in archiveInfo.Files )
+					{
+						var fullName = Path.Combine( VirtualFileSystem.Directories.Project, file );
+						var virtualPath = VirtualPathUtility.GetVirtualPathByReal( fullName );
+
+						var extension = Path.GetExtension( virtualPath );
+
+						var type = ResourceManager.GetTypeByFileExtension( extension );
+						if( type != null && type.Name == "Import 3D" )
+						{
+							var resource = ResourceManager.LoadResource( virtualPath, true );
+
+							var import3D = resource?.ResultComponent as Import3D;
+							if( import3D != null )
+								import3D.DoAutoUpdate();
+						}
+					}
+				}
+				catch( Exception e )
+				{
+					EditorMessageBox.ShowWarning( e.Message );
+				}
 			}
 
 			//!!!!

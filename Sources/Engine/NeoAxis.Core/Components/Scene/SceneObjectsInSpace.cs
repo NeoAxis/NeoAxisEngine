@@ -36,8 +36,9 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		//Represents an item for <see cref="Scene.GetObjectsInSpace(IList{GetObjectsInSpaceItem})"/> method.
 		/// <summary>
-		/// Represents an item for <see cref="Scene.GetObjectsInSpace(IList{GetObjectsInSpaceItem})"/> method.
+		/// Represents an item for Scene.GetObjectsInSpace method.
 		/// </summary>
 		public class GetObjectsInSpaceItem
 		{

@@ -23,7 +23,7 @@ namespace NeoAxis.Editor
 		private void ButtonClick_Click( ProcedureUI.Button sender )
 		{
 			foreach( var button in GetObjects<Button>() )
-				button.ClickingBegin();
+				button.TryClick( null );// ClickingBegin();
 		}
 	}
 }

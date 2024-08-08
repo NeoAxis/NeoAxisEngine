@@ -833,6 +833,8 @@ namespace NeoAxis.Editor
 					var collision = Mesh.GetComponent( "Collision Definition" ) as RigidBody;
 					if( collision != null )
 					{
+						var renderer = Viewport.Simple3DRenderer;
+
 						ColorValue color = new ColorValue( 0, 0, 1, 0.7 );
 						//if( MotionType.Value == MotionTypeEnum.Static )
 						//	color = ProjectSettings.Get.SceneShowPhysicsStaticColor;
@@ -840,7 +842,7 @@ namespace NeoAxis.Editor
 						//	color = ProjectSettings.Get.SceneShowPhysicsDynamicActiveColor;
 						//else
 						//	color = ProjectSettings.Get.SceneShowPhysicsDynamicInactiveColor;
-						Viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
+						renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 
 						int verticesRendered = 0;
 						foreach( var shape in collision.GetComponents<CollisionShape>() )
@@ -848,6 +850,29 @@ namespace NeoAxis.Editor
 							if( shape.Enabled )
 								shape.Render( Viewport, Transform.Identity, false, ref verticesRendered );
 						}
+
+						//!!!!
+						////center of mass
+						//if( collision.MotionType.Value == PhysicsMotionType.Dynamic )
+						//{
+						//	Vector3 centerOfMass;
+						//	centerOfMass = collision.CenterOfMassOffset;
+
+						//	renderer.SetColor( new ColorValue( 1, 0, 0 ), new ColorValue( 1, 0, 0 ) );//, 0.5f ) );
+
+						//	var size3 = meshBounds.BoundingBox.GetSize();//var size3 = collision.SpaceBounds.BoundingBox.GetSize();
+						//	var halfSize = size3.MaxComponent() / 30; //var halfSize = size3.MinComponent() / 10;
+
+						//	Matrix4 t = Transform.Identity.ToMatrix4(); //Matrix4 t = collision.TransformV.ToMatrix4();
+						//	t *= new Matrix4( Matrix3.Identity, centerOfMass );
+						//	t.GetTranslation( out var pos );
+
+						//	renderer.AddLineThin( pos + new Vector3( -halfSize, 0, 0 ), pos + new Vector3( halfSize, 0, 0 ) );
+						//	renderer.AddLineThin( pos + new Vector3( 0, -halfSize, 0 ), pos + new Vector3( 0, halfSize, 0 ) );
+						//	renderer.AddLineThin( pos + new Vector3( 0, 0, -halfSize ), pos + new Vector3( 0, 0, halfSize ) );
+
+						//	verticesRendered += 6;
+						//}
 					}
 				}
 

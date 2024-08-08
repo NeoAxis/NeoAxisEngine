@@ -9,7 +9,7 @@ using System.Text;
 namespace NeoAxis
 {
 	/// <summary>
-	/// Abstract object in the scene.
+	/// The base component of an object in the scene.
 	/// </summary>
 	[ResourceFileExtension( "objectinspace" )]
 #if !DEPLOY

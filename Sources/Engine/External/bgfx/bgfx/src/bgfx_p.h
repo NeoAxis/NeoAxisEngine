@@ -31,6 +31,11 @@
 #define LOG_ANDROID_INFO(T) __android_log_print(ANDROID_LOG_INFO, "bgfx", T)
 #endif
 
+#if BX_PLATFORM_WINDOWS
+#include <stdexcept>
+#include <windows.h>
+#endif
+
 // Check handle, cannot be bgfx::kInvalidHandle and must be valid.
 #define BGFX_CHECK_HANDLE(_desc, _handleAlloc, _handle) \
 	BX_ASSERT(isValid(_handle)                           \
@@ -3121,6 +3126,132 @@ namespace bgfx
 #	define BGFX_API_FUNC(_func) _func
 #endif // BGFX_CONFIG_DEBUG
 
+
+	//!!!!betauser
+
+#if BX_PLATFORM_WINDOWS
+
+
+//	class SymHandler {
+//		HANDLE p;
+//	public:
+//		SymHandler(HANDLE process, char const* path = NULL, bool intrude = false) : p(process) {
+//			if (!SymInitialize(p, path, intrude))
+//				throw(std::logic_error("Unable to initialize symbol handler"));
+//		}
+//		~SymHandler() { SymCleanup(p); }
+//	};
+//
+//#ifdef _M_X64
+//	STACKFRAME64 init_stack_frame(CONTEXT c) {
+//		STACKFRAME64 s;
+//		s.AddrPC.Offset = c.Rip;
+//		s.AddrPC.Mode = AddrModeFlat;
+//		s.AddrStack.Offset = c.Rsp;
+//		s.AddrStack.Mode = AddrModeFlat;
+//		s.AddrFrame.Offset = c.Rbp;
+//		s.AddrFrame.Mode = AddrModeFlat;
+//		return s;
+//	}
+//#else
+//	STACKFRAME64 init_stack_frame(CONTEXT c) {
+//		STACKFRAME64 s;
+//		s.AddrPC.Offset = c.Eip;
+//		s.AddrPC.Mode = AddrModeFlat;
+//		s.AddrStack.Offset = c.Esp;
+//		s.AddrStack.Mode = AddrModeFlat;
+//		s.AddrFrame.Offset = c.Ebp;
+//		s.AddrFrame.Mode = AddrModeFlat;
+//		return s;
+//	}
+//#endif
+//
+//	void sym_options(DWORD add, DWORD remove = 0) {
+//		DWORD symOptions = SymGetOptions();
+//		symOptions |= add;
+//		symOptions &= ~remove;
+//		SymSetOptions(symOptions);
+//	}
+//
+//	class symbol {
+//		typedef IMAGEHLP_SYMBOL64 sym_type;
+//		sym_type* sym;
+//		static const int max_name_len = 1024;
+//	public:
+//		symbol(HANDLE process, DWORD64 address) : sym((sym_type*)::operator new(sizeof(*sym) + max_name_len)) {
+//			memset(sym, '\0', sizeof(*sym) + max_name_len);
+//			sym->SizeOfStruct = sizeof(*sym);
+//			sym->MaxNameLength = max_name_len;
+//			DWORD64 displacement;
+//
+//			if (!SymGetSymFromAddr64(process, address, &displacement, sym))
+//				throw(std::logic_error("Bad symbol"));
+//		}
+//
+//		std::string name() { return std::string(sym->Name); }
+//		std::string undecorated_name() {
+//			std::vector<char> und_name(max_name_len);
+//			UnDecorateSymbolName(sym->Name, &und_name[0], max_name_len, UNDNAME_COMPLETE);
+//			return std::string(&und_name[0], strlen(&und_name[0]));
+//		}
+//	};
+//
+//	bool show_stack(std::ostream& os, HANDLE hThread, CONTEXT& c) {
+//		HANDLE process = GetCurrentProcess();
+//		int frame_number = 0;
+//		DWORD offset_from_symbol = 0;
+//		IMAGEHLP_LINE64 line = { 0 };
+//
+//		SymHandler handler(process);
+//
+//		sym_options(SYMOPT_LOAD_LINES | SYMOPT_UNDNAME);
+//
+//		void* base = load_modules_symbols(process, GetCurrentProcessId());
+//
+//		STACKFRAME64 s = init_stack_frame(c);
+//
+//		line.SizeOfStruct = sizeof line;
+//
+//		IMAGE_NT_HEADERS* h = ImageNtHeader(base);
+//		DWORD image_type = h->FileHeader.Machine;
+//
+//		do {
+//			if (!StackWalk64(image_type, process, hThread, &s, &c, NULL, SymFunctionTableAccess64, SymGetModuleBase64, NULL))
+//				return false;
+//
+//			os << std::setw(3) << "\n" << frame_number << "\t";
+//			if (s.AddrPC.Offset != 0) {
+//				std::cout << symbol(process, s.AddrPC.Offset).undecorated_name();
+//
+//				if (SymGetLineFromAddr64(process, s.AddrPC.Offset, &offset_from_symbol, &line))
+//					os << "\t" << line.FileName << "(" << line.LineNumber << ")";
+//			}
+//			else
+//				os << "(No Symbols: PC == 0)";
+//			++frame_number;
+//		} while (s.AddrReturn.Offset != 0);
+//		return true;
+//	}
+//
+
+	//DWORD Filter(EXCEPTION_POINTERS* ep)
+	//{
+	//	HANDLE thread;
+
+	//	DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &thread, 0, false, DUPLICATE_SAME_ACCESS);
+
+	//	std::cout << "Walking stack.";
+	//	show_stack(std::cout, thread, *(ep->ContextRecord));
+	//	std::cout << "\nEnd of stack walk.\n";
+
+	//	CloseHandle(thread);
+
+	//	return EXCEPTION_EXECUTE_HANDLER;
+	//}
+
+#endif
+
+
 	struct Context
 	{
 		static constexpr uint32_t kAlignment = 64;
@@ -3154,7 +3285,33 @@ namespace bgfx
 		{
 			BX_TRACE("render thread start");
 			BGFX_PROFILER_SET_CURRENT_THREAD_NAME("bgfx - Render Thread");
-			while (RenderFrame::Exiting != bgfx::renderFrame() ) {};
+
+#if BX_PLATFORM_WINDOWS
+
+			__try
+			{
+				while (RenderFrame::Exiting != bgfx::renderFrame()) {};
+			}
+			//__except (Filter(GetExceptionInformation()))
+			__except (EXCEPTION_EXECUTE_HANDLER)
+			{
+				//#include "MiniDump.h"
+
+				//!!!!stack trace
+				//https://github.com/jeremy-rifkin/cpptrace			
+				//https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-setunhandledexceptionfilter?redirectedfrom=MSDN
+
+				BGFX_FATAL(false, Fatal::DebugCheck, "Render thread exception!");
+			}
+
+#else
+
+			//!!!!try, catch for other platforms
+
+			while (RenderFrame::Exiting != bgfx::renderFrame()) {};
+
+#endif
+
 			BX_TRACE("render thread exit");
 			return bx::kExitSuccess;
 		}

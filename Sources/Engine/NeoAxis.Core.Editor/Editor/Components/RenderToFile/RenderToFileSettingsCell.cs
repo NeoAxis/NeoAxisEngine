@@ -309,7 +309,8 @@ namespace NeoAxis.Editor
 					scene.GetDisplayDevelopmentDataInThisApplicationOverride -= Scene_GetDisplayDevelopmentDataInThisApplicationOverride;
 				}
 
-				texture.Result.GetNativeObject( true ).BlitTo( (ushort)viewport.RenderingContext.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
+				texture.Result.GetNativeObject( true ).BlitTo( (ushort)RenderingSystem.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
+				//texture.Result.GetNativeObject( true ).BlitTo( (ushort)viewport.RenderingContext.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
 
 
 				//get data
@@ -320,7 +321,7 @@ namespace NeoAxis.Editor
 					fixed( byte* pBytes = data )
 					{
 						var demandedFrame = textureRead.Result.GetNativeObject( true ).Read( (IntPtr)pBytes, 0 );
-						while( RenderingSystem.CallBgfxFrame() < demandedFrame ) { }
+						while( RenderingSystem.CallFrame() < demandedFrame ) { }
 					}
 				}
 
@@ -727,7 +728,8 @@ namespace NeoAxis.Editor
 						scene.GetDisplayDevelopmentDataInThisApplicationOverride -= Scene_GetDisplayDevelopmentDataInThisApplicationOverride;
 					}
 
-					texture.Result.GetNativeObject( true ).BlitTo( (ushort)viewport.RenderingContext.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
+					texture.Result.GetNativeObject( true ).BlitTo( (ushort)RenderingSystem.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
+					//texture.Result.GetNativeObject( true ).BlitTo( (ushort)viewport.RenderingContext.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
 
 					//get data
 					var totalBytes = PixelFormatUtility.GetNumElemBytes( format ) * resolution.X * resolution.Y;
@@ -737,7 +739,7 @@ namespace NeoAxis.Editor
 						fixed( byte* pBytes = data )
 						{
 							var demandedFrame = textureRead.Result.GetNativeObject( true ).Read( (IntPtr)pBytes, 0 );
-							while( RenderingSystem.CallBgfxFrame() < demandedFrame ) { }
+							while( RenderingSystem.CallFrame() < demandedFrame ) { }
 						}
 					}
 

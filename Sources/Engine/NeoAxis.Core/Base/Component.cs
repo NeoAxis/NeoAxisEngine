@@ -4659,12 +4659,24 @@ again:;
 			{
 				if( EnabledInHierarchy )
 				{
-					var ins = ComponentUtility.GetResourceInstanceByComponent( this );
-					var isResource = ins != null && ins.InstanceType == Resource.InstanceType.Resource;
+					var instance = ComponentUtility.GetResourceInstanceByComponent( this );
+					var isResource = instance != null && instance.InstanceType == Resource.InstanceType.Resource;
 					if( !isResource )
 						return true;
 				}
 				return false;
+			}
+		}
+
+		//!!!!new
+		[Browsable( false )]
+		public bool IsResource
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get
+			{
+				var instance = ComponentUtility.GetResourceInstanceByComponent( this );
+				return instance != null && instance.InstanceType == Resource.InstanceType.Resource;
 			}
 		}
 

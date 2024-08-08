@@ -345,7 +345,8 @@ namespace NeoAxis
 
 			var jobSize = new Vector3I( (int)Math.Ceiling( sourceTriangleCount / 512.0 ), 1, 1 );
 
-			Bgfx.Dispatch( (ushort)context.CurrentViewNumber, tessellationPrepareProgram, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
+			//!!!!use context.Dispatch
+			Bgfx.Dispatch( (ushort)RenderingSystem.CurrentViewNumber, tessellationPrepareProgram, jobSize.X, jobSize.Y, jobSize.Z, DiscardFlags.All );
 			context.UpdateStatisticsCurrent.ComputeDispatches++;
 
 

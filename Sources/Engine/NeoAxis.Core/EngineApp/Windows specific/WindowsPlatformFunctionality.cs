@@ -1778,6 +1778,9 @@ namespace Internal//NeoAxis
 
 							EngineApp.CreatedWindowApplicationIdle( false );
 						}
+
+						if( IsIconic( EngineApp.ApplicationWindowHandle ) )
+							Thread.Sleep( 1 );
 					}
 					else
 						WaitMessage();
@@ -1790,7 +1793,7 @@ namespace Internal//NeoAxis
 		{
 			bool needIdle = true;
 
-			if( EngineApp.EnginePauseWhenApplicationIsNotActive ) //!!!!new
+			if( EngineApp.EnginePauseWhenApplicationIsNotActive )
 			{
 				if( IsIconic( EngineApp.ApplicationWindowHandle ) )
 					needIdle = false;
@@ -1818,7 +1821,6 @@ namespace Internal//NeoAxis
 
 		public override bool IsWindowInitialized()
 		{
-			//!!!!!что тут?
 			return EngineApp.ApplicationWindowHandle != IntPtr.Zero;
 		}
 
@@ -2132,11 +2134,15 @@ namespace Internal//NeoAxis
 
 				if( show )
 				{
-					while( ShowCursor( 1 ) < 0 ) { }
+					var counter = 0;
+					while( ShowCursor( 1 ) < 0 && counter < 100 ) { counter++; }
+					//while( ShowCursor( 1 ) < 0 ) { }
 				}
 				else
 				{
-					while( ShowCursor( 0 ) >= 0 ) { }
+					var counter = 0;
+					while( ShowCursor( 0 ) >= 0 && counter < 100 ) { counter++; }
+					//while( ShowCursor( 0 ) >= 0 ) { }
 				}
 			}
 		}

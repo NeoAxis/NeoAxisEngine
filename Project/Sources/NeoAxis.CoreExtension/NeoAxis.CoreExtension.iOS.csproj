@@ -212,6 +212,6 @@
 copy "$(ProjectDir)obj\NeoAxis.CoreExtension.iOS\NeoAxis.CoreExtension.pdb" "$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\iOS\Managed\"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>if EXIST "$(ProjectDir)NeoAxis.CoreExtension.csproj" ( if EXIST "$(ProjectDir)..\..\Binaries\NeoAxis.Editor.exe" ( "$(ProjectDir)..\..\Binaries\NeoAxis.Editor.exe" -platformProjectPatch "$(ProjectDir)NeoAxis.CoreExtension.iOS.csproj" -baseProject "$(ProjectDir)NeoAxis.CoreExtension.csproj" ) )</PreBuildEvent>
+    <PreBuildEvent>if EXIST "$(ProjectDir)NeoAxis.CoreExtension.csproj" ( if EXIST "$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" ( "$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -platformProjectPatch "$(ProjectDir)NeoAxis.CoreExtension.iOS.csproj" -baseProject "$(ProjectDir)NeoAxis.CoreExtension.csproj" ) )</PreBuildEvent>
   </PropertyGroup>
 </Project>

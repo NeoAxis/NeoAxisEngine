@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 namespace NeoAxis
 {
 	/// <summary>
-	/// Mesh in the scene.
+	/// A mesh instance in the scene.
 	/// </summary>
 	public class MeshInSpace : ObjectInSpace, IPhysicalObject
 	{
@@ -598,11 +598,17 @@ namespace NeoAxis
 			}
 		}
 
-		private void Scene_GetRenderSceneData2ForGroupOfObjects( Scene scene, ViewportRenderingContext context )
+		internal void Scene_GetRenderSceneData2ForGroupOfObjects()// Scene scene, ViewportRenderingContext context )
 		{
 			if( needUpdateStaticModeAndStaticShadows )
 				UpdateStaticMode();
 		}
+
+		//private void Scene_GetRenderSceneData2ForGroupOfObjects( Scene scene, ViewportRenderingContext context )
+		//{
+		//	if( needUpdateStaticModeAndStaticShadows )
+		//		UpdateStaticMode();
+		//}
 
 		[MethodImpl( (MethodImplOptions)512 )]
 		protected override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem )
@@ -1523,7 +1529,10 @@ namespace NeoAxis
 					CreateBody();
 
 				if( StaticShadows )
-					ResetLightStaticShadowsCache();
+				{
+					needUpdateStaticModeAndStaticShadows = true;
+					//ResetLightStaticShadowsCache();
+				}
 			}
 			else
 			{
@@ -1538,9 +1547,14 @@ namespace NeoAxis
 			if( scene != null )
 			{
 				if( EnabledInHierarchyAndIsInstance )
-					scene.GetRenderSceneData2ForGroupOfObjects += Scene_GetRenderSceneData2ForGroupOfObjects;
+					scene.meshInSpaces.AddWithCheckAlreadyContained( this );
 				else
-					scene.GetRenderSceneData2ForGroupOfObjects -= Scene_GetRenderSceneData2ForGroupOfObjects;
+					scene.meshInSpaces.Remove( this );
+
+				//if( EnabledInHierarchyAndIsInstance )
+				//	scene.GetRenderSceneData2ForGroupOfObjects += Scene_GetRenderSceneData2ForGroupOfObjects;
+				//else
+				//	scene.GetRenderSceneData2ForGroupOfObjects -= Scene_GetRenderSceneData2ForGroupOfObjects;
 			}
 		}
 
@@ -2747,10 +2761,11 @@ namespace NeoAxis
 		void ResetLightStaticShadowsCache()
 		{
 			var scene = ParentScene;
-			if( scene != null )
+			if( scene != null && scene.HierarchyController != null && scene.HierarchyController.HierarchyEnabled && !scene.IsResource )
 			{
 				var bounds = SpaceBounds.BoundingBox;
-				var item = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, bounds );
+				var item = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, MetadataManager.GetTypeOfNetType( typeof( Light ) ), true, bounds );
+				//var item = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, bounds );
 				scene.GetObjectsInSpace( item );
 
 				foreach( var resultItem in item.Result )

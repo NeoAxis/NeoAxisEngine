@@ -1,0 +1,24 @@
+// Made with NeoAxis Engine 2024.1.
+
+.component NeoAxis.GateType
+{
+	EditorCameraTransform = "1.61760495555813 -1.39957844584163 2.75453771847889; -0.385723949935561 0.245961836975541 0.749762739218043 0.478095852395713; 1 1 1"
+	OpeningType = HingeSide
+	Door1Position = 0 0 0
+	Door1ConstraintPosition = 0.1 0.077 0.9
+	Door2Position = 0 0 0
+	Door2ConstraintPosition = 1.85 0.077 0.9
+	DoorOpenAngle = -110
+	BaseMesh
+	{
+		GetByReference = "Content\\Fences\\NeoAxis\\Woodfence\\Brown Gate Base.gltf|$Mesh"
+	}
+	Door1Mesh
+	{
+		GetByReference = "Content\\Fences\\NeoAxis\\Woodfence\\Brown Gate Left.gltf|$Mesh"
+	}
+	Door2Mesh
+	{
+		GetByReference = "Content\\Fences\\NeoAxis\\Woodfence\\Brown Gate Right.gltf|$Mesh"
+	}
+}

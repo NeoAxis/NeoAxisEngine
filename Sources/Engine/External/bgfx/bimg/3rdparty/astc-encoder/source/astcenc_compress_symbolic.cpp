@@ -1,3 +1,6 @@
+//!!!!betauser. android compiler crash
+#ifndef __ANDROID__
+
 // SPDX-License-Identifier: Apache-2.0
 // ----------------------------------------------------------------------------
 // Copyright 2011-2023 Arm Limited
@@ -1452,5 +1455,7 @@ END_OF_TESTS:
 	// Compress to a physical block
 	symbolic_to_physical(bsd, scb, pcb);
 }
+
+#endif
 
 #endif

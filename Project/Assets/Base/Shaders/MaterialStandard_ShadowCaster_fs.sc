@@ -21,6 +21,8 @@ SAMPLER2D(s_materials, 1);
 	//SAMPLER2D(s_linearSamplerFragment, 10);
 #endif
 
+#include "CustomFunctions.sh"
+
 #ifdef FRAGMENT_CODE_PARAMETERS
 	FRAGMENT_CODE_PARAMETERS
 #endif

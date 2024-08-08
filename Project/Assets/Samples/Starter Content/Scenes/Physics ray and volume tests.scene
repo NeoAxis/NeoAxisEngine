@@ -2,7 +2,7 @@
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"5764BE5FC5314DDD74A0CA95C1A44AF4\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"1DF809CF5B8B468161AEDC4404B322F8\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"5764BE5FC5314DDD74A0CA95C1A44AF4\"><KP UN=\"5764BE5FC5314DDD74A0CA95C1A44AF4\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"226874B46A29499F3AA0101170C9018E\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP><KP UN=\"96D920724C4D4499E7B56C2894B3AC1F\" S=\"False\"><CPD ObjPath=\"$Box 10\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1144, 842\"><KW V=\"1\" A=\"5764BE5FC5314DDD74A0CA95C1A44AF4\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"1DF809CF5B8B468161AEDC4404B322F8\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"5764BE5FC5314DDD74A0CA95C1A44AF4\"><KP UN=\"5764BE5FC5314DDD74A0CA95C1A44AF4\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"226874B46A29499F3AA0101170C9018E\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP><KP UN=\"96D920724C4D4499E7B56C2894B3AC1F\" S=\"False\"><CPD ObjPath=\"$Box 10\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	DisplayDevelopmentDataInSimulation = True
 	DisplaySensors = True
 	RenderingPipeline
@@ -38,13 +38,14 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 50000
+		Brightness = 60000
 	}
 	.component NeoAxis.Light
 	{
 		Name = Directional Light
 		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
 		Type = Directional
+		Brightness = 150000
 		AttenuationFar = 100
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
@@ -139,10 +140,6 @@
 		{
 			GetByReference = "Base\\Materials\\White.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -174,10 +171,6 @@
 		{
 			GetByReference = "Base\\Materials\\Yellow.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -206,10 +199,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Yellow.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -240,10 +229,6 @@
 		{
 			GetByReference = "Base\\Materials\\Yellow.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -272,10 +257,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Yellow.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -306,10 +287,6 @@
 		{
 			GetByReference = "Base\\Materials\\Yellow.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -338,10 +315,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Yellow.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -372,10 +345,6 @@
 		{
 			GetByReference = "Base\\Materials\\Yellow.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -404,10 +373,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Yellow.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -438,10 +403,6 @@
 		{
 			GetByReference = "Base\\Materials\\Yellow.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -467,10 +428,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Box\\SFCrate1.fbx|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -487,10 +444,6 @@
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Box\\SFCrate1.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -512,10 +465,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Yellow.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -547,10 +496,6 @@
 		{
 			GetByReference = "Base\\Materials\\Yellow.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -580,10 +525,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Yellow.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -615,10 +556,6 @@
 		{
 			GetByReference = "Base\\Materials\\Green.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -638,7 +575,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Box 10
-		Transform = "-2.00124111794449 10.4762314244209 0.735368469918527; 0 0 0.8960851387205 -0.443882218797129; 1.48999998904765 1.48999998904765 1.48999998904765"
+		Transform = "-2.00124111794449 10.4762314244209 0.735368469918527; 0 0 -0.342353211642568 0.939571326977372; 1.48999998904765 1.48999998904765 1.48999998904765"
 		Collision = True
 		Mesh
 		{
@@ -647,10 +584,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Green.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -707,10 +640,6 @@
 		{
 			GetByReference = "Base\\Materials\\Green.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -739,10 +668,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Green.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -773,10 +698,6 @@
 		{
 			GetByReference = "Base\\Materials\\Green.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -805,10 +726,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Green.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -839,10 +756,6 @@
 		{
 			GetByReference = "Base\\Materials\\Green.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -871,10 +784,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Green.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -905,10 +814,6 @@
 		{
 			GetByReference = "Base\\Materials\\Green.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -937,10 +842,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Green.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -971,10 +872,6 @@
 		{
 			GetByReference = "Base\\Materials\\Blue.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1003,10 +900,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Blue.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1037,10 +930,6 @@
 		{
 			GetByReference = "Base\\Materials\\Blue.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1069,10 +958,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Blue.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1103,10 +988,6 @@
 		{
 			GetByReference = "Base\\Materials\\Blue.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1135,10 +1016,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Blue.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1170,10 +1047,6 @@
 		{
 			GetByReference = "Base\\Materials\\Blue.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1203,10 +1076,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Blue.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1238,10 +1107,6 @@
 		{
 			GetByReference = "Base\\Materials\\Blue.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1272,10 +1137,6 @@
 		{
 			GetByReference = "Base\\Materials\\Blue.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1304,10 +1165,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Blue.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1338,10 +1195,6 @@
 		{
 			GetByReference = "Base\\Materials\\Blue.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1371,10 +1224,6 @@
 		{
 			GetByReference = "Base\\Materials\\Blue.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1403,10 +1252,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Blue.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1568,10 +1413,6 @@
 		Name = Character
 		Transform = "-1.76844600047308 14.8383238170201 0.00000011803135536; 0 0 -0.291830705435556 0.956469988742452; 1 1 1"
 		Collision = True
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1589,10 +1430,6 @@
 		Name = Character 2
 		Transform = "8.14425288541925 23.1770269684083 0.00000011803135536; 0 0 -0.884149410664932 0.467204258992632; 1 1 1"
 		Collision = True
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value

@@ -39,7 +39,7 @@ namespace NeoAxis
 		/////////////////////////////////////////
 		//Basic
 
-		const string meshDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Bryce.fbx|$Mesh";
+		const string meshDefault = @"Content\Characters\NeoAxis\Bryce\Bryce.fbx|$Mesh";
 		//const string meshDefault = @"Content\Characters\Default\Human.fbx|$Mesh";
 
 		/// <summary>
@@ -278,7 +278,7 @@ namespace NeoAxis
 		/////////////////////////////////////////
 		//Idle
 
-		const string idleAnimationDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Animations\Idle.animation";
+		const string idleAnimationDefault = @"Content\Characters\NeoAxis\Bryce\Animations\Idle.animation";
 		//const string idleAnimationDefault = @"Content\Characters\Default\Human.fbx|$Mesh\$Animations\$Idle";
 
 		/// <summary>
@@ -354,7 +354,7 @@ namespace NeoAxis
 		//public event Action<CharacterType> WalkForceChanged;
 		//ReferenceField<double> _walkForce = 100000;
 
-		const string walkAnimationDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Animations\Walk.animation";
+		const string walkAnimationDefault = @"Content\Characters\NeoAxis\Bryce\Animations\Walk.animation";
 		//const string walkAnimationDefault = @"Content\Characters\Default\Human.fbx|$Mesh\$Animations\$Walk";
 		/// <summary>
 		/// Character walking animation.
@@ -458,7 +458,7 @@ namespace NeoAxis
 		//public event Action<CharacterType> RunForceChanged;
 		//ReferenceField<double> _runForce = 150000;
 
-		const string runAnimationDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Animations\Run.animation";
+		const string runAnimationDefault = @"Content\Characters\NeoAxis\Bryce\Animations\Run.animation";
 		//const string runAnimationDefault = @"Content\Characters\Default\Human.fbx|$Mesh\$Animations\$Run";
 
 		/// <summary>
@@ -490,7 +490,7 @@ namespace NeoAxis
 		public event Action<CharacterType> RunAnimationSpeedChanged;
 		ReferenceField<double> _runAnimationSpeed = 0.2;
 
-		const string flyAnimationDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Animations\Fly.animation";
+		const string flyAnimationDefault = @"Content\Characters\NeoAxis\Bryce\Animations\Fly.animation";
 		//const string flyAnimationDefault = @"Content\Characters\Default\Human.fbx|$Mesh\$Animations\$Fly";
 
 		/////////////////////////////////////////
@@ -524,7 +524,7 @@ namespace NeoAxis
 		public event Action<CharacterType> TurningSpeedOfLookingChanged;
 		ReferenceField<Degree> _turningSpeedOfLooking = new Degree( 180.0 );//360.0 );
 
-		const string leftTurnAnimationDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Animations\Left Turn.animation";
+		const string leftTurnAnimationDefault = @"Content\Characters\NeoAxis\Bryce\Animations\Left Turn.animation";
 		//const string leftTurnAnimationDefault = @"Content\Characters\Default\Human.fbx|$Mesh\$Animations\$Left Turn";
 
 		/// <summary>
@@ -541,7 +541,7 @@ namespace NeoAxis
 		public event Action<CharacterType> LeftTurnAnimationChanged;
 		ReferenceField<Animation> _leftTurnAnimation = new Reference<Animation>( null, leftTurnAnimationDefault );
 
-		const string rightTurnAnimationDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Animations\Right Turn.animation";
+		const string rightTurnAnimationDefault = @"Content\Characters\NeoAxis\Bryce\Animations\Right Turn.animation";
 		//const string rightTurnAnimationDefault = @"Content\Characters\Default\Human.fbx|$Mesh\$Animations\$Right Turn";
 
 		/// <summary>
@@ -663,7 +663,7 @@ namespace NeoAxis
 		public event Action<CharacterType> JumpSpeedChanged;
 		ReferenceField<double> _jumpSpeed = 4;
 
-		const string jumpAnimationDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Animations\Jump.animation";
+		const string jumpAnimationDefault = @"Content\Characters\NeoAxis\Bryce\Animations\Jump.animation";
 		//const string jumpAnimationDefault = @"Content\Characters\Default\Human.fbx|$Mesh\$Animations\$Jump";
 
 		/// <summary>
@@ -683,7 +683,7 @@ namespace NeoAxis
 		/////////////////////////////////////////
 		//Die
 
-		const string dieAnimationDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Animations\Die.animation";
+		const string dieAnimationDefault = @"Content\Characters\NeoAxis\Bryce\Animations\Die.animation";
 		//const string dieAnimationDefault = @"Content\Characters\Default\Human.fbx|$Mesh\$Animations\$Die";
 
 		/// <summary>
@@ -717,7 +717,7 @@ namespace NeoAxis
 		public event Action<CharacterType> SitButtHeightChanged;
 		ReferenceField<double> _sitButtHeight = 0.4;
 
-		const string sitAnimationDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Animations\Sit.animation";
+		const string sitAnimationDefault = @"Content\Characters\NeoAxis\Bryce\Animations\Sit.animation";
 
 		/// <summary>
 		/// The animation of sitting.
@@ -1065,7 +1065,7 @@ namespace NeoAxis
 
 		///////////////////////////////////////////////
 
-		const string footstepSoundDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Sounds\Footstep.ogg";
+		const string footstepSoundDefault = @"Content\Characters\NeoAxis\Bryce\Sounds\Footstep.ogg";
 		/// <summary>
 		/// The sound of footstep when walking or running.
 		/// </summary>
@@ -1080,7 +1080,7 @@ namespace NeoAxis
 		public event Action<CharacterType> FootstepSoundChanged;
 		ReferenceField<Sound> _footstepSound = new Reference<Sound>( null, footstepSoundDefault );
 
-		const string jumpSoundDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Sounds\Jump.ogg";
+		const string jumpSoundDefault = @"Content\Characters\NeoAxis\Bryce\Sounds\Jump.ogg";
 		[Category( "Sound" )]
 		[DefaultValueReference( jumpSoundDefault )]
 		public Reference<Sound> JumpSound
@@ -1092,7 +1092,7 @@ namespace NeoAxis
 		public event Action<CharacterType> JumpSoundChanged;
 		ReferenceField<Sound> _jumpSound = new Reference<Sound>( null, jumpSoundDefault );
 
-		const string flyEndSoundDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Sounds\Fly end.ogg";
+		const string flyEndSoundDefault = @"Content\Characters\NeoAxis\Bryce\Sounds\Fly end.ogg";
 		[Category( "Sound" )]
 		[DefaultValueReference( flyEndSoundDefault )]
 		public Reference<Sound> FlyEndSound
@@ -1128,7 +1128,7 @@ namespace NeoAxis
 		public event Action<CharacterType> RifleAimingArmsCenterFirstPersonChanged;
 		ReferenceField<Vector3> _rifleAimingArmsCenterFirstPerson = new Vector3( 0.46, -0.3, 1.25 );
 
-		const string rifleAimingIdleAnimationDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Animations\Rifle Aiming Idle.animation";
+		const string rifleAimingIdleAnimationDefault = @"Content\Characters\NeoAxis\Bryce\Animations\Rifle Aiming Idle.animation";
 
 		/// <summary>
 		/// Animation of character at rest with the rifle.
@@ -1144,7 +1144,7 @@ namespace NeoAxis
 		public event Action<CharacterType> RifleAimingIdleAnimationChanged;
 		ReferenceField<Animation> _rifleAimingIdleAnimation = new Reference<Animation>( null, rifleAimingIdleAnimationDefault );
 
-		const string rifleAimingIdleMinus45AnimationDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Animations\Rifle Aiming Idle Minus 45.animation";
+		const string rifleAimingIdleMinus45AnimationDefault = @"Content\Characters\NeoAxis\Bryce\Animations\Rifle Aiming Idle Minus 45.animation";
 
 		[Category( "Rifle" )]
 		[DefaultValueReference( rifleAimingIdleMinus45AnimationDefault )]
@@ -1158,7 +1158,7 @@ namespace NeoAxis
 		public event Action<CharacterType> RifleAimingIdleMinus45AnimationChanged;
 		ReferenceField<Animation> _rifleAimingIdleMinus45Animation = new Reference<Animation>( null, rifleAimingIdleMinus45AnimationDefault );
 
-		const string rifleAimingIdlePlus45AnimationDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Animations\Rifle Aiming Idle Plus 45.animation";
+		const string rifleAimingIdlePlus45AnimationDefault = @"Content\Characters\NeoAxis\Bryce\Animations\Rifle Aiming Idle Plus 45.animation";
 
 		[Category( "Rifle" )]
 		[DefaultValueReference( rifleAimingIdlePlus45AnimationDefault )]
@@ -1172,7 +1172,7 @@ namespace NeoAxis
 		public event Action<CharacterType> RifleAimingIdlePlus45AnimationChanged;
 		ReferenceField<Animation> _rifleAimingIdlePlus45Animation = new Reference<Animation>( null, rifleAimingIdlePlus45AnimationDefault );
 
-		const string rifleAimingWalkingAnimationDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Animations\Rifle Aiming Walking.animation";
+		const string rifleAimingWalkingAnimationDefault = @"Content\Characters\NeoAxis\Bryce\Animations\Rifle Aiming Walking.animation";
 
 		/// <summary>
 		/// Character walking animation with the aiming rifle.
@@ -1232,7 +1232,7 @@ namespace NeoAxis
 
 		///////////////////////////////////////////////
 
-		const string oneHandedMeleeWeaponIdleAnimationDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Animations\Sword And Shield Idle.animation";
+		const string oneHandedMeleeWeaponIdleAnimationDefault = @"Content\Characters\NeoAxis\Bryce\Animations\Sword And Shield Idle.animation";
 
 		/// <summary>
 		/// Animation of character at rest with one-handed melee weapon.
@@ -1248,7 +1248,7 @@ namespace NeoAxis
 		public event Action<CharacterType> OneHandedMeleeWeaponIdleAnimationChanged;
 		ReferenceField<Animation> _oneHandedMeleeWeaponIdleAnimation = new Reference<Animation>( null, oneHandedMeleeWeaponIdleAnimationDefault );
 
-		const string oneHandedMeleeWeaponWalkAnimationDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Animations\Sword And Shield Walk.animation";
+		const string oneHandedMeleeWeaponWalkAnimationDefault = @"Content\Characters\NeoAxis\Bryce\Animations\Sword And Shield Walk.animation";
 
 		/// <summary>
 		/// Walk animation with one-handed melee weapon.
@@ -1279,7 +1279,7 @@ namespace NeoAxis
 		public event Action<CharacterType> OneHandedMeleeWeaponWalkAnimationSpeedChanged;
 		ReferenceField<double> _oneHandedMeleeWeaponWalkAnimationSpeed = 0.75;//1.0;
 
-		const string oneHandedMeleeWeaponAttackAnimationDefault = @"Content\Characters\Authors\NeoAxis\Bryce\Animations\Sword And Shield Slash.animation";
+		const string oneHandedMeleeWeaponAttackAnimationDefault = @"Content\Characters\NeoAxis\Bryce\Animations\Sword And Shield Slash.animation";
 
 		/// <summary>
 		/// Attack animation by one-handed melee weapon.

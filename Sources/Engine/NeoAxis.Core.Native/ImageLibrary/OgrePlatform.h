@@ -30,7 +30,10 @@ THE SOFTWARE.
 
 #include "OgreConfig.h"
 
+#ifdef __cplusplus
 namespace Ogre {
+#endif
+
 /* Initial platform/compiler-related stuff to set.
 */
 #define OGRE_PLATFORM_WIN32 1
@@ -325,6 +328,8 @@ typedef char int8;
 #endif
 
 
+#ifdef __cplusplus
 }
+#endif
 
 #endif

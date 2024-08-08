@@ -982,8 +982,22 @@ namespace NeoAxis//SystemHalf
         {
             return Convert.ToUInt64(this);
         }
-        #endregion
-    }
+		#endregion
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static float PackTwoHalfsToFloat( HalfType v1, HalfType v2 )
+		{
+			var v = new Vector2H( v1, v2 );
+			return v.PackTwoHalfsToFloat();
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public static float PackTwoHalfsToFloat( float v1, float v2 )
+		{
+			var v = new Vector2H( v1, v2 );
+			return v.PackTwoHalfsToFloat();
+		}
+	}
 }
 
 /// ================ HalfHelper.cs ====================
@@ -1191,5 +1205,5 @@ namespace NeoAxis//SystemHalf
         {
             return half.Value == 0xfc00;
         }
-    }
+	}
 }

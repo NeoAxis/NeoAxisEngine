@@ -33,6 +33,7 @@ $input v_texCoord0
 SAMPLER2D(s_sourceTexture, 0);
 SAMPLER2D(s_motionVectors, 1);
 SAMPLER2D(s_previousColor, 2);
+SAMPLER2D( s_depthTexture, 3 );
 
 uniform vec4 viewportSize;
 uniform vec4/*float*/ intensity;
@@ -104,6 +105,9 @@ void main()
 	float gAlpha = taaParameters.x;
 	float gColorBoxSigma = taaParameters.y;
 	
+	float rawDepth = texture2D( s_depthTexture, v_texCoord0 ).x;
+	bool isSky = rawDepth >= 1.0;
+	
 	//vec2 pos = texC * texDim;
 	//ivec2 ipos = ivec2(pos);
 
@@ -157,6 +161,8 @@ void main()
 
 	history = clamp(history, colorMin, colorMax);
 	vec3 result = YCgCoToRGB(lerp(history, color, alpha));
+	if( isSky )
+		result = texture2D(s_sourceTexture, v_texCoord0).rgb;	
 	vec4 resultColor = vec4(result, 1.0f);
 	
 	gl_FragColor = lerp(sourceColor, resultColor, intensity.x);

@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /*
   Simple DirectMedia Layer
   Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
@@ -78,3 +81,5 @@ SDL_UnloadObject(void *handle)
 #endif /* SDL_LOADSO_WINDOWS */
 
 /* vi: set ts=4 sw=4 expandtab: */
+
+#endif

@@ -153,6 +153,15 @@ namespace Internal//NeoAxis
 						instance = new LinuxPlatformFunctionality();
 #endif
 					}
+					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
+					{
+#if !ANDROID && !IOS && !WEB && !UWP
+						Log.Fatal( "q" );
+#if __
+						instance = new MacOSPlatformFunctionality();
+#endif
+#endif
+					}
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 						Log.Fatal( "PlatformFunctionality: Get: Instance must be already initialized." );
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
@@ -161,11 +170,6 @@ namespace Internal//NeoAxis
 						Log.Fatal( "PlatformFunctionality: Get: Instance must be already initialized." );
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 						Log.Fatal( "PlatformFunctionality: Get: Instance must be already initialized." );
-					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
-					{
-						Log.Fatal( "MacOSXInputDeviceManager impl." );
-						//instance = new MacOSXPlatformFunctionality();
-					}
 					else
 						Log.Fatal( "PlatformFunctionality: Get: Unknown platform." );
 				}

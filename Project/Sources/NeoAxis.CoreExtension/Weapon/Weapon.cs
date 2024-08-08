@@ -351,6 +351,24 @@ namespace NeoAxis
 			StartPlayOneAnimation( mode == 1 ? TypeCached.Mode1FireAnimation : TypeCached.Mode2FireAnimation, mode == 1 ? TypeCached.Mode1FireAnimationSpeed : TypeCached.Mode2FireAnimationSpeed );
 			SoundPlay( mode == 1 ? TypeCached.Mode1FiringBeginSound : TypeCached.Mode2FiringBeginSound );
 
+			var recoilForce = mode == 1 ? TypeCached.Mode1RecoilForce.Value : TypeCached.Mode2RecoilForce.Value;
+			if( recoilForce != 0 )
+			{
+				if( PhysicalBody != null )
+				{
+					if( PhysicalBody.MotionType == PhysicsMotionType.Dynamic )
+					{
+						var force = PhysicalBody.Rotation * new Vector3F( (float)-recoilForce, 0, 0 );
+						var relativePosition = Vector3F.Zero;
+						PhysicalBody.ApplyForce( ref force, ref relativePosition );
+					}
+				}
+				else
+				{
+					//add force to turret, character body?
+				}
+			}
+
 			var character = Parent as Character;
 			if( character != null )
 				character.WeaponFiringBegin( this, mode );
@@ -563,10 +581,10 @@ namespace NeoAxis
 			return true;
 		}
 
-		public delegate void ObjectInteractionGetInfoEventDelegate( Weapon sender, GameMode gameMode, ref InteractiveObjectObjectInfo info );
-		public event ObjectInteractionGetInfoEventDelegate ObjectInteractionGetInfoEvent;
+		public delegate void InteractionGetInfoEventDelegate( Weapon sender, GameMode gameMode, ref InteractiveObjectObjectInfo info );
+		public event InteractionGetInfoEventDelegate InteractionGetInfoEvent;
 
-		public virtual void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
+		public virtual void InteractionGetInfo( GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info )
 		{
 			//enable an interaction context to take the object by a character
 			var character = gameMode.ObjectControlledByPlayer.Value as Character;
@@ -578,10 +596,10 @@ namespace NeoAxis
 				//info.Text.Add( Name );
 				//info.Text.Add( $"Click to take. Press {gameMode.KeyDrop1.Value} to drop." );
 			}
-			ObjectInteractionGetInfoEvent?.Invoke( this, gameMode, ref info );
+			InteractionGetInfoEvent?.Invoke( this, gameMode, ref info );
 		}
 
-		public virtual bool ObjectInteractionInputMessage( GameMode gameMode, InputMessage message )
+		public virtual bool InteractionInputMessage( GameMode gameMode, Component initiator, InputMessage message )
 		{
 			var mouseDown = message as InputMessageMouseButtonDown;
 			if( mouseDown != null )
@@ -613,15 +631,15 @@ namespace NeoAxis
 			return false;
 		}
 
-		public virtual void ObjectInteractionEnter( ObjectInteractionContext context )
+		public virtual void InteractionEnter( ObjectInteractionContext context )
 		{
 		}
 
-		public virtual void ObjectInteractionExit( ObjectInteractionContext context )
+		public virtual void InteractionExit( ObjectInteractionContext context )
 		{
 		}
 
-		public virtual void ObjectInteractionUpdate( ObjectInteractionContext context )
+		public virtual void InteractionUpdate( ObjectInteractionContext context )
 		{
 		}
 

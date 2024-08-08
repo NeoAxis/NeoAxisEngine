@@ -43,7 +43,9 @@
 #include <Jolt/Physics/Constraints/SixDOFConstraint.h>
 #include <Jolt/Physics/Vehicle/VehicleConstraint.h>
 #include <Jolt/Physics/Vehicle/WheeledVehicleController.h>
+#include <Jolt/Physics/Vehicle/TrackedVehicleController.h>
 #include <Jolt/Physics/Character/CharacterVirtual.h>
+#include <Jolt/Math/Math.h>
 
 // STL includes
 #include <iostream>
@@ -406,8 +408,8 @@ struct VehicleWheelSettings
 	float maxHandBrakeTorque;// = 4000.0f;
 
 	//Tracked specific
-	//!!!!
-
+	float trackLongitudinalFriction;
+	float trackLateralFriction;
 };
 #pragma pack(pop)
 
@@ -481,6 +483,7 @@ class ShapeItem
 {
 public:
 	CompoundShapeSettings* compoundShapeSettings;
+	OffsetCenterOfMassShapeSettings* offsetCenterOfMassShapeSettings;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -548,6 +551,8 @@ public:
 	bool stepListenerAdded = false;
 	//bool stepListenerMustBeAdded = false;
 	Ref<VehicleCollisionTester> collisionTester;
+	bool Wheels;
+	bool Tracks;
 
 	//
 
@@ -845,14 +850,24 @@ EXPORT PhysicsSystemItem* JCreateSystem(int maxBodies, int maxBodyPairs, int max
 		Fatal("JCreateSystem: sizeof(VolumeTestResultNative) != 12.");
 	if (sizeof(void*) == 8)
 	{
-		if (sizeof(VehicleWheelSettings) != 22 * 4 + 8)
-			Fatal("JCreateSystem: sizeof(VehicleWheelSettings) != 22 * 4 + 8.");
+		if (sizeof(VehicleWheelSettings) != 24 * 4 + 8)
+			Fatal("JCreateSystem: sizeof(VehicleWheelSettings) != 24 * 4 + 8.");
 	}
 	else
 	{
-		if (sizeof(VehicleWheelSettings) != 22 * 4)
-			Fatal("JCreateSystem: sizeof(VehicleWheelSettings) != 22 * 4.");
+		if (sizeof(VehicleWheelSettings) != 24 * 4)
+			Fatal("JCreateSystem: sizeof(VehicleWheelSettings) != 24 * 4.");
 	}
+	//if (sizeof(void*) == 8)
+	//{
+	//	if (sizeof(VehicleWheelSettings) != 22 * 4 + 8)
+	//		Fatal("JCreateSystem: sizeof(VehicleWheelSettings) != 22 * 4 + 8.");
+	//}
+	//else
+	//{
+	//	if (sizeof(VehicleWheelSettings) != 22 * 4)
+	//		Fatal("JCreateSystem: sizeof(VehicleWheelSettings) != 22 * 4.");
+	//}
 	if (sizeof(VehicleWheelData) != 5 * 4)
 		Fatal("JCreateSystem: sizeof(VehicleWheelSettings) != 5 * 4.");
 	if (sizeof(ContactItem) != 224)
@@ -1483,32 +1498,53 @@ EXPORT BodyItem* JCreateBody(PhysicsSystemItem* system, ShapeItem* shape, int mo
 	if (characterMode)
 		objectLayer = Layers::CHARACTER;
 
-	BodyCreationSettings settings(shape->compoundShapeSettings, ConvertToRVec3(position), ConvertToQuat(rotation), motionType2, objectLayer);
-	//BodyCreationSettings settings(shape->compoundShapeSettings->Create().Get(), Convert(position), rotation, motionType2, objectLayer);
-
-	settings.mMotionQuality = (EMotionQuality)motionQuality;
-
-	settings.mMassPropertiesOverride.mMass = mass;
+	ShapeSettings* shapeToCreate = shape->compoundShapeSettings;
 
 	if (centerOfMassOffset != Vector3::ZERO)
 	{
-		settings.mOverrideMassProperties = EOverrideMassProperties::MassAndInertiaProvided;
-		settings.mInertiaMultiplier = 1.0f;
+		shape->offsetCenterOfMassShapeSettings = new OffsetCenterOfMassShapeSettings(ConvertToVec3(centerOfMassOffset), shape->compoundShapeSettings);
+		shape->offsetCenterOfMassShapeSettings->SetEmbedded();
 
-		settings.mMassPropertiesOverride = settings.GetShape()->GetMassProperties();
-		settings.mMassPropertiesOverride.ScaleToMass(mass);
-		//settings.mMassPropertiesOverride.mInertia *= settings.mInertiaMultiplier;
-		settings.mMassPropertiesOverride.mInertia(3, 3) = 1.0f;
+		shapeToCreate = shape->offsetCenterOfMassShapeSettings;
+	}	
 
-		settings.mMassPropertiesOverride.Translate(ConvertToVec3(centerOfMassOffset));
-	}
-	else
-	{
-		settings.mOverrideMassProperties = EOverrideMassProperties::CalculateInertia;
-		settings.mInertiaMultiplier = 1.0f;
-	}
+	BodyCreationSettings settings(shapeToCreate/*shape->compoundShapeSettings*/, ConvertToRVec3(position), ConvertToQuat(rotation), motionType2, objectLayer);
 
-	//if (centerOfMassManual)
+	settings.mMotionQuality = (EMotionQuality)motionQuality;
+	settings.mMassPropertiesOverride.mMass = mass;
+
+	settings.mOverrideMassProperties = EOverrideMassProperties::CalculateInertia;
+	settings.mInertiaMultiplier = 1.0f;
+
+
+	//if (centerOfMassOffset != Vector3::ZERO)
+	//{
+	//	//settings.mOverrideMassProperties = EOverrideMassProperties::MassAndInertiaProvided;
+	//	//settings.mInertiaMultiplier = 1.0f;
+
+	//	//settings.mMassPropertiesOverride.mInertia = Mat44::sScale(ConvertToVec3(Vector3D(0.01, 1, 1)));
+
+	//	settings.mOverrideMassProperties = EOverrideMassProperties::MassAndInertiaProvided;
+	//	settings.mInertiaMultiplier = 1.0f;
+
+	//	const Shape* shape = settings.GetShape();
+
+	//	settings.mMassPropertiesOverride = shape->GetMassProperties2(ConvertToVec3(centerOfMassOffset));
+	//	//settings.mMassPropertiesOverride = ((CompoundShape*)settings.GetShape())->GetMassProperties2(ConvertToVec3(centerOfMassOffset));
+	//	settings.mMassPropertiesOverride.ScaleToMass(mass);
+	//	//settings.mMassPropertiesOverride.mInertia *= settings.mInertiaMultiplier;
+	//	settings.mMassPropertiesOverride.mInertia(3, 3) = 1.0f;
+
+	//	//settings.mMassPropertiesOverride.Translate(ConvertToVec3(centerOfMassOffset));
+	//}
+	//else
+	//{
+	//	settings.mOverrideMassProperties = EOverrideMassProperties::CalculateInertia;
+	//	settings.mInertiaMultiplier = 1.0f;
+	//}
+
+
+	//if (centerOfMassOffset != Vector3::ZERO)
 	//{
 	//	settings.mOverrideMassProperties = EOverrideMassProperties::MassAndInertiaProvided;
 	//	settings.mInertiaMultiplier = 1.0f;
@@ -1518,16 +1554,35 @@ EXPORT BodyItem* JCreateBody(PhysicsSystemItem* system, ShapeItem* shape, int mo
 	//	//settings.mMassPropertiesOverride.mInertia *= settings.mInertiaMultiplier;
 	//	settings.mMassPropertiesOverride.mInertia(3, 3) = 1.0f;
 
-	//	//!!!!
-	//	settings.mMassPropertiesOverride.Translate(ConvertToVec3(Vector3D(0, 0, -2)));
-	//	//settings.mMassPropertiesOverride.Translate(ConvertToVec3(centerOfMassPosition));
-
+	//	settings.mMassPropertiesOverride.Translate(ConvertToVec3(centerOfMassOffset));
 	//}
 	//else
 	//{
 	//	settings.mOverrideMassProperties = EOverrideMassProperties::CalculateInertia;
 	//	settings.mInertiaMultiplier = 1.0f;
 	//}
+
+
+	////if (centerOfMassManual)
+	////{
+	////	settings.mOverrideMassProperties = EOverrideMassProperties::MassAndInertiaProvided;
+	////	settings.mInertiaMultiplier = 1.0f;
+
+	////	settings.mMassPropertiesOverride = settings.GetShape()->GetMassProperties();
+	////	settings.mMassPropertiesOverride.ScaleToMass(mass);
+	////	//settings.mMassPropertiesOverride.mInertia *= settings.mInertiaMultiplier;
+	////	settings.mMassPropertiesOverride.mInertia(3, 3) = 1.0f;
+
+	////	//!!!!
+	////	settings.mMassPropertiesOverride.Translate(ConvertToVec3(Vector3D(0, 0, -2)));
+	////	//settings.mMassPropertiesOverride.Translate(ConvertToVec3(centerOfMassPosition));
+
+	////}
+	////else
+	////{
+	////	settings.mOverrideMassProperties = EOverrideMassProperties::CalculateInertia;
+	////	settings.mInertiaMultiplier = 1.0f;
+	////}
 
 	settings.mLinearDamping = linearDamping;
 	settings.mAngularDamping = angularDamping;
@@ -1879,12 +1934,20 @@ EXPORT ShapeItem* JCreateShape(bool mutableCompoundShape)
 
 	item->compoundShapeSettings->SetEmbedded();
 
+	item->offsetCenterOfMassShapeSettings = NULL;
+
 	return item;
 }
 
 EXPORT void JDestroyShape(ShapeItem* shape)
 {
-	delete shape->compoundShapeSettings;
+	//!!!!leaks?
+
+	if (shape->offsetCenterOfMassShapeSettings)
+		delete shape->offsetCenterOfMassShapeSettings;
+	else
+		delete shape->compoundShapeSettings;
+
 	delete shape;
 }
 
@@ -2912,131 +2975,179 @@ EXPORT ConstraintItem* JCreateConstraintFixed(PhysicsSystemItem* system, BodyIte
 	return constraint;
 }
 
-EXPORT VehicleConstraintItem* JCreateConstraintVehicle(PhysicsSystemItem* system, BodyItem* body, int wheelCount, VehicleWheelSettings* wheelsSettings, float frontWheelAntiRollBarStiffness, float rearWheelAntiRollBarStiffness, float maxPitchRollAngle, float engineMaxTorque, float engineMinRPM, float engineMaxRPM, bool transmissionAuto, int transmissionGearRatiosCount, double* transmissionGearRatios, int transmissionReverseGearRatiosCount, double* transmissionReverseGearRatios, float transmissionSwitchTime, float transmissionClutchReleaseTime, float transmissionSwitchLatency, float transmissionShiftUpRPM, float transmissionShiftDownRPM, float transmissionClutchStrength, bool frontWheelDrive, bool rearWheelDrive, float frontWheelDifferentialRatio, float frontWheelDifferentialLeftRightSplit, float frontWheelDifferentialLimitedSlipRatio, float frontWheelDifferentialEngineTorqueRatio, float rearWheelDifferentialRatio, float rearWheelDifferentialLeftRightSplit, float rearWheelDifferentialLimitedSlipRatio, float rearWheelDifferentialEngineTorqueRatio, float maxSlopeAngleInRadians)
+EXPORT VehicleConstraintItem* JCreateConstraintVehicle(PhysicsSystemItem* system, BodyItem* body, int wheelCount, VehicleWheelSettings* wheelsSettings, float frontWheelAntiRollBarStiffness, float rearWheelAntiRollBarStiffness, float maxPitchRollAngle, float engineMaxTorque, float engineMinRPM, float engineMaxRPM, bool transmissionAuto, int transmissionGearRatiosCount, double* transmissionGearRatios, int transmissionReverseGearRatiosCount, double* transmissionReverseGearRatios, float transmissionSwitchTime, float transmissionClutchReleaseTime, float transmissionSwitchLatency, float transmissionShiftUpRPM, float transmissionShiftDownRPM, float transmissionClutchStrength, /*bool frontWheelDrive, bool rearWheelDrive, float frontWheelDifferentialRatio, float frontWheelDifferentialLeftRightSplit, float frontWheelDifferentialLimitedSlipRatio, float frontWheelDifferentialEngineTorqueRatio, float rearWheelDifferentialRatio, float rearWheelDifferentialLeftRightSplit, float rearWheelDifferentialLimitedSlipRatio, float rearWheelDifferentialEngineTorqueRatio,*/ float maxSlopeAngleInRadians, bool tracks, int antiRollbarsCount, float* antiRollbars, float differentialLimitedSlipRatio, int engineNormalizedTorqueCount, float* engineNormalizedTorque, float engineInertia, float engineAngularDamping, int differentialsCount, float* differentials, int trackDrivenWheel, float trackInertia, float trackAngularDamping, float trackMaxBrakeTorque, float trackDifferentialRatio)
 {
+	bool wheels = !tracks;
+
 	VehicleConstraintSettings settings;
 	settings.SetEmbedded();
 
+	//common settings
 	settings.mUp = Vec3(0, 0, 1);
 	settings.mForward = Vec3(1, 0, 0);
 	settings.mMaxPitchRollAngle = maxPitchRollAngle;
 	if (abs(settings.mMaxPitchRollAngle - JPH_PI) < 0.001f)
 		settings.mMaxPitchRollAngle = JPH_PI;
 
+	//create wheels
 	for (int nWheel = 0; nWheel < wheelCount; nWheel++)
 	{
 		VehicleWheelSettings* wheelSettings = wheelsSettings + nWheel;
 
-		//!!!!удаляется?
-		WheelSettingsWV* s = new WheelSettingsWV;
+		//Wheels mode
+		if (wheels)
+		{
+			WheelSettingsWV* s = new WheelSettingsWV;
 
-		s->mPosition = ConvertToVec3(wheelSettings->position);
-		s->mSuspensionDirection = ConvertToVec3(wheelSettings->direction);
+			s->mPosition = ConvertToVec3(wheelSettings->position);
+			s->mSuspensionDirection = ConvertToVec3(wheelSettings->direction);
 
-		//add to C#?
-		s->mSteeringAxis = Vec3(0, 0, 1);
-		s->mWheelForward = Vec3(1, 0, 0);
-		s->mWheelUp = Vec3(0, 0, 1);
+			s->mSteeringAxis = Vec3(0, 0, 1);
+			s->mWheelForward = Vec3(1, 0, 0);
+			s->mWheelUp = Vec3(0, 0, 1);
 
-		s->mSuspensionMinLength = wheelSettings->suspensionMinLength;
-		s->mSuspensionMaxLength = wheelSettings->suspensionMaxLength;
-		s->mSuspensionPreloadLength = wheelSettings->suspensionPreloadLength;
-		//!!!!now exists StiffnessAndDamping mode
-		s->mSuspensionSpring.mFrequency = wheelSettings->suspensionFrequency;
-		s->mSuspensionSpring.mDamping = wheelSettings->suspensionDamping;
-		s->mRadius = wheelSettings->radius;
-		s->mWidth = wheelSettings->width;
+			s->mSuspensionMinLength = wheelSettings->suspensionMinLength;
+			s->mSuspensionMaxLength = wheelSettings->suspensionMaxLength;
+			s->mSuspensionPreloadLength = wheelSettings->suspensionPreloadLength;
 
-		//Wheeled specific
-		s->mInertia = wheelSettings->inertia;
-		s->mAngularDamping = wheelSettings->angularDamping;
-		s->mMaxSteerAngle = wheelSettings->maxSteerAngle;
-		s->mLongitudinalFriction.Clear();
-		for (int n = 0; n < wheelSettings->LongitudinalFrictionCount; n++)
-			s->mLongitudinalFriction.AddPoint(wheelSettings->LongitudinalFrictionData[n * 2 + 0], wheelSettings->LongitudinalFrictionData[n * 2 + 1]);
-		s->mLateralFriction.Clear();
-		for (int n = 0; n < wheelSettings->LateralFrictionCount; n++)
-			s->mLateralFriction.AddPoint(wheelSettings->LateralFrictionData[n * 2 + 0], wheelSettings->LateralFrictionData[n * 2 + 1]);
-		s->mMaxBrakeTorque = wheelSettings->maxBrakeTorque;
-		s->mMaxHandBrakeTorque = wheelSettings->maxHandBrakeTorque;
+			//!!!!now also exists StiffnessAndDamping mode
 
-		settings.mWheels.push_back(s);
+			s->mSuspensionSpring.mFrequency = wheelSettings->suspensionFrequency;
+			s->mSuspensionSpring.mDamping = wheelSettings->suspensionDamping;
+			s->mRadius = wheelSettings->radius;
+			s->mWidth = wheelSettings->width;
+
+			//Wheeled specific
+			s->mInertia = wheelSettings->inertia;
+			s->mAngularDamping = wheelSettings->angularDamping;
+			s->mMaxSteerAngle = wheelSettings->maxSteerAngle;
+			s->mLongitudinalFriction.Clear();
+			for (int n = 0; n < wheelSettings->LongitudinalFrictionCount; n++)
+				s->mLongitudinalFriction.AddPoint(wheelSettings->LongitudinalFrictionData[n * 2 + 0], wheelSettings->LongitudinalFrictionData[n * 2 + 1]);
+			s->mLateralFriction.Clear();
+			for (int n = 0; n < wheelSettings->LateralFrictionCount; n++)
+				s->mLateralFriction.AddPoint(wheelSettings->LateralFrictionData[n * 2 + 0], wheelSettings->LateralFrictionData[n * 2 + 1]);
+			s->mMaxBrakeTorque = wheelSettings->maxBrakeTorque;
+			s->mMaxHandBrakeTorque = wheelSettings->maxHandBrakeTorque;
+
+			settings.mWheels.push_back(s);
+		}
+		
+		//Tracks mode
+		if (tracks)
+		{
+			WheelSettingsTV* s = new WheelSettingsTV;
+
+			s->mPosition = ConvertToVec3(wheelSettings->position);
+			s->mSuspensionDirection = ConvertToVec3(wheelSettings->direction);
+
+			s->mSteeringAxis = Vec3(0, 0, 1);
+			s->mWheelForward = Vec3(1, 0, 0);
+			s->mWheelUp = Vec3(0, 0, 1);
+
+			s->mSuspensionMinLength = wheelSettings->suspensionMinLength;
+			s->mSuspensionMaxLength = wheelSettings->suspensionMaxLength;
+			s->mSuspensionPreloadLength = wheelSettings->suspensionPreloadLength;
+
+			//!!!!now also exists StiffnessAndDamping mode
+
+			s->mSuspensionSpring.mFrequency = wheelSettings->suspensionFrequency;
+			s->mSuspensionSpring.mDamping = wheelSettings->suspensionDamping;
+			s->mRadius = wheelSettings->radius;
+			s->mWidth = wheelSettings->width;
+
+			//Tracked specific
+			s->mLongitudinalFriction = wheelSettings->trackLongitudinalFriction;
+			s->mLateralFriction = wheelSettings->trackLateralFriction;
+
+			settings.mWheels.push_back(s);
+		}
 	}
 
-	// Anti rollbars
-	if (frontWheelAntiRollBarStiffness != 0)
+	//anti rollbars
+	for (int n = 0; n < antiRollbarsCount; n++)
 	{
 		VehicleAntiRollBar bar;
-		bar.mLeftWheel = 0;
-		bar.mRightWheel = 1;
-		bar.mStiffness = frontWheelAntiRollBarStiffness;
+		bar.mLeftWheel = (int)antiRollbars[n * 3 + 0];
+		bar.mRightWheel = (int)antiRollbars[n * 3 + 1];
+		bar.mStiffness = antiRollbars[n * 3 + 2];
 		settings.mAntiRollBars.push_back(bar);
 	}
-	if (rearWheelAntiRollBarStiffness != 0)
-	{
-		VehicleAntiRollBar bar;
-		bar.mLeftWheel = 2;
-		bar.mRightWheel = 3;
-		bar.mStiffness = rearWheelAntiRollBarStiffness;
-		settings.mAntiRollBars.push_back(bar);
-	}
-	//if (sAntiRollbar)
-	//{
-	//	settings.mAntiRollBars.resize(2);
-	//	settings.mAntiRollBars[0].mLeftWheel = 0;
-	//	settings.mAntiRollBars[0].mRightWheel = 1;
-	//	settings.mAntiRollBars[1].mLeftWheel = 2;
-	//	settings.mAntiRollBars[1].mRightWheel = 3;
-	//}
 
-	//!!!!delete?
-	WheeledVehicleControllerSettings* controller = new WheeledVehicleControllerSettings();
-	settings.mController = controller;
-
-	// Differential
-	if (frontWheelDrive)
+	//differentials for Wheels mode
+	if (wheels)
 	{
-		VehicleDifferentialSettings d;
-		d.mLeftWheel = 0;
-		d.mRightWheel = 1;
-		d.mDifferentialRatio = frontWheelDifferentialRatio;
-		d.mLeftRightSplit = frontWheelDifferentialLeftRightSplit;
-		d.mLimitedSlipRatio = frontWheelDifferentialLimitedSlipRatio;
-		d.mEngineTorqueRatio = frontWheelDifferentialEngineTorqueRatio;
-		controller->mDifferentials.push_back(d);
-	}
+		VehicleControllerSettings* controllerSettings = new WheeledVehicleControllerSettings();
+		settings.mController = controllerSettings;
 
-	if (rearWheelDrive)
-	{
-		VehicleDifferentialSettings d;
-		d.mLeftWheel = 2;
-		d.mRightWheel = 3;
-		d.mDifferentialRatio = rearWheelDifferentialRatio;
-		d.mLeftRightSplit = rearWheelDifferentialLeftRightSplit;
-		d.mLimitedSlipRatio = rearWheelDifferentialLimitedSlipRatio;
-		d.mEngineTorqueRatio = rearWheelDifferentialEngineTorqueRatio;
-		controller->mDifferentials.push_back(d);
+		WheeledVehicleControllerSettings* controllerSettings2 = (WheeledVehicleControllerSettings*)controllerSettings;
+
+		//differential
+		for (int n = 0; n < differentialsCount; n++)
+		{
+			VehicleDifferentialSettings d;
+			d.mLeftWheel = differentials[n * 6 + 0];
+			d.mRightWheel = differentials[n * 6 + 1];
+			d.mDifferentialRatio = differentials[n * 6 + 2];
+			d.mLeftRightSplit = differentials[n * 6 + 3];
+			d.mLimitedSlipRatio = differentials[n * 6 + 4];
+			d.mEngineTorqueRatio = differentials[n * 6 + 5];
+			controllerSettings2->mDifferentials.push_back(d);
+		}
+
+		//normalize mEngineTorqueRatio
+		if (controllerSettings2->mDifferentials.size() != 0)
+		{
+			float sum = 0.0f;
+			for (int n = 0; n < controllerSettings2->mDifferentials.size(); n++)
+				sum += controllerSettings2->mDifferentials[n].mEngineTorqueRatio;
+			if (sum <= 0)
+				sum = 1;
+			for (int n = 0; n < controllerSettings2->mDifferentials.size(); n++)
+				controllerSettings2->mDifferentials[n].mEngineTorqueRatio = controllerSettings2->mDifferentials[n].mEngineTorqueRatio / sum;
+		}
+
+		controllerSettings2->mDifferentialLimitedSlipRatio = differentialLimitedSlipRatio;
 	}
 
-	//normalize mEngineTorqueRatio
-	if (controller->mDifferentials.size() != 0)
+	//tracks for Tracks mode
+	if(tracks)
 	{
-		float sum = 0.0f;
-		for (int n = 0; n < controller->mDifferentials.size(); n++)
-			sum += controller->mDifferentials[n].mEngineTorqueRatio;
-		if (sum <= 0)
-			sum = 1;
-		for (int n = 0; n < controller->mDifferentials.size(); n++)
-			controller->mDifferentials[n].mEngineTorqueRatio = controller->mDifferentials[n].mEngineTorqueRatio / sum;
-	}
-	//if (frontWheelDrive && rearWheelDrive)
-	//{
-	//	// Split engine torque
-	//	controller->mDifferentials[0].mEngineTorqueRatio = controller->mDifferentials[1].mEngineTorqueRatio = 0.5f;
-	//}
+		VehicleControllerSettings* controllerSettings = new TrackedVehicleControllerSettings();
+		settings.mController = controllerSettings;
 
+		TrackedVehicleControllerSettings* controllerSettings2 = (TrackedVehicleControllerSettings*)controllerSettings;
+
+		for (int t = 0; t < 2; t++)
+		{
+			auto& track = controllerSettings2->mTracks[t];
+
+			if (t == 0)
+			{
+				track.mDrivenWheel = trackDrivenWheel;
+				for (int n = 0; n < wheelCount / 2; n++)
+					track.mWheels.push_back(n);
+			}
+			else
+			{
+				int rightStartIndex = wheelCount / 2;
+				track.mDrivenWheel = rightStartIndex + trackDrivenWheel;
+				for (int n = 0; n < wheelCount / 2; n++)
+					track.mWheels.push_back(rightStartIndex + n);
+			}
+
+			track.mInertia = trackInertia;
+			track.mAngularDamping = trackAngularDamping;
+			track.mMaxBrakeTorque = trackMaxBrakeTorque;
+			track.mDifferentialRatio = trackDifferentialRatio;
+		}
+	}
+
+	//constraint
 	auto constraint = new VehicleConstraintItem();
 	constraint->system = &system->system;
+	constraint->Wheels = wheels;
+	constraint->Tracks = tracks;
 	VehicleConstraint* vehicleConstraint = new VehicleConstraint(*body->body, settings);
 	constraint->constraint = vehicleConstraint;
 	constraint->body = body;
@@ -3046,66 +3157,108 @@ EXPORT VehicleConstraintItem* JCreateConstraintVehicle(PhysicsSystemItem* system
 	constraint->constraint->SetUserData((uint64_t)constraint);
 	constraint->collisionsBetweenLinkedBodies = false;
 
-	//collision tester
-
+	//constraint collision tester
 	VehicleCollisionTesterCastCylinder* collisionTester = new VehicleCollisionTesterCastCylinder(Layers::MOVING);
-
-	//double maxWidth = 0;
-	//for (int n = 0; n < wheelCount; n++)
-	//{
-	//	VehicleWheelSettings* wheelSettings = wheelsSettings + n;
-	//	if (wheelSettings->width > maxWidth)
-	//		maxWidth = wheelSettings->width;
-	//}
-	//VehicleCollisionTesterCastSphere* collisionTester = new VehicleCollisionTesterCastSphere(Layers::MOVING, maxWidth * 0.5f, Vec3::sAxisZ(), maxSlopeAngleInRadians);
-
-	//double maxRadius = 0;
-	//for (int n = 0; n < wheelCount; n++)
-	//{
-	//	VehicleWheelSettings* wheelSettings = wheelsSettings + n;
-	//	if (wheelSettings->radius > maxRadius)
-	//		maxRadius = wheelSettings->radius;
-	//}
-	//VehicleCollisionTesterCastSphere* collisionTester = new VehicleCollisionTesterCastSphere(Layers::MOVING, maxRadius, Vec3::sAxisZ(), maxSlopeAngleInRadians);
-
-	//VehicleCollisionTesterCastSphereMultiRadius* collisionTester = new VehicleCollisionTesterCastSphereMultiRadius(Layers::MOVING, Vec3::sAxisZ(), maxSlopeAngleInRadians);
-	//for (int n = 0; n < wheelCount; n++)
-	//{
-	//	VehicleWheelSettings* wheelSettings = wheelsSettings + n;
-	//	collisionTester->mRadiuses.push_back(wheelSettings->radius);
-	//}
 	constraint->collisionTester = collisionTester;
-
-	//constraint->collisionTester = new VehicleCollisionTesterRay(Layers::MOVING, Vec3::sAxisZ(), inMaxSlopeAngle);
-	//VehicleWheelSettings* wheelSettings = wheelsSettings + 0;
-	//constraint->collisionTester = new VehicleCollisionTesterCastSphere(Layers::MOVING, wheelSettings->radius, Vec3::sAxisZ(), inMaxSlopeAngle);
-
 	vehicleConstraint->SetVehicleCollisionTester(constraint->collisionTester);
 
-	//engine
-	WheeledVehicleController* controller2 = static_cast<WheeledVehicleController*>(vehicleConstraint->GetController());
-	controller2->GetEngine().mMaxTorque = engineMaxTorque;
-	controller2->GetEngine().mMinRPM = engineMinRPM;
-	controller2->GetEngine().mMaxRPM = engineMaxRPM;
 
-	//transmission
-	auto& tr = controller2->GetTransmission();
-	tr.mMode = transmissionAuto ? ETransmissionMode::Auto : ETransmissionMode::Manual;
-	tr.mGearRatios.clear();
-	for (int n = 0; n < transmissionGearRatiosCount; n++)
-		tr.mGearRatios.push_back((float)transmissionGearRatios[n]);
-	tr.mReverseGearRatios.clear();
-	for (int n = 0; n < transmissionReverseGearRatiosCount; n++)
-		tr.mReverseGearRatios.push_back((float)transmissionReverseGearRatios[n]);
-	tr.mSwitchTime = transmissionSwitchTime;
-	tr.mClutchReleaseTime = transmissionClutchReleaseTime;
-	tr.mSwitchLatency = transmissionSwitchLatency;
-	tr.mShiftUpRPM = transmissionShiftUpRPM;
-	tr.mShiftDownRPM = transmissionShiftDownRPM;
-	tr.mShiftDownRPM = transmissionShiftDownRPM;
+	////double maxWidth = 0;
+	////for (int n = 0; n < wheelCount; n++)
+	////{
+	////	VehicleWheelSettings* wheelSettings = wheelsSettings + n;
+	////	if (wheelSettings->width > maxWidth)
+	////		maxWidth = wheelSettings->width;
+	////}
+	////VehicleCollisionTesterCastSphere* collisionTester = new VehicleCollisionTesterCastSphere(Layers::MOVING, maxWidth * 0.5f, Vec3::sAxisZ(), maxSlopeAngleInRadians);
+	////double maxRadius = 0;
+	////for (int n = 0; n < wheelCount; n++)
+	////{
+	////	VehicleWheelSettings* wheelSettings = wheelsSettings + n;
+	////	if (wheelSettings->radius > maxRadius)
+	////		maxRadius = wheelSettings->radius;
+	////}
+	////VehicleCollisionTesterCastSphere* collisionTester = new VehicleCollisionTesterCastSphere(Layers::MOVING, maxRadius, Vec3::sAxisZ(), maxSlopeAngleInRadians);
+	////VehicleCollisionTesterCastSphereMultiRadius* collisionTester = new VehicleCollisionTesterCastSphereMultiRadius(Layers::MOVING, Vec3::sAxisZ(), maxSlopeAngleInRadians);
+	////for (int n = 0; n < wheelCount; n++)
+	////{
+	////	VehicleWheelSettings* wheelSettings = wheelsSettings + n;
+	////	collisionTester->mRadiuses.push_back(wheelSettings->radius);
+	////}
+	////constraint->collisionTester = new VehicleCollisionTesterRay(Layers::MOVING, Vec3::sAxisZ(), inMaxSlopeAngle);
+	////VehicleWheelSettings* wheelSettings = wheelsSettings + 0;
+	////constraint->collisionTester = new VehicleCollisionTesterCastSphere(Layers::MOVING, wheelSettings->radius, Vec3::sAxisZ(), inMaxSlopeAngle);
 
-	////!!!!можно выключать когда неактивный
-	//system->system.AddStepListener(vehicleConstraint);
+
+	//engine, transmission
+
+	//Wheels specific
+	if (wheels)
+	{
+		WheeledVehicleController* controller2 = static_cast<WheeledVehicleController*>(vehicleConstraint->GetController());
+
+		//engine
+		auto& engine = controller2->GetEngine();
+		engine.mMaxTorque = engineMaxTorque;
+		engine.mMinRPM = engineMinRPM;
+		engine.mMaxRPM = engineMaxRPM;
+		engine.mNormalizedTorque.Clear();
+		for (int n = 0; n < engineNormalizedTorqueCount; n++)
+			engine.mNormalizedTorque.AddPoint(engineNormalizedTorque[n * 2 + 0], engineNormalizedTorque[n * 2 + 1]);
+		engine.mInertia = engineInertia;
+		engine.mAngularDamping = engineAngularDamping;
+
+		//transmission
+		auto& tr = controller2->GetTransmission();
+		tr.mMode = transmissionAuto ? ETransmissionMode::Auto : ETransmissionMode::Manual;
+		tr.mGearRatios.clear();
+		for (int n = 0; n < transmissionGearRatiosCount; n++)
+			tr.mGearRatios.push_back((float)transmissionGearRatios[n]);
+		tr.mReverseGearRatios.clear();
+		for (int n = 0; n < transmissionReverseGearRatiosCount; n++)
+			tr.mReverseGearRatios.push_back((float)transmissionReverseGearRatios[n]);
+		tr.mSwitchTime = transmissionSwitchTime;
+		tr.mClutchReleaseTime = transmissionClutchReleaseTime;
+		tr.mSwitchLatency = transmissionSwitchLatency;
+		tr.mShiftUpRPM = transmissionShiftUpRPM;
+		tr.mShiftDownRPM = transmissionShiftDownRPM;
+		tr.mClutchStrength = transmissionClutchStrength;
+	}
+
+	//Tracks specific
+	if(tracks)
+	{
+		TrackedVehicleController* controller2 = static_cast<TrackedVehicleController*>(vehicleConstraint->GetController());
+
+		//engine
+		auto& engine = controller2->GetEngine();
+		engine.mMaxTorque = engineMaxTorque;
+		engine.mMinRPM = engineMinRPM;
+		engine.mMaxRPM = engineMaxRPM;
+		engine.mNormalizedTorque.Clear();
+		for (int n = 0; n < engineNormalizedTorqueCount; n++)
+			engine.mNormalizedTorque.AddPoint(engineNormalizedTorque[n * 2 + 0], engineNormalizedTorque[n * 2 + 1]);
+		engine.mInertia = engineInertia;
+		engine.mAngularDamping = engineAngularDamping;
+
+		//transmission
+		auto& tr = controller2->GetTransmission();
+		tr.mMode = transmissionAuto ? ETransmissionMode::Auto : ETransmissionMode::Manual;
+		tr.mGearRatios.clear();
+		for (int n = 0; n < transmissionGearRatiosCount; n++)
+			tr.mGearRatios.push_back((float)transmissionGearRatios[n]);
+		tr.mReverseGearRatios.clear();
+		for (int n = 0; n < transmissionReverseGearRatiosCount; n++)
+			tr.mReverseGearRatios.push_back((float)transmissionReverseGearRatios[n]);
+		tr.mSwitchTime = transmissionSwitchTime;
+		tr.mClutchReleaseTime = transmissionClutchReleaseTime;
+		tr.mSwitchLatency = transmissionSwitchLatency;
+		tr.mShiftUpRPM = transmissionShiftUpRPM;
+		tr.mShiftDownRPM = transmissionShiftDownRPM;
+		tr.mClutchStrength = transmissionClutchStrength;
+	}
+
+	////system->system.AddStepListener(vehicleConstraint);
 
 	return constraint;
 }
@@ -3183,7 +3336,9 @@ EXPORT void JSixDOFConstraint_SetMotor(SixDOFConstraintItem* constraint, int axi
 	auto mode2 = (EMotorState)mode;
 
 	auto& s = c->GetMotorSettings(axis2);
+
 	//!!!!now exists StiffnessAndDamping mode
+
 	s.mSpringSettings.mFrequency = frequency;
 	s.mSpringSettings.mDamping = damping;
 
@@ -3259,25 +3414,43 @@ EXPORT void JSixDOFConstraint_SetMotor(SixDOFConstraintItem* constraint, int axi
 	}
 }
 
-EXPORT void JVehicleConstraint_SetDriverInput(VehicleConstraintItem* constraint, float forward, /*float left, */float right, float brake, float handBrake, bool activateBody)
+EXPORT void JVehicleConstraint_SetDriverInput(VehicleConstraintItem* constraint, float forward, float leftTracksOnly, float right, float brake, float handBrake, bool activateBody)
 {
-	//constraint->forward = forward;
-	////constraint->left = left;
-	//constraint->right = right;
-	//constraint->brake = brake;
-	//constraint->handBrake = handBrake;
-
 	VehicleConstraint* c = (VehicleConstraint*)constraint->constraint.GetPtr();
-	WheeledVehicleController* controller = static_cast<WheeledVehicleController*>(c->GetController());
 
 	if (activateBody && !constraint->body->body->IsActive())
 		JBody_Activate(constraint->body);
 
-	// Pass the input on to the constraint
-	controller->SetDriverInput(forward, right, brake, handBrake);
+	if (constraint->Wheels)
+	{
+		WheeledVehicleController* controller = static_cast<WheeledVehicleController*>(c->GetController());
+		controller->SetDriverInput(forward, right, brake, handBrake);
+	}
+
+	if (constraint->Tracks)
+	{
+		TrackedVehicleController* controller = static_cast<TrackedVehicleController*>(c->GetController());
+		controller->SetDriverInput(forward, leftTracksOnly, right, brake);
+	}
+
+
+	////constraint->forward = forward;
+	//////constraint->left = left;
+	////constraint->right = right;
+	////constraint->brake = brake;
+	////constraint->handBrake = handBrake;
+
+	//VehicleConstraint* c = (VehicleConstraint*)constraint->constraint.GetPtr();
+	//WheeledVehicleController* controller = static_cast<WheeledVehicleController*>(c->GetController());
+
+	//if (activateBody && !constraint->body->body->IsActive())
+	//	JBody_Activate(constraint->body);
 
 	//// Pass the input on to the constraint
-	//controller->SetDriverInput(constraint->forward, constraint->right, constraint->brake, constraint->handBrake);
+	//controller->SetDriverInput(forward, right, brake, handBrake);
+
+	////// Pass the input on to the constraint
+	////controller->SetDriverInput(constraint->forward, constraint->right, constraint->brake, constraint->handBrake);
 }
 
 //EXPORT void JVehicleConstraint_SetStepListenerMustBeAdded(VehicleConstraintItem* constraint, bool value)
@@ -3309,13 +3482,27 @@ EXPORT void JVehicleConstraint_GetData(VehicleConstraintItem* constraint, Vehicl
 
 	active = c->IsActive();
 
-	WheeledVehicleController* controller2 = static_cast<WheeledVehicleController*>(c->GetController());
+	if (constraint->Wheels)
+	{
+		WheeledVehicleController* controller2 = static_cast<WheeledVehicleController*>(c->GetController());
 
-	VehicleTransmission& transmission = controller2->GetTransmission();
-	currentGear = transmission.GetCurrentGear();
-	isSwitchingGear = transmission.IsSwitchingGear();
+		VehicleTransmission& transmission = controller2->GetTransmission();
+		currentGear = transmission.GetCurrentGear();
+		isSwitchingGear = transmission.IsSwitchingGear();
 
-	currentRPM = controller2->GetEngine().GetCurrentRPM();
+		currentRPM = controller2->GetEngine().GetCurrentRPM();
+	}
+
+	if (constraint->Tracks)
+	{
+		TrackedVehicleController* controller2 = static_cast<TrackedVehicleController*>(c->GetController());
+
+		VehicleTransmission& transmission = controller2->GetTransmission();
+		currentGear = transmission.GetCurrentGear();
+		isSwitchingGear = transmission.IsSwitchingGear();
+
+		currentRPM = controller2->GetEngine().GetCurrentRPM();
+	}
 }
 
 ////for debug

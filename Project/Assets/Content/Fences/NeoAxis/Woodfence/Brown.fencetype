@@ -1,0 +1,26 @@
+// Made with NeoAxis Engine 2024.1.
+
+.component NeoAxis.FenceType
+{
+	PanelLength = 1.93
+	EndPost
+	{
+		GetByReference = "Content\\Fences\\NeoAxis\\Woodfence\\Brown Post.gltf|$Mesh"
+	}
+	LinePost
+	{
+		GetByReference = "Content\\Fences\\NeoAxis\\Woodfence\\Brown Post.gltf|$Mesh"
+	}
+	CornerPost
+	{
+		GetByReference = "Content\\Fences\\NeoAxis\\Woodfence\\Brown Post.gltf|$Mesh"
+	}
+	StepPost
+	{
+		GetByReference = "Content\\Fences\\NeoAxis\\Woodfence\\Brown Post.gltf|$Mesh"
+	}
+	FullPanel
+	{
+		GetByReference = "Content\\Fences\\NeoAxis\\Woodfence\\Brown Panel.gltf|$Mesh"
+	}
+}

@@ -65,7 +65,7 @@
 						Location3 = 0 0 0
 						Texture
 						{
-							GetByReference = "Content\\Vehicles\\Default\\M_Wheel_baseColor.png"
+							GetByReference = "Content\\Vehicles\\Default\\Textures\\M_Wheel_baseColor.png"
 						}
 					}
 				}
@@ -84,7 +84,7 @@
 						Location3 = 0 0 0
 						Texture
 						{
-							GetByReference = "Content\\Vehicles\\Default\\M_Wheel_metallicRoughness.png"
+							GetByReference = "Content\\Vehicles\\Default\\Textures\\M_Wheel_metallicRoughness.png"
 						}
 					}
 				}
@@ -103,7 +103,7 @@
 						Location3 = 0 0 0
 						Texture
 						{
-							GetByReference = "Content\\Vehicles\\Default\\M_Wheel_normal.jpg"
+							GetByReference = "Content\\Vehicles\\Default\\Textures\\M_Wheel_normal.jpg"
 						}
 					}
 				}

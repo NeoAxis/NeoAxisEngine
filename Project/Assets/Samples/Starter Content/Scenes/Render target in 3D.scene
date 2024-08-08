@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.Scene
 {
@@ -18,7 +18,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "6.37196298743802 -0.45680987126706 2.9580602243303; -0.201986822031512 0.0500029024318749 0.949450642035592 0.235041510827771; 1 1 1"
+		Transform = "1.9295940935667 -2.59436349273593 2.66275600608841; -0.116583807437111 0.144097712571548 0.618081701917337 0.763949654643604; 1 1 1"
 	}
 	.component NeoAxis.Camera
 	{
@@ -35,13 +35,14 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 50000
+		Brightness = 60000
 	}
 	.component NeoAxis.Light
 	{
 		Name = Light 1
 		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
 		Type = Directional
+		Brightness = 150000
 		AttenuationFar = 100
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
@@ -50,8 +51,9 @@
 	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
-		ShadowFarDistance = 15
 		ShadowIntensity = 0.5
+		ShadowDirectionalDistance = 15
+		ShadowPointSpotlightDistance = 15
 		.component NeoAxis.Component
 		{
 			Name = Background Effects
@@ -107,7 +109,7 @@
 	{
 		Name = Game Mode
 		UseBuiltInCamera = FirstPerson
-		ThirdPersonCameraHorizontalAngle = 90.00000000000007
+		ThirdPersonCameraHorizontalAngle = 123.55833912973655
 		DisplayTarget = True
 		CutsceneStarted = False
 		CutsceneGuiFadingFactor = 0
@@ -128,10 +130,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -172,126 +170,6 @@
 			}
 		}
 	}
-	.component NeoAxis.MeshInSpace
-	{
-		Name = Sphere
-		Transform
-		{
-			GetByReference = "this:$Collision Body\\Transform"
-		}
-		Mesh
-		{
-			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.Mesh
-		{
-			Name = Mesh
-			.component NeoAxis.MeshGeometry_Sphere
-			{
-				Name = Mesh Geometry
-			}
-		}
-		.component NeoAxis.RigidBody
-		{
-			Name = Collision Body
-			Transform = "1.649926094671 -5.24069580321873 0.5; 0 0 0 1; 1 1 1"
-			MotionType = Dynamic
-			.component NeoAxis.CollisionShape_Sphere
-			{
-			}
-		}
-	}
-	.component NeoAxis.MeshInSpace
-	{
-		Name = Box
-		Transform
-		{
-			GetByReference = "this:$Collision Body\\Transform"
-		}
-		Mesh
-		{
-			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.Mesh
-		{
-			Name = Mesh
-			.component NeoAxis.MeshGeometry_Box
-			{
-				Name = Mesh Geometry
-			}
-		}
-		.component NeoAxis.RigidBody
-		{
-			Name = Collision Body
-			Transform = "7.7583292677252 0.545388379699409 0.500000000000008; 0 0 0 1; 1 1 1"
-			MotionType = Dynamic
-			.component NeoAxis.CollisionShape_Box
-			{
-			}
-		}
-	}
-	.component NeoAxis.MeshInSpace
-	{
-		Name = Cylinder
-		Transform
-		{
-			GetByReference = "this:$Collision Body\\Transform"
-		}
-		Mesh
-		{
-			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.Mesh
-		{
-			Name = Mesh
-			.component NeoAxis.MeshGeometry_Cylinder
-			{
-				Name = Mesh Geometry
-			}
-		}
-		.component NeoAxis.RigidBody
-		{
-			Name = Collision Body
-			Transform = "8.0300300933609 -4.62765027806383 0.499999999999976; 0 0 0 1; 1 1 1"
-			MotionType = Dynamic
-			.component NeoAxis.CollisionShape_Cylinder
-			{
-			}
-		}
-	}
 	.component NeoAxis.GroupOfObjects
 	{
 		Name = Group Of Objects
@@ -313,10 +191,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -443,16 +317,8 @@
 	.component NeoAxis.Character
 	{
 		Name = Character
-		Transform = "2.41510538558536 -0.91161935090323 0.0056448639330271; 0 0 0.779542743749859 0.626349032622341; 1 1 1"
+		Transform = "4.44064063507778 -0.135150502207995 0.0056448639330271; 0 0 0.881131593421595 0.472871140031111; 1 1 1"
 		Collision = True
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value

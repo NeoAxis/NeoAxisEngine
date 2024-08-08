@@ -1,0 +1,19 @@
+// Made with NeoAxis Engine 2024.1.
+
+.component NeoAxis.Mesh
+{
+	EditorCameraTransform = "0.729854582827059 -4.23778837083322 3.60928711165181; -0.182579338447929 0.14795924037864 0.755160053418446 0.611969069544811; 1 1 1"
+	.component NeoAxis.MeshGeometry_Door
+	{
+		Name = Mesh Geometry
+		Axis = 1
+		Width = 2.4
+		Height = 2.4
+		DoorWidth = 2
+		DoorHeight = 2.2
+		Material
+		{
+			GetByReference = "Base\\Materials\\Green.material"
+		}
+	}
+}

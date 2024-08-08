@@ -38,6 +38,9 @@ namespace NeoAxis.Editor
 		void PerformBaseGetTextInfoLeftTopCorner( List<string> lines );
 		void PerformBaseGetTextInfoRightBottomCorner( List<string> lines );
 		void PerformBaseGetTextInfoCenterBottomCorner( List<string> lines );
+		void PerformEditorActionGetState( EditorActionGetStateContext context );
+		void PerformEditorActionClick( EditorActionClickContext context );
+		void PerformEditorActionClick2( EditorActionClickContext context );
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1061,6 +1064,34 @@ namespace NeoAxis.Editor
 			OnGetTextInfoCenterBottomCorner( lines );
 		}
 
+		protected virtual void OnEditorActionGetState( EditorActionGetStateContext context )
+		{
+			owner.PerformEditorActionGetState( context );
+		}
+		internal void PerformOnEditorActionGetState( EditorActionGetStateContext context )
+		{
+			OnEditorActionGetState( context );
+		}
+
+		protected virtual void OnEditorActionClick( EditorActionClickContext context )
+		{
+			owner.PerformEditorActionClick( context );
+		}
+		internal void PerformOnEditorActionClick( EditorActionClickContext context )
+		{
+			OnEditorActionClick( context );
+		}
+
+		protected virtual void OnEditorActionClick2( EditorActionClickContext context )
+		{
+			owner.PerformEditorActionClick2( context );
+		}
+		internal void PerformOnEditorActionClick2( EditorActionClickContext context )
+		{
+			OnEditorActionClick2( context );
+		}
+
+
 		public void AddScreenMessage( string text, ColorValue color )
 		{
 			owner.AddScreenMessage( text, color );
@@ -1222,6 +1253,23 @@ namespace NeoAxis.Editor
 
 		//	objectCreationMode = mode;
 		//}
+
+		public static void AddClonedSelectableChildrenToList( List<Component> list, Component component )
+		{
+			foreach( var childComponent in component.GetComponents() )
+			{
+				if( childComponent.DisplayInEditor && childComponent.TypeSettingsIsPublic() && EditorUtility.PerformComponentDisplayInEditorFilter( childComponent ) )
+				{
+					//CurveInSpace specific
+					if( childComponent is CurveInSpacePoint )
+					{
+						list.Add( childComponent );
+
+						AddClonedSelectableChildrenToList( list, childComponent );
+					}
+				}
+			}
+		}
 
 	}
 }

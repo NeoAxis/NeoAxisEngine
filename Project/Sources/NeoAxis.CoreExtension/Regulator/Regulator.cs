@@ -16,6 +16,7 @@ namespace NeoAxis
 
 		bool changing;
 		bool changingForward;
+		Component changingInitiator;
 
 		bool needUpdateAdditionalItems;
 
@@ -101,6 +102,12 @@ namespace NeoAxis
 		public bool ChangingForward
 		{
 			get { return changingForward; }
+		}
+
+		[Browsable( false )]
+		public Component ChangingInitiator
+		{
+			get { return changingInitiator; }
 		}
 
 		/////////////////////////////////////////
@@ -238,33 +245,61 @@ namespace NeoAxis
 		public event Action<Regulator> ChangingBeginEvent;
 		public event Action<Regulator> ChangingEndEvent;
 
-		public void ChangingBegin( bool forward )
+		public void TryChangingBegin( bool forward, Component initiator )
 		{
-			if( Changing && ChangingForward == forward )
-				return;
+			if( NetworkIsClient )
+			{
+				var writer = BeginNetworkMessageToServer( "ChangingBegin" );
+				if( writer != null )
+				{
+					writer.Write( forward );
+					writer.WriteVariableUInt64( initiator != null ? (ulong)initiator.NetworkID : 0 );
+					EndNetworkMessage();
+				}
+			}
+			else
+			{
+				if( Changing && ChangingForward == forward )
+					return;
 
-			if( Changing && ChangingForward != forward )
-				ChangingEnd();
+				if( Changing && ChangingForward != forward )
+					TryChangingEnd( forward, initiator );
 
-			changing = true;
-			changingForward = forward;
-			NetworkSendChanging( null );
-			OnChangingBegin();
-			ChangingBeginEvent?.Invoke( this );
-			needUpdateAdditionalItems = true;
+				changing = true;
+				changingForward = forward;
+				changingInitiator = initiator;
+				NetworkSendChanging( null );
+				OnChangingBegin();
+				ChangingBeginEvent?.Invoke( this );
+				needUpdateAdditionalItems = true;
+			}
 		}
 
-		public void ChangingEnd()
+		public void TryChangingEnd( bool forward, Component initiator )
 		{
-			if( !Changing )
-				return;
+			if( NetworkIsClient )
+			{
+				var writer = BeginNetworkMessageToServer( "ChangingEnd" );
+				if( writer != null )
+				{
+					writer.Write( forward );
+					writer.WriteVariableUInt64( initiator != null ? (ulong)initiator.NetworkID : 0 );
+					EndNetworkMessage();
+				}
+			}
+			else
+			{
+				if( !Changing )
+					return;
 
-			changing = false;
-			changingForward = false;
-			NetworkSendChanging( null );
-			OnChangingEnd();
-			ChangingEndEvent?.Invoke( this );
-			needUpdateAdditionalItems = true;
+				changing = false;
+				changingForward = false;
+				changingInitiator = null;
+				NetworkSendChanging( null );
+				OnChangingEnd();
+				ChangingEndEvent?.Invoke( this );
+				needUpdateAdditionalItems = true;
+			}
 		}
 
 		public double GetValueFactor()
@@ -384,85 +419,101 @@ namespace NeoAxis
 			ParentScene?.SoundPlay( sound, TransformV.Position );
 		}
 
-		public virtual bool ObjectInteractionInputMessage( GameMode gameMode, InputMessage message )
+		public virtual bool InteractionInputMessage( GameMode gameMode, Component initiator, InputMessage message )
 		{
 			var mouseDown = message as InputMessageMouseButtonDown;
 			if( mouseDown != null )
 			{
 				if( mouseDown.Button == EMouseButtons.Left || mouseDown.Button == EMouseButtons.Right )
 				{
-					if( NetworkIsClient )
-					{
-						var writer = BeginNetworkMessageToServer( "ChangingBegin" );
-						if( writer != null )
-						{
-							writer.Write( mouseDown.Button == EMouseButtons.Left );
-							EndNetworkMessage();
-						}
-					}
-					else
-						ChangingBegin( mouseDown.Button == EMouseButtons.Left );
+					var forward = mouseDown.Button == EMouseButtons.Left;
+					//var initiator = gameMode.ObjectControlledByPlayer.Value;
+					TryChangingBegin( forward, initiator );
 					return true;
+
+					//if( NetworkIsClient )
+					//{
+					//	var writer = BeginNetworkMessageToServer( "ChangingBegin" );
+					//	if( writer != null )
+					//	{
+					//		writer.Write( mouseDown.Button == EMouseButtons.Left );
+					//		EndNetworkMessage();
+					//	}
+					//}
+					//else
+					//	ChangingBegin( mouseDown.Button == EMouseButtons.Left );
+					//return true;
 				}
 			}
 
 			var mouseUp = message as InputMessageMouseButtonUp;
 			if( mouseUp != null )
 			{
-				if( mouseUp.Button == EMouseButtons.Left && Changing && ChangingForward )
+				if( mouseUp.Button == EMouseButtons.Left || mouseUp.Button == EMouseButtons.Right )
 				{
-					if( NetworkIsClient )
-					{
-						BeginNetworkMessageToServer( "ChangingEnd" );
-						EndNetworkMessage();
-					}
-					else
-						ChangingEnd();
+					var forward = mouseUp.Button == EMouseButtons.Left;
+					//var initiator = gameMode.ObjectControlledByPlayer.Value;
+					TryChangingEnd( forward, initiator );
 					return true;
-				}
-				if( mouseUp.Button == EMouseButtons.Right && Changing && !ChangingForward )
-				{
-					if( NetworkIsClient )
-					{
-						BeginNetworkMessageToServer( "ChangingEnd" );
-						EndNetworkMessage();
-					}
-					else
-						ChangingEnd();
-					return true;
+
+					//if( mouseUp.Button == EMouseButtons.Left && Changing && ChangingForward )
+					//{
+					//	if( NetworkIsClient )
+					//	{
+					//		BeginNetworkMessageToServer( "ChangingEnd" );
+					//		EndNetworkMessage();
+					//	}
+					//	else
+					//		ChangingEnd();
+					//	return true;
+					//}
+					//if( mouseUp.Button == EMouseButtons.Right && Changing && !ChangingForward )
+					//{
+					//	if( NetworkIsClient )
+					//	{
+					//		BeginNetworkMessageToServer( "ChangingEnd" );
+					//		EndNetworkMessage();
+					//	}
+					//	else
+					//		ChangingEnd();
+					//	return true;
+					//}
 				}
 			}
 
 			return false;
 		}
 
-		public delegate void ObjectInteractionGetInfoEventDelegate( Regulator sender, GameMode gameMode, ref InteractiveObjectObjectInfo info );
-		public event ObjectInteractionGetInfoEventDelegate ObjectInteractionGetInfoEvent;
+		public delegate void ObjectInteractionGetInfoEventDelegate( Regulator sender, GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info );
+		public event ObjectInteractionGetInfoEventDelegate InteractionGetInfoEvent;
 
-		public virtual void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
+		public virtual void InteractionGetInfo( GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info )
 		{
 			info = new InteractiveObjectObjectInfo();
 			info.AllowInteract = AllowInteract && TypeCached.AllowInteract;
 			//info.Text.Add( Name );
-			ObjectInteractionGetInfoEvent?.Invoke( this, gameMode, ref info );
+			InteractionGetInfoEvent?.Invoke( this, gameMode, initiator, ref info );
 		}
 
-		public virtual void ObjectInteractionEnter( ObjectInteractionContext context )
+		public virtual void InteractionEnter( ObjectInteractionContext context )
 		{
 		}
 
-		public virtual void ObjectInteractionExit( ObjectInteractionContext context )
+		public virtual void InteractionExit( ObjectInteractionContext context )
 		{
-			if( NetworkIsClient )
-			{
-				BeginNetworkMessageToServer( "ChangingEnd" );
-				EndNetworkMessage();
-			}
-			else
-				ChangingEnd();
+			TryChangingEnd( false, context.Obj as Component );
+			TryChangingEnd( true, context.Obj as Component );
+
+			//if( NetworkIsClient )
+			//{
+			//	BeginNetworkMessageToServer( "ChangingEnd" );
+			//	EndNetworkMessage();
+			//}
+			//else
+			//	ChangingEnd();
 		}
 
-		public virtual void ObjectInteractionUpdate( ObjectInteractionContext context )
+		public virtual void InteractionUpdate( ObjectInteractionContext context )
 		{
 		}
 
@@ -473,6 +524,7 @@ namespace NeoAxis
 				var writer = client != null ? BeginNetworkMessage( client, "Changing" ) : BeginNetworkMessageToEveryone( "Changing" );
 				writer.Write( changing );
 				writer.Write( changingForward );
+				writer.WriteVariableUInt64( changingInitiator != null ? (ulong)changingInitiator.NetworkID : 0 );
 				EndNetworkMessage();
 			}
 		}
@@ -495,6 +547,7 @@ namespace NeoAxis
 			{
 				changing = reader.ReadBoolean();
 				changingForward = reader.ReadBoolean();
+				changingInitiator = ParentRoot.HierarchyController.GetComponentByNetworkID( (long)reader.ReadVariableUInt64() );
 				needUpdateAdditionalItems = true;
 			}
 
@@ -506,21 +559,28 @@ namespace NeoAxis
 			if( !base.OnReceiveNetworkMessageFromClient( client, message, reader ) )
 				return false;
 
-
-			//!!!!security check is needed. who interact
-
-
 			if( message == "ChangingBegin" )
 			{
 				var forward = reader.ReadBoolean();
+				var initiatorNetworkID = (long)reader.ReadVariableUInt64();
 				if( !reader.Complete() )
 					return false;
 
-				ChangingBegin( forward );
+				//!!!!security. check initiator managed by the client. where else
+
+				var initiator = ParentRoot.HierarchyController.GetComponentByNetworkID( initiatorNetworkID );
+				TryChangingBegin( forward, initiator );
 			}
 			else if( message == "ChangingEnd" )
 			{
-				ChangingEnd();
+				var forward = reader.ReadBoolean();
+				var initiatorNetworkID = (long)reader.ReadVariableUInt64();
+				if( !reader.Complete() )
+					return false;
+				var initiator = ParentRoot.HierarchyController.GetComponentByNetworkID( initiatorNetworkID );
+				TryChangingEnd( forward, initiator );
+
+				//ChangingEnd();
 			}
 
 			return true;

@@ -1597,6 +1597,17 @@ namespace NeoAxis.Editor
 				{
 					nodeMove_Activated = true;
 
+					//!!!!new
+					//update objects
+					if( nodeMove_StartOverNode != null )
+					{
+						if( !IsObjectSelected( nodeMove_StartOverNode ) && ( nodeMove_StartOverNode.ControlledObject.Value == null || !IsObjectSelected( nodeMove_StartOverNode.ControlledObject.Value ) ) )
+						{
+							nodeMove_Nodes.Clear();
+							nodeMove_Nodes.Add( nodeMove_StartOverNode );
+						}
+					}
+
 					//Clone
 					if( ( ModifierKeys & Keys.Shift ) != 0 )//if( EngineApp.Instance.IsKeyPressed( EKeys.Shift ) )
 					{

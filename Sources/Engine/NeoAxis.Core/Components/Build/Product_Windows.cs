@@ -447,6 +447,9 @@ namespace NeoAxis
 					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.deps.json" ) );
 					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.runtimeconfig.dev.json" ) );
 					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.runtimeconfig.json" ) );
+
+					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.CoreExtension.Editor.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.CoreExtension.Editor.deps.json" ) );
 				}
 
 				excludePaths.Add( Path.Combine( sourceFolder, "SampleWidgetWinForms.exe" ) );
@@ -491,7 +494,8 @@ namespace NeoAxis
 				if( !ImportTools )
 				{
 					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\Windows\FbxWrapperNative.dll" ) );
-					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\Windows\assimp-vc141-mt.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\Windows\assimp-vc143-mt.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\Windows\CommandLineTools" ) );
 				}
 
 				if( !CubemapProcessingTools )

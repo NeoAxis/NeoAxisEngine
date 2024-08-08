@@ -50,7 +50,7 @@ namespace NeoAxis
 
 		//update many times during frame rendering
 		Viewport currentViewport;
-		internal int currentViewNumber = -1;
+		//internal int currentViewNumber = -1;
 
 		//custom cached data
 		public Dictionary<string, object> AnyData = new Dictionary<string, object>();
@@ -783,51 +783,20 @@ namespace NeoAxis
 		public Viewport CurrentViewport
 		{
 			get { return currentViewport; }
-			//set
-			//{
-			//	currentViewport = value;
-
-			//	currentViewNumber++;
-
-			//	Bgfx.ResetView( CurrentViewNumber );
-
-			//	bool skip = false;
-			//	var renderWindow = currentViewport.parent as RenderWindow;
-			//	if( renderWindow != null && renderWindow.ThisIsApplicationWindow )
-			//		skip = true;
-			//	if( !skip )
-			//		Bgfx.SetViewFrameBuffer( CurrentViewNumber, currentViewport.parent.FrameBuffer );
-
-			//	Bgfx.SetViewMode( CurrentViewNumber, ViewMode.Sequential );
-			//	Bgfx.SetViewRect( CurrentViewNumber, 0, 0, CurrentViewport.SizeInPixels.X, CurrentViewport.SizeInPixels.Y );
-
-			//	//!!!!new
-			//	Mat4F identity = Mat4F.Identity;
-			//	unsafe
-			//	{
-			//		Bgfx.SetViewTransform( CurrentViewNumber, (float*)&identity, (float*)&identity );
-			//	}
-			//}
 		}
 
-		public int CurrentViewNumber
-		{
-			get { return currentViewNumber; }
-			set { currentViewNumber = value; }
-		}
-
-		//public ushort CurrentViewNumber
+		//public static int CurrentViewNumber
 		//{
-		//	get { return (ushort)currentViewNumber; }
+		//	get { return currentViewNumber; }
+		//	set { currentViewNumber = value; }
 		//}
 
-		public void ResetViews()
-		{
-			//!!!!
-			for( int n = 0; n < currentViewNumber; n++ )
-				Bgfx.ResetView( (ushort)n );
-			currentViewNumber = -1;
-		}
+		//public void ResetViews()
+		//{
+		//	for( int n = 0; n < currentViewNumber; n++ )
+		//		Bgfx.ResetView( (ushort)n );
+		//	currentViewNumber = -1;
+		//}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static uint ToRGBA( ColorValue color )
@@ -849,24 +818,24 @@ namespace NeoAxis
 		public void SetViewport( Viewport viewport, Matrix4F viewMatrix, Matrix4F projectionMatrix, FrameBufferTypes clearBuffers, ColorValue clearBackgroundColor, float clearDepthValue = 1, byte clearStencilValue = 0 )//, bool setInvalidFrameBuffer = false )
 		{
 			currentViewport = viewport;
-			currentViewNumber++;
+			RenderingSystem.currentViewNumber++;
 
 			//init bgfx view
 
-			Bgfx.ResetView( (ushort)CurrentViewNumber );
+			Bgfx.ResetView( (ushort)RenderingSystem.CurrentViewNumber );
 
 			bool skip = false;
 			var renderWindow = currentViewport.parent as RenderWindow;
 			if( renderWindow != null && renderWindow.ThisIsApplicationWindow )
 				skip = true;
 			if( !skip )
-				Bgfx.SetViewFrameBuffer( (ushort)CurrentViewNumber, /*setInvalidFrameBuffer ? FrameBuffer.Invalid : */currentViewport.parent.FrameBuffer );
+				Bgfx.SetViewFrameBuffer( (ushort)RenderingSystem.CurrentViewNumber, /*setInvalidFrameBuffer ? FrameBuffer.Invalid : */currentViewport.parent.FrameBuffer );
 
-			Bgfx.SetViewMode( (ushort)CurrentViewNumber, ViewMode.Sequential );
-			Bgfx.SetViewRect( (ushort)CurrentViewNumber, 0, 0, CurrentViewport.SizeInPixels.X, CurrentViewport.SizeInPixels.Y );
+			Bgfx.SetViewMode( (ushort)RenderingSystem.CurrentViewNumber, ViewMode.Sequential );
+			Bgfx.SetViewRect( (ushort)RenderingSystem.CurrentViewNumber, 0, 0, CurrentViewport.SizeInPixels.X, CurrentViewport.SizeInPixels.Y );
 			unsafe
 			{
-				Bgfx.SetViewTransform( (ushort)CurrentViewNumber, (float*)&viewMatrix, (float*)&projectionMatrix );
+				Bgfx.SetViewTransform( (ushort)RenderingSystem.CurrentViewNumber, (float*)&viewMatrix, (float*)&projectionMatrix );
 			}
 
 			////!!!!
@@ -893,9 +862,9 @@ namespace NeoAxis
 					targets |= ClearTargets.Depth;
 				if( ( clearBuffers & FrameBufferTypes.Stencil ) != 0 )
 					targets |= ClearTargets.Stencil;
-				Bgfx.SetViewClear( (ushort)CurrentViewNumber, targets, ToRGBA( clearBackgroundColor ), clearDepthValue, clearStencilValue );
+				Bgfx.SetViewClear( (ushort)RenderingSystem.CurrentViewNumber, targets, ToRGBA( clearBackgroundColor ), clearDepthValue, clearStencilValue );
 
-				Bgfx.Touch( (ushort)CurrentViewNumber );
+				Bgfx.Touch( (ushort)RenderingSystem.CurrentViewNumber );
 			}
 
 			////!!!!
@@ -933,9 +902,20 @@ namespace NeoAxis
 		public void SetComputePass()
 		{
 			currentViewport = null;
-			currentViewNumber++;
+			RenderingSystem.currentViewNumber++;
 
-			Bgfx.ResetView( (ushort)CurrentViewNumber );
+			Bgfx.ResetView( (ushort)RenderingSystem.CurrentViewNumber );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public void Dispatch( Program program, int xCount, int yCount, int zCount, DiscardFlags flags )
+		{
+			if( CurrentViewport != null )
+				Log.Fatal( "ViewportRenderingContext: Dispatch: CurrentViewport != null. Call context.SetComputePass()." );
+
+			Bgfx.Dispatch( (ushort)RenderingSystem.CurrentViewNumber, program, xCount, yCount, zCount, flags );
+
+			UpdateStatisticsCurrent.ComputeDispatches++;
 		}
 
 		//public void ClearCurrentViewport( FrameBufferTypes buffers, ColorValue backgroundColor, float depth = 1, uint stencil = 0 )
@@ -1513,12 +1493,12 @@ namespace NeoAxis
 			if( occlusionQuery.HasValue )
 			{
 				pass.RenderingProcess_SetRenderState( renderOperation, false, disableAnisotropic );
-				Bgfx.Submit( (ushort)CurrentViewNumber, pass.LinkedProgram.RealObject, occlusionQuery.Value, 0, discardFlags );
+				Bgfx.Submit( (ushort)RenderingSystem.CurrentViewNumber, pass.LinkedProgram.RealObject, occlusionQuery.Value, 0, discardFlags );
 			}
 			else
 			{
 				pass.RenderingProcess_SetRenderState( renderOperation, true, disableAnisotropic );
-				Bgfx.Submit( (ushort)CurrentViewNumber, pass.LinkedProgram.RealObject, 0, discardFlags );
+				Bgfx.Submit( (ushort)RenderingSystem.CurrentViewNumber, pass.LinkedProgram.RealObject, 0, discardFlags );
 			}
 
 			//Bgfx.Submit( CurrentViewNumber, pass.LinkedProgram.RealObject, preserveState: true );

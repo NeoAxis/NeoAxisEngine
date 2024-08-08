@@ -82,6 +82,6 @@
     <Compile Include="Assets\Base\UI\Screens\AvatarWindow.cs" />
   </ItemGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="if EXIST &quot;$(ProjectDir)Project.csproj&quot; ( if EXIST &quot;$(ProjectDir)Binaries\NeoAxis.Editor.exe&quot; ( &quot;$(ProjectDir)Binaries\NeoAxis.Editor.exe&quot; -platformProjectPatch &quot;$(ProjectDir)Project.Client.csproj&quot; -baseProject &quot;$(ProjectDir)Project.csproj&quot; ) )" />
+    <Exec Command="if EXIST &quot;$(ProjectDir)Project.csproj&quot; ( if EXIST &quot;$(ProjectDir)Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; ( &quot;$(ProjectDir)Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -platformProjectPatch &quot;$(ProjectDir)Project.Client.csproj&quot; -baseProject &quot;$(ProjectDir)Project.csproj&quot; ) )" />
   </Target>
 </Project>

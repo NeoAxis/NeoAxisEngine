@@ -20,6 +20,9 @@
 
 #include "config.h"
 
+//!!!!betauser
+#ifdef HAVE_WASAPI
+
 #include "backends/wasapi.h"
 
 #define WIN32_LEAN_AND_MEAN
@@ -1762,3 +1765,6 @@ BackendFactory &WasapiBackendFactory::getFactory()
     static WasapiBackendFactory factory{};
     return factory;
 }
+
+//!!!!betauser
+#endif

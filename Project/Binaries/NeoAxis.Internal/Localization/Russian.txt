@@ -92,6 +92,10 @@ Backstage|NeoAxis Tokens|NeoAxis токены
 Backstage|Support the development of NeoAxis Engine!|Поддержать разработку NeoAxis Engine!
 Backstage|What is it?|Что это?
 Backstage|Withdraw|Вывести
+Backstage|Email or username|Емейл или никнейм
+Backstage|Get more features|Получить больше возможностей
+Backstage|Install 'Platform Tools' from the Stores to unlock all platforms.|Установите 'Platform Tools' из магазинов, чтобы разблокировать все платформы.
+Backstage|Subscribe Pro|Подписаться на Pro
 
 Ribbon.Action|Add\nCollision|Добавить\nфизику
 Ribbon.Action|Add\nLayer|Добавить\nслой
@@ -465,6 +469,19 @@ DebugInfoWindow|Time|Время
 DebugInfoWindow|Vertex buffers|Буферы вершин
 DebugInfoWindow|Virtual|Виртуальный
 DebugInfoWindow|Volume|Громкость
+DebugInfoWindow|Managed memory|Управляемая память
+DebugInfoWindow|Native memory (engine memory allocator)|Нативная память (аллокатор памяти движка)
+DebugInfoWindow|Index buffers GPU memory|GPU память индексных буферов
+DebugInfoWindow|Index buffers managed memory|Управляемая память индексных буферов
+DebugInfoWindow|Meshes enabled|Меши включены
+DebugInfoWindow|Meshes GPU buffers memory|GPU память буферов мешей
+DebugInfoWindow|Meshes managed memory|Управляемая память мешей
+DebugInfoWindow|Meshes|Меши
+DebugInfoWindow|Render targets GPU memory|GPU память целей рендеринга
+DebugInfoWindow|Textures GPU memory|GPU память текстур
+DebugInfoWindow|Textures managed memory|Управляемая память текстур
+DebugInfoWindow|Vertex buffers GPU memory|GPU память вершинных буферов
+DebugInfoWindow|Vertex buffers managed memory|Управляемая память вершинных буферов
 
 TipsWindow|Close|Закрыть
 TipsWindow|Next|Следующий
@@ -534,6 +551,23 @@ ContentBrowser.Group|Shader scripting|Скриптование шейдеров
 ContentBrowser.Group|Special|Специальные
 ContentBrowser.Group|Vegetation|Растительность
 ContentBrowser.Group|Vehicles|Транспортные средства
+ContentBrowser.Group|Building|Здание
+ContentBrowser.Group|Bullet|Пуля
+ContentBrowser.Group|Button|Кнопка
+ContentBrowser.Group|Examples|Примеры
+ContentBrowser.Group|Fence|Забор
+ContentBrowser.Group|Item 2D|Предмет 2D
+ContentBrowser.Group|Item|Предмет
+ContentBrowser.Group|Pathfinding|Поиск пути
+ContentBrowser.Group|Pipe|Труба
+ContentBrowser.Group|Plant|Растение
+ContentBrowser.Group|Regulator|Регулятор
+ContentBrowser.Group|Road|Дорога
+ContentBrowser.Group|Seat|Сиденье
+ContentBrowser.Group|Traffic System|Система движения
+ContentBrowser.Group|Vehicle|Транспортное средство
+ContentBrowser.Group|Weapon 2D|Оружие 2D
+ContentBrowser.Group|Weapon|Оружие
 
 EditorAction.Description|Adds a collision body to selected objects.|Добавляет физическое тело к выделенным объектам.
 EditorAction.Description|Add Paint Layer\nAdds a masked paint layer.|Добавить слой краски\nДобавляет красящий слой.
@@ -1006,3 +1040,6 @@ StoresWindow|Filter|Фильтр
 StoresWindow|Options|Настройки
 StoresWindow|Refresh|Обновить
 StoresWindow|Stores|Магазины
+
+Object.Property|Enabled|Включено
+

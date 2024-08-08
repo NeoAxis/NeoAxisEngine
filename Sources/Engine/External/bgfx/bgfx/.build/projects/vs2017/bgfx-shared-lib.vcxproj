@@ -143,9 +143,9 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalOptions>/wd4201 /wd4324 /Ob2  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/wd4201 /wd4324 /Ob2 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\3rdparty;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\3rdparty\dx__sdk\include;..\..\..\3rdparty\khronos;..\..\..\include;..\..\..\3rdparty\fcpp;..\..\..\3rdparty\glslang\glslang\Public;..\..\..\3rdparty\glslang\glslang\Include;..\..\..\3rdparty\glslang;..\..\..\3rdparty\glsl-optimizer\include;..\..\..\3rdparty\glsl-optimizer\src\glsl;..\..\..\3rdparty\spirv-cross;..\..\..\3rdparty\spirv-tools\include;..\..\..\3rdparty\glsl-optimizer\include\c99;..\..\..\3rdparty\dxc\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\3rdparty;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\3rdparty\dx__sdk\include;..\..\..\3rdparty\khronos;..\..\..\include;..\..\..\3rdparty\fcpp;..\..\..\3rdparty\glslang\glslang\Public;..\..\..\3rdparty\glslang\glslang\Include;..\..\..\3rdparty\glslang;..\..\..\3rdparty\glsl-optimizer\include;..\..\..\3rdparty\glsl-optimizer\src\glsl;..\..\..\3rdparty\spirv-cross;..\..\..\3rdparty\spirv-tools\include;..\..\..\3rdparty\glsl-optimizer\include\c99;..\..\..\3rdparty\dxc\inc;..\..\..\..\bimg\3rdparty\astc-encoder;..\..\..\..\bimg\3rdparty\astc-encoder\include;..\..\..\..\..\..\NeoAxis.Core.Native\MemoryManager;..\..\..\..\bx\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;_DEBUG;WIN32;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_WIN64;BGFX_SHARED_LIB_BUILD=1;BX_CONFIG_DEBUG=1;BGFX_CONFIG_DEBUG_UNIFORM=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -226,9 +226,9 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalOptions>/wd4201 /wd4324 /Ob2  %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/wd4201 /wd4324 /Ob2 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\3rdparty;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\3rdparty\dx__sdk\include;..\..\..\3rdparty\khronos;..\..\..\include;..\..\..\3rdparty\fcpp;..\..\..\3rdparty\glslang\glslang\Public;..\..\..\3rdparty\glslang\glslang\Include;..\..\..\3rdparty\glslang;..\..\..\3rdparty\glsl-optimizer\include;..\..\..\3rdparty\glsl-optimizer\src\glsl;..\..\..\3rdparty\spirv-cross;..\..\..\3rdparty\spirv-tools\include;..\..\..\3rdparty\glsl-optimizer\include\c99;..\..\..\3rdparty\dxc\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\..\bx\include\compat\msvc;..\..\..\3rdparty;..\..\..\..\bx\include;..\..\..\..\bimg\include;..\..\..\3rdparty\dx__sdk\include;..\..\..\3rdparty\khronos;..\..\..\include;..\..\..\3rdparty\fcpp;..\..\..\3rdparty\glslang\glslang\Public;..\..\..\3rdparty\glslang\glslang\Include;..\..\..\3rdparty\glslang;..\..\..\3rdparty\glsl-optimizer\include;..\..\..\3rdparty\glsl-optimizer\src\glsl;..\..\..\3rdparty\spirv-cross;..\..\..\3rdparty\spirv-tools\include;..\..\..\3rdparty\glsl-optimizer\include\c99;..\..\..\3rdparty\dxc\inc;..\..\..\..\bimg\3rdparty\astc-encoder;..\..\..\..\bimg\3rdparty\astc-encoder\include;..\..\..\..\..\..\NeoAxis.Core.Native\MemoryManager;..\..\..\..\bx\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;NDEBUG;WIN32;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_WIN64;BGFX_SHARED_LIB_BUILD=1;BX_CONFIG_DEBUG=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
@@ -274,6 +274,27 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\include\astcenc.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_diagnostic_trace.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_internal.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_internal_entry.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_mathlib.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_avx2_8.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_common_4.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_neon_4.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_none_4.h" />
+    <ClInclude Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_sse_4.h" />
+    <ClInclude Include="..\..\..\..\bimg\include\bimg\bimg.h" />
+    <ClInclude Include="..\..\..\..\bimg\include\bimg\decode.h" />
+    <ClInclude Include="..\..\..\..\bimg\include\bimg\encode.h" />
+    <ClInclude Include="..\..\..\3rdparty\fcpp\cpp.h" />
+    <ClInclude Include="..\..\..\3rdparty\fcpp\cppadd.h" />
+    <ClInclude Include="..\..\..\3rdparty\fcpp\cppdef.h" />
+    <ClInclude Include="..\..\..\3rdparty\fcpp\fpp.h" />
+    <ClInclude Include="..\..\..\3rdparty\fcpp\FPPBase.h" />
+    <ClInclude Include="..\..\..\3rdparty\fcpp\fpp_pragmas.h" />
+    <ClInclude Include="..\..\..\3rdparty\fcpp\FPP_protos.h" />
     <ClInclude Include="..\..\..\include\bgfx\bgfx.h" />
     <ClInclude Include="..\..\..\include\bgfx\defines.h" />
     <ClInclude Include="..\..\..\include\bgfx\embedded_shader.h" />
@@ -308,12 +329,57 @@
     <ClInclude Include="..\..\..\tools\shaderc\shaderc.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\amalgamated.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_averages_and_directions.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_block_sizes.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_color_quantize.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_color_unquantize.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_compress_symbolic.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_compute_variance.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_decompress_symbolic.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_diagnostic_trace.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_entry.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_find_best_partitioning.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_ideal_endpoints_and_weights.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_image.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_integer_sequence.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_mathlib.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_mathlib_softfloat.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_partition_tables.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_percentile_tables.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_pick_best_endpoint_format.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_quantization.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_symbolic_physical.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_weight_align.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\3rdparty\astc-encoder\source\astcenc_weight_quant_xfer_tables.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\src\image.cpp" />
+    <ClCompile Include="..\..\..\..\bimg\src\image_gnf.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\allocator.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\bx.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\commandline.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\crtnone.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\debug.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\dtoa.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\easing.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\file.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\filepath.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\hash.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\math.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\mutex.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\os.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\process.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\semaphore.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\settings.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\sort.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\string.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\thread.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\timer.cpp" />
+    <ClCompile Include="..\..\..\..\bx\src\url.cpp" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp1.c" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp2.c" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp3.c" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp4.c" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp5.c" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp6.c" />
     <ClCompile Include="..\..\..\src\bgfx.cpp">
     </ClCompile>
     <ClCompile Include="..\..\..\src\debug_renderdoc.cpp">
@@ -353,32 +419,13 @@
     <ClCompile Include="..\..\..\tools\shaderc\Library.cpp" />
     <ClCompile Include="..\..\..\tools\shaderc\LibraryBase.cpp" />
     <ClCompile Include="..\..\..\tools\shaderc\shaderc.cpp" />
-    <ClCompile Include="..\..\..\tools\shaderc\shaderc_glsl.cpp" />
     <ClCompile Include="..\..\..\tools\shaderc\shaderc_hlsl.cpp" />
     <ClCompile Include="..\..\..\tools\shaderc\shaderc_hlsl_dx12.cpp" />
     <ClCompile Include="..\..\..\tools\shaderc\shaderc_spirv.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\src\glcontext_eagl.mm" />
-    <None Include="..\..\..\src\glcontext_nsgl.mm" />
     <None Include="..\..\..\src\renderer_mtl.mm" />
-  </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="..\..\..\scripts\bgfx.natvis" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="bimg.vcxproj">
-      <Project>{C499947C-B0D0-950D-59BD-7B1045D3110F}</Project>
-    </ProjectReference>
-    <ProjectReference Include="bx.vcxproj">
-      <Project>{5F775900-4B03-880B-B4B1-880BA05C880B}</Project>
-    </ProjectReference>
-    <ProjectReference Include="fcpp.vcxproj">
-      <Project>{2eb2967c-1ae9-970d-c3d5-7d10afeb130f}</Project>
-    </ProjectReference>
-    <ProjectReference Include="glslang.vcxproj">
-      <Project>{0d19b900-79f8-379c-8210-c372ee6e9efd}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

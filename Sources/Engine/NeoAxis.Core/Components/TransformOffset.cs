@@ -6,7 +6,7 @@ using System.ComponentModel;
 namespace NeoAxis
 {
 	/// <summary>
-	/// Represents object transformation. Can be used in pair with other transformations to calculate resulting offset of position, rotation, scale.
+	/// Represents the transformation of an object. It can be used in combination with other transformations to calculate the resulting position offset, rotation, scale. 
 	/// </summary>
 	public class TransformOffset : Component
 	{

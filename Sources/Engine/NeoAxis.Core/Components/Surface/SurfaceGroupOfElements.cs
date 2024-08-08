@@ -52,6 +52,13 @@ namespace NeoAxis
 		//public event Action<SurfaceGroupOfElements> OverlapWithOtherGroupsChanged;
 		//ReferenceField<bool> _overlapWithOtherGroups = false;
 
+		//public enum VerticalAlignmentEnum
+		//{
+		//	
+		//}
+
+		//VerticalAlignment
+
 		/// <summary>
 		/// The range of possible Z-axis object position displacements when painting.
 		/// </summary>
@@ -117,6 +124,19 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="ScaleRange"/> property value changes.</summary>
 		public event Action<SurfaceGroupOfElements> ScaleRangeChanged;
 		ReferenceField<Range> _scaleRange = new Range( 1, 1 );
+
+		/// <summary>
+		/// The step of the tiling when this regular alignment mode is enabled.
+		/// </summary>
+		[DefaultValue( 0.0 )]
+		public Reference<double> RegularAlignment
+		{
+			get { if( _regularAlignment.BeginGet() ) RegularAlignment = _regularAlignment.Get( this ); return _regularAlignment.value; }
+			set { if( _regularAlignment.BeginSet( this, ref value ) ) { try { RegularAlignmentChanged?.Invoke( this ); ShouldRecompileSurface(); } finally { _regularAlignment.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RegularAlignment"/> property value changes.</summary>
+		public event Action<SurfaceGroupOfElements> RegularAlignmentChanged;
+		ReferenceField<double> _regularAlignment = 0.0;
 
 		/////////////////////////////////////////
 

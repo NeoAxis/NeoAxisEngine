@@ -547,7 +547,7 @@ namespace NeoAxis.Editor
 			// 
 			// kryptonLabelLoginError
 			// 
-			this.kryptonLabelLoginError.Location = new System.Drawing.Point(182, 223);
+			this.kryptonLabelLoginError.Location = new System.Drawing.Point(202, 223);
 			this.kryptonLabelLoginError.Name = "kryptonLabelLoginError";
 			this.kryptonLabelLoginError.Size = new System.Drawing.Size(43, 19);
 			this.kryptonLabelLoginError.StateCommon.ShortText.Color1 = System.Drawing.Color.Red;
@@ -564,7 +564,7 @@ namespace NeoAxis.Editor
 			// 
 			// kryptonLabelLicense
 			// 
-			this.kryptonLabelLicense.Location = new System.Drawing.Point(179, 127);
+			this.kryptonLabelLicense.Location = new System.Drawing.Point(199, 127);
 			this.kryptonLabelLicense.Name = "kryptonLabelLicense";
 			this.kryptonLabelLicense.Size = new System.Drawing.Size(102, 19);
 			this.kryptonLabelLicense.TabIndex = 26;
@@ -590,7 +590,7 @@ namespace NeoAxis.Editor
 			// 
 			// kryptonTextBoxLoginPassword
 			// 
-			this.kryptonTextBoxLoginPassword.Location = new System.Drawing.Point(182, 196);
+			this.kryptonTextBoxLoginPassword.Location = new System.Drawing.Point(202, 196);
 			this.kryptonTextBoxLoginPassword.Name = "kryptonTextBoxLoginPassword";
 			this.kryptonTextBoxLoginPassword.PasswordChar = '*';
 			this.kryptonTextBoxLoginPassword.Size = new System.Drawing.Size(591, 24);
@@ -615,7 +615,7 @@ namespace NeoAxis.Editor
 			// 
 			// kryptonTextBoxLoginEmail
 			// 
-			this.kryptonTextBoxLoginEmail.Location = new System.Drawing.Point(182, 163);
+			this.kryptonTextBoxLoginEmail.Location = new System.Drawing.Point(202, 163);
 			this.kryptonTextBoxLoginEmail.Name = "kryptonTextBoxLoginEmail";
 			this.kryptonTextBoxLoginEmail.Size = new System.Drawing.Size(591, 24);
 			this.kryptonTextBoxLoginEmail.TabIndex = 19;

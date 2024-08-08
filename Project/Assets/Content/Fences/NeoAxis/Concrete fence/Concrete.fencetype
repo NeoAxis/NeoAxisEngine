@@ -1,0 +1,8 @@
+.component NeoAxis.Component_FenceType
+{
+	PanelLength = 3
+	FullPanel
+	{
+		GetByReference = "Content\\Fences\\NeoAxis\\Concrete fence\\Data\\Concrete fence.fbx|$Mesh"
+	}
+}

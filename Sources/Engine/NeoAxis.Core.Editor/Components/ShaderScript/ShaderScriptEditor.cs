@@ -234,8 +234,7 @@ namespace NeoAxis.Editor
 			{
 				if( !needApplyChanges || needApplyChangesForValue != newValue )
 				{
-					//!!!!в опции редактора
-					var time = 3.0;
+					var time = ProjectSettings.Get.ShaderEditor.ShaderEditorAutoCompileTimeInSeconds.Value;
 
 					needApplyChanges = true;
 					needApplyChangesTime = EngineApp.GetSystemTime() + time;

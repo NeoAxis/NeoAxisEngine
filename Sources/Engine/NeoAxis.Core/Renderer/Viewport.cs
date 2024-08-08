@@ -1,4 +1,5 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+using Internal.SharpBgfx;
 using System;
 using System.Collections.Generic;
 
@@ -837,11 +838,10 @@ namespace NeoAxis
 			//	controlManager.PerformSpecialInputDeviceEvent( e );
 		}
 
-		//!!!!callBgfxFrame always true
 		/// <summary>
 		/// Updates viewport with the rendering of attached map and GUI rendering.
 		/// </summary>
-		public void Update( bool callBgfxFrame, CameraSettingsClass overrideCameraSettings = null, int parentCurrentViewNumber = -1 )
+		public void Update( bool callFrame, CameraSettingsClass overrideCameraSettings = null )//, int parentCurrentViewNumber = -1 )
 		{
 			if( insideUpdate )
 				return;
@@ -992,10 +992,10 @@ namespace NeoAxis
 
 				//AttachedScene?.PerformViewportUpdateCameraSettingsReady( this );
 
-				if( callBgfxFrame )
-					renderingContext.currentViewNumber = -1;
-				else
-					renderingContext.currentViewNumber = parentCurrentViewNumber;
+				//if( callFrame )
+				//	renderingContext.currentViewNumber = -1;
+				//else
+				//	renderingContext.currentViewNumber = parentCurrentViewNumber;
 
 				AttachedScene?.PerformViewportUpdateCameraSettingsReady( this );
 
@@ -1127,10 +1127,19 @@ namespace NeoAxis
 				renderingContext.renderingPipeline = null;
 				//renderingContext.Render( pipeline );// renderingData );
 
-				if( callBgfxFrame )
+				if( callFrame )
 				{
-					RenderingSystem.CallBgfxFrame();
-					renderingContext.ResetViews();
+					RenderingSystem.CallFrame();
+
+					//show render internal errors
+					while( true )
+					{
+						var lastError = Bgfx.GetLastWarning();
+						if( !string.IsNullOrEmpty( lastError ) )
+							Log.Warning( "Render: " + lastError );
+						else
+							break;
+					}
 				}
 
 				//clear

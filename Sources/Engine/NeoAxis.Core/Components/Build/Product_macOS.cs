@@ -466,7 +466,7 @@ namespace NeoAxis
 				{
 					//!!!!
 					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\macOS\FbxWrapperNative.dylib" ) );
-					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\macOS\assimp-vc141-mt.dylib" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\macOS\assimp-vc143-mt.dylib" ) );
 				}
 
 				if( !CubemapProcessingTools )

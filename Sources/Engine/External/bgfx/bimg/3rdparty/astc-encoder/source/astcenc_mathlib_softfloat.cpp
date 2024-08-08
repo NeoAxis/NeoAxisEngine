@@ -1,3 +1,6 @@
+//!!!!betauser. android compiler crash
+#ifndef __ANDROID__
+
 // SPDX-License-Identifier: Apache-2.0
 // ----------------------------------------------------------------------------
 // Copyright 2011-2021 Arm Limited
@@ -407,5 +410,7 @@ uint16_t float_to_sf16(float p)
 	i.f = p;
 	return sf32_to_sf16(i.u, SF_NEARESTEVEN);
 }
+
+#endif
 
 #endif

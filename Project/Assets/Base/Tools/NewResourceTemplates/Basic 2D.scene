@@ -389,7 +389,7 @@
 		}
 		ItemType
 		{
-			GetByReference = "Content\\Items 2D\\Authors\\NeoAxis\\Key\\Key.item2dtype"
+			GetByReference = "Content\\Items 2D\\NeoAxis\\Key\\Key.item2dtype"
 		}
 		.component NeoAxis.SpriteAnimationController
 		{

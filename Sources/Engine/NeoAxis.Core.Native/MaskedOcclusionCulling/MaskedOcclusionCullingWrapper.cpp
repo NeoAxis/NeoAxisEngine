@@ -1,5 +1,6 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "OgreStableHeaders.h"
+#if defined(PLATFORM_WINDOWS) || defined(PLATFORM_WINRT)
 #include "NeoAxisCoreNative.h"
 #include "UtilsNativeWrapper.h"
 #include "MaskedOcclusionCulling.h"
@@ -49,3 +50,4 @@ EXPORT void MaskedOcclusionCulling_ComputePixelDepthBuffer(MaskedOcclusionCullin
 {
 	instance->ComputePixelDepthBuffer(depthData, false);
 }
+#endif

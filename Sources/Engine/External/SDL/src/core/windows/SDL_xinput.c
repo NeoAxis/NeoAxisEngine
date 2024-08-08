@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /*
   Simple DirectMedia Layer
   Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
@@ -137,3 +140,5 @@ WIN_UnloadXInputDLL(void)
 #endif /* HAVE_XINPUT_H */
 
 /* vi: set ts=4 sw=4 expandtab: */
+
+#endif

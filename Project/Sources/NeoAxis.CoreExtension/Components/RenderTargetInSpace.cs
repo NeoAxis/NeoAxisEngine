@@ -430,11 +430,13 @@ namespace NeoAxis
 
 							createdViewport.BackgroundColorDefault = BackgroundColor;
 
-							createdViewport.Update( false, GetCameraSettings(), viewport.RenderingContext.CurrentViewNumber );
-							viewport.RenderingContext.CurrentViewNumber = createdViewport.RenderingContext.CurrentViewNumber;
+							createdViewport.Update( false, GetCameraSettings() );
 							viewport.RenderingContext.UpdateStatisticsCurrent.AddFrom( createdViewport.RenderingContext.UpdateStatisticsCurrent );
+							//createdViewport.Update( false, GetCameraSettings(), viewport.RenderingContext.CurrentViewNumber );
+							//viewport.RenderingContext.CurrentViewNumber = createdViewport.RenderingContext.CurrentViewNumber;
+							//viewport.RenderingContext.UpdateStatisticsCurrent.AddFrom( createdViewport.RenderingContext.UpdateStatisticsCurrent );
 
-							//createdViewport.Update( true, GetCameraSettings() );
+							////createdViewport.Update( true, GetCameraSettings() );
 						}
 						finally
 						{
@@ -570,17 +572,16 @@ namespace NeoAxis
 				if( DisplayScene )
 					scene = Scene.ReferenceSpecified ? Scene.Value : ParentScene;
 
-				if( scene != null )
+				if( scene != null && scene.IsResource ) //!!!!new using scene.IsResource
 				{
-					var ins = ComponentUtility.GetResourceInstanceByComponent( scene );
-					var isResource = ins != null && ins.InstanceType == Resource.InstanceType.Resource;
-
-					if( isResource )
-					{
-						SceneRecreateIfNeeded( scene );
-						scene = createdScene;
-						needSceneCreate = true;
-					}
+					//var ins = ComponentUtility.GetResourceInstanceByComponent( scene );
+					//var isResource = ins != null && ins.InstanceType == Resource.InstanceType.Resource;
+					//if( isResource )
+					//{
+					SceneRecreateIfNeeded( scene );
+					scene = createdScene;
+					needSceneCreate = true;
+					//}
 				}
 
 				createdViewport.AttachedScene = scene;
@@ -735,7 +736,19 @@ namespace NeoAxis
 			return false;
 		}
 
-		public bool ObjectInteractionInputMessage( GameMode gameMode, InputMessage message )
+		public delegate void InteractionGetInfoEventDelegate( RenderTargetInSpace sender, GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info );
+		public event InteractionGetInfoEventDelegate InteractionGetInfoEvent;
+
+		public virtual void InteractionGetInfo( GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info )
+		{
+			info = new InteractiveObjectObjectInfo();
+			info.AllowInteract = AllowInteract;
+			//info.Text.Add( Name );
+			info.DefaultRender = false;
+			InteractionGetInfoEvent?.Invoke( this, gameMode, initiator, ref info );
+		}
+
+		public virtual bool InteractionInputMessage( GameMode gameMode, Component initiator, InputMessage message )
 		{
 			if( createdViewport != null )
 			{
@@ -774,36 +787,24 @@ namespace NeoAxis
 			return false;
 		}
 
-		public delegate void ObjectInteractionGetInfoEventDelegate( RenderTargetInSpace sender, GameMode gameMode, ref InteractiveObjectObjectInfo info );
-		public event ObjectInteractionGetInfoEventDelegate ObjectInteractionGetInfoEvent;
-
-		public virtual void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
-		{
-			info = new InteractiveObjectObjectInfo();
-			info.AllowInteract = AllowInteract;
-			//info.Text.Add( Name );
-			info.DefaultRender = false;
-			ObjectInteractionGetInfoEvent?.Invoke( this, gameMode, ref info );
-		}
-
 		public delegate void ObjectInteractionEventDelegate( RenderTargetInSpace sender, ObjectInteractionContext context );
-		public event ObjectInteractionEventDelegate ObjectInteractionEnterEvent;
-		public event ObjectInteractionEventDelegate ObjectInteractionExitEvent;
-		public event ObjectInteractionEventDelegate ObjectInteractionUpdateEvent;
+		public event ObjectInteractionEventDelegate InteractionEnterEvent;
+		public event ObjectInteractionEventDelegate InteractionExitEvent;
+		public event ObjectInteractionEventDelegate InteractionUpdateEvent;
 
-		public virtual void ObjectInteractionEnter( ObjectInteractionContext context )
+		public virtual void InteractionEnter( ObjectInteractionContext context )
 		{
-			ObjectInteractionEnterEvent?.Invoke( this, context );
+			InteractionEnterEvent?.Invoke( this, context );
 		}
 
-		public virtual void ObjectInteractionExit( ObjectInteractionContext context )
+		public virtual void InteractionExit( ObjectInteractionContext context )
 		{
-			ObjectInteractionExitEvent?.Invoke( this, context );
+			InteractionExitEvent?.Invoke( this, context );
 		}
 
-		public virtual void ObjectInteractionUpdate( ObjectInteractionContext context )
+		public virtual void InteractionUpdate( ObjectInteractionContext context )
 		{
-			ObjectInteractionUpdateEvent?.Invoke( this, context );
+			InteractionUpdateEvent?.Invoke( this, context );
 
 			if( createdViewport != null )
 			{

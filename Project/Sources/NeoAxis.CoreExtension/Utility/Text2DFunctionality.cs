@@ -139,10 +139,9 @@ namespace Project
 
 			if( Shadow )
 			{
-				ColorValue color = ShadowColor.GetSaturate();
-				renderer.AddText( font, fontSize, text,
-					screenPosition + ConvertOffsetToScreen( context, ShadowOffset ),
-					HorizontalAlignment, VerticalAlignment, color, options );
+				var color = ShadowColor * new ColorValue( 1, 1, 1, Color.Alpha );
+				//var color = ShadowColor.GetSaturate() * new ColorValue( 1, 1, 1, Color.Alpha );
+				renderer.AddText( font, fontSize, text, screenPosition + ConvertOffsetToScreen( context, ShadowOffset ), HorizontalAlignment, VerticalAlignment, color, options );
 			}
 
 			renderer.AddText( font, fontSize, text, screenPosition, HorizontalAlignment, VerticalAlignment, Color, options );
@@ -188,7 +187,7 @@ namespace Project
 
 			if( lines.Count != 0 )
 			{
-				var shadowColor = ShadowColor;
+				var shadowColor = ShadowColor * new ColorValue( 1, 1, 1, Color.Alpha );
 				var textColor = Color;
 				var shadowScreenOffset = Shadow ? ConvertOffsetToScreen( context, ShadowOffset ) : Vector2.Zero;
 

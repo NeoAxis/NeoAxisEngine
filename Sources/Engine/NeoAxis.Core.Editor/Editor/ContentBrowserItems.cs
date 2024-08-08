@@ -755,6 +755,10 @@ namespace NeoAxis.Editor
 							}
 						}
 					}
+					else if( extension == ".bin" )
+					{
+						ShowDisabled = true;
+					}
 				}
 			}
 

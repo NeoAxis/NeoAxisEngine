@@ -467,6 +467,13 @@ namespace NeoAxis
 				return;
 			}
 
+			context.ObjectsDuringUpdate.namedTextures.TryGetValue( "depthTexture", out var depthTexture );
+			if( depthTexture == null )
+			{
+				TAADestroyPreviousColorTexture( context );
+				return;
+			}
+
 			ImageComponent previousColorTexture = null;
 			var previousColorTextureJustCreated = false;
 			{
@@ -515,6 +522,7 @@ namespace NeoAxis
 					shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0, actualTexture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
 					shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 1, motionAndObjectIdTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
 					shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 2, previousColorTexture, TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
+					shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 3, depthTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point ) );
 
 					var size = newTexture.Result.ResultSize;
 					shader.Parameters.Set( "viewportSize", new Vector4( size.X, size.Y, 1.0 / (double)size.X, 1.0 / (double)size.Y ).ToVector4F() );

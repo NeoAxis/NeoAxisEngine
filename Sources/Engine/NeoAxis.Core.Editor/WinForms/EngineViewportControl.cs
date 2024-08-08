@@ -811,7 +811,7 @@ namespace NeoAxis.Editor
 			if( IsDisposed )
 				return false;
 
-			if( EngineApp.Instance == null )
+			if( EngineApp.Instance == null || EngineApp.AfterFatalOperations )
 				return false;
 
 			//!!!!new. надо ли. поставлено т.к. валилось в UpdateTransformToolObjects на "foreach( var obj in transformTool.Objects )" в OnPaint, в Tick
@@ -972,11 +972,15 @@ namespace NeoAxis.Editor
 		{
 			if( show )
 			{
-				while( ShowCursor( 1 ) < 0 ) { }
+				var counter = 0;
+				while( ShowCursor( 1 ) < 0 && counter < 100 ) { counter++; }
+				//while( ShowCursor( 1 ) < 0 ) { }
 			}
 			else
 			{
-				while( ShowCursor( 0 ) >= 0 ) { }
+				var counter = 0;
+				while( ShowCursor( 0 ) >= 0 && counter < 100 ) { counter++; }
+				//while( ShowCursor( 0 ) >= 0 ) { }
 			}
 		}
 

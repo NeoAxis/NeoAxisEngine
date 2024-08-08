@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.Scene
 {
@@ -18,7 +18,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "2.55382255502285 -3.01046586921847 3.54828626462031; -0.200626964660957 0.199013764045156 0.68101790169415 0.675541975264016; 1 1 1"
+		Transform = "2.55688154482164 -3.31030624792741 3.75417328943996; -0.210756782943378 0.208617597125506 0.678735842167464 0.671846658970752; 1 1 1"
 	}
 	.component NeoAxis.Camera
 	{
@@ -35,13 +35,14 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 50000
+		Brightness = 60000
 	}
 	.component NeoAxis.Light
 	{
 		Name = Light 1
 		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
 		Type = Directional
+		Brightness = 150000
 		AttenuationFar = 100
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
@@ -50,8 +51,9 @@
 	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
-		ShadowFarDistance = 15
 		ShadowIntensity = 0.5
+		ShadowDirectionalDistance = 15
+		ShadowPointSpotlightDistance = 15
 		.component NeoAxis.Component
 		{
 			Name = Background Effects
@@ -107,7 +109,7 @@
 	{
 		Name = Game Mode
 		UseBuiltInCamera = FirstPerson
-		ThirdPersonCameraHorizontalAngle = -89.99999999999993
+		ThirdPersonCameraHorizontalAngle = 90.00000000000007
 		CutsceneStarted = False
 		CutsceneGuiFadingFactor = 0
 		CutsceneGuiFadingSpeed = 0
@@ -138,10 +140,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -193,10 +191,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -233,10 +227,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -272,10 +262,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -325,10 +311,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -400,13 +382,10 @@
 	{
 		Name = Weapon
 		Transform = "4.82441706724031 -0.191408804369556 0.0345156258889747; -0.707106781186548 0 0 0.707106781186548; 1 1 1"
+		Collision = True
 		Mesh
 		{
 			GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -421,14 +400,6 @@
 		Name = Character
 		Transform = "2.66460170888878 -1.00385962883237 0.00000010130450934; 0 0 0.707106781186548 0.707106781186548; 1 1 1"
 		Collision = True
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -453,10 +424,6 @@
 		{
 			GetByReference = "Content\\Buttons\\Default\\Base.mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -467,7 +434,7 @@
 		.component NeoAxis.CSharpScript
 		{
 			Name = C# Script
-			Code = "public void Button_Click(NeoAxis.Button sender)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\tvar ground = scene.GetComponent(\"Ground\") as MeshInSpace;\r\n\tif (ground != null)\r\n\t{\r\n\t\tif (!ground.ReplaceMaterial.ReferenceSpecified)\r\n\t\t{\r\n\t\t\tground.ReplaceMaterial = ReferenceUtility.MakeReference(\r\n\t\t\t\t@\"Content\\Materials\\Basic Library\\Concrete\\Concrete Floor 01.material\");\r\n\t\t}\r\n\t\telse\r\n\t\t\tground.ReplaceMaterial = null;\r\n\t}\r\n}\r\n"
+			Code = "public void Button_Click(NeoAxis.Button sender, NeoAxis.Component initiator)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\tvar ground = scene.GetComponent(\"Ground\") as MeshInSpace;\r\n\tif (ground != null)\r\n\t{\r\n\t\tif (!ground.ReplaceMaterial.ReferenceSpecified)\r\n\t\t{\r\n\t\t\tground.ReplaceMaterial = ReferenceUtility.MakeReference(\r\n\t\t\t\t@\"Content\\Materials\\Basic Library\\Concrete\\Concrete Floor 01.material\");\r\n\t\t}\r\n\t\telse\r\n\t\t\tground.ReplaceMaterial = null;\r\n\t}\r\n}\r\n"
 			Exit
 			{
 			}
@@ -480,7 +447,7 @@
 				}
 				HandlerMethod
 				{
-					GetByReference = "this:..\\method:Button_Click(NeoAxis.Button)"
+					GetByReference = "this:..\\method:Button_Click(NeoAxis.Button,NeoAxis.Component)"
 				}
 				HandlerFlow
 				{
@@ -495,10 +462,6 @@
 		Mesh
 		{
 			GetByReference = "Content\\Regulators\\Default\\Base.mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{

@@ -131,7 +131,7 @@ namespace NeoAxis
 		/////////////////////////////////////////
 		/////////////////////////////////////////
 		//server only
-#if !CLIENT
+//#if !CLIENT
 
 		float serverUpdateRemainingTime;
 		Dictionary<ServerNetworkService_Users.UserInfo, ServerUserItem> serverUsers = new Dictionary<ServerNetworkService_Users.UserInfo, ServerUserItem>();
@@ -170,6 +170,7 @@ namespace NeoAxis
 		{
 			base.OnSimulationStep();
 
+#if !CLIENT
 			if( SimulationAppServer.Created )
 			{
 				serverUpdateRemainingTime -= Time.SimulationDelta;
@@ -181,6 +182,7 @@ namespace NeoAxis
 					UpdateObjectControlledByPlayers();
 				}
 			}
+#endif
 		}
 
 		protected virtual ServerUserItem ServerOnNewUserItem()
@@ -216,6 +218,7 @@ namespace NeoAxis
 
 		void UpdateUsersList()
 		{
+#if !CLIENT
 			//remove old users
 			{
 				var toRemove = new List<ServerUserItem>();
@@ -236,6 +239,7 @@ namespace NeoAxis
 				if( !serverUsers.ContainsKey( user ) )
 					AddUser( user );
 			}
+#endif
 		}
 
 		public delegate void ObjectControlledByPlayerCreatedDelegate( NetworkLogic sender, Component obj );
@@ -261,6 +265,7 @@ namespace NeoAxis
 
 				string avatarSettings = "";
 
+#if !CLIENT
 				if( SimulationAppServer.NetworkMode == SimulationAppServer.NetworkModeEnum.CloudProject )
 				{
 
@@ -271,6 +276,7 @@ namespace NeoAxis
 				}
 				else
 					avatarSettings = userItem.User.DirectServerAvatar;
+#endif
 
 				var block = TextBlock.Parse( avatarSettings, out var error );
 				if( !string.IsNullOrEmpty( error ) )
@@ -284,7 +290,7 @@ namespace NeoAxis
 						var name = settings.NamedCharacter;
 						if( !string.IsNullOrEmpty( name ) )
 						{
-							var typeFileName = @$"Content\Characters\Authors\NeoAxis\{name}\{name}.charactertype";
+							var typeFileName = $"Content\\Characters\\NeoAxis\\{name}\\{name}.charactertype";
 
 							if( VirtualFile.Exists( typeFileName ) )
 							{
@@ -329,7 +335,7 @@ namespace NeoAxis
 				//		var name = settings.NamedCharacter;
 				//		if( !string.IsNullOrEmpty( name ) )
 				//		{
-				//			var typeFileName = @$"Content\Characters 2D\Authors\NeoAxis\{name}\{name}.character2dtype";
+				//			var typeFileName = @$"Content\Characters 2D\NeoAxis\{name}\{name}.character2dtype";
 				//			if( VirtualFile.Exists( typeFileName ) )
 				//			{
 				//				//it is synchronized with clients via GetByReference property
@@ -550,8 +556,10 @@ namespace NeoAxis
 				EndNetworkMessage();
 			}
 
+#if !CLIENT
 			//send update to all users. can be optional
 			SimulationAppServer.Server?.Users.UpdateObjectControlledByPlayerToClient( item.User, referenceToObject );
+#endif
 		}
 
 		public override void ServerChangeObjectControlled( ServerNetworkService_Users.UserInfo user, Component obj )
@@ -595,6 +603,21 @@ namespace NeoAxis
 				writer.Write( text );
 				writer.Write( error );
 				EndNetworkMessage();
+			}
+		}
+
+		public void SendScreenMessageToClientByControlledObject( Component controlledObject, string text, bool error )
+		{
+			var user = ServerGetUserByObjectControlled( controlledObject );
+			if( user != null )
+			{
+				var writer = BeginNetworkMessage( user, "ScreenMessage" );
+				if( writer != null )
+				{
+					writer.Write( text );
+					writer.Write( error );
+					EndNetworkMessage();
+				}
 			}
 		}
 
@@ -655,7 +678,7 @@ namespace NeoAxis
 			return true;
 		}
 
-#endif
+//#endif
 
 
 		/////////////////////////////////////////

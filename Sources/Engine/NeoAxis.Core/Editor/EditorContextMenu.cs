@@ -91,6 +91,11 @@ namespace NeoAxis.Editor
 			//var p = Cursor.Position;
 			//Show( items, new Vector2I( p.X, p.Y ) );
 		}
+
+		public static string Translate( string text )
+		{
+			return EditorLocalization.Translate( "ContextMenu", text );
+		}
 	}
 }
 #endif

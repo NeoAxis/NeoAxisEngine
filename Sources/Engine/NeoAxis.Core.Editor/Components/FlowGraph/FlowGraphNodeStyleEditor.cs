@@ -728,11 +728,13 @@ namespace NeoAxis
 			}
 
 			//node
-			{
-				Rectangle titleRect = new Rectangle( nodeRect.Left, nodeRect.Top, nodeRect.Right, nodeRect.Top + cellHeight );
-				if( titleRect.Contains( mouse ) )
-					return node;
-			}
+			if( nodeRect.Contains( mouse ) )
+				return node;
+			//{
+			//Rectangle titleRect = new Rectangle( nodeRect.Left, nodeRect.Top, nodeRect.Right, nodeRect.Top + cellHeight );
+			//if( titleRect.Contains( mouse ) )
+			//	return node;
+			//}
 
 			return null;
 		}

@@ -23,10 +23,6 @@ namespace NeoAxis
 
 		//
 
-		//!!!!
-		//DataWasChanged()
-
-
 		const string meshDefault = @"Content\Seats\Default\Data\scene.gltf|$Mesh";
 
 		/// <summary>
@@ -61,6 +57,7 @@ namespace NeoAxis
 		//	}
 		//}
 
+		//!!!!not used
 		[Browsable( false )]
 		public int Version
 		{

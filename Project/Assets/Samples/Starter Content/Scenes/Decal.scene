@@ -2,7 +2,7 @@
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"6B270FC44548416A53AF337EDA2ED3DF\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"225067826B27401FE99445115B9BD284\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"6B270FC44548416A53AF337EDA2ED3DF\"><KP UN=\"6B270FC44548416A53AF337EDA2ED3DF\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"2944A7901B0C4F0370B1C81D1756F4D6\" S=\"False\"><CPD ObjPath=\"$Material Normal Map\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1144, 842\"><KW V=\"1\" A=\"6B270FC44548416A53AF337EDA2ED3DF\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"225067826B27401FE99445115B9BD284\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"6B270FC44548416A53AF337EDA2ED3DF\"><KP UN=\"6B270FC44548416A53AF337EDA2ED3DF\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"2944A7901B0C4F0370B1C81D1756F4D6\" S=\"False\"><CPD ObjPath=\"$Material Normal Map\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -22,14 +22,14 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 50000
+		Brightness = 60000
 	}
 	.component NeoAxis.Light
 	{
 		Name = Light 1
 		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.772133688991624 -0.304645942480964 0.557640097020533 0.00615940329916298; 1 1 1"
 		Type = Directional
-		Brightness = 170000
+		Brightness = 150000
 		AttenuationFar = 100
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
@@ -108,10 +108,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -160,10 +156,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -187,10 +179,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{

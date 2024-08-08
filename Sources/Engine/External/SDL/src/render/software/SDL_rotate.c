@@ -1,3 +1,6 @@
+#include "MemoryManager.h"
+#ifdef PLATFORM_WINRT
+
 /*
 
 SDL_rotate.c: rotates 32bit or 8bit surfaces
@@ -532,3 +535,5 @@ SDLgfx_rotateSurface(SDL_Surface * src, double angle, int centerx, int centery, 
     /* Return rotated surface */
     return rz_dst;
 }
+
+#endif

@@ -46,7 +46,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <CompileAsWinRT>false</CompileAsWinRT>
-      <AdditionalIncludeDirectories>..\include;..\build;..;..\alc;..\common;..\..\SDL\include;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\build;..;..\alc;..\common;..\..\SDL\include;..\..\include;..\..\..\NeoAxis.Core.Native\MemoryManager;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;NOMINMAX;strcasecmp=_stricmp;strncasecmp=_strnicmp;OpenAL_EXPORTS;_CRT_SECURE_NO_WARNINGS;SDL_BUILDING_WINRT=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level1</WarningLevel>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>

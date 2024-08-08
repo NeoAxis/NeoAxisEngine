@@ -9,7 +9,7 @@ namespace NeoAxis
 	/// <summary>
 	/// Task-based artificial intelligence for vehicle.
 	/// </summary>
-	[AddToResourcesWindow( @"Addons\Vehicle\Vehicle AI", 22004 )]
+	[AddToResourcesWindow( @"Addons\Vehicle\Vehicle AI", 22005 )]
 	public class VehicleAI : AI
 	{
 		static FastRandom staticRandom = new FastRandom( 0 );

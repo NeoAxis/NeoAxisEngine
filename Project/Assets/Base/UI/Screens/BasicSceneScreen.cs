@@ -867,7 +867,7 @@ namespace Project
 		{
 			public string Text;
 			public Vector3 Position;
-			//public double Alpha;
+			public double Alpha;
 
 			public double DistanceSquared;
 		}
@@ -927,7 +927,8 @@ namespace Project
 								message = message.Substring( 0, DisplayMessagesAboveObjectsMaxLength ) + "...";
 
 							var tr = obj.TransformV;
-							if( ( position - tr.Position ).LengthSquared() < radius * radius )
+							var distance = ( position - tr.Position ).Length();
+							if( distance < radius ) //if( ( position - tr.Position ).LengthSquared() < radius * radius )
 							{
 								Vector3 pos = new Vector3( tr.Position.X, tr.Position.Y, obj.SpaceBounds.BoundingBox.Maximum.Z );
 								if( obj is Character || obj is Vehicle )
@@ -943,10 +944,14 @@ namespace Project
 								}
 
 								var messageToShow = new MessageToShow() { Text = message, Position = pos };
-								messageToShow.DistanceSquared = ( viewport.CameraSettings.Position - pos ).LengthSquared();
+								messageToShow.DistanceSquared = ( position - pos ).LengthSquared();
 
-								//impl by distance
-								//messageToShow.Alpha = 0.5;
+								//fade by distance
+								var startFading = radius * 0.9;
+								var div = radius - startFading;
+								if( div == 0 )
+									div = 0.00001;
+								messageToShow.Alpha = 1.0 - MathEx.Saturate( ( distance - startFading ) / div );
 
 								messagesToShow.Add( messageToShow );
 							}
@@ -969,10 +974,8 @@ namespace Project
 				{
 					if( viewport.CameraSettings.ProjectToScreenCoordinates( messageItem.Position, out var screenPosition ) )
 					{
-						//!!!!need blit background and shadow merged to right alpha blending
-
-						text2D.BackColor = new ColorValue( 0, 0.65, 1, 0.7 );// * messageItem.Alpha );
-						text2D.Color = new ColorValue( 1, 1, 1 );//, messageItem.Alpha );
+						text2D.BackColor = new ColorValue( 0, 0.65, 1, messageItem.Alpha );
+						text2D.Color = new ColorValue( 1, 1, 1, messageItem.Alpha );
 						text2D.Text = messageItem.Text;
 						text2D.Render( viewport.RenderingContext, screenPosition );
 					}
@@ -1040,6 +1043,9 @@ namespace Project
 
 		void TouchProcessFireAndInteract( GameMode gameMode, InputProcessing inputProcessing )
 		{
+			var objectControlledByPlayer = gameMode?.ObjectControlledByPlayer.Value;
+			var initiator = objectControlledByPlayer;
+
 			if( disableInteractionRemainingTime1 == 0 )
 			{
 				var pushed = IsControlTouched( inputProcessing, "Fire" );
@@ -1053,7 +1059,7 @@ namespace Project
 						if( pushed )
 						{
 							var message = new InputMessageMouseButtonDown( EMouseButtons.Left );
-							if( interactionContext.Obj.ObjectInteractionInputMessage( gameMode, message ) )
+							if( interactionContext.Obj.InteractionInputMessage( gameMode, initiator, message ) )
 							{
 								//temporary disable ProcessFireAndInteract execution to prevent fire of just taken weapon
 								disableInteractionRemainingTime1 = 0.25;
@@ -1062,7 +1068,7 @@ namespace Project
 						else
 						{
 							var message = new InputMessageMouseButtonUp( EMouseButtons.Left );
-							interactionContext.Obj.ObjectInteractionInputMessage( gameMode, message );
+							interactionContext.Obj.InteractionInputMessage( gameMode, initiator, message );
 						}
 					}
 				}
@@ -1090,7 +1096,7 @@ namespace Project
 						if( pushed )
 						{
 							var message = new InputMessageMouseButtonDown( EMouseButtons.Right );
-							if( interactionContext.Obj.ObjectInteractionInputMessage( gameMode, message ) )
+							if( interactionContext.Obj.InteractionInputMessage( gameMode, initiator, message ) )
 							{
 								//temporary disable ProcessFireAndInteract execution to prevent fire of just taken weapon
 								disableInteractionRemainingTime2 = 0.25;
@@ -1099,7 +1105,7 @@ namespace Project
 						else
 						{
 							var message = new InputMessageMouseButtonUp( EMouseButtons.Right );
-							interactionContext.Obj.ObjectInteractionInputMessage( gameMode, message );
+							interactionContext.Obj.InteractionInputMessage( gameMode, initiator, message );
 						}
 					}
 				}

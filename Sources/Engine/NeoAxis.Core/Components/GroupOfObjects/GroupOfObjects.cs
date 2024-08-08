@@ -281,6 +281,9 @@ namespace NeoAxis
 
 			public Object( ushort element, byte variationGroup, byte variationElement, FlagsEnum flags, Vector3 position, QuaternionF rotation, Vector3F scale, Vector4F anyData, ColorValue color, Vector4F special1, Vector4F special2, uint cullingByCameraDirectionData )
 			{
+				//if( float.IsNaN( rotation.X ) )
+				//	Log.Fatal( "float.IsNaN( rotation.X )" );
+
 				UniqueIdentifier = 0;
 				Element = element;
 				VariationGroup = variationGroup;
@@ -298,6 +301,9 @@ namespace NeoAxis
 
 			public Object( ushort element, byte variationGroup, byte variationElement, FlagsEnum flags, ref Vector3 position, ref QuaternionF rotation, ref Vector3F scale, ref Vector4F anyData, ref ColorValue color, ref Vector4F special1, ref Vector4F special2, uint cullingByCameraDirectionData )
 			{
+				//if( float.IsNaN( rotation.X ) )
+				//	Log.Fatal( "float.IsNaN( rotation.X )" );
+
 				UniqueIdentifier = 0;
 				Element = element;
 				VariationGroup = variationGroup;
@@ -453,6 +459,9 @@ namespace NeoAxis
 
 						//var p2 = transform * point;
 						//Log.Info( p2.ToString() );
+
+						if( double.IsNaN( pointTransformed.X ) )
+							Log.Fatal( "GroupOfObjects: AddToObjectsBounds: double.IsNaN( pointTransformed.X )." );
 
 						if( ObjectsBoundsCalculated )
 							ObjectsBounds.Add( ref pointTransformed );
@@ -613,7 +622,12 @@ namespace NeoAxis
 			{
 				var sector = obj.AnyData as Sector;
 				if( sector != null && sector.ObjectsBoundsCalculated )
+				{
+					if( double.IsNaN( sector.ObjectsBounds.Minimum.X ) )
+						Log.Fatal( "GroupOfObjects: ObjectInSpace_SpaceBoundsUpdateEvent: double.IsNaN( sector.ObjectsBounds.Minimum.X )." );
+
 					newBounds = new SpaceBounds( sector.ObjectsBounds );
+				}
 
 				//if( sector != null && sector.ObjectsBounds != null )
 				//	newBounds = sector.ObjectsBounds;
@@ -3450,6 +3464,13 @@ namespace NeoAxis
 			//!!!!Bounds?
 			public SubGroup( ArraySegment<Object> objects )
 			{
+				for( int n = 0; n < objects.Count; n++ )
+				{
+					var obj = objects[ n ];
+					if( double.IsNaN( obj.Position.X ) || double.IsNaN( obj.Rotation.X ) )
+						Log.Fatal( "GroupOfObjects: SubGroup: double.IsNaN( obj.Position.X ) || double.IsNaN( obj.Rotation.X )." );
+				}
+
 				Objects = objects;
 			}
 		}

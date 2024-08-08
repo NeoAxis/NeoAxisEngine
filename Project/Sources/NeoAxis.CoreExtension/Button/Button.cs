@@ -18,6 +18,7 @@ namespace NeoAxis
 		ButtonType typeCached = new ButtonType();
 
 		bool clicking;
+		Component clickingInitiator;
 		double clickingCurrentTime;
 
 		bool needUpdateAdditionalItems;
@@ -104,6 +105,12 @@ namespace NeoAxis
 		public bool Clicking
 		{
 			get { return clicking; }
+		}
+
+		[Browsable( false )]
+		public Component ClickingInitiator
+		{
+			get { return clickingInitiator; }
 		}
 
 		[Browsable( false )]
@@ -197,29 +204,29 @@ namespace NeoAxis
 			get { return typeCached; }
 		}
 
-		protected virtual void OnCanClick( ref bool canClick ) { }
+		protected virtual void OnCanClick( Component initiator, ref bool canClick ) { }
 
-		public delegate void CanClickDelegate( Button sender, ref bool canClick );
+		public delegate void CanClickDelegate( Button sender, Component initiator, ref bool canClick );
 		public event CanClickDelegate CanClick;
 
-		public bool PerformCanClick()
+		public bool PerformCanClick( Component initiator )
 		{
 			var canClick = true;
-			OnCanClick( ref canClick );
-			CanClick?.Invoke( this, ref canClick );
+			OnCanClick( initiator, ref canClick );
+			CanClick?.Invoke( this, initiator, ref canClick );
 			return canClick;
 		}
 
 		//
 
-		protected virtual void OnClick() { }
+		protected virtual void OnClick( Component initiator ) { }
 
-		public delegate void ClickDelegate( Button sender );
+		public delegate void ClickDelegate( Button sender, Component initiator );
 		public event ClickDelegate Click;
 
-		public bool PerformClick()
+		public bool PerformClick( Component initiator )
 		{
-			if( !PerformCanClick() )
+			if( !PerformCanClick( initiator ) )
 				return false;
 
 			if( SwitchActivateOnClick )
@@ -232,8 +239,8 @@ namespace NeoAxis
 				EndNetworkMessage();
 			}
 
-			OnClick();
-			Click?.Invoke( this );
+			OnClick( initiator );
+			Click?.Invoke( this, initiator );
 
 			return true;
 		}
@@ -243,28 +250,42 @@ namespace NeoAxis
 		public event Action<Button> ClickingBeginEvent;
 		public event Action<Button> ClickingEndEvent;
 
-		public bool ClickingBegin()
+		public bool TryClick( Component initiator ) //public bool ClickingBegin( Component initiator )
 		{
 			if( Clicking )
 				return false;
-			if( !PerformCanClick() )
+			if( !PerformCanClick( initiator ) )
 				return false;
 
-			clicking = true;
-			clickingCurrentTime = 0;
-			NetworkSendClicking( null );
-
-			SoundPlay( TypeCached.SoundClickingBegin );
-			if( NetworkIsServer && TypeCached.SoundClickingBegin.ReferenceOrValueSpecified )
+			if( NetworkIsClient )
 			{
-				BeginNetworkMessageToEveryone( "SoundClickingBegin" );
-				EndNetworkMessage();
+				var writer = BeginNetworkMessageToServer( "TryClick" );
+				if( writer != null )
+				{
+					writer.WriteVariableUInt64( initiator != null ? (ulong)initiator.NetworkID : 0 );
+					EndNetworkMessage();
+				}
+				return true;
 			}
+			else
+			{
+				clicking = true;
+				clickingInitiator = initiator;
+				clickingCurrentTime = 0;
+				NetworkSendClicking( null );
 
-			ClickingBeginEvent?.Invoke( this );
-			needUpdateAdditionalItems = true;
+				SoundPlay( TypeCached.SoundClickingBegin );
+				if( NetworkIsServer && TypeCached.SoundClickingBegin.ReferenceOrValueSpecified )
+				{
+					BeginNetworkMessageToEveryone( "SoundClickingBegin" );
+					EndNetworkMessage();
+				}
 
-			return true;
+				ClickingBeginEvent?.Invoke( this );
+				needUpdateAdditionalItems = true;
+
+				return true;
+			}
 		}
 
 		public void ClickingEnd()
@@ -273,6 +294,7 @@ namespace NeoAxis
 				return;
 
 			clicking = false;
+			clickingInitiator = null;
 			clickingCurrentTime = 0;
 			NetworkSendClicking( null );
 
@@ -298,7 +320,7 @@ namespace NeoAxis
 				var after = clickingCurrentTime < TypeCached.ClickingClickTime;
 
 				if( before != after )
-					PerformClick();
+					PerformClick( clickingInitiator );
 
 				if( clickingCurrentTime >= TypeCached.ClickingTotalTime )
 					ClickingEnd();
@@ -332,47 +354,52 @@ namespace NeoAxis
 			ParentScene?.SoundPlay( sound, TransformV.Position );
 		}
 
-		public virtual bool ObjectInteractionInputMessage( GameMode gameMode, InputMessage message )
+		public virtual bool InteractionInputMessage( GameMode gameMode, Component initiator, InputMessage message )
 		{
 			var mouseDown = message as InputMessageMouseButtonDown;
 			if( mouseDown != null )
 			{
 				if( mouseDown.Button == EMouseButtons.Left || mouseDown.Button == EMouseButtons.Right )
 				{
-					if( NetworkIsClient )
-					{
-						BeginNetworkMessageToServer( "ClickingBegin" );
-						EndNetworkMessage();
-					}
-					else
-						ClickingBegin();
+					//var initiator = gameMode.ObjectControlledByPlayer.Value;
+					TryClick( initiator );
 					return true;
+
+					//if( NetworkIsClient )
+					//{
+					//	zzzz;
+					//	BeginNetworkMessageToServer( "ClickingBegin" );
+					//	EndNetworkMessage();
+					//}
+					//else
+					//	ClickingBegin();
+					//return true;
 				}
 			}
 
 			return false;
 		}
 
-		public delegate void ObjectInteractionGetInfoEventDelegate( Button sender, GameMode gameMode, ref InteractiveObjectObjectInfo info );
-		public event ObjectInteractionGetInfoEventDelegate ObjectInteractionGetInfoEvent;
+		public delegate void InteractionGetInfoEventDelegate( Button sender, GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info );
+		public event InteractionGetInfoEventDelegate InteractionGetInfoEvent;
 
-		public virtual void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
+		public virtual void InteractionGetInfo( GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info )
 		{
 			info = new InteractiveObjectObjectInfo();
 			info.AllowInteract = AllowInteract;
 			//info.Text.Add( Name );
-			ObjectInteractionGetInfoEvent?.Invoke( this, gameMode, ref info );
+			InteractionGetInfoEvent?.Invoke( this, gameMode, initiator, ref info );
 		}
 
-		public virtual void ObjectInteractionEnter( ObjectInteractionContext context )
+		public virtual void InteractionEnter( ObjectInteractionContext context )
 		{
 		}
 
-		public virtual void ObjectInteractionExit( ObjectInteractionContext context )
+		public virtual void InteractionExit( ObjectInteractionContext context )
 		{
 		}
 
-		public virtual void ObjectInteractionUpdate( ObjectInteractionContext context )
+		public virtual void InteractionUpdate( ObjectInteractionContext context )
 		{
 		}
 
@@ -387,6 +414,7 @@ namespace NeoAxis
 			{
 				var writer = client != null ? BeginNetworkMessage( client, "Clicking" ) : BeginNetworkMessageToEveryone( "Clicking" );
 				writer.Write( clicking );
+				writer.WriteVariableUInt64( clickingInitiator != null ? (ulong)clickingInitiator.NetworkID : 0 );
 				writer.Write( (float)clickingCurrentTime );
 				EndNetworkMessage();
 			}
@@ -413,6 +441,7 @@ namespace NeoAxis
 			else if( message == "Clicking" )
 			{
 				clicking = reader.ReadBoolean();
+				clickingInitiator = ParentRoot.HierarchyController.GetComponentByNetworkID( (long)reader.ReadVariableUInt64() );
 				clickingCurrentTime = reader.ReadSingle();
 				needUpdateAdditionalItems = true;
 			}
@@ -425,12 +454,14 @@ namespace NeoAxis
 			if( !base.OnReceiveNetworkMessageFromClient( client, message, reader ) )
 				return false;
 
-
-			//!!!!security check is needed. who interact
-
-
-			if( message == "ClickingBegin" )
-				ClickingBegin();
+			if( message == "TryClick" )
+			{
+				var initiatorNetworkID = (long)reader.ReadVariableUInt64();
+				if( !reader.Complete() )
+					return false;
+				var initiator = ParentRoot.HierarchyController.GetComponentByNetworkID( initiatorNetworkID );
+				TryClick( initiator );
+			}
 
 			return true;
 		}

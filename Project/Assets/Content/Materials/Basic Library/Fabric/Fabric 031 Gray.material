@@ -1,0 +1,94 @@
+.component NeoAxis.Component_Material
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1195, 842\"><KW V=\"1\" A=\"21967650183047B409B485BD47F22F2A\"><CGD /><WS UN=\"E9051FC7B2EF42883DA9DD7C8C921031\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"84107FAD1733407297A2696FC35D9DAF\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"21967650183047B409B485BD47F22F2A\"><KP UN=\"5B4A0585588D4AAA6D85164465C533AE\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"21967650183047B409B485BD47F22F2A\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	ShadingModel = Cloth
+	SheenColor = 0.5921569 0.5921569 0.5921569
+	SubsurfaceColor = 0.3294118 0.3294118 0.3294118
+	BaseColor
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 1\\$Texture Sample\\RGBA"
+	}
+	Roughness
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 2\\$Texture Sample\\R"
+	}
+	Normal
+	{
+		GetByReference = "this:$Shader graph\\$Node Texture Sample 4\\$Texture Sample\\RGBA"
+	}
+	.component NeoAxis.Component_FlowGraph
+	{
+		Name = Shader graph
+		EditorScrollPosition = 0 0
+		Specialization
+		{
+			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+		}
+		.component NeoAxis.Component_FlowGraphNode
+		{
+			Name = "Node "
+			Position = 10 -7
+			ControlledObject
+			{
+				GetByReference = "this:..\\.."
+			}
+		}
+		.component NeoAxis.Component_FlowGraphNode
+		{
+			Name = Node Texture Sample 1
+			Position = -20 -19
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.Component_ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Fabric\\Textures\\Fabric031_2K_Color.jpg"
+				}
+			}
+		}
+		.component NeoAxis.Component_FlowGraphNode
+		{
+			Name = Node Texture Sample 2
+			Position = -20 -10
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.Component_ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Fabric\\Textures\\Fabric031_2K_Roughness.jpg"
+				}
+			}
+		}
+		.component NeoAxis.Component_FlowGraphNode
+		{
+			Name = Node Texture Sample 4
+			Position = -20 -1
+			ControlledObject
+			{
+				GetByReference = "this:$Texture Sample"
+			}
+			.component NeoAxis.Component_ShaderTextureSample
+			{
+				Name = Texture Sample
+				Location2 = 0 0
+				Location3 = 0 0 0
+				Texture
+				{
+					GetByReference = "Content\\Materials\\Basic Library\\Fabric\\Textures\\Fabric031_2K_Normal.jpg"
+				}
+			}
+		}
+	}
+}

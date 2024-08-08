@@ -2,12 +2,12 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using NeoAxis.Editor;
 
 namespace NeoAxis
 {
+	//<see cref="InteractiveObjectInterface.ObjectInteractionGetInfo(UIControl, GameMode, ref InteractiveObjectObjectInfo)"/>.
 	/// <summary>
-	/// A result data of <see cref="InteractiveObjectInterface.ObjectInteractionGetInfo(UIControl, GameMode, ref InteractiveObjectObjectInfo)"/>.
+	/// A result data of InteractiveObjectInterface.ObjectInteractionGetInfo method.
 	/// </summary>
 	public class InteractiveObjectObjectInfo
 	{
@@ -33,7 +33,7 @@ namespace NeoAxis
 		//public AllowInteractEnum AllowInteract = AllowInteractEnum.NotAllow;
 	}
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/// <summary>
 	/// A context of the player's interaction with the objects.
@@ -41,13 +41,15 @@ namespace NeoAxis
 	public class ObjectInteractionContext
 	{
 		public InteractiveObjectInterface Obj;
+		public Component Initiator;
 		public object AnyData;
 		public GameMode GameMode;
 		public Viewport Viewport;
 
-		public ObjectInteractionContext( InteractiveObjectInterface obj, GameMode gameMode, Viewport viewport )
+		public ObjectInteractionContext( InteractiveObjectInterface obj, Component initiator, GameMode gameMode, Viewport viewport )
 		{
 			Obj = obj;
+			Initiator = initiator;
 			GameMode = gameMode;
 			Viewport = viewport;
 		}
@@ -55,26 +57,26 @@ namespace NeoAxis
 		//public virtual void Dispose() { }
 	}
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/// <summary>
 	/// An interface of interactive object in the scene.
 	/// </summary>
 	public interface InteractiveObjectInterface
 	{
-		void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info );
+		void InteractionGetInfo( GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info );
 
-		bool ObjectInteractionInputMessage( GameMode gameMode, InputMessage message );
+		bool InteractionInputMessage( GameMode gameMode, Component initiator, InputMessage message );
 
-		void ObjectInteractionEnter( ObjectInteractionContext context );
-		void ObjectInteractionExit( ObjectInteractionContext context );
-		void ObjectInteractionUpdate( ObjectInteractionContext context );
+		void InteractionEnter( ObjectInteractionContext context );
+		void InteractionExit( ObjectInteractionContext context );
+		void InteractionUpdate( ObjectInteractionContext context );
 	}
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/// <summary>
-	/// A component to add interactive object functionality to a parent component.
+	/// A component to add interactive object functionality to the parent component.
 	/// </summary>
 	[AddToResourcesWindow( @"Base\Game framework\Interactive Object", -2980 )]
 	public class InteractiveObject : Component, InteractiveObjectInterface
@@ -107,51 +109,121 @@ namespace NeoAxis
 
 		///////////////////////////////////////////////
 
-		public delegate void ObjectInteractionGetInfoEventDelegate( InteractiveObject sender, GameMode gameMode, ref InteractiveObjectObjectInfo info );
-		public event ObjectInteractionGetInfoEventDelegate ObjectInteractionGetInfoEvent;
+		public delegate void InteractionGetInfoEventDelegate( InteractiveObject sender, GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info );
+		public event InteractionGetInfoEventDelegate InteractionGetInfoEvent;
 
-		public delegate void ObjectInteractionInputMessageEventDelegate( InteractiveObject sender, GameMode gameMode, InputMessage message, ref bool handled );
-		public event ObjectInteractionInputMessageEventDelegate ObjectInteractionInputMessageEvent;
+		public delegate void InteractionInputMessageEventDelegate( InteractiveObject sender, GameMode gameMode, Component initiator, InputMessage message, ref bool handled );
+		public event InteractionInputMessageEventDelegate InteractionInputMessageEvent;
 
-		public delegate void ObjectInteractionEnterEventDelegate( InteractiveObject sender, ObjectInteractionContext context );
-		public event ObjectInteractionEnterEventDelegate ObjectInteractionEnterEvent;
+		public delegate void InteractionEnterEventDelegate( InteractiveObject sender, ObjectInteractionContext context );
+		public event InteractionEnterEventDelegate InteractionEnterEvent;
 
-		public delegate void ObjectInteractionExitEventDelegate( InteractiveObject sender, ObjectInteractionContext context );
-		public event ObjectInteractionExitEventDelegate ObjectInteractionExitEvent;
+		public delegate void InteractionExitEventDelegate( InteractiveObject sender, ObjectInteractionContext context );
+		public event InteractionExitEventDelegate InteractionExitEvent;
 
-		public delegate void ObjectInteractionUpdateEventDelegate( InteractiveObject sender, ObjectInteractionContext context );
-		public event ObjectInteractionUpdateEventDelegate ObjectInteractionUpdateEvent;
+		public delegate void InteractionUpdateEventDelegate( InteractiveObject sender, ObjectInteractionContext context );
+		public event InteractionUpdateEventDelegate InteractionUpdateEvent;
 
 		///////////////////////////////////////////////
 
-		public virtual void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
+		public virtual void InteractionGetInfo( GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info )
 		{
 			info = new InteractiveObjectObjectInfo();
 			info.AllowInteract = AllowInteract;
 			info.Text = Text;
-			ObjectInteractionGetInfoEvent?.Invoke( this, gameMode, ref info );
+			InteractionGetInfoEvent?.Invoke( this, gameMode, initiator, ref info );
 		}
 
-		public virtual bool ObjectInteractionInputMessage( GameMode gameMode, InputMessage message )
+		///////////////////////////////////////////////
+
+		public virtual bool InteractionInputMessage( GameMode gameMode, Component initiator, InputMessage message )
 		{
 			var handled = false;
-			ObjectInteractionInputMessageEvent?.Invoke( this, gameMode, message, ref handled );
+			InteractionInputMessageEvent?.Invoke( this, gameMode, initiator, message, ref handled );
+			if( handled )
+				return true;
+
+			//!!!!add touch support
+
+			//Click functionality, special for this component
+			var mouseDown = message as InputMessageMouseButtonDown;
+			if( mouseDown != null )
+			{
+				if( mouseDown.Button == EMouseButtons.Left || mouseDown.Button == EMouseButtons.Right )
+				{
+					TryClick( initiator );
+					return true;
+				}
+			}
+
 			return handled;
 		}
 
-		public virtual void ObjectInteractionEnter( ObjectInteractionContext context )
+		public virtual void InteractionEnter( ObjectInteractionContext context )
 		{
-			ObjectInteractionEnterEvent?.Invoke( this, context );
+			InteractionEnterEvent?.Invoke( this, context );
 		}
 
-		public virtual void ObjectInteractionExit( ObjectInteractionContext context )
+		public virtual void InteractionExit( ObjectInteractionContext context )
 		{
-			ObjectInteractionExitEvent?.Invoke( this, context );
+			InteractionExitEvent?.Invoke( this, context );
 		}
 
-		public virtual void ObjectInteractionUpdate( ObjectInteractionContext context )
+		public virtual void InteractionUpdate( ObjectInteractionContext context )
 		{
-			ObjectInteractionUpdateEvent?.Invoke( this, context );
+			InteractionUpdateEvent?.Invoke( this, context );
+		}
+
+		///////////////////////////////////////////////
+
+		protected virtual void OnCanClick( Component initiator, ref bool canClick ) { }
+
+		public delegate void CanClickEventDelegate( InteractiveObject sender, Component initiator, ref bool canClick );
+		public event CanClickEventDelegate CanClick;
+
+		public delegate void ClickEventDelegate( InteractiveObject sender, Component initiator );
+		public event ClickEventDelegate Click;
+
+		public void TryClick( Component initiator )
+		{
+			//CanClick
+			var canClick = true;
+			OnCanClick( initiator, ref canClick );
+			CanClick?.Invoke( this, initiator, ref canClick );
+			if( !canClick )
+				return;
+
+			//do clicking
+			if( NetworkIsClient )
+			{
+				var writer = BeginNetworkMessageToServer( "Click" );
+				if( writer != null )
+				{
+					writer.WriteVariableUInt64( initiator != null ? (ulong)initiator.NetworkID : 0 );
+					EndNetworkMessage();
+				}
+			}
+			else
+			{
+				Click?.Invoke( this, initiator );
+			}
+		}
+
+		protected override bool OnReceiveNetworkMessageFromClient( ServerNetworkService_Components.ClientItem client, string message, ArrayDataReader reader )
+		{
+			if( !base.OnReceiveNetworkMessageFromClient( client, message, reader ) )
+				return false;
+
+			if( message == "Click" )
+			{
+				var initiatorNetworkID = (long)reader.ReadVariableUInt64();
+				if( !reader.Complete() )
+					return false;
+				var initiator = ParentRoot.HierarchyController.GetComponentByNetworkID( initiatorNetworkID );
+				TryClick( initiator );
+			}
+
+			return true;
 		}
 	}
 }

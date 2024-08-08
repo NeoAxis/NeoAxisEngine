@@ -29,6 +29,8 @@ namespace NeoAxis.Editor
 
 		public static ESet<StoreItem> needGetNextItemsForStores = new ESet<StoreItem>();
 
+		static bool? moderatorMode;
+
 		///////////////////////////////////////////////
 
 		public class StoreItem
@@ -752,6 +754,23 @@ namespace NeoAxis.Editor
 		public static StoreItem GetStore( string name )
 		{
 			return Stores.FirstOrDefault( s => s.Name == name );
+		}
+
+		public static bool ModeratorMode
+		{
+			get
+			{
+				if( moderatorMode == null )
+				{
+					try
+					{
+						if( bool.TryParse( VirtualFileSystem.DefaultSettingsConfig.GetAttribute( "ModeratorMode" ), out var result ) )
+							moderatorMode = result;
+					}
+					catch { }
+				}
+				return moderatorMode.HasValue ? moderatorMode.Value : false;
+			}
 		}
 	}
 }

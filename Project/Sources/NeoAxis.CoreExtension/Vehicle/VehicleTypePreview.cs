@@ -8,7 +8,9 @@ namespace NeoAxis.Editor
 {
 	public class VehicleTypePreview : CanvasBasedPreview
 	{
+		bool needRecreateInstance;
 		Vehicle objectInSpace;
+		int createdVersionOfType;
 
 		//
 
@@ -24,6 +26,8 @@ namespace NeoAxis.Editor
 			objectInSpace = Scene.CreateComponent<Vehicle>( enabled: false );
 			objectInSpace.VehicleType = VehicleType;
 			objectInSpace.Enabled = true;
+
+			createdVersionOfType = VehicleType.Version;
 		}
 
 		protected override void OnCreate()
@@ -39,6 +43,21 @@ namespace NeoAxis.Editor
 				SetCameraByBounds( scene.CalculateTotalBoundsOfObjectsInSpace(), 0.5 );
 			}
 		}
+
+		protected override void OnViewportUpdateBeforeOutput()
+		{
+			base.OnViewportUpdateBeforeOutput();
+
+			if( createdVersionOfType != VehicleType.Version )
+				needRecreateInstance = true;
+
+			if( needRecreateInstance )
+			{
+				CreateObject();
+				needRecreateInstance = false;
+			}
+		}
+
 	}
 }
 #endif

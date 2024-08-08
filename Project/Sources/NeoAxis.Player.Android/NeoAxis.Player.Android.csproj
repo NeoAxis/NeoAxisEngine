@@ -175,12 +175,8 @@
     <AndroidNativeLibrary Include="lib\armeabi-v7a\libNeoAxisCoreNative.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AndroidNativeLibrary>
-    <AndroidNativeLibrary Include="lib\armeabi-v7a\libOpenAL.so">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </AndroidNativeLibrary>
     <None Include="lib\arm64-v8a\libbgfx.so" />
     <None Include="lib\arm64-v8a\libNeoAxisCoreNative.so" />
-    <None Include="lib\arm64-v8a\libOpenAL.so" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml" />
     <None Include="Assets\AboutAssets.txt" />
@@ -230,7 +226,7 @@
     <PreBuildEvent>set Product=Base\Build\Mobile Demo Android.product
 rem set Product=Samples\Simple Game\Build\Simple Game Android.product
 
-if exist "$(ProjectDir)..\..\Binaries\NeoAxis.Editor.exe" "$(ProjectDir)..\..\Binaries\NeoAxis.Editor.exe" -prepareProductAssets "%25Product%25" -destinationFolder "$(ProjectDir)Assets" -platform Android
+if exist "$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" "$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -prepareProductAssets 1 -productFile "%25Product%25" -destinationFolder "$(ProjectDir)Assets" -platform Android
 </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

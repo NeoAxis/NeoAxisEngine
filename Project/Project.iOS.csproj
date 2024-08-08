@@ -79,7 +79,7 @@
 copy "$(ProjectDir)obj\Project.iOS\Project.pdb" "$(ProjectDir)Binaries\NeoAxis.Internal\Platforms\iOS\Managed\"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>if EXIST "$(ProjectDir)Project.csproj" ( if EXIST "$(ProjectDir)Binaries\NeoAxis.Editor.exe" ( "$(ProjectDir)Binaries\NeoAxis.Editor.exe" -platformProjectPatch "$(ProjectDir)Project.iOS.csproj" -baseProject "$(ProjectDir)Project.csproj" ) )
+    <PreBuildEvent>if EXIST "$(ProjectDir)Project.csproj" ( if EXIST "$(ProjectDir)Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" ( "$(ProjectDir)Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -platformProjectPatch "$(ProjectDir)Project.iOS.csproj" -baseProject "$(ProjectDir)Project.csproj" ) )
 </PreBuildEvent>
   </PropertyGroup>
 </Project>

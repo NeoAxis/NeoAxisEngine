@@ -749,34 +749,124 @@ namespace NeoAxis
 		ReferenceField<EKeys> _keyBrake2 = EKeys.None;
 
 		/// <summary>
-		/// The first key code to headlights.
+		/// The first key code to headlights low.
 		/// </summary>
 		[Category( "Control Keys" )]
 		[DefaultValue( EKeys.L )]
-		[DisplayName( "Key Headlights 1" )]
-		public Reference<EKeys> KeyHeadlights1
+		[DisplayName( "Key Headlights Low 1" )]
+		public Reference<EKeys> KeyHeadlightsLow1
 		{
-			get { if( _keyHeadlights1.BeginGet() ) KeyHeadlights1 = _keyHeadlights1.Get( this ); return _keyHeadlights1.value; }
-			set { if( _keyHeadlights1.BeginSet( this, ref value ) ) { try { KeyHeadlights1Changed?.Invoke( this ); } finally { _keyHeadlights1.EndSet(); } } }
+			get { if( _keyHeadlightsLow1.BeginGet() ) KeyHeadlightsLow1 = _keyHeadlightsLow1.Get( this ); return _keyHeadlightsLow1.value; }
+			set { if( _keyHeadlightsLow1.BeginSet( this, ref value ) ) { try { KeyHeadlightsLow1Changed?.Invoke( this ); } finally { _keyHeadlightsLow1.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="KeyHeadlights1"/> property value changes.</summary>
-		public event Action<GameMode> KeyHeadlights1Changed;
-		ReferenceField<EKeys> _keyHeadlights1 = EKeys.L;
+		/// <summary>Occurs when the <see cref="KeyHeadlightsLow1"/> property value changes.</summary>
+		public event Action<GameMode> KeyHeadlightsLow1Changed;
+		ReferenceField<EKeys> _keyHeadlightsLow1 = EKeys.L;
 
 		/// <summary>
-		/// The second key code to headlights.
+		/// The second key code to headlights low.
 		/// </summary>
 		[Category( "Control Keys" )]
 		[DefaultValue( EKeys.None )]
-		[DisplayName( "Key Headlights 2" )]
-		public Reference<EKeys> KeyHeadlights2
+		[DisplayName( "Key Headlights Low 2" )]
+		public Reference<EKeys> KeyHeadlightsLow2
 		{
-			get { if( _keyHeadlights2.BeginGet() ) KeyHeadlights2 = _keyHeadlights2.Get( this ); return _keyHeadlights2.value; }
-			set { if( _keyHeadlights2.BeginSet( this, ref value ) ) { try { KeyHeadlights2Changed?.Invoke( this ); } finally { _keyHeadlights2.EndSet(); } } }
+			get { if( _keyHeadlightsLow2.BeginGet() ) KeyHeadlightsLow2 = _keyHeadlightsLow2.Get( this ); return _keyHeadlightsLow2.value; }
+			set { if( _keyHeadlightsLow2.BeginSet( this, ref value ) ) { try { KeyHeadlightsLow2Changed?.Invoke( this ); } finally { _keyHeadlightsLow2.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="KeyHeadlights2"/> property value changes.</summary>
-		public event Action<GameMode> KeyHeadlights2Changed;
-		ReferenceField<EKeys> _keyHeadlights2 = EKeys.None;
+		/// <summary>Occurs when the <see cref="KeyHeadlightsLow2"/> property value changes.</summary>
+		public event Action<GameMode> KeyHeadlightsLow2Changed;
+		ReferenceField<EKeys> _keyHeadlightsLow2 = EKeys.None;
+
+		/// <summary>
+		/// The first key code to headlights high.
+		/// </summary>
+		[Category( "Control Keys" )]
+		[DefaultValue( EKeys.H )]
+		[DisplayName( "Key Headlights High 1" )]
+		public Reference<EKeys> KeyHeadlightsHigh1
+		{
+			get { if( _keyHeadlightsHigh1.BeginGet() ) KeyHeadlightsHigh1 = _keyHeadlightsHigh1.Get( this ); return _keyHeadlightsHigh1.value; }
+			set { if( _keyHeadlightsHigh1.BeginSet( this, ref value ) ) { try { KeyHeadlightsHigh1Changed?.Invoke( this ); } finally { _keyHeadlightsHigh1.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="KeyHeadlightsHigh1"/> property value changes.</summary>
+		public event Action<GameMode> KeyHeadlightsHigh1Changed;
+		ReferenceField<EKeys> _keyHeadlightsHigh1 = EKeys.H;
+
+		/// <summary>
+		/// The second key code to headlights high.
+		/// </summary>
+		[Category( "Control Keys" )]
+		[DefaultValue( EKeys.None )]
+		[DisplayName( "Key Headlights High 2" )]
+		public Reference<EKeys> KeyHeadlightsHigh2
+		{
+			get { if( _keyHeadlightsHigh2.BeginGet() ) KeyHeadlightsHigh2 = _keyHeadlightsHigh2.Get( this ); return _keyHeadlightsHigh2.value; }
+			set { if( _keyHeadlightsHigh2.BeginSet( this, ref value ) ) { try { KeyHeadlightsHigh2Changed?.Invoke( this ); } finally { _keyHeadlightsHigh2.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="KeyHeadlightsHigh2"/> property value changes.</summary>
+		public event Action<GameMode> KeyHeadlightsHigh2Changed;
+		ReferenceField<EKeys> _keyHeadlightsHigh2 = EKeys.None;
+
+		/// <summary>
+		/// The first key code to left turn signal.
+		/// </summary>
+		[Category( "Control Keys" )]
+		[DefaultValue( EKeys.O )]
+		[DisplayName( "Key Left Turn Signal 1" )]
+		public Reference<EKeys> KeyLeftTurnSignal1
+		{
+			get { if( _keyLeftTurnSignal1.BeginGet() ) KeyLeftTurnSignal1 = _keyLeftTurnSignal1.Get( this ); return _keyLeftTurnSignal1.value; }
+			set { if( _keyLeftTurnSignal1.BeginSet( this, ref value ) ) { try { KeyLeftTurnSignal1Changed?.Invoke( this ); } finally { _keyLeftTurnSignal1.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="KeyLeftTurnSignal1"/> property value changes.</summary>
+		public event Action<GameMode> KeyLeftTurnSignal1Changed;
+		ReferenceField<EKeys> _keyLeftTurnSignal1 = EKeys.O;
+
+		/// <summary>
+		/// The second key code to left turn signal.
+		/// </summary>
+		[Category( "Control Keys" )]
+		[DefaultValue( EKeys.None )]
+		[DisplayName( "Key Left Turn Signal 2" )]
+		public Reference<EKeys> KeyLeftTurnSignal2
+		{
+			get { if( _keyLeftTurnSignal2.BeginGet() ) KeyLeftTurnSignal2 = _keyLeftTurnSignal2.Get( this ); return _keyLeftTurnSignal2.value; }
+			set { if( _keyLeftTurnSignal2.BeginSet( this, ref value ) ) { try { KeyLeftTurnSignal2Changed?.Invoke( this ); } finally { _keyLeftTurnSignal2.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="KeyLeftTurnSignal2"/> property value changes.</summary>
+		public event Action<GameMode> KeyLeftTurnSignal2Changed;
+		ReferenceField<EKeys> _keyLeftTurnSignal2 = EKeys.None;
+
+		/// <summary>
+		/// The first key code to right turn signal.
+		/// </summary>
+		[Category( "Control Keys" )]
+		[DefaultValue( EKeys.P )]
+		[DisplayName( "Key Right Turn Signal 1" )]
+		public Reference<EKeys> KeyRightTurnSignal1
+		{
+			get { if( _keyRightTurnSignal1.BeginGet() ) KeyRightTurnSignal1 = _keyRightTurnSignal1.Get( this ); return _keyRightTurnSignal1.value; }
+			set { if( _keyRightTurnSignal1.BeginSet( this, ref value ) ) { try { KeyRightTurnSignal1Changed?.Invoke( this ); } finally { _keyRightTurnSignal1.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="KeyRightTurnSignal1"/> property value changes.</summary>
+		public event Action<GameMode> KeyRightTurnSignal1Changed;
+		ReferenceField<EKeys> _keyRightTurnSignal1 = EKeys.P;
+
+		/// <summary>
+		/// The second key code to right turn signal.
+		/// </summary>
+		[Category( "Control Keys" )]
+		[DefaultValue( EKeys.None )]
+		[DisplayName( "Key Right Turn Signal 2" )]
+		public Reference<EKeys> KeyRightTurnSignal2
+		{
+			get { if( _keyRightTurnSignal2.BeginGet() ) KeyRightTurnSignal2 = _keyRightTurnSignal2.Get( this ); return _keyRightTurnSignal2.value; }
+			set { if( _keyRightTurnSignal2.BeginSet( this, ref value ) ) { try { KeyRightTurnSignal2Changed?.Invoke( this ); } finally { _keyRightTurnSignal2.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="KeyRightTurnSignal2"/> property value changes.</summary>
+		public event Action<GameMode> KeyRightTurnSignal2Changed;
+		ReferenceField<EKeys> _keyRightTurnSignal2 = EKeys.None;
 
 		///////////////////////////////////////////////
 
@@ -1282,7 +1372,8 @@ namespace NeoAxis
 				return true;
 
 			//Object interaction
-			if( ObjectInteractionContext != null && ObjectInteractionContext.Obj.ObjectInteractionInputMessage( this, message ) )
+			var initiator = ObjectControlledByPlayer.Value;
+			if( ObjectInteractionContext != null && ObjectInteractionContext.Obj.InteractionInputMessage( this, initiator, message ) )
 				return true;
 
 			//InputProcessing
@@ -1664,7 +1755,8 @@ namespace NeoAxis
 		public virtual InteractiveObjectObjectInfo GetInteractiveObjectInfo( InteractiveObjectInterface obj )
 		{
 			InteractiveObjectObjectInfo result = null;
-			obj.ObjectInteractionGetInfo( this, ref result );
+			var initiator = ObjectControlledByPlayer.Value;
+			obj.InteractionGetInfo( this, initiator, ref result );
 			GetInteractiveObjectInfoEvent?.Invoke( this, obj, ref result );
 			if( result == null )
 				result = new InteractiveObjectObjectInfo();
@@ -1696,15 +1788,15 @@ namespace NeoAxis
 			if( vehicle != null )
 				return vehicle.GetBox().ToPoints();
 
-			//Door specific
-			var door = obj as Door;
-			if( door != null )
-			{
-				var box = door.GetBox();
-				box.Extents *= 1.05;
-				return box.ToPoints();
-				//return door.GetBox().ToPoints();
-			}
+			////Door specific
+			//var door = obj as Door;
+			//if( door != null )
+			//{
+			//	var box = door.GetBox();
+			//	box.Extents *= 1.05;
+			//	return box.ToPoints();
+			//	//return door.GetBox().ToPoints();
+			//}
 
 			var sphere = GetInteractionBoundingSphere( obj );
 			var result = new List<Vector3>( 64 );
@@ -2012,7 +2104,7 @@ namespace NeoAxis
 				//end old context
 				if( ObjectInteractionContext != null )
 				{
-					ObjectInteractionContext.Obj.ObjectInteractionExit( ObjectInteractionContext );
+					ObjectInteractionContext.Obj.InteractionExit( ObjectInteractionContext );
 					//ObjectInteractionContext.Dispose();
 					ObjectInteractionContext = null;
 				}
@@ -2020,8 +2112,9 @@ namespace NeoAxis
 				//create new
 				if( overObject != null )
 				{
-					ObjectInteractionContext = new ObjectInteractionContext( overObject, this, viewport );
-					ObjectInteractionContext.Obj.ObjectInteractionEnter( ObjectInteractionContext );
+					var initiator = ObjectControlledByPlayer.Value;
+					ObjectInteractionContext = new ObjectInteractionContext( overObject, initiator, this, viewport );
+					ObjectInteractionContext.Obj.InteractionEnter( ObjectInteractionContext );
 				}
 			}
 
@@ -2029,7 +2122,7 @@ namespace NeoAxis
 			if( ObjectInteractionContext != null )
 			{
 				ObjectInteractionContext.Viewport = viewport;
-				ObjectInteractionContext.Obj.ObjectInteractionUpdate( ObjectInteractionContext );
+				ObjectInteractionContext.Obj.InteractionUpdate( ObjectInteractionContext );
 			}
 		}
 

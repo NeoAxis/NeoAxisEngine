@@ -1,6 +1,7 @@
 
 #include "config.h"
 
+#if defined(PLATFORM_WINDOWS) || defined(PLATFORM_WINRT)
 
 #ifndef AL_NO_UID_DEFS
 
@@ -35,3 +36,5 @@ DEFINE_PROPERTYKEY(PKEY_AudioEndpoint_GUID, 0x1da5d803, 0xd492, 0x4edd, 0x8c, 0x
 #endif
 
 #endif /* AL_NO_UID_DEFS */
+
+#endif

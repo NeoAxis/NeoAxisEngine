@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2024.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"B8A142C98C4F48833EABDF5324205724\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"CA97BEA4B38A45BBE2A4DE5C45E94D42\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"B8A142C98C4F48833EABDF5324205724\"><KP UN=\"B8A142C98C4F48833EABDF5324205724\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"8FE410B401D34AF4BCAB9E38D6286904\" S=\"False\"><CPD ObjPath=\"$Constraint\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1144, 842\"><KW V=\"1\" A=\"B8A142C98C4F48833EABDF5324205724\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"CA97BEA4B38A45BBE2A4DE5C45E94D42\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"B8A142C98C4F48833EABDF5324205724\"><KP UN=\"B8A142C98C4F48833EABDF5324205724\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"8FE410B401D34AF4BCAB9E38D6286904\" S=\"False\"><CPD ObjPath=\"$Constraint\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	DisplayPhysicalObjects = True
 	RenderingPipeline
 	{
@@ -37,13 +37,14 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 50000
+		Brightness = 60000
 	}
 	.component NeoAxis.Light
 	{
 		Name = Directional Light
 		Transform = "23.4737008768449 -15.0814890020227 22.8055842838911; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
 		Type = Directional
+		Brightness = 150000
 		AttenuationFar = 100
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
@@ -52,7 +53,8 @@
 	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
-		ShadowFarDistance = 50
+		ShadowDirectionalDistance = 50
+		ShadowPointSpotlightDistance = 50
 		.component NeoAxis.Component
 		{
 			Name = Background Effects
@@ -123,10 +125,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -159,10 +157,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Yellow.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -205,10 +199,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Green.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -303,10 +293,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Blue.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{

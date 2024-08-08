@@ -66,7 +66,9 @@ namespace NeoAxis.Editor
 		bool buttonReferenceInitialized;
 		bool buttonReferenceMouseLeftDownCanDragDrop;
 
-		string description;
+		string descriptionCached;
+		int descriptionCachedDocumentationXmlVersion;
+
 		string displayName;
 
 		bool expandButtonInitialized;
@@ -158,25 +160,28 @@ namespace NeoAxis.Editor
 		{
 			get
 			{
-				if( description == null )
+				if( descriptionCached == null || descriptionCachedDocumentationXmlVersion != XmlDocumentationFiles.DocumentationXmlVersion )
 				{
+					descriptionCached = null;
+					descriptionCachedDocumentationXmlVersion = XmlDocumentationFiles.DocumentationXmlVersion;
+
 					var descrAttr = Property.GetCustomAttribute<DescriptionAttribute>( true );
 					if( descrAttr != null )
-						description = descrAttr.Description;
+						descriptionCached = descrAttr.Description;
 
-					if( description == null )
+					if( descriptionCached == null )
 					{
 						var id = XmlDocumentationFiles.GetMemberId( property );
 						if( !string.IsNullOrEmpty( id ) )
-							description = XmlDocumentationFiles.GetMemberSummary( id );
+							descriptionCached = XmlDocumentationFiles.GetMemberSummary( id );
 					}
 
-					if( description == null )
-						description = "";
+					if( descriptionCached == null )
+						descriptionCached = "";
 
-					Owner.PerformOverrideMemberDescription( this, ref description );
+					Owner.PerformOverrideMemberDescription( this, ref descriptionCached );
 				}
-				return description;
+				return descriptionCached;
 			}
 		}
 

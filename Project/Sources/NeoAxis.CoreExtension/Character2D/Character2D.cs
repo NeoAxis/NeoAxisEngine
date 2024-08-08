@@ -2174,36 +2174,36 @@ namespace NeoAxis
 			return true;
 		}
 
-		public delegate void ObjectInteractionGetInfoEventDelegate( Character2D sender, GameMode gameMode, ref InteractiveObjectObjectInfo info );
-		public event ObjectInteractionGetInfoEventDelegate ObjectInteractionGetInfoEvent;
+		public delegate void InteractionGetInfoEventDelegate( Character2D sender, GameMode gameMode, ref InteractiveObjectObjectInfo info );
+		public event InteractionGetInfoEventDelegate InteractionGetInfoEvent;
 
-		public virtual void ObjectInteractionGetInfo( GameMode gameMode, ref InteractiveObjectObjectInfo info )
+		public virtual void InteractionGetInfo( GameMode gameMode, Component initiator, ref InteractiveObjectObjectInfo info )
 		{
-			GetComponent<AI>()?.ObjectInteractionGetInfo( gameMode, ref info );
-			ObjectInteractionGetInfoEvent?.Invoke( this, gameMode, ref info );
+			GetComponent<AI>()?.InteractionGetInfo( gameMode, initiator, ref info );
+			InteractionGetInfoEvent?.Invoke( this, gameMode, ref info );
 		}
 
-		public bool ObjectInteractionInputMessage( GameMode gameMode, InputMessage message )
+		public bool InteractionInputMessage( GameMode gameMode, Component initiator, InputMessage message )
 		{
 			var ai = GetComponent<AI>();
-			if( ai != null && ai.ObjectInteractionInputMessage( gameMode, message ) )
+			if( ai != null && ai.InteractionInputMessage( gameMode, initiator, message ) )
 				return true;
 			return false;
 		}
 
-		public void ObjectInteractionEnter( ObjectInteractionContext context )
+		public void InteractionEnter( ObjectInteractionContext context )
 		{
-			GetComponent<AI>()?.ObjectInteractionEnter( context );
+			GetComponent<AI>()?.InteractionEnter( context );
 		}
 
-		public void ObjectInteractionExit( ObjectInteractionContext context )
+		public void InteractionExit( ObjectInteractionContext context )
 		{
-			GetComponent<AI>()?.ObjectInteractionExit( context );
+			GetComponent<AI>()?.InteractionExit( context );
 		}
 
-		public void ObjectInteractionUpdate( ObjectInteractionContext context )
+		public void InteractionUpdate( ObjectInteractionContext context )
 		{
-			GetComponent<AI>()?.ObjectInteractionUpdate( context );
+			GetComponent<AI>()?.InteractionUpdate( context );
 		}
 
 		protected override void OnComponentRemoved( Component component )
