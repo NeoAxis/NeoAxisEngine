@@ -2023,7 +2023,15 @@ namespace NeoAxis
 						if( type == CloneType.Auto )
 						{
 							if( property.Browsable && !property.ReadOnly )
-								type = CloneType.Deep;
+							{
+								//!!!!new
+								bool isComponent = GetTypeOfNetType( typeof( Component ) ).IsAssignableFrom( property.TypeUnreferenced );
+								if( isComponent )
+									type = CloneType.Shallow;
+								else
+									type = CloneType.Deep;
+								//type = CloneType.Deep;
+							}
 							else
 								type = CloneType.Disable;
 						}
