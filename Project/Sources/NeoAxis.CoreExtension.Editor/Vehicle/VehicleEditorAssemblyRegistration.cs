@@ -1,8 +1,10 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+using Internal.Fbx;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 
 namespace NeoAxis.Editor
 {
@@ -20,7 +22,7 @@ namespace NeoAxis.Editor
 
 				EditorAPI.PreviewImagesManager_RegisterResourceType( "Vehicle Type" );
 
-				Product_Store.CreateScreenshot += Product_Store_CreateScreenshot;
+				Product_Store.CreateScreenshots += Product_Store_CreateScreenshots;
 
 				RegisterEditorActions();
 				RegisterVehicleEditorRibbonTab();
@@ -43,7 +45,7 @@ namespace NeoAxis.Editor
 			}
 		}
 
-		private void Product_Store_CreateScreenshot( Product_Store sender, string[] files, ZipArchive archive, ref bool handled )
+		private void Product_Store_CreateScreenshots( Product_Store sender, string[] files, ZipArchive archive, bool additional, ref int imageCounter, ref bool handled )
 		{
 			var virtualFileName = "";
 
@@ -67,19 +69,236 @@ namespace NeoAxis.Editor
 				var vehicleType = ResourceManager.LoadResource<VehicleType>( virtualFileName );
 				if( vehicleType != null )
 				{
-					var vehicle = ComponentUtility.CreateComponent<Vehicle>( null, false, true );
-					vehicle.VehicleType = vehicleType;
+					if( !additional )
+					{
+						//logo
 
-					var generator = new Product_Store.ImageGenerator();
-					generator.CameraZoomFactor = 0.42;
+						var vehicle = ComponentUtility.CreateComponent<Vehicle>( null, false, true );
+						vehicle.VehicleType = vehicleType;
 
-					var mesh = vehicleType.Mesh.Value;
-					if( mesh != null )
-						generator.CameraLookTo = new Vector3( mesh.Result.SpaceBounds.BoundingBox.GetSize().X * 0.15, 0, 0 );
+						var generator = new Product_Store.ImageGenerator();
+						generator.CameraZoomFactor = 0.42;
 
-					var entry = archive.CreateEntry( "_ProductLogo.png" );
-					using( var entryStream = entry.Open() )
-						generator.Generate( vehicle, entryStream );//, ImageFormat.Png );
+						var mesh = vehicleType.Mesh.Value;
+						if( mesh != null )
+							generator.CameraLookTo = new Vector3( mesh.Result.SpaceBounds.BoundingBox.GetSize().X * 0.15, 0, 0 );
+
+
+						//!!!!
+						//generator.BeforeSceneEnable += delegate ( Product_Store.ImageGenerator sender )
+						//{
+						//	var scene = sender.Scene;
+
+						//	//sky
+						//	{
+						//		var sky = scene.CreateComponent<Sky>();
+						//		sky.Name = "Sky";
+
+						//		sky.Cubemap = ReferenceUtility.MakeReference( "Content\\Environments\\Basic Library\\Outdoor\\Textures\\kloofendal_48d_partly_cloudy_4k.hdr" );
+						//		sky.CubemapMultiplier = new ColorValuePowered( 1, 1, 1, 1, 2 );
+						//	}
+
+						//};
+
+
+						var entry = archive.CreateEntry( "_ProductLogo.png" );
+						using( var entryStream = entry.Open() )
+							generator.Generate( vehicle, entryStream );//, ImageFormat.Png );
+					}
+					else
+					{
+						//additional images
+
+						var cameraDistanceFactor = 1.0;
+						{
+							var mesh = vehicleType.Mesh.Value;
+							if( mesh?.Result != null )
+							{
+								var b = mesh.Result.SpaceBounds.BoundingBox;
+								var side = b.GetSize().MaxComponent();
+								if( side > 5 )
+									cameraDistanceFactor = side / 5.0;
+							}
+						}
+
+						for( int nImage = 0; nImage < 5; nImage++ )
+						{
+							//in the scene
+							if( nImage <= 3 )
+							{
+								var generator = new Product_Store.ImageGenerator();
+								generator.SceneName = "Base\\Tools\\Store\\PreviewVehicle.scene";
+								generator.CameraName = "Camera " + ( nImage + 1 ).ToString();
+								generator.ImageSizeRender = ( generator.ImageSizeRender.ToVector2() * 1.5 ).ToVector2I();
+								generator.ImageSizeOutput = ( generator.ImageSizeOutput.ToVector2() * 1.5 ).ToVector2I();
+
+								generator.BeforeSceneEnable += delegate ( Product_Store.ImageGenerator sender )
+								{
+									var scene = sender.Scene;
+									var vehicle = scene.GetComponent<Vehicle>( "Vehicle" );
+
+									vehicle.VehicleType = vehicleType;
+
+									var p = vehicle.TransformV.Position;
+									var height = vehicleType.CalculateHeightToBottomOfWheels();
+
+									if( vehicleType.Chassis.Value == VehicleType.ChassisEnum.Tracks )
+									{
+										var m = vehicleType.TrackFragmentMesh.Value;
+										if( m?.Result != null )
+										{
+											// / 2 is good?
+											height -= m.Result.SpaceBounds.BoundingBox.GetSize().Z / 2;
+										}
+									}
+
+									if( height == 0 )
+									{
+										//no wheels
+										var mesh = vehicleType.Mesh.Value;
+										if( mesh?.Result != null )
+										{
+											var b = mesh.Result.SpaceBounds.BoundingBox;
+											height = b.Minimum.Z;
+										}
+									}
+
+									vehicle.Transform = new Transform( new Vector3( p.X, p.Y, -height ) );
+								};
+
+								generator.AfterSceneEnable += delegate ( Product_Store.ImageGenerator sender )
+								{
+									var scene = sender.Scene;
+									var vehicle = scene.GetComponent<Vehicle>( "Vehicle" );
+
+									//do it after scene enable to use lights data from dynamic data
+
+									//headlights, brakes
+									{
+										vehicle.Brake = 1;
+										vehicle.HandBrake = 1;
+
+										var lights = vehicle?.DynamicData.Lights;
+										if( lights != null )
+										{
+											var existsHeadlightsLow = lights.FirstOrDefault( l => l.LightTypePurpose == Vehicle.DynamicDataClass.LightTypePurpose.Headlight_Low ) != null;
+											var existsHeadlightsHigh = lights.FirstOrDefault( l => l.LightTypePurpose == Vehicle.DynamicDataClass.LightTypePurpose.Headlight_High ) != null;
+
+											if( nImage == 0 )
+											{
+												if( existsHeadlightsLow )
+													vehicle.HeadlightsLow = 1;
+												else if( existsHeadlightsHigh )
+													vehicle.HeadlightsHigh = 1;
+											}
+											else
+											{
+												if( existsHeadlightsHigh )
+													vehicle.HeadlightsHigh = 1;
+												else if( existsHeadlightsLow )
+													vehicle.HeadlightsLow = 1;
+											}
+
+											if( nImage == 3 )
+											{
+												vehicle.LeftTurnSignal = 1;
+												vehicle.RightTurnSignal = 1;
+											}
+										}
+
+										var dummy = false;
+										vehicle.SimulateVisualHeadlights( ref dummy, true );
+										vehicle.SimulateVisualBrake( ref dummy, true );
+										vehicle.SimulateVisualTurnSignals( ref dummy, true );
+										vehicle.UpdateLightComponents();
+									}
+
+									//add driver
+									{
+										var gameMode = (GameMode)scene.GetGameMode();
+
+										//do
+										{
+											//find a free seat
+											var seatIndex = vehicle.GetFreeSeat();
+											if( seatIndex != -1 )
+											{
+												var character = scene.CreateComponent<Character>( enabled: false );
+												//character.CharacterType = playerCharacter.CharacterType;
+												character.Enabled = true;
+
+												//put to the seat
+												vehicle.PutObjectToSeat( gameMode, seatIndex, character );
+											}
+											//else
+											//	break;
+										}
+										//while( true );
+									}
+
+									//update camera
+									if( cameraDistanceFactor != 1.0 )
+									{
+										var camera = scene.GetComponent<Camera>( generator.CameraName );
+
+										var tr = camera.TransformV;
+										var distance = ( vehicle.TransformV.Position - tr.Position ).Length();
+
+										var newDistance = distance * cameraDistanceFactor;
+
+										var heightOffset = ( newDistance - distance ) * 0.2;
+
+										camera.Transform = new Transform( tr.Position - ( newDistance - distance ) * tr.Rotation.GetForward() + new Vector3( 0, 0, heightOffset ), tr.Rotation );
+									}
+								};
+
+								{
+									var entry = archive.CreateEntry( $"_Image{imageCounter}.png" );
+									using( var entryStream = entry.Open() )
+										generator.Generate( null/*vehicle*/, entryStream );
+									imageCounter++;
+								}
+							}
+
+							//debug data
+							if( nImage == 4 )
+							{
+								var vehicleTypeClone = (VehicleType)vehicleType.Clone();
+								vehicleTypeClone.EditorDisplayWheels = true;
+								vehicleTypeClone.EditorDisplaySeats = true;
+								vehicleTypeClone.EditorDisplayPhysics = true;
+
+								var vehicle = ComponentUtility.CreateComponent<Vehicle>( null, false, true );
+
+								vehicle.VehicleType = vehicleTypeClone;
+								vehicle.DebugVisualization = true;
+
+								var generator = new Product_Store.ImageGenerator();
+								generator.CameraZoomFactor = 0.42;
+								generator.ImageSizeRender = ( generator.ImageSizeRender.ToVector2() * 1.5 ).ToVector2I();
+								generator.ImageSizeOutput = ( generator.ImageSizeOutput.ToVector2() * 1.5 ).ToVector2I();
+								generator.ImageSizeRender /= 2;
+
+								var mesh = vehicleTypeClone.Mesh.Value;
+								if( mesh != null )
+									generator.CameraLookTo = new Vector3( 0, 0, 0 );
+
+								generator.CameraDirection = new Vector3( 0, 0.8, -0.4 ).GetNormalize();
+
+								generator.BeforeSceneEnable += delegate ( Product_Store.ImageGenerator sender )
+								{
+									generator.Scene.DisplayPhysicalObjects = true;
+								};
+
+								{
+									var entry = archive.CreateEntry( $"_Image{imageCounter}.png" );
+									using( var entryStream = entry.Open() )
+										generator.Generate( vehicle, entryStream );
+									imageCounter++;
+								}
+							}
+						}
+					}
 				}
 
 				handled = true;

@@ -449,7 +449,7 @@ namespace NeoAxis.Editor
 				items.Add( item );
 			}
 
-			EditorContextMenuWinForms.AddActionsToMenu( EditorContextMenuWinForms.MenuTypeEnum.Document, items );
+			EditorContextMenuWinForms.AddActionsToMenu( EditorActionContextMenuType.Document, items );
 
 			EditorContextMenuWinForms.Show( items, this );
 		}

@@ -44,6 +44,8 @@ namespace NeoAxis.Editor
 			{
 				Click?.Invoke( this );
 			}
+
+			public WinFormsButton( ProcedureUI.Form parent ) : base( parent ) { }
 		}
 
 		/////////////////////////////////////////
@@ -90,6 +92,8 @@ namespace NeoAxis.Editor
 			{
 				Click?.Invoke( this );
 			}
+
+			public WinFormsCheck( ProcedureUI.Form parent ) : base( parent ) { }
 		}
 
 		/////////////////////////////////////////
@@ -136,6 +140,8 @@ namespace NeoAxis.Editor
 			//{
 			//	Click?.Invoke( this );
 			//}
+
+			public WinFormsEdit( ProcedureUI.Form parent ) : base( parent ) { }
 		}
 
 		/////////////////////////////////////////
@@ -195,6 +201,8 @@ namespace NeoAxis.Editor
 			//{
 			//	Click?.Invoke( this );
 			//}
+
+			public WinFormsText( ProcedureUI.Form parent ) : base( parent ) { }
 		}
 
 		/////////////////////////////////////////
@@ -255,7 +263,7 @@ namespace NeoAxis.Editor
 				control.Click += Button_Click;
 				owner.Controls.Add( control );
 
-				var result = new WinFormsButton();
+				var result = new WinFormsButton( this );
 				result.control = control;
 				control.Tag = result;
 
@@ -281,7 +289,7 @@ namespace NeoAxis.Editor
 				control.Click += CheckBox_Click;
 				owner.Controls.Add( control );
 
-				var result = new WinFormsCheck();
+				var result = new WinFormsCheck( this );
 				result.control = control;
 				control.Tag = result;
 
@@ -301,7 +309,7 @@ namespace NeoAxis.Editor
 				//control.Click += CheckBox_Click;
 				owner.Controls.Add( control );
 
-				var result = new WinFormsEdit();
+				var result = new WinFormsEdit( this );
 				result.control = control;
 				control.Tag = result;
 
@@ -321,7 +329,7 @@ namespace NeoAxis.Editor
 				control.Text = text;
 				owner.Controls.Add( control );
 
-				var result = new WinFormsText();
+				var result = new WinFormsText( this );
 				result.control = control;
 				control.Tag = result;
 

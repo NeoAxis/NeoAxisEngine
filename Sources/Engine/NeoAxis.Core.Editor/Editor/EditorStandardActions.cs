@@ -385,7 +385,7 @@ namespace NeoAxis.Editor
 				a.ImageBig = Properties.Resources.MoveRotate_32;
 				a.ImageBigDark = Properties.Resources.MoveRotate_32_Dark;
 				a.RibbonText = ("Move", "Rotate");
-				a.ShortcutKeys =EditorUtility2.ConvertKeys( new Keys[] { Keys.T } );
+				a.ShortcutKeys = EditorUtility2.ConvertKeys( new Keys[] { Keys.T } );
 				a.QatSupport = true;
 				a.QatAddByDefault = true;
 				EditorActions.Register( a );
@@ -2935,7 +2935,33 @@ namespace NeoAxis.Editor
 				{
 					var mesh = context.ObjectsInFocus.DocumentWindow?.ObjectOfWindow as Mesh;
 					if( mesh != null )
-						context.Enabled = mesh.GetComponent( bodyName ) as RigidBody == null;
+					{
+						context.Enabled = true;//mesh.GetComponent( bodyName ) as RigidBody == null;
+
+						//update check boxes with current settings
+						{
+							var currentDefinition = mesh.GetComponent( bodyName ) as RigidBody;
+							var currentSettings = currentDefinition?.CollisionDefinitionSettings.Value ?? "";
+
+							foreach( var item in a.DropDownContextMenu.Items )
+							{
+								var item2 = item as KryptonContextMenuItems;
+								foreach( var item3 in item2.Items )
+								{
+									var item4 = item3 as KryptonContextMenuItem;
+									if( item4 != null )
+									{
+										var tagString = ( item4.Tag as string ) ?? "";
+
+										if( currentDefinition != null && ( currentSettings == tagString || ( tagString == "Convex Decomposition" && currentSettings.Contains( "Convex Decomposition" ) ) ) )
+											item4.Checked = true;
+										else
+											item4.Checked = false;
+									}
+								}
+							}
+						}
+					}
 				};
 
 				//context menu
@@ -2957,6 +2983,7 @@ namespace NeoAxis.Editor
 					{
 						var item = new KryptonContextMenuItem( name, null, clickHandler );
 						item.Tag = name;
+
 						items.Add( item );
 					}
 
@@ -3172,7 +3199,7 @@ namespace NeoAxis.Editor
 				a.ImageSmall = Properties.Resources.Add_16;
 				a.ImageBig = Properties.Resources.Add_32;
 				a.QatSupport = true;
-				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Resources;
+				a.ContextMenuSupport = EditorActionContextMenuType.Resources;
 				a.RibbonText = ("Add", "");
 
 				a.GetState += delegate ( EditorActionGetStateContext context )
@@ -3276,7 +3303,7 @@ namespace NeoAxis.Editor
 				a.ImageSmall = Properties.Resources.Delete_16;
 				a.ImageBig = Properties.Resources.Delete_32;
 				a.QatSupport = true;
-				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Resources;
+				a.ContextMenuSupport = EditorActionContextMenuType.Resources;
 				a.RibbonText = ("Remove", "");
 
 				a.GetState += delegate ( EditorActionGetStateContext context )
@@ -4041,7 +4068,7 @@ namespace NeoAxis.Editor
 				a.QatSupport = true;
 				a.RibbonText = ("Image", "Compression");
 				a.ActionType = EditorAction.ActionTypeEnum.DropDown;
-				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Resources;
+				a.ContextMenuSupport = EditorActionContextMenuType.Resources;
 
 				System.EventHandler clickHandler = delegate ( object s, EventArgs e2 )
 				{
@@ -4191,7 +4218,7 @@ namespace NeoAxis.Editor
 				a.QatSupport = true;
 				a.RibbonText = ("Process", "Env Cubemap");
 				a.ActionType = EditorAction.ActionTypeEnum.DropDown;
-				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Resources;
+				a.ContextMenuSupport = EditorActionContextMenuType.Resources;
 
 				System.EventHandler clickHandler = delegate ( object s, EventArgs e2 )
 				{
@@ -4560,7 +4587,7 @@ namespace NeoAxis.Editor
 				//a.ImageSmall = Properties.Resources.Default_16;
 				//a.ImageBig = Properties.Resources.Default_32;
 				a.QatSupport = true;
-				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Document;
+				a.ContextMenuSupport = EditorActionContextMenuType.Document;
 
 				a.GetState += delegate ( EditorActionGetStateContext context )
 				{
@@ -4601,7 +4628,7 @@ namespace NeoAxis.Editor
 				//a.ImageSmall = Properties.Resources.Default_16;
 				//a.ImageBig = Properties.Resources.Default_32;
 				a.QatSupport = true;
-				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Document;
+				a.ContextMenuSupport = EditorActionContextMenuType.Document;
 
 				a.GetState += delegate ( EditorActionGetStateContext context )
 				{

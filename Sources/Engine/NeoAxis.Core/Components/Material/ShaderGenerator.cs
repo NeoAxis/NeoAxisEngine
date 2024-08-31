@@ -775,6 +775,14 @@ namespace NeoAxis
 								//var constructBody = string.Format( "texture2D({0}, {1})", nameInShader, locationStr );
 								//var constructBody = string.Format( "{0}.Sample( {1}Sampler, {2} )", nameInShader, nameInShader, locationStr );
 
+								//fix RGBA access to L8, L16 textures
+								if( postfix == "" || postfix == "g" || postfix == "b" || postfix == "a" )
+								{
+									var result = shaderTextureSample.Texture.Value?.Result;
+									if( result != null && ( result.ResultFormat == PixelFormat.L8 || result.ResultFormat == PixelFormat.L16 ) )
+										constructBody = "vec4_splat((" + constructBody + ").r)";
+								}
+
 								if( postfix != "" )
 									constructBody += "." + postfix;
 

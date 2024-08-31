@@ -114,6 +114,20 @@ namespace NeoAxis.Editor
 
 			if( Scene != null )
 				Scene.DisplayPhysicalObjects = VehicleType.EditorDisplayPhysics;
+
+			//visualize selected objects
+			var renderer = Viewport.Simple3DRenderer;
+			foreach( var obj in SelectedObjects )
+			{
+				var light = obj as Light;
+				if( light != null )
+				{
+					var color = ProjectSettings.Get.Colors.SceneShowLightColor.Value;
+					//color.Alpha *= 0.25f;
+					renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
+					light.DebugDraw( Viewport );
+				}
+			}
 		}
 
 		protected override void OnSceneViewportUpdateGetCameraSettings( ref bool processed )

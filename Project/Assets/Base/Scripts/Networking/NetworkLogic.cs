@@ -131,9 +131,11 @@ namespace NeoAxis
 		/////////////////////////////////////////
 		/////////////////////////////////////////
 		//server only
-//#if !CLIENT
+		//#if !CLIENT
 
+#if !CLIENT
 		float serverUpdateRemainingTime;
+#endif
 		Dictionary<ServerNetworkService_Users.UserInfo, ServerUserItem> serverUsers = new Dictionary<ServerNetworkService_Users.UserInfo, ServerUserItem>();
 
 		//!!!!cache only for simulation

@@ -381,6 +381,7 @@ namespace NeoAxis.Editor
 			SplashForm.Instance?.Close();
 
 			loaded = true;
+			EditorAPI.PerformEditorFormLoaded();
 		}
 
 		void SaveDockingState()
@@ -2351,6 +2352,12 @@ namespace NeoAxis.Editor
 				if( !string.IsNullOrEmpty( EngineApp.InitSettings.ConfigVirtualFileName ) )
 					EngineConfig.Save();
 			}
+		}
+
+		[Browsable( false )]
+		public bool Loaded
+		{
+			get { return loaded; }
 		}
 	}
 }

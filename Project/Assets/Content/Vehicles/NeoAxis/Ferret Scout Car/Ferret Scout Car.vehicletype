@@ -1,10 +1,10 @@
-// Made with NeoAxis Engine 2024.1.
+// Made with NeoAxis Engine 2024.2.
 
 .component NeoAxis.VehicleType
 {
-	EditorCameraTransform = "2.04180638205498 -3.79977324699086 2.70359258505927; -0.264832821370578 0.16367486452846 0.808376384769323 0.499601577253084; 1 1 1"
-	EngineMaxTorque = 300
-	EngineMaxRPM = 3000
+	EditorCameraTransform = "2.5442865583916 4.10209212606087 3.04844422465097; -0.264891338640395 -0.153677455805109 0.823415012282134 -0.477706537362616; 1 1 1"
+	EngineMaxRPM = 5000
+	LightPairs = True
 	EditorDisplayPhysics = False
 	Mesh
 	{
@@ -338,20 +338,35 @@
 	}
 	.component NeoAxis.Light
 	{
-		Name = Headlight Low Right
-		Transform = "1.62393839859369 -0.53 0.26085662047027; 0 0.0871557427476582 0 0.996194698091746; 1 1 1"
+		Name = Brake Rear
+		Transform = "-1.50212579014837 0.844620318093999 0.0961017863983141; 0 0 1 0.00000000000000006; 1 1 1"
 		Type = Spotlight
-		Brightness = 250000
-		Color = 0.987098 1 0.683647
-		AttenuationFar = 43.263999999999996
-		SpotlightInnerAngle = 63
-		SpotlightOuterAngle = 66
-		StartDistance = 0.3
-		ShadowNearClipDistance = 0.2
-		FlareColor = "0.987098 1 0.812; 1.5"
-		FlareSize = 0.8 0.8
+		Brightness = 200000
+		Color = 1 0 0
+		AttenuationFar = 1.5
+		SpotlightInnerAngle = 160
+		SpotlightOuterAngle = 180
+		FlareColor = "1 0.1416078 0.08333334; 2"
+		FlareSize = 0.3 0.3
 		FlareSizeFadeByDistance = True
-		FlareDepthCheckOffset = 0.2
+		FlareImage
+		{
+			GetByReference = "Base\\Images\\Lens flares\\sparkle_blurred.png"
+		}
+	}
+	.component NeoAxis.Light
+	{
+		Name = Left Turn Rear
+		Transform = "-1.50212579014837 0.844620318093999 0.0270268388175808; 0 0 1 0.00000000000000006; 1 1 1"
+		Type = Spotlight
+		Brightness = 300000
+		Color = 1 0.5490196 0
+		AttenuationFar = 2
+		SpotlightInnerAngle = 160
+		SpotlightOuterAngle = 180
+		FlareColor = "0.9920784 1 0.4977647; 1.5"
+		FlareSize = 0.3 0.3
+		FlareSizeFadeByDistance = True
 		FlareImage
 		{
 			GetByReference = "Base\\Images\\Lens flares\\sparkle_blurred.png"

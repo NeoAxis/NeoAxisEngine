@@ -28,7 +28,7 @@ namespace NeoAxis.Editor
 				//!!!!выключить где-то?
 				a.QatSupport = true;
 				//a.qatAddByDefault = true;
-				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Document;
+				a.ContextMenuSupport = EditorActionContextMenuType.Document;
 
 				a.GetState += delegate ( EditorActionGetStateContext context )
 				{
@@ -172,7 +172,7 @@ namespace NeoAxis.Editor
 				//!!!!выключить где-то?
 				a.QatSupport = true;
 				//a.qatAddByDefault = true;
-				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Document;
+				a.ContextMenuSupport = EditorActionContextMenuType.Document;
 
 				a.GetState += delegate ( EditorActionGetStateContext context )
 				{

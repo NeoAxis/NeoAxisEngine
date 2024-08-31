@@ -2,10 +2,6 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
-using System.Drawing.Design;
-using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace NeoAxis.Editor
@@ -18,11 +14,28 @@ namespace NeoAxis.Editor
 
 			var mesh = documentWindow.ObjectOfWindow as Mesh;
 
-			var body = mesh.CreateComponent<RigidBody>( enabled: false );
+			var oldBody = mesh.GetComponent<RigidBody>( bodyName );
+
+			RigidBody body;
+			if( oldBody != null )
+			{
+				body = (RigidBody)oldBody.Clone();
+				body.RemoveAllComponents( false );
+				body.Enabled = false;
+				mesh.AddComponent( body );
+			}
+			else
+			{
+				body = mesh.CreateComponent<RigidBody>( enabled: false );
+				body.MotionType = PhysicsMotionType.Static;
+			}
+
 			body.Name = bodyName;
 			//collision.CanCreate = false;
 
-			body.MotionType = PhysicsMotionType.Static;
+			//body.MotionType = PhysicsMotionType.Static;
+
+			var settingsString = "";
 
 			string error = null;
 
@@ -37,6 +50,8 @@ namespace NeoAxis.Editor
 					var bounds = mesh.Result.SpaceBounds.BoundingBox;
 					shape.LocalTransform = new Transform( bounds.GetCenter(), Quaternion.Identity );
 					shape.Dimensions = bounds.GetSize();
+
+					settingsString = collisionName;
 				}
 				break;
 
@@ -47,6 +62,8 @@ namespace NeoAxis.Editor
 					var sphere = mesh.Result.SpaceBounds.BoundingSphere;
 					shape.LocalTransform = new Transform( sphere.Center, Quaternion.Identity );
 					shape.Radius = sphere.Radius;
+
+					settingsString = collisionName;
 				}
 				break;
 
@@ -58,6 +75,8 @@ namespace NeoAxis.Editor
 					shape.LocalTransform = new Transform( bounds.GetCenter(), Quaternion.Identity );
 					shape.Radius = Math.Max( bounds.GetSize().X, bounds.GetSize().Y ) / 2;
 					shape.Height = Math.Max( bounds.GetSize().Z - shape.Radius * 2, 0 );
+
+					settingsString = collisionName;
 				}
 				break;
 
@@ -69,6 +88,8 @@ namespace NeoAxis.Editor
 					shape.LocalTransform = new Transform( bounds.GetCenter(), Quaternion.Identity );
 					shape.Radius = Math.Max( bounds.GetSize().X, bounds.GetSize().Y ) / 2;
 					shape.Height = bounds.GetSize().Z;
+
+					settingsString = collisionName;
 				}
 				break;
 
@@ -79,12 +100,40 @@ namespace NeoAxis.Editor
 					shape.ShapeType = CollisionShape_Mesh.ShapeTypeEnum.Convex;
 					shape.Mesh = ReferenceUtility.MakeRootReference( mesh );
 					//shape.Mesh = ReferenceUtility.MakeThisReference( shape, mesh );
+
+					settingsString = collisionName;
 				}
 				break;
 
 			case "Convex Decomposition":
 				{
 					var settings = new ConvexDecomposition.Settings();
+
+					//use old settings
+					if( oldBody != null )
+					{
+						var oldSettings = oldBody.CollisionDefinitionSettings.Value;
+						if( !string.IsNullOrEmpty( oldSettings ) )
+						{
+							var s = TextBlock.Parse( oldSettings, out _ );
+							if( s != null )
+							{
+								try
+								{
+									foreach( var p in settings.GetType().GetProperties() )
+									{
+										var v = s.GetAttribute( p.Name );
+										if( !string.IsNullOrEmpty( v ) )
+										{
+											var v2 = SimpleTypes.ParseValue( p.PropertyType, v );
+											p.SetValue( settings, v2 );
+										}
+									}
+								}
+								catch { }
+							}
+						}
+					}
 
 					var form = new SpecifyParametersForm( "Convex Decomposition", settings );
 					form.CheckHandler = delegate ( ref string error2 )
@@ -118,6 +167,28 @@ namespace NeoAxis.Editor
 
 						counter++;
 					}
+
+					{
+						TextBlock b = new TextBlock();
+						//add id for checkboxes
+						b.SetAttribute( "Convex Decomposition", "True" );
+
+						foreach( var p in settings.GetType().GetProperties() )
+						{
+							try
+							{
+								var v = p.GetValue( settings );
+								if( v != null )
+								{
+									var v2 = v.ToString();
+									b.SetAttribute( p.Name, v2 );
+								}
+							}
+							catch { }
+						}
+
+						settingsString = b.DumpToString();
+					}
 				}
 				break;
 
@@ -144,6 +215,8 @@ namespace NeoAxis.Editor
 					var shape = body.CreateComponent<CollisionShape_Mesh>();
 					shape.Name = "Shape";
 					shape.Mesh = ReferenceUtility.MakeRootReference( selectMesh );
+
+					settingsString = collisionName;
 				}
 				break;
 
@@ -153,6 +226,8 @@ namespace NeoAxis.Editor
 					shape.Name = "Shape";
 					shape.Mesh = ReferenceUtility.MakeRootReference( mesh );
 					//shape.Mesh = ReferenceUtility.MakeThisReference( shape, mesh );
+
+					settingsString = collisionName;
 				}
 				break;
 
@@ -168,9 +243,13 @@ namespace NeoAxis.Editor
 				return;
 			}
 
+			body.CollisionDefinitionSettings = settingsString;
+
 			body.Enabled = true;
 
 			var undoActions = new List<UndoSystem.Action>();
+			if( oldBody != null )
+				undoActions.Add( new UndoActionComponentCreateDelete( documentWindow.Document2, new Component[] { oldBody }, false ) );
 			undoActions.Add( new UndoActionComponentCreateDelete( documentWindow.Document2, new Component[] { body }, true ) );
 
 			//enable EditorDisplayCollision

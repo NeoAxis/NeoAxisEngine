@@ -23,6 +23,9 @@ namespace NeoAxis
 			True,
 		}
 
+		/// <summary>
+		/// Whether to active.
+		/// </summary>
 		[DefaultValue( ActiveEnum.Auto )]
 		public Reference<ActiveEnum> Active
 		{

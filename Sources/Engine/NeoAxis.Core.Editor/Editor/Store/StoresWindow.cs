@@ -15,6 +15,7 @@ using System.Threading;
 using System.Globalization;
 using System.Drawing.Drawing2D;
 using Internal.ComponentFactory.Krypton.Toolkit;
+using Downloader;
 
 namespace NeoAxis.Editor
 {
@@ -1365,8 +1366,8 @@ next:
 							File.Delete( state.downloadingDestinationPath );
 							data.Cancelled = true;
 
-								data.Error = new Exception( "Invalid package (empty file)." );
-								data.ShowWarningAnyway = true;
+							data.Error = new Exception( "Invalid package (empty file)." );
+							data.ShowWarningAnyway = true;
 						}
 					}
 					if( !data.Cancelled && !File.Exists( state.downloadingDestinationPath ) )
@@ -1409,6 +1410,112 @@ next:
 					ScreenNotifications2.Show( EditorLocalization2.Translate( "General", "The package has been successfully downloaded." ) );
 			}
 		}
+
+		static List<string> ExtractToDirectory( string zipPath, string destinationFolder, bool overwriteExisting )
+		{
+			var extractedFiles = new List<string>();
+
+			using( var archive = ZipFile.OpenRead( zipPath ) )
+			{
+				foreach( var entry in archive.Entries )
+				{
+					// Skip directories
+					if( entry.FullName.EndsWith( "/" ) || entry.FullName.EndsWith( "\\" ) )
+						continue;
+
+					var filePath = PathUtility.NormalizePath( Path.Combine( destinationFolder, entry.FullName ) );
+
+					// Ensure the directory is created
+					var directoryPath = Path.GetDirectoryName( filePath );
+					if( !Directory.Exists( directoryPath ) )
+						Directory.CreateDirectory( directoryPath );
+
+					// Extract file
+					if( overwriteExisting || !File.Exists( filePath ) )
+						entry.ExtractToFile( filePath, overwriteExisting );
+
+					// Add to the list of extracted files
+					extractedFiles.Add( filePath );
+				}
+			}
+
+			return extractedFiles;
+		}
+
+
+		static void DownloadAndExtractExternalSource( string address, string destinationFolder, List<string> extractedFullPaths )
+		{
+			using( WebClient client = new WebClient() )
+			{
+				var tempFileName = Path.Combine( Path.GetTempPath(), "Temp9" + Path.GetRandomFileName() );
+
+				client.DownloadFile( address, tempFileName );
+
+				//extract archive
+				var extractedFiles = ExtractToDirectory( tempFileName, destinationFolder, true );
+				extractedFullPaths.AddRange( extractedFiles );
+				//ZipFile.ExtractToDirectory( tempFileName, destinationFolder, true );
+
+				//delete temp file
+				try
+				{
+					if( File.Exists( tempFileName ) )
+						File.Delete( tempFileName );
+				}
+				catch { }
+			}
+		}
+
+		//not works
+		//static void DownloadAndExtractExternalSource( string address, string destinationFolder )
+		//{
+		//	var downloaderOptions = new DownloadConfiguration();
+		//	downloaderOptions.MaxTryAgainOnFailover = 4;
+		//	//long chunkSize = 30 * 1024 * 1024;
+		//	//if( data.Package.Size > chunkSize )
+		//	//	downloaderOptions.ChunkCount = (int)Math.Max( data.Package.Size / chunkSize + 1, 1 );
+
+		//	using( var downloader = new DownloadService( downloaderOptions ) )
+		//	{
+		//		var tempFileName = Path.Combine( Path.GetTempPath(), "Temp9" + Path.GetRandomFileName() );
+
+		//		//downloader.DownloadProgressChanged += delegate ( object sender, Downloader.DownloadProgressChangedEventArgs e )
+		//		//{
+		//		//	//check already ended
+		//		//	if( data.Cancelled )
+		//		//		return;
+
+		//		//	if( e.TotalBytesToReceive != 0 )
+		//		//		state.downloadProgress = MathEx.Saturate( (float)e.ReceivedBytesSize / (float)e.TotalBytesToReceive );
+		//		//};
+
+		//		downloader.DownloadFileCompleted += delegate ( object sender, AsyncCompletedEventArgs e )
+		//		{
+		//			if( e.Error != null )
+		//				throw new Exception( e.Error.Message );
+		//			if( e.Cancelled )
+		//				throw new Exception( "Download cancelled" );
+
+		//			//extract archive
+		//			ZipFile.ExtractToDirectory( tempFileName, destinationFolder, true );
+
+		//			//delete temp file
+		//			try
+		//			{
+		//				if( File.Exists( tempFileName ) )
+		//					File.Delete( tempFileName );
+		//			}
+		//			catch { }
+		//		};
+
+		//		using( var task = downloader.DownloadFileTaskAsync( address, tempFileName ) )
+		//		{
+		//			while( /*!string.IsNullOrEmpty( address ) && */ !task.Wait( 10 ) )
+		//			{
+		//			}
+		//		}
+		//	}
+		//}
 
 		void StartInstall( string packageId, bool openAfterInstall )
 		{
@@ -1515,31 +1622,106 @@ next:
 				notification.Close();
 			}
 
-
-			if( !string.IsNullOrEmpty( archiveInfo.AddCSharpFilesToProject ) )
+			//ExternalSource.info
+			try
 			{
-				var toAdd = new ESet<string>();
+				var extractedFullPathsCopy = extractedFullPaths.ToArray();
 
-				var path = Path.Combine( VirtualFileSystem.Directories.Assets, archiveInfo.AddCSharpFilesToProject );
-				if( Directory.Exists( path ) )
+				foreach( var fullPath in extractedFullPathsCopy )
 				{
-					var fullPaths = CSharpProjectFileUtility.GetProjectFileCSFiles( false, true );
-					var files = Directory.GetFiles( path, "*.cs", SearchOption.AllDirectories );
-					foreach( var file in files )
+					if( Path.GetFileName( fullPath ).ToLower() == "externalsource.info" )
 					{
-						if( !fullPaths.Contains( file ) )
-							toAdd.AddWithCheckAlreadyContained( file );
+						var b = TextBlockUtility.LoadFromRealFile( fullPath );
+						var address = b.GetAttribute( "Source" );
+
+						if( string.IsNullOrEmpty( address ) )
+							throw new Exception( string.Format( "Invalid \"{0}\". Empty \"Source\" attribute.", Path.GetFileName( fullPath ) ) );
+
+						var text = "The package requires content from an external source. Download?\r\n\r\nAddress:\r\n" + address;
+						if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
+						{
+							var destinationFolder = Path.GetDirectoryName( fullPath );
+
+							var notification2 = ScreenNotifications2.ShowSticky( "Downloading from external source..." );
+							try
+							{
+								DownloadAndExtractExternalSource( address, destinationFolder, extractedFullPaths );
+							}
+							finally
+							{
+								notification2.Close();
+							}
+						}
 					}
 				}
+			}
+			catch( Exception e )
+			{
+				EditorMessageBox.ShowWarning( e.Message );
+				Log.Warning( e.Message );
+			}
 
-				//	if( !fileItem.IsDirectory && Path.GetExtension( fileItem.FullPath ).ToLower() == ".cs" )
+			//C# files
+			var addedCSFilesToAssetsReal = new List<string>();
+			var addedCSFilesToAssetsVirtual = new List<string>();
+			try
+			{
+				foreach( var fullPath in extractedFullPaths )
+				{
+					var virtualPath = VirtualPathUtility.GetVirtualPathByReal( fullPath );
+					if( !string.IsNullOrEmpty( virtualPath ) && Path.GetExtension( fullPath ).ToLower() == ".cs" )
+					{
+						addedCSFilesToAssetsReal.Add( fullPath );
+						addedCSFilesToAssetsVirtual.Add( virtualPath );
+					}
+				}
+			}
+			catch( Exception e )
+			{
+				EditorMessageBox.ShowWarning( e.Message );
+				Log.Warning( e.Message );
+			}
+
+			if( addedCSFilesToAssetsReal.Count != 0 )//if( !string.IsNullOrEmpty( archiveInfo.AddCSharpFilesToProject ) )
+			{
+				var toAdd = new ESet<string>();
+				toAdd.AddRangeWithCheckAlreadyContained( addedCSFilesToAssetsReal );
+
+				//var path = Path.Combine( VirtualFileSystem.Directories.Assets, archiveInfo.AddCSharpFilesToProject );
+				//if( Directory.Exists( path ) )
+				//{
+				//	var fullPaths = CSharpProjectFileUtility.GetProjectFileCSFiles( false, true );
+				//	var files = Directory.GetFiles( path, "*.cs", SearchOption.AllDirectories );
+				//	foreach( var file in files )
 				//	{
-				//		bool added = CSharpProjectFileUtility.GetProjectFileCSFiles( false, true ).Contains( fileItem.FullPath );
-				//		if( !added )
-				//			toAdd.Add( fileItem.FullPath );
+				//		if( !fullPaths.Contains( file ) )
+				//			toAdd.AddWithCheckAlreadyContained( file );
 				//	}
+				//}
 
-				if( toAdd.Count != 0 )
+				////	if( !fileItem.IsDirectory && Path.GetExtension( fileItem.FullPath ).ToLower() == ".cs" )
+				////	{
+				////		bool added = CSharpProjectFileUtility.GetProjectFileCSFiles( false, true ).Contains( fileItem.FullPath );
+				////		if( !added )
+				////			toAdd.Add( fileItem.FullPath );
+				////	}
+
+				//if( toAdd.Count != 0 )
+				//{
+
+				var text = string.Format( toAdd.Count == 1 ? "{0} C# file was added. Add it to the Project.csproj?" : "{0} C# files were added. Add them to the Project.csproj?", toAdd.Count ) + "\r\n\r\n";
+				var counter = 0;
+				foreach( var item in addedCSFilesToAssetsVirtual )
+				{
+					if( counter > 10 )
+					{
+						text += "...";
+						break;
+					}
+					text += item + "\r\n";
+					counter++;
+				}
+				if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.YesNo ) == EDialogResult.Yes )
 				{
 					if( CSharpProjectFileUtility.UpdateProjectFile( toAdd, null, out var error2 ) )
 					{
@@ -1553,6 +1735,8 @@ next:
 					else
 						Log.Warning( error2 );
 				}
+
+				//}
 			}
 
 			//load .neoaxisbaking files

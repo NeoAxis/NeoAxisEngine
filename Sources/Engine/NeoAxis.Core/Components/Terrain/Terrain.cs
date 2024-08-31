@@ -3759,7 +3759,7 @@ toSkip:
 
 				fixed( float* pData = data )
 				{
-					if( !ImageUtility.Save( realFileName, (IntPtr)pData, new Vector2I( length, length ), 1, PixelFormat.Float32R, 1, 0, out error ) )
+					if( !ImageUtility.Save( realFileName, (IntPtr)pData, new Vector2I( length, length ), 1, PixelFormat.Float32R, 1, 0, 90, out error ) )
 						return false;
 				}
 			}

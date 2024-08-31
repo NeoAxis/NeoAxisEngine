@@ -15,6 +15,9 @@ namespace NeoAxis
 #endif
 	public class FlashlightType : ItemType
 	{
+		/// <summary>
+		/// The material when not active.
+		/// </summary>
 		[DefaultValue( null )]
 		public Reference<Material> InactiveMaterial
 		{

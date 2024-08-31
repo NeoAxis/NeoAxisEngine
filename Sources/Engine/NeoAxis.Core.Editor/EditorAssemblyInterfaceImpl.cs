@@ -475,5 +475,184 @@ namespace NeoAxis.Editor
 		{
 			EditorForm.Instance?.AfterFatalShowDialogAndSaveDocuments( errorText, ref skipLogFatal );
 		}
+
+		public override IEditorAction RegisterEditorAction( string name, string description, object imageOrImageHint, (string, string) ribbonText, Action<EditorActionGetStateContext> getState, Action<EditorActionClickContext> click, EditorActionContextMenuType contextMenuSupport )
+		{
+			var a = new EditorAction();
+			a.Name = name;
+			a.Description = description;
+
+			//!!!!add to params?
+			a.CommonType = EditorAction.CommonTypeEnum.General;
+
+			var imageHint = imageOrImageHint as string;
+			if( !string.IsNullOrEmpty( imageHint ) )
+			{
+				{
+					object obj = Properties.Resources.ResourceManager.GetObject( imageHint + "_16", Properties.Resources.Culture );
+					var image = obj as Image;
+					if( image != null )
+						a.ImageSmall = image;
+				}
+
+				{
+					object obj = Properties.Resources.ResourceManager.GetObject( imageHint + "_32", Properties.Resources.Culture );
+					var image = obj as Image;
+					if( image != null )
+						a.ImageBig = image;
+				}
+			}
+			else
+			{
+				//!!!!add image support
+			}
+			//a.ImageSmall = Properties.Resources.Download_16;
+			//a.ImageBig = Properties.Resources.Download_32;
+
+			a.QatSupport = true;
+			a.ContextMenuSupport = contextMenuSupport;
+			a.RibbonText = ribbonText;
+
+			if( getState != null )
+			{
+				a.GetState += delegate ( EditorActionGetStateContext context )
+				{
+					getState( context );
+				};
+			}
+
+			if( click != null )
+			{
+				a.Click += delegate ( EditorActionClickContext context )
+				{
+					click( context );
+				};
+			}
+
+			EditorActions.Register( a );
+
+			return a;
+		}
+
+		public override void RibbonAddAction( string tabName, string groupName, string actionName )
+		{
+			if( EditorAPI.ClosingApplication )
+				return;
+			if( EditorForm.Instance == null || !EditorForm.Instance.Loaded )
+				return;
+
+			try
+			{
+				var settings = ProjectSettings.Get;
+				settings.RibbonAndToolbar.RibbonAndToolbarActions.SetToNotDefault();
+
+				var updated = false;
+
+				//get or add tab
+				var tab = settings.RibbonAndToolbar.RibbonAndToolbarActions.RibbonTabs.FirstOrDefault( t => t.Name == tabName );
+				if( tab == null )
+				{
+					tab = new ProjectSettingsPage_RibbonAndToolbar.RibbonAndToolbarActionsClass.TabItem();
+					tab.Name = tabName;
+					settings.RibbonAndToolbar.RibbonAndToolbarActions.RibbonTabs.Add( tab );
+					updated = true;
+				}
+
+				//get or add tab group
+				var group = tab.Groups.FirstOrDefault( g => g.Name == groupName );
+				if( group == null )
+				{
+					group = new ProjectSettingsPage_RibbonAndToolbar.RibbonAndToolbarActionsClass.GroupItem();
+					group.Name = groupName;
+					tab.Groups.Add( group );
+					updated = true;
+				}
+
+				//add action
+				var action = group.Actions.FirstOrDefault( a => a.Name == actionName );
+				if( action == null )
+				{
+					action = new ProjectSettingsPage_RibbonAndToolbar.RibbonAndToolbarActionsClass.ActionItem();
+					action.Name = actionName;
+					group.Actions.Add( action );
+					updated = true;
+				}
+
+				if( updated )
+					ProjectSettings.SaveToFileAndUpdate();
+
+			}
+			catch( Exception ex )
+			{
+				Log.Warning( "EditorAssemblyInterfaceImpl: RibbonAddAction: " + ex.Message );
+			}
+		}
+
+		public override void QATAddAction( string actionName )
+		{
+			if( EditorAPI.ClosingApplication )
+				return;
+			if( EditorForm.Instance == null || !EditorForm.Instance.Loaded )
+				return;
+
+			try
+			{
+				var settings = ProjectSettings.Get;
+				settings.RibbonAndToolbar.RibbonAndToolbarActions.SetToNotDefault();
+
+				var alreadyAdded = settings.RibbonAndToolbar.RibbonAndToolbarActions.ToolbarActions.FirstOrDefault(
+					i => i.Name == actionName ) != null;
+
+				if( !alreadyAdded )
+				{
+					var item = new ProjectSettingsPage_RibbonAndToolbar.RibbonAndToolbarActionsClass.ActionItem();
+					item.Name = actionName;
+					settings.RibbonAndToolbar.RibbonAndToolbarActions.ToolbarActions.Add( item );
+
+					ProjectSettings.SaveToFileAndUpdate();
+				}
+			}
+			catch( Exception ex )
+			{
+				Log.Warning( "EditorAssemblyInterfaceImpl: QATAddAction: " + ex.Message );
+			}
+		}
+
+		public override ProcedureUI.Form CreateProcedureUIDialog( ProcedureUIDialogSettings settings )
+		{
+			var winForm = new ProcedureUIDialog( settings );
+			var form = new WinFormsProcedureUI.WinFormsForm( winForm.WorkareaControl );
+			winForm.form = form;
+			return form;
+		}
+
+		public override void ShowDialog( ProcedureUI.Form form )
+		{
+			var form2 = (WinFormsProcedureUI.WinFormsForm)form;
+			var winForm = (Form)form2.owner.Parent;
+
+			winForm.ShowDialog();
+
+			//!!!!?
+			//EditorForm.Instance.WorkspaceController.BlockAutoHideAndDoAction( this, () =>
+			//{
+			//	winForm.ShowDialog();
+			//} );
+		}
+
+		public override bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, out string[] fileNames )
+		{
+			return EditorUtility2.ShowOpenFileDialog( isFolderPicker, initialDirectory, filters, out fileNames );
+		}
+
+		public override bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, out string fileName )
+		{
+			return EditorUtility2.ShowOpenFileDialog( isFolderPicker, initialDirectory, filters, out fileName );
+		}
+
+		public override bool ShowSaveFileDialog( string initialDirectory, string initialFileName, string filter, out string resultFileName )
+		{
+			return EditorUtility2.ShowSaveFileDialog( initialDirectory, initialFileName, filter, out resultFileName );
+		}
 	}
 }

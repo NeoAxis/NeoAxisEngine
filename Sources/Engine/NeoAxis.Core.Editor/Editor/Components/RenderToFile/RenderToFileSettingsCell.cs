@@ -359,7 +359,7 @@ namespace NeoAxis.Editor
 				if( !Directory.Exists( Path.GetDirectoryName( destRealFileName ) ) )
 					Directory.CreateDirectory( Path.GetDirectoryName( destRealFileName ) );
 
-				if( !ImageUtility.Save( destRealFileName, image.Data, image.Size, 1, image.Format, 1, 0, out var error ) )
+				if( !ImageUtility.Save( destRealFileName, image.Data, image.Size, 1, image.Format, 1, 0, 90, out var error ) )
 					throw new Exception( error );
 			}
 			catch( Exception e )
@@ -901,7 +901,7 @@ namespace NeoAxis.Editor
 						if( !Directory.Exists( Path.GetDirectoryName( fullPath ) ) )
 							Directory.CreateDirectory( Path.GetDirectoryName( fullPath ) );
 
-						if( !ImageUtility.Save( fullPath, image.Data, image.Size, 1, image.Format, 1, 0, out var error ) )
+						if( !ImageUtility.Save( fullPath, image.Data, image.Size, 1, image.Format, 1, 0, 90, out var error ) )
 							throw new Exception( error );
 
 						textureFileNames[ nChannel ] = VirtualPathUtility.GetVirtualPathByReal( fullPath );

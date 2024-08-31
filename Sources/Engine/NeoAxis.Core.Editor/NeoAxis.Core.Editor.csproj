@@ -252,6 +252,12 @@
     <Compile Update="Editor\ObjectsWindow.designer.cs">
       <DependentUpon>ObjectsWindow.cs</DependentUpon>
     </Compile>
+    <Compile Update="Editor\OKCancelTextBoxForm - Copy.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Editor\OKCancelTextBoxForm - Copy.designer.cs">
+      <DependentUpon>OKCancelTextBoxForm.cs</DependentUpon>
+    </Compile>
     <Compile Update="Editor\OKCancelTextBoxForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -781,6 +787,9 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Editor\ObjectsWindow.resx">
       <DependentUpon>ObjectsWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Editor\OKCancelTextBoxForm - Copy.resx">
+      <DependentUpon>OKCancelTextBoxForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Editor\OKCancelTextBoxForm.resx">
       <DependentUpon>OKCancelTextBoxForm.cs</DependentUpon>

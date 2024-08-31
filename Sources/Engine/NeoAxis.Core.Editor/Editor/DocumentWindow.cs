@@ -551,7 +551,7 @@ namespace NeoAxis.Editor
 				items.Add( item );
 			}
 
-			EditorContextMenuWinForms.AddActionsToMenu( EditorContextMenuWinForms.MenuTypeEnum.Document, items );//, this );
+			EditorContextMenuWinForms.AddActionsToMenu( EditorActionContextMenuType.Document, items );//, this );
 
 			EditorContextMenuWinForms.Show( items, this );
 		}

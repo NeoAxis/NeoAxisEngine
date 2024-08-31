@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2024.1.
+// Made with NeoAxis Engine 2024.2.
 
 .component NeoAxis.Scene
 {
@@ -65,7 +65,7 @@
 		Shadows = False
 		TransparentObjects = False
 		AnimatedObjects = False
-		LightMaxCount = 16
+		LightMaxCount = 2
 		LightMasks = False
 		LODScale = 0
 		PositionDependingCamera = True
@@ -162,10 +162,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -219,10 +215,6 @@
 		{
 			GetByReference = "root:$Material Mirror"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -264,10 +256,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "root:$Material Mirror 2"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -311,10 +299,6 @@
 		{
 			GetByReference = "root:$Material Mirror"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -350,10 +334,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -397,10 +377,6 @@
 		Name = Character
 		Transform = "2.61508163077183 -0.632551698556932 0; 0 0 0.707106781186547 0.707106781186548; 1 1 1"
 		Collision = True
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -432,10 +408,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -457,10 +429,6 @@
 		Name = Vehicle
 		Transform = "9.8899759477003 5.26890507115776 0.415897374942352; 0.00081692711436753 0.00103948999725161 0.621352439789777 -0.783530109915942; 1 1 1"
 		Collision = True
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -482,10 +450,6 @@
 		{
 			GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -505,10 +469,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "root:$Material Mirror"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -538,10 +498,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "root:$Material Mirror 2"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{

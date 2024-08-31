@@ -638,6 +638,7 @@ checkNext:;
 					if( SketchfabLogin.LoadFromRegistry( out _, out _, out var prepareStoreProduct ) && prepareStoreProduct )
 					{
 						var product = ComponentUtility.CreateComponent<Product_Store>( null, true, true );
+						product.NewObjectSetDefaultConfiguration();
 						product.Name = package.Title;
 
 						product.Description = package.ShortDescription;

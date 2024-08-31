@@ -635,7 +635,7 @@ namespace NeoAxis
 			{
 				var sideSize = (int)Math.Sqrt( mask.Length );
 
-				if( !ImageUtility.Save( realFileName, mask, new Vector2I( sideSize, sideSize ), 1, PixelFormat.L8, 1, 0, out error ) )
+				if( !ImageUtility.Save( realFileName, mask, new Vector2I( sideSize, sideSize ), 1, PixelFormat.L8, 1, 0, 90, out error ) )
 					return false;
 			}
 

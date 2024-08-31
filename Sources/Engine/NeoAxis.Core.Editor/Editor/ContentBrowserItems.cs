@@ -9,7 +9,7 @@ using NeoAxis.Networking;
 
 namespace NeoAxis.Editor
 {
-	public class ContentBrowserItem_File : ContentBrowser.Item
+	public class ContentBrowserItem_File : ContentBrowser.Item, IContentBrowserItem_File
 	{
 		string fullPath;
 		string text;

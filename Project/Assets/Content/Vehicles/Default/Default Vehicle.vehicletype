@@ -1,8 +1,10 @@
-// Made with NeoAxis Engine 2024.1.
+// Made with NeoAxis Engine 2024.2.
 
 .component NeoAxis.VehicleType
 {
-	EditorCameraTransform = "3.05401675652276 -3.92508394098382 3.28813519497449; -0.284399487554256 0.155144608287704 0.830528406456321 0.45306693552637; 1 1 1"
+	EditorCameraTransform = "2.64746022393498 3.79857421680867 5.24035816219219; -0.390629553350059 -0.219972267054724 0.778876356130489 -0.438602753795767; 1 1 1"
+	LightPairs = True
+	SeatPairs = True
 	EditorDisplayPhysics = False
 	EngineNormalizedTorque
 	{
@@ -197,53 +199,16 @@
 	}
 	.component NeoAxis.SeatItem
 	{
-		Name = Seat 2
-		Transform = "0.4 -0.38 0.05; 0 -0.17364817766693 0 0.984807753012208; 1 1 1"
-		SpineAngle = 30
-		LegsAngle = 50
-		ExitTransform = "0 -2 -0.2; 0 0 0 1; 1 1 1"
-	}
-	.component NeoAxis.SeatItem
-	{
 		Name = Seat 3
 		Transform = "-0.5 0.38 0.05; 0 -0.17364817766693 0 0.984807753012208; 1 1 1"
 		SpineAngle = 30
 		LegsAngle = 50
 		ExitTransform = "-1 2 -0.2; 0 0 0 1; 1 1 1"
 	}
-	.component NeoAxis.SeatItem
-	{
-		Name = Seat 4
-		Transform = "-0.5 -0.38 0.05; 0 -0.17364817766693 0 0.984807753012208; 1 1 1"
-		SpineAngle = 30
-		LegsAngle = 50
-		ExitTransform = "-1 -2 -0.2; 0 0 0 1; 1 1 1"
-	}
 	.component NeoAxis.Light
 	{
 		Name = Headlight Low Left
-		Transform = "2.45 0.77 0.22; 0 0.0871557427476582 0 0.996194698091746; 1 1 1"
-		Type = Spotlight
-		Brightness = 250000
-		Color = 0.987098 1 0.683647
-		AttenuationFar = 43.263999999999996
-		SpotlightInnerAngle = 63
-		SpotlightOuterAngle = 66
-		StartDistance = 0.3
-		ShadowNearClipDistance = 0.2
-		FlareColor = "0.987098 1 0.812; 1.5"
-		FlareSize = 0.8 0.8
-		FlareSizeFadeByDistance = True
-		FlareDepthCheckOffset = 0.2
-		FlareImage
-		{
-			GetByReference = "Base\\Images\\Lens flares\\sparkle_blurred.png"
-		}
-	}
-	.component NeoAxis.Light
-	{
-		Name = Headlight Low Right
-		Transform = "2.45 -0.77 0.22; 0 0.0871557427476582 0 0.996194698091746; 1 1 1"
+		Transform = "2.42278373680815 0.77 0.22; 0 0.0871557427476582 0 0.996194698091746; 1 1 1"
 		Type = Spotlight
 		Brightness = 250000
 		Color = 0.987098 1 0.683647
@@ -264,28 +229,7 @@
 	.component NeoAxis.Light
 	{
 		Name = Headlight High Left
-		Transform = "2.45 0.6 0.22; 0 0 0 1; 1 1 1"
-		Type = Spotlight
-		Brightness = 500000
-		Color = 0.987098 1 0.683647
-		AttenuationFar = 43.263999999999996
-		SpotlightInnerAngle = 63
-		SpotlightOuterAngle = 66
-		StartDistance = 0.3
-		ShadowNearClipDistance = 0.2
-		FlareColor = "0.987098 1 0.812; 1.5"
-		FlareSize = 0.8 0.8
-		FlareSizeFadeByDistance = True
-		FlareDepthCheckOffset = 0.2
-		FlareImage
-		{
-			GetByReference = "Base\\Images\\Lens flares\\sparkle_blurred.png"
-		}
-	}
-	.component NeoAxis.Light
-	{
-		Name = Headlight High Right
-		Transform = "2.45 -0.6 0.22; 0 0 0 1; 1 1 1"
+		Transform = "2.42278373680815 0.6 0.22; 0 0 0 1; 1 1 1"
 		Type = Spotlight
 		Brightness = 500000
 		Color = 0.987098 1 0.683647
@@ -306,88 +250,52 @@
 	.component NeoAxis.Light
 	{
 		Name = Brake Rear Left
-		Transform = "-2.6 0.66 0.14; 0 0 1 0.00000000000000006; 1 1 1"
-		Type = Point
+		Transform = "-2.52482200976175 0.66 0.14; 0 0 1 0.00000000000000006; 1 1 1"
+		Type = Spotlight
 		Brightness = 300000
 		Color = 1 0 0
 		AttenuationFar = 2
-		ShadowTextureSize = Quarter
-		ShadowNearClipDistance = 0.01
-	}
-	.component NeoAxis.Light
-	{
-		Name = Brake Rear Right
-		Transform = "-2.6 -0.66 0.14; 0 0 1 0.00000000000000006; 1 1 1"
-		Type = Point
-		Brightness = 300000
-		Color = 1 0 0
-		AttenuationFar = 2
+		SpotlightInnerAngle = 160
+		SpotlightOuterAngle = 180
 		ShadowTextureSize = Quarter
 		ShadowNearClipDistance = 0.01
 	}
 	.component NeoAxis.Light
 	{
 		Name = Left Turn Side Front
-		Transform = "2.10735010271322 0.981560659104948 0.0535234996763719; 0 0 1 0.00000000000000006; 1 1 1"
-		Type = Point
+		Transform = "2.10735010271322 0.859127971667531 -0.00027840266235638; 0 0 0.707106781186548 0.707106781186548; 1 1 1"
+		Type = Spotlight
 		Brightness = 300000
 		Color = 1 0.5 0
 		AttenuationFar = 2
+		SpotlightInnerAngle = 160
+		SpotlightOuterAngle = 180
 		ShadowTextureSize = Quarter
 		ShadowNearClipDistance = 0.01
 	}
 	.component NeoAxis.Light
 	{
 		Name = Left Turn Side Rear
-		Transform = "-2.22725503941756 0.908838484278114 0.0713794921731388; 0 0 1 0.00000000000000006; 1 1 1"
-		Type = Point
+		Transform = "-2.21620385126739 0.847682595462042 0.0713794921731388; 0 0 0.707106781186548 0.707106781186548; 1 1 1"
+		Type = Spotlight
 		Brightness = 300000
 		Color = 1 0.5 0
 		AttenuationFar = 2
+		SpotlightInnerAngle = 160
+		SpotlightOuterAngle = 180
 		ShadowTextureSize = Quarter
 		ShadowNearClipDistance = 0.01
 	}
 	.component NeoAxis.Light
 	{
 		Name = Left Turn Rear
-		Transform = "-2.59095581981435 0.659870319365266 0.241680694912894; 0 0 1 0.00000000000000006; 1 1 1"
-		Type = Point
+		Transform = "-2.5157778295761 0.659870319365266 0.241680694912894; 0 0 1 0; 1 1 1"
+		Type = Spotlight
 		Brightness = 300000
 		Color = 1 0 0
 		AttenuationFar = 2
-		ShadowTextureSize = Quarter
-		ShadowNearClipDistance = 0.01
-	}
-	.component NeoAxis.Light
-	{
-		Name = Right Turn Side Front
-		Transform = "2.10735010271322 -0.981560659104948 0.0535234996763719; 0 0 1 0.00000000000000006; 1 1 1"
-		Type = Point
-		Brightness = 300000
-		Color = 1 0.5 0
-		AttenuationFar = 2
-		ShadowTextureSize = Quarter
-		ShadowNearClipDistance = 0.01
-	}
-	.component NeoAxis.Light
-	{
-		Name = Right Turn Side Rear
-		Transform = "-2.22725503941756 -0.908838484278114 0.0713794921731388; 0 0 1 0.00000000000000006; 1 1 1"
-		Type = Point
-		Brightness = 300000
-		Color = 1 0.5 0
-		AttenuationFar = 2
-		ShadowTextureSize = Quarter
-		ShadowNearClipDistance = 0.01
-	}
-	.component NeoAxis.Light
-	{
-		Name = Right Turn Rear
-		Transform = "-2.59095581981435 -0.659870319365266 0.241680694912894; 0 0 1 0.00000000000000006; 1 1 1"
-		Type = Point
-		Brightness = 300000
-		Color = 1 0 0
-		AttenuationFar = 2
+		SpotlightInnerAngle = 160
+		SpotlightOuterAngle = 180
 		ShadowTextureSize = Quarter
 		ShadowNearClipDistance = 0.01
 	}

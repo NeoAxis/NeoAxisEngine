@@ -7,7 +7,7 @@ using System.Reflection;
 namespace NeoAxis.Editor
 {
 	/// <summary>
-	/// Provides an interface to work with the editor.
+	/// Provides an interface to work with the editor. Useful in the case when need to call editor functionality without adding a reference to NeoAxis.Core.Editor.dll.
 	/// </summary>
 	public static class EditorAPI
 	{
@@ -180,6 +180,64 @@ namespace NeoAxis.Editor
 		public static void Product_Store_ImageGenerator_WriteBitmapToStream( Stream writeStream, Product_Store.ImageGenerator.ImageFormat writeImageFormat, Vector2I imageSizeRender, Vector2I imageSizeOutput, IntPtr imageData )
 		{
 			EditorAssemblyInterface.Instance.Product_Store_ImageGenerator_WriteBitmapToStream( writeStream, writeImageFormat, imageSizeRender, imageSizeOutput, imageData );
+		}
+
+		/// <summary>
+		/// Register an editor action. Use this method for the code which not referencing to NeoAxis.Core.Editor.dll directly. As example when need to call the method from Project.csproj.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="description"></param>
+		/// <param name="imageOrImageHint">Right now only image hint is supported.</param>
+		/// <param name="ribbonText"></param>
+		/// <param name="getState"></param>
+		/// <param name="click"></param>
+		/// <param name="contextMenuSupport"></param>
+		/// <returns></returns>
+		public static IEditorAction RegisterEditorAction( string name, string description, object imageOrImageHint, (string, string) ribbonText, Action<EditorActionGetStateContext> getState, Action<EditorActionClickContext> click, EditorActionContextMenuType contextMenuSupport = EditorActionContextMenuType.None )
+		{
+			return EditorAssemblyInterface.Instance.RegisterEditorAction( name, description, imageOrImageHint, ribbonText, getState, click, contextMenuSupport );
+		}
+
+		public static void RibbonAddAction( string tab, string group, string action )
+		{
+			EditorAssemblyInterface.Instance?.RibbonAddAction( tab, group, action );
+		}
+
+		public static void QATAddAction( string action )
+		{
+			EditorAssemblyInterface.Instance?.QATAddAction( action );
+		}
+
+		public static event Action EditorFormLoaded;
+
+		internal static void PerformEditorFormLoaded()
+		{
+			EditorFormLoaded?.Invoke();
+		}
+
+		public static ProcedureUI.Form CreateProcedureUIDialog( ProcedureUIDialogSettings settings )
+		{
+			return EditorAssemblyInterface.Instance.CreateProcedureUIDialog( settings );
+		}
+
+		public static void ShowDialog( ProcedureUI.Form form )
+		{
+			EditorAssemblyInterface.Instance.ShowDialog( form );
+		}
+
+		public static bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, out string[] fileNames )
+		{
+			return EditorAssemblyInterface.Instance.ShowOpenFileDialog( isFolderPicker, initialDirectory, filters, out fileNames );
+		}
+
+		public static bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, out string fileName )
+		{
+			return EditorAssemblyInterface.Instance.ShowOpenFileDialog( isFolderPicker, initialDirectory, filters, out fileName );
+		}
+
+		public static bool ShowSaveFileDialog( string initialDirectory, string initialFileName, string filter, out string resultFileName )
+		{
+			return EditorAssemblyInterface.Instance.ShowSaveFileDialog( initialDirectory, initialFileName, filter, out resultFileName );
 		}
 	}
 }

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using NeoAxis.Editor;
 using System.Linq;
+using Internal.SharpNav.Geometry;
 
 namespace NeoAxis
 {
@@ -13,7 +14,7 @@ namespace NeoAxis
 	[ResourceFileExtension( "vehicletype" )]
 #if !DEPLOY
 	[AddToResourcesWindow( @"Addons\Vehicle\Vehicle Type", 22000 )]
-	[EditorControl( "NeoAxis.Editor.VehicleTypeEditor" )] //[EditorControl( typeof( VehicleTypeEditor ) )]
+	[EditorControl( "NeoAxis.Editor.VehicleTypeEditor" )]
 	[Preview( typeof( VehicleTypePreview ) )]
 	[PreviewImage( typeof( VehicleTypePreviewImage ) )]
 #endif
@@ -263,21 +264,6 @@ namespace NeoAxis
 		//transmission
 
 		/// <summary>
-		/// How to switch gears.
-		/// </summary>
-		[DefaultValue( true )]
-		[Category( "Transmission" )]
-		public Reference<bool> TransmissionAuto
-		{
-			get { if( _transmissionAuto.BeginGet() ) TransmissionAuto = _transmissionAuto.Get( this ); return _transmissionAuto.value; }
-			set { if( _transmissionAuto.BeginSet( this, ref value ) ) { try { TransmissionAutoChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionAuto.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="TransmissionAuto"/> property value changes.</summary>
-		public event Action<VehicleType> TransmissionAutoChanged;
-		ReferenceField<bool> _transmissionAuto = true;
-
-		//!!!!default value
-		/// <summary>
 		/// Ratio in rotation rate between engine and gear box, first element is 1st gear, 2nd element 2nd gear etc.
 		/// </summary>
 		[Cloneable( CloneType.Deep )]
@@ -305,6 +291,20 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="TransmissionReverseGearRatios"/> property value changes.</summary>
 		public event Action<VehicleType> TransmissionReverseGearRatiosChanged;
 		ReferenceField<double[]> _transmissionReverseGearRatios = new double[] { -2.90 };
+
+		/// <summary>
+		/// How to switch gears.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Transmission" )]
+		public Reference<bool> TransmissionAuto
+		{
+			get { if( _transmissionAuto.BeginGet() ) TransmissionAuto = _transmissionAuto.Get( this ); return _transmissionAuto.value; }
+			set { if( _transmissionAuto.BeginSet( this, ref value ) ) { try { TransmissionAutoChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionAuto.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="TransmissionAuto"/> property value changes.</summary>
+		public event Action<VehicleType> TransmissionAutoChanged;
+		ReferenceField<bool> _transmissionAuto = true;
 
 		/// <summary>
 		/// How long it takes to switch gears (s), only used in auto mode.
@@ -349,21 +349,6 @@ namespace NeoAxis
 		ReferenceField<double> _transmissionSwitchLatency = 0.5;
 
 		/// <summary>
-		/// If RPM of engine is bigger then this we will shift a gear up, only used in auto mode.
-		/// </summary>
-		[DefaultValue( 4000.0 )]
-		[Category( "Transmission" )]
-		[DisplayName( "Transmission Shift Up RPM" )]
-		public Reference<double> TransmissionShiftUpRPM
-		{
-			get { if( _transmissionShiftUpRPM.BeginGet() ) TransmissionShiftUpRPM = _transmissionShiftUpRPM.Get( this ); return _transmissionShiftUpRPM.value; }
-			set { if( _transmissionShiftUpRPM.BeginSet( this, ref value ) ) { try { TransmissionShiftUpRPMChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionShiftUpRPM.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="TransmissionShiftUpRPM"/> property value changes.</summary>
-		public event Action<VehicleType> TransmissionShiftUpRPMChanged;
-		ReferenceField<double> _transmissionShiftUpRPM = 4000.0;
-
-		/// <summary>
 		/// If RPM of engine is smaller then this we will shift a gear down, only used in auto mode.
 		/// </summary>
 		[DefaultValue( 2000.0 )]
@@ -377,6 +362,21 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="TransmissionShiftDownRPM"/> property value changes.</summary>
 		public event Action<VehicleType> TransmissionShiftDownRPMChanged;
 		ReferenceField<double> _transmissionShiftDownRPM = 2000.0;
+
+		/// <summary>
+		/// If RPM of engine is bigger then this we will shift a gear up, only used in auto mode.
+		/// </summary>
+		[DefaultValue( 4000.0 )]
+		[Category( "Transmission" )]
+		[DisplayName( "Transmission Shift Up RPM" )]
+		public Reference<double> TransmissionShiftUpRPM
+		{
+			get { if( _transmissionShiftUpRPM.BeginGet() ) TransmissionShiftUpRPM = _transmissionShiftUpRPM.Get( this ); return _transmissionShiftUpRPM.value; }
+			set { if( _transmissionShiftUpRPM.BeginSet( this, ref value ) ) { try { TransmissionShiftUpRPMChanged?.Invoke( this ); DataWasChanged(); } finally { _transmissionShiftUpRPM.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="TransmissionShiftUpRPM"/> property value changes.</summary>
+		public event Action<VehicleType> TransmissionShiftUpRPMChanged;
+		ReferenceField<double> _transmissionShiftUpRPM = 4000.0;
 
 		/// <summary>
 		/// Strength of the clutch when fully engaged. Total torque a clutch applies is Torque = ClutchStrength * (Velocity Engine - Avg Velocity Wheels) (units: k m^2 s^-1).
@@ -492,6 +492,49 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="TurretTurnSound"/> property value changes.</summary>
 		public event Action<VehicleType> TurretTurnSoundChanged;
 		ReferenceField<Sound> _turretTurnSound = null;
+
+		/// <summary>
+		/// Whether to make two instances for each light for right and left sides.
+		/// </summary>
+		[Category( "Lights" )]
+		[DefaultValue( false )]
+		public Reference<bool> LightPairs
+		{
+			get { if( _lightPairs.BeginGet() ) LightPairs = _lightPairs.Get( this ); return _lightPairs.value; }
+			set { if( _lightPairs.BeginSet( this, ref value ) ) { try { LightPairsChanged?.Invoke( this ); DataWasChanged(); } finally { _lightPairs.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LightPairs"/> property value changes.</summary>
+		public event Action<VehicleType> LightPairsChanged;
+		ReferenceField<bool> _lightPairs = false;
+
+		/// <summary>
+		/// Whether to enable lights optimization (shadows).
+		/// </summary>
+		[Category( "Lights" )]
+		[DefaultValue( true )]
+		public Reference<bool> LightOptimize
+		{
+			get { if( _lightOptimize.BeginGet() ) LightOptimize = _lightOptimize.Get( this ); return _lightOptimize.value; }
+			set { if( _lightOptimize.BeginSet( this, ref value ) ) { try { LightOptimizeChanged?.Invoke( this ); DataWasChanged(); } finally { _lightOptimize.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LightOptimize"/> property value changes.</summary>
+		public event Action<VehicleType> LightOptimizeChanged;
+		ReferenceField<bool> _lightOptimize = true;
+
+		//!!!!
+		/// <summary>
+		/// Whether to make two instances for each seat for right and left sides.
+		/// </summary>
+		[Category( "Seats" )]
+		[DefaultValue( false )]
+		public Reference<bool> SeatPairs
+		{
+			get { if( _seatPairs.BeginGet() ) SeatPairs = _seatPairs.Get( this ); return _seatPairs.value; }
+			set { if( _seatPairs.BeginSet( this, ref value ) ) { try { SeatPairsChanged?.Invoke( this ); DataWasChanged(); } finally { _seatPairs.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="SeatPairs"/> property value changes.</summary>
+		public event Action<VehicleType> SeatPairsChanged;
+		ReferenceField<bool> _seatPairs = false;
 
 		///////////////////////////////////////////////
 
@@ -712,6 +755,7 @@ namespace NeoAxis
 				rearWheel.Name = "Wheel Rear";
 				rearWheel.Position = new Vector3( -1.32, 0.8, -0.08 );
 
+				SeatPairs = true;
 
 				{
 					var seat = CreateComponent<SeatItem>();
@@ -722,58 +766,40 @@ namespace NeoAxis
 					seat.ExitTransform = new Transform( new Vector3( 0, 2, -0.2 ), Quaternion.Identity, Vector3.One );
 				}
 
-				{
-					var seat = CreateComponent<SeatItem>();
-					seat.Name = "Seat 2";
-					seat.Transform = new Transform( new Vector3( 0.4, -0.38, 0.05 ), new Quaternion( 0, -0.17364817766693, 0, 0.984807753012208 ), Vector3.One );
-					seat.SpineAngle = new Degree( 30 );
-					seat.LegsAngle = new Degree( 50 );
-					seat.ExitTransform = new Transform( new Vector3( 0, -2, -0.2 ), Quaternion.Identity, Vector3.One );
-				}
+				//{
+				//	var seat = CreateComponent<SeatItem>();
+				//	seat.Name = "Seat 2";
+				//	seat.Transform = new Transform( new Vector3( 0.4, -0.38, 0.05 ), new Quaternion( 0, -0.17364817766693, 0, 0.984807753012208 ), Vector3.One );
+				//	seat.SpineAngle = new Degree( 30 );
+				//	seat.LegsAngle = new Degree( 50 );
+				//	seat.ExitTransform = new Transform( new Vector3( 0, -2, -0.2 ), Quaternion.Identity, Vector3.One );
+				//}
 
 				{
 					var seat = CreateComponent<SeatItem>();
-					seat.Name = "Seat 3";
+					seat.Name = "Seat 2";
 					seat.Transform = new Transform( new Vector3( -0.5, 0.38, 0.05 ), new Quaternion( 0, -0.17364817766693, 0, 0.984807753012208 ), Vector3.One );
 					seat.SpineAngle = new Degree( 30 );
 					seat.LegsAngle = new Degree( 50 );
 					seat.ExitTransform = new Transform( new Vector3( -1, 2, -0.2 ), Quaternion.Identity, Vector3.One );
 				}
 
-				{
-					var seat = CreateComponent<SeatItem>();
-					seat.Name = "Seat 4";
-					seat.Transform = new Transform( new Vector3( -0.5, -0.38, 0.05 ), new Quaternion( 0, -0.17364817766693, 0, 0.984807753012208 ), Vector3.One );
-					seat.SpineAngle = new Degree( 30 );
-					seat.LegsAngle = new Degree( 50 );
-					seat.ExitTransform = new Transform( new Vector3( -1, -2, -0.2 ), Quaternion.Identity, Vector3.One );
-				}
+				//{
+				//	var seat = CreateComponent<SeatItem>();
+				//	seat.Name = "Seat 4";
+				//	seat.Transform = new Transform( new Vector3( -0.5, -0.38, 0.05 ), new Quaternion( 0, -0.17364817766693, 0, 0.984807753012208 ), Vector3.One );
+				//	seat.SpineAngle = new Degree( 30 );
+				//	seat.LegsAngle = new Degree( 50 );
+				//	seat.ExitTransform = new Transform( new Vector3( -1, -2, -0.2 ), Quaternion.Identity, Vector3.One );
+				//}
 
+
+				LightPairs = true;
 
 				{
 					var light = CreateComponent<Light>();
 					light.Name = "Headlight Low Left";
-					light.Transform = new Transform( new Vector3( 2.45, 0.77, 0.22 ), new Quaternion( 0, 0.0871557427476582, 0, 0.996194698091746 ), Vector3.One );
-					light.Type = Light.TypeEnum.Spotlight;
-					light.Brightness = 250000;
-					light.Color = new ColorValue( 0.987098f, 1f, 0.683647f );
-					light.AttenuationFar = 43.263999999999996;
-					light.SpotlightInnerAngle = new Degree( 53 );
-					light.SpotlightOuterAngle = new Degree( 66 );
-					light.StartDistance = 0.3;
-					light.ShadowNearClipDistance = 0.2;
-
-					light.FlareColor = new ColorValuePowered( 0.987098f, 1f, 0.812f, 1, 1.5 );
-					light.FlareSize = new Vector2( 0.8, 0.8 );
-					light.FlareSizeFadeByDistance = true;
-					light.FlareDepthCheckOffset = 0.2;
-					light.FlareImage = new Reference<ImageComponent>( null, @"Base\Images\Lens flares\sparkle_blurred.png" );
-				}
-
-				{
-					var light = CreateComponent<Light>();
-					light.Name = "Headlight Low Right";
-					light.Transform = new Transform( new Vector3( 2.45, -0.77, 0.22 ), new Quaternion( 0, 0.0871557427476582, 0, 0.996194698091746 ), Vector3.One );
+					light.Transform = new Transform( new Vector3( 2.42278373680815, 0.77, 0.22 ), new Quaternion( 0, 0.0871557427476582, 0, 0.996194698091746 ), Vector3.One );
 					light.Type = Light.TypeEnum.Spotlight;
 					light.Brightness = 250000;
 					light.Color = new ColorValue( 0.987098f, 1f, 0.683647f );
@@ -793,7 +819,7 @@ namespace NeoAxis
 				{
 					var light = CreateComponent<Light>();
 					light.Name = "Headlight High Left";
-					light.Transform = new Transform( new Vector3( 2.45, 0.6, 0.22 ), Quaternion.Identity, Vector3.One );
+					light.Transform = new Transform( new Vector3( 2.42278373680815, 0.6, 0.22 ), Quaternion.Identity, Vector3.One );
 					light.Type = Light.TypeEnum.Spotlight;
 					light.Brightness = 500000;
 					light.Color = new ColorValue( 0.987098f, 1f, 0.683647f );
@@ -809,125 +835,274 @@ namespace NeoAxis
 					light.FlareDepthCheckOffset = 0.2;
 					light.FlareImage = new Reference<ImageComponent>( null, @"Base\Images\Lens flares\sparkle_blurred.png" );
 				}
-
-				{
-					var light = CreateComponent<Light>();
-					light.Name = "Headlight High Right";
-					light.Transform = new Transform( new Vector3( 2.45, -0.6, 0.22 ), Quaternion.Identity, Vector3.One );
-					light.Type = Light.TypeEnum.Spotlight;
-					light.Brightness = 500000;
-					light.Color = new ColorValue( 0.987098f, 1f, 0.683647f );
-					light.AttenuationFar = 43.263999999999996;
-					light.SpotlightInnerAngle = new Degree( 63 );
-					light.SpotlightOuterAngle = new Degree( 66 );
-					light.StartDistance = 0.3;
-					light.ShadowNearClipDistance = 0.2;
-
-					light.FlareColor = new ColorValuePowered( 0.987098f, 1f, 0.812f, 1, 1.5 );
-					light.FlareSize = new Vector2( 0.8, 0.8 );
-					light.FlareSizeFadeByDistance = true;
-					light.FlareDepthCheckOffset = 0.2;
-					light.FlareImage = new Reference<ImageComponent>( null, @"Base\Images\Lens flares\sparkle_blurred.png" );
-				}
-
 
 				{
 					var light = CreateComponent<Light>();
 					light.Name = "Brake Rear Left";
-					light.Transform = new Transform( new Vector3( -2.6, 0.66, 0.14 ), Quaternion.Identity, Vector3.One );
+					light.Transform = new Transform( new Vector3( -2.52482200976175, 0.66, 0.14 ), Quaternion.Identity, Vector3.One );
 					light.Type = Light.TypeEnum.Point;
 					light.Brightness = 300000;
 					light.Color = new ColorValue( 1, 0, 0 );
 					light.AttenuationFar = 2;
-					light.ShadowTextureSize = Light.ShadowTextureSizeType.Quarter;
-					light.ShadowNearClipDistance = 0.01;
+					light.SpotlightInnerAngle = new Degree( 160 );
+					light.SpotlightOuterAngle = new Degree( 180 );
 				}
-
-				{
-					var light = CreateComponent<Light>();
-					light.Name = "Brake Rear Right";
-					light.Transform = new Transform( new Vector3( -2.6, -0.66, 0.14 ), Quaternion.Identity, Vector3.One );
-					light.Type = Light.TypeEnum.Point;
-					light.Brightness = 300000;
-					light.Color = new ColorValue( 1, 0, 0 );
-					light.AttenuationFar = 2;
-					light.ShadowTextureSize = Light.ShadowTextureSizeType.Quarter;
-					light.ShadowNearClipDistance = 0.01;
-				}
-
 
 				{
 					var light = CreateComponent<Light>();
 					light.Name = "Left Turn Side Front";
-					light.Transform = new Transform( new Vector3( 2.1, 1, 0.05 ), Quaternion.Identity, Vector3.One );
-					light.Type = Light.TypeEnum.Point;
+					light.Transform = new Transform( new Vector3( 2.10735010271322, 0.859127971667531, -0.00027840266235638 ), new Quaternion( 0, 0, 0.707106781186548, 0.707106781186548 ), Vector3.One );
+					light.Type = Light.TypeEnum.Spotlight;
 					light.Brightness = 300000;
 					light.Color = new ColorValue( 1, 0.5, 0 );
 					light.AttenuationFar = 2;
-					light.ShadowTextureSize = Light.ShadowTextureSizeType.Quarter;
-					light.ShadowNearClipDistance = 0.01;
+					light.SpotlightInnerAngle = new Degree( 160 );
+					light.SpotlightOuterAngle = new Degree( 180 );
 				}
 
 				{
 					var light = CreateComponent<Light>();
 					light.Name = "Left Turn Side Rear";
-					light.Transform = new Transform( new Vector3( -2.22, 0.9, 0.07 ), Quaternion.Identity, Vector3.One );
-					light.Type = Light.TypeEnum.Point;
+					light.Transform = new Transform( new Vector3( -2.21620385126739, 0.847682595462042, 0.0713794921731388 ), new Quaternion( 0, 0, 0.707106781186548, 0.707106781186548 ), Vector3.One );
+					light.Type = Light.TypeEnum.Spotlight;
 					light.Brightness = 300000;
 					light.Color = new ColorValue( 1, 0.5, 0 );
 					light.AttenuationFar = 2;
-					light.ShadowTextureSize = Light.ShadowTextureSizeType.Quarter;
-					light.ShadowNearClipDistance = 0.01;
+					light.SpotlightInnerAngle = new Degree( 160 );
+					light.SpotlightOuterAngle = new Degree( 180 );
 				}
 
 				{
 					var light = CreateComponent<Light>();
 					light.Name = "Left Turn Rear";
-					light.Transform = new Transform( new Vector3( -2.59, 0.65, 0.24 ), Quaternion.Identity, Vector3.One );
-					light.Type = Light.TypeEnum.Point;
+					light.Transform = new Transform( new Vector3( -2.5157778295761, 0.659870319365266, 0.241680694912894 ), new Quaternion( 0, 0, 1, 0 ), Vector3.One );
+					light.Type = Light.TypeEnum.Spotlight;
 					light.Brightness = 300000;
 					light.Color = new ColorValue( 1, 0, 0 );
 					light.AttenuationFar = 2;
-					light.ShadowTextureSize = Light.ShadowTextureSizeType.Quarter;
-					light.ShadowNearClipDistance = 0.01;
+					light.SpotlightInnerAngle = new Degree( 160 );
+					light.SpotlightOuterAngle = new Degree( 180 );
 				}
 
 
-				{
-					var light = CreateComponent<Light>();
-					light.Name = "Right Turn Side Front";
-					light.Transform = new Transform( new Vector3( 2.1, -1, 0.05 ), Quaternion.Identity, Vector3.One );
-					light.Type = Light.TypeEnum.Point;
-					light.Brightness = 300000;
-					light.Color = new ColorValue( 1, 0.5, 0 );
-					light.AttenuationFar = 2;
-					light.ShadowTextureSize = Light.ShadowTextureSizeType.Quarter;
-					light.ShadowNearClipDistance = 0.01;
-				}
 
-				{
-					var light = CreateComponent<Light>();
-					light.Name = "Right Turn Side Rear";
-					light.Transform = new Transform( new Vector3( -2.22, -0.9, 0.07 ), Quaternion.Identity, Vector3.One );
-					light.Type = Light.TypeEnum.Point;
-					light.Brightness = 300000;
-					light.Color = new ColorValue( 1, 0.5, 0 );
-					light.AttenuationFar = 2;
-					light.ShadowTextureSize = Light.ShadowTextureSizeType.Quarter;
-					light.ShadowNearClipDistance = 0.01;
-				}
+				//old
 
-				{
-					var light = CreateComponent<Light>();
-					light.Name = "Right Turn Rear";
-					light.Transform = new Transform( new Vector3( -2.59, -0.65, 0.24 ), Quaternion.Identity, Vector3.One );
-					light.Type = Light.TypeEnum.Point;
-					light.Brightness = 300000;
-					light.Color = new ColorValue( 1, 0, 0 );
-					light.AttenuationFar = 2;
-					light.ShadowTextureSize = Light.ShadowTextureSizeType.Quarter;
-					light.ShadowNearClipDistance = 0.01;
-				}
+				//{
+				//	var seat = CreateComponent<SeatItem>();
+				//	seat.Name = "Seat";
+				//	seat.Transform = new Transform( new Vector3( 0.4, 0.38, 0.05 ), new Quaternion( 0, -0.17364817766693, 0, 0.984807753012208 ), Vector3.One );
+				//	seat.SpineAngle = new Degree( 30 );
+				//	seat.LegsAngle = new Degree( 50 );
+				//	seat.ExitTransform = new Transform( new Vector3( 0, 2, -0.2 ), Quaternion.Identity, Vector3.One );
+				//}
+
+				//{
+				//	var seat = CreateComponent<SeatItem>();
+				//	seat.Name = "Seat 2";
+				//	seat.Transform = new Transform( new Vector3( 0.4, -0.38, 0.05 ), new Quaternion( 0, -0.17364817766693, 0, 0.984807753012208 ), Vector3.One );
+				//	seat.SpineAngle = new Degree( 30 );
+				//	seat.LegsAngle = new Degree( 50 );
+				//	seat.ExitTransform = new Transform( new Vector3( 0, -2, -0.2 ), Quaternion.Identity, Vector3.One );
+				//}
+
+				//{
+				//	var seat = CreateComponent<SeatItem>();
+				//	seat.Name = "Seat 3";
+				//	seat.Transform = new Transform( new Vector3( -0.5, 0.38, 0.05 ), new Quaternion( 0, -0.17364817766693, 0, 0.984807753012208 ), Vector3.One );
+				//	seat.SpineAngle = new Degree( 30 );
+				//	seat.LegsAngle = new Degree( 50 );
+				//	seat.ExitTransform = new Transform( new Vector3( -1, 2, -0.2 ), Quaternion.Identity, Vector3.One );
+				//}
+
+				//{
+				//	var seat = CreateComponent<SeatItem>();
+				//	seat.Name = "Seat 4";
+				//	seat.Transform = new Transform( new Vector3( -0.5, -0.38, 0.05 ), new Quaternion( 0, -0.17364817766693, 0, 0.984807753012208 ), Vector3.One );
+				//	seat.SpineAngle = new Degree( 30 );
+				//	seat.LegsAngle = new Degree( 50 );
+				//	seat.ExitTransform = new Transform( new Vector3( -1, -2, -0.2 ), Quaternion.Identity, Vector3.One );
+				//}
+
+
+				//{
+				//	var light = CreateComponent<Light>();
+				//	light.Name = "Headlight Low Left";
+				//	light.Transform = new Transform( new Vector3( 2.45, 0.77, 0.22 ), new Quaternion( 0, 0.0871557427476582, 0, 0.996194698091746 ), Vector3.One );
+				//	light.Type = Light.TypeEnum.Spotlight;
+				//	light.Brightness = 250000;
+				//	light.Color = new ColorValue( 0.987098f, 1f, 0.683647f );
+				//	light.AttenuationFar = 43.263999999999996;
+				//	light.SpotlightInnerAngle = new Degree( 53 );
+				//	light.SpotlightOuterAngle = new Degree( 66 );
+				//	light.StartDistance = 0.3;
+				//	light.ShadowNearClipDistance = 0.2;
+
+				//	light.FlareColor = new ColorValuePowered( 0.987098f, 1f, 0.812f, 1, 1.5 );
+				//	light.FlareSize = new Vector2( 0.8, 0.8 );
+				//	light.FlareSizeFadeByDistance = true;
+				//	light.FlareDepthCheckOffset = 0.2;
+				//	light.FlareImage = new Reference<ImageComponent>( null, @"Base\Images\Lens flares\sparkle_blurred.png" );
+				//}
+
+				//{
+				//	var light = CreateComponent<Light>();
+				//	light.Name = "Headlight Low Right";
+				//	light.Transform = new Transform( new Vector3( 2.45, -0.77, 0.22 ), new Quaternion( 0, 0.0871557427476582, 0, 0.996194698091746 ), Vector3.One );
+				//	light.Type = Light.TypeEnum.Spotlight;
+				//	light.Brightness = 250000;
+				//	light.Color = new ColorValue( 0.987098f, 1f, 0.683647f );
+				//	light.AttenuationFar = 43.263999999999996;
+				//	light.SpotlightInnerAngle = new Degree( 53 );
+				//	light.SpotlightOuterAngle = new Degree( 66 );
+				//	light.StartDistance = 0.3;
+				//	light.ShadowNearClipDistance = 0.2;
+
+				//	light.FlareColor = new ColorValuePowered( 0.987098f, 1f, 0.812f, 1, 1.5 );
+				//	light.FlareSize = new Vector2( 0.8, 0.8 );
+				//	light.FlareSizeFadeByDistance = true;
+				//	light.FlareDepthCheckOffset = 0.2;
+				//	light.FlareImage = new Reference<ImageComponent>( null, @"Base\Images\Lens flares\sparkle_blurred.png" );
+				//}
+
+				//{
+				//	var light = CreateComponent<Light>();
+				//	light.Name = "Headlight High Left";
+				//	light.Transform = new Transform( new Vector3( 2.45, 0.6, 0.22 ), Quaternion.Identity, Vector3.One );
+				//	light.Type = Light.TypeEnum.Spotlight;
+				//	light.Brightness = 500000;
+				//	light.Color = new ColorValue( 0.987098f, 1f, 0.683647f );
+				//	light.AttenuationFar = 43.263999999999996;
+				//	light.SpotlightInnerAngle = new Degree( 63 );
+				//	light.SpotlightOuterAngle = new Degree( 66 );
+				//	light.StartDistance = 0.3;
+				//	light.ShadowNearClipDistance = 0.2;
+
+				//	light.FlareColor = new ColorValuePowered( 0.987098f, 1f, 0.812f, 1, 1.5 );
+				//	light.FlareSize = new Vector2( 0.8, 0.8 );
+				//	light.FlareSizeFadeByDistance = true;
+				//	light.FlareDepthCheckOffset = 0.2;
+				//	light.FlareImage = new Reference<ImageComponent>( null, @"Base\Images\Lens flares\sparkle_blurred.png" );
+				//}
+
+				//{
+				//	var light = CreateComponent<Light>();
+				//	light.Name = "Headlight High Right";
+				//	light.Transform = new Transform( new Vector3( 2.45, -0.6, 0.22 ), Quaternion.Identity, Vector3.One );
+				//	light.Type = Light.TypeEnum.Spotlight;
+				//	light.Brightness = 500000;
+				//	light.Color = new ColorValue( 0.987098f, 1f, 0.683647f );
+				//	light.AttenuationFar = 43.263999999999996;
+				//	light.SpotlightInnerAngle = new Degree( 63 );
+				//	light.SpotlightOuterAngle = new Degree( 66 );
+				//	light.StartDistance = 0.3;
+				//	light.ShadowNearClipDistance = 0.2;
+
+				//	light.FlareColor = new ColorValuePowered( 0.987098f, 1f, 0.812f, 1, 1.5 );
+				//	light.FlareSize = new Vector2( 0.8, 0.8 );
+				//	light.FlareSizeFadeByDistance = true;
+				//	light.FlareDepthCheckOffset = 0.2;
+				//	light.FlareImage = new Reference<ImageComponent>( null, @"Base\Images\Lens flares\sparkle_blurred.png" );
+				//}
+
+
+				//{
+				//	var light = CreateComponent<Light>();
+				//	light.Name = "Brake Rear Left";
+				//	light.Transform = new Transform( new Vector3( -2.6, 0.66, 0.14 ), Quaternion.Identity, Vector3.One );
+				//	light.Type = Light.TypeEnum.Point;
+				//	light.Brightness = 300000;
+				//	light.Color = new ColorValue( 1, 0, 0 );
+				//	light.AttenuationFar = 2;
+				//	light.ShadowTextureSize = Light.ShadowTextureSizeType.Quarter;
+				//	light.ShadowNearClipDistance = 0.01;
+				//}
+
+				//{
+				//	var light = CreateComponent<Light>();
+				//	light.Name = "Brake Rear Right";
+				//	light.Transform = new Transform( new Vector3( -2.6, -0.66, 0.14 ), Quaternion.Identity, Vector3.One );
+				//	light.Type = Light.TypeEnum.Point;
+				//	light.Brightness = 300000;
+				//	light.Color = new ColorValue( 1, 0, 0 );
+				//	light.AttenuationFar = 2;
+				//	light.ShadowTextureSize = Light.ShadowTextureSizeType.Quarter;
+				//	light.ShadowNearClipDistance = 0.01;
+				//}
+
+
+				//{
+				//	var light = CreateComponent<Light>();
+				//	light.Name = "Left Turn Side Front";
+				//	light.Transform = new Transform( new Vector3( 2.1, 1, 0.05 ), Quaternion.Identity, Vector3.One );
+				//	light.Type = Light.TypeEnum.Point;
+				//	light.Brightness = 300000;
+				//	light.Color = new ColorValue( 1, 0.5, 0 );
+				//	light.AttenuationFar = 2;
+				//	light.ShadowTextureSize = Light.ShadowTextureSizeType.Quarter;
+				//	light.ShadowNearClipDistance = 0.01;
+				//}
+
+				//{
+				//	var light = CreateComponent<Light>();
+				//	light.Name = "Left Turn Side Rear";
+				//	light.Transform = new Transform( new Vector3( -2.22, 0.9, 0.07 ), Quaternion.Identity, Vector3.One );
+				//	light.Type = Light.TypeEnum.Point;
+				//	light.Brightness = 300000;
+				//	light.Color = new ColorValue( 1, 0.5, 0 );
+				//	light.AttenuationFar = 2;
+				//	light.ShadowTextureSize = Light.ShadowTextureSizeType.Quarter;
+				//	light.ShadowNearClipDistance = 0.01;
+				//}
+
+				//{
+				//	var light = CreateComponent<Light>();
+				//	light.Name = "Left Turn Rear";
+				//	light.Transform = new Transform( new Vector3( -2.59, 0.65, 0.24 ), Quaternion.Identity, Vector3.One );
+				//	light.Type = Light.TypeEnum.Point;
+				//	light.Brightness = 300000;
+				//	light.Color = new ColorValue( 1, 0, 0 );
+				//	light.AttenuationFar = 2;
+				//	light.ShadowTextureSize = Light.ShadowTextureSizeType.Quarter;
+				//	light.ShadowNearClipDistance = 0.01;
+				//}
+
+
+				//{
+				//	var light = CreateComponent<Light>();
+				//	light.Name = "Right Turn Side Front";
+				//	light.Transform = new Transform( new Vector3( 2.1, -1, 0.05 ), Quaternion.Identity, Vector3.One );
+				//	light.Type = Light.TypeEnum.Point;
+				//	light.Brightness = 300000;
+				//	light.Color = new ColorValue( 1, 0.5, 0 );
+				//	light.AttenuationFar = 2;
+				//	light.ShadowTextureSize = Light.ShadowTextureSizeType.Quarter;
+				//	light.ShadowNearClipDistance = 0.01;
+				//}
+
+				//{
+				//	var light = CreateComponent<Light>();
+				//	light.Name = "Right Turn Side Rear";
+				//	light.Transform = new Transform( new Vector3( -2.22, -0.9, 0.07 ), Quaternion.Identity, Vector3.One );
+				//	light.Type = Light.TypeEnum.Point;
+				//	light.Brightness = 300000;
+				//	light.Color = new ColorValue( 1, 0.5, 0 );
+				//	light.AttenuationFar = 2;
+				//	light.ShadowTextureSize = Light.ShadowTextureSizeType.Quarter;
+				//	light.ShadowNearClipDistance = 0.01;
+				//}
+
+				//{
+				//	var light = CreateComponent<Light>();
+				//	light.Name = "Right Turn Rear";
+				//	light.Transform = new Transform( new Vector3( -2.59, -0.65, 0.24 ), Quaternion.Identity, Vector3.One );
+				//	light.Type = Light.TypeEnum.Point;
+				//	light.Brightness = 300000;
+				//	light.Color = new ColorValue( 1, 0, 0 );
+				//	light.AttenuationFar = 2;
+				//	light.ShadowTextureSize = Light.ShadowTextureSizeType.Quarter;
+				//	light.ShadowNearClipDistance = 0.01;
+				//}
 
 
 			}
@@ -1091,6 +1266,73 @@ namespace NeoAxis
 			}
 
 			return true;
+		}
+
+		public bool IsValid( out string error )
+		{
+			error = "";
+
+			if( EngineMinRPM > EngineMaxRPM )
+			{
+				error = "EngineMinRPM > EngineMaxRPM.";
+				return false;
+			}
+
+			if( TransmissionAuto )
+			{
+				if( TransmissionShiftDownRPM > TransmissionShiftUpRPM )
+				{
+					error = "TransmissionShiftDownRPM > TransmissionShiftUpRPM.";
+					return false;
+				}
+
+				if( TransmissionShiftDownRPM < EngineMinRPM )
+				{
+					error = "TransmissionShiftDownRPM < EngineMinRPM.";
+					return false;
+				}
+
+				if( TransmissionShiftUpRPM > EngineMaxRPM )
+				{
+					error = "TransmissionShiftUpRPM > EngineMaxRPM.";
+					return false;
+				}
+			}
+
+			var transmissionGearRatios = TransmissionGearRatios.Value;
+			for( int n = 0; n < transmissionGearRatios.Length - 1; n++ )
+			{
+				if( transmissionGearRatios[ n ] < transmissionGearRatios[ n + 1 ] )
+				{
+					error = "TransmissionGearRatios contains not sorted ratios.";
+					return false;
+				}
+			}
+
+			//var transmissionReverseGearRatios = TransmissionReverseGearRatios.Value;
+
+
+			return true;
+		}
+
+		public double CalculateHeightToBottomOfWheels()
+		{
+			if( Chassis.Value != ChassisEnum.None )
+			{
+				var minHeight = double.MaxValue;
+
+				var typeWheels = GetComponents<VehicleTypeWheel>().Where( w => w.Enabled ).ToArray();
+				foreach( var wheel in typeWheels )
+				{
+					var height = wheel.Position.Value.Z - wheel.Diameter.Value / 2;
+					if( height < minHeight )
+						minHeight = height;
+				}
+
+				return minHeight;
+			}
+
+			return 0;
 		}
 	}
 }

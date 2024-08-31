@@ -461,6 +461,23 @@ namespace NeoAxis
 		public event Action<Light> ShadowTextureSizeValueChanged;
 		ReferenceField<ShadowTextureSizeEnum> _shadowTextureSizeValue = ShadowTextureSizeEnum._1024;
 
+		//!!!!lflflf
+
+		/// <summary>
+		/// Whether to use worst lod, usually voxel, for the shadow generation step. Use for not important light sources.
+		/// </summary>
+		[DefaultValue( false )]
+		[Category( "Shadows" )]
+		[DisplayName( "Shadow LOD Worst" )]
+		public Reference<bool> ShadowLODWorst
+		{
+			get { if( _shadowLODWorst.BeginGet() ) ShadowLODWorst = _shadowLODWorst.Get( this ); return _shadowLODWorst.value; }
+			set { if( _shadowLODWorst.BeginSet( this, ref value ) ) { try { ShadowLODWorstChanged?.Invoke( this ); } finally { _shadowLODWorst.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ShadowLODWorst"/> property value changes.</summary>
+		public event Action<Light> ShadowLODWorstChanged;
+		ReferenceField<bool> _shadowLODWorst = false;
+
 		/// <summary>
 		/// The minimal distance from the light source to generate shadows.
 		/// </summary>
@@ -788,6 +805,7 @@ namespace NeoAxis
 								item.ShadowTextureSize = ShadowTextureSize;
 								if( item.ShadowTextureSize == ShadowTextureSizeType.Value )
 									item.ShadowTextureSizeValue = ShadowTextureSizeValue;
+								item.ShadowLODWorst = ShadowLODWorst;
 								//item.ShadowContact = ShadowContact;
 								if( ShadowContact )
 									item.ShadowContactLength = (float)ShadowContactLength;
@@ -1136,6 +1154,7 @@ namespace NeoAxis
 				case nameof( ShadowContact ):
 				case nameof( ShadowTextureSize ):
 				case nameof( ShadowNearClipDistance ):
+				case nameof( ShadowLODWorst ):
 					if( Type.Value == TypeEnum.Ambient || !Shadows )
 						skip = true;
 					break;

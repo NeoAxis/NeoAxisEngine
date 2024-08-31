@@ -978,7 +978,7 @@ namespace NeoAxis
 				if( !Directory.Exists( Path.GetDirectoryName( destRealFileName ) ) )
 					Directory.CreateDirectory( Path.GetDirectoryName( destRealFileName ) );
 
-				if( !ImageUtility.Save( destRealFileName, image2D.Data, image2D.Size, 1, image2D.Format, 1, 0, out var error ) )
+				if( !ImageUtility.Save( destRealFileName, image2D.Data, image2D.Size, 1, image2D.Format, 1, 0, 90, out var error ) )
 					throw new Exception( error );
 
 				//delete Gen files

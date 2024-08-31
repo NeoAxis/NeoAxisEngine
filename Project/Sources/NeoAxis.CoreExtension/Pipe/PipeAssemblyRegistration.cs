@@ -21,7 +21,7 @@ namespace NeoAxis
 
 				EditorAPI.PreviewImagesManager_RegisterResourceType( "Pipe Type" );
 
-				Product_Store.CreateScreenshot += Product_Store_CreateScreenshot;
+				Product_Store.CreateScreenshots += Product_Store_CreateScreenshots;
 			}
 #endif
 		}
@@ -43,7 +43,7 @@ namespace NeoAxis
 			}
 		}
 
-		private void Product_Store_CreateScreenshot( Product_Store sender, string[] files, ZipArchive archive, ref bool handled )
+		private void Product_Store_CreateScreenshots( Product_Store sender, string[] files, ZipArchive archive, bool additional, ref int imageCounter, ref bool handled )
 		{
 			var virtualFileName = "";
 

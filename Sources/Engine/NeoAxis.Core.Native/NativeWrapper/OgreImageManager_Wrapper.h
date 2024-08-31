@@ -106,9 +106,9 @@ EXPORT void OgreImageManager_freeData( Root* root, uint8* data )
 	delete[] data;
 }
 
-EXPORT bool OgreImageManager_save( Root* root, wchar16* fileName, uint8* data, int width,
-	int height, int depth, PixelFormat format, int numFaces, int numMipmaps,
-	wchar16** error )
+int globalJpegQuality = -1;
+
+EXPORT bool OgreImageManager_save( Root* root, wchar16* fileName, uint8* data, int width, int height, int depth, PixelFormat format, int numFaces, int numMipmaps, int compressionLevel, wchar16** error )
 {
 	*error = NULL;
 
@@ -116,24 +116,34 @@ EXPORT bool OgreImageManager_save( Root* root, wchar16* fileName, uint8* data, i
 	try
 	{
 		image.loadDynamicImage( data, width, height, depth, format, false, numFaces, numMipmaps);
+
+		globalJpegQuality = compressionLevel;
+		//if (globalJpegQuality < 0)
+		//	globalJpegQuality = 0;
+		if (globalJpegQuality > 100)
+			globalJpegQuality = 100;
+
 		image.save(TO_WCHAR_T(fileName));
+
+		//globalJpegQuality = -1;
 	}
 	catch(Exception& ex)
 	{
 		*error = CreateOutString(ex.getFullDescription());
+		//globalJpegQuality = -1;
 		return false;
 	}
 	catch(...)
 	{
 		*error = CreateOutString("Unknown exception");
+		//globalJpegQuality = -1;
 		return false;
 	}
 
 	return true;
 }
 
-EXPORT void OgreImageManager_scale( Root* root, uint8* data, int width, int height, PixelFormat format, 
-	int newWidth, int newHeight, Image::Filter filter, uint8* newData )
+EXPORT void OgreImageManager_scale( Root* root, uint8* data, int width, int height, PixelFormat format, int newWidth, int newHeight, Image::Filter filter, uint8* newData )
 {
 	PixelBox src(width, height, 1, format, data);
 	PixelBox dest(newWidth, newHeight, 1, format, newData);

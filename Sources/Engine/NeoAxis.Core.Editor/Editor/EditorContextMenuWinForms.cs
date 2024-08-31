@@ -28,13 +28,13 @@ namespace NeoAxis.Editor
 
 		//
 
-		public enum MenuTypeEnum
-		{
-			None,
-			General,
-			Resources,
-			Document,
-		}
+		//public enum MenuTypeEnum
+		//{
+		//	None,
+		//	General,
+		//	Resources,
+		//	Document,
+		//}
 
 		//
 
@@ -163,13 +163,13 @@ namespace NeoAxis.Editor
 			items.Add( item );
 		}
 
-		public static void AddActionsToMenu( MenuTypeEnum menuType, ICollection<KryptonContextMenuItemBase> items )//, DocumentWindow documentWindow )
+		public static void AddActionsToMenu( EditorActionContextMenuType menuType, ICollection<KryptonContextMenuItemBase> items )//, DocumentWindow documentWindow )
 		{
 			bool firstItem = true;
 
 			foreach( var action in EditorActions.Actions )
 			{
-				if( !action.CompletelyDisabled && action.ContextMenuSupport != MenuTypeEnum.None && action.ContextMenuSupport == menuType )
+				if( !action.CompletelyDisabled && action.ContextMenuSupport != EditorActionContextMenuType.None && action.ContextMenuSupport == menuType )
 				{
 					var state = EditorAPI2.EditorActionGetState( EditorActionHolder.ContextMenu, action );
 					//bool enabled = false;

@@ -29,9 +29,7 @@ namespace NeoAxis
 
 		[DllImport( OgreWrapper.library, EntryPoint = "OgreImageManager_save", CallingConvention = OgreWrapper.convention )]
 		[return: MarshalAs( UnmanagedType.U1 )]
-		public unsafe static extern bool save( void* root, [MarshalAs( UnmanagedType.LPWStr )] string fileName, IntPtr data, int width,
-			int height, int depth, PixelFormat format, int numFaces, int numMipmaps,
-			out IntPtr/*string*/ error );
+		public unsafe static extern bool save( void* root, [MarshalAs( UnmanagedType.LPWStr )] string fileName, IntPtr data, int width, int height, int depth, PixelFormat format, int numFaces, int numMipmaps, int compressionLevel, out IntPtr/*string*/ error );
 
 		[DllImport( OgreWrapper.library, EntryPoint = "OgreImageManager_scale", CallingConvention = OgreWrapper.convention )]
 		public unsafe static extern void scale( void* root, IntPtr data, int width, int height,
@@ -589,17 +587,32 @@ namespace NeoAxis
 		/// <param name="format">Pixel format.</param>
 		/// <param name="numFaces">The number of faces the image data has inside (6 for cubemaps, 1 otherwise).</param>
 		/// <param name="numMipmaps">The number of mipmaps the image data has inside.</param>
+		/// <param name="jpegCompressionLevel">JPEG compression level in percents from 0 to 100.</param>
 		/// <param name="error">Output error string.</param>
 		/// <returns><b>true</b> if image is currently serialized; otherwise, <b>false</b>.</returns>
-		public static bool Save( string realFileName, IntPtr data, Vector2I size, int depth, PixelFormat format, int numFaces, int numMipmaps, out string error )
+		public static bool Save( string realFileName, IntPtr data, Vector2I size, int depth, PixelFormat format, int numFaces, int numMipmaps, int jpegCompressionLevel, out string error )
 		{
 			error = null;
 
 			unsafe
 			{
+				//fix format for jpeg
+				var format2 = format;
+				try
+				{
+					var extension = Path.GetExtension( realFileName ).ToLower().Replace( ".", "" );
+					if( extension == "jpg" || extension == "jpeg" || extension == "jpe" )
+					{
+						if( format2 == PixelFormat.A8R8G8B8 )
+							format2 = PixelFormat.X8R8G8B8;
+						if( format2 == PixelFormat.A8B8G8R8 )
+							format2 = PixelFormat.X8B8G8R8;
+					}
+				}
+				catch { }
+
 				IntPtr errPointer;
-				bool result = OgreImageManager.save( RenderingSystem.realRoot, realFileName, data,
-					size.X, size.Y, depth, format, numFaces, numMipmaps, out errPointer );
+				bool result = OgreImageManager.save( RenderingSystem.realRoot, realFileName, data, size.X, size.Y, depth, format2, numFaces, numMipmaps, jpegCompressionLevel, out errPointer );
 				string err = OgreNativeWrapper.GetOutString( errPointer );
 				if( err != null )
 					error = string.Format( "Saving file failed \"{0}\" ({1}).", realFileName, err );
@@ -617,15 +630,16 @@ namespace NeoAxis
 		/// <param name="format">Pixel format.</param>
 		/// <param name="numFaces">The number of faces the image data has inside (6 for cubemaps, 1 otherwise).</param>
 		/// <param name="numMipmaps">The number of mipmaps the image data has inside.</param>
+		/// <param name="jpegCompressionLevel">JPEG compression level in percents from 0 to 100.</param>
 		/// <param name="error">Output error string.</param>
 		/// <returns><b>true</b> if image is currently serialized; otherwise, <b>false</b>.</returns>
-		public static bool Save( string realFileName, byte[] data, Vector2I size, int depth, PixelFormat format, int numFaces, int numMipmaps, out string error )
+		public static bool Save( string realFileName, byte[] data, Vector2I size, int depth, PixelFormat format, int numFaces, int numMipmaps, int jpegCompressionLevel, out string error )
 		{
 			unsafe
 			{
 				fixed( byte* pData = data )
 				{
-					return Save( realFileName, (IntPtr)pData, size, depth, format, numFaces, numMipmaps, out error );
+					return Save( realFileName, (IntPtr)pData, size, depth, format, numFaces, numMipmaps, jpegCompressionLevel, out error );
 				}
 			}
 		}

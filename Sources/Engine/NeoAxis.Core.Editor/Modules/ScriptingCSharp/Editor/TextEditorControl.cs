@@ -146,7 +146,7 @@ namespace NeoAxis.Editor
 				items.Add( item );
 			}
 
-			EditorContextMenuWinForms.AddActionsToMenu( EditorContextMenuWinForms.MenuTypeEnum.General, items );
+			EditorContextMenuWinForms.AddActionsToMenu( EditorActionContextMenuType.General, items );
 
 			EditorContextMenuWinForms.Show( items, this );
 		}

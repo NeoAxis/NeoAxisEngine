@@ -809,6 +809,19 @@ namespace NeoAxis
 		public event Action<RigidBody> CollisionSoundTimeIntervalChanged;
 		ReferenceField<double> _collisionSoundTimeInterval = 0.25;
 
+		/// <summary>
+		/// Saved collision definition calculation settings to use when recalculate.
+		/// </summary>
+		[DefaultValue( "" )]
+		[Category( "Special" )]
+		public Reference<string> CollisionDefinitionSettings
+		{
+			get { if( _collisionDefinitionSettings.BeginGet() ) CollisionDefinitionSettings = _collisionDefinitionSettings.Get( this ); return _collisionDefinitionSettings.value; }
+			set { if( _collisionDefinitionSettings.BeginSet( this, ref value ) ) { try { CollisionDefinitionSettingsChanged?.Invoke( this ); } finally { _collisionDefinitionSettings.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="CollisionDefinitionSettings"/> property value changes.</summary>
+		public event Action<RigidBody> CollisionDefinitionSettingsChanged;
+		ReferenceField<string> _collisionDefinitionSettings = "";
 
 		[Browsable( false )]
 		[Cloneable( CloneType.Deep )]

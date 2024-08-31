@@ -1050,6 +1050,7 @@ namespace NeoAxis
 				public float ShadowSoftness;
 				public Light.ShadowTextureSizeType ShadowTextureSize;
 				public ShadowTextureSizeEnum ShadowTextureSizeValue;
+				public bool ShadowLODWorst;
 				public float ShadowContactLength;
 				public ImageComponent Mask;
 				public Transform MaskTransform;

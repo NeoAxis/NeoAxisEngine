@@ -123,7 +123,7 @@ namespace NeoAxis
 						}
 					}
 				}
-				end16bit:;
+end16bit:;
 			}
 
 			var surfaces = new List<DDSTextureTools.DDSImage.Surface>();
@@ -337,7 +337,7 @@ namespace NeoAxis
 								image2D.Blit( index * size, faceImage );
 							}
 
-							if( !ImageUtility.Save( temporaryGeneratedFile, image2D.Data, image2D.Size, 1, image2D.Format, 1, 0, out error ) )
+							if( !ImageUtility.Save( temporaryGeneratedFile, image2D.Data, image2D.Size, 1, image2D.Format, 1, 0, 90, out error ) )
 								return false;
 						}
 						else

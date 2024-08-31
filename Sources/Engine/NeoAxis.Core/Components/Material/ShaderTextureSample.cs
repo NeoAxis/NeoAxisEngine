@@ -152,20 +152,20 @@ namespace NeoAxis
 					}
 					break;
 
-				case nameof( RGBA ):
-				case nameof( G ):
-				case nameof( B ):
-				case nameof( A ):
-					{
-						var result = Texture.Value?.Result;
-						if( result != null && ( result.ResultFormat == PixelFormat.L8 || result.ResultFormat == PixelFormat.L16 ) )
-						//if( t == null || t.Result == null || ( t.Result.ResultFormat == PixelFormat.L8 || t.Result.ResultFormat == PixelFormat.L16 ) )
-						{
-							skip = true;
-							return;
-						}
-					}
-					break;
+				//case nameof( RGBA ):
+				//case nameof( G ):
+				//case nameof( B ):
+				//case nameof( A ):
+				//	{
+				//		var result = Texture.Value?.Result;
+				//		if( result != null && ( result.ResultFormat == PixelFormat.L8 || result.ResultFormat == PixelFormat.L16 ) )
+				//		//if( t == null || t.Result == null || ( t.Result.ResultFormat == PixelFormat.L8 || t.Result.ResultFormat == PixelFormat.L16 ) )
+				//		{
+				//			skip = true;
+				//			return;
+				//		}
+				//	}
+				//	break;
 				}
 			}
 		}

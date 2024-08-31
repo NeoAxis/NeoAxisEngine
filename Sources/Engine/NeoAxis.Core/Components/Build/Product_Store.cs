@@ -223,22 +223,10 @@ namespace NeoAxis
 		ReferenceField<string> _version = "1.0.0.0";
 
 		/// <summary>
-		/// Creates a screenshot to use it as a product logo.
-		/// </summary>
-		[DefaultValue( true )]
-		public Reference<bool> PrepareScreenshot
-		{
-			get { if( _prepareScreenshot.BeginGet() ) PrepareScreenshot = _prepareScreenshot.Get( this ); return _prepareScreenshot.value; }
-			set { if( _prepareScreenshot.BeginSet( this, ref value ) ) { try { PrepareScreenshotChanged?.Invoke( this ); } finally { _prepareScreenshot.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="PrepareScreenshot"/> property value changes.</summary>
-		public event Action<Product_Store> PrepareScreenshotChanged;
-		ReferenceField<bool> _prepareScreenshot = true;
-
-		/// <summary>
 		/// The logo of the product. {127, 127, 127} for background is the best. PNG, JPG formats are supported.
 		/// </summary>
 		[DefaultValue( null )]
+		[Category( "Logo" )]
 		public Reference<ReferenceValueType_Resource> ProductLogo
 		{
 			get { if( _productLogo.BeginGet() ) ProductLogo = _productLogo.Get( this ); return _productLogo.value; }
@@ -249,10 +237,25 @@ namespace NeoAxis
 		ReferenceField<ReferenceValueType_Resource> _productLogo = null;
 
 		/// <summary>
+		/// Whether to create a screenshot to use it as a product logo.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Logo" )]
+		public Reference<bool> LogoMakeScreenshot
+		{
+			get { if( _logoMakeScreenshot.BeginGet() ) LogoMakeScreenshot = _logoMakeScreenshot.Get( this ); return _logoMakeScreenshot.value; }
+			set { if( _logoMakeScreenshot.BeginSet( this, ref value ) ) { try { LogoMakeScreenshotChanged?.Invoke( this ); } finally { _logoMakeScreenshot.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LogoMakeScreenshot"/> property value changes.</summary>
+		public event Action<Product_Store> LogoMakeScreenshotChanged;
+		ReferenceField<bool> _logoMakeScreenshot = true;
+
+		/// <summary>
 		/// The list of images of the product. PNG, JPG formats are supported.
 		/// </summary>
 		[Cloneable( CloneType.Deep )]
 		[Serialize]
+		[Category( "Images" )]
 		public ReferenceList<ReferenceValueType_Resource> Images
 		{
 			get { return _images; }
@@ -260,6 +263,20 @@ namespace NeoAxis
 		public delegate void ObjectsOnSeatsChangedDelegate( Product_Store sender );
 		public event ObjectsOnSeatsChangedDelegate ImagesChanged;
 		ReferenceList<ReferenceValueType_Resource> _images;
+
+		/// <summary>
+		/// Whether to create additional screenshots. Used for vehicles.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Images" )]
+		public Reference<bool> AdditionalScreenshots
+		{
+			get { if( _additionalScreenshots.BeginGet() ) AdditionalScreenshots = _additionalScreenshots.Get( this ); return _additionalScreenshots.value; }
+			set { if( _additionalScreenshots.BeginSet( this, ref value ) ) { try { AdditionalScreenshotsChanged?.Invoke( this ); } finally { _additionalScreenshots.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="AdditionalScreenshots"/> property value changes.</summary>
+		public event Action<Product_Store> AdditionalScreenshotsChanged;
+		ReferenceField<bool> _additionalScreenshots = true;
 
 		/// <summary>
 		/// The mode allows you to create multiple products.
@@ -449,8 +466,8 @@ namespace NeoAxis
 
 		public class ImageGenerator
 		{
-			Vector2I imageSizeRender = new Vector2I( 1000 * 4, 562 * 4 );
-			Vector2I imageSizeOutput = new Vector2I( 1000, 562 );
+			public Vector2I ImageSizeRender { get; set; } = new Vector2I( 1000 * 4, 562 * 4 );
+			public Vector2I ImageSizeOutput { get; set; } = new Vector2I( 1000, 562 );
 			const PixelFormat imageFormat = PixelFormat.A8R8G8B8;
 
 			Mesh mesh;
@@ -469,6 +486,14 @@ namespace NeoAxis
 			public double CameraZoomFactor { get; set; } = 1;
 			public Vector3? CameraLookTo;
 
+			//!!!!new
+			public Vector3? CameraDirection;
+			//public Vector3? CameraPosition;
+
+			//!!!!new
+			public string SceneName { get; set; } = "";
+			public string CameraName { get; set; } = "";
+
 			/////////////////////////////////////////
 
 			public enum ImageFormat
@@ -479,53 +504,62 @@ namespace NeoAxis
 
 			/////////////////////////////////////////
 
-			public Scene CreateScene( bool enable )
+			public Scene CreateSceneWithoutEnable()// bool enable )
 			{
 				DetachAndOrDestroyScene();
 
-				scene = ComponentUtility.CreateComponent<Scene>( null, true, enable );
-
-				scene.OctreeEnabled = false;
-
-				//rendering pipeline
+				if( !string.IsNullOrEmpty( SceneName ) )
 				{
-					var pipeline = (RenderingPipeline_Basic)scene.CreateComponent( RenderingSystem.RenderingPipelineBasic, -1, false );
-					pipeline.Name = "Rendering Pipeline";
-					scene.RenderingPipeline = pipeline;
-
-					pipeline.DeferredShading = AutoTrueFalse.False;
-					pipeline.LODRange = new RangeI( 0, 0 );
-					//pipeline.UseRenderTargets = false;
-					pipeline.ShadowDirectionalLightCascades = 4;
-
-					scene.BackgroundColor = new ColorValue( 0.5, 0.5, 0.5 );
-
-					scene.BackgroundColorAffectLighting = 1;
-					scene.BackgroundColorEnvironmentOverride = new ColorValue( 0.8, 0.8, 0.8 );
-
-					pipeline.Enabled = true;
+					scene = ResourceManager.LoadSeparateInstance<Scene>( SceneName, true, false );
+					if( scene == null )
+						return null;
 				}
-
-				//ambient light
+				else
 				{
-					var light = scene.CreateComponent<Light>();
-					light.Name = "Ambient Light";
-					light.Type = Light.TypeEnum.Ambient;
-					light.Brightness = ReferenceUtility.MakeReference( "Base\\ProjectSettings.component|$Preview\\PreviewAmbientLightBrightness" );
-					//light.Brightness = ProjectSettings.Get.PreviewAmbientLightBrightness.Value;
-				}
+					scene = ComponentUtility.CreateComponent<Scene>( null, true, false );// enable );
 
-				//directional light
-				{
-					var light = scene.CreateComponent<Light>();
-					light.Name = "Directional Light";
-					light.Type = Light.TypeEnum.Directional;
-					light.Transform = new Transform( new Vector3( 0, 0, 0 ), Quaternion.FromDirectionZAxisUp( new Vector3( 0, 0, -1 ) ), Vector3.One );
-					light.Brightness = ReferenceUtility.MakeReference( "Base\\ProjectSettings.component|$Preview\\PreviewDirectionalLightBrightness" );
-					//light.Brightness = ProjectSettings.Get.PreviewDirectionalLightBrightness.Value;
-					light.Shadows = false;
-					//light.Type = Light.TypeEnum.Point;
-					//light.Transform = new Transform( new Vec3( 0, 0, 2 ), Quat.Identity, Vec3.One );
+					scene.OctreeEnabled = false;
+
+					//rendering pipeline
+					{
+						var pipeline = (RenderingPipeline_Basic)scene.CreateComponent( RenderingSystem.RenderingPipelineBasic, -1, false );
+						pipeline.Name = "Rendering Pipeline";
+						scene.RenderingPipeline = pipeline;
+
+						pipeline.DeferredShading = AutoTrueFalse.False;
+						pipeline.LODRange = new RangeI( 0, 0 );
+						//pipeline.UseRenderTargets = false;
+						pipeline.ShadowDirectionalLightCascades = 4;
+
+						scene.BackgroundColor = new ColorValue( 0.5, 0.5, 0.5 );
+
+						scene.BackgroundColorAffectLighting = 1;
+						scene.BackgroundColorEnvironmentOverride = new ColorValue( 0.8, 0.8, 0.8 );
+
+						pipeline.Enabled = true;
+					}
+
+					//ambient light
+					{
+						var light = scene.CreateComponent<Light>();
+						light.Name = "Ambient Light";
+						light.Type = Light.TypeEnum.Ambient;
+						light.Brightness = ReferenceUtility.MakeReference( "Base\\ProjectSettings.component|$Preview\\PreviewAmbientLightBrightness" );
+						//light.Brightness = ProjectSettings.Get.PreviewAmbientLightBrightness.Value;
+					}
+
+					//directional light
+					{
+						var light = scene.CreateComponent<Light>();
+						light.Name = "Directional Light";
+						light.Type = Light.TypeEnum.Directional;
+						light.Transform = new Transform( new Vector3( 0, 0, 0 ), Quaternion.FromDirectionZAxisUp( new Vector3( 0, 0, -1 ) ), Vector3.One );
+						light.Brightness = ReferenceUtility.MakeReference( "Base\\ProjectSettings.component|$Preview\\PreviewDirectionalLightBrightness" );
+						//light.Brightness = ProjectSettings.Get.PreviewDirectionalLightBrightness.Value;
+						light.Shadows = false;
+						//light.Type = Light.TypeEnum.Point;
+						//light.Transform = new Transform( new Vec3( 0, 0, 2 ), Quat.Identity, Vec3.One );
+					}
 				}
 
 				scene.ViewportUpdateGetCameraSettings += Scene_ViewportUpdateGetCameraSettings;
@@ -552,50 +586,67 @@ namespace NeoAxis
 			{
 				//copy from Mesh document window code
 
-				//var camera = scene.CameraEditor.Value;
-				var bounds = scene.CalculateTotalBoundsOfObjectsInSpace();
-				var cameraLookTo = bounds.GetCenter();
-				if( CameraLookTo != null )
-					cameraLookTo = CameraLookTo.Value;
+				Camera camera;
 
-				double maxGararite = Math.Max( Math.Max( bounds.GetSize().X, bounds.GetSize().Y ), bounds.GetSize().Z );
-				double distance = maxGararite * 2;// 2.3;
-				if( distance < 2 )
-					distance = 2;
-				if( material != null )
-					distance = 1.65;
-				if( surface != null )
-					distance /= 2;//!!!!
-
-				//double cameraZoomFactor = 1;
-				SphericalDirection cameraDirection = new SphericalDirection( -3.83, -.47 );
-				if( sky != null )
-					cameraDirection = new SphericalDirection( 0, 0 );
-
-				var cameraPosition = cameraLookTo - cameraDirection.GetVector() * distance * CameraZoomFactor;
-				var center = cameraLookTo;// GetSceneCenter();
-
-				Vector3 from = cameraPosition;//center + cameraDirection.GetVector() * cameraDistance;
-				Vector3 to = center;
-				Degree fov = 65;// 75;
-				if( material != null )
-					fov = 40;
-
-				var camera = new Camera();
-				//camera.AspectRatio = (double)ViewportControl.Viewport.SizeInPixels.X / (double)ViewportControl.Viewport.SizeInPixels.Y;
-				camera.FieldOfView = fov;
-				camera.NearClipPlane = Math.Max( distance / 10000, 0.01 );//.1;
-				camera.FarClipPlane = Math.Max( 1000, distance * 2 );
-
-				if( objectInSpace?.EditorCameraTransform != null )
-					camera.Transform = objectInSpace.EditorCameraTransform;
-				else if( mesh?.EditorCameraTransform != null )
-					camera.Transform = mesh.EditorCameraTransform;
-				else if( surface?.EditorCameraTransform != null )
-					camera.Transform = surface.EditorCameraTransform;
+				if( !string.IsNullOrEmpty( CameraName ) )
+				{
+					camera = scene.GetComponent<Camera>( CameraName );
+					if( camera == null )
+						Log.Warning( "Product_Store: Scene_ViewportUpdateGetCameraSettings: camera == null." );
+				}
 				else
-					camera.Transform = new Transform( from, Quaternion.LookAt( ( to - from ).GetNormalize(), Vector3.ZAxis ) );
-				camera.FixedUp = Vector3.ZAxis;
+				{
+					//var camera = scene.CameraEditor.Value;
+					var bounds = scene.CalculateTotalBoundsOfObjectsInSpace();
+					var cameraLookTo = bounds.GetCenter();
+					if( CameraLookTo != null )
+						cameraLookTo = CameraLookTo.Value;
+
+					double maxGararite = Math.Max( Math.Max( bounds.GetSize().X, bounds.GetSize().Y ), bounds.GetSize().Z );
+					double distance = maxGararite * 2;// 2.3;
+					if( distance < 2 )
+						distance = 2;
+					if( material != null )
+						distance = 1.65;
+					if( surface != null )
+						distance /= 2;//!!!!
+
+					//double cameraZoomFactor = 1;
+					SphericalDirection cameraDirection = new SphericalDirection( -3.83, -.47 );
+					if( sky != null )
+						cameraDirection = new SphericalDirection( 0, 0 );
+
+					var cameraDirection2 = CameraDirection != null ? CameraDirection.Value : cameraDirection.GetVector();
+
+					var cameraPosition = cameraLookTo - cameraDirection2/*cameraDirection.GetVector()*/ * distance * CameraZoomFactor;
+					//if( CameraPosition != null )
+					//	cameraPosition = CameraPosition.Value;
+
+					var center = cameraLookTo;// GetSceneCenter();
+
+					Vector3 from = cameraPosition;//center + cameraDirection.GetVector() * cameraDistance;
+					Vector3 to = center;
+					Degree fov = 65;// 75;
+					if( material != null )
+						fov = 40;
+
+					camera = new Camera();
+					//camera.AspectRatio = (double)ViewportControl.Viewport.SizeInPixels.X / (double)ViewportControl.Viewport.SizeInPixels.Y;
+					camera.FieldOfView = fov;
+					camera.NearClipPlane = Math.Max( distance / 10000, 0.01 );//.1;
+					camera.FarClipPlane = Math.Max( 1000, distance * 2 );
+
+					if( objectInSpace?.EditorCameraTransform != null )
+						camera.Transform = objectInSpace.EditorCameraTransform;
+					else if( mesh?.EditorCameraTransform != null )
+						camera.Transform = mesh.EditorCameraTransform;
+					else if( surface?.EditorCameraTransform != null )
+						camera.Transform = surface.EditorCameraTransform;
+					else
+						camera.Transform = new Transform( from, Quaternion.LookAt( ( to - from ).GetNormalize(), Vector3.ZAxis ) );
+
+					camera.FixedUp = Vector3.ZAxis;
+				}
 
 				viewport.CameraSettings = new Viewport.CameraSettingsClass( viewport, camera );
 
@@ -653,6 +704,7 @@ namespace NeoAxis
 
 				//is not best place, because the method is made only for getting camera settings
 				//update shadow far distance
+				if( string.IsNullOrEmpty( SceneName ) )
 				{
 					var directionalLight = scene.GetComponent( "Directional Light" ) as Light;
 					var pipeline = scene.GetComponent( "Rendering Pipeline" ) as RenderingPipeline_Basic;
@@ -675,7 +727,7 @@ namespace NeoAxis
 			{
 				texture = ComponentUtility.CreateComponent<ImageComponent>( null, true, false );
 				texture.CreateType = ImageComponent.TypeEnum._2D;
-				texture.CreateSize = imageSizeRender;// new Vector2I( imageSizeRender, imageSizeRender );
+				texture.CreateSize = ImageSizeRender;// new Vector2I( imageSizeRender, imageSizeRender );
 				texture.CreateMipmaps = false;
 				texture.CreateFormat = imageFormat;
 				texture.CreateUsage = ImageComponent.Usages.RenderTarget;
@@ -684,7 +736,7 @@ namespace NeoAxis
 
 				var renderTexture = texture.Result.GetRenderTarget( 0, 0 );
 
-				viewport = renderTexture.AddViewport( false, true );
+				viewport = renderTexture.AddViewport( true, true ); //viewport = renderTexture.AddViewport( false, true );
 				viewport.AllowRenderScreenLabels = false;
 
 				//viewport.UpdateBegin += Viewport_UpdateBegin;
@@ -698,7 +750,7 @@ namespace NeoAxis
 				textureRead.CreateFSAA = 0;
 				textureRead.Enabled = true;
 
-				var imageDataSize = PixelFormatUtility.GetNumElemBytes( imageFormat ) * imageSizeRender.X * imageSizeRender.Y;
+				var imageDataSize = PixelFormatUtility.GetNumElemBytes( imageFormat ) * ImageSizeRender.X * ImageSizeRender.Y;
 				imageData = NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Utility, imageDataSize );
 			}
 
@@ -727,7 +779,7 @@ namespace NeoAxis
 				this.mesh = mesh;
 				Init();
 
-				var scene = CreateScene( false );
+				var scene = CreateSceneWithoutEnable();
 				if( mesh != null )
 				{
 					var objInSpace = scene.CreateComponent<MeshInSpace>();
@@ -748,7 +800,7 @@ namespace NeoAxis
 				this.surface = surface;
 				Init();
 
-				var scene = CreateScene( false );
+				var scene = CreateSceneWithoutEnable();
 				if( surface != null )
 				{
 					EditorAPI.SurfaceEditorUtility_CreatePreviewObjects( scene, surface );
@@ -768,7 +820,7 @@ namespace NeoAxis
 				this.material = material;
 				Init();
 
-				var scene = CreateScene( false );
+				var scene = CreateSceneWithoutEnable();
 
 				var mesh = scene.CreateComponent<Mesh>( enabled: false );
 				var sphere = mesh.CreateComponent<MeshGeometry_Sphere>();
@@ -790,7 +842,7 @@ namespace NeoAxis
 				this.sky = sky;
 				Init();
 
-				var scene = CreateScene( false );
+				var scene = CreateSceneWithoutEnable();
 
 				var instanceInScene = (Sky)sky.Clone();
 				scene.AddComponent( instanceInScene );
@@ -800,6 +852,10 @@ namespace NeoAxis
 				GenerateGeneral( writeStream, writeImageFormat );// writeRealFileName );
 			}
 
+			public delegate void BeforeAfterSceneEnableDelegate( ImageGenerator sender );
+			public event BeforeAfterSceneEnableDelegate BeforeSceneEnable;
+			public event BeforeAfterSceneEnableDelegate AfterSceneEnable;
+
 			public void Generate( ObjectInSpace objectInSpace, Stream writeStream, ImageFormat writeImageFormat )//string writeRealFileName )
 			{
 				this.objectInSpace = objectInSpace;
@@ -807,7 +863,7 @@ namespace NeoAxis
 
 				ObjectInSpace objectInSpaceInScene = null;
 
-				var scene = CreateScene( false );
+				var scene = CreateSceneWithoutEnable();
 				if( objectInSpace != null )
 				{
 					objectInSpaceInScene = (ObjectInSpace)objectInSpace.Clone();
@@ -818,7 +874,9 @@ namespace NeoAxis
 					if( directionalLight != null )
 						directionalLight.Shadows = true;
 				}
+				BeforeSceneEnable?.Invoke( this );
 				scene.Enabled = true;
+				AfterSceneEnable?.Invoke( this );
 
 				//set animation to the character
 				if( objectInSpaceInScene != null )
@@ -863,10 +921,15 @@ namespace NeoAxis
 				}
 
 				//write image
-				EditorAPI.Product_Store_ImageGenerator_WriteBitmapToStream( writeStream, writeImageFormat, imageSizeRender, imageSizeOutput, imageData );
+				EditorAPI.Product_Store_ImageGenerator_WriteBitmapToStream( writeStream, writeImageFormat, ImageSizeRender, ImageSizeOutput, imageData );
 
 				DetachAndOrDestroyScene();
 				Shutdown();
+			}
+
+			public Scene Scene
+			{
+				get { return scene; }
 			}
 		}
 
@@ -907,16 +970,18 @@ namespace NeoAxis
 						skip = true;
 					break;
 
-				case nameof( PrepareScreenshot ):
+				//case nameof( LogoMakeScreenshot ):
+				//	break;
+
 				case nameof( CreateProducts ):
 					if( !ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Surfaces ) && !CategoryIsModel( ProjectItemCategories ) && !ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Materials ) && !ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Environments ) )
 						skip = true;
 					break;
 
-				case nameof( ProductLogo ):
-					if( PrepareScreenshot )
-						skip = true;
-					break;
+				//case nameof( ProductLogo ):
+				//	if( LogoScreenshot )
+				//		skip = true;
+				//	break;
 
 				case nameof( AddCodeOfProjects ):
 				case nameof( ReferenceAssemblies ):
@@ -927,6 +992,11 @@ namespace NeoAxis
 
 				case nameof( ProjectItemCategories ):
 					if( ProductType.Value != ProductTypeEnum.ProjectItem )
+						skip = true;
+					break;
+
+				case nameof( AdditionalScreenshots ):
+					if( !ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Vehicles ) )
 						skip = true;
 					break;
 				}
@@ -1267,58 +1337,61 @@ again:;
 				//upload
 				if( buildInstance.Run )
 				{
-					foreach( var fileToUpload in filesToUpload )
+					var text = $"Upload the package to the store?\r\n\r\nThe previous version will be overwritten if it exists.";
+					if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.OKCancel ) == EDialogResult.OK )
 					{
-						var email = authorEmail;
-						var hash = authorHash;
-
-
-						//!!!!невалидный идентификатор
-
-						//!!!!невалидная версия
-
-						//!!!!product
-						//!!!!version
-
-						var email64 = StringUtility.EncodeToBase64URL( email );
-						var hash64 = StringUtility.EncodeToBase64URL( hash );
-						var parameters = $"email={email64}&hash={hash64}";
-
-						var Client = new System.Net.WebClient();
-						Client.Headers.Add( "Content-Type", "binary/octet-stream" );
-
-
-						string resultString = "";
-
-						var notification = ScreenNotifications.ShowSticky( "Uploading to the Store..." );
-						try
+						foreach( var fileToUpload in filesToUpload )
 						{
-							var result = Client.UploadFile( EngineInfo.StoreAddress + "/api/product_processing_upload/?" + parameters, "POST", fileToUpload );
-							resultString = Encoding.UTF8.GetString( result, 0, result.Length );
-						}
-						catch( Exception e )
-						{
-							resultString = e.Message;
-						}
-						finally
-						{
-							notification.Close();
-						}
+							var email = authorEmail;
+							var hash = authorHash;
 
-						if( resultString == "OK" )
-						{
-							ScreenNotifications.Show( EditorLocalization.Translate( "Backstage", "The product was uploaded successfully. Now you can check it on the website and submit to publish." ) );
-						}
-						else
-						{
-							if( resultString == "" )
-								resultString = "Unable to upload. No error message.";
-							ScreenNotifications.Show( resultString, true );
-							Log.Warning( resultString );
+
+							//!!!!невалидный идентификатор
+
+							//!!!!невалидная версия
+
+							//!!!!product
+							//!!!!version
+
+							var email64 = StringUtility.EncodeToBase64URL( email );
+							var hash64 = StringUtility.EncodeToBase64URL( hash );
+							var parameters = $"email={email64}&hash={hash64}";
+
+							var Client = new System.Net.WebClient();
+							Client.Headers.Add( "Content-Type", "binary/octet-stream" );
+
+
+							string resultString = "";
+
+							var notification = ScreenNotifications.ShowSticky( "Uploading to the Store..." );
+							try
+							{
+								var result = Client.UploadFile( EngineInfo.StoreAddress + "/api/product_processing_upload/?" + parameters, "POST", fileToUpload );
+								resultString = Encoding.UTF8.GetString( result, 0, result.Length );
+							}
+							catch( Exception e )
+							{
+								resultString = e.Message;
+							}
+							finally
+							{
+								notification.Close();
+							}
+
+							if( resultString == "OK" )
+							{
+								ScreenNotifications.Show( EditorLocalization.Translate( "Backstage", "The product was uploaded successfully. Now you can check it on the website and submit to publish." ) );
+							}
+							else
+							{
+								if( resultString == "" )
+									resultString = "Unable to upload. No error message.";
+								ScreenNotifications.Show( resultString, true );
+								Log.Warning( resultString );
+							}
 						}
 					}
 				}
-
 			}
 			else
 			{
@@ -1591,8 +1664,8 @@ again:;
 			return result.ToArray();
 		}
 
-		public delegate void CreateScreenshotDelegate( Product_Store sender, string[] files, ZipArchive archive, ref bool handled );
-		public static event CreateScreenshotDelegate CreateScreenshot;
+		public delegate void CreateScreenshotsDelegate( Product_Store sender, string[] files, ZipArchive archive, bool additional, ref int imageCounter, ref bool handled );
+		public static event CreateScreenshotsDelegate CreateScreenshots;
 
 		bool ProjectItemBuildArchive( ProductBuildInstance buildInstance, string specifiedFile, string authorEmail, List<string> filesToUpload )
 		{
@@ -1667,7 +1740,7 @@ again:;
 							}
 						}
 
-						if( !PrepareScreenshot )
+						//!!!!new if( !LogoMakeScreenshot )
 						{
 							var resourceName = ProductLogo.Value?.ResourceName;
 							if( !string.IsNullOrEmpty( resourceName ) )
@@ -1762,11 +1835,26 @@ again:;
 					int triangles = 0;
 					int vertices = 0;
 
-					//try to create screenshots
-					if( PrepareScreenshot )
+					//logo
+					var productLogoResourceName = ProductLogo.Value?.ResourceName;
+					if( !string.IsNullOrEmpty( productLogoResourceName ) )
 					{
+						//ProductLogo
+
+						var extension = Path.GetExtension( productLogoResourceName ).ToLower();
+						if( extension == ".png" || extension == ".jpg" )
+						{
+							var entry = archive.CreateEntry( "_ProductLogo" + extension );
+							var data = VirtualFile.ReadAllBytes( productLogoResourceName );
+							using( var entryStream = entry.Open() )
+								entryStream.Write( data );
+						}
+					}
+					else if( LogoMakeScreenshot )
+					{
+						var imageCounterDummy = 0;
 						bool handled = false;
-						CreateScreenshot?.Invoke( this, files, archive, ref handled );
+						CreateScreenshots?.Invoke( this, files, archive, false, ref imageCounterDummy, ref handled );
 
 						if( !handled )
 						{
@@ -1970,57 +2058,67 @@ again:;
 							}
 						}
 					}
-					else
-					{
-						//ProductLogo
-
-						var resourceName = ProductLogo.Value?.ResourceName;
-						if( !string.IsNullOrEmpty( resourceName ) )
-						{
-							var extension = Path.GetExtension( resourceName ).ToLower();
-							if( extension == ".png" || extension == ".jpg" )
-							{
-								var entry = archive.CreateEntry( "_ProductLogo" + extension );
-								var data = VirtualFile.ReadAllBytes( resourceName );
-								using( var entryStream = entry.Open() )
-									entryStream.Write( data );
-							}
-						}
-					}
-
-					//Images
-					{
-						var counter = 1;
-						foreach( var resourceName in imagesResourceName )
-						{
-							var extension = Path.GetExtension( resourceName ).ToLower();
-							var entry = archive.CreateEntry( "_Image" + counter.ToString() + extension );
-							var data = VirtualFile.ReadAllBytes( resourceName );
-							using( var entryStream = entry.Open() )
-								entryStream.Write( data );
-							counter++;
-						}
-					}
-					//if( Images.Count > 0 )
+					//else
 					//{
-					//	var counter = 1;
-					//	for( int n = 0; n < Images.Count; n++ )
+					//	//ProductLogo
+
+					//	var resourceName = ProductLogo.Value?.ResourceName;
+					//	if( !string.IsNullOrEmpty( resourceName ) )
 					//	{
-					//		var resourceName = Images[ n ].Value?.ResourceName;
-					//		if( !string.IsNullOrEmpty( resourceName ) )
+					//		var extension = Path.GetExtension( resourceName ).ToLower();
+					//		if( extension == ".png" || extension == ".jpg" )
 					//		{
-					//			var extension = Path.GetExtension( resourceName ).ToLower();
-					//			if( extension == ".png" || extension == ".jpg" )
-					//			{
-					//				var entry = archive.CreateEntry( "_Image" + counter.ToString() + extension );
-					//				var data = VirtualFile.ReadAllBytes( resourceName );
-					//				using( var entryStream = entry.Open() )
-					//					entryStream.Write( data );
-					//				counter++;
-					//			}
+					//			var entry = archive.CreateEntry( "_ProductLogo" + extension );
+					//			var data = VirtualFile.ReadAllBytes( resourceName );
+					//			using( var entryStream = entry.Open() )
+					//				entryStream.Write( data );
 					//		}
 					//	}
 					//}
+
+
+					var imageCounter = 1;
+
+					//Images
+					//if( imagesResourceName.Count != 0 )
+					{
+						foreach( var resourceName in imagesResourceName )
+						{
+							var extension = Path.GetExtension( resourceName ).ToLower();
+							var entry = archive.CreateEntry( "_Image" + imageCounter.ToString() + extension );
+							var data = VirtualFile.ReadAllBytes( resourceName );
+							using( var entryStream = entry.Open() )
+								entryStream.Write( data );
+							imageCounter++;
+						}
+
+						//if( Images.Count > 0 )
+						//{
+						//	var counter = 1;
+						//	for( int n = 0; n < Images.Count; n++ )
+						//	{
+						//		var resourceName = Images[ n ].Value?.ResourceName;
+						//		if( !string.IsNullOrEmpty( resourceName ) )
+						//		{
+						//			var extension = Path.GetExtension( resourceName ).ToLower();
+						//			if( extension == ".png" || extension == ".jpg" )
+						//			{
+						//				var entry = archive.CreateEntry( "_Image" + counter.ToString() + extension );
+						//				var data = VirtualFile.ReadAllBytes( resourceName );
+						//				using( var entryStream = entry.Open() )
+						//					entryStream.Write( data );
+						//				counter++;
+						//			}
+						//		}
+						//	}
+						//}
+					}
+
+					if( AdditionalScreenshots )
+					{
+						bool handled = false;
+						CreateScreenshots?.Invoke( this, files, archive, true, ref imageCounter, ref handled );
+					}
 
 					//write info json
 					{
@@ -2504,7 +2602,15 @@ again:;
 			{
 				try
 				{
-					PrepareScreenshot = bool.Parse( block.GetAttribute( "CreateScreenshots" ) );
+					LogoMakeScreenshot = bool.Parse( block.GetAttribute( "CreateScreenshots" ) );
+				}
+				catch { }
+			}
+			if( block.AttributeExists( "PrepareScreenshot" ) )
+			{
+				try
+				{
+					LogoMakeScreenshot = bool.Parse( block.GetAttribute( "PrepareScreenshot" ) );
 				}
 				catch { }
 			}
@@ -2517,7 +2623,7 @@ again:;
 			base.NewObjectSetDefaultConfiguration( createdFromNewObjectWindow );
 
 			//by default skip product file for the Store, and skip attached images
-			SkipFilesWithExtension = "product";
+			//SkipFilesWithExtension = "product";
 			ClearFilesWithExtension = "";
 		}
 	}

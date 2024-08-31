@@ -20,6 +20,8 @@ namespace NeoAxis
 			public abstract Text CreateText( string text );
 
 			public abstract void AddRow( IEnumerable<Control> controls );
+
+			public object AnyData { get; set; }
 		}
 
 		/////////////////////////////////////////
@@ -29,9 +31,21 @@ namespace NeoAxis
 		/// </summary>
 		public abstract class Control
 		{
+			Form parent;
+			public Form Parent { get { return parent; } }
+
 			public abstract bool Enabled { get; set; }
 			public abstract bool Visible { get; set; }
 			public abstract string Text { get; set; }
+
+			public object AnyData { get; set; }
+
+			//
+
+			public Control( Form parent )
+			{
+				this.parent = parent;
+			}
 		}
 
 		/////////////////////////////////////////
@@ -49,6 +63,8 @@ namespace NeoAxis
 				Long,
 			}
 			//public abstract SizeEnum Size { get; set; }
+
+			public Button( Form parent ) : base( parent ) { }
 		}
 
 		/////////////////////////////////////////
@@ -97,6 +113,8 @@ namespace NeoAxis
 			//			State = StateEnum.Indeterminate;
 			//	}
 			//}
+
+			public Check( Form parent ) : base( parent ) { }
 		}
 
 		/////////////////////////////////////////
@@ -106,6 +124,7 @@ namespace NeoAxis
 		/// </summary>
 		public abstract class Edit : Control
 		{
+			public Edit( Form parent ) : base( parent ) { }
 		}
 
 		/////////////////////////////////////////
@@ -116,6 +135,8 @@ namespace NeoAxis
 		public abstract class Text : Control
 		{
 			public virtual bool Bold { get; set; } = false;
+
+			public Text( Form parent ) : base( parent ) { }
 		}
 
 		/////////////////////////////////////////

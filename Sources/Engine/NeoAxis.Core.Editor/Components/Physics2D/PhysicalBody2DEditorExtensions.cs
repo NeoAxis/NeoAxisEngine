@@ -27,7 +27,7 @@ namespace NeoAxis.Editor
 
 				a.QatSupport = true;
 				//a.qatAddByDefault = true;
-				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Document;
+				a.ContextMenuSupport = EditorActionContextMenuType.Document;
 
 				PhysicalBody2D GetBody( object obj )
 				{

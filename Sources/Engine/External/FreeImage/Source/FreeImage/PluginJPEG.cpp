@@ -1400,6 +1400,9 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 
 // ----------------------------------------------------------
 
+//!!!!betauser
+extern int globalJpegQuality;
+
 static BOOL DLL_CALLCONV
 Save(FreeImageIO *io, FIBITMAP *dib, fi_handle handle, int page, int flags, void *data) {
 	if ((dib) && (handle)) {
@@ -1469,6 +1472,13 @@ Save(FreeImageIO *io, FIBITMAP *dib, fi_handle handle, int page, int flags, void
 					cinfo.input_components = 3;
 					break;
 			}
+
+			//!!!!betauser
+			flags &= ~JPEG_SUBSAMPLING_411;
+			flags &= ~JPEG_SUBSAMPLING_420;
+			flags &= ~JPEG_SUBSAMPLING_422;
+			flags &= ~JPEG_SUBSAMPLING_444;
+			flags |= JPEG_SUBSAMPLING_444;
 
 			jpeg_set_defaults(&cinfo);
 
@@ -1568,6 +1578,10 @@ Save(FreeImageIO *io, FIBITMAP *dib, fi_handle handle, int page, int flags, void
 					quality = flags & 0x7F;
 				}
 			}
+
+			//!!!!betauser
+			if (globalJpegQuality >= 0)
+				quality = globalJpegQuality;
 
 			jpeg_set_quality(&cinfo, quality, TRUE); /* limit to baseline-JPEG values */
 

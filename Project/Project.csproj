@@ -15,7 +15,7 @@
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <DocumentationFile>Binaries\Project.xml</DocumentationFile>
-    <NoWarn>1701;1702;CS1591</NoWarn>
+    <NoWarn>1701;1702;CS1591;CS8632</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>false</Optimize>
@@ -25,7 +25,7 @@
     <CodeAnalysisRuleSet />
     <DefineConstants>TRACE</DefineConstants>
     <DocumentationFile>Binaries\Project.xml</DocumentationFile>
-    <NoWarn>1701;1702;CS1591</NoWarn>
+    <NoWarn>1701;1702;CS1591;CS8632</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Remove="Packages\**" />

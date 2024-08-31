@@ -80,7 +80,8 @@ namespace NeoAxis
 		public event Action<Product> ShaderCacheChanged;
 		ReferenceField<bool> _shaderCache = true;
 
-		const string skipFilesWithExtensionDefault = "blend;blend1;product";
+		const string skipFilesWithExtensionDefault = "blend1";
+		//const string skipFilesWithExtensionDefault = "blend;blend1;product";
 		//const string skipFilesWithExtensionDefault = "blend;blend1;bin";
 
 		/// <summary>

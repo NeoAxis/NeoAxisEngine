@@ -1543,8 +1543,21 @@
         </member>
         <member name="T:NeoAxis.Editor.EditorAPI">
             <summary>
-            Provides an interface to work with the editor.
+            Provides an interface to work with the editor. Useful in the case when need to call editor functionality without adding a reference to NeoAxis.Core.Editor.dll.
             </summary>
+        </member>
+        <member name="M:NeoAxis.Editor.EditorAPI.RegisterEditorAction(System.String,System.String,System.Object,System.ValueTuple{System.String,System.String},System.Action{NeoAxis.Editor.EditorActionGetStateContext},System.Action{NeoAxis.Editor.EditorActionClickContext},NeoAxis.Editor.EditorActionContextMenuType)">
+            <summary>
+            Register an editor action. Use this method for the code which not referencing to NeoAxis.Core.Editor.dll directly. As example when need to call the method from Project.csproj.
+            </summary>
+            <param name="name"></param>
+            <param name="description"></param>
+            <param name="imageOrImageHint">Right now only image hint is supported.</param>
+            <param name="ribbonText"></param>
+            <param name="getState"></param>
+            <param name="click"></param>
+            <param name="contextMenuSupport"></param>
+            <returns></returns>
         </member>
         <member name="T:NeoAxis.Editor.EditorExtensions">
             <summary>
@@ -1821,14 +1834,6 @@
         <member name="E:NeoAxis.Product_Store.VersionChanged">
             <summary>Occurs when the <see cref="P:NeoAxis.Product_Store.Version"/> property value changes.</summary>
         </member>
-        <member name="P:NeoAxis.Product_Store.PrepareScreenshot">
-            <summary>
-            Creates a screenshot to use it as a product logo.
-            </summary>
-        </member>
-        <member name="E:NeoAxis.Product_Store.PrepareScreenshotChanged">
-            <summary>Occurs when the <see cref="P:NeoAxis.Product_Store.PrepareScreenshot"/> property value changes.</summary>
-        </member>
         <member name="P:NeoAxis.Product_Store.ProductLogo">
             <summary>
             The logo of the product. {127, 127, 127} for background is the best. PNG, JPG formats are supported.
@@ -1837,10 +1842,26 @@
         <member name="E:NeoAxis.Product_Store.ProductLogoChanged">
             <summary>Occurs when the <see cref="P:NeoAxis.Product_Store.ProductLogo"/> property value changes.</summary>
         </member>
+        <member name="P:NeoAxis.Product_Store.LogoMakeScreenshot">
+            <summary>
+            Whether to create a screenshot to use it as a product logo.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.Product_Store.LogoMakeScreenshotChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Product_Store.LogoMakeScreenshot"/> property value changes.</summary>
+        </member>
         <member name="P:NeoAxis.Product_Store.Images">
             <summary>
             The list of images of the product. PNG, JPG formats are supported.
             </summary>
+        </member>
+        <member name="P:NeoAxis.Product_Store.AdditionalScreenshots">
+            <summary>
+            Whether to create additional screenshots. Used for vehicles.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.Product_Store.AdditionalScreenshotsChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Product_Store.AdditionalScreenshots"/> property value changes.</summary>
         </member>
         <member name="P:NeoAxis.Product_Store.CreateProducts">
             <summary>
@@ -4217,6 +4238,14 @@
         </member>
         <member name="E:NeoAxis.Light.ShadowTextureSizeValueChanged">
             <summary>Occurs when the <see cref="P:NeoAxis.Light.ShadowTextureSizeValue"/> property value changes.</summary>
+        </member>
+        <member name="P:NeoAxis.Light.ShadowLODWorst">
+            <summary>
+            Whether to use worst lod, usually voxel, for the shadow generation step. Use for not important light sources.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.Light.ShadowLODWorstChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Light.ShadowLODWorst"/> property value changes.</summary>
         </member>
         <member name="P:NeoAxis.Light.ShadowNearClipDistance">
             <summary>
@@ -8598,6 +8627,14 @@
         </member>
         <member name="E:NeoAxis.RigidBody.CollisionSoundTimeIntervalChanged">
             <summary>Occurs when the <see cref="P:NeoAxis.RigidBody.CollisionSoundTimeInterval"/> property value changes.</summary>
+        </member>
+        <member name="P:NeoAxis.RigidBody.CollisionDefinitionSettings">
+            <summary>
+            Saved collision definition calculation settings to use when recalculate.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.RigidBody.CollisionDefinitionSettingsChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.RigidBody.CollisionDefinitionSettings"/> property value changes.</summary>
         </member>
         <member name="T:NeoAxis.SoftBody">
             <summary>
@@ -34118,7 +34155,7 @@
             <param name="error">Output error string.</param>
             <returns><b>true</b> if image is loaded; otherwise, <b>false</b>.</returns>
         </member>
-        <member name="M:NeoAxis.ImageUtility.Save(System.String,System.IntPtr,NeoAxis.Vector2I,System.Int32,NeoAxis.PixelFormat,System.Int32,System.Int32,System.String@)">
+        <member name="M:NeoAxis.ImageUtility.Save(System.String,System.IntPtr,NeoAxis.Vector2I,System.Int32,NeoAxis.PixelFormat,System.Int32,System.Int32,System.Int32,System.String@)">
             <summary>
             Save the image as a file.
             </summary>
@@ -34129,10 +34166,11 @@
             <param name="format">Pixel format.</param>
             <param name="numFaces">The number of faces the image data has inside (6 for cubemaps, 1 otherwise).</param>
             <param name="numMipmaps">The number of mipmaps the image data has inside.</param>
+            <param name="jpegCompressionLevel">JPEG compression level in percents from 0 to 100.</param>
             <param name="error">Output error string.</param>
             <returns><b>true</b> if image is currently serialized; otherwise, <b>false</b>.</returns>
         </member>
-        <member name="M:NeoAxis.ImageUtility.Save(System.String,System.Byte[],NeoAxis.Vector2I,System.Int32,NeoAxis.PixelFormat,System.Int32,System.Int32,System.String@)">
+        <member name="M:NeoAxis.ImageUtility.Save(System.String,System.Byte[],NeoAxis.Vector2I,System.Int32,NeoAxis.PixelFormat,System.Int32,System.Int32,System.Int32,System.String@)">
             <summary>
             Save the image as a file.
             </summary>
@@ -34143,6 +34181,7 @@
             <param name="format">Pixel format.</param>
             <param name="numFaces">The number of faces the image data has inside (6 for cubemaps, 1 otherwise).</param>
             <param name="numMipmaps">The number of mipmaps the image data has inside.</param>
+            <param name="jpegCompressionLevel">JPEG compression level in percents from 0 to 100.</param>
             <param name="error">Output error string.</param>
             <returns><b>true</b> if image is currently serialized; otherwise, <b>false</b>.</returns>
         </member>

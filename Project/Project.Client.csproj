@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-	<CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputType>Library</OutputType>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
@@ -15,7 +15,7 @@
     <DefineConstants>TRACE;DEBUG;CLIENT</DefineConstants>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <DocumentationFile>Binaries\Project.Client.xml</DocumentationFile>
-    <NoWarn>1701;1702;CS1591</NoWarn>
+    <NoWarn>1701;1702;CS1591;CS8632</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>false</Optimize>
@@ -25,7 +25,7 @@
     <CodeAnalysisRuleSet />
     <DefineConstants>TRACE;CLIENT</DefineConstants>
     <DocumentationFile>Binaries\Project.Client.xml</DocumentationFile>
-    <NoWarn>1701;1702;CS1591</NoWarn>
+    <NoWarn>1701;1702;CS1591;CS8632</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Remove="Packages\**" />

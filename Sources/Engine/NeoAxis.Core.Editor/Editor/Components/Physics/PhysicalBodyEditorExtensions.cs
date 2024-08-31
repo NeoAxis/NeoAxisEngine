@@ -20,7 +20,7 @@ namespace NeoAxis.Editor
 				//!!!!выключить где-то?
 				a.QatSupport = true;
 				//a.qatAddByDefault = true;
-				a.ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.Document;
+				a.ContextMenuSupport = EditorActionContextMenuType.Document;
 
 				ObjectInSpace GetBody( object obj )
 				{

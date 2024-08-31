@@ -1571,11 +1571,11 @@ namespace NeoAxis.Editor
 				}
 			}
 
-			var menuType = EditorContextMenuWinForms.MenuTypeEnum.General;
+			var menuType = EditorActionContextMenuType.General;
 			if( Mode == ModeEnum.Resources )
-				menuType = EditorContextMenuWinForms.MenuTypeEnum.Resources;
+				menuType = EditorActionContextMenuType.Resources;
 			else if( DocumentWindow != null )
-				menuType = EditorContextMenuWinForms.MenuTypeEnum.Document;
+				menuType = EditorActionContextMenuType.Document;
 
 			EditorContextMenuWinForms.AddActionsToMenu( menuType, items );
 

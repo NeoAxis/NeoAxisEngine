@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Security.AccessControl;
 using System.Text;
 
 namespace NeoAxis.Editor
@@ -771,7 +770,7 @@ namespace NeoAxis.Editor
 			return text.Contains( info.ReplaceFromText );
 		}
 
-		static bool CutCopyFilesGetReplaceReferencesInfo( string[] filePaths, string destinationFolder, out CutCopyFilesReplaceReferencesInfo info )
+		static bool CutCopyFilesGetReplaceReferencesInfo( string[] filePaths, string destinationFolder, bool folderRenaming, out CutCopyFilesReplaceReferencesInfo info )
 		{
 			info = new CutCopyFilesReplaceReferencesInfo();
 
@@ -799,6 +798,8 @@ namespace NeoAxis.Editor
 					else if( Directory.Exists( realFilePath ) )
 					{
 						var folderName = Path.GetDirectoryName( realFilePath );
+						if( folderRenaming )
+							folderName = realFilePath;
 						if( replaceFrom != "" )
 						{
 							if( replaceFrom != folderName )
@@ -859,9 +860,9 @@ namespace NeoAxis.Editor
 			}
 		}
 
-		internal static void CutCopyFiles( string[] filePaths, bool cut, string destinationFolder )
+		internal static void CutCopyFiles( string[] filePaths, bool cut, string destinationFolder, bool folderRenaming = false, bool folderRenamingChangeCaseOnly = false )
 		{
-			if( CutCopyFilesGetReplaceReferencesInfo( filePaths, destinationFolder, out var info ) )
+			if( CutCopyFilesGetReplaceReferencesInfo( filePaths, destinationFolder, folderRenaming, out var info ) )
 			{
 				var affectedFiles = info.AffectedFiles;
 
@@ -905,6 +906,9 @@ namespace NeoAxis.Editor
 				try
 				{
 					string newRealFilePath = Path.Combine( destinationFolder, Path.GetFileName( realFilePath ) );
+					if( folderRenaming )
+						newRealFilePath = destinationFolder;
+					var newRealFilePathOriginal = newRealFilePath;
 
 					//rename if put to same directory and file already exists
 					if( File.Exists( realFilePath ) )
@@ -964,6 +968,14 @@ namespace NeoAxis.Editor
 						CopyRealFileDirectoryRecursive( realFilePath, newRealFilePath, info );
 						if( cut )
 							Directory.Delete( realFilePath, true );
+
+						//additional rename when change case only
+						if( folderRenaming && folderRenamingChangeCaseOnly )
+						{
+							CopyRealFileDirectoryRecursive( newRealFilePath, newRealFilePathOriginal, null );
+							if( cut )
+								Directory.Delete( newRealFilePath, true );
+						}
 
 						continue;
 					}

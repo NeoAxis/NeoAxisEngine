@@ -144,6 +144,18 @@ namespace NeoAxis.Editor
 #endif
 
 		public abstract void AfterFatalShowDialogAndSaveDocuments( string errorText, ref bool skipLogFatal );
+
+		public abstract IEditorAction RegisterEditorAction( string name, string description, object imageOrImageHint, (string, string) ribbonText, Action<EditorActionGetStateContext> getState, Action<EditorActionClickContext> click, EditorActionContextMenuType contextMenuSupport );
+
+		public abstract void RibbonAddAction( string tab, string group, string action );
+		public abstract void QATAddAction( string action );
+
+		public abstract ProcedureUI.Form CreateProcedureUIDialog( ProcedureUIDialogSettings settings );
+		public abstract void ShowDialog( ProcedureUI.Form form );
+
+		public abstract bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, out string[] fileNames );
+		public abstract bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, out string fileName );
+		public abstract bool ShowSaveFileDialog( string initialDirectory, string initialFileName, string filter, out string resultFileName );
 	}
 }
 

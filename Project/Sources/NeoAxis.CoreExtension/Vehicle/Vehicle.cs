@@ -15,6 +15,8 @@ namespace NeoAxis
 	{
 		static FastRandom staticRandom = new FastRandom( 0 );
 
+		static double lastInvalidVehicleWarningTime;
+
 		//
 
 		DynamicDataClass dynamicData;
@@ -56,6 +58,7 @@ namespace NeoAxis
 		float visualBrake;
 		float visualLeftTurnSignal;
 		float visualRightTurnSignal;
+		float visualMoveBack;
 		//!!!!add more
 
 		//VehicleInputProcessing inputProcessingCached;
@@ -88,13 +91,14 @@ namespace NeoAxis
 		////!!!!fix internal Jolt issue
 		//float skipFirstUpdateFromLibrary = 0.1f;
 
+		double randomTimeAddForTurnSignals;
+
 		/////////////////////////////////////////
 		//Basic
 
 		const string vehicleTypeDefault = @"Content\Vehicles\Default\Default Vehicle.vehicletype";
 
 		[DefaultValueReference( vehicleTypeDefault )]
-		//[Category( "General" )]
 		public Reference<VehicleType> VehicleType
 		{
 			get { if( _vehicleType.BeginGet() ) VehicleType = _vehicleType.Get( this ); return _vehicleType.value; }
@@ -314,6 +318,8 @@ namespace NeoAxis
 
 			public TurretItem[] Turrets;
 			public LightItem[] Lights;
+			public bool LightsExistHeadlightLow;
+			public bool LightsExistHeadlightHigh;
 			//!!!!
 			//public AeroEngineItem[] AeroEngines;
 
@@ -402,7 +408,8 @@ namespace NeoAxis
 
 			public class SeatItemData
 			{
-				public SeatItem SeatComponent;
+				public SeatItem SourceComponent;
+				public bool Mirrored;
 
 				//!!!!need make copy? in type can be with reference
 				public Transform Transform;
@@ -441,10 +448,10 @@ namespace NeoAxis
 				Brake,
 				Left_Turn,
 				Right_Turn,
+				Position,//position lights will enabled when headlight low or high enabled
+				Move_Back,
 
-				//!!!!impl
 				//Front_Fog,
-				//Move_Back,
 				//Daytime_Running
 			}
 
@@ -453,6 +460,7 @@ namespace NeoAxis
 			public class LightItem
 			{
 				public Light LightType;
+				public bool Mirrored;
 				public LightTypePurpose LightTypePurpose;
 
 				public Light Light;
@@ -533,6 +541,7 @@ namespace NeoAxis
 				SimulateVisualHeadlights( ref updated, true );
 				SimulateVisualBrake( ref updated, true );
 				SimulateVisualTurnSignals( ref updated, true );
+				SimulateVisualMoveBack( ref updated, true );
 				UpdateLightComponents();
 			}
 			else
@@ -909,6 +918,7 @@ namespace NeoAxis
 					SimulateVisualHeadlights( ref lightsUpdated );
 					SimulateVisualBrake( ref lightsUpdated );
 					SimulateVisualTurnSignals( ref lightsUpdated );
+					SimulateVisualMoveBack( ref lightsUpdated );
 					if( lightsUpdated )
 					{
 						updated = true;
@@ -957,6 +967,7 @@ namespace NeoAxis
 			SimulateVisualHeadlights( ref lightsUpdated );
 			SimulateVisualBrake( ref lightsUpdated );
 			SimulateVisualTurnSignals( ref lightsUpdated );
+			SimulateVisualMoveBack( ref lightsUpdated );
 			if( lightsUpdated )
 			{
 				updated = true;
@@ -976,7 +987,7 @@ namespace NeoAxis
 
 				var seatItem = dynamicData.Seats[ seatIndex ];
 
-				objectOnSeat.Visible = seatItem.SeatComponent.DisplayObject && Visible;
+				objectOnSeat.Visible = seatItem.SourceComponent.DisplayObject && Visible;
 
 				var character = objectOnSeat as Character;
 				if( character != null )
@@ -1010,6 +1021,7 @@ namespace NeoAxis
 				SimulateVisualHeadlights( ref lightsUpdated, true );
 				SimulateVisualBrake( ref lightsUpdated, true );
 				SimulateVisualTurnSignals( ref lightsUpdated, true );
+				SimulateVisualMoveBack( ref lightsUpdated, true );
 				if( lightsUpdated )
 					UpdateLightComponents();
 
@@ -1261,7 +1273,7 @@ namespace NeoAxis
 					var scene = context.Owner.AttachedScene;
 					var renderer = context.Owner.Simple3DRenderer;
 
-					if( scene != null && context.SceneDisplayDevelopmentDataInThisApplication && dynamicData != null )//!!!! scene.DisplayPhysicalObjects )
+					if( scene != null && context.SceneDisplayDevelopmentDataInThisApplication && dynamicData != null && renderer != null )//!!!! scene.DisplayPhysicalObjects )
 					{
 						var tr = TransformV;
 
@@ -1775,6 +1787,17 @@ namespace NeoAxis
 			if( type == null )
 				return;
 
+			//check vehicle type
+			if( !type.IsValid( out var error ) )
+			{
+				if( Time.Current - lastInvalidVehicleWarningTime > 5 )
+				{
+					lastInvalidVehicleWarningTime = Time.Current;
+					Log.Warning( "Invalid vehicle type. " + error );
+				}
+				return;
+			}
+
 			var wheels = type.Chassis.Value == NeoAxis.VehicleType.ChassisEnum.Wheels;
 			var tracks = type.Chassis.Value == NeoAxis.VehicleType.ChassisEnum.Tracks;
 
@@ -2179,31 +2202,50 @@ namespace NeoAxis
 
 			//!!!!slowly. make caching in the VehicleType
 
-			//!!!!GC
-			var seatComponents = dynamicData.VehicleType.GetComponents<SeatItem>().Where( w => w.Enabled ).ToArray();
-			if( seatComponents.Length != 0 )
+			var typeSeatItems = dynamicData.VehicleType.GetComponents<SeatItem>();
+			var seatItems = new List<DynamicDataClass.SeatItemData>( typeSeatItems.Length * ( type.SeatPairs ? 2 : 1 ) );
+			foreach( var typeSeatItem in typeSeatItems )
 			{
-				var seatItems = new List<DynamicDataClass.SeatItemData>( seatComponents.Length );
+				var typeTransform = typeSeatItem.Transform.Value;
+				var typeExitTransform = typeSeatItem.ExitTransform.Value;
 
-				foreach( var seatComponent in seatComponents )
+				if( typeSeatItem.Enabled )
 				{
-					if( seatComponent.Enabled )
 					{
 						var seatItem = new DynamicDataClass.SeatItemData();
-						seatItem.SeatComponent = seatComponent;
-						seatItem.Transform = seatComponent.Transform;
-						seatItem.SpineAngle = seatComponent.SpineAngle;
-						seatItem.LegsAngle = seatComponent.LegsAngle;
+						seatItem.SourceComponent = typeSeatItem;
+						seatItem.Transform = typeSeatItem.Transform;
+						seatItem.SpineAngle = typeSeatItem.SpineAngle;
+						seatItem.LegsAngle = typeSeatItem.LegsAngle;
 						//seatItem.EyeOffset = seatComponent.EyeOffset;
-						seatItem.ExitTransform = seatComponent.ExitTransform;
+						seatItem.ExitTransform = typeSeatItem.ExitTransform;
+
+						seatItems.Add( seatItem );
+					}
+
+					if( type.SeatPairs && typeTransform.Position.Y != 0 )
+					{
+						var seatItem = new DynamicDataClass.SeatItemData();
+						seatItem.SourceComponent = typeSeatItem;
+						seatItem.Mirrored = true;
+
+						var pos = typeTransform.Position;
+						pos.Y = -pos.Y;
+						seatItem.Transform = typeTransform.UpdatePosition( pos );
+
+						seatItem.SpineAngle = typeSeatItem.SpineAngle;
+						seatItem.LegsAngle = typeSeatItem.LegsAngle;
+
+						var exitPos = typeExitTransform.Position;
+						exitPos.Y = -exitPos.Y;
+						seatItem.ExitTransform = typeExitTransform.UpdatePosition( exitPos );
 
 						seatItems.Add( seatItem );
 					}
 				}
-
-				if( seatItems.Count != 0 )
-					dynamicData.Seats = seatItems.ToArray();
 			}
+			if( seatItems.Count != 0 )
+				dynamicData.Seats = seatItems.ToArray();
 
 			//also can take seats from Vehicle component
 
@@ -2360,30 +2402,116 @@ namespace NeoAxis
 			//lights
 			if( NetworkIsSingleOrClient )
 			{
-				var lights = new List<DynamicDataClass.LightItem>();
+				var lightTypeComponents = dynamicData.VehicleType.GetComponents<Light>();
 
-				foreach( var lightType in dynamicData.VehicleType.GetComponents<Light>() )
+				var lights = new List<DynamicDataClass.LightItem>();
+				var existHeadlightLow = false;
+				var existHeadlightHigh = false;
+
+				//!!!!slowly?
+
+				//var lowerNames = new ESet<string>();
+				//foreach( var lightType in lightTypeComponents )
+				//{
+				//	if( lightType.Enabled )
+				//	{
+				//		var lowerName = lightType.Name.ToLower();
+				//		lowerNames.AddWithCheckAlreadyContained( lowerName );
+				//	}
+				//}
+
+				foreach( var lightType in lightTypeComponents )
 				{
 					if( lightType.Enabled )
 					{
 						var lowerName = lightType.Name.ToLower();
 
 						var lightItem = new DynamicDataClass.LightItem();
-						lightItem.LightType = lightType;
-
-						//detect purpose by component name
-						foreach( var enumValue in Enum.GetValues( typeof( DynamicDataClass.LightTypePurpose ) ) )
-						//foreach( var enumValue in Enum.GetValues<DynamicDataClass.LightTypePurpose>() )
 						{
-							var enumString = enumValue.ToString().ToLower().Replace( "_", " " );
-							if( lowerName.Contains( enumString ) )
+							lightItem.LightType = lightType;
+
+							//detect purpose by component name
+							foreach( var enumValue in Enum.GetValues( typeof( DynamicDataClass.LightTypePurpose ) ) )
 							{
-								lightItem.LightTypePurpose = (DynamicDataClass.LightTypePurpose)enumValue;
-								break;
+								var enumString = enumValue.ToString().ToLower().Replace( "_", " " );
+								if( lowerName.Contains( enumString ) )
+								{
+									lightItem.LightTypePurpose = (DynamicDataClass.LightTypePurpose)enumValue;
+									break;
+								}
 							}
+							if( lightItem.LightTypePurpose == DynamicDataClass.LightTypePurpose.Unknown && lowerName.Contains( "turn" ) )
+							{
+								if( lightType.TransformV.Position.Y > 0 )
+									lightItem.LightTypePurpose = DynamicDataClass.LightTypePurpose.Left_Turn;
+								else
+									lightItem.LightTypePurpose = DynamicDataClass.LightTypePurpose.Right_Turn;
+							}
+
+							lights.Add( lightItem );
 						}
 
-						lights.Add( lightItem );
+						//add mirrored
+						if( dynamicData.VehicleType.LightPairs && lightType.TransformV.Position.Y != 0 )
+						{
+							var lightItem2 = new DynamicDataClass.LightItem();
+							lightItem2.LightType = lightType;
+							lightItem2.Mirrored = true;
+
+							switch( lightItem.LightTypePurpose )
+							{
+							case DynamicDataClass.LightTypePurpose.Right_Turn:
+								lightItem2.LightTypePurpose = DynamicDataClass.LightTypePurpose.Left_Turn;
+								break;
+							case DynamicDataClass.LightTypePurpose.Left_Turn:
+								lightItem2.LightTypePurpose = DynamicDataClass.LightTypePurpose.Right_Turn;
+								break;
+							default:
+								lightItem2.LightTypePurpose = lightItem.LightTypePurpose;
+								break;
+							}
+
+							lights.Add( lightItem2 );
+
+
+							//var originalIsLeft = lowerName.Contains( "left" );
+							//var originalIsRight = lowerName.Contains( "right" );
+							//if( originalIsLeft || originalIsRight )
+							//{
+							//	var mirroredLowerName = "";
+							//	if( originalIsLeft )
+							//		mirroredLowerName = lowerName.Replace( "left", "right" );
+							//	else if( originalIsRight )
+							//		mirroredLowerName = lowerName.Replace( "right", "left" );
+
+							//	if( !lowerNames.Contains( mirroredLowerName ) )
+							//	{
+							//		var lightItem2 = new DynamicDataClass.LightItem();
+							//		lightItem2.LightType = lightType;
+							//		lightItem2.Mirrored = true;
+
+							//		switch( lightItem.LightTypePurpose )
+							//		{
+							//		case DynamicDataClass.LightTypePurpose.Right_Turn:
+							//			lightItem2.LightTypePurpose = DynamicDataClass.LightTypePurpose.Left_Turn;
+							//			break;
+							//		case DynamicDataClass.LightTypePurpose.Left_Turn:
+							//			lightItem2.LightTypePurpose = DynamicDataClass.LightTypePurpose.Right_Turn;
+							//			break;
+							//		default:
+							//			lightItem2.LightTypePurpose = lightItem.LightTypePurpose;
+							//			break;
+							//		}
+
+							//		lights.Add( lightItem2 );
+							//	}
+							//}
+						}
+
+						if( lightItem.LightTypePurpose == DynamicDataClass.LightTypePurpose.Headlight_Low )
+							existHeadlightLow = true;
+						if( lightItem.LightTypePurpose == DynamicDataClass.LightTypePurpose.Headlight_High )
+							existHeadlightHigh = true;
 					}
 				}
 
@@ -2416,7 +2544,11 @@ namespace NeoAxis
 				//}
 
 				if( lights.Count != 0 )
+				{
 					dynamicData.Lights = lights.ToArray();
+					dynamicData.LightsExistHeadlightLow = existHeadlightLow;
+					dynamicData.LightsExistHeadlightHigh = existHeadlightHigh;
+				}
 			}
 
 			//!!!!
@@ -3573,7 +3705,7 @@ namespace NeoAxis
 		{
 			base.OnGetRenderSceneDataAddToFrameData( context, mode, ref item, ref skip );
 
-			if( visualHeadlightLow != 0 || visualHeadlightHigh != 0 || visualBrake != 0 || visualLeftTurnSignal != 0 || visualRightTurnSignal != 0 )
+			if( visualHeadlightLow != 0 || visualHeadlightHigh != 0 || visualBrake != 0 || visualLeftTurnSignal != 0 || visualRightTurnSignal != 0 || visualMoveBack != 0 )
 			{
 				//format of shader parameters. use material in "Content\Vehicles\Default\Body.gltf" as example.
 
@@ -3587,16 +3719,19 @@ namespace NeoAxis
 
 				//[ 0 ].Z - packed two halfs
 				//X - Right turn signal. 0 - 1 interval.
+				//Y - Move back. 0 - 1 interval.
 
 				//!!!!impl
+				////Position light
 				////Y - Front fog light. 0 - 1 interval.
-				////X - Move back signals. 0 - 1 interval.
 				////Y - Daytime running lights. 0 - 1 interval.
 
 				var p = new Vector4F[ 2 ];
 				p[ 0 ].X = HalfType.PackTwoHalfsToFloat( visualHeadlightLow, visualHeadlightHigh );
 				p[ 0 ].Y = HalfType.PackTwoHalfsToFloat( visualBrake, GetVisualLightFactorByPurpose( DynamicDataClass.LightTypePurpose.Left_Turn ) );
-				p[ 0 ].Z = HalfType.PackTwoHalfsToFloat( GetVisualLightFactorByPurpose( DynamicDataClass.LightTypePurpose.Right_Turn ), 0 );
+				p[ 0 ].Z = HalfType.PackTwoHalfsToFloat( GetVisualLightFactorByPurpose( DynamicDataClass.LightTypePurpose.Right_Turn ), visualMoveBack );
+
+				//!!!!position light
 
 				item.ObjectInstanceParameters = p;
 			}
@@ -3762,11 +3897,11 @@ namespace NeoAxis
 			}
 		}
 
-		void SimulateVisualHeadlights( ref bool updated, bool immediate = false )
+		public void SimulateVisualHeadlights( ref bool updated, bool immediate = false )
 		{
 			{
 				var headlights = HeadlightsLow.Value;
-				if( visualHeadlightLow != headlights )
+				if( visualHeadlightLow != headlights && dynamicData != null && dynamicData.LightsExistHeadlightLow )
 				{
 					updated = true;
 
@@ -3787,10 +3922,9 @@ namespace NeoAxis
 
 			{
 				var headlights = HeadlightsHigh.Value;
-				if( visualHeadlightHigh != headlights )
+				if( visualHeadlightHigh != headlights && dynamicData != null && dynamicData.LightsExistHeadlightHigh )
 				{
 					updated = true;
-
 					if( visualHeadlightHigh < headlights )
 					{
 						visualHeadlightHigh += immediate ? 10000 : Time.SimulationDelta * 10;
@@ -3807,79 +3941,12 @@ namespace NeoAxis
 			}
 		}
 
-		//old
-		//void SimulateVisualHeadlights( ref bool updated, bool immediate = false )
-		//{
-		//	var headlights = Headlights.Value;
-		//	if( visualHeadlights != headlights )
-		//	{
-		//		updated = true;
-
-		//		if( visualHeadlights < headlights )
-		//		{
-		//			visualHeadlights += immediate ? 10000 : Time.SimulationDelta * 10;
-		//			if( visualHeadlights > headlights )
-		//				visualHeadlights = headlights;
-		//		}
-		//		else
-		//		{
-		//			visualHeadlights -= immediate ? 10000 : Time.SimulationDelta * 2;
-		//			if( visualHeadlights < headlights )
-		//				visualHeadlights = headlights;
-		//		}
-
-
-		//		if( dynamicData?.Lights != null )
-		//		{
-		//			foreach( var lightItem in dynamicData.Lights )
-		//			{
-		//				//!!!!Headlights_High
-		//				if( lightItem.LightTypePurpose == DynamicDataClass.LightTypePurpose.Headlight_High )
-		//				{
-		//					if( visualHeadlights > 0 )
-		//					{
-		//						if( lightItem.Light == null )
-		//						{
-		//							var obj = (Light)lightItem.LightType.Clone();
-		//							lightItem.Light = obj;
-		//							obj.Enabled = false;
-		//							obj.SaveSupport = false;
-		//							obj.CanBeSelected = false;
-
-		//							AddComponent( obj );
-
-		//							//apply world transform
-		//							obj.Transform = TransformV * obj.TransformV;
-		//							foreach( var objectInSpace2 in obj.GetComponents<ObjectInSpace>( checkChildren: true ) )
-		//								objectInSpace2.Transform = TransformV * objectInSpace2.TransformV;
-
-		//							ObjectInSpaceUtility.Attach( this, obj, TransformOffset.ModeEnum.Elements );
-
-		//							obj.Enabled = true;
-		//						}
-
-		//						lightItem.Light.Brightness = visualHeadlights * lightItem.LightType.Brightness;
-		//						lightItem.Light.Transform.Touch();
-		//					}
-		//					else
-		//					{
-		//						if( lightItem.Light != null )
-		//						{
-		//							lightItem.Light.RemoveFromParent( false );
-		//							lightItem.Light = null;
-		//						}
-		//					}
-		//				}
-		//			}
-		//		}
-		//	}
-		//}
-
-		void SimulateVisualBrake( ref bool updated, bool immediate = false )
+		public void SimulateVisualBrake( ref bool updated, bool immediate = false )
 		{
 			var brake = Brake.Value;
-			if( Throttle < 0 )
-				brake = Math.Max( brake, -Throttle.Value );
+			//if( Throttle < 0 )
+			//	brake = Math.Max( brake, -Throttle.Value );
+
 			if( visualBrake != brake )
 			{
 				updated = true;
@@ -3899,7 +3966,7 @@ namespace NeoAxis
 			}
 		}
 
-		void SimulateVisualTurnSignals( ref bool updated, bool immediate = false )
+		public void SimulateVisualTurnSignals( ref bool updated, bool immediate = false )
 		{
 			{
 				var signal = LeftTurnSignal.Value;
@@ -3948,16 +4015,48 @@ namespace NeoAxis
 				updated = true;
 		}
 
+		public void SimulateVisualMoveBack( ref bool updated, bool immediate = false )
+		{
+			var moveBack = 0.0f;
+			if( IsOnGround() )
+			{
+				if( dynamicData.Wheels.Length != 0 ) //for( int n = 0; n < dynamicData.Wheels.Length; n++ )
+				{
+					var n = 0;
+					ref var wheel = ref dynamicData.Wheels[ n ];
+					//!!!! < -1.0
+					if( /*wheel.ContactBody != null &&*/ wheel.AngularVelocity < -1.0 )
+						moveBack = 1;
+				}
+			}
+
+			if( visualMoveBack != moveBack )
+			{
+				updated = true;
+
+				if( visualMoveBack < moveBack )
+				{
+					visualMoveBack += immediate ? 10000 : Time.SimulationDelta * 10;
+					if( visualMoveBack > moveBack )
+						visualMoveBack = moveBack;
+				}
+				else
+				{
+					visualMoveBack -= immediate ? 10000 : Time.SimulationDelta * 2;
+					if( visualMoveBack < moveBack )
+						visualMoveBack = moveBack;
+				}
+			}
+		}
+
 		float GetTurnBlinkingFactor()
 		{
-			double time;
-			{
-				var contoller = ParentRoot.HierarchyController;
-				if( contoller != null )
-					time = contoller.SimulationTime;
-				else
-					time = EngineApp.EngineTime;
-			}
+			if( randomTimeAddForTurnSignals == 0 )
+				randomTimeAddForTurnSignals = staticRandom.Next( 100.0 );
+
+			var contoller = ParentRoot.HierarchyController;
+			var time = contoller != null ? contoller.SimulationTime : EngineApp.EngineTime;
+			time += randomTimeAddForTurnSignals;
 
 			//!!!!configure settings
 			var factor = MathEx.Saturate( (float)MathEx.Sin( time * 4 ) + 0.5f );
@@ -3972,6 +4071,7 @@ namespace NeoAxis
 			case DynamicDataClass.LightTypePurpose.Headlight_Low: return visualHeadlightLow;
 			case DynamicDataClass.LightTypePurpose.Headlight_High: return visualHeadlightHigh;
 			case DynamicDataClass.LightTypePurpose.Brake: return visualBrake;
+
 			case DynamicDataClass.LightTypePurpose.Left_Turn:
 				{
 					var v = visualLeftTurnSignal;
@@ -3987,12 +4087,15 @@ namespace NeoAxis
 						v *= GetTurnBlinkingFactor();
 					return v;
 				}
+
+			case DynamicDataClass.LightTypePurpose.Move_Back: return visualMoveBack;
+			case DynamicDataClass.LightTypePurpose.Position: return Math.Max( visualHeadlightLow, visualHeadlightHigh );
 			}
 
 			return 0;
 		}
 
-		void UpdateLightComponents()
+		public void UpdateLightComponents()
 		{
 			if( dynamicData?.Lights != null )
 			{
@@ -4005,6 +4108,19 @@ namespace NeoAxis
 						if( lightItem.Light == null )
 						{
 							var obj = (Light)lightItem.LightType.Clone();
+
+							//optimize lights
+							if( dynamicData.VehicleType.LightOptimize )
+							{
+								var purpose = lightItem.LightTypePurpose;
+								if( purpose == DynamicDataClass.LightTypePurpose.Brake || purpose == DynamicDataClass.LightTypePurpose.Left_Turn || purpose == DynamicDataClass.LightTypePurpose.Right_Turn )
+								{
+									obj.ShadowTextureSize = Light.ShadowTextureSizeType.Quarter;
+									obj.ShadowLODWorst = true;
+									obj.ShadowNearClipDistance = 0.01;
+								}
+							}
+
 							lightItem.Light = obj;
 							obj.Enabled = false;
 							obj.SaveSupport = false;
@@ -4013,9 +4129,34 @@ namespace NeoAxis
 							AddComponent( obj );
 
 							//apply world transform
-							obj.Transform = TransformV * obj.TransformV;
-							foreach( var objectInSpace2 in obj.GetComponents<ObjectInSpace>( checkChildren: true ) )
-								objectInSpace2.Transform = TransformV * objectInSpace2.TransformV;
+							if( lightItem.Mirrored )
+							{
+								var sourceTr = obj.TransformV;
+								var sourcePos = sourceTr.Position;
+								var sourceRot = sourceTr.Rotation;
+
+								var pos = sourcePos;
+								var forward = sourceRot.GetForward();
+								var up = sourceRot.GetUp();
+
+								pos.Y = -pos.Y;
+								forward.Y = -forward.Y;
+								up.Y = -up.Y;
+
+								var rot = Quaternion.LookAt( forward, up );
+
+								var tr = new Transform( pos, rot, sourceTr.Scale );
+								obj.Transform = TransformV * tr;
+								//!!!!rotate?
+								foreach( var objectInSpace2 in obj.GetComponents<ObjectInSpace>( checkChildren: true ) )
+									objectInSpace2.Transform = TransformV * objectInSpace2.TransformV;
+							}
+							else
+							{
+								obj.Transform = TransformV * obj.TransformV;
+								foreach( var objectInSpace2 in obj.GetComponents<ObjectInSpace>( checkChildren: true ) )
+									objectInSpace2.Transform = TransformV * objectInSpace2.TransformV;
+							}
 
 							ObjectInSpaceUtility.Attach( this, obj, TransformOffset.ModeEnum.Elements );
 

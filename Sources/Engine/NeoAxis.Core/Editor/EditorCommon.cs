@@ -388,6 +388,16 @@ namespace NeoAxis.Editor
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	public enum EditorActionContextMenuType
+	{
+		None,
+		General,
+		Resources,
+		Document,
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	//#if !DEPLOY
 	public interface IEditorAction
 	{
@@ -606,4 +616,51 @@ namespace NeoAxis.Editor
 		public WasSelectedDelegate WasSelected;
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public class ProcedureUIDialogSettings
+	{
+		public string Caption { get; set; } = "";
+		public Vector2I Size { get; set; } = new Vector2I( 800, 500 );
+		public bool Sizable { get; set; }
+
+		public enum DialogButtonConfiguration
+		{
+			None,
+			Close,
+			OKCancel,
+		}
+		//AbortRetryIgnore = 2,
+		//YesNoCancel = 3,
+		//YesNo = 4,
+		//RetryCancel = 5,
+		//Cancel = 7,
+
+		public DialogButtonConfiguration DialogButtons { get; set; }
+		public DialogButtonName AcceptButton { get; set; } = DialogButtonName.OK;
+		public DialogButtonName CancelButton { get; set; } = DialogButtonName.Cancel;
+
+		public enum DialogButtonName
+		{
+			None,
+			Close,
+			OK,
+			Cancel,
+		}
+
+		public delegate void DialogButtonGetStateDelegate( ProcedureUI.Form sender, DialogButtonName button, ref bool enabled );
+		public DialogButtonGetStateDelegate DialogButtonGetState;
+
+		public delegate void DialogButtonClickDelegate( ProcedureUI.Form sender, DialogButtonName button, ref bool handled );
+		public DialogButtonClickDelegate DialogButtonClick;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public interface IContentBrowserItem_File
+	{
+		string FullPath { get; }
+		string Text { get; }
+		bool IsDirectory { get; }
+	}
 }

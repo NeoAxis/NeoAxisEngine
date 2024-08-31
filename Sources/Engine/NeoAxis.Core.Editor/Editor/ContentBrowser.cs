@@ -5222,11 +5222,13 @@ namespace NeoAxis.Editor
 									//rename when only case changed
 									if( fileItem.IsDirectory )
 									{
-										var tempName = newPath + "_";
-										while( Directory.Exists( tempName ) )
-											tempName += "_";
-										Directory.Move( fileItem.FullPath, tempName );
-										Directory.Move( tempName, newPath );
+										ContentBrowserUtility.CutCopyFiles( new string[] { fileItem.FullPath }, true, newPath, true, true );
+
+										//var tempName = newPath + "_";
+										//while( Directory.Exists( tempName ) )
+										//	tempName += "_";
+										//Directory.Move( fileItem.FullPath, tempName );
+										//Directory.Move( tempName, newPath );
 									}
 									else
 									{
@@ -5241,7 +5243,10 @@ namespace NeoAxis.Editor
 								{
 									//default rename
 									if( fileItem.IsDirectory )
-										Directory.Move( fileItem.FullPath, newPath );
+									{
+										ContentBrowserUtility.CutCopyFiles( new string[] { fileItem.FullPath }, true, newPath, true );
+										//Directory.Move( fileItem.FullPath, newPath );
+									}
 									else
 										File.Move( fileItem.FullPath, newPath );
 								}
@@ -6511,7 +6516,7 @@ namespace NeoAxis.Editor
 				items.Add( item );
 			}
 
-			EditorContextMenuWinForms.AddActionsToMenu( EditorContextMenuWinForms.MenuTypeEnum.None, items );
+			EditorContextMenuWinForms.AddActionsToMenu( EditorActionContextMenuType.None, items );
 
 			ShowContextMenuEvent?.Invoke( this, null, items );
 

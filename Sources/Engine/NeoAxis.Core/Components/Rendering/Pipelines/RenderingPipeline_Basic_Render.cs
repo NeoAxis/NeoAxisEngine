@@ -4596,6 +4596,12 @@ namespace NeoAxis
 									////else
 									////	meshData = meshItem.MeshDataShadows ?? meshItem.MeshData;
 
+									//!!!!lflflf
+									if( lightData.ShadowLODWorst && meshItem.MeshDataLastVoxelLOD != null )
+										meshData = meshItem.MeshDataLastVoxelLOD;
+									//if( EngineApp._DebugCapsLock && meshItem.MeshDataLastVoxelLOD != null )
+									//	meshData = meshItem.MeshDataLastVoxelLOD;
+
 									for( int nOperation = 0; nOperation < meshData.RenderOperations.Count; nOperation++ )
 									{
 										var oper = meshData.RenderOperations[ nOperation ];
@@ -4709,6 +4715,12 @@ namespace NeoAxis
 											////else
 											////	meshData = meshItem.MeshDataShadows ?? meshItem.MeshData;
 
+											//!!!!lflflf
+											if( lightData.ShadowLODWorst && meshItem.MeshDataLastVoxelLOD != null )
+												meshData = meshItem.MeshDataLastVoxelLOD;
+											//if( EngineApp._DebugCapsLock && meshItem.MeshDataLastVoxelLOD != null )
+											//	meshData = meshItem.MeshDataLastVoxelLOD;
+
 											BindRenderOperationData( context, frameData, specialShadowCasterData != null ? materialData : null, true, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, outputItemoperation.UnwrappedUV, ref meshItem.Color, outputItemoperation.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, null, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
 
 											pass = passGroup.Get( outputItemoperationVoxelDataInfo != null/*, outputItemoperation.VirtualizedData != null*/, meshData.BillboardMode != 0 );
@@ -4788,6 +4800,12 @@ namespace NeoAxis
 												////	meshData = meshItem.MeshDataLOD0 ?? meshItem.MeshData;
 												////else
 												////	meshData = meshItem.MeshDataShadows ?? meshItem.MeshData;
+
+												//!!!!lflflf
+												if( lightData.ShadowLODWorst && meshItem.MeshDataLastVoxelLOD != null )
+													meshData = meshItem.MeshDataLastVoxelLOD;
+												//if( EngineApp._DebugCapsLock && meshItem.MeshDataLastVoxelLOD != null )
+												//	meshData = meshItem.MeshDataLastVoxelLOD;
 
 												BindRenderOperationData( context, frameData, specialShadowCasterData != null ? materialData : null, meshItem.InstancingEnabled, meshItem.AnimationData, meshData.BillboardMode, meshData.BillboardShadowOffset * meshData.SpaceBounds.boundingSphere.Radius, meshItem.ReceiveDecals, ref meshItem.PreviousFramePositionChange, meshItem.LODValue, outputItemoperation.UnwrappedUV, ref meshItem.Color, outputItemoperation.VertexStructureContainsColor, false, meshItem.VisibilityDistance, meshItem.MotionBlurFactor, false, outputItemoperation.VoxelDataImage, outputItemoperationVoxelDataInfo, meshItem.ObjectInstanceParameters, meshItem.CullingByCameraDirectionData, ref meshItem.InstancingPositionOffsetRelative );
 

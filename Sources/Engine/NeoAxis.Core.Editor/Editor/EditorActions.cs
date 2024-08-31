@@ -53,7 +53,8 @@ namespace NeoAxis.Editor
 		//public ComboBoxSettings ComboBox = new ComboBoxSettings();
 		public ListBoxSettings ListBox = new ListBoxSettings();
 
-		public EditorContextMenuWinForms.MenuTypeEnum ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.None;
+		public EditorActionContextMenuType ContextMenuSupport = EditorActionContextMenuType.None;
+		//public EditorContextMenuWinForms.MenuTypeEnum ContextMenuSupport = EditorContextMenuWinForms.MenuTypeEnum.None;
 		//public bool ContextMenuSupport;
 
 		public string ContextMenuText { get; set; }
