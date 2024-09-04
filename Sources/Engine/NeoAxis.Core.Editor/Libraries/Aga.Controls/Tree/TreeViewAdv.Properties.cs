@@ -525,8 +525,9 @@ namespace Internal.Aga.Controls.Tree
 				UpdateView();
 			}
 		}
-
-		private float _topEdgeSensivity = 0.0f;//0.3f;
+		
+		//!!!!betauser
+		private float _topEdgeSensivity = 0.1f;//0.3f;
 		[DefaultValue(0.3f), Category("Behavior")]
 		public float TopEdgeSensivity
 		{
@@ -539,7 +540,8 @@ namespace Internal.Aga.Controls.Tree
 			}
 		}
 
-		private float _bottomEdgeSensivity = 0.0f;//0.3f;
+		//!!!!betauser
+		private float _bottomEdgeSensivity = 0.1f;//0.3f;
 		[DefaultValue(0.3f), Category("Behavior")]
 		public float BottomEdgeSensivity
 		{
