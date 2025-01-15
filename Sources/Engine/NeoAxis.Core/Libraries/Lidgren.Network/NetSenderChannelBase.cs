@@ -1,4 +1,4 @@
-﻿#if !UWP
+﻿#if !UWP && LIDGREN
 using System;
 
 namespace Internal.Lidgren.Network

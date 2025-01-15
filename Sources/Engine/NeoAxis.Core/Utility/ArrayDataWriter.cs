@@ -14,7 +14,6 @@ namespace NeoAxis
 	{
 		byte[] data;// = new byte[ 32 ];
 		int length;
-		//int bitLength;
 
 		//
 
@@ -26,7 +25,6 @@ namespace NeoAxis
 		public void Reset()
 		{
 			length = 0;
-			//bitLength = 0;
 		}
 
 		public byte[] Data
@@ -39,16 +37,6 @@ namespace NeoAxis
 			get { return length; }
 		}
 
-		//public int BitLength
-		//{
-		//	get { return bitLength; }
-		//}
-
-		//public int GetByteLength()
-		//{
-		//	return ( bitLength >> 3 ) + ( ( bitLength & 7 ) > 0 ? 1 : 0 );
-		//}
-
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void ExpandBuffer( int demandLength )
 		{
@@ -60,19 +48,6 @@ namespace NeoAxis
 				Array.Resize( ref data, newLength );
 			}
 		}
-
-		//void ExpandBuffer( int demandBitLength )
-		//{
-		//	int demandByteLength = ( demandBitLength >> 3 ) + ( ( demandBitLength & 7 ) > 0 ? 1 : 0 );
-
-		//	if( data.Length < demandByteLength )
-		//	{
-		//		int newLength = data.Length;
-		//		while( newLength < demandByteLength )
-		//			newLength *= 2;
-		//		Array.Resize<byte>( ref data, newLength );
-		//	}
-		//}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe void Write( void* source, int length )
@@ -642,6 +617,37 @@ namespace NeoAxis
 		[MethodImpl( (MethodImplOptions)512 )]
 		public void Write( string source )
 		{
+			//!!!!merge to one method, but errors
+
+
+			//if( source == null )
+			//	WriteVariableInt32( -1 );
+			//else if( source.Length == 0 )
+			//	WriteVariableInt32( 0 );
+			//else
+			//{
+			//	if( source.Length < 255 )
+			//	{
+			//		unsafe
+			//		{
+			//			fixed( char* chars = source )
+			//			{
+			//				var bytes = stackalloc byte[ 1024 ];
+			//				var bytesLength = Encoding.UTF8.GetBytes( chars, source.Length, bytes, 1024 );
+			//				WriteVariableInt32( bytesLength );
+			//				Write( bytes, bytesLength );
+			//			}
+			//		}
+			//	}
+			//	else
+			//	{
+			//		var bytes = Encoding.UTF8.GetBytes( source );
+			//		WriteVariableInt32( bytes.Length );
+			//		Write( bytes );
+			//	}
+			//}
+
+
 			if( !string.IsNullOrEmpty( source ) )
 			{
 				if( source.Length < 255 )
@@ -666,6 +672,37 @@ namespace NeoAxis
 			}
 			else
 				WriteVariableUInt32( 0 );
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		public void WriteWithNullSupport( string source )
+		{
+			if( source == null )
+				WriteVariableInt32( -1 );
+			else if( source.Length == 0 )
+				WriteVariableInt32( 0 );
+			else
+			{
+				if( source.Length < 255 )
+				{
+					unsafe
+					{
+						fixed( char* chars = source )
+						{
+							var bytes = stackalloc byte[ 1024 ];
+							var bytesLength = Encoding.UTF8.GetBytes( chars, source.Length, bytes, 1024 );
+							WriteVariableInt32( bytesLength );
+							Write( bytes, bytesLength );
+						}
+					}
+				}
+				else
+				{
+					var bytes = Encoding.UTF8.GetBytes( source );
+					WriteVariableInt32( bytes.Length );
+					Write( bytes );
+				}
+			}
 		}
 
 		/// <summary>

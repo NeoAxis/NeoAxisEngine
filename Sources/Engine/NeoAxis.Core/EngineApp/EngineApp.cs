@@ -1785,7 +1785,7 @@ end:;
 			//!!!!было
 			//UIControlsWorld.Shutdown();
 
-			UIWebBrowser.ShutdownCefRuntime();
+			//UIWebBrowser.ShutdownCefRuntime();
 
 			ResourceManager.DisposeAllResources();
 
@@ -2549,7 +2549,7 @@ end:;
 				//rect.Bottom *= 2;
 
 				RenderingSystem.ApplicationRenderTarget.WindowMovedOrResized( rect.Size );// FullScreenEnabled );//, videoMode );
-																						  //}
+
 
 				//lastWindowSize = platform.GetWindowRectangle().GetSize();
 

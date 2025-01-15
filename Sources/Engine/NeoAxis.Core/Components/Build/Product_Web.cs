@@ -318,8 +318,11 @@ namespace NeoAxis
 			{
 				var p1 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.Web.csproj" );
 				var p2 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.csproj" );
-				if( !EditorAPI.EditorCommandLineTools_PlatformProjectPatch_Process( p1, p2, out var error, out _ ) )
-					throw new Exception( error );
+				if( File.Exists( p1 ) )
+				{
+					if( !EditorAPI.EditorCommandLineTools_PlatformProjectPatch_Process( p1, p2, out var error, out _ ) )
+						throw new Exception( error );
+				}
 			}
 		}
 
@@ -452,8 +455,8 @@ namespace NeoAxis
 			//copy Sources\NeoAxis.Player.Web exclude Project.zip.hash, Project.zip
 			{
 				var excludePaths = new List<string>();
-				excludePaths.Add( @"Sources\NeoAxis.Player.Web\Assets\Project.zip.hash" );
-				excludePaths.Add( @"Sources\NeoAxis.Player.Web\Assets\Project.zip" );
+				excludePaths.Add( @"Sources\NeoAxis.Player.Web\Assets\wwwroot\Project.zip.hash" );
+				excludePaths.Add( @"Sources\NeoAxis.Player.Web\Assets\wwwroot\Project.zip" );
 
 				CopyFolder( Path.Combine( sourceSourcesPath, "NeoAxis.Player.Web" ), Path.Combine( destSourcesPath, "NeoAxis.Player.Web" ), buildInstance, new Range( 0.4, 0.45 ), excludePaths );
 			}
@@ -486,7 +489,7 @@ namespace NeoAxis
 
 			//create Project.zip
 			{
-				var destinationFileName = Path.Combine( buildInstance.DestinationFolder, @"Sources\NeoAxis.Player.Web\Assets\Project.zip" );
+				var destinationFileName = Path.Combine( buildInstance.DestinationFolder, @"Sources\NeoAxis.Player.Web\wwwroot\Assets\Project.zip" );
 				var compressionLevel = CompressData.Value ? CompressionLevel.Optimal : CompressionLevel.NoCompression;
 
 				if( File.Exists( destinationFileName ) )

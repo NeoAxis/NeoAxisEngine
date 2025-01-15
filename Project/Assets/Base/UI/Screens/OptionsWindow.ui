@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2024.1.
+// Made with NeoAxis Engine 2024.3.
 
 .component Project.OptionsWindow
 {
@@ -26,7 +26,6 @@
 	.component NeoAxis.UITabControl
 	{
 		Name = Tab Control
-		CanBeSelected = False
 		Size = Units 1640 710
 		HorizontalAlignment = Stretch
 		VerticalAlignment = Stretch

@@ -4964,8 +4964,10 @@ namespace bgfx { namespace gl
 			GLSL_TYPE(GL_INT_IMAGE_CUBE);
 			GLSL_TYPE(GL_UNSIGNED_INT_IMAGE_CUBE);
 
+#if !BX_PLATFORM_EMSCRIPTEN || BGFX_CONFIG_RENDERER_OPENGLES >= 32
 			//!!!!betauser
 			GLSL_TYPE(GL_SAMPLER_CUBE_MAP_ARRAY);
+#endif
 		}
 
 #undef GLSL_TYPE
@@ -6804,8 +6806,11 @@ namespace bgfx { namespace gl
 					{
 						//!!!!betauser
 
+#if BX_PLATFORM_EMSCRIPTEN
+						bx::write(&writer, "#version 300 es\n", &err);
+#else
 						bx::write(&writer, "#version 320 es\n", &err);
-						//bx::write(&writer, "#version 300 es\n");
+#endif
 
 						//bx::write(&writer, "#extension OES_texture_float : enable\n");
 
@@ -6840,7 +6845,9 @@ namespace bgfx { namespace gl
 						{
 							//bx::write(&writer, "precision highp sampler2D;\n", &err);
 							//bx::write(&writer, "precision highp samplerCube;\n", &err);
+#if !BX_PLATFORM_EMSCRIPTEN
 							bx::write(&writer, "precision highp samplerCubeArray;\n", &err);
+#endif
 							//bx::write(&writer, "precision highp samplerCubeShadow;\n", &err);
 							//bx::write(&writer, "precision highp sampler2DShadow;\n", &err);
 							bx::write(&writer, "precision highp sampler2DArray;\n", &err);

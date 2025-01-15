@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using Internal.LiteDB.Engine;
 using System;
 using System.Collections.Generic;

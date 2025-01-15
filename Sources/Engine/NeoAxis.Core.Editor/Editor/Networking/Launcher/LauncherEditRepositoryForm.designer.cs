@@ -44,6 +44,8 @@ namespace NeoAxis.Editor
 
 			this.toolStripForTreeView = new NeoAxis.Editor.EngineToolStrip();
 			this.toolStripButtonOptions = new System.Windows.Forms.ToolStripButton();
+			this.toolStripButtonChange = new System.Windows.Forms.ToolStripButton();
+			this.toolStripButtonOpen = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButtonGet = new System.Windows.Forms.ToolStripButton();
 			this.toolStripButtonCommit = new System.Windows.Forms.ToolStripButton();
 
@@ -56,6 +58,8 @@ namespace NeoAxis.Editor
 			this.toolStripForTreeView.ImageScalingSize = new System.Drawing.Size( 20, 20 );
 			this.toolStripForTreeView.Items.AddRange( new System.Windows.Forms.ToolStripItem[] {
 			this.toolStripButtonOptions,
+			this.toolStripButtonChange,
+			this.toolStripButtonOpen,
 			this.toolStripButtonGet,
 			this.toolStripButtonCommit} );
 			this.toolStripForTreeView.Location = new System.Drawing.Point( 16, 17 );
@@ -82,6 +86,28 @@ namespace NeoAxis.Editor
 			this.toolStripButtonOptions.Text = "Options";
 			this.toolStripButtonOptions.Click += new System.EventHandler( this.toolStripButtonOptions_Click );
 			// 
+			// toolStripButtonChange
+			// 
+			this.toolStripButtonChange.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.toolStripButtonChange.Image = global::NeoAxis.Editor.Properties.Resources.EditFolder_16;
+			this.toolStripButtonChange.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+			this.toolStripButtonChange.Name = "toolStripButtonChange";
+			this.toolStripButtonChange.AutoSize = false;
+			this.toolStripButtonChange.Size = new System.Drawing.Size( 23, 22 );
+			this.toolStripButtonChange.Text = "Change the local repository folder.";
+			this.toolStripButtonChange.Click += new System.EventHandler( this.toolStripButtonChange_Click );
+			// 
+			// toolStripButtonOpen
+			// 
+			this.toolStripButtonOpen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.toolStripButtonOpen.Image = global::NeoAxis.Editor.Properties.Resources.Folder_16;
+			this.toolStripButtonOpen.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+			this.toolStripButtonOpen.Name = "toolStripButtonOpen";
+			this.toolStripButtonOpen.AutoSize = false;
+			this.toolStripButtonOpen.Size = new System.Drawing.Size( 23, 22 );
+			this.toolStripButtonOpen.Text = "Open the local repository folder in the Explorer.";
+			this.toolStripButtonOpen.Click += new System.EventHandler( this.toolStripButtonOpen_Click );
+			// 
 			// toolStripButtonGet
 			// 
 			this.toolStripButtonGet.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -90,7 +116,7 @@ namespace NeoAxis.Editor
 			this.toolStripButtonGet.Name = "toolStripButtonGet";
 			this.toolStripButtonGet.AutoSize = false;
 			this.toolStripButtonGet.Size = new System.Drawing.Size( 23, 22 );
-			this.toolStripButtonGet.Text = "Get";
+			this.toolStripButtonGet.Text = "Get all changes.";
 			this.toolStripButtonGet.Click += new System.EventHandler( this.toolStripButtonGet_Click );
 			// 
 			// toolStripButtonCommit
@@ -101,7 +127,7 @@ namespace NeoAxis.Editor
 			this.toolStripButtonCommit.Name = "toolStripButtonCommit";
 			this.toolStripButtonCommit.AutoSize = false;
 			this.toolStripButtonCommit.Size = new System.Drawing.Size( 23, 22 );
-			this.toolStripButtonCommit.Text = "Commit";
+			this.toolStripButtonCommit.Text = "Commit all changes.";
 			this.toolStripButtonCommit.Click += new System.EventHandler( this.toolStripButtonCommit_Click );
 
 			// 
@@ -221,7 +247,7 @@ namespace NeoAxis.Editor
 			this.ShowInTaskbar = false;
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "Edit Repository";
+			this.Text = "Cloudbox Repository Tool";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LauncherEditRepositoryForm_FormClosing);
 			this.Load += new System.EventHandler(this.LauncherEditRepositoryForm_Load);
 			this.toolStripForTreeView.ResumeLayout( false );
@@ -245,6 +271,8 @@ namespace NeoAxis.Editor
 
 		private NeoAxis.Editor.EngineToolStrip toolStripForTreeView;
 		private System.Windows.Forms.ToolStripButton toolStripButtonOptions;
+		private System.Windows.Forms.ToolStripButton toolStripButtonChange;
+		private System.Windows.Forms.ToolStripButton toolStripButtonOpen;
 		private System.Windows.Forms.ToolStripButton toolStripButtonGet;
 		private System.Windows.Forms.ToolStripButton toolStripButtonCommit;
 	}

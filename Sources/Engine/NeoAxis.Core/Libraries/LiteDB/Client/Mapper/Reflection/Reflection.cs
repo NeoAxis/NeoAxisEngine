@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.CodeDom;
 using System.Collections;
@@ -28,7 +28,7 @@ namespace Internal.LiteDB
     {
         #region CreateInstance
 
-        private static Dictionary<Type, CreateObject> _cacheCtor = new Dictionary<Type, CreateObject>();
+        private static readonly Dictionary<Type, CreateObject> _cacheCtor = new Dictionary<Type, CreateObject>();
 
         /// <summary>
         /// Create a new instance from a Type
@@ -281,7 +281,7 @@ namespace Internal.LiteDB
 
         #region MethodName
 
-        private static Dictionary<MethodInfo, string> _cacheName = new Dictionary<MethodInfo, string>();
+        private static readonly Dictionary<MethodInfo, string> _cacheName = new Dictionary<MethodInfo, string>();
 
         /// <summary>
         /// Get a friendly method name with parameter types

@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -13,8 +13,8 @@ namespace Internal.LiteDB.Engine
     {
         #region Buffer Field Positions
 
-        private const int P_INDEXES = 96; // 96-8192 (64 + 32 header = 96)
-        private const int P_INDEXES_COUNT = PAGE_SIZE - P_INDEXES; // 8096
+        public const int P_INDEXES = 96; // 96-8192 (64 + 32 header = 96)
+        public const int P_INDEXES_COUNT = PAGE_SIZE - P_INDEXES; // 8096
 
         #endregion
 
@@ -58,7 +58,6 @@ namespace Internal.LiteDB.Engine
                 // skip reserved area
                 r.Skip(P_INDEXES - PAGE_HEADER_SIZE - r.Position);
 
-                // read indexes count (max 255 indexes per collection)
                 var count = r.ReadByte(); // 1 byte
 
                 for(var i = 0; i < count; i++)

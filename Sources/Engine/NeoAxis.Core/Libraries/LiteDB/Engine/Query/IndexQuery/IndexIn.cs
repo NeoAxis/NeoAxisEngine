@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ namespace Internal.LiteDB.Engine
     /// </summary>
     internal class IndexIn : Index
     {
-        private BsonArray _values;
+        private readonly BsonArray _values;
 
         public IndexIn(string name, BsonArray values, int order)
             : base(name, order)

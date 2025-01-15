@@ -22,11 +22,11 @@
 #	include <codecvt>
 #endif
 
-#ifdef PLATFORM_IOS
+#if defined(PLATFORM_IOS) || defined(PLATFORM_WEB)
 	#include <iconv.h>	
 #endif
 
-#if defined(PLATFORM_OSX) || defined(PLATFORM_IOS)
+#if defined(PLATFORM_OSX) || defined(PLATFORM_IOS) || defined(PLATFORM_WEB)
 
 template <class In, class Out>
 void ConvertString(iconv_t cd, const In& in, Out* out, const typename Out::value_type errorSign)

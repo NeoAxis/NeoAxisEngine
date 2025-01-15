@@ -58,7 +58,7 @@ namespace NeoAxis.Editor
 				return;
 			var mesh = meshes[ 0 ];
 
-			if( !EditorUtility2.ShowSaveFileDialog( "", "Mesh.fbx", "FBX files (*.fbx)|*.fbx", out var fileName ) )
+			if( !EditorUtility2.ShowSaveFileDialog( "", "Mesh.fbx", "FBX files (*.fbx)|*.fbx", EditorForm.Instance.Handle, out var fileName ) )
 				return;
 
 			if( !EditorAssemblyInterface.Instance.ExportToFBX( mesh, fileName, out var error ) )

@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -209,7 +209,7 @@ namespace Internal.LiteDB
             return items.Distinct();
         }
 
-        private static Random _random = new Random();
+        private static readonly Random _random = new Random();
 
         /// <summary>
         /// Return a random int value

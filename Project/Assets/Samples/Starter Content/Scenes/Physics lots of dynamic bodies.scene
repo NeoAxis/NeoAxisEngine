@@ -1,7 +1,8 @@
-// Made with NeoAxis Engine 2024.1.
+// Made with NeoAxis Engine 2024.3.
 
 .component NeoAxis.Scene
 {
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1174, 842\"><KW V=\"1\" A=\"390C8C8242314A935C90AD0758E9B80A\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"B177AF43F7264E920A9776EBC5B4BE12\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"390C8C8242314A935C90AD0758E9B80A\"><KP UN=\"390C8C8242314A935C90AD0758E9B80A\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"AD3AD84DFA1747AD26ABF032B37E4F47\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -20556,6 +20557,30 @@
 			Value
 			{
 				Count = 0
+			}
+		}
+	}
+	.component NeoAxis.CSharpScript
+	{
+		Name = C# Script
+		NetworkMode = False
+		Code = "const double resetTime = 20;\r\ndouble lastResetTime;\r\nDictionary<MeshInSpace, Transform> originalTransforms = new Dictionary<MeshInSpace, Transform>();\r\n\r\npublic void _SimulationStep(NeoAxis.Component obj)\r\n{\r\n\t//save initial state of objects\r\n\tif (lastResetTime == 0)\r\n\t{\r\n\t\tlastResetTime = Time.Current;\r\n\t\t\r\n\t\tforeach (var component in Scene.First.GetComponents<MeshInSpace>())\r\n\t\t{\r\n\t\t\tif (component.Name.Contains(\"SFCrate\"))\r\n\t\t\t\toriginalTransforms[component] = component.Transform.Value;\r\n\t\t}\r\n\t}\r\n\r\n\t//reset\r\n\tif (lastResetTime != 0 && Time.Current - lastResetTime > resetTime )\r\n\t{\r\n\t\tlastResetTime = Time.Current;\r\n\t\t\r\n\t\tforeach (var pair in originalTransforms)\r\n\t\t\tpair.Key.Transform = pair.Value;\r\n\t}\r\n}\r\n"
+		Exit
+		{
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler SimulationStep
+			Event
+			{
+				GetByReference = "this:..\\..\\event:SimulationStep"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\method:_SimulationStep(NeoAxis.Component)"
+			}
+			HandlerFlow
+			{
 			}
 		}
 	}

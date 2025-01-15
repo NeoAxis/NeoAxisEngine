@@ -103,9 +103,6 @@
     <ClCompile Include="..\..\..\src\glcontext_egl.cpp">
       <Filter>bgfx</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\glcontext_html5.cpp">
-      <Filter>bgfx</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\glcontext_wgl.cpp">
       <Filter>bgfx</Filter>
     </ClCompile>
@@ -208,6 +205,15 @@
     <ClCompile Include="..\..\..\tools\shaderc\shaderc_spirv.cpp">
       <Filter>shaderc</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp1.c" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp2.c" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp3.c" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp4.c" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp5.c" />
+    <ClCompile Include="..\..\..\3rdparty\fcpp\cpp6.c" />
+    <ClCompile Include="..\..\..\src\debug_renderdoc.cpp" />
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc_hlsl.cpp" />
+    <ClCompile Include="..\..\..\tools\shaderc\shaderc_hlsl_dx12.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\bx\include\bx\allocator.h">

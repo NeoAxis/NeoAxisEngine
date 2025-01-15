@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ namespace Internal.LiteDB
     internal partial class SqlParser
     {
         /// <summary>
-        /// CREATE [ UNQIUE ] INDEX {indexName} ON {collection} ({indexExpr})
+        /// CREATE [ UNIQUE ] INDEX {indexName} ON {collection} ({indexExpr})
         /// </summary>
         private BsonDataReader ParseCreate()
         {

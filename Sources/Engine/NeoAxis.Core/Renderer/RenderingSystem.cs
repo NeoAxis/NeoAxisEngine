@@ -48,6 +48,9 @@ namespace NeoAxis
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//!!!!
+#if WEB
+
 	struct MyOgreLogListener
 	{
 		[UnmanagedFunctionPointer( OgreWrapper.convention )]
@@ -55,11 +58,30 @@ namespace NeoAxis
 			OgreLogMessageLevel lml, [MarshalAs( UnmanagedType.U1 )] bool maskDebug );
 
 		[DllImport( OgreWrapper.library, EntryPoint = "MyOgreLogListener_New", CallingConvention = OgreWrapper.convention )]
+		public unsafe static extern void*/*MyOgreLogListener*/ New( void* messageLogged );
+
+		[DllImport( OgreWrapper.library, EntryPoint = "MyOgreLogListener_Delete", CallingConvention = OgreWrapper.convention )]
+		public unsafe static extern void Delete( void*/*MyOgreLogListener*/ _this );
+	}
+
+#else
+
+	struct MyOgreLogListener
+	{
+		[UnmanagedFunctionPointer( OgreWrapper.convention )]
+		public unsafe delegate void messageLoggedDelegate( IntPtr message, OgreLogMessageLevel lml, [MarshalAs( UnmanagedType.U1 )] bool maskDebug );
+
+		//[UnmanagedFunctionPointer( OgreWrapper.convention )]
+		//public unsafe delegate void messageLoggedDelegate( [MarshalAs( UnmanagedType.LPWStr )] string message, OgreLogMessageLevel lml, [MarshalAs( UnmanagedType.U1 )] bool maskDebug );
+
+		[DllImport( OgreWrapper.library, EntryPoint = "MyOgreLogListener_New", CallingConvention = OgreWrapper.convention )]
 		public unsafe static extern void*/*MyOgreLogListener*/ New( messageLoggedDelegate messageLogged );
 
 		[DllImport( OgreWrapper.library, EntryPoint = "MyOgreLogListener_Delete", CallingConvention = OgreWrapper.convention )]
 		public unsafe static extern void Delete( void*/*MyOgreLogListener*/ _this );
 	}
+
+#endif
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -127,7 +149,10 @@ namespace NeoAxis
 		//internal RenderStatisticsInfo statistics = new RenderStatisticsInfo();
 
 		static unsafe MyOgreLogListener* logListener;
+//!!!!
+#if !WEB
 		static MyOgreLogListener.messageLoggedDelegate logListener_messageLoggedDelegate;
+#endif
 		static bool invisibleInternalLogMessages;
 		static bool enableInternalLogMessages = true;
 
@@ -591,7 +616,7 @@ namespace NeoAxis
 			}
 
 			//set platform data
-			if( ( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS || SystemSettings.CurrentPlatform == SystemSettings.Platform.Web ) && EngineApp.InitSettings.RendererBackend == RendererBackend.OpenGLES )
+			if( ( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS ) && EngineApp.InitSettings.RendererBackend == RendererBackend.OpenGLES )
 			{
 				//Android, OpenGLES
 				Bgfx.SetPlatformData( new PlatformData { Context = (IntPtr)1 } );
@@ -636,9 +661,17 @@ namespace NeoAxis
 			//   profilingToolBeginOperationDelegate, 
 			//   profilingToolEndOperationDelegate );
 
+//!!!!
+#if WEB
+			logListener = (MyOgreLogListener*)MyOgreLogListener.New(
+				(delegate* unmanaged[Stdcall]< nint, OgreLogMessageLevel, byte, void >)&logListener_messageLogged
+			);
+#else
 			logListener_messageLoggedDelegate = logListener_messageLogged;
 			logListener = (MyOgreLogListener*)MyOgreLogListener.New(
 				logListener_messageLoggedDelegate );
+#endif
+
 			OgreLogManager.getDefaultLog_addListener( realRoot, logListener );
 
 			MyOgreVirtualFileSystem.Init();
@@ -807,8 +840,30 @@ namespace NeoAxis
 			disposed = true;
 		}
 
-		static unsafe void logListener_messageLogged( string message, OgreLogMessageLevel lml, bool maskDebug )
+//!!!!
+#if WEB
+
+		[UnmanagedCallersOnly( CallConvs = new[] { typeof( CallConvStdcall ) } )]
+		static unsafe void logListener_messageLogged( nint messagePtr, OgreLogMessageLevel lml, byte maskDebug )
 		{
+			//!!!!С‚РѕР»СЊРєРѕ РёР· РѕСЃРЅРѕРІРЅРѕРіРѕ РјРѕР¶РµС‚ РїСЂРёР№С‚Рё?
+			EngineThreading.CheckMainThread();
+
+
+			if( !EnableInternalLogMessages )
+				return;
+
+			var message = OgreNativeWrapper.GetOutString( messagePtr, false );
+			string text = "Renderer: " + message;
+
+#else
+
+		static unsafe void logListener_messageLogged( IntPtr messagePointer, OgreLogMessageLevel lml, bool maskDebug )
+		//static unsafe void logListener_messageLogged( string message, OgreLogMessageLevel lml, bool maskDebug )
+		{
+			//!!!!
+			var message = OgreNativeWrapper.GetOutString( messagePointer, false );
+
 			//!!!!только из основного может прийти?
 			EngineThreading.CheckMainThread();
 
@@ -817,6 +872,7 @@ namespace NeoAxis
 				return;
 
 			string text = "Renderer: " + message;
+#endif
 
 			bool logWrited = false;
 			bool internalLogMessageCalled = false;

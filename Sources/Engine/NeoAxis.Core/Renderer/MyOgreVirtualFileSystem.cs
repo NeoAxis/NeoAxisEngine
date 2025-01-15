@@ -1,3 +1,332 @@
+//!!!!
+#if WEB
+
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Security;
+using System.Runtime.CompilerServices;
+
+namespace NeoAxis
+{
+	struct MyOgreVirtualArchiveFactory
+	{
+		[UnmanagedFunctionPointer( OgreWrapper.convention )]
+		[return: MarshalAs( UnmanagedType.U1 )]
+		public unsafe delegate bool openDelegate( void*/*MyOgreVirtualDataStream*/ stream, [MarshalAs( UnmanagedType.LPWStr )] string fileName, ref int streamSize, [MarshalAs( UnmanagedType.U1 )] ref bool fileNotFound );
+
+		[UnmanagedFunctionPointer( OgreWrapper.convention )]
+		public unsafe delegate void closeDelegate( void*/*MyOgreVirtualDataStream*/ stream );
+
+		[UnmanagedFunctionPointer( OgreWrapper.convention )]
+		public unsafe delegate int readDelegate( void*/*MyOgreVirtualDataStream*/ stream,
+			void* buf, int count );
+
+		[UnmanagedFunctionPointer( OgreWrapper.convention )]
+		public unsafe delegate void skipDelegate( void*/*MyOgreVirtualDataStream*/ stream, int count );
+
+		[UnmanagedFunctionPointer( OgreWrapper.convention )]
+		public unsafe delegate void seekDelegate( void*/*MyOgreVirtualDataStream*/ stream, int pos );
+
+		[UnmanagedFunctionPointer( OgreWrapper.convention )]
+		public unsafe delegate int tellDelegate( void*/*MyOgreVirtualDataStream*/ stream );
+
+		[UnmanagedFunctionPointer( OgreWrapper.convention )]
+		[return: MarshalAs( UnmanagedType.U1 )]
+		public unsafe delegate bool findDelegate( [MarshalAs( UnmanagedType.LPWStr )] string pattern, [MarshalAs( UnmanagedType.U1 )] bool recursive, [MarshalAs( UnmanagedType.U1 )] bool dirs, void* userData );
+
+		[UnmanagedFunctionPointer( OgreWrapper.convention )]
+		[return: MarshalAs( UnmanagedType.U1 )]
+		public unsafe delegate bool findFileInfoDelegate( [MarshalAs( UnmanagedType.LPWStr )] string pattern, [MarshalAs( UnmanagedType.U1 )] bool recursive, [MarshalAs( UnmanagedType.U1 )] bool dirs, void* userData );
+
+		[UnmanagedFunctionPointer( OgreWrapper.convention )]
+		[return: MarshalAs( UnmanagedType.U1 )]
+		public unsafe delegate bool fileExistsDelegate( [MarshalAs( UnmanagedType.LPWStr )] string fileName );
+
+		///////////////////////////////////////////
+
+		[DllImport( OgreWrapper.library, EntryPoint = "MyOgreVirtualArchiveFactory_New", CallingConvention = OgreWrapper.convention )]
+		public unsafe static extern void*/*MyOgreVirtualArchiveFactory*/ New(
+			void* root,
+			void* open,
+			void* close,
+			void* read,
+			void* skip,
+			void* seek,
+			void* tell,
+			void* find,
+			void* findFileInfo,
+			void* fileExists );
+
+		[DllImport( OgreWrapper.library, EntryPoint = "MyOgreVirtualArchiveFactory_Delete", CallingConvention = OgreWrapper.convention )]
+		public unsafe static extern void Delete( void*/*MyOgreVirtualArchiveFactory*/ _this );
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+
+	struct OgreArchiveManager
+	{
+		[DllImport( OgreWrapper.library, EntryPoint = "OgreArchiveManager_addArchiveFactory", CallingConvention = OgreWrapper.convention )]
+		public unsafe static extern void addArchiveFactory( void*/*MyOgreVirtualArchiveFactory*/ factory );
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+
+	static class MyOgreVirtualFileSystem
+	{
+		static unsafe MyOgreVirtualArchiveFactory* virtualArchiveFactory;
+
+		//key - MyOgreVirtualDataStream*
+		static Dictionary<IntPtr, VirtualFileStream> openedStreams = new Dictionary<IntPtr, VirtualFileStream>();
+		static unsafe void* lastOpenedOgreStream;
+		static VirtualFileStream lastOpenedStream;
+
+		//
+
+		[DllImport( OgreWrapper.library, EntryPoint = "MyOgreVirtualFileSystem_findAddItem", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
+		public unsafe static extern void findAddItem( void* root, [MarshalAs( UnmanagedType.LPWStr )] string fileName, void* userData );
+
+		[DllImport( OgreWrapper.library, EntryPoint = "MyOgreVirtualFileSystem_findFileInfoAddItem", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
+		public unsafe static extern void findFileInfoAddItem( void* root, [MarshalAs( UnmanagedType.LPWStr )] string fileName, [MarshalAs( UnmanagedType.LPWStr )] string path, [MarshalAs( UnmanagedType.LPWStr )] string baseName, int compressedSize, int uncompressedSize, void* userData );
+
+		///////////////////////////////////////////
+
+		unsafe public static void Init()
+		{
+			virtualArchiveFactory = (MyOgreVirtualArchiveFactory*)MyOgreVirtualArchiveFactory.New(
+				RenderingSystem.realRoot,
+				(delegate* unmanaged[Cdecl]< void*, char*, int*, byte*, byte >)&open,
+				(delegate* unmanaged[Cdecl]< void*, void >)&close,
+				(delegate* unmanaged[Cdecl]< void*, void*, int, int >)&read,
+				(delegate* unmanaged[Cdecl]< void*, int, void >)&skip,
+				(delegate* unmanaged[Cdecl]< void*, int, void >)&seek,
+				(delegate* unmanaged[Cdecl]< void*, int >)&tell,
+				(delegate* unmanaged[Cdecl]< char*, byte, byte, void*, byte >)&find,
+				(delegate* unmanaged[Cdecl]< char*, byte, byte, void*, byte >)&findFileInfo,
+				(delegate* unmanaged[Cdecl]< char*, byte >)&fileExists
+			);
+			OgreArchiveManager.addArchiveFactory( virtualArchiveFactory );
+
+			OgreResourceGroupManager.addResourceLocation( RenderingSystem.realRoot, VirtualFileSystem.Directories.Assets, "VirtualFileSystem", true );
+		}
+
+		unsafe public static void Shutdown()
+		{
+			if( virtualArchiveFactory != null )
+			{
+				//crash
+				//MyOgreVirtualArchiveFactory.Delete( virtualArchiveFactory );
+				virtualArchiveFactory = null;
+			}
+		}
+
+		unsafe static VirtualFileStream GetStreamByOgreStream( void*/*MyOgreVirtualDataStream*/ stream )
+		{
+			lock( openedStreams )
+			{
+				if( lastOpenedOgreStream == stream )
+					return lastOpenedStream;
+
+				var s = openedStreams[ (IntPtr)stream ];
+				lastOpenedOgreStream = stream;
+				lastOpenedStream = s;
+				return s;
+			}
+		}
+
+		//static double totalTime;
+		//static double startTime;
+		//static int openings;
+		//static int calls;
+
+		//static void BeginCounter()
+		//{
+		//   //xx xx;
+		//   startTime = RendererWorld.renderTimerManager.GetSystemTime();
+		//   calls++;
+		//}
+
+		//static void EndCounter()
+		//{
+		//   double t = RendererWorld.renderTimerManager.GetSystemTime() - startTime;
+		//   totalTime += t;
+		//}
+
+		[UnmanagedCallersOnly( CallConvs = new[] { typeof( CallConvCdecl ) } )]
+		unsafe static byte open( void*/*MyOgreVirtualDataStream*/ stream, char* fileNamePtr, int* streamSizePtr, byte* fileNotFoundPtr )
+		{
+			//openings++;
+			//Log.Info( "OPEN: " + fileName );
+
+			ref var streamSize = ref Unsafe.AsRef<int>( streamSizePtr );
+			ref var fileNotFound = ref Unsafe.AsRef<bool>( fileNotFoundPtr );
+
+			streamSize = 0;
+			fileNotFound = false;
+
+			VirtualFileStream s;
+			try
+			{
+				s = VirtualFile.Open( new string( fileNamePtr ) );
+			}
+			catch( FileNotFoundException )
+			{
+				fileNotFound = true;
+				return 0;
+			}
+			catch
+			{
+				return 0;
+			}
+			streamSize = (int)s.Length;
+
+			lock( openedStreams )
+			{
+				openedStreams.Add( (IntPtr)stream, s );
+				lastOpenedOgreStream = stream;
+				lastOpenedStream = s;
+			}
+
+			return 1;
+		}
+
+		[UnmanagedCallersOnly( CallConvs = new[] { typeof( CallConvCdecl ) } )]
+		unsafe static void close( void*/*MyOgreVirtualDataStream*/ stream )
+		{
+			var s = GetStreamByOgreStream( stream );
+
+			s.Dispose();
+
+			lock( openedStreams )
+			{
+				bool removed = openedStreams.Remove( (IntPtr)stream );
+				if( lastOpenedOgreStream == stream )
+				{
+					lastOpenedOgreStream = null;
+					lastOpenedStream = null;
+				}
+			}
+
+			//Log.Info( "totalTime: {0}, openings: {1}, calls: {2}", totalTime, openings, calls );
+		}
+
+		[UnmanagedCallersOnly( CallConvs = new[] { typeof( CallConvCdecl ) } )]
+		unsafe static int read( void*/*MyOgreVirtualDataStream*/ stream, void* buf, int count )
+		{
+			//BeginCounter();
+			//var s = GetStreamByOgreStream( stream );
+			//int result = s.ReadUnmanaged( (IntPtr)buf, count );
+			//EndCounter();
+			//return result;
+
+			var s = GetStreamByOgreStream( stream );
+			return s.ReadUnmanaged( (IntPtr)buf, count );
+		}
+
+		[UnmanagedCallersOnly( CallConvs = new[] { typeof( CallConvCdecl ) } )]
+		unsafe static void skip( void*/*MyOgreVirtualDataStream*/ stream, int count )
+		{
+			//BeginCounter();
+
+			var s = GetStreamByOgreStream( stream );
+			s.Seek( count, SeekOrigin.Current );
+
+			//EndCounter();
+		}
+
+		[UnmanagedCallersOnly( CallConvs = new[] { typeof( CallConvCdecl ) } )]
+		unsafe static void seek( void*/*MyOgreVirtualDataStream*/ stream, int pos )
+		{
+			//BeginCounter();
+
+			var s = GetStreamByOgreStream( stream );
+			s.Seek( pos, SeekOrigin.Begin );
+
+			//EndCounter();
+		}
+
+		[UnmanagedCallersOnly( CallConvs = new[] { typeof( CallConvCdecl ) } )]
+		unsafe static int tell( void*/*MyOgreVirtualDataStream*/ stream )
+		{
+			//BeginCounter();
+			//var s = GetStreamByOgreStream( stream );
+			//int result = (int)s.Position;
+			//EndCounter();
+			//return result;
+
+			var s = GetStreamByOgreStream( stream );
+			return (int)s.Position;
+		}
+
+		[UnmanagedCallersOnly( CallConvs = new[] { typeof( CallConvCdecl ) } )]
+		unsafe static byte find( char* patternPtr, byte recursive, byte dirs, void* userData )
+		{
+			try
+			{
+				string[] names;
+				var pattern = new string( patternPtr );
+
+				if( dirs != 0 )
+					names = VirtualDirectory.GetDirectories( "", pattern, ( recursive != 0 ) ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly );
+				else
+					names = VirtualDirectory.GetFiles( "", pattern, ( recursive != 0 ) ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly );
+
+				foreach( string name in names )
+					findAddItem( RenderingSystem.realRoot, name, userData );
+			}
+			catch
+			{
+				return 0;
+			}
+			return 1;
+		}
+
+		[UnmanagedCallersOnly( CallConvs = new[] { typeof( CallConvCdecl ) } )]
+		unsafe static byte findFileInfo( char* patternPtr, byte recursive, byte dirs, void* userData )
+		{
+			try
+			{
+				var pattern = new string( patternPtr );
+				if( dirs != 0 )
+				{
+					var names = VirtualDirectory.GetDirectories( "", pattern, ( recursive != 0 ) ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly );
+
+					foreach( string name in names )
+					{
+						findFileInfoAddItem( RenderingSystem.realRoot, name, Path.GetDirectoryName( name ).Replace( '\\', '/' ) + "/", Path.GetFileName( name ), 0, 0, userData );
+					}
+				}
+				else
+				{
+					var names = VirtualDirectory.GetFiles( "", pattern, ( recursive != 0 ) ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly );
+
+					foreach( string name in names )
+					{
+						int length = (int)VirtualFile.GetLength( name );
+						findFileInfoAddItem( RenderingSystem.realRoot, name, Path.GetDirectoryName( name ).Replace( '\\', '/' ) + "/", Path.GetFileName( name ), length, length, userData );
+					}
+				}
+			}
+			catch
+			{
+				return 0;
+			}
+			return 1;
+		}
+
+		[UnmanagedCallersOnly( CallConvs = new[] { typeof( CallConvCdecl ) } )]
+		static unsafe byte fileExists( char* fileNamePtr )
+		{
+			return VirtualFile.Exists( new string( fileNamePtr ) ) ? (byte)1 : (byte)0;
+		}
+	}
+}
+
+#else
+
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
@@ -305,3 +634,5 @@ namespace NeoAxis
 		}
 	}
 }
+
+#endif

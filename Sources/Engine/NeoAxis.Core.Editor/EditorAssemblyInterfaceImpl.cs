@@ -640,19 +640,19 @@ namespace NeoAxis.Editor
 			//} );
 		}
 
-		public override bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, out string[] fileNames )
+		public override bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, IntPtr ownerWindowHandle, out string[] fileNames )
 		{
-			return EditorUtility2.ShowOpenFileDialog( isFolderPicker, initialDirectory, filters, out fileNames );
+			return EditorUtility2.ShowOpenFileDialog( isFolderPicker, initialDirectory, filters, ownerWindowHandle, out fileNames );
 		}
 
-		public override bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, out string fileName )
+		public override bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, IntPtr ownerWindowHandle, out string fileName )
 		{
-			return EditorUtility2.ShowOpenFileDialog( isFolderPicker, initialDirectory, filters, out fileName );
+			return EditorUtility2.ShowOpenFileDialog( isFolderPicker, initialDirectory, filters, ownerWindowHandle, out fileName );
 		}
 
-		public override bool ShowSaveFileDialog( string initialDirectory, string initialFileName, string filter, out string resultFileName )
+		public override bool ShowSaveFileDialog( string initialDirectory, string initialFileName, string filter, IntPtr ownerWindowHandle, out string resultFileName )
 		{
-			return EditorUtility2.ShowSaveFileDialog( initialDirectory, initialFileName, filter, out resultFileName );
+			return EditorUtility2.ShowSaveFileDialog( initialDirectory, initialFileName, filter, ownerWindowHandle, out resultFileName );
 		}
 	}
 }

@@ -283,7 +283,7 @@ namespace NeoAxis.Editor
 
 			case "Save As":
 				{
-					if( !EditorUtility2.ShowSaveFileDialog( Path.GetDirectoryName( RealFileName ), RealFileName, "All files (*.*)|*.*", out var saveAsFileName ) )
+					if( !EditorUtility2.ShowSaveFileDialog( Path.GetDirectoryName( RealFileName ), RealFileName, "All files (*.*)|*.*", EditorForm.Instance.Handle, out var saveAsFileName ) )
 						return;
 
 					if( string.Compare( RealFileName, saveAsFileName, true ) == 0 )

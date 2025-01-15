@@ -17,7 +17,8 @@ namespace NeoAxis
 
 		public DefaultVirtualFileStream( string realPath )
 		{
-			stream = new FileStream( realPath, FileMode.Open, FileAccess.Read );
+			stream = new FileStream( realPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite );
+			//stream = new FileStream( realPath, FileMode.Open, FileAccess.Read );
 		}
 
 		//public override void Close()

@@ -68,7 +68,7 @@ namespace Project
 					connectingWindowData = null;
 
 					if( SimulationAppClient.Client != null )
-						SimulationAppClient.Client.ConnectionStatusChanged -= ClientConnectionStatusChanged;
+						SimulationAppClient.Client.ConnectionStatusChanged -= ConnectionStatusChanged;
 					SimulationAppClient.Destroy();
 				}
 			}
@@ -82,7 +82,7 @@ namespace Project
 		protected override void OnDisabledInSimulation()
 		{
 			if( SimulationAppClient.Client != null )
-				SimulationAppClient.Client.ConnectionStatusChanged -= ClientConnectionStatusChanged;
+				SimulationAppClient.Client.ConnectionStatusChanged -= ConnectionStatusChanged;
 
 			base.OnDisabledInSimulation();
 		}
@@ -201,14 +201,14 @@ namespace Project
 				return;
 			}
 
-			SimulationAppClient.Client.ConnectionStatusChanged += ClientConnectionStatusChanged;
+			SimulationAppClient.Client.ConnectionStatusChanged += ConnectionStatusChanged;
 
 			connectingWindowData = MessageBoxWindow.Show( this, "Connecting to the server...", "Info", EMessageBoxButtons.Cancel );
 		}
 
-		void ClientConnectionStatusChanged( NetworkClientNode sender, NetworkStatus status )
+		void ConnectionStatusChanged( ClientNode sender )//, NetworkStatus status )
 		{
-			switch( status )
+			switch( sender.Status )
 			{
 			case NetworkStatus.Disconnected:
 				{
@@ -239,14 +239,14 @@ namespace Project
 			}
 		}
 
-        public void ListServers_SelectedIndexChanged(NeoAxis.UIList sender)
-        {
+		public void ListServers_SelectedIndexChanged( NeoAxis.UIList sender )
+		{
 			if( sender.SelectedIndex > 0 )
 			{
 				var value = predefinedServers[ sender.SelectedIndex ];
 				GetEditAddress().Text = value.Item1;
 				GetEditPort().Text = value.Item2;
 			}
-        }
-    }
+		}
+	}
 }

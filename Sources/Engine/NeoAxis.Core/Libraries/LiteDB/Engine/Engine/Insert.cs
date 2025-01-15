@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -22,13 +22,15 @@ namespace Internal.LiteDB.Engine
             {
                 var snapshot = transaction.CreateSnapshot(LockMode.Write, collection, true);
                 var count = 0;
-                var indexer = new IndexService(snapshot, _header.Pragmas.Collation);
-                var data = new DataService(snapshot);
+                var indexer = new IndexService(snapshot, _header.Pragmas.Collation, _disk.MAX_ITEMS_COUNT);
+                var data = new DataService(snapshot, _disk.MAX_ITEMS_COUNT);
 
                 LOG($"insert `{collection}`", "COMMAND");
 
                 foreach (var doc in docs)
                 {
+                    _state.Validate();
+
                     transaction.Safepoint();
 
                     this.InsertDocument(snapshot, doc, autoId, indexer, data);

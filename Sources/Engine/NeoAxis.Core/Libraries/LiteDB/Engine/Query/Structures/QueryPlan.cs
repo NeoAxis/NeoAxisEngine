@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,25 +98,25 @@ namespace Internal.LiteDB.Engine
         /// <summary>
         /// Select corrent pipe
         /// </summary>
-        public BasePipe GetPipe(TransactionService transaction, Snapshot snapshot, SortDisk tempDisk, EnginePragmas pragmas)
+        public BasePipe GetPipe(TransactionService transaction, Snapshot snapshot, SortDisk tempDisk, EnginePragmas pragmas, uint maxItemsCount)
         {
             if (this.GroupBy == null)
             {
-                return new QueryPipe(transaction, this.GetLookup(snapshot, pragmas), tempDisk, pragmas);
+                return new QueryPipe(transaction, this.GetLookup(snapshot, pragmas, maxItemsCount), tempDisk, pragmas, maxItemsCount);
             }
             else
             {
-                return new GroupByPipe(transaction, this.GetLookup(snapshot, pragmas), tempDisk, pragmas);
+                return new GroupByPipe(transaction, this.GetLookup(snapshot, pragmas, maxItemsCount), tempDisk, pragmas, maxItemsCount);
             }
         }
 
         /// <summary>
         /// Get corrent IDocumentLookup
         /// </summary>
-        public IDocumentLookup GetLookup(Snapshot snapshot, EnginePragmas pragmas)
+        public IDocumentLookup GetLookup(Snapshot snapshot, EnginePragmas pragmas, uint maxItemsCount)
         {
-            var data = new DataService(snapshot);
-            var indexer = new IndexService(snapshot, pragmas.Collation);
+            var data = new DataService(snapshot, maxItemsCount);
+            var indexer = new IndexService(snapshot, pragmas.Collation, maxItemsCount);
 
             // define document loader
             // if index are VirtualIndex - it's also lookup document

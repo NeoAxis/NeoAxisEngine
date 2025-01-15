@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System.IO;
 using System.Runtime.InteropServices;
 using static Internal.LiteDB.Constants;

@@ -27,29 +27,37 @@ namespace NeoAxis.Networking
 
 		public CloudProjectProjectSettingsCache( string cloudProjectFolder )
 		{
-			var projectSettingsFullPath = Path.Combine( cloudProjectFolder, @"Project\Assets\Base\ProjectSettings.component" );
 
-			var data = ProjectSettings.ReadParametersDirectlyByRealPath( projectSettingsFullPath, "Repository",
-				new string[] {
-					"SkipPaths",
-					"SkipFoldersWithName",
-					"SkipFilesWithExtensionWhenPlay",
-					"ClearFilesWithExtensionWhenPlay" },
-				new string[] {
-					ProjectSettingsPage_Repository.SkipPathsDefault,
-					ProjectSettingsPage_Repository.SkipFoldersWithNameDefault,
-					ProjectSettingsPage_Repository.SkipFilesWithExtensionWhenPlayDefault,
-					ProjectSettingsPage_Repository.ClearFilesWithExtensionWhenPlayDefault } );
+			//!!!!disabled
+			var applyNeoAxisEngineSkipPaths = false;
 
-			SkipPaths.AddRangeWithCheckAlreadyContained( data[ 0 ].Split( new char[] { '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries ) );
-			SkipFoldersWithName.AddRangeWithCheckAlreadyContained( data[ 1 ].Split( new char[] { '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries ) );
-			SkipFilesWithExtensionWhenPlay.AddRangeWithCheckAlreadyContained( data[ 2 ].Split( new char[] { '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries ) );
-			ClearFilesWithExtensionWhenPlay.AddRangeWithCheckAlreadyContained( data[ 3 ].Split( new char[] { '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries ) );
 
-			//var skipPaths = ProjectSettings.ReadParameterDirectlyByRealPath( projectSettingsFullPath, "Repository", "SkipPaths", ProjectSettingsPage_Repository.SkipPathsDefault );
-			//SkipPaths = new List<string>();
-			//foreach( var path in skipPaths.Split( new char[] { '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries ) )
-			//	SkipPaths.Add( path );
+			if( applyNeoAxisEngineSkipPaths )
+			{
+				var projectSettingsFullPath = Path.Combine( cloudProjectFolder, @"Project\Assets\Base\ProjectSettings.component" );
+
+				var data = ProjectSettings.ReadParametersDirectlyByRealPath( projectSettingsFullPath, "Repository",
+					new string[] {
+						"SkipPaths",
+						"SkipFoldersWithName",
+						"SkipFilesWithExtensionWhenPlay",
+						"ClearFilesWithExtensionWhenPlay" },
+					new string[] {
+						ProjectSettingsPage_Repository.SkipPathsDefault,
+						ProjectSettingsPage_Repository.SkipFoldersWithNameDefault,
+						ProjectSettingsPage_Repository.SkipFilesWithExtensionWhenPlayDefault,
+						ProjectSettingsPage_Repository.ClearFilesWithExtensionWhenPlayDefault } );
+
+				SkipPaths.AddRangeWithCheckAlreadyContained( data[ 0 ].Split( new char[] { '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries ) );
+				SkipFoldersWithName.AddRangeWithCheckAlreadyContained( data[ 1 ].Split( new char[] { '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries ) );
+				SkipFilesWithExtensionWhenPlay.AddRangeWithCheckAlreadyContained( data[ 2 ].Split( new char[] { '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries ) );
+				ClearFilesWithExtensionWhenPlay.AddRangeWithCheckAlreadyContained( data[ 3 ].Split( new char[] { '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries ) );
+			}
+
+			////var skipPaths = ProjectSettings.ReadParameterDirectlyByRealPath( projectSettingsFullPath, "Repository", "SkipPaths", ProjectSettingsPage_Repository.SkipPathsDefault );
+			////SkipPaths = new List<string>();
+			////foreach( var path in skipPaths.Split( new char[] { '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries ) )
+			////	SkipPaths.Add( path );
 		}
 	}
 
@@ -80,39 +88,39 @@ namespace NeoAxis.Networking
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public static class CloudProjectCommon
-	{
-		static string dataFolder;
+	//public static class CloudProjectCommon
+	//{
+	//	static string dataFolder;
 
-		static CloudProjectCommon()
-		{
-			dataFolder = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), "NeoAxis" );
-		}
+	//	static CloudProjectCommon()
+	//	{
+	//		dataFolder = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), "NeoAxis" );
+	//	}
 
-		public static string DataFolder
-		{
-			get { return dataFolder; }
-		}
+	//	public static string DataFolder
+	//	{
+	//		get { return dataFolder; }
+	//	}
 
-		public static string DataFolderProjects
-		{
-			get { return Path.Combine( dataFolder, "Projects" ); }
-		}
+	//	public static string DataFolderProjects
+	//	{
+	//		get { return Path.Combine( dataFolder, "Projects" ); }
+	//	}
 
-		public static string DataFolderPackages
-		{
-			get { return Path.Combine( dataFolder, "Packages" ); }
-		}
+	//	public static string DataFolderPackages
+	//	{
+	//		get { return Path.Combine( dataFolder, "Packages" ); }
+	//	}
 
-		public static string GetAppProjectFolder( long projectID )
-		{
-			return Path.Combine( DataFolderProjects, projectID.ToString() );
-		}
+	//	public static string GetAppProjectFolder( long projectID )
+	//	{
+	//		return Path.Combine( DataFolderProjects, projectID.ToString() );
+	//	}
 
-		public static string GetAppProjectFolder( long projectID, bool edit )
-		{
-			return Path.Combine( DataFolderProjects, projectID.ToString(), edit ? "Edit" : "Play" );
-		}
-	}
+	//	public static string GetAppProjectFolder( long projectID, bool edit )
+	//	{
+	//		return Path.Combine( DataFolderProjects, projectID.ToString(), edit ? "Edit" : "Play" );
+	//	}
+	//}
 }
 //#endif

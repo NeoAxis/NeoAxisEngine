@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,8 +20,8 @@ namespace Internal.LiteDB.Engine
             {
                 var snapshot = transaction.CreateSnapshot(LockMode.Write, collection, false);
                 var collectionPage = snapshot.CollectionPage;
-                var indexer = new IndexService(snapshot, _header.Pragmas.Collation);
-                var data = new DataService(snapshot);
+                var indexer = new IndexService(snapshot, _header.Pragmas.Collation, _disk.MAX_ITEMS_COUNT);
+                var data = new DataService(snapshot, _disk.MAX_ITEMS_COUNT);
                 var count = 0;
 
                 if (collectionPage == null) return 0;
@@ -30,6 +30,8 @@ namespace Internal.LiteDB.Engine
 
                 foreach (var doc in docs)
                 {
+                    _state.Validate();
+
                     transaction.Safepoint();
 
                     if (this.UpdateDocument(snapshot, collectionPage, doc, indexer, data))
@@ -105,7 +107,7 @@ namespace Internal.LiteDB.Engine
             }
             
             // find indexNode from pk index
-            var pkNode = indexer.Find(col.PK, id, false, Internal.LiteDB.Query.Ascending);
+            var pkNode = indexer.Find(col.PK, id, false, LiteDB.Query.Ascending);
             
             // if not found document, no updates
             if (pkNode == null) return false;

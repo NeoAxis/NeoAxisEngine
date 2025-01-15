@@ -1,8 +1,9 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 #include "OgreStableHeaders.h"
-#if defined(PLATFORM_WINDOWS) || defined(PLATFORM_WINRT)
 #include "NeoAxisCoreNative.h"
 #include "UtilsNativeWrapper.h"
+
+#if defined(PLATFORM_WINDOWS) || defined(PLATFORM_WINRT)
 #include "MaskedOcclusionCulling.h"
 
 EXPORT MaskedOcclusionCulling* MaskedOcclusionCulling_Create()
@@ -50,4 +51,44 @@ EXPORT void MaskedOcclusionCulling_ComputePixelDepthBuffer(MaskedOcclusionCullin
 {
 	instance->ComputePixelDepthBuffer(depthData, false);
 }
+
+#else
+#include "MaskedOcclusionCulling.h"
+
+EXPORT MaskedOcclusionCulling* MaskedOcclusionCulling_Create()
+{
+	return NULL;
+}
+
+EXPORT void MaskedOcclusionCulling_Destroy(MaskedOcclusionCulling* instance)
+{
+}
+
+EXPORT void MaskedOcclusionCulling_Init(MaskedOcclusionCulling* instance, int width, int height, bool ortho)
+{
+}
+
+EXPORT void MaskedOcclusionCulling_ClearBuffer(MaskedOcclusionCulling* instance)
+{
+}
+
+EXPORT MaskedOcclusionCulling::CullingResult MaskedOcclusionCulling_RenderTriangles(MaskedOcclusionCulling* instance, float* inVtx, const unsigned int* inTris, int nTris, float* modelToClipMatrix)//, bool stride16)
+{
+	return MaskedOcclusionCulling::CullingResult::VISIBLE;
+}
+
+EXPORT MaskedOcclusionCulling::CullingResult MaskedOcclusionCulling_TestTriangles(MaskedOcclusionCulling* instance, float* inVtx, const unsigned int* inTris, int nTris, float* modelToClipMatrix)
+{
+	return MaskedOcclusionCulling::CullingResult::VISIBLE;
+}
+
+EXPORT MaskedOcclusionCulling::CullingResult MaskedOcclusionCulling_TestRect(MaskedOcclusionCulling* instance, float xmin, float ymin, float xmax, float ymax, float wmin)
+{
+	return MaskedOcclusionCulling::CullingResult::VISIBLE;
+}
+
+EXPORT void MaskedOcclusionCulling_ComputePixelDepthBuffer(MaskedOcclusionCulling* instance, float* depthData)
+{
+}
+
 #endif

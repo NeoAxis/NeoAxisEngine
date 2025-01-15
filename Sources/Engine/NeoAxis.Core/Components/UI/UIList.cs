@@ -88,6 +88,10 @@ namespace NeoAxis
 		public List<string> Items { get; set; } = new List<string>();
 		//public List<object> Items { get; } = new List<object>();
 
+		//!!!!
+		//[Browsable( false )]
+		//public List<object> ItemTags { get; set; } = new List<object>();
+
 		///////////////////////////////////////////////
 
 		/// <summary>

@@ -1,7 +1,10 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
+using Internal.LiteDB.Utils.Extensions;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using static Internal.LiteDB.Constants;
 
 namespace Internal.LiteDB.Engine
@@ -12,19 +15,32 @@ namespace Internal.LiteDB.Engine
     internal class QueryExecutor
     {
         private readonly LiteEngine _engine;
+        private readonly EngineState _state;
         private readonly TransactionMonitor _monitor;
         private readonly SortDisk _sortDisk;
+        private readonly DiskService _disk;
         private readonly EnginePragmas _pragmas;
         private readonly CursorInfo _cursor;
         private readonly string _collection;
         private readonly Query _query;
         private readonly IEnumerable<BsonDocument> _source;
 
-        public QueryExecutor(LiteEngine engine, TransactionMonitor monitor, SortDisk sortDisk, EnginePragmas pragmas, string collection, Query query, IEnumerable<BsonDocument> source)
+        public QueryExecutor(
+            LiteEngine engine,
+            EngineState state,
+            TransactionMonitor monitor,
+            SortDisk sortDisk,
+            DiskService disk,
+            EnginePragmas pragmas,
+            string collection,
+            Query query,
+            IEnumerable<BsonDocument> source)
         {
             _engine = engine;
+            _state = state;
             _monitor = monitor;
             _sortDisk = sortDisk;
+            _disk = disk;
             _pragmas = pragmas;
             _collection = collection;
             _query = query;
@@ -59,8 +75,17 @@ namespace Internal.LiteDB.Engine
 
             transaction.OpenCursors.Add(_cursor);
 
+            var enumerable = RunQuery();
+
+            enumerable = enumerable.OnDispose(() => transaction.OpenCursors.Remove(_cursor));
+
+            if (isNew)
+            {
+                enumerable = enumerable.OnDispose(() => _monitor.ReleaseTransaction(transaction));
+            }
+
             // return new BsonDataReader with IEnumerable source
-            return new BsonDataReader(RunQuery(), _collection);
+            return new BsonDataReader(enumerable, _collection, _state);
 
             IEnumerable<BsonDocument> RunQuery()
             {
@@ -75,13 +100,6 @@ namespace Internal.LiteDB.Engine
                         yield return _query.Select.ExecuteScalar(_pragmas.Collation).AsDocument;
                     }
 
-                    transaction.OpenCursors.Remove(_cursor);
-
-                    if (isNew)
-                    {
-                        _monitor.ReleaseTransaction(transaction);
-                    }
-
                     yield break;
                 }
 
@@ -90,55 +108,58 @@ namespace Internal.LiteDB.Engine
 
                 var queryPlan = optimizer.ProcessQuery();
 
+                var plan = queryPlan.GetExecutionPlan();
+
                 // if execution is just to get explan plan, return as single document result
                 if (executionPlan)
                 {
                     yield return queryPlan.GetExecutionPlan();
-
-                    transaction.OpenCursors.Remove(_cursor);
-
-                    if (isNew)
-                    {
-                        _monitor.ReleaseTransaction(transaction);
-                    }
-
                     yield break;
                 }
 
                 // get node list from query - distinct by dataBlock (avoid duplicate)
-                var nodes = queryPlan.Index.Run(snapshot.CollectionPage, new IndexService(snapshot, _pragmas.Collation));
+                var nodes = queryPlan.Index.Run(snapshot.CollectionPage, new IndexService(snapshot, _pragmas.Collation, _disk.MAX_ITEMS_COUNT));
 
                 // get current query pipe: normal or groupby pipe
-                var pipe = queryPlan.GetPipe(transaction, snapshot, _sortDisk, _pragmas);
+                var pipe = queryPlan.GetPipe(transaction, snapshot, _sortDisk, _pragmas, _disk.MAX_ITEMS_COUNT);
 
-                try
+                // start cursor elapsed timer which stops on dispose
+                using var _ = _cursor.Elapsed.StartDisposable();
+
+                using (var enumerator = pipe.Pipe(nodes, queryPlan).GetEnumerator())
                 {
-                    // start cursor elapsed timer
-                    _cursor.Elapsed.Start();
+                    var read = false;
 
-                    // call safepoint just before return each document
-                    foreach (var doc in pipe.Pipe(nodes, queryPlan))
+                    try
+                    {
+                        read = enumerator.MoveNext();
+                    }
+                    catch (Exception ex)
+                    {
+                        _state.Handle(ex);
+                        throw ex;
+                    }
+
+                    while (read)
                     {
                         _cursor.Fetched++;
                         _cursor.Elapsed.Stop();
 
-                        yield return doc;
+                        yield return enumerator.Current;
 
                         if (transaction.State != TransactionState.Active) throw new LiteException(0, $"There is no more active transaction for this cursor: {_cursor.Query.ToSQL(_cursor.Collection)}");
 
                         _cursor.Elapsed.Start();
-                    }
-                }
-                finally
-                {
-                    // stop cursor elapsed
-                    _cursor.Elapsed.Stop();
 
-                    transaction.OpenCursors.Remove(_cursor);
-
-                    if (isNew)
-                    {
-                        _monitor.ReleaseTransaction(transaction);
+                        try
+                        {
+                            read = enumerator.MoveNext();
+                        }
+                        catch (Exception ex)
+                        {
+                            _state.Handle(ex);
+                            throw ex;
+                        }
                     }
                 }
             };

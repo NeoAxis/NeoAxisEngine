@@ -76,4 +76,21 @@ size_t meshopt_optimizeVertexFetch(void* destination, unsigned int* indices, siz
 	return next_vertex;
 }
 
+#else
+
+#include "NeoAxisCoreNative.h"
+#define MESHOPTIMIZER_API EXPORT
+
+#include <assert.h>
+#include <string.h>
+
+namespace meshopt
+{
+	MESHOPTIMIZER_API size_t meshopt_optimizeVertexFetch(void* destination, unsigned int* indices, size_t index_count, const void* vertices, size_t vertex_count, size_t vertex_size)
+	{
+		Fatal("impl meshopt_optimizeVertexFetch");
+		return 0;
+	}
+}
+
 #endif

@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -45,12 +45,6 @@ namespace Internal.LiteDB
         {
             if (connectionString == null) throw new ArgumentNullException(nameof(connectionString));
 
-            if (connectionString.Upgrade == true)
-            {
-                // try upgrade if need
-                LiteEngine.Upgrade(connectionString.Filename, connectionString.Password, connectionString.Collation);
-            }
-
             _engine = connectionString.CreateEngine();
             _mapper = mapper ?? BsonMapper.Global;
             _disposeOnClose = true;
@@ -64,7 +58,7 @@ namespace Internal.LiteDB
         /// <param name="logStream">LogStream reference </param>
         public LiteDatabase(Stream stream, BsonMapper mapper = null, Stream logStream = null)
         {
-            var settings = new Engine.EngineSettings
+            var settings = new EngineSettings
             {
                 DataStream = stream ?? throw new ArgumentNullException(nameof(stream)),
                 LogStream = logStream
@@ -90,7 +84,7 @@ namespace Internal.LiteDB
         #region Collections
 
         /// <summary>
-        /// Get a collection using a entity class as strong typed document. If collection does not exits, create a new one.
+        /// Get a collection using an entity class as strong typed document. If collection does not exist, create a new one.
         /// </summary>
         /// <param name="name">Collection name (case insensitive)</param>
         /// <param name="autoId">Define autoId data type (when object contains no id field)</param>
@@ -116,7 +110,7 @@ namespace Internal.LiteDB
         }
 
         /// <summary>
-        /// Get a collection using a generic BsonDocument. If collection does not exits, create a new one.
+        /// Get a collection using a generic BsonDocument. If collection does not exist, create a new one.
         /// </summary>
         /// <param name="name">Collection name (case insensitive)</param>
         /// <param name="autoId">Define autoId data type (when document contains no _id field)</param>
@@ -286,7 +280,7 @@ namespace Internal.LiteDB
         /// </summary>
         public long Rebuild(RebuildOptions options = null)
         {
-            return _engine.Rebuild(options);
+            return _engine.Rebuild(options ?? new RebuildOptions());
         }
 
         #endregion

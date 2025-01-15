@@ -25,6 +25,10 @@
 #endif
 #elif defined(__linux__)
 #define PLATFORM_LINUX
+#elif defined(__EMSCRIPTEN__)
+#ifndef PLATFORM_WEB
+#define PLATFORM_WEB
+#endif
 #else
 #error Platform is not supported.
 #endif

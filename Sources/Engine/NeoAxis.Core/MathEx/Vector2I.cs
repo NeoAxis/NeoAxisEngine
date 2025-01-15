@@ -84,6 +84,20 @@ namespace NeoAxis
 			}
 		}
 
+		public static bool TryParse( string text, out Vector2I result )
+		{
+			try
+			{
+				result = Parse( text );
+				return true;
+			}
+			catch
+			{
+				result = default;
+				return false;
+			}
+		}
+
 		/// <summary>
 		/// Returns a <see cref="string"/> that represents the current instance of <see cref="Vector2I"/>.
 		/// </summary>

@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using static Internal.LiteDB.Constants;
@@ -7,8 +7,6 @@ namespace Internal.LiteDB.Engine
 {
     public partial class LiteEngine
     {
-        private Dictionary<string, SystemCollection> _systemCollections = new Dictionary<string, SystemCollection>(StringComparer.OrdinalIgnoreCase);
-
         /// <summary>
         /// Get registered system collection
         /// </summary>

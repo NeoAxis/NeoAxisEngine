@@ -276,7 +276,7 @@ namespace NeoAxis.Editor
 						{
 							var item = new KryptonContextMenuItem( Translate( "Export to File" ), null, delegate ( object s, EventArgs e2 )
 							{
-								EditorUtility2.ExportComponentToFile( componentItem.Component );
+								EditorUtility2.ExportComponentToFile( componentItem.Component, IntPtr.Zero );
 							} );
 							item.Enabled = true;//oneSelectedComponent != null;
 							items.Add( item );
@@ -1081,6 +1081,17 @@ namespace NeoAxis.Editor
 
 							var itemAdd = new KryptonContextMenuItem( Translate( "Add" ), null );
 							var items3 = new List<KryptonContextMenuItemBase>();
+
+							{
+								var item = new KryptonContextMenuItem( Translate( "Default sync mode" ), EditorResourcesCache.Synchronize,
+									delegate ( object s, EventArgs e2 )
+									{
+										Add( RepositorySyncMode.Synchronize );
+									} );
+								items3.Add( item );
+							}
+
+							items3.Add( new KryptonContextMenuSeparator() );
 
 							{
 								var item = new KryptonContextMenuItem( Translate( "Sync with Clients" ), EditorResourcesCache.Synchronize,

@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -68,6 +68,17 @@ namespace Internal.LiteDB.Engine
         public override string ToString()
         {
             return this.IsEmpty ? "(empty)" : this.PageID.ToString().PadLeft(4, '0') + ":" + this.Index.ToString().PadLeft(2, '0');
+        }
+
+        public BsonValue ToBsonValue()
+        {
+            if (this.IsEmpty) return BsonValue.Null;
+
+            return new BsonDocument
+            {
+                ["pageID"] = (int)this.PageID,
+                ["index"] = (int)this.Index
+            };
         }
     }
 }

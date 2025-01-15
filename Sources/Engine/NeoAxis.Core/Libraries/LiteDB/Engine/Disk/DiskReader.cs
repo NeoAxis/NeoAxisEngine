@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -19,6 +19,7 @@ namespace Internal.LiteDB.Engine
     /// </summary>
     internal class DiskReader : IDisposable
     {
+        private readonly EngineState _state;
         private readonly MemoryCache _cache;
 
         private readonly StreamPool _dataPool;
@@ -27,8 +28,9 @@ namespace Internal.LiteDB.Engine
         private readonly Lazy<Stream> _dataStream;
         private readonly Lazy<Stream> _logStream;
 
-        public DiskReader(MemoryCache cache, StreamPool dataPool, StreamPool logPool)
+        public DiskReader(EngineState state, MemoryCache cache, StreamPool dataPool, StreamPool logPool)
         {
+            _state = state;
             _cache = cache;
             _dataPool = dataPool;
             _logPool = logPool;
@@ -48,6 +50,10 @@ namespace Internal.LiteDB.Engine
             var page = writable ?
                 _cache.GetWritablePage(position, origin, (pos, buf) => this.ReadStream(stream, pos, buf)) :
                 _cache.GetReadablePage(position, origin, (pos, buf) => this.ReadStream(stream, pos, buf));
+
+#if DEBUG
+            _state.SimulateDiskReadFail?.Invoke(page);
+#endif
 
             return page;
         }

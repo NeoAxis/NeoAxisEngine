@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -209,7 +209,7 @@ namespace Internal.LiteDB
     /// </summary>
     internal class Tokenizer
     {
-        private TextReader _reader;
+        private readonly TextReader _reader;
         private char _char = '\0';
         private Token _ahead = null;
         private bool _eof = false;

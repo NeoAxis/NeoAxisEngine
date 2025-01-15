@@ -225,19 +225,19 @@ namespace NeoAxis.Editor
 			EditorAssemblyInterface.Instance.ShowDialog( form );
 		}
 
-		public static bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, out string[] fileNames )
+		public static bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, IntPtr ownerWindowHandle, out string[] fileNames )
 		{
-			return EditorAssemblyInterface.Instance.ShowOpenFileDialog( isFolderPicker, initialDirectory, filters, out fileNames );
+			return EditorAssemblyInterface.Instance.ShowOpenFileDialog( isFolderPicker, initialDirectory, filters, ownerWindowHandle, out fileNames );
 		}
 
-		public static bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, out string fileName )
+		public static bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, IntPtr ownerWindowHandle, out string fileName )
 		{
-			return EditorAssemblyInterface.Instance.ShowOpenFileDialog( isFolderPicker, initialDirectory, filters, out fileName );
+			return EditorAssemblyInterface.Instance.ShowOpenFileDialog( isFolderPicker, initialDirectory, filters, ownerWindowHandle, out fileName );
 		}
 
-		public static bool ShowSaveFileDialog( string initialDirectory, string initialFileName, string filter, out string resultFileName )
+		public static bool ShowSaveFileDialog( string initialDirectory, string initialFileName, string filter, IntPtr ownerWindowHandle, out string resultFileName )
 		{
-			return EditorAssemblyInterface.Instance.ShowSaveFileDialog( initialDirectory, initialFileName, filter, out resultFileName );
+			return EditorAssemblyInterface.Instance.ShowSaveFileDialog( initialDirectory, initialFileName, filter, ownerWindowHandle, out resultFileName );
 		}
 	}
 }

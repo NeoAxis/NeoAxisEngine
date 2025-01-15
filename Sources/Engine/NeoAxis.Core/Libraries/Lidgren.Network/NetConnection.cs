@@ -1,4 +1,4 @@
-﻿#if !UWP
+﻿#if !UWP && LIDGREN
 using System;
 using System.Net;
 using System.Threading;
@@ -58,6 +58,12 @@ namespace Internal.Lidgren.Network
 		/// Gets the peer which holds this connection
 		/// </summary>
 		public NetPeer Peer { get { return m_peer; } }
+
+		////betauser
+		///// <summary>
+		///// Gets the current status of the connection (synced to the last status message read)
+		///// </summary>
+		//public NetConnectionStatus ActualStatus { get { return m_status; } }
 
 		/// <summary>
 		/// Gets the current status of the connection (synced to the last status message read)

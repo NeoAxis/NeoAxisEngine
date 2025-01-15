@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
-using Internal;
 
 namespace NeoAxis
 {
@@ -31,7 +30,6 @@ namespace NeoAxis
 					{
 						MaxCharacterCountChanged?.Invoke( this );
 
-						//!!!!check
 						var text = Text.Value;
 						Text = text;
 						//if( Text != null && Text.Length > MaxCharacterCount )
@@ -100,6 +98,16 @@ namespace NeoAxis
 		public event Action<UIEdit> CaretPositionChanged;
 		ReferenceField<int> _caretPosition = -1;
 
+		//[DefaultValue( false )]
+		//public Reference<bool> Multiline
+		//{
+		//	get { if( _multiline.BeginGet() ) Multiline = _multiline.Get( this ); return _multiline.value; }
+		//	set { if( _multiline.BeginSet( this, ref value ) ) { try { MultilineChanged?.Invoke( this ); } finally { _multiline.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="Multiline"/> property value changes.</summary>
+		//public event Action<UIEdit> MultilineChanged;
+		//ReferenceField<bool> _multiline = false;
+
 		[Browsable( false )]
 		public double EditingLastTime { get; set; }
 
@@ -119,20 +127,27 @@ namespace NeoAxis
 		{
 			Size = new UIMeasureValueVector2( UIMeasure.Units, 400, 40 );
 
-			TextChanged += UIEdit_TextChanged;
+			TextChanging += UIEdit_TextChanging;
+			//TextChanged += UIEdit_TextChanged;
 		}
 
-		private void UIEdit_TextChanged( UIControl obj )
+		private void UIEdit_TextChanging( UIControl sender, ref Reference<string> text )
 		{
-			var v = Text;
-			if( v.Value.Length > MaxCharacterCount )
-				Text = new Reference<string>( v.Value.Substring( 0, MaxCharacterCount ), v.GetByReference );
-
-			//var text = Text.Value;
-			//if( text.Length > MaxCharacterCount )
-			//	text = text.Substring( 0, MaxCharacterCount );
-			//Text = text;
+			if( text.Value.Length > MaxCharacterCount )
+				text = new Reference<string>( text.Value.Substring( 0, MaxCharacterCount ), text.GetByReference );
 		}
+
+		//private void UIEdit_TextChanged( UIControl obj )
+		//{
+		//	var v = Text;
+		//	if( v.Value.Length > MaxCharacterCount )
+		//		Text = new Reference<string>( v.Value.Substring( 0, MaxCharacterCount ), v.GetByReference );
+
+		//	//var text = Text.Value;
+		//	//if( text.Length > MaxCharacterCount )
+		//	//	text = text.Substring( 0, MaxCharacterCount );
+		//	//Text = text;
+		//}
 
 		///// <summary>
 		///// The text control associated with the edit box.
@@ -270,6 +285,65 @@ namespace NeoAxis
 		//public delegate void PreKeyPressDelegate( KeyPressEvent e, ref bool handled );
 		//public event PreKeyPressDelegate PreKeyPress;
 
+		//// Method to get the start position of the line
+		//int GetLineStartPosition( int caretPosition )
+		//{
+		//	// Get the text of the document
+		//	string documentText = GetDocumentText();
+
+		//	// Find the last newline character before the current caret position
+		//	int lastNewlineIndex = documentText.LastIndexOf( '\n', caretPosition );
+
+		//	// If there is no newline, start from the beginning of the document
+		//	if( lastNewlineIndex == -1 )
+		//	{
+		//		return 0; // Start of the document
+		//	}
+
+		//	// The start of the line is right after the newline character
+		//	return lastNewlineIndex + 1; // Move one position after the newline
+		//}
+
+		static int GetLineStartPosition( string text, int caretPosition )
+		{
+			if( text.Length == 0 )
+				return 0;
+
+			var caretPosition2 = MathEx.Clamp( caretPosition - 1, 0, text.Length - 1 );
+			for( int n = caretPosition2; n >= 0; n-- )
+			{
+				if( text[ n ] == '\n' )
+					return MathEx.Clamp( n + 1, 0, text.Length - 1 );
+			}
+			return 0;
+		}
+
+		static int GetLineLength( string text, int startLineIndex )
+		{
+			for( int n = startLineIndex; n < text.Length; n++ )
+			{
+				if( text[ n ] == '\n' )
+					return n - startLineIndex;
+			}
+			return text.Length - startLineIndex;
+		}
+
+		static int GetLineEndPosition( string text, int caretPosition, out bool gotEnd )
+		{
+			gotEnd = false;
+			if( text.Length == 0 )
+				return 0;
+
+			var caretPosition2 = MathEx.Clamp( caretPosition, 0, text.Length - 1 );
+			for( int n = caretPosition2; n < text.Length; n++ )
+			{
+				if( text[ n ] == '\n' )
+					return MathEx.Clamp( n, 0, text.Length - 1 );
+			}
+			gotEnd = true;
+			return text.Length - 1;
+		}
+
 		protected override bool OnKeyDown( KeyEvent e )
 		{
 			var textControl = GetTextControl();
@@ -347,7 +421,7 @@ namespace NeoAxis
 					//	break;
 
 					case EKeys.Return:
-						if( !ReadOnlyInHierarchy && textControl != null && textControl.WordWrap )
+						if( !ReadOnlyInHierarchy && textControl != null && textControl.WordWrap )// Multiline )
 						{
 							{
 								GetSelection( out var start, out var length );
@@ -471,33 +545,32 @@ namespace NeoAxis
 
 					case EKeys.Home:
 						{
-							var caret = GetCaretPosition();
-							var oldCaret = caret;
-							caret = 0;
+							int caret = GetCaretPosition();
+							int oldCaret = caret;
+							if( ParentContainer.Viewport.IsKeyPressed( EKeys.Control ) )
+								caret = 0;
+							else
+								caret = GetLineStartPosition( Text.Value, caret );
 							CaretPosition = caret;
 
 							if( ParentContainer.Viewport.IsKeyPressed( EKeys.Shift ) )
 							{
 								var start = SelectionStart.Value;
 								var length = SelectionLength.Value;
+								var oldStart = start;
+								var oldLength = length;
+								var oldEnd = start + length;
 
 								if( length == 0 )
 								{
-									start = 0;
-									length = oldCaret;
+									start = caret;
+									length = oldCaret - start;
 								}
 								else
 								{
-									if( oldCaret > start )
-									{
-										length = start;
-										start = 0;
-									}
-									else
-									{
-										length = start + length;
-										start = 0;
-									}
+									start = Math.Min( caret, oldStart );
+									var end = Math.Max( caret, oldEnd );
+									length = Math.Abs( end - start );
 								}
 
 								Select( start, length );
@@ -513,30 +586,119 @@ namespace NeoAxis
 						{
 							var caret = GetCaretPosition();
 							var oldCaret = caret;
-							CaretPosition = -1;
+							if( ParentContainer.Viewport.IsKeyPressed( EKeys.Control ) )
+							{
+								caret = Text.Value.Length;
+								CaretPosition = -1;
+							}
+							else
+							{
+								caret = GetLineEndPosition( Text.Value, caret, out var gotEnd );
+								CaretPosition = gotEnd ? -1 : caret;
+							}
 
 							if( ParentContainer.Viewport.IsKeyPressed( EKeys.Shift ) )
 							{
 								var start = SelectionStart.Value;
 								var length = SelectionLength.Value;
+								var oldStart = start;
+								var oldLength = length;
+								var oldEnd = start + length;
 
 								if( length == 0 )
 								{
 									start = oldCaret;
-									length = Text.Value.Length - start;
+									length = caret - start;
 								}
 								else
 								{
-									if( oldCaret == start + length )
-									{
-										//start = start;
-										length = Text.Value.Length - start;
-									}
-									else
-									{
-										start = start + length;
-										length = Text.Value.Length - start;
-									}
+									start = Math.Min( caret, oldStart );
+									var end = Math.Max( caret, oldEnd );
+									length = Math.Abs( end - start );
+								}
+
+								Select( start, length );
+							}
+							else
+								DeselectAll();
+
+							EditingLastTime = EngineApp.EngineTime;
+						}
+						return true;
+
+					case EKeys.Up:
+						{
+							int caret = GetCaretPosition();
+							int oldCaret = caret;
+
+							var currentLineStart = GetLineStartPosition( Text.Value, caret );
+							var currentLinePosition = caret - currentLineStart;
+							var previousLineStart = GetLineStartPosition( Text.Value, currentLineStart - 1 );
+							caret = previousLineStart + Math.Min( currentLinePosition, GetLineLength( Text.Value, previousLineStart ) );
+							CaretPosition = caret;
+
+							if( ParentContainer.Viewport.IsKeyPressed( EKeys.Shift ) )
+							{
+								var start = SelectionStart.Value;
+								var length = SelectionLength.Value;
+								var oldStart = start;
+								var oldLength = length;
+								var oldEnd = start + length;
+
+								if( length == 0 )
+								{
+									start = caret;
+									length = oldCaret - start;
+								}
+								else
+								{
+									start = Math.Min( caret, oldStart );
+									var end = Math.Max( caret, oldEnd );
+									length = Math.Abs( end - start );
+								}
+
+								Select( start, length );
+							}
+							else
+								DeselectAll();
+
+							EditingLastTime = EngineApp.EngineTime;
+						}
+						return true;
+
+					case EKeys.Down:
+						{
+							var caret = GetCaretPosition();
+							var oldCaret = caret;
+
+							var text = Text.Value;
+							var currentLineStart = GetLineStartPosition( text, caret );
+							var currentLinePosition = caret - currentLineStart;
+							var nextLineStart = GetLineEndPosition( text, currentLineStart + 1, out var gotEnd );
+							while( nextLineStart < text.Length && text[ nextLineStart ] == '\n' )
+								nextLineStart++;
+							caret = nextLineStart + Math.Min( currentLinePosition, GetLineLength( Text.Value, nextLineStart ) );
+							CaretPosition = caret >= text.Length ? -1 : caret;
+							caret = MathEx.Clamp( caret, 0, text.Length - 1 );
+
+							if( ParentContainer.Viewport.IsKeyPressed( EKeys.Shift ) )
+							{
+								var start = SelectionStart.Value;
+								var length = SelectionLength.Value;
+								var oldStart = start;
+								var oldLength = length;
+								var oldEnd = start + length;
+
+								if( length == 0 )
+								{
+									start = oldCaret;
+									length = caret - start;
+								}
+								else
+								{
+									start = Math.Min( caret, oldStart );
+									var end = Math.Max( caret, oldEnd );
+									length = Math.Abs( end - start );
 								}
 
 								Select( start, length );
@@ -621,7 +783,7 @@ namespace NeoAxis
 
 										foreach( var c in text )
 										{
-											if( IsAllowCharacter( font, c ) && OnTextTypingFilter( e.Key, c, newText ) )
+											if( IsAllowCharacter( font, textControl, c ) && OnTextTypingFilter( e.Key, c, newText ) )
 											{
 												newText = newText.Insert( caret, c.ToString() );
 												caret++;
@@ -696,8 +858,11 @@ namespace NeoAxis
 			return null;
 		}
 
-		static bool IsAllowCharacter( FontComponent font, char c )
+		static bool IsAllowCharacter( FontComponent font, UIText textControl, char c )
 		{
+			if( c == '\n' && textControl.WordWrap )
+				return true;
+
 			if( font != null )
 				return c >= 32 && font.IsCharacterInitialized( c );
 			else
@@ -723,7 +888,7 @@ namespace NeoAxis
 					if( Text.Value.Length < MaxCharacterCount )
 					{
 						var font = GetFont();
-						var allowCharacter = IsAllowCharacter( font, e.KeyChar );
+						var allowCharacter = IsAllowCharacter( font, textControl, e.KeyChar );
 
 						//var font = textControl.Font.Value;
 						//if( font == null )

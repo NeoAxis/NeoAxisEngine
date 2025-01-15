@@ -7,85 +7,6 @@ using NeoAxis.Networking;
 
 namespace Project
 {
-	public class SimulationAppClientNode : NetworkClientNode
-	{
-		//services
-		ClientNetworkService_Messages messages;
-		ClientNetworkService_Users users;
-		ClientNetworkService_Chat chat;
-		ClientNetworkService_Components components;
-		ClientNetworkService_FileSync fileSync;
-
-		//
-
-		public SimulationAppClientNode()
-		{
-			//register messages service
-			messages = new ClientNetworkService_Messages();
-			RegisterService( messages );
-
-			//register users service
-			users = new ClientNetworkService_Users();
-			RegisterService( users );
-
-			//register chat service
-			chat = new ClientNetworkService_Chat( users );
-			RegisterService( chat );
-
-			//register components service
-			components = new ClientNetworkService_Components( users );
-			RegisterService( components );
-
-			//register file sync service
-			fileSync = new ClientNetworkService_FileSync();
-			RegisterService( fileSync );
-		}
-
-		public ClientNetworkService_Messages Messages
-		{
-			get { return messages; }
-		}
-
-		public ClientNetworkService_Users Users
-		{
-			get { return users; }
-		}
-
-		public ClientNetworkService_Chat Chat
-		{
-			get { return chat; }
-		}
-
-		public ClientNetworkService_Components Components
-		{
-			get { return components; }
-		}
-
-		public ClientNetworkService_FileSync FileSync
-		{
-			get { return fileSync; }
-		}
-	}
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	public class SimulationAppClientAssemblyRegistration : AssemblyRegistration
-	{
-		public override void OnRegister()
-		{
-			if( EngineApp.IsSimulation )
-			{
-				EngineApp.AppCreateAfter += delegate ()
-				{
-					SimulationAppClient.InitFromCommandLine();
-					SimulationAppClient.RegisterEngineConsoleCommands();
-				};
-			}
-		}
-	}
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	/// <summary>
 	/// The class for general management of the client.
 	/// </summary>
@@ -106,6 +27,68 @@ namespace Project
 		{
 			CloudProject,
 			Direct,
+		}
+
+		/////////////////////////////////////////
+
+		public class SimulationAppClientNode : ClientNode
+		{
+			//services
+			ClientNetworkService_Messages messages;
+			ClientNetworkService_Users users;
+			ClientNetworkService_Chat chat;
+			ClientNetworkService_Components components;
+			ClientNetworkService_FileSync fileSync;
+
+			//
+
+			public SimulationAppClientNode()
+			{
+				//register messages service
+				messages = new ClientNetworkService_Messages();
+				RegisterService( messages );
+
+				//register users service
+				users = new ClientNetworkService_Users();
+				RegisterService( users );
+
+				//register chat service
+				chat = new ClientNetworkService_Chat( users );
+				RegisterService( chat );
+
+				//register components service
+				components = new ClientNetworkService_Components( users );
+				RegisterService( components );
+
+				//register file sync service
+				fileSync = new ClientNetworkService_FileSync();
+				RegisterService( fileSync );
+			}
+
+			public ClientNetworkService_Messages Messages
+			{
+				get { return messages; }
+			}
+
+			public ClientNetworkService_Users Users
+			{
+				get { return users; }
+			}
+
+			public ClientNetworkService_Chat Chat
+			{
+				get { return chat; }
+			}
+
+			public ClientNetworkService_Components Components
+			{
+				get { return components; }
+			}
+
+			public ClientNetworkService_FileSync FileSync
+			{
+				get { return fileSync; }
+			}
 		}
 
 		/////////////////////////////////////////
@@ -227,7 +210,7 @@ namespace Project
 		static bool ConnectToServer( string cloudModeVerificationCode, string directModeUsername, string directModePassword, out string error )
 		{
 
-			//!!!!связь может прерываться, может не сразу подключиться. постоянный "Connecting..." как в ланчере
+			//!!!!connection may break, may connect not fast. show "Connecting..."?
 
 
 			Destroy();
@@ -245,7 +228,7 @@ namespace Project
 			client = new SimulationAppClientNode();
 			client.ProtocolError += Client_ProtocolError;
 			client.ConnectionStatusChanged += Client_ConnectionStatusChanged;
-			client.Messages.ReceiveMessage += Messages_ReceiveMessage;
+			client.Messages.ReceiveMessageString += Messages_ReceiveMessageString;
 			client.Components.SceneCreateBegin += Components_SceneCreateBegin;
 			client.Components.SceneCreateEnd += Components_SceneCreateEnd;
 			client.Components.SceneDestroy += Components_SceneDestroy;
@@ -265,7 +248,7 @@ namespace Project
 			var loginData = block.DumpToString();
 
 			//!!!!connectionTimeout
-			if( !client.BeginConnect( serverAddress, serverPort, EngineInfo.Version, loginData, 100, out error ) )
+			if( !client.BeginConnect( serverAddress, serverPort, EngineInfo.Version, loginData, 30, out error ) )
 			{
 				Destroy();
 				return false;
@@ -291,7 +274,7 @@ namespace Project
 			return true;
 		}
 
-		private static void Client_ProtocolError( NetworkClientNode sender, string message )
+		private static void Client_ProtocolError( ClientNode sender, string message )
 		{
 			Log.Warning( "SimulationAppClient: Protocol error: " + message );
 		}
@@ -302,7 +285,7 @@ namespace Project
 			{
 				client.ProtocolError -= Client_ProtocolError;
 				client.ConnectionStatusChanged -= Client_ConnectionStatusChanged;
-				client.Messages.ReceiveMessage -= Messages_ReceiveMessage;
+				client.Messages.ReceiveMessageString -= Messages_ReceiveMessageString;
 				client.Components.SceneCreateBegin -= Components_SceneCreateBegin;
 				client.Components.SceneCreateEnd -= Components_SceneCreateEnd;
 				client.Components.SceneDestroy -= Components_SceneDestroy;
@@ -363,17 +346,16 @@ namespace Project
 			}
 		}
 
-		static void Client_ConnectionStatusChanged( NetworkClientNode sender, NetworkStatus status )
+		static void Client_ConnectionStatusChanged( ClientNode sender )
 		{
 			//ScreenMessages.Add( string.Format( "Connection status changed: {0}", status.ToString() ) );
 
-			switch( status )
+			switch( sender.Status )
 			{
 			case NetworkStatus.Connected:
 				{
 
-					//!!!!не обновлять если это в dev папке
-					//!!!!это sync в процессе работы
+					//!!!!impl sync in process
 					//client.FileSync.StartUpdate();
 
 				}
@@ -387,7 +369,7 @@ namespace Project
 			}
 		}
 
-		private static void Messages_ReceiveMessage( ClientNetworkService_Messages sender, string message, string data )
+		private static void Messages_ReceiveMessageString( ClientNetworkService_Messages sender, string message, string data )
 		{
 			//ScreenMessages.Add( string.Format( "Message from server: {0}", message ) );
 
@@ -435,6 +417,23 @@ namespace Project
 			{
 				Client?.ProfilerStop( true );
 			}, "Stops the network profiler." );
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public class SimulationAppClientAssemblyRegistration : AssemblyRegistration
+	{
+		public override void OnRegister()
+		{
+			if( EngineApp.IsSimulation )
+			{
+				EngineApp.AppCreateAfter += delegate ()
+				{
+					SimulationAppClient.InitFromCommandLine();
+					SimulationAppClient.RegisterEngineConsoleCommands();
+				};
+			}
 		}
 	}
 }

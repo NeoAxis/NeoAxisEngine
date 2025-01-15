@@ -41,7 +41,7 @@ void LogLongText(std::string s)
 #include <iconv.h>	
 #endif
 
-#ifdef LINUX
+#if defined(LINUX) || defined(__EMSCRIPTEN__)
 #include <codecvt>
 #include <string.h>
 #include <locale>
@@ -109,7 +109,7 @@ std::string ConvertStringToUTF8(const std::wstring& str)
 			if(WideCharToMultiByte(CP_UTF8, 0, str.c_str(), -1, aString, size, NULL, NULL) != 0)
 				result = aString;
 		}
-#elif defined(__ANDROID__) || defined(LINUX)
+#elif defined(__ANDROID__) || defined(LINUX) || defined(__EMSCRIPTEN__)
 
 		std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
 		result = myconv.to_bytes(str);
@@ -149,7 +149,7 @@ std::wstring ConvertStringToUTFWide(const std::string& str)
 			if(MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, wString, size) != 0)
 				result = wString;
 		}
-#elif defined(__ANDROID__) || defined(LINUX)
+#elif defined(__ANDROID__) || defined(LINUX) || defined(__EMSCRIPTEN__)
 
 		//!!!!
 		for (int n = 0; n < str.length(); n++)
@@ -179,7 +179,7 @@ std::wstring ConvertStringToUTFWide(const std::string& str)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-wchar16* CreateOutString(const std::wstring& str)
+wchar16* CreateOutString2(const std::wstring& str)
 {
 #ifdef _WIN32
 	wchar16* result = new wchar_t[str.length() + 1];

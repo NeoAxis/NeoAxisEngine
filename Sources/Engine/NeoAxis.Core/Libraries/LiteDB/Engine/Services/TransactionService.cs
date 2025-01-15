@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -90,7 +90,7 @@ namespace Internal.LiteDB.Engine
         {
             ENSURE(_state == TransactionState.Active, "transaction must be active to create new snapshot");
 
-            Snapshot create() => new Snapshot(mode, collection, _header, _transactionID, _transPages, _locker, _walIndex, _reader, addIfNotExists);
+            Snapshot create() => new Snapshot(mode, collection, _header, _transactionID, _transPages, _locker, _walIndex, _reader, _disk, addIfNotExists);
 
             if (_snapshots.TryGetValue(collection, out var snapshot))
             {
@@ -114,7 +114,7 @@ namespace Internal.LiteDB.Engine
                 _snapshots[collection] = snapshot = create();
             }
 
-            // update transaction mode to write in first write snaphost request 
+            // update transaction mode to write in first write snaphost request
             if (mode == LockMode.Write) _mode = LockMode.Write;
 
             return snapshot;
@@ -206,34 +206,30 @@ namespace Internal.LiteDB.Engine
                 // in commit with header page change, last page will be header
                 if (commit && _transPages.HeaderChanged)
                 {
-                    lock(_header)
-                    {
-                        // update this confirm page with current transactionID
-                        _header.TransactionID = _transactionID;
+                    // update this confirm page with current transactionID
+                    _header.TransactionID = _transactionID;
 
-                        // this header page will be marked as confirmed page in log file
-                        _header.IsConfirmed = true;
+                    // this header page will be marked as confirmed page in log file
+                    _header.IsConfirmed = true;
 
-                        // invoke all header callbacks (new/drop collections)
-                        _transPages.OnCommit(_header);
+                    // invoke all header callbacks (new/drop collections)
+                    _transPages.OnCommit(_header);
 
-                        // clone header page
-                        var buffer = _header.UpdateBuffer();
-                        var clone = _disk.NewPage();
+                    // clone header page
+                    var buffer = _header.UpdateBuffer();
+                    var clone = _disk.NewPage();
 
-                        // mem copy from current header to new header clone
-                        Buffer.BlockCopy(buffer.Array, buffer.Offset, clone.Array, clone.Offset, clone.Count);
+                    // mem copy from current header to new header clone
+                    Buffer.BlockCopy(buffer.Array, buffer.Offset, clone.Array, clone.Offset, clone.Count);
 
-                        // persist header in log file
-                        yield return clone;
-                    }
+                    // persist header in log file
+                    yield return clone;
                 }
-
             };
 
             // write all dirty pages, in sequence on log-file and store references into log pages on transPages
             // (works only for Write snapshots)
-            var count = _disk.WriteAsync(source());
+            var count = _disk.WriteLogDisk(source());
 
             // now, discard all clean pages (because those pages are writable and must be readable)
             // from write snapshots
@@ -251,23 +247,26 @@ namespace Internal.LiteDB.Engine
         /// </summary>
         public void Commit()
         {
-            ENSURE(_state == TransactionState.Active, $"transaction must be active to commit (current state: {_state})");
+            ENSURE(_state == TransactionState.Active, "transaction must be active to commit (current state: {0})", _state);
 
             LOG($"commit transaction ({_transPages.TransactionSize} pages)", "TRANSACTION");
 
             if (_mode == LockMode.Write || _transPages.HeaderChanged)
             {
-                // persist all dirty page as commit mode (mark last page as IsConfirm)
-                var count = this.PersistDirtyPages(true);
-
-                // update wal-index (if any page was added into log disk)
-                if(count > 0)
+                lock (_header)
                 {
-                    _walIndex.ConfirmTransaction(_transactionID, _transPages.DirtyPages.Values);
+                    // persist all dirty page as commit mode (mark last page as IsConfirm)
+                    var count = this.PersistDirtyPages(true);
+
+                    // update wal-index (if any page was added into log disk)
+                    if (count > 0)
+                    {
+                        _walIndex.ConfirmTransaction(_transactionID, _transPages.DirtyPages.Values);
+                    }
                 }
             }
 
-            // dispose all snapshosts
+            // dispose all snapshots
             foreach (var snapshot in _snapshots.Values)
             {
                 snapshot.Dispose();
@@ -282,7 +281,7 @@ namespace Internal.LiteDB.Engine
         /// </summary>
         public void Rollback()
         {
-            ENSURE(_state == TransactionState.Active, $"transaction must be active to rollback (current state: {_state})");
+            ENSURE(_state == TransactionState.Active, "transaction must be active to rollback (current state: {0})", _state);
 
             LOG($"rollback transaction ({_transPages.TransactionSize} pages with {_transPages.NewPages.Count} returns)", "TRANSACTION");
 
@@ -292,7 +291,7 @@ namespace Internal.LiteDB.Engine
                 this.ReturnNewPages();
             }
 
-            // dispose all snaphosts
+            // dispose all snapshots
             foreach (var snapshot in _snapshots.Values)
             {
                 // but first, if writable, discard changes
@@ -369,7 +368,7 @@ namespace Internal.LiteDB.Engine
                 try
                 {
                     // write all pages (including new header)
-                    _disk.WriteAsync(source());
+                    _disk.WriteLogDisk(source());
                 }
                 catch
                 {
@@ -388,7 +387,7 @@ namespace Internal.LiteDB.Engine
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
+            this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 

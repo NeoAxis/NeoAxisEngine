@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Security.Cryptography;
 using System.IO;
@@ -59,7 +59,7 @@ namespace Internal.LiteDB
                 crypto.Write(encryptedValue, offset, count == -1 ? encryptedValue.Length : count);
                 crypto.FlushFinalBlock();
                 stream.Position = 0;
-                var decryptedBytes = new Byte[stream.Length];
+                var decryptedBytes = new byte[stream.Length];
                 stream.Read(decryptedBytes, 0, decryptedBytes.Length);
 
                 return decryptedBytes;

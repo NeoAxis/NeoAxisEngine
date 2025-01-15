@@ -334,4 +334,21 @@ void meshopt_optimizeOverdraw(unsigned int* destination, const unsigned int* ind
 	assert(offset == index_count);
 }
 
+#else
+
+#include "NeoAxisCoreNative.h"
+#define MESHOPTIMIZER_API EXPORT
+
+#include <assert.h>
+#include <math.h>
+#include <string.h>
+
+namespace meshopt
+{
+	MESHOPTIMIZER_API void meshopt_optimizeOverdraw(unsigned int* destination, const unsigned int* indices, size_t index_count, const float* vertex_positions, size_t vertex_count, size_t vertex_positions_stride, float threshold)
+	{
+		Fatal("impl meshopt_optimizeOverdraw");
+	}
+}
+
 #endif

@@ -141,7 +141,7 @@ EXPORT Instance* ShaderC_New(ShaderType shaderType, ShaderModel shaderModel, wch
 	case ShaderType_Vertex:instance->options.shaderType = 'v'; break;
 	case ShaderType_Fragment:instance->options.shaderType = 'f'; break;
 	case ShaderType_Compute:instance->options.shaderType = 'c'; break;
-	default: ::Fatal("ShaderC_New: impl."); break;
+	default: ::Fatal2("ShaderC_New: impl."); break;
 	}
 
 	//!!!!unicode
@@ -150,6 +150,8 @@ EXPORT Instance* ShaderC_New(ShaderType shaderType, ShaderModel shaderModel, wch
 
 #ifdef ANDROID
 	instance->options.platform = "android";
+#elif __EMSCRIPTEN__
+	instance->options.platform = "asm.js";
 #else
 	instance->options.platform = "windows";
 #endif
@@ -170,7 +172,7 @@ EXPORT Instance* ShaderC_New(ShaderType shaderType, ShaderModel shaderModel, wch
 		//case ShaderType_Fragment:instance->options.profile = "ps_5_0"; break;
 		//case ShaderType_Compute:instance->options.profile = "cs_5_0"; break;
 
-		default: ::Fatal("ShaderC_New: impl."); break;
+		default: ::Fatal2("ShaderC_New: impl."); break;
 		}
 		break;
 
@@ -183,7 +185,7 @@ EXPORT Instance* ShaderC_New(ShaderType shaderType, ShaderModel shaderModel, wch
 		case ShaderType_Vertex:instance->options.profile = "vs_6_0"; break;
 		case ShaderType_Fragment:instance->options.profile = "ps_6_0"; break;
 		case ShaderType_Compute:instance->options.profile = "cs_6_0"; break;
-		default: ::Fatal("ShaderC_New: impl."); break;
+		default: ::Fatal2("ShaderC_New: impl."); break;
 		}
 		break;
 
@@ -198,7 +200,7 @@ EXPORT Instance* ShaderC_New(ShaderType shaderType, ShaderModel shaderModel, wch
 		//case ShaderType_Fragment:instance->options.profile = "310"; break;
 		//case ShaderType_Compute:instance->options.profile = "310"; break;
 
-		default: ::Fatal("ShaderC_New: impl."); break;
+		default: ::Fatal2("ShaderC_New: impl."); break;
 		}
 		break;
 
@@ -213,12 +215,12 @@ EXPORT Instance* ShaderC_New(ShaderType shaderType, ShaderModel shaderModel, wch
 		case ShaderType_Fragment:instance->options.profile = "spirv"; break;
 		case ShaderType_Compute:instance->options.profile = "spirv"; break;
 
-		default: ::Fatal("ShaderC_New: impl."); break;
+		default: ::Fatal2("ShaderC_New: impl."); break;
 		}
 		break;
 
 	default:
-		::Fatal("ShaderC_New: Shader model is not implemented.");
+		::Fatal2("ShaderC_New: Shader model is not implemented.");
 		break;
 	}
 
@@ -414,7 +416,7 @@ EXPORT bool ShaderC_Compile(Instance* instance)
 
 EXPORT wchar16* ShaderC_GetError(Instance* instance)
 {
-	return CreateOutString(instance->error);
+	return CreateOutString2(instance->error);
 }
 
 EXPORT void ShaderC_GetResult(Instance* instance, void** data, int* size)

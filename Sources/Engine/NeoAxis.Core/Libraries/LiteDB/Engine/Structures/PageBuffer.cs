@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -78,6 +78,16 @@ namespace Internal.LiteDB.Engine
             var pageType = this[4];
 
             return $"ID: {this.UniqueID} - Position: {p}/{this.Origin} - Shared: {s} - ({base.ToString()}) :: Content: [{pageID.ToString("0:0000")}/{(PageType)pageType}]";
+        }
+
+        public unsafe bool IsBlank()
+        {
+            fixed (byte* arrayPtr = this.Array)
+            {
+                ulong* ptr = (ulong*)(arrayPtr + this.Offset);
+
+                return *ptr == 0UL && *(ptr + 1) == 0UL;
+            }
         }
     }
 }

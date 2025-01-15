@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -103,8 +103,8 @@ namespace Internal.LiteDB.Engine
         /// Get how many bytes are used in footer page at this moment
         /// ((HighestIndex + 1) * 4 bytes per slot: [2 for position, 2 for length])
         /// </summary>
-        public int FooterSize => 
-            (this.HighestIndex == byte.MaxValue ? 
+        public int FooterSize =>
+            (this.HighestIndex == byte.MaxValue ?
             0 :  // no items in page
             ((this.HighestIndex + 1) * SLOT_SIZE)); // 4 bytes PER item (2 to position + 2 to length) - need consider HighestIndex used
 
@@ -283,8 +283,8 @@ namespace Internal.LiteDB.Engine
             var position = _buffer.ReadUInt16(positionAddr);
             var length = _buffer.ReadUInt16(lengthAddr);
 
-            ENSURE(this.IsValidPos(position), "invalid segment position");
-            ENSURE(this.IsValidLen(length), "invalid segment length");
+            ENSURE(this.IsValidPos(position), "invalid segment position in index footer: {0}/{1}", this, index);
+            ENSURE(this.IsValidLen(length), "invalid segment length in index footer: {0}/{1}", this, index);
 
             // return buffer slice with content only data
             return _buffer.Slice(position, length);
@@ -321,9 +321,9 @@ namespace Internal.LiteDB.Engine
             // calculate how many continuous bytes are avaiable in this page
             var continuousBlocks = this.FreeBytes - this.FragmentedBytes - (isNewInsert ? SLOT_SIZE : 0);
 
-            ENSURE(continuousBlocks == PAGE_SIZE - this.NextFreePosition - this.FooterSize - (isNewInsert ? SLOT_SIZE : 0), "continuosBlock must be same as from NextFreePosition");
+            ENSURE(continuousBlocks == PAGE_SIZE - this.NextFreePosition - this.FooterSize - (isNewInsert ? SLOT_SIZE : 0), "continuousBlock must be same as from NextFreePosition");
 
-            // if continuous blocks are not big enough for this data, must run page defrag
+            // if continuous blocks are not enough for this data, must run page defrag
             if (bytesLength > continuousBlocks)
             {
                 this.Defrag();
@@ -409,7 +409,7 @@ namespace Internal.LiteDB.Engine
                 this.NextFreePosition = position;
             }
             else
-            { 
+            {
                 // if segment is in middle of the page, add this blocks as fragment block
                 this.FragmentedBytes += length;
             }
@@ -476,7 +476,7 @@ namespace Internal.LiteDB.Engine
 
                 if (isLastSegment)
                 {
-                    // if is at end of page, must get back unused blocks 
+                    // if is at end of page, must get back unused blocks
                     this.NextFreePosition -= diff;
                 }
                 else
@@ -618,7 +618,7 @@ namespace Internal.LiteDB.Engine
                 var positionAddr = CalcPositionAddr(index);
                 var position = _buffer.ReadUInt16(positionAddr);
 
-                // if position = 0 means this slot are not used
+                // if position = 0 means this slot is not used
                 if (position == 0)
                 {
                     _startIndex = (byte)(index + 1);
@@ -638,7 +638,7 @@ namespace Internal.LiteDB.Engine
             // check for empty before loop
             if (this.ItemsCount == 0) yield break;
 
-            ENSURE(this.HighestIndex != byte.MaxValue, "if has items count Heighest index should be not emtpy");
+            ENSURE(this.HighestIndex != byte.MaxValue, "if has items count, Highest index should be not empty");
 
             // [safe for byte loop] - because this.HighestIndex can't be 255
             for (byte index = 0; index <= this.HighestIndex; index++)

@@ -119,6 +119,12 @@ namespace NeoAxis
 				else
 					return null;
 			}
+			set
+			{
+				var pages = GetAllPages();
+				var index = pages.IndexOf( value );
+				SelectedIndex = index;
+			}
 		}
 
 		/////////////////////////////////////////

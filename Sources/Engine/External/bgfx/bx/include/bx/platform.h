@@ -42,6 +42,7 @@
 #endif // BX_CRT_NONE
 
 // Language standard version
+#define BX_LANGUAGE_CPP14 0
 #define BX_LANGUAGE_CPP17 201703L
 #define BX_LANGUAGE_CPP20 202002L
 #define BX_LANGUAGE_CPP23 202207L

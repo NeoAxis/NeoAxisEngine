@@ -84,11 +84,13 @@
     <OutDir>$(SolutionDir)_build\Linux\$(Platform)\$(MSBuildProjectName)\</OutDir>
     <IntDir>$(SolutionDir)_build\Linux\$(Platform)\$(MSBuildProjectName)\</IntDir>
     <TargetName>libNeoAxisCoreNative</TargetName>
+    <MultiProcNumber>4</MultiProcNumber>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)_build\Linux\$(Platform)\$(MSBuildProjectName)\</OutDir>
     <IntDir>$(SolutionDir)_build\Linux\$(Platform)\$(MSBuildProjectName)\</IntDir>
     <TargetName>libNeoAxisCoreNative</TargetName>
+    <MultiProcNumber>4</MultiProcNumber>
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="..\External\OggVorbisTheora\libogg\src\bitwise.c" />
@@ -2326,6 +2328,7 @@
       <AdditionalIncludeDirectories>%(ClCompile.AdditionalIncludeDirectories);..\include;..\..\PlugIns\ParticleFX\include;..\..\..\FreeImage\Source;..\..\..\FreeType\include;..\..\..\Stlport\stlport;..\..\..\NvidiaTextureTools\src;..\..\..\NvidiaTextureTools\project\vc8;..\..\RenderSystems\NULL\include;..\..\OgreNativeWrapper\src;..\External\OggVorbisTheora\libogg\include;..\External\OggVorbisTheora\libvorbis\include;..\External\OggVorbisTheora\libvorbis\lib;..\External\OggVorbisTheora\libtheora\include;MemoryManager;..\External\FreeImage\Source;NativeWrapper;ImageLibrary;..\External\FreeType\include;NeoAxis;MaskedOcclusionCulling;./;..\External\FreeImage\Source\FreeImageToolkit;..\External\FreeImage\Source\LibJPEG;include;..\External\FreeImage\Source\LibOpenJPEG;..\External\FreeImage\Source\LibPNG;..\External\FreeImage\Source\LibRawLite;..\External\FreeImage\Source\LibRawLite\dcraw;..\External\FreeImage\Source\LibRawLite\internal;..\External\FreeImage\Source\LibRawLite\libraw;..\External\FreeImage\Source\LibRawLite\src;..\External\FreeImage\Source\LibTIFF;..\External\FreeImage\Source\LibWebP;..\External\FreeImage\Source\OpenEXR;..\External\FreeImage\Source\OpenEXR\Half;..\External\FreeImage\Source\OpenEXR\Iex;..\External\FreeImage\Source\OpenEXR\IexMath;..\External\FreeImage\Source\OpenEXR\IlmImf;..\External\FreeImage\Source\OpenEXR\IlmThread;..\External\FreeImage\Source\OpenEXR\Imath;..\External\FreeImage\Source\ZLib;..\External\OpenALSoft;..\External\OpenALSoft\include;..\External\OpenALSoft\build;..\External\OpenALSoft\alc;..\External\OpenALSoft\common;..\External\OpenALSoft\al;..\External\SDL\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;LINUX;__LINUX__;DEBUG;_MT;FREEIMAGE_LIB;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;OGRE_GCC_VISIBILITY;PLATFORM_LINUX;PNG_ARM_NEON_OPT=0;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;JPH_DOU___________BLE_PRECISION;JPH_DEBUG_RENDERER;JPH_FLOA_______disabled_______TING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;HAVE_ALLOCA_H;USE_MEMORY_H;FT2_BUILD_LIBRARY;OPJ_STATIC;LIBRAW_NODLL;LIBRAW_LIBRARY_BUILD;USE_JPIP;DISABLE_PERF_MEASUREMENT;_HAS_AUTO_PTR_ETC=1;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;_LARGEFILE_SOURCE;_LARGE_FILES;OpenAL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CppLanguageStandard>c++17</CppLanguageStandard>
+      <Optimization>MaxSpeed</Optimization>
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
@@ -2341,6 +2344,7 @@
       <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;LINUX;__LINUX__;NDEBUG;_MT;FREEIMAGE_LIB;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;OGRE_GCC_VISIBILITY;PLATFORM_LINUX;PNG_ARM_NEON_OPT=0;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;JPH_DOU___________BLE_PRECISION;JPH_DEBUG_RENDERER;JPH_FLOA_______disabled_______TING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;HAVE_ALLOCA_H;USE_MEMORY_H;FT2_BUILD_LIBRARY;OPJ_STATIC;LIBRAW_NODLL;LIBRAW_LIBRARY_BUILD;USE_JPIP;DISABLE_PERF_MEASUREMENT;_HAS_AUTO_PTR_ETC=1;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;_LARGEFILE_SOURCE;_LARGE_FILES;OpenAL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CppLanguageStandard>c++17</CppLanguageStandard>
       <Optimization>MaxSpeed</Optimization>
+      <OmitFramePointers>true</OmitFramePointers>
     </ClCompile>
     <PostBuildEvent>
       <Command>copy "$(SolutionDir)_build\Linux\$(Platform)\libNeoAxisCoreNative.Linux\libNeoAxisCoreNative.so" "$(SolutionDir)Project\Binaries\NeoAxis.Internal\Platforms\Linux\$(Platform)\libNeoAxisCoreNative.so"</Command>

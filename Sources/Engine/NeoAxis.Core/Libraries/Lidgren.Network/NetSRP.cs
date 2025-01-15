@@ -1,4 +1,4 @@
-﻿//#if !UWP
+﻿//#if !UWP && LIDGREN
 //#define USE_SHA256
 
 //using System;

@@ -1,4 +1,4 @@
-﻿#if !UWP
+﻿#if !UWP && LIDGREN
 #if !__ANDROID__ && !__CONSTRAINED__ && !WINDOWS_RUNTIME
 using System;
 using System.Collections.Generic;

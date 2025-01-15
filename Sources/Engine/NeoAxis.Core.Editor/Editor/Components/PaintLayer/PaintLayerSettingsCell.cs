@@ -98,7 +98,7 @@ namespace NeoAxis.Editor
 			if( paintLayer == null )
 				return;
 
-			if( !EditorUtility2.ShowOpenFileDialog( false, "", null, out string fileName ) )
+			if( !EditorUtility2.ShowOpenFileDialog( false, "", null, EditorForm.Instance.Handle, out string fileName ) )
 				return;
 			//if( !EditorUtility.ShowOpenFileDialog( false, "", new[] { ("PNG files (*.png)", "*.png") }, out string fileName ) )
 			//	return;
@@ -123,7 +123,7 @@ namespace NeoAxis.Editor
 			if( paintLayer == null || paintLayer.Mask.Value == null )
 				return;
 
-			if( !EditorUtility2.ShowSaveFileDialog( "", "Mask.png", "PNG files (*.png)|*.png", out var fileName ) )
+			if( !EditorUtility2.ShowSaveFileDialog( "", "Mask.png", "PNG files (*.png)|*.png", EditorForm.Instance.Handle, out var fileName ) )
 				return;
 
 			if( !paintLayer.SaveMask( fileName, out var error ) )

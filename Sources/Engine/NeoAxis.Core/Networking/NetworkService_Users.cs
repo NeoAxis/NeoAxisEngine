@@ -7,10 +7,10 @@ using NeoAxis.Networking;
 
 namespace NeoAxis
 {
-	public class ServerNetworkService_Users : ServerNetworkService
+	public class ServerNetworkService_Users : ServerService
 	{
 		Dictionary<long, UserInfo> usersByID = new Dictionary<long, UserInfo>();
-		Dictionary<NetworkNode.ConnectedNode, UserInfo> usersByConnectedNode = new Dictionary<NetworkNode.ConnectedNode, UserInfo>();
+		Dictionary<ServerNode.Client, UserInfo> usersByClient = new Dictionary<ServerNode.Client, UserInfo>();
 		//UserInfo serverUser;
 
 		long botIDCounter = 10000000001L;
@@ -22,18 +22,18 @@ namespace NeoAxis
 		{
 			//long userID;
 			//string username;
-			NetworkNode.ConnectedNode connectedNode;
+			ServerNode.Client client;
 
 			long botUserID;
 			string botUsername = "";
 
 			//
 
-			internal UserInfo( /*long userID, string username, */NetworkNode.ConnectedNode connectedNode )
+			internal UserInfo( /*long userID, string username, */ServerNode.Client client )
 			{
 				//this.userID = userID;
 				//this.username = username;
-				this.connectedNode = connectedNode;
+				this.client = client;
 			}
 
 			internal UserInfo( long botUserID, string botUsername )
@@ -44,26 +44,26 @@ namespace NeoAxis
 
 			public long UserID
 			{
-				get { return connectedNode != null ? connectedNode.LoginDataUserID : botUserID; }
+				get { return client != null ? client.LoginDataUserID : botUserID; }
 			}
 
 			public string Username
 			{
-				get { return connectedNode != null ? connectedNode.LoginDataUsername : botUsername; }
+				get { return client != null ? client.LoginDataUsername : botUsername; }
 			}
 
-			public NetworkNode.ConnectedNode ConnectedNode
+			public ServerNode.Client Client
 			{
-				get { return connectedNode; }
+				get { return client; }
 			}
 
 			public override string ToString()
 			{
 				string address;
-				if( connectedNode != null )
+				if( client != null )
 				{
-					if( connectedNode.RemoteEndPoint != null )
-						address = connectedNode.RemoteEndPoint.ToString();
+					if( client.RemoteEndPoint != null )
+						address = client.RemoteEndPoint.ToString();
 					else
 						address = "Unknown address";
 				}
@@ -88,7 +88,7 @@ namespace NeoAxis
 
 			public bool Bot
 			{
-				get { return connectedNode == null; }
+				get { return client == null; }
 			}
 
 			//custom data
@@ -147,9 +147,9 @@ namespace NeoAxis
 		//	get { return serverUser; }
 		//}
 
-		public UserInfo GetUser( NetworkNode.ConnectedNode connectedNode )
+		public UserInfo GetUser( ServerNode.Client client )
 		{
-			if( usersByConnectedNode.TryGetValue( connectedNode, out var user ) )
+			if( usersByClient.TryGetValue( client, out var user ) )
 				return user;
 			return null;
 		}
@@ -162,16 +162,16 @@ namespace NeoAxis
 		//	return identifier;
 		//}
 
-		public UserInfo AddUser( NetworkNode.ConnectedNode connectedNode )
+		public UserInfo AddUser( ServerNode.Client client )
 		//UserInfo CreateUser( string name, NetworkNode.ConnectedNode connectedNode )
 		{
 			//uint identifier = GetFreeUserIdentifier();
 
-			var newUser = new UserInfo( /*identifier, name, */connectedNode );
+			var newUser = new UserInfo( /*identifier, name, */client );
 
 			usersByID.Add( newUser.UserID, newUser );
-			if( newUser.ConnectedNode != null )
-				usersByConnectedNode.Add( newUser.ConnectedNode, newUser );
+			if( newUser.Client != null )
+				usersByClient.Add( newUser.Client, newUser );
 
 			{
 				var messageType = GetMessageType( "AddUserToClient" );
@@ -181,11 +181,11 @@ namespace NeoAxis
 				//send event about new user to the all users
 				foreach( var user in Users )
 				{
-					if( user.ConnectedNode != null )
+					if( user.Client != null )
 					{
 						bool thisUserFlag = user == newUser;
 
-						var writer = BeginMessage( user.ConnectedNode, messageType );
+						var writer = BeginMessage( user.Client, messageType );
 						writer.Write( newUser.UserID );//writer.WriteVariableUInt64( (ulong)newUser.UserID );
 						writer.Write( newUser.Username );
 						writer.Write( newUser.Bot );
@@ -200,7 +200,7 @@ namespace NeoAxis
 
 				//!!!!необязательно всем
 
-				if( newUser.ConnectedNode != null )
+				if( newUser.Client != null )
 				{
 					//send list of users to new user
 					foreach( var user in Users )
@@ -208,7 +208,7 @@ namespace NeoAxis
 						if( user == newUser )
 							continue;
 
-						var writer = BeginMessage( newUser.ConnectedNode, messageType );
+						var writer = BeginMessage( newUser.Client, messageType );
 						writer.Write( user.UserID );//writer.WriteVariableUInt64( (ulong)user.UserID );
 						writer.Write( user.Username );
 						writer.Write( user.Bot );
@@ -252,11 +252,11 @@ namespace NeoAxis
 				//send event about new user to the all users
 				foreach( var user in Users )
 				{
-					if( user.ConnectedNode != null )
+					if( user.Client != null )
 					{
 						bool thisUserFlag = user == newUser;
 
-						var writer = BeginMessage( user.ConnectedNode, messageType );
+						var writer = BeginMessage( user.Client, messageType );
 						writer.Write( newUser.UserID );//writer.WriteVariableUInt64( (ulong)newUser.UserID );
 						writer.Write( newUser.Username );
 						writer.Write( newUser.Bot );
@@ -297,8 +297,8 @@ namespace NeoAxis
 
 			//remove user
 			usersByID.Remove( user.UserID );
-			if( user.ConnectedNode != null )
-				usersByConnectedNode.Remove( user.ConnectedNode );
+			if( user.Client != null )
+				usersByClient.Remove( user.Client );
 			//if( serverUser == user )
 			//	serverUser = null;
 
@@ -311,9 +311,9 @@ namespace NeoAxis
 
 				foreach( var toUser in Users )
 				{
-					if( toUser.ConnectedNode != null )
+					if( toUser.Client != null )
 					{
-						var writer = BeginMessage( toUser.ConnectedNode, messageType );
+						var writer = BeginMessage( toUser.Client, messageType );
 						writer.Write( user.UserID );//writer.WriteVariableUInt64( (ulong)user.UserID );
 						EndMessage();
 					}
@@ -345,9 +345,9 @@ namespace NeoAxis
 
 				foreach( var toUser in Users )
 				{
-					if( toUser.ConnectedNode != null )
+					if( toUser.Client != null )
 					{
-						var writer = BeginMessage( toUser.ConnectedNode, messageType );
+						var writer = BeginMessage( toUser.Client, messageType );
 						writer.Write( user.UserID );
 						writer.Write( referenceToObjectControlledByPlayer );
 						EndMessage();
@@ -385,7 +385,7 @@ namespace NeoAxis
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public class ClientNetworkService_Users : ClientNetworkService
+	public class ClientNetworkService_Users : ClientService
 	{
 		//!!!!не все могут быть. только те которые сервер дал
 		//key: user identifier
@@ -483,7 +483,7 @@ namespace NeoAxis
 			return null;
 		}
 
-		bool ReceiveMessage_AddUserToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_AddUserToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			//get data from message
 			var userID = reader.ReadInt64();//long userID = (long)reader.ReadVariableUInt64();
@@ -503,7 +503,7 @@ namespace NeoAxis
 			return true;
 		}
 
-		bool ReceiveMessage_RemoveUserToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_RemoveUserToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			//get data from message
 			var userID = reader.ReadInt64();//long userID = (long)reader.ReadVariableUInt64();
@@ -562,7 +562,7 @@ namespace NeoAxis
 			get { return thisUser; }
 		}
 
-		bool ReceiveMessage_UpdateObjectControlledByPlayerToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_UpdateObjectControlledByPlayerToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			//get data from message
 			var userID = reader.ReadInt64();

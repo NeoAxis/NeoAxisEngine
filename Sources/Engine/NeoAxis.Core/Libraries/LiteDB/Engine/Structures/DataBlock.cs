@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using static Internal.LiteDB.Constants;
 
@@ -9,7 +9,7 @@ namespace Internal.LiteDB.Engine
         /// <summary>
         /// Get fixed part of DataBlock (6 bytes)
         /// </summary>
-        public const int DATA_BLOCK_FIXED_SIZE = 1 + // DataIndex
+        public const int DATA_BLOCK_FIXED_SIZE = 1 + // Extend
                                                  PageAddress.SIZE; // NextBlock
 
         public const int P_EXTEND = 0; // 00-00 [byte]

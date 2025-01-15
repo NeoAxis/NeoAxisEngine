@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System.Runtime.CompilerServices;
 using static Internal.LiteDB.Constants;
 
@@ -8,7 +8,7 @@ namespace Internal.LiteDB
     {
         public const int BucketCount = 17;
 
-        private static int[] _bucketSize;
+        private static readonly int[] _bucketSize;
 
         static BucketHelper()
         {

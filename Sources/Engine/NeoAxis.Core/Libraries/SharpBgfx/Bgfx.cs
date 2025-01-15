@@ -89,37 +89,37 @@ namespace Internal.SharpBgfx
         //    return result;
         //}
 
-        /// <summary>
-        /// Swizzles an RGBA8 image to BGRA8.
-        /// </summary>
-        /// <param name="destination">The destination image data.</param>
-        /// <param name="width">The width of the image.</param>
-        /// <param name="height">The height of the image.</param>
-        /// <param name="pitch">The pitch of the image (in bytes).</param>
-        /// <param name="source">The source image data.</param>
-        /// <remarks>
-        /// This method can operate in-place on the image (i.e. src == dst).
-        /// </remarks>
-        public static void ImageSwizzleBgra8( IntPtr destination, int width, int height, int pitch, IntPtr source )
-        {
-            NativeMethods.bgfx_image_swizzle_bgra8( destination, width, height, pitch, source );
-        }
+        ///// <summary>
+        ///// Swizzles an RGBA8 image to BGRA8.
+        ///// </summary>
+        ///// <param name="destination">The destination image data.</param>
+        ///// <param name="width">The width of the image.</param>
+        ///// <param name="height">The height of the image.</param>
+        ///// <param name="pitch">The pitch of the image (in bytes).</param>
+        ///// <param name="source">The source image data.</param>
+        ///// <remarks>
+        ///// This method can operate in-place on the image (i.e. src == dst).
+        ///// </remarks>
+        //public static void ImageSwizzleBgra8( IntPtr destination, int width, int height, int pitch, IntPtr source )
+        //{
+        //    NativeMethods.bgfx_image_swizzle_bgra8( destination, width, height, pitch, source );
+        //}
 
-        /// <summary>
-        /// Downsamples an RGBA8 image with a 2x2 pixel average filter.
-        /// </summary>
-        /// <param name="destination">The destination image data.</param>
-        /// <param name="width">The width of the image.</param>
-        /// <param name="height">The height of the image.</param>
-        /// <param name="pitch">The pitch of the image (in bytes).</param>
-        /// <param name="source">The source image data.</param>
-        /// <remarks>
-        /// This method can operate in-place on the image (i.e. src == dst).
-        /// </remarks>
-        public static void ImageRgba8Downsample2x2( IntPtr destination, int width, int height, int pitch, IntPtr source )
-        {
-            NativeMethods.bgfx_image_rgba8_downsample_2x2( destination, width, height, pitch, source );
-        }
+        ///// <summary>
+        ///// Downsamples an RGBA8 image with a 2x2 pixel average filter.
+        ///// </summary>
+        ///// <param name="destination">The destination image data.</param>
+        ///// <param name="width">The width of the image.</param>
+        ///// <param name="height">The height of the image.</param>
+        ///// <param name="pitch">The pitch of the image (in bytes).</param>
+        ///// <param name="source">The source image data.</param>
+        ///// <remarks>
+        ///// This method can operate in-place on the image (i.e. src == dst).
+        ///// </remarks>
+        //public static void ImageRgba8Downsample2x2( IntPtr destination, int width, int height, int pitch, IntPtr source )
+        //{
+        //    NativeMethods.bgfx_image_rgba8_downsample_2x2( destination, width, height, pitch, source );
+        //}
 
         /// <summary>
         /// Sets platform-specific data pointers to hook into low-level library functionality.
@@ -420,7 +420,7 @@ namespace Internal.SharpBgfx
         /// <param name="ratio">The ratio with which to automatically size the viewport.</param>
         public static void SetViewRect( ushort id, int x, int y, BackbufferRatio ratio )
         {
-            NativeMethods.bgfx_set_view_rect_auto( id, (ushort)x, (ushort)y, ratio );
+            NativeMethods.bgfx_set_view_rect_ratio( id, (ushort)x, (ushort)y, ratio );
         }
 
         /// <summary>
@@ -867,7 +867,7 @@ namespace Internal.SharpBgfx
    		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void SetComputeImage( byte stage, Texture texture, byte mip, ComputeBufferAccess access, TextureFormat format = TextureFormat.Unknown )
         {
-            NativeMethods.bgfx_set_image( stage, texture.handle, mip, format, access );
+			NativeMethods.bgfx_set_image( stage, texture.handle, mip, access, format );
         }
 
         /// <summary>
@@ -934,11 +934,10 @@ namespace Internal.SharpBgfx
         /// Marks a view as "touched", ensuring that its background is cleared even if nothing is rendered.
         /// </summary>
         /// <param name="id">The index of the view to touch.</param>
-        /// <returns>The number of draw calls.</returns>
         [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-        public static int Touch( ushort id )
+        public static void Touch( ushort id )
         {
-            return NativeMethods.bgfx_touch( id );
+            NativeMethods.bgfx_touch( id );
         }
 
         /// <summary>
@@ -959,11 +958,10 @@ namespace Internal.SharpBgfx
         /// <param name="program">The program with which to render.</param>
         /// <param name="depth">A depth value to use for sorting the batch.</param>
         /// <param name="flags">Which states to discard for next draw.</param>
-        /// <returns>The number of draw calls.</returns>
         [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-        public static int Submit( ushort id, Program program, int depth, DiscardFlags flags )
+        public static void Submit( ushort id, Program program, int depth, DiscardFlags flags )
         {
-            return NativeMethods.bgfx_submit( id, program.handle, depth, flags );
+            NativeMethods.bgfx_submit( id, program.handle, depth, flags );
         }
         ///// <summary>
         ///// Submits the current batch of primitives for rendering.
@@ -986,11 +984,10 @@ namespace Internal.SharpBgfx
         /// <param name="query">An occlusion query to use as a predicate during rendering.</param>
         /// <param name="depth">A depth value to use for sorting the batch.</param>
         /// <param name="flags">Which states to discard for next draw.</param>
-        /// <returns>The number of draw calls.</returns>
         [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-        public static int Submit( ushort id, Program program, OcclusionQuery query, int depth, DiscardFlags flags )
+        public static void Submit( ushort id, Program program, OcclusionQuery query, int depth, DiscardFlags flags )
         {
-            return NativeMethods.bgfx_submit_occlusion_query( id, program.handle, query.handle, depth, flags );
+            NativeMethods.bgfx_submit_occlusion_query( id, program.handle, query.handle, depth, flags );
         }
         ///// <summary>
         ///// Submits the current batch of primitives for rendering.
@@ -1016,11 +1013,10 @@ namespace Internal.SharpBgfx
         /// <param name="count">The number of commands to process from the buffer.</param>
         /// <param name="depth">A depth value to use for sorting the batch.</param>
         /// <param name="flags">Which states to discard for next draw.</param>
-        /// <returns>The number of draw calls.</returns>
         [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-        public static int Submit( ushort id, Program program, IndirectBuffer indirectBuffer, int startIndex, int count, int depth, DiscardFlags flags )
+        public static void Submit( ushort id, Program program, IndirectBuffer indirectBuffer, int startIndex, int count, int depth, DiscardFlags flags )
         {
-            return NativeMethods.bgfx_submit_indirect( id, program.handle, indirectBuffer.handle, (ushort)startIndex, (ushort)count, depth, flags );
+            NativeMethods.bgfx_submit_indirect( id, program.handle, indirectBuffer.handle, (ushort)startIndex, (ushort)count, depth, flags );
         }
         ///// <summary>
         ///// Submits an indirect batch of drawing commands to be used for rendering.
@@ -1168,14 +1164,18 @@ namespace Internal.SharpBgfx
             NativeMethods.bgfx_set_stencil( (uint)frontFace, (uint)backFace );
         }
 
-        /// <summary>
-        /// Begins submission of commands via an encoder on this thread.
-        /// </summary>
-        /// <returns>An encoder instance that can be used to submit commands.</returns>
-        public static Encoder Begin()
-        {
-            return new Encoder( NativeMethods.bgfx_begin() );
-        }
+//        /// <summary>
+//        /// Begins submission of commands via an encoder on this thread.
+//        /// </summary>
+//        /// <returns>An encoder instance that can be used to submit commands.</returns>
+//        public static Encoder Begin()
+//        {
+//#if WEB
+//            return default;
+//#else
+//            return new Encoder( NativeMethods.bgfx_begin() );
+//#endif
+//        }
 
         class DefaultCallbackHandler : ICallbackHandler
         {
@@ -1268,7 +1268,7 @@ namespace Internal.SharpBgfx
             fixed( byte* p = buffer )
             {
                 if( !NativeMethods.bgfx_get_last_warning( /*1025,*/ p ) )
-                    return "";                
+                    return "";
             }
             int length;
             for( length = 0; length < 1025; length++ )

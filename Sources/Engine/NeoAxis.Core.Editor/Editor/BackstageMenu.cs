@@ -345,7 +345,7 @@ namespace NeoAxis.Editor
 				break;
 			}
 
-			if( EditorUtility2.ShowOpenFileDialog( true, path, null, out string fileName ) )
+			if( EditorUtility2.ShowOpenFileDialog( true, path, null, EditorForm.Instance.Handle, out string fileName ) )
 				kryptonTextBoxNewFolder.Text = fileName;
 		}
 
@@ -585,7 +585,7 @@ namespace NeoAxis.Editor
 
 		private void kryptonButtonPackageBrowse_Click( object sender, EventArgs e )
 		{
-			if( EditorUtility2.ShowOpenFileDialog( true, kryptonTextBoxPackageDestinationFolder.Text, null, out string fileName ) )
+			if( EditorUtility2.ShowOpenFileDialog( true, kryptonTextBoxPackageDestinationFolder.Text, null, EditorForm.Instance.Handle, out string fileName ) )
 				kryptonTextBoxPackageDestinationFolder.Text = fileName;
 		}
 

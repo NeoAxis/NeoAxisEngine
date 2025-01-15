@@ -21,7 +21,7 @@ public:
 
 	CRTMemoryManager()
 	{
-#if defined(PLATFORM_ANDROID) || defined(PLATFORM_IOS) || defined(PLATFORM_LINUX)
+#if defined(PLATFORM_ANDROID) || defined(PLATFORM_IOS) || defined(PLATFORM_LINUX) || defined(PLATFORM_WEB)
 		int size = 8;
 		int align = 16;
 		int newSize = size + align + sizeof(void*);

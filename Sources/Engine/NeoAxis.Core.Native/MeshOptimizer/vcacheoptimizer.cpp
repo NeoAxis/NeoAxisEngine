@@ -474,4 +474,20 @@ void meshopt_optimizeVertexCacheFifo(unsigned int* destination, const unsigned i
 	assert(output_triangle == face_count);
 }
 
+#else
+
+#include "NeoAxisCoreNative.h"
+#define MESHOPTIMIZER_API EXPORT
+
+#include <assert.h>
+#include <string.h>
+
+namespace meshopt
+{
+	MESHOPTIMIZER_API void meshopt_optimizeVertexCache(unsigned int* destination, const unsigned int* indices, size_t index_count, size_t vertex_count)
+	{
+		Fatal("impl meshopt_optimizeVertexCache");
+	}
+}
+
 #endif

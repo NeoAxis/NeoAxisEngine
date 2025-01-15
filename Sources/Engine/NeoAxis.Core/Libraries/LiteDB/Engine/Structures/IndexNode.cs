@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,14 +20,16 @@ namespace Internal.LiteDB.Engine
                                                   PageAddress.SIZE; // NextNode (5 bytes)
 
         private const int P_SLOT = 0; // 00-00 [byte]
-        private const int P_LEVEL = 1; // 01-01 [byte]
+        private const int P_LEVELS = 1; // 01-01 [byte]
         private const int P_DATA_BLOCK = 2; // 02-06 [PageAddress]
         private const int P_NEXT_NODE = 7; // 07-11 [PageAddress]
         private const int P_PREV_NEXT = 12; // 12-(_level * 5 [PageAddress] * 2 [prev-next])
-        private int P_KEY => P_PREV_NEXT + (this.Level * PageAddress.SIZE * 2); // just after NEXT
+        private int P_KEY => P_PREV_NEXT + (this.Levels * PageAddress.SIZE * 2); // just after NEXT
 
         private readonly IndexPage _page;
         private readonly BufferSlice _segment;
+
+        private static readonly byte[] arrayByteEmpty = new byte[0];
 
         /// <summary>
         /// Position of this node inside a IndexPage (not persist)
@@ -40,9 +42,9 @@ namespace Internal.LiteDB.Engine
         public byte Slot { get; }
 
         /// <summary>
-        /// Skip-list level (0-31) - [1 byte]
+        /// Skip-list levels (array-size) (1-32) - [1 byte]
         /// </summary>
-        public byte Level { get; }
+        public byte Levels { get; }
 
         /// <summary>
         /// The object value that was indexed (max 255 bytes value)
@@ -109,14 +111,14 @@ namespace Internal.LiteDB.Engine
 
             this.Position = new PageAddress(page.PageID, index);
             this.Slot = segment.ReadByte(P_SLOT);
-            this.Level = segment.ReadByte(P_LEVEL);
+            this.Levels = segment.ReadByte(P_LEVELS);
             this.DataBlock = segment.ReadPageAddress(P_DATA_BLOCK);
             this.NextNode = segment.ReadPageAddress(P_NEXT_NODE);
 
-            this.Next = new PageAddress[this.Level];
-            this.Prev = new PageAddress[this.Level];
+            this.Next = new PageAddress[this.Levels];
+            this.Prev = new PageAddress[this.Levels];
 
-            for (var i = 0; i < this.Level; i++)
+            for (var i = 0; i < this.Levels; i++)
             {
                 this.Prev[i] = segment.ReadPageAddress(P_PREV_NEXT + (i * PageAddress.SIZE * 2));
                 this.Next[i] = segment.ReadPageAddress(P_PREV_NEXT + (i * PageAddress.SIZE * 2) + PageAddress.SIZE);
@@ -128,27 +130,27 @@ namespace Internal.LiteDB.Engine
         /// <summary>
         /// Create new index node and persist into page segment
         /// </summary>
-        public IndexNode(IndexPage page, byte index, BufferSlice segment, byte slot, byte level, BsonValue key, PageAddress dataBlock)
+        public IndexNode(IndexPage page, byte index, BufferSlice segment, byte slot, byte levels, BsonValue key, PageAddress dataBlock)
         {
             _page = page;
             _segment = segment;
 
             this.Position = new PageAddress(page.PageID, index);
             this.Slot = slot;
-            this.Level = level;
+            this.Levels = levels;
             this.DataBlock = dataBlock;
             this.NextNode = PageAddress.Empty;
-            this.Next = new PageAddress[level];
-            this.Prev = new PageAddress[level];
+            this.Next = new PageAddress[levels];
+            this.Prev = new PageAddress[levels];
             this.Key = key;
 
             // persist in buffer read only data
             segment.Write(slot, P_SLOT);
-            segment.Write(level, P_LEVEL);
+            segment.Write(levels, P_LEVELS);
             segment.Write(dataBlock, P_DATA_BLOCK);
             segment.Write(this.NextNode, P_NEXT_NODE);
 
-            for (var i = 0; i < level; i++)
+            for (var i = 0; i < levels; i++)
             {
                 this.SetPrev((byte)i, PageAddress.Empty);
                 this.SetNext((byte)i, PageAddress.Empty);
@@ -165,11 +167,11 @@ namespace Internal.LiteDB.Engine
         public IndexNode(BsonDocument doc)
         {
             _page = null;
-            _segment = new BufferSlice(new byte[0], 0, 0);
+            _segment = new BufferSlice(arrayByteEmpty, 0, 0);
 
             this.Position = new PageAddress(0, 0);
             this.Slot = 0;
-            this.Level = 0;
+            this.Levels = 0;
             this.DataBlock = PageAddress.Empty;
             this.NextNode = PageAddress.Empty;
             this.Next = new PageAddress[0];
@@ -196,7 +198,7 @@ namespace Internal.LiteDB.Engine
         /// </summary>
         public void SetPrev(byte level, PageAddress value)
         {
-            ENSURE(level <= this.Level, "out of index in level");
+            ENSURE(level <= this.Levels, "out of index in level");
 
             this.Prev[level] = value;
 
@@ -210,7 +212,7 @@ namespace Internal.LiteDB.Engine
         /// </summary>
         public void SetNext(byte level, PageAddress value)
         {
-            ENSURE(level <= this.Level, "out of index in level");
+            ENSURE(level <= this.Levels, "out of index in level");
 
             this.Next[level] = value;
 

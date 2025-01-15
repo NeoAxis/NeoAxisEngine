@@ -16,18 +16,23 @@ namespace NeoAxis
 	struct OgreNativeWrapper
 	{
 		[DllImport( OgreWrapper.library, EntryPoint = "OgreNativeWrapper_CheckNativeBridge", CallingConvention = OgreWrapper.convention )]
+#if WEB
+//!!!!
+		[DefaultDllImportSearchPaths( DllImportSearchPath.SafeDirectories )]
+#endif
 		public unsafe static extern void CheckNativeBridge( int parameterTypeTextureCubeValue );
 
 		[DllImport( OgreWrapper.library, EntryPoint = "OgreNativeWrapper_FreeOutString", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
 		public unsafe static extern void FreeOutString( IntPtr pointer );
 
 
-		public static string GetOutString( IntPtr pointer )
+		public static string GetOutString( IntPtr pointer, bool free = true )
 		{
 			if( pointer != IntPtr.Zero )
 			{
 				string result = Marshal.PtrToStringUni( pointer );
-				FreeOutString( pointer );
+				if( free )
+					FreeOutString( pointer );
 				return result;
 			}
 			else

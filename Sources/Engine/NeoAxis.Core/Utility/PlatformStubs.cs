@@ -17,6 +17,7 @@ namespace System.Configuration
 	}
 }
 
+#if !WEB
 namespace System
 {
 	public class UserPreferenceChangedEventArgs
@@ -27,6 +28,7 @@ namespace System
 	{
 	}
 }
+#endif
 
 #if UWP || WEB
 namespace System.Drawing

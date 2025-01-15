@@ -48,11 +48,6 @@ namespace NeoAxis
 		//	Init( data, byteOffset );
 		//}
 
-		//public ArrayDataReader( byte[] data, int bitOffset, int bitLength )
-		//{
-		//	Init( data, bitOffset, bitLength );
-		//}
-
 		//public ArrayDataReader( byte[] data )
 		//{
 		//	Init( data, 0, data.Length );
@@ -69,15 +64,6 @@ namespace NeoAxis
 		//	overflow = false;
 		//}
 
-		//public void Init( byte[] data, int bitOffset, int bitLength )
-		//{
-		//	this.data = data;
-		//	bitPosition = bitOffset;
-		//	startBitPosition = bitPosition;
-		//	endBitPosition = bitPosition + bitLength;
-		//	overflow = false;
-		//}
-
 		public int CurrentPosition
 		{
 			get { return currentPosition; }
@@ -88,21 +74,6 @@ namespace NeoAxis
 			get { return endPosition; }
 		}
 
-		//public int BitPosition
-		//{
-		//	get { return bitPosition; }
-		//}
-
-		//public int StartBitPosition
-		//{
-		//	get { return startBitPosition; }
-		//}
-
-		//public int EndBitPosition
-		//{
-		//	get { return endBitPosition; }
-		//}
-
 		public bool Overflow
 		{
 			get { return overflow; }
@@ -112,6 +83,11 @@ namespace NeoAxis
 		public bool Complete()
 		{
 			return currentPosition == endPosition && !overflow;
+		}
+
+		public void ReadSkip( int length )
+		{
+			currentPosition += length;
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -201,30 +177,7 @@ namespace NeoAxis
 			var value = data[ currentPosition ];
 			currentPosition = newPosition;
 			return value;
-
-			//int newPosition = bitPosition + 8;
-			//if( overflow || newPosition > endBitPosition )
-			//{
-			//	overflow = true;
-			//	return 0;
-			//}
-			//byte value = BitWriter.ReadByte( data, 8, bitPosition );
-			//bitPosition = newPosition;
-			//return value;
 		}
-
-		//public byte ReadByte( int numberOfBits )
-		//{
-		//	int newPosition = bitPosition + numberOfBits;
-		//	if( overflow || newPosition > endBitPosition )
-		//	{
-		//		overflow = true;
-		//		return 0;
-		//	}
-		//	byte value = BitWriter.ReadByte( data, numberOfBits, bitPosition );
-		//	bitPosition = newPosition;
-		//	return value;
-		//}
 
 		//public sbyte ReadSByte()
 		//{
@@ -891,6 +844,24 @@ namespace NeoAxis
 		[MethodImpl( (MethodImplOptions)512 )]
 		public string ReadString()
 		{
+			//int length = ReadVariableInt32();
+			//if( length == -1 )
+			//	return null;
+			//if( length == 0 )
+			//	return string.Empty;
+
+			//int newPosition = currentPosition + length;
+			//if( overflow || newPosition > endPosition )
+			//{
+			//	overflow = true;
+			//	return "";
+			//}
+			//var result = Encoding.UTF8.GetString( data, currentPosition, length );
+			//currentPosition = newPosition;
+
+			//return result;
+
+
 			int length = (int)ReadVariableUInt32();
 			if( length == 0 )
 				return "";
@@ -907,25 +878,46 @@ namespace NeoAxis
 			return result;
 
 
-			//if( overflow || bitPosition + byteLength * 8 > endBitPosition )
-			//{
-			//	overflow = true;
-			//	return "";
-			//}
+			////if( overflow || bitPosition + byteLength * 8 > endBitPosition )
+			////{
+			////	overflow = true;
+			////	return "";
+			////}
 
-			//if( ( bitPosition & 7 ) == 0 )
-			//{
-			//	//read directly
-			//	string result = System.Text.Encoding.UTF8.GetString( data, bitPosition >> 3, byteLength );
-			//	bitPosition += ( byteLength * 8 );
-			//	return result;
-			//}
+			////if( ( bitPosition & 7 ) == 0 )
+			////{
+			////	//read directly
+			////	string result = System.Text.Encoding.UTF8.GetString( data, bitPosition >> 3, byteLength );
+			////	bitPosition += ( byteLength * 8 );
+			////	return result;
+			////}
 
-			//byte[] bytes = new byte[ byteLength ];
-			//ReadBuffer( bytes );
-			//if( overflow )
-			//	return "";
-			//return System.Text.Encoding.UTF8.GetString( bytes, 0, bytes.Length );
+			////byte[] bytes = new byte[ byteLength ];
+			////ReadBuffer( bytes );
+			////if( overflow )
+			////	return "";
+			////return System.Text.Encoding.UTF8.GetString( bytes, 0, bytes.Length );
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		public string ReadStringWithNullSupport()
+		{
+			int length = ReadVariableInt32();
+			if( length == -1 )
+				return null;
+			if( length == 0 )
+				return string.Empty;
+
+			int newPosition = currentPosition + length;
+			if( overflow || newPosition > endPosition )
+			{
+				overflow = true;
+				return "";
+			}
+			var result = Encoding.UTF8.GetString( data, currentPosition, length );
+			currentPosition = newPosition;
+
+			return result;
 		}
 
 		///// <summary>

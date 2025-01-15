@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using static Internal.LiteDB.Constants;
@@ -21,14 +21,16 @@ namespace Internal.LiteDB.Engine
             {
                 var snapshot = transaction.CreateSnapshot(LockMode.Write, collection, true);
                 var collectionPage = snapshot.CollectionPage;
-                var indexer = new IndexService(snapshot, _header.Pragmas.Collation);
-                var data = new DataService(snapshot);
+                var indexer = new IndexService(snapshot, _header.Pragmas.Collation, _disk.MAX_ITEMS_COUNT);
+                var data = new DataService(snapshot, _disk.MAX_ITEMS_COUNT);
                 var count = 0;
 
                 LOG($"upsert `{collection}`", "COMMAND");
 
                 foreach (var doc in docs)
                 {
+                    _state.Validate();
+
                     transaction.Safepoint();
 
                     // first try update document (if exists _id), if not found, do insert

@@ -20,4 +20,24 @@ namespace NeoAxis
 		[Browsable( false )]
 		bool CanBeSelectedInHierarchy { get; }
 	}
+
+	public delegate void IUIWebBrowser_LoadStartDelegate( IUIWebBrowser sender, object cefFrame );
+	public delegate void IUIWebBrowser_LoadEndDelegate( IUIWebBrowser sender, object cefFrame, int httpStatusCode );
+
+	public interface IUIWebBrowser
+	{
+		[DefaultValue( "" )]
+		[Serialize]
+		Reference<string> StartFile
+		{
+			get;
+			set;
+		}
+
+		//public delegate void IUIWebBrowser_LoadStartDelegate( IUIWebBrowser sender, object cefFrame );
+		event IUIWebBrowser_LoadStartDelegate IUIWebBrowser_LoadStart;
+
+		//public delegate void IUIWebBrowser_LoadEndDelegate( IUIWebBrowser sender, object cefFrame, int httpStatusCode );
+		event IUIWebBrowser_LoadEndDelegate IUIWebBrowser_LoadEnd;
+	}
 }

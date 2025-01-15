@@ -1512,13 +1512,17 @@ namespace NeoAxis
 
 				var newIndicesU = new uint[ indices.Length ];
 
-				meshopt_optimizeVertexCache( newIndicesU, indicesU, (UIntPtr)indicesU.Length, (UIntPtr)vertexCount );
+				try
+				{
+					meshopt_optimizeVertexCache( newIndicesU, indicesU, (UIntPtr)indicesU.Length, (UIntPtr)vertexCount );
 
-				var newIndices = new int[ indices.Length ];
-				for( int n = 0; n < indicesU.Length; n++ )
-					newIndices[ n ] = (int)newIndicesU[ n ];
+					var newIndices = new int[ indices.Length ];
+					for( int n = 0; n < indicesU.Length; n++ )
+						newIndices[ n ] = (int)newIndicesU[ n ];
 
-				Indices = newIndices;
+					Indices = newIndices;
+				}
+				catch { }
 			}
 		}
 
@@ -1541,19 +1545,23 @@ namespace NeoAxis
 
 					var newIndicesU = new uint[ indices.Length ];
 
-					unsafe
+					try
 					{
-						fixed( byte* pVertices = vertices )
+						unsafe
 						{
-							meshopt_optimizeOverdraw( newIndicesU, indicesU, (UIntPtr)indicesU.Length, (IntPtr)pVertices, (UIntPtr)vertexCount, (UIntPtr)vertexSize, (float)threshold );
+							fixed( byte* pVertices = vertices )
+							{
+								meshopt_optimizeOverdraw( newIndicesU, indicesU, (UIntPtr)indicesU.Length, (IntPtr)pVertices, (UIntPtr)vertexCount, (UIntPtr)vertexSize, (float)threshold );
+							}
 						}
+
+						var newIndices = new int[ indices.Length ];
+						for( int n = 0; n < indicesU.Length; n++ )
+							newIndices[ n ] = (int)newIndicesU[ n ];
+
+						Indices = newIndices;
 					}
-
-					var newIndices = new int[ indices.Length ];
-					for( int n = 0; n < indicesU.Length; n++ )
-						newIndices[ n ] = (int)newIndicesU[ n ];
-
-					Indices = newIndices;
+					catch { }
 				}
 			}
 		}
@@ -1575,20 +1583,24 @@ namespace NeoAxis
 				for( int n = 0; n < indices.Length; n++ )
 					newIndicesU[ n ] = (uint)indices[ n ];
 
-				unsafe
+				try
 				{
-					fixed( byte* pNewVertices = newVertices )
+					unsafe
 					{
-						meshopt_optimizeVertexFetch( (IntPtr)pNewVertices, newIndicesU, (UIntPtr)newIndicesU.Length, (IntPtr)pNewVertices, (UIntPtr)vertexCount, (UIntPtr)vertexSize );
+						fixed( byte* pNewVertices = newVertices )
+						{
+							meshopt_optimizeVertexFetch( (IntPtr)pNewVertices, newIndicesU, (UIntPtr)newIndicesU.Length, (IntPtr)pNewVertices, (UIntPtr)vertexCount, (UIntPtr)vertexSize );
+						}
 					}
+
+					var newIndices = new int[ newIndicesU.Length ];
+					for( int n = 0; n < newIndicesU.Length; n++ )
+						newIndices[ n ] = (int)newIndicesU[ n ];
+
+					Vertices = newVertices;
+					Indices = newIndices;
 				}
-
-				var newIndices = new int[ newIndicesU.Length ];
-				for( int n = 0; n < newIndicesU.Length; n++ )
-					newIndices[ n ] = (int)newIndicesU[ n ];
-
-				Vertices = newVertices;
-				Indices = newIndices;
+				catch { }
 			}
 		}
 
@@ -3294,7 +3306,7 @@ namespace NeoAxis
 
 #if !DEPLOY
 
-		internal static unsafe void VerticesWriteChannel<T>( VertexElement element, T[] data, byte[] writeToVertices, int vertexSize, int vertexCount ) where T : unmanaged
+		static unsafe void VerticesWriteChannel<T>( VertexElement element, T[] data, byte[] writeToVertices, int vertexSize, int vertexCount ) where T : unmanaged
 		{
 			if( VertexElement.GetSizeInBytes( element.Type ) == sizeof( T ) )
 			{

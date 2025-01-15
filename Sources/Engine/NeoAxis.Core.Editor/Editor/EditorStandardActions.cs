@@ -4952,6 +4952,115 @@ namespace NeoAxis.Editor
 				EditorActions.Register( a );
 			}
 
+			//Select Page. UITabControl
+			{
+				var a = new EditorAction();
+				a.Name = "Select Page";
+				a.Description = "Changes selected index of the tab control.";
+				//a.ImageSmall = Properties.Resources.Add_16;
+				//a.ImageBig = Properties.Resources.MeshCollision_32;
+				a.ActionType = EditorAction.ActionTypeEnum.DropDown;
+				a.QatSupport = true;
+				a.ContextMenuSupport = EditorActionContextMenuType.Document;
+
+				a.GetState += delegate ( EditorActionGetStateContext context )
+				{
+					if( context.ObjectsInFocus.DocumentWindow != null )
+					{
+						object[] selectedObjects = context.ObjectsInFocus.Objects;
+						if( selectedObjects.Length == 1 && Array.TrueForAll( selectedObjects, obj => obj is UITabControl ) )
+							context.Enabled = true;
+						a.DropDownContextMenu.Tag = (context.ObjectsInFocus.DocumentWindow.Document, selectedObjects);
+					}
+				};
+
+				//context menu
+				{
+					a.DropDownContextMenu = new KryptonContextMenu();
+
+					a.DropDownContextMenu.Opening += delegate ( object sender, CancelEventArgs e )
+					{
+						var menu = (KryptonContextMenu)sender;
+						var tuple = ((IDocumentInstance, object[]))menu.Tag;
+
+						UITabControl tabControl = null;
+						foreach( var obj in tuple.Item2 )
+						{
+							tabControl = obj as UITabControl;
+							if( tabControl != null )
+								break;
+						}
+
+						if( tabControl != null )
+						{
+							var pages = tabControl.GetAllPages();
+
+							var items2 = (KryptonContextMenuItems)menu.Items[ 0 ];
+							for( int n = 0; n < items2.Items.Count; n++ )
+							{
+								var item2 = (KryptonContextMenuItem)items2.Items[ n ];
+
+								if( n < pages.Count )
+									item2.Text = pages[ n ].Name;
+								item2.Visible = n < pages.Count;
+								item2.Checked = n == tabControl.SelectedIndex;
+								item2.Enabled = n != tabControl.SelectedIndex;
+							}
+						}
+					};
+
+					System.EventHandler clickHandler = delegate ( object s, EventArgs e2 )
+					{
+						var item = (KryptonContextMenuItem)s;
+						var itemTag = ((KryptonContextMenu, int))item.Tag;
+						var menu = itemTag.Item1;
+						var pageIndex = itemTag.Item2;
+
+						var menuTag = ((IDocumentInstance, object[]))menu.Tag;
+						var document = menuTag.Item1;
+						var selectedObjects = menuTag.Item2;
+
+						var undoActions = new List<UndoSystem.Action>();
+
+						foreach( var obj in selectedObjects )
+						{
+							var tabControl = obj as UITabControl;
+							if( tabControl != null )
+							{
+								//undo action
+								var property = (Metadata.Property)tabControl.MetadataGetMemberBySignature( "property:SelectedIndex" );
+								var undoItem = new UndoActionPropertiesChange.Item( tabControl, property, tabControl.SelectedIndex, new object[ 0 ] );
+								undoActions.Add( new UndoActionPropertiesChange( new UndoActionPropertiesChange.Item[] { undoItem } ) );
+
+								//change property
+								tabControl.SelectedIndex = pageIndex;
+							}
+						}
+
+						if( undoActions.Count != 0 )
+						{
+							document.UndoSystem.CommitAction( new UndoMultiAction( undoActions ) );
+							document.Modified = true;
+						}
+					};
+
+					var items = new List<KryptonContextMenuItemBase>();
+
+					for( int n = 0; n < 30; n++ )
+					{
+						var name = "Page " + n.ToString();
+
+						var item = new KryptonContextMenuItem( name, null, clickHandler );
+						item.Tag = (a.DropDownContextMenu, n);
+						items.Add( item );
+					}
+
+					a.DropDownContextMenu.Items.Add( new KryptonContextMenuItems( items.ToArray() ) );
+				}
+
+				EditorActions.Register( a );
+			}
+
 		}
 
 #endif

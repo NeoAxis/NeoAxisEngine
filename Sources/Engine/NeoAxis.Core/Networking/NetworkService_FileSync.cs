@@ -16,12 +16,12 @@ namespace NeoAxis.Networking
 		//public static int MaxFileSize = MaxFileSizeDefault;
 	}
 
-	public class ServerNetworkService_FileSync : ServerNetworkService
+	public class ServerNetworkService_FileSync : ServerService
 	{
 		public int SendFilesMaxSize { get; set; } = 5/*10*/ * 1024 * 1024;
 		public bool ZipData = true;
 
-		public delegate void GetFileCacheForConnectedNodeDelegate( ServerNetworkService_FileSync sender, NetworkNode.ConnectedNode connectedNode, ref FileCache fileCache );
+		public delegate void GetFileCacheForConnectedNodeDelegate( ServerNetworkService_FileSync sender, ServerNode.Client client, ref FileCache fileCache );
 		public event GetFileCacheForConnectedNodeDelegate GetFileCacheForConnectedNode;
 
 		public static List<string> SkipPathsServer { get; } = new List<string>();
@@ -95,11 +95,11 @@ namespace NeoAxis.Networking
 							}
 							catch { }
 
-							string newFileName = null;
+							//string newFileName = null;
 
-							//rename exe files to prevent manual execution
-							if( extension == "exe" )
-								newFileName = Path.ChangeExtension( fileInfo.FileName, ".exe_secure" );
+							////rename exe files to prevent manual execution
+							//if( extension == "exe" )
+							//	newFileName = Path.ChangeExtension( fileInfo.FileName, ".exe_secure" );
 
 							//can't send exe, cmd and other files when play
 							if( GetProhibitedExtensionsWhenPlay().Contains( extension ) )
@@ -270,9 +270,10 @@ namespace NeoAxis.Networking
 				}
 				catch { }
 
-				//rename exe files to prevent manual execution
-				if( extension == "exe" )
-					newFileName = Path.ChangeExtension( fileInfo.FileName, ".exe_secure" );
+				//!!!!disabled if( extension == "exe" )
+				////rename exe files to prevent manual execution
+				//if( extension == "exe" )
+				//	newFileName = Path.ChangeExtension( fileInfo.FileName, ".exe_secure" );
 
 				//can't send exe, cmd and other files when play
 				if( GetProhibitedExtensionsWhenPlay().Contains( extension ) )
@@ -333,7 +334,7 @@ namespace NeoAxis.Networking
 			return CanSendFileToClient( projectSettingsCache, clientData.Edit, fileInfo, out newFileName, out clearFile );
 		}
 
-		bool ReceiveMessage_RequestInfoToServer( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_RequestInfoToServer( ServerNode.Client sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var clientData = (CloudProjectClientData)sender.Tag;
 			if( !clientData.Verified )
@@ -348,6 +349,7 @@ namespace NeoAxis.Networking
 
 			//send the file info to the client
 			var writer = BeginMessage( sender, GetMessageType( "SendInfoToClient" ) );
+			writer.Write( cache != null );
 			if( cache != null )
 			{
 				writer.WriteVariableInt32( CommonNetworkService_FileSync.FileBlockSize );
@@ -374,17 +376,17 @@ namespace NeoAxis.Networking
 
 				//writer.Write( cache.TotalHash );
 			}
-			else
-			{
-				writer.Write( 0 );
-				//writer.Write( cache.TotalHash );
-			}
+			//else
+			//{
+			//writer.Write( 0 );
+			////writer.Write( cache.TotalHash );
+			//}
 			EndMessage();
 
 			return true;
 		}
 
-		bool ReceiveMessage_RequestFilesToServer( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_RequestFilesToServer( ServerNode.Client sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			//!!!!везде такое во всех сервисах
 			var clientData = (CloudProjectClientData)sender.Tag;
@@ -452,7 +454,7 @@ namespace NeoAxis.Networking
 							data = Array.Empty<byte>();
 						else
 						{
-							using( FileStream fs = new FileStream( fullPath, FileMode.Open ) )
+							using( FileStream fs = new FileStream( fullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite ) )
 							{
 								var offset = requestedBlock * CommonNetworkService_FileSync.FileBlockSize;
 								fs.Seek( offset, SeekOrigin.Begin );
@@ -528,7 +530,7 @@ namespace NeoAxis.Networking
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public class ClientNetworkService_FileSync : ClientNetworkService
+	public class ClientNetworkService_FileSync : ClientService
 	{
 		public static List<string> SkipPathsClient { get; } = new List<string>();
 
@@ -746,7 +748,7 @@ namespace NeoAxis.Networking
 					string hash;
 					if( fileInfo.Length > 10000000 )
 					{
-						using( var stream = new FileStream( fullPath, FileMode.Open, FileAccess.Read ) )
+						using( var stream = new FileStream( fullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite ) )
 							hash = GetMD5( md5, stream );
 					}
 					else
@@ -865,22 +867,27 @@ namespace NeoAxis.Networking
 			}
 		}
 
-		bool ReceiveMessage_SendInfoToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_SendInfoToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
-			ServerFileBlockSize = reader.ReadVariableInt32();
+			var filesOnServer = new Dictionary<string, FileInfo>();
 
-			var fileCountOnServer = reader.ReadInt32();
-			var filesOnServer = new Dictionary<string, FileInfo>( fileCountOnServer );
-			for( int n = 0; n < fileCountOnServer; n++ )
+			var isCacheAvailable = reader.ReadBoolean();
+			if( isCacheAvailable )
 			{
-				var info = new FileInfo();
-				//!!!!check for "..". where else
-				info.FileName = PathUtility.NormalizePath( reader.ReadString() );
-				info.TimeModified = reader.ReadDateTime();
-				info.Length = reader.ReadInt64();
-				info.Hash = reader.ReadString();
-				info.SyncMode = (RepositorySyncMode)reader.ReadByte();
-				filesOnServer[ info.FileName.ToLower() ] = info;
+				ServerFileBlockSize = reader.ReadVariableInt32();
+
+				var fileCountOnServer = reader.ReadInt32();
+				for( int n = 0; n < fileCountOnServer; n++ )
+				{
+					var info = new FileInfo();
+					//!!!!check for "..". where else
+					info.FileName = PathUtility.NormalizePath( reader.ReadString() );
+					info.TimeModified = reader.ReadDateTime();
+					info.Length = reader.ReadInt64();
+					info.Hash = reader.ReadString();
+					info.SyncMode = (RepositorySyncMode)reader.ReadByte();
+					filesOnServer[ info.FileName.ToLower() ] = info;
+				}
 			}
 
 			//может дополнительно получать хеш из всего списка (сортированного). где еще
@@ -960,7 +967,6 @@ namespace NeoAxis.Networking
 				//}
 				//else
 				//{
-				//	zzzzz;
 				//	//!!!!проверять еще раз? хеш всех хешей может
 
 
@@ -986,7 +992,7 @@ namespace NeoAxis.Networking
 			public int RequestedBlock;
 		}
 
-		bool ReceiveMessage_SendFilesToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_SendFilesToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var fileItems = new List<FileItem>();
 			while( reader.ReadBoolean() )

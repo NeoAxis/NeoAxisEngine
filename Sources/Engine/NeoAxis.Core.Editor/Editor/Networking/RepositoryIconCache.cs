@@ -193,7 +193,7 @@ namespace NeoAxis.Editor
 						var fileInfo = new FileInfo( fullPath );
 
 						string hash;
-						using( var stream = new FileStream( fullPath, FileMode.Open, FileAccess.Read ) )
+						using( var stream = new FileStream( fullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite ) )
 							hash = GetMD5( md5, stream );
 
 						item.Exists = true;

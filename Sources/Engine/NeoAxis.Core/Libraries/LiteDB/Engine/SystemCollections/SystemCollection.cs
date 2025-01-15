@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace Internal.LiteDB.Engine
     internal class SystemCollection
     {
         private readonly string _name;
-        private Func<IEnumerable<BsonDocument>> _input = null;
+        private readonly Func<IEnumerable<BsonDocument>> _input = null;
 
         public SystemCollection(string name)
         {

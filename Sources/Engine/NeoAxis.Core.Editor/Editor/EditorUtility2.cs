@@ -80,7 +80,7 @@ namespace NeoAxis.Editor
 			return builder.ToString();
 		}
 
-		public static bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, out string[] fileNames )
+		public static bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, IntPtr ownerWindowHandle, out string[] fileNames )
 		{
 			var dialog = new Microsoft.WindowsAPICodePack.Dialogs.CommonOpenFileDialog();
 			dialog.IsFolderPicker = isFolderPicker;
@@ -93,19 +93,35 @@ namespace NeoAxis.Editor
 					dialog.Filters.Add( new Microsoft.WindowsAPICodePack.Dialogs.CommonFileDialogFilter( filter.rawDisplayName, filter.extensionList ) );
 			}
 
-			if( dialog.ShowDialog() == Microsoft.WindowsAPICodePack.Dialogs.CommonFileDialogResult.Ok && dialog.FileNames.ToArray().Length != 0 )
+			if( ownerWindowHandle != IntPtr.Zero )
 			{
-				fileNames = dialog.FileNames.ToArray();
-				return true;
+				if( dialog.ShowDialog( ownerWindowHandle ) == Microsoft.WindowsAPICodePack.Dialogs.CommonFileDialogResult.Ok && dialog.FileNames.ToArray().Length != 0 )
+				{
+					fileNames = dialog.FileNames.ToArray();
+					return true;
+				}
+				else
+				{
+					fileNames = null;
+					return false;
+				}
 			}
 			else
 			{
-				fileNames = null;
-				return false;
+				if( dialog.ShowDialog() == Microsoft.WindowsAPICodePack.Dialogs.CommonFileDialogResult.Ok && dialog.FileNames.ToArray().Length != 0 )
+				{
+					fileNames = dialog.FileNames.ToArray();
+					return true;
+				}
+				else
+				{
+					fileNames = null;
+					return false;
+				}
 			}
 		}
 
-		public static bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, out string fileName )
+		public static bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, IntPtr ownerWindowHandle, out string fileName )
 		{
 			var dialog = new Microsoft.WindowsAPICodePack.Dialogs.CommonOpenFileDialog();
 			dialog.IsFolderPicker = isFolderPicker;
@@ -118,19 +134,35 @@ namespace NeoAxis.Editor
 					dialog.Filters.Add( new Microsoft.WindowsAPICodePack.Dialogs.CommonFileDialogFilter( filter.rawDisplayName, filter.extensionList ) );
 			}
 
-			if( dialog.ShowDialog() == Microsoft.WindowsAPICodePack.Dialogs.CommonFileDialogResult.Ok )
+			if( ownerWindowHandle != IntPtr.Zero )
 			{
-				fileName = dialog.FileName;
-				return true;
+				if( dialog.ShowDialog( ownerWindowHandle ) == Microsoft.WindowsAPICodePack.Dialogs.CommonFileDialogResult.Ok )
+				{
+					fileName = dialog.FileName;
+					return true;
+				}
+				else
+				{
+					fileName = null;
+					return false;
+				}
 			}
 			else
 			{
-				fileName = null;
-				return false;
+				if( dialog.ShowDialog() == Microsoft.WindowsAPICodePack.Dialogs.CommonFileDialogResult.Ok )
+				{
+					fileName = dialog.FileName;
+					return true;
+				}
+				else
+				{
+					fileName = null;
+					return false;
+				}
 			}
 		}
 
-		public static bool ShowSaveFileDialog( string initialDirectory, string initialFileName, string filter, out string resultFileName )
+		public static bool ShowSaveFileDialog( string initialDirectory, string initialFileName, string filter, IntPtr ownerWindowHandle, out string resultFileName )
 		{
 			var dialog = new System.Windows.Forms.SaveFileDialog();
 			if( !string.IsNullOrEmpty( initialDirectory ) )
@@ -147,19 +179,35 @@ namespace NeoAxis.Editor
 			}
 			catch { }
 
-			if( dialog.ShowDialog() == DialogResult.OK )
+			if( ownerWindowHandle != IntPtr.Zero )
 			{
-				resultFileName = dialog.FileName;
-				return true;
+				if( dialog.ShowDialog( new Win32WindowWrapper( ownerWindowHandle ) ) == DialogResult.OK )
+				{
+					resultFileName = dialog.FileName;
+					return true;
+				}
+				else
+				{
+					resultFileName = "";
+					return false;
+				}
 			}
 			else
 			{
-				resultFileName = "";
-				return false;
+				if( dialog.ShowDialog() == DialogResult.OK )
+				{
+					resultFileName = dialog.FileName;
+					return true;
+				}
+				else
+				{
+					resultFileName = "";
+					return false;
+				}
 			}
 		}
 
-		public static void ExportComponentToFile( Component component )
+		public static void ExportComponentToFile( Component component, IntPtr ownerWindowHandle )
 		{
 			var componentFolder = "";
 			{
@@ -180,7 +228,7 @@ namespace NeoAxis.Editor
 			}
 
 			var initialFileName = GetFixedName( name + "." + extension );
-			if( !ShowSaveFileDialog( componentFolder, initialFileName, "All files (*.*)|*.*", out var saveAsFileName ) )
+			if( !ShowSaveFileDialog( componentFolder, initialFileName, "All files (*.*)|*.*", ownerWindowHandle, out var saveAsFileName ) )
 				return;
 
 			var context = new Metadata.SaveContext();

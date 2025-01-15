@@ -16,7 +16,7 @@ namespace NeoAxis.Editor
 	/// </summary>
 	public partial class TipsWindow : DocumentWindowWithViewport
 	{
-		UIWebBrowser browser;
+		IUIWebBrowser browser;
 		UIControl backstage;
 
 		List<string> tips;
@@ -177,11 +177,12 @@ namespace NeoAxis.Editor
 			var uiContainer = sender.Viewport.UIContainer;
 			uiContainer.AfterRenderUIWithChildren += UiContainer_AfterRenderUIWithChildren;
 
-			browser = uiContainer.CreateComponent<UIWebBrowser>( enabled: false );
-			browser.LoadStart += Browser_LoadStart;
-			browser.LoadEnd += Browser_LoadEnd;
+			browser = (IUIWebBrowser)uiContainer.CreateComponent( MetadataManager.GetType( "NeoAxis.UIWebBrowser" ), enabled: false );
+			//browser = uiContainer.CreateComponent<UIWebBrowser>( enabled: false );
+			browser.IUIWebBrowser_LoadStart += Browser_LoadStart;
+			browser.IUIWebBrowser_LoadEnd += Browser_LoadEnd;
 			ShowTip( currentTip );
-			browser.Enabled = true;
+			( (UIControl)browser ).Enabled = true;
 
 			backstage = uiContainer.CreateComponent<UIControl>( enabled: false );
 			backstage.Margin = new UIMeasureValueRectangle( UIMeasure.Screen, Rectangle.Zero );
@@ -193,13 +194,13 @@ namespace NeoAxis.Editor
 			//browser.TargetUrlChanged += Browser_TargetUrlChanged;
 		}
 
-		private void Browser_LoadStart( UIWebBrowser sender, object/*Internal.Xilium.CefGlue.CefFrame*/ cefFrame )
+		private void Browser_LoadStart( IUIWebBrowser sender, object/*Internal.Xilium.CefGlue.CefFrame*/ cefFrame )
 		{
 			if( firstLoading )
 				firstWasLoaded = false;
 		}
 
-		private void Browser_LoadEnd( UIWebBrowser sender, object/*Internal.Xilium.CefGlue.CefFrame*/ cefFrame, int httpStatusCode )
+		private void Browser_LoadEnd( IUIWebBrowser sender, object/*Internal.Xilium.CefGlue.CefFrame*/ cefFrame, int httpStatusCode )
 		{
 			if( firstLoading )
 			{

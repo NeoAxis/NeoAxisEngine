@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Text;
 using static Internal.LiteDB.Constants;
@@ -10,7 +10,7 @@ namespace Internal.LiteDB
     /// </summary>
     internal class BsonReader
     {
-        private bool _utcDate = false;
+        private readonly bool _utcDate = false;
 
         public BsonReader(bool utcDate)
         {

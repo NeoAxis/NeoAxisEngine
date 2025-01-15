@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System.Collections.Generic;
 using static Internal.LiteDB.Constants;
 
@@ -31,7 +31,7 @@ namespace Internal.LiteDB.Engine
         {
             using (var reader = new BufferReader(_data.Read(rawId), _utcDate))
             {
-                var doc = reader.ReadDocument(_fields);
+                var doc = reader.ReadDocument(_fields).GetValue();
 
                 doc.RawId = rawId;
 

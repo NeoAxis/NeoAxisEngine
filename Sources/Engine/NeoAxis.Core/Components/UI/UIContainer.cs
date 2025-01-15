@@ -42,7 +42,20 @@ namespace NeoAxis
 		/// The pixel scale for Measure.PixelsScaled. When no value, the size of the system font is used.
 		/// </summary>
 		[Browsable( false )]
-		public double? PixelScale { get; set; }
+		public double? PixelScale
+		{
+			get { return pixelScale; }
+			set
+			{
+				if( pixelScale == value )
+					return;
+				pixelScale = value;
+				ResetCachedScreenRectangleRecursive();
+			}
+		}
+		double? pixelScale;
+		//[Browsable( false )]
+		//public double? PixelScale { get; set; }
 
 		///////////////////////////////////////////////
 
@@ -484,15 +497,32 @@ namespace NeoAxis
 			CurrentCursor = defaultCursor;
 		}
 
-		public virtual void PlaySound( string name )
+		public virtual SoundData PreloadSound( string name, bool loop = false, bool stream = false )
 		{
 			if( string.IsNullOrEmpty( name ) || SoundWorld.BackendNull )
-				return;
+				return null;
 
 			var mode = Transform3D != null ? SoundModes.Mode3D : 0;
+			if( loop )
+				mode |= SoundModes.Loop;
+			if( stream )
+				mode |= SoundModes.Stream;
+			return SoundWorld.SoundCreate( name, mode );
+		}
+
+		public virtual SoundVirtualChannel PlaySound( string name, bool loop = false, bool stream = false )
+		{
+			if( string.IsNullOrEmpty( name ) || SoundWorld.BackendNull )
+				return null;
+
+			var mode = Transform3D != null ? SoundModes.Mode3D : 0;
+			if( loop )
+				mode |= SoundModes.Loop;
+			if( stream )
+				mode |= SoundModes.Stream;
 			SoundData sound = SoundWorld.SoundCreate( name, mode );
 			if( sound == null )
-				return;
+				return null;
 
 			//!!!!attachedToScene
 			var channel = SoundWorld.SoundPlay( null, sound, EngineApp.DefaultSoundChannelGroup, 0.5, 1, true );
@@ -505,14 +535,30 @@ namespace NeoAxis
 				}
 				channel.Pause = false;
 			}
+
+			return channel;
 		}
 
-		public virtual void PlaySound( Sound sound )
+		public virtual SoundData PreloadSound( Sound sound, bool loop = false, bool stream = false )
 		{
 			var mode = Transform3D != null ? SoundModes.Mode3D : 0;
+			if( loop )
+				mode |= SoundModes.Loop;
+			if( stream )
+				mode |= SoundModes.Stream;
+			return sound?.Result?.LoadSoundByMode( mode );
+		}
+
+		public virtual SoundVirtualChannel PlaySound( Sound sound, bool loop = false, bool stream = false )
+		{
+			var mode = Transform3D != null ? SoundModes.Mode3D : 0;
+			if( loop )
+				mode |= SoundModes.Loop;
+			if( stream )
+				mode |= SoundModes.Stream;
 			var sound2 = sound?.Result?.LoadSoundByMode( mode );
 			if( sound2 == null )
-				return;
+				return null;
 
 			//!!!!attachedToScene
 			var channel = SoundWorld.SoundPlay( null, sound2, EngineApp.DefaultSoundChannelGroup, 0.5, 1, true );
@@ -526,7 +572,53 @@ namespace NeoAxis
 
 				channel.Pause = false;
 			}
+
+			return channel;
 		}
+
+		//public virtual void PlaySound( string name )
+		//{
+		//	if( string.IsNullOrEmpty( name ) || SoundWorld.BackendNull )
+		//		return;
+
+		//	var mode = Transform3D != null ? SoundModes.Mode3D : 0;
+		//	SoundData sound = SoundWorld.SoundCreate( name, mode );
+		//	if( sound == null )
+		//		return;
+
+		//	//!!!!attachedToScene
+		//	var channel = SoundWorld.SoundPlay( null, sound, EngineApp.DefaultSoundChannelGroup, 0.5, 1, true );
+		//	if( channel != null )
+		//	{
+		//		if( Transform3D != null )
+		//		{
+		//			channel.Position = Transform3D.Position;
+		//			//channel.Velocity = xxx;
+		//		}
+		//		channel.Pause = false;
+		//	}
+		//}
+
+		//public virtual void PlaySound( Sound sound )
+		//{
+		//	var mode = Transform3D != null ? SoundModes.Mode3D : 0;
+		//	var sound2 = sound?.Result?.LoadSoundByMode( mode );
+		//	if( sound2 == null )
+		//		return;
+
+		//	//!!!!attachedToScene
+		//	var channel = SoundWorld.SoundPlay( null, sound2, EngineApp.DefaultSoundChannelGroup, 0.5, 1, true );
+		//	if( channel != null )
+		//	{
+		//		if( Transform3D != null )
+		//		{
+		//			channel.Position = Transform3D.Position;
+		//			//channel.Velocity = xxx;
+		//		}
+
+		//		channel.Pause = false;
+		//	}
+		//}
 
 		public string DefaultCursor
 		{
@@ -608,8 +700,7 @@ namespace NeoAxis
 		//	get { return GetMouseRelativeMode(); }
 		//}
 
-		//!!!!public?
-		UIControl GetControlByScreenPosition( Vector2 screenPosition )
+		public UIControl GetControlByScreenPosition( Vector2 screenPosition )
 		{
 			UIControl result = null;
 
@@ -629,28 +720,66 @@ namespace NeoAxis
 			return result;
 		}
 
+		public List<UIControl> GetControlsByScreenPosition( Vector2 screenPosition )
+		{
+			var result = new List<UIControl>();
+
+			EnumerateChildrenRecursive( true, true, true, delegate ( UIControl control, ref bool stopEnumerate )
+			{
+				control.GetScreenRectangle( out var rect );
+				if( rect.Contains( screenPosition ) )
+				{
+					result.Add( control );
+					stopEnumerate = false;
+				}
+			} );
+
+			return result;
+		}
+
 		void DrawTooltip( CanvasRenderer renderer )
 		{
 			if( MouseRelativeMode )
 				return;
 
 			var mouse = ContainerGetMousePosition();
-			var control = GetControlByScreenPosition( mouse );
+			var controls = GetControlsByScreenPosition( mouse );
 
-			if( control != null && !IsControlCursorCoveredByOther( control ) )
+			foreach( var control in controls )
 			{
-				var tooltip = control.GetComponent<UITooltip>( onlyEnabledInHierarchy: true );
-				if( tooltip != null )
+				if( !IsControlCursorCoveredByOther( control ) )
 				{
-					if( EngineApp.EngineTime - tooltipLastMouseMoveTimeOutsideThreshold > tooltip.InitialDelay )
+					var tooltip = control.GetComponent<UITooltip>( onlyEnabledInHierarchy: true );
+					if( tooltip != null )
 					{
-						var c = tooltip.Parent as UIControl;
-						if( c == null )
-							c = this;
-						c.GetStyle().PerformRenderComponent( tooltip, renderer );
+						if( EngineApp.EngineTime - tooltipLastMouseMoveTimeOutsideThreshold > tooltip.InitialDelay )
+						{
+							var c = tooltip.Parent as UIControl;
+							if( c == null )
+								c = this;
+							c.GetStyle().PerformRenderComponent( tooltip, renderer );
+						}
 					}
 				}
 			}
+
+			//var mouse = ContainerGetMousePosition();
+			//var control = GetControlByScreenPosition( mouse );
+
+			//if( control != null && !IsControlCursorCoveredByOther( control ) )
+			//{
+			//	var tooltip = control.GetComponent<UITooltip>( onlyEnabledInHierarchy: true );
+			//	if( tooltip != null )
+			//	{
+			//		if( EngineApp.EngineTime - tooltipLastMouseMoveTimeOutsideThreshold > tooltip.InitialDelay )
+			//		{
+			//			var c = tooltip.Parent as UIControl;
+			//			if( c == null )
+			//				c = this;
+			//			c.GetStyle().PerformRenderComponent( tooltip, renderer );
+			//		}
+			//	}
+			//}
 		}
 
 		public UIControl CapturedControl

@@ -54,7 +54,7 @@ namespace NeoAxis
 
 					methodVirtual = provider.MetadataGetMemberBySignature( signature ) as Metadata.Method;
 
-					skip_virtual:;
+skip_virtual:;
 				}
 
 				if( methodVirtual == null )
@@ -144,7 +144,7 @@ namespace NeoAxis
 						}
 					}
 
-					next_member:;
+next_member:;
 				}
 			}
 
@@ -211,7 +211,7 @@ namespace NeoAxis
 						}
 					}
 
-					next_member2:;
+next_member2:;
 				}
 			}
 
@@ -360,7 +360,7 @@ namespace NeoAxis
 					signature = builder.ToString();
 
 					propertyVirtual = provider.MetadataGetMemberBySignature( signature ) as Metadata.Property;
-					skip_virtual:;
+skip_virtual:;
 
 					if( propertyVirtual != null )
 					{
@@ -527,7 +527,7 @@ namespace NeoAxis
 
 					propertyVirtual = provider.MetadataGetMemberBySignature( signature ) as Metadata.Property;
 
-					skip_virtual:;
+skip_virtual:;
 
 					if( propertyVirtual == null )
 					{
@@ -644,5 +644,101 @@ namespace NeoAxis
 
 			return true;
 		}
+
+		///// <summary>
+		///// Sets the value of the object property by name without engine's metadata usage.
+		///// </summary>
+		///// <param name="obj"></param>
+		///// <param name="name"></param>
+		///// <param name="value"></param>
+		///// <param name="indexers"></param>
+		///// <returns></returns>
+		//public static bool PropertySetNativeOnly( this object obj, string name, object value, object[] indexers = null )
+		//{
+		//	if( indexers == null )
+		//		indexers = Array.Empty<object>();
+
+		//	PropertyInfo propertyNative = null;
+
+		//	if( indexers.Length != 0 )
+		//	{
+		//		//with indexers
+
+		//		var types = new Type[ indexers.Length ];
+		//		for( int n = 0; n < indexers.Length; n++ )
+		//		{
+		//			if( indexers[ n ] == null )
+		//				return false;
+		//			types[ n ] = indexers[ n ].GetType();
+		//		}
+
+		//		//native
+		//		try
+		//		{
+		//			propertyNative = obj.GetType().GetProperty( name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static, null, null, types, null );
+		//		}
+		//		catch { }
+
+		//	}
+		//	else
+		//	{
+		//		//without indexers
+
+		//		//native
+		//		try
+		//		{
+		//			propertyNative = obj.GetType().GetProperty( name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static );
+		//		}
+		//		catch { }
+		//	}
+
+		//	if( propertyNative == null )
+		//		return false;
+
+		//	Type expectedType = propertyNative.PropertyType;
+		//	var expectedTypeUnref = expectedType;
+
+		//	//value type is null
+		//	if( value == null && expectedTypeUnref.IsValueType )
+		//		return false;
+
+		//	//convert
+		//	if( value != null && !expectedType.IsAssignableFrom( value.GetType() ) )
+		//	{
+		//		if( !ReferenceUtility.IsReferenceType( value.GetType() ) )
+		//		{
+		//			//value is not Reference type
+
+		//			//try to convert
+		//			if( !expectedTypeUnref.IsAssignableFrom( value.GetType() ) )
+		//			{
+		//				var newValue = MetadataManager.AutoConvertValue( value, expectedTypeUnref );
+		//				if( newValue == null )
+		//					return false;
+		//				value = newValue;
+		//			}
+		//		}
+		//		else
+		//		{
+		//			//value is Reference type
+
+		//			//specified Reference type must have equal type
+		//			return false;
+		//		}
+		//	}
+
+		//	//set value
+		//	try
+		//	{
+		//		propertyNative.SetValue( propertyNative.GetMethod.IsStatic ? null : obj, value, indexers );
+		//	}
+		//	catch
+		//	{
+		//		return false;
+		//	}
+
+		//	return true;
+		//}
+
 	}
 }

@@ -610,4 +610,11 @@ namespace NeoAxis
 	{
 		Vector3 GetBestGlobalReflectionProbePosition( Viewport viewport );
 	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	[AttributeUsage( AttributeTargets.Method )]
+	public class CloudMethodAttribute : Attribute
+	{
+	}
 }

@@ -11,7 +11,7 @@ using NeoAxis.Networking;
 
 namespace NeoAxis.Editor
 {
-	public class ClientNetworkService_Commit : ClientNetworkService
+	public class ClientNetworkService_Commit : ClientService
 	{
 		public const int FileBlockSize = 1 * 1024 * 1024;
 
@@ -111,7 +111,7 @@ namespace NeoAxis.Editor
 			StatusChanged?.Invoke( this );
 		}
 
-		bool ReceiveMessage_SendFilesResultToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_SendFilesResultToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var error = reader.ReadString();
 
@@ -180,7 +180,7 @@ namespace NeoAxis.Editor
 							try
 							{
 								byte[] data;
-								using( FileStream fs = new FileStream( fileItem.FullPath, FileMode.Open ) )
+								using( FileStream fs = new FileStream( fileItem.FullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite ) )
 								{
 									var offset = fileItem.SentBlocks * FileBlockSize;
 									fs.Seek( offset, SeekOrigin.Begin );

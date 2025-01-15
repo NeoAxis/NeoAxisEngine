@@ -247,7 +247,7 @@ namespace NeoAxis
 		}
 
 		/// <summary>
-		/// Sets attribute. If such already there is that rewrites him.
+		/// Sets attribute. Replaces previous when already exists with the same name.
 		/// </summary>
 		/// <param name="name">The attribute name.</param>
 		/// <param name="value">The attribute value.</param>

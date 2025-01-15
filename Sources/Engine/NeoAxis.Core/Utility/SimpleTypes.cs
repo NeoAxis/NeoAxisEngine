@@ -301,6 +301,22 @@ namespace NeoAxis
 			return item.ParseFunction( value );
 		}
 
+		public static bool TryParseValue<T>( string value, out T resultValue, out string error )
+		{
+			try
+			{
+				resultValue = (T)ParseValue( typeof( T ), value );
+				error = null;
+				return true;
+			}
+			catch( Exception e )
+			{
+				resultValue = default;
+				error = e.Message;
+				return false;
+			}
+		}
+
 		public static object GetDefaultValue( Type type )
 		{
 			if( typeof( Enum ).IsAssignableFrom( type ) )

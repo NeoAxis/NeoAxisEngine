@@ -8,10 +8,11 @@ using System.IO.Compression;
 using System.Linq;
 using System.Xml;
 using System.Transactions;
+using NeoAxis;
 
-namespace NeoAxis.Editor
+namespace CommandLineTools
 {
-	static class EditorCommandLineTools
+	static partial class EditorCommandLineTools
 	{
 		public static bool Process()
 		{
@@ -25,6 +26,13 @@ namespace NeoAxis.Editor
 			if( SystemSettings.CommandLineParameters.ContainsKey( "-platformProjectPatch" ) )
 			{
 				var result = PlatformProjectPatch.Process();
+				Environment.Exit( result ? 0 : -1 );
+				return true;
+			}
+
+			if( SystemSettings.CommandLineParameters.ContainsKey( "-compile" ) )
+			{
+				var result = Compile.Process();
 				Environment.Exit( result ? 0 : -1 );
 				return true;
 			}
@@ -67,7 +75,7 @@ namespace NeoAxis.Editor
 				//File.SetLastAccessTime( destFileName, setTimeToFilesInZip );
 			}
 
-			public static void CopyFolder( string sourceFolder, string destFolder, Range progressRange, IEnumerable<string> excludePaths = null )
+			public static void CopyFolder( string sourceFolder, string destFolder, NeoAxis.Range progressRange, IEnumerable<string> excludePaths = null )
 			{
 				if( !Directory.Exists( sourceFolder ) )
 					return;
@@ -114,7 +122,7 @@ namespace NeoAxis.Editor
 				}
 			}
 
-			static void CopyIncludeExcludePaths( IEnumerable<string> paths, Range progressRange )
+			static void CopyIncludeExcludePaths( IEnumerable<string> paths, NeoAxis.Range progressRange )
 			{
 				var includePaths = new List<string>();
 				var excludePathsRooted = new List<string>();
@@ -137,7 +145,7 @@ namespace NeoAxis.Editor
 						var destPath = Path.Combine( DestinationFolder, includePath );
 
 						//!!!!проценты от размера папки
-						var percentRange = new Range( currentPercent, currentPercent + percentStep );
+						var percentRange = new NeoAxis.Range( currentPercent, currentPercent + percentStep );
 
 						if( File.Exists( sourcePath ) )
 						{
@@ -201,7 +209,7 @@ namespace NeoAxis.Editor
 						paths[ n ] = paths[ n ].Replace( ProjectFolder + Path.DirectorySeparatorChar, "" );
 
 					//execute
-					CopyIncludeExcludePaths( paths, new Range( 0, 0.4 ) );
+					CopyIncludeExcludePaths( paths, new NeoAxis.Range( 0, 0.4 ) );
 				}
 
 				////copy Assets

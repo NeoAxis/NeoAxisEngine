@@ -114,9 +114,9 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
-		const uint OS_WOW6432 = 0x1E;
-		[DllImport( "shlwapi.dll" )]
-		static extern bool IsOS( uint dwOS );
+		//const uint OS_WOW6432 = 0x1E;
+		//[DllImport( "shlwapi.dll" )]
+		//static extern bool IsOS( uint dwOS );
 
 		///////////////////////////////////////////
 
@@ -188,6 +188,8 @@ namespace NeoAxis
 			platform = Platform.iOS;
 #elif UWP
 			platform = Platform.UWP;
+#elif WEB
+			platform = Platform.Web;
 #else
 			if( RuntimeInformation.IsOSPlatform( OSPlatform.OSX ) ) //if( Environment.OSVersion.Platform == PlatformID.Unix )
 			{

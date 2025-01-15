@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using Internal.LiteDB.Engine;
 using System;
 using System.Collections.Generic;
@@ -43,6 +43,11 @@ namespace Internal.LiteDB
         /// "upgrade": Check if data file is an old version and convert before open (default: false)
         /// </summary>
         public bool Upgrade { get; set; } = false;
+
+        /// <summary>
+        /// "auto-rebuild": If last close database exception result a invalid data state, rebuild datafile on next open (default: false)
+        /// </summary>
+        public bool AutoRebuild { get; set; } = false;
 
         /// <summary>
         /// "collation": Set default collaction when database creation (default: "[CurrentCulture]/IgnoreCase")
@@ -92,6 +97,7 @@ namespace Internal.LiteDB
             this.Collation = _values.ContainsKey("collation") ? new Collation(_values.GetValue<string>("collation")) : this.Collation;
 
             this.Upgrade = _values.GetValue("upgrade", this.Upgrade);
+            this.AutoRebuild = _values.GetValue("auto-rebuild", this.AutoRebuild);
         }
 
         /// <summary>
@@ -102,16 +108,20 @@ namespace Internal.LiteDB
         /// <summary>
         /// Create ILiteEngine instance according string connection parameters. For now, only Local/Shared are supported
         /// </summary>
-        internal ILiteEngine CreateEngine()
+        internal ILiteEngine CreateEngine(Action<EngineSettings> engineSettingsAction = null)
         {
-            var settings = new Engine.EngineSettings
+            var settings = new EngineSettings
             {
                 Filename = this.Filename,
                 Password = this.Password,
                 InitialSize = this.InitialSize,
                 ReadOnly = this.ReadOnly,
-                Collation = this.Collation
+                Collation = this.Collation,
+                Upgrade = this.Upgrade,
+                AutoRebuild = this.AutoRebuild,
             };
+
+            engineSettingsAction?.Invoke(settings);
 
             // create engine implementation as Connection Type
             if (this.Connection == ConnectionType.Direct)

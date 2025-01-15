@@ -1,4 +1,4 @@
-#if !UWP
+#if !UWP && LIDGREN
 #if !__NOIPENDPOINT__
 using NetEndPoint = System.Net.IPEndPoint;
 using NetAddress = System.Net.IPAddress;

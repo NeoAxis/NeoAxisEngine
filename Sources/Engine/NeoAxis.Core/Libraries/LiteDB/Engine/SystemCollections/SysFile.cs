@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -11,7 +11,7 @@ namespace Internal.LiteDB.Engine
 {
     internal class SysFile : SystemCollection
     {
-        private Dictionary<string, SystemCollection> _formats = new Dictionary<string, SystemCollection>(StringComparer.OrdinalIgnoreCase)
+        private readonly Dictionary<string, SystemCollection> _formats = new Dictionary<string, SystemCollection>(StringComparer.OrdinalIgnoreCase)
         {
             ["json"] = new SysFileJson(),
             ["csv"] = new SysFileCsv()

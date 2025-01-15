@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -54,8 +54,16 @@ namespace Internal.LiteDB.Engine
         {
             // if current thread are in reserved mode, do not exit transaction (will be exit from ExitExclusive)
             if (_transaction.IsWriteLockHeld) return;
-
-            _transaction.ExitReadLock();
+            
+            //This can be called when a lock has either been released by the slim or somewhere else therefore there is no lock to release from ExitReadLock()
+            if (_transaction.IsReadLockHeld)
+            {
+                try
+                {
+                    _transaction.ExitReadLock();
+                }
+                catch { }
+            }
         }
 
         /// <summary>
@@ -150,4 +158,5 @@ namespace Internal.LiteDB.Engine
         }
     }
 }
+
 #endif

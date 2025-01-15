@@ -1,4 +1,4 @@
-﻿#if !UWP
+﻿#if !UWP && LIDGREN
 #if WINDOWS_RUNTIME
 //
 //

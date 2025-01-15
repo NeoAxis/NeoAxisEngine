@@ -1,7 +1,7 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 namespace Internal.LiteDB.Engine
 {
-    internal enum FileOrigin : byte
+    public enum FileOrigin : byte
     {
         /// <summary>
         /// There is no origin (new page)

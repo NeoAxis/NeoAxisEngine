@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -26,7 +26,7 @@ namespace Internal.LiteDB
                 (CompareOptions)Enum.Parse(typeof(CompareOptions), parts[1]) : 
                 CompareOptions.None;
 
-            this.LCID = Internal.LiteDB.LCID.GetLCID(culture);
+            this.LCID = LiteDB.LCID.GetLCID(culture);
             this.SortOptions = sortOptions;
             this.Culture = new CultureInfo(culture);
 
@@ -37,12 +37,12 @@ namespace Internal.LiteDB
         {
             this.LCID = lcid;
             this.SortOptions = sortOptions;
-            this.Culture = Internal.LiteDB.LCID.GetCulture(lcid);
+            this.Culture = LiteDB.LCID.GetCulture(lcid);
 
             _compareInfo = this.Culture.CompareInfo;
         }
 
-        public static Collation Default = new Collation(Internal.LiteDB.LCID.Current, CompareOptions.IgnoreCase);
+        public static Collation Default = new Collation(LiteDB.LCID.Current, CompareOptions.IgnoreCase);
 
         public static Collation Binary = new Collation(127 /* Invariant */, CompareOptions.Ordinal);
 
@@ -69,15 +69,6 @@ namespace Internal.LiteDB
             var result = _compareInfo.Compare(left, right, this.SortOptions);
 
             return result < 0 ? -1 : result > 0 ? +1 : 0;
-        }
-
-        /// <summary>
-        /// Compare 2 chars values using current culture/compare options
-        /// </summary>
-        public int Compare(char left, char right)
-        {
-            //TODO implementar o compare corretamente
-            return char.ToUpper(left) == char.ToUpper(right) ? 0 : 1;
         }
 
         public int Compare(BsonValue left, BsonValue rigth)

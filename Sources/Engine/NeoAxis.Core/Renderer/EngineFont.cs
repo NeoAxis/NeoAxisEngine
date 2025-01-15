@@ -40,8 +40,20 @@ namespace NeoAxis
 		[UnmanagedFunctionPointer( OgreWrapper.convention )]
 		public unsafe delegate void GetGlyphContoursDelegate( int pointCount, IntPtr points );
 
+		//!!!!
+//#if WEB
+
+//		[DllImport( OgreWrapper.library, EntryPoint = "FreeType_GetGlyphContours", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
+//		[return: MarshalAs( UnmanagedType.U1 )]
+//		public static unsafe extern bool GetGlyphContours( IntPtr/*FT_Library*/ library, IntPtr/*FT_Face*/ face, int character, void*/*GetGlyphContoursDelegate*/ callback, out int drawOffsetX, out int drawOffsetY, out int advance );
+
+//#else
+
 		[DllImport( OgreWrapper.library, EntryPoint = "FreeType_GetGlyphContours", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
 		[return: MarshalAs( UnmanagedType.U1 )]
 		public static extern bool GetGlyphContours( IntPtr/*FT_Library*/ library, IntPtr/*FT_Face*/ face, int character, GetGlyphContoursDelegate callback, out int drawOffsetX, out int drawOffsetY, out int advance );
+
+//#endif
+
 	}
 }

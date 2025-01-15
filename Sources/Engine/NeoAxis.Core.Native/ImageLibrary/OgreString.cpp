@@ -35,7 +35,7 @@ THE SOFTWARE.
 	#include <windows.h>
 #endif
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS || OGRE_PLATFORM == OGRE_PLATFORM_EMSCRIPTEN
 	#include <iconv.h>	
 #endif
 
@@ -483,7 +483,7 @@ namespace Ogre {
 	}
 
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS || OGRE_PLATFORM == OGRE_PLATFORM_EMSCRIPTEN
 
 	template <class In, class Out>
 	void ConvertString(iconv_t cd, const In& in, Out* out, const typename Out::value_type errorSign)

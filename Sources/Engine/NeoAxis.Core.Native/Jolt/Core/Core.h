@@ -174,7 +174,7 @@
 	#define JPH_CPU_ADDRESS_BITS 32
 	#define JPH_VECTOR_ALIGNMENT 16
 	#define JPH_DVECTOR_ALIGNMENT 32
-	#define JPH_DISABLE_CUSTOM_ALLOCATOR
+//!!!!betauser	#define JPH_DISABLE_CUSTOM_ALLOCATOR
 #else
 	#error Unsupported CPU architecture
 #endif

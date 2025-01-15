@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using Internal.LiteDB.Engine;
 using System;
 using System.Linq;
@@ -100,6 +100,25 @@ namespace Internal.LiteDB
         }
 
         /// <summary>
+        /// Read string with \0 on end. Returns full string length (including \0 char)
+        /// </summary>
+        public static string ReadCString(this BufferSlice buffer, int offset, out int length)
+        {
+            length = buffer.Count - buffer.Offset - offset;
+
+            for (var i = offset + buffer.Offset; i < buffer.Count; i++)
+            {
+                if (buffer[i] == '\0')
+                {
+                    length = i - buffer.Offset - offset + 1; // +1 for \0
+                    break;
+                }
+            }
+
+            return Encoding.UTF8.GetString(buffer.Array, buffer.Offset + offset, length - 1);
+        }
+
+        /// <summary>
         /// Read any BsonValue. Use 1 byte for data type, 1 byte for length (optional), 0-255 bytes to value. 
         /// For document or array, use BufferReader
         /// </summary>
@@ -124,13 +143,13 @@ namespace Internal.LiteDB
                     using (var r = new BufferReader(buffer))
                     {
                         r.Skip(offset); // skip first byte for value.Type
-                        return r.ReadDocument();
+                        return r.ReadDocument().GetValue();
                     }
                 case BsonType.Array:
                     using (var r = new BufferReader(buffer))
                     {
                         r.Skip(offset); // skip first byte for value.Type
-                        return r.ReadArray();
+                        return r.ReadArray().GetValue();
                     }
 
                 case BsonType.Binary:

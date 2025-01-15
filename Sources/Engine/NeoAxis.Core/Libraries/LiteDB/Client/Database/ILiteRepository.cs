@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -15,7 +15,7 @@ namespace Internal.LiteDB
         /// <summary>
         /// Insert a new document into collection. Document Id must be a new value in collection - Returns document Id
         /// </summary>
-        void Insert<T>(T entity, string collectionName = null);
+        BsonValue Insert<T>(T entity, string collectionName = null);
 
         /// <summary>
         /// Insert an array of new documents into collection. Document Id must be a new value in collection. Can be set buffer size to commit at each N documents

@@ -628,6 +628,20 @@ namespace NeoAxis
 		ReferenceField<double> _physicsPointVelocitySleepThreshold = 0.01;//0.03;
 
 		/// <summary>
+		/// Whether to enable the deterministic simulation. This will make the simulation run faster but it will no longer be deterministic.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Physics" )]
+		public Reference<bool> PhysicsDeterministicSimulation
+		{
+			get { if( _physicsDeterministicSimulation.BeginGet() ) PhysicsDeterministicSimulation = _physicsDeterministicSimulation.Get( this ); return _physicsDeterministicSimulation.value; }
+			set { if( _physicsDeterministicSimulation.BeginSet( this, ref value ) ) { try { PhysicsDeterministicSimulationChanged?.Invoke( this ); } finally { _physicsDeterministicSimulation.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsDeterministicSimulation"/> property value changes.</summary>
+		public event Action<Scene> PhysicsDeterministicSimulationChanged;
+		ReferenceField<bool> _physicsDeterministicSimulation = true;
+
+		/// <summary>
 		/// Whether or not to use warm starting for constraints (initially applying previous frames impulses).
 		/// </summary>
 		[DefaultValue( true )]
@@ -668,6 +682,20 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="PhysicsUseManifoldReduction"/> property value changes.</summary>
 		public event Action<Scene> PhysicsUseManifoldReductionChanged;
 		ReferenceField<bool> _physicsUseManifoldReduction = true;
+
+		/// <summary>
+		/// Whether to split up large islands into smaller parallel batches of work to improve performance.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Physics" )]
+		public Reference<bool> PhysicsUseLargeIslandSplitter
+		{
+			get { if( _physicsUseLargeIslandSplitter.BeginGet() ) PhysicsUseLargeIslandSplitter = _physicsUseLargeIslandSplitter.Get( this ); return _physicsUseLargeIslandSplitter.value; }
+			set { if( _physicsUseLargeIslandSplitter.BeginSet( this, ref value ) ) { try { PhysicsUseLargeIslandSplitterChanged?.Invoke( this ); } finally { _physicsUseLargeIslandSplitter.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PhysicsUseLargeIslandSplitter"/> property value changes.</summary>
+		public event Action<Scene> PhysicsUseLargeIslandSplitterChanged;
+		ReferenceField<bool> _physicsUseLargeIslandSplitter = true;
 
 		/// <summary>
 		/// If objects can go to sleep or not.
@@ -1728,9 +1756,11 @@ namespace NeoAxis
 				case nameof( PhysicsMinVelocityForRestitution ):
 				case nameof( PhysicsTimeBeforeSleep ):
 				case nameof( PhysicsPointVelocitySleepThreshold ):
+				case nameof( PhysicsDeterministicSimulation ):
 				case nameof( PhysicsConstraintWarmStart ):
 				case nameof( PhysicsUseBodyPairContactCache ):
 				case nameof( PhysicsUseManifoldReduction ):
+				case nameof( PhysicsUseLargeIslandSplitter ):
 				case nameof( PhysicsAllowSleeping ):
 				case nameof( PhysicsCheckActiveEdges ):
 					if( !PhysicsAdvancedSettings )

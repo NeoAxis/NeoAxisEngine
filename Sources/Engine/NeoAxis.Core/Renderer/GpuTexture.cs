@@ -400,7 +400,7 @@ namespace NeoAxis
 			case PixelFormat.R32G32B32A32_UInt: return TextureFormat.RGBA32U;
 
 			//case PixelFormat.R5G6B5: return TextureFormat.R5G6B5;
-			//case PixelFormat.R8G8B8: return TextureFormat.RGB8;
+			case PixelFormat.R8G8B8: return TextureFormat.RGB8;
 
 			case PixelFormat.A8R8G8B8: return TextureFormat.BGRA8;
 			case PixelFormat.A8B8G8R8: return TextureFormat.RGBA8;

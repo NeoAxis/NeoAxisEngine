@@ -8,6 +8,8 @@ using System.IO;
 using System.Windows.Forms;
 using System.Linq;
 using NeoAxis.Networking;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace NeoAxis.Editor
 {
@@ -49,8 +51,8 @@ namespace NeoAxis.Editor
 			{
 				//var projectID = EngineInfo.CloudProjectInfo.ID;
 
-				//request verification code from general manager to entering server manager						
-				var requestCodeResult = await GeneralManagerFunctions.RequestVerificationCodeToEnterProjectAsync( projectID, "Edit" );
+				//request verification code from general manager to entering server manager
+				var requestCodeResult = await GeneralManagerFunctions.RequestVerificationCodeToEnterProjectAsync( projectID, "DeveloperGet" );// "Edit" );
 				if( !string.IsNullOrEmpty( requestCodeResult.Error ) )
 				{
 					Log.Warning( requestCodeResult.Error );
@@ -204,7 +206,7 @@ namespace NeoAxis.Editor
 				var block = requestCodeResult.Data;
 				var code = block.GetAttribute( "Code" );
 				var serverAddress = block.GetAttribute( "ServerAddress" );
-				var enteringResult = await CloudProjectEnteringClient.BeginEnteringAsync( serverAddress, projectID, code, true, true, delegate ( string statusMessage )
+				var enteringResult = await CloudProjectEnteringClient.BeginEnteringAsync( serverAddress, projectID, code, false/*true*/, cloudProjectFolder, true, delegate ( string statusMessage )
 				{
 					cancelForm.LabelText = statusMessage + "...";
 				}, FileSyncBeforeUpdateFiles );
@@ -287,10 +289,11 @@ namespace NeoAxis.Editor
 			{
 				//var projectID = EngineInfo.CloudProjectInfo.ID;
 
-				//request verification code from general manager to entering server manager						
-				var requestCodeResult = await GeneralManagerFunctions.RequestVerificationCodeToEnterProjectAsync( projectID, "Edit" );
+				//request verification code from general manager to entering server manager
+				var requestCodeResult = await GeneralManagerFunctions.RequestVerificationCodeToEnterProjectAsync( projectID, "DeveloperEdit" ); //"Edit" );
 				if( !string.IsNullOrEmpty( requestCodeResult.Error ) )
 				{
+					cancelForm.CloseMultithreaded();
 					Log.Warning( requestCodeResult.Error );
 					ScreenNotifications2.Show( requestCodeResult.Error, true );
 					return;
@@ -307,6 +310,7 @@ namespace NeoAxis.Editor
 						//RepositoryServerState.Init( sender.DestinationFolder );
 						if( !RepositoryServerState.WriteConfigFile( filesOnServer.Values, out var error ) )
 						{
+							cancelForm.CloseMultithreaded();
 							Log.Warning( "Unable to write repository server state config file. " + error );
 							ScreenNotifications2.Show( "Unable to write repository server state config file. " + error, true );
 							cancel = true;
@@ -321,7 +325,7 @@ namespace NeoAxis.Editor
 					var block = requestCodeResult.Data;
 					var code = block.GetAttribute( "Code" );
 					var serverAddress = block.GetAttribute( "ServerAddress" );
-					var enteringResult = await CloudProjectEnteringClient.BeginEnteringAsync( serverAddress, projectID, code, true, true, delegate ( string statusMessage )
+					var enteringResult = await CloudProjectEnteringClient.BeginEnteringAsync( serverAddress, projectID, code, true, cloudProjectFolder, true, delegate ( string statusMessage )
 					{
 						cancelForm.LabelText = statusMessage + "...";
 					}, FileSyncBeforeUpdateFiles );
@@ -330,6 +334,7 @@ namespace NeoAxis.Editor
 					{
 						if( enteringResult != null )
 						{
+							cancelForm.CloseMultithreaded();
 							Log.Warning( enteringResult.Error );
 							ScreenNotifications2.Show( enteringResult.Error, true );
 						}
@@ -345,6 +350,7 @@ namespace NeoAxis.Editor
 					//RepositoryLocal.Init( sender.DestinationFolder );
 					if( !RepositoryLocal.GetFilesToCommit( out var filesToUpload, out var filesToDelete, out var error ) )
 					{
+						cancelForm.CloseMultithreaded();
 						Log.Warning( "Unable to get files to commit. " + error );
 						ScreenNotifications2.Show( "Unable to get files to commit. " + error, true );
 						return;
@@ -435,6 +441,14 @@ namespace NeoAxis.Editor
 
 					if( formItems.Count == 0 )
 					{
+						//cancelForm.LabelText = "No files to commit.";
+						//cancelForm.ButtonText = "OK";
+						//cancelForm.Activate();
+
+						//while( !cancelForm.IsDisposed )
+						//	await Task.Delay( 1 );
+
+						cancelForm.CloseMultithreaded();
 						ScreenNotifications2.Show( "No files to commit." );
 						return;
 					}
@@ -510,6 +524,7 @@ namespace NeoAxis.Editor
 						{
 							if( commitResult != null )
 							{
+								cancelForm.CloseMultithreaded();
 								Log.Warning( commitResult.Error );
 								ScreenNotifications2.Show( commitResult.Error, true );
 							}
@@ -527,6 +542,7 @@ namespace NeoAxis.Editor
 
 							if( !RepositoryLocal.RemoveFileItems( fileNames ) )
 							{
+								cancelForm.CloseMultithreaded();
 								Log.Warning( "Unable to remove file items from local repository." );
 								ScreenNotifications2.Show( "Unable to remove file items from local repository.", true );
 								return;
@@ -547,6 +563,7 @@ namespace NeoAxis.Editor
 						//RepositoryServerState.Init( sender.DestinationFolder );
 						if( !RepositoryServerState.WriteConfigFile( filesOnServer.Values, out var error ) )
 						{
+							cancelForm.CloseMultithreaded();
 							Log.Warning( "Unable to write repository server state config file. " + error );
 							ScreenNotifications2.Show( "Unable to write repository server state config file. " + error, true );
 							cancel = true;
@@ -561,7 +578,7 @@ namespace NeoAxis.Editor
 					var block = requestCodeResult.Data;
 					var code = block.GetAttribute( "Code" );
 					var serverAddress = block.GetAttribute( "ServerAddress" );
-					var enteringResult = await CloudProjectEnteringClient.BeginEnteringAsync( serverAddress, projectID, code, true, true, delegate ( string statusMessage )
+					var enteringResult = await CloudProjectEnteringClient.BeginEnteringAsync( serverAddress, projectID, code, true, cloudProjectFolder, true, delegate ( string statusMessage )
 					{
 						cancelForm.LabelText = statusMessage + "...";
 					}, FileSyncBeforeUpdateFiles );
@@ -570,6 +587,7 @@ namespace NeoAxis.Editor
 					{
 						if( enteringResult != null )
 						{
+							cancelForm.CloseMultithreaded();
 							Log.Warning( enteringResult.Error );
 							ScreenNotifications2.Show( enteringResult.Error, true );
 						}
@@ -579,6 +597,7 @@ namespace NeoAxis.Editor
 				if( cancelCommit )
 					return;
 
+				cancelForm.CloseMultithreaded();
 				ScreenNotifications2.Show( "The commit was done successfully." );
 
 				EditorAPI2.FindWindow<ResourcesWindow>()?.Invalidate( true );

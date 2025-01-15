@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +26,6 @@ namespace Internal.LiteDB.Engine
                         ["name"] = index.Name,
                         ["expression"] = index.Expression,
                         ["unique"] = index.Unique,
-                        ["maxLevel"] = (int)index.MaxLevel
                     };
                 }
             }

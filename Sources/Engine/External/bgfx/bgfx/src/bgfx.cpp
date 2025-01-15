@@ -6004,7 +6004,7 @@ BGFX_C_API void* bgfx_call_special(const char* name, void* parameter1, void* par
 }
 
 //!!!!betauser
-void Fatal(const char* text)
+void Fatal2(const char* text)
 {
 #if BX_PLATFORM_OSX
 	CFStringRef textRef = CFStringCreateWithCString(NULL, text, kCFStringEncodingUTF8);
@@ -6029,11 +6029,11 @@ void Fatal(const char* text)
 BGFX_C_API void bgfx_check_wrapper(int initSettings, int platformData, int nativeAttachment)
 {
 	if (sizeof(bgfx_init_t) != initSettings)
-		Fatal("bgfx_check_wrapper: sizeof(bgfx_init_t) != initSettings.");
+		Fatal2("bgfx_check_wrapper: sizeof(bgfx_init_t) != initSettings.");
 	if (sizeof(bgfx_platform_data_t) != platformData)
-		Fatal("bgfx_check_wrapper: sizeof(bgfx_platform_data_t) != platformData.");
+		Fatal2("bgfx_check_wrapper: sizeof(bgfx_platform_data_t) != platformData.");
 	if (sizeof(bgfx::Attachment) != nativeAttachment)
-		Fatal("bgfx_check_wrapper: sizeof(bgfx::Attachment) != nativeAttachment.");
+		Fatal2("bgfx_check_wrapper: sizeof(bgfx::Attachment) != nativeAttachment.");
 }
 
 //!!!!betauser

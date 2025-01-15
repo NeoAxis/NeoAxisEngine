@@ -11,7 +11,7 @@ using NeoAxis.Networking;
 
 namespace NeoAxis.Editor
 {
-	class CloudProjectCommitClientNode : NetworkClientNode
+	class CloudProjectCommitClientNode : ClientNode
 	{
 		//services
 		ClientNetworkService_Messages messages;
@@ -75,7 +75,7 @@ namespace NeoAxis.Editor
 			client = new CloudProjectCommitClientNode();
 			client.ProtocolError += Client_ProtocolError;
 			client.ConnectionStatusChanged += Client_ConnectionStatusChanged;
-			client.Messages.ReceiveMessage += Messages_ReceiveMessage;
+			client.Messages.ReceiveMessageString += Messages_ReceiveMessage;
 			client.Commit.StatusChanged += Commit_StatusChanged;
 
 			client.Commit.SetFilesToCommit( filesToCommit );
@@ -84,7 +84,7 @@ namespace NeoAxis.Editor
 			block.SetAttribute( "Project", projectID.ToString() );
 			block.SetAttribute( "VerificationCode", verificationCode );
 
-			if( !client.BeginConnect( serverAddress, NetworkCommonSettings.ProjectCommitPort, EngineInfo.Version, block.DumpToString(), 100, out error ) )
+			if( !client.BeginConnect( serverAddress, NetworkCommonSettings.ProjectCommitPort, EngineInfo.Version, block.DumpToString(), 30, out error ) )
 			{
 				client.Dispose();
 				client = null;
@@ -94,7 +94,7 @@ namespace NeoAxis.Editor
 			return true;
 		}
 
-		static private void Client_ProtocolError( NetworkClientNode sender, string message )
+		static private void Client_ProtocolError( ClientNode sender, string message )
 		{
 			Result = new ResultClass( "", "Protocol error. " + message );
 		}
@@ -105,7 +105,7 @@ namespace NeoAxis.Editor
 			{
 				client.ProtocolError -= Client_ProtocolError;
 				client.ConnectionStatusChanged -= Client_ConnectionStatusChanged;
-				client.Messages.ReceiveMessage -= Messages_ReceiveMessage;
+				client.Messages.ReceiveMessageString -= Messages_ReceiveMessage;
 				client.Commit.StatusChanged -= Commit_StatusChanged;
 
 				client.Dispose();
@@ -141,9 +141,9 @@ namespace NeoAxis.Editor
 			}
 		}
 
-		static void Client_ConnectionStatusChanged( NetworkClientNode sender, NetworkStatus status )
+		static void Client_ConnectionStatusChanged( ClientNode sender )//, NetworkStatus status )
 		{
-			switch( status )
+			switch( sender.Status )
 			{
 			case NetworkStatus.Disconnected:
 				if( Result == null && !string.IsNullOrEmpty( sender.DisconnectionReason ) )

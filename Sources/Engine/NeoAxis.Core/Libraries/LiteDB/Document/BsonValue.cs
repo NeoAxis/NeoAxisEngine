@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using Internal.LiteDB.Engine;
 using System;
 using System.Collections.Generic;
@@ -649,7 +649,7 @@ namespace Internal.LiteDB
                 case BsonType.Double: return 8;
                 case BsonType.Decimal: return 16;
 
-                case BsonType.String: return Encoding.UTF8.GetByteCount(this.AsString);
+                case BsonType.String: return StringEncoding.UTF8.GetByteCount(this.AsString);
 
                 case BsonType.Binary: return this.AsBinary.Length;
                 case BsonType.ObjectId: return 12;
@@ -675,7 +675,7 @@ namespace Internal.LiteDB
 
             return
                 1 + // element type
-                Encoding.UTF8.GetByteCount(key) + // CString
+                StringEncoding.UTF8.GetByteCount(key) + // CString
                 1 + // CString \0
                 value.GetBytesCount(true) +
                 (variant ? 5 : 0); // bytes.Length + 0x??

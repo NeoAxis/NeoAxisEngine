@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.IO;
 using System.Linq;
@@ -67,12 +67,34 @@ namespace Internal.LiteDB
 
         public override bool CanWrite { get { return _mode == FileAccess.Write; } }
 
-        public override bool CanSeek { get { return false; } }
+        public override bool CanSeek { get { return _mode == FileAccess.Read; } }
 
         public override long Position
         {
             get { return _streamPosition; }
-            set { throw new NotSupportedException(); }
+            set { if (_mode == FileAccess.Read) { this.SetReadStreamPosition(value); } else { throw new NotSupportedException(); } }
+        }
+
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            if (_mode == FileAccess.Write)
+            {
+                throw new NotSupportedException();
+            }
+
+            switch (origin)
+            {
+                case SeekOrigin.Begin:
+                    this.SetReadStreamPosition(offset);
+                    break;
+                case SeekOrigin.Current:
+                    this.SetReadStreamPosition(_streamPosition + offset);
+                    break;
+                case SeekOrigin.End:
+                    this.SetReadStreamPosition(Length + offset);
+                    break;
+            }
+            return _streamPosition;
         }
 
         #region Dispose
@@ -97,11 +119,6 @@ namespace Internal.LiteDB
         #endregion
 
         #region Not supported operations
-
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            throw new NotSupportedException();
-        }
 
         public override void SetLength(long value)
         {

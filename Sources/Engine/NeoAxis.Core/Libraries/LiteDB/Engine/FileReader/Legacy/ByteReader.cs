@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using Internal.LiteDB.Engine;
 using System;
 using System.Text;
@@ -8,8 +8,8 @@ namespace Internal.LiteDB
 {
     internal class ByteReader
     {
-        private byte[] _buffer;
-        private int _length;
+        private readonly byte[] _buffer;
+        private readonly int _length;
         private int _pos;
 
         public int Position { get { return _pos; } set { _pos = value; } }
@@ -104,7 +104,7 @@ namespace Internal.LiteDB
             return new Decimal(new int[] {  a, b, c, d });
         }
 
-        public Byte[] ReadBytes(int count)
+        public byte[] ReadBytes(int count)
         {
             var buffer = new byte[count];
 

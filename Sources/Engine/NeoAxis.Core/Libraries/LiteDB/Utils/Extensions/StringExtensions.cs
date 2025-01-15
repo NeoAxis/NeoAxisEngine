@@ -1,17 +1,26 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
+
 using static Internal.LiteDB.Constants;
 
 namespace Internal.LiteDB
 {
     internal static class StringExtensions
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsNullOrWhiteSpace(this string str)
         {
-            return str == null || str.Trim().Length == 0;
+            return string.IsNullOrWhiteSpace(str);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsNullOrEmpty(this string str)
+        {
+            return string.IsNullOrEmpty(str);
         }
 
         /// <summary>
@@ -27,13 +36,6 @@ namespace Internal.LiteDB
             }
 
             return true;
-        }
-
-        public static string TrimToNull(this string str)
-        {
-            var v = str.Trim();
-
-            return v.Length == 0 ? null : v;
         }
 
         public static string Sha1(this string value)
@@ -109,7 +111,7 @@ namespace Internal.LiteDB
 
                 if (isWildCardOn)
                 {
-                    if (char.ToUpper(c) == char.ToUpper(p))
+                    if (collation.Compare(c.ToString(), p.ToString()) == 0)
                     {
                         isWildCardOn = false;
                         patternIndex++;
@@ -141,7 +143,7 @@ namespace Internal.LiteDB
                 }
                 else
                 {
-                    if (collation.Compare(c, p) == 0)
+                    if (collation.Compare(c.ToString(), p.ToString()) == 0)
                     {
                         patternIndex++;
                     }
@@ -149,6 +151,8 @@ namespace Internal.LiteDB
                     {
                         if (lastWildCard >= 0)
                         {
+                            int back = patternIndex - lastWildCard - 1;
+                            i -= back;
                             patternIndex = lastWildCard;
                         }
                         else

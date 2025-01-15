@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace Internal.LiteDB
 {
     internal class LinqExpressionVisitor : ExpressionVisitor
     {
-        private static Dictionary<Type, ITypeResolver> _resolver = new Dictionary<Type, ITypeResolver>
+        private static readonly Dictionary<Type, ITypeResolver> _resolver = new Dictionary<Type, ITypeResolver>
         {
             [typeof(BsonValue)] = new BsonValueResolver(),
             [typeof(BsonArray)] = new BsonValueResolver(),

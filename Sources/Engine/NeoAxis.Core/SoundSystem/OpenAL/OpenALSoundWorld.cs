@@ -20,6 +20,7 @@ namespace OpenALSoundSystem
 		static internal List<OpenALRealChannel> realChannels;
 		static internal List<OpenALRealChannel> fileStreamRealChannels;
 
+		static bool useThread;
 		static Thread thread;
 		static volatile bool needAbortThread;
 
@@ -143,6 +144,11 @@ namespace OpenALSoundSystem
 
 			try
 			{
+				//!!!!new. not work on windows
+				//var result = Alc.alcMakeContextCurrent( alContext );
+				//if( result != 1 )
+				//	return false;
+
 				Alc.alcMakeContextCurrent( alContext );
 			}
 			catch( Exception e )
@@ -151,8 +157,10 @@ namespace OpenALSoundSystem
 				return false;
 			}
 
-			if( CheckError() )
-				return false;
+			//!!!!new. no warnings
+			Al.alGetError();
+			//if( CheckError() )
+			//	return false;
 
 			//get captureDeviceName
 			try
@@ -178,15 +186,25 @@ namespace OpenALSoundSystem
 
 			fileStreamRealChannels = new List<OpenALRealChannel>();
 
-			thread = new Thread( new ThreadStart( ThreadFunction ) );
-			try
+
+			useThread = true;
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+				useThread = false;
+
+			Log.InvisibleInfo( "OpenALSoundSystem: Threads: " + useThread.ToString() );
+
+			if( useThread )
 			{
-				if( SystemSettings.CurrentPlatform != SystemSettings.Platform.UWP )
-					thread.CurrentCulture = new System.Globalization.CultureInfo( "en-US" );
+				thread = new Thread( new ThreadStart( ThreadFunction ) );
+				try
+				{
+					if( SystemSettings.CurrentPlatform != SystemSettings.Platform.UWP )
+						thread.CurrentCulture = new System.Globalization.CultureInfo( "en-US" );
+				}
+				catch { }
+				thread.IsBackground = true;
+				thread.Start();
 			}
-			catch { }
-			thread.IsBackground = true;
-			thread.Start();
 
 			hWnd = mainWindowHandle;
 
@@ -243,6 +261,9 @@ namespace OpenALSoundSystem
 		{
 			if( IsActive() )
 			{
+				if( !useThread )
+					UpdateNoThreads();
+
 				criticalSection.Enter();
 
 				for( int n = 0; n < realChannels.Count; n++ )
@@ -532,6 +553,12 @@ namespace OpenALSoundSystem
 				if( needAbortThread )
 					break;
 			}
+		}
+
+		void UpdateNoThreads()
+		{
+			for( int n = 0; n < fileStreamRealChannels.Count; n++ )
+				fileStreamRealChannels[ n ].UpdateFileStreamFromThread();
 		}
 
 		//[DllImport( "user32.dll" )]

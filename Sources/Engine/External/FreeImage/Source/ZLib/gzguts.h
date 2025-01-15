@@ -36,7 +36,7 @@
 #endif
 
 //!!!!betauser
-#ifdef IOS
+#if defined(IOS) || defined(__EMSCRIPTEN__)
 #include <unistd.h>
 #endif
 

@@ -142,7 +142,7 @@ namespace NeoAxis
 		}
 	}
 
-	public class ServerNetworkService_Components : ServerNetworkService
+	public class ServerNetworkService_Components : ServerService
 	{
 		ServerNetworkService_Users users;
 
@@ -156,7 +156,7 @@ namespace NeoAxis
 
 		Dictionary<ServerNetworkService_Users.UserInfo, ClientItem> clientItemByUser = new Dictionary<ServerNetworkService_Users.UserInfo, ClientItem>();
 		Dictionary<long, ClientItem> clientItemByUserID = new Dictionary<long, ClientItem>();
-		Dictionary<NetworkNode.ConnectedNode, ClientItem> clientItemByConnectedNode = new Dictionary<NetworkNode.ConnectedNode, ClientItem>();
+		Dictionary<ServerNode.Client, ClientItem> clientItemByClient = new Dictionary<ServerNode.Client, ClientItem>();
 
 		ClientItem[] allClientItemsCached;
 
@@ -256,6 +256,11 @@ namespace NeoAxis
 		public Scene Scene
 		{
 			get { return scene; }
+		}
+
+		public string SceneInfo
+		{
+			get { return sceneInfo; }
 		}
 
 		void SubscribeToEventsChanged( Component component )
@@ -360,9 +365,9 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public ClientItem GetClientItem( NetworkNode.ConnectedNode connectedNode )
+		public ClientItem GetClientItem( ServerNode.Client client )
 		{
-			if( clientItemByConnectedNode.TryGetValue( connectedNode, out var value ) )
+			if( clientItemByClient.TryGetValue( client, out var value ) )
 				return value;
 			return null;
 		}
@@ -386,8 +391,8 @@ namespace NeoAxis
 
 			clientItemByUser[ user ] = clientItem;
 			clientItemByUserID[ user.UserID ] = clientItem;
-			if( user.ConnectedNode != null )
-				clientItemByConnectedNode[ user.ConnectedNode ] = clientItem;
+			if( user.Client != null )
+				clientItemByClient[ user.Client ] = clientItem;
 			allClientItemsCached = null;
 		}
 
@@ -401,8 +406,8 @@ namespace NeoAxis
 
 				clientItemByUser.Remove( user );
 				clientItemByUserID.Remove( user.UserID );
-				if( user.ConnectedNode != null )
-					clientItemByConnectedNode.Remove( user.ConnectedNode );
+				if( user.Client != null )
+					clientItemByClient.Remove( user.Client );
 				allClientItemsCached = null;
 			}
 		}
@@ -434,13 +439,13 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		ArrayDataWriter BeginMessage( ClientItem client, byte messageID )
 		{
-			return BeginMessage( client.User.ConnectedNode, messageID );
+			return BeginMessage( client.User.Client, messageID );
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		void AddMessageRecipient( ClientItem client )
 		{
-			AddMessageRecipient( client.User.ConnectedNode );
+			AddMessageRecipient( client.User.Client );
 		}
 
 		//!!!!use array
@@ -1196,7 +1201,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		bool ReceiveMessage_ComponentSendNetworkMessageNameToServer( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_ComponentSendNetworkMessageNameToServer( ServerNode.Client sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var name = reader.ReadString();
 			var nameID = reader.ReadVariableInt32();
@@ -1215,7 +1220,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		bool ReceiveMessage_ComponentSendNetworkMessageToServer( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_ComponentSendNetworkMessageToServer( ServerNode.Client sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var sceneInstanceID = reader.ReadVariableInt32();
 			var componentID = (long)reader.ReadVariableUInt64();
@@ -1253,7 +1258,7 @@ namespace NeoAxis
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public class ClientNetworkService_Components : ClientNetworkService
+	public class ClientNetworkService_Components : ClientService
 	{
 		ClientNetworkService_Users users;
 
@@ -1350,7 +1355,7 @@ namespace NeoAxis
 				scene = null;
 		}
 
-		bool ReceiveMessage_SceneCreateBeginToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_SceneCreateBeginToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var sceneInstanceID = reader.ReadVariableInt32();
 			var sceneInfo = reader.ReadString();
@@ -1402,7 +1407,7 @@ namespace NeoAxis
 			return true;
 		}
 
-		bool ReceiveMessage_SceneCreateEndToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_SceneCreateEndToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var enabled = reader.ReadBoolean();
 			if( !reader.Complete() )
@@ -1422,7 +1427,7 @@ namespace NeoAxis
 			return true;
 		}
 
-		bool ReceiveMessage_SceneDestroyToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_SceneDestroyToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			//var newMapWillBeLoaded = reader.ReadBoolean();
 			if( !reader.Complete() )
@@ -1475,7 +1480,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		bool ReceiveMessage_ComponentCreateBeginToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_ComponentCreateBeginToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var parentComponentID = (long)reader.ReadVariableUInt64();
 			var componentID = (long)reader.ReadVariableUInt64();
@@ -1549,7 +1554,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		bool ReceiveMessage_ComponentSetEnabledToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_ComponentSetEnabledToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var componentID = (long)reader.ReadVariableUInt64();
 			var enabled = reader.ReadBoolean();
@@ -1571,7 +1576,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		bool ReceiveMessage_ComponentRemoveFromParentToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_ComponentRemoveFromParentToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var componentID = (long)reader.ReadVariableUInt64();
 			//var queued = reader.ReadBoolean();
@@ -1612,7 +1617,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		bool ReceiveMessage_ComponentSetPropertySignatureToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_ComponentSetPropertySignatureToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var signature = reader.ReadString();
 			var signatureID = reader.ReadVariableInt32();
@@ -1629,7 +1634,7 @@ namespace NeoAxis
 		byte[] tempSpecialSerializedData;
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		bool ReceiveMessage_ComponentSetPropertyValueToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_ComponentSetPropertyValueToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var size = reader.EndPosition - reader.CurrentPosition;
 
@@ -1666,7 +1671,7 @@ namespace NeoAxis
 				var messageTypeItem = serviceItem.GetMessageTypeItem( messageType.Identifier );
 
 				if( messageTypeItem.ReceivedCustomData == null )
-					messageTypeItem.ReceivedCustomData = new Dictionary<string, NetworkNode.ProfilerDataClass.ServiceItem.MessageTypeItem.CustomData>();
+					messageTypeItem.ReceivedCustomData = new Dictionary<string, ClientNode.ProfilerDataClass.ServiceItem.MessageTypeItem.CustomData>();
 
 				messageTypeItem.ReceivedCustomData.TryGetValue( signature, out var item );
 				item.Messages++;
@@ -1739,7 +1744,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		bool ReceiveMessage_SimulationStepToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_SimulationStepToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			//!!!!может какое-то время синхронизации
 			//!!!!может указывать сколько вызовов передавать
@@ -1760,7 +1765,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		bool ReceiveMessage_ComponentSendNetworkMessageNameToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_ComponentSendNetworkMessageNameToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var name = reader.ReadString();
 			var nameID = reader.ReadVariableInt32();
@@ -1775,7 +1780,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		bool ReceiveMessage_ComponentSendNetworkMessageToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_ComponentSendNetworkMessageToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var size = reader.EndPosition - reader.CurrentPosition;
 
@@ -1795,7 +1800,7 @@ namespace NeoAxis
 				var messageTypeItem = serviceItem.GetMessageTypeItem( messageType.Identifier );
 
 				if( messageTypeItem.ReceivedCustomData == null )
-					messageTypeItem.ReceivedCustomData = new Dictionary<string, NetworkNode.ProfilerDataClass.ServiceItem.MessageTypeItem.CustomData>();
+					messageTypeItem.ReceivedCustomData = new Dictionary<string, ClientNode.ProfilerDataClass.ServiceItem.MessageTypeItem.CustomData>();
 
 				messageTypeItem.ReceivedCustomData.TryGetValue( message, out var item );
 				item.Messages++;
@@ -1861,7 +1866,7 @@ namespace NeoAxis
 					var messageTypeItem = serviceItem.GetMessageTypeItem( ComponentSendNetworkMessage );// messageType.Identifier );
 
 					if( messageTypeItem.SentCustomData == null )
-						messageTypeItem.SentCustomData = new Dictionary<string, NetworkNode.ProfilerDataClass.ServiceItem.MessageTypeItem.CustomData>();
+						messageTypeItem.SentCustomData = new Dictionary<string, ClientNode.ProfilerDataClass.ServiceItem.MessageTypeItem.CustomData>();
 
 					messageTypeItem.SentCustomData.TryGetValue( sendingNetworkMessage, out var item );
 					item.Messages++;

@@ -76,6 +76,10 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
+		public delegate void TextChangingDelegate( UIControl sender, ref Reference<string> text );
+		public event TextChangingDelegate TextChanging;
+		//protected virtual void OnTextChanging( ref Reference<string> text ) { }
+
 		/// <summary>
 		/// The text value of the control.
 		/// </summary>
@@ -91,6 +95,9 @@ namespace NeoAxis
 			{
 				if( value.Value == null )
 					value.Value = "";
+
+				TextChanging?.Invoke( this, ref value );
+				//OnTextChanging( ref value );
 				if( _text.BeginSet( this, ref value ) ) { try { TextChanged?.Invoke( this ); } finally { _text.EndSet(); } }
 			}
 		}

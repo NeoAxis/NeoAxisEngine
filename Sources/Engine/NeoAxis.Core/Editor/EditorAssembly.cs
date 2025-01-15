@@ -153,9 +153,9 @@ namespace NeoAxis.Editor
 		public abstract ProcedureUI.Form CreateProcedureUIDialog( ProcedureUIDialogSettings settings );
 		public abstract void ShowDialog( ProcedureUI.Form form );
 
-		public abstract bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, out string[] fileNames );
-		public abstract bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, out string fileName );
-		public abstract bool ShowSaveFileDialog( string initialDirectory, string initialFileName, string filter, out string resultFileName );
+		public abstract bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, IntPtr ownerWindowHandle, out string[] fileNames );
+		public abstract bool ShowOpenFileDialog( bool isFolderPicker, string initialDirectory, IEnumerable<(string rawDisplayName, string extensionList)> filters, IntPtr ownerWindowHandle, out string fileName );
+		public abstract bool ShowSaveFileDialog( string initialDirectory, string initialFileName, string filter, IntPtr ownerWindowHandle, out string resultFileName );
 	}
 }
 

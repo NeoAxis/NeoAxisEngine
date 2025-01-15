@@ -7,44 +7,13 @@ using System.Threading.Tasks;
 
 namespace NeoAxis.Networking
 {
-	public class CloudProjectEnteringClientNode : NetworkClientNode
-	{
-		//services
-		ClientNetworkService_Messages messages;
-		ClientNetworkService_FileSync fileSync;
-
-		//
-
-		public CloudProjectEnteringClientNode()
-		{
-			//register messages service
-			messages = new ClientNetworkService_Messages();
-			RegisterService( messages );
-
-			//register file sync service
-			fileSync = new ClientNetworkService_FileSync();
-			RegisterService( fileSync );
-		}
-
-		public ClientNetworkService_Messages Messages
-		{
-			get { return messages; }
-		}
-
-		public ClientNetworkService_FileSync FileSync
-		{
-			get { return fileSync; }
-		}
-	}
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	public static class CloudProjectEnteringClient
 	{
 		static bool Edit;
+		static string ProjectFolder;
 		static bool EnableFileSync;
 		static FileSyncBeforeUpdateFilesDelegate FileSyncBeforeUpdateFilesCallback;
-		static CloudProjectEnteringClientNode client;
+		static Node client;
 		static string resultDataFromServer = "";
 		static volatile ResultClass Result;
 		static volatile bool cancelEntering;
@@ -65,20 +34,52 @@ namespace NeoAxis.Networking
 
 		/////////////////////////////////////////
 
+		class Node : ClientNode
+		{
+			//services
+			ClientNetworkService_Messages messages;
+			ClientNetworkService_FileSync fileSync;
+
+			//
+
+			public Node()
+			{
+				//register messages service
+				messages = new ClientNetworkService_Messages();
+				RegisterService( messages );
+
+				//register file sync service
+				fileSync = new ClientNetworkService_FileSync();
+				RegisterService( fileSync );
+			}
+
+			public ClientNetworkService_Messages Messages
+			{
+				get { return messages; }
+			}
+
+			public ClientNetworkService_FileSync FileSync
+			{
+				get { return fileSync; }
+			}
+		}
+
+		/////////////////////////////////////////
+
 		static bool ConnectToServer( string serverAddress, long projectID, string verificationCode, out string error )
 		{
 			error = "";
 
 			DestroyClient();
 
-			client = new CloudProjectEnteringClientNode();
+			client = new Node();
 			client.ProtocolError += Client_ProtocolError;
 			client.ConnectionStatusChanged += Client_ConnectionStatusChanged;
-			client.Messages.ReceiveMessage += Messages_ReceiveMessage;
+			client.Messages.ReceiveMessageString += Messages_ReceiveMessage;
 			client.FileSync.StatusChanged += FileSync_StatusChanged;
 			client.FileSync.BeforeUpdateFiles += FileSync_BeforeUpdateFiles;
 
-			client.FileSync.DestinationFolder = CloudProjectCommon.GetAppProjectFolder( projectID, Edit );
+			client.FileSync.DestinationFolder = ProjectFolder;// CloudProjectCommon.GetAppProjectFolder( projectID, Edit );
 
 			//client.FileSync.LocalFilesFolder = "";
 
@@ -88,7 +89,7 @@ namespace NeoAxis.Networking
 			block.SetAttribute( "Edit", Edit.ToString() );
 			block.SetAttribute( "VerificationCode", verificationCode );
 
-			if( !client.BeginConnect( serverAddress, NetworkCommonSettings.ProjectEnteringPort, EngineInfo.Version, block.DumpToString(), 100, out error ) )
+			if( !client.BeginConnect( serverAddress, NetworkCommonSettings.ProjectEnteringPort, EngineInfo.Version, block.DumpToString(), 30, out error ) )
 			{
 				client.Dispose();
 				client = null;
@@ -98,7 +99,7 @@ namespace NeoAxis.Networking
 			return true;
 		}
 
-		static private void Client_ProtocolError( NetworkClientNode sender, string message )
+		static private void Client_ProtocolError( ClientNode sender, string message )
 		{
 			Result = new ResultClass( "", "Protocol error. " + message );
 		}
@@ -109,7 +110,7 @@ namespace NeoAxis.Networking
 			{
 				client.ProtocolError -= Client_ProtocolError;
 				client.ConnectionStatusChanged -= Client_ConnectionStatusChanged;
-				client.Messages.ReceiveMessage -= Messages_ReceiveMessage;
+				client.Messages.ReceiveMessageString -= Messages_ReceiveMessage;
 				client.FileSync.StatusChanged -= FileSync_StatusChanged;
 				client.FileSync.BeforeUpdateFiles -= FileSync_BeforeUpdateFiles;
 
@@ -130,9 +131,9 @@ namespace NeoAxis.Networking
 			client?.Update();
 		}
 
-		static void Client_ConnectionStatusChanged( NetworkClientNode sender, NetworkStatus status )
+		static void Client_ConnectionStatusChanged( ClientNode sender )//, NetworkStatus status )
 		{
-			switch( status )
+			switch( sender.Status )
 			{
 			case NetworkStatus.Disconnected:
 				if( Result == null && !string.IsNullOrEmpty( sender.DisconnectionReason ) )
@@ -187,9 +188,10 @@ namespace NeoAxis.Networking
 		public delegate void BeginEnteringAsyncStatusMessageDelegate( string statusMessage );
 		public delegate void FileSyncBeforeUpdateFilesDelegate( ClientNetworkService_FileSync sender, Dictionary<string, ClientNetworkService_FileSync.FileInfo> filesOnServer, ref string[] filesToDownload, ref string[] filesToDelete, ref bool cancel );
 
-		public static async Task<ResultClass> BeginEnteringAsync( string serverAddress, long projectID, string verificationCode, bool edit, bool enableFileSync, BeginEnteringAsyncStatusMessageDelegate statusMessageCallback, FileSyncBeforeUpdateFilesDelegate fileSyncBeforeUpdateFilesCallback )
+		public static async Task<ResultClass> BeginEnteringAsync( string serverAddress, long projectID, string verificationCode, bool edit, string projectFolder, bool enableFileSync, BeginEnteringAsyncStatusMessageDelegate statusMessageCallback, FileSyncBeforeUpdateFilesDelegate fileSyncBeforeUpdateFilesCallback )
 		{
 			Edit = edit;
+			ProjectFolder = projectFolder;
 			EnableFileSync = enableFileSync;
 			FileSyncBeforeUpdateFilesCallback = fileSyncBeforeUpdateFilesCallback;
 			Result = null;
@@ -200,7 +202,7 @@ namespace NeoAxis.Networking
 			//create folder for project files
 			try
 			{
-				var projectFolder = CloudProjectCommon.GetAppProjectFolder( projectID, edit );
+				//var projectFolder = CloudProjectCommon.GetAppProjectFolder( projectID, edit );
 				if( !Directory.Exists( projectFolder ) )
 					Directory.CreateDirectory( projectFolder );
 			}

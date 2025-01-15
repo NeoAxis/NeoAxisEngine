@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ namespace Internal.LiteDB.Engine
     /// </summary>
     internal class IndexScan : Index
     {
-        private Func<BsonValue, bool> _func;
+        private readonly Func<BsonValue, bool> _func;
 
         public IndexScan(string name, Func<BsonValue, bool> func, int order)
             : base(name, order)

@@ -1,4 +1,4 @@
-//#if !UWP// && !ANDROID
+//#if !UWP && LIDGREN// && !ANDROID
 //using System;
 //using System.Diagnostics;
 //using System.Net;

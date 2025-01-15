@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2024.1.
+// Made with NeoAxis Engine 2024.3.
 
 .component Project.MessageBoxWindow
 {
@@ -15,9 +15,10 @@
 	{
 		Name = Text
 		Text = Text text text text text text text text text text text text text text text. Text text text text text text text text text text text text text text text.
-		Size = Units 660 100
+		Size = Units 660 0
 		HorizontalAlignment = Stretch
-		Margin = Units 40 70 40 0
+		VerticalAlignment = Stretch
+		Margin = Units 40 70 40 110
 		EditorScrollPosition = 0 0
 		WordWrap = True
 	}
@@ -27,7 +28,8 @@
 		Text = 1 Set 1
 		Size = Units 200 40
 		HorizontalAlignment = Center
-		Margin = Units 150 200 150 0
+		VerticalAlignment = Bottom
+		Margin = Units 150 200 150 40
 		EditorScrollPosition = 0 0
 		.component NeoAxis.EventHandlerComponent
 		{
@@ -51,7 +53,8 @@
 		Text = 2 Set 1
 		Size = Units 200 40
 		HorizontalAlignment = Center
-		Margin = Units 40 200 260 0
+		VerticalAlignment = Bottom
+		Margin = Units 40 200 260 40
 		EditorScrollPosition = 0 0
 		.component NeoAxis.EventHandlerComponent
 		{
@@ -75,7 +78,8 @@
 		Text = 3 Set 1
 		Size = Units 200 40
 		HorizontalAlignment = Center
-		Margin = Units -70 200 380 0
+		VerticalAlignment = Bottom
+		Margin = Units -50 200 380 40
 		EditorScrollPosition = 0 0
 		.component NeoAxis.EventHandlerComponent
 		{
@@ -99,7 +103,8 @@
 		Text = 3 Set 2
 		Size = Units 200 40
 		HorizontalAlignment = Center
-		Margin = Units 160 200 150 0
+		VerticalAlignment = Bottom
+		Margin = Units 160 200 150 40
 		EditorScrollPosition = 0 0
 		.component NeoAxis.EventHandlerComponent
 		{
@@ -123,7 +128,8 @@
 		Text = 3 Set 3
 		Size = Units 200 40
 		HorizontalAlignment = Center
-		Margin = Units 380 200 -60 0
+		VerticalAlignment = Bottom
+		Margin = Units 380 200 -40 40
 		EditorScrollPosition = 0 0
 		.component NeoAxis.EventHandlerComponent
 		{
@@ -147,7 +153,8 @@
 		Text = 2 Set 2
 		Size = Units 200 40
 		HorizontalAlignment = Center
-		Margin = Units 260 200 40 0
+		VerticalAlignment = Bottom
+		Margin = Units 260 200 40 40
 		EditorScrollPosition = 0 0
 		.component NeoAxis.EventHandlerComponent
 		{

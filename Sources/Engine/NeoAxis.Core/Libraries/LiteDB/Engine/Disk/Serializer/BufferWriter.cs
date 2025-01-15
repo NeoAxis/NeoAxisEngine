@@ -1,5 +1,6 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Text;
 using static Internal.LiteDB.Constants;
@@ -18,6 +19,8 @@ namespace Internal.LiteDB.Engine
         private int _position = 0; // global position
 
         private bool _isEOF = false;
+
+        private static readonly ArrayPool<byte> _bufferPool = ArrayPool<byte>.Shared;
 
         /// <summary>
         /// Current global cursor position
@@ -99,10 +102,10 @@ namespace Internal.LiteDB.Engine
                 // fill buffer
                 if (buffer != null)
                 {
-                    Buffer.BlockCopy(buffer, 
+                    Buffer.BlockCopy(buffer,
                         offset + bufferPosition,
                         _current.Array,
-                        _current.Offset + _currentPosition, 
+                        _current.Offset + _currentPosition,
                         bytesToCopy);
                 }
 
@@ -134,7 +137,7 @@ namespace Internal.LiteDB.Engine
         /// </summary>
         public void Consume()
         {
-            if(_source != null)
+            if (_source != null)
             {
                 while (_source.MoveNext())
                 {
@@ -153,13 +156,13 @@ namespace Internal.LiteDB.Engine
         {
             if (value.IndexOf('\0') > -1) throw LiteException.InvalidNullCharInString();
 
-            var bytesCount = Encoding.UTF8.GetByteCount(value);
+            var bytesCount = StringEncoding.UTF8.GetByteCount(value);
             var available = _current.Count - _currentPosition; // avaiable in current segment
 
             // can write direct in current segment (use < because need +1 \0)
             if (bytesCount < available)
             {
-                Encoding.UTF8.GetBytes(value, 0, value.Length, _current.Array, _current.Offset + _currentPosition);
+                StringEncoding.UTF8.GetBytes(value, 0, value.Length, _current.Array, _current.Offset + _currentPosition);
 
                 _current[_currentPosition + bytesCount] = 0x00;
 
@@ -167,9 +170,9 @@ namespace Internal.LiteDB.Engine
             }
             else
             {
-                var buffer = BufferPool.Rent(bytesCount);
+                var buffer = _bufferPool.Rent(bytesCount);
 
-                Encoding.UTF8.GetBytes(value, 0, value.Length, buffer, 0);
+                StringEncoding.UTF8.GetBytes(value, 0, value.Length, buffer, 0);
 
                 this.Write(buffer, 0, bytesCount);
 
@@ -177,7 +180,7 @@ namespace Internal.LiteDB.Engine
 
                 this.MoveForward(1);
 
-                BufferPool.Return(buffer);
+                _bufferPool.Return(buffer, true);
             }
         }
 
@@ -187,7 +190,7 @@ namespace Internal.LiteDB.Engine
         /// </summary>
         public void WriteString(string value, bool specs)
         {
-            var count = Encoding.UTF8.GetByteCount(value);
+            var count = StringEncoding.UTF8.GetByteCount(value);
 
             if (specs)
             {
@@ -196,20 +199,20 @@ namespace Internal.LiteDB.Engine
 
             if (count <= _current.Count - _currentPosition)
             {
-                Encoding.UTF8.GetBytes(value, 0, value.Length, _current.Array, _current.Offset + _currentPosition);
+                StringEncoding.UTF8.GetBytes(value, 0, value.Length, _current.Array, _current.Offset + _currentPosition);
 
                 this.MoveForward(count);
             }
             else
             {
                 // rent a buffer to be re-usable
-                var buffer = BufferPool.Rent(count);
+                var buffer = _bufferPool.Rent(count);
 
-                Encoding.UTF8.GetBytes(value, 0, value.Length, buffer, 0);
+                StringEncoding.UTF8.GetBytes(value, 0, value.Length, buffer, 0);
 
                 this.Write(buffer, 0, count);
 
-                BufferPool.Return(buffer);
+                _bufferPool.Return(buffer, true);
             }
 
             if (specs)
@@ -232,13 +235,13 @@ namespace Internal.LiteDB.Engine
             }
             else
             {
-                var buffer = BufferPool.Rent(size);
+                var buffer = _bufferPool.Rent(size);
 
                 toBytes(value, buffer, 0);
 
                 this.Write(buffer, 0, size);
 
-                BufferPool.Return(buffer);
+                _bufferPool.Return(buffer, true);
             }
         }
 
@@ -294,13 +297,13 @@ namespace Internal.LiteDB.Engine
             }
             else
             {
-                var buffer = BufferPool.Rent(12);
+                var buffer = _bufferPool.Rent(12);
 
                 value.ToByteArray(buffer, 0);
 
                 this.Write(buffer, 0, 12);
 
-                BufferPool.Return(buffer);
+                _bufferPool.Return(buffer, true);
             }
         }
 

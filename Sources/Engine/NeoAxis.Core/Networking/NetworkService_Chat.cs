@@ -6,7 +6,7 @@ using NeoAxis.Networking;
 
 namespace NeoAxis
 {
-	public class ServerNetworkService_Chat : ServerNetworkService
+	public class ServerNetworkService_Chat : ServerService
 	{
 		ServerNetworkService_Users users;
 
@@ -27,7 +27,7 @@ namespace NeoAxis
 			RegisterMessageType( "TextToClient", 2 );
 		}
 
-		bool ReceiveMessage_TextToServer( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_TextToServer( ServerNode.Client sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			//get source user
 			var fromUser = users.GetUser( sender );
@@ -84,14 +84,14 @@ namespace NeoAxis
 
 			if( privateToUser != null )
 			{
-				if( privateToUser.ConnectedNode != null )
+				if( privateToUser.Client != null )
 					SendTextToClient( privateToUser, fromUser, text );
 			}
 			else
 			{
 				foreach( var toUser in users.Users )
 				{
-					if( toUser.ConnectedNode != null )
+					if( toUser.Client != null )
 						SendTextToClient( toUser, fromUser, text );
 				}
 			}
@@ -100,7 +100,7 @@ namespace NeoAxis
 		void SendTextToClient( ServerNetworkService_Users.UserInfo toUser, ServerNetworkService_Users.UserInfo fromUser, string text )
 		{
 			var messageType = GetMessageType( "TextToClient" );
-			var writer = BeginMessage( toUser.ConnectedNode, messageType );
+			var writer = BeginMessage( toUser.Client, messageType );
 			writer.Write( fromUser.UserID );
 			//writer.WriteVariableUInt64( (ulong)fromUser.UserID );
 			writer.Write( text );
@@ -110,7 +110,7 @@ namespace NeoAxis
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public class ClientNetworkService_Chat : ClientNetworkService
+	public class ClientNetworkService_Chat : ClientService
 	{
 		ClientNetworkService_Users users;
 
@@ -193,7 +193,7 @@ namespace NeoAxis
 			EndMessage();
 		}
 
-		bool ReceiveMessage_TextToClient( NetworkNode.ConnectedNode sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_TextToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			//get data from message
 			var fromUserID = reader.ReadInt64();//var fromUserID = (long)reader.ReadVariableUInt64();

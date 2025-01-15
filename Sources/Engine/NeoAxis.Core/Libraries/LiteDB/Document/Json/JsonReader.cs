@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -14,7 +14,7 @@ namespace Internal.LiteDB
     {
         private readonly static IFormatProvider _numberFormat = CultureInfo.InvariantCulture.NumberFormat;
 
-        private Tokenizer _tokenizer = null;
+        private readonly Tokenizer _tokenizer = null;
 
         public long Position { get { return _tokenizer.Position; } }
 

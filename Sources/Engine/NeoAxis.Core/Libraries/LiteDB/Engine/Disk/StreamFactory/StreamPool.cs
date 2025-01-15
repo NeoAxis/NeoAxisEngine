@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -33,7 +33,7 @@ namespace Internal.LiteDB.Engine
         /// <summary>
         /// Get single Stream writer instance
         /// </summary>
-        public Stream Writer => _writer.Value;
+        public Lazy<Stream> Writer => _writer;
 
         /// <summary>
         /// Rent a Stream reader instance

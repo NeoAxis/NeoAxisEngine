@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -32,7 +32,16 @@ namespace Internal.LiteDB.Engine
                 collection = sys.Name;
             }
 
-            var exec = new QueryExecutor(this, _monitor, _sortDisk, _header.Pragmas, collection, query, source);
+            var exec = new QueryExecutor(
+                this, 
+                _state,
+                _monitor, 
+                _sortDisk, 
+                _disk,
+                _header.Pragmas, 
+                collection, 
+                query, 
+                source);
 
             return exec.ExecuteQuery();
         }

@@ -1,4 +1,4 @@
-﻿//#if !UWP
+﻿//#if !UWP && LIDGREN
 //using System;
 //using System.Text;
 //using System.Collections;

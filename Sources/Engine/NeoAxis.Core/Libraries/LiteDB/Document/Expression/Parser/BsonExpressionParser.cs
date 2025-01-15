@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -122,7 +122,7 @@ namespace Internal.LiteDB
                 }
 
                 values.Add(expr);
-                ops.Add(op.ToUpper());
+                ops.Add(op.ToUpperInvariant());
             }
 
             var order = 0;
@@ -889,7 +889,7 @@ namespace Internal.LiteDB
             var useSource = false;
             var fields = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            src.Append(token.Value.ToUpper() + "(");
+            src.Append(token.Value.ToUpperInvariant() + "(");
 
             // method call with no parameters
             if (tokenizer.LookAhead().Type == TokenType.CloseParenthesis)
@@ -927,7 +927,7 @@ namespace Internal.LiteDB
 
             var method = BsonExpression.GetMethod(token.Value, pars.Count);
 
-            if (method == null) throw LiteException.UnexpectedToken($"Method '{token.Value.ToUpper()}' does not exist or contains invalid parameters", token);
+            if (method == null) throw LiteException.UnexpectedToken($"Method '{token.Value.ToUpperInvariant()}' does not exist or contains invalid parameters", token);
 
             // test if method are decorated with "Variable" (immutable = false)
             if (method.GetCustomAttribute<VolatileAttribute>() != null)
@@ -1171,7 +1171,7 @@ namespace Internal.LiteDB
             if (tokenizer.Current.Type != TokenType.Word) return null;
             if (tokenizer.LookAhead().Type != TokenType.OpenParenthesis) return null;
 
-            var token = tokenizer.Current.Value.ToUpper();
+            var token = tokenizer.Current.Value.ToUpperInvariant();
 
             switch (token)
             {
@@ -1386,7 +1386,7 @@ namespace Internal.LiteDB
 
             if (token.Is("ALL") || token.Is("ANY"))
             {
-                var key = token.Value.ToUpper();
+                var key = token.Value.ToUpperInvariant();
 
                 tokenizer.ReadToken(); // consume operant
 
@@ -1475,7 +1475,7 @@ namespace Internal.LiteDB
                 Expression = Expression.New(ctor, expr),
                 Left = left,
                 Right = right,
-                Source = left.Source + " " + (type.ToString().ToUpper()) + " " + right.Source
+                Source = left.Source + " " + (type.ToString().ToUpperInvariant()) + " " + right.Source
             };
 
             return result;

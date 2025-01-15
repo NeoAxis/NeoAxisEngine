@@ -50,6 +50,8 @@
 #define PLATFORM_ANDROID
 #elif defined(__linux__)
 #define PLATFORM_LINUX
+#elif defined(__EMSCRIPTEN__)
+#define PLATFORM_WEB
 #else
 #error Platform is not supported.
 #endif
@@ -138,7 +140,7 @@ namespace bx
 			}
 
 			//!!!!betauser
-#if defined(__ANDROID__) || defined(IOS) || defined(LINUX)
+#if defined(__ANDROID__) || defined(IOS) || defined(LINUX) || defined(__EMSCRIPTEN__)
 			m_file = fopen(_filePath.getCPtr(), "rb");
 #else
 			wchar_t wfilePath[PATH_MAX + 1];
@@ -240,7 +242,7 @@ namespace bx
 			}
 
 			//!!!!betauser
-#if defined(__ANDROID__) || defined(IOS) || defined(LINUX)
+#if defined(__ANDROID__) || defined(IOS) || defined(LINUX) || defined(__EMSCRIPTEN__)
 			m_file = fopen(_filePath.getCPtr(), _append ? "ab" : "wb");
 #else
 			wchar_t wfilePath[PATH_MAX + 1];

@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -269,8 +269,8 @@ namespace Internal.LiteDB
 
         #region Static methods
 
-        private static int _machine;
-        private static short _pid;
+        private static readonly int _machine;
+        private static readonly short _pid;
         private static int _increment;
 
         // static constructor

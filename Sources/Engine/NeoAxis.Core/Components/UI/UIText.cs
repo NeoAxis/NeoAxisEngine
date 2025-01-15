@@ -711,7 +711,6 @@ namespace NeoAxis
 					allCharacters.Add( new CharacterItem( c, n, width ) );
 				}
 
-
 				foreach( var characters in Split( allCharacters, '\n' ) )
 				{
 

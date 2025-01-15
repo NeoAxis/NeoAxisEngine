@@ -3685,11 +3685,12 @@ namespace NeoAxis
 		//	//	viewport.DebugGeometry.AddSphere( result.Position, r );
 		//}
 
-		void UpdateAdvancedPhysicsSettings()
+		unsafe void UpdateAdvancedPhysicsSettings()
 		{
 			if( physicsWorld != null )
 			{
 				var useDefault = !PhysicsAdvancedSettings.Value;
+				var settings = new PhysicsNative.PhysicsSettings2();
 
 				if( !useDefault )
 				{
@@ -3697,7 +3698,7 @@ namespace NeoAxis
 					if( maxInFlightBodyPairs == 0 )
 						maxInFlightBodyPairs = PhysicsMaxBodies / 10;
 
-					PhysicsNative.JPhysicsSystem_SetPhysicsSettings( physicsWorld.physicsSystem, /*useDefault,*/
+					PhysicsNative.Init_SetPhysicsSettings( ref settings,
 						maxInFlightBodyPairs,
 						PhysicsStepListenersBatchSize,
 						PhysicsStepListenerBatchesPerJob,
@@ -3717,15 +3718,17 @@ namespace NeoAxis
 						(float)PhysicsMinVelocityForRestitution,
 						(float)PhysicsTimeBeforeSleep,
 						(float)PhysicsPointVelocitySleepThreshold,
+						PhysicsDeterministicSimulation,
 						PhysicsConstraintWarmStart,
 						PhysicsUseBodyPairContactCache,
 						PhysicsUseManifoldReduction,
 						PhysicsAllowSleeping,
+						PhysicsUseLargeIslandSplitter,
 						PhysicsCheckActiveEdges );
 				}
 				else
 				{
-					PhysicsNative.JPhysicsSystem_SetPhysicsSettings( physicsWorld.physicsSystem, /*useDefault,*/
+					PhysicsNative.Init_SetPhysicsSettings( ref settings,
 						16384,
 						8,
 						1,
@@ -3749,9 +3752,82 @@ namespace NeoAxis
 						true,
 						true,
 						true,
+						true,
+						true,
 						true );
 				}
+
+				PhysicsNative.JPhysicsSystem_SetPhysicsSettingsStructure( physicsWorld.physicsSystem, &settings, sizeof( PhysicsNative.PhysicsSettings2 ) );
 			}
 		}
+
+		//void UpdateAdvancedPhysicsSettings()
+		//{
+		//	if( physicsWorld != null )
+		//	{
+		//		var useDefault = !PhysicsAdvancedSettings.Value;
+
+		//		if( !useDefault )
+		//		{
+		//			var maxInFlightBodyPairs = PhysicsAdvancedSettings ? PhysicsMaxInFlightBodyPairs.Value : 0;
+		//			if( maxInFlightBodyPairs == 0 )
+		//				maxInFlightBodyPairs = PhysicsMaxBodies / 10;
+
+		//			PhysicsNative.JPhysicsSystem_SetPhysicsSettings( physicsWorld.physicsSystem, /*useDefault,*/
+		//				maxInFlightBodyPairs,
+		//				PhysicsStepListenersBatchSize,
+		//				PhysicsStepListenerBatchesPerJob,
+		//				(float)PhysicsBaumgarte,
+		//				(float)PhysicsSpeculativeContactDistance,
+		//				(float)PhysicsPenetrationSlop,
+		//				(float)PhysicsLinearCastThreshold,
+		//				(float)PhysicsLinearCastMaxPenetration,
+		//				(float)( PhysicsManifoldTolerance * PhysicsManifoldTolerance ),
+		//				(float)PhysicsMaxPenetrationDistance,
+		//				(float)( PhysicsBodyPairCacheMaxDeltaPosition * PhysicsBodyPairCacheMaxDeltaPosition ),
+		//				(float)PhysicsBodyPairCacheCosMaxDeltaRotationDiv2,
+		//				(float)PhysicsContactNormalCosMaxDeltaRotation,
+		//				(float)( PhysicsContactPointPreserveLambdaMaxDist * PhysicsContactPointPreserveLambdaMaxDist ),
+		//				PhysicsNumVelocitySteps,
+		//				PhysicsNumPositionSteps,
+		//				(float)PhysicsMinVelocityForRestitution,
+		//				(float)PhysicsTimeBeforeSleep,
+		//				(float)PhysicsPointVelocitySleepThreshold,
+		//				PhysicsConstraintWarmStart,
+		//				PhysicsUseBodyPairContactCache,
+		//				PhysicsUseManifoldReduction,
+		//				PhysicsAllowSleeping,
+		//				PhysicsCheckActiveEdges );
+		//		}
+		//		else
+		//		{
+		//			PhysicsNative.JPhysicsSystem_SetPhysicsSettings( physicsWorld.physicsSystem, /*useDefault,*/
+		//				16384,
+		//				8,
+		//				1,
+		//				(float)0.2,
+		//				(float)0.01,
+		//				(float)0.01,
+		//				(float)0.1,//0.75,
+		//				(float)0.05,//0.25,
+		//				(float)( 0.001 * 0.001 ),
+		//				(float)0.02,
+		//				(float)( 0.001 * 0.001 ),
+		//				(float)0.99984769515639123915701155881391,
+		//				(float)0.99619469809174553229501040247389,
+		//				(float)( 0.01 * 0.01 ),
+		//				10,
+		//				2,
+		//				(float)1.0,
+		//				(float)0.5,
+		//				(float)0.01,
+		//				true,
+		//				true,
+		//				true,
+		//				true,
+		//				true );
+		//		}
+		//	}
+		//}
 	}
 }

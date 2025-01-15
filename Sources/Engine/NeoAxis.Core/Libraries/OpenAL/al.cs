@@ -3933,6 +3933,7 @@ namespace Tao.OpenAl
 		#endregion string alGetString(int state)
 
 		#region alHint(int target, int mode)
+#if !WEB
 		/// <summary>
 		///     Sets application preferences for driver performance choices.
 		/// </summary>
@@ -3945,6 +3946,7 @@ namespace Tao.OpenAl
 		// ALAPI ALvoid ALAPIENTRY alHint(ALenum target, ALenum mode);
 		[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
 		public static extern void alHint( int target, int mode );
+#endif
 		#endregion alHint(int target, int mode)
 
 		#region int alIsBuffer(int buffer)
@@ -4229,6 +4231,7 @@ namespace Tao.OpenAl
 		#endregion alListeneriv(int attribute, [In] ref int values)
 
 		#region alQueuei(int source, int attribute, int val)
+#if !WEB
 		/// <summary>
 		///     Unknown.
 		/// </summary>
@@ -4244,6 +4247,7 @@ namespace Tao.OpenAl
 		// ALAPI void ALAPIENTRY alQueuei(ALuint sid, ALenum param, ALint value);
 		[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
 		public static extern void alQueuei( int source, int attribute, int val );
+#endif
 		#endregion alQueuei(int source, int attribute, int val)
 
 		#region alSource3f(int source, int attribute, float value1, float value2, float value3)
@@ -5021,6 +5025,7 @@ namespace Tao.OpenAl
 		#endregion Public OpenAL 1.1 Methods
 
 		#region Public IASIG Methods
+#if !WEB
 		#region int alGenEnvironmentIASIG(int number, out int environments)
 		/// <summary>
 		///     Unknown.
@@ -5205,6 +5210,7 @@ namespace Tao.OpenAl
 		[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
 		public static extern void alEnvironmentfIASIG( int environmentId, int attribute, int val );
 		#endregion alEnvironmentfIASIG(int environmentId, int attribute, int val)
+#endif
 		#endregion Public IASIG Methods
 
 		#region Public OpenAL Extension Methods

@@ -1,5 +1,4 @@
 ﻿#if CLOUD
-#if !DEPLOY
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
@@ -13,7 +12,6 @@ using NeoAxis.Networking;
 using Internal.ComponentFactory.Krypton.Toolkit;
 using System.IO;
 using System.Diagnostics;
-using System.Windows.Forms.Design;
 
 namespace NeoAxis.Editor
 {
@@ -23,7 +21,14 @@ namespace NeoAxis.Editor
 
 		//bool firstTick = true;
 		public long projectID;
+		public string defaultProjectFolder;
+
 		public RepositoryFileWatcher fileWatcher;
+		public string projectFolder;
+
+		public delegate void ChangeProjectFolderCallbackDelegate( LauncherEditRepositoryForm sender, string projectFolder );
+		public event ChangeProjectFolderCallbackDelegate ChangeProjectFolderCallback;
+		public bool reopen;
 
 		///////////////////////////////////////////////
 
@@ -103,7 +108,8 @@ namespace NeoAxis.Editor
 
 		public string GetProjectFolder()
 		{
-			return CloudProjectCommon.GetAppProjectFolder( projectID, true );
+			return projectFolder;
+			//return CloudProjectCommon.GetAppProjectFolder( projectID, true );
 		}
 
 		private void ContentBrowser_UpdateDataEvent( ContentBrowser sender, IList<ContentBrowser.Item> roots )
@@ -111,10 +117,11 @@ namespace NeoAxis.Editor
 			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
-			var projectFolder = CloudProjectCommon.GetAppProjectFolder( projectID, true );
+			//var projectFolder = CloudProjectCommon.GetAppProjectFolder( projectID, true );
 
 			var dataItem = new LauncherEditRepositoryContentBrowserItem( this, sender, null, projectFolder, true );
-			dataItem.SetText( EditorLocalization2.Translate( "ContentBrowser.Group", "Files" ) );
+			dataItem.SetText( EditorLocalization2.Translate( "ContentBrowser.Group", projectFolder ) );
+			//dataItem.SetText( EditorLocalization2.Translate( "ContentBrowser.Group", "'Root'" ) );// "Files" ) );
 			dataItem.imageKey = "Folder";
 			dataItem.expandAtStartup = true;
 			roots.Add( dataItem );
@@ -507,6 +514,17 @@ namespace NeoAxis.Editor
 							var items3 = new List<KryptonContextMenuItemBase>();
 
 							{
+								var item = new KryptonContextMenuItem( Translate( "Default sync mode" ), EditorResourcesCache.Synchronize,
+									delegate ( object s, EventArgs e2 )
+									{
+										Add( RepositorySyncMode.Synchronize );
+									} );
+								items3.Add( item );
+							}
+
+							items3.Add( new KryptonContextMenuSeparator() );
+
+							{
 								var item = new KryptonContextMenuItem( Translate( "Sync with Clients" ), EditorResourcesCache.Synchronize,
 									delegate ( object s, EventArgs e2 )
 									{
@@ -827,6 +845,66 @@ namespace NeoAxis.Editor
 			form.ShowDialog();
 		}
 
+		private void toolStripButtonChange_Click( object sender, EventArgs e )
+		{
+			//!!!!Default button to reset
+
+			var folder = projectFolder;
+			if( string.IsNullOrEmpty( folder ) )
+				folder = defaultProjectFolder ?? "";
+
+			var form = new OKCancelTextBoxForm( "Select the local folder for the repository:", folder, "Cloudbox",
+				delegate ( string text, ref string error )
+				{
+					try
+					{
+						bool IsPathValid( string path )
+						{
+							var invalidChars = Path.GetInvalidPathChars();
+							foreach( var invalidChar in invalidChars )
+							{
+								if( path.Contains( invalidChar ) )
+									return false;
+							}
+							return true;
+						}
+
+						if( !IsPathValid( text ) || !Path.IsPathRooted( text ) )
+						{
+							error = "Invalid file path.";
+							return false;
+						}
+					}
+					catch
+					{
+						error = "Invalid file path.";
+						return false;
+					}
+
+					return true;
+				},
+				delegate ( string text, ref string error )
+				{
+					projectFolder = text;
+					ChangeProjectFolderCallback?.Invoke( this, projectFolder );
+					reopen = true;
+					return true;
+				}
+			);
+
+			if( form.ShowDialog( new Win32WindowWrapper( EngineApp.CreatedInsideEngineWindow.Handle ) ) != DialogResult.OK )
+				return;
+
+			reopen = true;
+			Close();
+		}
+
+		private void toolStripButtonOpen_Click( object sender, EventArgs e )
+		{
+			//var projectFolder = CloudProjectCommon.GetAppProjectFolder( projectID, true );
+			Win32Utility.ShellExecuteEx( null, projectFolder );
+		}
+
 		private void toolStripButtonGet_Click( object sender, EventArgs e )
 		{
 			Close();
@@ -859,8 +937,9 @@ namespace NeoAxis.Editor
 		{
 			//update project folders
 
-			var allFilesPath = RepositoryUtility.GetAllFilesPathByReal( GetProjectFolder(), realPath );
-			if( !string.IsNullOrEmpty( allFilesPath ) )
+			//commented because not work when file updated in the root of the project
+			//var allFilesPath = RepositoryUtility.GetAllFilesPathByReal( GetProjectFolder(), realPath );
+			//if( !string.IsNullOrEmpty( allFilesPath ) )
 			{
 				foreach( var currentItem in /*ContentBrowserUtility.*/FindCreatedItemsByRealPath( contentBrowser1, realPath ) )
 				{
@@ -907,5 +986,4 @@ namespace NeoAxis.Editor
 		}
 	}
 }
-#endif
 #endif

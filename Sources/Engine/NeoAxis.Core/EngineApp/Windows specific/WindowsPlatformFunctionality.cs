@@ -13,6 +13,7 @@ using DirectInput;
 using NeoAxis;
 using System.Reflection;
 using System.Linq;
+using NeoAxis.Networking;
 
 namespace Internal//NeoAxis
 {
@@ -278,6 +279,7 @@ namespace Internal//NeoAxis
 			WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
 
 		const int WS_EX_TOPMOST = 0x00000008;
+		const int WS_EX_COMPOSITED = 0x02000000;
 
 		[DllImport( "user32.dll", CharSet = CharSet.Unicode )]
 		static extern bool SetForegroundWindow( IntPtr hWnd );
@@ -648,12 +650,10 @@ namespace Internal//NeoAxis
 		///////////////////////////////////////////
 
 		[DllImport( "psapi.dll", CharSet = CharSet.Unicode )]
-		static unsafe extern bool EnumProcessModules( IntPtr hProcess,
-			IntPtr* lphModule, uint cb, uint* lpcbNeeded );
+		static unsafe extern bool EnumProcessModules( IntPtr hProcess, IntPtr* lphModule, uint cb, uint* lpcbNeeded );
 
 		[DllImport( "psapi.dll", CharSet = CharSet.Unicode )]
-		static extern uint GetModuleFileNameEx( IntPtr hProcess,
-			IntPtr hModule, StringBuilder lpFilename, uint nSize );
+		static extern uint GetModuleFileNameEx( IntPtr hProcess, IntPtr hModule, StringBuilder lpFilename, uint nSize );
 
 		///////////////////////////////////////////
 
@@ -663,8 +663,7 @@ namespace Internal//NeoAxis
 		static extern IntPtr ImmGetContext( IntPtr hWnd );
 
 		[DllImport( "imm32.dll", CharSet = CharSet.Unicode )]
-		static unsafe extern int ImmGetCompositionString( IntPtr hIMC,
-			uint dwIndex, void* lpBuf, uint dwBufLen );
+		static unsafe extern int ImmGetCompositionString( IntPtr hIMC, uint dwIndex, void* lpBuf, uint dwBufLen );
 
 		[DllImport( "imm32.dll", CharSet = CharSet.Unicode )]
 		static extern bool ImmReleaseContext( IntPtr hWnd, IntPtr hIMC );
@@ -920,6 +919,9 @@ namespace Internal//NeoAxis
 
 				if( EngineApp.FullscreenEnabled && !Debugger.IsAttached )
 					exStyle |= WS_EX_TOPMOST;
+
+				if( IsServerWithoutRenderingBackend() )
+					exStyle |= WS_EX_COMPOSITED;
 			}
 
 			IntPtr windowHandle = CreateWindowEx( exStyle, applicationWindowClassName,
@@ -995,6 +997,21 @@ namespace Internal//NeoAxis
 		static int LOWORD( int n )
 		{
 			return ( n & 0xffff );
+		}
+
+		static RECT MakeRECT( int left, int top, int width, int height )
+		{
+			RECT r = new RECT();
+			r.Left = left;
+			r.Top = top;
+			r.Right = left + width;
+			r.Bottom = top + height;
+			return r;
+		}
+
+		static int ToWin32( int r, int g, int b )
+		{
+			return ( b << 16 ) | ( g << 8 ) | r;
 		}
 
 		static void RemovePendingMessage( IntPtr hWnd, uint message )
@@ -1491,10 +1508,16 @@ namespace Internal//NeoAxis
 					case WM_TIMER:
 						if( (int)wParam == suspendModeTimerID )
 						{
-							if( EngineApp.DrawSplashScreen != ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled )
+							if( EngineApp.DrawSplashScreen != ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled || IsServerWithoutRenderingBackend() )
 							{
 								unsafe
 								{
+
+									//!!!!blinking after resize. not works:
+									//if( IsServerWithoutRenderingBackend() && EngineApp.ApplicationWindowHandle != IntPtr.Zero )
+									//	SetWindowComposed();
+
+
 									InvalidateRect( hWnd, null, false );
 								}
 							}
@@ -1507,181 +1530,203 @@ namespace Internal//NeoAxis
 						break;
 
 					case WM_PAINT:
-
+						{
 #if !DEPLOY
 
-						RECT MakeRECT( int left, int top, int width, int height )
-						{
-							RECT r = new RECT();
-							r.Left = left;
-							r.Top = top;
-							r.Right = left + width;
-							r.Bottom = top + height;
-							return r;
-						}
+							////draw splash screen
+							//var drawSplashScreen = EngineApp.DrawSplashScreen;
 
-						////draw splash screen
-						//var drawSplashScreen = EngineApp.DrawSplashScreen;
+							//if( drawSplashScreen != ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled )
+							//{
+							//var hdc = BeginPaint( hWnd, out var ps );
 
-						//if( drawSplashScreen != ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled )
-						//{
-						//var hdc = BeginPaint( hWnd, out var ps );
+							////int COLOR_WINDOW = 3;// 5;
+							////FillRect( hdc, ref ps.rcPaint, (IntPtr)( COLOR_WINDOW + 1 ) );
+							////FillRect( hdc, out ps.rcPaint, (HBRUSH)( COLOR_WINDOW + 1 ) );
 
-						////int COLOR_WINDOW = 3;// 5;
-						////FillRect( hdc, ref ps.rcPaint, (IntPtr)( COLOR_WINDOW + 1 ) );
-						////FillRect( hdc, out ps.rcPaint, (HBRUSH)( COLOR_WINDOW + 1 ) );
+							//using( var bitmap = EngineInfo.GetSplashLogoImage( drawSplashScreen ) )
+							//{
+							//	var screenRect = instance.CreatedWindow_GetClientRectangle();
+							//	var screenSize = screenRect.Size;
+							//	var center = screenRect.GetCenter();
 
-						//using( var bitmap = EngineInfo.GetSplashLogoImage( drawSplashScreen ) )
-						//{
-						//	var screenRect = instance.CreatedWindow_GetClientRectangle();
-						//	var screenSize = screenRect.Size;
-						//	var center = screenRect.GetCenter();
+							//	Bitmap bitmap2 = null;
 
-						//	Bitmap bitmap2 = null;
+							//	var imageSize = new Vector2I( bitmap.Size.Width, bitmap.Size.Height );
+							//	if( imageSize.X > screenSize.X )
+							//	{
+							//		double factor = (double)screenSize.X / (double)imageSize.X;
+							//		imageSize = ( imageSize.ToVector2() * factor ).ToVector2I();
+							//		bitmap2 = Win32Utility.ResizeImage( bitmap, imageSize.X, imageSize.Y );
+							//	}
 
-						//	var imageSize = new Vector2I( bitmap.Size.Width, bitmap.Size.Height );
-						//	if( imageSize.X > screenSize.X )
-						//	{
-						//		double factor = (double)screenSize.X / (double)imageSize.X;
-						//		imageSize = ( imageSize.ToVector2() * factor ).ToVector2I();
-						//		bitmap2 = Win32Utility.ResizeImage( bitmap, imageSize.X, imageSize.Y );
-						//	}
+							//	var splashBitmap = ( bitmap2 ?? bitmap ).GetHbitmap();
+							//	if( splashBitmap != IntPtr.Zero )
+							//	{
+							//		var hdcMem = CreateCompatibleDC( hdc );
+							//		var oldBitmap = SelectObject( hdcMem, splashBitmap );
 
-						//	var splashBitmap = ( bitmap2 ?? bitmap ).GetHbitmap();
-						//	if( splashBitmap != IntPtr.Zero )
-						//	{
-						//		var hdcMem = CreateCompatibleDC( hdc );
-						//		var oldBitmap = SelectObject( hdcMem, splashBitmap );
+							//		var destRect = new System.Drawing.Rectangle( center.X - imageSize.X / 2, center.Y - imageSize.Y / 2, imageSize.X, imageSize.Y );
 
-						//		var destRect = new System.Drawing.Rectangle( center.X - imageSize.X / 2, center.Y - imageSize.Y / 2, imageSize.X, imageSize.Y );
+							//		//draw background
+							//		{
+							//			var color = drawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.WhiteBackground ? Color.White : Color.Black;
 
-						//		//draw background
-						//		{
-						//			var color = drawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.WhiteBackground ? Color.White : Color.Black;
+							//			//!!!!
+							//			//color = Color.Gray;
 
-						//			//!!!!
-						//			//color = Color.Gray;
+							//			var brush = CreateSolidBrush( (uint)ColorTranslator.ToWin32( color ) );
 
-						//			var brush = CreateSolidBrush( (uint)ColorTranslator.ToWin32( color ) );
+							//			if( destRect.Left > 0 )
+							//			{
+							//				RECT r = MakeRECT( 0, 0, destRect.Left, screenSize.Y );
+							//				FillRect( hdc, ref r, brush );
+							//			}
+							//			if( destRect.Right < screenSize.X )
+							//			{
+							//				RECT r = MakeRECT( destRect.Right, 0, screenSize.X - destRect.Right, screenSize.Y );
+							//				FillRect( hdc, ref r, brush );
+							//			}
+							//			if( destRect.Top > 0 )
+							//			{
+							//				RECT r = MakeRECT( 0, 0, screenSize.X, destRect.Top );
+							//				FillRect( hdc, ref r, brush );
+							//			}
+							//			if( destRect.Bottom < screenSize.Y )
+							//			{
+							//				RECT r = MakeRECT( 0, destRect.Bottom, screenSize.X, screenSize.Y - destRect.Bottom );
+							//				FillRect( hdc, ref r, brush );
+							//			}
 
-						//			if( destRect.Left > 0 )
-						//			{
-						//				RECT r = MakeRECT( 0, 0, destRect.Left, screenSize.Y );
-						//				FillRect( hdc, ref r, brush );
-						//			}
-						//			if( destRect.Right < screenSize.X )
-						//			{
-						//				RECT r = MakeRECT( destRect.Right, 0, screenSize.X - destRect.Right, screenSize.Y );
-						//				FillRect( hdc, ref r, brush );
-						//			}
-						//			if( destRect.Top > 0 )
-						//			{
-						//				RECT r = MakeRECT( 0, 0, screenSize.X, destRect.Top );
-						//				FillRect( hdc, ref r, brush );
-						//			}
-						//			if( destRect.Bottom < screenSize.Y )
-						//			{
-						//				RECT r = MakeRECT( 0, destRect.Bottom, screenSize.X, screenSize.Y - destRect.Bottom );
-						//				FillRect( hdc, ref r, brush );
-						//			}
+							//			DeleteObject( brush );
+							//		}
 
-						//			DeleteObject( brush );
-						//		}
+							//		////!!!!
+							//		//{
+							//		//	var text = new StringBuilder( "Test test" );
 
-						//		////!!!!
-						//		//{
-						//		//	var text = new StringBuilder( "Test test" );
+							//		//	var rect = MakeRECT( 0, 0, 500, 500 );
+							//		//	var format = DT_CENTER | DT_VCENTER | DT_SINGLELINE;
 
-						//		//	var rect = MakeRECT( 0, 0, 500, 500 );
-						//		//	var format = DT_CENTER | DT_VCENTER | DT_SINGLELINE;
+							//		//	SetTextColor( hdc, ColorTranslator.ToWin32( Color.FromArgb( 255, 0, 0 ) ) );
 
-						//		//	SetTextColor( hdc, ColorTranslator.ToWin32( Color.FromArgb( 255, 0, 0 ) ) );
+							//		//	DrawTextEx( hdc, text, text.Length, ref rect, format, IntPtr.Zero );
+							//		//}
 
-						//		//	DrawTextEx( hdc, text, text.Length, ref rect, format, IntPtr.Zero );
-						//		//}
+							//		//if( stretch )
+							//		//{
+							//		//	StretchBlt( hdc, destRect.Left, destRect.Top, destRect.Width, destRect.Height, hdcMem, 0, 0, bitmap.Size.Width, bitmap.Size.Height, TernaryRasterOperations.SRCCOPY );
+							//		//}
+							//		//else
+							//		//{
 
-						//		//if( stretch )
-						//		//{
-						//		//	StretchBlt( hdc, destRect.Left, destRect.Top, destRect.Width, destRect.Height, hdcMem, 0, 0, bitmap.Size.Width, bitmap.Size.Height, TernaryRasterOperations.SRCCOPY );
-						//		//}
-						//		//else
-						//		//{
+							//		BitBlt( hdc, destRect.Left, destRect.Top, destRect.Width, destRect.Height, hdcMem, 0, 0, TernaryRasterOperations.SRCCOPY );
 
-						//		BitBlt( hdc, destRect.Left, destRect.Top, destRect.Width, destRect.Height, hdcMem, 0, 0, TernaryRasterOperations.SRCCOPY );
+							//		//}
 
-						//		//}
+							//		SelectObject( hdcMem, oldBitmap );
+							//		DeleteDC( hdcMem );
 
-						//		SelectObject( hdcMem, oldBitmap );
-						//		DeleteDC( hdcMem );
+							//	}
 
-						//	}
+							//	bitmap2?.Dispose();
+							//}
 
-						//	bitmap2?.Dispose();
-						//}
+							//EndPaint( hWnd, ref ps );
 
-						//EndPaint( hWnd, ref ps );
+							//	return IntPtr.Zero;
+							//}
 
-						//	return IntPtr.Zero;
-						//}
-
-						if( SystemSettings.CommandLineParameters.TryGetValue( "-server", out var projectServer ) && projectServer == "1" && RenderingSystem.BackendNull )
-						{
-							int ToWin32( int r, int g, int b )
+							//server mode text info
+							if( IsServerWithoutRenderingBackend() )
 							{
-								return ( b << 16 ) | ( g << 8 ) | r;
-							}
+								var hdc = BeginPaint( hWnd, out var ps );
 
-							var hdc = BeginPaint( hWnd, out var ps );
-
-							{
-								var screenRect = instance.CreatedWindow_GetClientRectangle();
-								var screenSize = screenRect.Size;
-
-								//var textColor = Color.White;
-								//var backColor = Color.Black;
-
-								//draw background
 								{
-									var brush = CreateSolidBrush( (uint)ToWin32( 0, 0, 0 ) );
-									//var brush = CreateSolidBrush( (uint)ColorTranslator.ToWin32( backColor ) );
+									var screenRect = instance.CreatedWindow_GetClientRectangle();
+									var screenSize = screenRect.Size;
 
-									var rect = MakeRECT( 0, 0, screenSize.X, screenSize.Y );
-									FillRect( hdc, ref rect, brush );
+									//var textColor = Color.White;
+									//var backColor = Color.Black;
 
-									DeleteObject( brush );
+									//draw background
+									{
+										var brush = CreateSolidBrush( (uint)ToWin32( 0, 0, 0 ) );
+										//var brush = CreateSolidBrush( (uint)ColorTranslator.ToWin32( backColor ) );
+
+										var rect = MakeRECT( 0, 0, screenSize.X, screenSize.Y );
+										FillRect( hdc, ref rect, brush );
+
+										DeleteObject( brush );
+									}
+
+									//draw text
+									{
+										var text = new StringBuilder( "Server mode.\n" );
+										text.Append( "Engine time: " + EngineApp.EngineTime.ToString( "F2" ) + "\n" );
+
+										var instances = ServerNode.GetInstances();
+										text.Append( $"Server nodes: {instances.Length}\n\n" );
+
+										foreach( var instance in instances )
+										{
+											text.Append( $"{instance.ServerName}\nClients: {instance.ClientCount}\n" );
+
+											var components = instance.GetService( "Components" ) as ServerNetworkService_Components;
+											var scene = components?.Scene;
+											if( scene != null )
+											{
+												var sceneInfo = components.SceneInfo ?? "";
+
+												text.Append( $"A scene is loaded.\n" );
+												text.Append( $"Scene info: " + sceneInfo + "\n" );
+
+												//text.Append( $"A scene is loaded with a scene info \"{sceneInfo}\".\n" );
+											}
+
+											text.Append( $"Received total: {instance.TotalDataMessagesReceivedCounter} messages, {instance.TotalDataSizeReceivedCounter} bytes.\n" );
+											text.Append( $"Sent total: {instance.TotalDataMessagesSentCounter} messages, {instance.TotalDataSizeSentCounter} bytes.\n" );
+
+											instance.GetDataMessageStatistics( 1, out var receivedMessages, out var receivedSize, out var sentMessages, out var sentSize );
+
+											var receivedSpeed = NetworkUtility.FormatSize( (long)receivedSize );
+											var sentSpeed = NetworkUtility.FormatSize( (long)sentSize );
+
+											text.Append( $"Received speed: {receivedMessages} messages per second, {receivedSpeed} per second.\n" );
+											text.Append( $"Sent speed: {sentMessages} messages per second, {sentSpeed} per second.\n" );
+
+											text.Append( "\n" );
+										}
+
+										var rect = MakeRECT( 10, 10, screenSize.X, screenSize.Y );
+										var format = DT_LEFT | DT_TOP;
+										//var format = DT_CENTER | DT_VCENTER;// | DT_SINGLELINE;
+
+										SetTextColor( hdc, ToWin32( 255, 255, 255 ) );
+										SetBkColor( hdc, ToWin32( 0, 0, 0 ) );
+
+										//SetTextColor( hdc, ColorTranslator.ToWin32( textColor ) );
+										//SetBkColor( hdc, ColorTranslator.ToWin32( backColor ) );
+
+										DrawTextEx( hdc, text, text.Length, ref rect, format, IntPtr.Zero );
+									}
 								}
 
-								//draw text
-								{
-									var text = new StringBuilder( "Server mode" );
+								EndPaint( hWnd, ref ps );
 
-									var rect = MakeRECT( 10, 10, screenSize.X, screenSize.Y );
-									var format = DT_LEFT | DT_TOP;
-									//var format = DT_CENTER | DT_VCENTER;// | DT_SINGLELINE;
-
-									SetTextColor( hdc, ToWin32( 255, 255, 255 ) );
-									SetBkColor( hdc, ToWin32( 0, 0, 0 ) );
-
-									//SetTextColor( hdc, ColorTranslator.ToWin32( textColor ) );
-									//SetBkColor( hdc, ColorTranslator.ToWin32( backColor ) );
-
-									DrawTextEx( hdc, text, text.Length, ref rect, format, IntPtr.Zero );
-								}
+								return IntPtr.Zero;
 							}
-
-							EndPaint( hWnd, ref ps );
-
-							return IntPtr.Zero;
-						}
 
 
 #endif
 
-						if( EngineApp.insideRunMessageLoop && EngineApp.EnginePaused && !instance.resizingMoving &&
-							!instance.intoMenuLoop && !instance.goingToWindowedMode &&
-							!instance.goingToFullScreenMode && !instance.goingToChangeWindowRectangle )
-						{
-							EngineApp.CreatedWindowApplicationIdle( false );
+							if( EngineApp.insideRunMessageLoop && EngineApp.EnginePaused && !instance.resizingMoving &&
+								!instance.intoMenuLoop && !instance.goingToWindowedMode &&
+								!instance.goingToFullScreenMode && !instance.goingToChangeWindowRectangle )
+							{
+								EngineApp.CreatedWindowApplicationIdle( false );
+							}
+
 						}
 						break;
 					}
@@ -2064,6 +2109,22 @@ namespace Internal//NeoAxis
 		//   SetWindowPos( App.WindowHandle, value ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0,
 		//      0, 0, SWP_NOMOVE | SWP_NOSIZE );
 		//}
+
+		static void SetWindowComposed()
+		{
+			if( IntPtr.Size == 8 )
+			{
+				ulong exStyle = (ulong)GetWindowLong( EngineApp.ApplicationWindowHandle, GWL_EXSTYLE );
+				exStyle |= WS_EX_COMPOSITED;
+				SetWindowLong( EngineApp.ApplicationWindowHandle, GWL_EXSTYLE, (IntPtr)exStyle );
+			}
+			else
+			{
+				uint exStyle = (uint)GetWindowLong( EngineApp.ApplicationWindowHandle, GWL_EXSTYLE );
+				exStyle |= WS_EX_COMPOSITED;
+				SetWindowLong( EngineApp.ApplicationWindowHandle, GWL_EXSTYLE, (IntPtr)(int)exStyle );
+			}
+		}
 
 		public override Vector2 CreatedWindow_GetMousePosition()
 		{
@@ -2690,6 +2751,14 @@ namespace Internal//NeoAxis
 				DwmSetWindowAttribute( handle, DwmWindowAttribute.UseImmersiveDarkMode, ref value, 4 );
 			}
 			catch { }
+		}
+
+		public static bool IsServerWithoutRenderingBackend()
+		{
+			return SystemSettings.CommandLineParameters.TryGetValue( "-server", out var projectServer ) &&
+				( projectServer == "1" || projectServer.ToLower() == "true" ) &&
+				SystemSettings.CommandLineParameters.TryGetValue( "-rendererBackend", out var backend ) &&
+				backend.ToLower() == "noop";
 		}
 	}
 }

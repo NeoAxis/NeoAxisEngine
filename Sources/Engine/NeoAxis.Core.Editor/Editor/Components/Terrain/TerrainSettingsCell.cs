@@ -117,7 +117,7 @@ namespace NeoAxis.Editor
 			if( terrain == null )
 				return;
 
-			if( !EditorUtility2.ShowOpenFileDialog( false, "", new[] { ("EXR files (*.exr)", "*.exr") }, out string fileName ) )
+			if( !EditorUtility2.ShowOpenFileDialog( false, "", new[] { ("EXR files (*.exr)", "*.exr") }, EditorForm.Instance.Handle, out string fileName ) )
 				return;
 
 			if( !Terrain.LoadHeightmapBuffer( fileName, terrain.GetHeightmapSizeAsInteger(), out var heightmapBuffer, out var error ) )
@@ -140,7 +140,7 @@ namespace NeoAxis.Editor
 			if( terrain == null )
 				return;
 
-			if( !EditorUtility2.ShowSaveFileDialog( "", "Heightmap.exr", "EXR files (*.exr)|*.exr", out var fileName ) )
+			if( !EditorUtility2.ShowSaveFileDialog( "", "Heightmap.exr", "EXR files (*.exr)|*.exr", EditorForm.Instance.Handle, out var fileName ) )
 				return;
 
 			if( !terrain.SaveHeightmapBuffer( fileName, out var error ) )

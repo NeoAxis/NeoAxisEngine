@@ -35,7 +35,7 @@
 #ifdef _WIN32
 	#include <malloc.h>
 #endif
-#ifdef IOS
+#if (defined(IOS) || defined(__EMSCRIPTEN__))
     #include <string.h>
 #endif
 #include <stdio.h>
@@ -188,6 +188,15 @@ OGG_FORCEINLINE void* _ogg_calloc2(size_t num, size_t size, char* fileName, int 
    typedef int32_t ogg_int32_t;
    typedef u_int32_t ogg_uint32_t;
    typedef int64_t ogg_int64_t;
+
+#elif defined(__EMSCRIPTEN__)
+
+#  include <sys/types.h>
+typedef int16_t ogg_int16_t;
+typedef u_int16_t ogg_uint16_t;
+typedef int32_t ogg_int32_t;
+typedef u_int32_t ogg_uint32_t;
+typedef int64_t ogg_int64_t;
 
 #else
 

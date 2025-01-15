@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,7 +68,7 @@ namespace Internal.LiteDB
         /// </summary>
         private BsonExpression GetIndexExpression<K>(Expression<Func<T, K>> keySelector)
         {
-            var expression = _mapper.GetExpression(keySelector);
+            var expression = _mapper.GetIndexExpression(keySelector);
 
             if (typeof(K).IsEnumerable() && expression.IsScalar == true)
             {

@@ -1,4 +1,4 @@
-﻿#if !UWP
+﻿#if !UWP && LIDGREN
 using System;
 using System.Net;
 using System.Threading;
@@ -398,6 +398,9 @@ namespace Internal.Lidgren.Network
 							//
 							// remove connection
 							//
+
+							//!!!!slowly?
+
 							m_connections.RemoveAt(i);
 							m_connectionLookup.Remove(conn.RemoteEndPoint);
 						}

@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +15,15 @@ namespace Internal.LiteDB.Engine
         protected readonly IDocumentLookup _lookup;
         protected readonly SortDisk _tempDisk;
         protected readonly EnginePragmas _pragmas;
+        protected readonly uint _maxItemsCount;
 
-        public BasePipe(TransactionService transaction, IDocumentLookup lookup, SortDisk tempDisk, EnginePragmas pragmas)
+        public BasePipe(TransactionService transaction, IDocumentLookup lookup, SortDisk tempDisk, EnginePragmas pragmas, uint maxItemsCount)
         {
             _transaction = transaction;
             _lookup = lookup;
             _tempDisk = tempDisk;
             _pragmas = pragmas;
+            _maxItemsCount = maxItemsCount;
         }
 
         /// <summary>
@@ -97,8 +99,8 @@ namespace Internal.LiteDB.Engine
 
                     // initialize services
                     snapshot = _transaction.CreateSnapshot(LockMode.Read, last, false);
-                    indexer = new IndexService(snapshot, _pragmas.Collation);
-                    data = new DataService(snapshot);
+                    indexer = new IndexService(snapshot, _pragmas.Collation, _maxItemsCount);
+                    data = new DataService(snapshot, _maxItemsCount);
 
                     lookup = new DatafileLookup(data, _pragmas.UtcDate, null);
 

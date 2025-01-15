@@ -441,6 +441,11 @@ namespace NeoAxis
 			{
 				Blit( writePosition, sourceImage, Vector2I.Zero );
 			}
+
+			public void Blit( Image2D sourceImage )
+			{
+				Blit( Vector2I.Zero, sourceImage, Vector2I.Zero );
+			}
 		}
 
 		/////////////////////////////////////////

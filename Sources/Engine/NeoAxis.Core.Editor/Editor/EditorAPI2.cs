@@ -1374,6 +1374,9 @@ namespace NeoAxis.Editor
 				var document = new DocumentInstance( "", null, "" );
 				Documents.Add( document );
 
+				if( MetadataManager.GetType( "NeoAxis.UIWebBrowser" ) == null )
+					return;
+
 				var window = new TipsWindow();
 				window.InitDocumentWindow( document, null, false, null );
 

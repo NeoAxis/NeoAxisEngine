@@ -210,7 +210,7 @@ namespace NeoAxis
 		///////////////////////////////////////////
 
 		//Linux
-#if !UWP && !ANDROID
+#if !UWP && !ANDROID && !WEB
 		static bool dllImportResolverInitialized;
 
 		static IntPtr DllImportResolver( string libraryName, Assembly assembly, DllImportSearchPath? searchPath )
@@ -281,7 +281,7 @@ namespace NeoAxis
 				}
 				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
 				{
-#if !UWP && !ANDROID
+#if !UWP && !ANDROID && !WEB
 					InitDllImportResolver();
 #endif
 

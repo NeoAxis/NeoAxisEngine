@@ -1,4 +1,4 @@
-﻿#if !UWP
+﻿#if !UWP && LIDGREN
 
 //!!!!betauser
 #if !ANDROID

@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -12,7 +12,7 @@ namespace Internal.LiteDB
     {
         private readonly static IFormatProvider _numberFormat = CultureInfo.InvariantCulture.NumberFormat;
 
-        private TextWriter _writer;
+        private readonly TextWriter _writer;
         private int _indent;
         private string _spacer = "";
 
@@ -72,7 +72,17 @@ namespace Internal.LiteDB
                     break;
 
                 case BsonType.Double:
-                    _writer.Write(value.AsDouble.ToString("0.0########", _numberFormat));
+                    var d = value.AsDouble;
+
+                    if (double.IsNaN(d) || double.IsNegativeInfinity(d) || double.IsPositiveInfinity(d))
+                    {
+                        _writer.Write("null");
+                    }
+                    else
+                    {
+                        _writer.Write(value.AsDouble.ToString("0.0########", _numberFormat));
+                    }
+
                     break;
 
                 case BsonType.Binary:

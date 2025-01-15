@@ -232,7 +232,8 @@ namespace NeoAxis.Editor
 					AddItem( new Item( group + @"\List", typeof( UIList ) ) );
 					//AddItem( new Item( group + @"\Tree", typeof( UITree ) ) );
 					AddItem( new Item( group + @"\Video", typeof( UIVideo ) ) );
-					AddItem( new Item( group + @"\Web Browser", typeof( UIWebBrowser ) ) );
+					if( MetadataManager.GetType( "NeoAxis.UIWebBrowser" ) != null )
+						AddItem( new Item( group + @"\Web Browser", MetadataManager.GetType( "NeoAxis.UIWebBrowser" ).GetNetType() ) );// typeof( UIWebBrowser ) ) );
 					AddItem( new Item( group + @"\Render Target", typeof( UIRenderTarget ) ) );
 					//AddItem( new Item( group + @"\Menu", typeof( UIMenu ) ) );
 				}

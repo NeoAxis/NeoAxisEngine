@@ -40,9 +40,16 @@ THE SOFTWARE.
 //#include <sstream>
 
 #include <vector>
-#ifndef FORCEINLINE
-#define FORCEINLINE __forceinline
-#endif
+
+//no sense
+//#ifndef FORCEINLINE
+//	#if OGRE_PLATFORM == OGRE_PLATFORM_EMSCRIPTEN
+//		#define FORCEINLINE __inline__
+//	#else
+//		#define FORCEINLINE __forceinline
+//	#endif
+//#endif
+
 #define nvector vector
 //#include "NeoAxisSTLVector.h"
 #include <map>

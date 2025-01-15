@@ -64,6 +64,19 @@ namespace Project
 		public event Action<ShooterNetworkLogic> SpawnWeaponsChanged;
 		ReferenceField<bool> _spawnWeapons = true;
 
+		/// <summary>
+		/// Whether to delete Character components after scene loading in the simulation.
+		/// </summary>
+		[DefaultValue( true )]
+		public Reference<bool> RemoveInitialCharactersOnServer
+		{
+			get { if( _removeInitialCharactersOnServer.BeginGet() ) RemoveInitialCharactersOnServer = _removeInitialCharactersOnServer.Get( this ); return _removeInitialCharactersOnServer.value; }
+			set { if( _removeInitialCharactersOnServer.BeginSet( this, ref value ) ) { try { RemoveInitialCharactersOnServerChanged?.Invoke( this ); } finally { _removeInitialCharactersOnServer.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="RemoveInitialCharactersOnServer"/> property value changes.</summary>
+		public event Action<ShooterNetworkLogic> RemoveInitialCharactersOnServerChanged;
+		ReferenceField<bool> _removeInitialCharactersOnServer = true;
+
 		[Browsable( false )]
 		[Serialize( SerializeType.Enable )]
 		[NetworkSynchronize( true )]
@@ -188,6 +201,17 @@ namespace Project
 
 						spawnWeapons.Add( item );
 					}
+				}
+			}
+
+			//delete characters
+			if( RemoveInitialCharactersOnServer && NetworkIsServer )
+			{
+				var scene = ParentRoot as Scene;
+				if( scene != null )
+				{
+					foreach( var character in scene.GetComponents<Character>() )
+						character.RemoveFromParent( false );
 				}
 			}
 

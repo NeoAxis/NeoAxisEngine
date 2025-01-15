@@ -1,8 +1,10 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using Internal.LiteDB.Engine;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using static Internal.LiteDB.Constants;
 
 namespace Internal.LiteDB
@@ -84,7 +86,6 @@ namespace Internal.LiteDB
             if (field.IsNullOrWhiteSpace()) throw new ArgumentNullException(nameof(field));
 
             return BsonExpression.Create($"{field} > {value ?? BsonValue.Null}");
-
         }
 
         /// <summary>
@@ -124,7 +125,7 @@ namespace Internal.LiteDB
         public static BsonExpression Contains(string field, string value)
         {
             if (field.IsNullOrWhiteSpace()) throw new ArgumentNullException(nameof(field));
-            if (value.IsNullOrWhiteSpace()) throw new ArgumentNullException(nameof(value));
+            if (value.IsNullOrEmpty()) throw new ArgumentNullException(nameof(value));
 
             return BsonExpression.Create($"{field} LIKE {(new BsonValue("%" + value + "%"))}");
         }

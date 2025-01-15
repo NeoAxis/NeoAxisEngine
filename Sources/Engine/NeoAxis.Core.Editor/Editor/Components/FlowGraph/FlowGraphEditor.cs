@@ -410,7 +410,7 @@ namespace NeoAxis.Editor
 			{
 				var item = new KryptonContextMenuItem( TranslateContextMenu( "Export to File" ), null, delegate ( object s, EventArgs e2 )
 				{
-					EditorUtility2.ExportComponentToFile( oneSelectedComponent );
+					EditorUtility2.ExportComponentToFile( oneSelectedComponent, IntPtr.Zero );
 				} );
 				item.Enabled = oneSelectedComponent != null;
 				items.Add( item );

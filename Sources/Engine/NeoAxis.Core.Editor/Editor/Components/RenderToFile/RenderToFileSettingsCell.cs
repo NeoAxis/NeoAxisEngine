@@ -172,17 +172,17 @@ namespace NeoAxis.Editor
 				switch( renderToFile.Mode.Value )
 				{
 				case RenderToFile.ModeEnum.Screenshot:
-					if( !EditorUtility2.ShowSaveFileDialog( "", "Output.png", "PNG files (*.png)|*.png", out destRealFileName ) )
+					if( !EditorUtility2.ShowSaveFileDialog( "", "Output.png", "PNG files (*.png)|*.png", EditorForm.Instance.Handle, out destRealFileName ) )
 						return;
 					break;
 
 				case RenderToFile.ModeEnum.Video:
-					if( !EditorUtility2.ShowSaveFileDialog( "", "Output.avi", "AVI files (*.avi)|*.avi", out destRealFileName ) )
+					if( !EditorUtility2.ShowSaveFileDialog( "", "Output.avi", "AVI files (*.avi)|*.avi", EditorForm.Instance.Handle, out destRealFileName ) )
 						return;
 					break;
 
 				case RenderToFile.ModeEnum.Material:
-					if( !EditorUtility2.ShowSaveFileDialog( "", "Output.material", "Material files (*.material)|*.material", out destRealFileName ) )
+					if( !EditorUtility2.ShowSaveFileDialog( "", "Output.material", "Material files (*.material)|*.material", EditorForm.Instance.Handle, out destRealFileName ) )
 						return;
 					break;
 				}

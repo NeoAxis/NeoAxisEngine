@@ -59,6 +59,24 @@ namespace NeoAxis.Editor
 			}
 		}
 
+		public string ButtonText
+		{
+			set
+			{
+				if( IsDisposed )
+					return;
+
+				try
+				{
+					if( InvokeRequired )
+						Invoke( new MethodInvoker( () => { buttonCancel.Text = value; } ) );
+					else
+						buttonCancel.Text = value;
+				}
+				catch { }
+			}
+		}
+
 		//public string LabelText
 		//{
 		//	get { return labelText.Text; }

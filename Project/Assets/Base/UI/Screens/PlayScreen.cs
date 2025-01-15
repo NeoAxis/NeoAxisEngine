@@ -340,13 +340,13 @@ namespace Project
 			firstRender = false;
 		}
 
-		public void SetScene( Scene scene, bool canChangeUIControl )
+		public void SetScene( Scene scene, string sceneInfo, bool canChangeUIControl )
 		{
 			this.scene = scene;
 
 			//finish scene initialization
 #if !CLIENT
-			SimulationAppServer.SetScene( this.scene );
+			SimulationAppServer.SetScene( this.scene, sceneInfo );
 #endif
 			scene.Enabled = true;
 
@@ -411,7 +411,7 @@ namespace Project
 			GC.Collect();
 			GC.WaitForPendingFinalizers();
 
-			SetScene( scene, canChangeUIControl );
+			SetScene( scene, PlayFileName, canChangeUIControl );
 
 			return true;
 		}
@@ -548,7 +548,7 @@ namespace Project
 			GC.Collect();
 			GC.WaitForPendingFinalizers();
 
-			SetScene( scene, canChangeUIControl );
+			SetScene( scene, "", canChangeUIControl );
 
 			return true;
 		}

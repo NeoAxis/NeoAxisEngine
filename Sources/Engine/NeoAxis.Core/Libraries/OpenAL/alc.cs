@@ -293,13 +293,15 @@ namespace Tao.OpenAl
 		/// <param name="device">
 		///     A pointer to an opened device.
 		/// </param>
-		// ALCAPI ALCvoid ALCAPIENTRY alcCloseDevice(ALCdevice *device);
+		// ALCAPI ALCboolean ALCAPIENTRY alcCloseDevice(ALCdevice *device);
 		[DllImport( ALC_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
-		public static extern void alcCloseDevice( [In] IntPtr device );
+		public static extern int alcCloseDevice( [In] IntPtr device );
 		#endregion alcCloseDevice([In] IntPtr device)
 
+#if !WEB
         [DllImport(ALC_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION), SuppressUnmanagedCodeSecurity]
         public static extern void alcSetJNIEnvironmentAndJavaVM([In] IntPtr jniEnv, [In] IntPtr javaVM);
+#endif
 
 
 		#region IntPtr alcCreateContext([In] IntPtr device, [In] ref int attribute)

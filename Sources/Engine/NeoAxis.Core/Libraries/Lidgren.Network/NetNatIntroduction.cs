@@ -1,4 +1,4 @@
-﻿#if !UWP
+﻿#if !UWP && LIDGREN
 using System;
 using System.Collections.Generic;
 using System.Net;

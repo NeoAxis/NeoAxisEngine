@@ -10,7 +10,7 @@ using NeoAxis.Networking;
 
 namespace NeoAxis.Editor
 {
-	class EditorClientNode : NetworkClientNode
+	class EditorClientNode : ClientNode
 	{
 		//services
 		ClientNetworkService_Messages messages;
@@ -279,7 +279,7 @@ namespace NeoAxis.Editor
 			client = new EditorClientNode();
 			client.ProtocolError += Client_ProtocolError;
 			client.ConnectionStatusChanged += Client_ConnectionStatusChanged;
-			client.Messages.ReceiveMessage += Messages_ReceiveMessage;
+			client.Messages.ReceiveMessageString += Messages_ReceiveMessage;
 			client.Components.SceneCreateBegin += Components_SceneCreateBegin;
 			client.Components.SceneCreateEnd += Components_SceneCreateEnd;
 			client.Components.SceneDestroy += Components_SceneDestroy;
@@ -289,7 +289,7 @@ namespace NeoAxis.Editor
 			var loginData = block.DumpToString();
 
 			//!!!!connectionTimeout
-			if( !client.BeginConnect( serverAddress, serverPort, EngineInfo.Version, loginData, 100, out error ) )
+			if( !client.BeginConnect( serverAddress, serverPort, EngineInfo.Version, loginData, 30, out error ) )
 			{
 				client.Dispose();
 				client = null;
@@ -299,7 +299,7 @@ namespace NeoAxis.Editor
 			return true;
 		}
 
-		private static void Client_ProtocolError( NetworkClientNode sender, string message )
+		private static void Client_ProtocolError( ClientNode sender, string message )
 		{
 			Log.Warning( "EditorClient: Protocol error: " + message );
 		}
@@ -310,7 +310,7 @@ namespace NeoAxis.Editor
 			{
 				client.ProtocolError -= Client_ProtocolError;
 				client.ConnectionStatusChanged -= Client_ConnectionStatusChanged;
-				client.Messages.ReceiveMessage -= Messages_ReceiveMessage;
+				client.Messages.ReceiveMessageString -= Messages_ReceiveMessage;
 				client.Components.SceneCreateBegin -= Components_SceneCreateBegin;
 				client.Components.SceneCreateEnd -= Components_SceneCreateEnd;
 				client.Components.SceneDestroy -= Components_SceneDestroy;
@@ -359,11 +359,11 @@ namespace NeoAxis.Editor
 		//	}
 		//}
 
-		static void Client_ConnectionStatusChanged( NetworkClientNode sender, NetworkStatus status )
+		static void Client_ConnectionStatusChanged( ClientNode sender )//, NetworkStatus status )
 		{
 			//ScreenMessages.Add( string.Format( "Connection status changed: {0}", status.ToString() ) );
 
-			switch( status )
+			switch( sender.Status )
 			{
 			case NetworkStatus.Connected:
 				{

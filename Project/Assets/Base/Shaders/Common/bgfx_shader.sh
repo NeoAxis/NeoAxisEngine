@@ -672,6 +672,9 @@ vec4  mod(vec4  _a, vec4  _b) { return _a - _b * floor(_a / _b); }
 
 //!!!!betauser
 
+//!!!!
+#if BX_PLATFORM_EMSCRIPTEN != 1 //#	if BGFX_SHADER_LANGUAGE_GLSL >= 400
+
 #	define SAMPLER2D(_name, _reg)       layout(binding=_reg) uniform sampler2D _name
 #	define SAMPLER2DMS(_name, _reg)     layout(binding=_reg) uniform sampler2DMS _name
 #	define SAMPLER3D(_name, _reg)       layout(binding=_reg) uniform sampler3D _name
@@ -699,7 +702,8 @@ vec4  mod(vec4  _a, vec4  _b) { return _a - _b * floor(_a / _b); }
 #		define ISAMPLER3D(_name, _reg) layout(binding=_reg) uniform isampler3D _name
 #		define USAMPLER3D(_name, _reg) layout(binding=_reg) uniform usampler3D _name
 
-/*
+#else
+
 #	define SAMPLER2D(_name, _reg)       uniform sampler2D _name
 #	define SAMPLER2DMS(_name, _reg)     uniform sampler2DMS _name
 #	define SAMPLER3D(_name, _reg)       uniform sampler3D _name
@@ -715,7 +719,8 @@ vec4  mod(vec4  _a, vec4  _b) { return _a - _b * floor(_a / _b); }
 #		define USAMPLER2D(_name, _reg) uniform usampler2D _name
 #		define ISAMPLER3D(_name, _reg) uniform isampler3D _name
 #		define USAMPLER3D(_name, _reg) uniform usampler3D _name
-*/
+
+#endif
 
 #	define texture2DBias(_sampler, _coord, _bias)      texture2D(_sampler, _coord, _bias)
 #	define textureCubeBias(_sampler, _coord, _bias)    textureCube(_sampler, _coord, _bias)

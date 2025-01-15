@@ -1,4 +1,4 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System;
 using System.Linq.Expressions;
 using System.Text;
@@ -10,9 +10,9 @@ namespace Internal.LiteDB
     internal static class ExpressionExtensions
     {
         // more dirty as possible: removing ".Select(x => x." sentence
-        private static Regex _removeSelect = new Regex(@"\.Select\s*\(\s*\w+\s*=>\s*\w+\.", RegexOptions.Compiled);
-        private static Regex _removeList = new Regex(@"\.get_Item\(\d+\)", RegexOptions.Compiled);
-        private static Regex _removeArray = new Regex(@"\[\d+\]", RegexOptions.Compiled);
+        private static readonly Regex _removeSelect = new Regex(@"\.Select\s*\(\s*\w+\s*=>\s*\w+\.", RegexOptions.Compiled);
+        private static readonly Regex _removeList = new Regex(@"\.get_Item\(\d+\)", RegexOptions.Compiled);
+        private static readonly Regex _removeArray = new Regex(@"\[\d+\]", RegexOptions.Compiled);
 
         /// <summary>
         /// Get Path (better ToString) from an Expression.

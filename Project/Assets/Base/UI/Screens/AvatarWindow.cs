@@ -62,7 +62,7 @@ namespace Project
 			//request avatar settings from the server
 			if( SimulationAppClient.Client != null )
 			{
-				SimulationAppClient.Client.Messages.ReceiveMessage += Messages_ReceiveMessage;
+				SimulationAppClient.Client.Messages.ReceiveMessageString += Messages_ReceiveMessageString;
 				SimulationAppClient.Client.Messages.SendToServer( "RequestAvatarSettings", "" );
 			}
 			else
@@ -72,7 +72,7 @@ namespace Project
 		protected override void OnDisabledInSimulation()
 		{
 			if( SimulationAppClient.Client != null )
-				SimulationAppClient.Client.Messages.ReceiveMessage -= Messages_ReceiveMessage;
+				SimulationAppClient.Client.Messages.ReceiveMessageString -= Messages_ReceiveMessageString;
 
 			base.OnDisabledInSimulation();
 		}
@@ -102,7 +102,7 @@ namespace Project
 			}
 		}
 
-		private void Messages_ReceiveMessage( ClientNetworkService_Messages sender, string message, string data )
+		private void Messages_ReceiveMessageString( ClientNetworkService_Messages sender, string message, string data )
 		{
 			if( message == "AvatarSettings" )
 			{

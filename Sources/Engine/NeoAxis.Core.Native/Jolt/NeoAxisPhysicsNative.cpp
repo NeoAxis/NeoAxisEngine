@@ -943,72 +943,219 @@ EXPORT void JDestroy()
 	job_system.SetNumThreads(0);
 }
 
-EXPORT void JPhysicsSystem_SetPhysicsSettings(PhysicsSystemItem* system, /*bool useDefault,*/
-	int maxInFlightBodyPairs,
-	int stepListenersBatchSize,
-	int stepListenerBatchesPerJob,
-	float baumgarte,
-	float speculativeContactDistance,
-	float penetrationSlop,
-	float linearCastThreshold,
-	float linearCastMaxPenetration,
-	float manifoldToleranceSq,
-	float maxPenetrationDistance,
-	float bodyPairCacheMaxDeltaPositionSq,
-	float bodyPairCacheCosMaxDeltaRotationDiv2,
-	float contactNormalCosMaxDeltaRotation,
-	float contactPointPreserveLambdaMaxDistSq,
-	int numVelocitySteps,
-	int numPositionSteps,
-	float minVelocityForRestitution,
-	float timeBeforeSleep,
-	float pointVelocitySleepThreshold,
-	bool constraintWarmStart,
-	bool useBodyPairContactCache,
-	bool useManifoldReduction,
-	bool allowSleeping,
-	bool checkActiveEdges)
+//EXPORT void JPhysicsSystem_SetPhysicsSettings(PhysicsSystemItem* system, /*bool useDefault,*/
+//	int maxInFlightBodyPairs,
+//	int stepListenersBatchSize,
+//	int stepListenerBatchesPerJob,
+//	float baumgarte,
+//	float speculativeContactDistance,
+//	float penetrationSlop,
+//	float linearCastThreshold,
+//	float linearCastMaxPenetration,
+//	float manifoldToleranceSq,
+//	float maxPenetrationDistance,
+//	float bodyPairCacheMaxDeltaPositionSq,
+//	float bodyPairCacheCosMaxDeltaRotationDiv2,
+//	float contactNormalCosMaxDeltaRotation,
+//	float contactPointPreserveLambdaMaxDistSq,
+//	int numVelocitySteps,
+//	int numPositionSteps,
+//	float minVelocityForRestitution,
+//	float timeBeforeSleep,
+//	float pointVelocitySleepThreshold,
+//	bool constraintWarmStart,
+//	bool useBodyPairContactCache,
+//	bool useManifoldReduction,
+//	bool allowSleeping,
+//	bool checkActiveEdges)
+//{
+//
+//	PhysicsSettings settings;
+//
+//	//if (!useDefault)
+//	//{
+//
+//	settings.mMaxInFlightBodyPairs = maxInFlightBodyPairs;
+//	settings.mStepListenersBatchSize = stepListenersBatchSize;
+//	settings.mStepListenerBatchesPerJob = stepListenerBatchesPerJob;
+//	settings.mBaumgarte = baumgarte;
+//	settings.mSpeculativeContactDistance = speculativeContactDistance;
+//	settings.mPenetrationSlop = penetrationSlop;
+//	settings.mLinearCastThreshold = linearCastThreshold;
+//	settings.mLinearCastMaxPenetration = linearCastMaxPenetration;
+//	settings.mManifoldToleranceSq = manifoldToleranceSq;
+//	settings.mMaxPenetrationDistance = maxPenetrationDistance;
+//	settings.mBodyPairCacheMaxDeltaPositionSq = bodyPairCacheMaxDeltaPositionSq;
+//	settings.mBodyPairCacheCosMaxDeltaRotationDiv2 = bodyPairCacheCosMaxDeltaRotationDiv2;
+//	settings.mContactNormalCosMaxDeltaRotation = contactNormalCosMaxDeltaRotation;
+//	settings.mContactPointPreserveLambdaMaxDistSq = contactPointPreserveLambdaMaxDistSq;
+//	settings.mNumVelocitySteps = numVelocitySteps;
+//	settings.mNumPositionSteps = numPositionSteps;
+//	settings.mMinVelocityForRestitution = minVelocityForRestitution;
+//	settings.mTimeBeforeSleep = timeBeforeSleep;
+//	settings.mPointVelocitySleepThreshold = pointVelocitySleepThreshold;
+//	settings.mConstraintWarmStart = constraintWarmStart;
+//	settings.mUseBodyPairContactCache = useBodyPairContactCache;
+//	settings.mUseManifoldReduction = useManifoldReduction;
+//	settings.mAllowSleeping = allowSleeping;
+//	settings.mCheckActiveEdges = checkActiveEdges;
+//
+//	//settings.mBaumgarte = 1;
+//	//settings.mNumVelocitySteps = 30;
+//	//settings.mNumPositionSteps = 10;
+//	//settings.mLinearCastThreshold = 0.05;
+//	//settings.mLinearCastMaxPenetration = 0.05;
+//	//settings.mMaxPenetrationDistance = 0.01;
+//
+//
+//	//}
+//
+//	system->system.SetPhysicsSettings(settings);
+//}
+
+#ifdef _WIN32
+#pragma pack(push, 1)
+#else
+#pragma pack(1)
+#endif // _WIN32
+
+struct PhysicsSettings2
 {
+	/// Size of body pairs array, corresponds to the maximum amount of potential body pairs that can be in flight at any time.
+	/// Setting this to a low value will use less memory but slow down simulation as threads may run out of narrow phase work.
+	int mMaxInFlightBodyPairs;
+
+	/// How many PhysicsStepListeners to notify in 1 batch
+	int mStepListenersBatchSize;
+
+	/// How many step listener batches are needed before spawning another job (set to INT_MAX if no parallelism is desired)
+	int mStepListenerBatchesPerJob;
+
+	/// Baumgarte stabilization factor (how much of the position error to 'fix' in 1 update) (unit: dimensionless, 0 = nothing, 1 = 100%)
+	float mBaumgarte;
+
+	/// Radius around objects inside which speculative contact points will be detected. Note that if this is too big 
+	/// you will get ghost collisions as speculative contacts are based on the closest points during the collision detection 
+	/// step which may not be the actual closest points by the time the two objects hit (unit: meters)
+	float mSpeculativeContactDistance;
+
+	/// How much bodies are allowed to sink into eachother (unit: meters)
+	float mPenetrationSlop;
+
+	/// Fraction of its inner radius a body must move per step to enable casting for the LinearCast motion quality
+	float mLinearCastThreshold;
+
+	/// Fraction of its inner radius a body may penetrate another body for the LinearCast motion quality
+	float mLinearCastMaxPenetration;
+
+	/// Max squared distance to use to determine if two points are on the same plane for determining the contact manifold between two shape faces (unit: meter^2)
+	float mManifoldToleranceSq;
+
+	/// Maximum distance to correct in a single iteration when solving position constraints (unit: meters)
+	float mMaxPenetrationDistance;
+
+	/// Maximum relative delta position for body pairs to be able to reuse collision results from last frame (units: meter^2)
+	float mBodyPairCacheMaxDeltaPositionSq; ///< 1 mm
+
+
+	/// Maximum relative delta orientation for body pairs to be able to reuse collision results from last frame, stored as cos(max angle / 2)
+	float mBodyPairCacheCosMaxDeltaRotationDiv2; ///< cos(2 degrees / 2)
+
+
+	/// Maximum angle between normals that allows manifolds between different sub shapes of the same body pair to be combined
+	float mContactNormalCosMaxDeltaRotation; ///< cos(5 degree)
+
+
+	/// Maximum allowed distance between old and new contact point to preserve contact forces for warm start (units: meter^2)
+	float mContactPointPreserveLambdaMaxDistSq; ///< 1 cm
+
+
+	/// Number of solver velocity iterations to run
+	/// Note that this needs to be >= 2 in order for friction to work (friction is applied using the non-penetration impulse from the previous iteration)
+	int mNumVelocitySteps;
+
+	/// Number of solver position iterations to run
+	int mNumPositionSteps;
+
+	/// Minimal velocity needed before a collision can be elastic (unit: m)
+	float mMinVelocityForRestitution;
+
+	/// Time before object is allowed to go to sleep (unit: seconds)
+	float mTimeBeforeSleep;
+
+	/// Velocity of points on bounding box of object below which an object can be considered sleeping (unit: m/s)
+	float mPointVelocitySleepThreshold;
+
+	/// By default the simulation is deterministic, it is possible to turn this off by setting this setting to false. This will make the simulation run faster but it will no longer be deterministic.
+	bool mDeterministicSimulation;
+
+	///@name These variables are mainly for debugging purposes, they allow turning on/off certain subsystems. You probably want to leave them alone.
+	///@{
+
+	/// Whether or not to use warm starting for constraints (initially applying previous frames impulses)
+	bool mConstraintWarmStart;
+
+	/// Whether or not to use the body pair cache, which removes the need for narrow phase collision detection when orientation between two bodies didn't change
+	bool mUseBodyPairContactCache;
+
+	/// Whether or not to reduce manifolds with similar contact normals into one contact manifold
+	bool mUseManifoldReduction;
+
+	/// If we split up large islands into smaller parallel batches of work (to improve performance)
+	bool mUseLargeIslandSplitter;
+
+	/// If objects can go to sleep or not
+	bool mAllowSleeping;
+
+	/// When false, we prevent collision against non-active (shared) edges. Mainly for debugging the algorithm.
+	bool mCheckActiveEdges;
+
+	///@}
+};
+
+#ifdef _WIN32
+#pragma pack(pop)
+#else
+#pragma pack()
+#endif // _WIN32
+
+EXPORT void JPhysicsSystem_SetPhysicsSettingsStructure(PhysicsSystemItem* system, PhysicsSettings2* settings2, int structSizeToCheck)
+{
+	if (structSizeToCheck != sizeof(PhysicsSettings2))
+	{
+		char q[200];
+		sprintf(q, "JPhysicsSystem_SetPhysicsSettings_All: structSizeToCheck != sizeof(PhysicsSettings2). %d %d", (int)structSizeToCheck, (int)sizeof(PhysicsSettings2));
+		Fatal(q);
+	}
 
 	PhysicsSettings settings;
 
-	//if (!useDefault)
-	//{
-
-	settings.mMaxInFlightBodyPairs = maxInFlightBodyPairs;
-	settings.mStepListenersBatchSize = stepListenersBatchSize;
-	settings.mStepListenerBatchesPerJob = stepListenerBatchesPerJob;
-	settings.mBaumgarte = baumgarte;
-	settings.mSpeculativeContactDistance = speculativeContactDistance;
-	settings.mPenetrationSlop = penetrationSlop;
-	settings.mLinearCastThreshold = linearCastThreshold;
-	settings.mLinearCastMaxPenetration = linearCastMaxPenetration;
-	settings.mManifoldToleranceSq = manifoldToleranceSq;
-	settings.mMaxPenetrationDistance = maxPenetrationDistance;
-	settings.mBodyPairCacheMaxDeltaPositionSq = bodyPairCacheMaxDeltaPositionSq;
-	settings.mBodyPairCacheCosMaxDeltaRotationDiv2 = bodyPairCacheCosMaxDeltaRotationDiv2;
-	settings.mContactNormalCosMaxDeltaRotation = contactNormalCosMaxDeltaRotation;
-	settings.mContactPointPreserveLambdaMaxDistSq = contactPointPreserveLambdaMaxDistSq;
-	settings.mNumVelocitySteps = numVelocitySteps;
-	settings.mNumPositionSteps = numPositionSteps;
-	settings.mMinVelocityForRestitution = minVelocityForRestitution;
-	settings.mTimeBeforeSleep = timeBeforeSleep;
-	settings.mPointVelocitySleepThreshold = pointVelocitySleepThreshold;
-	settings.mConstraintWarmStart = constraintWarmStart;
-	settings.mUseBodyPairContactCache = useBodyPairContactCache;
-	settings.mUseManifoldReduction = useManifoldReduction;
-	settings.mAllowSleeping = allowSleeping;
-	settings.mCheckActiveEdges = checkActiveEdges;
-
-	//settings.mBaumgarte = 1;
-	//settings.mNumVelocitySteps = 30;
-	//settings.mNumPositionSteps = 10;
-	//settings.mLinearCastThreshold = 0.05;
-	//settings.mLinearCastMaxPenetration = 0.05;
-	//settings.mMaxPenetrationDistance = 0.01;
-
-
-	//}
+	settings.mMaxInFlightBodyPairs = settings2->mMaxInFlightBodyPairs;
+	settings.mStepListenersBatchSize = settings2->mStepListenersBatchSize;
+	settings.mStepListenerBatchesPerJob = settings2->mStepListenerBatchesPerJob;
+	settings.mBaumgarte = settings2->mBaumgarte;
+	settings.mSpeculativeContactDistance = settings2->mSpeculativeContactDistance;
+	settings.mPenetrationSlop = settings2->mPenetrationSlop;
+	settings.mLinearCastThreshold = settings2->mLinearCastThreshold;
+	settings.mLinearCastMaxPenetration = settings2->mLinearCastMaxPenetration;
+	settings.mManifoldToleranceSq = settings2->mManifoldToleranceSq;
+	settings.mMaxPenetrationDistance = settings2->mMaxPenetrationDistance;
+	settings.mBodyPairCacheMaxDeltaPositionSq = settings2->mBodyPairCacheMaxDeltaPositionSq;
+	settings.mBodyPairCacheCosMaxDeltaRotationDiv2 = settings2->mBodyPairCacheCosMaxDeltaRotationDiv2;
+	settings.mContactNormalCosMaxDeltaRotation = settings2->mContactNormalCosMaxDeltaRotation;
+	settings.mContactPointPreserveLambdaMaxDistSq = settings2->mContactPointPreserveLambdaMaxDistSq;
+	settings.mNumVelocitySteps = settings2->mNumVelocitySteps;
+	settings.mNumPositionSteps = settings2->mNumPositionSteps;
+	settings.mMinVelocityForRestitution = settings2->mMinVelocityForRestitution;
+	settings.mTimeBeforeSleep = settings2->mTimeBeforeSleep;
+	settings.mPointVelocitySleepThreshold = settings2->mPointVelocitySleepThreshold;
+	settings.mDeterministicSimulation = settings2->mDeterministicSimulation;
+	settings.mConstraintWarmStart = settings2->mConstraintWarmStart;
+	settings.mUseBodyPairContactCache = settings2->mUseBodyPairContactCache;
+	settings.mUseManifoldReduction = settings2->mUseManifoldReduction;
+	settings.mUseLargeIslandSplitter = settings2->mUseLargeIslandSplitter;
+	settings.mAllowSleeping = settings2->mAllowSleeping;
+	settings.mCheckActiveEdges = settings2->mCheckActiveEdges;
 
 	system->system.SetPhysicsSettings(settings);
 }

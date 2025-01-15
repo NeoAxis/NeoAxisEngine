@@ -52,12 +52,19 @@ namespace NeoAxis.OggVorbisTheora
 		///////////////////////////////////////////
 
 		[StructLayout( LayoutKind.Sequential )]
-		public struct ov_callbacks
+		public unsafe struct ov_callbacks
 		{
+#if WEB
+			public void* read_func;
+			public void* seek_func;
+			public void* close_func;
+			public void* tell_func;
+#else
 			public ov_callbacks_read_func read_func;
 			public ov_callbacks_seek_func seek_func;
 			public ov_callbacks_close_func close_func;
 			public ov_callbacks_tell_func tell_func;
+#endif
 		}
 
 		///////////////////////////////////////////

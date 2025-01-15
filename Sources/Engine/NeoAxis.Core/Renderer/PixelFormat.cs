@@ -2,6 +2,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Threading;
 
 namespace NeoAxis
 {
@@ -296,34 +297,34 @@ namespace NeoAxis
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
-	struct OgrePixelUtil
-	{
-		[DllImport( OgreWrapper.library, EntryPoint = "OgrePixelUtil_getMemorySize", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
-		public unsafe static extern int getMemorySize( int width, int height, int depth, PixelFormat format );
+	//struct OgrePixelUtil
+	//{
+	//	//[DllImport( OgreWrapper.library, EntryPoint = "OgrePixelUtil_getMemorySize", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
+	//	//public unsafe static extern int getMemorySize( int width, int height, int depth, PixelFormat format );
 
-		[DllImport( OgreWrapper.library, EntryPoint = "OgrePixelUtil_getNumElemBytes", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
-		public unsafe static extern int getNumElemBytes( PixelFormat format );
+	//	[DllImport( OgreWrapper.library, EntryPoint = "OgrePixelUtil_getNumElemBytes", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
+	//	public unsafe static extern int getNumElemBytes( PixelFormat format );
 
-		[DllImport( OgreWrapper.library, EntryPoint = "OgrePixelUtil_hasAlpha", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
-		[return: MarshalAs( UnmanagedType.U1 )]
-		public unsafe static extern bool hasAlpha( PixelFormat format );
+	//	[DllImport( OgreWrapper.library, EntryPoint = "OgrePixelUtil_hasAlpha", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
+	//	[return: MarshalAs( UnmanagedType.U1 )]
+	//	public unsafe static extern bool hasAlpha( PixelFormat format );
 
-		[DllImport( OgreWrapper.library, EntryPoint = "OgrePixelUtil_isFloatingPoint", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
-		[return: MarshalAs( UnmanagedType.U1 )]
-		public unsafe static extern bool isFloatingPoint( PixelFormat format );
+	//	[DllImport( OgreWrapper.library, EntryPoint = "OgrePixelUtil_isFloatingPoint", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
+	//	[return: MarshalAs( UnmanagedType.U1 )]
+	//	public unsafe static extern bool isFloatingPoint( PixelFormat format );
 
-		[DllImport( OgreWrapper.library, EntryPoint = "OgrePixelUtil_isCompressed", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
-		[return: MarshalAs( UnmanagedType.U1 )]
-		public unsafe static extern bool isCompressed( PixelFormat format );
+	//	[DllImport( OgreWrapper.library, EntryPoint = "OgrePixelUtil_isCompressed", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
+	//	[return: MarshalAs( UnmanagedType.U1 )]
+	//	public unsafe static extern bool isCompressed( PixelFormat format );
 
-		[DllImport( OgreWrapper.library, EntryPoint = "OgrePixelUtil_isDepth", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
-		[return: MarshalAs( UnmanagedType.U1 )]
-		public unsafe static extern bool isDepth( PixelFormat format );
+	//	[DllImport( OgreWrapper.library, EntryPoint = "OgrePixelUtil_isDepth", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
+	//	[return: MarshalAs( UnmanagedType.U1 )]
+	//	public unsafe static extern bool isDepth( PixelFormat format );
 
-		[DllImport( OgreWrapper.library, EntryPoint = "OgrePixelUtil_unpackColour", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
-		public static extern void unpackColour( out float r, out float g, out float b, out float a,
-			PixelFormat pf, IntPtr src );
-	}
+	//	//[DllImport( OgreWrapper.library, EntryPoint = "OgrePixelUtil_unpackColour", CallingConvention = OgreWrapper.convention ), SuppressUnmanagedCodeSecurity]
+	//	//public static extern void unpackColour( out float r, out float g, out float b, out float a,
+	//	//	PixelFormat pf, IntPtr src );
+	//}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -332,35 +333,245 @@ namespace NeoAxis
 	/// </summary>
 	public static class PixelFormatUtility
 	{
-		public static int GetMemorySize( int width, int height, int depth, PixelFormat format )
+		static PixelFormatData[] pixelFormats;
+
+		//////////////////////
+
+		public struct PixelFormatData
 		{
-			return OgrePixelUtil.getMemorySize( width, height, depth, format );
+			public int NumElemBytes;
+			public bool HasAlpha;
+			public bool IsFloatingPoint;
+			public bool IsCompressed;
+			public bool IsDepth;
+
+			public bool Initialized;
+
+			public PixelFormatData( int numElemBytes, bool hasAlpha, bool isFloatingPoint, bool isCompressed, bool isDepth )
+			{
+				NumElemBytes = numElemBytes;
+				HasAlpha = hasAlpha;
+				IsFloatingPoint = isFloatingPoint;
+				IsCompressed = isCompressed;
+				IsDepth = isDepth;
+				Initialized = true;
+			}
 		}
+
+		//////////////////////
+
+		static void AddPixelFormatData( PixelFormatData[] array, PixelFormat format, int numElemBytes, bool hasAlpha, bool isFloatingPoint, bool isCompressed, bool isDepth )
+		{
+			array[ (int)format ] = new PixelFormatData( numElemBytes, hasAlpha, isFloatingPoint, isCompressed, isDepth );
+		}
+
+		public static PixelFormatData[] PixelFormats
+		{
+			get
+			{
+				if( pixelFormats == null )
+				{
+					var formats = new PixelFormatData[ (int)PixelFormat.Depth32F + 1 ];
+
+					AddPixelFormatData( formats, PixelFormat.Unknown, 0, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.L8, 1, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.L16, 2, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.A8, 1, true, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.A4L4, 1, true, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.ByteLA, 2, true, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R5G6B5, 2, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.B5G6R5, 2, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.A4R4G4B4, 2, true, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.A1R5G5B5, 2, true, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R8G8B8, 3, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.B8G8R8, 3, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.A8R8G8B8, 4, true, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.A8B8G8R8, 4, true, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.B8G8R8A8, 4, true, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.A2R10G10B10, 4, true, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.A2B10G10R10, 4, true, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.DXT1, 0, true, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.DXT2, 0, true, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.DXT3, 0, true, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.DXT4, 0, true, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.DXT5, 0, true, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.Float16RGB, 6, false, true, false, false );
+					AddPixelFormatData( formats, PixelFormat.Float16RGBA, 8, true, true, false, false );
+					AddPixelFormatData( formats, PixelFormat.Float32RGB, 12, false, true, false, false );
+					AddPixelFormatData( formats, PixelFormat.Float32RGBA, 16, true, true, false, false );
+					AddPixelFormatData( formats, PixelFormat.X8R8G8B8, 4, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.X8B8G8R8, 4, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R8G8B8A8, 4, true, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.Depth24S8, 4, false, false, false, true );
+					AddPixelFormatData( formats, PixelFormat.ShortRGBA, 8, true, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R3G3B2, 1, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.Float16R, 2, false, true, false, false );
+					AddPixelFormatData( formats, PixelFormat.Float32R, 4, false, true, false, false );
+					AddPixelFormatData( formats, PixelFormat.ShortGR, 4, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.Float16GR, 4, false, true, false, false );
+					AddPixelFormatData( formats, PixelFormat.Float32GR, 8, false, true, false, false );
+					AddPixelFormatData( formats, PixelFormat.ShortRGB, 6, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.PVRTC_RGB2, 0, false, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.PVRTC_RGBA2, 0, true, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.PVRTC_RGB4, 0, false, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.PVRTC_RGBA4, 0, true, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.PVRTC2_2BPP, 0, true, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.PVRTC2_4BPP, 0, true, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.R11G11B10_Float, 4, false, true, false, false );
+					AddPixelFormatData( formats, PixelFormat.R8_UInt, 1, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R8G8_UInt, 2, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R8G8B8_UInt, 3, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R8G8B8A8_UInt, 4, true, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R16_UInt, 2, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R16G16_UInt, 4, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R16G16B16_UInt, 6, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R16G16B16A16_UInt, 8, true, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R32_UInt, 4, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R32G32_UInt, 8, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R32G32B32_UInt, 12, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R32G32B32A32_UInt, 16, true, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R8_SInt, 1, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R8G8_SInt, 2, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R8G8B8_SInt, 3, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R8G8B8A8_SInt, 4, true, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R16_SInt, 2, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R16G16_SInt, 4, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R16G16B16_SInt, 6, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R16G16B16A16_SInt, 8, true, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R32_SInt, 4, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R32G32_SInt, 8, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R32G32B32_SInt, 12, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R32G32B32A32_SInt, 16, true, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R9G9B9E5_ShareExp, 4, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.BC4_UNorm, 0, false, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.BC4_SNorm, 0, false, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.BC5_UNorm, 0, false, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.BC5_SNorm, 0, false, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.BC6H_UF16, 0, false, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.BC6H_SF16, 0, false, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.BC7_UNorm, 0, true, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.BC7_UNorm_SRGB, 0, true, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.R8, 1, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.RG8, 2, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R8_SNorm, 1, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R8G8_SNorm, 2, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R8G8B8_SNorm, 3, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R8G8B8A8_SNorm, 4, true, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R16_SNorm, 2, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R16G16_SNorm, 4, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R16G16B16_SNorm, 6, false, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.R16G16B16A16_SNorm, 8, true, false, false, false );
+					AddPixelFormatData( formats, PixelFormat.ETC1_RGB8, 0, false, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.ETC2_RGB8, 0, false, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.ETC2_RGBA8, 0, true, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.ETC2_RGB8A1, 0, true, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.ATC_RGB, 0, false, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.ATC_RGBA_ExplicitAlpha, 0, true, false, true, false );
+					AddPixelFormatData( formats, PixelFormat.ATC_RGBA_InterpolatedAlpha, 0, true, false, true, false );
+					AddPixelFormatData( formats, PixelFormat._3DC, 0, false, false, true, false );
+
+					//no in native
+					AddPixelFormatData( formats, PixelFormat.Depth32F, 0, false, false, false, false );
+
+					for( int n = 0; n < formats.Length; n++ )
+					{
+						if( !formats[ n ].Initialized )
+							Log.Fatal( $"PixelFormatUtility: PixelFormats: !pixelFormats[ n ].Initialized. n is {n}." );
+					}
+
+					pixelFormats = formats;
+
+
+					//code to generate
+
+					//for( int n = 0; n < pixelFormats.Length; n++ )
+					//{
+					//	var format = (PixelFormat)n;
+					//	var item = new PixelFormatData();
+					//	item.NumElemBytes = GetNumElemBytes( format );
+					//	item.HasAlpha = HasAlpha( format );
+					//	item.IsFloatingPoint = IsFloatingPoint( format );
+					//	item.IsCompressed = IsCompressed( format );
+					//	item.IsDepth = IsDepth( format );
+					//	pixelFormats[ n ] = item;
+					//}
+
+					//{
+					//	var formats = PixelFormatUtility.PixelFormats;
+					//	for( int n = 0; n < formats.Length; n++ )
+					//	{
+					//		var format = formats[ n ];
+
+					//		Log.Info( $"AddPixelFormatData( PixelFormat.{(PixelFormat)n}, {format.NumElemBytes}, {format.HasAlpha}, {format.IsFloatingPoint}, {format.IsCompressed}, {format.IsDepth} );" );
+
+					//		//Log.Info( ( (PixelFormat)n ).ToString() + " " + format.HasAlpha.ToString() + " " + format.IsFloatingPoint.ToString() + " " + format.IsCompressed.ToString() + " " + format.IsDepth.ToString() );
+					//	}
+					//}
+
+				}
+
+				return pixelFormats;
+			}
+		}
+
+		//
 
 		public static int GetNumElemBytes( PixelFormat format )
 		{
-			return OgrePixelUtil.getNumElemBytes( format );
+			return PixelFormats[ (int)format ].NumElemBytes;
 		}
 
 		public static bool HasAlpha( PixelFormat format )
 		{
-			return OgrePixelUtil.hasAlpha( format );
+			return PixelFormats[ (int)format ].HasAlpha;
 		}
 
 		public static bool IsFloatingPoint( PixelFormat format )
 		{
-			return OgrePixelUtil.isFloatingPoint( format );
+			return PixelFormats[ (int)format ].IsFloatingPoint;
 		}
 
 		public static bool IsCompressed( PixelFormat format )
 		{
-			return OgrePixelUtil.isCompressed( format );
+			return PixelFormats[ (int)format ].IsCompressed;
 		}
 
 		public static bool IsDepth( PixelFormat format )
 		{
-			return OgrePixelUtil.isDepth( format );
+			return PixelFormats[ (int)format ].IsDepth;
 		}
+
+
+		//public static int GetNumElemBytes( PixelFormat format )
+		//{
+		//	return OgrePixelUtil.getNumElemBytes( format );
+		//}
+
+		//public static bool HasAlpha( PixelFormat format )
+		//{
+		//	return OgrePixelUtil.hasAlpha( format );
+		//}
+
+		//public static bool IsFloatingPoint( PixelFormat format )
+		//{
+		//	return OgrePixelUtil.isFloatingPoint( format );
+		//}
+
+		//public static bool IsCompressed( PixelFormat format )
+		//{
+		//	return OgrePixelUtil.isCompressed( format );
+		//}
+
+		//public static bool IsDepth( PixelFormat format )
+		//{
+		//	return OgrePixelUtil.isDepth( format );
+		//}
+
+
+		//public static int GetMemorySize( int width, int height, int depth, PixelFormat format )
+		//{
+		//	return OgrePixelUtil.getMemorySize( width, height, depth, format );
+		//}
 
 		//public static ColorValue UnpackColor( PixelFormat format, IntPtr source )
 		//{

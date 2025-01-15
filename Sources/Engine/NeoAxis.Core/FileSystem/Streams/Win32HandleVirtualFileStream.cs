@@ -49,7 +49,8 @@ namespace NeoAxis
 
 		public Win32HandleVirtualFileStream( string realPath )
 		{
-			handle = CreateFile( realPath, GENERIC_READ, FileShare.Read, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
+			handle = CreateFile( realPath, GENERIC_READ, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
+			//handle = CreateFile( realPath, GENERIC_READ, FileShare.Read, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
 
 			if( handle == (IntPtr)( -1 ) )
 			{

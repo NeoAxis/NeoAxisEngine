@@ -1,7 +1,5 @@
-#if !NO_LITE_DB
+﻿#if !NO_LITE_DB
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using static Internal.LiteDB.Constants;
 
 namespace Internal.LiteDB.Engine
@@ -17,7 +15,7 @@ namespace Internal.LiteDB.Engine
         public DataPage(PageBuffer buffer)
             : base(buffer)
         {
-            ENSURE(this.PageType == PageType.Data, "page type must be data page");
+            ENSURE(this.PageType == PageType.Data, "Page type must be data page: {0}", PageType);
 
             if (this.PageType != PageType.Data) throw LiteException.InvalidPageType(PageType.Data, this);
         }
@@ -95,7 +93,7 @@ namespace Internal.LiteDB.Engine
         /// 30% -  60% = 3 (2448 - 4895)
         ///  0% -  30% = 4 (0000 - 2447)
         /// </summary>
-        private static int[] _freePageSlots = new[]
+        private static readonly int[] _freePageSlots = new[]
         {
             (int)((PAGE_SIZE - PAGE_HEADER_SIZE) * .90), // 0
             (int)((PAGE_SIZE - PAGE_HEADER_SIZE) * .75), // 1
@@ -104,11 +102,12 @@ namespace Internal.LiteDB.Engine
         };
 
         /// <summary>
-        /// Get page index slot on FreeDataPageID
+        /// Returns the slot the page should be in, given the <paramref name="freeBytes"/> it has
         /// </summary>
+        /// <returns>A slot number between 0 and 4</returns>
         public static byte FreeIndexSlot(int freeBytes)
         {
-            ENSURE(freeBytes >= 0, "freeBytes must be positive");
+            ENSURE(freeBytes >= 0, "FreeBytes must be positive: {0}", freeBytes);
 
             for (var i = 0; i < _freePageSlots.Length; i++)
             {
@@ -119,9 +118,10 @@ namespace Internal.LiteDB.Engine
         }
 
         /// <summary>
-        /// Get minimum slot with space enough for your data content
-        /// Returns -1 if no space guaranteed (more than 90%)
+        /// Returns the slot where there is a page with enough space for <paramref name="length"/> bytes of data.
+        /// Returns -1 if no space guaranteed (more than 90% of a DataPage net size)
         /// </summary>
+        /// <returns>A slot number between -1 and 3</returns>
         public static int GetMinimumIndexSlot(int length)
         {
             return FreeIndexSlot(length) - 1;
