@@ -65,4 +65,4 @@ Yes. If you encounter problems, please report it as soon as possible.</li>
 
 </ul>
 
-<div class="image" align="center"><a href="https://www.neoaxis.com/images/2024_1/NeoAxisEngine_2024_1_CityDemo1.jpg"><img src="https://www.neoaxis.com/images/2024_1/NeoAxisEngine_2024_1_CityDemo1.jpg" alt="" width="1000" vspace="10"></a></div>
+<div class="image" align="center"><a href="https://www.neoaxis.com/images/2024_1/NeoAxisEngine_2024_1_CharacterScene.png"><img src="https://www.neoaxis.com/images/2024_1/NeoAxisEngine_2024_1_CharacterScene.png" alt="" width="1000" vspace="10"></a></div>
