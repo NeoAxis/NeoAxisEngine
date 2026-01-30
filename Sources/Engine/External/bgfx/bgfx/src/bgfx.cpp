@@ -2574,7 +2574,7 @@ namespace bgfx
 			return RenderFrame::Timeout;
 		}
 
-		return m_exit
+		return m_exit || bgfxShutdowning //!!!!betauser
 			? RenderFrame::Exiting
 			: RenderFrame::Render
 			;
@@ -3703,14 +3703,16 @@ namespace bgfx
 	void shutdown()
 	{
 		//!!!!betauser
-		bgfxShutdowning = true;
+		//bgfxShutdowning = true;
 
 		BX_TRACE("Shutdown...");
 
 		BGFX_CHECK_API_THREAD();
-		Context* ctx = s_ctx; // it's going to be NULLd inside shutdown.
+		Context* ctx = s_ctx; // it's going to be NULL inside shutdown.
 		ctx->shutdown();
-		BX_ASSERT(NULL == s_ctx, "bgfx is should be uninitialized here.");
+
+		//!!!!betauser
+		//BX_ASSERT(NULL == s_ctx, "bgfx is should be uninitialized here.");
 
 		bx::deleteObject(g_allocator, ctx, Context::kAlignment);
 
