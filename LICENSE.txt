@@ -4,7 +4,7 @@ NeoAxis Engine End User License Agreement
 
 This document is an agreement between NeoAxis Group Ltd, 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica ("Licensor") and Licensee (you) regarding the use of the NeoAxis Engine software and additional products (Technology) by Licensee.
 
-It is a legal document that explains your rights and obligations related to your use of the Technology for it. By downloading or using this software, you are agreeing to be bound by the terms of this Agreement. If you do not or cannot agree to the terms of this Agreement, please do not download or use this software.
+It is a legal document that explains your rights and obligations related to your use of the Technology. By downloading, installing, or using this software, you are agreeing to be bound by the terms of this Agreement. If you do not or cannot agree to the terms of this Agreement, do not download, install, or use this software.
 
 The License becomes effective on the date you accept this Agreement or download the Engine Code.
 
@@ -14,21 +14,21 @@ Permission is hereby granted, free of charge, to you obtaining a copy of this so
 
 A. All redistributions must retain all occurrences of the above copyright notice and website addresses that are currently in place.
 
-B. Modified versions in binary or in source form must be plainly marked as such, and must not be misrepresented as being the original software. The license imposes restrictions on creating a competing product, as it is technically possible to do so by forking the source code. This license does not permit the creation of another game engine; a special license is required for that.
+B. Modified versions in binary or in source form must be plainly marked as such, and must not be misrepresented as being the original software. The license imposes restrictions on creating a competing product, as it is technically possible to do so by forking the source code. This license does not permit the creation of another game engine or other competing game engine technology based substantially on the Engine Code; a special license is required for that.
 
-C. You agree to pay the Licensor a royalty equal to 5% of all worldwide gross revenue from each Product, excluding the first $200,000 USD or equivalent in the lifetime of a Product. In includes gross revenue from any and all sales of a Product to end users through any and all media, revenue from any and all in-app purchases, in-app advertising, affiliate programs, downloadable content, microtransactions, subscriptions, sale, transfer, from advance payments, exchange of content created by end users, revenue in any other form. Payments must be made monthly. This requirement only applies if a Product includes the Engine Code.
+C. You agree to pay the Licensor a royalty equal to 5% of all worldwide gross revenue from each Product, excluding the first $200,000 USD or equivalent in the lifetime of a Product. This includes gross revenue from any and all sales of a Product to end users through any and all media, revenue from any and all in-app purchases, in-app advertising, affiliate programs, downloadable content, microtransactions, subscriptions, sale, transfer, advance payments, exchange of content created by end users, and revenue in any other form. Payments must be made monthly. This requirement only applies if a Product includes the Engine Code.
 
-D. A product that uses Engine Code must display the Engine Logo upon startup for at least 3 seconds. Engine Logo of NeoAxis Engine must be original, clearly readable, and be at least 1/15 of the horizontal or vertical size of the screen. Check Engine Logo definition for more details. Engine Logo can be displayed as a primary logo or as a secondary logo in additional to other information on the screen. You can run NeoAxis Player (Binaries/NeoAxis.Player.exe) to see the demonstration. To configure the logo use the project settings of the editor.
+D. A Product that uses Engine Code must display the Engine Logo upon startup for at least 3 seconds. The Engine Logo of NeoAxis Engine must be original, clearly readable, and be at least 1/15 of the horizontal or vertical size of the screen. Check the Engine Logo definition for more details. The Engine Logo can be displayed as a primary logo or as a secondary logo in addition to other information on the screen. You can run NeoAxis Player (Binaries/NeoAxis.Player.exe) to see the demonstration. To configure the logo use the project settings of the editor.
 
-E. The product information must indicate that it is powered by NeoAxis Engine and with a link to website www.neoaxis.com. Example: "Made with NeoAxis Engine. www.neoaxis.com."
+E. The Product information must indicate that it is powered by NeoAxis Engine and include a link to the website www.neoaxis.com. Example: "Made with NeoAxis Engine. www.neoaxis.com."
 
-F. Additional Content which is provided for an additional fee, can be redistributed in their Source Code form only to those that have purchased the same products. It cannot be distributed in their Source Code form with a Product.
+F. Additional Content which is provided for an additional fee can be redistributed in its Source Code form only to those that have purchased the same products. It cannot be distributed in its Source Code form with a Product.
 
 G. Certain Additional Content is distributed under the "Free to use with NeoAxis" license. This means that the content can only be used with the Engine Code.
 
 H. "NeoX Service" means a special case of this Agreement under which the Product may be distributed solely inside the NeoX cloud service.
 
-If you do not accept these conditions or it is not enforceable in your jurisdiction, then you may not use the software.
+If you do not accept these conditions or they are not enforceable in your jurisdiction, then you may not use the software.
 
 3. COPYRIGHT
 
@@ -40,21 +40,21 @@ The title and ownership of the software shall remain with the Licensor. All righ
 
 5. DISCLAIMER OF WARRANTY
 
-The software is provided "AS IS", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement.
+The software is provided "AS IS", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and noninfringement.
 
 6. NO LIABILITY
 
-Licensee agrees that use of the Software is at their own risk. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the software.
+Licensee agrees that use of the Software is at their own risk. In no event shall the authors or copyright holders be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.
 
 7. DEFINITIONS
 
-"Additional Content" is add-on or content which is using the Engine Code that is provided for an additional fee or for free under this license through www.neoaxis.com or through authorized resellers of the NeoAxis Group Ltd.
+"Additional Content" is add-on software or content which is using the Engine Code that is provided for an additional fee or for free under this license through www.neoaxis.com or through authorized resellers of NeoAxis Group Ltd.
 
 "Engine Code" means the Source Code and object code of the NeoAxis Engine software, including any future versions, as made available to you by NeoAxis Group Ltd under this Agreement, and any object code compiled from that Source Code.
 
 "Product" means any product developed under this Agreement that is made using the Technology or that combines the Technology with any other software or content.
 
-"Source Code" means the human readable form of a software program, including all modules it contains, plus any associated resource files, scripts used to control compilation.
+"Source Code" means the human readable form of a software program, including all modules it contains, plus any associated resource files and scripts used to control compilation.
 
 "Technology" means any or all of the original or modified Engine Code and the Additional Content.
 
@@ -66,7 +66,7 @@ Licensee agrees that use of the Software is at their own risk. In no event shall
 
 This Agreement and any documents or information referred to in this Agreement constitute the entire agreement between you and NeoAxis Group Ltd relating to the subject matter covered by this Agreement. All other communications, proposals, and representations with respect to the subject matter covered by this Agreement are excluded.
 
-If any provision in this agreement is unenforceable or invalid, it shall not affect the rest of the agreement. The licensee agrees to replace any unenforceable or invalid provision with a valid provision that upholds the intent of the provision to the greatest extent possible.
+If any provision in this Agreement is unenforceable or invalid, it shall not affect the rest of the Agreement. The Licensee agrees to replace any unenforceable or invalid provision with a valid provision that upholds the intent of the provision to the greatest extent possible.
 
 IBC NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 http://www.neoaxis.com/
