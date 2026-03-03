@@ -191,6 +191,11 @@
 		{
 			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
 		}
+		.component NeoAxis.UITooltip
+		{
+			Name = Tooltip
+			Text = "Download the Sci\x2011Fi Demo from the Stores window in the editor."
+		}
 	}
 	.component NeoAxis.UIButton
 	{
