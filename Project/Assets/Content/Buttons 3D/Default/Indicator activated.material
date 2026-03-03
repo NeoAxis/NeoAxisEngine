@@ -1,0 +1,26 @@
+// Made with NeoAxis Engine 2023.1.
+
+.component NeoAxis.Material
+{
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"0E9EAB9126F74FB6108134D9322C5B80\"><CGD /><WS UN=\"3BC5D2A36875407E99A5DC1C92BB6855\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"60EAC61088204A9923BF1B07D20604C5\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"0E9EAB9126F74FB6108134D9322C5B80\"><KP UN=\"6C3DBF7CC59E44DDB39874231CD30308\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"0E9EAB9126F74FB6108134D9322C5B80\" S=\"False\"><CPD ObjPath=\"$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	BaseColor = 0.25 0.25 0.25
+	Emissive = 0 1 0
+	.component NeoAxis.FlowGraph
+	{
+		Name = Shader graph
+		EditorScrollPosition = 0 0
+		Specialization
+		{
+			GetByReference = NeoAxis.FlowGraphSpecialization_Shader|Instance
+		}
+		.component NeoAxis.FlowGraphNode
+		{
+			Name = Node
+			Position = 10 -7
+			ControlledObject
+			{
+				GetByReference = "this:..\\.."
+			}
+		}
+	}
+}

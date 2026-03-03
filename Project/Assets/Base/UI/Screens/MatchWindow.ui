@@ -1,0 +1,422 @@
+// Made with NeoAxis Engine 2026.1.
+
+.component Project.MatchWindow
+{
+	Name = Window
+	Text = Match
+	Size = Units 900 900
+	HorizontalAlignment = Center
+	VerticalAlignment = Center
+	Margin = Units 20 20 20 80
+	EditorScrollPosition = -0.309740059335934 -0.19134791335749
+	Style
+	{
+		GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text Settings
+		Text = "Settings:"
+		Size = Units 320 30
+		Margin = Units 20 50 0 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text Participants
+		Text = "Participants:"
+		Size = Units 320 30
+		Margin = Units 20 420 0 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text Chat
+		Text = "Chat:"
+		Size = Units 320 30
+		VerticalAlignment = Bottom
+		Margin = Units 20 570 0 260
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+	}
+	.component NeoAxis.UIList
+	{
+		Name = List Participants
+		Size = Units 1430 150
+		HorizontalAlignment = Stretch
+		Margin = Units 20 450 200 20
+		EditorScrollPosition = 0 0
+		ItemsAsText
+		{
+			Count = 0
+		}
+		.component NeoAxis.UIScroll
+		{
+			Name = Scroll
+			CanBeSelected = False
+			Size = Units 30 400
+			HorizontalAlignment = Right
+			VerticalAlignment = Stretch
+			Margin = Units 0 2 2 2
+			EditorScrollPosition = 0 0
+			Vertical = True
+		}
+	}
+	.component NeoAxis.UIList
+	{
+		Name = List Chat
+		Size = Units 1430 190
+		HorizontalAlignment = Stretch
+		VerticalAlignment = Bottom
+		Margin = Units 20 600 200 70
+		EditorScrollPosition = 0 0
+		ItemsAsText
+		{
+			Count = 0
+		}
+		.component NeoAxis.UIScroll
+		{
+			Name = Scroll
+			CanBeSelected = False
+			Size = Units 30 400
+			HorizontalAlignment = Right
+			VerticalAlignment = Stretch
+			Margin = Units 0 2 2 2
+			EditorScrollPosition = 0 0
+			Vertical = True
+		}
+	}
+	.component NeoAxis.UIEdit
+	{
+		Name = Edit Chat Message
+		Size = Units 240 40
+		HorizontalAlignment = Stretch
+		VerticalAlignment = Bottom
+		Margin = Units 20 730 360 20
+		EditorScrollPosition = 0 0
+		.component NeoAxis.UIText
+		{
+			Name = Text
+			CanBeSelected = False
+			Size = Parent 1 1
+			HorizontalAlignment = Stretch
+			VerticalAlignment = Stretch
+			Margin = Units 4 2 4 2
+			EditorScrollPosition = 0 0
+			TextHorizontalAlignment = Left
+			ClipRectangle = True
+			Text
+			{
+				GetByReference = "this:..\\DisplayText"
+			}
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler KeyDownBefore
+			Event
+			{
+				GetByReference = "this:..\\event:KeyDownBefore"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:EditChatMessage_KeyDownBefore(NeoAxis.UIControl,NeoAxis.KeyEvent,ref System.Boolean)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Chat Send
+		Text = Send
+		Size = Units 150 40
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		Margin = Units 1130 740 200 20
+		EditorScrollPosition = 0 0
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonChatSend_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Start
+		Text = Start
+		Size = Units 150 40
+		HorizontalAlignment = Right
+		Margin = Units 1130 60 20 880
+		EditorScrollPosition = 0 0
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonStart_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+		.component NeoAxis.UITooltip
+		{
+			Name = Tooltip
+			Text = Start the match.
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Delete
+		Text = Delete
+		Size = Units 150 40
+		HorizontalAlignment = Right
+		Margin = Units 1130 120 20 810
+		EditorScrollPosition = 0 0
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonDelete_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+		.component NeoAxis.UITooltip
+		{
+			Name = Tooltip
+			Text = Delete the match.
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Kick
+		Text = Kick
+		Size = Units 150 40
+		HorizontalAlignment = Right
+		Margin = Units 1130 450 20 810
+		EditorScrollPosition = 0 0
+		.component NeoAxis.UITooltip
+		{
+			Name = Tooltip
+			Text = Kick the selected user from the match.
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonKick_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Close
+		Text = Close
+		Size = Units 150 40
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		Margin = Units 490 740 20 20
+		EditorScrollPosition = 0 0
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonClose_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIControl
+	{
+		Name = Control Settings Combo
+		Size = Units 480 40
+		Margin = Units 860 250 0 0
+		BackgroundColor = 0.00545098 0 0.827451 0.2950196
+		EditorScrollPosition = 0 0
+		.component NeoAxis.UIText
+		{
+			Name = Text
+			Text = "Name:"
+			CanBeSelected = False
+			Size = Parent 0.38 1
+			Margin = Units 0 0 0 0
+			EditorScrollPosition = 0 0
+			TextHorizontalAlignment = Left
+			ClipRectangle = True
+		}
+		.component NeoAxis.UICombo
+		{
+			Name = Combo
+			CanBeSelected = False
+			Size = Parent 0.6 1
+			Margin = Parent 0.4 0 0 0
+			EditorScrollPosition = 0 0
+			ItemsAsText
+			{
+				Count = 0
+			}
+			.component NeoAxis.UIEdit
+			{
+				Name = Text Control
+				ReadOnly = True
+				CanBeSelected = False
+				Size = Parent 1 1
+				HorizontalAlignment = Stretch
+				VerticalAlignment = Stretch
+				EditorScrollPosition = 0 0
+				Text
+				{
+					GetByReference = "this:..\\DisplayText"
+				}
+				.component NeoAxis.UIText
+				{
+					Name = Text
+					CanBeSelected = False
+					Size = Parent 1 1
+					HorizontalAlignment = Stretch
+					VerticalAlignment = Stretch
+					Margin = Units 4 2 4 2
+					EditorScrollPosition = 0 0
+					TextHorizontalAlignment = Left
+					ClipRectangle = True
+					Text
+					{
+						GetByReference = "this:..\\DisplayText"
+					}
+				}
+				.component NeoAxis.UIImage
+				{
+					CanBeSelected = False
+					Size = Screen 0 0
+					HorizontalAlignment = Right
+					EditorScrollPosition = 0 0
+					SourceImage
+					{
+						GetByReference = "Base\\UI\\Images\\ComboBoxButton.png"
+					}
+				}
+			}
+			.component NeoAxis.UIList
+			{
+				Name = Down List
+				Visible = False
+				CanBeSelected = False
+				Size = Screen 0 0
+				Margin = Parent 0 1 1 1
+				TopMost = True
+				EditorScrollPosition = 0 0
+				ItemsAsText
+				{
+					Count = 0
+				}
+				.component NeoAxis.UIScroll
+				{
+					Name = Scroll
+					CanBeSelected = False
+					Size = Units 30 400
+					HorizontalAlignment = Right
+					VerticalAlignment = Stretch
+					Margin = Units 0 2 2 2
+					EditorScrollPosition = 0 0
+					Vertical = True
+				}
+				.component NeoAxis.UIControl
+				{
+					Name = Cover
+					CanBeSelected = False
+					Size = Screen 1 1
+					Margin = Screen 0 0 1 1
+					EditorScrollPosition = 0 0
+				}
+			}
+		}
+	}
+	.component NeoAxis.UIControl
+	{
+		Name = Control Settings Check
+		Size = Units 480 40
+		Margin = Units 860 300 0 0
+		BackgroundColor = 0.00545098 0 0.827451 0.2950196
+		EditorScrollPosition = 0 0
+		.component NeoAxis.UIText
+		{
+			Name = Text
+			Text = "Name:"
+			CanBeSelected = False
+			Size = Parent 0.38 1
+			Margin = Units 0 0 0 0
+			EditorScrollPosition = 0 0
+			TextHorizontalAlignment = Left
+			ClipRectangle = True
+		}
+		.component NeoAxis.UICheck
+		{
+			Name = Check
+			Size = Units 40 40
+			Margin = Parent 0.4 0 0 0
+			EditorScrollPosition = 0 0
+		}
+	}
+	.component NeoAxis.UIControlList
+	{
+		Name = Control List Settings
+		Size = Units 580 320
+		HorizontalAlignment = Stretch
+		Margin = Units 20 90 200 0
+		BackgroundColor = 0.8627451 0.372 0.2094118 0.322
+		EditorScrollPosition = 0 0
+		ControlsHorizontalAlignment = Left
+		ControlsVerticalAlignment = Top
+		.component NeoAxis.UIScroll
+		{
+			Enabled = False
+			Name = Vertical Scroll
+			CanBeSelected = False
+			Size = Units 30 400
+			HorizontalAlignment = Right
+			VerticalAlignment = Stretch
+			Margin = Units 0 2 2 2
+			EditorScrollPosition = 0 0
+			Vertical = True
+		}
+	}
+}

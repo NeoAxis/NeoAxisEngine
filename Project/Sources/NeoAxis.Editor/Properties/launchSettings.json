@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "NeoAxis.Editor": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

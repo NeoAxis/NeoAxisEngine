@@ -1,0 +1,211 @@
+// Made with NeoAxis Engine 2026.1.
+
+.component Project.MatchesWindow
+{
+	Name = Window
+	Text = Matches
+	Size = Units 1200 800
+	HorizontalAlignment = Stretch
+	VerticalAlignment = Stretch
+	Margin = Units 20 20 20 80
+	EditorScrollPosition = -0.0102839473251056 -2.21033911058639
+	EditorZoomIndex = 9
+	Style
+	{
+		GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text Common Info
+		Text = "{Common info}"
+		Size = Units 240 30
+		Margin = Units 20 50 0 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+	}
+	.component NeoAxis.UIText
+	{
+		Name = Text Matches
+		Text = "Available matches:"
+		Size = Units 400 30
+		Margin = Units 20 90 0 0
+		EditorScrollPosition = 0 0
+		TextHorizontalAlignment = Left
+	}
+	.component NeoAxis.UIList
+	{
+		Name = List Matches
+		Size = Units 790 770
+		Margin = Units 20 120 880 20
+		EditorScrollPosition = 0 0
+		ItemsAsText
+		{
+			Count = 0
+		}
+		.component NeoAxis.UIScroll
+		{
+			Name = Scroll
+			CanBeSelected = False
+			Size = Units 30 400
+			HorizontalAlignment = Right
+			VerticalAlignment = Stretch
+			Margin = Units 0 2 2 2
+			EditorScrollPosition = 0 0
+			Vertical = True
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler ItemMouseDoubleClick
+			Event
+			{
+				GetByReference = "this:..\\event:ItemMouseDoubleClick"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ListMatches_ItemMouseDoubleClick(NeoAxis.UIControl,NeoAxis.EMouseButtons,ref System.Boolean)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler KeyDown
+			Event
+			{
+				GetByReference = "this:..\\event:KeyDown"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ListMatches_KeyDown(NeoAxis.UIControl,NeoAxis.KeyEvent,ref System.Boolean)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button New
+		Text = New Match
+		Size = Units 150 40
+		HorizontalAlignment = Right
+		Margin = Units 1130 60 20 880
+		EditorScrollPosition = 0 0
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonNew_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Find
+		Text = Find
+		Size = Units 150 40
+		HorizontalAlignment = Right
+		Margin = Units 1130 170 20 760
+		EditorScrollPosition = 0 0
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonFind_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Enter
+		Text = Enter
+		Size = Units 150 40
+		HorizontalAlignment = Right
+		Margin = Units 1130 120 20 810
+		EditorScrollPosition = 0 0
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonEnter_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Close
+		Text = Close
+		Size = Units 150 40
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		Margin = Units 490 740 20 20
+		EditorScrollPosition = 0 0
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonClose_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIEdit
+	{
+		Name = Edit Match Info
+		Text = "{Match info} {Match info} {Match info} {Match info} {Match info} {Match info} {Match info} {Match info} {Match info} {Match info} {Match info} {Match info} {Match info} {Match info} {Match info} {Match info}"
+		ReadOnly = True
+		Size = Units 700 770
+		Margin = Units 850 120 0 20
+		EditorScrollPosition = 0 0
+		.component NeoAxis.UIText
+		{
+			Name = Text
+			CanBeSelected = False
+			Size = Parent 1 1
+			HorizontalAlignment = Stretch
+			VerticalAlignment = Stretch
+			Margin = Units 4 2 4 2
+			EditorScrollPosition = 0 0
+			TextHorizontalAlignment = Left
+			TextVerticalAlignment = Top
+			WordWrap = True
+			ClipRectangle = True
+			Text
+			{
+				GetByReference = "this:..\\DisplayText"
+			}
+		}
+	}
+}
