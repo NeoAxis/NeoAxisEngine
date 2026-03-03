@@ -1,13 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30309.148
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11415.280
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoAxis.Player.UWP", "Sources\NeoAxis.Player.UWP\NeoAxis.Player.UWP.csproj", "{5417393A-BA14-4C40-AAC7-9FD5A5EC9278}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project.UWP", "Project.UWP.csproj", "{1479C4F8-80D1-4313-9657-ACC6FB8815EB}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoAxis.CoreExtension.UWP", "Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.UWP.csproj", "{5AC5DA1A-BB1C-419E-A8F6-ECE12B62E731}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,14 +17,6 @@ Global
 		{5417393A-BA14-4C40-AAC7-9FD5A5EC9278}.Release|x64.ActiveCfg = Release|x64
 		{5417393A-BA14-4C40-AAC7-9FD5A5EC9278}.Release|x64.Build.0 = Release|x64
 		{5417393A-BA14-4C40-AAC7-9FD5A5EC9278}.Release|x64.Deploy.0 = Release|x64
-		{1479C4F8-80D1-4313-9657-ACC6FB8815EB}.Debug|x64.ActiveCfg = Debug|x64
-		{1479C4F8-80D1-4313-9657-ACC6FB8815EB}.Debug|x64.Build.0 = Debug|x64
-		{1479C4F8-80D1-4313-9657-ACC6FB8815EB}.Release|x64.ActiveCfg = Release|x64
-		{1479C4F8-80D1-4313-9657-ACC6FB8815EB}.Release|x64.Build.0 = Release|x64
-		{5AC5DA1A-BB1C-419E-A8F6-ECE12B62E731}.Debug|x64.ActiveCfg = Debug|x64
-		{5AC5DA1A-BB1C-419E-A8F6-ECE12B62E731}.Debug|x64.Build.0 = Debug|x64
-		{5AC5DA1A-BB1C-419E-A8F6-ECE12B62E731}.Release|x64.ActiveCfg = Release|x64
-		{5AC5DA1A-BB1C-419E-A8F6-ECE12B62E731}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

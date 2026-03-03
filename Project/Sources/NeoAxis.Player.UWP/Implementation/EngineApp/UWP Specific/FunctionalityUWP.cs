@@ -268,8 +268,11 @@ namespace NeoAxis
 
 					if( viewport.IsKeyPressed( EKeys.Alt ) && eKey == EKeys.Return )
 					{
-						EngineApp.SetFullscreenMode( !EngineApp.FullscreenEnabled, EngineApp.FullscreenSize );
-						//App.FullScreen = !App.FullScreen;
+						if( EngineApp.WindowedMode == WindowedModeEnum.Fullscreen )
+							EngineApp.SetWindowedMode( WindowedModeEnum.Windowed, EngineApp.WindowedModeSize );
+						else
+							EngineApp.SetWindowedMode( WindowedModeEnum.Fullscreen, EngineApp.WindowedModeSize );
+						//EngineApp.SetFullscreenMode( !EngineApp.FullscreenEnabled, EngineApp.FullscreenSize );
 						handled = true;
 					}
 				}

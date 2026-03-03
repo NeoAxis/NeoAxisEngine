@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputType>Library</OutputType>
@@ -28,9 +28,11 @@
     <NoWarn>1701;1702;CS1591;CS8632</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Remove="Assets\Gomoku\**" />
     <EmbeddedResource Remove="Packages\**" />
     <EmbeddedResource Remove="Sources\**" />
     <EmbeddedResource Remove="User settings\**" />
+    <None Remove="Assets\Gomoku\**" />
     <None Remove="Packages\**" />
     <None Remove="Sources\**" />
     <None Remove="User settings\**" />
@@ -38,11 +40,6 @@
   <ItemGroup>
     <Reference Include="NeoAxis.Core">
       <HintPath>Binaries\NeoAxis.Core.dll</HintPath>
-      <SpecificVersion>false</SpecificVersion>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="NeoAxis.CoreExtension">
-      <HintPath>Binaries\NeoAxis.CoreExtension.dll</HintPath>
       <SpecificVersion>false</SpecificVersion>
       <Private>false</Private>
     </Reference>
@@ -65,23 +62,29 @@
     <Compile Include="Assets\Base\WindowApp\WindowAppMainForm.cs" />
     <Compile Include="Assets\Samples\Spaceship Game\SpaceshipGameGUI.cs" />
     <Compile Include="Assets\Samples\Platform Game\PlatformGameGUI.cs" />
-    <Compile Include="Assets\Base\Scripts\Networking\SimulationAppClient.cs" />
-    <Compile Include="Assets\Base\Scripts\Networking\SimulationAppServer.cs" />
     <Compile Include="Assets\Samples\Shooter\UI\ShooterInGameContextScreen.cs" />
     <Compile Include="Assets\Samples\Shooter\UI\ShooterSceneScreen.cs" />
     <Compile Include="Assets\Base\UI\Screens\MultiplayerJoinWindow.cs" />
     <Compile Include="Assets\Base\UI\Screens\MultiplayerCreateWindow.cs" />
-    <Compile Include="Assets\Base\Scripts\Networking\RunServer.cs" />
-    <Compile Include="Assets\Base\Scripts\Networking\NetworkLogic.cs" />
     <Compile Include="Assets\Samples\Shooter\Scripts\ShooterNetworkLogic.cs" />
-    <Compile Include="Assets\Base\Scripts\Networking\ClientUtility.cs" />
     <Compile Include="Assets\Samples\Shooter\Scripts\ShooterCommon.cs" />
     <Compile Include="Assets\Base\UI\Screens\BasicSceneScreen.cs" />
     <Compile Include="Assets\Base\UI\Screens\EntranceScreen.cs" />
     <Compile Include="Assets\Base\UI\Screens\InGameContextScreen.cs" />
     <Compile Include="Assets\Base\UI\Screens\AvatarWindow.cs" />
+    <Compile Include="Assets\Base\UI\Screens\MatchesWindow.cs" />
+    <Compile Include="Assets\Base\UI\Screens\MatchWindow.cs" />
+    <Compile Include="Assets\Base\Scripts\ClientUtility.cs" />
+    <Compile Include="Assets\Base\Scripts\RunServer.cs" />
+    <Compile Include="Assets\Base\Scripts\NetworkLogic.cs" />
+    <Compile Include="Assets\Base\Scripts\CloudServiceClient.cs" />
+    <Compile Include="Assets\Base\Scripts\SimulationAppClient.cs" />
+    <Compile Include="Assets\Base\Scripts\SimulationAppServer.cs" />
   </ItemGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="if EXIST &quot;$(ProjectDir)Project.csproj&quot; ( if EXIST &quot;$(ProjectDir)Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; ( &quot;$(ProjectDir)Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -platformProjectPatch &quot;$(ProjectDir)Project.Client.csproj&quot; -baseProject &quot;$(ProjectDir)Project.csproj&quot; ) )" />
+  </Target>
+  <Target Name="FailIfOptimizeEnabled" BeforeTargets="BeforeBuild">
+    <Error Condition="'$(Optimize)' == 'true'" Text="Optimize must be disabled. Current configuration has Optimize=$(Optimize)." />
   </Target>
 </Project>

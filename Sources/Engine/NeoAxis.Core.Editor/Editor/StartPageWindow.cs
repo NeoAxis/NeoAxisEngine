@@ -267,7 +267,7 @@ namespace NeoAxis.Editor
 			//update store items
 			if( !featuredStoreItemsWereUpdated )
 			{
-				var store = StoreManager.GetStore( "NeoAxis Store" );
+				var store = StoreManager.GetStore( "NeoX" );
 				if( store != null )
 				{
 					var packages = StoreManager.GetPackages( store );

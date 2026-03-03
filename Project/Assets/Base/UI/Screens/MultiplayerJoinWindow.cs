@@ -11,7 +11,7 @@ namespace Project
 		[EngineConfig( "MultiplayerJoinWindow", "lastAddress" )]
 		public static string lastAddress { get; set; } = "localhost";
 		[EngineConfig( "MultiplayerJoinWindow", "lastPort" )]
-		public static int lastPort { get; set; } = 52000;
+		public static int lastPort { get; set; } = 53000;
 		[EngineConfig( "MultiplayerJoinWindow", "lastUsername" )]
 		public static string lastUsername { get; set; } = "";
 		[EngineConfig( "MultiplayerJoinWindow", "lastPassword" )]
@@ -67,8 +67,10 @@ namespace Project
 				{
 					connectingWindowData = null;
 
-					if( SimulationAppClient.Client != null )
-						SimulationAppClient.Client.ConnectionStatusChanged -= ConnectionStatusChanged;
+					var clientNode = SimulationAppClient.ConnectionNode;
+					if( clientNode != null )
+						clientNode.ConnectionStatusChanged -= ConnectionStatusChanged;
+
 					SimulationAppClient.Destroy();
 				}
 			}
@@ -81,8 +83,9 @@ namespace Project
 
 		protected override void OnDisabledInSimulation()
 		{
-			if( SimulationAppClient.Client != null )
-				SimulationAppClient.Client.ConnectionStatusChanged -= ConnectionStatusChanged;
+			var clientNode = SimulationAppClient.ConnectionNode;
+			if( clientNode != null )
+				clientNode.ConnectionStatusChanged -= ConnectionStatusChanged;
 
 			base.OnDisabledInSimulation();
 		}
@@ -133,7 +136,7 @@ namespace Project
 
 
 				//hardcoded variant:
-				//list.Items.Add( "1.1.1.1:52000" );
+				//list.Items.Add( "1.1.1.1:53000" );
 			}
 		}
 
@@ -201,12 +204,14 @@ namespace Project
 				return;
 			}
 
-			SimulationAppClient.Client.ConnectionStatusChanged += ConnectionStatusChanged;
+			var clientNode = SimulationAppClient.ConnectionNode;
+			if( clientNode != null )
+				clientNode.ConnectionStatusChanged += ConnectionStatusChanged;
 
 			connectingWindowData = MessageBoxWindow.Show( this, "Connecting to the server...", "Info", EMessageBoxButtons.Cancel );
 		}
 
-		void ConnectionStatusChanged( ClientNode sender )//, NetworkStatus status )
+		void ConnectionStatusChanged( ClientNode sender )
 		{
 			switch( sender.Status )
 			{

@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2022.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component Project.MenuWindow
 {
@@ -17,7 +17,8 @@
 		Text = Scenes
 		Size = Units 200 40
 		HorizontalAlignment = Center
-		Margin = Units 0 80 0 0
+		VerticalAlignment = Bottom
+		Margin = Units 0 80 0 300
 		EditorScrollPosition = 0 0
 	}
 	.component NeoAxis.UIButton
@@ -26,7 +27,8 @@
 		Text = Options
 		Size = Units 200 40
 		HorizontalAlignment = Center
-		Margin = Units 0 140 0 0
+		VerticalAlignment = Bottom
+		Margin = Units 0 140 0 240
 		EditorScrollPosition = 0 0
 	}
 	.component NeoAxis.UIButton
@@ -35,7 +37,8 @@
 		Text = Main Menu
 		Size = Units 200 40
 		HorizontalAlignment = Center
-		Margin = Units 0 200 0 0
+		VerticalAlignment = Bottom
+		Margin = Units 0 200 0 180
 		EditorScrollPosition = 0 0
 	}
 	.component NeoAxis.UIButton
@@ -44,7 +47,8 @@
 		Text = Exit
 		Size = Units 200 40
 		HorizontalAlignment = Center
-		Margin = Units 0 260 0 0
+		VerticalAlignment = Bottom
+		Margin = Units 0 260 0 120
 		EditorScrollPosition = 0 0
 	}
 	.component NeoAxis.UIButton

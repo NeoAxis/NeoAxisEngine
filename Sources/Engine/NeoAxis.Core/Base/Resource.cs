@@ -15,10 +15,9 @@ namespace NeoAxis
 		internal object creator;
 
 		volatile Instance primaryInstance;
-		//volatile TextBlock loadedBlock;
 		volatile object loadedAnyData;
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////
 
 		public enum InstanceType
 		{
@@ -26,9 +25,9 @@ namespace NeoAxis
 			SeparateInstance,
 		}
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////
 
-		//check: если сепаратный то не обязательно диспосить
+		//check: when SeparateInstance then no sense to dispose
 		/// <summary>
 		/// Represents an instance of <see cref="Resource"/>.
 		/// </summary>
@@ -54,7 +53,7 @@ namespace NeoAxis
 				Ready
 			}
 
-			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			///////////////////////////////////////////////
 
 			public Instance( Resource owner, InstanceType instanceType, bool componentCreateHierarchyController, bool? componentSetEnabled )
 			{
@@ -113,8 +112,6 @@ namespace NeoAxis
 
 			protected override void OnDispose()
 			{
-				//!!!!что было бы если диспоснуть недозагруженный. другой поток юзает то бишь
-
 				IDisposable disposable = ResultObject as IDisposable;
 				if( disposable != null )
 					disposable.Dispose();
@@ -122,10 +119,10 @@ namespace NeoAxis
 				if( instanceType == InstanceType.Resource && Owner != null )
 					Owner.Dispose();
 
-				//!!!!тут?
 				DisposedEvent?.Invoke( this );
 				AllInstances_DisposedEvent?.Invoke( this );
 			}
+
 			public event Action<Instance> DisposedEvent;
 			public static event Action<Instance> AllInstances_DisposedEvent;
 
@@ -159,11 +156,11 @@ namespace NeoAxis
 				if( ResultObject == null )
 				{
 					//load block
-					if( loadedBlock/*Owner.LoadedBlock*/ == null )
+					if( loadedBlock == null )
 					{
 						string error;
-						loadedBlock/*Owner.LoadedBlock*/ = TextBlockUtility.LoadFromVirtualFile( Owner.Name, out error );
-						if( loadedBlock/*Owner.LoadedBlock*/ == null )
+						loadedBlock = TextBlockUtility.LoadFromVirtualFile( Owner.Name, out error );
+						if( loadedBlock == null )
 						{
 							StatusError = error;
 							Status = StatusEnum.Error;
@@ -173,8 +170,7 @@ namespace NeoAxis
 
 					//parse text block
 					string error2;
-					var component = ComponentUtility.LoadComponentFromTextBlock( null, loadedBlock/*Owner.LoadedBlock*/, Owner.Name, this, componentSetEnabled, componentCreateHierarchyController, out error2 );
-					//var component = ComponentUtils.LoadComponentFromTextBlock( Owner.LoadedBlock, Owner.Name, null, out error2 );
+					var component = ComponentUtility.LoadComponentFromTextBlock( null, loadedBlock, Owner.Name, this, componentSetEnabled, componentCreateHierarchyController, out error2 );
 					if( component == null )
 					{
 						StatusError = error2;
@@ -182,20 +178,7 @@ namespace NeoAxis
 						return;
 					}
 
-					//!!!!
-
-					//if( componentSetEnabled != null )
-					//	component.Enabled = componentSetEnabled.Value;
-
-					//xx xx;
-					//xx xx;//сначала выключить иерархию? потом всем разом включится?
-
-					////!!!!возможно это раньше нужно делать, т.к. в GetProvidedType() что-то там надо
-					//if( componentCreateHierarchyController )
-					//	ComponentUtils.CreateHierarchyControllerForRootComponent( component, this, true );//, true );
-
 					//resource is ready
-					//ResultObject = component;
 					Status = StatusEnum.Ready;
 				}
 			}
@@ -207,7 +190,6 @@ namespace NeoAxis
 				Load( ref loadedBlock );
 			}
 
-			//!!!!threading
 			public virtual IEnumerable<Metadata.TypeInfo> MetadataGetTypes()
 			{
 				//!!!!public/private
@@ -216,7 +198,6 @@ namespace NeoAxis
 				if( rootComponent != null )
 				{
 					{
-						//!!!!а не всегда ли есть тип
 						var type = rootComponent.GetProvidedType();
 						if( type != null )
 							yield return type;
@@ -224,7 +205,6 @@ namespace NeoAxis
 
 					foreach( var c in rootComponent.GetComponents<Component>( false, true ) )
 					{
-						//!!!!а не всегда ли есть тип
 						var type = c.GetProvidedType();
 						if( type != null )
 							yield return type;
@@ -232,15 +212,9 @@ namespace NeoAxis
 				}
 			}
 
-			//!!!!!!додумать про сохранение типов
-			//!!!!знать кем выставлено
-			//!!!!!!!!т.е. в Reference<> добавить переменную того, кто выставил значение?
-
-			//!!!!threading
 			public virtual Metadata.TypeInfo MetadataGetType( string pathInside )
 			{
 				//!!!!public/private
-				//!!!!получается, тут только по иерархии компонент бегается по именам. можно было бы расширить?
 
 				var c = GetComponentByPathInside( pathInside );
 				if( c != null )
@@ -262,7 +236,7 @@ namespace NeoAxis
 			}
 		}
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////
 
 		public Resource()
 		{
@@ -291,8 +265,6 @@ namespace NeoAxis
 
 		protected override void OnDispose()
 		{
-			//!!!!!threading
-
 			ResourceManager.RemoveInternal( this );
 
 			primaryInstance?.Dispose();
@@ -303,12 +275,6 @@ namespace NeoAxis
 			get { return primaryInstance; }
 			set { primaryInstance = value; }
 		}
-
-		//public TextBlock LoadedBlock
-		//{
-		//	get { return loadedBlock; }
-		//	set { loadedBlock = value; }
-		//}
 
 		public object LoadedAnyData
 		{
@@ -321,7 +287,6 @@ namespace NeoAxis
 			return new Instance( this, instanceType, componentCreateHierarchyController, componentSetEnabled );
 		}
 
-		//!!!!
 		public virtual string GetSaveAddFileExtension()
 		{
 			return "";

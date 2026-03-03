@@ -133,8 +133,6 @@ namespace NeoAxis.Editor
 		public static void PreloadBaseAssemblies()
 		{
 			Load( "NeoAxis.Core.xml" );
-			Load( "NeoAxis.CoreExtension.xml" );
-			//Load( "NeoAxis.Extended.xml" );
 
 			//CheckMissingSummaries();
 		}

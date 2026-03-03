@@ -1,5 +1,5 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-#include "OgreStableHeaders.h"
+#include "NativeStableHeaders.h"
 #include "NeoAxisCoreNative.h"
 #include "OctreeContainer.h"
 #include "MaskedOcclusionCulling.h"
@@ -8,7 +8,7 @@
 #include <atomic>
 #include <memory>
 
-using namespace Ogre;
+using namespace Native;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -198,7 +198,7 @@ public:
 		//int Mode;
 		void* occlusionCullingBuffer;
 		Vector3D cameraPosition;
-		Ogre::Matrix4 viewProjectionMatrix;
+		Native::Matrix4 viewProjectionMatrix;
 		//can use flags
 		int occlusionCullingBufferCullNodes;
 		int occlusionCullingBufferCullObjects;

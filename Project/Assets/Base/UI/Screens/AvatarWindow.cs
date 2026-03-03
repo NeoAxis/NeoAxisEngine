@@ -60,10 +60,10 @@ namespace Project
 			GetList().Style = new ListStyle();
 
 			//request avatar settings from the server
-			if( SimulationAppClient.Client != null )
+			if( SimulationAppClient.ConnectionNode != null )
 			{
-				SimulationAppClient.Client.Messages.ReceiveMessageString += Messages_ReceiveMessageString;
-				SimulationAppClient.Client.Messages.SendToServer( "RequestAvatarSettings", "" );
+				SimulationAppClient.ConnectionNode.Messages.ReceiveMessageString += Messages_ReceiveMessageString;
+				SimulationAppClient.ConnectionNode.Messages.SendToServer( "RequestAvatarSettings", "" );
 			}
 			else
 				UpdateList();
@@ -71,8 +71,8 @@ namespace Project
 
 		protected override void OnDisabledInSimulation()
 		{
-			if( SimulationAppClient.Client != null )
-				SimulationAppClient.Client.Messages.ReceiveMessageString -= Messages_ReceiveMessageString;
+			if( SimulationAppClient.ConnectionNode != null )
+				SimulationAppClient.ConnectionNode.Messages.ReceiveMessageString -= Messages_ReceiveMessageString;
 
 			base.OnDisabledInSimulation();
 		}
@@ -137,7 +137,7 @@ namespace Project
 				var block = new TextBlock();
 				settings.Save( block );
 
-				SimulationAppClient.Client?.Messages.SendToServer( "SetAvatarSettings", block.DumpToString() );
+				SimulationAppClient.ConnectionNode?.Messages.SendToServer( "SetAvatarSettings", block.DumpToString() );
 			}
 
 			RemoveFromParent( true );
@@ -156,8 +156,10 @@ namespace Project
 		void UpdateControlsBySettings( AvatarSettings settings )
 		{
 			var list = GetList();
-			if( !list.SelectItem( settings.NamedCharacter ) )
+			if( list.SelectItemByValue( settings.NamedCharacter ) == -1 )
 				list.SelectedIndex = 0;
+			//if( !list.SelectItem( settings.NamedCharacter ) )
+			//	list.SelectedIndex = 0;
 		}
 
 		AvatarSettings GetSettingsFromControls()

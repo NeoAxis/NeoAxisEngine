@@ -60,7 +60,9 @@ namespace NeoAxis.Editor
 			this.kryptonButtonPrevious.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.kryptonButtonPrevious.Location = new System.Drawing.Point(384, 12);
 			this.kryptonButtonPrevious.Name = "kryptonButtonPrevious";
-			this.kryptonButtonPrevious.Size = new System.Drawing.Size(117, 32);
+			//fixnet8
+			this.kryptonButtonPrevious.Size = new System.Drawing.Size( 117, 26 );
+			//this.kryptonButtonPrevious.Size = new System.Drawing.Size(117, 32);
 			this.kryptonButtonPrevious.TabIndex = 1;
 			this.kryptonButtonPrevious.Values.Text = "Previous";
 			this.kryptonButtonPrevious.Click += new System.EventHandler(this.kryptonButtonPrevious_Click);
@@ -70,7 +72,9 @@ namespace NeoAxis.Editor
 			this.kryptonButtonNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.kryptonButtonNext.Location = new System.Drawing.Point(507, 12);
 			this.kryptonButtonNext.Name = "kryptonButtonNext";
-			this.kryptonButtonNext.Size = new System.Drawing.Size(117, 32);
+			//fixnet8
+			this.kryptonButtonNext.Size = new System.Drawing.Size( 117, 26 );
+			//this.kryptonButtonNext.Size = new System.Drawing.Size(117, 32);
 			this.kryptonButtonNext.TabIndex = 2;
 			this.kryptonButtonNext.Values.Text = "Next";
 			this.kryptonButtonNext.Click += new System.EventHandler(this.kryptonButtonNext_Click);
@@ -80,7 +84,9 @@ namespace NeoAxis.Editor
 			this.kryptonButtonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.kryptonButtonClose.Location = new System.Drawing.Point(630, 12);
 			this.kryptonButtonClose.Name = "kryptonButtonClose";
-			this.kryptonButtonClose.Size = new System.Drawing.Size(117, 32);
+			//fixnet8
+			this.kryptonButtonClose.Size = new System.Drawing.Size( 117, 26 );
+			//this.kryptonButtonClose.Size = new System.Drawing.Size(117, 32);
 			this.kryptonButtonClose.TabIndex = 3;
 			this.kryptonButtonClose.Values.Text = "Close";
 			this.kryptonButtonClose.Click += new System.EventHandler(this.kryptonButtonClose_Click);
@@ -128,7 +134,9 @@ namespace NeoAxis.Editor
 			//this.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.471698F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.Margin = new System.Windows.Forms.Padding(5);
 			this.Name = "TipsWindow";
-			this.Size = new System.Drawing.Size(759, 535);
+			//fixnet8
+			this.Size = new System.Drawing.Size( 759, 529 );
+			//this.Size = new System.Drawing.Size(759, 535);
 			this.WindowTitle = "Tips";
 			this.Load += new System.EventHandler(this.TipsWindow_Load);
 			this.Controls.SetChildIndex(this.panel1, 0);

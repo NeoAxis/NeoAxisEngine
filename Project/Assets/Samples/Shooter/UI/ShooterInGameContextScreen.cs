@@ -111,7 +111,7 @@ namespace Project
 				foreach( var user in users )
 				{
 					string text;
-					var userInfo = SimulationAppClient.Client?.Users.GetUser( user.UserID );
+					var userInfo = SimulationAppClient.ConnectionNode?.Users.GetUser( user.UserID );
 					if( userInfo != null )
 					{
 						text = userInfo.Username;

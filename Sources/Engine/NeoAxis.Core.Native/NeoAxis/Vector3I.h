@@ -29,11 +29,11 @@ THE SOFTWARE.
 #ifndef __Vector3I_H__
 #define __Vector3I_H__
 
-#include "OgrePrerequisites.h"
-#include "OgreMath.h"
-#include "OgreQuaternion.h"
+#include "NativePrerequisites.h"
+#include "NativeMath.h"
+#include "NativeQuaternion.h"
 
-namespace Ogre
+namespace Native
 {
     class Vector3I
     {

@@ -26,11 +26,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
-#include "OgreStableHeaders.h"
+#include "NativeStableHeaders.h"
 #include "Vector3I.h"
-#include "OgreVector3D.h"
+#include "NativeVector3D.h"
 
-namespace Ogre
+namespace Native
 {
     const Vector3I Vector3I::ZERO( 0, 0, 0 );
 

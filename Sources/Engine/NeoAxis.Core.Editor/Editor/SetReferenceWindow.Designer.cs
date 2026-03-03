@@ -45,7 +45,9 @@ namespace NeoAxis.Editor
 			this.buttonSet.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonSet.Location = new System.Drawing.Point(218, 527);
 			this.buttonSet.Name = "buttonSet";
-			this.buttonSet.Size = new System.Drawing.Size(147, 32);
+			//fixnet8
+			this.buttonSet.Size = new System.Drawing.Size( 147, 26 );
+			//this.buttonSet.Size = new System.Drawing.Size(147, 32);
 			this.buttonSet.TabIndex = 3;
 			this.buttonSet.Values.Text = "Set";
 			this.buttonSet.Click += new System.EventHandler(this.ButtonSet_Click);
@@ -56,7 +58,9 @@ namespace NeoAxis.Editor
 			this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.buttonClose.Location = new System.Drawing.Point(524, 527);
 			this.buttonClose.Name = "buttonClose";
-			this.buttonClose.Size = new System.Drawing.Size(147, 32);
+			//fixnet8
+			this.buttonClose.Size = new System.Drawing.Size( 147, 26 );
+			//this.buttonClose.Size = new System.Drawing.Size(147, 32);
 			this.buttonClose.TabIndex = 5;
 			this.buttonClose.Values.Text = "Close";
 			this.buttonClose.Click += new System.EventHandler(this.ButtonClose_Click);
@@ -85,7 +89,9 @@ namespace NeoAxis.Editor
 			this.buttonSetAndClose.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.buttonSetAndClose.Location = new System.Drawing.Point(371, 527);
 			this.buttonSetAndClose.Name = "buttonSetAndClose";
-			this.buttonSetAndClose.Size = new System.Drawing.Size(147, 32);
+			//fixnet8
+			this.buttonSetAndClose.Size = new System.Drawing.Size( 147, 26 );
+			//this.buttonSetAndClose.Size = new System.Drawing.Size(147, 32);
 			this.buttonSetAndClose.TabIndex = 4;
 			this.buttonSetAndClose.Values.Text = "Set and Close";
 			this.buttonSetAndClose.Click += new System.EventHandler(this.ButtonSetAndClose_Click);
@@ -140,7 +146,9 @@ namespace NeoAxis.Editor
 			this.Controls.Add(this.buttonClose);
 			this.Controls.Add(this.buttonSet);
 			this.Name = "SetReferenceWindow";
-			this.Size = new System.Drawing.Size(685, 572);
+			//fixnet8
+			this.Size = new System.Drawing.Size( 685, 566 );
+			//this.Size = new System.Drawing.Size(685, 572);
 			this.WindowTitle = "Set Reference";
 			this.ResumeLayout(false);
 			this.PerformLayout();

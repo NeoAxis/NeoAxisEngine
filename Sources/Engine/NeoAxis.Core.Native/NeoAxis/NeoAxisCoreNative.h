@@ -207,8 +207,8 @@ typedef unsigned char byte;
 //
 //#include <new>
 
-#include "OgrePrerequisites.h"
-#include "OgreStableHeaders.h"
+#include "NativePrerequisites.h"
+#include "NativeStableHeaders.h"
 #include "Vector3I.h"
 #include "AxisAlignedBoxI.h"
 #include "Bounds.h"
@@ -254,6 +254,6 @@ typedef unsigned char byte;
 #include "BoundsI.h"
 #include "OBB.h"
 #include "OBBD.h"
-#include "OgrePlaneD.h"
-#include "OgreRayD.h"
-#include "OgreAxisAlignedBoxD.h"
+#include "NativePlaneD.h"
+#include "NativeRayD.h"
+#include "NativeAxisAlignedBoxD.h"

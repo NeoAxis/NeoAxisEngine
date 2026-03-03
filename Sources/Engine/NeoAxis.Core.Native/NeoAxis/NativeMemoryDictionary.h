@@ -3,7 +3,7 @@
 //#ifndef __NativeMemoryDictionary_H_
 //#define __NativeMemoryDictionary_H_
 //
-//#include "OgreStableHeaders.h"
+//#include "NativeStableHeaders.h"
 //#include "StringUtils.h"
 //
 //#ifdef ANDROID

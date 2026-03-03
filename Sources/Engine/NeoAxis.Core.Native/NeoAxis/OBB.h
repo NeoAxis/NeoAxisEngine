@@ -29,12 +29,12 @@ THE SOFTWARE.
 #ifndef __OBB_H_
 #define __OBB_H_
 
-#include "OgrePrerequisites.h"
-#include "OgreVector3.h"
-#include "OgreMatrix3.h"
+#include "NativePrerequisites.h"
+#include "NativeVector3.h"
+#include "NativeMatrix3.h"
 #include "Bounds.h"
 
-namespace Ogre
+namespace Native
 {
 	class OBB
 	{
@@ -1350,6 +1350,6 @@ namespace Ogre
 
 	/** @} */
 	/** @} */
-} // namespace Ogre
+} // namespace Native
 
 #endif

@@ -94,7 +94,9 @@ namespace NeoAxis.Editor
 				var color = ( DrawingUtility.ToColorValue( label.BackColor ).ToVector4F() * 0.7f + DrawingUtility.ToColorValue( label.ForeColor ).ToVector4F() * 0.3f );
 				var color2 = DrawingUtility.ToColor( color.ToColorValue() );//.ToColor();
 
-				TextRenderer.DrawText( e.Graphics, labelNameTextAdditional, label.Font, new System.Drawing.Rectangle( size.Width, 0, label.Size.Width - size.Width, label.Size.Height ), color2, flags );
+				TextRenderer.DrawText( e.Graphics, labelNameTextAdditional, label.Font, new System.Drawing.Rectangle( size.Width, 0, label.Size.Width - size.Width, size.Height ), color2, flags );
+
+				//TextRenderer.DrawText( e.Graphics, labelNameTextAdditional, label.Font, new System.Drawing.Rectangle( size.Width, 0, label.Size.Width - size.Width, label.Size.Height ), color2, flags );
 			}
 		}
 

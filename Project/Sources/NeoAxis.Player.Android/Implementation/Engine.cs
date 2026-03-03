@@ -10,12 +10,10 @@ using Android.Content;
 using Android.Opengl;
 using Android.OS;
 using Android.Runtime;
-using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
-using ICSharpCode.SharpZipLib.Zip;
 using Internal;
-using Android.Views.InputMethods;
+using System.IO.Compression;
 
 namespace NeoAxis.Player.Android
 {
@@ -66,53 +64,62 @@ namespace NeoAxis.Player.Android
 
 		public static void InitEngine()
 		{
-			Log.Handlers.InvisibleInfoHandler += Log_InvisibleInfoHandler;
-			Log.Handlers.InfoHandler += Log_InfoHandler;
-			Log.Handlers.WarningHandler += Log_WarningHandler;
-			Log.Handlers.ErrorHandler += Log_ErrorHandler;
-
-			EngineApp.AppCreateBefore += EngineApp_AppCreateBefore;
-
-			new PlatformFunctionalityAndroid();
-			EngineApp.ApplicationType = EngineApp.ApplicationTypeEnum.Simulation;
-
-			ExtractProjectZip( out var projectDir );
-
-			//get project's directories
-			string projectDirectory = "";
-			string userSettingsDirectory = "";
-			string binariesDirectory = "";
+			try
 			{
-				//!!!!
-				projectDirectory = projectDir;
-				userSettingsDirectory = Path.Combine( projectDirectory, "User settings" );
-				binariesDirectory = Path.Combine( projectDirectory, "Binaries" );
+				Log.Handlers.InvisibleInfoHandler += Log_InvisibleInfoHandler;
+				Log.Handlers.InfoHandler += Log_InfoHandler;
+				Log.Handlers.WarningHandler += Log_WarningHandler;
+				Log.Handlers.ErrorHandler += Log_ErrorHandler;
+
+				//EngineApp.AppCreateBefore += EngineApp_AppCreateBefore;
+
+				new PlatformFunctionalityAndroid();
+				EngineApp.ApplicationType = EngineApp.ApplicationTypeEnum.Simulation;
+
+				ExtractProjectZip( out var projectDir );
+
+				//get project's directories
+				string projectDirectory = "";
+				string userSettingsDirectory = "";
+				string binariesDirectory = "";
+				{
+					//!!!!
+					projectDirectory = projectDir;
+					userSettingsDirectory = Path.Combine( projectDirectory, "User settings" );
+					binariesDirectory = Path.Combine( projectDirectory, "Binaries" );
+				}
+
+				if( !VirtualFileSystem.Init( "user:Logs/Player.log", true, projectDirectory, userSettingsDirectory, binariesDirectory ) )
+					return;
+
+				//configure general settings
+				EngineApp.InitSettings.ConfigVirtualFileName = "user:Configs/Player.config";
+
+				//these parameters are enabled by default
+				//EngineApp.EnginePauseWhenApplicationIsNotActive = false;
+				//EngineApp.InitSettings.AllowJoysticksAndSpecialInputDevices = false;
+
+				//register project assembly
+				AssemblyUtility.RegisterAssembly( typeof( Engine ).Assembly, "" );
+				EngineApp.ProjectAssembly = typeof( Engine ).Assembly;
+
+				//init engine application
+				EngineApp.Init();
+
+				if( !EngineApp.Create() )
+				{
+					Log.Fatal( "EngineApp.Create() failed." );
+					return;
+				}
 			}
-
-			if( !VirtualFileSystem.Init( "user:Logs/Player.log", true, projectDirectory, userSettingsDirectory, binariesDirectory ) )
-				return;
-
-			//configure general settings
-			EngineApp.InitSettings.ConfigVirtualFileName = "user:Configs/Player.config";
-
-			//these parameters are enabled by default
-			//EngineApp.EnginePauseWhenApplicationIsNotActive = false;
-			//EngineApp.InitSettings.AllowJoysticksAndSpecialInputDevices = false;
-
-			//specify Project assembly for scripts
-			EngineApp.ProjectAssembly = typeof( Project.SimulationApp ).Assembly;
-
-			//init engine application
-			EngineApp.Init();
-
-			if( !EngineApp.Create() )
+			catch( Exception ex )
 			{
-				Log.Fatal( "EngineApp.Create() failed." );
+				Log.Fatal( "Engine initialization failed: " + ex.Message );
 				return;
 			}
 		}
 
-		//!!!!never call
+		//never call
 		public static void ShutdownEngine()
 		{
 			EngineApp.Shutdown();
@@ -140,49 +147,189 @@ namespace NeoAxis.Player.Android
 			global::Android.Util.Log.WriteLine( global::Android.Util.LogPriority.Debug, "MyApp", "Error: " + text );
 		}
 
-		static private void EngineApp_AppCreateBefore()
-		{
-			//preload NeoAxis.CoreExtension.dll
-			AssemblyUtility.RegisterAssembly( typeof( CanvasRendererUtility ).Assembly, "" );
-
-			//preload Project.dll
-			AssemblyUtility.RegisterAssembly( typeof( Project.SimulationApp ).Assembly, "" );
-		}
+		//static private void EngineApp_AppCreateBefore()
+		//{
+		//	//preload Project.dll
+		//	AssemblyUtility.RegisterAssembly( typeof( Project.SimulationApp ).Assembly, "" );
+		//}
 
 		static void UnzipFromStream( Stream zipStream, string outFolder )
 		{
-			using( var zipInputStream = new ZipInputStream( zipStream ) )
+			// Plan (pseudocode):
+			// - Ensure `outFolder` exists.
+			// - Use `System.IO.Compression.ZipArchive` (modern API) over the input `zipStream`.
+			// - For each entry:
+			//   - Normalize entry path separators to '/' and reject unsafe paths:
+			//     - empty entries are allowed (directories)
+			//     - reject rooted paths, drive letters, and any path containing ".." segments
+			//   - Combine with `outFolder`, get full path, and ensure it is still under `outFolder` (Zip Slip protection).
+			//   - If directory entry: create directory.
+			//   - Else:
+			//     - create parent directory
+			//     - extract by copying entry stream to a newly created file (overwrite).
+			//     - (optional) set last write time if available.
+			//
+			// Notes:
+			// - Works on modern Android (.NET for Android) without external zip libs.
+			// - Keeps memory usage low (streaming copy).
+
+			if( zipStream == null )
+				throw new ArgumentNullException( nameof( zipStream ) );
+			if( string.IsNullOrEmpty( outFolder ) )
+				throw new ArgumentNullException( nameof( outFolder ) );
+
+			Directory.CreateDirectory( outFolder );
+
+			// Full path canonicalization base for traversal prevention.
+			var outFolderFullPath = Path.GetFullPath( outFolder );
+			if( !outFolderFullPath.EndsWith( Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal ) )
+				outFolderFullPath += Path.DirectorySeparatorChar;
+
+			// IMPORTANT: If this file doesn't already have the using, add at top:
+			// using System.IO.Compression;
+
+			using( var archive = new ZipArchive( zipStream, System.IO.Compression.ZipArchiveMode.Read, leaveOpen: true ) )
 			{
-				while( zipInputStream.GetNextEntry() is ZipEntry zipEntry )
+				foreach( var entry in archive.Entries )
 				{
-					var entryFileName = zipEntry.Name;
-					// To remove the folder from the entry:
-					//var entryFileName = Path.GetFileName(entryFileName);
-					// Optionally match entrynames against a selection list here
-					// to skip as desired.
-					// The unpacked length is available in the zipEntry.Size property.
+					// Zip entries use '/' by convention.
+					var entryName = entry.FullName?.Replace( '\\', '/' ) ?? string.Empty;
 
-					// 4K is optimum
-					var buffer = new byte[ 4096 ];
-
-					// Manipulate the output filename here as desired.
-					var fullZipToPath = Path.Combine( outFolder, entryFileName );
-					var directoryName = Path.GetDirectoryName( fullZipToPath );
-					if( directoryName.Length > 0 )
-						Directory.CreateDirectory( directoryName );
-
-					// Skip directory entry
-					if( Path.GetFileName( fullZipToPath ).Length == 0 )
+					// Skip completely empty names.
+					if( entryName.Length == 0 )
 						continue;
 
-					// Unzip file in buffered chunks. This is just as fast as unpacking
-					// to a buffer the full size of the file, but does not waste memory.
-					// The "using" will close the stream even if an exception occurs.
-					using( FileStream streamWriter = File.Create( fullZipToPath ) )
+					// Directory entry detection (common zip convention).
+					var isDirectory = entryName.EndsWith( "/", StringComparison.Ordinal );
+
+					// Reject rooted paths and drive-letter paths.
+					// Also reject any traversal segments.
 					{
-						ICSharpCode.SharpZipLib.Core.StreamUtils.Copy( zipInputStream, streamWriter, buffer );
+						// Trim trailing slash for segment checks.
+						var checkName = isDirectory ? entryName.TrimEnd( '/' ) : entryName;
+
+						// Rooted ("/x") or drive ("C:/x") checks.
+						if( checkName.StartsWith( "/", StringComparison.Ordinal ) )
+							throw new InvalidDataException( $"Invalid zip entry path: '{entry.FullName}'." );
+
+						if( checkName.Length >= 2 && char.IsLetter( checkName[ 0 ] ) && checkName[ 1 ] == ':' )
+							throw new InvalidDataException( $"Invalid zip entry path: '{entry.FullName}'." );
+
+						var segments = checkName.Split( new[] { '/' }, StringSplitOptions.RemoveEmptyEntries );
+						for( int i = 0; i < segments.Length; i++ )
+						{
+							var seg = segments[ i ];
+							if( seg == "." || seg == ".." )
+								throw new InvalidDataException( $"Invalid zip entry path: '{entry.FullName}'." );
+						}
 					}
+
+					// Build destination path using platform separators.
+					var destinationPath = Path.Combine( outFolder, entryName.Replace( '/', Path.DirectorySeparatorChar ) );
+
+					// Zip Slip protection: ensure destination is within outFolder.
+					var destinationFullPath = Path.GetFullPath( destinationPath );
+					if( !destinationFullPath.StartsWith( outFolderFullPath, StringComparison.Ordinal ) )
+						throw new InvalidDataException( $"Zip entry is outside target dir: '{entry.FullName}'." );
+
+					if( isDirectory )
+					{
+						Directory.CreateDirectory( destinationFullPath );
+						continue;
+					}
+
+					var parentDir = Path.GetDirectoryName( destinationFullPath );
+					if( !string.IsNullOrEmpty( parentDir ) )
+						Directory.CreateDirectory( parentDir );
+
+					// Some zips might include entries with empty Name but non-empty FullName; treat as directory.
+					if( string.IsNullOrEmpty( entry.Name ) )
+					{
+						Directory.CreateDirectory( destinationFullPath );
+						continue;
+					}
+
+					// Extract file (overwrite).
+					using( var entryStream = entry.Open() )
+					using( var outStream = new FileStream(
+						destinationFullPath,
+						FileMode.Create,
+						FileAccess.Write,
+						FileShare.None,
+						bufferSize: 81920,
+						useAsync: false ) )
+					{
+						entryStream.CopyTo( outStream );
+					}
+
+					// Preserve timestamp when available (does not throw on all platforms).
+					try
+					{
+						if( entry.LastWriteTime != default )
+							File.SetLastWriteTime( destinationFullPath, entry.LastWriteTime.DateTime );
+					}
+					catch { }
 				}
+			}
+
+
+			//using( var zipInputStream = new ZipInputStream( zipStream ) )
+			//{
+			//	while( zipInputStream.GetNextEntry() is ZipEntry zipEntry )
+			//	{
+			//		var entryFileName = zipEntry.Name;
+			//		// To remove the folder from the entry:
+			//		//var entryFileName = Path.GetFileName(entryFileName);
+			//		// Optionally match entrynames against a selection list here
+			//		// to skip as desired.
+			//		// The unpacked length is available in the zipEntry.Size property.
+
+			//		// 4K is optimum
+			//		var buffer = new byte[ 4096 ];
+
+			//		// Manipulate the output filename here as desired.
+			//		var fullZipToPath = Path.Combine( outFolder, entryFileName );
+			//		var directoryName = Path.GetDirectoryName( fullZipToPath );
+			//		if( directoryName.Length > 0 )
+			//			Directory.CreateDirectory( directoryName );
+
+			//		// Skip directory entry
+			//		if( Path.GetFileName( fullZipToPath ).Length == 0 )
+			//			continue;
+
+			//		// Unzip file in buffered chunks. This is just as fast as unpacking
+			//		// to a buffer the full size of the file, but does not waste memory.
+			//		// The "using" will close the stream even if an exception occurs.
+			//		using( FileStream streamWriter = File.Create( fullZipToPath ) )
+			//		{
+			//			ICSharpCode.SharpZipLib.Core.StreamUtils.Copy( zipInputStream, streamWriter, buffer );
+			//		}
+			//	}
+			//}
+		}
+
+		static string ReadAssetText( string assetName )
+		{
+			// Plan (pseudocode):
+			// - Open asset via AssetManager.
+			// - Read its bytes into MemoryStream (avoid StreamReader/ReadToEnd edge cases with encoding/BOM/partial reads).
+			// - Decode bytes:
+			//   - If UTF-8 BOM present, skip BOM and decode UTF-8.
+			//   - Else decode as UTF-8 without BOM.
+			// - Normalize line endings/trimming is done by the caller.
+
+			using( var stream = activity.Assets.Open( assetName ) )
+			using( var ms = new MemoryStream() )
+			{
+				stream.CopyTo( ms );
+				var bytes = ms.ToArray();
+
+				// UTF-8 BOM: EF BB BF
+				int offset = 0;
+				if( bytes.Length >= 3 && bytes[ 0 ] == 0xEF && bytes[ 1 ] == 0xBB && bytes[ 2 ] == 0xBF )
+					offset = 3;
+
+				return Encoding.UTF8.GetString( bytes, offset, bytes.Length - offset );
 			}
 		}
 
@@ -211,10 +358,14 @@ namespace NeoAxis.Player.Android
 
 			var newProjectZipHash = "";
 			{
-				using( var stream = activity.Assets.Open( "Project.zip.hash" ) )
-				using( var r = new StreamReader( stream ) )
-					newProjectZipHash = r.ReadToEnd();
+				// Avoid StreamReader.ReadToEnd() crashing on some devices/encodings by reading bytes first.
+				newProjectZipHash = ReadAssetText( "Project.zip.hash" );
 				newProjectZipHash = newProjectZipHash.Replace( "\r", "" ).Replace( "\n", "" ).Trim();
+
+				//using( var stream = activity.Assets.Open( "Project.zip.hash" ) )
+				//using( var r = new StreamReader( stream ) )
+				//	newProjectZipHash = r.ReadToEnd();
+				//newProjectZipHash = newProjectZipHash.Replace( "\r", "" ).Replace( "\n", "" ).Trim();
 			}
 
 			var alreadyExtracted = !string.IsNullOrEmpty( newProjectZipHash ) && newProjectZipHash == currentProjectZipHash;

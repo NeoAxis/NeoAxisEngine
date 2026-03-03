@@ -19,7 +19,7 @@ namespace NeoAxis.Editor
 
 		public class PackageInfo
 		{
-			public StoreManager.StoreItem/*.StoreImplementation */ Store;
+			public StoreManager.StoreItem Store;
 			public string Identifier;
 
 			public string FullFilePath;
@@ -33,7 +33,7 @@ namespace NeoAxis.Editor
 			public long Size;
 			public string FreeDownload;
 			public bool SecureDownload;
-			public string Date;//string
+			public DateTime? Time;//string //public string Date;//string
 			public string Files;
 			public string Categories;
 			public string Tags;
@@ -42,7 +42,7 @@ namespace NeoAxis.Editor
 			public int Vertices;
 			public bool Rigged;
 			public int Animations;
-			public StoreProductLicense License;
+			public CloudProductLicense License;
 
 			bool updatedFromArchive;
 
@@ -110,7 +110,7 @@ namespace NeoAxis.Editor
 								Author = info.Author;
 							if( !string.IsNullOrEmpty( info.Cost ) )
 								Cost = info.Cost;
-							if( info.License != StoreProductLicense.None )
+							if( info.License != CloudProductLicense.None )
 								License = info.License;
 							if( !string.IsNullOrEmpty( info.Categories ) )
 								Categories = info.Categories;
@@ -161,7 +161,7 @@ namespace NeoAxis.Editor
 				result.Size = p1.Size != 0 ? p1.Size : p2.Size;
 				result.FreeDownload = p1.FreeDownload ?? p2.FreeDownload;
 				result.SecureDownload = p1.SecureDownload || p2.SecureDownload;
-				result.Date = p1.Date ?? p2.Date;
+				result.Time = p1.Time ?? p2.Time;
 				result.Files = p1.Files ?? p2.Files;
 				result.Categories = p1.Categories ?? p2.Categories;
 				result.Tags = p1.Tags ?? p2.Tags;
@@ -170,7 +170,7 @@ namespace NeoAxis.Editor
 				result.Vertices = p1.Vertices != 0 ? p1.Vertices : p2.Vertices;
 				result.Rigged = p1.Rigged || p2.Rigged;
 				result.Animations = p1.Animations != 0 ? p1.Animations : p2.Animations;
-				result.License = p1.License != StoreProductLicense.None ? p1.License : p2.License;
+				result.License = p1.License != CloudProductLicense.None ? p1.License : p2.License;
 
 				return result;
 			}
@@ -372,7 +372,7 @@ namespace NeoAxis.Editor
 				if( Size != 0 )
 					d += "\r\n" + GetSizeAsString( Size );
 
-				if( License != StoreProductLicense.None && !License.ToString().Contains( "Paid" ) )
+				if( License != CloudProductLicense.None && !License.ToString().Contains( "Paid" ) )
 					d += "\r\nFree (" + EnumUtility.GetValueDisplayName( License ) + ")";
 				else if( CostNumber > 0 || !string.IsNullOrEmpty( FreeDownload ) )
 				{
@@ -382,7 +382,7 @@ namespace NeoAxis.Editor
 					else
 						d += "Free";
 
-					if( License != StoreProductLicense.None )
+					if( License != CloudProductLicense.None )
 						d += " (" + EnumUtility.GetValueDisplayName( License ) + ")";
 				}
 
@@ -446,7 +446,7 @@ namespace NeoAxis.Editor
 			public bool Rigged;
 			public int Animations;
 			public string Cost = "";
-			public StoreProductLicense License;
+			public CloudProductLicense License;
 			public string Categories = "";
 			public string Tags = "";
 			public string Store = "";
@@ -473,7 +473,8 @@ namespace NeoAxis.Editor
 
 				//for( int nExtension = 0; nExtension < 2; nExtension++ )
 				//{
-				var filter = "*.neoaxispackage";
+				var filter = "*.zip";
+				//var filter = "*.neoaxispackage";
 				//var filter = nExtension == 0 ? "*.neoaxispackage" : "*.zip";
 
 				if( Directory.Exists( PackagesFolder ) )
@@ -646,7 +647,7 @@ namespace NeoAxis.Editor
 						info.Cost = block.GetAttribute( "Cost" );
 
 						var license = block.GetAttribute( "License" ).Replace( " ", "" ).Replace( "-", "" );
-						Enum.TryParse<StoreProductLicense>( license, out var value );
+						Enum.TryParse<CloudProductLicense>( license, out var value );
 						info.License = value;
 
 						info.Categories = block.GetAttribute( "Categories" );

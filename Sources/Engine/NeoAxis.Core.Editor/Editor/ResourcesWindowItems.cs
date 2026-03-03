@@ -230,6 +230,7 @@ namespace NeoAxis.Editor
 					AddItem( new Item( group + @"\Scroll", typeof( UIScroll ) ) );
 					AddItem( new Item( group + @"\Combo", typeof( UICombo ) ) );
 					AddItem( new Item( group + @"\List", typeof( UIList ) ) );
+
 					//AddItem( new Item( group + @"\Tree", typeof( UITree ) ) );
 					AddItem( new Item( group + @"\Video", typeof( UIVideo ) ) );
 					if( MetadataManager.GetType( "NeoAxis.UIWebBrowser" ) != null )
@@ -242,6 +243,7 @@ namespace NeoAxis.Editor
 				{
 					var group = @"Base\UI\Containers";
 					AddItem( new Item( group + @"\Tab Control", typeof( UITabControl ) ) );
+					AddItem( new Item( group + @"\Control List", typeof( UIControlList ) ) );
 					//AddItem( new Item( group + @"\Split Container", typeof( UISplitContainer ) ) );
 					AddItem( new Item( group + @"\Grid", typeof( UIGrid ) ) );
 					AddItem( new Item( group + @"\Toolbar", typeof( UIToolbar ) ) );

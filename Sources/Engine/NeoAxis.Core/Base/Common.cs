@@ -2,6 +2,7 @@
 using System;
 using System.Reflection;
 using System.ComponentModel;
+using System.Text;
 
 namespace NeoAxis
 {
@@ -633,11 +634,118 @@ namespace NeoAxis
 		/// </summary>
 		public bool AddToCommands { get; set; }
 
-		//
+		/// <summary>
+		/// Limits the maximum number of calls permitted within the specified time window per client.
+		/// </summary>
+		public int MaxCallPerClientPermit { get; set; }
+
+		///// <summary>
+		///// Limits the maximum number of calls that can be queued within the specified time window per client.
+		///// </summary>
+		//public int MaxCallPerClientQueue { get; set; }
+
+		/// <summary>
+		/// Specifies the time window for rate limiting.
+		/// </summary>
+		public LimitWindowMeasure LimitWindow { get; set; } = LimitWindowMeasure.Minute;
+
+		///////////////////////////////////////////////
+
+		public enum LimitWindowMeasure
+		{
+			Second,
+			Minute,
+			Hour,
+		}
+
+		///////////////////////////////////////////////
 
 		public CloudMethodAttribute( CloudUserRole userRole = CloudUserRole.None )
 		{
 			UserRole = userRole;
 		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public class CloudWebRequestResult
+	{
+		public int StatusCode { get; set; }
+		public byte[] Content { get; set; }
+		public string ContentType { get; set; }
+		public int CachingTimeInSeconds { get; set; } = -1;
+		public DateTime LastModified { get; set; }
+
+		//
+
+		public CloudWebRequestResult()
+		{
+		}
+
+		public CloudWebRequestResult( int statusCode, byte[] content, string contentType = null, int cachingTimeInSeconds = -1, DateTime lastModified = default )
+		{
+			StatusCode = statusCode;
+			Content = content;
+			ContentType = contentType;
+			CachingTimeInSeconds = cachingTimeInSeconds;
+			LastModified = lastModified;
+		}
+
+		public CloudWebRequestResult( int statusCode, string content, string contentType = null, int cachingTimeInSeconds = -1, DateTime lastModified = default )
+		{
+			StatusCode = statusCode;
+			Content = Encoding.UTF8.GetBytes( content );
+			ContentType = contentType;
+			CachingTimeInSeconds = cachingTimeInSeconds;
+			LastModified = lastModified;
+
+			if( ContentType == null )
+				ContentType = "text/plain; charset=utf-8";
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public enum CloudProductLicense
+	{
+		None,
+		[DisplayNameEnum( "NeoX Service" )]
+		NeoXService,
+		MIT,
+		[DisplayNameEnum( "CC Attribution" )]
+		CCAttribution,
+		[DisplayNameEnum( "CC Attribution BY-SA" )]
+		CCAttributionBYSA,
+		[DisplayNameEnum( "CC Attribution BY-ND" )]
+		CCAttributionBYND,
+		[DisplayNameEnum( "CC Attribution BY-NC" )]
+		CCAttributionBYNC,
+		[DisplayNameEnum( "CC Attribution BY-NC-SA" )]
+		CCAttributionBYNCSA,
+		[DisplayNameEnum( "CC Attribution BY-NC-ND" )]
+		CCAttributionBYNCND,
+		[DisplayNameEnum( "CC0" )]
+		CC0,
+		FreeToUse,
+		[DisplayNameEnum( "Free To Use With NeoAxis" )]
+		FreeToUseWithNeoAxis,
+		PaidPerSeat,
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public enum ConnectionModeEnum
+	{
+		Direct,
+		Cloud,
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public enum WindowedModeEnum
+	{
+		Fullscreen,
+		Borderless,
+		Windowed,
 	}
 }

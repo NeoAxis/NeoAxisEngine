@@ -290,7 +290,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Button
+	.component NeoAxis.Button3D
 	{
 		Name = Button
 		Transform = "-1.0009537689691 4.38739450818632 1.32489341333328; 0 0 -0.478282120422081 0.878206247577731; 1 1 1"

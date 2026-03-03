@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2024.3.
+// Made with NeoAxis Engine 2026.1.
 
 .component Project.OptionsWindow
 {
@@ -155,7 +155,7 @@
 					Name = Check Display Frame Info
 					Text = Display frame info
 					Size = Units 262.97674033836597 25
-					Margin = Units 20 400 0 0
+					Margin = Units 20 410 0 0
 					EditorScrollPosition = 0 0
 				}
 				.component NeoAxis.UICheck
@@ -163,7 +163,7 @@
 					Name = Check Display Scene Info
 					Text = Display scene info
 					Size = Units 262.97674033836597 25
-					Margin = Units 20 430 0 0
+					Margin = Units 20 440 0 0
 					EditorScrollPosition = 0 0
 				}
 				.component NeoAxis.UICheck
@@ -171,7 +171,7 @@
 					Name = Check Display Engine Info
 					Text = Display engine info
 					Size = Units 262.97674033836597 25
-					Margin = Units 20 460 0 0
+					Margin = Units 20 470 0 0
 					EditorScrollPosition = 0 0
 				}
 				.component NeoAxis.UICheck
@@ -179,23 +179,102 @@
 					Name = Check Vertical Sync
 					Text = Vertical sync
 					Size = Units 143.32363067103114 25
-					Margin = Units 20 360 0 0
+					Margin = Units 20 380 0 0
 					EditorScrollPosition = 0 0
 				}
-				.component NeoAxis.UICheck
+				.component NeoAxis.UICombo
 				{
-					Name = Check Fullscreen
-					Text = Fullscreen
-					Size = Units 124.04625204435544 25
-					Margin = Units 20 330 0 0
+					Name = Combo Windowed Mode
+					Size = Units 330 34
+					Margin = Units 20 240 0 0
 					EditorScrollPosition = 0 0
-					Checked = Checked
+					ItemsAsText
+					{
+						Count = 3
+						0 = Fullscreen
+						1 = Borderless
+						2 = Windowed
+					}
+					.component NeoAxis.UIEdit
+					{
+						Name = Text Control
+						ReadOnly = True
+						CanBeSelected = False
+						Size = Parent 1 1
+						HorizontalAlignment = Stretch
+						VerticalAlignment = Stretch
+						EditorScrollPosition = 0 0
+						Text
+						{
+							GetByReference = "this:..\\DisplayText"
+						}
+						.component NeoAxis.UIText
+						{
+							Name = Text
+							CanBeSelected = False
+							Size = Parent 1 1
+							HorizontalAlignment = Stretch
+							VerticalAlignment = Stretch
+							Margin = Units 4 2 4 2
+							EditorScrollPosition = 0 0
+							TextHorizontalAlignment = Left
+							ClipRectangle = True
+							Text
+							{
+								GetByReference = "this:..\\DisplayText"
+							}
+						}
+						.component NeoAxis.UIImage
+						{
+							CanBeSelected = False
+							Size = Screen 0 0
+							HorizontalAlignment = Right
+							EditorScrollPosition = 0 0
+							SourceImage
+							{
+								GetByReference = "Base\\UI\\Images\\ComboBoxButton.png"
+							}
+						}
+					}
+					.component NeoAxis.UIList
+					{
+						Name = Down List
+						Visible = False
+						CanBeSelected = False
+						Size = Screen 0 0
+						Margin = Parent 0 1 1 1
+						TopMost = True
+						EditorScrollPosition = 0 0
+						ItemsAsText
+						{
+							Count = 0
+						}
+						.component NeoAxis.UIScroll
+						{
+							Name = Scroll
+							CanBeSelected = False
+							Size = Units 30 400
+							HorizontalAlignment = Right
+							VerticalAlignment = Stretch
+							Margin = Units 0 2 2 2
+							EditorScrollPosition = 0 0
+							Vertical = True
+						}
+						.component NeoAxis.UIControl
+						{
+							Name = Cover
+							CanBeSelected = False
+							Size = Screen 1 1
+							Margin = Screen 0 0 1 1
+							EditorScrollPosition = 0 0
+						}
+					}
 				}
 				.component NeoAxis.UIList
 				{
 					Name = List Video Mode
 					Size = Units 330 90
-					Margin = Units 20 230 0 0
+					Margin = Units 20 280 0 0
 					EditorScrollPosition = 0 0
 					ItemsAsText
 					{
@@ -206,7 +285,7 @@
 					{
 						Name = Scroll
 						CanBeSelected = False
-						Size = Units 30 400
+						Size = Units 25 400
 						HorizontalAlignment = Right
 						VerticalAlignment = Stretch
 						Margin = Units 0 2 2 2
@@ -219,7 +298,7 @@
 					Name = Restart To Apply Changes
 					Text = Restart app to apply changes.
 					Size = Units 330 30
-					Margin = Units 20 630 0 0
+					Margin = Units 20 640 0 0
 					ColorMultiplier = 1 0 0
 					EditorScrollPosition = 0 0
 					TextHorizontalAlignment = Left
@@ -229,7 +308,7 @@
 					Name = Restart To Apply Changes 2
 					Text = "Ctrl + Number - Drop item\r\nF6 - First or third person camera\r\nF7 - Free camera\r\nHome, End, PgUp, PgDown, Plus, Minus - third person camera settings"
 					Size = Units 330 100
-					Margin = Units 20 530 0 0
+					Margin = Units 20 540 0 0
 					EditorScrollPosition = 0 0
 					TextHorizontalAlignment = Left
 					TextVerticalAlignment = Top
@@ -238,9 +317,9 @@
 				.component NeoAxis.UIText
 				{
 					Name = Text 4
-					Text = Video Mode
+					Text = Windowed Mode
 					Size = Units 330 30
-					Margin = Units 20 200 0 0
+					Margin = Units 20 210 0 0
 					EditorScrollPosition = 0 0
 					FontSize = Screen 0.025
 					TextHorizontalAlignment = Left
@@ -250,7 +329,7 @@
 					Name = Check Display Background Scene
 					Text = Background scene in main menu
 					Size = Units 264.3062193346698 25
-					Margin = Units 20 490 0 0
+					Margin = Units 20 500 0 0
 					EditorScrollPosition = 0 0
 				}
 			}

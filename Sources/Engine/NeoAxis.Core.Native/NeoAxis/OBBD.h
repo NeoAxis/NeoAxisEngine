@@ -29,12 +29,12 @@ THE SOFTWARE.
 #ifndef __OBBD_H_
 #define __OBBD_H_
 
-#include "OgrePrerequisites.h"
-#include "OgreVector3D.h"
-#include "OgreMatrix3D.h"
+#include "NativePrerequisites.h"
+#include "NativeVector3D.h"
+#include "NativeMatrix3D.h"
 #include "BoundsD.h"
 
-namespace Ogre
+namespace Native
 {
 	class OBBD
 	{
@@ -1350,6 +1350,6 @@ namespace Ogre
 
 	/** @} */
 	/** @} */
-} // namespace Ogre
+} // namespace Native
 
 #endif

@@ -173,7 +173,7 @@ namespace NeoAxis
 
 		public override void CreatedWindow_UpdateSystemCursorFileName()
 		{
-			string fileName = EngineApp.SystemCursorFileName;
+			//string fileName = EngineApp.SystemCursorFileName;
 
 			//TODO: implement it:
 

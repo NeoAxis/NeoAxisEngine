@@ -21,6 +21,9 @@ namespace NeoAxis.Editor
 	/// </summary>
 	public partial class BackstageMenu : BackstageAppMenu
 	{
+		[EngineConfig]
+		static string buildDestinationFolder = "C:\\_Temp";
+
 		static bool backstageVisible;
 
 		bool doInitActionsInTimer;
@@ -53,6 +56,9 @@ namespace NeoAxis.Editor
 		{
 			InitializeComponent();
 
+			//register config variables
+			EngineConfig.RegisterClassParameters( typeof( BackstageMenu ) );
+
 			kryptonButtonBack.Values.Image = Properties.Resources.BackstageButtonBack;
 
 			kryptonNavigator1.owner = this;
@@ -71,6 +77,8 @@ namespace NeoAxis.Editor
 
 			kryptonLabel12.Text = EngineInfo.NameWithoutVersion;
 
+			kryptonTextBoxPackageDestinationFolder.Text = buildDestinationFolder;
+
 			try
 			{
 				var assembly = Assembly.GetExecutingAssembly();
@@ -79,8 +87,6 @@ namespace NeoAxis.Editor
 				kryptonLabelEngineVersion.Text = version;
 			}
 			catch { }
-
-			//kryptonLinkLabelTokenWhatIsIt.LinkClicked += KryptonLinkLabelTokenWhatIsIt_LinkClicked;
 		}
 
 		[Browsable( false )]
@@ -149,15 +155,9 @@ namespace NeoAxis.Editor
 				kryptonLabelLoginError.StateCommon.ShortText.Color1 = Color.Red;
 				kryptonLabelInstallPlatformTools.StateCommon.ShortText.Color1 = Color.Red;
 
-				//labelExTokenTransactions.StateCommon.Back.Color1 = Color.FromArgb( 40, 40, 40 );
-
 				//restore colors after apply the dark theme
 				kryptonLinkLabel1.LabelStyle = LabelStyle.Custom1;
 				kryptonLinkLabel1.StateCommon.ShortText.Color1 = Color.FromArgb( 0, 110, 190 );
-
-				////restore colors after apply the dark theme
-				//kryptonLinkLabelTokenWhatIsIt.LabelStyle = LabelStyle.Custom1;
-				//kryptonLinkLabelTokenWhatIsIt.StateCommon.ShortText.Color1 = Color.FromArgb( 0, 110, 190 );
 			}
 
 			//translate
@@ -272,7 +272,7 @@ namespace NeoAxis.Editor
 			}
 		}
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		void InfoInit()
 		{
@@ -290,7 +290,7 @@ namespace NeoAxis.Editor
 			kryptonTextBoxInfoLocation.Text = VirtualFileSystem.Directories.Project;
 		}
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		volatile bool creationInProgress;
 		Task creationTask;
@@ -660,6 +660,8 @@ namespace NeoAxis.Editor
 			if( string.IsNullOrEmpty( folder ) )
 				return;
 
+			buildDestinationFolder = folder;
+
 			var product = GetSelectedBuildConfiguration();
 			if( product == null )
 				return;
@@ -694,9 +696,9 @@ namespace NeoAxis.Editor
 				{
 					if( LoginUtility.GetCurrentLicense( out var email, out _ ) )
 					{
-						if( LoginUtility.GetRequestedFullLicenseInfo( out var license, out _, out var error2 ) )
+						if( LoginUtility.GetRequestedInfo( out var userID, out var error2 ) )
 						{
-							if( !string.IsNullOrEmpty( license ) )
+							if( userID != 0 )
 								authorEmail = email;
 						}
 					}
@@ -835,16 +837,13 @@ namespace NeoAxis.Editor
 
 			{
 				string text;
-				//string tokenTransactions = "";
 				string error = "";
 				if( LoginUtility.GetCurrentLicense( out var email, out _ ) )
 				{
 					text = email;
-					if( LoginUtility.GetRequestedFullLicenseInfo( out var license, out _, /*out tokenTransactions,*/ out var error2 ) )
+					if( LoginUtility.GetRequestedInfo( out var userID, out var error2 ) )
 					{
-						//if( !string.IsNullOrEmpty( license ) )
-						//	text += " - " + license + " license";
-						if( !string.IsNullOrEmpty( license ) )
+						if( userID != 0 )
 							text += " You are awesome!";
 						error = error2;
 					}
@@ -856,30 +855,6 @@ namespace NeoAxis.Editor
 
 				kryptonLabelLicense.Text = text;
 				kryptonLabelLoginError.Text = error;
-
-				//labelExTokenTransactions.Text = "Transactions:";
-				//kryptonLabelTokenBalance.Text = "0";
-
-				//try
-				//{
-				//	//  "07/01/2020 +200|07/02/2020 +500"
-
-				//	double balance = 0;
-
-				//	foreach( var s in tokenTransactions.Split( new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries ) )
-				//	{
-				//		var s2 = s.Split( new char[] { ' ' } );
-				//		var v = double.Parse( s2[ 1 ] );
-				//		balance += v;
-				//	}
-
-				//	labelExTokenTransactions.Text = "Transactions:\r\n" + tokenTransactions.Replace( "|", "\r\n" );
-				//	kryptonLabelTokenBalance.Text = balance.ToString( "F0" );
-				//}
-				//catch( Exception e )
-				//{
-				//	Log.Warning( e.Message );
-				//}
 			}
 
 			{
@@ -891,7 +866,7 @@ namespace NeoAxis.Editor
 
 		private void kryptonButtonLogin_Click( object sender, EventArgs e )
 		{
-			var email = kryptonTextBoxLoginEmail.Text.Trim().ToLower();
+			var email = kryptonTextBoxLoginEmail.Text.Trim().ToLowerInvariant();
 			var password = kryptonTextBoxLoginPassword.Text;
 
 			if( string.IsNullOrEmpty( email ) || string.IsNullOrEmpty( password ) )
@@ -903,41 +878,36 @@ namespace NeoAxis.Editor
 				return;
 			}
 
-			LoginUtility.SetCurrentLicense( kryptonTextBoxLoginEmail.Text, kryptonTextBoxLoginPassword.Text );
+			LoginUtility.SetCurrentLicense( email, password );
+			//LoginUtility.SetCurrentLicense( kryptonTextBoxLoginEmail.Text, kryptonTextBoxLoginPassword.Text );
 		}
 
 		private void kryptonButtonRegister_Click( object sender, EventArgs e )
 		{
-			Process.Start( new ProcessStartInfo( EngineInfo.StoreAddress + "/my-account/" ) { UseShellExecute = true } );
+			Process.Start( new ProcessStartInfo( EngineInfo.WebsiteFullAddress + "/neoaxis/downloads/" ) { UseShellExecute = true } );
+
+			//Process.Start( new ProcessStartInfo( EngineInfo.StoreAddress + "/my-account/" ) { UseShellExecute = true } );
 		}
 
 		bool IsPlatformInstalled( SystemSettings.Platform platform )
 		{
-			if( platform == SystemSettings.Platform.Store )
-				return true;
-			var path = Path.Combine( VirtualFileSystem.Directories.EngineInternal, "Platforms", platform.ToString() );
-			return Directory.Exists( path );
+			//!!!!platform tools is disabled
+			return true;
+			//if( platform == SystemSettings.Platform.Store )
+			//	return true;
+			//var path = Path.Combine( VirtualFileSystem.Directories.EngineInternal, "Platforms", platform.ToString() );
+			//return Directory.Exists( path );
 		}
 
 		private void kryptonButtonDonate_Click( object sender, EventArgs e )
 		{
-			Process.Start( new ProcessStartInfo( "https://www.neoaxis.com/support/donate" ) { UseShellExecute = true } );
+			Process.Start( new ProcessStartInfo( EngineInfo.WebsiteFullAddress + "/support/donate" ) { UseShellExecute = true } );
 		}
 
 		private void kryptonButtonSubscribeToPro_Click( object sender, EventArgs e )
 		{
-			Process.Start( new ProcessStartInfo( "https://www.neoaxis.com/licensing" ) { UseShellExecute = true } );
+			Process.Start( new ProcessStartInfo( EngineInfo.WebsiteFullAddress + "/licensing" ) { UseShellExecute = true } );
 		}
-
-		//private void KryptonLinkLabelTokenWhatIsIt_LinkClicked( object sender, EventArgs e )
-		//{
-		//	Process.Start( new ProcessStartInfo( "https://www.neoaxis.com/neoaxis/token" ) { UseShellExecute = true } );
-		//}
-
-		//private void kryptonButtonTokenBuy_Click( object sender, EventArgs e )
-		//{
-		//	Process.Start( new ProcessStartInfo( "https://www.neoaxis.com/neoaxis/token" ) { UseShellExecute = true } );
-		//}
 	}
 }
 #endif

@@ -252,16 +252,16 @@ namespace Project
 			var isCreator = matchInfo.UserID == CloudServiceClient.ThisUserID;
 			var text = isCreator ? "Delete the match?" : "Leave the match?";
 
-			MessageBoxWindow.Show( this, text, "Confirm", EMessageBoxButtons.YesNo, EMessageBoxIcon.Question, null, delegate ( MessageBoxWindow sender, EDialogResult result, object anyData )
+			MessageBoxWindow.Show( this, text, "Confirm", EMessageBoxButtons.YesNo, EMessageBoxIcon.Question, null, delegate ( MessageBoxWindow sender2, EDialogResult result2, object anyData )
 			{
-				if( result == EDialogResult.Yes )
+				if( result2 == EDialogResult.Yes )
 				{
 					Task.Run( async delegate ()
 					{
 						if( isCreator )
 						{
 							//delete the match
-							using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+							var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 							var result = await client.CallMethodWithCancellationTokenAsync( "Matches", "UpdateMatch", cts.Token, MatchID, "Deleted", null, null );
 							if( !string.IsNullOrEmpty( result.Error ) )
 							{
@@ -272,7 +272,7 @@ namespace Project
 						else
 						{
 							//leave the match
-							using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+							var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 							var result = await client.CallMethodWithCancellationTokenAsync( "Matches", "RemoveMatchUser", cts.Token, MatchID, CloudServiceClient.ThisUserID );
 							if( !string.IsNullOrEmpty( result.Error ) )
 							{
@@ -293,7 +293,7 @@ namespace Project
 				if( client == null )
 					return;
 
-				using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+				var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 				var result = await client.CallMethodWithCancellationTokenAsync<Matches.Match>( "Matches", "GetMatch", cts.Token, MatchID );
 				if( !string.IsNullOrEmpty( result.Error ) )
 				{
@@ -317,7 +317,7 @@ namespace Project
 				if( client == null )
 					return;
 
-				using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+				var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 				var result = await client.CallMethodWithCancellationTokenAsync<string>( "Implementation", "GetMatchSettings", cts.Token, MatchID );
 				if( !string.IsNullOrEmpty( result.Error ) )
 				{
@@ -437,7 +437,7 @@ namespace Project
 			{
 				try
 				{
-					using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+					var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 					var result = await client.CallMethodWithCancellationTokenAsync( "Implementation", "SetMatchSetting", cts.Token, MatchID, settingName, newValue );
 					if( !string.IsNullOrEmpty( result.Error ) )
 						Log.Warning( "Error: " + result.Error );
@@ -457,7 +457,7 @@ namespace Project
 				if( client == null )
 					return;
 
-				using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+				var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 				var result = await client.CallMethodWithCancellationTokenAsync<string>( "Implementation", "GetMatchDetails", cts.Token, MatchID );
 				if( !string.IsNullOrEmpty( result.Error ) )
 				{
@@ -560,7 +560,7 @@ namespace Project
 			{
 				try
 				{
-					using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+					var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 					var result = await client.CallMethodWithCancellationTokenAsync( "Matches", "UpdateMatch", cts.Token, MatchID, "Play", null, null );
 					if( !string.IsNullOrEmpty( result.Error ) )
 					{
@@ -592,14 +592,14 @@ namespace Project
 
 			var text = $"Kick \"{selectedText}\" from the match?";
 
-			MessageBoxWindow.Show( this, text, "Confirm", EMessageBoxButtons.YesNo, EMessageBoxIcon.Question, null, delegate ( MessageBoxWindow sender, EDialogResult result, object anyData )
+			MessageBoxWindow.Show( this, text, "Confirm", EMessageBoxButtons.YesNo, EMessageBoxIcon.Question, null, delegate ( MessageBoxWindow sender2, EDialogResult result2, object anyData )
 			{
-				if( result == EDialogResult.Yes )
+				if( result2 == EDialogResult.Yes )
 				{
 					Task.Run( async delegate ()
 					{
 						//kick the player
-						using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+						var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 						var result = await client.CallMethodWithCancellationTokenAsync( "Matches", "RemoveMatchUser", cts.Token, MatchID, selectedPartipicantID );
 						if( !string.IsNullOrEmpty( result.Error ) )
 						{
@@ -628,7 +628,7 @@ namespace Project
 			{
 				try
 				{
-					using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+					var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 					var result = await client.CallMethodWithCancellationTokenAsync<long>( "Chats", "NewMessage", cts.Token, matchInfo.ChatID, message, null, null );
 					if( !string.IsNullOrEmpty( result.Error ) )
 					{
@@ -659,7 +659,7 @@ namespace Project
 			ChatSendMessage();
 		}
 
-		private void Messages_ReceiveMessageString( ClientNetworkService_Messages sender, string message, string data )
+		private void Messages_ReceiveMessageString( ClientNetworkService_Messages sender2, string message, string data )
 		{
 			//handle messages from the server
 
@@ -766,7 +766,7 @@ namespace Project
 				var timeFrom = lastMessage != null ? lastMessage.CreationTime : DateTime.MinValue;
 				var getFromEnd = lastMessage == null;
 
-				using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+				var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 				var getMessagesResult = await client.CallMethodWithCancellationTokenAsync<Chats.Message[]>( "Chats", "GetMessages", cts.Token, matchInfo.ChatID, new[] { "Enabled" }, timeFrom, DateTime.MaxValue, 200, getFromEnd );
 				if( !string.IsNullOrEmpty( getMessagesResult.Error ) )
 				{

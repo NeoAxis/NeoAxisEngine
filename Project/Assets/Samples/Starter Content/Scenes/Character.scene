@@ -1510,7 +1510,7 @@
 			Name = Character Input Processing
 		}
 	}
-	.component NeoAxis.Button
+	.component NeoAxis.Button3D
 	{
 		Name = Button
 		Transform = "2.6 -2.034613134103 1.4; 0 0 -1 0.00000000000000006; 1 1 1"
@@ -1532,7 +1532,7 @@
 		.component NeoAxis.CSharpScript
 		{
 			Name = C# Script
-			Code = "public void Button_Click(NeoAxis.Button sender, NeoAxis.Component initiator)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\t// Get object type.\r\n\tvar resourceName = @\"Samples\\Starter Content\\Models\\Sci-fi Box\\Sci-fi Box.objectinspace\";\r\n\tvar boxType = MetadataManager.GetType(resourceName);\r\n\tif(boxType == null)\r\n\t{\r\n\t\tLog.Warning(\"Object type is null.\");\r\n\t\treturn;\r\n\t}\r\n\t\r\n\t// Create the object without enabling.\r\n\tvar box = (MeshInSpace)scene.CreateComponent(boxType, enabled: false);\r\n\t//var obj = scene.CreateComponent<MeshInSpace>(enabled: false);\r\n\r\n\t// Set initial position.\r\n\tvar random = new FastRandom();\r\n\tbox.Transform = new Transform(\r\n\t\tnew Vector3(2 + random.Next(0.0, 4.0), 8 + random.Next(0.0, 4.0), 10 + random.Next(0.0, 4.0)), \r\n\t\tnew Angles(random.Next(360.0), random.Next(360.0), random.Next(360.0)));\r\n\t\r\n\t// Enable the object in the scene.\r\n\tbox.Enabled = true;\r\n\r\n\t//var light = scene.GetComponent(\"Directional Light\") as Light;\r\n\t//if (light != null)\r\n\t//\tlight.Enabled = sender.Activated;\r\n}\r\n"
+			Code = "public void Button_Click(NeoAxis.Button3D sender, NeoAxis.Component initiator)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\t// Get object type.\r\n\tvar resourceName = @\"Samples\\Starter Content\\Models\\Sci-fi Box\\Sci-fi Box.objectinspace\";\r\n\tvar boxType = MetadataManager.GetType(resourceName);\r\n\tif(boxType == null)\r\n\t{\r\n\t\tLog.Warning(\"Object type is null.\");\r\n\t\treturn;\r\n\t}\r\n\t\r\n\t// Create the object without enabling.\r\n\tvar box = (MeshInSpace)scene.CreateComponent(boxType, enabled: false);\r\n\t//var obj = scene.CreateComponent<MeshInSpace>(enabled: false);\r\n\r\n\t// Set initial position.\r\n\tvar random = new FastRandom();\r\n\tbox.Transform = new Transform(\r\n\t\tnew Vector3(2 + random.Next(0.0, 4.0), 8 + random.Next(0.0, 4.0), 10 + random.Next(0.0, 4.0)), \r\n\t\tnew Angles(random.Next(360.0), random.Next(360.0), random.Next(360.0)));\r\n\t\r\n\t// Enable the object in the scene.\r\n\tbox.Enabled = true;\r\n\r\n\t//var light = scene.GetComponent(\"Directional Light\") as Light;\r\n\t//if (light != null)\r\n\t//\tlight.Enabled = sender.Activated;\r\n}\r\n"
 			Exit
 			{
 			}
@@ -1545,7 +1545,7 @@
 				}
 				HandlerMethod
 				{
-					GetByReference = "this:..\\method:Button_Click(NeoAxis.Button,NeoAxis.Component)"
+					GetByReference = "this:..\\method:Button_Click(NeoAxis.Button3D,NeoAxis.Component)"
 				}
 				HandlerFlow
 				{
@@ -1758,11 +1758,11 @@
 		Collision = True
 		Mesh
 		{
-			GetByReference = "Content\\Items\\NeoAxis\\Flashlight\\Data\\scene.gltf|$Mesh"
+			GetByReference = "Content\\Items 3D\\NeoAxis\\Flashlight\\Data\\scene.gltf|$Mesh"
 		}
 		ReplaceMaterial
 		{
-			GetByReference = "Content\\Items\\NeoAxis\\Flashlight\\Data\\scene.gltf|$Materials\\$M_Flashlight_V01 Inactive"
+			GetByReference = "Content\\Items 3D\\NeoAxis\\Flashlight\\Data\\scene.gltf|$Materials\\$M_Flashlight_V01 Inactive"
 		}
 		SpecialEffects
 		{
@@ -1773,7 +1773,7 @@
 		}
 		ItemType
 		{
-			GetByReference = "Content\\Items\\NeoAxis\\Flashlight\\Flashlight.itemtype"
+			GetByReference = "Content\\Items 3D\\NeoAxis\\Flashlight\\Flashlight.itemtype"
 		}
 	}
 	.component NeoAxis.Constraint_SixDOF

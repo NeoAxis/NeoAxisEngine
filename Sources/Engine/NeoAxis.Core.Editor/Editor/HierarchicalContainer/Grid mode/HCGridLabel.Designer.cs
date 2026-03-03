@@ -57,7 +57,9 @@ namespace NeoAxis.Editor
 			this.Controls.Add(this.label2);
 			this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.Name = "HCGridLabel";
-			this.Size = new System.Drawing.Size(452, 28);
+			//fixnet8
+			this.Size = new System.Drawing.Size( 452, 22 );
+			//this.Size = new System.Drawing.Size(452, 28);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

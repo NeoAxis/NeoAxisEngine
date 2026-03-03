@@ -16,7 +16,6 @@ namespace Project
 		GameMode gameMode;
 		NetworkLogic networkLogic;
 
-		//!!!!
 		//double colorAlpha;
 
 		/////////////////////////////////////////
@@ -61,23 +60,23 @@ namespace Project
 			{
 				GetListMessages().ClearItems();
 
-				if( SimulationAppClient.Client?.Chat != null )
+				if( SimulationAppClient.ConnectionNode?.Chat != null )
 				{
 					if( EnabledInHierarchyAndIsInstance )
 					{
 						//colorAlpha = 0;
 
-						var defaultRoom = SimulationAppClient.Client.Chat.GetRoom( "Default" );
+						var defaultRoom = SimulationAppClient.ConnectionNode.Chat.GetRoom( "Default" );
 						if( defaultRoom != null )
 						{
 							foreach( var message in defaultRoom.Messages )
 								AddListMessageChatMessage( message );
 						}
 
-						SimulationAppClient.Client.Chat.ReceivedRoomMessage += Chat_ReceivedRoomMessage;
+						SimulationAppClient.ConnectionNode.Chat.ReceivedRoomMessage += Chat_ReceivedRoomMessage;
 					}
 					else
-						SimulationAppClient.Client.Chat.ReceivedRoomMessage -= Chat_ReceivedRoomMessage;
+						SimulationAppClient.ConnectionNode.Chat.ReceivedRoomMessage -= Chat_ReceivedRoomMessage;
 				}
 			}
 		}
@@ -89,7 +88,6 @@ namespace Project
 			//update controls
 			if( EngineApp.IsSimulation )
 			{
-				//!!!!
 				ColorMultiplier = new ColorValue( 1, 1, 1, 1 );
 				//fading
 				//colorAlpha += delta * 2;
@@ -150,11 +148,11 @@ namespace Project
 			if( text == "" )
 				return false;
 
-			var defaultRoom = SimulationAppClient.Client?.Chat?.GetRoom( "Default" );
+			var defaultRoom = SimulationAppClient.ConnectionNode?.Chat?.GetRoom( "Default" );
 			if( defaultRoom == null )
 				return false;
 
-			SimulationAppClient.Client.Chat.SayInRoom( defaultRoom, text );
+			SimulationAppClient.ConnectionNode.Chat.SayInRoom( defaultRoom, text );
 			GetEditMessage().Text = "";
 
 			return true;
@@ -166,9 +164,9 @@ namespace Project
 
 			list.AddItem( text );
 
-			if( SimulationAppClient.Client != null )
+			if( SimulationAppClient.ConnectionNode != null )
 			{
-				while( list.Items.Count > SimulationAppClient.Client.Chat.MaxMessagesInRoom )
+				while( list.Items.Count > SimulationAppClient.ConnectionNode.Chat.MaxMessagesInRoom )
 					list.RemoveItem( 0 );
 			}
 
@@ -186,7 +184,7 @@ namespace Project
 			if( skip )
 				return;
 
-			var chatService = SimulationAppClient.Client?.Chat;
+			var chatService = SimulationAppClient.ConnectionNode?.Chat;
 
 			var user = chatService.UsersService.GetUser( message.UserID );
 			var userString = user != null ? user.Username : message.UserID.ToString();

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -11,8 +11,8 @@
     <AssemblyName>NeoAxis.Player</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.17134.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.17134.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -32,7 +32,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>UWP;DEPLOY;CLIENT;TRACE;DEBUG</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -42,7 +42,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>UWP;DEPLOY;CLIENT;RELEASE</DefineConstants>
     <Optimize>false</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -67,6 +67,40 @@
     <Compile Include="Implementation\FileSystem\PlatformSpecificUtilityUWP.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MultiplayerCreateWindow.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\SimulationApp.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MainMenuScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MenuWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\OptionsWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\ScenesWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\PlayScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\SplashScreen.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\ProjectAssembly.cs" />
+    <Compile Include="Project\Assets\Base\UI\Styles\UIStyleEditor.cs" />
+    <Compile Include="Project\Assets\Base\UI\Styles\UIStyleSimple.cs" />
+    <Compile Include="Project\Assets\Base\UI\Windows\MessageBoxWindow.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\Scripts\ShooterCommon.cs" />
+    <Compile Include="Project\Assets\Samples\Simple Game\SimpleGameGUI.cs" />
+    <Compile Include="Project\Caches\CSharpScripts\CSharpScripts.cs" />
+    <Compile Include="Project\Assets\Base\WindowApp\WindowAppMainForm.cs" />
+    <Compile Include="Project\Assets\Samples\Spaceship Game\SpaceshipGameGUI.cs" />
+    <Compile Include="Project\Assets\Samples\Platform Game\PlatformGameGUI.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\Scripts\ShooterNetworkLogic.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\UI\ShooterInGameContextScreen.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\UI\ShooterSceneScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MultiplayerJoinWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\BasicSceneScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\EntranceScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\InGameContextScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\AvatarWindow.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\ClientUtility.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\RunServer.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\NetworkLogic.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\CloudServiceClient.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\SimulationAppClient.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\SimulationAppServer.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MatchesWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MatchWindow.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -102,17 +136,14 @@
     <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.Core.dll">
       <Link>NeoAxis.Core.dll</Link>
     </Content>
-    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.CoreExtension.dll">
-      <Link>NeoAxis.CoreExtension.dll</Link>
-    </Content>
-    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\Project.dll">
-      <Link>Project.dll</Link>
-    </Content>
     <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\System.Runtime.dll">
       <Link>System.Runtime.dll</Link>
     </Content>
-    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\*.pdb">
-      <Link>%(Filename)%(Extension)</Link>
+    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.Core.pdb">
+      <Link>NeoAxis.Core.pdb</Link>
+    </Content>
+    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.Player.pdb">
+      <Link>NeoAxis.Player.pdb</Link>
     </Content>
     <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\*.STUB">
       <Link>%(Filename)%(Extension)</Link>
@@ -129,16 +160,6 @@
       <HintPath>..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Project.UWP.csproj">
-      <Project>{1479c4f8-80d1-4313-9657-acc6fb8815eb}</Project>
-      <Name>Project.UWP</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NeoAxis.CoreExtension\NeoAxis.CoreExtension.UWP.csproj">
-      <Project>{5ac5da1a-bb1c-419e-a8f6-ece12b62e731}</Project>
-      <Name>NeoAxis.CoreExtension.UWP</Name>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
@@ -151,7 +172,7 @@
     </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>if EXIST "$(ProjectDir)Project.csproj" ( if EXIST "$(ProjectDir)Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" ( "$(ProjectDir)Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -platformProjectPatch "$(ProjectDir)Project.UWP.csproj" -baseProject "$(ProjectDir)Project.csproj" ) )</PreBuildEvent>
+    <PreBuildEvent>if EXIST "$(ProjectDir)..\..\Project.csproj" ( if EXIST "$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" ( "$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -platformProjectPatchWithCopyFiles "$(ProjectDir)NeoAxis.Player.UWP.csproj" -baseProject "$(ProjectDir)..\..\Project.csproj" ) )</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -160,4 +181,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="FailIfOptimizeEnabled" BeforeTargets="BeforeBuild">
+    <Error Condition="'$(Optimize)' == 'true'" Text="Optimize must be disabled. Current configuration has Optimize=$(Optimize)." />
+  </Target>
 </Project>

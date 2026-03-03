@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using NeoAxis;
+using NeoAxis.Networking;
 
 namespace Project
 {
@@ -21,6 +23,14 @@ namespace Project
 		UIWindow optionsWindow;
 		UIWindow multiplayerCreateWindow;
 		UIWindow multiplayerJoinWindow;
+
+		///////////////////////////////////////////
+
+		public delegate void EnabledInSimulationStaticDelegate( MainMenuScreen sender );
+		/// <summary>
+		/// Static event may be used to change the main menu without changing the code.
+		/// </summary>
+		public static event EnabledInSimulationStaticDelegate EnabledInSimulationStatic;
 
 		///////////////////////////////////////////
 
@@ -63,6 +73,10 @@ namespace Project
 		{
 			instance = this;
 
+			base.OnEnabledInSimulation();
+
+			EnabledInSimulationStatic?.Invoke( this );
+
 			if( GetButtonScenes() != null )
 			{
 				var button = GetButtonScenes();
@@ -88,6 +102,15 @@ namespace Project
 			{
 				var button = (UIButton)Components[ "Button Play Nature Demo" ];
 				var fileName = @"Samples\Nature Demo\Nature Demo.scene";
+				button.AnyData = fileName;
+				button.Click += ButtonPlay_Click;
+				if( button.Visible )
+					button.ReadOnly = !VirtualFile.Exists( fileName ) || SimulationAppClient.Created;
+			}
+			if( Components[ "Button Play SciFi Demo" ] != null )
+			{
+				var button = (UIButton)Components[ "Button Play SciFi Demo" ];
+				var fileName = @"Samples\Sci-fi Demo\Scenes\Sci-fi Demo.scene";
 				button.AnyData = fileName;
 				button.Click += ButtonPlay_Click;
 				if( button.Visible )
@@ -163,6 +186,8 @@ namespace Project
 		protected override void OnDisabledInSimulation()
 		{
 			DestroyScene();
+
+			base.OnDisabledInSimulation();
 
 			if( instance == this )
 				instance = null;
@@ -242,7 +267,7 @@ namespace Project
 					SoundWorld.SetListenerReset();
 
 				// Scene simulation.
-				if( SimulationApp.Simulate )
+				if( SimulationApp.SceneSimulate )
 					scene?.HierarchyController?.PerformSimulationSteps();
 				ParentRoot.HierarchyController?.PerformSimulationSteps();
 
@@ -254,8 +279,9 @@ namespace Project
 					GetButtonMultiplayerCreate().Highlighted = RunServer.Running;
 					GetButtonMultiplayerCreate().ReadOnly = SystemSettings.CurrentPlatform != SystemSettings.Platform.Windows;
 				}
-				if( GetButtonMultiplayerJoin() != null )
-					GetButtonMultiplayerJoin().ReadOnly = SystemSettings.CurrentPlatform != SystemSettings.Platform.Windows && SystemSettings.CurrentPlatform != SystemSettings.Platform.Android;
+
+				//if( GetButtonMultiplayerJoin() != null )
+				//	GetButtonMultiplayerJoin().ReadOnly = SystemSettings.CurrentPlatform != SystemSettings.Platform.Windows && SystemSettings.CurrentPlatform != SystemSettings.Platform.Android;
 			}
 		}
 

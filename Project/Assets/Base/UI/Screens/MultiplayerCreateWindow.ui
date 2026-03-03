@@ -26,7 +26,7 @@
 	.component NeoAxis.UIEdit
 	{
 		Name = Edit Port
-		Text = 52000
+		Text = 53000
 		Size = Units 360 40
 		Margin = Units 20 80 0 0
 		EditorScrollPosition = 0 0

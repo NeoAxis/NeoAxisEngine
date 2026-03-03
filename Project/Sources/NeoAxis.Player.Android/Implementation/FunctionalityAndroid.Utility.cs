@@ -10,7 +10,7 @@ namespace NeoAxis
 {
 	partial class PlatformFunctionalityAndroid : PlatformFunctionality
 	{
-		Stopwatch stopwatch;
+		//Stopwatch stopwatch;
 
 		//public override double GetSystemTime()
 		//{

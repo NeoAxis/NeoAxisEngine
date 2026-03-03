@@ -87,7 +87,9 @@ namespace Project
 		[EngineConfig]
 		public static Vector2I VideoMode { get; set; }
 		[EngineConfig]
-		public static bool Fullscreen { get; set; } = true;
+		public static WindowedModeEnum WindowedMode { get; set; } = WindowedModeEnum.Fullscreen;
+		//[EngineConfig]
+		//public static bool Fullscreen { get; set; } = true;
 		[EngineConfig]
 		public static bool VerticalSync { get; set; } = true;
 		[EngineConfig]
@@ -250,19 +252,31 @@ namespace Project
 		}
 
 		[EngineConfig]
-		public static bool Simulate { get; set; } = true;
+		public static bool SceneSimulate { get; set; } = true;
 
 		[EngineConfig]
-		public static bool SimulatePhysics
+		public static bool SceneSimulatePhysics
 		{
-			get { return simulatePhysics; }
+			get { return sceneSimulatePhysics; }
 			set
 			{
-				simulatePhysics = value;
-				Scene.InternalSimulatePhysics = simulatePhysics;
+				sceneSimulatePhysics = value;
+				Scene._InternalSimulatePhysics = sceneSimulatePhysics;
 			}
 		}
-		static bool simulatePhysics = true;
+		static bool sceneSimulatePhysics = true;
+
+		[EngineConfig]
+		public static bool SceneRendering
+		{
+			get { return sceneRendering; }
+			set
+			{
+				sceneRendering = value;
+				Scene._InternalRendering = sceneRendering;
+			}
+		}
+		static bool sceneRendering = true;
 
 		//[EngineConfig]
 		//public static bool ShowEngineWatermark { get; set; }
@@ -327,15 +341,21 @@ namespace Project
 			EngineConfig.RegisterClassParameters( typeof( SimulationApp ) );
 
 			//creation settings
-
-			if( !Fullscreen )
-				EngineApp.InitSettings.CreateWindowFullscreen = false;
-			if( VideoMode != Vector2I.Zero && ( SystemSettings.VideoModeExists( VideoMode ) || !Fullscreen ) )
-			{
+			EngineApp.InitSettings.CreateWindowedMode = WindowedMode;
+			if( WindowedMode == WindowedModeEnum.Fullscreen && VideoMode != Vector2I.Zero && SystemSettings.VideoModeExists( VideoMode ) )
 				EngineApp.InitSettings.CreateWindowSize = VideoMode;
-				if( !Fullscreen )
-					EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Normal;
-			}
+			if( WindowedMode == WindowedModeEnum.Windowed && VideoMode != Vector2I.Zero )
+				EngineApp.InitSettings.CreateWindowSize = VideoMode;
+
+			//if( !Fullscreen )
+			//	EngineApp.InitSettings.CreateWindowFullscreen = false;
+			//if( VideoMode != Vector2I.Zero && ( SystemSettings.VideoModeExists( VideoMode ) || !Fullscreen ) )
+			//{
+			//	EngineApp.InitSettings.CreateWindowSize = VideoMode;
+			//	if( !Fullscreen )
+			//		EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Normal;
+			//}
+
 			if( !VerticalSync )
 				EngineApp.InitSettings.SimulationVSync = false;
 
@@ -352,7 +372,8 @@ namespace Project
 							{
 							case ProjectSettingsPage_General.WindowStateEnum.Normal:
 								{
-									EngineApp.InitSettings.CreateWindowFullscreen = false;
+									EngineApp.InitSettings.CreateWindowedMode = WindowedModeEnum.Windowed;
+									//EngineApp.InitSettings.CreateWindowFullscreen = false;
 									EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Normal;
 
 									var windowSizeString = ProjectSettings.ReadParameterDirectly( "General", "WindowSize", ProjectSettingsPage_General.WindowSizeDefault.ToString() );
@@ -378,17 +399,24 @@ namespace Project
 								break;
 
 							case ProjectSettingsPage_General.WindowStateEnum.Minimized:
-								EngineApp.InitSettings.CreateWindowFullscreen = false;
+								EngineApp.InitSettings.CreateWindowedMode = WindowedModeEnum.Windowed;
+								//EngineApp.InitSettings.CreateWindowFullscreen = false;
 								EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Minimized;
 								break;
 
 							case ProjectSettingsPage_General.WindowStateEnum.Maximized:
-								EngineApp.InitSettings.CreateWindowFullscreen = false;
+								EngineApp.InitSettings.CreateWindowedMode = WindowedModeEnum.Windowed;
+								//EngineApp.InitSettings.CreateWindowFullscreen = false;
 								EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Maximized;
 								break;
 
+							case ProjectSettingsPage_General.WindowStateEnum.Borderless:
+								EngineApp.InitSettings.CreateWindowedMode = WindowedModeEnum.Borderless;
+								break;
+
 							case ProjectSettingsPage_General.WindowStateEnum.Fullscreen:
-								EngineApp.InitSettings.CreateWindowFullscreen = true;
+								EngineApp.InitSettings.CreateWindowedMode = WindowedModeEnum.Fullscreen;
+								//EngineApp.InitSettings.CreateWindowFullscreen = true;
 								break;
 							}
 						}

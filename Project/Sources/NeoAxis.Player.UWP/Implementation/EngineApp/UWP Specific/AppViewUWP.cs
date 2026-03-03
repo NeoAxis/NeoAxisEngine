@@ -6,6 +6,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
+using System.Diagnostics;
 
 namespace NeoAxis
 {
@@ -84,6 +85,13 @@ namespace NeoAxis
 			try
 			{
 				runCallback?.Invoke();
+			}
+			catch(Exception e)
+			{
+				//write to Output window in Visual Studio
+				Debug.WriteLine( "AppViewUWP: Run: Exception: " + e.ToString() );
+
+				Log.Fatal( "AppViewUWP: Run: Exception: " + e.ToString() );
 			}
 			finally
 			{

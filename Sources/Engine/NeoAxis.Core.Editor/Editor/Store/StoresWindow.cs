@@ -24,7 +24,7 @@ namespace NeoAxis.Editor
 	/// </summary>
 	public partial class StoresWindow : DockWindow
 	{
-		double toolbarMustVisibleForTime;
+		//double toolbarMustVisibleForTime;
 
 		StoreManager.StoreItem selectedStore;
 
@@ -126,7 +126,7 @@ namespace NeoAxis.Editor
 					{
 						var state = storesWindow.GetPackageState( packageId );
 						if( state == null || ( !state.Installed && !state.Downloaded ) )
-							storesWindow.StartDownload( package.Identifier, true, false, true );
+							storesWindow.StartDownload( package.Identifier/*, true*/, false, true );
 					}
 
 					return result;
@@ -222,8 +222,7 @@ namespace NeoAxis.Editor
 			public volatile string downloadingAddress = "";
 			public volatile string downloadingDestinationPath = "";
 			public volatile float downloadProgress;
-			public volatile bool downloadingInstallAfterDownload;
-			//public volatile WebClient downloadingClient;
+			//public volatile bool downloadingInstallAfterDownload; //disabled because always "true"
 			public volatile Downloader.DownloadService downloadingDownloader;
 
 			public bool AutoImport;
@@ -326,57 +325,24 @@ namespace NeoAxis.Editor
 
 		void InitCategories()
 		{
-			var rootCategories = new[] { "2D", "Audio", "Basic Content", "Buildings", "Characters", "Demos", "Environments", "Extensions", "Fences", "Materials", "Models", "Pipes", "Surfaces", "Vehicles", "Visual Effects", "Weapons", "Uncategorized", "Installed" };
+			var rootCategories = new[] { "2D", "Audio", "Buildings", "Characters", "Constructors", "Demos", "Environments", "Extensions", "Fences", "Materials", "3D Models", "Pipes", "Surfaces", "Vehicles", "Visual Effects", "Weapons", "Uncategorized", "Installed" };
 			foreach( var name in rootCategories )
 			{
 				var category = new CategoryItem( name );
 				categoryByName.Add( category.Name, category );
 			}
 
-			//Audio
-			{
-				var parent = categoryByName[ "Audio" ];
-				var categories = new[] { "Ambient Sounds", "Music", "Sound Effects" };
-				foreach( var name in categories )
-				{
-					var category = new CategoryItem( name );
-					category.Parent = parent;
-					categoryByName.Add( category.Name, category );
-				}
-			}
-
-			//Extensions
-			{
-				var parent = categoryByName[ "Extensions" ];
-				var categories = new[] { "Basic Extensions", "Components", "Constructors", "Kits" };
-				foreach( var name in categories )
-				{
-					var category = new CategoryItem( name );
-					category.Parent = parent;
-					categoryByName.Add( category.Name, category );
-				}
-			}
-
-
-
-			//var rootCategories = new[] { /*"2D", */ /*"Audio",*/ "Basic Content", "Demos", "Environments", "Extensions", /*"Images",*/ "Materials", "Models", "Functional Objects", "Surfaces", "Visual Effects", "Uncategorized", "Installed" };
-			//foreach( var name in rootCategories )
+			////Audio
 			//{
-			//	var category = new CategoryItem( name );
-			//	categoryByName.Add( category.Name, category );
+			//	var parent = categoryByName[ "Audio" ];
+			//	var categories = new[] { "Ambient Sounds", "Music", "Sound Effects" };
+			//	foreach( var name in categories )
+			//	{
+			//		var category = new CategoryItem( name );
+			//		category.Parent = parent;
+			//		categoryByName.Add( category.Name, category );
+			//	}
 			//}
-
-			//////Audio
-			////{
-			////	var parent = categoryByName[ "Audio" ];
-			////	var categories = new[] { "Ambient Sounds", "Music", "Sound Effects" };
-			////	foreach( var name in categories )
-			////	{
-			////		var category = new CategoryItem( name );
-			////		category.Parent = parent;
-			////		categoryByName.Add( category.Name, category );
-			////	}
-			////}
 
 			////Extensions
 			//{
@@ -390,10 +356,21 @@ namespace NeoAxis.Editor
 			//	}
 			//}
 
-			////Models
+
+
+
+
+			//var rootCategories = new[] { "2D", "Audio", "Basic Content", "Buildings", "Characters", "Demos", "Environments", "Extensions", "Fences", "Materials", "Models", "Pipes", "Surfaces", "Vehicles", "Visual Effects", "Weapons", "Uncategorized", "Installed" };
+			//foreach( var name in rootCategories )
 			//{
-			//	var parent = categoryByName[ "Models" ];
-			//	var categories = new[] { "Animals", "Architecture", "Characters", "Exterior", "Food", "Industrial", "Interior", "Nature", /*"Plant",*/ "Uncategorized Models", "Vehicles", "Weapons" };
+			//	var category = new CategoryItem( name );
+			//	categoryByName.Add( category.Name, category );
+			//}
+
+			////Audio
+			//{
+			//	var parent = categoryByName[ "Audio" ];
+			//	var categories = new[] { "Ambient Sounds", "Music", "Sound Effects" };
 			//	foreach( var name in categories )
 			//	{
 			//		var category = new CategoryItem( name );
@@ -401,6 +378,63 @@ namespace NeoAxis.Editor
 			//		categoryByName.Add( category.Name, category );
 			//	}
 			//}
+
+			////Extensions
+			//{
+			//	var parent = categoryByName[ "Extensions" ];
+			//	var categories = new[] { "Basic Extensions", "Components", "Constructors", "Kits" };
+			//	foreach( var name in categories )
+			//	{
+			//		var category = new CategoryItem( name );
+			//		category.Parent = parent;
+			//		categoryByName.Add( category.Name, category );
+			//	}
+			//}
+
+
+
+			////var rootCategories = new[] { /*"2D", */ /*"Audio",*/ "Basic Content", "Demos", "Environments", "Extensions", /*"Images",*/ "Materials", "Models", "Functional Objects", "Surfaces", "Visual Effects", "Uncategorized", "Installed" };
+			////foreach( var name in rootCategories )
+			////{
+			////	var category = new CategoryItem( name );
+			////	categoryByName.Add( category.Name, category );
+			////}
+
+			////////Audio
+			//////{
+			//////	var parent = categoryByName[ "Audio" ];
+			//////	var categories = new[] { "Ambient Sounds", "Music", "Sound Effects" };
+			//////	foreach( var name in categories )
+			//////	{
+			//////		var category = new CategoryItem( name );
+			//////		category.Parent = parent;
+			//////		categoryByName.Add( category.Name, category );
+			//////	}
+			//////}
+
+			//////Extensions
+			////{
+			////	var parent = categoryByName[ "Extensions" ];
+			////	var categories = new[] { "Basic Extensions", "Components", "Constructors", "Kits" };
+			////	foreach( var name in categories )
+			////	{
+			////		var category = new CategoryItem( name );
+			////		category.Parent = parent;
+			////		categoryByName.Add( category.Name, category );
+			////	}
+			////}
+
+			//////Models
+			////{
+			////	var parent = categoryByName[ "Models" ];
+			////	var categories = new[] { "Animals", "Architecture", "Characters", "Exterior", "Food", "Industrial", "Interior", "Nature", /*"Plant",*/ "Uncategorized Models", "Vehicles", "Weapons" };
+			////	foreach( var name in categories )
+			////	{
+			////		var category = new CategoryItem( name );
+			////		category.Parent = parent;
+			////		categoryByName.Add( category.Name, category );
+			////	}
+			////}
 		}
 
 		void ContentBrowserSetConstantOptions()
@@ -421,7 +455,7 @@ namespace NeoAxis.Editor
 			if( WinFormsUtility.IsDesignerHosted( this ) )
 				return;
 
-			toolbarMustVisibleForTime = Time.Current;
+			//toolbarMustVisibleForTime = Time.Current;
 			timer1.Start();
 
 
@@ -657,7 +691,7 @@ namespace NeoAxis.Editor
 						contentBrowser1.SelectItemsList( new ContentBrowser.Item[] { item }, true );
 
 						if( needSelectPackageInstall )
-							StartDownload( needSelectPackage, true, true );
+							StartDownload( needSelectPackage/*, true*/, true );
 
 						break;
 					}
@@ -819,7 +853,7 @@ namespace NeoAxis.Editor
 						{
 							var item = new KryptonContextMenuItem( Translate( "Install" ), EditorResourcesCache.Download, delegate ( object s, EventArgs e2 )
 							{
-								StartDownload( storeItem.packageId, true, true );
+								StartDownload( storeItem.packageId/*, true*/, true );
 							} );
 							item.Enabled = !state.Installed && ( state.CanDownload || state.Downloaded );
 							//item.Enabled = !state.Installed && state.CanDownload || state.Downloaded;// && state.CanDownload;
@@ -946,7 +980,7 @@ namespace NeoAxis.Editor
 		{
 			var current = category;
 
-next:
+			next:
 			if( groupItemByCategory.TryGetValue( current, out var item ) )
 				return item;
 
@@ -1191,13 +1225,15 @@ next:
 		{
 			if( LoginUtility.GetCurrentLicense( out var email, out _ ) )
 			{
-				if( LoginUtility.GetRequestedFullLicenseInfo( out var license, out var purchasedProducts, /*out _,*/ out _ ) )
+				if( LoginUtility.GetRequestedInfo( out var license, out _ ) )
 				{
 					if( StoreManager.ModeratorMode )
 						return true;
 
-					if( !string.IsNullOrEmpty( license ) )
-						return purchasedProducts.Contains( productIdentifier );
+					//!!!!
+
+					//if( !string.IsNullOrEmpty( license ) )
+					//	return purchasedProducts.Contains( productIdentifier );
 				}
 			}
 			return false;
@@ -1214,7 +1250,7 @@ next:
 		{
 			if( updateLogin )
 			{
-				LoginUtility.RequestFullLicenseInfo();
+				LoginUtility.RequestInfo();
 				Thread.Sleep( 500 );
 			}
 
@@ -1244,7 +1280,7 @@ next:
 		//	//return dt.ToString();
 		//}
 
-		void StartDownload( string packageId, bool installAfterDownload, bool openAfterInstall, bool autoImport = false )
+		void StartDownload( string packageId/*, bool installAfterDownload*/, bool openAfterInstall, bool autoImport = false )
 		{
 			var package = GetPackage( packageId, true );
 			if( package == null )
@@ -1263,8 +1299,10 @@ next:
 					state.downloadingAddress = package.FreeDownload;
 
 					var fileName = Path.GetFileName( state.downloadingAddress );
-					if( Path.GetExtension( fileName ) != ".neoaxispackage" )
-						fileName = $"{package.Identifier}-{package.Version}.neoaxispackage";
+					if( Path.GetExtension( fileName ) != ".zip" )
+						fileName = $"{package.Identifier}-{package.Version}.zip";
+					//if( Path.GetExtension( fileName ) != ".neoaxispackage" )
+					//	fileName = $"{package.Identifier}-{package.Version}.neoaxispackage";
 
 					state.downloadingDestinationPath = Path.Combine( PackageManager.PackagesFolder, fileName );
 					//state.downloadingDestinationPath = Path.Combine( PackageManager.PackagesFolder, Path.GetFileName( state.downloadingAddress ) );
@@ -1288,14 +1326,17 @@ next:
 
 					//var version64 = Convert.ToBase64String( Encoding.UTF8.GetBytes( version ) ).Replace( "=", "" );
 
-					state.downloadingAddress = EngineInfo.StoreAddress + $@"/api/secure_download/?email={email64}&hash={hash64}&product={product64}&action={action64}";
+					//!!!!
+					Log.Fatal( "impl" );
+					//state.downloadingAddress = EngineInfo.StoreAddress + $@"/api/secure_download/?email={email64}&hash={hash64}&product={product64}&action={action64}";
 
-					var fileName = $"{productIdentifier}-{version}.neoaxispackage";
+					var fileName = $"{productIdentifier}-{version}.zip";
+					//var fileName = $"{productIdentifier}-{version}.neoaxispackage";
 					state.downloadingDestinationPath = Path.Combine( PackageManager.PackagesFolder, fileName );
 				}
 
 				state.downloadProgress = 0;
-				state.downloadingInstallAfterDownload = installAfterDownload;
+				//state.downloadingInstallAfterDownload = installAfterDownload;
 
 				Thread thread1 = new Thread( ThreadDownload );
 				thread1.IsBackground = true;
@@ -1309,7 +1350,6 @@ next:
 		{
 			var state = GetPackageState( packageId );
 
-			//state.downloadingClient?.CancelAsync();
 			state.downloadingDownloader?.CancelAsync();
 
 			//state.downloadingCancel = true;
@@ -1318,13 +1358,12 @@ next:
 			state.downloadingAddress = "";
 			//state.downloadingDestinationPath = "";
 			state.downloadProgress = 0;
-			state.downloadingInstallAfterDownload = false;
-			//state.downloadingClient = null;
+			//state.downloadingInstallAfterDownload = false;
 			state.downloadingDownloader = null;
 			//state.downloadingCancel = false;
 		}
 
-		public class ThreadDownloadData
+		public class TaskDownloadData
 		{
 			public PackageManager.PackageInfo Package;
 			public PackageState State;
@@ -1333,18 +1372,18 @@ next:
 			public bool ShowWarningAnyway;
 		}
 
-		void ThreadDownload( object obj )
+		async void ThreadDownload( object obj )
 		{
 			var (packageId, openAfterInstall, package) = ((string, bool, PackageManager.PackageInfo))obj;
 			var state = GetPackageState( packageId );
 
-			var data = new ThreadDownloadData();
+			var data = new TaskDownloadData();
 			data.Package = package;
 			data.State = state;
 
 			try
 			{
-				package.Store?.Implementation?.ThreadDownloadBody( data );
+				await package.Store?.Implementation?.DownloadBodyAsync( data );
 			}
 			catch( Exception e )
 			{
@@ -1384,13 +1423,12 @@ next:
 				if( data.Error != null && !data.Cancelled || data.ShowWarningAnyway )
 					Log.Warning( ( data.Error.InnerException ?? data.Error ).Message );
 
-				var installAfterDownload = state.downloadingInstallAfterDownload;
+				var installAfterDownload = true;// state.downloadingInstallAfterDownload;
 
 				state.downloadingAddress = "";
 				state.downloadingDestinationPath = "";
 				state.downloadProgress = 0;
-				state.downloadingInstallAfterDownload = false;
-				//state.downloadingClient = null;
+				//state.downloadingInstallAfterDownload = false;
 				state.downloadingDownloader = null;
 				//state.downloadingCancel = false;
 
@@ -1402,13 +1440,19 @@ next:
 				}
 			}
 
-			if( !data.Cancelled )
-			{
-				if( data.Error != null )
-					ScreenNotifications2.Show( EditorLocalization2.Translate( "General", "Error downloading the package." ), true );
-				else
-					ScreenNotifications2.Show( EditorLocalization2.Translate( "General", "The package has been successfully downloaded." ) );
-			}
+			if( data.Error != null )
+				ScreenNotifications2.Show( EditorLocalization2.Translate( "General", data.Error.Message ), true );
+
+			if( !data.Cancelled && data.Error == null )
+				ScreenNotifications2.Show( EditorLocalization2.Translate( "General", "The package has been successfully downloaded." ) );
+
+			//if( !data.Cancelled )
+			//{
+			//	if( data.Error != null )
+			//		ScreenNotifications2.Show( EditorLocalization2.Translate( "General", "Error downloading the package." ), true );
+			//	else
+			//		ScreenNotifications2.Show( EditorLocalization2.Translate( "General", "The package has been successfully downloaded." ) );
+			//}
 		}
 
 		static List<string> ExtractToDirectory( string zipPath, string destinationFolder, bool overwriteExisting )
@@ -1527,7 +1571,7 @@ next:
 			if( archiveInfo == null )
 			{
 				//Download & Install
-				StartDownload( packageId, true, openAfterInstall );
+				StartDownload( packageId/*, true*/, openAfterInstall );
 				return;
 			}
 
@@ -2058,7 +2102,6 @@ next:
 				{
 					try
 					{
-						//state.downloadingClient?.CancelAsync();
 						state.downloadingDownloader?.CancelAsync();
 					}
 					catch { }

@@ -26,10 +26,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
-#include "OgreStableHeaders.h"
+#include "NativeStableHeaders.h"
 #include "Bounds.h"
 
-namespace Ogre
+namespace Native
 {
 	const Bounds Bounds::BOUNDS_ZERO( 0, 0, 0, 0, 0, 0 );
 	const Bounds Bounds::BOUNDS_CLEARED( FLT_MAX, FLT_MAX, FLT_MAX, FLT_MIN, FLT_MIN, FLT_MIN );

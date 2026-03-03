@@ -62,9 +62,9 @@ namespace NeoAxis.Editor
 			string arguments = "";
 
 			if( ProjectSettings.Get.General.RunPlayerFromEditorInFullscreen.Value )
-				arguments += "-fullscreen 1";
+				arguments += "-windowedMode Fullscreen";
 			else
-				arguments += "-windowed 1";
+				arguments += "-windowedMode Windowed";
 
 			if( !string.IsNullOrEmpty( realFileName ) )
 				arguments += string.Format( " -play \"{0}\"", realFileName );
@@ -79,11 +79,7 @@ namespace NeoAxis.Editor
 
 			string arguments = "";
 
-			//!!!!
-			//if( ProjectSettings.Get.RunSimulationInFullscreen.Value )
-			arguments += "-fullscreen 1";
-			//else
-			//	arguments += "-windowed 1";
+			arguments += "-windowedMode Fullscreen";
 
 			if( !string.IsNullOrEmpty( realFileName ) )
 				arguments += string.Format( " -play \"{0}\"", realFileName );

@@ -239,10 +239,10 @@ namespace Project
 
 		/////////////////////////////////////////
 
-		protected override void OnRenderSplitContainer( UISplitContainer control, CanvasRenderer renderer )
-		{
-			base.OnRenderSplitContainer( control, renderer );
-		}
+		//protected override void OnRenderSplitContainer( UISplitContainer control, CanvasRenderer renderer )
+		//{
+		//	base.OnRenderSplitContainer( control, renderer );
+		//}
 
 		/////////////////////////////////////////
 

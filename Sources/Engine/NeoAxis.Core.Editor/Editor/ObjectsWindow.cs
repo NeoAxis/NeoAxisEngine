@@ -116,38 +116,45 @@ namespace NeoAxis.Editor
 				var browser = panel.control as ContentBrowser;
 				if( browser != null )
 				{
-					var items = new List<ContentBrowser.Item>();
-
-					if( documentWindow.SelectedObjects.Length != 0 )
+					for( int step = 0; step < 5; step++ )
 					{
-						//precreate and expand all parents' items
+						var currentBrowserItemsCount = browser.Items.Count;
+
+						var items = new List<ContentBrowser.Item>();
+
+						if( documentWindow.SelectedObjects.Length != 0 )
 						{
-							var allParents = new ESet<Component>();
-							foreach( var obj in documentWindow.SelectedObjects )
+							//precreate and expand all parents' items
 							{
-								var c = obj as Component;
-								if( c != null )
-									allParents.AddRangeWithCheckAlreadyContained( c.GetAllParents() );
+								var allParents = new ESet<Component>();
+								foreach( var obj in documentWindow.SelectedObjects )
+								{
+									var c = obj as Component;
+									if( c != null )
+										allParents.AddRangeWithCheckAlreadyContained( c.GetAllParents() );
+								}
+								foreach( var c in allParents )
+								{
+									var i = browser.FindItemByContainedObject( c );
+									if( i != null )
+										browser.SelectItems( new ContentBrowser.Item[] { i }, true, false );
+								}
 							}
-							foreach( var c in allParents )
+
+							//get items to select
+							foreach( var item in browser.GetAllItems() )
 							{
-								var i = browser.FindItemByContainedObject( c );
-								if( i != null )
-									browser.SelectItems( new ContentBrowser.Item[] { i }, true, false );
+								var componentItem = item as ContentBrowserItem_Component;
+								if( componentItem != null && documentWindow.SelectedObjectsSet.Contains( componentItem.Component ) )
+									items.Add( item );
 							}
 						}
 
-						//get items to select
-						foreach( var item in browser.GetAllItems() )
-						{
-							var componentItem = item as ContentBrowserItem_Component;
-							if( componentItem != null && documentWindow.SelectedObjectsSet.Contains( componentItem.Component ) )
-								items.Add( item );
-						}
+						browser.SelectItems( items.ToArray(), items.Count == 1 );
+
+						if( currentBrowserItemsCount == browser.Items.Count )
+							break;
 					}
-
-					browser.SelectItems( items.ToArray(), items.Count == 1 );
-					//browser.SelectItems( items.ToArray() );
 				}
 			}
 		}

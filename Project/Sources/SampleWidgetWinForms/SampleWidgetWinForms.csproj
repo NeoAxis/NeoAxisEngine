@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0-windows</TargetFramework>
-	<CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <TargetFramework>net8.0-windows8.0</TargetFramework>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
 	<UseWindowsForms>true</UseWindowsForms>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
-	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+  <SelfContained>true</SelfContained>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <OutputType>WinExe</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
@@ -15,9 +16,11 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>..\..\Binaries\</OutputPath>
     <Optimize>False</Optimize>
+    <NoWarn>1701;1702;CA1416;MSB3277;MSB3277</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\..\Binaries\</OutputPath>
+    <NoWarn>1701;1702;CA1416;MSB3277;MSB3277</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NeoAxis.Core">

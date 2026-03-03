@@ -57,8 +57,6 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         [SecuritySafeCritical]
         public static void ExtendFrameIntoClientArea(IntPtr hWnd, Padding padding)
         {
-            Debug.Assert(hWnd != null);
-
             // Cerate structure that contains distances for each edge
             PI.MARGINS margins = new PI.MARGINS();
             margins.leftWidth = padding.Left;

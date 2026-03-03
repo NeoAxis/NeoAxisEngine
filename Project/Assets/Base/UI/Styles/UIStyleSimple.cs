@@ -672,7 +672,63 @@ namespace Project
 
 		protected override void OnRenderTooltip( UITooltip tooltip, CanvasRenderer renderer )
 		{
-			base.OnRenderTooltip( tooltip, renderer );
+			if( Rounding )
+			{
+				var container = tooltip.FindParent<UIContainer>();
+				var parentControl = tooltip.Parent as UIControl;
+				if( container != null && parentControl != null )
+				{
+					var text = tooltip.Text.Value;
+					if( !string.IsNullOrEmpty( text ) )
+					{
+						var position = container.ContainerGetMousePosition();
+
+						//cursor offset
+						if( container.LastCursorRectangle.Size.Y != 0 )
+							position.Y += container.LastCursorRectangle.Size.Y;
+						else
+							position.Y += parentControl.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Pixels, 0, 32 ) ).Y;
+
+						//get text size
+						var width = renderer.DefaultFont.GetTextLength( renderer.DefaultFontSize, renderer, text );
+						var height = renderer.DefaultFontSize;
+
+						//var fontSize = parentControl.GetScreenOffsetByValueY( new UIMeasureValueDouble( UIMeasure.PixelsScaled, 16 ) );
+						//var width = renderer.DefaultFont.GetTextLength( fontSize /*renderer.DefaultFontSize*/, renderer, text );
+						//var height = fontSize;//renderer.DefaultFontSize;
+
+						var rect = new Rectangle( position.X, position.Y, position.X + width, position.Y + height );
+						rect.Expand( parentControl.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 8, 6 ) ) );
+
+						//fix rectangle when outside screen
+						if( rect.Right > 1 )
+						{
+							var offset = rect.Right - 1.0;
+							rect.Left -= offset;
+							rect.Right -= offset;
+						}
+						if( rect.Bottom > 1 )
+						{
+							var offset = rect.Bottom - 1.0;
+							rect.Top -= offset;
+							rect.Bottom -= offset;
+						}
+
+						//back
+						var roundingSize = parentControl.GetScreenOffsetByValueY( new UIMeasureValueDouble( UIMeasure.Units, 6 ) );
+						//var roundingSize = 0.0075;
+
+						renderer.AddRoundedQuad( rect, roundingSize /*0.0075*/, CanvasRenderer.AddRoundedQuadMode.Antialiasing/*true*/, new ColorValue( 0.25, 0.25, 0.25 ) );
+
+						//text
+						renderer.AddText( text, rect.GetCenter(), EHorizontalAlignment.Center, EVerticalAlignment.Center, new ColorValue( 1, 1, 1 ) );
+
+						//renderer.AddText( renderer.DefaultFont, fontSize, text, rect.GetCenter(), EHorizontalAlignment.Center, EVerticalAlignment.Center, new ColorValue( 1, 1, 1 ) );
+					}
+				}
+			}
+			else
+				base.OnRenderTooltip( tooltip, renderer );
 		}
 
 		/////////////////////////////////////////
@@ -694,10 +750,10 @@ namespace Project
 
 		/////////////////////////////////////////
 
-		protected override void OnRenderSplitContainer( UISplitContainer control, CanvasRenderer renderer )
-		{
-			base.OnRenderSplitContainer( control, renderer );
-		}
+		//protected override void OnRenderSplitContainer( UISplitContainer control, CanvasRenderer renderer )
+		//{
+		//	base.OnRenderSplitContainer( control, renderer );
+		//}
 
 		/////////////////////////////////////////
 

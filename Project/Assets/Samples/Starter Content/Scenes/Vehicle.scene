@@ -324,7 +324,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Button
+	.component NeoAxis.Button3D
 	{
 		Name = Button
 		Transform = "-1.37663702575556 2.5 1.25136197296495; 0 0 0 1; 1 1 1"
@@ -344,7 +344,7 @@
 		{
 			Name = C# Script
 			NetworkMode = False
-			Code = "public void Button_Click(NeoAxis.Button sender, NeoAxis.Component initiator)\r\n{\r\n\t//put characters to free seats\r\n\r\n\tvar scene = sender.ParentScene;\r\n\tvar gameMode = (GameMode)scene.GetGameMode();\r\n\tvar playerCharacter = initiator as Character;\r\n\tif(playerCharacter == null)\r\n\t\treturn;\r\n\t\r\n\tforeach (var vehicle in scene.GetComponents<Vehicle>())\r\n\t{\r\n\t\tdo\r\n\t\t{\r\n\t\t\t//find a free seat\r\n\t\t\tvar seatIndex = vehicle.GetFreeSeat();\r\n\t\t\tif (seatIndex == -1)\r\n\t\t\t\tbreak;\r\n\r\n\t\t\t//create a new character with the type of the player character\r\n\t\t\tvar character = scene.CreateComponent<Character>(enabled: false);\r\n\t\t\tcharacter.CharacterType = playerCharacter.CharacterType;\r\n\t\t\tcharacter.Enabled = true;\r\n\r\n\t\t\t//put to the seat\r\n\t\t\tvehicle.PutObjectToSeat(gameMode, seatIndex, character);\r\n\t\t}\r\n\t\twhile (true);\r\n\t}\r\n}\r\n"
+			Code = "public void Button_Click(NeoAxis.Button3D sender, NeoAxis.Component initiator)\r\n{\r\n\t//put characters to free seats\r\n\r\n\tvar scene = sender.ParentScene;\r\n\tvar gameMode = (GameMode)scene.GetGameMode();\r\n\tvar playerCharacter = initiator as Character;\r\n\tif(playerCharacter == null)\r\n\t\treturn;\r\n\t\r\n\tforeach (var vehicle in scene.GetComponents<Vehicle>())\r\n\t{\r\n\t\tdo\r\n\t\t{\r\n\t\t\t//find a free seat\r\n\t\t\tvar seatIndex = vehicle.GetFreeSeat();\r\n\t\t\tif (seatIndex == -1)\r\n\t\t\t\tbreak;\r\n\r\n\t\t\t//create a new character with the type of the player character\r\n\t\t\tvar character = scene.CreateComponent<Character>(enabled: false);\r\n\t\t\tcharacter.CharacterType = playerCharacter.CharacterType;\r\n\t\t\tcharacter.Enabled = true;\r\n\r\n\t\t\t//put to the seat\r\n\t\t\tvehicle.PutObjectToSeat(gameMode, seatIndex, character);\r\n\t\t}\r\n\t\twhile (true);\r\n\t}\r\n}\r\n"
 			Exit
 			{
 			}
@@ -357,7 +357,7 @@
 				}
 				HandlerMethod
 				{
-					GetByReference = "this:..\\method:Button_Click(NeoAxis.Button,NeoAxis.Component)"
+					GetByReference = "this:..\\method:Button_Click(NeoAxis.Button3D,NeoAxis.Component)"
 				}
 				HandlerFlow
 				{

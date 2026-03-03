@@ -12,7 +12,7 @@ using NeoAxis.Editor;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Text;
-using Downloader;
+//using Downloader;
 
 namespace NeoAxis
 {
@@ -133,7 +133,7 @@ namespace NeoAxis
 					url += "&restricted=true";
 
 
-goNext:;
+				goNext:;
 
 				var jsonString = "";
 
@@ -196,7 +196,8 @@ goNext:;
 					}
 					catch { }
 
-					info.Categories = "Models";
+					info.Categories = "3D Models";
+					//info.Categories = "Models";
 					//info.Categories = "Uncategorized Models";
 
 					if( item.isDownloadable )
@@ -269,9 +270,9 @@ goNext:;
 					return;
 
 
-//next
+				//next
 
-checkNext:;
+				checkNext:;
 
 				bool needGetNext;
 				lock( StoreManager.needGetNextItemsForStores )
@@ -321,7 +322,7 @@ checkNext:;
 		{
 			var CLIENT_ID = "iCfsSDtpdY2nNQDsv2pyWEBgKrKwlK58XWRZhKmE";
 
-			if( !SketchfabLogin.LoadFromRegistry( out var username, out var password, out _ ) || string.IsNullOrEmpty( username ) || string.IsNullOrEmpty( password ) )
+			if( !SketchfabLogin.LoadFromRegistry( out var username, out var password/*, out _*/ ) || string.IsNullOrEmpty( username ) || string.IsNullOrEmpty( password ) )
 			{
 				StoresWindow.needOpenOptions = true;
 
@@ -405,93 +406,67 @@ checkNext:;
 			//return @$"Content\Models\Authors\{package.Author}\{namePath}";
 		}
 
-		public override void ThreadDownloadBody( StoresWindow.ThreadDownloadData data )
+		public async override Task DownloadBodyAsync( StoresWindow.TaskDownloadData data )
 		{
 			var package = data.Package;
 			var state = data.State;
-
 
 			//get download link
 			var accessToken = GetAccessToken();
 			var downloadLink = RequestDownloadLink( package, accessToken );
 
-
 			var tempDownloadedFileName = Path.Combine( Path.GetTempPath(), "Temp" + Path.GetRandomFileName() );
-			//var tempDownloadedFileName = Path.GetTempFileName();
 
 			try
 			{
-
 				//download
 				{
-					var downloaderOptions = new DownloadConfiguration();
+					//download file
+					using var cts2 = new CancellationTokenSource( new TimeSpan( 100, 0, 0 ) );
 
-					//can use more than one chunk?
-					//long chunkSize = 30 * 1024 * 1024;
-					//if( data.Package.Size > chunkSize )
-					//	downloaderOptions.ChunkCount = (int)Math.Max( data.Package.Size / chunkSize + 1, 1 );
-
-					using( var downloader = new DownloadService( downloaderOptions ) )
+					void Progress( int downloadedIncrement, long totalDownloaded, long totalSize )
 					{
-						state.downloadingDownloader = downloader;
+						if( data.Cancelled )
+							cts2.Cancel();
 
-						downloader.DownloadProgressChanged += delegate ( object sender, Downloader.DownloadProgressChangedEventArgs e )
-						{
-							//check already ended
-							if( data.Cancelled )
-								return;
-
-							if( e.TotalBytesToReceive != 0 )
-								state.downloadProgress = MathEx.Saturate( (float)e.ReceivedBytesSize / (float)e.TotalBytesToReceive );
-						};
-
-						downloader.DownloadFileCompleted += delegate ( object sender, AsyncCompletedEventArgs e )
-						{
-							//check already ended
-							if( !data.Cancelled )
-							{
-								//releases blocked thread
-								lock( e.UserState )
-									Monitor.Pulse( e.UserState );
-
-								data.Cancelled = e.Cancelled;
-								data.Error = e.Error;
-							}
-						};
-
-						using( var task = downloader.DownloadFileTaskAsync( downloadLink, tempDownloadedFileName ) )
-						{
-							while( !string.IsNullOrEmpty( state.downloadingAddress ) && !task.Wait( 10 ) )
-							{
-							}
-						}
-
-						state.downloadingDownloader = null;
+						state.downloadProgress = (float)MathEx.Saturate( (double)totalDownloaded / Math.Max( totalSize, 1 ) );
 					}
 
-					if( data.Cancelled || data.Error != null )
+					var downloadResult = await NetworkUtility.DownloadFileByUrlAsync( downloadLink, tempDownloadedFileName, Progress, cts2.Token );
+					if( !string.IsNullOrEmpty( downloadResult.Error ) )
+					{
+						data.Error = new Exception( downloadResult.Error );
+						return;
+					}
+
+					if( data.Cancelled )
 						return;
 				}
 
-
-
 				////download
 				//{
-				//	using( WebClient client = new WebClient() )
-				//	{
-				//		state.downloadingClient = client;
+				//	var downloaderOptions = new DownloadConfiguration();
 
-				//		client.DownloadProgressChanged += delegate ( object sender, DownloadProgressChangedEventArgs e )
+				//	//can use more than one chunk?
+				//	//long chunkSize = 30 * 1024 * 1024;
+				//	//if( data.Package.Size > chunkSize )
+				//	//	downloaderOptions.ChunkCount = (int)Math.Max( data.Package.Size / chunkSize + 1, 1 );
+
+				//	using( var downloader = new DownloadService( downloaderOptions ) )
+				//	{
+				//		state.downloadingDownloader = downloader;
+
+				//		downloader.DownloadProgressChanged += delegate ( object sender, Downloader.DownloadProgressChangedEventArgs e )
 				//		{
 				//			//check already ended
 				//			if( data.Cancelled )
 				//				return;
 
 				//			if( e.TotalBytesToReceive != 0 )
-				//				state.downloadProgress = MathEx.Saturate( (float)e.BytesReceived / (float)e.TotalBytesToReceive );
+				//				state.downloadProgress = MathEx.Saturate( (float)e.ReceivedBytesSize / (float)e.TotalBytesToReceive );
 				//		};
 
-				//		client.DownloadFileCompleted += delegate ( object sender, AsyncCompletedEventArgs e )
+				//		downloader.DownloadFileCompleted += delegate ( object sender, AsyncCompletedEventArgs e )
 				//		{
 				//			//check already ended
 				//			if( !data.Cancelled )
@@ -505,19 +480,65 @@ checkNext:;
 				//			}
 				//		};
 
-				//		using( var task = client.DownloadFileTaskAsync( new Uri( downloadLink ), tempDownloadedFileName ) )
+				//		using( var task = downloader.DownloadFileTaskAsync( downloadLink, tempDownloadedFileName ) )
 				//		{
 				//			while( !string.IsNullOrEmpty( state.downloadingAddress ) && !task.Wait( 10 ) )
 				//			{
 				//			}
 				//		}
 
-				//		state.downloadingClient = null;
+				//		state.downloadingDownloader = null;
 				//	}
 
 				//	if( data.Cancelled || data.Error != null )
 				//		return;
 				//}
+
+
+
+				//////download
+				////{
+				////	using( WebClient client = new WebClient() )
+				////	{
+				////		state.downloadingClient = client;
+
+				////		client.DownloadProgressChanged += delegate ( object sender, DownloadProgressChangedEventArgs e )
+				////		{
+				////			//check already ended
+				////			if( data.Cancelled )
+				////				return;
+
+				////			if( e.TotalBytesToReceive != 0 )
+				////				state.downloadProgress = MathEx.Saturate( (float)e.BytesReceived / (float)e.TotalBytesToReceive );
+				////		};
+
+				////		client.DownloadFileCompleted += delegate ( object sender, AsyncCompletedEventArgs e )
+				////		{
+				////			//check already ended
+				////			if( !data.Cancelled )
+				////			{
+				////				//releases blocked thread
+				////				lock( e.UserState )
+				////					Monitor.Pulse( e.UserState );
+
+				////				data.Cancelled = e.Cancelled;
+				////				data.Error = e.Error;
+				////			}
+				////		};
+
+				////		using( var task = client.DownloadFileTaskAsync( new Uri( downloadLink ), tempDownloadedFileName ) )
+				////		{
+				////			while( !string.IsNullOrEmpty( state.downloadingAddress ) && !task.Wait( 10 ) )
+				////			{
+				////			}
+				////		}
+
+				////		state.downloadingClient = null;
+				////	}
+
+				////	if( data.Cancelled || data.Error != null )
+				////		return;
+				////}
 
 
 				//process downloaded file
@@ -563,7 +584,7 @@ checkNext:;
 						if( !string.IsNullOrEmpty( package.Cost ) )
 							block.SetAttribute( "Cost", package.Cost );
 
-						if( package.License != StoreProductLicense.None )
+						if( package.License != CloudProductLicense.None )
 							block.SetAttribute( "License", EnumUtility.GetValueDisplayName( package.License ) );
 
 						//categories
@@ -634,67 +655,67 @@ checkNext:;
 						}
 					}
 
-					//write Store.product
-					if( SketchfabLogin.LoadFromRegistry( out _, out _, out var prepareStoreProduct ) && prepareStoreProduct )
-					{
-						var product = ComponentUtility.CreateComponent<Product_Store>( null, true, true );
-						product.NewObjectSetDefaultConfiguration();
-						product.Name = package.Title;
+					////write Store.product
+					//if( SketchfabLogin.LoadFromRegistry( out _, out _, out var prepareStoreProduct ) && prepareStoreProduct )
+					//{
+					//	var product = ComponentUtility.CreateComponent<Product_Store>( null, true, true );
+					//	product.NewObjectSetDefaultConfiguration();
+					//	product.Name = package.Title;
 
-						product.Description = package.ShortDescription;
+					//	product.Description = package.ShortDescription;
 
-						{
-							var index = licenseTxtText.IndexOf( "this credit wherever you share it:" );
-							if( index != -1 )
-							{
-								index += "this credit wherever you share it:".Length + 1;
-								product.Description = licenseTxtText.Substring( index ).Trim( new char[] { ' ', '\n', '\r' } );
-							}
-						}
+					//	{
+					//		var index = licenseTxtText.IndexOf( "this credit wherever you share it:" );
+					//		if( index != -1 )
+					//		{
+					//			index += "this credit wherever you share it:".Length + 1;
+					//			product.Description = licenseTxtText.Substring( index ).Trim( new char[] { ' ', '\n', '\r' } );
+					//		}
+					//	}
 
-						//product.ShortDescription = package.ShortDescription;
+					//	//product.ShortDescription = package.ShortDescription;
 
-						//{
-						//	var index = licenseTxtText.IndexOf( "this credit wherever you share it:" );
-						//	if( index != -1 )
-						//	{
-						//		index += "this credit wherever you share it:".Length + 1;
-						//		product.FullDescription = licenseTxtText.Substring( index ).Trim( new char[] { ' ', '\n', '\r' } );
-						//	}
-						//}
+					//	//{
+					//	//	var index = licenseTxtText.IndexOf( "this credit wherever you share it:" );
+					//	//	if( index != -1 )
+					//	//	{
+					//	//		index += "this credit wherever you share it:".Length + 1;
+					//	//		product.FullDescription = licenseTxtText.Substring( index ).Trim( new char[] { ' ', '\n', '\r' } );
+					//	//	}
+					//	//}
 
-						product.ProjectItemCategories = Product_Store.ProjectItemCategoriesEnum.Models;
+					//	product.ProjectItemCategories = Product_Store.ProjectItemCategoriesEnum.Models;
 
-						if( package.License != StoreProductLicense.None )
-							product.License = package.License;
-						else
-						{
-							//try to detect license because Sketchfab API is not provides it
-							if( licenseTxtText.Contains( "CC-BY-4.0" ) )
-								product.License = StoreProductLicense.CCAttribution;
-							else
-								product.License = StoreProductLicense.FreeToUseWithNeoAxis;
-						}
+					//	if( package.License != StoreProductLicense.None )
+					//		product.License = package.License;
+					//	else
+					//	{
+					//		//try to detect license because Sketchfab API is not provides it
+					//		if( licenseTxtText.Contains( "CC-BY-4.0" ) )
+					//			product.License = StoreProductLicense.CCAttribution;
+					//		else
+					//			product.License = StoreProductLicense.FreeToUseWithNeoAxis;
+					//	}
 
-						//!!!!Tags
+					//	//!!!!Tags
 
 
-						var block = ComponentUtility.SaveComponentToTextBlock( product, null, out var error );
-						if( block != null )
-						{
-							var str = block.DumpToString();
-							var bytes = Encoding.ASCII.GetBytes( str );
+					//	var block = ComponentUtility.SaveComponentToTextBlock( product, null, out var error );
+					//	if( block != null )
+					//	{
+					//		var str = block.DumpToString();
+					//		var bytes = Encoding.ASCII.GetBytes( str );
 
-							var destPath = Path.Combine( "Assets", virtualDestinationFolder, "Store.product" );
+					//		var destPath = Path.Combine( "Assets", virtualDestinationFolder, "Store.product" );
 
-							//write
-							var entry = archive.CreateEntry( destPath );
-							using( var entryStream = entry.Open() )
-								entryStream.Write( bytes );
-						}
+					//		//write
+					//		var entry = archive.CreateEntry( destPath );
+					//		using( var entryStream = entry.Open() )
+					//			entryStream.Write( bytes );
+					//	}
 
-						product.Dispose();
-					}
+					//	product.Dispose();
+					//}
 
 				}
 
@@ -708,6 +729,8 @@ checkNext:;
 				}
 				catch { }
 			}
+
+			await Task.CompletedTask;
 		}
 	}
 }

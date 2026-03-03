@@ -1,8 +1,10 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.IO;
+using System.Diagnostics;
 using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
+using Internal;
 
 namespace NeoAxis.Player
 {
@@ -17,8 +19,11 @@ namespace NeoAxis.Player
 		[MTAThread]
 		private static void Main()
 		{
-			//configure fullscreen mode
-			ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
+			//Configure fullscreen mode. Maximized when debugger is attached, and real fullscreen otherwise.
+			if( Debugger.IsAttached )
+				ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Maximized;
+			else
+				ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
 
 			// init non xaml app
 			var appSource = new AppViewSourceUWP( Init, Run, Exit );
@@ -56,6 +61,10 @@ namespace NeoAxis.Player
 			EngineApp.InitSettings.AllowJoysticksAndSpecialInputDevices = true;
 			EngineApp.InitSettings.UseDirectInputForMouseRelativeMode = false; // not implemented for UWP
 
+			//register project assembly
+			AssemblyUtility.RegisterAssembly( typeof( Program ).Assembly, "" );
+			EngineApp.ProjectAssembly = typeof( Program ).Assembly;
+
 			//init engine application
 			EngineApp.Init();
 
@@ -68,7 +77,8 @@ namespace NeoAxis.Player
 
 			if( !EngineApp.Create() )
 			{
-				// TODO: implement fail logic
+				Log.DumpToFile( "Program: Init: EngineApp.Create failed.\r\n" );
+				return;
 			}
 		}
 

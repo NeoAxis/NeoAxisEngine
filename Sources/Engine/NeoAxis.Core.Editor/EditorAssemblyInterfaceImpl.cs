@@ -8,8 +8,6 @@ using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
 using ICSharpCode.AvalonEdit;
-using ICSharpCode.AvalonEdit.Highlighting;
-using NeoAxis.Import;
 using Internal.ComponentFactory.Krypton.Toolkit;
 using System.Linq;
 using System.Drawing.Imaging;
@@ -252,7 +250,7 @@ namespace NeoAxis.Editor
 			return FlowGraphNodeStyle_Rectangle.Instance;
 		}
 
-		public override bool EditorCommandLineTools_PlatformProjectPatch_Process( string destFile, string baseProjectFileName, out string error, out bool changed )
+		public override bool EditorCommandLineTools_PlatformProjectPatch_Process( string destFile, string baseProjectFileName, bool modeWithCopyFiles, out string error, out bool changed )
 		{
 			error = "";
 
@@ -260,7 +258,11 @@ namespace NeoAxis.Editor
 			changed = false;
 
 			var exeFileName = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "CommandLineTools\\CommandLineTools.exe" );
-			var parameters = string.Format( "-platformProjectPatch \"{0}\" -baseProject \"{1}\"", destFile, baseProjectFileName );
+			string parameters;
+			if( modeWithCopyFiles )
+				parameters = string.Format( "-platformProjectPatchWithCopyFiles \"{0}\" -baseProject \"{1}\"", destFile, baseProjectFileName );
+			else
+				parameters = string.Format( "-platformProjectPatch \"{0}\" -baseProject \"{1}\"", destFile, baseProjectFileName );
 
 			var processStartInfo = new ProcessStartInfo
 			{

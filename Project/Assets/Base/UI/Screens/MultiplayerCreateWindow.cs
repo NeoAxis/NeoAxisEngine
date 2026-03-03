@@ -9,7 +9,7 @@ namespace Project
 	public class MultiplayerCreateWindow : UIWindow
 	{
 		[EngineConfig( "MultiplayerCreateWindow", "MultiplayerLastPort" )]
-		public static int lastPort { get; set; } = 52000;
+		public static int lastPort { get; set; } = 53000;
 		[EngineConfig( "MultiplayerCreateWindow", "MultiplayerLastPassword" )]
 		public static string lastPassword { get; set; } = "";
 		[EngineConfig( "MultiplayerCreateWindow", "MultiplayerLastRendering" )]

@@ -1,10 +1,10 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-#include "OgreStableHeaders.h"
+#include "NativeStableHeaders.h"
 #include "NeoAxisCoreNative.h"
-#include "OgreNativeWrapperGeneral.h"
+#include "NativeNativeWrapperGeneral.h"
 #include "NativeImpl.h"
 
-using namespace Ogre;
+using namespace Native;
 
 
 EXPORT void* NativeImpl_Example(void* obj, Vector3* arrayVec3F, wchar16* stringParameter, bool boolParameter, int& outputParameter)

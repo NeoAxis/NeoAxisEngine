@@ -104,6 +104,9 @@ namespace NeoAxis.Editor
 			}
 			AllowFormChrome = KryptonToolkitSettings.GetResultCustomizeWindowsStyle( true );
 
+			//configure RoslynPad
+			EditorUtility2.SetRoslynPadDotNetReferenceDllDirectory();
+
 			////splash screen
 			//var splashScreenAtStartup = ProjectSettings.ReadParameterFromFile( "SplashScreenAtStartup" );
 			//if( string.IsNullOrEmpty( splashScreenAtStartup ) && !Debugger.IsAttached )
@@ -364,7 +367,7 @@ namespace NeoAxis.Editor
 			//			}
 			//#endif
 
-			LoginUtility.RequestFullLicenseInfo();
+			LoginUtility.RequestInfo();
 
 			kryptonRibbon.BeforeMinimizedModeChanged += KryptonRibbon_BeforeMinimizedModeChanged;
 			kryptonRibbon.MinimizedModeChanged += KryptonRibbon_MinimizedModeChanged;

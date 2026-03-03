@@ -40,7 +40,9 @@ namespace NeoAxis.Editor
 			this.previewButton.Location = new System.Drawing.Point(68, 3);
 			this.previewButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.previewButton.Name = "previewButton";
-			this.previewButton.Size = new System.Drawing.Size(27, 22);
+			//fixnet8
+			this.previewButton.Size = new System.Drawing.Size( 27, 18 );
+			//this.previewButton.Size = new System.Drawing.Size(27, 22);
 			this.previewButton.TabIndex = 1;
 			this.previewButton.Values.Text = "";
 			// 
@@ -80,7 +82,9 @@ namespace NeoAxis.Editor
 			this.Controls.Add(this.textBox1);
 			this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.Name = "HCGridColorValuePowered";
-			this.Size = new System.Drawing.Size(308, 28);
+			//fixnet8
+			this.Size = new System.Drawing.Size( 308, 22 );
+			//this.Size = new System.Drawing.Size(308, 28);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

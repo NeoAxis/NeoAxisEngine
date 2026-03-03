@@ -158,9 +158,7 @@ namespace NeoAxis.Editor
 								{
 									EditorAPI2.OpenDocumentWindowForObject( DocumentWindow != null ? DocumentWindow.Document2 : null, componentItem.Component );
 								} );
-							item.Enabled = componentItem.Component != null &&
-								EditorAPI2.IsDocumentObjectSupport( componentItem.Component ) &&
-								!componentItem.Component.EditorReadOnlyInHierarchy;
+							item.Enabled = componentItem.Component != null && EditorAPI2.IsDocumentObjectSupport( componentItem.Component ) && !componentItem.Component.EditorReadOnlyInHierarchy;
 							items.Add( item );
 						}
 
@@ -171,6 +169,7 @@ namespace NeoAxis.Editor
 								{
 									EditorAPI2.SelectDockWindow( EditorAPI2.FindWindow<SettingsWindow>() );
 								} );
+							item.Enabled = componentItem.Component != null && EditorAPI2.IsDocumentObjectSupport( componentItem.Component ) && !componentItem.Component.EditorReadOnlyInHierarchy;
 							items.Add( item );
 						}
 

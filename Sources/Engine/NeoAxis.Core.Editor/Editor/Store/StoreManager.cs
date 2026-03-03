@@ -13,6 +13,7 @@ using System.Threading;
 using System.Xml;
 using System.Linq;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace NeoAxis.Editor
 {
@@ -38,7 +39,7 @@ namespace NeoAxis.Editor
 			public string Name;
 			public Image Icon16;
 			public Image Icon32;
-			public string Website;
+			//public string Website;
 			public StoreImplementation Implementation;
 
 			internal Image IconScaled;
@@ -58,8 +59,7 @@ namespace NeoAxis.Editor
 				StopCurrentTask();
 			}
 
-			public abstract void ThreadDownloadBody( StoresWindow.ThreadDownloadData data );
-			//public abstract void ThreadDownloadBody( PackageManager.PackageInfo package, ref bool cancelled );//, ref Exception error );
+			public abstract Task DownloadBodyAsync( StoresWindow.TaskDownloadData data );
 		}
 
 		///////////////////////////////////////////////
@@ -450,7 +450,6 @@ namespace NeoAxis.Editor
 
 		//public class FullPackageInfoClass
 		//{
-		//	zzzzzzz;
 
 		//	Dictionary<string, Item> packages = new Dictionary<string, Item>();
 
@@ -463,7 +462,6 @@ namespace NeoAxis.Editor
 		//		public volatile HttpWebRequest webRequest;
 		//		public volatile HttpWebResponse webResponse;
 
-		//		zzzzzzz;
 
 		//			//PackageManager.PackageInfo
 
@@ -640,7 +638,7 @@ namespace NeoAxis.Editor
 
 		internal static void Init()
 		{
-			RegisterStore( new StoreItem() { Name = "NeoAxis Store", Website = EngineInfo.StoreAddress + "/", Icon16 = Properties.Resources.NeoAxis_16, Icon32 = Properties.Resources.NeoAxis_32, Implementation = new NeoAxisStoreImplementation() } );
+			RegisterStore( new StoreItem() { Name = "NeoX"/*, Website = EngineInfo.StoreAddress + "/"*/, Icon16 = Properties.Resources.NeoAxis_16, Icon32 = Properties.Resources.NeoAxis_32, Implementation = new NeoAxisStoreImplementation() } );
 		}
 
 		internal static void Shutdown()

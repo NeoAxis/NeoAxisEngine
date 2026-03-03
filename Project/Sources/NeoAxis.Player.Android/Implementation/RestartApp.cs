@@ -13,7 +13,7 @@ namespace Com.JakeWharton.ProcessPhoenix
 	{
 		private const string KEY_RESTART_INTENT = "phoenix_restart_intent";
 
-		///**
+		//**
 		// * Call to restart the application process using the {@linkplain Intent#CATEGORY_DEFAULT default}
 		// * activity as an intent.
 		// * <p>
@@ -26,7 +26,6 @@ namespace Com.JakeWharton.ProcessPhoenix
 
 		/**
 		 * Call to restart the application process using the specified intent.
-		 * <p>
 		 * Behavior of the current process after invoking this method is undefined.
 		 */
 		public static void TriggerRebirth( Context context, Intent nextIntent )
@@ -69,7 +68,8 @@ namespace Com.JakeWharton.ProcessPhoenix
 		{
 			base.OnCreate( savedInstanceState );
 
-			Intent intent = (Intent)Intent.GetParcelableExtra( KEY_RESTART_INTENT );
+			var intent = Intent.GetParcelableExtra( KEY_RESTART_INTENT, Java.Lang.Class.FromType( typeof( Intent ) ) ) as Intent;
+			//Intent intent = (Intent)Intent.GetParcelableExtra( KEY_RESTART_INTENT );
 			StartActivity( intent );
 			Finish();
 			Java.Lang.Runtime.GetRuntime().Exit( 0 ); // Kill kill kill!
@@ -97,4 +97,3 @@ namespace Com.JakeWharton.ProcessPhoenix
 		}
 	}
 }
-

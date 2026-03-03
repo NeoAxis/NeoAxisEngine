@@ -22,7 +22,7 @@ namespace Project
 		UICheck GetCheckDisplayFrameInfo() { return GetPageGeneral()?.Components[ "Check Display Frame Info" ] as UICheck; }
 		UICheck GetCheckDisplaySceneInfo() { return GetPageGeneral()?.Components[ "Check Display Scene Info" ] as UICheck; }
 		UICheck GetCheckDisplayEngineInfo() { return GetPageGeneral()?.Components[ "Check Display Engine Info" ] as UICheck; }
-		UICheck GetCheckFullscreen() { return GetPageGeneral()?.Components[ "Check Fullscreen" ] as UICheck; }
+		UICombo GetComboWindowedMode() { return GetPageGeneral()?.Components[ "Combo Windowed Mode" ] as UICombo; }
 		UICheck GetCheckVerticalSync() { return GetPageGeneral()?.Components[ "Check Vertical Sync" ] as UICheck; }
 		UICheck GetCheckDisplayBackgroundScene() { return GetPageGeneral()?.Components[ "Check Display Background Scene" ] as UICheck; }
 		UIControl GetTextRestartToApplyChanges() { return GetPageGeneral()?.Components[ "Restart To Apply Changes" ] as UIControl; }
@@ -166,7 +166,7 @@ namespace Project
 					}
 				}
 
-				listAntialiasingBasic.SelectItem( SimulationApp.AntialiasingBasic );
+				listAntialiasingBasic.SelectItemByValue( SimulationApp.AntialiasingBasic );
 				listAntialiasingBasic.SelectedIndexChanged += delegate ( UIList sender )
 				{
 					SimulationApp.AntialiasingBasic = (string)sender.SelectedItem.Value;
@@ -179,7 +179,7 @@ namespace Project
 				if( SystemSettings.LimitedDevice )
 					listAntialiasingAdditional.ReadOnly = true;
 
-				listAntialiasingAdditional.SelectItem( SimulationApp.AntialiasingAdditional );
+				listAntialiasingAdditional.SelectItemByValue( SimulationApp.AntialiasingAdditional );
 				listAntialiasingAdditional.SelectedIndexChanged += delegate ( UIList sender )
 				{
 					SimulationApp.AntialiasingAdditional = (string)sender.SelectedItem.Value;
@@ -195,7 +195,7 @@ namespace Project
 					listAntialiasingMotion.RemoveItem( 2 );
 				}
 
-				listAntialiasingMotion.SelectItem( SimulationApp.AntialiasingMotion );
+				listAntialiasingMotion.SelectItemByValue( SimulationApp.AntialiasingMotion );
 				listAntialiasingMotion.SelectedIndexChanged += delegate ( UIList sender )
 				{
 					SimulationApp.AntialiasingMotion = (string)sender.SelectedItem.Value;
@@ -205,7 +205,7 @@ namespace Project
 			var listResolutionUpscaleMode = GetListResolutionUpscaleMode();
 			if( listResolutionUpscaleMode != null )
 			{
-				listResolutionUpscaleMode.SelectItem( SimulationApp.ResolutionUpscaleMode );
+				listResolutionUpscaleMode.SelectItemByValue( SimulationApp.ResolutionUpscaleMode );
 				listResolutionUpscaleMode.SelectedIndexChanged += delegate ( UIList sender )
 				{
 					SimulationApp.ResolutionUpscaleMode = (string)sender.SelectedItem.Value;
@@ -215,7 +215,7 @@ namespace Project
 			var listResolutionUpscaleTechnique = GetListResolutionUpscaleTechnique();
 			if( listResolutionUpscaleTechnique != null )
 			{
-				listResolutionUpscaleTechnique.SelectItem( SimulationApp.ResolutionUpscaleTechnique );
+				listResolutionUpscaleTechnique.SelectItemByValue( SimulationApp.ResolutionUpscaleTechnique );
 				listResolutionUpscaleTechnique.SelectedIndexChanged += delegate ( UIList sender )
 				{
 					SimulationApp.ResolutionUpscaleTechnique = (string)sender.SelectedItem.Value;
@@ -226,6 +226,27 @@ namespace Project
 					listResolutionUpscaleTechnique.RemoveItem( 3 );
 			}
 
+			var comboWindowedMode = GetComboWindowedMode();
+			if( comboWindowedMode != null )
+			{
+				comboWindowedMode.SelectedIndex = (int)SimulationApp.WindowedMode;
+				comboWindowedMode.SelectedIndexChanged += delegate ( UICombo sender )
+				{
+					SimulationApp.WindowedMode = (WindowedModeEnum)sender.SelectedIndex;
+
+					MessageBoxWindow.Show( this, "Change the windowed mode right now?", "Confirm", EMessageBoxButtons.YesNo, EMessageBoxIcon.Question, null, delegate ( MessageBoxWindow sender2, EDialogResult result, object anyData )
+					{
+						if( result == EDialogResult.Yes )
+							EngineApp.SetWindowedMode( SimulationApp.WindowedMode, EngineApp.WindowedModeSize );
+						else
+							ShowTextRestartToApplyChanges();
+					} );
+
+					//ShowTextRestartToApplyChanges();
+				};
+				comboWindowedMode.ReadOnly = SystemSettings.MobileDevice;
+			}
+
 			var listVideoMode = GetListVideoMode();
 			if( listVideoMode != null )
 			{
@@ -233,7 +254,10 @@ namespace Project
 				{
 					listVideoMode.AddItem( $"{mode.X}x{mode.Y}" );
 					if( mode == SimulationApp.VideoMode )
+					{
 						listVideoMode.SelectedIndex = listVideoMode.Items.Count - 1;
+						listVideoMode.EnsureVisible( listVideoMode.SelectedIndex );
+					}
 				}
 				listVideoMode.SelectedIndexChanged += delegate ( UIList sender )
 				{
@@ -245,21 +269,23 @@ namespace Project
 					}
 					else
 						SimulationApp.VideoMode = Vector2I.Zero;
-					ShowTextRestartToApplyChanges();
+
+					MessageBoxWindow.Show( this, "Change the windowed mode right now?", "Confirm", EMessageBoxButtons.YesNo, EMessageBoxIcon.Question, null, delegate ( MessageBoxWindow sender2, EDialogResult result, object anyData )
+					{
+						if( result == EDialogResult.Yes )
+						{
+							var fullscreenSize = SimulationApp.VideoMode;
+							if( fullscreenSize == Vector2I.Zero )
+								fullscreenSize = EngineApp.GetScreenSize();
+							EngineApp.SetWindowedMode( EngineApp.WindowedMode, fullscreenSize );
+						}
+						else
+							ShowTextRestartToApplyChanges();
+					} );
+
+					//ShowTextRestartToApplyChanges();
 				};
 				listVideoMode.ReadOnly = SystemSettings.MobileDevice || SystemSettings.CurrentPlatform == SystemSettings.Platform.Web;
-			}
-
-			var checkFullscreen = GetCheckFullscreen();
-			if( checkFullscreen != null )
-			{
-				checkFullscreen.Checked = SimulationApp.Fullscreen ? UICheck.CheckValue.Checked : UICheck.CheckValue.Unchecked;
-				checkFullscreen.CheckedChanged += delegate ( UICheck obj )
-				{
-					SimulationApp.Fullscreen = obj.Checked.Value == UICheck.CheckValue.Checked;
-					ShowTextRestartToApplyChanges();
-				};
-				checkFullscreen.ReadOnly = SystemSettings.MobileDevice;
 			}
 
 			var checkVerticalSync = GetCheckVerticalSync();
@@ -530,6 +556,11 @@ namespace Project
 
 			if( GetTextMicroparticlesInAir() != null )
 				GetTextMicroparticlesInAir().Text = SimulationApp.MicroparticlesInAirMultiplier.ToString( "F1" );
+
+			var comboWindowedMode = GetComboWindowedMode();
+			var listVideoMode = GetListVideoMode();
+			if( comboWindowedMode != null && listVideoMode != null )
+				listVideoMode.ReadOnly = (WindowedModeEnum)comboWindowedMode.SelectedIndex == WindowedModeEnum.Borderless;
 		}
 	}
 }

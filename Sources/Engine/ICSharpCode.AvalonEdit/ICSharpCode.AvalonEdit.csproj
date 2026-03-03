@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0-windows</TargetFramework>
-	<CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <TargetFramework>net8.0-windows8.0</TargetFramework>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
 	<UseWindowsForms>true</UseWindowsForms>
 	<UseWPF>true</UseWPF>
 	<EnableDefaultPageItems>false</EnableDefaultPageItems>
@@ -33,13 +33,13 @@
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <DefineDebug>True</DefineDebug>
     <DefineTrace>True</DefineTrace>
-    <NoWarn>CS1607;CS1591;CS0618</NoWarn>
+    <NoWarn>CS1607;CS1591;CS0618;SYSLIB0051;SYSLIB0050;CA1416</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputPath>..\..\..\Project\Binaries\</OutputPath>
     <DocumentationFile>ICSharpCode.AvalonEdit.xml</DocumentationFile>
     <DefineTrace>True</DefineTrace>
-    <NoWarn>CS1607;CS1591;CS0618</NoWarn>
+    <NoWarn>CS1607;CS1591;CS0618;SYSLIB0051;SYSLIB0050;CA1416</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Update="System.Core">

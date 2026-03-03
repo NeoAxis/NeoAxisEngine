@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
 	<CheckEolTargetFramework>false</CheckEolTargetFramework>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputType>Library</OutputType>
@@ -11,11 +11,13 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\..\Binaries\</OutputPath>
     <CodeAnalysisRuleSet />
+    <NoWarn>1701;1702;MSB3277</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>false</Optimize>
     <OutputPath>..\..\Binaries\</OutputPath>
     <CodeAnalysisRuleSet />
+    <NoWarn>1701;1702;MSB3277</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NeoAxis.Core">

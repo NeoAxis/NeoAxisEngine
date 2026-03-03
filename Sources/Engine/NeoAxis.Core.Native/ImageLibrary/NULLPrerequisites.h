@@ -1,3 +1,4 @@
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 /*
 -----------------------------------------------------------------------------
 This source file is part of OGRE
@@ -29,7 +30,7 @@ Torus Knot Software Ltd.
 #ifndef __NULLPREREQUISITES_H__
 #define __NULLPREREQUISITES_H__
 
-#include "OgrePrerequisites.h"
+#include "NativePrerequisites.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -39,7 +40,7 @@ Torus Knot Software Ltd.
 #endif
 
 
-namespace Ogre
+namespace Native
 {
 	// Predefine classes
 	class NULLRenderSystem;

@@ -56,7 +56,9 @@ namespace NeoAxis.Editor
 			this.Controls.Add(this.kryptonDropButton);
 			this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.Name = "HCGridDropDownButton";
-			this.Size = new System.Drawing.Size(285, 28);
+			//fixnet8
+			this.Size = new System.Drawing.Size( 285, 22 );
+			//this.Size = new System.Drawing.Size(285, 28);
 			this.ResumeLayout(false);
 
 		}

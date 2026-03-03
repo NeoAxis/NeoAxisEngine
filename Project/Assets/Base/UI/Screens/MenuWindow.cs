@@ -7,6 +7,12 @@ namespace Project
 {
 	public class MenuWindow : UIWindow
 	{
+		public static bool EnableButtonScenes { get; set; } = true;
+
+		static MenuWindow instance;
+
+		//
+
 		UIButton GetButtonClose() { return GetComponent<UIButton>( "Button Close" ); }
 		UIButton GetButtonScenes() { return GetComponent<UIButton>( "Button Scenes" ); }
 		UIButton GetButtonOptions() { return GetComponent<UIButton>( "Button Options" ); }
@@ -15,8 +21,15 @@ namespace Project
 
 		//
 
+		public static MenuWindow Instance
+		{
+			get { return instance; }
+		}
+
 		protected override void OnEnabledInSimulation()
 		{
+			instance = this;
+
 			var networkClientByCommandLine = false;
 			if( SystemSettings.CommandLineParameters.TryGetValue( "-client", out var isClient ) && isClient == "1" )
 				networkClientByCommandLine = true;
@@ -26,8 +39,13 @@ namespace Project
 
 			if( GetButtonScenes() != null )
 			{
-				GetButtonScenes().Click += ButtonScenes_Click;
-				GetButtonScenes().ReadOnly = networkClientByCommandLine;
+				if( EnableButtonScenes )
+				{
+					GetButtonScenes().Click += ButtonScenes_Click;
+					GetButtonScenes().ReadOnly = networkClientByCommandLine;
+				}
+				else
+					GetButtonScenes().Enabled = false;
 			}
 
 			if( GetButtonOptions() != null )
@@ -41,6 +59,21 @@ namespace Project
 
 			if( GetButtonExit() != null )
 				GetButtonExit().Click += ButtonExit_Click;
+
+			//fix size of the window
+			if( !EnableButtonScenes )
+			{
+				var size = Size.Value;
+				size.Y -= 60;
+				Size = size;
+			}
+		}
+
+		protected override void OnDisabledInSimulation()
+		{
+			base.OnDisabledInSimulation();
+
+			instance = null;
 		}
 
 		void ButtonClose_Click( UIButton sender )

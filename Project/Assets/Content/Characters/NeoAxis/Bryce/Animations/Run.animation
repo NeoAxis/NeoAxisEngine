@@ -29,12 +29,12 @@
 	{
 		Name = Trigger Footstep
 		Time = 0.1165
-		AnyData = Footstep
+		AnyDataTrigger = Footstep
 	}
 	.component NeoAxis.AnimationTrigger
 	{
 		Name = Trigger Footstep 2
 		Time = 0.4325
-		AnyData = Footstep
+		AnyDataTrigger = Footstep
 	}
 }

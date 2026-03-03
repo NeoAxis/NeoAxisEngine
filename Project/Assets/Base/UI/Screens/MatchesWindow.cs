@@ -141,16 +141,16 @@ namespace Project
 			if( client == null )
 				return;
 
-			MessageBoxWindow.Show( this, "Create a new match?", "Confirm", EMessageBoxButtons.YesNo, EMessageBoxIcon.Question, null, delegate ( MessageBoxWindow sender, EDialogResult result, object anyData )
+			MessageBoxWindow.Show( this, "Create a new match?", "Confirm", EMessageBoxButtons.YesNo, EMessageBoxIcon.Question, null, delegate ( MessageBoxWindow sender2, EDialogResult result2, object anyData )
 			{
-				if( result == EDialogResult.Yes )
+				if( result2 == EDialogResult.Yes )
 				{
 					Task.Run( async delegate ()
 					{
 						//create match on the server
 						var matchID = 0L;
 						{
-							using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+							var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 							var result = await client.CallMethodWithCancellationTokenAsync<long>( "Matches", "NewMatch", cts.Token, null, null );
 							if( !string.IsNullOrEmpty( result.Error ) )
 							{
@@ -201,7 +201,7 @@ namespace Project
 				return;
 
 			//call EnterMatch on the server
-			using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+			var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 			var result = await client.CallMethodWithCancellationTokenAsync<long>( "Matches", "EnterMatch", cts.Token, matchID, null );
 			if( !string.IsNullOrEmpty( result.Error ) )
 			{
@@ -240,7 +240,7 @@ namespace Project
 				var isUserOfMatch = false;
 				{
 					//call GetMatchUserOfCaller on the server
-					using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+					var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 					var result = await client.CallMethodWithCancellationTokenAsync<Matches.MatchUser>( "Matches", "GetMatchUserOfCaller", cts.Token, selectedMatch.Id );
 					if( !string.IsNullOrEmpty( result.Error ) )
 					{
@@ -294,7 +294,7 @@ namespace Project
 					return;
 
 				//get matches with Lobby status
-				using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+				var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 				var result = await client.CallMethodWithCancellationTokenAsync<Matches.Match[]>( "Matches", "GetMatches", cts.Token, null, null, null, new[] { "Lobby" } );
 				if( !string.IsNullOrEmpty( result.Error ) )
 				{
@@ -391,7 +391,7 @@ namespace Project
 
 				TextBlock rootBlock = null;
 
-				using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+				var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 				var result = await client.CallMethodWithCancellationTokenAsync<string>( "Implementation", "GetProjectDetails", cts.Token );
 				if( !string.IsNullOrEmpty( result.Error ) )
 					Log.Warning( "Error: " + result.Error );
@@ -439,7 +439,7 @@ namespace Project
 				if( client == null )
 					return;
 
-				using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+				var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 				var result = await client.CallMethodWithCancellationTokenAsync<Matches.Match>( "Implementation", "GetMatchPlayingByCaller", cts.Token );
 
 				if( !string.IsNullOrEmpty( result.Error ) )
@@ -461,9 +461,9 @@ namespace Project
 
 					var text = $"You are playing \"{match.Name}\". Do you want to continue?";
 
-					MessageBoxWindow.Show( this, text, "Confirm", EMessageBoxButtons.YesNo, EMessageBoxIcon.Question, null, delegate ( MessageBoxWindow sender, EDialogResult result, object anyData )
+					MessageBoxWindow.Show( this, text, "Confirm", EMessageBoxButtons.YesNo, EMessageBoxIcon.Question, null, delegate ( MessageBoxWindow sender, EDialogResult result2, object anyData )
 					{
-						if( result == EDialogResult.Yes )
+						if( result2 == EDialogResult.Yes )
 						{
 							MatchContinuePlay?.Invoke( this, match );
 						}

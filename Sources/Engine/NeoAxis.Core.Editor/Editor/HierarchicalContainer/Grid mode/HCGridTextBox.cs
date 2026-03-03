@@ -18,7 +18,6 @@ namespace NeoAxis.Editor
 		public HCGridTextBox()
 		{
 			InitializeComponent();
-
 			textBox1.Location = new Point( 0, DpiHelper.Default.ScaleValue( 3 ) );
 			textBox1.AutoSize = false;
 			textBox1.Height = DpiHelper.Default.ScaleValue( 18 );

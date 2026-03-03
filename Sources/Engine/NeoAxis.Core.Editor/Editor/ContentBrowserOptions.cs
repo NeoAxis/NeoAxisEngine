@@ -124,8 +124,8 @@ namespace NeoAxis.Editor
 
 			//
 
-			public PropertyImpl( ContentBrowserOptions owner, string name, Metadata.TypeInfo type, IList<Attribute> attributes, string category, object value )
-				: base( owner, name, false, type, type, new Metadata.Parameter[ 0 ], false )
+			public PropertyImpl( ContentBrowserOptions owner, string name, Metadata.TypeInfo type, IList<Attribute> attributes, string category, object value, bool readOnly = false )
+				: base( owner, name, false, type, type, new Metadata.Parameter[ 0 ], readOnly )
 			{
 				this.attributes = attributes;
 				this.category = category;

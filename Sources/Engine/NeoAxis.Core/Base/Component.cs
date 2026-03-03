@@ -2102,7 +2102,10 @@ namespace NeoAxis
 			public Component this[ string nameOrPath ]
 			{
 				[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-				get { return GetByPath( nameOrPath ); }
+				get
+				{
+					return GetByPath( nameOrPath );
+				}
 			}
 
 			//!!!!!
@@ -4377,7 +4380,7 @@ namespace NeoAxis
 
 					item.remainingTime -= delta;
 
-again:;
+					again:;
 					if( item.remainingTime <= 0 )
 					{
 						ObjectEx.MethodInvoke( this, item.methodVirtual, item.methodNative, item.parameters );

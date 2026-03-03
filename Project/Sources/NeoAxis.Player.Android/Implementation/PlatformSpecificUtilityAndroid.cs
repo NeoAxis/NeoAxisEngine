@@ -1,9 +1,8 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Internal;
-using Plugin.Clipboard;
+using Android.App;
+using Android.Content;
+using Android.OS;
 
 namespace NeoAxis
 {
@@ -18,6 +17,10 @@ namespace NeoAxis
 		{
 			//!!!!
 			return "";
+
+			//// Android apps don’t have an “executable directory” in the desktop sense.
+			//// If you need a base path, typically use internal files dir:
+			//return Application.Context.FilesDir?.AbsolutePath ?? string.Empty;
 		}
 
 		public override IntPtr LoadLibrary( string path )
@@ -25,25 +28,93 @@ namespace NeoAxis
 			return IntPtr.Zero;
 		}
 
+		static ClipboardManager? GetClipboardManager()
+		{
+			var ctx = Application.Context;
+			return (ClipboardManager?)ctx.GetSystemService( Context.ClipboardService );
+		}
+
+		static void RunOnMainThread( Action action )
+		{
+			var looper = Looper.MyLooper();
+			if( Looper.MyLooper() == looper )
+				action();
+			else
+			{
+				if( looper != null )
+					new Handler( looper ).Post( action );
+			}
+		}
+
 		public override string GetClipboardText()
 		{
 			try
 			{
-				return CrossClipboard.Current.GetText();
+				var cm = GetClipboardManager();
+				if( cm == null )
+					return string.Empty;
+
+				string result = string.Empty;
+
+				RunOnMainThread( () =>
+				{
+					if( !cm.HasPrimaryClip )
+						return;
+
+					var clip = cm.PrimaryClip;
+					if( clip == null || clip.ItemCount <= 0 )
+						return;
+
+					var item = clip.GetItemAt( 0 );
+					if( item == null )
+						return;
+
+					// CoerceToText handles plain text and some other clip types.
+					var coerced = item.CoerceToText( Application.Context );
+					result = coerced?.ToString() ?? string.Empty;
+				} );
+
+				return result;
 			}
 			catch
 			{
-				return "";
+				return string.Empty;
 			}
+
+			//try
+			//{
+			//	return CrossClipboard.Current.GetText();
+			//}
+			//catch
+			//{
+			//	return "";
+			//}
 		}
 
 		public override void SetClipboardText( string text )
 		{
 			try
 			{
-				CrossClipboard.Current.SetText( text );
+				var cm = GetClipboardManager();
+				if( cm == null )
+					return;
+
+				RunOnMainThread( () =>
+				{
+					var clip = ClipData.NewPlainText( "text", text ?? string.Empty );
+					cm.PrimaryClip = clip;
+				} );
 			}
-			catch { }
+			catch
+			{
+				// ignore
+			}
+
+			//try
+			//{
+			//	CrossClipboard.Current.SetText( text );
+			//}
+			//catch { }
 		}
 	}
 }

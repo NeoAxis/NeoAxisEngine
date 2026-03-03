@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0-windows</TargetFramework>
-	<CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <TargetFramework>net8.0-windows8.0</TargetFramework>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
 	<UseWindowsForms>true</UseWindowsForms>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputType>Library</OutputType>
@@ -14,7 +14,7 @@
     <CodeAnalysisRuleSet />
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DocumentationFile></DocumentationFile>
-    <NoWarn>1701;1702;1591;CA1416</NoWarn>
+    <NoWarn>1701;1702;1591;CA1416;SYSLIB0014</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>false</Optimize>
@@ -22,7 +22,7 @@
     <CodeAnalysisRuleSet />
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DocumentationFile></DocumentationFile>
-    <NoWarn>1701;1702;1591;CA1416</NoWarn>
+    <NoWarn>1701;1702;1591;CA1416;SYSLIB0014</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />

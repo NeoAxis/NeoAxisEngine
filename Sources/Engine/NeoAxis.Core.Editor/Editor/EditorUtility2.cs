@@ -349,5 +349,48 @@ again2:;
 				}
 			}
 		}
+
+		public static void SetRoslynPadDotNetReferenceDllDirectory()
+		{
+			try
+			{
+				//dotnet\packs\Microsoft.NETCore.App.Ref\8.0.23\ref\net8.0
+
+				var dotNetDirectory = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet\packs\Microsoft.NETCore.App.Ref" );
+				var versionDirectories = Directory.GetDirectories( dotNetDirectory );
+
+				//get version directory, select which contain directory
+				var versionDirectory = "";
+				foreach( var dir in versionDirectories )
+				{
+					if( Directory.GetDirectories( dir ).Length != 0 )
+					{
+						versionDirectory = dir;
+						break;
+					}
+				}
+				if( string.IsNullOrEmpty( versionDirectory ) )
+					throw new Exception( "RoslynHostReferences: Version directory with files not found in " + dotNetDirectory );
+
+				var refDirectory = Path.Combine( versionDirectory, "ref" );
+				var netDirectories = Directory.GetDirectories( refDirectory, "net*" );
+
+				var netDirectory = "";
+				foreach( var dir in netDirectories )
+				{
+					if( Directory.GetFiles( dir ).Length != 0 )
+					{
+						netDirectory = dir;
+						break;
+					}
+				}
+
+				RoslynPad.Roslyn.RoslynHostReferences.DotNetDirectory = netDirectory;
+			}
+			catch( Exception e )
+			{
+				Log.Fatal( "EditorUtility2: GetDotNetReferenceDllDirectory: Exception: " + e.Message );
+			}
+		}
 	}
 }

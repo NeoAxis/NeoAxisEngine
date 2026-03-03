@@ -191,10 +191,6 @@ namespace NeoAxis.Editor
 			Helper.AddImage( "GroupOfObjects", Properties.Resources.GroupOfObjects_16, Properties.Resources.GroupOfObjects_32 );
 			Helper.AddImage( "Terrain", Properties.Resources.Terrain_16, Properties.Resources.Terrain_32 );
 			//Helper.AddImage( "BasicItem", Properties.Resources.BasicItem_16, Properties.Resources.BasicItem_32 );
-
-
-			//!!!!
-			//CoreExtension.dll
 			Helper.AddImage( "Plant", Properties.Resources.Plant_16, Properties.Resources.Plant_32 );
 		}
 	}
@@ -255,7 +251,7 @@ namespace NeoAxis.Editor
 					return "GameMode";
 				else if( MetadataManager.GetType( "NeoAxis.NetworkLogic" ).IsAssignableFrom( type ) )
 					return "NetworkLogic";
-				else if( MetadataManager.GetType( "NeoAxis.Button" ).IsAssignableFrom( type ) )
+				else if( MetadataManager.GetType( "NeoAxis.Button3D" ).IsAssignableFrom( type ) )
 					return "Button";
 				else if( MetadataManager.GetType( "NeoAxis.Regulator" ).IsAssignableFrom( type ) )
 					return "Regulator";

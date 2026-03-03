@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net8.0-windows8.0</TargetFramework>
 	<CheckEolTargetFramework>false</CheckEolTargetFramework>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
 	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <OutputType>WinExe</OutputType>
-    <OldToolsVersion>3.5</OldToolsVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -39,4 +39,9 @@
       <HintPath>..\..\Binaries\NeoAxis.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <Target Name="FailIfOptimizeEnabled" BeforeTargets="BeforeBuild">
+    <Error Condition="'$(Optimize)' == 'true'" Text="Optimize must be disabled. Current configuration has Optimize=$(Optimize)." />
+  </Target>
+  
 </Project>

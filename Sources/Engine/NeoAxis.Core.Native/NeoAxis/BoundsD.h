@@ -30,12 +30,12 @@ THE SOFTWARE.
 #define __BoundsD_H_
 
 // Precompiler options
-#include "OgrePrerequisites.h"
+#include "NativePrerequisites.h"
 
-#include "OgreVector3D.h"
-//#include "OgreMatrix4.h"
+#include "NativeVector3D.h"
+//#include "NativeMatrix4.h"
 
-namespace Ogre {
+namespace Native {
 
 	class BoundsD
 	{
@@ -547,6 +547,6 @@ namespace Ogre {
 
 	/** @} */
 	/** @} */
-} // namespace Ogre
+} // namespace Native
 
 #endif

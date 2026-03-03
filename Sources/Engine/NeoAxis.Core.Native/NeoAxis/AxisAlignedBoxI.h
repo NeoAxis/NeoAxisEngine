@@ -30,11 +30,11 @@ THE SOFTWARE.
 #define __AxisAlignedBoxI_H_
 
 // Precompiler options
-#include "OgrePrerequisites.h"
+#include "NativePrerequisites.h"
 
 #include "Vector3I.h"
 
-namespace Ogre {
+namespace Native {
 	/** \addtogroup Core
 	*  @{
 	*/
@@ -645,6 +645,6 @@ namespace Ogre {
 
 	/** @} */
 	/** @} */
-} // namespace Ogre
+} // namespace Native
 
 #endif

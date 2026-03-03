@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2024.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1144, 842\"><KW V=\"1\" A=\"A4F0C5CC785E4EED91B891480301153A\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"691D02B801C846BF37B51655FFEF360A\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"A4F0C5CC785E4EED91B891480301153A\"><KP UN=\"A4F0C5CC785E4EED91B891480301153A\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"2C6935ACDAC3458727866D15C720CE1D\" S=\"False\"><CPD ObjPath=\"$Button\\$C# Script\" /></KP><KP UN=\"6E004B7797A8473683B9007600BE6B86\" S=\"False\"><CPD ObjPath=\"$Default Gate 3\\$C# Script\" /></KP><KP UN=\"B00DB9D5A61F41985083294B365B5611\" S=\"False\"><CPD ObjPath=\"$Pipe 2\\$Interactive Object\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1174, 963\"><KW V=\"1\" A=\"A4F0C5CC785E4EED91B891480301153A\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"691D02B801C846BF37B51655FFEF360A\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"A4F0C5CC785E4EED91B891480301153A\"><KP UN=\"A4F0C5CC785E4EED91B891480301153A\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"2C6935ACDAC3458727866D15C720CE1D\" S=\"False\"><CPD ObjPath=\"$Button\\$C# Script\" /></KP><KP UN=\"6E004B7797A8473683B9007600BE6B86\" S=\"False\"><CPD ObjPath=\"$Default Gate 3\\$C# Script\" /></KP><KP UN=\"B00DB9D5A61F41985083294B365B5611\" S=\"False\"><CPD ObjPath=\"$Pipe 2\\$Interactive Object\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -230,13 +230,13 @@
 			LookingForFoodModeIdleTime = 10
 		}
 	}
-	.component NeoAxis.Button
+	.component NeoAxis.Button3D
 	{
 		Name = Button
 		Transform = "2.10110404308887 4.88006665059538 1.31812492559637; 0 0 -0.707106781186548 0.707106781186548; 0.613496937815348 0.613496937815348 0.613496937815348"
 		Mesh
 		{
-			GetByReference = "Content\\Buttons\\Default\\Base.mesh"
+			GetByReference = "Content\\Buttons 3D\\Default\\Base.mesh"
 		}
 		SpecialEffects
 		{
@@ -249,7 +249,7 @@
 		{
 			Name = C# Script
 			NetworkMode = False
-			Code = "public void Button_Click(NeoAxis.Button sender, NeoAxis.Component initiator)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\t//open or close the gate\r\n\tvar gate = scene.GetComponent<Gate>(\"Default Gate 2\");\r\n\tif(gate != null)\r\n\t{\r\n\t\tgate.TrySwitch(initiator);\r\n\r\n\t\t//!!!!add networking support\r\n\t\t//gate.TrySetState\r\n\t\t//gate.DesiredState = sender.Activated.Value ? 1 : 0;\r\n\t}\t\r\n}\r\n"
+			Code = "public void Button_Click(NeoAxis.Button3D sender, NeoAxis.Component initiator)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\t//open or close the gate\r\n\tvar gate = scene.GetComponent<Gate>(\"Default Gate 2\");\r\n\tif(gate != null)\r\n\t{\r\n\t\tgate.TrySwitch(initiator);\r\n\r\n\t\t//!!!!add networking support\r\n\t\t//gate.TrySetState\r\n\t\t//gate.DesiredState = sender.Activated.Value ? 1 : 0;\r\n\t}\t\r\n}\r\n"
 			Exit
 			{
 			}
@@ -262,7 +262,7 @@
 				}
 				HandlerMethod
 				{
-					GetByReference = "this:..\\method:Button_Click(NeoAxis.Button,NeoAxis.Component)"
+					GetByReference = "this:..\\method:Button_Click(NeoAxis.Button3D,NeoAxis.Component)"
 				}
 				HandlerFlow
 				{
@@ -270,14 +270,14 @@
 			}
 		}
 	}
-	.component NeoAxis.Item
+	.component NeoAxis.Item3D
 	{
 		Name = Key
 		Transform = "6.64027624544232 0.662653233517053 1.01512538717886; 0 0 0 1; 1 1 1"
 		Collision = True
 		Mesh
 		{
-			GetByReference = "Content\\Items\\NeoAxis\\Key\\Data\\scene.gltf|$Mesh"
+			GetByReference = "Content\\Items 3D\\NeoAxis\\Key\\Data\\scene.gltf|$Mesh"
 		}
 		SpecialEffects
 		{
@@ -288,7 +288,7 @@
 		}
 		ItemType
 		{
-			GetByReference = "Content\\Items\\NeoAxis\\Key\\Key.itemtype"
+			GetByReference = "Content\\Items 3D\\NeoAxis\\Key\\Key.itemtype"
 		}
 	}
 	.component NeoAxis.MeshInSpace
@@ -409,7 +409,7 @@
 		{
 			Name = C# Script
 			NetworkMode = False
-			Code = "public void DefaultGate3_CanSwitch(NeoAxis.Gate sender, NeoAxis.Component initiator, ref bool canSwitch)\r\n{\r\n\t//get a character of the player\r\n\tvar playerCharacter = initiator as Character;\r\n\tif (playerCharacter != null)\r\n\t{\r\n\t\t//checks player\'s character has a key\r\n\t\tvar item = playerCharacter.GetItemByResourceName(@\"Content\\Items\\NeoAxis\\Key\\Key.itemtype\");\r\n\t\tif (item == null)\r\n\t\t{\r\n\t\t\t//show screen message\r\n\t\t\tvar text = \"You need to have a key to open the door.\";\t\t\t\r\n\t\t\tif(sender.NetworkIsServer) //if(SimulationAppServer.Server != null)\r\n\t\t\t{\r\n\t\t\t\tvar networkLogic = NetworkLogicUtility.GetNetworkLogic(initiator) as NetworkLogic;\r\n\t\t\t\tnetworkLogic?.SendScreenMessageToClientByControlledObject(initiator, text, false);\r\n\t\t\t}\r\n\t\t\telse\r\n\t\t\t\tScreenMessages.Add(text);\r\n\t\t\t\t\r\n\t\t\t//set can\'t interact \r\n\t\t\tcanSwitch = false;\r\n\t\t\t\r\n\t\t\treturn;\r\n\t\t}\r\n\t}\t\t\t\r\n}\r\n"
+			Code = "public void DefaultGate3_CanSwitch(NeoAxis.Gate sender, NeoAxis.Component initiator, ref bool canSwitch)\r\n{\r\n\t//get a character of the player\r\n\tvar playerCharacter = initiator as Character;\r\n\tif (playerCharacter != null)\r\n\t{\r\n\t\t//checks player\'s character has a key\r\n\t\tvar item = playerCharacter.GetItemByResourceName(@\"Content\\Items 3D\\NeoAxis\\Key\\Key.itemtype\");\r\n\t\tif (item == null)\r\n\t\t{\r\n\t\t\t//show screen message\r\n\t\t\tvar text = \"You need to have a key to open the door.\";\t\t\t\r\n\t\t\tif(sender.NetworkIsServer) //if(SimulationAppServer.Server != null)\r\n\t\t\t{\r\n\t\t\t\tvar networkLogic = NetworkLogicUtility.GetNetworkLogic(initiator) as NetworkLogic;\r\n\t\t\t\tnetworkLogic?.SendScreenMessageToClientByControlledObject(initiator, text, false);\r\n\t\t\t}\r\n\t\t\telse\r\n\t\t\t\tScreenMessages.Add(text);\r\n\t\t\t\t\r\n\t\t\t//set can\'t interact \r\n\t\t\tcanSwitch = false;\r\n\t\t\t\r\n\t\t\treturn;\r\n\t\t}\r\n\t}\t\t\t\r\n}\r\n"
 			Exit
 			{
 			}

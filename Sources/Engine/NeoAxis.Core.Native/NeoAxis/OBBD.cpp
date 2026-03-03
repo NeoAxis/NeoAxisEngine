@@ -26,10 +26,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
-#include "OgreStableHeaders.h"
+#include "NativeStableHeaders.h"
 #include "OBBD.h"
 
-namespace Ogre
+namespace Native
 {
 	const OBBD OBBD::OBBD_ZERO( Vector3D::ZERO, Vector3D::ZERO, Matrix3D::IDENTITY );
 	const OBBD OBBD::OBBD_CLEARED( Vector3D::ZERO, Vector3D( DBL_MIN, DBL_MIN, DBL_MIN), Matrix3D::IDENTITY );

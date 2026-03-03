@@ -10,9 +10,7 @@ namespace Project
 	public class EntranceScreen : NeoAxis.UIControl
 	{
 		AvatarWindow avatarWindow;
-
 		double requestEntranceScreenInfoRemainingTime = 5;
-
 		bool autoEnterTriedEnterToWorld;
 
 		/////////////////////////////////////////
@@ -146,13 +144,13 @@ namespace Project
 			var status = "";
 
 			var clientLogic = GetNetworkLogic();
-			if( clientLogic != null && SimulationAppClient.Client != null )
+			if( clientLogic != null && SimulationAppClient.ConnectionNode != null )
 			{
 				description = clientLogic.EntranceScreenDescription;
 
 				var players = 0;
 				var bots = 0;
-				foreach( var user in SimulationAppClient.Client.Users.Users )
+				foreach( var user in SimulationAppClient.ConnectionNode.Users.Users )
 				{
 					if( user.Bot )
 						bots++;

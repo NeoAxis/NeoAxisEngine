@@ -1,9 +1,9 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-#include "OgreStableHeaders.h"
+#include "NativeStableHeaders.h"
 #include "NeoAxisCoreNative.h"
 #include "UtilsNativeWrapper.h"
 
-using namespace Ogre;
+using namespace Native;
 
 #ifdef USE_NATIVE_MEMORY_MANAGER
 

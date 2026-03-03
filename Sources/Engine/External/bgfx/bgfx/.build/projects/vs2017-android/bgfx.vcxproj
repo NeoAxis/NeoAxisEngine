@@ -462,7 +462,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(OutDir)libbgfx.lib</ImportLibrary>
       <AdditionalOptions>-z muldefs -lm %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm64\usr\lib\libm.a;C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm64\usr\lib\libGLESv2.so;C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm64\usr\lib\libEGL.so;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\Program Files (x86)\Android\AndroidNDK64\android-ndk-r16b\platforms\android-27\arch-arm64\usr\lib\libm.a;C:\Program Files (x86)\Android\AndroidNDK64\android-ndk-r16b\platforms\android-27\arch-arm64\usr\lib\libGLESv2.so;C:\Program Files (x86)\Android\AndroidNDK64\android-ndk-r16b\platforms\android-27\arch-arm64\usr\lib\libEGL.so;%(AdditionalDependencies)</AdditionalDependencies>
       <DebuggerSymbolInformation>OmitAllSymbolInformation</DebuggerSymbolInformation>
     </Link>
     <PostBuildEvent>
@@ -616,7 +616,7 @@
       <AdditionalOptions>-fms-extensions %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm64\usr\lib\libm.a;C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm64\usr\lib\libGLESv2.so;C:\Microsoft\AndroidNDK64\android-ndk-r16b\platforms\android-26\arch-arm64\usr\lib\libEGL.so;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\Program Files (x86)\Android\AndroidNDK64\android-ndk-r16b\platforms\android-27\arch-arm64\usr\lib\libm.a;C:\Program Files (x86)\Android\AndroidNDK64\android-ndk-r16b\platforms\android-27\arch-arm64\usr\lib\libGLESv2.so;C:\Program Files (x86)\Android\AndroidNDK64\android-ndk-r16b\platforms\android-27\arch-arm64\usr\lib\libEGL.so;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <Version>
       </Version>

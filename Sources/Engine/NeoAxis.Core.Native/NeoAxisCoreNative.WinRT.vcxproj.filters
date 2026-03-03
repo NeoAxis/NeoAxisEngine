@@ -30,144 +30,6 @@
     <ClCompile Include="ImageLibrary\NULLRenderSystem.cpp">
       <Filter>ImageManager</Filter>
     </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreAlignedAllocator.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreArchiveManager.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreAxisAlignedBox.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreAxisAlignedBoxD.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreCodec.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreColourValue.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreCommon.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreDataStream.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreDDSCodec.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreDebugKeys.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreDynLib.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreDynLibManager.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreException.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreFreeImageCodec.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreImage.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreLog.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreLogManager.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreMath.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreMathD.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreMatrix3.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreMatrix3D.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreMatrix4.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreMemoryAllocatedObject.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreOptimisedUtil.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreOptimisedUtilGeneral.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreOptimisedUtilSSE.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgrePixelFormat.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgrePlane.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgrePlaneD.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgrePlatformInformation.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgrePrecompiledHeaders.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgrePVRTCCodec.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreQuaternion.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreRenderSystem.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreResource.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreResourceGroupManager.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreResourceManager.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreRoot.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreSceneManager.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreString.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreStringConverter.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreStringInterface.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreVector2.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreVector3.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreVector3D.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreVector4.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
     <ClCompile Include="ImageLibrary\YUVToRGBConverter.cpp">
       <Filter>ImageManager</Filter>
     </ClCompile>
@@ -193,15 +55,6 @@
       <Filter>NativeWrapper</Filter>
     </ClCompile>
     <ClCompile Include="NativeWrapper\MiniDump.cpp">
-      <Filter>NativeWrapper</Filter>
-    </ClCompile>
-    <ClCompile Include="NativeWrapper\MyOgreLogListener.cpp">
-      <Filter>NativeWrapper</Filter>
-    </ClCompile>
-    <ClCompile Include="NativeWrapper\MyOgreVirtualFileSystem.cpp">
-      <Filter>NativeWrapper</Filter>
-    </ClCompile>
-    <ClCompile Include="NativeWrapper\OgreNativeWrapper.cpp">
       <Filter>NativeWrapper</Filter>
     </ClCompile>
     <ClCompile Include="NeoAxis\AxisAlignedBoxI.cpp">
@@ -1420,5 +1273,56 @@
     <ClCompile Include="SimpleTrayIcon\TrayMenuItemBase.cpp" />
     <ClCompile Include="SimpleTrayIcon\TrayMenuPopup.cpp" />
     <ClCompile Include="SimpleTrayIcon\TrayMenuSeparator.cpp" />
+    <ClCompile Include="ImageLibrary\NativeAlignedAllocator.cpp" />
+    <ClCompile Include="ImageLibrary\NativeArchiveManager.cpp" />
+    <ClCompile Include="ImageLibrary\NativeAxisAlignedBox.cpp" />
+    <ClCompile Include="ImageLibrary\NativeAxisAlignedBoxD.cpp" />
+    <ClCompile Include="ImageLibrary\NativeCodec.cpp" />
+    <ClCompile Include="ImageLibrary\NativeColourValue.cpp" />
+    <ClCompile Include="ImageLibrary\NativeCommon.cpp" />
+    <ClCompile Include="ImageLibrary\NativeDataStream.cpp" />
+    <ClCompile Include="ImageLibrary\NativeDDSCodec.cpp" />
+    <ClCompile Include="ImageLibrary\NativeDebugKeys.cpp" />
+    <ClCompile Include="ImageLibrary\NativeDynLib.cpp" />
+    <ClCompile Include="ImageLibrary\NativeDynLibManager.cpp" />
+    <ClCompile Include="ImageLibrary\NativeException.cpp" />
+    <ClCompile Include="ImageLibrary\NativeFreeImageCodec.cpp" />
+    <ClCompile Include="ImageLibrary\NativeImage.cpp" />
+    <ClCompile Include="ImageLibrary\NativeLog.cpp" />
+    <ClCompile Include="ImageLibrary\NativeLogManager.cpp" />
+    <ClCompile Include="ImageLibrary\NativeMath.cpp" />
+    <ClCompile Include="ImageLibrary\NativeMathD.cpp" />
+    <ClCompile Include="ImageLibrary\NativeMatrix3.cpp" />
+    <ClCompile Include="ImageLibrary\NativeMatrix3D.cpp" />
+    <ClCompile Include="ImageLibrary\NativeMatrix4.cpp" />
+    <ClCompile Include="ImageLibrary\NativeMemoryAllocatedObject.cpp" />
+    <ClCompile Include="ImageLibrary\NativeOptimisedUtil.cpp" />
+    <ClCompile Include="ImageLibrary\NativeOptimisedUtilGeneral.cpp" />
+    <ClCompile Include="ImageLibrary\NativeOptimisedUtilSSE.cpp" />
+    <ClCompile Include="ImageLibrary\NativePixelFormat.cpp" />
+    <ClCompile Include="ImageLibrary\NativePlane.cpp" />
+    <ClCompile Include="ImageLibrary\NativePlaneD.cpp" />
+    <ClCompile Include="ImageLibrary\NativePlatformInformation.cpp" />
+    <ClCompile Include="ImageLibrary\NativePrecompiledHeaders.cpp" />
+    <ClCompile Include="ImageLibrary\NativePVRTCCodec.cpp" />
+    <ClCompile Include="ImageLibrary\NativeQuaternion.cpp" />
+    <ClCompile Include="ImageLibrary\NativeRenderSystem.cpp" />
+    <ClCompile Include="ImageLibrary\NativeResource.cpp" />
+    <ClCompile Include="ImageLibrary\NativeResourceGroupManager.cpp" />
+    <ClCompile Include="ImageLibrary\NativeResourceManager.cpp" />
+    <ClCompile Include="ImageLibrary\NativeRoot.cpp" />
+    <ClCompile Include="ImageLibrary\NativeSceneManager.cpp" />
+    <ClCompile Include="ImageLibrary\NativeString.cpp" />
+    <ClCompile Include="ImageLibrary\NativeStringConverter.cpp" />
+    <ClCompile Include="ImageLibrary\NativeStringInterface.cpp" />
+    <ClCompile Include="ImageLibrary\NativeVector2.cpp" />
+    <ClCompile Include="ImageLibrary\NativeVector3.cpp" />
+    <ClCompile Include="ImageLibrary\NativeVector3D.cpp" />
+    <ClCompile Include="ImageLibrary\NativeVector4.cpp" />
+    <ClCompile Include="NativeWrapper\MyNativeLogListener.cpp" />
+    <ClCompile Include="NativeWrapper\MyNativeVirtualFileSystem.cpp" />
+    <ClCompile Include="NativeWrapper\NativeNativeWrapper.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\alsa.cpp" />
+    <ClCompile Include="..\External\OpenALSoft\alc\backends\opensl.cpp" />
   </ItemGroup>
 </Project>

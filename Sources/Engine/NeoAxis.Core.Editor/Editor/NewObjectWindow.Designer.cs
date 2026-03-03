@@ -59,7 +59,9 @@ namespace NeoAxis.Editor
 			this.buttonCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonCreate.Location = new System.Drawing.Point(222, 655);
 			this.buttonCreate.Name = "buttonCreate";
-			this.buttonCreate.Size = new System.Drawing.Size(147, 32);
+			//fixnet8
+			this.buttonCreate.Size = new System.Drawing.Size( 147, 26 );
+			//this.buttonCreate.Size = new System.Drawing.Size(147, 32);
 			this.buttonCreate.TabIndex = 0;
 			this.buttonCreate.Values.Text = "Create";
 			this.buttonCreate.Click += new System.EventHandler(this.ButtonCreate_Click);
@@ -70,7 +72,9 @@ namespace NeoAxis.Editor
 			this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.buttonClose.Location = new System.Drawing.Point(528, 655);
 			this.buttonClose.Name = "buttonClose";
-			this.buttonClose.Size = new System.Drawing.Size(147, 32);
+			//fixnet8
+			this.buttonClose.Size = new System.Drawing.Size( 147, 26 );
+			//this.buttonClose.Size = new System.Drawing.Size(147, 32);
 			this.buttonClose.TabIndex = 1;
 			this.buttonClose.Values.Text = "Close";
 			this.buttonClose.Click += new System.EventHandler(this.ButtonClose_Click);
@@ -212,7 +216,9 @@ namespace NeoAxis.Editor
 			this.buttonCreateAndClose.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.buttonCreateAndClose.Location = new System.Drawing.Point(375, 655);
 			this.buttonCreateAndClose.Name = "buttonCreateAndClose";
-			this.buttonCreateAndClose.Size = new System.Drawing.Size(147, 32);
+			//fixnet8
+			this.buttonCreateAndClose.Size = new System.Drawing.Size( 147, 26 );
+			//this.buttonCreateAndClose.Size = new System.Drawing.Size(147, 32);
 			this.buttonCreateAndClose.TabIndex = 8;
 			this.buttonCreateAndClose.Values.Text = "Create and Close";
 			this.buttonCreateAndClose.Click += new System.EventHandler(this.ButtonCreateAndClose_Click);
@@ -229,7 +235,9 @@ namespace NeoAxis.Editor
 			this.CloseByEscape = true;
 			this.Controls.Add(this.kryptonSplitContainer1);
 			this.Name = "NewObjectWindow";
-			this.Size = new System.Drawing.Size(1054, 714);
+			//fixnet8
+			this.Size = new System.Drawing.Size( 1054, 708 );
+			//this.Size = new System.Drawing.Size(1054, 714);
 			this.WindowTitle = "New Object";
 			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer1.Panel1)).EndInit();
 			this.kryptonSplitContainer1.Panel1.ResumeLayout(false);

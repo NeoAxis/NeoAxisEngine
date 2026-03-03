@@ -62,7 +62,9 @@ namespace NeoAxis.Editor
 			this.Controls.Add(this.textBox1);
 			this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.Name = "HCGridTextBoxNumeric";
-			this.Size = new System.Drawing.Size(307, 28);
+			//fixnet8
+			this.Size = new System.Drawing.Size( 307, 22 );
+			//this.Size = new System.Drawing.Size(307, 28);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

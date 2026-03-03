@@ -74,11 +74,8 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
-		//!!!! rename to GetScreenResolutions ?
 		public override List<Vector2I> GetVideoModes()
 		{
-			// not implemented !
-
 			// IDXGIAdapter1.EnumOutputs, IDXGIOutput::GetDisplayModeList to enumerate resolutions.
 			// see SDL.
 
@@ -141,9 +138,10 @@ namespace NeoAxis
 
 			if( CreatedWindow_IsWindowActive() )
 			{
-				Debug.Assert( EngineApp.FullscreenEnabled == !applicationView.IsFullScreenMode );
+				var isFullscreen = EngineApp.WindowedMode == WindowedModeEnum.Fullscreen; //EngineApp.FullscreenEnabled
+				Debug.Assert( isFullscreen == !applicationView.IsFullScreenMode );
 
-				if( EngineApp.FullscreenEnabled )
+				if( EngineApp.WindowedMode == WindowedModeEnum.Fullscreen ) //if( EngineApp.FullscreenEnabled )
 				{
 					bool result = applicationView.TryEnterFullScreenMode();
 				}

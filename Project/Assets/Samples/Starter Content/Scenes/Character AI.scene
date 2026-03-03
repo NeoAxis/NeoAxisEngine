@@ -281,7 +281,7 @@
 			}
 		}
 	}
-	.component NeoAxis.Button
+	.component NeoAxis.Button3D
 	{
 		Name = Button
 		Transform = "-1.3658208777314 4.15177148121879 1.32489341333328; 0 0 -0.478282120422081 0.878206247577731; 1 1 1"
@@ -299,7 +299,7 @@
 		.component NeoAxis.CSharpScript
 		{
 			Name = C# Script
-			Code = "public void Button_Click(NeoAxis.Button sender, NeoAxis.Component initiator)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\tvar ground = scene.GetComponent(\"Ground\") as MeshInSpace;\r\n\tif (ground != null)\r\n\t{\r\n\t\tif (!ground.ReplaceMaterial.ReferenceSpecified)\r\n\t\t{\r\n\t\t\tground.ReplaceMaterial = ReferenceUtility.MakeReference( @\"Base\\Materials\\Dark Yellow.material\");\r\n\t\t}\r\n\t\telse\r\n\t\t\tground.ReplaceMaterial = null;\r\n\t}\r\n}\r\n"
+			Code = "public void Button_Click(NeoAxis.Button3D sender, NeoAxis.Component initiator)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\tvar ground = scene.GetComponent(\"Ground\") as MeshInSpace;\r\n\tif (ground != null)\r\n\t{\r\n\t\tif (!ground.ReplaceMaterial.ReferenceSpecified)\r\n\t\t{\r\n\t\t\tground.ReplaceMaterial = ReferenceUtility.MakeReference( @\"Base\\Materials\\Dark Yellow.material\");\r\n\t\t}\r\n\t\telse\r\n\t\t\tground.ReplaceMaterial = null;\r\n\t}\r\n}\r\n"
 			Exit
 			{
 			}
@@ -312,7 +312,7 @@
 				}
 				HandlerMethod
 				{
-					GetByReference = "this:..\\method:Button_Click(NeoAxis.Button,NeoAxis.Component)"
+					GetByReference = "this:..\\method:Button_Click(NeoAxis.Button3D,NeoAxis.Component)"
 				}
 				HandlerFlow
 				{

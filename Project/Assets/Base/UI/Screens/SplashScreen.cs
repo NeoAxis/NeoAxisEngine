@@ -9,13 +9,17 @@ namespace Project
 	public class SplashScreen : UIControl
 	{
 		ProjectSettingsPage_General.EngineSplashScreenStyleEnum drawSplashScreen = ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled;
-
 		int resetTimeCounter = 3;
+		bool gotoMainMenu;
+		bool gotoMainMenuUpdated;
 
 		///////////////////////////////////////////
 
-		bool gotoMainMenu;
-		bool gotoMainMenuUpdated;
+		public delegate void EnabledInSimulationStaticDelegate( SplashScreen sender );
+		/// <summary>
+		/// Static event may be used to change the splash screen without changing the code.
+		/// </summary>
+		public static event EnabledInSimulationStaticDelegate EnabledInSimulationStatic;
 
 		///////////////////////////////////////////
 
@@ -41,6 +45,10 @@ namespace Project
 
 		protected override void OnEnabledInSimulation()
 		{
+			base.OnEnabledInSimulation();
+
+			EnabledInSimulationStatic?.Invoke( this );
+
 			var originalDrawSplashScreen = ProjectSettings.Get.General.EngineSplashScreenStyle.Value;
 
 			////get drawing engine splash settings. engine splash for Windows is rendered from another place
@@ -101,7 +109,10 @@ namespace Project
 
 		double GetTotalTime()
 		{
-			return 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0 + FadingTime + ProjectTime + FadingTime;
+			if( ProjectTime == 0 )
+				return 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0;
+			else
+				return 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0 + FadingTime + ProjectTime + FadingTime;
 		}
 
 		void GetImagesTransparency( out double engine, out double project )
@@ -113,9 +124,12 @@ namespace Project
 			curve.AddPoint( 1.0 + FadingTime + PoweredByTime, new Vector3( 1, 0, 0 ) );
 			curve.AddPoint( 1.0 + FadingTime + PoweredByTime + FadingTime, new Vector3( 0, 0, 0 ) );
 			curve.AddPoint( 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0, new Vector3( 0, 0, 0 ) );
-			curve.AddPoint( 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0 + FadingTime, new Vector3( 0, 1, 0 ) );
-			curve.AddPoint( 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0 + FadingTime + ProjectTime, new Vector3( 0, 1, 0 ) );
-			curve.AddPoint( 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0 + FadingTime + ProjectTime + FadingTime, new Vector3( 0, 0, 0 ) );
+			if( ProjectTime != 0 )
+			{
+				curve.AddPoint( 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0 + FadingTime, new Vector3( 0, 1, 0 ) );
+				curve.AddPoint( 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0 + FadingTime + ProjectTime, new Vector3( 0, 1, 0 ) );
+				curve.AddPoint( 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0 + FadingTime + ProjectTime + FadingTime, new Vector3( 0, 0, 0 ) );
+			}
 
 			var value = curve.CalculateValueByTime( resetTimeCounter != 0 ? 0 : Time );
 			engine = MathEx.Saturate( value.X );

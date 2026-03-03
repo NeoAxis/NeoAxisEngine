@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace NeoAxis.Editor
 {
@@ -13,8 +14,8 @@ namespace NeoAxis.Editor
 	/// </summary>
 	public static class EditorApp
 	{
-		[DllImport( "user32.dll" )]
-		internal/*obfuscator*/ static extern bool SetProcessDPIAware();
+		//[DllImport( "user32.dll" )]
+		//internal/*obfuscator*/ static extern bool SetProcessDPIAware();
 
 		//[STAThread]
 		public static void Main()
@@ -43,22 +44,15 @@ namespace NeoAxis.Editor
 			//				return;
 			//#endif
 
-			if( Environment.OSVersion.Version.Major >= 6 )
-			{
-				try
-				{
-					//TODO: we can use "app.manifest" and dpiAware prop for .net < 4.7
-					// eg https://medium.com/@EverydayBits/windows-forms-high-dpi-f8bbd70b4dc
-					//
-					//or use DpiAwareness in ApplicationConfigurationSection in  "app.config" for .net >= 4.7
-					// eg https://docs.microsoft.com/ru-ru/dotnet/framework/winforms/high-dpi-support-in-windows-forms
-					//
-					// and we can remove API call SetProcessDPIAware after.
 
-					SetProcessDPIAware();
-				}
-				catch { }
-			}
+			Application.SetHighDpiMode( HighDpiMode.SystemAware );
+			//if( Environment.OSVersion.Version.Major >= 6 )
+			//{
+			//	try
+			//		SetProcessDPIAware();
+			//	}
+			//	catch { }
+			//}
 
 			EngineApp.ApplicationType = EngineApp.ApplicationTypeEnum.Editor;
 
@@ -165,13 +159,23 @@ namespace NeoAxis.Editor
 			{
 				string fullPath = Process.GetCurrentProcess().MainModule.FileName;
 				Process.Start( new ProcessStartInfo( fullPath ) { UseShellExecute = true } );
+				Thread.Sleep( 1000 );
 				//Application.Restart();
 			}
 			else
 			{
-				//bug fix for ".NET-BroadcastEventWindow" error
-				Application.Exit();
+				////bug fix for ".NET-BroadcastEventWindow" error
+				//Application.Exit();
 			}
+
+			//prevent internal exception and freeze on exit
+			try
+			{
+				Process.GetCurrentProcess().Kill();
+			}
+			catch { }
+
+
 
 			//	//Mono check
 			//	if( RuntimeFramework.Runtime == RuntimeFramework.RuntimeType.Mono )

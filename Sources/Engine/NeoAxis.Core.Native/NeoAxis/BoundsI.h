@@ -30,14 +30,14 @@ THE SOFTWARE.
 #define __BoundsI_H_
 
 // Precompiler options
-#include "OgrePrerequisites.h"
+#include "NativePrerequisites.h"
 
 #include "Vector3I.h"
 #ifdef LINUX
 #include <limits.h>
 #endif
 
-namespace Ogre {
+namespace Native {
 
 	class BoundsI
 	{
@@ -353,6 +353,6 @@ namespace Ogre {
 
 	/** @} */
 	/** @} */
-} // namespace Ogre
+} // namespace Native
 
 #endif

@@ -1,23 +1,33 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
+using System.Collections.Generic;
 using Android.App;
 using Android.OS;
-using Android.Support.V7.App;
 using Android.Views;
 using Android.Widget;
 using Android.Content.PM;
 using Android.Content;
 using Android.Views.InputMethods;
 using Android.Runtime;
-using System.Collections.Generic;
 #if OPENGLES
 using Android.Opengl;
 #endif
 
+// IMPORTANT: alias the generated resource class.
+// If your generated resource class is not `NeoAxis.Player.Android.Resource`, change this alias accordingly.
+using AppResource = NeoAxis.Player.Android.Resource;
+
 namespace NeoAxis.Player.Android
 {
-	[Activity( Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true, ScreenOrientation = DefaultScreenOrientation, ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize, WindowSoftInputMode = SoftInput.AdjustResize )]
-	public class MainActivity : AppCompatActivity, View.IOnTouchListener
+	[Activity( 
+		Label = "@string/app_name",
+		Theme = "@android:style/Theme.DeviceDefault.NoActionBar", //Theme = "@style/AppTheme.NoActionBar", 
+		MainLauncher = true, 
+		ScreenOrientation = DefaultScreenOrientation, 
+		ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize, 
+		WindowSoftInputMode = SoftInput.AdjustResize 
+	)]
+	public class MainActivity : Activity, View.IOnTouchListener // AppCompatActivity, View.IOnTouchListener
 	{
 		//general settings
 		//defined by default screen orientation. you can override orientation in the scene, use Screen Orientation property
@@ -38,6 +48,14 @@ namespace NeoAxis.Player.Android
 
 		//
 
+		int GetResId( string name, string defType )
+		{
+			var id = Resources?.GetIdentifier( name, defType, PackageName ) ?? 0;
+			if( id == 0 )
+				throw new InvalidOperationException( $"Android resource not found: type='{defType}', name='{name}', package='{PackageName}'." );
+			return id;
+		}
+
 		protected override void OnCreate( Bundle savedInstanceState )
 		{
 			base.OnCreate( savedInstanceState );
@@ -52,7 +70,8 @@ namespace NeoAxis.Player.Android
 
 			StartupTiming.TotalStart();
 
-			SetContentView( Resource.Layout.activity_main );
+			SetContentView( GetResId( "activity_main", "layout" ) );
+			//SetContentView( AppResource.Layout.activity_main );
 
 			//Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>( Resource.Id.toolbar );
 			//SetSupportActionBar( toolbar );
@@ -61,7 +80,8 @@ namespace NeoAxis.Player.Android
 			surfaceView = new VulkanView( this );
 
 			//!!!!LinearLayout?
-			var sceneHolder = (RelativeLayout)this.FindViewById( Resource.Id.sceneHolder );
+			var sceneHolder = (RelativeLayout)this.FindViewById( GetResId( "sceneHolder", "id" ) );
+			//var sceneHolder = (RelativeLayout)this.FindViewById( AppResource.Id.sceneHolder );
 			sceneHolder.AddView( surfaceView );
 
 			surfaceView.SetOnTouchListener( this );
@@ -79,7 +99,8 @@ namespace NeoAxis.Player.Android
 			renderer = new RendererClass();
 			surfaceView.SetRenderer( renderer );
 
-			var sceneHolder = (RelativeLayout)FindViewById( Resource.Id.sceneHolder );
+			var sceneHolder = (RelativeLayout)FindViewById( GetResId( "sceneHolder", "id" ) );
+			//var sceneHolder = (RelativeLayout)FindViewById( AppResource.Id.sceneHolder );
 			sceneHolder.AddView( surfaceView );
 
 			surfaceView.SetOnTouchListener( this );
@@ -91,15 +112,18 @@ namespace NeoAxis.Player.Android
 
 		public override bool OnCreateOptionsMenu( IMenu menu )
 		{
-			MenuInflater.Inflate( Resource.Menu.menu_main, menu );
+			MenuInflater.Inflate( GetResId( "menu_main", "menu" ), menu );
+			//MenuInflater.Inflate( AppResource.Menu.menu_main, menu );
 			return true;
 		}
 
 		public override bool OnOptionsItemSelected( IMenuItem item )
 		{
 			int id = item.ItemId;
-			if( id == Resource.Id.action_settings )
+			if( id == GetResId( "action_settings", "id" ) )
 				return true;
+			//if( id == AppResource.Id.action_settings )
+			//	return true;
 
 			return base.OnOptionsItemSelected( item );
 		}
@@ -141,27 +165,6 @@ namespace NeoAxis.Player.Android
 			get { return renderer; }
 		}
 
-		//void EngineMainThreadMethod()
-		//{
-		//	try
-		//	{
-		//		InitEngine();
-		//	}
-		//	catch( Exception e )
-		//	{
-		//		Log.FatalAsException( e.ToString() );
-		//		return;
-		//	}
-
-		//	engineInitialized = true;
-
-		//	while( true )
-		//	{
-		//		EngineUpdate();
-		//		Thread.Sleep( 0 );
-		//	}
-		//}
-
 		public void RestartApp()
 		{
 			Log.InvisibleInfo( "Restarting the app." );
@@ -196,23 +199,17 @@ namespace NeoAxis.Player.Android
 
 					var view = SurfaceView;
 
+					var inputMethodManager = (InputMethodManager)GetSystemService( Context.InputMethodService );
+
 					if( currentSoftInput )
 					{
-						var inputMethodManager = (InputMethodManager)GetSystemService( Context.InputMethodService );
 						view.RequestFocus();
-						inputMethodManager.ShowSoftInput( view, 0 );
-						inputMethodManager.ToggleSoftInput( ShowFlags.Forced, HideSoftInputFlags.ImplicitOnly );
+						// Explicitly show (avoids obsolete ToggleSoftInput on API 31+).
+						inputMethodManager.ShowSoftInput( view, ShowFlags.Forced );
 					}
 					else
 					{
-						//var currentFocus = CurrentFocus;
-						//if( currentFocus != null )
-						//{
-
-						var inputMethodManager = (InputMethodManager)GetSystemService( Context.InputMethodService );
 						inputMethodManager.HideSoftInputFromWindow( view.WindowToken, HideSoftInputFlags.None );
-
-						//}
 					}
 				}
 			}
@@ -255,10 +252,6 @@ namespace NeoAxis.Player.Android
 					if( Engine.inputEventQueue.Count < 200 )
 					{
 						var item = new Engine.TouchEventItem();
-
-						//it can't work. MotionEvent properties become invalid when OnTouch call is ended
-						//item.View = v;
-						//item.MotionEvent = e;
 
 						item.Action = e.Action;
 						item.ActionIndex = e.ActionIndex;
@@ -313,8 +306,6 @@ namespace NeoAxis.Player.Android
 
 		public override bool OnKeyDown( [GeneratedEnum] Keycode keyCode, global::Android.Views.KeyEvent e )
 		{
-			//Log.Info( "unicode: " + ( (char)e.UnicodeChar ).ToString() + ", code: " + e.KeyCode.ToString() );
-
 			if( KeyDown( keyCode, e ) )
 				return true;
 
@@ -333,17 +324,6 @@ namespace NeoAxis.Player.Android
 
 		public override bool OnKeyMultiple( [GeneratedEnum] Keycode keyCode, int repeatCount, global::Android.Views.KeyEvent e )
 		{
-			//!!!!need?
-
-			//var result = false;
-			//for( int n = 0; n < repeatCount; n++ )
-			//{
-			//	if( KeyDown( keyCode, e ) )
-			//		result = true;
-			//}
-			//if( result )
-			//	return true;
-
 			return base.OnKeyMultiple( keyCode, repeatCount, e );
 		}
 

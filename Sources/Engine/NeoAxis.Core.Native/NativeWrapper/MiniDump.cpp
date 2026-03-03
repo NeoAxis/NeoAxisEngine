@@ -1,6 +1,6 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-#include "OgreStableHeaders.h"
-#include "OgreNativeWrapperGeneral.h"
+#include "NativeStableHeaders.h"
+#include "NativeNativeWrapperGeneral.h"
 #pragma hdrstop
 
 #include "MiniDump.h"

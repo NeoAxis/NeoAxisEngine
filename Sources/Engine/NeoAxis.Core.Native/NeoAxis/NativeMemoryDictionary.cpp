@@ -1,10 +1,10 @@
 //// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-//#include "OgreStableHeaders.h"
+//#include "NativeStableHeaders.h"
 ////#include "NeoAxisProprietary.h"
 //#include "NativeMemoryDictionary.h"
-//#include "OgreNativeWrapperGeneral.h"
+//#include "NativeNativeWrapperGeneral.h"
 //
-//using namespace Ogre;
+//using namespace Native;
 //
 //EXPORT void* NativeMemoryDictionary_New()
 //{

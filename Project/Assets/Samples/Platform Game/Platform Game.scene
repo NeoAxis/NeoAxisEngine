@@ -1131,7 +1131,7 @@
 		Name = AI Destination 2
 		Transform = "-3.63689715760393 0.96252305242882 0; 0 0 0 1; 1 1 1"
 	}
-	.component NeoAxis.Button
+	.component NeoAxis.Button3D
 	{
 		Name = Button
 		Transform = "11.0682068957314 -1.72044371610927 0; -0.5 -0.5 -0.5 0.5; 2 2 2"
@@ -1154,7 +1154,7 @@
 		.component NeoAxis.CSharpScript
 		{
 			Name = C# Script
-			Code = "public void Button_Click(NeoAxis.Button sender, NeoAxis.Component initiator)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\tvar light = scene.GetComponent(\"Ambient Light\") as Light;\r\n\tif (light != null)\r\n\t\tlight.Enabled = sender.Activated;\t\r\n}\r\n"
+			Code = "public void Button_Click(NeoAxis.Button3D sender, NeoAxis.Component initiator)\r\n{\r\n\tvar scene = sender.ParentScene;\r\n\r\n\tvar light = scene.GetComponent(\"Ambient Light\") as Light;\r\n\tif (light != null)\r\n\t\tlight.Enabled = sender.Activated;\t\r\n}\r\n"
 			Exit
 			{
 			}
@@ -1167,7 +1167,7 @@
 				}
 				HandlerMethod
 				{
-					GetByReference = "this:..\\method:Button_Click(NeoAxis.Button,NeoAxis.Component)"
+					GetByReference = "this:..\\method:Button_Click(NeoAxis.Button3D,NeoAxis.Component)"
 				}
 				HandlerFlow
 				{

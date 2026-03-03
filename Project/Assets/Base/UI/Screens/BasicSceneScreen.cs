@@ -165,7 +165,7 @@ namespace Project
 				//scene, game mode
 				if( EnabledInHierarchyAndIsInstance )
 				{
-					if( scene != null && scene.NetworkIsClient )
+					if( scene != null ) //&& scene.NetworkIsClient )
 					{
 						if( PlayScreen.Instance != null )
 							PlayScreen.Instance.InputEnabledEvent += PlayScreen_InputEnabledEvent;
@@ -194,12 +194,12 @@ namespace Project
 				}
 
 				//chat
-				if( SimulationAppClient.Client?.Chat != null )
+				if( SimulationAppClient.ConnectionNode?.Chat != null )
 				{
 					if( EnabledInHierarchyAndIsInstance )
-						SimulationAppClient.Client.Chat.ReceivedRoomMessage += Chat_ReceivedRoomMessage;
+						SimulationAppClient.ConnectionNode.Chat.ReceivedRoomMessage += Chat_ReceivedRoomMessage;
 					else
-						SimulationAppClient.Client.Chat.ReceivedRoomMessage -= Chat_ReceivedRoomMessage;
+						SimulationAppClient.ConnectionNode.Chat.ReceivedRoomMessage -= Chat_ReceivedRoomMessage;
 				}
 			}
 
@@ -289,21 +289,22 @@ namespace Project
 			base.OnRenderUI( renderer );
 
 			//display network client connection status
-			if( SimulationAppClient.Client != null )
+			if( SimulationAppClient.ConnectionNode != null )
 			{
 				var color = ColorValue.Zero;
 				var text = "";
-				if( SimulationAppClient.Client.Status == NetworkStatus.Disconnected )
+				if( SimulationAppClient.ConnectionNode.Status == NetworkStatus.Disconnected )
 				{
 					color = new ColorValue( 1, 0, 0 );
-					text = SimulationAppClient.Client.DisconnectionReason;
+					text = SimulationAppClient.ConnectionNode.DisconnectionReason;
 				}
-				else if( SimulationAppClient.Client.Status == NetworkStatus.Connected )
+				else if( SimulationAppClient.ConnectionNode.Status == NetworkStatus.Connected )
 				{
-					if( EngineApp.EngineTime - SimulationAppClient.Client.LastReceivedMessageTime > 3 )
+					var seconds = SimulationAppClient.ConnectionNode.GetRoundtripLastInSeconds();
+					if( seconds > 4 )
 					{
 						color = new ColorValue( 1, 1, 0 );
-						text = "Doesn't receive messages from the server.";
+						text = $"Doesn't receive messages from the server {(int)seconds} seconds.";
 					}
 				}
 
@@ -657,10 +658,10 @@ namespace Project
 				if( widget.Enabled )
 				{
 					//get the list of items
-					var items = new List<ItemInterface>( 8 );
+					var items = new List<Item3DInterface>( 8 );
 					if( objectControlledByPlayer != null )
 					{
-						foreach( var c in objectControlledByPlayer.GetComponents<ItemInterface>() )
+						foreach( var c in objectControlledByPlayer.GetComponents<Item3DInterface>() )
 							items.Add( c );
 					}
 
@@ -879,8 +880,8 @@ namespace Project
 			if( DisplayMessagesAboveObjects )
 			{
 				var networkLogic = NetworkLogicUtility.GetNetworkLogic( scene );
-				var userService = SimulationAppClient.Client?.Users;
-				var chatService = SimulationAppClient.Client?.Chat;
+				var userService = SimulationAppClient.ConnectionNode?.Users;
+				var chatService = SimulationAppClient.ConnectionNode?.Chat;
 				var chatServiceDefaultRoom = chatService?.GetRoom( "Default" );
 
 				var position = viewport.CameraSettings.Position;
@@ -1364,6 +1365,13 @@ namespace Project
 					//	ProcessAutoTake();
 				}
 			}
+		}
+
+		//enable focus to allows unfocusing controls in the screen
+		[Browsable( false )]
+		public override bool CanFocus
+		{
+			get { return true; }
 		}
 	}
 }

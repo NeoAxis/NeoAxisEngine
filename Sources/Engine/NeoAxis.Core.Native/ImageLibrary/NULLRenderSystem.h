@@ -1,3 +1,4 @@
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 /*
 -----------------------------------------------------------------------------
 This source file is part of OGRE
@@ -30,12 +31,12 @@ Torus Knot Software Ltd.
 #define __NULLRENDERSYSTEM_H__
 
 #include "NULLPrerequisites.h"
-#include "OgreString.h"
-#include "OgreStringConverter.h"
-#include "OgreRenderSystem.h"
-#include "OgreRenderSystemCapabilities.h"
+#include "NativeString.h"
+#include "NativeStringConverter.h"
+#include "NativeRenderSystem.h"
+#include "NativeRenderSystemCapabilities.h"
 
-namespace Ogre 
+namespace Native 
 {
 #define MAX_LIGHTS 8
 

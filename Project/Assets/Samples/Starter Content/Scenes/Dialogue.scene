@@ -191,14 +191,14 @@
 			}
 		}
 	}
-	.component NeoAxis.Item
+	.component NeoAxis.Item3D
 	{
 		Name = Item
 		Transform = "6.00318240201785 1.10886365773029 1.01917665050136; 0 0 0 1; 1 1 1"
 		Collision = True
 		Mesh
 		{
-			GetByReference = "Content\\Items\\NeoAxis\\Key\\Data\\scene.gltf|$Mesh"
+			GetByReference = "Content\\Items 3D\\NeoAxis\\Key\\Data\\scene.gltf|$Mesh"
 		}
 		SpecialEffects
 		{
@@ -209,7 +209,7 @@
 		}
 		ItemType
 		{
-			GetByReference = "Content\\Items\\NeoAxis\\Key\\Key.itemtype"
+			GetByReference = "Content\\Items 3D\\NeoAxis\\Key\\Key.itemtype"
 		}
 	}
 	.component NeoAxis.GroupOfObjects
@@ -540,7 +540,7 @@
 					{
 						Name = C# Script Condition
 						NetworkMode = False
-						Code = "bool Method()\r\n{\r\n\t//prevent execution the script in the editor and when loading\r\n\tif(EngineApp.IsSimulation && !Owner.ParentRoot.HierarchyController.Loading)\r\n\t{\r\n\t\t//get current interaction\r\n\t\tvar interaction = ContinuousInteraction.Latest;\r\n\r\n\t\t//get a character of the player\r\n\t\tvar playerCharacter = (Character)interaction.SecondParticipant.Value;\r\n\r\n\t\t//checks player\'s character has a key\r\n\t\tvar item = playerCharacter.GetItemByResourceName(@\"Content\\Items\\NeoAxis\\Key\\Key.itemtype\");\r\n\t\tif (item != null)\r\n\t\t\treturn true;\r\n\t}\r\n\t\r\n\treturn false;\r\n}\r\n"
+						Code = "bool Method()\r\n{\r\n\t//prevent execution the script in the editor and when loading\r\n\tif(EngineApp.IsSimulation && !Owner.ParentRoot.HierarchyController.Loading)\r\n\t{\r\n\t\t//get current interaction\r\n\t\tvar interaction = ContinuousInteraction.Latest;\r\n\r\n\t\t//get a character of the player\r\n\t\tvar playerCharacter = (Character)interaction.SecondParticipant.Value;\r\n\r\n\t\t//checks player\'s character has a key\r\n\t\tvar item = playerCharacter.GetItemByResourceName(@\"Content\\Items 3D\\NeoAxis\\Key\\Key.itemtype\");\r\n\t\tif (item != null)\r\n\t\t\treturn true;\r\n\t}\r\n\t\r\n\treturn false;\r\n}\r\n"
 						Exit
 						{
 						}

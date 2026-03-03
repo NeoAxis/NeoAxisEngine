@@ -587,8 +587,6 @@ namespace NeoAxis.Editor
 
 			realFileName = VirtualPathUtility.NormalizePath( realFileName );
 
-			//!!!!!грузить не сразу
-
 			//check for already opened
 			if( canUseAlreadyOpened )
 			{
@@ -1562,6 +1560,10 @@ namespace NeoAxis.Editor
 			try
 			{
 				Application.DoEvents();
+			}
+			catch
+			{
+				//!!!!new
 			}
 			finally
 			{

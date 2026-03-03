@@ -16,6 +16,14 @@
 #ifndef VHACD_CIRCULAR_LIST_H
 #define VHACD_CIRCULAR_LIST_H
 #include <stdlib.h>
+
+//!!!!betauser
+#include <stdint.h>
+#ifndef uint32_t
+typedef unsigned int uint32_t;
+#endif
+
+
 namespace VHACD {
 //!    CircularListElement class.
 template <typename T>

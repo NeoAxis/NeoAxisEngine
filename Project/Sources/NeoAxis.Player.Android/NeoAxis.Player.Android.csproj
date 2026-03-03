@@ -1,94 +1,37 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3BC0AC7E-3B3B-4D3F-9CC0-B2BDECC460A6}</ProjectGuid>
-    <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TemplateGuid>{84dd83c5-0fe3-4294-9419-09e7c8ba324f}</TemplateGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>net10.0-android</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <ApplicationId>com.neoaxis.AndroidPlayer</ApplicationId>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <RootNamespace>NeoAxis.Player.Android</RootNamespace>
     <AssemblyName>NeoAxis.Player.Android</AssemblyName>
-    <FileAlignment>512</FileAlignment>
-    <AndroidApplication>True</AndroidApplication>
-    <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
-    <AndroidResgenClass>Resource</AndroidResgenClass>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
-    <TargetFrameworkVersion>v8.0</TargetFrameworkVersion>
-    <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
-    <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
-    <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
-    <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\Binaries\NeoAxis.Internal\Platforms\Android\Managed\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;OPENGLES</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>ANDROID;DEPLOY;CLIENT;OPENGLES</DefineConstants>
     <DebugType>portable</DebugType>
+    <LangVersion>latest</LangVersion>
+    <Nullable>annotations</Nullable>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Android\Managed\</OutputPath>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <AotAssemblies>false</AotAssemblies>
-    <EnableLLVM>false</EnableLLVM>
-    <BundleAssemblies>false</BundleAssemblies>
-    <AndroidSupportedAbis>armeabi-v7a</AndroidSupportedAbis>
-    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
-    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
-    <Debugger>Xamarin</Debugger>
-    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-    <AndroidLinkMode>None</AndroidLinkMode>
-    <MandroidI18n />
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
-    <AndroidDexTool>d8</AndroidDexTool>
-    <AndroidUseAapt2>true</AndroidUseAapt2>
-    <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
-    <NoWarn>CS0414</NoWarn>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <SupportedOSPlatformVersion>33.0</SupportedOSPlatformVersion>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <DebugSymbols>false</DebugSymbols>
-    <OutputPath>..\..\Binaries\NeoAxis.Internal\Platforms\Android\Managed\</OutputPath>
-    <DefineConstants>TRACE;OPENGLES</DefineConstants>
-    <DebugType>PdbOnly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <AotAssemblies>false</AotAssemblies>
-    <EnableLLVM>false</EnableLLVM>
-    <BundleAssemblies>false</BundleAssemblies>
-    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
-    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
-    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
-    <MandroidI18n />
-    <AndroidDexTool>d8</AndroidDexTool>
-    <AndroidSupportedAbis>armeabi-v7a</AndroidSupportedAbis>
-    <NoWarn>CS0414</NoWarn>
-    <AndroidUseAapt2>true</AndroidUseAapt2>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants);TRACE;DEBUG</DefineConstants>
+    <NoWarn>
+    </NoWarn>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="NeoAxis.Core">
-      <HintPath>..\..\Binaries\NeoAxis.Internal\Platforms\Android\Managed\NeoAxis.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="NeoAxis.CoreExtension, Version=2019.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Binaries\NeoAxis.Internal\Platforms\Android\Managed\NeoAxis.CoreExtension.dll</HintPath>
-    </Reference>
-    <Reference Include="Project">
-      <HintPath>..\..\Binaries\NeoAxis.Internal\Platforms\Android\Managed\Project.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Core" />
-    <Reference Include="Mono.Android" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>
+    </NoWarn>
+    <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
+    <Optimize>False</Optimize>
+    <!-- Optional: produce symbols like Debug so stack traces are useful -->
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Implementation\RestartApp.cs" />
     <Compile Include="Implementation\Engine.cs" />
@@ -98,142 +41,68 @@
     <Compile Include="Implementation\FunctionalityAndroid.Video.cs" />
     <Compile Include="Implementation\LogPlatformFunctionalityAndroid.cs" />
     <Compile Include="Implementation\PlatformSpecificUtilityAndroid.cs" />
-    <Compile Include="Implementation\SharpZipLib\BZip2\BZip2.cs" />
-    <Compile Include="Implementation\SharpZipLib\BZip2\BZip2Constants.cs" />
-    <Compile Include="Implementation\SharpZipLib\BZip2\BZip2Exception.cs" />
-    <Compile Include="Implementation\SharpZipLib\BZip2\BZip2InputStream.cs" />
-    <Compile Include="Implementation\SharpZipLib\BZip2\BZip2OutputStream.cs" />
-    <Compile Include="Implementation\SharpZipLib\Checksum\Adler32.cs" />
-    <Compile Include="Implementation\SharpZipLib\Checksum\BZip2Crc.cs" />
-    <Compile Include="Implementation\SharpZipLib\Checksum\Crc32.cs" />
-    <Compile Include="Implementation\SharpZipLib\Checksum\IChecksum.cs" />
-    <Compile Include="Implementation\SharpZipLib\Core\FileSystemScanner.cs" />
-    <Compile Include="Implementation\SharpZipLib\Core\INameTransform.cs" />
-    <Compile Include="Implementation\SharpZipLib\Core\IScanFilter.cs" />
-    <Compile Include="Implementation\SharpZipLib\Core\NameFilter.cs" />
-    <Compile Include="Implementation\SharpZipLib\Core\PathFilter.cs" />
-    <Compile Include="Implementation\SharpZipLib\Core\StreamUtils.cs" />
-    <Compile Include="Implementation\SharpZipLib\Core\WindowsPathUtils.cs" />
-    <Compile Include="Implementation\SharpZipLib\Encryption\PkzipClassic.cs" />
-    <Compile Include="Implementation\SharpZipLib\Encryption\ZipAESStream.cs" />
-    <Compile Include="Implementation\SharpZipLib\Encryption\ZipAESTransform.cs" />
-    <Compile Include="Implementation\SharpZipLib\GZip\GZip.cs" />
-    <Compile Include="Implementation\SharpZipLib\GZip\GZIPConstants.cs" />
-    <Compile Include="Implementation\SharpZipLib\GZip\GZipException.cs" />
-    <Compile Include="Implementation\SharpZipLib\GZip\GzipInputStream.cs" />
-    <Compile Include="Implementation\SharpZipLib\GZip\GzipOutputStream.cs" />
-    <Compile Include="Implementation\SharpZipLib\Lzw\LzwConstants.cs" />
-    <Compile Include="Implementation\SharpZipLib\Lzw\LzwException.cs" />
-    <Compile Include="Implementation\SharpZipLib\Lzw\LzwInputStream.cs" />
-    <Compile Include="Implementation\SharpZipLib\SharpZipBaseException.cs" />
-    <Compile Include="Implementation\SharpZipLib\Tar\InvalidHeaderException.cs" />
-    <Compile Include="Implementation\SharpZipLib\Tar\TarArchive.cs" />
-    <Compile Include="Implementation\SharpZipLib\Tar\TarBuffer.cs" />
-    <Compile Include="Implementation\SharpZipLib\Tar\TarEntry.cs" />
-    <Compile Include="Implementation\SharpZipLib\Tar\TarException.cs" />
-    <Compile Include="Implementation\SharpZipLib\Tar\TarHeader.cs" />
-    <Compile Include="Implementation\SharpZipLib\Tar\TarInputStream.cs" />
-    <Compile Include="Implementation\SharpZipLib\Tar\TarOutputStream.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\Compression\Deflater.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\Compression\DeflaterConstants.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\Compression\DeflaterEngine.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\Compression\DeflaterHuffman.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\Compression\DeflaterPending.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\Compression\Inflater.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\Compression\InflaterDynHeader.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\Compression\InflaterHuffmanTree.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\Compression\PendingBuffer.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\Compression\Streams\DeflaterOutputStream.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\Compression\Streams\InflaterInputStream.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\Compression\Streams\OutputWindow.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\Compression\Streams\StreamManipulator.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\FastZip.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\IEntryFactory.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\WindowsNameTransform.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\ZipConstants.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\ZipEntry.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\ZipEntryFactory.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\ZipException.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\ZipExtraData.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\ZipFile.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\ZipHelperStream.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\ZipInputStream.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\ZipNameTransform.cs" />
-    <Compile Include="Implementation\SharpZipLib\Zip\ZipOutputStream.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Implementation\OpenGLES.cs" />
-    <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Implementation\Vulkan.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MultiplayerCreateWindow.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\SimulationApp.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MainMenuScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MenuWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\OptionsWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\ScenesWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\PlayScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\SplashScreen.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\ProjectAssembly.cs" />
+    <Compile Include="Project\Assets\Base\UI\Styles\UIStyleEditor.cs" />
+    <Compile Include="Project\Assets\Base\UI\Styles\UIStyleSimple.cs" />
+    <Compile Include="Project\Assets\Base\UI\Windows\MessageBoxWindow.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\Scripts\ShooterCommon.cs" />
+    <Compile Include="Project\Assets\Samples\Simple Game\SimpleGameGUI.cs" />
+    <Compile Include="Project\Caches\CSharpScripts\CSharpScripts.cs" />
+    <Compile Include="Project\Assets\Base\WindowApp\WindowAppMainForm.cs" />
+    <Compile Include="Project\Assets\Samples\Spaceship Game\SpaceshipGameGUI.cs" />
+    <Compile Include="Project\Assets\Samples\Platform Game\PlatformGameGUI.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\Scripts\ShooterNetworkLogic.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\UI\ShooterInGameContextScreen.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\UI\ShooterSceneScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MultiplayerJoinWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\BasicSceneScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\EntranceScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\InGameContextScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\AvatarWindow.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\ClientUtility.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\RunServer.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\NetworkLogic.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\CloudServiceClient.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\SimulationAppClient.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\SimulationAppServer.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MatchesWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MatchWindow.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\Project.zip" />
-    <AndroidAsset Include="Assets\Project.zip.hash" />
-    <AndroidNativeLibrary Include="lib\armeabi-v7a\libbgfx.so">
+    <AndroidAsset Include="Assets\Project.zip.hash">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </AndroidNativeLibrary>
-    <AndroidNativeLibrary Include="lib\armeabi-v7a\libNeoAxisCoreNative.so">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </AndroidNativeLibrary>
+    </AndroidAsset>
     <None Include="lib\arm64-v8a\libbgfx.so" />
     <None Include="lib\arm64-v8a\libNeoAxisCoreNative.so" />
-    <None Include="Resources\AboutResources.txt" />
-    <None Include="Properties\AndroidManifest.xml" />
-    <None Include="Assets\AboutAssets.txt" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\activity_main.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-    <AndroidResource Include="Resources\layout\content_main.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-    <AndroidResource Include="Resources\values\colors.xml" />
-    <AndroidResource Include="Resources\values\dimens.xml" />
-    <AndroidResource Include="Resources\values\ic_launcher_background.xml" />
-    <AndroidResource Include="Resources\values\strings.xml" />
-    <AndroidResource Include="Resources\values\styles.xml" />
-    <AndroidResource Include="Resources\menu\menu_main.xml" />
-    <AndroidResource Include="Resources\mipmap-anydpi-v26\ic_launcher.xml" />
-    <AndroidResource Include="Resources\mipmap-anydpi-v26\ic_launcher_round.xml" />
-    <AndroidResource Include="Resources\mipmap-hdpi\ic_launcher.png" />
-    <AndroidResource Include="Resources\mipmap-hdpi\ic_launcher_foreground.png" />
-    <AndroidResource Include="Resources\mipmap-hdpi\ic_launcher_round.png" />
-    <AndroidResource Include="Resources\mipmap-mdpi\ic_launcher.png" />
-    <AndroidResource Include="Resources\mipmap-mdpi\ic_launcher_foreground.png" />
-    <AndroidResource Include="Resources\mipmap-mdpi\ic_launcher_round.png" />
-    <AndroidResource Include="Resources\mipmap-xhdpi\ic_launcher.png" />
-    <AndroidResource Include="Resources\mipmap-xhdpi\ic_launcher_foreground.png" />
-    <AndroidResource Include="Resources\mipmap-xhdpi\ic_launcher_round.png" />
-    <AndroidResource Include="Resources\mipmap-xxhdpi\ic_launcher.png" />
-    <AndroidResource Include="Resources\mipmap-xxhdpi\ic_launcher_foreground.png" />
-    <AndroidResource Include="Resources\mipmap-xxhdpi\ic_launcher_round.png" />
-    <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_launcher.png" />
-    <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_launcher_foreground.png" />
-    <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_launcher_round.png" />
+    <Reference Include="NeoAxis.Core">
+      <HintPath>..\..\Binaries\NeoAxis.Internal\Platforms\Android\Managed\NeoAxis.Core.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Android.Support.Design" Version="26.1.0.1" />
-    <PackageReference Include="Xamarin.Plugins.Clipboard">
-      <Version>2.3.0</Version>
-    </PackageReference>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
-  <ItemGroup>
-    <AndroidEnvironment Include="environment.txt" />
-  </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>set Product=Base\Build\Mobile Demo Android.product
-rem set Product=Samples\Simple Game\Build\Simple Game Android.product
-
-if exist "$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" "$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -prepareProductAssets 1 -productFile "%25Product%25" -destinationFolder "$(ProjectDir)Assets" -platform Android
-</PreBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-    Other similar extension points exist, see Microsoft.Common.targets.
-    <Target Name="BeforeBuild">
-    </Target>
-    <Target Name="AfterBuild">
-    </Target>
-  -->
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="if EXIST &quot;$(ProjectDir)..\..\Project.csproj&quot; ( if EXIST &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; ( &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -platformProjectPatchWithCopyFiles &quot;$(ProjectDir)NeoAxis.Player.Android.csproj&quot; -baseProject &quot;$(ProjectDir)..\..\Project.csproj&quot; ) )&#xD;&#xA;&#xD;&#xA;set Product=Base\Build\Mobile Demo Android.product&#xD;&#xA;rem set Product=Samples\Simple Game\Build\Simple Game Android.product&#xD;&#xA;if exist &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -prepareProductAssets 1 -productFile &quot;%25Product%25&quot; -destinationFolder &quot;$(ProjectDir)Assets&quot; -platform Android" />
+  </Target>
+  <Target Name="FailIfOptimizeEnabled" BeforeTargets="BeforeBuild">
+    <Error Condition="'$(Optimize)' == 'true'" Text="Optimize must be disabled. Current configuration has Optimize=$(Optimize)." />
+  </Target>
 </Project>

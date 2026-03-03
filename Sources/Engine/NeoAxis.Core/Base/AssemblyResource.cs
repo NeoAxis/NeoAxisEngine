@@ -11,10 +11,7 @@ namespace NeoAxis
 	/// </summary>
 	class AssemblyResource : Resource
 	{
-		//!!!!threading
-		//!!!!или тут Assembly assembly;
-
-		////////////////
+		//!!!!reloading support
 
 		/// <summary>
 		/// Represents an instance of <see cref="AssemblyResource"/>.
@@ -38,8 +35,6 @@ namespace NeoAxis
 
 			protected override void OnDispose()
 			{
-				//!!!!!возможность перезагружать
-
 				base.OnDispose();
 			}
 
@@ -48,17 +43,7 @@ namespace NeoAxis
 				var realFileName = VirtualPathUtility.GetRealPathByVirtual( Owner.Name );
 				if( File.Exists( realFileName ) )
 				{
-					//!!!!!экскепшены?
-					//!!!!virtual name
-					//!!!!reloading
-
 					assembly = Internal.AssemblyUtility.LoadAssemblyByRealFileName( realFileName, false, true, Owner.Name );
-					//if( assembly == null )
-					//{
-					//	//!!!!
-					//	Log.Fatal( "impl" );
-					//}
-
 					ResultObject = assembly;
 				}
 			}
@@ -120,8 +105,6 @@ namespace NeoAxis
 
 		protected override void OnDispose()
 		{
-			//!!!!!возможность перезагружать
-
 			base.OnDispose();
 		}
 

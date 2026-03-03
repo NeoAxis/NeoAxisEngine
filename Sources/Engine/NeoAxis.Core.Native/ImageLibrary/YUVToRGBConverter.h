@@ -21,6 +21,6 @@ public:
 	void ShutdownInternal();
 
 	void Convert(int yWidth, int yHeight, int yStride, int uvWidth, int uvHeight, int uvStride,
-		Ogre::uint8* ySrc, Ogre::uint8* uSrc, Ogre::uint8* vSrc, int destBufferSizeX, Ogre::uint8* destBuffer,
+		Native::uint8* ySrc, Native::uint8* uSrc, Native::uint8* vSrc, int destBufferSizeX, Native::uint8* destBuffer,
 		bool isABGR) const;
 };

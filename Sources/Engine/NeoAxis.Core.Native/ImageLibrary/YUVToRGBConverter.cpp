@@ -1,8 +1,8 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-#include "OgreStableHeaders.h"
+#include "NativeStableHeaders.h"
 #include "YUVToRGBConverter.h"
 
-using namespace Ogre;
+using namespace Native;
 
 YUVToRGBConverter* YUVToRGBConverter::instance = NULL;
 

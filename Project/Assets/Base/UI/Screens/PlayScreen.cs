@@ -243,7 +243,7 @@ namespace Project
 			//scene simulation
 			if( !SimulationAppClient.Created )
 			{
-				if( SimulationApp.Simulate )
+				if( SimulationApp.SceneSimulate )
 					scene?.HierarchyController?.PerformSimulationSteps();
 				ParentRoot.HierarchyController?.PerformSimulationSteps();
 			}
@@ -561,7 +561,7 @@ namespace Project
 			playFileName = "";
 		}
 
-		void OpenOrCloseMenu()
+		public void OpenOrCloseMenu()
 		{
 			if( menuWindow != null && menuWindow.Disposed )
 				menuWindow = null;

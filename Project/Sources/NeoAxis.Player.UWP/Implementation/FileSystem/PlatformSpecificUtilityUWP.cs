@@ -788,7 +788,7 @@ namespace NeoAxis
 
 				private object ReadObjectFromHandle( IntPtr handle, bool restrictDeserialization )
 				{
-					object obj = null;
+					//object obj = null;
 					bool isSerializedObject;
 					Stream stream = ReadByteStreamFromHandle( handle, out isSerializedObject );
 					if( isSerializedObject )
@@ -833,7 +833,7 @@ namespace NeoAxis
 
 				private unsafe string ReadStringFromHandle( IntPtr handle, bool unicode )
 				{
-					string text = null;
+					//string text = null;
 					IntPtr intPtr = UnsafeNativeMethods.GlobalLock( new HandleRef( null, handle ) );
 					try
 					{
@@ -851,7 +851,7 @@ namespace NeoAxis
 
 				private unsafe string ReadHtmlFromHandle( IntPtr handle )
 				{
-					string text = null;
+					//string text = null;
 					IntPtr intPtr = UnsafeNativeMethods.GlobalLock( new HandleRef( null, handle ) );
 					try
 					{

@@ -26,10 +26,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
-#include "OgreStableHeaders.h"
+#include "NativeStableHeaders.h"
 #include "AxisAlignedBoxI.h"
 
-namespace Ogre
+namespace Native
 {
 	const AxisAlignedBoxI AxisAlignedBoxI::BOX_NULL;
 	const AxisAlignedBoxI AxisAlignedBoxI::BOX_INFINITE(AxisAlignedBoxI::EXTENT_INFINITE);

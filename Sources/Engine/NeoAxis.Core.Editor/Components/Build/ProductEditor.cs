@@ -57,7 +57,7 @@ namespace NeoAxis.Editor
 					//lines.Add( "Categories: " + productStore.ProjectItemCategories.Value.ToString() );
 
 					var license = productStore.License.Value.ToString();
-					if( productStore.License.Value == StoreProductLicense.None )
+					if( productStore.License.Value == CloudProductLicense.None )
 						license = license.ToUpper() + " - " + Translate( "The license is not specified." ).ToUpper();
 					lines.Add( "License: " + license );
 					//lines.Add( "License: " + productStore.License.Value.ToString() );

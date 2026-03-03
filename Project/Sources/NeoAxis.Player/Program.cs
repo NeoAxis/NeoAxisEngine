@@ -85,32 +85,6 @@ namespace NeoAxis.Player
 					EngineApp.CreatedInsideEngineWindow.IconFilePath = iconFilePath;
 				//EngineApp.CreatedInsideEngineWindow.Icon = NeoAxis.Player.Properties.Resources.Logo;
 
-
-				////!!!!temp
-				//{
-				//	var block = TextBlockUtility.LoadFromRealFile( @"F:\Dev5\Project\User settings\Configs\Editor.config" );
-
-				//	var json = TextBlockUtility.ConvertTextBlockToJsonSerialized( block );
-				//	var qq = @"F:\Dev5\Project\User settings\Configs\_vv.json";
-				//	File.WriteAllText( qq, json );
-
-				//	return;
-				//}
-
-				////!!!!temp
-				//{
-				//	//var block = TextBlockUtility.LoadFromRealFile( @"F:\Dev5\Project\User settings\Configs\Editor.config" );
-
-				//	//var json = TextBlockUtility.ConvertTextBlockToJsonSerialized( block );
-				//	var qq = File.ReadAllText( @"F:\Dev5\Project\User settings\Configs\_vv.json" );
-
-				//	var aa = TextBlockUtility.ConvertJsonToTextBlock( qq );
-
-				//	File.WriteAllText( @"F:\Dev5\Project\User settings\Configs\_aa.txt", aa.DumpToString() );
-
-				//	return;
-				//}
-
 				EngineApp.Run();
 			}
 

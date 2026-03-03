@@ -1,3 +1,4 @@
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 /*
 -----------------------------------------------------------------------------
 This source file is part of OGRE
@@ -26,13 +27,14 @@ the OGRE Unrestricted License provided you have obtained such a license from
 Torus Knot Software Ltd.
 -----------------------------------------------------------------------------
 */
+
 #include "NULLRenderSystem.h"
 #include "NULLPrerequisites.h"
-#include "OgreLogManager.h"
-#include "OgreMath.h"
+#include "NativeLogManager.h"
+#include "NativeMath.h"
 //#include "NULLHLSLProgramFactory.h"
-//#include "OgreFrustum.h"
-#include "OgreRoot.h"
+//#include "NativeFrustum.h"
+#include "NativeRoot.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -58,7 +60,7 @@ Torus Knot Software Ltd.
 //#endif//ANDROID
 //}
 
-namespace Ogre 
+namespace Native 
 {
 
 	//---------------------------------------------------------------------

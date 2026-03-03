@@ -1,7 +1,7 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
-#include "OgreStableHeaders.h"
+#include "NativeStableHeaders.h"
 #include "MemoryManager.h"
 #include "NeoAxisCoreNative.h"
 #include "NeoAxisPhysicsNative.h"
@@ -57,7 +57,7 @@
 
 // All Jolt symbols are in the JPH namespace
 using namespace JPH;
-using namespace Ogre;
+using namespace Native;
 
 // If you want your code to compile using single or double precision write 0.0_r to get a Real value that compiles to double or float depending if JPH_DOUBLE_PRECISION is set or not.
 using namespace JPH::literals;

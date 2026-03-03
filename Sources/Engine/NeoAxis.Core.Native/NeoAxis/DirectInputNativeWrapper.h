@@ -4,7 +4,7 @@
 #pragma region Desktop Family
 #ifdef PLATFORM_WINDOWS
 
-using namespace Ogre;
+using namespace Native;
 
 #define EXPORT extern "C" __declspec(dllexport)
 

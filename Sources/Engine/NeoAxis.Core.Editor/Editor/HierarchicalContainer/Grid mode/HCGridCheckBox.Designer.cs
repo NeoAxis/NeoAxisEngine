@@ -48,7 +48,9 @@ namespace NeoAxis.Editor
 			this.Controls.Add(this.checkBox1);
 			this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.Name = "HCGridCheckBox";
-			this.Size = new System.Drawing.Size(516, 28);
+			//fixnet8
+			this.Size = new System.Drawing.Size( 516, 22 );
+			//this.Size = new System.Drawing.Size(516, 28);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

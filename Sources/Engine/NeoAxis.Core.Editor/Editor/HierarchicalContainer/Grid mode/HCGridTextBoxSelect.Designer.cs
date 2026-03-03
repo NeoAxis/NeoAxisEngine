@@ -38,7 +38,9 @@ namespace NeoAxis.Editor
 			this.buttonSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonSelect.Location = new System.Drawing.Point(259, 3);
 			this.buttonSelect.Name = "buttonSelect";
-			this.buttonSelect.Size = new System.Drawing.Size(26, 22);
+			//fixnet8
+			this.buttonSelect.Size = new System.Drawing.Size( 26, 18 );
+			//this.buttonSelect.Size = new System.Drawing.Size(26, 22);
 			this.buttonSelect.TabIndex = 1;
 			this.buttonSelect.Values.Image = global::NeoAxis.Editor.Properties.Resources.DropDownButton;
 			this.buttonSelect.Values.Text = "";
@@ -61,7 +63,9 @@ namespace NeoAxis.Editor
 			this.Controls.Add(this.textBox);
 			this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.Name = "HCGridTextBoxSelect";
-			this.Size = new System.Drawing.Size(285, 28);
+			//fixnet8
+			this.Size = new System.Drawing.Size( 285, 22 );
+			//this.Size = new System.Drawing.Size(285, 28);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
