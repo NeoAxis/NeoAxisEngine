@@ -5,7 +5,6 @@ using System.Text;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
-//using System.Drawing;
 using System.Reflection;
 using System.IO;
 using System.Linq;
@@ -42,20 +41,10 @@ namespace NeoAxis
 		//config
 		static volatile bool needSaveConfig;
 
-		//fullscreen mode
-		//lastValidWindowRectangleInWindowedMode
-		//lastValisFullScreenSize
-		//fullscreen mode
-		//!!!!!
-		static bool fullscreenEnabled;
-		static Vector2I fullscreenSize;//when fullscreen mode is disabled this field is used to remember last fullscreen size.
-		static bool mustChangeVideoMode;
-		//Vec2I videoMode;
-		//bool videoModeWasChangedOutside;
-		//bool fullScreen;
-		//internal Vec2I lastFullScreenWindowSize;
-		//bool renderWindowInFullscreen;
-		//Vec2I lastWindowSize;
+		//windowed mode
+		static WindowedModeEnum windowedMode = WindowedModeEnum.Fullscreen; //static bool fullscreenEnabled;
+		static Vector2I windowedModeSize;//when fullscreen mode is disabled this field is used to remember last fullscreen size.
+		static bool mustChangeWindowedModeOrVideoMode;
 
 		//cursor
 		//это скорее App & Window Management
@@ -80,7 +69,7 @@ namespace NeoAxis
 		static int fpsCalcFrames;
 		static uint fpsStartTime;
 		static double fps;
-		static volatile bool showFPS;
+		//static volatile bool showFPS;
 		static double lastEngineTimeToCalculateFPS;
 
 		//time management
@@ -88,7 +77,7 @@ namespace NeoAxis
 		static double addToResultTime;
 		static double engineTimeScale = 1;
 		static double engineTime;
-		static bool engineTimeManualValueAndDisableAutoUpdate;
+		//static bool engineTimeManualValueAndDisableAutoUpdate;
 		//static object timeLocker = new object();
 
 		//auto unload textures
@@ -123,7 +112,6 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
-		//!!!!так и оставить?
 		/// <summary>
 		/// Represents engine's initialization settings.
 		/// </summary>
@@ -133,19 +121,18 @@ namespace NeoAxis
 
 			static bool useDirectInputForMouseRelativeMode = true;
 			static bool allowJoysticksAndSpecialInputDevices = true;
-			//!!!!!странный флаг
 			static bool allowChangeScreenVideoMode;
-			static bool? multiMonitorMode;//!!!!!!тестить. смотреть где юзаются параметры
+			static bool? multiMonitorMode;
 
-			static string language = "";//"Autodetect";
-			static bool? localizeEngine = null;
-			static bool? localizeToolset = null;
+			static string language = "";
+			static bool? localizeEngine;
+			static bool? localizeToolset;
 
 			static IntPtr useApplicationWindowHandle;
-			static bool? createWindowFullscreen = null;
-			static WindowStateEnum? createWindowState = null;
-			static Vector2I? createWindowPosition = null;
-			static Vector2I? createWindowSize = null;
+			static WindowedModeEnum? createWindowedMode; //static bool? createWindowFullscreen = null;
+			static WindowStateEnum? createWindowState;
+			static Vector2I? createWindowPosition;
+			static Vector2I? createWindowSize;
 			//static bool createWindowFullscreenAllowChangeDisplayFrequency = true;
 
 			//static bool allowWriteEngineConfigFile;
@@ -255,16 +242,27 @@ namespace NeoAxis
 				}
 			}
 
-			public static bool? CreateWindowFullscreen
+			public static WindowedModeEnum? CreateWindowedMode
 			{
-				get { return createWindowFullscreen; }
+				get { return createWindowedMode; }
 				set
 				{
 					if( Created )
 						Log.Fatal( "EngineApp: InitializationParameters: Can't change initialization parameters after creation." );
-					createWindowFullscreen = value;
+					createWindowedMode = value;
 				}
 			}
+
+			//public static bool? CreateWindowFullscreen
+			//{
+			//	get { return createWindowFullscreen; }
+			//	set
+			//	{
+			//		if( Created )
+			//			Log.Fatal( "EngineApp: InitializationParameters: Can't change initialization parameters after creation." );
+			//		createWindowFullscreen = value;
+			//	}
+			//}
 
 			public static WindowStateEnum? CreateWindowState
 			{
@@ -434,24 +432,12 @@ namespace NeoAxis
 		/// </summary>
 		public sealed class CreatedInsideEngineWindowClass
 		{
-			////!!!!инитить
-			//Viewport viewport;
-
 			string title = "NeoAxis Player";
 			object/*Icon*/ icon;
 			//object/*Icon*/ smallIcon;//!!!!!так?
 			string iconFilePath;
 
-			//!!!!всё тут
-
-			//internal bool cursorWasUpdatedFirstTime;
-
 			/////////////////////
-
-			//public Viewport Viewport
-			//{
-			//	get { return viewport; }
-			//}
 
 			internal void Dispose()
 			{
@@ -488,10 +474,9 @@ namespace NeoAxis
 				get { return platform.CreatedWindow_GetWindowRectangle(); }
 				set
 				{
-					//!!!!!
-					if( FullscreenEnabled )
+					if( WindowedMode != WindowedModeEnum.Windowed )
 					{
-						Log.Warning( "EngineApp: ApplicationWindow: set Rectangle: Can't change in fullscreen mode." );
+						Log.Warning( "EngineApp: ApplicationWindow: set Rectangle: Can't change in fullscreen or borderless mode." );
 						return;
 					}
 
@@ -545,11 +530,7 @@ namespace NeoAxis
 
 			public string Title
 			{
-				get
-				{
-					//!!!!!получать реальный? в других местах тоже? иконки?
-					return title;
-				}
+				get { return title; }
 				set
 				{
 					title = value;
@@ -589,32 +570,22 @@ namespace NeoAxis
 				//				}
 			}
 
-			public /*internal */void ProcessMouseMoveEvent()
+			public void ProcessMouseMoveEvent()
 			{
-				//!!!!всё тут обновить с учетом изменений в Viewport
+				var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
 
-				Viewport viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
-
-				//!!!!обязательно IsFocused?
+				//!!!!must be IsFocused?
 				if( viewport.MouseRelativeMode && platform.IsFocused() && !InitSettings.UseDirectInputForMouseRelativeMode )
 				{
-					//!!!!для мака
+					//!!!!what about mac
 
-					Vector2 delta;
-					platform.CreatedWindow_UpdateMouseRelativeMove( out delta );
+					platform.CreatedWindow_UpdateMouseRelativeMove( out var delta );
 					viewport.PerformMouseMove( delta );
 				}
 
 				if( !viewport.MouseRelativeMode )
 				{
-					Vector2 mouse = platform.CreatedWindow_GetMousePosition();
-
-					//было, не надо
-					//bool lastInside = new Rectangle( 0, 0, 1, 1 ).Contains( lastMousePositionForCursorUpdate );
-					//bool inside = new Rectangle( 0, 0, 1, 1 ).Contains( mouse );
-					//if( platform.IsFocused() && lastInside != inside )
-					//	platform.UpdateShowSystemCursor();
-
+					var mouse = platform.CreatedWindow_GetMousePosition();
 					viewport.PerformMouseMove( mouse );
 
 					lastMousePositionForCursorUpdate = mouse;
@@ -816,11 +787,6 @@ namespace NeoAxis
 				//Log.InvisibleInfo( "AppContainer: " + SystemSettings.AppContainer.ToString() );
 			}
 
-			//Window
-			//было. теперь в .._PostFix()
-			//fullScreen = allowChangeVideoMode;
-			//videoMode = platform.GetScreenSize();
-
 			//Timer
 			startTime = GetSystemTime();
 
@@ -847,12 +813,9 @@ namespace NeoAxis
 
 			InitializationParameters_InitFromEngineConfig();
 
-			//!!!!?
-			//!!!!всем в сборке зарегать прост?
 			//enable support field and properties serialization for GameEngineApp class.
 			EngineConfig.RegisterClassParameters( GetType() );// typeof( SimulationApp ) );
 
-			//!!!!
 			//ReadLicenseCertificate();
 
 			//if( !CreateEngineInterfaceImpl() )
@@ -879,58 +842,6 @@ namespace NeoAxis
 			{
 				if( !string.IsNullOrEmpty( InitSettings.ConfigVirtualFileName ) )
 					EngineConfig.Save();
-
-				//!!!!!было. как теперь?
-				//!!!!!!!!!теперь в SimulationApp?
-				////Update Configs/Engine.config (videoMode)
-				//if( allowWriteEngineConfigFile )
-				//{
-				//   string fileName = PathUtils.GetRealPathByVirtual( "user:Configs/Engine.config" );
-
-				//   string error;
-				//   TextBlock engineConfigBlock = TextBlockUtils.LoadFromRealFile( fileName, out error );
-				//   if( engineConfigBlock == null )
-				//      engineConfigBlock = new TextBlock();
-
-				//   TextBlock rendererBlock = engineConfigBlock.FindChild( "Renderer" );
-				//   if( rendererBlock == null )
-				//      rendererBlock = engineConfigBlock.AddChild( "Renderer" );
-
-				//   Vec2I size = VideoMode;
-				//   if( windowState == PlatformFunctionality.WindowStates.Minimized && lastWindowSize != Vec2I.Zero )
-				//      size = lastWindowSize;
-
-				//   if( allowChangeVideoMode )
-				//   {
-				//      rendererBlock.SetAttribute( "fullScreen", FullScreen.ToString() );
-
-				//      if( windowState == PlatformFunctionality.WindowStates.Maximized && !FullScreen )
-				//      {
-				//         rendererBlock.DeleteAttribute( "videoMode" );
-				//      }
-				//      else
-				//      {
-				//         if( !FullScreen || videoModeWasChangedOutside )
-				//            rendererBlock.SetAttribute( "videoMode", size.ToString() );
-				//      }
-				//   }
-
-				//   try
-				//   {
-				//      string directoryName = Path.GetDirectoryName( fileName );
-				//      if( directoryName != "" && !Directory.Exists( directoryName ) )
-				//         Directory.CreateDirectory( directoryName );
-
-				//      using( StreamWriter writer = new StreamWriter( fileName ) )
-				//      {
-				//         writer.Write( engineConfigBlock.DumpToString() );
-				//      }
-				//   }
-				//   catch
-				//   {
-				//      Log.Warning( "Unable to save file \"{0}\".", fileName );
-				//   }
-				//}
 			}
 
 			//native memory manager detect leaks
@@ -939,8 +850,6 @@ namespace NeoAxis
 
 		void InitializationParameters_InitFromEngineConfig()
 		{
-			//!!!!!
-
 			var configPath = VirtualPathUtility.GetRealPathByVirtual( "user:Configs/Engine.config" );
 			if( !File.Exists( configPath ) )
 				return; // use default values.
@@ -949,74 +858,72 @@ namespace NeoAxis
 			TextBlock engineConfigBlock = TextBlockUtility.LoadFromRealFile( configPath, out error );
 			if( engineConfigBlock != null )
 			{
-				//Renderer
-				TextBlock rendererBlock = engineConfigBlock.FindChild( "Renderer" );
-				if( rendererBlock != null )
-				{
-					//!!!!было
-					//if( string.IsNullOrEmpty( InitSettings.RenderingSystemComponent ) )
-					//	InitSettings.RenderingSystemComponent = rendererBlock.GetAttribute( "implementationComponent" );
+				////Renderer
+				//TextBlock rendererBlock = engineConfigBlock.FindChild( "Renderer" );
+				//if( rendererBlock != null )
+				//{
+				//	//if( string.IsNullOrEmpty( InitSettings.RenderingSystemComponent ) )
+				//	//	InitSettings.RenderingSystemComponent = rendererBlock.GetAttribute( "implementationComponent" );
 
-					//if( string.IsNullOrEmpty( InitSettings.RenderingDeviceName ) )
-					//{
-					//	if( rendererBlock.AttributeExists( "renderingDeviceName" ) )
-					//		InitSettings.RenderingDeviceName = rendererBlock.GetAttribute( "renderingDeviceName" );
-					//	if( rendererBlock.AttributeExists( "renderingDeviceIndex" ) )
-					//		InitSettings.RenderingDeviceIndex = int.Parse( rendererBlock.GetAttribute( "renderingDeviceIndex" ) );
-					//}
+				//	//if( string.IsNullOrEmpty( InitSettings.RenderingDeviceName ) )
+				//	//{
+				//	//	if( rendererBlock.AttributeExists( "renderingDeviceName" ) )
+				//	//		InitSettings.RenderingDeviceName = rendererBlock.GetAttribute( "renderingDeviceName" );
+				//	//	if( rendererBlock.AttributeExists( "renderingDeviceIndex" ) )
+				//	//		InitSettings.RenderingDeviceIndex = int.Parse( rendererBlock.GetAttribute( "renderingDeviceIndex" ) );
+				//	//}
 
-					//if( rendererBlock.IsAttributeExist( "fullSceneAntialiasing" ) )
-					//{
-					//   RendererWorld.InitializationOptions.FullSceneAntialiasing = rendererBlock.GetAttribute( "fullSceneAntialiasing" );
-					//}
+				//	//if( rendererBlock.IsAttributeExist( "fullSceneAntialiasing" ) )
+				//	//{
+				//	//   RendererWorld.InitializationOptions.FullSceneAntialiasing = rendererBlock.GetAttribute( "fullSceneAntialiasing" );
+				//	//}
 
-					//if( rendererBlock.AttributeExists( "filtering" ) )
-					//{
-					//	try
-					//	{
-					//		InitSettings.RenderingFilteringMode = (RendererWorld.FilteringMode)
-					//			Enum.Parse( typeof( RendererWorld.FilteringMode ), rendererBlock.GetAttribute( "filtering" ) );
-					//	}
-					//	catch { }
-					//}
+				//	//if( rendererBlock.AttributeExists( "filtering" ) )
+				//	//{
+				//	//	try
+				//	//	{
+				//	//		InitSettings.RenderingFilteringMode = (RendererWorld.FilteringMode)
+				//	//			Enum.Parse( typeof( RendererWorld.FilteringMode ), rendererBlock.GetAttribute( "filtering" ) );
+				//	//	}
+				//	//	catch { }
+				//	//}
 
-					//if( rendererBlock.AttributeExists( "verticalSync" ) )
-					//	InitSettings.RenderingVerticalSync = bool.Parse( rendererBlock.GetAttribute( "verticalSync" ) );
+				//	//if( rendererBlock.AttributeExists( "verticalSync" ) )
+				//	//	InitSettings.RenderingVerticalSync = bool.Parse( rendererBlock.GetAttribute( "verticalSync" ) );
 
-					//!!!!!!это выставлять из SimulationApp?
-					//!!!!!!!!!!там и хранить в одном месте хранить размер экрана для симуляции?
+				//	//!!!!!!это выставлять из SimulationApp?
+				//	//!!!!!!!!!!там и хранить в одном месте хранить размер экрана для симуляции?
 
-					//if( InitializationParameters.AllowChangeScreenVideoMode )
-					//{
-					//   if( rendererBlock.IsAttributeExist( "fullScreen" ) )
-					//      FullScreen = bool.Parse( rendererBlock.GetAttribute( "fullScreen" ) );
-					//   if( InitializationParameters.MultiMonitorMode == null )
-					//   {
-					//      if( rendererBlock.IsAttributeExist( "multiMonitorMode" ) )
-					//         InitializationParameters.MultiMonitorMode = bool.Parse( rendererBlock.GetAttribute( "multiMonitorMode" ) );
-					//   }
-					//   if( rendererBlock.IsAttributeExist( "videoMode" ) )
-					//   {
-					//      try
-					//      {
-					//         VideoMode = Vec2I.Parse( rendererBlock.GetAttribute( "videoMode" ) );
-					//      }
-					//      catch { }
-					//   }
-					//}
-				}
+				//	//if( InitializationParameters.AllowChangeScreenVideoMode )
+				//	//{
+				//	//   if( rendererBlock.IsAttributeExist( "fullScreen" ) )
+				//	//      FullScreen = bool.Parse( rendererBlock.GetAttribute( "fullScreen" ) );
+				//	//   if( InitializationParameters.MultiMonitorMode == null )
+				//	//   {
+				//	//      if( rendererBlock.IsAttributeExist( "multiMonitorMode" ) )
+				//	//         InitializationParameters.MultiMonitorMode = bool.Parse( rendererBlock.GetAttribute( "multiMonitorMode" ) );
+				//	//   }
+				//	//   if( rendererBlock.IsAttributeExist( "videoMode" ) )
+				//	//   {
+				//	//      try
+				//	//      {
+				//	//         VideoMode = Vec2I.Parse( rendererBlock.GetAttribute( "videoMode" ) );
+				//	//      }
+				//	//      catch { }
+				//	//   }
+				//	//}
+				//}
 
-				//SoundSystem
-				TextBlock soundSystemBlock = engineConfigBlock.FindChild( "SoundSystem" );
-				if( soundSystemBlock != null )
-				{
-					//!!!!было
-					//if( string.IsNullOrEmpty( InitSettings.SoundSystemComponent ) )
-					//	InitSettings.SoundSystemComponent = soundSystemBlock.GetAttribute( "implementationComponent" );
-				}
+				////SoundSystem
+				//TextBlock soundSystemBlock = engineConfigBlock.FindChild( "SoundSystem" );
+				//if( soundSystemBlock != null )
+				//{
+				//	//if( string.IsNullOrEmpty( InitSettings.SoundSystemComponent ) )
+				//	//	InitSettings.SoundSystemComponent = soundSystemBlock.GetAttribute( "implementationComponent" );
+				//}
 
 				//localization
-				TextBlock localizationBlock = engineConfigBlock.FindChild( "Localization" );
+				var localizationBlock = engineConfigBlock.FindChild( "Localization" );
 				if( localizationBlock != null )
 				{
 					if( string.IsNullOrEmpty( InitSettings.Language ) )
@@ -1036,22 +943,19 @@ namespace NeoAxis
 					}
 				}
 
-				//physics
-				TextBlock physicsSystemBlock = engineConfigBlock.FindChild( "PhysicsSystem" );
-				if( physicsSystemBlock != null )
-				{
-					//!!!!было
-					//if( string.IsNullOrEmpty( InitSettings.PhysicsSystemComponent ) )
-					//	InitSettings.PhysicsSystemComponent = physicsSystemBlock.GetAttribute( "implementationComponent" );
-				}
+				////physics
+				//var physicsSystemBlock = engineConfigBlock.FindChild( "PhysicsSystem" );
+				//if( physicsSystemBlock != null )
+				//{
+				//	//!!!!было
+				//	//if( string.IsNullOrEmpty( InitSettings.PhysicsSystemComponent ) )
+				//	//	InitSettings.PhysicsSystemComponent = physicsSystemBlock.GetAttribute( "implementationComponent" );
+				//}
 			}
 		}
 
 		static void InitializationParameters_PostFix()
 		{
-			//!!!!!
-
-			//!!!!было
 			////Deployed: get language from deployment parameters
 			//if( VirtualFileSystem.Deployed )
 			//{
@@ -1120,7 +1024,7 @@ namespace NeoAxis
 
 				InitSettings.Language = "English";
 
-end:;
+				end:;
 			}
 
 			//init parameters
@@ -1136,33 +1040,48 @@ end:;
 				{
 					//if( InitSettings.CreateWindowFullscreen == null )
 					{
-						//fullscreen
-						if( SystemSettings.CommandLineParameters.TryGetValue( "-fullscreen", out var fullscreenStr ) )
+						//windowedMode
+						if( SystemSettings.CommandLineParameters.TryGetValue( "-windowedMode", out var windowedModeString ) )
 						{
-							try
-							{
-								InitSettings.CreateWindowFullscreen = (bool)SimpleTypes.ParseValue( typeof( bool ), fullscreenStr );
-							}
-							catch { }
+							if( Enum.TryParse<WindowedModeEnum>( windowedModeString, true, out var windowedMode ) )
+								InitSettings.CreateWindowedMode = windowedMode;
 						}
 
-						//windowed
-						if( SystemSettings.CommandLineParameters.TryGetValue( "-windowed", out var windowedStr ) )
-						{
-							try
-							{
-								InitSettings.CreateWindowFullscreen = !(bool)SimpleTypes.ParseValue( typeof( bool ), windowedStr );
-							}
-							catch { }
-						}
-
-						if( InitSettings.CreateWindowFullscreen == null )
+						if( InitSettings.CreateWindowedMode == null )
 						{
 							if( ApplicationType == ApplicationTypeEnum.Simulation )
-								InitSettings.CreateWindowFullscreen = true;
+								InitSettings.CreateWindowedMode = WindowedModeEnum.Fullscreen;
 							else
-								InitSettings.CreateWindowFullscreen = false;
+								InitSettings.CreateWindowedMode = WindowedModeEnum.Windowed;
 						}
+
+						////fullscreen
+						//if( SystemSettings.CommandLineParameters.TryGetValue( "-fullscreen", out var fullscreenStr ) )
+						//{
+						//	try
+						//	{
+						//		InitSettings.CreateWindowFullscreen = (bool)SimpleTypes.ParseValue( typeof( bool ), fullscreenStr );
+						//	}
+						//	catch { }
+						//}
+
+						////windowed
+						//if( SystemSettings.CommandLineParameters.TryGetValue( "-windowed", out var windowedStr ) )
+						//{
+						//	try
+						//	{
+						//		InitSettings.CreateWindowFullscreen = !(bool)SimpleTypes.ParseValue( typeof( bool ), windowedStr );
+						//	}
+						//	catch { }
+						//}
+
+						//if( InitSettings.CreateWindowFullscreen == null )
+						//{
+						//	if( ApplicationType == ApplicationTypeEnum.Simulation )
+						//		InitSettings.CreateWindowFullscreen = true;
+						//	else
+						//		InitSettings.CreateWindowFullscreen = false;
+						//}
 					}
 
 					//if( InitSettings.CreateWindowState == null )
@@ -1221,8 +1140,10 @@ end:;
 							InitSettings.CreateWindowPosition = ( platform.GetScreenSize() - InitSettings.CreateWindowSize.Value ) / 2;
 					}
 
-					if( InitSettings.CreateWindowFullscreen.Value )
+					if( InitSettings.CreateWindowedMode != null && InitSettings.CreateWindowedMode.Value != WindowedModeEnum.Windowed )
 						InitSettings.CreateWindowPosition = new Vector2I( 0, 0 );
+					//if( InitSettings.CreateWindowFullscreen.Value )
+					//	InitSettings.CreateWindowPosition = new Vector2I( 0, 0 );
 
 					//rendererBackend
 					{
@@ -1264,26 +1185,44 @@ end:;
 				InitializationParameters_PostFix();
 
 				//change video mode
-				if( InitSettings.UseApplicationWindowHandle == IntPtr.Zero )
+				if( InitSettings.UseApplicationWindowHandle == IntPtr.Zero && InitSettings.CreateWindowedMode != null )
 				{
-					if( InitSettings.CreateWindowFullscreen.Value )
+					if( InitSettings.CreateWindowedMode.Value == WindowedModeEnum.Fullscreen )
+					{
 						platform.FullscreenFadeOut( false );
 
-					//!!!!new: InitSettings.AllowChangeScreenVideoMode
-					if( InitSettings.AllowChangeScreenVideoMode && InitSettings.CreateWindowFullscreen.Value && !InitSettings.MultiMonitorMode.Value )
-					{
-						if( SystemSettings.ChangeVideoMode( InitSettings.CreateWindowSize.Value ) )
+						if( InitSettings.AllowChangeScreenVideoMode && !InitSettings.MultiMonitorMode.Value )
 						{
-							fullscreenEnabled = true;
-							fullscreenSize = InitSettings.CreateWindowSize.Value;
-							//lastFullScreenWindowSize = videoMode;
-						}
-						else
-						{
-							//!!!!!что тут?
-							//videoMode = platform.GetScreenSize();
+							if( SystemSettings.ChangeVideoMode( InitSettings.CreateWindowSize.Value ) )
+							{
+								windowedMode = WindowedModeEnum.Fullscreen;
+								windowedModeSize = InitSettings.CreateWindowSize.Value;
+							}
 						}
 					}
+					else if( InitSettings.CreateWindowedMode.Value == WindowedModeEnum.Borderless )
+					{
+						windowedMode = WindowedModeEnum.Borderless;
+						windowedModeSize = InitSettings.CreateWindowSize.Value;
+					}
+					else if( InitSettings.CreateWindowedMode.Value == WindowedModeEnum.Windowed )
+					{
+						windowedMode = WindowedModeEnum.Windowed;
+						windowedModeSize = InitSettings.CreateWindowSize.Value;
+					}
+
+
+					//if( InitSettings.CreateWindowFullscreen.Value )
+					//	platform.FullscreenFadeOut( false );
+
+					//if( InitSettings.AllowChangeScreenVideoMode && InitSettings.CreateWindowFullscreen.Value && !InitSettings.MultiMonitorMode.Value )
+					//{
+					//	if( SystemSettings.ChangeVideoMode( InitSettings.CreateWindowSize.Value ) )
+					//	{
+					//		fullscreenEnabled = true;
+					//		fullscreenSize = InitSettings.CreateWindowSize.Value;
+					//	}
+					//}
 				}
 
 				if( !WindowCreateOrAttach() )
@@ -1384,7 +1323,7 @@ end:;
 				//Renderer init
 				StartupTiming.CounterStart( "Rendering system init" );
 				{
-					bool startedAtFullscreen = FullscreenEnabled;
+					bool startedAtFullscreen = WindowedMode == WindowedModeEnum.Fullscreen;
 					if( Debugger.IsAttached && !SystemSettings.CommandLineParameters.TryGetValue( "-renderVideoToFile", out _ ) )
 						startedAtFullscreen = false;
 
@@ -1416,26 +1355,11 @@ end:;
 				//if( applicationWindowCreatedInsideEngine )
 				//	MainViewport_Change( RendererWorld.ApplicationRenderTarget, new MainViewportClassForCreatedWindow() );
 
-				//!!!!!откуда выставлять?
+				//!!!!!where to set
 				//UpdateGamma();
 
-				//!!!!было
-				//if( !UIControlsWorld.Init() )
-				//	return false;
-
-				//instance.OnAfterRendererWorldInit();
-
-				if( FullscreenEnabled )
+				if( WindowedMode == WindowedModeEnum.Fullscreen )
 					platform.FullscreenFadeIn( false );
-
-				//!!!!!!было, но не надо
-				//if( HighLevelMaterialManager.Instance.NeedLoadAllMaterialsAtStartup )
-				//{
-				//	if( !HighLevelMaterialManager.Instance.LoadAllMaterials() )
-				//		return false;
-				//}
-
-				//RendererWorld.BeginRenderFrame += RendererWorld_BeginRenderFrame;
 
 				RenderingSystem.PostInitRendererAddition();
 
@@ -1454,29 +1378,14 @@ end:;
 
 				fpsStartTime = (uint)(float)( EngineTime * 1000.0f );
 
-				//ShowCursor = true;
-
-				//!!!!!было
-				//if( !EngineInterface.instance.OnPostInitialize() )
-				//   return false;
-
 				//process message loop events
 				if( createdInsideEngineWindow != null )
 					ProcessApplicationMessageEvents();
-
-				//!!!!тут?
-				//if( !SceneManager.Init() )
-				//	return false;
-
-				//!!!!!стало ниже
-				//if( !OnCreate() )
-				//   return false;
 
 				created = true;
 
 				VirtualFileSystem.RegisterAssembliesIncludingFromDefaultSettingConfig();
 
-				//!!!!было
 				if( createdInsideEngineWindow != null && createdInsideEngineWindow.Focused )
 					platform.CreatedWindow_UpdateShowSystemCursor( true );
 
@@ -1486,13 +1395,7 @@ end:;
 
 				lastEngineTimeToCalculateFPS = EngineTime;
 
-				//is not used
-				//EngineConfig.RegisterClassParameters( typeof( EngineSettings ) );
-
 				AppCreateAfter?.Invoke();
-				//if( !instance.OnAppCreated() )
-				//	return false;
-
 			}
 			finally
 			{
@@ -1547,7 +1450,7 @@ end:;
 			//check dotnet available
 			bool canCompile = true;
 			{
-				var folder = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "dotnet5" );
+				var folder = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "dotnet" );
 				if( !Directory.Exists( folder ) )
 					canCompile = false;
 
@@ -1572,36 +1475,18 @@ end:;
 
 				if( InitSettings.ScriptingCompileProjectSolutionAtStartup )
 					CSharpProjectFileUtility.ClearAndCompileIfRequiredAtStart( clientDll );
-
-				////load
-				//string fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
-				//projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true, loadWithoutLocking: true );
-
-				////compile
-				//string outputAssemblyName = CSharpProjectFileUtility.OutputAssemblyName;
-				//if( InitSettings.ScriptingCompileProjectSolutionAtStartup )
-				//	outputAssemblyName = CSharpProjectFileUtility.CompileIfRequired( rebuild, applicationType == ApplicationTypeEnum.Editor );
-
-				////load
-				//string fullPath = Path.Combine( CSharpProjectFileUtility.OutputDir, outputAssemblyName + ".dll" );
-				//projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true, loadWithoutLocking: true );
 			}
-			//else
-			//{
-			//	string fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
-			//	projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true, loadWithoutLocking: true );
-			//}
 
 			//load
 			string fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
 			projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true, loadWithoutLocking: true );
 
 #else
-			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
-			{
-				string fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
-				projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true );
-			}
+			//if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+			//{
+			//	string fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
+			//	projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true );
+			//}
 #endif
 		}
 
@@ -1619,7 +1504,7 @@ end:;
 			{
 				if( !created )
 				{
-					if( createdInsideEngineWindow != null && FullscreenEnabled )
+					if( createdInsideEngineWindow != null && WindowedMode == WindowedModeEnum.Fullscreen )
 						RestoreVideoModeAndMinimize();
 				}
 			}
@@ -1632,7 +1517,7 @@ end:;
 			{
 				if( !created )
 				{
-					if( createdInsideEngineWindow != null && FullscreenEnabled )
+					if( createdInsideEngineWindow != null && WindowedMode == WindowedModeEnum.Fullscreen )
 						RestoreVideoModeAndMinimize();
 				}
 			}
@@ -1643,7 +1528,7 @@ end:;
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows ||
 				SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 			{
-				if( createdInsideEngineWindow != null && FullscreenEnabled )
+				if( createdInsideEngineWindow != null && WindowedMode == WindowedModeEnum.Fullscreen )
 					RestoreVideoModeAndMinimize();
 			}
 		}
@@ -1673,7 +1558,7 @@ end:;
 			//MainViewport._CallSpecialInputDeviceEvent( e );
 		}
 
-		static void ProcessChangingVideoMode()
+		static void ProcessChangingWindowedModeOrVideoMode()
 		{
 			if( EnginePauseWhenApplicationIsNotActive )
 			{
@@ -1684,15 +1569,15 @@ end:;
 			platform.ProcessChangingVideoMode();
 		}
 
-		static public /*internal */void CreatedWindowApplicationIdle( bool doTickOnly )
+		static public void CreatedWindowApplicationIdle( bool doTickOnly )
 		{
 			if( created && !closing && !afterFatalOperations )
 			{
 				//change video mode
-				if( mustChangeVideoMode && !doTickOnly && !InitSettings.MultiMonitorMode.Value )
+				if( mustChangeWindowedModeOrVideoMode && !doTickOnly && !InitSettings.MultiMonitorMode.Value )
 				{
-					mustChangeVideoMode = false;
-					ProcessChangingVideoMode();
+					mustChangeWindowedModeOrVideoMode = false;
+					ProcessChangingWindowedModeOrVideoMode();
 					return;
 				}
 
@@ -1761,14 +1646,12 @@ end:;
 			EnginePauseUpdateState( true, true );
 			closing = true;
 
-			//!!!!!было. надо?
 			//if( createdInsideEngineWindow != null )
 			//{
 			//	Viewport viewport = RendererWorld.ApplicationRenderTarget.Viewports[ 0 ];//App.CreatedInsideEngineWindow.Viewport;
 			//	viewport.MouseRelativeMode = false;
 			//}
 
-			//!!!!
 			SystemSettings.ResetGamma();
 			//Gamma = 1.0f;
 
@@ -1786,9 +1669,6 @@ end:;
 			RenderVideoToFileData?.Close();
 			RenderVideoToFileData = null;
 
-			//!!!!было
-			//UIControlsWorld.Shutdown();
-
 			//UIWebBrowser.ShutdownCefRuntime();
 
 			ResourceManager.DisposeAllResources();
@@ -1798,8 +1678,6 @@ end:;
 			ScriptingCSharpEngine.Shutdown();
 
 			//Renderer
-			//if( RendererWorld.Instance != null )
-			//   RendererWorld.BeginRenderFrame -= RendererWorld_BeginRenderFrame;
 			RenderingSystem.Shutdown();
 
 #if !NO_LITE_DB
@@ -1815,11 +1693,8 @@ end:;
 
 			WindowDestroyOrDetach();
 
-			//!!!!
 			SystemSettings.ResetGamma();
-			//Gamma = 1.0f;
 
-			//!!!!!тут?
 			ResourceManager.Shutdown();
 
 			created = false;
@@ -1829,40 +1704,23 @@ end:;
 			//   platform.FullscreenFadeIn( true );
 		}
 
-		//!!!!!!
 		static bool IsWindowVisibleAndValidSize()
 		{
 			if( !platform.IsWindowVisible() )
 				return false;
-			if( createdInsideEngineWindow != null && platform.GetWindowState() == PlatformFunctionality.WindowState.Minimized )
-				return false;
 
-			if( createdInsideEngineWindow != null )//!!!!new
+			if( createdInsideEngineWindow != null )
 			{
-				RectangleI clientRect = platform.CreatedWindow_GetClientRectangle();
+				if( platform.GetWindowState() == PlatformFunctionality.WindowState.Minimized )
+					return false;
+
+				var clientRect = platform.CreatedWindow_GetClientRectangle();
 				if( clientRect.Size.X < 2 || clientRect.Size.Y < 2 )
 					return false;
 			}
 
 			return true;
 		}
-
-		//void RendererWorld_BeginRenderFrame()
-		//{
-		//   //OnRenderFrame();
-
-		//   //render screen UI
-		//   if( needRenderScreenUI )
-		//   {
-		//      needRenderScreenUI = false;
-
-		//      //!!!!!везде обновляется?
-		//      //if( VideoMode.X != 0 && VideoMode.Y != 0 )
-		//      //   screenGuiRenderer.AspectRatio = (float)VideoMode.X / (float)VideoMode.Y;
-		//      OnRenderScreenUI( screenGuiRenderer );
-
-		//   }
-		//}
 
 		static void RenderSceneInternal()
 		{
@@ -1873,7 +1731,7 @@ end:;
 
 			if( !platform.IsWindowInitialized() )
 			{
-				Log.Fatal( "EngineApp.RenderScene: !platform.IsWindowInitialized()." );
+				Log.Fatal( "EngineApp: RenderSceneInternal: !platform.IsWindowInitialized()." );
 				return;
 			}
 			if( RenderingSystem.IsDeviceLostByTestCooperativeLevel() )
@@ -1882,14 +1740,9 @@ end:;
 				return;
 
 			//update cursor for the first time when using the created window mode
-			if( platform != null && createdInsideEngineWindow != null && createdInsideEngineWindow.Focused &&
-				new Rectangle( 0, 0, 1, 1 ).Contains( RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ].MousePosition ) )
+			if( platform != null && createdInsideEngineWindow != null && createdInsideEngineWindow.Focused && new Rectangle( 0, 0, 1, 1 ).Contains( RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ].MousePosition ) )
 			{
-				//if( !createdInsideEngineWindow.cursorWasUpdatedFirstTime )
-				//{
 				platform.CreatedWindow_UpdateSystemCursorFileName();
-				//	createdInsideEngineWindow.cursorWasUpdatedFirstTime = true;
-				//}
 			}
 
 			if( duringRenderScene )
@@ -1899,15 +1752,12 @@ end:;
 				duringRenderScene = true;
 
 				//renderPerformanceCounter.Start();
-				//needRenderScreenUI = true;
-				var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
 
+				var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
 				viewport.Update( true );
 
 				RenderVideoToFileData?.AddFrame();
 
-				//RendererWorld._RenderOneFrame();
-				//needRenderScreenUI = false;
 				//renderPerformanceCounter.End();
 
 				fpsCalcFrames++;
@@ -1926,26 +1776,16 @@ end:;
 			}
 		}
 
-		//!!!!!переименовать в RenderScene
-		//!!!!!!!!или в CreatedWindow_XXx
-		//public void RenderScene_T()
-		//{
-		//	xx xx;//DOTIck, queued
-
-		//	RenderSceneInternal();
-		//}
-
 		public static double FPS
 		{
 			get { return fps; }
 		}
 
-		//!!!!тут ли? в MainViewport?
-		public static bool ShowFPS
-		{
-			get { return showFPS; }
-			set { showFPS = value; }
-		}
+		//public static bool ShowFPS
+		//{
+		//	get { return showFPS; }
+		//	set { showFPS = value; }
+		//}
 
 		public static bool ShowCursor
 		{
@@ -1987,69 +1827,13 @@ end:;
 		public static event Action AppCreateAfter;
 		public static event Action AppDestroy;
 
-		//protected virtual void OnDestroy()
-		//{
-		//	//!!!!!!было
-		//	//if( AllowChangeVideoMode )
-		//	//{
-		//	//   //get videoMode from windowControl.Size for window mode
-		//	//   if( !fullScreen && platform.IsWindowInitialized() )
-		//	//   {
-		//	//      RectI windowRect = platform.GetWindowRectangle();
-		//	//      videoMode = windowRect.Size;
-		//	//   }
-		//	//}
-		//}
-
-		//!!!!!!как юзают?
-		//!!!!может лучше последовательно?
 		public delegate void TickDelegate( float delta );
 		public static event TickDelegate Tick;
 
 		static void PerformTick( float delta )
 		{
-			//!!!!так?
 			Tick?.Invoke( delta );
 		}
-
-		//!!!!!!
-		//protected abstract void MainViewport_OnUpdateCameraSettings();
-
-		//!!!!!!
-		//internal void Call_MainViewport_OnUpdateCameraSettings()
-		//{
-		//	//reset main render target settings
-		//	MainViewport.Viewport.Camera.PolygonMode = PolygonMode.Solid;
-		//	MainViewport.Viewport.Camera.LodBias = 1;
-		//	MainViewport.Viewport.UpdateAspectRatio();
-
-		//	MainViewport_OnUpdateCameraSettings();
-		//}
-
-		//!!!!!объединить с MainViewport_OnUpdateCameraSettings?
-		//protected abstract void MainViewport_OnRenderUI();
-
-		//!!!!!!
-		//internal void Call_MainViewport_OnRenderUI()
-		//{
-		//	MainViewport_OnRenderUI();
-
-		//	//draw FPS counter
-		//	if( ShowFPS )
-		//	{
-		//		Viewport viewport = mainViewport.Viewport;
-		//		Vec2 position = new Vec2( .005f / viewport.GuiRenderer.AspectRatio, .005f );
-		//		Vec2 shadowOffset = 2.0f / viewport.DimensionsInPixels.Size.ToVec2();
-		//		string str = FPS.ToString( "F2" );
-		//		viewport.GuiRenderer.AddText( str, position + shadowOffset, HorizontalAlign.Left, VerticalAlign.Top, new ColorValue( 0, 0, 0, .5f ) );
-		//		viewport.GuiRenderer.AddText( str, position, HorizontalAlign.Left, VerticalAlign.Top, new ColorValue( 1, 1, 1 ) );
-		//	}
-		//}
-
-		//Render
-		//protected virtual void OnRenderFrame() { }
-		//!!!!было;//когда вызывать?
-		//protected virtual void OnRenderScreenUI( GuiRenderer renderer ) { }
 
 		public static void DoTick()
 		{
@@ -2094,11 +1878,6 @@ end:;
 					lastEngineTimeToAutoUnloadGpuResources = EngineTime;
 				}
 
-				////update sound world
-				////soundPerformanceCounter.Start();
-				//SoundWorld.UpdateInternal();
-				////soundPerformanceCounter.End();
-
 				Log.FlushCachedLog();
 
 				double time = EngineTime;
@@ -2121,8 +1900,7 @@ end:;
 						PerformTick( (float)delta );
 				}
 
-				//!!!!!
-				EngineThreading.ExecuteQueuedActionsFromMainThread();
+				//EngineThreading.ExecuteQueuedActionsFromMainThread();
 
 				Flow.ExecuteGlobalSleepingFlows();
 
@@ -2134,7 +1912,6 @@ end:;
 				//if( needReadLicenseCertificate )
 				//{
 				//	needReadLicenseCertificate = false;
-				//	//!!!!
 				//	//ReadLicenseCertificate();
 				//}
 			}
@@ -2146,37 +1923,9 @@ end:;
 
 		static bool WindowCreateOrAttach()
 		{
-			//lastFullScreenWindowSize = platform.GetScreenSize();
-
-			////change video mode
-			//if( FullScreenEnabled && !InitializationParameters.MultiMonitorMode.Value )
-			//{
-			//   if( videoMode == Vec2I.Zero )
-			//      videoMode = platform.GetScreenSize();
-
-			//   if( DisplaySettings.ChangeVideoMode( FullScreenSize ) )
-			//      lastFullScreenWindowSize = videoMode;
-			//   else
-			//      videoMode = platform.GetScreenSize();
-			//}
-
-			//if( initialWindowPosition.X == -1 || initialWindowPosition.Y == -1 )
-			//   initialWindowPosition = ( platform.GetScreenSize() - videoMode ) / 2;
-
-			//if( InitializationParameters.MultiMonitorMode.Value )
-			//{
-			//   RectI totalBounds = RectI.Cleared;
-			//   foreach( DisplayInfo display in AllDisplays )
-			//      totalBounds.Add( display.Bounds );
-
-			//   initialWindowPosition = totalBounds.LeftTop;
-			//   videoMode = totalBounds.Size;
-			//}
-
 			if( InitSettings.UseApplicationWindowHandle == IntPtr.Zero )
 			{
 				//create window by the engine
-				//!!!!может выше создавать, чтобы раньше можно было параметры менять?
 				createdInsideEngineWindow = new CreatedInsideEngineWindowClass();
 				applicationWindowHandle = platform.CreatedWindow_CreateWindow();
 			}
@@ -2205,8 +1954,10 @@ end:;
 
 				applicationWindowHandle = IntPtr.Zero;
 
-				if( fullscreenEnabled && !InitSettings.MultiMonitorMode.Value )
+				if( windowedMode == WindowedModeEnum.Fullscreen && !InitSettings.MultiMonitorMode.Value )
 					SystemSettings.RestoreVideoMode();
+				//if( fullscreenEnabled && !InitSettings.MultiMonitorMode.Value )
+				//	SystemSettings.RestoreVideoMode();
 			}
 
 			if( createdInsideEngineWindow != null )
@@ -2216,59 +1967,69 @@ end:;
 			}
 		}
 
-		public static bool FullscreenEnabled
+		public static WindowedModeEnum WindowedMode
 		{
-			get { return fullscreenEnabled; }
+			get { return windowedMode; }
 		}
 
-		public static Vector2I FullscreenSize
+		public static Vector2I WindowedModeSize
 		{
-			get { return fullscreenSize; }
+			get { return windowedModeSize; }
 		}
 
-		public static void SetFullscreenMode( bool enable, Vector2I screenResolution )
+		public static void SetWindowedMode( WindowedModeEnum mode, Vector2I size )
 		{
 			if( !InitSettings.AllowChangeScreenVideoMode )
 				return;
 			if( InitSettings.MultiMonitorMode.Value && created )
 				return;
-
 			if( createdInsideEngineWindow == null )
-			{
-				//!!!!!
-				//Log.Fatal( "EngineApp: Fullscreen mode are not supported for window not created by the EngineApp." );
 				return;
-			}
 
-			if( created && SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
+			//if( created && SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
+			//{
+			//	Log.Warning( "Switching fullscreen/windowed mode during application work on macOS is not supported." );
+			//	return;
+			//}
+
+			if( windowedMode != mode || windowedModeSize != size )
 			{
-				Log.Warning( "Switching fullscreen/windowed mode during application work on Mac OS X is not supported." );
-				return;
-			}
-
-			if( fullscreenEnabled != enable || ( fullscreenEnabled && fullscreenSize != screenResolution ) )
-			{
-				bool modeChanged = fullscreenEnabled != enable;
-
-				fullscreenEnabled = enable;
-				fullscreenSize = screenResolution;
+				windowedMode = mode;
+				windowedModeSize = size;
 
 				if( created && !closing )
-				{
-					//!!!!!так?
-					//if( !fullScreen )
-					//   platform.SetWindowSize( videoMode );
-					//else
-					mustChangeVideoMode = true;
-					//!!!!было
-					//videoModeWasChangedOutside = true;
-				}
+					mustChangeWindowedModeOrVideoMode = true;
 			}
-
-			//!!!!!!?
-			//if( fullScreen )
-			//   VideoMode = LastFullScreenWindowSize;
 		}
+
+		//public static void SetFullscreenMode( bool enable, Vector2I screenResolution )
+		//{
+		//	if( !InitSettings.AllowChangeScreenVideoMode )
+		//		return;
+		//	if( InitSettings.MultiMonitorMode.Value && created )
+		//		return;
+		//	if( createdInsideEngineWindow == null )
+		//		return;
+
+		//	if( created && SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
+		//	{
+		//		Log.Warning( "Switching fullscreen/windowed mode during application work on Mac OS X is not supported." );
+		//		return;
+		//	}
+
+		//	if( fullscreenEnabled != enable || ( fullscreenEnabled && fullscreenSize != screenResolution ) )
+		//	{
+		//		bool modeChanged = fullscreenEnabled != enable;
+
+		//		fullscreenEnabled = enable;
+		//		fullscreenSize = screenResolution;
+
+		//		if( created && !closing )
+		//		{
+		//			mustChangeVideoMode = true;
+		//		}
+		//	}
+		//}
 
 		public static SoundChannelGroup DefaultSoundChannelGroup
 		{
@@ -2285,61 +2046,17 @@ end:;
 			get { return closing; }
 		}
 
-		//bool CreateEngineInterfaceImpl()
-		//{
-		//EngineComponentManager.ComponentInfo[] components = EngineComponentManager.Instance.GetComponentsByType(
-		//	EngineComponentManager.ComponentTypeFlags.Classes );
-		//foreach( EngineComponentManager.ComponentInfo component in components )
-		//{
-		//	foreach( EngineComponentManager.ComponentInfo.PathInfo path in component.GetAllEntryPointsForThisPlatform() )
-		//	{
-		//		string assemblyFileName = path.Path;
-		//		if( !string.IsNullOrEmpty( assemblyFileName ) )
-		//		{
-		//			Assembly assembly;
-		//			try
-		//			{
-		//				assembly = AssemblyUtils.LoadAssemblyByRealFileName( assemblyFileName, false );
-		//			}
-		//			catch( Exception e )
-		//			{
-		//				Log.Fatal( "EngineApp: CreateEngineInterfaceImpl: Loading assembly failed \"{0}\" ({1})", assemblyFileName, e.Message );
-		//				return false;
-		//			}
-
-		//			foreach( Type type in assembly.GetTypes() )
-		//			{
-		//				//!!!!good?
-		//				if( typeof( EngineInterface ).IsAssignableFrom( type ) && !type.IsAbstract )
-		//				{
-		//					ConstructorInfo constructor = type.GetConstructor( new Type[ 0 ] { } );
-		//					EngineInterface engineInitialization = (EngineInterface)constructor.Invoke( null );
-		//					return true;
-		//				}
-		//			}
-		//		}
-		//	}
-		//}
-
-		//Log.Fatal( "EngineApp: CreateEngineInterfaceImpl: Implementation class for EngineInterface class is not found." );
-		//	return false;
-		//}
-
-		////!!!!!
-		//protected virtual void OnHideAnyEditorSplashForms() { }
-		//public void DoHideAnyEditorSplashForms() { OnHideAnyEditorSplashForms(); }
-
 		static internal void PerformWindowsWndProcEvent( uint message, IntPtr wParam, IntPtr lParam, ref bool processMessageByEngine )
 		{
 			WindowsWndProc?.Invoke( message, wParam, lParam, ref processMessageByEngine );
 		}
 
-		static internal void MustChangeVideoMode()
+		static internal void MustChangeWindowedModeOrVideoMode()
 		{
-			mustChangeVideoMode = true;
+			mustChangeWindowedModeOrVideoMode = true;
 		}
 
-		static public /*internal */bool IsRealShowSystemCursor()
+		static public bool IsRealShowSystemCursor()
 		{
 			bool show;
 
@@ -2405,7 +2122,7 @@ end:;
 		}
 
 		//!!!!!!
-		static public /*internal */void EnginePauseUpdateState( bool tempPauseByEngine, bool updateSoundWorldAndKeysUpAll )
+		static public void EnginePauseUpdateState( bool tempPauseByEngine, bool updateSoundWorldAndKeysUpAll )
 		{
 			if( Created )
 			{
@@ -2424,11 +2141,6 @@ end:;
 					{
 						foreach( Viewport viewport in RenderingSystem.GetAllViewports() )
 							viewport.ResetLastUpdateTime();
-						//!!!!!!
-						//foreach( Map map in Map.Instances )
-						//	map.ResetExecutedTimeForTicks();
-
-						//RendererWorld._ResetFrameRenderTimeAndRenderTimeStep();
 					}
 
 					if( RenderVideoToFileData == null )
@@ -2443,7 +2155,6 @@ end:;
 
 					if( updateSoundWorldAndKeysUpAll )
 					{
-						//!!!!было
 						//SoundWorld._UpdateAfterEnginePause( EngineTime );
 
 						if( SoundWorld.MasterChannelGroup != null )
@@ -2470,36 +2181,7 @@ end:;
 			}
 		}
 
-		//////////////////////////////////////////////////////// App & Window Management ////////////////////////////////////////////////////////////
-
-		//void UpdateGamma()
-		//{
-		//	if( gamma != 1 )
-		//	{
-		//		platform.SetGamma( gamma );
-		//		gammChanged = true;
-		//	}
-		//	else
-		//	{
-		//		if( gammChanged )
-		//		{
-		//			platform.SetGamma( 1 );
-		//			gammChanged = false;
-		//		}
-		//	}
-		//}
-
-		//!!!!!
-		//public float Gamma
-		//{
-		//	get { return gamma; }
-		//	set
-		//	{
-		//		gamma = value;
-		//		if( created )
-		//			UpdateGamma();
-		//	}
-		//}
+		////////////////////////////////////////////////////// App & Window Management //////////////////////////////////////////////////////////
 
 		public static void ProcessApplicationMessageEvents()
 		{
@@ -2522,51 +2204,24 @@ end:;
 			needExit = false;
 		}
 
-		//!!!!!
-		static public /*internal */void CreatedWindowProcessResize()
+		public static void CreatedWindowProcessResize()
 		{
 			if( createdInsideEngineWindow == null )
-				Log.Fatal( "EngineApp: CreatedWindow_ProcessResize: createdInsideEngineWindow == null." );
+				Log.Fatal( "EngineApp: CreatedWindowProcessResize: createdInsideEngineWindow == null." );
 
 			if( !created || closing )
 				return;
 
 			if( !platform.IsWindowInitialized() )
 			{
-				Log.Fatal( "EngineApp.OnResize: !platform.IsWindowInitialized()." );
+				Log.Fatal( "EngineApp: CreatedWindowProcessResize: !platform.IsWindowInitialized()." );
 				return;
 			}
 
-			//было
-			//if( !fullScreen )
-			//{
-			//   if( platform.GetWindowState() != PlatformFunctionality.WindowStates.Minimized )
-			//   {
-			//      RectI clientRect = platform.GetClientRectangle();
-			//      videoMode = clientRect.Size;
-			//   }
-			//}
-
 			if( IsWindowVisibleAndValidSize() )
 			{
-				//было
-				//if( RendererWorld.RenderWindow.Size != videoMode || renderWindowInFullscreen != fullScreen )
-				//{
-				//   renderWindowInFullscreen = fullScreen;
-
-				//!!!!так?
 				var rect = platform.CreatedWindow_GetClientRectangle();
-
-				////!!!!
-				//rect.Right *= 2;
-				//rect.Bottom *= 2;
-
-				RenderingSystem.ApplicationRenderTarget.WindowMovedOrResized( rect.Size );// FullScreenEnabled );//, videoMode );
-
-
-				//lastWindowSize = platform.GetWindowRectangle().GetSize();
-
-				//MainViewport_OnResize();
+				RenderingSystem.ApplicationRenderTarget.WindowMovedOrResized( rect.Size );
 			}
 		}
 
@@ -2575,33 +2230,7 @@ end:;
 			platform.MessageLoopWaitMessage();
 		}
 
-		/////////////////////////////////////////////////////////////// Main Viewport /////////////////////////////////////////////////////////////////
-
-		//public MainViewportInterface MainViewport
-		//{
-		//	get { return mainViewport; }
-		//}
-
-		//!!!!!
-		//!!!!можно null? или всегда не null, но и менять можно
-		//!!!!name? SetMainViewport?
-		//public void MainViewport_Change( RenderTarget target, MainViewportInterface mainViewportImplementation )
-		//{
-		//	//!!!!!можно менять потом? если нет, то ошибку тут
-		//	//!!!!!что для этого обновить?
-
-		//	mainViewport = mainViewportImplementation;
-		//	mainViewport.renderTarget = target;
-		//	mainViewport.viewport = mainViewport.renderTarget.Viewports[ 0 ];
-
-		//	//!!!!что тут?
-		//}
-
-		//MainViewport events
-		//!!!!!
-		//protected virtual void MainViewport_OnResize() { }
-
-		/////////////////////////////////////////////////////////////// Time Management ///////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////// Time Management ////////////////////////////////////////////////////////////
 
 		public static double EngineTimeScale
 		{
@@ -2626,7 +2255,7 @@ end:;
 			}
 		}
 
-		public /*internal */static void UpdateEngineTime( double? setManualValueAndDisableAutoUpdate = null )
+		public static void UpdateEngineTime( double? setManualValueAndDisableAutoUpdate = null )
 		{
 			//lock( timeLocker )
 			//{
@@ -2640,13 +2269,13 @@ end:;
 			{
 				Interlocked.Exchange( ref engineTime, setManualValueAndDisableAutoUpdate.Value );
 				//engineTime = setManualValueAndDisableAutoUpdate.Value;
-				engineTimeManualValueAndDisableAutoUpdate = true;
+				//engineTimeManualValueAndDisableAutoUpdate = true;
 			}
 			else
 			{
 				Interlocked.Exchange( ref engineTime, addToResultTime + ( GetSystemTime() - startTime ) * engineTimeScale );
 				//engineTime = addToResultTime + ( GetSystemTime() - startTime ) * engineTimeScale;
-				engineTimeManualValueAndDisableAutoUpdate = false;
+				//engineTimeManualValueAndDisableAutoUpdate = false;
 			}
 
 			//}
@@ -2660,42 +2289,17 @@ end:;
 			get
 			{
 				return Interlocked.CompareExchange( ref engineTime, -1.0, -1.0 );
-
-				//lock( timeLocker )
-				//{
-				//	return engineTime;
-				//}
 			}
 		}
 
 		public static double GetSystemTime()
 		{
-			//#if WINDOWS
-			//if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
-			//{
-
 			long time = Stopwatch.GetTimestamp();
 			double elapsedSeconds = time * ( 1.0 / Stopwatch.Frequency );
 			return elapsedSeconds;
-
-			//}
-			//else
-			//{
-			//	//#else
-
-			//	lock( timeLocker )
-			//	{
-			//		if( platform != null )
-			//			return platform.GetSystemTime();
-			//		else
-			//			return 0;
-			//	}
-
-			//	//#endif
-			//}
 		}
 
-		///////////////////////////////////////////////////////////////// Get Info ////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////// Get Info /////////////////////////////////////////////////////////////////
 
 		//!!!SystemSettings
 		public static void GetSystemLanguage( out string languageName, out string languageEnglishName )
@@ -2708,23 +2312,13 @@ end:;
 			return platform.GetNativeModuleNames();
 		}
 
-		/////////////////////////////////////////////////////////////////// Config ////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////// Config /////////////////////////////////////////////////////////////////
 
-		////!!!!
-		//public static EngineConfig Config
-		//{
-		//	get { return config; }
-		//}
-
-		//!!!!
 		public static bool NeedSaveConfig
 		{
 			get { return needSaveConfig; }
 			set { needSaveConfig = value; }
 		}
-
-		////!!!!
-		//protected internal virtual void OnRegisterConfigParameter( EngineConfig.Parameter parameter ) { }
 
 		public delegate void RegisterConfigParameterDelegate( EngineConfig.Parameter parameter );
 		public static event RegisterConfigParameterDelegate RegisterConfigParameter;
@@ -2734,7 +2328,7 @@ end:;
 			RegisterConfigParameter?.Invoke( parameter );
 		}
 
-		/////////////////////////////////////////////////////////////////// Other /////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////// Other //////////////////////////////////////////////////////////////////
 
 		/// <summary>
 		/// The ability to set the limit for maximal framerate.
@@ -2755,42 +2349,11 @@ end:;
 		//   return platform.CallUserCustomMethod( methodName, out returnValue, arguments );
 		//}
 
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		//!!!!!может для удобства таки добавить. но потом
-
-		//!!!!!
-		//public bool IsKeyPressed( EKeys key )
-		//{
-		//	return MainViewport.IsKeyPressed( key );
-		//}
-
-		//!!!!!
-		//public static bool IsKeyLocked( EKeys key )
-		//{
-		//	if( key != EKeys.Insert && key != EKeys.NumLock && key != EKeys.Capital && key != EKeys.Scroll )
-		//		Log.Fatal( "EngineApp: IsKeyLocked: Invalid key value. Next keys can be checked by this method: EKeys.Insert, EKeys.NumLock, EKeys.Capital, EKeys.Scroll." );
-		//	return instance.platform.IsKeyLocked( key );
-		//}
-
-		//!!!!!
-		//public bool IsMouseButtonPressed( EMouseButtons button )
-		//{
-		//	return MainViewport.IsMouseButtonPressed( button );
-		//}
-
-		//!!!!!
-		//public bool IsJoystickButtonPressed( JoystickButtons button )
-		//{
-		//	return MainViewport.IsJoystickButtonPressed( button );
-		//}
-
-		//!!!!!!
 		internal static bool ChangeVideoMode( Vector2I mode )
 		{
-			PlatformFunctionality platform = PlatformFunctionality.Instance;
-
-			if( !platform.ChangeVideoMode( mode ) )
+			if( !PlatformFunctionality.Instance.ChangeVideoMode( mode ) )
 			{
 				string text = string.Format( "Cannot change screen resolution to \"{0}x{1}\".", mode.X, mode.Y );
 				if( !SystemSettings.VideoModeExists( mode ) )
@@ -2803,7 +2366,6 @@ end:;
 			return true;
 		}
 
-		//!!!!!!
 		internal static void RestoreVideoMode()
 		{
 			if( videoModeChanged )
@@ -2814,8 +2376,6 @@ end:;
 			}
 		}
 
-		//!!!!а на какое changed?
-		//!!!!!!в SystemSettings?
 		public static bool VideoModeChanged
 		{
 			get { return videoModeChanged; }
@@ -2827,7 +2387,7 @@ end:;
 			get { return createdInsideEngineWindow; }
 		}
 
-		public /*internal */static int GetEKeysMaxIndex()
+		public static int GetEKeysMaxIndex()
 		{
 			int maxIndex = 0;
 			foreach( EKeys eKey in Enum.GetValues( typeof( EKeys ) ) )
@@ -2844,18 +2404,11 @@ end:;
 			get { return applicationWindowHandle; }
 		}
 
-		//public double LastTickTime
-		//{
-		//	get { return lastTickTime; }
-		//}
-
-		//!!!!!тут ли. может в SystemSettings
 		public static Vector2I GetScreenSize()
 		{
 			return platform.GetScreenSize();
 		}
 
-		//!!!!Debug
 		[DllImport( "user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi )]
 		static extern short GetKeyState( int keyCode );
 		[Browsable( false )]
@@ -2863,23 +2416,17 @@ end:;
 		{
 			get
 			{
-				try
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
 				{
-					return ( ( (ushort)GetKeyState( 0x14 ) ) & 0xffff ) != 0;
+					try
+					{
+						return ( ( (ushort)GetKeyState( 0x14 ) ) & 0xffff ) != 0;
+					}
+					catch { }
 				}
-				catch { return false; }
+				return false;
 			}
 		}
-
-		//public static string License
-		//{
-		//	get { return license; }
-		//}
-
-		//public static bool IsProPlan
-		//{
-		//	get { return License == "Pro"; }
-		//}
 
 		[Browsable( false )]
 		public static ProjectSettingsPage_General.EngineSplashScreenStyleEnum DrawSplashScreen
@@ -2982,10 +2529,6 @@ end:;
 			get { return projectAssembly; }
 			set { projectAssembly = value; }
 		}
-
-		//!!!!
-
-		//!!!!может без енума. просто Restart
 
 		//public enum RestartEngineEventEnum
 		//{

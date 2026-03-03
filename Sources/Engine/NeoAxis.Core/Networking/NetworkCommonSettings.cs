@@ -9,13 +9,35 @@ namespace NeoAxis.Networking
 {
 	public static class NetworkCommonSettings
 	{
-		public static string GeneralManagerDomain { get; set; } = "cloud.neoaxis.com";
-		public static string GeneralManagerAddress { get; set; } = "195.200.29.132";
-		public static int GeneralManagerHttpsPort = 44318; //internal const int GeneralManagerHttpPort = 44317;
-		public static int GeneralManagerExecuteCommandTimeout = 120000;// 30000;
-
+		//common network settings
 		public static bool NetworkLogging { get; set; }
 
-		//public const int P2PDefaultSeederPort = 56571;
+		//cloud service settings
+		public static CloudServiceFrontServer CloudServiceCurrentFrontServer { get; set; }
+		public static int CloudServiceExecuteCommandTimeout = 120000; //2 minutes is default timeout for cloud service commands
+
+		///////////////////////////////////////////////
+
+		public class CloudServiceFrontServer
+		{
+			public string Domain;
+			//public string Address;
+			public int HttpsPort;
+
+			public CloudServiceFrontServer( string domain/*, string address*/, int httpsPort )
+			{
+				Domain = domain;
+				//Address = address;
+				HttpsPort = httpsPort;
+			}
+		}
+
+		///////////////////////////////////////////////
+
+		static NetworkCommonSettings()
+		{
+			//default front server
+			CloudServiceCurrentFrontServer = new CloudServiceFrontServer( "cloud.neoaxis.com", 443 );
+		}
 	}
 }

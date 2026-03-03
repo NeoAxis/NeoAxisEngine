@@ -574,7 +574,7 @@ namespace NeoAxis
 				var renderer = ParentContainer?.Viewport.CanvasRenderer;
 				if( renderer != null )
 				{
-					if( button == EMouseButtons.Left )//|| button == EMouseButtons.Right ) //!!!!new
+					if( button == EMouseButtons.Left )
 					{
 						var overCheckbox = false;
 						var index = GetListItemIndexByScreenPosition( ParentContainer.MousePosition, ref overCheckbox );
@@ -848,17 +848,30 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		public bool SelectItem( object value )
+		public int SelectItemByValue( object value )
 		{
 			for( int n = 0; n < Items.Count; n++ )
 			{
-				if( items[ n ].Value == value )
+				if( Equals( Items[ n ].Value, value ) ) //if( items[ n ].Value == value )
 				{
 					SelectedIndex = n;
-					return true;
+					return n;
 				}
 			}
-			return false;
+			return -1;
+		}
+
+		public int SelectItemByTag( object tag )
+		{
+			for( int n = 0; n < Items.Count; n++ )
+			{
+				if( Equals( Items[ n ].Tag, tag ) ) //if( Items[ n ].Tag == tag )
+				{
+					SelectedIndex = n;
+					return n;
+				}
+			}
+			return -1;
 		}
 
 		public override CoverOtherControlsEnum CoverOtherControls

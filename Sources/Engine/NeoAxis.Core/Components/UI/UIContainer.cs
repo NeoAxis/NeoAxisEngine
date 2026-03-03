@@ -322,7 +322,10 @@ namespace NeoAxis
 			UpdateCapturedAndFocusedControls();
 
 			if( focusedControl != null )
-				return focusedControl.CallMouseWheel( delta );
+			{
+				if( focusedControl.CallMouseWheel( delta ) )
+					return true;
+			}
 
 			return CallMouseWheel( delta );
 		}

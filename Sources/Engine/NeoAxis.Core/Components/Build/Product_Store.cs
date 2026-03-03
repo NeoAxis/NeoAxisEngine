@@ -10,6 +10,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
 using Internal.tainicom.Aether.Physics2D.Dynamics;
+using NeoAxis.Networking;
+using System.Threading.Tasks;
+using System.Threading;
+
 #if !DEPLOY
 using System.Text.Json;
 #endif
@@ -98,19 +102,19 @@ namespace NeoAxis
 		//public event Action<Product_Store> AddShadersChanged;
 		//ReferenceField<bool> _addShaders = false;
 
-		/// <summary>
-		/// The unique identifier of the product. When the parameter is empty the identifier calculated by path name of this file.
-		/// </summary>
-		[DefaultValue( "" )]
-		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
-		public Reference<string> Identifier
-		{
-			get { if( _identifier.BeginGet() ) Identifier = _identifier.Get( this ); return _identifier.value; }
-			set { if( _identifier.BeginSet( this, ref value ) ) { try { IdentifierChanged?.Invoke( this ); } finally { _identifier.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="Identifier"/> property value changes.</summary>
-		public event Action<Product_Store> IdentifierChanged;
-		ReferenceField<string> _identifier = "";
+		///// <summary>
+		///// The unique identifier of the product. When the parameter is empty the identifier calculated by path name of this file.
+		///// </summary>
+		//[DefaultValue( "" )]
+		//[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
+		//public Reference<string> Identifier
+		//{
+		//	get { if( _identifier.BeginGet() ) Identifier = _identifier.Get( this ); return _identifier.value; }
+		//	set { if( _identifier.BeginSet( this, ref value ) ) { try { IdentifierChanged?.Invoke( this ); } finally { _identifier.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="Identifier"/> property value changes.</summary>
+		//public event Action<Product_Store> IdentifierChanged;
+		//ReferenceField<string> _identifier = "";
 
 		///// <summary>
 		///// The display name of the product.
@@ -192,15 +196,15 @@ namespace NeoAxis
 		/// <summary>
 		/// The license of the product.
 		/// </summary>
-		[DefaultValue( StoreProductLicense.None )]
-		public Reference<StoreProductLicense> License
+		[DefaultValue( CloudProductLicense.None )]
+		public Reference<CloudProductLicense> License
 		{
 			get { if( _license.BeginGet() ) License = _license.Get( this ); return _license.value; }
 			set { if( _license.BeginSet( this, ref value ) ) { try { LicenseChanged?.Invoke( this ); } finally { _license.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="License"/> property value changes.</summary>
 		public event Action<Product_Store> LicenseChanged;
-		ReferenceField<StoreProductLicense> _license = StoreProductLicense.None;
+		ReferenceField<CloudProductLicense> _license = CloudProductLicense.None;
 
 		[DefaultValue( 0.0 )]
 		public Reference<double> Cost
@@ -265,7 +269,7 @@ namespace NeoAxis
 		ReferenceList<ReferenceValueType_Resource> _images;
 
 		/// <summary>
-		/// Whether to create additional screenshots. Used for vehicles.
+		/// Whether to create additional screenshots. Used for 3D models and vehicles.
 		/// </summary>
 		[DefaultValue( true )]
 		[Category( "Images" )]
@@ -306,7 +310,8 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="AddCodeOfProjects"/> property value changes.</summary>
 		public event Action<Product_Store> AddCodeOfProjectsChanged;
 		ReferenceField<string> _addCodeOfProjects = addCodeOfProjectsDefault;
-		const string addCodeOfProjectsDefault = "Sources\\NeoAxis.CoreExtension\\NeoAxis.CoreExtension.csproj\r\nProject.csproj";
+		const string addCodeOfProjectsDefault = "Project.csproj";
+		//const string addCodeOfProjectsDefault = "Sources\\NeoAxis.CoreExtension\\NeoAxis.CoreExtension.csproj\r\nProject.csproj";
 
 		//!!!!
 		//!!!!расширение можно указывать, можно не указывать
@@ -401,17 +406,21 @@ namespace NeoAxis
 			_2D = 1 << 0,
 
 			//Audio
-			AmbientSounds = 1 << 1,
-			Music = 1 << 2,
-			SoundEffects = 1 << 3,
+			Audio = 1 << 1,
+			//AmbientSounds = 1 << 1,
+			//Music = 1 << 2,
+			//SoundEffects = 1 << 3,
 
 			Demos = 1 << 4,
 			VisualEffects = 1 << 5,
 			Environments = 1 << 6,
 
 			//Extensions
-			BasicExtensions = 1 << 7,
+			Extensions = 1 << 7, //BasicExtensions = 1 << 7,
+
+			//!!!!
 			Components = 1 << 8,
+
 			Constructors = 1 << 9,
 			Frameworks = 1 << 10,
 
@@ -430,24 +439,24 @@ namespace NeoAxis
 			Pipes = 1 << 18,
 			Buildings = 1 << 19,
 
-			////Models
-			//Animals = 1 << 13,
-			//Architecture = 1 << 14,
-			//Characters = 1 << 15,
-			//Exterior = 1 << 16,
-			//Food = 1 << 17,
-			//Industrial = 1 << 18,
-			//Interior = 1 << 19,
-			//Vehicles = 1 << 20,
-			//Nature = 1 << 21,
-			//Weapons = 1 << 22,
-			//UncategorizedModels = 1 << 23,
+			//////Models
+			////Animals = 1 << 13,
+			////Architecture = 1 << 14,
+			////Characters = 1 << 15,
+			////Exterior = 1 << 16,
+			////Food = 1 << 17,
+			////Industrial = 1 << 18,
+			////Interior = 1 << 19,
+			////Vehicles = 1 << 20,
+			////Nature = 1 << 21,
+			////Weapons = 1 << 22,
+			////UncategorizedModels = 1 << 23,
 
 			Surfaces = 1 << 24,
 
-			BasicContent = 1 << 25,
+			//BasicContent = 1 << 25,
 
-			//FunctionalObjects = 1 << 26,
+			////FunctionalObjects = 1 << 26,
 		}
 
 		/////////////////////////////////////////
@@ -466,8 +475,8 @@ namespace NeoAxis
 
 		public class ImageGenerator
 		{
-			public Vector2I ImageSizeRender { get; set; } = new Vector2I( 1000 * 4, 562 * 4 );
-			public Vector2I ImageSizeOutput { get; set; } = new Vector2I( 1000, 562 );
+			public Vector2I ImageSizeRender { get; set; } = new Vector2I( 1920 * 2, 1080 * 2 ); //new Vector2I( 1000 * 4, 562 * 4 );
+			public Vector2I ImageSizeOutput { get; set; } = new Vector2I( 1920, 1080 ); //new Vector2I( 1000, 562 );
 			const PixelFormat imageFormat = PixelFormat.A8R8G8B8;
 
 			Mesh mesh;
@@ -966,7 +975,7 @@ namespace NeoAxis
 					break;
 
 				case nameof( Cost ):
-					if( License.Value != StoreProductLicense.PaidPerSeat )
+					if( License.Value != CloudProductLicense.PaidPerSeat )
 						skip = true;
 					break;
 
@@ -996,7 +1005,7 @@ namespace NeoAxis
 					break;
 
 				case nameof( AdditionalScreenshots ):
-					if( !ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Vehicles ) )
+					if( !ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Models ) && !ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Vehicles ) )
 						skip = true;
 					break;
 				}
@@ -1070,7 +1079,7 @@ namespace NeoAxis
 								{
 									var t2 = t.Substring( 0, t.Length - 2 );
 
-again:;
+									again:;
 									foreach( var name in toInclude.Keys )
 									{
 										if( name.Length >= t2.Length && name.Substring( 0, t2.Length ) == t2 )
@@ -1292,12 +1301,13 @@ again:;
 #if !DEPLOY
 			var authorEmail = "";
 			var authorHash = "";
+			long userID = 0;
 			{
 				if( LoginUtility.GetCurrentLicense( out var email, out var hash ) )
 				{
-					if( LoginUtility.GetRequestedFullLicenseInfo( out var license, out _, out var error2 ) )
+					if( LoginUtility.GetRequestedInfo( out userID, out var error2 ) )
 					{
-						if( !string.IsNullOrEmpty( license ) )
+						if( userID != 0 )
 						{
 							authorEmail = email;
 							authorHash = hash;
@@ -1307,13 +1317,13 @@ again:;
 			}
 			if( string.IsNullOrEmpty( authorEmail ) )
 			{
-				EditorMessageBox.ShowWarning( "Please login to build store products." );
+				EditorMessageBox.ShowWarning( "Please login to build products for the cloud service." );
 				return;
 			}
 
 			//check settings
 			{
-				if( License.Value == StoreProductLicense.None )
+				if( License.Value == CloudProductLicense.None )
 				{
 					EditorMessageBox.ShowWarning( "The license is not specified." );
 					return;
@@ -1337,184 +1347,540 @@ again:;
 				//upload
 				if( buildInstance.Run )
 				{
-					var text = $"Upload the package to the store?\r\n\r\nThe previous version will be overwritten if it exists.";
+					var text = $"Upload the package to the cloud service?\r\n\r\nThe previous version will be overwritten if it exists.";
 					if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.OKCancel ) == EDialogResult.OK )
 					{
-						foreach( var fileToUpload in filesToUpload )
+						var notification = ScreenNotifications.ShowSticky( "Uploading..." );
+
+						var task = new Task( async delegate ()
 						{
-							var email = authorEmail;
-							var hash = authorHash;
-
-
-							//!!!!невалидный идентификатор
-
-							//!!!!невалидная версия
-
-							//!!!!product
-							//!!!!version
-
-							var email64 = StringUtility.EncodeToBase64URL( email );
-							var hash64 = StringUtility.EncodeToBase64URL( hash );
-							var parameters = $"email={email64}&hash={hash64}";
-
-							var Client = new System.Net.WebClient();
-							Client.Headers.Add( "Content-Type", "binary/octet-stream" );
-
-
-							string resultString = "";
-
-							var notification = ScreenNotifications.ShowSticky( "Uploading to the Store..." );
 							try
 							{
-								var result = Client.UploadFile( EngineInfo.StoreAddress + "/api/product_processing_upload/?" + parameters, "POST", fileToUpload );
-								resultString = Encoding.UTF8.GetString( result, 0, result.Length );
+								foreach( var fileToUpload in filesToUpload )
+								{
+									var projectName = Name.Trim();
+
+									if( string.IsNullOrEmpty( projectName ) )
+									{
+										ScreenNotifications.Show( $"Name is not configured.", true );
+										Log.Warning( $"Name is not configured." );
+										return;
+									}
+
+
+									//!!!!get valid project name. fix or error
+
+
+									//create or update project
+									var projectID = 0L;
+
+									//find project by name
+									{
+										using var cts = new CancellationTokenSource( TimeSpan.FromMinutes( 2 ) );
+										var getProjectResult = await CloudServiceFunctions.ProjectGetAsync( cancellationToken: cts.Token );
+										if( !string.IsNullOrEmpty( getProjectResult.Error ) )
+										{
+											ScreenNotifications.Show( $"Unable to create the project. {getProjectResult.Error}", true );
+											Log.Warning( $"Unable to create the project. {getProjectResult.Error}" );
+											return;
+										}
+
+										var data = getProjectResult?.Data;
+										if( data != null )
+										{
+											foreach( var block in data.Children )
+											{
+												if( block.Name == "Project" )
+												{
+													long.TryParse( block.GetAttribute( "ID" ), out var id );
+													var name = block.GetAttribute( "Name" );
+													bool.TryParse( block.GetAttribute( "Serverless", "False" ), out var serverless );
+
+													if( name == projectName && serverless )
+													{
+														projectID = id;
+														break;
+													}
+												}
+											}
+										}
+									}
+
+									if( projectID == 0 )
+									{
+										using var cts = new CancellationTokenSource( TimeSpan.FromMinutes( 2 ) );
+										var projectNewResult = await CloudServiceFunctions.ProjectNewAsync( projectName, true, null, null, null, null, null, cancellationToken: cts.Token );
+										if( !string.IsNullOrEmpty( projectNewResult.Error ) )
+										{
+											ScreenNotifications.Show( $"Unable to create the project. {projectNewResult.Error}", true );
+											Log.Warning( $"Unable to create the project. {projectNewResult.Error}" );
+											return;
+										}
+
+										projectID = projectNewResult.ProjectID;
+									}
+
+
+									//upload logo
+									{
+										try
+										{
+											var block = new TextBlock();
+											block.SetAttribute( "ID", projectID.ToString() );
+
+											var fullPath = "";
+											{
+												var basePath = Path.ChangeExtension( fileToUpload, null );
+												var fullPath2 = basePath + "_Logo.png";
+												if( File.Exists( fullPath2 ) )
+													fullPath = fullPath2;
+												else
+												{
+													fullPath2 = basePath + "_Logo.jpg";
+													if( File.Exists( fullPath2 ) )
+														fullPath = fullPath2;
+												}
+											}
+
+											if( string.IsNullOrEmpty( fullPath ) )
+												throw new Exception( "Logo file not found." );
+
+											if( !ImageUtility.LoadFromRealFile( fullPath, out var data, out var size, out _, out var format, out _, out _, out var error ) )
+												throw new Exception( error );
+
+											//make square with saving proportions. some of the image may be cut
+											if( size.X != size.Y )
+											{
+												var image2D = new ImageUtility.Image2D( format, size, data );
+
+												int newSizeValue = Math.Min( size.X, size.Y );
+												var newSize = new Vector2I( newSizeValue, newSizeValue );
+
+												var newImage2D = new ImageUtility.Image2D( format, newSize );
+												newImage2D.Blit( Vector2I.Zero, image2D, new Vector2I( ( size.X - newSizeValue ) / 2, ( size.Y - newSizeValue ) / 2 ) );
+
+												data = newImage2D.Data;
+												size = newSize;
+											}
+
+											//rescale if needed
+											int maxWidth = 1024;
+											int maxHeight = 1024;
+											if( size.X > maxWidth || size.Y > maxHeight )
+											{
+												double ratioX = (double)maxWidth / size.X;
+												double ratioY = (double)maxHeight / size.Y;
+												double ratio = Math.Min( ratioX, ratioY );
+												int newWidth = (int)Math.Round( size.X * ratio );
+												int newHeight = (int)Math.Round( size.Y * ratio );
+												var newSize = new Vector2I( newWidth, newHeight );
+
+												ImageUtility.Scale( data, size, format, newSize, ImageUtility.Filters.Box, out var scaledData );
+
+												data = scaledData;
+												size = newSize;
+											}
+
+											ImageUtility.Image2D image2DRGB;
+											{
+												var image2D = new ImageUtility.Image2D( format, size, data );
+
+												image2DRGB = new ImageUtility.Image2D( NeoAxis.PixelFormat.R8G8B8, size );
+												image2DRGB.Blit( Vector2I.Zero, image2D );
+											}
+
+											var zip = IOUtility.Zip( image2DRGB.Data, CompressionLevel.Optimal );
+											var base64 = Convert.ToBase64String( zip, Base64FormattingOptions.None );
+											block.SetAttribute( "Logo", base64 );
+											block.SetAttribute( "LogoSize", image2DRGB.Size.ToString() );
+
+
+											using var cts = new CancellationTokenSource( TimeSpan.FromMinutes( 5 ) );
+											var updateResult = await CloudServiceFunctions.ProjectUpdateAsync( block, cancellationToken: cts.Token );
+											if( !string.IsNullOrEmpty( updateResult.Error ) )
+											{
+												ScreenNotifications.Show( $"Unable to update the project. {updateResult.Error}", true );
+												Log.Warning( $"Unable to update the project. {updateResult.Error}" );
+												return;
+											}
+										}
+										catch( Exception e )
+										{
+											ScreenNotifications.Show( $"Unable to update the project. Exception: {e.Message}", true );
+											Log.Warning( $"Unable to update the project. Exception: {e.Message}" );
+											return;
+										}
+									}
+
+
+									//upload screenshots
+									for( int iteration = 0; iteration < 4; iteration++ )
+									{
+										try
+										{
+											var block = new TextBlock();
+											block.SetAttribute( "ID", projectID.ToString() );
+
+											var fullPath = "";
+											{
+												var basePath = Path.ChangeExtension( fileToUpload, null );
+												var fullPath2 = basePath + $"_Image{iteration + 1}.png";
+												if( File.Exists( fullPath2 ) )
+													fullPath = fullPath2;
+												else
+												{
+													fullPath2 = basePath + $"_Image{iteration + 1}.jpg";
+													if( File.Exists( fullPath2 ) )
+														fullPath = fullPath2;
+												}
+											}
+
+											if( string.IsNullOrEmpty( fullPath ) )
+												break;
+
+											if( !ImageUtility.LoadFromRealFile( fullPath, out var data, out var size, out _, out var format, out _, out _, out var error ) )
+												throw new Exception( error );
+
+											//rescale if needed
+											int maxWidth = 3840;
+											int maxHeight = 2160;
+											if( size.X > maxWidth || size.Y > maxHeight )
+											{
+												double ratioX = (double)maxWidth / size.X;
+												double ratioY = (double)maxHeight / size.Y;
+												double ratio = Math.Min( ratioX, ratioY );
+												int newWidth = (int)Math.Round( size.X * ratio );
+												int newHeight = (int)Math.Round( size.Y * ratio );
+												var newSize = new Vector2I( newWidth, newHeight );
+
+												ImageUtility.Scale( data, size, format, newSize, ImageUtility.Filters.Box, out var scaledData );
+
+												data = scaledData;
+												size = newSize;
+											}
+
+											ImageUtility.Image2D image2DRGB;
+											{
+												var image2D = new ImageUtility.Image2D( format, size, data );
+
+												image2DRGB = new ImageUtility.Image2D( NeoAxis.PixelFormat.R8G8B8, size );
+												image2DRGB.Blit( Vector2I.Zero, image2D );
+											}
+
+											var zip = IOUtility.Zip( image2DRGB.Data, CompressionLevel.Optimal );
+											var base64 = Convert.ToBase64String( zip, Base64FormattingOptions.None );
+											block.SetAttribute( "Screenshot" + ( iteration + 1 ).ToString(), base64 );
+											block.SetAttribute( "Screenshot" + ( iteration + 1 ).ToString() + "Size", image2DRGB.Size.ToString() );
+
+											using var cts = new CancellationTokenSource( TimeSpan.FromMinutes( 5 ) );
+											var updateResult = await CloudServiceFunctions.ProjectUpdateAsync( block, cancellationToken: cts.Token );
+											if( !string.IsNullOrEmpty( updateResult.Error ) )
+											{
+												ScreenNotifications.Show( $"Unable to update the project. {updateResult.Error}", true );
+												Log.Warning( $"Unable to update the project. {updateResult.Error}" );
+												return;
+											}
+										}
+										catch( Exception e )
+										{
+											ScreenNotifications.Show( $"Unable to update the project. Exception: {e.Message}", true );
+											Log.Warning( $"Unable to update the project. Exception: {e.Message}" );
+											return;
+										}
+									}
+
+
+									//upload build
+									var buildContent = "";
+									{
+										using var cts = new CancellationTokenSource( TimeSpan.FromMinutes( 60 ) );
+
+										var fileName = Path.GetFileName( fileToUpload );
+										var storageFileName = $"{userID}/ContentBuilds/{fileName}";
+
+										var getUrlResult = await CloudServiceFunctions.StorageGetContentUrlAsync( storageFileName, true, cancellationToken: cts.Token );
+
+										if( !string.IsNullOrEmpty( getUrlResult.Error ) )
+										{
+											ScreenNotifications.Show( $"Unable to upload the build. {getUrlResult.Error}", true );
+											Log.Warning( $"Unable to upload the build. {getUrlResult.Error}" );
+											return;
+										}
+
+										var uploadUrl = getUrlResult.Url;
+
+										var uploadResult = await NetworkUtility.UploadFileByUrlAsync( uploadUrl, fileToUpload, true, null, cancellationToken: cts.Token );
+										if( !string.IsNullOrEmpty( uploadResult.Error ) )
+										{
+											ScreenNotifications.Show( $"Unable to upload the build. {uploadResult.Error}", true );
+											Log.Warning( $"Unable to upload the build. {uploadResult.Error}" );
+											return;
+										}
+
+										buildContent = storageFileName;
+									}
+
+
+									//configure project details and submit to publish
+									{
+										var block = new TextBlock();
+										block.SetAttribute( "ID", projectID.ToString() );
+
+										if( !string.IsNullOrEmpty( Description.Value ) )
+											block.SetAttribute( "Description", Description.Value );
+
+										//block.SetAttribute( "FullDescription", EditFullDescription.Text.Value );
+
+										block.SetAttribute( "ProductType", "Content" );
+
+
+										//!!!!multi selection
+
+										var category = ProjectItemCategories.Value.ToString();
+										category = category.Replace( ProjectItemCategoriesEnum.Models.ToString(), "3D Models" );
+										category = "NeoAxis Engine: " + category;
+										block.SetAttribute( "Category", category );
+
+										block.SetAttribute( "License", License.Value.ToString() );
+
+
+										//!!!!paid
+
+										//if( float.TryParse( EditEntryFee.Text.Value.Trim(), out var entryFee ) )
+										//	block.SetAttribute( "EntryFee", entryFee.ToString() );
+
+
+										if( !string.IsNullOrEmpty( buildContent ) )
+											block.SetAttribute( "BuildContent", buildContent );
+
+										block.SetAttribute( "SubmitToPublish", "True" );
+
+										using var cts = new CancellationTokenSource( TimeSpan.FromMinutes( 5 ) );
+										var updateResult = await CloudServiceFunctions.ProjectUpdateAsync( block, cancellationToken: cts.Token );
+										if( !string.IsNullOrEmpty( updateResult.Error ) )
+										{
+											ScreenNotifications.Show( $"Unable to update the project. {updateResult.Error}", true );
+											Log.Warning( $"Unable to update the project. {updateResult.Error}" );
+											return;
+										}
+									}
+								}
 							}
 							catch( Exception e )
 							{
-								resultString = e.Message;
+								ScreenNotifications.Show( $"Unable to upload the product. Exception: {e.Message}", true );
+								Log.Warning( $"Unable to upload the product. Exception: {e.Message}" );
 							}
 							finally
 							{
-								notification.Close();
+								EngineThreading.ExecuteFromMainThreadLater( delegate ()
+								{
+									notification?.Close();
+								} );
 							}
 
-							if( resultString == "OK" )
-							{
-								ScreenNotifications.Show( EditorLocalization.Translate( "Backstage", "The product was uploaded successfully. Now you can check it on the website and submit to publish." ) );
-							}
-							else
-							{
-								if( resultString == "" )
-									resultString = "Unable to upload. No error message.";
-								ScreenNotifications.Show( resultString, true );
-								Log.Warning( resultString );
-							}
-						}
+							//"Now you can check it on the website and submit to publish"
+							ScreenNotifications.Show( EditorLocalization.Translate( "Backstage", "The package was uploaded successfully." ) );
+						} );
+
+						//try
+						//{
+
+						task.Start();
+						task.GetAwaiter().GetResult();
+
+						//}
+						//finally
+						//{
+						//	notification?.Close();
+						//}
 					}
 				}
+
+				////upload
+				//if( buildInstance.Run )
+				//{
+				//	var text = $"Upload the package to the store?\r\n\r\nThe previous version will be overwritten if it exists.";
+				//	if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.OKCancel ) == EDialogResult.OK )
+				//	{
+				//		foreach( var fileToUpload in filesToUpload )
+				//		{
+				//			var email = authorEmail;
+				//			var hash = authorHash;
+
+
+				//			//!!!!невалидный идентификатор
+
+				//			//!!!!невалидная версия
+
+				//			//!!!!product
+				//			//!!!!version
+
+				//			var email64 = StringUtility.EncodeToBase64URL( email );
+				//			var hash64 = StringUtility.EncodeToBase64URL( hash );
+				//			var parameters = $"email={email64}&hash={hash64}";
+
+				//			var Client = new System.Net.WebClient();
+				//			Client.Headers.Add( "Content-Type", "binary/octet-stream" );
+
+
+				//			string resultString = "";
+
+				//			var notification = ScreenNotifications.ShowSticky( "Uploading to the Store..." );
+				//			try
+				//			{
+				//				//!!!!
+				//				Log.Fatal( "impl" );
+
+				//				//var result = Client.UploadFile( EngineInfo.StoreAddress + "/api/product_processing_upload/?" + parameters, "POST", fileToUpload );
+				//				//resultString = Encoding.UTF8.GetString( result, 0, result.Length );
+				//			}
+				//			catch( Exception e )
+				//			{
+				//				resultString = e.Message;
+				//			}
+				//			finally
+				//			{
+				//				notification.Close();
+				//			}
+
+				//			if( resultString == "OK" )
+				//			{
+				//				ScreenNotifications.Show( EditorLocalization.Translate( "Backstage", "The product was uploaded successfully. Now you can check it on the website and submit to publish." ) );
+				//			}
+				//			else
+				//			{
+				//				if( resultString == "" )
+				//					resultString = "Unable to upload. No error message.";
+				//				ScreenNotifications.Show( resultString, true );
+				//				Log.Warning( resultString );
+				//			}
+				//		}
+				//	}
+				//}
 			}
 			else
 			{
-				//!!!!is not implemented
+				//is not implemented
 
-				//App, Game, ProjectTemplate
+				////App, Game, ProjectTemplate
 
-				//copy files
-				try
-				{
-					var paths = GetPaths();
-					CopyIncludeExcludePaths( paths, buildInstance, new Range( 0, 0.99 ) );
+				////copy files
+				//try
+				//{
+				//	var paths = GetPaths();
+				//	CopyIncludeExcludePaths( paths, buildInstance, new Range( 0, 0.99 ) );
 
-					if( CheckCancel( buildInstance ) )
-						return;
+				//	if( CheckCancel( buildInstance ) )
+				//		return;
 
-					//process C# code
-					ProcessCode( buildInstance );
+				//	//process C# code
+				//	ProcessCode( buildInstance );
 
-					if( CheckCancel( buildInstance ) )
-						return;
+				//	if( CheckCancel( buildInstance ) )
+				//		return;
 
 
-					var license = EnumUtility.GetValueDisplayName( License.Value );
+				//	var license = EnumUtility.GetValueDisplayName( License.Value );
 
-					//prepare Package.info
-					{
-						var block = new TextBlock();
+				//	//prepare Package.info
+				//	{
+				//		var block = new TextBlock();
 
-						//block.SetAttribute( "Identifier", GetIdentifier() );
-						block.SetAttribute( "Title", GetName() );
-						block.SetAttribute( "Version", GetVersion() );
-						//block.SetAttribute( "Author", authorEmail );// "NeoAxis" );
+				//		//block.SetAttribute( "Identifier", GetIdentifier() );
+				//		block.SetAttribute( "Title", GetName() );
+				//		block.SetAttribute( "Version", GetVersion() );
+				//		//block.SetAttribute( "Author", authorEmail );// "NeoAxis" );
 
-						block.SetAttribute( "FullDescription", Description );
-						//block.SetAttribute( "Description", ShortDescription );
-						////"ShortDescription"
-						//block.SetAttribute( "FullDescription", FullDescription.Value );
+				//		block.SetAttribute( "FullDescription", Description );
+				//		//block.SetAttribute( "Description", ShortDescription );
+				//		////"ShortDescription"
+				//		//block.SetAttribute( "FullDescription", FullDescription.Value );
 
-						block.SetAttribute( "License", license );
+				//		block.SetAttribute( "License", license );
 
-						if( License.Value == StoreProductLicense.PaidPerSeat )
-							block.SetAttribute( "Cost", Cost.Value.ToString() );
+				//		if( License.Value == CloudProductLicense.PaidPerSeat )
+				//			block.SetAttribute( "Cost", Cost.Value.ToString() );
 
-						block.SetAttribute( "Categories", ProductType.Value.ToString() + "s" );
+				//		block.SetAttribute( "Categories", ProductType.Value.ToString() + "s" );
 
-						if( !string.IsNullOrEmpty( Tags.Value ) )
-							block.SetAttribute( "Tags", Tags.Value );
+				//		if( !string.IsNullOrEmpty( Tags.Value ) )
+				//			block.SetAttribute( "Tags", Tags.Value );
 
-						block.SetAttribute( "EngineVersion", EngineInfo.Version );
+				//		block.SetAttribute( "EngineVersion", EngineInfo.Version );
 
-						var fileName = Path.Combine( buildInstance.DestinationFolder, "Package.info" );
-						File.WriteAllText( fileName, block.DumpToString() );
-					}
+				//		var fileName = Path.Combine( buildInstance.DestinationFolder, "Package.info" );
+				//		File.WriteAllText( fileName, block.DumpToString() );
+				//	}
 
-					//!!!!percents
+				//	//!!!!percents
 
-					//make archive
-					var zipFileTempFileName = Path.Combine( Path.GetTempPath(), "Temp" + Path.GetRandomFileName() );
-					ZipFile.CreateFromDirectory( buildInstance.DestinationFolder, zipFileTempFileName );
+				//	//make archive
+				//	var zipFileTempFileName = Path.Combine( Path.GetTempPath(), "Temp" + Path.GetRandomFileName() );
+				//	ZipFile.CreateFromDirectory( buildInstance.DestinationFolder, zipFileTempFileName );
 
-					//clear folder
-					IOUtility.ClearDirectory( buildInstance.DestinationFolder );
+				//	//clear folder
+				//	IOUtility.ClearDirectory( buildInstance.DestinationFolder );
 
-					//copy zip
-					var destZipFileName = Path.Combine( buildInstance.DestinationFolder, GetIdentifier() + "-" + GetVersion() + ".neoaxispackage" );
-					File.Copy( zipFileTempFileName, destZipFileName );
+				//	//copy zip
+				//	var destZipFileName = Path.Combine( buildInstance.DestinationFolder, GetIdentifier() + "-" + GetVersion() + ".neoaxispackage" );
+				//	File.Copy( zipFileTempFileName, destZipFileName );
 
-					//delete temp file
-					if( File.Exists( zipFileTempFileName ) )
-						File.Delete( zipFileTempFileName );
+				//	//delete temp file
+				//	if( File.Exists( zipFileTempFileName ) )
+				//		File.Delete( zipFileTempFileName );
 
-					//write info json
-					{
-						var jsonFileName = destZipFileName + ".json";
+				//	//write info json
+				//	{
+				//		var jsonFileName = destZipFileName + ".json";
 
-						//var sw = new StringWriter();
-						using( var stream = new MemoryStream() )
-						{
-							var options = new JsonWriterOptions();
-							options.Indented = true;
+				//		//var sw = new StringWriter();
+				//		using( var stream = new MemoryStream() )
+				//		{
+				//			var options = new JsonWriterOptions();
+				//			options.Indented = true;
 
-							using( var writer = new Utf8JsonWriter( stream, options ) )
-							{
-								//!!!!writer.Formatting = Formatting.Indented;
-								writer.WriteStartObject();
+				//			using( var writer = new Utf8JsonWriter( stream, options ) )
+				//			{
+				//				//!!!!writer.Formatting = Formatting.Indented;
+				//				writer.WriteStartObject();
 
-								writer.WriteString( "Author", authorEmail );// "NeoAxis" );
-								writer.WriteString( "Identifier", GetIdentifier() );
-								writer.WriteString( "Title", GetName() );
-								writer.WriteString( "License", license );
+				//				writer.WriteString( "Author", authorEmail );// "NeoAxis" );
+				//				writer.WriteString( "Identifier", GetIdentifier() );
+				//				writer.WriteString( "Title", GetName() );
+				//				writer.WriteString( "License", license );
 
-								if( License.Value == StoreProductLicense.PaidPerSeat )
-									writer.WriteString( "Cost", Cost.Value.ToString() );
+				//				if( License.Value == CloudProductLicense.PaidPerSeat )
+				//					writer.WriteString( "Cost", Cost.Value.ToString() );
 
-								writer.WriteString( "FullDescription", Description.Value );
-								//writer.WriteString( "ShortDescription", ShortDescription.Value );
-								//writer.WriteString( "FullDescription", FullDescription.Value );
+				//				writer.WriteString( "FullDescription", Description.Value );
+				//				//writer.WriteString( "ShortDescription", ShortDescription.Value );
+				//				//writer.WriteString( "FullDescription", FullDescription.Value );
 
-								writer.WriteString( "Categories", ProductType.Value.ToString() + "s" );
+				//				writer.WriteString( "Categories", ProductType.Value.ToString() + "s" );
 
-								if( !string.IsNullOrEmpty( Tags.Value ) )
-									writer.WriteString( "Tags", Tags.Value );
+				//				if( !string.IsNullOrEmpty( Tags.Value ) )
+				//					writer.WriteString( "Tags", Tags.Value );
 
-								writer.WriteString( "Version", GetVersion() );
-								writer.WriteString( "EngineVersion", EngineInfo.Version );
+				//				writer.WriteString( "Version", GetVersion() );
+				//				writer.WriteString( "EngineVersion", EngineInfo.Version );
 
-								//writer.WriteEnd();
-								writer.WriteEndObject();
-							}
+				//				//writer.WriteEnd();
+				//				writer.WriteEndObject();
+				//			}
 
-							string json = Encoding.UTF8.GetString( stream.ToArray() );
-							File.WriteAllText( jsonFileName, json );
-						}
-					}
+				//			string json = Encoding.UTF8.GetString( stream.ToArray() );
+				//			File.WriteAllText( jsonFileName, json );
+				//		}
+				//	}
 
-				}
-				catch( Exception e )
-				{
-					buildInstance.Error = e.Message;
-					buildInstance.State = ProductBuildInstance.StateEnum.Error;
-					return;
-				}
+				//}
+				//catch( Exception e )
+				//{
+				//	buildInstance.Error = e.Message;
+				//	buildInstance.State = ProductBuildInstance.StateEnum.Error;
+				//	return;
+				//}
 
 			}
 
@@ -1557,49 +1923,52 @@ again:;
 		//	return ( category & ( ProjectItemCategoriesEnum.Animals | ProjectItemCategoriesEnum.Architecture | ProjectItemCategoriesEnum.Characters | ProjectItemCategoriesEnum.Exterior | ProjectItemCategoriesEnum.Food | ProjectItemCategoriesEnum.Industrial | ProjectItemCategoriesEnum.Interior | ProjectItemCategoriesEnum.Vehicles | ProjectItemCategoriesEnum.Nature | ProjectItemCategoriesEnum.Weapons | ProjectItemCategoriesEnum.UncategorizedModels ) ) != 0;
 		//}
 
-		static string GetHash( string input )
-		{
-			// Use input string to calculate MD5 hash
-			using( var sha = System.Security.Cryptography.SHA256.Create() )
-			{
-				byte[] inputBytes = Encoding.ASCII.GetBytes( input );
-				byte[] hashBytes = sha.ComputeHash( inputBytes );
+		//static string GetHash( string input )
+		//{
+		//	// Use input string to calculate MD5 hash
+		//	using( var sha = System.Security.Cryptography.SHA256.Create() )
+		//	{
+		//		byte[] inputBytes = Encoding.ASCII.GetBytes( input );
+		//		byte[] hashBytes = sha.ComputeHash( inputBytes );
 
-				// Convert the byte array to hexadecimal string
-				var sb = new StringBuilder();
-				for( int i = 0; i < hashBytes.Length; i++ )
-					sb.Append( hashBytes[ i ].ToString( "X2" ) );
-				return sb.ToString().Substring( 0, 32 );
-			}
+		//		// Convert the byte array to hexadecimal string
+		//		var sb = new StringBuilder();
+		//		for( int i = 0; i < hashBytes.Length; i++ )
+		//			sb.Append( hashBytes[ i ].ToString( "X2" ) );
+		//		return sb.ToString().Substring( 0, 32 );
+		//	}
 
-			//// Use input string to calculate MD5 hash
-			//using( System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create() )
-			//{
-			//	byte[] inputBytes = Encoding.ASCII.GetBytes( input );
-			//	byte[] hashBytes = md5.ComputeHash( inputBytes );
+		//	//// Use input string to calculate MD5 hash
+		//	//using( System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create() )
+		//	//{
+		//	//	byte[] inputBytes = Encoding.ASCII.GetBytes( input );
+		//	//	byte[] hashBytes = md5.ComputeHash( inputBytes );
 
-			//	// Convert the byte array to hexadecimal string
-			//	var sb = new StringBuilder();
-			//	for( int i = 0; i < hashBytes.Length; i++ )
-			//		sb.Append( hashBytes[ i ].ToString( "X2" ) );
-			//	return sb.ToString();
-			//}
-		}
+		//	//	// Convert the byte array to hexadecimal string
+		//	//	var sb = new StringBuilder();
+		//	//	for( int i = 0; i < hashBytes.Length; i++ )
+		//	//		sb.Append( hashBytes[ i ].ToString( "X2" ) );
+		//	//	return sb.ToString();
+		//	//}
+		//}
 
 		public virtual string GetIdentifier()
 		{
-			var result = Identifier.Value;
-
-			if( string.IsNullOrEmpty( result ) )
-			{
-				result = GetName().Replace( ' ', '_' ).Replace( '-', '_' ).Replace( '(', '_' ).Replace( ')', '_' );
-
-				var fileName = ComponentUtility.GetOwnedFileNameOfComponent( this );
-				if( !string.IsNullOrEmpty( fileName ) )
-					result += "_" + GetHash( fileName + ":byfilename" ).ToLower().Substring( 0, 12 );
-			}
-
+			var result = GetName().Replace( ' ', '_' ).Replace( '-', '_' ).Replace( '(', '_' ).Replace( ')', '_' );
 			return result;
+
+			//var result = Identifier.Value;
+
+			//if( string.IsNullOrEmpty( result ) )
+			//{
+			//	result = GetName().Replace( ' ', '_' ).Replace( '-', '_' ).Replace( '(', '_' ).Replace( ')', '_' );
+
+			//	var fileName = ComponentUtility.GetOwnedFileNameOfComponent( this );
+			//	if( !string.IsNullOrEmpty( fileName ) )
+			//		result += "_" + GetHash( fileName + ":byfilename" ).ToLower().Substring( 0, 12 );
+			//}
+
+			//return result;
 		}
 
 		string GetVersion()
@@ -1610,10 +1979,10 @@ again:;
 			return result;
 		}
 
-		static IEnumerable<Enum> GetFlags( Enum e )
-		{
-			return Enum.GetValues( e.GetType() ).Cast<Enum>().Where( e.HasFlag );
-		}
+		//static IEnumerable<Enum> GetFlags( Enum e )
+		//{
+		//	return Enum.GetValues( e.GetType() ).Cast<Enum>().Where( e.HasFlag );
+		//}
 
 		void EnumerateAllChildren( TextBlock block, Action<TextBlock> callback )
 		{
@@ -1677,7 +2046,7 @@ again:;
 			return result.ToArray();
 		}
 
-		public delegate void CreateScreenshotsDelegate( Product_Store sender, string[] files, ZipArchive archive, bool additional, ref int imageCounter, ref bool handled );
+		public delegate void CreateScreenshotsDelegate( Product_Store sender, string[] files, ZipArchive archive, bool additional, string productFilesPathPrefix, ref int imageCounter, ref bool handled );
 		public static event CreateScreenshotsDelegate CreateScreenshots;
 
 		bool ProjectItemBuildArchive( ProductBuildInstance buildInstance, string specifiedFile, string authorEmail, List<string> filesToUpload )
@@ -1694,8 +2063,6 @@ again:;
 			var title = GetName();// Title.Value;
 			if( !string.IsNullOrEmpty( specifiedFile ) )
 				title = Path.GetFileNameWithoutExtension( specifiedFile );
-
-			//!!!!
 
 			var sourceDirectory = Path.GetDirectoryName( VirtualPathUtility.GetRealPathByVirtual( ComponentUtility.GetOwnedFileNameOfComponent( this ) ) );
 
@@ -1714,7 +2081,8 @@ again:;
 
 			if( !Directory.Exists( buildInstance.DestinationFolder ) )
 				Directory.CreateDirectory( buildInstance.DestinationFolder );
-			var destFileName = Path.Combine( buildInstance.DestinationFolder, identifier + "-" + GetVersion() + ".neoaxispackage" );
+			var destFileName = Path.Combine( buildInstance.DestinationFolder, identifier + "-" + GetVersion() + ".zip" );
+			//var destFileName = Path.Combine( buildInstance.DestinationFolder, identifier + "-" + GetVersion() + ".neoaxispackage" );
 
 			//check file already exists
 			if( File.Exists( destFileName ) )
@@ -1725,13 +2093,40 @@ again:;
 					return false;
 			}
 
+			var notification = ScreenNotifications.ShowSticky( "Making the package..." );
+
 			try
 			{
+				//delete old files
+				{
+					if( File.Exists( destFileName ) )
+						File.Delete( destFileName );
+
+					//delete logo
+					var logoBasePath = Path.ChangeExtension( destFileName, null );
+					var logoPngFileName = logoBasePath + "_Logo.png";
+					if( File.Exists( logoPngFileName ) )
+						File.Delete( logoPngFileName );
+					var logoJpgFileName = logoBasePath + "_Logo.jpg";
+					if( File.Exists( logoJpgFileName ) )
+						File.Delete( logoJpgFileName );
+
+					//delete screenshots
+					var basePath = Path.ChangeExtension( destFileName, null );
+					for( int n = 1; n <= 4; n++ )
+					{
+						var fileName = basePath + $"_Image{n}.png";
+						if( File.Exists( fileName ) )
+							File.Delete( fileName );
+						fileName = basePath + $"_Image{n}.jpg";
+						if( File.Exists( fileName ) )
+							File.Delete( fileName );
+					}
+				}
+
 				//make zip
 
-				if( File.Exists( destFileName ) )
-					File.Delete( destFileName );
-
+				var productFilesPathPrefix = Path.ChangeExtension( destFileName, null );
 
 				using( var archive = ZipFile.Open( destFileName, ZipArchiveMode.Create ) )
 				{
@@ -1786,63 +2181,63 @@ again:;
 					}
 
 
-					//add Package.info
-					{
-						var block = new TextBlock();
+					////add Package.info
+					//{
+					//	var block = new TextBlock();
 
-						//block.SetAttribute( "Identifier", identifier );// GetIdentifier() );
-						block.SetAttribute( "Title", title );// Title.Value );
-						block.SetAttribute( "Version", GetVersion() );
-						//block.SetAttribute( "Author", authorEmail );//, "NeoAxis" );
+					//	//block.SetAttribute( "Identifier", identifier );// GetIdentifier() );
+					//	block.SetAttribute( "Title", title );// Title.Value );
+					//	block.SetAttribute( "Version", GetVersion() );
+					//	//block.SetAttribute( "Author", authorEmail );//, "NeoAxis" );
 
-						block.SetAttribute( "FullDescription", Description );
-						//block.SetAttribute( "Description", Description );
-						//block.SetAttribute( "Description", ShortDescription );
-						////"ShortDescription"
-						//block.SetAttribute( "FullDescription", FullDescription.Value );
+					//	block.SetAttribute( "FullDescription", Description );
+					//	//block.SetAttribute( "Description", Description );
+					//	//block.SetAttribute( "Description", ShortDescription );
+					//	////"ShortDescription"
+					//	//block.SetAttribute( "FullDescription", FullDescription.Value );
 
-						block.SetAttribute( "License", license );
+					//	block.SetAttribute( "License", license );
 
-						if( License.Value == StoreProductLicense.PaidPerSeat )
-							block.SetAttribute( "Cost", Cost.Value.ToString() );
+					//	if( License.Value == CloudProductLicense.PaidPerSeat )
+					//		block.SetAttribute( "Cost", Cost.Value.ToString() );
 
-						//categories
-						{
-							var s = "";
-							foreach( ProjectItemCategoriesEnum flag in GetFlags( ProjectItemCategories.Value ) )
-							{
-								if( flag != 0 )
-								{
-									if( s.Length != 0 )
-										s += ", ";
-									s += TypeUtility.DisplayNameAddSpaces( flag.ToString() );
-								}
-							}
-							block.SetAttribute( "Categories", s );
-						}
+					//	//categories
+					//	{
+					//		var s = "";
+					//		foreach( ProjectItemCategoriesEnum flag in GetFlags( ProjectItemCategories.Value ) )
+					//		{
+					//			if( flag != 0 )
+					//			{
+					//				if( s.Length != 0 )
+					//					s += ", ";
+					//				s += TypeUtility.DisplayNameAddSpaces( flag.ToString() );
+					//			}
+					//		}
+					//		block.SetAttribute( "Categories", s );
+					//	}
 
-						if( !string.IsNullOrEmpty( Tags.Value ) )
-							block.SetAttribute( "Tags", Tags.Value );
+					//	if( !string.IsNullOrEmpty( Tags.Value ) )
+					//		block.SetAttribute( "Tags", Tags.Value );
 
-						string openAfterInstall;
-						if( !string.IsNullOrEmpty( specifiedFile ) )
-							openAfterInstall = Path.GetDirectoryName( specifiedFile );
-						else
-							openAfterInstall = sourceDirectory.Substring( VirtualFileSystem.Directories.Assets.Length + 1 );
-						block.SetAttribute( "OpenAfterInstall", openAfterInstall );
+					//	string openAfterInstall;
+					//	if( !string.IsNullOrEmpty( specifiedFile ) )
+					//		openAfterInstall = Path.GetDirectoryName( specifiedFile );
+					//	else
+					//		openAfterInstall = sourceDirectory.Substring( VirtualFileSystem.Directories.Assets.Length + 1 );
+					//	block.SetAttribute( "OpenAfterInstall", openAfterInstall );
 
-						block.SetAttribute( "EngineVersion", EngineInfo.Version );
+					//	block.SetAttribute( "EngineVersion", EngineInfo.Version );
 
-						//MustRestart = True
-						//AddCSharpFilesToProject = "Store\\Simple Level Generator"
+					//	//MustRestart = True
+					//	//AddCSharpFilesToProject = "Store\\Simple Level Generator"
 
-						var entry = archive.CreateEntry( "Package.info" );
-						using( var entryStream = entry.Open() )
-						using( var streamWriter = new StreamWriter( entryStream ) )
-							streamWriter.Write( block.DumpToString() );
+					//	var entry = archive.CreateEntry( "Package.info" );
+					//	using( var entryStream = entry.Open() )
+					//	using( var streamWriter = new StreamWriter( entryStream ) )
+					//		streamWriter.Write( block.DumpToString() );
 
-						//archive.CreateEntryFromFile( packageInfoTempFileName, "Package.info" );
-					}
+					//	//archive.CreateEntryFromFile( packageInfoTempFileName, "Package.info" );
+					//}
 
 
 					int triangles = 0;
@@ -1857,17 +2252,21 @@ again:;
 						var extension = Path.GetExtension( productLogoResourceName ).ToLower();
 						if( extension == ".png" || extension == ".jpg" )
 						{
-							var entry = archive.CreateEntry( "_ProductLogo" + extension );
+							var fullPath = productFilesPathPrefix + "_Logo" + extension;
 							var data = VirtualFile.ReadAllBytes( productLogoResourceName );
-							using( var entryStream = entry.Open() )
-								entryStream.Write( data );
+							File.WriteAllBytes( fullPath, data );
+
+							//var entry = archive.CreateEntry( "_ProductLogo" + extension );
+							//var data = VirtualFile.ReadAllBytes( productLogoResourceName );
+							//using( var entryStream = entry.Open() )
+							//	entryStream.Write( data );
 						}
 					}
 					else if( LogoMakeScreenshot )
 					{
 						var imageCounterDummy = 0;
 						bool handled = false;
-						CreateScreenshots?.Invoke( this, files, archive, false, ref imageCounterDummy, ref handled );
+						CreateScreenshots?.Invoke( this, files, archive, false, productFilesPathPrefix, ref imageCounterDummy, ref handled );
 
 						if( !handled )
 						{
@@ -1911,9 +2310,13 @@ again:;
 								{
 									var generator = new ImageGenerator();
 
-									var entry = archive.CreateEntry( "_ProductLogo.png" );
-									using( var entryStream = entry.Open() )
-										generator.Generate( objectInSpace, entryStream, ImageGenerator.ImageFormat.Png );
+									var fullPath = productFilesPathPrefix + "_Logo.png";
+									using( var stream = File.OpenWrite( fullPath ) )
+										generator.Generate( objectInSpace, stream, ImageGenerator.ImageFormat.Png );
+
+									//var entry = archive.CreateEntry( "_ProductLogo.png" );
+									//using( var entryStream = entry.Open() )
+									//	generator.Generate( objectInSpace, entryStream, ImageGenerator.ImageFormat.Png );
 								}
 							}
 							else if( ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Surfaces ) )
@@ -1944,10 +2347,13 @@ again:;
 									{
 										var generator = new ImageGenerator();
 
-										var entry = archive.CreateEntry( "_ProductLogo.png" );
-										using( var entryStream = entry.Open() )
-											generator.Generate( surface, entryStream, ImageGenerator.ImageFormat.Png );
-										//generator.Generate( surface, destFileName + ".logo.png" );
+										var fullPath = productFilesPathPrefix + "_Logo.png";
+										using( var stream = File.OpenWrite( fullPath ) )
+											generator.Generate( surface, stream, ImageGenerator.ImageFormat.Png );
+
+										//var entry = archive.CreateEntry( "_ProductLogo.png" );
+										//using( var entryStream = entry.Open() )
+										//	generator.Generate( surface, entryStream, ImageGenerator.ImageFormat.Png );
 									}
 								}
 							}
@@ -1984,10 +2390,13 @@ again:;
 										{
 											var generator = new ImageGenerator();
 
-											var entry = archive.CreateEntry( "_ProductLogo.png" );
-											using( var entryStream = entry.Open() )
-												generator.Generate( mesh, entryStream, ImageGenerator.ImageFormat.Png );
-											//generator.Generate( mesh, destFileName + ".logo.png" );
+											var fullPath = productFilesPathPrefix + "_Logo.png";
+											using( var stream = File.OpenWrite( fullPath ) )
+												generator.Generate( mesh, stream, ImageGenerator.ImageFormat.Png );
+
+											//var entry = archive.CreateEntry( "_ProductLogo.png" );
+											//using( var entryStream = entry.Open() )
+											//	generator.Generate( mesh, entryStream, ImageGenerator.ImageFormat.Png );
 
 											//!!!!если не делаем скриншоты, тогда не будет
 											if( mesh.Result != null )
@@ -2027,10 +2436,13 @@ again:;
 									{
 										var generator = new ImageGenerator();
 
-										var entry = archive.CreateEntry( "_ProductLogo.png" );
-										using( var entryStream = entry.Open() )
-											generator.Generate( material, entryStream, ImageGenerator.ImageFormat.Png );
-										//generator.Generate( material, destFileName + ".logo.png" );
+										var fullPath = productFilesPathPrefix + "_Logo.png";
+										using( var stream = File.OpenWrite( fullPath ) )
+											generator.Generate( material, stream, ImageGenerator.ImageFormat.Png );
+
+										//var entry = archive.CreateEntry( "_ProductLogo.png" );
+										//using( var entryStream = entry.Open() )
+										//	generator.Generate( material, entryStream, ImageGenerator.ImageFormat.Png );
 									}
 								}
 							}
@@ -2062,10 +2474,13 @@ again:;
 									{
 										var generator = new ImageGenerator();
 
-										var entry = archive.CreateEntry( "_ProductLogo.jpg" );
-										using( var entryStream = entry.Open() )
-											generator.Generate( sky, entryStream, ImageGenerator.ImageFormat.Jpeg );
-										//generator.Generate( skybox, destFileName + ".logo.jpg" );// png" );
+										var fullPath = productFilesPathPrefix + "_Logo.jpg";
+										using( var stream = File.OpenWrite( fullPath ) )
+											generator.Generate( sky, stream, ImageGenerator.ImageFormat.Jpeg );
+
+										//var entry = archive.CreateEntry( "_ProductLogo.jpg" );
+										//using( var entryStream = entry.Open() )
+										//	generator.Generate( sky, entryStream, ImageGenerator.ImageFormat.Jpeg );
 									}
 								}
 							}
@@ -2098,11 +2513,17 @@ again:;
 						foreach( var resourceName in imagesResourceName )
 						{
 							var extension = Path.GetExtension( resourceName ).ToLower();
-							var entry = archive.CreateEntry( "_Image" + imageCounter.ToString() + extension );
+							var fullPath = productFilesPathPrefix + $"_Image{imageCounter}{extension}";
 							var data = VirtualFile.ReadAllBytes( resourceName );
-							using( var entryStream = entry.Open() )
-								entryStream.Write( data );
+							File.WriteAllBytes( fullPath, data );
 							imageCounter++;
+
+							//var extension = Path.GetExtension( resourceName ).ToLower();
+							//var entry = archive.CreateEntry( "_Image" + imageCounter.ToString() + extension );
+							//var data = VirtualFile.ReadAllBytes( resourceName );
+							//using( var entryStream = entry.Open() )
+							//	entryStream.Write( data );
+							//imageCounter++;
 						}
 
 						//if( Images.Count > 0 )
@@ -2130,375 +2551,124 @@ again:;
 					if( AdditionalScreenshots )
 					{
 						bool handled = false;
-						CreateScreenshots?.Invoke( this, files, archive, true, ref imageCounter, ref handled );
-					}
+						CreateScreenshots?.Invoke( this, files, archive, true, productFilesPathPrefix, ref imageCounter, ref handled );
 
-					//write info json
-					{
-						//var jsonFileName = destFileName + ".json";
-
-						//var sw = new StringWriter();
-						using( var stream = new MemoryStream() )
+						//if no screenshots, use logo as first image
 						{
-							var options = new JsonWriterOptions();
-							options.Indented = true;
-
-							using( var writer = new Utf8JsonWriter( stream, options ) )
+							var logoFullPath1 = productFilesPathPrefix + "_Logo.png";
+							var logoFullPath2 = productFilesPathPrefix + "_Logo.jpg";
+							if( File.Exists( logoFullPath1 ) || File.Exists( logoFullPath2 ) )
 							{
-								//!!!!writer.Formatting = Formatting.Indented;
-								writer.WriteStartObject();
-
-								writer.WriteString( "Author", authorEmail ); //"NeoAxis" );
-								writer.WriteString( "Identifier", identifier );// GetIdentifier() );
-								writer.WriteString( "Title", title );// Title.Value );
-
-								//var license = EnumExtension.GetValueDisplayName( License.Value );
-								//if( string.IsNullOrEmpty( license ) )
-								//	license = TypeUtility.DisplayNameAddSpaces( license.ToString() );
-								writer.WriteString( "License", license );
-
-								if( License.Value == StoreProductLicense.PaidPerSeat )
-									writer.WriteString( "Cost", Cost.Value.ToString() );
-
-								writer.WriteString( "FullDescription", Description.Value );
-								//writer.WriteString( "Description", Description.Value );
-								//writer.WriteString( "ShortDescription", ShortDescription.Value );
-								//writer.WriteString( "FullDescription", FullDescription.Value );
-
+								var imageFullPath1 = productFilesPathPrefix + "_Image1.png";
+								var imageFullPath2 = productFilesPathPrefix + "_Image1.jpg";
+								if( !File.Exists( imageFullPath1 ) && !File.Exists( imageFullPath2 ) )
 								{
-									var s = "";
-									foreach( ProjectItemCategoriesEnum flag in GetFlags( ProjectItemCategories.Value ) )
-									{
-										if( flag != 0 )
-										{
-											if( s.Length != 0 )
-												s += ", ";
-											s += TypeUtility.DisplayNameAddSpaces( flag.ToString() );
-										}
-									}
-									writer.WriteString( "Categories", s );
-									//writer.WriteValue( Categories.Value.ToString() );
+									if( File.Exists( logoFullPath1 ) )
+										File.Copy( logoFullPath1, imageFullPath1 );
+									else
+										File.Copy( logoFullPath2, imageFullPath2 );
 								}
-
-								writer.WriteString( "Tags", Tags.Value );
-								writer.WriteString( "Version", GetVersion() );
-								writer.WriteString( "EngineVersion", EngineInfo.Version );
-
-								if( triangles != 0 )
-								{
-									writer.WriteNumber( "Triangles", triangles );
-									writer.WriteNumber( "Vertices", vertices );
-								}
-
-								//writer.WriteEnd();
-								writer.WriteEndObject();
 							}
-
-							string json = Encoding.UTF8.GetString( stream.ToArray() );
-
-							var entry = archive.CreateEntry( "_Product.json" );
-							using( var entryStream = entry.Open() )
-							using( var streamWriter = new StreamWriter( entryStream ) )
-								streamWriter.Write( json );
-
-							//File.WriteAllText( jsonFileName, json );
 						}
+
+						////for 3d models: use logo as first image
+						//if( ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Models ) )
+						//{
+						//	var logoFullPath = productFilesPathPrefix + "_Logo.png";
+						//	if( File.Exists( logoFullPath ) )
+						//	{
+						//		var imageFullPath = productFilesPathPrefix + "_Image1.png";
+						//		File.Copy( logoFullPath, imageFullPath );
+						//	}
+						//}
 					}
+
+
+					////write info json
+					//{
+					//	//var jsonFileName = destFileName + ".json";
+
+					//	//var sw = new StringWriter();
+					//	using( var stream = new MemoryStream() )
+					//	{
+					//		var options = new JsonWriterOptions();
+					//		options.Indented = true;
+
+					//		using( var writer = new Utf8JsonWriter( stream, options ) )
+					//		{
+					//			//!!!!writer.Formatting = Formatting.Indented;
+					//			writer.WriteStartObject();
+
+					//			writer.WriteString( "Author", authorEmail ); //"NeoAxis" );
+					//			writer.WriteString( "Identifier", identifier );// GetIdentifier() );
+					//			writer.WriteString( "Title", title );// Title.Value );
+
+					//			//var license = EnumExtension.GetValueDisplayName( License.Value );
+					//			//if( string.IsNullOrEmpty( license ) )
+					//			//	license = TypeUtility.DisplayNameAddSpaces( license.ToString() );
+					//			writer.WriteString( "License", license );
+
+					//			if( License.Value == CloudProductLicense.PaidPerSeat )
+					//				writer.WriteString( "Cost", Cost.Value.ToString() );
+
+					//			writer.WriteString( "FullDescription", Description.Value );
+					//			//writer.WriteString( "Description", Description.Value );
+					//			//writer.WriteString( "ShortDescription", ShortDescription.Value );
+					//			//writer.WriteString( "FullDescription", FullDescription.Value );
+
+					//			{
+					//				var s = "";
+					//				foreach( ProjectItemCategoriesEnum flag in GetFlags( ProjectItemCategories.Value ) )
+					//				{
+					//					if( flag != 0 )
+					//					{
+					//						if( s.Length != 0 )
+					//							s += ", ";
+					//						s += TypeUtility.DisplayNameAddSpaces( flag.ToString() );
+					//					}
+					//				}
+					//				writer.WriteString( "Categories", s );
+					//				//writer.WriteValue( Categories.Value.ToString() );
+					//			}
+
+					//			writer.WriteString( "Tags", Tags.Value );
+					//			writer.WriteString( "Version", GetVersion() );
+					//			writer.WriteString( "EngineVersion", EngineInfo.Version );
+
+					//			if( triangles != 0 )
+					//			{
+					//				writer.WriteNumber( "Triangles", triangles );
+					//				writer.WriteNumber( "Vertices", vertices );
+					//			}
+
+					//			//writer.WriteEnd();
+					//			writer.WriteEndObject();
+					//		}
+
+					//		string json = Encoding.UTF8.GetString( stream.ToArray() );
+
+					//		var entry = archive.CreateEntry( "_Product.json" );
+					//		using( var entryStream = entry.Open() )
+					//		using( var streamWriter = new StreamWriter( entryStream ) )
+					//			streamWriter.Write( json );
+
+					//		//File.WriteAllText( jsonFileName, json );
+					//	}
+					//}
 
 				}
 
 				filesToUpload.Add( destFileName );
-
-
-				////prepare Package.info
-				//var packageInfoTempFileName = Path.Combine( Path.GetTempPath(), "Temp3" + Path.GetRandomFileName() );
-				////var packageInfoTempFileName = Path.GetTempFileName();
-				//{
-				//	var block = new TextBlock();
-
-				//	block.SetAttribute( "Identifier", identifier );// GetIdentifier() );
-				//	block.SetAttribute( "Title", title );// Title.Value );
-				//	block.SetAttribute( "Version", GetVersion() );
-				//	//block.SetAttribute( "Author", authorEmail );//, "NeoAxis" );
-				//	block.SetAttribute( "Description", ShortDescription );
-				//	//"ShortDescription"
-
-				//	block.SetAttribute( "FullDescription", FullDescription.Value );
-
-				//	block.SetAttribute( "License", license );
-
-				//	if( License.Value == StoreProductLicense.PaidPerSeat )
-				//		block.SetAttribute( "Cost", Cost.Value.ToString() );
-
-				//	//categories
-				//	{
-				//		var s = "";
-				//		foreach( ProjectItemCategoriesEnum flag in GetFlags( ProjectItemCategories.Value ) )
-				//		{
-				//			if( flag != 0 )
-				//			{
-				//				if( s.Length != 0 )
-				//					s += ", ";
-				//				s += TypeUtility.DisplayNameAddSpaces( flag.ToString() );
-				//			}
-				//		}
-				//		block.SetAttribute( "Categories", s );
-				//	}
-
-				//	if( !string.IsNullOrEmpty( Tags.Value ) )
-				//		block.SetAttribute( "Tags", Tags.Value );
-
-				//	string openAfterInstall;
-				//	if( !string.IsNullOrEmpty( specifiedFile ) )
-				//		openAfterInstall = Path.GetDirectoryName( specifiedFile );
-				//	else
-				//		openAfterInstall = sourceDirectory.Substring( VirtualFileSystem.Directories.Assets.Length + 1 );
-				//	block.SetAttribute( "OpenAfterInstall", openAfterInstall );
-
-				//	block.SetAttribute( "EngineVersion", EngineInfo.Version );
-
-				//	//MustRestart = True
-				//	//AddCSharpFilesToProject = "Store\\Simple Level Generator"
-
-				//	File.WriteAllText( packageInfoTempFileName, block.DumpToString() );
-				//}
-
-				//using( var archive = ZipFile.Open( destFileName, ZipArchiveMode.Create ) )
-				//{
-				//	foreach( var file in files )
-				//	{
-				//		if( Path.GetExtension( file ) == ".product" )
-				//			continue;
-
-				//		var entryName = file.Substring( VirtualFileSystem.Directories.Project.Length + 1 );
-				//		//var entryName = file.Substring( sourceDirectory.Length + 1 );
-				//		archive.CreateEntryFromFile( file, entryName );
-				//	}
-
-				//	archive.CreateEntryFromFile( packageInfoTempFileName, "Package.info" );
-				//}
-
-
-				//if( File.Exists( packageInfoTempFileName ) )
-				//	File.Delete( packageInfoTempFileName );
-
-
-				//int triangles = 0;
-				//int vertices = 0;
-
-				////try to create screenshots
-				//if( CreateScreenshots )
-				//{
-				//	if( ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Surfaces ) )
-				//	{
-				//		//surface
-
-				//		var resourceType = ResourceManager.GetTypeByName( "Surface" );
-				//		var importExtensions = new ESet<string>();
-				//		foreach( var e in resourceType.FileExtensions )
-				//			importExtensions.AddWithCheckAlreadyContained( "." + e );
-
-				//		var importVirtualFileNames = new List<string>();
-				//		foreach( var file in files )
-				//		{
-				//			var ext = Path.GetExtension( file );
-				//			if( !string.IsNullOrEmpty( ext ) && importExtensions.Contains( ext ) )
-				//			{
-				//				var virtualFileName = VirtualPathUtility.GetVirtualPathByReal( file );
-				//				if( !string.IsNullOrEmpty( virtualFileName ) )
-				//					importVirtualFileNames.Add( virtualFileName );
-				//			}
-				//		}
-
-				//		if( importVirtualFileNames.Count == 1 )
-				//		{
-				//			var surface = ResourceManager.LoadResource<Surface>( importVirtualFileNames[ 0 ] );
-				//			if( surface != null )
-				//			{
-				//				var generator = new ImageGenerator();
-				//				generator.Generate( surface, destFileName + ".logo.png" );
-				//			}
-				//		}
-				//	}
-				//	else if( CategoryIsModel( ProjectItemCategories.Value ) )
-				//	{
-				//		//model
-
-				//		//find in the folder one import file (FBX, etc). make screenshot of 'Mesh' object inside the import file.
-
-				//		var resourceType = ResourceManager.GetTypeByName( "Import 3D" );
-				//		var importExtensions = new ESet<string>();
-				//		foreach( var e in resourceType.FileExtensions )
-				//			importExtensions.AddWithCheckAlreadyContained( "." + e );
-
-				//		var importVirtualFileNames = new List<string>();
-				//		foreach( var file in files )
-				//		{
-				//			var ext = Path.GetExtension( file );
-				//			if( !string.IsNullOrEmpty( ext ) && importExtensions.Contains( ext ) )
-				//			{
-				//				var virtualFileName = VirtualPathUtility.GetVirtualPathByReal( file );
-				//				if( !string.IsNullOrEmpty( virtualFileName ) )
-				//					importVirtualFileNames.Add( virtualFileName );
-				//			}
-				//		}
-
-				//		if( importVirtualFileNames.Count == 1 )
-				//		{
-				//			var import3D = ResourceManager.LoadResource<Import3D>( importVirtualFileNames[ 0 ] );
-				//			if( import3D != null )
-				//			{
-				//				var mesh = import3D.GetComponent<Mesh>( "Mesh" );
-				//				if( mesh != null )
-				//				{
-				//					var generator = new ImageGenerator();
-				//					generator.Generate( mesh, destFileName + ".logo.png" );
-
-				//					//!!!!если не делаем скриншоты, тогда не будет
-				//					if( mesh.Result != null )
-				//					{
-				//						triangles = mesh.Result.ExtractedIndices.Length / 3;
-				//						vertices = mesh.Result.ExtractedVerticesPositions.Length;
-				//					}
-				//				}
-				//			}
-				//		}
-				//	}
-				//	else if( ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Materials ) )
-				//	{
-				//		//material
-
-				//		var resourceType = ResourceManager.GetTypeByName( "Material" );
-				//		var importExtensions = new ESet<string>();
-				//		foreach( var e in resourceType.FileExtensions )
-				//			importExtensions.AddWithCheckAlreadyContained( "." + e );
-
-				//		var importVirtualFileNames = new List<string>();
-				//		foreach( var file in files )
-				//		{
-				//			var ext = Path.GetExtension( file );
-				//			if( !string.IsNullOrEmpty( ext ) && importExtensions.Contains( ext ) )
-				//			{
-				//				var virtualFileName = VirtualPathUtility.GetVirtualPathByReal( file );
-				//				if( !string.IsNullOrEmpty( virtualFileName ) )
-				//					importVirtualFileNames.Add( virtualFileName );
-				//			}
-				//		}
-
-				//		if( importVirtualFileNames.Count == 1 )
-				//		{
-				//			var material = ResourceManager.LoadResource<Material>( importVirtualFileNames[ 0 ] );
-				//			if( material != null )
-				//			{
-				//				var generator = new ImageGenerator();
-				//				generator.Generate( material, destFileName + ".logo.png" );
-				//			}
-				//		}
-				//	}
-				//	else if( ProjectItemCategories.Value.HasFlag( ProjectItemCategoriesEnum.Environments ) )
-				//	{
-				//		//skybox
-
-				//		var resourceType = ResourceManager.GetTypeByName( "Skybox" );
-				//		var importExtensions = new ESet<string>();
-				//		foreach( var e in resourceType.FileExtensions )
-				//			importExtensions.AddWithCheckAlreadyContained( "." + e );
-
-				//		var importVirtualFileNames = new List<string>();
-				//		foreach( var file in files )
-				//		{
-				//			var ext = Path.GetExtension( file );
-				//			if( !string.IsNullOrEmpty( ext ) && importExtensions.Contains( ext ) )
-				//			{
-				//				var virtualFileName = VirtualPathUtility.GetVirtualPathByReal( file );
-				//				if( !string.IsNullOrEmpty( virtualFileName ) )
-				//					importVirtualFileNames.Add( virtualFileName );
-				//			}
-				//		}
-
-				//		if( importVirtualFileNames.Count == 1 )
-				//		{
-				//			var skybox = ResourceManager.LoadResource<Skybox>( importVirtualFileNames[ 0 ] );
-				//			if( skybox != null )
-				//			{
-				//				var generator = new ImageGenerator();
-				//				generator.Generate( skybox, destFileName + ".logo.jpg" );// png" );
-				//			}
-				//		}
-				//	}
-				//}
-
-
-				////write info json
-				//{
-				//	var jsonFileName = destFileName + ".json";
-
-				//	//var sw = new StringWriter();
-				//	using( var stream = new MemoryStream() )
-				//	{
-				//		var options = new JsonWriterOptions();
-				//		options.Indented = true;
-
-				//		using( var writer = new Utf8JsonWriter( stream, options ) )
-				//		{
-				//			//!!!!writer.Formatting = Formatting.Indented;
-				//			writer.WriteStartObject();
-
-				//			writer.WriteString( "Author", authorEmail ); //"NeoAxis" );
-				//			writer.WriteString( "Identifier", identifier );// GetIdentifier() );
-				//			writer.WriteString( "Title", title );// Title.Value );
-
-				//			//var license = EnumExtension.GetValueDisplayName( License.Value );
-				//			//if( string.IsNullOrEmpty( license ) )
-				//			//	license = TypeUtility.DisplayNameAddSpaces( license.ToString() );
-				//			writer.WriteString( "License", license );
-
-				//			if( License.Value == StoreProductLicense.PaidPerSeat )
-				//				writer.WriteString( "Cost", Cost.Value.ToString() );
-
-				//			writer.WriteString( "ShortDescription", ShortDescription.Value );
-				//			writer.WriteString( "FullDescription", FullDescription.Value );
-
-				//			{
-				//				var s = "";
-				//				foreach( ProjectItemCategoriesEnum flag in GetFlags( ProjectItemCategories.Value ) )
-				//				{
-				//					if( flag != 0 )
-				//					{
-				//						if( s.Length != 0 )
-				//							s += ", ";
-				//						s += TypeUtility.DisplayNameAddSpaces( flag.ToString() );
-				//					}
-				//				}
-				//				writer.WriteString( "Categories", s );
-				//				//writer.WriteValue( Categories.Value.ToString() );
-				//			}
-
-				//			writer.WriteString( "Tags", Tags.Value );
-				//			writer.WriteString( "Version", GetVersion() );
-				//			writer.WriteString( "EngineVersion", EngineInfo.Version );
-
-				//			if( triangles != 0 )
-				//			{
-				//				writer.WriteNumber( "Triangles", triangles );
-				//				writer.WriteNumber( "Vertices", vertices );
-				//			}
-
-				//			//writer.WriteEnd();
-				//			writer.WriteEndObject();
-				//		}
-
-				//		string json = Encoding.UTF8.GetString( stream.ToArray() );
-				//		File.WriteAllText( jsonFileName, json );
-				//	}
-				//}
-
 			}
 			catch( Exception e )
 			{
 				buildInstance.Error = e.Message;
 				buildInstance.State = ProductBuildInstance.StateEnum.Error;
 				return false;
+			}
+			finally
+			{
+				notification?.Close();
 			}
 #endif
 

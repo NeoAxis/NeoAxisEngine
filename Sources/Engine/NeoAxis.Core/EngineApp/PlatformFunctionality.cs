@@ -66,7 +66,6 @@ namespace Internal//NeoAxis
 		public abstract RectangleI CreatedWindow_GetWindowRectangle();
 		public abstract RectangleI CreatedWindow_GetClientRectangle();
 		//public abstract void SetWindowPosition( Vec2i position );
-		//!!!!!!
 		public abstract void CreatedWindow_SetWindowSize( Vector2I size );
 		public abstract void CreatedWindow_SetWindowRectangle( RectangleI rectangle );
 		public abstract bool CreatedWindow_IsWindowActive();

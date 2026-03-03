@@ -608,13 +608,13 @@ namespace NeoAxis
 								if( length == 0 )
 								{
 									start = oldCaret;
-									length = caret - start;
+									length = caret - start + 1;
 								}
 								else
 								{
 									start = Math.Min( caret, oldStart );
 									var end = Math.Max( caret, oldEnd );
-									length = Math.Abs( end - start );
+									length = Math.Abs( end - start + 1 );
 								}
 
 								Select( start, length );

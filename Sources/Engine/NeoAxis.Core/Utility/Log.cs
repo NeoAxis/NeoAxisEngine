@@ -18,7 +18,9 @@ namespace NeoAxis
 		static Thread mainThread;
 		static object lockObject = new object();
 
-		static List<CachedItem> cachedList = new List<CachedItem>();
+		public static int CachedQueueMaxSize { get; set; } = 10000;
+		static Queue<CachedItem> cachedQueue = new Queue<CachedItem>();
+		//static List<CachedItem> cachedList = new List<CachedItem>();
 
 		static bool fatalActivated;
 
@@ -129,7 +131,18 @@ namespace NeoAxis
 						DumpToFile( "Info: " + text + "\r\n" );
 				}
 				else
-					cachedList.Add( new CachedItem( LogType.InvisibleInfo, text ) );
+				{
+					cachedQueue.Enqueue( new CachedItem( LogType.InvisibleInfo, text ) );
+
+					if( cachedQueue.Count > CachedQueueMaxSize )
+					{
+						cachedQueue.Dequeue();
+						cachedQueue.Dequeue();
+						cachedQueue.Enqueue( new CachedItem( LogType.InvisibleInfo, "Log cached queue limit reached." ) );
+					}
+
+					//cachedList.Add( new CachedItem( LogType.InvisibleInfo, text ) );
+				}
 			}
 
 			//lock( lockObject )
@@ -159,7 +172,18 @@ namespace NeoAxis
 						DumpToFile( "Info: " + text + "\r\n" );
 				}
 				else
-					cachedList.Add( new CachedItem( LogType.Info, text ) );
+				{
+					cachedQueue.Enqueue( new CachedItem( LogType.Info, text ) );
+
+					if( cachedQueue.Count > CachedQueueMaxSize )
+					{
+						cachedQueue.Dequeue();
+						cachedQueue.Dequeue();
+						cachedQueue.Enqueue( new CachedItem( LogType.Info, "Log cached queue limit reached." ) );
+					}
+
+					//cachedList.Add( new CachedItem( LogType.Info, text ) );
+				}
 			}
 
 			//lock( lockObject )
@@ -194,7 +218,18 @@ namespace NeoAxis
 						DumpToFile( "Warning: " + text + "\r\n" );
 				}
 				else
-					cachedList.Add( new CachedItem( LogType.Warning, text ) );
+				{
+					cachedQueue.Enqueue( new CachedItem( LogType.Warning, text ) );
+
+					if( cachedQueue.Count > CachedQueueMaxSize )
+					{
+						cachedQueue.Dequeue();
+						cachedQueue.Dequeue();
+						cachedQueue.Enqueue( new CachedItem( LogType.Warning, "Log cached queue limit reached." ) );
+					}
+
+					//cachedList.Add( new CachedItem( LogType.Warning, text ) );
+				}
 			}
 
 			//lock( lockObject )
@@ -245,7 +280,18 @@ namespace NeoAxis
 						DumpToFile( "Error: " + text + "\r\n" + GetStackTrace() );
 				}
 				else
-					cachedList.Add( new CachedItem( LogType.Error, text ) );
+				{
+					cachedQueue.Enqueue( new CachedItem( LogType.Error, text ) );
+
+					if( cachedQueue.Count > CachedQueueMaxSize )
+					{
+						cachedQueue.Dequeue();
+						cachedQueue.Dequeue();
+						cachedQueue.Enqueue( new CachedItem( LogType.Error, "Log cached queue limit reached." ) );
+					}
+
+					//cachedList.Add( new CachedItem( LogType.Error, text ) );
+				}
 			}
 		}
 
@@ -588,10 +634,12 @@ namespace NeoAxis
 		{
 			lock( lockObject )
 			{
-				while( cachedList.Count != 0 )
+				while( cachedQueue.Count != 0 ) //while( cachedList.Count != 0 )
 				{
-					CachedItem item = cachedList[ 0 ];
-					cachedList.RemoveAt( 0 );
+					var item = cachedQueue.Dequeue();
+
+					//CachedItem item = cachedList[ 0 ];
+					//cachedList.RemoveAt( 0 );
 
 					switch( item.type )
 					{

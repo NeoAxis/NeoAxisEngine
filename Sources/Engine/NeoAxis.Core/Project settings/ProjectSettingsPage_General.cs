@@ -347,6 +347,7 @@ namespace NeoAxis
 			Normal,
 			Minimized,
 			Maximized,
+			Borderless,
 			Fullscreen
 		}
 

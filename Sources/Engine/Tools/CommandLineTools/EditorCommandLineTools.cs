@@ -7,7 +7,6 @@ using System.Text;
 using System.IO.Compression;
 using System.Linq;
 using System.Xml;
-using System.Transactions;
 using NeoAxis;
 
 namespace CommandLineTools
@@ -23,9 +22,16 @@ namespace CommandLineTools
 				return true;
 			}
 
+			if( SystemSettings.CommandLineParameters.ContainsKey( "-platformProjectPatchWithCopyFiles" ) )
+			{
+				var result = PlatformProjectPatch.Process( true );
+				Environment.Exit( result ? 0 : -1 );
+				return true;
+			}
+
 			if( SystemSettings.CommandLineParameters.ContainsKey( "-platformProjectPatch" ) )
 			{
-				var result = PlatformProjectPatch.Process();
+				var result = PlatformProjectPatch.Process( false );
 				Environment.Exit( result ? 0 : -1 );
 				return true;
 			}
@@ -598,6 +604,273 @@ namespace CommandLineTools
 
 		public static class PlatformProjectPatch
 		{
+			static bool ProcessCsprojWithCopyFiles( string destFile, string baseProjectFileName, out string error, out bool changed )
+			{
+				error = "";
+				changed = false;
+
+				var sourceFolder = Path.GetFullPath( Path.GetDirectoryName( baseProjectFileName ) );
+				var destFolder = Path.GetDirectoryName( destFile );
+
+				var toInclude = new ESet<string>();
+				{
+					var xmldoc2 = new XmlDocument();
+					xmldoc2.Load( baseProjectFileName );
+
+					var mgr2 = new XmlNamespaceManager( xmldoc2.NameTable );
+					mgr2.AddNamespace( "df", xmldoc2.DocumentElement.NamespaceURI );
+
+					//EnableDefaultCompileItems
+					{
+						var defaultCompileItems = true;
+						foreach( XmlNode node in xmldoc2.GetElementsByTagName( "EnableDefaultCompileItems" ) )
+						{
+							if( !string.IsNullOrEmpty( node.InnerText ) )
+							{
+								defaultCompileItems = bool.Parse( node.InnerText );
+								break;
+							}
+						}
+
+						if( defaultCompileItems )
+						{
+
+							//!!!!
+
+
+							foreach( var f in Directory.GetFiles( sourceFolder, "*.cs", SearchOption.AllDirectories ) )
+							{
+								var name = f.Replace( sourceFolder + "\\", "" );
+
+								//skip some files
+								var fileName = Path.GetFileName( name );
+								if( fileName == "AssemblyInfo.cs" )
+									continue;
+
+								toInclude.AddWithCheckAlreadyContained( name );
+							}
+						}
+					}
+
+					//Compile Include
+					{
+						var list = xmldoc2.SelectNodes( "//df:Compile", mgr2 );
+						foreach( XmlNode node in list )
+						{
+							var attr = node.Attributes[ "Include" ];
+							if( attr != null )
+							{
+								var name = attr.Value;
+
+								//skip some files
+								var fileName = Path.GetFileName( name );
+								if( fileName == "AssemblyInfo.cs" )
+									continue;
+
+								toInclude.AddWithCheckAlreadyContained( name );
+							}
+						}
+					}
+
+					//Compile Remove
+					{
+						var list = xmldoc2.SelectNodes( "//df:Compile", mgr2 );
+						foreach( XmlNode node in list )
+						{
+							var attr = node.Attributes[ "Remove" ];
+							if( attr != null )
+							{
+								var t = attr.Value;
+
+								if( t.Length >= 2 && t[ t.Length - 2 ] == '*' && t[ t.Length - 1 ] == '*' )
+								{
+									var t2 = t.Substring( 0, t.Length - 2 );
+
+									again:;
+									foreach( var name in toInclude )
+									{
+										if( name.Length >= t2.Length && name.Substring( 0, t2.Length ) == t2 )
+										{
+											toInclude.Remove( name );
+											goto again;
+										}
+									}
+								}
+								else
+									toInclude.Remove( t );
+							}
+						}
+					}
+				}
+
+				//copy files to Project folder
+				{
+					var projectDestFolder = Path.Combine( Path.GetDirectoryName( destFile ), "Project" );
+
+					if( !Directory.Exists( projectDestFolder ) )
+						Directory.CreateDirectory( projectDestFolder );
+
+					foreach( var fileName in toInclude )
+					{
+						var sourceFileName = Path.Combine( sourceFolder, fileName );
+						var destFileName = Path.Combine( projectDestFolder, fileName );
+
+						////skip some files
+						//if( fileName == "AssemblyInfo.cs" )
+						//	continue;
+
+						var directoryName = Path.GetDirectoryName( destFileName );
+						if( !Directory.Exists( directoryName ) )
+							Directory.CreateDirectory( directoryName );
+
+						//copy file. skip when file is the same
+						var copyFile = true;
+						if( File.Exists( destFileName ) )
+						{
+							var sourceBytes = File.ReadAllBytes( sourceFileName );
+							var destBytes = File.ReadAllBytes( destFileName );
+							if( sourceBytes.Length == destBytes.Length )
+							{
+								copyFile = false;
+								for( int n = 0; n < sourceBytes.Length; n++ )
+								{
+									if( sourceBytes[ n ] != destBytes[ n ] )
+									{
+										copyFile = true;
+										break;
+									}
+								}
+							}
+						}
+						if( copyFile )
+						{
+							File.Copy( sourceFileName, destFileName, true );
+							changed = true;
+						}
+					}
+
+					//delete not needed files in Project folder
+					{
+						var files = Directory.GetFiles( projectDestFolder, "*.*", SearchOption.AllDirectories );
+						foreach( var file in files )
+						{
+							var name = file.Replace( projectDestFolder + "\\", "" );
+							if( !toInclude.Contains( name ) )
+							{
+								File.Delete( file );
+								changed = true;
+							}
+						}
+					}
+
+					//delete empty folders from Project folder
+					{
+						var directories = Directory.GetDirectories( projectDestFolder, "*", SearchOption.AllDirectories );
+						foreach( var dir in directories )
+						{
+							if( Directory.GetFiles( dir ).Length == 0 && Directory.GetDirectories( dir ).Length == 0 )
+							{
+								Directory.Delete( dir );
+								changed = true;
+							}
+						}
+					}
+				}
+
+				//update csproj
+				{
+					var xmldoc = new XmlDocument();
+					xmldoc.Load( destFile );
+
+					var mgr = new XmlNamespaceManager( xmldoc.NameTable );
+					mgr.AddNamespace( "df", xmldoc.DocumentElement.NamespaceURI );
+
+					//find parent to add
+
+					XmlNode itemGroupNode = null;
+					{
+						var list = xmldoc.SelectNodes( "//df:Compile", mgr );
+						foreach( XmlNode node in list )
+						{
+							itemGroupNode = node.ParentNode;
+							break;
+						}
+					}
+
+					var toIncludesWithProjectPrefix = new ESet<string>();
+					foreach( var fileName in toInclude )
+						toIncludesWithProjectPrefix.Add( "Project\\" + fileName );
+
+					var nodesChanged = false;
+
+					//remove
+					{
+						var nodesToRemove = new List<XmlNode>();
+
+						var list = xmldoc.SelectNodes( "//df:Compile", mgr );
+						foreach( XmlNode node in list )
+						{
+							var attr = node.Attributes[ "Include" ];
+							if( attr != null )
+							{
+								var name = attr.Value;
+
+								//if contains Project prefix then can remove
+								if( name.StartsWith( "Project\\" ) )
+								{
+									if( toIncludesWithProjectPrefix.Contains( name ) )
+										toIncludesWithProjectPrefix.Remove( name );
+									else
+										nodesToRemove.Add( node );
+								}
+							}
+						}
+
+						foreach( var node in nodesToRemove.GetReverse() )
+							node.ParentNode.RemoveChild( node );
+
+						if( nodesToRemove.Count != 0 )
+							nodesChanged = true;
+					}
+
+					//add
+					foreach( var fileName in toIncludesWithProjectPrefix )
+					{
+						var node = xmldoc.CreateNode( XmlNodeType.Element, "Compile", null );
+						var includeAttribute = xmldoc.CreateAttribute( "Include" );
+						includeAttribute.Value = fileName;
+						node.Attributes.Append( includeAttribute );
+						itemGroupNode.AppendChild( node );
+
+						nodesChanged = true;
+					}
+
+					//save
+
+					if( nodesChanged )
+					{
+						var oldFile = File.ReadAllText( destFile, Encoding.UTF8 );
+
+						var stream = new MemoryStream();
+						xmldoc.Save( stream );
+						stream.Seek( 0, SeekOrigin.Begin );
+						var reader = new StreamReader( stream );
+						string text = reader.ReadToEnd();
+
+						//remove xmlns=""
+						text = text.Replace( " xmlns=\"\"", "" );
+
+						if( oldFile != text )
+						{
+							File.WriteAllText( destFile, text );
+							changed = true;
+						}
+					}
+
+					return true;
+				}
+			}
+
 			static bool ProcessCsproj( string destFile, string baseProjectFileName, out string error, out bool changed )
 			{
 				error = "";
@@ -663,7 +936,7 @@ namespace CommandLineTools
 								{
 									var t2 = t.Substring( 0, t.Length - 2 );
 
-again:;
+									again:;
 									foreach( var name in toInclude )
 									{
 										if( name.Length >= t2.Length && name.Substring( 0, t2.Length ) == t2 )
@@ -694,13 +967,8 @@ again:;
 					var list = xmldoc.SelectNodes( "//df:Compile", mgr );
 					foreach( XmlNode node in list )
 					{
-						//!!!!add too?
-						//var attr = node.Attributes[ "Include" ];
-						//if( attr != null )
-						//{
 						itemGroupNode = node.ParentNode;
 						break;
-						//}
 					}
 				}
 
@@ -711,7 +979,6 @@ again:;
 					var nodesToRemove = new List<XmlNode>();
 
 					var list = xmldoc.SelectNodes( "//df:Compile", mgr );
-					//var list = xmldoc.SelectNodes( "//Compile" );
 					foreach( XmlNode node in list )
 					{
 						var attr = node.Attributes[ "Include" ];
@@ -754,7 +1021,7 @@ again:;
 					var stream = new MemoryStream();
 					xmldoc.Save( stream );
 					stream.Seek( 0, SeekOrigin.Begin );
-					var reader = new StreamReader( stream );//, Encoding.UTF8 );
+					var reader = new StreamReader( stream );
 					string text = reader.ReadToEnd();
 
 					//remove xmlns=""
@@ -765,20 +1032,6 @@ again:;
 						File.WriteAllText( destFile, text );
 						changed = true;
 					}
-
-					//var oldFile = File.ReadAllText( destFile, Encoding.UTF8 );
-
-					////!!!!save once, not twice
-
-					//xmldoc.Save( destFile );
-
-					//var text = File.ReadAllText( destFile );
-					////remove xmlns=""
-					//text = text.Replace( " xmlns=\"\"", "" );
-
-					//File.WriteAllText( destFile, text );
-
-					//changed = oldFile != text;
 				}
 
 				return true;
@@ -953,7 +1206,7 @@ again:;
 				return true;
 			}
 
-			public static bool Process( string destFile, string baseProjectFileName, out string error, out bool changed )
+			public static bool Process( string destFile, string baseProjectFileName, bool modeWithCopyFiles, out string error, out bool changed )
 			{
 				if( !Path.IsPathRooted( destFile ) )
 					destFile = Path.Combine( Directory.GetCurrentDirectory(), destFile );
@@ -979,8 +1232,17 @@ again:;
 
 				if( destExtension == ".csproj" )
 				{
-					if( !ProcessCsproj( destFile, baseProjectFileName, out error, out changed ) )
-						return false;
+					if( modeWithCopyFiles )
+					{
+						if( !ProcessCsprojWithCopyFiles( destFile, baseProjectFileName, out error, out changed ) )
+							return false;
+					}
+					else
+					{
+						if( !ProcessCsproj( destFile, baseProjectFileName, out error, out changed ) )
+							return false;
+					}
+
 					return true;
 				}
 				else if( destExtension == ".vcxproj" )
@@ -994,20 +1256,32 @@ again:;
 				return false;
 			}
 
-			public static bool Process()
+			public static bool Process( bool modeWithCopyFiles )
 			{
-				Console.WriteLine( "CommandLineTools: PlatformProjectPatch." );
-				//Console.WriteLine();
+				if( modeWithCopyFiles )
+					Console.WriteLine( "CommandLineTools: PlatformProjectPatchWithCopyFiles." );
+				else
+					Console.WriteLine( "CommandLineTools: PlatformProjectPatch." );
 
-				if( !SystemSettings.CommandLineParameters.TryGetValue( "-platformProjectPatch", out var destFile ) )
-					return false;
+				string destFile;
+				if( modeWithCopyFiles )
+				{
+					if( !SystemSettings.CommandLineParameters.TryGetValue( "-platformProjectPatchWithCopyFiles", out destFile ) )
+						return false;
+				}
+				else
+				{
+					if( !SystemSettings.CommandLineParameters.TryGetValue( "-platformProjectPatch", out destFile ) )
+						return false;
+				}
+
 				if( !SystemSettings.CommandLineParameters.TryGetValue( "-baseProject", out var baseProjectFileName ) )
 				{
 					Log.Warning( "PlatformProjectPatch: -baseProject is not specified." );
 					return false;
 				}
 
-				if( !Process( destFile, baseProjectFileName, out var error, out var changed ) )
+				if( !Process( destFile, baseProjectFileName, modeWithCopyFiles, out var error, out var changed ) )
 				{
 					Console.WriteLine( error );
 					Log.Warning( error );

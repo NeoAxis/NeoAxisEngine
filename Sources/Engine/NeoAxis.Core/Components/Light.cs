@@ -479,10 +479,10 @@ namespace NeoAxis
 		ReferenceField<bool> _shadowLODWorst = false;
 
 		/// <summary>
-		/// The minimal distance from the light source to generate shadows.
+		/// The precision and minimal distance from the light source to generate shadows.
 		/// </summary>
-		[DefaultValue( 0.1 )]
-		[Range( 0.01, 1, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		[DefaultValue( 0.01 )] //0.1
+		[Range( 0.0001, 1, RangeAttribute.ConvenientDistributionEnum.Exponential, 4 )]
 		[Category( "Shadows" )]
 		public Reference<double> ShadowNearClipDistance
 		{

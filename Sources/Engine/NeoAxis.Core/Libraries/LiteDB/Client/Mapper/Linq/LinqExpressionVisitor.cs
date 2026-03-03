@@ -620,6 +620,7 @@ namespace Internal.LiteDB
 
             // get class entity from mapper
             var entity = _mapper.GetEntityMapper(member.DeclaringType);
+            entity.WaitForInitialization();
 
             // get mapped field from entity
             var field = entity.Members.FirstOrDefault(x => x.MemberName == name);

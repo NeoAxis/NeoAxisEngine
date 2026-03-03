@@ -2598,95 +2598,97 @@ namespace NeoAxis
 					}
 				}
 
-				//add ambient, directional lights
-				foreach( var light in ambientDirectionalLights )
-					frameData.RegisterObjectInSpace( context, light, GetRenderSceneDataMode.InsideFrustum, getObjectsItem );
-
-				//get visible objects
 				{
-					//if( EngineApp._DebugCapsLock )
-					//{
+					//add ambient, directional lights
+					foreach( var light in ambientDirectionalLights )
+						frameData.RegisterObjectInSpace( context, light, GetRenderSceneDataMode.InsideFrustum, getObjectsItem );
 
-					var getObjectsItems = new Scene.GetObjectsInSpaceItem[ 4 ];
-					for( int n = 0; n < getObjectsItems.Length; n++ )
-						getObjectsItems[ n ] = getObjectsItem.Clone();
-
-					var cameraPlanes = cameraFrustum.Planes;
-					Bounds bounds = new Bounds( cameraFrustum.Points[ 0 ] );
-					for( int n = 1; n < 8; n++ )
-						bounds.Add( cameraFrustum.Points[ n ] );
-
-					//split screen to 4 frustums, find objects on 4 threads
-
-					//!!!!лишние плоскости можно убрать
-					//!!!!bounds можно уменьшить
-
-					for( int n = 0; n < 4; n++ )
+					//get visible objects
 					{
-						ref var item = ref getObjectsItems[ n ];
+						//if( EngineApp._DebugCapsLock )
+						//{
 
-						var planes = new List<Plane>( cameraPlanes.Length + 2 );
+						var getObjectsItems = new Scene.GetObjectsInSpaceItem[ 4 ];
+						for( int n = 0; n < getObjectsItems.Length; n++ )
+							getObjectsItems[ n ] = getObjectsItem.Clone();
 
-						switch( n )
+						var cameraPlanes = cameraFrustum.Planes;
+						Bounds bounds = new Bounds( cameraFrustum.Points[ 0 ] );
+						for( int n = 1; n < 8; n++ )
+							bounds.Add( cameraFrustum.Points[ n ] );
+
+						//split screen to 4 frustums, find objects on 4 threads
+
+						//!!!!лишние плоскости можно убрать
+						//!!!!bounds можно уменьшить
+
+						for( int n = 0; n < 4; n++ )
 						{
-						case 0:
-							planes.Add( Plane.FromPointAndNormal( cameraSettings.Position, -cameraSettings.Up ) );
-							planes.Add( Plane.FromPointAndNormal( cameraSettings.Position, -cameraSettings.Right ) );
-							break;
+							ref var item = ref getObjectsItems[ n ];
 
-						case 1:
-							planes.Add( Plane.FromPointAndNormal( cameraSettings.Position, -cameraSettings.Up ) );
-							planes.Add( Plane.FromPointAndNormal( cameraSettings.Position, cameraSettings.Right ) );
-							break;
+							var planes = new List<Plane>( cameraPlanes.Length + 2 );
 
-						case 2:
-							planes.Add( Plane.FromPointAndNormal( cameraSettings.Position, cameraSettings.Up ) );
-							planes.Add( Plane.FromPointAndNormal( cameraSettings.Position, -cameraSettings.Right ) );
-							break;
+							switch( n )
+							{
+							case 0:
+								planes.Add( Plane.FromPointAndNormal( cameraSettings.Position, -cameraSettings.Up ) );
+								planes.Add( Plane.FromPointAndNormal( cameraSettings.Position, -cameraSettings.Right ) );
+								break;
 
-						case 3:
-							planes.Add( Plane.FromPointAndNormal( cameraSettings.Position, cameraSettings.Up ) );
-							planes.Add( Plane.FromPointAndNormal( cameraSettings.Position, cameraSettings.Right ) );
-							break;
+							case 1:
+								planes.Add( Plane.FromPointAndNormal( cameraSettings.Position, -cameraSettings.Up ) );
+								planes.Add( Plane.FromPointAndNormal( cameraSettings.Position, cameraSettings.Right ) );
+								break;
+
+							case 2:
+								planes.Add( Plane.FromPointAndNormal( cameraSettings.Position, cameraSettings.Up ) );
+								planes.Add( Plane.FromPointAndNormal( cameraSettings.Position, -cameraSettings.Right ) );
+								break;
+
+							case 3:
+								planes.Add( Plane.FromPointAndNormal( cameraSettings.Position, cameraSettings.Up ) );
+								planes.Add( Plane.FromPointAndNormal( cameraSettings.Position, cameraSettings.Right ) );
+								break;
+							}
+
+							planes.AddRange( cameraPlanes );
+
+							item.Frustum = null;
+							item.Planes = planes.ToArray();
+							item.Bounds = bounds;
 						}
 
-						planes.AddRange( cameraPlanes );
 
-						item.Frustum = null;
-						item.Planes = planes.ToArray();
-						item.Bounds = bounds;
-					}
+						scene.GetObjectsInSpace( getObjectsItems );
 
-
-					scene.GetObjectsInSpace( getObjectsItems );
-
-					foreach( var item in getObjectsItems )
-					{
-						for( int nObject = 0; nObject < item.Result.Length; nObject++ )
+						foreach( var item in getObjectsItems )
 						{
-							var obj = item.Result[ nObject ].Object;
-							if( obj.EnabledInHierarchy && obj.VisibleInHierarchy )
-								frameData.RegisterObjectInSpace( context, obj, GetRenderSceneDataMode.InsideFrustum, getObjectsItem );
+							for( int nObject = 0; nObject < item.Result.Length; nObject++ )
+							{
+								var obj = item.Result[ nObject ].Object;
+								if( obj.EnabledInHierarchy && obj.VisibleInHierarchy )
+									frameData.RegisterObjectInSpace( context, obj, GetRenderSceneDataMode.InsideFrustum, getObjectsItem );
+							}
 						}
+
+						//}
+						//else
+						//{
+						//	scene.GetObjectsInSpace( getObjectsItem );
+
+						//	for( int nObject = 0; nObject < getObjectsItem.Result.Length; nObject++ )
+						//	{
+						//		var obj = getObjectsItem.Result[ nObject ].Object;
+						//		if( obj.EnabledInHierarchy && obj.VisibleInHierarchy )
+						//		{
+						//			//if( ComponentsHidePublic.GetRenderSceneIndex( obj ) != -1 )
+						//			//	Log.Fatal( "RenderingPipeline_Render: PrepareListOfObjects: obj._internalRenderSceneIndex != -1." );
+
+						//			frameData.RegisterObjectInSpace( context, obj, GetRenderSceneDataMode.InsideFrustum, getObjectsItem );
+						//		}
+						//	}
+						//}
 					}
-
-					//}
-					//else
-					//{
-					//	scene.GetObjectsInSpace( getObjectsItem );
-
-					//	for( int nObject = 0; nObject < getObjectsItem.Result.Length; nObject++ )
-					//	{
-					//		var obj = getObjectsItem.Result[ nObject ].Object;
-					//		if( obj.EnabledInHierarchy && obj.VisibleInHierarchy )
-					//		{
-					//			//if( ComponentsHidePublic.GetRenderSceneIndex( obj ) != -1 )
-					//			//	Log.Fatal( "RenderingPipeline_Render: PrepareListOfObjects: obj._internalRenderSceneIndex != -1." );
-
-					//			frameData.RegisterObjectInSpace( context, obj, GetRenderSceneDataMode.InsideFrustum, getObjectsItem );
-					//		}
-					//	}
-					//}
 				}
 			}
 
@@ -13388,40 +13390,43 @@ namespace NeoAxis
 
 			SetViewportOwnerSettingsUniform( context );
 
-			//get lists of visible objects
-			PrepareListsOfObjects( context, frameData );
-
-			//additional actions after PrepareListsOfObjects sorted by camera distance from far to near
+			if( Scene._InternalRendering )
 			{
-				CollectionUtility.MergeSort( context.FrameData.RenderSceneData.ActionsToDoAfterPrepareListsOfObjectsSortedByDistance, delegate ( RenderSceneData.ActionToDoAfterPrepareListsOfObjectsSortedByDistance item1, RenderSceneData.ActionToDoAfterPrepareListsOfObjectsSortedByDistance item2 )
+				//get lists of visible objects
+				PrepareListsOfObjects( context, frameData );
+
+				//additional actions after PrepareListsOfObjects sorted by camera distance from far to near
 				{
-					if( item1.DistanceToCamera > item2.DistanceToCamera )
-						return -1;
-					if( item1.DistanceToCamera < item2.DistanceToCamera )
-						return 1;
-					return 0;
-				}, true );
+					CollectionUtility.MergeSort( context.FrameData.RenderSceneData.ActionsToDoAfterPrepareListsOfObjectsSortedByDistance, delegate ( RenderSceneData.ActionToDoAfterPrepareListsOfObjectsSortedByDistance item1, RenderSceneData.ActionToDoAfterPrepareListsOfObjectsSortedByDistance item2 )
+					{
+						if( item1.DistanceToCamera > item2.DistanceToCamera )
+							return -1;
+						if( item1.DistanceToCamera < item2.DistanceToCamera )
+							return 1;
+						return 0;
+					}, true );
 
-				foreach( var item in context.FrameData.RenderSceneData.ActionsToDoAfterPrepareListsOfObjectsSortedByDistance )
-					item.Action( context );
+					foreach( var item in context.FrameData.RenderSceneData.ActionsToDoAfterPrepareListsOfObjectsSortedByDistance )
+						item.Action( context );
+				}
+
+				//display additional data
+				if( context.Owner.AttachedScene != null && context.Owner.Simple3DRenderer != null )
+				{
+					//display physical objects
+					DisplayPhysicalObjects( context, frameData );
+
+					//display bounds for ObjectInSpace
+					if( context.Owner.AttachedScene.GetDisplayDevelopmentDataInThisApplication() && context.Owner.AttachedScene.DisplayObjectInSpaceBounds )
+						DisplayObjectInSpaceBounds( context, frameData );
+
+					//sort and display object's labels
+					SortObjectInSpaceLabels( context );
+					DisplayObjectInSpaceLabels( context );
+				}
 			}
 
-			//display additional data
-			if( context.Owner.AttachedScene != null && context.Owner.Simple3DRenderer != null )
-			{
-				//display physical objects
-				DisplayPhysicalObjects( context, frameData );
-
-				//display bounds for ObjectInSpace
-				if( context.Owner.AttachedScene.GetDisplayDevelopmentDataInThisApplication() && context.Owner.AttachedScene.DisplayObjectInSpaceBounds )
-					DisplayObjectInSpaceBounds( context, frameData );
-
-				//sort and display object's labels
-				SortObjectInSpaceLabels( context );
-				DisplayObjectInSpaceLabels( context );
-			}
-
-			//render UI. must call before PrepareListsOfObjects.
+			//render UI
 			context.Owner.PerformUpdateBeforeOutputEvents();
 
 			//!!!!parallel?

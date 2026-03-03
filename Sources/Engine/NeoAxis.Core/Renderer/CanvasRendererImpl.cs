@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using Internal.SharpBgfx;
+using NeoAxis.Editor;
 
 namespace NeoAxis
 {
@@ -3065,7 +3066,12 @@ namespace NeoAxis
 					rectangle = clipRectangle2;
 			}
 			else
-				rectangle = currentRectangle;
+			{
+				//!!!!new
+				//reset the stack when cleared rectangle is specified
+				rectangle = new RectangleF( -10000, -10000, 10000, 10000 );
+				//rectangle = currentRectangle;
+			}
 
 			//if( !clipRectangle.IsCleared() )
 			//{

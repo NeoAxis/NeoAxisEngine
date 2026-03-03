@@ -302,8 +302,10 @@ namespace NeoAxis
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		static void LoadTaskFunction( object data )
+		async static Task LoadTaskFunction( object data )
 		{
+			//!!!!use async file operations
+
 			Resource.Instance ins = (Resource.Instance)data;
 			ins.PerformLoad();
 		}
@@ -381,12 +383,14 @@ namespace NeoAxis
 			{
 				if( wait )
 				{
-					LoadTaskFunction( ins );
+					ins.PerformLoad();
+					//LoadTaskFunction( ins );
 				}
 				else
 				{
-					Task task = new Task( LoadTaskFunction, ins );
-					task.Start();
+					TaskUtility.Run(TaskUtility.TaskLifetimeEnum.Minutes, "ResourceManager: _Load", LoadTaskFunction, ins );
+					//Task task = new Task( LoadTaskFunction, ins );
+					//task.Start();
 				}
 			}
 
@@ -708,11 +712,7 @@ again:;
 							imageKey = "Product";
 						else if( resourceType.Name == "Store Product" )
 							imageKey = "Store Product";
-
-
-						//!!!!
-						//CoreExtension.dll
-						if( resourceType.Name == "Plant Type" )
+						else if( resourceType.Name == "Plant Type" )
 							imageKey = "Plant";
 					}
 				}

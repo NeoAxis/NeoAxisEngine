@@ -23,7 +23,7 @@ namespace NeoAxis
 		Center,
 		/// <summary>The element is aligned to the right side.</summary>
 		Right,
-		//!!!!new
+
 		Stretch
 	}
 
@@ -38,7 +38,7 @@ namespace NeoAxis
 		Center,
 		/// <summary>The element is aligned to the bottom.</summary>
 		Bottom,
-		//!!!!new
+
 		Stretch
 	}
 

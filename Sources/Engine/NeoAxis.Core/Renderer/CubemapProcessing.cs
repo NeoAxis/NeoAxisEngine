@@ -82,7 +82,8 @@ namespace NeoAxis
 				arguments = $"--format=hdr --size={destSize} --type=cubemap -x \"{tempDirectory}\" \"{sourceRealFileName}\"";
 
 			var process = new Process();
-			process.StartInfo.FileName = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Tools\Filament\cmgen.exe" );
+			process.StartInfo.FileName = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"Filament\cmgen.exe" );
+			//process.StartInfo.FileName = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Tools\Filament\cmgen.exe" );
 			process.StartInfo.Arguments = arguments;
 			process.Start();
 			process.WaitForExit();
@@ -463,13 +464,12 @@ end16bit:;
 			}
 		}
 
-		public static bool GetOrGenerate( string sourceFileName, bool forceUpdate, int specifiedSize, out string envFileName, out Vector4F[] irradiance /*, out string irrFileName*/, out string error )
+		public static bool GetOrGenerate( string sourceFileName, bool forceUpdate, int specifiedSize, out string envFileName, out Vector4F[] irradiance, out string error )
 		{
 			EngineThreading.CheckMainThread();
 
 			var destFileNameBase = GetDestFileNameBase( sourceFileName );
 			GetDestFileNames( destFileNameBase, out _, out envFileName, out _ );
-			//GetDestFileNames( destFileNameBase, out var infoFileName, out envFileName, out irrFileName );
 
 			if( !GetInfoFromSourceFile( sourceFileName, out var sourceFileHash, out var sourceFileSize ) )
 			{
@@ -478,18 +478,20 @@ end16bit:;
 				return false;
 			}
 
-			ReadCachedInfoFile( destFileNameBase, out var cacheSourceFileHash, out var cacheSourceFileSize, out irradiance );//, out var cacheSourceFileFormat );
+			ReadCachedInfoFile( destFileNameBase, out var cacheSourceFileHash, out var cacheSourceFileSize, out irradiance );
 
-#if !DEPLOY
 			bool needUpdate = sourceFileHash != cacheSourceFileHash || sourceFileSize != cacheSourceFileSize;
 			if( needUpdate || forceUpdate )
+			{
+#if !DEPLOY
 				return Generate( sourceFileName, sourceFileHash, sourceFileSize, specifiedSize, out error );
+#else
+				error = "The current platform is not support cubemap processing. To precompile run the scene on the development platform.";
+				return false;
+#endif
+			}
 			error = "";
 			return true;
-#else
-			error = "The current platform is not support cubemap processing.";
-			return false;
-#endif
 		}
 	}
 }

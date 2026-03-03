@@ -128,9 +128,7 @@ namespace NeoAxis
 
 			//when run by means built-in dotnet.exe from NeoAxis.Internal
 			{
-				var remove = VirtualPathUtility.NormalizePath( @"\NeoAxis.Internal\Platforms\Windows\dotnet5" );
-				//var remove = VirtualPathUtility.NormalizePath( @"\NeoAxis.Internal\Platforms\Windows\dotnet" );
-
+				var remove = VirtualPathUtility.NormalizePath( @"\NeoAxis.Internal\Platforms\Windows\dotnet" );
 				var index = result.IndexOf( remove );
 				if( index != -1 )
 					result = result.Remove( index, remove.Length );

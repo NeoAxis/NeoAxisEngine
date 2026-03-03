@@ -1,5 +1,4 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-#if !LIDGREN
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -13,32 +12,41 @@ using System.Threading.Tasks;
 
 namespace NeoAxis.Networking
 {
+	/// <summary>
+	/// Base class for a network client instance.
+	/// </summary>
 	public abstract class ClientNode
 	{
 		readonly static bool trace = false;
-		internal const int maxServiceIdentifier = 255;
+		const int maxServiceIdentifier = 255;
+		const double sendPingIntervalInSeconds = 1;
 
 		static List<ClientNode> instances = new List<ClientNode>();
 
-		bool disposed;
+		volatile bool disposed;
 
 		//profiler
 		ProfilerDataClass profilerData;
 
 		string clientVersion = "";
 		string loginData = "";
-		double keepAliveInSeconds;
-		int sendMessageMaxSize = 10 * 1024 * 1024;
-		int receiveMessageMaxSize = 11 * 1024 * 1024;
+		public int SendMessageMaxSize { get; set; } = 10 * 1024 * 1024;
+		public int ReceiveMessageMaxSize { get; set; } = 11 * 1024 * 1024;
+
+		//settings
+		public double ConnectingMaxTimeInSeconds { get; set; }
+		public bool AllowReconnectFromClient { get; set; }
+
+		//synchronized from server
+		double keepAliveTimeFromServer = 60;
+		string reconnectTokenFromServer;
 
 		//connection state
-		NetworkStatus lastStatus;
-		bool beginConnecting;
-		//bool failedToConnect;
-		////ESet<string> serverServices = new ESet<string>();
+		volatile NetworkStatus status;
+
+		internal DateTime noRealConnectionStartTime;
 
 		string disconnectionReason = "";
-		double lastReceivedMessageTime;
 
 		//services
 		List<ClientService> services = new List<ClientService>();
@@ -46,30 +54,48 @@ namespace NeoAxis.Networking
 		ReadOnlyCollection<ClientService> servicesReadOnly;
 
 		//client data
-		string clientConnectHost = string.Empty;
+		string clientConnectHost = "";
 		int clientConnectPort;
-		string clientConnectAddress = string.Empty;
-		internal ClientWebSocket client;
+		string clientConnectAddress = ""; //changed when reconnect
+		volatile ClientWebSocket webSocketClient;
+		bool connectionIsOld;
 
-		//thread
-		Thread thread;
-		volatile bool threadNeedExit;
-		AutoResetEvent threadNeedUpdate = new AutoResetEvent( false );
-		volatile bool threadNeedExitSendClose;
+		//background task
+		Task connectAndSendingTask;
+		Task receiveMessagesTask;
+		volatile bool backgroundTasksNeedExit;
+		volatile bool backgroundTasksNeedExitSendClose;
+		AsyncAutoResetEvent backgroundTaskSemaphore = new AsyncAutoResetEvent();
 
 		//limits. it is solved by timeout
 		ConcurrentQueue<ReceivedMessage> receivedMessages = new ConcurrentQueue<ReceivedMessage>();
 		ConcurrentQueue<ToProcessMessage> toProcessMessages = new ConcurrentQueue<ToProcessMessage>();
+		int toProcesssMessagesTotalBinaryDataSize;
 
-		//these values are changed from a background thread
-		long dataMessagesReceivedCounter;
+		//these values are changed from the background task
+		int dataMessagesReceivedCounter;
 		long dataSizeReceivedCounter;
 		uint dataMessagesReceivedChecksum;
-		long dataMessagesSentCounter;
+		int dataMessagesSentCounter;
 		long dataSizeSentCounter;
 		uint dataMessagesSentChecksum;
 
 		internal ArrayDataWriter accumulatedMessagesToSend = new ArrayDataWriter();
+
+		//sent messages queue for reconnection support
+		internal long sentMessagesQueueSize;
+		internal EConcurrentQueue<SentMessage> sentMessages = new EConcurrentQueue<SentMessage>();
+
+		internal uint receivedMessagesLastNumber;
+
+		//roundtrip time measurement
+		uint roundtripTimeMeasurementLastSentMessageNumber;
+		List<RoundtripTimeMeasurement> roundtripTimeMeasurements = new List<RoundtripTimeMeasurement>();
+		DateTime roundtripTimeMeasurementsLastReceiveTime;
+
+		DateTime sentPingLastTime;
+
+		ClientNetworkService_Internal networkServiceInternal;
 
 		///////////////////////////////////////////////
 
@@ -146,15 +172,114 @@ namespace NeoAxis.Networking
 
 		///////////////////////////////////////////////
 
+		public class ReceivedMessage
+		{
+			////public string DataString;
+			public byte[] DataBinary;
+			public string CloseReason;
+			public WebSocketCloseStatus CloseCode;
+			public string ErrorMessage;
+		}
+
+		///////////////////////////////////////////////
+
+		public class ToProcessMessage
+		{
+			public bool DataBinaryCommand;
+			public byte[] DataBinaryArray;
+
+			public bool CloseCommand;
+			public WebSocketCloseStatus CloseStatusCode;
+			public string CloseReason;
+
+			public bool ResendSentMessages;
+		}
+
+		///////////////////////////////////////////////
+
+		public struct SentMessage
+		{
+			public uint MessageNumber;
+			public uint Checksum;
+			public ToProcessMessage Data;
+
+			public SentMessage( uint messageNumber, uint checksum, ToProcessMessage data )
+			{
+				MessageNumber = messageNumber;
+				Checksum = checksum;
+				Data = data;
+			}
+		}
+
+		///////////////////////////////////////////////
+
+		public class RoundtripTimeMeasurement
+		{
+			public uint MessageNumber;
+			public DateTime SendTime;
+			public DateTime ReceiveTime;
+		}
+
+		///////////////////////////////////////////////
+
+		public delegate void ProtocolErrorDelegate( ClientNode sender, string message );
+		public event ProtocolErrorDelegate ProtocolError;
+
+		public delegate void ConnectionStatusChangedDelegate( ClientNode sender );
+		public event ConnectionStatusChangedDelegate ConnectionStatusChanged;
+
+		///////////////////////////////////////////////
+
 		public static ClientNode[] GetInstances()
 		{
 			lock( instances )
 				return instances.ToArray();
 		}
 
-		public void Update()
+		///////////////////////////////////////////////
+
+		public virtual void Dispose()
 		{
-			OnUpdate();
+			DisposeWebSocketClient();
+
+			//wait to exit from background tasks
+			{
+				var connectAndSendingTask2 = connectAndSendingTask;
+				var receiveMessagesTask2 = receiveMessagesTask;
+				if( connectAndSendingTask2 != null || receiveMessagesTask2 != null )
+				{
+					backgroundTasksNeedExit = true;
+					if( webSocketClient != null && Status != NetworkStatus.Disconnected )
+						backgroundTasksNeedExitSendClose = true;
+					backgroundTaskSemaphore.Set();
+
+					if( connectAndSendingTask2 != null )
+						for( var counter = 0; !connectAndSendingTask2.IsCompleted && counter < 500; counter++ )
+							Thread.Sleep( 1 );
+					if( receiveMessagesTask2 != null )
+						for( var counter = 0; !receiveMessagesTask2.IsCompleted && counter < 500; counter++ )
+							Thread.Sleep( 1 );
+
+					connectAndSendingTask = null;
+					receiveMessagesTask = null;
+				}
+			}
+
+			status = NetworkStatus.Disconnected;
+
+			DisposeWebSocketClient();
+
+			//dispose services
+			foreach( var service in services.ToArray().GetReverse() )
+				service.PerformDispose();
+			//services.Clear();
+
+			backgroundTaskSemaphore?.Dispose();
+
+			lock( instances )
+				instances.Remove( this );
+
+			disposed = true;
 		}
 
 		public bool Disposed
@@ -162,15 +287,10 @@ namespace NeoAxis.Networking
 			get { return disposed; }
 		}
 
-		//public bool BeginConnecting
-		//{
-		//	get { return beginConnecting; }
-		//}
-
-		//public bool FailedToConnect
-		//{
-		//	get { return failedToConnect; }
-		//}
+		public void Update( DateTime utcNow )
+		{
+			OnUpdate( utcNow );
+		}
 
 		public ProfilerDataClass ProfilerData
 		{
@@ -181,7 +301,7 @@ namespace NeoAxis.Networking
 		{
 			ProfilerStop( false );
 			profilerData = new ProfilerDataClass();
-			profilerData.TimeStarted = DateTime.Now;
+			profilerData.TimeStarted = DateTime.UtcNow;
 			profilerData.WorkingTime = workingTime;
 			profilerData.SystemMessagesReceivedStartCounter = DataMessagesReceivedCounter;
 			profilerData.SystemMessagesSentStartCounter = DataMessagesSentCounter;
@@ -191,22 +311,22 @@ namespace NeoAxis.Networking
 
 		public void ProfilerStop( bool writeToLogs )
 		{
-			if( profilerData == null )
-				return;
-
-			var workedTime = ( DateTime.Now - ProfilerData.TimeStarted ).TotalSeconds;
-			if( workedTime > 0 )
+			if( profilerData != null )
 			{
-				var workedTimeString = workedTime.ToString( "F1" );
-				Log.Info( $"Network profiler stopped after {workedTimeString} seconds." );
+				var workedTime = ( DateTime.UtcNow - profilerData.TimeStarted ).TotalSeconds;
+				if( workedTime > 0 )
+				{
+					var workedTimeString = workedTime.ToString( "F1" );
+					Log.Info( $"Network profiler stopped after {workedTimeString} seconds." );
+				}
+				else
+					Log.Info( $"Network profiler stopped." );
+
+				if( writeToLogs )
+					DumpProfilerDataToLogs();
+
+				profilerData = null;
 			}
-			else
-				Log.Info( $"Network profiler stopped." );
-
-			if( writeToLogs )
-				DumpProfilerDataToLogs();
-
-			profilerData = null;
 		}
 
 		static string FormatCount( long count )
@@ -223,7 +343,6 @@ namespace NeoAxis.Networking
 
 			lines.Add( "--------------------------------------------------------------" );
 			lines.Add( string.Format( "Total received; {0}", StringUtility.FormatSize( profilerData.TotalReceivedSize ) ) );
-			//lines.Add( string.Format( "Total received. Messages: {0}; Size: {1}", FormatCount( profilerData.TotalReceivedMessages ), FormatSize( profilerData.TotalReceivedSize ) ) );
 
 			lines.Add( string.Format( "System messages received; {0}", systemMessagesReceived ) );
 
@@ -288,48 +407,11 @@ namespace NeoAxis.Networking
 							}
 						}
 					}
-
-
-					////for( int messageTypeId = 0; messageTypeId < serviceItem.MessagesByType.Count; messageTypeId++ )
-					////{
-					////	var messageType = service.GetMessageType( (byte)messageTypeId );
-					////	if( messageType != null )
-					////	{
-					////		var messageByTypeItem = serviceItem.GetMessageTypeItem( messageTypeId );
-					////		if( messageByTypeItem != null && messageByTypeItem.ReceivedMessages != 0 )
-					////		{
-					////			lines.Add( string.Format( "> > {0}; Messages: {1}; Size: {2}", messageType.Name, FormatCount( messageByTypeItem.ReceivedMessages ), FormatSize( messageByTypeItem.ReceivedSize ) ) );
-
-					////			var customData = messageByTypeItem.ReceivedCustomData;
-					////			if( customData != null )
-					////			{
-					////				var items = new List<(string, ProfilerDataClass.ServiceItem.MessageTypeItem.CustomData)>( customData.Count );
-					////				foreach( var item in customData )
-					////					items.Add( (item.Key, item.Value) );
-
-					////				CollectionUtility.MergeSort( items, delegate ( (string, ProfilerDataClass.ServiceItem.MessageTypeItem.CustomData) item1, (string, ProfilerDataClass.ServiceItem.MessageTypeItem.CustomData) item2 )
-					////				{
-					////					if( item1.Item2.Size > item2.Item2.Size )
-					////						return -1;
-					////					if( item1.Item2.Size < item2.Item2.Size )
-					////						return 1;
-					////					return 0;
-					////				} );
-
-					////				foreach( var item in items )
-					////				{
-					////					lines.Add( string.Format( "> > > {0}; Messages: {1}; Size: {2}", item.Item1, FormatCount( item.Item2.Messages ), FormatSize( item.Item2.Size ) ) );
-					////				}
-					////			}
-					////		}
-					////	}
-					////}
 				}
 			}
 
 			lines.Add( "--------------------------------------------------------------" );
 			lines.Add( string.Format( "Total sent; Size: {0}", StringUtility.FormatSize( profilerData.TotalSentSize ) ) );
-			//lines.Add( string.Format( "Total sent. Messages: {0}; Size: {1}", FormatCount( profilerData.TotalSentMessages ), FormatSize( profilerData.TotalSentSize ) ) );
 
 			lines.Add( string.Format( "System messages sent; {0}", systemMessagesSent ) );
 
@@ -394,41 +476,6 @@ namespace NeoAxis.Networking
 							}
 						}
 					}
-
-					////for( int messageTypeId = 0; messageTypeId < serviceItem.MessagesByType.Count; messageTypeId++ )
-					////{
-					////	var messageType = service.GetMessageType( messageTypeId );
-					////	if( messageType != null )
-					////	{
-					////		var messageByTypeItem = serviceItem.GetMessageTypeItem( messageTypeId );
-					////		if( messageByTypeItem != null && messageByTypeItem.SentMessages != 0 )
-					////		{
-					////			lines.Add( string.Format( "> > {0}; Messages: {1}; Size: {2}", messageType.Name, FormatCount( messageByTypeItem.SentMessages ), FormatSize( messageByTypeItem.SentSize ) ) );
-
-					////			var customData = messageByTypeItem.SentCustomData;
-					////			if( customData != null )
-					////			{
-					////				var items = new List<(string, ProfilerDataClass.ServiceItem.MessageTypeItem.CustomData)>( customData.Count );
-					////				foreach( var item in customData )
-					////					items.Add( (item.Key, item.Value) );
-
-					////				CollectionUtility.MergeSort( items, delegate ( (string, ProfilerDataClass.ServiceItem.MessageTypeItem.CustomData) item1, (string, ProfilerDataClass.ServiceItem.MessageTypeItem.CustomData) item2 )
-					////				{
-					////					if( item1.Item2.Size > item2.Item2.Size )
-					////						return -1;
-					////					if( item1.Item2.Size < item2.Item2.Size )
-					////						return 1;
-					////					return 0;
-					////				} );
-
-					////				foreach( var item in items )
-					////				{
-					////					lines.Add( string.Format( "> > > {0}; Messages: {1}; Size: {2}", item.Item1, FormatCount( item.Item2.Messages ), FormatSize( item.Item2.Size ) ) );
-					////				}
-					////			}
-					////		}
-					////	}
-					////}
 				}
 			}
 
@@ -446,92 +493,50 @@ namespace NeoAxis.Networking
 
 		///////////////////////////////////////////////
 
-		public delegate void ProtocolErrorDelegate( ClientNode sender, string message );
-		public event ProtocolErrorDelegate ProtocolError;
-
-		public delegate void ConnectionStatusChangedDelegate( ClientNode sender );
-		public event ConnectionStatusChangedDelegate ConnectionStatusChanged;
-
-		///////////////////////////////////////////////
-
-		public class ReceivedMessage
-		{
-			////public string DataString;
-			public byte[] DataBinary;
-			public string CloseReason;
-			public WebSocketCloseStatus? CloseCode;
-			public string ErrorMessage;
-		}
-
-		///////////////////////////////////////////////
-
-		public class ToProcessMessage
-		{
-			//public string DataString;
-
-			public bool DataBinary;
-			public byte[] DataBinaryArray;
-			////public ArraySegment<byte> DataBinarySegment;
-
-			public bool Close;
-			public WebSocketCloseStatus CloseStatusCode;
-			public string CloseReason;
-		}
-
-		///////////////////////////////////////////////
-
 		protected ClientNode()
 		{
 			lock( instances )
 				instances.Add( this );
 
 			servicesReadOnly = new ReadOnlyCollection<ClientService>( services );
+
+			networkServiceInternal = new ClientNetworkService_Internal();
+			RegisterService( networkServiceInternal );
 		}
 
-		public bool BeginConnect( string host, int port, string clientVersion, string loginData, double keepAliveInSeconds, out string error )
+		public bool BeginConnect( string host, int port, string clientVersion, string loginData, out string error )
 		{
 			this.clientVersion = clientVersion;
 			this.loginData = loginData;
-			this.keepAliveInSeconds = keepAliveInSeconds;
-
-			error = null;
 
 #if !UWP
 			if( Disposed )
 				Log.Fatal( "NetworkClient: BeginConnect: The client is disposed." );
-			if( client != null )
+			if( webSocketClient != null )
 				Log.Fatal( "NetworkClient: BeginConnect: The client is already initialized." );
 			if( string.IsNullOrEmpty( host ) )
 				Log.Fatal( "NetworkClient: BeginConnect: \"host\" is empty." );
 
 			disconnectionReason = "";
 
+			string welcomeBase64;
+			{
+				var rootBlock = new TextBlock();
+				rootBlock.SetAttribute( "ClientVersion", clientVersion );
+				rootBlock.SetAttribute( "LoginData", loginData );
+				////foreach( var service in Services )
+				////	rootBlock.AddChild( "ClientService", service.Name );
+				var welcome = rootBlock.DumpToString( false );
+				welcomeBase64 = StringUtility.EncodeToBase64URL( welcome );
+			}
+
+			clientConnectHost = host;
+			clientConnectPort = port;
+			clientConnectAddress = $"ws://{host}:{port}/service/?welcome={welcomeBase64}";
+
 			try
 			{
-				string welcomeBase64;
-				{
-					var rootBlock = new TextBlock();
-					rootBlock.SetAttribute( "ClientVersion", clientVersion );
-					rootBlock.SetAttribute( "LoginData", loginData );
-					////foreach( var service in Services )
-					////	rootBlock.AddChild( "ClientService", service.Name );
-					var welcome = rootBlock.DumpToString( false );
-					welcomeBase64 = StringUtility.EncodeToBase64URL( welcome );
-				}
-
-				clientConnectHost = host;
-				clientConnectPort = port;
-				clientConnectAddress = $"ws://{host}:{port}/service/?welcome={welcomeBase64}";
-				client = new ClientWebSocket();
-				client.Options.KeepAliveInterval = TimeSpan.FromSeconds( keepAliveInSeconds );
-
-				lastStatus = NetworkStatus.Connecting;
-				beginConnecting = true;
-				//failedToConnect = false;
-
-				thread = new Thread( ThreadFunction );
-				thread.IsBackground = true;
-				thread.Start();
+				webSocketClient = new ClientWebSocket();
 			}
 			catch( Exception e )
 			{
@@ -539,6 +544,11 @@ namespace NeoAxis.Networking
 				return false;
 			}
 
+			status = NetworkStatus.Connecting;
+
+			connectAndSendingTask = TaskUtility.Run( TaskUtility.TaskLifetimeEnum.Forever, "ClientNode: BeginConnect: ConnectAndSendingTask", ConnectAndSendingTask );
+
+			error = null;
 			return true;
 #else
 			error = "No network implementation for the platform.";
@@ -547,160 +557,284 @@ namespace NeoAxis.Networking
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		void RunReceiveMessages()
+		async Task ConnectAndSendingTask()
 		{
-			Task.Run( async delegate ()
+			//first connect
+
+			var firstDisconnectionReason = "";
+			var connectAttemptsStartTime = DateTime.UtcNow;
+
+			while( true )
 			{
-				var accumulatedBuffer = new ArrayDataWriter( 1024 );
-				var buffer = new byte[ 1024 * 16 ];
-
-				while( client.State == WebSocketState.Open )
+				try
 				{
-					var result = await client.ReceiveAsync( new ArraySegment<byte>( buffer ), CancellationToken.None );
+					var remainingTime = ConnectingMaxTimeInSeconds - ( DateTime.UtcNow - connectAttemptsStartTime ).TotalSeconds;
+					if( remainingTime < 1 )
+						remainingTime = 1;
 
-					if( result.MessageType != WebSocketMessageType.Close )
-					{
-						accumulatedBuffer.Write( buffer, 0, result.Count );
+					using var cts = new CancellationTokenSource( TimeSpan.FromSeconds( remainingTime ) );
+					await webSocketClient.ConnectAsync( new Uri( clientConnectAddress ), cts.Token );
 
-						//can check for max message size. get from ServeNode
-
-						if( result.EndOfMessage )
-						{
-							await OnMessage( result.MessageType, accumulatedBuffer.AsArraySegment() );
-							accumulatedBuffer.Reset();
-						}
-					}
-					else
-					{
-						OnClose( WebSocketCloseStatus.NormalClosure, result.CloseStatusDescription );
-						break;
-					}
+					break;
 				}
-			} );
-		}
+				catch( Exception e )
+				{
+					if( string.IsNullOrEmpty( firstDisconnectionReason ) )
+						firstDisconnectionReason = "ConnectAsync exception: " + e.Message;
 
-		[MethodImpl( (MethodImplOptions)512 )]
-		async void ThreadFunction( object param )
-		{
-			//non thread variant?
+					var utcNow = DateTime.UtcNow;
+					if( ( utcNow - connectAttemptsStartTime ).TotalSeconds > ConnectingMaxTimeInSeconds )
+					{
+						disconnectionReason = firstDisconnectionReason;
+						if( status != NetworkStatus.Disconnected )
+						{
+							status = NetworkStatus.Disconnected;
+							OnConnectionStatusChanged();
+						}
+						return;
+					}
 
-			if( !beginConnecting || Disposed )
-				return;
+					if( Disposed || backgroundTasksNeedExit )
+					{
+						disconnectionReason = firstDisconnectionReason;
+						return;
+					}
+
+					await Task.Delay( 1000 );
+				}
+			}
+
+			//try
+			//{
+			//	using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+			//	await webSocketClient.ConnectAsync( new Uri( clientConnectAddress ), cts.Token );
+			//}
+			//catch( Exception e )
+			//{
+			//	disconnectionReason = "ConnectAsync exception: " + e.Message;
+			//	if( status != NetworkStatus.Disconnected )
+			//	{
+			//		status = NetworkStatus.Disconnected;
+			//		OnConnectionStatusChanged();
+			//	}
+			//	return;
+			//}
+
+			//start receiving messages task after connection established
+			receiveMessagesTask = TaskUtility.Run( TaskUtility.TaskLifetimeEnum.Forever, "ClientNode: BeginConnect: ReceiveMessagesTask", ReceiveMessagesTask );
 
 			try
 			{
-				await client.ConnectAsync( new Uri( clientConnectAddress ), CancellationToken.None );
-			}
-			catch( Exception e )
-			{
-				disconnectionReason = e.Message;
-				//failedToConnect = true;
-				if( lastStatus != NetworkStatus.Disconnected )
+				//process messages
+				while( !Disposed && !backgroundTasksNeedExit )
 				{
-					lastStatus = NetworkStatus.Disconnected;
-					OnConnectionStatusChanged();
-				}
-				return;
-			}
-
-			//run task to receive messages
-			RunReceiveMessages();
-
-			beginConnecting = false;
-			if( lastStatus != NetworkStatus.Connected )
-			{
-				lastStatus = NetworkStatus.Connected;
-				OnConnectionStatusChanged();
-			}
-
-			//process messages
-			while( !Disposed && !threadNeedExit )
-			{
-				//send messages
-				while( toProcessMessages.TryDequeue( out var message ) )
-				{
-					if( message.DataBinary )
+					//send messages
+					while( toProcessMessages.TryDequeue( out var message ) )
 					{
-						//send data message
-
-						try
+						if( message.DataBinaryCommand )
 						{
+							//send data message
+
 							var data = message.DataBinaryArray;
 
-							unchecked
+							//overload of toProcessMessages queue
+							if( data == null )
 							{
-								Interlocked.Increment( ref dataMessagesSentCounter );
-								Interlocked.Add( ref dataSizeSentCounter, data.Length );
-								foreach( var b in data )
-									dataMessagesSentChecksum += b;
+								OnClose( WebSocketCloseStatus.ProtocolError, "The process messages queue is overloaded." );
+								return;
 							}
 
-							if( trace )
-								Log.Info( $"Send Binary {data.Length} {DataMessagesSentCounter} {dataMessagesSentChecksum}" );
+							//decrease total size of toProcessMessages queue
+							Interlocked.Add( ref toProcesssMessagesTotalBinaryDataSize, -data.Length );
 
-							await client.SendAsync( new ArraySegment<byte>( data ), WebSocketMessageType.Binary, true, CancellationToken.None );
-						}
-						catch( Exception e )
-						{
-							try //!!!!?
-							{
-								await CloseAsync( WebSocketCloseStatus.ProtocolError, "Unable to send the binary message. " + e.Message );
-							}
-							catch { }
-						}
-
-						//send checksum
-						if( DataMessagesSentCounter % 100 == 0 )
-						{
 							try
 							{
-								var rootBlock = new TextBlock();
-								rootBlock.SetAttribute( "Command", "Checksum" );
-								rootBlock.SetAttribute( "Counter", DataMessagesSentCounter.ToString() );
-								rootBlock.SetAttribute( "Checksum", dataMessagesSentChecksum.ToString() );
-								var text = rootBlock.DumpToString( false );
+								//update counters and checksum
+								unchecked
+								{
+									Interlocked.Increment( ref dataMessagesSentCounter );
+									Interlocked.Add( ref dataSizeSentCounter, data.Length );
+									dataMessagesSentChecksum += ChecksumAppend( data );
+								}
+
+								//update headers
+								unsafe
+								{
+									fixed( byte* p = data )
+									{
+										*(uint*)p = (uint)dataMessagesSentCounter;
+										*(uint*)( p + 4 ) = dataMessagesSentChecksum;
+									}
+								}
 
 								if( trace )
-									Log.Info( $"Send Text Checksum {DataMessagesSentCounter} {dataMessagesSentChecksum}" );
+									Log.Info( $"Send Binary {data.Length} {dataMessagesSentCounter} {dataMessagesSentChecksum}" );
 
-								var buffer = Encoding.UTF8.GetBytes( text );
-								await client.SendAsync( new ArraySegment<byte>( buffer ), WebSocketMessageType.Text, true, CancellationToken.None );
+								//add to sent messages queue for reconnecting
+								if( AllowReconnect )
+								{
+									Interlocked.Add( ref sentMessagesQueueSize, data.Length );
+									sentMessages.Enqueue( new SentMessage( (uint)dataMessagesSentCounter, dataMessagesSentChecksum, message ) );
+
+									//maybe SendMessageMaxSize * 2?
+
+									//check limit. max buffer size is same as SendMessageMaxSize
+									if( sentMessagesQueueSize > SendMessageMaxSize )
+									{
+										OnClose( WebSocketCloseStatus.ProtocolError, "The sent messages queue size exceeded the maximum allowed." );
+										return;
+									}
+								}
+
+								//Log.Info( "SendAsync Before." );
+
+								//try to send message
+								var webSocketClient2 = webSocketClient;
+								if( webSocketClient2 != null )
+								{
+									using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+									await webSocketClient2.SendAsync( data, WebSocketMessageType.Binary, true, cts.Token );
+								}
 							}
 							catch( Exception e )
 							{
-								await CloseAsync( WebSocketCloseStatus.ProtocolError, "Unable to send the checksum command message. " + e.Message );
-								break;
+								if( trace )
+									Log.Info( "OnMessage Binary exception when sending data message: " + e.Message );
+
+								if( AllowReconnect )
+								{
+									SetConnectionIsOldAndDisposeWebSocketClient();
+									break;
+								}
+								else
+								{
+									OnClose( WebSocketCloseStatus.ProtocolError, "Unable to send the binary message. " + e.Message );
+									return;
+								}
 							}
 						}
-					}
-					else if( message.Close )
-					{
-						//receive close message
-
-						try
+						else if( message.CloseCommand )
 						{
-							await CloseAsync( message.CloseStatusCode, message.CloseReason );
+							//receive close message
+							OnClose( message.CloseStatusCode, message.CloseReason );
+							return;
 						}
-						catch { }
+						else if( message.ResendSentMessages )
+						{
+							//resend sent messages after reconnection
+
+							try
+							{
+								foreach( var sentMessage in sentMessages )
+								{
+									//Log.Info( "SendAsync Before (SentMessages)." );
+
+									var webSocketClient2 = webSocketClient;
+									if( webSocketClient2 != null )
+									{
+										using var cts = new CancellationTokenSource( TimeSpan.FromSeconds( Math.Max( KeepAliveTime, 60 ) ) );
+										await webSocketClient2.SendAsync( sentMessage.Data.DataBinaryArray, WebSocketMessageType.Binary, true, cts.Token );
+									}
+
+									//Log.Info( "SendAsync After (SentMessages)." );
+								}
+							}
+							catch( Exception e )
+							{
+								if( trace )
+									Log.Info( "OnMessage Binary exception when sending ResendSentMessages command: " + e.Message );
+
+								if( AllowReconnect )
+								{
+									SetConnectionIsOldAndDisposeWebSocketClient();
+									break;
+								}
+								else
+								{
+									OnClose( WebSocketCloseStatus.ProtocolError, "Unable to send the ResendSentMessages command message. " + e.Message );
+									return;
+								}
+							}
+						}
+
+						if( Disposed || backgroundTasksNeedExit )
+							break;
 					}
 
-					if( Disposed || threadNeedExit )
-						break;
-				}
+					//try to reconnect
+					if( connectionIsOld && AllowReconnect )
+					{
+						while( !Disposed && !backgroundTasksNeedExit )
+						{
+							//if( !EngineApp._DebugCapsLock )
+							//{
+							//	await Task.Delay( 1000 );
+							//	continue;
+							//}
 
-				threadNeedUpdate.WaitOne();
-				//Thread.Sleep( 1 );
+							try
+							{
+								//Log.Info( "Request reconnect. Token: " + reconnectTokenFromServer );
+
+								clientConnectAddress = $"ws://{clientConnectHost}:{clientConnectPort}/service/?reconnect_token={reconnectTokenFromServer}";
+
+								webSocketClient = new ClientWebSocket();
+
+								using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+								await webSocketClient.ConnectAsync( new Uri( clientConnectAddress ), cts.Token );
+
+								//Log.Info( "Request reconnect 2." );
+
+								//connection restored now
+								noRealConnectionStartTime = default;
+								connectionIsOld = false;
+
+								//resend queued messages
+								ToProcessMessagesEnqueue( new ToProcessMessage { ResendSentMessages = true } );
+
+								//exit from the reconnect loop
+								break;
+							}
+							catch( Exception e )
+							{
+								if( trace )
+									Log.Info( "Exception when reconnecting: " + e.Message );
+							}
+
+							var noRealConnectionStartTime2 = noRealConnectionStartTime;
+							if( noRealConnectionStartTime2 != default )
+							{
+								var utcNow = DateTime.UtcNow;
+								if( ( utcNow - noRealConnectionStartTime2 ).TotalSeconds >= KeepAliveTime )
+								{
+									//time is out, close connection
+									OnClose( WebSocketCloseStatus.NormalClosure, null );
+									return;
+								}
+							}
+
+							await Task.Delay( 5000 );
+						}
+					}
+
+					if( Disposed || backgroundTasksNeedExit )
+						break;
+
+					//wait for new messages to send or reconnect
+					await backgroundTaskSemaphore.WaitAsync();
+				}
+			}
+			catch( Exception e )
+			{
+				Log.Warning( "ClientNode: ConnectAndSendingTask exception: " + e.ToString() );
 			}
 
-			if( threadNeedExit && threadNeedExitSendClose )
+			//send close before dispose
+			if( backgroundTasksNeedExit && backgroundTasksNeedExitSendClose )
 			{
 				try
 				{
 					await CloseAsync( WebSocketCloseStatus.NormalClosure, null );
-
-					//var cancellationTokenSource = new CancellationTokenSource( TimeSpan.FromSeconds( 1 ) );
-					//var task = CloseAsync( WebSocketCloseStatus.NormalClosure, null, cancellationTokenSource.Token );
-					//task.Wait();
 				}
 				catch { }
 			}
@@ -717,7 +851,7 @@ namespace NeoAxis.Networking
 			}
 		}
 
-		async Task OnMessage( WebSocketMessageType messageType, ArraySegment<byte> buffer )
+		void ProcessReceivedMessage( WebSocketMessageType messageType, ArraySegment<byte> buffer )
 		{
 			if( messageType == WebSocketMessageType.Text )
 			{
@@ -728,9 +862,11 @@ namespace NeoAxis.Networking
 
 				try
 				{
-					//? check for hard to parse text block. maybe then not use TextBlock. or use limits when parsing
-
+#if UWP
+					var text = Encoding.UTF8.GetString( buffer.ToArray() );
+#else
 					var text = Encoding.UTF8.GetString( buffer );
+#endif
 					if( text.Length > 1000 )
 						throw new Exception( "The system message is more than 1000 characters." );
 
@@ -738,101 +874,166 @@ namespace NeoAxis.Networking
 					if( !string.IsNullOrEmpty( error ) )
 						throw new Exception( error );
 
-					var command = rootBlock.GetAttribute( "Command" );
+					var command = rootBlock.GetAttribute( "C" );
 
-					if( command == "Checksum" )
+					if( command == "Settings" )
 					{
-						var counter = long.Parse( rootBlock.GetAttribute( "Counter" ) );
-						var checksum = uint.Parse( rootBlock.GetAttribute( "Checksum" ) );
+						if( double.TryParse( rootBlock.GetAttribute( "KeepAliveTime", "60" ), out var keepAliveTime2 ) )
+							keepAliveTimeFromServer = keepAliveTime2;
+						if( rootBlock.AttributeExists( "ReconnectToken" ) )
+							reconnectTokenFromServer = rootBlock.GetAttribute( "ReconnectToken" );
 
-						if( DataMessagesReceivedCounter != counter || dataMessagesReceivedChecksum != checksum )
-						{
-							throw new Exception( $"Invalid checksum. {DataMessagesReceivedCounter} != {counter} || {dataMessagesReceivedChecksum} != {checksum}" );
-						}
+						if( trace )
+							Log.Info( $"OnMessage Text Settings; KeepAliveTime={KeepAliveTime}; AllowReconnect={AllowReconnect}" );
 					}
 					else
 						throw new Exception( "Unknown command." );
 				}
-				catch( Exception ex )
+				catch( Exception e )
 				{
-					try
-					{
-						await CloseAsync( WebSocketCloseStatus.ProtocolError, ex.Message );
-					}
-					catch { }
+					if( trace )
+						Log.Info( "OnMessage Text Exception: " + e.Message );
+					OnClose( WebSocketCloseStatus.ProtocolError, e.Message );
+					return;
 				}
 			}
 			else if( messageType == WebSocketMessageType.Binary )
 			{
 				//data commands
 
-				var data = buffer.ToArray();
-				var length = data.Length;
-
-				unchecked
+				if( buffer.Count < 8 )
 				{
-					Interlocked.Increment( ref dataMessagesReceivedCounter );
-					Interlocked.Add( ref dataSizeReceivedCounter, length );
-					foreach( var b in data )
-						dataMessagesReceivedChecksum += b;
+					if( trace )
+						Log.Info( "OnMessage Binary: The binary message size is less than 8 bytes." );
+					OnClose( WebSocketCloseStatus.ProtocolError, "The binary message size is less than 8 bytes." );
+					return;
 				}
 
-				if( trace )
-					Log.Info( $"OnMessage Binary {length} {DataMessagesReceivedCounter} {dataMessagesReceivedChecksum}" );
+				var reader = new ArrayDataReader( buffer.Array, buffer.Offset, buffer.Count );
+				var messageNumber = reader.ReadUInt32();
+				var checksum = reader.ReadUInt32();
 
-				receivedMessages.Enqueue( new ReceivedMessage { DataBinary = data } );
+				var length = buffer.Count - 8;
+
+				//!!!!need copy data because buffer will be reused. can make pool of buffers. limit the total size of buffers.
+				//GC. if manage arrays by self, maybe need to worry about memory limitations
+				var data = new byte[ length ];
+				reader.ReadBuffer( data, 0, length );
+
+				if( reader.Overflow )
+				{
+					if( trace )
+						Log.Info( "OnMessage Binary: Invalid binary message. reader.Overflow." );
+					OnClose( WebSocketCloseStatus.ProtocolError, "Invalid binary message." );
+					return;
+				}
+
+				if( messageNumber == receivedMessagesLastNumber + 1 )
+				{
+					receivedMessagesLastNumber++;
+
+					unchecked
+					{
+						Interlocked.Increment( ref dataMessagesReceivedCounter );
+						Interlocked.Add( ref dataSizeReceivedCounter, length );
+						dataMessagesReceivedChecksum += ChecksumAppend( data );
+					}
+
+					if( trace )
+						Log.Info( $"OnMessage Binary {length} {DataMessagesReceivedCounter} {dataMessagesReceivedChecksum}" );
+
+					//compare checksums
+					if( DataMessagesReceivedCounter != messageNumber || dataMessagesReceivedChecksum != checksum )
+					{
+						if( trace )
+							Log.Info( $"OnMessage Binary: Invalid checksum. {DataMessagesReceivedCounter} != {messageNumber} || {dataMessagesReceivedChecksum} != {checksum}" );
+						OnClose( WebSocketCloseStatus.ProtocolError, $"Invalid checksum. {DataMessagesReceivedCounter} != {messageNumber} || {dataMessagesReceivedChecksum} != {checksum}" );
+						return;
+					}
+
+					//enqueue message
+					receivedMessages.Enqueue( new ReceivedMessage { DataBinary = data } );
+
+					////send back message number. it is used to confirm message received
+					//if( AllowReconnect )
+					//	networkServiceInternal.SendMessageProcessedToServer( receivedMessagesLastNumber );
+				}
 			}
 		}
 
-		public virtual void Dispose()
+		[MethodImpl( (MethodImplOptions)512 )]
+		async Task ReceiveMessagesTask()
 		{
-			//exit from the thread
-			var thread2 = thread;
-			if( thread2 != null )
-			{
-				threadNeedExit = true;
-				if( client != null && Status != NetworkStatus.Disconnected )
-					threadNeedExitSendClose = true;
-				threadNeedUpdate.Set();
-
-				for( var counter = 0; thread2.ThreadState != ThreadState.Stopped && counter < 500; counter++ )
-					Thread.Sleep( 1 );
-				//for( var counter = 0; thread2.ThreadState != ThreadState.Stopped && counter < 50; counter++ )
-				//	Thread.Sleep( 1 );
-				////Thread.Sleep( 50 );
-
-				thread = null;
-			}
-
-			lastStatus = NetworkStatus.Disconnected;
-			beginConnecting = false;
-
-			//clear client field
-			if( client != null )
+			while( !Disposed && !backgroundTasksNeedExit && status != NetworkStatus.Disconnected )
 			{
 				try
 				{
-					client.Dispose();
+					var accumulatedBuffer = new ArrayDataWriter( 1024 );
+					var buffer = new byte[ 1024 * 64 ];
+
+					while( true )
+					{
+						var webSocketClient2 = webSocketClient;
+						if( webSocketClient2 == null )
+							break;
+						if( webSocketClient2.State == WebSocketState.None || webSocketClient2.State == WebSocketState.Connecting )
+							break;
+
+						var result = await webSocketClient2.ReceiveAsync( new ArraySegment<byte>( buffer ), CancellationToken.None );
+
+						if( result.MessageType != WebSocketMessageType.Close )
+						{
+							//check for max receive message size
+							if( accumulatedBuffer.Length + result.Count > ReceiveMessageMaxSize )
+							{
+								//exceed max message size
+								OnClose( WebSocketCloseStatus.MessageTooBig, "The received message size exceeded the maximum allowed." );
+								break;
+							}
+
+							accumulatedBuffer.Write( buffer, 0, result.Count );
+
+							if( result.EndOfMessage )
+							{
+								ProcessReceivedMessage( result.MessageType, accumulatedBuffer.AsArraySegment() );
+								accumulatedBuffer.Reset();
+							}
+						}
+						else
+						{
+							if( AllowReconnect )
+								SetConnectionIsOldAndDisposeWebSocketClient();
+							else
+								OnClose( WebSocketCloseStatus.NormalClosure, result.CloseStatusDescription );
+							break;
+						}
+					}
 				}
-				catch { }
+				catch( Exception e )
+				{
+					if( AllowReconnect )
+						SetConnectionIsOldAndDisposeWebSocketClient();
+					else
+					{
+						//!!!!maybe exists better solution to detect normal close
 
-				client = null;
+						if( e.Message.Contains( "The remote party closed the WebSocket connection without completing the close handshake." ) )
+							OnClose( WebSocketCloseStatus.NormalClosure, null );
+						else
+							OnClose( WebSocketCloseStatus.ProtocolError, "Unable to receive messages. " + e.Message );
+					}
+				}
+
+				if( webSocketClient == null )
+					await Task.Delay( 5000 );
+				else
+					await Task.Delay( 10 );
 			}
-
-			//dispose services
-			foreach( var service in services.ToArray().Reverse() )
-				service.PerformDispose();
-			//services.Clear();
-
-			lock( instances )
-				instances.Remove( this );
-
-			disposed = true;
 		}
 
 		public NetworkStatus Status
 		{
-			get { return lastStatus; }
+			get { return status; }
 		}
 
 		public string ClientVersion
@@ -845,22 +1046,32 @@ namespace NeoAxis.Networking
 			get { return loginData; }
 		}
 
-		public double KeepAliveInSeconds
+		public double KeepAliveTime
 		{
-			get { return keepAliveInSeconds; }
-			//set { keepAliveInSeconds = value; }
+			get { return keepAliveTimeFromServer; }
 		}
 
-		public int SendMessageMaxSize
+		public bool AllowReconnect
 		{
-			get { return sendMessageMaxSize; }
-			set { sendMessageMaxSize = value; }
+			get { return AllowReconnectFromClient && !string.IsNullOrEmpty( reconnectTokenFromServer ); }
 		}
 
-		public int ReceiveMessageMaxSize
+		void SendPingUpdate( DateTime utcNow )
 		{
-			get { return receiveMessageMaxSize; }
-			set { receiveMessageMaxSize = value; }
+			if( Status == NetworkStatus.Connected )
+			{
+				lock( roundtripTimeMeasurements )
+				{
+					roundtripTimeMeasurementLastSentMessageNumber++;
+
+					if( roundtripTimeMeasurements.Count > 3 )
+						roundtripTimeMeasurements.RemoveAt( 0 );
+
+					roundtripTimeMeasurements.Add( new RoundtripTimeMeasurement { SendTime = utcNow, MessageNumber = roundtripTimeMeasurementLastSentMessageNumber } );
+
+					networkServiceInternal.SendPingToServer( roundtripTimeMeasurementLastSentMessageNumber, receivedMessagesLastNumber );
+				}
+			}
 		}
 
 		void ProcessAccumulatedMessagesToSend()
@@ -869,9 +1080,19 @@ namespace NeoAxis.Networking
 			{
 				if( accumulatedMessagesToSend.Length > 0 )
 				{
+					//!!!!
+					//GC. if manage arrays by self, maybe need to worry about memory limitations
 					var array = accumulatedMessagesToSend.ToArray();
-					toProcessMessages.Enqueue( new ToProcessMessage { DataBinary = true, DataBinaryArray = array } );
-					threadNeedUpdate.Set();
+
+					var overloadOfToProcessMessages = toProcesssMessagesTotalBinaryDataSize > SendMessageMaxSize * 2;
+					if( overloadOfToProcessMessages )
+						ToProcessMessagesEnqueue( new ToProcessMessage { DataBinaryCommand = true, DataBinaryArray = null } );
+					else
+					{
+						ToProcessMessagesEnqueue( new ToProcessMessage { DataBinaryCommand = true, DataBinaryArray = array } );
+						Interlocked.Add( ref toProcesssMessagesTotalBinaryDataSize, array.Length );
+					}
+
 					accumulatedMessagesToSend.Reset();
 				}
 			}
@@ -881,26 +1102,39 @@ namespace NeoAxis.Networking
 		internal int AddAccumulatedMessageToSend( ArrayDataWriter writer )
 		{
 			int bytesWritten;
+
 			lock( accumulatedMessagesToSend )
 			{
 				var newCount = accumulatedMessagesToSend.Length + writer.Length + 4;
-				if( newCount > sendMessageMaxSize )
+				if( newCount > SendMessageMaxSize )
 					ProcessAccumulatedMessagesToSend();
+
+				//add headers (message number, checksum)
+				if( accumulatedMessagesToSend.Length == 0 )
+				{
+					accumulatedMessagesToSend.Write( 0 );
+					accumulatedMessagesToSend.Write( 0 );
+				}
 
 				bytesWritten = accumulatedMessagesToSend.WriteVariableUInt32( (uint)writer.Length );
 				accumulatedMessagesToSend.Write( writer.Data, 0, writer.Length );
 			}
+
 			return bytesWritten;
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		protected virtual void OnUpdate()
+		protected virtual void OnUpdate( DateTime utcNow )
 		{
-			if( ProfilerData != null )
+			//stop profiler if time is out
 			{
-				var workedTime = ( DateTime.Now - ProfilerData.TimeStarted ).TotalSeconds;
-				if( workedTime >= ProfilerData.WorkingTime )
-					ProfilerStop( true );
+				var profilerData2 = ProfilerData;
+				if( profilerData2 != null )
+				{
+					var workedTime = ( utcNow - profilerData2.TimeStarted ).TotalSeconds;
+					if( workedTime >= profilerData2.WorkingTime )
+						ProfilerStop( true );
+				}
 			}
 
 #if !UWP
@@ -908,8 +1142,6 @@ namespace NeoAxis.Networking
 			//process received messages
 			while( receivedMessages.TryDequeue( out var message ) )
 			{
-				lastReceivedMessageTime = EngineApp.EngineTime;
-
 				if( message.DataBinary != null )
 				{
 					//data binary message
@@ -919,26 +1151,28 @@ namespace NeoAxis.Networking
 
 					while( reader.CurrentPosition < reader.EndPosition )
 					{
+						//read and process message
 						var startPosition = reader.CurrentPosition;
 						var length = (int)reader.ReadVariableUInt32();
 						ProcessReceivedMessage( data, reader.CurrentPosition, length );
 						reader.ReadSkip( length );
 						var endPosition = reader.CurrentPosition;
 
-						if( profilerData != null )
-						{
-							profilerData.TotalReceivedMessages++;
-							profilerData.TotalReceivedSize += endPosition - startPosition;
-						}
-
+						//check overflow
 						if( reader.Overflow )
 						{
 							var reason = "OnMessage: Read overflow.";
 							OnReceiveProtocolErrorInternal( reason );
-							toProcessMessages.Enqueue( new ToProcessMessage { Close = true, CloseStatusCode = WebSocketCloseStatus.ProtocolError, CloseReason = reason } );
-							threadNeedUpdate.Set();
-
+							ToProcessMessagesEnqueue( new ToProcessMessage { CloseCommand = true, CloseStatusCode = WebSocketCloseStatus.ProtocolError, CloseReason = reason } );
 							break;
+						}
+
+						//update profiler
+						var profilerData2 = profilerData;
+						if( profilerData2 != null )
+						{
+							profilerData2.TotalReceivedMessages++;
+							profilerData2.TotalReceivedSize += endPosition - startPosition;
 						}
 					}
 				}
@@ -949,57 +1183,82 @@ namespace NeoAxis.Networking
 					if( trace )
 						Log.Info( "OnUpdate: Close. " + message.CloseReason + " " + message.CloseCode.ToString() );
 
-					//update status
-
-					beginConnecting = false;
+					//set disconnection reason
 					if( string.IsNullOrEmpty( disconnectionReason ) )
 						disconnectionReason = message.CloseReason ?? "";
 
-					if( lastStatus != NetworkStatus.Disconnected )
+					//update status
+					if( status != NetworkStatus.Disconnected )
 					{
-						lastStatus = NetworkStatus.Disconnected;
+						status = NetworkStatus.Disconnected;
 						OnConnectionStatusChanged();
 					}
 
 					if( message.CloseCode == WebSocketCloseStatus.ProtocolError )
 						OnReceiveProtocolErrorInternal( disconnectionReason );
 
-					//now disconnected
+					TaskUtility.Run( TaskUtility.TaskLifetimeEnum.Minutes, "ClientNode: OnUpdate: CloseAsync: Close message", async delegate ()
+					{
+						try
+						{
+							await CloseAsync( message.CloseCode, disconnectionReason );
+						}
+						catch { }
+					} );
 				}
 				else if( message.ErrorMessage != null )
 				{
 					//error message
 
-					var text = message.ErrorMessage;
+					if( trace )
+						Log.Info( "OnUpdate: Error: " + message.ErrorMessage );
 
 					//update status
-					beginConnecting = false;
-					if( lastStatus != NetworkStatus.Disconnected )
+					if( status != NetworkStatus.Disconnected )
 					{
-						lastStatus = NetworkStatus.Disconnected;
+						status = NetworkStatus.Disconnected;
 						OnConnectionStatusChanged();
 					}
 
-					OnReceiveProtocolErrorInternal( text );
+					OnReceiveProtocolErrorInternal( message.ErrorMessage );
 
-					//now disconnected
+					TaskUtility.Run( TaskUtility.TaskLifetimeEnum.Minutes, "ClientNode: OnUpdate: CloseAsync: Error message", async delegate ()
+					{
+						try
+						{
+							await CloseAsync( WebSocketCloseStatus.ProtocolError, disconnectionReason );
+						}
+						catch { }
+					} );
 				}
 			}
 
-			//check for Aborted state
-			if( client?.State == WebSocketState.Aborted )
+			//check for closed connection. drop connection if closed or no real connection long time
+			if( status != NetworkStatus.Disconnected )
 			{
-				if( lastStatus != NetworkStatus.Disconnected )
+				var webSocketClient2 = webSocketClient;
+				if( webSocketClient2 == null || webSocketClient2.State == WebSocketState.Aborted || webSocketClient2.State == WebSocketState.Closed )
 				{
-					lastStatus = NetworkStatus.Disconnected;
-					disconnectionReason = "Connection is aborted.";
-					OnConnectionStatusChanged();
+					if( !AllowReconnect || GetRoundtripLastInSeconds( utcNow ) > KeepAliveTime )
+					{
+						status = NetworkStatus.Disconnected;
+						if( string.IsNullOrEmpty( disconnectionReason ) )
+							disconnectionReason = "Connection is closed.";
+						OnConnectionStatusChanged();
+					}
 				}
 			}
 
 			//update services
 			for( int n = 0; n < services.Count; n++ )
-				services[ n ].OnUpdate();
+				services[ n ].OnUpdate( utcNow );
+
+			//send ping
+			if( ( utcNow - sentPingLastTime ).TotalSeconds > sendPingIntervalInSeconds )
+			{
+				sentPingLastTime = utcNow;
+				SendPingUpdate( utcNow );
+			}
 
 			//send accumulated messages
 			ProcessAccumulatedMessagesToSend();
@@ -1021,8 +1280,8 @@ namespace NeoAxis.Networking
 		{
 			if( service.owner != null )
 				Log.Fatal( "ClientNode: RegisterService: Service is already registered." );
-			if( service.Identifier == 0 )
-				Log.Fatal( "ClientNode: RegisterService: Invalid service identifier. Identifier can not be zero." );
+			if( service.Identifier < 0 )
+				Log.Fatal( "ClientNode: RegisterService: Invalid service identifier. Identifier can not be zero or negative." );
 			if( service.Identifier > maxServiceIdentifier )
 				Log.Fatal( "ClientNode: RegisterService: Invalid service identifier. Max identifier is \"{0}\".", maxServiceIdentifier );
 
@@ -1077,8 +1336,6 @@ namespace NeoAxis.Networking
 			return null;
 		}
 
-		//protected internal virtual void OnReceiveProtocolError( string message ) { }
-
 		internal virtual void OnReceiveProtocolErrorInternal( string message )
 		{
 			if( trace )
@@ -1086,7 +1343,6 @@ namespace NeoAxis.Networking
 
 			if( !Disposed )
 				ProtocolError?.Invoke( this, message );
-			//OnReceiveProtocolError( message );
 		}
 
 		public string DisconnectionReason
@@ -1094,13 +1350,8 @@ namespace NeoAxis.Networking
 			get { return disconnectionReason; }
 		}
 
-		public double LastReceivedMessageTime
-		{
-			get { return lastReceivedMessageTime; }
-		}
-
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		internal void ProcessReceivedMessage( byte[] data, int position, int length )
+		void ProcessReceivedMessage( byte[] data, int position, int length )
 		{
 			var reader = new ArrayDataReader( data, position, length );
 
@@ -1109,7 +1360,7 @@ namespace NeoAxis.Networking
 
 			if( reader.Overflow )
 			{
-				OnReceiveProtocolErrorInternal( "Invalid message." );
+				//OnReceiveProtocolErrorInternal( "Invalid message." );
 				return;
 			}
 
@@ -1124,9 +1375,9 @@ namespace NeoAxis.Networking
 			service.ProcessReceivedMessage( reader, length, messageIdentifier );
 		}
 
-		public long DataMessagesReceivedCounter
+		public int DataMessagesReceivedCounter
 		{
-			get { return Interlocked.Read( ref dataMessagesReceivedCounter ); }
+			get { return dataMessagesReceivedCounter; }
 		}
 
 		public long DataSizeReceivedCounter
@@ -1134,9 +1385,9 @@ namespace NeoAxis.Networking
 			get { return Interlocked.Read( ref dataSizeReceivedCounter ); }
 		}
 
-		public long DataMessagesSentCounter
+		public int DataMessagesSentCounter
 		{
-			get { return Interlocked.Read( ref dataMessagesSentCounter ); }
+			get { return dataMessagesSentCounter; }
 		}
 
 		public long DataSizeSentCounter
@@ -1154,15 +1405,11 @@ namespace NeoAxis.Networking
 			get { return clientConnectPort; }
 		}
 
-		public string ClientConnectAddress
-		{
-			get { return clientConnectAddress; }
-		}
-
-		public WebSocket Client
-		{
-			get { return client; }
-		}
+		//changed when reconnect
+		//public string ClientConnectAddress
+		//{
+		//	get { return clientConnectAddress; }
+		//}
 
 		static string ClampCloseReason( string reason )
 		{
@@ -1172,11 +1419,191 @@ namespace NeoAxis.Networking
 			return reasonClamped;
 		}
 
-		async Task CloseAsync( WebSocketCloseStatus status, string rejectReason, CancellationToken cancellationToken = default )
+		async Task CloseAsync( WebSocketCloseStatus status, string rejectReason )
 		{
-			if( client != null )
-				await client.CloseAsync( status, rejectReason != null ? ClampCloseReason( rejectReason ) : null, cancellationToken );
+			if( webSocketClient != null )
+			{
+				if( string.IsNullOrEmpty( disconnectionReason ) )
+					disconnectionReason = rejectReason ?? "";
+
+				using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+				await webSocketClient?.CloseAsync( status, rejectReason != null ? ClampCloseReason( rejectReason ) : null, cts.Token );
+			}
+		}
+
+		void DisposeWebSocketClient()
+		{
+			try
+			{
+				webSocketClient?.Dispose();
+				webSocketClient = null;
+			}
+			catch { }
+		}
+
+		void SetConnectionIsOldAndDisposeWebSocketClient()
+		{
+			if( !connectionIsOld )
+			{
+				if( trace )
+					Log.Info( "ClientNode: SetConnectionIsOldAndDisposeClient: Start reconnecting..." );
+
+				DisposeWebSocketClient();
+				if( noRealConnectionStartTime == default )
+					noRealConnectionStartTime = DateTime.UtcNow;
+				connectionIsOld = true;
+				backgroundTaskSemaphore.Set();
+			}
+		}
+
+		public double RoundtripSizeLast
+		{
+			get
+			{
+				lock( roundtripTimeMeasurements )
+				{
+					for( int i = roundtripTimeMeasurements.Count - 1; i >= 0; i-- )
+					{
+						var item = roundtripTimeMeasurements[ i ];
+						if( item.ReceiveTime != default )
+							return ( item.ReceiveTime - item.SendTime ).TotalSeconds;
+					}
+					return double.MaxValue;
+				}
+			}
+		}
+
+		public double RoundtripSizeAverage
+		{
+			get
+			{
+				var total = 0.0;
+				var count = 0;
+				lock( roundtripTimeMeasurements )
+				{
+					for( int i = 0; i < roundtripTimeMeasurements.Count; i++ )
+					{
+						var item = roundtripTimeMeasurements[ i ];
+						if( item.ReceiveTime != default )
+						{
+							var time = ( item.ReceiveTime - item.SendTime ).TotalSeconds;
+							total += time;
+							count++;
+						}
+					}
+					if( count == 0 )
+						return 0;
+					return total / count;
+				}
+			}
+		}
+
+		public DateTime RoundtripLastUtcTime
+		{
+			get { return roundtripTimeMeasurementsLastReceiveTime; }
+		}
+
+		public double GetRoundtripLastInSeconds( DateTime? utcNow = null )
+		{
+			var lastTime = RoundtripLastUtcTime;
+			if( lastTime == default )
+				return 0;
+			var utcNow2 = utcNow ?? DateTime.UtcNow;
+			return ( utcNow2 - lastTime ).TotalSeconds;
+		}
+
+		internal void ToProcessMessagesEnqueue( ToProcessMessage message )
+		{
+			toProcessMessages.Enqueue( message );
+			backgroundTaskSemaphore.Set();
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+#if UWP
+		static uint ChecksumAppend( byte[] data )
+#else
+		static uint ChecksumAppend( ReadOnlySpan<byte> data )
+#endif
+		{
+			unchecked
+			{
+				unsafe
+				{
+					fixed( byte* pData = data )
+					{
+						//use optimized sum of 8 byte longs and bytes at the end
+						ulong result = 0;
+
+						ulong* pULong = (ulong*)pData;
+						int longCount = data.Length / 8;
+						for( int n = 0; n < longCount; n++ )
+							result += pULong[ n ];
+
+						int byteCount = data.Length & 7;
+						byte* pByte = (byte*)( pULong + longCount );
+						for( int n = 0; n < byteCount; n++ )
+							result += pByte[ n ];
+
+						//Fold 64-bit sum into 32-bit checksum (mod 2^32)
+						return (uint)result + (uint)( result >> 32 );
+					}
+				}
+			}
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		internal void ProcessPong( uint messageNumber )
+		{
+			lock( roundtripTimeMeasurements )
+			{
+				for( int n = 0; n < roundtripTimeMeasurements.Count; n++ )
+				{
+					var item = roundtripTimeMeasurements[ n ];
+					if( item.MessageNumber == messageNumber )
+					{
+						item.ReceiveTime = DateTime.UtcNow;
+
+						if( item.ReceiveTime > roundtripTimeMeasurementsLastReceiveTime )
+							roundtripTimeMeasurementsLastReceiveTime = item.ReceiveTime;
+
+						break;
+					}
+				}
+			}
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		internal void ProcessMessageProcessed( uint messageNumber )
+		{
+			//remove client.sentMessages messages up to processed message number
+			while( sentMessages.TryPeek( out var message ) )
+			{
+				if( message.MessageNumber <= messageNumber )
+				{
+					Interlocked.Add( ref sentMessagesQueueSize, -message.Data.DataBinaryArray.Length );
+					sentMessages.TryDequeue( out _ );
+				}
+				else
+					break;
+			}
+		}
+
+		internal void ReceivedMessageSetStatusConnected()
+		{
+			if( status != NetworkStatus.Connected )
+			{
+				status = NetworkStatus.Connected;
+				OnConnectionStatusChanged();
+			}
+		}
+
+		public string _GetInternalState()
+		{
+			var webSocketClient2 = webSocketClient;
+			if( webSocketClient2 != null )
+				return webSocketClient2.State.ToString();
+			else
+				return "No socket client";
 		}
 	}
 }
-#endif

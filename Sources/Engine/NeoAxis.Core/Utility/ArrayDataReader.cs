@@ -1,7 +1,7 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-using Internal.LiteDB;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -38,6 +38,11 @@ namespace NeoAxis
 			Init( data, startPosition, length );
 		}
 
+		public ArrayDataReader( ArraySegment<byte> data )
+		{
+			Init( data.Array, data.Offset, data.Count );
+		}
+
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void Init( byte[] data, int startPosition, int length )
 		{
@@ -46,27 +51,6 @@ namespace NeoAxis
 			endPosition = startPosition + length;
 			overflow = false;
 		}
-
-		//public ArrayDataReader( byte[] data, int byteOffset = 0 )
-		//{
-		//	Init( data, byteOffset );
-		//}
-
-		//public ArrayDataReader( byte[] data )
-		//{
-		//	Init( data, 0, data.Length );
-		//	//Init( data, 0, data.Length * 8 );
-		//}
-
-		//public void Init( byte[] data, int byteOffset )
-		//{
-		//	this.data = data;
-		//	this.bytePosition = byteOffset;
-		//	//bitPosition = bitOffset;
-		//	//startBitPosition = bitPosition;
-		//	//endBitPosition = bitPosition + bitLength;
-		//	overflow = false;
-		//}
 
 		public int CurrentPosition
 		{
@@ -1167,7 +1151,7 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public DateTime ReadDateTime()
 		{
-			return new DateTime( ReadInt64() );
+			return new DateTime( ReadInt64(), DateTimeKind.Utc );
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -1396,15 +1380,101 @@ namespace NeoAxis
 			}
 		}
 
+		//public ObjectId ReadObjectId()
+		//{
+		//	ObjectId.TryParse( ReadString(), out var result );
+		//	return result;
+		//}
+
+
+
+		//not work
+		//object CreateNullable( Type nullableType, Type innerType, bool hasValue, object value )
+		//{
+		//	if( !hasValue )
+		//	{
+		//		// return default(Nullable<innerType>) -> Activator.CreateInstance(nullableType)
+		//		return Activator.CreateInstance( nullableType );
+		//	}
+
+		//	// ensure value is of the inner type
+		//	if( value != null && !innerType.IsInstanceOfType( value ) )
+		//	{
+		//		value = Convert.ChangeType( value, innerType );
+		//	}
+
+		//	// create Nullable<innerType> with the inner value
+		//	return Activator.CreateInstance( nullableType, new object[] { value } );
+		//}
+
+		///////////////////////////////////////////////
+
+		public class AllocationStatistics
+		{
+			public long BytesLimit;
+			public long ObjectsLimit;
+
+			public long BytesAllocated;
+			public long ObjectsAllocated;
+
+			//
+
+			public AllocationStatistics( long maxBytes, long maxObjects )
+			{
+				BytesLimit = maxBytes;
+				ObjectsLimit = maxObjects;
+			}
+
+			public bool IsExceeded()
+			{
+				return BytesAllocated > BytesLimit || ObjectsAllocated > ObjectsLimit;
+			}
+
+			public void AddAllocation( long bytes )
+			{
+				BytesAllocated += bytes;
+				ObjectsAllocated++;
+
+				if( IsExceeded() )
+					throw new InvalidOperationException( "Allocation limit exceeded." );
+			}
+		}
+
+		///////////////////////////////////////////////
+
+		long GetTypeSizeForAllocationStatistics( Type type )
+		{
+			try
+			{
+				return Marshal.SizeOf( type );
+			}
+			catch { }
+			return 8;
+		}
+
 		[MethodImpl( (MethodImplOptions)512 )]
-		public object Read( Type typeToRead )
+		public object Read( Type typeToRead, AllocationStatistics allocationStatistics )
 		{
 			//!!!!slowly
 
 			//simple types
 			var simpleType = SimpleTypes.GetTypeItem( typeToRead );
 			if( simpleType != null )
-				return simpleType.ReadFunction( this );
+			{
+				if( allocationStatistics != null && simpleType.Type.IsValueType )
+					allocationStatistics.AddAllocation( GetTypeSizeForAllocationStatistics( simpleType.Type ) );
+
+				var value = simpleType.ReadFunction( this );
+
+				if( allocationStatistics != null )
+				{
+					var str = value as string;
+					if( str != null )
+						allocationStatistics.AddAllocation( 8 + sizeof( char ) * str.Length );
+				}
+
+				return value;
+			}
 
 			//array
 			if( typeToRead.IsArray )
@@ -1412,19 +1482,28 @@ namespace NeoAxis
 				//!!!!slowly
 				//arrays with simple types may be optimized. same as MetadataManager. and cache simple type item
 
-				var elementType = typeToRead.GetElementType();
-
 				var count = ReadVariableInt();
-				var value = (object)Array.CreateInstance( elementType, count );
-				var methodSetValue = value.GetType().GetMethod( "SetValue", new Type[] { typeof( object ), typeof( int ) } );
-
-				for( int n = 0; n < count; n++ )
+				if( count >= 0 )
 				{
-					var itemValue = Read( elementType );
-					methodSetValue.Invoke( value, new object[] { itemValue, n } );
-				}
+					var elementType = typeToRead.GetElementType();
+					var value = (object)Array.CreateInstance( elementType, count );
+					var methodSetValue = value.GetType().GetMethod( "SetValue", new Type[] { typeof( object ), typeof( int ) } );
 
-				return value;
+					allocationStatistics?.AddAllocation( GetTypeSizeForAllocationStatistics( elementType ) * count );
+
+					for( int n = 0; n < count; n++ )
+					{
+						var itemValue = Read( elementType, allocationStatistics );
+						methodSetValue.Invoke( value, new object[] { itemValue, n } );
+
+						if( overflow )
+							break;
+					}
+
+					return value;
+				}
+				else
+					return null;
 			}
 
 			//containers
@@ -1443,25 +1522,34 @@ namespace NeoAxis
 					var elementType = TypeUtility.GetGenericArgumentInBaseTypes( typeToRead, containerType, 0 );
 
 					var count = ReadVariableInt();
-
-					var value = typeToRead.InvokeMember( "", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance, null, null, new object[] { count } );
-
-					string addName;
-					if( containerType == typeof( Stack<> ) )
-						addName = "Push";
-					else if( containerType == typeof( Queue<> ) )
-						addName = "Enqueue";
-					else
-						addName = "Add";
-					var methodAdd = value.GetType().GetMethod( addName, new Type[] { elementType } );
-
-					for( int n = 0; n < count; n++ )
+					if( count >= 0 )
 					{
-						var elementObject = Read( elementType );
-						methodAdd.Invoke( value, new object[] { elementObject } );
-					}
+						allocationStatistics?.AddAllocation( GetTypeSizeForAllocationStatistics( elementType ) * count );
 
-					return value;
+						var value = typeToRead.InvokeMember( "", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance, null, null, new object[] { count } );
+
+						string addName;
+						if( containerType == typeof( Stack<> ) )
+							addName = "Push";
+						else if( containerType == typeof( Queue<> ) )
+							addName = "Enqueue";
+						else
+							addName = "Add";
+						var methodAdd = value.GetType().GetMethod( addName, new Type[] { elementType } );
+
+						for( int n = 0; n < count; n++ )
+						{
+							var elementObject = Read( elementType, allocationStatistics );
+							methodAdd.Invoke( value, new object[] { elementObject } );
+
+							if( overflow )
+								break;
+						}
+
+						return value;
+					}
+					else
+						return null;
 				}
 
 				if( containerType == typeof( Dictionary<,> ) ||
@@ -1473,19 +1561,28 @@ namespace NeoAxis
 					var elementTypeValue = elementTypes[ 1 ];
 
 					var count = ReadVariableInt();
-
-					var value = typeToRead.InvokeMember( "", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance, null, null, new object[] { count } );
-
-					var methodAdd = value.GetType().GetMethod( "Add", new Type[] { elementTypeKey, elementTypeValue } );
-
-					for( int n = 0; n < count; n++ )
+					if( count >= 0 )
 					{
-						var elementKey = Read( elementTypeKey );
-						var elementValue = Read( elementTypeValue );
-						methodAdd.Invoke( value, new object[] { elementKey, elementValue } );
-					}
+						allocationStatistics?.AddAllocation( ( GetTypeSizeForAllocationStatistics( elementTypeKey ) + GetTypeSizeForAllocationStatistics( elementTypeValue ) ) * count );
 
-					return value;
+						var value = typeToRead.InvokeMember( "", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance, null, null, new object[] { count } );
+
+						var methodAdd = value.GetType().GetMethod( "Add", new Type[] { elementTypeKey, elementTypeValue } );
+
+						for( int n = 0; n < count; n++ )
+						{
+							var elementKey = Read( elementTypeKey, allocationStatistics );
+							var elementValue = Read( elementTypeValue, allocationStatistics );
+							methodAdd.Invoke( value, new object[] { elementKey, elementValue } );
+
+							if( overflow )
+								break;
+						}
+
+						return value;
+					}
+					else
+						return null;
 				}
 			}
 
@@ -1510,7 +1607,7 @@ namespace NeoAxis
 
 						foreach( var field in fields )
 						{
-							var fieldValue = Read( field.FieldType );
+							var fieldValue = Read( field.FieldType, allocationStatistics );
 							field.SetValue( value, fieldValue );
 						}
 
@@ -1534,9 +1631,11 @@ namespace NeoAxis
 						if( constructor == null )
 							throw new InvalidOperationException( "No constructor found for the Tuple type." );
 
+						allocationStatistics?.AddAllocation( GetTypeSizeForAllocationStatistics( typeToRead ) );
+
 						var arguments = new object[ properties.Length ];
 						for( int n = 0; n < properties.Length; n++ )
-							arguments[ n ] = Read( properties[ n ].PropertyType );
+							arguments[ n ] = Read( properties[ n ].PropertyType, allocationStatistics );
 
 						var value = Activator.CreateInstance( typeToRead, arguments );
 
@@ -1545,26 +1644,135 @@ namespace NeoAxis
 				}
 			}
 
+			//custom structure
+			{
+				//!!!!slowly cache properties info per type
+
+				if( ArrayDataWriter.TypeToWriteCustomStructureIsSupported( typeToRead, 0, out var properties ) )
+				{
+
+					//!!!!slowly. make cache of properties
+
+					var value = ReadCustomStructure( typeToRead, allocationStatistics );
+
+					return value;
+
+
+					//if( answer.ResultCustomStructureValues != null )
+					//{
+					//	try
+					//	{
+					//		var returnParameter = method.ReturnParameter;
+
+					//		var valueType = typeof( T );
+					//		var value = (T)valueType.InvokeMember( "", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance, null, null, null );
+
+					//		if( returnParameter.CustomTypeProperties.Length != answer.ResultCustomStructureValues.Length )
+					//			return new CallMethodResult<T> { Error = "Invalid answer. returnParameter.CustomTypeProperties.Length != answer.ResultCustomStructureValues.Length." };
+
+					//		for( int n = 0; n < returnParameter.CustomTypeProperties.Length; n++ )
+					//		{
+					//			var p = returnParameter.CustomTypeProperties[ n ];
+					//			var resultCustomStructureValue = answer.ResultCustomStructureValues[ n ];
+
+					//			if( p.FieldType != null )
+					//			{
+					//				var field = valueType.GetField( p.Name );
+					//				if( field == null )
+					//					return new CallMethodResult<T> { Error = $"No field with name \"{p.Name}\"." };
+					//				field.SetValue( value, resultCustomStructureValue );
+					//			}
+					//			else if( p.PropertyType != null )
+					//			{
+					//				var property = valueType.GetProperty( p.Name );
+					//				if( property == null )
+					//					return new CallMethodResult<T> { Error = $"No property with name \"{p.Name}\"." };
+					//				property.SetValue( value, resultCustomStructureValue );
+					//			}
+					//		}
+
+					//		return new CallMethodResult<T> { Value = value };
+					//	}
+					//	catch( Exception e )
+					//	{
+					//		return new CallMethodResult<T> { Error = e.Message };
+					//	}
+					//}
+					//else
+
+				}
+			}
+
+
+
+			//not work
+			////nullable
+			//if( typeToRead.IsGenericType && typeToRead.GetGenericTypeDefinition() == typeof( Nullable<> ) )
+			//{
+			//	//var underlyingType = Nullable.GetUnderlyingType( typeToRead )!;
+
+			//	//var hasValue = ReadBoolean();
+			//	//if( !hasValue )
+			//	//{
+			//	//	// Return default(Nullable<T>)
+			//	//	return Activator.CreateInstance( typeToRead ); // HasValue == false
+			//	//}
+
+			//	////// Read and ensure exact underlying type
+			//	//object value = Read( underlyingType );
+			//	////if( value != null && value.GetType() != underlyingType )
+			//	////{
+			//	////	value = Convert.ChangeType( value, underlyingType, CultureInfo.InvariantCulture );
+			//	////}
+
+			//	//// Construct Nullable<T> with a value: new Nullable<T>((T)value)
+			//	//return Activator.CreateInstance( typeToRead, value );
+
+
+			//	object innerValue;
+
+			//	var hasValue = ReadBoolean();
+			//	if( !hasValue )
+			//	{
+			//		if( typeToRead.IsValueType )
+			//			innerValue = Activator.CreateInstance( typeToRead );
+			//		else
+			//			innerValue = null;
+			//	}
+			//	else
+			//	{
+			//		var underlyingType = Nullable.GetUnderlyingType( typeToRead );
+			//		innerValue = Read( underlyingType );
+			//	}
+
+			//	//convert to Nullable<> and return. but unboxing make just value
+			//	return Activator.CreateInstance( typeToRead, new object[] { innerValue } );
+			//	//return Activator.CreateInstance( typeToRead, innerValue );
+			//}
+
+
 			throw new NotSupportedException();
 		}
 
-		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public T Read<T>()
-		{
-			return (T)Read( typeof( T ) );
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public T Read<T>()
+		//{
+		//	return (T)Read( typeof( T ) );
+		//}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		public object ReadCustomStructure( Type typeToRead )
+		object ReadCustomStructure( Type typeToRead, AllocationStatistics allocationStatistics )
 		{
 			var value = typeToRead.InvokeMember( "", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance, null, null, null );
+
+			allocationStatistics?.AddAllocation( GetTypeSizeForAllocationStatistics( typeToRead ) );
 
 			var fields = typeToRead.GetFields( BindingFlags.Public | BindingFlags.Instance );
 			foreach( var field in fields )
 			{
 				//!!!!more checks
 
-				var fieldValue = Read( field.FieldType );
+				var fieldValue = Read( field.FieldType, allocationStatistics );
 				field.SetValue( value, fieldValue );
 			}
 
@@ -1573,40 +1781,34 @@ namespace NeoAxis
 			{
 				//!!!!more checks
 
-				var propertyValue = Read( property.PropertyType );
+				var propertyValue = Read( property.PropertyType, allocationStatistics );
 				property.SetValue( value, propertyValue );
 			}
 
 			return value;
 		}
 
-		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public T ReadCustomStructure<T>()
-		{
-			return (T)Read( typeof( T ) );
-		}
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public T ReadCustomStructure<T>()
+		//{
+		//	return (T)Read( typeof( T ) );
+		//}
 
-		[MethodImpl( (MethodImplOptions)512 )]
-		public object[] ReadCustomStructureProperties( ArrayDataWriter.TypeToWriteCustomStructureProperty[] properties )
-		{
-			var values = new object[ properties.Length ];
+		//[MethodImpl( (MethodImplOptions)512 )]
+		//public object[] ReadCustomStructureProperties( ArrayDataWriter.TypeToWriteCustomStructureProperty[] properties )
+		//{
+		//	var values = new object[ properties.Length ];
 
-			for( int n = 0; n < properties.Length; n++ )
-			{
-				var p = properties[ n ];
-				if( p.FieldType != null )
-					values[ n ] = Read( p.FieldType );
-				else if( p.PropertyType != null )
-					values[ n ] = Read( p.PropertyType );
-			}
+		//	for( int n = 0; n < properties.Length; n++ )
+		//	{
+		//		var p = properties[ n ];
+		//		if( p.FieldType != null )
+		//			values[ n ] = Read( p.FieldType );
+		//		else if( p.PropertyType != null )
+		//			values[ n ] = Read( p.PropertyType );
+		//	}
 
-			return values;
-		}
-
-		public ObjectId ReadObjectId()
-		{
-			ObjectId.TryParse( ReadString(), out var result );
-			return result;
-		}
+		//	return values;
+		//}
 	}
 }

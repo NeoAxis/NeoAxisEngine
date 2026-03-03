@@ -90,13 +90,19 @@ namespace NeoAxis
 			}
 		}
 
-		public static byte[] Unzip( byte[] data )
+		public static byte[] Unzip( byte[] data, long maxUncompressedSize = long.MaxValue )
 		{
 			using( var zippedStream = new MemoryStream( data ) )
 			{
 				using( var archive = new ZipArchive( zippedStream ) )
 				{
 					var entry = archive.Entries.FirstOrDefault();
+
+					if(entry == null )
+						throw new InvalidOperationException( "No entries in the zip archive." );
+					if( entry.Length > maxUncompressedSize )
+						throw new InvalidOperationException( "Uncompressed data size is too large." );
+
 					using( var stream = entry.Open() )
 					{
 						var result = new byte[ entry.Length ];
@@ -115,6 +121,22 @@ namespace NeoAxis
 						////	return memoryStream.ToArray();
 						////}
 					}
+				}
+			}
+		}
+
+		public static void UnzipGetInfo( byte[] data, out long uncompressedSize )
+		{
+			using( var zippedStream = new MemoryStream( data ) )
+			{
+				using( var archive = new ZipArchive( zippedStream ) )
+				{
+					var entry = archive.Entries.FirstOrDefault();
+
+					if( entry != null )
+						uncompressedSize = entry.Length;
+					else
+						uncompressedSize = 0;
 				}
 			}
 		}

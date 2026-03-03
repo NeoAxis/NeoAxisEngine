@@ -214,6 +214,7 @@ namespace Internal.LiteDB
                 }
 
                 var entity = this.GetEntityMapper(type);
+                entity.WaitForInitialization();
 
                 // initialize CreateInstance
                 if (entity.CreateInstance == null)

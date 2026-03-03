@@ -461,18 +461,18 @@ namespace NeoAxis
 		void PatchCSharpProjects( ProductBuildInstance buildInstance )
 		{
 			{
-				var p1 = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.UWP.csproj" );
-				var p2 = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.csproj" );
-				if( !EditorAPI.EditorCommandLineTools_PlatformProjectPatch_Process( p1, p2, out var error, out _ ) )
+				var p1 = Path.Combine( VirtualFileSystem.Directories.Project, "Sources", "NeoAxis.Player.UWP", "NeoAxis.Player.UWP.csproj" );
+				var p2 = Path.Combine( VirtualFileSystem.Directories.Project, "Project.csproj" );
+				if( !EditorAPI.EditorCommandLineTools_PlatformProjectPatch_Process( p1, p2, true, out var error, out _ ) )
 					throw new Exception( error );
 			}
 
-			{
-				var p1 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.UWP.csproj" );
-				var p2 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.csproj" );
-				if( !EditorAPI.EditorCommandLineTools_PlatformProjectPatch_Process( p1, p2, out var error, out _ ) )
-					throw new Exception( error );
-			}
+			//{
+			//	var p1 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.UWP.csproj" );
+			//	var p2 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.csproj" );
+			//	if( !EditorAPI.EditorCommandLineTools_PlatformProjectPatch_Process( p1, p2, out var error, out _ ) )
+			//		throw new Exception( error );
+			//}
 		}
 
 		void CopyFilesToPackageFolder( ProductBuildInstance buildInstance )
@@ -591,8 +591,8 @@ namespace NeoAxis
 				CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Build.UWP.sln" );
 			}
 
-			//copy Project.UWP.csproj
-			CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Project.UWP.csproj" );
+			////copy Project.UWP.csproj
+			//CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Project.UWP.csproj" );
 
 			//copy Properties
 			CopyFolder( Path.Combine( VirtualFileSystem.Directories.Project, "Properties" ), Path.Combine( buildInstance.DestinationFolder, "Properties" ), buildInstance, new Range( 0.4, 0.4 ) );
@@ -603,8 +603,9 @@ namespace NeoAxis
 
 			//copy Sources\NeoAxis.Player.UWP
 			CopyFolder( Path.Combine( sourceSourcesPath, "NeoAxis.Player.UWP" ), Path.Combine( destSourcesPath, "NeoAxis.Player.UWP" ), buildInstance, new Range( 0.4, 0.45 ) );
-			//copy Sources\NeoAxis.CoreExtension
-			CopyFolder( Path.Combine( sourceSourcesPath, "NeoAxis.CoreExtension" ), Path.Combine( destSourcesPath, "NeoAxis.CoreExtension" ), buildInstance, new Range( 0.45, 0.5 ) );
+
+			////copy Sources\NeoAxis.CoreExtension
+			//CopyFolder( Path.Combine( sourceSourcesPath, "NeoAxis.CoreExtension" ), Path.Combine( destSourcesPath, "NeoAxis.CoreExtension" ), buildInstance, new Range( 0.45, 0.5 ) );
 
 			var sourceBinariesPath = VirtualFileSystem.Directories.Binaries;
 			string destBinariesPath = Path.Combine( buildInstance.DestinationFolder, "Binaries" );

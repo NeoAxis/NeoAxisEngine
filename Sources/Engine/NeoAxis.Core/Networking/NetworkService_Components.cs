@@ -12,6 +12,7 @@ namespace NeoAxis
 	static class ServerNetworkService_Components_SpecialSerialization
 	{
 		static bool initialized;
+		[ThreadStatic]
 		static ArrayDataWriter writer = new ArrayDataWriter();
 
 		//ObjectInSpace.Transform
@@ -1274,10 +1275,26 @@ namespace NeoAxis
 		[MethodImpl( (MethodImplOptions)512 )]
 		bool ReceiveMessage_ComponentSendNetworkMessageNameToServer( ServerNode.Client sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
-			var name = reader.ReadString() ?? string.Empty;
+			var name = reader.ReadString() ?? "";
 			var nameID = reader.ReadVariableInt32();
 			if( !reader.Complete() )
 				return false;
+
+			if( name.Length > 256 )
+			{
+				additionalErrorMessage = "Network message name too long. Limit: 256 characters.";
+				return false;
+			}
+			if( nameID < 0 )
+			{
+				additionalErrorMessage = "Invalid nameID value.";
+				return false;
+			}
+			if( nameID > 1000 )
+			{
+				additionalErrorMessage = "Too big nameID value. Limit: 1000.";
+				return false;
+			}
 
 			var client = GetClientItem( sender );
 			if( client != null )
@@ -1298,6 +1315,17 @@ namespace NeoAxis
 			var nameID = reader.ReadVariableInt32();
 			if( reader.Overflow )
 				return false;
+
+			if( nameID < 0 )
+			{
+				additionalErrorMessage = "Invalid nameID value.";
+				return false;
+			}
+			if( nameID > 1000 )
+			{
+				additionalErrorMessage = "Too big nameID value. Limit: 1000.";
+				return false;
+			}
 
 			if( this.sceneInstanceID == sceneInstanceID && scene != null && !scene.Disposed )
 			{
@@ -1327,7 +1355,7 @@ namespace NeoAxis
 		}
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public class ClientNetworkService_Components : ClientService
 	{
@@ -1429,10 +1457,10 @@ namespace NeoAxis
 		bool ReceiveMessage_SceneCreateBeginToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var sceneInstanceID = reader.ReadVariableInt32();
-			var sceneInfo = reader.ReadString() ?? string.Empty;
+			var sceneInfo = reader.ReadString() ?? "";
 			var componentID = (long)reader.ReadVariableUInt64();
-			var typeName = reader.ReadString() ?? string.Empty;
-			var name = reader.ReadString() ?? string.Empty;
+			var typeName = reader.ReadString() ?? "";
+			var name = reader.ReadString() ?? "";
 			//var mapVirtualFileName = reader.ReadString();
 			//var worldCheckIdentifier = reader.ReadInt32();
 			if( !reader.Complete() )
@@ -1558,10 +1586,10 @@ namespace NeoAxis
 
 			//!!!!тоже сделать id? typeNameID
 			//!!!!может ли быть динамическим?
-			var typeName = reader.ReadString() ?? string.Empty;
+			var typeName = reader.ReadString() ?? "";
 
 			var insertIndex = reader.ReadVariableInt32();
-			var name = reader.ReadString() ?? string.Empty;
+			var name = reader.ReadString() ?? "";
 			//var enabled = reader.ReadBoolean();
 			if( !reader.Complete() )
 				return false;
@@ -1690,7 +1718,7 @@ namespace NeoAxis
 		[MethodImpl( (MethodImplOptions)512 )]
 		bool ReceiveMessage_ComponentSetPropertySignatureToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
-			var signature = reader.ReadString() ?? string.Empty;
+			var signature = reader.ReadString() ?? "";
 			var signatureID = reader.ReadVariableInt32();
 			if( !reader.Complete() )
 				return false;
@@ -1724,7 +1752,7 @@ namespace NeoAxis
 				reader.ReadBuffer( tempSpecialSerializedData, 0, (int)specialDataSize );
 			}
 			else
-				valueString = reader.ReadString() ?? string.Empty;
+				valueString = reader.ReadString() ?? "";
 
 			if( !reader.Complete() )
 				return false;
@@ -1838,7 +1866,7 @@ namespace NeoAxis
 		[MethodImpl( (MethodImplOptions)512 )]
 		bool ReceiveMessage_ComponentSendNetworkMessageNameToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
-			var name = reader.ReadString() ?? string.Empty;
+			var name = reader.ReadString() ?? "";
 			var nameID = reader.ReadVariableInt32();
 			if( !reader.Complete() )
 				return false;
@@ -1984,5 +2012,6 @@ namespace NeoAxis
 		//		sendingNetworkMessage = "";
 		//	}
 		//}
+
 	}
 }

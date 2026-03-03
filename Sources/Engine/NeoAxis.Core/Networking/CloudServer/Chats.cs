@@ -1,4 +1,3 @@
-#if !NO_SERVER
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Concurrent;
@@ -7,14 +6,17 @@ using System.Linq;
 using System.Security;
 using System.Threading;
 using System.Threading.Tasks;
-using Internal.LiteDB;
 using NeoAxis;
 using NeoAxis.Networking;
+#if !NO_SERVER
+using Internal.LiteDB;
+#endif
 
 namespace NeoAxis.CloudServer
 {
 	public static class Chats
 	{
+#if !NO_SERVER
 		//settings
 		public static int ChatMaxCountPerUser { get; set; } = 1000;
 		public static int ChatNameMaxLength { get; set; } = 200;
@@ -35,6 +37,7 @@ namespace NeoAxis.CloudServer
 		public static ILiteCollection<Message> messagesCollection;
 		public static ConcurrentLockManager<long> messagesCollectionLockManager = new ConcurrentLockManager<long>();
 		static object messagesCollectionNewItemLock = new object();
+#endif
 
 		///////////////////////////////////////////////
 
@@ -79,6 +82,7 @@ namespace NeoAxis.CloudServer
 
 		///////////////////////////////////////////////
 
+#if !NO_SERVER
 		public class SimpleResult
 		{
 			public string Error { get; set; }
@@ -996,6 +1000,6 @@ namespace NeoAxis.CloudServer
 			if( !string.IsNullOrEmpty( result.Error ) )
 				throw new Exception( result.Error );
 		}
+#endif
 	}
 }
-#endif

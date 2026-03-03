@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using NeoAxis.Editor;
 using Internal;
-using Microsoft.CodeAnalysis;
 
 namespace NeoAxis
 {

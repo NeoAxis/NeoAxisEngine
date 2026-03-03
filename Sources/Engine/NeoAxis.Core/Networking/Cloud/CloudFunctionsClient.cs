@@ -8,7 +8,7 @@ using System.IO;
 namespace NeoAxis.Networking
 {
 	/// <summary>
-	/// A basic client to access cloud functions. Another way is using ClientNetworkService_CloudFunctions inside a custom service node.
+	/// A basic client to access cloud functions service.
 	/// </summary>
 	public class CloudFunctionsClient : BasicServiceClient
 	{
@@ -22,9 +22,8 @@ namespace NeoAxis.Networking
 		public class CloudFunctionsNode : BasicServiceNode
 		{
 			ClientNetworkService_CloudFunctions cloudFunctions;
-			//ClientNetworkService_Messages messages;
 			ClientNetworkService_Users users;
-			ClientNetworkService_Chat chat;
+			//ClientNetworkService_Chat chat;
 
 			//
 
@@ -33,14 +32,11 @@ namespace NeoAxis.Networking
 				cloudFunctions = new ClientNetworkService_CloudFunctions();
 				RegisterService( cloudFunctions );
 
-				//messages = new ClientNetworkService_Messages();
-				//RegisterService( messages );
-
 				users = new ClientNetworkService_Users();
 				RegisterService( users );
 
-				chat = new ClientNetworkService_Chat( users );
-				RegisterService( chat );
+				//chat = new ClientNetworkService_Chat( users );
+				//RegisterService( chat );
 			}
 
 			public ClientNetworkService_CloudFunctions CloudFunctions
@@ -48,20 +44,15 @@ namespace NeoAxis.Networking
 				get { return cloudFunctions; }
 			}
 
-			//public ClientNetworkService_Messages Messages
-			//{
-			//	get { return messages; }
-			//}
-
 			public ClientNetworkService_Users Users
 			{
 				get { return users; }
 			}
 
-			public ClientNetworkService_Chat Chat
-			{
-				get { return chat; }
-			}
+			//public ClientNetworkService_Chat Chat
+			//{
+			//	get { return chat; }
+			//}
 		}
 
 		///////////////////////////////////////////////
@@ -102,10 +93,6 @@ namespace NeoAxis.Networking
 				instance = new CloudFunctionsClient();
 			instance.ConnectionSettings = connectionSettings;
 
-			//var instance = (CloudFunctionsClient)instanceType.InvokeMember( "", BindingFlags.CreateInstance, null, null, new object[] { autoUpdate } );
-			////var instance = new CloudFunctionsClient( autoUpdate );
-			//instance.ConnectionSettings = connectionSettings;
-
 			lock( instances )
 			{
 				instances.Add( instance );
@@ -122,37 +109,6 @@ namespace NeoAxis.Networking
 			return new CreateResult() { Client = instance };
 		}
 
-		//public static async Task<CreateResult> CreateAsync<T>( ConnectionSettingsClass connectionSettings, bool autoUpdate, bool connect )
-		//{
-		//	return await CreateAsync( typeof( T ), connectionSettings, autoUpdate, connect );
-		//}
-
-		//public static async Task<CreateResult> CreateAsync( ConnectionSettingsClass connectionSettings, bool autoUpdate, bool connect )
-		//{
-		//	return await CreateAsync( new CloudFunctionsClient( autoUpdate ), connectionSettings/*, bool autoUpdate*/, connect );
-
-		//	//return await CreateAsync( typeof( CloudFunctionsClient ), connectionSettings, autoUpdate, connect );
-
-
-		//	//var instance = new CloudFunctionsClient( autoUpdate );
-		//	//instance.ConnectionSettings = connectionSettings;
-
-		//	//lock( instances )
-		//	//{
-		//	//	instances.Add( instance );
-		//	//	firstInstance = instances.Count > 0 ? instances[ 0 ] : null;
-		//	//}
-
-		//	//if( connect )
-		//	//{
-		//	//	var error = await instance.ReconnectAsync();
-		//	//	if( !string.IsNullOrEmpty( error ) )
-		//	//		return new CreateResult() { Error = error };
-		//	//}
-
-		//	//return new CreateResult() { Client = instance };
-		//}
-
 		protected override BasicServiceNode OnCreateNetworkNode()
 		{
 			return new CloudFunctionsNode();
@@ -168,97 +124,9 @@ namespace NeoAxis.Networking
 			get { return helloFromServerMessage; }
 		}
 
-		////async?
-		//public static CloudFunctions2 ConnectDirect( string serverAddress, int serverPort, string password/*, bool callUpdateFromInternalThread*/, out string error )
-		//{
-		//	error = "";
-
-		//	instances
-
-		//	var instance = new CloudFunctions2();
-		//	//instance.connectionType = ConnectionTypeEnum.Direct;
-		//	//instance.serverAddress = serverAddress;
-		//	//instance.serverPort = serverPort;
-		//	//instance.password = password;
-		//	instance.callUpdateFromInternalThread = callUpdateFromInternalThread;
-
-		//	//connect to the server
-		//	instance.connectionNode = CloudFunctionsClient2.BeginConnect( serverAddress, serverPort, password, instance, out error );
-		//	if( instance.connectionNode == null )
-		//		return null;
-		//	//if( !CloudFunctionsClient2.BeginConnect( serverAddress, serverPort, password, instance, out error ) )
-		//	//	return null;
-
-		//	instance.PostConnect();
-
-		//	return instance;
-		//}
-
-		////async?
-		//public static CloudFunctions2 ConnectViaCloud( bool callUpdateFromInternalThread, out string error )
-		//{
-		//	error = "";
-
-		//	var instance = new CloudFunctions2();
-		//	//instance.connectionType = ConnectionTypeEnum.ViaCloud;
-		//	instance.callUpdateFromInternalThread = callUpdateFromInternalThread;
-
-		//	string serverAddress;
-		//	int serverPort;
-		//	string verificationCode;
-
-		//	//request server address from the cloud service
-		//	try
-		//	{
-		//		var requestResult = GeneralManagerFunctions.RequestService( "CloudFunctions" );
-		//		if( !string.IsNullOrEmpty( requestResult.Error ) )
-		//		{
-		//			error = "Unable to get server address from the cloud service. " + requestResult.Error;
-		//			return null;
-		//		}
-
-		//		serverAddress = requestResult.ServerAddress;
-		//		serverPort = requestResult.ServerPort;
-		//		verificationCode = requestResult.VerificationCode;
-		//	}
-		//	catch( Exception e )
-		//	{
-		//		error = e.Message;
-		//		return null;
-		//	}
-
-		//	//connect to the server
-		//	instance.connectionNode = CloudFunctionsClient2.BeginConnect( serverAddress, serverPort, verificationCode, instance, out error );
-		//	if( instance.connectionNode == null )
-		//		return null;
-		//	//if( !CloudFunctionsClient2.BeginConnect( serverAddress, serverPort, verificationCode, instance, out error ) )
-		//	//	return null;
-
-		//	instance.PostConnect();
-
-		//	return instance;
-		//}
-
-		//void PostConnect()
-		//{
-		//if( callUpdateFromInternalThread )
-		//{
-		//	backgroundThread = new Thread( delegate ()
-		//	{
-		//		while( true )
-		//		{
-		//			Update();
-		//			Thread.Sleep( 0 );
-		//		}
-		//	} );
-		//	backgroundThread.IsBackground = true;
-		//	backgroundThread.Start();
-		//}
-		//}
-
-		protected override void OnUpdate()
+		protected override void OnUpdate( DateTime utcNow )
 		{
-			base.OnUpdate();
+			base.OnUpdate( utcNow );
 		}
 
 		//public static void UpdateAll()
@@ -314,165 +182,6 @@ namespace NeoAxis.Networking
 		//		instance.Destroy();
 		//}
 
-
-		//about reconnect. with contenuation
-
-		//public bool Connected
-		//{
-		//	get
-		//	{
-		//		return false;
-		//	}
-		//}
-
-		///// <summary>
-		///// Returns error.
-		///// </summary>
-		///// <returns></returns>
-		//public async Task<string> ReconnectAsync()
-		//{
-		//	try
-		//	{
-		//		connectionNode?.Dispose();
-		//		connectionNode = null;
-
-		//		string serverAddress;
-		//		int serverPort;
-		//		string password = null;
-		//		string verificationCode = null;
-
-		//		if( connectionSettings.ConnectionType == ConnectionSettingsClass.ConnectionTypeEnum.Clo_udbox )
-		//		{
-		//			//request access info from Cloud
-
-		//			//request verification code from general manager to entering server manager
-		//			var requestCodeResult = await GeneralManagerFunctions.RequestVerificationCodeToEnterProjectAsync( connectionSettings.ProjectID, "Service" );
-
-		//			if( !string.IsNullOrEmpty( requestCodeResult.Error ) )
-		//				throw new Exception( requestCodeResult.Error );
-
-		//			//var requestResult = GeneralManagerFunctions.RequestService( "CloudFunctions" );
-		//			//if( !string.IsNullOrEmpty( requestResult.Error ) )
-		//			//{
-		//			//	error = "Unable to get server address from the cloud service. " + requestResult.Error;
-		//			//	return false;
-		//			//}
-
-		//			port
-
-		//			serverAddress = requestCodeResult.Data.GetAttribute( "ServerAddress" );
-		//			serverPort = int.Parse( requestCodeResult.Data.GetAttribute( "ServerPort" ) );
-		//			verificationCode = requestCodeResult.Data.GetAttribute( "VerificationCode" );
-		//		}
-		//		else
-		//		{
-		//			//connect direct by IP
-		//			serverAddress = connectionSettings.ServerAddress;
-		//			serverPort = connectionSettings.ServerPort;
-		//			password = connectionSettings.Password;
-		//		}
-
-		//		var node = new Node();
-		//		node.ProtocolError += Client_ProtocolError;
-		//		node.ConnectionStatusChanged += Client_ConnectionStatusChanged;
-
-		//		var rootBlock = new TextBlock();
-		//		if( !string.IsNullOrEmpty( verificationCode ) )
-		//			rootBlock.SetAttribute( "VerificationCode", verificationCode );
-		//		if( !string.IsNullOrEmpty( password ) )
-		//			rootBlock.SetAttribute( "Password", password );
-
-		//		if( !node.BeginConnect( serverAddress, serverPort, EngineInfo.Version, rootBlock.DumpToString(), 100, out error ) )
-		//		{
-		//			node.Dispose();
-		//			node = null;
-		//			return false;
-		//		}
-
-		//		connectionNode = node;
-		//		return true;
-		//	}
-		//	catch( Exception e )
-		//	{
-		//		error = e.Message;
-		//		return false;
-		//	}
-		//}
-
-		//public bool Reconnect( out string error )
-		//{
-		//	error = "";
-
-		//	try
-		//	{
-		//		connectionNode?.Dispose();
-		//		connectionNode = null;
-
-		//		string serverAddress;
-		//		int serverPort;
-		//		string password = null;
-		//		string verificationCode = null;
-
-		//		if( connectionSettings.ConnectionType == ConnectionSettingsClass.ConnectionTypeEnum.Clou_dbox )
-		//		{
-		//			//request access info from Cloud
-
-		//			//request verification code from general manager to entering server manager
-		//			var requestCodeResultTask = GeneralManagerFunctions.RequestVerificationCodeToEnterProjectAsync( connectionSettings.ProjectID, "Service" );
-		//			var requestCodeResult = requestCodeResultTask.GetAwaiter().GetResult();
-
-		//			if( !string.IsNullOrEmpty( requestCodeResult.Error ) )
-		//				throw new Exception( requestCodeResult.Error );
-
-		//			//var requestResult = GeneralManagerFunctions.RequestService( "CloudFunctions" );
-		//			//if( !string.IsNullOrEmpty( requestResult.Error ) )
-		//			//{
-		//			//	error = "Unable to get server address from the cloud service. " + requestResult.Error;
-		//			//	return false;
-		//			//}
-
-		//			port
-
-		//			serverAddress = requestCodeResult.Data.GetAttribute( "ServerAddress" );
-		//			serverPort = int.Parse( requestCodeResult.Data.GetAttribute( "ServerPort" ) );
-		//			verificationCode = requestCodeResult.Data.GetAttribute( "VerificationCode" );
-		//		}
-		//		else
-		//		{
-		//			//connect direct by IP
-		//			serverAddress = connectionSettings.ServerAddress;
-		//			serverPort = connectionSettings.ServerPort;
-		//			password = connectionSettings.Password;
-		//		}
-
-		//		var node = new Node();
-		//		node.ProtocolError += Client_ProtocolError;
-		//		node.ConnectionStatusChanged += Client_ConnectionStatusChanged;
-
-		//		var rootBlock = new TextBlock();
-		//		if( !string.IsNullOrEmpty( verificationCode ) )
-		//			rootBlock.SetAttribute( "VerificationCode", verificationCode );
-		//		if( !string.IsNullOrEmpty( password ) )
-		//			rootBlock.SetAttribute( "Password", password );
-
-		//		if( !node.BeginConnect( serverAddress, serverPort, EngineInfo.Version, rootBlock.DumpToString(), 100, out error ) )
-		//		{
-		//			node.Dispose();
-		//			node = null;
-		//			return false;
-		//		}
-
-		//		connectionNode = node;
-		//		return true;
-		//	}
-		//	catch( Exception e )
-		//	{
-		//		error = e.Message;
-		//		return false;
-		//	}
-		//}
-
-
 		///////////////////////////////////////////////
 		//SaveStrings, LoadStrings
 
@@ -513,17 +222,17 @@ namespace NeoAxis.Networking
 		///////////////////////////////////////////////
 		//GetCallMethodInfo
 
-		public async Task<ClientNetworkService_CloudFunctions.GetCallMethodInfoResult> GetCallMethodInfoAsync( string className, string methodName, CancellationToken cancellationToken = default )
+		public async Task<ClientNetworkService_CloudFunctions.GetCloudMethodInfoResult> GetCallMethodInfoAsync( string className, string methodName, CancellationToken cancellationToken = default )
 		{
-			return await ConnectionNode.CloudFunctions.GetCallMethodInfoAsync( className, methodName, cancellationToken );
+			return await ConnectionNode.CloudFunctions.GetCloudMethodInfoAsync( className, methodName, cancellationToken );
 		}
 
 		///////////////////////////////////////////////
 		//GetCallMethods
 
-		public async Task<ClientNetworkService_CloudFunctions.GetCallMethodsResult> GetCallMethodsAsync( bool commandsOnly, CancellationToken cancellationToken = default )
+		public async Task<ClientNetworkService_CloudFunctions.GetCloudMethodsResult> GetCallMethodsAsync( bool commandsOnly, CancellationToken cancellationToken = default )
 		{
-			return await ConnectionNode.CloudFunctions.GetCallMethodsAsync( commandsOnly, cancellationToken );
+			return await ConnectionNode.CloudFunctions.GetCloudMethodsAsync( commandsOnly, cancellationToken );
 		}
 
 		///////////////////////////////////////////////
@@ -531,7 +240,7 @@ namespace NeoAxis.Networking
 
 		//with return value
 
-		public async Task<ClientNetworkService_CloudFunctions.CallMethodResult<T>> CallMethodWithCancellationTokenAsync<T>( ClientNetworkService_CloudFunctions.CallMethodInfo method, CancellationToken cancellationToken, params object[] parameters )
+		public async Task<ClientNetworkService_CloudFunctions.CallMethodResult<T>> CallMethodWithCancellationTokenAsync<T>( ClientNetworkService_CloudFunctions.CloudMethodInfo method, CancellationToken cancellationToken, params object[] parameters )
 		{
 			return await ConnectionNode.CloudFunctions.CallMethodWithCancellationTokenAsync<T>( method, cancellationToken, parameters );
 		}
@@ -548,7 +257,7 @@ namespace NeoAxis.Networking
 		/// <param name="method"></param>
 		/// <param name="parameters"></param>
 		/// <returns></returns>
-		public async Task<ClientNetworkService_CloudFunctions.CallMethodResult<T>> CallMethodAsync<T>( ClientNetworkService_CloudFunctions.CallMethodInfo method, params object[] parameters )
+		public async Task<ClientNetworkService_CloudFunctions.CallMethodResult<T>> CallMethodAsync<T>( ClientNetworkService_CloudFunctions.CloudMethodInfo method, params object[] parameters )
 		{
 			return await ConnectionNode.CloudFunctions.CallMethodAsync<T>( method, parameters );
 		}
@@ -567,7 +276,7 @@ namespace NeoAxis.Networking
 			return await ConnectionNode.CloudFunctions.CallMethodAsync<T>( className, methodName, parameters );
 		}
 
-		public async Task<ClientNetworkService_CloudFunctions.CallMethodResultNoValue> CallMethodWithCancellationTokenAsync( ClientNetworkService_CloudFunctions.CallMethodInfo method, CancellationToken cancellationToken, params object[] parameters )
+		public async Task<ClientNetworkService_CloudFunctions.CallMethodResultNoValue> CallMethodWithCancellationTokenAsync( ClientNetworkService_CloudFunctions.CloudMethodInfo method, CancellationToken cancellationToken, params object[] parameters )
 		{
 			return await ConnectionNode.CloudFunctions.CallMethodWithCancellationTokenAsync( method, cancellationToken, parameters );
 		}
@@ -584,7 +293,7 @@ namespace NeoAxis.Networking
 		/// <param name="method"></param>
 		/// <param name="parameters"></param>
 		/// <returns></returns>
-		public async Task<ClientNetworkService_CloudFunctions.CallMethodResultNoValue> CallMethodAsync( ClientNetworkService_CloudFunctions.CallMethodInfo method, params object[] parameters )
+		public async Task<ClientNetworkService_CloudFunctions.CallMethodResultNoValue> CallMethodAsync( ClientNetworkService_CloudFunctions.CloudMethodInfo method, params object[] parameters )
 		{
 			return await ConnectionNode.CloudFunctions.CallMethodAsync( method, parameters );
 		}

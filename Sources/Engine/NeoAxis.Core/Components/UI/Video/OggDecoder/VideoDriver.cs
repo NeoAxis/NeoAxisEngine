@@ -11,27 +11,27 @@ namespace OggDecoder
 	{
 		internal OggFile oggFile;
 
-		theora.Info theoraInfo;
-		theora.Comment theoraComment;
-		ogg.StreamState theoraStreamState;
-		theora.State theoraState;
+		Theora.Info theoraInfo;
+		Theora.Comment theoraComment;
+		Ogg.StreamState theoraStreamState;
+		Theora.State theoraState;
 
-		ogg.Packet oggPacket;
+		Ogg.Packet oggPacket;
 
 		int headerCount;
 
-		theora.YUVBuffer yuvBuffer;
+		Theora.YUVBuffer yuvBuffer;
 		bool yuvBufferFilled;
 
 		//
 
 		public VideoDriver()
 		{
-			theoraInfo = new theora.Info();
-			theoraComment = new theora.Comment();
-			theoraState = new theora.State();
-			yuvBuffer = new theora.YUVBuffer();
-			oggPacket = new ogg.Packet();
+			theoraInfo = new Theora.Info();
+			theoraComment = new Theora.Comment();
+			theoraState = new Theora.State();
+			yuvBuffer = new Theora.YUVBuffer();
+			oggPacket = new Ogg.Packet();
 		}
 
 		public virtual void Dispose()
@@ -75,7 +75,7 @@ namespace OggDecoder
 			GC.SuppressFinalize( this );
 		}
 
-		protected theora.YUVBuffer YUVBuffer
+		protected Theora.YUVBuffer YUVBuffer
 		{
 			get { return yuvBuffer; }
 		}
@@ -101,12 +101,12 @@ namespace OggDecoder
 			theoraState.decode_init( theoraInfo );
 		}
 
-		internal void PageIn( ogg.Page page )
+		internal void PageIn( Ogg.Page page )
 		{
 			theoraStreamState.pagein( page );
 		}
 
-		internal bool DecodePrimaryHeader( ogg.Packet p, ogg.StreamState s )
+		internal bool DecodePrimaryHeader( Ogg.Packet p, Ogg.StreamState s )
 		{
 			if( theoraInfo.decode_header( theoraComment, p ) >= 0 )
 			{
@@ -118,7 +118,7 @@ namespace OggDecoder
 			return false;
 		}
 
-		internal bool CheckSecondHeader( ogg.Packet p, ref bool needMoreData )
+		internal bool CheckSecondHeader( Ogg.Packet p, ref bool needMoreData )
 		{
 			needMoreData = false;
 			if( headerCount == 3 )

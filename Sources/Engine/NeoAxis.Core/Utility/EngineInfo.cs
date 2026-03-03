@@ -27,7 +27,7 @@ namespace NeoAxis
 			}
 		}
 
-		public static string WWW
+		public static string SourceWebsite
 		{
 			get { return "www.neoaxis.com"; }
 		}
@@ -74,8 +74,7 @@ namespace NeoAxis
 		public static string ReplaceNameWithoutVersion { get; set; } = "";
 		public static string ReplaceNameWithVersion { get; set; } = "";
 
-		public static string StoreAddress { get; set; } = "https://store.neoaxis.com";
-
+		public static string WebsiteFullAddress { get; set; } = "https://www.neoaxis.com";
 		public static string CloudServiceName { get; set; } = "NeoX";
 
 		/////////////////////////////////////////

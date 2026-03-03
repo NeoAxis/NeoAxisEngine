@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace NeoAxis.OggVorbisTheora
 {
-	/*public */static class theora
+	static class Theora
 	{
 		const string library = "NeoAxisCoreNative";
 		const CallingConvention convention = CallingConvention.Cdecl;
@@ -128,7 +128,7 @@ namespace NeoAxis.OggVorbisTheora
 				GC.SuppressFinalize( this );
 			}
 
-			public int decode_header( Comment comment, ogg.Packet packet )
+			public int decode_header( Comment comment, Ogg.Packet packet )
 			{
 				return theora_decode_header( native, comment.native, packet.native );
 			}
@@ -218,7 +218,7 @@ namespace NeoAxis.OggVorbisTheora
 			}
 
 			public int decode_init( Info info ) { return theora_decode_init( native, info.native ); }
-			public int decode_packetin( ogg.Packet packet ) { return theora_decode_packetin( native, packet.native ); }
+			public int decode_packetin( Ogg.Packet packet ) { return theora_decode_packetin( native, packet.native ); }
 			public double granule_time( long granulepos ) { return theora_granule_time( native, granulepos ); }
 			public int decode_YUVout( YUVBuffer yuv ) { return theora_decode_YUVout( native, yuv.native ); }
 

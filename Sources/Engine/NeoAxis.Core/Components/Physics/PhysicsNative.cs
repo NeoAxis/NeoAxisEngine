@@ -251,7 +251,9 @@ namespace NeoAxis
 		}
 
 		[DllImport( library, CallingConvention = convention )]
-		public unsafe static extern void JPhysicsSystem_SetPhysicsSettingsStructure( IntPtr system, PhysicsSettings2* settings, int structSizeToCheck );
+		public unsafe static extern void JPhysicsSystem_SetPhysicsSettingsStructure( IntPtr system, ref PhysicsSettings2 settings, int structSizeToCheck );
+		//[DllImport( library, CallingConvention = convention )]
+		//public unsafe static extern void JPhysicsSystem_SetPhysicsSettingsStructure( IntPtr system, PhysicsSettings2* settings, int structSizeToCheck );
 
 		[DllImport( library, CallingConvention = convention )]
 		public static extern void JPhysicsSystem_SetGravity( IntPtr system, ref Vector3F value );

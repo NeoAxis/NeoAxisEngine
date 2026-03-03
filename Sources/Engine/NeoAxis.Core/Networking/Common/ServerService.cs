@@ -33,7 +33,7 @@ namespace NeoAxis.Networking
 
 			///////////////
 
-			public delegate bool ReceiveHandlerDelegate( ServerNode.Client sender, MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage );
+			public delegate bool ReceiveHandlerDelegate( ServerNode.Client sender, MessageType messageType, ArrayDataReader reader, ref string error );
 
 			///////////////
 
@@ -64,6 +64,9 @@ namespace NeoAxis.Networking
 
 		protected ServerService( string name, int identifier )
 		{
+			if( identifier < 0 )
+				Log.Fatal( "ServerService: Constructor: identifier < 0." );
+
 			this.name = name;
 			this.identifier = identifier;
 		}
@@ -149,16 +152,16 @@ namespace NeoAxis.Networking
 			}
 
 			//some data can be received for not registered message types
-			var profiledDataCached = owner.ProfilerData;
-			if( profiledDataCached != null )
+			var profiledData2 = owner.ProfilerData;
+			if( profiledData2 != null )
 			{
-				var serviceItem = profiledDataCached.GetServiceItem( Identifier );
+				var serviceItem = profiledData2.GetServiceItem( Identifier );
 				var messageTypeItem = serviceItem.GetMessageTypeItem( messageType.Identifier );
 				messageTypeItem.ReceivedMessages++;
 				messageTypeItem.ReceivedSize += lengthForProfiler;
 
-				profiledDataCached.TotalReceivedMessages++;
-				profiledDataCached.TotalReceivedSize += lengthForProfiler;
+				profiledData2.TotalReceivedMessages++;
+				profiledData2.TotalReceivedSize += lengthForProfiler;
 			}
 
 			if( messageType.ReceiveHandler == null )
@@ -167,12 +170,22 @@ namespace NeoAxis.Networking
 				return;
 			}
 
-			string additionalErrorMessage = null;
-			if( !messageType.ReceiveHandler( client, messageType, reader, ref additionalErrorMessage ) )
+			try
 			{
-				var text = string.Format( "Invalid service message \"{0}\".", messageType.Name );
-				if( !string.IsNullOrEmpty( additionalErrorMessage ) )
-					text += " " + additionalErrorMessage;
+				string additionalErrorMessage = null;
+				if( !messageType.ReceiveHandler( client, messageType, reader, ref additionalErrorMessage ) )
+				{
+					var text = string.Format( "Invalid service message \"{0}\".", messageType.Name );
+					if( !string.IsNullOrEmpty( additionalErrorMessage ) )
+						text += " " + additionalErrorMessage;
+					owner.OnReceiveProtocolErrorInternal( client, text );
+					return;
+				}
+			}
+			catch( Exception e )
+			{
+				var text = string.Format( "Exception in service message \"{0}\". {1}", messageType.Name, e.ToString() );
+				//var text = string.Format( "Exception in service message \"{0}\". {1}", messageType.Name, e.Message );
 				owner.OnReceiveProtocolErrorInternal( client, text );
 				return;
 			}
@@ -200,29 +213,26 @@ namespace NeoAxis.Networking
 					for( int n = 0; n < Recepients.Count; n++ )
 					{
 						var client = Recepients[ n ];
-						if( client.Status == NetworkStatus.Connected )
+
+						if( client.Status != NetworkStatus.Disconnected ) //can send when Connecting status, to send before Connected status
 						{
 							var writer = Writer;
 
+							//send accumulated message
 							int bytesWritten = client.AddAccumulatedMessageToSend( writer );
-							//int bytesWritten;
-							//lock( client.accumulatedMessagesToSend )
-							//{
-							//	bytesWritten = client.accumulatedMessagesToSend.WriteVariableUInt32( (uint)writer.Length );
-							//	client.accumulatedMessagesToSend.Write( writer.Data, 0, writer.Length );
-							//}
 
-							var profilerDataCached = Owner.Owner.ProfilerData;
-							if( profilerDataCached != null )
+							//profiler
+							var profilerData2 = Owner.Owner.ProfilerData;
+							if( profilerData2 != null )
 							{
-								var serviceItem = profilerDataCached.GetServiceItem( Owner.Identifier );
+								var serviceItem = profilerData2.GetServiceItem( Owner.Identifier );
 								var messageTypeItem = serviceItem.GetMessageTypeItem( MessageID );
 
 								Interlocked.Increment( ref messageTypeItem.SentMessages );
 								Interlocked.Add( ref messageTypeItem.SentSize, writer.Length );
 
-								Interlocked.Increment( ref profilerDataCached.TotalSentMessages );
-								Interlocked.Add( ref profilerDataCached.TotalSentSize, bytesWritten + writer.Length );
+								Interlocked.Increment( ref profilerData2.TotalSentMessages );
+								Interlocked.Add( ref profilerData2.TotalSentSize, bytesWritten + writer.Length );
 							}
 						}
 					}

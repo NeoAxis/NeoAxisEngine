@@ -14,8 +14,8 @@ namespace OggDecoder
 		VideoDriver videoDriver;
 		AudioDriver audioDriver;
 
-		ogg.SyncState oggSyncState;
-		ogg.Page oggPage;
+		Ogg.SyncState oggSyncState;
+		Ogg.Page oggPage;
 
 		bool audioStarted;
 
@@ -57,8 +57,8 @@ namespace OggDecoder
 			if( audioDriver != null )
 				audioDriver.oggFile = this;
 
-			oggSyncState = new ogg.SyncState();
-			oggPage = new ogg.Page();
+			oggSyncState = new Ogg.SyncState();
+			oggPage = new Ogg.Page();
 
 			ParsePrimaryHeaders();
 			ParseSecondaryHeaders();
@@ -154,7 +154,7 @@ namespace OggDecoder
 		/// </summary>
 		void ParsePrimaryHeaders()
 		{
-			ogg.Packet tempOggPacket = new ogg.Packet();
+			Ogg.Packet tempOggPacket = new Ogg.Packet();
 			bool notDone = true;
 			int vorbis_streams = 0;
 			int theora_streams = 0;
@@ -182,7 +182,7 @@ namespace OggDecoder
 						break;
 					}
 
-					ogg.StreamState oggStateTest = new ogg.StreamState( oggPage.serialno() );
+					Ogg.StreamState oggStateTest = new Ogg.StreamState( oggPage.serialno() );
 					//oggStateTest.init( oggPage.serialno() );
 					oggStateTest.pagein( oggPage );
 					oggStateTest.packetout( tempOggPacket );
@@ -218,7 +218,7 @@ namespace OggDecoder
 		/// </summary>
 		void ParseSecondaryHeaders()
 		{
-			ogg.Packet tempOggPacket = new ogg.Packet();
+			Ogg.Packet tempOggPacket = new Ogg.Packet();
 			bool theoraNotDone = true;
 			bool vorbisNotDone = true;
 

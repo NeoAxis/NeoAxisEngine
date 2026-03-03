@@ -1,9 +1,6 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
-using Internal.LiteDB;
 
 namespace NeoAxis
 {
@@ -752,18 +749,29 @@ namespace NeoAxis
 				writer.Write( (RangeColorValue)value );
 			} );
 
-			//!!!!DateTime?
-
-			//ObjectId
-			RegisterType( typeof( ObjectId ), delegate ( string value ) { return new ObjectId( value ); }, ObjectId.Empty,
+			//DateTime
+			RegisterType( typeof( DateTime ), delegate ( string value ) { return DateTime.Parse( value ); }, new DateTime(),
 			delegate ( ArrayDataReader reader )
 			{
-				return reader.ReadObjectId();
+				return reader.ReadDateTime();
 			},
 			delegate ( ArrayDataWriter writer, object value )
 			{
-				writer.Write( (ObjectId)value );
+				writer.Write( (DateTime)value );
 			} );
+
+
+
+			////ObjectId
+			//RegisterType( typeof( ObjectId ), delegate ( string value ) { return new ObjectId( value ); }, ObjectId.Empty,
+			//delegate ( ArrayDataReader reader )
+			//{
+			//	return reader.ReadObjectId();
+			//},
+			//delegate ( ArrayDataWriter writer, object value )
+			//{
+			//	writer.Write( (ObjectId)value );
+			//} );
 
 			//no Parse methods. This is complex structures. This is not simple types? or just can't parse?
 			//Box

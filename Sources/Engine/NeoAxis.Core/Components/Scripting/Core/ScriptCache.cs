@@ -152,7 +152,7 @@ namespace NeoAxis
 			else
 			{
 #if DEPLOY
-				//on UWP, Android scripts compiled inside Project.dll
+				//on UWP, Android scripts compiled inside Player assembly
 				if( EngineApp.ProjectAssembly != null )
 					FillLoadedAssemblyDllTypes( EngineApp.ProjectAssembly );
 #else

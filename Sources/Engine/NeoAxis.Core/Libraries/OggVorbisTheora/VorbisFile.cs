@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace NeoAxis.OggVorbisTheora
 {
-	/*public */static class VorbisFile
+	static class VorbisFile
 	{
 		const string library = "NeoAxisCoreNative";
 		const CallingConvention convention = CallingConvention.Cdecl;
@@ -144,8 +144,8 @@ namespace NeoAxis.OggVorbisTheora
 			unsafe public void get_info( int link, out int channels, out int rate )
 			{
 				IntPtr info = ov_info( native, link );
-				channels = vorbis.vorbis_info_get_channels( info );
-				rate = vorbis.vorbis_info_get_rate( info );
+				channels = Vorbis.vorbis_info_get_channels( info );
+				rate = Vorbis.vorbis_info_get_rate( info );
 			}
 		}
 

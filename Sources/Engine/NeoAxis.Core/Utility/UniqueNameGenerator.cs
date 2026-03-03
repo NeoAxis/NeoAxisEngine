@@ -8,7 +8,7 @@ namespace NeoAxis
 	/// <summary>
 	/// Class for generating unique names.
 	/// </summary>
-	/*public */class UniqueNameGenerator
+	class UniqueNameGenerator
 	{
 		long counter1;
 		long counter2;

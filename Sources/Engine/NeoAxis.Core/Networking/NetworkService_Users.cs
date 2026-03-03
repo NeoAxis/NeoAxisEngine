@@ -156,41 +156,40 @@ namespace NeoAxis
 			if( newUser.Client != null )
 				usersByClient[ newUser.Client ] = newUser;
 
+			//send event about new user to the all users
+			foreach( var user in Users )
 			{
-				//send event about new user to the all users
+				if( user.Client != null && ( user == newUser || GetShareUserWithAnother( user, newUser ) ) )
+				{
+					bool thisUserFlag = user == newUser;
+
+					var m = BeginMessage( user.Client, addUserToClient );
+					m.Writer.WriteVariableInt64( newUser.UserID ); //m.Writer.Write( newUser.UserID );
+					m.Writer.Write( newUser.Username );
+					m.Writer.Write( newUser.Bot );
+					m.Writer.Write( thisUserFlag );
+					//custom data
+					m.Writer.Write( newUser.ReferenceToObjectControlledByPlayer );
+					m.End();
+				}
+			}
+
+			if( newUser.Client != null )
+			{
+				//send list of users to new user
 				foreach( var user in Users )
 				{
-					if( user.Client != null && ( user == newUser || GetShareUserWithAnother( user, newUser ) ) )
+					if( user != newUser && GetShareUserWithAnother( newUser, user ) )
 					{
-						bool thisUserFlag = user == newUser;
-
-						var m = BeginMessage( user.Client, addUserToClient );
-						m.Writer.WriteVariableInt64( newUser.UserID ); //m.Writer.Write( newUser.UserID );
-						m.Writer.Write( newUser.Username );
-						m.Writer.Write( newUser.Bot );
-						m.Writer.Write( thisUserFlag );
+						var m = BeginMessage( newUser.Client, addUserToClient );
+						m.Writer.WriteVariableInt64( user.UserID );//m.Writer.Write( user.UserID );
+						m.Writer.Write( user.Username );
+						m.Writer.Write( user.Bot );
+						//this user flag
+						m.Writer.Write( false );
 						//custom data
-						m.Writer.Write( newUser.ReferenceToObjectControlledByPlayer );
+						m.Writer.Write( user.ReferenceToObjectControlledByPlayer );
 						m.End();
-					}
-				}
-
-				if( newUser.Client != null )
-				{
-					//send list of users to new user
-					foreach( var user in Users )
-					{
-						if( user != newUser && GetShareUserWithAnother( newUser, user ) )
-						{
-							var m = BeginMessage( newUser.Client, addUserToClient );
-							m.Writer.WriteVariableInt64( user.UserID );//m.Writer.Write( user.UserID );
-							m.Writer.Write( user.Username );
-							m.Writer.Write( user.Bot );
-							m.Writer.Write( false );//this user flag
-													//custom data
-							m.Writer.Write( user.ReferenceToObjectControlledByPlayer );
-							m.End();
-						}
 					}
 				}
 			}
@@ -451,7 +450,7 @@ namespace NeoAxis
 		bool ReceiveMessage_AddUserToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			//get data from message
-			var userID = reader.ReadVariableInt64();//var userID = reader.ReadInt64();
+			var userID = reader.ReadVariableInt64();
 			var username = reader.ReadString() ?? string.Empty;
 			var bot = reader.ReadBoolean();
 			bool thisUserFlag = reader.ReadBoolean();
@@ -471,7 +470,7 @@ namespace NeoAxis
 		bool ReceiveMessage_RemoveUserToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			//get data from message
-			var userID = reader.ReadVariableInt64(); //var userID = reader.ReadInt64();
+			var userID = reader.ReadVariableInt64();
 			if( !reader.Complete() )
 				return false;
 
@@ -528,7 +527,7 @@ namespace NeoAxis
 		bool ReceiveMessage_UpdateObjectControlledByPlayerToClient( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			//get data from message
-			var userID = reader.ReadVariableInt64();//var userID = reader.ReadInt64();
+			var userID = reader.ReadVariableInt64();
 			var referenceToObjectControlledByPlayer = reader.ReadString() ?? string.Empty;
 			if( !reader.Complete() )
 				return false;

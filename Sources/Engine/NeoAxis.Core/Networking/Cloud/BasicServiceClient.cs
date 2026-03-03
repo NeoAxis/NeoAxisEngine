@@ -13,6 +13,8 @@ namespace NeoAxis.Networking
 	/// </summary>
 	public abstract class BasicServiceClient
 	{
+		public double UpdateFrequency { get; set; } = 1.0 / 30.0;
+
 		static ConcurrentBag<BasicServiceClient> autoUpdateInstances = new ConcurrentBag<BasicServiceClient>();
 		//static List<BasicServiceClient> instances;
 
@@ -25,9 +27,10 @@ namespace NeoAxis.Networking
 
 		ConnectionSettingsClass connectionSettings;
 		BasicServiceNode connectionNode;
-		bool verified;
 
 		string connectionErrorReceived;
+
+		DateTime updateLastTime;
 
 		///////////////////////////////////////////////
 
@@ -49,6 +52,10 @@ namespace NeoAxis.Networking
 
 			//Cloud specific
 			public long ProjectID;
+
+			//advanced settings
+			public double ConnectingMaxTimeInSeconds = 10;
+			public bool AllowReconnect;
 
 			//public string AnyData;
 
@@ -73,7 +80,7 @@ namespace NeoAxis.Networking
 			{
 			}
 
-			public static ConnectionSettingsClass CreateDirect( CloudUserRole userRole, string serverAddress, int serverPort, string password )
+			public static ConnectionSettingsClass CreateDirect( CloudUserRole userRole, string serverAddress, int serverPort, string password, bool allowReconnect )
 			{
 				var result = new ConnectionSettingsClass();
 				result.ConnectionType = ConnectionTypeEnum.Direct;
@@ -81,15 +88,17 @@ namespace NeoAxis.Networking
 				result.ServerAddress = serverAddress;
 				result.ServerPort = serverPort;
 				result.Password = password;
+				result.AllowReconnect = allowReconnect;
 				return result;
 			}
 
-			public static ConnectionSettingsClass CreateCloud( CloudUserRole userRole, long projectID = 0 )
+			public static ConnectionSettingsClass CreateCloud( CloudUserRole userRole, long projectID /*= 0*/, bool allowReconnect )
 			{
 				var result = new ConnectionSettingsClass();
 				result.ConnectionType = ConnectionTypeEnum.Cloud;
 				result.UserRole = userRole;
 				result.ProjectID = projectID;
+				result.AllowReconnect = allowReconnect;
 				return result;
 			}
 		}
@@ -116,11 +125,11 @@ namespace NeoAxis.Networking
 
 		///////////////////////////////////////////////
 
-		public class CreateResult
-		{
-			public BasicServiceClient Client;
-			public string Error;
-		}
+		//public class CreateResult
+		//{
+		//	public BasicServiceClient Client;
+		//	public string Error;
+		//}
 
 		///////////////////////////////////////////////
 
@@ -180,14 +189,15 @@ namespace NeoAxis.Networking
 		{
 			//maybe change to exit from thread when no instances
 
-			//use wait/trigger instead of Thread.Sleep
+			//maybe use wait/trigger instead of Thread.Sleep
 
 			while( true )
 			{
 				if( autoUpdateInstances.Count > 0 )
 				{
-					foreach( var instance in autoUpdateInstances.ToArray() )
-						instance.Update();
+					var utcNow = DateTime.UtcNow;
+					foreach( var instance in autoUpdateInstances )
+						instance.Update( utcNow );
 					Thread.Sleep( 1 );
 				}
 				else
@@ -217,9 +227,14 @@ namespace NeoAxis.Networking
 			get { return connectionNode; }
 		}
 
-		public bool Verified
+		public NetworkStatus Status
 		{
-			get { return verified; }
+			get { return connectionNode?.Status ?? NetworkStatus.Disconnected; }
+		}
+
+		public double GetRoundtripLastInSeconds( DateTime? utcNow = null )
+		{
+			return connectionNode?.GetRoundtripLastInSeconds( utcNow ) ?? 0;
 		}
 
 		public string ConnectionErrorReceived
@@ -231,13 +246,24 @@ namespace NeoAxis.Networking
 
 		protected abstract BasicServiceNode OnCreateNetworkNode();
 
-		protected virtual void OnUpdate() { }
+		protected virtual void OnUpdate( DateTime utcNow ) { }
 
-		public void Update()
+		public void Update( DateTime utcNow )
 		{
-			connectionNode?.Update();
+			if( utcNow - updateLastTime > TimeSpan.FromSeconds( UpdateFrequency ) )
+			{
+				updateLastTime = utcNow;
 
-			OnUpdate();
+				try
+				{
+					connectionNode?.Update( utcNow );
+					OnUpdate( utcNow );
+				}
+				catch( Exception e )
+				{
+					Log.Fatal( "BasicServiceClient: Update: Exception: " + e.ToString() );
+				}
+			}
 		}
 
 		//public static void UpdateAll()
@@ -269,14 +295,6 @@ namespace NeoAxis.Networking
 		//{
 		//	foreach( var instance in GetInstances() )
 		//		instance.Destroy();
-		//}
-
-		//public bool Connected
-		//{
-		//	get
-		//	{
-		//		return false;
-		//	}
 		//}
 
 		public delegate void BeforeConnectDelegate( BasicServiceClient sender, BasicServiceNode node, TextBlock loginData );
@@ -329,7 +347,7 @@ namespace NeoAxis.Networking
 						return "ProjectID is not configured.";
 
 					//request access info from cloud. get access data from general manager
-					var requestCodeResult = await GeneralManagerFunctions.AccessRequestServiceServerAsync( ServiceName, connectionSettings.UserRole, projectID, cancellationToken );
+					var requestCodeResult = await CloudServiceFunctions.AccessRequestServiceServerAsync( ServiceName, connectionSettings.UserRole, projectID, cancellationToken );
 					if( !string.IsNullOrEmpty( requestCodeResult.Error ) )
 						return "RequestService failed. " + requestCodeResult.Error;
 
@@ -346,6 +364,12 @@ namespace NeoAxis.Networking
 				}
 
 				var node = OnCreateNetworkNode();
+
+				//settings
+				node.ConnectingMaxTimeInSeconds = connectionSettings.ConnectingMaxTimeInSeconds;
+				node.AllowReconnectFromClient = connectionSettings.AllowReconnect;
+
+				//subscribe to events
 				node.ProtocolError += Client_ProtocolError;
 				node.ConnectionStatusChanged += Client_ConnectionStatusChanged;
 				node.Messages.ReceiveMessageString += Messages_ReceiveMessageString;
@@ -360,7 +384,7 @@ namespace NeoAxis.Networking
 				OnBeforeConnect( node, loginData );
 				BeforeConnect?.Invoke( this, node, loginData );
 
-				if( !node.BeginConnect( serverAddress, serverPort, EngineInfo.Version, loginData.DumpToString(), 30, out var error ) )
+				if( !node.BeginConnect( serverAddress, serverPort, EngineInfo.Version, loginData.DumpToString(), out var error ) )
 				{
 					node.Dispose();
 					node = null;
@@ -370,17 +394,15 @@ namespace NeoAxis.Networking
 				connectionNode = node;
 
 				//wait for establishing connection
+				while( ConnectionNode.Status == NetworkStatus.Connecting )
 				{
-					while( ConnectionNode.Status == NetworkStatus.Connecting || ( ConnectionNode.Status == NetworkStatus.Connected && !Verified ) )
-					{
-						Update();
-						await Task.Delay( 1 );
-						if( cancellationToken.IsCancellationRequested )
-							break;
-					}
-					if( ConnectionNode.Status != NetworkStatus.Connected || !Verified )
-						return connectionErrorReceived ?? "ConnectionNode.Status != NetworkStatus.Connected || !Verified";
+					await Task.Delay( 1 );
+					if( cancellationToken.IsCancellationRequested )
+						break;
 				}
+
+				if( ConnectionNode.Status != NetworkStatus.Connected )
+					return connectionErrorReceived ?? $"ConnectionNode.Status != NetworkStatus.Connected. Status: {ConnectionNode.Status}, {ConnectionNode.DisconnectionReason ?? ""}";
 			}
 			catch( Exception e )
 			{
@@ -396,13 +418,8 @@ namespace NeoAxis.Networking
 
 		private void Client_ProtocolError( ClientNode sender, string message )
 		{
-			//? reconnect, resend requests
-
 			connectionErrorReceived = "Protocol error: " + message;
-
 			OnClient_ProtocolError( sender, message );
-
-			//Console.WriteLine( "BasicServiceClient: Protocol error: " + message );
 		}
 
 		protected virtual void OnClient_ConnectionStatusChanged( ClientNode sender )
@@ -413,29 +430,21 @@ namespace NeoAxis.Networking
 		{
 			if( sender.Status == NetworkStatus.Disconnected )
 			{
-				//? reconnect, resend requests
-
 				if( !string.IsNullOrEmpty( sender.DisconnectionReason ) )
-				{
 					connectionErrorReceived = sender.DisconnectionReason;
-				}
 			}
 
 			OnClient_ConnectionStatusChanged( sender );
-
-			//Console.WriteLine( $"BasicServiceClient: Client_ConnectionStatusChanged " + status.ToString() );
-			//Console.WriteLine( $"reason " + ( sender.DisconnectionReason ?? "" ) );
 		}
 
 		protected virtual void OnMessages_ReceiveMessageString( ClientNetworkService_Messages sender, string message, string data )
 		{
+			if( message == "Connected" )
+				connectionNode.ReceivedMessageSetStatusConnected();
 		}
 
 		void Messages_ReceiveMessageString( ClientNetworkService_Messages sender, string message, string data )
 		{
-			if( message == "Verified" )
-				verified = true;
-
 			OnMessages_ReceiveMessageString( sender, message, data );
 		}
 

@@ -309,19 +309,18 @@ namespace NeoAxis
 			//	return;
 			//}
 
-			//!!!!
-			//write Run.cmd
-			try
-			{
-				string fileName = Path.Combine( buildInstance.DestinationFolder, "Run.cmd" );
-				File.WriteAllText( fileName, Path.Combine( @"Binaries", ExecutableName + ".exe" ) );
-			}
-			catch( Exception e )
-			{
-				buildInstance.Error = e.Message;
-				buildInstance.State = ProductBuildInstance.StateEnum.Error;
-				return;
-			}
+			////write Run.cmd
+			//try
+			//{
+			//	string fileName = Path.Combine( buildInstance.DestinationFolder, "Run.cmd" );
+			//	File.WriteAllText( fileName, Path.Combine( @"Binaries", ExecutableName + ".exe" ) );
+			//}
+			//catch( Exception e )
+			//{
+			//	buildInstance.Error = e.Message;
+			//	buildInstance.State = ProductBuildInstance.StateEnum.Error;
+			//	return;
+			//}
 
 			////write License.cert
 			//if( EngineApp.IsProPlan )

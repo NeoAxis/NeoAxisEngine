@@ -667,7 +667,7 @@ namespace NeoAxis
 		//	Matrix3.FromRotateByZ( Rotation.Value.InRadians() ).ToMatrix3F( out result );
 		//}
 
-		void GetRenderSceneData( ViewportRenderingContext context, bool insideFrustum )
+		void GetRenderSceneData2( ViewportRenderingContext context, bool insideFrustum )
 		{
 			//UpdateProcessedCubemaps();
 
@@ -754,7 +754,7 @@ namespace NeoAxis
 		protected override void OnGetRenderSceneData( ViewportRenderingContext context, GetRenderSceneDataMode mode, Scene.GetObjectsInSpaceItem modeGetObjectsItem )
 		{
 			if( mode == GetRenderSceneDataMode.InsideFrustum && !Global && context.Owner.Mode != Viewport.ModeEnum.ReflectionProbeCubemap && RenderingEffect_Reflection.GlobalMultiplier > 0 )
-				GetRenderSceneData( context, mode == GetRenderSceneDataMode.InsideFrustum );
+				GetRenderSceneData2( context, mode == GetRenderSceneDataMode.InsideFrustum );
 		}
 
 		private void Scene_GetRenderSceneData( Scene scene, ViewportRenderingContext context )
@@ -762,7 +762,7 @@ namespace NeoAxis
 			//!!!!don't subscribe to event for not Global
 
 			if( VisibleInHierarchy && Global && context.Owner.Mode != Viewport.ModeEnum.ReflectionProbeCubemap && RenderingEffect_Reflection.GlobalMultiplier > 0 )
-				GetRenderSceneData( context, true );
+				GetRenderSceneData2( context, true );
 		}
 
 		//public bool Contains( Vec3 point )

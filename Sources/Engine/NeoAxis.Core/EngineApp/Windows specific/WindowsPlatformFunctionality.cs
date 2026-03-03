@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Threading;
 using System.Globalization;
 using System.Runtime.InteropServices;
-//using System.Drawing;
 using System.IO;
 using DirectInput;
 using NeoAxis;
@@ -15,7 +14,7 @@ using System.Reflection;
 using System.Linq;
 using NeoAxis.Networking;
 
-namespace Internal//NeoAxis
+namespace Internal
 {
 	class WindowsPlatformFunctionality : PlatformFunctionality
 	{
@@ -53,8 +52,7 @@ namespace Internal//NeoAxis
 
 		double maxFPSLastRenderTime;
 
-		bool goingToWindowedMode;
-		bool goingToFullScreenMode;
+		WindowedModeEnum? goingToAnotherWindowedMode;
 		bool goingToChangeWindowRectangle;
 
 		static List<SystemSettings.DisplayInfo> tempScreenList = new List<SystemSettings.DisplayInfo>();
@@ -256,9 +254,7 @@ namespace Internal//NeoAxis
 		static extern bool ScreenToClient( IntPtr hWnd, ref Vector2I lpPoint );
 
 		[DllImport( "user32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		static extern IntPtr CreateWindowEx( uint exStyle, string lpszClassName,
-			string lpszWindowName, uint style, int x, int y, int width, int height,
-			IntPtr hWndParent, IntPtr hMenu, IntPtr hInst, IntPtr pvParam );
+		static extern IntPtr CreateWindowEx( uint exStyle, string lpszClassName, string lpszWindowName, uint style, int x, int y, int width, int height, IntPtr hWndParent, IntPtr hMenu, IntPtr hInst, IntPtr pvParam );
 
 		[DllImport( "user32.dll", CharSet = CharSet.Unicode )]
 		static extern IntPtr DefWindowProc( IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam );
@@ -275,8 +271,7 @@ namespace Internal//NeoAxis
 		const uint WS_CHILD = 0x40000000;
 		const uint WS_MAXIMIZE = 0x01000000;
 
-		const uint WS_OVERLAPPEDWINDOW = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU |
-			WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+		const uint WS_OVERLAPPEDWINDOW = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
 
 		const int WS_EX_TOPMOST = 0x00000008;
 		const int WS_EX_COMPOSITED = 0x02000000;
@@ -303,8 +298,7 @@ namespace Internal//NeoAxis
 		}
 
 		[DllImport( "user32.dll", CharSet = CharSet.Unicode )]
-		static extern bool PeekMessage( ref MSG msg, IntPtr hWnd,
-			uint wMsgFilterMin, uint wMsgFilterMax, uint wRemoveMsg );
+		static extern bool PeekMessage( ref MSG msg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax, uint wRemoveMsg );
 
 		[DllImport( "user32.dll", CharSet = CharSet.Unicode )]
 		static extern bool TranslateMessage( ref MSG lpMsg );
@@ -393,11 +387,9 @@ namespace Internal//NeoAxis
 		}
 
 		[DllImport( "user32.dll", EntryPoint = "SetWindowLong", CharSet = CharSet.Unicode )]
-		static extern IntPtr SetWindowLongPtr32ForWndProc( IntPtr hWnd, int nIndex,
-			WndProcDelegate dwNewLong );
+		static extern IntPtr SetWindowLongPtr32ForWndProc( IntPtr hWnd, int nIndex, WndProcDelegate dwNewLong );
 		[DllImport( "user32.dll", EntryPoint = "SetWindowLongPtr", CharSet = CharSet.Unicode )]
-		static extern IntPtr SetWindowLongPtr64ForWndProc( IntPtr hWnd, int nIndex,
-			WndProcDelegate dwNewLong );
+		static extern IntPtr SetWindowLongPtr64ForWndProc( IntPtr hWnd, int nIndex, WndProcDelegate dwNewLong );
 
 		static IntPtr SetWindowLongForWndProc( IntPtr hWnd, int nIndex, WndProcDelegate dwNewLong )
 		{
@@ -693,6 +685,11 @@ namespace Internal//NeoAxis
 		[DllImport( "user32.dll" )]
 		static extern bool SetProcessDPIAware();
 
+		const uint MONITOR_DEFAULTTONEAREST = 2;
+
+		[DllImport( "user32.dll" )]
+		static extern IntPtr MonitorFromWindow( IntPtr hwnd, uint dwFlags );
+
 		///////////////////////////////////////////
 
 		[Flags]
@@ -726,13 +723,6 @@ namespace Internal//NeoAxis
 
 		[DllImport( "dwmapi.dll", PreserveSig = true )]
 		static extern int DwmSetWindowAttribute( IntPtr hwnd, DwmWindowAttribute attr, ref int attrValue, int attrSize );
-
-		///////////////////////////////////////////
-
-		//public static EngineApp App
-		//{
-		//	get { return EngineApp.Instance; }
-		//}
 
 		///////////////////////////////////////////
 
@@ -881,11 +871,8 @@ namespace Internal//NeoAxis
 
 			//create window
 
-			bool showMaximized = !EngineApp.FullscreenEnabled &&
-				EngineApp.InitSettings.CreateWindowState.Value == EngineApp.WindowStateEnum.Maximized &&
-				!EngineApp.InitSettings.MultiMonitorMode.Value;
+			bool showMaximized = EngineApp.WindowedMode == WindowedModeEnum.Windowed && EngineApp.InitSettings.CreateWindowState.Value == EngineApp.WindowStateEnum.Maximized && !EngineApp.InitSettings.MultiMonitorMode.Value;
 			bool showMinimized = EngineApp.InitSettings.CreateWindowState.Value == EngineApp.WindowStateEnum.Minimized;
-			//bool showMaximized = !App.FullScreenEnabled && App.VideoMode == GetScreenSize() && !EngineApp.InitializationParameters.MultiMonitorMode;
 
 			Vector2I position;
 			Vector2I size;
@@ -897,8 +884,7 @@ namespace Internal//NeoAxis
 				}
 				else
 				{
-					//!!!!!EngineApp.InitializationParameters.MultiMonitorMode.Value? не False?
-					if( !EngineApp.FullscreenEnabled || EngineApp.InitSettings.MultiMonitorMode.Value )
+					if( EngineApp.WindowedMode == WindowedModeEnum.Windowed || EngineApp.InitSettings.MultiMonitorMode.Value )
 						position = EngineApp.InitSettings.CreateWindowPosition.Value;
 					else
 						position = Vector2I.Zero;
@@ -912,21 +898,19 @@ namespace Internal//NeoAxis
 				if( !showMaximized )
 					style |= WS_VISIBLE;
 
-				if( EngineApp.FullscreenEnabled )
+				if( EngineApp.WindowedMode == WindowedModeEnum.Fullscreen || EngineApp.WindowedMode == WindowedModeEnum.Borderless )
 					style |= WS_POPUP;
 				else
 					style |= WS_OVERLAPPEDWINDOW;
 
-				if( EngineApp.FullscreenEnabled && !Debugger.IsAttached )
+				if( EngineApp.WindowedMode == WindowedModeEnum.Fullscreen )
 					exStyle |= WS_EX_TOPMOST;
 
 				if( IsServerWithoutRenderingBackend() )
 					exStyle |= WS_EX_COMPOSITED;
 			}
 
-			IntPtr windowHandle = CreateWindowEx( exStyle, applicationWindowClassName,
-				EngineApp.CreatedInsideEngineWindow.Title, style, position.X, position.Y, size.X, size.Y, IntPtr.Zero,
-				IntPtr.Zero, GetModuleHandle( null ), IntPtr.Zero );
+			IntPtr windowHandle = CreateWindowEx( exStyle, applicationWindowClassName, EngineApp.CreatedInsideEngineWindow.Title, style, position.X, position.Y, size.X, size.Y, IntPtr.Zero, IntPtr.Zero, GetModuleHandle( null ), IntPtr.Zero );
 
 			if( SystemSettings.DarkMode )
 				SetDarkMode( windowHandle, true );
@@ -935,6 +919,79 @@ namespace Internal//NeoAxis
 				ShowWindow( windowHandle, SW_SHOWMAXIMIZED );
 			if( showMinimized )
 				ShowWindow( windowHandle, SW_SHOWMINIMIZED );
+
+
+
+			//bool showMaximized = !EngineApp.FullscreenEnabled && EngineApp.InitSettings.CreateWindowState.Value == EngineApp.WindowStateEnum.Maximized && !EngineApp.InitSettings.MultiMonitorMode.Value;
+			//bool showMinimized = EngineApp.InitSettings.CreateWindowState.Value == EngineApp.WindowStateEnum.Minimized;
+
+			//Vector2I position;
+			//Vector2I size;
+			//{
+			//	if( showMaximized )
+			//	{
+			//		size = new Vector2I( 800, 600 );
+			//		position = ( GetScreenSize() - size ) / 2;
+			//	}
+			//	else
+			//	{
+			//		//!!!!!EngineApp.InitializationParameters.MultiMonitorMode.Value? не False?
+			//		if( !EngineApp.FullscreenEnabled || EngineApp.InitSettings.MultiMonitorMode.Value )
+			//			position = EngineApp.InitSettings.CreateWindowPosition.Value;
+			//		else
+			//			position = Vector2I.Zero;
+			//		size = EngineApp.InitSettings.CreateWindowSize.Value;
+			//	}
+			//}
+
+			//uint style = 0;
+			//uint exStyle = 0;
+			//{
+			//	if( !showMaximized )
+			//		style |= WS_VISIBLE;
+
+			//	if( EngineApp.FullscreenEnabled )
+			//		style |= WS_POPUP;
+			//	else
+			//		style |= WS_OVERLAPPEDWINDOW;
+
+			//	if( EngineApp.FullscreenEnabled && !Debugger.IsAttached )
+			//		exStyle |= WS_EX_TOPMOST;
+
+			//	if( IsServerWithoutRenderingBackend() )
+			//		exStyle |= WS_EX_COMPOSITED;
+			//}
+
+			//IntPtr windowHandle = CreateWindowEx( exStyle, applicationWindowClassName, EngineApp.CreatedInsideEngineWindow.Title, style, position.X, position.Y, size.X, size.Y, IntPtr.Zero, IntPtr.Zero, GetModuleHandle( null ), IntPtr.Zero );
+
+			//if( SystemSettings.DarkMode )
+			//	SetDarkMode( windowHandle, true );
+
+			//if( showMaximized )
+			//	ShowWindow( windowHandle, SW_SHOWMAXIMIZED );
+			//if( showMinimized )
+			//	ShowWindow( windowHandle, SW_SHOWMINIMIZED );
+
+
+
+			//{
+			//	var topMost = true;
+
+			//	SetWindowBorderStyle( WindowBorderStyle.None );
+			//	SetWindowState( WindowState.Normal );
+
+			//	var monitorRect = GetWindowMonitorRectangle();
+
+			//	SetWindowPos(
+			//		windowHandle,
+			//		topMost ? HWND_TOPMOST : HWND_NOTOPMOST,
+			//		monitorRect.Left,
+			//		monitorRect.Top,
+			//		monitorRect.Size.X,
+			//		monitorRect.Size.Y,
+			//		SWP_FRAMECHANGED | SWP_SHOWWINDOW );
+			//}
+
 
 			SetForegroundWindow( windowHandle );
 			SetFocus( windowHandle );
@@ -1060,7 +1117,8 @@ namespace Internal//NeoAxis
 					return IntPtr.Zero;
 
 				case WM_SIZE:
-					if( !instance.goingToWindowedMode && !instance.goingToFullScreenMode && !instance.goingToChangeWindowRectangle )
+					//if( !instance.goingToWindowedMode && !instance.goingToFullScreenMode && !instance.goingToChangeWindowRectangle )
+					if( instance.goingToAnotherWindowedMode == null && !instance.goingToChangeWindowRectangle )
 					{
 						EngineApp.CreatedWindowProcessResize();
 						return IntPtr.Zero;
@@ -1107,7 +1165,8 @@ namespace Internal//NeoAxis
 
 					case WM_ACTIVATE:
 						{
-							if( !instance.goingToWindowedMode && !instance.goingToFullScreenMode && !instance.goingToChangeWindowRectangle )
+							//if( !instance.goingToWindowedMode && !instance.goingToFullScreenMode && !instance.goingToChangeWindowRectangle )
+							if( instance.goingToAnotherWindowedMode == null && !instance.goingToChangeWindowRectangle )
 							{
 								bool activate = LOWORD( (int)wParam ) != WA_INACTIVE;
 
@@ -1115,10 +1174,10 @@ namespace Internal//NeoAxis
 
 								if( activate )
 								{
-									if( EngineApp.FullscreenEnabled )
+									if( EngineApp.WindowedMode == WindowedModeEnum.Fullscreen ) //if( EngineApp.FullscreenEnabled )
 									{
-										if( EngineApp.FullscreenSize != instance.GetScreenSize() )
-											EngineApp.MustChangeVideoMode();
+										if( EngineApp.WindowedModeSize != instance.GetScreenSize() )
+											EngineApp.MustChangeWindowedModeOrVideoMode();
 									}
 								}
 								else
@@ -1135,8 +1194,9 @@ namespace Internal//NeoAxis
 									//if( App.SuspendWorkingWhenApplicationIsNotActive )
 									//   App.DoSystemPause( true, true );
 
-									if( EngineApp.FullscreenEnabled )
+									if( EngineApp.WindowedMode == WindowedModeEnum.Fullscreen ) //if( EngineApp.FullscreenEnabled )
 									{
+										//!!!!
 										instance.SetWindowState( WindowState.Minimized );
 
 										if( !EngineApp.NeedExit )
@@ -1392,8 +1452,13 @@ namespace Internal//NeoAxis
 								{
 									if( viewport.IsKeyPressed( EKeys.Alt ) && eKey == EKeys.Return )
 									{
-										EngineApp.SetFullscreenMode( !EngineApp.FullscreenEnabled, EngineApp.FullscreenSize );
-										//App.FullScreen = !App.FullScreen;
+										if( EngineApp.WindowedMode == WindowedModeEnum.Fullscreen )
+											EngineApp.SetWindowedMode( WindowedModeEnum.Windowed, EngineApp.WindowedModeSize );
+										else
+											EngineApp.SetWindowedMode( WindowedModeEnum.Fullscreen, EngineApp.WindowedModeSize );
+
+										//EngineApp.SetFullscreenMode( !EngineApp.FullscreenEnabled, EngineApp.FullscreenSize );
+
 										handled = true;
 									}
 								}
@@ -1512,11 +1577,9 @@ namespace Internal//NeoAxis
 							{
 								unsafe
 								{
-
-									//!!!!blinking after resize. not works:
+									//blinking after resize. not works:
 									//if( IsServerWithoutRenderingBackend() && EngineApp.ApplicationWindowHandle != IntPtr.Zero )
 									//	SetWindowComposed();
-
 
 									InvalidateRect( hWnd, null, false );
 								}
@@ -1665,42 +1728,6 @@ namespace Internal//NeoAxis
 										var text = new StringBuilder( "Server mode.\n" );
 										text.Append( ServerUtility.GetServerNodesCommonInfoText() );
 
-										//var text = new StringBuilder( "Server mode.\n" );
-										//text.Append( "Engine time: " + EngineApp.EngineTime.ToString( "F2" ) + "\n" );
-
-										//var instances = ServerNode.GetInstances();
-										//text.Append( $"Server nodes: {instances.Length}\n\n" );
-
-										//foreach( var instance in instances )
-										//{
-										//	text.Append( $"{instance.ServerName}\nClients: {instance.ClientCount}\n" );
-
-										//	var components = instance.GetService( "Components" ) as ServerNetworkService_Components;
-										//	var scene = components?.Scene;
-										//	if( scene != null )
-										//	{
-										//		var sceneInfo = components.SceneInfo ?? "";
-
-										//		text.Append( $"A scene is loaded.\n" );
-										//		text.Append( $"Scene info: " + sceneInfo + "\n" );
-
-										//		//text.Append( $"A scene is loaded with a scene info \"{sceneInfo}\".\n" );
-										//	}
-
-										//	text.Append( $"Received total: {instance.TotalDataMessagesReceivedCounter} messages, {instance.TotalDataSizeReceivedCounter} bytes.\n" );
-										//	text.Append( $"Sent total: {instance.TotalDataMessagesSentCounter} messages, {instance.TotalDataSizeSentCounter} bytes.\n" );
-
-										//	instance.GetDataMessageStatistics( 1, out var receivedMessages, out var receivedSize, out var sentMessages, out var sentSize );
-
-										//	var receivedSpeed = StringUtility.FormatSize( (long)receivedSize );
-										//	var sentSpeed = StringUtility.FormatSize( (long)sentSize );
-
-										//	text.Append( $"Received speed: {receivedMessages} messages per second, {receivedSpeed} per second.\n" );
-										//	text.Append( $"Sent speed: {sentMessages} messages per second, {sentSpeed} per second.\n" );
-
-										//	text.Append( "\n" );
-										//}
-
 										var rect = MakeRECT( 10, 10, screenSize.X, screenSize.Y );
 										var format = DT_LEFT | DT_TOP;
 										//var format = DT_CENTER | DT_VCENTER;// | DT_SINGLELINE;
@@ -1723,9 +1750,8 @@ namespace Internal//NeoAxis
 
 #endif
 
-							if( EngineApp.insideRunMessageLoop && EngineApp.EnginePaused && !instance.resizingMoving &&
-								!instance.intoMenuLoop && !instance.goingToWindowedMode &&
-								!instance.goingToFullScreenMode && !instance.goingToChangeWindowRectangle )
+							//if( EngineApp.insideRunMessageLoop && EngineApp.EnginePaused && !instance.resizingMoving && !instance.intoMenuLoop && !instance.goingToWindowedMode && !instance.goingToFullScreenMode && !instance.goingToChangeWindowRectangle )
+							if( EngineApp.insideRunMessageLoop && EngineApp.EnginePaused && !instance.resizingMoving && !instance.intoMenuLoop && instance.goingToAnotherWindowedMode == null && !instance.goingToChangeWindowRectangle )
 							{
 								EngineApp.CreatedWindowApplicationIdle( false );
 							}
@@ -1740,6 +1766,7 @@ namespace Internal//NeoAxis
 				return DefWindowProc( hWnd, message, wParam, lParam );
 			else
 				return IntPtr.Zero;
+
 			//}
 			//catch( Exception e )
 			//{
@@ -1801,28 +1828,72 @@ namespace Internal//NeoAxis
 						{
 							maxFPSLastRenderTime = time;
 
-							//finish switching to windowed mode
-							if( goingToWindowedMode )
+							//finish switching to another windowed mode
+							var goingToAnotherWindowedMode2 = goingToAnotherWindowedMode;
+							if( goingToAnotherWindowedMode2 != null )
 							{
-								SetWindowBorderStyle( PlatformFunctionality.WindowBorderStyle.Sizeable );
-								//!!!!было .VideoMode
-								Vector2I pos = ( GetScreenSize() - EngineApp.FullscreenSize ) / 2;
-								//!!!!было .VideoMode
-								Vector2I size = EngineApp.FullscreenSize - new Vector2I( 1, 1 );
-								SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_NOTOPMOST, pos.X, pos.Y, size.X, size.Y, 0 );
-								goingToWindowedMode = false;
+								//windowed
+								if( goingToAnotherWindowedMode2.Value == WindowedModeEnum.Windowed )
+								{
+									SetWindowBorderStyle( WindowBorderStyle.Sizeable );
+
+									var pos = ( GetScreenSize() - EngineApp.WindowedModeSize ) / 2;
+									var size = EngineApp.WindowedModeSize - new Vector2I( 1, 1 );
+									SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_NOTOPMOST, pos.X, pos.Y, size.X, size.Y, SWP_FRAMECHANGED | SWP_SHOWWINDOW );
+								}
+
+								//borderless
+								if( goingToAnotherWindowedMode2.Value == WindowedModeEnum.Borderless )
+								{
+									SetWindowBorderStyle( WindowBorderStyle.None );
+
+									var monitorRect = GetWindowMonitorRectangle();
+
+									SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_NOTOPMOST, monitorRect.Left, monitorRect.Top, monitorRect.Size.X, monitorRect.Size.Y, SWP_FRAMECHANGED | SWP_SHOWWINDOW );
+
+									//SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_NOTOPMOST, 0, 0, EngineApp.WindowedModeSize.X, EngineApp.WindowedModeSize.Y, SWP_FRAMECHANGED | SWP_SHOWWINDOW );
+								}
+
+								//fullscreen
+								if( goingToAnotherWindowedMode2.Value == WindowedModeEnum.Fullscreen )
+								{
+									SetWindowBorderStyle( WindowBorderStyle.None );
+
+									var monitorRect = GetWindowMonitorRectangle();
+
+									SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_TOPMOST, monitorRect.Left, monitorRect.Top, monitorRect.Size.X, monitorRect.Size.Y, SWP_FRAMECHANGED | SWP_SHOWWINDOW );
+
+									//SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_TOPMOST, 0, 0, EngineApp.WindowedModeSize.X, EngineApp.WindowedModeSize.Y, SWP_FRAMECHANGED | SWP_SHOWWINDOW );
+								}
+
+								//SetWindowState( WindowState.Normal );
+								SetForegroundWindow( EngineApp.ApplicationWindowHandle );
+								SetFocus( EngineApp.ApplicationWindowHandle );
+
+								goingToAnotherWindowedMode = null;
 								EngineApp.CreatedWindowProcessResize();
 							}
 
-							//finish switching to fullscreen mode
-							if( goingToFullScreenMode )
-							{
-								bool topMost = !Debugger.IsAttached;
-								SetWindowPos( EngineApp.ApplicationWindowHandle, topMost ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0,
-									EngineApp.FullscreenSize.X, EngineApp.FullscreenSize.Y, 0 );
-								goingToFullScreenMode = false;
-								EngineApp.CreatedWindowProcessResize();
-							}
+
+							////finish switching to windowed mode
+							//if( goingToWindowedMode )
+							//{
+							//	SetWindowBorderStyle( WindowBorderStyle.Sizeable );
+							//	Vector2I pos = ( GetScreenSize() - EngineApp.FullscreenSize ) / 2;
+							//	Vector2I size = EngineApp.FullscreenSize - new Vector2I( 1, 1 );
+							//	SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_NOTOPMOST, pos.X, pos.Y, size.X, size.Y, 0 );
+							//	goingToWindowedMode = false;
+							//	EngineApp.CreatedWindowProcessResize();
+							//}
+
+							////finish switching to fullscreen mode
+							//if( goingToFullScreenMode )
+							//{
+							//	bool topMost = !Debugger.IsAttached;
+							//	SetWindowPos( EngineApp.ApplicationWindowHandle, topMost ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, EngineApp.FullscreenSize.X, EngineApp.FullscreenSize.Y, 0 );
+							//	goingToFullScreenMode = false;
+							//	EngineApp.CreatedWindowProcessResize();
+							//}
 
 							EngineApp.CreatedWindowApplicationIdle( false );
 						}
@@ -1847,9 +1918,10 @@ namespace Internal//NeoAxis
 					needIdle = false;
 			}
 
-			//!!!!!так?
-			if( EngineApp.FullscreenEnabled && GetForegroundWindow() != EngineApp.ApplicationWindowHandle )
+			if( EngineApp.WindowedMode != WindowedModeEnum.Windowed && GetForegroundWindow() != EngineApp.ApplicationWindowHandle )
 				needIdle = false;
+			//if( EngineApp.FullscreenEnabled && GetForegroundWindow() != EngineApp.ApplicationWindowHandle )
+			//	needIdle = false;
 
 			if( EngineApp.EnginePaused )
 				needIdle = false;
@@ -1978,7 +2050,6 @@ namespace Internal//NeoAxis
 			return windowRect;
 		}
 
-		//!!!!?
 		public override RectangleI CreatedWindow_GetClientRectangle()
 		{
 			RectangleI clientRect;
@@ -1991,7 +2062,6 @@ namespace Internal//NeoAxis
 		//   SetWindowPos( App.ApplicationWindow.Handle, IntPtr.Zero, position.X, position.Y, 0, 0, SWP_NOSIZE );
 		//}
 
-		//!!!!!
 		public override void CreatedWindow_SetWindowSize( Vector2I size )
 		{
 			if( EngineApp.ApplicationWindowHandle != IntPtr.Zero )
@@ -2004,7 +2074,6 @@ namespace Internal//NeoAxis
 				return false;
 			if( GetWindowState() == WindowState.Minimized )
 				return false;
-
 			return true;
 		}
 
@@ -2035,11 +2104,11 @@ namespace Internal//NeoAxis
 			{
 				int show;
 				if( value == WindowState.Maximized )
-					show = SW_MAXIMIZE;//SW_SHOWMAXIMIZED;
+					show = SW_MAXIMIZE;
 				else if( value == WindowState.Minimized )
-					show = SW_MINIMIZE;//before SW_SHOWMINIMIZED;
+					show = SW_MINIMIZE;
 				else
-					show = SW_RESTORE;//before SW_SHOWNORMAL;
+					show = SW_RESTORE;
 				ShowWindow( EngineApp.ApplicationWindowHandle, show );
 			}
 		}
@@ -2077,16 +2146,16 @@ namespace Internal//NeoAxis
 				{
 					unchecked
 					{
-						style &= ~(uint)WS_OVERLAPPEDWINDOW;
-						style |= ( (uint)WS_POPUP );
+						style &= ~WS_OVERLAPPEDWINDOW;
+						style |= WS_POPUP;
 					}
 				}
 				else if( value == WindowBorderStyle.Sizeable )
 				{
 					unchecked
 					{
-						style &= ~(uint)WS_POPUP;
-						style |= ( (uint)WS_OVERLAPPEDWINDOW );
+						style &= ~WS_POPUP;
+						style |= WS_OVERLAPPEDWINDOW;
 					}
 				}
 
@@ -2098,36 +2167,31 @@ namespace Internal//NeoAxis
 		{
 			if( EngineApp.ApplicationWindowHandle != IntPtr.Zero )
 			{
-				int show;
-				if( value )
-					show = SW_SHOW;
-				else
-					show = SW_HIDE;
+				int show = value ? SW_SHOW : SW_HIDE;
 				ShowWindow( EngineApp.ApplicationWindowHandle, show );
 			}
 		}
 
 		//void SetWindowTopMost( bool value )
 		//{
-		//   SetWindowPos( App.WindowHandle, value ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0,
-		//      0, 0, SWP_NOMOVE | SWP_NOSIZE );
+		//   SetWindowPos( App.WindowHandle, value ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
 		//}
 
-		static void SetWindowComposed()
-		{
-			if( IntPtr.Size == 8 )
-			{
-				ulong exStyle = (ulong)GetWindowLong( EngineApp.ApplicationWindowHandle, GWL_EXSTYLE );
-				exStyle |= WS_EX_COMPOSITED;
-				SetWindowLong( EngineApp.ApplicationWindowHandle, GWL_EXSTYLE, (IntPtr)exStyle );
-			}
-			else
-			{
-				uint exStyle = (uint)GetWindowLong( EngineApp.ApplicationWindowHandle, GWL_EXSTYLE );
-				exStyle |= WS_EX_COMPOSITED;
-				SetWindowLong( EngineApp.ApplicationWindowHandle, GWL_EXSTYLE, (IntPtr)(int)exStyle );
-			}
-		}
+		//static void SetWindowComposed()
+		//{
+		//	if( IntPtr.Size == 8 )
+		//	{
+		//		ulong exStyle = (ulong)GetWindowLong( EngineApp.ApplicationWindowHandle, GWL_EXSTYLE );
+		//		exStyle |= WS_EX_COMPOSITED;
+		//		SetWindowLong( EngineApp.ApplicationWindowHandle, GWL_EXSTYLE, (IntPtr)exStyle );
+		//	}
+		//	else
+		//	{
+		//		uint exStyle = (uint)GetWindowLong( EngineApp.ApplicationWindowHandle, GWL_EXSTYLE );
+		//		exStyle |= WS_EX_COMPOSITED;
+		//		SetWindowLong( EngineApp.ApplicationWindowHandle, GWL_EXSTYLE, (IntPtr)(int)exStyle );
+		//	}
+		//}
 
 		public override Vector2 CreatedWindow_GetMousePosition()
 		{
@@ -2236,8 +2300,7 @@ namespace Internal//NeoAxis
 					{
 						//load from virtual file system
 
-						string tempRealFileName = VirtualPathUtility.GetRealPathByVirtual(
-							string.Format( "user:_Temp_{0}", Path.GetFileName( virtualFileName ) ) );
+						string tempRealFileName = VirtualPathUtility.GetRealPathByVirtual( string.Format( "user:_Temp_{0}", Path.GetFileName( virtualFileName ) ) );
 
 						try
 						{
@@ -2500,27 +2563,27 @@ namespace Internal//NeoAxis
 
 		public override List<Vector2I> GetVideoModes()
 		{
-			List<Vector2I> videoModes = new List<Vector2I>();
+			var videoModes = new List<Vector2I>();
 
 			uint mask = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
-			DEVMODE deviceMode;
-
 			int bpp = GetScreenBitsPerPixel();
 
-			for( int n = 0; EnumDisplaySettings( IntPtr.Zero, n, out deviceMode ) != 0; n++ )
+			for( int n = 0; EnumDisplaySettings( IntPtr.Zero, n, out var deviceMode ) != 0; n++ )
 			{
 				if( ( deviceMode.dmFields & mask ) == mask )
 				{
-					if( ChangeDisplaySettings( ref deviceMode, CDS_TEST | CDS_FULLSCREEN ) == DISP_CHANGE_SUCCESSFUL )
-					{
-						if( deviceMode.dmBitsPerPel != bpp )
-							continue;
+					//if( ChangeDisplaySettings( ref deviceMode, CDS_TEST | CDS_FULLSCREEN ) == DISP_CHANGE_SUCCESSFUL )
+					//{
 
-						Vector2I mode = new Vector2I( deviceMode.dmPelsWidth, deviceMode.dmPelsHeight );
+					if( deviceMode.dmBitsPerPel == bpp )
+					{
+						var mode = new Vector2I( deviceMode.dmPelsWidth, deviceMode.dmPelsHeight );
 
 						if( !videoModes.Contains( mode ) )
 							videoModes.Add( mode );
 					}
+
+					//}
 				}
 			}
 
@@ -2532,24 +2595,25 @@ namespace Internal//NeoAxis
 			int maxFrequency = 0;
 
 			uint mask = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT | DM_DISPLAYFREQUENCY;
-			DEVMODE deviceMode;
-
 			int bpp = GetScreenBitsPerPixel();
 
-			for( int n = 0; EnumDisplaySettings( IntPtr.Zero, n, out deviceMode ) != 0; n++ )
+			for( int n = 0; EnumDisplaySettings( IntPtr.Zero, n, out var deviceMode ) != 0; n++ )
 			{
 				if( ( deviceMode.dmFields & mask ) == mask )
 				{
-					if( ChangeDisplaySettings( ref deviceMode, CDS_TEST | CDS_FULLSCREEN ) == DISP_CHANGE_SUCCESSFUL )
+					//if( ChangeDisplaySettings( ref deviceMode, CDS_TEST | CDS_FULLSCREEN ) == DISP_CHANGE_SUCCESSFUL )
+					//{
+
+					if( mode.X == deviceMode.dmPelsWidth && mode.Y == deviceMode.dmPelsHeight && bpp == deviceMode.dmBitsPerPel )
 					{
-						if( mode.X == deviceMode.dmPelsWidth &&
-							mode.Y == deviceMode.dmPelsHeight &&
-							bpp == deviceMode.dmBitsPerPel )
+						if( deviceMode.dmDisplayFrequency > maxFrequency )
 						{
-							if( deviceMode.dmDisplayFrequency > maxFrequency )
+							if( ChangeDisplaySettings( ref deviceMode, CDS_TEST | CDS_FULLSCREEN ) == DISP_CHANGE_SUCCESSFUL )
 								maxFrequency = deviceMode.dmDisplayFrequency;
 						}
 					}
+
+					//}
 				}
 			}
 
@@ -2559,8 +2623,8 @@ namespace Internal//NeoAxis
 		public override bool ChangeVideoMode( Vector2I mode )
 		{
 			int frequency = 0;
-			//on some drivers a bug in ChangeDisplaySettings(CDC_TEST) 
-			//if( EngineApp.InitSettings.CreateWindowFullscreenAllowChangeDisplayFrequency )
+			////on some drivers a bug in ChangeDisplaySettings(CDC_TEST) 
+			////if( EngineApp.InitSettings.CreateWindowFullscreenAllowChangeDisplayFrequency )
 			frequency = GetMaximumFrequencyByVideoMode( mode );
 
 			DEVMODE deviceMode = new DEVMODE();
@@ -2655,33 +2719,80 @@ namespace Internal//NeoAxis
 			return IntPtr.Zero;
 		}
 
+		RectangleI GetWindowMonitorRectangle()
+		{
+			var hMonitor = MonitorFromWindow( EngineApp.ApplicationWindowHandle, MONITOR_DEFAULTTONEAREST );
+
+			var mi = new MONITORINFOEX();
+			mi.cbSize = Marshal.SizeOf<MONITORINFOEX>();
+
+			if( hMonitor != IntPtr.Zero && GetMonitorInfo( hMonitor, ref mi ) )
+			{
+				var r = mi.rcMonitor;
+				return new RectangleI( r.Left, r.Top, r.Right - r.Left, r.Bottom - r.Top );
+			}
+
+			// Fallback: primary screen.
+			return new RectangleI( Vector2I.Zero, GetScreenSize() );
+		}
+
 		public override void ProcessChangingVideoMode()
 		{
-			if( EngineApp.FullscreenEnabled )
+			if( EngineApp.WindowedMode == WindowedModeEnum.Fullscreen ) //if( EngineApp.FullscreenEnabled )
 			{
-				goingToFullScreenMode = true;
+				goingToAnotherWindowedMode = EngineApp.WindowedMode; //goingToFullScreenMode = true;
 
-				//minimize window
+				//!!!!
 				SetWindowState( WindowState.Minimized );
 
-				//!!!!!так?
 				//change video mode
-				if( !SystemSettings.ChangeVideoMode( EngineApp.FullscreenSize ) )
+				if( !SystemSettings.ChangeVideoMode( EngineApp.WindowedModeSize ) )
 					return;
-				//было
-				//App.lastFullScreenWindowSize = App.FullScreenSize;
 
-				//update window
-				bool topMost = !Debugger.IsAttached;
-				SetWindowBorderStyle( WindowBorderStyle.None );
-				SetWindowState( WindowState.Normal );
-				SetWindowPos( EngineApp.ApplicationWindowHandle, topMost ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, EngineApp.FullscreenSize.X, EngineApp.FullscreenSize.Y, 0 );
+
+
+				//bool topMost = !Debugger.IsAttached;
+
+				//SetWindowBorderStyle( WindowBorderStyle.None );
+				//SetWindowState( WindowState.Normal );
+
+				//var monitorRect = GetWindowMonitorRectangle();
+
+				//SetWindowPos(
+				//	EngineApp.ApplicationWindowHandle,
+				//	topMost ? HWND_TOPMOST : HWND_NOTOPMOST,
+				//	monitorRect.Left,
+				//	monitorRect.Top,
+				//	monitorRect.Size.X,
+				//	monitorRect.Size.Y,
+				//	SWP_FRAMECHANGED | SWP_SHOWWINDOW );
+
+				//SetForegroundWindow( EngineApp.ApplicationWindowHandle );
+				//SetFocus( EngineApp.ApplicationWindowHandle );
+
+
+
+
+
+				//goingToFullScreenMode = true;
+
+				////minimize window
+				//SetWindowState( WindowState.Minimized );
+
+				////change video mode
+				//if( !SystemSettings.ChangeVideoMode( EngineApp.FullscreenSize ) )
+				//	return;
+
+				////update window
+				//bool topMost = !Debugger.IsAttached;
+				//SetWindowBorderStyle( WindowBorderStyle.None );
+				//SetWindowState( WindowState.Normal );
+				//SetWindowPos( EngineApp.ApplicationWindowHandle, topMost ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, EngineApp.FullscreenSize.X, EngineApp.FullscreenSize.Y, 0 );
 			}
 			else
 			{
-				goingToWindowedMode = true;
+				goingToAnotherWindowedMode = EngineApp.WindowedMode; //goingToWindowedMode = true;
 
-				//!!!!!так?
 				//change video mode
 				SystemSettings.RestoreVideoMode();
 			}
@@ -2689,11 +2800,12 @@ namespace Internal//NeoAxis
 
 		unsafe static bool MonitorEnumProc( IntPtr hMonitor, IntPtr hdcMonitor, ref RectangleI lprcMonitor, IntPtr dwData )
 		{
-			MONITORINFOEX info = new MONITORINFOEX();
-			info.cbSize = sizeof( MONITORINFOEX );
+			var info = new MONITORINFOEX();
+			info.cbSize = Marshal.SizeOf<MONITORINFOEX>();
+			//info.cbSize = sizeof( MONITORINFOEX );
 			if( GetMonitorInfo( hMonitor, ref info ) )
 			{
-				SystemSettings.DisplayInfo displayInfo = new SystemSettings.DisplayInfo( new string( info.szDeviceName ), info.rcMonitor,
+				var displayInfo = new SystemSettings.DisplayInfo( new string( info.szDeviceName ), info.rcMonitor,
 					info.rcWork, ( info.dwFlags & MONITORINFOF_PRIMARY ) != 0 );
 				tempScreenList.Add( displayInfo );
 			}
@@ -2703,7 +2815,7 @@ namespace Internal//NeoAxis
 
 		public override IList<SystemSettings.DisplayInfo> GetAllDisplays()
 		{
-			List<SystemSettings.DisplayInfo> result = new List<SystemSettings.DisplayInfo>();
+			var result = new List<SystemSettings.DisplayInfo>();
 
 			lock( tempScreenList )
 			{
@@ -2722,8 +2834,8 @@ namespace Internal//NeoAxis
 
 			if( result.Count == 0 )
 			{
-				RectangleI area = new RectangleI( Vector2I.Zero, GetScreenSize() );
-				SystemSettings.DisplayInfo info = new SystemSettings.DisplayInfo( "Primary", area, area, true );
+				var area = new RectangleI( Vector2I.Zero, GetScreenSize() );
+				var info = new SystemSettings.DisplayInfo( "Primary", area, area, true );
 				result.Add( info );
 			}
 
@@ -2738,7 +2850,6 @@ namespace Internal//NeoAxis
 			SetWindowPos( EngineApp.ApplicationWindowHandle, IntPtr.Zero, rectangle.Left, rectangle.Top, rectangle.Size.X, rectangle.Size.Y, 0 );
 			goingToChangeWindowRectangle = false;
 
-			//!!!!!так?
 			EngineApp.CreatedWindowProcessResize();
 		}
 

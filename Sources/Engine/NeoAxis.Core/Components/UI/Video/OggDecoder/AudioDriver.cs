@@ -12,19 +12,19 @@ namespace OggDecoder
 	{
 		internal OggFile oggFile;
 
-		internal vorbis.Info vorbisInfo;
-		vorbis.Comment vorbisComment;
+		internal Vorbis.Info vorbisInfo;
+		Vorbis.Comment vorbisComment;
 
-		vorbis.DspState vorbisDSPState;
-		vorbis.Block vorbisBlock;
+		Vorbis.DspState vorbisDSPState;
+		Vorbis.Block vorbisBlock;
 
-		ogg.StreamState vorbisStreamState;
+		Ogg.StreamState vorbisStreamState;
 
 		protected const int soundBufferSize = 16384 * 2;
 		internal int bufferSize;
 		byte[] samplesBuffer = new byte[ 65536 * 2 ];
 
-		ogg.Packet oggPacket;
+		Ogg.Packet oggPacket;
 
 		int headerCount;
 
@@ -32,9 +32,9 @@ namespace OggDecoder
 
 		public AudioDriver()
 		{
-			vorbisInfo = new vorbis.Info();
-			vorbisComment = new vorbis.Comment();
-			oggPacket = new ogg.Packet();
+			vorbisInfo = new Vorbis.Info();
+			vorbisComment = new Vorbis.Comment();
+			oggPacket = new Ogg.Packet();
 		}
 
 		public abstract void StartAudioStream();
@@ -80,19 +80,19 @@ namespace OggDecoder
 
 		internal void InitDSP()
 		{
-			vorbisDSPState = new vorbis.DspState( vorbisInfo );
+			vorbisDSPState = new Vorbis.DspState( vorbisInfo );
 			//vorbisDSPState.synthesis_init( vorbisInfo );
 
-			vorbisBlock = new vorbis.Block( vorbisDSPState );
+			vorbisBlock = new Vorbis.Block( vorbisDSPState );
 			//vorbisBlock.init( vorbisDSPState );
 		}
 
-		internal void PageIn( ogg.Page page )
+		internal void PageIn( Ogg.Page page )
 		{
 			vorbisStreamState.pagein( page );
 		}
 
-		internal bool DecodePrimaryHeader( ogg.Packet p, ogg.StreamState s )
+		internal bool DecodePrimaryHeader( Ogg.Packet p, Ogg.StreamState s )
 		{
 			if( vorbisInfo.synthesis_headerin( vorbisComment, p ) >= 0 )
 			{
@@ -104,7 +104,7 @@ namespace OggDecoder
 			return false;
 		}
 
-		internal bool CheckSecondHeader( ogg.Packet p, ref bool needMoreData )
+		internal bool CheckSecondHeader( Ogg.Packet p, ref bool needMoreData )
 		{
 			needMoreData = false;
 			//We have all headers already, so just return

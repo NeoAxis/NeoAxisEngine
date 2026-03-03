@@ -22,7 +22,8 @@ namespace NeoAxis
 		static List<Scene> all = new List<Scene>();
 		static List<Scene> allInstancesEnabled = new List<Scene>();
 
-		public static bool InternalSimulatePhysics { get; set; } = true;
+		public static bool _InternalSimulatePhysics { get; set; } = true;
+		public static bool _InternalRendering { get; set; } = true;
 
 		double initTime;
 		Bounds boundsWhenSimulationStarted;
@@ -45,7 +46,7 @@ namespace NeoAxis
 		//!!!!
 		//Particles freeParticles;
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////
 
 		/// <summary>
 		/// The rendering pipeline of the scene.
@@ -2941,7 +2942,7 @@ namespace NeoAxis
 		{
 			base.OnSimulationStepBefore( ref childrenSimulationStep );
 
-			if( InternalSimulatePhysics )
+			if( _InternalSimulatePhysics )
 			{
 				PhysicsSimulate( false, null );
 				Physics2DSimulate( false, null );

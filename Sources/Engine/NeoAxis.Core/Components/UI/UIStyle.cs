@@ -489,8 +489,8 @@ namespace NeoAxis
 				OnRenderContextMenu( contextMenu, renderer );
 			else if( component is UIToolbar toolbar )
 				OnRenderToolbar( toolbar, renderer );
-			else if( component is UISplitContainer splitContainer )
-				OnRenderSplitContainer( splitContainer, renderer );
+			//else if( component is UISplitContainer splitContainer )
+			//	OnRenderSplitContainer( splitContainer, renderer );
 			else if( component is UITabControl tabControl )
 				OnRenderTabControl( tabControl, renderer );
 		}
@@ -772,7 +772,6 @@ namespace NeoAxis
 		protected virtual void OnRenderListItem( UIList control, CanvasRenderer renderer, int itemIndex, Rectangle itemRectangle, FontComponent font, double fontSize )
 		{
 			var item = control.GetItem( itemIndex );
-			//var item = control.Items[ itemIndex ];
 
 			if( control.Multiselect )
 			{
@@ -810,9 +809,6 @@ namespace NeoAxis
 				var textColor = new ColorValue( 1, 1, 1 );
 
 				var checkedStatus = item.Checked;
-				//var checkedStatus = UICheck.CheckValue.Unchecked;
-				//if( itemIndex < control.ItemChecks.Count )
-				//	checkedStatus = control.ItemChecks[ itemIndex ];
 
 				var colorMultiplier = new ColorValue( 1, 1, 1 );
 				var checkBoxRect = new Rectangle( itemRectangle.Left, itemRectangle.Top, itemRectangle.Left + itemRectangle.Size.Y * renderer.AspectRatioInv, itemRectangle.Bottom );
@@ -1505,12 +1501,12 @@ namespace NeoAxis
 				renderer.AddQuad( control.GetScreenRectangle(), new ColorValue( 0.3, 0.3, 0.3 ) );
 		}
 
-		protected virtual void OnRenderSplitContainer( UISplitContainer control, CanvasRenderer renderer )
-		{
-			//draw default background
-			if( control.BackgroundColor.Value == ColorValue.Zero )
-				renderer.AddQuad( control.GetScreenRectangle(), new ColorValue( 0.3, 0.3, 0.3 ) );
-		}
+		//protected virtual void OnRenderSplitContainer( UISplitContainer control, CanvasRenderer renderer )
+		//{
+		//	//draw default background
+		//	if( control.BackgroundColor.Value == ColorValue.Zero )
+		//		renderer.AddQuad( control.GetScreenRectangle(), new ColorValue( 0.3, 0.3, 0.3 ) );
+		//}
 
 		protected virtual void OnRenderTabControl( UITabControl control, CanvasRenderer renderer )
 		{

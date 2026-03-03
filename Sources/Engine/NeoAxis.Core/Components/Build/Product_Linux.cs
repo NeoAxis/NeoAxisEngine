@@ -277,8 +277,8 @@ namespace NeoAxis
 					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.runtimeconfig.dev.json" ) );
 					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.runtimeconfig.json" ) );
 
-					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.CoreExtension.Editor.dll" ) );
-					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.CoreExtension.Editor.deps.json" ) );
+					//excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.CoreExtension.Editor.dll" ) );
+					//excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.CoreExtension.Editor.deps.json" ) );
 				}
 
 				excludePaths.Add( Path.Combine( sourceFolder, "SampleWidgetWinForms.exe" ) );

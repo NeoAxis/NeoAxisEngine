@@ -1,3 +1,4 @@
+#if !NO_SERVER
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
@@ -18,8 +19,10 @@ namespace NeoAxis.Networking
 
 		static DateTime deleteOldRequestsLastTime;
 
-		static GetMainServerInfoResult getMainServerInfoResultCached = new GetMainServerInfoResult();
-		static DateTime getMainServerInfoResultCachedTime;
+		static GetServerInfoResult getServerInfoResultCached = new GetServerInfoResult();
+		static DateTime getServerInfoResultCachedTime;
+
+		static int currentServerWorkload = -1;
 
 		////////////////////////////////////////////////
 
@@ -33,13 +36,14 @@ namespace NeoAxis.Networking
 			internal static long projectID;
 			internal static string projectDirectory;
 			internal static string projectName = "";
-			internal static string projectCurrency = "";
+			//internal static string projectCurrency = "";
 			internal static bool projectInAppPurchase;
 			internal static bool projectInAppWithdraw;
 			internal static bool projectInAppProfit;
+			internal static int projectHorizontalServersMaxCount;
 			internal static string processSettings = "";
 			internal static TextBlock processSettingsTextBlock;
-			internal static bool additionalServer;
+			internal static bool horizontalServer;
 
 			//
 
@@ -120,14 +124,14 @@ namespace NeoAxis.Networking
 				}
 			}
 
-			public static string ProjectCurrency
-			{
-				get
-				{
-					Init();
-					return projectCurrency;
-				}
-			}
+			//public static string ProjectCurrency
+			//{
+			//	get
+			//	{
+			//		Init();
+			//		return projectCurrency;
+			//	}
+			//}
 
 			public static bool ProjectInAppPurchase
 			{
@@ -156,6 +160,15 @@ namespace NeoAxis.Networking
 				}
 			}
 
+			public static int ProjectHorizontalServersMaxCount
+			{
+				get
+				{
+					Init();
+					return projectHorizontalServersMaxCount;
+				}
+			}
+
 			public static string ProcessSettings
 			{
 				get
@@ -179,14 +192,21 @@ namespace NeoAxis.Networking
 				}
 			}
 
-			public static bool AdditionalServer
+			public static bool HorizontalServer
 			{
 				get
 				{
 					Init();
-					return additionalServer;
+					return horizontalServer;
 				}
 			}
+		}
+
+		////////////////////////////////////////////////
+
+		public class SimpleResult
+		{
+			public string Error;
 		}
 
 		////////////////////////////////////////////////
@@ -230,8 +250,8 @@ namespace NeoAxis.Networking
 				if( SystemSettings.CommandLineParameters.TryGetValue( "-projectName", out var projectNameEncoded ) )
 					CommandLineParameters.projectName = StringUtility.DecodeFromBase64URL( projectNameEncoded );
 
-				//get projectCurrency
-				SystemSettings.CommandLineParameters.TryGetValue( "-projectCurrency", out CommandLineParameters.projectCurrency );
+				////get projectCurrency
+				//SystemSettings.CommandLineParameters.TryGetValue( "-projectCurrency", out CommandLineParameters.projectCurrency );
 
 				//get projectInAppPurchase
 				if( SystemSettings.CommandLineParameters.TryGetValue( "-inAppPurchase", out var inAppPurchaseString ) )
@@ -245,13 +265,17 @@ namespace NeoAxis.Networking
 				if( SystemSettings.CommandLineParameters.TryGetValue( "-inAppProfit", out var inAppProfitString ) )
 					bool.TryParse( inAppProfitString, out CommandLineParameters.projectInAppProfit );
 
+				//get projectHorizontalServersMaxCount
+				if( SystemSettings.CommandLineParameters.TryGetValue( "-horizontalServersMaxCount", out var horizontalServersMaxCountString ) )
+					int.TryParse( horizontalServersMaxCountString, out CommandLineParameters.projectHorizontalServersMaxCount );
+
 				//get processSettings
 				if( SystemSettings.CommandLineParameters.TryGetValue( "-processSettings", out var processSettingsEncoded ) )
 					CommandLineParameters.processSettings = StringUtility.DecodeFromBase64URL( processSettingsEncoded );
 
-				//get additionalServer
-				if( SystemSettings.CommandLineParameters.TryGetValue( "-additionalServer", out var additionalServerString ) )
-					bool.TryParse( additionalServerString, out CommandLineParameters.additionalServer );
+				//get horizontalServer
+				if( SystemSettings.CommandLineParameters.TryGetValue( "-horizontalServer", out var horizontalServerString ) )
+					bool.TryParse( horizontalServerString, out CommandLineParameters.horizontalServer );
 
 				initialized = true;
 			}
@@ -442,53 +466,48 @@ namespace NeoAxis.Networking
 			return Path.Combine( StorageDirectory, VirtualPathUtility.NormalizePath( storageFileName ) );
 		}
 
-		public class StorageSimpleResult
-		{
-			public string Error;
-		}
-
 		///////////////////////////////////////////////
 		//storage get files info
 
-		public static async Task<GeneralManagerFunctions.StorageGetFilesInfoResult> StorageGetFilesInfoAsync( string[] storageFileNames, CancellationToken cancellationToken = default )
+		public static async Task<CloudServiceFunctions.StorageGetFilesInfoResult> StorageGetFilesInfoAsync( string[] storageFileNames, CancellationToken cancellationToken = default )
 		{
 			if( string.IsNullOrEmpty( CommandLineParameters.ServerCheckCode ) )
-				return new GeneralManagerFunctions.StorageGetFilesInfoResult() { Error = "Server check code is not configured." };
-			return await GeneralManagerFunctions.StorageGetFilesInfoAsync( storageFileNames, CommandLineParameters.ServerCheckCode, cancellationToken );
+				return new CloudServiceFunctions.StorageGetFilesInfoResult() { Error = "Server check code is not configured." };
+			return await CloudServiceFunctions.StorageGetFilesInfoAsync( storageFileNames, CommandLineParameters.ServerCheckCode, cancellationToken );
 		}
 
-		public static async Task<GeneralManagerFunctions.StorageGetFileInfoResult> StorageGetFileInfoAsync( string storageFileName, CancellationToken cancellationToken = default )
+		public static async Task<CloudServiceFunctions.StorageGetFileInfoResult> StorageGetFileInfoAsync( string storageFileName, CancellationToken cancellationToken = default )
 		{
 			if( string.IsNullOrEmpty( CommandLineParameters.ServerCheckCode ) )
-				return new GeneralManagerFunctions.StorageGetFileInfoResult() { Error = "Server check code is not configured." };
-			return await GeneralManagerFunctions.StorageGetFileInfoAsync( storageFileName, CommandLineParameters.ServerCheckCode, cancellationToken );
+				return new CloudServiceFunctions.StorageGetFileInfoResult() { Error = "Server check code is not configured." };
+			return await CloudServiceFunctions.StorageGetFileInfoAsync( storageFileName, CommandLineParameters.ServerCheckCode, cancellationToken );
 		}
 
 		///////////////////////////////////////////////
 		//storage get directory info
 
-		public static async Task<GeneralManagerFunctions.StorageGetDirectoryInfoResult> StorageGetDirectoryInfoAsync( string storageDirectory, string searchPattern, SearchOption searchOption, CancellationToken cancellationToken = default )
+		public static async Task<CloudServiceFunctions.StorageGetDirectoryInfoResult> StorageGetDirectoryInfoAsync( string storageDirectory, string searchPattern, SearchOption searchOption, CancellationToken cancellationToken = default )
 		{
 			if( string.IsNullOrEmpty( CommandLineParameters.ServerCheckCode ) )
 				throw new Exception( "Server check code is not configured." );
-			return await GeneralManagerFunctions.StorageGetDirectoryInfoAsync( storageDirectory, searchPattern, searchOption, CommandLineParameters.ServerCheckCode, cancellationToken );
+			return await CloudServiceFunctions.StorageGetDirectoryInfoAsync( storageDirectory, searchPattern, searchOption, CommandLineParameters.ServerCheckCode, cancellationToken );
 		}
 
 		///////////////////////////////////////////////
 		//storage get content urls
 
-		public static async Task<GeneralManagerFunctions.StorageGetContentUrlsResult> StorageGetContentUrlsAsync( string[] storageFileNames, bool upload, CancellationToken cancellationToken = default )
+		public static async Task<CloudServiceFunctions.StorageGetContentUrlsResult> StorageGetContentUrlsAsync( string[] storageFileNames, bool upload, CancellationToken cancellationToken = default )
 		{
 			if( string.IsNullOrEmpty( CommandLineParameters.ServerCheckCode ) )
 				throw new Exception( "Server check code is not configured." );
-			return await GeneralManagerFunctions.StorageGetContentUrlsAsync( storageFileNames, upload, CommandLineParameters.ServerCheckCode, cancellationToken );
+			return await CloudServiceFunctions.StorageGetContentUrlsAsync( storageFileNames, upload, false, CommandLineParameters.ServerCheckCode, cancellationToken );
 		}
 
-		public static async Task<GeneralManagerFunctions.StorageGetContentUrlResult> StorageGetContentUrlAsync( string storageFileName, bool upload, CancellationToken cancellationToken = default )
+		public static async Task<CloudServiceFunctions.StorageGetContentUrlResult> StorageGetContentUrlAsync( string storageFileName, bool upload, bool makePublic = false, CancellationToken cancellationToken = default )
 		{
 			if( string.IsNullOrEmpty( CommandLineParameters.ServerCheckCode ) )
 				throw new Exception( "Server check code is not configured." );
-			return await GeneralManagerFunctions.StorageGetContentUrlAsync( storageFileName, upload, CommandLineParameters.ServerCheckCode, cancellationToken );
+			return await CloudServiceFunctions.StorageGetContentUrlAsync( storageFileName, upload, makePublic, CommandLineParameters.ServerCheckCode, cancellationToken );
 		}
 
 		///////////////////////////////////////////////
@@ -507,7 +526,7 @@ namespace NeoAxis.Networking
 			if( string.IsNullOrEmpty( CommandLineParameters.ServerCheckCode ) )
 				return new StorageDownloadFilesResult() { Error = "Server check code is not configured." };
 
-			var getFilesInfoResult = await GeneralManagerFunctions.StorageGetFilesInfoAsync( storageFileNames, CommandLineParameters.ServerCheckCode, cancellationToken );
+			var getFilesInfoResult = await CloudServiceFunctions.StorageGetFilesInfoAsync( storageFileNames, CommandLineParameters.ServerCheckCode, cancellationToken );
 			if( !string.IsNullOrEmpty( getFilesInfoResult.Error ) )
 				return new StorageDownloadFilesResult() { Error = getFilesInfoResult.Error };
 
@@ -594,7 +613,7 @@ namespace NeoAxis.Networking
 						lastProgressUpdate = DateTime.UtcNow;
 					}
 
-					var cancellationToken2 = new CancellationTokenSource( new TimeSpan( 100, 0, 0 ) );
+					using var cancellationToken2 = new CancellationTokenSource( new TimeSpan( 100, 0, 0 ) );
 
 					var downloadResultTask = NetworkUtility.DownloadFileByUrlAsync( /*httpClient,*/ url, targetFullPath, Progress, cancellationToken );
 
@@ -654,15 +673,15 @@ namespace NeoAxis.Networking
 				return new StorageDownloadDirectoryResult() { Error = "Server check code is not configured." };
 
 			//!!!!where else
-			if( !ServerNetworkService_CloudFunctions.IsValidVirtualPath( storageDirectory ) )
+			if( !ServerNetworkService_CloudFunctions.IsValidVirtualPath( storageDirectory, true ) )
 				throw new Exception( "Invalid storage directory path." );
 
-			var getDirectoryInfoResult = await GeneralManagerFunctions.StorageGetDirectoryInfoAsync( storageDirectory, searchPattern, searchOption, CommandLineParameters.ServerCheckCode, cancellationToken );
+			var getDirectoryInfoResult = await CloudServiceFunctions.StorageGetDirectoryInfoAsync( storageDirectory, searchPattern, searchOption, CommandLineParameters.ServerCheckCode, cancellationToken );
 			if( !string.IsNullOrEmpty( getDirectoryInfoResult.Error ) )
 				return new StorageDownloadDirectoryResult() { Error = getDirectoryInfoResult.Error };
 
 			//compare
-			var filesToDownload = new List<GeneralManagerFunctions.StorageGetDirectoryInfoResult.Item>();
+			var filesToDownload = new List<CloudServiceFunctions.StorageGetDirectoryInfoResult.Item>();
 			var fileNamesToDownload = new List<string>();
 			//!!!!var directoriesToCreate = new List<GeneralManagerFunctions.StorageGetDirectoryInfoResult.Item>();
 			{
@@ -738,7 +757,7 @@ namespace NeoAxis.Networking
 							lastProgressUpdate = DateTime.UtcNow;
 						}
 
-						var cancellationToken2 = new CancellationTokenSource( new TimeSpan( 100, 0, 0 ) );
+						using var cancellationToken2 = new CancellationTokenSource( new TimeSpan( 100, 0, 0 ) );
 
 						var downloadResultTask = NetworkUtility.DownloadFileByUrlAsync( /*httpClient,*/ url, targetFullPath, Progress, cancellationToken );
 
@@ -760,7 +779,7 @@ namespace NeoAxis.Networking
 						//	lastProgressUpdate = DateTime.UtcNow;
 						//}
 
-						//var cancellationToken2 = new CancellationTokenSource( new TimeSpan( 100, 0, 0 ) );
+						//using var cancellationToken2 = new CancellationTokenSource( new TimeSpan( 100, 0, 0 ) );
 
 						//var downloadResultTask = StorageUtility.DownloadFileAsync( StorageUtility.CreateS3Client( keys.ServiceURL, keys.PublicKey, keys.SecretKey ), true, keys.Bucket, fileItem.Key, filePath, callbackProgressPercentage: Progress, cancellationToken: cancellationToken2.Token );
 
@@ -841,11 +860,11 @@ namespace NeoAxis.Networking
 
 		public delegate void StorageUploadFilesProgressCallback( int uploadedIncrement, long totalUploaded, long totalSize );
 
-		public static async Task<StorageSimpleResult> StorageUploadFilesAsync( string[] storageFileNames, StorageUploadFilesProgressCallback progressCallback = null, CancellationToken cancellationToken = default )
+		public static async Task<SimpleResult> StorageUploadFilesAsync( string[] storageFileNames, StorageUploadFilesProgressCallback progressCallback = null, CancellationToken cancellationToken = default )
 		{
 			var getContentUrlsResult = await StorageGetContentUrlsAsync( storageFileNames, true, cancellationToken );
 			if( !string.IsNullOrEmpty( getContentUrlsResult.Error ) )
-				return new StorageSimpleResult() { Error = getContentUrlsResult.Error };
+				return new SimpleResult() { Error = getContentUrlsResult.Error };
 
 			var totalSizeToUpload = 0L;
 			{
@@ -854,7 +873,7 @@ namespace NeoAxis.Networking
 					var storageFileName = storageFileNames[ n ];
 					var sourceFullPath = GetFilePathByStorageFileName( storageFileName );
 					if( !File.Exists( sourceFullPath ) )
-						return new StorageSimpleResult() { Error = "File to upload not found." }; //: " + storageFileName };
+						return new SimpleResult() { Error = "File to upload not found." }; //: " + storageFileName };
 					var fileInfo = new FileInfo( sourceFullPath );
 					totalSizeToUpload += fileInfo.Length;
 				}
@@ -874,7 +893,7 @@ namespace NeoAxis.Networking
 					var sourceFullPath = GetFilePathByStorageFileName( storageFileName );
 
 					if( !File.Exists( sourceFullPath ) )
-						return new StorageSimpleResult() { Error = "File to upload not found." }; //: " + storageFileName };
+						return new SimpleResult() { Error = "File to upload not found." }; //: " + storageFileName };
 
 					void Progress( int uploadedIncrement, long totalUploaded, long totalSize )
 					{
@@ -884,14 +903,14 @@ namespace NeoAxis.Networking
 
 					var uploadResult = await NetworkUtility.UploadFileByUrlAsync( /*httpClient, */url, sourceFullPath, true, Progress, cancellationToken );
 					if( !string.IsNullOrEmpty( uploadResult.Error ) )
-						return new StorageSimpleResult() { Error = uploadResult.Error };
+						return new SimpleResult() { Error = uploadResult.Error };
 				}
 			}
 
-			return new StorageSimpleResult();
+			return new SimpleResult();
 		}
 
-		public static async Task<StorageSimpleResult> StorageUploadFileAsync( string storageFileName, StorageUploadFilesProgressCallback progressCallback = null, CancellationToken cancellationToken = default )
+		public static async Task<SimpleResult> StorageUploadFileAsync( string storageFileName, StorageUploadFilesProgressCallback progressCallback = null, CancellationToken cancellationToken = default )
 		{
 			return await StorageUploadFilesAsync( new[] { storageFileName }, progressCallback, cancellationToken );
 		}
@@ -900,11 +919,17 @@ namespace NeoAxis.Networking
 		{
 			var newFilePath = GetFilePathByStorageFileName( storageFileName );
 			if( sourceFilePath != newFilePath )
+			{
+#if UWP
+				File.Move( sourceFilePath, newFilePath );
+#else
 				File.Move( sourceFilePath, newFilePath, true );
+#endif
+			}
 			return newFilePath;
 		}
 
-		public static async Task<StorageSimpleResult> MoveFileToLocalStorageDirectoryAndUploadAsync( string sourceFilePath, string storageFileName, StorageUploadFilesProgressCallback progressCallback = null, CancellationToken cancellationToken = default )
+		public static async Task<SimpleResult> MoveFileToLocalStorageDirectoryAndUploadAsync( string sourceFilePath, string storageFileName, StorageUploadFilesProgressCallback progressCallback = null, CancellationToken cancellationToken = default )
 		{
 			var newFilePath = MoveFileToLocalStorageDirectory( sourceFilePath, storageFileName );
 			return await StorageUploadFilesAsync( new string[] { storageFileName }, progressCallback, cancellationToken );
@@ -913,14 +938,14 @@ namespace NeoAxis.Networking
 		///////////////////////////////////////////////
 		//storage create directory
 
-		public static async Task<GeneralManagerFunctions.SimpleResult> StorageCreateDirectoriesAsync( string[] storageDirectoryNames, CancellationToken cancellationToken = default )
+		public static async Task<CloudServiceFunctions.SimpleResult> StorageCreateDirectoriesAsync( string[] storageDirectoryNames, CancellationToken cancellationToken = default )
 		{
 			if( string.IsNullOrEmpty( CommandLineParameters.ServerCheckCode ) )
 				throw new Exception( "Server check code is not configured." );
-			return await GeneralManagerFunctions.StorageCreateDirectoriesAsync( storageDirectoryNames, CommandLineParameters.ServerCheckCode, cancellationToken );
+			return await CloudServiceFunctions.StorageCreateDirectoriesAsync( storageDirectoryNames, CommandLineParameters.ServerCheckCode, cancellationToken );
 		}
 
-		public static async Task<GeneralManagerFunctions.SimpleResult> StorageCreateDirectoryAsync( string storageDirectoryName, CancellationToken cancellationToken = default )
+		public static async Task<CloudServiceFunctions.SimpleResult> StorageCreateDirectoryAsync( string storageDirectoryName, CancellationToken cancellationToken = default )
 		{
 			return await StorageCreateDirectoriesAsync( new string[] { storageDirectoryName }, cancellationToken );
 		}
@@ -928,12 +953,12 @@ namespace NeoAxis.Networking
 		///////////////////////////////////////////////
 		//delete objects
 
-		public static async Task<GeneralManagerFunctions.SimpleResult> StorageDeleteObjectsAsync( GeneralManagerFunctions.DeleteObjectsItem[] objects, bool deleteLocalFiles, CancellationToken cancellationToken = default )
+		public static async Task<CloudServiceFunctions.SimpleResult> StorageDeleteObjectsAsync( CloudServiceFunctions.DeleteObjectsItem[] objects, bool deleteLocalFiles, CancellationToken cancellationToken = default )
 		{
 			if( string.IsNullOrEmpty( CommandLineParameters.ServerCheckCode ) )
 				throw new Exception( "Server check code is not configured." );
 
-			var result = await GeneralManagerFunctions.StorageDeleteObjectsAsync( objects, CommandLineParameters.ServerCheckCode, cancellationToken );
+			var result = await CloudServiceFunctions.StorageDeleteObjectsAsync( objects, CommandLineParameters.ServerCheckCode, cancellationToken );
 
 			if( string.IsNullOrEmpty( result.Error ) && deleteLocalFiles )
 			{
@@ -956,7 +981,7 @@ namespace NeoAxis.Networking
 					}
 					catch( Exception e )
 					{
-						return new GeneralManagerFunctions.SimpleResult { Error = e.Message };
+						return new CloudServiceFunctions.SimpleResult { Error = e.Message };
 					}
 				}
 			}
@@ -964,53 +989,59 @@ namespace NeoAxis.Networking
 			return result;
 		}
 
-		public static async Task<GeneralManagerFunctions.SimpleResult> StorageDeleteDirectoryAsync( string storageDirectoryName, bool deleteLocalFiles, CancellationToken cancellationToken = default )
+		public static async Task<CloudServiceFunctions.SimpleResult> StorageDeleteDirectoryAsync( string storageDirectoryName, bool deleteLocalFiles, CancellationToken cancellationToken = default )
 		{
-			return await StorageDeleteObjectsAsync( new GeneralManagerFunctions.DeleteObjectsItem[] { new GeneralManagerFunctions.DeleteObjectsItem { Name = storageDirectoryName, IsDirectory = true } }, deleteLocalFiles, cancellationToken );
+			return await StorageDeleteObjectsAsync( new CloudServiceFunctions.DeleteObjectsItem[] { new CloudServiceFunctions.DeleteObjectsItem { Name = storageDirectoryName, IsDirectory = true } }, deleteLocalFiles, cancellationToken );
 		}
 
-		public static async Task<GeneralManagerFunctions.SimpleResult> StorageDeleteFilesAsync( string[] storageFileNames, bool deleteLocalFiles, CancellationToken cancellationToken = default )
+		public static async Task<CloudServiceFunctions.SimpleResult> StorageDeleteFilesAsync( string[] storageFileNames, bool deleteLocalFiles, CancellationToken cancellationToken = default )
 		{
-			return await StorageDeleteObjectsAsync( await Task.Run( () => storageFileNames.Select( fn => new GeneralManagerFunctions.DeleteObjectsItem { Name = fn, IsDirectory = false } ).ToArray() ), deleteLocalFiles, cancellationToken );
+			var objects = new CloudServiceFunctions.DeleteObjectsItem[ storageFileNames.Length ];
+			for( int n = 0; n < storageFileNames.Length; n++ )
+				objects[ n ] = new CloudServiceFunctions.DeleteObjectsItem { Name = storageFileNames[ n ], IsDirectory = false };
+
+			return await StorageDeleteObjectsAsync( objects, deleteLocalFiles, cancellationToken );
+
+			//return await StorageDeleteObjectsAsync( await Task.Run( () => storageFileNames.Select( fn => new CloudServiceFunctions.DeleteObjectsItem { Name = fn, IsDirectory = false } ).ToArray() ), deleteLocalFiles, cancellationToken );
 		}
 
-		public static async Task<GeneralManagerFunctions.SimpleResult> StorageDeleteFileAsync( string storageFileName, bool deleteLocalFiles, CancellationToken cancellationToken = default )
+		public static async Task<CloudServiceFunctions.SimpleResult> StorageDeleteFileAsync( string storageFileName, bool deleteLocalFiles, CancellationToken cancellationToken = default )
 		{
-			return await StorageDeleteObjectsAsync( new GeneralManagerFunctions.DeleteObjectsItem[] { new GeneralManagerFunctions.DeleteObjectsItem { Name = storageFileName, IsDirectory = false } }, deleteLocalFiles, cancellationToken );
+			return await StorageDeleteObjectsAsync( new CloudServiceFunctions.DeleteObjectsItem[] { new CloudServiceFunctions.DeleteObjectsItem { Name = storageFileName, IsDirectory = false } }, deleteLocalFiles, cancellationToken );
 		}
 
 		///////////////////////////////////////////////
 		//copy objects
 
-		public static async Task<GeneralManagerFunctions.SimpleResult> StorageCopyObjectsAsync( GeneralManagerFunctions.CopyObjectsItem[] objects, bool move, CancellationToken cancellationToken = default )
+		public static async Task<CloudServiceFunctions.SimpleResult> StorageCopyObjectsAsync( CloudServiceFunctions.CopyObjectsItem[] objects, bool move, CancellationToken cancellationToken = default )
 		{
 			if( string.IsNullOrEmpty( CommandLineParameters.ServerCheckCode ) )
 				throw new Exception( "Server check code is not configured." );
-			return await GeneralManagerFunctions.StorageCopyObjectsAsync( objects, move, CommandLineParameters.ServerCheckCode, cancellationToken );
+			return await CloudServiceFunctions.StorageCopyObjectsAsync( objects, move, CommandLineParameters.ServerCheckCode, cancellationToken );
 		}
 
-		public static async Task<GeneralManagerFunctions.SimpleResult> StorageCopyDirectoryAsync( string sourceDirectory, string targetDirectory, bool move, CancellationToken cancellationToken = default )
+		public static async Task<CloudServiceFunctions.SimpleResult> StorageCopyDirectoryAsync( string sourceDirectory, string targetDirectory, bool move, CancellationToken cancellationToken = default )
 		{
-			return await StorageCopyObjectsAsync( new GeneralManagerFunctions.CopyObjectsItem[] { new GeneralManagerFunctions.CopyObjectsItem { Name = sourceDirectory, TargetName = targetDirectory, IsDirectory = true } }, move, cancellationToken );
+			return await StorageCopyObjectsAsync( new CloudServiceFunctions.CopyObjectsItem[] { new CloudServiceFunctions.CopyObjectsItem { Name = sourceDirectory, TargetName = targetDirectory, IsDirectory = true } }, move, cancellationToken );
 		}
 
-		public static async Task<GeneralManagerFunctions.SimpleResult> StorageCopyFilesAsync( string[] sourceFileNames, string[] targetFileNames, bool move, CancellationToken cancellationToken = default )
+		public static async Task<CloudServiceFunctions.SimpleResult> StorageCopyFilesAsync( string[] sourceFileNames, string[] targetFileNames, bool move, CancellationToken cancellationToken = default )
 		{
-			var objects = new GeneralManagerFunctions.CopyObjectsItem[ sourceFileNames.Length ];
+			var objects = new CloudServiceFunctions.CopyObjectsItem[ sourceFileNames.Length ];
 			for( int n = 0; n < sourceFileNames.Length; n++ )
-				objects[ n ] = new GeneralManagerFunctions.CopyObjectsItem { Name = sourceFileNames[ n ], TargetName = targetFileNames[ n ] };
+				objects[ n ] = new CloudServiceFunctions.CopyObjectsItem { Name = sourceFileNames[ n ], TargetName = targetFileNames[ n ] };
 			return await StorageCopyObjectsAsync( objects, move, cancellationToken );
 		}
 
-		public static async Task<GeneralManagerFunctions.SimpleResult> StorageCopyFileAsync( string sourceFileName, string targetFileName, bool move, CancellationToken cancellationToken = default )
+		public static async Task<CloudServiceFunctions.SimpleResult> StorageCopyFileAsync( string sourceFileName, string targetFileName, bool move, CancellationToken cancellationToken = default )
 		{
-			return await StorageCopyObjectsAsync( new GeneralManagerFunctions.CopyObjectsItem[] { new GeneralManagerFunctions.CopyObjectsItem { Name = sourceFileName, TargetName = targetFileName } }, move, cancellationToken );
+			return await StorageCopyObjectsAsync( new CloudServiceFunctions.CopyObjectsItem[] { new CloudServiceFunctions.CopyObjectsItem { Name = sourceFileName, TargetName = targetFileName } }, move, cancellationToken );
 		}
 
 		///////////////////////////////////////////////
 		//get main server info
 
-		public class GetMainServerInfoResult
+		public class GetServerInfoResult
 		{
 			public int CPUUsage;
 			public long MemoryInUse;
@@ -1059,18 +1090,21 @@ namespace NeoAxis.Networking
 			}
 		}
 
-		public static async Task<GetMainServerInfoResult> GetMainServerInfoAsync( CancellationToken cancellationToken = default )
+		public static async Task<GetServerInfoResult> GetServerInfoAsync( CancellationToken cancellationToken = default )
 		{
 			var now = DateTime.UtcNow;
-			if( ( now - getMainServerInfoResultCachedTime ).TotalSeconds > 1 )
+			if( ( now - getServerInfoResultCachedTime ).TotalSeconds > 1 )
 			{
-				var requestResult = await RequestToServerManagerAsync( "ServerInfo", cancellationToken );
+				var input = new TextBlock();
+				input.SetAttribute( "Command", "ServerInfo" );
+
+				var requestResult = await RequestToServerManagerAsync( input.DumpToString( false ), cancellationToken );
 				if( !string.IsNullOrEmpty( requestResult.Error ) )
-					return new GetMainServerInfoResult() { Error = requestResult.Error };
+					return new GetServerInfoResult() { Error = requestResult.Error };
 
 				var block = requestResult.Answer;
 
-				var result = new GetMainServerInfoResult();
+				var result = new GetServerInfoResult();
 				int.TryParse( block.GetAttribute( "CPUUsage", "0" ), out result.CPUUsage );
 				long.TryParse( block.GetAttribute( "MemoryInUse", "0" ), out result.MemoryInUse );
 				long.TryParse( block.GetAttribute( "MemoryCapacity", "0" ), out result.MemoryCapacity );
@@ -1084,11 +1118,47 @@ namespace NeoAxis.Networking
 				long.TryParse( block.GetAttribute( "TrafficOutboundSpeed", "0" ), out result.TrafficOutboundSpeed );
 				long.TryParse( block.GetAttribute( "TrafficInboundSpeed", "0" ), out result.TrafficInboundSpeed );
 
-				getMainServerInfoResultCached = result;
-				getMainServerInfoResultCachedTime = now;
+				getServerInfoResultCached = result;
+				getServerInfoResultCachedTime = now;
 			}
 
-			return getMainServerInfoResultCached;
+			return getServerInfoResultCached;
+		}
+
+		/// <summary>
+		/// Sets the user-specified server workload value from 0 to 100. Use it for manual management of balancing between servers for the Web Access feature.
+		/// </summary>
+		/// <param name="workload"></param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		public static async Task<SimpleResult> SetServerWorkloadAsync( int workload, CancellationToken cancellationToken = default )
+		{
+			if( currentServerWorkload != workload )
+			{
+				currentServerWorkload = workload;
+
+				var input = new TextBlock();
+				input.SetAttribute( "Command", "SetWorkload" );
+				input.SetAttribute( "Workload", workload.ToString() );
+
+				var requestResult = await RequestToServerManagerAsync( input.DumpToString( false ), cancellationToken );
+				if( !string.IsNullOrEmpty( requestResult.Error ) )
+					return new SimpleResult() { Error = requestResult.Error };
+			}
+
+			return new SimpleResult();
+		}
+
+		/// <summary>
+		/// Resets the user-specified server workload value.
+		/// </summary>
+		/// <param name="workload"></param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		public static async Task<SimpleResult> ResetServerWorkloadAsync( CancellationToken cancellationToken = default )
+		{
+			return await SetServerWorkloadAsync( -1, cancellationToken );
 		}
 	}
 }
+#endif

@@ -48,7 +48,11 @@ namespace NeoAxis
 					long totalReadBytes = 0;
 					progressCallback?.Invoke( 0, totalReadBytes, totalBytes );
 
+#if UWP
+					using( var contentStream = await response.Content.ReadAsStreamAsync() )
+#else
 					using( var contentStream = await response.Content.ReadAsStreamAsync( cancellationToken ) )
+#endif
 					{
 						using( var fileStream = new FileStream( targetFullPath, FileMode.Create, FileAccess.Write, FileShare.None ) )
 						{
@@ -180,6 +184,7 @@ namespace NeoAxis
 
 								// Modify the URL for appending after the first part
 								string uploadUrl = url;
+								uploadUrl += "&last_part=true";
 
 								// Send the POST request
 								var response = await client.PostAsync( uploadUrl, content, cancellationToken );

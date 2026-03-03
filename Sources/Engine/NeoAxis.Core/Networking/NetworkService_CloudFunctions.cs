@@ -1,4 +1,4 @@
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152<ServerNetworkService_CloudFunctions> Commonwealth of Dominica.
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -8,19 +8,34 @@ using System.Threading.Tasks;
 using NeoAxis.Networking;
 using System.Reflection;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.ComponentModel;
 
-#if !NO_LITE_DB
+
+#if !NO_SERVER
 using Internal.LiteDB;
+using Internal.LiteDB.Engine;
 #endif
 
 namespace NeoAxis
 {
-#if !NO_LITE_DB
+#if !NO_SERVER
 	public class ServerNetworkService_CloudFunctions : ServerService
 	{
+		public int SaveStringMaxCountPerRequest { get; set; } = 1000;
+		public int SaveStringMaxKeyLength { get; set; } = 1024;
+		public int SaveStringMaxValueLength { get; set; } = 1 * 1024 * 1024; //1 MB
+
+		public int CloudMethodDefaultMaxCallPerClientPermit { get; set; } = 1000;
+		//public int GlobalCloudMethodMaxCallPerClientQueue { get; set; } = 0;
+		public CloudMethodAttribute.LimitWindowMeasure CloudMethodDefaultLimitWindow { get; set; } = CloudMethodAttribute.LimitWindowMeasure.Minute;
+		public int CloudMethodMaxInputParametersMaxBytes { get; set; } = 10 * 1024 * 1024; //10 MB
+		public int CloudMethodMaxInputParametersMaxObjects { get; set; } = 100000;
+		public int CloudMethodMaxTimeInMinutes { get; set; } = 10;
+
+		public int FileRequestMaxItemCount { get; set; } = 1000;
+
+		//
+
 		MessageType saveStringMessage;
 		MessageType loadStringMessage;
 		MessageType stringAnswerMessage;
@@ -45,22 +60,24 @@ namespace NeoAxis
 		MessageType storageDownloadFilesAnswerMessage;
 		MessageType storageUploadFilesMessage;
 		MessageType storageUploadFilesAnswerMessage;
-		MessageType getCallMethodInfoMessage;
-		MessageType getCallMethodInfoAnswerMessage;
-		MessageType getCallMethodsMessage;
-		MessageType getCallMethodsAnswerMessage;
+		MessageType getCloudMethodInfoMessage;
+		MessageType getCloudMethodInfoAnswerMessage;
+		MessageType getCloudMethodsMessage;
+		MessageType getCloudMethodsAnswerMessage;
 
 		string fullPathToDatabase;
 		bool databaseReadOnly;
 		DatabaseImplClass databaseImpl;
 		string projectDirectory;
 
-		ConcurrentDictionary<string, CallMethodInfo> callMethods = new ConcurrentDictionary<string, CallMethodInfo>();
-		ConcurrentDictionary<int, CallMethodInfo> callMethodById = new ConcurrentDictionary<int, CallMethodInfo>();
-		int callMethodIdCounter;
+		ConcurrentDictionary<string, CloudMethodInfo> cloudMethods = new ConcurrentDictionary<string, CloudMethodInfo>();
+		ConcurrentDictionary<int, CloudMethodInfo> cloudMethodById = new ConcurrentDictionary<int, CloudMethodInfo>();
+		int cloudMethodIdCounter;
 
 		ConcurrentDictionary<(ServerNode.Client, long), RequestToCancelItem> requestsToCancel = new ConcurrentDictionary<(ServerNode.Client, long), RequestToCancelItem>();
 		DateTime requestsToCancelLastUpdateTime;
+
+		ConcurrentDictionary<long, CancellationTokenSource> requestsCancellationTokens = new ConcurrentDictionary<long, CancellationTokenSource>();
 
 		///////////////////////////////////////////
 
@@ -72,15 +89,8 @@ namespace NeoAxis
 		public delegate void LoadStringEventDelegate( ServerNetworkService_CloudFunctions sender, ServerNode.Client client, long requestID, string[] keys, ref bool allow, ref string error );
 		public event LoadStringEventDelegate LoadStringEvent;
 
-		//public delegate void SaveStringEventDelegate( ServerNetworkService_CloudFunctions sender, ServerNode.Client client, long requestID, string[] keys, string[] values, ref bool answerHandled, ref string error );
-		//public event SaveStringEventDelegate SaveStringEvent;
-
-		//public delegate void LoadStringEventDelegate( ServerNetworkService_CloudFunctions sender, ServerNode.Client client, long requestID, string[] keys, ref bool answerHandled, ref string error );
-		//public event LoadStringEventDelegate LoadStringEvent;
-
-
 		//call method
-		public delegate void CallMethodEventDelegate( ServerNetworkService_CloudFunctions sender, ServerNode.Client client, long requestID, CallMethodInfo method, object[] parameters, ref bool answerHandled, ref string error );
+		public delegate void CallMethodEventDelegate( ServerNetworkService_CloudFunctions sender, ServerNode.Client client, long requestID, CloudMethodInfo method, object[] parameters, ref bool answerHandled, ref string error );
 		public event CallMethodEventDelegate CallMethodEvent;
 
 
@@ -318,7 +328,7 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
-		public class CallMethodInfo
+		public class CloudMethodInfo
 		{
 			public int Id;
 			public string ClassName;
@@ -326,7 +336,7 @@ namespace NeoAxis
 			public string Key;
 			public MethodInfo NetMethod;
 			public ParameterInfo[] Parameters;
-			public bool WithClientInfoParameters;
+			public bool WithContextParameter;
 
 			public ParameterInfo[] InputParameters;
 			public ParameterInfo ReturnParameter;
@@ -336,6 +346,11 @@ namespace NeoAxis
 			public string Description;
 			//public string AdditionalInfo;
 
+			public int MaxCallPerClientPermit;
+			////is not implemented
+			//public int MaxCallPerClientQueue;
+			public CloudMethodAttribute.LimitWindowMeasure LimitWindow = CloudMethodAttribute.LimitWindowMeasure.Minute;
+
 			//
 
 			public class ParameterInfo
@@ -343,16 +358,7 @@ namespace NeoAxis
 				public string Name;
 				public bool IsReturn;
 				public Type Type;
-				public ArrayDataWriter.TypeToWriteCustomStructureProperty[] CustomTypeProperties;
-				//public CustomTypeProperty[] CustomTypeProperties;
 			}
-
-			//public class CustomTypeProperty
-			//{
-			//	public string Name;
-			//	public PropertyInfo Property;
-			//	public FieldInfo Field;
-			//}
 		}
 
 		///////////////////////////////////////////
@@ -361,6 +367,73 @@ namespace NeoAxis
 		{
 			Project,
 			Storage,
+		}
+
+		///////////////////////////////////////////
+
+		public class CallMethodContext
+		{
+			internal ServerNetworkService_CloudFunctions cloudFunctions;
+			internal ServerNode.Client client;
+			internal CancellationToken cancellationToken;
+
+			//
+
+			public ServerNetworkService_CloudFunctions CloudFunctions
+			{
+				get { return cloudFunctions; }
+			}
+
+			public ServerNode.Client Client
+			{
+				get { return client; }
+			}
+
+			public CancellationToken CancellationToken
+			{
+				get { return cancellationToken; }
+			}
+		}
+
+		///////////////////////////////////////////
+
+		public class CallMethodLimiter
+		{
+			Dictionary<int, Queue<DateTime>> requests = new Dictionary<int, Queue<DateTime>>();
+
+			//
+
+			public bool AddCall( int defaultMaxCall, CloudMethodAttribute.LimitWindowMeasure defaultWindow, CloudMethodInfo method )
+			{
+				var maxCall = method.MaxCallPerClientPermit <= 0 ? defaultMaxCall : method.MaxCallPerClientPermit;
+				var window = method.MaxCallPerClientPermit <= 0 ? defaultWindow : method.LimitWindow;
+
+				if( !requests.TryGetValue( method.Id, out var queue ) )
+				{
+					queue = new Queue<DateTime>();
+					requests[ method.Id ] = queue;
+				}
+
+				var now = DateTime.UtcNow;
+
+				var totalSecondsLimit = 1.0;
+				if( window == CloudMethodAttribute.LimitWindowMeasure.Minute )
+					totalSecondsLimit = 60.0;
+				else if( window == CloudMethodAttribute.LimitWindowMeasure.Hour )
+					totalSecondsLimit = 60.0 * 60.0;
+
+				//remove old requests
+				while( queue.Count > 0 && ( now - queue.Peek() ).TotalSeconds >= totalSecondsLimit )
+					queue.Dequeue();
+
+				if( queue.Count < maxCall )
+				{
+					queue.Enqueue( now );
+					return true;
+				}
+
+				return false;
+			}
 		}
 
 		///////////////////////////////////////////
@@ -397,10 +470,10 @@ namespace NeoAxis
 			storageDownloadFilesAnswerMessage = RegisterMessageType( "StorageDownloadFilesAnswer", 22 );
 			storageUploadFilesMessage = RegisterMessageType( "StorageUploadFiles", 23, ReceiveMessage_StorageUploadFiles );
 			storageUploadFilesAnswerMessage = RegisterMessageType( "StorageUploadFilesAnswer", 24 );
-			getCallMethodInfoMessage = RegisterMessageType( "GetCallMethodInfo", 25, ReceiveMessage_GetCallMethodInfo );
-			getCallMethodInfoAnswerMessage = RegisterMessageType( "GetCallMethodInfoAnswer", 26 );
-			getCallMethodsMessage = RegisterMessageType( "GetCallMethods", 27, ReceiveMessage_GetCallMethods );
-			getCallMethodsAnswerMessage = RegisterMessageType( "GetCallMethodsAnswer", 28 );
+			getCloudMethodInfoMessage = RegisterMessageType( "GetCloudMethodInfo", 25, ReceiveMessage_GetCloudMethodInfo );
+			getCloudMethodInfoAnswerMessage = RegisterMessageType( "GetCloudMethodInfoAnswer", 26 );
+			getCloudMethodsMessage = RegisterMessageType( "GetCloudMethods", 27, ReceiveMessage_GetCloudMethods );
+			getCloudMethodsAnswerMessage = RegisterMessageType( "GetCloudMethodsAnswer", 28 );
 
 			if( !string.IsNullOrEmpty( FullPathToDatabase ) )
 			{
@@ -453,7 +526,7 @@ namespace NeoAxis
 				var item2 = item.Value;
 
 				if( ( now - item2.CreationTime ).TotalMinutes > 10 )
-					requestsToCancel.TryRemove( item );
+					requestsToCancel.TryRemove( item.Key, out _ );
 			}
 		}
 
@@ -489,20 +562,39 @@ namespace NeoAxis
 
 		bool ReceiveMessage_SaveString( ServerNode.Client sender, MessageType messageType, ArrayDataReader reader, ref string error )
 		{
+			//read request ID
 			var requestID = reader.ReadVariableInt64();
+
+			//read count
 			var count = reader.ReadVariableInt32();
-			if( count > 1000 )
+			if( count > SaveStringMaxCountPerRequest )
 			{
-				error = "String count limit is 1000.";
+				error = $"String count limit is {SaveStringMaxCountPerRequest}.";
 				return false;
 			}
+
+			//read keys and values
 			var keys = new string[ count ];
 			var valuesToSave = new string[ count ];
 			for( int n = 0; n < count; n++ )
 			{
-				keys[ n ] = reader.ReadString() ?? string.Empty;
-				valuesToSave[ n ] = reader.ReadString();
+				var key = reader.ReadString() ?? "";
+				if( key.Length > SaveStringMaxKeyLength )
+				{
+					error = $"Key length limit is {SaveStringMaxKeyLength}.";
+					return false;
+				}
+				var value = reader.ReadString();
+				if( value != null && value.Length > SaveStringMaxValueLength )
+				{
+					error = $"Value length limit is {SaveStringMaxValueLength}.";
+					return false;
+				}
+
+				keys[ n ] = key;
+				valuesToSave[ n ] = value;
 			}
+
 			if( !reader.Complete() )
 				return false;
 
@@ -512,7 +604,8 @@ namespace NeoAxis
 			//	return true;
 			//}
 
-			Task.Run( delegate ()
+			//Task.Run( delegate ()
+			TaskUtility.Run( TaskUtility.TaskLifetimeEnum.Minutes, "ServerNetworkService_CloudFunctions: ReceiveMessage_SaveString", async delegate ()
 			{
 				try
 				{
@@ -522,13 +615,7 @@ namespace NeoAxis
 					if( !string.IsNullOrEmpty( error2 ) )
 						throw new Exception( error2 );
 
-					//var answerHandled = false;
-					//string error2 = null;
-					//SaveStringEvent?.Invoke( this, sender, requestID, keys, valuesToSave, ref answerHandled, ref error2 );
-					//if( !string.IsNullOrEmpty( error2 ) )
-					//	throw new Exception( error2 );
-
-					if( allow ) //if( !answerHandled )
+					if( allow )
 					{
 						if( databaseImpl != null )
 						{
@@ -556,19 +643,31 @@ namespace NeoAxis
 		bool ReceiveMessage_LoadString( ServerNode.Client sender, MessageType messageType, ArrayDataReader reader, ref string error )
 		{
 			var requestID = reader.ReadVariableInt64();
+
 			var count = reader.ReadVariableInt32();
-			if( count > 1000 )
+			if( count > SaveStringMaxCountPerRequest )
 			{
-				error = "String count limit is 1000.";
+				error = $"String count limit is {SaveStringMaxCountPerRequest}.";
 				return false;
 			}
+
 			var keys = new string[ count ];
 			for( int n = 0; n < count; n++ )
-				keys[ n ] = reader.ReadString() ?? string.Empty;
+			{
+				var key = reader.ReadString() ?? "";
+				if( key.Length > SaveStringMaxKeyLength )
+				{
+					error = $"Key length limit is {SaveStringMaxKeyLength}.";
+					return false;
+				}
+				keys[ n ] = key;
+			}
+
 			if( !reader.Complete() )
 				return false;
 
-			Task.Run( delegate ()
+			//Task.Run( delegate ()
+			TaskUtility.Run( TaskUtility.TaskLifetimeEnum.Minutes, "ServerNetworkService_CloudFunctions: ReceiveMessage_LoadString", async delegate ()
 			{
 				try
 				{
@@ -578,13 +677,7 @@ namespace NeoAxis
 					if( !string.IsNullOrEmpty( error2 ) )
 						throw new Exception( error2 );
 
-					//var answerHandled = false;
-					//string error2 = null;
-					//LoadStringEvent?.Invoke( this, sender, requestID, keys, ref answerHandled, ref error2 );
-					//if( !string.IsNullOrEmpty( error2 ) )
-					//	throw new Exception( error2 );
-
-					if( allow ) //if( !answerHandled )
+					if( allow )
 					{
 						if( databaseImpl != null )
 						{
@@ -606,10 +699,9 @@ namespace NeoAxis
 
 		///////////////////////////////////////////////
 
-		bool CallMethodGetParameterTypeSupported( Type parameterType, out ArrayDataWriter.TypeToWriteCustomStructureProperty[] customTypeProperties/*out CallMethodInfo.CustomTypeProperty[] customTypeProperties*/, out string reason )
+		bool CloudMethodGetParameterTypeSupported( Type parameterType, out string reason )
 		{
 			reason = null;
-			customTypeProperties = null;
 
 			if( parameterType.IsByRef )
 			{
@@ -617,30 +709,16 @@ namespace NeoAxis
 				return false;
 			}
 
-			if( ArrayDataWriter.TypeToWriteIsSupported( parameterType ) )
+			if( ArrayDataWriter.TypeToWriteIsSupported( parameterType, 0 ) )
 				return true;
-
-			if( ArrayDataWriter.TypeToWriteCustomStructureIsSupported( parameterType, out customTypeProperties ) )
-				return true;
-
-			//if( ArrayDataWriter.TypeToWriteCustomStructureIsSupported( parameterType, out var fields, out var properties ) )
-			//{
-			//	var customProperties = new List<CallMethodInfo.CustomTypeProperty>();
-			//	foreach( var field in fields )
-			//		customProperties.Add( new CallMethodInfo.CustomTypeProperty { Name = field.Name, Field = field } );
-			//	foreach( var property in properties )
-			//		customProperties.Add( new CallMethodInfo.CustomTypeProperty { Name = property.Name, Property = property } );
-			//	customTypeProperties = customProperties.ToArray();
-			//	return true;
-			//}
 
 			reason = "The type is not supported.";
 			return false;
 		}
 
-		public bool RegisterCallMethods( Type type, out string error )
+		public bool RegisterCloudMethods( Type type, out string error )
 		{
-			error = string.Empty;
+			error = "";
 
 			var bindingFlags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static;// BindingFlags.Instance;
 			foreach( var netMethod in type.GetMethods( bindingFlags ) )
@@ -648,29 +726,23 @@ namespace NeoAxis
 				var attrib = netMethod.GetCustomAttribute<CloudMethodAttribute>();
 				if( attrib != null )
 				{
-					var method = new CallMethodInfo();
+					var method = new CloudMethodInfo();
 					method.ClassName = type.Name;
 					method.MethodName = netMethod.Name;
-					method.Id = Interlocked.Increment( ref callMethodIdCounter );
+					method.Id = Interlocked.Increment( ref cloudMethodIdCounter );
 					method.Key = $"{type.Name}.{netMethod.Name}";
 					method.NetMethod = netMethod;
 
 					//get parameters from the method
-					var parameters = new List<CallMethodInfo.ParameterInfo>();
-					var withClientInfoParameters = false;
+					var parameters = new List<CloudMethodInfo.ParameterInfo>();
 
 					var netParameters = netMethod.GetParameters();
 
-					if( netParameters.Length >= 2 )
-					{
-						if( typeof( ServerNetworkService_CloudFunctions ).IsAssignableFrom( netParameters[ 0 ].ParameterType ) &&
-							typeof( ServerNode.Client ).IsAssignableFrom( netParameters[ 1 ].ParameterType ) )
-						{
-							withClientInfoParameters = true;
-						}
-					}
+					var withContextParameter = false;
+					if( netParameters.Length >= 1 && typeof( CallMethodContext ).IsAssignableFrom( netParameters[ 0 ].ParameterType ) )
+						withContextParameter = true;
 
-					var indexOffset = withClientInfoParameters ? 2 : 0;
+					var indexOffset = withContextParameter ? 1 : 0;
 					for( int n = indexOffset; n < netParameters.Length; n++ )
 					{
 						var netParameter = netParameters[ n ];
@@ -682,16 +754,15 @@ namespace NeoAxis
 							return false;
 						}
 
-						if( !CallMethodGetParameterTypeSupported( parameterType, out var customTypeProperties, out var reason ) )
+						if( !CloudMethodGetParameterTypeSupported( parameterType, out var reason ) )
 						{
 							error = $"Parameter type \"{parameterType.FullName}\" is not supported. " + reason;
 							return false;
 						}
 
-						var p = new CallMethodInfo.ParameterInfo();
+						var p = new CloudMethodInfo.ParameterInfo();
 						p.Name = netParameter.Name;
 						p.Type = parameterType;
-						p.CustomTypeProperties = customTypeProperties;
 						parameters.Add( p );
 					}
 
@@ -709,23 +780,22 @@ namespace NeoAxis
 
 						if( parameterType != typeof( void ) )
 						{
-							if( !CallMethodGetParameterTypeSupported( parameterType, out var customTypeProperties, out var reason ) )
+							if( !CloudMethodGetParameterTypeSupported( parameterType, out var reason ) )
 							{
 								error = $"Parameter type \"{parameterType.FullName}\" is not supported. " + reason;
 								return false;
 							}
 
-							var p = new CallMethodInfo.ParameterInfo();
+							var p = new CloudMethodInfo.ParameterInfo();
 							p.Name = "ReturnValue";
 							p.IsReturn = true;
 							p.Type = parameterType;
-							p.CustomTypeProperties = customTypeProperties;
 							parameters.Add( p );
 						}
 					}
 
 					method.Parameters = parameters.ToArray();
-					method.WithClientInfoParameters = withClientInfoParameters;
+					method.WithContextParameter = withContextParameter;
 
 					method.InputParameters = method.Parameters.Where( p => !p.IsReturn ).ToArray();
 					method.ReturnParameter = method.Parameters.FirstOrDefault( p => p.IsReturn );
@@ -736,31 +806,33 @@ namespace NeoAxis
 					if( descriptionAttribute != null )
 						method.Description = descriptionAttribute.Description;
 
-					//File.AppendAllText( "/home/Data/Logs/Temp.log", "Register: " + method.Key + "\r\n" );
+					method.MaxCallPerClientPermit = attrib.MaxCallPerClientPermit;
+					//method.MaxCallPerClientQueue = attrib.MaxCallPerClientQueue;
+					method.LimitWindow = attrib.LimitWindow;
 
-					callMethods[ method.Key ] = method;
-					callMethodById[ method.Id ] = method;
+					cloudMethods[ method.Key ] = method;
+					cloudMethodById[ method.Id ] = method;
 				}
 			}
 
 			return true;
 		}
 
-		public CallMethodInfo[] GetCallMethods()
+		public CloudMethodInfo[] GetCloudMethods()
 		{
-			return callMethods.Values.ToArray();
+			return cloudMethods.Values.ToArray();
 		}
 
-		public int CallMethodCount
+		public int CloudMethodCount
 		{
-			get { return callMethods.Count; }
+			get { return cloudMethods.Count; }
 		}
 
 		///////////////////////////////////////////////
 
-		public void SendGetCallMethodInfoAnswer( ServerNode.Client recepient, long requestID, CallMethodInfo method, string error )
+		public void SendGetCloudMethodInfoAnswer( ServerNode.Client recepient, long requestID, CloudMethodInfo method, string error )
 		{
-			var m = BeginMessage( recepient, getCallMethodInfoAnswerMessage );
+			var m = BeginMessage( recepient, getCloudMethodInfoAnswerMessage );
 			m.Writer.WriteVariable( requestID );
 
 			if( string.IsNullOrEmpty( error ) )
@@ -775,20 +847,21 @@ namespace NeoAxis
 					parameterBlock.SetAttribute( "Name", parameter.Name );
 					parameterBlock.SetAttribute( "IsReturn", parameter.IsReturn.ToString() );
 					parameterBlock.SetAttribute( "Type", parameter.Type.FullName );
-					if( parameter.CustomTypeProperties != null )
-					{
-						for( int n = 0; n < parameter.CustomTypeProperties.Length; n++ )
-						{
-							var property = parameter.CustomTypeProperties[ n ];
 
-							var customTypePropertyBlock = parameterBlock.AddChild( "CustomTypeProperty" );
-							customTypePropertyBlock.SetAttribute( "Name", property.Name );
-							if( property.PropertyType != null )
-								customTypePropertyBlock.SetAttribute( "PropertyType", property.PropertyType.FullName );
-							else if( property.FieldType != null )
-								customTypePropertyBlock.SetAttribute( "FieldType", property.FieldType.FullName );
-						}
-					}
+					//if( parameter.CustomTypeProperties != null )
+					//{
+					//	for( int n = 0; n < parameter.CustomTypeProperties.Length; n++ )
+					//	{
+					//		var property = parameter.CustomTypeProperties[ n ];
+
+					//		var customTypePropertyBlock = parameterBlock.AddChild( "CustomTypeProperty" );
+					//		customTypePropertyBlock.SetAttribute( "Name", property.Name );
+					//		if( property.PropertyType != null )
+					//			customTypePropertyBlock.SetAttribute( "PropertyType", property.PropertyType.FullName );
+					//		else if( property.FieldType != null )
+					//			customTypePropertyBlock.SetAttribute( "FieldType", property.FieldType.FullName );
+					//	}
+					//}
 				}
 
 				if( method.AddToCommands )
@@ -807,7 +880,7 @@ namespace NeoAxis
 
 		///////////////////////////////////////////////
 
-		static bool GetCallMethodInfoIsValidName( string classNameOrMethodName )
+		static bool GetCloudMethodInfoIsValidName( string classNameOrMethodName )
 		{
 			if( string.IsNullOrEmpty( classNameOrMethodName ) )
 				return false;
@@ -820,17 +893,17 @@ namespace NeoAxis
 			return true;
 		}
 
-		bool ReceiveMessage_GetCallMethodInfo( ServerNode.Client sender, MessageType messageType, ArrayDataReader reader, ref string error )
+		bool ReceiveMessage_GetCloudMethodInfo( ServerNode.Client sender, MessageType messageType, ArrayDataReader reader, ref string error )
 		{
 			var requestID = reader.ReadVariableInt64();
-			var className = reader.ReadString() ?? string.Empty;
-			if( !GetCallMethodInfoIsValidName( className ) )
+			var className = reader.ReadString() ?? "";
+			if( !GetCloudMethodInfoIsValidName( className ) )
 			{
 				error = "Invalid class name.";
 				return false;
 			}
-			var methodName = reader.ReadString() ?? string.Empty;
-			if( !GetCallMethodInfoIsValidName( methodName ) )
+			var methodName = reader.ReadString() ?? "";
+			if( !GetCloudMethodInfoIsValidName( methodName ) )
 			{
 				error = "Invalid method name.";
 				return false;
@@ -850,38 +923,37 @@ namespace NeoAxis
 				return false;
 
 			var key = $"{className}.{methodName}";
-			if( !callMethods.TryGetValue( key, out var method ) )
+			if( !cloudMethods.TryGetValue( key, out var method ) )
 			{
-				SendGetCallMethodInfoAnswer( sender, requestID, null, $"Method not found \"{key}\"." );
-				//SendGetCallMethodInfoAnswer( sender, requestID, null, $"Method \"{key}\" not found." );
+				SendGetCloudMethodInfoAnswer( sender, requestID, null, $"Method not found \"{key}\"." );
 				return true;
 			}
 
-			SendGetCallMethodInfoAnswer( sender, requestID, method, null );
+			SendGetCloudMethodInfoAnswer( sender, requestID, method, null );
 			return true;
 		}
 
 		///////////////////////////////////////////////
 
-		public void SendGetCallMethodsAnswer( ServerNode.Client recepient, long requestID, bool commandsOnly, string error )
+		public void SendGetCloudMethodsAnswer( ServerNode.Client recepient, long requestID, bool commandsOnly, string error )
 		{
-			var m = BeginMessage( recepient, getCallMethodsAnswerMessage );
+			var m = BeginMessage( recepient, getCloudMethodsAnswerMessage );
 			m.Writer.WriteVariable( requestID );
 
 			if( string.IsNullOrEmpty( error ) )
 			{
-				var methods = GetCallMethods();
+				var methods = GetCloudMethods();
 				if( commandsOnly )
 					methods = methods.Where( m => m.AddToCommands ).ToArray();
 
 				var rootBlock = new TextBlock();
 
-				var classes = new EDictionary<string, List<CallMethodInfo>>();
+				var classes = new EDictionary<string, List<CloudMethodInfo>>();
 				foreach( var method in methods )
 				{
 					if( !classes.TryGetValue( method.ClassName, out var list ) )
 					{
-						list = new List<CallMethodInfo>();
+						list = new List<CloudMethodInfo>();
 						classes[ method.ClassName ] = list;
 					}
 					list.Add( method );
@@ -907,20 +979,20 @@ namespace NeoAxis
 			m.End();
 		}
 
-		bool ReceiveMessage_GetCallMethods( ServerNode.Client sender, MessageType messageType, ArrayDataReader reader, ref string error )
+		bool ReceiveMessage_GetCloudMethods( ServerNode.Client sender, MessageType messageType, ArrayDataReader reader, ref string error )
 		{
 			var requestID = reader.ReadVariableInt64();
 			var commandsOnly = reader.ReadBoolean();
 			if( !reader.Complete() )
 				return false;
 
-			SendGetCallMethodsAnswer( sender, requestID, commandsOnly, null );
+			SendGetCloudMethodsAnswer( sender, requestID, commandsOnly, null );
 			return true;
 		}
 
 		///////////////////////////////////////////////
 
-		public void SendCallMethodAnswer( ServerNode.Client recepient, long requestID, CallMethodInfo method, object value, string error )
+		public void SendCallMethodAnswer( ServerNode.Client recepient, long requestID, CloudMethodInfo method, object value, string error )
 		{
 			var m = BeginMessage( recepient, callMethodAnswerMessage );
 			var writer = m.Writer;
@@ -930,48 +1002,59 @@ namespace NeoAxis
 			if( string.IsNullOrEmpty( error ) )
 			{
 				if( method.ReturnParameter != null && value != null )
-				{
-					if( method.ReturnParameter.CustomTypeProperties != null )
-						writer.WriteCustomStructure( method.ReturnParameter.Type, value );
-					else
-						writer.Write( method.ReturnParameter.Type, value );
-				}
+					writer.Write( method.ReturnParameter.Type, value );
 			}
-			//writer.Write( error );
 			m.End();
 		}
 
 		bool ReceiveMessage_CallMethod( ServerNode.Client sender, MessageType messageType, ArrayDataReader reader, ref string error )
 		{
+			//read request id
 			var requestID = reader.ReadVariableInt64();
 
+			//read method id
 			var methodId = reader.ReadVariableInt();
-			if( !callMethodById.TryGetValue( methodId, out var method ) )
+			if( !cloudMethodById.TryGetValue( methodId, out var method ) )
 				return false;
 
+			//check input parameters size limit
+			if( ( reader.EndPosition - reader.CurrentPosition ) > CloudMethodMaxInputParametersMaxBytes )
+			{
+				error = $"Input parameters size exceeds limit of {CloudMethodMaxInputParametersMaxBytes} bytes.";
+				return false;
+			}
+
+			//read parameter count
 			var parameterCount = reader.ReadVariableInt();
 			if( parameterCount > 100 )
 			{
 				error = "Parameter count limit is 100.";
 				return false;
 			}
+
+			//check parameter count
 			var inputParameters = method.InputParameters;
 			if( parameterCount != inputParameters.Length )
 				return false;
 
+			//read parameters
 			var inputParameterValues = new object[ parameterCount ];
-			for( int n = 0; n < inputParameters.Length; n++ )
+			try
 			{
-				var inputParameter = inputParameters[ n ];
-				if( inputParameter.CustomTypeProperties != null )
-					inputParameterValues[ n ] = reader.ReadCustomStructure( inputParameter.Type );
-				else
-					inputParameterValues[ n ] = reader.Read( inputParameter.Type );
+				var allocationStatistics = new ArrayDataReader.AllocationStatistics( CloudMethodMaxInputParametersMaxBytes, CloudMethodMaxInputParametersMaxObjects );
+				for( int n = 0; n < inputParameters.Length; n++ )
+					inputParameterValues[ n ] = reader.Read( inputParameters[ n ].Type, allocationStatistics );
+			}
+			catch( Exception e )
+			{
+				error = "Error reading input parameters. " + e.Message;
+				return false;
 			}
 
 			if( !reader.Complete() )
 				return false;
 
+			//check user role
 			if( sender.UserRole < method.UserRole )
 			{
 				SendCallMethodAnswer( sender, requestID, method, null, "Access Denied: Insufficient user role." );
@@ -984,7 +1067,19 @@ namespace NeoAxis
 			//	return true;
 			//}
 
-			Task.Run( async delegate ()
+			//check max call limits
+			{
+				if( sender.callMethodLimiter == null )
+					sender.callMethodLimiter = new CallMethodLimiter();
+				if( !sender.callMethodLimiter.AddCall( CloudMethodDefaultMaxCallPerClientPermit, CloudMethodDefaultLimitWindow, method ) )
+				{
+					SendCallMethodAnswer( sender, requestID, method, null, "Call limit exceeded." );
+					return true;
+				}
+			}
+
+			//run task for method call
+			TaskUtility.Run( TaskUtility.TaskLifetimeEnum.Minutes, "ServerNetworkService_CloudFunctions: ReceiveMessage_CallMethod", async delegate ()
 			{
 				try
 				{
@@ -996,74 +1091,93 @@ namespace NeoAxis
 
 					if( !answerHandled )
 					{
-						//var key = $"{className}.{methodName}";
+						using var cts = new CancellationTokenSource( new TimeSpan( 0, CloudMethodMaxTimeInMinutes, 0 ) );
 
-						//if( !callMethods.TryGetValue( key, out var method ) )
-						//	throw new Exception( $"Method \"{className}.{methodName}\" is not registered." );
-
-						//var inputParams = new List<ParameterInfo>();
-						//foreach( var p in method.NetMethod.GetParameters() )
-						//{
-						//	if( !p.IsRetval )
-						//		inputParams.Add( p );
-						//}
-
-						var inputParameterValues2 = new object[ ( method.WithClientInfoParameters ? 2 : 0 ) + inputParameterValues.Length ];
-
-						if( method.WithClientInfoParameters )
+						requestsCancellationTokens[ requestID ] = cts;
+						try
 						{
-							inputParameterValues2[ 0 ] = this;
-							inputParameterValues2[ 1 ] = sender;
-						}
+							var context = new CallMethodContext();
+							context.cloudFunctions = this;
+							context.client = sender;
+							context.cancellationToken = cts.Token;
 
-						var indexOffset = method.WithClientInfoParameters ? 2 : 0;
+							var inputParameterValues2 = new object[ ( method.WithContextParameter ? 1 : 0 ) + inputParameterValues.Length ];
+							if( method.WithContextParameter )
+								inputParameterValues2[ 0 ] = context;
 
-						for( int nParam = 0; nParam < inputParameterValues.Length; nParam++ )
-						{
-							var demandedType = inputParameters[ nParam ].Type;
-							var value = inputParameterValues[ nParam ];
+							var indexOffset = method.WithContextParameter ? 1 : 0;
 
-							if( value != null )
+							//Console.WriteLine( $"CallMethod: method={method.Key}, inputParameterValues.Length={inputParameterValues.Length}" );
+
+							for( int nParam = 0; nParam < inputParameterValues.Length; nParam++ )
 							{
-								if( demandedType == value.GetType() )
-									inputParameterValues2[ indexOffset + nParam ] = value;
-								else if( demandedType.IsAssignableFrom( value.GetType() ) )
-									inputParameterValues2[ indexOffset + nParam ] = Convert.ChangeType( value, demandedType );
+								var demandedType = inputParameters[ nParam ].Type;
+								var value = inputParameterValues[ nParam ];
+
+								//Console.WriteLine( $"CallMethod param {nParam}: demanded={demandedType.FullName}, value type={(value != null ? value.GetType().FullName : "null")}, value={(value != null ? value.ToString() : "null")}" );
+
+								if( value != null )
+								{
+									object newValue;
+
+									if( demandedType == value.GetType() )
+										newValue = value;
+									else if( demandedType.IsAssignableFrom( value.GetType() ) )
+										newValue = Convert.ChangeType( value, demandedType );
+									else
+									{
+										//!!!!good?
+										//convert via string
+										newValue = SimpleTypes.ParseValue( demandedType, value.ToString() );
+										//newParameters[ nParam ] = MetadataManager.AutoConvertValue( value, demandedType );
+									}
+
+									//check valid type
+									if( newValue != null )
+									{
+										if( !demandedType.IsAssignableFrom( newValue.GetType() ) )
+											throw new Exception( $"Unable to convert parameter \"{inputParameters[ nParam ].Name}\" to type \"{demandedType.FullName}\"." );
+									}
+									else
+									{
+										if( demandedType.IsValueType )
+											throw new Exception( $"Unable to convert parameter \"{inputParameters[ nParam ].Name}\" to type \"{demandedType.FullName}\"." );
+									}
+
+									inputParameterValues2[ indexOffset + nParam ] = newValue;
+								}
 								else
 								{
-
-									//!!!!?
-
-									inputParameterValues2[ indexOffset + nParam ] = SimpleTypes.ParseValue( demandedType, value.ToString() );
-									//newParameters[ nParam ] = MetadataManager.AutoConvertValue( value, demandedType );
+									//check valid type
+									if( demandedType.IsValueType )
+										throw new Exception( $"Unable to convert parameter \"{inputParameters[ nParam ].Name}\" to type \"{demandedType.FullName}\"." );
 								}
 							}
-						}
 
-						var netMethod = method.NetMethod;
-						var methodValue = netMethod.Invoke( null, inputParameterValues2 );
+							var netMethod = method.NetMethod;
+							var methodValue = netMethod.Invoke( null, inputParameterValues2 );
 
-						Task task = methodValue as Task;
-						if( task != null )
-						{
-							await task;
-
-							// Check if the task's return type is Task<object> or Task
-							if( netMethod.ReturnType.IsGenericType && netMethod.ReturnType.GetGenericTypeDefinition() == typeof( Task<> ) )
+							Task task = methodValue as Task;
+							if( task != null )
 							{
-								var resultProperty = netMethod.ReturnType.GetProperty( "Result" );
-								methodValue = resultProperty?.GetValue( task );
+								await task;
+
+								// Check if the task's return type is Task<object> or Task
+								if( netMethod.ReturnType.IsGenericType && netMethod.ReturnType.GetGenericTypeDefinition() == typeof( Task<> ) )
+								{
+									var resultProperty = netMethod.ReturnType.GetProperty( "Result" );
+									methodValue = resultProperty?.GetValue( task );
+								}
+								else if( netMethod.ReturnType == typeof( Task ) )
+									methodValue = null;
 							}
-							else if( netMethod.ReturnType == typeof( Task ) )
-								methodValue = null;
+
+							SendCallMethodAnswer( sender, requestID, method, methodValue, null );
 						}
-
-						//var methodValue = method.NetMethod.Invoke( null, inputParameterValues2 ); 
-
-						//// ObjectEx.MethodInvoke( null, null, item.Method, newParameters );
-						////var resultValue = methodValue != null ? methodValue.ToString() : null;
-
-						SendCallMethodAnswer( sender, requestID, method, methodValue, null );
+						finally
+						{
+							requestsCancellationTokens.TryRemove( requestID, out _ );
+						}
 					}
 				}
 				catch( Exception e )
@@ -1076,94 +1190,11 @@ namespace NeoAxis
 					}
 					else
 					{
-						//var message = e.ToString() + "\r\n" + ( e.StackTrace ?? e.ToString() );
 						var message = e.Message + "\r\n" + ( e.StackTrace ?? e.ToString() );
 						SendCallMethodAnswer( sender, requestID, method, null, message );
 					}
-
-					////SendCallMethodAnswer( sender, requestID, method, null, e.ToString() );
-					//////SendCallMethodAnswer( sender, requestID, method, null, e.Message );
 				}
 			} );
-
-
-			//var requestID = reader.ReadVariableInt64();
-			//var className = reader.ReadString() ?? string.Empty;
-			//var methodName = reader.ReadString() ?? string.Empty;
-			//var parameterCount = reader.ReadVariableInt32();
-			//if( parameterCount > 100 )
-			//{
-			//	error = "Parameter count limit is 100.";
-			//	return false;
-			//}
-			//var parameters = new string[ parameterCount ];
-			//for( int n = 0; n < parameterCount; n++ )
-			//	parameters[ n ] = reader.ReadString();
-
-			//if( !reader.Complete() )
-			//	return false;
-
-			//Task.Run( delegate ()
-			//{
-			//	try
-			//	{
-
-			//		//!!!!arrays, tuples support
-
-			//		//!!!!slowly. don't transfer class, method names
-
-
-			//		var answerHandled = false;
-			//		string error2 = null;
-			//		CallMethodEvent?.Invoke( this, sender, requestID, className, methodName, parameters, ref answerHandled, ref error2 );
-			//		if( !string.IsNullOrEmpty( error2 ) )
-			//			throw new Exception( error2 );
-
-			//		if( !answerHandled )
-			//		{
-			//			var key = $"{className}.{methodName}";
-
-			//			if( !callMethods.TryGetValue( key, out var method ) )
-			//				throw new Exception( $"Method \"{className}.{methodName}\" is not registered." );
-
-			//			var inputParams = new List<ParameterInfo>();
-			//			foreach( var p in method.NetMethod.GetParameters() )
-			//			{
-			//				if( !p.IsRetval )
-			//					inputParams.Add( p );
-			//			}
-
-			//			var newParameters = new object[ parameters.Length ];
-			//			for( int nParam = 0; nParam < inputParams.Count; nParam++ )
-			//			{
-			//				var demandedType = inputParams[ nParam ].ParameterType;
-			//				var value = parameters[ nParam ];
-
-			//				if( value != null )
-			//				{
-			//					if( demandedType == value.GetType() )
-			//						newParameters[ nParam ] = value;
-			//					else if( demandedType.IsAssignableFrom( value.GetType() ) )
-			//						newParameters[ nParam ] = Convert.ChangeType( value, demandedType );
-			//					else
-			//					{
-			//						newParameters[ nParam ] = SimpleTypes.ParseValue( demandedType, value );
-			//						//newParameters[ nParam ] = MetadataManager.AutoConvertValue( value, demandedType );
-			//					}
-			//				}
-			//			}
-
-			//			var methodValue = method.NetMethod.Invoke( null, newParameters ); // = ObjectEx.MethodInvoke( null, null, item.Method, newParameters );
-			//			var resultValue = methodValue != null ? methodValue.ToString() : null;
-
-			//			SendCallMethodAnswer( sender, requestID, resultValue, null );
-			//		}
-			//	}
-			//	catch( Exception e )
-			//	{
-			//		SendCallMethodAnswer( sender, requestID, null, e.Message );
-			//	}
-			//} );
 
 			return true;
 		}
@@ -1192,76 +1223,7 @@ namespace NeoAxis
 			SendMessage( recepient, getFilesInfoAnswerMessage, writer.AsArraySegment() );
 		}
 
-		//static string GetMD5( MD5 md5, Stream stream )
-		//{
-		//	var hashBytes = md5.ComputeHash( stream );
-
-		//	var builder = new StringBuilder( ( hashBytes.Length + 1 ) * 2 );
-		//	for( int i = 0; i < hashBytes.Length; i++ )
-		//		builder.Append( hashBytes[ i ].ToString( "X2" ) );
-		//	return builder.ToString();
-		//}
-
-		//static string GetMD5( MD5 md5, byte[] input )
-		//{
-		//	var hashBytes = md5.ComputeHash( input );
-
-		//	var builder = new StringBuilder( ( hashBytes.Length + 1 ) * 2 );
-		//	for( int i = 0; i < hashBytes.Length; i++ )
-		//		builder.Append( hashBytes[ i ].ToString( "X2" ) );
-		//	return builder.ToString();
-		//}
-
-		//!!!!
-		//string GetOrCalculateFileHash( FileInfo fileInfo )
-		//{
-		//	string hash = string.Empty;
-
-		//	try
-		//	{
-
-		//		var fullPath = fileInfo.FullName;
-
-		//		var hashFileInfo = new FileInfo( fullPath + ".hash" );
-		//		if( hashFileInfo.Exists && hashFileInfo.LastWriteTimeUtc >= fileInfo.LastWriteTimeUtc )
-		//			hash = File.ReadAllText( hashFileInfo.FullName ).Trim( new char[] { '\n', '\r' } );
-
-		//		if( string.IsNullOrEmpty( hash ) )
-		//		{
-		//			//Console.WriteLine( $"Calculating hash for file \"{fullPath}\"..." );
-		//			//var now = DateTime.UtcNow;
-
-		//			//!!!!slowly?
-		//			using( var md5 = MD5.Create() )
-		//			{
-		//				if( fileInfo.Length > 10000000 )
-		//				{
-		//					using( var stream = new FileStream( fullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite ) )
-		//						hash = GetMD5( md5, stream );
-		//				}
-		//				else
-		//				{
-		//					var bytes = File.ReadAllBytes( fullPath );
-		//					hash = GetMD5( md5, bytes );
-		//				}
-		//			}
-
-		//			//var totalSeconds = ( DateTime.UtcNow - now ).TotalSeconds;
-		//			//Console.WriteLine( $"Calculated hash for file \"{fullPath}\" in {totalSeconds} seconds." );
-
-		//			//write .hash file
-		//			File.WriteAllText( hashFileInfo.FullName, hash );
-		//		}
-		//	}
-		//	catch( Exception )
-		//	{
-		//		//!!!!?
-		//	}
-
-		//	return hash;
-		//}
-
-		public static bool IsValidVirtualPath( string filePath )
+		public static bool IsValidVirtualPath( string filePath, bool isStoragePath )
 		{
 			if( string.IsNullOrEmpty( filePath ) )
 				return false;
@@ -1272,15 +1234,45 @@ namespace NeoAxis
 			if( filePath.Contains( ".." ) )
 				return false;
 
-			//slowly?
 			var invalidPathChars = Path.GetInvalidPathChars();
 			if( filePath.Any( c => invalidPathChars.Contains( c ) ) )
 				return false;
 
-			//var invalidPathChars = Path.GetInvalidPathChars();
-			//var invalidFileNameChars = Path.GetInvalidFileNameChars();
-			//if( filePath.Any( c => invalidPathChars.Contains( c ) || invalidFileNameChars.Contains( c ) ) )
+			if( isStoragePath )
+			{
+				//Linode limits
+
+				var lengthWithHash = 0;
+				try
+				{
+					lengthWithHash = filePath.Length + 34 + Path.GetExtension( filePath ).Length;
+				}
+				catch { }
+
+				if( lengthWithHash >= 1024 )
+					return false;
+
+				////-40 for hash suffixes in the storage. by idea can save hash names or make own storage service
+				//var maxLength = 1024 - 40;
+				//if( filePath.Length > maxLength )
+				//	return false;
+			}
+			else
+			{
+				var maxLength = 4096;
+				if( filePath.Length > maxLength )
+					return false;
+			}
+
+			//try
+			//{
+			//	if( Path.GetFileName( filePath ).Length >= 255 )
+			//		return false;
+			//}
+			//catch
+			//{
 			//	return false;
+			//}
 
 			return true;
 		}
@@ -1290,14 +1282,15 @@ namespace NeoAxis
 			var requestID = reader.ReadVariableInt64();
 			var source = reader.ReadBoolean() ? FileSource.Storage : FileSource.Project;
 			var count = reader.ReadVariableInt32();
-			if( count > 10000 )
+			if( count > FileRequestMaxItemCount )
 			{
-				error = "Get files count limit is 10000.";
+				error = $"File count limit is {FileRequestMaxItemCount}.";
 				return false;
 			}
 			var filePaths = new string[ count ];
 			for( int n = 0; n < count; n++ )
-				filePaths[ n ] = reader.ReadString() ?? string.Empty;
+				filePaths[ n ] = reader.ReadString() ?? "";
+
 			var anyData = reader.ReadString();
 			if( !reader.Complete() )
 				return false;
@@ -1306,14 +1299,14 @@ namespace NeoAxis
 			for( int n = 0; n < filePaths.Length; n++ )
 				filePaths[ n ] = PathUtility.NormalizePath( filePaths[ n ] );
 
-			Task.Run( async delegate ()
+			TaskUtility.Run( TaskUtility.TaskLifetimeEnum.Minutes, "ServerNetworkService_CloudFunctions: ReceiveMessage_GetFilesInfo", async delegate ()
 			{
 				try
 				{
 					//check for invalid paths
 					for( int n = 0; n < filePaths.Length; n++ )
 					{
-						if( !IsValidVirtualPath( filePaths[ n ] ) )
+						if( !IsValidVirtualPath( filePaths[ n ], source == FileSource.Storage ) )
 						{
 							SendGetFilesInfoAnswer( sender, requestID, null, "Invalid file path." );
 							return;
@@ -1360,7 +1353,7 @@ namespace NeoAxis
 									resultValues[ n ] = new( fileInfo.Length, fileInfo.LastWriteTimeUtc, hash );
 								}
 								else
-									resultValues[ n ] = new( -1, new DateTime(), string.Empty );
+									resultValues[ n ] = new( -1, new DateTime(), "" );
 							}
 
 							SendGetFilesInfoAnswer( sender, requestID, resultValues, null );
@@ -1369,11 +1362,11 @@ namespace NeoAxis
 						{
 							//Storage source
 
-							var cancellationToken = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+							using var cancellationToken = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 
 							if( string.IsNullOrEmpty( CloudServerProcessUtility.CommandLineParameters.ServerCheckCode ) )
 								throw new Exception( "Server check code is not configured." );
-							var resultTask = GeneralManagerFunctions.StorageGetFilesInfoAsync( filePaths, CloudServerProcessUtility.CommandLineParameters.ServerCheckCode, cancellationToken.Token );
+							var resultTask = CloudServiceFunctions.StorageGetFilesInfoAsync( filePaths, CloudServerProcessUtility.CommandLineParameters.ServerCheckCode, cancellationToken.Token );
 
 							//var resultTask = CloudServerProcessUtility.StorageGetFilesInfoAsync( filePaths, cancellationToken.Token );
 
@@ -1394,7 +1387,7 @@ namespace NeoAxis
 							for( int n = 0; n < resultValues.Length; n++ )
 							{
 								var resultValue = result.Items[ n ];
-								resultValues[ n ] = new( resultValue.Size, resultValue.LastModified, string.Empty );
+								resultValues[ n ] = new( resultValue.Size, resultValue.LastModified, "" );
 							}
 							SendGetFilesInfoAnswer( sender, requestID, resultValues, null );
 						}
@@ -1438,7 +1431,7 @@ namespace NeoAxis
 		{
 			var requestID = reader.ReadVariableInt64();
 			var source = reader.ReadBoolean() ? FileSource.Storage : FileSource.Project;
-			var sourcePath = reader.ReadString() ?? string.Empty;
+			var sourcePath = reader.ReadString() ?? "";
 			var searchPattern = reader.ReadString();
 			var searchOption = reader.ReadBoolean() ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 			var anyData = reader.ReadString();
@@ -1450,12 +1443,12 @@ namespace NeoAxis
 			if( sourcePath.Length > 0 && sourcePath[ sourcePath.Length - 1 ] == Path.DirectorySeparatorChar )
 				sourcePath = sourcePath.Substring( 0, sourcePath.Length - 1 );
 
-			Task.Run( async delegate ()
+			TaskUtility.Run( TaskUtility.TaskLifetimeEnum.Minutes, "ServerNetworkService_CloudFunctions: ReceiveMessage_GetDirectoryInfo", async delegate ()
 			{
 				try
 				{
 					//check for invalid path
-					if( !IsValidVirtualPath( sourcePath ) )
+					if( !IsValidVirtualPath( sourcePath, source == FileSource.Storage ) )
 					{
 						SendGetDirectoryInfoAnswer( sender, requestID, null, "Invalid file path." );
 						return;
@@ -1496,7 +1489,7 @@ namespace NeoAxis
 								foreach( var directoryInfo2 in directoryInfo.GetDirectories( "*", searchOption ) )
 								{
 									var virtualPath = Path.Combine( sourcePath, directoryInfo2.FullName.Substring( directoryFullPath.Length + 1 ) );
-									resultValues.Add( (virtualPath, 0, directoryInfo2.LastWriteTimeUtc, string.Empty, true) );
+									resultValues.Add( (virtualPath, 0, directoryInfo2.LastWriteTimeUtc, "", true) );
 								}
 
 								foreach( var fileInfo in directoryInfo.GetFiles( "*", searchOption ) )
@@ -1527,11 +1520,11 @@ namespace NeoAxis
 						{
 							//Storage source
 
-							var cancellationToken = new CancellationTokenSource( new TimeSpan( 0, 2, 0 ) );
+							using var cancellationToken = new CancellationTokenSource( new TimeSpan( 0, 2, 0 ) );
 
 							if( string.IsNullOrEmpty( CloudServerProcessUtility.CommandLineParameters.ServerCheckCode ) )
 								throw new Exception( "Server check code is not configured." );
-							var resultTask = GeneralManagerFunctions.StorageGetDirectoryInfoAsync( sourcePath, searchPattern, searchOption, CloudServerProcessUtility.CommandLineParameters.ServerCheckCode, cancellationToken.Token );
+							var resultTask = CloudServiceFunctions.StorageGetDirectoryInfoAsync( sourcePath, searchPattern, searchOption, CloudServerProcessUtility.CommandLineParameters.ServerCheckCode, cancellationToken.Token );
 							//var resultTask = CloudServerProcessUtility.StorageGetDirectoryInfoAsync( sourcePath, searchOption, cancellationToken.Token );
 
 							while( !resultTask.IsCompleted )
@@ -1547,7 +1540,7 @@ namespace NeoAxis
 
 							var resultValues = new List<(string Name, long Size, DateTime LastModifiedUtc, string Hash, bool IsDirectory)>( result.Items.Length );
 							foreach( var file in result.Items )
-								resultValues.Add( (file.Name, file.Size, file.LastModified, string.Empty, file.IsDirectory) );
+								resultValues.Add( (file.Name, file.Size, file.LastModified, "", file.IsDirectory) );
 							SendGetDirectoryInfoAnswer( sender, requestID, resultValues, null );
 						}
 					}
@@ -1588,12 +1581,7 @@ namespace NeoAxis
 
 		bool ReceiveMessage_DownloadFileContent( ServerNode.Client sender, MessageType messageType, ArrayDataReader reader, ref string error )
 		{
-			//!!!!
-			//var maxQueueSize = 10 * 1024 * 1024;
-			//var maxQueueSize = DownloadFilesMaxQueueSize;
-
 			const int maxPartCountInGroup = 10000;
-
 
 			var requestID = reader.ReadVariableInt64();
 			//Console.WriteLine( $"ReceiveMessage_DownloadFileContent: " + requestID.ToString() );
@@ -1607,7 +1595,7 @@ namespace NeoAxis
 			for( int n = 0; n < partCount; n++ )
 			{
 				ref var part = ref parts[ n ];
-				part.FileName = reader.ReadString() ?? string.Empty;
+				part.FileName = reader.ReadString() ?? "";
 				part.PartStart = reader.ReadVariableInt64();
 				part.PartEnd = reader.ReadVariableInt64();
 			}
@@ -1625,7 +1613,8 @@ namespace NeoAxis
 
 			//tasks settings?
 
-			Task.Run( delegate ()
+			//Task.Run( delegate ()
+			TaskUtility.Run( TaskUtility.TaskLifetimeEnum.Minutes, "ServerNetworkService_CloudFunctions: ReceiveMessage_DownloadFileContent", async delegate ()
 			{
 				try
 				{
@@ -1638,8 +1627,8 @@ namespace NeoAxis
 					//check for invalid paths and data
 					for( int n = 0; n < partCount; n++ )
 					{
-						ref var part = ref parts[ n ];
-						if( !IsValidVirtualPath( part.FileName ) )
+						var part = parts[ n ]; //ref var part = ref parts[ n ];
+						if( !IsValidVirtualPath( part.FileName, false ) )
 						{
 							SendDownloadFileContentAnswerError( sender, requestID, "Invalid file path." );
 							return;
@@ -1656,7 +1645,7 @@ namespace NeoAxis
 					{
 						for( int n = 0; n < partCount; n++ )
 						{
-							ref var part = ref parts[ n ];
+							var part = parts[ n ]; //ref var part = ref parts[ n ];
 							totalRequestedDataSize += part.Size;
 						}
 					}
@@ -1733,7 +1722,7 @@ namespace NeoAxis
 							writer.WriteVariable( partSize );
 							writer.Write( data, 0, partSize );
 						}
-						writer.Write( string.Empty );
+						writer.Write( "" );
 						SendMessage( sender, downloadFileContentAnswerMessage, writer.AsArraySegment() );
 						//Console.WriteLine( $"ReceiveMessage_DownloadFileContent: " + requestID.ToString() + " Sent" );
 					}
@@ -1793,7 +1782,7 @@ namespace NeoAxis
 			{
 				var part = new UploadFileContentPart();
 
-				part.FileName = reader.ReadString() ?? string.Empty;
+				part.FileName = reader.ReadString() ?? "";
 				part.PartStart = reader.ReadVariableInt64();
 				part.PartEnd = reader.ReadVariableInt64();
 
@@ -1833,8 +1822,8 @@ namespace NeoAxis
 				part.FileName = PathUtility.NormalizePath( part.FileName );
 			}
 
-
-			Task.Run( delegate ()
+			//Task.Run( delegate ()
+			TaskUtility.Run( TaskUtility.TaskLifetimeEnum.Minutes, "ServerNetworkService_CloudFunctions: ReceiveMessage_UploadFileContent", async delegate ()
 			{
 				try
 				{
@@ -1847,8 +1836,8 @@ namespace NeoAxis
 					//check for invalid paths and data
 					for( int n = 0; n < partCount; n++ )
 					{
-						ref var part = ref parts[ n ];
-						if( !IsValidVirtualPath( part.FileName ) )
+						var part = parts[ n ]; //ref var part = ref parts[ n ];
+						if( !IsValidVirtualPath( part.FileName, false ) )
 						{
 							SendUploadFileContentAnswer( sender, requestID, "Invalid file path." );
 							return;
@@ -1934,7 +1923,7 @@ namespace NeoAxis
 		{
 			var requestID = reader.ReadVariableInt64();
 			var source = reader.ReadBoolean() ? FileSource.Storage : FileSource.Project;
-			var directoryPath = reader.ReadString() ?? string.Empty;
+			var directoryPath = reader.ReadString() ?? "";
 			var anyData = reader.ReadString();
 			if( !reader.Complete() )
 				return false;
@@ -1950,12 +1939,12 @@ namespace NeoAxis
 			if( directoryPath.Length > 0 && directoryPath[ directoryPath.Length - 1 ] == Path.DirectorySeparatorChar )
 				directoryPath = directoryPath.Substring( 0, directoryPath.Length - 1 );
 
-			Task.Run( async delegate ()
+			TaskUtility.Run( TaskUtility.TaskLifetimeEnum.Minutes, "ServerNetworkService_CloudFunctions: ReceiveMessage_CreateDirectory", async delegate ()
 			{
 				try
 				{
 					//check for invalid path
-					if( !IsValidVirtualPath( directoryPath ) )
+					if( !IsValidVirtualPath( directoryPath, source == FileSource.Storage ) )
 					{
 						SendCreateDirectoryAnswer( sender, requestID, "Invalid file path." );
 						return;
@@ -1996,11 +1985,11 @@ namespace NeoAxis
 						{
 							//Storage source
 
-							var cancellationToken = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+							using var cancellationToken = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 
 							if( string.IsNullOrEmpty( CloudServerProcessUtility.CommandLineParameters.ServerCheckCode ) )
 								throw new Exception( "Server check code is not configured." );
-							var resultTask = GeneralManagerFunctions.StorageCreateDirectoriesAsync( new[] { directoryPath }, CloudServerProcessUtility.CommandLineParameters.ServerCheckCode, cancellationToken.Token );
+							var resultTask = CloudServiceFunctions.StorageCreateDirectoriesAsync( new[] { directoryPath }, CloudServerProcessUtility.CommandLineParameters.ServerCheckCode, cancellationToken.Token );
 							//var resultTask = CloudServerProcessUtility.StorageCreateDirectoryAsync( directoryPath, cancellationToken.Token );
 
 							while( !resultTask.IsCompleted )
@@ -2042,14 +2031,14 @@ namespace NeoAxis
 			var requestID = reader.ReadVariableInt64();
 			var source = reader.ReadBoolean() ? FileSource.Storage : FileSource.Project;
 			var count = reader.ReadVariableInt32();
-			if( count > 10000 )
+			if( count > FileRequestMaxItemCount )
 			{
-				error = "Delete files count limit is 10000.";
+				error = $"Delete files count limit is {FileRequestMaxItemCount}.";
 				return false;
 			}
 			var filePaths = new string[ count ];
 			for( int n = 0; n < count; n++ )
-				filePaths[ n ] = reader.ReadString() ?? string.Empty;
+				filePaths[ n ] = reader.ReadString() ?? "";
 			var anyData = reader.ReadString();
 			if( !reader.Complete() )
 				return false;
@@ -2064,14 +2053,14 @@ namespace NeoAxis
 			for( int n = 0; n < filePaths.Length; n++ )
 				filePaths[ n ] = PathUtility.NormalizePath( filePaths[ n ] );
 
-			Task.Run( async delegate ()
+			TaskUtility.Run( TaskUtility.TaskLifetimeEnum.Minutes, "ServerNetworkService_CloudFunctions: ReceiveMessage_DeleteFiles", async delegate ()
 			{
 				try
 				{
 					//check for invalid paths
 					for( int n = 0; n < filePaths.Length; n++ )
 					{
-						if( !IsValidVirtualPath( filePaths[ n ] ) )
+						if( !IsValidVirtualPath( filePaths[ n ], source == FileSource.Storage ) )
 						{
 							SendDeleteFilesAnswer( sender, requestID, null );
 							return;
@@ -2120,15 +2109,15 @@ namespace NeoAxis
 							//var deleteLocalFiles = false;
 
 
-							var cancellationToken = new CancellationTokenSource( new TimeSpan( 0, 2, 0 ) );
+							using var cancellationToken = new CancellationTokenSource( new TimeSpan( 0, 2, 0 ) );
 
 							if( string.IsNullOrEmpty( CloudServerProcessUtility.CommandLineParameters.ServerCheckCode ) )
 								throw new Exception( "Server check code is not configured." );
 
-							var objects = new GeneralManagerFunctions.DeleteObjectsItem[ filePaths.Length ];
+							var objects = new CloudServiceFunctions.DeleteObjectsItem[ filePaths.Length ];
 							for( int n = 0; n < filePaths.Length; n++ )
-								objects[ n ] = new GeneralManagerFunctions.DeleteObjectsItem { Name = filePaths[ n ] };
-							var resultTask = GeneralManagerFunctions.StorageDeleteObjectsAsync( objects, CloudServerProcessUtility.CommandLineParameters.ServerCheckCode, cancellationToken.Token );
+								objects[ n ] = new CloudServiceFunctions.DeleteObjectsItem { Name = filePaths[ n ] };
+							var resultTask = CloudServiceFunctions.StorageDeleteObjectsAsync( objects, CloudServerProcessUtility.CommandLineParameters.ServerCheckCode, cancellationToken.Token );
 
 							//var resultTask = CloudServerProcessUtility.StorageDeleteFilesAsync( filePaths, deleteLocalFiles, cancellationToken.Token );
 
@@ -2170,7 +2159,7 @@ namespace NeoAxis
 		{
 			var requestID = reader.ReadVariableInt64();
 			var source = reader.ReadBoolean() ? FileSource.Storage : FileSource.Project;
-			var directoryPath = reader.ReadString() ?? string.Empty;
+			var directoryPath = reader.ReadString() ?? "";
 			var recursive = reader.ReadBoolean();
 			var clear = reader.ReadBoolean();
 			var anyData = reader.ReadString();
@@ -2188,12 +2177,12 @@ namespace NeoAxis
 			if( directoryPath.Length > 0 && directoryPath[ directoryPath.Length - 1 ] == Path.DirectorySeparatorChar )
 				directoryPath = directoryPath.Substring( 0, directoryPath.Length - 1 );
 
-			Task.Run( async delegate ()
+			TaskUtility.Run( TaskUtility.TaskLifetimeEnum.Minutes, "ServerNetworkService_CloudFunctions: ReceiveMessage_DeleteDirectory", async delegate ()
 			{
 				try
 				{
 					//check for invalid path
-					if( !IsValidVirtualPath( directoryPath ) )
+					if( !IsValidVirtualPath( directoryPath, source == FileSource.Storage ) )
 					{
 						SendDeleteDirectoryAnswer( sender, requestID, "Invalid file path." );
 						return;
@@ -2239,14 +2228,14 @@ namespace NeoAxis
 						{
 							//Storage source
 
-							var cancellationToken = new CancellationTokenSource( new TimeSpan( 0, 10, 0 ) );
+							using var cancellationToken = new CancellationTokenSource( new TimeSpan( 0, 10, 0 ) );
 
 							if( string.IsNullOrEmpty( CloudServerProcessUtility.CommandLineParameters.ServerCheckCode ) )
 								throw new Exception( "Server check code is not configured." );
 
-							var objects = new GeneralManagerFunctions.DeleteObjectsItem[ 1 ];
-							objects[ 0 ] = new GeneralManagerFunctions.DeleteObjectsItem { Name = directoryPath, IsDirectory = true };
-							var resultTask = GeneralManagerFunctions.StorageDeleteObjectsAsync( objects, CloudServerProcessUtility.CommandLineParameters.ServerCheckCode, cancellationToken.Token );
+							var objects = new CloudServiceFunctions.DeleteObjectsItem[ 1 ];
+							objects[ 0 ] = new CloudServiceFunctions.DeleteObjectsItem { Name = directoryPath, IsDirectory = true };
+							var resultTask = CloudServiceFunctions.StorageDeleteObjectsAsync( objects, CloudServerProcessUtility.CommandLineParameters.ServerCheckCode, cancellationToken.Token );
 
 							//var resultTask = CloudServerProcessUtility.StorageDeleteDirectoryAsync( directoryPath, recursive, clear, cancellationToken.Token );
 
@@ -2282,10 +2271,15 @@ namespace NeoAxis
 			if( !reader.Complete() )
 				return false;
 
+			//add to cancel list
 			var item = new RequestToCancelItem();
 			item.RequestID = requestID;
 			item.CreationTime = DateTime.UtcNow;
 			requestsToCancel[ (sender, requestID) ] = item;
+
+			//cancel token if exists
+			if( requestsCancellationTokens.TryRemove( requestID, out var cancellationTokenSource ) )
+				cancellationTokenSource.Cancel();
 
 			return true;
 		}
@@ -2312,14 +2306,14 @@ namespace NeoAxis
 		{
 			var requestID = reader.ReadVariableInt64();
 			var count = reader.ReadVariableInt32();
-			if( count > 10000 )
+			if( count > FileRequestMaxItemCount )
 			{
-				error = "Get files count limit is 10000.";
+				error = $"Get files count limit is {FileRequestMaxItemCount}.";
 				return false;
 			}
 			var filePaths = new string[ count ];
 			for( int n = 0; n < count; n++ )
-				filePaths[ n ] = reader.ReadString() ?? string.Empty;
+				filePaths[ n ] = reader.ReadString() ?? "";
 			var anyData = reader.ReadString();
 			if( !reader.Complete() )
 				return false;
@@ -2328,14 +2322,14 @@ namespace NeoAxis
 			for( int n = 0; n < filePaths.Length; n++ )
 				filePaths[ n ] = PathUtility.NormalizePath( filePaths[ n ] );
 
-			Task.Run( async delegate ()
+			TaskUtility.Run( TaskUtility.TaskLifetimeEnum.Hour, "ServerNetworkService_CloudFunctions: ReceiveMessage_StorageDownloadFiles", async delegate ()
 			{
 				try
 				{
 					//check for invalid paths
 					for( int n = 0; n < filePaths.Length; n++ )
 					{
-						if( !IsValidVirtualPath( filePaths[ n ] ) )
+						if( !IsValidVirtualPath( filePaths[ n ], true ) )
 						{
 							SendStorageDownloadFilesAnswer( sender, requestID, null, "Invalid file path." );
 							return;
@@ -2357,11 +2351,11 @@ namespace NeoAxis
 
 					if( !answerHandled )
 					{
-						var cancellationToken = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+						using var cancellationToken = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 
 						if( string.IsNullOrEmpty( CloudServerProcessUtility.CommandLineParameters.ServerCheckCode ) )
 							throw new Exception( "Server check code is not configured." );
-						var resultTask = GeneralManagerFunctions.StorageGetContentUrlsAsync( filePaths, false, CloudServerProcessUtility.CommandLineParameters.ServerCheckCode, cancellationToken.Token );
+						var resultTask = CloudServiceFunctions.StorageGetContentUrlsAsync( filePaths, false, false, CloudServerProcessUtility.CommandLineParameters.ServerCheckCode, cancellationToken.Token );
 						while( !resultTask.IsCompleted )
 						{
 							if( sender.Status == NetworkStatus.Disconnected || RemoveCancelledRequest( sender, requestID ) )
@@ -2378,7 +2372,7 @@ namespace NeoAxis
 						SendStorageDownloadFilesAnswer( sender, requestID, resultTask.Result.Urls, null );
 
 
-						//var cancellationToken = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+						//using var cancellationToken = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 						//var resultTask = CloudServerProcessUtility.StorageGetDownloadUrlsAsync( filePaths, cancellationToken.Token );
 						//while( !resultTask.IsCompleted )
 						//{
@@ -2427,14 +2421,14 @@ namespace NeoAxis
 		{
 			var requestID = reader.ReadVariableInt64();
 			var count = reader.ReadVariableInt32();
-			if( count > 10000 )
+			if( count > FileRequestMaxItemCount )
 			{
-				error = "Get files count limit is 10000.";
+				error = $"Get files count limit is {FileRequestMaxItemCount}.";
 				return false;
 			}
 			var filePaths = new string[ count ];
 			for( int n = 0; n < count; n++ )
-				filePaths[ n ] = reader.ReadString() ?? string.Empty;
+				filePaths[ n ] = reader.ReadString() ?? "";
 			var anyData = reader.ReadString();
 			if( !reader.Complete() )
 				return false;
@@ -2449,14 +2443,14 @@ namespace NeoAxis
 			for( int n = 0; n < filePaths.Length; n++ )
 				filePaths[ n ] = PathUtility.NormalizePath( filePaths[ n ] );
 
-			Task.Run( async delegate ()
+			TaskUtility.Run( TaskUtility.TaskLifetimeEnum.Hour, "ServerNetworkService_CloudFunctions: ReceiveMessage_StorageUploadFiles", async delegate ()
 			{
 				try
 				{
 					//check for invalid paths
 					for( int n = 0; n < filePaths.Length; n++ )
 					{
-						if( !IsValidVirtualPath( filePaths[ n ] ) )
+						if( !IsValidVirtualPath( filePaths[ n ], true ) )
 						{
 							SendStorageUploadFilesAnswer( sender, requestID, null, "Invalid file path." );
 							return;
@@ -2478,11 +2472,11 @@ namespace NeoAxis
 
 					if( !answerHandled )
 					{
-						var cancellationToken = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+						using var cancellationToken = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 
 						if( string.IsNullOrEmpty( CloudServerProcessUtility.CommandLineParameters.ServerCheckCode ) )
 							throw new Exception( "Server check code is not configured." );
-						var resultTask = GeneralManagerFunctions.StorageGetContentUrlsAsync( filePaths, true, CloudServerProcessUtility.CommandLineParameters.ServerCheckCode, cancellationToken.Token );
+						var resultTask = CloudServiceFunctions.StorageGetContentUrlsAsync( filePaths, true, false, CloudServerProcessUtility.CommandLineParameters.ServerCheckCode, cancellationToken.Token );
 						while( !resultTask.IsCompleted )
 						{
 							if( sender.Status == NetworkStatus.Disconnected || RemoveCancelledRequest( sender, requestID ) )
@@ -2503,30 +2497,6 @@ namespace NeoAxis
 						}
 
 						SendStorageUploadFilesAnswer( sender, requestID, resultTask.Result.Urls, null );
-
-
-						//var cancellationToken = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-						//var resultTask = CloudServerProcessUtility.StorageGetUploadUrlsAsync( filePaths, cancellationToken.Token );
-						//while( !resultTask.IsCompleted )
-						//{
-						//	if( sender.Status == NetworkStatus.Disconnected || RemoveCancelledRequest( sender, requestID ) )
-						//		cancellationToken.Cancel();
-						//	await Task.Delay( 1 );
-						//}
-						//var result = resultTask.Result;
-
-						//if( !string.IsNullOrEmpty( result.Error ) )
-						//	throw new Exception( result.Error );
-						//if( result.UploadUrls.Length != filePaths.Length )
-						//	throw new Exception( "Invalid result from the Storage." );
-
-						//for( int n = 0; n < result.UploadUrls.Length; n++ )
-						//{
-						//	if( string.IsNullOrEmpty( result.UploadUrls[ n ] ) )
-						//		throw new Exception( "Empty upload url." );
-						//}
-
-						//SendStorageUploadFilesAnswer( sender, requestID, resultTask.Result.UploadUrls, null );
 					}
 				}
 				catch( Exception e )
@@ -2569,10 +2539,10 @@ namespace NeoAxis
 		MessageType storageDownloadFilesAnswerMessage;
 		MessageType storageUploadFilesMessage;
 		MessageType storageUploadFilesAnswerMessage;
-		MessageType getCallMethodInfoMessage;
-		MessageType getCallMethodInfoAnswerMessage;
-		MessageType getCallMethodsMessage;
-		MessageType getCallMethodsAnswerMessage;
+		MessageType getCloudMethodInfoMessage;
+		MessageType getCloudMethodInfoAnswerMessage;
+		MessageType getCloudMethodsMessage;
+		MessageType getCloudMethodsAnswerMessage;
 
 		long requestIdCounter;
 		ConcurrentDictionary<long, AnswerItem> answers = new ConcurrentDictionary<long, AnswerItem>();
@@ -2580,15 +2550,16 @@ namespace NeoAxis
 
 		string connectionErrorReceived;
 
-		ConcurrentDictionary<string, CallMethodInfo> callMethods = new ConcurrentDictionary<string, CallMethodInfo>();
-		ConcurrentDictionary<int, CallMethodInfo> callMethodById = new ConcurrentDictionary<int, CallMethodInfo>();
-		ConcurrentHashSet<Type> callMethodKnownParameterTypes = new ConcurrentHashSet<Type>();
-		CancellationTokenSource callMethodDefaultCancellationTokenSource = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+		ConcurrentDictionary<string, CloudMethodInfo> cloudMethods = new ConcurrentDictionary<string, CloudMethodInfo>();
+		ConcurrentDictionary<int, CloudMethodInfo> cloudMethodById = new ConcurrentDictionary<int, CloudMethodInfo>();
+		//ConcurrentHashSet<Type> callMethodKnownParameterTypes = new ConcurrentHashSet<Type>();
 
 		//GetCallMethodsResult getCallMethodsResultCached;
 
-		//!!!!support for speed limit
+		//support for speed limit
 		//maxBytesPerSecond
+
+		List<Assembly> registeredCloudMethodAssemblies = new List<Assembly>();
 
 		///////////////////////////////////////////////
 
@@ -2632,10 +2603,13 @@ namespace NeoAxis
 			storageDownloadFilesAnswerMessage = RegisterMessageType( "StorageDownloadFilesAnswer", 22, ReceiveMessage_StorageDownloadFilesAnswer );
 			storageUploadFilesMessage = RegisterMessageType( "StorageUploadFiles", 23 );
 			storageUploadFilesAnswerMessage = RegisterMessageType( "StorageUploadFilesAnswer", 24, ReceiveMessage_StorageUploadFilesAnswer );
-			getCallMethodInfoMessage = RegisterMessageType( "GetCallMethodInfo", 25 );
-			getCallMethodInfoAnswerMessage = RegisterMessageType( "GetCallMethodInfoAnswer", 26, ReceiveMessage_GetCallMethodInfoAnswer );
-			getCallMethodsMessage = RegisterMessageType( "GetCallMethods", 27 );
-			getCallMethodsAnswerMessage = RegisterMessageType( "GetCallMethodsAnswer", 28, ReceiveMessage_GetCallMethodsAnswer );
+			getCloudMethodInfoMessage = RegisterMessageType( "GetCloudMethodInfo", 25 );
+			getCloudMethodInfoAnswerMessage = RegisterMessageType( "GetCloudMethodInfoAnswer", 26, ReceiveMessage_GetCloudMethodInfoAnswer );
+			getCloudMethodsMessage = RegisterMessageType( "GetCloudMethods", 27 );
+			getCloudMethodsAnswerMessage = RegisterMessageType( "GetCloudMethodsAnswer", 28, ReceiveMessage_GetCloudMethodsAnswer );
+
+			//register NeoAxis.Core.dll
+			RegisterAssemblyForCloudMethodTypes( typeof( Vector2 ).Assembly );
 		}
 
 		long GetRequestID()
@@ -2649,16 +2623,14 @@ namespace NeoAxis
 			set { connectionErrorReceived = value; }
 		}
 
-		protected internal override void OnUpdate()
+		protected internal override void OnUpdate( DateTime utcNow )
 		{
-			base.OnUpdate();
+			base.OnUpdate( utcNow );
 
-			var now = DateTime.UtcNow;
-
-			if( ( now - answersLastOldRemoveTime ).TotalSeconds > 30 )
+			if( ( utcNow - answersLastOldRemoveTime ).TotalSeconds > 30 )
 			{
-				RemoveOldNotUsedAnswers( now );
-				answersLastOldRemoveTime = now;
+				answersLastOldRemoveTime = utcNow;
+				RemoveOldNotUsedAnswers( utcNow );
 			}
 		}
 
@@ -2669,14 +2641,14 @@ namespace NeoAxis
 			m.End();
 		}
 
-		void RemoveOldNotUsedAnswers( DateTime now )
+		void RemoveOldNotUsedAnswers( DateTime utcNow )
 		{
 			foreach( var pair in answers.ToArray() )
 			{
 				var requestID = pair.Key;
 				var item = pair.Value;
 
-				if( ( now - item.CreationTime ).TotalMinutes > 10 )
+				if( ( utcNow - item.CreationTime ).TotalMinutes > 10 )
 					answers.Remove( requestID, out _ );
 			}
 		}
@@ -2723,7 +2695,7 @@ namespace NeoAxis
 				for( int n = 0; n < count; n++ )
 					values[ n ] = reader.ReadString();
 			}
-			var error = reader.ReadString() ?? string.Empty;
+			var error = reader.ReadString() ?? "";
 			if( !reader.Complete() )
 				return false;
 
@@ -2776,6 +2748,13 @@ namespace NeoAxis
 			m.End();
 		}
 
+		/// <summary>
+		/// Save string values by keys to the server's database. Gettings the updated data for next SaveStrings and LoadStrings calls are guaranteed when this method's task is completed.
+		/// </summary>
+		/// <param name="keys"></param>
+		/// <param name="values"></param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
 		public async Task<SaveStringsResult> SaveStringsAsync( string[] keys, string[] values, CancellationToken cancellationToken = default )
 		{
 			var requestID = GetRequestID();
@@ -2798,11 +2777,24 @@ namespace NeoAxis
 			}
 		}
 
+		/// <summary>
+		/// Save string values by keys to the server's database. Gettings the updated data for next SaveStrings and LoadStrings calls are guaranteed when this method's task is completed.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
 		public async Task<SaveStringsResult> SaveStringAsync( string key, string value, CancellationToken cancellationToken = default )
 		{
 			return await SaveStringsAsync( new string[] { key }, new string[] { value }, cancellationToken );
 		}
 
+		/// <summary>
+		/// Loads string values by keys from the server's database. Gettings the updated data for next SaveStrings and LoadStrings calls are guaranteed when this method's task is completed.
+		/// </summary>
+		/// <param name="keys"></param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
 		public async Task<LoadStringsResult> LoadStringsAsync( string[] keys, CancellationToken cancellationToken = default )
 		{
 			var requestID = GetRequestID();
@@ -2825,6 +2817,12 @@ namespace NeoAxis
 			}
 		}
 
+		/// <summary>
+		/// Loads string values by keys from the server's database. Gettings the updated data for next SaveStrings and LoadStrings calls are guaranteed when this method's task is completed.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
 		public async Task<LoadStringResult> LoadStringAsync( string key, CancellationToken cancellationToken = default )
 		{
 			var result = await LoadStringsAsync( new string[] { key }, cancellationToken );
@@ -2836,12 +2834,12 @@ namespace NeoAxis
 
 		///////////////////////////////////////////////
 
-		class GetCallMethodInfoAnswerItem : AnswerItem
+		class GetCloudMethodInfoAnswerItem : AnswerItem
 		{
 			public TextBlock MethodData;
 		}
 
-		public class CallMethodInfo
+		public class CloudMethodInfo
 		{
 			public int Id;
 			public string ClassName;
@@ -2864,46 +2862,34 @@ namespace NeoAxis
 				public string TypeName;
 				public Type Type;
 
-				public ArrayDataWriter.TypeToWriteCustomStructureProperty[] CustomTypeProperties;
-				//public CustomTypeProperty[] CustomTypeProperties;
+				//public ArrayDataWriter.TypeToWriteCustomStructureProperty[] CustomTypeProperties;
 			}
-
-			//public class CustomTypeProperty
-			//{
-			//	public string Name;
-
-			//	public string PropertyTypeName;
-			//	public Type PropertyType;
-
-			//	public string FieldTypeName;
-			//	public Type FieldType;
-			//}
 		}
 
-		public class GetCallMethodInfoResult
+		public class GetCloudMethodInfoResult
 		{
-			public CallMethodInfo Method;
+			public CloudMethodInfo Method;
 			public string Error;
 		}
 
-		public CancellationTokenSource CallMethodDefaultCancellationTokenSource
-		{
-			get { return callMethodDefaultCancellationTokenSource; }
-			set { callMethodDefaultCancellationTokenSource = value; }
-		}
+		//public CancellationTokenSource CallMethodDefaultCancellationTokenSource
+		//{
+		//	get { return callMethodDefaultCancellationTokenSource; }
+		//	set { callMethodDefaultCancellationTokenSource = value; }
+		//}
 
-		bool ReceiveMessage_GetCallMethodInfoAnswer( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_GetCloudMethodInfoAnswer( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var requestID = reader.ReadVariableInt64();
 			//var methodId = reader.ReadVariableInt32();
 			var methodDataText = reader.ReadString();
-			var error = reader.ReadString() ?? string.Empty;
+			var error = reader.ReadString() ?? "";
 			if( !reader.Complete() )
 				return false;
 
 			try
 			{
-				var answerItem = new GetCallMethodInfoAnswerItem();
+				var answerItem = new GetCloudMethodInfoAnswerItem();
 				//answerItem.Id = methodId;
 
 				if( !string.IsNullOrEmpty( methodDataText ) )
@@ -2927,9 +2913,9 @@ namespace NeoAxis
 			return true;
 		}
 
-		void SendGetCallMethodInfo( long requestID, string className, string methodName )
+		void SendGetCloudMethodInfo( long requestID, string className, string methodName )
 		{
-			var m = BeginMessage( getCallMethodInfoMessage );
+			var m = BeginMessage( getCloudMethodInfoMessage );
 			var writer = m.Writer;
 			writer.WriteVariable( requestID );
 			writer.Write( className );
@@ -2937,61 +2923,62 @@ namespace NeoAxis
 			m.End();
 		}
 
-		public async Task<GetCallMethodInfoResult> GetCallMethodInfoAsync( string className, string methodName, CancellationToken cancellationToken = default )
+		public async Task<GetCloudMethodInfoResult> GetCloudMethodInfoAsync( string className, string methodName, CancellationToken cancellationToken = default )
 		{
 			try
 			{
 				var key = $"{className}_{methodName}";
-				if( !callMethods.TryGetValue( key, out var method ) )
+				if( !cloudMethods.TryGetValue( key, out var method ) )
 				{
 					var requestID = GetRequestID();
-					SendGetCallMethodInfo( requestID, className, methodName );
+					SendGetCloudMethodInfo( requestID, className, methodName );
 
 					while( true )
 					{
-						var answer = GetAnswerAndRemove<GetCallMethodInfoAnswerItem>( requestID );
+						var answer = GetAnswerAndRemove<GetCloudMethodInfoAnswerItem>( requestID );
 						if( answer != null )
 						{
 							if( !string.IsNullOrEmpty( answer.Error ) )
-								return new GetCallMethodInfoResult { Error = answer.Error };
+								return new GetCloudMethodInfoResult { Error = answer.Error };
 							else
 							{
-								method = new CallMethodInfo();
+								method = new CloudMethodInfo();
 								method.Id = int.Parse( answer.MethodData.GetAttribute( "Id" ) );
 								//method.Id = answer.Id;
 								method.ClassName = className;
 								method.MethodName = methodName;
 
-								var parameters = new List<CallMethodInfo.ParameterInfo>();
+								var parameters = new List<CloudMethodInfo.ParameterInfo>();
 
 								foreach( var parameterBlock in answer.MethodData.Children )
 								{
 									if( parameterBlock.Name == "Parameter" )
 									{
-										var parameter = new CallMethodInfo.ParameterInfo();
+										var parameter = new CloudMethodInfo.ParameterInfo();
 										parameter.Name = parameterBlock.GetAttribute( "Name" );
 										parameter.IsReturn = bool.Parse( parameterBlock.GetAttribute( "IsReturn" ) );
 										parameter.TypeName = parameterBlock.GetAttribute( "Type" );
 
+										parameter.Type = FindTypeForCloudMethod( parameter.TypeName );
 
-										var simpleTypeItem = SimpleTypes.GetTypeItem( parameter.TypeName );
-										if( simpleTypeItem != null )
-										{
-											parameter.Type = simpleTypeItem.Type;
-										}
-										else
-										{
-											var type = Type.GetType( parameter.TypeName );
-											if( type != null )
-												parameter.Type = type;
-											else
-											{
-												//!!!!check
-												type = typeof( Vector2 ).Assembly.GetType( parameter.TypeName );
-												if( type != null )
-													parameter.Type = type;
-											}
-										}
+										//var simpleTypeItem = SimpleTypes.GetTypeItem( parameter.TypeName );
+										//if( simpleTypeItem != null )
+										//{
+										//	parameter.Type = simpleTypeItem.Type;
+										//}
+										//else
+										//{
+										//	var type = Type.GetType( parameter.TypeName );
+										//	if( type != null )
+										//		parameter.Type = type;
+										//	else
+										//	{
+										//		//!!!!check
+										//		type = typeof( Vector2 ).Assembly.GetType( parameter.TypeName );
+										//		if( type != null )
+										//			parameter.Type = type;
+										//	}
+										//}
 
 										//if( parameter.Type == null )
 										//	return new GetCallMethodInfoResult { Error = $"Type not found \"{parameter.TypeName}\"." };
@@ -3010,28 +2997,32 @@ namespace NeoAxis
 
 												if( !string.IsNullOrEmpty( fieldTypeName ) )
 												{
-													var type = Type.GetType( fieldTypeName );
+													var type = FindTypeForCloudMethod( fieldTypeName );
 													if( type == null )
-													{
-														//!!!!check
-														type = typeof( Vector2 ).Assembly.GetType( fieldTypeName );
-													}
-													if( type == null )
-														return new GetCallMethodInfoResult { Error = $"Type not found \"{fieldTypeName}\"." };
+														return new GetCloudMethodInfoResult { Error = $"Type not found \"{fieldTypeName}\"." };
 													p.FieldType = type;
+
+													//var type = Type.GetType( fieldTypeName );
+													//if( type == null )
+													//	type = typeof( Vector2 ).Assembly.GetType( fieldTypeName );
+													//if( type == null )
+													//	return new GetCallMethodInfoResult { Error = $"Type not found \"{fieldTypeName}\"." };
+													//p.FieldType = type;
 												}
 
 												if( !string.IsNullOrEmpty( propertyTypeName ) )
 												{
-													var type = Type.GetType( propertyTypeName );
+													var type = FindTypeForCloudMethod( propertyTypeName );
 													if( type == null )
-													{
-														//!!!!check
-														type = typeof( Vector2 ).Assembly.GetType( propertyTypeName );
-													}
-													if( type == null )
-														return new GetCallMethodInfoResult { Error = $"Type not found \"{propertyTypeName}\"." };
+														return new GetCloudMethodInfoResult { Error = $"Type not found \"{propertyTypeName}\"." };
 													p.PropertyType = type;
+
+													//var type = Type.GetType( propertyTypeName );
+													//if( type == null )
+													//	type = typeof( Vector2 ).Assembly.GetType( propertyTypeName );
+													//if( type == null )
+													//	return new GetCallMethodInfoResult { Error = $"Type not found \"{propertyTypeName}\"." };
+													//p.PropertyType = type;
 												}
 
 												if( p.FieldType != null || p.PropertyType != null )
@@ -3083,13 +3074,13 @@ namespace NeoAxis
 										//}
 
 
-										if( customProperties.Count != 0 )
-											parameter.CustomTypeProperties = customProperties.ToArray();
-										else
-										{
-											if( parameter.Type == null )
-												return new GetCallMethodInfoResult { Error = $"Type not found \"{parameter.TypeName}\"." };
-										}
+										//if( customProperties.Count != 0 )
+										//	parameter.CustomTypeProperties = customProperties.ToArray();
+										//else
+										//{
+										if( parameter.Type == null )
+											return new GetCloudMethodInfoResult { Error = $"Type not found \"{parameter.TypeName}\"." };
+										//}
 
 										parameters.Add( parameter );
 									}
@@ -3103,8 +3094,8 @@ namespace NeoAxis
 								method.AddToCommands = bool.Parse( answer.MethodData.GetAttribute( "AddToCommands", "False" ) );
 								method.Description = answer.MethodData.GetAttribute( "Description" );
 
-								callMethods[ key ] = method;
-								callMethodById[ method.Id ] = method;
+								cloudMethods[ key ] = method;
+								cloudMethodById[ method.Id ] = method;
 
 								break;
 							}
@@ -3114,30 +3105,30 @@ namespace NeoAxis
 						if( cancellationToken.IsCancellationRequested )
 						{
 							SendCancelRequest( requestID );
-							return new GetCallMethodInfoResult { Error = "Operation was canceled." };
+							return new GetCloudMethodInfoResult { Error = "Operation was canceled." };
 						}
 						if( !string.IsNullOrEmpty( ConnectionErrorReceived ) )
-							return new GetCallMethodInfoResult { Error = ConnectionErrorReceived };
+							return new GetCloudMethodInfoResult { Error = ConnectionErrorReceived };
 					}
 				}
 
-				return new GetCallMethodInfoResult { Method = method };
+				return new GetCloudMethodInfoResult { Method = method };
 
 			}
 			catch( Exception e )
 			{
-				return new GetCallMethodInfoResult { Error = e.Message };
+				return new GetCloudMethodInfoResult { Error = e.Message };
 			}
 		}
 
 		///////////////////////////////////////////////
 
-		class GetCallMethodsAnswerItem : AnswerItem
+		class GetCloudMethodsAnswerItem : AnswerItem
 		{
 			public TextBlock ClassesData;
 		}
 
-		public class GetCallMethodsResult
+		public class GetCloudMethodsResult
 		{
 			public ClassInfo[] Classes;
 			public string Error;
@@ -3151,17 +3142,17 @@ namespace NeoAxis
 			}
 		}
 
-		bool ReceiveMessage_GetCallMethodsAnswer( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		bool ReceiveMessage_GetCloudMethodsAnswer( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var requestID = reader.ReadVariableInt64();
 			var classesDataText = reader.ReadString();
-			var error = reader.ReadString() ?? string.Empty;
+			var error = reader.ReadString() ?? "";
 			if( !reader.Complete() )
 				return false;
 
 			try
 			{
-				var answerItem = new GetCallMethodsAnswerItem();
+				var answerItem = new GetCloudMethodsAnswerItem();
 
 				if( !string.IsNullOrEmpty( classesDataText ) )
 				{
@@ -3184,34 +3175,34 @@ namespace NeoAxis
 			return true;
 		}
 
-		void SendGetCallMethods( long requestID, bool commandsOnly )
+		void SendGetCloudMethods( long requestID, bool commandsOnly )
 		{
-			var m = BeginMessage( getCallMethodsMessage );
+			var m = BeginMessage( getCloudMethodsMessage );
 			var writer = m.Writer;
 			writer.WriteVariable( requestID );
 			writer.Write( commandsOnly );
 			m.End();
 		}
 
-		public async Task<GetCallMethodsResult> GetCallMethodsAsync( bool commandsOnly, CancellationToken cancellationToken = default )
+		public async Task<GetCloudMethodsResult> GetCloudMethodsAsync( bool commandsOnly, CancellationToken cancellationToken = default )
 		{
 			try
 			{
 				var requestID = GetRequestID();
-				SendGetCallMethods( requestID, commandsOnly );
+				SendGetCloudMethods( requestID, commandsOnly );
 
-				List<GetCallMethodsResult.ClassInfo> classes = null;
+				List<GetCloudMethodsResult.ClassInfo> classes = null;
 
 				while( true )
 				{
-					var answer = GetAnswerAndRemove<GetCallMethodsAnswerItem>( requestID );
+					var answer = GetAnswerAndRemove<GetCloudMethodsAnswerItem>( requestID );
 					if( answer != null )
 					{
 						if( !string.IsNullOrEmpty( answer.Error ) )
-							return new GetCallMethodsResult { Error = answer.Error };
+							return new GetCloudMethodsResult { Error = answer.Error };
 						else
 						{
-							classes = new List<GetCallMethodsResult.ClassInfo>();
+							classes = new List<GetCloudMethodsResult.ClassInfo>();
 
 							foreach( var classBlock in answer.ClassesData.Children )
 							{
@@ -3219,7 +3210,7 @@ namespace NeoAxis
 								{
 									var className = classBlock.GetAttribute( "Name" );
 									if( string.IsNullOrEmpty( className ) )
-										return new GetCallMethodsResult { Error = "Class name is empty." };
+										return new GetCloudMethodsResult { Error = "Class name is empty." };
 
 									var methodNames = new List<string>();
 									foreach( var methodBlock in classBlock.Children )
@@ -3228,12 +3219,12 @@ namespace NeoAxis
 										{
 											var methodName = methodBlock.GetAttribute( "Name" );
 											if( string.IsNullOrEmpty( methodName ) )
-												return new GetCallMethodsResult { Error = "Method name is empty." };
+												return new GetCloudMethodsResult { Error = "Method name is empty." };
 											methodNames.Add( methodName );
 										}
 									}
 
-									var classInfo = new GetCallMethodsResult.ClassInfo();
+									var classInfo = new GetCloudMethodsResult.ClassInfo();
 									classInfo.ClassName = className;
 									classInfo.MethodNames = methodNames.ToArray();
 
@@ -3249,31 +3240,18 @@ namespace NeoAxis
 					if( cancellationToken.IsCancellationRequested )
 					{
 						SendCancelRequest( requestID );
-						return new GetCallMethodsResult { Error = "Operation was canceled." };
+						return new GetCloudMethodsResult { Error = "Operation was canceled." };
 					}
 					if( !string.IsNullOrEmpty( ConnectionErrorReceived ) )
-						return new GetCallMethodsResult { Error = ConnectionErrorReceived };
+						return new GetCloudMethodsResult { Error = ConnectionErrorReceived };
 				}
 
-				return new GetCallMethodsResult { Classes = classes.ToArray() };
+				return new GetCloudMethodsResult { Classes = classes.ToArray() };
 			}
 			catch( Exception e )
 			{
-				return new GetCallMethodsResult { Error = e.Message };
+				return new GetCloudMethodsResult { Error = e.Message };
 			}
-
-
-			////var result = getCallMethodsResultCached;
-			////if( result == null )
-			////{
-			////	var result2 = await CallMethodWithCancellationTokenAsync<GetCallMethodsResult>( "CloudFunctionsServer", "GetCallMethods", cancellationToken );
-			////	if( !string.IsNullOrEmpty( result2.Error ) )
-			////		return new GetCallMethodsResult { Error = result2.Error };
-
-			////	result = result2.Value;
-			////}
-
-			////return result;
 		}
 
 		///////////////////////////////////////////////
@@ -3281,7 +3259,7 @@ namespace NeoAxis
 		class CallMethodAnswerItem : AnswerItem
 		{
 			public object ResultValue;
-			public object[] ResultCustomStructureValues;
+			//public object[] ResultCustomStructureValues;
 		}
 
 		public class CallMethodResult<T>
@@ -3300,43 +3278,28 @@ namespace NeoAxis
 			var requestID = reader.ReadVariableInt64();
 
 			var methodId = reader.ReadVariableInt();
-			if( !callMethodById.TryGetValue( methodId, out var method ) )
+			if( !cloudMethodById.TryGetValue( methodId, out var method ) )
 			{
 				additionalErrorMessage = "No method with specified id.";
 				return false;
 			}
 
-			var error = reader.ReadString() ?? string.Empty;
+			var error = reader.ReadString() ?? "";
 			object resultValue = null;
-			object[] resultCustomStructureValues = null;
+			//object[] resultCustomStructureValues = null;
 			if( string.IsNullOrEmpty( error ) )
 			{
 				if( method.ReturnParameter != null )
 				{
-					if( method.ReturnParameter.CustomTypeProperties != null )
-						resultCustomStructureValues = reader.ReadCustomStructureProperties( method.ReturnParameter.CustomTypeProperties );
-					else
-					{
-						if( method.ReturnParameter.Type != null )
-							resultValue = reader.Read( method.ReturnParameter.Type );
-					}
+					//if( method.ReturnParameter.CustomTypeProperties != null )
+					//	resultCustomStructureValues = reader.ReadCustomStructureProperties( method.ReturnParameter.CustomTypeProperties );
+					//else
+					//{
+					if( method.ReturnParameter.Type != null )
+						resultValue = reader.Read( method.ReturnParameter.Type, null );
+					//}
 				}
 			}
-
-			//object resultValue = null;
-			//object[] resultCustomStructureValues = null;
-			//if( method.ReturnParameter != null )
-			//{
-			//	if( method.ReturnParameter.CustomTypeProperties != null )
-			//		resultCustomStructureValues = reader.ReadCustomStructureProperties( method.ReturnParameter.CustomTypeProperties );
-			//	else
-			//	{
-			//		if( method.ReturnParameter.Type != null )
-			//			resultValue = reader.Read( method.ReturnParameter.Type );
-			//	}
-			//}
-
-			//var error = reader.ReadString() ?? string.Empty;
 
 			if( !reader.Complete() )
 				return false;
@@ -3345,7 +3308,7 @@ namespace NeoAxis
 			{
 				var answerItem = new CallMethodAnswerItem();
 				answerItem.ResultValue = resultValue;
-				answerItem.ResultCustomStructureValues = resultCustomStructureValues;
+				//answerItem.ResultCustomStructureValues = resultCustomStructureValues;
 				answerItem.Error = error;
 				answerItem.CreationTime = DateTime.UtcNow;
 				answers[ requestID ] = answerItem;
@@ -3359,7 +3322,7 @@ namespace NeoAxis
 			return true;
 		}
 
-		void SendCallMethod( long requestID, CallMethodInfo method, object[] inputParameterValues )
+		void SendCallMethod( long requestID, CloudMethodInfo method, object[] inputParameterValues )
 		{
 			var m = BeginMessage( callMethodMessage );
 			var writer = m.Writer;
@@ -3372,22 +3335,22 @@ namespace NeoAxis
 				var inputParameter = inputParameters[ n ];
 				var inputParameterValue = inputParameterValues[ n ];
 
-				if( inputParameter.CustomTypeProperties != null )
-				{
-					if( inputParameter.Type != null )
-						writer.WriteCustomStructure( inputParameter.Type, inputParameterValue );
-					else
-						writer.WriteCustomStructure( inputParameterValue.GetType(), inputParameterValue );
-				}
-				else
-					writer.Write( inputParameter.Type, inputParameterValue );
+				//if( inputParameter.CustomTypeProperties != null )
+				//{
+				//	if( inputParameter.Type != null )
+				//		writer.WriteCustomStructure( inputParameter.Type, inputParameterValue );
+				//	else
+				//		writer.WriteCustomStructure( inputParameterValue.GetType(), inputParameterValue );
+				//}
+				//else
+				writer.Write( inputParameter.Type, inputParameterValue );
 			}
 			m.End();
 		}
 
 		//with return value
 
-		public async Task<CallMethodResult<T>> CallMethodWithCancellationTokenAsync<T>( CallMethodInfo method, CancellationToken cancellationToken, params object[] parameters )
+		public async Task<CallMethodResult<T>> CallMethodWithCancellationTokenAsync<T>( CloudMethodInfo method, CancellationToken cancellationToken, params object[] parameters )
 		{
 			var inputParameterValues = parameters ?? Array.Empty<object>();
 
@@ -3403,48 +3366,48 @@ namespace NeoAxis
 						return new CallMethodResult<T> { Error = answer.Error };
 					else
 					{
-						if( answer.ResultCustomStructureValues != null )
-						{
-							try
-							{
-								var returnParameter = method.ReturnParameter;
+						//if( answer.ResultCustomStructureValues != null )
+						//{
+						//	try
+						//	{
+						//		var returnParameter = method.ReturnParameter;
 
-								var valueType = typeof( T );
-								var value = (T)valueType.InvokeMember( "", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance, null, null, null );
+						//		var valueType = typeof( T );
+						//		var value = (T)valueType.InvokeMember( "", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance, null, null, null );
 
-								if( returnParameter.CustomTypeProperties.Length != answer.ResultCustomStructureValues.Length )
-									return new CallMethodResult<T> { Error = "Invalid answer. returnParameter.CustomTypeProperties.Length != answer.ResultCustomStructureValues.Length." };
+						//		if( returnParameter.CustomTypeProperties.Length != answer.ResultCustomStructureValues.Length )
+						//			return new CallMethodResult<T> { Error = "Invalid answer. returnParameter.CustomTypeProperties.Length != answer.ResultCustomStructureValues.Length." };
 
-								for( int n = 0; n < returnParameter.CustomTypeProperties.Length; n++ )
-								{
-									var p = returnParameter.CustomTypeProperties[ n ];
-									var resultCustomStructureValue = answer.ResultCustomStructureValues[ n ];
+						//		for( int n = 0; n < returnParameter.CustomTypeProperties.Length; n++ )
+						//		{
+						//			var p = returnParameter.CustomTypeProperties[ n ];
+						//			var resultCustomStructureValue = answer.ResultCustomStructureValues[ n ];
 
-									if( p.FieldType != null )
-									{
-										var field = valueType.GetField( p.Name );
-										if( field == null )
-											return new CallMethodResult<T> { Error = $"No field with name \"{p.Name}\"." };
-										field.SetValue( value, resultCustomStructureValue );
-									}
-									else if( p.PropertyType != null )
-									{
-										var property = valueType.GetProperty( p.Name );
-										if( property == null )
-											return new CallMethodResult<T> { Error = $"No property with name \"{p.Name}\"." };
-										property.SetValue( value, resultCustomStructureValue );
-									}
-								}
+						//			if( p.FieldType != null )
+						//			{
+						//				var field = valueType.GetField( p.Name );
+						//				if( field == null )
+						//					return new CallMethodResult<T> { Error = $"No field with name \"{p.Name}\"." };
+						//				field.SetValue( value, resultCustomStructureValue );
+						//			}
+						//			else if( p.PropertyType != null )
+						//			{
+						//				var property = valueType.GetProperty( p.Name );
+						//				if( property == null )
+						//					return new CallMethodResult<T> { Error = $"No property with name \"{p.Name}\"." };
+						//				property.SetValue( value, resultCustomStructureValue );
+						//			}
+						//		}
 
-								return new CallMethodResult<T> { Value = value };
-							}
-							catch( Exception e )
-							{
-								return new CallMethodResult<T> { Error = e.Message };
-							}
-						}
-						else
-							return new CallMethodResult<T> { Value = (T)answer.ResultValue };
+						//		return new CallMethodResult<T> { Value = value };
+						//	}
+						//	catch( Exception e )
+						//	{
+						//		return new CallMethodResult<T> { Error = e.Message };
+						//	}
+						//}
+						//else
+						return new CallMethodResult<T> { Value = (T)answer.ResultValue };
 					}
 				}
 
@@ -3461,7 +3424,7 @@ namespace NeoAxis
 
 		public async Task<CallMethodResult<T>> CallMethodWithCancellationTokenAsync<T>( string className, string methodName, CancellationToken cancellationToken, params object[] parameters )
 		{
-			var method = await GetCallMethodInfoAsync( className, methodName, cancellationToken );
+			var method = await GetCloudMethodInfoAsync( className, methodName, cancellationToken );
 			if( !string.IsNullOrEmpty( method.Error ) )
 				return new CallMethodResult<T> { Error = method.Error };
 
@@ -3475,9 +3438,10 @@ namespace NeoAxis
 		/// <param name="method"></param>
 		/// <param name="parameters"></param>
 		/// <returns></returns>
-		public async Task<CallMethodResult<T>> CallMethodAsync<T>( CallMethodInfo method, params object[] parameters )
+		public async Task<CallMethodResult<T>> CallMethodAsync<T>( CloudMethodInfo method, params object[] parameters )
 		{
-			return await CallMethodWithCancellationTokenAsync<T>( method, CallMethodDefaultCancellationTokenSource.Token, parameters );
+			return await CallMethodWithCancellationTokenAsync<T>( method, default, parameters );
+			//return await CallMethodWithCancellationTokenAsync<T>( method, CallMethodDefaultCancellationTokenSource.Token, parameters );
 		}
 
 		/// <summary>
@@ -3490,12 +3454,13 @@ namespace NeoAxis
 		/// <returns></returns>
 		public async Task<CallMethodResult<T>> CallMethodAsync<T>( string className, string methodName, params object[] parameters )
 		{
-			return await CallMethodWithCancellationTokenAsync<T>( className, methodName, CallMethodDefaultCancellationTokenSource.Token, parameters );
+			return await CallMethodWithCancellationTokenAsync<T>( className, methodName, default, parameters );
+			//return await CallMethodWithCancellationTokenAsync<T>( className, methodName, CallMethodDefaultCancellationTokenSource.Token, parameters );
 		}
 
 		//without return value
 
-		public async Task<CallMethodResultNoValue> CallMethodWithCancellationTokenAsync( CallMethodInfo method, CancellationToken cancellationToken, params object[] parameters )
+		public async Task<CallMethodResultNoValue> CallMethodWithCancellationTokenAsync( CloudMethodInfo method, CancellationToken cancellationToken, params object[] parameters )
 		{
 			var inputParameterValues = parameters ?? Array.Empty<object>();
 
@@ -3526,7 +3491,7 @@ namespace NeoAxis
 
 		public async Task<CallMethodResultNoValue> CallMethodWithCancellationTokenAsync( string className, string methodName, CancellationToken cancellationToken, params object[] parameters )
 		{
-			var method = await GetCallMethodInfoAsync( className, methodName, cancellationToken );
+			var method = await GetCloudMethodInfoAsync( className, methodName, cancellationToken );
 			if( !string.IsNullOrEmpty( method.Error ) )
 				return new CallMethodResultNoValue { Error = method.Error };
 
@@ -3540,9 +3505,10 @@ namespace NeoAxis
 		/// <param name="method"></param>
 		/// <param name="parameters"></param>
 		/// <returns></returns>
-		public async Task<CallMethodResultNoValue> CallMethodAsync( CallMethodInfo method, params object[] parameters )
+		public async Task<CallMethodResultNoValue> CallMethodAsync( CloudMethodInfo method, params object[] parameters )
 		{
-			return await CallMethodWithCancellationTokenAsync( method, CallMethodDefaultCancellationTokenSource.Token, parameters );
+			return await CallMethodWithCancellationTokenAsync( method, default, parameters );
+			//return await CallMethodWithCancellationTokenAsync( method, CallMethodDefaultCancellationTokenSource.Token, parameters );
 		}
 
 		/// <summary>
@@ -3555,7 +3521,8 @@ namespace NeoAxis
 		/// <returns></returns>
 		public async Task<CallMethodResultNoValue> CallMethodAsync( string className, string methodName, params object[] parameters )
 		{
-			return await CallMethodWithCancellationTokenAsync( className, methodName, CallMethodDefaultCancellationTokenSource.Token, parameters );
+			return await CallMethodWithCancellationTokenAsync( className, methodName, default, parameters );
+			//return await CallMethodWithCancellationTokenAsync( className, methodName, CallMethodDefaultCancellationTokenSource.Token, parameters );
 		}
 
 
@@ -3757,12 +3724,12 @@ namespace NeoAxis
 				{
 					var item = new GetFilesInfoResult.FileItem();
 					item.Size = reader.ReadInt64();
-					item.Hash = reader.ReadString() ?? string.Empty;
+					item.Hash = reader.ReadString() ?? "";
 					item.LastModifiedUtc = reader.ReadDateTime();
 					files[ n ] = item;
 				}
 			}
-			var error = reader.ReadString() ?? string.Empty;
+			var error = reader.ReadString() ?? "";
 			if( !reader.Complete() )
 				return false;
 
@@ -3794,15 +3761,15 @@ namespace NeoAxis
 				for( int n = 0; n < itemCount; n++ )
 				{
 					var item = new GetDirectoryInfoResult.Item();
-					item.Path = reader.ReadString() ?? string.Empty; //item.Path = PathUtility.NormalizePath( reader.ReadString() );
+					item.Path = reader.ReadString() ?? ""; //item.Path = PathUtility.NormalizePath( reader.ReadString() );
 					item.Size = reader.ReadVariableInt64();
-					item.Hash = reader.ReadString() ?? string.Empty;
+					item.Hash = reader.ReadString() ?? "";
 					item.LastModifiedUtc = reader.ReadDateTime();
 					item.IsDirectory = reader.ReadBoolean();
 					files[ n ] = item;
 				}
 			}
-			var error = reader.ReadString() ?? string.Empty;
+			var error = reader.ReadString() ?? "";
 			if( !reader.Complete() )
 				return false;
 
@@ -3960,7 +3927,7 @@ namespace NeoAxis
 				reader.ReadBuffer( data, 0, data.Length );
 				parts[ n ] = new DownloadFileContentAnswerItem.Part() { Data = data };
 			}
-			var error = reader.ReadString() ?? string.Empty;
+			var error = reader.ReadString() ?? "";
 			if( !reader.Complete() )
 				return false;
 
@@ -4043,7 +4010,7 @@ namespace NeoAxis
 			var downloadUrls = new string[ itemCount ];
 			for( int n = 0; n < itemCount; n++ )
 				downloadUrls[ n ] = reader.ReadString();
-			var error = reader.ReadString() ?? string.Empty;
+			var error = reader.ReadString() ?? "";
 			if( !reader.Complete() )
 				return false;
 
@@ -4750,7 +4717,7 @@ namespace NeoAxis
 		bool ReceiveMessage_UploadFileContentAnswer( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var requestID = reader.ReadVariableInt64();
-			var error = reader.ReadString() ?? string.Empty;
+			var error = reader.ReadString() ?? "";
 			if( !reader.Complete() )
 				return false;
 
@@ -4852,7 +4819,7 @@ namespace NeoAxis
 			var uploadUrls = new string[ itemCount ];
 			for( int n = 0; n < itemCount; n++ )
 				uploadUrls[ n ] = reader.ReadString();
-			var error = reader.ReadString() ?? string.Empty;
+			var error = reader.ReadString() ?? "";
 			if( !reader.Complete() )
 				return false;
 
@@ -5338,7 +5305,7 @@ namespace NeoAxis
 		bool ReceiveMessage_CreateDirectoryAnswer( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var requestID = reader.ReadVariableInt64();
-			var error = reader.ReadString() ?? string.Empty;
+			var error = reader.ReadString() ?? "";
 			if( !reader.Complete() )
 				return false;
 
@@ -5704,7 +5671,7 @@ namespace NeoAxis
 		bool ReceiveMessage_DeleteFilesAnswer( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var requestID = reader.ReadVariableInt64();
-			var error = reader.ReadString() ?? string.Empty;
+			var error = reader.ReadString() ?? "";
 			if( !reader.Complete() )
 				return false;
 
@@ -5773,7 +5740,7 @@ namespace NeoAxis
 		bool ReceiveMessage_DeleteDirectoryAnswer( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
 			var requestID = reader.ReadVariableInt64();
-			var error = reader.ReadString() ?? string.Empty;
+			var error = reader.ReadString() ?? "";
 			if( !reader.Complete() )
 				return false;
 
@@ -5872,6 +5839,36 @@ namespace NeoAxis
 			{
 				return new SimpleResult { Error = e.Message };
 			}
+		}
+
+		public void RegisterAssemblyForCloudMethodTypes( Assembly assembly )
+		{
+			if( !registeredCloudMethodAssemblies.Contains( assembly ) )
+				registeredCloudMethodAssemblies.Add( assembly );
+		}
+
+		Type FindTypeForCloudMethod( string typeName )
+		{
+			var simpleTypeItem = SimpleTypes.GetTypeItem( typeName );
+			if( simpleTypeItem != null )
+				return simpleTypeItem.Type;
+
+			var type = Type.GetType( typeName );
+			if( type != null )
+				return type;
+
+			foreach( var assembly in registeredCloudMethodAssemblies )
+			{
+				type = assembly.GetType( typeName, false, true );
+				if( type != null )
+					return type;
+			}
+
+			//type = typeof( Vector2 ).Assembly.GetType( typeName );
+			//if( type != null )
+			//	return type;
+
+			return null;
 		}
 	}
 }

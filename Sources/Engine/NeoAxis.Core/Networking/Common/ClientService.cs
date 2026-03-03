@@ -33,7 +33,7 @@ namespace NeoAxis.Networking
 
 			/////////////////////
 
-			public delegate bool ReceiveHandlerDelegate( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage );
+			public delegate bool ReceiveHandlerDelegate( MessageType messageType, ArrayDataReader reader, ref string error );
 
 			/////////////////////
 
@@ -79,8 +79,10 @@ namespace NeoAxis.Networking
 				{
 					var writer = Writer;
 
+					//send accumulated message
 					int bytesWritten = clientNode.AddAccumulatedMessageToSend( writer );
 
+					//profiler
 					var profilerDataCached = clientNode.ProfilerData;
 					if( profilerDataCached != null )
 					{
@@ -123,6 +125,9 @@ namespace NeoAxis.Networking
 
 		protected ClientService( string name, int identifier )
 		{
+			if( identifier < 0 )
+				Log.Fatal( "ClientService: Constructor: identifier < 0." );
+
 			this.name = name;
 			this.identifier = identifier;
 		}
@@ -234,7 +239,7 @@ namespace NeoAxis.Networking
 			}
 		}
 
-		protected internal virtual void OnUpdate() { }
+		protected internal virtual void OnUpdate( DateTime utcNow ) { }
 
 		[MethodImpl( (MethodImplOptions)512 )]
 		protected BeginMessageContext BeginMessage( int messageID )

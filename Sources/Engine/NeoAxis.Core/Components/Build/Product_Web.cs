@@ -308,19 +308,19 @@ namespace NeoAxis
 
 		void PatchCSharpProjects( ProductBuildInstance buildInstance )
 		{
-			{
-				var p1 = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.Web.csproj" );
-				var p2 = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.csproj" );
-				if( !EditorAPI.EditorCommandLineTools_PlatformProjectPatch_Process( p1, p2, out var error, out _ ) )
-					throw new Exception( error );
-			}
+			//{
+			//	var p1 = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.Web.csproj" );
+			//	var p2 = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.csproj" );
+			//	if( !EditorAPI.EditorCommandLineTools_PlatformProjectPatch_Process( p1, p2, out var error, out _ ) )
+			//		throw new Exception( error );
+			//}
 
 			{
 				var p1 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.Web.csproj" );
 				var p2 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.csproj" );
 				if( File.Exists( p1 ) )
 				{
-					if( !EditorAPI.EditorCommandLineTools_PlatformProjectPatch_Process( p1, p2, out var error, out _ ) )
+					if( !EditorAPI.EditorCommandLineTools_PlatformProjectPatch_Process( p1, p2, false, out var error, out _ ) )
 						throw new Exception( error );
 				}
 			}
@@ -461,8 +461,8 @@ namespace NeoAxis
 				CopyFolder( Path.Combine( sourceSourcesPath, "NeoAxis.Player.Web" ), Path.Combine( destSourcesPath, "NeoAxis.Player.Web" ), buildInstance, new Range( 0.4, 0.45 ), excludePaths );
 			}
 
-			//copy Sources\NeoAxis.CoreExtension
-			CopyFolder( Path.Combine( sourceSourcesPath, "NeoAxis.CoreExtension" ), Path.Combine( destSourcesPath, "NeoAxis.CoreExtension" ), buildInstance, new Range( 0.45, 0.5 ) );
+			////copy Sources\NeoAxis.CoreExtension
+			//CopyFolder( Path.Combine( sourceSourcesPath, "NeoAxis.CoreExtension" ), Path.Combine( destSourcesPath, "NeoAxis.CoreExtension" ), buildInstance, new Range( 0.45, 0.5 ) );
 
 			var sourceBinariesPath = VirtualFileSystem.Directories.Binaries;
 			string destBinariesPath = Path.Combine( buildInstance.DestinationFolder, "Binaries" );

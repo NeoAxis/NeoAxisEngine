@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows8.0</TargetFramework>
 	<CheckEolTargetFramework>false</CheckEolTargetFramework>
 	<UseWindowsForms>true</UseWindowsForms>
 	<UseWPF>true</UseWPF>
@@ -14,14 +14,14 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\..\..\Project\Binaries\</OutputPath>
     <DocumentationFile>..\..\..\Project\Binaries\NeoAxis.Widget.xml</DocumentationFile>
-    <NoWarn>CS1591</NoWarn>
+    <NoWarn>CS1591;CA1416</NoWarn>
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>false</Optimize>
     <OutputPath>..\..\..\Project\Binaries\</OutputPath>
     <DocumentationFile>..\..\..\Project\Binaries\NeoAxis.Widget.xml</DocumentationFile>
-    <NoWarn>CS1591</NoWarn>
+    <NoWarn>CS1591;CA1416</NoWarn>
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <ItemGroup>

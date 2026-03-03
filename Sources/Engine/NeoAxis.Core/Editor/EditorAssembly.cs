@@ -109,7 +109,7 @@ namespace NeoAxis.Editor
 		public abstract IEditorAction[] GetEditorActions();
 		public abstract FlowGraphNodeStyle Get_FlowGraphNodeStyle_Rectangle_Instance();
 
-		public abstract bool EditorCommandLineTools_PlatformProjectPatch_Process( string destFile, string baseProjectFileName, out string error, out bool changed );
+		public abstract bool EditorCommandLineTools_PlatformProjectPatch_Process( string destFile, string baseProjectFileName, bool modeWithCopyFiles, out string error, out bool changed );
 
 		public abstract void RegisterEditorAsembly( Assembly assembly, Type[] exportedTypes );
 		public abstract void UnregisterEditorAsembly( Assembly assembly );

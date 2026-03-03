@@ -17,7 +17,7 @@ namespace System.Configuration
 	}
 }
 
-#if !WEB
+#if !WEB && !ANDROID
 namespace System
 {
 	public class UserPreferenceChangedEventArgs

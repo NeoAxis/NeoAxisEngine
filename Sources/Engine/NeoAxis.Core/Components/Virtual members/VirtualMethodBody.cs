@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace NeoAxis
 {
@@ -21,7 +22,9 @@ namespace NeoAxis
 		PropertyImpl propertyPropertyValue;
 
 		[ThreadStatic]
-		Stack<InvokeStackItem> invokeStack;
+		static ConcurrentDictionary<VirtualMethodBody, Stack<InvokeStackItem>> invokeStack = new ConcurrentDictionary<VirtualMethodBody, Stack<InvokeStackItem>>();
+		//[ThreadStatic]
+		//Stack<InvokeStackItem> invokeStack;
 
 		/////////////////////////////////////////
 
@@ -200,9 +203,10 @@ namespace NeoAxis
 			{
 				object result = null;
 
-				if( creator.invokeStack != null && creator.invokeStack.Count != 0 )
+				var stack = GetInvokeStack( creator, false );
+				if( stack != null && stack.Count != 0 ) //if( creator.invokeStack != null && creator.invokeStack.Count != 0 )
 				{
-					var invokeItem = creator.invokeStack.Peek();
+					var invokeItem = stack.Peek(); //var invokeItem = creator.invokeStack.Peek();
 
 					switch( parameterType )
 					{
@@ -450,41 +454,47 @@ namespace NeoAxis
 			invokeItem.obj = obj;
 			invokeItem.parameters = parameters;
 
-			if( invokeStack == null )
-				invokeStack = new Stack<InvokeStackItem>();
-			invokeStack.Push( invokeItem );
+			var stack = GetInvokeStack( this, true );
+			stack.Push( invokeItem );
+			//if( invokeStack == null )
+			//	invokeStack = new Stack<InvokeStackItem>();
+			//invokeStack.Push( invokeItem );
 
-			//execute flow
-			Flow flow = null;
-			if( Flow.Value != null )
-				flow = NeoAxis.Flow.ExecuteWithoutRemoveFromStack( ParentRoot?.HierarchyController, Flow, null );
-
-			//get ref, out, return value parameters
-			var bodyEnd = BodyEnd.Value;
-			if( bodyEnd != null )
+			try
 			{
-				foreach( var p in bodyEnd.properties )
-				{
-					switch( p.parameterType )
-					{
-					case VirtualMethodBodyEnd.PropertyImpl.ParameterType.Parameter:
-						if( p.invokeParameterIndex < parameters.Length )
-							parameters[ p.invokeParameterIndex ] = ReferenceUtility.GetUnreferencedValue( p.GetValue( bodyEnd, null ) );
-						break;
+				//execute flow
+				Flow flow = null;
+				if( Flow.Value != null )
+					flow = NeoAxis.Flow.ExecuteWithoutRemoveFromStack( ParentRoot?.HierarchyController, Flow, null );
 
-					case VirtualMethodBodyEnd.PropertyImpl.ParameterType.ReturnValue:
-						returnValue = ReferenceUtility.GetUnreferencedValue( p.GetValue( bodyEnd, null ) );
-						break;
+				//get ref, out, return value parameters
+				var bodyEnd = BodyEnd.Value;
+				if( bodyEnd != null )
+				{
+					foreach( var p in bodyEnd.properties )
+					{
+						switch( p.parameterType )
+						{
+						case VirtualMethodBodyEnd.PropertyImpl.ParameterType.Parameter:
+							if( p.invokeParameterIndex < parameters.Length )
+								parameters[ p.invokeParameterIndex ] = ReferenceUtility.GetUnreferencedValue( p.GetValue( bodyEnd, null ) );
+							break;
+
+						case VirtualMethodBodyEnd.PropertyImpl.ParameterType.ReturnValue:
+							returnValue = ReferenceUtility.GetUnreferencedValue( p.GetValue( bodyEnd, null ) );
+							break;
+						}
 					}
 				}
+
+				if( flow != null )
+					NeoAxis.Flow.RemoveFromStack( flow );
+
 			}
-
-			if( flow != null )
-				NeoAxis.Flow.RemoveFromStack( flow );
-
-			invokeStack.Pop();
-
-			//returnValue = EngineApp.EngineTime % 4.0 > 2.0;
+			finally
+			{
+				stack.Pop();
+			}
 
 			return returnValue;
 		}
@@ -498,6 +508,17 @@ namespace NeoAxis
 		public void GetFlowGraphRepresentationData( FlowGraphRepresentationData data )
 		{
 			data.NodeContentType = FlowGraphNodeContentType.MethodBody;
+		}
+
+		static Stack<InvokeStackItem> GetInvokeStack( VirtualMethodBody body, bool allowCreate )
+		{
+			if( allowCreate )
+				return invokeStack.GetOrAdd( body, b => new Stack<InvokeStackItem>() );
+			else
+			{
+				invokeStack.TryGetValue( body, out var stack );
+				return stack;
+			}
 		}
 	}
 }

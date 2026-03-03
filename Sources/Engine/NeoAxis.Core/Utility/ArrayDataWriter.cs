@@ -1,5 +1,4 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-using Internal.LiteDB;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -1294,8 +1293,20 @@ namespace NeoAxis
 			}
 		}
 
-		public static bool TypeToWriteIsSupported( Type typeToWrite )
+		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//public void Write( ObjectId source )
+		//{
+		//	Write( source.ToString() );
+		//}
+
+
+
+		public static bool TypeToWriteIsSupported( Type typeToWrite, int recursiveLevel )
 		{
+			//limit recursion when checking complex types
+			if( recursiveLevel > 5 )
+				return false;
+
 			//simple types
 			var simpleType = SimpleTypes.GetTypeItem( typeToWrite );
 			if( simpleType != null )
@@ -1303,7 +1314,19 @@ namespace NeoAxis
 
 			//array
 			if( typeToWrite.IsArray )
+			{
+				//!!!!multi dimension support
+
+				//only one dimension arrays supported now
+				if( typeToWrite.GetArrayRank() != 1 )
+					return false;
+
+				var arrayItemType = typeToWrite.GetElementType();
+				if( !TypeToWriteIsSupported( arrayItemType, recursiveLevel + 1 ) )
+					return false;
+
 				return true;
+			}
 
 			//containers
 			{
@@ -1318,8 +1341,10 @@ namespace NeoAxis
 					containerType == typeof( Stack<> ) ||
 					containerType == typeof( Queue<> ) )
 				{
-					//!!!!check element types
-
+					//check element types
+					var elementType0 = TypeUtility.GetGenericArgumentInBaseTypes( typeToWrite, containerType, 0 );
+					if( !TypeToWriteIsSupported( elementType0, recursiveLevel + 1 ) )
+						return false;
 					return true;
 				}
 
@@ -1327,8 +1352,13 @@ namespace NeoAxis
 					containerType == typeof( EDictionary<,> ) ||
 					containerType == typeof( SortedList<,> ) )
 				{
-					//!!!!check element types
-
+					//check element types
+					var elementType0 = TypeUtility.GetGenericArgumentInBaseTypes( typeToWrite, containerType, 0 );
+					if( !TypeToWriteIsSupported( elementType0, recursiveLevel + 1 ) )
+						return false;
+					var elementType1 = TypeUtility.GetGenericArgumentInBaseTypes( typeToWrite, containerType, 1 );
+					if( !TypeToWriteIsSupported( elementType1, recursiveLevel + 1 ) )
+						return false;
 					return true;
 				}
 			}
@@ -1347,9 +1377,13 @@ namespace NeoAxis
 					genericType == typeof( ValueTuple<,,,,,,> ) ||
 					genericType == typeof( ValueTuple<,,,,,,,> ) )
 				{
-
-					//!!!!check element types
-
+					//check element types
+					var itemTypes = typeToWrite.GetGenericArguments();
+					foreach( var itemType in itemTypes )
+					{
+						if( !TypeToWriteIsSupported( itemType, recursiveLevel + 1 ) )
+							return false;
+					}
 					return true;
 				}
 
@@ -1362,12 +1396,25 @@ namespace NeoAxis
 					genericType == typeof( Tuple<,,,,,,> ) ||
 					genericType == typeof( Tuple<,,,,,,,> ) )
 				{
-
-					//!!!!check element types
-
+					//check element types
+					var itemTypes = typeToWrite.GetGenericArguments();
+					foreach( var itemType in itemTypes )
+					{
+						if( !TypeToWriteIsSupported( itemType, recursiveLevel + 1 ) )
+							return false;
+					}
 					return true;
 				}
 			}
+
+			//!!!!
+			//Nullable is not supported now. need generated code of method to use as input parameter Nullable<>, it is automatically unwrapped.
+			if( typeToWrite.IsGenericType && typeToWrite.GetGenericTypeDefinition() == typeof( Nullable<> ) )
+				return false;
+
+			//custom structure
+			if( TypeToWriteCustomStructureIsSupported( typeToWrite, recursiveLevel + 1, out _ ) )
+				return true;
 
 			return false;
 		}
@@ -1393,19 +1440,24 @@ namespace NeoAxis
 				//!!!!slowly
 				//arrays with simple types may be optimized. same as MetadataManager. and cache simple type item
 
-				var valueType = value.GetType();
-				var propertyCount = valueType.GetProperty( "Length" );
-				var methodGetValue = valueType.GetMethod( "GetValue", new Type[] { typeof( int ) } );
-				var elementType = valueType.GetElementType();
-
-				int count = (int)propertyCount.GetValue( value, null );
-				WriteVariable( count );
-
-				for( int n = 0; n < count; n++ )
+				if( value != null )
 				{
-					var itemValue = methodGetValue.Invoke( value, new object[] { n } );
-					Write( elementType, itemValue );
+					var valueType = value.GetType();
+					var propertyCount = valueType.GetProperty( "Length" );
+					var methodGetValue = valueType.GetMethod( "GetValue", new Type[] { typeof( int ) } );
+					var elementType = valueType.GetElementType();
+
+					int count = (int)propertyCount.GetValue( value, null );
+					WriteVariable( count );
+
+					for( int n = 0; n < count; n++ )
+					{
+						var itemValue = methodGetValue.Invoke( value, new object[] { n } );
+						Write( elementType, itemValue );
+					}
 				}
+				else
+					WriteVariable( -1 );
 
 				return;
 			}
@@ -1423,19 +1475,24 @@ namespace NeoAxis
 					containerType == typeof( Stack<> ) ||
 					containerType == typeof( Queue<> ) )
 				{
-					var valueType = value.GetType();
-					var propertyCount = valueType.GetProperty( "Count" );
-
-					int count = (int)propertyCount.GetValue( value, null );
-					WriteVariable( count );
-
-					if( count > 0 )
+					if( value != null )
 					{
-						var elementType = TypeUtility.GetGenericArgumentInBaseTypes( typeToWrite, containerType, 0 );
+						var valueType = value.GetType();
+						var propertyCount = valueType.GetProperty( "Count" );
 
-						foreach( object elementValue in (IEnumerable)value )
-							Write( elementType, elementValue );
+						int count = (int)propertyCount.GetValue( value, null );
+						WriteVariable( count );
+
+						if( count > 0 )
+						{
+							var elementType = TypeUtility.GetGenericArgumentInBaseTypes( typeToWrite, containerType, 0 );
+
+							foreach( object elementValue in (IEnumerable)value )
+								Write( elementType, elementValue );
+						}
 					}
+					else
+						WriteVariable( -1 );
 
 					return;
 				}
@@ -1444,35 +1501,40 @@ namespace NeoAxis
 					containerType == typeof( EDictionary<,> ) ||
 					containerType == typeof( SortedList<,> ) )
 				{
-					var valueType = value.GetType();
-					var propertyCount = valueType.GetProperty( "Count" );
-
-					int count = (int)propertyCount.GetValue( value, null );
-					WriteVariable( count );
-
-					if( count > 0 )
+					if( value != null )
 					{
-						PropertyInfo propertyKey = null;
-						PropertyInfo propertyValue = null;
+						var valueType = value.GetType();
+						var propertyCount = valueType.GetProperty( "Count" );
 
-						var elementTypes = TypeUtility.GetGenericArgumentsInBaseTypes( typeToWrite, containerType );
-						var elementTypeKey = elementTypes[ 0 ];
-						var elementTypeValue = elementTypes[ 1 ];
+						int count = (int)propertyCount.GetValue( value, null );
+						WriteVariable( count );
 
-						foreach( object pair in (IEnumerable)value )
+						if( count > 0 )
 						{
-							if( propertyKey == null )
-							{
-								propertyKey = pair.GetType().GetProperty( "Key" );
-								propertyValue = pair.GetType().GetProperty( "Value" );
-							}
-							var elementKey = propertyKey.GetValue( pair, new object[ 0 ] );
-							var elementValue = propertyValue.GetValue( pair, new object[ 0 ] );
+							PropertyInfo propertyKey = null;
+							PropertyInfo propertyValue = null;
 
-							Write( elementTypeKey, elementKey );
-							Write( elementTypeValue, elementValue );
+							var elementTypes = TypeUtility.GetGenericArgumentsInBaseTypes( typeToWrite, containerType );
+							var elementTypeKey = elementTypes[ 0 ];
+							var elementTypeValue = elementTypes[ 1 ];
+
+							foreach( object pair in (IEnumerable)value )
+							{
+								if( propertyKey == null )
+								{
+									propertyKey = pair.GetType().GetProperty( "Key" );
+									propertyValue = pair.GetType().GetProperty( "Value" );
+								}
+								var elementKey = propertyKey.GetValue( pair, new object[ 0 ] );
+								var elementValue = propertyValue.GetValue( pair, new object[ 0 ] );
+
+								Write( elementTypeKey, elementKey );
+								Write( elementTypeValue, elementValue );
+							}
 						}
 					}
+					else
+						WriteVariable( -1 );
 
 					return;
 				}
@@ -1526,10 +1588,43 @@ namespace NeoAxis
 				}
 			}
 
+			//custom structure
+			WriteCustomStructure( typeToWrite, value );
+			return;
+
+
+			//not work
+			////nullable
+			//if( typeToWrite.IsGenericType && typeToWrite.GetGenericTypeDefinition() == typeof( Nullable<> ) )
+			//{
+			//	var genericParameterType = typeToWrite.GetGenericArguments()[ 0 ];
+
+			//	//when the value is not nullable
+			//	if( genericParameterType.IsAssignableFrom( value.GetType() ) )
+			//	{
+			//		Write( true );
+			//		Write( genericParameterType, value );
+			//		return;
+			//	}
+			//	else
+			//	{
+			//		var hasValueProperty = typeToWrite.GetProperty( "HasValue" );
+			//		var valueProperty = typeToWrite.GetProperty( "Value" );
+			//		bool hasValue = (bool)hasValueProperty.GetValue( value, null );
+			//		Write( hasValue );
+			//		if( hasValue )
+			//		{
+			//			var underlyingType = Nullable.GetUnderlyingType( typeToWrite );
+			//			var actualValue = valueProperty.GetValue( value, null );
+			//			Write( underlyingType, actualValue );
+			//		}
+			//		return;
+			//	}
+			//}
+
 			throw new NotSupportedException();
 		}
 
-		//support recusive custom structures?
 
 		public class TypeToWriteCustomStructureProperty
 		{
@@ -1538,14 +1633,22 @@ namespace NeoAxis
 			public Type FieldType;
 		}
 
-		public static bool TypeToWriteCustomStructureIsSupported( Type typeToWrite, out TypeToWriteCustomStructureProperty[] properties )
+		public static bool TypeToWriteCustomStructureIsSupported( Type typeToWrite, int recursiveLevel, out TypeToWriteCustomStructureProperty[] properties )
 		{
+
+			//!!!!make cache of properties per type
+
+
 			var propertiesResult = new List<TypeToWriteCustomStructureProperty>();
 
 			var fields2 = typeToWrite.GetFields( BindingFlags.Public | BindingFlags.Instance );
 			foreach( var field in fields2 )
 			{
-				//!!!!more checks
+				if( !TypeToWriteIsSupported( field.FieldType, recursiveLevel + 1 ) )
+				{
+					properties = null;
+					return false;
+				}
 
 				var p = new TypeToWriteCustomStructureProperty();
 				p.Name = field.Name;
@@ -1556,7 +1659,11 @@ namespace NeoAxis
 			var properties3 = typeToWrite.GetProperties( BindingFlags.Public | BindingFlags.Instance );
 			foreach( var property in properties3 )
 			{
-				//!!!!more checks
+				if( !TypeToWriteIsSupported( property.PropertyType, recursiveLevel + 1 ) )
+				{
+					properties = null;
+					return false;
+				}
 
 				var p = new TypeToWriteCustomStructureProperty();
 				p.Name = property.Name;
@@ -1569,7 +1676,8 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		public void WriteCustomStructure( Type typeToWrite, object value )
+		/*public */
+		void WriteCustomStructure( Type typeToWrite, object value )
 		{
 			var fields = typeToWrite.GetFields( BindingFlags.Public | BindingFlags.Instance );
 			foreach( var field in fields )
@@ -1588,12 +1696,6 @@ namespace NeoAxis
 				var propertyValue = property.GetValue( value );
 				Write( property.PropertyType, propertyValue );
 			}
-		}
-
-		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		public void Write( ObjectId source )
-		{
-			Write( source.ToString() );
 		}
 	}
 }

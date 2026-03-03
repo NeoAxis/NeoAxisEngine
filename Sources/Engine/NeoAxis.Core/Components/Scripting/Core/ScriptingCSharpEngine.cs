@@ -44,24 +44,25 @@ namespace NeoAxis
 						scriptAssemblyNameResolver = new ScriptAssemblyNameResolver();
 						scriptAssemblyNameResolver.AddSearchDirectory( VirtualFileSystem.Directories.Binaries );
 
-						//{
-						//	var folder = PathUtility.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet5\shared\Microsoft.WindowsDesktop.App\5.0.17" );
-						//	if( Directory.Exists( folder ) )
-						//		scriptAssemblyNameResolver.AddSearchDirectory( folder );
-						//}
 						{
-							var folder = PathUtility.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet5\shared\Microsoft.NETCore.App\5.0.17" );
-							if( Directory.Exists( folder ) )
-								scriptAssemblyNameResolver.AddSearchDirectory( folder );
+							var netFolder = PathUtility.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet\shared\Microsoft.NETCore.App" );
+
+							var folderWithFiles = "";
+							foreach( var folder in Directory.GetDirectories( netFolder ) )
+							{
+								if( Directory.GetFiles( folder ).Length != 0 )
+								{
+									folderWithFiles = folder;
+									break;
+								}
+							}
+
+							if( !string.IsNullOrEmpty( folderWithFiles ) )
+								scriptAssemblyNameResolver.AddSearchDirectory( folderWithFiles );
 						}
 
 						//{
-						//	var folder = PathUtility.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet\shared\Microsoft.WindowsDesktop.App\3.1.6" );
-						//	if( Directory.Exists( folder ) )
-						//		scriptAssemblyNameResolver.AddSearchDirectory( folder );
-						//}
-						//{
-						//	var folder = PathUtility.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet\shared\Microsoft.NETCore.App\3.1.6" );
+						//	var folder = PathUtility.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet5\shared\Microsoft.NETCore.App\5.0.17" );
 						//	if( Directory.Exists( folder ) )
 						//		scriptAssemblyNameResolver.AddSearchDirectory( folder );
 						//}
@@ -202,6 +203,10 @@ namespace NeoAxis
 					if( SystemSettings.CommandLineParameters.TryGetValue( "-client", out var worldClient ) )
 						return false;
 					if( SystemSettings.CommandLineParameters.TryGetValue( "-server", out var projectServer ) )
+						return false;
+
+					var dotnetDirectoryPath = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Platforms\Windows\dotnet" );
+					if( !Directory.Exists( dotnetDirectoryPath ) )
 						return false;
 				}
 

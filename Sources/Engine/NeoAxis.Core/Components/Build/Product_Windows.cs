@@ -29,6 +29,19 @@ namespace NeoAxis
 		ReferenceField<string> _executableName = "NeoAxis.Player";
 
 		/// <summary>
+		/// Whether to include .NET runtime and assemblies to support compiling C# scripts in the built product.
+		/// </summary>
+		[DefaultValue( false )]
+		public Reference<bool> CompilingScripts
+		{
+			get { if( _compilingScripts.BeginGet() ) CompilingScripts = _compilingScripts.Get( this ); return _compilingScripts.value; }
+			set { if( _compilingScripts.BeginSet( this, ref value ) ) { try { CompilingScriptsChanged?.Invoke( this ); } finally { _compilingScripts.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="CompilingScripts"/> property value changes.</summary>
+		public event Action<Product_Windows> CompilingScriptsChanged;
+		ReferenceField<bool> _compilingScripts = false;
+
+		/// <summary>
 		/// Whether to include NeoAxis Editor.
 		/// </summary>
 		[DefaultValue( false )]
@@ -147,8 +160,14 @@ namespace NeoAxis
 			{
 				var paths = GetPaths();
 
+				var obfuscate = Obfuscate.Value;
+
 				//execute
-				CopyIncludeExcludePaths( paths, buildInstance, new Range( 0, 0.99 ) );
+				CopyIncludeExcludePaths( paths, buildInstance, new Range( 0, obfuscate ? 0.9 : 0.99 ) );
+
+				//obfuscate
+				if( Obfuscate )
+					DoObfuscation( buildInstance, new Range( 0.9, 0.99 ) );
 			}
 			catch( Exception e )
 			{
@@ -325,18 +344,18 @@ namespace NeoAxis
 			//	return;
 			//}
 
-			//write Run.cmd
-			try
-			{
-				string fileName = Path.Combine( buildInstance.DestinationFolder, "Run.cmd" );
-				File.WriteAllText( fileName, Path.Combine( @"Binaries", ExecutableName + ".exe" ) );
-			}
-			catch( Exception e )
-			{
-				buildInstance.Error = e.Message;
-				buildInstance.State = ProductBuildInstance.StateEnum.Error;
-				return;
-			}
+			////write Run.cmd
+			//try
+			//{
+			//	string fileName = Path.Combine( buildInstance.DestinationFolder, "Run.cmd" );
+			//	File.WriteAllText( fileName, Path.Combine( @"Binaries", ExecutableName + ".exe" ) );
+			//}
+			//catch( Exception e )
+			//{
+			//	buildInstance.Error = e.Message;
+			//	buildInstance.State = ProductBuildInstance.StateEnum.Error;
+			//	return;
+			//}
 
 			////write License.cert
 			//if( EngineApp.IsProPlan )
@@ -438,6 +457,7 @@ namespace NeoAxis
 					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tips" ) );
 					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Localization" ) );
 					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tools\PlatformTools" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\Windows\Obfuscar" ) );
 
 					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Core.Editor.dll" ) );
 					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Core.Editor.deps.json" ) );
@@ -448,8 +468,8 @@ namespace NeoAxis
 					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.runtimeconfig.dev.json" ) );
 					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Editor.runtimeconfig.json" ) );
 
-					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.CoreExtension.Editor.dll" ) );
-					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.CoreExtension.Editor.deps.json" ) );
+					//excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.CoreExtension.Editor.dll" ) );
+					//excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.CoreExtension.Editor.deps.json" ) );
 				}
 
 				excludePaths.Add( Path.Combine( sourceFolder, "SampleWidgetWinForms.exe" ) );
@@ -466,10 +486,9 @@ namespace NeoAxis
 
 				excludePaths.Add( Path.Combine( sourceFolder, "_TestPlayerParameters.cmd" ) );
 
-				if( !Editor )
+				if( !Editor && !CompilingScripts )
 				{
-					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\Windows\dotnet5" ) );
-					//excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\Windows\dotnet" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\Windows\dotnet" ) );
 				}
 
 				//if( !BuildTools )
@@ -499,7 +518,7 @@ namespace NeoAxis
 				}
 
 				if( !CubemapProcessingTools )
-					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tools\Filament" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\Windows\Filament" ) );
 
 				if( !SatelliteResourceLanguages )
 				{

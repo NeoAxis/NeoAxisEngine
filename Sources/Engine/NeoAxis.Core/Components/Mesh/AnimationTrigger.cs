@@ -29,13 +29,13 @@ namespace NeoAxis
 		/// Any user data as string.
 		/// </summary>
 		[DefaultValue( "" )]
-		public Reference<string> AnyData
+		public Reference<string> AnyDataTrigger
 		{
-			get { if( _anyData.BeginGet() ) AnyData = _anyData.Get( this ); return _anyData.value; }
-			set { if( _anyData.BeginSet( this, ref value ) ) { try { AnyDataChanged?.Invoke( this ); } finally { _anyData.EndSet(); } } }
+			get { if( _anyDataTrigger.BeginGet() ) AnyDataTrigger = _anyDataTrigger.Get( this ); return _anyDataTrigger.value; }
+			set { if( _anyDataTrigger.BeginSet( this, ref value ) ) { try { AnyDataTriggerChanged?.Invoke( this ); } finally { _anyDataTrigger.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="AnyData"/> property value changes.</summary>
-		public event Action<AnimationTrigger> AnyDataChanged;
-		ReferenceField<string> _anyData = "";
+		/// <summary>Occurs when the <see cref="AnyDataTrigger"/> property value changes.</summary>
+		public event Action<AnimationTrigger> AnyDataTriggerChanged;
+		ReferenceField<string> _anyDataTrigger = "";
 	}
 }

@@ -47,6 +47,20 @@ namespace NeoAxis
 		ReferenceField<string> _textWhenNoSelectedItems = "";
 
 		/// <summary>
+		/// The maximum height of the drop-down list as a proportion of the screen height (0.0 to 1.0).
+		/// </summary>
+		[DefaultValue( 0.5 )]
+		[Range( 0, 1 )]
+		public Reference<double> MaxListScreenHeight
+		{
+			get { if( _maxListScreenHeight.BeginGet() ) MaxListScreenHeight = _maxListScreenHeight.Get( this ); return _maxListScreenHeight.value; }
+			set { if( _maxListScreenHeight.BeginSet( this, ref value ) ) { try { MaxListScreenHeightChanged?.Invoke( this ); } finally { _maxListScreenHeight.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="MaxListScreenHeight"/> property value changes.</summary>
+		public event Action<UICombo> MaxListScreenHeightChanged;
+		ReferenceField<double> _maxListScreenHeight = 0.5;
+
+		/// <summary>
 		/// The list of items.
 		/// </summary>
 		[Cloneable( CloneType.Deep )]
@@ -251,6 +265,9 @@ namespace NeoAxis
 						cover.Touch -= ListCover_Touch;
 					}
 				}
+
+				//configure list clip rectangle. cleared to reset parent clip rectangles
+				list.ScreenClipRectangle = Rectangle.Cleared;
 			}
 		}
 
@@ -543,25 +560,25 @@ namespace NeoAxis
 
 				//!!!!when it doesn’t fit on the bottom of the screen, then show it from above
 
-
 				var itemSize = list.ConvertOffsetY( list.ItemSize, UIMeasure.Screen );
 
+				//!!!!fix scroll bar issue
 				var height = itemSize * ( list.Items.Count + 0.5 );
+				//var height = itemSize * list.Items.Count;
 
 				//!!!!fix scroll bar issue
-				height *= 1.02;
+				height *= 1.025;//height *= 1.02;
 
-				//!!!!
-				if( height > 0.35 )
-					height = 0.35;
-				//if( height > 0.3 )
-				//	height = 0.3;
+				//var listMargin = list.Margin.Value;
+				//var listMarginScreenHeight = list.ConvertOffsetY( new UIMeasureValueDouble( listMargin.Measure, listMargin.Top + listMargin.Bottom ), UIMeasure.Screen );
+				//height += listMarginScreenHeight;
+
+				if( height > MaxListScreenHeight.Value )
+					height = MaxListScreenHeight.Value;
 
 				list.Size = new UIMeasureValueVector2( UIMeasure.Screen, rect.Size.X, height );
 			}
 		}
-
-
 
 
 		/////////////////////////////////////////////
@@ -682,11 +699,24 @@ namespace NeoAxis
 		//	return base.OnMouseDown( button );
 		//}
 
-		public int SelectItem( object value )
+		public int SelectItemByValue( object value )
 		{
 			for( int n = 0; n < Items.Count; n++ )
 			{
-				if( Items[ n ].Value == value )
+				if( Equals( Items[ n ].Value, value ) ) //if( Items[ n ].Value == value )
+				{
+					SelectedIndex = n;
+					return n;
+				}
+			}
+			return -1;
+		}
+
+		public int SelectItemByTag( object tag )
+		{
+			for( int n = 0; n < Items.Count; n++ )
+			{
+				if( Equals( Items[ n ].Tag, tag ) ) //if( Items[ n ].Tag == tag )
 				{
 					SelectedIndex = n;
 					return n;

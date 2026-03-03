@@ -3497,7 +3497,6 @@ namespace NeoAxis
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		////!!!!temp
 		//void PhysicsTest( Viewport viewport )
 		//{
 		//	if( viewport.Simple3DRenderer == null )
@@ -3757,7 +3756,8 @@ namespace NeoAxis
 						true );
 				}
 
-				PhysicsNative.JPhysicsSystem_SetPhysicsSettingsStructure( physicsWorld.physicsSystem, &settings, sizeof( PhysicsNative.PhysicsSettings2 ) );
+				PhysicsNative.JPhysicsSystem_SetPhysicsSettingsStructure( physicsWorld.physicsSystem, ref settings, sizeof( PhysicsNative.PhysicsSettings2 ) );
+				//PhysicsNative.JPhysicsSystem_SetPhysicsSettingsStructure( physicsWorld.physicsSystem, &settings, sizeof( PhysicsNative.PhysicsSettings2 ) );
 			}
 		}
 

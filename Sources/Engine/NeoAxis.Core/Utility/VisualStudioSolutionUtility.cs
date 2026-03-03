@@ -56,8 +56,7 @@ namespace NeoAxis
 				arguments = builder.ToString();
 			}
 
-			var dotnetExePath = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Platforms\Windows\dotnet5\dotnet.exe" );
-			//var dotnetExePath = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Platforms\Windows\dotnet\dotnet.exe" );
+			var dotnetExePath = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Platforms\Windows\dotnet\dotnet.exe" );
 
 			var success = ProcessUtility.RunAndWait( dotnetExePath, arguments, out var result ) == 0;
 			result = result.Trim( new char[] { '\r', '\n' } );

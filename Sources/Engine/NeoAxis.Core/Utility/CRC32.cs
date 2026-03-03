@@ -151,13 +151,20 @@ namespace NeoAxis
 		[MethodImpl( (MethodImplOptions)512 )]
 		protected override void HashCore( byte[] buffer, int offset, int count )
 		{
-			// Save the text in the buffer. 
-			for( int i = offset; i < count; i++ )
+			int end = offset + count;
+			for( int i = offset; i < end; i++ )
 			{
 				ulong tabPtr = ( m_crc & 0xFF ) ^ buffer[ i ];
 				m_crc >>= 8;
 				m_crc ^= crc32Table[ tabPtr ];
 			}
+
+			//for( int i = offset; i < count; i++ )
+			//{
+			//	ulong tabPtr = ( m_crc & 0xFF ) ^ buffer[ i ];
+			//	m_crc >>= 8;
+			//	m_crc ^= crc32Table[ tabPtr ];
+			//}
 		}
 
 		/// <summary>
@@ -211,6 +218,11 @@ namespace NeoAxis
 		{
 			HashCore( buffer, offset, count );
 			return HashFinal();
+		}
+
+		public uint CurrentCRC
+		{
+			get { return m_crc ^ AllOnes; }
 		}
 	}
 }

@@ -31,6 +31,7 @@ namespace Internal.LiteDB
         {
             return this.GetMember(member, (p) =>
             {
+                _entity.WaitForInitialization();
                 _entity.Members.Remove(p);
             });
         }
@@ -55,9 +56,11 @@ namespace Internal.LiteDB
         {
             return this.GetMember(member, (p) =>
             {
+                _entity.WaitForInitialization();
+                
                 // if contains another _id, remove-it
                 var oldId = _entity.Members.FirstOrDefault(x => x.FieldName == "_id");
-
+        
                 if (oldId != null)
                 {
                     oldId.FieldName = _mapper.ResolveFieldName(oldId.MemberName);
@@ -74,6 +77,7 @@ namespace Internal.LiteDB
         /// </summary>
         public EntityBuilder<T> Ctor(Func<BsonDocument, T> createInstance)
         {
+            _entity.WaitForInitialization();
             _entity.CreateInstance = v => createInstance(v);
 
             return this;
@@ -96,7 +100,8 @@ namespace Internal.LiteDB
         private EntityBuilder<T> GetMember<TK, K>(Expression<Func<TK, K>> member, Action<MemberMapper> action)
         {
             if (member == null) throw new ArgumentNullException(nameof(member));
-
+            _entity.WaitForInitialization();
+            
             var memb = _entity.GetMember(member);
 
             if (memb == null)

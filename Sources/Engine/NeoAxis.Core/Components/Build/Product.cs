@@ -3,8 +3,11 @@ using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using NeoAxis.Editor;
 using System.Linq;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace NeoAxis
 {
@@ -120,6 +123,67 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="ClearFilesWithExtension"/> property value changes.</summary>
 		public event Action<Product> ClearFilesWithExtensionChanged;
 		ReferenceField<string> _clearFilesWithExtension = clearFilesWithExtensionDefault;
+
+		/// <summary>
+		/// Whether to the assemblies of the build must be obfuscated.
+		/// </summary>
+		[Category( "Obfuscation" )]
+		[DefaultValue( false )]
+		public Reference<bool> Obfuscate
+		{
+			get { if( _obfuscate.BeginGet() ) Obfuscate = _obfuscate.Get( this ); return _obfuscate.value; }
+			set { if( _obfuscate.BeginSet( this, ref value ) ) { try { ObfuscateChanged?.Invoke( this ); } finally { _obfuscate.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Obfuscate"/> property value changes.</summary>
+		public event Action<Product> ObfuscateChanged;
+		ReferenceField<bool> _obfuscate = false;
+
+		/// <summary>
+		/// The list of assembly names to obfuscate. Items are separated by return or semicolon. For example: "Project.dll;Project.Client.dll".
+		/// </summary>
+		[Category( "Obfuscation" )]
+		[DefaultValue( obfuscateAssembliesDefault )]
+		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
+		public Reference<string> ObfuscateAssemblies
+		{
+			get { if( _obfuscateAssemblies.BeginGet() ) ObfuscateAssemblies = _obfuscateAssemblies.Get( this ); return _obfuscateAssemblies.value; }
+			set { if( _obfuscateAssemblies.BeginSet( this, ref value ) ) { try { ObfuscateAssembliesChanged?.Invoke( this ); } finally { _obfuscateAssemblies.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ObfuscateAssemblies"/> property value changes.</summary>
+		public event Action<Product> ObfuscateAssembliesChanged;
+		ReferenceField<string> _obfuscateAssemblies = obfuscateAssembliesDefault;
+
+		const string obfuscateAssembliesDefault = "Project.dll;Project.Client.dll";
+
+		/// <summary>
+		/// Whether to reuse names when obfuscating. If this option is enabled, the same names will be used for the methods and fields in a type.
+		/// </summary>
+		[Category( "Obfuscation" )]
+		[DefaultValue( true )]
+		public Reference<bool> ObfuscateReuseNames
+		{
+			get { if( _obfuscateReuseNames.BeginGet() ) ObfuscateReuseNames = _obfuscateReuseNames.Get( this ); return _obfuscateReuseNames.value; }
+			set { if( _obfuscateReuseNames.BeginSet( this, ref value ) ) { try { ObfuscateReuseNamesChanged?.Invoke( this ); } finally { _obfuscateReuseNames.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ObfuscateReuseNames"/> property value changes.</summary>
+		public event Action<Product> ObfuscateReuseNamesChanged;
+		ReferenceField<bool> _obfuscateReuseNames = true;
+
+		/// <summary>
+		/// Whether to hide strings when obfuscating. If this option is enabled, the strings will be encrypted and decrypted at runtime.
+		/// </summary>
+		[Category( "Obfuscation" )]
+		[DefaultValue( true )]
+		public Reference<bool> ObfuscateHideStrings
+		{
+			get { if( _obfuscateHideStrings.BeginGet() ) ObfuscateHideStrings = _obfuscateHideStrings.Get( this ); return _obfuscateHideStrings.value; }
+			set { if( _obfuscateHideStrings.BeginSet( this, ref value ) ) { try { ObfuscateHideStringsChanged?.Invoke( this ); } finally { _obfuscateHideStrings.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ObfuscateHideStrings"/> property value changes.</summary>
+		public event Action<Product> ObfuscateHideStringsChanged;
+		ReferenceField<bool> _obfuscateHideStrings = true;
+
+
 
 		///// <summary>
 		///// Whether to clear source 3D files such as FBX, GLTF, etc. The actual data of 3D models is stored in settings files.
@@ -366,6 +430,13 @@ namespace NeoAxis
 				case nameof( ScreenLabel ):
 					skip = true;
 					break;
+
+				case nameof( ObfuscateAssemblies ):
+				case nameof( ObfuscateReuseNames ):
+				case nameof( ObfuscateHideStrings ):
+					if( !Obfuscate )
+						skip = true;
+					break;
 				}
 			}
 		}
@@ -491,6 +562,186 @@ namespace NeoAxis
 			}
 
 			return result;
+		}
+
+		public void DoObfuscation( ProductBuildInstance buildInstance, Range progressRange )
+		{
+			var binariesFolder = Path.Combine( buildInstance.DestinationFolder, "Binaries" );
+
+			//get assemblies to obfuscate
+			var assembliesToObfuscate = new List<string>();
+			foreach( var assembly in ObfuscateAssemblies.Value.Split( new char[] { '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries ) )
+			{
+				var assembly2 = assembly.Trim();
+				if( assembly2 != "" )
+				{
+					var fullPath = Path.Combine( binariesFolder, assembly2 );
+					if( !File.Exists( fullPath ) )
+					{
+						buildInstance.Error = "Assembly to obfuscate not found: " + fullPath;
+						buildInstance.State = ProductBuildInstance.StateEnum.Error;
+						return;
+					}
+
+					assembliesToObfuscate.Add( fullPath );
+				}
+			}
+
+			//check exists pdb files
+			var regenerateDebugInfo = true;
+			{
+				foreach( var assembly in assembliesToObfuscate )
+				{
+					var pdbFile = Path.ChangeExtension( assembly, "pdb" );
+					if( !File.Exists( pdbFile ) )
+					{
+						regenerateDebugInfo = false;
+						break;
+					}
+				}
+			}
+
+			//prepare temp folder
+			var tempFolder = Path.Combine( buildInstance.DestinationFolder, "_TempObfuscation" );
+			Directory.CreateDirectory( tempFolder );
+
+			var obfuscarConfigPath = Path.Combine( tempFolder, "obfuscar.xml" );
+
+			//write obfuscar config
+			{
+				var xml = new StringBuilder();
+				xml.AppendLine( "<?xml version=\"1.0\"?>" );
+				xml.AppendLine( "<Obfuscator>" );
+				xml.AppendLine( $"<Var name=\"InPath\" value=\"{binariesFolder}\" />" );
+				xml.AppendLine( $"<Var name=\"OutPath\" value=\"{tempFolder}\" />" );
+
+				xml.AppendLine( $"<Var name=\"RegenerateDebugInfo\" value=\"{regenerateDebugInfo.ToString().ToLower()}\" />" );
+				xml.AppendLine( $"<Var name=\"ReuseNames\" value=\"{ObfuscateReuseNames.Value.ToString().ToLower()}\" />" );
+				xml.AppendLine( $"<Var name=\"HideStrings\" value=\"{ObfuscateHideStrings.Value.ToString().ToLower()}\" />" );
+
+				foreach( var assembly in assembliesToObfuscate )
+					xml.AppendLine( $"<Module file=\"{assembly}\" />" );
+
+				xml.AppendLine( "</Obfuscator>" );
+
+				File.WriteAllText( obfuscarConfigPath, xml.ToString() );
+
+				//	<Var name="RenameFields" value="true" />
+				//	<Var name="RenameProperties" value="true" />
+				//	<Var name="KeepProperties" value="true" />
+				//	<Var name="RenameEvents" value="false" />
+				//	<Var name="KeepPublicApi" value="true" />
+				//	<Var name="HidePrivateApi" value="false" />
+				//	<Var name="UseUnicodeNames" value="false" />
+				//	<Var name="UseKoreanNames" value="false" />
+				//	<Var name="OptimizeMethods" value="false" /> 
+				//	<Var name="SuppressIldasm" value="false" />  
+			}
+
+			//execute obfuscation
+			{
+				var toolExecutable = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"Obfuscar\Obfuscar.Console.exe" );
+				if( !File.Exists( toolExecutable ) )
+				{
+					buildInstance.Error = "Obfuscation tool not found: " + toolExecutable;
+					buildInstance.State = ProductBuildInstance.StateEnum.Error;
+					return;
+				}
+
+				using( var process = new Process() )
+				{
+					process.StartInfo.FileName = toolExecutable;
+					process.StartInfo.Arguments = $"\"{obfuscarConfigPath}\"";
+
+					process.StartInfo.CreateNoWindow = true;
+					process.StartInfo.UseShellExecute = false;
+					process.StartInfo.RedirectStandardOutput = true;
+					process.StartInfo.RedirectStandardError = true;
+
+					process.OutputDataReceived += ( sender, e ) =>
+					{
+					};
+
+					var error = new StringBuilder();
+
+					process.ErrorDataReceived += ( sender, e ) =>
+					{
+						if( e.Data != null )
+							error.AppendLine( e.Data );
+					};
+
+					process.Start();
+					process.BeginOutputReadLine();
+					process.BeginErrorReadLine();
+					process.WaitForExit();
+
+					int exitCode = process.ExitCode;
+					if( exitCode != 0 )
+					{
+						buildInstance.Error = "Obfuscation failed. Exit code: " + exitCode.ToString() + ". Error output: " + error.ToString();
+						buildInstance.State = ProductBuildInstance.StateEnum.Error;
+						return;
+					}
+				}
+
+
+
+				//var dotNetExecutable = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Platforms\Windows\dotnet\dotnet.exe" );
+				//if( !File.Exists( dotNetExecutable ) )
+				//{
+				//	buildInstance.Error = "dotnet executable not found: " + dotNetExecutable;
+				//	buildInstance.State = ProductBuildInstance.StateEnum.Error;
+				//	return;
+				//}
+
+				//process.StartInfo.FileName = dotNetExecutable;
+				//process.StartInfo.Arguments = $"\"{toolExecutable}\" \"{obfuscarConfigPath}\"";
+
+
+
+
+				////var args = new List<string>();
+				////args.Add( "dummy.exe" );
+				////args.Add( $"\"{obfuscarConfigPath}\"" );
+
+				////const string AppName = "Obfuscar for .NET Framework";
+				////const string AppDescription = "Obfuscar is a basic obfuscator for .NET Framework assemblies";
+				////const string AppCopyright = "(C) 2007-2026, Ryan Williams and other contributors.";
+
+				////Task.Run( () =>
+				////{
+				////	EditorAssemblyInterface.Instance.ObfuscatorRunAsync( args.ToArray(), AppName, AppDescription, AppCopyright ).Wait();
+				////} ).Wait();
+
+
+				////var result = EditorAssemblyInterface.Instance.ObfuscatorRunAsync( args.ToArray(), AppName, AppDescription, AppCopyright );
+
+				////result.Wait();
+			}
+
+			//copy obfuscated assemblies
+			foreach( var fullPath in assembliesToObfuscate )
+			{
+				var fileName = Path.GetFileName( fullPath );
+				var obfuscatedFile = Path.Combine( tempFolder, fileName );
+				if( !File.Exists( obfuscatedFile ) )
+				{
+					buildInstance.Error = "Obfuscated assembly not found: " + obfuscatedFile;
+					buildInstance.State = ProductBuildInstance.StateEnum.Error;
+					return;
+				}
+
+				File.Copy( obfuscatedFile, fullPath, true );
+
+				//copy pdb if exists
+				var pdbFile = Path.ChangeExtension( fullPath, "pdb" );
+				var obfuscatedPdbFile = Path.ChangeExtension( obfuscatedFile, "pdb" );
+				if( File.Exists( obfuscatedPdbFile ) )
+					File.Copy( obfuscatedPdbFile, pdbFile, true );
+			}
+
+			//delete temp folder
+			Directory.Delete( tempFolder, true );
 		}
 	}
 }

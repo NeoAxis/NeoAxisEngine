@@ -249,33 +249,6 @@ namespace NeoAxis.Editor
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public enum StoreProductLicense
-	{
-		None,
-		MIT,
-		[DisplayNameEnum( "CC Attribution" )]
-		CCAttribution,
-		[DisplayNameEnum( "CC Attribution BY-SA" )]
-		CCAttributionBYSA,
-		[DisplayNameEnum( "CC Attribution BY-ND" )]
-		CCAttributionBYND,
-		[DisplayNameEnum( "CC Attribution BY-NC" )]
-		CCAttributionBYNC,
-		[DisplayNameEnum( "CC Attribution BY-NC-SA" )]
-		CCAttributionBYNCSA,
-		[DisplayNameEnum( "CC Attribution BY-NC-ND" )]
-		CCAttributionBYNCND,
-		[DisplayNameEnum( "CC0" )]
-		CC0,
-		FreeToUse,
-		[DisplayNameEnum( "Free To Use With NeoAxis" )]
-		FreeToUseWithNeoAxis,
-		PaidPerSeat,
-		//PaidThirdParty,
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	public interface IDocumentInstance
 	{
 		string Name { get; }

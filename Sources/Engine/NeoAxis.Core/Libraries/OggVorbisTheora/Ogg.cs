@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace NeoAxis.OggVorbisTheora
 {
-	/*public */static class ogg
+	static class Ogg
 	{
 		const string library = "NeoAxisCoreNative";
 		const CallingConvention convention = CallingConvention.Cdecl;

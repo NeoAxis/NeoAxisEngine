@@ -62,7 +62,7 @@ namespace NeoAxis
 		}
 
 		/// <summary>
-		/// It is applied only to creation root blocks. Not for creation of children.
+		/// Create a root block.
 		/// </summary>
 		/// <example>Example of creation of the block and filling by data.
 		/// <code>
@@ -77,6 +77,20 @@ namespace NeoAxis
 		{
 			childrenAsReadOnly = new ReadOnlyCollection<TextBlock>( children );
 			attributesAsReadOnly = new ReadOnlyCollection<Attribute>( attributes );
+		}
+
+		/// <summary>
+		/// Create a root block.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="data"></param>
+		/// <exception cref="Exception"></exception>
+		public TextBlock( string name, string data = "" ) : this()
+		{
+			if( string.IsNullOrEmpty( name ) )
+				throw new Exception( "TextBlock: \"name\" is null or empty." );
+			this.name = name;
+			this.data = data;
 		}
 
 		//Hierarchy

@@ -50,7 +50,7 @@ namespace NeoAxis
 
 			this.size = size;
 
-			//!!!!по идее не во всех графических API надо пересоздавать
+			//maybe not is all API need to recreate frame buffer when window size changed
 			if( thisIsApplicationWindow )
 			{
 				Bgfx.Reset( size.X, size.Y, RenderingSystem.GetApplicationWindowResetFlags() );

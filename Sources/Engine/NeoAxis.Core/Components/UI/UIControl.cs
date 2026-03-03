@@ -1369,6 +1369,9 @@ namespace NeoAxis
 		{
 			if( value.Value == Vector2.Zero )
 				return Vector2.Zero;
+			//!!!!new
+			if( value.Measure == toMeasure )
+				return value.Value;
 
 			Vector2 screen = Vector2.Zero;
 
@@ -2032,8 +2035,11 @@ namespace NeoAxis
 		//Render
 
 		public delegate void BeforeRenderUIWithChildrenEventDelegate( UIControl sender, CanvasRenderer renderer );
+		[DisplayName( "Before Render UI With Children" )]
 		public event BeforeRenderUIWithChildrenEventDelegate BeforeRenderUIWithChildren;
+
 		public delegate void AfterRenderUIWithChildrenEventDelegate( UIControl sender, CanvasRenderer renderer );
+		[DisplayName( "After Render UI With Children" )]
 		public event AfterRenderUIWithChildrenEventDelegate AfterRenderUIWithChildren;
 
 		protected virtual void OnBeforeRenderUIWithChildren( CanvasRenderer renderer )

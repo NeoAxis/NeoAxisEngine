@@ -104,9 +104,9 @@ namespace NeoAxis.Editor
 			return EditorAssemblyInterface.Instance.Get_FlowGraphNodeStyle_Rectangle_Instance();
 		}
 
-		public static bool EditorCommandLineTools_PlatformProjectPatch_Process( string destFile, string baseProjectFileName, out string error, out bool changed )
+		public static bool EditorCommandLineTools_PlatformProjectPatch_Process( string destFile, string baseProjectFileName, bool modeWithCopyFiles, out string error, out bool changed )
 		{
-			return EditorAssemblyInterface.Instance.EditorCommandLineTools_PlatformProjectPatch_Process( destFile, baseProjectFileName, out error, out changed );
+			return EditorAssemblyInterface.Instance.EditorCommandLineTools_PlatformProjectPatch_Process( destFile, baseProjectFileName, modeWithCopyFiles, out error, out changed );
 		}
 
 		public static void RegisterEditorAssembly( Assembly assembly, Type[] exportedTypes )

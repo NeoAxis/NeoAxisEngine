@@ -42,7 +42,7 @@ namespace NeoAxis
 		{
 			string groupPath;
 			string name;
-			FieldInfo field;
+			FieldInfo fieldInfo;
 			PropertyInfo property;
 			string defaultValue;
 
@@ -60,7 +60,7 @@ namespace NeoAxis
 
 			public FieldInfo Field
 			{
-				get { return field; }
+				get { return fieldInfo; }
 			}
 
 			public PropertyInfo Property
@@ -75,8 +75,8 @@ namespace NeoAxis
 
 			public object GetValue()
 			{
-				if( field != null )
-					return field.GetValue( null );
+				if( fieldInfo != null )
+					return fieldInfo.GetValue( null );
 				else if( property != null )
 					return property.GetValue( null, null );
 				else
@@ -87,7 +87,7 @@ namespace NeoAxis
 			{
 				this.groupPath = groupPath;
 				this.name = name;
-				this.field = field;
+				this.fieldInfo = field;
 				this.property = property;
 
 				object value = GetValue();
@@ -268,10 +268,10 @@ namespace NeoAxis
 				{
 					Type valueType = null;
 					object lastValue = null;
-					if( field != null )
+					if( fieldInfo != null )
 					{
-						valueType = field.FieldType;
-						lastValue = field.GetValue( null );
+						valueType = fieldInfo.FieldType;
+						lastValue = fieldInfo.GetValue( null );
 					}
 					if( property != null )
 					{
@@ -283,8 +283,8 @@ namespace NeoAxis
 
 					if( value != null )
 					{
-						if( field != null )
-							field.SetValue( null, value );
+						if( fieldInfo != null )
+							fieldInfo.SetValue( null, value );
 						if( property != null )
 							property.SetValue( null, value, null );
 					}
@@ -318,8 +318,8 @@ namespace NeoAxis
 				catch( FormatException e )
 				{
 					string s = "";
-					if( field != null )
-						s = field.FieldType.ToString();
+					if( fieldInfo != null )
+						s = fieldInfo.FieldType.ToString();
 					else if( property != null )
 						s = property.PropertyType.ToString();
 					Log.Warning( "Config : Invalid parameter format \"{0}\". {1}.", s, e.Message );
@@ -430,8 +430,8 @@ namespace NeoAxis
 				}
 
 				object value = null;
-				if( field != null )
-					value = field.GetValue( null );
+				if( fieldInfo != null )
+					value = fieldInfo.GetValue( null );
 				else if( property != null )
 					value = property.GetValue( null, null );
 				if( value != null )

@@ -5,7 +5,7 @@
     <OutputType>Library</OutputType>
 	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <RootNamespace>RoslynPad</RootNamespace>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
 	<CheckEolTargetFramework>false</CheckEolTargetFramework>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>

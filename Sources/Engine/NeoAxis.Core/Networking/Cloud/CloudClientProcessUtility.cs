@@ -11,9 +11,9 @@ namespace NeoAxis.Networking
 		static bool? initialized;
 		static long projectID;
 		static string appDirectory;
-
 		static string loginForSecureMode;
 		static string verificationCodeForSecureMode;
+		static string projectCurrency;
 
 		///////////////////////////////////////////////
 
@@ -66,29 +66,27 @@ namespace NeoAxis.Networking
 			try
 			{
 				//get projectID
-				if( !SystemSettings.CommandLineParameters.TryGetValue( "-projectID", out var projectIDString ) )
-					return false;
-				if( !long.TryParse( projectIDString, out var projectID2 ) )
-					return false;
+				if( SystemSettings.CommandLineParameters.TryGetValue( "-projectID", out var projectIDString ) )
+					if( long.TryParse( projectIDString, out var projectID2 ) )
+						projectID = projectID2;
 
 				//get appDirectory
-				if( !SystemSettings.CommandLineParameters.TryGetValue( "-appDirectory", out var appDirectory2 ) )
-					return false;
+				if( SystemSettings.CommandLineParameters.TryGetValue( "-appDirectory", out var appDirectory2 ) )
+					appDirectory = appDirectory2;
 
 				//get loginForSecureMode
-				if( !SystemSettings.CommandLineParameters.TryGetValue( "-loginForSecureMode", out var loginForSecureMode2 ) )
-					return false;
+				if( SystemSettings.CommandLineParameters.TryGetValue( "-loginForSecureMode", out var loginForSecureMode2 ) )
+					loginForSecureMode = loginForSecureMode2;
 
 				//get verificationCodeForSecureMode
-				if( !SystemSettings.CommandLineParameters.TryGetValue( "-verificationCodeForSecureMode", out var verificationCodeForSecureMode2 ) )
-					return false;
+				if( SystemSettings.CommandLineParameters.TryGetValue( "-verificationCodeForSecureMode", out var verificationCodeForSecureMode2 ) )
+					verificationCodeForSecureMode = verificationCodeForSecureMode2;
 
-				projectID = projectID2;
-				appDirectory = appDirectory2;
-				loginForSecureMode = loginForSecureMode2;
-				verificationCodeForSecureMode = verificationCodeForSecureMode2;
+				//get projectCurrency
+				if( SystemSettings.CommandLineParameters.TryGetValue( "-projectCurrency", out var projectCurrency2 ) )
+					projectCurrency = projectCurrency2;
 
-				return true;
+				return projectID != 0 && !string.IsNullOrEmpty( appDirectory );
 			}
 			catch
 			{
@@ -145,114 +143,13 @@ namespace NeoAxis.Networking
 			}
 		}
 
-		///////////////////////////////////////////////
-
-		//public static class CommandLineParameters
-		//{
-		//	internal static long projectID;
-		//	internal static string appDirectory;
-
-		//	//internal static string projectDirectory;
-		//	//internal static string processSettings = "";
-		//	//internal static TextBlock processSettingsTextBlock;
-
-		//	//
-
-		//	public static long ProjectID
-		//	{
-		//		get
-		//		{
-		//			InitOld();
-		//			return projectID;
-		//		}
-		//	}
-
-		//	public static string AppDirectory
-		//	{
-		//		get
-		//		{
-		//			InitOld();
-		//			return appDirectory;
-		//		}
-		//	}
-
-		//	//public static string ProjectDirectory
-		//	//{
-		//	//	get
-		//	//	{
-		//	//		Init();
-		//	//		return projectDirectory;
-		//	//	}
-		//	//}
-
-		//	//public static string ProcessSettings
-		//	//{
-		//	//	get
-		//	//	{
-		//	//		Init();
-		//	//		return processSettings;
-		//	//	}
-		//	//}
-
-		//	//public static TextBlock ProcessSettingsTextBlock
-		//	//{
-		//	//	get
-		//	//	{
-		//	//		if( processSettingsTextBlock == null )
-		//	//		{
-		//	//			processSettingsTextBlock = TextBlock.Parse( ProcessSettings, out _ );
-		//	//			if( processSettingsTextBlock == null )
-		//	//				processSettingsTextBlock = new TextBlock();
-		//	//		}
-		//	//		return processSettingsTextBlock;
-		//	//	}
-		//	//}
-		//}
-
-		////////////////////////////////////////////////
-
-		//static void InitOld()
-		//{
-		//	if( !initialized )
-		//	{
-		//		//get projectID
-		//		if( !SystemSettings.CommandLineParameters.TryGetValue( "-projectID", out var projectIDString ) )
-		//		{
-		//			//Logs.Write( "Common", "Init: '-projectID' is not specified." );
-		//			//return false;
-		//		}
-		//		if( !long.TryParse( projectIDString, out CommandLineParameters.projectID ) )
-		//		{
-		//			//Logs.Write( "Common", "Init: '-projectID' invalid data." );
-		//			//return false;
-		//		}
-
-		//		//get appDirectory
-		//		if( !SystemSettings.CommandLineParameters.TryGetValue( "-appDirectory", out CommandLineParameters.appDirectory ) )
-		//		{
-		//			//Logs.Write( "Common", "Init: '-projectDirectory' is not specified." );
-		//			//return false;
-		//		}
-
-		//		////get projectDirectory
-		//		//if( !SystemSettings.CommandLineParameters.TryGetValue( "-projectDirectory", out CommandLineParameters.projectDirectory ) )
-		//		//{
-		//		//	//Logs.Write( "Common", "Init: '-projectDirectory' is not specified." );
-		//		//	//return false;
-		//		//}
-
-		//		////get processSettings
-		//		//if( SystemSettings.CommandLineParameters.TryGetValue( "-processSettings", out var processSettings ) )
-		//		//{
-		//		//	try
-		//		//	{
-		//		//		CommandLineParameters.processSettings = Encoding.UTF8.GetString( Convert.FromBase64String( processSettings ) );
-		//		//	}
-		//		//	catch { }
-		//		//}
-
-		//		initialized = true;
-		//	}
-		//}
+		public static string ProjectCurrency
+		{
+			get
+			{
+				Init();
+				return projectCurrency;
+			}
+		}
 	}
 }

@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace NeoAxis.OggVorbisTheora
 {
-	/*public */static class vorbis
+	static class Vorbis
 	{
 		const string library = "NeoAxisCoreNative";
 		const CallingConvention convention = CallingConvention.Cdecl;
@@ -111,7 +111,7 @@ namespace NeoAxis.OggVorbisTheora
 				GC.SuppressFinalize( this );
 			}
 
-			public int synthesis_headerin( Comment comment, ogg.Packet packet )
+			public int synthesis_headerin( Comment comment, Ogg.Packet packet )
 			{
 				return vorbis_synthesis_headerin( native, comment.native, packet.native );
 			}
@@ -215,7 +215,7 @@ namespace NeoAxis.OggVorbisTheora
 				GC.SuppressFinalize( this );
 			}
 
-			public int synthesis( ogg.Packet packet ) { return vorbis_synthesis( native, packet.native ); }
+			public int synthesis( Ogg.Packet packet ) { return vorbis_synthesis( native, packet.native ); }
 		}
 
 		///////////////////////////////////////////
