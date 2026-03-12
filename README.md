@@ -11,7 +11,6 @@
 <li>Full source code is provided from the start.</li>
 <li>A large set of popular game components.</li>
 <li>API for integration of third-party services and stores.</li>
-<li>The ability to create any product, including a modified engine and editor.</li>
 </ul>
 
 <h2>Target supported platforms</h2>
