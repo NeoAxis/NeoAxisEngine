@@ -5429,6 +5429,14 @@
         <member name="E:NeoAxis.FontComponent.BakingMaxCharacterSizeInPixelsChanged">
             <summary>Occurs when the <see cref="P:NeoAxis.FontComponent.BakingMaxCharacterSizeInPixels"/> property value changes.</summary>
         </member>
+        <member name="P:NeoAxis.FontComponent.BakingMaxCharacterSizeInPixelsLimitedDevice">
+            <summary>
+            Maximum pixel size of a character for limited device. This limit may be useful in case of big font size, which may consume a lot of memory.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.FontComponent.BakingMaxCharacterSizeInPixelsLimitedDeviceChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.FontComponent.BakingMaxCharacterSizeInPixelsLimitedDevice"/> property value changes.</summary>
+        </member>
         <member name="T:NeoAxis.FontComponent.CompiledData">
             <summary>
             Represents precalculated data of <see cref="T:NeoAxis.FontComponent"/>.
@@ -8144,6 +8152,14 @@
         <member name="E:NeoAxis.MeshModifier_BoxUV.TilesChanged">
             <summary>Occurs when the <see cref="P:NeoAxis.MeshModifier_BoxUV.Tiles"/> property value changes.</summary>
         </member>
+        <member name="P:NeoAxis.MeshModifier_BoxUV.Offset">
+            <summary>
+            The offset of UV coordinates.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.MeshModifier_BoxUV.OffsetChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.MeshModifier_BoxUV.Offset"/> property value changes.</summary>
+        </member>
         <member name="T:NeoAxis.MeshModifier_RandomizePosition">
             <summary>
             A mesh modifier that adds a random offset to the position of the vertices.
@@ -8788,6 +8804,12 @@
         </member>
         <member name="E:NeoAxis.MeshGeometry_Box.DimensionsChanged">
             <summary>Occurs when the <see cref="P:NeoAxis.MeshGeometry_Box.Dimensions"/> property value changes.</summary>
+        </member>
+        <member name="E:NeoAxis.MeshGeometry_Box.RoundingRadiusesChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.MeshGeometry_Box.RoundingRadiuses"/> property value changes.</summary>
+        </member>
+        <member name="E:NeoAxis.MeshGeometry_Box.RoundingSegmentsChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.MeshGeometry_Box.RoundingSegments"/> property value changes.</summary>
         </member>
         <member name="P:NeoAxis.MeshGeometry_Box.InsideOut">
             <summary>
@@ -38778,7 +38800,7 @@
         </member>
         <member name="T:NeoAxis.BalanceUtility">
             <summary>
-            Utility functions for handling balances in different currencies.
+            Utility functions to handle balance.
             </summary>
         </member>
         <member name="T:NeoAxis.ServerNetworkService_Chat">
@@ -42982,9 +43004,9 @@
             Auxiliary class for working with strings.
             </summary>
         </member>
-        <member name="M:NeoAxis.TaskUtility.EnableTracing">
+        <member name="M:NeoAxis.TaskUtility.EnableTracking">
             <summary>
-            Enable tracing of tasks. Must call Update() method periodically.
+            Enable tracking of tasks. Must call Update() method periodically.
             </summary>
         </member>
         <member name="M:NeoAxis.TaskUtility.Run(NeoAxis.TaskUtility.TaskLifetimeEnum,System.String,System.Func{System.Object,System.Threading.Tasks.Task},System.Object)">

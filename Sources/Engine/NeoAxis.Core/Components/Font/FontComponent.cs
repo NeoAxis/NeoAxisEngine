@@ -125,10 +125,24 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="BakingMaxCharacterSizeInPixels"/> property value changes.</summary>
 		public event Action<FontComponent> BakingMaxCharacterSizeInPixelsChanged;
 		ReferenceField<int> _bakingMaxCharacterSizeInPixels = 64;
-		//!!!!
+
+		/// <summary>
+		/// Maximum pixel size of a character for limited device. This limit may be useful in case of big font size, which may consume a lot of memory.
+		/// </summary>
+		[DefaultValue( 32 )]
+		[Category( "Optimization" )]
+		public Reference<int> BakingMaxCharacterSizeInPixelsLimitedDevice
+		{
+			get { if( _bakingMaxCharacterSizeInPixelsLimitedDevice.BeginGet() ) BakingMaxCharacterSizeInPixelsLimitedDevice = _bakingMaxCharacterSizeInPixelsLimitedDevice.Get( this ); return _bakingMaxCharacterSizeInPixelsLimitedDevice.value; }
+			set { if( _bakingMaxCharacterSizeInPixelsLimitedDevice.BeginSet( this, ref value ) ) { try { BakingMaxCharacterSizeInPixelsLimitedDeviceChanged?.Invoke( this ); } finally { _bakingMaxCharacterSizeInPixelsLimitedDevice.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="BakingMaxCharacterSizeInPixelsLimitedDevice"/> property value changes.</summary>
+		public event Action<FontComponent> BakingMaxCharacterSizeInPixelsLimitedDeviceChanged;
+		ReferenceField<int> _bakingMaxCharacterSizeInPixelsLimitedDevice = 32;
+
+
 		//TextureSizes textureSize = TextureSizes._512;
 		//int textureIndentBetweenCharacters = 8;
-
 		//int renderingIn3DHeightInPixels = 24;
 
 		/////////////////////////////////////////
@@ -641,10 +655,21 @@ namespace NeoAxis
 			}
 
 			bool scaled = false;
-			if( sizeInPixels >= BakingMaxCharacterSizeInPixels.Value )
+			if( SystemSettings.LimitedDevice )
 			{
-				scaled = true;
-				sizeInPixels = BakingMaxCharacterSizeInPixels.Value;
+				if( sizeInPixels >= BakingMaxCharacterSizeInPixelsLimitedDevice.Value )
+				{
+					scaled = true;
+					sizeInPixels = BakingMaxCharacterSizeInPixelsLimitedDevice.Value;
+				}
+			}
+			else
+			{
+				if( sizeInPixels >= BakingMaxCharacterSizeInPixels.Value )
+				{
+					scaled = true;
+					sizeInPixels = BakingMaxCharacterSizeInPixels.Value;
+				}
 			}
 
 			var key = sizeInPixels;
@@ -1193,8 +1218,10 @@ namespace NeoAxis
 
 		static int GetTextureSize()
 		{
-			//!!!!в зависимости от размера выставлять 1024
-			return 512;
+			var size = Math.Min( 1024, RenderingSystem.LimitTextureSize );
+			return size;
+
+			//return 1024;
 		}
 
 		//!!!!

@@ -691,7 +691,7 @@ namespace NeoAxis
 			if( verticalScroll != null && verticalScroll.Enabled )
 			{
 				var scrollRectangle = verticalScroll.GetScreenRectangle();
-				if( horizontalScroll.VerticalAlignment.Value == EVerticalAlignment.Bottom )
+				if( horizontalScroll != null && horizontalScroll.VerticalAlignment.Value == EVerticalAlignment.Bottom )
 					clipRectangle.Right = Math.Min( clipRectangle.Right, scrollRectangle.Left );
 			}
 

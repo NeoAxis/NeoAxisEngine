@@ -337,5 +337,975 @@ namespace NeoAxis
 			tangents = ToVector4F( tangentsD );
 			texCoords = ToVector2F( texCoordsD );
 		}
+
+		//roundingRadiuses are always 0 or more.
+		//roundingSegments are always 2 or more.
+		//when roundingRadiuses are zero, need make sharp corners, not smooth ones. so need special case for zero radiuses.
+		public static void GenerateRoundingBox( Vector3 size, Vector3 roundingRadiuses, int roundingSegments, bool insideOut, out Vector3[] positions, out Vector3[] normals, out Vector4[] tangents, out Vector2[] texCoords, out int[] indices, out Face[] faces )
+		{
+			var half = size * 0.5;
+
+			// Clamp radiuses.
+			var r = new Vector3(
+				Math.Max( 0.0, Math.Min( roundingRadiuses.X, Math.Abs( half.X ) ) ),
+				Math.Max( 0.0, Math.Min( roundingRadiuses.Y, Math.Abs( half.Y ) ) ),
+				Math.Max( 0.0, Math.Min( roundingRadiuses.Z, Math.Abs( half.Z ) ) ) );
+
+			var countZeroRadiuses = 0;
+			if( r.X <= 1e-6 )
+				countZeroRadiuses++;
+			if( r.Y <= 1e-6 )
+				countZeroRadiuses++;
+			if( r.Z <= 1e-6 )
+				countZeroRadiuses++;
+
+			// If no rounding requested -> use regular box generator.
+			if( countZeroRadiuses >= 2 )
+			{
+				GenerateBox( size, insideOut, out positions, out normals, out tangents, out texCoords, out indices, out faces );
+				return;
+			}
+
+			//if( countZeroRadiuses == 1 )
+			//{
+			//	GenerateRoundingBoxWhenOneRoundingSegmentIsZero( size, roundingRadiuses, roundingSegments, insideOut, out positions, out normals, out tangents, out texCoords, out indices, out faces );
+			//	return;
+			//}
+
+			// Avoid division by zero
+			var epsilon = 1e-10;
+			if( r.X < epsilon ) r.X = epsilon;
+			if( r.Y < epsilon ) r.Y = epsilon;
+			if( r.Z < epsilon ) r.Z = epsilon;
+
+			var posList = new List<Vector3>( 4096 );
+			var nrmList = new List<Vector3>( 4096 );
+			var tanList = new List<Vector4>( 4096 );
+			var uvList = new List<Vector2>( 4096 );
+			var idxList = new List<int>( 8192 );
+
+			static int SideIndexFromNormal( Vector3 n )
+			{
+				var ax = Math.Abs( n.X );
+				var ay = Math.Abs( n.Y );
+				var az = Math.Abs( n.Z );
+				if( ax >= ay && ax >= az ) return n.X >= 0 ? 1 : 0;
+				if( ay >= ax && ay >= az ) return n.Y >= 0 ? 3 : 2;
+				return n.Z >= 0 ? 5 : 4;
+			}
+
+			static Vector2 PlanarUV( Vector3 p, int side, Vector3 halfLocal )
+			{
+				switch( side )
+				{
+				case 0:
+				case 1:
+					return new Vector2(
+						( p.Z + halfLocal.Z ) / ( halfLocal.Z * 2.0 ),
+						1.0 - ( p.Y + halfLocal.Y ) / ( halfLocal.Y * 2.0 ) );
+				case 2:
+				case 3:
+					return new Vector2(
+						( p.X + halfLocal.X ) / ( halfLocal.X * 2.0 ),
+						( p.Z + halfLocal.Z ) / ( halfLocal.Z * 2.0 ) );
+				case 4:
+				case 5:
+					return new Vector2(
+						( p.X + halfLocal.X ) / ( halfLocal.X * 2.0 ),
+						1.0 - ( p.Y + halfLocal.Y ) / ( halfLocal.Y * 2.0 ) );
+				default:
+					return Vector2.Zero;
+				}
+			}
+
+			static Vector3 SafeNormalize( Vector3 v )
+			{
+				var len = v.Length();
+				return len > 1e-12 ? v / len : new Vector3( 0, 1, 0 );
+			}
+
+			int AddVertex( Vector3 p, Vector3 n, Vector3 t3, Vector2 uv )
+			{
+				var vi = posList.Count;
+				posList.Add( p );
+				nrmList.Add( n );
+				tanList.Add( new Vector4( t3, -1 ) );
+				uvList.Add( uv );
+				return vi;
+			}
+
+			void AddTri( int a, int b, int c )
+			{
+				idxList.Add( a );
+				idxList.Add( b );
+				idxList.Add( c );
+			}
+
+			void AddQuadAutoWinding( int v00, int v10, int v11, int v01 )
+			{
+				var p00 = posList[ v00 ];
+				var p10 = posList[ v10 ];
+				var p01 = posList[ v01 ];
+
+				var nDesired = SafeNormalize( nrmList[ v00 ] + nrmList[ v10 ] + nrmList[ v11 ] + nrmList[ v01 ] );
+				var nGeom = SafeNormalize( Vector3.Cross( p10 - p00, p01 - p00 ) );
+
+				if( Vector3.Dot( nGeom, nDesired ) >= 0 )
+				{
+					AddTri( v00, v10, v11 );
+					AddTri( v11, v01, v00 );
+				}
+				else
+				{
+					AddTri( v00, v01, v11 );
+					AddTri( v11, v10, v00 );
+				}
+			}
+
+			void BuildGrid( int segU, int segV, Func<int, int, (Vector3 p, Vector3 n, Vector3 t, Vector2 uv)> eval )
+			{
+				var vtx = new int[ segU + 1, segV + 1 ];
+				for( int v = 0; v <= segV; v++ )
+				{
+					for( int u = 0; u <= segU; u++ )
+					{
+						var d = eval( u, v );
+						vtx[ u, v ] = AddVertex( d.p, d.n, d.t, d.uv );
+					}
+				}
+
+				for( int v = 0; v < segV; v++ )
+				{
+					for( int u = 0; u < segU; u++ )
+					{
+						AddQuadAutoWinding( vtx[ u, v ], vtx[ u + 1, v ], vtx[ u + 1, v + 1 ], vtx[ u, v + 1 ] );
+					}
+				}
+			}
+
+			// 1) Inner planar faces
+			void BuildInnerFace( int side )
+			{
+				switch( side )
+				{
+				case 3: // +y
+					{
+						var y = half.Y;
+						var minX = -half.X + r.X; var maxX = half.X - r.X;
+						var minZ = -half.Z + r.Z; var maxZ = half.Z - r.Z;
+						if( maxX <= minX || maxZ <= minZ ) return;
+						BuildGrid( 1, 1, ( ix, iz ) =>
+						{
+							var p = new Vector3( ix == 0 ? minX : maxX, y, iz == 0 ? minZ : maxZ );
+							return (p, new Vector3( 0, 1, 0 ), new Vector3( -1, 0, 0 ), PlanarUV( p, side, half ));
+						} );
+					}
+					break;
+				case 2: // -y
+					{
+						var y = -half.Y;
+						var minX = -half.X + r.X; var maxX = half.X - r.X;
+						var minZ = -half.Z + r.Z; var maxZ = half.Z - r.Z;
+						if( maxX <= minX || maxZ <= minZ ) return;
+						BuildGrid( 1, 1, ( ix, iz ) =>
+						{
+							var p = new Vector3( ix == 0 ? minX : maxX, y, iz == 0 ? minZ : maxZ );
+							return (p, new Vector3( 0, -1, 0 ), new Vector3( 1, 0, 0 ), PlanarUV( p, side, half ));
+						} );
+					}
+					break;
+				case 1: // +x
+					{
+						var x = half.X;
+						var minY = -half.Y + r.Y; var maxY = half.Y - r.Y;
+						var minZ = -half.Z + r.Z; var maxZ = half.Z - r.Z;
+						if( maxY <= minY || maxZ <= minZ ) return;
+						BuildGrid( 1, 1, ( iy, iz ) =>
+						{
+							var p = new Vector3( x, iy == 0 ? minY : maxY, iz == 0 ? minZ : maxZ );
+							return (p, new Vector3( 1, 0, 0 ), new Vector3( 0, 1, 0 ), PlanarUV( p, side, half ));
+						} );
+					}
+					break;
+				case 0: // -x
+					{
+						var x = -half.X;
+						var minY = -half.Y + r.Y; var maxY = half.Y - r.Y;
+						var minZ = -half.Z + r.Z; var maxZ = half.Z - r.Z;
+						if( maxY <= minY || maxZ <= minZ ) return;
+						BuildGrid( 1, 1, ( iy, iz ) =>
+						{
+							var p = new Vector3( x, iy == 0 ? minY : maxY, iz == 0 ? minZ : maxZ );
+							return (p, new Vector3( -1, 0, 0 ), new Vector3( 0, -1, 0 ), PlanarUV( p, side, half ));
+						} );
+					}
+					break;
+				case 5: // +z
+					{
+						var z = half.Z;
+						var minX = -half.X + r.X; var maxX = half.X - r.X;
+						var minY = -half.Y + r.Y; var maxY = half.Y - r.Y;
+						if( maxX <= minX || maxY <= minY ) return;
+						BuildGrid( 1, 1, ( ix, iy ) =>
+						{
+							var p = new Vector3( ix == 0 ? minX : maxX, iy == 0 ? minY : maxY, z );
+							return (p, new Vector3( 0, 0, 1 ), new Vector3( 1, 0, 0 ), PlanarUV( p, side, half ));
+						} );
+					}
+					break;
+				case 4: // -z
+					{
+						var z = -half.Z;
+						var minX = -half.X + r.X; var maxX = half.X - r.X;
+						var minY = -half.Y + r.Y; var maxY = half.Y - r.Y;
+						if( maxX <= minX || maxY <= minY ) return;
+						BuildGrid( 1, 1, ( ix, iy ) =>
+						{
+							var p = new Vector3( ix == 0 ? minX : maxX, iy == 0 ? minY : maxY, z );
+							return (p, new Vector3( 0, 0, -1 ), new Vector3( 1, 0, 0 ), PlanarUV( p, side, half ));
+						} );
+					}
+					break;
+				}
+			}
+
+			for( int side = 0; side < 6; side++ )
+				BuildInnerFace( side );
+
+			// 2) Edge patches
+			void BuildEdgeAlongX( int sy, int sz )
+			{
+				var y0 = sy * ( half.Y - r.Y );
+				var z0 = sz * ( half.Z - r.Z );
+				var minX = -half.X + r.X; var maxX = half.X - r.X;
+
+				BuildGrid( roundingSegments, roundingSegments, ( iu, iv ) =>
+				{
+					var tx = (double)iu / roundingSegments;
+					var a = (double)iv / roundingSegments * ( Math.PI * 0.5 );
+					var x = minX + ( maxX - minX ) * tx;
+					var y = y0 + sy * r.Y * Math.Cos( a );
+					var z = z0 + sz * r.Z * Math.Sin( a );
+
+					var ny = (float)( sy * Math.Cos( a ) / r.Y );
+					var nz = (float)( sz * Math.Sin( a ) / r.Z );
+					var n = SafeNormalize( new Vector3( 0, ny, nz ) );
+					return (new Vector3( x, y, z ), n, new Vector3( 1, 0, 0 ), PlanarUV( new Vector3( x, y, z ), SideIndexFromNormal( n ), half ));
+				} );
+			}
+
+			void BuildEdgeAlongY( int sx, int sz )
+			{
+				var x0 = sx * ( half.X - r.X );
+				var z0 = sz * ( half.Z - r.Z );
+				var minY = -half.Y + r.Y; var maxY = half.Y - r.Y;
+
+				BuildGrid( roundingSegments, roundingSegments, ( iu, iv ) =>
+				{
+					var ty = (double)iu / roundingSegments;
+					var a = (double)iv / roundingSegments * ( Math.PI * 0.5 );
+					var y = minY + ( maxY - minY ) * ty;
+					var x = x0 + sx * r.X * Math.Cos( a );
+					var z = z0 + sz * r.Z * Math.Sin( a );
+
+					var nx = (float)( sx * Math.Cos( a ) / r.X );
+					var nz = (float)( sz * Math.Sin( a ) / r.Z );
+					var n = SafeNormalize( new Vector3( nx, 0, nz ) );
+					return (new Vector3( x, y, z ), n, new Vector3( 0, 1, 0 ), PlanarUV( new Vector3( x, y, z ), SideIndexFromNormal( n ), half ));
+				} );
+			}
+
+			void BuildEdgeAlongZ( int sx, int sy )
+			{
+				var x0 = sx * ( half.X - r.X );
+				var y0 = sy * ( half.Y - r.Y );
+				var minZ = -half.Z + r.Z; var maxZ = half.Z - r.Z;
+
+				BuildGrid( roundingSegments, roundingSegments, ( iu, iv ) =>
+				{
+					var tz = (double)iu / roundingSegments;
+					var a = (double)iv / roundingSegments * ( Math.PI * 0.5 );
+					var z = minZ + ( maxZ - minZ ) * tz;
+					var x = x0 + sx * r.X * Math.Cos( a );
+					var y = y0 + sy * r.Y * Math.Sin( a );
+
+					var nx = (float)( sx * Math.Cos( a ) / r.X );
+					var ny = (float)( sy * Math.Sin( a ) / r.Y );
+					var n = SafeNormalize( new Vector3( nx, ny, 0 ) );
+					return (new Vector3( x, y, z ), n, new Vector3( 0, 0, 1 ), PlanarUV( new Vector3( x, y, z ), SideIndexFromNormal( n ), half ));
+				} );
+			}
+
+			for( int sy = -1; sy <= 1; sy += 2 ) for( int sz = -1; sz <= 1; sz += 2 ) BuildEdgeAlongX( sy, sz );
+			for( int sx = -1; sx <= 1; sx += 2 ) for( int sz = -1; sz <= 1; sz += 2 ) BuildEdgeAlongY( sx, sz );
+			for( int sx = -1; sx <= 1; sx += 2 ) for( int sy = -1; sy <= 1; sy += 2 ) BuildEdgeAlongZ( sx, sy );
+
+			// 3) Corner patches
+			Vector3 CornerCenter( int sx, int sy, int sz ) => new Vector3( sx * ( half.X - r.X ), sy * ( half.Y - r.Y ), sz * ( half.Z - r.Z ) );
+
+			for( int sx = -1; sx <= 1; sx += 2 )
+			{
+				for( int sy = -1; sy <= 1; sy += 2 )
+				{
+					for( int sz = -1; sz <= 1; sz += 2 )
+					{
+						BuildGrid( roundingSegments, roundingSegments, ( iu, iv ) =>
+						{
+							var u01 = (double)iu / roundingSegments;
+							var v01 = (double)iv / roundingSegments;
+							var a = u01 * ( Math.PI * 0.5 );
+							var b = v01 * ( Math.PI * 0.5 );
+							var dx = Math.Cos( a ) * Math.Cos( b );
+							var dy = Math.Sin( a ) * Math.Cos( b );
+							var dz = Math.Sin( b );
+
+							var local = new Vector3( sx * r.X * dx, sy * r.Y * dy, sz * r.Z * dz );
+							var n = SafeNormalize( new Vector3( sx * dx / r.X, sy * dy / r.Y, sz * dz / r.Z ) );
+
+							var t = SafeNormalize( new Vector3( sx * -Math.Sin( a ) * Math.Cos( b ) * r.X, sy * Math.Cos( a ) * Math.Cos( b ) * r.Y, 0 ) );
+							if( Math.Abs( Vector3.Dot( t, n ) ) > 0.99 )
+								t = SafeNormalize( Vector3.Cross( Math.Abs( n.Y ) < 0.9 ? new Vector3( 0, 1, 0 ) : new Vector3( 1, 0, 0 ), n ) );
+
+							var p = CornerCenter( sx, sy, sz ) + local;
+							return (p, n, t, PlanarUV( p, SideIndexFromNormal( n ), half ));
+						} );
+					}
+				}
+			}
+
+			if( insideOut )
+			{
+				for( int i = 0; i < nrmList.Count; i++ ) nrmList[ i ] = -nrmList[ i ];
+				for( int i = 0; i < idxList.Count; i += 3 ) (idxList[ i + 1 ], idxList[ i + 2 ]) = (idxList[ i + 2 ], idxList[ i + 1 ]);
+				for( int i = 0; i < uvList.Count; i++ ) uvList[ i ] = new Vector2( 1.0f - uvList[ i ].X, 1.0f - uvList[ i ].Y );
+			}
+
+			positions = posList.ToArray();
+			normals = nrmList.ToArray();
+			tangents = tanList.ToArray();
+			texCoords = uvList.ToArray();
+			indices = idxList.ToArray();
+
+			var rebuilt = new List<FaceVertex>[ 6 ];
+			for( int i = 0; i < 6; i++ ) rebuilt[ i ] = new List<FaceVertex>();
+
+			for( int i = 0; i < indices.Length; i += 3 )
+			{
+				var ia = indices[ i ]; var ib = indices[ i + 1 ]; var ic = indices[ i + 2 ];
+				var nAvg = SafeNormalize( normals[ ia ] + normals[ ib ] + normals[ ic ] );
+				var side = SideIndexFromNormal( nAvg );
+				rebuilt[ side ].Add( new FaceVertex( ia, ia ) );
+				rebuilt[ side ].Add( new FaceVertex( ib, ib ) );
+				rebuilt[ side ].Add( new FaceVertex( ic, ic ) );
+			}
+
+			faces = new Face[ 6 ];
+			for( int i = 0; i < 6; i++ ) faces[ i ] = new Face { Triangles = rebuilt[ i ].ToArray() };
+		}
+
+
+		//public static void GenerateRoundingBox( Vector3 size, Vector3 roundingRadiuses, Vector3I roundingSegments, bool insideOut, out Vector3[] positions, out Vector3[] normals, out Vector4[] tangents, out Vector2[] texCoords, out int[] indices, out Face[] faces )
+		//{
+		//	//roundingSegments must be equal or works wrong
+
+		//	//roundingRadiuses are always 0 or more.
+		//	//roundingSegments are always 2 or more.
+
+		//	// Plan (pseudocode):
+		//	// 1) Clamp radiuses to [0, halfSize] per axis.
+		//	// 2) If all radiuses are zero -> fallback to GenerateBox(size, insideOut, ...).
+		//	// 3) Build surface patches (inner faces, edges, corners) emitting vertices and quads.
+		//	// 4) For every quad, enforce consistent outward winding by comparing geometric normal to averaged per-vertex normal.
+		//	//    - This fixes sporadic inverted triangles caused by parameterization direction differences on some patches.
+		//	// 5) If insideOut: invert normals, flip triangle winding, mirror texcoords.
+		//	// 6) Build faces[] by dominant triangle normal.
+
+		//	var half = size * 0.5;
+
+		//	// Clamp radiuses.
+		//	var r = new Vector3(
+		//		Math.Max( 0.0, Math.Min( roundingRadiuses.X, Math.Abs( half.X ) ) ),
+		//		Math.Max( 0.0, Math.Min( roundingRadiuses.Y, Math.Abs( half.Y ) ) ),
+		//		Math.Max( 0.0, Math.Min( roundingRadiuses.Z, Math.Abs( half.Z ) ) ) );
+
+		//	// If no rounding requested -> use regular box generator.
+		//	if( r.X <= 0 && r.Y <= 0 && r.Z <= 0 )
+		//	{
+		//		GenerateBox( size, insideOut, out positions, out normals, out tangents, out texCoords, out indices, out faces );
+		//		return;
+		//	}
+
+		//	//!!!!bug without it
+		//	var epsilon = 0.0000000001;
+		//	if( r.X < epsilon )
+		//		r.X = epsilon;
+		//	if( r.Y < epsilon )
+		//		r.Y = epsilon;
+		//	if( r.Z < epsilon )
+		//		r.Z = epsilon;
+
+		//	// Edge arc segments derived from involved axes.
+		//	int EdgeArcSegYZ() => Math.Max( roundingSegments.Y, roundingSegments.Z );
+		//	int EdgeArcSegXZ() => Math.Max( roundingSegments.X, roundingSegments.Z );
+		//	int EdgeArcSegXY() => Math.Max( roundingSegments.X, roundingSegments.Y );
+
+		//	var posList = new List<Vector3>( 4096 );
+		//	var nrmList = new List<Vector3>( 4096 );
+		//	var tanList = new List<Vector4>( 4096 );
+		//	var uvList = new List<Vector2>( 4096 );
+		//	var idxList = new List<int>( 8192 );
+
+		//	static int SideIndexFromNormal( Vector3 n )
+		//	{
+		//		var ax = Math.Abs( n.X );
+		//		var ay = Math.Abs( n.Y );
+		//		var az = Math.Abs( n.Z );
+
+		//		if( ax >= ay && ax >= az )
+		//			return n.X >= 0 ? 1 : 0;
+		//		if( ay >= ax && ay >= az )
+		//			return n.Y >= 0 ? 3 : 2;
+		//		return n.Z >= 0 ? 5 : 4;
+		//	}
+
+		//	static Vector2 PlanarUV( Vector3 p, int side, Vector3 halfLocal )
+		//	{
+		//		switch( side )
+		//		{
+		//		case 0:
+		//		case 1:
+		//			return new Vector2(
+		//				( p.Z + halfLocal.Z ) / ( halfLocal.Z * 2.0 ),
+		//				1.0 - ( p.Y + halfLocal.Y ) / ( halfLocal.Y * 2.0 ) );
+		//		case 2:
+		//		case 3:
+		//			return new Vector2(
+		//				( p.X + halfLocal.X ) / ( halfLocal.X * 2.0 ),
+		//				( p.Z + halfLocal.Z ) / ( halfLocal.Z * 2.0 ) );
+		//		case 4:
+		//		case 5:
+		//			return new Vector2(
+		//				( p.X + halfLocal.X ) / ( halfLocal.X * 2.0 ),
+		//				1.0 - ( p.Y + halfLocal.Y ) / ( halfLocal.Y * 2.0 ) );
+		//		default:
+		//			return Vector2.Zero;
+		//		}
+		//	}
+
+		//	static Vector3 SafeNormalize( Vector3 v )
+		//	{
+		//		var len = v.Length();
+		//		if( len > 1e-12 )
+		//			return v / len;
+		//		return new Vector3( 0, 1, 0 );
+		//	}
+
+		//	int AddVertex( Vector3 p, Vector3 n, Vector3 t3, Vector2 uv )
+		//	{
+		//		var vi = posList.Count;
+		//		posList.Add( p );
+		//		nrmList.Add( n );
+		//		tanList.Add( new Vector4( t3, -1 ) );
+		//		uvList.Add( uv );
+		//		return vi;
+		//	}
+
+		//	void AddTri( int a, int b, int c )
+		//	{
+		//		idxList.Add( a );
+		//		idxList.Add( b );
+		//		idxList.Add( c );
+		//	}
+
+		//	// Enforce consistent outward winding for every quad based on geometry vs desired normal.
+		//	void AddQuadAutoWinding( int v00, int v10, int v11, int v01 )
+		//	{
+		//		var p00 = posList[ v00 ];
+		//		var p10 = posList[ v10 ];
+		//		var p01 = posList[ v01 ];
+
+		//		var nDesired = SafeNormalize( nrmList[ v00 ] + nrmList[ v10 ] + nrmList[ v11 ] + nrmList[ v01 ] );
+
+		//		// Geometric normal for triangle (00,10,01) with assumed winding (00->10->01).
+		//		var nGeom = SafeNormalize( Vector3.Cross( p10 - p00, p01 - p00 ) );
+
+		//		// If geometric normal points opposite to desired, swap winding.
+		//		var flip = Vector3.Dot( nGeom, nDesired ) < 0;
+
+		//		if( !flip )
+		//		{
+		//			AddTri( v00, v10, v11 );
+		//			AddTri( v11, v01, v00 );
+		//		}
+		//		else
+		//		{
+		//			AddTri( v00, v01, v11 );
+		//			AddTri( v11, v10, v00 );
+		//		}
+		//	}
+
+		//	void BuildGrid( int segU, int segV, Func<int, int, (Vector3 p, Vector3 n, Vector3 t, Vector2 uv)> eval )
+		//	{
+		//		var vtx = new int[ segU + 1, segV + 1 ];
+		//		for( int v = 0; v <= segV; v++ )
+		//		{
+		//			for( int u = 0; u <= segU; u++ )
+		//			{
+		//				var d = eval( u, v );
+		//				vtx[ u, v ] = AddVertex( d.p, d.n, d.t, d.uv );
+		//			}
+		//		}
+
+		//		for( int v = 0; v < segV; v++ )
+		//		{
+		//			for( int u = 0; u < segU; u++ )
+		//			{
+		//				var v00 = vtx[ u, v ];
+		//				var v10 = vtx[ u + 1, v ];
+		//				var v11 = vtx[ u + 1, v + 1 ];
+		//				var v01 = vtx[ u, v + 1 ];
+		//				AddQuadAutoWinding( v00, v10, v11, v01 );
+		//			}
+		//		}
+		//	}
+
+		//	// 1) Inner planar faces (shrunk rectangles).
+		//	void BuildInnerFace( int side )
+		//	{
+		//		//if( half.X == 0 || half.Y == 0 || half.Z == 0 )
+		//		//	return;
+
+		//		switch( side )
+		//		{
+		//		case 3: // +y
+		//			{
+		//				var y = half.Y;
+		//				var minX = -half.X + r.X;
+		//				var maxX = half.X - r.X;
+		//				var minZ = -half.Z + r.Z;
+		//				var maxZ = half.Z - r.Z;
+		//				if( maxX <= minX || maxZ <= minZ )
+		//					return;
+
+		//				BuildGrid( 1, 1, ( ix, iz ) =>
+		//				{
+		//					var x = ix == 0 ? minX : maxX;
+		//					var z = iz == 0 ? minZ : maxZ;
+		//					var p = new Vector3( x, y, z );
+		//					var n = new Vector3( 0, 1, 0 );
+		//					var t = new Vector3( -1, 0, 0 );
+		//					var uv = PlanarUV( p, side, half );
+		//					return (p, n, t, uv);
+		//				} );
+		//			}
+		//			break;
+
+		//		case 2: // -y
+		//			{
+		//				var y = -half.Y;
+		//				var minX = -half.X + r.X;
+		//				var maxX = half.X - r.X;
+		//				var minZ = -half.Z + r.Z;
+		//				var maxZ = half.Z - r.Z;
+		//				if( maxX <= minX || maxZ <= minZ )
+		//					return;
+
+		//				BuildGrid( 1, 1, ( ix, iz ) =>
+		//				{
+		//					var x = ix == 0 ? minX : maxX;
+		//					var z = iz == 0 ? minZ : maxZ;
+		//					var p = new Vector3( x, y, z );
+		//					var n = new Vector3( 0, -1, 0 );
+		//					var t = new Vector3( 1, 0, 0 );
+		//					var uv = PlanarUV( p, side, half );
+		//					return (p, n, t, uv);
+		//				} );
+		//			}
+		//			break;
+
+		//		case 1: // +x
+		//			{
+		//				var x = half.X;
+		//				var minY = -half.Y + r.Y;
+		//				var maxY = half.Y - r.Y;
+		//				var minZ = -half.Z + r.Z;
+		//				var maxZ = half.Z - r.Z;
+		//				if( maxY <= minY || maxZ <= minZ )
+		//					return;
+
+		//				BuildGrid( 1, 1, ( iy, iz ) =>
+		//				{
+		//					var y = iy == 0 ? minY : maxY;
+		//					var z = iz == 0 ? minZ : maxZ;
+		//					var p = new Vector3( x, y, z );
+		//					var n = new Vector3( 1, 0, 0 );
+		//					var t = new Vector3( 0, 1, 0 );
+		//					var uv = PlanarUV( p, side, half );
+		//					return (p, n, t, uv);
+		//				} );
+		//			}
+		//			break;
+
+		//		case 0: // -x
+		//			{
+		//				var x = -half.X;
+		//				var minY = -half.Y + r.Y;
+		//				var maxY = half.Y - r.Y;
+		//				var minZ = -half.Z + r.Z;
+		//				var maxZ = half.Z - r.Z;
+		//				if( maxY <= minY || maxZ <= minZ )
+		//					return;
+
+		//				BuildGrid( 1, 1, ( iy, iz ) =>
+		//				{
+		//					var y = iy == 0 ? minY : maxY;
+		//					var z = iz == 0 ? minZ : maxZ;
+		//					var p = new Vector3( x, y, z );
+		//					var n = new Vector3( -1, 0, 0 );
+		//					var t = new Vector3( 0, -1, 0 );
+		//					var uv = PlanarUV( p, side, half );
+		//					return (p, n, t, uv);
+		//				} );
+		//			}
+		//			break;
+
+		//		case 5: // +z
+		//			{
+		//				var z = half.Z;
+		//				var minX = -half.X + r.X;
+		//				var maxX = half.X - r.X;
+		//				var minY = -half.Y + r.Y;
+		//				var maxY = half.Y - r.Y;
+		//				if( maxX <= minX || maxY <= minY )
+		//					return;
+
+		//				BuildGrid( 1, 1, ( ix, iy ) =>
+		//				{
+		//					var x = ix == 0 ? minX : maxX;
+		//					var y = iy == 0 ? minY : maxY;
+		//					var p = new Vector3( x, y, z );
+		//					var n = new Vector3( 0, 0, 1 );
+		//					var t = new Vector3( 1, 0, 0 );
+		//					var uv = PlanarUV( p, side, half );
+		//					return (p, n, t, uv);
+		//				} );
+		//			}
+		//			break;
+
+		//		case 4: // -z
+		//			{
+		//				var z = -half.Z;
+		//				var minX = -half.X + r.X;
+		//				var maxX = half.X - r.X;
+		//				var minY = -half.Y + r.Y;
+		//				var maxY = half.Y - r.Y;
+		//				if( maxX <= minX || maxY <= minY )
+		//					return;
+
+		//				BuildGrid( 1, 1, ( ix, iy ) =>
+		//				{
+		//					var x = ix == 0 ? minX : maxX;
+		//					var y = iy == 0 ? minY : maxY;
+		//					var p = new Vector3( x, y, z );
+		//					var n = new Vector3( 0, 0, -1 );
+		//					var t = new Vector3( 1, 0, 0 );
+		//					var uv = PlanarUV( p, side, half );
+		//					return (p, n, t, uv);
+		//				} );
+		//			}
+		//			break;
+		//		}
+		//	}
+
+		//	for( int side = 0; side < 6; side++ )
+		//		BuildInnerFace( side );
+
+		//	// 2) Edge patches
+		//	void BuildEdgeAlongX( int sy, int sz )
+		//	{
+		//		//if( r.Y <= 0 || r.Z <= 0 )
+		//		//	return;
+
+		//		var arcSeg = EdgeArcSegYZ();
+
+		//		var y0 = sy * ( half.Y - r.Y );
+		//		var z0 = sz * ( half.Z - r.Z );
+
+		//		var minX = -half.X + r.X;
+		//		var maxX = half.X - r.X;
+		//		//var minX = -half.X + ( r.X > 0 ? r.X : 0 );
+		//		//var maxX = half.X - ( r.X > 0 ? r.X : 0 );
+		//		//if( r.X <= 0 )
+		//		//{
+		//		//	minX = -half.X;
+		//		//	maxX = half.X;
+		//		//}
+		//		//if( maxX <= minX )
+		//		//	return;
+
+		//		BuildGrid( roundingSegments.X, arcSeg, ( iu, iv ) =>
+		//		{
+		//			var tx = (double)iu / roundingSegments.X;
+		//			var a = (double)iv / arcSeg * ( Math.PI * 0.5 );
+
+		//			var x = minX + ( maxX - minX ) * tx;
+		//			var y = y0 + sy * r.Y * Math.Cos( a );
+		//			var z = z0 + sz * r.Z * Math.Sin( a );
+		//			var p = new Vector3( x, y, z );
+
+		//			var ny = (float)( sy * Math.Cos( a ) / Math.Max( r.Y, 1e-9 ) );
+		//			var nz = (float)( sz * Math.Sin( a ) / Math.Max( r.Z, 1e-9 ) );
+		//			var n = SafeNormalize( new Vector3( 0, ny, nz ) );
+
+		//			var t = new Vector3( 1, 0, 0 );
+
+		//			var side = SideIndexFromNormal( n );
+		//			var uv = PlanarUV( p, side, half );
+		//			return (p, n, t, uv);
+		//		} );
+		//	}
+
+		//	void BuildEdgeAlongY( int sx, int sz )
+		//	{
+		//		//if( r.X <= 0 || r.Z <= 0 )
+		//		//	return;
+
+		//		var arcSeg = EdgeArcSegXZ();
+
+		//		var x0 = sx * ( half.X - r.X );
+		//		var z0 = sz * ( half.Z - r.Z );
+
+		//		var minY = -half.Y + r.Y;
+		//		var maxY = half.Y - r.Y;
+		//		//var minY = -half.Y + ( r.Y > 0 ? r.Y : 0 );
+		//		//var maxY = half.Y - ( r.Y > 0 ? r.Y : 0 );
+		//		//if( r.Y <= 0 )
+		//		//{
+		//		//	minY = -half.Y;
+		//		//	maxY = half.Y;
+		//		//}
+		//		//if( maxY <= minY )
+		//		//	return;
+
+		//		BuildGrid( roundingSegments.Y, arcSeg, ( iu, iv ) =>
+		//		{
+		//			var ty = (double)iu / roundingSegments.Y;
+		//			var a = (double)iv / arcSeg * ( Math.PI * 0.5 );
+
+		//			var y = minY + ( maxY - minY ) * ty;
+		//			var x = x0 + sx * r.X * Math.Cos( a );
+		//			var z = z0 + sz * r.Z * Math.Sin( a );
+		//			var p = new Vector3( x, y, z );
+
+		//			var nx = (float)( sx * Math.Cos( a ) / Math.Max( r.X, 1e-9 ) );
+		//			var nz = (float)( sz * Math.Sin( a ) / Math.Max( r.Z, 1e-9 ) );
+		//			var n = SafeNormalize( new Vector3( nx, 0, nz ) );
+
+		//			var t = new Vector3( 0, 1, 0 );
+
+		//			var side = SideIndexFromNormal( n );
+		//			var uv = PlanarUV( p, side, half );
+		//			return (p, n, t, uv);
+		//		} );
+		//	}
+
+		//	void BuildEdgeAlongZ( int sx, int sy )
+		//	{
+		//		//if( r.X <= 0 || r.Y <= 0 )
+		//		//	return;
+
+		//		var arcSeg = EdgeArcSegXY();
+
+		//		var x0 = sx * ( half.X - r.X );
+		//		var y0 = sy * ( half.Y - r.Y );
+
+		//		var minZ = -half.Z + r.Z;
+		//		var maxZ = half.Z - r.Z;
+		//		//var minZ = -half.Z + ( r.Z > 0 ? r.Z : 0 );
+		//		//var maxZ = half.Z - ( r.Z > 0 ? r.Z : 0 );
+		//		//if( r.Z <= 0 )
+		//		//{
+		//		//	minZ = -half.Z;
+		//		//	maxZ = half.Z;
+		//		//}
+		//		//if( maxZ <= minZ )
+		//		//	return;
+
+		//		BuildGrid( roundingSegments.Z, arcSeg, ( iu, iv ) =>
+		//		{
+		//			var tz = (double)iu / roundingSegments.Z;
+		//			var a = (double)iv / arcSeg * ( Math.PI * 0.5 );
+
+		//			var z = minZ + ( maxZ - minZ ) * tz;
+		//			var x = x0 + sx * r.X * Math.Cos( a );
+		//			var y = y0 + sy * r.Y * Math.Sin( a );
+		//			var p = new Vector3( x, y, z );
+
+		//			var nx = (float)( sx * Math.Cos( a ) / Math.Max( r.X, 1e-9 ) );
+		//			var ny = (float)( sy * Math.Sin( a ) / Math.Max( r.Y, 1e-9 ) );
+		//			var n = SafeNormalize( new Vector3( nx, ny, 0 ) );
+
+		//			var t = new Vector3( 0, 0, 1 );
+
+		//			var side = SideIndexFromNormal( n );
+		//			var uv = PlanarUV( p, side, half );
+		//			return (p, n, t, uv);
+		//		} );
+		//	}
+
+		//	for( int sy = -1; sy <= 1; sy += 2 )
+		//		for( int sz = -1; sz <= 1; sz += 2 )
+		//			BuildEdgeAlongX( sy, sz );
+
+		//	for( int sx = -1; sx <= 1; sx += 2 )
+		//		for( int sz = -1; sz <= 1; sz += 2 )
+		//			BuildEdgeAlongY( sx, sz );
+
+		//	for( int sx = -1; sx <= 1; sx += 2 )
+		//		for( int sy = -1; sy <= 1; sy += 2 )
+		//			BuildEdgeAlongZ( sx, sy );
+
+		//	// 3) Corner patches (8 corners).
+		//	Vector3 CornerCenter( int sx, int sy, int sz )
+		//	{
+		//		return new Vector3(
+		//			sx * ( half.X - r.X ),
+		//			sy * ( half.Y - r.Y ),
+		//			sz * ( half.Z - r.Z ) );
+		//	}
+
+		//	(Vector3 p, Vector3 n, Vector3 t) EvalCorner( int sx, int sy, int sz, double u01, double v01 )
+		//	{
+		//		var a = u01 * ( Math.PI * 0.5 );
+		//		var b = v01 * ( Math.PI * 0.5 );
+
+		//		var dx = Math.Cos( a ) * Math.Cos( b );
+		//		var dy = Math.Sin( a ) * Math.Cos( b );
+		//		var dz = Math.Sin( b );
+
+		//		var rx = r.X;
+		//		var ry = r.Y;
+		//		var rz = r.Z;
+
+		//		var local = new Vector3(
+		//			sx * rx * dx,
+		//			sy * ry * dy,
+		//			sz * rz * dz );
+
+		//		var center = CornerCenter( sx, sy, sz );
+		//		var p = center + local;
+
+		//		Vector3 grad = Vector3.Zero;
+		//		if( rx > 0 ) grad.X = sx * ( dx / rx );
+		//		if( ry > 0 ) grad.Y = sy * ( dy / ry );
+		//		if( rz > 0 ) grad.Z = sz * ( dz / rz );
+
+		//		var n = SafeNormalize( grad );
+
+		//		var tDir = new Vector3(
+		//			sx * (float)( -Math.Sin( a ) * Math.Cos( b ) * rx ),
+		//			sy * (float)( Math.Cos( a ) * Math.Cos( b ) * ry ),
+		//			0 );
+		//		var t = SafeNormalize( tDir );
+		//		if( Math.Abs( Vector3.Dot( t, n ) ) > 0.99 )
+		//		{
+		//			var axis = Math.Abs( n.Y ) < 0.9 ? new Vector3( 0, 1, 0 ) : new Vector3( 1, 0, 0 );
+		//			t = SafeNormalize( Vector3.Cross( axis, n ) );
+		//		}
+
+		//		return (p, n, t);
+		//	}
+
+		//	//if( r.X > 0 && r.Y > 0 && r.Z > 0 )
+		//	{
+		//		for( int sx = -1; sx <= 1; sx += 2 )
+		//		{
+		//			for( int sy = -1; sy <= 1; sy += 2 )
+		//			{
+		//				for( int sz = -1; sz <= 1; sz += 2 )
+		//				{
+		//					var segU = Math.Max( roundingSegments.X, roundingSegments.Y );
+		//					var segV = roundingSegments.Z;
+
+		//					BuildGrid( segU, segV, ( iu, iv ) =>
+		//					{
+		//						var u01 = (double)iu / segU;
+		//						var v01 = (double)iv / segV;
+
+		//						var (p, n, t) = EvalCorner( sx, sy, sz, u01, v01 );
+		//						var side = SideIndexFromNormal( n );
+		//						var uv = PlanarUV( p, side, half );
+		//						return (p, n, t, uv);
+		//					} );
+		//				}
+		//			}
+		//		}
+		//	}
+
+		//	if( insideOut )
+		//	{
+		//		for( int i = 0; i < nrmList.Count; i++ )
+		//			nrmList[ i ] = -nrmList[ i ];
+
+		//		for( int i = 0; i < idxList.Count; i += 3 )
+		//			(idxList[ i + 1 ], idxList[ i + 2 ]) = (idxList[ i + 2 ], idxList[ i + 1 ]);
+
+		//		for( int i = 0; i < uvList.Count; i++ )
+		//			uvList[ i ] = new Vector2( 1.0f - uvList[ i ].X, 1.0f - uvList[ i ].Y );
+		//	}
+
+		//	positions = posList.ToArray();
+		//	normals = nrmList.ToArray();
+		//	tangents = tanList.ToArray();
+		//	texCoords = uvList.ToArray();
+		//	indices = idxList.ToArray();
+
+		//	// Build faces from indices by dominant normal of triangle
+		//	var rebuilt = new List<FaceVertex>[ 6 ];
+		//	for( int i = 0; i < 6; i++ )
+		//		rebuilt[ i ] = new List<FaceVertex>( indices.Length / 6 );
+
+		//	for( int i = 0; i < indices.Length; i += 3 )
+		//	{
+		//		var ia = indices[ i ];
+		//		var ib = indices[ i + 1 ];
+		//		var ic = indices[ i + 2 ];
+
+		//		var nAvg = SafeNormalize( normals[ ia ] + normals[ ib ] + normals[ ic ] );
+		//		var side = SideIndexFromNormal( nAvg );
+
+		//		rebuilt[ side ].Add( new FaceVertex( ia, ia ) );
+		//		rebuilt[ side ].Add( new FaceVertex( ib, ib ) );
+		//		rebuilt[ side ].Add( new FaceVertex( ic, ic ) );
+		//	}
+
+		//	faces = new Face[]
+		//	{
+		//		new Face{ Triangles = rebuilt[ 0 ].ToArray() }, //-x
+		//		new Face{ Triangles = rebuilt[ 1 ].ToArray() }, //+x
+		//		new Face{ Triangles = rebuilt[ 2 ].ToArray() }, //-y
+		//		new Face{ Triangles = rebuilt[ 3 ].ToArray() }, //+y
+		//		new Face{ Triangles = rebuilt[ 4 ].ToArray() }, //-z
+		//		new Face{ Triangles = rebuilt[ 5 ].ToArray() }, //+z
+		//	};
+		//}
+
+		public static void GenerateRoundingBox( Vector3 size, Vector3 roundingRadiuses, int roundingSegments, bool insideOut, out Vector3F[] positions, out Vector3F[] normals, out Vector4F[] tangents, out Vector2F[] texCoords, out int[] indices, out Face[] faces )
+		{
+			GenerateRoundingBox( size, roundingRadiuses, roundingSegments, insideOut, out Vector3[] positionsD, out Vector3[] normalsD, out Vector4[] tangentsD, out Vector2[] texCoordsD, out indices, out faces );
+			positions = ToVector3F( positionsD );
+			normals = ToVector3F( normalsD );
+			tangents = ToVector4F( tangentsD );
+			texCoords = ToVector2F( texCoordsD );
+		}
+
+		//public static void GenerateRoundingBox( Vector3 size, Vector3 roundingRadiuses, Vector3I roundingSegments, bool insideOut, out Vector3F[] positions, out Vector3F[] normals, out Vector4F[] tangents, out Vector2F[] texCoords, out int[] indices, out Face[] faces )
+		//{
+		//	GenerateRoundingBox( size, roundingRadiuses, roundingSegments, insideOut, out Vector3[] positionsD, out Vector3[] normalsD, out Vector4[] tangentsD, out Vector2[] texCoordsD, out indices, out faces );
+		//	positions = ToVector3F( positionsD );
+		//	normals = ToVector3F( normalsD );
+		//	tangents = ToVector4F( tangentsD );
+		//	texCoords = ToVector2F( texCoordsD );
+		//}
 	}
 }

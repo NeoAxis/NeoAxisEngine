@@ -13,7 +13,7 @@ namespace NeoAxis
 
 		//
 
-		static Vector2 GetShadowOffset( Viewport viewport, double fontSize )
+		public static Vector2 GetShadowOffset( Viewport viewport, double fontSize )
 		{
 			var renderer = viewport.CanvasRenderer;
 

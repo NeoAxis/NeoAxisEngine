@@ -92,7 +92,9 @@ namespace NeoAxis.Editor
 			this.Controls.Add(this.labelName);
 			this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.Name = "HCGridEvent";
-			this.Size = new System.Drawing.Size(266, 28);
+			//fixnet8
+			this.Size = new System.Drawing.Size( 266, 22 );
+			//this.Size = new System.Drawing.Size(266, 28);
 			this.ResumeLayout(false);
 
 		}

@@ -674,7 +674,7 @@ namespace NeoAxis.Editor
 			}
 			if( !authenticated )
 			{
-				data.Error = new Exception( "You must be logged in to download this package." );
+				data.Error = new Exception( "You must be logged in to download this package. Use Project Menu to login." );
 				return;
 			}
 

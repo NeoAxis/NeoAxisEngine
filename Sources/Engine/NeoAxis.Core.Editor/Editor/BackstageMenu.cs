@@ -319,7 +319,7 @@ namespace NeoAxis.Editor
 			var firstItem = item;
 			items.Add( item );
 
-			item = new ContentBrowserItem_Virtual( objectsBrowserNew, null, Translate( "Initial project (Use NeoAxis Launcher or initial source package to create default project)" ) );
+			item = new ContentBrowserItem_Virtual( objectsBrowserNew, null, Translate( "Initial project (Use NeoX app or initial source package to create default project)" ) );
 			item.ShowDisabled = true;
 			item.Tag = "DefaultProjectDisabled";
 			items.Add( item );

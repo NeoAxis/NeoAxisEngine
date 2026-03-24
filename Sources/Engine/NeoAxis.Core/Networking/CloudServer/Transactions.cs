@@ -60,7 +60,6 @@ namespace NeoAxis.CloudServer
 			//public long GroupID { get; set; }
 			//Type: Task ////Type: TopUp, Withdraw, Task
 			public string Type { get; set; }
-			//public string Currency { get; set; }
 			public double Amount { get; set; }
 			public string AnyData { get; set; }
 		}
@@ -505,11 +504,10 @@ namespace NeoAxis.CloudServer
 		{
 			var userID = context.Client.LoginDataUserID;
 			var projectID = CloudServerProcessUtility.CommandLineParameters.ProjectID;
-			//var currency = CloudServerProcessUtility.CommandLineParameters.ProjectCurrency;
 			var serverCheckCode = CloudServerProcessUtility.CommandLineParameters.ServerCheckCode;
 			using var cancellationToken = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 
-			var result = await CloudServiceFunctions.UserTransactionsRequestProjectInAppPurchaseAsync( projectID, userID/*, currency*/, amount, null, null, serverCheckCode, cancellationToken.Token );
+			var result = await CloudServiceFunctions.UserTransactionsRequestProjectInAppPurchaseAsync( projectID, userID, amount, null, null, serverCheckCode, cancellationToken.Token );
 
 			if( !string.IsNullOrEmpty( result.Error ) )
 				throw new Exception( result.Error );
@@ -525,11 +523,10 @@ namespace NeoAxis.CloudServer
 				throw new Exception( "Not enough reserved balance." );
 
 			var projectID = CloudServerProcessUtility.CommandLineParameters.ProjectID;
-			//var currency = CloudServerProcessUtility.CommandLineParameters.ProjectCurrency;
 			var serverCheckCode = CloudServerProcessUtility.CommandLineParameters.ServerCheckCode;
 			using var cancellationToken = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
 
-			var result = await CloudServiceFunctions.UserTransactionsProjectInAppWithdrawAsync( projectID, userID/*, currency*/, amount, null, null, serverCheckCode, cancellationToken.Token );
+			var result = await CloudServiceFunctions.UserTransactionsProjectInAppWithdrawAsync( projectID, userID, amount, null, null, serverCheckCode, cancellationToken.Token );
 			if( !string.IsNullOrEmpty( result.Error ) )
 				throw new Exception( result.Error );
 		}

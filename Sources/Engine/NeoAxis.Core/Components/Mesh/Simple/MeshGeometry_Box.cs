@@ -48,6 +48,59 @@ namespace NeoAxis
 		public event Action<MeshGeometry_Box> DimensionsChanged;
 		ReferenceField<Vector3> _dimensions = Vector3.One;
 
+		[DefaultValue( "0 0 0" )]
+		public Reference<Vector3> RoundingRadiuses
+		{
+			get { if( _roundingRadiuses.BeginGet() ) RoundingRadiuses = _roundingRadiuses.Get( this ); return _roundingRadiuses.value; }
+			set
+			{
+				var v = value.Value;
+				if( v.X < 0 || v.Y < 0 || v.Z < 0 )
+				{
+					if( v.X < 0 ) v.X = 0;
+					if( v.Y < 0 ) v.Y = 0;
+					if( v.Z < 0 ) v.Z = 0;
+					value = new Reference<Vector3>( v, value.GetByReference );
+				}
+				if( _roundingRadiuses.BeginSet( this, ref value ) )
+				{
+					try
+					{
+						RoundingRadiusesChanged?.Invoke( this );
+						ShouldRecompileMesh();
+					}
+					finally { _roundingRadiuses.EndSet(); }
+				}
+			}
+		}
+		/// <summary>Occurs when the <see cref="RoundingRadiuses"/> property value changes.</summary>
+		public event Action<MeshGeometry_Box> RoundingRadiusesChanged;
+		ReferenceField<Vector3> _roundingRadiuses;
+
+		[DefaultValue( 8 )]
+		[Range( 2, 32, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		public Reference<int> RoundingSegments
+		{
+			get { if( _roundingSegments.BeginGet() ) RoundingSegments = _roundingSegments.Get( this ); return _roundingSegments.value; }
+			set
+			{
+				if( value < 2 )
+					value = new Reference<int>( 2, value.GetByReference );
+				if( _roundingSegments.BeginSet( this, ref value ) )
+				{
+					try
+					{
+						RoundingSegmentsChanged?.Invoke( this );
+						ShouldRecompileMesh();
+					}
+					finally { _roundingSegments.EndSet(); }
+				}
+			}
+		}
+		/// <summary>Occurs when the <see cref="RoundingSegments"/> property value changes.</summary>
+		public event Action<MeshGeometry_Box> RoundingSegmentsChanged;
+		ReferenceField<int> _roundingSegments = 8;
+
 		/// <summary>
 		/// Whether the box is flipped.
 		/// </summary>
@@ -133,6 +186,23 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
+		{
+			base.OnMetadataGetMembersFilter( context, member, ref skip );
+
+			var p = member as Metadata.Property;
+			if( p != null )
+			{
+				switch( p.Name )
+				{
+				case nameof( RoundingSegments ):
+					if( RoundingRadiuses.Value == Vector3.Zero )
+						skip = true;
+					break;
+				}
+			}
+		}
+
 		public override void GetProceduralGeneratedData( ref VertexElement[] vertexStructure, ref byte[] vertices, ref int[] indices, ref Material material, ref byte[] voxelData, ref byte[] clusterData, ref Mesh.StructureClass structure )
 		{
 			vertexStructure = StandardVertex.MakeStructure( StandardVertex.Components.StaticOneTexCoord, true, out int vertexSize );
@@ -142,7 +212,15 @@ namespace NeoAxis
 					Log.Fatal( "vertexSize != sizeof( StandardVertexF )" );
 			}
 
-			SimpleMeshGenerator.GenerateBox( Dimensions.Value.ToVector3F(), InsideOut, out Vector3F[] positions, out Vector3F[] normals, out Vector4F[] tangents, out Vector2F[] texCoords, out indices, out var faces );
+			SimpleMeshGenerator.GenerateRoundingBox( Dimensions.Value.ToVector3F(), RoundingRadiuses, RoundingSegments.Value, InsideOut, out Vector3F[] positions, out Vector3F[] normals, out Vector4F[] tangents, out Vector2F[] texCoords, out indices, out var faces );
+
+			////roundingSegments must be equal or works wrong
+			//var roundingSegments2 = RoundingSegments.Value;
+			//var roundingSegments = new Vector3I( roundingSegments2, roundingSegments2, roundingSegments2 );
+
+			//SimpleMeshGenerator.GenerateRoundingBox( Dimensions.Value.ToVector3F(), RoundingRadiuses, roundingSegments, InsideOut, out Vector3F[] positions, out Vector3F[] normals, out Vector4F[] tangents, out Vector2F[] texCoords, out indices, out var faces );
+
+			//SimpleMeshGenerator.GenerateBox( Dimensions.Value.ToVector3F(), InsideOut, out Vector3F[] positions, out Vector3F[] normals, out Vector4F[] tangents, out Vector2F[] texCoords, out indices, out var faces );
 
 			if( faces != null )
 				structure = SimpleMeshGenerator.CreateMeshStructure( faces );
@@ -150,7 +228,7 @@ namespace NeoAxis
 			vertices = new byte[ vertexSize * positions.Length ];
 			unsafe
 			{
-				fixed ( byte* pVertices = vertices )
+				fixed( byte* pVertices = vertices )
 				{
 					StandardVertex.StaticOneTexCoord* pVertex = (StandardVertex.StaticOneTexCoord*)pVertices;
 

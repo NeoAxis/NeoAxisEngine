@@ -26,6 +26,20 @@ namespace NeoAxis
 		public event Action<MeshModifier_BoxUV> TilesChanged;
 		ReferenceField<Vector3> tiles = Vector3.One;
 
+		/// <summary>
+		/// The offset of UV coordinates.
+		/// </summary>
+		[DefaultValue( "0 0 0" )]
+		public Reference<Vector3> Offset
+		{
+			get { if( _offset.BeginGet() ) Offset = _offset.Get( this ); return _offset.value; }
+			set { if( _offset.BeginSet( this, ref value ) ) { try { OffsetChanged?.Invoke( this ); ShouldRecompileMesh(); } finally { _offset.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Offset"/> property value changes.</summary>
+		public event Action<MeshModifier_BoxUV> OffsetChanged;
+		ReferenceField<Vector3> _offset = Vector3.Zero;
+
+
 		///// <summary>
 		///// The number of UV tiles per unit of the world.
 		///// </summary>
@@ -76,7 +90,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		void ProcessVertex( ref Vector3 tiles, ref Bounds bounds, ref Vector3F position, ref Vector3F normal, out Vector2F result )
+		void ProcessVertex( ref Vector3 tiles, ref Vector3 offset, ref Bounds bounds, ref Vector3F position, ref Vector3F normal, out Vector2F result )
 		{
 			var side = Vector3I.Zero;
 			{
@@ -137,7 +151,9 @@ namespace NeoAxis
 						s1 = ( position[ axis1 ] - bounds.Minimum[ axis1 ] ) / d;
 				}
 
-				var v = new Vector2( s0 * tiles[ axis0 ], -s1 * tiles[ axis1 ] );
+				var offset2 = new Vector2( offset[ axis0 ], offset[ axis1 ] );
+
+				var v = new Vector2( s0 * tiles[ axis0 ], -s1 * tiles[ axis1 ] ) + offset2;
 
 				if( side.X != 0 )
 				{
@@ -183,6 +199,7 @@ namespace NeoAxis
 			}
 
 			var tiles = Tiles.Value;
+			var offset = Offset.Value;
 
 			foreach( var oper in compiledData.MeshData.RenderOperations )
 			{
@@ -202,7 +219,7 @@ namespace NeoAxis
 
 							var newTexCoords = new Vector2F[ positions.Length ];
 							for( int n = 0; n < newTexCoords.Length; n++ )
-								ProcessVertex( ref tiles, ref bounds, ref positions[ n ], ref normals[ n ], out newTexCoords[ n ] );
+								ProcessVertex( ref tiles, ref offset, ref bounds, ref positions[ n ], ref normals[ n ], out newTexCoords[ n ] );
 
 							var vertexBuffer = oper.VertexBuffers[ texCoordElement.Source ];
 							vertexBuffer.MakeCopyOfData();
@@ -236,6 +253,7 @@ namespace NeoAxis
 			}
 
 			var tiles = Tiles.Value;
+			var offset = Offset.Value;
 
 			foreach( var geometry in geometries )
 			{
@@ -252,7 +270,7 @@ namespace NeoAxis
 
 					var newTexCoords = new Vector2F[ vertexCount ];
 					for( int n = 0; n < vertexCount; n++ )
-						ProcessVertex( ref tiles, ref bounds, ref positions[ n ], ref normals[ n ], out newTexCoords[ n ] );
+						ProcessVertex( ref tiles, ref offset, ref bounds, ref positions[ n ], ref normals[ n ], out newTexCoords[ n ] );
 
 					var newVertices = (byte[])vertices.Clone();
 					if( geometry.VerticesWriteChannel( VertexElementSemantic.TextureCoordinate0, newTexCoords, newVertices ) )

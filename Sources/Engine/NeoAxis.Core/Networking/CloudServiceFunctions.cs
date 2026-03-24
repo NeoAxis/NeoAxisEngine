@@ -151,6 +151,7 @@ namespace NeoAxis.Networking
 
 			public long SenderID;
 			public long RecepientID;
+			public long AffiliateID;
 
 			//AdminChangeBalance: change balance by admin.
 			//TopUp: top up balance. NodeId, ServiceComission, NodeComission are used.
@@ -161,7 +162,6 @@ namespace NeoAxis.Networking
 			//ProjectInAppPayment: in-app payments. purchase when amount > 0, withdraw when amount < 0. ProjectID, PaymentName are used.
 			public string Type;
 
-			//public string Currency;
 			public double Amount;
 
 			public long ProjectID;
@@ -195,9 +195,10 @@ namespace NeoAxis.Networking
 				long.TryParse( block.GetAttribute( "SenderID" ), out tx.SenderID );
 			if( block.AttributeExists( "RecepientID" ) )
 				long.TryParse( block.GetAttribute( "RecepientID" ), out tx.RecepientID );
+			if( block.AttributeExists( "AffiliateID" ) )
+				long.TryParse( block.GetAttribute( "AffiliateID" ), out tx.AffiliateID );
 
 			tx.Type = block.GetAttribute( "Type" );
-			//tx.Currency = block.GetAttribute( "Currency" );
 			double.TryParse( block.GetAttribute( "Amount" ), out tx.Amount );
 
 			if( block.AttributeExists( "ProjectID" ) )
@@ -300,7 +301,7 @@ namespace NeoAxis.Networking
 			return new UserTransactionsIsProjectEntryFeePaidResult() { Paid = paidCount > cancelCount };
 		}
 
-		public static async Task<CloudServiceExecuteCommand.ResultClass> UserTransactionsRequestProjectInAppPurchaseAsync( long projectID, long senderID/*, string currency*/, double amount, string description /*= null*/, string requestID = null, string authToken = null, CancellationToken cancellationToken = default )
+		public static async Task<CloudServiceExecuteCommand.ResultClass> UserTransactionsRequestProjectInAppPurchaseAsync( long projectID, long senderID, double amount, string description /*= null*/, string requestID = null, string authToken = null, CancellationToken cancellationToken = default )
 		{
 			var command = new CloudServiceExecuteCommand();
 			command.FunctionName = "api/v1/user_transaction/request_project_in_app_purchase";
@@ -313,7 +314,6 @@ namespace NeoAxis.Networking
 			var block = new TextBlock();
 			block.SetAttribute( "ProjectID", projectID.ToString() );
 			block.SetAttribute( "SenderID", senderID.ToString() );
-			//block.SetAttribute( "Currency", currency );
 			block.SetAttribute( "Amount", amount.ToString() );
 			if( description != null )
 				block.SetAttribute( "Description", description );
@@ -328,7 +328,7 @@ namespace NeoAxis.Networking
 			return await command.ExecuteAsync( cancellationToken );
 		}
 
-		public static async Task<CloudServiceExecuteCommand.ResultClass> UserTransactionsProjectInAppWithdrawAsync( long projectID, long recepientID/*, string currency*/, double amount, string description /*= null*/, string requestID = null, string authToken = null, CancellationToken cancellationToken = default )
+		public static async Task<CloudServiceExecuteCommand.ResultClass> UserTransactionsProjectInAppWithdrawAsync( long projectID, long recepientID, double amount, string description /*= null*/, string requestID = null, string authToken = null, CancellationToken cancellationToken = default )
 		{
 			var command = new CloudServiceExecuteCommand();
 			command.FunctionName = "api/v1/user_transaction/project_in_app_withdraw";
@@ -341,7 +341,6 @@ namespace NeoAxis.Networking
 			var block = new TextBlock();
 			block.SetAttribute( "ProjectID", projectID.ToString() );
 			block.SetAttribute( "RecepientID", recepientID.ToString() );
-			//block.SetAttribute( "Currency", currency );
 			block.SetAttribute( "Amount", amount.ToString() );
 			if( description != null )
 				block.SetAttribute( "Description", description );
@@ -1400,7 +1399,7 @@ namespace NeoAxis.Networking
 		/// <param name="authToken"></param>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		public static async Task<ProjectNewResult> ProjectNewAsync( string name, bool serverless, string region, string attachTo, string configuration, string templateOrBackup/*, string currency*/, string requestID = null, string authToken = null, CancellationToken cancellationToken = default )
+		public static async Task<ProjectNewResult> ProjectNewAsync( string name, bool serverless, string region, string attachTo, string configuration, string templateOrBackup, string requestID = null, string authToken = null, CancellationToken cancellationToken = default )
 		{
 			try
 			{
@@ -1424,8 +1423,6 @@ namespace NeoAxis.Networking
 					block.SetAttribute( "Configuration", configuration.ToString() );
 				if( !string.IsNullOrEmpty( templateOrBackup ) )
 					block.SetAttribute( "TemplateOrBackup", templateOrBackup.ToString() );
-				//if( !string.IsNullOrEmpty( currency ) )
-				//	block.SetAttribute( "Currency", currency.ToString() );
 
 				var requestID2 = requestID;
 				if( string.IsNullOrEmpty( requestID2 ) )

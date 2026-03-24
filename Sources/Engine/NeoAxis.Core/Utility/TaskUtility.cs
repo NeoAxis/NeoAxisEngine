@@ -8,7 +8,7 @@ namespace NeoAxis
 {
 	public static class TaskUtility
 	{
-		static bool tracing;
+		static bool tracking;
 		static ConcurrentDictionary<Task, TaskInfo> tasks = new ConcurrentDictionary<Task, TaskInfo>();
 		static DateTime lastUpdateTime;
 		static string tasksInfo = "";
@@ -34,11 +34,11 @@ namespace NeoAxis
 		///////////////////////////////////////////////
 
 		/// <summary>
-		/// Enable tracing of tasks. Must call Update() method periodically.
+		/// Enable tracking of tasks. Must call Update() method periodically.
 		/// </summary>
-		public static void EnableTracing()
+		public static void EnableTracking()
 		{
-			tracing = true;
+			tracking = true;
 		}
 
 		/// <summary>
@@ -53,7 +53,7 @@ namespace NeoAxis
 
 			var task = new Task<Task>( function, state );
 			task.Start();
-			if( tracing )
+			if( tracking )
 				tasks[ task ] = info;
 			return task;
 		}
@@ -70,7 +70,7 @@ namespace NeoAxis
 
 			var task = new Task<Task>( function );
 			task.Start();
-			if( tracing )
+			if( tracking )
 				tasks[ task ] = info;
 			return task;
 		}
