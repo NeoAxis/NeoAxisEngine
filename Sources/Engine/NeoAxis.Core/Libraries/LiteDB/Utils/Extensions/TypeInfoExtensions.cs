@@ -5,9 +5,9 @@ using System.Text;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Collections;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     internal static class TypeInfoExtensions
     {

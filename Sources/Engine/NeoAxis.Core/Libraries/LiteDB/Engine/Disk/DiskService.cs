@@ -4,9 +4,9 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB.Engine
+namespace NeoAxis.LiteDB.Engine
 {
     /// <summary>
     /// Implement custom fast/in memory mapped disk access

@@ -8,7 +8,7 @@ namespace NeoAxis
 {
 	public sealed class AsyncAutoResetEvent : IDisposable
 	{
-		readonly SemaphoreSlim semaphore = new( 0, 1 );
+		readonly SemaphoreSlim semaphore = new SemaphoreSlim( 0, 1 );
 		volatile bool disposed;
 
 		//

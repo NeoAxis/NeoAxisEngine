@@ -6,14 +6,14 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
 	public partial class BsonMapper
 	{
 		/// <summary>
 		/// Mapping cache between Class/BsonDocument
 		/// </summary>
-		private readonly ConcurrentDictionary<Type, EntityMapper> _entities = new();
+		private readonly ConcurrentDictionary<Type, EntityMapper> _entities = new ConcurrentDictionary<Type, EntityMapper>();
 
 		/// <summary>
 		/// Get property mapper between typed .NET class and BsonDocument - Cache results

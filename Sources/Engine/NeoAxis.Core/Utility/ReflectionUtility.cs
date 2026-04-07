@@ -82,7 +82,8 @@ namespace NeoAxis
 				throw new Exception( "Property must be of type FieldInfo or PropertyInfo" );
 		}
 
-		internal static Type GetUnderlyingType( this MemberInfo member )
+		//internal static Type GetUnderlyingType( this MemberInfo member )
+		public static Type GetUnderlyingType( MemberInfo member )
 		{
 			switch( member.MemberType )
 			{

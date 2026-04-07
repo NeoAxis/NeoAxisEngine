@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     /// <summary>
     /// Static class for serialize/deserialize BsonDocuments into json extended format

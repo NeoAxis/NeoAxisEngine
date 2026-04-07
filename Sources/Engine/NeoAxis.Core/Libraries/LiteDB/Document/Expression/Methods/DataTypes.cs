@@ -6,9 +6,9 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     internal partial class BsonExpressionMethods
     {

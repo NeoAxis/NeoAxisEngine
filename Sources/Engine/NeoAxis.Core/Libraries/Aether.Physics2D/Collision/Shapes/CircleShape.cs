@@ -4,9 +4,12 @@
  */
 
 /*
-* Farseer Physics Engine:
+* Farseer Physics Engine 3, based on Box2D.XNA port:
 * Copyright (c) 2012 Ian Qvist
 * 
+* Box2D.XNA port of Box2D:
+* Copyright (c) 2009 Brandon Furtwangler, Nathan Furtwangler
+*
 * Original source Box2D:
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org
 *
@@ -27,12 +30,13 @@
 
 using System;
 using System.Diagnostics;
-using Internal.tainicom.Aether.Physics2D.Common;
+using Internal.nkast.Aether.Physics2D.Common;
 #if XNAAPI
+using Complex = nkast.Aether.Physics2D.Common.Complex;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.tainicom.Aether.Physics2D.Collision.Shapes
+namespace Internal.nkast.Aether.Physics2D.Collision.Shapes
 {
     /// <summary>
     /// A circle shape.
@@ -136,8 +140,8 @@ namespace Internal.tainicom.Aether.Physics2D.Collision.Shapes
         public override void ComputeAABB(out AABB aabb, ref Transform transform, int childIndex)
         {
             // OPT: Vector2 p = transform.p + Complex.Multiply(ref _position, ref transform.q);
-            var pX = (_position.X * transform.q.Real - _position.Y * transform.q.Imaginary) + transform.p.X;
-            var pY = (_position.Y * transform.q.Real + _position.X * transform.q.Imaginary) + transform.p.Y;
+            var pX = (_position.X * transform.q.R - _position.Y * transform.q.i) + transform.p.X;
+            var pY = (_position.Y * transform.q.R + _position.X * transform.q.i) + transform.p.Y;
 
             // OPT: aabb.LowerBound = new Vector2(p.X - Radius, p.Y - Radius);
             // OPT: aabb.UpperBound = new Vector2(p.X + Radius, p.Y + Radius);

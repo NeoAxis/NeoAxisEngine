@@ -5,10 +5,10 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Internal.LiteDB.Engine;
-using static Internal.LiteDB.Constants;
+using NeoAxis.LiteDB.Engine;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     /// <summary>
     /// The LiteDB database. Used for create a LiteDB instance and use all storage resources. It's the database connection

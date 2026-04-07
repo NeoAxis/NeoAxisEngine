@@ -6,9 +6,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Internal.tainicom.Aether.Physics2D.Common.ConvexHull;
+using Internal.nkast.Aether.Physics2D.Common.ConvexHull;
 
-namespace Internal.tainicom.Aether.Physics2D.Common.Decomposition
+namespace Internal.nkast.Aether.Physics2D.Common.Decomposition
 {
     public enum TriangulationAlgorithm
     {

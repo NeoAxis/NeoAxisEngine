@@ -6,15 +6,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Internal.tainicom.Aether.Physics2D.Collision;
-using Internal.tainicom.Aether.Physics2D.Collision.Shapes;
-using Internal.tainicom.Aether.Physics2D.Common;
-using Internal.tainicom.Aether.Physics2D.Dynamics;
+using Internal.nkast.Aether.Physics2D.Collision;
+using Internal.nkast.Aether.Physics2D.Collision.Shapes;
+using Internal.nkast.Aether.Physics2D.Common;
+using Internal.nkast.Aether.Physics2D.Dynamics;
 #if XNAAPI
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.tainicom.Aether.Physics2D.Common.PhysicsLogic
+namespace Internal.nkast.Aether.Physics2D.Common.PhysicsLogic
 {
     // Original Code by Steven Lu - see http://www.box2d.org/forum/viewtopic.php?f=3&t=1688
     // Ported to Farseer 3.0 by Nicolás Hormazábal

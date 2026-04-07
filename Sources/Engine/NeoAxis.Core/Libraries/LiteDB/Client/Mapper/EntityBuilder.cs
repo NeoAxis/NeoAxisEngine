@@ -4,9 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     /// <summary>
     /// Helper class to modify your entity mapping to document. Can be used instead attribute decorates

@@ -1800,7 +1800,11 @@ namespace NeoAxis.Networking
 								if( AllowReconnect )
 									client.SetNoRealConnection( "2 " + e.Message );// ToString() );
 								else
-									client.OnClose( WebSocketCloseStatus.ProtocolError, "Unable to send the binary message. " + e.Message );
+								{
+									//!!!!temp? jkjfj
+									client.OnClose( WebSocketCloseStatus.ProtocolError, "Unable to send the binary message. " + e.ToString() );
+									//client.OnClose( WebSocketCloseStatus.ProtocolError, "Unable to send the binary message. " + e.Message );
+								}
 
 								continue;
 							}

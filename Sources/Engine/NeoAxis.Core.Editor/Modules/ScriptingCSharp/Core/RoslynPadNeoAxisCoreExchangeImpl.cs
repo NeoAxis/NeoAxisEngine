@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using RoslynPad.Roslyn;
+using Internal;
 
 namespace NeoAxis
 {
@@ -24,17 +25,17 @@ namespace NeoAxis
 
 		public override List<string> CSharpScriptReferenceAssemblies
 		{
-			get { return ScriptingCSharpEngine.CSharpScriptReferenceAssemblies; }
+			get { return ScriptCompiler.CSharpScriptReferenceAssemblies; }
 		}
 
 		public override List<string> CSharpScriptUsingNamespaces
 		{
-			get { return ScriptingCSharpEngine.CSharpScriptUsingNamespaces; }
+			get { return ScriptCompiler.CSharpScriptUsingNamespaces; }
 		}
 
 		public override string ResolveAssemblyName( string name )
 		{
-			return ScriptingCSharpEngine.scriptAssemblyNameResolver.Resolve( name );
+			return ScriptCompiler.ScriptAssemblyNameResolver.Resolve( name );
 		}
 	}
 }

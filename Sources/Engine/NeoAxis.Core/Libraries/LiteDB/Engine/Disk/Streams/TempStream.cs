@@ -1,9 +1,9 @@
 ﻿#if !NO_LITE_DB
 using System;
 using System.IO;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB.Engine
+namespace NeoAxis.LiteDB.Engine
 {
     /// <summary>
     /// Implement a temporary stream that uses MemoryStream until get LIMIT bytes, then copy all to tempoary disk file and delete on dispose

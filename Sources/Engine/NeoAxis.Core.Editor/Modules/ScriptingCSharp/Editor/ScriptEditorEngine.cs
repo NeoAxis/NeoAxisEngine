@@ -1,14 +1,11 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-using NeoAxis.Editor;
 using RoslynPad.Roslyn;
 //using RoslynPad.UI;
 using System;
-using System.Collections.Immutable;
-using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using Internal;
 
 namespace NeoAxis.Editor
 {

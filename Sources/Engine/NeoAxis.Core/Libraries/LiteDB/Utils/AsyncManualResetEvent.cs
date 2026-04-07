@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     /// <summary>
     /// Async implementation of ManualResetEvent

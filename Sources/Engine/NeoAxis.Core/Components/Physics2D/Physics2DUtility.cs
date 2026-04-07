@@ -9,14 +9,14 @@ namespace NeoAxis
 	/// </summary>
 	static class Physics2DUtility
 	{
-		public static Vector2 Convert( Internal.tainicom.Aether.Physics2D.Common.Vector2 v )
+		public static Vector2 Convert( Internal.nkast.Aether.Physics2D.Common.Vector2 v )
 		{
 			return new Vector2( v.X, v.Y );
 		}
 
-		public static Internal.tainicom.Aether.Physics2D.Common.Vector2 Convert( Vector2 v )
+		public static Internal.nkast.Aether.Physics2D.Common.Vector2 Convert( Vector2 v )
 		{
-			return new Internal.tainicom.Aether.Physics2D.Common.Vector2( (float)v.X, (float)v.Y );
+			return new Internal.nkast.Aether.Physics2D.Common.Vector2( (float)v.X, (float)v.Y );
 		}
 	}
 }

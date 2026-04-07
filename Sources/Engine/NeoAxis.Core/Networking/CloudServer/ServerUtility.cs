@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Threading;
 
 namespace NeoAxis.CloudServer
 {
@@ -12,6 +13,42 @@ namespace NeoAxis.CloudServer
 	/// </summary>
 	public static class ServerUtility
 	{
+		static Task WaitForExitAsync( Process process, CancellationToken cancellationToken = default )
+		{
+			// If already exited, complete synchronously.
+			if( process.HasExited )
+				return Task.CompletedTask;
+
+			var tcs = new TaskCompletionSource<object>( TaskCreationOptions.RunContinuationsAsynchronously );
+
+			void Handler( object sender, EventArgs args )
+			{
+				process.Exited -= Handler;
+				tcs.TrySetResult( null );
+			}
+
+			process.EnableRaisingEvents = true;
+			process.Exited += Handler;
+
+			// Re-check in case it exited between HasExited and subscribing.
+			if( process.HasExited )
+			{
+				process.Exited -= Handler;
+				return Task.CompletedTask;
+			}
+
+			if( cancellationToken.CanBeCanceled )
+			{
+				cancellationToken.Register( () =>
+				{
+					process.Exited -= Handler;
+					tcs.TrySetCanceled( cancellationToken );
+				} );
+			}
+
+			return tcs.Task;
+		}
+
 		public async static Task<bool> ExecuteBashCommandAsync( string command )
 		{
 			var processInfo = new ProcessStartInfo
@@ -26,9 +63,21 @@ namespace NeoAxis.CloudServer
 
 			using( var process = Process.Start( processInfo ) )
 			{
-				var output = process.StandardOutput.ReadToEnd();
-				var error = process.StandardError.ReadToEnd();
-				await process.WaitForExitAsync();
+
+				//!!!!new. test
+
+				// Read streams asynchronously to avoid potential deadlocks with large output.
+				var outputTask = process.StandardOutput.ReadToEndAsync();
+				var errorTask = process.StandardError.ReadToEndAsync();
+
+				await WaitForExitAsync( process ).ConfigureAwait( false );
+
+				var output = await outputTask.ConfigureAwait( false );
+				var error = await errorTask.ConfigureAwait( false );
+
+				//var output = process.StandardOutput.ReadToEnd();
+				//var error = process.StandardError.ReadToEnd();
+				//await process.WaitForExitAsync();
 
 				if( process.ExitCode != 0 )
 				{

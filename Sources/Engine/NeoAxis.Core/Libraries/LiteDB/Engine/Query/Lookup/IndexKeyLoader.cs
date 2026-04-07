@@ -1,8 +1,8 @@
 ﻿#if !NO_LITE_DB
 using System.Collections.Generic;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB.Engine
+namespace NeoAxis.LiteDB.Engine
 {
     /// <summary>
     /// Implement lookup based only in index Key

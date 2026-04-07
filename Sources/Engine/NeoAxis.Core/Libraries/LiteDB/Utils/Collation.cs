@@ -6,9 +6,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     /// <summary>
     /// Implement how database will compare to order by/find strings according defined culture/compare options

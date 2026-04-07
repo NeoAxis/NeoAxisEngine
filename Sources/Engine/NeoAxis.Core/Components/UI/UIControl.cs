@@ -2317,15 +2317,16 @@ namespace NeoAxis
 		{
 			get
 			{
-				if( ParentContainer == null )
+				var container = ParentContainer;
+ 				if( container == null )
 					return false;
-				return ParentContainer.capturedControl == this;
+				return container.capturedControl == this;
 			}
 			set
 			{
-				if( ParentContainer == null )
-					return;
-				ParentContainer.capturedControl = value ? this : null;
+				var container = ParentContainer;
+				if( container != null )
+					container.capturedControl = value ? this : null;
 			}
 		}
 
@@ -2573,10 +2574,10 @@ namespace NeoAxis
 		{
 			get
 			{
-				UIContainer manager = ParentContainer;
-				if( manager == null )
+				UIContainer container = ParentContainer;
+				if( container == null )
 					return false;
-				return manager.focusedControl == this && CanFocus;
+				return container.focusedControl == this && CanFocus;
 			}
 		}
 
@@ -2595,20 +2596,20 @@ namespace NeoAxis
 				return false;
 			if( RemoveFromParentQueued )
 				return false;
-			UIContainer manager = ParentContainer;
-			if( manager == null )
+			var container = ParentContainer;
+			if( container == null )
 				return false;
-			manager.focusedControl = this;
+			container.focusedControl = this;
 			return true;
 		}
 
 		public void Unfocus()
 		{
-			UIContainer manager = ParentContainer;
-			if( manager == null )
+			var container = ParentContainer;
+			if( container == null )
 				return;
-			if( manager.focusedControl == this )
-				manager.focusedControl = null;
+			if( container.focusedControl == this )
+				container.focusedControl = null;
 		}
 
 		////!!!!
@@ -2624,8 +2625,14 @@ namespace NeoAxis
 		{
 			//!!!!!раньше было только если queued
 			Capture = false;
-			if( Focused && ParentContainer != null )
-				ParentContainer.focusedControl = null;
+			if( Focused )
+			{
+				var container = ParentContainer;
+				if( container != null )
+					container.focusedControl = null;
+			}
+			//if( Focused && ParentContainer != null )
+			//	ParentContainer.focusedControl = null;
 
 			base.RemoveFromParent( queued );
 		}

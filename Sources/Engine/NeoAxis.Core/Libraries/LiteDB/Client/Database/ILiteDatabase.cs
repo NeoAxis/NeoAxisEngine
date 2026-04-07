@@ -2,9 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Internal.LiteDB.Engine;
+using NeoAxis.LiteDB.Engine;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     public interface ILiteDatabase : IDisposable
     {

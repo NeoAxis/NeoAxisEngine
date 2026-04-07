@@ -1,9 +1,9 @@
 ﻿#if !NO_LITE_DB
 using System.IO;
 using System.Runtime.InteropServices;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     internal static class IOExceptionExtensions
     {

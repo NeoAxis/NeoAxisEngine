@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Internal.LiteDB.Utils.Extensions
+namespace NeoAxis.LiteDB.Utils.Extensions
 {
     internal static class EnumerableExtensions
     {

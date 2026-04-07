@@ -1,7 +1,7 @@
 ﻿#if !NO_LITE_DB
 using System.Text;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     internal class StringEncoding
     {

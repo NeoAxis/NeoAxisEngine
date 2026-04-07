@@ -6,9 +6,12 @@
  */
 
 /*
-* Farseer Physics Engine:
+* Farseer Physics Engine 3, based on Box2D.XNA port:
 * Copyright (c) 2012 Ian Qvist
 * 
+* Box2D.XNA port of Box2D:
+* Copyright (c) 2009 Brandon Furtwangler, Nathan Furtwangler
+*
 * Original source Box2D:
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org 
 * 
@@ -28,10 +31,10 @@
 */
 
 using System.Collections.Generic;
-using Internal.tainicom.Aether.Physics2D.Collision;
-using Internal.tainicom.Aether.Physics2D.Dynamics.Contacts;
+using Internal.nkast.Aether.Physics2D.Collision;
+using Internal.nkast.Aether.Physics2D.Dynamics.Contacts;
 
-namespace Internal.tainicom.Aether.Physics2D.Dynamics
+namespace Internal.nkast.Aether.Physics2D.Dynamics
 {
     public class ContactManager
     {
@@ -326,7 +329,7 @@ namespace Internal.tainicom.Aether.Physics2D.Dynamics
 
         internal void Collide()
         {
-#if NET40 || NET45 || NETSTANDARD2_0 || PORTABLE40 || PORTABLE45 || W10 || W8_1 || WP8_1
+#if NET40 || NET45 || NETSTANDARD2_0_OR_GREATER
             if (this.ContactCount > CollideMultithreadThreshold && System.Environment.ProcessorCount > 1)
             {
                 CollideMultiCore();
@@ -439,7 +442,7 @@ namespace Internal.tainicom.Aether.Physics2D.Dynamics
         /// </summary>
         List<Contact> updateList = new List<Contact>();
 
-#if NET40 || NET45 || NETSTANDARD2_0 || PORTABLE40 || PORTABLE45 || W10 || W8_1 || WP8_1
+#if NET40 || NET45 || NETSTANDARD2_0_OR_GREATER
         internal void CollideMultiCore()
         {
             int lockOrder = 0;
@@ -577,7 +580,7 @@ namespace Internal.tainicom.Aether.Physics2D.Dynamics
                             break;
                         System.Threading.Interlocked.Exchange(ref orderedBodyA._lock, 0);
                     }
-#if NET40 || NET45 || NETSTANDARD2_0
+#if NET40 || NET45 || NETSTANDARD2_0_OR_GREATER
                     System.Threading.Thread.Sleep(0);
 #endif
                 }

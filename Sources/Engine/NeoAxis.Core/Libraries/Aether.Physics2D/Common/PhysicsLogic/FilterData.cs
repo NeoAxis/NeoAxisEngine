@@ -3,9 +3,9 @@
  * Microsoft Permissive License (Ms-PL) v1.1
  */
 
-using Internal.tainicom.Aether.Physics2D.Dynamics;
+using Internal.nkast.Aether.Physics2D.Dynamics;
 
-namespace Internal.tainicom.Aether.Physics2D.Common.PhysicsLogic
+namespace Internal.nkast.Aether.Physics2D.Common.PhysicsLogic
 {
     /// <summary>
     /// Contains filter data that can determine whether an object should be processed or not.

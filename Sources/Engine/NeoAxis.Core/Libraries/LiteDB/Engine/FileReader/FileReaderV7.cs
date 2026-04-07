@@ -7,9 +7,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB.Engine
+namespace NeoAxis.LiteDB.Engine
 {
     /// <summary>
     /// Internal class to read old LiteDB v4 database version (datafile v7 structure)

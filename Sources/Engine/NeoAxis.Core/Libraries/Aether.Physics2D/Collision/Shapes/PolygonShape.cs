@@ -4,9 +4,12 @@
  */
 
 /*
-* Farseer Physics Engine:
+* Farseer Physics Engine 3, based on Box2D.XNA port:
 * Copyright (c) 2012 Ian Qvist
 * 
+* Box2D.XNA port of Box2D:
+* Copyright (c) 2009 Brandon Furtwangler, Nathan Furtwangler
+*
 * Original source Box2D:
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org 
 * 
@@ -26,13 +29,14 @@
 */
 
 using System.Diagnostics;
-using Internal.tainicom.Aether.Physics2D.Common;
-using Internal.tainicom.Aether.Physics2D.Common.ConvexHull;
+using Internal.nkast.Aether.Physics2D.Common;
+using Internal.nkast.Aether.Physics2D.Common.ConvexHull;
 #if XNAAPI
+using Complex = nkast.Aether.Physics2D.Common.Complex;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.tainicom.Aether.Physics2D.Collision.Shapes
+namespace Internal.nkast.Aether.Physics2D.Collision.Shapes
 {
     /// <summary>
     /// Represents a simple non-selfintersecting convex polygon.
@@ -320,16 +324,16 @@ namespace Internal.tainicom.Aether.Physics2D.Collision.Shapes
         {
             // OPT: aabb.LowerBound = Transform.Multiply(Vertices[0], ref transform);
             var vert = Vertices[0];
-            aabb.LowerBound.X = (vert.X * transform.q.Real - vert.Y * transform.q.Imaginary) + transform.p.X;
-            aabb.LowerBound.Y = (vert.Y * transform.q.Real + vert.X * transform.q.Imaginary) + transform.p.Y;
+            aabb.LowerBound.X = (vert.X * transform.q.R - vert.Y * transform.q.i) + transform.p.X;
+            aabb.LowerBound.Y = (vert.Y * transform.q.R + vert.X * transform.q.i) + transform.p.Y;
             aabb.UpperBound = aabb.LowerBound;
 
             for (int i = 1; i < Vertices.Count; ++i)
             {
                 // OPT: Vector2 v = Transform.Multiply(Vertices[i], ref transform);
                 vert = Vertices[i];
-                float vX = (vert.X * transform.q.Real - vert.Y * transform.q.Imaginary) + transform.p.X;
-                float vY = (vert.Y * transform.q.Real + vert.X * transform.q.Imaginary) + transform.p.Y;
+                float vX = (vert.X * transform.q.R - vert.Y * transform.q.i) + transform.p.X;
+                float vY = (vert.Y * transform.q.R + vert.X * transform.q.i) + transform.p.Y;
 
                 // OPT: Vector2.Min(ref aabb.LowerBound, ref v, out aabb.LowerBound);
                 // OPT: Vector2.Max(ref aabb.UpperBound, ref v, out aabb.UpperBound);

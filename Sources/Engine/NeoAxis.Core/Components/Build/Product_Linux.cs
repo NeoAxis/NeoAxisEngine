@@ -295,6 +295,11 @@ namespace NeoAxis
 
 				excludePaths.Add( Path.Combine( sourceFolder, "_TestPlayerParameters.cmd" ) );
 
+
+				excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Core.CompileScripts.dll" ) );
+				excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Core.CompileScripts.deps.json" ) );
+
+
 				//!!!!x64
 
 				//if( !Editor )

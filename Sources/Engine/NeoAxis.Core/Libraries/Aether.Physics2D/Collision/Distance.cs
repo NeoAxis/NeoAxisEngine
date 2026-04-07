@@ -4,9 +4,12 @@
  */
 
 /*
-* Farseer Physics Engine:
+* Farseer Physics Engine 3, based on Box2D.XNA port:
 * Copyright (c) 2012 Ian Qvist
 * 
+* Box2D.XNA port of Box2D:
+* Copyright (c) 2009 Brandon Furtwangler, Nathan Furtwangler
+*
 * Original source Box2D:
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org 
 * 
@@ -26,14 +29,16 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using Internal.tainicom.Aether.Physics2D.Collision.Shapes;
-using Internal.tainicom.Aether.Physics2D.Common;
+using Internal.nkast.Aether.Physics2D.Collision.Shapes;
+using Internal.nkast.Aether.Physics2D.Common;
 #if XNAAPI
+using Complex = nkast.Aether.Physics2D.Common.Complex;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.tainicom.Aether.Physics2D.Collision
+namespace Internal.nkast.Aether.Physics2D.Collision
 {
     /// <summary>
     /// A distance proxy is used by the GJK algorithm.
@@ -42,7 +47,7 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
     public struct DistanceProxy
     {
         internal float Radius;
-        internal Vertices Vertices;
+        internal Vector2[] Vertices;
 
         // GJK using Voronoi regions (Christer Ericson) and Barycentric coordinates.
 
@@ -54,15 +59,13 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
         /// <param name="index">The index.</param>
         public DistanceProxy(Shape shape, int index)
         {
-            Vertices = new Vertices();
-
             switch (shape.ShapeType)
             {
                 case ShapeType.Circle:
                     {
                         CircleShape circle = (CircleShape)shape;
-                        Vertices.Clear();
-                        Vertices.Add(circle.Position);
+                        Vertices = new Vector2[1];
+                        Vertices[0] = circle.Position;
                         Radius = circle.Radius;
                     }
                     break;
@@ -70,10 +73,10 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
                 case ShapeType.Polygon:
                     {
                         PolygonShape polygon = (PolygonShape)shape;
-                        Vertices.Clear();
+                        Vertices = new Vector2[polygon.Vertices.Count];
                         for (int i = 0; i < polygon.Vertices.Count; i++)
                         {
-                            Vertices.Add(polygon.Vertices[i]);
+                            Vertices[i] = polygon.Vertices[i];
                         }
                         Radius = polygon.Radius;
                     }
@@ -83,10 +86,11 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
                     {
                         ChainShape chain = (ChainShape)shape;
                         Debug.Assert(0 <= index && index < chain.Vertices.Count);
-                        Vertices.Clear();
-                        Vertices.Add(chain.Vertices[index]);
-                        Vertices.Add(index + 1 < chain.Vertices.Count ? chain.Vertices[index + 1] : chain.Vertices[0]);
-
+                        Vertices = new Vector2[2];
+                        Vertices[0] = chain.Vertices[index];
+                        Vertices[1] = (index + 1 < chain.Vertices.Count)
+                                    ? chain.Vertices[index + 1]
+                                    : chain.Vertices[0];
                         Radius = chain.Radius;
                     }
                     break;
@@ -94,14 +98,15 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
                 case ShapeType.Edge:
                     {
                         EdgeShape edge = (EdgeShape)shape;
-                        Vertices.Clear();
-                        Vertices.Add(edge.Vertex1);
-                        Vertices.Add(edge.Vertex2);
+                        Vertices = new Vector2[2];
+                        Vertices[0] = edge.Vertex1;
+                        Vertices[1] = edge.Vertex2;
                         Radius = edge.Radius;
                     }
                     break;
 
                 default:
+                    Vertices = new Vector2[0];
                     Radius = 0;
                     Debug.Assert(false);
                     break;
@@ -117,7 +122,7 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
         {
             int bestIndex = 0;
             float bestValue = Vector2.Dot(Vertices[0], direction);
-            for (int i = 1; i < Vertices.Count; ++i)
+            for (int i = 1; i < Vertices.Length; ++i)
             {
                 float value = Vector2.Dot(Vertices[i], direction);
                 if (value > bestValue)
@@ -139,7 +144,7 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
         {
             int bestIndex = 0;
             float bestValue = Vector2.Dot(Vertices[0], direction);
-            for (int i = 1; i < Vertices.Count; ++i)
+            for (int i = 1; i < Vertices.Length; ++i)
             {
                 float value = Vector2.Dot(Vertices[i], direction);
                 if (value > bestValue)

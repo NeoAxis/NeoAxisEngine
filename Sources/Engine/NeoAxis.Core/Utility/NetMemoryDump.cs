@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -14,7 +15,30 @@ namespace NeoAxis
 		readonly Dictionary<Type, TypeInfo> _types = new Dictionary<Type, TypeInfo>();
 
 		// Avoid infinite recursion on object graphs with cycles.
-		readonly HashSet<object> _visited = new HashSet<object>( ReferenceEqualityComparer.Instance );
+		readonly HashSet<object> _visited = new HashSet<object>( ReferenceEqualityComparer2.Instance );
+
+		///////////////////////////////////////////////
+
+		// .NET Standard 2.1-compatible reference equality comparer.
+		// Uses ReferenceEquals for equality and RuntimeHelpers.GetHashCode for stable identity hash.
+		sealed class ReferenceEqualityComparer2 : IEqualityComparer<object>
+		{
+			public static readonly ReferenceEqualityComparer2 Instance = new ReferenceEqualityComparer2();
+
+			ReferenceEqualityComparer2() { }
+
+			public new bool Equals( object x, object y )
+			{
+				return ReferenceEquals( x, y );
+			}
+
+			public int GetHashCode( object obj )
+			{
+				if( obj == null )
+					return 0;
+				return RuntimeHelpers.GetHashCode( obj );
+			}
+		}
 
 		///////////////////////////////////////////////
 

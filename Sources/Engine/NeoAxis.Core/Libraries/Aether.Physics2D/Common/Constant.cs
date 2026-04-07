@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Internal.tainicom.Aether.Physics2D.Common
+namespace Internal.nkast.Aether.Physics2D.Common
 {
     static class Constant
     {

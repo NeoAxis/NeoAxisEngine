@@ -4,9 +4,12 @@
  */
 
 /*
-* Farseer Physics Engine:
+* Farseer Physics Engine 3, based on Box2D.XNA port:
 * Copyright (c) 2012 Ian Qvist
 * 
+* Box2D.XNA port of Box2D:
+* Copyright (c) 2009 Brandon Furtwangler, Nathan Furtwangler
+*
 * Original source Box2D:
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org 
 * 
@@ -26,12 +29,13 @@
 */
 
 using System.Diagnostics;
-using Internal.tainicom.Aether.Physics2D.Common;
+using Internal.nkast.Aether.Physics2D.Common;
 #if XNAAPI
+using Complex = nkast.Aether.Physics2D.Common.Complex;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.tainicom.Aether.Physics2D.Dynamics.Joints
+namespace Internal.nkast.Aether.Physics2D.Dynamics.Joints
 {
     // p = attached point, m = mouse point
     // C = p - m

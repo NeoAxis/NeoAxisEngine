@@ -46,10 +46,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT.Delaunay.Sweep;
-using Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT.Util;
+using Internal.nkast.Aether.Physics2D.Common.Decomposition.CDT.Delaunay.Sweep;
+using Internal.nkast.Aether.Physics2D.Common.Decomposition.CDT.Util;
 
-namespace Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT.Delaunay
+namespace Internal.nkast.Aether.Physics2D.Common.Decomposition.CDT.Delaunay
 {
     internal class DelaunayTriangle
     {

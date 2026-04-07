@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics;
 
-namespace Internal.LiteDB.Utils.Extensions
+namespace NeoAxis.LiteDB.Utils.Extensions
 {
     public static class StopWatchExtensions
     {

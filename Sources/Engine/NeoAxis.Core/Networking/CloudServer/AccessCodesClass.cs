@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Security.Cryptography;
-using Internal.LiteDB;
+using NeoAxis.LiteDB;
 using NeoAxis;
 using NeoAxis.Networking;
 

@@ -1,7 +1,7 @@
 ﻿#if !NO_LITE_DB
 using System;
 
-namespace Internal.LiteDB.Engine
+namespace NeoAxis.LiteDB.Engine
 {
     /// <summary>
     /// Interface for abstract document lookup that can be direct from datafile or by virtual collections

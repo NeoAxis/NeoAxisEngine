@@ -374,7 +374,7 @@ namespace Internal
 					}
 					catch( Exception e )
 					{
-						Log.Error( "Unable to register assembly \'" + name + "\'. " + e.Message );
+						Log.Error( "Unable to register assembly \'" + name + "\'. " + e.ToString() );
 					}
 					finally
 					{

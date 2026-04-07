@@ -6,9 +6,12 @@
  */
 
 /*
-* Farseer Physics Engine:
+* Farseer Physics Engine 3, based on Box2D.XNA port:
 * Copyright (c) 2012 Ian Qvist
 * 
+* Box2D.XNA port of Box2D:
+* Copyright (c) 2009 Brandon Furtwangler, Nathan Furtwangler
+*
 * Original source Box2D:
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org 
 * 
@@ -31,13 +34,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Internal.tainicom.Aether.Physics2D.Collision.Shapes;
-using Internal.tainicom.Aether.Physics2D.Common;
+using Internal.nkast.Aether.Physics2D.Collision.Shapes;
+using Internal.nkast.Aether.Physics2D.Common;
 #if XNAAPI
+using Complex = nkast.Aether.Physics2D.Common.Complex;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.tainicom.Aether.Physics2D.Collision
+namespace Internal.nkast.Aether.Physics2D.Collision
 {
     internal enum ContactFeatureType : byte
     {
@@ -1130,21 +1134,15 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
             /// <summary>
             /// This holds polygon B expressed in frame A.
             /// </summary>
-            internal struct TempPolygon
+            internal unsafe struct TempPolygon
             {
-                public Vector2[] Vertices;
-                public Vector2[] Normals;
+                public Vector2* Vertices;
+                public Vector2* Normals;
                 public int Count;
 
-                internal TempPolygon(int maxPolygonVertices)
-                {
-                    Vertices = new Vector2[maxPolygonVertices];
-                    Normals = new Vector2[maxPolygonVertices];
-                    Count = 0;
-                }
             }
 
-            public static void Collide(ref Manifold manifold, EdgeShape edgeA, ref Transform xfA, PolygonShape polygonB, ref Transform xfB)
+            public unsafe static void Collide(ref Manifold manifold, EdgeShape edgeA, ref Transform xfA, PolygonShape polygonB, ref Transform xfB)
             {
                 // Algorithm:
                 // 1. Classify v1 and v2
@@ -1156,7 +1154,6 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
                 // 7. Return if _any_ axis indicates separation
                 // 8. Clip
 
-                TempPolygon tempPolygonB = new TempPolygon(Settings.MaxPolygonVertices);
                 Transform xf;
                 Vector2 centroidB;
                 Vector2 normal0 = new Vector2();
@@ -1362,6 +1359,11 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
                 }
 
                 // Get polygonB in frameA
+                Vector2* tmpVertices = stackalloc Vector2[Settings.MaxPolygonVertices];
+                Vector2* tmpNormals  = stackalloc Vector2[Settings.MaxPolygonVertices];
+                TempPolygon tempPolygonB = default;
+                tempPolygonB.Vertices = tmpVertices;
+                tempPolygonB.Normals  = tmpNormals;
                 tempPolygonB.Count = polygonB.Vertices.Count;
                 for (int i = 0; i < polygonB.Vertices.Count; ++i)
                 {
@@ -1560,7 +1562,7 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
                 manifold.PointCount = pointCount;
             }
 
-            private static EPAxis ComputeEdgeSeparation(ref TempPolygon polygonB, ref Vector2 normal, ref Vector2 v1, bool front)
+            private unsafe static EPAxis ComputeEdgeSeparation(ref TempPolygon polygonB, ref Vector2 normal, ref Vector2 v1, bool front)
             {
                 EPAxis axis;
                 axis.Type = EPAxisType.EdgeA;
@@ -1579,7 +1581,7 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
                 return axis;
             }
 
-            private static EPAxis ComputePolygonSeparation(ref TempPolygon polygonB, ref Vector2 normal, ref Vector2 v1, ref Vector2 v2, ref Vector2 lowerLimit, ref Vector2 upperLimit, float radius)
+            private unsafe static EPAxis ComputePolygonSeparation(ref TempPolygon polygonB, ref Vector2 normal, ref Vector2 v1, ref Vector2 v2, ref Vector2 lowerLimit, ref Vector2 upperLimit, float radius)
             {
                 EPAxis axis;
                 axis.Type = EPAxisType.Unknown;

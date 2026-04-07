@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Internal.LiteDB.Engine
+namespace NeoAxis.LiteDB.Engine
 {
     public interface ILiteEngine : IDisposable
     {

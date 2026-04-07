@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using NeoAxis;
 using NeoAxis.Networking;
 #if !NO_SERVER
-using Internal.LiteDB;
+using NeoAxis.LiteDB;
 #endif
 
 namespace NeoAxis.CloudServer

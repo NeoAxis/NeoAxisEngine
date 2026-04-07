@@ -3,7 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using NeoAxis.Editor;
-using Internal.tainicom.Aether.Physics2D.Dynamics.Joints;
+using Internal.nkast.Aether.Physics2D.Dynamics.Joints;
 
 namespace NeoAxis
 {

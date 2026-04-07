@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Kastellanos Nikolaos
+﻿// Copyright (c) 2018-2021 Kastellanos Nikolaos
 
 /* Original source Farseer Physics Engine:
  * Copyright (c) 2014 Ian Qvist, http://farseerphysics.codeplex.com
@@ -6,9 +6,12 @@
  */
 
 /*
-* Farseer Physics Engine:
+* Farseer Physics Engine 3, based on Box2D.XNA port:
 * Copyright (c) 2012 Ian Qvist
 * 
+* Box2D.XNA port of Box2D:
+* Copyright (c) 2009 Brandon Furtwangler, Nathan Furtwangler
+*
 * Original source Box2D:
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org 
 * 
@@ -30,17 +33,17 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Internal.tainicom.Aether.Physics2D.Common;
+using Internal.nkast.Aether.Physics2D.Common;
 #if XNAAPI
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.tainicom.Aether.Physics2D.Collision
+namespace Internal.nkast.Aether.Physics2D.Collision
 {
     /// <summary>
     /// A node in the dynamic tree. The client does not interact with this directly.
     /// </summary>
-    internal struct TreeNode<T>
+    internal struct TreeNode<TNode>
     {
         /// <summary>
         /// Enlarged AABB
@@ -64,12 +67,12 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
             set { Parent = value; }
         }
 
-        internal T UserData;
+        internal TNode UserData;
 
 
         internal bool IsLeaf()
         {
-            return Child1 == DynamicTree<T>.NullNode;
+            return Child1 == DynamicTree<TNode>.NullNode;
         }
     }
 
@@ -82,14 +85,14 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
     ///
     /// Nodes are pooled and relocatable, so we use node indices rather than pointers.
     /// </summary>
-    public class DynamicTree<T>
+    public class DynamicTree<TNode>
     {
         private Stack<int> _raycastStack = new Stack<int>(256);
         private Stack<int> _queryStack = new Stack<int>(256);
         private int _freeList;
         private int _nodeCapacity;
         private int _nodeCount;
-        private TreeNode<T>[] _nodes;
+        private TreeNode<TNode>[] _nodes;
         private int _root;
         internal const int NullNode = -1;
 
@@ -102,7 +105,7 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
 
             _nodeCapacity = 16;
             _nodeCount = 0;
-            _nodes = new TreeNode<T>[_nodeCapacity];
+            _nodes = new TreeNode<TNode>[_nodeCapacity];
 
             // Build a linked list for the free list.
             for (int i = 0; i < _nodeCapacity - 1; ++i)
@@ -290,7 +293,7 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
         /// <typeparam name="T"></typeparam>
         /// <param name="proxyId">The proxy id.</param>
         /// <param name="userData">The proxy user data.</param>
-        public void SetUserData(int proxyId, T userData)
+        public void SetUserData(int proxyId, TNode userData)
         {
             _nodes[proxyId].UserData = userData;
         }
@@ -301,7 +304,7 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
         /// <typeparam name="T"></typeparam>
         /// <param name="proxyId">The proxy id.</param>
         /// <returns>the proxy user data or 0 if the id is invalid.</returns>
-        public T GetUserData(int proxyId)
+        public TNode GetUserData(int proxyId)
         {
             Debug.Assert(0 <= proxyId && proxyId < _nodeCapacity);
             return _nodes[proxyId].UserData;
@@ -482,9 +485,9 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
                 Debug.Assert(_nodeCount == _nodeCapacity);
 
                 // The free list is empty. Rebuild a bigger pool.
-                TreeNode<T>[] oldNodes = _nodes;
+                TreeNode<TNode>[] oldNodes = _nodes;
                 _nodeCapacity *= 2;
-                _nodes = new TreeNode<T>[_nodeCapacity];
+                _nodes = new TreeNode<TNode>[_nodeCapacity];
                 Array.Copy(oldNodes, _nodes, _nodeCount);
 
                 // Build a linked list for the free list.
@@ -507,7 +510,7 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
             _nodes[nodeId].Child1 = NullNode;
             _nodes[nodeId].Child2 = NullNode;
             _nodes[nodeId].Height = 0;
-            _nodes[nodeId].UserData = default(T);
+            _nodes[nodeId].UserData = default(TNode);
             ++_nodeCount;
             return nodeId;
         }
@@ -608,7 +611,7 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
             int oldParent = _nodes[sibling].Parent;
             int newParent = AllocateNode();
             _nodes[newParent].Parent = oldParent;
-            _nodes[newParent].UserData = default(T);
+            _nodes[newParent].UserData = default(TNode);
             _nodes[newParent].AABB.Combine(ref leafAABB, ref _nodes[sibling].AABB);
             _nodes[newParent].Height = _nodes[sibling].Height + 1;
 

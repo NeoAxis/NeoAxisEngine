@@ -1,5 +1,5 @@
 ﻿#if !NO_LITE_DB
-namespace Internal.LiteDB.Engine
+namespace NeoAxis.LiteDB.Engine
 {
     /// <summary>
     /// Represents a snapshot lock mode

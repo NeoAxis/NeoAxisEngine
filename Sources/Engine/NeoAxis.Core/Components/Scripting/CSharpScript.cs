@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using NeoAxis.Editor;
 using System.Reflection;
+using Internal;
 
 namespace NeoAxis
 {

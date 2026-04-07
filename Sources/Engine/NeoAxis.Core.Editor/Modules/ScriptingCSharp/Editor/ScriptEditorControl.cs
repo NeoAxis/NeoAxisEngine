@@ -24,6 +24,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Highlighting;
 using System.Text;
+using Internal;
 
 namespace NeoAxis.Editor
 {
@@ -521,7 +522,10 @@ namespace NeoAxis.Editor
 				return false;
 			try
 			{
-				document = ScriptCodeGenerator.AddMethodToClass( document, ScriptCodeGenerator.GenerateMethodFromReflection( methodName, parameters ) );
+				var scriptCompiler = ScriptingCSharpEngine.GetScriptCompiler();
+				document = (Document)scriptCompiler.ScriptCodeGenerator_AddMethodToClass( document, scriptCompiler.ScriptCodeGenerator_GenerateMethodFromReflection( methodName, parameters ) );
+
+				//document = ScriptCodeGenerator.AddMethodToClass( document, ScriptCodeGenerator.GenerateMethodFromReflection( methodName, parameters ) );
 			}
 			catch( Exception e )
 			{

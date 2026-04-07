@@ -5,16 +5,16 @@
 
 using System;
 using System.Collections.Generic;
-using Internal.tainicom.Aether.Physics2D.Collision.Shapes;
-using Internal.tainicom.Aether.Physics2D.Common.Decomposition;
-using Internal.tainicom.Aether.Physics2D.Dynamics;
-using Internal.tainicom.Aether.Physics2D.Dynamics.Joints;
+using Internal.nkast.Aether.Physics2D.Collision.Shapes;
+using Internal.nkast.Aether.Physics2D.Common.Decomposition;
+using Internal.nkast.Aether.Physics2D.Dynamics;
+using Internal.nkast.Aether.Physics2D.Dynamics.Joints;
 #if XNAAPI
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 #endif
 
-namespace Internal.tainicom.Aether.Physics2D.Common
+namespace Internal.nkast.Aether.Physics2D.Common
 {
     /// <summary>
     /// An easy to use manager for creating paths.

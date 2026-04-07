@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq.Expressions;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     public interface ILiteStorage<TFileId>
     {

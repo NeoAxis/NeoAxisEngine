@@ -1,8 +1,8 @@
 ﻿#if !NO_LITE_DB
 using System;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     /// <summary>
     /// Indicate that field are not persisted inside this document but it's a reference for another document (DbRef)

@@ -1,12 +1,12 @@
 ﻿#if !NO_LITE_DB
-using Internal.LiteDB.Engine;
+using NeoAxis.LiteDB.Engine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     /// <summary>
     /// Implement some Enumerable methods to IBsonDataReader

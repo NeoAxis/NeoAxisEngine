@@ -193,11 +193,20 @@ namespace NeoAxis
 
 		//
 
+		public static bool IsMainThread()
+		{
+			var mainThread = MainThread ?? VirtualFileSystem.MainThread;
+			return mainThread == Thread.CurrentThread;
+		}
+
 		public static void CheckMainThread()
 		{
-			var thread = MainThread ?? VirtualFileSystem.MainThread;
-			if( thread != Thread.CurrentThread )
+			if( !IsMainThread() )
 				Log.Fatal( "EngineThreading: CheckMainThread: Prohibited call from not app main thread." );
+
+			//var mainThread = MainThread ?? VirtualFileSystem.MainThread;
+			//if( mainThread != Thread.CurrentThread )
+			//	Log.Fatal( "EngineThreading: CheckMainThread: Prohibited call from not app main thread." );
 		}
 
 		public static void ExecuteQueuedActionsFromMainThread()

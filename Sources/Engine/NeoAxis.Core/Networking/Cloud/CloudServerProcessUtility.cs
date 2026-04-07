@@ -920,7 +920,13 @@ namespace NeoAxis.Networking
 			var newFilePath = GetFilePathByStorageFileName( storageFileName );
 			if( sourceFilePath != newFilePath )
 			{
-#if UWP
+#if UWP || NETSTANDARD2_1
+				// .NET Standard 2.1 doesn't support File.Move(source, dest, overwrite). Emulate overwrite behavior.
+				var destDir = Path.GetDirectoryName( newFilePath );
+				if( !string.IsNullOrEmpty( destDir ) )
+					Directory.CreateDirectory( destDir );
+				if( File.Exists( newFilePath ) )
+					File.Delete( newFilePath );
 				File.Move( sourceFilePath, newFilePath );
 #else
 				File.Move( sourceFilePath, newFilePath, true );

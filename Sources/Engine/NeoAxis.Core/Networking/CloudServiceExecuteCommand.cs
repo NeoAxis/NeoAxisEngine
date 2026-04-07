@@ -284,7 +284,7 @@ namespace NeoAxis.Networking
 
 				lastSuccessHttpRequestTime = DateTime.UtcNow;
 
-#if UWP
+#if UWP || NETSTANDARD2_1
 				string blockString = await response.Content.ReadAsStringAsync();
 #else
 				string blockString = await response.Content.ReadAsStringAsync( cancellationToken );

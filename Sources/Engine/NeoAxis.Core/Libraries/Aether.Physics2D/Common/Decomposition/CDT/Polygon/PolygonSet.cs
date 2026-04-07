@@ -42,7 +42,7 @@
 
 using System.Collections.Generic;
 
-namespace Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT.Polygon
+namespace Internal.nkast.Aether.Physics2D.Common.Decomposition.CDT.Polygon
 {
     internal class PolygonSet
     {

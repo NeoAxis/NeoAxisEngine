@@ -757,7 +757,7 @@ namespace Project
 							foreach( var worldBody in physicsWorld2D.BodyList )
 							{
 								rigidBodyCount++;
-								if( worldBody.BodyType == Internal.tainicom.Aether.Physics2D.Dynamics.BodyType.Dynamic )
+								if( worldBody.BodyType == Internal.nkast.Aether.Physics2D.Dynamics.BodyType.Dynamic )
 								{
 									dynamicRigidBodyCount++;
 									if( worldBody.Awake )

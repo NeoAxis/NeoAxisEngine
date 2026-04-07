@@ -1,7 +1,7 @@
 ﻿#if !NO_LITE_DB
 using System;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     public interface IBsonDataReader : IDisposable
     {

@@ -233,14 +233,19 @@ namespace Project
 			return resultData;
 		}
 
-		public static async Task<EDialogResult> ShowAsync( UIControl parent, string text, string caption, EMessageBoxButtons buttons = EMessageBoxButtons.OK, EMessageBoxIcon icon = EMessageBoxIcon.None, UIStyle overrideStyle = null )
+		public static async Task<ResultData> ShowAsync( UIControl parent, string text, string caption, EMessageBoxButtons buttons = EMessageBoxButtons.OK, EMessageBoxIcon icon = EMessageBoxIcon.None, UIStyle overrideStyle = null )
 		{
-			var result = Show( parent, text, caption, buttons, icon, overrideStyle );
+			var result = new ResultData();
+
+			EngineThreading.ExecuteFromMainThreadLater( delegate ()
+			{
+				result = Show( parent, text, caption, buttons, icon, overrideStyle );
+			} );
 
 			while( result.Result == EDialogResult.None )
 				await Task.Delay( 10 );
 
-			return result.Result;
+			return result;
 		}
 	}
 }

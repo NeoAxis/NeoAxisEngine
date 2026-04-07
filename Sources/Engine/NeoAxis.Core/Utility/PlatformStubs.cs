@@ -4,6 +4,17 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO.Compression;
 
+
+#if NETSTANDARD2_1 || UWP
+namespace System
+{
+	public class SuppressGCTransitionAttribute : Attribute
+	{
+	}
+}
+#endif
+
+
 #if ANDROID || UWP || IOS || WEB
 
 namespace System.Configuration
@@ -17,18 +28,16 @@ namespace System.Configuration
 	}
 }
 
+
 #if !WEB && !ANDROID
 namespace System
 {
 	public class UserPreferenceChangedEventArgs
 	{
 	}
-
-	public class SuppressGCTransitionAttribute : Attribute
-	{
-	}
 }
 #endif
+
 
 #if UWP || WEB
 namespace System.Drawing

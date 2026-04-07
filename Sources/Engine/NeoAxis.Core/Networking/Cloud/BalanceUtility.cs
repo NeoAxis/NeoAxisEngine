@@ -12,23 +12,16 @@ namespace NeoAxis
 	/// </summary>
 	public static class BalanceUtility
 	{
-		static string RemoveZerosAfterDot( string s )
-		{
-			int dotIndex = s.IndexOf( '.' );
-			if( dotIndex == -1 )
-				return s;
-			string afterDot = s.Substring( dotIndex + 1 );
-			if( afterDot.All( c => c == '0' ) )
-				return s.Substring( 0, dotIndex );
-			return s;
-		}
+		public static char CurrencyPrefix = '$';
 
-		public static string BalanceToString( double balance, bool addDollarPrefix )
-		{
-			var balanceString = RemoveZerosAfterDot( balance.ToString( "F2" ) );
+		//
 
-			if( addDollarPrefix )
-				return $"${balanceString}";
+		public static string BalanceToString( double balance, bool addCurrencyPrefix, string format = "0.00" )
+		{
+			var balanceString = balance.ToString( format );
+
+			if( addCurrencyPrefix )
+				return $"{CurrencyPrefix}{balanceString}";
 			else
 				return balanceString;
 		}

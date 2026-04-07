@@ -1,9 +1,9 @@
 ﻿#if !NO_LITE_DB
 using System;
 using System.Text;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     /// <summary>
     /// Internal class to deserialize a byte[] into a BsonDocument using BSON data format

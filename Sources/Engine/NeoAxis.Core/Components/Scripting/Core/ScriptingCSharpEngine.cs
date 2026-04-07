@@ -4,31 +4,29 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using System.Text;
+using NeoAxis;
 
-namespace NeoAxis
+namespace Internal
 {
 	// see similar RoslynPad ScriptRunner class
 
 	/// <summary>
 	/// Script compilation and execution engine.
 	/// </summary>
-	static class ScriptingCSharpEngine
+	public static class ScriptingCSharpEngine
 	{
 		static bool initialized;
 
 		static ScriptCache scriptCache = new ScriptCache();
 
-#if !NO_EMIT
-		static Lazy<ScriptCompiler> scriptCompiler = new Lazy<ScriptCompiler>();
+		static bool scriptCompilerRequested;
+		static object getScriptCompilerLock = new object();
+		//static Lazy<ScriptCompiler> scriptCompiler = new Lazy<ScriptCompiler>();
 
-		////currently we support only one context type for all scripts.
-		//public static Type ContextType { get; private set; } = typeof( CSharpScriptContext );
-#endif
+		//public static List<string> CSharpScriptReferenceAssemblies { get; } = new List<string>();
+		//public static List<string> CSharpScriptUsingNamespaces { get; } = new List<string>();
+		//internal static ScriptAssemblyNameResolver ScriptAssemblyNameResolver;
 
-		public static List<string> CSharpScriptReferenceAssemblies { get; } = new List<string>();
-		public static List<string> CSharpScriptUsingNamespaces { get; } = new List<string>();
-
-		public static ScriptAssemblyNameResolver scriptAssemblyNameResolver;
 		static List<string> tempFilesToDelete = new List<string>();
 
 		/////////////////////////////////////////
@@ -41,8 +39,8 @@ namespace NeoAxis
 				{
 					if( CanCompileScripts )
 					{
-						scriptAssemblyNameResolver = new ScriptAssemblyNameResolver();
-						scriptAssemblyNameResolver.AddSearchDirectory( VirtualFileSystem.Directories.Binaries );
+						ScriptCompiler.ScriptAssemblyNameResolver = new ScriptAssemblyNameResolver();
+						ScriptCompiler.ScriptAssemblyNameResolver.AddSearchDirectory( VirtualFileSystem.Directories.Binaries );
 
 						{
 							var netFolder = PathUtility.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet\shared\Microsoft.NETCore.App" );
@@ -58,21 +56,14 @@ namespace NeoAxis
 							}
 
 							if( !string.IsNullOrEmpty( folderWithFiles ) )
-								scriptAssemblyNameResolver.AddSearchDirectory( folderWithFiles );
+								ScriptCompiler.ScriptAssemblyNameResolver.AddSearchDirectory( folderWithFiles );
 						}
-
-						//{
-						//	var folder = PathUtility.Combine( VirtualFileSystem.Directories.PlatformSpecific, @"dotnet5\shared\Microsoft.NETCore.App\5.0.17" );
-						//	if( Directory.Exists( folder ) )
-						//		scriptAssemblyNameResolver.AddSearchDirectory( folder );
-						//}
 
 						InitReferenceAssemblies();
 						InitUsingNamespaces();
 
-#if !NO_EMIT
-						ScriptCompiler.Settings = ScriptCompiler.Settings.AddReferences( CSharpScriptReferenceAssemblies );
-#endif
+						GetScriptCompiler().SettingsAddReferences( ScriptCompiler.CSharpScriptReferenceAssemblies );
+						//ScriptCompiler.Settings = ScriptCompiler.Settings.AddReferences( CSharpScriptReferenceAssemblies );
 					}
 
 					scriptCache.Initialize();
@@ -86,7 +77,6 @@ namespace NeoAxis
 			}
 		}
 
-#if !NO_EMIT
 		public static void WriteCharpScriptsCsFile()
 		{
 			try
@@ -100,7 +90,10 @@ namespace NeoAxis
 				{
 					script = "#if DEPLOY\r\n";
 					script += "namespace Scripts {\r\n";
-					script += ScriptCodeGenerator.GenerateWrappedScript( scriptsToCompile, CSharpScriptUsingNamespaces, null );//, ContextType );
+
+					script += GetScriptCompiler().ScriptCodeGenerator_GenerateWrappedScript( scriptsToCompile, ScriptCompiler.CSharpScriptUsingNamespaces, null );
+					//script += ScriptCodeGenerator.GenerateWrappedScript( scriptsToCompile, CSharpScriptUsingNamespaces, null );//, ContextType );
+
 					script += "\r\n}\r\n";
 					script += "#endif";
 				}
@@ -121,17 +114,14 @@ namespace NeoAxis
 				Log.Warning( $"Unable to write \'{scriptCache.GeneratedCSFileName}\'. " + e.Message );
 			}
 		}
-#endif
 
 		public static void Shutdown()
 		{
 			if( !initialized )
 				return;
 
-#if !NO_EMIT
 			//write CSharpScripts.cs
 			WriteCharpScriptsCsFile();
-#endif
 
 			try
 			{
@@ -155,9 +145,9 @@ namespace NeoAxis
 					{
 						try
 						{
-							string fullPath = scriptAssemblyNameResolver.Resolve( name );
+							string fullPath = ScriptCompiler.ScriptAssemblyNameResolver.Resolve( name );
 							if( File.Exists( fullPath ) )
-								CSharpScriptReferenceAssemblies.Add( fullPath );
+								ScriptCompiler.CSharpScriptReferenceAssemblies.Add( fullPath );
 						}
 						catch { }
 					}
@@ -173,12 +163,12 @@ namespace NeoAxis
 				{
 					string value = b.GetAttribute( "Value" );
 					if( !string.IsNullOrEmpty( value ) )
-						CSharpScriptUsingNamespaces.Add( value );
+						ScriptCompiler.CSharpScriptUsingNamespaces.Add( value );
 				}
 			}
 		}
 
-		public static CompiledScript GetOrCompileScript( string script, out string error )
+		internal static CompiledScript GetOrCompileScript( string script, out string error )
 		{
 			Init();
 
@@ -200,14 +190,18 @@ namespace NeoAxis
 
 				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
 				{
-					if( SystemSettings.CommandLineParameters.TryGetValue( "-client", out var worldClient ) )
+					if( SystemSettings.CommandLineParameters.TryGetValue( "-client", out _ ) )
 						return false;
-					if( SystemSettings.CommandLineParameters.TryGetValue( "-server", out var projectServer ) )
+					if( SystemSettings.CommandLineParameters.TryGetValue( "-server", out _ ) )
 						return false;
 
 					var dotnetDirectoryPath = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Platforms\Windows\dotnet" );
 					if( !Directory.Exists( dotnetDirectoryPath ) )
 						return false;
+
+
+					//!!!!check NeoAxis.Core.CompileScripts.dll existence and loadability
+
 				}
 
 				return true;
@@ -228,48 +222,52 @@ namespace NeoAxis
 			}
 		}
 
-#if !NO_EMIT
-		public static ScriptCompiler ScriptCompiler
+		public static ScriptCompiler GetScriptCompiler()
 		{
-			get
+			try
 			{
-				try
+				lock( getScriptCompilerLock )
 				{
-					return scriptCompiler.Value;
+					if( !scriptCompilerRequested )
+					{
+						scriptCompilerRequested = true;
+						var assembly = AssemblyUtility.LoadAssemblyByRealFileName( "NeoAxis.Core.CompileScripts.dll", false, true );
+					}
 				}
-				catch( Exception e )
-				{
-					if( e.Message.Contains( "System.Collections.Immutable" ) ||
-					   ( e.InnerException != null && e.InnerException.Message.Contains( "System.Collections.Immutable" ) ) )
-						throw new Exception( "File loading error. Make sure 'Microsoft.CodeAnalysis.CSharp.Scripting' package is installed.", e );
-					else
-						throw;
-				}
+				return ScriptCompiler.Instance;
+
+				//return scriptCompiler.Value;
+			}
+			catch( Exception e )
+			{
+				if( e.Message.Contains( "System.Collections.Immutable" ) ||
+				   ( e.InnerException != null && e.InnerException.Message.Contains( "System.Collections.Immutable" ) ) )
+					throw new Exception( "File loading error. Make sure 'Microsoft.CodeAnalysis.CSharp.Scripting' package is installed.", e );
+				else
+					throw;
 			}
 		}
-#endif
 
 		public static Assembly CompileScriptsToAssembly( IEnumerable<string> scripts, string writeToDllOptional )
 		{
-#if !NO_EMIT
-			string script = ScriptCodeGenerator.GenerateWrappedScript( scripts, CSharpScriptUsingNamespaces, null );//, ContextType );
-			return ScriptCompiler.CompileCode( script, writeToDllOptional );
-#else
-			return null;
-#endif
+			var scriptCompiler = GetScriptCompiler();
+
+			string script = scriptCompiler.ScriptCodeGenerator_GenerateWrappedScript( scripts, ScriptCompiler.CSharpScriptUsingNamespaces, null );//, ContextType );
+			return scriptCompiler.CompileCode( script, writeToDllOptional );
+
+			//string script = ScriptCodeGenerator.GenerateWrappedScript( scripts, CSharpScriptUsingNamespaces, null );//, ContextType );
+			//return ScriptCompiler.CompileCode( script, writeToDllOptional );
 		}
 
 		public static void CheckForSyntaxErrors( string code )
 		{
-#if !NO_EMIT
-			ScriptCodeGenerator.CheckForSyntaxErrors( code );
-#endif
+			GetScriptCompiler().ScriptCodeGenerator_CheckForSyntaxErrors( code );
+			//ScriptCodeGenerator.CheckForSyntaxErrors( code );
 		}
 
 		public static bool ScriptCacheCompile( out string error )
 		{
 			return scriptCache.Compile( out error );
 		}
-
 	}
 }

@@ -3,9 +3,9 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Text;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB.Engine
+namespace NeoAxis.LiteDB.Engine
 {
     /// <summary>
     /// Write data types/BSON data into byte[]. It's forward only and support multi buffer slice as source

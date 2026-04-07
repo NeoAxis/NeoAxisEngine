@@ -576,20 +576,15 @@
     <Compile Include="Components\Scripting\Core\CompiledScript.cs" />
     <Compile Include="Components\Scripting\Core\ScriptAssemblyNameResolver.cs" />
     <Compile Include="Components\Scripting\Core\ScriptCache.cs" />
-    <Compile Include="Components\Scripting\Core\ScriptCodeGenerator.cs" />
     <Compile Include="Components\Scripting\Core\ScriptCommon.cs" />
     <Compile Include="Components\Scripting\Core\ScriptCompiler.cs" />
-    <Compile Include="Components\Scripting\Core\ScriptCompilerException.cs" />
     <Compile Include="Components\Scripting\Core\ScriptingCSharpEngine.cs" />
-    <Compile Include="Components\Scripting\Core\ScriptUtility.cs" />
     <Compile Include="Components\UI\Video\UIVideo.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Collision\Collision.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Collision\Distance.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Collision\DynamicTree.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Collision\DynamicTreeBroadPhase.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Collision\IBroadPhase.cs" />
-    <Compile Include="Libraries\Aether.Physics2D\Collision\QuadTree.cs" />
-    <Compile Include="Libraries\Aether.Physics2D\Collision\QuadTreeBroadPhase.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Collision\TimeOfImpact.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Common\Complex.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Common\Constant.cs" />
@@ -600,14 +595,9 @@
     <Compile Include="Libraries\Aether.Physics2D\Common\PathManager.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Common\PolygonTools.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Common\Serialization.cs" />
-    <Compile Include="Libraries\Aether.Physics2D\Common\Stopwatch.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Common\Vector2.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Common\Vector3.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Common\Vertices.cs" />
-    <Compile Include="Libraries\Aether.Physics2D\Content\BodyContainer.cs" />
-    <Compile Include="Libraries\Aether.Physics2D\Content\PolygonContainer.cs" />
-    <Compile Include="Libraries\Aether.Physics2D\ContentReaders\BodyContainerReader.cs" />
-    <Compile Include="Libraries\Aether.Physics2D\ContentReaders\PolygonContainerReader.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Controllers\AbstractForceController.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Controllers\BuoyancyController.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Controllers\Controller.cs" />
@@ -730,14 +720,6 @@
     <Compile Include="Libraries\Aether.Physics2D\Dynamics\Joints\RopeJoint.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Dynamics\Joints\WeldJoint.cs" />
     <Compile Include="Libraries\Aether.Physics2D\Dynamics\Joints\WheelJoint.cs" />
-    <Compile Include="Libraries\Aether.Physics2D\Fluids\1\FluidDefinition.cs" />
-    <Compile Include="Libraries\Aether.Physics2D\Fluids\1\FluidParticle.cs" />
-    <Compile Include="Libraries\Aether.Physics2D\Fluids\1\FluidSystem1.cs" />
-    <Compile Include="Libraries\Aether.Physics2D\Fluids\1\HashGrid.cs" />
-    <Compile Include="Libraries\Aether.Physics2D\Fluids\1\Spring.cs" />
-    <Compile Include="Libraries\Aether.Physics2D\Fluids\1\SpringHash.cs" />
-    <Compile Include="Libraries\Aether.Physics2D\Fluids\2\FluidSystem2.cs" />
-    <Compile Include="Libraries\Aether.Physics2D\Fluids\2\SpartialTable.cs" />
     <Compile Include="Libraries\LiteDB\Client\Database\ILiteCollection.cs" />
     <Compile Include="Libraries\LiteDB\Client\Database\ILiteDatabase.cs" />
     <Compile Include="Libraries\LiteDB\Client\Database\ILiteQueryable.cs" />
@@ -1854,6 +1836,7 @@
     <Compile Include="Utility\EConcurrentQueue.cs" />
     <Compile Include="Utility\NetMemoryDump.cs" />
     <Compile Include="Libraries\LiteDB\Client\Mapper\BsonMapper.GetEntityMapper.cs" />
+    <Compile Include="Components\Mesh modifiers\MeshModifier_PlaneUV.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Properties\Settings.settings">

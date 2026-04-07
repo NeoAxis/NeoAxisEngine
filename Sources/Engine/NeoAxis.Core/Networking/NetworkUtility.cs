@@ -204,7 +204,7 @@ namespace NeoAxis
 								}
 							}
 
-#if UWP
+#if UWP || NETSTANDARD2_1
 							using( var contentStream = await response.Content.ReadAsStreamAsync() )
 #else
 							using( var contentStream = await response.Content.ReadAsStreamAsync( cancellationToken ) )

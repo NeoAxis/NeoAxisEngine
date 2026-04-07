@@ -157,7 +157,7 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void ZeroMemory( IntPtr buffer, int length )
 		{
-#if !UWP && !ANDROID
+#if !UWP && !ANDROID && !NETSTANDARD2_1
 			unsafe
 			{
 				Unsafe.InitBlockUnaligned( (void*)buffer, 0, (uint)length );
@@ -169,7 +169,7 @@ namespace NeoAxis
 		}
 		public unsafe static void ZeroMemory( void* buffer, int length )
 		{
-#if !UWP && !ANDROID
+#if !UWP && !ANDROID && !NETSTANDARD2_1
 			Unsafe.InitBlockUnaligned( buffer, 0, (uint)length );
 #else
 			LoadUtilsNativeWrapperLibrary();
@@ -182,7 +182,7 @@ namespace NeoAxis
 		static extern void NativeUtils_FillMemory( IntPtr buffer, int length, byte value );
 		public static void FillMemory( IntPtr buffer, int length, byte value )
 		{
-#if !UWP && !ANDROID
+#if !UWP && !ANDROID && !NETSTANDARD2_1
 			unsafe
 			{
 				Unsafe.InitBlockUnaligned( (void*)buffer, value, (uint)length );
@@ -213,6 +213,118 @@ namespace NeoAxis
 #if !UWP && !ANDROID && !WEB
 		static bool dllImportResolverInitialized;
 
+
+		// Reflection cache. Keep minimal and safe for .NET Standard 2.1 (where NativeLibrary may not exist).
+		static MethodInfo nativeLibraryTryLoadMethod;
+
+		static bool TryLoadReflection( string libraryPath, out IntPtr handle )
+		{
+			handle = IntPtr.Zero;
+
+			try
+			{
+				// Resolve System.Runtime.InteropServices.NativeLibrary.TryLoad(string, out IntPtr)
+				if( nativeLibraryTryLoadMethod == null )
+				{
+					var nativeLibraryType = Type.GetType( "System.Runtime.InteropServices.NativeLibrary, System.Runtime.InteropServices", throwOnError: false );
+					if( nativeLibraryType == null )
+						nativeLibraryType = Type.GetType( "System.Runtime.InteropServices.NativeLibrary", throwOnError: false );
+					if( nativeLibraryType == null )
+						return false;
+
+					var methods = nativeLibraryType.GetMethods( BindingFlags.Public | BindingFlags.Static );
+					for( int i = 0; i < methods.Length; i++ )
+					{
+						var m = methods[ i ];
+						if( m.Name != "TryLoad" )
+							continue;
+
+						var p = m.GetParameters();
+						if( p.Length != 2 )
+							continue;
+						if( p[ 0 ].ParameterType != typeof( string ) )
+							continue;
+						if( !p[ 1 ].IsOut || p[ 1 ].ParameterType != typeof( IntPtr ).MakeByRefType() )
+							continue;
+
+						nativeLibraryTryLoadMethod = m;
+						break;
+					}
+
+					if( nativeLibraryTryLoadMethod == null )
+						return false;
+				}
+
+				object[] args = new object[] { libraryPath, IntPtr.Zero };
+				var result = nativeLibraryTryLoadMethod.Invoke( null, args );
+				if( result is bool ok && ok )
+				{
+					handle = (IntPtr)args[ 1 ];
+					return handle != IntPtr.Zero;
+				}
+			}
+			catch { }
+
+			return false;
+		}
+
+		public delegate IntPtr DllImportResolverReflection( string libraryName, Assembly assembly, DllImportSearchPath? searchPath );
+
+		static void SetDllImportResolverReflection( Assembly assembly, DllImportResolverReflection resolver )
+		{
+			try
+			{
+				var nativeLibraryType = Type.GetType( "System.Runtime.InteropServices.NativeLibrary, System.Runtime.InteropServices", throwOnError: false );
+				if( nativeLibraryType == null )
+					nativeLibraryType = Type.GetType( "System.Runtime.InteropServices.NativeLibrary", throwOnError: false );
+				if( nativeLibraryType == null )
+					return;
+
+				// Find NativeLibrary.SetDllImportResolver(Assembly, DllImportResolver).
+				var methods = nativeLibraryType.GetMethods( BindingFlags.Public | BindingFlags.Static );
+				MethodInfo setResolverMethod = null;
+				for( int i = 0; i < methods.Length; i++ )
+				{
+					var m = methods[ i ];
+					if( m.Name != "SetDllImportResolver" )
+						continue;
+
+					var p = m.GetParameters();
+					if( p.Length != 2 )
+						continue;
+					if( p[ 0 ].ParameterType != typeof( Assembly ) )
+						continue;
+
+					setResolverMethod = m;
+					break;
+				}
+
+				if( setResolverMethod == null )
+					return;
+
+				// Create delegate instance of the exact DllImportResolver type expected by runtime.
+				var resolverParamType = setResolverMethod.GetParameters()[ 1 ].ParameterType; // System.Runtime.InteropServices.DllImportResolver
+				var invoke = resolverParamType.GetMethod( "Invoke" );
+				if( invoke == null )
+					return;
+
+				// Ensure signature matches (string, Assembly, Nullable<DllImportSearchPath>) -> IntPtr.
+				var invokeParams = invoke.GetParameters();
+				if( invokeParams.Length != 3 ||
+					invokeParams[ 0 ].ParameterType != typeof( string ) ||
+					invokeParams[ 1 ].ParameterType != typeof( Assembly ) ||
+					invoke.ReturnType != typeof( IntPtr ) )
+					return;
+
+				// Rebind our resolver to the required delegate type.
+				var typedResolver = Delegate.CreateDelegate( resolverParamType, resolver.Target, resolver.Method );
+				setResolverMethod.Invoke( null, new object[] { assembly, typedResolver } );
+			}
+			catch { }
+		}
+
+
+
 		static IntPtr DllImportResolver( string libraryName, Assembly assembly, DllImportSearchPath? searchPath )
 		{
 			IntPtr libHandle = IntPtr.Zero;
@@ -221,31 +333,14 @@ namespace NeoAxis
 			{
 				//!!!!maybe rename libraries to remove adding "lib" prefix
 
-				if( libraryName == "NeoAxisCoreNative" || libraryName == "bgfx" || libraryName == "shaderc" )
+				if( libraryName == "NeoAxisCoreNative" || libraryName == "bgfx" )
 				{
 					var path = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "lib" + libraryName + ".so" );
-					NativeLibrary.TryLoad( path, out libHandle );
+					TryLoadReflection( path, out libHandle );
+					//NativeLibrary.TryLoad( path, out libHandle );
 				}
-				//else if( libraryName == "OpenAL32" )
-				//{
-				//	var path = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "libOpenAL.so" );
-				//	NativeLibrary.TryLoad( path, out libHandle );
-				//}
 			}
 			return libHandle;
-
-			//IntPtr libHandle = IntPtr.Zero;
-			////you can add here different loading logic
-			//if( libraryName == NativeLib && RuntimeInformation.IsOSPlatform( OSPlatform.Windows ) && Environment.Is64BitProcess )
-			//{
-			//	NativeLibrary.TryLoad( "./runtimes/win-x64/native/somelib.dll", out libHandle );
-			//}
-			//else
-			//if( libraryName == NativeLib )
-			//{
-			//	NativeLibrary.TryLoad( "libsomelibrary.so", assembly, DllImportSearchPath.ApplicationDirectory, out libHandle );
-			//}
-			//return libHandle;
 		}
 
 		static void InitDllImportResolver()
@@ -253,7 +348,9 @@ namespace NeoAxis
 			if( !dllImportResolverInitialized )
 			{
 				dllImportResolverInitialized = true;
-				NativeLibrary.SetDllImportResolver( typeof( NativeUtility ).Assembly, DllImportResolver );
+
+				SetDllImportResolverReflection( typeof( NativeUtility ).Assembly, DllImportResolver );
+				//NativeLibrary.SetDllImportResolver( typeof( NativeUtility ).Assembly, DllImportResolver );
 			}
 		}
 #endif
@@ -298,14 +395,6 @@ namespace NeoAxis
 				{
 					//no preloading on Android
 					return IntPtr.Zero;
-
-					//if( Path.GetExtension( baseName ) != ".so" )
-					//	baseName += ".so";
-
-					//string prefix = "lib";
-					//if( baseName.Length > 3 && baseName.Substring( 0, 3 ) == "lib" )
-					//	prefix = "";
-					//baseName = prefix + baseName + ".so";
 				}
 				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
 				{

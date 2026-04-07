@@ -580,7 +580,10 @@ namespace NeoAxis.Networking
 				catch( Exception e )
 				{
 					if( string.IsNullOrEmpty( firstDisconnectionReason ) )
-						firstDisconnectionReason = "ConnectAsync exception: " + e.Message;
+					{
+						firstDisconnectionReason = "ConnectAsync exception: " + e.ToString();
+						//firstDisconnectionReason = "ConnectAsync exception: " + e.Message;
+					}
 
 					var utcNow = DateTime.UtcNow;
 					if( ( utcNow - connectAttemptsStartTime ).TotalSeconds > ConnectingMaxTimeInSeconds )
@@ -708,7 +711,9 @@ namespace NeoAxis.Networking
 								}
 								else
 								{
-									OnClose( WebSocketCloseStatus.ProtocolError, "Unable to send the binary message. " + e.Message );
+									//!!!!temp? jkjfj
+									OnClose( WebSocketCloseStatus.ProtocolError, "Unable to send the binary message. " + e.ToString() );
+									//OnClose( WebSocketCloseStatus.ProtocolError, "Unable to send the binary message. " + e.Message );
 									return;
 								}
 							}

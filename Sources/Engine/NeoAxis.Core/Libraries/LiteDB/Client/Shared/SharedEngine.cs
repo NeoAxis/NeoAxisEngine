@@ -1,5 +1,5 @@
 ﻿#if !NO_LITE_DB
-using Internal.LiteDB.Engine;
+using NeoAxis.LiteDB.Engine;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +9,7 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 #endif
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     public class SharedEngine : ILiteEngine
     {

@@ -4,16 +4,16 @@
  */
 
 using System.Collections.Generic;
-using Internal.tainicom.Aether.Physics2D.Collision;
-using Internal.tainicom.Aether.Physics2D.Collision.Shapes;
-using Internal.tainicom.Aether.Physics2D.Common;
-using Internal.tainicom.Aether.Physics2D.Common.PhysicsLogic;
-using Internal.tainicom.Aether.Physics2D.Dynamics;
+using Internal.nkast.Aether.Physics2D.Collision;
+using Internal.nkast.Aether.Physics2D.Collision.Shapes;
+using Internal.nkast.Aether.Physics2D.Common;
+using Internal.nkast.Aether.Physics2D.Common.PhysicsLogic;
+using Internal.nkast.Aether.Physics2D.Dynamics;
 #if XNAAPI
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.tainicom.Aether.Physics2D.Controllers
+namespace Internal.nkast.Aether.Physics2D.Controllers
 {
     public sealed class BuoyancyController : Controller
     {

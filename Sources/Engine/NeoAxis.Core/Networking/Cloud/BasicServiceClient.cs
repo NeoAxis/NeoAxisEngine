@@ -54,7 +54,7 @@ namespace NeoAxis.Networking
 			public long ProjectID;
 
 			//advanced settings
-			public double ConnectingMaxTimeInSeconds = 10;
+			public double ConnectingMaxTimeInSeconds = 20;//10;
 			public bool AllowReconnect;
 
 			//public string AnyData;

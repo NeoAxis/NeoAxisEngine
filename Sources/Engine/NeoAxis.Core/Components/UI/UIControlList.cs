@@ -621,7 +621,8 @@ namespace NeoAxis
 		{
 			//!!!!slowly?
 
-			return GetComponents<UIControl>().Where( c => c is not UIScroll && c is not UIContextMenu && c.Enabled ).ToArray();
+			return GetComponents<UIControl>().Where( c => !( c is UIScroll ) && !( c is UIContextMenu ) && c.Enabled ).ToArray();
+			//return GetComponents<UIControl>().Where( c => c is not UIScroll && c is not UIContextMenu && c.Enabled ).ToArray();
 		}
 
 		public UIControl GetItem( int index )

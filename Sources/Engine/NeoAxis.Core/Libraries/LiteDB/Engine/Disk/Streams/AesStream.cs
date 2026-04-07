@@ -4,9 +4,9 @@ using System.Buffers;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB.Engine
+namespace NeoAxis.LiteDB.Engine
 {
     /// <summary>
     /// Encrypted AES Stream

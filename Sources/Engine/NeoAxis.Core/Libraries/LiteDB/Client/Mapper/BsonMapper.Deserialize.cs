@@ -4,9 +4,9 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     public partial class BsonMapper
     {
@@ -97,14 +97,23 @@ namespace Internal.LiteDB
         /// </summary>
         public object Deserialize(Type type, BsonValue value)
         {
-            if (OnDeserialization is not null)
-            {
-                var result = OnDeserialization(this, type, value);
-                if (result is not null)
-                {
-                    value = result;
-                }
-            }
+			//!!!!betauser
+			if( OnDeserialization != null )
+			{
+				var result = OnDeserialization( this, type, value );
+				if( result != null )
+				{
+					value = result;
+				}
+			}
+			//if( OnDeserialization is not null)
+   //         {
+   //             var result = OnDeserialization(this, type, value);
+   //             if (result is not null)
+   //             {
+   //                 value = result;
+   //             }
+   //         }
 
             // null value - null returns
             if (value.IsNull) return null;

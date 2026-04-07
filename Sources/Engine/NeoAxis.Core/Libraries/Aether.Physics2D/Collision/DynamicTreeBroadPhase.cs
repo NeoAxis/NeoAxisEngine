@@ -1,12 +1,17 @@
-﻿/* Original source Farseer Physics Engine:
+﻿// Copyright (c) 2021 Kastellanos Nikolaos
+
+/* Original source Farseer Physics Engine:
  * Copyright (c) 2014 Ian Qvist, http://farseerphysics.codeplex.com
  * Microsoft Permissive License (Ms-PL) v1.1
  */
 
 /*
-* Farseer Physics Engine:
+* Farseer Physics Engine 3, based on Box2D.XNA port:
 * Copyright (c) 2012 Ian Qvist
 * 
+* Box2D.XNA port of Box2D:
+* Copyright (c) 2009 Brandon Furtwangler, Nathan Furtwangler
+*
 * Original source Box2D:
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org 
 * 
@@ -26,13 +31,13 @@
 */
 
 using System;
-using Internal.tainicom.Aether.Physics2D.Common;
-using Internal.tainicom.Aether.Physics2D.Dynamics;
+using Internal.nkast.Aether.Physics2D.Common;
+using Internal.nkast.Aether.Physics2D.Dynamics;
 #if XNAAPI
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.tainicom.Aether.Physics2D.Collision
+namespace Internal.nkast.Aether.Physics2D.Collision
 {
     internal struct Pair : IComparable<Pair>
     {
@@ -65,12 +70,23 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
         #endregion
     }
 
+
     /// <summary>
     /// The broad-phase is used for computing pairs and performing volume queries and ray casts.
     /// This broad-phase does not persist pairs. Instead, this reports potentially new pairs.
     /// It is up to the client to consume the new pairs and to track subsequent overlap.
     /// </summary>
-    public class DynamicTreeBroadPhase : IBroadPhase
+    public class DynamicTreeBroadPhase : DynamicTreeBroadPhase<FixtureProxy>, IBroadPhase
+    {
+    }
+
+    /// <summary>
+    /// The broad-phase is used for computing pairs and performing volume queries and ray casts.
+    /// This broad-phase does not persist pairs. Instead, this reports potentially new pairs.
+    /// It is up to the client to consume the new pairs and to track subsequent overlap.
+    /// </summary>
+    public class DynamicTreeBroadPhase<TNode> : IBroadPhase<TNode>
+        where TNode : struct
     {
         private const int NullProxy = -1;
         private int[] _moveBuffer;
@@ -83,7 +99,7 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
         private int _proxyCount;
         private BroadPhaseQueryCallback _queryCallbackCache;
         private int _queryProxyId;
-        private DynamicTree<FixtureProxy> _tree = new DynamicTree<FixtureProxy>();
+        private DynamicTree<TNode> _tree = new DynamicTree<TNode>();
 
         /// <summary>
         /// Constructs a new broad phase based on the dynamic tree implementation
@@ -215,7 +231,7 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
             _tree.GetFatAABB(proxyId, out aabb);
         }
 
-        public void SetProxy(int proxyId, ref FixtureProxy proxy)
+        public void SetProxy(int proxyId, ref TNode proxy)
         {
             _tree.SetUserData(proxyId, proxy);
         }
@@ -225,7 +241,7 @@ namespace Internal.tainicom.Aether.Physics2D.Collision
         /// </summary>
         /// <param name="proxyId">The proxy id.</param>
         /// <returns></returns>
-        public FixtureProxy GetProxy(int proxyId)
+        public TNode GetProxy(int proxyId)
         {
             return _tree.GetUserData(proxyId);
         }

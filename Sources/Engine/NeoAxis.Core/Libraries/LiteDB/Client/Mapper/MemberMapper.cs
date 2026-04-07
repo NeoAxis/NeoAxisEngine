@@ -1,9 +1,9 @@
 ﻿#if !NO_LITE_DB
 using System;
 using System.Reflection;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     /// <summary>
     /// Internal representation for a .NET member mapped to BsonDocument

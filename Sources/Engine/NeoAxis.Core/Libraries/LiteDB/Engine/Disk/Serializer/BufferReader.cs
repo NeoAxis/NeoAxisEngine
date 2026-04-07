@@ -3,9 +3,9 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB.Engine
+namespace NeoAxis.LiteDB.Engine
 {
     /// <summary>
     /// Read multiple array segment as a single linear segment - Forward Only

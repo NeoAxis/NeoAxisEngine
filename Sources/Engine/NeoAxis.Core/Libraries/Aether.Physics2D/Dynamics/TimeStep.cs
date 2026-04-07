@@ -4,6 +4,9 @@
  */
 
 /*
+* Box2D.XNA port of Box2D:
+* Copyright (c) 2009 Brandon Furtwangler, Nathan Furtwangler
+*
 * Original source Box2D:
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org 
 * 
@@ -22,12 +25,12 @@
 * 3. This notice may not be removed or altered from any source distribution. 
 */
 
-using Internal.tainicom.Aether.Physics2D.Common;
+using Internal.nkast.Aether.Physics2D.Common;
 #if XNAAPI
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.tainicom.Aether.Physics2D.Dynamics
+namespace Internal.nkast.Aether.Physics2D.Dynamics
 {
     /// <summary>
     /// This is an internal structure.

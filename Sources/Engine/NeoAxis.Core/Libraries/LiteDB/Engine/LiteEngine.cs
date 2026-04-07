@@ -1,5 +1,5 @@
 ﻿#if !NO_LITE_DB
-using Internal.LiteDB.Utils;
+using NeoAxis.LiteDB.Utils;
 
 using System;
 using System.Collections.Concurrent;
@@ -8,9 +8,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB.Engine
+namespace NeoAxis.LiteDB.Engine
 {
     /// <summary>
     /// A public class that take care of all engine data structure access - it´s basic implementation of a NoSql database

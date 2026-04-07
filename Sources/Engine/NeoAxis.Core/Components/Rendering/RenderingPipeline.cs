@@ -1600,7 +1600,7 @@ namespace NeoAxis
 		public static void GetColorForInstancingData( ref ColorValue color, out uint value1, out byte value2 )
 		{
 			var maxComponent = color.MaxComponent();
-#if UWP || ANDROID
+#if UWP || ANDROID || NETSTANDARD2_1
 			var exponent = Math.Ceiling( Math.Log( maxComponent, 2 ) );
 #else
 			var exponent = Math.Ceiling( Math.Log2( maxComponent ) );

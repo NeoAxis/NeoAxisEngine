@@ -12,8 +12,8 @@ using System.ComponentModel;
 
 
 #if !NO_SERVER
-using Internal.LiteDB;
-using Internal.LiteDB.Engine;
+using NeoAxis.LiteDB;
+using NeoAxis.LiteDB.Engine;
 #endif
 
 namespace NeoAxis
@@ -1350,10 +1350,10 @@ namespace NeoAxis
 									//!!!!what about hashes
 
 									var hash = "";// GetOrCalculateFileHash( fileInfo );
-									resultValues[ n ] = new( fileInfo.Length, fileInfo.LastWriteTimeUtc, hash );
+									resultValues[ n ] = ( fileInfo.Length, fileInfo.LastWriteTimeUtc, hash );
 								}
 								else
-									resultValues[ n ] = new( -1, new DateTime(), "" );
+									resultValues[ n ] = ( -1, new DateTime(), "" );
 							}
 
 							SendGetFilesInfoAnswer( sender, requestID, resultValues, null );
@@ -1387,7 +1387,7 @@ namespace NeoAxis
 							for( int n = 0; n < resultValues.Length; n++ )
 							{
 								var resultValue = result.Items[ n ];
-								resultValues[ n ] = new( resultValue.Size, resultValue.LastModified, "" );
+								resultValues[ n ] = ( resultValue.Size, resultValue.LastModified, "" );
 							}
 							SendGetFilesInfoAnswer( sender, requestID, resultValues, null );
 						}

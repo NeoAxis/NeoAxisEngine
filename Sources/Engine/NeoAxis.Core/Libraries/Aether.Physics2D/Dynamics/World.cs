@@ -6,9 +6,12 @@
  */
 
 /*
-* Farseer Physics Engine:
+* Farseer Physics Engine 3, based on Box2D.XNA port:
 * Copyright (c) 2012 Ian Qvist
 * 
+* Box2D.XNA port of Box2D:
+* Copyright (c) 2009 Brandon Furtwangler, Nathan Furtwangler
+*
 * Original source Box2D:
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org 
 * 
@@ -38,17 +41,17 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Internal.tainicom.Aether.Physics2D.Collision;
-using Internal.tainicom.Aether.Physics2D.Common;
-using Internal.tainicom.Aether.Physics2D.Controllers;
-using Internal.tainicom.Aether.Physics2D.Dynamics.Contacts;
-using Internal.tainicom.Aether.Physics2D.Dynamics.Joints;
+using Internal.nkast.Aether.Physics2D.Collision;
+using Internal.nkast.Aether.Physics2D.Common;
+using Internal.nkast.Aether.Physics2D.Controllers;
+using Internal.nkast.Aether.Physics2D.Dynamics.Contacts;
+using Internal.nkast.Aether.Physics2D.Dynamics.Joints;
 
 #if XNAAPI
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.tainicom.Aether.Physics2D.Dynamics
+namespace Internal.nkast.Aether.Physics2D.Dynamics
 {
     /// <summary>
     /// The world class manages all physics entities, dynamic simulation,
@@ -59,11 +62,12 @@ namespace Internal.tainicom.Aether.Physics2D.Dynamics
         #region These are for debugging the solver.
         /// <summary>This is only for debugging the solver</summary>
         private const bool _warmStarting = true;
-        /// <summary>This is only for debugging the solver</summary>
-        private const bool _subStepping = false;
-        #endregion
+		//!!!!betauser
+		///// <summary>This is only for debugging the solver</summary>
+		//private const bool _subStepping = false;
+		#endregion
 
-        Vector2 _gravity;
+		Vector2 _gravity;
 
         private bool _stepComplete = true;
 
@@ -89,9 +93,6 @@ namespace Internal.tainicom.Aether.Physics2D.Dynamics
         private HashSet<Joint> _jointRemoveList = new HashSet<Joint>();
 #endif
 
-#if LEGACY_FLUIDS
-        public tainicom.Aether.Physics2D.Fluids.FluidSystem2 Fluid { get; private set; }
-#endif
 
         /// <summary>
         /// Set the user data. Use this to store your application specific data.
@@ -165,9 +166,6 @@ namespace Internal.tainicom.Aether.Physics2D.Dynamics
             _rayCastCallbackCache = new BroadPhaseRayCastCallback(RayCastCallback);
             _testPointDelegateCache = new QueryReportFixtureDelegate(this.TestPointCallback);
 
-#if LEGACY_FLUIDS
-            Fluid = new tainicom.Aether.Physics2D.Fluids.FluidSystem2(new Vector2(0, -1), 5000, 150, 150);
-#endif
 
             ContactManager = new ContactManager(new DynamicTreeBroadPhase());
             Gravity = new Vector2(0f, -9.80665f);
@@ -802,12 +800,12 @@ namespace Internal.tainicom.Aether.Physics2D.Dynamics
                 ContactManager.FindNewContacts();
 
 				//!!!!betauser
-                //if (_subStepping)
-                //{
-                //    _stepComplete = false;
-                //    break;
-                //}
-            }
+				//if( _subStepping )
+				//{
+				//	_stepComplete = false;
+				//	break;
+				//}
+			}
 
 #if OPTIMIZE_TOI
             if (wasStepComplete)
@@ -1383,6 +1381,7 @@ namespace Internal.tainicom.Aether.Physics2D.Dynamics
             iterations.VelocityIterations = Settings.VelocityIterations;
             iterations.TOIPositionIterations = Settings.TOIPositionIterations;
             iterations.TOIVelocityIterations = Settings.TOIVelocityIterations;
+            iterations.AutoClearForces = Settings.AutoClearForces;
             Step(dt, ref iterations);
         }
 
@@ -1460,12 +1459,7 @@ namespace Internal.tainicom.Aether.Physics2D.Dynamics
                 if (Settings.EnableDiagnostics)
                     ContinuousPhysicsTime = TimeSpan.FromTicks(_watch.ElapsedTicks) - (AddRemoveTime + NewContactsTime + ControllersUpdateTime + ContactsUpdateTime + SolveUpdateTime);
 
-#if LEGACY_FLUIDS
-                if (step.dt > 0.0f)
-                    Fluid.Update(dt);
-#endif
-
-                if (Settings.AutoClearForces)
+                if (iterations.AutoClearForces)
                     ClearForces();
             }
             finally

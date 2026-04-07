@@ -5,16 +5,16 @@
 
 using System;
 using System.Collections.Generic;
-using Internal.tainicom.Aether.Physics2D.Collision.Shapes;
-using Internal.tainicom.Aether.Physics2D.Dynamics;
-using Internal.tainicom.Aether.Physics2D.Dynamics.Contacts;
-using Internal.tainicom.Aether.Physics2D.Common.Decomposition;
-using Internal.tainicom.Aether.Physics2D.Common;
+using Internal.nkast.Aether.Physics2D.Collision.Shapes;
+using Internal.nkast.Aether.Physics2D.Dynamics;
+using Internal.nkast.Aether.Physics2D.Dynamics.Contacts;
+using Internal.nkast.Aether.Physics2D.Common.Decomposition;
+using Internal.nkast.Aether.Physics2D.Common;
 #if XNAAPI
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.tainicom.Aether.Physics2D.Common.PhysicsLogic
+namespace Internal.nkast.Aether.Physics2D.Common.PhysicsLogic
 {
     /// <summary>
     /// A type of body that supports multiple fixtures that can break apart.

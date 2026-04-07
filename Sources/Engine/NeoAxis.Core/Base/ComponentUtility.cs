@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace NeoAxis
 {
@@ -34,7 +35,7 @@ namespace NeoAxis
 			return (T)CreateComponent( typeof( T ), constructorParams, createHierarchyController, componentEnable );
 		}
 
-		public static void CreateHierarchyControllerForRootComponent( Component rootComponent, Resource.Instance createdByResource,
+		public static ComponentHierarchyController CreateHierarchyControllerForRootComponent( Component rootComponent, Resource.Instance createdByResource,
 			bool hierarchyEnabled )
 		{
 			if( rootComponent.HierarchyController != null )
@@ -42,12 +43,14 @@ namespace NeoAxis
 			if( rootComponent.Parent != null )
 				Log.Fatal( "ComponentManager: CreateHierarchyControllerForRootComponent: rootComponent.Parent != null." );
 
-			var controller = new ComponentHierarchyController();
+			var controller = new ComponentHierarchyController( Thread.CurrentThread );
 			controller.rootComponent = rootComponent;
 			controller.createdByResource = createdByResource;
 			rootComponent.hierarchyController = controller;
 
 			controller.HierarchyEnabled = hierarchyEnabled;
+
+			return controller;
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

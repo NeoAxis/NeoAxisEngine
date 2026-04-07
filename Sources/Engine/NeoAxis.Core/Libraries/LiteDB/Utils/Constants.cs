@@ -1,5 +1,5 @@
 ﻿#if !NO_LITE_DB
-using Internal.LiteDB.Engine;
+using NeoAxis.LiteDB.Engine;
 
 using System;
 using System.Diagnostics;
@@ -11,7 +11,7 @@ using System.Threading;
 [assembly: InternalsVisibleTo("ConsoleApp1")]
 #endif
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     using System.Globalization;
 

@@ -35,9 +35,9 @@
  */
 
 using System.Collections.Generic;
-using Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT.Delaunay.Sweep;
+using Internal.nkast.Aether.Physics2D.Common.Decomposition.CDT.Delaunay.Sweep;
 
-namespace Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT
+namespace Internal.nkast.Aether.Physics2D.Common.Decomposition.CDT
 {
     internal class TriangulationPoint
     {

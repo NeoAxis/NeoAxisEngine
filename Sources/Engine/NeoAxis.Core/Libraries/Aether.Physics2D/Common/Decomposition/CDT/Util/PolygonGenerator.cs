@@ -35,9 +35,9 @@
  */
 
 using System;
-using Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT.Polygon;
+using Internal.nkast.Aether.Physics2D.Common.Decomposition.CDT.Polygon;
 
-namespace Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT.Util
+namespace Internal.nkast.Aether.Physics2D.Common.Decomposition.CDT.Util
 {
     internal class PolygonGenerator
     {

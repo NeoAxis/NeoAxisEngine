@@ -1,5 +1,4 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-#if !NO_EMIT
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -29,7 +28,7 @@ namespace NeoAxis
 				throw new ScriptCompilerException( ScriptUtility.FormatCompilationError( diagnostics, true ) );
 		}
 
-		public static string GenerateWrappedScript( IEnumerable<string> methods, IEnumerable<string> usingNamespaces, string inheritFrom )//, Type contextType )
+		public static string GenerateWrappedScript( IEnumerable<string> methods, IEnumerable<string> usingNamespaces, string inheritFrom ) //, Type contextType = null )
 		{
 			var tree = SyntaxFactory.CompilationUnit();
 
@@ -57,7 +56,10 @@ namespace NeoAxis
 			var bindingFlags = BindingFlags.Public | BindingFlags.Instance;
 			var fieldsAndProps = contextType.GetFields( bindingFlags ).Cast<MemberInfo>().Concat( contextType.GetProperties( bindingFlags ) );
 			foreach( var member in fieldsAndProps )
-				result.Add( (member.Name, Type: member.GetUnderlyingType().FullName) );
+			{
+				result.Add( (member.Name, Type: ReflectionUtility.GetUnderlyingType( member ).FullName) );
+				//result.Add( (member.Name, Type: member.GetUnderlyingType().FullName) );
+			}
 
 			return result;
 		}
@@ -238,7 +240,7 @@ namespace NeoAxis
 			return SyntaxFactory.TokenList();
 		}
 
-		async static Task<Document> AddMethodToClass2( Document document, MethodDeclarationSyntax method )
+		async static Task<Document> AddMethodToClassAsync( Document document, MethodDeclarationSyntax method )
 		{
 			var root = await document.GetSyntaxRootAsync().ConfigureAwait( false );
 			var classDeclaration = root.DescendantNodes().OfType<ClassDeclarationSyntax>().FirstOrDefault();
@@ -252,8 +254,8 @@ namespace NeoAxis
 
 		public static Document AddMethodToClass( Document document, MethodDeclarationSyntax method )
 		{
-			return AddMethodToClass2( document, method ).Result;
+			return AddMethodToClassAsync( document, method ).GetAwaiter().GetResult();
+			//return AddMethodToClassAsync( document, method ).Result;
 		}
 	}
 }
-#endif

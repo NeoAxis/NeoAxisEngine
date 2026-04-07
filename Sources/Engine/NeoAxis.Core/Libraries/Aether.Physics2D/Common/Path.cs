@@ -7,11 +7,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 #if XNAAPI
+using Complex = nkast.Aether.Physics2D.Common.Complex;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 #endif
 
-namespace Internal.tainicom.Aether.Physics2D.Common
+namespace Internal.nkast.Aether.Physics2D.Common
 {
     //Contributed by Matthew Bettcher
 

@@ -36,14 +36,12 @@
 
 using System.Collections.Generic;
 
-namespace Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT.Sets
+namespace Internal.nkast.Aether.Physics2D.Common.Decomposition.CDT.Sets
 {
     /*
-     * Extends the PointSet by adding some Constraints on how it will be triangulated<br>
+     * Extends the PointSet by adding some Constraints on how it will be triangulated
      * A constraint defines an edge between two points in the set, these edges can not
      * be crossed. They will be enforced triangle edges after a triangulation.
-     * <p>
-     * 
      * 
      * @author Thomas Åhlén, thahlen@gmail.com
      */
@@ -105,8 +103,8 @@ namespace Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT.Sets
 
         /**
          * TODO: TO BE IMPLEMENTED!
-         * Peforms a validation on given input<br>
-         * 1. Check's if there any constraint edges are crossing or collinear<br>
+         * Peforms a validation on given input
+         * 1. Check's if there any constraint edges are crossing or collinear
          * 2. 
          * @return
          */

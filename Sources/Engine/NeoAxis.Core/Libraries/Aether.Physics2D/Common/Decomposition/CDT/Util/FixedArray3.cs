@@ -38,7 +38,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT.Util
+namespace Internal.nkast.Aether.Physics2D.Common.Decomposition.CDT.Util
 {
     internal struct FixedArray3<T> : IEnumerable<T> where T : class
     {

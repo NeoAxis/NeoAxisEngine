@@ -1,13 +1,13 @@
 ﻿#if !NO_LITE_DB
-using Internal.LiteDB.Utils.Extensions;
+using NeoAxis.LiteDB.Utils.Extensions;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB.Engine
+namespace NeoAxis.LiteDB.Engine
 {
     /// <summary>
     /// Class that execute QueryPlan returing results

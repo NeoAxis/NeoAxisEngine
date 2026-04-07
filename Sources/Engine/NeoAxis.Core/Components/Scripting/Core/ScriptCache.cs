@@ -7,8 +7,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 #if !NO_LITE_DB
-using Internal.LiteDB;
+using NeoAxis.LiteDB;
 #endif
+using Internal;
 
 namespace NeoAxis
 {
@@ -69,13 +70,15 @@ namespace NeoAxis
 			get { return Path.Combine( CacheFolder, "CSharpScripts.cs" ); }
 		}
 
-#if !NO_LITE_DB
 		public List<string> GetScriptsToCompile()
 		{
+#if !NO_LITE_DB
 			var scriptsCollection = database.GetCollection<DatabaseItem>( "scripts" );
 			return new List<string>( scriptsCollection.FindAll().Select( i => FromBase64( i.ScriptBase64 ) ) );
-		}
+#else
+			return new List<string>();
 #endif
+		}
 
 		public void Initialize()
 		{

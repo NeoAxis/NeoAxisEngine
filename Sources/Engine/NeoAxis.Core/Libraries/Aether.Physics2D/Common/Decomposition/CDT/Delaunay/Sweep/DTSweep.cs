@@ -54,7 +54,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT.Delaunay.Sweep
+namespace Internal.nkast.Aether.Physics2D.Common.Decomposition.CDT.Delaunay.Sweep
 {
     internal static class DTSweep
     {
@@ -683,7 +683,7 @@ namespace Internal.tainicom.Aether.Physics2D.Common.Decomposition.CDT.Delaunay.S
         }
 
         /// <summary>
-        /// Scan part of the FlipScan algorithm<br>
+        /// Scan part of the FlipScan algorithm
         /// When a triangle pair isn't flippable we will scan for the next 
         /// point that is inside the flip triangle scan area. When found 
         /// we generate a new flipEdgeEvent

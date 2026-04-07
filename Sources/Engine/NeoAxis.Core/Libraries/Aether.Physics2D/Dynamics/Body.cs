@@ -6,9 +6,12 @@
  */
 
 /*
-* Farseer Physics Engine:
+* Farseer Physics Engine 3, based on Box2D.XNA port:
 * Copyright (c) 2012 Ian Qvist
 * 
+* Box2D.XNA port of Box2D:
+* Copyright (c) 2009 Brandon Furtwangler, Nathan Furtwangler
+*
 * Original source Box2D:
 * Copyright (c) 2006-2011 Erin Catto http://www.box2d.org 
 * 
@@ -31,18 +34,19 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Internal.tainicom.Aether.Physics2D.Collision;
-using Internal.tainicom.Aether.Physics2D.Collision.Shapes;
-using Internal.tainicom.Aether.Physics2D.Common;
-using Internal.tainicom.Aether.Physics2D.Common.PhysicsLogic;
-using Internal.tainicom.Aether.Physics2D.Controllers;
-using Internal.tainicom.Aether.Physics2D.Dynamics.Contacts;
-using Internal.tainicom.Aether.Physics2D.Dynamics.Joints;
+using Internal.nkast.Aether.Physics2D.Collision;
+using Internal.nkast.Aether.Physics2D.Collision.Shapes;
+using Internal.nkast.Aether.Physics2D.Common;
+using Internal.nkast.Aether.Physics2D.Common.PhysicsLogic;
+using Internal.nkast.Aether.Physics2D.Controllers;
+using Internal.nkast.Aether.Physics2D.Dynamics.Contacts;
+using Internal.nkast.Aether.Physics2D.Dynamics.Joints;
 #if XNAAPI
+using Complex = nkast.Aether.Physics2D.Common.Complex;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.tainicom.Aether.Physics2D.Dynamics
+namespace Internal.nkast.Aether.Physics2D.Dynamics
 {
     public partial class Body
     {
@@ -164,7 +168,7 @@ namespace Internal.tainicom.Aether.Physics2D.Dynamics
         }
 
         /// <summary>
-        /// Get or sets the linear velocity of the center of mass.
+        /// Get or sets the linear velocity of the center of mass. Property has no effect on <see cref="BodyType.Static"/> bodies.
         /// </summary>
         /// <value>The linear velocity.</value>
         public Vector2 LinearVelocity
@@ -1194,6 +1198,7 @@ namespace Internal.tainicom.Aether.Physics2D.Dynamics
         }
 
 
+/*
         /// <summary>
         /// Set restitution on all fixtures.
         /// Warning: This method applies the value on existing Fixtures. It's not a property of Body.
@@ -1263,6 +1268,7 @@ namespace Internal.tainicom.Aether.Physics2D.Dynamics
             for (int i = 0; i < FixtureList._list.Count; i++)
                 FixtureList._list[i].IsSensor = isSensor;
         }
+*/
 
         /// <summary>
         /// Makes a clone of the body. Fixtures and therefore shapes are not included.
@@ -1273,7 +1279,16 @@ namespace Internal.tainicom.Aether.Physics2D.Dynamics
         public Body Clone(World world = null)
         {
             world = world ?? World;
-            Body body = world.CreateBody(Position, Rotation);
+
+            Body body = new Body();
+            body.Position = Position;
+            body.Rotation = Rotation;
+            body.BodyType = BodyType.Static;
+#if LEGACY_ASYNCADDREMOVE
+            world.AddAsync(body);
+#else
+            world.Add(body);
+#endif
             body._bodyType = _bodyType;
             body._linearVelocity = _linearVelocity;
             body._angularVelocity = _angularVelocity;

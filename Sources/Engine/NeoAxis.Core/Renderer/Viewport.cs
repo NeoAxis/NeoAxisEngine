@@ -161,7 +161,8 @@ namespace NeoAxis
 				canvasRenderer = new CanvasRendererImpl( this );
 
 				uiContainer = new UIContainer( this );
-				ComponentUtility.CreateHierarchyControllerForRootComponent( uiContainer, null, true );//, true );
+				var controller = ComponentUtility.CreateHierarchyControllerForRootComponent( uiContainer, null, true );//, true );
+				controller.FatalWhenHierarchyChangeFromNotControllerThread = true;
 
 				//!!!!вызывать все методы для controlManager
 			}

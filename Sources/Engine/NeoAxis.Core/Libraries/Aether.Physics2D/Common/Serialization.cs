@@ -10,14 +10,14 @@
 //using System.Text;
 //using System.Xml;
 //using System.Xml.Serialization;
-//using Internal.tainicom.Aether.Physics2D.Collision.Shapes;
-//using Internal.tainicom.Aether.Physics2D.Dynamics;
-//using Internal.tainicom.Aether.Physics2D.Dynamics.Joints;
+//using Internal.nkast.Aether.Physics2D.Collision.Shapes;
+//using Internal.nkast.Aether.Physics2D.Dynamics;
+//using Internal.nkast.Aether.Physics2D.Dynamics.Joints;
 //#if XNAAPI
 //using Vector2 = Microsoft.Xna.Framework.Vector2;
 //#endif
 
-//namespace Internal.tainicom.Aether.Physics2D.Common
+//namespace Internal.nkast.Aether.Physics2D.Common
 //{
 //    /// <summary>
 //    /// Serialize the world into an XML file

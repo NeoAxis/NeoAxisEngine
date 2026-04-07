@@ -489,6 +489,9 @@ namespace NeoAxis
 				if( !Editor && !CompilingScripts )
 				{
 					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\Windows\dotnet" ) );
+
+					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Core.CompileScripts.dll" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Core.CompileScripts.deps.json" ) );
 				}
 
 				//if( !BuildTools )

@@ -3,12 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace NeoAxis
+namespace Internal
 {
 	//TODO: add GAC search and assembly strong name support. see Mono.Cecil.BaseAssemblyResolver
 	//TODO: move to Utils folder ?
 	//TODO: use AssemblyName as return value ?
-	class ScriptAssemblyNameResolver
+	public class ScriptAssemblyNameResolver
 	{
 		static readonly bool onMono = Type.GetType( "Mono.Runtime" ) != null;
 		readonly List<string> directories;

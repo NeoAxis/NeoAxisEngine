@@ -116,6 +116,8 @@ namespace NeoAxis
 		Component[] _tempComponentListForUpdateAndSimulationStep;
 		//List<Component> _tempComponentListForUpdateAndSimulationStep;
 
+		//bool warningWhenHierarchyChangeFromNotMainThread;
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		public Component()
@@ -1648,14 +1650,12 @@ namespace NeoAxis
 			if( Disposed )
 				throw new Exception( "Component: AddComponent: Disposed == true." );
 
-			//if( component.HierarchyController != null )
-			//	Log.Fatal( "Component: AddComponent: component.HierarchyController != null." );
-			//if( component.Parent != null )
-			//	Log.Fatal( "Component: AddComponent: component.Parent != null. This component is already attached to another parent." );
-			//if( component.Disposed )
-			//	Log.Fatal( "Component: AddComponent: component.Disposed == true." );
-			//if( Disposed )
-			//	Log.Fatal( "Component: AddComponent: Disposed == true." );
+			var controller = ParentRoot.HierarchyController;
+			if( controller != null )
+			{
+				if( controller.FatalWhenHierarchyChangeFromNotControllerThread && controller.ControllerThread != Thread.CurrentThread )
+					Log.Fatal( "Component: AddComponentInternal: Hierarchy change from a non-controller thread detected." );
+			}
 
 			if( components.linkedList == null )
 				components.linkedList = new LinkedList<Component>();
@@ -1690,7 +1690,7 @@ namespace NeoAxis
 
 			components.ComponentsByNameAdd( component, addLast );
 
-			var controller = ParentRoot.HierarchyController;
+			//var controller = ParentRoot.HierarchyController;
 			controller?.networkServerInterface?.PerformAddComponent( component, createComponent );
 
 			component._UpdateEnabledInHierarchy( false );
@@ -2675,14 +2675,23 @@ namespace NeoAxis
 
 			if( queued && controller != null )
 			{
-				if( !controller.objectsDeletionQueue.Contains( this ) )
-					controller.objectsDeletionQueue.Add( this );
+				lock( controller.objectsDeletionQueue )
+				{
+					if( !controller.objectsDeletionQueue.Contains( this ) )
+						controller.objectsDeletionQueue.Add( this );
+				}
 				removeFromParentQueued = true;
 			}
 			else
 			{
 				if( controller != null )
-					controller.objectsDeletionQueue.Remove( this );
+				{
+					lock( controller.objectsDeletionQueue )
+						controller.objectsDeletionQueue.Remove( this );
+
+					if( controller.FatalWhenHierarchyChangeFromNotControllerThread && controller.ControllerThread != Thread.CurrentThread )
+						Log.Fatal( "Component: RemoveFromParentInternal: Hierarchy change from a non-controller thread detected." );
+				}
 
 				var oldParent = parent;
 
@@ -2693,9 +2702,6 @@ namespace NeoAxis
 					parent.components.linkedList.Remove( parentListNode );
 				parent = null;
 
-				//!!!!!нужны ли эвенты до начала отсоединения? как тогда они вместе с этими будут существовать?
-
-				//!!!!!порядок норм?
 				RemovedFromParent?.Invoke( this, oldParent );
 				oldParent.ComponentRemoved?.Invoke( oldParent, this );
 				OnRemovedFromParent( oldParent );
@@ -5052,5 +5058,12 @@ namespace NeoAxis
 					networkDisabledPropertiesSynchronization = null;
 			}
 		}
+
+		//[Browsable( false )]
+		//public bool WarningWhenHierarchyChangeFromNotMainThread
+		//{
+		//	get { return warningWhenHierarchyChangeFromNotMainThread; }
+		//	set { warningWhenHierarchyChangeFromNotMainThread = value; }
+		//}
 	}
 }

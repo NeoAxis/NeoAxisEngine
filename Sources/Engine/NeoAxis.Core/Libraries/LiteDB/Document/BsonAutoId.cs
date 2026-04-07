@@ -1,5 +1,5 @@
 ﻿#if !NO_LITE_DB
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     /// <summary>
     /// All supported BsonTypes supported in AutoId insert operation

@@ -400,6 +400,8 @@ namespace Project
 			if( scene == null )
 				return false;
 
+			scene.HierarchyController.FatalWhenHierarchyChangeFromNotControllerThread = true;
+
 			//if( !string.IsNullOrEmpty( error ) )
 			//{
 			//	Log.Error( error );

@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Internal.LiteDB.Engine;
-using static Internal.LiteDB.Constants;
+using NeoAxis.LiteDB.Engine;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     internal partial class SqlParser
     {

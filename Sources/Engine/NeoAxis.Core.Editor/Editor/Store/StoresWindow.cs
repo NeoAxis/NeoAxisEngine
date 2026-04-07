@@ -15,7 +15,7 @@ using System.Threading;
 using System.Globalization;
 using System.Drawing.Drawing2D;
 using Internal.ComponentFactory.Krypton.Toolkit;
-using Downloader;
+//using Internal.Downloader;
 
 namespace NeoAxis.Editor
 {
@@ -223,7 +223,7 @@ namespace NeoAxis.Editor
 			public volatile string downloadingDestinationPath = "";
 			public volatile float downloadProgress;
 			//public volatile bool downloadingInstallAfterDownload; //disabled because always "true"
-			public volatile Downloader.DownloadService downloadingDownloader;
+			//public volatile Internal.Downloader.DownloadService downloadingDownloader;
 
 			public bool AutoImport;
 
@@ -1350,7 +1350,7 @@ namespace NeoAxis.Editor
 		{
 			var state = GetPackageState( packageId );
 
-			state.downloadingDownloader?.CancelAsync();
+			//state.downloadingDownloader?.CancelAsync();
 
 			//state.downloadingCancel = true;
 			//Thread.Sleep( 500 );
@@ -1359,7 +1359,7 @@ namespace NeoAxis.Editor
 			//state.downloadingDestinationPath = "";
 			state.downloadProgress = 0;
 			//state.downloadingInstallAfterDownload = false;
-			state.downloadingDownloader = null;
+			//state.downloadingDownloader = null;
 			//state.downloadingCancel = false;
 		}
 
@@ -1429,7 +1429,7 @@ namespace NeoAxis.Editor
 				state.downloadingDestinationPath = "";
 				state.downloadProgress = 0;
 				//state.downloadingInstallAfterDownload = false;
-				state.downloadingDownloader = null;
+				//state.downloadingDownloader = null;
 				//state.downloadingCancel = false;
 
 				//auto install after download
@@ -2098,14 +2098,14 @@ namespace NeoAxis.Editor
 		{
 			if( EditorAPI.ClosingApplication )
 			{
-				foreach( var state in packageStates.Values.ToArray() )
-				{
-					try
-					{
-						state.downloadingDownloader?.CancelAsync();
-					}
-					catch { }
-				}
+				//foreach( var state in packageStates.Values.ToArray() )
+				//{
+				//	try
+				//	{
+				//		state.downloadingDownloader?.CancelAsync();
+				//	}
+				//	catch { }
+				//}
 			}
 		}
 

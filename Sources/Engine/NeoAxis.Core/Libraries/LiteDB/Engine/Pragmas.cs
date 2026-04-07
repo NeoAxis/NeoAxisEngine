@@ -1,5 +1,5 @@
 ﻿#if !NO_LITE_DB
-namespace Internal.LiteDB.Engine
+namespace NeoAxis.LiteDB.Engine
 {
     public static class Pragmas
     {

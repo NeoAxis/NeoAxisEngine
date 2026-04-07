@@ -2,9 +2,9 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     public partial class LiteCollection<T>
     {

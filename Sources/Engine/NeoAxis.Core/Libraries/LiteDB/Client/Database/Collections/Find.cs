@@ -1,12 +1,12 @@
 ﻿#if !NO_LITE_DB
-using Internal.LiteDB.Engine;
+using NeoAxis.LiteDB.Engine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     public partial class LiteCollection<T>
     {

@@ -8,7 +8,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
 using Internal.SharpBgfx;
-using Internal.LiteDB;
+using NeoAxis.LiteDB;
 using System.Threading;
 
 namespace NeoAxis

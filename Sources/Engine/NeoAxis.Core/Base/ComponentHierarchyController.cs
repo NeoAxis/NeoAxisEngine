@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace NeoAxis
 {
@@ -40,6 +41,9 @@ namespace NeoAxis
 		Dictionary<Metadata.Property, PropertyChangedHandler> networkComponentPropertyChangedEventHandlers = new Dictionary<Metadata.Property, PropertyChangedHandler>();
 
 		internal bool loading;
+
+		Thread controllerThread;
+		bool fatalWhenHierarchyChangeFromNotControllerThread;
 
 		/////////////////////////////////////////
 
@@ -207,8 +211,9 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		public ComponentHierarchyController()
+		public ComponentHierarchyController( Thread controllerThread )
 		{
+			this.controllerThread = controllerThread;
 		}
 
 		public Component RootComponent
@@ -236,16 +241,19 @@ namespace NeoAxis
 
 		void ProcessObjectsDeletionQueue()
 		{
-			while( objectsDeletionQueue.Count != 0 )
+			lock( objectsDeletionQueue )
 			{
-				var e = objectsDeletionQueue.GetEnumerator();
-				e.MoveNext();
-				Component c = e.Current;
+				while( objectsDeletionQueue.Count != 0 )
+				{
+					var e = objectsDeletionQueue.GetEnumerator();
+					e.MoveNext();
+					Component c = e.Current;
 
-				if( c.Parent != null )
-					c.RemoveFromParent( false );
-				else
-					objectsDeletionQueue.Remove( c );
+					if( c.Parent != null )
+						c.RemoveFromParent( false );
+					else
+						objectsDeletionQueue.Remove( c );
+				}
 			}
 		}
 
@@ -485,6 +493,18 @@ namespace NeoAxis
 		public bool Loading
 		{
 			get { return loading; }
+		}
+
+		public Thread ControllerThread
+		{
+			get { return controllerThread; }
+			set { controllerThread = value; }
+		}
+
+		public bool FatalWhenHierarchyChangeFromNotControllerThread
+		{
+			get { return fatalWhenHierarchyChangeFromNotControllerThread; }
+			set { fatalWhenHierarchyChangeFromNotControllerThread = value; }
 		}
 	}
 }

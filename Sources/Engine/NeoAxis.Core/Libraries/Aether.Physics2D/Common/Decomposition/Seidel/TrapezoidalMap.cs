@@ -5,7 +5,7 @@
 
 using System.Collections.Generic;
 
-namespace Internal.tainicom.Aether.Physics2D.Common.Decomposition.Seidel
+namespace Internal.nkast.Aether.Physics2D.Common.Decomposition.Seidel
 {
     internal class TrapezoidalMap
     {

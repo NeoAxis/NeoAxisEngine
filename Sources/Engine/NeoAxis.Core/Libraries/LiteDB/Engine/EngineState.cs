@@ -8,9 +8,9 @@ using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
 
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB.Engine
+namespace NeoAxis.LiteDB.Engine
 {
     internal class EngineState
     {

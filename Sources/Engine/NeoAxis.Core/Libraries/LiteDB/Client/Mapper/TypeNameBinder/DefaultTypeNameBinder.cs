@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     public class DefaultTypeNameBinder : ITypeNameBinder
     {

@@ -7,7 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Internal.LiteDB;
+using NeoAxis.LiteDB;
 using NeoAxis;
 using NeoAxis.Networking;
 

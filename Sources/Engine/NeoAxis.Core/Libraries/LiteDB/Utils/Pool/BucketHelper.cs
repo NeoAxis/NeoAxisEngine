@@ -1,8 +1,8 @@
 ﻿#if !NO_LITE_DB
 using System.Runtime.CompilerServices;
-using static Internal.LiteDB.Constants;
+using static NeoAxis.LiteDB.Constants;
 
-namespace Internal.LiteDB
+namespace NeoAxis.LiteDB
 {
     internal static class BucketHelper
     {

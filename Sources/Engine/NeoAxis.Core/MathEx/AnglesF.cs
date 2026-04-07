@@ -12,7 +12,7 @@ namespace NeoAxis
 {
 	//[TypeConverter( typeof( MathExGeneralTypeConverter<AnglesF> ) )]
 	/// <summary>
-	/// Represents single precision Euler angles.
+	/// Represents single precision Euler angles. Degrees are used for the angles of rotation.
 	/// </summary>
 	[StructLayout( LayoutKind.Sequential )]
 	[HCExpandable]
