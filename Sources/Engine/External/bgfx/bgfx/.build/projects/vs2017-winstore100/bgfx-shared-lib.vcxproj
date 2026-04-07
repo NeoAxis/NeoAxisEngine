@@ -221,7 +221,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)bgfx-shared-libDebug.pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>gdi32.lib;psapi.lib;fcppDebug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gdi32.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bgfx-shared-libDebug.dll</OutputFile>
       <AdditionalLibraryDirectories>..\..\..\3rdparty\lib\win64_vs2017-winstore100;..\..\..\..\..\..\Lib\UWP\x64;..\..\win64_vs2017-winstore100\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\..\win64_vs2017-winstore100\bin\bgfx-shared-libDebug.lib</ImportLibrary>
@@ -350,7 +350,7 @@ copy ..\..\win64_vs2017-winstore100\bin\bgfx-shared-libDebug.dll "..\..\..\..\..
       <ProgramDatabaseFile>$(OutDir)bgfx-shared-libRelease.pdb</ProgramDatabaseFile>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>gdi32.lib;psapi.lib;fcppRelease.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gdi32.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bgfx-shared-libRelease.dll</OutputFile>
       <AdditionalLibraryDirectories>..\..\..\3rdparty\lib\win64_vs2017-winstore100;..\..\..\..\..\..\Lib\UWP\x64;..\..\win64_vs2017-winstore100\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImportLibrary>..\..\win64_vs2017-winstore100\bin\bgfx-shared-libRelease.lib</ImportLibrary>

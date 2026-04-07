@@ -124,12 +124,6 @@
     <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\x64\NeoAxisCoreNative.dll">
       <Link>NeoAxis.Internal\Platforms\UWP\x64\NeoAxisCoreNative.dll</Link>
     </Content>
-    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\x64\OpenAL32.dll">
-      <Link>NeoAxis.Internal\Platforms\UWP\x64\OpenAL32.dll</Link>
-    </Content>
-    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\x64\shaderc.dll">
-      <Link>NeoAxis.Internal\Platforms\UWP\x64\shaderc.dll</Link>
-    </Content>
     <Content Include="..\..\Binaries\NeoAxis.Internal\NeoAxis.DefaultSettings.config">
       <Link>NeoAxis.Internal\NeoAxis.DefaultSettings.config</Link>
     </Content>
