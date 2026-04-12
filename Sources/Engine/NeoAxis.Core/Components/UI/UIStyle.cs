@@ -682,7 +682,7 @@ namespace NeoAxis
 				parentEditData.Edit = parentEdit;
 				parentEditData.SelectionColor = new ColorValue( 0.75, 0.75, 0.75, 0.75 );
 				parentEditData.CaretColor = new ColorValue( 1, 1, 1 );
-				if( ( EngineApp.EngineTime - parentEdit.EditingLastTime ) % 2.0 > 1.0 )
+				if( ( EngineApp.EngineTime - parentEdit.EditingOrChangeCaretPositionLastTime ) % 2.0 > 1.0 )
 					parentEditData.CaretColor.Alpha = 0;
 			}
 

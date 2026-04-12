@@ -851,10 +851,6 @@ namespace NeoAxis
 							maxCharacter = characterRange.Minimum;
 						if( characterRange.Maximum > maxCharacter )
 							maxCharacter = characterRange.Maximum;
-						//if( characterRange.Begin > maxCharacter )
-						//	maxCharacter = characterRange.Begin;
-						//if( characterRange.End > maxCharacter )
-						//	maxCharacter = characterRange.End;
 					}
 
 					foreach( char character in CharacterString.Value )
@@ -866,14 +862,14 @@ namespace NeoAxis
 
 				trueTypeCharactersInitializedFlags = new bool[ maxCharacter + 1 ];
 
-				{
-					char character = (char)0;
-					if( !trueTypeCharactersInitializedFlags[ character ] )
-					{
-						if( FreeType.IsGlyphExists( freeTypeLibrary, freeTypeFace, character ) )
-							trueTypeCharactersInitializedFlags[ character ] = true;
-					}
-				}
+				//{
+				//	char character = (char)0;
+				//	if( !trueTypeCharactersInitializedFlags[ character ] )
+				//	{
+				//		if( character > 31 && FreeType.IsGlyphExists( freeTypeLibrary, freeTypeFace, character ) )
+				//			trueTypeCharactersInitializedFlags[ character ] = true;
+				//	}
+				//}
 
 				foreach( var characterRange in CharacterRanges.Value )
 				{
@@ -881,7 +877,7 @@ namespace NeoAxis
 					{
 						if( !trueTypeCharactersInitializedFlags[ character ] )
 						{
-							if( FreeType.IsGlyphExists( freeTypeLibrary, freeTypeFace, character ) )
+							if( character > 31 && FreeType.IsGlyphExists( freeTypeLibrary, freeTypeFace, character ) )
 								trueTypeCharactersInitializedFlags[ character ] = true;
 						}
 					}
@@ -891,7 +887,7 @@ namespace NeoAxis
 				{
 					if( !trueTypeCharactersInitializedFlags[ character ] )
 					{
-						if( FreeType.IsGlyphExists( freeTypeLibrary, freeTypeFace, character ) )
+						if( character > 31 && FreeType.IsGlyphExists( freeTypeLibrary, freeTypeFace, character ) )
 							trueTypeCharactersInitializedFlags[ character ] = true;
 					}
 				}

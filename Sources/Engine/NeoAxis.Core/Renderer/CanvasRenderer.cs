@@ -500,7 +500,14 @@ namespace NeoAxis
 		[Flags]
 		public enum AddTextOptions
 		{
+			None = 0,
 			PixelAlign = 1,
+			ReturnCharacterRectangles = 2,
+		}
+
+		public class AddTextResult
+		{
+			public RectangleF[] CharacterRectangles;
 		}
 
 		/// <summary>
@@ -512,7 +519,7 @@ namespace NeoAxis
 		/// <param name="horizontalAlign">The text horizontal align.</param>
 		/// <param name="verticalAlign">The text vertical align.</param>
 		/// <param name="color">The text color.</param>
-		public abstract void AddText( FontComponent font, double fontSize, string text, Vector2F position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign );
+		public abstract AddTextResult AddText( FontComponent font, double fontSize, string text, Vector2F position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign );
 		/// <summary>
 		/// Adds text to rendering queue.
 		/// </summary>
@@ -522,9 +529,9 @@ namespace NeoAxis
 		/// <param name="horizontalAlign">The text horizontal align.</param>
 		/// <param name="verticalAlign">The text vertical align.</param>
 		/// <param name="color">The text color.</param>
-		public void AddText( FontComponent font, double fontSize, string text, Vector2 position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
+		public AddTextResult AddText( FontComponent font, double fontSize, string text, Vector2 position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
 		{
-			AddText( font, fontSize, text, position.ToVector2F(), horizontalAlign, verticalAlign, color, options );
+			return AddText( font, fontSize, text, position.ToVector2F(), horizontalAlign, verticalAlign, color, options );
 		}
 
 		/// <summary>
@@ -535,9 +542,9 @@ namespace NeoAxis
 		/// <param name="horizontalAlign">The text horizontal align.</param>
 		/// <param name="verticalAlign">The text vertical align.</param>
 		/// <param name="color">The text color.</param>
-		public void AddText( string text, Vector2F position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
+		public AddTextResult AddText( string text, Vector2F position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
 		{
-			AddText( null, DefaultFontSize, text, position, horizontalAlign, verticalAlign, color, options );
+			return AddText( null, DefaultFontSize, text, position, horizontalAlign, verticalAlign, color, options );
 		}
 		/// <summary>
 		/// Adds text to rendering queue.
@@ -547,9 +554,9 @@ namespace NeoAxis
 		/// <param name="horizontalAlign">The text horizontal align.</param>
 		/// <param name="verticalAlign">The text vertical align.</param>
 		/// <param name="color">The text color.</param>
-		public void AddText( string text, Vector2 position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
+		public AddTextResult AddText( string text, Vector2 position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
 		{
-			AddText( null, DefaultFontSize, text, position.ToVector2F(), horizontalAlign, verticalAlign, color, options );
+			return AddText( null, DefaultFontSize, text, position.ToVector2F(), horizontalAlign, verticalAlign, color, options );
 		}
 
 		/// <summary>
@@ -559,9 +566,9 @@ namespace NeoAxis
 		/// <param name="position">The text position.</param>
 		/// <param name="horizontalAlign">The text horizontal align.</param>
 		/// <param name="verticalAlign">The text vertical align.</param>
-		public void AddText( string text, Vector2F position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign )
+		public AddTextResult AddText( string text, Vector2F position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign )
 		{
-			AddText( null, DefaultFontSize, text, position, horizontalAlign, verticalAlign, new ColorValue( 1, 1, 1 ) );
+			return AddText( null, DefaultFontSize, text, position, horizontalAlign, verticalAlign, new ColorValue( 1, 1, 1 ) );
 		}
 		/// <summary>
 		/// Adds text to rendering queue.
@@ -570,9 +577,9 @@ namespace NeoAxis
 		/// <param name="position">The text position.</param>
 		/// <param name="horizontalAlign">The text horizontal align.</param>
 		/// <param name="verticalAlign">The text vertical align.</param>
-		public void AddText( string text, Vector2 position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign )
+		public AddTextResult AddText( string text, Vector2 position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign )
 		{
-			AddText( null, DefaultFontSize, text, position.ToVector2F(), horizontalAlign, verticalAlign, new ColorValue( 1, 1, 1 ) );
+			return AddText( null, DefaultFontSize, text, position.ToVector2F(), horizontalAlign, verticalAlign, new ColorValue( 1, 1, 1 ) );
 		}
 
 		/// <summary>
@@ -580,21 +587,26 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="text">The text.</param>
 		/// <param name="position">The text position.</param>
-		public void AddText( string text, Vector2F position )
+		public AddTextResult AddText( string text, Vector2F position )
 		{
-			AddText( null, DefaultFontSize, text, position, EHorizontalAlignment.Left, EVerticalAlignment.Top, new ColorValue( 1, 1, 1 ) );
+			return AddText( null, DefaultFontSize, text, position, EHorizontalAlignment.Left, EVerticalAlignment.Top, new ColorValue( 1, 1, 1 ) );
 		}
 		/// <summary>
 		/// Adds text to rendering queue.
 		/// </summary>
 		/// <param name="text">The text.</param>
 		/// <param name="position">The text position.</param>
-		public void AddText( string text, Vector2 position )
+		public AddTextResult AddText( string text, Vector2 position )
 		{
-			AddText( null, DefaultFontSize, text, position.ToVector2F(), EHorizontalAlignment.Left, EVerticalAlignment.Top, new ColorValue( 1, 1, 1 ) );
+			return AddText( null, DefaultFontSize, text, position.ToVector2F(), EHorizontalAlignment.Left, EVerticalAlignment.Top, new ColorValue( 1, 1, 1 ) );
 		}
 
 		/////////////////////////////////////////
+
+		public class AddTextLinesResult
+		{
+			public AddTextResult[] Lines;
+		}
 
 		/// <summary>
 		/// Adds text lines to rendering queue.
@@ -606,7 +618,7 @@ namespace NeoAxis
 		/// <param name="verticalAlign">The text vertical align.</param>
 		/// <param name="textVerticalIndention">The vertical intention between lines.</param>
 		/// <param name="color">The text color.</param>
-		public abstract void AddTextLines( FontComponent font, double fontSize, IList<string> lines, Vector2F pos, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, float textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign );
+		public abstract AddTextLinesResult AddTextLines( FontComponent font, double fontSize, IList<string> lines, Vector2F pos, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, float textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign );
 		/// <summary>
 		/// Adds text lines to rendering queue.
 		/// </summary>
@@ -617,9 +629,9 @@ namespace NeoAxis
 		/// <param name="verticalAlign">The text vertical align.</param>
 		/// <param name="textVerticalIndention">The vertical intention between lines.</param>
 		/// <param name="color">The text color.</param>
-		public void AddTextLines( FontComponent font, double fontSize, IList<string> lines, Vector2 pos, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, double textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
+		public AddTextLinesResult AddTextLines( FontComponent font, double fontSize, IList<string> lines, Vector2 pos, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, double textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
 		{
-			AddTextLines( font, fontSize, lines, pos.ToVector2F(), horizontalAlign, verticalAlign, (float)textVerticalIndention, color, options );
+			return AddTextLines( font, fontSize, lines, pos.ToVector2F(), horizontalAlign, verticalAlign, (float)textVerticalIndention, color, options );
 		}
 
 		/// <summary>
@@ -631,9 +643,9 @@ namespace NeoAxis
 		/// <param name="horizontalAlign">The text horizontal align.</param>
 		/// <param name="verticalAlign">The text vertical align.</param>
 		/// <param name="color">The text color.</param>
-		public void AddTextLines( IList<string> lines, Vector2F pos, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, float textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
+		public AddTextLinesResult AddTextLines( IList<string> lines, Vector2F pos, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, float textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
 		{
-			AddTextLines( null, DefaultFontSize, lines, pos, horizontalAlign, verticalAlign, textVerticalIndention, color, options );
+			return AddTextLines( null, DefaultFontSize, lines, pos, horizontalAlign, verticalAlign, textVerticalIndention, color, options );
 		}
 		/// <summary>
 		/// Adds text lines to rendering queue.
@@ -644,24 +656,30 @@ namespace NeoAxis
 		/// <param name="horizontalAlign">The text horizontal align.</param>
 		/// <param name="verticalAlign">The text vertical align.</param>
 		/// <param name="color">The text color.</param>
-		public void AddTextLines( IList<string> lines, Vector2 pos, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, double textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
+		public AddTextLinesResult AddTextLines( IList<string> lines, Vector2 pos, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, double textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
 		{
-			AddTextLines( null, DefaultFontSize, lines, pos.ToVector2F(), horizontalAlign, verticalAlign, (float)textVerticalIndention, color, options );
+			return AddTextLines( null, DefaultFontSize, lines, pos.ToVector2F(), horizontalAlign, verticalAlign, (float)textVerticalIndention, color, options );
 		}
 
 		/////////////////////////////////////////
 
-		public abstract int AddTextWordWrap( FontComponent font, double fontSize, string text, RectangleF rect, EHorizontalAlignment horizontalAlign, bool alignByWidth, EVerticalAlignment verticalAlign, float textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign );
-		public int AddTextWordWrap( FontComponent font, double fontSize, string text, Rectangle rect, EHorizontalAlignment horizontalAlign, bool alignByWidth, EVerticalAlignment verticalAlign, double textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
+		public class AddTextWordWrapResult : AddTextResult
+		{
+			public int LinesCount;
+		}
+
+		public abstract AddTextWordWrapResult/*int*/ AddTextWordWrap( FontComponent font, double fontSize, string text, RectangleF rect, EHorizontalAlignment horizontalAlign, bool alignByWidth, EVerticalAlignment verticalAlign, float textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign );
+
+		public AddTextWordWrapResult AddTextWordWrap( FontComponent font, double fontSize, string text, Rectangle rect, EHorizontalAlignment horizontalAlign, bool alignByWidth, EVerticalAlignment verticalAlign, double textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
 		{
 			return AddTextWordWrap( font, fontSize, text, rect.ToRectangleF(), horizontalAlign, alignByWidth, verticalAlign, (float)textVerticalIndention, color, options );
 		}
 
-		public int AddTextWordWrap( string text, RectangleF rect, EHorizontalAlignment horizontalAlign, bool alignByWidth, EVerticalAlignment verticalAlign, float textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
+		public AddTextWordWrapResult AddTextWordWrap( string text, RectangleF rect, EHorizontalAlignment horizontalAlign, bool alignByWidth, EVerticalAlignment verticalAlign, float textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
 		{
 			return AddTextWordWrap( null, DefaultFontSize, text, rect, horizontalAlign, alignByWidth, verticalAlign, textVerticalIndention, color, options );
 		}
-		public int AddTextWordWrap( string text, Rectangle rect, EHorizontalAlignment horizontalAlign, bool alignByWidth, EVerticalAlignment verticalAlign, double textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
+		public AddTextWordWrapResult AddTextWordWrap( string text, Rectangle rect, EHorizontalAlignment horizontalAlign, bool alignByWidth, EVerticalAlignment verticalAlign, double textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
 		{
 			return AddTextWordWrap( null, DefaultFontSize, text, rect.ToRectangleF(), horizontalAlign, alignByWidth, verticalAlign, (float)textVerticalIndention, color, options );
 		}

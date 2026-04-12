@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
+using System.Runtime.ExceptionServices;
 
 namespace NeoAxis
 {
@@ -11,7 +12,7 @@ namespace NeoAxis
 	/// </summary>
 	public class UIText : UIControl
 	{
-		//!!!!может Font в UIControl?
+		//!!!!maybe Font to UIControl?
 
 		/// <summary>
 		/// The font of rendered text.
@@ -94,7 +95,7 @@ namespace NeoAxis
 		ReferenceField<UIMeasureValueVector2> _offset = new UIMeasureValueVector2( UIMeasure.Units, 0, 0 );
 
 		/// <summary>
-		/// Wordwrap the text to fit within the width of the control.
+		/// Word-wrap the text to fit within the control’s width and support multiline mode.
 		/// </summary>
 		[DefaultValue( false )]
 		[Serialize]
@@ -257,30 +258,6 @@ namespace NeoAxis
 			base.OnBeforeRenderUIWithChildren( renderer );
 		}
 
-		//protected override void OnRenderUI( CanvasRenderer renderer )
-		//{
-		//	base.OnRenderUI( renderer );
-
-		//	string localizedText;
-		//	//!!!!
-		//	//if( SupportLocalization )
-		//	//	localizedText = LanguageManager.Instance.Translate( "UISystem", Text );
-		//	//else
-		//	localizedText = Text;
-
-		//	//!!!!было
-		//	//if( AutoSize )
-		//	//	UpdateAutoSize( renderer, localizedText );
-
-		//	if( !string.IsNullOrEmpty( localizedText ) )
-		//	{
-		//		if( !WordWrap )
-		//			NoWordWrapRenderUI( renderer, localizedText );
-		//		else
-		//			WordWrapRenderUI( renderer, localizedText );
-		//	}
-		//}
-
 		public class RenderParentEditData
 		{
 			public UIEdit Edit;
@@ -295,49 +272,16 @@ namespace NeoAxis
 			//if( SupportLocalization )
 			//	localizedText = LanguageManager.Instance.Translate( "UISystem", Text );
 			//else
-			text = Text;
+			text = Text.Value ?? "";
 
-			//!!!!было
-			//if( AutoSize )
-			//	UpdateAutoSize( renderer, localizedText );
-
-			//if( !string.IsNullOrEmpty( text ) )
+			if( !WordWrap || string.IsNullOrEmpty( text ) )
 			{
-				if( !WordWrap || string.IsNullOrEmpty( text ) )
-					NoWordWrapRenderUI( renderer, parentEditData, text );
-				else
-					WordWrapRenderUI( renderer, parentEditData, text );
+				var text2 = text.Replace( '\n', ' ' );
+				NoWordWrapRenderUI( renderer, parentEditData, text2 );
 			}
+			else
+				WordWrapRenderUI( renderer, parentEditData, text );
 		}
-
-		//int GetTextLineCount( string text )
-		//{
-		//	if( string.IsNullOrEmpty( text ) )
-		//		return 0;
-
-		//	int result = 1;
-		//	foreach( char c in text )
-		//	{
-		//		if( c == '\n' )
-		//			result++;
-		//	}
-		//	return result;
-		//}
-
-		//!!!!было
-		//void UpdateAutoSize( CanvasRenderer renderer, string localizedText )
-		//{
-		//if( WordWrap )
-		//	return;
-
-		//EngineFont f = font;
-		//if( f == null )
-		//	f = renderer.DefaultFont;
-
-		//double length = f.GetTextLength( renderer, localizedText );
-		//double height = f.Height * GetTextLineCount( localizedText );
-		//Size = new ScaleValue( ScaleType.Screen, new Vec2( length, height ) );
-		//}
 
 		/////////////////////////////////////////
 
@@ -360,17 +304,20 @@ namespace NeoAxis
 		public class TextItem
 		{
 			public List<CharacterItem> Characters;
+			public int CharacterIndexStart;
 
 			//
 
-			public TextItem( int capacity )
+			public TextItem( int capacity, int characterIndexStart )
 			{
 				Characters = new List<CharacterItem>( capacity );
+				CharacterIndexStart = characterIndexStart;
 			}
 
-			public TextItem( List<CharacterItem> characters )
+			public TextItem( List<CharacterItem> characters, int characterIndexStart )
 			{
-				this.Characters = characters;
+				Characters = characters;
+				CharacterIndexStart = characterIndexStart;
 			}
 
 			public void Add( CharacterItem item )
@@ -398,7 +345,6 @@ namespace NeoAxis
 				Characters.Clear();
 			}
 
-			//!!!!slowly несколько раз вызывать?
 			public string GetText()
 			{
 				var builder = new StringBuilder( Characters.Count + 1 );
@@ -407,7 +353,6 @@ namespace NeoAxis
 				return builder.ToString();
 			}
 
-			//!!!!slowly несколько раз вызывать?
 			public double GetWidth()
 			{
 				var result = 0.0;
@@ -423,16 +368,18 @@ namespace NeoAxis
 		{
 			public TextItem Text;
 			public bool AlignByWidth;
+			public int CharacterIndexStart;
 
 			//
 
-			public LineItem( TextItem text, bool alignByWidth )
+			public LineItem( TextItem text, bool alignByWidth, int characterIndexStart )
 			{
-				this.Text = text;
-				this.AlignByWidth = alignByWidth;
+				Text = text;
+				AlignByWidth = alignByWidth;
+				CharacterIndexStart = characterIndexStart;
 			}
 
-			public LineItem( List<TextItem> texts, bool alignByWidth )
+			public LineItem( List<TextItem> texts, bool alignByWidth, int characterIndexStart )
 			{
 				if( texts.Count > 1 )
 				{
@@ -443,9 +390,10 @@ namespace NeoAxis
 				else if( texts.Count == 1 )
 					Text = texts[ 0 ];
 				else
-					Text = new TextItem( 4 );
+					Text = new TextItem( 4, characterIndexStart );
 
-				this.AlignByWidth = alignByWidth;
+				AlignByWidth = alignByWidth;
+				CharacterIndexStart = characterIndexStart;
 			}
 		}
 
@@ -571,20 +519,25 @@ namespace NeoAxis
 				catch { }
 			}
 
-
+			//draw shadow
 			if( Shadow )
 			{
-				ColorValue color = ShadowColor.Value.GetSaturate();
+				var color = ShadowColor.Value.GetSaturate();
 				renderer.AddText( Font, fontSize, text, screenPos + GetScreenOffsetByValue( ShadowOffset ), horizontalAlign, verticalAlign, color );
-				//renderer.AddText( Font, fontSize, text, ConvertLocalToScreen( localPos + GetLocalOffsetByValue( ShadowOffset ) ), TextHorizontalAlignment, TextVerticalAlignment, color );
 			}
 
+			//draw text and selection, caret of parent UIEdit
 			{
-				//var screenPos = ConvertLocalToScreen( localPos );
+				var addTextOptions = CanvasRenderer.AddTextOptions.PixelAlign;
+				if( parentEditData != null )
+					addTextOptions |= CanvasRenderer.AddTextOptions.ReturnCharacterRectangles;
 
-				ColorValue color = Color.Value.GetSaturate();
-				renderer.AddText( Font, fontSize, text, screenPos, horizontalAlign, verticalAlign, color );
+				//draw text
+				var color = Color.Value.GetSaturate();
+				var addTextResult = renderer.AddText( Font, fontSize, text, screenPos, horizontalAlign, verticalAlign, color, addTextOptions );
 
+				if( parentEditData != null && addTextResult != null )
+					parentEditData.Edit.lastCharacterRectangles = addTextResult.CharacterRectangles;
 
 				//selection, caret of parent UIEdit
 				if( parentEditData != null && ( parentEditData.Edit.SelectionLength.Value > 0 || parentEditData.Edit.Focused ) )
@@ -604,7 +557,7 @@ namespace NeoAxis
 						startPos.Y -= (float)fontSize * (float)GetTextLineCount( text );
 
 
-					var textItem = new TextItem( text.Length + 1 );
+					var textItem = new TextItem( text.Length + 1, 0 );
 					for( int n = 0; n < text.Length; n++ )
 						textItem.Add( new CharacterItem( text[ n ], n, 0 ) );
 
@@ -613,77 +566,38 @@ namespace NeoAxis
 					if( caret == textItem.Count )
 						textItem.Add( new CharacterItem( '\0', caret, 0 ) );
 
-
 					RenderEditSelectionAndCursor( renderer, parentEditData, textItem, fontSize, startPos );
 				}
 			}
 		}
 
-		//static TextItem Trim( TextItem text )
-		//{
-		//	int start;
-		//	for( start = 0; start < text.characters.Count; start++ )
-		//	{
-		//		if( text.characters[ start ].character != ' ' )
-		//			break;
-		//	}
-
-		//	int end;
-		//	for( end = text.characters.Count - 1; end >= 0; end-- )
-		//	{
-		//		if( text.characters[ end ].character != ' ' )
-		//			break;
-		//	}
-
-		//	var length = end - start + 1;
-		//	if( length != 0 )
-		//		return new TextItem( text.characters.GetRange( start, length ) );
-		//	else
-		//		return new TextItem( 4 );
-		//}
-
 		static List<TextItem> Split( TextItem text, char splitCharacter )
 		{
 			var result = new List<TextItem>( 32 );
 
-			var current = new TextItem( 32 );
-
-			foreach( var item in text.Characters )
+			var current = new TextItem( 32, text.CharacterIndexStart );
+			for( int n = 0; n < text.Characters.Count; n++ )
 			{
-				current.Add( item );
+				var item = text.Characters[ n ];
 
+				current.Add( item );
 				if( item.Character == splitCharacter )
 				{
 					result.Add( current );
-					current = new TextItem( 32 );
+					current = new TextItem( 32, text.CharacterIndexStart + n + 1 );
 				}
-
-				//if( item.character == splitCharacter )
-				//{
-				//	var c = Trim( current );
-				//	if( c.Count != 0 )
-				//		result.Add( c );
-				//	current.Clear();
-				//}
-				//else
-				//	current.Add( item );
 			}
 
-			{
-				if( current.Count != 0 )
-					result.Add( current );
-
-				//var c = Trim( current );
-				//if( c.Count != 0 )
-				//	result.Add( c );
-			}
+			if( current.Count != 0 )
+				result.Add( current );
 
 			return result;
 		}
 
+		//slowly to calculate every time?
 		public IList<LineItem> CalculateLinesWordWrapRendering( CanvasRenderer renderer, RenderParentEditData parentEditData, string text )
 		{
-			var screenRect = GetScreenRectangle();
+			//var screenRect = GetScreenRectangle();
 			var screenSize = GetScreenSize();
 			var verticalIndention = VerticalIndention.Value;
 			var screenVerticalIndention = GetScreenOffsetByValue( new UIMeasureValueVector2( verticalIndention.Measure, 0, verticalIndention.Value ) ).Y;
@@ -693,104 +607,78 @@ namespace NeoAxis
 				font = renderer.DefaultFont;
 			if( font == null || font.Disposed )
 				return null;
-			//if(font == null || font.Disposed)
-			//	fon
-			//EngineFont fontInternal = font;
-			//if( fontInternal == null )
-			//	fontInternal = renderer.DefaultFont;
 
 			var fontSize = GetFontSizeScreen();
 
-			//slowly to calculate every time?
 			var lines = new List<LineItem>( 32 );
+
+			//calculate lengths
+			var allCharacters = new TextItem( text.Length, 0 );
+			for( int n = 0; n < text.Length; n++ )
 			{
-				//calculate lengths
-				var allCharacters = new TextItem( text.Length );
-				for( int n = 0; n < text.Length; n++ )
+				var c = text[ n ];
+				var width = font.GetCharacterWidth( fontSize, renderer, c );
+				allCharacters.Add( new CharacterItem( c, n, width ) );
+			}
+
+			foreach( var charactersItem in Split( allCharacters, '\n' ) )
+			{
+				var words = Split( charactersItem, ' ' );
+
+				var currentLine = new List<TextItem>();
+				var currentLineWidth = 0.0;
+
+				foreach( var word in words )
 				{
-					var c = text[ n ];
-					var width = font.GetCharacterWidth( fontSize, renderer, c );
-					allCharacters.Add( new CharacterItem( c, n, width ) );
+					var wordWidth = word.GetWidth();
+
+					var words2 = new List<TextItem>();
+					if( wordWidth >= screenSize.X )
+					{
+						//split long word to small
+						for( int n = 0; n < word.Characters.Count; n++ ) //foreach( var c in word.Characters )
+						{
+							var c = word.Characters[ n ];
+
+							var w = new TextItem( 1, word.CharacterIndexStart + n );
+							w.Add( c );
+							words2.Add( w );
+						}
+					}
+					else
+						words2.Add( word );
+
+					foreach( var word2 in words2 )
+					{
+						var word2Width = word2.GetWidth();
+
+						if( currentLineWidth + word2Width > screenSize.X )
+						{
+							if( currentLine.Count != 0 )
+								lines.Add( new LineItem( currentLine, TextHorizontalAlignment.Value == EHorizontalAlignment.Stretch, currentLine[ 0 ].CharacterIndexStart ) );
+							currentLine = new List<TextItem>();
+							currentLineWidth = 0;
+						}
+
+						currentLine.Add( word2 );
+						currentLineWidth += word2Width;
+					}
 				}
 
-				foreach( var characters in Split( allCharacters, '\n' ) )
+				if( currentLine.Count != 0 )
+					lines.Add( new LineItem( currentLine, false, currentLine[ 0 ].CharacterIndexStart ) );
+			}
+
+			//add caret to end
+			if( parentEditData != null && parentEditData.Edit.Focused )
+			{
+				var caret = parentEditData.Edit.GetCaretPosition();
+				if( caret == allCharacters.Count )
 				{
-
-					var words = new List<TextItem>( 32 );
-					{
-						var currentWord = new TextItem( 32 );
-
-						for( int n = 0; n < characters.Count; n++ )
-						{
-							var c = characters.Characters[ n ];
-
-							currentWord.Add( c );
-
-							if( c.Character == ' ' )
-							{
-								words.Add( currentWord );
-								currentWord = new TextItem( 32 );
-							}
-						}
-
-						if( currentWord.Count != 0 )
-							words.Add( currentWord );
-					}
-
-
-					var currentLine = new List<TextItem>();
-					var currentLineWidth = 0.0;
-
-					foreach( var word in words )
-					{
-						var wordWidth = word.GetWidth();
-
-						var words2 = new List<TextItem>();
-						if( wordWidth >= screenSize.X )
-						{
-							//split long word to small
-							foreach( var c in word.Characters )
-							{
-								var w = new TextItem( 1 );
-								w.Add( c );
-								words2.Add( w );
-							}
-						}
-						else
-							words2.Add( word );
-
-						foreach( var word2 in words2 )
-						{
-							var word2Width = word2.GetWidth();
-
-							if( currentLineWidth + word2Width > screenSize.X )
-							{
-								lines.Add( new LineItem( currentLine, TextHorizontalAlignment.Value == EHorizontalAlignment.Stretch ) );
-								currentLine = new List<TextItem>();
-								currentLineWidth = 0;
-							}
-
-							currentLine.Add( word2 );
-							currentLineWidth += word2Width;
-						}
-					}
-
-					if( currentLine.Count != 0 )
-						lines.Add( new LineItem( currentLine, false ) );
-				}
-
-
-				//add caret to end
-				if( parentEditData != null && parentEditData.Edit.Focused )
-				{
-					var caret = parentEditData.Edit.GetCaretPosition();
-					if( caret == allCharacters.Count )
-					{
-						if( lines.Count == 0 )
-							lines.Add( new LineItem( new TextItem( 1 ), false ) );
-						var line = lines[ lines.Count - 1 ];
-						line.Text.Add( new CharacterItem( '\0', caret, 0 ) );
-					}
+					if( lines.Count == 0 )
+						lines.Add( new LineItem( new TextItem( 1, 0 ), false, 0 ) );
+					var line = lines[ lines.Count - 1 ];
+					line.Text.Add( new CharacterItem( '\0', caret, 0 ) );
 				}
 			}
 
@@ -809,210 +697,21 @@ namespace NeoAxis
 				font = renderer.DefaultFont;
 			if( font == null || font.Disposed )
 				return;
-			//if(font == null || font.Disposed)
-			//	fon
-			//EngineFont fontInternal = font;
-			//if( fontInternal == null )
-			//	fontInternal = renderer.DefaultFont;
 
 			var fontSize = GetFontSizeScreen();
+			double stepY = fontSize + screenVerticalIndention;
 
 			//slowly to calculate every time?
 			var lines = CalculateLinesWordWrapRendering( renderer, parentEditData, text );
 
-			////slowly to calculate every time?
-			//var lines = new List<LineItem>( 32 );
-			//{
-			//	//calculate lengths
-			//	var allCharacters = new TextItem( text.Length );
-			//	for( int n = 0; n < text.Length; n++ )
-			//	{
-			//		var c = text[ n ];
-			//		var width = font.GetCharacterWidth( fontSize, renderer, c );
-			//		allCharacters.Add( new CharacterItem( c, n, width ) );
-			//	}
-
-			//	foreach( var characters in Split( allCharacters, '\n' ) )
-			//	{
-
-			//		var words = new List<TextItem>( 32 );
-			//		{
-			//			var currentWord = new TextItem( 32 );
-
-			//			for( int n = 0; n < characters.Count; n++ )
-			//			{
-			//				var c = characters.Characters[ n ];
-
-			//				currentWord.Add( c );
-
-			//				if( c.Character == ' ' )
-			//				{
-			//					words.Add( currentWord );
-			//					currentWord = new TextItem( 32 );
-			//				}
-			//			}
-
-			//			if( currentWord.Count != 0 )
-			//				words.Add( currentWord );
-			//		}
-
-
-			//		var currentLine = new List<TextItem>();
-			//		var currentLineWidth = 0.0;
-
-			//		foreach( var word in words )
-			//		{
-			//			var wordWidth = word.GetWidth();
-
-			//			var words2 = new List<TextItem>();
-			//			if( wordWidth >= screenSize.X )
-			//			{
-			//				//split long word to small
-			//				foreach( var c in word.Characters )
-			//				{
-			//					var w = new TextItem( 1 );
-			//					w.Add( c );
-			//					words2.Add( w );
-			//				}
-			//			}
-			//			else
-			//				words2.Add( word );
-
-			//			foreach( var word2 in words2 )
-			//			{
-			//				var word2Width = word2.GetWidth();
-
-			//				if( currentLineWidth + word2Width > screenSize.X )
-			//				{
-			//					lines.Add( new LineItem( currentLine, TextHorizontalAlignment.Value == EHorizontalAlignment.Stretch ) );
-			//					currentLine = new List<TextItem>();
-			//					currentLineWidth = 0;
-			//				}
-
-			//				currentLine.Add( word2 );
-			//				currentLineWidth += word2Width;
-			//			}
-			//		}
-
-			//		if( currentLine.Count != 0 )
-			//			lines.Add( new LineItem( currentLine, false ) );
-			//	}
-
-
-			//	//add caret to end
-			//	if( parentEditData != null && parentEditData.Edit.Focused )
-			//	{
-			//		var caret = parentEditData.Edit.GetCaretPosition();
-			//		if( caret == allCharacters.Count )
-			//		{
-			//			if( lines.Count == 0 )
-			//				lines.Add( new LineItem( new TextItem( 1 ), false ) );
-			//			var line = lines[ lines.Count - 1 ];
-			//			line.Text.Add( new CharacterItem( '\0', caret, 0 ) );
-			//		}
-			//	}
-
-
-
-
-			//	////double posY = 0;
-
-			//	//var word = new TextItem( text.Length );
-			//	//double wordLength = 0;
-
-			//	//var toDraw = new TextItem( text.Length );
-			//	//double toDrawLength = 0;
-
-			//	//double spaceCharacterLength = font.GetCharacterWidth( fontSize, renderer, ' ' );
-
-			//	//for( int index = 0; index < text.Length; index++ )
-			//	//{
-			//	//	var c = text[ index ];
-
-			//	//	if( c == ' ' )
-			//	//	{
-			//	//		if( word.Count != 0 )
-			//	//		{
-			//	//			toDraw.Add( new CharacterItem( ' ', -1 ) );
-			//	//			toDraw.AddRange( word );
-			//	//			toDrawLength += spaceCharacterLength + wordLength;
-			//	//			word.Clear();
-			//	//			wordLength = 0;
-			//	//		}
-			//	//		else
-			//	//		{
-			//	//			toDraw.Add( new CharacterItem( ' ', -1 ) );
-			//	//			toDrawLength += spaceCharacterLength;
-			//	//		}
-			//	//		continue;
-			//	//	}
-
-			//	//	if( c == '\n' )
-			//	//	{
-			//	//		toDraw.Add( new CharacterItem( ' ', -1 ) );
-			//	//		toDraw.AddRange( word );
-			//	//		toDrawLength += wordLength;
-			//	//		lines.Add( new LineItem( Trim( toDraw ), false ) );
-
-			//	//		//posY += fontSize + screenVerticalIndention;
-			//	//		////if( posY >= screenSize.Y )
-			//	//		////   break;
-
-			//	//		toDraw.Clear();
-			//	//		toDrawLength = 0;
-			//	//		word.Clear();
-			//	//		wordLength = 0;
-			//	//	}
-
-			//	//	//slowly?
-			//	//	double characterWidth = font.GetCharacterWidth( fontSize, renderer, c );
-
-			//	//	if( toDrawLength + wordLength + characterWidth >= screenSize.X )
-			//	//	{
-			//	//		if( toDraw.Count == 0 )
-			//	//		{
-			//	//			toDraw.Clear();
-			//	//			toDraw.AddRange( word );
-			//	//			toDrawLength = wordLength;
-			//	//			word.Clear();
-			//	//			wordLength = 0;
-			//	//		}
-			//	//		lines.Add( new LineItem( Trim( toDraw ), TextHorizontalAlignment.Value == EHorizontalAlignment.Stretch ) );
-
-			//	//		//posY += fontSize + screenVerticalIndention;
-			//	//		////if( posY >= screenSize.Y )
-			//	//		////   break;
-
-			//	//		toDraw.Clear();
-			//	//		toDrawLength = 0;
-			//	//	}
-
-			//	//	word.Add( new CharacterItem( c, index ) );
-			//	//	wordLength += characterWidth;
-			//	//}
-
-			//	//var s = new TextItem( toDraw.Count + 1 + word.Count );
-			//	//s.AddRange( toDraw );
-			//	//s.Add( new CharacterItem( ' ', -1 ) );
-			//	//s.AddRange( word );
-			//	//s = Trim( s );
-			//	//if( s.Count != 0 )
-			//	//{
-			//	//	//bool skip = false;
-			//	//	//if( clipRectangle && posY >= screenSize.Y )
-			//	//	//   skip = true;
-			//	//	//if( !skip )
-			//	//	lines.Add( new LineItem( s, false ) );
-			//	//}
-			//}
+			if( parentEditData != null )
+				parentEditData.Edit.lastCharacterRectangles = new RectangleF[ text.Length ];
 
 			if( lines.Count != 0 )
 			{
 				var shadowColor = ShadowColor.Value;
 				var textColor = Color.Value;
-				double stepY = fontSize + screenVerticalIndention;
 				var verticalAlign = TextVerticalAlignment.Value;
-
 				var shadowScreenOffset = Shadow ? GetScreenOffsetByValue( ShadowOffset ) : Vector2.Zero;
 
 				double startY = 0;
@@ -1078,6 +777,9 @@ namespace NeoAxis
 					//}
 				}
 
+				var addTextOptions = CanvasRenderer.AddTextOptions.PixelAlign;
+				if( parentEditData != null )
+					addTextOptions |= CanvasRenderer.AddTextOptions.ReturnCharacterRectangles;
 
 				for( int nStep = Shadow ? 0 : 1; nStep < 2; nStep++ )
 				{
@@ -1112,30 +814,47 @@ namespace NeoAxis
 								space = ( screenSize.X - totalWidth ) / ( words.Count - 1 );
 
 							double posX = screenRect.Left;
-							for( int n = 0; n < words.Count; n++ )
+							for( int nWord = 0; nWord < words.Count; nWord++ )
 							{
-								var word = words[ n ];
+								var word = words[ nWord ];
+								var wordText = word.GetText();
 
 								Vector2 pos = new Vector2( posX, positionY ) + GetScreenOffsetByValue( Offset );
 
 								if( nStep == 0 )
 								{
-									renderer.AddText( font, fontSize, word.GetText(), pos + shadowScreenOffset, EHorizontalAlignment.Left, EVerticalAlignment.Top, shadowColor );
+									renderer.AddText( font, fontSize, wordText, pos + shadowScreenOffset, EHorizontalAlignment.Left, EVerticalAlignment.Top, shadowColor );
 								}
 								else
 								{
-									renderer.AddText( font, fontSize, word.GetText(), pos, EHorizontalAlignment.Left, EVerticalAlignment.Top, textColor );
+									var addTextResult = renderer.AddText( font, fontSize, wordText, pos, EHorizontalAlignment.Left, EVerticalAlignment.Top, textColor, addTextOptions );
+
+									if( parentEditData != null )
+									{
+										var characterRectangles = addTextResult?.CharacterRectangles;
+										if( characterRectangles != null )
+										{
+											for( int n = 0; n < wordText.Length; n++ )
+											{
+												int characterIndex = word.CharacterIndexStart + n;
+												if( characterIndex < parentEditData.Edit.lastCharacterRectangles.Length )
+													parentEditData.Edit.lastCharacterRectangles[ characterIndex ] = characterRectangles[ n ];
+											}
+										}
+									}
 
 									//selection, caret of parent UIEdit
 									if( parentEditData != null && ( parentEditData.Edit.SelectionLength.Value > 0 || parentEditData.Edit.Focused ) )
 										RenderEditSelectionAndCursor( renderer, parentEditData, word, fontSize, pos );
 								}
 
-								posX += widths[ n ] + space;
+								posX += widths[ nWord ] + space;
 							}
 						}
 						else
 						{
+							var lineText = line.Text.GetText();
+
 							double positionX = 0;
 							switch( TextHorizontalAlignment.Value )
 							{
@@ -1144,10 +863,10 @@ namespace NeoAxis
 								positionX = screenRect.Left;
 								break;
 							case EHorizontalAlignment.Center:
-								positionX = screenRect.Left + ( screenRect.GetSize().X - font.GetTextLength( fontSize, renderer, line.Text.GetText() ) ) / 2;
+								positionX = screenRect.Left + ( screenRect.GetSize().X - font.GetTextLength( fontSize, renderer, lineText ) ) / 2;
 								break;
 							case EHorizontalAlignment.Right:
-								positionX = screenRect.Right - font.GetTextLength( fontSize, renderer, line.Text.GetText() );
+								positionX = screenRect.Right - font.GetTextLength( fontSize, renderer, lineText );
 								break;
 							}
 
@@ -1155,11 +874,25 @@ namespace NeoAxis
 
 							if( nStep == 0 )
 							{
-								renderer.AddText( font, fontSize, line.Text.GetText(), pos + shadowScreenOffset, EHorizontalAlignment.Left, EVerticalAlignment.Top, shadowColor );
+								renderer.AddText( font, fontSize, lineText, pos + shadowScreenOffset, EHorizontalAlignment.Left, EVerticalAlignment.Top, shadowColor );
 							}
 							else
 							{
-								renderer.AddText( font, fontSize, line.Text.GetText(), pos, EHorizontalAlignment.Left, EVerticalAlignment.Top, textColor );
+								var addTextResult = renderer.AddText( font, fontSize, lineText, pos, EHorizontalAlignment.Left, EVerticalAlignment.Top, textColor, addTextOptions );
+
+								if( parentEditData != null )
+								{
+									var characterRectangles = addTextResult?.CharacterRectangles;
+									if( characterRectangles != null )
+									{
+										for( int n = 0; n < lineText.Length; n++ )
+										{
+											int characterIndex = line.CharacterIndexStart + n;
+											if( characterIndex < parentEditData.Edit.lastCharacterRectangles.Length )
+												parentEditData.Edit.lastCharacterRectangles[ characterIndex ] = characterRectangles[ n ];
+										}
+									}
+								}
 
 								//selection, caret of parent UIEdit
 								if( parentEditData != null && ( parentEditData.Edit.SelectionLength.Value > 0 || parentEditData.Edit.Focused ) )
@@ -1170,243 +903,54 @@ namespace NeoAxis
 						positionY += stepY;
 					}
 				}
+
+				//fill empty character rectangles
+				if( parentEditData != null )
+				{
+					var characterRectangles = parentEditData.Edit.lastCharacterRectangles;
+					if( characterRectangles != null && characterRectangles.Length > 0 )
+					{
+						double positionX = 0;
+						switch( TextHorizontalAlignment.Value )
+						{
+						case EHorizontalAlignment.Left:
+						case EHorizontalAlignment.Stretch:
+							positionX = screenRect.Left;
+							break;
+						case EHorizontalAlignment.Center:
+							positionX = screenRect.Left + screenRect.GetSize().X / 2;
+							break;
+						case EHorizontalAlignment.Right:
+							positionX = screenRect.Right;
+							break;
+						}
+
+						var posX = positionX + GetScreenOffsetByValue( Offset ).X;
+
+						var actual = characterRectangles[ 0 ];
+						for( int n = 0; n < characterRectangles.Length; n++ )
+						{
+							var rectangle = characterRectangles[ n ];
+
+							if( rectangle != RectangleF.Zero )
+								actual = rectangle;
+							else
+							{
+								var c = n < text.Length ? text[ n ] : '\0';
+								if( c == '\n' || c == '\r' )
+								{
+									characterRectangles[ n ] = new RectangleF( (float)posX, actual.Top + (float)stepY, (float)posX, actual.Bottom + (float)stepY );
+								}
+								else
+								{
+									characterRectangles[ n ] = new RectangleF( actual.Right, actual.Top, actual.Right, actual.Bottom );
+								}
+							}
+						}
+					}
+				}
 			}
 		}
-
-		//struct LineItem
-		//{
-		//public string text;
-		//public bool alignByWidth;
-
-		//public LineItem( string text, bool alignByWidth )
-		//{
-		//	this.text = text;
-		//	this.alignByWidth = alignByWidth;
-		//}
-		//}
-
-		//void WordWrapRenderUI( CanvasRenderer renderer, RenderParentEditData parentEditData, string text )
-		//{
-		//	var screenRect = GetScreenRectangle();
-		//	var screenSize = GetScreenSize();
-		//	var verticalIndention = VerticalIndention.Value;
-		//	var screenVerticalIndention = GetScreenOffsetByValue( new UIMeasureValueVector2( verticalIndention.Measure, 0, verticalIndention.Value ) ).Y;
-
-		//	var font = Font.Value;
-		//	if( font == null )
-		//		font = renderer.DefaultFont;
-		//	if( font == null || font.Disposed )
-		//		return;
-		//	//if(font == null || font.Disposed)
-		//	//	fon
-		//	//EngineFont fontInternal = font;
-		//	//if( fontInternal == null )
-		//	//	fontInternal = renderer.DefaultFont;
-
-		//	var fontSize = GetFontSizeScreen();
-
-		//	//slowly to calculate every time?
-		//	var lines = new List<LineItem>();
-		//	{
-		//		double posY = 0;
-
-		//		var word = new StringBuilder( text.Length );
-		//		double wordLength = 0;
-
-		//		var toDraw = new StringBuilder( text.Length );
-		//		double toDrawLength = 0;
-
-		//		double spaceCharacterLength = font.GetCharacterWidth( fontSize, renderer, ' ' );
-
-		//		foreach( char c in text )
-		//		{
-		//			if( c == ' ' )
-		//			{
-		//				if( word.Length != 0 )
-		//				{
-		//					toDraw.Append( ' ' );
-		//					toDraw.Append( word );
-		//					toDrawLength += spaceCharacterLength + wordLength;
-		//					word.Length = 0;
-		//					wordLength = 0;
-		//				}
-		//				else
-		//				{
-		//					toDraw.Append( ' ' );
-		//					toDrawLength += spaceCharacterLength;
-		//				}
-		//				continue;
-		//			}
-
-		//			if( c == '\n' )
-		//			{
-		//				toDraw.Append( ' ' );
-		//				toDraw.Append( word );
-		//				toDrawLength += wordLength;
-		//				lines.Add( new LineItem( toDraw.ToString().Trim(), false ) );
-
-		//				posY += fontSize + screenVerticalIndention;
-		//				//if( posY >= screenSize.Y )
-		//				//   break;
-
-		//				toDraw.Length = 0;
-		//				toDrawLength = 0;
-		//				word.Length = 0;
-		//				wordLength = 0;
-		//			}
-
-		//			//slowly?
-		//			double characterWidth = font.GetCharacterWidth( fontSize, renderer, c );
-
-		//			if( toDrawLength + wordLength + characterWidth >= screenSize.X )
-		//			{
-		//				if( toDraw.Length == 0 )
-		//				{
-		//					toDraw.Length = 0;
-		//					toDraw.Append( word.ToString() );
-		//					toDrawLength = wordLength;
-		//					word.Length = 0;
-		//					wordLength = 0;
-		//				}
-		//				lines.Add( new LineItem( toDraw.ToString().Trim(), TextHorizontalAlignment.Value == EHorizontalAlignment.Stretch ) );
-
-		//				posY += fontSize + screenVerticalIndention;
-		//				//if( posY >= screenSize.Y )
-		//				//   break;
-
-		//				toDraw.Length = 0;
-		//				toDrawLength = 0;
-		//			}
-
-		//			word.Append( c );
-		//			wordLength += characterWidth;
-		//		}
-
-		//		string s = string.Format( "{0} {1}", toDraw, word );
-		//		s = s.Trim();
-		//		if( s.Length != 0 )
-		//		{
-		//			//bool skip = false;
-		//			//if( clipRectangle && posY >= screenSize.Y )
-		//			//   skip = true;
-		//			//if( !skip )
-		//			lines.Add( new LineItem( s, false ) );
-		//		}
-		//	}
-
-		//	if( lines.Count != 0 )
-		//	{
-		//		var shadowColor = ShadowColor.Value;
-		//		var textColor = Color.Value;
-
-		//		var shadowScreenOffset = Shadow ? GetScreenOffsetByValue( ShadowOffset ) : Vector2.Zero;
-		//		//var shadowLocalOffset = Shadow ? GetLocalOffsetByValue( ShadowOffset ) : Vec2.Zero;
-
-		//		double startY = 0;
-		//		switch( TextVerticalAlignment.Value )
-		//		{
-		//		case EVerticalAlignment.Top:
-		//			startY = screenRect.Top;
-		//			break;
-		//		case EVerticalAlignment.Center:
-		//			{
-		//				double height = fontSize * (double)lines.Count + screenVerticalIndention * ( (double)lines.Count - 1 );
-		//				startY = screenRect.Top + ( screenRect.GetSize().Y - height ) / 2;
-		//			}
-		//			break;
-		//		case EVerticalAlignment.Bottom:
-		//			{
-		//				double height = fontSize * (double)lines.Count + screenVerticalIndention * ( (double)lines.Count - 1 );
-		//				startY = screenRect.Bottom - height;
-		//			}
-		//			break;
-		//		}
-
-		//		//!!!!
-		//		double stepY = fontSize + screenVerticalIndention;
-
-		//		for( int nStep = Shadow ? 0 : 1; nStep < 2; nStep++ )
-		//		{
-		//			double positionY = startY;
-		//			foreach( LineItem line in lines )
-		//			{
-		//				if( line.alignByWidth )
-		//				{
-		//					string[] words = line.text.Split( new char[] { ' ' } );
-		//					double[] lengths = new double[ words.Length ];
-		//					double totalLength = 0;
-		//					for( int n = 0; n < lengths.Length; n++ )
-		//					{
-		//						double length = font.GetTextLength( fontSize, renderer, words[ n ] );
-		//						lengths[ n ] = length;
-		//						totalLength += length;
-		//					}
-
-		//					double space = 0;
-		//					if( words.Length > 1 )
-		//						space = ( screenSize.X - totalLength ) / ( words.Length - 1 );
-
-		//					double posX = screenRect.Left;
-		//					for( int n = 0; n < words.Length; n++ )
-		//					{
-		//						Vector2 pos = new Vector2( posX, positionY ) + GetScreenOffsetByValue( Offset );
-
-		//						if( nStep == 0 )
-		//						{
-		//							renderer.AddText( font, fontSize, words[ n ],
-		//								pos + shadowScreenOffset,//LocalToScreen( ScreenToLocal( pos ) + shadowLocalOffset ),
-		//								EHorizontalAlignment.Left, EVerticalAlignment.Top, shadowColor );
-		//						}
-		//						else
-		//							renderer.AddText( font, fontSize, words[ n ], pos, EHorizontalAlignment.Left, EVerticalAlignment.Top, textColor );
-
-		//						posX += lengths[ n ] + space;
-		//					}
-		//				}
-		//				else
-		//				{
-		//					double positionX = 0;
-		//					switch( TextHorizontalAlignment.Value )
-		//					{
-		//					case EHorizontalAlignment.Left:
-		//					case EHorizontalAlignment.Stretch:
-		//						positionX = screenRect.Left;
-		//						break;
-		//					case EHorizontalAlignment.Center:
-		//						positionX = screenRect.Left + ( screenRect.GetSize().X - font.GetTextLength( fontSize, renderer, line.text ) ) / 2;
-		//						break;
-		//					case EHorizontalAlignment.Right:
-		//						positionX = screenRect.Right - font.GetTextLength( fontSize, renderer, line.text );
-		//						break;
-		//					}
-
-		//					Vector2 pos = new Vector2( positionX, positionY ) + GetScreenOffsetByValue( Offset );
-
-		//					if( nStep == 0 )
-		//					{
-		//						renderer.AddText( font, fontSize, line.text,
-		//							pos + shadowScreenOffset,//LocalToScreen( ScreenToLocal( pos ) + shadowLocalOffset ),
-		//							EHorizontalAlignment.Left, EVerticalAlignment.Top, shadowColor );
-		//					}
-		//					else
-		//						renderer.AddText( font, fontSize, line.text, pos, EHorizontalAlignment.Left, EVerticalAlignment.Top, textColor );
-		//				}
-
-		//				positionY += stepY;
-		//			}
-		//		}
-		//	}
-		//}
-
-		//public Font GetFont()
-		//{
-		//	xx
-		//	var font = Font.Value;
-		//	if( font != null )
-		//		font = renderer.DefaultFont;
-		//	if( font == null || font.Disposed )
-		//		return;
-		//}
 
 		public double GetFontSizeScreen()
 		{

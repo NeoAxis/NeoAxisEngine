@@ -103,6 +103,8 @@ namespace NeoAxis
 			public RenderableItem[] renderableItems;
 			public ColorValue colorMultiplier;
 			public Vector4F occlusionDepthCheck;
+
+			public RectangleF[] CharacterRectangles;
 		}
 
 		///////////////////////////////////////////
@@ -217,6 +219,7 @@ namespace NeoAxis
 			public string text;
 			public Vector2F startPosition;
 			public ColorValue color;
+			public AddTextOptions options;
 
 			//
 
@@ -232,6 +235,8 @@ namespace NeoAxis
 					return false;
 				if( color != obj.color )
 					return false;
+				if( options != obj.options )
+					return false;
 
 				if( !IsEqualGeneral( obj ) )
 					return false;
@@ -241,8 +246,9 @@ namespace NeoAxis
 
 			public override void CalculateHashCode()
 			{
-				hashCode = fontSize.GetHashCode() ^ text.GetHashCode() ^ startPosition.GetHashCode();
-				hashCode ^= shader.GetHashCode();
+				hashCode = fontSize.GetHashCode() ^ text.GetHashCode() ^ startPosition.GetHashCode() ^ shader.GetHashCode() ^ color.GetHashCode() ^ options.GetHashCode();
+				if( font != null )
+					hashCode ^= font.GetHashCode();
 			}
 		}
 
@@ -309,14 +315,6 @@ namespace NeoAxis
 							return false;
 					}
 				}
-				//else
-				//{
-				//	//!!!!
-				//	Log.Info( "same references 2" );
-				//}
-
-				////!!!!
-				//Log.Info( "equal 2" );
 
 				return true;
 			}
@@ -351,14 +349,6 @@ namespace NeoAxis
 							return false;
 					}
 				}
-				//else
-				//{
-				//	//!!!!
-				//	Log.Info( "same references" );
-				//}
-
-				////!!!!
-				//Log.Info( "equal" );
 
 				return true;
 			}
@@ -948,19 +938,26 @@ namespace NeoAxis
 			return result;
 		}
 
-		public override void AddText( FontComponent font, double fontSize, string text, Vector2F position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
+		public override AddTextResult AddText( FontComponent font, double fontSize, string text, Vector2F position, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
 		{
+			AddTextResult result = null;
+			if( ( options & AddTextOptions.ReturnCharacterRectangles ) != 0 )
+			{
+				result = new AddTextResult();
+				result.CharacterRectangles = Array.Empty<RectangleF>();
+			}
+
 			//if( RenderSystem.Instance.IsDeviceLost() )
 			//	return;
 			if( RenderingSystem.BackendNull )
-				return;
+				return result;
 			if( string.IsNullOrEmpty( text ) )
-				return;
+				return result;
 
-			if( font == null )//|| font.Disposed )
+			if( font == null )
 				font = DefaultFont;
 			if( font == null || font.Disposed )
-				return;
+				return result;
 			if( fontSize < 0 )
 				fontSize = DefaultFontSize;
 
@@ -1003,6 +1000,7 @@ namespace NeoAxis
 				key.color = color;
 				key.clipRectangle = clipRectangle;
 				key.shader = GetCurrentShader();
+				key.options = options;
 				//key.sourceFileName = sourceFileName;
 				//key.textureCount = textureCount;
 
@@ -1026,25 +1024,19 @@ namespace NeoAxis
 
 			int vertexBufferSize = textBufferSize;
 
-			//!!!!было
-			////update Variant.trueTypeLastUsedTime
-			//if( item != null )
-			//	font.GetTextures( fontSize, this );
-
 			if( item == null )
 			{
 				var compiledData = font.GetCompiledData( fontSize, this );
 				if( compiledData == null )
-					return;
+					return result;
 
 				//create renderable items
 
 				List<RenderableItem> renderableItems = new List<RenderableItem>();
 
 				var textures = compiledData.Textures;
-				//Image[] textures = font.GetTextures( fontSize, this );
 				if( textures == null )
-					return;
+					return result;
 
 				//get list of used texture
 				bool[] textureIndices = new bool[ textures.Length ];
@@ -1061,10 +1053,13 @@ namespace NeoAxis
 						textureIndices[ 0 ] = true;
 				}
 
+				RectangleF[] characterRectangles = null;
+				if( ( options & AddTextOptions.ReturnCharacterRectangles ) != 0 )
+					characterRectangles = new RectangleF[ text.Length ];
+
 				unsafe
 				{
-					BufferVertex* buffer = (BufferVertex*)NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Utility,
-						sizeof( BufferVertex ) * vertexBufferSize );
+					BufferVertex* buffer = (BufferVertex*)NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Utility, sizeof( BufferVertex ) * vertexBufferSize );
 
 					//enumerate textures
 					for( int fontTextureIndex = 0; fontTextureIndex < textureIndices.Length; fontTextureIndex++ )
@@ -1081,8 +1076,10 @@ namespace NeoAxis
 						int vertexCountInBuffer = 0;
 
 						//render each character with specified texture index
-						foreach( char c in text )
+						for( var characterIndex = 0; characterIndex < text.Length; characterIndex++ ) //foreach( char c in text )
 						{
+							var c = text[ characterIndex ];
+
 							if( c == '\n' )
 							{
 								pos.X = startPos.X;
@@ -1193,10 +1190,17 @@ namespace NeoAxis
 
 									RectangleF destRect = FixResultPosition( correctedRectangle );
 
-									AddQuadToBuffer( buffer + vertexCountInBuffer, ref destRect,
-										ref correctedTextureCoordRectangle, /*texture, */ref color );
+									AddQuadToBuffer( buffer + vertexCountInBuffer, ref destRect, ref correctedTextureCoordRectangle, /*texture, */ref color );
 
 									vertexCountInBuffer += 6;
+								}
+
+								//collect rectangles of characters
+								if( characterRectangles != null )
+								{
+									var r = new RectangleF( pos, pos + new Vector2F( characterWidth, (float)fontSize ) );
+									characterRectangles[ characterIndex ] = r;
+									//characterRectangles[ characterIndex ] = rectangle;
 								}
 							}
 
@@ -1220,10 +1224,46 @@ namespace NeoAxis
 					NativeUtility.Free( (IntPtr)buffer );
 				}
 
+				//fill empty character rectangles
+				if( characterRectangles != null && characterRectangles.Length > 0 )
+				{
+					var actual = characterRectangles[ 0 ];
+					for( int n = 0; n < characterRectangles.Length; n++ )
+					{
+						var rectangle = characterRectangles[ n ];
+
+						if( rectangle != RectangleF.Zero )
+							actual = rectangle;
+						else
+						{
+							var c = n < text.Length ? text[ n ] : '\0';
+							if( c == '\n' || c == '\r' )
+							{
+								characterRectangles[ n ] = new RectangleF( (float)startPos.X, actual.Top + (float)fontSize, (float)startPos.X, actual.Bottom + (float)fontSize );
+							}
+							else
+							{
+								characterRectangles[ n ] = new RectangleF( actual.Right, actual.Top, actual.Right, actual.Bottom );
+							}
+						}
+					}
+
+					//var actual = characterRectangles[ 0 ];
+					//for( int n = 0; n < characterRectangles.Length; n++ )
+					//{
+					//	var rectangle = characterRectangles[ n ];
+					//	if( rectangle != RectangleF.Zero )
+					//		actual = rectangle;
+					//	else
+					//		characterRectangles[ n ] = new RectangleF( actual.Right, actual.Top, actual.Right, actual.Bottom );
+					//}
+				}
+
 				//create item
 				item = new Item();
 				item.itemKey = key;
 				item.renderableItems = renderableItems.ToArray();
+				item.CharacterRectangles = characterRectangles;
 			}
 
 			//set dynamic data
@@ -1231,22 +1271,32 @@ namespace NeoAxis
 
 			//add to out list
 			outItems.Add( item );
+
+			if( ( options & AddTextOptions.ReturnCharacterRectangles ) != 0 )
+				result.CharacterRectangles = item.CharacterRectangles;
+			return result;
 		}
 
-		public override void AddTextLines( FontComponent font, double fontSize, IList<string> lines, Vector2F pos, EHorizontalAlignment horizontalAlign,
-			EVerticalAlignment verticalAlign, float textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
+		public override AddTextLinesResult AddTextLines( FontComponent font, double fontSize, IList<string> lines, Vector2F pos, EHorizontalAlignment horizontalAlign, EVerticalAlignment verticalAlign, float textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
 		{
+			AddTextLinesResult result = null;
+			if( ( options & AddTextOptions.ReturnCharacterRectangles ) != 0 )
+			{
+				result = new AddTextLinesResult();
+				result.Lines = Array.Empty<AddTextResult>();
+			}
+
 			//if( RenderSystem.Instance.IsDeviceLost() )
 			//	return;
 			if( RenderingSystem.BackendNull )
-				return;
+				return result;
 			if( lines.Count == 0 )
-				return;
+				return result;
 
-			if( font == null )//|| font.Disposed )
+			if( font == null )
 				font = DefaultFont;
 			if( font == null || font.Disposed )
-				return;
+				return result;
 			if( fontSize < 0 )
 				fontSize = DefaultFontSize;
 
@@ -1263,40 +1313,57 @@ namespace NeoAxis
 			}
 
 			double stepY = fontSize + textVerticalIndention;
-
 			double positionY = startY;
-			foreach( string line in lines )
+
+			if( ( options & AddTextOptions.ReturnCharacterRectangles ) != 0 )
+				result.Lines = new AddTextResult[ lines.Count ];
+
+			for( int nLine = 0; nLine < lines.Count; nLine++ )
 			{
-				AddText( font, fontSize, line, new Vector2( pos.X, positionY ), horizontalAlign, EVerticalAlignment.Top, color, options );
+				var line = lines[ nLine ];
+
+				var addTextResult = AddText( font, fontSize, line, new Vector2( pos.X, positionY ), horizontalAlign, EVerticalAlignment.Top, color, options );
 				positionY += stepY;
+
+				if( result?.Lines != null )
+					result.Lines[ nLine ] = addTextResult;
 			}
+
+			return result;
 		}
 
 		struct TextLineItem
 		{
-			public string text;
-			public bool alignByWidth;
-			public TextLineItem( string text, bool alignByWidth )
+			public string Text;
+			public bool AlignByWidth;
+			public int CharacterIndexStart;
+
+			public TextLineItem( string text, bool alignByWidth, int characterIndexStart )
 			{
-				this.text = text;
-				this.alignByWidth = alignByWidth;
+				Text = text;
+				AlignByWidth = alignByWidth;
+				CharacterIndexStart = characterIndexStart;
 			}
 		}
 
-		public override int AddTextWordWrap( FontComponent font, double fontSize, string text, RectangleF rect, EHorizontalAlignment horizontalAlign,
+		public override AddTextWordWrapResult/*int*/ AddTextWordWrap( FontComponent font, double fontSize, string text, RectangleF rect, EHorizontalAlignment horizontalAlign,
 			bool alignByWidth, EVerticalAlignment verticalAlign, float textVerticalIndention, ColorValue color, AddTextOptions options = AddTextOptions.PixelAlign )
 		{
+			var result = new AddTextWordWrapResult();
+			if( ( options & AddTextOptions.ReturnCharacterRectangles ) != 0 )
+				result.CharacterRectangles = Array.Empty<RectangleF>();
+
 			//if( RenderSystem.Instance.IsDeviceLost() )
 			//	return 0;
 			if( RenderingSystem.BackendNull )
-				return 0;
+				return result;
 			if( string.IsNullOrEmpty( text ) )
-				return 0;
+				return result;
 
-			if( font == null )//|| font.Disposed )
+			if( font == null )
 				font = DefaultFont;
 			if( font == null || font.Disposed )
-				return 0;
+				return result;
 			if( fontSize < 0 )
 				fontSize = DefaultFontSize;
 
@@ -1315,8 +1382,11 @@ namespace NeoAxis
 
 				float spaceCharacterLength = font.GetCharacterWidth( fontSize, this, ' ' );
 
-				foreach( char c in text )
+				var lineStartCharacterIndex = 0;
+				for( var characterIndex = 0; characterIndex < text.Length; characterIndex++ ) //foreach( char c in text )
 				{
+					var c = text[ characterIndex ];
+
 					if( c == ' ' )
 					{
 						if( word.Length != 0 )
@@ -1341,7 +1411,7 @@ namespace NeoAxis
 						toDraw.Append( word );
 						toDrawLength += wordLength;
 						count++;
-						lines.Add( new TextLineItem( toDraw.ToString().Trim(), false ) );
+						lines.Add( new TextLineItem( toDraw.ToString().Trim(), false, lineStartCharacterIndex ) );
 
 						posY += fontSize + textVerticalIndention;
 
@@ -1352,6 +1422,7 @@ namespace NeoAxis
 						toDrawLength = 0;
 						word.Length = 0;
 						wordLength = 0;
+						lineStartCharacterIndex = characterIndex;
 					}
 
 					//slowly?
@@ -1368,13 +1439,14 @@ namespace NeoAxis
 							wordLength = 0;
 						}
 						count++;
-						lines.Add( new TextLineItem( toDraw.ToString().Trim(), alignByWidth ) );
+						lines.Add( new TextLineItem( toDraw.ToString().Trim(), alignByWidth, lineStartCharacterIndex ) );
 
 						posY += fontSize + textVerticalIndention;
 						if( posY >= size.Y )
 							break;
 						toDraw.Length = 0;
 						toDrawLength = 0;
+						lineStartCharacterIndex = characterIndex;
 					}
 
 					word.Append( c );
@@ -1386,13 +1458,13 @@ namespace NeoAxis
 				if( s.Length != 0 )
 				{
 					if( posY < size.Y )
-						lines.Add( new TextLineItem( s, false ) );
+						lines.Add( new TextLineItem( s, false, lineStartCharacterIndex ) );
 					count++;
 				}
 			}
 
 			if( lines.Count == 0 )
-				return 0;
+				return result;
 
 			double startY = 0;
 			switch( verticalAlign )
@@ -1415,13 +1487,18 @@ namespace NeoAxis
 			}
 
 			double stepY = fontSize + textVerticalIndention;
-
 			double positionY = startY;
-			foreach( TextLineItem line in lines )
+
+			if( ( options & AddTextOptions.ReturnCharacterRectangles ) != 0 )
+				result.CharacterRectangles = new RectangleF[ text.Length ];
+
+			for( var nLine = 0; nLine < lines.Count; nLine++ ) //foreach( TextLineItem line in lines )
 			{
-				if( line.alignByWidth )
+				var line = lines[ nLine ];
+
+				if( line.AlignByWidth )
 				{
-					string[] words = line.text.Split( new char[] { ' ' } );
+					string[] words = line.Text.Split( new char[] { ' ' } );
 					float[] lengths = new float[ words.Length ];
 					float totalLength = 0;
 					for( int n = 0; n < lengths.Length; n++ )
@@ -1436,10 +1513,26 @@ namespace NeoAxis
 						space = ( size.X - totalLength ) / ( words.Length - 1 );
 
 					double posX = rect.Left;
-					for( int n = 0; n < words.Length; n++ )
+					for( int nWord = 0; nWord < words.Length; nWord++ )
 					{
-						AddText( font, fontSize, words[ n ], new Vector2( posX, positionY ), EHorizontalAlignment.Left, EVerticalAlignment.Top, color, options );
-						posX += lengths[ n ] + space;
+						var word = words[ nWord ];
+
+						var addTextResult = AddText( font, fontSize, word, new Vector2( posX, positionY ), EHorizontalAlignment.Left, EVerticalAlignment.Top, color, options );
+						posX += lengths[ nWord ] + space;
+
+						if( ( options & AddTextOptions.ReturnCharacterRectangles ) != 0 )
+						{
+							var characterRectangles = addTextResult?.CharacterRectangles;
+							if( characterRectangles != null )
+							{
+								for( int n = 0; n < word.Length; n++ )
+								{
+									int characterIndex = line.CharacterIndexStart + n;
+									if( characterIndex < result.CharacterRectangles.Length )
+										result.CharacterRectangles[ characterIndex ] = characterRectangles[ n ];
+								}
+							}
+						}
 					}
 				}
 				else
@@ -1451,20 +1544,36 @@ namespace NeoAxis
 						positionX = rect.Left;
 						break;
 					case EHorizontalAlignment.Center:
-						positionX = rect.Left + ( rect.GetSize().X - font.GetTextLength( fontSize, this, line.text ) ) / 2;
+						positionX = rect.Left + ( rect.GetSize().X - font.GetTextLength( fontSize, this, line.Text ) ) / 2;
 						break;
 					case EHorizontalAlignment.Right:
-						positionX = rect.Right - font.GetTextLength( fontSize, this, line.text );
+						positionX = rect.Right - font.GetTextLength( fontSize, this, line.Text );
 						break;
 					}
 
-					AddText( font, fontSize, line.text, new Vector2( positionX, positionY ), EHorizontalAlignment.Left, EVerticalAlignment.Top, color, options );
+					var addTextResult = AddText( font, fontSize, line.Text, new Vector2( positionX, positionY ), EHorizontalAlignment.Left, EVerticalAlignment.Top, color, options );
+
+					if( ( options & AddTextOptions.ReturnCharacterRectangles ) != 0 )
+					{
+						var characterRectangles = addTextResult?.CharacterRectangles;
+						if( characterRectangles != null )
+						{
+							for( int n = 0; n < line.Text.Length; n++ )
+							{
+								int characterIndex = line.CharacterIndexStart + n;
+								if( characterIndex < result.CharacterRectangles.Length )
+									result.CharacterRectangles[ characterIndex ] = characterRectangles[ n ];
+							}
+						}
+					}
 				}
 
 				positionY += stepY;
 			}
 
-			return lines.Count;
+			result.LinesCount = lines.Count;
+			return result;
+			//return lines.Count;
 		}
 
 		public unsafe override void AddLines( IList<TriangleVertex> vertices )
@@ -3359,13 +3468,11 @@ namespace NeoAxis
 
 		static Vector2F FixResultPosition( Vector2F pos )
 		{
-			//return pos;
 			return new Vector2F( pos.X * 2 - 1, ( pos.Y * 2 - 1 ) * -1 );
 		}
 
 		static RectangleF FixResultPosition( RectangleF pos )
 		{
-			//return pos;
 			return new RectangleF(
 				pos.Minimum.X * 2 - 1, ( pos.Minimum.Y * 2 - 1 ) * -1,
 				pos.Maximum.X * 2 - 1, ( pos.Maximum.Y * 2 - 1 ) * -1 );

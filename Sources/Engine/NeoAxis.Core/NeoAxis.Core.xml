@@ -19215,7 +19215,7 @@
         </member>
         <member name="P:NeoAxis.UIText.WordWrap">
             <summary>
-            Wordwrap the text to fit within the width of the control.
+            Word-wrap the text to fit within the control’s width and support multiline mode.
             </summary>
         </member>
         <member name="P:NeoAxis.UIText.VerticalIndention">
