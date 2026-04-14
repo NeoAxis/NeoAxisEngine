@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class MultilineTextDropDownControl
 	{
@@ -64,5 +63,3 @@ namespace NeoAxis.Editor
 		private EngineTextBox engineTextBox;
 	}
 }
-
-#endif

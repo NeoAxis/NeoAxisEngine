@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class DebugInfoWindow
 	{
@@ -120,5 +119,3 @@ namespace NeoAxis.Editor
 		private ContentBrowser contentBrowserData;
 	}
 }
-
-#endif

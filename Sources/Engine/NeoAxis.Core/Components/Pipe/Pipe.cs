@@ -10,10 +10,8 @@ namespace NeoAxis
 	/// <summary>
 	/// An instance of a pipe.
 	/// </summary>
-#if !DEPLOY
 	[AddToResourcesWindow( @"Addons\Pipe\Pipe", 9200 )]
 	[SettingsCell( typeof( PipeSettingsCell ) )]
-#endif
 	public class Pipe : CurveInSpace
 	{
 		//readonly bool useGroupOfObjects = true;
@@ -1333,26 +1331,27 @@ namespace NeoAxis
 				if( EnabledInHierarchyAndIsInstance )
 				{
 					scene.ViewportUpdateBefore += Scene_ViewportUpdateBefore;
-#if !DEPLOY
-					TransformToolUtility.AllInstances_ModifyCommit += TransformTool_AllInstances_ModifyCommit;
-					TransformToolUtility.AllInstances_ModifyCancel += TransformTool_AllInstances_ModifyCancel;
-#endif
+					if( EngineApp.IsEditor )
+					{
+						TransformToolUtility.AllInstances_ModifyCommit += TransformTool_AllInstances_ModifyCommit;
+						TransformToolUtility.AllInstances_ModifyCancel += TransformTool_AllInstances_ModifyCancel;
+					}
 					if( logicalData == null )
 						Update();
 				}
 				else
 				{
 					scene.ViewportUpdateBefore -= Scene_ViewportUpdateBefore;
-#if !DEPLOY
-					TransformToolUtility.AllInstances_ModifyCommit -= TransformTool_AllInstances_ModifyCommit;
-					TransformToolUtility.AllInstances_ModifyCancel -= TransformTool_AllInstances_ModifyCancel;
-#endif
+					if( EngineApp.IsEditor )
+					{
+						TransformToolUtility.AllInstances_ModifyCommit -= TransformTool_AllInstances_ModifyCommit;
+						TransformToolUtility.AllInstances_ModifyCancel -= TransformTool_AllInstances_ModifyCancel;
+					}
 					Update();
 				}
 			}
 		}
 
-#if !DEPLOY
 		private void TransformTool_AllInstances_ModifyCommit( ITransformTool sender )
 		{
 			if( needUpdateAfterEndModifyingTransformTool )
@@ -1370,7 +1369,6 @@ namespace NeoAxis
 				needUpdateAfterEndModifyingTransformTool = false;
 			}
 		}
-#endif
 
 		public void Update()
 		{

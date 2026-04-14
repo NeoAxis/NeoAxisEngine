@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-using Internal.ComponentFactory.Krypton.Toolkit;
+﻿using Internal.ComponentFactory.Krypton.Toolkit;
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -72,10 +71,8 @@ namespace NeoAxis.Editor
 
 			if( BorderSides == BorderSides.All )
 			{
-#if !ANDROID && !IOS
 				using( var p = new Pen( BorderColor ) )
 					e.Graphics.DrawRectangle( p, new System.Drawing.Rectangle( 0, 0, Width - 1, Height - 1 ) );
-#endif //!ANDROID
 			}
 			else
 			{
@@ -115,5 +112,3 @@ namespace NeoAxis.Editor
 		}
 	}
 }
-
-#endif

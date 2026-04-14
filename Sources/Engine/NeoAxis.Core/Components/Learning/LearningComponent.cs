@@ -7,9 +7,7 @@ using NeoAxis.Editor;
 namespace NeoAxis
 {
 	[ResourceFileExtension( "learning" )]
-#if !DEPLOY
 	[EditorControl( "NeoAxis.Editor.LearningEditor" )]
-#endif
 	public class LearningComponent : Component
 	{
 		[Serialize]

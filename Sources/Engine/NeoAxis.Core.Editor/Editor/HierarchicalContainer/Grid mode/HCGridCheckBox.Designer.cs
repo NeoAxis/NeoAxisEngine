@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class HCGridCheckBox
 	{
@@ -61,5 +60,3 @@ namespace NeoAxis.Editor
 		public Internal.ComponentFactory.Krypton.Toolkit.KryptonCheckBox checkBox1;
 	}
 }
-
-#endif

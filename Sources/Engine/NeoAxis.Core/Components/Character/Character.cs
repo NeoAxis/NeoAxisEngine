@@ -10,9 +10,7 @@ namespace NeoAxis
 	/// A basic class for characters.
 	/// </summary>
 	[AddToResourcesWindow( @"Base\3D\Character", -8999 )]
-#if !DEPLOY
 	[Editor.SettingsCell( typeof( Editor.CharacterSettingsCell ), true )]
-#endif
 	public class Character : MeshInSpace, IProcessDamage, InteractiveObjectInterface, MeshInSpaceAnimationController.IParentAnimationTriggerProcess
 	{
 		static FastRandom staticRandom = new FastRandom( 0 );
@@ -1887,7 +1885,6 @@ namespace NeoAxis
 				if( !showLabels )
 					context2.disableShowingLabelForThisObject = true;
 
-#if !DEPLOY
 				//draw selection
 				if( EngineApp.IsEditor && PhysicalBody != null )
 				{
@@ -1907,7 +1904,6 @@ namespace NeoAxis
 						DebugDraw( viewport );
 					}
 				}
-#endif
 
 				//if( debugRays != null && debugRays.Count != 0 )
 				//{

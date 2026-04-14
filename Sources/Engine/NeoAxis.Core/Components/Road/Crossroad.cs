@@ -10,9 +10,7 @@ namespace NeoAxis
 	/// <summary>
 	/// A logical element to make crossroads.
 	/// </summary>
-#if !DEPLOY
 	[AddToResourcesWindow( @"Addons\Road\Crossroad", 10540 )]
-#endif
 	public class Crossroad : RoadNode
 	{
 		/// <summary>

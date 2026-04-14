@@ -25,7 +25,6 @@ namespace NeoAxis.Editor
 
 		public static bool GetCurrentLicense( out string email, out string hash )
 		{
-#if !DEPLOY
 			try
 			{
 				email = PlatformSpecificUtility.Instance.GetRegistryValue( registryPath, "LoginEmail", "" ) as string;
@@ -37,7 +36,6 @@ namespace NeoAxis.Editor
 					return true;
 			}
 			catch { }
-#endif
 
 			email = "";
 			hash = "";

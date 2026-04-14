@@ -11,13 +11,11 @@ namespace NeoAxis
 	/// The info about structure of a building.
 	/// </summary>
 	[ResourceFileExtension( "buildingtype" )]
-#if !DEPLOY
 	[AddToResourcesWindow( @"Addons\Building\Building Type", 300 )]
 	//!!!!
 	//[EditorControl( typeof( BuildingTypeEditor ) )]
 	//[Preview( typeof( BuildingTypePreview ) )]
 	//[PreviewImage( typeof( BuildingTypePreviewImage ) )]
-#endif
 	public class BuildingType : Component
 	{
 		int version;

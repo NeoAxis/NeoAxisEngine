@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
     partial class NewObjectWindow
 	{
@@ -272,4 +271,3 @@ namespace NeoAxis.Editor
 		private System.Windows.Forms.Panel panelName;
 	}
 }
-#endif

@@ -9,10 +9,8 @@ namespace NeoAxis
 	/// <summary>
 	/// The component for creation custom fullscreen rendering effects.
 	/// </summary>
-#if !DEPLOY
 	[NewObjectSettings( "NeoAxis.Editor.RenderingEffect_Script_NewObjectSettings" )]
 	[SettingsCell( "NeoAxis.Editor.RenderingEffect_Script_SettingsCell" )]
-#endif
 	public class RenderingEffect_Script : RenderingEffect, IEditorUpdateWhenDocumentModified
 	{
 		const bool shaderGenerationCompile = true;
@@ -421,13 +419,14 @@ namespace NeoAxis
 			node.Position = new Vector2I( 10, -7 );
 			node.ControlledObject = ReferenceUtility.MakeThisReference( node, this );
 
-#if !DEPLOY
-			if( Parent == null )
+			if( EngineApp.IsEditor )
 			{
-				var toSelect = new Component[] { this, graph };
-				EditorDocumentConfiguration = EditorAPI.CreateEditorDocumentXmlConfiguration( toSelect, graph );
+				if( Parent == null )
+				{
+					var toSelect = new Component[] { this, graph };
+					EditorDocumentConfiguration = EditorAPI.CreateEditorDocumentXmlConfiguration( toSelect, graph );
+				}
 			}
-#endif
 		}
 
 		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow )

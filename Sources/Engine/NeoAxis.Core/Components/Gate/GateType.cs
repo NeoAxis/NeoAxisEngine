@@ -11,12 +11,10 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "gatetype" )]
 	[NewObjectDefaultName( "Gate Type" )]
-#if !DEPLOY
 	[AddToResourcesWindow( @"Addons\Gate\Gate Type", 620 )]
 	[EditorControl( typeof( GateTypeEditor ) )]
 	[Preview( typeof( GateTypePreview ) )]
 	[PreviewImage( typeof( GateTypePreviewImage ) )]
-#endif
 	public class GateType : Component
 	{
 		const string defaultBaseMesh = @"Content\Gates\Default\Base.mesh"; //@"Content\Gates\Default\Base.gltf|$Mesh";

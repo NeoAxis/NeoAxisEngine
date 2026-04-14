@@ -1,25 +1,24 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 
-//to fix scripts compilation
-#if DEPLOY
-namespace NeoAxis
-{
-	public class PlantType
-	{
-	}
+////to fix scripts compilation
+//#i_f DE_PLOY
+//namespace NeoAxis
+//{
+//	public class PlantType
+//	{
+//	}
 
-	public class PlantGenerator
-	{
-		public enum ElementTypeEnum
-		{
-		}
-	}
-}
-#endif
+//	public class PlantGenerator
+//	{
+//		public enum ElementTypeEnum
+//		{
+//		}
+//	}
+//}
+//#endif
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if !DEPLOY
 using System;
 using System.Collections.Generic;
 using NeoAxis.Editor;
@@ -66,4 +65,3 @@ namespace NeoAxis
 		//}
 	}
 }
-#endif

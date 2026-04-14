@@ -1,4 +1,3 @@
-#if !DEPLOY
 #region License
 /*
 MIT License
@@ -123,4 +122,3 @@ namespace Internal//NeoAxis
 		}
 	}
 }
-#endif

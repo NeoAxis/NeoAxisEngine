@@ -11,12 +11,10 @@ namespace NeoAxis
 	/// Defines a fence type.
 	/// </summary>
 	[ResourceFileExtension( "fencetype" )]
-#if !DEPLOY
 	[AddToResourcesWindow( @"Addons\Fence\Fence Type", 500 )]
 	[EditorControl( typeof( FenceTypeEditor ) )]
 	[Preview( typeof( FenceTypePreview ) )]
 	[PreviewImage( typeof( FenceTypePreviewImage ) )]
-#endif
 	public class FenceType : Component
 	{
 		/// <summary>

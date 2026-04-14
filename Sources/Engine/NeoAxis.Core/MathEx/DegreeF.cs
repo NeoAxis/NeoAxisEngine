@@ -144,11 +144,9 @@ namespace NeoAxis
 		[AutoConvertType]
 		public Degree ToDegree() { return new Degree( (double)value ); }
 
-		//#if !DISABLE_IMPLICIT
 		//		public static implicit operator Degree( DegreeF v )
 		//		{
 		//			return (double)v;
 		//		}
-		//#endif
 	}
 }

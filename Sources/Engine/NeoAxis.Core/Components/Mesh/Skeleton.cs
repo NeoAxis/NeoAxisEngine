@@ -9,10 +9,8 @@ namespace NeoAxis
 	/// <summary>
 	/// Represents mesh skeleton as a collection of bones. Used for a mesh animation.
 	/// </summary>
-#if !DEPLOY
 	[EditorControl( "NeoAxis.Editor.SkeletonEditor" )]
 	//[Preview( "NeoAxis.Editor.SkeletonPreview" )]
-#endif
 	public class Skeleton : Component
 	{
 		SkeletonBone[] bonesCache;

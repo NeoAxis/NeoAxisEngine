@@ -17,9 +17,7 @@ namespace NeoAxis
 	/// <summary>
 	/// Represents font import settings.
 	/// </summary>
-#if !DEPLOY
 	[Preview( "NeoAxis.Editor.FontPreview" )]
-#endif
 	public class FontComponent : Component
 	{
 		//true type specific

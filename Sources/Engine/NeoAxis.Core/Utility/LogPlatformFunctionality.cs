@@ -31,7 +31,8 @@ namespace Internal//NeoAxis
 			{
 				if( instance == null )
 				{
-#if !WEB
+					//#if !WEB
+
 					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 						instance = new LogPlatformFunctionalityMacOS();
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
@@ -40,18 +41,17 @@ namespace Internal//NeoAxis
 						Log.Fatal( "LogPlatformFunctionality: Get: Instance must be already initialized." );
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 						Log.Fatal( "LogPlatformFunctionality: Get: Instance must be already initialized." );
+					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+						Log.Fatal( "LogPlatformFunctionality: Get: Instance must be already initialized." );
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
 						instance = new LogPlatformFunctionalityLinux();
 					else
-					{
-						//#if WINDOWS || UWP
 						instance = new LogPlatformFunctionalityWindows();
-						//#endif
-					}
-#else
-					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
-						Log.Fatal( "LogPlatformFunctionality: Get: Instance must be already initialized." );
-#endif
+
+					//#else
+					//					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+					//						Log.Fatal( "LogPlatformFunctionality: Get: Instance must be already initialized." );
+					//#endif
 				}
 				return instance;
 			}
@@ -60,7 +60,9 @@ namespace Internal//NeoAxis
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if !WEB
+	//!!!!move to special dll
+
+	//#if !WEB
 	//#if WINDOWS || UWP
 	class LogPlatformFunctionalityWindows : LogPlatformFunctionality
 	{
@@ -129,9 +131,11 @@ namespace Internal//NeoAxis
 		}
 	}
 	//#endif
-#endif
+	//#endif
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//!!!!move to special dll
 
 	class LogPlatformFunctionalityLinux : LogPlatformFunctionality
 	{
@@ -159,7 +163,9 @@ namespace Internal//NeoAxis
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if !WEB
+	//!!!!move to special dll
+
+	//#if !WEB
 	class LogPlatformFunctionalityMacOS : LogPlatformFunctionality
 	{
 		struct MacAppNativeWrapper
@@ -177,5 +183,5 @@ namespace Internal//NeoAxis
 			return EDialogResult.OK;
 		}
 	}
-#endif
+	//#endif
 }

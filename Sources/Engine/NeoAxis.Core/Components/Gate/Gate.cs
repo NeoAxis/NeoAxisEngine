@@ -10,9 +10,7 @@ namespace NeoAxis
 	/// </summary>
 	[AddToResourcesWindow( @"Addons\Gate\Gate", 630 )]
 	[NewObjectDefaultName( "Gate" )]
-#if !DEPLOY
 	[Editor.SettingsCell( typeof( Editor.GateSettingsCell ) )]
-#endif
 	public class Gate : MeshInSpace, InteractiveObjectInterface
 	{
 		DynamicData dynamicData;

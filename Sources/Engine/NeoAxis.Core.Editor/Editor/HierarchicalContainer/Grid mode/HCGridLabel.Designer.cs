@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class HCGridLabel
 	{
@@ -69,5 +68,3 @@ namespace NeoAxis.Editor
 		public EngineTextBox label2;
 	}
 }
-
-#endif

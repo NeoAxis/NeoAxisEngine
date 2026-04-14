@@ -70,7 +70,6 @@ namespace NeoAxis
 			}
 		}
 
-#if !DEPLOY
 		protected override void OnBakeIntoMesh( Editor.IDocumentInstance document, Editor.UndoMultiAction undoMultiAction )
 		{
 			base.OnBakeIntoMesh( document, undoMultiAction );
@@ -114,7 +113,5 @@ namespace NeoAxis
 				}
 			}
 		}
-#endif
-
 	}
 }

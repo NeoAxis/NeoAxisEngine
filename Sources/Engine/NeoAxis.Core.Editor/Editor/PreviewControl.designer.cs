@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class PreviewControl
 	{
@@ -32,5 +31,3 @@ namespace NeoAxis.Editor
 		#endregion
 	}
 }
-
-#endif

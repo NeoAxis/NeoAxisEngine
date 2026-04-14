@@ -9,9 +9,7 @@ namespace NeoAxis
 	/// <summary>
 	/// Specifies a layer for the mesh or for the terrain.
 	/// </summary>
-#if !DEPLOY
 	[SettingsCell( "NeoAxis.Editor.PaintLayerSettingsCell" )]
-#endif
 	public class PaintLayer : Component
 	{
 		ImageComponent createdMaskImage;

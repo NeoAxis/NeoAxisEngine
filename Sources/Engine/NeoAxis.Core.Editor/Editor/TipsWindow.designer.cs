@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class TipsWindow
 	{
@@ -158,5 +157,3 @@ namespace NeoAxis.Editor
 		private System.Windows.Forms.Panel panel2;
 	}
 }
-
-#endif

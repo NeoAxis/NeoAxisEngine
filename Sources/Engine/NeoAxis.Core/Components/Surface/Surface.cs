@@ -11,11 +11,9 @@ namespace NeoAxis
 	/// A component is defined how to apply of objects and material on the surface.
 	/// </summary>
 	[ResourceFileExtension( "surface" )]
-#if !DEPLOY
 	[EditorControl( "NeoAxis.Editor.SurfaceEditor" )]
 	[Preview( "NeoAxis.Editor.SurfacePreview" )]
 	[PreviewImage( "NeoAxis.Editor.SurfacePreviewImage" )]
-#endif
 	public class Surface : ResultCompile<Surface.CompiledSurfaceData>//, IEditorUpdateWhenDocumentModified
 	{
 		/// <summary>

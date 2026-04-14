@@ -9,11 +9,9 @@ namespace NeoAxis
 	/// <summary>
 	/// A road manager to control all roads in the scene.
 	/// </summary>
-#if !DEPLOY
 	[AddToResourcesWindow( @"Addons\Road\Road Manager", 10570 )]
 	[SettingsCell( typeof( RoadManagerSettingsCell ) )]
 	[WhenCreatingShowWarningIfItAlreadyExists]
-#endif
 	public class RoadManager : Component
 	{
 		/// <summary>

@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class CancelForm
 	{
@@ -84,4 +83,3 @@ namespace NeoAxis.Editor
 		private System.Windows.Forms.Label labelText;
 	}
 }
-#endif

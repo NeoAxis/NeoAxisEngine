@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -157,12 +156,10 @@ namespace NeoAxis.Editor
 						}
 					}
 
-#if !DEPLOY
 					if( encodingCodepage.HasValue )
 						encoding = CodePagesEncodingProvider.Instance.GetEncoding( encodingCodepage.Value );
 					else if( !string.IsNullOrEmpty( encodingName ) )
 						encoding = CodePagesEncodingProvider.Instance.GetEncoding( encodingName );
-#endif
 					//if( encodingCodepage.HasValue )
 					//	encoding = Encoding.GetEncoding( encodingCodepage.Value );
 					//else if( !string.IsNullOrEmpty( encodingName ) )
@@ -293,8 +290,6 @@ namespace NeoAxis.Editor
 		}
 	}
 }
-
-#endif
 
 
 
@@ -738,5 +733,3 @@ namespace NeoAxis.Editor
 //		}
 //	}
 //}
-
-//#endif

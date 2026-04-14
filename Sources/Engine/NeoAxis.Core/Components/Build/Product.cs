@@ -15,10 +15,8 @@ namespace NeoAxis
 	/// Represents the product build settings.
 	/// </summary>
 	[ResourceFileExtension( "product" )]
-#if !DEPLOY
 	[EditorControl( "NeoAxis.Editor.ProductEditor" )]
 	[SettingsCell( "NeoAxis.Editor.ProductSettingsCell" )]
-#endif
 	public abstract class Product : Component
 	{
 		/// <summary>
@@ -43,9 +41,7 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( pathsDefault )]
 		[Category( "Files" )]
-#if !DEPLOY
 		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
-#endif
 		public Reference<string> Paths
 		{
 			get { if( _paths.BeginGet() ) Paths = _paths.Get( this ); return _paths.value; }
@@ -92,9 +88,7 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( skipFilesWithExtensionDefault )]
 		[Category( "Files" )]
-#if !DEPLOY
 		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
-#endif
 		public Reference<string> SkipFilesWithExtension
 		{
 			get { if( _skipFilesWithExtension.BeginGet() ) SkipFilesWithExtension = _skipFilesWithExtension.Get( this ); return _skipFilesWithExtension.value; }
@@ -112,9 +106,7 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( clearFilesWithExtensionDefault )]
 		[Category( "Files" )]
-#if !DEPLOY
 		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
-#endif
 		public Reference<string> ClearFilesWithExtension
 		{
 			get { if( _clearFilesWithExtension.BeginGet() ) ClearFilesWithExtension = _clearFilesWithExtension.Get( this ); return _clearFilesWithExtension.value; }
@@ -414,9 +406,7 @@ namespace NeoAxis
 
 		public void ShowSuccessScreenNotification()
 		{
-#if !DEPLOY
 			ScreenNotifications.Show( EditorLocalization.Translate( "Backstage", "The product was built successfully." ) );
-#endif
 		}
 
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )

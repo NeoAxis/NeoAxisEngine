@@ -1350,7 +1350,6 @@ namespace NeoAxis
 		//			return result;
 		//		}
 
-		//#if !DISABLE_IMPLICIT
 		//		/// <summary>
 		//		/// Implicit conversion from <see cref="Matrix4H"/> type to <see cref="Matrix4"/> type for given value.
 		//		/// </summary>
@@ -1359,7 +1358,7 @@ namespace NeoAxis
 		//		{
 		//			return new Matrix4( v );
 		//		}
-		//#endif
+
 		//		/// <summary>
 		//		/// Returns the translation of the current instance of <see cref="Matrix4H"/>.
 		//		/// </summary>

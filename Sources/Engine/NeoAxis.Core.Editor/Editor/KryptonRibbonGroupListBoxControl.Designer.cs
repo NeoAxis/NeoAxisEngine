@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class KryptonRibbonGroupListBoxControl
 	{
@@ -119,5 +118,3 @@ namespace NeoAxis.Editor
 		public Internal.ComponentFactory.Krypton.Toolkit.KryptonSplitContainer kryptonSplitContainer1;
 	}
 }
-
-#endif

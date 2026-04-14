@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class HCGridEvent
 	{
@@ -106,5 +105,3 @@ namespace NeoAxis.Editor
 		private NeoAxis.Editor.EngineToolTip eventToolTip;
 	}
 }
-
-#endif

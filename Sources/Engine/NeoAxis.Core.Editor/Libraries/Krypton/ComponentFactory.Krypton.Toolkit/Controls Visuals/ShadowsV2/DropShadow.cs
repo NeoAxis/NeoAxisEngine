@@ -1,4 +1,3 @@
-#if !DEPLOY
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -412,5 +411,3 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         }
     }
 }
-
-#endif

@@ -314,9 +314,9 @@ namespace NeoAxis
 
 				if( cameraDistanceMinSquared < visibilityDistance * visibilityDistance/* || mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum*/ )
 				{
-#if !DEPLOY
+//#if !DEPLOY
 					var allowOutlineSelect = context.renderingPipeline.UseRenderTargets && ProjectSettings.Get.SceneEditor.SceneEditorSelectOutlineEffectEnabled;
-#endif
+//#endif
 
 					var item = new RenderingPipeline.RenderSceneData.BillboardItem();
 					item.Creator = this;
@@ -334,7 +334,7 @@ namespace NeoAxis
 					if( specialEffects != null && specialEffects.Count != 0 )
 						item.SpecialEffects = specialEffects;
 
-#if !DEPLOY
+//#if !DEPLOY
 					//display outline effect of editor selection
 					if( mode == GetRenderSceneDataMode.InsideFrustum && allowOutlineSelect && context2.selectedObjects.Contains( this ) )
 					{
@@ -356,7 +356,7 @@ namespace NeoAxis
 							item.SpecialEffects.Add( effect );
 						}
 					}
-#endif
+//#endif
 
 					context.ConvertToRelative( tr.Position, out item.PositionRelative );
 					//item.Position = tr.Position.ToVector3F();
@@ -388,7 +388,7 @@ namespace NeoAxis
 
 					context.FrameData.RenderSceneData.Billboards.Add( ref item );
 
-#if !DEPLOY
+//#if !DEPLOY
 					//display editor selection
 					if( mode == GetRenderSceneDataMode.InsideFrustum )
 					{
@@ -421,7 +421,7 @@ namespace NeoAxis
 							}
 						}
 					}
-#endif
+//#endif
 				}
 
 				//}

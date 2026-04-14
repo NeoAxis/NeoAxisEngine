@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class HCGridTextBoxNumeric
 	{
@@ -75,5 +74,3 @@ namespace NeoAxis.Editor
 		private Internal.ComponentFactory.Krypton.Toolkit.KryptonTrackBar trackBar;
 	}
 }
-
-#endif

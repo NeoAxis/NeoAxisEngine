@@ -218,7 +218,6 @@ namespace NeoAxis
 			if( scene.Mode.Value == Scene.ModeEnum._2D )
 				pos.Z = Math.Ceiling( pos.Z );
 
-#if !DEPLOY
 			//snap
 			if( allowSnap )
 			{
@@ -237,7 +236,6 @@ namespace NeoAxis
 					pos *= snapVec;
 				}
 			}
-#endif
 
 			//CalculateCreateObjectPositionUnderCursorEvent?.Invoke( objectInSpace, ref found, ref pos );
 

@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class LearningEditor
 	{
@@ -32,4 +31,3 @@ namespace NeoAxis.Editor
 #endregion
 	}
 }
-#endif

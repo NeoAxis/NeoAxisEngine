@@ -182,12 +182,10 @@ namespace NeoAxis
 		//Parse, ToString
 
 
-#if !DISABLE_IMPLICIT
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Capsule( CapsuleF v )
 		{
 			return new Capsule( v );
 		}
-#endif
 	}
 }

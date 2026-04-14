@@ -8,10 +8,8 @@ namespace NeoAxis
 	/// <summary>
 	/// Represents an area in the scene defined by the set of points.
 	/// </summary>
-#if !DEPLOY
 	[ObjectCreationMode( "NeoAxis.Editor.AreaCreationMode" )]
 	[AddToResourcesWindow( @"Base\Scene objects\Areas\Area", 0 )]
-#endif
 	public class Area : ObjectInSpace
 	{
 		public AreaPoint[] GetPoints()

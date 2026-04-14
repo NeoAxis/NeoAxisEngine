@@ -11,7 +11,6 @@ namespace NeoAxis
 	/// </summary>
 	public class FlowGraphStyle_Default : FlowGraphStyle
 	{
-#if !DEPLOY
 		static FlowGraphStyle_Default instance;
 		public static FlowGraphStyle_Default Instance
 		{
@@ -311,6 +310,5 @@ namespace NeoAxis
 
 			viewport.CanvasRenderer.AddLines( lines );
 		}
-#endif
 	}
 }

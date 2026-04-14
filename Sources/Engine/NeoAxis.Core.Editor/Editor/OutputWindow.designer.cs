@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class OutputWindow
 	{
@@ -118,5 +117,3 @@ namespace NeoAxis.Editor
 		//private ComponentFactory.Krypton.Toolkit.KryptonRichTextBox kryptonRichTextBox1;
 	}
 }
-
-#endif

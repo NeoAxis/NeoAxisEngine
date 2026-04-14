@@ -106,13 +106,11 @@ namespace NeoAxis
 
 			// check for DirectInput devices
 
-			int hr = IDirectInput.EnumDevices( directInput, DInput.DI8DEVCLASS_GAMECTRL,
-					EnumDevicesHandler, null, DInput.DIEDFL_ATTACHEDONLY );
+			int hr = IDirectInput.EnumDevices( directInput, DInput.DI8DEVCLASS_GAMECTRL, EnumDevicesHandler, null, DInput.DIEDFL_ATTACHEDONLY );
 
 			if( global::DirectInput.Wrapper.FAILED( hr ) )
 			{
-				Log.Warning( "WindowsInputDeviceManager: IDirectInput.EnumDevices failed ({0}).",
-					DInput.GetOutString( DInput.DXGetErrorStringW( hr ) ) );
+				Log.Warning( "WindowsInputDeviceManager: IDirectInput.EnumDevices failed ({0}).", DInput.GetOutString( DInput.DXGetErrorStringW( hr ) ) );
 				return false;
 			}
 
@@ -131,8 +129,7 @@ namespace NeoAxis
 			{
 				string deviceName = new string( deviceInstance->tszInstanceName );
 
-				DirectInputJoystickInputDevice joystick = new DirectInputJoystickInputDevice(
-					deviceName, deviceInstance->guidInstance );
+				DirectInputJoystickInputDevice joystick = new DirectInputJoystickInputDevice( deviceName, deviceInstance->guidInstance );
 
 				if( !joystick.Init() )
 				{

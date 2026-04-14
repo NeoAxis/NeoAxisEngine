@@ -95,9 +95,7 @@ namespace NeoAxis
 		ReferenceField<bool> _allowInteract = true;
 
 		[DefaultValue( "" )]
-#if !DEPLOY
 		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
-#endif
 		public Reference<string> Text
 		{
 			get { if( _text.BeginGet() ) Text = _text.Get( this ); return _text.value; }

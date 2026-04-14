@@ -842,8 +842,6 @@ namespace Internal
 
 					case WM_PAINT:
 
-#if !DEPLOY
-
 						RECT MakeRECT( int left, int top, int width, int height )
 						{
 							RECT r = new RECT();
@@ -1007,9 +1005,6 @@ namespace Internal
 
 							return IntPtr.Zero;
 						}
-
-
-#endif
 
 						if( EngineApp.insideRunMessageLoop && EngineApp.EnginePaused && !instance.resizingMoving &&
 							!instance.intoMenuLoop && !instance.goingToWindowedMode &&

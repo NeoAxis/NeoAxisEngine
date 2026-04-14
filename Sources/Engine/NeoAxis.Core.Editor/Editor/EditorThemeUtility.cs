@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections;
 using System.Drawing;
@@ -54,13 +53,11 @@ namespace NeoAxis.Editor
 
 				if( draw )
 				{
-#if !DEPLOY
 					using( var brush = new SolidBrush( color ) )
 					{
 						var bounds = new System.Drawing.Rectangle( Point.Empty, item.Size );
 						e.Graphics.FillRectangle( brush, bounds.X, bounds.Y, bounds.Width - 1, bounds.Height - 1 );
 					}
-#endif
 				}
 			}
 
@@ -93,13 +90,11 @@ namespace NeoAxis.Editor
 
 				if( draw )
 				{
-#if !DEPLOY
 					using( var brush = new SolidBrush( color ) )
 					{
 						var bounds = new System.Drawing.Rectangle( Point.Empty, item.Size );
 						e.Graphics.FillRectangle( brush, bounds.X, bounds.Y, bounds.Width - 1, bounds.Height - 1 );
 					}
-#endif
 				}
 			}
 
@@ -124,12 +119,10 @@ namespace NeoAxis.Editor
 						disposeImage = true;
 					}
 
-#if !DEPLOY
 					if( e.Item.ImageScaling == ToolStripItemImageScaling.None )
 						e.Graphics.DrawImage( image, imageRect, new System.Drawing.Rectangle( Point.Empty, imageRect.Size ), GraphicsUnit.Pixel );
 					else
 						e.Graphics.DrawImage( image, imageRect );
-#endif
 
 					if( disposeImage )
 						image.Dispose();
@@ -138,7 +131,6 @@ namespace NeoAxis.Editor
 
 			void DrawSeparator( Graphics g, ToolStripItem item, System.Drawing.Rectangle bounds, bool vertical )
 			{
-#if !DEPLOY
 				var color = EditorAPI2.DarkTheme ? Color.FromArgb( 30, 30, 30 ) : Color.FromArgb( 210, 210, 210 );
 
 				using( Pen pen = new Pen( color ) )
@@ -150,7 +142,6 @@ namespace NeoAxis.Editor
 					int startX = bounds2.Width / 2;
 					g.DrawLine( pen, startX, bounds2.Top, startX, bounds2.Bottom - 1 );
 				}
-#endif
 			}
 
 			protected override void OnRenderSeparator( ToolStripSeparatorRenderEventArgs e )
@@ -251,5 +242,3 @@ namespace NeoAxis.Editor
 		}
 	}
 }
-
-#endif

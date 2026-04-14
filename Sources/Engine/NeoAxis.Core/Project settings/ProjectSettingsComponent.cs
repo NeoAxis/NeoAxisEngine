@@ -9,9 +9,7 @@ namespace NeoAxis
 	/// <summary>
 	/// Component representing the settings of the project.
 	/// </summary>
-#if !DEPLOY
 	[EditorControl( "NeoAxis.Editor.ObjectSettingsWindow" )]
-#endif
 	public class ProjectSettingsComponent : Component
 	{
 		public static ESet<string> HidePropertiesForSpecialAppMode = new ESet<string>();
@@ -30,14 +28,12 @@ namespace NeoAxis
 		{
 			get
 			{
-#if !DEPLOY
 				if( EngineApp.IsEditor )
 				{
 					var document = EditorAPI.GetDocumentByComponent( this );
 					if( document != null && document.SpecialMode == "ProjectSettingsUserMode" )
 						return true;
 				}
-#endif
 				return false;
 			}
 		}

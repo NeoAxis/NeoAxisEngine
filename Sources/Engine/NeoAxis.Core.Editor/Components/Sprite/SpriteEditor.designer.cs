@@ -1,4 +1,3 @@
-#if !DEPLOY
 namespace NeoAxis.Editor
 {
 	partial class SpriteEditor
@@ -32,4 +31,3 @@ namespace NeoAxis.Editor
 #endregion
 	}
 }
-#endif

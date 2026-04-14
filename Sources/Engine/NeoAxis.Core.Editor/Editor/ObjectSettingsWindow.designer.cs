@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
     partial class ObjectSettingsWindow
 	{
@@ -188,5 +187,3 @@ namespace NeoAxis.Editor
 		private Internal.ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonApply;
 	}
 }
-
-#endif

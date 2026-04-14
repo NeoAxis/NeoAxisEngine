@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -168,8 +167,6 @@ namespace NeoAxis.Editor
 		}
 
 		/////////////////////////////////////////
-
-#if !DEPLOY
 
 		//static EditorRibbonDefaultConfiguration()
 		static void RegisterBasicTabs()
@@ -699,8 +696,6 @@ namespace NeoAxis.Editor
 			BuilderEditorExtensions.AddToRibbonDefaultConfiguration();
 		}
 
-#endif
-
 		public static Tab GetTab( string name )
 		{
 			foreach( var tab in tabs )
@@ -725,5 +720,3 @@ namespace NeoAxis.Editor
 		}
 	}
 }
-
-#endif

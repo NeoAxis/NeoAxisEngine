@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
     partial class StartPageWindow
 	{
@@ -308,5 +307,3 @@ namespace NeoAxis.Editor
 		private Internal.ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabelStoreItems;
 	}
 }
-
-#endif

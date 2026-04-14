@@ -9,9 +9,7 @@ namespace NeoAxis
 	/// <summary>
 	/// Component for setting item type of <see cref="GroupOfObjects"/>.
 	/// </summary>
-#if !DEPLOY
 	[SettingsCell( "NeoAxis.Editor.GroupOfObjectsElementSettingsCell" )]
-#endif
 	public abstract class GroupOfObjectsElement : Component
 	{
 		/// <summary>
@@ -87,8 +85,6 @@ namespace NeoAxis
 			return new List<int>();
 		}
 
-#if !DEPLOY
-
 		public virtual void SetColors( UndoMultiAction undoMultiAction, ColorValue color )
 		{
 			var groupOfObjects = Parent as GroupOfObjects;
@@ -115,8 +111,6 @@ namespace NeoAxis
 				undoMultiAction.AddAction( new GroupOfObjectsUndo.UndoActionCreateDelete( groupOfObjects, newIndexes, true, false ) );
 			}
 		}
-
-#endif
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -354,7 +348,6 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-#if !DEPLOY
 		public virtual void UpdateAlignment( UndoMultiAction undoMultiAction )
 		{
 			//var random = new FastRandom();
@@ -403,7 +396,6 @@ namespace NeoAxis
 				//}
 			}
 		}
-#endif
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -519,8 +511,6 @@ namespace NeoAxis
 		//public float motionBlurFactor;
 
 		/////////////////////////////////////////
-
-#if !DEPLOY
 
 		public virtual void UpdateVariationsAndTransform( bool randomizeGroups, UndoMultiAction undoMultiAction, bool updateVariations, bool updateTransform )
 		{
@@ -679,7 +669,6 @@ namespace NeoAxis
 		//		}
 		//	}
 		//}
-#endif
 
 	}
 

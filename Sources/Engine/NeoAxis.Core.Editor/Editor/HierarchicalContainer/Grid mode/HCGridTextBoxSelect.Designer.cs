@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class HCGridTextBoxSelect
 	{
@@ -76,5 +75,3 @@ namespace NeoAxis.Editor
 		public Internal.ComponentFactory.Krypton.Toolkit.KryptonButton buttonSelect;
 	}
 }
-
-#endif

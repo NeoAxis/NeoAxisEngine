@@ -44,9 +44,7 @@ namespace NeoAxis
 		/// The message from the dialogue creator
 		/// </summary>
 		[DefaultValue( "" )]
-#if !DEPLOY
 		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
-#endif
 		public Reference<string> Message
 		{
 			get { if( _message.BeginGet() ) Message = _message.Get( this ); return _message.value; }
@@ -117,13 +115,11 @@ namespace NeoAxis
 				}
 
 				//Editor attribute
-#if !DEPLOY
 				if( parameterType == ParameterType.Text )
 				{
 					if( attributeType.IsAssignableFrom( typeof( EditorAttribute ) ) )
 						result.Add( new EditorAttribute( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) ) );
 				}
-#endif
 
 				return result.ToArray();
 			}

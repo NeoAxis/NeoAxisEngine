@@ -223,7 +223,7 @@ namespace NeoAxis
 		{
 			get
 			{
-				//!!!!было в 3.5
+				//was in 3.5
 				//if( CurrentPlatform == Platform.macOS )
 				//{
 				//	int major, minor, bugFix;
@@ -503,21 +503,16 @@ namespace NeoAxis
 				if( DarkModeOverride.HasValue )
 					return DarkModeOverride.Value;
 
-#if !DEPLOY
 				if( CurrentPlatform == Platform.Windows )
 				{
 					try
 					{
 						int res = (int)PlatformSpecificUtility.Instance.GetRegistryValue( "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", -1 );
-
-						//int res = (int)Registry.GetValue( "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", -1 );
-
 						if( res == 0 )
 							return true;
 					}
 					catch { }
 				}
-#endif
 
 				return false;
 			}

@@ -17,12 +17,10 @@ namespace NeoAxis
 	/// </summary>
 	[AddToResourcesWindow( @"Base\3D\Character Maker", -8989 )]
 	[ResourceFileExtension( "charactermaker" )]
-#if !DEPLOY
 	[EditorControl( typeof( CharacterMakerEditor ) )]
 	//[Preview( typeof( CharacterMakerPreview ) )]
 	//[PreviewImage( typeof( CharacterMakerPreviewImage ) )]
 	[SettingsCell( typeof( CharacterMakerSettingsCell ) )]
-#endif
 	public class CharacterMaker : Component
 	{
 		bool needUpdateCreatedMesh;

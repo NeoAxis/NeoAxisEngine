@@ -1,4 +1,3 @@
-#if !DEPLOY
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
@@ -63,5 +62,3 @@ namespace Internal.Aga.Controls.Tree
 		#endregion
 	}
 }
-
-#endif

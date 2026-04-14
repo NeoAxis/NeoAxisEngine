@@ -16,7 +16,6 @@ namespace NeoAxis
 			ResourceManager.RegisterType( "Character Maker", new string[] { "charactermaker" }, typeof( Resource ) );
 			//ResourceManager.RegisterType( "Character", new string[] { "character" }, typeof( Resource ) );
 
-#if !DEPLOY
 			if( EngineApp.IsEditor )
 			{
 				SceneEditorUtility.CreateObjectWhatTypeWillCreatedEvent += Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent;
@@ -25,7 +24,6 @@ namespace NeoAxis
 				EditorAPI.PreviewImagesManager_RegisterResourceType( "Character Type" );
 				//PreviewImagesManager.RegisterResourceType( "Character" );
 			}
-#endif
 
 			////editor actions
 			//if( EngineApp.IsEditor )
@@ -59,7 +57,6 @@ namespace NeoAxis
 
 		}
 
-#if !DEPLOY
 		private void Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent( Metadata.TypeInfo objectType, string referenceToObject, ref Metadata.TypeInfo type )
 		{
 			if( MetadataManager.GetTypeOfNetType( typeof( CharacterType ) ).IsAssignableFrom( objectType ) )
@@ -75,7 +72,5 @@ namespace NeoAxis
 				obj.CharacterType = new Reference<CharacterType>( null, referenceToObject );
 			}
 		}
-#endif
-
 	}
 }

@@ -1,6 +1,4 @@
-﻿#if !DEPLOY
-
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class SolutionExplorer
 	{
@@ -67,5 +65,3 @@ namespace NeoAxis.Editor
 		private ContentBrowser resourcesBrowser1;
 	}
 }
-
-#endif

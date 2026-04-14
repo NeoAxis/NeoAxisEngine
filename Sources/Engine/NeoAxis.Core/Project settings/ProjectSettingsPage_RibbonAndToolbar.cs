@@ -11,7 +11,7 @@ namespace NeoAxis
 	/// </summary>
 	public class ProjectSettingsPage_RibbonAndToolbar : ProjectSettingsPage
 	{
-#if !DEPLOY
+//#if !DEPLOY
 		public sealed class RibbonAndToolbarActionsClass
 		{
 			[Serialize]
@@ -313,6 +313,6 @@ namespace NeoAxis
 			set { ribbonAndToolbarSettings = value; }
 		}
 		RibbonAndToolbarActionsClass ribbonAndToolbarSettings = new RibbonAndToolbarActionsClass();
-#endif
+//#endif
 	}
 }

@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class HCGridProperty
 	{
@@ -66,5 +65,3 @@ namespace NeoAxis.Editor
 		private NeoAxis.Editor.EngineToolTip propertyToolTip;
 	}
 }
-
-#endif

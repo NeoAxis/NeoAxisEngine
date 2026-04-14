@@ -1,4 +1,3 @@
-﻿#if !DEPLOY
 namespace NeoAxis.Editor
 {
 	partial class EUserControl
@@ -31,4 +30,3 @@ namespace NeoAxis.Editor
 		#endregion
 	}
 }
-#endif

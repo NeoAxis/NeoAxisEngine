@@ -17,10 +17,8 @@ namespace NeoAxis
 	/// <summary>
 	/// A heightmap based terrain.
 	/// </summary>
-#if !DEPLOY
 	[SettingsCell( "NeoAxis.Editor.TerrainSettingsCell" )]
 	//because sorting is added from ResourcesWindowItems.cs [AddToResourcesWindow( @"Base\Scene objects\Terrain", 0 )]
-#endif
 	public class Terrain : Component
 	{
 		const double timeLimitToDestroyFarSurfaceObjectGroups = 10;

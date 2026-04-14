@@ -61,15 +61,15 @@ namespace NeoAxis
 						Log.Fatal( "PlatformSpecificUtility: Get: Instance must be already initialized." );
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
 					{
-#if !ANDROID && !IOS && !WEB && !UWP
+						//#if !ANDROID && !IOS && !WEB && !UWP
 						instance = new LinuxPlatformSpecificUtility();
-#endif
+						//#endif
 					}
 					else
 					{
-#if !ANDROID && !IOS && !WEB && !UWP
+						#if !ANDROID && !IOS && !WEB && !UWP
 						instance = new WindowsPlatformSpecificUtility();
-#endif
+						#endif
 					}
 				}
 				return instance;
@@ -90,7 +90,9 @@ namespace NeoAxis
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if !ANDROID && !IOS && !WEB && !UWP
+	//!!!!move to special dll
+
+	#if !ANDROID && !IOS && !WEB && !UWP
 	class WindowsPlatformSpecificUtility : PlatformSpecificUtility
 	{
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode )]
@@ -901,19 +903,23 @@ namespace NeoAxis
 
 				private static object ReadObjectFromHandleDeserializer( Stream stream, bool restrictDeserialization )
 				{
-					BinaryFormatter binaryFormatter = new BinaryFormatter();
+					return stream;
+
+					//BinaryFormatter binaryFormatter = new BinaryFormatter();
 					//if( restrictDeserialization )
 					//{
 					//	binaryFormatter.Binder = new BitmapBinder();
 					//}
 					//binaryFormatter.AssemblyFormat = FormatterAssemblyStyle.Simple;
-					return binaryFormatter.Deserialize( stream );
+					//return binaryFormatter.Deserialize( stream );
 				}
 
 				private string[] ReadFileListFromHandle( IntPtr hdrop )
 				{
+					//!!!!
+
 					string[] array = null;
-					StringBuilder stringBuilder = new StringBuilder( 260 );
+					//StringBuilder stringBuilder = new StringBuilder( 260 );
 					//int num = UnsafeNativeMethods.DragQueryFile( new HandleRef( null, hdrop ), -1, null, 0 );
 					//if( num > 0 )
 					//{
@@ -4291,48 +4297,88 @@ namespace NeoAxis
 
 				internal unsafe static string GetMessage( int errorCode, IntPtr moduleHandle )
 				{
-					int num = 12800;
+					int flags = 12800;
 					if( moduleHandle != IntPtr.Zero )
-					{
-						num |= 0x800;
-					}
-					Span<char> span = stackalloc char[ 256 ];
-					fixed( char* lpBuffer = span )
-					{
-						int num2 = FormatMessage( num, moduleHandle, (uint)errorCode, 0, lpBuffer, span.Length, IntPtr.Zero );
-						if( num2 > 0 )
-						{
-							return GetAndTrimString( span.Slice( 0, num2 ) );
-						}
-					}
+						flags |= 0x800;
+
+					// First try with a reasonably sized fixed buffer (stackalloc).
+					const int stackChars = 256;
+					char* stackBuffer = stackalloc char[ stackChars ];
+					int chars = FormatMessage( flags, moduleHandle, (uint)errorCode, 0, stackBuffer, stackChars, IntPtr.Zero );
+					if( chars > 0 )
+						return GetAndTrimString( stackBuffer, chars );
+
+					// If buffer is too small, request system-allocated buffer.
 					if( Marshal.GetLastWin32Error() == 122 )
 					{
-						IntPtr intPtr = default( IntPtr );
+						IntPtr allocated = IntPtr.Zero;
 						try
 						{
-							int num3 = FormatMessage( num | 0x100, moduleHandle, (uint)errorCode, 0, &intPtr, 0, IntPtr.Zero );
-							if( num3 > 0 )
-							{
-								return GetAndTrimString( new Span<char>( (void*)intPtr, num3 ) );
-							}
+							int chars2 = FormatMessage( flags | 0x100, moduleHandle, (uint)errorCode, 0, &allocated, 0, IntPtr.Zero );
+							if( chars2 > 0 && allocated != IntPtr.Zero )
+								return GetAndTrimString( (char*)allocated, chars2 );
 						}
 						finally
 						{
-							Marshal.FreeHGlobal( intPtr );
+							// Note: original code used FreeHGlobal. Keep behavior to avoid changing interop contract here.
+							Marshal.FreeHGlobal( allocated );
 						}
 					}
+
 					return $"Unknown error (0x{errorCode:x})";
 				}
 
-				private static string GetAndTrimString( Span<char> buffer )
+				unsafe static string GetAndTrimString( char* buffer, int length )
 				{
-					int num = buffer.Length;
-					while( num > 0 && buffer[ num - 1 ] <= ' ' )
-					{
-						num--;
-					}
-					return buffer.Slice( 0, num ).ToString();
+					int end = length;
+					while( end > 0 && buffer[ end - 1 ] <= ' ' )
+						end--;
+
+					return new string( buffer, 0, end );
 				}
+
+				//internal static string GetMessage( int errorCode )
+				//{
+				//	return GetMessage( errorCode, IntPtr.Zero );
+				//}
+
+				//internal unsafe static string GetMessage( int errorCode, IntPtr moduleHandle )
+				//{
+				//	int num = 12800;
+				//	if( moduleHandle != IntPtr.Zero )
+				//		num |= 0x800;
+
+				//	Span<char> span = stackalloc char[ 256 ];
+				//	fixed( char* lpBuffer = span )
+				//	{
+				//		int num2 = FormatMessage( num, moduleHandle, (uint)errorCode, 0, lpBuffer, span.Length, IntPtr.Zero );
+				//		if( num2 > 0 )
+				//			return GetAndTrimString( span.Slice( 0, num2 ) );
+				//	}
+				//	if( Marshal.GetLastWin32Error() == 122 )
+				//	{
+				//		IntPtr intPtr = IntPtr.Zero;
+				//		try
+				//		{
+				//			int num3 = FormatMessage( num | 0x100, moduleHandle, (uint)errorCode, 0, &intPtr, 0, IntPtr.Zero );
+				//			if( num3 > 0 )
+				//				return GetAndTrimString( new Span<char>( (void*)intPtr, num3 ) );
+				//		}
+				//		finally
+				//		{
+				//			Marshal.FreeHGlobal( intPtr );
+				//		}
+				//	}
+				//	return $"Unknown error (0x{errorCode:x})";
+				//}
+
+				//static string GetAndTrimString( Span<char> buffer )
+				//{
+				//	int num = buffer.Length;
+				//	while( num > 0 && buffer[ num - 1 ] <= ' ' )
+				//		num--;
+				//	return buffer.Slice( 0, num ).ToString();
+				//}
 			}
 
 			internal enum BOOL
@@ -4381,11 +4427,13 @@ namespace NeoAxis
 			//method.Invoke( null, new object[] { keyName, valueName, value } );
 		}
 	}
-#endif
+	#endif
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#if !ANDROID && !IOS && !WEB && !UWP
+	//!!!!move to special dll
+
+	//#if !ANDROID && !IOS && !WEB && !UWP
 	class LinuxPlatformSpecificUtility : PlatformSpecificUtility
 	{
 		public override string GetExecutableDirectoryPath()
@@ -4450,7 +4498,7 @@ namespace NeoAxis
 			//!!!!impl
 		}
 	}
-#endif
+	//#endif
 
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

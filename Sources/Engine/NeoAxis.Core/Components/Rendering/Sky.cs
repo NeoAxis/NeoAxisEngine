@@ -12,13 +12,11 @@ namespace NeoAxis
 	/// <summary>
 	/// A basic sky component in the engine.
 	/// </summary>
-#if !DEPLOY
 	[SettingsCell( "NeoAxis.Editor.SkySettingsCell" )]
 	[EditorControl( "NeoAxis.Editor.SkyEditor" )]
 	[Preview( "NeoAxis.Editor.SkyPreview" )]
 	[PreviewImage( "NeoAxis.Editor.SkyPreviewImage" )]
 	[WhenCreatingShowWarningIfItAlreadyExists]
-#endif
 	public class Sky : Component
 	{
 		static GpuMaterialPass materialPassCube;

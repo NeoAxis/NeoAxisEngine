@@ -9,9 +9,7 @@ namespace NeoAxis
 	/// <summary>
 	/// 6-degrees of freedom constraint link between two physical bodies.
 	/// </summary>
-#if !DEPLOY
 	[NewObjectSettings( "NeoAxis.Editor.Constraint_SixDOF_NewObjectSettings" )]
-#endif
 	public class Constraint_SixDOF : ObjectInSpace, IPhysicalObject
 	{
 		bool created;
@@ -978,10 +976,8 @@ namespace NeoAxis
 				var context2 = context.ObjectInSpaceRenderingContext;
 
 				bool show = context.SceneDisplayDevelopmentDataInThisApplication && ParentScene.DisplayPhysicalObjects;
-#if !DEPLOY
 				if( !show )
 					show = context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
-#endif
 
 				if( show && physicalConstraint != null )
 				{

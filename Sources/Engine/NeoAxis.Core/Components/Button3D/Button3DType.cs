@@ -11,12 +11,10 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "buttontype" )]
 	[NewObjectDefaultName( "Button 3D Type" )]
-#if !DEPLOY
 	[AddToResourcesWindow( @"Addons\Button 3D\Button 3D Type", 420 )]
 	[EditorControl( typeof( Button3DTypeEditor ) )]
 	[Preview( typeof( Button3DTypePreview ) )]
 	[PreviewImage( typeof( Button3DTypePreviewImage ) )]
-#endif
 	public class Button3DType : Component
 	{
 		/// <summary>

@@ -14,11 +14,9 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "csscript" )]
 	[NewObjectDefaultName( "C# Script" )]
-#if !DEPLOY
 	[SettingsCell( "NeoAxis.Editor.CSharpScriptSettingsCell" )]
 	[EditorControl( "NeoAxis.Editor.CSharpScriptEditor" )]
 	[Preview( "NeoAxis.Editor.CSharpScriptPreview" )]
-#endif
 	public class CSharpScript : Component, IFlowGraphRepresentationData, IFlowExecutionComponent
 	{
 		////!!!!is not used
@@ -40,11 +38,9 @@ namespace NeoAxis
 		List<MethodParameterPropertyImpl> propertyMethodParameters;
 		MethodParameterPropertyImpl propertyMethodReturnParameter;
 
-#if !DEPLOY
 		//FlowGraph
 		ImageComponent cachedFlowGraphNodeImage;
 		EditorAssemblyInterface.IScriptPrinter cachedFlowGraphNodeImageScriptPrinter;
-#endif
 
 		//!!!!
 		bool disableUpdate;
@@ -919,11 +915,9 @@ namespace NeoAxis
 				propertyMethodParameters = null;
 				propertyMethodReturnParameter = null;
 
-#if !DEPLOY
 				// clear cached texture for flow graph
 				cachedFlowGraphNodeImage?.Dispose();
 				cachedFlowGraphNodeImage = null;
-#endif
 			}
 		}
 
@@ -989,7 +983,6 @@ namespace NeoAxis
 		/////////////////////////////////////////
 		//Invoke Method
 		
-#if !DEPLOY
 		public virtual void GetFlowGraphRepresentationData( FlowGraphRepresentationData data )
 		{
 			if( compiledOneMethod != null )
@@ -1018,7 +1011,6 @@ namespace NeoAxis
 					data.NodeContentType = FlowGraphNodeContentType.Flow;
 			}
 		}
-#endif
 
 		void IFlowExecutionComponent.FlowExecution( Flow flow, Flow.ExecutionStackItem entryItem, ref bool sleep )
 		{

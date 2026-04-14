@@ -10,10 +10,8 @@ namespace NeoAxis
 	/// <summary>
 	/// Represents a fence in the scene.
 	/// </summary>
-#if !DEPLOY
 	[AddToResourcesWindow( @"Addons\Fence\Fence", 510 )]
 	[SettingsCell( typeof( FenceSettingsCell ) )]
-#endif
 	public class Fence : CurveInSpace
 	{
 		LogicalData logicalData;
@@ -1009,28 +1007,26 @@ namespace NeoAxis
 				if( EnabledInHierarchyAndIsInstance )
 				{
 					scene.ViewportUpdateBefore += Scene_ViewportUpdateBefore;
-#if !DEPLOY
-					TransformToolUtility.AllInstances_ModifyCommit += TransformTool_AllInstances_ModifyCommit;
-					TransformToolUtility.AllInstances_ModifyCancel += TransformTool_AllInstances_ModifyCancel;
-#endif
-
+					if( EngineApp.IsEditor )
+					{
+						TransformToolUtility.AllInstances_ModifyCommit += TransformTool_AllInstances_ModifyCommit;
+						TransformToolUtility.AllInstances_ModifyCancel += TransformTool_AllInstances_ModifyCancel;
+					}
 					if( logicalData == null )
 						Update();
 				}
 				else
 				{
 					scene.ViewportUpdateBefore -= Scene_ViewportUpdateBefore;
-#if !DEPLOY
-					TransformToolUtility.AllInstances_ModifyCommit -= TransformTool_AllInstances_ModifyCommit;
-					TransformToolUtility.AllInstances_ModifyCancel -= TransformTool_AllInstances_ModifyCancel;
-#endif
-
+					if( EngineApp.IsEditor )
+					{
+						TransformToolUtility.AllInstances_ModifyCommit -= TransformTool_AllInstances_ModifyCommit;
+						TransformToolUtility.AllInstances_ModifyCancel -= TransformTool_AllInstances_ModifyCancel;
+					}
 					Update();
 				}
 			}
 		}
-
-#if !DEPLOY
 
 		private void TransformTool_AllInstances_ModifyCommit( ITransformTool sender )
 		{
@@ -1049,8 +1045,6 @@ namespace NeoAxis
 				needUpdateAfterEndModifyingTransformTool = false;
 			}
 		}
-
-#endif
 
 		public void Update()
 		{

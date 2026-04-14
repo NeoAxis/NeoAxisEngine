@@ -3368,13 +3368,11 @@ namespace NeoAxis.Editor
 
 			var result = new List<object>();
 
-#if !DEPLOY
 			foreach( var obj in SelectedObjects )
 			{
 				if( obj is ObjectInSpace || obj is BuilderWorkareaMode.Vertex || obj is BuilderWorkareaMode.Edge || obj is BuilderWorkareaMode.Face )
 					result.Add( obj );
 			}
-#endif
 
 			objects = result.ToArray();
 			//objects = SelectedObjects.OfType<ObjectInSpace>().ToArray();
@@ -3383,7 +3381,6 @@ namespace NeoAxis.Editor
 
 		public void FocusCameraOnSelectedObject( object[] objects )
 		{
-#if !DEPLOY
 			Bounds bounds = NeoAxis.Bounds.Cleared;
 			foreach( var obj in objects )
 			{
@@ -3452,7 +3449,6 @@ end:;
 					camera.SetPosition( new Vector3( lookTo.ToVector2(), camera.TransformV.Position.Z ) );
 				}
 			}
-#endif
 		}
 
 		[Browsable( false )]

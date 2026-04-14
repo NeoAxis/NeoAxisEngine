@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
     partial class SettingsHeader_Components
     {
@@ -44,5 +43,3 @@ namespace NeoAxis.Editor
 		#endregion
 	}
 }
-
-#endif

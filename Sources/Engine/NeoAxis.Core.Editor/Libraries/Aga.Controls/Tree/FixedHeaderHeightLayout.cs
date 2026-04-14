@@ -1,4 +1,3 @@
-#if !DEPLOY
 namespace Internal.Aga.Controls.Tree
 {
 	class FixedHeaderHeightLayout : IHeaderLayout
@@ -27,5 +26,3 @@ namespace Internal.Aga.Controls.Tree
 		#endregion
 	}
 }
-
-#endif

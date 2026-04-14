@@ -11,12 +11,10 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "regulatortype" )]
 	[NewObjectDefaultName( "Regulator Type" )]
-#if !DEPLOY
 	[AddToResourcesWindow( @"Addons\Regulator\Regulator Type", 10100 )]
 	[EditorControl( typeof( RegulatorTypeEditor ) )]
 	[Preview( typeof( RegulatorTypePreview ) )]
 	[PreviewImage( typeof( RegulatorTypePreviewImage ) )]
-#endif
 	public class RegulatorType : Component
 	{
 		/// <summary>

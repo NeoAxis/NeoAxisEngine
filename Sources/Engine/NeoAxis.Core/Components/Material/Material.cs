@@ -11,13 +11,11 @@ namespace NeoAxis
 	/// Defines how a geometry looks.
 	/// </summary>
 	[ResourceFileExtension( "material" )]
-#if !DEPLOY
 	[EditorControl( "NeoAxis.Editor.MaterialEditor" )]
 	[Preview( "NeoAxis.Editor.MaterialPreview" )]
 	[PreviewImage( "NeoAxis.Editor.MaterialPreviewImage" )]
 	[SettingsCell( "NeoAxis.Editor.MaterialSettingsCell" )]
 	[NewObjectSettings( "NeoAxis.Editor.MaterialNewObjectSettings" )]
-#endif
 	public partial class Material : ResultCompile<Material.CompiledMaterialData>, IEditorUpdateWhenDocumentModified
 	{
 		const bool shaderGenerationCompile = true;
@@ -916,10 +914,7 @@ namespace NeoAxis
 		/// </summary>		
 		[DefaultValue( "" )]
 		[Category( "Advanced Scripting" )]
-		//!!!!
-#if !DEPLOY
 		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
-#endif
 		[FlowGraphBrowsable( false )]
 		public Reference<string> VertexFunctions
 		{
@@ -935,9 +930,7 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( "" )]
 		[Category( "Advanced Scripting" )]
-#if !DEPLOY
 		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
-#endif
 		[FlowGraphBrowsable( false )]
 		public Reference<string> VertexCode
 		{
@@ -953,9 +946,7 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( "" )]
 		[Category( "Advanced Scripting" )]
-#if !DEPLOY
 		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
-#endif
 		[FlowGraphBrowsable( false )]
 		public Reference<string> FragmentFunctions
 		{
@@ -971,9 +962,7 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( "" )]
 		[Category( "Advanced Scripting" )]
-#if !DEPLOY
 		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
-#endif
 		[FlowGraphBrowsable( false )]
 		public Reference<string> FragmentCode
 		{
@@ -2045,14 +2034,12 @@ namespace NeoAxis
 		public virtual CompiledMaterialData Compile( CompiledMaterialData.SpecialMode specialMode, CompileExtensionData extensionData, int multiMaterialStartIndexOfCombinedGroup, CompiledMaterialData[] multiMaterialReferencedSeparateMaterialsOfCombinedGroup, Material[] multiMaterialSourceMaterialsToGetProperties, int multiSubMaterialSeparatePassIndex )
 		{
 			var optimize = true;
-#if !DEPLOY
 			if( EngineApp.IsEditor )
 			{
 				var document = EditorAPI.GetDocumentByObject( this );
 				if( document != null && document.Modified )
 					optimize = false;
 			}
-#endif
 
 			//var time = DateTime.Now;
 
@@ -3651,13 +3638,11 @@ namespace NeoAxis
 				}
 			}
 
-#if !DEPLOY
 			if( Parent == null )
 			{
 				var toSelect = new Component[] { this, graph };
 				EditorDocumentConfiguration = EditorAPI.CreateEditorDocumentXmlConfiguration( toSelect, graph );
 			}
-#endif
 		}
 
 		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow )

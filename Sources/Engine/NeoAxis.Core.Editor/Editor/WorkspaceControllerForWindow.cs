@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using Internal.ComponentFactory.Krypton.Docking;
 using Internal.ComponentFactory.Krypton.Navigator;
 using Internal.ComponentFactory.Krypton.Workspace;
@@ -193,5 +192,3 @@ namespace NeoAxis.Editor
 
 	}
 }
-
-#endif

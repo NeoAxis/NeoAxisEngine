@@ -292,11 +292,9 @@ namespace NeoAxis
 		//	return result;
 		//}
 
-		//#if !DISABLE_IMPLICIT
 		//		public static implicit operator Range( RangeVector3F v )
 		//		{
 		//			return new Range( v );
 		//		}
-		//#endif
 	}
 }

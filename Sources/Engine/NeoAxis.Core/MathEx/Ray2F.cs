@@ -97,13 +97,11 @@ namespace NeoAxis
 		//[AutoConvertType]
 		//Parse, ToString
 
-#if !DISABLE_IMPLICIT
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Ray( Ray2F v )
 		{
 			return new Ray( v );
 		}
-#endif
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector2F GetEndPoint()

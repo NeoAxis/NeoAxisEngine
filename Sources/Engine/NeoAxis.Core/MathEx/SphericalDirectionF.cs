@@ -238,12 +238,10 @@ namespace NeoAxis
 			return string.Format( format, Horizontal, Vertical );
 		}
 
-#if !DISABLE_IMPLICIT
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator SphericalDirection( SphericalDirectionF v )
 		{
 			return new SphericalDirection( v );
 		}
-#endif
 	}
 }

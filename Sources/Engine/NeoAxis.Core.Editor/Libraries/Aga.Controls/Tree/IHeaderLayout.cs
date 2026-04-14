@@ -1,4 +1,3 @@
-#if !DEPLOY
 namespace Internal.Aga.Controls.Tree
 {
   internal interface IHeaderLayout
@@ -12,5 +11,3 @@ namespace Internal.Aga.Controls.Tree
     void ClearCache();
   }
 }
-
-#endif

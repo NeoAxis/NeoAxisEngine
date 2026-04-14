@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class HCItemProjectShortcutsForm
 	{
@@ -150,5 +149,3 @@ namespace NeoAxis.Editor
 		public HierarchicalContainer hierarchicalContainerSelected;
 	}
 }
-
-#endif

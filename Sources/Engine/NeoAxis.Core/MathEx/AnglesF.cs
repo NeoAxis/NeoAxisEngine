@@ -392,7 +392,6 @@ namespace NeoAxis
 			return result;
 		}
 
-#if !DISABLE_IMPLICIT
 		/// <summary>
 		/// Implicit conversion from <see cref="AnglesF"/> type to <see cref="Angles"/> type for the given value.
 		/// </summary>
@@ -402,6 +401,5 @@ namespace NeoAxis
 		{
 			return new Angles( v );
 		}
-#endif
 	}
 }

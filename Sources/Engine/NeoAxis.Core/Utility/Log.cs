@@ -41,6 +41,9 @@ namespace NeoAxis
 			public static event LogHandledDelegate ErrorHandler;
 			public static event LogFatalHandledDelegate FatalHandler;
 
+			public delegate void FatalAfterHandlerDelegate();
+			public static event FatalAfterHandlerDelegate FatalAfterHandler;
+
 			internal static void InvisibleInfo( string text, ref bool dumpToLogFile )
 			{
 				if( InvisibleInfoHandler != null )
@@ -69,6 +72,12 @@ namespace NeoAxis
 			{
 				if( FatalHandler != null )
 					FatalHandler( text, createdLogFilePath, ref handled );
+			}
+
+			internal static void FatalAfter()
+			{
+				if( FatalAfterHandler != null )
+					FatalAfterHandler();
 			}
 		}
 
@@ -345,8 +354,9 @@ namespace NeoAxis
 					string messageBoxText = text + "\r\n\r\n\r\n" + GetStackTrace();
 					LogPlatformFunctionality.Instance.ShowMessageBox( messageBoxText, "Fatal" );//: Exception" );
 
-					if( AfterFatal != null )
-						AfterFatal();
+					Handlers.FatalAfter();
+					//if( AfterFatal != null )
+					//	AfterFatal();
 
 					Process process = Process.GetCurrentProcess();
 					process.Kill();
@@ -359,8 +369,8 @@ namespace NeoAxis
 			Fatal( (object)message );
 		}
 
-		public delegate void AfterFatalDelegate();
-		public static event AfterFatalDelegate AfterFatal;
+		//public delegate void AfterFatalDelegate();
+		//public static event AfterFatalDelegate AfterFatal;
 
 		public static void FatalAsException( object message )
 		{
@@ -389,7 +399,8 @@ namespace NeoAxis
 					//{
 					LogPlatformFunctionality.Instance.ShowMessageBox( text, "Fatal: Exception" );
 
-					AfterFatal?.Invoke();
+					Handlers.FatalAfter();
+					//AfterFatal?.Invoke();
 
 					Process process = Process.GetCurrentProcess();
 					process.Kill();

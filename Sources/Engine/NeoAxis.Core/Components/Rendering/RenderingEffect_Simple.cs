@@ -9,9 +9,7 @@ namespace NeoAxis
 	/// <summary>
 	/// Base class of simple rendering effects.
 	/// </summary>
-#if !DEPLOY
 	[SettingsCell( "NeoAxis.Editor.RenderingEffect_Simple_SettingsCell" )]
-#endif
 	public class RenderingEffect_Simple : RenderingEffect
 	{
 		//const bool shaderGenerationCompile = true;

@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
     partial class SettingsHeader_ObjectInfo
 	{
@@ -128,5 +127,3 @@ namespace NeoAxis.Editor
 		private Internal.ComponentFactory.Krypton.Toolkit.KryptonButton buttonTypeSettingsDefaultValue;
 	}
 }
-
-#endif

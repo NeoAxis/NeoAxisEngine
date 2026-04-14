@@ -9,9 +9,7 @@ namespace NeoAxis
 	/// <summary>
 	/// An element to specify participant of the traffic system.
 	/// </summary>
-#if !DEPLOY
 	[AddToResourcesWindow( @"Addons\Traffic System\Traffic System Element", 10585 )]
-#endif
 	public class TrafficSystemElement : Component
 	{
 

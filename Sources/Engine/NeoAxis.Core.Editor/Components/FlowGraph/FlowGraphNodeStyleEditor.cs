@@ -19,7 +19,6 @@ namespace NeoAxis
 	/// </summary>
 	public class FlowGraphNodeStyle_Rectangle : FlowGraphNodeStyle
 	{
-#if !DEPLOY
 		static FlowGraphNodeStyle_Rectangle instance;
 		/// <summary>
 		/// Singleton object of the style.
@@ -762,6 +761,5 @@ namespace NeoAxis
 
 			return rectInUnits.Intersects( nodeRectInUnits );
 		}
-#endif
 	}
 }

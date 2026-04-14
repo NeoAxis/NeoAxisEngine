@@ -12,11 +12,9 @@ namespace NeoAxis
 	/// The base component of an object in the scene.
 	/// </summary>
 	[ResourceFileExtension( "objectinspace" )]
-#if !DEPLOY
 	[EditorControl( "NeoAxis.Editor.ObjectInSpaceEditor", true )]
 	[Preview( "NeoAxis.Editor.ObjectInSpacePreview" )]
 	[PreviewImage( "NeoAxis.Editor.ObjectInSpacePreviewImage" )]
-#endif
 	public class ObjectInSpace : Component, IVisibleInHierarchy, ICanBeSelectedInHierarchy//, Scene_DocumentWindow.ICanDropToScene
 	{
 		Scene parentSceneCached;

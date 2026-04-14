@@ -11,8 +11,6 @@ namespace NeoAxis
 	/// </summary>
 	public class ProjectSettingsPage_Shortcuts : ProjectSettingsPage
 	{
-//#if !DEPLOY
-
 		[Flags]
 		public enum Keys2
 		{
@@ -351,6 +349,5 @@ namespace NeoAxis
 			set { shortcutSettings = value; }
 		}
 		ShortcutSettingsClass shortcutSettings = new ShortcutSettingsClass();
-//#endif
 	}
 }

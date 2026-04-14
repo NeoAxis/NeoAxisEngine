@@ -11,10 +11,8 @@ namespace Project
 		{
 			get
 			{
-#if !DEPLOY
 				if( EngineApp.IsEditor )
 					return NeoAxis.Editor.EditorAPI.DarkTheme;
-#endif
 				return true;
 			}
 		}

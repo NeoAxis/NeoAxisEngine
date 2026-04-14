@@ -81,12 +81,10 @@ namespace NeoAxis
 		//[AutoConvertType]
 		//Parse, ToString
 
-#if !DISABLE_IMPLICIT
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Line2( Line2F v )
 		{
 			return new Line2( v );
 		}
-#endif
 	}
 }

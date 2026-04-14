@@ -1,4 +1,3 @@
-#if !DEPLOY
 //using ComponentFactory.Krypton.Toolkit;
 //using System.Drawing;
 //using System.Windows;
@@ -69,4 +68,3 @@
 //        //}
 //    }
 //}
-#endif

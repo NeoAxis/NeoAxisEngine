@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class FlowGraphEditor
 	{
@@ -43,6 +42,3 @@ namespace NeoAxis.Editor
 		private System.Windows.Forms.Timer timer50;
 	}
 }
-
-
-#endif

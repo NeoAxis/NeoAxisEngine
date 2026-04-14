@@ -530,12 +530,6 @@ namespace NeoAxis
 				fixed( T* pointer = array )
 					Sto.StoParallelMergeSortExtensionUnmanaged.ParallelMergeSort( pointer, array.Length, comparer, multithreaded );
 			}
-
-			//#if !UWP
-			//Sto.StoParallelMergeSortExtensionUnmanaged.ParallelMergeSort( array, comparer, multithreaded );
-			//#else
-			//			Sto.StoParallelMergeSortExtension.ParallelMergeSort( array, comparer, multithreaded );
-			//#endif
 		}
 
 		/// <summary>
@@ -565,16 +559,6 @@ namespace NeoAxis
 				return;
 
 			Sto.StoParallelMergeSortExtensionUnmanaged.ParallelMergeSort( pointer, count, comparer, multithreaded );
-
-			//#if !UWP
-			//Sto.StoParallelMergeSortExtensionUnmanaged.ParallelMergeSort( new Span<int>( pointer, count ), comparer, multithreaded );
-			//#else
-			//			check
-			//			var array = new int[ count ];
-			//			Marshal.Copy( (IntPtr)pointer, array, 0, count );
-			//			MergeSort( array, comparer, multithreaded );
-			//			Marshal.Copy( array, 0, (IntPtr)pointer, count );
-			//#endif
 		}
 
 		/// <summary>

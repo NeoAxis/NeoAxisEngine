@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class ProcedureUIDialog
 	{
@@ -94,4 +93,3 @@ namespace NeoAxis.Editor
 		private Internal.ComponentFactory.Krypton.Toolkit.KryptonButton buttonCancel;
 	}
 }
-#endif

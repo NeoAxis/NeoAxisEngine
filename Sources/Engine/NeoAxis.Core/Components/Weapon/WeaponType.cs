@@ -11,12 +11,10 @@ namespace NeoAxis
 	/// A definition of the weapon type.
 	/// </summary>
 	[ResourceFileExtension( "weapontype" )]
-#if !DEPLOY
 	[AddToResourcesWindow( @"Addons\Weapon\Weapon Type", 22100 )]
 	[EditorControl( typeof( WeaponTypeEditor ) )]
 	[Preview( typeof( WeaponTypePreview ) )]
 	[PreviewImage( typeof( WeaponTypePreviewImage ) )]
-#endif
 	public class WeaponType : Component, Item3DTypeInterface
 	{
 		int version;

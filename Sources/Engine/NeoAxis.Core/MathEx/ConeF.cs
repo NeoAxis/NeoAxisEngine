@@ -172,7 +172,6 @@ namespace NeoAxis
 		//[AutoConvertType]
 		//Parse, ToString
 
-#if !DISABLE_IMPLICIT
 		/// <summary>
 		/// Implicit conversion from <see cref="ConeF"/> type to <see cref="Cone"/> type for the given value.
 		/// </summary>
@@ -182,6 +181,5 @@ namespace NeoAxis
 		{
 			return new Cone( v );
 		}
-#endif
 	}
 }

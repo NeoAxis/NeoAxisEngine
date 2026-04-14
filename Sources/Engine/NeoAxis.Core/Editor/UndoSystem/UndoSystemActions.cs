@@ -1,5 +1,4 @@
-﻿//#if !DEPLOY
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -166,9 +165,7 @@ namespace NeoAxis.Editor
 
 		void CreateObjects()
 		{
-#if !DEPLOY
 			EditorAPI.ContentBrowserUtility_AllContentBrowsers_SuspendChildrenChangedEvent();
-#endif
 			ESet<ComponentHierarchyController> controllersToProcessDelayedOperations = new ESet<ComponentHierarchyController>();
 			try
 			{
@@ -194,17 +191,13 @@ namespace NeoAxis.Editor
 			{
 				foreach( var c in controllersToProcessDelayedOperations )
 					c.ProcessDelayedOperations();
-#if !DEPLOY
 				EditorAPI.ContentBrowserUtility_AllContentBrowsers_ResumeChildrenChangedEvent();
-#endif
 			}
 		}
 
 		void DeleteObjects()
 		{
-#if !DEPLOY
 			EditorAPI.ContentBrowserUtility_AllContentBrowsers_SuspendChildrenChangedEvent();
-#endif
 			ESet<ComponentHierarchyController> controllersToProcessDelayedOperations = new ESet<ComponentHierarchyController>();
 
 			List<Component> deleted = new List<Component>();
@@ -235,12 +228,9 @@ namespace NeoAxis.Editor
 			{
 				foreach( var c in controllersToProcessDelayedOperations )
 					c.ProcessDelayedOperations();
-#if !DEPLOY
 				EditorAPI.ContentBrowserUtility_AllContentBrowsers_ResumeChildrenChangedEvent();
-#endif
 			}
 
-#if !DEPLOY
 			//update selected objects for document windows
 			if( document != null )
 			{
@@ -275,7 +265,6 @@ namespace NeoAxis.Editor
 			//			SettingsWindow.Instance.SelectObjects( panel.documentWindow, selectedObjects );
 			//	}
 			//}
-#endif
 		}
 
 		protected internal override void DoUndo()
@@ -866,5 +855,3 @@ namespace NeoAxis.Editor
 	//	}
 	//}
 }
-
-//#endif

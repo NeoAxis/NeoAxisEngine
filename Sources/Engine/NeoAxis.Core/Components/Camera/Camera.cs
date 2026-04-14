@@ -9,9 +9,7 @@ namespace NeoAxis
 	/// <summary>
 	/// Representation of a player's point of view.
 	/// </summary>
-#if !DEPLOY
 	[Preview( "NeoAxis.Editor.CameraPreview" )]
-#endif
 	public class Camera : ObjectInSpace
 	{
 		//!!!!

@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class SetReferenceWindow
 	{
@@ -167,4 +166,3 @@ namespace NeoAxis.Editor
 		private Internal.ComponentFactory.Krypton.Toolkit.KryptonCheckBox kryptonCheckBoxCanMakeRelativeFilePath;
 	}
 }
-#endif

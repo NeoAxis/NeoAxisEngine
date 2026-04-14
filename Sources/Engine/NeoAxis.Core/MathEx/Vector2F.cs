@@ -884,7 +884,6 @@ namespace NeoAxis
 			return result;
 		}
 
-#if !DISABLE_IMPLICIT
 		/// <summary>
 		/// Implicit conversion from <see cref="Vector2F"/> type to <see cref="Vector2"/> type for given value.
 		/// </summary>
@@ -894,7 +893,6 @@ namespace NeoAxis
 		{
 			return v.ToVector2();
 		}
-#endif
 
 		/// <summary>
 		/// Chooses one of two vectors depending on the <paramref name="pick1"/> value.

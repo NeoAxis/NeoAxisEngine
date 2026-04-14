@@ -9,12 +9,10 @@ namespace DirectInput
 {
 	internal class DirectInputForceFeedbackController : ForceFeedbackController
 	{
-		public unsafe DirectInputForceFeedbackController( IDirectInputDevice8* directInputDevice,
-			JoystickInputDevice joystick )
+		public unsafe DirectInputForceFeedbackController( IDirectInputDevice8* directInputDevice, JoystickInputDevice joystick )
 			: base( joystick )
 		{
-			int hr = IDirectInputDevice8.EnumEffects( directInputDevice, EnumEffectHandler, null,
-				 DInput.DIEFT_ALL );
+			int hr = IDirectInputDevice8.EnumEffects( directInputDevice, EnumEffectHandler, null, DInput.DIEFT_ALL );
 			if( Wrapper.FAILED( hr ) )
 			{
 				Log.Warning( "DirectInputForceFeedbackController: " +
@@ -81,31 +79,26 @@ namespace DirectInput
 			return true; //continue
 		}
 
-		protected override ForceFeedbackEffect OnCreateEffect( ForceFeedbackEffectTypes effectType,
-			JoystickAxes[] axes )
+		protected override ForceFeedbackEffect OnCreateEffect( ForceFeedbackEffectTypes effectType, JoystickAxes[] axes )
 		{
 			ForceFeedbackEffect effect = null;
 
 			switch( effectType )
 			{
 			case ForceFeedbackEffectTypes.Spring:
-				effect = new DirectInputForceFeedbackConditionEffect(
-					this, ForceFeedbackEffectTypes.Spring, axes );
+				effect = new DirectInputForceFeedbackConditionEffect( this, ForceFeedbackEffectTypes.Spring, axes );
 				break;
 
 			case ForceFeedbackEffectTypes.Damper:
-				effect = new DirectInputForceFeedbackConditionEffect(
-					this, ForceFeedbackEffectTypes.Damper, axes );
+				effect = new DirectInputForceFeedbackConditionEffect( this, ForceFeedbackEffectTypes.Damper, axes );
 				break;
 
 			case ForceFeedbackEffectTypes.Friction:
-				effect = new DirectInputForceFeedbackConditionEffect(
-					this, ForceFeedbackEffectTypes.Friction, axes );
+				effect = new DirectInputForceFeedbackConditionEffect( this, ForceFeedbackEffectTypes.Friction, axes );
 				break;
 
 			case ForceFeedbackEffectTypes.Inertia:
-				effect = new DirectInputForceFeedbackConditionEffect(
-					this, ForceFeedbackEffectTypes.Inertia, axes );
+				effect = new DirectInputForceFeedbackConditionEffect( this, ForceFeedbackEffectTypes.Inertia, axes );
 				break;
 
 			case ForceFeedbackEffectTypes.ConstantForce:
@@ -117,28 +110,23 @@ namespace DirectInput
 			//   break;
 
 			case ForceFeedbackEffectTypes.SawtoothDown:
-				effect = new DirectInputForceFeedbackPeriodicEffect(
-					this, ForceFeedbackEffectTypes.SawtoothDown, axes );
+				effect = new DirectInputForceFeedbackPeriodicEffect( this, ForceFeedbackEffectTypes.SawtoothDown, axes );
 				break;
 
 			case ForceFeedbackEffectTypes.SawtoothUp:
-				effect = new DirectInputForceFeedbackPeriodicEffect(
-					this, ForceFeedbackEffectTypes.SawtoothUp, axes );
+				effect = new DirectInputForceFeedbackPeriodicEffect( this, ForceFeedbackEffectTypes.SawtoothUp, axes );
 				break;
 
 			case ForceFeedbackEffectTypes.Sine:
-				effect = new DirectInputForceFeedbackPeriodicEffect(
-					this, ForceFeedbackEffectTypes.Sine, axes );
+				effect = new DirectInputForceFeedbackPeriodicEffect( this, ForceFeedbackEffectTypes.Sine, axes );
 				break;
 
 			case ForceFeedbackEffectTypes.Square:
-				effect = new DirectInputForceFeedbackPeriodicEffect(
-					this, ForceFeedbackEffectTypes.Square, axes );
+				effect = new DirectInputForceFeedbackPeriodicEffect( this, ForceFeedbackEffectTypes.Square, axes );
 				break;
 
 			case ForceFeedbackEffectTypes.Triangle:
-				effect = new DirectInputForceFeedbackPeriodicEffect(
-					this, ForceFeedbackEffectTypes.Triangle, axes );
+				effect = new DirectInputForceFeedbackPeriodicEffect( this, ForceFeedbackEffectTypes.Triangle, axes );
 				break;
 
 			case ForceFeedbackEffectTypes.Ramp:
@@ -155,8 +143,7 @@ namespace DirectInput
 
 		public unsafe override bool SetEnableAutocenter( bool enable )
 		{
-			IDirectInputDevice8* directInputDevice = 
-				( (DirectInputJoystickInputDevice)Device ).directInputDevice;
+			IDirectInputDevice8* directInputDevice = ( (DirectInputJoystickInputDevice)Device ).directInputDevice;
 
 			DIPROPDWORD dipdw = new DIPROPDWORD();
 			dipdw.diph.dwSize = (uint)sizeof( DIPROPDWORD );
@@ -169,8 +156,7 @@ namespace DirectInput
 			int hr = IDirectInputDevice8.SetProperty( directInputDevice, centerProp, ref dipdw.diph );
 			if( Wrapper.FAILED( hr ) )
 			{
-				Log.Warning( "DirectInputForceFeedbackController: " +
-					"Cannot change autocenter property for \"{0}\".", Device.Name );
+				Log.Warning( "DirectInputForceFeedbackController: Cannot change autocenter property for \"{0}\".", Device.Name );
 				return false;
 			}
 

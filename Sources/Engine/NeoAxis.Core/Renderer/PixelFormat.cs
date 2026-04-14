@@ -85,7 +85,7 @@ namespace NeoAxis
 
 		/*
 
-		#if OGRE_ENDIAN == OGRE_ENDIAN_BIG
+		#i_f OGRE_ENDIAN == OGRE_ENDIAN_BIG
 		/// 3 byte pixel format, 1 byte for red, 1 byte for green, 1 byte for blue
 		ByteRGB = R8G8B8,
 		/// 3 byte pixel format, 1 byte for blue, 1 byte for green, 1 byte for red

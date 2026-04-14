@@ -1,5 +1,4 @@
-﻿//#if !DEPLOY
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +8,6 @@ namespace NeoAxis.Editor
 {
 	public class DocumentInstance : IDocumentInstance
 	{
-#if !DEPLOY
 		string realFileName;
 		Resource.Instance loadedResource;
 		string specialMode;
@@ -551,8 +549,5 @@ again:;
 		//		}
 		//	}
 		//}
-#endif
 	}
 }
-
-//#endif

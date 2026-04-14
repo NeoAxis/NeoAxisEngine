@@ -16,9 +16,7 @@ namespace NeoAxis
 		/// The text of the tooltip.
 		/// </summary>
 		[DefaultValue( "Tooltip" )]
-#if !DEPLOY
 		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
-#endif
 		public Reference<string> Text
 		{
 			get { if( _text.BeginGet() ) Text = _text.Get( this ); return _text.value; }

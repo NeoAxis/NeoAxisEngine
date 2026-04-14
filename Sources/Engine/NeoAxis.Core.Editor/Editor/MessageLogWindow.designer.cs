@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class MessageLogWindow
 	{
@@ -176,5 +175,3 @@ namespace NeoAxis.Editor
 		private System.Windows.Forms.Timer timer1;
 	}
 }
-
-#endif

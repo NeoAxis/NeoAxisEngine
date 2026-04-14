@@ -502,13 +502,11 @@ namespace NeoAxis
 			return string.Format( format, Center.X, Center.Y, Center.Z, Radius );
 		}
 
-#if !DISABLE_IMPLICIT
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Sphere( SphereF v )
 		{
 			return new Sphere( v );
 		}
-#endif
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static SphereF Merge( SphereF a, SphereF b )

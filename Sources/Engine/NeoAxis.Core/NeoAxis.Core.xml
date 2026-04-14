@@ -1713,6 +1713,128 @@
         <member name="E:NeoAxis.BuildingManager.SectorSizeChanged">
             <summary>Occurs when the <see cref="P:NeoAxis.BuildingManager.SectorSize"/> property value changes.</summary>
         </member>
+        <member name="T:NeoAxis.BuildingType">
+            <summary>
+            The info about structure of a building.
+            </summary>
+        </member>
+        <member name="P:NeoAxis.BuildingType.Structure">
+            <summary>
+            The structure type of the building.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.BuildingType.StructureChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.BuildingType.Structure"/> property value changes.</summary>
+        </member>
+        <member name="P:NeoAxis.BuildingType.ElementSize">
+            <summary>
+            The default size of the element, horizontal width and height.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.BuildingType.ElementSizeChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.BuildingType.ElementSize"/> property value changes.</summary>
+        </member>
+        <member name="P:NeoAxis.BuildingType.OccluderShrinkHorizontal">
+            <summary>
+            The size of shrinking the volume of occluder by horizontal axes.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.BuildingType.OccluderShrinkHorizontalChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.BuildingType.OccluderShrinkHorizontal"/> property value changes.</summary>
+        </member>
+        <member name="P:NeoAxis.BuildingType.OccluderExtendBottom">
+            <summary>
+            The additional height of the occluder at bottom.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.BuildingType.OccluderExtendBottomChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.BuildingType.OccluderExtendBottom"/> property value changes.</summary>
+        </member>
+        <member name="T:NeoAxis.Product">
+            <summary>
+            Represents the product build settings.
+            </summary>
+        </member>
+        <member name="P:NeoAxis.Product.SortOrder">
+            <summary>
+            The position of the product in the product list for build.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.Product.SortOrderChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Product.SortOrder"/> property value changes.</summary>
+        </member>
+        <member name="P:NeoAxis.Product.Paths">
+            <summary>
+            The list of folders and files to add. Items are separated by return or semicolon. The item can have a prefix 'exclude:' to remove selected path.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.Product.PathsChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Product.Paths"/> property value changes.</summary>
+        </member>
+        <member name="P:NeoAxis.Product.FileCache">
+            <summary>
+            Whether to include the cache of auto-compressed images.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.Product.FileCacheChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Product.FileCache"/> property value changes.</summary>
+        </member>
+        <member name="P:NeoAxis.Product.ShaderCache">
+            <summary>
+            Whether to include shader cache.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.Product.ShaderCacheChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Product.ShaderCache"/> property value changes.</summary>
+        </member>
+        <member name="P:NeoAxis.Product.SkipFilesWithExtension">
+            <summary>
+            The list of file extensions to remove. Items are separated by return or semicolon.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.Product.SkipFilesWithExtensionChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Product.SkipFilesWithExtension"/> property value changes.</summary>
+        </member>
+        <member name="P:NeoAxis.Product.ClearFilesWithExtension">
+            <summary>
+            The list of file extensions to clear. Items are separated by return or semicolon. Clearing of files is used for source 3D models, because the actual data of 3D models is stored in settings files. It is enough to save empty original files.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.Product.ClearFilesWithExtensionChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Product.ClearFilesWithExtension"/> property value changes.</summary>
+        </member>
+        <member name="P:NeoAxis.Product.Obfuscate">
+            <summary>
+            Whether to the assemblies of the build must be obfuscated.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.Product.ObfuscateChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Product.Obfuscate"/> property value changes.</summary>
+        </member>
+        <member name="P:NeoAxis.Product.ObfuscateAssemblies">
+            <summary>
+            The list of assembly names to obfuscate. Items are separated by return or semicolon. For example: "Project.dll;Project.Client.dll".
+            </summary>
+        </member>
+        <member name="E:NeoAxis.Product.ObfuscateAssembliesChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Product.ObfuscateAssemblies"/> property value changes.</summary>
+        </member>
+        <member name="P:NeoAxis.Product.ObfuscateReuseNames">
+            <summary>
+            Whether to reuse names when obfuscating. If this option is enabled, the same names will be used for the methods and fields in a type.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.Product.ObfuscateReuseNamesChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Product.ObfuscateReuseNames"/> property value changes.</summary>
+        </member>
+        <member name="P:NeoAxis.Product.ObfuscateHideStrings">
+            <summary>
+            Whether to hide strings when obfuscating. If this option is enabled, the strings will be encrypted and decrypted at runtime.
+            </summary>
+        </member>
+        <member name="E:NeoAxis.Product.ObfuscateHideStringsChanged">
+            <summary>Occurs when the <see cref="P:NeoAxis.Product.ObfuscateHideStrings"/> property value changes.</summary>
+        </member>
         <member name="T:NeoAxis.Editor.GroupOfObjectsUndo">
             <summary>
             Auxiliary class for <see cref="T:NeoAxis.GroupOfObjects"/>.
@@ -1845,128 +1967,6 @@
             <summary>
             Represents an item of <see cref="T:NeoAxis.Editor.UndoActionPropertiesChange"/>.
             </summary>
-        </member>
-        <member name="T:NeoAxis.BuildingType">
-            <summary>
-            The info about structure of a building.
-            </summary>
-        </member>
-        <member name="P:NeoAxis.BuildingType.Structure">
-            <summary>
-            The structure type of the building.
-            </summary>
-        </member>
-        <member name="E:NeoAxis.BuildingType.StructureChanged">
-            <summary>Occurs when the <see cref="P:NeoAxis.BuildingType.Structure"/> property value changes.</summary>
-        </member>
-        <member name="P:NeoAxis.BuildingType.ElementSize">
-            <summary>
-            The default size of the element, horizontal width and height.
-            </summary>
-        </member>
-        <member name="E:NeoAxis.BuildingType.ElementSizeChanged">
-            <summary>Occurs when the <see cref="P:NeoAxis.BuildingType.ElementSize"/> property value changes.</summary>
-        </member>
-        <member name="P:NeoAxis.BuildingType.OccluderShrinkHorizontal">
-            <summary>
-            The size of shrinking the volume of occluder by horizontal axes.
-            </summary>
-        </member>
-        <member name="E:NeoAxis.BuildingType.OccluderShrinkHorizontalChanged">
-            <summary>Occurs when the <see cref="P:NeoAxis.BuildingType.OccluderShrinkHorizontal"/> property value changes.</summary>
-        </member>
-        <member name="P:NeoAxis.BuildingType.OccluderExtendBottom">
-            <summary>
-            The additional height of the occluder at bottom.
-            </summary>
-        </member>
-        <member name="E:NeoAxis.BuildingType.OccluderExtendBottomChanged">
-            <summary>Occurs when the <see cref="P:NeoAxis.BuildingType.OccluderExtendBottom"/> property value changes.</summary>
-        </member>
-        <member name="T:NeoAxis.Product">
-            <summary>
-            Represents the product build settings.
-            </summary>
-        </member>
-        <member name="P:NeoAxis.Product.SortOrder">
-            <summary>
-            The position of the product in the product list for build.
-            </summary>
-        </member>
-        <member name="E:NeoAxis.Product.SortOrderChanged">
-            <summary>Occurs when the <see cref="P:NeoAxis.Product.SortOrder"/> property value changes.</summary>
-        </member>
-        <member name="P:NeoAxis.Product.Paths">
-            <summary>
-            The list of folders and files to add. Items are separated by return or semicolon. The item can have a prefix 'exclude:' to remove selected path.
-            </summary>
-        </member>
-        <member name="E:NeoAxis.Product.PathsChanged">
-            <summary>Occurs when the <see cref="P:NeoAxis.Product.Paths"/> property value changes.</summary>
-        </member>
-        <member name="P:NeoAxis.Product.FileCache">
-            <summary>
-            Whether to include the cache of auto-compressed images.
-            </summary>
-        </member>
-        <member name="E:NeoAxis.Product.FileCacheChanged">
-            <summary>Occurs when the <see cref="P:NeoAxis.Product.FileCache"/> property value changes.</summary>
-        </member>
-        <member name="P:NeoAxis.Product.ShaderCache">
-            <summary>
-            Whether to include shader cache.
-            </summary>
-        </member>
-        <member name="E:NeoAxis.Product.ShaderCacheChanged">
-            <summary>Occurs when the <see cref="P:NeoAxis.Product.ShaderCache"/> property value changes.</summary>
-        </member>
-        <member name="P:NeoAxis.Product.SkipFilesWithExtension">
-            <summary>
-            The list of file extensions to remove. Items are separated by return or semicolon.
-            </summary>
-        </member>
-        <member name="E:NeoAxis.Product.SkipFilesWithExtensionChanged">
-            <summary>Occurs when the <see cref="P:NeoAxis.Product.SkipFilesWithExtension"/> property value changes.</summary>
-        </member>
-        <member name="P:NeoAxis.Product.ClearFilesWithExtension">
-            <summary>
-            The list of file extensions to clear. Items are separated by return or semicolon. Clearing of files is used for source 3D models, because the actual data of 3D models is stored in settings files. It is enough to save empty original files.
-            </summary>
-        </member>
-        <member name="E:NeoAxis.Product.ClearFilesWithExtensionChanged">
-            <summary>Occurs when the <see cref="P:NeoAxis.Product.ClearFilesWithExtension"/> property value changes.</summary>
-        </member>
-        <member name="P:NeoAxis.Product.Obfuscate">
-            <summary>
-            Whether to the assemblies of the build must be obfuscated.
-            </summary>
-        </member>
-        <member name="E:NeoAxis.Product.ObfuscateChanged">
-            <summary>Occurs when the <see cref="P:NeoAxis.Product.Obfuscate"/> property value changes.</summary>
-        </member>
-        <member name="P:NeoAxis.Product.ObfuscateAssemblies">
-            <summary>
-            The list of assembly names to obfuscate. Items are separated by return or semicolon. For example: "Project.dll;Project.Client.dll".
-            </summary>
-        </member>
-        <member name="E:NeoAxis.Product.ObfuscateAssembliesChanged">
-            <summary>Occurs when the <see cref="P:NeoAxis.Product.ObfuscateAssemblies"/> property value changes.</summary>
-        </member>
-        <member name="P:NeoAxis.Product.ObfuscateReuseNames">
-            <summary>
-            Whether to reuse names when obfuscating. If this option is enabled, the same names will be used for the methods and fields in a type.
-            </summary>
-        </member>
-        <member name="E:NeoAxis.Product.ObfuscateReuseNamesChanged">
-            <summary>Occurs when the <see cref="P:NeoAxis.Product.ObfuscateReuseNames"/> property value changes.</summary>
-        </member>
-        <member name="P:NeoAxis.Product.ObfuscateHideStrings">
-            <summary>
-            Whether to hide strings when obfuscating. If this option is enabled, the strings will be encrypted and decrypted at runtime.
-            </summary>
-        </member>
-        <member name="E:NeoAxis.Product.ObfuscateHideStringsChanged">
-            <summary>Occurs when the <see cref="P:NeoAxis.Product.ObfuscateHideStrings"/> property value changes.</summary>
         </member>
         <member name="T:NeoAxis.Product_Android">
             <summary>
@@ -23307,6 +23307,12 @@
         <member name="T:NeoAxis.VirtualFileStream">
             <summary>
             Defines a file stream for virtual file system.
+            </summary>
+        </member>
+        <member name="T:NeoAxis.Win32HandleVirtualFileStream">
+            <summary>
+            Provides a read-only stream for accessing files using a Win32 file handle, enabling direct file operations through
+            the Windows API. The class has a special method ReadUnmanaged which work faster than the standard Read method.
             </summary>
         </member>
         <member name="T:NeoAxis.VirtualDirectory">

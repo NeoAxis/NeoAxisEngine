@@ -19,9 +19,7 @@ namespace NeoAxis
 	/// The component containing sound data.
 	/// </summary>
 	[ResourceFileExtension( "sound" )]
-#if !DEPLOY
 	[Preview( "NeoAxis.Editor.SoundPreview" )]
-#endif
 	public class Sound : ResultCompile<Sound.CompiledData>
 	{
 		////CreateFormat

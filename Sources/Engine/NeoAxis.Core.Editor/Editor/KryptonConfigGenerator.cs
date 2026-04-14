@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-using Internal.ComponentFactory.Krypton.Docking;
+﻿using Internal.ComponentFactory.Krypton.Docking;
 using Internal.ComponentFactory.Krypton.Navigator;
 using System;
 using System.Collections.Generic;
@@ -78,5 +77,3 @@ namespace NeoAxis.Editor
 		}
 	}
 }
-
-#endif

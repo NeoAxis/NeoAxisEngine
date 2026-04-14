@@ -18,10 +18,8 @@ namespace NeoAxis
 	/// Base class of all components.
 	/// </summary>
 	[ResourceFileExtension( "component" )]
-#if !DEPLOY
 	[EditorControl( "NeoAxis.Editor.DocumentWindow" )]
 	[SettingsCell( "NeoAxis.Editor.SettingsCell_Properties", true )]
-#endif
 	public class Component : Metadata.IMetadataProvider/*, ISettingsProvider*/, IDisposable
 	{
 		ThreadSafeExchangeBool disposed;

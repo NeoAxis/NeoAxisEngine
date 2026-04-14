@@ -11,12 +11,10 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "weapon2dtype" )]
 	[NewObjectDefaultName( "Weapon 2D Type" )]
-#if !DEPLOY
 	[AddToResourcesWindow( @"Addons\Weapon 2D\Weapon 2D Type", 23100 )]
 	[EditorControl( typeof( Weapon2DTypeEditor ) )]
 	[Preview( typeof( Weapon2DTypePreview ) )]
 	[PreviewImage( typeof( Weapon2DTypePreviewImage ) )]
-#endif
 	public class Weapon2DType : Component, Item3DTypeInterface
 	{
 		int version;

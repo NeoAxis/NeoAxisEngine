@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
     partial class HierarchicalContainer
 	{
@@ -74,5 +73,3 @@ namespace NeoAxis.Editor
 		private System.Windows.Forms.Panel panel1;
 	}
 }
-
-#endif

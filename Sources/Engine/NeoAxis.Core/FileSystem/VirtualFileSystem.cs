@@ -278,10 +278,8 @@ namespace NeoAxis
 					CorrectCurrentDirectory();
 
 				//now in the EditorForm
-				//#if !DEPLOY
-				//				if( EngineApp.IsEditor )
-				//					Editor.PackageManager.DeleteFilesAsStartup();
-				//#endif
+				//if( EngineApp.IsEditor )
+				//	Editor.PackageManager.DeleteFilesAsStartup();
 
 				NativeUtility.PreloadLibrary( "NeoAxisCoreNative" );
 

@@ -26,15 +26,10 @@ namespace NeoAxis.Editor
 		{
 			get
 			{
-#if !DEPLOY
 				return KryptonManager._globalPaletteMode == PaletteModeManager.NeoAxisBlack;
-#else
-				return true;
-#endif
 			}
 		}
 
-#if !DEPLOY
 		static bool needRestartApplication;
 		static bool needRestartApplication_ResetWindowsSettings;
 
@@ -1574,7 +1569,6 @@ namespace NeoAxis.Editor
 				}
 			}
 		}
-#endif
 
 		public static DocumentInstance GetDocumentByComponent( Component component )
 		{

@@ -1,4 +1,3 @@
-#if !DEPLOY
 using System.Windows.Forms;
 
 namespace Internal.ComponentFactory.Krypton.Toolkit
@@ -71,4 +70,3 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         private System.Windows.Forms.Label labelMessage;
     }
 }
-#endif

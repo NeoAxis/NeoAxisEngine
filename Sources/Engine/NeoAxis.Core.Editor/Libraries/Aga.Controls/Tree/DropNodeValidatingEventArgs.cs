@@ -1,4 +1,3 @@
-#if !DEPLOY
 using System;
 using System.Drawing;
 
@@ -27,5 +26,3 @@ namespace Internal.Aga.Controls.Tree
 		}
 	}
 }
-
-#endif

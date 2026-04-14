@@ -11,9 +11,7 @@ namespace NeoAxis
 	/// </summary>
 	[AddToResourcesWindow( @"Base\2D\Character 2D", -7899 )]
 	[NewObjectDefaultName( "Character 2D" )]
-#if !DEPLOY
 	[Editor.SettingsCell( typeof( Editor.Character2DSettingsCell ), true )]
-#endif
 	public class Character2D : Sprite, InteractiveObjectInterface
 	{
 		Character2DType typeCached = new Character2DType();
@@ -1420,7 +1418,6 @@ namespace NeoAxis
 				if( !showLabels )
 					context2.disableShowingLabelForThisObject = true;
 
-				//#if !DEPLOY
 				//				//draw selection
 				//				if( mainBody != null )
 				//				{
@@ -1440,7 +1437,6 @@ namespace NeoAxis
 				//						DebugDraw( viewport );
 				//					}
 				//				}
-				//#endif
 
 
 				//foreach( var ray in debugRays )

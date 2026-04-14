@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class HCGridCollection
 	{
@@ -84,5 +83,3 @@ namespace NeoAxis.Editor
 		public Internal.ComponentFactory.Krypton.Toolkit.KryptonButton buttonEdit;
 	}
 }
-
-#endif

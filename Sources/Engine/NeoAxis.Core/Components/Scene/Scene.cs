@@ -12,11 +12,9 @@ namespace NeoAxis
 	/// Represents a scene.
 	/// </summary>
 	[ResourceFileExtension( "scene" )]
-#if !DEPLOY
 	[EditorControl( "NeoAxis.Editor.SceneEditor" )] //[EditorControl( typeof( SceneEditor ) )]
 	[NewObjectSettings( "NeoAxis.Editor.SceneNewObjectSettings" )]
 	[SettingsCell( "NeoAxis.Editor.SceneSettingsCell" )]
-#endif
 	public partial class Scene : Component
 	{
 		static List<Scene> all = new List<Scene>();

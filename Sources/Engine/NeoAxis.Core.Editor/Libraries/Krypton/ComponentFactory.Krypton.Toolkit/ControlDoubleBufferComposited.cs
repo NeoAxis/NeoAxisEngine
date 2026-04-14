@@ -1,4 +1,3 @@
-#if !DEPLOY
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Text;
@@ -63,5 +62,3 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
 
     }
 }
-
-#endif

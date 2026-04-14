@@ -121,14 +121,14 @@ namespace NeoAxis.Editor
 			return control;
 		}
 
-		public override void ImportFBX( ImportGeneral.Settings settings, out string error )
+		public override void ImportFBX( object/*ImportGeneral.Settings*/ settings, out string error )
 		{
-			Import.FBX.ImportFBX.DoImport( settings, out error );
+			Import.FBX.ImportFBX.DoImport( (ImportGeneral.Settings)settings, out error );
 		}
 
-		public override void ImportAssimp( ImportGeneral.Settings settings, out string error )
+		public override void ImportAssimp( object/*ImportGeneral.Settings*/ settings, out string error )
 		{
-			Import.ImportAssimp.DoImport( settings, out error );
+			Import.ImportAssimp.DoImport( (ImportGeneral.Settings)settings, out error );
 		}
 
 		public override bool ExportToFBX( Mesh sourceMesh, string realFileName, out string error )

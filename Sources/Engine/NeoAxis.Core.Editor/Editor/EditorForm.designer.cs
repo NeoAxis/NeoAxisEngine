@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
     partial class EditorForm
     {
@@ -157,6 +156,3 @@ namespace NeoAxis.Editor
 		public BackstageMenu backstageMenu1;
 	}
 }
-
-
-#endif

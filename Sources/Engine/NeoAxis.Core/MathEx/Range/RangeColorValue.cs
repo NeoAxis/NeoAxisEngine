@@ -278,11 +278,9 @@ namespace NeoAxis
 		//	return result;
 		//}
 
-		//#if !DISABLE_IMPLICIT
 		//		public static implicit operator Range( RangeColorValue v )
 		//		{
 		//			return new Range( v );
 		//		}
-		//#endif
 	}
 }

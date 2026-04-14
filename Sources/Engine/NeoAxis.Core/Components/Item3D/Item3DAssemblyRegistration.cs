@@ -13,7 +13,6 @@ namespace NeoAxis
 		{
 			ResourceManager.RegisterType( "Item 3D Type", new string[] { "itemtype" }, typeof( Resource ) );
 
-#if !DEPLOY
 			if( EngineApp.IsEditor )
 			{
 				SceneEditorUtility.CreateObjectWhatTypeWillCreatedEvent += Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent;
@@ -23,10 +22,8 @@ namespace NeoAxis
 
 				//Product_Store.CreateScreenshot += Product_Store_CreateScreenshot;
 			}
-#endif
 		}
 
-#if !DEPLOY
 		private void Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent( Metadata.TypeInfo objectType, string referenceToObject, ref Metadata.TypeInfo type )
 		{
 			if( MetadataManager.GetTypeOfNetType( typeof( FlashlightType ) ).IsAssignableFrom( objectType ) )
@@ -63,7 +60,5 @@ namespace NeoAxis
 				catch { }
 			}
 		}
-
-#endif
 	}
 }

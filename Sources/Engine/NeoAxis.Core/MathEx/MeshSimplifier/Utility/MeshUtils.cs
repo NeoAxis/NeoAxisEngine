@@ -1,4 +1,3 @@
-#if !DEPLOY
 #region License
 /*
 MIT License
@@ -467,4 +466,3 @@ namespace NeoAxisMeshSimplifier
         #endregion
     }
 }
-#endif

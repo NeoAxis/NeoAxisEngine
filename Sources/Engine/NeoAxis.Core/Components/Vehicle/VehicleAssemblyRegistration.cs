@@ -16,7 +16,6 @@ namespace NeoAxis
 		{
 			ResourceManager.RegisterType( "Vehicle Type", new string[] { "vehicletype" }, typeof( Resource ) );
 
-//#if !DEPLOY
 //			if( EngineApp.IsEditor )
 //			{
 //				SceneEditorUtility.CreateObjectWhatTypeWillCreatedEvent += Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent;
@@ -26,10 +25,8 @@ namespace NeoAxis
 
 //				Product_Store.CreateScreenshot += Product_Store_CreateScreenshot;
 //			}
-//#endif
 		}
 
-//#if !DEPLOY
 //		private void Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent( Metadata.TypeInfo objectType, string referenceToObject, ref Metadata.TypeInfo type )
 //		{
 //			if( MetadataManager.GetTypeOfNetType( typeof( VehicleType ) ).IsAssignableFrom( objectType ) )
@@ -88,6 +85,5 @@ namespace NeoAxis
 //				handled = true;
 //			}
 //		}
-//#endif
 	}
 }

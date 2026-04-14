@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-using Internal.ComponentFactory.Krypton.Toolkit;
+﻿using Internal.ComponentFactory.Krypton.Toolkit;
 
 namespace NeoAxis.Editor
 {
@@ -64,5 +63,3 @@ namespace NeoAxis.Editor
 		public EngineTextBox textBox1;
 	}
 }
-
-#endif

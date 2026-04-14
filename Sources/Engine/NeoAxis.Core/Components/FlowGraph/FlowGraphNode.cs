@@ -339,7 +339,6 @@ namespace NeoAxis
 				get { return itemByProperty; }
 			}
 
-#if !DEPLOY
 			//!!!!
 			public string Title
 			{
@@ -416,7 +415,6 @@ namespace NeoAxis
 				//}
 				return 0;
 			}
-#endif
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1311,7 +1309,6 @@ namespace NeoAxis
 			return representation;
 		}
 
-#if !DEPLOY
 		public FlowGraphNodeStyle GetResultStyle( FlowGraph ownerFlowGraph )
 		{
 			FlowGraphNodeStyle style = Style;
@@ -1327,7 +1324,6 @@ namespace NeoAxis
 
 			return style;
 		}
-#endif
 
 		protected override bool OnLoad( Metadata.LoadContext context, TextBlock block, out string error )
 		{

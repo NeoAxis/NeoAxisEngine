@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class KryptonRibbonGroupListBox
 	{
@@ -35,5 +34,3 @@ namespace NeoAxis.Editor
 		#endregion
 	}
 }
-
-#endif

@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class HCGridGroup
 	{
@@ -60,5 +59,3 @@ namespace NeoAxis.Editor
 		public NeoAxis.Editor.LabelExtended label1;
 	}
 }
-
-#endif

@@ -82,10 +82,8 @@ namespace NeoAxis
 		[Serialize]
 		[FlowGraphBrowsable( false )]
 		//!!!!
-#if !DEPLOY
 		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
 		//!!!![Editor( typeof( HCItemScript ), typeof( object ) )]
-#endif
 		public Reference<string> Code
 		{
 			get { if( _code.BeginGet() ) Code = _code.Get( this ); return _code.value; }

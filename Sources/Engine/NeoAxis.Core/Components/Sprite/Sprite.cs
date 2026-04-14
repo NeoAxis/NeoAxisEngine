@@ -10,11 +10,9 @@ namespace NeoAxis
 	/// Sprite in the scene.
 	/// </summary>
 	[ResourceFileExtension( "sprite" )]
-#if !DEPLOY
 	[EditorControl( "NeoAxis.Editor.SpriteEditor", true )]
 	[Preview( "NeoAxis.Editor.SpritePreview" )]
 	[AddToResourcesWindow( @"Base\2D\Sprite", -8000 )]
-#endif
 	public class Sprite : MeshInSpace
 	{
 		/// <summary>

@@ -15,9 +15,7 @@ namespace NeoAxis
 	/// Navigation mesh pathfinding.
 	/// </summary>
 	[AddToResourcesWindow( @"Addons\Pathfinding\Pathfinding", 540 )]
-#if !DEPLOY
 	[Editor.SettingsCell( typeof( Editor.PathfindingSettingsCell ) )]
-#endif
 	public class Pathfinding : ObjectInSpace
 	{
 		static List<Pathfinding> instances = new List<Pathfinding>();

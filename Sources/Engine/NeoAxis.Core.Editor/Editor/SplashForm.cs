@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,11 +29,9 @@ namespace NeoAxis.Editor
 			//if( WinFormsUtility.IsDesignerHosted( this ) )
 			//	return;
 
-#if !DEPLOY
 			var image = Properties.Resources.Splash;
 			Size = image.Size;
 			BackgroundImage = image;
-#endif
 		}
 
 		public static SplashForm Instance
@@ -97,5 +94,3 @@ namespace NeoAxis.Editor
 		}
 	}
 }
-
-#endif

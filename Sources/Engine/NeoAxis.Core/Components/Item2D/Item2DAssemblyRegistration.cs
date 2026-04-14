@@ -13,7 +13,6 @@ namespace NeoAxis
 		{
 			ResourceManager.RegisterType( "Item 2D Type", new string[] { "item2dtype" }, typeof( Resource ) );
 
-#if !DEPLOY
 			if( EngineApp.IsEditor )
 			{
 				SceneEditorUtility.CreateObjectWhatTypeWillCreatedEvent += Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent;
@@ -23,10 +22,8 @@ namespace NeoAxis
 
 				//Product_Store.CreateScreenshot += Product_Store_CreateScreenshot;
 			}
-#endif
 		}
 
-#if !DEPLOY
 		private void Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent( Metadata.TypeInfo objectType, string referenceToObject, ref Metadata.TypeInfo type )
 		{
 			if( MetadataManager.GetTypeOfNetType( typeof( Item2DType ) ).IsAssignableFrom( objectType ) )
@@ -42,7 +39,5 @@ namespace NeoAxis
 				obj.ItemType = new Reference<Item2DType>( null, referenceToObject );
 			}
 		}
-
-#endif
 	}
 }

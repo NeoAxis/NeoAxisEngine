@@ -1594,7 +1594,6 @@ namespace Internal
 
 					case WM_PAINT:
 						{
-#if !DEPLOY
 
 							////draw splash screen
 							//var drawSplashScreen = EngineApp.DrawSplashScreen;
@@ -1746,9 +1745,6 @@ namespace Internal
 
 								return IntPtr.Zero;
 							}
-
-
-#endif
 
 							//if( EngineApp.insideRunMessageLoop && EngineApp.EnginePaused && !instance.resizingMoving && !instance.intoMenuLoop && !instance.goingToWindowedMode && !instance.goingToFullScreenMode && !instance.goingToChangeWindowRectangle )
 							if( EngineApp.insideRunMessageLoop && EngineApp.EnginePaused && !instance.resizingMoving && !instance.intoMenuLoop && instance.goingToAnotherWindowedMode == null && !instance.goingToChangeWindowRectangle )

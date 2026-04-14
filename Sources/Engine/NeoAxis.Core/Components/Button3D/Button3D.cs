@@ -5,14 +5,14 @@ using System.Collections.Generic;
 
 namespace NeoAxis
 {
+	//!!!!move [Editor.SettingsCell( and other to NeoAxis.Core.Editor.dll
+
 	/// <summary>
 	/// Button 3D in the scene.
 	/// </summary>
 	[AddToResourcesWindow( @"Addons\Button 3D\Button 3D", 430 )]
 	[NewObjectDefaultName( "Button 3D" )]
-#if !DEPLOY
 	[Editor.SettingsCell( typeof( Editor.Button3DSettingsCell ) )]
-#endif
 	public class Button3D : MeshInSpace, InteractiveObjectInterface
 	{
 		Button3DType typeCached = new Button3DType();

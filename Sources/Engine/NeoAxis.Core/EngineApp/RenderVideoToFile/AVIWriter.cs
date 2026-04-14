@@ -6,8 +6,6 @@
 // contacts@aforgenet.com
 // 
 
-#if !DEPLOY
-
 namespace NeoAxis//Accord.Video.VFW
 {
 	using System;
@@ -431,5 +429,3 @@ namespace NeoAxis//Accord.Video.VFW
 		//}
 	}
 }
-
-#endif

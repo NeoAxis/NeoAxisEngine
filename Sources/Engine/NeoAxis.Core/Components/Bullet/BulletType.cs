@@ -3,7 +3,6 @@ using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using NeoAxis.Editor;
-using System.Linq;
 
 namespace NeoAxis
 {
@@ -11,12 +10,10 @@ namespace NeoAxis
 	/// A definition of the bullet type.
 	/// </summary>
 	[ResourceFileExtension( "bullettype" )]
-#if !DEPLOY
 	[AddToResourcesWindow( @"Addons\Bullet\Bullet Type", 400 )]
-	[EditorControl( typeof( BulletTypeEditor ) )]
-	[Preview( typeof( BulletTypePreview ) )]
-	[PreviewImage( typeof( BulletTypePreviewImage ) )]
-#endif
+	[EditorControl( "NeoAxis.Editor.BulletTypeEditor" )]
+	[Preview( "NeoAxis.Editor.BulletTypePreview" )]
+	[PreviewImage( "NeoAxis.Editor.BulletTypePreviewImage" )]
 	public class BulletType : Component
 	{
 		int version;

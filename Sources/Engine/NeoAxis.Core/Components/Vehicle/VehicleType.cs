@@ -12,12 +12,10 @@ namespace NeoAxis
 	/// A definition of the vehicle type.
 	/// </summary>
 	[ResourceFileExtension( "vehicletype" )]
-#if !DEPLOY
 	[AddToResourcesWindow( @"Addons\Vehicle\Vehicle Type", 22000 )]
 	[EditorControl( "NeoAxis.Editor.VehicleTypeEditor" )]
 	[Preview( typeof( VehicleTypePreview ) )]
 	[PreviewImage( typeof( VehicleTypePreviewImage ) )]
-#endif
 	public class VehicleType : Component
 	{
 		int version;

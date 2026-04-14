@@ -1,5 +1,4 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-//#if !DEPLOY
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -14,10 +13,6 @@ using NeoAxis.Networking;
 using System.Threading.Tasks;
 using System.Threading;
 using NeoAxis.Editor;
-
-//#if !DEPLOY
-//using System.Text.Json;
-//#endif
 
 namespace NeoAxis
 {
@@ -1298,7 +1293,6 @@ namespace NeoAxis
 
 		public override void BuildFunction( ProductBuildInstance buildInstance )
 		{
-#if !DEPLOY
 			var authorEmail = "";
 			var authorHash = "";
 			long userID = 0;
@@ -1899,7 +1893,6 @@ namespace NeoAxis
 
 			if( !buildInstance.Run )
 				ShowSuccessScreenNotification();
-#endif
 		}
 
 		[Browsable( false )]
@@ -2051,7 +2044,6 @@ namespace NeoAxis
 
 		bool ProjectItemBuildArchive( ProductBuildInstance buildInstance, string specifiedFile, string authorEmail, List<string> filesToUpload )
 		{
-#if !DEPLOY
 			//get info
 
 			var license = EnumUtility.GetValueDisplayName( License.Value );
@@ -2670,7 +2662,6 @@ namespace NeoAxis
 			{
 				notification?.Close();
 			}
-#endif
 
 			return true;
 		}
@@ -2811,4 +2802,3 @@ namespace NeoAxis
 		}
 	}
 }
-//#endif

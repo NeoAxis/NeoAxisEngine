@@ -773,7 +773,6 @@ namespace NeoAxis
 			return result;
 		}
 
-#if !DISABLE_IMPLICIT
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Quaternion( QuaternionH v )
 		{
@@ -785,7 +784,6 @@ namespace NeoAxis
 		{
 			return new QuaternionF( v );
 		}
-#endif
 
 		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		//public static QuaternionH LookAt( Vector3F direction, Vector3F up )

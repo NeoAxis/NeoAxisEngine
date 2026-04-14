@@ -11,7 +11,7 @@ namespace NeoAxis
 	class DefaultVirtualFileStream : VirtualFileStream
 	{
 		FileStream stream;
-		byte[] tempReadUnmanagedBuffer;
+		//byte[] tempReadUnmanagedBuffer;
 
 		///////////////////////////////////////////
 
@@ -134,13 +134,30 @@ namespace NeoAxis
 			if( stream == null )
 				throw new ObjectDisposedException( null );
 
-			if( tempReadUnmanagedBuffer == null || tempReadUnmanagedBuffer.Length < count )
-				tempReadUnmanagedBuffer = new byte[ count ];
+			var rented = System.Buffers.ArrayPool<byte>.Shared.Rent( count );
+			try
+			{
+				int readed = stream.Read( rented, 0, count );
+				if( readed > 0 )
+					Marshal.Copy( rented, 0, buffer, readed );
+				return readed;
+			}
+			finally
+			{
+				System.Buffers.ArrayPool<byte>.Shared.Return( rented );
+			}
 
-			int readed = stream.Read( tempReadUnmanagedBuffer, 0, count );
-			if( readed > 0 )
-				Marshal.Copy( tempReadUnmanagedBuffer, 0, buffer, readed );
-			return readed;
+			//lock( stream )
+			//{
+			//	if( tempReadUnmanagedBuffer == null || tempReadUnmanagedBuffer.Length < count )
+			//		tempReadUnmanagedBuffer = new byte[ count ];
+
+			//	int readed = stream.Read( tempReadUnmanagedBuffer, 0, count );
+			//	if( readed > 0 )
+			//		Marshal.Copy( tempReadUnmanagedBuffer, 0, buffer, readed );
+
+			//	return readed;
+			//}
 		}
 
 		public override int ReadByte()
@@ -149,6 +166,5 @@ namespace NeoAxis
 				throw new ObjectDisposedException( null );
 			return stream.ReadByte();
 		}
-
 	}
 }

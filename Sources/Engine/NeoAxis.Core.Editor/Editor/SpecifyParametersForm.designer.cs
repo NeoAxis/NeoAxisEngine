@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class SpecifyParametersForm
 	{
@@ -118,4 +117,3 @@ namespace NeoAxis.Editor
 		private HierarchicalContainer hierarchicalContainer1;
 	}
 }
-#endif

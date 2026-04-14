@@ -12,9 +12,7 @@ namespace NeoAxis
 	/// <summary>
 	/// Particle system in the scene.
 	/// </summary>
-#if !DEPLOY
 	[SettingsCell( "NeoAxis.Editor.ParticleSystemInSpaceSettingsCell" )]
-#endif
 	public class ParticleSystemInSpace : ObjectInSpace
 	{
 		static FastRandom staticRandom = new FastRandom( 0 );

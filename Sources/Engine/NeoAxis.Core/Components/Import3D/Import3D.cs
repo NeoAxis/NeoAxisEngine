@@ -12,15 +12,13 @@ namespace NeoAxis
 	/// <summary>
 	/// The component for import of 3D content.
 	/// </summary>
-#if !DEPLOY
 	[EditorControl( "NeoAxis.Editor.Import3DEditor" )]
 	[Preview( "NeoAxis.Editor.Import3DPreview" )]
 	[PreviewImage( "NeoAxis.Editor.Import3DPreviewImage" )]
 	[SettingsCell( "NeoAxis.Editor.Import3DSettingsCell" )]
-#endif
 	public class Import3D : Component
 	{
-#if !DEPLOY
+//#if !DEPLOY
 		bool insideDoUpdate;
 
 		public enum ModeEnum
@@ -864,6 +862,8 @@ namespace NeoAxis
 
 		public bool DoUpdate( ReimportSettings reimportSettings, out string error )
 		{
+			//!!!!code to editor
+
 			ScreenNotifications.IStickyNotificationItem notification = EngineApp.IsEditor ? ScreenNotifications.ShowSticky( "Importing..." ) : null;
 
 			try
@@ -1570,7 +1570,7 @@ again:
 		{
 			error = "";
 
-#if !DEPLOY
+//#if !DEPLOY
 			var sourceMeshes = GetMeshes( false );
 
 			var initialFactor = LODReduction.Value;//Simplify.Value; //var initialFactor = LODs.Value ? ReductionFactor.Value : 1.0;
@@ -1701,7 +1701,7 @@ again:
 				sourceMesh.LODScale = LODScale;
 				sourceMesh.LODScaleShadows = LODScaleShadows;
 			}
-#endif
+//#endif
 
 			return true;
 		}
@@ -2129,7 +2129,7 @@ again:
 		//		geometry.CalculateVirtualizedData( VirtualizeProxyFactor, Compress, Optimize );
 		//}
 
-#endif
+//#endif
 
 	}
 }

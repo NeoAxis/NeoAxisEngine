@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class HCGridColorValue
 	{
@@ -77,5 +76,3 @@ namespace NeoAxis.Editor
 		public HCColorPreviewButton previewButton;
 	}
 }
-
-#endif

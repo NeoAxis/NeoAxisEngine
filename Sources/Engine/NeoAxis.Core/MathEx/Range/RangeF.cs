@@ -291,13 +291,11 @@ namespace NeoAxis
 			return result;
 		}
 
-#if !DISABLE_IMPLICIT
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Range( RangeF v )
 		{
 			return new Range( v );
 		}
-#endif
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public float GetCenter()

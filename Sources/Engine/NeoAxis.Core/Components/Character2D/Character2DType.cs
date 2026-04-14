@@ -11,12 +11,10 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "character2dtype" )]
 	[NewObjectDefaultName( "Character 2D Type" )]
-#if !DEPLOY
 	[AddToResourcesWindow( @"Base\2D\Character 2D Type", -7900 )]
 	[EditorControl( typeof( Character2DTypeEditor ), true )]
 	[Preview( typeof( Character2DTypePreview ) )]
 	[PreviewImage( typeof( Character2DTypePreviewImage ) )]
-#endif
 	public class Character2DType : Component
 	{
 		int version;

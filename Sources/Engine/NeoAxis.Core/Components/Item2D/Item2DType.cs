@@ -11,12 +11,10 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "item2dtype" )]
 	[NewObjectDefaultName( "Item 2D Type" )]
-#if !DEPLOY
 	[AddToResourcesWindow( @"Addons\Item 2D\Item 2D Type", 23000 )]
 	[EditorControl( typeof( Item2DTypeEditor ) )]
 	[Preview( typeof( Item2DTypePreview ) )]
 	[PreviewImage( typeof( Item2DTypePreviewImage ) )]
-#endif
 	public class Item2DType : Component, Item3DTypeInterface
 	{
 		int version;

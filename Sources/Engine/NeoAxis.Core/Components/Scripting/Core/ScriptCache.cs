@@ -73,6 +73,8 @@ namespace NeoAxis
 		public List<string> GetScriptsToCompile()
 		{
 #if !NO_LITE_DB
+			if( database == null )
+				return new List<string>();
 			var scriptsCollection = database.GetCollection<DatabaseItem>( "scripts" );
 			return new List<string>( scriptsCollection.FindAll().Select( i => FromBase64( i.ScriptBase64 ) ) );
 #else
@@ -154,7 +156,7 @@ namespace NeoAxis
 			}
 			else
 			{
-#if DEPLOY
+#if UWP || ANDROID || IOS || WEB //#if DEPLOY
 				//on UWP, Android scripts compiled inside Player assembly
 				if( EngineApp.ProjectAssembly != null )
 					FillLoadedAssemblyDllTypes( EngineApp.ProjectAssembly );

@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class ComponentTypeSettingsForm
 	{
@@ -133,4 +132,3 @@ namespace NeoAxis.Editor
 		private EngineLabel labelEx1;
 	}
 }
-#endif

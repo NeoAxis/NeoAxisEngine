@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class ContentBrowserSearchForm
 	{
@@ -116,4 +115,3 @@ namespace NeoAxis.Editor
 		private Internal.ComponentFactory.Krypton.Toolkit.KryptonTextBox kryptonTextBoxFilterByName;
 	}
 }
-#endif

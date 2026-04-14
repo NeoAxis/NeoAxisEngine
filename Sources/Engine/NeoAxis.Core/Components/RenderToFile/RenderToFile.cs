@@ -13,9 +13,7 @@ namespace NeoAxis
 	/// <summary>
 	/// A tool for rendering a scene to a file. It intended to create screenshots and to create materials.
 	/// </summary>
-#if !DEPLOY
 	[SettingsCell( "NeoAxis.Editor.RenderToFileSettingsCell" )]
-#endif
 	[AddToResourcesWindow( @"Base\Scene objects\Additional\Render To File", 0 )]
 	public class RenderToFile : Component
 	{

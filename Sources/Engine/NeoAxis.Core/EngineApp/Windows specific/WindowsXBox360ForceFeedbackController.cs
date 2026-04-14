@@ -30,8 +30,7 @@ namespace NeoAxis
 			int hr = XInput.SetState( controllerIndex, ref vibration );
 			if( XInputNativeWrapper.Wrapper.FAILED( hr ) )
 			{
-				Log.Warning( "WindowsXBox360ForceFeedbackController: Cannot " +
-					"set vibration params for \"{0}\".", Device.Name );
+				Log.Warning( "WindowsXBox360ForceFeedbackController: Cannot set vibration params for \"{0}\".", Device.Name );
 				return false;
 			}
 			return true;

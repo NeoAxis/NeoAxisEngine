@@ -1,4 +1,3 @@
-#if !DEPLOY
 using Internal.ComponentFactory.Krypton.Navigator;
 using System;
 using System.Collections.Generic;
@@ -77,5 +76,3 @@ namespace Internal.ComponentFactory.Krypton.Navigator
 		}
 	}
 }
-
-#endif

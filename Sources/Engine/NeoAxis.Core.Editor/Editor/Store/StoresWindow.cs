@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -2117,7 +2116,6 @@ namespace NeoAxis.Editor
 
 		void UpdateListItems()
 		{
-#if !DEPLOY
 			var time = EngineApp.GetSystemTime();
 
 			var visibleItems = new ESet<ContentBrowser.Item>( contentBrowser1.GetVisibleItemsByListView() );
@@ -2233,7 +2231,6 @@ namespace NeoAxis.Editor
 					}
 				}
 			}
-#endif
 		}
 
 		PackageState GetPackageState( string packageId )
@@ -2425,5 +2422,3 @@ namespace NeoAxis.Editor
 
 	}
 }
-
-#endif

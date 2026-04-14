@@ -34,10 +34,8 @@ namespace NeoAxis
 	/// <summary>
 	/// Represents a road in the scene.
 	/// </summary>
-#if !DEPLOY
 	[AddToResourcesWindow( @"Addons\Road\Road", 10510 )]
 	[SettingsCell( typeof( RoadSettingsCell ) )]
-#endif
 	public class Road : CurveInSpace
 	{
 		bool sceneIsReady;
@@ -2044,10 +2042,11 @@ namespace NeoAxis
 				{
 					scene.EnabledInHierarchyChanged += Scene_EnabledInHierarchyChanged;
 					scene.ViewportUpdateBefore += Scene_ViewportUpdateBefore;
-#if !DEPLOY
-					TransformToolUtility.AllInstances_ModifyCommit += TransformTool_AllInstances_ModifyCommit;
-					TransformToolUtility.AllInstances_ModifyCancel += TransformTool_AllInstances_ModifyCancel;
-#endif
+					if( EngineApp.IsEditor )
+					{
+						TransformToolUtility.AllInstances_ModifyCommit += TransformTool_AllInstances_ModifyCommit;
+						TransformToolUtility.AllInstances_ModifyCancel += TransformTool_AllInstances_ModifyCancel;
+					}
 					if( logicalData == null )
 						Update();
 				}
@@ -2055,10 +2054,11 @@ namespace NeoAxis
 				{
 					scene.EnabledInHierarchyChanged -= Scene_EnabledInHierarchyChanged;
 					scene.ViewportUpdateBefore -= Scene_ViewportUpdateBefore;
-#if !DEPLOY
-					TransformToolUtility.AllInstances_ModifyCommit -= TransformTool_AllInstances_ModifyCommit;
-					TransformToolUtility.AllInstances_ModifyCancel -= TransformTool_AllInstances_ModifyCancel;
-#endif
+					if( EngineApp.IsEditor )
+					{
+						TransformToolUtility.AllInstances_ModifyCommit -= TransformTool_AllInstances_ModifyCommit;
+						TransformToolUtility.AllInstances_ModifyCancel -= TransformTool_AllInstances_ModifyCancel;
+					}
 					Update();
 				}
 			}
@@ -2070,7 +2070,6 @@ namespace NeoAxis
 			}
 		}
 
-#if !DEPLOY
 		private void TransformTool_AllInstances_ModifyCommit( ITransformTool sender )
 		{
 			if( needUpdateLogicalDataAfterEndModifyingTransformTool )
@@ -2090,7 +2089,6 @@ namespace NeoAxis
 				needUpdateLogicalDataAfterEndModifyingTransformTool = false;
 			}
 		}
-#endif
 
 		public void Update()
 		{

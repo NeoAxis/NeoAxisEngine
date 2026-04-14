@@ -14,9 +14,7 @@ namespace NeoAxis
 	/// The component for creation of visual workflow.
 	/// </summary>
 	[ResourceFileExtension( "flowgraph" )]
-#if !DEPLOY
 	[EditorControl( "NeoAxis.Editor.FlowGraphEditor" )]
-#endif
 	public class FlowGraph : Component
 	{
 		//!!!!!

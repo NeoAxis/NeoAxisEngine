@@ -9,9 +9,7 @@ namespace NeoAxis
 	/// <summary>
 	/// Lens flares effect of the light. The component must be a child of Light.
 	/// </summary>
-#if !DEPLOY
 	[NewObjectSettings( "NeoAxis.Editor.LensFlaresNewObjectSettings" )]
-#endif
 	public class LensFlares : Component//, ILightChild
 	{
 		/// <summary>

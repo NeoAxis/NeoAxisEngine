@@ -360,14 +360,14 @@ namespace Internal
 								}
 							}
 
-#if !DEPLOY
+//#if !DEPLOY
 							if( EngineApp.IsEditor )
 							{
 								EditorAPI.RegisterEditorAssembly( assembly, exportedTypes );
 								//EditorUtility.RegisterEditorExtensions( assembly, false );
 								//ResourcesWindowItems.RegisterAssembly( exportedTypes );
 							}
-#endif
+//#endif
 						}
 
 						RegisterAssemblyEvent?.Invoke( assembly, reloadingOldAssembly );
@@ -424,14 +424,14 @@ namespace Internal
 									ins.OnUnregister();
 							}
 
-#if !DEPLOY
+//#if !DEPLOY
 							if( EngineApp.IsEditor )
 							{
 								EditorAPI.UnregisterEditorAssembly( assembly );
 								//EditorUtility.RegisterEditorExtensions( assembly, true );
 								//ResourcesWindowItems.UnregisterAssembly( assembly );
 							}
-#endif
+//#endif
 						}
 
 					}

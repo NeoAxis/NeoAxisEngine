@@ -57,7 +57,6 @@ namespace NeoAxis
 		{
 			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
-#if !DEPLOY
 			//draw selection
 			if( EngineApp.IsEditor )
 			{
@@ -80,7 +79,6 @@ namespace NeoAxis
 					renderer.AddArrow( tr.Position, tr.Position + tr.Rotation.GetForward() * tr.Scale.MaxComponent(), 0, 0, true, 0 );
 				}
 			}
-#endif
 		}
 	}
 }

@@ -12,7 +12,6 @@ namespace NeoAxis
 			ResourceManager.RegisterType( "Building Type", new string[] { "buildingtype" }, typeof( Resource ) );
 			ResourceManager.RegisterType( "Building", new string[] { "building" }, typeof( Resource ) );
 
-#if !DEPLOY
 			if( EngineApp.IsEditor )
 			{
 				SceneEditorUtility.CreateObjectWhatTypeWillCreatedEvent += Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent;
@@ -22,10 +21,8 @@ namespace NeoAxis
 				//need?
 				//PreviewImagesManager.RegisterResourceType( "Building" );
 			}
-#endif
 		}
 
-#if !DEPLOY
 		private void Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent( Metadata.TypeInfo objectType, string referenceToObject, ref Metadata.TypeInfo type )
 		{
 			if( MetadataManager.GetTypeOfNetType( typeof( BuildingType ) ).IsAssignableFrom( objectType ) )
@@ -41,6 +38,5 @@ namespace NeoAxis
 				obj.BuildingType = new Reference<BuildingType>( null, referenceToObject );
 			}
 		}
-#endif
 	}
 }

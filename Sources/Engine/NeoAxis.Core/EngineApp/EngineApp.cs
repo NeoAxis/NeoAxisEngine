@@ -736,10 +736,8 @@ namespace NeoAxis
 
 			//Thread.CurrentThread.CurrentCulture = new CultureInfo( "en-US" );
 
-#if !DEPLOY
 			if( ApplicationType == ApplicationTypeEnum.Editor )
 				EditorAssembly.Init();
-#endif
 
 			platform.Init( mainModuleData );
 
@@ -1230,11 +1228,10 @@ namespace NeoAxis
 
 				if( createdInsideEngineWindow != null )
 				{
-					//!!!!!?
 					Log.Handlers.WarningHandler += Log_WarningHandler;
 					Log.Handlers.ErrorHandler += Log_ErrorHandler;
 					Log.Handlers.FatalHandler += Log_FatalHandler;
-					Log.AfterFatal += Log_AfterFatal;
+					Log.Handlers.FatalAfterHandler += Log_FatalAfterHandler;
 				}
 
 				////physics
@@ -1432,62 +1429,55 @@ namespace NeoAxis
 
 		static void CompileAndLoadProjectAssembly()// string projectName, bool rebuild = false )
 		{
-			var clientDll = false;
-			//use Project.Client.dll on a client in network mode
-			if( SystemSettings.CommandLineParameters.TryGetValue( "-client", out var projectClient ) )
-				clientDll = true;
-
-			var projectName = "Project";
-			if( clientDll )
-				projectName += ".Client";
-
-#if !DEPLOY
-
-			var server = false;
-			if( SystemSettings.CommandLineParameters.TryGetValue( "-server", out var projectServer ) )
-				server = true;
-
-			//check dotnet available
-			bool canCompile = true;
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
 			{
-				var folder = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "dotnet" );
-				if( !Directory.Exists( folder ) )
-					canCompile = false;
+				var clientDll = false;
+				//use Project.Client.dll on a client in network mode
+				if( SystemSettings.CommandLineParameters.TryGetValue( "-client", out var projectClient ) )
+					clientDll = true;
 
-				var projectSln = Path.Combine( VirtualFileSystem.Directories.Project, projectName + ".sln" );
-				if( !File.Exists( projectSln ) )
-					canCompile = false;
-
-				//the compilation on the client is disabled
+				var projectName = "Project";
 				if( clientDll )
-					canCompile = false;
+					projectName += ".Client";
 
-				if( server )
-					canCompile = false;
+				var server = false;
+				if( SystemSettings.CommandLineParameters.TryGetValue( "-server", out var projectServer ) )
+					server = true;
+
+				//check dotnet available
+				bool canCompile = true;
+				{
+					var folder = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "dotnet" );
+					if( !Directory.Exists( folder ) )
+						canCompile = false;
+
+					var projectSln = Path.Combine( VirtualFileSystem.Directories.Project, projectName + ".sln" );
+					if( !File.Exists( projectSln ) )
+						canCompile = false;
+
+					//the compilation on the client is disabled
+					if( clientDll )
+						canCompile = false;
+
+					if( server )
+						canCompile = false;
+				}
+
+				//compile
+				if( canCompile )
+				{
+					CSharpProjectFileUtility.Init();
+					CSharpProjectFileUtility.GetProjectFileCSFiles( true, false );
+					CSharpProjectFileUtility.CheckToRemoveNotExistsFilesFromProject();
+
+					if( InitSettings.ScriptingCompileProjectSolutionAtStartup )
+						CSharpProjectFileUtility.ClearAndCompileIfRequiredAtStart( clientDll );
+				}
+
+				//load
+				string fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
+				projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true, loadWithoutLocking: true );
 			}
-
-			//compile
-			if( canCompile )
-			{
-				CSharpProjectFileUtility.Init();
-				CSharpProjectFileUtility.GetProjectFileCSFiles( true, false );
-				CSharpProjectFileUtility.CheckToRemoveNotExistsFilesFromProject();
-
-				if( InitSettings.ScriptingCompileProjectSolutionAtStartup )
-					CSharpProjectFileUtility.ClearAndCompileIfRequiredAtStart( clientDll );
-			}
-
-			//load
-			string fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
-			projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true, loadWithoutLocking: true );
-
-#else
-			//if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
-			//{
-			//	string fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
-			//	projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true );
-			//}
-#endif
 		}
 
 		static void RestoreVideoModeAndMinimize()
@@ -1533,7 +1523,7 @@ namespace NeoAxis
 			}
 		}
 
-		static void Log_AfterFatal()
+		static void Log_FatalAfterHandler()
 		{
 			if( Instance != null && !AfterFatalOperations )
 				Destroy();

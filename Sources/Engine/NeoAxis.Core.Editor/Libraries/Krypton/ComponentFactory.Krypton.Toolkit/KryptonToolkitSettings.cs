@@ -1,4 +1,3 @@
-﻿#if !DEPLOY
 using System;
 using System.Text;
 using System.Drawing;
@@ -68,4 +67,3 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
     }
 }
 
-#endif

@@ -2353,7 +2353,7 @@ namespace NeoAxis
 		//						{
 		//							//default behaviour
 
-		//#if !ANDROID
+		//#_if !ANDROID
 		//							var image = viewport.SizeInPixels.X >= 1600 ? Properties.Resources.Watermark : Properties.Resources.Watermark256;
 
 		//							var size = new Vector2I( image.Size.Width, image.Size.Height );
@@ -2388,9 +2388,9 @@ namespace NeoAxis
 		//							texture.Enabled = true;
 
 		//							texture.Result.SetData( new GpuTexture.SurfaceData[] { new GpuTexture.SurfaceData( 0, 0, data ) } );
-		//#else //ANDROID
+		//#e_lse //ANDROID
 		//							texture = null;
-		//#endif //!ANDROID
+		//#e_ndif //!ANDROID
 		//						}
 
 		//						watermarkTexture = texture;

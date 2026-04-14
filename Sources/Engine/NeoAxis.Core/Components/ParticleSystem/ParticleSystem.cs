@@ -11,11 +11,9 @@ namespace NeoAxis
 	/// Defines a particle system.
 	/// </summary>
 	[ResourceFileExtension( "particle" )]
-#if !DEPLOY
 	[EditorControl( "NeoAxis.Editor.ParticleSystemEditor" )]
 	[Preview( "NeoAxis.Editor.ParticleSystemPreview" )]
 	[SettingsCell( "NeoAxis.Editor.ParticleSystemSettingsCell" )]
-#endif
 	public class ParticleSystem : ResultCompile<ParticleSystem.CompiledData>
 	{
 		int mustRecreateInstancesCounter;

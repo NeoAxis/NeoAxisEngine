@@ -735,13 +735,11 @@ namespace NeoAxis
 			return MathEx.Sqrt( sqr );
 		}
 
-#if !DISABLE_IMPLICIT
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Rectangle( RectangleF v )
 		{
 			return new Rectangle( v );
 		}
-#endif
 
 		//!!!!check
 

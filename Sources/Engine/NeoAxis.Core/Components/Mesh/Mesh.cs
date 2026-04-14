@@ -12,12 +12,10 @@ namespace NeoAxis
 	/// Represents a 3D mesh in the engine. The child mesh geometries defines the mesh data.
 	/// </summary>
 	[ResourceFileExtension( "mesh" )]
-#if !DEPLOY
 	[EditorControl( "NeoAxis.Editor.MeshEditor" )]
 	[Preview( "NeoAxis.Editor.MeshPreview" )]
 	[PreviewImage( "NeoAxis.Editor.MeshPreviewImage" )]
 	[SettingsCell( "NeoAxis.Editor.MeshSettingsCell" )]
-#endif
 	public partial class Mesh : ResultCompile<Mesh.CompiledData>
 	{
 		static ESet<Mesh> all = new ESet<Mesh>();

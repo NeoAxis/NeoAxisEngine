@@ -1893,10 +1893,8 @@ namespace NeoAxis
 				var context2 = context.ObjectInSpaceRenderingContext;
 
 				bool show = context.SceneDisplayDevelopmentDataInThisApplication && ParentScene.DisplayPhysicalObjects;
-#if !DEPLOY
 				if( !show )
 					show = context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
-#endif
 
 				if( show && physicalBody != null )
 				{

@@ -932,7 +932,6 @@ namespace NeoAxis
 			return result;
 		}
 
-#if !DISABLE_IMPLICIT
 		/// <summary>
 		/// Implicit conversion from <see cref="PlaneF"/> type to <see cref="Plane"/> type for the given value.
 		/// </summary>
@@ -942,6 +941,5 @@ namespace NeoAxis
 		{
 			return new Plane( v );
 		}
-#endif
 	}
 }

@@ -1,5 +1,5 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-//#if WINDOWS || UWP
+#if !ANDROID && !IOS && !WEB && !LINUX
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,6 +8,10 @@ using System.Security;
 
 namespace NeoAxis
 {
+	/// <summary>
+	/// Provides a read-only stream for accessing files using a Win32 file handle, enabling direct file operations through
+	/// the Windows API. The class has a special method ReadUnmanaged which work faster than the standard Read method.
+	/// </summary>
 	sealed class Win32HandleVirtualFileStream : VirtualFileStream
 	{
 		IntPtr handle;
@@ -172,9 +176,7 @@ namespace NeoAxis
 			unsafe
 			{
 				fixed( byte* pBuffer = buffer )
-				{
 					ret = ReadUnmanaged( (IntPtr)( pBuffer + offset ), count );
-				}
 			}
 			return ret;
 		}
@@ -222,4 +224,4 @@ namespace NeoAxis
 		}
 	}
 }
-//#endif
+#endif

@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -593,7 +592,6 @@ namespace NeoAxis.Editor
 
 		void PackagingUpdate()
 		{
-#if !DEPLOY
 			//check ended
 			if( packageBuildInstance != null && ( packageBuildInstance.State != ProductBuildInstance.StateEnum.Building || packageBuildInstance.BuildFunctionFinished ) )
 			{
@@ -625,7 +623,6 @@ namespace NeoAxis.Editor
 				progressBarBuild.Value = (int)( packageBuildInstance.Progress * 100 );
 			progressBarBuild.Visible = building;
 			kryptonButtonBuildCancel.Visible = building;
-#endif
 		}
 
 		bool CanPackageProject()
@@ -655,7 +652,6 @@ namespace NeoAxis.Editor
 
 		void PackageCreate( bool run )
 		{
-#if !DEPLOY
 			string folder = kryptonTextBoxPackageDestinationFolder.Text.Trim();
 			if( string.IsNullOrEmpty( folder ) )
 				return;
@@ -726,7 +722,6 @@ namespace NeoAxis.Editor
 			}
 
 			PackagingUpdate();
-#endif
 		}
 
 		private void kryptonButtonPackageCreate_Click( object sender, EventArgs e )
@@ -910,4 +905,3 @@ namespace NeoAxis.Editor
 		}
 	}
 }
-#endif

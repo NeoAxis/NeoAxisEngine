@@ -1102,16 +1102,11 @@
     <Compile Include="Components\Building\BuildingAssemblyRegistration.cs" />
     <Compile Include="Components\Building\BuildingElement.cs" />
     <Compile Include="Components\Building\BuildingManager.cs" />
-    <Compile Include="Components\Building\BuildingManagerSettingsCell.cs" />
     <Compile Include="Components\Building\BuildingModifier.cs" />
-    <Compile Include="Components\Building\BuildingSettingsCell.cs" />
     <Compile Include="Components\Building\BuildingType.cs" />
     <Compile Include="Components\Bullet\Bullet.cs" />
     <Compile Include="Components\Bullet\BulletAssemblyRegistration.cs" />
     <Compile Include="Components\Bullet\BulletType.cs" />
-    <Compile Include="Components\Bullet\BulletTypeEditor.cs" />
-    <Compile Include="Components\Bullet\BulletTypePreview.cs" />
-    <Compile Include="Components\Bullet\BulletTypePreviewImage.cs" />
     <Compile Include="Components\Button3D\Button3D.cs" />
     <Compile Include="Components\Button3D\Button3DAssemblyRegistration.cs" />
     <Compile Include="Components\Button3D\Button3DSettingsCell.cs" />

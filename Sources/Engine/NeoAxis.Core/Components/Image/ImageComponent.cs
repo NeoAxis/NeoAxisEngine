@@ -11,11 +11,9 @@ namespace NeoAxis
 	/// Represents a 2D or cubemap image. The component is useful to make cubemap textures from 6 2D images.
 	/// </summary>
 	[ResourceFileExtension( "image" )]
-#if !DEPLOY
 	[EditorControl( "NeoAxis.Editor.ImageEditor" )]
 	[Preview( "NeoAxis.Editor.ImagePreview" )]
 	[PreviewImage( "NeoAxis.Editor.ImagePreviewImage" )]
-#endif
 	public class ImageComponent : ResultCompile<GpuTexture>
 	{
 		/// <summary>

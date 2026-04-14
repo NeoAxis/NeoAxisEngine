@@ -1404,7 +1404,6 @@ namespace NeoAxis
 		//[AutoConvertType]
 		//Parse, ToString
 
-#if !DISABLE_IMPLICIT
 		/// <summary>
 		/// Implicit conversion from <see cref="BoxF"/> type to <see cref="Box"/> type for the given value.
 		/// </summary>
@@ -1414,6 +1413,5 @@ namespace NeoAxis
 		{
 			return new Box( v );
 		}
-#endif
 	}
 }

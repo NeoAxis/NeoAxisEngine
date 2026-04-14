@@ -1,5 +1,4 @@
-﻿//#if !DEPLOY
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -73,11 +72,9 @@ namespace NeoAxis.Editor
 
 		/////////////////////////////////////////
 
-#if !DEPLOY
-		public abstract void ImportFBX( ImportGeneral.Settings settings, out string error );
-		public abstract void ImportAssimp( ImportGeneral.Settings settings, out string error );
+		public abstract void ImportFBX( object/*ImportGeneral.Settings*/ settings, out string error );
+		public abstract void ImportAssimp( object/*ImportGeneral.Settings*/ settings, out string error );
 		public abstract bool ExportToFBX( Mesh sourceMesh, string realFileName, out string error );
-#endif
 
 		/////////////////////////////////////////
 
@@ -137,11 +134,9 @@ namespace NeoAxis.Editor
 
 		public abstract void Product_Store_ImageGenerator_WriteBitmapToStream( Stream writeStream, Product_Store.ImageGenerator.ImageFormat writeImageFormat, Vector2I imageSizeRender, Vector2I imageSizeOutput, IntPtr imageData );
 
-#if !DEPLOY
 		public abstract EditorContextMenu.Item EditorContextMenuNewItem( string text, EventHandler clickHandler );
 		public abstract EditorContextMenu.Separator EditorContextMenuNewSeparator();
 		public abstract void EditorContextMenuShow( ICollection<EditorContextMenu.ItemBase> items, Vector2I? screenPosition );
-#endif
 
 		public abstract void AfterFatalShowDialogAndSaveDocuments( string errorText, ref bool skipLogFatal );
 
@@ -158,5 +153,3 @@ namespace NeoAxis.Editor
 		public abstract bool ShowSaveFileDialog( string initialDirectory, string initialFileName, string filter, IntPtr ownerWindowHandle, out string resultFileName );
 	}
 }
-
-//#endif

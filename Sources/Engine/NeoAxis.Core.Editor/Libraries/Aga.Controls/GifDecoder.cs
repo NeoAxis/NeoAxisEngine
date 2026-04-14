@@ -1,4 +1,3 @@
-#if !DEPLOY
 #pragma warning disable 675 // Bitwise-or operator used on a sign-extended operand
 
 #region Java Info
@@ -863,5 +862,3 @@ namespace Internal.Aga.Controls
 		}
 	}
 }
-
-#endif

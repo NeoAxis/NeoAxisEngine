@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class HCItemProjectRibbonAndToolbarActionsForm
 	{
@@ -315,5 +314,3 @@ namespace NeoAxis.Editor
 		private Internal.ComponentFactory.Krypton.Toolkit.KryptonSplitContainer kryptonSplitContainer2;
 	}
 }
-
-#endif

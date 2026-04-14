@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class WorkspaceWindow
 	{
@@ -54,5 +53,3 @@ namespace NeoAxis.Editor
 		private Internal.ComponentFactory.Krypton.Docking.KryptonDockableWorkspace kryptonDockableWorkspace;
 	}
 }
-
-#endif

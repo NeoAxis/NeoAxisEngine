@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class BackstageMenu
 	{
@@ -796,5 +795,3 @@ namespace NeoAxis.Editor
 		//private EngineLabel labelExTokenTransactions;
 	}
 }
-
-#endif

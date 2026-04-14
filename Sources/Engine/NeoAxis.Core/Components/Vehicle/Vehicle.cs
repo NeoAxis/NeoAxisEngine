@@ -1425,7 +1425,6 @@ namespace NeoAxis
 				if( !showLabels )
 					context2.disableShowingLabelForThisObject = true;
 
-#if !DEPLOY
 				//draw selection, touch Mesh of type
 				if( EngineApp.IsEditor )
 				{
@@ -1466,8 +1465,6 @@ namespace NeoAxis
 					//	type.RearWheelMesh.Touch();
 					//}
 				}
-#endif
-
 			}
 		}
 

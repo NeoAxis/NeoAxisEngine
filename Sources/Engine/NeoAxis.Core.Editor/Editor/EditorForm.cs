@@ -1113,7 +1113,6 @@ namespace NeoAxis.Editor
 
 		void UpdateRecentProjectsInRegistry()
 		{
-#if !DEPLOY
 			string recentProjects = "";
 			try
 			{
@@ -1152,7 +1151,6 @@ namespace NeoAxis.Editor
 				}
 			}
 			catch { }
-#endif
 		}
 
 		private void EditorForm_Activated( object sender, EventArgs e )

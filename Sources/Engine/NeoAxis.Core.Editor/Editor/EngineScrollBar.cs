@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -989,8 +988,6 @@ namespace NeoAxis.Editor//ProXoft.WinForms
 
 		void DrawArrowButton( Graphics g, System.Drawing.Rectangle bounds, ScrollBarArrowButtonState state )
 		{
-#if !DEPLOY
-
 			Color color = Color.Red;
 			Color color2 = Color.Red;
 			switch( state )
@@ -1177,7 +1174,6 @@ namespace NeoAxis.Editor//ProXoft.WinForms
 
 			//ScrollBarRenderer.DrawArrowButton( g, bounds, state );
 
-#endif
 		}
 
 		void DrawTrack( Graphics g, System.Drawing.Rectangle bounds, ScrollBarState state )
@@ -1199,12 +1195,10 @@ namespace NeoAxis.Editor//ProXoft.WinForms
 				break;
 			}
 
-#if !DEPLOY
 			using( var brush = new SolidBrush( color ) )
 			{
 				g.FillRectangle( brush, bounds );
 			}
-#endif
 		}
 
 		void DrawUpperVerticalTrack( Graphics g, System.Drawing.Rectangle bounds, ScrollBarState state )
@@ -1265,12 +1259,10 @@ namespace NeoAxis.Editor//ProXoft.WinForms
 				break;
 			}
 
-#if !DEPLOY
 			using( var brush = new SolidBrush( color ) )
 			{
 				graphics.FillRectangle( brush, rec );
 			}
-#endif
 
 			//ScrollBarState state = GetScrollBarAreaState( EnhancedScrollBarMouseLocation.Thumb );
 			//System.Drawing.Rectangle rec;
@@ -2020,4 +2012,3 @@ namespace NeoAxis.Editor//ProXoft.WinForms
 	//#endregion
 
 }
-#endif

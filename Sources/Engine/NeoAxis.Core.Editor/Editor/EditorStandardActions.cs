@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -31,7 +30,6 @@ namespace NeoAxis.Editor
 				return;
 			initialized = true;
 
-#if !DEPLOY
 			RegisterGeneral();
 			RegisterWindows();
 			RegisterScene();
@@ -42,12 +40,9 @@ namespace NeoAxis.Editor
 			RegisterTools();
 			RegisterCamera();
 			RegisterUI();
-#endif
 		}
 
 		/////////////////////////////////////////
-
-#if !DEPLOY
 
 		static void RegisterGeneral()
 		{
@@ -5062,10 +5057,5 @@ namespace NeoAxis.Editor
 			}
 
 		}
-
-#endif
-
 	}
 }
-
-#endif

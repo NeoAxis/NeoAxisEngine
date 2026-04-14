@@ -11,9 +11,7 @@ namespace NeoAxis
 	/// A tool for procedural scene generation.
 	/// </summary>
 	[AddToResourcesWindow( @"Base\Scene objects\Additional\World Generator", 0 )]
-#if !DEPLOY
 	[Editor.SettingsCell( typeof( Editor.WorldGeneratorSettingsCell ) )]
-#endif
 	public class WorldGenerator : Component
 	{
 		/// <summary>
@@ -870,8 +868,6 @@ namespace NeoAxis
 			}
 		}
 
-#if !DEPLOY
-
 		//TemplateData
 
 		public delegate void GetTemplateDataDelegate( WorldGenerator sender, ref TemplateData data );
@@ -1384,8 +1380,5 @@ namespace NeoAxis
 			if( groupOfObjects != null )
 				groupOfObjects.Enabled = true;
 		}
-
-#endif
-
 	}
 }

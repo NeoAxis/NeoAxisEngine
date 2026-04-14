@@ -9,11 +9,9 @@ namespace NeoAxis
 	/// <summary>
 	/// A building manager to control all buildings on the scene.
 	/// </summary>
-#if !DEPLOY
 	[AddToResourcesWindow( @"Addons\Building\Building Manager", 350 )]
-	[SettingsCell( typeof( BuildingManagerSettingsCell ) )]
+	[SettingsCell( "NeoAxis.Editor.BuildingManagerSettingsCell" )]
 	[WhenCreatingShowWarningIfItAlreadyExists]
-#endif
 	public class BuildingManager : Component
 	{
 		/// <summary>

@@ -14,9 +14,7 @@ namespace NeoAxis
 	/// <summary>
 	/// An object in a scene designed to store a large number of similar objects.
 	/// </summary>
-#if !DEPLOY
 	[SettingsCell( "NeoAxis.Editor.GroupOfObjectsSettingsCell" )]
-#endif
 	public partial class GroupOfObjects : Component, IVisibleInHierarchy
 	{
 		const int formatVersion = 2;
@@ -3207,7 +3205,6 @@ namespace NeoAxis
 		{
 			//_tempSectorsGetSceneData.Clear();
 
-#if !DEPLOY
 			var context2 = context.ObjectInSpaceRenderingContext;
 			if( context2.selectedObjects.Contains( this ) )
 			{
@@ -3222,7 +3219,6 @@ namespace NeoAxis
 					}
 				}
 			}
-#endif
 		}
 
 		//private void Scene_GetRenderSceneDataAfterObjects( Scene scene, ViewportRenderingContext context )

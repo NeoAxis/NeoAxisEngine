@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using Internal.ComponentFactory.Krypton.Toolkit;
 using System;
 using System.Drawing;
@@ -50,7 +49,6 @@ namespace NeoAxis.Editor
 				color[ n ] = c;
 			}
 
-#if !ANDROID && !IOS
 			if( PreviewColor.Alpha != 1 )
 			{
 				using( HatchBrush brush = new HatchBrush( HatchStyle.LargeCheckerBoard,
@@ -67,9 +65,6 @@ namespace NeoAxis.Editor
 			{
 				e.Graphics.FillRectangle( brush, rect );
 			}
-#endif //!ANDROID
 		}
 	}
 }
-
-#endif

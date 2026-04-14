@@ -146,11 +146,9 @@ namespace NeoAxis
 		[AutoConvertType]
 		public Radian ToRadian() { return new Radian( (double)value ); }
 
-		//#if !DISABLE_IMPLICIT
 		//		public static implicit operator Radian( RadianF v )
 		//		{
 		//			return (double)v;
 		//		}
-		//#endif
 	}
 }

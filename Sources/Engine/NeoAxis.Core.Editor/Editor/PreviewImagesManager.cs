@@ -1,4 +1,3 @@
-#if !DEPLOY
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
@@ -244,7 +243,6 @@ namespace NeoAxis.Editor
 
 			public void Update()
 			{
-#if !DEPLOY
 				if( Working )
 				{
 					try
@@ -331,7 +329,6 @@ namespace NeoAxis.Editor
 						Log.Warning( e.Message );
 					}
 				}
-#endif
 			}
 
 			public void ClearTask()
@@ -437,7 +434,6 @@ namespace NeoAxis.Editor
 		{
 			cacheNotExists = false;
 
-#if !DEPLOY
 			var item = GetLoadedPreview( virtualFileName );
 			if( item == null || item.needReload )
 			{
@@ -481,9 +477,6 @@ namespace NeoAxis.Editor
 			}
 
 			return item;
-#else
-			return null;
-#endif
 		}
 
 		public static Image GetImageForResource( string realFileName, bool forTreeView )
@@ -706,5 +699,3 @@ namespace NeoAxis.Editor
 
 	}
 }
-
-#endif

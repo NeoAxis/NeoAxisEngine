@@ -1,5 +1,5 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-#if !DEPLOY
+//#if !DEPLOY
 
 //using Microsoft.Build.Evaluation;
 //using Microsoft.Build.Utilities;
@@ -939,34 +939,34 @@ namespace NeoAxis
 	}
 }
 
-#else
+//#else
 
-using System;
-using System.Collections.Generic;
+//using System;
+//using System.Collections.Generic;
 
-namespace NeoAxis
-{
-	static class CSharpProjectFileUtility
-	{
-		public static void Init()
-		{
-		}
+//namespace NeoAxis
+//{
+//	static class CSharpProjectFileUtility
+//	{
+//		public static void Init()
+//		{
+//		}
 
-		public static void Shutdown()
-		{
-		}
+//		public static void Shutdown()
+//		{
+//		}
 
-		public static bool UpdateProjectFile( ICollection<string> addFiles, ICollection<string> removeFiles, out string error )
-		{
-			error = "";
-			return false;
-		}
+//		public static bool UpdateProjectFile( ICollection<string> addFiles, ICollection<string> removeFiles, out string error )
+//		{
+//			error = "";
+//			return false;
+//		}
 
-		public static ESet<string> GetProjectFileCSFiles( bool reload, bool getFullPaths )
-		{
-			return new ESet<string>();
-		}
-	}
-}
+//		public static ESet<string> GetProjectFileCSFiles( bool reload, bool getFullPaths )
+//		{
+//			return new ESet<string>();
+//		}
+//	}
+//}
 
-#endif
+//#endif

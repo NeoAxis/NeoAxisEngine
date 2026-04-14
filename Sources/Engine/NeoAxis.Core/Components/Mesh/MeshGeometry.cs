@@ -3304,7 +3304,7 @@ namespace NeoAxis
 		//	return ExtractActualGeometry( Vertices, VertexStructure, Indices, VirtualizedData, checkData, out error );
 		//}
 
-#if !DEPLOY
+//#if !DEPLOY
 
 		static unsafe void VerticesWriteChannel<T>( VertexElement element, T[] data, byte[] writeToVertices, int vertexSize, int vertexCount ) where T : unmanaged
 		{
@@ -3616,6 +3616,6 @@ namespace NeoAxis
 			//}
 		}
 
-#endif
+//#endif
 	}
 }

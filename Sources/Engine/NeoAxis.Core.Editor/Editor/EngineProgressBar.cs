@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -46,8 +45,6 @@ namespace NeoAxis.Editor
 
 		protected override void OnPaint( PaintEventArgs e )
 		{
-#if !DEPLOY
-
 			var rect = new System.Drawing.Rectangle( 0, 0, Width, Height );
 
 			using( var brush = new SolidBrush( EditorAPI2.DarkTheme ? Color.FromArgb( 40, 40, 40 ) : Color.FromArgb( 230, 230, 230 ) ) )
@@ -60,8 +57,6 @@ namespace NeoAxis.Editor
 			var r = new System.Drawing.Rectangle( 2, 2, (int)( rect.Width * ( (double)Value / Maximum ) ) - 4, rect.Height - 4 );
 			using( var brush = new SolidBrush( EditorAPI2.DarkTheme ? Color.FromArgb( 0, 150, 0 ) : Color.FromArgb( 0, 190, 0 ) ) )
 				e.Graphics.FillRectangle( brush, r );
-
-#endif
 		}
 	}
 
@@ -109,5 +104,3 @@ namespace NeoAxis.Editor
 	//		}
 	//	}
 }
-
-#endif

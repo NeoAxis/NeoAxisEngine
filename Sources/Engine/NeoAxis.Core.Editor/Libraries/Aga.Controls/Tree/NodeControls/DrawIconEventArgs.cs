@@ -1,4 +1,3 @@
-#if !DEPLOY
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,5 +19,3 @@ namespace Internal.Aga.Controls.Tree.NodeControls
 		public DrawIconEventArgs(TreeNodeAdv node, NodeControl control, DrawContext context) : base(node, control, context) {}
 	}
 }
-
-#endif

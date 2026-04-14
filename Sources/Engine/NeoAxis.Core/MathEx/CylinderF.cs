@@ -187,12 +187,10 @@ namespace NeoAxis
 		//Parse, ToString
 
 
-#if !DISABLE_IMPLICIT
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Cylinder( CylinderF v )
 		{
 			return new Cylinder( v );
 		}
-#endif
 	}
 }

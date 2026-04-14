@@ -11,12 +11,10 @@ namespace NeoAxis
 	/// Represents a type of the road.
 	/// </summary>
 	[ResourceFileExtension( "roadtype" )]
-#if !DEPLOY
 	[AddToResourcesWindow( @"Addons\Road\Road Type", 10500 )]
 	[EditorControl( typeof( RoadTypeEditor ) )]
 	[Preview( typeof( RoadTypePreview ) )]
 	[PreviewImage( typeof( RoadTypePreviewImage ) )]
-#endif
 	public class RoadType : Component
 	{
 		int version;

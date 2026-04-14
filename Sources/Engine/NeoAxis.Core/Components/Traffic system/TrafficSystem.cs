@@ -16,10 +16,8 @@ namespace NeoAxis
 	/// <summary>
 	/// A system to simulate ground and fly traffic.
 	/// </summary>
-#if !DEPLOY
 	[AddToResourcesWindow( @"Addons\Traffic System\Traffic System", 10580 )]
 	[SettingsCell( typeof( TrafficSystemSettingsCell ) )]
-#endif
 	public class TrafficSystem : Component
 	{
 		static FastRandom staticRandom = new FastRandom( 0 );

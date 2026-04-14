@@ -1,4 +1,3 @@
-#if !DEPLOY
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -82,5 +81,3 @@ namespace Internal.Aga.Controls.Tree
 		public static extern int GetDeviceCaps(IntPtr hDC, int nIndex);
 	}
 }
-
-#endif

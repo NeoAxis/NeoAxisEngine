@@ -1,4 +1,3 @@
-#if !DEPLOY
 using System;
 using System.Windows.Forms;
 namespace Internal.Aga.Controls.Tree
@@ -36,5 +35,3 @@ namespace Internal.Aga.Controls.Tree
 		}
 	}
 }
-
-#endif

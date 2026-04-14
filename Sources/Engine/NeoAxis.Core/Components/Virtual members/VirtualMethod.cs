@@ -10,9 +10,7 @@ namespace NeoAxis
 	/// <summary>
 	/// The component for adding a virtual method to the parent component.
 	/// </summary>
-#if !DEPLOY
 	[NewObjectSettings( "NeoAxis.Editor.VirtualMethodNewObjectSettings" )]
-#endif
 	public class VirtualMethod : VirtualMember
 	{
 		Metadata.Method createdMethod;

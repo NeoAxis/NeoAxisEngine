@@ -34,10 +34,8 @@ namespace NeoAxis.Editor
 		{
 			get
 			{
-#if !DEPLOY
 				if( EditorAssemblyInterface.Instance != null )
 					return EditorAssemblyInterface.Instance.GetDarkTheme();
-#endif
 				return true;
 			}
 		}

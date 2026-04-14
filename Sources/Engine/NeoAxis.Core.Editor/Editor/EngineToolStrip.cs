@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-using System;
+﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
@@ -104,5 +103,3 @@ namespace NeoAxis.Editor
 		}
 	}
 }
-
-#endif

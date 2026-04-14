@@ -5,9 +5,6 @@
 // Copyright © AForge.NET, 2007-2011
 // contacts@aforgenet.com
 
-#if !DEPLOY
-
-//
 namespace NeoAxis//Accord.Video.VFW
 {
 	using System;
@@ -790,5 +787,3 @@ namespace NeoAxis//Accord.Video.VFW
 		}
 	}
 }
-
-#endif

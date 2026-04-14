@@ -70,7 +70,7 @@ namespace NeoAxis
 				directory.Delete( true );
 		}
 
-#if !DEPLOY
+		//#if !DEPLOY
 		static bool GenerateFile( string sourceRealFileName, bool generateIrradiance, int destSize, string destRealFileName, List<Vector3> outIrradianceValues, out string error )
 		{
 			var tempDirectory = GetTemporaryDirectory();
@@ -124,7 +124,7 @@ namespace NeoAxis
 						}
 					}
 				}
-end16bit:;
+				end16bit:;
 			}
 
 			var surfaces = new List<DDSTextureTools.DDSImage.Surface>();
@@ -438,7 +438,7 @@ end16bit:;
 			error = "";
 			return true;
 		}
-#endif
+		//#endif
 
 		static bool GetInfoFromSourceFile( string sourceFileName, out string hash, out int sourceFileSize )
 		{
@@ -483,12 +483,22 @@ end16bit:;
 			bool needUpdate = sourceFileHash != cacheSourceFileHash || sourceFileSize != cacheSourceFileSize;
 			if( needUpdate || forceUpdate )
 			{
-#if !DEPLOY
-				return Generate( sourceFileName, sourceFileHash, sourceFileSize, specifiedSize, out error );
-#else
-				error = "The current platform is not support cubemap processing. To precompile run the scene on the development platform.";
-				return false;
-#endif
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
+				{
+					return Generate( sourceFileName, sourceFileHash, sourceFileSize, specifiedSize, out error );
+				}
+				else
+				{
+					error = "The current platform is not support cubemap processing. To precompile run the scene on the development platform.";
+					return false;
+				}
+
+				//#if !DEPLOY
+				//				return Generate( sourceFileName, sourceFileHash, sourceFileSize, specifiedSize, out error );
+				//#else
+				//				error = "The current platform is not support cubemap processing. To precompile run the scene on the development platform.";
+				//				return false;
+				//#endif
 			}
 			error = "";
 			return true;

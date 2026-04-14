@@ -13,11 +13,9 @@ namespace NeoAxis
 	/// <summary>
 	/// Represents an area that filled by surface.
 	/// </summary>
-#if !DEPLOY
 	[SettingsCell( "NeoAxis.Editor.SurfaceAreaSettingsCell" )]
 	[ObjectCreationMode( "NeoAxis.Editor.SurfaceAreaCreationMode" )]
 	[AddToResourcesWindow( @"Base\Scene objects\Areas\Surface Area", 0 )]
-#endif
 	public class SurfaceArea : Area
 	{
 		bool needUpdate;

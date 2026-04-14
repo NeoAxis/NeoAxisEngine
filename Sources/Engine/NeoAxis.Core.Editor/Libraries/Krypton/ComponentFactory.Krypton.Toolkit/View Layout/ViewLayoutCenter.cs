@@ -1,4 +1,3 @@
-#if !DEPLOY
 // *****************************************************************************
 // 
 //  © Component Factory Pty Ltd 2012. All rights reserved.
@@ -303,5 +302,3 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
 		#endregion
 	}
 }
-
-#endif

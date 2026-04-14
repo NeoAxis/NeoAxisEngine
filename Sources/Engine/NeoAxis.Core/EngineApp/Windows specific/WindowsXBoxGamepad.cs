@@ -44,33 +44,27 @@ namespace NeoAxis
 				switch( n )
 				{
 				case 0: // left thumb x
-					axis = new JoystickInputDevice.Axis(
-						JoystickAxes.XBox360_LeftThumbstickX, new RangeF( -1, 1 ), false );
+					axis = new JoystickInputDevice.Axis( JoystickAxes.XBox360_LeftThumbstickX, new RangeF( -1, 1 ), false );
 					break;
 
 				case 1: // left thumb y
-					axis = new JoystickInputDevice.Axis(
-						JoystickAxes.XBox360_LeftThumbstickY, new RangeF( -1, 1 ), false );
+					axis = new JoystickInputDevice.Axis( JoystickAxes.XBox360_LeftThumbstickY, new RangeF( -1, 1 ), false );
 					break;
 
-				case 2:	// right thumb x
-					axis = new JoystickInputDevice.Axis(
-						JoystickAxes.XBox360_RightThumbstickX, new RangeF( -1, 1 ), false );
+				case 2: // right thumb x
+					axis = new JoystickInputDevice.Axis( JoystickAxes.XBox360_RightThumbstickX, new RangeF( -1, 1 ), false );
 					break;
 
 				case 3: // right thumb y
-					axis = new JoystickInputDevice.Axis(
-						JoystickAxes.XBox360_RightThumbstickY, new RangeF( -1, 1 ), false );
+					axis = new JoystickInputDevice.Axis( JoystickAxes.XBox360_RightThumbstickY, new RangeF( -1, 1 ), false );
 					break;
 
 				case 4: // left trigger
-					axis = new JoystickInputDevice.Axis(
-						JoystickAxes.XBox360_LeftTrigger, new RangeF( 0, 1 ), false );
+					axis = new JoystickInputDevice.Axis( JoystickAxes.XBox360_LeftTrigger, new RangeF( 0, 1 ), false );
 					break;
 
 				case 5: // right trigger
-					axis = new JoystickInputDevice.Axis(
-						JoystickAxes.XBox360_RightTrigger, new RangeF( 0, 1 ), false );
+					axis = new JoystickInputDevice.Axis( JoystickAxes.XBox360_RightTrigger, new RangeF( 0, 1 ), false );
 					break;
 				}
 
@@ -191,13 +185,11 @@ namespace NeoAxis
 
 					if( pressed )
 					{
-						InputDeviceManager.Instance.SendEvent(
-							new JoystickButtonDownEvent( this, Buttons[ n ] ) );
+						InputDeviceManager.Instance.SendEvent( new JoystickButtonDownEvent( this, Buttons[ n ] ) );
 					}
 					else
 					{
-						InputDeviceManager.Instance.SendEvent(
-							new JoystickButtonUpEvent( this, Buttons[ n ] ) );
+						InputDeviceManager.Instance.SendEvent( new JoystickButtonUpEvent( this, Buttons[ n ] ) );
 					}
 				}
 			}
@@ -211,8 +203,7 @@ namespace NeoAxis
 				if( Axes[ 0 ].Value != value )
 				{
 					Axes[ 0 ].Value = value;
-					InputDeviceManager.Instance.SendEvent(
-						new JoystickAxisChangedEvent( this, Axes[ 0 ] ) );
+					InputDeviceManager.Instance.SendEvent( new JoystickAxisChangedEvent( this, Axes[ 0 ] ) );
 				}
 			}
 
@@ -223,8 +214,7 @@ namespace NeoAxis
 				if( Axes[ 1 ].Value != value )
 				{
 					Axes[ 1 ].Value = value;
-					InputDeviceManager.Instance.SendEvent(
-						new JoystickAxisChangedEvent( this, Axes[ 1 ] ) );
+					InputDeviceManager.Instance.SendEvent( new JoystickAxisChangedEvent( this, Axes[ 1 ] ) );
 				}
 			}
 
@@ -235,8 +225,7 @@ namespace NeoAxis
 				if( Axes[ 2 ].Value != value )
 				{
 					Axes[ 2 ].Value = value;
-					InputDeviceManager.Instance.SendEvent(
-						new JoystickAxisChangedEvent( this, Axes[ 2 ] ) );
+					InputDeviceManager.Instance.SendEvent( new JoystickAxisChangedEvent( this, Axes[ 2 ] ) );
 				}
 			}
 
@@ -247,8 +236,7 @@ namespace NeoAxis
 				if( Axes[ 3 ].Value != value )
 				{
 					Axes[ 3 ].Value = value;
-					InputDeviceManager.Instance.SendEvent(
-						new JoystickAxisChangedEvent( this, Axes[ 3 ] ) );
+					InputDeviceManager.Instance.SendEvent( new JoystickAxisChangedEvent( this, Axes[ 3 ] ) );
 				}
 			}
 
@@ -258,8 +246,7 @@ namespace NeoAxis
 				if( Axes[ 4 ].Value != value )
 				{
 					Axes[ 4 ].Value = value;
-					InputDeviceManager.Instance.SendEvent(
-						new JoystickAxisChangedEvent( this, Axes[ 4 ] ) );
+					InputDeviceManager.Instance.SendEvent( new JoystickAxisChangedEvent( this, Axes[ 4 ] ) );
 				}
 			}
 
@@ -269,8 +256,7 @@ namespace NeoAxis
 				if( Axes[ 5 ].Value != value )
 				{
 					Axes[ 5 ].Value = value;
-					InputDeviceManager.Instance.SendEvent(
-						new JoystickAxisChangedEvent( this, Axes[ 5 ] ) );
+					InputDeviceManager.Instance.SendEvent( new JoystickAxisChangedEvent( this, Axes[ 5 ] ) );
 				}
 			}
 

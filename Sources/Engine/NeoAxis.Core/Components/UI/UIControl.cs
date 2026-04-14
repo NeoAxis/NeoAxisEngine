@@ -10,10 +10,8 @@ namespace NeoAxis
 	/// Base class of all UI controls.
 	/// </summary>
 	[ResourceFileExtension( "ui" )]
-#if !DEPLOY
 	[EditorControl( "NeoAxis.Editor.UIControlEditor" )]
 	//[EditorNewObjectSettings( typeof( UIControl_NewObjectSettings ) )]
-#endif
 	public class UIControl : Component, IVisibleInHierarchy//, ICanBeSelectedInHierarchy
 	{
 		//!!!!всё тут
@@ -85,9 +83,7 @@ namespace NeoAxis
 		/// </summary>
 		[DefaultValue( "" )]
 		[Category( "Common" )]
-#if !DEPLOY
 		[Editor( "NeoAxis.Editor.HCItemTextBoxDropMultiline", typeof( object ) )]
-#endif
 		public Reference<string> Text
 		{
 			get { if( _text.BeginGet() ) Text = _text.Get( this ); return _text.value; }

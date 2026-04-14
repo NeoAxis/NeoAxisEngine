@@ -617,18 +617,16 @@ namespace NeoAxis
 
 			if( staticModeEnabled )
 			{
-#if !DEPLOY
 				var context2 = context.ObjectInSpaceRenderingContext;
 				if( !context2.selectedObjects.Contains( this ) && !context2.canSelectObjects.Contains( this ) )
 				{
 					context2.disableShowingLabelForThisObject = staticModeGroupOfObjectSubGroups != null;
 					return;
 				}
-#else
-				var context2 = context.ObjectInSpaceRenderingContext;
-				context2.disableShowingLabelForThisObject = true;
-				return;
-#endif
+
+				//var context2 = context.ObjectInSpaceRenderingContext;
+				//context2.disableShowingLabelForThisObject = true;
+				//return;
 			}
 
 			//!!!!если mode == GI то лоды не нужно выбирать. другие свойства видимо тоже
@@ -689,9 +687,7 @@ namespace NeoAxis
 								var cameraDistanceMaxSquared = SceneLODUtility.GetCameraDistanceMax( cameraSettings, SpaceBounds );
 								cameraDistanceMaxSquared *= cameraDistanceMaxSquared;
 
-#if !DEPLOY
 								var allowOutlineSelect = EngineApp.IsEditor && Math.Max( context2.selectedObjects.Count, context2.canSelectObjects.Count ) <= 1000 && context.renderingPipeline.UseRenderTargets && ProjectSettings.Get.SceneEditor.SceneEditorSelectOutlineEffectEnabled;
-#endif
 
 								var item = new RenderingPipeline.RenderSceneData.MeshItem();
 								item.Creator = this;
@@ -722,7 +718,6 @@ namespace NeoAxis
 								if( specialEffects != null && specialEffects.Count != 0 )
 									item.SpecialEffects = specialEffects;
 
-#if !DEPLOY
 								//display outline effect of editor selection
 								if( allowOutlineSelect && mode == GetRenderSceneDataMode.InsideFrustum && context2.selectedObjects.Contains( this ) && EditorAllowRenderSelection )
 								{
@@ -739,7 +734,6 @@ namespace NeoAxis
 										item.SpecialEffects = new List<ObjectSpecialRenderingEffect>();
 									item.SpecialEffects.Add( effect );
 								}
-#endif
 
 								//PositionPreviousFrame
 								var previousTime = time - context.Owner.LastUpdateTimeStep;
@@ -921,7 +915,6 @@ namespace NeoAxis
 									}
 								}
 
-#if !DEPLOY
 								//display editor selection
 								if( EngineApp.IsEditor && mode == GetRenderSceneDataMode.InsideFrustum && EditorAllowRenderSelection )
 								{
@@ -951,8 +944,6 @@ namespace NeoAxis
 										}
 									}
 								}
-#endif
-
 							}
 						}
 					}
@@ -1024,9 +1015,7 @@ namespace NeoAxis
 								var cameraDistanceMaxSquared = SceneLODUtility.GetCameraDistanceMax( cameraSettings, SpaceBounds );
 								cameraDistanceMaxSquared *= cameraDistanceMaxSquared;
 
-#if !DEPLOY
 								var allowOutlineSelect = EngineApp.IsEditor && Math.Max( context2.selectedObjects.Count, context2.canSelectObjects.Count ) <= 1000 && context.renderingPipeline.UseRenderTargets && ProjectSettings.Get.SceneEditor.SceneEditorSelectOutlineEffectEnabled;
-#endif
 
 								var item = new RenderingPipeline.RenderSceneData.MeshItem();
 								item.Creator = this;
@@ -1064,7 +1053,6 @@ namespace NeoAxis
 								if( specialEffects != null && specialEffects.Count != 0 )
 									item.SpecialEffects = specialEffects;
 
-#if !DEPLOY
 								//display outline effect of editor selection
 								if( allowOutlineSelect && mode == GetRenderSceneDataMode.InsideFrustum && context2.selectedObjects.Contains( this ) )
 								{
@@ -1081,7 +1069,6 @@ namespace NeoAxis
 										item.SpecialEffects = new List<ObjectSpecialRenderingEffect>();
 									item.SpecialEffects.Add( effect );
 								}
-#endif
 
 								//PositionPreviousFrame
 								var previousTime = time - context.Owner.LastUpdateTimeStep;
@@ -1264,7 +1251,6 @@ namespace NeoAxis
 									}
 								}
 
-#if !DEPLOY
 								//display editor selection
 								if( EngineApp.IsEditor && mode == GetRenderSceneDataMode.InsideFrustum )
 								{
@@ -1301,8 +1287,6 @@ namespace NeoAxis
 										}
 									}
 								}
-#endif
-
 							}
 						}
 

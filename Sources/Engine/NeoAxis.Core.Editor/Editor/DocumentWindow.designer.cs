@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class DocumentWindow
 	{
@@ -42,5 +41,3 @@ namespace NeoAxis.Editor
 		private System.Windows.Forms.Timer timer1;
 	}
 }
-
-#endif

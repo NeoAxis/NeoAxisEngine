@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class OKCancelTextBoxForm
 	{
@@ -124,4 +123,3 @@ namespace NeoAxis.Editor
 		private System.Windows.Forms.Label labelError;
 	}
 }
-#endif

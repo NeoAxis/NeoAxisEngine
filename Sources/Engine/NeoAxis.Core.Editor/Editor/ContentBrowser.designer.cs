@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
     partial class ContentBrowser
     {
@@ -802,5 +801,3 @@ namespace NeoAxis.Editor
 		private NeoAxis.Editor.EngineToolTip toolTip2;
 	}
 }
-
-#endif

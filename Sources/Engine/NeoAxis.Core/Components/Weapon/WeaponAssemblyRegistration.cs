@@ -14,7 +14,6 @@ namespace NeoAxis
 		{
 			ResourceManager.RegisterType( "Weapon Type", new string[] { "weapontype" }, typeof( Resource ) );
 
-#if !DEPLOY
 			if( EngineApp.IsEditor )
 			{
 				SceneEditorUtility.CreateObjectWhatTypeWillCreatedEvent += Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent;
@@ -22,10 +21,8 @@ namespace NeoAxis
 
 				EditorAPI.PreviewImagesManager_RegisterResourceType( "Weapon Type" );
 			}
-#endif
 		}
 
-#if !DEPLOY
 		private void Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent( Metadata.TypeInfo objectType, string referenceToObject, ref Metadata.TypeInfo type )
 		{
 			if( MetadataManager.GetTypeOfNetType( typeof( WeaponType ) ).IsAssignableFrom( objectType ) )
@@ -41,7 +38,5 @@ namespace NeoAxis
 				obj.WeaponType = new Reference<WeaponType>( null, referenceToObject );
 			}
 		}
-#endif
-
 	}
 }

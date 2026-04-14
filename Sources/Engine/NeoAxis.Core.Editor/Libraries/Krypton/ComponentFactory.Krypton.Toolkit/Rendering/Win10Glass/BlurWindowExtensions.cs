@@ -1,4 +1,3 @@
-#if !DEPLOY
 //using System;
 //using System.Runtime.InteropServices;
 //using System.Windows.Forms;
@@ -126,5 +125,3 @@
 //        }
 //    }
 //}
-
-#endif

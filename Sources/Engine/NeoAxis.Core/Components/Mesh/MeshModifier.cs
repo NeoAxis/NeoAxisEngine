@@ -10,10 +10,8 @@ namespace NeoAxis
 	/// <summary>
 	/// Declares modifier of the mesh. Using mesh modifiers, you can change the output data provided by the mesh; they do not change the original mesh data.
 	/// </summary>
-#if !DEPLOY
 	[SettingsCell( "NeoAxis.Editor.MeshModifierSettingsCell" )]
 	[AddToResourcesWindow( @"Base\Scene common\Mesh modifiers\Mesh Modifier", -10000 )]
-#endif
 	public class MeshModifier : Component
 	{
 		protected override void OnEnabledInHierarchyChanged()

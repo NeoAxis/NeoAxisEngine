@@ -12,7 +12,7 @@ namespace NeoAxis.Editor
 	{
 		internal static Metadata.GetMembersContext getMemberContextNoFilter = new Metadata.GetMembersContext( false );
 
-#if !DEPLOY
+		//#if !DEPLOY
 		public static bool AllowConfigureComponentTypeSettings = true;
 		public static bool AllowSeparateSettings = true;
 
@@ -386,6 +386,6 @@ namespace NeoAxis.Editor
 			EditorActionVisibleFilter?.Invoke( action, ref result );
 			return result;
 		}
-#endif
+		//#endif
 	}
 }

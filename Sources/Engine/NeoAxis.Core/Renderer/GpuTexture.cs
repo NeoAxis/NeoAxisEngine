@@ -527,14 +527,12 @@ namespace NeoAxis
 			if( directoryName != "" && !Directory.Exists( directoryName ) )
 				Directory.CreateDirectory( directoryName );
 
-#if !DEPLOY
 			ScreenNotifications.IStickyNotificationItem notification = null;
 			if( EngineApp.IsEditor )
 			{
 				var text = string.Format( EditorLocalization.Translate( "Texture", "Compressing \'{0}\'..." ), Path.GetFileName( loadFileNames[ 0 ] ) );
 				notification = ScreenNotifications.ShowSticky( text );
 			}
-#endif
 
 			try
 			{
@@ -554,9 +552,7 @@ namespace NeoAxis
 			}
 			finally
 			{
-#if !DEPLOY
 				notification?.Close();
-#endif
 			}
 
 			error = "";

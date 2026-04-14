@@ -1,4 +1,3 @@
-#if !DEPLOY
 using Microsoft.Win32;
 
 //Seb add
@@ -49,5 +48,3 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
 //        }
     }
 }
-
-#endif

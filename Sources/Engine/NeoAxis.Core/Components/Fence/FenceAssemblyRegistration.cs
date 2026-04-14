@@ -13,7 +13,6 @@ namespace NeoAxis
 		{
 			ResourceManager.RegisterType( "Fence Type", new string[] { "fencetype" }, typeof( Resource ) );
 
-#if !DEPLOY
 			if( EngineApp.IsEditor )
 			{
 				SceneEditorUtility.CreateObjectWhatTypeWillCreatedEvent += Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent;
@@ -23,10 +22,8 @@ namespace NeoAxis
 
 				Product_Store.CreateScreenshots += Product_Store_CreateScreenshots;
 			}
-#endif
 		}
 
-#if !DEPLOY
 		private void Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent( Metadata.TypeInfo objectType, string referenceToObject, ref Metadata.TypeInfo type )
 		{
 			if( MetadataManager.GetTypeOfNetType( typeof( FenceType ) ).IsAssignableFrom( objectType ) )
@@ -112,6 +109,5 @@ namespace NeoAxis
 				handled = true;
 			}
 		}
-#endif
 	}
 }

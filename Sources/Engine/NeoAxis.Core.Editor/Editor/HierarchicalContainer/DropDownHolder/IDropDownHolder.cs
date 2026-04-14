@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -19,5 +18,3 @@ namespace NeoAxis.Editor
 		bool ProcessResizing( ref Message m );
 	}
 }
-
-#endif

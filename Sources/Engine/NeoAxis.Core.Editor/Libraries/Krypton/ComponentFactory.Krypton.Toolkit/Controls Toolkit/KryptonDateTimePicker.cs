@@ -1,4 +1,3 @@
-#if !DEPLOY
 //// *****************************************************************************
 //// 
 ////  © Component Factory Pty Ltd 2012. All rights reserved.
@@ -2579,5 +2578,3 @@
 //        #endregion
 //    }
 //}
-
-#endif

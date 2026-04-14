@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -305,7 +304,6 @@ namespace NeoAxis.Editor
 
 			//PaintLabelName( e );
 
-#if !DEPLOY
 			if( HierarchicalContainer.DrawSplitter )
 			{
 				var color = EditorAPI2.DarkTheme ? Color.FromArgb( 65, 65, 65 ) : Color.FromArgb( 225, 225, 225 );
@@ -326,7 +324,6 @@ namespace NeoAxis.Editor
 					}
 				}
 			}
-#endif
 		}
 
 		public override string ToString()
@@ -342,5 +339,3 @@ namespace NeoAxis.Editor
 		}
 	}
 }
-
-#endif

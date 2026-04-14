@@ -10,9 +10,7 @@ namespace NeoAxis
 	/// <summary>
 	/// The component is capturing surroundings of the scene to get reflections and to get ambient lighting data.
 	/// </summary>
-#if !DEPLOY
 	[SettingsCell( "NeoAxis.Editor.ReflectionProbeSettingsCell" )]
-#endif
 	public class ReflectionProbe : ObjectInSpace
 	{
 		//Image captureTexture;

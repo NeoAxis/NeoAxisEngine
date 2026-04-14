@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class EngineForm
 	{
@@ -37,4 +36,3 @@ namespace NeoAxis.Editor
 		#endregion
 	}
 }
-#endif

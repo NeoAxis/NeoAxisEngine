@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class DocumentWindowWithViewport : IDocumentWindowWithViewport
 	{
@@ -48,5 +47,3 @@ namespace NeoAxis.Editor
 		private NeoAxis.Editor.EngineViewportControl viewportControl;
 	}
 }
-
-#endif

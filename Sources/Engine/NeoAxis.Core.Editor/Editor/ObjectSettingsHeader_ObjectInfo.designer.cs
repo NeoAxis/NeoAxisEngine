@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
     partial class ObjectSettingsHeader_ObjectInfo
 	{
@@ -125,5 +124,3 @@ namespace NeoAxis.Editor
 		private NeoAxis.Editor.EngineToolTip toolTip1;
 	}
 }
-
-#endif

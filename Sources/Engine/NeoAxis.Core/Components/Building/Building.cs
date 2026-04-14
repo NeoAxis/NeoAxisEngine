@@ -12,12 +12,11 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "building" )]
 	[AddToResourcesWindow( @"Addons\Building\Building", 320 )]
-#if !DEPLOY
-	[SettingsCell( typeof( BuildingSettingsCell ) )]
+	[SettingsCell( "NeoAxis.Editor.BuildingSettingsCell" )]
+	//[SettingsCell( typeof( BuildingSettingsCell ) )]
 	//[EditorControl( typeof( Editor.BuildingEditor ), true )]
 	//[Preview( typeof( Editor.BuildingPreview ) )]
 	//[PreviewImage( typeof( Editor.BuildingPreviewImage ) )]
-#endif
 	public class Building : ObjectInSpace
 	{
 		LogicalData logicalData;
@@ -1650,11 +1649,11 @@ namespace NeoAxis
 					//!!!!new
 					scene.GetRenderSceneData += Scene_GetRenderSceneData;
 					//scene.ViewportUpdateBefore += Scene_ViewportUpdateBefore;
-#if !DEPLOY
-					TransformToolUtility.AllInstances_ModifyCommit += TransformTool_AllInstances_ModifyCommit;
-					TransformToolUtility.AllInstances_ModifyCancel += TransformTool_AllInstances_ModifyCancel;
-#endif
-
+					if( EngineApp.IsEditor )
+					{
+						TransformToolUtility.AllInstances_ModifyCommit += TransformTool_AllInstances_ModifyCommit;
+						TransformToolUtility.AllInstances_ModifyCancel += TransformTool_AllInstances_ModifyCancel;
+					}
 					if( logicalData == null )
 						Update();
 				}
@@ -1663,17 +1662,15 @@ namespace NeoAxis
 					//!!!!new
 					scene.GetRenderSceneData -= Scene_GetRenderSceneData;
 					//scene.ViewportUpdateBefore -= Scene_ViewportUpdateBefore;
-#if !DEPLOY
-					TransformToolUtility.AllInstances_ModifyCommit -= TransformTool_AllInstances_ModifyCommit;
-					TransformToolUtility.AllInstances_ModifyCancel -= TransformTool_AllInstances_ModifyCancel;
-#endif
-
+					if( EngineApp.IsEditor )
+					{
+						TransformToolUtility.AllInstances_ModifyCommit -= TransformTool_AllInstances_ModifyCommit;
+						TransformToolUtility.AllInstances_ModifyCancel -= TransformTool_AllInstances_ModifyCancel;
+					}
 					Update();
 				}
 			}
 		}
-
-#if !DEPLOY
 
 		private void TransformTool_AllInstances_ModifyCommit( ITransformTool sender )
 		{
@@ -1694,8 +1691,6 @@ namespace NeoAxis
 				needUpdateAfterEndModifyingTransformTool = false;
 			}
 		}
-
-#endif
 
 		public void Update()
 		{
@@ -1779,7 +1774,6 @@ namespace NeoAxis
 		{
 			base.OnGetRenderSceneData( context, mode, modeGetObjectsItem );
 
-#if !DEPLOY
 			//display editor selection
 			if( EngineApp.IsEditor && mode == GetRenderSceneDataMode.InsideFrustum )
 			{
@@ -1806,7 +1800,6 @@ namespace NeoAxis
 					}
 				}
 			}
-#endif
 		}
 
 		protected override void OnTransformChanged()

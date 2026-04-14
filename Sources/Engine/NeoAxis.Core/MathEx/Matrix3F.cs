@@ -1343,7 +1343,6 @@ namespace NeoAxis
 			return result;
 		}
 
-#if !DISABLE_IMPLICIT
 		/// <summary>
 		/// Implicit conversion from <see cref="Matrix3F"/> type to <see cref="Matrix3"/> type for given value.
 		/// </summary>
@@ -1353,7 +1352,6 @@ namespace NeoAxis
 		{
 			return new Matrix3( v );
 		}
-#endif
 
 		/// <summary>
 		/// Decomposes a matrix into a rotation and scale.

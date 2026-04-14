@@ -1,4 +1,3 @@
-#if !DEPLOY
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -153,5 +152,3 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         }
     }
 }
-
-#endif

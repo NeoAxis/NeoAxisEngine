@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
     partial class NewObjectSettingsCell
 	{
@@ -60,5 +59,3 @@ namespace NeoAxis.Editor
 		private HierarchicalContainer hierarchicalContainer1;
 	}
 }
-
-#endif

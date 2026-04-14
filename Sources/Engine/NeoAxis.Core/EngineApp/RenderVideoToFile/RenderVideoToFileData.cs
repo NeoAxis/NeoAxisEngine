@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-//using System.Drawing;
 
 namespace NeoAxis
 {
@@ -18,8 +17,6 @@ namespace NeoAxis
 		public string Format = "";
 
 		//
-
-#if !DEPLOY
 
 		int skipFrames = 6;
 		long remainingFrames;
@@ -138,20 +135,5 @@ namespace NeoAxis
 				Log.Fatal( "RenderVideoToFileData: Close: Rendering video to file failed. " + e.Message );
 			}
 		}
-#else
-
-		public static void Init()
-		{
-		}
-
-		public virtual void AddFrame()// Bitmap bitmap )
-		{
-		}
-
-		public virtual void Close()
-		{
-		}
-
-#endif
 	}
 }

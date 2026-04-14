@@ -1,4 +1,3 @@
-#if !DEPLOY
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -66,5 +65,3 @@ namespace Internal.ComponentFactory.Krypton.Ribbon
 		}
 	}
 }
-
-#endif

@@ -11,7 +11,6 @@ namespace NeoAxis
 	/// </summary>
 	public abstract class FlowGraphNodeStyle : Component
 	{
-#if !DEPLOY
 		public abstract Vector2 GetSocketPositionInUnits( FlowGraphNode.Representation.Item socket, bool input );
 
 		//EditorRenderSelectionState.Selected
@@ -27,6 +26,5 @@ namespace NeoAxis
 		public abstract object GetMouseOverObject( IFlowGraphEditor window, FlowGraphNode node );
 
 		public abstract bool IsIntersectsWithRectangle( IFlowGraphEditor window, FlowGraphNode node, Rectangle rectInUnits );
-#endif
 	}
 }

@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class EnumDropDownControl
 	{
@@ -63,5 +62,3 @@ namespace NeoAxis.Editor
 		private NeoAxis.Editor.EngineListView listViewEnum;
 	}
 }
-
-#endif

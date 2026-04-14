@@ -431,13 +431,11 @@ namespace NeoAxis
 		//[AutoConvertType]
 		//!!!!Parse, ToString
 
-#if !DISABLE_IMPLICIT
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Circle( CircleF v )
 		{
 			return new Circle( v );
 		}
-#endif
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public double GetPointDistance( Vector2F point )

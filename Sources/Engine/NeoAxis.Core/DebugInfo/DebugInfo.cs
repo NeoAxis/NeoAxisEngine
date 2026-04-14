@@ -55,15 +55,10 @@ namespace Internal//NeoAxis
 
 		public static string Translate( string text )
 		{
-#if !DEPLOY
 			if( EngineApp.IsEditor )
 				return NeoAxis.Editor.EditorLocalization.Translate( "DebugInfoWindow", text );
 			else
 				return text;
-#else
-			return text;
-#endif
 		}
-
 	}
 }

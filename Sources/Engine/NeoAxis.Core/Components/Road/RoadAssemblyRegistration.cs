@@ -14,7 +14,6 @@ namespace NeoAxis
 		{
 			ResourceManager.RegisterType( "Road Type", new string[] { "roadtype" }, typeof( Resource ) );
 
-#if !DEPLOY
 			if( EngineApp.IsEditor )
 			{
 				SceneEditorUtility.CreateObjectWhatTypeWillCreatedEvent += Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent;
@@ -22,10 +21,8 @@ namespace NeoAxis
 
 				EditorAPI.PreviewImagesManager_RegisterResourceType( "Road Type" );
 			}
-#endif
 		}
 
-#if !DEPLOY
 		private void Scene_DocumentWindow_CreateObjectWhatTypeWillCreatedEvent( Metadata.TypeInfo objectType, string referenceToObject, ref Metadata.TypeInfo type )
 		{
 			if( MetadataManager.GetTypeOfNetType( typeof( RoadType ) ).IsAssignableFrom( objectType ) )
@@ -41,6 +38,5 @@ namespace NeoAxis
 				obj.RoadType = new Reference<RoadType>( null, referenceToObject );
 			}
 		}
-#endif
 	}
 }

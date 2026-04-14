@@ -35,24 +35,6 @@ namespace NeoAxis
 				return true;
 
 			return false;
-
-			//!!!!!всё закомменченное
-
-			//lock( VirtualFileSystem.lockObject )
-			//{
-			//	path = VirtualPathUtils.NormalizePath( path );
-
-			//	path = VirtualFileSystem.GetRedirectedFileNameInternal( path, true );
-
-			//	string realPath = VirtualPathUtils.GetRealPathByVirtual( path );
-			//	if( File.Exists( realPath ) )
-			//		return true;
-
-			//	if( InsidePackage( path ) )
-			//		return true;
-
-			//	return false;
-			//}
 		}
 
 		public static VirtualFileStream Open( string path )
@@ -70,27 +52,27 @@ namespace NeoAxis
 			{
 				VirtualFileStream stream = null;
 				{
-					//!!!!!
 					//try
 					//{
 
-					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
+					//!!!!other platforms
+
+					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 					{
-//#if WINDOWS || UWP
+#if !ANDROID && !IOS && !WEB && !LINUX
 						stream = new Win32HandleVirtualFileStream( realPath );
-//#endif
+#endif
 					}
-					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
-					{
-						//#if MACOS
-						Log.Fatal( "new MacVirtualFileStream. impl." );
-						//stream = new MacVirtualFileStream( realPath );
-						//#endif
-					}
+					//else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
+					//{
+					//	//#if MACOS
+					//	Log.Fatal( "new MacVirtualFileStream. impl." );
+					//	//stream = new MacVirtualFileStream( realPath );
+					//	//#endif
+					//}
 					else
 						stream = new DefaultVirtualFileStream( realPath );
 
-					//!!!!
 					//}
 					//catch( FileNotFoundException )
 					//{
@@ -120,101 +102,6 @@ namespace NeoAxis
 			//	return ArchiveManager.FileOpen( path );
 
 			throw new FileNotFoundException( "File not found.", path );
-
-			//!!!!всё закомменченное
-
-			//lock ( VirtualFileSystem.lockObject )
-			//{
-
-			//	path = VirtualFileSystem.GetRedirectedFileNameInternal( path, true );
-
-			//	bool canBeCached = VirtualFileSystem.IsFileCanBeCached( path );
-
-			//	//get from cache
-			//	if( canBeCached )
-			//	{
-			//		byte[] data = VirtualFileSystem.GetVirtualFileDataFromCache( path );
-			//		if( data != null )
-			//			return new MemoryVirtualFileStream( data );
-			//	}
-
-			//	//preloaded files to memory
-			//	if( VirtualFileSystem.preloadedFilesToMemory.Count != 0 )
-			//	{
-			//		string pathLowerCase = path.ToLower();
-			//		VirtualFileSystem.PreloadFileToMemoryItem item;
-			//		if( VirtualFileSystem.preloadedFilesToMemory.TryGetValue( pathLowerCase, out item ) )
-			//		{
-			//			if( item.loaded )
-			//				return new MemoryVirtualFileStream( item.data );
-			//		}
-			//	}
-
-			//	VirtualFileStream stream = null;
-			//	{
-			//		string realPath = VirtualPathUtils.GetRealPathByVirtual( path );
-
-			//		try
-			//		{
-			//			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
-			//				stream = new Win32HandleVirtualFileStream( realPath );
-			//			else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.MacOS )
-			//				stream = new MacOSXVirtualFileStream( realPath );
-			//			else
-			//				stream = new DefaultVirtualFileStream( realPath );
-			//		}
-			//		catch( FileNotFoundException )
-			//		{
-			//		}
-			//		catch( Exception e )
-			//		{
-			//			throw e;
-			//		}
-
-			//		if( stream == null )
-			//		{
-			//			stream = PackageManager.FileOpen( path );
-			//			if( stream == null )
-			//				throw new FileNotFoundException( "File not found.", path );
-			//		}
-
-			//		//if( File.Exists( realPath ) )
-			//		//{
-			//		//   if( PlatformInfo.Platform == PlatformInfo.Platforms.Windows )
-			//		//      stream = new Win32HandleVirtualFileStream( realPath );
-			//		//   else if( PlatformInfo.Platform == PlatformInfo.Platforms.MacOSX )
-			//		//      stream = new MacOSXVirtualFileStream( realPath );
-			//		//   else
-			//		//      stream = new DefaultVirtualFileStream( realPath );
-			//		//}
-			//		//else
-			//		//{
-			//		//   stream = ArchiveManager.Instance.FileOpen( path );
-			//		//   if( stream == null )
-			//		//      throw new FileNotFoundException();
-			//		//}
-			//	}
-
-			//	//put to cache
-			//	if( canBeCached )
-			//	{
-			//		byte[] data = new byte[ stream.Length ];
-			//		if( stream.Read( data, 0, (int)stream.Length ) == stream.Length )
-			//			VirtualFileSystem.AddVirtualFileToCache( path, data );
-			//		stream.Position = 0;
-			//	}
-
-			//	//{
-			//	//   byte[] buffer = new byte[ stream.Length ];
-			//	//   stream.Read( buffer, 0, (int)stream.Length );
-			//	//   stream.Close();
-
-			//	//   MemoryVirtualFileStream memoryStream = new MemoryVirtualFileStream( buffer );
-			//	//   return memoryStream;
-			//	//}
-
-			//	return stream;
-			//}
 		}
 
 		public static long GetLength( string path )
@@ -241,34 +128,6 @@ namespace NeoAxis
 			//	return ArchiveManager.FileGetLength( path );
 
 			throw new FileNotFoundException( "File not found.", path );
-
-			//!!!!всё закомменченное
-
-			//lock( VirtualFileSystem.lockObject )
-			//{
-			//	path = VirtualPathUtils.NormalizePath( path );
-			//	path = VirtualFileSystem.GetRedirectedFileNameInternal( path, true );
-
-			//	try
-			//	{
-			//		FileInfo fileInfo = new FileInfo( realPath );
-			//		return fileInfo.Length;
-			//	}
-			//	catch( FileNotFoundException )
-			//	{
-			//	}
-			//	//if( File.Exists( realPath ) )
-			//	//{
-			//	//   FileInfo fileInfo = new FileInfo( realPath );
-			//	//   return fileInfo.Length;
-			//	//}
-
-			//	PackageManager.FileInfo archiveFileInfo;
-			//	if( PackageManager.GetFileInfo( path, out archiveFileInfo ) )
-			//		return archiveFileInfo.Length;
-
-			//	throw new FileNotFoundException( "File not found.", path );
-			//}
 		}
 
 		//!!!!
@@ -353,7 +212,7 @@ namespace NeoAxis
 			}
 		}
 
-		//!!!!в VirtualFileUtils?
+		//!!!!to VirtualFileUtils?
 		/// <summary>
 		/// Calculates the check sum of a file.
 		/// </summary>

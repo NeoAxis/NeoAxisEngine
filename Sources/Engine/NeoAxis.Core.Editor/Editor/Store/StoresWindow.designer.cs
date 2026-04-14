@@ -1,6 +1,4 @@
-﻿#if !DEPLOY
-
-namespace NeoAxis.Editor
+﻿namespace NeoAxis.Editor
 {
 	partial class StoresWindow
 	{
@@ -167,5 +165,3 @@ namespace NeoAxis.Editor
 		private NeoAxis.Editor.ToolStripTextBoxHost toolStripButtonSearch;
 	}
 }
-
-#endif

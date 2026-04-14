@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -292,7 +291,6 @@ namespace NeoAxis.Editor
 		//!!!!
 		void ShowContextMenu()//Point locationPoint )
 		{
-#if !DEPLOY
 			var items = new List<KryptonContextMenuItemBase>();
 
 			//!!!!
@@ -443,7 +441,6 @@ namespace NeoAxis.Editor
 			EditorContextMenuWinForms.AddActionsToMenu( EditorActionContextMenuType.Document, items );
 
 			EditorContextMenuWinForms.Show( items, this );
-#endif
 		}
 
 		//!!!!
@@ -2978,5 +2975,3 @@ namespace NeoAxis.Editor
 		}
 	}
 }
-
-#endif

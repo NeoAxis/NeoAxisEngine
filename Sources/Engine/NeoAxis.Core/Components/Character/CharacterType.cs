@@ -17,12 +17,10 @@ namespace NeoAxis
 	/// A definition of the character type.
 	/// </summary>
 	[ResourceFileExtension( "charactertype" )]
-#if !DEPLOY
 	[AddToResourcesWindow( @"Base\3D\Character Type", -8998 )]
 	[EditorControl( typeof( CharacterTypeEditor ) )]
 	[Preview( typeof( CharacterTypePreview ) )]
 	[PreviewImage( typeof( CharacterTypePreviewImage ) )]
-#endif
 	public class CharacterType : Component
 	{
 		int version;

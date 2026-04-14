@@ -15,55 +15,56 @@ namespace System
 #endif
 
 
-#if ANDROID || UWP || IOS || WEB
 
-namespace System.Configuration
-{
-	internal class ApplicationSettingsBase
-	{
-		public static object Synchronized( object parameter )
-		{
-			return null;
-		}
-	}
-}
+//#if ANDROID || UWP || IOS || WEB
 
-
-#if !WEB && !ANDROID
-namespace System
-{
-	public class UserPreferenceChangedEventArgs
-	{
-	}
-}
-#endif
+//namespace System.Configuration
+//{
+//	internal class ApplicationSettingsBase
+//	{
+//		public static object Synchronized( object parameter )
+//		{
+//			return null;
+//		}
+//	}
+//}
 
 
-#if UWP || WEB
-namespace System.Drawing
-{
-	public class Bitmap
-	{
-	}
+//#if !WEB && !ANDROID
+//namespace System
+//{
+//	public class UserPreferenceChangedEventArgs
+//	{
+//	}
+//}
+//#endif
 
-	public class Icon : IDisposable
-	{
-		public void Dispose()
-		{
-		}
-	}
-}
-#endif
 
-namespace System.Windows.Forms
-{
-	public class Cursor
-	{
-	}
-}
+//#if UWP || WEB
+//namespace System.Drawing
+//{
+//	public class Bitmap
+//	{
+//	}
 
-namespace System.Drawing.Design
-{ 
-}
+//	public class Icon : IDisposable
+//	{
+//		public void Dispose()
+//		{
+//		}
+//	}
+//}
+//#endif
 
-#endif
+//namespace System.Windows.Forms
+//{
+//	public class Cursor
+//	{
+//	}
+//}
+
+//namespace System.Drawing.Design
+//{ 
+//}
+
+//#endif

@@ -896,13 +896,11 @@ namespace NeoAxis
 		//	return b.ToBoundsD();
 		//}
 
-#if !DISABLE_IMPLICIT
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static implicit operator Bounds( BoundsF v )
 		{
 			return new Bounds( v );
 		}
-#endif
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static BoundsF Merge( BoundsF a, BoundsF b )

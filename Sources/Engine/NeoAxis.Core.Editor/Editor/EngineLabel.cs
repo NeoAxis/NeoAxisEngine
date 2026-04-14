@@ -1,5 +1,4 @@
-﻿#if !DEPLOY
-using Internal.ComponentFactory.Krypton.Toolkit;
+﻿using Internal.ComponentFactory.Krypton.Toolkit;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -94,5 +93,3 @@ namespace NeoAxis.Editor
 		}
 	}
 }
-
-#endif

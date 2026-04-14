@@ -45,7 +45,6 @@ namespace NeoAxis
 	/// </summary>
 	public interface IFlowGraphRepresentationData
 	{
-#if !DEPLOY
 		void GetFlowGraphRepresentationData( FlowGraphRepresentationData data );
 
 		//string FlowchartNodeTitle { get; }
@@ -55,7 +54,6 @@ namespace NeoAxis
 		////void FlowchartNodeRenderClientArea();
 
 		//FlowchartNodeContentType FlowchartNodeContentType { get; }
-#endif
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
