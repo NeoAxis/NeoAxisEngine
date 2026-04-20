@@ -59,7 +59,7 @@ namespace NeoAxis
 
 					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 					{
-#if !ANDROID && !IOS && !WEB && !LINUX
+#if !ANDROID && !IOS && !WEB
 						stream = new Win32HandleVirtualFileStream( realPath );
 #endif
 					}

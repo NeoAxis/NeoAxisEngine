@@ -135,8 +135,6 @@ namespace NeoAxis
 			static Vector2I? createWindowSize;
 			//static bool createWindowFullscreenAllowChangeDisplayFrequency = true;
 
-			//static bool allowWriteEngineConfigFile;
-
 			///////////////
 
 			public static string ConfigVirtualFileName
@@ -323,6 +321,9 @@ namespace NeoAxis
 
 			public static double AutoUnloadGpuResourcesNotUsedForLongTimeInSecondsInEditor = 300;
 			public static double AutoUnloadGpuResourcesNotUsedForLongTimeInSecondsInSimulation = 300;
+
+			public static bool AppServerMode;
+
 
 			//public static bool RenderingVerticalSync
 			//{
@@ -1036,7 +1037,6 @@ namespace NeoAxis
 
 				if( InitSettings.UseApplicationWindowHandle == IntPtr.Zero )
 				{
-					//if( InitSettings.CreateWindowFullscreen == null )
 					{
 						//windowedMode
 						if( SystemSettings.CommandLineParameters.TryGetValue( "-windowedMode", out var windowedModeString ) )
@@ -1052,37 +1052,8 @@ namespace NeoAxis
 							else
 								InitSettings.CreateWindowedMode = WindowedModeEnum.Windowed;
 						}
-
-						////fullscreen
-						//if( SystemSettings.CommandLineParameters.TryGetValue( "-fullscreen", out var fullscreenStr ) )
-						//{
-						//	try
-						//	{
-						//		InitSettings.CreateWindowFullscreen = (bool)SimpleTypes.ParseValue( typeof( bool ), fullscreenStr );
-						//	}
-						//	catch { }
-						//}
-
-						////windowed
-						//if( SystemSettings.CommandLineParameters.TryGetValue( "-windowed", out var windowedStr ) )
-						//{
-						//	try
-						//	{
-						//		InitSettings.CreateWindowFullscreen = !(bool)SimpleTypes.ParseValue( typeof( bool ), windowedStr );
-						//	}
-						//	catch { }
-						//}
-
-						//if( InitSettings.CreateWindowFullscreen == null )
-						//{
-						//	if( ApplicationType == ApplicationTypeEnum.Simulation )
-						//		InitSettings.CreateWindowFullscreen = true;
-						//	else
-						//		InitSettings.CreateWindowFullscreen = false;
-						//}
 					}
 
-					//if( InitSettings.CreateWindowState == null )
 					{
 						//windowState
 						if( SystemSettings.CommandLineParameters.TryGetValue( "-windowState", out var str ) )
@@ -1096,7 +1067,6 @@ namespace NeoAxis
 						}
 					}
 
-					//if( InitSettings.CreateWindowPosition == null )
 					{
 						//windowPosition
 						if( SystemSettings.CommandLineParameters.TryGetValue( "-windowPosition", out var str ) )
@@ -1111,7 +1081,6 @@ namespace NeoAxis
 						}
 					}
 
-					//if( InitSettings.CreateWindowSize == null )
 					{
 						//windowSize
 						if( SystemSettings.CommandLineParameters.TryGetValue( "-windowSize", out var str ) )
@@ -1126,22 +1095,23 @@ namespace NeoAxis
 						}
 					}
 
-					if( InitSettings.CreateWindowState == null )
-						InitSettings.CreateWindowState = WindowStateEnum.Maximized;
-					if( InitSettings.CreateWindowSize == null )
-						InitSettings.CreateWindowSize = platform.GetScreenSize();
-
-					if( InitSettings.CreateWindowPosition == null )
+					if( !InitSettings.AppServerMode )
 					{
-						InitSettings.CreateWindowPosition = new Vector2I( 0, 0 );
-						if( InitSettings.CreateWindowState.Value == WindowStateEnum.Normal )
-							InitSettings.CreateWindowPosition = ( platform.GetScreenSize() - InitSettings.CreateWindowSize.Value ) / 2;
-					}
+						if( InitSettings.CreateWindowState == null )
+							InitSettings.CreateWindowState = WindowStateEnum.Maximized;
+						if( InitSettings.CreateWindowSize == null )
+							InitSettings.CreateWindowSize = platform.GetScreenSize();
 
-					if( InitSettings.CreateWindowedMode != null && InitSettings.CreateWindowedMode.Value != WindowedModeEnum.Windowed )
-						InitSettings.CreateWindowPosition = new Vector2I( 0, 0 );
-					//if( InitSettings.CreateWindowFullscreen.Value )
-					//	InitSettings.CreateWindowPosition = new Vector2I( 0, 0 );
+						if( InitSettings.CreateWindowPosition == null )
+						{
+							InitSettings.CreateWindowPosition = new Vector2I( 0, 0 );
+							if( InitSettings.CreateWindowState.Value == WindowStateEnum.Normal )
+								InitSettings.CreateWindowPosition = ( platform.GetScreenSize() - InitSettings.CreateWindowSize.Value ) / 2;
+						}
+
+						if( InitSettings.CreateWindowedMode != null && InitSettings.CreateWindowedMode.Value != WindowedModeEnum.Windowed )
+							InitSettings.CreateWindowPosition = new Vector2I( 0, 0 );
+					}
 
 					//rendererBackend
 					{
@@ -1183,7 +1153,7 @@ namespace NeoAxis
 				InitializationParameters_PostFix();
 
 				//change video mode
-				if( InitSettings.UseApplicationWindowHandle == IntPtr.Zero && InitSettings.CreateWindowedMode != null )
+				if( InitSettings.UseApplicationWindowHandle == IntPtr.Zero && InitSettings.CreateWindowedMode != null && !InitSettings.AppServerMode )
 				{
 					if( InitSettings.CreateWindowedMode.Value == WindowedModeEnum.Fullscreen )
 					{
@@ -1223,8 +1193,11 @@ namespace NeoAxis
 					//}
 				}
 
-				if( !WindowCreateOrAttach() )
-					return false;
+				if( !InitSettings.AppServerMode )
+				{
+					if( !WindowCreateOrAttach() )
+						return false;
+				}
 
 				if( createdInsideEngineWindow != null )
 				{
@@ -1234,17 +1207,8 @@ namespace NeoAxis
 					Log.Handlers.FatalAfterHandler += Log_FatalAfterHandler;
 				}
 
-				////physics
-				//{
-				//	//!!!!temp
-				//	//bool allowHardwareAcceleration = false;
-				//	//PhysicsWorld.Init( allowHardwareAcceleration );
-
-				//	Internal.BulletSharp.BulletPhysicsUtility.InitLibrary();
-				//}
-
 				//joysticks and special input devices
-				if( InitSettings.AllowJoysticksAndSpecialInputDevices )
+				if( InitSettings.AllowJoysticksAndSpecialInputDevices && !InitSettings.AppServerMode )
 				{
 					InputDeviceManager instance = null;
 
@@ -1289,9 +1253,7 @@ namespace NeoAxis
 
 				//DirectInput mouse device
 				// not implemented for UWP now.
-				if( ( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows ||
-					SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP ) &&
-					InitSettings.UseDirectInputForMouseRelativeMode )
+				if( ( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP ) && InitSettings.UseDirectInputForMouseRelativeMode && !InitSettings.AppServerMode )
 				{
 					if( !platform.InitDirectInputMouseDevice() )
 						InitSettings.UseDirectInputForMouseRelativeMode = false;
@@ -1313,21 +1275,20 @@ namespace NeoAxis
 				//}
 				//catch { }
 
-				//OnBeforeRendererWorldInit();
-
-				//renderWindowInFullscreen = startedAtFullScreen;
-
 				//Renderer init
-				StartupTiming.CounterStart( "Rendering system init" );
+				if( VirtualFileSystem.NeoAxisCoreNativeLoaded )
 				{
-					bool startedAtFullscreen = WindowedMode == WindowedModeEnum.Fullscreen;
-					if( Debugger.IsAttached && !SystemSettings.CommandLineParameters.TryGetValue( "-renderVideoToFile", out _ ) )
-						startedAtFullscreen = false;
+					StartupTiming.CounterStart( "Rendering system init" );
+					{
+						bool startedAtFullscreen = WindowedMode == WindowedModeEnum.Fullscreen;
+						if( Debugger.IsAttached && !SystemSettings.CommandLineParameters.TryGetValue( "-renderVideoToFile", out _ ) )
+							startedAtFullscreen = false;
 
-					if( !RenderingSystem.Init( startedAtFullscreen, InitSettings.MultiMonitorMode.Value, InitSettings.Language ) )
-						return false;
+						if( !RenderingSystem.Init( startedAtFullscreen, InitSettings.MultiMonitorMode.Value, InitSettings.Language ) )
+							return false;
+					}
+					StartupTiming.CounterEnd( "Rendering system init" );
 				}
-				StartupTiming.CounterEnd( "Rendering system init" );
 
 				////check for DirectX debug version
 				//if( RenderSystem.Instance.Name.Contains( "Direct3D" ) )
@@ -1348,14 +1309,10 @@ namespace NeoAxis
 				//	}
 				//}
 
-				//!!!!!
-				//if( applicationWindowCreatedInsideEngine )
-				//	MainViewport_Change( RendererWorld.ApplicationRenderTarget, new MainViewportClassForCreatedWindow() );
-
 				//!!!!!where to set
 				//UpdateGamma();
 
-				if( WindowedMode == WindowedModeEnum.Fullscreen )
+				if( WindowedMode == WindowedModeEnum.Fullscreen && !InitSettings.AppServerMode )
 					platform.FullscreenFadeIn( false );
 
 				RenderingSystem.PostInitRendererAddition();
@@ -1368,10 +1325,6 @@ namespace NeoAxis
 
 				//reset sound listener
 				SoundWorld.SetListenerReset();
-
-				//!!!! initialize here or on first use ?
-				// scripting init.
-				//Scripting.ScriptingCSharpEngine.Init();
 
 				fpsStartTime = (uint)(float)( EngineTime * 1000.0f );
 
@@ -1388,7 +1341,6 @@ namespace NeoAxis
 
 				if( createdInsideEngineWindow != null )
 					CreatedWindowProcessResize();
-				//DoResize();
 
 				lastEngineTimeToCalculateFPS = EngineTime;
 

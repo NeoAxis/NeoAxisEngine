@@ -23,6 +23,8 @@ namespace NeoAxis
 		static TextBlock defaultSettingsConfig;
 		static bool loggingFileOperations;
 
+		static bool neoAxisCoreNativeLoaded;
+
 		//internal static object lockObject = new object();
 
 		//!!!!это чуть другое, чем 'user', т.к. 'user' - это что-то вроде конвертации из real в virtual.
@@ -277,16 +279,10 @@ namespace NeoAxis
 				if( setCurrentDirectory )
 					CorrectCurrentDirectory();
 
-				//now in the EditorForm
-				//if( EngineApp.IsEditor )
-				//	Editor.PackageManager.DeleteFilesAsStartup();
-
-				NativeUtility.PreloadLibrary( "NeoAxisCoreNative" );
+				var fatalOnLoadingCoreNative = SystemSettings.CurrentPlatform != SystemSettings.Platform.Linux;
+				neoAxisCoreNativeLoaded = NativeUtility.PreloadLibrary( "NeoAxisCoreNative", errorFatal: fatalOnLoadingCoreNative ) != IntPtr.Zero;
 
 				InitDefaultSettingsConfig();
-
-				//!!!!new commented
-				//InitCloudProjectInfo();
 
 				ArchiveManager.Init();
 				//if( !ArchiveManager.Init() )
@@ -774,7 +770,9 @@ namespace NeoAxis
 					defaultSettingsConfig = TextBlockUtility.LoadFromRealFile( realFileName );
 				else
 				{
-					Log.Warning( "VirtualFileSystem: InitDefaultSettingsConfig: \"NeoAxis.DefaultSettings.config\" is not exists." );
+					Log.Warning( $"VirtualFileSystem: InitDefaultSettingsConfig: \"{realFileName}\" is not exists." );
+
+					//Log.Warning( "VirtualFileSystem: InitDefaultSettingsConfig: \"NeoAxis.DefaultSettings.config\" is not exists." );
 					defaultSettingsConfig = new TextBlock();
 				}
 			}
@@ -899,6 +897,11 @@ namespace NeoAxis
 		public static void SetMainThread( Thread value )
 		{
 			mainThread = value;
+		}
+
+		public static bool NeoAxisCoreNativeLoaded
+		{
+			get { return neoAxisCoreNativeLoaded; }
 		}
 
 		//!!!!new commented

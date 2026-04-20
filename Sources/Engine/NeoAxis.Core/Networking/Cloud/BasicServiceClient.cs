@@ -53,8 +53,12 @@ namespace NeoAxis.Networking
 			//Cloud specific
 			public long ProjectID;
 
+			//protocol settings
+			public bool ConnectWebSocket = true;
+			public bool ConnectUDP;
+
 			//advanced settings
-			public double ConnectingMaxTimeInSeconds = 20;//10;
+			public double ConnectingMaxTimeInSeconds = 20;
 			public bool AllowReconnect;
 
 			//public string AnyData;
@@ -384,7 +388,13 @@ namespace NeoAxis.Networking
 				OnBeforeConnect( node, loginData );
 				BeforeConnect?.Invoke( this, node, loginData );
 
-				if( !node.BeginConnect( serverAddress, serverPort, EngineInfo.Version, loginData.DumpToString(), out var error ) )
+				//!!!!
+				var https = false;
+
+				var serverPortWebSocket = connectionSettings.ConnectWebSocket ? serverPort : 0;
+				var serverPortUDP = connectionSettings.ConnectUDP ? serverPort + 1 : 0;
+
+				if( !node.BeginConnect( https, serverAddress, serverPortWebSocket, serverPortUDP, EngineInfo.Version, loginData.DumpToString(), out var error ) )
 				{
 					node.Dispose();
 					node = null;

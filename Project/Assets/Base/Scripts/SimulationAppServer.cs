@@ -258,7 +258,7 @@ namespace Project
 			serverNode.Chat.CreateRoom( "Default" );
 			//serverNode.Chat.AllowPrivateMessages = ChatPrivateMessages;
 
-			if( !serverNode.BeginListen( false, null, serverPort, out error ) )
+			if( !serverNode.BeginListen( false, null, serverPort, 0, out error ) )
 			{
 				serverNode.Dispose();
 				serverNode = null;

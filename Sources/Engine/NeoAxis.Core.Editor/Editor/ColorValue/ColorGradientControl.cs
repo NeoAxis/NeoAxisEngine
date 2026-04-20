@@ -131,7 +131,6 @@ namespace NeoAxis.Editor
 
 		private void DrawGradient( Graphics g )
 		{
-#if !ANDROID && !IOS
 			System.Drawing.Rectangle gradientRect;
 
 			// draw gradient
@@ -183,7 +182,6 @@ namespace NeoAxis.Editor
 				if( EditorAPI2.DarkTheme )
 					brush.Dispose();
 			}
-#endif //!ANDROID
 		}
 
 		protected override void OnPaint( PaintEventArgs e )

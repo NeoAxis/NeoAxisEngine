@@ -30,6 +30,8 @@ namespace NeoAxis.CloudServer
 		public static bool Transactions;
 		public static bool ChatsEnabled;
 		public static bool MatchesEnabled;
+		public static bool ServerWebSocket = true;
+		public static bool ServerUDP = true;
 
 		//client settings
 		public static double ConnectionDefaultMaxLifetime = 31536000;
@@ -143,6 +145,10 @@ namespace NeoAxis.CloudServer
 				ChatsEnabled = chats;
 			if( bool.TryParse( settingsBlock.GetAttribute( "Matches" ), out var matches ) )
 				MatchesEnabled = matches;
+			if( bool.TryParse( settingsBlock.GetAttribute( "ServerWebSocket" ), out var serverWebSocket ) )
+				ServerWebSocket = serverWebSocket;
+			if( bool.TryParse( settingsBlock.GetAttribute( "ServerUDP" ), out var serverUDP ) )
+				ServerUDP = serverUDP;
 
 			if( ServerLogsEnabled )
 				ServerLogs.Init();
@@ -189,7 +195,8 @@ namespace NeoAxis.CloudServer
 			}
 
 			//start the server
-			if( !serverNode.BeginListen( false, CloudServerProcessUtility.CommandLineParameters.ServerAddress, CloudServerProcessUtility.CommandLineParameters.ServerPort, out error ) )
+			var port = CloudServerProcessUtility.CommandLineParameters.ServerPort;
+			if( !serverNode.BeginListen( false, CloudServerProcessUtility.CommandLineParameters.ServerAddress, ServerWebSocket ? port : 0, ServerUDP ? ( port + 1 ) : 0, out error ) )
 			{
 				serverNode.Dispose();
 				serverNode = null;
@@ -197,17 +204,6 @@ namespace NeoAxis.CloudServer
 			}
 
 			ServerLogs.Write( "Cloud Functions", "Started." );
-
-			////try
-			////{
-			////	ServerStarted?.Invoke();
-			////	//Implementation.ServerStarted();
-			////}
-			////catch( Exception e )
-			////{
-			////	ServerLogs.Write( "Cloud Functions", "Implementation.ServerStarted exception: " + e.Message );
-			////	Console.WriteLine( "Implementation.ServerStarted exception: " + e.Message );
-			////}
 
 			return true;
 		}
@@ -236,16 +232,6 @@ namespace NeoAxis.CloudServer
 
 		public static void Shutdown()
 		{
-			////try
-			////{
-			////	ServerShuttingDown?.Invoke();
-			////	//Implementation.ServerShuttingDown();
-			////}
-			////catch( Exception e )
-			////{
-			////	ServerLogs.Write( "Cloud Functions", "Implementation.ServerShuttingDown exception: " + e.Message );
-			////}
-
 			DestroyServer();
 		}
 

@@ -145,9 +145,7 @@ namespace NeoAxis.Editor
 
 			using( Graphics g1 = Graphics.FromImage( renderBitmap ) )
 			{
-#if !ANDROID && !IOS
 				g1.Clear( this.BackColor );
-#endif //!ANDROID
 				DrawWheel( g1, renderBitmap.Width, renderBitmap.Height );
 			}
 		}
@@ -157,7 +155,6 @@ namespace NeoAxis.Editor
 			float radius = ComputeRadius( new Size( width, height ) );
 			PointF[] points = GetCirclePoints( Math.Max( 1.0f, (float)radius - 1 ), new PointF( radius, radius ) );
 
-#if !ANDROID && !IOS
 			using( PathGradientBrush pgb = new PathGradientBrush( points ) )
 			{
 				pgb.CenterColor = new HSVColor( 0, 0, 1 ).ToColor();
@@ -166,7 +163,6 @@ namespace NeoAxis.Editor
 
 				g.FillEllipse( pgb, 0, 0, radius * 2, radius * 2 );
 			}
-#endif //!ANDROID
 		}
 
 		private static float ComputeRadius( Size size )
@@ -183,13 +179,11 @@ namespace NeoAxis.Editor
 		{
 			base.OnResize( e );
 
-#if !ANDROID && !IOS
 			if( renderBitmap != null && ( ComputeRadius( Size ) != ComputeRadius( renderBitmap.Size ) ) )
 			{
 				renderBitmap.Dispose();
 				renderBitmap = null;
 			}
-#endif //!ANDROID
 
 			Invalidate();
 		}

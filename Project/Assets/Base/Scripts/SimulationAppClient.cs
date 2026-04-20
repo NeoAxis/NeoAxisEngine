@@ -157,7 +157,7 @@ namespace Project
 
 			var loginData = block.DumpToString();
 
-			if( !connectionNode.BeginConnect( serverAddress, serverPort, EngineInfo.Version, loginData, out error ) )
+			if( !connectionNode.BeginConnect( false, serverAddress, serverPort, 0, EngineInfo.Version, loginData, out error ) )
 			{
 				Destroy();
 				return false;

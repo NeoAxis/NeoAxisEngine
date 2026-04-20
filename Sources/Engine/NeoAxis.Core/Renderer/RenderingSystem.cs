@@ -48,7 +48,7 @@ namespace NeoAxis
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//!!!!
+	//!!!!
 #if WEB
 
 	struct MyOgreLogListener
@@ -149,7 +149,7 @@ namespace NeoAxis
 		//internal RenderStatisticsInfo statistics = new RenderStatisticsInfo();
 
 		static unsafe MyOgreLogListener* logListener;
-//!!!!
+		//!!!!
 #if !WEB
 		static MyOgreLogListener.messageLoggedDelegate logListener_messageLoggedDelegate;
 #endif
@@ -268,6 +268,7 @@ namespace NeoAxis
 		//static extern bool SetDllDirectory( string lpPathName );
 
 		static bool nativeDLLsPreloaded;
+
 		internal static void NativeDLLsPreload()
 		{
 			if( !nativeDLLsPreloaded )
@@ -278,7 +279,6 @@ namespace NeoAxis
 			}
 		}
 
-		//!!!!editor
 		internal static bool Init( bool startedAtFullScreen, bool multiMonitorMode, string fontManagerDefaultLanguage )//, Vec2I mainRenderTargetSize )
 		{
 			//if( instance != null )
@@ -661,7 +661,7 @@ namespace NeoAxis
 			//   profilingToolBeginOperationDelegate, 
 			//   profilingToolEndOperationDelegate );
 
-//!!!!
+			//!!!!
 #if WEB
 			logListener = (MyOgreLogListener*)MyOgreLogListener.New(
 				(delegate* unmanaged[Stdcall]< nint, OgreLogMessageLevel, byte, void >)&logListener_messageLogged
@@ -840,7 +840,7 @@ namespace NeoAxis
 			disposed = true;
 		}
 
-//!!!!
+		//!!!!
 #if WEB
 
 		[UnmanagedCallersOnly( CallConvs = new[] { typeof( CallConvStdcall ) } )]
@@ -1020,7 +1020,7 @@ namespace NeoAxis
 
 		public static bool BackendNull
 		{
-			get { return Capabilities.Backend == RendererBackend.Noop; }
+			get { return !VirtualFileSystem.NeoAxisCoreNativeLoaded || Capabilities.Backend == RendererBackend.Noop; }
 		}
 
 		public delegate void RenderSystemEventDelegate( RenderSystemEvent name );

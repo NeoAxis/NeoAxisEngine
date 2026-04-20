@@ -207,8 +207,9 @@ namespace NeoAxis.Networking
 			[MethodImpl( (MethodImplOptions)512 )]
 			public void End()
 			{
-				var server = Owner.Owner?.server;
-				if( server != null )
+				var serverWebSocket = Owner.Owner?.webSocketListener;
+				var serverUdp = Owner.Owner?.udpListener;
+				if( serverWebSocket != null || serverUdp != null )
 				{
 					for( int n = 0; n < Recepients.Count; n++ )
 					{

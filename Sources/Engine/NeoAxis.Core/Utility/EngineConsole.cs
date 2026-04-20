@@ -12,6 +12,10 @@ namespace NeoAxis
 	/// </summary>
 	public static class EngineConsole
 	{
+		//settings
+		public static EKeys KeyToOpen1 = EKeys.F2;
+		public static EKeys KeyToOpen2 = EKeys.None;
+
 		//visual
 		static bool needLoadTextureAndFont = true;
 		static FontComponent font;
@@ -332,17 +336,24 @@ namespace NeoAxis
 					return result;
 			}
 
-			if( e.Key == EKeys.Oemtilde || e.Key == EKeys.Paragraph || e.Key == EKeys.F12 )
+			if( e.Key == KeyToOpen1 || e.Key == KeyToOpen2 )
 			{
 				e.SuppressKeyPress = true;
-				if( !Active )
-					Active = AutoOpening || MainViewport.IsKeyPressed( EKeys.Control );
-				else
-				{
-					Active = false;
-					if( MainViewport.IsKeyPressed( EKeys.Control ) )
-						AutoOpening = !AutoOpening;
-				}
+
+				if( AutoOpening )
+					Active = !Active;
+				if( MainViewport.IsKeyPressed( EKeys.Control ) )
+					AutoOpening = !AutoOpening;
+
+				//if( !Active )
+				//	Active = AutoOpening || MainViewport.IsKeyPressed( EKeys.Control );
+				//else
+				//{
+				//	Active = false;
+				//	if( MainViewport.IsKeyPressed( EKeys.Control ) )
+				//		AutoOpening = !AutoOpening;
+				//}
+
 				return true;
 			}
 
@@ -632,13 +643,29 @@ namespace NeoAxis
 			renderer.AddQuad( new Rectangle( 0, .5f, 1, .508f ), new ColorValue( 0.29f, 0.6f, 0.86f, 0.9f * transparency ) );
 
 			//draw background info
-			string staticText;
+			string staticText = "";
 			if( SystemSettings.MobileDevice )
-				staticText = "Click to the console to hide it";
+				staticText = "Click on the console area to hide it.";
 			else
 			{
-				staticText = "Press ~ or F12 to hide the console\r\nPress Ctrl + ~ to hide and disable auto opening";
-				//staticText = "Press \"~\" or \"F12\" to hide console\r\nPress \"Ctrl + ~\" to hide and disable auto opening";
+				var keysString = "";
+
+				if( KeyToOpen1 != EKeys.None || KeyToOpen2 != EKeys.None )
+				{
+					if( KeyToOpen1 != EKeys.None )
+						keysString += KeyToOpen1.ToString();
+					if( KeyToOpen2 != EKeys.None )
+					{
+						if( keysString != "" )
+							keysString += " or ";
+						keysString += KeyToOpen2.ToString();
+					}
+
+					staticText = $"Press {keysString} to hide the console.";
+					staticText += $"\r\nPress Ctrl + {keysString} to hide it and disable auto-opening.";
+				}
+
+				//staticText = "Press ~ or F12 to hide the console\r\nPress Ctrl + ~ to hide and disable auto opening";
 			}
 			renderer.AddTextWordWrap( staticText, new RectangleF( 0, 0, .995f, .495f ), EHorizontalAlignment.Right, false, EVerticalAlignment.Bottom, 0,
 				new ColorValue( 0.8, 0.8, 0.8, transparency ) );
@@ -792,7 +819,7 @@ namespace NeoAxis
 			{
 				string text = command.Name;
 				if( command.Description != null )
-					text += " (" + command.Description + ")";
+					text += " - " + command.Description;
 				Print( text );
 			}
 		}
@@ -1000,7 +1027,6 @@ namespace NeoAxis
 					Log.Info( "-------------------------------------------------------------------------------" );
 					Print( "Client node" );
 					Print( $"Connected to: {clientNode.ClientConnectHost}:{clientNode.ClientConnectPort}" );
-					//Print( $"Connected to: {clientNode.Client.Url.Host}:{clientNode.Client.Url.Port}" );
 					Print( "Network node class: " + clientNode.GetType().FullName );
 
 					var s = "";
@@ -1034,19 +1060,25 @@ namespace NeoAxis
 			}
 		}
 
+		static void ConsoleClose( string arguments )
+		{
+			Active = false;
+		}
+
 		static void AddStandardCommands()
 		{
-			AddCommand( "Quit", ConsoleQuit );
-			AddCommand( "Exit", ConsoleQuit );
-			AddCommand( "Clear", ConsoleClear );
-			AddCommand( "Commands", ConsoleCommands );
-			AddCommand( "WindowedMode", ConsoleWindowedMode ); //AddCommand( "Fullscreen", ConsoleFullscreen );
+			AddCommand( "Quit", ConsoleQuit, "Quit the application." );
+			AddCommand( "Exit", ConsoleQuit, "Quit the application." );
+			AddCommand( "Clear", ConsoleClear, "Clear the console." );
+			AddCommand( "Commands", ConsoleCommands, "Show the list of available commands." );
+			AddCommand( "WindowedMode", ConsoleWindowedMode );
 			AddCommand( "VideoMode", ConsoleVideoMode );
 			//AddCommand( "LogNativeMemoryStatistics", LogNativeMemoryStatistics );
 			AddCommand( "EngineTimeScale", ConsoleEngineTimeScale );
 			AddCommand( "SoundPitchScale", ConsoleSoundPitchScale );
 			AddCommand( "DebugInfo", ConsoleDebugInfo );
 			AddCommand( "Connections", Connections, "Get info about network connections." );
+			AddCommand( "Close", ConsoleClose, "Close the console." );
 		}
 	}
 }

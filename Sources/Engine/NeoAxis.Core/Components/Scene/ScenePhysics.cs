@@ -1942,6 +1942,12 @@ namespace NeoAxis
 
 		void PhysicsWorldCreate()
 		{
+			if( !VirtualFileSystem.NeoAxisCoreNativeLoaded )
+			{
+				//Log.Warning( "Scene: PhysicsWorldCreate: NeoAxisCoreNative library is not loaded." );
+				return;
+			}
+
 			unsafe
 			{
 				if( sizeof( PhysicsNative.RayTestResult ) != 56 )
@@ -1958,16 +1964,6 @@ namespace NeoAxis
 					if( sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 24 * 4 )
 						Log.Fatal( "Scene: PhysicsWorldCreate: sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 24 * 4." );
 				}
-				//if( sizeof( IntPtr ) == 8 )
-				//{
-				//	if( sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 22 * 4 + 8 )
-				//		Log.Fatal( "Scene: PhysicsWorldCreate: sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 22 * 4 + 8." );
-				//}
-				//else
-				//{
-				//	if( sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 22 * 4 )
-				//		Log.Fatal( "Scene: PhysicsWorldCreate: sizeof( PhysicsWorldClass.VehicleWheelSettings ) != 22 * 4." );
-				//}
 				if( sizeof( PhysicsWorldClass.VehicleWheelData ) != 5 * 4 )
 					Log.Fatal( "Scene: PhysicsWorldCreate: sizeof( PhysicsWorldClass.VehicleWheelData ) != 5 * 4." );
 				if( sizeof( PhysicsWorldClass.ContactItem ) != 224 )
