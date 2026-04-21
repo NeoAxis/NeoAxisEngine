@@ -824,6 +824,7 @@ namespace NeoAxis.Networking
 						{
 							//connection established
 							udpConnected = true;
+							DisposeWebSocketClient();
 							break;
 						}
 
