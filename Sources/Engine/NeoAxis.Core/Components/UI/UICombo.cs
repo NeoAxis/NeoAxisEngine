@@ -557,9 +557,6 @@ namespace NeoAxis
 					disableListSelectedIndexChangedEvent = false;
 				}
 
-
-				//!!!!when it doesn’t fit on the bottom of the screen, then show it from above
-
 				var itemSize = list.ConvertOffsetY( list.ItemSize, UIMeasure.Screen );
 
 				//!!!!fix scroll bar issue
@@ -577,6 +574,12 @@ namespace NeoAxis
 					height = MaxListScreenHeight.Value;
 
 				list.Size = new UIMeasureValueVector2( UIMeasure.Screen, rect.Size.X, height );
+
+				//calculate list alignment (top or bottom)
+				if( rect.Bottom + height > 1 )
+					list.VerticalAlignment = EVerticalAlignment.Bottom;
+				else
+					list.VerticalAlignment = EVerticalAlignment.Top;
 			}
 		}
 
