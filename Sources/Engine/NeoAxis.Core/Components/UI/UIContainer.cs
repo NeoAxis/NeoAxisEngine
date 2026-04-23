@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 using System.ComponentModel;
+using System.Linq;
 
 namespace NeoAxis
 {
@@ -707,18 +708,24 @@ namespace NeoAxis
 		{
 			UIControl result = null;
 
-			EnumerateChildrenRecursive( true, true, true, delegate ( UIControl control, ref bool stopEnumerate )
+			for( int nTopMost = 0; nTopMost < 2; nTopMost++ )
 			{
-				if( result == null )
+				EnumerateChildrenRecursive( true, true, true, delegate ( UIControl control, ref bool stopEnumerate )
 				{
-					control.GetScreenRectangle( out var rect );
-					if( rect.Contains( screenPosition ) )
+					if( control.TopMost == ( nTopMost == 0 ) )
 					{
-						result = control;
-						stopEnumerate = true;
+						if( result == null )
+						{
+							control.GetScreenRectangle( out var rect );
+							if( rect.Contains( screenPosition ) )
+							{
+								result = control;
+								stopEnumerate = true;
+							}
+						}
 					}
-				}
-			} );
+				} );
+			}
 
 			return result;
 		}
@@ -727,15 +734,21 @@ namespace NeoAxis
 		{
 			var result = new List<UIControl>();
 
-			EnumerateChildrenRecursive( true, true, true, delegate ( UIControl control, ref bool stopEnumerate )
+			for( int nTopMost = 0; nTopMost < 2; nTopMost++ )
 			{
-				control.GetScreenRectangle( out var rect );
-				if( rect.Contains( screenPosition ) )
+				EnumerateChildrenRecursive( true, true, true, delegate ( UIControl control, ref bool stopEnumerate )
 				{
-					result.Add( control );
-					stopEnumerate = false;
-				}
-			} );
+					if( control.TopMost == ( nTopMost == 0 ) )
+					{
+						control.GetScreenRectangle( out var rect );
+						if( rect.Contains( screenPosition ) )
+						{
+							result.Add( control );
+							stopEnumerate = false;
+						}
+					}
+				} );
+			}
 
 			return result;
 		}
@@ -752,15 +765,19 @@ namespace NeoAxis
 			{
 				if( !IsControlCursorCoveredByOther( control ) )
 				{
-					var tooltip = control.GetComponent<UITooltip>( onlyEnabledInHierarchy: true );
-					if( tooltip != null )
+					var controlUnderCursor = GetControlByScreenPosition( mouse );
+					if( controlUnderCursor == control || controlUnderCursor.GetAllParents().Contains( control ) )
 					{
-						if( EngineApp.EngineTime - tooltipLastMouseMoveTimeOutsideThreshold > tooltip.InitialDelay )
+						var tooltip = control.GetComponent<UITooltip>( onlyEnabledInHierarchy: true );
+						if( tooltip != null )
 						{
-							var c = tooltip.Parent as UIControl;
-							if( c == null )
-								c = this;
-							c.GetStyle().PerformRenderComponent( tooltip, renderer );
+							if( EngineApp.EngineTime - tooltipLastMouseMoveTimeOutsideThreshold > tooltip.InitialDelay )
+							{
+								var c = tooltip.Parent as UIControl;
+								if( c == null )
+									c = this;
+								c.GetStyle().PerformRenderComponent( tooltip, renderer );
+							}
 						}
 					}
 				}

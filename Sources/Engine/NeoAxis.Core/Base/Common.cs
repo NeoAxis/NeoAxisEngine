@@ -709,8 +709,6 @@ namespace NeoAxis
 	public enum CloudProductLicense
 	{
 		None,
-		[DisplayNameEnum( "NeoX Service" )]
-		NeoXService,
 		MIT,
 		[DisplayNameEnum( "CC Attribution" )]
 		CCAttribution,
@@ -727,9 +725,13 @@ namespace NeoAxis
 		[DisplayNameEnum( "CC0" )]
 		CC0,
 		FreeToUse,
-		[DisplayNameEnum( "Free To Use With NeoAxis" )]
+		[DisplayNameEnum( "Free To Use With NeoAxis" )] //it is same as "NeoAxis Engine"
 		FreeToUseWithNeoAxis,
 		PaidPerSeat,
+		[DisplayNameEnum( "NeoAxis Engine" )]
+		NeoAxisEngine,
+		[DisplayNameEnum( "NeoX Service" )]
+		NeoXService,
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

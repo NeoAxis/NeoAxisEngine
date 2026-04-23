@@ -14,9 +14,7 @@ namespace NeoAxis
 	public class UIControlList : UIControl
 	{
 		object touchDown;
-
-		//when reset?
-		//Dictionary<UIControl, UIMeasureValueVector2> originalSizes = new Dictionary<UIControl, UIMeasureValueVector2>();
+		Dictionary<UIControl, UIMeasureValueVector2> originalSizes = new Dictionary<UIControl, UIMeasureValueVector2>();
 
 		/////////////////////////////////////////
 
@@ -67,6 +65,9 @@ namespace NeoAxis
 		public event Action<UIControlList> MaxColumnsChanged;
 		ReferenceField<int> _maxColumns = 1000;
 
+		/// <summary>
+		/// The horizontal indent between managed controls.
+		/// </summary>
 		[DefaultValue( "Units 10" )]
 		[Category( "Controls" )]
 		public Reference<UIMeasureValueDouble> HorizontalIndent
@@ -78,6 +79,9 @@ namespace NeoAxis
 		public event Action<UIControlList> HorizontalIndentChanged;
 		ReferenceField<UIMeasureValueDouble> _horizontalIndent = new UIMeasureValueDouble( UIMeasure.Units, 10 );
 
+		/// <summary>
+		/// The vertical indent between managed controls.
+		/// </summary>
 		[DefaultValue( "Units 10" )]
 		[Category( "Controls" )]
 		public Reference<UIMeasureValueDouble> VerticalIndent
@@ -88,6 +92,35 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="VerticalIndent"/> property value changes.</summary>
 		public event Action<UIControlList> VerticalIndentChanged;
 		ReferenceField<UIMeasureValueDouble> _verticalIndent = new UIMeasureValueDouble( UIMeasure.Units, 10 );
+
+		//!!!!impl
+		///// <summary>
+		///// The indent between the horizontal scroll and managed controls.
+		///// </summary>
+		//[DefaultValue( "Units 5" )]
+		//[Category( "Controls" )]
+		//public Reference<UIMeasureValueDouble> HorizontalScrollIndent
+		//{
+		//	get { if( _horizontalScrollIndent.BeginGet() ) HorizontalScrollIndent = _horizontalScrollIndent.Get( this ); return _horizontalScrollIndent.value; }
+		//	set { if( _horizontalScrollIndent.BeginSet( this, ref value ) ) { try { HorizontalScrollIndentChanged?.Invoke( this ); } finally { _horizontalScrollIndent.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="HorizontalScrollIndent"/> property value changes.</summary>
+		//public event Action<UIControlList> HorizontalScrollIndentChanged;
+		//ReferenceField<UIMeasureValueDouble> _horizontalScrollIndent = new UIMeasureValueDouble( UIMeasure.Units, 5 );
+
+		/// <summary>
+		/// The indent between the vertical scroll and managed controls.
+		/// </summary>
+		[DefaultValue( "Units 5" )]
+		[Category( "Controls" )]
+		public Reference<UIMeasureValueDouble> VerticalScrollIndent
+		{
+			get { if( _verticalScrollIndent.BeginGet() ) VerticalScrollIndent = _verticalScrollIndent.Get( this ); return _verticalScrollIndent.value; }
+			set { if( _verticalScrollIndent.BeginSet( this, ref value ) ) { try { VerticalScrollIndentChanged?.Invoke( this ); } finally { _verticalScrollIndent.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="VerticalScrollIndent"/> property value changes.</summary>
+		public event Action<UIControlList> VerticalScrollIndentChanged;
+		ReferenceField<UIMeasureValueDouble> _verticalScrollIndent = new UIMeasureValueDouble( UIMeasure.Units, 5 );
 
 		///// <summary>
 		///// Whether the scrollbar will be always visible or not.
@@ -619,10 +652,9 @@ namespace NeoAxis
 
 		public UIControl[] GetItems()
 		{
-			//!!!!slowly?
+			//!!!!slowly? maybe cache
 
 			return GetComponents<UIControl>().Where( c => !( c is UIScroll ) && !( c is UIContextMenu ) && c.Enabled ).ToArray();
-			//return GetComponents<UIControl>().Where( c => c is not UIScroll && c is not UIContextMenu && c.Enabled ).ToArray();
 		}
 
 		public UIControl GetItem( int index )
@@ -685,15 +717,22 @@ namespace NeoAxis
 			if( horizontalScroll != null && horizontalScroll.Enabled )
 			{
 				var scrollRectangle = horizontalScroll.GetScreenRectangle();
+
+				//!!!!apply
+				//var horizontalScrollIndent = ConvertOffsetY( HorizontalScrollIndent.Value, UIMeasure.Screen );
+
 				if( horizontalScroll.HorizontalAlignment.Value == EHorizontalAlignment.Right )
 					clipRectangle.Bottom = Math.Min( clipRectangle.Bottom, scrollRectangle.Top );
 			}
+
 			var verticalScroll = GetVerticalScroll();
 			if( verticalScroll != null && verticalScroll.Enabled )
 			{
 				var scrollRectangle = verticalScroll.GetScreenRectangle();
+				var verticalScrollIndent = ConvertOffsetX( VerticalScrollIndent.Value, UIMeasure.Screen );
+
 				if( horizontalScroll != null && horizontalScroll.VerticalAlignment.Value == EVerticalAlignment.Bottom )
-					clipRectangle.Right = Math.Min( clipRectangle.Right, scrollRectangle.Left );
+					clipRectangle.Right = Math.Min( clipRectangle.Right, scrollRectangle.Left - verticalScrollIndent );
 			}
 
 			return clipRectangle;
@@ -705,11 +744,18 @@ namespace NeoAxis
 			var horizontalScroll = GetHorizontalScroll();
 			var verticalScroll = GetVerticalScroll();
 
-			//foreach( var item in items )
-			//{
-			//	if( !originalSizes.ContainsKey( item ) )
-			//		originalSizes[ item ] = item.Size.Value;
-			//}
+			//add new items to original sizes
+			foreach( var item in items )
+			{
+				if( !originalSizes.ContainsKey( item ) )
+					originalSizes[ item ] = item.Size.Value;
+			}
+			//remove old items from original sizes
+			foreach( var item in originalSizes.Keys )
+			{
+				if( !items.Contains( item ) )
+					originalSizes.Remove( item );
+			}
 
 			var itemScreenWidth = 0.0;
 			if( items.Length != 0 )
@@ -720,7 +766,11 @@ namespace NeoAxis
 			GetScreenRectangle( out var screenRectangle );
 			var horizontalIndent = ConvertOffsetX( HorizontalIndent.Value, UIMeasure.Screen );
 			var verticalIndent = ConvertOffsetY( VerticalIndent.Value, UIMeasure.Screen );
+
 			var viewHeight = screenRectangle.Size.Y;
+
+			//!!!!apply
+			//var horizontalScrollIndent = ConvertOffsetY( HorizontalScrollIndent.Value, UIMeasure.Screen );
 
 			//calculate total height
 			var totalHeight = 0.0;
@@ -772,11 +822,9 @@ namespace NeoAxis
 				return needScroll;
 			}
 
-			var needVerticalScroll = IsNeedVerticalScroll( false, out var columns );
-			if( needVerticalScroll )
+			var needAndExistVerticalScroll = IsNeedVerticalScroll( false, out var columns ) && verticalScroll != null;
+			if( needAndExistVerticalScroll )
 				IsNeedVerticalScroll( true, out columns );
-
-			var horizontalStretch = ControlsHorizontalAlignment.Value == EHorizontalAlignment.Stretch;
 
 			//horizontal scroll
 
@@ -793,10 +841,10 @@ namespace NeoAxis
 			}
 
 			//determine need horizontal scroll or not
-			var needHorizontalScroll = maxItemWidth > screenRectangle.Size.X;
+			var needAndExistHorizontalScroll = maxItemWidth > screenRectangle.Size.X && horizontalScroll != null;
 			if( horizontalScroll != null )
 			{
-				if( needHorizontalScroll )
+				if( needAndExistHorizontalScroll )
 				{
 					horizontalScroll.ValueRange = new Range( 0, maxItemWidth - screenRectangle.Size.X );
 					horizontalScroll.Enabled = true;
@@ -813,7 +861,7 @@ namespace NeoAxis
 			if( horizontalScroll != null && horizontalScroll.Enabled )
 				screenOffsetX -= horizontalScroll.Value.Value;
 
-			if( !needHorizontalScroll )
+			if( !needAndExistHorizontalScroll )
 			{
 				switch( ControlsHorizontalAlignment.Value )
 				{
@@ -833,7 +881,7 @@ namespace NeoAxis
 
 			//vertical scroll
 
-			if( !needVerticalScroll )
+			if( !needAndExistVerticalScroll )
 			{
 				//without vertical scroll
 
@@ -902,19 +950,14 @@ namespace NeoAxis
 							var offsetY = screenRectangle.Top + screenOffsetY + currentPositionY;
 							item.Margin = new UIMeasureValueRectangle( UIMeasure.Screen, offsetX, offsetY, offsetX + itemScreenSize.X, offsetY + itemScreenSize.Y );
 
-							//if( !needHorizontalScroll && ControlsHorizontalAlignment.Value == EHorizontalAlignment.Stretch )
-							//{
-							//	originalSizes.TryGetValue( item, out var originalSize );
-
-							//	var sizeY = ConvertOffsetY( new UIMeasureValueDouble( originalSize.Measure, originalSize.Y ), UIMeasure.Screen );
-							//	item.Size = new UIMeasureValueVector2( UIMeasure.Screen, itemScreenWidth, sizeY );
-
-							//	//var sizeX = ConvertOffsetX( new UIMeasureValueDouble( UIMeasure.Screen, itemScreenWidth ), item.Size.Value.Measure );
-							//	//item.Size = new UIMeasureValueVector2( item.Size.Value.Measure, sizeX, item.Size.Value.Y );
-
-							//	//var sizeY = ConvertOffsetY( new UIMeasureValueDouble( item.Size.Value.Measure, item.Size.Value.Y ), UIMeasure.Screen );
-							//	//item.Size = new UIMeasureValueVector2( UIMeasure.Screen, itemScreenWidth, sizeY );
-							//}
+							if( !needAndExistHorizontalScroll && ControlsHorizontalAlignment.Value == EHorizontalAlignment.Stretch )
+							{
+								if( originalSizes.TryGetValue( item, out var originalSize ) )
+								{
+									var sizeY = ConvertOffsetY( new UIMeasureValueDouble( originalSize.Measure, originalSize.Y ), UIMeasure.Screen );
+									item.Size = new UIMeasureValueVector2( UIMeasure.Screen, itemScreenWidth, sizeY );
+								}
+							}
 
 							currentPositionY += itemScreenSize.Y + verticalIndent;
 						}
@@ -978,6 +1021,9 @@ namespace NeoAxis
 					if( verticalScroll != null && verticalScroll.Enabled )
 						screenPositionY -= verticalScroll.Value.Value;
 
+					var verticalScrollSizeX = verticalScroll.GetScreenSize().X;
+					var verticalScrollIndent = ConvertOffsetX( VerticalScrollIndent.Value, UIMeasure.Screen );
+
 					for( int n = 0; n < items.Length; n++ )
 					{
 						var item = items[ n ];
@@ -991,16 +1037,14 @@ namespace NeoAxis
 						var offsetY = screenPositionY + currentPositionY;
 						item.Margin = new UIMeasureValueRectangle( UIMeasure.Screen, offsetX, offsetY, offsetX + itemScreenSize.X, offsetY + itemScreenSize.Y );
 
-						//if( !needHorizontalScroll && ControlsHorizontalAlignment.Value == EHorizontalAlignment.Stretch )
-						//{
-						//	originalSizes.TryGetValue( item, out var originalSize );
-
-						//	var sizeY = ConvertOffsetY( new UIMeasureValueDouble( originalSize.Measure, originalSize.Y ), UIMeasure.Screen );
-						//	item.Size = new UIMeasureValueVector2( UIMeasure.Screen, itemScreenWidth, sizeY );
-
-						//	//var sizeY = ConvertOffsetY( new UIMeasureValueDouble( item.Size.Value.Measure, item.Size.Value.Y ), UIMeasure.Screen );
-						//	//item.Size = new UIMeasureValueVector2( UIMeasure.Screen, itemScreenWidth, sizeY );
-						//}
+						if( !needAndExistHorizontalScroll && ControlsHorizontalAlignment.Value == EHorizontalAlignment.Stretch )
+						{
+							if( originalSizes.TryGetValue( item, out var originalSize ) )
+							{
+								var sizeY = ConvertOffsetY( new UIMeasureValueDouble( originalSize.Measure, originalSize.Y ), UIMeasure.Screen );
+								item.Size = new UIMeasureValueVector2( UIMeasure.Screen, itemScreenWidth - verticalScrollSizeX - verticalScrollIndent, sizeY );
+							}
+						}
 					}
 				}
 			}

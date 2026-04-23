@@ -101,16 +101,16 @@ namespace Project
 				if( client != null )
 				{
 					//update controls size and position
-					{
-						if( ControlListSettings != null )
-						{
-							var screenSize = ControlListSettings.GetScreenSize();
-							var unitsSize = ConvertOffsetX( new UIMeasureValueDouble( UIMeasure.Screen, screenSize.X ), UIMeasure.Units );
+					//{
+					//	if( ControlListSettings != null )
+					//	{
+					//		var screenSize = ControlListSettings.GetScreenSize();
+					//		var unitsSize = ConvertOffsetX( new UIMeasureValueDouble( UIMeasure.Screen, screenSize.X ), UIMeasure.Units );
 
-							foreach( var control in ControlListSettings.GetItems() )
-								control.Size = new UIMeasureValueVector2( UIMeasure.Units, unitsSize, control.Size.Value.Y );
-						}
-					}
+					//		foreach( var control in ControlListSettings.GetItems() )
+					//			control.Size = new UIMeasureValueVector2( UIMeasure.Units, unitsSize, control.Size.Value.Y );
+					//	}
+					//}
 
 					//update controls state
 					{
@@ -374,6 +374,8 @@ namespace Project
 						//add control
 
 						var control = (UIControl)ControlSettingsCombo.Clone();
+						//!!!!new
+						//ControlListSettings.GetOrCreateClientControl().AddComponent( control );
 						ControlListSettings.AddComponent( control );
 
 						var text = control.GetComponent( "Text" ) as UIText;

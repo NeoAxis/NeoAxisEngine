@@ -404,7 +404,7 @@
 		Margin = Units 20 90 200 0
 		BackgroundColor = 0.8627451 0.372 0.2094118 0.322
 		EditorScrollPosition = 0 0
-		ControlsHorizontalAlignment = Left
+		ControlsHorizontalAlignment = Stretch
 		ControlsVerticalAlignment = Top
 		.component NeoAxis.UIScroll
 		{
@@ -414,7 +414,7 @@
 			Size = Units 30 400
 			HorizontalAlignment = Right
 			VerticalAlignment = Stretch
-			Margin = Units 0 2 2 2
+			Margin = Units 0 0 0 0
 			EditorScrollPosition = 0 0
 			Vertical = True
 		}
