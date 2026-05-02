@@ -4,8 +4,6 @@
 
 [![Join the chat at https://discord.gg/NdCej26](https://img.shields.io/discord/639722941411753984?color=%237289DA&label=neoaxis&logo=discord&logoColor=white)](https://discord.gg/NdCej26)
 
-<div class="image" align="center"><a href="https://www.neoaxis.com/images/2024_1/NeoAxisEngine_2024_1_CharacterScene.jpg"><img src="https://www.neoaxis.com/images/2024_1/NeoAxisEngine_2024_1_CharacterScene.jpg" alt="" width="1000" vspace="10"></a></div>
-
 <h2>Key features</h2>
 <ul>
 <li>Full source code is provided from the start.</li>
