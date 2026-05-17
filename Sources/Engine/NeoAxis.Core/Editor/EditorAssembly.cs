@@ -6,10 +6,16 @@ using System.IO;
 
 namespace NeoAxis.Editor
 {
-	static class EditorAssembly
+	public static class EditorAssembly
 	{
+		volatile static bool initialized;
+
 		public static void Init()
 		{
+			if( initialized )
+				return;
+			initialized = true;
+
 			var assembly = Internal.AssemblyUtility.LoadAssemblyByRealFileName( "NeoAxis.Core.Editor.dll", false, false );
 
 			var type = assembly.GetType( "NeoAxis.Editor.EditorAssemblyInterfaceImpl" );
@@ -73,7 +79,7 @@ namespace NeoAxis.Editor
 		/////////////////////////////////////////
 
 		public abstract void ImportFBX( object/*ImportGeneral.Settings*/ settings, out string error );
-		public abstract void ImportAssimp( object/*ImportGeneral.Settings*/ settings, out string error );
+		//public abstract void ImportAssimp( object/*ImportGeneral.Settings*/ settings, out string error );
 		public abstract bool ExportToFBX( Mesh sourceMesh, string realFileName, out string error );
 
 		/////////////////////////////////////////

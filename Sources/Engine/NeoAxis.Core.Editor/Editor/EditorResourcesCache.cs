@@ -68,6 +68,8 @@ namespace NeoAxis.Editor
 		public static readonly Image StorageOnly = RenderStandard.GetImageForDispalyScale( Resources.StorageOnly_16, Resources.StorageOnly_32 );
 		public static readonly Image Database = RenderStandard.GetImageForDispalyScale( Resources.Database_16, Resources.Database_32 );
 
+		public static readonly Image Chat = RenderStandard.GetImageForDispalyScale( Resources.Chat_16, Resources.Chat_32 );
+
 		//
 
 		public static Image GetImage( string name )

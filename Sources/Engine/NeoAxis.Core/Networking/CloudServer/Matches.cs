@@ -632,8 +632,9 @@ namespace NeoAxis.CloudServer
 
 					if( status != null )
 					{
+						var oldStatus = match.Status;
 						match.Status = status;
-						if( status == "Deleted" && match.Status != "Deleted" )
+						if( status == "Deleted" && oldStatus != "Deleted" )
 							match.DeletionTime = DateTime.UtcNow;
 					}
 					if( name != null )

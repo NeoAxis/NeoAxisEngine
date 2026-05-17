@@ -54,11 +54,35 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
                 {
                     int alpha = GetAlpha(map, x, y, width, height, rotation);
 
+					//!!!!laskdlasd
+					//alpha *= 2;
+
                     bitmap.SetPixel(x, y, Color.FromArgb(alpha, BaseColor));
                 }
             }
 
-            return bitmap;
+			//!!!!laskdlasd
+			////scale bitmap 3 times bigger
+			//{
+			//	var width2 = width;
+			//	if( width2 > 1 )
+			//		width2 *= 4;
+			//	var height2 = height;
+			//	if( height2 > 1 )
+			//		height2 *= 4;
+
+			//	var scaledBitmap = new Bitmap( width2, height2, PixelFormat.Format32bppArgb );
+			//	using( var g = Graphics.FromImage( scaledBitmap ) )
+			//	{
+			//		g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Bilinear;
+			//		//g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+			//		g.DrawImage( bitmap, new Rectangle( 0, 0, scaledBitmap.Width, scaledBitmap.Height ), new Rectangle( 0, 0, bitmap.Width, bitmap.Height ), GraphicsUnit.Pixel );
+			//	}
+			//	bitmap.Dispose();
+			//	bitmap = scaledBitmap;
+			//}
+
+			return bitmap;
         }
 
         int GetAlpha(int[,] map, int x, int y, int width, int height, int rotation)

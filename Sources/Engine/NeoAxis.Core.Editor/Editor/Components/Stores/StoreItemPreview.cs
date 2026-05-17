@@ -68,6 +68,8 @@ namespace NeoAxis.Editor
 			var storeItem = GetStoreItem();
 			var package = storeItem.storesWindow.GetPackage( storeItem.packageId, false );
 
+			if( package != null && !string.IsNullOrEmpty( package.ThumbnailBig ) )
+				return StoreManager.ImageManager.GetSourceImage( package.ThumbnailBig, EngineApp.GetSystemTime() );
 			if( package != null && !string.IsNullOrEmpty( package.Thumbnail ) )
 				return StoreManager.ImageManager.GetSourceImage( package.Thumbnail, EngineApp.GetSystemTime() );
 

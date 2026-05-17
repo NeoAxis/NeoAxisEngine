@@ -31,6 +31,8 @@ namespace NeoAxis.Editor
 		//System.Drawing.Font richTextBox1FontOriginal;
 		//string richTextBox1FontCurrent = "";
 
+		DateTime createTimeUtc = DateTime.UtcNow;
+
 		//
 
 		public DockWindow()
@@ -283,5 +285,8 @@ namespace NeoAxis.Editor
 		{
 			get { return ( new Vector2( 280, 200 ) * EditorAPI2.DPIScale ).ToVector2I(); }
 		}
+
+		[Browsable( false )]
+		public DateTime CreateTimeUtc { get { return createTimeUtc; } }
 	}
 }

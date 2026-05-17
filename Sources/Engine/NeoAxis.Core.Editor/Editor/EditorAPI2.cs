@@ -7,6 +7,7 @@ using System.Drawing;
 using Internal.ComponentFactory.Krypton.Toolkit;
 using Internal;
 using System.Linq;
+using System.Net.WebSockets;
 
 namespace NeoAxis.Editor
 {
@@ -971,6 +972,13 @@ namespace NeoAxis.Editor
 		public static void OpenStoresWindow()
 		{
 			var window = FindWindow<StoresWindow>();
+			if( window != null )
+				SelectDockWindow( window );
+		}
+
+		public static void OpenChatWindow()
+		{
+			var window = FindWindow<ChatWindow>();
 			if( window != null )
 				SelectDockWindow( window );
 		}

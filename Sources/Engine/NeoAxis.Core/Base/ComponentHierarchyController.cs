@@ -47,6 +47,12 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		public delegate void SimulationStepDelegate( ComponentHierarchyController sender );
+		public event SimulationStepDelegate SimulationStep;
+		public event SimulationStepDelegate SimulationStepClient;
+
+		/////////////////////////////////////////
+
 		public class NetworkServerInterface
 		{
 			public delegate void AddComponentDelegate( NetworkServerInterface sender, Component child, bool createComponent );
@@ -310,10 +316,9 @@ namespace NeoAxis
 		{
 			if( rootComponent != null && rootComponent.EnabledInHierarchy )
 				rootComponent.PerformSimulationStep();
+			SimulationStep?.Invoke( this );
 			ProcessDelayedOperations();
-
 			ProcessSleepingFlows();
-
 			networkServerInterface?.PerformSimulationStep();
 		}
 
@@ -322,8 +327,8 @@ namespace NeoAxis
 		{
 			if( rootComponent != null && rootComponent.EnabledInHierarchy )
 				rootComponent.PerformSimulationStepClient();
+			SimulationStepClient?.Invoke( this );
 			ProcessDelayedOperations();
-
 			ProcessSleepingFlows();
 		}
 

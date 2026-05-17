@@ -431,6 +431,17 @@ namespace NeoAxis.Editor
 
 			Component oneSelectedComponent = ObjectOfWindow as Component;
 
+			//Chat
+			if( ChatWindow.EnableChatDocument )
+			{
+				var item = new KryptonContextMenuItem( TranslateContextMenu( "Chat" ), EditorResourcesCache.Chat, delegate ( object s, EventArgs e2 )
+				{
+					ChatWindow.ShowChatPromptFormForDocument( this, SelectedObjects );
+				} );
+				items.Add( item );
+				items.Add( new KryptonContextMenuSeparator() );
+			}
+
 			//Editor
 			{
 				var item = new KryptonContextMenuItem( TranslateContextMenu( "Editor" ), EditorResourcesCache.Edit, delegate ( object s, EventArgs e2 )

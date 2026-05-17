@@ -18,7 +18,7 @@ namespace NeoAxis
 	[SettingsCell( "NeoAxis.Editor.Import3DSettingsCell" )]
 	public class Import3D : Component
 	{
-//#if !DEPLOY
+		//#if !DEPLOY
 		bool insideDoUpdate;
 
 		public enum ModeEnum
@@ -785,9 +785,9 @@ namespace NeoAxis
 			return false;
 		}
 
-		public void DoAutoUpdate()
+		public void DoAutoUpdate( bool forceUpdate = false )
 		{
-			if( !insideDoUpdate && EnabledInHierarchy && IsNeedUpdate() )
+			if( !insideDoUpdate && EnabledInHierarchy && ( IsNeedUpdate() || forceUpdate ) )
 			{
 				if( !DoUpdate( null, out string error ) )
 				{
@@ -1072,8 +1072,9 @@ namespace NeoAxis
 
 						//settings.loadAnimations = false;
 
-						EditorAssemblyInterface.Instance.ImportAssimp( settings, out error );
-						//ImportAssimp.DoImport( settings, out error );
+						ImportAssimp.DoImport( settings, out error );
+						//EditorAssemblyInterface.Instance.ImportAssimp( settings, out error );
+
 						if( !string.IsNullOrEmpty( error ) )
 							return false;
 					}
@@ -1220,7 +1221,7 @@ namespace NeoAxis
 							}
 						}
 
-again:
+						again:
 						foreach( var material in GetComponents<Material>( false, true ) )
 						{
 							if( !usedMaterials.Contains( material ) )
@@ -1346,7 +1347,8 @@ again:
 					//select window with mesh or select window with root object
 					var selectObject = mesh != null ? (Component)mesh : this;
 
-					EditorDocumentConfiguration = EditorAPI.CreateEditorDocumentXmlConfiguration( toSelect, selectObject );
+					if( EditorAssemblyInterface.Instance != null )
+						EditorDocumentConfiguration = EditorAPI.CreateEditorDocumentXmlConfiguration( toSelect, selectObject );
 
 					//update windows
 					if( EngineApp.IsEditor )
@@ -1570,7 +1572,7 @@ again:
 		{
 			error = "";
 
-//#if !DEPLOY
+			//#if !DEPLOY
 			var sourceMeshes = GetMeshes( false );
 
 			var initialFactor = LODReduction.Value;//Simplify.Value; //var initialFactor = LODs.Value ? ReductionFactor.Value : 1.0;
@@ -1701,7 +1703,7 @@ again:
 				sourceMesh.LODScale = LODScale;
 				sourceMesh.LODScaleShadows = LODScaleShadows;
 			}
-//#endif
+			//#endif
 
 			return true;
 		}
@@ -2129,7 +2131,7 @@ again:
 		//		geometry.CalculateVirtualizedData( VirtualizeProxyFactor, Compress, Optimize );
 		//}
 
-//#endif
+		//#endif
 
 	}
 }

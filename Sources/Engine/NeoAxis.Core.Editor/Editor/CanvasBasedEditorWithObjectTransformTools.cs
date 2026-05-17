@@ -1384,6 +1384,17 @@ namespace NeoAxis.Editor
 					oneSelectedComponent = SelectedObjects[ 0 ] as Component;
 			}
 
+			//Chat
+			if( ChatWindow.EnableChatDocument )
+			{
+				var item = new KryptonContextMenuItem( TranslateContextMenu( "Chat" ), EditorResourcesCache.Chat, delegate ( object s, EventArgs e2 )
+				{
+					ChatWindow.ShowChatPromptFormForDocument( Owner, SelectedObjects );
+				} );
+				items.Add( item );
+				items.Add( new KryptonContextMenuSeparator() );
+			}
+
 			//Transform Tool
 			if( transformTool != null )
 			{

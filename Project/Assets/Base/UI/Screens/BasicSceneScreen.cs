@@ -212,9 +212,15 @@ namespace Project
 				if( scene != null )
 				{
 					if( EnabledInHierarchyAndIsInstance )
+					{
 						scene.RenderEvent += Scene_RenderEvent;
+						scene.SimulationStep += Scene_SimulationStep;
+					}
 					else
+					{
 						scene.RenderEvent -= Scene_RenderEvent;
+						scene.SimulationStep -= Scene_SimulationStep;
+					}
 				}
 			}
 		}
@@ -983,6 +989,10 @@ namespace Project
 					}
 				}
 			}
+		}
+
+		protected virtual void Scene_SimulationStep( NeoAxis.Component obj )
+		{
 		}
 
 		///////////////////////////////////////////////

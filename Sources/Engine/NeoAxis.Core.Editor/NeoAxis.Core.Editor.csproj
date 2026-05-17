@@ -69,6 +69,9 @@
     <Compile Update="Editor\CancelForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Editor\ChatWindow\ChatPromptForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Editor\ColorValue\ColorGradientControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -141,6 +144,7 @@
     <Compile Update="Editor\ForeachDocumentWindowContainer.designer.cs">
       <DependentUpon>ForeachDocumentWindowContainer.cs</DependentUpon>
     </Compile>
+    <Compile Update="Editor\ChatWindow.cs" />
     <Compile Update="Editor\HierarchicalContainer\DropDownEditors\EnumDropDownControl.designer.cs">
       <DependentUpon>EnumDropDownControl.cs</DependentUpon>
     </Compile>
@@ -249,7 +253,7 @@
     <Compile Update="Editor\ObjectsWindow.designer.cs">
       <DependentUpon>ObjectsWindow.cs</DependentUpon>
     </Compile>
-    <Compile Update="Editor\OKCancelTextBoxForm - Copy.cs">
+    <Compile Update="Editor\ProcessingForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Editor\OKCancelTextBoxForm - Copy.designer.cs">

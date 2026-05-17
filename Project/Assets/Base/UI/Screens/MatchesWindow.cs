@@ -151,7 +151,7 @@ namespace Project
 						var matchID = 0L;
 						{
 							var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-							var result = await client.CallMethodWithCancellationTokenAsync<long>( "Matches", "NewMatch", cts.Token, null, null );
+							var result = await client.CallMethodAsync<long>( "Matches", "NewMatch", cts.Token, null, null );
 							if( !string.IsNullOrEmpty( result.Error ) )
 							{
 								EngineThreading.ExecuteFromMainThreadLater( delegate ()
@@ -202,7 +202,7 @@ namespace Project
 
 			//call EnterMatch on the server
 			var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-			var result = await client.CallMethodWithCancellationTokenAsync<long>( "Matches", "EnterMatch", cts.Token, matchID, null );
+			var result = await client.CallMethodAsync<long>( "Matches", "EnterMatch", cts.Token, matchID, null );
 			if( !string.IsNullOrEmpty( result.Error ) )
 			{
 				EngineThreading.ExecuteFromMainThreadLater( delegate ()
@@ -241,7 +241,7 @@ namespace Project
 				{
 					//call GetMatchUserOfCaller on the server
 					var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-					var result = await client.CallMethodWithCancellationTokenAsync<Matches.MatchUser>( "Matches", "GetMatchUserOfCaller", cts.Token, selectedMatch.Id );
+					var result = await client.CallMethodAsync<Matches.MatchUser>( "Matches", "GetMatchUserOfCaller", cts.Token, selectedMatch.Id );
 					if( !string.IsNullOrEmpty( result.Error ) )
 					{
 						Log.Warning( "Error: " + result.Error );
@@ -295,7 +295,7 @@ namespace Project
 
 				//get matches with Lobby status
 				var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-				var result = await client.CallMethodWithCancellationTokenAsync<Matches.Match[]>( "Matches", "GetMatches", cts.Token, null, null, null, new[] { "Lobby" } );
+				var result = await client.CallMethodAsync<Matches.Match[]>( "Matches", "GetMatches", cts.Token, null, null, null, new[] { "Lobby" } );
 				if( !string.IsNullOrEmpty( result.Error ) )
 				{
 					Log.Warning( "Error: " + result.Error );
@@ -392,7 +392,7 @@ namespace Project
 				TextBlock rootBlock = null;
 
 				var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-				var result = await client.CallMethodWithCancellationTokenAsync<string>( "Implementation", "GetProjectDetails", cts.Token );
+				var result = await client.CallMethodAsync<string>( "Implementation", "GetProjectDetails", cts.Token );
 				if( !string.IsNullOrEmpty( result.Error ) )
 					Log.Warning( "Error: " + result.Error );
 				else
@@ -440,7 +440,7 @@ namespace Project
 					return;
 
 				var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-				var result = await client.CallMethodWithCancellationTokenAsync<Matches.Match>( "Implementation", "GetMatchPlayingByCaller", cts.Token );
+				var result = await client.CallMethodAsync<Matches.Match>( "Implementation", "GetMatchPlayingByCaller", cts.Token );
 
 				if( !string.IsNullOrEmpty( result.Error ) )
 				{
@@ -459,15 +459,47 @@ namespace Project
 				{
 					//ask to enter
 
+					var isCreator = match.UserID == CloudServiceClient.ThisUserID;
+
 					var text = $"You are playing \"{match.Name}\". Do you want to continue?";
 
-					MessageBoxWindow.Show( this, text, "Confirm", EMessageBoxButtons.YesNo, EMessageBoxIcon.Question, null, delegate ( MessageBoxWindow sender, EDialogResult result2, object anyData )
+					var windowData = MessageBoxWindow.Show( this, text, "Confirm", EMessageBoxButtons.YesNoCancel, EMessageBoxIcon.Question, null, delegate ( MessageBoxWindow sender, EDialogResult result2, object anyData )
 					{
 						if( result2 == EDialogResult.Yes )
 						{
 							MatchContinuePlay?.Invoke( this, match );
 						}
+						else if( result2 == EDialogResult.No )
+						{
+							Task.Run( async delegate ()
+							{
+								if( isCreator )
+								{
+									//delete the match
+									var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+									var result = await client.CallMethodAsync( "Matches", "UpdateMatch", cts.Token, match.Id, "Deleted", null, null );
+									if( !string.IsNullOrEmpty( result.Error ) )
+									{
+										Log.Warning( "Error: " + result.Error );
+										return;
+									}
+								}
+								else
+								{
+									//leave the match
+									var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+									var result = await client.CallMethodAsync( "Matches", "RemoveMatchUser", cts.Token, match.Id, CloudServiceClient.ThisUserID );
+									if( !string.IsNullOrEmpty( result.Error ) )
+									{
+										Log.Warning( "Error: " + result.Error );
+										return;
+									}
+								}
+							} );
+						}
 					} );
+
+					windowData.Window.SetButtonName( EDialogResult.No, isCreator ? "Delete" : "Leave" );
 				} );
 			}
 			catch( Exception e )

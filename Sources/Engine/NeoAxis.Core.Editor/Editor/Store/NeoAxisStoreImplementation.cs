@@ -287,6 +287,7 @@ namespace NeoAxis.Editor
 								////}
 
 								info.Thumbnail = $"{cloudServiceCommonStorage}/Projects/{projectID}_Logo_Preview.jpg";
+								info.ThumbnailBig = $"{cloudServiceCommonStorage}/Projects/{projectID}_Logo.png";
 
 
 								//!!!!возможно не движковые не добавлять
@@ -360,7 +361,9 @@ namespace NeoAxis.Editor
 								//featured products
 								if( info.Author == "3845" )
 								{
-									if( info.Title == "Basic Materials 2K" || info.Title == "Basic Environments 4K" || info.Title == "City Demo" || info.Title == "Nature Demo" )
+									//!!!!
+									if( info.Title == "Basic Materials 2K" || info.Title == "Basic Environments 4K" || info.Title == "Sci-fi Demo" )
+									//if( info.Title == "Basic Materials 2K" || info.Title == "Basic Environments 4K" || info.Title == "City Demo" || info.Title == "Nature Demo" )
 									{
 										featuredStoreItems.AddWithCheckAlreadyContained( info.Identifier );
 									}

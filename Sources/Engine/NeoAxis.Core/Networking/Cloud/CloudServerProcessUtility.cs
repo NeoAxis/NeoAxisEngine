@@ -1052,6 +1052,8 @@ namespace NeoAxis.Networking
 			public int CPUUsage;
 			public long MemoryInUse;
 			public long MemoryCapacity;
+			public long SwapInUse;
+			public long SwapCapacity;
 			public int GPUUsage;
 			public long GPUMemoryInUse;
 			public long GPUMemoryCapacity;
@@ -1072,6 +1074,16 @@ namespace NeoAxis.Networking
 					if( MemoryCapacity == 0 )
 						return 0;
 					return (int)( MemoryInUse * 100 / MemoryCapacity );
+				}
+			}
+
+			public int SwapUsage
+			{
+				get
+				{
+					if( SwapCapacity == 0 )
+						return 0;
+					return (int)( SwapInUse * 100 / SwapCapacity );
 				}
 			}
 
@@ -1114,6 +1126,8 @@ namespace NeoAxis.Networking
 				int.TryParse( block.GetAttribute( "CPUUsage", "0" ), out result.CPUUsage );
 				long.TryParse( block.GetAttribute( "MemoryInUse", "0" ), out result.MemoryInUse );
 				long.TryParse( block.GetAttribute( "MemoryCapacity", "0" ), out result.MemoryCapacity );
+				long.TryParse( block.GetAttribute( "SwapInUse", "0" ), out result.SwapInUse );
+				long.TryParse( block.GetAttribute( "SwapCapacity", "0" ), out result.SwapCapacity );
 				int.TryParse( block.GetAttribute( "GPUUsage", "0" ), out result.GPUUsage );
 				long.TryParse( block.GetAttribute( "GPUMemoryInUse", "0" ), out result.GPUMemoryInUse );
 				long.TryParse( block.GetAttribute( "GPUMemoryCapacity", "0" ), out result.GPUMemoryCapacity );

@@ -28,17 +28,9 @@
     <NoWarn>1701;1702;CS1591;CS8632</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Remove="Assets\BoardGames\Games\**" />
-    <EmbeddedResource Remove="Assets\BoardGames\Objects\**" />
-    <EmbeddedResource Remove="Assets\BoardGames\Scripts\**" />
-    <EmbeddedResource Remove="Assets\BoardGames\UI\**" />
     <EmbeddedResource Remove="Packages\**" />
     <EmbeddedResource Remove="Sources\**" />
     <EmbeddedResource Remove="User settings\**" />
-    <None Remove="Assets\BoardGames\Games\**" />
-    <None Remove="Assets\BoardGames\Objects\**" />
-    <None Remove="Assets\BoardGames\Scripts\**" />
-    <None Remove="Assets\BoardGames\UI\**" />
     <None Remove="Packages\**" />
     <None Remove="Sources\**" />
     <None Remove="User settings\**" />

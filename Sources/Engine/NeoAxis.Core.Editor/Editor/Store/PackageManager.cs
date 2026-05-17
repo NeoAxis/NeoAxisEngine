@@ -37,6 +37,7 @@ namespace NeoAxis.Editor
 			public string Categories;
 			public string Tags;
 			public string Thumbnail;
+			public string ThumbnailBig;
 			public int Triangles;
 			public int Vertices;
 			public bool Rigged;
@@ -165,6 +166,7 @@ namespace NeoAxis.Editor
 				result.Categories = p1.Categories ?? p2.Categories;
 				result.Tags = p1.Tags ?? p2.Tags;
 				result.Thumbnail = p1.Thumbnail ?? p2.Thumbnail;
+				result.ThumbnailBig = p1.ThumbnailBig ?? p2.ThumbnailBig;
 				result.Triangles = p1.Triangles != 0 ? p1.Triangles : p2.Triangles;
 				result.Vertices = p1.Vertices != 0 ? p1.Vertices : p2.Vertices;
 				result.Rigged = p1.Rigged || p2.Rigged;

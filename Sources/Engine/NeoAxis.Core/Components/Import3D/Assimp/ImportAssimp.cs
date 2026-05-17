@@ -5,7 +5,7 @@ using System.IO;
 using Internal.Assimp;
 using Internal.Assimp.Configs;
 
-namespace NeoAxis.Import
+namespace NeoAxis//.Import
 {
 	class ImportAssimp : ImportGeneral
 	{

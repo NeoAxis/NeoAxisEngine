@@ -398,7 +398,7 @@ namespace NeoAxis.CloudServer
 					if( !string.IsNullOrEmpty( getCountResult.Error ) )
 						return new NewChatResult { Error = getCountResult.Error };
 					if( getCountResult.Count >= ChatMaxCountPerUser )
-						return new NewChatResult { Error = "The maximum number of chats has been reached." };
+						return new NewChatResult { Error = $"The maximum number of chats has been reached. Limit: {ChatMaxCountPerUser} chats." };
 				}
 				if( name.Length > ChatNameMaxLength )
 					return new NewChatResult { Error = $"The chat name length exceeds the maximum allowed. Limit: {ChatNameMaxLength} characters." };
@@ -500,8 +500,9 @@ namespace NeoAxis.CloudServer
 
 					if( status != null )
 					{
+						var oldStatus = chat.Status;
 						chat.Status = status;
-						if( status == "Deleted" && chat.Status != "Deleted" )
+						if( status == "Deleted" && oldStatus != "Deleted" )
 							chat.DeletionTime = DateTime.UtcNow;
 					}
 					if( name != null )
@@ -680,7 +681,7 @@ namespace NeoAxis.CloudServer
 			if( getChatResult.NotFound )
 				throw new Exception( "Chat not found." );
 			var chat = getChatResult.Chat;
-			
+
 			//check permissions
 			var allow = chat.UserID == callerID;
 			GetMessagesCheckAccessRights?.Invoke( callerID, chat, ref statuses, ref timeFrom, ref timeTo, ref maxCount, ref getFromEnd, ref allow );
@@ -813,7 +814,7 @@ namespace NeoAxis.CloudServer
 					if( !string.IsNullOrEmpty( getCountResult.Error ) )
 						return new NewMessageResult { Error = getCountResult.Error };
 					if( getCountResult.Count >= ChatMaxMessageCount )
-						return new NewMessageResult { Error = "The maximum number of messages in the chat has been reached." };
+						return new NewMessageResult { Error = $"The maximum number of messages in the chat has been reached. Limit: {ChatMaxMessageCount} messages." };
 				}
 
 				//event before new message
@@ -939,8 +940,9 @@ namespace NeoAxis.CloudServer
 
 					if( status != null )
 					{
+						var oldStatus = message.Status;
 						message.Status = status;
-						if( status == "Deleted" && message.Status != "Deleted" )
+						if( status == "Deleted" && oldStatus != "Deleted" )
 							message.DeletionTime = DateTime.UtcNow;
 					}
 					if( text != null )
@@ -1000,6 +1002,7 @@ namespace NeoAxis.CloudServer
 			if( !string.IsNullOrEmpty( result.Error ) )
 				throw new Exception( result.Error );
 		}
+
 #endif
 	}
 }

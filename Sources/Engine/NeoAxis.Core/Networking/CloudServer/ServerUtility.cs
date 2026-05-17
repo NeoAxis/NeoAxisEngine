@@ -49,7 +49,7 @@ namespace NeoAxis.CloudServer
 			return tcs.Task;
 		}
 
-		public async static Task<bool> ExecuteBashCommandAsync( string command )
+		public async static Task<bool> ExecuteBashCommandAsync( string command, CancellationToken cancellationToken = default )
 		{
 			var processInfo = new ProcessStartInfo
 			{
@@ -70,7 +70,7 @@ namespace NeoAxis.CloudServer
 				var outputTask = process.StandardOutput.ReadToEndAsync();
 				var errorTask = process.StandardError.ReadToEndAsync();
 
-				await WaitForExitAsync( process ).ConfigureAwait( false );
+				await WaitForExitAsync( process, cancellationToken ).ConfigureAwait( false );
 
 				var output = await outputTask.ConfigureAwait( false );
 				var error = await errorTask.ConfigureAwait( false );

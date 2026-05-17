@@ -1747,6 +1747,17 @@ namespace NeoAxis.Editor
 					oneSelectedComponent = SelectedObjects[ 0 ] as Component;
 			}
 
+			//Chat
+			if( ChatWindow.EnableChatDocument )
+			{
+				var item = new KryptonContextMenuItem( TranslateContextMenu( "Chat" ), EditorResourcesCache.Chat, delegate ( object s, EventArgs e2 )
+				{
+					ChatWindow.ShowChatPromptFormForDocument( this, SelectedObjects );
+				} );
+				items.Add( item );
+				items.Add( new KryptonContextMenuSeparator() );
+			}
+
 			//Transform Tool
 			if( transformTool != null )
 			{
@@ -3442,7 +3453,7 @@ namespace NeoAxis.Editor
 
 						distance /= 1.03f;
 					}
-end:;
+					end:;
 				}
 				else
 				{
@@ -4353,7 +4364,7 @@ end:;
 												}
 											}
 
-end:;
+											end:;
 
 											if( position != null )
 											{

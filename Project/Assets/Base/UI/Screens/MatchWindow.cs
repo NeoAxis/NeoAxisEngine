@@ -262,7 +262,7 @@ namespace Project
 						{
 							//delete the match
 							var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-							var result = await client.CallMethodWithCancellationTokenAsync( "Matches", "UpdateMatch", cts.Token, MatchID, "Deleted", null, null );
+							var result = await client.CallMethodAsync( "Matches", "UpdateMatch", cts.Token, MatchID, "Deleted", null, null );
 							if( !string.IsNullOrEmpty( result.Error ) )
 							{
 								Log.Warning( "Error: " + result.Error );
@@ -273,7 +273,7 @@ namespace Project
 						{
 							//leave the match
 							var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-							var result = await client.CallMethodWithCancellationTokenAsync( "Matches", "RemoveMatchUser", cts.Token, MatchID, CloudServiceClient.ThisUserID );
+							var result = await client.CallMethodAsync( "Matches", "RemoveMatchUser", cts.Token, MatchID, CloudServiceClient.ThisUserID );
 							if( !string.IsNullOrEmpty( result.Error ) )
 							{
 								Log.Warning( "Error: " + result.Error );
@@ -294,7 +294,7 @@ namespace Project
 					return;
 
 				var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-				var result = await client.CallMethodWithCancellationTokenAsync<Matches.Match>( "Matches", "GetMatch", cts.Token, MatchID );
+				var result = await client.CallMethodAsync<Matches.Match>( "Matches", "GetMatch", cts.Token, MatchID );
 				if( !string.IsNullOrEmpty( result.Error ) )
 				{
 					Log.Warning( "Error: " + result.Error );
@@ -318,7 +318,7 @@ namespace Project
 					return;
 
 				var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-				var result = await client.CallMethodWithCancellationTokenAsync<string>( "Implementation", "GetMatchSettings", cts.Token, MatchID );
+				var result = await client.CallMethodAsync<string>( "Implementation", "GetMatchSettings", cts.Token, MatchID );
 				if( !string.IsNullOrEmpty( result.Error ) )
 				{
 					if( !result.Error.Contains( "You are not a user of this match." ) )
@@ -374,8 +374,6 @@ namespace Project
 						//add control
 
 						var control = (UIControl)ControlSettingsCombo.Clone();
-						//!!!!new
-						//ControlListSettings.GetOrCreateClientControl().AddComponent( control );
 						ControlListSettings.AddComponent( control );
 
 						var text = control.GetComponent( "Text" ) as UIText;
@@ -440,7 +438,7 @@ namespace Project
 				try
 				{
 					var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-					var result = await client.CallMethodWithCancellationTokenAsync( "Implementation", "SetMatchSetting", cts.Token, MatchID, settingName, newValue );
+					var result = await client.CallMethodAsync( "Implementation", "SetMatchSetting", cts.Token, MatchID, settingName, newValue );
 					if( !string.IsNullOrEmpty( result.Error ) )
 						Log.Warning( "Error: " + result.Error );
 				}
@@ -460,7 +458,7 @@ namespace Project
 					return;
 
 				var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-				var result = await client.CallMethodWithCancellationTokenAsync<string>( "Implementation", "GetMatchDetails", cts.Token, MatchID );
+				var result = await client.CallMethodAsync<string>( "Implementation", "GetMatchDetails", cts.Token, MatchID );
 				if( !string.IsNullOrEmpty( result.Error ) )
 				{
 					if( !result.Error.Contains( "You are not a user of this match." ) )
@@ -563,7 +561,7 @@ namespace Project
 				try
 				{
 					var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-					var result = await client.CallMethodWithCancellationTokenAsync( "Matches", "UpdateMatch", cts.Token, MatchID, "Play", null, null );
+					var result = await client.CallMethodAsync( "Matches", "UpdateMatch", cts.Token, MatchID, "Play", null, null );
 					if( !string.IsNullOrEmpty( result.Error ) )
 					{
 						Log.Warning( "Error: " + result.Error );
@@ -602,7 +600,7 @@ namespace Project
 					{
 						//kick the player
 						var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-						var result = await client.CallMethodWithCancellationTokenAsync( "Matches", "RemoveMatchUser", cts.Token, MatchID, selectedPartipicantID );
+						var result = await client.CallMethodAsync( "Matches", "RemoveMatchUser", cts.Token, MatchID, selectedPartipicantID );
 						if( !string.IsNullOrEmpty( result.Error ) )
 						{
 							Log.Warning( "Error: " + result.Error );
@@ -631,7 +629,7 @@ namespace Project
 				try
 				{
 					var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-					var result = await client.CallMethodWithCancellationTokenAsync<long>( "Chats", "NewMessage", cts.Token, matchInfo.ChatID, message, null, null );
+					var result = await client.CallMethodAsync<long>( "Chats", "NewMessage", cts.Token, matchInfo.ChatID, message, null, null );
 					if( !string.IsNullOrEmpty( result.Error ) )
 					{
 						Log.Warning( "Error: " + result.Error );
@@ -769,7 +767,7 @@ namespace Project
 				var getFromEnd = lastMessage == null;
 
 				var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-				var getMessagesResult = await client.CallMethodWithCancellationTokenAsync<Chats.Message[]>( "Chats", "GetMessages", cts.Token, matchInfo.ChatID, new[] { "Enabled" }, timeFrom, DateTime.MaxValue, 200, getFromEnd );
+				var getMessagesResult = await client.CallMethodAsync<Chats.Message[]>( "Chats", "GetMessages", cts.Token, matchInfo.ChatID, new[] { "Enabled" }, timeFrom, DateTime.MaxValue, 200, getFromEnd );
 				if( !string.IsNullOrEmpty( getMessagesResult.Error ) )
 				{
 					Log.Warning( "ChatGetNewMessagesAsync: Chats.GetMessages erorr: " + getMessagesResult.Error );

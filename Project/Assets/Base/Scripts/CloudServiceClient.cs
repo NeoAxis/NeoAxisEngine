@@ -41,13 +41,15 @@ namespace Project
 			}
 		}
 
-		public async static Task<SimpleResult> ConnectAsync( long projectID = 0L, CancellationToken cancellationToken = default )
+		public async static Task<SimpleResult> ConnectAsync( long projectID = 0L, bool allowWebSocket = true, bool allowUDP = false, CancellationToken cancellationToken = default )
 		{
 			//disconnect previous client
 			Destroy();
 
 			//connection settings
 			var settings = BasicServiceClient.ConnectionSettingsClass.CreateCloud( CloudUserRole.Player, projectID, true );
+			settings.ConnectWebSocket = allowWebSocket;
+			settings.ConnectUDP = allowUDP;
 
 			//create client and connect
 			var createResult = await CloudFunctionsClient.CreateAsync( settings, true, cancellationToken );

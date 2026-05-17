@@ -129,7 +129,7 @@
 			this.kryptonButtonOpenStore.Location = new System.Drawing.Point(780, 23);
 			this.kryptonButtonOpenStore.Margin = new System.Windows.Forms.Padding(4);
 			this.kryptonButtonOpenStore.Name = "kryptonButtonOpenStore";
-			this.kryptonButtonOpenStore.Size = new System.Drawing.Size(147, 32);
+			this.kryptonButtonOpenStore.Size = new System.Drawing.Size(117, 32);
 			this.kryptonButtonOpenStore.TabIndex = 10;
 			this.kryptonButtonOpenStore.Values.Text = "Get Content";
 			this.kryptonButtonOpenStore.Visible = false;
@@ -195,7 +195,7 @@
 			this.buttonCreateScene.Location = new System.Drawing.Point(0, 304);
 			this.buttonCreateScene.Margin = new System.Windows.Forms.Padding(4);
 			this.buttonCreateScene.Name = "buttonCreateScene";
-			this.buttonCreateScene.Size = new System.Drawing.Size(117, 32);
+			this.buttonCreateScene.Size = new System.Drawing.Size( 117, 32 );
 			this.buttonCreateScene.TabIndex = 5;
 			this.buttonCreateScene.Values.Text = "Create";
 			// 
@@ -241,7 +241,7 @@
 			this.kryptonButtonInstallStoreItem.Location = new System.Drawing.Point(0, 304);
 			this.kryptonButtonInstallStoreItem.Margin = new System.Windows.Forms.Padding(4);
 			this.kryptonButtonInstallStoreItem.Name = "kryptonButtonInstallStoreItem";
-			this.kryptonButtonInstallStoreItem.Size = new System.Drawing.Size(117, 32);
+			this.kryptonButtonInstallStoreItem.Size = new System.Drawing.Size( 117, 32 );
 			this.kryptonButtonInstallStoreItem.TabIndex = 7;
 			this.kryptonButtonInstallStoreItem.Values.Text = "Learn More";
 			// 
@@ -255,7 +255,8 @@
 			// 
 			// StartPageWindow
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF( 8F, 20F );
+			//this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.panelStoreItems);
 			this.Controls.Add(this.panelNewResource);

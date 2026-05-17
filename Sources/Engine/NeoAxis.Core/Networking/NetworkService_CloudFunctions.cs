@@ -3350,7 +3350,7 @@ namespace NeoAxis
 
 		//with return value
 
-		public async Task<CallMethodResult<T>> CallMethodWithCancellationTokenAsync<T>( CloudMethodInfo method, CancellationToken cancellationToken, params object[] parameters )
+		public async Task<CallMethodResult<T>> CallMethodAsync<T>( CloudMethodInfo method, CancellationToken cancellationToken, params object[] parameters )
 		{
 			var inputParameterValues = parameters ?? Array.Empty<object>();
 
@@ -3422,45 +3422,45 @@ namespace NeoAxis
 			}
 		}
 
-		public async Task<CallMethodResult<T>> CallMethodWithCancellationTokenAsync<T>( string className, string methodName, CancellationToken cancellationToken, params object[] parameters )
+		public async Task<CallMethodResult<T>> CallMethodAsync<T>( string className, string methodName, CancellationToken cancellationToken, params object[] parameters )
 		{
 			var method = await GetCloudMethodInfoAsync( className, methodName, cancellationToken );
 			if( !string.IsNullOrEmpty( method.Error ) )
 				return new CallMethodResult<T> { Error = method.Error };
 
-			return await CallMethodWithCancellationTokenAsync<T>( method.Method, cancellationToken, parameters );
+			return await CallMethodAsync<T>( method.Method, cancellationToken, parameters );
 		}
 
-		/// <summary>
-		/// Call method with default cancellation token specified in CallMethodDefaultCancellationTokenSource.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="method"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		public async Task<CallMethodResult<T>> CallMethodAsync<T>( CloudMethodInfo method, params object[] parameters )
-		{
-			return await CallMethodWithCancellationTokenAsync<T>( method, default, parameters );
-			//return await CallMethodWithCancellationTokenAsync<T>( method, CallMethodDefaultCancellationTokenSource.Token, parameters );
-		}
+		///// <summary>
+		///// Call method with default cancellation token specified in CallMethodDefaultCancellationTokenSource.
+		///// </summary>
+		///// <typeparam name="T"></typeparam>
+		///// <param name="method"></param>
+		///// <param name="parameters"></param>
+		///// <returns></returns>
+		//public async Task<CallMethodResult<T>> CallMethodAsync<T>( CloudMethodInfo method, params object[] parameters )
+		//{
+		//	return await CallMethodWithCancellationTokenAsync<T>( method, default, parameters );
+		//	//return await CallMethodWithCancellationTokenAsync<T>( method, CallMethodDefaultCancellationTokenSource.Token, parameters );
+		//}
 
-		/// <summary>
-		/// Call method with default cancellation token specified in CallMethodDefaultCancellationTokenSource.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="className"></param>
-		/// <param name="methodName"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		public async Task<CallMethodResult<T>> CallMethodAsync<T>( string className, string methodName, params object[] parameters )
-		{
-			return await CallMethodWithCancellationTokenAsync<T>( className, methodName, default, parameters );
-			//return await CallMethodWithCancellationTokenAsync<T>( className, methodName, CallMethodDefaultCancellationTokenSource.Token, parameters );
-		}
+		///// <summary>
+		///// Call method with default cancellation token specified in CallMethodDefaultCancellationTokenSource.
+		///// </summary>
+		///// <typeparam name="T"></typeparam>
+		///// <param name="className"></param>
+		///// <param name="methodName"></param>
+		///// <param name="parameters"></param>
+		///// <returns></returns>
+		//public async Task<CallMethodResult<T>> CallMethodAsync<T>( string className, string methodName, params object[] parameters )
+		//{
+		//	return await CallMethodWithCancellationTokenAsync<T>( className, methodName, default, parameters );
+		//	//return await CallMethodWithCancellationTokenAsync<T>( className, methodName, CallMethodDefaultCancellationTokenSource.Token, parameters );
+		//}
 
 		//without return value
 
-		public async Task<CallMethodResultNoValue> CallMethodWithCancellationTokenAsync( CloudMethodInfo method, CancellationToken cancellationToken, params object[] parameters )
+		public async Task<CallMethodResultNoValue> CallMethodAsync( CloudMethodInfo method, CancellationToken cancellationToken, params object[] parameters )
 		{
 			var inputParameterValues = parameters ?? Array.Empty<object>();
 
@@ -3489,41 +3489,41 @@ namespace NeoAxis
 			}
 		}
 
-		public async Task<CallMethodResultNoValue> CallMethodWithCancellationTokenAsync( string className, string methodName, CancellationToken cancellationToken, params object[] parameters )
+		public async Task<CallMethodResultNoValue> CallMethodAsync( string className, string methodName, CancellationToken cancellationToken, params object[] parameters )
 		{
 			var method = await GetCloudMethodInfoAsync( className, methodName, cancellationToken );
 			if( !string.IsNullOrEmpty( method.Error ) )
 				return new CallMethodResultNoValue { Error = method.Error };
 
-			return await CallMethodWithCancellationTokenAsync( method.Method, cancellationToken, parameters );
+			return await CallMethodAsync( method.Method, cancellationToken, parameters );
 		}
 
-		/// <summary>
-		/// Call method with default cancellation token specified in CallMethodDefaultCancellationTokenSource.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="method"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		public async Task<CallMethodResultNoValue> CallMethodAsync( CloudMethodInfo method, params object[] parameters )
-		{
-			return await CallMethodWithCancellationTokenAsync( method, default, parameters );
-			//return await CallMethodWithCancellationTokenAsync( method, CallMethodDefaultCancellationTokenSource.Token, parameters );
-		}
+		///// <summary>
+		///// Call method with default cancellation token specified in CallMethodDefaultCancellationTokenSource.
+		///// </summary>
+		///// <typeparam name="T"></typeparam>
+		///// <param name="method"></param>
+		///// <param name="parameters"></param>
+		///// <returns></returns>
+		//public async Task<CallMethodResultNoValue> CallMethodAsync( CloudMethodInfo method, params object[] parameters )
+		//{
+		//	return await CallMethodWithCancellationTokenAsync( method, default, parameters );
+		//	//return await CallMethodWithCancellationTokenAsync( method, CallMethodDefaultCancellationTokenSource.Token, parameters );
+		//}
 
-		/// <summary>
-		/// Call method with default cancellation token specified in CallMethodDefaultCancellationTokenSource.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="className"></param>
-		/// <param name="methodName"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		public async Task<CallMethodResultNoValue> CallMethodAsync( string className, string methodName, params object[] parameters )
-		{
-			return await CallMethodWithCancellationTokenAsync( className, methodName, default, parameters );
-			//return await CallMethodWithCancellationTokenAsync( className, methodName, CallMethodDefaultCancellationTokenSource.Token, parameters );
-		}
+		///// <summary>
+		///// Call method with default cancellation token specified in CallMethodDefaultCancellationTokenSource.
+		///// </summary>
+		///// <typeparam name="T"></typeparam>
+		///// <param name="className"></param>
+		///// <param name="methodName"></param>
+		///// <param name="parameters"></param>
+		///// <returns></returns>
+		//public async Task<CallMethodResultNoValue> CallMethodAsync( string className, string methodName, params object[] parameters )
+		//{
+		//	return await CallMethodWithCancellationTokenAsync( className, methodName, default, parameters );
+		//	//return await CallMethodWithCancellationTokenAsync( className, methodName, CallMethodDefaultCancellationTokenSource.Token, parameters );
+		//}
 
 
 

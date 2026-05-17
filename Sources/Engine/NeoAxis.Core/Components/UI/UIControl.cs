@@ -1361,6 +1361,14 @@ namespace NeoAxis
 			return v;
 		}
 
+		Vector2 DivideWithZeroCheck( Vector2 v1, double v2 )
+		{
+			Vector2 v = Vector2.Zero;
+			if( v2 != 0 )
+				v = v1 / v2;
+			return v;
+		}
+
 		public Vector2 ConvertOffset( UIMeasureValueVector2 value, UIMeasure toMeasure )
 		{
 			if( value.Value == Vector2.Zero )
@@ -1403,7 +1411,8 @@ namespace NeoAxis
 			case UIMeasure.Pixels:
 				return screen * GetParentContainerSizeInPixels();
 			case UIMeasure.PixelsScaled:
-				return screen * GetParentContainerPixelScale() * GetParentContainerSizeInPixels();
+				return DivideWithZeroCheck( screen * GetParentContainerSizeInPixels(), GetParentContainerPixelScale() );
+			//return screen * GetParentContainerPixelScale() * GetParentContainerSizeInPixels();
 			default:
 				return Vector2.Zero;
 			}
@@ -2314,7 +2323,7 @@ namespace NeoAxis
 			get
 			{
 				var container = ParentContainer;
- 				if( container == null )
+				if( container == null )
 					return false;
 				return container.capturedControl == this;
 			}

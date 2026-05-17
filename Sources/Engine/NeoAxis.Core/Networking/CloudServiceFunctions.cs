@@ -1203,6 +1203,8 @@ namespace NeoAxis.Networking
 				public int CPUUsage;
 				public long MemoryInUse;
 				public long MemoryCapacity;
+				public long SwapInUse;
+				public long SwapCapacity;
 				public int GPUUsage;
 				public long GPUMemoryInUse;
 				public long GPUMemoryCapacity;
@@ -1261,6 +1263,16 @@ namespace NeoAxis.Networking
 						if( MemoryCapacity == 0 )
 							return 0;
 						return (int)( MemoryInUse * 100 / MemoryCapacity );
+					}
+				}
+
+				public int SwapUsage
+				{
+					get
+					{
+						if( SwapCapacity == 0 )
+							return 0;
+						return (int)( SwapInUse * 100 / SwapCapacity );
 					}
 				}
 
@@ -1332,8 +1344,11 @@ namespace NeoAxis.Networking
 						server.HorizontalServerBuildName = serverBlock.GetAttribute( "HorizontalServerBuildName" );
 
 						int.TryParse( serverBlock.GetAttribute( "CPUUsage", "0" ), out server.CPUUsage );
+
 						long.TryParse( serverBlock.GetAttribute( "MemoryInUse", "0" ), out server.MemoryInUse );
 						long.TryParse( serverBlock.GetAttribute( "MemoryCapacity", "0" ), out server.MemoryCapacity );
+						long.TryParse( serverBlock.GetAttribute( "SwapInUse", "0" ), out server.SwapInUse );
+						long.TryParse( serverBlock.GetAttribute( "SwapCapacity", "0" ), out server.SwapCapacity );
 
 						int.TryParse( serverBlock.GetAttribute( "GPUUsage", "0" ), out server.GPUUsage );
 						long.TryParse( serverBlock.GetAttribute( "GPUMemoryInUse", "0" ), out server.GPUMemoryInUse );

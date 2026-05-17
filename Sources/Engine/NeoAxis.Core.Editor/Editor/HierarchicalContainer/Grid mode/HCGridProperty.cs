@@ -246,8 +246,9 @@ namespace NeoAxis.Editor
 
 		internal virtual void UpdateLayout()
 		{
-			if( labelName.Width != splitterPosition - buttonExpandSize.Width - HierarchicalContainer.SpliterWidth - 5 )
-				labelName.Width = splitterPosition - buttonExpandSize.Width - HierarchicalContainer.SpliterWidth - 5;
+			var offset2 = (int)( 6 * EditorAPI2.DPIScale );
+			if( labelName.Width != splitterPosition - buttonExpandSize.Width - HierarchicalContainer.SpliterWidth - offset2 )
+				labelName.Width = splitterPosition - buttonExpandSize.Width - HierarchicalContainer.SpliterWidth - offset2;
 			if( labelName.Visible != !ShowOnlyEditorControl )
 				labelName.Visible = !ShowOnlyEditorControl;
 

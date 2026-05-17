@@ -10,7 +10,7 @@ namespace NeoAxis.Player.Linux
 {
 	internal class Program
 	{
-		public static bool needRestartApplication;
+		public static bool needRestartApplication = false;
 
 		static void Main( string[] args )
 		{

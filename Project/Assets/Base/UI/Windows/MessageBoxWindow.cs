@@ -122,6 +122,13 @@ namespace Project
 			return null;
 		}
 
+		public void SetButtonName( EDialogResult result, string name )
+		{
+			var button = FindButtonByResult( result );
+			if( button != null )
+				button.Text = name;
+		}
+
 		protected override bool OnKeyDown( KeyEvent e )
 		{
 			switch( e.Key )

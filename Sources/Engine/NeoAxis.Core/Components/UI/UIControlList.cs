@@ -672,6 +672,13 @@ namespace NeoAxis
 				item.RemoveFromParent( queued );
 		}
 
+		public void RemoveItemAt( int index, bool queued = false )
+		{
+			var item = GetItem( index );
+			if( item != null )
+				item.RemoveFromParent( queued );
+		}
+
 		/// <summary>
 		/// Get the indexes of selected items in Multiselect mode combined with current selected index.
 		/// </summary>

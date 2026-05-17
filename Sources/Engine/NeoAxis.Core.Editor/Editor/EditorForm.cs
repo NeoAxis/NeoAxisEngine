@@ -63,6 +63,8 @@ namespace NeoAxis.Editor
 
 		double configAutoSaveLastTime;
 
+		int compositedCounter = 3;
+
 		/////////////////////////////////////////
 
 		//internal class CoverControl : Control
@@ -293,7 +295,7 @@ namespace NeoAxis.Editor
 			workspaceController.AddToDockspaceStack( new DockWindow[] { new ObjectsWindow(), new SettingsWindow() }, DockingEdge.Right );
 			//workspaceController.AddDockspace(new MembersWindow(), "Members", DockingEdge.Right, new Size(300, 300));
 
-			workspaceController.AddToDockspaceStack( new DockWindow[] { new ResourcesWindow(), new SolutionExplorer(), new PreviewWindow(), new StoresWindow() }, DockingEdge.Left );
+			workspaceController.AddToDockspaceStack( new DockWindow[] { new ResourcesWindow(), new SolutionExplorer(), new PreviewWindow(), new StoresWindow(), new ChatWindow() }, DockingEdge.Left );
 			//workspaceController.AddToDockspaceStack( new DockWindow[] { new StoresWindow() }, DockingEdge.Bottom );
 
 
@@ -799,6 +801,19 @@ namespace NeoAxis.Editor
 				//				CloudProjectEnteringClient.Update();
 				//				CloudProjectCommitClient.Update();
 				//#endif
+
+				//update composited style
+				if( compositedCounter > 0 )
+				{
+					compositedCounter--;
+					if( compositedCounter == 0 )
+					{
+						int style = Internal.ComponentFactory.Krypton.Toolkit.PI.GetWindowLong( Handle, Internal.ComponentFactory.Krypton.Toolkit.PI.GWL_EXSTYLE );
+						var newStyle = style & ~Internal.ComponentFactory.Krypton.Toolkit.PI.WS_EX_COMPOSITED;
+						if( newStyle != style )
+							Internal.ComponentFactory.Krypton.Toolkit.PI.SetWindowLong( Handle, Internal.ComponentFactory.Krypton.Toolkit.PI.GWL_EXSTYLE, newStyle );
+					}
+				}
 
 				canSaveConfig = true;
 			}
@@ -2358,6 +2373,17 @@ namespace NeoAxis.Editor
 		public bool Loaded
 		{
 			get { return loaded; }
+		}
+
+		//Composited will disabled after loading. it is needed to avoid flickering during loading.
+		protected override CreateParams CreateParams
+		{
+			get
+			{
+				CreateParams handleParam = base.CreateParams;
+				handleParam.ExStyle |= 0x02000000;//WS_EX_COMPOSITED       
+				return handleParam;
+			}
 		}
 	}
 }

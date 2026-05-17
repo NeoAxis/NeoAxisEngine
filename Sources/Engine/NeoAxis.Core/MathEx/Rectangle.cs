@@ -832,5 +832,74 @@ namespace NeoAxis
 		//	return Intersects( ref triangle );
 		//}
 
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		public bool Intersects( ref Ray2 ray, out double scale )
+		{
+			//!!!!slowly. check rayAABBIntersect
+
+			int i, ax0, ax1, ax2, side, inside;
+			double f;
+			Vector2 hit = Vector2.Zero;
+
+			scale = 0.0;
+
+			ax0 = -1;
+			inside = 0;
+			for( i = 0; i < 2; i++ )
+			{
+				if( ray.Origin[ i ] < Minimum[ i ] )
+					side = 0;
+				else if( ray.Origin[ i ] > Maximum[ i ] )
+					side = 1;
+				else
+				{
+					inside++;
+					continue;
+				}
+				if( ray.Direction[ i ] == 0.0 )
+					continue;
+				f = ray.Origin[ i ] - ( side == 0 ? Minimum : Maximum )[ i ]; //f = ( ray.Origin[ i ] - this[ side ][ i ] );
+				if( ax0 < 0 || Math.Abs( f ) > Math.Abs( scale * ray.Direction[ i ] ) )
+				{
+					scale = -( f / ray.Direction[ i ] );
+					ax0 = i;
+				}
+			}
+
+			if( scale < 0 || scale > 1 )
+				return false;
+
+			if( ax0 < 0 )
+			{
+				scale = 0.0;
+				return ( inside == 2 );
+			}
+
+			ax1 = ( ax0 + 1 ) % 2;
+			ax2 = ( ax0 + 2 ) % 2;
+			hit[ ax1 ] = ray.Origin[ ax1 ] + scale * ray.Direction[ ax1 ];
+			hit[ ax2 ] = ray.Origin[ ax2 ] + scale * ray.Direction[ ax2 ];
+
+			return ( hit[ ax1 ] >= Minimum[ ax1 ] && hit[ ax1 ] <= Maximum[ ax1 ] && hit[ ax2 ] >= Minimum[ ax2 ] && hit[ ax2 ] <= Maximum[ ax2 ] );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public bool Intersects( Ray2 ray, out double scale )
+		{
+			return Intersects( ref ray, out scale );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public bool Intersects( ref Ray2 ray )
+		{
+			return Intersects( ref ray, out _ );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public bool Intersects( Ray2 ray )
+		{
+			return Intersects( ref ray, out _ );
+		}
 	}
 }

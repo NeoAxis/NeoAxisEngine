@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2024.3.
+// Made with NeoAxis Engine 2026.1.
 
 .component Project.MessageBoxWindow
 {
@@ -6,7 +6,8 @@
 	Size = Units 740 280
 	HorizontalAlignment = Center
 	VerticalAlignment = Center
-	EditorScrollPosition = 0 0
+	EditorScrollPosition = -1.25118997144367 -0.988002198363044
+	EditorZoomIndex = 13
 	Style
 	{
 		GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
@@ -29,7 +30,7 @@
 		Size = Units 200 40
 		HorizontalAlignment = Center
 		VerticalAlignment = Bottom
-		Margin = Units 150 200 150 40
+		Margin = Units 0 200 0 40
 		EditorScrollPosition = 0 0
 		.component NeoAxis.EventHandlerComponent
 		{
@@ -54,7 +55,7 @@
 		Size = Units 200 40
 		HorizontalAlignment = Center
 		VerticalAlignment = Bottom
-		Margin = Units 40 200 260 40
+		Margin = Units 50 200 260 40
 		EditorScrollPosition = 0 0
 		.component NeoAxis.EventHandlerComponent
 		{
@@ -79,7 +80,7 @@
 		Size = Units 200 40
 		HorizontalAlignment = Center
 		VerticalAlignment = Bottom
-		Margin = Units -50 200 380 40
+		Margin = Units -30 200 390 40
 		EditorScrollPosition = 0 0
 		.component NeoAxis.EventHandlerComponent
 		{
@@ -104,7 +105,7 @@
 		Size = Units 200 40
 		HorizontalAlignment = Center
 		VerticalAlignment = Bottom
-		Margin = Units 160 200 150 40
+		Margin = Units 0 200 0 40
 		EditorScrollPosition = 0 0
 		.component NeoAxis.EventHandlerComponent
 		{
@@ -129,7 +130,7 @@
 		Size = Units 200 40
 		HorizontalAlignment = Center
 		VerticalAlignment = Bottom
-		Margin = Units 380 200 -40 40
+		Margin = Units 390 200 -30 40
 		EditorScrollPosition = 0 0
 		.component NeoAxis.EventHandlerComponent
 		{
@@ -154,7 +155,7 @@
 		Size = Units 200 40
 		HorizontalAlignment = Center
 		VerticalAlignment = Bottom
-		Margin = Units 260 200 40 40
+		Margin = Units 260 200 50 40
 		EditorScrollPosition = 0 0
 		.component NeoAxis.EventHandlerComponent
 		{

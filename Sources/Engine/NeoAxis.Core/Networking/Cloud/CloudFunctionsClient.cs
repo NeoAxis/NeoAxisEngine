@@ -240,75 +240,75 @@ namespace NeoAxis.Networking
 
 		//with return value
 
-		public async Task<ClientNetworkService_CloudFunctions.CallMethodResult<T>> CallMethodWithCancellationTokenAsync<T>( ClientNetworkService_CloudFunctions.CloudMethodInfo method, CancellationToken cancellationToken, params object[] parameters )
+		public async Task<ClientNetworkService_CloudFunctions.CallMethodResult<T>> CallMethodAsync<T>( ClientNetworkService_CloudFunctions.CloudMethodInfo method, CancellationToken cancellationToken, params object[] parameters )
 		{
-			return await ConnectionNode.CloudFunctions.CallMethodWithCancellationTokenAsync<T>( method, cancellationToken, parameters );
+			return await ConnectionNode.CloudFunctions.CallMethodAsync<T>( method, cancellationToken, parameters );
 		}
 
-		public async Task<ClientNetworkService_CloudFunctions.CallMethodResult<T>> CallMethodWithCancellationTokenAsync<T>( string className, string methodName, CancellationToken cancellationToken, params object[] parameters )
+		public async Task<ClientNetworkService_CloudFunctions.CallMethodResult<T>> CallMethodAsync<T>( string className, string methodName, CancellationToken cancellationToken, params object[] parameters )
 		{
-			return await ConnectionNode.CloudFunctions.CallMethodWithCancellationTokenAsync<T>( className, methodName, cancellationToken, parameters );
+			return await ConnectionNode.CloudFunctions.CallMethodAsync<T>( className, methodName, cancellationToken, parameters );
 		}
 
-		/// <summary>
-		/// Call method with default cancellation token specified in CallMethodDefaultCancellationTokenSource.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="method"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		public async Task<ClientNetworkService_CloudFunctions.CallMethodResult<T>> CallMethodAsync<T>( ClientNetworkService_CloudFunctions.CloudMethodInfo method, params object[] parameters )
-		{
-			return await ConnectionNode.CloudFunctions.CallMethodAsync<T>( method, parameters );
-		}
+		///// <summary>
+		///// Call method with default cancellation token specified in CallMethodDefaultCancellationTokenSource.
+		///// </summary>
+		///// <typeparam name="T"></typeparam>
+		///// <param name="method"></param>
+		///// <param name="parameters"></param>
+		///// <returns></returns>
+		//public async Task<ClientNetworkService_CloudFunctions.CallMethodResult<T>> CallMethodAsync<T>( ClientNetworkService_CloudFunctions.CloudMethodInfo method, params object[] parameters )
+		//{
+		//	return await ConnectionNode.CloudFunctions.CallMethodAsync<T>( method, parameters );
+		//}
 
 		//without return value
 
-		/// <summary>
-		/// Call method with default cancellation token specified in CallMethodDefaultCancellationTokenSource.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="method"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		public async Task<ClientNetworkService_CloudFunctions.CallMethodResult<T>> CallMethodAsync<T>( string className, string methodName, params object[] parameters )
+		///// <summary>
+		///// Call method with default cancellation token specified in CallMethodDefaultCancellationTokenSource.
+		///// </summary>
+		///// <typeparam name="T"></typeparam>
+		///// <param name="method"></param>
+		///// <param name="parameters"></param>
+		///// <returns></returns>
+		//public async Task<ClientNetworkService_CloudFunctions.CallMethodResult<T>> CallMethodAsync<T>( string className, string methodName, params object[] parameters )
+		//{
+		//	return await ConnectionNode.CloudFunctions.CallMethodAsync<T>( className, methodName, parameters );
+		//}
+
+		public async Task<ClientNetworkService_CloudFunctions.CallMethodResultNoValue> CallMethodAsync( ClientNetworkService_CloudFunctions.CloudMethodInfo method, CancellationToken cancellationToken, params object[] parameters )
 		{
-			return await ConnectionNode.CloudFunctions.CallMethodAsync<T>( className, methodName, parameters );
+			return await ConnectionNode.CloudFunctions.CallMethodAsync( method, cancellationToken, parameters );
 		}
 
-		public async Task<ClientNetworkService_CloudFunctions.CallMethodResultNoValue> CallMethodWithCancellationTokenAsync( ClientNetworkService_CloudFunctions.CloudMethodInfo method, CancellationToken cancellationToken, params object[] parameters )
+		public async Task<ClientNetworkService_CloudFunctions.CallMethodResultNoValue> CallMethodAsync( string className, string methodName, CancellationToken cancellationToken, params object[] parameters )
 		{
-			return await ConnectionNode.CloudFunctions.CallMethodWithCancellationTokenAsync( method, cancellationToken, parameters );
+			return await ConnectionNode.CloudFunctions.CallMethodAsync( className, methodName, cancellationToken, parameters );
 		}
 
-		public async Task<ClientNetworkService_CloudFunctions.CallMethodResultNoValue> CallMethodWithCancellationTokenAsync( string className, string methodName, CancellationToken cancellationToken, params object[] parameters )
-		{
-			return await ConnectionNode.CloudFunctions.CallMethodWithCancellationTokenAsync( className, methodName, cancellationToken, parameters );
-		}
+		///// <summary>
+		///// Call method with default cancellation token specified in CallMethodDefaultCancellationTokenSource.
+		///// </summary>
+		///// <typeparam name="T"></typeparam>
+		///// <param name="method"></param>
+		///// <param name="parameters"></param>
+		///// <returns></returns>
+		//public async Task<ClientNetworkService_CloudFunctions.CallMethodResultNoValue> CallMethodAsync( ClientNetworkService_CloudFunctions.CloudMethodInfo method, params object[] parameters )
+		//{
+		//	return await ConnectionNode.CloudFunctions.CallMethodAsync( method, parameters );
+		//}
 
-		/// <summary>
-		/// Call method with default cancellation token specified in CallMethodDefaultCancellationTokenSource.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="method"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		public async Task<ClientNetworkService_CloudFunctions.CallMethodResultNoValue> CallMethodAsync( ClientNetworkService_CloudFunctions.CloudMethodInfo method, params object[] parameters )
-		{
-			return await ConnectionNode.CloudFunctions.CallMethodAsync( method, parameters );
-		}
-
-		/// <summary>
-		/// Call method with default cancellation token specified in CallMethodDefaultCancellationTokenSource.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="method"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		public async Task<ClientNetworkService_CloudFunctions.CallMethodResultNoValue> CallMethodAsync( string className, string methodName, params object[] parameters )
-		{
-			return await ConnectionNode.CloudFunctions.CallMethodAsync( className, methodName, parameters );
-		}
+		///// <summary>
+		///// Call method with default cancellation token specified in CallMethodDefaultCancellationTokenSource.
+		///// </summary>
+		///// <typeparam name="T"></typeparam>
+		///// <param name="method"></param>
+		///// <param name="parameters"></param>
+		///// <returns></returns>
+		//public async Task<ClientNetworkService_CloudFunctions.CallMethodResultNoValue> CallMethodAsync( string className, string methodName, params object[] parameters )
+		//{
+		//	return await ConnectionNode.CloudFunctions.CallMethodAsync( className, methodName, parameters );
+		//}
 
 		///////////////////////////////////////////////
 		//GetFilesInfo, GetFileInfo, GetDirectoryInfo

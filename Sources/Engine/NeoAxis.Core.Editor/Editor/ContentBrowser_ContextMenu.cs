@@ -142,6 +142,17 @@ namespace NeoAxis.Editor
 
 						//!!!!!cut, copy
 
+						//Chat
+						if( ChatWindow.EnableChatDocument )
+						{
+							var item = new KryptonContextMenuItem( Translate( "Chat" ), EditorResourcesCache.Chat, delegate ( object s, EventArgs e2 )
+							{
+								var selectedObjects = SelectedItems.Where( s => s is ContentBrowserItem_Component ).Select( s => ( (ContentBrowserItem_Component)s ).Component ).Where( c => c != null ).ToArray();
+								ChatWindow.ShowChatPromptFormForDocument( DocumentWindow, selectedObjects );
+							} );
+							items.Add( item );
+							items.Add( new KryptonContextMenuSeparator() );
+						}
 
 						//!!!!!
 						//Editor
@@ -574,6 +585,15 @@ namespace NeoAxis.Editor
 
 				if( fileItem != null )
 				{
+					//Chat
+					if( ChatWindow.EnableChatAssets && fileItem.IsDirectory )
+					{
+						var item = new KryptonContextMenuItem( Translate( "Chat" ), EditorResourcesCache.Chat, delegate ( object s, EventArgs e2 )
+						{
+							ChatWindow.ShowChatPromptFormForAssets( fileItem.FullPath );
+						} );
+						items.Add( item );
+					}
 
 					//!!!!!
 					//Open

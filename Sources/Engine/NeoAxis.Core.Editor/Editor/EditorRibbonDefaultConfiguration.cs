@@ -379,6 +379,7 @@ namespace NeoAxis.Editor
 
 					group.AddAction( "Resources Window" );
 					group.AddAction( "Stores Window" );
+					group.AddAction( "Chat Window" );
 					//group.AddAction( "Resources Window New" );
 					group.AddAction( "Objects Window" );
 					//group.AddAction( "Objects Window New" );

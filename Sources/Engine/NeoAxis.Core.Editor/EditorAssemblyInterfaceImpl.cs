@@ -126,10 +126,10 @@ namespace NeoAxis.Editor
 			Import.FBX.ImportFBX.DoImport( (ImportGeneral.Settings)settings, out error );
 		}
 
-		public override void ImportAssimp( object/*ImportGeneral.Settings*/ settings, out string error )
-		{
-			Import.ImportAssimp.DoImport( (ImportGeneral.Settings)settings, out error );
-		}
+		//public override void ImportAssimp( object/*ImportGeneral.Settings*/ settings, out string error )
+		//{
+		//	Import.ImportAssimp.DoImport( (ImportGeneral.Settings)settings, out error );
+		//}
 
 		public override bool ExportToFBX( Mesh sourceMesh, string realFileName, out string error )
 		{

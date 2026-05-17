@@ -255,6 +255,7 @@ namespace NeoAxis.CloudServer
 					Matches.Update( utcNow );
 					UpdateGCCollect( utcNow );
 
+
 					//if( false )
 					//{
 					//	var now = DateTime.UtcNow;
@@ -552,14 +553,6 @@ namespace NeoAxis.CloudServer
 		public static void SendMessageToClientByLoginDataUserID( long userID, string message, byte[] data )
 		{
 			SendMessageToClientByLoginDataUserID( userID, message, new ArraySegment<byte>( data ) );
-
-			//var serverNode = ServerNode;
-			//if( serverNode != null )
-			//{
-			//	var client = serverNode.GetClientByLoginDataUserID( userID );
-			//	if( client != null )
-			//		serverNode.Messages?.SendToClient( client, message, data );
-			//}
 		}
 
 		public static void SendMessageToClientsByLoginDataUserID( IList<long> userIDs, string message, string data )
@@ -589,9 +582,10 @@ namespace NeoAxis.CloudServer
 			SendMessageToClientsByLoginDataUserID( userIDs, message, new ArraySegment<byte>( data ) );
 		}
 
+		//also can use <ServerGarbageCollection>false</ServerGarbageCollection> in the csproj file.
 		static void UpdateGCCollect( DateTime utcNow )
 		{
-			if( ( utcNow - gcCollectLastTime ).TotalMinutes > GCCollectFrequencyInMinutes )
+			if( GCCollectFrequencyInMinutes > 0 && ( utcNow - gcCollectLastTime ).TotalMinutes > GCCollectFrequencyInMinutes )
 			{
 				gcCollectLastTime = utcNow;
 

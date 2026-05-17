@@ -229,72 +229,149 @@ namespace Internal
 			disableAssemblyRegistration = new ESet<string>();
 			disableNamespaceRegistration = new ESet<string>();
 
-			string realFileName = Path.Combine( VirtualFileSystem.Directories.Binaries, "NeoAxis.Internal", "NeoAxis.DefaultSettings.config" );
-			if( File.Exists( realFileName ) )
+			TextBlock block = null;
 			{
-				var block = TextBlockUtility.LoadFromRealFile( realFileName );
-				if( block != null )
+				string realFileName = Path.Combine( VirtualFileSystem.Directories.Binaries, "NeoAxis.Internal", "NeoAxis.DefaultSettings.config" );
+				if( File.Exists( realFileName ) )
+					block = TextBlockUtility.LoadFromRealFile( realFileName );
+				else
 				{
-					{
-						var groupBlock = block.FindChild( "DisableAssemblyRegistration" );
-						if( groupBlock != null )
-						{
-							foreach( var itemBlock in groupBlock.Children )
-							{
-								if( itemBlock.Name == "Assembly" )
-								{
-									bool disable = true;
-
-									var platform = itemBlock.GetAttribute( "Platform" );
-									if( !string.IsNullOrEmpty( platform ) )
-									{
-										if( string.Compare( SystemSettings.CurrentPlatform.ToString(), platform, true ) != 0 )
-											disable = false;
-									}
-
-									if( disable )
-									{
-										var name = itemBlock.GetAttribute( "Name" );
-
-										disableAssemblyRegistration.AddWithCheckAlreadyContained( name );
-									}
-								}
-							}
-						}
-					}
-
-					{
-						var groupBlock = block.FindChild( "DisableNamespaceRegistration" );
-						if( groupBlock != null )
-						{
-							foreach( var itemBlock in groupBlock.Children )
-							{
-								if( itemBlock.Name == "Namespace" )
-								{
-									bool disable = true;
-
-									var platform = itemBlock.GetAttribute( "Platform" );
-									if( !string.IsNullOrEmpty( platform ) )
-									{
-										if( string.Compare( SystemSettings.CurrentPlatform.ToString(), platform, true ) != 0 )
-											disable = false;
-									}
-
-									if( disable )
-									{
-										var name = itemBlock.GetAttribute( "Name" );
-
-										disableNamespaceRegistration.AddWithCheckAlreadyContained( name );
-									}
-								}
-							}
-						}
-					}
-
+					var text = VirtualFileSystem.GetDefaultDefaultSettingsConfigText();
+					block = TextBlock.Parse( text, out var error );
+					if( !string.IsNullOrEmpty( error ) )
+						Log.Warning( $"AssemblyUtility: ParseDisableAssemblyNamespaceRegistration: Error parsing default settings config: {error}" );
 				}
 			}
-			else
-				Log.Warning( "AssemblyUtility: ParseDisableAssemblyNamespaceRegistration: \"NeoAxis.DefaultSettings.config\" is not exists." );
+
+			if( block != null )
+			{
+				{
+					var groupBlock = block.FindChild( "DisableAssemblyRegistration" );
+					if( groupBlock != null )
+					{
+						foreach( var itemBlock in groupBlock.Children )
+						{
+							if( itemBlock.Name == "Assembly" )
+							{
+								bool disable = true;
+
+								var platform = itemBlock.GetAttribute( "Platform" );
+								if( !string.IsNullOrEmpty( platform ) )
+								{
+									if( string.Compare( SystemSettings.CurrentPlatform.ToString(), platform, true ) != 0 )
+										disable = false;
+								}
+
+								if( disable )
+								{
+									var name = itemBlock.GetAttribute( "Name" );
+
+									disableAssemblyRegistration.AddWithCheckAlreadyContained( name );
+								}
+							}
+						}
+					}
+				}
+
+				{
+					var groupBlock = block.FindChild( "DisableNamespaceRegistration" );
+					if( groupBlock != null )
+					{
+						foreach( var itemBlock in groupBlock.Children )
+						{
+							if( itemBlock.Name == "Namespace" )
+							{
+								bool disable = true;
+
+								var platform = itemBlock.GetAttribute( "Platform" );
+								if( !string.IsNullOrEmpty( platform ) )
+								{
+									if( string.Compare( SystemSettings.CurrentPlatform.ToString(), platform, true ) != 0 )
+										disable = false;
+								}
+
+								if( disable )
+								{
+									var name = itemBlock.GetAttribute( "Name" );
+
+									disableNamespaceRegistration.AddWithCheckAlreadyContained( name );
+								}
+							}
+						}
+					}
+				}
+			}
+
+
+
+			//string realFileName = Path.Combine( VirtualFileSystem.Directories.Binaries, "NeoAxis.Internal", "NeoAxis.DefaultSettings.config" );
+			//if( File.Exists( realFileName ) )
+			//{
+			//	var block = TextBlockUtility.LoadFromRealFile( realFileName );
+			//	if( block != null )
+			//	{
+			//		{
+			//			var groupBlock = block.FindChild( "DisableAssemblyRegistration" );
+			//			if( groupBlock != null )
+			//			{
+			//				foreach( var itemBlock in groupBlock.Children )
+			//				{
+			//					if( itemBlock.Name == "Assembly" )
+			//					{
+			//						bool disable = true;
+
+			//						var platform = itemBlock.GetAttribute( "Platform" );
+			//						if( !string.IsNullOrEmpty( platform ) )
+			//						{
+			//							if( string.Compare( SystemSettings.CurrentPlatform.ToString(), platform, true ) != 0 )
+			//								disable = false;
+			//						}
+
+			//						if( disable )
+			//						{
+			//							var name = itemBlock.GetAttribute( "Name" );
+
+			//							disableAssemblyRegistration.AddWithCheckAlreadyContained( name );
+			//						}
+			//					}
+			//				}
+			//			}
+			//		}
+
+			//		{
+			//			var groupBlock = block.FindChild( "DisableNamespaceRegistration" );
+			//			if( groupBlock != null )
+			//			{
+			//				foreach( var itemBlock in groupBlock.Children )
+			//				{
+			//					if( itemBlock.Name == "Namespace" )
+			//					{
+			//						bool disable = true;
+
+			//						var platform = itemBlock.GetAttribute( "Platform" );
+			//						if( !string.IsNullOrEmpty( platform ) )
+			//						{
+			//							if( string.Compare( SystemSettings.CurrentPlatform.ToString(), platform, true ) != 0 )
+			//								disable = false;
+			//						}
+
+			//						if( disable )
+			//						{
+			//							var name = itemBlock.GetAttribute( "Name" );
+
+			//							disableNamespaceRegistration.AddWithCheckAlreadyContained( name );
+			//						}
+			//					}
+			//				}
+			//			}
+			//		}
+
+			//	}
+			//}
+			//else
+			//{
+			//Log.Warning( "AssemblyUtility: ParseDisableAssemblyNamespaceRegistration: \"NeoAxis.DefaultSettings.config\" is not exists." );
+			//}
 		}
 
 		public delegate void RegisterAssemblyEventDelegate( Assembly assembly, Assembly reloadingOldAssembly );
@@ -360,14 +437,14 @@ namespace Internal
 								}
 							}
 
-//#if !DEPLOY
+							//#if !DEPLOY
 							if( EngineApp.IsEditor )
 							{
 								EditorAPI.RegisterEditorAssembly( assembly, exportedTypes );
 								//EditorUtility.RegisterEditorExtensions( assembly, false );
 								//ResourcesWindowItems.RegisterAssembly( exportedTypes );
 							}
-//#endif
+							//#endif
 						}
 
 						RegisterAssemblyEvent?.Invoke( assembly, reloadingOldAssembly );
@@ -424,14 +501,14 @@ namespace Internal
 									ins.OnUnregister();
 							}
 
-//#if !DEPLOY
+							//#if !DEPLOY
 							if( EngineApp.IsEditor )
 							{
 								EditorAPI.UnregisterEditorAssembly( assembly );
 								//EditorUtility.RegisterEditorExtensions( assembly, true );
 								//ResourcesWindowItems.UnregisterAssembly( assembly );
 							}
-//#endif
+							//#endif
 						}
 
 					}

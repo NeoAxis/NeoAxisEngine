@@ -637,7 +637,12 @@ namespace NeoAxis.Editor
 
 		internal static void Init()
 		{
-			RegisterStore( new StoreItem() { Name = "NeoX"/*, Website = EngineInfo.StoreAddress + "/"*/, Icon16 = Properties.Resources.NeoAxis_16, Icon32 = Properties.Resources.NeoAxis_32, Implementation = new NeoAxisStoreImplementation() } );
+			RegisterStore( new StoreItem() { Name = "NeoX Catalog"/*, Website = EngineInfo.StoreAddress + "/"*/, Icon16 = Properties.Resources.NeoAxis_16, Icon32 = Properties.Resources.NeoAxis_32, Implementation = new NeoAxisStoreImplementation() } );
+
+			if( ChatWindow.EnableNeoXForgeStore )
+			{
+				RegisterStore( new StoreItem() { Name = "NeoX Forge"/*, Website = EngineInfo.StoreAddress + "/"*/, Icon16 = Properties.Resources.NeoAxis_16, Icon32 = Properties.Resources.NeoAxis_32, Implementation = new NeoXForgeImplementation() } );
+			}
 		}
 
 		internal static void Shutdown()

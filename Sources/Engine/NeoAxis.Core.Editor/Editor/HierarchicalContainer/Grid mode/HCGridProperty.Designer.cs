@@ -53,7 +53,6 @@
 			this.Size = new System.Drawing.Size( 516, 22 );
 			//this.Size = new System.Drawing.Size(516, 28);
 			this.ResumeLayout(false);
-
 		}
 
 		#endregion

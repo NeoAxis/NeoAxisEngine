@@ -15,6 +15,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Linq;
 using System.Collections;
+using ICSharpCode.AvalonEdit;
 
 namespace NeoAxis.Editor
 {
@@ -42,7 +43,7 @@ namespace NeoAxis.Editor
 		IDropDownHolder dropDownHolder;
 
 		internal const bool DrawSplitter = true;
-		internal const int SpliterWidth = 6;
+		const int spliterWidth = 4;
 		//const bool EnableCompositionOnDragging = true;
 		float splitterRatio = 2.0f / 5.0f;
 		SplitterState splitterState = SplitterState.None;
@@ -58,6 +59,9 @@ namespace NeoAxis.Editor
 		DateTime? doubleBufferCompositedTime;
 
 		//bool resizingWasVisible;
+
+		[Browsable( false )]
+		public bool StartInvisible { get; set; } = true;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -441,6 +445,28 @@ namespace NeoAxis.Editor
 
 			//!!!!.NET Core. move to WinForms designer when it will work
 			engineScrollBar1.ValueChanged += EngineScrollBar1_ValueChanged;
+
+			//configure StartInvisible
+			{
+				DockWindow dockWindow = null;
+
+				var parent = Parent;
+				while( parent.Parent != null )
+				{
+					parent = parent.Parent;
+					if( parent is DockWindow )
+					{
+						dockWindow = (DockWindow)parent;
+						break;
+					}
+				}
+
+				if( dockWindow != null && ( DateTime.UtcNow - dockWindow.CreateTimeUtc ).TotalSeconds > 1.0 )
+					StartInvisible = false;
+			}
+
+			if( StartInvisible )
+				Visible = false;
 		}
 
 		//private void EngineScrollBar1_Scroll( object sender, EngineScrollBarEventArgs e )
@@ -654,6 +680,12 @@ namespace NeoAxis.Editor
 
 		private void timer10ms_Tick( object sender, EventArgs e )
 		{
+			if( StartInvisible )
+			{
+				StartInvisible = false;
+				Visible = true;
+			}
+
 			if( !IsHandleCreated || WinFormsUtility.IsDesignerHosted( this ) || EditorAPI.ClosingApplication )
 				return;
 			if( !WinFormsUtility.IsControlVisibleInHierarchy( this ) )
@@ -933,6 +965,9 @@ namespace NeoAxis.Editor
 		internal void UpdateItems()
 		//void UpdateItems()
 		{
+			//!!!!new
+			SuspendLayout();
+
 			////!!!!new
 			//UpdateControls();
 
@@ -958,13 +993,15 @@ namespace NeoAxis.Editor
 
 			if( itemsToDelete.Count != 0 )
 			{
-				SuspendLayout();
+				//!!!!new
+				//SuspendLayout();
 
 				//delete old items
 				foreach( var item in itemsToDelete )
 					item.Dispose();
 
-				ResumeLayout( false );
+				//!!!!new
+				//ResumeLayout( false );
 			}
 
 			foreach( var item in rootItems )
@@ -1008,6 +1045,9 @@ namespace NeoAxis.Editor
 				if( engineScrollBar1.Visible )
 					engineScrollBar1.Visible = false;
 			}
+
+			//!!!!new
+			ResumeLayout( false );
 		}
 
 		bool IsVerticalScrollNeeded( out int itemsHeight )
@@ -1021,14 +1061,16 @@ namespace NeoAxis.Editor
 
 		void UpdateItemsLayout( bool needVerticalScroll )
 		{
-			SuspendLayout();
+			//!!!!new
+			//SuspendLayout();
 
 			int positionY = 0;
 			int tabIndex = 0;
 			foreach( var item in rootItems )
 				item.UpdateLayout( ref positionY, ref tabIndex, needVerticalScroll );
 
-			ResumeLayout( true );
+			//!!!!new
+			//ResumeLayout( true );
 		}
 
 		protected override void AdjustFormScrollbars( bool displayScrollbars )
@@ -1419,5 +1461,12 @@ namespace NeoAxis.Editor
 			//	Visible = true;
 		}
 
+		public static int SpliterWidth
+		{
+			get
+			{
+				return (int)( spliterWidth * EditorAPI2.DPIScale );
+			}
+		}
 	}
 }
