@@ -20,7 +20,7 @@ namespace NeoAxis
 
 			try
 			{
-				if( File.Exists( VirtualFileSystem.Directories.Assets ) )
+				if( Directory.Exists( VirtualFileSystem.Directories.Assets ) )
 				{
 					foreach( var path in Directory.GetFiles( VirtualFileSystem.Directories.Assets, "*.neoaxisbaking", SearchOption.AllDirectories ) )
 						LoadBakingFile( path );
