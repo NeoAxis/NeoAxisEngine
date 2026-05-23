@@ -215,7 +215,7 @@ namespace NeoAxis.Editor
 				if( Import.Components.Count == 0 && !ProjectSettings.Get.General.AutoImport3DModels )
 				{
 					lines.Add( "" );
-					lines.Add( "Click the \"Re-import\" button to import the model." );
+					lines.Add( "Click the \"Import\" button to import the model." );
 					lines.Add( "You can enable auto-import in the editor settings. General -> Editor -> Auto Import 3D Models." );
 				}
 			}

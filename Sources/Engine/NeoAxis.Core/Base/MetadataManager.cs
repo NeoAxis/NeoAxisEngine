@@ -443,10 +443,12 @@ namespace NeoAxis
 					{
 						enumElements = new EDictionary<string, long>();
 
-						Type underlyingType = Enum.GetUnderlyingType( type );
+						//Type underlyingType = Enum.GetUnderlyingType( type );
 
 						try
 						{
+							var underlyingType = Enum.GetUnderlyingType( type );
+
 							foreach( var value in type.GetEnumValues() )
 							{
 								long v = 0;

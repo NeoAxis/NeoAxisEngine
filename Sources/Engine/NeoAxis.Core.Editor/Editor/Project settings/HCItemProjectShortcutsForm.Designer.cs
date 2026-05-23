@@ -47,7 +47,7 @@
 			this.kryptonSplitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.kryptonSplitContainer1.Cursor = System.Windows.Forms.Cursors.Default;
-			this.kryptonSplitContainer1.Location = new System.Drawing.Point(3, 30);
+			this.kryptonSplitContainer1.Location = new System.Drawing.Point(3, 22);
 			this.kryptonSplitContainer1.Name = "kryptonSplitContainer1";
 			// 
 			// kryptonSplitContainer1.Panel1
@@ -93,9 +93,10 @@
 			// kryptonButtonReset
 			// 
 			this.kryptonButtonReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.kryptonButtonReset.Location = new System.Drawing.Point(3, 543);
+			this.kryptonButtonReset.Location = new System.Drawing.Point(3, 535);
+			this.kryptonButtonReset.Margin = new System.Windows.Forms.Padding( 2 );
 			this.kryptonButtonReset.Name = "kryptonButtonReset";
-			this.kryptonButtonReset.Size = new System.Drawing.Size(147, 32);
+			this.kryptonButtonReset.Size = new System.Drawing.Size(147, 26);
 			this.kryptonButtonReset.TabIndex = 5;
 			this.kryptonButtonReset.Values.Text = "Reset to Default";
 			// 

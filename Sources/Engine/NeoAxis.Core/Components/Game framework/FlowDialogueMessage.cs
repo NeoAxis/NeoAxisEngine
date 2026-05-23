@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 
 namespace NeoAxis
 {
@@ -15,11 +16,7 @@ namespace NeoAxis
 
 		static long GetUniqueMessageIdentifier()
 		{
-			unchecked
-			{
-				uniqueMessageIdentifierCounter++;
-			}
-			return uniqueMessageIdentifierCounter;
+			return Interlocked.Increment( ref uniqueMessageIdentifierCounter );
 		}
 
 		//

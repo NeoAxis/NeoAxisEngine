@@ -184,26 +184,13 @@ namespace NeoAxis
 			//coreWindow.PointerCursor = new CoreCursor( CoreCursorType.Custom, 101 );
 		}
 
-		public unsafe override bool InitDirectInputMouseDevice()
-		{
-			//TODO: implement it !
-			// Do not use DirectInput in name. it's not cross-platform name.
-			return false;
-		}
-
-		public override void ShutdownDirectInputMouseDevice()
-		{
-			//TODO: implement it !
-			// Do not use DirectInput in name. it's not cross-platform name.
-		}
-
 		public unsafe override void CreatedWindow_UpdateInputDevices()
 		{
 			//!!!!!всё тут проверить
 
 			//!!!!//ничего не обновлять, если отрублены?
 
-			Viewport viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];//App.CreatedInsideEngineWindow.Viewport;
+			Viewport viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
 
 			//!!!!new
 			if( EngineApp.CreatedInsideEngineWindow != null && IsFocused() )

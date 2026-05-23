@@ -285,6 +285,9 @@ namespace NeoAxis
 
 				var fatalOnLoadingCoreNative = SystemSettings.CurrentPlatform != SystemSettings.Platform.Linux;
 				neoAxisCoreNativeLoaded = NativeUtility.PreloadLibrary( "NeoAxisCoreNative", errorFatal: fatalOnLoadingCoreNative ) != IntPtr.Zero;
+				//on some system native libraries always loaded
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android  || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS  || SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+					neoAxisCoreNativeLoaded = true;
 
 				InitDefaultSettingsConfig();
 
@@ -356,14 +359,14 @@ namespace NeoAxis
 				if( File.Exists( fullPath ) )
 					return AssemblyUtility.LoadAssemblyByRealFileName( fullPath, false, loadWithoutLocking: true );
 
-				//Use Project.Client.dll instead of Project.dll
-				if( baseName == "Project" )
-				{
-					fileName = baseName + ".Client.dll";
-					fullPath = Path.Combine( Directories.Binaries, fileName );
-					if( File.Exists( fullPath ) )
-						return AssemblyUtility.LoadAssemblyByRealFileName( fullPath, false, loadWithoutLocking: true );
-				}
+				////Use Project.Client.dll instead of Project.dll
+				//if( baseName == "Project" )
+				//{
+				//	fileName = baseName + ".Client.dll";
+				//	fullPath = Path.Combine( Directories.Binaries, fileName );
+				//	if( File.Exists( fullPath ) )
+				//		return AssemblyUtility.LoadAssemblyByRealFileName( fullPath, false, loadWithoutLocking: true );
+				//}
 			}
 
 			return null;

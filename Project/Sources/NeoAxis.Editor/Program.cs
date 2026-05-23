@@ -3,12 +3,18 @@ using System;
 
 namespace NeoAxis.Editor
 {
-    static class Program
-    {
-        [STAThread]
-        static void Main()
-        {
+	/// <summary>
+	/// Defines an input point in the application.
+	/// </summary>
+	static class Program
+	{
+		/// <summary>
+		/// The main entry point for the application.
+		/// </summary>
+		[STAThread]
+		static void Main()
+		{
 			EditorApp.Main();
-        }
-    }
+		}
+	}
 }

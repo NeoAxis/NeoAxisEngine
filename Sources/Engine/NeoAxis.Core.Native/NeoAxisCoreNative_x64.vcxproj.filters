@@ -22,144 +22,6 @@
     <ClCompile Include="ImageLibrary\NULLRenderSystem.cpp">
       <Filter>ImageManager</Filter>
     </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreAlignedAllocator.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreArchiveManager.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreAxisAlignedBox.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreAxisAlignedBoxD.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreCodec.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreColourValue.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreCommon.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreDataStream.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreDDSCodec.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreDebugKeys.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreDynLib.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreDynLibManager.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreException.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreFreeImageCodec.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreImage.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreLog.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreLogManager.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreMath.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreMathD.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreMatrix3.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreMatrix3D.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreMatrix4.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreMemoryAllocatedObject.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreOptimisedUtil.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreOptimisedUtilGeneral.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreOptimisedUtilSSE.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgrePixelFormat.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgrePlane.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgrePlaneD.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgrePlatformInformation.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgrePrecompiledHeaders.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgrePVRTCCodec.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreQuaternion.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreRenderSystem.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreResource.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreResourceGroupManager.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreResourceManager.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreRoot.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreSceneManager.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreString.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreStringConverter.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreStringInterface.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreVector2.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreVector3.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreVector3D.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageLibrary\OgreVector4.cpp">
-      <Filter>ImageManager</Filter>
-    </ClCompile>
     <ClCompile Include="ImageLibrary\YUVToRGBConverter.cpp">
       <Filter>ImageManager</Filter>
     </ClCompile>
@@ -167,15 +29,6 @@
       <Filter>NativeWrapper</Filter>
     </ClCompile>
     <ClCompile Include="NativeWrapper\MiniDump.cpp">
-      <Filter>NativeWrapper</Filter>
-    </ClCompile>
-    <ClCompile Include="NativeWrapper\MyOgreLogListener.cpp">
-      <Filter>NativeWrapper</Filter>
-    </ClCompile>
-    <ClCompile Include="NativeWrapper\MyOgreVirtualFileSystem.cpp">
-      <Filter>NativeWrapper</Filter>
-    </ClCompile>
-    <ClCompile Include="NativeWrapper\OgreNativeWrapper.cpp">
       <Filter>NativeWrapper</Filter>
     </ClCompile>
     <ClCompile Include="NeoAxis\AxisAlignedBoxI.cpp">
@@ -2878,6 +2731,55 @@
     <ClCompile Include="..\External\OpenALSoft\alc\backends\alsa.cpp">
       <Filter>OpenAL</Filter>
     </ClCompile>
+    <ClCompile Include="ImageLibrary\NativeAlignedAllocator.cpp" />
+    <ClCompile Include="ImageLibrary\NativeArchiveManager.cpp" />
+    <ClCompile Include="ImageLibrary\NativeAxisAlignedBox.cpp" />
+    <ClCompile Include="ImageLibrary\NativeAxisAlignedBoxD.cpp" />
+    <ClCompile Include="ImageLibrary\NativeCodec.cpp" />
+    <ClCompile Include="ImageLibrary\NativeColourValue.cpp" />
+    <ClCompile Include="ImageLibrary\NativeCommon.cpp" />
+    <ClCompile Include="ImageLibrary\NativeDataStream.cpp" />
+    <ClCompile Include="ImageLibrary\NativeDDSCodec.cpp" />
+    <ClCompile Include="ImageLibrary\NativeDebugKeys.cpp" />
+    <ClCompile Include="ImageLibrary\NativeDynLib.cpp" />
+    <ClCompile Include="ImageLibrary\NativeDynLibManager.cpp" />
+    <ClCompile Include="ImageLibrary\NativeException.cpp" />
+    <ClCompile Include="ImageLibrary\NativeFreeImageCodec.cpp" />
+    <ClCompile Include="ImageLibrary\NativeImage.cpp" />
+    <ClCompile Include="ImageLibrary\NativeLog.cpp" />
+    <ClCompile Include="ImageLibrary\NativeLogManager.cpp" />
+    <ClCompile Include="ImageLibrary\NativeMath.cpp" />
+    <ClCompile Include="ImageLibrary\NativeMathD.cpp" />
+    <ClCompile Include="ImageLibrary\NativeMatrix3.cpp" />
+    <ClCompile Include="ImageLibrary\NativeMatrix3D.cpp" />
+    <ClCompile Include="ImageLibrary\NativeMatrix4.cpp" />
+    <ClCompile Include="ImageLibrary\NativeMemoryAllocatedObject.cpp" />
+    <ClCompile Include="ImageLibrary\NativeOptimisedUtil.cpp" />
+    <ClCompile Include="ImageLibrary\NativeOptimisedUtilGeneral.cpp" />
+    <ClCompile Include="ImageLibrary\NativeOptimisedUtilSSE.cpp" />
+    <ClCompile Include="ImageLibrary\NativePixelFormat.cpp" />
+    <ClCompile Include="ImageLibrary\NativePlane.cpp" />
+    <ClCompile Include="ImageLibrary\NativePlaneD.cpp" />
+    <ClCompile Include="ImageLibrary\NativePlatformInformation.cpp" />
+    <ClCompile Include="ImageLibrary\NativePrecompiledHeaders.cpp" />
+    <ClCompile Include="ImageLibrary\NativePVRTCCodec.cpp" />
+    <ClCompile Include="ImageLibrary\NativeQuaternion.cpp" />
+    <ClCompile Include="ImageLibrary\NativeRenderSystem.cpp" />
+    <ClCompile Include="ImageLibrary\NativeResource.cpp" />
+    <ClCompile Include="ImageLibrary\NativeResourceGroupManager.cpp" />
+    <ClCompile Include="ImageLibrary\NativeResourceManager.cpp" />
+    <ClCompile Include="ImageLibrary\NativeRoot.cpp" />
+    <ClCompile Include="ImageLibrary\NativeSceneManager.cpp" />
+    <ClCompile Include="ImageLibrary\NativeString.cpp" />
+    <ClCompile Include="ImageLibrary\NativeStringConverter.cpp" />
+    <ClCompile Include="ImageLibrary\NativeStringInterface.cpp" />
+    <ClCompile Include="ImageLibrary\NativeVector2.cpp" />
+    <ClCompile Include="ImageLibrary\NativeVector3.cpp" />
+    <ClCompile Include="ImageLibrary\NativeVector3D.cpp" />
+    <ClCompile Include="ImageLibrary\NativeVector4.cpp" />
+    <ClCompile Include="NativeWrapper\MyNativeLogListener.cpp" />
+    <ClCompile Include="NativeWrapper\MyNativeVirtualFileSystem.cpp" />
+    <ClCompile Include="NativeWrapper\NativeNativeWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MemoryManager\MemoryManager.h">
@@ -2904,249 +2806,6 @@
     <ClInclude Include="ImageLibrary\NULLRenderSystem.h">
       <Filter>ImageManager</Filter>
     </ClInclude>
-    <ClInclude Include="ImageLibrary\Ogre.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreAlignedAllocator.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreArchive.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreArchiveFactory.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreArchiveManager.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreAtomicWrappers.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreAxisAlignedBox.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreAxisAlignedBoxD.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreBitwise.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreBlendMode.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreCodec.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreColourValue.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreCommon.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreConfig.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreConfigOptionMap.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreDataStream.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreDDSCodec.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreDebugKeys.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreDynLib.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreDynLibManager.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreException.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreFactoryObj.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreFreeImageCodec.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreHeaderPrefix.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreHeaderSuffix.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreImage.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreImageCodec.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreImageResampler.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreIteratorRange.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreIteratorWrapper.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreIteratorWrappers.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreLog.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreLogManager.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreMath.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreMathD.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreMatrix3.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreMatrix3D.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreMatrix4.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreMemoryAllocatedObject.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreMemoryAllocatorConfig.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreMemoryStdAlloc.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreMemorySTLAllocator.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreOptimisedUtil.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgrePixelConversions.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgrePixelFormat.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgrePixelFormatDescriptions.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgrePlane.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgrePlaneBoundedVolume.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgrePlaneD.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgrePlatform.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgrePlatformInformation.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgrePrerequisites.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgrePVRTCCodec.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreQuaternion.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreRay.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreRayD.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreRectangle.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreRenderSystem.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreRenderSystemCapabilities.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreResource.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreResourceGroupManager.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreResourceManager.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreRoot.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreSceneManager.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreSharedPtr.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreSIMDHelper.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreSingleton.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreSphere.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreSphereD.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreStableHeaders.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreStdHeaders.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreString.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreStringConverter.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreStringInterface.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreStringVector.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreThreadDefines.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreThreadDefinesNone.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreVector2.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreVector3.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreVector3D.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageLibrary\OgreVector4.h">
-      <Filter>ImageManager</Filter>
-    </ClInclude>
     <ClInclude Include="ImageLibrary\YUVToRGBConverter.h">
       <Filter>ImageManager</Filter>
     </ClInclude>
@@ -3157,45 +2816,6 @@
       <Filter>NativeWrapper</Filter>
     </ClInclude>
     <ClInclude Include="NativeWrapper\MiniDump.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\MyOgreLogListener.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\MyOgreSceneManager.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\MyOgreVirtualFileSystem.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\OgreArchiveManager_Wrapper.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\OgreImageManager_Wrapper.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\OgreLogManager_Wrapper.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\OgreNameValuePairList_Wrapper.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\OgreNativeWrapper.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\OgreNativeWrapperGeneral.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\OgrePixelFormat_Wrapper.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\OgreResourceGroupManager_Wrapper.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\OgreRoot_Wrapper.h">
-      <Filter>NativeWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="NativeWrapper\OgreStringInterface_Wrapper.h">
       <Filter>NativeWrapper</Filter>
     </ClInclude>
     <ClInclude Include="NativeWrapper\YUVToRGBConverter_Wrapper.h">
@@ -5703,6 +5323,100 @@
     <ClInclude Include="NeoAxis\macOS\KeyCodes.h">
       <Filter>NeoAxis\macOS</Filter>
     </ClInclude>
+    <ClInclude Include="ImageLibrary\Native.h" />
+    <ClInclude Include="ImageLibrary\NativeAlignedAllocator.h" />
+    <ClInclude Include="ImageLibrary\NativeArchive.h" />
+    <ClInclude Include="ImageLibrary\NativeArchiveFactory.h" />
+    <ClInclude Include="ImageLibrary\NativeArchiveManager.h" />
+    <ClInclude Include="ImageLibrary\NativeAtomicWrappers.h" />
+    <ClInclude Include="ImageLibrary\NativeAxisAlignedBox.h" />
+    <ClInclude Include="ImageLibrary\NativeAxisAlignedBoxD.h" />
+    <ClInclude Include="ImageLibrary\NativeBitwise.h" />
+    <ClInclude Include="ImageLibrary\NativeBlendMode.h" />
+    <ClInclude Include="ImageLibrary\NativeCodec.h" />
+    <ClInclude Include="ImageLibrary\NativeColourValue.h" />
+    <ClInclude Include="ImageLibrary\NativeCommon.h" />
+    <ClInclude Include="ImageLibrary\NativeConfig.h" />
+    <ClInclude Include="ImageLibrary\NativeConfigOptionMap.h" />
+    <ClInclude Include="ImageLibrary\NativeDataStream.h" />
+    <ClInclude Include="ImageLibrary\NativeDDSCodec.h" />
+    <ClInclude Include="ImageLibrary\NativeDebugKeys.h" />
+    <ClInclude Include="ImageLibrary\NativeDynLib.h" />
+    <ClInclude Include="ImageLibrary\NativeDynLibManager.h" />
+    <ClInclude Include="ImageLibrary\NativeException.h" />
+    <ClInclude Include="ImageLibrary\NativeFactoryObj.h" />
+    <ClInclude Include="ImageLibrary\NativeFreeImageCodec.h" />
+    <ClInclude Include="ImageLibrary\NativeHeaderPrefix.h" />
+    <ClInclude Include="ImageLibrary\NativeHeaderSuffix.h" />
+    <ClInclude Include="ImageLibrary\NativeImage.h" />
+    <ClInclude Include="ImageLibrary\NativeImageCodec.h" />
+    <ClInclude Include="ImageLibrary\NativeImageResampler.h" />
+    <ClInclude Include="ImageLibrary\NativeIteratorRange.h" />
+    <ClInclude Include="ImageLibrary\NativeIteratorWrapper.h" />
+    <ClInclude Include="ImageLibrary\NativeIteratorWrappers.h" />
+    <ClInclude Include="ImageLibrary\NativeLog.h" />
+    <ClInclude Include="ImageLibrary\NativeLogManager.h" />
+    <ClInclude Include="ImageLibrary\NativeMath.h" />
+    <ClInclude Include="ImageLibrary\NativeMathD.h" />
+    <ClInclude Include="ImageLibrary\NativeMatrix3.h" />
+    <ClInclude Include="ImageLibrary\NativeMatrix3D.h" />
+    <ClInclude Include="ImageLibrary\NativeMatrix4.h" />
+    <ClInclude Include="ImageLibrary\NativeMemoryAllocatedObject.h" />
+    <ClInclude Include="ImageLibrary\NativeMemoryAllocatorConfig.h" />
+    <ClInclude Include="ImageLibrary\NativeMemoryStdAlloc.h" />
+    <ClInclude Include="ImageLibrary\NativeMemorySTLAllocator.h" />
+    <ClInclude Include="ImageLibrary\NativeOptimisedUtil.h" />
+    <ClInclude Include="ImageLibrary\NativePixelConversions.h" />
+    <ClInclude Include="ImageLibrary\NativePixelFormat.h" />
+    <ClInclude Include="ImageLibrary\NativePixelFormatDescriptions.h" />
+    <ClInclude Include="ImageLibrary\NativePlane.h" />
+    <ClInclude Include="ImageLibrary\NativePlaneBoundedVolume.h" />
+    <ClInclude Include="ImageLibrary\NativePlaneD.h" />
+    <ClInclude Include="ImageLibrary\NativePlatform.h" />
+    <ClInclude Include="ImageLibrary\NativePlatformInformation.h" />
+    <ClInclude Include="ImageLibrary\NativePrerequisites.h" />
+    <ClInclude Include="ImageLibrary\NativePVRTCCodec.h" />
+    <ClInclude Include="ImageLibrary\NativeQuaternion.h" />
+    <ClInclude Include="ImageLibrary\NativeRay.h" />
+    <ClInclude Include="ImageLibrary\NativeRayD.h" />
+    <ClInclude Include="ImageLibrary\NativeRectangle.h" />
+    <ClInclude Include="ImageLibrary\NativeRenderSystem.h" />
+    <ClInclude Include="ImageLibrary\NativeRenderSystemCapabilities.h" />
+    <ClInclude Include="ImageLibrary\NativeResource.h" />
+    <ClInclude Include="ImageLibrary\NativeResourceGroupManager.h" />
+    <ClInclude Include="ImageLibrary\NativeResourceManager.h" />
+    <ClInclude Include="ImageLibrary\NativeRoot.h" />
+    <ClInclude Include="ImageLibrary\NativeSceneManager.h" />
+    <ClInclude Include="ImageLibrary\NativeSharedPtr.h" />
+    <ClInclude Include="ImageLibrary\NativeSIMDHelper.h" />
+    <ClInclude Include="ImageLibrary\NativeSingleton.h" />
+    <ClInclude Include="ImageLibrary\NativeSphere.h" />
+    <ClInclude Include="ImageLibrary\NativeSphereD.h" />
+    <ClInclude Include="ImageLibrary\NativeStableHeaders.h" />
+    <ClInclude Include="ImageLibrary\NativeStdHeaders.h" />
+    <ClInclude Include="ImageLibrary\NativeString.h" />
+    <ClInclude Include="ImageLibrary\NativeStringConverter.h" />
+    <ClInclude Include="ImageLibrary\NativeStringInterface.h" />
+    <ClInclude Include="ImageLibrary\NativeStringVector.h" />
+    <ClInclude Include="ImageLibrary\NativeThreadDefines.h" />
+    <ClInclude Include="ImageLibrary\NativeThreadDefinesNone.h" />
+    <ClInclude Include="ImageLibrary\NativeVector2.h" />
+    <ClInclude Include="ImageLibrary\NativeVector3.h" />
+    <ClInclude Include="ImageLibrary\NativeVector3D.h" />
+    <ClInclude Include="ImageLibrary\NativeVector4.h" />
+    <ClInclude Include="NativeWrapper\MyNativeLogListener.h" />
+    <ClInclude Include="NativeWrapper\MyNativeSceneManager.h" />
+    <ClInclude Include="NativeWrapper\MyNativeVirtualFileSystem.h" />
+    <ClInclude Include="NativeWrapper\NativeArchiveManager_Wrapper.h" />
+    <ClInclude Include="NativeWrapper\NativeImageManager_Wrapper.h" />
+    <ClInclude Include="NativeWrapper\NativeLogManager_Wrapper.h" />
+    <ClInclude Include="NativeWrapper\NativeNameValuePairList_Wrapper.h" />
+    <ClInclude Include="NativeWrapper\NativeNativeWrapper.h" />
+    <ClInclude Include="NativeWrapper\NativeNativeWrapperGeneral.h" />
+    <ClInclude Include="NativeWrapper\NativePixelFormat_Wrapper.h" />
+    <ClInclude Include="NativeWrapper\NativeResourceGroupManager_Wrapper.h" />
+    <ClInclude Include="NativeWrapper\NativeRoot_Wrapper.h" />
+    <ClInclude Include="NativeWrapper\NativeStringInterface_Wrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MemoryManager">

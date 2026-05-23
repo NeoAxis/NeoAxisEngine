@@ -1,60 +1,53 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <UseUwp>true</UseUwp>
+    <Platforms>x64;arm64</Platforms>
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+    <DefaultLanguage>en-US</DefaultLanguage>
+
+    <SelfContained>true</SelfContained>
+    <PublishTrimmed>false</PublishTrimmed>
+    <PublishAot>False</PublishAot>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    
+    <PublishProfile>win-$(Platform).pubxml</PublishProfile>
+    
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
-    <ProjectGuid>{5417393A-BA14-4C40-AAC7-9FD5A5EC9278}</ProjectGuid>
-    <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NeoAxis.Player</RootNamespace>
     <AssemblyName>NeoAxis.Player</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
-    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
-    <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
     <PackageCertificateKeyFile>NeoAxis.Player.UWP_TemporaryKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
-    <AppxPackageDir>C:\Projects\Dev_NeoAxis\UWP_Package</AppxPackageDir>
-    <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <PackageCertificateThumbprint>2A2010862FA2191EF975658C1F5BB8F601888DB3</PackageCertificateThumbprint>
-    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
-    <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
-    <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
   </PropertyGroup>
+
   <PropertyGroup>
-    <OutputPath>..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\</OutputPath>
-  </PropertyGroup>
+    <OutputPath>C:\_TestUWP\</OutputPath>
+  </PropertyGroup>  
+  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <DefineConstants>UWP;DEPLOY;CLIENT;TRACE;DEBUG</DefineConstants>
-    <NoWarn>;2008</NoWarn>
+    <NoWarn>2008</NoWarn>
     <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsPublishable>True</IsPublishable>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <DefineConstants>UWP;DEPLOY;CLIENT;RELEASE</DefineConstants>
     <Optimize>false</Optimize>
-    <NoWarn>;2008</NoWarn>
+    <NoWarn>2008</NoWarn>
     <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>true</Prefer32Bit>
-    <UseDotNetNativeToolchain>false</UseDotNetNativeToolchain>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup>
-    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <IsPublishable>True</IsPublishable>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Implementation\EngineApp\UWP Specific\AppViewUWP.cs" />
@@ -63,11 +56,17 @@
     <Compile Include="Implementation\EngineApp\UWP Specific\FunctionalityUWP.Input.cs" />
     <Compile Include="Implementation\EngineApp\UWP Specific\FunctionalityUWP.Utility.cs" />
     <Compile Include="Implementation\EngineApp\UWP Specific\FunctionalityUWP.Video.cs" />
+    <Compile Include="Implementation\EngineApp\UWP Specific\UWPInputDeviceManager.cs" />
     <Compile Include="Implementation\FileSystem\DebugUtil.cs" />
     <Compile Include="Implementation\FileSystem\PlatformSpecificUtilityUWP.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\ClientUtility.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\RunServer.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\NetworkLogic.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\CloudServiceClient.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\MultiplayerCreateWindow.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\SimulationAppClient.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\SimulationAppServer.cs" />
     <Compile Include="Project\Assets\Base\Scripts\SimulationApp.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\MainMenuScreen.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\MenuWindow.cs" />
@@ -93,12 +92,6 @@
     <Compile Include="Project\Assets\Base\UI\Screens\EntranceScreen.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\InGameContextScreen.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\AvatarWindow.cs" />
-    <Compile Include="Project\Assets\Base\Scripts\ClientUtility.cs" />
-    <Compile Include="Project\Assets\Base\Scripts\RunServer.cs" />
-    <Compile Include="Project\Assets\Base\Scripts\NetworkLogic.cs" />
-    <Compile Include="Project\Assets\Base\Scripts\CloudServiceClient.cs" />
-    <Compile Include="Project\Assets\Base\Scripts\SimulationAppClient.cs" />
-    <Compile Include="Project\Assets\Base\Scripts\SimulationAppServer.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\MatchesWindow.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\MatchWindow.cs" />
   </ItemGroup>
@@ -108,7 +101,6 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
     <Content Include="Assets\Square150x150Logo.scale-200.png" />
@@ -127,46 +119,27 @@
     <Content Include="..\..\Binaries\NeoAxis.Internal\NeoAxis.DefaultSettings.config">
       <Link>NeoAxis.Internal\NeoAxis.DefaultSettings.config</Link>
     </Content>
-    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.Core.dll">
-      <Link>NeoAxis.Core.dll</Link>
-    </Content>
-    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\System.Runtime.dll">
-      <Link>System.Runtime.dll</Link>
-    </Content>
-    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.Core.pdb">
-      <Link>NeoAxis.Core.pdb</Link>
-    </Content>
-    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.Player.pdb">
-      <Link>NeoAxis.Player.pdb</Link>
-    </Content>
-    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\*.STUB">
-      <Link>%(Filename)%(Extension)</Link>
-    </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.14</Version>
-    </PackageReference>
+    <Folder Include="Project\" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="NeoAxis.Core, Version=2020.5.1.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Binaries\NeoAxis.Internal\Platforms\UWP\Managed\NeoAxis.Core.dll</HintPath>
+    <Reference Include="NeoAxis.Core">
+      <HintPath>..\..\Binaries\NeoAxis.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
-    <VisualStudioVersion>14.0</VisualStudioVersion>
-  </PropertyGroup>
   <PropertyGroup>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+  <Target Name="RunCommandLineTools" BeforeTargets="BeforeBuild">
+    <Exec Condition="Exists('$(ProjectDir)..\..\Project.csproj') and Exists('$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe')" Command="&quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -platformProjectPatchWithCopyFiles &quot;$(ProjectDir)NeoAxis.Player.UWP.csproj&quot; -baseProject &quot;$(ProjectDir)..\..\Project.csproj&quot;" />
+  </Target>  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'">
+    <Optimize>False</Optimize>
+    <IsPublishable>True</IsPublishable>
   </PropertyGroup>
-  <PropertyGroup>
-    <PreBuildEvent>if EXIST "$(ProjectDir)..\..\Project.csproj" ( if EXIST "$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" ( "$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -platformProjectPatchWithCopyFiles "$(ProjectDir)NeoAxis.Player.UWP.csproj" -baseProject "$(ProjectDir)..\..\Project.csproj" ) )</PreBuildEvent>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'">
+    <IsPublishable>True</IsPublishable>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

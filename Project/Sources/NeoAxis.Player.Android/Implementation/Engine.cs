@@ -112,9 +112,9 @@ namespace NeoAxis.Player.Android
 					return;
 				}
 			}
-			catch( Exception ex )
+			catch( Exception e )
 			{
-				Log.Fatal( "Engine initialization failed: " + ex.Message );
+				Log.Fatal( "Engine initialization failed: " + e.ToString() );
 				return;
 			}
 		}

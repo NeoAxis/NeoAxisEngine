@@ -5,7 +5,7 @@ using System.Text;
 using System.IO.Compression;
 
 
-#if NETSTANDARD2_1 || UWP
+#if NETSTANDARD2_1
 namespace System
 {
 	public class SuppressGCTransitionAttribute : Attribute

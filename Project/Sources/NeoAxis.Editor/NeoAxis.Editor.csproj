@@ -2,11 +2,11 @@
   <PropertyGroup>
     <TargetFramework>net8.0-windows8.0</TargetFramework>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
-	<UseWindowsForms>true</UseWindowsForms>
-	<UseWPF>true</UseWPF>	
+  	<UseWindowsForms>true</UseWindowsForms>
+  	<UseWPF>true</UseWPF>	
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SelfContained>true</SelfContained>
-	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+  	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <OutputType>WinExe</OutputType>

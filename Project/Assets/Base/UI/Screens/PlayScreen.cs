@@ -410,8 +410,7 @@ namespace Project
 
 			Log.InvisibleInfo( "Scene loaded successfully." );
 
-			GC.Collect();
-			GC.WaitForPendingFinalizers();
+			GC.Collect( 2, GCCollectionMode.Forced, true );
 
 			SetScene( scene, PlayFileName, canChangeUIControl );
 
@@ -484,8 +483,7 @@ namespace Project
 				scene.Dispose();
 				scene = null;
 
-				GC.Collect();
-				GC.WaitForPendingFinalizers();
+				GC.Collect( 2, GCCollectionMode.Forced, true );
 			}
 
 			//unload GPU resources. disable it when need faster switching between scenes
@@ -547,8 +545,7 @@ namespace Project
 
 			DestroyScene();
 
-			GC.Collect();
-			GC.WaitForPendingFinalizers();
+			GC.Collect( 2, GCCollectionMode.Forced, true );
 
 			SetScene( scene, "", canChangeUIControl );
 

@@ -537,7 +537,6 @@ namespace NeoAxis
 			}
 			static Dictionary<Type, TypeIndex> typeIndexes;
 
-
 			static List<ShaderGenerator.ResultData> tempCodes = new List<ShaderGenerator.ResultData>();
 
 			[MethodImpl( (MethodImplOptions)512 )]

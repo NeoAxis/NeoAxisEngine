@@ -620,11 +620,11 @@ namespace NeoAxis
 				Path.Combine( VirtualFileSystem.Directories.Binaries, "NeoAxis.Internal", "NeoAxis.DefaultSettings.config" ),
 				Path.Combine( destBinariesPath, "NeoAxis.Internal", "NeoAxis.DefaultSettings.config" ) );
 
-			//!!!!unnecessary dlls are copied? we need a list of references?
-			//copy managed dll references from UWP folder
-			CopyFiles(
-				Path.Combine( sourcePlatformFolder, "Managed" ),
-				Path.Combine( destPlatformFolder, "Managed" ), buildInstance, new Range( 0.6, 0.7 ), "*.dll" );
+			//!!!!new
+			////copy managed dll references from UWP folder
+			//CopyFiles(
+			//	Path.Combine( sourcePlatformFolder, "Managed" ),
+			//	Path.Combine( destPlatformFolder, "Managed" ), buildInstance, new Range( 0.6, 0.7 ), "*.dll" );
 
 			if( CheckCancel( buildInstance ) )
 				return;
@@ -654,22 +654,23 @@ namespace NeoAxis
 
 			PatchManifestFile( Path.Combine( destSourcesPath, "NeoAxis.Player.UWP\\Package.appxmanifest" ) );
 			PatchCSProjFile( Path.Combine( destSourcesPath, "NeoAxis.Player.UWP\\NeoAxis.Player.UWP.csproj" ) );
-			PatchAssemblyInfoFile( Path.Combine( destSourcesPath, "NeoAxis.Player.UWP\\Properties\\AssemblyInfo.cs" ) );
 
 
-			//CopyFolder( GetTemplateFolder(), buildInstance.DestinationFolder, buildInstance, new Range( 0, 0.2 ) );
+			////PatchAssemblyInfoFile( Path.Combine( destSourcesPath, "NeoAxis.Player.UWP\\Properties\\AssemblyInfo.cs" ) );
 
-			//File.Move(
-			//	Path.Combine( buildInstance.DestinationFolder, "ProductName.sln" ),
-			//	Path.Combine( buildInstance.DestinationFolder, ProductName + ".sln" ) );
+			////CopyFolder( GetTemplateFolder(), buildInstance.DestinationFolder, buildInstance, new Range( 0, 0.2 ) );
 
-			//Directory.Move( Path.Combine( buildInstance.DestinationFolder, "ProductName" ), buildInstance.ProductFolder );
+			////File.Move(
+			////	Path.Combine( buildInstance.DestinationFolder, "ProductName.sln" ),
+			////	Path.Combine( buildInstance.DestinationFolder, ProductName + ".sln" ) );
 
-			//File.Move(
-			//	Path.Combine( buildInstance.ProductFolder, "ProductName.csproj" ),
-			//	Path.Combine( buildInstance.ProductFolder, ProductName + ".csproj" ) );
+			////Directory.Move( Path.Combine( buildInstance.DestinationFolder, "ProductName" ), buildInstance.ProductFolder );
 
-			//PatchSolutionFile( Path.Combine( buildInstance.DestinationFolder, ProductName + ".sln" ) );
+			////File.Move(
+			////	Path.Combine( buildInstance.ProductFolder, "ProductName.csproj" ),
+			////	Path.Combine( buildInstance.ProductFolder, ProductName + ".csproj" ) );
+
+			////PatchSolutionFile( Path.Combine( buildInstance.DestinationFolder, ProductName + ".sln" ) );
 		}
 
 		// The package manifest is an XML document that contains the info the system needs to deploy, display, or update a Windows app.
@@ -726,12 +727,12 @@ namespace NeoAxis
 			File.WriteAllText( path, data );
 		}
 
-		void PatchAssemblyInfoFile( string path )
-		{
-			string data = File.ReadAllText( path );
-			data = data.Replace( "NeoAxis.Player.UWP", Name );// ProductName );
-			File.WriteAllText( path, data );
-		}
+		//void PatchAssemblyInfoFile( string path )
+		//{
+		//	string data = File.ReadAllText( path );
+		//	data = data.Replace( "NeoAxis.Player.UWP", Name );// ProductName );
+		//	File.WriteAllText( path, data );
+		//}
 
 
 		//bool BuildProject( string destFolder )

@@ -303,7 +303,7 @@ namespace NeoAxis
 		public Transform EditorCameraTransform;
 
 
-		//!!!!add new editor properties to Re-import (Reset Editor Settings)
+		//!!!!add new editor properties to Import (Reset Editor Settings)
 
 
 		[Browsable( false )]

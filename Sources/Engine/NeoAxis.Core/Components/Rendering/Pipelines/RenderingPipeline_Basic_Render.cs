@@ -14778,12 +14778,7 @@ namespace NeoAxis
 			var vertices = occluderItem.Vertices;
 			var indices = occluderItem.Indices;
 
-#if UWP
-			//!!!!
-			fixed( Vector3F* verticesFloat = new Vector3F[ vertices.Length ] )
-#else
 			fixed( Vector3F* verticesFloat = vertices.Length < 512 ? stackalloc Vector3F[ vertices.Length ] : new Vector3F[ vertices.Length ] )
-#endif
 			{
 				for( int n = 0; n < vertices.Length; n++ )
 					context.ConvertToRelative( ref vertices[ n ], out verticesFloat[ n ] );

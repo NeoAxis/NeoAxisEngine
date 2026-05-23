@@ -11,7 +11,7 @@ namespace NeoAxis.Player
 	/// <summary>
 	/// Player application.
 	/// </summary>
-	internal class Program
+	internal class MyProgram
 	{
 		/// <summary>
 		/// Defines the entry point of the application.
@@ -32,7 +32,7 @@ namespace NeoAxis.Player
 			//TODO: implement xaml swapChainPanel alternative.
 		}
 
-		static void Init()
+		public static void Init()
 		{
 			new PlatformFunctionalityUWP();
 
@@ -62,8 +62,8 @@ namespace NeoAxis.Player
 			EngineApp.InitSettings.UseDirectInputForMouseRelativeMode = false; // not implemented for UWP
 
 			//register project assembly
-			AssemblyUtility.RegisterAssembly( typeof( Program ).Assembly, "" );
-			EngineApp.ProjectAssembly = typeof( Program ).Assembly;
+			AssemblyUtility.RegisterAssembly( typeof( MyProgram ).Assembly, "" );
+			EngineApp.ProjectAssembly = typeof( MyProgram ).Assembly;
 
 			//init engine application
 			EngineApp.Init();

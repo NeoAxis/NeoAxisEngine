@@ -17,6 +17,7 @@ namespace NeoAxis
 	{
 		[DllImport( OgreWrapper.library, EntryPoint = "OgreNativeWrapper_CheckNativeBridge", CallingConvention = OgreWrapper.convention )]
 #if WEB
+		qq qq;
 //!!!!
 		[DefaultDllImportSearchPaths( DllImportSearchPath.SafeDirectories )]
 #endif

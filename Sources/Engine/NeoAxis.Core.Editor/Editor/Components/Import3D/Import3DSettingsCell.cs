@@ -20,7 +20,7 @@ namespace NeoAxis.Editor
 
 		protected override void OnInit()
 		{
-			buttonReimport = ProcedureForm.CreateButton( Translate( "Re-import" ) );
+			buttonReimport = ProcedureForm.CreateButton( Translate( "Import" ) );
 			buttonReimport.Click += ButtonReimport_Click;
 
 			ProcedureForm.AddRow( new ProcedureUI.Control[] { buttonReimport } );
@@ -34,7 +34,7 @@ namespace NeoAxis.Editor
 
 			var settings = new Import3D.ReimportSettings();
 
-			var form = new SpecifyParametersForm( Translate( "Re-import" ), settings );
+			var form = new SpecifyParametersForm( Translate( "Import" ), settings );
 			form.HierarchicalContainer.SplitterRatio = 0.5f;
 			form.CheckHandler = delegate ( ref string error2 )
 			{

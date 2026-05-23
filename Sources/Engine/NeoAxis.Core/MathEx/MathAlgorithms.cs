@@ -2675,12 +2675,7 @@ namespace NeoAxis
 
 			unsafe
 			{
-#if UWP
-				//!!!!
-				fixed( double* distances = new double[ vertexCount ] )
-#else
 				fixed( double* distances = vertexCount < 1024 ? stackalloc double[ vertexCount ] : new double[ vertexCount ] )
-#endif
 				{
 					//double* distances = (double*)NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Utility, vertexCount * sizeof( double ) );
 					//double* distances = stackalloc double[ vertexCount ];

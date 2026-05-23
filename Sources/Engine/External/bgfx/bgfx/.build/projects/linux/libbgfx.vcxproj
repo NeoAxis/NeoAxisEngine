@@ -266,7 +266,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>WSL_2_0</PlatformToolset>
+    <PlatformToolset>WSL_1_0</PlatformToolset>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfStl>libstdc++_static</UseOfStl>
   </PropertyGroup>
@@ -288,24 +288,26 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)_build\Linux\$(Platform)\$(MSBuildProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)_build\Linux\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\Linux\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_build\Linux\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</IntDir>
     <TargetName>libbgfx</TargetName>
+    <MultiProcNumber>100</MultiProcNumber>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>libbgfx</TargetName>
-    <OutDir>$(SolutionDir)_build\Linux\$(Platform)\$(MSBuildProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)_build\Linux\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)_build\Linux\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)_build\Linux\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</IntDir>
+    <MultiProcNumber>100</MultiProcNumber>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(StlIncludeDirectories);%(ClCompile.AdditionalIncludeDirectories);..\..\..\include;..\..\..\..\..\..\NativeMemoryManager;..\..\..\..\bx\include;..\..\..\..\bx\3rdparty;..\..\..\..\bimg\include;..\..\..\..\bimg\3rdparty;..\..\..\..\bimg\3rdparty\astc-encoder\include;..\..\..\..\bimg\3rdparty\astc-encoder;..\..\..\3rdparty\khronos;..\..\..\include;..\..\..\3rdparty\fcpp;..\..\..\3rdparty\glslang\glslang\Public;..\..\..\3rdparty\glslang\glslang\Include;..\..\..\3rdparty\glslang;..\..\..\3rdparty\glsl-optimizer\include;..\..\..\3rdparty\glsl-optimizer\src\glsl;..\..\..\3rdparty\spirv-cross;..\..\..\3rdparty\spirv-tools\include;..\..\..\3rdparty\glsl-optimizer\include\c99;..\..\..\3rdparty\dxc\inc</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__SIZEOF_SIZE_T__=8;_LIBCPP_VERSION;_STLP_HASH_FUN_H;LINUX;__LINUX__;_DEBUG;_MT;_SECURE_SCL=0;BGFX_CONFIG_RENDERER_VUL___KAN=10;BGFX_CONFIG_RENDERER_OPE___NGLES=32;BX_CONFIG_DEBUG=1;BGFX_CONFIG_DEBUG=1;BGFX_CONFIG_DEBUG_UNIFORM=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <CppLanguageStandard>c++17</CppLanguageStandard>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)_build\Linux\$(Platform)\libbgfx\libbgfx.so" "$(SolutionDir)Project\Binaries\NeoAxis.Internal\Platforms\Linux\$(Platform)\libbgfx.so"</Command>
+      <Command>copy "$(SolutionDir)_build\Linux\$(Configuration)\$(Platform)\libbgfx\libbgfx.so" "$(SolutionDir)Project\Binaries\NeoAxis.Internal\Platforms\Linux\$(Platform)\libbgfx.so"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>if EXIST "$(ProjectDir)..\vs2017\bgfx-shared-lib.vcxproj" ( if EXIST "$(ProjectDir)..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" ( "$(ProjectDir)..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -platformProjectPatch "$(ProjectDir)libbgfx.vcxproj" -baseProject "$(ProjectDir)..\vs2017\bgfx-shared-lib.vcxproj" ) )</Command>
@@ -319,7 +321,7 @@
       <CppLanguageStandard>c++17</CppLanguageStandard>
     </ClCompile>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)_build\Linux\$(Platform)\libbgfx\libbgfx.so" "$(SolutionDir)Project\Binaries\NeoAxis.Internal\Platforms\Linux\$(Platform)\libbgfx.so"</Command>
+      <Command>copy "$(SolutionDir)_build\Linux\$(Configuration)\$(Platform)\libbgfx\libbgfx.so" "$(SolutionDir)Project\Binaries\NeoAxis.Internal\Platforms\Linux\$(Platform)\libbgfx.so"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>if EXIST "$(ProjectDir)..\vs2017\bgfx-shared-lib.vcxproj" ( if EXIST "$(ProjectDir)..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" ( "$(ProjectDir)..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -platformProjectPatch "$(ProjectDir)libbgfx.vcxproj" -baseProject "$(ProjectDir)..\vs2017\bgfx-shared-lib.vcxproj" ) )</Command>

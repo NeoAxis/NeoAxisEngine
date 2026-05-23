@@ -13,8 +13,6 @@ namespace NeoAxis
 	[AddToResourcesWindow( @"Addons\Vehicle\Vehicle", 22003 )]
 	public class Vehicle : MeshInSpace, InteractiveObjectInterface, IProcessDamage
 	{
-		static FastRandom staticRandom = new FastRandom( 0 );
-
 		static double lastInvalidVehicleWarningTime;
 
 		//
@@ -950,7 +948,7 @@ namespace NeoAxis
 				}
 
 				if( !updated )
-					fullyDisabledRemainingTime = 2.0f + staticRandom.Next( 0.1f );
+					fullyDisabledRemainingTime = 2.0f + Scene.GetRandomGuaranteed( ParentScene ).Next( 0.1f );
 			}
 		}
 
@@ -1074,7 +1072,7 @@ namespace NeoAxis
 						var tr = TransformV;
 
 						//update each 2-3 seconds
-						var extendForSeconds = 2.0f + staticRandom.Next( 0.0f, 1.0f );
+						var extendForSeconds = 2.0f + Scene.GetRandomGuaranteed( ParentScene ).Next( 0.0f, 1.0f );
 						var radiusExtended = radius * 1.1f;
 
 						Vector3 velocity;
@@ -4052,7 +4050,7 @@ namespace NeoAxis
 		float GetTurnBlinkingFactor()
 		{
 			if( randomTimeAddForTurnSignals == 0 )
-				randomTimeAddForTurnSignals = staticRandom.Next( 100.0 );
+				randomTimeAddForTurnSignals = Scene.GetRandomGuaranteed( ParentScene ).Next( 100.0 );
 
 			var contoller = ParentRoot.HierarchyController;
 			var time = contoller != null ? contoller.SimulationTime : EngineApp.EngineTime;

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using NeoAxis.Networking;
 using NeoAxis.CloudServer;
+using System.Windows.Controls;
 
 namespace NeoAxis.Editor
 {
@@ -18,12 +19,12 @@ namespace NeoAxis.Editor
 		static NeoXForgeImplementation instance;
 
 		public const string StorageDirectory = "Forge";
+		//!!!!? add to settings
+		const string targetPathInAssets = "Forge";
 		const long projectID = 3082;
 
 		ThreadItem currentThread;
 		CloudFunctionsClient cloudClient;
-
-		//static ESet<string> featuredStoreItems = new ESet<string>();
 
 		///////////////////////////////////////////////
 
@@ -47,29 +48,6 @@ namespace NeoAxis.Editor
 			get { return instance; }
 		}
 
-		//public static ESet<string> FeaturedStoreItems
-		//{
-		//	get { return featuredStoreItems; }
-		//}
-
-		//static string ProcessDescription( string text )
-		//{
-		//	try
-		//	{
-		//		// Define a regex pattern to match links in the specified format
-		//		string pattern = @"\[(.*?)\]\(.*?\)";
-
-		//		// Replace the matches with just the link text
-		//		string result = Regex.Replace( text, pattern, "$1" );
-
-		//		return result;
-		//	}
-		//	catch
-		//	{
-		//		return text;
-		//	}
-		//}
-
 		async Task<bool> ConnectAsync( CancellationToken cancellationToken = default )
 		{
 			//disconnect previous client
@@ -79,14 +57,15 @@ namespace NeoAxis.Editor
 			//connection settings
 			var settings = BasicServiceClient.ConnectionSettingsClass.CreateCloud( CloudUserRole.Player, projectID, true );
 
+			//use access token when specified
+			NeoAxisStoreImplementation.LoadFromRegistry( out var accessToken );
+			if( !string.IsNullOrEmpty( accessToken ) )
+				settings.Password = accessToken;
+
 			//create client and connect
 			var createResult = await CloudFunctionsClient.CreateAsync( settings, true, cancellationToken );
 			if( !string.IsNullOrEmpty( createResult.Error ) )
-			{
 				throw new Exception( "Error of connecting to the service. " + createResult.Error );
-				//Log( "Error: " + createResult.Error );
-				//return false;
-			}
 
 			//now connected
 			cloudClient = createResult.Client;
@@ -94,9 +73,6 @@ namespace NeoAxis.Editor
 			//!!!!need?
 			//register types from additional dlls for call methods
 			cloudClient.ConnectionNode.CloudFunctions.RegisterAssemblyForCloudMethodTypes( typeof( Chats.Chat ).Assembly );
-
-			////register to receive messages from the server
-			//cloudClient.ConnectionNode.Messages.ReceiveMessageString += Messages_ReceiveMessageString;
 
 			return true;
 		}
@@ -108,18 +84,22 @@ namespace NeoAxis.Editor
 
 		async Task GetThumbnainsAsync( List<PackageManager.PackageInfo> packages )
 		{
-			//get all with one request
+			//use access token when specified
+			NeoAxisStoreImplementation.LoadFromRegistry( out var accessToken );
 
+			//!!!!used only first preview image right now
+
+			//try to get all with one request
 			var storageFileNames = new string[ packages.Count ];
 			for( int n = 0; n < packages.Count; n++ )
 			{
 				var info = packages[ n ];
-				var storageDirectoryName = $"{info.Author}/{StorageDirectory}/{info.Identifier}";
-				storageFileNames[ n ] = $"{storageDirectoryName}/OutputPreview.jpg";
+				var storageDirectoryName = $"{info.Author}/{StorageDirectory}/{info.Identifier.Replace( '_', '-' )}";
+				storageFileNames[ n ] = $"{storageDirectoryName}/OutputPreview1.jpg";
 			}
 
 			var cts3 = new CancellationTokenSource( new TimeSpan( 0, 0, 15 * packages.Count ) );
-			var getContentUrlsResult = await CloudServiceFunctions.StorageGetContentUrlsAsync( storageFileNames, false, false, "", cts3.Token );
+			var getContentUrlsResult = await CloudServiceFunctions.StorageGetContentUrlsAsync( storageFileNames, false, false, accessToken, cts3.Token );
 
 			if( string.IsNullOrEmpty( getContentUrlsResult.Error ) )
 			{
@@ -138,12 +118,25 @@ namespace NeoAxis.Editor
 					var info = packages[ n ];
 
 					var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-					var getContentUrlResult = await CloudServiceFunctions.StorageGetContentUrlAsync( storageFileNames[ n ], false, false, "", cts.Token );
+					var getContentUrlResult = await CloudServiceFunctions.StorageGetContentUrlAsync( storageFileNames[ n ], false, false, accessToken, cts.Token );
 
 					if( !string.IsNullOrEmpty( getContentUrlResult.Url ) )
 						info.Thumbnail = getContentUrlResult.Url;
 				}
 			}
+		}
+
+		static string GetOutputFileExtension( string contentType, int amount )
+		{
+			var outputFileExtension = "zip";
+			if( amount == 1 )
+			{
+				if( contentType == "3D Model" )
+					outputFileExtension = "glb";
+				else if( contentType == "Image" )
+					outputFileExtension = "png";
+			}
+			return outputFileExtension;
 		}
 
 		async void ThreadGetStoreItems( object threadItem2 )
@@ -155,8 +148,8 @@ namespace NeoAxis.Editor
 			{
 				//connect
 				{
-					var client2 = cloudClient;
-					if( client2 == null || client2.Status == NetworkStatus.Disconnected )
+					var client = cloudClient;
+					if( client == null || client.Status == NetworkStatus.Disconnected )
 						await ConnectAsync();
 				}
 
@@ -164,9 +157,9 @@ namespace NeoAxis.Editor
 
 				//get items
 				{
-					var client2 = cloudClient;
+					var client = cloudClient;
 					var userID = GetThisUserID();
-					if( client2 != null && userID != 0 )
+					if( client != null && userID != 0 )
 					{
 						var packages = new List<PackageManager.PackageInfo>();
 
@@ -175,7 +168,7 @@ namespace NeoAxis.Editor
 
 
 						var cts2 = new CancellationTokenSource( new TimeSpan( 0, 2, 0 ) );
-						var getItemsResult = await client2.CallMethodAsync<string>( "Implementation", "GetItemsTextBlock", cts2.Token, null, new[] { userID }, null, new[] { "Finished" }, new[] { "3D Model" } );
+						var getItemsResult = await client.CallMethodAsync<string>( "Implementation", "GetItemsTextBlock", cts2.Token, null, new[] { userID }, null, new[] { "Finished" }, new[] { "3D Model" } );
 						if( !string.IsNullOrEmpty( getItemsResult.Error ) )
 							throw new Exception( getItemsResult.Error );
 
@@ -194,7 +187,7 @@ namespace NeoAxis.Editor
 								info.Store = store;
 
 								var itemID = block.GetAttribute( "Id" );
-								info.Identifier = itemID;
+								info.Identifier = itemID.Replace( '-', '_' );
 								info.Version = "1.0.0.0";
 
 								info.Author = block.GetAttribute( "UserID" );
@@ -211,7 +204,7 @@ namespace NeoAxis.Editor
 
 								var contentType = block.GetAttribute( "ContentType" );
 
-								int.TryParse( block.GetAttribute( "Amount", "0" ), out var amount );
+								int.TryParse( block.GetAttribute( "Amount", "1" ), out var amount );
 
 								info.Time = creationTime;
 
@@ -219,7 +212,6 @@ namespace NeoAxis.Editor
 								//!!!!
 
 								//public long Size;
-								//public string FreeDownload;
 								//public string Files;
 								//public string Tags;
 
@@ -245,8 +237,12 @@ namespace NeoAxis.Editor
 								//if( Enum.TryParse<CloudProductLicense>( block.GetAttribute( "License" ), out var license ) )
 								//	info.License = license;
 
+								var storageDirectoryName = $"{info.Author}/{StorageDirectory}/{itemID}";
+								var outputFileExtension = GetOutputFileExtension( contentType, amount );
+								var storageFileName = $"{storageDirectoryName}/{itemID}.{outputFileExtension}";
+								info.FreeDownload = PathUtility.NormalizePath( storageFileName );
 
-								//!!!!
+								//info.FreeDownload = Path.GetFileName( info.FreeDownload );
 
 								//if( cost == 0 )
 								//{
@@ -254,7 +250,7 @@ namespace NeoAxis.Editor
 								//}
 								//else
 								//{
-								//	//!!!!impl paid
+								//	!!!!impl paid
 								//}
 
 
@@ -262,6 +258,8 @@ namespace NeoAxis.Editor
 
 								//info.Size = long.Parse( block.GetAttribute( "BuildContentSize", "0" ) );
 
+
+								//!!!!Files?
 
 								//files are not provided from the service. files are read from zip archive
 								//////files
@@ -356,7 +354,7 @@ namespace NeoAxis.Editor
 
 						StoreManager.SetDownloadedListOfPackages( store, packages );
 
-						//refresh content urls
+						//refresh thumbnail content urls
 						while( true )
 						{
 							for( int n = 0; n < 45; n++ )
@@ -494,17 +492,12 @@ namespace NeoAxis.Editor
 
 		public async override Task DownloadBodyAsync( StoresWindow.TaskDownloadData data )
 		{
-
-			//!!!!
-
-#if ___
-
 			var package = data.Package;
 			var state = data.State;
 
 			//login from registry or access token specicied
 			var authenticated = false;
-			LoadFromRegistry( out var accessToken );
+			NeoAxisStoreImplementation.LoadFromRegistry( out var accessToken );
 			if( !string.IsNullOrEmpty( accessToken ) )
 				authenticated = true;
 			else
@@ -515,20 +508,23 @@ namespace NeoAxis.Editor
 			}
 			if( !authenticated )
 			{
-				data.Error = new Exception( "You must be logged in to download this package. Use Project Menu to login." );
+				data.Error = new Exception( "You must be logged in to download this package. Use NeoX app to login or specify the access token in the options of the Stores window." );
 				return;
 			}
 
 			var tempDownloadedFileName = Path.Combine( Path.GetTempPath(), "Temp" + Path.GetRandomFileName() );
 
-			var fileNameFromBuild = package.Identifier + "-" + Path.GetFileName( PathUtility.NormalizePath( package.FreeDownload ?? "" ) );
+			var isZip = Path.GetExtension( package.FreeDownload ).Equals( ".zip", StringComparison.OrdinalIgnoreCase );
+
+			var fileBaseName = Path.GetFileNameWithoutExtension( package.FreeDownload );
+			var fileNameFromBuild = $"{fileBaseName.Replace( '-', '_' )}-{package.Version}.zip";
 			var downloadFullPath = Path.Combine( PackageManager.PackagesFolder, fileNameFromBuild );
 
 			try
 			{
 				//download
 				{
-					var storageFileName = package.FreeDownload;
+					var storageFileName = package.FreeDownload.Replace( "\\", "/" );
 
 					//check storage file name
 					if( string.IsNullOrEmpty( storageFileName ) )
@@ -545,11 +541,6 @@ namespace NeoAxis.Editor
 						data.Error = new Exception( getContentUrlResult.Error );
 						return;
 					}
-
-					//destinationFullPath = PathUtility.NormalizePath( destinationFullPath );
-
-					//var targetFullPathDirectory = Path.GetDirectoryName( tempDownloadedFileName );
-					//Directory.CreateDirectory( targetFullPathDirectory );
 
 					//download file
 					using var cts2 = new CancellationTokenSource( new TimeSpan( 100, 0, 0 ) );
@@ -573,10 +564,40 @@ namespace NeoAxis.Editor
 						return;
 				}
 
-				//move temp file to the final destination
+				//create zip, copy files inside
 				try
 				{
-					File.Move( tempDownloadedFileName, downloadFullPath );// state.downloadingDestinationPath );
+					if( File.Exists( downloadFullPath ) )
+						File.Delete( downloadFullPath );
+
+					using( var archive = ZipFile.Open( downloadFullPath, ZipArchiveMode.Create ) )
+					{
+						var targetDirectory = Path.Combine( "Assets", targetPathInAssets, fileBaseName );
+
+						if( isZip )
+						{
+							using( var zipArchive = ZipFile.Open( tempDownloadedFileName, ZipArchiveMode.Read ) )
+							{
+								foreach( var zipEntry in zipArchive.Entries )
+								{
+									var entryName = Path.Combine( targetDirectory, zipEntry.FullName );
+									var entry = archive.CreateEntry( entryName );
+
+									using( var sourceStream = zipEntry.Open() )
+									using( var entryStream = entry.Open() )
+										sourceStream.CopyTo( entryStream );
+								}
+							}
+						}
+						else
+						{
+							var entryName = Path.Combine( targetDirectory, "Output" + Path.GetExtension( package.FreeDownload ) );
+							var entry = archive.CreateEntry( entryName );
+							using( var entryStream = entry.Open() )
+							using( var fileStream = File.OpenRead( tempDownloadedFileName ) )
+								fileStream.CopyTo( entryStream );
+						}
+					}
 				}
 				catch( Exception e )
 				{
@@ -584,9 +605,10 @@ namespace NeoAxis.Editor
 					return;
 				}
 
+
 				//process downloaded file
 
-				using( var archive = ZipFile.Open( downloadFullPath/*state.downloadingDestinationPath*/, ZipArchiveMode.Update ) )
+				using( var archive = ZipFile.Open( downloadFullPath, ZipArchiveMode.Update ) )
 				{
 					//write Package.info
 					{
@@ -607,8 +629,9 @@ namespace NeoAxis.Editor
 						if( !string.IsNullOrEmpty( package.Permalink ) )
 							block.SetAttribute( "Permalink", package.Permalink );
 
-						if( !string.IsNullOrEmpty( package.Thumbnail ) )
-							block.SetAttribute( "Thumbnail", package.Thumbnail );
+						//package.Thumbnail is temporary url
+						//if( !string.IsNullOrEmpty( package.Thumbnail ) )
+						//	block.SetAttribute( "Thumbnail", package.Thumbnail );
 
 						if( package.Triangles != 0 )
 							block.SetAttribute( "Triangles", package.Triangles.ToString() );
@@ -706,8 +729,6 @@ namespace NeoAxis.Editor
 
 				//set downloaded path to process after download
 				state.downloadingDestinationPath = downloadFullPath;
-				//state.downloadingInstallAfterDownload = true;
-
 			}
 			finally
 			{
@@ -718,7 +739,6 @@ namespace NeoAxis.Editor
 				}
 				catch { }
 			}
-#endif
 		}
 
 		public async Task<CloudFunctionsClient> GetOrConnectClientAsync( CancellationToken cancellationToken )

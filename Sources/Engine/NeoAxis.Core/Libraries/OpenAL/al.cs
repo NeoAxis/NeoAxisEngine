@@ -3933,20 +3933,21 @@ namespace Tao.OpenAl
 		#endregion string alGetString(int state)
 
 		#region alHint(int target, int mode)
-#if !WEB
-		/// <summary>
-		///     Sets application preferences for driver performance choices.
-		/// </summary>
-		/// <param name="target">
-		///     Unknown.
-		/// </param>
-		/// <param name="mode">
-		///     Unknown.
-		/// </param>
-		// ALAPI ALvoid ALAPIENTRY alHint(ALenum target, ALenum mode);
-		[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
-		public static extern void alHint( int target, int mode );
-#endif
+
+		//!!!!betauser
+		///// <summary>
+		/////     Sets application preferences for driver performance choices.
+		///// </summary>
+		///// <param name="target">
+		/////     Unknown.
+		///// </param>
+		///// <param name="mode">
+		/////     Unknown.
+		///// </param>
+		//// ALAPI ALvoid ALAPIENTRY alHint(ALenum target, ALenum mode);
+		//[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
+		//public static extern void alHint( int target, int mode );
+
 		#endregion alHint(int target, int mode)
 
 		#region int alIsBuffer(int buffer)
@@ -4231,23 +4232,24 @@ namespace Tao.OpenAl
 		#endregion alListeneriv(int attribute, [In] ref int values)
 
 		#region alQueuei(int source, int attribute, int val)
-#if !WEB
-		/// <summary>
-		///     Unknown.
-		/// </summary>
-		/// <param name="source">
-		///     Unknown.
-		/// </param>
-		/// <param name="attribute">
-		///     Unknown.
-		/// </param>
-		/// <param name="val">
-		///     Unknown.
-		/// </param>
-		// ALAPI void ALAPIENTRY alQueuei(ALuint sid, ALenum param, ALint value);
-		[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
-		public static extern void alQueuei( int source, int attribute, int val );
-#endif
+
+		//!!!!betauser
+		///// <summary>
+		/////     Unknown.
+		///// </summary>
+		///// <param name="source">
+		/////     Unknown.
+		///// </param>
+		///// <param name="attribute">
+		/////     Unknown.
+		///// </param>
+		///// <param name="val">
+		/////     Unknown.
+		///// </param>
+		//// ALAPI void ALAPIENTRY alQueuei(ALuint sid, ALenum param, ALint value);
+		//[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
+		//public static extern void alQueuei( int source, int attribute, int val );
+
 		#endregion alQueuei(int source, int attribute, int val)
 
 		#region alSource3f(int source, int attribute, float value1, float value2, float value3)
@@ -5025,192 +5027,193 @@ namespace Tao.OpenAl
 		#endregion Public OpenAL 1.1 Methods
 
 		#region Public IASIG Methods
-#if !WEB
-		#region int alGenEnvironmentIASIG(int number, out int environments)
-		/// <summary>
-		///     Unknown.
-		/// </summary>
-		/// <param name="number">
-		///     Unknown.
-		/// </param>
-		/// <param name="environments">
-		///     Unknown.
-		/// </param>
-		/// <returns>
-		///     Unknown.
-		/// </returns>
-		// ALAPI ALsizei ALAPIENTRY alGenEnvironmentIASIG(ALsizei n, ALuint* environs);
-		[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
-		public static extern int alGenEnvironmentIASIG( int number, out int environments );
-		#endregion int alGenEnvironmentIASIG(int number, out int environments)
 
-		#region int alGenEnvironmentIASIG(int number, [Out] int[] environments)
-		/// <summary>
-		///     Unknown.
-		/// </summary>
-		/// <param name="number">
-		///     Unknown.
-		/// </param>
-		/// <param name="environments">
-		///     Unknown.
-		/// </param>
-		/// <returns>
-		///     Unknown.
-		/// </returns>
-		// ALAPI ALsizei ALAPIENTRY alGenEnvironmentIASIG(ALsizei n, ALuint* environs);
-		//betauser
+		//!!!!betauser
+		//#region int alGenEnvironmentIASIG(int number, out int environments)
+		///// <summary>
+		/////     Unknown.
+		///// </summary>
+		///// <param name="number">
+		/////     Unknown.
+		///// </param>
+		///// <param name="environments">
+		/////     Unknown.
+		///// </param>
+		///// <returns>
+		/////     Unknown.
+		///// </returns>
+		//// ALAPI ALsizei ALAPIENTRY alGenEnvironmentIASIG(ALsizei n, ALuint* environs);
 		//[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
-		//public static extern int alGenEnvironmentIASIG( int number, [Out] int[] environments );
-		#endregion int alGenEnvironmentIASIG(int number, [Out] int[] environments)
+		//public static extern int alGenEnvironmentIASIG( int number, out int environments );
+		//#endregion int alGenEnvironmentIASIG(int number, out int environments)
 
-		#region int alGenEnvironmentIASIG(int number, [Out] IntPtr environments)
-		/// <summary>
-		///     Unknown.
-		/// </summary>
-		/// <param name="number">
-		///     Unknown.
-		/// </param>
-		/// <param name="environments">
-		///     Unknown.
-		/// </param>
-		/// <returns>
-		///     Unknown.
-		/// </returns>
-		// ALAPI ALsizei ALAPIENTRY alGenEnvironmentIASIG(ALsizei n, ALuint* environs);
-		[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
-		public static extern int alGenEnvironmentIASIG( int number, [Out] IntPtr environments );
-		#endregion int alGenEnvironmentIASIG(int number, [Out] IntPtr environments)
+		//#region int alGenEnvironmentIASIG(int number, [Out] int[] environments)
+		///// <summary>
+		/////     Unknown.
+		///// </summary>
+		///// <param name="number">
+		/////     Unknown.
+		///// </param>
+		///// <param name="environments">
+		/////     Unknown.
+		///// </param>
+		///// <returns>
+		/////     Unknown.
+		///// </returns>
+		//// ALAPI ALsizei ALAPIENTRY alGenEnvironmentIASIG(ALsizei n, ALuint* environs);
+		////betauser
+		////[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
+		////public static extern int alGenEnvironmentIASIG( int number, [Out] int[] environments );
+		//#endregion int alGenEnvironmentIASIG(int number, [Out] int[] environments)
 
-		#region int alGenEnvironmentIASIG(int number, [Out] int *environments)
-		/// <summary>
-		///     Unknown.
-		/// </summary>
-		/// <param name="number">
-		///     Unknown.
-		/// </param>
-		/// <param name="environments">
-		///     Unknown.
-		/// </param>
-		/// <returns>
-		///     Unknown.
-		/// </returns>
-		// ALAPI ALsizei ALAPIENTRY alGenEnvironmentIASIG(ALsizei n, ALuint* environs);
-		[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), CLSCompliant( false ), SuppressUnmanagedCodeSecurity]
-		public unsafe static extern int alGenEnvironmentIASIG( int number, [Out] int* environments );
-		#endregion int alGenEnvironmentIASIG(int number, [Out] int *environments)
-
-		#region alDeleteEnvironmentIASIG(int number, [In] ref int environments)
-		/// <summary>
-		///     Unknown.
-		/// </summary>
-		/// <param name="number">
-		///     Unknown.
-		/// </param>
-		/// <param name="environments">
-		///     Unknown.
-		/// </param>
-		// ALAPI void ALAPIENTRY alDeleteEnvironmentIASIG( ALsizei n, ALuint* environs );
-		[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
-		public static extern void alDeleteEnvironmentIASIG( int number, [In] ref int environments );
-		#endregion alDeleteEnvironmentIASIG(int number, [In] ref int environments)
-
-		#region alDeleteEnvironmentIASIG(int number, [In] int[] environments)
-		/// <summary>
-		///     Unknown.
-		/// </summary>
-		/// <param name="number">
-		///     Unknown.
-		/// </param>
-		/// <param name="environments">
-		///     Unknown.
-		/// </param>
-		// ALAPI void ALAPIENTRY alDeleteEnvironmentIASIG( ALsizei n, ALuint* environs );
-		//betauser
+		//#region int alGenEnvironmentIASIG(int number, [Out] IntPtr environments)
+		///// <summary>
+		/////     Unknown.
+		///// </summary>
+		///// <param name="number">
+		/////     Unknown.
+		///// </param>
+		///// <param name="environments">
+		/////     Unknown.
+		///// </param>
+		///// <returns>
+		/////     Unknown.
+		///// </returns>
+		//// ALAPI ALsizei ALAPIENTRY alGenEnvironmentIASIG(ALsizei n, ALuint* environs);
 		//[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
-		//public static extern void alDeleteEnvironmentIASIG( int number, [In] int[] environments );
-		#endregion alDeleteEnvironmentIASIG(int number, [In] int[] environments)
+		//public static extern int alGenEnvironmentIASIG( int number, [Out] IntPtr environments );
+		//#endregion int alGenEnvironmentIASIG(int number, [Out] IntPtr environments)
 
-		#region alDeleteEnvironmentIASIG(int number, [In] IntPtr environments)
-		/// <summary>
-		///     Unknown.
-		/// </summary>
-		/// <param name="number">
-		///     Unknown.
-		/// </param>
-		/// <param name="environments">
-		///     Unknown.
-		/// </param>
-		// ALAPI void ALAPIENTRY alDeleteEnvironmentIASIG( ALsizei n, ALuint* environs );
-		[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
-		public static extern void alDeleteEnvironmentIASIG( int number, [In] IntPtr environments );
-		#endregion alDeleteEnvironmentIASIG(int number, [In] IntPtr environments)
+		//#region int alGenEnvironmentIASIG(int number, [Out] int *environments)
+		///// <summary>
+		/////     Unknown.
+		///// </summary>
+		///// <param name="number">
+		/////     Unknown.
+		///// </param>
+		///// <param name="environments">
+		/////     Unknown.
+		///// </param>
+		///// <returns>
+		/////     Unknown.
+		///// </returns>
+		//// ALAPI ALsizei ALAPIENTRY alGenEnvironmentIASIG(ALsizei n, ALuint* environs);
+		//[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), CLSCompliant( false ), SuppressUnmanagedCodeSecurity]
+		//public unsafe static extern int alGenEnvironmentIASIG( int number, [Out] int* environments );
+		//#endregion int alGenEnvironmentIASIG(int number, [Out] int *environments)
 
-		#region alDeleteEnvironmentIASIG(int number, [In] int *environments)
-		/// <summary>
-		///     Unknown.
-		/// </summary>
-		/// <param name="number">
-		///     Unknown.
-		/// </param>
-		/// <param name="environments">
-		///     Unknown.
-		/// </param>
-		// ALAPI void ALAPIENTRY alDeleteEnvironmentIASIG( ALsizei n, ALuint* environs );
-		[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), CLSCompliant( false ), SuppressUnmanagedCodeSecurity]
-		public unsafe static extern void alDeleteEnvironmentIASIG( int number, [In] int* environments );
-		#endregion alDeleteEnvironmentIASIG(int number, [In] int *environments)
+		//#region alDeleteEnvironmentIASIG(int number, [In] ref int environments)
+		///// <summary>
+		/////     Unknown.
+		///// </summary>
+		///// <param name="number">
+		/////     Unknown.
+		///// </param>
+		///// <param name="environments">
+		/////     Unknown.
+		///// </param>
+		//// ALAPI void ALAPIENTRY alDeleteEnvironmentIASIG( ALsizei n, ALuint* environs );
+		//[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
+		//public static extern void alDeleteEnvironmentIASIG( int number, [In] ref int environments );
+		//#endregion alDeleteEnvironmentIASIG(int number, [In] ref int environments)
 
-		#region int alIsEnvironmentIASIG(int environment)
-		/// <summary>
-		///     Unknown.
-		/// </summary>
-		/// <param name="environment">
-		///     Unknown.
-		/// </param>
-		/// <returns>
-		///     Unknown.
-		/// </returns>
-		// ALAPI ALboolean ALAPIENTRY alIsEnvironmentIASIG( ALuint environ );
-		[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
-		public static extern int alIsEnvironmentIASIG( int environment );
-		#endregion int alIsEnvironmentIASIG(int environment)
+		//#region alDeleteEnvironmentIASIG(int number, [In] int[] environments)
+		///// <summary>
+		/////     Unknown.
+		///// </summary>
+		///// <param name="number">
+		/////     Unknown.
+		///// </param>
+		///// <param name="environments">
+		/////     Unknown.
+		///// </param>
+		//// ALAPI void ALAPIENTRY alDeleteEnvironmentIASIG( ALsizei n, ALuint* environs );
+		////betauser
+		////[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
+		////public static extern void alDeleteEnvironmentIASIG( int number, [In] int[] environments );
+		//#endregion alDeleteEnvironmentIASIG(int number, [In] int[] environments)
 
-		#region alEnvironmentiIASIG(int environmentId, int attribute, int val)
-		/// <summary>
-		///     Unknown.
-		/// </summary>
-		/// <param name="environmentId">
-		///     Unknown.
-		/// </param>
-		/// <param name="attribute">
-		///     Unknown.
-		/// </param>
-		/// <param name="val">
-		///     Unknown.
-		/// </param>
-		// ALAPI void ALAPIENTRY alEnvironmentiIASIG( ALuint eid, ALenum param, ALint value );
-		[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
-		public static extern void alEnvironmentiIASIG( int environmentId, int attribute, int val );
-		#endregion alEnvironmentiIASIG(int environmentId, int attribute, int val)
+		//#region alDeleteEnvironmentIASIG(int number, [In] IntPtr environments)
+		///// <summary>
+		/////     Unknown.
+		///// </summary>
+		///// <param name="number">
+		/////     Unknown.
+		///// </param>
+		///// <param name="environments">
+		/////     Unknown.
+		///// </param>
+		//// ALAPI void ALAPIENTRY alDeleteEnvironmentIASIG( ALsizei n, ALuint* environs );
+		//[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
+		//public static extern void alDeleteEnvironmentIASIG( int number, [In] IntPtr environments );
+		//#endregion alDeleteEnvironmentIASIG(int number, [In] IntPtr environments)
 
-		#region alEnvironmentfIASIG(int environmentId, int attribute, int val)
-		/// <summary>
-		///     Unknown.
-		/// </summary>
-		/// <param name="environmentId">
-		///     Unknown.
-		/// </param>
-		/// <param name="attribute">
-		///     Unknown.
-		/// </param>
-		/// <param name="val">
-		///     Unknown.
-		/// </param>
-		// ALAPI void ALAPIENTRY alEnvironmentfIASIG( ALuint eid, ALenum param, ALuint value );
-		[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
-		public static extern void alEnvironmentfIASIG( int environmentId, int attribute, int val );
-		#endregion alEnvironmentfIASIG(int environmentId, int attribute, int val)
-#endif
+		//#region alDeleteEnvironmentIASIG(int number, [In] int *environments)
+		///// <summary>
+		/////     Unknown.
+		///// </summary>
+		///// <param name="number">
+		/////     Unknown.
+		///// </param>
+		///// <param name="environments">
+		/////     Unknown.
+		///// </param>
+		//// ALAPI void ALAPIENTRY alDeleteEnvironmentIASIG( ALsizei n, ALuint* environs );
+		//[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), CLSCompliant( false ), SuppressUnmanagedCodeSecurity]
+		//public unsafe static extern void alDeleteEnvironmentIASIG( int number, [In] int* environments );
+		//#endregion alDeleteEnvironmentIASIG(int number, [In] int *environments)
+
+		//#region int alIsEnvironmentIASIG(int environment)
+		///// <summary>
+		/////     Unknown.
+		///// </summary>
+		///// <param name="environment">
+		/////     Unknown.
+		///// </param>
+		///// <returns>
+		/////     Unknown.
+		///// </returns>
+		//// ALAPI ALboolean ALAPIENTRY alIsEnvironmentIASIG( ALuint environ );
+		//[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
+		//public static extern int alIsEnvironmentIASIG( int environment );
+		//#endregion int alIsEnvironmentIASIG(int environment)
+
+		//#region alEnvironmentiIASIG(int environmentId, int attribute, int val)
+		///// <summary>
+		/////     Unknown.
+		///// </summary>
+		///// <param name="environmentId">
+		/////     Unknown.
+		///// </param>
+		///// <param name="attribute">
+		/////     Unknown.
+		///// </param>
+		///// <param name="val">
+		/////     Unknown.
+		///// </param>
+		//// ALAPI void ALAPIENTRY alEnvironmentiIASIG( ALuint eid, ALenum param, ALint value );
+		//[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
+		//public static extern void alEnvironmentiIASIG( int environmentId, int attribute, int val );
+		//#endregion alEnvironmentiIASIG(int environmentId, int attribute, int val)
+
+		//#region alEnvironmentfIASIG(int environmentId, int attribute, int val)
+		///// <summary>
+		/////     Unknown.
+		///// </summary>
+		///// <param name="environmentId">
+		/////     Unknown.
+		///// </param>
+		///// <param name="attribute">
+		/////     Unknown.
+		///// </param>
+		///// <param name="val">
+		/////     Unknown.
+		///// </param>
+		//// ALAPI void ALAPIENTRY alEnvironmentfIASIG( ALuint eid, ALenum param, ALuint value );
+		//[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
+		//public static extern void alEnvironmentfIASIG( int environmentId, int attribute, int val );
+		//#endregion alEnvironmentfIASIG(int environmentId, int attribute, int val)
+
 		#endregion Public IASIG Methods
 
 		#region Public OpenAL Extension Methods

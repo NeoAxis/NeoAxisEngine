@@ -21,13 +21,13 @@ namespace NeoAxis
 		bool duringCreateDestroy;
 		bool updatePropertiesWithoutUpdatingBody;
 
-		class CenterOfMassGeometry
-		{
-			public float radius;
-			public Vector3F[] positions;
-			public int[] indices;
-		}
-		static List<CenterOfMassGeometry> centerOfMassGeometryCache = new List<CenterOfMassGeometry>();
+		//class CenterOfMassGeometry
+		//{
+		//	public float radius;
+		//	public Vector3F[] positions;
+		//	public int[] indices;
+		//}
+		//static List<CenterOfMassGeometry> centerOfMassGeometryCache = new List<CenterOfMassGeometry>();
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -738,26 +738,26 @@ namespace NeoAxis
 			}
 		}
 
-		CenterOfMassGeometry GetCenterOfMassGeometry( float radius )
-		{
-			for( int n = 0; n < centerOfMassGeometryCache.Count; n++ )
-			{
-				var item2 = centerOfMassGeometryCache[ n ];
-				if( Math.Abs( item2.radius - radius ) < .01 )
-					return item2;
-			}
+		//CenterOfMassGeometry GetCenterOfMassGeometry( float radius )
+		//{
+		//	for( int n = 0; n < centerOfMassGeometryCache.Count; n++ )
+		//	{
+		//		var item2 = centerOfMassGeometryCache[ n ];
+		//		if( Math.Abs( item2.radius - radius ) < .01 )
+		//			return item2;
+		//	}
 
-			while( centerOfMassGeometryCache.Count > 15 )
-				centerOfMassGeometryCache.RemoveAt( 0 );
+		//	while( centerOfMassGeometryCache.Count > 15 )
+		//		centerOfMassGeometryCache.RemoveAt( 0 );
 
-			var item = new CenterOfMassGeometry();
-			item.radius = radius;
-			var segments = 10;
-			SimpleMeshGenerator.GenerateSphere( radius, segments, ( ( segments + 1 ) / 2 ) * 2, false, out item.positions, out item.indices );
-			centerOfMassGeometryCache.Add( item );
+		//	var item = new CenterOfMassGeometry();
+		//	item.radius = radius;
+		//	var segments = 10;
+		//	SimpleMeshGenerator.GenerateSphere( radius, segments, ( ( segments + 1 ) / 2 ) * 2, false, out item.positions, out item.indices );
+		//	centerOfMassGeometryCache.Add( item );
 
-			return item;
-		}
+		//	return item;
+		//}
 
 		public override void RenderPhysicalObject( ViewportRenderingContext context, out int verticesRendered )
 		{

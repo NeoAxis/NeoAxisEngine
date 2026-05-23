@@ -10,6 +10,7 @@ namespace NeoAxis
 		public static int MaxCacheSize = 100;
 
 		static EDictionary<RectangleF, Item> items = new EDictionary<RectangleF, Item>();
+		static object itemsLock = new object();
 
 		/////////////////////////////////////////
 
@@ -76,41 +77,44 @@ namespace NeoAxis
 
 		public static Mesh GetMesh( RectangleF uv )
 		{
-			//try to get from the cache
-			if( items.TryGetValue( uv, out var item ) )
+			lock( itemsLock )
 			{
-				item.LastUsedTime = Time.Current;
-				return item.Mesh;
-			}
-
-			//remove oldest item from the cache
-			if( items.Count >= MaxCacheSize )
-			{
-				Item oldestItem = null;
-
-				foreach( var pair in items )
+				//try to get from the cache
+				if( items.TryGetValue( uv, out var item ) )
 				{
-					if( pair.Value.LastUsedTime != Time.Current )
+					item.LastUsedTime = Time.Current;
+					return item.Mesh;
+				}
+
+				//remove oldest item from the cache
+				if( items.Count >= MaxCacheSize )
+				{
+					Item oldestItem = null;
+
+					foreach( var pair in items )
 					{
-						if( oldestItem == null || pair.Value.LastUsedTime < oldestItem.LastUsedTime )
-							oldestItem = pair.Value;
+						if( pair.Value.LastUsedTime != Time.Current )
+						{
+							if( oldestItem == null || pair.Value.LastUsedTime < oldestItem.LastUsedTime )
+								oldestItem = pair.Value;
+						}
+					}
+
+					if( oldestItem != null )
+					{
+						oldestItem.Dispose();
+						items.Remove( oldestItem.UV );
 					}
 				}
 
-				if( oldestItem != null )
-				{
-					oldestItem.Dispose();
-					items.Remove( oldestItem.UV );
-				}
+				//create item and add to the cache
+				item = new Item( uv );
+				items.Add( uv, item );
+
+				item.LastUsedTime = Time.Current;
+
+				return item.Mesh;
 			}
-
-			//create item and add to the cache
-			item = new Item( uv );
-			items.Add( uv, item );
-
-			item.LastUsedTime = Time.Current;
-
-			return item.Mesh;
 		}
 	}
 }

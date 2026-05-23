@@ -39,6 +39,8 @@ THE SOFTWARE.
 #       include <tr1/unordered_map> 
 #   else
 #include <ext/hash_map>
+#include<functional>
+
 namespace __gnu_cxx
 {
     template <> struct hash< Native::_StringBase >
@@ -246,10 +248,10 @@ namespace Native {
 	typedef ::std::tr1::hash< _StringBase > _StringHash;
 	typedef ::std::tr1::hash< _WStringBase > _WStringHash;
 #   endif
-#elif OGRE_COMPILER == OGRE_COMPILER_MSVC && OGRE_COMP_VER >= 1600 && !defined(STLPORT) // VC++ 10.0
-	typedef ::std::tr1::hash< _StringBase > _StringHash;
-	typedef ::std::tr1::hash< _WStringBase > _WStringHash;
-//!!!!for iOS
+#elif OGRE_COMPILER == OGRE_COMPILER_MSVC && !defined(STLPORT)
+    typedef ::std::hash< _StringBase > _StringHash;
+    typedef ::std::hash< _WStringBase > _WStringHash;
+    //!!!!for iOS
 //#elif !defined( _STLP_HASH_FUN_H )
 //	typedef stdext::hash_compare< _StringBase, std::less< _StringBase > > _StringHash;
 //	typedef stdext::hash_compare< _WStringBase, std::less< _WStringBase > > _WStringHash;

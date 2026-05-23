@@ -41,6 +41,8 @@ namespace NeoAxis
 		//optimization
 		internal ESet<MeshInSpace> meshInSpaces = new ESet<MeshInSpace>();
 
+		FastRandom sceneRandom = new FastRandom( 0 );
+
 		//!!!!
 		//Particles freeParticles;
 
@@ -3018,7 +3020,7 @@ namespace NeoAxis
 
 		public delegate void GetRenderSceneDataDelegate( Scene scene, ViewportRenderingContext context );
 		public event GetRenderSceneDataDelegate GetRenderSceneData;
-		public static event GetRenderSceneDataDelegate AllScenes_GetRenderSceneData;
+		//public static event GetRenderSceneDataDelegate AllScenes_GetRenderSceneData;
 
 		internal event GetRenderSceneDataDelegate GetRenderSceneData2ForGroupOfObjects;
 		internal event GetRenderSceneDataDelegate GetRenderSceneData3ForGroupOfObjects;
@@ -3051,7 +3053,7 @@ namespace NeoAxis
 			{
 				try
 				{
-					AllScenes_GetRenderSceneData?.Invoke( this, context );
+					//AllScenes_GetRenderSceneData?.Invoke( this, context );
 				}
 				catch( Exception e )
 				{
@@ -3059,8 +3061,8 @@ namespace NeoAxis
 					return;
 				}
 			}
-			else
-				AllScenes_GetRenderSceneData?.Invoke( this, context );
+			//else
+			//	AllScenes_GetRenderSceneData?.Invoke( this, context );
 
 			//optimization
 			//enumerate all MeshInSpace
@@ -3362,5 +3364,23 @@ namespace NeoAxis
 		{
 			RenderAfterSetCommonUniforms?.Invoke( this, pipeline, context, frameData );
 		}
+
+		/// <summary>
+		/// Pseudo fast randomizer of the scene.
+		/// </summary>
+		[Browsable( false )]
+		public FastRandom SceneRandom
+		{
+			get { return sceneRandom; }
+		}
+
+		public static FastRandom GetRandomGuaranteed( Scene sceneOptional )
+		{
+			if( sceneOptional != null )
+				return sceneOptional.sceneRandom;
+			else
+				return new FastRandom( 0 );
+		}
+
 	}
 }

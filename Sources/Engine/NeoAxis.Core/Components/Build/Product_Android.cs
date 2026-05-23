@@ -268,8 +268,8 @@ namespace NeoAxis
 			try
 			{
 				PatchCSharpProjects( buildInstance );
-
 				CopyFilesToPackageFolder( buildInstance );
+
 				buildInstance.Progress = 0.8f;
 
 				if( CheckCancel( buildInstance ) )
@@ -464,9 +464,6 @@ namespace NeoAxis
 				CopyFolder( Path.Combine( sourceSourcesPath, "NeoAxis.Player.Android" ), Path.Combine( destSourcesPath, "NeoAxis.Player.Android" ), buildInstance, new Range( 0.4, 0.45 ), excludePaths );
 			}
 
-			////copy Sources\NeoAxis.CoreExtension
-			//CopyFolder( Path.Combine( sourceSourcesPath, "NeoAxis.CoreExtension" ), Path.Combine( destSourcesPath, "NeoAxis.CoreExtension" ), buildInstance, new Range( 0.45, 0.5 ) );
-
 			var sourceBinariesPath = VirtualFileSystem.Directories.Binaries;
 			string destBinariesPath = Path.Combine( buildInstance.DestinationFolder, "Binaries" );
 
@@ -481,11 +478,11 @@ namespace NeoAxis
 				Path.Combine( VirtualFileSystem.Directories.Binaries, "NeoAxis.Internal", "NeoAxis.DefaultSettings.config" ),
 				Path.Combine( destBinariesPath, "NeoAxis.Internal", "NeoAxis.DefaultSettings.config" ) );
 
-			//!!!!unnecessary dlls are copied? we need a list of references?
-			//copy managed dll references from Android folder
-			CopyFiles(
-				Path.Combine( sourcePlatformFolder, "Managed" ),
-				Path.Combine( destPlatformFolder, "Managed" ), buildInstance, new Range( 0.6, 0.7 ), "*.dll" );
+			//!!!!new
+			////copy managed dll references from Android folder
+			//CopyFiles(
+			//	Path.Combine( sourcePlatformFolder, "Managed" ),
+			//	Path.Combine( destPlatformFolder, "Managed" ), buildInstance, new Range( 0.6, 0.7 ), "*.dll" );
 
 			if( CheckCancel( buildInstance ) )
 				return;
@@ -634,6 +631,10 @@ namespace NeoAxis
 		protected override void OnGetPaths( List<string> paths )
 		{
 			base.OnGetPaths( paths );
+
+			//!!!!new
+			//basic dll
+			paths.Add( @"Binaries\NeoAxis.Core.dll" );
 
 			//Caches
 			paths.Add( "Caches" );

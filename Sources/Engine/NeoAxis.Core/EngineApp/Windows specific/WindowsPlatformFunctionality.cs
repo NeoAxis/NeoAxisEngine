@@ -2872,6 +2872,14 @@ namespace Internal
 				SystemSettings.CommandLineParameters.TryGetValue( "-rendererBackend", out var backend ) &&
 				backend.ToLower() == "noop";
 		}
+
+		public override InputDeviceManager CreateInputDeviceManager()
+		{
+			if( EngineApp.CreatedInsideEngineWindow != null )
+				return new WindowsInputDeviceManager( EngineApp.CreatedInsideEngineWindow.Handle );
+			else
+				return null;
+		}
 	}
 }
 #endif

@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace NeoAxis
 {
@@ -14,7 +15,9 @@ namespace NeoAxis
 		/// <summary>
 		/// Easy access to current interaction from scripts.
 		/// </summary>
-		public static ContinuousInteraction Latest { get; set; }
+		[ThreadStatic]
+		static ContinuousInteraction latest;
+		public static ContinuousInteraction Latest { get { return latest; } set { latest = value; } }
 
 		//
 

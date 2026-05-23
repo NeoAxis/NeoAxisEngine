@@ -15,7 +15,7 @@ using Internal;
 
 namespace NeoAxis
 {
-	// remove this
+	// remove this?
 
 	partial class PlatformFunctionalityUWP : PlatformFunctionality
 	{

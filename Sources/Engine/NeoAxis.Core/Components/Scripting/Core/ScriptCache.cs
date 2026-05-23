@@ -156,16 +156,25 @@ namespace NeoAxis
 			}
 			else
 			{
-#if UWP || ANDROID || IOS || WEB //#if DEPLOY
+#if IOS || WEB //#if UWP || ANDROID || IOS || WEB //#if DEPLOY
 				//on UWP, Android scripts compiled inside Player assembly
 				if( EngineApp.ProjectAssembly != null )
 					FillLoadedAssemblyDllTypes( EngineApp.ProjectAssembly );
 #else
-				//try load dll
-				if( File.Exists( AssemblyFileName ) )
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP || SystemSettings.CurrentPlatform == SystemSettings.Platform.Android || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS || SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 				{
-					if( !LoadAssemblyDll() )
-						DeleteAssemblyDllFile();
+					//on UWP scripts compiled inside Player assembly
+					if( EngineApp.ProjectAssembly != null )
+						FillLoadedAssemblyDllTypes( EngineApp.ProjectAssembly );
+				}
+				else
+				{
+					//try load dll
+					if( File.Exists( AssemblyFileName ) )
+					{
+						if( !LoadAssemblyDll() )
+							DeleteAssemblyDllFile();
+					}
 				}
 #endif
 			}

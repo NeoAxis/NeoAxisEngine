@@ -936,8 +936,7 @@ namespace Project
 					{
 						playScreen.Load( virtualFileName, true );
 
-						GC.Collect();
-						GC.WaitForPendingFinalizers();
+						GC.Collect( 2, GCCollectionMode.Forced, true );
 
 						playScreen.ResetCreateTime();
 					}
@@ -955,8 +954,7 @@ namespace Project
 				{
 					playScreen.NetworkClientSetScene( scene, true );
 
-					GC.Collect();
-					GC.WaitForPendingFinalizers();
+					GC.Collect( 2, GCCollectionMode.Forced, true );
 
 					playScreen.ResetCreateTime();
 				}

@@ -46,10 +46,10 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\_build\Win64\NeoAxisCoreNative\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\_build\Win64\NeoAxisCoreNative\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\_build\Win64\NeoAxisCoreNative\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\_build\Win64\NeoAxisCoreNative\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkIncremental>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
@@ -102,8 +102,8 @@
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy ..\..\..\_build\Win64\NeoAxisCoreNative\NeoAxisCoreNative.lib ..\Lib\Windows_x64
-copy ..\..\..\_build\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows"
+      <Command>copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\NeoAxisCoreNative.lib ..\Lib\Windows_x64
+copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -151,8 +151,8 @@ copy ..\..\..\_build\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\Pro
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy ..\..\..\_build\Win64\NeoAxisCoreNative\NeoAxisCoreNative.lib ..\Lib\Windows_x64
-copy ..\..\..\_build\Win64\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows"
+      <Command>copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\NeoAxisCoreNative.lib ..\Lib\Windows_x64
+copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

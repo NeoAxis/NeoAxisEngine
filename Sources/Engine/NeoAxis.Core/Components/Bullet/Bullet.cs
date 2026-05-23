@@ -12,8 +12,6 @@ namespace NeoAxis
 	[AddToResourcesWindow( @"Addons\Bullet\Bullet", 410 )]
 	public class Bullet : MeshInSpace
 	{
-		static FastRandom staticRandom = new FastRandom( 0 );
-
 		BulletType typeCached = new BulletType();
 		bool firstSimulationStep = true;
 
@@ -653,7 +651,7 @@ namespace NeoAxis
 
 					Quaternion rot;
 					if( TypeCached.HitParticleApplyHitNormal )
-						rot = Quaternion.FromDirectionZAxisUp( hitNormal ) * Quaternion.FromRotateByX( staticRandom.Next( MathEx.PI * 2 ) );
+						rot = Quaternion.FromDirectionZAxisUp( hitNormal ) * Quaternion.FromRotateByX( Scene.GetRandomGuaranteed( ParentScene ).Next( MathEx.PI * 2 ) );
 					else
 						rot = Quaternion.Identity;
 					obj.Transform = new Transform( fixedHitPosition, rot, obj.TransformV.Scale );
@@ -680,7 +678,7 @@ namespace NeoAxis
 					obj.Material = TypeCached.HitDecalMaterial;
 
 					var rot = Quaternion.FromDirectionZAxisUp( -hitNormal );
-					rot *= Quaternion.FromRotateByX( staticRandom.Next( MathEx.PI * 2 ) );
+					rot *= Quaternion.FromRotateByX( Scene.GetRandomGuaranteed( ParentScene ).Next( MathEx.PI * 2 ) );
 
 					obj.Transform = new Transform( fixedHitPosition, rot, TypeCached.HitDecalScale/*obj.TransformV.Scale*/ );
 
@@ -1046,7 +1044,7 @@ namespace NeoAxis
 
 						var bTotal = realBounds;
 						var b2 = new Bounds( trPosition );
-						b2.Add( trPosition + LinearVelocityNoPhysicalBodyMode.Value * ( 2.0f + staticRandom.NextFloat() ) );
+						b2.Add( trPosition + LinearVelocityNoPhysicalBodyMode.Value * ( 2.0f + Scene.GetRandomGuaranteed( ParentScene ).NextFloat() ) );
 						b2.Expand( newBounds.BoundingSphere.Radius * 1.1 );
 						bTotal.Add( ref b2 );
 

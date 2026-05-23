@@ -44,11 +44,12 @@ namespace NeoAxis.Networking
 
 			//both Direct and Cloud specific
 			public int ServerPort;
+			//password for direct connection or NeoX access token for cloud connection
+			public string Password;
 
 			//Direct specific
 			public string ServerAddress;
 			//public int ServerPort;
-			public string Password;
 
 			//Cloud specific
 			public long ProjectID;
@@ -351,7 +352,7 @@ namespace NeoAxis.Networking
 						return "ProjectID is not configured.";
 
 					//request access info from cloud. get access data from general manager
-					var requestCodeResult = await CloudServiceFunctions.AccessRequestServiceServerAsync( ServiceName, connectionSettings.UserRole, projectID, cancellationToken );
+					var requestCodeResult = await CloudServiceFunctions.AccessRequestServiceServerAsync( ServiceName, connectionSettings.UserRole, projectID, connectionSettings.Password, cancellationToken );
 					if( !string.IsNullOrEmpty( requestCodeResult.Error ) )
 						return "RequestService failed. " + requestCodeResult.Error;
 

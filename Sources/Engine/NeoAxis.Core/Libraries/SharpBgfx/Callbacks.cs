@@ -2,6 +2,8 @@
 //!!!!
 #if WEB
 
+qq qq;
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;

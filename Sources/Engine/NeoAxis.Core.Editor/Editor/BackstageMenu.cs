@@ -630,11 +630,16 @@ namespace NeoAxis.Editor
 			var selectedConfiguration = GetSelectedBuildConfiguration();
 			if( selectedConfiguration == null || !IsPlatformInstalled( selectedConfiguration.Platform ) )
 				return false;
-			string folder = kryptonTextBoxPackageDestinationFolder.Text.Trim();
-			if( string.IsNullOrEmpty( folder ) )
-				return false;
-			if( !Path.IsPathRooted( folder ) )
-				return false;
+
+			if( string.IsNullOrEmpty( selectedConfiguration.OutputPath ) )
+			{
+				string folder = kryptonTextBoxPackageDestinationFolder.Text.Trim();
+				if( string.IsNullOrEmpty( folder ) )
+					return false;
+				if( !Path.IsPathRooted( folder ) )
+					return false;
+			}
+
 			if( contentBrowserPackage.SelectedItems.Length == 0 )
 				return false;
 			if( packageBuildInstance != null )
@@ -652,20 +657,46 @@ namespace NeoAxis.Editor
 
 		void PackageCreate( bool run )
 		{
-			string folder = kryptonTextBoxPackageDestinationFolder.Text.Trim();
-			if( string.IsNullOrEmpty( folder ) )
-				return;
-
-			buildDestinationFolder = folder;
-
 			var product = GetSelectedBuildConfiguration();
 			if( product == null )
 				return;
 
-			//clear destination folder
+			//get destination folder
+			string folder;
+			try
+			{
+				var outputPath = product.OutputPath.Value.Trim();
+				if( !string.IsNullOrEmpty( outputPath ) )
+				{
+					if( Path.IsPathRooted( outputPath ) )
+						folder = outputPath;
+					else
+						folder = Path.Combine( VirtualFileSystem.Directories.Project, outputPath );
+					folder = Path.GetFullPath( folder );
+				}
+				else
+				{
+					folder = kryptonTextBoxPackageDestinationFolder.Text.Trim();
+					if( string.IsNullOrEmpty( folder ) )
+						return;
+					buildDestinationFolder = folder;
+				}
+
+				//normalize path
+				folder = PathUtility.NormalizePath( folder );
+				folder = folder.TrimEnd( Path.DirectorySeparatorChar );
+			}
+			catch( Exception e )
+			{
+				EditorMessageBox.ShowWarning( e.Message );
+				return;
+			}
+
+			//ask to continue and clear destination folder
 			if( Directory.Exists( folder ) && !IOUtility.IsDirectoryEmpty( folder ) && !( product is Product_Store ) )
 			{
-				var text = string.Format( Translate( "Destination folder \'{0}\' is not empty. Clear folder and continue?" ), folder );
+				//clear destination folder
+				var text = string.Format( Translate( "The destination folder \"{0}\" is not empty. Clear the folder and continue?" ), folder );
 				if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.OKCancel ) == EDialogResult.Cancel )
 					return;
 
@@ -683,6 +714,12 @@ namespace NeoAxis.Editor
 					EditorMessageBox.ShowWarning( e.Message );
 					return;
 				}
+			}
+			else
+			{
+				var text = string.Format( Translate( "Do you want to build to the destination folder \"{0}\"?" ), folder );
+				if( EditorMessageBox.ShowQuestion( text, EMessageBoxButtons.OKCancel ) == EDialogResult.Cancel )
+					return;
 			}
 
 			//check login

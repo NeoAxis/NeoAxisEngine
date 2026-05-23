@@ -245,7 +245,8 @@ namespace Internal.Xilium.CefGlue
             if (!_initialized) return;
 
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-            GC.WaitForPendingFinalizers();
+			//!!!!betauser
+			//GC.WaitForPendingFinalizers();
 
             libcef.shutdown();
         }

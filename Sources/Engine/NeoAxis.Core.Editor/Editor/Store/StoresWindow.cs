@@ -776,6 +776,8 @@ namespace NeoAxis.Editor
 					form.ShowDialog();
 				} );
 			}
+
+			PerformRefreshFromStores( true );
 		}
 
 		private void toolStripButtonRefresh_Click( object sender, EventArgs e )

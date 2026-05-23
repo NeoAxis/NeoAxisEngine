@@ -71,8 +71,8 @@ namespace NeoAxis
 			inputEventHandler = null;
 		}
 
-		internal abstract bool OnInit();
-		internal abstract void OnShutdown();
+		protected abstract bool OnInit();
+		protected abstract void OnShutdown();
 
 		/// <summary>
 		/// Device must call this after creation to register itself in system 

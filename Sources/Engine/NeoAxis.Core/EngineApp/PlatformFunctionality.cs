@@ -33,9 +33,12 @@ namespace Internal//NeoAxis
 
 		///////////////////////////////////////////
 
-		protected void SetInstance( PlatformFunctionality instance )
+		protected void SetInstance( PlatformFunctionality instance, SystemSettings.Platform? setPlatform = null )
 		{
 			PlatformFunctionality.instance = instance;
+
+			if( setPlatform != null )
+				SystemSettings._SetPlatform( setPlatform.Value );
 		}
 
 		public virtual void Init( IntPtr mainModuleData ) { }
@@ -131,6 +134,8 @@ namespace Internal//NeoAxis
 		public abstract IList<SystemSettings.DisplayInfo> GetAllDisplays();
 
 		public abstract void GetSystemLanguage( out string name, out string englishName );
+
+		public abstract InputDeviceManager CreateInputDeviceManager();
 
 		///////////////////////////////////////////
 

@@ -5,6 +5,7 @@ using System.Text;
 using System.ComponentModel;
 using NeoAxis.Editor;
 using System.Net.WebSockets;
+using System.Threading.Tasks;
 
 namespace NeoAxis
 {
@@ -718,7 +719,6 @@ namespace NeoAxis
 									if( length != 0 )
 									{
 										PlatformSpecificUtility.Instance.SetClipboardText( SelectedText );
-										//System.Windows.Forms.Clipboard.SetText( SelectedText );
 
 										Text = Text.Value.Remove( start, length );
 										CaretPosition = start;
@@ -740,10 +740,7 @@ namespace NeoAxis
 								{
 									GetSelection( out var start, out var length );
 									if( length != 0 )
-									{
 										PlatformSpecificUtility.Instance.SetClipboardText( SelectedText );
-										//System.Windows.Forms.Clipboard.SetText( SelectedText );
-									}
 								}
 								catch { }
 
@@ -763,39 +760,76 @@ namespace NeoAxis
 									DeselectAll();
 								}
 
-								try
+								Task.Run( async delegate ()
 								{
-									var text = PlatformSpecificUtility.Instance.GetClipboardText();
-									//var text = System.Windows.Forms.Clipboard.GetText();
+									var text = await PlatformSpecificUtility.Instance.GetClipboardTextAsync();
 									if( !string.IsNullOrEmpty( text ) )
 									{
-										var font = GetFont();
-
-										var caret = GetCaretPosition();
-
-										var newText = Text.Value;
-
-										foreach( var c in text )
+										EngineThreading.ExecuteFromMainThreadLater( delegate ()
 										{
-											if( IsAllowCharacter( font, textControl, c ) && OnTextTypingFilter( e.Key, c, newText ) )
+											try
 											{
-												newText = newText.Insert( caret, c.ToString() );
-												caret++;
+												if( !ReadOnlyInHierarchy )
+												{
+													var font = GetFont();
+													var caret = GetCaretPosition();
+
+													var newText = Text.Value;
+													foreach( var c in text )
+													{
+														if( IsAllowCharacter( font, textControl, c ) && OnTextTypingFilter( e.Key, c, newText ) )
+														{
+															newText = newText.Insert( caret, c.ToString() );
+															caret++;
+														}
+													}
+													Text = newText;
+
+													if( caret == Text.Value.Length )
+														caret = -1;
+													CaretPosition = caret;
+
+													DeselectAll();
+													EditingOrChangeCaretPositionLastTime = EngineApp.EngineTime;
+												}
 											}
-										}
-
-										Text = newText;
-
-										if( caret == Text.Value.Length )
-											caret = -1;
-										CaretPosition = caret;
+											catch { }
+										} );
 									}
-								}
-								catch { }
+								} );
 
-								DeselectAll();
-								EditingOrChangeCaretPositionLastTime = EngineApp.EngineTime;
 								return true;
+
+
+								//try
+								//{
+								//	var text = PlatformSpecificUtility.Instance.GetClipboardText();
+								//	if( !string.IsNullOrEmpty( text ) )
+								//	{
+								//		var font = GetFont();
+								//		var caret = GetCaretPosition();
+
+								//		var newText = Text.Value;
+								//		foreach( var c in text )
+								//		{
+								//			if( IsAllowCharacter( font, textControl, c ) && OnTextTypingFilter( e.Key, c, newText ) )
+								//			{
+								//				newText = newText.Insert( caret, c.ToString() );
+								//				caret++;
+								//			}
+								//		}
+								//		Text = newText;
+
+								//		if( caret == Text.Value.Length )
+								//			caret = -1;
+								//		CaretPosition = caret;
+								//	}
+								//}
+								//catch { }
+
+								//DeselectAll();
+								//EditingOrChangeCaretPositionLastTime = EngineApp.EngineTime;
+								//return true;
 							}
 							break;
 

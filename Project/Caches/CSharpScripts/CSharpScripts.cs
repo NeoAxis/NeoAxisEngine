@@ -724,5 +724,304 @@ public class DynamicClass2DF7B4DD291979A88C71843ABCADCF979DCD0328C02F21A9E2BB60B
     //lines.Add($"0 - multithreaded scene octree - {multithreadedSceneOctreeString}");
     }
 }
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgX1VwZGF0ZUV2ZW50KE5lb0F4aXMuQ29tcG9uZW50IHNlbmRlciwgZmxvYXQgZGVsdGEpCnsKCXZhciBvYmplY3QxID0gc2VuZGVyLkNvbXBvbmVudHNbIlNwaGVyZSJdIGFzIE1lc2hJblNwYWNlOwoJaWYob2JqZWN0MSAhPSBudWxsKQoJCW9iamVjdDEuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjUsIDAuNzUgKyBNYXRoLlNpbihUaW1lLkN1cnJlbnQpICogMC4yNSwgMC41KTsKCgl2YXIgbWF0ZXJpYWwyID0gc2VuZGVyLkNvbXBvbmVudHNbIkJveFxcTWF0ZXJpYWwiXSBhcyBNYXRlcmlhbDsKCWlmKG1hdGVyaWFsMiAhPSBudWxsKQoJCW1hdGVyaWFsMi5FbWlzc2l2ZSA9IG5ldyBDb2xvclZhbHVlUG93ZXJlZCgwLCAoMS4wICsgTWF0aC5TaW4oVGltZS5DdXJyZW50KSkgKiA1LCAwKTsKCQkKCXZhciBtYXRlcmlhbDMgPSBzZW5kZXIuQ29tcG9uZW50c1siQ3lsaW5kZXJcXE1hdGVyaWFsIl0gYXMgTWF0ZXJpYWw7CglpZihtYXRlcmlhbDMgIT0gbnVsbCkKCQltYXRlcmlhbDMuUHJvcGVydHlTZXQoIk11bHRpcGxpZXIiLCBuZXcgQ29sb3JWYWx1ZSgxLCAxLCAxLjAgKyAoMS4wICsgTWF0aC5TaW4oVGltZS5DdXJyZW50KSkgKiA1KSk7Cn0K")]
+public class DynamicClass05C48E8299CF8F7A31FE138987B25138DC388677E1788A606B8EC18AFAACBFF3
+{
+    public NeoAxis.CSharpScript Owner;
+    public void _UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var object1 = sender.Components["Sphere"] as MeshInSpace;
+        if (object1 != null)
+            object1.Color = new ColorValue(0.5, 0.75 + Math.Sin(Time.Current) * 0.25, 0.5);
+        var material2 = sender.Components["Box\\Material"] as Material;
+        if (material2 != null)
+            material2.Emissive = new ColorValuePowered(0, (1.0 + Math.Sin(Time.Current)) * 5, 0);
+        var material3 = sender.Components["Cylinder\\Material"] as Material;
+        if (material3 != null)
+            material3.PropertySet("Multiplier", new ColorValue(1, 1, 1.0 + (1.0 + Math.Sin(Time.Current)) * 5));
+    }
+}
+
+[CSharpScriptGeneratedAttribute("UmVuZGVyaW5nUGlwZWxpbmUgR2V0UGlwZWxpbmUoKQp7CglzdHJpbmcgbmFtZTsKCWlmKEVuZ2luZUFwcC5FbmdpbmVUaW1lICUgNiA+IDMpCgkJbmFtZSA9ICJSZW5kZXJpbmcgUGlwZWxpbmUiOwoJZWxzZQoJCW5hbWUgPSAiUmVuZGVyaW5nIFBpcGVsaW5lIDIiOwoJCQoJcmV0dXJuIE93bmVyLlBhcmVudC5HZXRDb21wb25lbnQobmFtZSkgYXMgUmVuZGVyaW5nUGlwZWxpbmU7Cn0K")]
+public class DynamicClassE9187D41516A838882B97D8B60F698D11F337B7737278CBFF9DB427D2BB97E84
+{
+    public NeoAxis.CSharpScript Owner;
+    RenderingPipeline GetPipeline()
+    {
+        string name;
+        if (EngineApp.EngineTime % 6 > 3)
+            name = "Rendering Pipeline";
+        else
+            name = "Rendering Pipeline 2";
+        return Owner.Parent.GetComponent(name) as RenderingPipeline;
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgQnV0dG9uX0NsaWNrKE5lb0F4aXMuQnV0dG9uM0Qgc2VuZGVyLCBOZW9BeGlzLkNvbXBvbmVudCBpbml0aWF0b3IpCnsKCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRTY2VuZTsKCgl2YXIgZ3JvdW5kID0gc2NlbmUuR2V0Q29tcG9uZW50KCJHcm91bmQiKSBhcyBNZXNoSW5TcGFjZTsKCWlmIChncm91bmQgIT0gbnVsbCkKCXsKCQlpZiAoIWdyb3VuZC5SZXBsYWNlTWF0ZXJpYWwuUmVmZXJlbmNlU3BlY2lmaWVkKQoJCXsKCQkJZ3JvdW5kLlJlcGxhY2VNYXRlcmlhbCA9IFJlZmVyZW5jZVV0aWxpdHkuTWFrZVJlZmVyZW5jZSggQCJCYXNlXE1hdGVyaWFsc1xEYXJrIFllbGxvdy5tYXRlcmlhbCIpOwoJCX0KCQllbHNlCgkJCWdyb3VuZC5SZXBsYWNlTWF0ZXJpYWwgPSBudWxsOwoJfQp9Cg==")]
+public class DynamicClass28E28649DA0E4DFCD3DBBEE127666CBB289F09C1DFDFBA904D84E18DC044FE5C
+{
+    public NeoAxis.CSharpScript Owner;
+    public void Button_Click(NeoAxis.Button3D sender, NeoAxis.Component initiator)
+    {
+        var scene = sender.ParentScene;
+        var ground = scene.GetComponent("Ground") as MeshInSpace;
+        if (ground != null)
+        {
+            if (!ground.ReplaceMaterial.ReferenceSpecified)
+            {
+                ground.ReplaceMaterial = ReferenceUtility.MakeReference(@"Base\Materials\Dark Yellow.material");
+            }
+            else
+                ground.ReplaceMaterial = null;
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgQ2hhcmFjdGVyX1VwZGF0ZUV2ZW50KE5lb0F4aXMuQ29tcG9uZW50IHNlbmRlciwgZmxvYXQgZGVsdGEpCnsKCXZhciBjaGFyYWN0ZXIgPSBzZW5kZXIgYXMgQ2hhcmFjdGVyOwoJaWYoY2hhcmFjdGVyICE9IG51bGwpCgl7CgkJLy9maW5nZXJzCgoJCXsKCQkJdmFyIHZhbHVlID0gKE1hdGguU2luKFRpbWUuQ3VycmVudCAqIDEuNSkgKyAxKSAvIDI7CgkJCQoJCQkvL2NoYXJhY3Rlci5MZWZ0SGFuZFRodW1iRmluZ2VyRmxleGlvbkZhY3RvciA9IDE7CgkJCS8vY2hhcmFjdGVyLkxlZnRIYW5kVGh1bWJGaW5nZXJGbGV4aW9uVmFsdWUgPSB2YWx1ZTsKCQkJY2hhcmFjdGVyLkxlZnRIYW5kSW5kZXhGaW5nZXJGbGV4aW9uRmFjdG9yID0gMTsKCQkJY2hhcmFjdGVyLkxlZnRIYW5kSW5kZXhGaW5nZXJGbGV4aW9uVmFsdWUgPSB2YWx1ZTsKCQkJY2hhcmFjdGVyLkxlZnRIYW5kTWlkZGxlRmluZ2VyRmxleGlvbkZhY3RvciA9IDE7CgkJCWNoYXJhY3Rlci5MZWZ0SGFuZE1pZGRsZUZpbmdlckZsZXhpb25WYWx1ZSA9IHZhbHVlOwoJCQljaGFyYWN0ZXIuTGVmdEhhbmRSaW5nRmluZ2VyRmxleGlvbkZhY3RvciA9IDE7CgkJCWNoYXJhY3Rlci5MZWZ0SGFuZFJpbmdGaW5nZXJGbGV4aW9uVmFsdWUgPSB2YWx1ZTsKCQkJY2hhcmFjdGVyLkxlZnRIYW5kTGl0dGxlRmluZ2VyRmxleGlvbkZhY3RvciA9IDE7CgkJCWNoYXJhY3Rlci5MZWZ0SGFuZExpdHRsZUZpbmdlckZsZXhpb25WYWx1ZSA9IHZhbHVlOwoJCX0KCgkJewoJCQl2YXIgdmFsdWUgPSAoTWF0aC5TaW4oKFRpbWUuQ3VycmVudCArIDEpICogMS41KSArIDEpIC8gMjsKCgkJCS8vY2hhcmFjdGVyLlJpZ2h0SGFuZFRodW1iRmluZ2VyRmxleGlvbkZhY3RvciA9IDE7CgkJCS8vY2hhcmFjdGVyLlJpZ2h0SGFuZFRodW1iRmluZ2VyRmxleGlvblZhbHVlID0gdmFsdWU7CgkJCWNoYXJhY3Rlci5SaWdodEhhbmRJbmRleEZpbmdlckZsZXhpb25GYWN0b3IgPSAxOwoJCQljaGFyYWN0ZXIuUmlnaHRIYW5kSW5kZXhGaW5nZXJGbGV4aW9uVmFsdWUgPSB2YWx1ZTsKCQkJY2hhcmFjdGVyLlJpZ2h0SGFuZE1pZGRsZUZpbmdlckZsZXhpb25GYWN0b3IgPSAxOwoJCQljaGFyYWN0ZXIuUmlnaHRIYW5kTWlkZGxlRmluZ2VyRmxleGlvblZhbHVlID0gdmFsdWU7CgkJCWNoYXJhY3Rlci5SaWdodEhhbmRSaW5nRmluZ2VyRmxleGlvbkZhY3RvciA9IDE7CgkJCWNoYXJhY3Rlci5SaWdodEhhbmRSaW5nRmluZ2VyRmxleGlvblZhbHVlID0gdmFsdWU7CgkJCWNoYXJhY3Rlci5SaWdodEhhbmRMaXR0bGVGaW5nZXJGbGV4aW9uRmFjdG9yID0gMTsKCQkJY2hhcmFjdGVyLlJpZ2h0SGFuZExpdHRsZUZpbmdlckZsZXhpb25WYWx1ZSA9IHZhbHVlOwoJCX0KCX0KfQo=")]
+public class DynamicClassD740203FA7C256A143D4A53FB644115371AAF5C7A7740BEBB16474579E0C90BD
+{
+    public NeoAxis.CSharpScript Owner;
+    public void Character_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var character = sender as Character;
+        if (character != null)
+        {
+            //fingers
+            {
+                var value = (Math.Sin(Time.Current * 1.5) + 1) / 2;
+                //character.LeftHandThumbFingerFlexionFactor = 1;
+                //character.LeftHandThumbFingerFlexionValue = value;
+                character.LeftHandIndexFingerFlexionFactor = 1;
+                character.LeftHandIndexFingerFlexionValue = value;
+                character.LeftHandMiddleFingerFlexionFactor = 1;
+                character.LeftHandMiddleFingerFlexionValue = value;
+                character.LeftHandRingFingerFlexionFactor = 1;
+                character.LeftHandRingFingerFlexionValue = value;
+                character.LeftHandLittleFingerFlexionFactor = 1;
+                character.LeftHandLittleFingerFlexionValue = value;
+            }
+
+            {
+                var value = (Math.Sin((Time.Current + 1) * 1.5) + 1) / 2;
+                //character.RightHandThumbFingerFlexionFactor = 1;
+                //character.RightHandThumbFingerFlexionValue = value;
+                character.RightHandIndexFingerFlexionFactor = 1;
+                character.RightHandIndexFingerFlexionValue = value;
+                character.RightHandMiddleFingerFlexionFactor = 1;
+                character.RightHandMiddleFingerFlexionValue = value;
+                character.RightHandRingFingerFlexionFactor = 1;
+                character.RightHandRingFingerFlexionValue = value;
+                character.RightHandLittleFingerFlexionFactor = 1;
+                character.RightHandLittleFingerFlexionValue = value;
+            }
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgbmVhckNhbWVyYTsKc3RhdGljIGJvb2wgYWRkaXRpb25hbExpZ2h0cyA9IHRydWU7CnN0YXRpYyBib29sIHNoYWRvd3MgPSB0cnVlOwoKcHVibGljIHZvaWQgR2FtZU1vZGVfUmVuZGVyVUkoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuQ2FudmFzUmVuZGVyZXIgcmVuZGVyZXIpCnsKCXZhciBsaW5lcyA9IG5ldyBMaXN0PHN0cmluZz4oKTsKCglsaW5lcy5BZGQoIkMgLSBzd2l0Y2ggY2FtZXJhIik7CglsaW5lcy5BZGQoIkwgLSBhZGRpdGlvbmFsIGxpZ2h0cyIpOwoJbGluZXMuQWRkKCJIIC0gc2hhZG93cyIpOwoJbGluZXMuQWRkKCIiKTsKCWxpbmVzLkFkZCgiRjcgLSBmcmVlIGNhbWVyYSIpOwoJbGluZXMuQWRkKCJXIEEgUyBEIFEgRSAtIGZyZWUgY2FtZXJhIGNvbnRyb2wiKTsKCWxpbmVzLkFkZCgiIik7CglsaW5lcy5BZGQoIllvdSBhbHNvIGNhbiBwbGF5IHdpdGggYW50aWFsaWFzaW5nIGFuZCBvdGhlciBzZXR0aW5ncyBmcm9tIE9wdGlvbnMgKEVzYykiKTsKCgl2YXIgZm9udFNpemUgPSByZW5kZXJlci5EZWZhdWx0Rm9udFNpemU7Cgl2YXIgb2Zmc2V0ID0gbmV3IFZlY3RvcjIoZm9udFNpemUgKiByZW5kZXJlci5Bc3BlY3RSYXRpb0ludiAqIDAuOCwgMC44KTsKCgkvL2RyYXcgYmFja2dyb3VuZAoJewoJCXZhciBtYXhMZW5ndGggPSAwLjA7CgkJZm9yZWFjaCAodmFyIGxpbmUgaW4gbGluZXMpCgkJewoJCQl2YXIgbGVuZ3RoID0gcmVuZGVyZXIuRGVmYXVsdEZvbnQuR2V0VGV4dExlbmd0aChmb250U2l6ZSwgcmVuZGVyZXIsIGxpbmUpOwoJCQlpZiAobGVuZ3RoID4gbWF4TGVuZ3RoKQoJCQkJbWF4TGVuZ3RoID0gbGVuZ3RoOwoJCX0KCQl2YXIgcmVjdCA9IG9mZnNldCArIG5ldyBSZWN0YW5nbGUoMCwgMCwgbWF4TGVuZ3RoLCBmb250U2l6ZSAqIGxpbmVzLkNvdW50KTsKCQlyZWN0LkV4cGFuZChuZXcgVmVjdG9yMihmb250U2l6ZSAqIDAuMiwgZm9udFNpemUgKiAwLjIgKiByZW5kZXJlci5Bc3BlY3RSYXRpbykpOwoJCXJlbmRlcmVyLkFkZFF1YWQocmVjdCwgbmV3IENvbG9yVmFsdWUoMCwgMCwgMCwgMC43NSkpOwoJfQoKCS8vZHJhdyB0ZXh0IAoJQ2FudmFzUmVuZGVyZXJVdGlsaXR5LkFkZFRleHRMaW5lc1dpdGhTaGFkb3cocmVuZGVyZXIuVmlld3BvcnRGb3JTY3JlZW5DYW52YXNSZW5kZXJlciwgcmVuZGVyZXIuRGVmYXVsdEZvbnQsIHJlbmRlcmVyLkRlZmF1bHRGb250U2l6ZSwgbGluZXMsIG5ldyBSZWN0YW5nbGUob2Zmc2V0LlgsIG9mZnNldC5ZLCAxLCAxKSwgRUhvcml6b250YWxBbGlnbm1lbnQuTGVmdCwgRVZlcnRpY2FsQWxpZ25tZW50LlRvcCwgbmV3IENvbG9yVmFsdWUoMSwgMSwgMSkpOwp9CgpwdWJsaWMgdm9pZCBHYW1lTW9kZV9JbnB1dE1lc3NhZ2VFdmVudChOZW9BeGlzLkdhbWVNb2RlIHNlbmRlciwgTmVvQXhpcy5JbnB1dE1lc3NhZ2UgbWVzc2FnZSkKewoJdmFyIGtleURvd24gPSBtZXNzYWdlIGFzIElucHV0TWVzc2FnZUtleURvd247CglpZiAoa2V5RG93biAhPSBudWxsKQoJewoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5DKQoJCXsKCQkJLy91cGRhdGUgY2FtZXJhIHNldHRpbmdzCgkJCW5lYXJDYW1lcmEgPSAhbmVhckNhbWVyYTsKCgkJCS8vdXBkYXRlIGNhbWVyYQoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuRmluZFBhcmVudDxTY2VuZT4oKTsKCQkJc2NlbmUuQ2FtZXJhRGVmYXVsdCA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KG5lYXJDYW1lcmEgPyAiQ2FtZXJhIE5lYXIiIDogIkNhbWVyYSBGYXIiKTsKCQkJU2ltdWxhdGlvbkFwcC5NYWluVmlld3BvcnQuTm90aWZ5SW5zdGFudENhbWVyYU1vdmVtZW50KCk7CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoKCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuTCkKCQl7CgkJCWFkZGl0aW9uYWxMaWdodHMgPSAhYWRkaXRpb25hbExpZ2h0czsKCgkJCXZhciBzY2VuZSA9IHNlbmRlci5GaW5kUGFyZW50PFNjZW5lPigpOwoKCQkJZm9yZWFjaCAodmFyIGxpZ2h0IGluIHNjZW5lLkdldENvbXBvbmVudHM8TGlnaHQ+KCkpCgkJCXsKCQkJCWlmIChsaWdodC5OYW1lID09ICJMaWdodCIgfHwgbGlnaHQuTmFtZS5Db250YWlucygiTGlnaHQgIikpCgkJCQkJbGlnaHQuRW5hYmxlZCA9IGFkZGl0aW9uYWxMaWdodHM7CgkJCX0KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5IKQoJCXsKCQkJc2hhZG93cyA9ICFzaGFkb3dzOwoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLkZpbmRQYXJlbnQ8U2NlbmU+KCk7CgkJCXZhciBwaXBlbGluZSA9IHNjZW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdQaXBlbGluZV9CYXNpYz4oKTsKCQkJcGlwZWxpbmUuU2hhZG93cyA9IHNoYWRvd3M7CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJfQp9Cg==")]
+public class DynamicClass690C20DD109F42C98C8FA48795CB9D0235480800766425980530B7CF0486D3C0
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool nearCamera;
+    static bool additionalLights = true;
+    static bool shadows = true;
+    public void GameMode_RenderUI(NeoAxis.GameMode sender, NeoAxis.CanvasRenderer renderer)
+    {
+        var lines = new List<string>();
+        lines.Add("C - switch camera");
+        lines.Add("L - additional lights");
+        lines.Add("H - shadows");
+        lines.Add("");
+        lines.Add("F7 - free camera");
+        lines.Add("W A S D Q E - free camera control");
+        lines.Add("");
+        lines.Add("You also can play with antialiasing and other settings from Options (Esc)");
+        var fontSize = renderer.DefaultFontSize;
+        var offset = new Vector2(fontSize * renderer.AspectRatioInv * 0.8, 0.8);
+        //draw background
+        {
+            var maxLength = 0.0;
+            foreach (var line in lines)
+            {
+                var length = renderer.DefaultFont.GetTextLength(fontSize, renderer, line);
+                if (length > maxLength)
+                    maxLength = length;
+            }
+
+            var rect = offset + new Rectangle(0, 0, maxLength, fontSize * lines.Count);
+            rect.Expand(new Vector2(fontSize * 0.2, fontSize * 0.2 * renderer.AspectRatio));
+            renderer.AddQuad(rect, new ColorValue(0, 0, 0, 0.75));
+        }
+
+        //draw text 
+        CanvasRendererUtility.AddTextLinesWithShadow(renderer.ViewportForScreenCanvasRenderer, renderer.DefaultFont, renderer.DefaultFontSize, lines, new Rectangle(offset.X, offset.Y, 1, 1), EHorizontalAlignment.Left, EVerticalAlignment.Top, new ColorValue(1, 1, 1));
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null)
+        {
+            if (keyDown.Key == EKeys.C)
+            {
+                //update camera settings
+                nearCamera = !nearCamera;
+                //update camera
+                var scene = sender.FindParent<Scene>();
+                scene.CameraDefault = scene.GetComponent<Camera>(nearCamera ? "Camera Near" : "Camera Far");
+                SimulationApp.MainViewport.NotifyInstantCameraMovement();
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.L)
+            {
+                additionalLights = !additionalLights;
+                var scene = sender.FindParent<Scene>();
+                foreach (var light in scene.GetComponents<Light>())
+                {
+                    if (light.Name == "Light" || light.Name.Contains("Light "))
+                        light.Enabled = additionalLights;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.H)
+            {
+                shadows = !shadows;
+                var scene = sender.FindParent<Scene>();
+                var pipeline = scene.GetComponent<RenderingPipeline_Basic>();
+                pipeline.Shadows = shadows;
+                message.Handled = true;
+                return;
+            }
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgX1NpbXVsYXRpb25TdGVwKE5lb0F4aXMuQ29tcG9uZW50IG9iaikKewoJZm9yZWFjaCAodmFyIGxpZ2h0IGluIG9iai5HZXRDb21wb25lbnRzPExpZ2h0PigpKQoJewoJCS8vc2tpcCBBbWJpZW50IExpZ2h0LCBEaXJlY3Rpb25hbCBMaWdodAoJCWlmIChsaWdodC5OYW1lID09ICJBbWJpZW50IExpZ2h0IiB8fCBsaWdodC5OYW1lID09ICJEaXJlY3Rpb25hbCBMaWdodCIpCgkJCWNvbnRpbnVlOwoKCQl2YXIgc3BlZWQgPSAwLjM7CgoJCXZhciB1cCA9IG5ldyBWZWN0b3IzKE1hdGguQ29zKFRpbWUuQ3VycmVudCAqIHNwZWVkKSwgTWF0aC5TaW4oVGltZS5DdXJyZW50ICogc3BlZWQpLCAwKS5HZXROb3JtYWxpemUoKTsKCQl2YXIgZGlyID0gbmV3IFZlY3RvcjMoMCwgMCwgLTEpOwoKCQl2YXIgbmV3Um90YXRpb24gPSBRdWF0ZXJuaW9uLkxvb2tBdChkaXIsIHVwKTsKCgkJbGlnaHQuVHJhbnNmb3JtID0gbmV3IFRyYW5zZm9ybShsaWdodC5UcmFuc2Zvcm1WLlBvc2l0aW9uLCBuZXdSb3RhdGlvbik7CgoJCS8vdmFyIG5ld1JvdGF0aW9uID0gUXVhdGVybmlvbi5Gcm9tUm90YXRlQnlaKFRpbWUuQ3VycmVudCk7Cgl9Cn0K")]
+public class DynamicClassACC11F227898AFE0EFD620D8835FB0064E872DF18ABD487C5C0C283F134E61FB
+{
+    public NeoAxis.CSharpScript Owner;
+    public void _SimulationStep(NeoAxis.Component obj)
+    {
+        foreach (var light in obj.GetComponents<Light>())
+        {
+            //skip Ambient Light, Directional Light
+            if (light.Name == "Ambient Light" || light.Name == "Directional Light")
+                continue;
+            var speed = 0.3;
+            var up = new Vector3(Math.Cos(Time.Current * speed), Math.Sin(Time.Current * speed), 0).GetNormalize();
+            var dir = new Vector3(0, 0, -1);
+            var newRotation = Quaternion.LookAt(dir, up);
+            light.Transform = new Transform(light.TransformV.Position, newRotation);
+        //var newRotation = Quaternion.FromRotateByZ(Time.Current);
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgQ2hhcmFjdGVyQUlfT2JqZWN0SW50ZXJhY3Rpb25JbnB1dE1lc3NhZ2VFdmVudChOZW9BeGlzLkFJIHNlbmRlciwgTmVvQXhpcy5HYW1lTW9kZSBnYW1lTW9kZSwgQ29tcG9uZW50IGluaXRpYXRvciwgTmVvQXhpcy5JbnB1dE1lc3NhZ2UgbWVzc2FnZSwgcmVmIGJvb2wgaGFuZGxlZCkKewoJLy92YXIga2V5RG93biA9IG1lc3NhZ2UgYXMgSW5wdXRNZXNzYWdlS2V5RG93bjsKCS8vaWYgKGtleURvd24gIT0gbnVsbCAmJiAoa2V5RG93bi5LZXkgPT0gZ2FtZU1vZGUuS2V5SW50ZXJhY3QxIHx8IGtleURvd24uS2V5ID09IGdhbWVNb2RlLktleUludGVyYWN0MikpCgl2YXIgYnV0dG9uRG93biA9IG1lc3NhZ2UgYXMgSW5wdXRNZXNzYWdlTW91c2VCdXR0b25Eb3duOwoJaWYgKGJ1dHRvbkRvd24gIT0gbnVsbCkKCXsKCQkvL25vIG5ldHdvcmsgc3VwcG9ydC4gZm9yIG5ldHdvcmtpbmcgc3VwcG9ydCBpcyBlYXNpZXIgdG8gdXNlIEZsb3cgR3JhcGggYmFzZWQgdmFyaWFudAoKCQkvL2NyZWF0ZSBpbnRlcmFjdGlvbgoJCXZhciBpbnRlcmFjdGlvbiA9IGdhbWVNb2RlLkNyZWF0ZUNvbXBvbmVudDxDb250aW51b3VzSW50ZXJhY3Rpb24+KGVuYWJsZWQ6IGZhbHNlKTsKCQlpbnRlcmFjdGlvbi5DcmVhdG9yID0gc2VuZGVyOwoJCWludGVyYWN0aW9uLlNlY29uZFBhcnRpY2lwYW50ID0gZ2FtZU1vZGUuT2JqZWN0Q29udHJvbGxlZEJ5UGxheWVyLlZhbHVlOwoJCQoJCS8vc2V0IHVwIHRoZSBmaXJzdCBtZXNzYWdlIGZyb20gTlBDIGFuZCBwb3NzaWJsZSBhbnN3ZXJzCgkJdmFyIGJsb2NrID0gbmV3IFRleHRCbG9jaygpOwoJCWJsb2NrLlNldEF0dHJpYnV0ZSgiTWVzc2FnZUlEIiwgIjEiKTsKCQlibG9jay5TZXRBdHRyaWJ1dGUoIk1lc3NhZ2UiLCAiSGkhIEhvdyBjYW4gSSBoZWxwIHlvdT8iKTsKCQlibG9jay5TZXRBdHRyaWJ1dGUoIkFuc3dlciAxIiwgIlNheSBzb21ldGhpbmcgZWxzZSIpOwoJCWJsb2NrLlNldEF0dHJpYnV0ZSgiQW5zd2VyIDIiLCAiQnllIik7CgkJaW50ZXJhY3Rpb24uQ3VycmVudE1lc3NhZ2VGcm9tQ3JlYXRvciA9IGJsb2NrLkR1bXBUb1N0cmluZygpOwoKCQlpbnRlcmFjdGlvbi5NZXNzYWdlRnJvbVBhcnRpY2lwYW50RXZlbnQgKz0gZGVsZWdhdGUgKENvbnRpbnVvdXNJbnRlcmFjdGlvbiBzZW5kZXIyLCBzdHJpbmcgbWVzc2FnZTIpCgkJewoJCQkvL3Byb2Nlc3MgbWVzc2FnZXMgZnJvbSBOUEMKCQkJCgkJCXZhciBibG9jazIgPSBUZXh0QmxvY2suUGFyc2UobWVzc2FnZTIsIG91dCBfKTsKCQkJaWYgKGJsb2NrMiAhPSBudWxsKQoJCQl7CgkJCQl2YXIgbWVzc2FnZUlEID0gYmxvY2syLkdldEF0dHJpYnV0ZSgiTWVzc2FnZUlEIik7CgkJCQl2YXIgYW5zd2VyID0gYmxvY2syLkdldEF0dHJpYnV0ZSgiQW5zd2VyIik7CgkJCQkvL0xvZy5JbmZvKGFuc3dlcik7CgkJCQkKCQkJCS8vZ2VuZXJhdGUgYW5zd2VycyB0byBtZXNzYWdlIDEgCgkJCQlpZihtZXNzYWdlSUQgPT0gIjEiKQoJCQkJewoJCQkJCWlmIChhbnN3ZXIgPT0gIjEiKQoJCQkJCXsKCQkJCQkJdmFyIGJsb2NrMyA9IG5ldyBUZXh0QmxvY2soKTsKCQkJCQkJYmxvY2szLlNldEF0dHJpYnV0ZSgiTWVzc2FnZUlEIiwgIjIiKTsKCQkJCQkJYmxvY2szLlNldEF0dHJpYnV0ZSgiTWVzc2FnZSIsICJObyBwcm9ibGVtIDopIik7CgkJCQkJCWJsb2NrMy5TZXRBdHRyaWJ1dGUoIkFuc3dlciAxIiwgIkJ5ZSIpOwoJCQkJCQlpbnRlcmFjdGlvbi5DdXJyZW50TWVzc2FnZUZyb21DcmVhdG9yID0gYmxvY2szLkR1bXBUb1N0cmluZygpOwoJCQkJCX0KCQkJCQlpZiAoYW5zd2VyID09ICIyIikKCQkJCQl7CgkJCQkJCXNlbmRlcjIuUmVtb3ZlRnJvbVBhcmVudCh0cnVlKTsKCQkJCQl9CgkJCQl9CgoJCQkJLy9nZW5lcmF0ZSBhbnN3ZXJzIHRvIG1lc3NhZ2UgMiAKCQkJCWlmKG1lc3NhZ2VJRCA9PSAiMiIpCgkJCQl7CgkJCQkJaWYgKGFuc3dlciA9PSAiMSIpCgkJCQkJewoJCQkJCQlzZW5kZXIyLlJlbW92ZUZyb21QYXJlbnQodHJ1ZSk7CgkJCQkJfQoJCQkJfQoJCQl9CgkJfTsKCgkJaW50ZXJhY3Rpb24uRW5hYmxlZCA9IHRydWU7CgoJCWhhbmRsZWQgPSB0cnVlOwoJfQp9Cg==")]
+public class DynamicClassBF4DB8B384881FB790CCDD4ADF8BED1CBDD60FD6B11D5930F8FC6B3D917EDFDC
+{
+    public NeoAxis.CSharpScript Owner;
+    public void CharacterAI_ObjectInteractionInputMessageEvent(NeoAxis.AI sender, NeoAxis.GameMode gameMode, Component initiator, NeoAxis.InputMessage message, ref bool handled)
+    {
+        //var keyDown = message as InputMessageKeyDown;
+        //if (keyDown != null && (keyDown.Key == gameMode.KeyInteract1 || keyDown.Key == gameMode.KeyInteract2))
+        var buttonDown = message as InputMessageMouseButtonDown;
+        if (buttonDown != null)
+        {
+            //no network support. for networking support is easier to use Flow Graph based variant
+            //create interaction
+            var interaction = gameMode.CreateComponent<ContinuousInteraction>(enabled: false);
+            interaction.Creator = sender;
+            interaction.SecondParticipant = gameMode.ObjectControlledByPlayer.Value;
+            //set up the first message from NPC and possible answers
+            var block = new TextBlock();
+            block.SetAttribute("MessageID", "1");
+            block.SetAttribute("Message", "Hi! How can I help you?");
+            block.SetAttribute("Answer 1", "Say something else");
+            block.SetAttribute("Answer 2", "Bye");
+            interaction.CurrentMessageFromCreator = block.DumpToString();
+            interaction.MessageFromParticipantEvent += delegate (ContinuousInteraction sender2, string message2)
+            {
+                //process messages from NPC
+                var block2 = TextBlock.Parse(message2, out _);
+                if (block2 != null)
+                {
+                    var messageID = block2.GetAttribute("MessageID");
+                    var answer = block2.GetAttribute("Answer");
+                    //Log.Info(answer);
+                    //generate answers to message 1 
+                    if (messageID == "1")
+                    {
+                        if (answer == "1")
+                        {
+                            var block3 = new TextBlock();
+                            block3.SetAttribute("MessageID", "2");
+                            block3.SetAttribute("Message", "No problem :)");
+                            block3.SetAttribute("Answer 1", "Bye");
+                            interaction.CurrentMessageFromCreator = block3.DumpToString();
+                        }
+
+                        if (answer == "2")
+                        {
+                            sender2.RemoveFromParent(true);
+                        }
+                    }
+
+                    //generate answers to message 2 
+                    if (messageID == "2")
+                    {
+                        if (answer == "1")
+                        {
+                            sender2.RemoveFromParent(true);
+                        }
+                    }
+                }
+            }
+
+            ;
+            interaction.Enabled = true;
+            handled = true;
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("Ym9vbCBNZXRob2QoKQp7CgkvL3ByZXZlbnQgZXhlY3V0aW9uIHRoZSBzY3JpcHQgaW4gdGhlIGVkaXRvciBhbmQgd2hlbiBsb2FkaW5nCglpZihFbmdpbmVBcHAuSXNTaW11bGF0aW9uICYmICFPd25lci5QYXJlbnRSb290LkhpZXJhcmNoeUNvbnRyb2xsZXIuTG9hZGluZykKCXsKCQkvL2dldCBjdXJyZW50IGludGVyYWN0aW9uCgkJdmFyIGludGVyYWN0aW9uID0gQ29udGludW91c0ludGVyYWN0aW9uLkxhdGVzdDsKCgkJLy9nZXQgYSBjaGFyYWN0ZXIgb2YgdGhlIHBsYXllcgoJCXZhciBwbGF5ZXJDaGFyYWN0ZXIgPSAoQ2hhcmFjdGVyKWludGVyYWN0aW9uLlNlY29uZFBhcnRpY2lwYW50LlZhbHVlOwoKCQkvL2NoZWNrcyBwbGF5ZXIncyBjaGFyYWN0ZXIgaGFzIGEga2V5CgkJdmFyIGl0ZW0gPSBwbGF5ZXJDaGFyYWN0ZXIuR2V0SXRlbUJ5UmVzb3VyY2VOYW1lKEAiQ29udGVudFxJdGVtcyAzRFxOZW9BeGlzXEtleVxLZXkuaXRlbXR5cGUiKTsKCQlpZiAoaXRlbSAhPSBudWxsKQoJCQlyZXR1cm4gdHJ1ZTsKCX0KCQoJcmV0dXJuIGZhbHNlOwp9Cg==")]
+public class DynamicClassC617EEE538ED586F29B3DDAE3B481520D7E3FB0852A0ED5763713EF93F3E2AC5
+{
+    public NeoAxis.CSharpScript Owner;
+    bool Method()
+    {
+        //prevent execution the script in the editor and when loading
+        if (EngineApp.IsSimulation && !Owner.ParentRoot.HierarchyController.Loading)
+        {
+            //get current interaction
+            var interaction = ContinuousInteraction.Latest;
+            //get a character of the player
+            var playerCharacter = (Character)interaction.SecondParticipant.Value;
+            //checks player's character has a key
+            var item = playerCharacter.GetItemByResourceName(@"Content\Items 3D\NeoAxis\Key\Key.itemtype");
+            if (item != null)
+                return true;
+        }
+
+        return false;
+    }
+}
+
+[CSharpScriptGeneratedAttribute("dm9pZCBNZXRob2QoKQp7CglMb2cuSW5mbygiTWVzc2FnZSBmcm9tIHRoZSBkaWFsb2d1ZSIpOwp9Cg==")]
+public class DynamicClassCD77F714BBDC128E3675B41DB2C321D17906634F20B508D44777046026BCAD4D
+{
+    public NeoAxis.CSharpScript Owner;
+    void Method()
+    {
+        Log.Info("Message from the dialogue");
+    }
+}
 }
 #endif

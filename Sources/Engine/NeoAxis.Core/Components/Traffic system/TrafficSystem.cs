@@ -20,10 +20,6 @@ namespace NeoAxis
 	[SettingsCell( typeof( TrafficSystemSettingsCell ) )]
 	public class TrafficSystem : Component
 	{
-		static FastRandom staticRandom = new FastRandom( 0 );
-
-		//
-
 		bool needUpdateObjects;
 
 		Dictionary<TrafficSystemElement, ElementCachedData> cachedElementsDictionary;
@@ -1185,13 +1181,16 @@ namespace NeoAxis
 
 		protected virtual ObjectInstance CreateFlyingObject( bool initialization )
 		{
+			var scene = FindParent<Scene>();
+			var sceneRandom = Scene.GetRandomGuaranteed( scene );
+
 			//var camerasPosition = GetCamerasPosition();
 
 			if( cachedFlyingVehicleElements != null && cachedFlyingVehicleElements.Length != 0 && lastCameraPosition/*camerasPosition*/.HasValue )
 			{
 				var cameraPosition = lastCameraPosition.Value.ToVector2();
 
-				var typeIndex = staticRandom.Next( cachedFlyingVehicleElements.Length - 1 );
+				var typeIndex = sceneRandom.Next( cachedFlyingVehicleElements.Length - 1 );
 				var type = cachedFlyingVehicleElements[ typeIndex ];
 				var element = type.Element;
 
@@ -1203,13 +1202,13 @@ namespace NeoAxis
 				for( int nIteration = 0; nIteration < 20; nIteration++ )
 				{
 					//!!!!check for free place
-					var height = staticRandom.Next( heightRange.Minimum, heightRange.Maximum );
+					var height = sceneRandom.Next( heightRange.Minimum, heightRange.Maximum );
 
 					if( !initialization )
 					{
 						//create on far border
 
-						var angle = staticRandom.Next( 0, Math.PI * 2 );
+						var angle = sceneRandom.Next( 0, Math.PI * 2 );
 
 						var offset = new Vector2( Math.Cos( angle ), Math.Sin( angle ) ) * createDistance;
 						pos = new Vector3( cameraPosition + offset, height );
@@ -1218,7 +1217,7 @@ namespace NeoAxis
 					{
 						//create anywhere in radius
 
-						var offset = new Vector2( staticRandom.Next( -createDistance, createDistance ), staticRandom.Next( -createDistance, createDistance ) );
+						var offset = new Vector2( sceneRandom.Next( -createDistance, createDistance ), sceneRandom.Next( -createDistance, createDistance ) );
 
 						//check by distance
 						if( offset.LengthSquared() < createDistance * createDistance )
@@ -1229,10 +1228,10 @@ namespace NeoAxis
 				if( pos.HasValue )
 				{
 					var speedRange = element.FlyingSpeedRange.Value;
-					var speed = staticRandom.Next( speedRange.Minimum, speedRange.Maximum );
+					var speed = sceneRandom.Next( speedRange.Minimum, speedRange.Maximum );
 
-					var destX = staticRandom.Next( cameraPosition.X - createDistance, cameraPosition.X + createDistance );
-					var destY = staticRandom.Next( cameraPosition.Y - createDistance, cameraPosition.Y + createDistance );
+					var destX = sceneRandom.Next( cameraPosition.X - createDistance, cameraPosition.X + createDistance );
+					var destY = sceneRandom.Next( cameraPosition.Y - createDistance, cameraPosition.Y + createDistance );
 					var destPos = new Vector2( destX, destY );
 					if( destPos == pos.Value.ToVector2() )
 						destPos.X += 1;
@@ -1257,6 +1256,9 @@ namespace NeoAxis
 
 		void SimulateFlyingObjects( bool initialization )
 		{
+			var scene = FindParent<Scene>();
+			var sceneRandom = Scene.GetRandomGuaranteed( scene );
+
 			//simulate created objects
 			foreach( var obj in flyingObjects.ToArray() ) //make copy to change flyingObjects
 			{
@@ -1300,7 +1302,7 @@ namespace NeoAxis
 			flyingObjectsRemainingTimeToUpdate -= Time.SimulationDelta;
 			if( flyingObjectsRemainingTimeToUpdate <= 0 || initialization )
 			{
-				flyingObjectsRemainingTimeToUpdate = 1 + staticRandom.Next( 0.1 );
+				flyingObjectsRemainingTimeToUpdate = 1 + sceneRandom.Next( 0.1 );
 
 				//var camerasBounds = GetCamerasBounds();
 				//if( !camerasBounds.IsCleared() )
@@ -1397,6 +1399,7 @@ namespace NeoAxis
 		[MethodImpl( (MethodImplOptions)512 )]
 		protected virtual ObjectInstance CreateWalkingPedestrian( Scene scene, bool initialization, Vector3 cameraPosition, Circle circle, Circle circleFar, List<Road.LogicalData> roadsInRadius )
 		{
+			var sceneRandom = Scene.GetRandomGuaranteed( scene );
 
 			//!!!!Parallel, threading?
 
@@ -1406,7 +1409,7 @@ namespace NeoAxis
 			TrafficSystemElement element = null;
 			if( cachedPedestriansElements != null && cachedPedestriansElements.Length != 0 )//&& camerasPosition.HasValue )
 			{
-				var cachedElement = cachedPedestriansElements[ staticRandom.Next( cachedPedestriansElements.Length - 1 ) ];
+				var cachedElement = cachedPedestriansElements[ sceneRandom.Next( cachedPedestriansElements.Length - 1 ) ];
 				element = cachedElement.Element;
 			}
 
@@ -1429,12 +1432,12 @@ namespace NeoAxis
 						//get random point in circles inverval
 						Vector2 point;
 						{
-							var angle = staticRandom.Next( MathEx.PI * 2 );
+							var angle = sceneRandom.Next( MathEx.PI * 2 );
 							double radius;
 							if( initialization )
-								radius = staticRandom.Next( circle.Radius );
+								radius = sceneRandom.Next( circle.Radius );
 							else
-								radius = staticRandom.Next( circle.Radius, circleFar.Radius );
+								radius = sceneRandom.Next( circle.Radius, circleFar.Radius );
 							point = circle.Center + new Vector2( Math.Cos( angle ), Math.Sin( angle ) ) * radius;
 						}
 
@@ -1480,7 +1483,7 @@ namespace NeoAxis
 							var roadData = nearestRoad.RoadData;
 
 							//get lane
-							var lane = staticRandom.Next( roadData.Lanes - 1 );
+							var lane = sceneRandom.Next( roadData.Lanes - 1 );
 							var laneOffset = roadData.GetLaneOffset( lane );
 
 							roadData.GetPositionByTime( nearestRoadTimeOnCurve, out var positionOnCurve );
@@ -1601,6 +1604,7 @@ namespace NeoAxis
 			var scene = FindParent<Scene>();
 			if( scene == null )
 				return;
+			var sceneRandom = Scene.GetRandomGuaranteed( scene );
 
 			//delete before recreation
 			if( initialization )
@@ -1654,7 +1658,7 @@ namespace NeoAxis
 			walkingPedestriansRemainingTimeToUpdate -= Time.SimulationDelta;
 			if( walkingPedestriansRemainingTimeToUpdate <= 0 || initialization )
 			{
-				walkingPedestriansRemainingTimeToUpdate = 1 + staticRandom.Next( 0.1 );
+				walkingPedestriansRemainingTimeToUpdate = 1 + sceneRandom.Next( 0.1 );
 
 				//var camerasPosition = GetCamerasPosition();
 				if( lastCameraPosition.HasValue ) //if( camerasPosition.HasValue )

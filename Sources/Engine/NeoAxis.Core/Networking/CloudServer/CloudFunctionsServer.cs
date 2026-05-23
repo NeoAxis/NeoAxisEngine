@@ -591,9 +591,11 @@ namespace NeoAxis.CloudServer
 
 				try
 				{
-					GC.Collect();
-					GC.WaitForPendingFinalizers();
-					GC.Collect();
+					GC.Collect( 2, GCCollectionMode.Forced, false );
+
+					//GC.Collect();
+					//GC.WaitForPendingFinalizers();
+					//GC.Collect();
 				}
 				catch( Exception e )
 				{

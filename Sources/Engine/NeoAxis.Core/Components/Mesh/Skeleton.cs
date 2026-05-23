@@ -17,6 +17,9 @@ namespace NeoAxis
 		Dictionary<string, int> boneByNameCache;
 		int[] boneParentsCache;
 
+		//optimization
+		internal OpenList<MeshInSpaceAnimationController.UpdateAnimationItem> tempAnimationsForController;
+
 		/////////////////////////////////////////
 
 		///// <summary>

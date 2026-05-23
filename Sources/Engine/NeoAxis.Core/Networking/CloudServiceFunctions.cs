@@ -98,11 +98,14 @@ namespace NeoAxis.Networking
 		/// <param name="userRole">Developer, Player</param>
 		/// <param name="projectID"></param>
 		/// <returns></returns>
-		public static async Task<AccessRequestServiceResult> AccessRequestServiceServerAsync( string service, CloudUserRole userRole, long? projectID = null, CancellationToken cancellationToken = default )
+		public static async Task<AccessRequestServiceResult> AccessRequestServiceServerAsync( string service, CloudUserRole userRole, long? projectID = null, string authToken = null, CancellationToken cancellationToken = default )
 		{
 			var command = new CloudServiceExecuteCommand();
 			command.FunctionName = "api/v1/access/request_server_access";
-			command.RequireUserLogin = true;
+			if( !string.IsNullOrEmpty( authToken ) )
+				command.ServerCheckCodeOrAccessToken = authToken;
+			else
+				command.RequireUserLogin = true;
 			command.RequestMethod = CloudServiceExecuteCommand.RequestMethodEnum.Post;
 
 			var block = new TextBlock();
@@ -468,11 +471,7 @@ namespace NeoAxis.Networking
 
 				public override int GetHashCode()
 				{
-#if UWP
-					return Exists.GetHashCode() ^ Size.GetHashCode() ^ LastModified.GetHashCode();
-#else
 					return HashCode.Combine( Exists, Size, LastModified );
-#endif
 				}
 
 				public override string ToString()
@@ -603,11 +602,7 @@ namespace NeoAxis.Networking
 
 				public override int GetHashCode()
 				{
-#if UWP
-					return Name.GetHashCode() ^ Size.GetHashCode() ^ LastModified.GetHashCode() ^ IsDirectory.GetHashCode() ^ Public.GetHashCode();
-#else
 					return HashCode.Combine( Name, Size, LastModified, IsDirectory, Public );
-#endif
 				}
 
 				public override string ToString()

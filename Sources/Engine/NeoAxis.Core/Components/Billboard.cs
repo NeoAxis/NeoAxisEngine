@@ -11,6 +11,7 @@ namespace NeoAxis
 	public class Billboard : ObjectInSpace
 	{
 		static Mesh billboardMesh;
+		static object getBillboardMeshLock = new object();
 
 		double transformPositionByTime1_Time;
 		Vector3 transformPositionByTime1_Position;
@@ -314,9 +315,9 @@ namespace NeoAxis
 
 				if( cameraDistanceMinSquared < visibilityDistance * visibilityDistance/* || mode == GetRenderSceneDataMode.ShadowCasterOutsideFrustum*/ )
 				{
-//#if !DEPLOY
+					//#if !DEPLOY
 					var allowOutlineSelect = context.renderingPipeline.UseRenderTargets && ProjectSettings.Get.SceneEditor.SceneEditorSelectOutlineEffectEnabled;
-//#endif
+					//#endif
 
 					var item = new RenderingPipeline.RenderSceneData.BillboardItem();
 					item.Creator = this;
@@ -334,7 +335,7 @@ namespace NeoAxis
 					if( specialEffects != null && specialEffects.Count != 0 )
 						item.SpecialEffects = specialEffects;
 
-//#if !DEPLOY
+					//#if !DEPLOY
 					//display outline effect of editor selection
 					if( mode == GetRenderSceneDataMode.InsideFrustum && allowOutlineSelect && context2.selectedObjects.Contains( this ) )
 					{
@@ -356,7 +357,7 @@ namespace NeoAxis
 							item.SpecialEffects.Add( effect );
 						}
 					}
-//#endif
+					//#endif
 
 					context.ConvertToRelative( tr.Position, out item.PositionRelative );
 					//item.Position = tr.Position.ToVector3F();
@@ -388,7 +389,7 @@ namespace NeoAxis
 
 					context.FrameData.RenderSceneData.Billboards.Add( ref item );
 
-//#if !DEPLOY
+					//#if !DEPLOY
 					//display editor selection
 					if( mode == GetRenderSceneDataMode.InsideFrustum )
 					{
@@ -421,7 +422,7 @@ namespace NeoAxis
 							}
 						}
 					}
-//#endif
+					//#endif
 				}
 
 				//}
@@ -430,21 +431,24 @@ namespace NeoAxis
 
 		public static Mesh GetBillboardMesh()
 		{
-			if( billboardMesh == null || billboardMesh.Disposed )
-				billboardMesh = null;
-
-			if( billboardMesh == null )
+			lock( getBillboardMeshLock )
 			{
-				var mesh = ComponentUtility.CreateComponent<Mesh>( null, true, false );
-				var geometry = mesh.CreateComponent<MeshGeometry_Plane>();
-				geometry.Axis = 1;
-				mesh.Billboard = true;
-				mesh.Enabled = true;
+				if( billboardMesh == null || billboardMesh.Disposed )
+					billboardMesh = null;
 
-				billboardMesh = mesh;
+				if( billboardMesh == null )
+				{
+					var mesh = ComponentUtility.CreateComponent<Mesh>( null, true, false );
+					var geometry = mesh.CreateComponent<MeshGeometry_Plane>();
+					geometry.Axis = 1;
+					mesh.Billboard = true;
+					mesh.Enabled = true;
+
+					billboardMesh = mesh;
+				}
+
+				return billboardMesh;
 			}
-
-			return billboardMesh;
 		}
 
 		//maybe add GetLinearVelocityByRenderingData()

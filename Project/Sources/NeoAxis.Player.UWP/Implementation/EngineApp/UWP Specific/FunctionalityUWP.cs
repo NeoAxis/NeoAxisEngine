@@ -11,6 +11,9 @@ using Windows.Graphics.Display;
 using Windows.UI.Input;
 using Windows.Foundation;
 using Internal;
+using System.Threading.Tasks;
+using System.Collections.Concurrent;
+using Windows.System;
 
 namespace NeoAxis
 {
@@ -31,9 +34,9 @@ namespace NeoAxis
 		static PlatformFunctionalityUWP instance;
 
 		CoreWindowActivationState activationState = CoreWindowActivationState.Deactivated;
-		bool windowClosed;
-		bool windowVisible = true;
-		bool isSizeChanged;
+		volatile bool windowClosed;
+		volatile bool windowVisible = true;
+		volatile bool isSizeChanged;
 
 		CoreWindow coreWindow;
 		ApplicationView applicationView;
@@ -43,12 +46,24 @@ namespace NeoAxis
 
 		double[] lastMouseButtonClickTimeForDoubleClickDetection = new double[ 5 ];
 
+		//ConcurrentQueue<ActionItem> actionsToProcess = new ConcurrentQueue<ActionItem>();
+
+		/////////////////////////////////////////
+
+		public struct ActionItem
+		{
+			public string Name;
+			public EMouseButtons Button;
+			public CoreAcceleratorKeyEventType EventType;
+			public VirtualKey VirtualKey;
+		}
+
 		/////////////////////////////////////////
 
 		public PlatformFunctionalityUWP()
 		{
 			instance = this;
-			SetInstance( instance );
+			SetInstance( instance, SystemSettings.Platform.UWP );
 
 			new PlatformSpecificUtilityUWP();
 		}
@@ -62,9 +77,7 @@ namespace NeoAxis
 
 		public override int GetScreenBitsPerPixel()
 		{
-			//TODO: implement it.
-			int bpp = 32;
-			return bpp;
+			return 32;
 		}
 
 		public override Vector2I GetSmallIconSize()
@@ -155,24 +168,38 @@ namespace NeoAxis
 
 		private void CoreWindow_Closed( CoreWindow sender, CoreWindowEventArgs args )
 		{
+			args.Handled = true;
+
 			windowClosed = true;
 		}
 
 		private void CoreWindow_PointerMoved( CoreWindow sender, PointerEventArgs args )
 		{
-			EngineApp.CreatedInsideEngineWindow.ProcessMouseMoveEvent();
+			args.Handled = true;
+
+			EngineThreading.ExecuteFromMainThreadLater( delegate ()
+			{
+				EngineApp.CreatedInsideEngineWindow.ProcessMouseMoveEvent();
+			} );
 		}
 
 		private void CoreWindow_PointerWheelChanged( CoreWindow sender, PointerEventArgs args )
 		{
-			bool handled = false;
+			args.Handled = true;
+
 			var wheelDelta = args.CurrentPoint.Properties.MouseWheelDelta;
-			GetViewport()?.PerformMouseWheel( wheelDelta, ref handled );
-			//args.Handled = handled;
+
+			EngineThreading.ExecuteFromMainThreadLater( delegate ()
+			{
+				bool handled = false;
+				GetViewport()?.PerformMouseWheel( wheelDelta, ref handled );
+			} );
 		}
 
 		private void CoreWindow_PointerPressed( CoreWindow sender, PointerEventArgs args )
 		{
+			args.Handled = true;
+
 			var properties = args.CurrentPoint.Properties;
 
 			EMouseButtons button;
@@ -185,24 +212,30 @@ namespace NeoAxis
 			else
 				return;
 
-			bool handled = false;
-			GetViewport()?.PerformMouseDown( button, ref handled );
-			//args.Handled = handled;
-
-			//double click
-			var time = EngineApp.GetSystemTime();//GetSystemTime();
-			if( time - lastMouseButtonClickTimeForDoubleClickDetection[ (int)button ] < 0.5 )
+			EngineThreading.ExecuteFromMainThreadLater( delegate ()
 			{
-				bool handled2 = false;
-				GetViewport()?.PerformMouseDoubleClick( button, ref handled2 );
-				lastMouseButtonClickTimeForDoubleClickDetection[ (int)button ] = 0;
-			}
-			else
-				lastMouseButtonClickTimeForDoubleClickDetection[ (int)button ] = time;
+				bool handled = false;
+				GetViewport()?.PerformMouseDown( button, ref handled );
+
+				//double click
+				var time = EngineApp.GetSystemTime();
+				if( time - lastMouseButtonClickTimeForDoubleClickDetection[ (int)button ] < 0.5 )
+				{
+					bool handled2 = false;
+					GetViewport()?.PerformMouseDoubleClick( button, ref handled2 );
+					lastMouseButtonClickTimeForDoubleClickDetection[ (int)button ] = 0;
+				}
+				else
+					lastMouseButtonClickTimeForDoubleClickDetection[ (int)button ] = time;
+			} );
+
+			//actionsToProcess.Enqueue( new ActionItem() { Name = "PointerPressed", Button = button } );
 		}
 
 		private void CoreWindow_PointerReleased( CoreWindow sender, PointerEventArgs args )
 		{
+			args.Handled = true;
+
 			var properties = args.CurrentPoint.Properties;
 
 			EMouseButtons button;
@@ -215,13 +248,19 @@ namespace NeoAxis
 			else
 				return;
 
-			bool handled = false;
-			GetViewport()?.PerformMouseUp( button, ref handled );
-			//args.Handled = handled;
+			EngineThreading.ExecuteFromMainThreadLater( delegate ()
+			{
+				bool handled = false;
+				GetViewport()?.PerformMouseUp( button, ref handled );
+			} );
+
+			//actionsToProcess.Enqueue( new ActionItem() { Name = "PointerReleased", Button = button } );
 		}
 
 		private void CoreWindow_SizeChanged( CoreWindow sender, WindowSizeChangedEventArgs args )
 		{
+			args.Handled = true;
+
 			isSizeChanged = true;
 		}
 
@@ -239,60 +278,72 @@ namespace NeoAxis
 
 		private void Dispatcher_AcceleratorKeyActivated( CoreDispatcher sender, AcceleratorKeyEventArgs args )
 		{
-			var viewport = GetViewport();
-			if( viewport == null )
-				return;
+			args.Handled = true;
 
-			if( !GetEKeyByVirtualKey( args.VirtualKey, out EKeys eKey ) )
-				return;
+			var eventType = args.EventType;
+			var virtualKey = args.VirtualKey;
 
-			if( args.EventType == CoreAcceleratorKeyEventType.KeyDown || args.EventType == CoreAcceleratorKeyEventType.SystemKeyDown )
+			EngineThreading.ExecuteFromMainThreadLater( delegate ()
 			{
-				bool handled = false;
-				var keyEvent = new KeyEvent( eKey );
-				viewport.PerformKeyDown( keyEvent, ref handled );
-				if( keyEvent.SuppressKeyPress )
-					args.Handled = true;
+				var viewport = GetViewport();
+				if( viewport == null )
+					return;
 
-				if( !handled && EngineApp.InitSettings.AllowChangeScreenVideoMode )
+				if( !GetEKeyByVirtualKey( virtualKey, out EKeys eKey ) )
+					return;
+
+				if( eventType == CoreAcceleratorKeyEventType.KeyDown || eventType == CoreAcceleratorKeyEventType.SystemKeyDown )
 				{
-					//support Alt+F4 in mouse relative mode. Alt+F4 is disabled during captured cursor.
-					if( viewport.MouseRelativeMode )
+					bool handled = false;
+					var keyEvent = new KeyEvent( eKey );
+					viewport.PerformKeyDown( keyEvent, ref handled );
+					if( keyEvent.SuppressKeyPress )
 					{
-						if( eKey == EKeys.F4 && viewport.IsKeyPressed( EKeys.Alt ) )
+						//!!!!?
+
+						//args.Handled = true;
+					}
+
+					if( !handled && EngineApp.InitSettings.AllowChangeScreenVideoMode )
+					{
+						//support Alt+F4 in mouse relative mode. Alt+F4 is disabled during captured cursor.
+						if( viewport.MouseRelativeMode )
 						{
-							EngineApp.NeedExit = true;
-							return;
+							if( eKey == EKeys.F4 && viewport.IsKeyPressed( EKeys.Alt ) )
+							{
+								EngineApp.NeedExit = true;
+								return;
+							}
+						}
+
+						if( viewport.IsKeyPressed( EKeys.Alt ) && eKey == EKeys.Return )
+						{
+							if( EngineApp.WindowedMode == WindowedModeEnum.Fullscreen )
+								EngineApp.SetWindowedMode( WindowedModeEnum.Windowed, EngineApp.WindowedModeSize );
+							else
+								EngineApp.SetWindowedMode( WindowedModeEnum.Fullscreen, EngineApp.WindowedModeSize );
+							//EngineApp.SetFullscreenMode( !EngineApp.FullscreenEnabled, EngineApp.FullscreenSize );
+							handled = true;
 						}
 					}
-
-					if( viewport.IsKeyPressed( EKeys.Alt ) && eKey == EKeys.Return )
-					{
-						if( EngineApp.WindowedMode == WindowedModeEnum.Fullscreen )
-							EngineApp.SetWindowedMode( WindowedModeEnum.Windowed, EngineApp.WindowedModeSize );
-						else
-							EngineApp.SetWindowedMode( WindowedModeEnum.Fullscreen, EngineApp.WindowedModeSize );
-						//EngineApp.SetFullscreenMode( !EngineApp.FullscreenEnabled, EngineApp.FullscreenSize );
-						handled = true;
-					}
 				}
+				else if( eventType == CoreAcceleratorKeyEventType.KeyUp || eventType == CoreAcceleratorKeyEventType.SystemKeyUp )
+				{
+					bool handled = false;
+					viewport.PerformKeyUp( new KeyEvent( eKey ), ref handled );
+					//args.Handled = handled;
+				}
+				else if( eventType == CoreAcceleratorKeyEventType.Character || eventType == CoreAcceleratorKeyEventType.UnicodeCharacter )
+				{
+					char keyChar = (char)virtualKey;
+					KeyPressEvent keyPressEvent = new KeyPressEvent( keyChar );
+					bool handled = false;
+					GetViewport()?.PerformKeyPress( keyPressEvent, ref handled );
+					//args.Handled = handled;
+				}
+			} );
 
-				//args.Handled = handled;
-			}
-			else if( args.EventType == CoreAcceleratorKeyEventType.KeyUp || args.EventType == CoreAcceleratorKeyEventType.SystemKeyUp )
-			{
-				bool handled = false;
-				viewport.PerformKeyUp( new KeyEvent( eKey ), ref handled );
-				//args.Handled = handled;
-			}
-			else if( args.EventType == CoreAcceleratorKeyEventType.Character || args.EventType == CoreAcceleratorKeyEventType.UnicodeCharacter )
-			{
-				char keyChar = (char)args.VirtualKey;
-				KeyPressEvent keyPressEvent = new KeyPressEvent( keyChar );
-				bool handled = false;
-				GetViewport()?.PerformKeyPress( keyPressEvent, ref handled );
-				//args.Handled = handled;
-			}
+			//actionsToProcess.Enqueue( new ActionItem() { Name = "KeyActivated", EventType = args.EventType, VirtualKey = args.VirtualKey } );
 		}
 
 		//private void CoreWindow_KeyDown( CoreWindow sender, KeyEventArgs args )
@@ -315,36 +366,47 @@ namespace NeoAxis
 
 		private void CoreWindow_VisibilityChanged( CoreWindow sender, VisibilityChangedEventArgs args )
 		{
-			windowVisible = args.Visible;
+			args.Handled = true;
 
-			EngineApp.EnginePauseUpdateState( false, !args.Visible );
+			var visible = args.Visible;
+
+			EngineThreading.ExecuteFromMainThreadLater( delegate ()
+			{
+				windowVisible = visible;
+				EngineApp.EnginePauseUpdateState( false, !visible );
+			} );
 		}
 
 		private void CoreWindow_Activated( CoreWindow sender, WindowActivatedEventArgs args )
 		{
-			activationState = args.WindowActivationState;
+			args.Handled = true;
 
-			if( args.WindowActivationState == CoreWindowActivationState.Deactivated )
+			var windowActivationState = args.WindowActivationState;
+
+			EngineThreading.ExecuteFromMainThreadLater( delegate ()
 			{
-				//!!!!просто обновляем. ведь внутри и так проверка есть. еще можно зафорсить. но не будет ли так, 
-				//что отключится слишком быстро? нужно там где включает ставить флаг -> ChangeVUdeMode.
-				EngineApp.EnginePauseUpdateState( false, true );
+				activationState = windowActivationState;
 
-				// do stuff
-			}
-			else
-			{
-				// do different stuff
-			}
+				if( windowActivationState == CoreWindowActivationState.Deactivated )
+				{
+					EngineApp.EnginePauseUpdateState( false, true );
 
-			instance.mustIgnoreOneMouseMoveAtRelativeMode = true;
-			instance.CreatedWindow_UpdateShowSystemCursor( true );
+					// do stuff
+				}
+				else
+				{
+					// do different stuff
+				}
+
+				instance.mustIgnoreOneMouseMoveAtRelativeMode = true;
+				instance.CreatedWindow_UpdateShowSystemCursor( true );
+			} );
 		}
 
-		private Viewport GetViewport()
+		Viewport GetViewport()
 		{
 			if( !RenderingSystem.Disposed && RenderingSystem.ApplicationRenderTarget != null )
-				return RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];//App.CreatedInsideEngineWindow.Viewport;
+				return RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
 			else
 				return null;
 		}
@@ -357,7 +419,6 @@ namespace NeoAxis
 
 		public override void CreatedWindow_ProcessMessageEvents()
 		{
-			// empty for UWP?
 			coreWindow.Dispatcher.ProcessEvents( CoreProcessEventsOption.ProcessAllIfPresent );
 		}
 
@@ -372,6 +433,102 @@ namespace NeoAxis
 			return false;
 		}
 
+		//void ProcessActions()
+		//{
+		//	while( actionsToProcess.TryDequeue( out var action ) )
+		//	{
+		//		switch( action.Name )
+		//		{
+		//		case "PointerPressed":
+		//			{
+		//				var button = action.Button;
+
+		//				bool handled = false;
+		//				GetViewport()?.PerformMouseDown( button, ref handled );
+
+		//				//double click
+		//				var time = EngineApp.GetSystemTime();//GetSystemTime();
+		//				if( time - lastMouseButtonClickTimeForDoubleClickDetection[ (int)button ] < 0.5 )
+		//				{
+		//					bool handled2 = false;
+		//					GetViewport()?.PerformMouseDoubleClick( button, ref handled2 );
+		//					lastMouseButtonClickTimeForDoubleClickDetection[ (int)button ] = 0;
+		//				}
+		//				else
+		//					lastMouseButtonClickTimeForDoubleClickDetection[ (int)button ] = time;
+		//			}
+		//			break;
+
+		//		case "PointerReleased":
+		//			{
+		//				var button = action.Button;
+
+		//				bool handled = false;
+		//				GetViewport()?.PerformMouseUp( button, ref handled );
+		//			}
+		//			break;
+
+		//		case "KeyActivated":
+		//			{
+		//				var eventType = action.EventType;
+		//				var virtualKey = action.VirtualKey;
+
+		//				var viewport = GetViewport();
+		//				if( viewport != null && GetEKeyByVirtualKey( virtualKey, out var eKey ) )
+		//				{
+		//					if( eventType == CoreAcceleratorKeyEventType.KeyDown || eventType == CoreAcceleratorKeyEventType.SystemKeyDown )
+		//					{
+		//						bool handled = false;
+		//						var keyEvent = new KeyEvent( eKey );
+		//						viewport.PerformKeyDown( keyEvent, ref handled );
+		//						//!!!!
+		//						if( keyEvent.SuppressKeyPress )
+		//						{
+		//							//args.Handled = true;
+		//						}
+
+		//						if( !handled && EngineApp.InitSettings.AllowChangeScreenVideoMode )
+		//						{
+		//							//support Alt+F4 in mouse relative mode. Alt+F4 is disabled during captured cursor.
+		//							if( viewport.MouseRelativeMode )
+		//							{
+		//								if( eKey == EKeys.F4 && viewport.IsKeyPressed( EKeys.Alt ) )
+		//								{
+		//									EngineApp.NeedExit = true;
+		//									return;
+		//								}
+		//							}
+
+		//							if( viewport.IsKeyPressed( EKeys.Alt ) && eKey == EKeys.Return )
+		//							{
+		//								if( EngineApp.WindowedMode == WindowedModeEnum.Fullscreen )
+		//									EngineApp.SetWindowedMode( WindowedModeEnum.Windowed, EngineApp.WindowedModeSize );
+		//								else
+		//									EngineApp.SetWindowedMode( WindowedModeEnum.Fullscreen, EngineApp.WindowedModeSize );
+		//								//EngineApp.SetFullscreenMode( !EngineApp.FullscreenEnabled, EngineApp.FullscreenSize );
+		//								handled = true;
+		//							}
+		//						}
+		//					}
+		//					else if( eventType == CoreAcceleratorKeyEventType.KeyUp || eventType == CoreAcceleratorKeyEventType.SystemKeyUp )
+		//					{
+		//						bool handled = false;
+		//						viewport.PerformKeyUp( new KeyEvent( eKey ), ref handled );
+		//					}
+		//					else if( eventType == CoreAcceleratorKeyEventType.Character || eventType == CoreAcceleratorKeyEventType.UnicodeCharacter )
+		//					{
+		//						char keyChar = (char)virtualKey;
+		//						KeyPressEvent keyPressEvent = new KeyPressEvent( keyChar );
+		//						bool handled = false;
+		//						GetViewport()?.PerformKeyPress( keyPressEvent, ref handled );
+		//					}
+		//				}
+		//			}
+		//			break;
+		//		}
+		//	}
+		//}
+
 		public override void CreatedWindow_RunMessageLoop()
 		{
 			while( !windowClosed )
@@ -384,10 +541,12 @@ namespace NeoAxis
 					// Process events incoming to the window.
 					coreWindow.Dispatcher.ProcessEvents( CoreProcessEventsOption.ProcessAllIfPresent );
 
+					////process actions
+					//ProcessActions();
 
 					EngineApp.UpdateEngineTime();
-					double time = EngineApp.EngineTime;
-					bool needSleep = EngineApp.MaxFPS != 0 && time < maxFPSLastRenderTime + 1.0f / EngineApp.MaxFPS;
+					double engineEime = EngineApp.EngineTime;
+					bool needSleep = EngineApp.MaxFPS != 0 && engineEime < maxFPSLastRenderTime + 1.0f / EngineApp.MaxFPS;
 
 					if( needSleep )
 					{
@@ -396,7 +555,7 @@ namespace NeoAxis
 					}
 					else
 					{
-						maxFPSLastRenderTime = time;
+						maxFPSLastRenderTime = engineEime;
 
 						EngineApp.CreatedWindowApplicationIdle( false );
 
@@ -410,6 +569,7 @@ namespace NeoAxis
 				}
 				else
 				{
+					//actionsToProcess.Clear();
 					coreWindow.Dispatcher.ProcessEvents( CoreProcessEventsOption.ProcessOneAndAllPending );
 				}
 			}
@@ -533,6 +693,11 @@ namespace NeoAxis
 		public override void SetWindowVisible( bool value )
 		{
 			//!!!!impl
+		}
+
+		public override InputDeviceManager CreateInputDeviceManager()
+		{
+			return new UWPInputDeviceManager( EngineApp.CreatedInsideEngineWindow.Handle );
 		}
 	}
 }

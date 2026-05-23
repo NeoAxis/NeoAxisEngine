@@ -1427,12 +1427,12 @@ namespace NeoAxis.Editor
 
 			var rebuild = Control.ModifierKeys.HasFlag( Keys.Control );
 
-			if( rebuild || CSharpProjectFileUtility.CompilationIsRequired( false ) )
+			if( rebuild || CSharpProjectFileUtility.CompilationIsRequired() )// false ) )
 			{
 				ScreenNotifications2.Show( EditorLocalization2.Translate( "General", "Building Project.sln..." ) );
 				ScreenNotifications2.ShowAllImmediately();
 
-				if( CSharpProjectFileUtility.Compile( false, rebuild, out var outputDllFilePath ) )
+				if( CSharpProjectFileUtility.Compile( /*false,*/ rebuild, out var outputDllFilePath ) )
 				{
 					//reload Project assembly
 					{
@@ -1511,20 +1511,20 @@ namespace NeoAxis.Editor
 					ScreenNotifications2.Show( EditorLocalization2.Translate( "General", "Project.sln was built successfully." ) );
 
 
-					//compile Project.Client.dll
-					if( File.Exists( CSharpProjectFileUtility.GetProjectSlnFullPath( true ) ) )
-					{
-						if( rebuild || CSharpProjectFileUtility.CompilationIsRequired( true ) )
-						{
-							ScreenNotifications2.Show( EditorLocalization2.Translate( "General", "Building Project.Client.sln..." ) );
-							ScreenNotifications2.ShowAllImmediately();
+					////compile Project.Client.dll
+					//if( File.Exists( CSharpProjectFileUtility.GetProjectSlnFullPath( true ) ) )
+					//{
+					//	if( rebuild || CSharpProjectFileUtility.CompilationIsRequired( true ) )
+					//	{
+					//		ScreenNotifications2.Show( EditorLocalization2.Translate( "General", "Building Project.Client.sln..." ) );
+					//		ScreenNotifications2.ShowAllImmediately();
 
-							if( CSharpProjectFileUtility.Compile( true, rebuild, out var outputDllFilePath2 ) )
-							{
-								ScreenNotifications2.Show( EditorLocalization2.Translate( "General", "Project.Client.sln was built successfully." ) );
-							}
-						}
-					}
+					//		if( CSharpProjectFileUtility.Compile( true, rebuild, out var outputDllFilePath2 ) )
+					//		{
+					//			ScreenNotifications2.Show( EditorLocalization2.Translate( "General", "Project.Client.sln was built successfully." ) );
+					//		}
+					//	}
+					//}
 
 					return true;
 				}

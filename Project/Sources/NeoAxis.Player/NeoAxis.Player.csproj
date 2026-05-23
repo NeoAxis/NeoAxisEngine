@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0-windows8.0</TargetFramework>
-	<CheckEolTargetFramework>false</CheckEolTargetFramework>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <TargetFramework>net8.0</TargetFramework>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <SelfContained>true</SelfContained>
-	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-    <OutputType>WinExe</OutputType>
+
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+	
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -25,23 +25,55 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <OutputPath>..\..\Binaries\</OutputPath>
+    <AssemblyName>NeoAxis.Player</AssemblyName>
+    <Configurations>Release-Windows-x64;Release-Linux-x64;Debug-Windows-x64;Debug-Linux-x64</Configurations>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug-Windows-x64'">
+    <TargetFramework>net8.0-windows8.0</TargetFramework>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <OutputType>WinExe</OutputType>
+    <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
     <PlatformTarget>x64</PlatformTarget>
     <Optimize>False</Optimize>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release-Windows-x64'">
+    <TargetFramework>net8.0-windows8.0</TargetFramework>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <OutputType>WinExe</OutputType>
+    <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
     <PlatformTarget>x64</PlatformTarget>
     <Optimize>False</Optimize>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug-Linux-x64'">
+    <TargetFramework>net8.0</TargetFramework>
+    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+    <OutputType>Exe</OutputType>
+    <DefineConstants>$(DefineConstants);LINUX</DefineConstants>
+    <PlatformTarget>x64</PlatformTarget>
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release-Linux-x64'">
+    <TargetFramework>net8.0</TargetFramework>
+    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+    <OutputType>Exe</OutputType>
+    <DefineConstants>$(DefineConstants);LINUX</DefineConstants>
+    <PlatformTarget>x64</PlatformTarget>
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+  
+
+  <Target Name="FailIfOptimizeEnabled" BeforeTargets="BeforeBuild">
+    <Error Condition="'$(Optimize)' == 'true'" Text="Optimize must be disabled. Current configuration has Optimize=$(Optimize)." />
+  </Target>
+
   <ItemGroup>
     <Reference Include="NeoAxis.Core">
       <HintPath>..\..\Binaries\NeoAxis.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
-
-  <Target Name="FailIfOptimizeEnabled" BeforeTargets="BeforeBuild">
-    <Error Condition="'$(Optimize)' == 'true'" Text="Optimize must be disabled. Current configuration has Optimize=$(Optimize)." />
-  </Target>
   
 </Project>

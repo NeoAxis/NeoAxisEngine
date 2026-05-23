@@ -738,7 +738,7 @@ namespace NeoAxis.Editor
 				//move temp file to the final destination
 				try
 				{
-					File.Move( tempDownloadedFileName, downloadFullPath );// state.downloadingDestinationPath );
+					File.Move( tempDownloadedFileName, downloadFullPath, true );// state.downloadingDestinationPath );
 				}
 				catch( Exception e )
 				{

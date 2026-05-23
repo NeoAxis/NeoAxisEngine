@@ -2441,6 +2441,14 @@ namespace Internal
 			//!!!!
 			throw new NotImplementedException();
 		}
+
+		public override InputDeviceManager CreateInputDeviceManager()
+		{
+			if( EngineApp.CreatedInsideEngineWindow != null )
+				return new MacOSInputDeviceManager( EngineApp.CreatedInsideEngineWindow.Handle );
+			else
+				return null;
+		}
 	}
 }
 #endif

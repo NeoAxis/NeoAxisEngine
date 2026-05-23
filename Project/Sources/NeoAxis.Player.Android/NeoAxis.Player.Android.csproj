@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0-android</TargetFramework>
     <OutputType>Exe</OutputType>
@@ -13,7 +13,7 @@
     <LangVersion>latest</LangVersion>
     <Nullable>annotations</Nullable>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <OutputPath>..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Android\Managed\</OutputPath>
+    <OutputPath>C:\_TestAndroid\</OutputPath>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <SupportedOSPlatformVersion>33.0</SupportedOSPlatformVersion>
@@ -30,7 +30,7 @@
     <Optimize>False</Optimize>
     <!-- Optional: produce symbols like Debug so stack traces are useful -->
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
+    <DebugType>portable</DebugType>    
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Implementation\RestartApp.cs" />
@@ -85,12 +85,12 @@
     <AndroidAsset Include="Assets\Project.zip.hash">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AndroidAsset>
-    <None Include="lib\arm64-v8a\libbgfx.so" />
-    <None Include="lib\arm64-v8a\libNeoAxisCoreNative.so" />
+    <None Include="lib\arm64-v8a\libbgfx.so"></None>
+    <None Include="lib\arm64-v8a\libNeoAxisCoreNative.so"></None>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="NeoAxis.Core">
-      <HintPath>..\..\Binaries\NeoAxis.Internal\Platforms\Android\Managed\NeoAxis.Core.dll</HintPath>
+      <HintPath>..\..\Binaries\NeoAxis.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

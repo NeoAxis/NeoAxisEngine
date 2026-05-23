@@ -7,7 +7,6 @@ using System.Text;
 using NeoAxis.Editor;
 using System.Linq;
 using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace NeoAxis
 {
@@ -19,6 +18,20 @@ namespace NeoAxis
 	[SettingsCell( "NeoAxis.Editor.ProductSettingsCell" )]
 	public abstract class Product : Component
 	{
+		/// <summary>
+		/// Predefined root or relative path to the output folder. If the path is relative, it is resolved relative to the project folder. If this property is empty, the value from the form will be used.
+		/// </summary>
+		[DefaultValue( "" )]
+		[Category( "Product" )]
+		public Reference<string> OutputPath
+		{
+			get { if( _outputPath.BeginGet() ) OutputPath = _outputPath.Get( this ); return _outputPath.value; }
+			set { if( _outputPath.BeginSet( this, ref value ) ) { try { OutputPathChanged?.Invoke( this ); } finally { _outputPath.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="OutputPath"/> property value changes.</summary>
+		public event Action<Product> OutputPathChanged;
+		ReferenceField<string> _outputPath = "";
+
 		/// <summary>
 		/// The position of the product in the product list for build.
 		/// </summary>
@@ -131,7 +144,7 @@ namespace NeoAxis
 		ReferenceField<bool> _obfuscate = false;
 
 		/// <summary>
-		/// The list of assembly names to obfuscate. Items are separated by return or semicolon. For example: "Project.dll;Project.Client.dll".
+		/// The list of assembly names to obfuscate. Items are separated by return or semicolon. For example: "Project.dll;NeoAxis.Addon.Ships.dll".
 		/// </summary>
 		[Category( "Obfuscation" )]
 		[DefaultValue( obfuscateAssembliesDefault )]
@@ -145,7 +158,7 @@ namespace NeoAxis
 		public event Action<Product> ObfuscateAssembliesChanged;
 		ReferenceField<string> _obfuscateAssemblies = obfuscateAssembliesDefault;
 
-		const string obfuscateAssembliesDefault = "Project.dll;Project.Client.dll";
+		const string obfuscateAssembliesDefault = "Project.dll";
 
 		/// <summary>
 		/// Whether to reuse names when obfuscating. If this option is enabled, the same names will be used for the methods and fields in a type.

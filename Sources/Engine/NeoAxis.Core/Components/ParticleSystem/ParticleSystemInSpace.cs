@@ -15,8 +15,6 @@ namespace NeoAxis
 	[SettingsCell( "NeoAxis.Editor.ParticleSystemInSpaceSettingsCell" )]
 	public class ParticleSystemInSpace : ObjectInSpace
 	{
-		static FastRandom staticRandom = new FastRandom( 0 );
-
 		//creation
 		ParticleSystem.CompiledData currentParticleSystem;
 		int currentMustRecreateCounter;
@@ -976,14 +974,16 @@ namespace NeoAxis
 			if( mustRecreate )
 				Emitters = new Emitter[ currentParticleSystem.Emitters.Length ];
 
+			var sceneRandom = Scene.GetRandomGuaranteed( ParentScene );
+
 			//update emitters
 			for( int n = 0; n < Emitters.Length; n++ )
 			{
 				ref var emitter = ref Emitters[ n ];
 				var compiledEmitter = currentParticleSystem.Emitters[ n ];
 
-				emitter.StartTime = compiledEmitter.StartTime.GenerateValue( staticRandom );
-				emitter.Duration = compiledEmitter.Duration.GenerateValue( staticRandom );
+				emitter.StartTime = compiledEmitter.StartTime.GenerateValue( sceneRandom );
+				emitter.Duration = compiledEmitter.Duration.GenerateValue( sceneRandom );
 			}
 		}
 
@@ -1286,6 +1286,8 @@ namespace NeoAxis
 		[MethodImpl( (MethodImplOptions)512 )]
 		void Simulate( float delta, out bool wasUpdated )
 		{
+			var sceneRandom = Scene.GetRandomGuaranteed( ParentScene );
+
 			var wasUpdated2 = false;
 
 			//update playing time
@@ -1321,8 +1323,8 @@ namespace NeoAxis
 								ref var emitter = ref Emitters[ n ];
 								var compiledEmitter = currentParticleSystem.Emitters[ n ];
 
-								emitter.StartTime = compiledEmitter.StartTime.GenerateValue( staticRandom );
-								emitter.Duration = compiledEmitter.Duration.GenerateValue( staticRandom );
+								emitter.StartTime = compiledEmitter.StartTime.GenerateValue( sceneRandom );
+								emitter.Duration = compiledEmitter.Duration.GenerateValue( sceneRandom );
 							}
 						}
 					}
@@ -1362,7 +1364,7 @@ namespace NeoAxis
 						//calculate spawn time
 						float spawnTime = 0;
 						{
-							var spawnRate = Math.Abs( compiledEmitter.SpawnRate.GenerateValue( staticRandom ) );
+							var spawnRate = Math.Abs( compiledEmitter.SpawnRate.GenerateValue( sceneRandom ) );
 							if( spawnRate != 0 )
 								spawnTime = 1.0f / spawnRate;
 						}
@@ -1376,7 +1378,7 @@ namespace NeoAxis
 						//!!!!multithreading
 
 						//emit
-						var spawnCount = compiledEmitter.SpawnCount.GenerateValue( staticRandom );
+						var spawnCount = compiledEmitter.SpawnCount.GenerateValue( sceneRandom );
 						for( int nSpawn = 0; nSpawn < spawnCount; nSpawn++ )
 						{
 							if( ObjectsGetCount() < currentParticleSystem.Owner.MaxParticles )
@@ -1384,14 +1386,14 @@ namespace NeoAxis
 								var particle = new Particle();
 
 								particle.Emitter = nEmitter;
-								particle.Lifetime = compiledEmitter.Lifetime.GenerateValue( staticRandom );
+								particle.Lifetime = compiledEmitter.Lifetime.GenerateValue( sceneRandom );
 
-								particle.StartSize = compiledEmitter.Size.GenerateValue( staticRandom );
+								particle.StartSize = compiledEmitter.Size.GenerateValue( sceneRandom );
 								if( currentParticleSystem.SimulationSpace == NeoAxis.ParticleSystem.SimulationSpaceEnum.World )
 									particle.StartSize *= (float)trScale.MaxComponent();
 								particle.Size = particle.StartSize;
 
-								particle.GravityMultiplier = compiledEmitter.GravityMultiplier.GenerateValue( staticRandom );
+								particle.GravityMultiplier = compiledEmitter.GravityMultiplier.GenerateValue( sceneRandom );
 
 								//get shape
 								var shapes = compiledEmitter.Shapes;
@@ -1406,7 +1408,7 @@ namespace NeoAxis
 										//var groupProbabilities = stackalloc double[ shapes.Length ];
 										for( int n = 0; n < shapes.Length; n++ )
 											groupProbabilities[ n ] = shapes[ n ].Probability;
-										shapeIndex = RandomUtility.GetRandomIndexByProbabilities( staticRandom, new ArraySegment<double>( groupProbabilities, 0, shapes.Length ) );
+										shapeIndex = RandomUtility.GetRandomIndexByProbabilities( sceneRandom, new ArraySegment<double>( groupProbabilities, 0, shapes.Length ) );
 										//}
 									}
 									else
@@ -1417,7 +1419,7 @@ namespace NeoAxis
 
 									Vector3 position;
 									{
-										shape.PerformGetLocalPosition( staticRandom, out var localPosition );
+										shape.PerformGetLocalPosition( sceneRandom, out var localPosition );
 										if( !shapeTransform.IsIdentity )
 											Matrix4.Multiply( ref shapeTransform.ToMatrix4(), ref localPosition, out position );
 										else
@@ -1444,14 +1446,14 @@ namespace NeoAxis
 										{
 											var d = position - shapeTransform.Position;
 											while( d == Vector3.Zero )
-												d = new SphericalDirection( staticRandom.Next( Math.PI * 2 ), staticRandom.Next( -Math.PI / 2, Math.PI / 2 ) ).GetVector();
+												d = new SphericalDirection( sceneRandom.Next( Math.PI * 2 ), sceneRandom.Next( -Math.PI / 2, Math.PI / 2 ) ).GetVector();
 											direction = d.ToVector3F().GetNormalize();
 										}
 
-										var dispersionAngle = compiledEmitter.DispersionAngle.GenerateValue( staticRandom );
+										var dispersionAngle = compiledEmitter.DispersionAngle.GenerateValue( sceneRandom );
 										if( dispersionAngle != 0 )
 										{
-											var axisAngle = staticRandom.Next( MathEx.PI * 2 );
+											var axisAngle = sceneRandom.Next( MathEx.PI * 2 );
 
 											//!!!!slowly
 
@@ -1462,7 +1464,7 @@ namespace NeoAxis
 											direction = r.GetForward();
 										}
 
-										var speed = compiledEmitter.Speed.GenerateValue( staticRandom );
+										var speed = compiledEmitter.Speed.GenerateValue( sceneRandom );
 
 										if( currentParticleSystem.SimulationSpace == NeoAxis.ParticleSystem.SimulationSpaceEnum.World )
 											particle.LinearVelocity = trMatrix3F * ( direction.GetNormalize() * speed );
@@ -1492,7 +1494,7 @@ namespace NeoAxis
 											particle.Rotation = Matrix3F.Identity;
 
 										{
-											var rotation = compiledEmitter.Rotation.GenerateValue( staticRandom );
+											var rotation = compiledEmitter.Rotation.GenerateValue( sceneRandom );
 											if( rotation.X != 0 )
 											{
 												Matrix3F.FromRotateByX( MathEx.DegreeToRadian( rotation.X ), out var m );
@@ -1515,10 +1517,10 @@ namespace NeoAxis
 									}
 
 									//AngularVelocity
-									particle.AngularVelocity = compiledEmitter.AngularVelocity.GenerateValue( staticRandom );
+									particle.AngularVelocity = compiledEmitter.AngularVelocity.GenerateValue( sceneRandom );
 
 									//Color
-									compiledEmitter.Color.GenerateValue( staticRandom, out particle.StartColor );
+									compiledEmitter.Color.GenerateValue( sceneRandom, out particle.StartColor );
 									particle.Color = particle.StartColor;
 
 									//add

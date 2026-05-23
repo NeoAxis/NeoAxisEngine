@@ -55,6 +55,8 @@ namespace NeoAxis.OggVorbisTheora
 		public unsafe struct ov_callbacks
 		{
 #if WEB
+			qq qq;
+
 			public void* read_func;
 			public void* seek_func;
 			public void* close_func;
@@ -79,8 +81,7 @@ namespace NeoAxis.OggVorbisTheora
 		static extern int ov_clear( IntPtr vf );
 
 		[DllImport( library, CallingConvention = convention ), SuppressUnmanagedCodeSecurity]
-		static extern int ov_open_callbacks( IntPtr datasource, IntPtr vf,
-			IntPtr initial, int ibytes, ov_callbacks callbacks );
+		static extern int ov_open_callbacks( IntPtr datasource, IntPtr vf, IntPtr initial, int ibytes, ov_callbacks callbacks );
 
 		[DllImport( library, CallingConvention = convention ), SuppressUnmanagedCodeSecurity]
 		static extern long ov_pcm_total( IntPtr vf, int i );
@@ -89,8 +90,7 @@ namespace NeoAxis.OggVorbisTheora
 		static extern double ov_time_total( IntPtr vf, int i );
 
 		[DllImport( library, CallingConvention = convention ), SuppressUnmanagedCodeSecurity]
-		static extern int ov_read( IntPtr vf, IntPtr buffer, int length,
-			int bigendianp, int word, int sgned, IntPtr bitstream );
+		static extern int ov_read( IntPtr vf, IntPtr buffer, int length, int bigendianp, int word, int sgned, IntPtr bitstream );
 
 		[DllImport( library, CallingConvention = convention ), SuppressUnmanagedCodeSecurity]
 		static extern IntPtr/*vorbis_info**/ ov_info( IntPtr vf, int link );

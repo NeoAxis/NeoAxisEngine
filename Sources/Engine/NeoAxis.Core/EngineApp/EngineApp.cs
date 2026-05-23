@@ -1210,38 +1210,7 @@ namespace NeoAxis
 				//joysticks and special input devices
 				if( InitSettings.AllowJoysticksAndSpecialInputDevices && !InitSettings.AppServerMode )
 				{
-					InputDeviceManager instance = null;
-
-					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
-					{
-#if !ANDROID && !IOS && !WEB
-						instance = new WindowsInputDeviceManager( applicationWindowHandle );
-#endif
-					}
-					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
-					{
-#if !ANDROID && !IOS && !WEB && !UWP
-						instance = new MacOSInputDeviceManager( applicationWindowHandle );
-#endif
-					}
-					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
-					{
-#if UWP
-						instance = new UWPInputDeviceManager( applicationWindowHandle );
-#endif
-					}
-					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
-					{
-					}
-					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
-					{
-					}
-					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
-					{
-					}
-					else
-						Log.Fatal( "EngineApp: Init InputDeviceManager: Unknown platform." );
-
+					var instance = platform.CreateInputDeviceManager();
 					if( instance != null )
 					{
 						if( !InputDeviceManager.Init( instance, InputDeviceManager_InputEventHandler ) )
@@ -1252,8 +1221,7 @@ namespace NeoAxis
 				}
 
 				//DirectInput mouse device
-				// not implemented for UWP now.
-				if( ( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP ) && InitSettings.UseDirectInputForMouseRelativeMode && !InitSettings.AppServerMode )
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows && InitSettings.UseDirectInputForMouseRelativeMode && !InitSettings.AppServerMode )
 				{
 					if( !platform.InitDirectInputMouseDevice() )
 						InitSettings.UseDirectInputForMouseRelativeMode = false;
@@ -1383,18 +1351,32 @@ namespace NeoAxis
 		{
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
 			{
-				var clientDll = false;
-				//use Project.Client.dll on a client in network mode
-				if( SystemSettings.CommandLineParameters.TryGetValue( "-client", out var projectClient ) )
-					clientDll = true;
+				//var clientDll = false;
+				////use Project.Client.dll on a client in network mode
+				//if( SystemSettings.CommandLineParameters.TryGetValue( "-client", out var projectClient ) )
+				//	clientDll = true;
 
 				var projectName = "Project";
-				if( clientDll )
-					projectName += ".Client";
+				//if( clientDll )
+				//	projectName += ".Client";
 
 				var server = false;
 				if( SystemSettings.CommandLineParameters.TryGetValue( "-server", out var projectServer ) )
-					server = true;
+				{
+					bool.TryParse( projectServer, out server );
+					if( projectServer == "1" )
+						server = true;
+					//server = true;
+				}
+
+				var client = false;
+				if( SystemSettings.CommandLineParameters.TryGetValue( "-client", out var projectClient ) )
+				{
+					bool.TryParse( projectClient, out client );
+					if( projectClient == "1" )
+						client = true;
+					//client = true;
+				}
 
 				//check dotnet available
 				bool canCompile = true;
@@ -1408,8 +1390,10 @@ namespace NeoAxis
 						canCompile = false;
 
 					//the compilation on the client is disabled
-					if( clientDll )
+					if( client )
 						canCompile = false;
+					//if( clientDll )
+					//	canCompile = false;
 
 					if( server )
 						canCompile = false;
@@ -1423,7 +1407,7 @@ namespace NeoAxis
 					CSharpProjectFileUtility.CheckToRemoveNotExistsFilesFromProject();
 
 					if( InitSettings.ScriptingCompileProjectSolutionAtStartup )
-						CSharpProjectFileUtility.ClearAndCompileIfRequiredAtStart( clientDll );
+						CSharpProjectFileUtility.ClearAndCompileIfRequiredAtStart();// clientDll );
 				}
 
 				//load

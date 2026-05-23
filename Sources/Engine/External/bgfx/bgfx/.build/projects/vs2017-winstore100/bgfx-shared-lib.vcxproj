@@ -27,7 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{14C304D7-804E-729B-895F-F58FF569CE9B}</ProjectGuid>
+    <ProjectGuid>{08FF48B8-F92F-4154-ACAE-CBD51F24F913}</ProjectGuid>
     <RootNamespace>bgfx-shared-lib</RootNamespace>
     <DefaultLanguage>en-US</DefaultLanguage>
     <AppContainerApplication>true</AppContainerApplication>
@@ -112,8 +112,8 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\..\win64_vs2017-winstore100\bin\</OutDir>
-    <IntDir>..\..\win64_vs2017-winstore100\obj\x64\Debug\bgfx-shared-lib\</IntDir>
+    <OutDir>$(SolutionDir)_build\UWP\$(Configuration)\$(Platform)\$(MSBuildProjectName)\bin\</OutDir>
+    <IntDir>$(SolutionDir)_build\UWP\$(Configuration)\$(Platform)\$(MSBuildProjectName)\obj\</IntDir>
     <TargetName>bgfx-shared-libDebug</TargetName>
     <TargetExt>.dll</TargetExt>
     <IgnoreImportLibrary>false</IgnoreImportLibrary>
@@ -136,8 +136,8 @@
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\..\win64_vs2017-winstore100\bin\</OutDir>
-    <IntDir>..\..\win64_vs2017-winstore100\obj\x64\Release\bgfx-shared-lib\</IntDir>
+    <OutDir>$(SolutionDir)_build\UWP\$(Configuration)\$(Platform)\$(MSBuildProjectName)\bin\</OutDir>
+    <IntDir>$(SolutionDir)_build\UWP\$(Configuration)\$(Platform)\$(MSBuildProjectName)\obj\</IntDir>
     <TargetName>bgfx-shared-libRelease</TargetName>
     <TargetExt>.dll</TargetExt>
     <IgnoreImportLibrary>false</IgnoreImportLibrary>
@@ -230,7 +230,7 @@
     </Link>
     <PostBuildEvent>
       <Command>if not exist "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)" mkdir "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)"
-copy ..\..\win64_vs2017-winstore100\bin\bgfx-shared-libDebug.dll "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)\bgfx.dll"</Command>
+copy "$(SolutionDir)_build\UWP\$(Configuration)\$(Platform)\$(MSBuildProjectName)\bin\bgfx-shared-libDebug.dll" "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)\bgfx.dll"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>if EXIST "$(ProjectDir)..\vs2017\bgfx-shared-lib.vcxproj" ( if EXIST "$(ProjectDir)..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" ( "$(ProjectDir)..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -platformProjectPatch "$(ProjectDir)bgfx-shared-lib.vcxproj" -baseProject "$(ProjectDir)..\vs2017\bgfx-shared-lib.vcxproj" ) )</Command>
@@ -359,7 +359,7 @@ copy ..\..\win64_vs2017-winstore100\bin\bgfx-shared-libDebug.dll "..\..\..\..\..
     </Link>
     <PostBuildEvent>
       <Command>if not exist "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)" mkdir "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)"
-copy ..\..\win64_vs2017-winstore100\bin\bgfx-shared-libRelease.dll "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)\bgfx.dll"</Command>
+copy "$(SolutionDir)_build\UWP\$(Configuration)\$(Platform)\$(MSBuildProjectName)\bin\bgfx-shared-libRelease.dll" "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\UWP\$(Platform)\bgfx.dll"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>if EXIST "$(ProjectDir)..\vs2017\bgfx-shared-lib.vcxproj" ( if EXIST "$(ProjectDir)..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" ( "$(ProjectDir)..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe" -platformProjectPatch "$(ProjectDir)bgfx-shared-lib.vcxproj" -baseProject "$(ProjectDir)..\vs2017\bgfx-shared-lib.vcxproj" ) )</Command>

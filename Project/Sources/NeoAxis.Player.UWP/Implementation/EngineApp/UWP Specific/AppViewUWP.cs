@@ -11,7 +11,7 @@ using System.Diagnostics;
 namespace NeoAxis
 {
 	// The entry point for the app.
-	public class AppViewSourceUWP : IFrameworkViewSource
+	public partial class AppViewSourceUWP : IFrameworkViewSource
 	{
 		Action initCallback;
 		Action runCallback;
@@ -33,7 +33,7 @@ namespace NeoAxis
 	/// <summary>
 	/// The IFrameworkView connects the app with Windows and handles application lifecycle events.
 	/// </summary>
-	public class AppViewUWP : IFrameworkView
+	public partial class AppViewUWP : IFrameworkView
 	{
 		Action initCallback;
 		Action runCallback;

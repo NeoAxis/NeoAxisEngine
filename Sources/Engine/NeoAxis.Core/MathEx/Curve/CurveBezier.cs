@@ -14,12 +14,7 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe override void CalculateValueByTime( double time, out Vector3 result )
 		{
-#if UWP
-			//!!!!
-			fixed(double* bvals = new double[ points.Count ] )
-#else
 			fixed( double* bvals = points.Count < 128 ? stackalloc double[ points.Count ] : new double[ points.Count ] )
-#endif
 			{
 				Basis( points.Count, time, bvals, 0 );
 				result = bvals[ 0 ] * points[ 0 ].value;
@@ -53,12 +48,7 @@ namespace NeoAxis
 			double d;
 			Vector3 v;
 
-#if UWP
-			//!!!!
-			fixed( double* bvals = new double[ points.Count ] )
-#else
 			fixed( double* bvals = points.Count < 128 ? stackalloc double[ points.Count ] : new double[ points.Count ] )
-#endif
 			{
 				BasisFirstDerivative( points.Count, time, bvals, 0 );
 				v = bvals[ 0 ] * points[ 0 ].value;
@@ -81,12 +71,7 @@ namespace NeoAxis
 			if( d <= 0 )
 				return;
 
-#if UWP
-			//!!!!
-			fixed( double* c = new double[ d + 1 ] )
-#else
 			fixed( double* c = d < 1024 ? stackalloc double[ d + 1 ] : new double[ d + 1 ] )
-#endif
 			{
 				s = (double)( t - points[ 0 ].time ) / ( points[ points.Count - 1 ].time - points[ 0 ].time );
 				o = 1.0f - s;

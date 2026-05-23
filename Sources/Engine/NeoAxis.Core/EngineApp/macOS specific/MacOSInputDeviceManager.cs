@@ -31,7 +31,7 @@ namespace NeoAxis
 			this.windowHandle = windowHandle;
 		}
 
-		unsafe internal override bool OnInit()
+		unsafe protected override bool OnInit()
 		{
 			NativeUtility.PreloadLibrary( "NeoAxisCoreNative" );
 
@@ -59,7 +59,7 @@ namespace NeoAxis
 			return true;
 		}
 
-		internal unsafe override void OnShutdown()
+		protected unsafe override void OnShutdown()
 		{
 			//!!!!
 			//if( directInput != null )

@@ -179,12 +179,16 @@ namespace NeoAxis
 
 		static SystemSettings()
 		{
-#if ANDROID
-			platform = Platform.Android;
-#elif IOS
+			//#if ANDROID
+			//			platform = Platform.Android;
+			//#elif IOS
+#if IOS
 			platform = Platform.iOS;
-#elif UWP
-			platform = Platform.UWP;
+
+//initialized from PlatformFunctionality.SetInstance
+//#elif UWP
+//			platform = Platform.UWP;
+
 #elif WEB
 			platform = Platform.Web;
 #else
@@ -212,6 +216,14 @@ namespace NeoAxis
 			mobileDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS;
 
 			netRuntime = Type.GetType( "Mono.Runtime", false ) != null ? NetRuntimeType.Mono : NetRuntimeType.Net;
+		}
+
+		internal static void _SetPlatform( Platform platform )
+		{
+			SystemSettings.platform = platform;
+
+			limitedDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS || CurrentPlatform == Platform.Web;
+			mobileDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS;
 		}
 
 		public static Platform CurrentPlatform

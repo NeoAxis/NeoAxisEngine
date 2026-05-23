@@ -665,7 +665,6 @@ namespace NeoAxis.Networking
 			this.clientVersion = clientVersion;
 			this.loginData = loginData;
 
-#if !UWP
 			if( Disposed )
 				Log.Fatal( "NetworkClient: BeginConnect: The client is disposed." );
 			if( webSocketClient != null )
@@ -775,10 +774,6 @@ namespace NeoAxis.Networking
 
 			error = null;
 			return true;
-#else
-			error = "No network implementation for the platform.";
-			return false;
-#endif
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
@@ -1184,11 +1179,7 @@ namespace NeoAxis.Networking
 
 				try
 				{
-#if UWP
-					var text = Encoding.UTF8.GetString( buffer.ToArray() );
-#else
 					var text = Encoding.UTF8.GetString( buffer );
-#endif
 					if( text.Length > 1000 )
 						throw new Exception( "The system message is more than 1000 characters." );
 
@@ -1483,8 +1474,6 @@ namespace NeoAxis.Networking
 				}
 			}
 
-#if !UWP
-
 			//process received messages
 			while( receivedMessages.TryDequeue( out var message ) )
 			{
@@ -1611,8 +1600,6 @@ namespace NeoAxis.Networking
 
 			//send accumulated messages
 			ProcessAccumulatedMessagesToSend();
-
-#endif
 		}
 
 		protected virtual void OnConnectionStatusChanged()
@@ -1909,11 +1896,7 @@ namespace NeoAxis.Networking
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-#if UWP
-		static uint ChecksumAppend( byte[] data )
-#else
 		static uint ChecksumAppend( ReadOnlySpan<byte> data )
-#endif
 		{
 			unchecked
 			{

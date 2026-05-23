@@ -1,5 +1,6 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -46,7 +47,7 @@ namespace NeoAxis
 			}
 		}
 
-		public override string GetClipboardText()
+		public override async Task<string> GetClipboardTextAsync()
 		{
 			try
 			{

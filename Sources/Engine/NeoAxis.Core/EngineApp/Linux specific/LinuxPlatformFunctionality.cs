@@ -2649,6 +2649,20 @@ namespace Internal//NeoAxis
 			//}
 			//catch { }
 		}
+
+		public override InputDeviceManager CreateInputDeviceManager()
+		{
+
+			//!!!!
+
+
+			return null;
+
+			//if( EngineApp.CreatedInsideEngineWindow != null )
+			//return new LinuxInputDeviceManager( EngineApp.CreatedInsideEngineWindow.Handle );
+			//else
+			//return null;
+		}
 	}
 }
 #endif

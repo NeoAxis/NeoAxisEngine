@@ -12,8 +12,6 @@ namespace NeoAxis
 	[AddToResourcesWindow( @"Addons\Vehicle\Vehicle AI", 22005 )]
 	public class VehicleAI : AI
 	{
-		static FastRandom staticRandom = new FastRandom( 0 );
-
 		Weapon[] weaponsCache;
 		ObjectInSpace currentTarget;
 		float updateTargetRemainingTime;
@@ -285,11 +283,13 @@ namespace NeoAxis
 				if( EnabledInHierarchyAndIsInstance )
 					scene.GetRenderSceneData += Scene_GetRenderSceneData;
 				else
-					scene.GetRenderSceneData += Scene_GetRenderSceneData;
+					scene.GetRenderSceneData -= Scene_GetRenderSceneData;
 			}
 
-			updateTargetRemainingTime = staticRandom.Next( 1.0f );
-			updateTasksRemainingTime = staticRandom.Next( 1.0f );
+			var random = Scene.GetRandomGuaranteed( scene );
+
+			updateTargetRemainingTime = random.Next( 1.0f );
+			updateTasksRemainingTime = random.Next( 1.0f );
 		}
 
 		private void Scene_GetRenderSceneData( Scene scene, ViewportRenderingContext context )
@@ -546,6 +546,8 @@ namespace NeoAxis
 		[MethodImpl( (MethodImplOptions)512 )]
 		void SimulationStepCombatMode( Vehicle thisObject )
 		{
+			var random = Scene.GetRandomGuaranteed( thisObject.ParentScene );
+
 			if( weaponsCache == null )
 				weaponsCache = thisObject.GetComponents<Weapon>( checkChildren: true, onlyEnabledInHierarchy: true );
 
@@ -557,7 +559,7 @@ namespace NeoAxis
 					if( updateTargetRemainingTime <= 0 )
 					{
 						UpdateCurrentTarget( thisObject );
-						updateTargetRemainingTime += 1.0f + staticRandom.Next( 0.1f );
+						updateTargetRemainingTime += 1.0f + random.Next( 0.1f );
 					}
 
 					//reset when target not exists
@@ -597,7 +599,7 @@ namespace NeoAxis
 						else
 							ClearTaskQueue();
 
-						updateTasksRemainingTime += 1.0f + staticRandom.Next( 0.1f );
+						updateTasksRemainingTime += 1.0f + random.Next( 0.1f );
 					}
 				}
 

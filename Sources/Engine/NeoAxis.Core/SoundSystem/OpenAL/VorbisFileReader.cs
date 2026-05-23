@@ -29,6 +29,9 @@ namespace OpenALSoundSystem
 			streamGCHandle = GCHandle.Alloc( stream );
 
 #if WEB
+
+			qq qq;
+
 			callbacks.read_func = (delegate* unmanaged[Cdecl]< IntPtr, uint, uint, IntPtr, uint >)&Vorbis_read_func;
 			callbacks.seek_func = (delegate* unmanaged[Cdecl]< IntPtr, long, int, int >)&Vorbis_seek_func;
 			callbacks.tell_func = (delegate* unmanaged[Cdecl]< IntPtr, int >)&Vorbis_tell_func;
@@ -69,6 +72,8 @@ namespace OpenALSoundSystem
 		}
 
 #if WEB
+		qq qq;
+
 		[UnmanagedCallersOnly( CallConvs = new[] { typeof( CallConvCdecl ) } )]
 #endif
 		static uint Vorbis_read_func( IntPtr ptr, uint size, uint nmemb, IntPtr datasource )
@@ -80,6 +85,8 @@ namespace OpenALSoundSystem
 		}
 
 #if WEB
+		qq qq;
+
 		[UnmanagedCallersOnly( CallConvs = new[] { typeof( CallConvCdecl ) } )]
 #endif
 		static int Vorbis_seek_func( IntPtr datasource, long offset, int whence )
@@ -116,6 +123,8 @@ namespace OpenALSoundSystem
 		//}
 
 #if WEB
+		qq qq;
+
 		[UnmanagedCallersOnly( CallConvs = new[] { typeof( CallConvCdecl ) } )]
 #endif
 		static int Vorbis_tell_func( IntPtr datasource )

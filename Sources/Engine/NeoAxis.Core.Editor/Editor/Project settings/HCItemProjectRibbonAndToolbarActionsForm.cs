@@ -55,6 +55,5 @@ namespace NeoAxis.Editor
 				}
 			}
 		}
-
 	}
 }

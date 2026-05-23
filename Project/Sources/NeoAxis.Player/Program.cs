@@ -8,17 +8,17 @@ using System.IO;
 namespace NeoAxis.Player
 {
 	/// <summary>
-	/// Defines an input point in the application.
+	/// Defines a common code of the player application.
 	/// </summary>
-	public static class Program
+	public static class PlayerApp
 	{
-		public static bool needRestartApplication;
+		public static bool NeedRestartApplication;
 
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
-		static void Main()
+		public static void Main()
 		{
 			if( Debugger.IsAttached )
 			{
@@ -71,10 +71,10 @@ namespace NeoAxis.Player
 			//init engine application
 			EngineApp.Init();
 
-			EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Maximized;
-			//EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Normal;
-			//var screenSize = EngineApp.GetScreenSize().ToVector2();
-			//EngineApp.InitSettings.CreateWindowSize = new Vec2( screenSize.X * 0.85, screenSize.Y * 0.9 ).ToVec2I();
+			//EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Maximized;
+			////EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Normal;
+			////var screenSize = EngineApp.GetScreenSize().ToVector2();
+			////EngineApp.InitSettings.CreateWindowSize = new Vec2( screenSize.X * 0.85, screenSize.Y * 0.9 ).ToVec2I();
 
 			//create and run application loop.
 			if( EngineApp.Create() )
@@ -83,20 +83,35 @@ namespace NeoAxis.Player
 				var iconFilePath = Path.Combine( VirtualFileSystem.Directories.EngineInternal, "App.ico" );
 				if( File.Exists( iconFilePath ) )
 					EngineApp.CreatedInsideEngineWindow.IconFilePath = iconFilePath;
-				//EngineApp.CreatedInsideEngineWindow.Icon = NeoAxis.Player.Properties.Resources.Logo;
 
+				//run application
 				EngineApp.Run();
 			}
 
+			//shutdown engine application
 			EngineApp.Shutdown();
-
 			Log.DumpToFile( "Program END\r\n" );
-
 			VirtualFileSystem.Shutdown();
 
-			//restart app
-			if( needRestartApplication )
+			//restart application if needed
+			if( NeedRestartApplication )
 				Process.Start( new ProcessStartInfo( Assembly.GetExecutingAssembly().Location, "" ) { UseShellExecute = true } );
 		}
 	}
+
+
+	///// <summary>
+	///// Defines an input point in the application.
+	///// </summary>
+	//static class Program
+	//{
+	//	/// <summary>
+	//	/// The main entry point for the application.
+	//	/// </summary>
+	//	[STAThread]
+	//	static void Main()
+	//	{
+	//		PlayerApp.Main();
+	//	}
+	//}
 }

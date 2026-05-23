@@ -13,8 +13,6 @@ namespace NeoAxis
 	[Editor.SettingsCell( typeof( Editor.CharacterSettingsCell ), true )]
 	public class Character : MeshInSpace, IProcessDamage, InteractiveObjectInterface, MeshInSpaceAnimationController.IParentAnimationTriggerProcess
 	{
-		static FastRandom staticRandom = new FastRandom( 0 );
-
 		CharacterType typeCached = new CharacterType();
 		int typeCachedVersion;
 
@@ -1542,7 +1540,7 @@ namespace NeoAxis
 
 						var bTotal = realBounds;
 						var b2 = new Bounds( trPosition );
-						b2.Add( trPosition + PhysicalBody.LinearVelocity * ( 2.0f + staticRandom.NextFloat() ) );
+						b2.Add( trPosition + PhysicalBody.LinearVelocity * ( 2.0f + Scene.GetRandomGuaranteed( ParentScene ).NextFloat() ) );
 						b2.Expand( newBounds.BoundingSphere.Radius * 1.1 );
 						bTotal.Add( ref b2 );
 

@@ -28,269 +28,254 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.kryptonSplitContainer1 = new Internal.ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
-			this.contentBrowserAll = new NeoAxis.Editor.ContentBrowser();
-			this.kryptonSplitContainer2 = new Internal.ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
-			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-			this.toolStripButtonEnabled = new System.Windows.Forms.ToolStripButton();
-			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-			this.toolStripButtonNewGroup = new System.Windows.Forms.ToolStripButton();
-			this.toolStripButtonAdd = new System.Windows.Forms.ToolStripButton();
-			this.toolStripButtonDelete = new System.Windows.Forms.ToolStripButton();
-			this.toolStripButtonRename = new System.Windows.Forms.ToolStripButton();
-			this.toolStripButtonMoveUp = new System.Windows.Forms.ToolStripButton();
-			this.toolStripButtonMoveDown = new System.Windows.Forms.ToolStripButton();
-			this.contentBrowserProject = new NeoAxis.Editor.ContentBrowser();
-			this.kryptonButtonReset = new Internal.ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.kryptonLabel1 = new Internal.ComponentFactory.Krypton.Toolkit.KryptonLabel();
-			this.kryptonLabel2 = new Internal.ComponentFactory.Krypton.Toolkit.KryptonLabel();
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer1)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer1.Panel1)).BeginInit();
-			this.kryptonSplitContainer1.Panel1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer1.Panel2)).BeginInit();
-			this.kryptonSplitContainer1.Panel2.SuspendLayout();
-			this.kryptonSplitContainer1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer2)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer2.Panel1)).BeginInit();
-			this.kryptonSplitContainer2.Panel1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer2.Panel2)).BeginInit();
-			this.kryptonSplitContainer2.Panel2.SuspendLayout();
-			this.kryptonSplitContainer2.SuspendLayout();
-			this.toolStrip1.SuspendLayout();
-			this.SuspendLayout();
+			kryptonSplitContainer1 = new Internal.ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
+			contentBrowserAll = new ContentBrowser();
+			kryptonSplitContainer2 = new Internal.ComponentFactory.Krypton.Toolkit.KryptonSplitContainer();
+			toolStrip1 = new System.Windows.Forms.ToolStrip();
+			toolStripButtonEnabled = new System.Windows.Forms.ToolStripButton();
+			toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			toolStripButtonNewGroup = new System.Windows.Forms.ToolStripButton();
+			toolStripButtonAdd = new System.Windows.Forms.ToolStripButton();
+			toolStripButtonDelete = new System.Windows.Forms.ToolStripButton();
+			toolStripButtonRename = new System.Windows.Forms.ToolStripButton();
+			toolStripButtonMoveUp = new System.Windows.Forms.ToolStripButton();
+			toolStripButtonMoveDown = new System.Windows.Forms.ToolStripButton();
+			contentBrowserProject = new ContentBrowser();
+			kryptonButtonReset = new Internal.ComponentFactory.Krypton.Toolkit.KryptonButton();
+			kryptonLabel1 = new Internal.ComponentFactory.Krypton.Toolkit.KryptonLabel();
+			kryptonLabel2 = new Internal.ComponentFactory.Krypton.Toolkit.KryptonLabel();
+			( (System.ComponentModel.ISupportInitialize)kryptonSplitContainer1 ).BeginInit();
+			( kryptonSplitContainer1.Panel1 ).BeginInit();
+			kryptonSplitContainer1.Panel1.SuspendLayout();
+			( kryptonSplitContainer1.Panel2 ).BeginInit();
+			kryptonSplitContainer1.Panel2.SuspendLayout();
+			( (System.ComponentModel.ISupportInitialize)kryptonSplitContainer2 ).BeginInit();
+			( kryptonSplitContainer2.Panel1 ).BeginInit();
+			kryptonSplitContainer2.Panel1.SuspendLayout();
+			( kryptonSplitContainer2.Panel2 ).BeginInit();
+			kryptonSplitContainer2.Panel2.SuspendLayout();
+			toolStrip1.SuspendLayout();
+			SuspendLayout();
 			// 
 			// kryptonSplitContainer1
 			// 
-			this.kryptonSplitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.kryptonSplitContainer1.Cursor = System.Windows.Forms.Cursors.Default;
-			this.kryptonSplitContainer1.Location = new System.Drawing.Point(2, 24);
-			this.kryptonSplitContainer1.Margin = new System.Windows.Forms.Padding(2);
-			this.kryptonSplitContainer1.Name = "kryptonSplitContainer1";
+			kryptonSplitContainer1.Anchor =   System.Windows.Forms.AnchorStyles.Top  |  System.Windows.Forms.AnchorStyles.Left   |  System.Windows.Forms.AnchorStyles.Right ;
+			kryptonSplitContainer1.Location = new System.Drawing.Point( 3, 28 );
+			kryptonSplitContainer1.Margin = new System.Windows.Forms.Padding( 3, 4, 3, 4 );
+			kryptonSplitContainer1.Name = "kryptonSplitContainer1";
 			// 
-			// kryptonSplitContainer1.Panel1
 			// 
-			this.kryptonSplitContainer1.Panel1.Controls.Add(this.contentBrowserAll);
 			// 
-			// kryptonSplitContainer1.Panel2
+			kryptonSplitContainer1.Panel1.Controls.Add( contentBrowserAll );
 			// 
-			this.kryptonSplitContainer1.Panel2.Controls.Add(this.kryptonSplitContainer2);
-			this.kryptonSplitContainer1.Size = new System.Drawing.Size(452, 411);
-			this.kryptonSplitContainer1.SplitterDistance = 226;
-			this.kryptonSplitContainer1.SplitterPercent = 0.5D;
-			this.kryptonSplitContainer1.TabIndex = 4;
+			// 
+			// 
+			kryptonSplitContainer1.Panel2.Controls.Add( kryptonSplitContainer2 );
+			kryptonSplitContainer1.Size = new System.Drawing.Size( 602, 632 );
+			kryptonSplitContainer1.SplitterDistance = 301;
+			kryptonSplitContainer1.SplitterPercent = 0.5D;
+			kryptonSplitContainer1.TabIndex = 4;
 			// 
 			// contentBrowserAll
 			// 
-			this.contentBrowserAll.CanSelectObjectSettings = false;
-			this.contentBrowserAll.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.contentBrowserAll.FilteringMode = null;
-			this.contentBrowserAll.ListViewModeOverride = null;
-			this.contentBrowserAll.Location = new System.Drawing.Point(0, 0);
-			this.contentBrowserAll.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-			this.contentBrowserAll.Mode = NeoAxis.Editor.ContentBrowser.ModeEnum.Resources;
-			this.contentBrowserAll.Name = "contentBrowserAll";
-			this.contentBrowserAll.ReadOnlyHierarchy = false;
-			this.contentBrowserAll.ShowToolBar = false;
-			this.contentBrowserAll.Size = new System.Drawing.Size(226, 411);
-			this.contentBrowserAll.TabIndex = 3;
-			this.contentBrowserAll.ThisIsSettingsWindow = false;
+			contentBrowserAll.Dock = System.Windows.Forms.DockStyle.Fill;
+			contentBrowserAll.FilteringMode = null;
+			contentBrowserAll.Font = new System.Drawing.Font( "Microsoft Sans Serif", 8F );
+			contentBrowserAll.ListViewModeOverride = null;
+			contentBrowserAll.Location = new System.Drawing.Point( 0, 0 );
+			contentBrowserAll.Margin = new System.Windows.Forms.Padding( 4, 5, 4, 5 );
+			contentBrowserAll.Mode = ContentBrowser.ModeEnum.Resources;
+			contentBrowserAll.Name = "contentBrowserAll";
+			contentBrowserAll.ReadOnlyHierarchy = false;
+			contentBrowserAll.ShowToolBar = false;
+			contentBrowserAll.Size = new System.Drawing.Size( 301, 632 );
+			contentBrowserAll.TabIndex = 3;
+			contentBrowserAll.ThisIsSettingsWindow = false;
 			// 
 			// kryptonSplitContainer2
 			// 
-			this.kryptonSplitContainer2.Cursor = System.Windows.Forms.Cursors.Default;
-			this.kryptonSplitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.kryptonSplitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-			this.kryptonSplitContainer2.IsSplitterFixed = true;
-			this.kryptonSplitContainer2.Location = new System.Drawing.Point(0, 0);
-			this.kryptonSplitContainer2.Name = "kryptonSplitContainer2";
-			this.kryptonSplitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+			kryptonSplitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+			kryptonSplitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+			kryptonSplitContainer2.IsSplitterFixed = true;
+			kryptonSplitContainer2.Location = new System.Drawing.Point( 0, 0 );
+			kryptonSplitContainer2.Margin = new System.Windows.Forms.Padding( 3, 4, 3, 4 );
+			kryptonSplitContainer2.Name = "kryptonSplitContainer2";
+			kryptonSplitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
-			// kryptonSplitContainer2.Panel1
 			// 
-			this.kryptonSplitContainer2.Panel1.Controls.Add(this.toolStrip1);
-			this.kryptonSplitContainer2.Panel1MinSize = 10;
 			// 
-			// kryptonSplitContainer2.Panel2
+			kryptonSplitContainer2.Panel1.Controls.Add( toolStrip1 );
+			kryptonSplitContainer2.Panel1MinSize = 10;
 			// 
-			this.kryptonSplitContainer2.Panel2.Controls.Add(this.contentBrowserProject);
-			this.kryptonSplitContainer2.Size = new System.Drawing.Size(221, 411);
-			this.kryptonSplitContainer2.SplitterDistance = 24;
-			this.kryptonSplitContainer2.SplitterPercent = 0.058394160583941604D;
-			this.kryptonSplitContainer2.SplitterWidth = 0;
-			this.kryptonSplitContainer2.TabIndex = 6;
+			// 
+			// 
+			kryptonSplitContainer2.Panel2.Controls.Add( contentBrowserProject );
+			kryptonSplitContainer2.Size = new System.Drawing.Size( 296, 632 );
+			kryptonSplitContainer2.SplitterDistance = 24;
+			kryptonSplitContainer2.SplitterPercent = 0.0379746835443038D;
+			kryptonSplitContainer2.SplitterWidth = 0;
+			kryptonSplitContainer2.TabIndex = 6;
 			// 
 			// toolStrip1
 			// 
-			this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButtonEnabled,
-            this.toolStripSeparator1,
-            this.toolStripButtonNewGroup,
-            this.toolStripButtonAdd,
-            this.toolStripButtonDelete,
-            this.toolStripButtonRename,
-            this.toolStripButtonMoveUp,
-            this.toolStripButtonMoveDown});
-			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-			this.toolStrip1.Padding = new System.Windows.Forms.Padding( 1, 1, 1, 1 );
-			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.AutoSize = false;
-			this.toolStrip1.Size = new System.Drawing.Size(221, 26);
-			this.toolStrip1.TabIndex = 5;
-			this.toolStrip1.Text = "toolStrip1";
+			toolStrip1.AutoSize = false;
+			toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			toolStrip1.ImageScalingSize = new System.Drawing.Size( 20, 20 );
+			toolStrip1.Items.AddRange( new System.Windows.Forms.ToolStripItem[] { toolStripButtonEnabled, toolStripSeparator1, toolStripButtonNewGroup, toolStripButtonAdd, toolStripButtonDelete, toolStripButtonRename, toolStripButtonMoveUp, toolStripButtonMoveDown } );
+			toolStrip1.Location = new System.Drawing.Point( 0, 0 );
+			toolStrip1.Name = "toolStrip1";
+			toolStrip1.Padding = new System.Windows.Forms.Padding( 1 );
+			toolStrip1.Size = new System.Drawing.Size( 296, 32 );
+			toolStrip1.TabIndex = 5;
+			toolStrip1.Text = "toolStrip1";
 			// 
 			// toolStripButtonEnabled
 			// 
-			this.toolStripButtonEnabled.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButtonEnabled.Image = global::NeoAxis.Editor.Properties.Resources.Checked_16;
-			this.toolStripButtonEnabled.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-			this.toolStripButtonEnabled.Name = "toolStripButtonEnabled";
-			this.toolStripButtonEnabled.AutoSize = false;
-			this.toolStripButtonEnabled.Size = new System.Drawing.Size(23, 22);
-			this.toolStripButtonEnabled.Text = "Enabled";
+			toolStripButtonEnabled.AutoSize = false;
+			toolStripButtonEnabled.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			toolStripButtonEnabled.Image = Properties.Resources.Checked_16;
+			toolStripButtonEnabled.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+			toolStripButtonEnabled.Name = "toolStripButtonEnabled";
+			toolStripButtonEnabled.Size = new System.Drawing.Size( 23, 22 );
+			toolStripButtonEnabled.Text = "Enabled";
 			// 
 			// toolStripSeparator1
 			// 
-			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+			toolStripSeparator1.Name = "toolStripSeparator1";
+			toolStripSeparator1.Size = new System.Drawing.Size( 6, 30 );
 			// 
 			// toolStripButtonNewGroup
 			// 
-			this.toolStripButtonNewGroup.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButtonNewGroup.Image = global::NeoAxis.Editor.Properties.Resources.NewFolder_16;
-			this.toolStripButtonNewGroup.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-			this.toolStripButtonNewGroup.Name = "toolStripButtonNewGroup";
-			this.toolStripButtonNewGroup.AutoSize = false;
-			this.toolStripButtonNewGroup.Size = new System.Drawing.Size(23, 22);
-			this.toolStripButtonNewGroup.Text = "New Group";
+			toolStripButtonNewGroup.AutoSize = false;
+			toolStripButtonNewGroup.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			toolStripButtonNewGroup.Image = Properties.Resources.NewFolder_16;
+			toolStripButtonNewGroup.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+			toolStripButtonNewGroup.Name = "toolStripButtonNewGroup";
+			toolStripButtonNewGroup.Size = new System.Drawing.Size( 23, 22 );
+			toolStripButtonNewGroup.Text = "New Group";
 			// 
 			// toolStripButtonAdd
 			// 
-			this.toolStripButtonAdd.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButtonAdd.Image = global::NeoAxis.Editor.Properties.Resources.Add_16;
-			this.toolStripButtonAdd.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-			this.toolStripButtonAdd.Name = "toolStripButtonAdd";
-			this.toolStripButtonAdd.AutoSize = false;
-			this.toolStripButtonAdd.Size = new System.Drawing.Size(23, 22);
-			this.toolStripButtonAdd.Text = "Add";
+			toolStripButtonAdd.AutoSize = false;
+			toolStripButtonAdd.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			toolStripButtonAdd.Image = Properties.Resources.Add_16;
+			toolStripButtonAdd.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+			toolStripButtonAdd.Name = "toolStripButtonAdd";
+			toolStripButtonAdd.Size = new System.Drawing.Size( 23, 22 );
+			toolStripButtonAdd.Text = "Add";
 			// 
 			// toolStripButtonDelete
 			// 
-			this.toolStripButtonDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButtonDelete.Image = global::NeoAxis.Editor.Properties.Resources.Delete_16;
-			this.toolStripButtonDelete.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-			this.toolStripButtonDelete.Name = "toolStripButtonDelete";
-			this.toolStripButtonDelete.AutoSize = false;
-			this.toolStripButtonDelete.Size = new System.Drawing.Size(23, 22);
-			this.toolStripButtonDelete.Text = "Delete";
+			toolStripButtonDelete.AutoSize = false;
+			toolStripButtonDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			toolStripButtonDelete.Image = Properties.Resources.Delete_16;
+			toolStripButtonDelete.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+			toolStripButtonDelete.Name = "toolStripButtonDelete";
+			toolStripButtonDelete.Size = new System.Drawing.Size( 23, 22 );
+			toolStripButtonDelete.Text = "Delete";
 			// 
 			// toolStripButtonRename
 			// 
-			this.toolStripButtonRename.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButtonRename.Image = global::NeoAxis.Editor.Properties.Resources.Rename_16x;
-			this.toolStripButtonRename.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-			this.toolStripButtonRename.Name = "toolStripButtonRename";
-			this.toolStripButtonRename.AutoSize = false;
-			this.toolStripButtonRename.Size = new System.Drawing.Size(23, 22);
-			this.toolStripButtonRename.Text = "Rename";
+			toolStripButtonRename.AutoSize = false;
+			toolStripButtonRename.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			toolStripButtonRename.Image = Properties.Resources.Rename_16x;
+			toolStripButtonRename.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+			toolStripButtonRename.Name = "toolStripButtonRename";
+			toolStripButtonRename.Size = new System.Drawing.Size( 23, 22 );
+			toolStripButtonRename.Text = "Rename";
 			// 
 			// toolStripButtonMoveUp
 			// 
-			this.toolStripButtonMoveUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButtonMoveUp.Image = global::NeoAxis.Editor.Properties.Resources.MoveUp_16;
-			this.toolStripButtonMoveUp.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-			this.toolStripButtonMoveUp.Name = "toolStripButtonMoveUp";
-			this.toolStripButtonMoveUp.AutoSize = false;
-			this.toolStripButtonMoveUp.Size = new System.Drawing.Size(23, 22);
-			this.toolStripButtonMoveUp.Text = "Move Up";
+			toolStripButtonMoveUp.AutoSize = false;
+			toolStripButtonMoveUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			toolStripButtonMoveUp.Image = Properties.Resources.MoveUp_16;
+			toolStripButtonMoveUp.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+			toolStripButtonMoveUp.Name = "toolStripButtonMoveUp";
+			toolStripButtonMoveUp.Size = new System.Drawing.Size( 23, 22 );
+			toolStripButtonMoveUp.Text = "Move Up";
 			// 
 			// toolStripButtonMoveDown
 			// 
-			this.toolStripButtonMoveDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.toolStripButtonMoveDown.Image = global::NeoAxis.Editor.Properties.Resources.MoveDown_16;
-			this.toolStripButtonMoveDown.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-			this.toolStripButtonMoveDown.Name = "toolStripButtonMoveDown";
-			this.toolStripButtonMoveDown.AutoSize = false;
-			this.toolStripButtonMoveDown.Size = new System.Drawing.Size(23, 22);
-			this.toolStripButtonMoveDown.Text = "Move Down";
+			toolStripButtonMoveDown.AutoSize = false;
+			toolStripButtonMoveDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			toolStripButtonMoveDown.Image = Properties.Resources.MoveDown_16;
+			toolStripButtonMoveDown.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+			toolStripButtonMoveDown.Name = "toolStripButtonMoveDown";
+			toolStripButtonMoveDown.Size = new System.Drawing.Size( 23, 22 );
+			toolStripButtonMoveDown.Text = "Move Down";
 			// 
 			// contentBrowserProject
 			// 
-			this.contentBrowserProject.CanSelectObjectSettings = false;
-			this.contentBrowserProject.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.contentBrowserProject.FilteringMode = null;
-			this.contentBrowserProject.ListViewModeOverride = null;
-			this.contentBrowserProject.Location = new System.Drawing.Point(0, 0);
-			this.contentBrowserProject.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-			this.contentBrowserProject.Mode = NeoAxis.Editor.ContentBrowser.ModeEnum.Resources;
-			this.contentBrowserProject.MultiSelect = true;
-			this.contentBrowserProject.Name = "contentBrowserProject";
-			this.contentBrowserProject.ReadOnlyHierarchy = false;
-			this.contentBrowserProject.ShowToolBar = false;
-			this.contentBrowserProject.Size = new System.Drawing.Size(221, 387);
-			this.contentBrowserProject.TabIndex = 4;
-			this.contentBrowserProject.ThisIsSettingsWindow = false;
+			contentBrowserProject.Dock = System.Windows.Forms.DockStyle.Fill;
+			contentBrowserProject.FilteringMode = null;
+			contentBrowserProject.Font = new System.Drawing.Font( "Microsoft Sans Serif", 8F );
+			contentBrowserProject.ListViewModeOverride = null;
+			contentBrowserProject.Location = new System.Drawing.Point( 0, 0 );
+			contentBrowserProject.Margin = new System.Windows.Forms.Padding( 2 );
+			contentBrowserProject.Mode = ContentBrowser.ModeEnum.Resources;
+			contentBrowserProject.MultiSelect = true;
+			contentBrowserProject.Name = "contentBrowserProject";
+			contentBrowserProject.ReadOnlyHierarchy = false;
+			contentBrowserProject.ShowToolBar = false;
+			contentBrowserProject.Size = new System.Drawing.Size( 296, 608 );
+			contentBrowserProject.TabIndex = 4;
+			contentBrowserProject.ThisIsSettingsWindow = false;
 			// 
 			// kryptonButtonReset
 			// 
-			this.kryptonButtonReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.kryptonButtonReset.Location = new System.Drawing.Point(2, 441);
-			this.kryptonButtonReset.Margin = new System.Windows.Forms.Padding(2);
-			this.kryptonButtonReset.Name = "kryptonButtonReset";
-			this.kryptonButtonReset.Size = new System.Drawing.Size(110, 26);
-			this.kryptonButtonReset.TabIndex = 5;
-			this.kryptonButtonReset.Values.Text = "Reset to Default";
+			kryptonButtonReset.Anchor =  System.Windows.Forms.AnchorStyles.Bottom  |  System.Windows.Forms.AnchorStyles.Left ;
+			kryptonButtonReset.Location = new System.Drawing.Point( 3, 669 );
+			kryptonButtonReset.Margin = new System.Windows.Forms.Padding( 2 );
+			kryptonButtonReset.Name = "kryptonButtonReset";
+			kryptonButtonReset.Size = new System.Drawing.Size( 147, 32 );
+			kryptonButtonReset.TabIndex = 5;
+			kryptonButtonReset.Values.Text = "Reset to Default";
 			// 
 			// kryptonLabel1
 			// 
-			this.kryptonLabel1.Location = new System.Drawing.Point(0, 3);
-			this.kryptonLabel1.Margin = new System.Windows.Forms.Padding(2);
-			this.kryptonLabel1.Name = "kryptonLabel1";
-			this.kryptonLabel1.Size = new System.Drawing.Size(62, 16);
-			this.kryptonLabel1.TabIndex = 6;
-			this.kryptonLabel1.Values.Text = "All actions";
+			kryptonLabel1.Location = new System.Drawing.Point( 0, 5 );
+			kryptonLabel1.Margin = new System.Windows.Forms.Padding( 3, 4, 3, 4 );
+			kryptonLabel1.Name = "kryptonLabel1";
+			kryptonLabel1.Size = new System.Drawing.Size( 75, 19 );
+			kryptonLabel1.TabIndex = 6;
+			kryptonLabel1.Values.Text = "All actions";
 			// 
 			// kryptonLabel2
 			// 
-			this.kryptonLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.kryptonLabel2.Location = new System.Drawing.Point(342, 3);
-			this.kryptonLabel2.Margin = new System.Windows.Forms.Padding(2);
-			this.kryptonLabel2.Name = "kryptonLabel2";
-			this.kryptonLabel2.Size = new System.Drawing.Size(112, 16);
-			this.kryptonLabel2.TabIndex = 7;
-			this.kryptonLabel2.Values.Text = "Current configuration";
+			kryptonLabel2.Anchor =  System.Windows.Forms.AnchorStyles.Top  |  System.Windows.Forms.AnchorStyles.Right ;
+			kryptonLabel2.Location = new System.Drawing.Point( 466, 4 );
+			kryptonLabel2.Margin = new System.Windows.Forms.Padding( 2 );
+			kryptonLabel2.Name = "kryptonLabel2";
+			kryptonLabel2.Size = new System.Drawing.Size( 135, 19 );
+			kryptonLabel2.TabIndex = 7;
+			kryptonLabel2.Values.Text = "Current configuration";
 			// 
 			// HCItemProjectRibbonAndToolbarActionsForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.kryptonLabel2);
-			this.Controls.Add(this.kryptonLabel1);
-			this.Controls.Add(this.kryptonButtonReset);
-			this.Controls.Add(this.kryptonSplitContainer1);
-			this.Margin = new System.Windows.Forms.Padding(2);
-			this.Name = "HCItemProjectRibbonAndToolbarActionsForm";
-			this.Size = new System.Drawing.Size(456, 470);
-			this.Load += new System.EventHandler( this.HCItemProjectRibbonAndToolbarActionsForm_Load );
-			( (System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer1.Panel1)).EndInit();
-			this.kryptonSplitContainer1.Panel1.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer1.Panel2)).EndInit();
-			this.kryptonSplitContainer1.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer1)).EndInit();
-			this.kryptonSplitContainer1.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer2.Panel1)).EndInit();
-			this.kryptonSplitContainer2.Panel1.ResumeLayout(false);
-			this.kryptonSplitContainer2.Panel1.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer2.Panel2)).EndInit();
-			this.kryptonSplitContainer2.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.kryptonSplitContainer2)).EndInit();
-			this.kryptonSplitContainer2.ResumeLayout(false);
-			this.toolStrip1.ResumeLayout(false);
-			this.toolStrip1.PerformLayout();
-			this.ResumeLayout(false);
-			this.PerformLayout();
+			AutoScaleDimensions = new System.Drawing.SizeF( 8F, 20F );
+			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			Controls.Add( kryptonLabel2 );
+			Controls.Add( kryptonLabel1 );
+			Controls.Add( kryptonButtonReset );
+			Controls.Add( kryptonSplitContainer1 );
+			Margin = new System.Windows.Forms.Padding( 3, 2, 3, 2 );
+			Name = "HCItemProjectRibbonAndToolbarActionsForm";
+			Size = new System.Drawing.Size( 608, 722 );
+			Load +=  HCItemProjectRibbonAndToolbarActionsForm_Load ;
+			( kryptonSplitContainer1.Panel1 ).EndInit();
+			kryptonSplitContainer1.Panel1.ResumeLayout( false );
+			( kryptonSplitContainer1.Panel2 ).EndInit();
+			kryptonSplitContainer1.Panel2.ResumeLayout( false );
+			( (System.ComponentModel.ISupportInitialize)kryptonSplitContainer1 ).EndInit();
+			( kryptonSplitContainer2.Panel1 ).EndInit();
+			kryptonSplitContainer2.Panel1.ResumeLayout( false );
+			( kryptonSplitContainer2.Panel2 ).EndInit();
+			kryptonSplitContainer2.Panel2.ResumeLayout( false );
+			( (System.ComponentModel.ISupportInitialize)kryptonSplitContainer2 ).EndInit();
+			toolStrip1.ResumeLayout( false );
+			toolStrip1.PerformLayout();
+			ResumeLayout( false );
+			PerformLayout();
 
 		}
 

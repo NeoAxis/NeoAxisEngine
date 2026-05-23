@@ -79,8 +79,8 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\..\..\..\..\..\..\..\_build\Win64\bgfx\bin\</OutDir>
-    <IntDir>..\..\..\..\..\..\..\..\_build\Win64\bgfx\obj\x64\Debug\bgfx-shared-lib\</IntDir>
+    <OutDir>..\..\..\..\..\..\..\..\_build\Windows\$(Configuration)\$(Platform)\bgfx\bin\</OutDir>
+    <IntDir>..\..\..\..\..\..\..\..\_build\Windows\$(Configuration)\$(Platform)\bgfx\obj\x64\Debug\bgfx-shared-lib\</IntDir>
     <TargetName>bgfx-shared-libDebug</TargetName>
     <TargetExt>.dll</TargetExt>
     <IgnoreImportLibrary>false</IgnoreImportLibrary>
@@ -95,8 +95,8 @@
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\..\..\..\..\..\..\..\_build\Win64\bgfx\bin\</OutDir>
-    <IntDir>..\..\..\..\..\..\..\..\_build\Win64\bgfx\obj\x64\Release\bgfx-shared-lib\</IntDir>
+    <OutDir>..\..\..\..\..\..\..\..\_build\Windows\$(Configuration)\$(Platform)\bgfx\bin\</OutDir>
+    <IntDir>..\..\..\..\..\..\..\..\_build\Windows\$(Configuration)\$(Platform)\bgfx\obj\x64\Release\bgfx-shared-lib\</IntDir>
     <TargetName>bgfx-shared-libRelease</TargetName>
     <TargetExt>.dll</TargetExt>
     <IgnoreImportLibrary>false</IgnoreImportLibrary>
@@ -179,7 +179,7 @@
       <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>copy ..\..\..\..\..\..\..\..\_build\Win64\bgfx\bin\bgfx-shared-libDebug.dll "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\bgfx.dll"</Command>
+      <Command>copy ..\..\..\..\..\..\..\..\_build\Windows\$(Configuration)\$(Platform)\bgfx\bin\bgfx-shared-libDebug.dll "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\bgfx.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -270,7 +270,7 @@
       <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
-      <Command>copy ..\..\..\..\..\..\..\..\_build\Win64\bgfx\bin\bgfx-shared-libRelease.dll "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\bgfx.dll"</Command>
+      <Command>copy ..\..\..\..\..\..\..\..\_build\Windows\$(Configuration)\$(Platform)\bgfx\bin\bgfx-shared-libRelease.dll "..\..\..\..\..\..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows\bgfx.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

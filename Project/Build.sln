@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11415.280
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Project", "Project.csproj", "{77A0E3BB-AD36-4128-9790-966770EAC238}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoAxis.Player", "Sources\NeoAxis.Player\NeoAxis.Player.csproj", "{D7680B85-EA28-620F-4854-7981F4BF54C3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug-Linux-x64|Any CPU = Debug-Linux-x64|Any CPU
+		Debug-Windows-x64|Any CPU = Debug-Windows-x64|Any CPU
+		Release-Linux-x64|Any CPU = Release-Linux-x64|Any CPU
+		Release-Windows-x64|Any CPU = Release-Windows-x64|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{77A0E3BB-AD36-4128-9790-966770EAC238}.Debug-Linux-x64|Any CPU.ActiveCfg = Debug|Any CPU
+		{77A0E3BB-AD36-4128-9790-966770EAC238}.Debug-Linux-x64|Any CPU.Build.0 = Debug|Any CPU
+		{77A0E3BB-AD36-4128-9790-966770EAC238}.Debug-Windows-x64|Any CPU.ActiveCfg = Debug|Any CPU
+		{77A0E3BB-AD36-4128-9790-966770EAC238}.Debug-Windows-x64|Any CPU.Build.0 = Debug|Any CPU
+		{77A0E3BB-AD36-4128-9790-966770EAC238}.Release-Linux-x64|Any CPU.ActiveCfg = Release|Any CPU
+		{77A0E3BB-AD36-4128-9790-966770EAC238}.Release-Linux-x64|Any CPU.Build.0 = Release|Any CPU
+		{77A0E3BB-AD36-4128-9790-966770EAC238}.Release-Windows-x64|Any CPU.ActiveCfg = Release|Any CPU
+		{77A0E3BB-AD36-4128-9790-966770EAC238}.Release-Windows-x64|Any CPU.Build.0 = Release|Any CPU
+		{D7680B85-EA28-620F-4854-7981F4BF54C3}.Debug-Linux-x64|Any CPU.ActiveCfg = Debug-Linux-x64|Any CPU
+		{D7680B85-EA28-620F-4854-7981F4BF54C3}.Debug-Linux-x64|Any CPU.Build.0 = Debug-Linux-x64|Any CPU
+		{D7680B85-EA28-620F-4854-7981F4BF54C3}.Debug-Windows-x64|Any CPU.ActiveCfg = Debug-Windows-x64|Any CPU
+		{D7680B85-EA28-620F-4854-7981F4BF54C3}.Debug-Windows-x64|Any CPU.Build.0 = Debug-Windows-x64|Any CPU
+		{D7680B85-EA28-620F-4854-7981F4BF54C3}.Release-Linux-x64|Any CPU.ActiveCfg = Release-Linux-x64|Any CPU
+		{D7680B85-EA28-620F-4854-7981F4BF54C3}.Release-Linux-x64|Any CPU.Build.0 = Release-Linux-x64|Any CPU
+		{D7680B85-EA28-620F-4854-7981F4BF54C3}.Release-Windows-x64|Any CPU.ActiveCfg = Release-Windows-x64|Any CPU
+		{D7680B85-EA28-620F-4854-7981F4BF54C3}.Release-Windows-x64|Any CPU.Build.0 = Release-Windows-x64|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {81D26196-B170-4684-AA5E-EADD96B9C5EE}
+	EndGlobalSection
+EndGlobal

@@ -13,8 +13,6 @@ namespace NeoAxis
 	[NewObjectDefaultName( "Weapon" )]
 	public class Weapon : MeshInSpace, Item3DInterface, InteractiveObjectInterface
 	{
-		static FastRandom staticRandom = new FastRandom( 0 );
-
 		WeaponType typeCached = new WeaponType();
 
 		bool[] firing = new bool[ 3 ];
@@ -222,6 +220,8 @@ namespace NeoAxis
 
 				if( !NetworkIsClient )
 				{
+					var random = Scene.GetRandomGuaranteed( ParentScene );
+
 					for( int nCount = 0; nCount < bulletCount; nCount++ )
 					{
 
@@ -249,8 +249,8 @@ namespace NeoAxis
 							//dispersion angle
 							if( dispersionAngle != new Degree( 0 ) )
 							{
-								Matrix3F.FromRotateByX( staticRandom.NextFloat() * MathEx.PI * 2, out var matrix2 );
-								Matrix3F.FromRotateByZ( staticRandom.NextFloat() * (float)dispersionAngle.InRadians(), out var matrix3 );
+								Matrix3F.FromRotateByX( random.NextFloat() * MathEx.PI * 2, out var matrix2 );
+								Matrix3F.FromRotateByZ( random.NextFloat() * (float)dispersionAngle.InRadians(), out var matrix3 );
 								Matrix3F.Multiply( ref matrix2, ref matrix3, out var matrix );
 								matrix.ToQuaternion( out var rot );
 

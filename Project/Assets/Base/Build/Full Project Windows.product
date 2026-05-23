@@ -4,4 +4,5 @@
 {
 	Name = Full Project
 	SortOrder = -2900
+	CompilingScripts = True
 }

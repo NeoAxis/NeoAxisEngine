@@ -31,7 +31,7 @@ namespace NeoAxis
 
 		RenderingPipeline.RenderSceneData.MeshItem.AnimationDataClass cachedAnimationData;
 
-		static OpenList<UpdateAnimationItem> tempAnimations;
+		//static OpenList<UpdateAnimationItem> tempAnimations2;
 
 		//disable DQS
 		//SkeletonAnimationTrack.CalculateBoneTransformsItem[] transformRelativeToSkin;
@@ -1093,7 +1093,7 @@ namespace NeoAxis
 		public delegate void CalculateBoneTransformsDelegate( MeshInSpaceAnimationController sender, SkeletonAnimationTrack.CalculateBoneTransformsItem[] result/*, ref bool handled*/ );
 		public event CalculateBoneTransformsDelegate CalculateBoneTransforms;
 
-		struct UpdateAnimationItem
+		internal struct UpdateAnimationItem
 		{
 			//first way
 			public Animation Animation;
@@ -1157,11 +1157,10 @@ namespace NeoAxis
 
 			if( animationState != null )
 			{
-				//!!!!threading
-				if( tempAnimations == null )
-					tempAnimations = new OpenList<UpdateAnimationItem>( animationState.Animations.Count );
-				tempAnimations.Clear();
-				var animations = tempAnimations;
+				if( skeleton.tempAnimationsForController == null )
+					skeleton.tempAnimationsForController = new OpenList<UpdateAnimationItem>( animationState.Animations.Count );
+				var animations = skeleton.tempAnimationsForController;
+				animations.Clear();
 
 				for( int n = 0; n < animationState.Animations.Count; n++ )
 				{

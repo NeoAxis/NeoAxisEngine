@@ -29,8 +29,7 @@
 Compile for Windows:
 <ul>
 <li>Visual Studio 2026 Community or equivalent.</li>
-<li>Use NeoAxis.Windows.ManagedOnly.sln to compile only managed assemblies. Native code is already compiled.</li>
-<li>Or use NeoAxis.Windows.sln to build the entire engine.</li>
+<li>Use NeoAxis.Managed.sln to compile only managed assemblies. Native code is already compiled.</li>
 </ul>
 
 More:

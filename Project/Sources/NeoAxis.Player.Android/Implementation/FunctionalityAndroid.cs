@@ -20,7 +20,7 @@ namespace NeoAxis
 		public PlatformFunctionalityAndroid()
 		{
 			instance = this;
-			SetInstance( instance );
+			SetInstance( instance, SystemSettings.Platform.Android );
 
 			new LogPlatformFunctionalityAndroid();
 			new PlatformSpecificUtilityAndroid();
@@ -153,6 +153,11 @@ namespace NeoAxis
 		{
 			//!!!!
 			return true;
+		}
+
+		public override InputDeviceManager CreateInputDeviceManager()
+		{
+			return null;
 		}
 	}
 }

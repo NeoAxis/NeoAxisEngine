@@ -1701,7 +1701,6 @@ namespace NeoAxis.Networking
 		{
 			error = null;
 
-#if !UWP
 			if( Disposed )
 				Log.Fatal( "ServerNode: BeginListen: The server has been disposed." );
 			if( webSocketListener != null )
@@ -2015,11 +2014,6 @@ namespace NeoAxis.Networking
 			backgroundTask = TaskUtility.Run( TaskUtility.TaskLifetimeEnum.Forever, "ServerNode: BeginListen: SendingAndDisapprovedClosingClientsTask", SendingAndDisapprovedClosingClientsTask );
 
 			return true;
-
-#else
-			error = "No network implementation for the platform.";
-			return false;
-#endif
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
@@ -2329,8 +2323,6 @@ namespace NeoAxis.Networking
 				}
 			}
 
-#if !UWP
-
 			//delete freezed connecting clients
 			if( ( utcNow - connectingClientsDeleteFreezedLastTime ).TotalSeconds > 1 )
 			{
@@ -2554,7 +2546,6 @@ namespace NeoAxis.Networking
 				//drop by
 				DropByMaxLifetimeAndByKeepAliveTime( clients, utcNow );
 			}
-#endif
 		}
 
 		public void DisconnectClient( Client client, string reason = null )
@@ -2911,11 +2902,7 @@ namespace NeoAxis.Networking
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-#if UWP
-		static uint ChecksumAppend( byte[] data )
-#else
 		static uint ChecksumAppend( ReadOnlySpan<byte> data )
-#endif
 		{
 			unchecked
 			{

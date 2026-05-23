@@ -338,8 +338,7 @@ namespace Project
 			sceneViewport.AttachedScene = scene;
 			sceneViewport.NotifyInstantCameraMovement();
 
-			GC.Collect();
-			GC.WaitForPendingFinalizers();
+			GC.Collect( 2, GCCollectionMode.Forced, true );
 		}
 
 		private void Scene_ViewportUpdateBegin( Scene scene, Viewport viewport, Viewport.CameraSettingsClass overrideCameraSettings )
@@ -392,8 +391,7 @@ namespace Project
 				scene.Dispose();
 				scene = null;
 
-				GC.Collect();
-				GC.WaitForPendingFinalizers();
+				GC.Collect( 2, GCCollectionMode.Forced, true );
 			}
 		}
 

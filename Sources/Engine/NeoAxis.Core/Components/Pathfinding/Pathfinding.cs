@@ -1,7 +1,6 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Internal.SharpNav;
@@ -19,8 +18,9 @@ namespace NeoAxis
 	public class Pathfinding : ObjectInSpace
 	{
 		static List<Pathfinding> instances = new List<Pathfinding>();
-		static ReadOnlyCollection<Pathfinding> instancesReadOnly;
+		static Pathfinding[] instancesAsArray = Array.Empty<Pathfinding>();
 
+		//!!!!
 		const int maxPathFindInParallel = 8;
 
 		PrecompiledDataClass precompiledData;
@@ -1639,7 +1639,6 @@ namespace NeoAxis
 
 		static Pathfinding()
 		{
-			instancesReadOnly = new ReadOnlyCollection<Pathfinding>( instances );
 		}
 
 		public Pathfinding()
@@ -1648,7 +1647,7 @@ namespace NeoAxis
 
 		public static IList<Pathfinding> Instances
 		{
-			get { return instancesReadOnly; }
+			get { return instancesAsArray; }
 		}
 
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
@@ -1696,7 +1695,13 @@ namespace NeoAxis
 		protected override void OnEnabledInHierarchyChanged()
 		{
 			if( EnabledInHierarchyAndIsInstance )
-				instances.Add( this );
+			{
+				lock( instances )
+				{
+					instances.Add( this );
+					instancesAsArray = instances.ToArray();
+				}
+			}
 
 			base.OnEnabledInHierarchyChanged();
 
@@ -1717,7 +1722,13 @@ namespace NeoAxis
 			}
 
 			if( !EnabledInHierarchyAndIsInstance )
-				instances.Remove( this );
+			{
+				lock( instances )
+				{
+					instances.Remove( this );
+					instancesAsArray = instances.ToArray();
+				}
+			}
 		}
 
 		Bounds GetGeometriesBoundsForNavMesh()

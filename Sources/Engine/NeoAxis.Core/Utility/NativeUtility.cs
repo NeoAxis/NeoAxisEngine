@@ -143,28 +143,25 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static int CompareMemory( IntPtr buffer1, IntPtr buffer2, int length )
 		{
-#if !UWP
+			//#if !UWP
 			unsafe
 			{
 				return new ReadOnlySpan<byte>( (void*)buffer1, length ).SequenceCompareTo( new ReadOnlySpan<byte>( (void*)buffer2, length ) );
 			}
-#else
-			LoadUtilsNativeWrapperLibrary();
-			return NativeUtils_CompareMemory( buffer1, buffer2, length );
-#endif
-
-			//LoadUtilsNativeWrapperLibrary();
-			//return NativeUtils_CompareMemory( buffer1, buffer2, length );
+			//#else
+			//			LoadUtilsNativeWrapperLibrary();
+			//			return NativeUtils_CompareMemory( buffer1, buffer2, length );
+			//#endif
 		}
 
 		public unsafe static int CompareMemory( void* buffer1, void* buffer2, int length )
 		{
-#if !UWP
+			//#if !UWP
 			return new ReadOnlySpan<byte>( buffer1, length ).SequenceCompareTo( new ReadOnlySpan<byte>( buffer2, length ) );
-#else
-			LoadUtilsNativeWrapperLibrary();
-			return NativeUtils_CompareMemory( (IntPtr)buffer1, (IntPtr)buffer2, length );
-#endif
+			//#else
+			//			LoadUtilsNativeWrapperLibrary();
+			//			return NativeUtils_CompareMemory( (IntPtr)buffer1, (IntPtr)buffer2, length );
+			//#endif
 		}
 
 		[DllImport( library, CallingConvention = convention ), SuppressUnmanagedCodeSecurity]
@@ -174,47 +171,47 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static void ZeroMemory( IntPtr buffer, int length )
 		{
-#if !UWP
+			//#if !UWP
 			unsafe
 			{
 				if( buffer != IntPtr.Zero && length > 0 )
 					new Span<byte>( (void*)buffer, length ).Clear();
 			}
-#else
-			LoadUtilsNativeWrapperLibrary();
-			NativeUtils_ZeroMemory( buffer, length );
-#endif
-
-			//#if !UWP && !ANDROID && !NETSTANDARD2_1
-			//			unsafe
-			//			{
-			//				Unsafe.InitBlockUnaligned( (void*)buffer, 0, (uint)length );
-			//			}
 			//#else
 			//			LoadUtilsNativeWrapperLibrary();
 			//			NativeUtils_ZeroMemory( buffer, length );
 			//#endif
+
+			////#if !UWP && !ANDROID && !NETSTANDARD2_1
+			////			unsafe
+			////			{
+			////				Unsafe.InitBlockUnaligned( (void*)buffer, 0, (uint)length );
+			////			}
+			////#else
+			////			LoadUtilsNativeWrapperLibrary();
+			////			NativeUtils_ZeroMemory( buffer, length );
+			////#endif
 		}
 
 		public unsafe static void ZeroMemory( void* buffer, int length )
 		{
-#if !UWP
+			//#if !UWP
 			unsafe
 			{
 				if( buffer != null && length > 0 )
 					new Span<byte>( buffer, length ).Clear();
 			}
-#else
-			LoadUtilsNativeWrapperLibrary();
-			NativeUtils_ZeroMemory( (IntPtr)buffer, length );
-#endif
-
-			//#if !UWP && !ANDROID && !NETSTANDARD2_1
-			//			Unsafe.InitBlockUnaligned( buffer, 0, (uint)length );
 			//#else
 			//			LoadUtilsNativeWrapperLibrary();
 			//			NativeUtils_ZeroMemory( (IntPtr)buffer, length );
 			//#endif
+
+			////#if !UWP && !ANDROID && !NETSTANDARD2_1
+			////			Unsafe.InitBlockUnaligned( buffer, 0, (uint)length );
+			////#else
+			////			LoadUtilsNativeWrapperLibrary();
+			////			NativeUtils_ZeroMemory( (IntPtr)buffer, length );
+			////#endif
 		}
 
 		[DllImport( library, CallingConvention = convention ), SuppressUnmanagedCodeSecurity]
@@ -223,26 +220,26 @@ namespace NeoAxis
 
 		public static void FillMemory( IntPtr buffer, int length, byte value )
 		{
-#if !UWP
+			//#if !UWP
 			unsafe
 			{
 				if( buffer != IntPtr.Zero && length > 0 )
 					new Span<byte>( (void*)buffer, length ).Fill( value );
 			}
-#else
-			LoadUtilsNativeWrapperLibrary();
-			NativeUtils_FillMemory( buffer, length, value );
-#endif
-
-			//#if !UWP && !ANDROID && !NETSTANDARD2_1
-			//			unsafe
-			//			{
-			//				Unsafe.InitBlockUnaligned( (void*)buffer, value, (uint)length );
-			//			}
 			//#else
 			//			LoadUtilsNativeWrapperLibrary();
 			//			NativeUtils_FillMemory( buffer, length, value );
 			//#endif
+
+			////#if !UWP && !ANDROID && !NETSTANDARD2_1
+			////			unsafe
+			////			{
+			////				Unsafe.InitBlockUnaligned( (void*)buffer, value, (uint)length );
+			////			}
+			////#else
+			////			LoadUtilsNativeWrapperLibrary();
+			////			NativeUtils_FillMemory( buffer, length, value );
+			////#endif
 		}
 
 		[DllImport( library, CallingConvention = convention ), SuppressUnmanagedCodeSecurity]

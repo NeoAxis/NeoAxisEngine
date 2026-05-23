@@ -13,8 +13,6 @@ namespace NeoAxis
 	[AddToResourcesWindow( @"Base\3D\Character AI", -8997 )]
 	public class CharacterAI : AI
 	{
-		static FastRandom staticRandom = new FastRandom( 0 );
-
 		PathController pathController;
 		float lookAtControlledCharacterByPlayerRemainingTimeToUpdate;
 		Character lookAtControlledCharacterByPlayerLookAtObject;
@@ -671,7 +669,7 @@ namespace NeoAxis
 				}
 
 				if( alive )
-					LookAtControlledCharacterByPlayerSimulationStep();
+					LookAtControlledCharacterByPlayerSimulationStep( Scene.GetRandomGuaranteed( character.ParentScene ) );
 			}
 		}
 
@@ -769,7 +767,7 @@ namespace NeoAxis
 					scene.GetRenderSceneData += Scene_GetRenderSceneData;
 			}
 
-			combatModeUpdateTargetRemainingTime = staticRandom.Next( 1.0f );
+			combatModeUpdateTargetRemainingTime = Scene.GetRandomGuaranteed( scene ).Next( 1.0f );
 			combatModeUpdateTasksRemainingTime = combatModeUpdateTargetRemainingTime;
 			lookingForFoodUpdateTasksRemainingTime = combatModeUpdateTargetRemainingTime;
 			trafficWalkingModeUpdateTasksRemainingTime = combatModeUpdateTargetRemainingTime;
@@ -958,7 +956,7 @@ namespace NeoAxis
 			return true;
 		}
 
-		void LookAtControlledCharacterByPlayerSimulationStep()
+		void LookAtControlledCharacterByPlayerSimulationStep( FastRandom sceneRandom )
 		{
 			//!!!!also look at when in dialogue (useful for multiplayer mode)
 
@@ -970,7 +968,7 @@ namespace NeoAxis
 				lookAtControlledCharacterByPlayerRemainingTimeToUpdate -= Time.SimulationDelta;
 				if( lookAtControlledCharacterByPlayerRemainingTimeToUpdate <= 0 )
 				{
-					lookAtControlledCharacterByPlayerRemainingTimeToUpdate = 1 + staticRandom.NextFloat();
+					lookAtControlledCharacterByPlayerRemainingTimeToUpdate = 1 + sceneRandom.NextFloat();
 
 					//do update
 
@@ -1158,7 +1156,7 @@ namespace NeoAxis
 					if( combatModeUpdateTargetRemainingTime <= 0 )
 					{
 						UpdateCurrentTarget( thisObject );
-						combatModeUpdateTargetRemainingTime += 1.0f + staticRandom.Next( 0.1f );
+						combatModeUpdateTargetRemainingTime += 1.0f + Scene.GetRandomGuaranteed( thisObject.ParentScene ).Next( 0.1f );
 					}
 
 					//reset when target not exists
@@ -1271,7 +1269,8 @@ namespace NeoAxis
 			lookingForFoodUpdateTasksRemainingTime -= Time.SimulationDelta;
 			if( lookingForFoodUpdateTasksRemainingTime <= 0 )
 			{
-				lookingForFoodUpdateTasksRemainingTime = 1.0f + staticRandom.Next( 1.0f );
+				var sceneRandom = Scene.GetRandomGuaranteed( thisObject.ParentScene );
+				lookingForFoodUpdateTasksRemainingTime = 1.0f + sceneRandom.Next( 1.0f );
 
 				if( lookingForFoodCurrentTask == LookingForFoodTask.Idle )
 				{
@@ -1291,7 +1290,7 @@ namespace NeoAxis
 						Vector2? foundPosition = null;
 						for( int n = 0; n < 20; n++ )
 						{
-							var position2 = new Vector2( staticRandom.Next( bounds2.Minimum.X, bounds2.Maximum.X ), staticRandom.Next( bounds2.Minimum.Y, bounds2.Maximum.Y ) );
+							var position2 = new Vector2( sceneRandom.Next( bounds2.Minimum.X, bounds2.Maximum.X ), sceneRandom.Next( bounds2.Minimum.Y, bounds2.Maximum.Y ) );
 							if( MathAlgorithms.IsPointInPolygon( points2, position2 ) )
 							{
 								foundPosition = position2;
@@ -1305,7 +1304,7 @@ namespace NeoAxis
 
 							MoveTo( targetPosition, false );
 							lookingForFoodCurrentTask = LookingForFoodTask.Move;
-							lookingForFoodUpdateTasksRemainingTime = 1.0f + staticRandom.Next( 1.0f );
+							lookingForFoodUpdateTasksRemainingTime = 1.0f + sceneRandom.Next( 1.0f );
 						}
 					}
 				}
@@ -1330,7 +1329,8 @@ namespace NeoAxis
 			trafficWalkingModeUpdateTasksRemainingTime -= Time.SimulationDelta;
 			if( trafficWalkingModeUpdateTasksRemainingTime <= 0 )
 			{
-				trafficWalkingModeUpdateTasksRemainingTime = 1.0f + staticRandom.Next( 1.0f );
+				var sceneRandom = Scene.GetRandomGuaranteed( thisObject.ParentScene );
+				trafficWalkingModeUpdateTasksRemainingTime = 1.0f + sceneRandom.Next( 1.0f );
 
 				//!!!!
 				var maxDistanceWhenOutsideRoad = 30.0;
@@ -1364,12 +1364,12 @@ namespace NeoAxis
 						//detect on end of road
 						if( !directionToBack && timeOnCurve >= roadEndTime - 0.001 )
 						{
-							TrafficWalkingModeCurrentRoadLane = staticRandom.Next( roadData.Lanes / 2 );
+							TrafficWalkingModeCurrentRoadLane = sceneRandom.Next( roadData.Lanes / 2 );
 							return;
 						}
 						if( directionToBack && timeOnCurve <= 0.001 )
 						{
-							TrafficWalkingModeCurrentRoadLane = roadData.Lanes - 1 - staticRandom.Next( roadData.Lanes / 2 );
+							TrafficWalkingModeCurrentRoadLane = roadData.Lanes - 1 - sceneRandom.Next( roadData.Lanes / 2 );
 							return;
 						}
 						////delete object
@@ -1428,7 +1428,7 @@ namespace NeoAxis
 								var connectedRoads = roadLogicalData.GetConnectedRoadsInInterval( new Range( minTime, maxTime ), null ).ToArray();
 								if( connectedRoads.Length != 0 )
 								{
-									var selectIndex = staticRandom.Next( connectedRoads.Length - 1 );
+									var selectIndex = sceneRandom.Next( connectedRoads.Length - 1 );
 									var connectedCrossroadRoadItem = connectedRoads[ selectIndex ];
 									var connectedRoadData = connectedCrossroadRoadItem.ConnectedRoad;
 
@@ -1441,9 +1441,9 @@ namespace NeoAxis
 										//calculate lane on new road. don't change lane?
 										int newLane;
 										if( !connectedCrossroadRoadItem.ForwardDirection )
-											newLane = connectedRoadData.Lanes - 1 - staticRandom.Next( connectedRoadData.Lanes / 2 );
+											newLane = connectedRoadData.Lanes - 1 - sceneRandom.Next( connectedRoadData.Lanes / 2 );
 										else
-											newLane = staticRandom.Next( connectedRoadData.Lanes / 2 );
+											newLane = sceneRandom.Next( connectedRoadData.Lanes / 2 );
 
 										//trafficWalkingModeLastPassedCrossroad = connectedCrossroadRoadItem.Owner;
 										TrafficWalkingModeCurrentRoad = connectedRoadData.Owner;
@@ -1466,7 +1466,7 @@ namespace NeoAxis
 							MoveTo( positionOnLane, false, nStep == 0 );
 						}
 
-						trafficWalkingModeUpdateTasksRemainingTime = precalculateSeconds * 0.7f - 1.0f + staticRandom.Next( 1.0f );
+						trafficWalkingModeUpdateTasksRemainingTime = precalculateSeconds * 0.7f - 1.0f + sceneRandom.Next( 1.0f );
 					}
 				}
 			}
