@@ -2,11 +2,14 @@
 
 ------
 04 June 2026. Our cloud provider is experiencing technical <a href="https://cp.vdsina.com/">difficulties.</a>
+
 <a href="https://neoaxis-la.us-east-1.linodeobjects.com/NeoX.exe">Download NeoX app to get NeoAxis Engine in compiled form.</a>
+
 <a href="https://www.neoaxis.cn/en/">Use an alternative website to learn more about the engine.</a>
 ------
 
-<a href="https://www.neoaxis.com/">www.neoaxis.com</a>
+Website: <a href="https://www.neoaxis.com/">www.neoaxis.com</a>
+
 Alternative website: <a href="https://www.neoaxis.cn/en/">www.neoaxis.cn/en/</a>
 
 [![Join the chat at https://discord.gg/NdCej26](https://img.shields.io/discord/639722941411753984?color=%237289DA&label=neoaxis&logo=discord&logoColor=white)](https://discord.gg/NdCej26)
