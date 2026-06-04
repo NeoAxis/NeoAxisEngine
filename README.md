@@ -1,3 +1,19 @@
+------
+
+------
+
+04 June 2026.
+
+<a href="https://cp.vdsina.com/">Our cloud provider is experiencing technical difficulties.</a>
+
+<a href="https://neoaxis-la.us-east-1.linodeobjects.com/NeoX.exe">Download NeoX app to get NeoAxis Engine in compiled form.</a>
+
+<a href="https://www.neoaxis.cn/en/">Use an alternative website to learn more about the engine.</a>
+
+------
+
+------
+
 <b>NeoAxis Engine</b> is a versatile game engine designed for creating video games and real-time apps. It is well-suited for developing various 3D and 2D projects, including computer games, simulators, virtual reality systems, and apps with rich graphics.
 
 Website: <a href="https://www.neoaxis.com/">www.neoaxis.com</a>
