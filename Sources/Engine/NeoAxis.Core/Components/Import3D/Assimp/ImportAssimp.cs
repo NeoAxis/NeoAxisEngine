@@ -2153,6 +2153,11 @@ namespace NeoAxis
 				//ImportFBX.cs works right (import via FBX SDK), so the problem is in the code of getting track data from Assimp.
 				//To disable any transforms, disable FixAxes in the Import3D settings. Then global transform will be identity.
 
+				//Import skeleton: OK.
+				//Bind pose: OK.
+				//List of animations: OK.
+				//Animation tracks: Invalid transforms.
+
 				//how test models and snow hierarchy:
 				//https://gltf-viewer.donmccurdy.com/
 				//https://sandbox.babylonjs.com/
@@ -2160,6 +2165,8 @@ namespace NeoAxis
 				//useful samples:
 				//glTF-Sample-Assets library on guthub. SimpleSkin sample
 				//sketchfab models as example: https://sketchfab.com/3d-models/blue-flower-animated-c20b1f12833148e09f7f49c3dd444906
+
+
 
 				//minor nuance, but ok: in Assimp can't detect root skeleton node, so just use root node of the scene as root skeleton node
 				//CalculateRootSkeletonNode() method
