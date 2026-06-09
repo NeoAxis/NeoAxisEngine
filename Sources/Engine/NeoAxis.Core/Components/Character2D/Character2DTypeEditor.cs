@@ -34,6 +34,7 @@ namespace NeoAxis.Editor
 
 			if( Character2DType != null )
 			{
+				Is3DScene = false;
 				var scene = CreateScene( false );
 				CreateObject();
 				scene.Mode = Scene.ModeEnum._2D;

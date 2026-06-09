@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2024.3.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1174, 842\"><KW V=\"1\" A=\"390C8C8242314A935C90AD0758E9B80A\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"B177AF43F7264E920A9776EBC5B4BE12\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"390C8C8242314A935C90AD0758E9B80A\"><KP UN=\"390C8C8242314A935C90AD0758E9B80A\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"AD3AD84DFA1747AD26ABF032B37E4F47\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1192, 963\"><KW V=\"1\" A=\"390C8C8242314A935C90AD0758E9B80A\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"B177AF43F7264E920A9776EBC5B4BE12\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"390C8C8242314A935C90AD0758E9B80A\"><KP UN=\"390C8C8242314A935C90AD0758E9B80A\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"AD3AD84DFA1747AD26ABF032B37E4F47\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -36,7 +36,8 @@
 		Name = Ambient Light
 		Transform = "85.3369876215458 -10.6516820123039 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 60000
+		Brightness = 30000
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -48,6 +49,7 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 91.429
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
@@ -72,7 +74,6 @@
 			.component NeoAxis.RenderingEffect_ToneMapping
 			{
 				Name = Tone Mapping
-				Intensity = 0.5
 			}
 			.component NeoAxis.RenderingEffect_ToLDR
 			{

@@ -11,50 +11,37 @@ namespace NeoAxis
 	[AddToResourcesWindow( @"Addons\Pathfinding\Pathfinding Geometry Tag", 560 )]
 	public class PathfindingGeometryTag : Component
 	{
-		/// <summary>
-		/// The available types of a geometry.
-		/// </summary>
-		public enum TypeEnum
-		{
-			///// <summary>
-			///// A character can walk on top of a geometry.
-			///// </summary>
-			//WalkableArea,
+		//!!!!RemoveObstacle, Obstacle, Ground/Walkable/ObstacleWalkableOver
 
-			/// <summary>
-			/// A character can't walk on top of a geometry.
-			/// </summary>
-			BakedObstacle,
+		///// <summary>
+		///// The available types of a geometry.
+		///// </summary>
+		//public enum TypeEnum
+		//{
+		//	///// <summary>
+		//	///// A character can walk on top of a geometry.
+		//	///// </summary>
+		//	//WalkableArea,
 
-			//!!!!DynamicObstacle,
-		}
+		//	/// <summary>
+		//	/// A character can't walk on top of a geometry.
+		//	/// </summary>
+		//	BakedObstacle,
+		//}
 
-		/// <summary>
-		/// The type of the geometry tag.
-		/// </summary>
-		[DefaultValue( TypeEnum.BakedObstacle )]
-		[Serialize]
-		public Reference<TypeEnum> Type
-		{
-			get { if( _type.BeginGet() ) Type = _type.Get( this ); return _type.value; }
-			set { if( _type.BeginSet( this, ref value ) ) { try { TypeChanged?.Invoke( this ); } finally { _type.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="Type"/> property value changes.</summary>
-		public event Action<PathfindingGeometryTag> TypeChanged;
-		ReferenceField<TypeEnum> _type = TypeEnum.BakedObstacle;
+		///// <summary>
+		///// The type of the geometry tag.
+		///// </summary>
+		//[DefaultValue( TypeEnum.BakedObstacle )]
+		//[Serialize]
+		//public Reference<TypeEnum> Type
+		//{
+		//	get { if( _type.BeginGet() ) Type = _type.Get( this ); return _type.value; }
+		//	set { if( _type.BeginSet( this, ref value ) ) { try { TypeChanged?.Invoke( this ); } finally { _type.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="Type"/> property value changes.</summary>
+		//public event Action<PathfindingGeometryTag> TypeChanged;
+		//ReferenceField<TypeEnum> _type = TypeEnum.BakedObstacle;
 
-		/// <summary>
-		/// The area of the walkable geometry, which is intended to configure walking cost. Zero value is a non-walkable area.
-		/// </summary>
-		[DefaultValue( (uint)255 )]
-		[Range( 0, 255 )]
-		public Reference<uint> Area
-		{
-			get { if( _area.BeginGet() ) Area = _area.Get( this ); return _area.value; }
-			set { if( _area.BeginSet( this, ref value ) ) { try { AreaChanged?.Invoke( this ); } finally { _area.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="Area"/> property value changes.</summary>
-		public event Action<PathfindingGeometryTag> AreaChanged;
-		ReferenceField<uint> _area = 255;
 	}
 }

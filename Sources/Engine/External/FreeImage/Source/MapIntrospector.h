@@ -95,7 +95,7 @@ template<class _Maptype>
 class MapIntrospector: private _Maptype {
 public:
 	static size_t GetNodesMemorySize(size_t node_count) {
-		return (node_count + 1) * sizeof(_Node);
+		return (node_count + 1) * sizeof(_Maptype::_Node);
 	}
 };
 

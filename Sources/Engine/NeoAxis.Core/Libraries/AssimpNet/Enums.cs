@@ -60,9 +60,19 @@ namespace Internal.Assimp
         String = 5,
 
         /// <summary>
-        /// Metadata is a <see cref="Vector3D"/>.
+        /// Metadata is a <see cref="Vector3"/>.
         /// </summary>
-        Vector3D = 6
+        Vector3 = 6,
+
+        /// <summary>
+        /// Metadata is a signed 64-bit integer.
+        /// </summary>
+        Int64 = 7,
+
+        /// <summary>
+        /// Metadata is an unsigned 32-bit integer.
+        /// </summary>
+        UInt32 = 8,
     }
 
     /// <summary>
@@ -96,13 +106,15 @@ namespace Internal.Assimp
         /// Identifies and joins identical vertex data sets within all
         /// imported meshes.
         /// <para>
-        /// After this step is run each mesh does contain only unique vertices
-        /// anymore, so a vertex is possibly used by multiple faces. You usually
-        /// want to use this post processing step. If your application deals with
+        /// After this step is run, each mesh contains unique vertices,
+        /// so a vertex may be used by multiple faces. You usually want
+        /// to use this post processing step. If your application deals with
         /// indexed geometry, this step is compulsory or you'll just waste rendering
         /// time.</para>
         /// <para>If this flag is not specified, no vertices are referenced by more than one
         /// face and no index buffer is required for rendering.</para>
+        /// <para>Unless the importer (like ply) had to split vertices.
+        /// Then you need one regardless.</para>
         /// </summary>
         JoinIdenticalVertices = 0x2,
 
@@ -634,9 +646,9 @@ namespace Internal.Assimp
     public enum MeshMorphingMethod
     {
         /// <summary>
-        /// No morphing.
+        /// Morphing method to be determined.
         /// </summary>
-        None = 0x0,
+        Unknown = 0x0,
 
         /// <summary>
         /// Interpolation between morph targets.
@@ -1050,7 +1062,59 @@ namespace Internal.Assimp
         /// An unknown texture that does not mention any of the defined texture type definitions. It is still imported, but is excluded from any
         /// further postprocessing.
         /// </summary>
-        Unknown = 18
+        Unknown = 18,
+
+        /// <summary>
+        /// Generally used to simulate textiles that are covered in a layer of microfibers, e.g. velvet.
+        /// <a href="https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_sheen"/>
+        /// </summary>
+        Sheen = 19,
+
+        /// <summary>
+        /// Simulates a layer of 'polish' or 'lacquer' layered on top of a PBR substrate.
+        /// <a href="https://autodesk.github.io/standard-surface/#closures/coating"/>
+        /// <a href="https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_clearcoat"/>
+        /// </summary>
+        Clearcoat = 20,
+
+        /// <summary>
+        /// Simulates transmission through the surface.
+        /// May include further information such as wall thickness.
+        /// </summary>
+        Transmission = 21,
+
+        /// <summary>
+        /// Maya material declaration for a base color texture.
+        /// </summary>
+        MayaBase = 22,
+
+        /// <summary>
+        /// Maya material declaration for a specular texture.
+        /// </summary>
+        MayaSpecular = 23,
+
+        /// <summary>
+        /// Maya material declaration for a specular color texture.
+        /// </summary>
+        MayaSpecularColor = 24,
+
+        /// <summary>
+        /// Maya material declaration for a specular roughness texture.
+        /// </summary>
+        MayaSpecularRoughness = 25,
+
+        /// <summary>
+        /// Simulates a surface with directional properties.
+        /// </summary>
+        Anisotropy = 26,
+
+        /// <summary>
+        /// Textures for metalness and roughness properties packed together in a single texture.
+        /// Its green channel contains roughness values and its blue channel contains metalness values.
+        /// <a href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#metallic-roughness-material"/>
+        /// <a href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#_material_pbrmetallicroughness_metallicroughnesstexture"/>
+        /// </summary>
+        GltfMetallicRoughness = 27,
     }
 
     /// <summary>
@@ -1334,5 +1398,31 @@ namespace Internal.Assimp
         /// development, and not typically yet in released production code.
         /// </summary>
         Experimental = 0x10
+    }
+
+    /// <summary>
+    /// Defines the type of interpolation to use.
+    /// </summary>
+    public enum AnimationInterpolation
+    {
+        /// <summary>
+        /// Step interpolation.
+        /// </summary>
+        Step,
+
+        /// <summary>
+        /// Linear interpolation.
+        /// </summary>
+        Linear,
+
+        /// <summary>
+        /// Spherical linear interpolation.
+        /// </summary>
+        SphericalLinear,
+
+        /// <summary>
+        /// Cubic spline interpolation.
+        /// </summary>
+        CubicSpline,
     }
 }

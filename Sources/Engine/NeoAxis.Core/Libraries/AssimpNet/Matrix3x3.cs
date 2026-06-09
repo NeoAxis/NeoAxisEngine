@@ -21,7 +21,7 @@
 */
 
 using System;
-using System.Globalization;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace Internal.Assimp
@@ -31,66 +31,22 @@ namespace Internal.Assimp
     /// and it looks like they're only describing the memory layout. Matrices are treated
     /// as column vectors however (X base in the first column, Y base the second, and Z base the third)
     /// </summary>
+    /// <param name="A1">Value at row 1, column 1 of the matrix.</param>
+    /// <param name="A2">Value at row 1, column 2 of the matrix.</param>
+    /// <param name="A3">Value at row 1, column 3 of the matrix.</param>
+    /// <param name="B1">Value at row 2, column 1 of the matrix.</param>
+    /// <param name="B2">Value at row 2, column 2 of the matrix.</param>
+    /// <param name="B3">Value at row 2, column 3 of the matrix.</param>
+    /// <param name="C1">Value at row 3, column 1 of the matrix.</param>
+    /// <param name="C2">Value at row 3, column 2 of the matrix.</param>
+    /// <param name="C3">Value at row 3, column 3 of the matrix.</param>
     [StructLayout(LayoutKind.Sequential)]
-    public struct Matrix3x3 : IEquatable<Matrix3x3>
+    public record struct Matrix3x3(float A1, float A2, float A3, float B1, float B2, float B3, float C1, float C2, float C3)
     {
-        /// <summary>
-        /// Value at row 1, column 1 of the matrix
-        /// </summary>
-        public float A1;
-
-        /// <summary>
-        /// Value at row 1, column 2 of the matrix
-        /// </summary>
-        public float A2;
-
-        /// <summary>
-        /// Value at row 1, column 3 of the matrix
-        /// </summary>
-        public float A3;
-
-        /// <summary>
-        /// Value at row 2, column 1 of the matrix
-        /// </summary>
-        public float B1;
-
-        /// <summary>
-        /// Value at row 2, column 2 of the matrix
-        /// </summary>
-        public float B2;
-
-        /// <summary>
-        /// Value at row 2, column 3 of the matrix
-        /// </summary>
-        public float B3;
-
-        /// <summary>
-        /// Value at row 3, column 1 of the matrix
-        /// </summary>
-        public float C1;
-
-        /// <summary>
-        /// Value at row 3, column 2 of the matrix
-        /// </summary>
-        public float C2;
-
-        /// <summary>
-        /// Value at row 3, column 3 of the matrix
-        /// </summary>
-        public float C3;
-
-        private static Matrix3x3 _identity = new Matrix3x3(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-
         /// <summary>
         /// Gets the identity matrix.
         /// </summary>
-        public static Matrix3x3 Identity
-        {
-            get
-            {
-                return _identity;
-            }
-        }
+        public static Matrix3x3 Identity { get; } = new(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 
         /// <summary>
         /// Gets if this matrix is an identity matrix.
@@ -221,46 +177,12 @@ namespace Internal.Assimp
         /// <summary>
         /// Constructs a new Matrix3x3.
         /// </summary>
-        /// <param name="a1">Element at row 1, column 1</param>
-        /// <param name="a2">Element at row 1, column 2</param>
-        /// <param name="a3">Element at row 1, column 3</param>
-        /// <param name="b1">Element at row 2, column 1</param>
-        /// <param name="b2">Element at row 2, column 2</param>
-        /// <param name="b3">Element at row 2, column 3</param>
-        /// <param name="c1">Element at row 3, column 1</param>
-        /// <param name="c2">Element at row 3, column 2</param>
-        /// <param name="c3">Element at row 3, column 3</param>
-        public Matrix3x3(float a1, float a2, float a3, float b1, float b2, float b3, float c1, float c2, float c3)
-        {
-            this.A1 = a1;
-            this.A2 = a2;
-            this.A3 = a3;
-            this.B1 = b1;
-            this.B2 = b2;
-            this.B3 = b3;
-            this.C1 = c1;
-            this.C2 = c2;
-            this.C3 = c3;
-        }
-
-        /// <summary>
-        /// Constructs a new Matrix3x3.
-        /// </summary>
         /// <param name="rotMatrix">A 4x4 matrix to construct from, only taking the rotation/scaling part.</param>
-        public Matrix3x3(Matrix4x4 rotMatrix)
-        {
-            this.A1 = rotMatrix.A1;
-            this.A2 = rotMatrix.A2;
-            this.A3 = rotMatrix.A3;
-
-            this.B1 = rotMatrix.B1;
-            this.B2 = rotMatrix.B2;
-            this.B3 = rotMatrix.B3;
-
-            this.C1 = rotMatrix.C1;
-            this.C2 = rotMatrix.C2;
-            this.C3 = rotMatrix.C3;
-        }
+        public Matrix3x3(Matrix4x4 rotMatrix) : this(
+            rotMatrix.M11, rotMatrix.M12, rotMatrix.M13,
+            rotMatrix.M21, rotMatrix.M22, rotMatrix.M23,
+            rotMatrix.M31, rotMatrix.M32, rotMatrix.M33)
+        { }
 
         /// <summary>
         /// Transposes this matrix (rows become columns, vice versa).
@@ -287,8 +209,8 @@ namespace Internal.Assimp
             float det = Determinant();
             if(det == 0.0f)
             {
-                // Matrix not invertible. Setting all elements to NaN is not really
-                // correct in a mathematical sense but it is easy to debug for the
+                // Matrix is not invertible. Setting all elements to NaN is not really
+                // correct in a mathematical sense, but it is easy to debug for the
                 // programmer.
                 A1 = float.NaN;
                 A2 = float.NaN;
@@ -334,10 +256,7 @@ namespace Internal.Assimp
         /// Compute the determinant of this matrix.
         /// </summary>
         /// <returns>The determinant</returns>
-        public float Determinant()
-        {
-            return A1 * B2 * C3 - A1 * B3 * C2 + A2 * B3 * C1 - A2 * B1 * C3 + A3 * B1 * C2 - A3 * B2 * C1;
-        }
+        public float Determinant() => A1 * B2 * C3 - A1 * B3 * C2 + A2 * B3 * C1 - A2 * B1 * C3 + A3 * B1 * C2 - A3 * B2 * C1;
 
         /// <summary>
         /// Creates a rotation matrix from a set of euler angles.
@@ -358,7 +277,7 @@ namespace Internal.Assimp
             float srsp = sr * sp;
             float crsp = cr * sp;
 
-            Matrix3x3 m;
+            Matrix3x3 m = default;
             m.A1 = cp * cy;
             m.A2 = cp * sy;
             m.A3 = -sp;
@@ -379,10 +298,7 @@ namespace Internal.Assimp
         /// </summary>
         /// <param name="angles">Vector containing the rotation angles about the x, y, z axes, in radians.</param>
         /// <returns>The rotation matrix</returns>
-        public static Matrix3x3 FromEulerAnglesXYZ(Vector3D angles)
-        {
-            return Matrix3x3.FromEulerAnglesXYZ(angles.X, angles.Y, angles.Z);
-        }
+        public static Matrix3x3 FromEulerAnglesXYZ(Vector3 angles) => FromEulerAnglesXYZ(angles.X, angles.Y, angles.Z);
 
         /// <summary>
         /// Creates a rotation matrix for a rotation about the x-axis.
@@ -447,7 +363,7 @@ namespace Internal.Assimp
         /// <param name="radians">Rotation angle, in radians</param>
         /// <param name="axis">Rotation axis, which should be a normalized vector.</param>
         /// <returns>The rotation matrix</returns>
-        public static Matrix3x3 FromAngleAxis(float radians, Vector3D axis)
+        public static Matrix3x3 FromAngleAxis(float radians, Vector3 axis)
         {
             float x = axis.X;
             float y = axis.Y;
@@ -463,7 +379,7 @@ namespace Internal.Assimp
             float xz = x * z;
             float yz = y * z;
 
-            Matrix3x3 m;
+            Matrix3x3 m = default;
             m.A1 = xx + (cos * (1.0f - xx));
             m.B1 = (xy - (cos * xy)) + (sin * z);
             m.C1 = (xz - (cos * xz)) - (sin * y);
@@ -484,7 +400,7 @@ namespace Internal.Assimp
         /// </summary>
         /// <param name="scaling">Scaling vector</param>
         /// <returns>The scaling vector</returns>
-        public static Matrix3x3 FromScaling(Vector3D scaling)
+        public static Matrix3x3 FromScaling(Vector3 scaling)
         {
             Matrix3x3 m = Identity;
             m.A1 = scaling.X;
@@ -504,9 +420,9 @@ namespace Internal.Assimp
         /// <param name="from">Starting vector</param>
         /// <param name="to">Ending vector</param>
         /// <returns>Rotation matrix to rotate from the start to end.</returns>
-        public static Matrix3x3 FromToMatrix(Vector3D from, Vector3D to)
+        public static Matrix3x3 FromToMatrix(Vector3 from, Vector3 to)
         {
-            float e = Vector3D.Dot(from, to);
+            float e = Vector3.Dot(from, to);
             float f = (e < 0) ? -e : e;
 
             Matrix3x3 m = Identity;
@@ -514,8 +430,8 @@ namespace Internal.Assimp
             //"from" and "to" vectors almost parallel
             if(f > 1.0f - 0.00001f)
             {
-                Vector3D u, v; //Temp variables
-                Vector3D x; //Vector almost orthogonal to "from"
+                Vector3 u, v; //Temp variables
+                Vector3 x; //Vector almost orthogonal to "from"
 
                 x.X = (from.X > 0.0f) ? from.X : -from.X;
                 x.Y = (from.Y > 0.0f) ? from.Y : -from.Y;
@@ -560,17 +476,28 @@ namespace Internal.Assimp
                 v.Y = x.Y - to.Y;
                 v.Z = x.Z - to.Z;
 
-                float c1 = 2.0f / Vector3D.Dot(u, u);
-                float c2 = 2.0f / Vector3D.Dot(v, v);
-                float c3 = c1 * c2 * Vector3D.Dot(u, v);
+                float c1 = 2.0f / Vector3.Dot(u, u);
+                float c2 = 2.0f / Vector3.Dot(v, v);
+                float c3 = c1 * c2 * Vector3.Dot(u, v);
 
                 for(int i = 1; i < 4; i++)
                 {
                     for(int j = 1; j < 4; j++)
                     {
-                        //This is somewhat unreadable, but the indices for u, v vectors are "zero-based" while
-                        //matrix indices are "one-based" always subtract by one to index those
-                        m[i, j] = -c1 * u[i - 1] * u[j - 1] - c2 * v[i - 1] * v[j - 1] + c3 * v[i - 1] * u[j - 1];
+                        m[i, j] = -c1 * Index(u, i) * Index(u, j) - c2 * Index(v, i) * Index(v, j) + c3 * Index(v, i) * Index(u, j);
+
+                        continue;
+
+                        static float Index(Vector3 v, int i)
+                        {
+                            return i switch
+                            {
+                                1 => v.X,
+                                2 => v.Y,
+                                3 => v.Z,
+                                _ => 0,
+                            };
+                        }
                     }
                     m[i, i] += 1.0f;
                 }
@@ -579,7 +506,7 @@ namespace Internal.Assimp
             else
             {
                 //Most common case, unless "from" = "to" or "from" =- "to"
-                Vector3D v = Vector3D.Cross(from, to);
+                Vector3 v = Vector3.Cross(from, to);
 
                 //Hand optimized version (9 mults less) by Gottfried Chen
                 float h = 1.0f / (1.0f + e);
@@ -606,31 +533,16 @@ namespace Internal.Assimp
         }
 
         /// <summary>
-        /// Tests equality between two matrices.
+        /// Performs matrix-vector multiplication identical to the way Assimp does it.
         /// </summary>
-        /// <param name="a">First matrix</param>
-        /// <param name="b">Second matrix</param>
-        /// <returns>True if the matrices are equal, false otherwise</returns>
-        public static bool operator ==(Matrix3x3 a, Matrix3x3 b)
-        {
-            return (((a.A1 == b.A1) && (a.A2 == b.A2) && (a.A3 == b.A3))
-                && ((a.B1 == b.B1) && (a.B2 == b.B2) && (a.B3 == b.B3))
-                && ((a.C1 == b.C1) && (a.C2 == b.C2) && (a.C3 == b.C3)));
-        }
-
-        /// <summary>
-        /// Tests inequality between two matrices.
-        /// </summary>
-        /// <param name="a">First matrix</param>
-        /// <param name="b">Second matrix</param>
-        /// <returns>True if the matrices are not equal, false otherwise</returns>
-        public static bool operator !=(Matrix3x3 a, Matrix3x3 b)
-        {
-            return (((a.A1 != b.A1) || (a.A2 != b.A2) || (a.A3 != b.A3))
-                || ((a.B1 != b.B1) || (a.B2 != b.B2) || (a.B3 != b.B3))
-                || ((a.C1 != b.C1) || (a.C2 != b.C2) || (a.C3 != b.C3)));
-        }
-
+        /// <param name="v">Vector to transform</param>
+        /// <returns>Transformed vector</returns>
+        public Vector3 Transform(Vector3 v) =>
+            new(
+                A1 * v.X + A2 * v.Y + A3 * v.Z,
+                B1 * v.X + B2 * v.Y + B3 * v.Z,
+                C1 * v.X + C2 * v.Y + C3 * v.Z
+            );
 
         /// <summary>
         /// Performs matrix multiplication.Multiplication order is B x A. That way, SRT concatenations
@@ -659,74 +571,59 @@ namespace Internal.Assimp
         /// <returns>3x3 matrix</returns>
         public static implicit operator Matrix3x3(Matrix4x4 mat)
         {
-            Matrix3x3 m;
-            m.A1 = mat.A1;
-            m.A2 = mat.A2;
-            m.A3 = mat.A3;
+            Matrix3x3 m = default;
+            m.A1 = mat.M11;
+            m.A2 = mat.M12;
+            m.A3 = mat.M13;
 
-            m.B1 = mat.B1;
-            m.B2 = mat.B2;
-            m.B3 = mat.B3;
+            m.B1 = mat.M21;
+            m.B2 = mat.M22;
+            m.B3 = mat.M23;
 
-            m.C1 = mat.C1;
-            m.C2 = mat.C2;
-            m.C3 = mat.C3;
+            m.C1 = mat.M31;
+            m.C2 = mat.M32;
+            m.C3 = mat.M33;
+            return m;
+        }
+
+        
+        /// <summary>
+        /// Implicit conversion from a 3x3 matrix to a 4x4 matrix.
+        /// </summary>
+        /// <param name="mat">3x3 matrix</param>
+        /// <returns>4x4 matrix</returns>
+        public static implicit operator Matrix4x4(Matrix3x3 mat)
+        {
+            Matrix4x4 m;
+            m.M11 = mat.A1;
+            m.M12 = mat.A2;
+            m.M13 = mat.A3;
+            m.M14 = 0;
+
+            m.M21 = mat.B1;
+            m.M22 = mat.B2;
+            m.M23 = mat.B3;
+            m.M24 = 0;
+
+            m.M31 = mat.C1;
+            m.M32 = mat.C2;
+            m.M33 = mat.C3;
+            m.M34 = 0;
+
+            m.M41 = 0;
+            m.M42 = 0;
+            m.M43 = 0;
+            m.M44 = 1;
+
             return m;
         }
 
         /// <summary>
-        /// Tests equality between this matrix and another.
-        /// </summary>
-        /// <param name="other">Other matrix to test</param>
-        /// <returns>True if the matrices are equal, false otherwise</returns>
-        public bool Equals(Matrix3x3 other)
-        {
-            return (((A1 == other.A1) && (A2 == other.A2) && (A3 == other.A3))
-                && ((B1 == other.B1) && (B2 == other.B2) && (B3 == other.B3))
-                && ((C1 == other.C1) && (C2 == other.C2) && (C3 == other.C3)));
-        }
-
-        /// <summary>
-        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
-        /// </summary>
-        /// <param name="obj">The <see cref="System.Object"/> to compare with this instance.</param>
-        /// <returns>
-        ///   <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
-        public override bool Equals(Object obj)
-        {
-            if(obj is Matrix3x3)
-            {
-                return Equals((Matrix3x3) obj);
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Returns a hash code for this instance.
+        /// Returns a <see cref="string"/> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// A <see cref="string"/> that represents this instance.
         /// </returns>
-        public override int GetHashCode()
-        {
-            return A1.GetHashCode() + A2.GetHashCode() + A3.GetHashCode() + B1.GetHashCode() + B2.GetHashCode() + B3.GetHashCode() +
-                C1.GetHashCode() + C2.GetHashCode() + C3.GetHashCode();
-        }
-
-        /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
-        /// </returns>
-        public override String ToString()
-        {
-            CultureInfo info = CultureInfo.CurrentCulture;
-            Object[] args = new object[] { A1.ToString(info), A2.ToString(info), A3.ToString(info),
-				B1.ToString(info), B2.ToString(info), B3.ToString(info),
-				C1.ToString(info), C2.ToString(info), C3.ToString(info)};
-            return String.Format(info, "{{[A1:{0} A2:{1} A3:{2}] [B1:{3} B2:{4} B3:{5}] [C1:{6} C2:{7} C3:{8}]}}", args);
-        }
+        public override string ToString() => $"{{[A1:{A1} A2:{A2} A3:{A3}] [B1:{B1} B2:{B2} B3:{B3}] [C1:{C1} C2:{C2} C3:{C3}]}}";
     }
 }

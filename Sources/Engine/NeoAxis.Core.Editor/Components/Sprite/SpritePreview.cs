@@ -26,6 +26,7 @@ namespace NeoAxis.Editor
 
 			if( Sprite != null && Sprite.ParentScene == null )//show only when not in a scene
 			{
+				Is3DScene = false;
 				var scene = CreateScene( false );
 				CreateObject();
 				scene.Enabled = true;

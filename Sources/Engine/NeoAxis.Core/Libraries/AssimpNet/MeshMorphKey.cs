@@ -40,37 +40,19 @@ namespace Internal.Assimp
         /// </summary>
         public double Time
         {
-            get
-            {
-                return m_time;
-            }
-            set
-            {
-                m_time = value;
-            }
+            get => m_time;
+            set => m_time = value;
         }
 
         /// <summary>
         /// Gets the values at the time of this keyframe. Number of values must equal number of weights.
         /// </summary>
-        public List<int> Values
-        {
-            get
-            {
-                return m_values;
-            }
-        }
+        public List<int> Values => m_values;
 
         /// <summary>
         /// Gets the weights at the time of this keyframe. Number of weights must equal number of values.
         /// </summary>
-        public List<double> Weights
-        {
-            get
-            {
-                return m_weights;
-            }
-        }
+        public List<double> Weights => m_weights;
 
         /// <summary>
         /// Constructs a new instance of the <see cref="MeshMorphKey"/> class.
@@ -87,7 +69,7 @@ namespace Internal.Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<MeshMorphKey, AiMeshMorphKey>.IsNativeBlittable { get { return true; } }
+        bool IMarshalable<MeshMorphKey, AiMeshMorphKey>.IsNativeBlittable => true;
 
         /// <summary>
         /// Writes the managed data to the native value.
@@ -106,8 +88,8 @@ namespace Internal.Assimp
             {
                 if(m_weights.Count > 0)
                 {
-                    nativeValue.Values = MemoryHelper.ToNativeArray<int>(m_values.ToArray());
-                    nativeValue.Weights = MemoryHelper.ToNativeArray<double>(m_weights.ToArray());
+                    nativeValue.Values = MemoryHelper.ToNativeArray<int>(m_values);
+                    nativeValue.Weights = MemoryHelper.ToNativeArray<double>(m_weights);
                 }
             }
             else

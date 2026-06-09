@@ -40,13 +40,16 @@
 #pragma pack(1)
 #endif
 
+/**
+PCX header
+*/
 typedef struct tagPCXHEADER {
 	BYTE  manufacturer;		// Magic number (0x0A = ZSoft Z)
 	BYTE  version;			// Version	0 == 2.5
 							//          2 == 2.8 with palette info
 							//          3 == 2.8 without palette info
 							//          5 == 3.0 with palette info
-	BYTE  encoding;			// Encoding: 0 = uncompressed, 1 = PCX rle compressed
+	BYTE  encoding;			// Encoding: 0 = uncompressed, 1 = PCX bIsRLE compressed
 	BYTE  bpp;				// Bits per pixel per plane (only 1 or 8)
 	WORD  window[4];		// left, upper, right,lower pixel coord.
 	WORD  hdpi;				// Horizontal resolution
@@ -71,6 +74,12 @@ typedef struct tagPCXHEADER {
 // Internal functions
 // ==========================================================
 
+/**
+Try to validate a PCX signature.
+Note that a PCX file cannot be trusted by its signature. 
+We use other information from the PCX header to improve the trust we have with this file.
+@return Returns TRUE if PCX signature is OK, returns FALSE otherwise
+*/
 static BOOL 
 pcx_validate(FreeImageIO *io, fi_handle handle) {
 	BYTE pcx_signature = 0x0A;
@@ -96,26 +105,31 @@ pcx_validate(FreeImageIO *io, fi_handle handle) {
 	return FALSE;
 }
 
-static unsigned
-readline(FreeImageIO &io, fi_handle handle, BYTE *buffer, unsigned length, BOOL rle, BYTE * ReadBuf, int * ReadPos) {
-	// -----------------------------------------------------------//
-	// Read either run-length encoded or normal image data        //
-	//                                                            //
-	//       THIS IS HOW RUNTIME LENGTH ENCODING WORKS IN PCX:    //
-	//                                                            //
-	//  1) If the upper 2 bits of a byte are set,                 //
-	//     the lower 6 bits specify the count for the next byte   //
-	//                                                            //
-	//  2) If the upper 2 bits of the byte are clear,             //
-	//     the byte is actual data with a count of 1              //
-	//                                                            //
-	//  Note that a scanline always has an even number of bytes   //
-	// -------------------------------------------------------------
+/**
+Read either run-length encoded or normal image data
 
-	BYTE count = 0, value = 0;
+THIS IS HOW RUNTIME LENGTH ENCODING WORKS IN PCX:
+1) If the upper 2 bits of a byte are set, the lower 6 bits specify the count for the next byte
+2) If the upper 2 bits of the byte are clear, the byte is actual data with a count of 1
+
+Note that a scanline always has an even number of bytes
+
+@param io FreeImage IO
+@param handle FreeImage handle
+@param buffer
+@param length
+@param bIsRLE
+@param ReadBuf
+@param ReadPos
+@return
+*/
+static unsigned
+readLine(FreeImageIO *io, fi_handle handle, BYTE *buffer, unsigned length, BOOL bIsRLE, BYTE * ReadBuf, int * ReadPos) {
+	BYTE count = 0;
+	BYTE value = 0;
 	unsigned written = 0;
 
-	if (rle) {
+	if (bIsRLE) {
 		// run-length encoded read
 
 		while (length--) {
@@ -123,14 +137,11 @@ readline(FreeImageIO &io, fi_handle handle, BYTE *buffer, unsigned length, BOOL 
 				if (*ReadPos >= PCX_IO_BUF_SIZE - 1 ) {
 					if (*ReadPos == PCX_IO_BUF_SIZE - 1) {
 						// we still have one BYTE, copy it to the start pos
-
 						*ReadBuf = ReadBuf[PCX_IO_BUF_SIZE - 1];
-
-						io.read_proc(ReadBuf + 1, 1, PCX_IO_BUF_SIZE - 1, handle);
+						io->read_proc(ReadBuf + 1, 1, PCX_IO_BUF_SIZE - 1, handle);
 					} else {
 						// read the complete buffer
-
-						io.read_proc(ReadBuf, 1, PCX_IO_BUF_SIZE, handle);
+						io->read_proc(ReadBuf, 1, PCX_IO_BUF_SIZE, handle);
 					}
 
 					*ReadPos = 0;
@@ -154,7 +165,7 @@ readline(FreeImageIO &io, fi_handle handle, BYTE *buffer, unsigned length, BOOL 
 	} else {
 		// normal read
 
-		written = io.read_proc(buffer, length, 1, handle);
+		written = io->read_proc(buffer, length, 1, handle);
 	}
 
 	return written;
@@ -489,7 +500,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 		// calculate the line length for the PCX and the dib
 
 		// length of raster line in bytes
-		const unsigned linelength = header.bytes_per_line * header.planes;
+		const unsigned lineLength = header.bytes_per_line * header.planes;
 		// length of dib line (rounded to DWORD) in bytes
 		const unsigned pitch = FreeImage_GetPitch(dib);
 
@@ -500,7 +511,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 		// load image data
 		// ---------------
 
-		line = (BYTE*)malloc(linelength * sizeof(BYTE));
+		line = (BYTE*)malloc(MAX(lineLength, width * header.bpp) * sizeof(BYTE)); //< # header.bytes_per_line might be corrupted (too small)
 		if(!line) {
 			throw FI_MSG_ERROR_MEMORY;
 		}
@@ -519,11 +530,14 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 			unsigned written;
 
 			for (unsigned y = 0; y < height; y++) {
-				written = readline(*io, handle, bits, linelength, bIsRLE, ReadBuf, &ReadPos);
+				// do a safe copy of the scanline into 'line'
+				written = readLine(io, handle, line, lineLength, bIsRLE, ReadBuf, &ReadPos);
+				// sometimes (already encountered), PCX images can have a lineLength > pitch
+				memcpy(bits, line, MIN(pitch, lineLength));
 
 				// skip trailing garbage at the end of the scanline
 
-				for (unsigned count = written; count < linelength; count++) {
+				for (unsigned count = written; count < lineLength; count++) {
 					if (ReadPos < PCX_IO_BUF_SIZE) {
 						ReadPos++;
 					} else {
@@ -537,15 +551,14 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 			BYTE bit,  mask, skip;
 			unsigned index;
 			BYTE *buffer;
-			unsigned x, y, written;
 
 			buffer = (BYTE*)malloc(width * sizeof(BYTE));
 			if(!buffer) {
 				throw FI_MSG_ERROR_MEMORY;
 			}
 
-			for (y = 0; y < height; y++) {
-				written = readline(*io, handle, line, linelength, bIsRLE, ReadBuf, &ReadPos);
+			for (unsigned y = 0; y < height; y++) {
+				unsigned written = readLine(io, handle, line, lineLength, bIsRLE, ReadBuf, &ReadPos);
 
 				// build a nibble using the 4 planes
 
@@ -554,7 +567,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 				for(int plane = 0; plane < 4; plane++) {
 					bit = (BYTE)(1 << plane);
 
-					for (x = 0; x < width; x++) {
+					for (unsigned x = 0; x < width; x++) {
 						index = (unsigned)((x / 8) + plane * header.bytes_per_line);
 						mask = (BYTE)(0x80 >> (x & 0x07));
 						buffer[x] |= (line[index] & mask) ? bit : 0;
@@ -563,13 +576,13 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 
 				// then write the dib row
 
-				for (x = 0; x < width / 2; x++) {
+				for (unsigned x = 0; x < width / 2; x++) {
 					bits[x] = (buffer[2*x] << 4) | buffer[2*x+1];
 				}
 
 				// skip trailing garbage at the end of the scanline
 
-				for (unsigned count = written; count < linelength; count++) {
+				for (unsigned count = written; count < lineLength; count++) {
 					if (ReadPos < PCX_IO_BUF_SIZE) {
 						ReadPos++;
 					} else {
@@ -583,31 +596,31 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 			free(buffer);
 
 		} else if((header.planes == 3) && (header.bpp == 8)) {
-			BYTE *pline;
+			BYTE *pLine;
 
 			for (unsigned y = 0; y < height; y++) {
-				readline(*io, handle, line, linelength, bIsRLE, ReadBuf, &ReadPos);
+				readLine(io, handle, line, lineLength, bIsRLE, ReadBuf, &ReadPos);
 
 				// convert the plane stream to BGR (RRRRGGGGBBBB -> BGRBGRBGRBGR)
 				// well, now with the FI_RGBA_x macros, on BIGENDIAN we convert to RGB
 
-				pline = line;
+				pLine = line;
 				unsigned x;
 
 				for (x = 0; x < width; x++) {
-					bits[x * 3 + FI_RGBA_RED] = pline[x];						
+					bits[x * 3 + FI_RGBA_RED] = pLine[x];						
 				}
-				pline += header.bytes_per_line;
+				pLine += header.bytes_per_line;
 
 				for (x = 0; x < width; x++) {
-					bits[x * 3 + FI_RGBA_GREEN] = pline[x];
+					bits[x * 3 + FI_RGBA_GREEN] = pLine[x];
 				}
-				pline += header.bytes_per_line;
+				pLine += header.bytes_per_line;
 
 				for (x = 0; x < width; x++) {
-					bits[x * 3 + FI_RGBA_BLUE] = pline[x];
+					bits[x * 3 + FI_RGBA_BLUE] = pLine[x];
 				}
-				pline += header.bytes_per_line;
+				pLine += header.bytes_per_line;
 
 				bits -= pitch;
 			}

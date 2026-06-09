@@ -474,6 +474,7 @@ namespace NeoAxis.Editor
 		bool AllowCameraControl { get; }
 		bool AllowSelectObjects { get; }
 		bool DisplaySelectedObjects { get; }
+		bool Is3DScene { get; set; }
 
 		Scene CreateScene( bool enable );
 		void DestroyScene();
@@ -518,6 +519,7 @@ namespace NeoAxis.Editor
 		double CameraInitialDistance { get; set; }
 		bool CameraRotationMode { get; set; }
 		SphericalDirection CameraDirection { get; set; }
+		public bool Is3DScene { get; set; }
 
 		Scene CreateScene( bool enable );
 		void DestroyScene();

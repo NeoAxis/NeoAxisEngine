@@ -44,6 +44,7 @@
 #include "IlmThreadMutex.h"
 #include "Iex.h"
 #include <string.h>
+#include <functional>
 #include <map>
 
 #include "ImfNamespace.h"
@@ -63,24 +64,14 @@ Attribute::~Attribute () {}
 
 namespace {
 
-//!!!!betauser
-
-struct NameCompare
+struct NameCompare: std::binary_function <const char *, const char *, bool>
 {
-    bool operator () (const char* x, const char* y) const
+    bool
+    operator () (const char *x, const char *y) const
     {
-        return strcmp(x, y) < 0;
+	return strcmp (x, y) < 0;
     }
 };
-
-//struct NameCompare: std::binary_function <const char *, const char *, bool>
-//{
-//    bool
-//    operator () (const char *x, const char *y) const
-//    {
-//	return strcmp (x, y) < 0;
-//    }
-//};
 
 
 typedef Attribute* (*Constructor)();

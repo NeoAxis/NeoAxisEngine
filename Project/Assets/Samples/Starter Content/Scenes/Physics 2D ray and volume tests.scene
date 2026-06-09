@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
@@ -41,6 +41,7 @@
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
 		Brightness = 30000
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -52,6 +53,7 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 91.429
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
@@ -59,8 +61,9 @@
 		DeferredShading = False
 		LODRange = 0 0
 		Shadows = False
-		ShadowFarDistance = 15
+		ShadowDirectionalDistance = 15
 		ShadowDirectionalLightCascades = 1
+		ShadowPointSpotlightDistance = 15
 		ProvideColorDepthTextureCopy = False
 		.component NeoAxis.Component
 		{
@@ -86,7 +89,6 @@
 			}
 			.component NeoAxis.RenderingEffect_ToneMapping
 			{
-				Enabled = False
 				Name = Tone Mapping
 			}
 			.component NeoAxis.RenderingEffect_ToLDR
@@ -137,6 +139,7 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 91.429
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.MeshInSpace
 	{
@@ -146,10 +149,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -252,10 +251,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Spaceship\\Spaceship.fbx|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -323,10 +318,6 @@
 		{
 			GetByReference = "Base\\Materials\\Yellow.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -382,7 +373,7 @@
 					Value
 					{
 						Length = 6144
-						.elements = "UEsDBBQAAAAIAOg9WlZGs7NoIgMAAAAYAAAEAAAAZmlsZa2YT0gUURzHHyhseTExIyP6u2OQBlGCEuvbOXgoCsqg7A8RlEEdpA7dOjQiK65Qh2AlMyl0h5TAe1lbHdJKFMqsVNC8rB40WATpUjYzr9n5vR0P83362Mey++azn+/Mvt+PYRarZlIvJ8dTjLGkNe1hWK+omO4w3njf0TUjOnGTK/IGt9+vLWVS8fgFRb8u8bdnj5iNW5tNhKf5MV7kt6bF2pMxnJf9n042JZ/F6iF/38efkSvdywo8i+bmx/26xNsjva0A4ml+jHfzO+sKfpuX/R3To3uXCkKQv/jDUx6PTyrwui8/7td95/9tuRLiaX6M1+k+VPDrPn935/6eyrFqyG/VPz9XPaPAG778uF/3nX9sUwXE0/wYL+1DBb/IQPvnpbaQWdp6NBxw/7Dc+sd4Uf/tI0OpqYmSiJqfSfyfAw3m/+MD8zQ/xtP+JwbOy35yPOB31hV4t3/ksir518KvNf9qIyi/Hn65/oPz+jrmF+NEfnifPVdW7gK8lx/jRf6KzkL+ZEee0z9wXvbbBz441KyB1y+qxhu+/LifSfyZutbwroE5iKf5MV78xvzvh7wk0fva+gz6xR6g/TPddt3sH44lA+4fllv/GC/qvy8xn3pf28jV/Aan/I3e7WD/l2sX46X+zdX41XoH6l9r//Dy4343v+C3/Dim2RPjvYHx2fxl3+v3OP8/zsv+R5FRh0f6J61/jNd9+XG/cw2zPP7/Gzyn/wG8yD+cvspbQnM1arzsv7h4West6kgiftr/MN7w5cf9Bqf8r+chrSFvGuJpfowX+ReqZvjX8f4aNV7un01dO83a0nzg/luuf4wX9X/QevaxUP5Z0c8Y5c9qx5Mbdm8OWv/uWjY/xov8p8vrUtbzAwW/23s8/2OjTBu88wW6frT+MV7UP82P+xmj/Fjmnnb+1mH0/LP5MV7kH5xKRDb2ddnXQYGX/fcHysOvMqcgP61/jNd9+XE/Y5QH73+cdZof473+N/vuhcL9l+7zt2dKtODPf4Wf9j+MF3uQ5sf9Ir/L9xQXlRW2mMj9P6P5MV7kT4wM8b+8xfK/VeAZ+wdQSwECFAAUAAAACADoPVpWRrOzaCIDAAAAGAAABAAAAAAAAAAAAAAAAAAAAAAAZmlsZVBLBQYAAAAAAQABADIAAABEAwAAAAA="
+						.elements = "UEsDBBQAAAAIADu3vFxGs7No3AMAAAAYAAAEAAAAZmlsZa2YTUgVURTHLyi8cmNiRkb0+cYgDaIEJZ533sJFUVAGZR9EYAq1kFq0a9GIKD6hFsGTzKTQGVIC92VNtUgrUSizUkFzoy40eAjSpoxzz3ycCaF7Hg3M0zfv/e7/N2fuPTO6XDHrPp+acIUQtsDNEsIycfeOCOtVeIx+ZpmT12WWvCVhzIaVjJtKXcgyPxnhb84dcRq3Njuh67/8kxF/Ho/+Qlgu7kLw+Wj+h5NN9pOWWk1/zO9//z1R17Oq6sfjhXeNQ38eD/lJGCM4f6j2/LY8hn/SpP483vcHChxw088HPprfOTO2dyUvpumP+YXvHstUakrVn8er2plojf48Hv0pD79/WS1n+CdN6s/jfX81D4P66+cDH83v6drfWz5eqemP+Q0rGXmuclbVn8f7fSz05/HoL0TIQ/1aNpUx/FX/Cvx5vO+v5mFQf/184KP981J7zCluOxrn9E+6/nk89o+O0WF3erIoAfcfHg/VEiblfx2od9RR7fuXXztcfzwe/Wnv4fPRfHSH1+DaeofWu//6+er7wfVHQIf3+0fYO70wRr7vH5L6+eAPPGx/O3D8cYToqy7/P/LhPLLx9/tH1Bzfcf2ROpEb3wf72tptnec3qD18L/Dn8ehf1pUvH+3IUf2Xz0fzYSLcO9Rs6M3/oH7eM4iqAYOHGidN6s/PFxH+TE1bfNfgAsNfzb/An8ej/+LP+7Io3fdSCMvm89H+Od9+1RkYabE15w8UPHCHNzwe139/etF9W90IvcDm8ZBoScpf69vO7P/h3IfReDz6e/c/8M+Cj+bDGLjprH8/32foTx2ezj01FhlAh1fuXu9Afsu3YwbseuvX58NYHh/4l3yt3aPmD5+PnveDxJjy15z/qn/S/sHjoX+p9RP483jFQv0DPqykzvVDnvrzePQfmb8iW2MLVeT/B7AuoS9493YYdb3nF+AtSfMvLl82+go6bX1emLT/8XjlZ1J/Ho/+lP/xNGbU58ww/C1J/Xk8+i9VzMrPEwNV0P/5fLR/NnXvdKqLcxnP/2oNw9//qv/xeFz/B6cm3KXSj2r98nicrZQ/axy3N+zerNl//NkOz27oz+PR/3RpjVvXs6r8+bxaG0H+Q6vEGLr1SbP+mE/XP4/H9U/9eTzWjPLjmTvG+RuHNeuPPPXn8eg/NJ1ObOzvhj5o83lV/6B/3h0sjb/InNL0x3y6/nk89g/qz+MhXwjK855fkKf+PD7sf3Nvnqn5z+eFoPkdmSIDbhb6/d+StP/xeHWPkpDv+/N4OH/09/newoKS/FZHc/4gT/15PPqnR4flb9kqhXht83kh/gBQSwECFAAUAAAACAA7t7xcRrOzaNwDAAAAGAAABAAAAAAAAAAAAAAAAAAAAAAAZmlsZVBLBQYAAAAAAQABADIAAAD+AwAAAAA="
 						.elementsZip = True
 					}
 				}

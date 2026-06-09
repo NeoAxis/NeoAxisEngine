@@ -33,102 +33,54 @@ namespace Internal.Assimp
     [DebuggerDisplay("{Name}")]
     public sealed class ImporterDescription
     {
-        private String m_name;
-        private String m_author;
-        private String m_maintainer;
-        private String m_comments;
+        private string m_name;
+        private string m_author;
+        private string m_maintainer;
+        private string m_comments;
         private ImporterFeatureFlags m_featureFlags;
         private Version m_minVersion;
         private Version m_maxVersion;
-        private String[] m_fileExtensions;
+        private string[] m_fileExtensions;
 
         /// <summary>
         /// Gets the name of the importer (e.g. Blender3D Importer)
         /// </summary>
-        public String Name
-        {
-            get
-            {
-                return m_name;
-            }
-        }
+        public string Name => m_name;
 
         /// <summary>
         /// Gets the original author (blank if unknown or assimp team).
         /// </summary>
-        public String Author
-        {
-            get
-            {
-                return m_author;
-            }
-        }
+        public string Author => m_author;
 
         /// <summary>
         /// Gets the name of the current maintainer, if empty then the author maintains.
         /// </summary>
-        public String Maintainer
-        {
-            get
-            {
-                return m_maintainer;
-            }
-        }
+        public string Maintainer => m_maintainer;
 
         /// <summary>
         /// Gets any implementation comments.
         /// </summary>
-        public String Comments
-        {
-            get
-            {
-                return m_comments;
-            }
-        }
+        public string Comments => m_comments;
 
         /// <summary>
         /// Gets the features supported by the importer.
         /// </summary>
-        public ImporterFeatureFlags FeatureFlags
-        {
-            get
-            {
-                return m_featureFlags;
-            }
-        }
+        public ImporterFeatureFlags FeatureFlags => m_featureFlags;
 
         /// <summary>
         /// Gets the minimum version of the file format supported. If no version scheme, forwards compatible, or importer doesn't care, major/min will be zero.
         /// </summary>
-        public Version MinVersion
-        {
-            get
-            {
-                return m_minVersion;
-            }
-        }
+        public Version MinVersion => m_minVersion;
 
         /// <summary>
         /// Gets the maximum version of the file format supported. If no version scheme, forwards compatible, or importer doesn't care, major/min will be zero.
         /// </summary>
-        public Version MaxVersion
-        {
-            get
-            {
-                return m_maxVersion;
-            }
-        }
+        public Version MaxVersion => m_maxVersion;
 
         /// <summary>
         /// Gets the list of file extensions the importer can handle. All entries are lower case and do NOT have a leading dot.
         /// </summary>
-        public String[] FileExtensions
-        {
-            get
-            {
-                return m_fileExtensions;
-            }
-        }
+        public string[] FileExtensions => m_fileExtensions;
 
 		//!!!!betauser
 
@@ -154,24 +106,24 @@ namespace Internal.Assimp
 		}
 
 		//internal ImporterDescription(in AiImporterDesc descr)
-		//{
-		//    m_name = Marshal.PtrToStringAnsi(descr.Name);
-		//    m_author = Marshal.PtrToStringAnsi(descr.Author);
-		//    m_maintainer = Marshal.PtrToStringAnsi(descr.Maintainer);
-		//    m_comments = Marshal.PtrToStringAnsi(descr.Comments);
-		//    m_featureFlags = descr.Flags;
-		//    m_minVersion = new Version((int) descr.MinMajor, (int) descr.MinMinor);
-		//    m_maxVersion = new Version((int) descr.MaxMajor, (int) descr.MaxMajor);
+  //      {
+  //          m_name = Marshal.PtrToStringAnsi(descr.Name);
+  //          m_author = Marshal.PtrToStringAnsi(descr.Author);
+  //          m_maintainer = Marshal.PtrToStringAnsi(descr.Maintainer);
+  //          m_comments = Marshal.PtrToStringAnsi(descr.Comments);
+  //          m_featureFlags = descr.Flags;
+  //          m_minVersion = new Version((int) descr.MinMajor, (int) descr.MinMinor);
+  //          m_maxVersion = new Version((int) descr.MaxMajor, (int) descr.MaxMajor);
 
-		//    String fileExts = Marshal.PtrToStringAnsi(descr.FileExtensions);
-		//    if(String.IsNullOrEmpty(fileExts))
-		//    {
-		//        m_fileExtensions = new String[0];
-		//    }
-		//    else
-		//    {
-		//        m_fileExtensions = fileExts.Split(' ');
-		//    }
-		//}
-	}
+  //          string fileExts = Marshal.PtrToStringAnsi(descr.FileExtensions);
+  //          if(string.IsNullOrEmpty(fileExts))
+  //          {
+  //              m_fileExtensions = Array.Empty<string>();
+  //          }
+  //          else
+  //          {
+  //              m_fileExtensions = fileExts.Split(' ');
+  //          }
+  //      }
+    }
 }

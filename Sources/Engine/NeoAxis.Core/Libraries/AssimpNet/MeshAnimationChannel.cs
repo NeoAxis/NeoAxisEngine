@@ -33,7 +33,7 @@ namespace Internal.Assimp
     /// </summary>
     public sealed class MeshAnimationChannel : IMarshalable<MeshAnimationChannel, AiMeshAnim>
     {
-        private String m_name;
+        private string m_name;
         private List<MeshKey> m_meshKeys;
 
         /// <summary>
@@ -41,58 +41,34 @@ namespace Internal.Assimp
         /// animation meshes need to be named (not necessarily uniquely, the name can basically
         /// serve as a wildcard to select a group of meshes with similar animation setup).
         /// </summary>
-        public String MeshName
+        public string MeshName
         {
-            get
-            {
-                return m_name;
-            }
-            set
-            {
-                m_name = value;
-            }
+            get => m_name;
+            set => m_name = value;
         }
 
         /// <summary>
         /// Gets the number of meshkeys in this animation channel. There will always
         /// be at least one key.
         /// </summary>
-        public int MeshKeyCount
-        {
-            get
-            {
-                return m_meshKeys.Count;
-            }
-        }
+        public int MeshKeyCount => m_meshKeys.Count;
 
         /// <summary>
         /// Gets if this animation channel has mesh keys - this should always be true.
         /// </summary>
-        public bool HasMeshKeys
-        {
-            get
-            {
-                return m_meshKeys.Count > 0;
-            }
-        }
+        public bool HasMeshKeys => m_meshKeys.Count > 0;
 
         /// <summary>
         /// Gets the mesh keyframes of the animation. This should not be null.
         /// </summary>
-        public List<MeshKey> MeshKeys
-        {
-            get
-            {
-                return m_meshKeys;
-            }
-        }
+        public List<MeshKey> MeshKeys => m_meshKeys;
 
         /// <summary>
         /// Constructs a new instance of the <see cref="MeshAnimationChannel"/> class.
         /// </summary>
         public MeshAnimationChannel()
         {
-            m_name = String.Empty;
+            m_name = string.Empty;
             m_meshKeys = new List<MeshKey>();
         }
 
@@ -101,7 +77,7 @@ namespace Internal.Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<MeshAnimationChannel, AiMeshAnim>.IsNativeBlittable { get { return true; } }
+        bool IMarshalable<MeshAnimationChannel, AiMeshAnim>.IsNativeBlittable => true;
 
         /// <summary>
         /// Writes the managed data to the native value.
@@ -115,7 +91,7 @@ namespace Internal.Assimp
             nativeValue.Keys = IntPtr.Zero;
 
             if(nativeValue.NumKeys > 0)
-                nativeValue.Keys = MemoryHelper.ToNativeArray<MeshKey>(m_meshKeys.ToArray());
+                nativeValue.Keys = MemoryHelper.ToNativeArray<MeshKey>(m_meshKeys);
         }
 
         /// <summary>

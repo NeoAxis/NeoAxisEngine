@@ -147,10 +147,14 @@ CacheFile::lockBlock(int nr) {
 				m_current_block->data = new BYTE[BLOCK_SIZE];
 
 				fseek(m_file, m_current_block->nr * BLOCK_SIZE, SEEK_SET);
-				fread(m_current_block->data, BLOCK_SIZE, 1, m_file);
-
-				m_page_cache_mem.splice(m_page_cache_mem.begin(), m_page_cache_disk, it->second);
-				m_page_map[nr] = m_page_cache_mem.begin();
+				if (fread(m_current_block->data, BLOCK_SIZE, 1, m_file) == 1) {
+					m_page_cache_mem.splice(m_page_cache_mem.begin(), m_page_cache_disk, it->second);
+					m_page_map[nr] = m_page_cache_mem.begin();
+				}
+				else {
+					FreeImage_OutputMessageProc(FIF_UNKNOWN, "Failed to lock a block in CacheFile");
+					return NULL;
+				}
 			}
 
 			// if the memory cache size is too large, swap an item to disc

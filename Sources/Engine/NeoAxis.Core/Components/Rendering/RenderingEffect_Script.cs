@@ -287,8 +287,8 @@ namespace NeoAxis
 
 			//fragment
 			{
-				var properties = new List<(Component, int, Metadata.Property)>();
-				properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Color ) )) );
+				var properties = new List<(Component, int, Metadata.Property, bool)>();
+				properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Color ) ), false) );
 
 				var generator = new ShaderGenerator();
 				int textureRegisterCounter = 1;

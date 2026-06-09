@@ -69,13 +69,13 @@ namespace Internal.Assimp
         /// </summary>
         /// <param name="managedObj">Managed object to marshal.</param>
         /// <param name="nativeData">Unmanaged chunk of memory to write to.</param>
-        void MarshalManagedToNative(Object managedObj, IntPtr nativeData);
+        void MarshalManagedToNative(object managedObj, IntPtr nativeData);
 
         /// <summary>
         /// Marshals the managed object from the unmanaged chunk of memory.
         /// </summary>
         /// <param name="nativeData">Unmanaged chunk of memory to read from.</param>
         /// <returns>Managed object marshaled.</returns>
-        Object MarshalNativeToManaged(IntPtr nativeData);
+        object MarshalNativeToManaged(IntPtr nativeData);
     }
 }

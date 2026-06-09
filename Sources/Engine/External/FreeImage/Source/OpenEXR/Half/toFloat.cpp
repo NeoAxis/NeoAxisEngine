@@ -131,34 +131,34 @@ halfToFloat (unsigned short y)
 // Main - prints the half-to-float lookup table
 //---------------------------------------------
 
-int
-main ()
-{
-    cout.precision (9);
-    cout.setf (ios_base::hex, ios_base::basefield);
+// int
+// main ()
+// {
+//     cout.precision (9);
+//     cout.setf (ios_base::hex, ios_base::basefield);
 
-    cout << "//\n"
-	    "// This is an automatically generated file.\n"
-	    "// Do not edit.\n"
-	    "//\n\n";
+//     cout << "//\n"
+// 	    "// This is an automatically generated file.\n"
+// 	    "// Do not edit.\n"
+// 	    "//\n\n";
 
-    cout << "{\n    ";
+//     cout << "{\n    ";
 
-    const int iMax = (1 << 16);
+//     const int iMax = (1 << 16);
 
-    for (int i = 0; i < iMax; i++)
-    {
-	cout << "{0x" << setfill ('0') << setw (8) << halfToFloat (i) << "}, ";
+//     for (int i = 0; i < iMax; i++)
+//     {
+// 	cout << "{0x" << setfill ('0') << setw (8) << halfToFloat (i) << "}, ";
 
-	if (i % 4 == 3)
-	{
-	    cout << "\n";
+// 	if (i % 4 == 3)
+// 	{
+// 	    cout << "\n";
 
-	    if (i < iMax - 1)
-		cout << "    ";
-	}
-    }
+// 	    if (i < iMax - 1)
+// 		cout << "    ";
+// 	}
+//     }
 
-    cout << "};\n";
-    return 0;
-}
+//     cout << "};\n";
+//     return 0;
+// }

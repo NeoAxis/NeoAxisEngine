@@ -29,7 +29,6 @@ namespace NeoAxis
 		/// <summary>
 		/// The intensity of the effect.
 		/// </summary>
-		[Serialize]
 		[DefaultValue( 1.0 )]
 		[Range( 0, 1 )]
 		[Category( "Effect" )]
@@ -42,22 +41,20 @@ namespace NeoAxis
 		public event Action<RenderingEffect_Precipitation> IntensityChanged;
 		ReferenceField<double> _intensity = 1;
 
-
-		//const string shaderDefault = @"Base\Shaders\Effects\Precipitation_fs.sc";
-
-		//
-
-		//public RenderingEffect_Precipitation()
-		//{
-		//	ShaderFile = shaderDefault;
-		//}
+		/// <summary>
+		/// The color multiplier of the effect.
+		/// </summary>
+		[DefaultValue( "1 1 1" )]
+		public Reference<ColorValuePowered> Color
+		{
+			get { if( _color.BeginGet() ) Color = _color.Get( this ); return _color.value; }
+			set { if( _color.BeginSet( this, ref value ) ) { try { ColorChanged?.Invoke( this ); } finally { _color.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Color"/> property value changes.</summary>
+		public event Action<RenderingEffect_Precipitation> ColorChanged;
+		ReferenceField<ColorValuePowered> _color = ColorValuePowered.One;
 
 		/////////////////////////////////////////
-
-		//protected override void OnSetShaderParameters( ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ImageComponent actualTexture, CanvasRenderer.ShaderItem shader )
-		//{
-		//	base.OnSetShaderParameters( context, frameData, actualTexture, shader );
-		//}
 
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
 		{
@@ -101,14 +98,14 @@ namespace NeoAxis
 
 			context.SetViewport( newTexture.Result.GetRenderTarget().Viewports[ 0 ] );
 
-			CanvasRenderer.ShaderItem shader = new CanvasRenderer.ShaderItem();
+			var shader = new CanvasRenderer.ShaderItem();
 			shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
 			shader.FragmentProgramFileName = @"Base\Shaders\Effects\Precipitation_fs.sc";
 
-			shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, actualTexture,
-				TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
+			shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, actualTexture, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
 
 			shader.Parameters.Set( "intensity", (float)intensity );
+			shader.Parameters.Set( "precipitationMultiplier", new Vector4F( Color.Value.ToVector3F(), 0 ) );
 
 			context.RenderQuadToCurrentViewport( shader );
 

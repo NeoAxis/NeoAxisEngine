@@ -257,10 +257,19 @@
 #	define BGFX_CONFIG_DEBUG_OCCLUSION BGFX_CONFIG_DEBUG
 #endif // BGFX_CONFIG_DEBUG_OCCLUSION
 
+
+
 //!!!!betauser. temp. UWP frezees when multithreaded renderer is enabled
-#ifdef BX_PLATFORM_WINRT
+#if BX_PLATFORM_WINRT
 #	define BGFX_CONFIG_MULTITHREADED 0
 #endif
+
+//!!!!betauser. multithreaded renderer is disabled for all backends right now
+#ifndef BGFX_CONFIG_MULTITHREADED
+#	define BGFX_CONFIG_MULTITHREADED 0
+#endif
+
+
 
 #ifndef BGFX_CONFIG_MULTITHREADED
 #	define BGFX_CONFIG_MULTITHREADED ( (0 == BX_PLATFORM_EMSCRIPTEN) ? 1 : 0)

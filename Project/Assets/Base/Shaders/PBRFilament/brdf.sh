@@ -201,13 +201,13 @@ float visibilityAnisotropic(float linearRoughness, float at, float ab,
 #endif
 }
 
-float distributionClearCoat(float linearRoughness, float NoH, const vec3 h) {
+float distributionClearcoat(float linearRoughness, float NoH, const vec3 h) {
 #if BRDF_CLEAR_COAT_D == SPECULAR_D_GGX
     return D_GGX(linearRoughness, NoH, h);
 #endif
 }
 
-float visibilityClearCoat(float roughness, float linearRoughness, float LoH) {
+float visibilityClearcoat(float roughness, float linearRoughness, float LoH) {
 #if BRDF_CLEAR_COAT_V == SPECULAR_V_KELEMEN
     return V_Kelemen(LoH);
 #endif
@@ -271,7 +271,7 @@ float f0ToIor(float f0) {
     return (1.0 + r) / (1.0 - r);
 }
 
-vec3 f0ClearCoatToSurface(const vec3 f0) {
+vec3 f0ClearcoatToSurface(const vec3 f0) {
     // Approximation of iorTof0(f0ToIor(f0), 1.5)
     // This assumes that the clear coat layer has an IOR of 1.5
 #if GLOBAL_MATERIAL_SHADING == GLOBAL_MATERIAL_SHADING_BASIC

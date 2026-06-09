@@ -335,11 +335,23 @@ namespace NeoAxis
 			}
 		}
 
-		class ReduceVoxelPositionItem
-		{
-			public List<Vector3F> Normals = new List<Vector3F>();
-			public Vector3F ResultOffset;
-		}
+		//class ReduceVoxelPositionEqualGroup
+		//{
+		//	public List<Item> Items;
+		//	public Vector3F Offset;
+
+		//	public struct Item
+		//	{
+		//		public int GeometryIndex;
+		//		public int VertexIndex;
+		//	}
+		//}
+
+		//class ReduceVoxelPositionItem
+		//{
+		//	public List<Vector3F> Normals = new List<Vector3F>();
+		//	public Vector3F ResultOffset;
+		//}
 
 		[MethodImpl( (MethodImplOptions)512 )]
 		unsafe byte[] CreateVoxelData( MeshGeometry[] geometries, out BoundsF meshBoundsOut )
@@ -424,6 +436,146 @@ namespace NeoAxis
 
 						meshBounds.Add( geometryData.Position );
 					}
+
+
+
+					//is not good too
+					////decrease mesh geometry to half of cell size
+					//if( !meshBounds.IsCleared() && EngineApp._DebugCapsLock )
+					//{
+					//	var maxSide2 = meshBounds.GetSize().MaxComponent();
+					//	var estimatedCellSize = maxSide2 / InitialGridSize;
+
+					//	var initSettings = new OctreeContainer.InitSettings();
+					//	initSettings.InitialOctreeBounds = meshBounds.GetExpanded( 0.001f );
+					//	initSettings.MinNodeSize = meshBounds.GetSize() / 50;
+					//	using( var octree = new OctreeContainer( initSettings ) )
+					//	{
+
+					//		//calculate groups of vertices with equal position
+
+					//		//ReduceVoxelPositionEqualGroup
+					//		var equalVertexGroups = new Dictionary<int, ReduceVoxelPositionEqualGroup>();
+
+
+					//		//!!!!double sided
+
+
+					//		//collect triangle normals in position items
+					//		for( int nGeometry = 0; nGeometry < geometries.Length; nGeometry++ )
+					//		{
+					//			var geometryData = geometryDatas[ nGeometry ];
+
+					//			for( int tri = 0; tri < geometryData.Indices.Length / 3; tri++ )
+					//			{
+					//				var vertexIndex0 = geometryData.Indices[ tri * 3 + 0 ];
+					//				var vertexIndex1 = geometryData.Indices[ tri * 3 + 1 ];
+					//				var vertexIndex2 = geometryData.Indices[ tri * 3 + 2 ];
+
+					//				var position0 = geometryData.Position[ vertexIndex0 ];
+					//				var position1 = geometryData.Position[ vertexIndex1 ];
+					//				var position2 = geometryData.Position[ vertexIndex2 ];
+
+					//				var triangleCenter = ( position0 + position1 + position2 ) / 3;
+					//				var triangleNormal = MathAlgorithms.CalculateTriangleNormal( position0, position1, position2 );
+
+					//				var vertexIndexes = new int[] { vertexIndex0, vertexIndex1, vertexIndex2 };
+					//				var vertexPositions = new Vector3F[] { position0, position1, position2 };
+					//				int index = 0;
+					//				foreach( var vertexPosition in vertexPositions )
+					//				{
+					//					var vertexIndex = vertexIndexes[ index ];
+
+					//					var b = new Bounds( vertexPosition ).GetExpanded( 0.0001 );
+					//					var objects = octree.GetObjects( b, 1, OctreeContainer.ModeEnum.One );
+					//					if( objects.Length != 0 )
+					//					{
+					//						//add to the group
+
+					//						var groupIndex = objects[ 0 ];
+					//						var group = equalVertexGroups[ groupIndex ];
+
+					//						var alreadyAdded = false;
+					//						for( int n = 0; n < group.Items.Count; n++ )
+					//						{
+					//							var item = group.Items[ n ];
+					//							if( item.GeometryIndex == nGeometry && item.VertexIndex == vertexIndex )
+					//							{
+					//								alreadyAdded = true;
+					//								break;
+					//							}
+					//						}
+					//						if( !alreadyAdded )
+					//							group.Items.Add( new ReduceVoxelPositionEqualGroup.Item() { GeometryIndex = nGeometry, VertexIndex = vertexIndex } );
+
+					//						//var offset = -triangleNormal * estimatedCellSize * 0.5f;
+
+					//						var vector = triangleCenter - vertexPosition;
+					//						var length = vector.Length();
+					//						if( length > estimatedCellSize * 0.5f )
+					//							length = estimatedCellSize * 0.5f;
+					//						var offset = ( triangleCenter - vertexPosition ).GetNormalize() * length;
+
+					//						//var offset = ( triangleCenter - vertexPosition ).GetNormalize() * estimatedCellSize * 0.5f;
+					//						group.Offset += offset;
+					//					}
+					//					else
+					//					{
+					//						//create a new group
+
+					//						var groupIndex = octree.AddObject( new Bounds( vertexPosition ), 1 );
+
+					//						var group = new ReduceVoxelPositionEqualGroup();
+					//						group.Items = new List<ReduceVoxelPositionEqualGroup.Item>();
+					//						group.Items.Add( new ReduceVoxelPositionEqualGroup.Item() { GeometryIndex = nGeometry, VertexIndex = vertexIndex } );
+
+					//						//var offset = -triangleNormal * estimatedCellSize * 0.5f;
+
+					//						var vector = triangleCenter - vertexPosition;
+					//						var length = vector.Length();
+					//						if( length > estimatedCellSize * 0.5f )
+					//							length = estimatedCellSize * 0.5f;
+					//						var offset = ( triangleCenter - vertexPosition ).GetNormalize() * length;
+
+					//						//var offset = ( triangleCenter - vertexPosition ).GetNormalize() * estimatedCellSize * 0.5f;
+
+					//						group.Offset = offset;
+
+					//						equalVertexGroups[ groupIndex ] = group;
+					//					}
+
+					//					index++;
+					//				}
+					//			}
+					//		}
+
+					//		//fix position offsets
+					//		foreach( var group in equalVertexGroups.Values )
+					//		{
+					//			for( int n = 0; n < 3; n++ )
+					//				group.Offset[ n ] = MathEx.Clamp( group.Offset[ n ], -estimatedCellSize * 0.5f, estimatedCellSize * 0.5f );
+					//		}
+
+					//		//apply offset
+					//		foreach( var group in equalVertexGroups.Values )
+					//		{
+					//			foreach( var item in group.Items )
+					//			{
+					//				var geometryData = geometryDatas[ item.GeometryIndex ];
+					//				ref var position = ref geometryData.Position[ item.VertexIndex ];
+					//				position += group.Offset;
+					//			}
+					//		}
+					//	}
+
+					//	//calculate new meshBounds
+					//	{
+					//		meshBounds = BoundsF.Cleared;
+					//		foreach( var geometryData in geometryDatas )
+					//			meshBounds.Add( geometryData.Position );
+					//	}
+					//}
+
 
 
 					////портит геометрию. внутренние части вылазят наружу
@@ -1274,7 +1426,7 @@ namespace NeoAxis
 												}
 											}
 										}
-end:;
+										end:;
 									}
 
 									if( !existsNearestInside )
@@ -1654,7 +1806,7 @@ end:;
 					material.ShadingModel = Material.ShadingModelEnum.Lit;
 			}
 
-			material.ClearCoat = 0;
+			material.Clearcoat = 0;
 			material.Anisotropy = 0;
 			material.ReceiveShadows = true;
 

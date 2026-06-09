@@ -21,17 +21,16 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Internal.Assimp.Unmanaged;
-using System.Globalization;
+using System.Numerics;
 
 namespace Internal.Assimp
 {
     /// <summary>
     /// Represents a container for holding metadata, representing as key-value pairs.
     /// </summary>
-    public sealed class Metadata : Dictionary<String, Metadata.Entry>, IMarshalable<Metadata, AiMetadata>
+    public sealed class Metadata : Dictionary<string, Metadata.Entry>, IMarshalable<Metadata, AiMetadata>
     {
         /// <summary>
         /// Constructs a new instance of the <see cref="Metadata"/> class.
@@ -43,7 +42,7 @@ namespace Internal.Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<Metadata, AiMetadata>.IsNativeBlittable { get { return true; } }
+        bool IMarshalable<Metadata, AiMetadata>.IsNativeBlittable => true;
 
         /// <summary>
         /// Writes the managed data to the native value.
@@ -58,7 +57,7 @@ namespace Internal.Assimp
             AiString[] keys = new AiString[Count];
             AiMetadataEntry[] entries = new AiMetadataEntry[Count];
             int index = 0;
-            foreach(KeyValuePair<String, Entry> kv in this)
+            foreach(KeyValuePair<string, Entry> kv in this)
             {
                 AiMetadataEntry entry = new AiMetadataEntry();
                 entry.DataType = kv.Value.DataType;
@@ -87,18 +86,18 @@ namespace Internal.Assimp
                         break;
                     case MetaDataType.String:
                         entry.Data = MemoryHelper.AllocateMemory(MemoryHelper.SizeOf<AiString>());
-                        AiString aiStringValue = new AiString(kv.Value.Data as String);
+                        AiString aiStringValue = new AiString(kv.Value.Data as string);
                         MemoryHelper.Write<AiString>(entry.Data, aiStringValue);
                         break;
                     case MetaDataType.UInt64:
-                        entry.Data = MemoryHelper.AllocateMemory(sizeof(UInt64));
-                        UInt64 uint64Value = (UInt64) kv.Value.Data;
-                        MemoryHelper.Write<UInt64>(entry.Data, uint64Value);
+                        entry.Data = MemoryHelper.AllocateMemory(sizeof(ulong));
+                        ulong uint64Value = (ulong) kv.Value.Data;
+                        MemoryHelper.Write<ulong>(entry.Data, uint64Value);
                         break;
-                    case MetaDataType.Vector3D:
-                        entry.Data = MemoryHelper.AllocateMemory(MemoryHelper.SizeOf<Vector3D>());
-                        Vector3D vectorValue = (Vector3D) kv.Value.Data;
-                        MemoryHelper.Write<Vector3D>(entry.Data, vectorValue);
+                    case MetaDataType.Vector3:
+                        entry.Data = MemoryHelper.AllocateMemory(MemoryHelper.SizeOf<Vector3>());
+                        Vector3 vectorValue = (Vector3) kv.Value.Data;
+                        MemoryHelper.Write<Vector3>(entry.Data, vectorValue);
                         break;
                 }
 
@@ -127,13 +126,13 @@ namespace Internal.Assimp
 
             for(int i = 0; i < nativeValue.NumProperties; i++)
             {
-                String key = keys[i].GetString();
+                string key = keys[i].GetString();
                 AiMetadataEntry entry = entries[i];
 
-                if(String.IsNullOrEmpty(key) || entry.Data == IntPtr.Zero)
+                if(string.IsNullOrEmpty(key) || entry.Data == IntPtr.Zero)
                     continue;
 
-                Object data = null;
+                object data = null;
                 switch(entry.DataType)
                 {
                     case MetaDataType.Bool:
@@ -153,10 +152,10 @@ namespace Internal.Assimp
                         data = aiString.GetString();
                         break;
                     case MetaDataType.UInt64:
-                        data = MemoryHelper.Read<UInt64>(entry.Data);
+                        data = MemoryHelper.Read<ulong>(entry.Data);
                         break;
-                    case MetaDataType.Vector3D:
-                        data = MemoryHelper.Read<Vector3D>(entry.Data);
+                    case MetaDataType.Vector3:
+                        data = MemoryHelper.Read<Vector3>(entry.Data);
                         break;
                 }
 
@@ -197,160 +196,146 @@ namespace Internal.Assimp
                 MemoryHelper.FreeMemory(nativeValue);
         }
 
-        #endregion
+		#endregion
 
-        /// <summary>
-        /// Represents an entry in a metadata container.
-        /// </summary>
-        public struct Entry : IEquatable<Entry>
-        {
-            private MetaDataType m_dataType;
-            private Object m_data;
 
-            /// <summary>
-            /// Gets the type of metadata.
-            /// </summary>
-            public MetaDataType DataType
-            {
-                get
-                {
-                    return m_dataType;
-                }
-            }
 
-            /// <summary>
-            /// Gets the metadata data stored in this entry.
-            /// </summary>
-            public Object Data
-            {
-                get
-                {
-                    return m_data;
-                }
-            }
+		//!!!!betauser
 
-            /// <summary>
-            /// Constructs a new instance of the <see cref="Entry"/> struct.
-            /// </summary>
-            /// <param name="dataType">Type of the data.</param>
-            /// <param name="data">The data.</param>
-            public Entry(MetaDataType dataType, Object data)
-            {
-                m_dataType = dataType;
-                m_data = data;
-            }
+		/// <summary>
+		/// Represents an entry in a metadata container.
+		/// </summary>
+		public readonly struct Entry : IEquatable<Entry>
+		{
+			/// <summary>
+			/// Gets the type of metadata.
+			/// </summary>
+			public MetaDataType DataType { get; }
 
-            /// <summary>
-            /// Tests equality between two entries.
-            /// </summary>
-            /// <param name="a">First entry</param>
-            /// <param name="b">Second entry</param>
-            /// <returns>True if the entries are equal, false otherwise</returns>
-            public static bool operator ==(Entry a, Entry b)
-            {
-                return a.Equals(b);
-            }
+			/// <summary>
+			/// Gets the metadata data stored in this entry.
+			/// </summary>
+			public object Data { get; }
 
-            /// <summary>
-            /// Tests inequality between two entries.
-            /// </summary>
-            /// <param name="a">First entry</param>
-            /// <param name="b">Second entry</param>
-            /// <returns>True if the entries are not equal, false otherwise</returns>
-            public static bool operator !=(Entry a, Entry b)
-            {
-                return !a.Equals(b);
-            }
+			/// <summary>
+			/// Constructs a new instance of the <see cref="Entry"/> struct.
+			/// </summary>
+			/// <param name="dataType">Type of metadata.</param>
+			/// <param name="data">Metadata data stored in this entry.</param>
+			public Entry( MetaDataType dataType, object data )
+			{
+				DataType = dataType;
+				Data = data;
+			}
 
-            /// <summary>
-            /// Gets the data as the specified type. If it cannot be casted to the type, then null is returned.
-            /// </summary>
-            /// <typeparam name="T">Type to cast the data to.</typeparam>
-            /// <returns>Casted data or null.</returns>
-            public T? DataAs<T>() where T : struct
-            {
-                Type dataTypeType = null;
-                switch(m_dataType)
-                {
-                    case MetaDataType.Bool:
-                        dataTypeType = typeof(bool);
-                        break;
-                    case MetaDataType.Float:
-                        dataTypeType = typeof(float);
-                        break;
-                    case MetaDataType.Double:
-                        dataTypeType = typeof(double);
-                        break;
-                    case MetaDataType.Int32:
-                        dataTypeType = typeof(int);
-                        break;
-                    case MetaDataType.String:
-                        dataTypeType = typeof(String);
-                        break;
-                    case MetaDataType.UInt64:
-                        dataTypeType = typeof(UInt64);
-                        break;
-                    case MetaDataType.Vector3D:
-                        dataTypeType = typeof(Vector3D);
-                        break;
-                }
+			/// <summary>
+			/// Gets the data as the specified type. If it cannot be casted to the type, then null is returned.
+			/// </summary>
+			/// <typeparam name="T">Type to cast the data to.</typeparam>
+			/// <returns>Casted data or null.</returns>
+			public T? DataAs<T>() where T : struct
+			{
+				Type dataTypeType = null;
+				switch( DataType )
+				{
+				case MetaDataType.Bool:
+					dataTypeType = typeof( bool );
+					break;
+				case MetaDataType.Float:
+					dataTypeType = typeof( float );
+					break;
+				case MetaDataType.Double:
+					dataTypeType = typeof( double );
+					break;
+				case MetaDataType.Int32:
+					dataTypeType = typeof( int );
+					break;
+				case MetaDataType.String:
+					dataTypeType = typeof( string );
+					break;
+				case MetaDataType.UInt64:
+					dataTypeType = typeof( ulong );
+					break;
+				case MetaDataType.Vector3:
+					dataTypeType = typeof( Vector3 );
+					break;
+				}
 
-                if(dataTypeType == typeof(T))
-                    return (T) m_data;
+				if( dataTypeType == typeof( T ) )
+					return (T)Data;
 
-                return null;
-            }
+				return null;
+			}
 
-            /// <summary>
-            /// Determines whether the specified <see cref="System.Object" /> is equal to this instance.
-            /// </summary>
-            /// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
-            /// <returns>True if the specified <see cref="System.Object" /> is equal to this instance; otherwise, false.</returns>
-            public override bool Equals(object obj)
-            {
-                if(obj is Entry)
-                    return Equals((Entry) obj);
+			/// <inheritdoc/>
+			public bool Equals( Entry other ) => DataType == other.DataType && Equals( Data, other.Data );
 
-                return false;
-            }
+			/// <inheritdoc/>
+			public override bool Equals( object obj ) => obj is Entry other && Equals( other );
 
-            /// <summary>
-            /// Indicates whether the current object is equal to another object of the same type.
-            /// </summary>
-            /// <param name="other">An object to compare with this object.</param>
-            /// <returns>True if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
-            public bool Equals(Entry other)
-            {
-                if(other.DataType != DataType)
-                    return false;
+			/// <inheritdoc/>
+			public override int GetHashCode()
+			{
+				unchecked
+				{
+					return ( (int)DataType * 397 ) ^ ( Data != null ? Data.GetHashCode() : 0 );
+				}
+			}
 
-                return Object.Equals(other.Data, Data);
-            }
+			/// <inheritdoc/>
+			public static bool operator ==( Entry left, Entry right ) => left.Equals( right );
 
-            /// <summary>
-            /// Returns a hash code for this instance.
-            /// </summary>
-            /// <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. </returns>
-            public override int GetHashCode()
-            {
-                unchecked
-                {
-                    int hash = 17;
-                    hash = (hash * 31) + m_data.GetHashCode();
-                    hash = (hash * 31) + ((m_data == null) ? 0 : m_data.GetHashCode());
+			/// <inheritdoc/>
+			public static bool operator !=( Entry left, Entry right ) => !left.Equals( right );
+		}
 
-                    return hash;
-                }
-            }
 
-            /// <summary>
-            /// Returns the fully qualified type name of this instance.
-            /// </summary>
-            /// <returns>A <see cref="T:System.String" /> containing a fully qualified type name.</returns>
-            public override String ToString()
-            {
-                return String.Format(CultureInfo.CurrentCulture, "DataType: {0}, Data: {1}", new Object[] { m_dataType.ToString(), (m_data == null) ? "null" : m_data.ToString() });
-            }
-        }
-    }
+		///// <summary>
+		///// Represents an entry in a metadata container.
+		///// </summary>
+		///// <param name="DataType">Type of metadata.</param>
+		///// <param name="Data">Metadata data stored in this entry.</param>
+		//public readonly record struct Entry( MetaDataType DataType, object Data ) : IEquatable<Entry>
+		//{
+		//	/// <summary>
+		//	/// Gets the data as the specified type. If it cannot be casted to the type, then null is returned.
+		//	/// </summary>
+		//	/// <typeparam name="T">Type to cast the data to.</typeparam>
+		//	/// <returns>Casted data or null.</returns>
+		//	public T? DataAs<T>() where T : struct
+		//	{
+		//		Type dataTypeType = null;
+		//		switch( DataType )
+		//		{
+		//		case MetaDataType.Bool:
+		//			dataTypeType = typeof( bool );
+		//			break;
+		//		case MetaDataType.Float:
+		//			dataTypeType = typeof( float );
+		//			break;
+		//		case MetaDataType.Double:
+		//			dataTypeType = typeof( double );
+		//			break;
+		//		case MetaDataType.Int32:
+		//			dataTypeType = typeof( int );
+		//			break;
+		//		case MetaDataType.String:
+		//			dataTypeType = typeof( string );
+		//			break;
+		//		case MetaDataType.UInt64:
+		//			dataTypeType = typeof( ulong );
+		//			break;
+		//		case MetaDataType.Vector3:
+		//			dataTypeType = typeof( Vector3 );
+		//			break;
+		//		}
+
+		//		if( dataTypeType == typeof( T ) )
+		//			return (T)Data;
+
+		//		return null;
+		//	}
+		//}
+
+	}
 }

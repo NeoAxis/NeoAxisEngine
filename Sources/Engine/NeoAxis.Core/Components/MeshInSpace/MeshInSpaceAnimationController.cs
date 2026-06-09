@@ -22,6 +22,7 @@ namespace NeoAxis
 		bool needRecreateModifiableMesh;
 
 		double calculatedForTime { get; set; } = -1;
+
 		SkeletonBone[] bones;
 		Dictionary<string, int> boneByName;
 		int[] boneParents;
@@ -30,8 +31,6 @@ namespace NeoAxis
 		Matrix4F[] transformMatrixRelativeToSkin; //transform from bind pose to a current pose
 
 		RenderingPipeline.RenderSceneData.MeshItem.AnimationDataClass cachedAnimationData;
-
-		//static OpenList<UpdateAnimationItem> tempAnimations2;
 
 		//disable DQS
 		//SkeletonAnimationTrack.CalculateBoneTransformsItem[] transformRelativeToSkin;
@@ -296,20 +295,6 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		//struct BoneGlobalTransformItem
-		//{
-		//	public bool HasValue;
-		//	public Matrix4F Value;
-
-		//	public BoneGlobalTransformItem( bool hasValue, ref Matrix4F value )
-		//	{
-		//		HasValue = hasValue;
-		//		Value = value;
-		//	}
-		//}
-
-		/////////////////////////////////////////
-
 		public class AnimationStateClass
 		{
 			public List<AnimationItem> Animations = new List<AnimationItem>();
@@ -490,7 +475,9 @@ namespace NeoAxis
 					}
 					catch { }
 
-					if( transformMatrixRelativeToSkin != null && transformMatrixRelativeToSkin.Length != 0 && RenderingSystem.SkeletalAnimation )
+					var transformMatrixRelativeToSkinLocal = transformMatrixRelativeToSkin;
+
+					if( transformMatrixRelativeToSkinLocal != null && transformMatrixRelativeToSkinLocal.Length != 0 && RenderingSystem.SkeletalAnimation )
 					{
 						if( cachedAnimationData == null )
 							cachedAnimationData = new RenderingPipeline.RenderSceneData.MeshItem.AnimationDataClass();
@@ -499,7 +486,7 @@ namespace NeoAxis
 						animationData.BonesIndex = context.AnimationBonesData.Count;
 						item.AnimationData = animationData;
 
-						context.AnimationBonesData.Add( transformMatrixRelativeToSkin );
+						context.AnimationBonesData.Add( transformMatrixRelativeToSkinLocal );
 
 
 						////bool dualQuaternion = false;// GetSkinningMode( skeleton ) == Skeleton.SkinningModeEnum.DualQuaternion;
@@ -580,15 +567,19 @@ namespace NeoAxis
 			{
 				var renderer = viewport.Simple3DRenderer;
 
-				for( int n = 0; n < bones.Length; n++ )
-				{
-					var bone = bones[ n ];
+				var bonesLocal = bones;
+				var boneParentsLocal = boneParents;
+				var boneGlobalTransformsLocal = boneGlobalTransforms;
 
-					var parentIndex = boneParents[ n ];
+				for( int n = 0; n < bonesLocal.Length; n++ )
+				{
+					var bone = bonesLocal[ n ];
+
+					var parentIndex = boneParentsLocal[ n ];
 					if( parentIndex != -1 )
 					{
-						ref var tr0 = ref boneGlobalTransforms[ parentIndex ];
-						ref var tr1 = ref boneGlobalTransforms[ n ];
+						ref var tr0 = ref boneGlobalTransformsLocal[ parentIndex ];
+						ref var tr1 = ref boneGlobalTransformsLocal[ n ];
 
 						var pos0 = transformMatrix * tr0.Position;
 						var pos1 = transformMatrix * tr1.Position;
@@ -1014,11 +1005,13 @@ namespace NeoAxis
 					if( !blendIndices.Exists || !blendWeights.Exists )
 						continue;
 
+					var transformMatrixRelativeToSkinLocal = transformMatrixRelativeToSkin;
+
 					if( normal.Exists )
 					{
 						if( tangent.Exists )
 						{
-							TransformVertices(
+							TransformVertices( transformMatrixRelativeToSkinLocal,
 								//dualQuaternion,
 								position.SourceData, normal.SourceData, tangent.SourceData, blendIndices.SourceData, blendWeights.SourceData,
 								position.DestData, normal.DestData, tangent.DestData
@@ -1026,7 +1019,7 @@ namespace NeoAxis
 						}
 						else
 						{
-							TransformVertices(
+							TransformVertices( transformMatrixRelativeToSkinLocal,
 								//dualQuaternion,
 								position.SourceData, normal.SourceData, blendIndices.SourceData, blendWeights.SourceData,
 								position.DestData, normal.DestData
@@ -1035,7 +1028,7 @@ namespace NeoAxis
 					}
 					else
 					{
-						TransformVertices(
+						TransformVertices( transformMatrixRelativeToSkinLocal,
 							//dualQuaternion,
 							position.SourceData, blendIndices.SourceData, blendWeights.SourceData,
 							position.DestData
@@ -1112,21 +1105,19 @@ namespace NeoAxis
 			//public string[] SkipBonesWithChildren;
 		}
 
-		void UpdateTaskMethod()
+		static void UpdateTaskMethod( SkeletonBone[] bones, int[] boneParents, SkeletonAnimationTrack.CalculateBoneTransformsItem[] boneTransforms, SkeletonAnimationTrack.CalculateBoneTransformsItem[] boneGlobalTransforms, Matrix4F[] transformMatrixRelativeToSkin )
 		{
 			try
 			{
 				//calculate result global transforms
-				CalculateGlobalBoneTransforms();
+				CalculateGlobalBoneTransformsInternal( bones, boneParents, boneTransforms, boneGlobalTransforms, transformMatrixRelativeToSkin );
 
-				var skeleton = GetSkeleton();
-				//var skeletonNormalized = false;// skeleton != null && skeleton.Normalized;
-
+				//calculate transformMatrixRelativeToSkin
 				for( int n = 0; n < bones.Length; n++ )
 				{
 					var bone = bones[ n ];
 					boneGlobalTransforms[ n ].ToMatrix( out var matrix );
-					Matrix4F.Multiply( ref matrix, ref bone.GetTransformMatrixInverse( /*skeletonNormalized, animationState != null */), out transformMatrixRelativeToSkin[ n ] );
+					Matrix4F.Multiply( ref matrix, ref bone.GetTransformMatrixInverse(), out transformMatrixRelativeToSkin[ n ] );
 				}
 			}
 			catch { }
@@ -1143,15 +1134,18 @@ namespace NeoAxis
 
 			//update common data
 			calculatedForTime = time;
-			//!!!!threading
+
+			//get bones
 			skeleton.GetBones( false, out bones, out boneByName, out boneParents );
 
 			//calculate bone transforms
+			var bonesLocal = bones;
 
-			if( boneTransforms == null || boneTransforms.Length != bones.Length )
-				boneTransforms = new SkeletonAnimationTrack.CalculateBoneTransformsItem[ bones.Length ];
-			for( int n = 0; n < boneTransforms.Length; n++ )
-				boneTransforms[ n ].Flags = 0;
+			if( boneTransforms == null || boneTransforms.Length != bonesLocal.Length )
+				boneTransforms = new SkeletonAnimationTrack.CalculateBoneTransformsItem[ bonesLocal.Length ];
+			var boneTransformsLocal = boneTransforms;
+			for( int n = 0; n < boneTransformsLocal.Length; n++ )
+				boneTransformsLocal[ n ].Flags = 0;
 
 			var boneTransformsInitialized = false;
 
@@ -1187,9 +1181,9 @@ namespace NeoAxis
 
 				if( animations.Count != 0 )
 				{
-					var transforms = stackalloc SkeletonAnimationTrack.CalculateBoneTransformsItem[ boneTransforms.Length ];
-					var transforms2 = stackalloc SkeletonAnimationTrack.CalculateBoneTransformsItem[ boneTransforms.Length ];
-					var affectBonesBuffer = stackalloc bool[ boneTransforms.Length ];
+					var transforms = stackalloc SkeletonAnimationTrack.CalculateBoneTransformsItem[ boneTransformsLocal.Length ];
+					var transforms2 = stackalloc SkeletonAnimationTrack.CalculateBoneTransformsItem[ boneTransformsLocal.Length ];
+					var affectBonesBuffer = stackalloc bool[ boneTransformsLocal.Length ];
 
 					if( animations.Count > 1 )
 					{
@@ -1234,7 +1228,7 @@ namespace NeoAxis
 									if( item.AffectBonesWithChildren != null )
 									{
 										affectBones = affectBonesBuffer;
-										NativeUtility.ZeroMemory( affectBones, bones.Length );
+										NativeUtility.ZeroMemory( affectBones, bonesLocal.Length );
 
 										foreach( var rootBoneName in item.AffectBonesWithChildren )
 										{
@@ -1242,7 +1236,7 @@ namespace NeoAxis
 											if( rootBoneIndex != -1 )
 												affectBones[ rootBoneIndex ] = true;
 										}
-										for( int n = 0; n < bones.Length; n++ )
+										for( int n = 0; n < bonesLocal.Length; n++ )
 										{
 											var boneParent = boneParents[ n ];
 											if( boneParent != -1 && affectBones[ boneParent ] )
@@ -1280,7 +1274,7 @@ namespace NeoAxis
 
 									//calculate bone transforms
 									//!!!!threading
-									track.CalculateBoneTransforms( bones, boneByName, skeletonAnimation, skeletonAnimation.TrackStartTime + item.CurrentTime, transforms );
+									track.CalculateBoneTransforms( bonesLocal, boneByName, skeletonAnimation, skeletonAnimation.TrackStartTime + item.CurrentTime, transforms );
 
 									//apply Animation2
 									var skeletonAnimation2 = item.Animation2 as SkeletonAnimation;
@@ -1290,9 +1284,9 @@ namespace NeoAxis
 										if( track2 != null )
 										{
 											//!!!!threading
-											track2.CalculateBoneTransforms( bones, boneByName, skeletonAnimation, skeletonAnimation.TrackStartTime + item.CurrentTime, transforms2 );
+											track2.CalculateBoneTransforms( bonesLocal, boneByName, skeletonAnimation, skeletonAnimation.TrackStartTime + item.CurrentTime, transforms2 );
 
-											for( int n = 0; n < boneTransforms.Length; n++ )
+											for( int n = 0; n < boneTransformsLocal.Length; n++ )
 											{
 												ref var transform1 = ref transforms[ n ];
 												ref var transform2 = ref transforms2[ n ];
@@ -1304,13 +1298,13 @@ namespace NeoAxis
 										}
 									}
 
-									for( int n = 0; n < boneTransforms.Length; n++ )
+									for( int n = 0; n < boneTransformsLocal.Length; n++ )
 									{
 										if( affectBones != null && !affectBones[ n ] )
 											continue;
 
 										ref var boneSource = ref transforms[ n ];
-										ref var boneDest = ref boneTransforms[ n ];
+										ref var boneDest = ref boneTransformsLocal[ n ];
 
 										if( count == 0 )
 										{
@@ -1344,9 +1338,9 @@ namespace NeoAxis
 						//normalize rotation
 						if( count != 0 )
 						{
-							for( int n = 0; n < boneTransforms.Length; n++ )
+							for( int n = 0; n < boneTransformsLocal.Length; n++ )
 							{
-								ref var item = ref boneTransforms[ n ];
+								ref var item = ref boneTransformsLocal[ n ];
 								item.Rotation.Normalize();
 							}
 						}
@@ -1363,8 +1357,8 @@ namespace NeoAxis
 							var track = skeletonAnimation?.Track.Value;
 							if( track != null )
 							{
-								fixed( SkeletonAnimationTrack.CalculateBoneTransformsItem* transforms3 = boneTransforms )
-									track.CalculateBoneTransforms( bones, boneByName, skeletonAnimation, skeletonAnimation.TrackStartTime + item.CurrentTime, transforms3 );
+								fixed( SkeletonAnimationTrack.CalculateBoneTransformsItem* transforms3 = boneTransformsLocal )
+									track.CalculateBoneTransforms( bonesLocal, boneByName, skeletonAnimation, skeletonAnimation.TrackStartTime + item.CurrentTime, transforms3 );
 
 								boneTransformsInitialized = true;
 							}
@@ -1382,47 +1376,36 @@ namespace NeoAxis
 
 						//calculate global bone transforms first time without additional modifications
 
-						if( boneGlobalTransforms == null || boneGlobalTransforms.Length != bones.Length )
-							boneGlobalTransforms = new SkeletonAnimationTrack.CalculateBoneTransformsItem[ bones.Length ];
+						if( boneGlobalTransforms == null || boneGlobalTransforms.Length != bonesLocal.Length )
+							boneGlobalTransforms = new SkeletonAnimationTrack.CalculateBoneTransformsItem[ bonesLocal.Length ];
+						var boneGlobalTransformsLocal = boneGlobalTransforms;
 
 						//need update all boneGlobalTransforms bones
-						for( int n = 0; n < boneGlobalTransforms.Length; n++ )
-							boneGlobalTransforms[ n ].NeedUpdate = true;
+						for( int n = 0; n < boneGlobalTransformsLocal.Length; n++ )
+							boneGlobalTransformsLocal[ n ].NeedUpdate = true;
 
 						//additional modifications
 						if( animationState.AdditionalBoneTransformsUpdate != null )
-							animationState.AdditionalBoneTransformsUpdate( this, animationState, skeleton, boneTransforms );
+							animationState.AdditionalBoneTransformsUpdate( this, animationState, skeleton, boneTransformsLocal );
 
 						//!!!!here?
-						CalculateBoneTransforms?.Invoke( this, boneTransforms );
+						CalculateBoneTransforms?.Invoke( this, boneTransformsLocal );
 
 
-						if( transformMatrixRelativeToSkin == null || transformMatrixRelativeToSkin.Length != bones.Length )
-							transformMatrixRelativeToSkin = new Matrix4F[ bones.Length ];
+						if( transformMatrixRelativeToSkin == null || transformMatrixRelativeToSkin.Length != bonesLocal.Length )
+							transformMatrixRelativeToSkin = new Matrix4F[ bonesLocal.Length ];
 
 
 						//!!!!move to tasks more, but harder
 
 						//calculate by means tasks
-						//!!!!
 						if( context != null )
 						{
-							var task = Task.Run( UpdateTaskMethod );
+							var task = Task.Run( () => UpdateTaskMethod( bonesLocal, boneParents, boneTransformsLocal, boneGlobalTransformsLocal, transformMatrixRelativeToSkin ) );
 							context.AnimationBonesDataTasks.Add( task );
 						}
 						else
-							UpdateTaskMethod();
-
-						////calculate result global transforms
-						//CalculateGlobalBoneTransforms();
-
-						//for( int n = 0; n < bones.Length; n++ )
-						//{
-						//	var bone = bones[ n ];
-						//	boneGlobalTransforms[ n ].ToMatrix( out var matrix );
-						//	Matrix4F.Multiply( ref matrix, ref bone.GetTransformMatrixInverse(), out transformMatrixRelativeToSkin[ n ] );
-						//}
-
+							UpdateTaskMethod( bonesLocal, boneParents, boneTransformsLocal, boneGlobalTransformsLocal, transformMatrixRelativeToSkin );
 
 						resetAnimation = false;
 
@@ -1449,13 +1432,13 @@ namespace NeoAxis
 				//!!!!new
 				//!!!!slowly
 
-				for( int n = 0; n < boneTransforms.Length; n++ )
+				for( int n = 0; n < boneTransformsLocal.Length; n++ )
 				{
-					var transform = bones[ n ].Transform.Value;
+					var transform = bonesLocal[ n ].Transform.Value;
 
 					Transform parentTransform;
 					if( boneParents[ n ] != -1 )
-						parentTransform = bones[ boneParents[ n ] ].Transform.Value;
+						parentTransform = bonesLocal[ boneParents[ n ] ].Transform.Value;
 					else
 						parentTransform = null;
 
@@ -1478,7 +1461,7 @@ namespace NeoAxis
 
 					m.Decompose( out Vector3 pos, out Quaternion rot, out Vector3 scl );
 
-					ref var item = ref boneTransforms[ n ];
+					ref var item = ref boneTransformsLocal[ n ];
 					item.Position = pos.ToVector3F();
 					item.Rotation = rot.ToQuaternionF();
 					item.Scale = scl.ToVector3F();
@@ -1487,24 +1470,25 @@ namespace NeoAxis
 				{
 					//calculate global bone transforms first time without additional modifications
 
-					if( boneGlobalTransforms == null || boneGlobalTransforms.Length != bones.Length )
-						boneGlobalTransforms = new SkeletonAnimationTrack.CalculateBoneTransformsItem[ bones.Length ];
+					if( boneGlobalTransforms == null || boneGlobalTransforms.Length != bonesLocal.Length )
+						boneGlobalTransforms = new SkeletonAnimationTrack.CalculateBoneTransformsItem[ bonesLocal.Length ];
+					var boneGlobalTransformsLocal = boneGlobalTransforms;
 
 					//need update all boneGlobalTransforms bones
-					for( int n = 0; n < boneGlobalTransforms.Length; n++ )
-						boneGlobalTransforms[ n ].NeedUpdate = true;
+					for( int n = 0; n < boneGlobalTransformsLocal.Length; n++ )
+						boneGlobalTransformsLocal[ n ].NeedUpdate = true;
 
-					if( transformMatrixRelativeToSkin == null || transformMatrixRelativeToSkin.Length != bones.Length )
-						transformMatrixRelativeToSkin = new Matrix4F[ bones.Length ];
+					if( transformMatrixRelativeToSkin == null || transformMatrixRelativeToSkin.Length != bonesLocal.Length )
+						transformMatrixRelativeToSkin = new Matrix4F[ bonesLocal.Length ];
 
 					//calculate by means tasks
 					if( context != null )
 					{
-						var task = Task.Run( UpdateTaskMethod );
+						var task = Task.Run( () => UpdateTaskMethod( bonesLocal, boneParents, boneTransformsLocal, boneGlobalTransformsLocal, transformMatrixRelativeToSkin ) );
 						context.AnimationBonesDataTasks.Add( task );
 					}
 					else
-						UpdateTaskMethod();
+						UpdateTaskMethod( bonesLocal, boneParents, boneTransformsLocal, boneGlobalTransformsLocal, transformMatrixRelativeToSkin );
 
 					resetAnimation = false;
 				}
@@ -1515,7 +1499,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		public void CalculateGlobalBoneTransforms()
+		static void CalculateGlobalBoneTransformsInternal( SkeletonBone[] bones, int[] boneParents, SkeletonAnimationTrack.CalculateBoneTransformsItem[] boneTransforms, SkeletonAnimationTrack.CalculateBoneTransformsItem[] boneGlobalTransforms, Matrix4F[] transformMatrixRelativeToSkin )
 		{
 			for( int n = 0; n < bones.Length; n++ )
 			{
@@ -1576,33 +1560,26 @@ namespace NeoAxis
 				boneGlobalTransforms[ n ].NeedUpdate = false;
 		}
 
-		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		//ref Matrix4F GetBoneGlobalTransformRecursive( Skeleton skeleton, SkeletonBone bone )
-		//{
-		//	int boneIndex = bone.GetCachedBoneIndex( skeleton );
-
-		//	if( !boneGlobalTransforms[ boneIndex ].HasValue )
-		//	{
-		//		ToMatrix4( ref boneTransforms[ boneIndex ], out var res );
-		//		if( bone.Parent is SkeletonBone parent )
-		//			res = GetBoneGlobalTransformRecursive( skeleton, parent ) * res;
-		//		boneGlobalTransforms[ boneIndex ] = new BoneGlobalTransformItem( true, ref res );
-		//	}
-		//	return ref boneGlobalTransforms[ boneIndex ].Value;
-		//}
+		[MethodImpl( (MethodImplOptions)512 )]
+		public void CalculateGlobalBoneTransforms()
+		{
+			CalculateGlobalBoneTransformsInternal( bones, boneParents, boneTransforms, boneGlobalTransforms, transformMatrixRelativeToSkin );
+		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
 		IList<Line3F> GetSkeletonArrows()// Skeleton skeleton )
 		{
-			var result = new List<Line3F>( bones.Length );
+			var bonesLocal = bones;
+			var boneGlobalTransformsLocal = boneGlobalTransforms;
 
-			for( int n = 0; n < bones.Length; n++ )
+			var result = new List<Line3F>( bonesLocal.Length );
+			for( int n = 0; n < bonesLocal.Length; n++ )
 			{
 				var parentIndex = boneParents[ n ];
 				if( parentIndex != -1 )
 				{
-					ref var tr0 = ref boneGlobalTransforms[ parentIndex ];
-					ref var tr1 = ref boneGlobalTransforms[ n ];
+					ref var tr0 = ref boneGlobalTransformsLocal[ parentIndex ];
+					ref var tr1 = ref boneGlobalTransformsLocal[ n ];
 					result.Add( new Line3F( tr0.Position, tr1.Position ) );
 				}
 			}
@@ -1631,7 +1608,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		void TransformVertices(
+		static void TransformVertices( Matrix4F[] transformMatrixRelativeToSkinLocal,
 			//bool dualQuaternion,
 			Vector3F[] position, Vector3F[] normal, Vector4F[] tangent, Vector4I[] blendIndex, Vector4F[] blendWeight,
 			Vector3F[] newPosition, Vector3F[] newNormal, Vector4F[] newTangent )
@@ -1650,7 +1627,7 @@ namespace NeoAxis
 
 			for( int n = 0; n < newPosition.Length; n++ )
 			{
-				TransformVertexByLinearBlendingSkinning(
+				TransformVertexByLinearBlendingSkinning( transformMatrixRelativeToSkinLocal,
 				   ref position[ n ], ref normal[ n ], ref tangent[ n ], ref blendIndex[ n ], ref blendWeight[ n ],
 				   out newPosition[ n ], out newNormal[ n ], out newTangent[ n ] );
 			}
@@ -1659,7 +1636,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		void TransformVertices(
+		static void TransformVertices( Matrix4F[] transformMatrixRelativeToSkinLocal,
 			//bool dualQuaternion,
 			Vector3F[] position, Vector3F[] normal, Vector4I[] blendIndex, Vector4F[] blendWeight,
 			Vector3F[] newPosition, Vector3F[] newNormal )
@@ -1680,7 +1657,7 @@ namespace NeoAxis
 
 			for( int n = 0; n < newPosition.Length; n++ )
 			{
-				TransformVertexByLinearBlendingSkinning(
+				TransformVertexByLinearBlendingSkinning( transformMatrixRelativeToSkinLocal,
 					ref position[ n ], ref normal[ n ], ref vector4FOne, ref blendIndex[ n ], ref blendWeight[ n ],
 					out newPosition[ n ], out newNormal[ n ], out _ );
 			}
@@ -1689,7 +1666,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		void TransformVertices(
+		static void TransformVertices( Matrix4F[] transformMatrixRelativeToSkinLocal,
 			//bool dualQuaternion,
 			Vector3F[] position, Vector4I[] blendIndex, Vector4F[] blendWeight,
 			Vector3F[] newPosition )
@@ -1704,16 +1681,16 @@ namespace NeoAxis
 			//{
 
 			for( int n = 0; n < newPosition.Length; n++ )
-				TransformVertexByLinearBlendingSkinning( ref position[ n ], ref blendIndex[ n ], ref blendWeight[ n ], out newPosition[ n ] );
+				TransformVertexByLinearBlendingSkinning( transformMatrixRelativeToSkinLocal, ref position[ n ], ref blendIndex[ n ], ref blendWeight[ n ], out newPosition[ n ] );
 
 			//}
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		void TransformVertexByLinearBlendingSkinning( ref Vector3F position, ref Vector4I blendIndex, ref Vector4F blendWeight, out Vector3F newPosition )
+		static void TransformVertexByLinearBlendingSkinning( Matrix4F[] transformMatrixRelativeToSkinLocal, ref Vector3F position, ref Vector4I blendIndex, ref Vector4F blendWeight, out Vector3F newPosition )
 		{
 			var position4 = new Vector4F( position, 1.0f );
-			if( !GetVertexTransformByLinearBlendingSkinning( ref blendIndex, ref blendWeight, out Matrix4F matrix ) )
+			if( !GetVertexTransformByLinearBlendingSkinning( transformMatrixRelativeToSkinLocal, ref blendIndex, ref blendWeight, out Matrix4F matrix ) )
 				newPosition = position;
 			else
 			{
@@ -1724,10 +1701,10 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		void TransformVertexByLinearBlendingSkinning( ref Vector3F position, ref Vector3F normal, ref Vector4F tangent, ref Vector4I blendIndex, ref Vector4F blendWeight, out Vector3F newPosition, out Vector3F newNormal, out Vector4F newTangent )
+		static void TransformVertexByLinearBlendingSkinning( Matrix4F[] transformMatrixRelativeToSkinLocal, ref Vector3F position, ref Vector3F normal, ref Vector4F tangent, ref Vector4I blendIndex, ref Vector4F blendWeight, out Vector3F newPosition, out Vector3F newNormal, out Vector4F newTangent )
 		{
 			var position4 = new Vector4F( position, 1.0f );
-			if( !GetVertexTransformByLinearBlendingSkinning( ref blendIndex, ref blendWeight, out var matrix ) )
+			if( !GetVertexTransformByLinearBlendingSkinning( transformMatrixRelativeToSkinLocal, ref blendIndex, ref blendWeight, out var matrix ) )
 			{
 				newPosition = position;
 				newNormal = normal;
@@ -1784,7 +1761,7 @@ namespace NeoAxis
 		//Warning : Ogre HLSL has W component of Quaternion in the first (X) component of vector.
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		void CalculateBlendNormal( ref Vector3F vIn, ref QuaternionF blendQ, out Vector3F result )
+		static void CalculateBlendNormal( ref Vector3F vIn, ref QuaternionF blendQ, out Vector3F result )
 		{
 			var blendDQ_0_yzw = new Vector3F( blendQ.X, blendQ.Y, blendQ.Z );
 			var blendDQ_0_x = blendQ.W;
@@ -1797,7 +1774,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		void CalculateBlendTangentNormal( ref Vector4F vIn, ref QuaternionF blendQ, out Vector4F result )
+		static void CalculateBlendTangentNormal( ref Vector4F vIn, ref QuaternionF blendQ, out Vector4F result )
 		{
 			var vIn3 = vIn.ToVector3F();
 
@@ -1915,7 +1892,7 @@ namespace NeoAxis
 		//}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		bool GetVertexTransformByLinearBlendingSkinning( ref Vector4I blendIndex, ref Vector4F blendWeight, out Matrix4F matrix )
+		static bool GetVertexTransformByLinearBlendingSkinning( Matrix4F[] transformMatrixRelativeToSkinLocal, ref Vector4I blendIndex, ref Vector4F blendWeight, out Matrix4F matrix )
 		{
 			int index = blendIndex.X;
 			if( index == -1 )
@@ -1923,22 +1900,22 @@ namespace NeoAxis
 				matrix = Matrix4F.Identity;
 				return false;
 			}
-			matrix = blendWeight.X * transformMatrixRelativeToSkin[ index ];
+			matrix = blendWeight.X * transformMatrixRelativeToSkinLocal[ index ];
 
 			index = blendIndex.Y;
 			if( index == -1 )
 				return true;
-			matrix += blendWeight.Y * transformMatrixRelativeToSkin[ index ];
+			matrix += blendWeight.Y * transformMatrixRelativeToSkinLocal[ index ];
 
 			index = blendIndex.Z;
 			if( index == -1 )
 				return true;
-			matrix += blendWeight.Z * transformMatrixRelativeToSkin[ index ];
+			matrix += blendWeight.Z * transformMatrixRelativeToSkinLocal[ index ];
 
 			index = blendIndex.W;
 			if( index == -1 )
 				return true;
-			matrix += blendWeight.W * transformMatrixRelativeToSkin[ index ];
+			matrix += blendWeight.W * transformMatrixRelativeToSkinLocal[ index ];
 
 			return true;
 		}
@@ -2037,9 +2014,11 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public bool GetBoneGlobalTransform( int boneIndex, out SkeletonAnimationTrack.CalculateBoneTransformsItem item )
 		{
-			if( boneGlobalTransforms != null && boneIndex < boneGlobalTransforms.Length )
+			var boneGlobalTransformsLocal = boneGlobalTransforms;
+
+			if( boneGlobalTransformsLocal != null && boneIndex < boneGlobalTransformsLocal.Length )
 			{
-				item = boneGlobalTransforms[ boneIndex ];
+				item = boneGlobalTransformsLocal[ boneIndex ];
 				return true;
 			}
 			else
@@ -2048,22 +2027,6 @@ namespace NeoAxis
 				return false;
 			}
 		}
-
-		//[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-		//public bool GetBoneGlobalTransform( int boneIndex, out Matrix4F value )
-		//{
-		//	if( boneGlobalTransforms != null && boneIndex < boneGlobalTransforms.Length )
-		//	{
-		//		ref var item = ref boneGlobalTransforms[ boneIndex ];
-		//		if( item.HasValue )
-		//		{
-		//			value = item.Value;
-		//			return true;
-		//		}
-		//	}
-		//	value = Matrix4F.Identity;
-		//	return false;
-		//}
 
 		[MethodImpl( (MethodImplOptions)512 )]
 		public void SetAnimationState( AnimationStateClass newState, bool allowInterpolation )

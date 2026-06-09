@@ -1475,6 +1475,23 @@ namespace NeoAxis
 			}
 		}
 
+		static bool? opacityDithering;
+		public static bool OpacityDithering
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get
+			{
+				if( !opacityDithering.HasValue )
+				{
+					if( SystemSettings.LimitedDevice )
+						opacityDithering = ProjectSettings.Get.Rendering.OpacityDitheringLimitedDevice;
+					else
+						opacityDithering = ProjectSettings.Get.Rendering.OpacityDithering;
+				}
+				return opacityDithering.Value;
+			}
+		}
+
 		static bool? motionVector;
 		public static bool MotionVector
 		{
@@ -1765,6 +1782,23 @@ namespace NeoAxis
 						limitTextureSize = ProjectSettings.Get.Rendering.LimitTextureSize;
 				}
 				return limitTextureSize.Value;
+			}
+		}
+
+		static bool? accurateSrgbCorrection;
+		public static bool AccurateSrgbCorrection
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get
+			{
+				if( !accurateSrgbCorrection.HasValue )
+				{
+					if( SystemSettings.LimitedDevice )
+						accurateSrgbCorrection = ProjectSettings.Get.Rendering.AccurateSrgbCorrectionLimitedDevice;
+					else
+						accurateSrgbCorrection = ProjectSettings.Get.Rendering.AccurateSrgbCorrection;
+				}
+				return accurateSrgbCorrection.Value;
 			}
 		}
 

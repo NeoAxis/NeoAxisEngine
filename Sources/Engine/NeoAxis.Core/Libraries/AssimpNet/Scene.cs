@@ -43,7 +43,7 @@ namespace Internal.Assimp
         private List<Animation> m_animations;
         private List<Material> m_materials;
         private Metadata m_metadata;
-        //private String m_name;
+        private string m_name;
 
         /// <summary>
         /// Gets or sets the state of the imported scene. By default no flags are set, but
@@ -51,14 +51,8 @@ namespace Internal.Assimp
         /// </summary>
         public SceneFlags SceneFlags
         {
-            get
-            {
-                return m_flags;
-            }
-            set
-            {
-                m_flags = value;
-            }
+            get => m_flags;
+            set => m_flags = value;
         }
 
         /// <summary>
@@ -68,243 +62,118 @@ namespace Internal.Assimp
         /// </summary>
         public Node RootNode
         {
-            get
-            {
-                return m_rootNode;
-            }
-            set
-            {
-                m_rootNode = value;
-            }
+            get => m_rootNode;
+            set => m_rootNode = value;
         }
 
         /// <summary>
         /// Gets if the scene contains meshes. Unless if no special scene flags are set
         /// this should always be true.
         /// </summary>
-        public bool HasMeshes
-        {
-            get
-            {
-                return m_meshes.Count > 0;
-            }
-        }
+        public bool HasMeshes => m_meshes.Count > 0;
 
         /// <summary>
         /// Gets the number of meshes in the scene.
         /// </summary>
-        public int MeshCount
-        {
-            get
-            {
-                return m_meshes.Count;
-            }
-        }
+        public int MeshCount => m_meshes.Count;
 
         /// <summary>
         /// Gets the meshes contained in the scene, if any.
         /// </summary>
-        public List<Mesh> Meshes
-        {
-            get
-            {
-                return m_meshes;
-            }
-        }
+        public List<Mesh> Meshes => m_meshes;
 
 
         /// <summary>
         /// Gets if the scene contains any lights.
         /// </summary>
-        public bool HasLights
-        {
-            get
-            {
-                return m_lights.Count > 0;
-            }
-        }
+        public bool HasLights => m_lights.Count > 0;
 
         /// <summary>
         /// Gets the number of lights in the scene.
         /// </summary>
-        public int LightCount
-        {
-            get
-            {
-                return m_lights.Count;
-            }
-        }
+        public int LightCount => m_lights.Count;
 
         /// <summary>
         /// Gets the lights in the scene, if any.
         /// </summary>
-        public List<Light> Lights
-        {
-            get
-            {
-                return m_lights;
-            }
-        }
+        public List<Light> Lights => m_lights;
 
         /// <summary>
         /// Gets if the scene contains any cameras.
         /// </summary>
-        public bool HasCameras
-        {
-            get
-            {
-                return m_cameras.Count > 0;
-            }
-        }
+        public bool HasCameras => m_cameras.Count > 0;
 
         /// <summary>
         /// Gets the number of cameras in the scene.
         /// </summary>
-        public int CameraCount
-        {
-            get
-            {
-                return m_cameras.Count;
-            }
-        }
+        public int CameraCount => m_cameras.Count;
+
         /// <summary>
         /// Gets the cameras in the scene, if any.
         /// </summary>
-        public List<Camera> Cameras
-        {
-            get
-            {
-                return m_cameras;
-            }
-        }
+        public List<Camera> Cameras => m_cameras;
 
         /// <summary>
         /// Gets if the scene contains embedded textures.
         /// </summary>
-        public bool HasTextures
-        {
-            get
-            {
-                return m_textures.Count > 0;
-            }
-        }
+        public bool HasTextures => m_textures.Count > 0;
 
         /// <summary>
         /// Gets the number of embedded textures in the scene.
         /// </summary>
-        public int TextureCount
-        {
-            get
-            {
-                return m_textures.Count;
-            }
-        }
+        public int TextureCount => m_textures.Count;
 
         /// <summary>
         /// Gets the embedded textures in the scene, if any.
         /// </summary>
-        public List<EmbeddedTexture> Textures
-        {
-            get
-            {
-                return m_textures;
-            }
-        }
+        public List<EmbeddedTexture> Textures => m_textures;
 
         /// <summary>
         /// Gets if the scene contains any animations.
         /// </summary>
-        public bool HasAnimations
-        {
-            get
-            {
-                return m_animations.Count > 0;
-            }
-        }
+        public bool HasAnimations => m_animations.Count > 0;
 
         /// <summary>
         /// Gets the number of animations in the scene.
         /// </summary>
-        public int AnimationCount
-        {
-            get
-            {
-                return m_animations.Count;
-            }
-        }
+        public int AnimationCount => m_animations.Count;
 
         /// <summary>
         /// Gets the animations in the scene, if any.
         /// </summary>
-        public List<Animation> Animations
-        {
-            get
-            {
-                return m_animations;
-            }
-        }
+        public List<Animation> Animations => m_animations;
 
         /// <summary>
         /// Gets if the scene contains any materials. There should always be at least the
         /// default Assimp material if no materials were loaded.
         /// </summary>
-        public bool HasMaterials
-        {
-            get
-            {
-                return m_materials.Count > 0;
-            }
-        }
+        public bool HasMaterials => m_materials.Count > 0;
 
         /// <summary>
         /// Gets the number of materials in the scene. There should always be at least the
         /// default Assimp material if no materials were loaded.
         /// </summary>
-        public int MaterialCount
-        {
-            get
-            {
-                return m_materials.Count;
-            }
-        }
+        public int MaterialCount => m_materials.Count;
 
         /// <summary>
         /// Gets the materials in the scene.
         /// </summary>
-        public List<Material> Materials
-        {
-            get
-            {
-                return m_materials;
-            }
-        }
+        public List<Material> Materials => m_materials;
 
         /// <summary>
         /// Gets the metadata of the scene. This data contains global metadata which belongs to the scene like 
         /// unit-conversions, versions, vendors or other model-specific data. This can be used to store format-specific metadata as well.
         /// </summary>
-        public Metadata Metadata
-        {
-            get
-            {
-                return m_metadata;
-            }
-        }
+        public Metadata Metadata => m_metadata;
 
-        ///// <summary>
-        ///// Gets or sets the name of the scene.
-        ///// </summary>
-        //public String Name
-        //{
-        //    get
-        //    {
-        //        return m_name;
-        //    }
-        //    set
-        //    {
-        //        m_name = value;
-        //    }
-        //}
+        /// <summary>
+        /// Gets or sets the name of the scene.
+        /// </summary>
+        public string Name
+        {
+            get => m_name;
+            set => m_name = value;
+        }
 
         /// <summary>
         /// Constructs a new instance of the <see cref="Scene"/> class.
@@ -320,17 +189,17 @@ namespace Internal.Assimp
             m_animations = new List<Animation>();
             m_materials = new List<Material>();
             m_metadata = new Metadata();
-            //m_name = String.Empty;
+            m_name = string.Empty;
         }
 
         /// <summary>
         /// Constructs a new instance of the <see cref="Scene"/> class.
         /// </summary>
         /// <param name="name">Name of the scene</param>
-        public Scene(String name)
+        public Scene(string name)
             : this()
         {
-            //m_name = name;
+            m_name = name;
         }
 
         /// <summary>
@@ -349,20 +218,47 @@ namespace Internal.Assimp
         }
 
         /// <summary>
+        /// Will try to locate a bone described by its name.
+        /// </summary>
+        /// <param name="name">The name to look for.</param>
+        /// <returns>The bone.</returns>
+        public Bone FindBone(string name)
+        {
+            if(HasMeshes)
+            {
+                foreach(Mesh mesh in m_meshes)
+                {
+                    if(mesh is { HasBones: true })
+                    {
+                        foreach(Bone bone in mesh.Bones)
+                        {
+                            if(bone != null && bone.Name == name)
+                            {
+                                return bone;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Gets an embedded texture by a string. The string may be a texture ID in the format of "*1" or is the
         /// file name of the texture.
         /// </summary>
         /// <param name="fileName">Texture ID or original file name.</param>
         /// <returns>Embedded texture or null if it could not be found.</returns>
-        public EmbeddedTexture GetEmbeddedTexture(String fileName)
+        public EmbeddedTexture GetEmbeddedTexture(string fileName)
         {
-            if(String.IsNullOrEmpty(fileName))
+            if(string.IsNullOrEmpty(fileName))
                 return null;
 
             //Lookup using texture ID (if referenced like: "*1", "*2", etc)
             if (fileName.StartsWith("*"))
             {
-                String indexStr = fileName.Substring(1);
+                string indexStr = fileName[1..];
                 int index;
                 if(!int.TryParse(indexStr, out index) || index < 0 || index >= m_textures.Count)
                     return null;
@@ -371,14 +267,14 @@ namespace Internal.Assimp
             }
 
             //Lookup using filename
-            String shortFileName = Path.GetFileName(fileName);
+            string shortFileName = Path.GetFileName(fileName);
             foreach(EmbeddedTexture tex in m_textures)
             {
                 if(tex == null)
                     continue;
 
-                String otherFilename = Path.GetFileName(tex.Filename);
-                if(String.Equals(shortFileName, otherFilename, StringComparison.Ordinal))
+                string otherFilename = Path.GetFileName(tex.Filename);
+                if(string.Equals(shortFileName, otherFilename, StringComparison.Ordinal))
                     return tex;
             }
 
@@ -430,7 +326,7 @@ namespace Internal.Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<Scene, AiScene>.IsNativeBlittable { get { return true; } }
+        bool IMarshalable<Scene, AiScene>.IsNativeBlittable => true;
 
         /// <summary>
         /// Writes the managed data to the native value.
@@ -439,9 +335,6 @@ namespace Internal.Assimp
         /// <param name="nativeValue">Output native value</param>
         void IMarshalable<Scene, AiScene>.ToNative(IntPtr thisPtr, out AiScene nativeValue)
         {
-			//!!!!betauser
-			nativeValue = new AiScene();
-
             nativeValue.Flags = m_flags;
             nativeValue.Materials = IntPtr.Zero;
             nativeValue.RootNode = IntPtr.Zero;
@@ -451,7 +344,7 @@ namespace Internal.Assimp
             nativeValue.Textures = IntPtr.Zero;
             nativeValue.Animations = IntPtr.Zero;
             nativeValue.Metadata = IntPtr.Zero;
-            //nativeValue.Name = new AiString(m_name);
+            nativeValue.Name = new AiString(m_name);
             nativeValue.Skeletons = IntPtr.Zero;
             nativeValue.Private = IntPtr.Zero;
 
@@ -465,7 +358,7 @@ namespace Internal.Assimp
 
             //Write materials
             if (nativeValue.NumMaterials > 0)
-                nativeValue.Materials = MemoryHelper.ToNativeArray<Material, AiMaterial>(m_materials.ToArray(), true);
+                nativeValue.Materials = MemoryHelper.ToNativeArray<Material, AiMaterial>(m_materials, true);
 
             //Write scenegraph
             if(m_rootNode != null)
@@ -473,23 +366,23 @@ namespace Internal.Assimp
 
             //Write meshes
             if(nativeValue.NumMeshes > 0)
-                nativeValue.Meshes = MemoryHelper.ToNativeArray<Mesh, AiMesh>(m_meshes.ToArray(), true);
+                nativeValue.Meshes = MemoryHelper.ToNativeArray<Mesh, AiMesh>(m_meshes, true);
 
             //Write lights
             if(nativeValue.NumLights > 0)
-                nativeValue.Lights = MemoryHelper.ToNativeArray<Light, AiLight>(m_lights.ToArray(), true);
+                nativeValue.Lights = MemoryHelper.ToNativeArray<Light, AiLight>(m_lights, true);
 
             //Write cameras
             if(nativeValue.NumCameras > 0)
-                nativeValue.Cameras = MemoryHelper.ToNativeArray<Camera, AiCamera>(m_cameras.ToArray(), true);
+                nativeValue.Cameras = MemoryHelper.ToNativeArray<Camera, AiCamera>(m_cameras, true);
 
             //Write textures
             if(nativeValue.NumTextures > 0)
-                nativeValue.Textures = MemoryHelper.ToNativeArray<EmbeddedTexture, AiTexture>(m_textures.ToArray(), true);
+                nativeValue.Textures = MemoryHelper.ToNativeArray<EmbeddedTexture, AiTexture>(m_textures, true);
 
             //Write animations
             if(nativeValue.NumAnimations > 0)
-                nativeValue.Animations = MemoryHelper.ToNativeArray<Animation, AiAnimation>(m_animations.ToArray(), true);
+                nativeValue.Animations = MemoryHelper.ToNativeArray<Animation, AiAnimation>(m_animations, true);
             
             //Write metadata
             if(m_metadata.Count > 0)
@@ -505,7 +398,7 @@ namespace Internal.Assimp
             Clear();
 
             m_flags = nativeValue.Flags;
-            //m_name = AiString.GetString(nativeValue.Name); //Avoid struct copy
+            m_name = AiString.GetString(nativeValue.Name); //Avoid struct copy
 
             //Read materials
             if(nativeValue.NumMaterials > 0 && nativeValue.Materials != IntPtr.Zero)

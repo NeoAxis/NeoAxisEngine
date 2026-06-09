@@ -22,6 +22,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Numerics;
 using System.Text;
 using Internal.Assimp.Unmanaged;
 
@@ -32,24 +33,21 @@ namespace Internal.Assimp
     /// </summary>
     public sealed class MaterialProperty : IMarshalable<MaterialProperty, AiMaterialProperty>
     {
-        private String m_name;
+        private string m_name;
         private PropertyType m_type;
         private byte[] m_rawValue;
         private TextureType m_texType;
         private int m_texIndex;
-        private String m_fullyQualifiedName;
+        private string m_fullyQualifiedName;
         private bool m_fullQualifiedNameNeedsUpdate = true;
 
         /// <summary>
         /// Gets or sets the property key name. E.g. $tex.file. This corresponds to the
         /// "AiMatKeys" base name constants.
         /// </summary>
-        public String Name
+        public string Name
         {
-            get
-            {
-                return m_name;
-            }
+            get => m_name;
             set
             {
                 m_name = value;
@@ -64,58 +62,31 @@ namespace Internal.Assimp
         /// </summary>
         public PropertyType PropertyType
         {
-            get
-            {
-                return m_type;
-            }
-            set
-            {
-                m_type = value;
-            }
+            get => m_type;
+            set => m_type = value;
         }
 
         /// <summary>
         /// Gets the raw byte data count.
         /// </summary>
-        public int ByteCount
-        {
-            get
-            {
-                return (m_rawValue == null) ? 0 : m_rawValue.Length;
-            }
-        }
+        public int ByteCount => (m_rawValue == null) ? 0 : m_rawValue.Length;
 
         /// <summary>
         /// Checks if the property has data.
         /// </summary>
-        public bool HasRawData
-        {
-            get
-            {
-                return m_rawValue != null;
-            }
-        }
+        public bool HasRawData => m_rawValue != null;
 
         /// <summary>
         /// Gets the raw byte data. To modify/read this data, see the Get/SetXXXValue methods.
         /// </summary>
-        public byte[] RawData
-        {
-            get
-            {
-                return m_rawValue;
-            }
-        }
+        public byte[] RawData => m_rawValue;
 
         /// <summary>
-        /// Gets or sets the texture type semantic, for non-texture properties this is always <see cref="Assimp.TextureType.None"/>.
+        /// Gets or sets the texture type semantic, for non-texture properties this is always <see cref="Internal.Assimp.TextureType.None"/>.
         /// </summary>
         public TextureType TextureType
         {
-            get
-            {
-                return m_texType;
-            }
+            get => m_texType;
             set
             {
                 m_texType = value;
@@ -128,10 +99,7 @@ namespace Internal.Assimp
         /// </summary>
         public int TextureIndex
         {
-            get
-            {
-                return m_texIndex;
-            }
+            get => m_texIndex;
             set
             {
                 m_texIndex = value;
@@ -143,7 +111,7 @@ namespace Internal.Assimp
         /// Gets the property's fully qualified name. Format: "{base name},{texture type semantic},{texture index}". E.g. "$clr.diffuse,0,0". This
         /// is the key that is used to index the property in the material property map.
         /// </summary>
-        public String FullyQualifiedName
+        public string FullyQualifiedName
         {
             get
             {
@@ -162,7 +130,7 @@ namespace Internal.Assimp
         /// </summary>
         public MaterialProperty()
         {
-            m_name = String.Empty;
+            m_name = string.Empty;
             m_type = PropertyType.Buffer;
             m_texIndex = 0;
             m_texType = TextureType.None;
@@ -174,7 +142,7 @@ namespace Internal.Assimp
         /// </summary>
         /// <param name="baseName">Base name of the property</param>
         /// <param name="buffer">Property value</param>
-        public MaterialProperty(String baseName, byte[] buffer)
+        public MaterialProperty(string baseName, byte[] buffer)
         {
             m_name = baseName;
             m_type = PropertyType.Buffer;
@@ -190,7 +158,7 @@ namespace Internal.Assimp
         /// </summary>
         /// <param name="baseName">Base name of the property</param>
         /// <param name="value">Property value</param>
-        public MaterialProperty(String baseName, float value)
+        public MaterialProperty(string baseName, float value)
         {
             m_name = baseName;
             m_type = PropertyType.Float;
@@ -207,7 +175,7 @@ namespace Internal.Assimp
         /// </summary>
         /// <param name="baseName">Base name of the property</param>
         /// <param name="value">Property value</param>
-        public MaterialProperty(String baseName, int value)
+        public MaterialProperty(string baseName, int value)
         {
             m_name = baseName;
             m_type = PropertyType.Integer;
@@ -224,7 +192,7 @@ namespace Internal.Assimp
         /// </summary>
         /// <param name="baseName">Name of the property</param>
         /// <param name="value">Property value</param>
-        public MaterialProperty(String baseName, bool value)
+        public MaterialProperty(string baseName, bool value)
         {
             m_name = baseName;
             m_type = PropertyType.Integer;
@@ -241,7 +209,7 @@ namespace Internal.Assimp
         /// </summary>
         /// <param name="baseName">Base name of the property</param>
         /// <param name="value">Property value</param>
-        public MaterialProperty(String baseName, String value)
+        public MaterialProperty(string baseName, string value)
         {
             m_name = baseName;
             m_type = PropertyType.String;
@@ -260,7 +228,7 @@ namespace Internal.Assimp
         /// <param name="value">Property value</param>
         /// <param name="texType">Texture type</param>
         /// <param name="textureIndex">Texture index</param>
-        public MaterialProperty(String baseName, String value, TextureType texType, int textureIndex)
+        public MaterialProperty(string baseName, string value, TextureType texType, int textureIndex)
         {
             m_name = baseName;
             m_type = PropertyType.String;
@@ -277,7 +245,7 @@ namespace Internal.Assimp
         /// </summary>
         /// <param name="baseName">Base name of the property</param>
         /// <param name="values">Property values</param>
-        public MaterialProperty(String baseName, float[] values)
+        public MaterialProperty(string baseName, float[] values)
         {
             m_name = baseName;
             m_type = PropertyType.Float;
@@ -294,7 +262,7 @@ namespace Internal.Assimp
         /// </summary>
         /// <param name="baseName">Base name of the property</param>
         /// <param name="values">Property values</param>
-        public MaterialProperty(String baseName, int[] values)
+        public MaterialProperty(string baseName, int[] values)
         {
             m_name = baseName;
             m_type = PropertyType.Integer;
@@ -307,11 +275,11 @@ namespace Internal.Assimp
         }
 
         /// <summary>
-        /// Constructs a new instance of the <see cref="MaterialProperty"/> class. Creates a Color3D property.
+        /// Constructs a new instance of the <see cref="MaterialProperty"/> class. Creates a Vector3 property.
         /// </summary>
         /// <param name="baseName">Base name of the property</param>
         /// <param name="value">Property value</param>
-        public MaterialProperty(String baseName, Color3D value)
+        public MaterialProperty(string baseName, Vector3 value)
         {
             m_name = baseName;
             m_type = PropertyType.Float;
@@ -319,16 +287,16 @@ namespace Internal.Assimp
             m_texType = TextureType.None;
             m_rawValue = null;
 
-            SetColor3DValue(value);
+            SetVector3Value(value);
             AssertIsBaseName();
         }
 
         /// <summary>
-        /// Constructs a new instance of the <see cref="MaterialProperty"/> class. Creates a Color4D property.
+        /// Constructs a new instance of the <see cref="MaterialProperty"/> class. Creates a Vector4 property.
         /// </summary>
         /// <param name="baseName">Base name of the property</param>
         /// <param name="value">Property value</param>
-        public MaterialProperty(String baseName, Color4D value)
+        public MaterialProperty(string baseName, Vector4 value)
         {
             m_name = baseName;
             m_type = PropertyType.Float;
@@ -336,7 +304,7 @@ namespace Internal.Assimp
             m_texType = TextureType.None;
             m_rawValue = null;
 
-            SetColor4DValue(value);
+            SetVector4Value(value);
             AssertIsBaseName();
         }
 
@@ -419,7 +387,7 @@ namespace Internal.Assimp
         /// Gets the property raw data as a string.
         /// </summary>
         /// <returns>String</returns>
-        public String GetStringValue()
+        public string GetStringValue()
         {
             if(m_type != PropertyType.String)
                 return null;
@@ -432,7 +400,7 @@ namespace Internal.Assimp
         /// </summary>
         /// <param name="value">String</param>
         /// <returns>True if successful, false otherwise</returns>
-        public bool SetStringValue(String value)
+        public bool SetStringValue(string value)
         {
             if(m_type != PropertyType.String)
                 return false;
@@ -571,38 +539,38 @@ namespace Internal.Assimp
         }
 
         /// <summary>
-        /// Gets the property raw data as a Color3D.
+        /// Gets the property raw data as a Vector3.
         /// </summary>
-        /// <returns>Color3D</returns>
-        public Color3D GetColor3DValue()
+        /// <returns>Vector3</returns>
+        public Vector3 GetVector3Value()
         {
             if(m_type != PropertyType.Float)
-                return new Color3D();
+                return new Vector3();
 
-            return GetValueAs<Color3D>();
+            return GetValueAs<Vector3>();
         }
 
         /// <summary>
-        /// Sets the property raw data as a Color3D.
+        /// Sets the property raw data as a Vector3.
         /// </summary>
-        /// <param name="value">Color3D</param>
+        /// <param name="value">Vector3</param>
         /// <returns>True if successful, false otherwise</returns>
-        public bool SetColor3DValue(Color3D value)
+        public bool SetVector3Value(Vector3 value)
         {
             if(m_type != PropertyType.Float)
                 return false;
 
-            return SetValueAs<Color3D>(value);
+            return SetValueAs<Vector3>(value);
         }
 
         /// <summary>
-        /// Gets the property raw data as a Color4D.
+        /// Gets the property raw data as a Vector4.
         /// </summary>
-        /// <returns>Color4D</returns>
-        public Color4D GetColor4DValue()
+        /// <returns>Vector4</returns>
+        public Vector4 GetVector4Value()
         {
             if(m_type != PropertyType.Float || m_rawValue == null)
-                return new Color4D();
+                return new Vector4();
 
             //We may have a Color that's RGB, so still read it and set alpha to 1.0
             unsafe
@@ -610,35 +578,35 @@ namespace Internal.Assimp
                 fixed(byte* ptr = m_rawValue)
                 {
 
-                    if(m_rawValue.Length >= MemoryHelper.SizeOf<Color4D>())
+                    if(m_rawValue.Length >= MemoryHelper.SizeOf<Vector4>())
                     {
-                        return MemoryHelper.Read<Color4D>(new IntPtr(ptr));
+                        return MemoryHelper.Read<Vector4>(new IntPtr(ptr));
                     }
-                    else if(m_rawValue.Length >= MemoryHelper.SizeOf<Color3D>())
+                    else if(m_rawValue.Length >= MemoryHelper.SizeOf<Vector3>())
                     {
-                        return new Color4D(MemoryHelper.Read<Color3D>(new IntPtr(ptr)), 1.0f);
+                        return new Vector4(MemoryHelper.Read<Vector3>(new IntPtr(ptr)), 1.0f);
                     }
 
                 }
             }
 
-            return new Color4D();
+            return new Vector4();
         }
 
         /// <summary>
-        /// Sets the property raw data as a Color4D.
+        /// Sets the property raw data as a Vector4.
         /// </summary>
-        /// <param name="value">Color4D</param>
+        /// <param name="value">Vector4</param>
         /// <returns>True if successful, false otherwise</returns>
-        public bool SetColor4DValue(Color4D value)
+        public bool SetVector4Value(Vector4 value)
         {
             if(m_type != PropertyType.Float)
                 return false;
 
-            return SetValueAs<Color4D>(value);
+            return SetValueAs<Vector4>(value);
         }
 
-        private unsafe T[] GetValueArrayAs<T>(int count) where T : unmanaged// struct
+        private unsafe T[] GetValueArrayAs<T>(int count) where T : struct
         {
             int size = MemoryHelper.SizeOf<T>();
 
@@ -656,7 +624,7 @@ namespace Internal.Assimp
             return null;
         }
 
-        private unsafe T GetValueAs<T>() where T : unmanaged// struct
+        private unsafe T GetValueAs<T>() where T : struct
         {
             int size = MemoryHelper.SizeOf<T>();
 
@@ -671,8 +639,8 @@ namespace Internal.Assimp
             return default(T);
         }
 
-        private unsafe bool SetValueArrayAs<T>(T[] data) where T : unmanaged//struct
-		{
+        private unsafe bool SetValueArrayAs<T>(T[] data) where T : struct
+        {
             if(data == null || data.Length == 0)
                 return false;
 
@@ -688,7 +656,7 @@ namespace Internal.Assimp
             return true;
         }
 
-        private unsafe bool SetValueAs<T>(T value) where T : unmanaged// struct
+        private unsafe bool SetValueAs<T>(T value) where T : struct
         {
             int size = MemoryHelper.SizeOf<T>();
 
@@ -702,10 +670,10 @@ namespace Internal.Assimp
             return true;
         }
 
-        private static unsafe String GetMaterialString(byte[] matPropData)
+        private static unsafe string GetMaterialString(byte[] matPropData)
         {
             if(matPropData == null)
-                return String.Empty;
+                return string.Empty;
 
             fixed(byte* ptr = &matPropData[0])
             {
@@ -714,15 +682,15 @@ namespace Internal.Assimp
                 aiString.Length = (uint) MemoryHelper.Read<int>(new IntPtr(ptr));
 
                 //Memcpy starting at dataPtr + sizeof(int) for length + 1 (to account for null terminator)
-                MemoryHelper.CopyMemory(new IntPtr(aiString.Data), MemoryHelper.AddIntPtr(new IntPtr(ptr), sizeof(int)), (int) aiString.Length + 1);
+                MemoryHelper.CopyMemory(new IntPtr(aiString.Data), new IntPtr(ptr) + sizeof(int), (int) aiString.Length + 1);
 
                 return aiString.GetString();
             }
         }
 
-        private static unsafe byte[] SetMaterialString(String value, byte[] existing)
+        private static unsafe byte[] SetMaterialString(string value, byte[] existing)
         {
-            if(String.IsNullOrEmpty(value))
+            if(string.IsNullOrEmpty(value))
                 return null;
 
             int stringSize = Encoding.UTF8.GetByteCount(value);
@@ -761,7 +729,7 @@ namespace Internal.Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<MaterialProperty, AiMaterialProperty>.IsNativeBlittable { get { return true; } }
+        bool IMarshalable<MaterialProperty, AiMaterialProperty>.IsNativeBlittable => true;
 
         /// <summary>
         /// Writes the managed data to the native value.

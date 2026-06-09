@@ -29,20 +29,20 @@ namespace NeoAxis
 		public event Action<RenderingEffect_ToneMapping> IntensityChanged;
 		ReferenceField<double> _intensity = 1;
 
-		/// <summary>
-		/// The input gamma of the tone mapping.
-		/// </summary>
-		[DefaultValue( 0.5 )]
-		[Serialize]
-		[Range( 0.1, 10, RangeAttribute.ConvenientDistributionEnum.Exponential )]
-		public Reference<double> GammaInput
-		{
-			get { if( _gammaInput.BeginGet() ) GammaInput = _gammaInput.Get( this ); return _gammaInput.value; }
-			set { if( _gammaInput.BeginSet( this, ref value ) ) { try { GammaInputChanged?.Invoke( this ); } finally { _gammaInput.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="GammaInput"/> property value changes.</summary>
-		public event Action<RenderingEffect_ToneMapping> GammaInputChanged;
-		ReferenceField<double> _gammaInput = 0.5;
+		///// <summary>
+		///// The input gamma of the tone mapping.
+		///// </summary>
+		//[DefaultValue( 0.5 )]
+		//[Serialize]
+		//[Range( 0.1, 10, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		//public Reference<double> GammaInput
+		//{
+		//	get { if( _gammaInput.BeginGet() ) GammaInput = _gammaInput.Get( this ); return _gammaInput.value; }
+		//	set { if( _gammaInput.BeginSet( this, ref value ) ) { try { GammaInputChanged?.Invoke( this ); } finally { _gammaInput.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="GammaInput"/> property value changes.</summary>
+		//public event Action<RenderingEffect_ToneMapping> GammaInputChanged;
+		//ReferenceField<double> _gammaInput = 0.5;
 
 		/// <summary>
 		/// The level of exposure.
@@ -61,15 +61,16 @@ namespace NeoAxis
 
 		public enum MethodEnum
 		{
-			Linear,
+			Neutral,
 			ACES,
+			Linear,
 			Custom
 		}
 
 		/// <summary>
 		/// The type of the tone mapping.
 		/// </summary>
-		[DefaultValue( MethodEnum.ACES )]
+		[DefaultValue( MethodEnum.Neutral )] //ACES 
 		public Reference<MethodEnum> Method
 		{
 			get { if( _method.BeginGet() ) Method = _method.Get( this ); return _method.value; }
@@ -77,7 +78,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="Method"/> property value changes.</summary>
 		public event Action<RenderingEffect_ToneMapping> MethodChanged;
-		ReferenceField<MethodEnum> _method = MethodEnum.ACES;
+		ReferenceField<MethodEnum> _method = MethodEnum.Neutral;// ACES;
 
 		//!!!!text editor form
 		/// <summary>
@@ -94,20 +95,20 @@ namespace NeoAxis
 		public event Action<RenderingEffect_ToneMapping> CustomCodeChanged;
 		ReferenceField<string> _customCode = customCodeDefault;
 
-		/// <summary>
-		/// The output gamma of the tone mapping.
-		/// </summary>
-		[DefaultValue( 2.2 )]
-		[Serialize]
-		[Range( 0.1, 10, RangeAttribute.ConvenientDistributionEnum.Exponential )]
-		public Reference<double> GammaOutput
-		{
-			get { if( _gammaOutput.BeginGet() ) GammaOutput = _gammaOutput.Get( this ); return _gammaOutput.value; }
-			set { if( _gammaOutput.BeginSet( this, ref value ) ) { try { GammaOutputChanged?.Invoke( this ); } finally { _gammaOutput.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="GammaOutput"/> property value changes.</summary>
-		public event Action<RenderingEffect_ToneMapping> GammaOutputChanged;
-		ReferenceField<double> _gammaOutput = 2.2;
+		///// <summary>
+		///// The output gamma of the tone mapping.
+		///// </summary>
+		//[DefaultValue( 2.2 )]
+		//[Serialize]
+		//[Range( 0.1, 10, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		//public Reference<double> GammaOutput
+		//{
+		//	get { if( _gammaOutput.BeginGet() ) GammaOutput = _gammaOutput.Get( this ); return _gammaOutput.value; }
+		//	set { if( _gammaOutput.BeginSet( this, ref value ) ) { try { GammaOutputChanged?.Invoke( this ); } finally { _gammaOutput.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="GammaOutput"/> property value changes.</summary>
+		//public event Action<RenderingEffect_ToneMapping> GammaOutputChanged;
+		//ReferenceField<double> _gammaOutput = 2.2;
 
 		/////////////////////////////////////////
 
@@ -146,11 +147,14 @@ namespace NeoAxis
 			shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, actualTexture,
 				TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
 
-			shader.Parameters.Set( "u_tonemapping_parameters", new Vector4F( (float)Intensity, (float)GammaInput, (float)Exposure, (float)GammaOutput ) );
+			shader.Parameters.Set( "u_tonemapping_parameters", new Vector4F( (float)Intensity, 0, (float)Exposure, 0 ) );
+			//shader.Parameters.Set( "u_tonemapping_parameters", new Vector4F( (float)Intensity, (float)GammaInput, (float)Exposure, (float)GammaOutput ) );
 
 			shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( $"TONEMAPPING_METHOD_{Method.Value.ToString().ToUpper()}" ) );
 			if( Method.Value == MethodEnum.Custom )
 				shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "CUSTOM_CODE", CustomCode.Value ) );
+			if( RenderingSystem.AccurateSrgbCorrection )
+				shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( "ACCURATE_SRGB_CORRECTION" ) );
 
 			context.RenderQuadToCurrentViewport( shader );
 

@@ -20,8 +20,7 @@
 * THE SOFTWARE.
 */
 
-using System;
-using System.Globalization;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace Internal.Assimp
@@ -29,97 +28,8 @@ namespace Internal.Assimp
     /// <summary>
     /// Represents an axis-aligned bounding box
     /// </summary>
+    /// <param name="Min">Minimum point of the bounding box.</param>
+    /// <param name="Max">Maximum point of the bounding box.</param>
     [StructLayout(LayoutKind.Sequential)]
-    public struct BoundingBox : IEquatable<BoundingBox>
-    {
-        /// <summary>
-        /// Minimum point of the bounding box.
-        /// </summary>
-        public Vector3D Min;
-        
-        /// <summary>
-        /// Maximum point of the bounding box.
-        /// </summary>
-        public Vector3D Max;
-
-        /// <summary>
-        /// Constructs a new BoundingBox.
-        /// </summary>
-        /// <param name="min">Minimum point.</param>
-        /// <param name="max">Maximum point.</param>
-        public BoundingBox(Vector3D min, Vector3D max)
-        {
-            Min = min;
-            Max = max;
-        }
-
-        /// <summary>
-        /// Tests equality between two Bounding Boxes.
-        /// </summary>
-        /// <param name="a">First BoundingBox</param>
-        /// <param name="b">Second BoundingBox</param>
-        /// <returns>True if the Bounding Boxes are equal, false otherwise</returns>
-        public static bool operator ==(BoundingBox a, BoundingBox b)
-        {
-            return (a.Min == b.Min) && (a.Max == b.Max);
-        }
-
-        /// <summary>
-        /// Tests inequality between two Bounding Boxes.
-        /// </summary>
-        /// <param name="a">First BoundingBox</param>
-        /// <param name="b">Second BoundingBox</param>
-        /// <returns>True if the Bounding Boxes are not equal, false otherwise</returns>
-        public static bool operator !=(BoundingBox a, BoundingBox b)
-        {
-            return (a.Min != b.Min) || (a.Max != b.Max);
-        }
-
-        /// <summary>
-        /// Tests equality between this BoundingBox and another BoundingBox.
-        /// </summary>
-        /// <param name="other">BoundingBox to test against</param>
-        /// <returns>True if components are equal</returns>
-        public bool Equals(BoundingBox other)
-        {
-            return (Min == other.Min) && (Max == other.Max);
-        }
-
-        /// <summary>
-        /// Tests equality between this vector and another object.
-        /// </summary>
-        /// <param name="obj">Object to test against</param>
-        /// <returns>True if the object is a vector and the components are equal</returns>
-        public override bool Equals(object obj)
-        {
-            if(obj is BoundingBox)
-                return Equals((BoundingBox) obj);
-
-            return false;
-        }
-
-        /// <summary>
-        /// Returns a hash code for this instance.
-        /// </summary>
-        /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
-        /// </returns>
-        public override int GetHashCode()
-        {
-            return (Min.GetHashCode() + Max.GetHashCode());
-        }
-
-        /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
-        /// </returns>
-        public override string ToString()
-        {
-            CultureInfo info = CultureInfo.CurrentCulture;
-            return String.Format(info, "{{Min:{0} Max:{1}}",
-                new Object[] { Min.ToString(), Max.ToString() });
-        }
-    }
+    public record struct BoundingBox(Vector3 Min, Vector3 Max);
 }

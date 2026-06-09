@@ -13,9 +13,6 @@ namespace NeoAxis.Editor
 	/// </summary>
 	public static class EditorApp
 	{
-		//[DllImport( "user32.dll" )]
-		//internal/*obfuscator*/ static extern bool SetProcessDPIAware();
-
 		//[STAThread]
 		public static void Main()
 		{
@@ -45,13 +42,6 @@ namespace NeoAxis.Editor
 
 
 			Application.SetHighDpiMode( HighDpiMode.SystemAware );
-			//if( Environment.OSVersion.Version.Major >= 6 )
-			//{
-			//	try
-			//		SetProcessDPIAware();
-			//	}
-			//	catch { }
-			//}
 
 			EngineApp.ApplicationType = EngineApp.ApplicationTypeEnum.Editor;
 
@@ -77,59 +67,15 @@ namespace NeoAxis.Editor
 			//configure general settings
 			EngineApp.InitSettings.ConfigVirtualFileName = "user:Configs/Editor.config";
 
-			//!!!!не было
-			//!!!!теперь true по дефолту
-			//if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
-			//	EngineApp.InitSettings.UseDirectInputForMouseRelativeMode = true;
-
-			//!!!!не включать по дефолту. но нужно раскомментить
-			//EngineApp.InitSettings.AllowJoysticksAndSpecialInputDevices= true;
-			//!!!!!
-			//EngineApp.InitSettings.AllowWriteEngineConfigFile = true;
-			//EngineApp.InitSettings.AllowChangeScreenVideoMode = true;
-			//Change Floating Point Model for FPU math calculations. Default is Strict53Bits.
-			//FloatingPointModel.Model = FloatingPointModel.Models.Strict53Bits;
-
 			EngineApp.Init();
-			//EngineApp.Init( new EngineApp() );// EngineApp.ApplicationTypes.Editor ) );
-			//EngineApp.Init( new SimulationApp() );
 
-			//!!!!всем в сборке зарегать прост?
-			//enable support field and properties serialization for GameEngineApp class.
-			//EngineApp.Instance.Config.RegisterClassParameters( typeof( SimulationApp ) );
-
-			//update window
-			//!!!!
-			//EngineApp.Instance.WindowTitle = "Game";
-			//!!!!!чуть ниже стало
-			//if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
-			//	EngineApp.Instance.CreatedInsideEngineWindow.Icon = NeoAxis.Game.Properties.Resources.Logo;
-
-			//EngineApp.Instance.SuspendWorkingWhenApplicationIsNotActive = false;
-
-			//!!!!!
-			//create and run application loop.
-			//if( EngineApp.Instance.Create() )
-			//{
-			//	//!!!!!
-			//	//if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
-			//	//	EngineApp.Instance.CreatedInsideEngineWindow.Icon = NeoAxis.Game.Properties.Resources.Logo;
-
-			//	//EngineApp.Instance.Run();
-			//}
-			//else
-			//{
-			//	//!!!!!
-			//}
-
-			//Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault( false );
 
-			EditorForm form = new EditorForm();
+			var form = new EditorForm();
 			form.Show();
 			while( form.Created )
 			{
-				EditorAPI2.ApplicationDoEvents( false );//Application.DoEvents();
+				EditorAPI2.ApplicationDoEvents( false );
 
 				if( EditorForm.Instance == null || EngineApp.Instance == null || EngineApp.Closing )
 					break;
@@ -137,17 +83,7 @@ namespace NeoAxis.Editor
 				EditorForm.Instance.RenderViewports( out bool existActiveViewports );
 				if( !existActiveViewports && EngineApp.Instance != null )
 					EngineApp.MessageLoopWaitMessage();
-
-				//bool allowRender = MainForm.Instance.Visible &&
-				//	MainForm.Instance.WindowState != FormWindowState.Minimized &&
-				//	MainForm.Instance.IsAllowRenderScene();
-
-				//if( allowRender )
-				//	form.RenderScene();
-				//else
-				//	EngineApp.Instance.MessageLoopWaitMessage();
 			}
-			//Application.Run( new EditorForm() );
 
 			EngineApp.Shutdown();
 			Log.DumpToFile( "Program END\r\n" );
@@ -159,12 +95,6 @@ namespace NeoAxis.Editor
 				string fullPath = Process.GetCurrentProcess().MainModule.FileName;
 				Process.Start( new ProcessStartInfo( fullPath ) { UseShellExecute = true } );
 				Thread.Sleep( 1000 );
-				//Application.Restart();
-			}
-			else
-			{
-				////bug fix for ".NET-BroadcastEventWindow" error
-				//Application.Exit();
 			}
 
 			//prevent internal exception and freeze on exit
@@ -173,89 +103,6 @@ namespace NeoAxis.Editor
 				Process.GetCurrentProcess().Kill();
 			}
 			catch { }
-
-
-
-			//	//Mono check
-			//	if( RuntimeFramework.Runtime == RuntimeFramework.RuntimeType.Mono )
-			//	{
-			//		string text = "The Map Editor does not work correctly on the Mono Runtime.\n\nContinue?";
-			//		if( MessageBox.Show( text, "Map Editor", MessageBoxButtons.YesNo, MessageBoxIcon.Warning ) == DialogResult.No )
-			//			return;
-			//	}
-
-			//	if( !VirtualFileSystem.Init( "user:Logs/MapEditor.log", true, null, null, null, null ) )
-			//		return;
-
-			//	Log.Handlers.InfoHandler += delegate( string text, ref bool dumpToLogFile )
-			//	{
-			//		if( MapEditorEngineApp.Instance != null )
-			//			MapEditorEngineApp.Instance.AddScreenMessage( text );
-			//	};
-
-			//	Log.Handlers.WarningHandler += delegate( string text, ref bool handled, ref bool dumpToLogFile )
-			//	{
-			//		handled = true;
-
-			//		if( SplashForm.Instance != null )
-			//			SplashForm.Instance.Hide();
-			//		if( EngineApp.Instance != null )
-			//			EngineApp.Instance.ShowSystemCursor = true;
-
-			//		string caption = ToolsLocalization.Translate( "Various", "Warning" );
-			//		MessageBox.Show( text, caption, MessageBoxButtons.OK, MessageBoxIcon.Warning );
-			//	};
-
-			//	Log.Handlers.ErrorHandler += delegate( string text, ref bool handled, ref bool dumpToLogFile )
-			//	{
-			//		handled = true;
-
-			//		if( SplashForm.Instance != null )
-			//			SplashForm.Instance.Hide();
-			//		if( EngineApp.Instance != null )
-			//			EngineApp.Instance.ShowSystemCursor = true;
-
-			//		string caption = ToolsLocalization.Translate( "Various", "Error" );
-			//		MessageBox.Show( text, caption, MessageBoxButtons.OK, MessageBoxIcon.Warning );
-			//	};
-
-			//	Log.Handlers.FatalHandler += delegate( string text, string createdLogFilePath, ref bool handled )
-			//	{
-			//		if( SplashForm.Instance != null )
-			//			SplashForm.Instance.Hide();
-			//		if( EngineApp.Instance != null )
-			//			EngineApp.Instance.ShowSystemCursor = true;
-			//	};
-
-			//	Application.EnableVisualStyles();
-			//	Application.SetCompatibleTextRenderingDefault( false );
-
-			//	EngineApp.ConfigName = "user:Configs/MapEditor.config";
-
-			//	EngineApp.Init( new MapEditorEngineApp() );
-
-			//	//Do message loop
-
-			//	MainForm form = new MainForm();
-			//	form.Show();
-			//	while( form.Created )
-			//	{
-			//		Application.DoEvents();
-
-			//		if( MainForm.Instance == null )
-			//			break;
-
-			//		bool allowRender = MainForm.Instance.Visible &&
-			//			MainForm.Instance.WindowState != FormWindowState.Minimized &&
-			//			MainForm.Instance.IsAllowRenderScene();
-
-			//		if( allowRender )
-			//			form.RenderScene();
-			//		else
-			//			EngineApp.Instance.MessageLoopWaitMessage();
-			//	}
-			//}
-
 		}
 	}
 }

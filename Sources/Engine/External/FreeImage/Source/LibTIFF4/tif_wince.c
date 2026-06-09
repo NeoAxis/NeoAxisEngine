@@ -1,5 +1,3 @@
-/* $Id: tif_wince.c,v 1.12 2015/10/09 21:36:11 drolon Exp $ */
-
 /*
  * Copyright (c) 1988-1997 Sam Leffler
  * Copyright (c) 1991-1997 Silicon Graphics, Inc.
@@ -35,9 +33,6 @@
 
 #include "tiffiop.h"
 #include <windows.h>
-
-/* Turn off console support on Windows CE. */
-#undef TIF_PLATFORM_CONSOLE
 
 COMPILATION SHOULD FAIL
 This file is not yet updated to reflect changes in LibTiff 4.0. If you have

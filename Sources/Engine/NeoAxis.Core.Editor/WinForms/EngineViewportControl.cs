@@ -1,5 +1,4 @@
 // Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-#if !DEPLOY
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +12,6 @@ using DirectInput;
 #endif
 using Internal.ComponentFactory.Krypton.Toolkit;
 using System.IO;
-using System.Diagnostics;
 
 namespace NeoAxis.Editor
 {
@@ -28,20 +26,17 @@ namespace NeoAxis.Editor
 		RenderWindow renderWindow;
 		Viewport viewport;
 
-		//!!!!!лучше чтобы окно и виевпорт не пересоздавались. тогда в них всё останется. чувак не будет париться, чтобы заного параметры выставлять или типа того
 		bool needCreateRenderWindow;
 		bool allowCreateRenderWindow = true;
 		bool disableRecreationRenderWindow;
 
-		//!!!!!
 		//update render target
-		float automaticUpdateFPS = 60;//!!!!30; //!!!!! = 0?
+		float automaticUpdateFPS = 60;
 		Timer updateTimer;
 		double lastRenderTime;
 
 		Cursor oneFrameChangeCursor;
 
-		//!!!!temp?
 		//bool invalidated;
 
 		bool loaded;
@@ -98,21 +93,11 @@ namespace NeoAxis.Editor
 				return;
 
 			needCreateRenderWindow = true;
-			//!!!!тут создавать?
-			//!!!!!что-то opengl иногда при создании ошибку дает
-			//if( CreateRenderTarget() )
-			//	needCreateRenderWindow = false;
 
-			float interval = 10;
-			// ( automaticUpdateFPS != 0 ) ? ( ( 1.0f / automaticUpdateFPS ) * 1000.0f ) : 100;
-			//float interval = ( automaticUpdateFPS != 0 ) ? ( ( 1.0f / automaticUpdateFPS ) * 1000.0f ) : 100;
 			updateTimer = new Timer();
-			updateTimer.Interval = (int)interval;
+			updateTimer.Interval = 10;
 			updateTimer.Tick += updateTimer_Tick;
 			updateTimer.Enabled = true;
-
-			//!!!!
-			//WinFormsAppWorld.renderTargetUserControls.Add( this );
 
 			loaded = true;
 
@@ -136,9 +121,6 @@ namespace NeoAxis.Editor
 
 			DestroyRenderTarget();
 
-			//!!!!
-			//WinFormsAppWorld.renderTargetUserControls.Remove( this );
-
 			base.OnDestroy();
 		}
 
@@ -148,23 +130,18 @@ namespace NeoAxis.Editor
 				return;
 			if( !IsHandleCreated )
 				return;
-			//!!!!надо ли?
 			if( !WinFormsUtility.IsControlVisibleInHierarchy( this ) )
 				return;
-
-			//!!!!
 
 			if( automaticUpdateFPS == 0 )
 				UpdateInput();
 
-			////!!!!
 			////if( WinFormsAppWorld.DuringWarningOrErrorMessageBox )
 			////	return;
 
 			//	if( viewport != null )
 			//	UpdateKeysAndMouseButtons();
 
-			////!!!!
 			////if( automaticUpdateFPS != 0 )
 			////{
 			////	if( !invalidated )//!!!!temp?
@@ -223,7 +200,6 @@ namespace NeoAxis.Editor
 			return true;
 		}
 
-		//!!!!new: public
 		public void DestroyRenderTarget()
 		{
 			if( RenderWindow != null )
@@ -234,8 +210,7 @@ namespace NeoAxis.Editor
 				Viewport = null;
 				RenderWindow = null;
 
-				////!!!!new
-				//needCreateRenderWindow = true;
+				needCreateRenderWindow = true;
 			}
 		}
 
@@ -259,7 +234,6 @@ namespace NeoAxis.Editor
 
 			paintBackgroundCounter = 3;
 
-			//!!!!?
 			//Invalidate();
 		}
 
@@ -693,7 +667,6 @@ namespace NeoAxis.Editor
 			base.OnLeave( e );
 		}
 
-		//!!!!name
 		/// <summary>
 		/// If zero, then no automatic updates.
 		/// </summary>
@@ -795,8 +768,6 @@ namespace NeoAxis.Editor
 
 		public void UpdateInput()
 		{
-			//!!!!!так? может проверки какие
-
 			if( Viewport != null )
 			{
 				UpdateKeysAndMouseButtons();
@@ -814,7 +785,6 @@ namespace NeoAxis.Editor
 			if( EngineApp.Instance == null || EngineApp.AfterFatalOperations )
 				return false;
 
-			//!!!!new. надо ли. поставлено т.к. валилось в UpdateTransformToolObjects на "foreach( var obj in transformTool.Objects )" в OnPaint, в Tick
 			if( !loaded )
 				return false;
 
@@ -863,12 +833,7 @@ namespace NeoAxis.Editor
 			//	return;
 
 			if( !IsAllowRender() )
-			{
-				////!!!!new
-				//DestroyRenderTarget();
-
 				return;
-			}
 
 			if( EditorAPI2.ApplicationDoEventsIsAdditionalCall )
 				return;
@@ -880,8 +845,6 @@ namespace NeoAxis.Editor
 			{
 				UpdateInput();
 
-
-				//!!!!в OnPaint рисовать?
 
 				//create render window
 				if( needCreateRenderWindow && allowCreateRenderWindow && !DisableRecreationRenderWindow && EngineApp.Instance != null && EngineApp.Created )
@@ -911,44 +874,19 @@ namespace NeoAxis.Editor
 						lastRenderTime = time;
 
 						OneFrameChangeCursor = Viewport.MouseRelativeMode ? GetHidedCursor() : Cursors.Default;
-						//OneFrameChangeCursor = Cursors.Default;
 
 						EngineApp.DoTick();
 
-						//!!!!так ли. где еще
 						//if( DrawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled )
 						Viewport.PerformTick( (float)step );
 
-						//!!!!
-						////tick and entity world tick
-						//if( WinFormsAppEngineApp.Instance != null )
-						//	WinFormsAppEngineApp.Instance.DoTick();
-
-						//!!!!!было
-						//if( renderWindow.Size.X != 0 && renderWindow.Size.Y != 0 )
-						//	camera.AspectRatio = (float)renderWindow.Size.X / (float)renderWindow.Size.Y;
-						//if( renderWindow.Size.X != 0 && renderWindow.Size.Y != 0 )
-						//	guiRenderer.AspectRatio = (float)renderWindow.Size.X / (float)renderWindow.Size.Y;
-
 						//update
-						//!!!!так?
 						Viewport.Update( true, OverrideCameraSettings );// false );
 
-						//!!!!возможно надо свапать только раз. делать цепь из всех существующих.
-
-						//!!!!wait vsync?
-						//viewport.Parent.SwapBuffers( false );
-						//!!!!
-						//Log.Fatal( "viewport.Parent.SwapBuffers( true )" );
-						//viewport.Parent.SwapBuffers( true );
-						//renderWindow.Update( true );
-
-						//!!!!так?
 						if( Cursor != OneFrameChangeCursor )
 							Cursor = OneFrameChangeCursor;
 
 						OneFrameChangeCursor = Viewport.MouseRelativeMode ? GetHidedCursor() : Cursors.Default;
-						//OneFrameChangeCursor = Cursors.Default;
 
 						WinFormsUtility.InvalidateParentComposedStyleControl( this );
 					}
@@ -959,11 +897,6 @@ namespace NeoAxis.Editor
 				insideTryRender = false;
 			}
 		}
-
-		//public override string ToString()
-		//{
-		//	return GetType().Name + " : Parent=" + Parent?.ToString();
-		//}
 
 		[DllImport( "user32.dll" )]
 		static extern int ShowCursor( int show );
@@ -1034,4 +967,3 @@ namespace NeoAxis.Editor
 
 	}
 }
-#endif

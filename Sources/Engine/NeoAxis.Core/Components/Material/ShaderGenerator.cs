@@ -269,6 +269,7 @@ namespace NeoAxis
 			public string name;
 			public Component owner;
 			public Metadata.Property property;
+			public bool convertSrgbToLinear;
 		}
 
 		string GetUniqueVariableName()
@@ -299,7 +300,7 @@ namespace NeoAxis
 		//	return value;
 		//}
 
-		public ResultData Process( ICollection<(Component, int, Metadata.Property)> properties, string parametersNamePrefix, Material thisMaterial, Material.CompiledMaterialData[] multiMaterialSeparateMaterialsOfCombinedGroup, ref int refTextureRegisterCounter, out string error )
+		public ResultData Process( ICollection<(Component, int, Metadata.Property, bool)> properties, string parametersNamePrefix, Material thisMaterial, Material.CompiledMaterialData[] multiMaterialSeparateMaterialsOfCombinedGroup, ref int refTextureRegisterCounter, out string error )
 		//public ResultData Process( ICollection<(Component, int, Metadata.Property)> properties, string parametersNamePrefix, Material thisMaterial, Material[] multiMaterialSeparateMaterialsOfCombinedGroup, ref int refTextureRegisterCounter, out string error )
 		//public ResultData Process( Component owner, ICollection<string> propertyNames, string parametersNamePrefix, out string error )
 		{
@@ -321,6 +322,7 @@ namespace NeoAxis
 					var owner = propertyItem.Item1;
 					var materialIndex = propertyItem.Item2;
 					var property = propertyItem.Item3;
+					var convertSrgbToLinear = propertyItem.Item4;
 
 					//Metadata.Property property = (Metadata.Property)owner.MetadataGetMemberBySignature( "property:" + propertyName );
 					if( property != null )
@@ -342,6 +344,7 @@ namespace NeoAxis
 								variableToCreate.name = GetUniqueVariableName();
 								variableToCreate.owner = owner;
 								variableToCreate.property = property;
+								variableToCreate.convertSrgbToLinear = convertSrgbToLinear;
 								variablesToCreateInQueue.Push( variableToCreate );
 							}
 
@@ -349,7 +352,7 @@ namespace NeoAxis
 							while( variablesToCreateInQueue.Count != 0 )
 							{
 								var variableToCreate = variablesToCreateInQueue.Pop();
-								GenerateLine( variableToCreate, materialIndex );
+								GenerateLine( variableToCreate, materialIndex, variableToCreate.convertSrgbToLinear );
 							}
 						}
 					}
@@ -620,7 +623,7 @@ namespace NeoAxis
 			return b.ToString();
 		}
 
-		void GenerateLine( VariableToCreate variableToCreate, int materialIndex )
+		void GenerateLine( VariableToCreate variableToCreate, int materialIndex, bool convertSrgbToLinear )
 		{
 			string body;
 			//Type bodyType = null;
@@ -774,6 +777,14 @@ namespace NeoAxis
 									constructBody = string.Format( "CODE_BODY_TEXTURE2D({0}, {1})", nameInShader, locationStr );
 								//var constructBody = string.Format( "texture2D({0}, {1})", nameInShader, locationStr );
 								//var constructBody = string.Format( "{0}.Sample( {1}Sampler, {2} )", nameInShader, nameInShader, locationStr );
+
+								if( convertSrgbToLinear )
+								{
+									if( RenderingSystem.AccurateSrgbCorrection )
+										constructBody = $"toLinearAccurate({constructBody})";
+									else
+										constructBody = $"toLinear({constructBody})";
+								}
 
 								//fix RGBA access to L8, L16 textures
 								if( postfix == "" || postfix == "g" || postfix == "b" || postfix == "a" )

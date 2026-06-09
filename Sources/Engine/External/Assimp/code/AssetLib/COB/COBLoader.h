@@ -2,8 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2022, assimp team
-
+Copyright (c) 2006-2026, assimp team
 
 All rights reserved.
 
@@ -73,7 +72,7 @@ namespace COB {
  *
  *  Currently relatively limited, loads only ASCII files and needs more test coverage. */
 // -------------------------------------------------------------------------------------------
-class COBImporter : public BaseImporter {
+class COBImporter final : public BaseImporter {
 public:
     COBImporter() = default;
     ~COBImporter() override = default;
@@ -81,6 +80,10 @@ public:
     // --------------------
     bool CanRead(const std::string &pFile, IOSystem *pIOHandler,
             bool checkSig) const override;
+
+    // -------------------------------------------------------------------
+    /** Prepend 'COB: ' and throw msg.*/
+    AI_WONT_RETURN static void ThrowException(const std::string &msg) AI_WONT_RETURN_SUFFIX;
 
 protected:
     // --------------------
@@ -94,10 +97,6 @@ protected:
             IOSystem *pIOHandler) override;
 
 private:
-    // -------------------------------------------------------------------
-    /** Prepend 'COB: ' and throw msg.*/
-    AI_WONT_RETURN static void ThrowException(const std::string &msg) AI_WONT_RETURN_SUFFIX;
-
     // -------------------------------------------------------------------
     /** @brief Read from an ascii scene/object file
      *  @param out Receives output data.
@@ -120,7 +119,7 @@ private:
     void ReadChunkInfo_Ascii(COB::ChunkInfo &out, const LineSplitter &splitter);
     void ReadBasicNodeInfo_Ascii(COB::Node &msh, LineSplitter &splitter, const COB::ChunkInfo &nfo);
     template <typename T>
-    void ReadFloat3Tuple_Ascii(T &fill, const char **in);
+    void ReadFloat3Tuple_Ascii(T &fill, const char **in, const char *end);
 
     void ReadPolH_Ascii(COB::Scene &out, LineSplitter &splitter, const COB::ChunkInfo &nfo);
     void ReadBitM_Ascii(COB::Scene &out, LineSplitter &splitter, const COB::ChunkInfo &nfo);
@@ -149,4 +148,5 @@ private:
 }; // !class COBImporter
 
 } // end of namespace Assimp
+
 #endif // AI_UNREALIMPORTER_H_INC

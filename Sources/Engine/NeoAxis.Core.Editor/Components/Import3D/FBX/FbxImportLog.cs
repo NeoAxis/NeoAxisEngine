@@ -8,14 +8,10 @@ using Internal.Fbx;
 
 namespace NeoAxis.Import.FBX
 {
-	//Temporary
-	//ToDo : 
 	static class FbxImportLog
 	{
 		public static void LogError( FbxNode node, string message )
 		{
-			//!!!!пока так
-
 			Log.Info( "Import3D: Error: " + node.GetName() + " : " + message );
 		}
 

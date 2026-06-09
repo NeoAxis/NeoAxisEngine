@@ -1,8 +1,9 @@
 // ==========================================================
-// GetType
+// GetType / Validate
 //
 // Design and implementation by
 // - Floris van den Berg (flvdberg@wxs.nl)
+// - Hervé Drolon (drolon@infonie.fr)
 //
 // This file is part of FreeImage 3
 //
@@ -27,9 +28,10 @@
 #include "Utilities.h"
 #include "FreeImageIO.h"
 #include "Plugin.h"
-#include "../DeprecationManager/DeprecationMgr.h"
 
-// ----------------------------------------------------------
+// =====================================================================
+// Generic stream file type access
+// =====================================================================
 
 FREE_IMAGE_FORMAT DLL_CALLCONV
 FreeImage_GetFileTypeFromHandle(FreeImageIO *io, fi_handle handle, int size) {
@@ -38,11 +40,11 @@ FreeImage_GetFileTypeFromHandle(FreeImageIO *io, fi_handle handle, int size) {
 
 		for (int i = 0; i < fif_count; ++i) {
 			FREE_IMAGE_FORMAT fif = (FREE_IMAGE_FORMAT)i;
-			if (FreeImage_Validate(fif, io, handle)) {
+			if (FreeImage_ValidateFIF(fif, io, handle)) {
 				if(fif == FIF_TIFF) {
 					// many camera raw files use a TIFF signature ...
 					// ... try to revalidate against FIF_RAW (even if it breaks the code genericity)
-					if (FreeImage_Validate(FIF_RAW, io, handle)) {
+					if (FreeImage_ValidateFIF(FIF_RAW, io, handle)) {
 						return FIF_RAW;
 					}
 				}
@@ -53,6 +55,10 @@ FreeImage_GetFileTypeFromHandle(FreeImageIO *io, fi_handle handle, int size) {
 
 	return FIF_UNKNOWN;
 }
+
+// =====================================================================
+// File stream file type access
+// =====================================================================
 
 FREE_IMAGE_FORMAT DLL_CALLCONV
 FreeImage_GetFileType(const char *filename, int size) {
@@ -90,3 +96,70 @@ FreeImage_GetFileTypeU(const wchar_t *filename, int size) {
 	return FIF_UNKNOWN;
 }
 
+// =====================================================================
+// Memory stream file type access
+// =====================================================================
+
+FREE_IMAGE_FORMAT DLL_CALLCONV
+FreeImage_GetFileTypeFromMemory(FIMEMORY *stream, int size) {
+	FreeImageIO io;
+	SetMemoryIO(&io);
+
+	if (stream != NULL) {
+		return FreeImage_GetFileTypeFromHandle(&io, (fi_handle)stream, size);
+	}
+
+	return FIF_UNKNOWN;
+}
+
+// --------------------------------------------------------------------------
+
+BOOL DLL_CALLCONV
+FreeImage_ValidateFromHandle(FREE_IMAGE_FORMAT fif, FreeImageIO *io, fi_handle handle) {
+	return FreeImage_ValidateFIF(fif, io, handle);
+}
+
+BOOL DLL_CALLCONV
+FreeImage_Validate(FREE_IMAGE_FORMAT fif, const char *filename) {
+	FreeImageIO io;
+	SetDefaultIO(&io);
+
+	FILE *handle = fopen(filename, "rb");
+
+	if (handle != NULL) {
+		BOOL bIsValidFIF = FreeImage_ValidateFromHandle(fif, &io, (fi_handle)handle);
+		fclose(handle);
+		return bIsValidFIF;
+	}
+
+	return FALSE;
+}
+
+BOOL DLL_CALLCONV
+FreeImage_ValidateU(FREE_IMAGE_FORMAT fif, const wchar_t *filename) {
+#ifdef _WIN32	
+	FreeImageIO io;
+	SetDefaultIO(&io);
+	FILE *handle = _wfopen(filename, L"rb");
+
+	if (handle != NULL) {
+		BOOL bIsValidFIF = FreeImage_ValidateFromHandle(fif, &io, (fi_handle)handle);
+		fclose(handle);
+		return bIsValidFIF;
+	}
+#endif
+	return FALSE;
+}
+
+BOOL DLL_CALLCONV
+FreeImage_ValidateFromMemory(FREE_IMAGE_FORMAT fif, FIMEMORY *stream) {
+	FreeImageIO io;
+	SetMemoryIO(&io);
+
+	if (stream != NULL) {
+		BOOL bIsValidFIF = FreeImage_ValidateFromHandle(fif, &io, (fi_handle)stream);
+		return bIsValidFIF;
+	}
+
+	return FALSE;
+}

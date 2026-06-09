@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
@@ -39,7 +39,8 @@
 		Name = Ambient Light
 		Transform = "33.3672008088317 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 50000
+		Brightness = 30000
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -51,12 +52,14 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 91.429
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
-		ShadowFarDistance = 60
 		ShadowIntensity = 0.5
+		ShadowDirectionalDistance = 60
+		ShadowPointSpotlightDistance = 60
 		.component NeoAxis.Component
 		{
 			Name = Background Effects
@@ -75,7 +78,6 @@
 			.component NeoAxis.RenderingEffect_ToneMapping
 			{
 				Name = Tone Mapping
-				Intensity = 0.5
 			}
 			.component NeoAxis.RenderingEffect_ToLDR
 			{
@@ -107,7 +109,7 @@
 	{
 		Name = Game Mode
 		UseBuiltInCamera = FirstPerson
-		ThirdPersonCameraHorizontalAngle = -89.99999999999993
+		ThirdPersonCameraHorizontalAngle = 90.00000000000007
 		InventoryWidget = True
 		CutsceneStarted = False
 		CutsceneGuiFadingFactor = 0
@@ -160,10 +162,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Content\\Materials\\Basic Library\\Wood\\Wood Floor 039.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -219,10 +217,6 @@
 		{
 			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -263,10 +257,6 @@
 		{
 			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -306,10 +296,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -354,13 +340,10 @@
 	{
 		Name = Weapon
 		Transform = "14.1135318704313 -13.1914088043696 0.600748485574068; 0 0 0 1; 1 1 1"
+		Collision = True
 		Mesh
 		{
 			GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -374,13 +357,10 @@
 	{
 		Name = Weapon 2
 		Transform = "-11.8864681295687 -13.1914088043696 0.600748485574068; 0 0 0 1; 1 1 1"
+		Collision = True
 		Mesh
 		{
 			GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -394,13 +374,10 @@
 	{
 		Name = Weapon 3
 		Transform = "-12.0021684799524 11.2098141843413 0.600748485574068; 0 0 -1 0.00000000000000006; 1 1 1"
+		Collision = True
 		Mesh
 		{
 			GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -414,13 +391,10 @@
 	{
 		Name = Weapon 4
 		Transform = "14.9978315200476 11.2098141843413 0.600748485574068; 0 0 -1 0.00000000000000006; 1 1 1"
+		Collision = True
 		Mesh
 		{
 			GetByReference = "Content\\Weapons\\Default\\scene.gltf|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -444,10 +418,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -495,10 +465,6 @@
 		{
 			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -544,10 +510,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Content\\Materials\\Basic Library\\Wood\\Wood Floor 039.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -595,10 +557,6 @@
 		{
 			GetByReference = "Content\\Materials\\Basic Library\\Wood\\Wood Floor 039.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -644,10 +602,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Content\\Materials\\Basic Library\\Wood\\Wood Floor 039.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -695,10 +649,6 @@
 		{
 			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -745,10 +695,6 @@
 		{
 			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -794,10 +740,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -857,10 +799,6 @@
 		{
 			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -919,10 +857,6 @@
 		{
 			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -971,14 +905,6 @@
 		Name = Character
 		Transform = "-0.5 -22 0; 0 0 0.707106781186548 0.707106781186548; 1 1 1"
 		Collision = True
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value

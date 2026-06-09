@@ -560,7 +560,14 @@ UnpackPictRow( FreeImageIO *io, fi_handle handle, BYTE* pLineBuf, int width, int
 					// Packed data.
 					int len = ((FlagCounter ^ 255) & 255) + 2;					
 					BYTE p = Read8( io, handle );
-					memset( pCurPixel, p, len);
+					// Clamp to remaining buffer to prevent out-of-bounds write
+					int remaining = (int)(pLineBuf + rowBytes - pCurPixel);
+					if (len > remaining) {
+						len = remaining;
+					}
+					if (len > 0) {
+						memset( pCurPixel, p, len);
+					}
 					pCurPixel += len;
 					j += 2;
 				}
@@ -568,7 +575,14 @@ UnpackPictRow( FreeImageIO *io, fi_handle handle, BYTE* pLineBuf, int width, int
 			else { 
 				// Unpacked data
 				int len = (FlagCounter & 255) + 1;
-				io->read_proc( pCurPixel, len, 1, handle );
+				// Clamp to remaining buffer to prevent out-of-bounds write
+				int remaining = (int)(pLineBuf + rowBytes - pCurPixel);
+				if (len > remaining) {
+					len = remaining;
+				}
+				if (len > 0) {
+					io->read_proc( pCurPixel, len, 1, handle );
+				}
 				pCurPixel += len;
 				j += len + 1;
 			}

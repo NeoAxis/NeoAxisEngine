@@ -1,3 +1,135 @@
+- 7/20/2021: version 1.2.1
+  This is a binary compatible release.
+  * minor lossless encoder improvements and x86 color conversion speed up
+  * add ARM64 simulator support to xcframeworkbuild.sh (#510)
+  * further security related hardening in libwebp & examples
+    (issues: #497, #508, #518)
+    (chromium: #1196480, #1196773, #1196775, #1196777, #1196778, #1196850)
+    (oss-fuzz: #28658, #28978)
+  * toolchain updates and bug fixes (#498, #501, #502, #504, #505, #506, #509,
+                                     #533)
+  * use more inclusive language within the source (#507)
+
+- 12/23/2020: version 1.2.0
+  * API changes:
+    - libwebp:
+      encode.h: add a qmin / qmax range for quality factor (cwebp adds -qrange)
+  * lossless encoder improvements
+  * SIMD support for Wasm builds
+  * add xcframeworkbuild.sh, supports Mac Catalyst builds
+  * import fuzzers from oss-fuzz & chromium (#409)
+  * webpmux: add an '-set loop <value>' option (#494)
+  * toolchain updates and bug fixes (#449, #463, #470, #475, #477, #478, #479,
+    #488, #491)
+
+- 12/18/2019: version 1.1.0
+  * API changes:
+    - libwebp:
+      WebPMalloc (issue #442)
+    - extras:
+      WebPUnmultiplyARGB
+  * alpha decode fix (issue #439)
+  * toolchain updates and bug fixes
+    (chromium: #1026858, #1027136, #1027409, #1028620, #1028716, #995200)
+    (oss-fuzz: #19430, #19447)
+
+- 7/4/2019: version 1.0.3
+  This is a binary compatible release.
+  * resize fixes for Nx1 sizes and the addition of non-opaque alpha values for
+    odd sizes (issues #418, #434)
+  * lossless encode/decode performance improvements
+  * lossy compression performance improvement at low quality levels with flat
+    content (issue #432)
+  * python swig files updated to support python 3
+  Tool updates:
+    vwebp will now preserve the aspect ratio of images that exceed monitor
+    resolution by scaling the image to fit (issue #433)
+
+- 1/14/2019: version 1.0.2
+  This is a binary compatible release.
+  * (Windows) unicode file support in the tools (linux and mac already had
+    support, issue #398)
+  * lossless encoder speedups
+  * lossy encoder speedup on ARM
+  * lossless multi-threaded security fix (chromium:917029)
+
+- 11/2/2018: version 1.0.1
+  This is a binary compatible release.
+  * lossless encoder speedups
+  * big-endian fix for alpha decoding (issue #393)
+  * gif2webp fix for loop count=65535 transcode (issue #382)
+  * further security related hardening in libwebp & libwebpmux
+    (issues #383, #385, #386, #387, #388, #391)
+    (oss-fuzz #9099, #9100, #9105, #9106, #9111, #9112, #9119, #9123, #9170,
+              #9178, #9179, #9183, #9186, #9191, #9364, #9417, #9496, #10349,
+              #10423, #10634, #10700, #10838, #10922, #11021, #11088, #11152)
+  * miscellaneous bug & build fixes (issues #381, #394, #396, #397, #400)
+
+- 4/2/2018: version 1.0.0
+  This is a binary compatible release.
+  * lossy encoder improvements to avoid chroma shifts in various circumstances
+    (issues #308, #340)
+  * big-endian fixes for decode, RGBA import and WebPPictureDistortion
+  Tool updates:
+    gifwebp, anim_diff - default duration behavior (<= 10ms) changed to match
+                         web browsers, transcoding tools (issue #379)
+    img2webp, webpmux - allow options to be passed in via a file (issue #355)
+
+- 11/24/2017: version 0.6.1
+  This is a binary compatible release.
+  * lossless performance and compression improvements + a new 'cruncher' mode
+    (-m 6 -q 100)
+  * ARM performance improvements with clang (15-20% w/ndk r15c, issue #339)
+  * webp-js: emscripten/webassembly based javascript decoder
+  * miscellaneous bug & build fixes (issue #329, #332, #343, #353, #360, #361,
+    #363)
+  Tool updates / additions:
+    added webpinfo - prints file format information (issue #330)
+    gif2webp - loop behavior modified to match Chrome M63+ (crbug.com/649264);
+               '-loop_compatibility' can be used for the old behavior
+
+- 1/26/2017: version 0.6.0
+  * lossless performance and compression improvements
+  * miscellaneous performance improvements (SSE2, NEON, MSA)
+  * webpmux gained a -duration option allowing for frame timing modification
+  * new img2webp utility allowing a sequence of images to be converted to
+    animated webp
+  * API changes:
+    - libwebp:
+      WebPPictureSharpARGBToYUVA
+      WebPPlaneDistortion
+    - libwebpmux / gif2webp:
+      WebPAnimEncoderOptions: kmax <= 0 now disables keyframes, kmax == 1
+                              forces all keyframes. See mux.h and the gif2webp
+                              manpage for details.
+
+- 12/13/2016: version 0.5.2
+  This is a binary compatible release.
+  This release covers CVE-2016-8888 and CVE-2016-9085.
+  * further security related hardening in the tools; fixes to
+    gif2webp/AnimEncoder (issues #310, #314, #316, #322), cwebp/libwebp (issue
+    #312)
+  * full libwebp (encoder & decoder) iOS framework; libwebpdecoder
+    WebP.framework renamed to WebPDecoder.framework (issue #307)
+  * CMake support for Android Studio (2.2)
+  * miscellaneous build related fixes (issue #306, #313)
+  * miscellaneous documentation improvements (issue #225)
+  * minor lossy encoder fixes and improvements
+
+- 6/14/2016: version 0.5.1
+  This is a binary compatible release.
+  * miscellaneous bug fixes (issues #280, #289)
+  * reverted alpha plane encoding with color cache for compatibility with
+    libwebp 0.4.0->0.4.3 (issues #291, #298)
+  * lossless encoding performance improvements
+  * memory reduction in both lossless encoding and decoding
+  * force mux output to be in the extended format (VP8X) when undefined chunks
+    are present (issue #294)
+  * gradle, cmake build support
+  * workaround for compiler bug causing 64-bit decode failures on android
+    devices using clang-3.8 in the r11c NDK
+  * various WebPAnimEncoder improvements
+
 - 12/17/2015: version 0.5.0
   * miscellaneous bug & build fixes (issues #234, #258, #274, #275, #278)
   * encoder & decoder speed-ups on x86/ARM/MIPS for lossy & lossless

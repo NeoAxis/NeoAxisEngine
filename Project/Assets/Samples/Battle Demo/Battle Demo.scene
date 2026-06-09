@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"91347C196EB94D335DAA0C01081CFA07\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"09D1E3FB94E343984B80D4CE74E66D1D\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"91347C196EB94D335DAA0C01081CFA07\"><KP UN=\"91347C196EB94D335DAA0C01081CFA07\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"E6327D03DC9F4F3A6DA84782301DADDC\" S=\"False\"><CPD ObjPath=\"$Material\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1192, 963\"><KW V=\"1\" A=\"91347C196EB94D335DAA0C01081CFA07\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"09D1E3FB94E343984B80D4CE74E66D1D\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"91347C196EB94D335DAA0C01081CFA07\"><KP UN=\"91347C196EB94D335DAA0C01081CFA07\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"E6327D03DC9F4F3A6DA84782301DADDC\" S=\"False\"><CPD ObjPath=\"$Material\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	SoundAttenuationFar = 300
 	RenderingPipeline
 	{
@@ -41,7 +41,8 @@
 		Name = Ambient Light
 		Transform = "119.065132302725 -250.236741218282 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 50000
+		Brightness = 30000
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -52,13 +53,15 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 91.429
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
 		MinimumVisibleSizeOfObjects = 2
-		ShadowFarDistance = 300
 		ShadowIntensity = 0.5
+		ShadowDirectionalDistance = 300
+		ShadowPointSpotlightDistance = 300
 		.component NeoAxis.Component
 		{
 			Name = Background Effects
@@ -81,7 +84,6 @@
 			.component NeoAxis.RenderingEffect_ToneMapping
 			{
 				Name = Tone Mapping
-				Intensity = 0.5
 			}
 			.component NeoAxis.RenderingEffect_ToLDR
 			{
@@ -189,10 +191,6 @@
 		{
 			GetByReference = "root:$Material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -219,7 +217,7 @@
 	.component NeoAxis.GroupOfObjects
 	{
 		Name = Group Of Objects
-		Objects = "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"
+		Objects = "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"
 		ObjectsZip = True
 		ObjectsVersion = 2
 		BaseObjects
@@ -251,10 +249,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -283,10 +277,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -315,10 +305,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -347,10 +333,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -379,10 +361,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -411,10 +389,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -443,10 +417,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -475,10 +445,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -507,10 +473,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -539,10 +501,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -571,10 +529,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -603,10 +557,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -635,10 +585,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -667,10 +613,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -699,10 +641,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -731,10 +669,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -763,10 +697,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -795,10 +725,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -827,10 +753,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -859,10 +781,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -891,10 +809,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -923,10 +837,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -955,10 +865,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -987,10 +893,6 @@
 		Collision = True
 		Health = 300
 		Team = 1
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1019,10 +921,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1051,10 +949,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1083,10 +977,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1115,10 +1005,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1147,10 +1033,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1179,10 +1061,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1211,10 +1089,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1243,10 +1117,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1275,10 +1145,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1307,10 +1173,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1339,10 +1201,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1371,10 +1229,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1403,10 +1257,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1435,10 +1285,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1467,10 +1313,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1499,10 +1341,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1531,10 +1369,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1563,10 +1397,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1595,10 +1425,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1627,10 +1453,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1659,10 +1481,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1691,10 +1509,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1723,10 +1537,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1755,10 +1565,6 @@
 		Collision = True
 		Health = 300
 		Team = 2
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1788,14 +1594,6 @@
 		Health = 10
 		DeletionTimeAfterDeath = 100000
 		Team = 2
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1818,10 +1616,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -1836,8 +1630,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = 0.440346996276922 -0.140000000000001 1.4262717911383
-				RotationOffset = 0.00000000127063146 -0.00001814388494307 -0.00007003083734244 -0.999999997383241
+				PositionOffset = 0.447963070667946 -0.140000000000001 1.4250582770125
+				RotationOffset = 0.00000000122813975 -0.00001753699420902 -0.00007003137094214 -0.99999999739403
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -1859,14 +1653,6 @@
 		Health = 10
 		DeletionTimeAfterDeath = 100000
 		Team = 2
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1889,10 +1675,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -1907,8 +1689,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = 0.440346996276922 -0.140000000000001 1.4262717911383
-				RotationOffset = 0.00000000127063146 -0.00001814388494307 -0.00007003083734244 -0.999999997383241
+				PositionOffset = 0.447963070667946 -0.140000000000001 1.4250582770125
+				RotationOffset = 0.00000000122813975 -0.00001753699420902 -0.00007003137094214 -0.99999999739403
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -1930,14 +1712,6 @@
 		Health = 10
 		DeletionTimeAfterDeath = 100000
 		Team = 2
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1960,10 +1734,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -1978,8 +1748,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = 0.440346996276922 -0.140000000000001 1.4262717911383
-				RotationOffset = 0.00000000127063146 -0.00001814388494307 -0.00007003083734244 -0.999999997383241
+				PositionOffset = 0.447963070667946 -0.140000000000001 1.4250582770125
+				RotationOffset = 0.00000000122813975 -0.00001753699420902 -0.00007003137094214 -0.99999999739403
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -2001,14 +1771,6 @@
 		Health = 10
 		DeletionTimeAfterDeath = 100000
 		Team = 2
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2031,10 +1793,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -2049,8 +1807,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = 0.440346996276922 -0.140000000000001 1.4262717911383
-				RotationOffset = 0.00000000127063146 -0.00001814388494307 -0.00007003083734244 -0.999999997383241
+				PositionOffset = 0.447963070667946 -0.140000000000001 1.4250582770125
+				RotationOffset = 0.00000000122813975 -0.00001753699420902 -0.00007003137094214 -0.99999999739403
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -2072,14 +1830,6 @@
 		Health = 10
 		DeletionTimeAfterDeath = 100000
 		Team = 2
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2102,10 +1852,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -2120,8 +1866,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = 0.440346996276922 -0.140000000000001 1.4262717911383
-				RotationOffset = 0.00000000127063146 -0.00001814388494307 -0.00007003083734244 -0.999999997383241
+				PositionOffset = 0.447963070667946 -0.140000000000001 1.4250582770125
+				RotationOffset = 0.00000000122813975 -0.00001753699420902 -0.00007003137094214 -0.99999999739403
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -2143,14 +1889,6 @@
 		Health = 10
 		DeletionTimeAfterDeath = 100000
 		Team = 2
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2173,10 +1911,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -2191,8 +1925,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = 0.440346996276922 -0.140000000000001 1.4262717911383
-				RotationOffset = 0.00000000127063146 -0.00001814388494307 -0.00007003083734244 -0.999999997383241
+				PositionOffset = 0.447963070667946 -0.140000000000001 1.4250582770125
+				RotationOffset = 0.00000000122813975 -0.00001753699420902 -0.00007003137094236 -0.99999999739403
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -2214,14 +1948,6 @@
 		Health = 10
 		DeletionTimeAfterDeath = 100000
 		Team = 2
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2244,10 +1970,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -2262,8 +1984,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = 0.440346996276922 -0.140000000000001 1.4262717911383
-				RotationOffset = 0.00000000127063146 -0.00001814388494307 -0.00007003083734244 -0.999999997383241
+				PositionOffset = 0.447963070667946 -0.140000000000001 1.4250582770125
+				RotationOffset = 0.00000000122813975 -0.00001753699420902 -0.00007003137094236 -0.99999999739403
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -2285,14 +2007,6 @@
 		Health = 10
 		DeletionTimeAfterDeath = 100000
 		Team = 2
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2315,10 +2029,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -2333,8 +2043,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = 0.440346996276922 -0.140000000000001 1.4262717911383
-				RotationOffset = 0.00000000127063146 -0.00001814388494307 -0.00007003083734244 -0.999999997383241
+				PositionOffset = 0.447963070667946 -0.140000000000001 1.4250582770125
+				RotationOffset = 0.00000000122813975 -0.00001753699420902 -0.00007003137094214 -0.99999999739403
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -2356,14 +2066,6 @@
 		Health = 10
 		DeletionTimeAfterDeath = 100000
 		Team = 2
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2386,10 +2088,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -2404,8 +2102,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = 0.440346996276922 -0.140000000000001 1.4262717911383
-				RotationOffset = 0.00000000127063146 -0.00001814388494307 -0.00007003083734244 -0.999999997383241
+				PositionOffset = 0.447963070667946 -0.140000000000001 1.4250582770125
+				RotationOffset = 0.00000000122813975 -0.00001753699420902 -0.00007003137094236 -0.99999999739403
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -2427,14 +2125,6 @@
 		Health = 10
 		DeletionTimeAfterDeath = 100000
 		Team = 2
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2457,10 +2147,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -2475,8 +2161,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = 0.440346996276922 -0.140000000000001 1.4262717911383
-				RotationOffset = 0.00000000127063146 -0.00001814388494307 -0.00007003083734244 -0.999999997383241
+				PositionOffset = 0.447963070667946 -0.140000000000001 1.4250582770125
+				RotationOffset = 0.00000000122813975 -0.00001753699420902 -0.00007003137094214 -0.99999999739403
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -2498,14 +2184,6 @@
 		Health = 100
 		DeletionTimeAfterDeath = 100000
 		Team = 2
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2528,10 +2206,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Medieval Sword\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -2546,8 +2220,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = -0.158891499042511 -0.441622853279114 0.98137378692627
-				RotationOffset = 0.831437461078167 0.22244193404913 0.437409706413746 -0.260582007467747
+				PositionOffset = -0.178135469555855 -0.422997087240219 0.946549654006958
+				RotationOffset = 0.373856033283154 0.474056414548287 0.189880361232916 -0.774240473130822
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -2570,14 +2244,6 @@
 		Health = 100
 		DeletionTimeAfterDeath = 100000
 		Team = 2
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2600,10 +2266,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Medieval Sword\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -2618,8 +2280,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = -0.158891499042511 -0.441622853279114 0.98137378692627
-				RotationOffset = 0.831437461078167 0.22244193404913 0.437409706413746 -0.260582007467747
+				PositionOffset = -0.178135469555855 -0.422997087240219 0.946549654006958
+				RotationOffset = 0.373856033283154 0.474056414548287 0.189880361232916 -0.774240473130822
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -2642,14 +2304,6 @@
 		Health = 10
 		DeletionTimeAfterDeath = 100000
 		Team = 1
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2672,10 +2326,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -2690,8 +2340,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = 0.440346996276915 -0.140000000000001 1.4262717911383
-				RotationOffset = -0.00000000127063146 0.00001814388494307 0.0000700308373424 0.999999997383241
+				PositionOffset = 0.447963070667953 -0.140000000000001 1.4250582770125
+				RotationOffset = -0.00000000122813975 0.00001753699420902 0.00007003137094225 0.99999999739403
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -2713,14 +2363,6 @@
 		Health = 10
 		DeletionTimeAfterDeath = 100000
 		Team = 1
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2743,10 +2385,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -2761,8 +2399,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = 0.440346996276915 -0.140000000000001 1.4262717911383
-				RotationOffset = -0.00000000127063146 0.00001814388494307 0.0000700308373424 0.999999997383241
+				PositionOffset = 0.447963070667953 -0.140000000000001 1.4250582770125
+				RotationOffset = -0.00000000122813975 0.00001753699420902 0.00007003137094225 0.99999999739403
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -2784,14 +2422,6 @@
 		Health = 10
 		DeletionTimeAfterDeath = 100000
 		Team = 1
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2814,10 +2444,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -2832,8 +2458,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = 0.440346996276915 -0.140000000000001 1.4262717911383
-				RotationOffset = -0.00000000127063146 0.00001814388494307 0.0000700308373424 0.999999997383241
+				PositionOffset = 0.447963070667953 -0.140000000000001 1.4250582770125
+				RotationOffset = -0.00000000122813975 0.00001753699420902 0.00007003137094225 0.99999999739403
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -2855,14 +2481,6 @@
 		Health = 10
 		DeletionTimeAfterDeath = 100000
 		Team = 1
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2885,10 +2503,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -2903,8 +2517,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = 0.440346996276915 -0.140000000000001 1.4262717911383
-				RotationOffset = -0.00000000127063146 0.00001814388494307 0.0000700308373424 0.999999997383241
+				PositionOffset = 0.447963070667953 -0.140000000000001 1.4250582770125
+				RotationOffset = -0.00000000122813975 0.00001753699420902 0.00007003137094225 0.99999999739403
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -2926,14 +2540,6 @@
 		Health = 10
 		DeletionTimeAfterDeath = 100000
 		Team = 1
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -2956,10 +2562,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -2974,8 +2576,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = 0.440346996276915 -0.140000000000001 1.4262717911383
-				RotationOffset = -0.00000000127063146 0.00001814388494307 0.0000700308373424 0.999999997383241
+				PositionOffset = 0.447963070667953 -0.140000000000001 1.4250582770125
+				RotationOffset = -0.00000000122813975 0.00001753699420902 0.00007003137094225 0.99999999739403
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -2997,14 +2599,6 @@
 		Health = 10
 		DeletionTimeAfterDeath = 100000
 		Team = 1
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3027,10 +2621,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -3045,8 +2635,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = 0.440346996276915 -0.140000000000001 1.4262717911383
-				RotationOffset = -0.00000000127063146 0.00001814388494307 0.0000700308373424 0.999999997383241
+				PositionOffset = 0.447963070667953 -0.140000000000001 1.4250582770125
+				RotationOffset = -0.00000000122813975 0.00001753699420902 0.00007003137094225 0.99999999739403
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -3068,14 +2658,6 @@
 		Health = 10
 		DeletionTimeAfterDeath = 100000
 		Team = 1
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3098,10 +2680,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -3116,8 +2694,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = 0.440346996276915 -0.140000000000001 1.4262717911383
-				RotationOffset = -0.00000000127063146 0.00001814388494307 0.0000700308373424 0.999999997383241
+				PositionOffset = 0.447963070667953 -0.140000000000001 1.4250582770125
+				RotationOffset = -0.00000000122813975 0.00001753699420902 0.00007003137094225 0.99999999739403
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -3139,14 +2717,6 @@
 		Health = 10
 		DeletionTimeAfterDeath = 100000
 		Team = 1
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3169,10 +2739,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -3187,8 +2753,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = 0.440346996276915 -0.140000000000001 1.4262717911383
-				RotationOffset = -0.00000000127063146 0.00001814388494307 0.0000700308373424 0.999999997383241
+				PositionOffset = 0.447963070667953 -0.140000000000001 1.4250582770125
+				RotationOffset = -0.00000000122813975 0.00001753699420902 0.00007003137094225 0.99999999739403
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -3210,14 +2776,6 @@
 		Health = 10
 		DeletionTimeAfterDeath = 100000
 		Team = 1
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3240,10 +2798,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -3258,8 +2812,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = 0.440346996276915 -0.140000000000001 1.4262717911383
-				RotationOffset = -0.00000000127063146 0.00001814388494307 0.0000700308373424 0.999999997383241
+				PositionOffset = 0.447963070667953 -0.140000000000001 1.4250582770125
+				RotationOffset = -0.00000000122813975 0.00001753699420902 0.00007003137094225 0.99999999739403
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -3281,14 +2835,6 @@
 		Health = 10
 		DeletionTimeAfterDeath = 100000
 		Team = 1
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3311,10 +2857,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Colt xm177e1\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -3329,8 +2871,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = 0.440346996276915 -0.140000000000001 1.4262717911383
-				RotationOffset = -0.00000000127063146 0.00001814388494307 0.0000700308373424 0.999999997383241
+				PositionOffset = 0.447963070667953 -0.140000000000001 1.4250582770125
+				RotationOffset = -0.00000000122813975 0.00001753699420902 0.00007003137094225 0.99999999739403
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -3352,14 +2894,6 @@
 		Health = 100
 		DeletionTimeAfterDeath = 100000
 		Team = 1
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3382,10 +2916,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Medieval Sword\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -3400,8 +2930,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = -0.158891499042511 -0.441622853279114 0.98137378692627
-				RotationOffset = 0.831437461078167 0.22244193404913 0.437409706413746 -0.260582007467747
+				PositionOffset = -0.178135469555855 -0.422997087240219 0.946549654006958
+				RotationOffset = 0.373856033283154 0.474056414548287 0.189880361232916 -0.774240473130822
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -3424,14 +2954,6 @@
 		Health = 100
 		DeletionTimeAfterDeath = 100000
 		Team = 1
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\Default\\Human.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3454,10 +2976,6 @@
 			{
 				GetByReference = "Content\\Weapons\\NeoAxis\\Medieval Sword\\Data\\scene.gltf|$Mesh"
 			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
-			}
 			SpecialEffects
 			{
 				Value
@@ -3472,8 +2990,8 @@
 			.component NeoAxis.TransformOffset
 			{
 				Name = Attach Transform Offset
-				PositionOffset = -0.158891499042511 -0.441622853279114 0.98137378692627
-				RotationOffset = 0.831437461078167 0.22244193404913 0.437409706413746 -0.260582007467747
+				PositionOffset = -0.178135469555855 -0.422997087240219 0.946549654006958
+				RotationOffset = 0.373856033283154 0.474056414548287 0.189880361232916 -0.774240473130822
 				Source
 				{
 					GetByReference = "this:..\\..\\Transform"
@@ -3496,14 +3014,6 @@
 		Health = 200
 		DeletionTimeAfterDeath = 100000
 		Team = 1
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\NeoAxis\\Polar bear\\Data\\PolarBearALL.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3526,10 +3036,6 @@
 			Transform
 			{
 				GetByReference = "this:$Attach Transform Offset\\Result"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
 			}
 			SpecialEffects
 			{
@@ -3567,14 +3073,6 @@
 		Health = 200
 		DeletionTimeAfterDeath = 100000
 		Team = 1
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\NeoAxis\\Polar bear\\Data\\PolarBearALL.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3597,10 +3095,6 @@
 			Transform
 			{
 				GetByReference = "this:$Attach Transform Offset\\Result"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
 			}
 			SpecialEffects
 			{
@@ -3638,14 +3132,6 @@
 		Health = 200
 		DeletionTimeAfterDeath = 100000
 		Team = 2
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\NeoAxis\\Polar bear\\Data\\PolarBearALL.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3668,10 +3154,6 @@
 			Transform
 			{
 				GetByReference = "this:$Attach Transform Offset\\Result"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
 			}
 			SpecialEffects
 			{
@@ -3709,14 +3191,6 @@
 		Health = 200
 		DeletionTimeAfterDeath = 100000
 		Team = 2
-		Mesh
-		{
-			GetByReference = "Content\\Characters\\NeoAxis\\Polar bear\\Data\\PolarBearALL.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -3739,10 +3213,6 @@
 			Transform
 			{
 				GetByReference = "this:$Attach Transform Offset\\Result"
-			}
-			ReplaceMaterialSelectively
-			{
-				Count = 0
 			}
 			SpecialEffects
 			{

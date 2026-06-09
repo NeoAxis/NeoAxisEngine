@@ -20,7 +20,6 @@
 * THE SOFTWARE.
 */
 
-using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Internal.Assimp.Unmanaged;
@@ -33,42 +32,24 @@ namespace Internal.Assimp
     [DebuggerDisplay("{Description}")]
     public sealed class ExportFormatDescription
     {
-        private String m_formatId;
-        private String m_description;
-        private String m_fileExtension;
+        private string m_formatId;
+        private string m_description;
+        private string m_fileExtension;
 
         /// <summary>
         /// Gets a short string ID to uniquely identify the export format. E.g. "collada" or "obj".
         /// </summary>
-        public String FormatId
-        {
-            get
-            {
-                return m_formatId;
-            }
-        }
+        public string FormatId => m_formatId;
 
         /// <summary>
         /// Gets a short description of the file format to present to users.
         /// </summary>
-        public String Description
-        {
-            get
-            {
-                return m_description;
-            }
-        }
+        public string Description => m_description;
 
         /// <summary>
         /// Gets the recommended file extension for the exported file in lower case.
         /// </summary>
-        public String FileExtension
-        {
-            get
-            {
-                return m_fileExtension;
-            }
-        }
+        public string FileExtension => m_fileExtension;
 
         /// <summary>
         /// Constructs a new ExportFormatDescription.

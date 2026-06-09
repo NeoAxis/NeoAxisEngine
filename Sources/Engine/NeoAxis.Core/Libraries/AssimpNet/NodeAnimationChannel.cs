@@ -38,7 +38,7 @@ namespace Internal.Assimp
     /// </summary>
     public sealed class NodeAnimationChannel : IMarshalable<NodeAnimationChannel, AiNodeAnim>
     {
-        private String m_nodeName;
+        private string m_nodeName;
         private List<VectorKey> m_positionKeys;
         private List<QuaternionKey> m_rotationKeys;
         private List<VectorKey> m_scalingKeys;
@@ -49,122 +49,62 @@ namespace Internal.Assimp
         /// Gets or sets the name of the node affected by this animation. It must <c>exist</c> and it <c>must</c>
         /// be unique.
         /// </summary>
-        public String NodeName
+        public string NodeName
         {
-            get
-            {
-                return m_nodeName;
-            }
-            set
-            {
-                m_nodeName = value;
-            }
+            get => m_nodeName;
+            set => m_nodeName = value;
         }
 
         /// <summary>
         /// Gets the number of position keys in the animation channel.
         /// </summary>
-        public int PositionKeyCount
-        {
-            get
-            {
-                return m_positionKeys.Count;
-            }
-        }
+        public int PositionKeyCount => m_positionKeys.Count;
 
         /// <summary>
         /// Gets if this animation channel contains position keys.
         /// </summary>
-        public bool HasPositionKeys
-        {
-            get
-            {
-                return m_positionKeys.Count > 0;
-            }
-        }
+        public bool HasPositionKeys => m_positionKeys.Count > 0;
 
         /// <summary>
         /// Gets the position keys of this animation channel. Positions are
         /// specified as a 3D vector. If there are position keys, there should
         /// also be -at least- one scaling and one rotation key.
         /// </summary>
-        public List<VectorKey> PositionKeys
-        {
-            get
-            {
-                return m_positionKeys;
-            }
-        }
+        public List<VectorKey> PositionKeys => m_positionKeys;
 
         /// <summary>
         /// Gets the number of rotation keys in the animation channel.
         /// </summary>
-        public int RotationKeyCount
-        {
-            get
-            {
-                return m_rotationKeys.Count;
-            }
-        }
+        public int RotationKeyCount => m_rotationKeys.Count;
 
         /// <summary>
         /// Gets if the animation channel contains rotation keys.
         /// </summary>
-        public bool HasRotationKeys
-        {
-            get
-            {
-                return m_rotationKeys.Count > 0;
-            }
-        }
+        public bool HasRotationKeys => m_rotationKeys.Count > 0;
 
         /// <summary>
         /// Gets the rotation keys of this animation channel. Rotations are
         /// given as quaternions. If this exists, there should be -at least- one
         /// scaling and one position key.
         /// </summary>
-        public List<QuaternionKey> RotationKeys
-        {
-            get
-            {
-                return m_rotationKeys;
-            }
-        }
+        public List<QuaternionKey> RotationKeys => m_rotationKeys;
 
         /// <summary>
         /// Gets the number of scaling keys in the animation channel.
         /// </summary>
-        public int ScalingKeyCount
-        {
-            get
-            {
-                return m_scalingKeys.Count;
-            }
-        }
+        public int ScalingKeyCount => m_scalingKeys.Count;
 
         /// <summary>
         /// Gets if the animation channel contains scaling keys.
         /// </summary>
-        public bool HasScalingKeys
-        {
-            get
-            {
-                return m_scalingKeys.Count > 0;
-            }
-        }
+        public bool HasScalingKeys => m_scalingKeys.Count > 0;
 
         /// <summary>
         /// Gets the scaling keys of this animation channel. Scalings are
         /// specified in a 3D vector. If there are scaling keys, there should
         /// also be -at least- one position and one rotation key.
         /// </summary>
-        public List<VectorKey> ScalingKeys
-        {
-            get
-            {
-                return m_scalingKeys;
-            }
-        }
+        public List<VectorKey> ScalingKeys => m_scalingKeys;
 
         /// <summary>
         /// Gets or sets how the animation behaves before the first key is encountered. By default the original
@@ -172,14 +112,8 @@ namespace Internal.Assimp
         /// </summary>
         public AnimationBehaviour PreState
         {
-            get
-            {
-                return m_preState;
-            }
-            set
-            {
-                m_preState = value;
-            }
+            get => m_preState;
+            set => m_preState = value;
         }
 
         /// <summary>
@@ -188,14 +122,8 @@ namespace Internal.Assimp
         /// </summary>
         public AnimationBehaviour PostState
         {
-            get
-            {
-                return m_postState;
-            }
-            set
-            {
-                m_postState = value;
-            }
+            get => m_postState;
+            set => m_postState = value;
         }
 
         /// <summary>
@@ -203,7 +131,7 @@ namespace Internal.Assimp
         /// </summary>
         public NodeAnimationChannel()
         {
-            m_nodeName = String.Empty;
+            m_nodeName = string.Empty;
             m_preState = AnimationBehaviour.Default;
             m_postState = AnimationBehaviour.Default;
 
@@ -217,7 +145,7 @@ namespace Internal.Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<NodeAnimationChannel, AiNodeAnim>.IsNativeBlittable { get { return true; } }
+        bool IMarshalable<NodeAnimationChannel, AiNodeAnim>.IsNativeBlittable => true;
 
         /// <summary>
         /// Writes the managed data to the native value.
@@ -234,21 +162,21 @@ namespace Internal.Assimp
             nativeValue.PositionKeys = IntPtr.Zero;
 
             if(nativeValue.NumPositionKeys > 0)
-                nativeValue.PositionKeys = MemoryHelper.ToNativeArray<VectorKey>(m_positionKeys.ToArray());
+                nativeValue.PositionKeys = MemoryHelper.ToNativeArray<VectorKey>(m_positionKeys);
 
 
             nativeValue.NumRotationKeys = (uint) m_rotationKeys.Count;
             nativeValue.RotationKeys = IntPtr.Zero;
 
             if(nativeValue.NumRotationKeys > 0)
-                nativeValue.RotationKeys = MemoryHelper.ToNativeArray<QuaternionKey>(m_rotationKeys.ToArray());
+                nativeValue.RotationKeys = MemoryHelper.ToNativeArray<QuaternionKey>(m_rotationKeys);
 
 
             nativeValue.NumScalingKeys = (uint) m_scalingKeys.Count;
             nativeValue.ScalingKeys = IntPtr.Zero;
 
             if(nativeValue.NumScalingKeys > 0)
-                nativeValue.ScalingKeys = MemoryHelper.ToNativeArray<VectorKey>(m_scalingKeys.ToArray());
+                nativeValue.ScalingKeys = MemoryHelper.ToNativeArray<VectorKey>(m_scalingKeys);
         }
 
         /// <summary>

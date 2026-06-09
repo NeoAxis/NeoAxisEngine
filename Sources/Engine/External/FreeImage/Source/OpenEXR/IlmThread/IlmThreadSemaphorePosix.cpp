@@ -60,8 +60,12 @@ Semaphore::Semaphore (unsigned int value)
 
 Semaphore::~Semaphore ()
 {
-    int error = ::sem_destroy (&_semaphore);
-    assert (error == 0);
+    //!!!!betauser
+    int error = sem_destroy(&_semaphore);
+    assert(error == 0);
+
+    //int error = ::sem_destroy (&_semaphore);
+    //assert (error == 0);
 }
 
 

@@ -2,10 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Internal.Assimp;
 using Internal.Assimp.Configs;
 
-namespace NeoAxis//.Import
+namespace NeoAxis
 {
 	class ImportAssimp : ImportGeneral
 	{
@@ -40,12 +41,8 @@ namespace NeoAxis//.Import
 
 		static void LoadNativeLibrary()
 		{
-			//#if DEBUG
-			//         string libraryName = "assimp-vc100-mtd";
-			//#else
-			string libraryName = "assimp-vc143-mt";
-			//string libraryName = "assimp-vc141-mt";
-			//#endif
+			string libraryName = "assimp-vc142-mt";
+			//string libraryName = "assimp-vc143-mt";
 
 			NativeUtility.PreloadLibrary( libraryName );
 
@@ -63,314 +60,55 @@ namespace NeoAxis//.Import
 			public Settings settings;
 			public string directoryName;
 			public Component materialsGroup;
+			public ESet<Internal.Assimp.Mesh> processedMeshes = new ESet<Internal.Assimp.Mesh>();
 			public EDictionary<int, Material> materialByIndex = new EDictionary<int, Material>();
+
+			public Matrix4 globalTransform;
+
+			public MeshesSkeletonStructure skeletonStructure;
 		}
 
-		//ModelImportSceneSource.BoneSource FindBoneByName( List<ModelImportSceneSource.BoneSource> boneList, string name )
+		//!!!!?
+		//static bool HasTransformMatrixNegParity( Matrix3F m )
 		//{
-		//	for( int i = 0; i < boneList.Count; i++ )
-		//	{
-		//		if( boneList[ i ].Name == name )
-		//			return boneList[ i ];
-		//	}
-		//	return null;
+		//	return Vector3F.Dot( Vector3F.Cross( m.Item0, m.Item1 ), m.Item2 ) < 0.0f ? true : false;
 		//}
 
-		//ModelImportSceneSource.BoneSource FindParentBone( List<ModelImportSceneSource.BoneSource> boneList, Node aiParentNode )
-		//{
-		//	if( aiParentNode == null )
-		//		return null;
-
-		//	ModelImportSceneSource.BoneSource parentBone = FindBoneByName( boneList, aiParentNode.Name );
-		//	if( parentBone == null )
-		//		return FindParentBone( boneList, aiParentNode.Parent );
-
-		//	return parentBone;
-		//}
-
-		//int GetChannelIndex( global::Assimp.Animation animation, string name )
-		//{
-		//	int resultIndex = -1;
-		//	for( int i = 0; i < animation.NodeAnimationChannelCount; i++ )
-		//	{
-		//		if( animation.NodeAnimationChannels[ i ].NodeName == name )
-		//		{
-		//			resultIndex = i;
-		//			break;
-		//		}
-		//	}
-		//	return resultIndex;
-		//}
-
-		//int GetKeyFrameIndex( double time, dynamic keys, ref int lastFoundKeyFrameIndex )
-		//{
-		//	int frameIndex = 0;
-
-		//	if( lastFoundKeyFrameIndex >= 0 && lastFoundKeyFrameIndex < keys.Count )
-		//	{
-		//		if( keys[ lastFoundKeyFrameIndex ].Time < time )
-		//		{
-		//			frameIndex = lastFoundKeyFrameIndex;
-		//		}
-		//		else if( lastFoundKeyFrameIndex > 0 && keys[ lastFoundKeyFrameIndex - 1 ].Time < time )
-		//		{
-		//			frameIndex = lastFoundKeyFrameIndex - 1;
-		//		}
-		//	}
-
-		//	while( frameIndex < keys.Count && keys[ frameIndex ].Time < time )
-		//		frameIndex++;
-
-		//	lastFoundKeyFrameIndex = frameIndex;
-
-		//	return frameIndex;
-		//}
-
-		//Vec3F GetInterpolatedVec3( double time, List<ModelImportSceneSource.BoneSource.BoneVec3Key> keys, ref int lastFoundKeyFrameIndex )
-		//{
-		//	int frameIndex = GetKeyFrameIndex( time, keys, ref lastFoundKeyFrameIndex );
-
-		//	if( frameIndex == 0 || keys.Count == 1 )
-		//		return keys[ 0 ].Offset;
-
-		//	if( frameIndex == keys.Count )
-		//		return keys[ keys.Count - 1 ].Offset;
-
-		//	ModelImportSceneSource.BoneSource.BoneVec3Key framePrev = keys[ frameIndex - 1 ];
-		//	ModelImportSceneSource.BoneSource.BoneVec3Key frameNext = keys[ frameIndex ];
-
-		//	double length = frameNext.Time - framePrev.Time;
-		//	float t = (float)( ( time - framePrev.Time ) / length );
-		//	Vec3F result = ( 1 - t ) * framePrev.Offset + t * frameNext.Offset;
-
-		//	return result;
-		//}
-
-		//QuatF GetInterpolatedQuat( double time, List<ModelImportSceneSource.BoneSource.BoneQuatKey> keys, ref int lastFoundKeyFrameIndex )
-		//{
-		//	int frameIndex = GetKeyFrameIndex( time, keys, ref lastFoundKeyFrameIndex );
-
-		//	if( frameIndex == 0 || keys.Count == 1 )
-		//		return keys[ 0 ].Rotation;
-
-		//	if( frameIndex == keys.Count )
-		//		return keys[ keys.Count - 1 ].Rotation;
-
-		//	ModelImportSceneSource.BoneSource.BoneQuatKey framePrev = keys[ frameIndex - 1 ];
-		//	ModelImportSceneSource.BoneSource.BoneQuatKey frameNext = keys[ frameIndex ];
-
-		//	double length = frameNext.Time - framePrev.Time;
-		//	float t = (float)( ( time - framePrev.Time ) / length );
-		//	return QuatF.Slerp( framePrev.Rotation, frameNext.Rotation, t );
-		//}
-
-		//void CreateBones( Dictionary<string, ModelImportSceneSource.BoneSource> boneDictionary,
-		//	ModelImportSceneSource sceneSource, Node node, List<Assimp.Animation> aiAnimationVectors,
-		//	double[] animationDurations, Set<string> boneNames, Set<string> realBones,
-		//	bool needToLoadAnimations, double frameStep )
-		//{
-		//	string boneName = node.Name;
-
-		//	if( boneName == "" )
-		//		boneName = "emptyName";
-
-		//	if( boneNames.Contains( boneName ) )
-		//	{
-		//		int suffix = 0;
-		//		while( boneNames.Contains( boneName + "_" + suffix.ToString() ) )
-		//			suffix++;
-		//		boneName = boneName + "_" + suffix.ToString();
-		//	}
-
-		//	ModelImportSceneSource.BoneSource parentBone = null;
-		//	if( node.Parent != null )
-		//		parentBone = boneDictionary[ node.Parent.Name ];
-		//	Assimp.Node aiParentNode = node.Parent;
-
-		//	Mat4F boneLocalTransform = node.Transform.ToMat4();
-		//	if( node.Parent == null )
-		//	{
-		//		Mat4F transform90Fix = new Mat4F( 1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1 );
-		//		boneLocalTransform = transform90Fix * boneLocalTransform;
-		//	}
-
-		//	Vec3F initialPosition = boneLocalTransform.Item3.ToVec3();
-		//	Mat3F rotationM;
-		//	Vec3F initialScale;
-		//	Vec3F dummy;
-		//	boneLocalTransform.ToMat3().QDUDecomposition( out rotationM, out initialScale, out dummy );
-		//	QuatF initialRotation = rotationM.ToQuat();
-
-		//	ModelImportSceneSource.BoneSource bone = new ModelImportSceneSource.BoneSource( boneName, parentBone,
-		//			 initialPosition, initialRotation, initialScale, realBones.Contains( boneName ) );
-
-		//	boneDictionary.Add( boneName, bone );
-		//	boneNames.Add( boneName );
-		//	sceneSource.AddBone( bone );
-
-		//	//animations
-		//	if( aiAnimationVectors != null && needToLoadAnimations )
-		//	{
-		//		double animationTrackOffset = 0;
-		//		for( int animationIndex = 0; animationIndex < aiAnimationVectors.Count; animationIndex++ )
-		//		{
-		//			var tempPositionKeys = new List<ModelImportSceneSource.BoneSource.BoneVec3Key>();
-		//			var tempRotationKeys = new List<ModelImportSceneSource.BoneSource.BoneQuatKey>();
-		//			var tempScalingKeys = new List<ModelImportSceneSource.BoneSource.BoneVec3Key>();
-
-		//			Assimp.Animation aiAnim = aiAnimationVectors[ animationIndex ];
-		//			int channelIndex = GetChannelIndex( aiAnim, boneName );
-		//			if( channelIndex >= 0 )
-		//			{
-		//				Assimp.NodeAnimationChannel aiNodeAnimation = aiAnim.NodeAnimationChannels[ channelIndex ];
-
-		//				for( int i = 0; i < aiNodeAnimation.PositionKeyCount; i++ )
-		//				{
-		//					VectorKey aiPositionKey = aiNodeAnimation.PositionKeys[ i ];
-		//					tempPositionKeys.Add( new ModelImportSceneSource.BoneSource.BoneVec3Key(
-		//						 aiPositionKey.Time, aiPositionKey.Value.ToVec3() ) );
-		//				}
-
-		//				if( aiNodeAnimation.RotationKeyCount > 0 )
-		//				{
-		//					for( int i = 0; i < aiNodeAnimation.RotationKeyCount; i++ )
-		//					{
-		//						QuaternionKey aiRotationKey = aiNodeAnimation.RotationKeys[ i ];
-		//						tempRotationKeys.Add( new ModelImportSceneSource.BoneSource.BoneQuatKey(
-		//							 aiRotationKey.Time, aiRotationKey.Value.ToQuat() ) );
-		//					}
-		//				}
-
-		//				for( int i = 0; i < aiNodeAnimation.ScalingKeyCount; i++ )
-		//				{
-		//					VectorKey aiScalingKey = aiNodeAnimation.ScalingKeys[ i ];
-		//					tempScalingKeys.Add( new ModelImportSceneSource.BoneSource.BoneVec3Key(
-		//						 aiScalingKey.Time, aiScalingKey.Value.ToVec3() ) );
-		//				}
-		//			}
-
-		//			if( frameStep == 0 )
-		//			{
-		//				foreach( ModelImportSceneSource.BoneSource.BoneVec3Key key in tempPositionKeys )
-		//					bone.AddPositionKey( key.Time + animationTrackOffset, key.Offset );
-		//				foreach( ModelImportSceneSource.BoneSource.BoneQuatKey key in tempRotationKeys )
-		//					bone.AddRotationKey( key.Time + animationTrackOffset, key.Rotation );
-		//				foreach( ModelImportSceneSource.BoneSource.BoneVec3Key key in tempScalingKeys )
-		//					bone.AddScalingKey( key.Time + animationTrackOffset, key.Offset );
-		//			}
-		//			else
-		//			{
-		//				if( tempPositionKeys.Count == 0 )
-		//					tempPositionKeys.Add( new ModelImportSceneSource.BoneSource.BoneVec3Key( 0, initialPosition ) );
-		//				if( tempRotationKeys.Count == 0 )
-		//					tempRotationKeys.Add( new ModelImportSceneSource.BoneSource.BoneQuatKey( 0, initialRotation ) );
-		//				if( tempScalingKeys.Count == 0 )
-		//					tempScalingKeys.Add( new ModelImportSceneSource.BoneSource.BoneVec3Key( 0, initialScale ) );
-
-		//				int lastFoundPositionKeyFrameIndex = -1;
-		//				int lastFoundRotationKeyFrameIndex = -1;
-		//				int lastFoundScaleKeyFrameIndex = -1;
-
-		//				for( double time = 0; time < animationDurations[ animationIndex ] + frameStep; time += frameStep )
-		//				{
-		//					double frameTime = time;
-		//					if( frameTime > animationDurations[ animationIndex ] )
-		//						frameTime = animationDurations[ animationIndex ];
-
-		//					Vec3F positionKey = GetInterpolatedVec3( frameTime, tempPositionKeys,
-		//						 ref lastFoundPositionKeyFrameIndex );
-		//					bone.AddPositionKey( frameTime + animationTrackOffset, positionKey );
-
-		//					QuatF rotationKey = GetInterpolatedQuat( frameTime, tempRotationKeys,
-		//						 ref lastFoundRotationKeyFrameIndex );
-		//					bone.AddRotationKey( frameTime + animationTrackOffset, rotationKey );
-
-		//					Vec3F scalingKey = GetInterpolatedVec3( frameTime, tempScalingKeys,
-		//						 ref lastFoundScaleKeyFrameIndex );
-		//					bone.AddScalingKey( frameTime + animationTrackOffset, scalingKey );
-		//				}
-		//			}
-
-		//			animationTrackOffset = animationTrackOffset + animationDurations[ animationIndex ] + 1;
-		//		}
-		//	}
-
-		//	for( int i = 0; i < node.ChildCount; i++ )
-		//	{
-		//		CreateBones( boneDictionary, sceneSource, node.Children[ i ], aiAnimationVectors, animationDurations,
-		//				  boneNames, realBones, needToLoadAnimations, frameStep );
-		//	}
-		//}
-
-		static bool HasTransformMatrixNegParity( Matrix3F m )
+		static void AddMesh( ImportContext importContext, Matrix4 nodeTransform, Mesh meshComponent, Internal.Assimp.Mesh mesh ) //, int[] newIndexFromOldIndex )
 		{
-			return Vector3F.Dot( Vector3F.Cross( m.Item0, m.Item1 ), m.Item2 ) < 0.0f ? true : false;
-		}
+			var vertices = new StandardVertex[ mesh.VertexCount ];
+			var transformedVertices = new bool[ mesh.VertexCount ];
 
-		//static bool ContainsMeshesRecursive( Node node )
-		//{
-		//	if( node.HasMeshes )
-		//		return true;
-		//	foreach( var child in node.Children )
-		//	{
-		//		if( ContainsMeshesRecursive( child ) )
-		//			return true;
-		//	}
-		//	return false;
-		//}
-
-		static void AddMesh( ImportContext importContext, Matrix4 nodeTransform, Mesh mesh, Internal.Assimp.Mesh aiMesh )
-		{
-			StandardVertex[] vertices = new StandardVertex[ aiMesh.VertexCount ];
-
-			bool hasVertexColor = aiMesh.HasVertexColors( 0 );
-			List<Color4D> colors0 = null;
+			bool hasVertexColor = mesh.HasVertexColors( 0 );
+			List<System.Numerics.Vector4> colors0 = null;
+			var allColorAlphaIsZero = false;
 			if( hasVertexColor )
-				colors0 = aiMesh.VertexColorChannels[ 0 ];
+			{
+				colors0 = mesh.VertexColorChannels[ 0 ];
+
+				allColorAlphaIsZero = true;
+				for( int n = 0; n < colors0.Count; n++ )
+				{
+					if( colors0[ n ].W != 0 )
+					{
+						allColorAlphaIsZero = false;
+						break;
+					}
+				}
+			}
 
 			int textureCoordsCount = 0;
-			for( int n = 0; n < 4 && n < aiMesh.TextureCoordinateChannelCount; n++ )
+			for( int n = 0; n < 4 && n < mesh.TextureCoordinateChannelCount; n++ )
 			{
-				if( aiMesh.HasTextureCoords( n ) )
+				if( mesh.HasTextureCoords( n ) )
 					textureCoordsCount++;
 				else
 					break;
 			}
-			List<Vector3D> texCoords0 = textureCoordsCount > 0 ? aiMesh.TextureCoordinateChannels[ 0 ] : null;
-			List<Vector3D> texCoords1 = textureCoordsCount > 1 ? aiMesh.TextureCoordinateChannels[ 1 ] : null;
-			List<Vector3D> texCoords2 = textureCoordsCount > 2 ? aiMesh.TextureCoordinateChannels[ 2 ] : null;
-			List<Vector3D> texCoords3 = textureCoordsCount > 3 ? aiMesh.TextureCoordinateChannels[ 3 ] : null;
-
-			Matrix4 geometryTransform = nodeTransform;
-			geometryTransform.Decompose( out _, out Matrix3 geometryTransformR, out _ );
-
-			////{
-			////geometryTransform = importContext.settings.globalTransform.ToMat4F() * nodeTransform;// childTransform;
-			////geometryTransform = nodeTransform;// childTransform;
-
-			////var importTransform = importContext.settings.component.ImportTransform.Value;
-			////geometryTransform = importTransform.ToMat4().ToMat4F();
-			////geometryTransformR = importTransform.Rotation.ToMat3().ToMat3F();
-			////}
-
-			////Mat4F transform90Fix = new Mat4F( 1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1 );
-			////Mat3F transform90RFix = transform90Fix.ToMat3();
-
-			////Mat4F geometryTransform;
-			////Mat3F geometryTransformR;
-			////if( aiMesh.HasBones )
-			////{
-			////	geometryTransform = transform90Fix * importTransform;
-			////	//geometryTransform = nodeTransform;
-			////	Vec3F dummy1;
-			////	Vec3F dummy2;
-			////	geometryTransform.ToMat3().QDUDecomposition( out geometryTransformR, out dummy1, out dummy2 );
-			////}
-			////else
-			////{
-			////	geometryTransform = Mat4F.Identity;
-			////	geometryTransformR = Mat3F.Identity;
-			////}
+			var texCoords0 = textureCoordsCount > 0 ? mesh.TextureCoordinateChannels[ 0 ] : null;
+			var texCoords1 = textureCoordsCount > 1 ? mesh.TextureCoordinateChannels[ 1 ] : null;
+			var texCoords2 = textureCoordsCount > 2 ? mesh.TextureCoordinateChannels[ 2 ] : null;
+			var texCoords3 = textureCoordsCount > 3 ? mesh.TextureCoordinateChannels[ 3 ] : null;
 
 			////if( HasTransformMatrixNegParity( geometryTransform .GetTranspose().ToMat3() ) )
 			////{
@@ -380,11 +118,7 @@ namespace NeoAxis//.Import
 			//get data
 			for( int n = 0; n < vertices.Length; n++ )
 			{
-				StandardVertex vertex = new StandardVertex();
-
-				vertex.Position = ( geometryTransform * ToVector3( aiMesh.Vertices[ n ] ) ).ToVector3F();
-				if( aiMesh.HasNormals )
-					vertex.Normal = ( geometryTransformR * ToVector3( aiMesh.Normals[ n ] ) ).ToVector3F().GetNormalize();
+				var vertex = new StandardVertex();
 
 				if( textureCoordsCount > 0 )
 				{
@@ -402,150 +136,66 @@ namespace NeoAxis//.Import
 				}
 
 				if( hasVertexColor )
-					vertex.Color = ToColorValue( colors0[ n ] );
-
-				if( aiMesh.HasTangentBasis )
 				{
-					Vector3F tangent = ( geometryTransformR * ToVector3( aiMesh.Tangents[ n ] ) ).ToVector3F().GetNormalize();
-					Vector3F binormal = ( geometryTransformR * ToVector3( aiMesh.BiTangents[ n ] ) ).ToVector3F().GetNormalize();
-
-					float parity;
-					if( Vector3F.Dot( Vector3F.Cross( tangent, binormal ), vertex.Normal ) >= 0 )
-						parity = -1;
-					else
-						parity = 1;
-					vertex.Tangent = new Vector4F( tangent, parity );
+					vertex.Color = ToColorValue( colors0[ n ] );
+					if( allColorAlphaIsZero )
+						vertex.Color.Alpha = 1;
 				}
+
+				vertex.BlendIndices = new Vector4I( -1, -1, -1, -1 );
+				vertex.BlendWeights = new Vector4F( 0, 0, 0, 0 );
 
 				vertices[ n ] = vertex;
 			}
 
-			int[] indices = new int[ aiMesh.FaceCount * 3 ];
-			for( int n = 0; n < aiMesh.FaceCount; n++ )
+			var meshBoneByBoneName = new Dictionary<string, Bone>();
+
+			var skeletonStructure = importContext.skeletonStructure;
+			if( skeletonStructure != null && mesh.HasBones )
 			{
-				Face face = aiMesh.Faces[ n ];
+				for( int nBone = 0; nBone < mesh.Bones.Count; nBone++ )
+				{
+					var bone = mesh.Bones[ nBone ];
+
+					meshBoneByBoneName[ bone.Name ] = bone;
+
+					foreach( var weight in bone.VertexWeights )
+					{
+						if( weight.VertexID >= vertices.Length )
+							continue;
+						if( weight.Weight <= 0 )
+							continue;
+
+						ref var vertex = ref vertices[ weight.VertexID ];
+						for( int n = 0; n < 4; n++ )
+						{
+							if( vertex.BlendIndices[ n ] == -1 )
+							{
+								vertex.BlendIndices[ n ] = nBone;
+								vertex.BlendWeights[ n ] = weight.Weight;
+								break;
+							}
+						}
+					}
+				}
+			}
+
+			int[] indices = new int[ mesh.FaceCount * 3 ];
+			for( int n = 0; n < mesh.FaceCount; n++ )
+			{
+				Face face = mesh.Faces[ n ];
 				indices[ n * 3 + 0 ] = face.Indices[ 0 ];
 				indices[ n * 3 + 1 ] = face.Indices[ 1 ];
 				indices[ n * 3 + 2 ] = face.Indices[ 2 ];
 			}
 
-			//ModelImportSceneSource.MaterialSource material = null;
-			//if( aiMesh.MaterialIndex < sceneSource.Materials.Count )
-			//	material = sceneSource.Materials[ (int)aiMesh.MaterialIndex ];
+			var geometry = meshComponent.CreateComponent<MeshGeometry>();
+			geometry.Name = GetFixedName( mesh.Name );
 
-			////edit bind pose
-			//Dictionary<string, int> boneNameToBoneIndexDictionary = null;
-			//if( aiMesh.HasBones )
-			//{
-			//	Dictionary<string, Assimp.Bone> assimpBonesDictionary = new Dictionary<string, Assimp.Bone>();
-			//	for( int i = 0; i < aiMesh.BoneCount; i++ )
-			//	{
-			//		Assimp.Bone aiBone = aiMesh.Bones[ i ];
-			//		try
-			//		{
-			//			assimpBonesDictionary.Add( aiBone.Name, aiBone );
-			//		}
-			//		catch { }
-			//	}
-
-			//	Dictionary<string, Mat4F> boneGlobalTransforms = new Dictionary<string, Mat4F>();
-			//	foreach( ModelImportSceneSource.BoneSource bone in sceneSource.Bones )
-			//	{
-			//		string boneName = bone.Name;
-			//		Assimp.Bone aiBone;
-			//		if( assimpBonesDictionary.TryGetValue( boneName, out aiBone ) )
-			//		{
-			//			Mat4F parentTransform = Mat4F.Identity;
-			//			if( bone.Parent != null )
-			//				parentTransform = boneGlobalTransforms[ bone.Parent.Name ];
-			//			Mat4F boneGlobalTransform = geometryTransform * aiBone.OffsetMatrix.ToMat4().GetInverse();
-			//			Mat4F boneBindPoseLocalTransform = parentTransform.GetInverse() * boneGlobalTransform;
-
-			//			Vec3F bonePosition = boneBindPoseLocalTransform.Item3.ToVec3();
-			//			Mat3F boneRotationM;
-			//			Vec3F boneScale;
-			//			Vec3F dummy2;
-			//			boneBindPoseLocalTransform.ToMat3().QDUDecomposition( out boneRotationM, out boneScale, out dummy2 );
-			//			QuatF boneRotation = boneRotationM.ToQuat();
-
-			//			if( changedBindPoseMatrixBoneDictionary[ boneName ] )
-			//			{
-			//				if( bone.Position != bonePosition || bone.Rotation != boneRotation || bone.Scale != boneScale )
-			//					Log.InvisibleInfo( "Assimp Import Library: " + boneName + " bind pose bone has difference." );
-			//			}
-
-			//			bone.Position = bonePosition;
-			//			bone.Rotation = boneRotation;
-			//			bone.Scale = boneScale;
-
-			//			boneGlobalTransforms.Add( boneName, boneGlobalTransform );
-			//			changedBindPoseMatrixBoneDictionary[ boneName ] = true;
-			//		}
-			//		else
-			//		{
-			//			Mat4F parentTransform = Mat4F.Identity;
-			//			if( bone.Parent != null )
-			//				parentTransform = boneGlobalTransforms[ bone.Parent.Name ];
-
-			//			Mat4F localTransform = new Mat4F( bone.Rotation.ToMat3() *
-			//				Mat3F.FromScale( bone.Scale ), bone.Position );
-			//			Mat4F boneTransform = parentTransform * localTransform;
-
-			//			boneGlobalTransforms.Add( bone.Name, boneTransform );
-			//		}
-			//	}
-
-			//	boneNameToBoneIndexDictionary = new Dictionary<string, int>();
-			//	for( int i = 0; i < sceneSource.Bones.Count; i++ )
-			//		boneNameToBoneIndexDictionary.Add( sceneSource.Bones[ i ].Name, i );
-			//}
-
-			//ModelImportSceneSource.MeshSource.BoneAssignmentItem[][] boneAssignments = null;
-			//if( aiMesh.HasBones )
-			//{
-			//	boneAssignments = new ModelImportSceneSource.MeshSource.BoneAssignmentItem[ aiMesh.BoneCount ][];
-
-			//	for( int i = 0; i < aiMesh.BoneCount; i++ )
-			//	{
-			//		Assimp.Bone aiBone = aiMesh.Bones[ i ];
-			//		boneAssignments[ i ] = new ModelImportSceneSource.MeshSource.BoneAssignmentItem[ aiBone.VertexWeightCount ];
-
-			//		int boneIndex;
-			//		if( boneNameToBoneIndexDictionary.TryGetValue( aiBone.Name, out boneIndex ) )
-			//		{
-			//			for( int j = 0; j < aiBone.VertexWeightCount; j++ )
-			//			{
-			//				VertexWeight aiWeight = aiBone.VertexWeights[ j ];
-			//				ModelImportSceneSource.MeshSource.BoneAssignmentItem assignment =
-			//					new ModelImportSceneSource.MeshSource.BoneAssignmentItem(
-			//					(int)aiWeight.VertexID, boneIndex, aiWeight.Weight );
-			//				boneAssignments[ i ][ j ] = assignment;
-			//			}
-			//		}
-			//	}
-			//}
-
-			//Vec3F position = Vec3F.Zero;
-			//QuatF rotation = QuatF.Identity;
-			//Vec3F scale = new Vec3F( 1, 1, 1 );
-			//if( !aiMesh.HasBones )
-			//{
-			//	Mat4F nodeTransformRotated = transform90Fix * importTransform;
-			//	//Mat4 nodeTransformRotated = nodeTransform;
-			//	position = nodeTransformRotated.Item3.ToVec3F();
-			//	Mat3F r;
-			//	Vec3F dummy;
-			//	nodeTransformRotated.ToMat3().QDUDecomposition( out r, out scale, out dummy );
-			//	rotation = r.ToQuat();
-			//}
-
-			var geometry = mesh.CreateComponent<MeshGeometry>();
-			geometry.Name = GetFixedName( aiMesh.Name );
-
-			StandardVertex.Components vertexComponents = StandardVertex.Components.Position;
-			if( aiMesh.HasNormals )
+			var vertexComponents = StandardVertex.Components.Position;
+			if( mesh.HasNormals )
 				vertexComponents |= StandardVertex.Components.Normal;
-			if( aiMesh.HasTangentBasis )
+			if( mesh.HasTangentBasis )
 				vertexComponents |= StandardVertex.Components.Tangent;
 			if( hasVertexColor )
 				vertexComponents |= StandardVertex.Components.Color;
@@ -558,541 +208,166 @@ namespace NeoAxis//.Import
 			if( textureCoordsCount > 3 )
 				vertexComponents |= StandardVertex.Components.TexCoord3;
 
+			//affect blend indices
+
+			if( skeletonStructure != null && mesh.HasBones )
+			{
+				vertexComponents |= StandardVertex.Components.BlendIndices | StandardVertex.Components.BlendWeights;
+
+				var meshBones = mesh.Bones;
+
+				var boneNodeArray = skeletonStructure.boneNodeByName.Values.ToArray();
+
+				for( int nVertex = 0; nVertex < vertices.Length; nVertex++ )
+				{
+					ref Vector4I bi = ref vertices[ nVertex ].BlendIndices;
+					if( bi.X != -1 )
+						skeletonStructure.boneIndexByName.TryGetValue( meshBones[ bi.X ].Name, out bi.X );
+					if( bi.Y != -1 )
+						skeletonStructure.boneIndexByName.TryGetValue( meshBones[ bi.Y ].Name, out bi.Y );
+					if( bi.Z != -1 )
+						skeletonStructure.boneIndexByName.TryGetValue( meshBones[ bi.Z ].Name, out bi.Z );
+					if( bi.W != -1 )
+						skeletonStructure.boneIndexByName.TryGetValue( meshBones[ bi.W ].Name, out bi.W );
+				}
+
+				//transform vertices
+				for( int nVertex = 0; nVertex < vertices.Length; nVertex++ )
+				{
+					ref var vertex = ref vertices[ nVertex ];
+
+					//var sourcePosition = vertex.Position;
+					var outputPosition = Vector3.Zero;
+					var outputNormal = Vector3.Zero;
+					var outputTangent = Vector3.Zero;
+					var outputBinormal = Vector3.Zero;
+
+					var affected = false;
+
+					for( int n = 0; n < 4; n++ )
+					{
+						var boneIndex = vertex.BlendIndices[ n ];
+						var boneWeight = vertex.BlendWeights[ n ];
+
+						if( boneIndex >= 0 && boneWeight > 0 )
+						{
+							var boneNode = boneNodeArray[ boneIndex ];
+							var bone = meshBoneByBoneName[ boneNode.Name ];
+
+							//get global transform for bone in bind pose and apply offset matrix to get final bone matrix for transforming vertex
+							var globalBoneTransform = GetNodeFullTransform( importContext, boneNode );
+
+							//merge offset matrix and global transform to get final bone matrix for transforming vertex
+							var finalBoneMatrix = globalBoneTransform * ToMatrix4( bone.OffsetMatrix );
+
+							//transform vertex position by final bone matrix and accumulate with weight
+							var position = finalBoneMatrix * ToVector3( mesh.Vertices[ nVertex ] );
+							outputPosition += position * boneWeight;
+
+							finalBoneMatrix.Decompose( out _, out Matrix3 finalBoneMatrixR, out _ );
+
+							if( mesh.HasNormals )
+							{
+								var normal = ( finalBoneMatrixR * ToVector3( mesh.Normals[ nVertex ] ) ).GetNormalize();
+								outputNormal += normal * boneWeight;
+							}
+
+							if( mesh.HasTangentBasis )
+							{
+								var tangent = ( finalBoneMatrixR * ToVector3( mesh.Tangents[ nVertex ] ) ).GetNormalize();
+								var binormal = ( finalBoneMatrixR * ToVector3( mesh.BiTangents[ nVertex ] ) ).GetNormalize();
+								outputTangent = tangent * boneWeight;
+								outputBinormal = binormal * boneWeight;
+							}
+
+							affected = true;
+						}
+					}
+
+					if( affected )
+					{
+						vertex.Position = outputPosition.ToVector3F();
+						if( mesh.HasNormals )
+							vertex.Normal = outputNormal.ToVector3F().GetNormalize();
+						if( mesh.HasTangentBasis )
+						{
+							var parity = ( Vector3.Dot( Vector3.Cross( outputTangent, outputBinormal ), vertex.Normal ) >= 0 ) ? -1 : 1;
+							vertex.Tangent = new Vector4F( outputTangent.ToVector3F(), parity );
+						}
+					}
+
+					transformedVertices[ nVertex ] = affected;
+				}
+			}
+
+			//transform vertices by node transform if no skeleton or bones, or if some vertices are not affected by bones
+			{
+				var geometryTransform = nodeTransform;
+				geometryTransform.Decompose( out _, out Matrix3 geometryTransformR, out _ );
+
+				for( int nVertex = 0; nVertex < transformedVertices.Length; nVertex++ )
+				{
+					if( !transformedVertices[ nVertex ] )
+					{
+						ref var vertex = ref vertices[ nVertex ];
+
+						vertex.Position = ( geometryTransform * ToVector3( mesh.Vertices[ nVertex ] ) ).ToVector3F();
+						if( mesh.HasNormals )
+							vertex.Normal = ( geometryTransformR * ToVector3( mesh.Normals[ nVertex ] ) ).ToVector3F().GetNormalize();
+						if( mesh.HasTangentBasis )
+						{
+							var tangent = ( geometryTransformR * ToVector3( mesh.Tangents[ nVertex ] ) ).GetNormalize();
+							var binormal = ( geometryTransformR * ToVector3( mesh.BiTangents[ nVertex ] ) ).GetNormalize();
+							var parity = ( Vector3.Dot( Vector3.Cross( tangent, binormal ), vertex.Normal ) >= 0 ) ? -1 : 1;
+							vertex.Tangent = new Vector4F( tangent.ToVector3F(), parity );
+						}
+					}
+				}
+			}
+
 			geometry.SetVertexData( vertices, vertexComponents );
 			geometry.Indices = indices;
 
 			//material
-			importContext.materialByIndex.TryGetValue( aiMesh.MaterialIndex, out Material material );
+			importContext.materialByIndex.TryGetValue( mesh.MaterialIndex, out Material material );
 			if( material != null )
 			{
 				var referenceValue = ReferenceUtility.CalculateRootReference( material );
-				//var referenceValue = importContext.settings.virtualFileName + "|" + material.GetNamePathToAccessFromRoot();
-				//var referenceValue = importContext.settings.virtualFileName + "|" + material.GetNamePathToAccessFromRoot();
 				geometry.Material = ReferenceUtility.MakeReference<Material>( null, referenceValue );
-				//meshData.Material = ReferenceUtils.CreateReference<Material>( null,
-				//	ReferenceUtils.CalculateThisReference( meshData, material ) );
-				//meshData.Material = ResourceManager.LoadResource<Material>( "_Dev\\Sphere.material" );
 			}
+
+			importContext.processedMeshes.Add( mesh );
 		}
 
-		static void InitMeshGeometriesRecursive( ImportContext importContext, Node node, Matrix4 nodeTransform, Mesh mesh )
+		static void InitMeshGeometriesRecursive( ImportContext importContext, Node node, Matrix4 nodeTransform, Mesh meshComponent ) //, int[] newIndexFromOldIndex )
 		{
-			//!!!!меши не индексируются/не инстансятся. это какие-то структуризированные меши
-
 			foreach( var meshIndex in node.MeshIndices )
 			{
-				var aiMesh = importContext.scene.Meshes[ meshIndex ];
-				AddMesh( importContext, nodeTransform, mesh, aiMesh );
+				var mesh = importContext.scene.Meshes[ meshIndex ];
+				AddMesh( importContext, nodeTransform, meshComponent, mesh );//, newIndexFromOldIndex );
 			}
 
 			foreach( var childNode in node.Children )
 			{
-				var childTransform = nodeTransform * ToMatrix4F( childNode.Transform );
-				InitMeshGeometriesRecursive( importContext, childNode, childTransform, mesh );
+				var childTransform = nodeTransform * ToMatrix4( childNode.Transform );
+				InitMeshGeometriesRecursive( importContext, childNode, childTransform, meshComponent );//, newIndexFromOldIndex );
 			}
 		}
 
-
-
-
-#if FFFF
-
-		static Mesh CreateMesh( ImportContext importContext, global::Assimp.Mesh aiMesh )
-		/*Mat4F nodeTransform, global::Assimp.Node rootNode, global::Assimp.Scene scene,
-		Dictionary<string, ModelImportSceneSource.BoneSource> boneDictionary,
-		Dictionary<string, bool> changedBindPoseMatrixBoneDictionary*///)
+		static Matrix4 GetNodeFullTransform( ImportContext importContext, Node node )
 		{
-			//get name
-			string name = GetFixedName( aiMesh.Name );
-			if( string.IsNullOrEmpty( name ) || importContext.groupMeshes.GetComponentByName( name ) != null )
+			var transform = Matrix4.Identity;
+			var node2 = node;
+			while( node2 != null )
 			{
-				//!!!!
-
-				string emptyNamePrefix = Path.GetFileNameWithoutExtension( importContext.settings.virtualFileName );
-				string prefix = string.IsNullOrEmpty( name ) ? emptyNamePrefix : name;
-				for( int counter = 1; ; counter++ )
-				{
-					name = prefix;
-					if( counter != 1 )
-						name += counter.ToString();
-					if( importContext.groupMeshes.GetComponentByName( name ) == null )
-						break;
-				}
+				transform = ToMatrix4( node2.Transform ) * transform;
+				node2 = node2.Parent;
 			}
 
-			StandardVertexF[] vertices = new StandardVertexF[ aiMesh.VertexCount ];
+			transform = importContext.globalTransform * transform;
 
-			bool hasVertexColor = aiMesh.HasVertexColors( 0 );
-			List<Color4D> colors0 = null;
-			if( hasVertexColor )
-				colors0 = aiMesh.VertexColorChannels[ 0 ];
-
-			int textureCoordsCount = 0;
-			for( int n = 0; n < 4 && n < aiMesh.TextureCoordinateChannelCount; n++ )
-			{
-				if( aiMesh.HasTextureCoords( n ) )
-					textureCoordsCount++;
-				else
-					break;
-			}
-			List<Vector3D> texCoords0 = textureCoordsCount > 0 ? aiMesh.TextureCoordinateChannels[ 0 ] : null;
-			List<Vector3D> texCoords1 = textureCoordsCount > 1 ? aiMesh.TextureCoordinateChannels[ 1 ] : null;
-			List<Vector3D> texCoords2 = textureCoordsCount > 2 ? aiMesh.TextureCoordinateChannels[ 2 ] : null;
-			List<Vector3D> texCoords3 = textureCoordsCount > 3 ? aiMesh.TextureCoordinateChannels[ 3 ] : null;
-
-			//!!!!
-			Mat4F geometryTransform;
-			Mat3F geometryTransformR;
-			{
-				var importTransform = importContext.settings.component.ImportTransform.Value;
-				geometryTransform = importTransform.ToMat4().ToMat4F();
-				geometryTransformR = importTransform.Rotation.ToMat3().ToMat3F();
-			}
-
-			//!!!!
-			//Mat4F transform90Fix = new Mat4F( 1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1 );
-			//Mat3F transform90RFix = transform90Fix.ToMat3();
-
-			//!!!!
-			//Mat4F geometryTransform;
-			//Mat3F geometryTransformR;
-			//if( aiMesh.HasBones )
-			//{
-			//	geometryTransform = transform90Fix * importTransform;
-			//	//geometryTransform = nodeTransform;
-			//	Vec3F dummy1;
-			//	Vec3F dummy2;
-			//	geometryTransform.ToMat3().QDUDecomposition( out geometryTransformR, out dummy1, out dummy2 );
-			//}
-			//else
-			//{
-			//	geometryTransform = Mat4F.Identity;
-			//	geometryTransformR = Mat3F.Identity;
-			//}
-
-			//if( HasTransformMatrixNegParity( geometryTransform .GetTranspose().ToMat3() ) )
-			//{
-			//   //what to do?
-			//}
-
-			//get data
-			for( int n = 0; n < vertices.Length; n++ )
-			{
-				StandardVertexF vertex = new StandardVertexF();
-
-				vertex.position = geometryTransform * aiMesh.Vertices[ n ].ToVec3();
-				if( aiMesh.HasNormals )
-					vertex.normal = ( geometryTransformR * aiMesh.Normals[ n ].ToVec3() ).GetNormalize();
-
-				if( textureCoordsCount > 0 )
-				{
-					vertex.texCoord0 = texCoords0[ n ].ToVec2();
-					if( textureCoordsCount > 1 )
-					{
-						vertex.texCoord1 = texCoords1[ n ].ToVec2();
-						if( textureCoordsCount > 2 )
-						{
-							vertex.texCoord2 = texCoords2[ n ].ToVec2();
-							if( textureCoordsCount > 3 )
-								vertex.texCoord3 = texCoords3[ n ].ToVec2();
-						}
-					}
-				}
-
-				if( hasVertexColor )
-					vertex.color = colors0[ n ].ToColorValue();
-
-				if( aiMesh.HasTangentBasis )
-				{
-					Vec3F tangent = ( geometryTransformR * aiMesh.Tangents[ n ].ToVec3() ).GetNormalize();
-					Vec3F binormal = ( geometryTransformR * aiMesh.BiTangents[ n ].ToVec3() ).GetNormalize();
-
-					float parity;
-					if( Vec3F.Dot( Vec3F.Cross( tangent, binormal ), vertex.normal ) >= 0 )
-						parity = -1;
-					else
-						parity = 1;
-					vertex.tangent = new Vec4F( tangent, parity );
-				}
-
-				vertices[ n ] = vertex;
-			}
-
-			int[] indices = new int[ aiMesh.FaceCount * 3 ];
-			for( int n = 0; n < aiMesh.FaceCount; n++ )
-			{
-				Face face = aiMesh.Faces[ n ];
-				indices[ n * 3 + 0 ] = face.Indices[ 0 ];
-				indices[ n * 3 + 1 ] = face.Indices[ 1 ];
-				indices[ n * 3 + 2 ] = face.Indices[ 2 ];
-			}
-
-			//!!!!
-			//ModelImportSceneSource.MaterialSource material = null;
-			//if( aiMesh.MaterialIndex < sceneSource.Materials.Count )
-			//	material = sceneSource.Materials[ (int)aiMesh.MaterialIndex ];
-
-			////edit bind pose
-			//Dictionary<string, int> boneNameToBoneIndexDictionary = null;
-			//if( aiMesh.HasBones )
-			//{
-			//	Dictionary<string, Assimp.Bone> assimpBonesDictionary = new Dictionary<string, Assimp.Bone>();
-			//	for( int i = 0; i < aiMesh.BoneCount; i++ )
-			//	{
-			//		Assimp.Bone aiBone = aiMesh.Bones[ i ];
-			//		try
-			//		{
-			//			assimpBonesDictionary.Add( aiBone.Name, aiBone );
-			//		}
-			//		catch { }
-			//	}
-
-			//	Dictionary<string, Mat4F> boneGlobalTransforms = new Dictionary<string, Mat4F>();
-			//	foreach( ModelImportSceneSource.BoneSource bone in sceneSource.Bones )
-			//	{
-			//		string boneName = bone.Name;
-			//		Assimp.Bone aiBone;
-			//		if( assimpBonesDictionary.TryGetValue( boneName, out aiBone ) )
-			//		{
-			//			Mat4F parentTransform = Mat4F.Identity;
-			//			if( bone.Parent != null )
-			//				parentTransform = boneGlobalTransforms[ bone.Parent.Name ];
-			//			Mat4F boneGlobalTransform = geometryTransform * aiBone.OffsetMatrix.ToMat4().GetInverse();
-			//			Mat4F boneBindPoseLocalTransform = parentTransform.GetInverse() * boneGlobalTransform;
-
-			//			Vec3F bonePosition = boneBindPoseLocalTransform.Item3.ToVec3();
-			//			Mat3F boneRotationM;
-			//			Vec3F boneScale;
-			//			Vec3F dummy2;
-			//			boneBindPoseLocalTransform.ToMat3().QDUDecomposition( out boneRotationM, out boneScale, out dummy2 );
-			//			QuatF boneRotation = boneRotationM.ToQuat();
-
-			//			if( changedBindPoseMatrixBoneDictionary[ boneName ] )
-			//			{
-			//				if( bone.Position != bonePosition || bone.Rotation != boneRotation || bone.Scale != boneScale )
-			//					Log.InvisibleInfo( "Assimp Import Library: " + boneName + " bind pose bone has difference." );
-			//			}
-
-			//			bone.Position = bonePosition;
-			//			bone.Rotation = boneRotation;
-			//			bone.Scale = boneScale;
-
-			//			boneGlobalTransforms.Add( boneName, boneGlobalTransform );
-			//			changedBindPoseMatrixBoneDictionary[ boneName ] = true;
-			//		}
-			//		else
-			//		{
-			//			Mat4F parentTransform = Mat4F.Identity;
-			//			if( bone.Parent != null )
-			//				parentTransform = boneGlobalTransforms[ bone.Parent.Name ];
-
-			//			Mat4F localTransform = new Mat4F( bone.Rotation.ToMat3() *
-			//				Mat3F.FromScale( bone.Scale ), bone.Position );
-			//			Mat4F boneTransform = parentTransform * localTransform;
-
-			//			boneGlobalTransforms.Add( bone.Name, boneTransform );
-			//		}
-			//	}
-
-			//	boneNameToBoneIndexDictionary = new Dictionary<string, int>();
-			//	for( int i = 0; i < sceneSource.Bones.Count; i++ )
-			//		boneNameToBoneIndexDictionary.Add( sceneSource.Bones[ i ].Name, i );
-			//}
-
-			//ModelImportSceneSource.MeshSource.BoneAssignmentItem[][] boneAssignments = null;
-			//if( aiMesh.HasBones )
-			//{
-			//	boneAssignments = new ModelImportSceneSource.MeshSource.BoneAssignmentItem[ aiMesh.BoneCount ][];
-
-			//	for( int i = 0; i < aiMesh.BoneCount; i++ )
-			//	{
-			//		Assimp.Bone aiBone = aiMesh.Bones[ i ];
-			//		boneAssignments[ i ] = new ModelImportSceneSource.MeshSource.BoneAssignmentItem[ aiBone.VertexWeightCount ];
-
-			//		int boneIndex;
-			//		if( boneNameToBoneIndexDictionary.TryGetValue( aiBone.Name, out boneIndex ) )
-			//		{
-			//			for( int j = 0; j < aiBone.VertexWeightCount; j++ )
-			//			{
-			//				VertexWeight aiWeight = aiBone.VertexWeights[ j ];
-			//				ModelImportSceneSource.MeshSource.BoneAssignmentItem assignment =
-			//					new ModelImportSceneSource.MeshSource.BoneAssignmentItem(
-			//					(int)aiWeight.VertexID, boneIndex, aiWeight.Weight );
-			//				boneAssignments[ i ][ j ] = assignment;
-			//			}
-			//		}
-			//	}
-			//}
-
-			//!!!!
-			//Vec3F position = Vec3F.Zero;
-			//QuatF rotation = QuatF.Identity;
-			//Vec3F scale = new Vec3F( 1, 1, 1 );
-			//if( !aiMesh.HasBones )
-			//{
-			//	Mat4F nodeTransformRotated = transform90Fix * importTransform;
-			//	//Mat4 nodeTransformRotated = nodeTransform;
-			//	position = nodeTransformRotated.Item3.ToVec3F();
-			//	Mat3F r;
-			//	Vec3F dummy;
-			//	nodeTransformRotated.ToMat3().QDUDecomposition( out r, out scale, out dummy );
-			//	rotation = r.ToQuat();
-			//}
-
-			Mesh mesh = importContext.groupMeshes.CreateComponent<Mesh>( -1, false );
-			mesh.Name = GetFixedName( name );
-
-			StandardVertexF.Components vertexComponents = StandardVertexF.Components.Position;
-			if( aiMesh.HasNormals )
-				vertexComponents |= StandardVertexF.Components.Normal;
-			if( aiMesh.HasTangentBasis )
-				vertexComponents |= StandardVertexF.Components.Tangent;
-			if( hasVertexColor )
-				vertexComponents |= StandardVertexF.Components.Color;
-			if( textureCoordsCount > 0 )
-				vertexComponents |= StandardVertexF.Components.TexCoord0;
-			if( textureCoordsCount > 1 )
-				vertexComponents |= StandardVertexF.Components.TexCoord1;
-			if( textureCoordsCount > 2 )
-				vertexComponents |= StandardVertexF.Components.TexCoord2;
-			if( textureCoordsCount > 3 )
-				vertexComponents |= StandardVertexF.Components.TexCoord3;
-
-			mesh.SetVertexDataWithRemovingHoles( vertices, vertexComponents );
-			mesh.Indices = indices;
-
-			////material
-			//materialByIndex.TryGetValue( aiMesh.MaterialIndex, out Material material );
-			//if( material != null )
-			//{
-			//	//не через "this:", впрочем неважно, т.к. полный путь есть при указании типа в "Sources".
-
-			//	var referenceValue = settings.virtualFileName + "|" + material.GetNamePathToAccessFromRoot();
-			//	meshData.Material = ReferenceUtils.CreateReference<Material>( null, referenceValue );
-
-			//	//meshData.Material = ReferenceUtils.CreateReference<Material>( null,
-			//	//	ReferenceUtils.CalculateThisReference( meshData, material ) );
-			//	//meshData.Material = ResourceManager.LoadResource<Material>( "_Dev\\Sphere.material" );
-			//}
-
-			//!!!!так? тут?
-			if( aiMesh.HasBones )
-			{
-				//!!!!temp
-
-				var skeleton = mesh.CreateComponent<Skeleton>( -1, false );
-				skeleton.Name = "Skeleton";
-
-				mesh.Skeleton = new Reference<Skeleton>( null, ReferenceUtils.CalculateThisReference( mesh, skeleton ) );
-
-				var bone1 = skeleton.CreateComponent<Bone>( -1, false );
-				bone1.Name = "Bone 1";
-				var bone2 = bone1.CreateComponent<Bone>( -1, false );
-				bone2.Name = "Bone 2";
-				var bone3 = bone1.CreateComponent<Bone>( -1, false );
-				bone3.Name = "Bone 3";
-
-				var animation1 = skeleton.CreateComponent<Animation>( -1, false );
-				animation1.Name = "Animation 1";
-				var animation2 = skeleton.CreateComponent<Animation>( -1, false );
-				animation2.Name = "Animation 2";
-			}
-
-			//LOD
-			{
-				//!!!!temp
-
-				var lod1 = mesh.CreateComponent<MeshLevelOfDetail>( -1, false );
-				lod1.Name = "LOD 1";
-				//lod1.Mesh = xxx;
-				lod1.Distance = 50;
-
-				var lod2 = mesh.CreateComponent<MeshLevelOfDetail>( -1, false );
-				lod2.Name = "LOD 2";
-				lod2.Distance = 100;
-			}
-
-			mesh.Enabled = true;
-
-			//name,
-			//vertices, 
-			//textureCoordsCount, 
-			//aiMesh.HasTangentBasis, 
-			//hasVertexColor, 
-			//indices, 
-			//material,
-			//position, 
-			//rotation, 
-			//scale, 
-			//boneAssignments
-
-			////create mesh source
-			//ModelImportSceneSource.MeshSource meshSource = new ModelImportSceneSource.MeshSource( name,
-			//	vertices, textureCoordsCount, aiMesh.HasTangentBasis, hasVertexColor, indices, material,
-			//	position, rotation, scale, boneAssignments );
-			//sceneSource.AddMesh( meshSource );
-
-			return mesh;
+			return transform;
 		}
-
-		static void InitMeshFromNodesRecursive( Settings settings, global::Assimp.Scene scene,
-			ImportContext importContext, Mesh group, global::Assimp.Node node,
-			Mat4F nodeTransform, int level /*,
-			Dictionary<string, ModelImportSceneSource.BoneSource> boneDictionary,
-			Dictionary<string, bool> changedBindPoseMatrixBoneDictionary*/ )
-		{
-			//set transform
-			{
-				nodeTransform.Decompose( out Vec3F pos, out QuatF rot, out Vec3F scl );
-				group.TransformRelativeToParent = new Reference<Transform>( new Transform( pos, rot, scl ) );
-			}
-
-			//children nodes
-			for( int n = 0; n < node.ChildCount; n++ )
-			{
-				global::Assimp.Node childNode = node.Children[ n ];
-
-				//!!!!просто по имени?
-				//!!!!тип проверять еще
-				var childGroup = group.GetComponentByName( childNode.Name );
-				if( childGroup == null )
-				{
-					childGroup = group.CreateComponent<Mesh>();
-					childGroup.Name = childNode.Name;
-				}
-
-				if( childGroup is Mesh )
-					InitMeshFromNodesRecursive( settings, scene, importContext, (Mesh)childGroup, childNode, nodeTransform * childNode.Transform.ToMat4(), level + 1 /*, boneDictionary, changedBindPoseMatrixBoneDictionary*/ );
-
-				//remove empty
-				if( childGroup.Components.Count == 0 )
-					childGroup.RemoveFromParent( false );
-			}
-
-			//meshes
-			for( int nMesh = 0; nMesh < node.MeshCount; nMesh++ )
-			{
-				if( importContext.sourcesMeshByIndex.TryGetValue( node.MeshIndices[ nMesh ], out Mesh sourceMesh ) )
-				{
-					var type = sourceMesh.GetProvidedType();
-					if( type != null )
-					{
-						//!!!!просто по имени?
-						//!!!!тип проверять еще
-						var obj = group.GetComponentByName( sourceMesh.Name );
-						if( obj == null )
-						{
-							obj = group.CreateComponent( type );
-							//var obj = group.CreateComponent( MetadataManager.MetadataGetType( original ), -1, false );
-							obj.Name = sourceMesh.Name;
-
-							//set material
-							if( importContext.groupMaterials != null )
-							{
-								var mesh = (Mesh)obj;
-
-								importContext.materialNamePathByMeshNamePath.TryGetValue( mesh.GetNameWithIndexFromParent(), out string materialNamePath );
-								if( !string.IsNullOrEmpty( materialNamePath ) )
-								{
-									var material = importContext.groupMaterials.GetComponentByNamePath( materialNamePath ) as Material;
-									if( material != null )
-									{
-										//не через "this:", впрочем неважно, т.к. полный путь есть при указании типа в "Sources".
-
-										var referenceValue = settings.virtualFileName + "|" + material.GetNamePathToAccessFromRoot();
-										mesh.Material = ReferenceUtils.CreateReference<Material>( null, referenceValue );
-
-										//meshData.Material = ReferenceUtils.CreateReference<Material>( null,
-										//	ReferenceUtils.CalculateThisReference( meshData, material ) );
-										//meshData.Material = ResourceManager.LoadResource<Material>( "_Dev\\Sphere.material" );
-									}
-								}
-							}
-						}
-					}
-
-					////!!!!так?
-					//global::Assimp.Mesh aiMesh = scene.Meshes[ node.MeshIndices[ nMesh ] ];
-
-					//if( aiMesh.PrimitiveType == PrimitiveType.Triangle )
-					//{
-					//	////"this:..\\..\\Meshes\\{0}"
-					//	//string r = "this:";
-					//	//for( int n = 0; n < level + 2; n++ )
-					//	//	r += "..\\";
-					//	//r += string.Format( "$Meshes\\{0}", mesh.GetNameWithIndexFromParent() );
-					//	////r += string.Format( "Meshes\\{0}", mesh.Name );
-					//	//Reference<Mesh> referenceToMesh = new Reference<Mesh>( null, r );
-
-					//	MeshInSpace objectInSpace = group.CreateComponent<MeshInSpace>();
-					//	objectInSpace.Mesh = ReferenceUtils.CreateReference<Mesh>( null,
-					//		ReferenceUtils.CalculateThisReference( objectInSpace, mesh ) );
-					//	//objInSpace.Mesh = referenceToMesh;
-
-					//	nodeTransform.Decompose( out Vec3F pos, out QuatF rot, out Vec3F scl );
-
-					//	//!!!!не так
-					//	objectInSpace.Transform = new Reference<Transform>( new Transform( pos, rot, scl ) );
-
-					//	//!!!!что-то еще выставлять?
-					//}
-				}
-			}
-		}
-
-		//bool HasSceneSkeleton( global::Assimp.Scene scene )
-		//{
-		//	bool hasSkeleton = false;
-		//	for( int i = 0; i < scene.MeshCount; i++ )
-		//	{
-		//		if( scene.Meshes[ i ].HasBones )
-		//		{
-		//			hasSkeleton = true;
-		//			break;
-		//		}
-		//	}
-		//	return hasSkeleton;
-		//}
-
-		//bool AddRealBonesRecursive( global::Assimp.Node boneNode, Set<string> realBones )
-		//{
-		//	bool needToAddBone = realBones.Contains( boneNode.Name );
-
-		//	for( int n = 0; n < boneNode.ChildCount; n++ )
-		//	{
-		//		Assimp.Node childNode = boneNode.Children[ n ];
-		//		if( AddRealBonesRecursive( childNode, realBones ) )
-		//			needToAddBone = true;
-		//	}
-
-		//	if( needToAddBone )
-		//		realBones.AddWithCheckAlreadyContained( boneNode.Name );
-
-		//	return needToAddBone;
-		//}
-
-		//Set<string> GetRealBones( Assimp.Scene scene )
-		//{
-		//	Set<string> realBones = new Set<string>();
-
-		//	if( scene.HasMeshes )
-		//	{
-		//		for( int i = 0; i < scene.MeshCount; i++ )
-		//		{
-		//			Assimp.Mesh aiMesh = scene.Meshes[ i ];
-		//			for( int j = 0; j < aiMesh.BoneCount; j++ )
-		//			{
-		//				Assimp.Bone aiBone = aiMesh.Bones[ j ];
-		//				realBones.AddWithCheckAlreadyContained( aiBone.Name );
-		//			}
-		//		}
-		//		AddRealBonesRecursive( scene.RootNode, realBones );
-		//	}
-
-		//	return realBones;
-		//}
-
-#endif
 
 		public static void DoImport( Settings settings, out string error )
 		{
@@ -1125,19 +400,18 @@ namespace NeoAxis//.Import
 						//PostProcessSteps.SplitLargeMeshes |
 						//PostProcessSteps.PreTransformVertices |
 						PostProcessSteps.LimitBoneWeights |
-						//!!!!new PostProcessSteps.ValidateDataStructure |
+						//PostProcessSteps.ValidateDataStructure |
 						//PostProcessSteps.ImproveCacheLocality |
 						//PostProcessSteps.RemoveRedundantMaterials |
-						//PostProcessSteps.FixInFacingNormals | //!!!!?
+						//PostProcessSteps.FixInFacingNormals | 
 						PostProcessSteps.SortByPrimitiveType |
 						PostProcessSteps.FindDegenerates |
 						PostProcessSteps.FindInvalidData |
 						PostProcessSteps.GenerateUVCoords |
-						PostProcessSteps.TransformUVCoords |
+						//PostProcessSteps.TransformUVCoords |
 						//PostProcessSteps.FindInstances |
 						PostProcessSteps.OptimizeMeshes |
 						//PostProcessSteps.OptimizeGraph |
-						//PostProcessSteps.FlipUVs |
 						//PostProcessSteps.FlipWindingOrder |
 						//PostProcessSteps.SplitByBoneCount |
 						//PostProcessSteps.Debone |
@@ -1175,16 +449,6 @@ namespace NeoAxis//.Import
 						return;
 					}
 
-					//public List<Animation> Animations { get; }
-					//public SceneFlags SceneFlags { get; set; }
-					//public List<EmbeddedTexture> Textures { get; }
-
-					////!!!!
-					//if( scene.Textures != null )
-					//{
-					//	Log.Info( scene.Textures.Count.ToString() );
-					//}
-
 
 					var context = new ImportContext();
 					context.scene = scene;
@@ -1217,104 +481,103 @@ namespace NeoAxis//.Import
 							context.materialByIndex.Add( data.Index, material );
 					}
 
-					////animation
-					//double[] animationDurations = null;
-					//if( scene.HasAnimations )
-					//{
-					//	double animationTrackOffset = 0;
-					//	List<ModelImportSceneSource.AnimationTrackItem> animationTracks =
-					//		new List<ModelImportSceneSource.AnimationTrackItem>();
-					//	animationDurations = new double[ scene.AnimationCount ];
-
-					//	for( int animationIndex = 0; animationIndex < scene.AnimationCount; animationIndex++ )
-					//	{
-					//		Assimp.Animation animation = scene.Animations[ animationIndex ];
-
-					//		double animationTrackDuration = animation.DurationInTicks;
-					//		animationDurations[ animationIndex ] = animationTrackDuration;
-
-					//		animationTracks.Add( new ModelImportSceneSource.AnimationTrackItem( animation.Name,
-					//			animationTrackOffset, animationTrackOffset + animationTrackDuration ) );
-
-					//		animationTrackOffset = animationTrackOffset + animationTrackDuration + 1;
-					//	}
-
-					//	sceneSource.HasAnimations = true;
-					//	if( scene.Animations[ 0 ].TicksPerSecond != 0.0 )
-					//		sceneSource.AnimationFrameRate = (float)scene.Animations[ 0 ].TicksPerSecond;
-					//	sceneSource.AnimationTracks = animationTracks.ToArray();
-					//}
-
-					////create skeleton
-					//Dictionary<string, ModelImportSceneSource.BoneSource> boneDictionary = null;
-					//Dictionary<string, bool> changedBindPoseMatrixBoneDictionary = null;
-					//if( HasSceneSkeleton( scene ) )
-					//{
-					//	boneDictionary = new Dictionary<string, ModelImportSceneSource.BoneSource>();
-
-					//	Set<string> boneNames = new Set<string>();
-					//	Set<string> realBones = GetRealBones( scene );
-
-					//	CreateBones( boneDictionary, sceneSource, scene.RootNode, scene.Animations,
-					//		 animationDurations, boneNames, realBones, needToLoadAnimations, frameStep );
-
-					//	changedBindPoseMatrixBoneDictionary = new Dictionary<string, bool>();
-					//	foreach( ModelImportSceneSource.BoneSource bone in sceneSource.Bones )
-					//		changedBindPoseMatrixBoneDictionary.Add( bone.Name, false );
-					//}
-
-					Matrix3 rotation = settings.component.Rotation.Value.ToMatrix3();
-
-					Matrix3 rotateByX = Matrix3.Identity;
+					var rotateByX = Matrix3.Identity;
 					if( settings.component.FixAxes )
 						rotateByX = new Matrix3( 1, 0, 0, 0, 0, 1, 0, -1, 0 );
+					var globalTransform2 = new Matrix4( settings.component.Rotation.Value.ToMatrix3() * rotateByX, settings.component.Position );
+					context.globalTransform = globalTransform2;
 
-					Matrix4 globalTransform = new Matrix4( rotation * rotateByX, settings.component.Position ) * ToMatrix4( scene.RootNode.Transform );
-					globalTransform.Decompose( out _, out Matrix3 globalTransformR, out _ );
-
-					//Matrix4 rotation = Matrix4.Identity;
-					//if( settings.component.Rotation.Value != Quaternion.Identity )
-					//	rotation = settings.component.Rotation.Value.ToMatrix3().ToMatrix4();
-
-					//Matrix4 rotateByX = Matrix4.Identity;
-					//if( settings.component.ForceFrontXAxis )
-					//	rotateByX = new Matrix4( 1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1 );
-
-					//Matrix4 globalTransform = rotation * rotateByX * scene.RootNode.Transform.ToMat4();
+					//Matrix4 globalTransform = new Matrix4( rotation * rotateByX, settings.component.Position ) * ToMatrix4( scene.RootNode.Transform );
 
 					var mode = settings.component.Mode.Value;
-					//if( mode == Import3D.ModeEnum.Auto )
-					//	mode = Import3D.ModeEnum.OneMesh;
 
 					//create one mesh (OneMesh mode)
-					if( mode == Import3D.ModeEnum.OneMesh && scene.HasMeshes && scene.MeshCount != 0 )//&& settings.updateMeshes )
+					if( mode == Import3D.ModeEnum.OneMesh && scene.HasMeshes && scene.MeshCount != 0 ) //&& settings.updateMeshes )
 					{
+						//skeleton and animations
+						//var boneTransformsToNormalize = new Dictionary<SkeletonBone, Matrix4>( 128 );
+						Skeleton skeletonComponent = null;
+						//int[] newIndexFromOldIndex = null;
+						skeletonComponent = CreateSkeletonComponent( context, scene );///*, out newIndexFromOldIndex, out var oldBoneFromNewIndex*/, globalTransform );//, out var addedBones );//, boneTransformsToNormalize );
+
+
+						//!!!!
+						//try
+						//{
+						//	Log.Info( "----------" );
+						//	var equalCheck = new Dictionary<string, string>();
+
+						//	void ShowLogRecursive( Node node, int level )
+						//	{
+						//		var mat = ToMatrix4( node.Transform );
+						//		Matrix4Round( ref mat );
+
+						//		Log.Info( $"{new string( ' ', level * 2 )} Node: " + node.Name + " " + node.MeshCount.ToString() );// + " " + mat.ToString() );
+
+						//		if( equalCheck.TryGetValue( node.Name, out var tr ) )
+						//		{
+						//			if( tr != node.Transform.ToString() )
+						//				throw new Exception( "Not equal transform for node with name: " + node.Name );
+						//		}
+						//		else
+						//			equalCheck.Add( node.Name, node.Transform.ToString() );
+
+						//		foreach( var childNode in node.Children )
+						//			ShowLogRecursive( childNode, level + 1 );
+						//	}
+
+						//	ShowLogRecursive( scene.RootNode, 0 );
+						//	Log.Info( "---------- END" );
+						//}
+						//catch( Exception e )
+						//{
+						//	Log.Info( "Exception: " + e.Message );
+						//}
+
+
 						//mesh
-						var mesh = settings.component.CreateComponent<Mesh>( enabled: false );
-						mesh.Name = "Mesh";
+						var meshComponent = settings.component.CreateComponent<Mesh>( enabled: false );
+						meshComponent.Name = "Mesh";
 
 						foreach( var node in scene.RootNode.Children )
 						{
-							var transform = globalTransform * ToMatrix4( node.Transform );
-							InitMeshGeometriesRecursive( context, node, transform, mesh );
+							var transform = GetNodeFullTransform( context, node );
+							InitMeshGeometriesRecursive( context, node, transform, meshComponent );//, newIndexFromOldIndex );
 						}
 
-						//!!!!or process not processed meshes
-						if( mesh.Components.Count == 0 )
+						//need
+						//if( meshComponent.Components.Count == 0 )
 						{
-							foreach( var aiMesh in scene.Meshes )
-								AddMesh( context, globalTransform, mesh, aiMesh );
+							var transform = GetNodeFullTransform( context, scene.RootNode );
+
+							foreach( var mesh in scene.Meshes )
+							{
+								if( !context.processedMeshes.Contains( mesh ) )
+									AddMesh( context, transform, meshComponent, mesh );//, newIndexFromOldIndex );
+							}
+						}
+
+						//skeleton and animations
+						if( skeletonComponent != null )
+						{
+							meshComponent.AddComponent( skeletonComponent );
+							meshComponent.Skeleton = ReferenceUtility.MakeThisReference( meshComponent, skeletonComponent );
+							InitAnimations( context, scene, meshComponent/*, oldBoneFromNewIndex*/);//, globalTransform );//, addedBones ); //, boneTransformsToNormalize );
 						}
 
 						if( settings.component.MergeGeometries.Value != Import3D.MergeGeometriesEnum.False )
-							mesh.MergeGeometriesWithEqualVertexStructureAndMaterial();
+							meshComponent.MergeGeometriesWithEqualVertexStructureAndMaterial();
 
-						mesh.Enabled = true;
+						meshComponent.Enabled = true;
 					}
 
 					//create meshes, object in space (Meshes mode)
 					if( mode == Import3D.ModeEnum.Meshes && scene.HasMeshes && scene.MeshCount != 0 )
 					{
+						//skeleton and animations
+						//!!!!is not enabled in Meshes mode
+						//int[] newIndexFromOldIndex = null;
+
 						var meshesGroup = settings.component.GetComponent( "Meshes" );
 
 						//Meshes
@@ -1325,42 +588,53 @@ namespace NeoAxis//.Import
 
 							foreach( var node in scene.RootNode.Children )
 							{
-								var transform = globalTransform * ToMatrix4( node.Transform );
+								var transform = GetNodeFullTransform( context, node );
 
-								var mesh = meshesGroup.CreateComponent<Mesh>();
-								InitMeshGeometriesRecursive( context, node, transform, mesh );
+								var meshComponent = meshesGroup.CreateComponent<Mesh>();
+								InitMeshGeometriesRecursive( context, node, transform, meshComponent );//, newIndexFromOldIndex );
 
-								if( mesh.Components.Count != 0 )
+								if( meshComponent.Components.Count != 0 )
 								{
 									if( string.IsNullOrEmpty( node.Name ) )
-										mesh.Name = mesh.Components.ToArray()[ 0 ].Name;
+										meshComponent.Name = meshComponent.Components.ToArray()[ 0 ].Name;
 									else
-										mesh.Name = node.Name;
+										meshComponent.Name = node.Name;
+
+									//skeleton and animations
+									//!!!!is not enabled in Meshes mode
 
 									if( settings.component.MergeGeometries.Value != Import3D.MergeGeometriesEnum.False )
-										mesh.MergeGeometriesWithEqualVertexStructureAndMaterial();
+										meshComponent.MergeGeometriesWithEqualVertexStructureAndMaterial();
 								}
 								else
-									mesh.Dispose();
+									meshComponent.Dispose();
 							}
 
-							//!!!!or process not processed meshes
-							if( meshesGroup.Components.Count == 0 )
+							//need
+							//if( meshesGroup.Components.Count == 0 )
 							{
-								foreach( var aiMesh in scene.Meshes )
+								var transform = GetNodeFullTransform( context, scene.RootNode );
+
+								foreach( var mesh in scene.Meshes )
 								{
-									var mesh = meshesGroup.CreateComponent<Mesh>();
-									AddMesh( context, globalTransform, mesh, aiMesh );
-
-									if( mesh.Components.Count != 0 )
+									if( !context.processedMeshes.Contains( mesh ) )
 									{
-										mesh.Name = mesh.Components.ToArray()[ 0 ].Name;
+										var meshComponent = meshesGroup.CreateComponent<Mesh>();
+										AddMesh( context, transform, meshComponent, mesh );//, newIndexFromOldIndex );
 
-										if( settings.component.MergeGeometries.Value != Import3D.MergeGeometriesEnum.False )
-											mesh.MergeGeometriesWithEqualVertexStructureAndMaterial();
+										if( meshComponent.Components.Count != 0 )
+										{
+											meshComponent.Name = meshComponent.Components.ToArray()[ 0 ].Name;
+
+											//skeleton and animations
+											//!!!!is not enabled in Meshes mode
+
+											if( settings.component.MergeGeometries.Value != Import3D.MergeGeometriesEnum.False )
+												meshComponent.MergeGeometriesWithEqualVertexStructureAndMaterial();
+										}
+										else
+											meshComponent.Dispose();
 									}
-									else
-										mesh.Dispose();
 								}
 							}
 
@@ -1678,28 +952,21 @@ namespace NeoAxis//.Import
 					////}
 
 
+					//////create nodes
+					////if( scene.RootNode != null )
+					////{
+					////	var groupNodes = settings.component.CreateComponent<ObjectInSpace>( -1, false );
+					////	groupNodes.Name = "Nodes";
 
+					////	EnumerateNodeRecursive( settings, scene, groupNodes, scene.RootNode, scene.RootNode.Transform.ToMat4(), sourcesMeshByIndex, 0
+					////		/*, boneDictionary, changedBindPoseMatrixBoneDictionary*/ );
 
-					////!!!!
-					////create nodes
-					//if( scene.RootNode != null )
-					//{
-					//	//!!!!
-					//	var groupNodes = settings.component.CreateComponent<ObjectInSpace>( -1, false );
-					//	groupNodes.Name = "Nodes";
+					////	//EnumerateNodeRecursiveNew( settings, scene, /*sceneSource, */scene.RootNode, scene.RootNode,
+					////	//	scene.RootNode.Transform.ToMat4()/*, boneDictionary, changedBindPoseMatrixBoneDictionary*/ );
 
-					//	//!!!!
-					//	EnumerateNodeRecursive( settings, scene, groupNodes, scene.RootNode, scene.RootNode.Transform.ToMat4(), sourcesMeshByIndex, 0
-					//		/*, boneDictionary, changedBindPoseMatrixBoneDictionary*/ );
-
-					//	//EnumerateNodeRecursiveNew( settings, scene, /*sceneSource, */scene.RootNode, scene.RootNode,
-					//	//	scene.RootNode.Transform.ToMat4()/*, boneDictionary, changedBindPoseMatrixBoneDictionary*/ );
-
-					//	//!!!!
-					//	groupNodes.Enabled = true;
-					//}
-
-
+					////	//!!!!
+					////	groupNodes.Enabled = true;
+					////}
 
 
 					stream?.Dispose();
@@ -1788,111 +1055,60 @@ namespace NeoAxis//.Import
 
 		/////////////////////////////////////////
 
-		public static Vector2F ToVector2F( Vector3D value )
+		public static Vector2F ToVector2F( System.Numerics.Vector3 value )
 		{
 			return new Vector2F( value.X, value.Y );
 		}
 
-		public static Vector3 ToVector3( Vector3D value )
+		public static Vector3 ToVector3( System.Numerics.Vector3 value )
 		{
 			return new Vector3( value.X, value.Y, value.Z );
 		}
 
-		public static Vector3F ToVector3F( Vector3D value )
+		public static Vector3F ToVector3F( System.Numerics.Vector3 value )
 		{
 			return new Vector3F( value.X, value.Y, value.Z );
 		}
 
-		public static Vector4 ToVector4( Color4D value )
+		public static Vector4F ToVector4F( System.Numerics.Vector4 value )
 		{
-			return new Vector4( value.R, value.G, value.B, value.A );
+			return new Vector4F( value.X, value.Y, value.Z, value.W );
 		}
 
-		public static Vector4F ToVector4F( Color4D value )
-		{
-			return new Vector4F( value.R, value.G, value.B, value.A );
-		}
-
-		public static Matrix4 ToMatrix4( Matrix4x4 value )
+		public static Matrix4 ToMatrix4( System.Numerics.Matrix4x4 value )
 		{
 			return new Matrix4(
-				value.A1, value.B1, value.C1, value.D1,
-				value.A2, value.B2, value.C2, value.D2,
-				value.A3, value.B3, value.C3, value.D3,
-				value.A4, value.B4, value.C4, value.D4 );
+				value.M11, value.M21, value.M31, value.M41,
+				value.M12, value.M22, value.M32, value.M42,
+				value.M13, value.M23, value.M33, value.M43,
+				value.M14, value.M24, value.M34, value.M44 );
 		}
 
-		public static Matrix4F ToMatrix4F( Matrix4x4 value )
+		public static Matrix4F ToMatrix4F( System.Numerics.Matrix4x4 value )
 		{
 			return new Matrix4F(
-				value.A1, value.B1, value.C1, value.D1,
-				value.A2, value.B2, value.C2, value.D2,
-				value.A3, value.B3, value.C3, value.D3,
-				value.A4, value.B4, value.C4, value.D4 );
+				value.M11, value.M21, value.M31, value.M41,
+				value.M12, value.M22, value.M32, value.M42,
+				value.M13, value.M23, value.M33, value.M43,
+				value.M14, value.M24, value.M34, value.M44 );
 		}
 
-		public static Quaternion ToQuat( Internal.Assimp.Quaternion value )
+		public static Quaternion ToQuaternionNormalize( System.Numerics.Quaternion value )
 		{
-			return new Quaternion( value.X, value.Y, value.Z, value.W );
+			var q = new Quaternion( value.X, value.Y, value.Z, value.W );
+			return q.GetNormalize();
 		}
 
-		public static QuaternionF ToQuatF( Internal.Assimp.Quaternion value )
+		public static ColorValue ToColorValue( System.Numerics.Vector4 value )
 		{
-			return new QuaternionF( value.X, value.Y, value.Z, value.W );
+			return new ColorValue( value.X, value.Y, value.Z, value.W );
 		}
 
-		public static ColorValue ToColorValue( Color4D value )
+		public static void Matrix4Round( ref Matrix4 matrix )
 		{
-			return new ColorValue( value.R, value.G, value.B, value.A );
-		}
-
-		public static Vector3D ToVector3( Vector2F value )
-		{
-			return new Vector3D( value.X, value.Y, 0.0f );
-		}
-
-		public static Vector3D ToVector3( Vector3F value )
-		{
-			return new Vector3D( value.X, value.Y, value.Z );
-		}
-
-		public static Color4D ToColor( Vector4F value )
-		{
-			return new Color4D( value.X, value.Y, value.Z, value.W );
-		}
-
-		public static Internal.Assimp.Quaternion ToQuaternion( QuaternionF value )
-		{
-			return new Internal.Assimp.Quaternion( value.X, value.Y, value.Z, value.W );
-		}
-
-		public static Color4D ToColor4D( ColorValue value )
-		{
-			return new Color4D( value.Red, value.Green, value.Blue, value.Alpha );
-		}
-
-		public static List<Vector3D> ToVector3DList( Vector3F[] value )
-		{
-			var list = new List<Vector3D>( value.Length );
-			foreach( var item in value )
-				list.Add( ToVector3( item ) );
-			return list;
-		}
-
-		public static List<Vector3D> ToVector3DList( Vector2F[] value )
-		{
-			var list = new List<Vector3D>( value.Length );
-			foreach( var item in value )
-				list.Add( ToVector3( item ) );
-			return list;
-		}
-
-		public static List<Color4D> ToColor4DList( Vector4F[] value )
-		{
-			var list = new List<Color4D>( value.Length );
-			foreach( var item in value )
-				list.Add( ToColor( item ) );
-			return list;
+			for( int y = 0; y < 4; y++ )
+				for( int x = 0; x < 4; x++ )
+					matrix[ x, y ] = Math.Round( matrix[ x, y ], 5 );
 		}
 
 		/////////////////////////////////////////
@@ -1911,215 +1127,461 @@ namespace NeoAxis//.Import
 
 				for( int nMaterial = 0; nMaterial < scene.MaterialCount; nMaterial++ )
 				{
-					var aiMaterial = scene.Materials[ nMaterial ];
+					var material = scene.Materials[ nMaterial ];
 
 					var data = new MaterialData();
 					data.Index = nMaterial;
-					data.Name = GetFixedName( aiMaterial.Name );
+					data.Name = GetFixedName( material.Name );
 
 					try
 					{
-						//TwoSided
-						if( aiMaterial.HasTwoSided && aiMaterial.IsTwoSided )
-							data.TwoSided = true;
-
-						//BaseColor
-						if( aiMaterial.HasColorDiffuse )
+						//BlendMode
 						{
-							var scale = ToVector4F( aiMaterial.ColorDiffuse );
-							data.BaseColor = new ColorValue( scale.X, scale.Y, scale.Z );
-						}
-
-						float? transmissionFactor = null;
-						foreach( var p in aiMaterial.GetAllProperties() )
-						{
-							if( p.Name == "$mat.transmission.factor" )
+							var property = material.GetProperty( "$mat.gltf.alphaMode", TextureType.None, 0 );
+							if( property != null )
 							{
-								if( p.PropertyType == PropertyType.Float )
-									transmissionFactor = p.GetFloatValue();
-								else if( p.PropertyType == PropertyType.Double )
-									transmissionFactor = (float)p.GetDoubleValue();
+								var alphaMode = property.GetStringValue() ?? "";
+								if( alphaMode == "MASK" )
+									data.BlendMode = Material.BlendModeEnum.Masked;
+								else if( alphaMode == "BLEND" )
+									data.BlendMode = Material.BlendModeEnum.Transparent;
 							}
 						}
 
-						//Opacity
-						if( aiMaterial.HasOpacity && aiMaterial.Opacity < 1 )
-							data.Opacity = aiMaterial.Opacity;
-
-						//Transmission factor
-						if( data.Opacity == 1 && transmissionFactor.HasValue && transmissionFactor.Value > 0 )
+						//OpacityMaskThreshold
 						{
-							//!!!!not right?
-							data.Opacity = MathEx.Saturate( 1.0f - MathEx.Sqrt( transmissionFactor.Value ) );
+							var property = material.GetProperty( "$mat.gltf.alphaCutoff", TextureType.None, 0 );
+							if( property != null )
+							{
+								if( property.PropertyType == PropertyType.Float )
+									data.OpacityMaskThreshold = property.GetFloatValue();
+								else if( property.PropertyType == PropertyType.Integer )
+									data.OpacityMaskThreshold = property.GetIntegerValue();
+							}
 						}
+
+						//TwoSided
+						if( material.HasTwoSided && material.IsTwoSided )
+							data.TwoSided = true;
+						//TwoSided fix
+						{
+							var property = material.GetProperty( "$mat.twosided", TextureType.None, 0 );
+							if( property != null )
+							{
+								if( property.PropertyType == PropertyType.Buffer )
+								{
+									if( property.ByteCount == 1 && property.RawData[ 0 ] != 0 )
+										data.TwoSided = true;
+								}
+							}
+						}
+
+						//BaseColor
+						if( material.HasColorDiffuse )
+						{
+							var value = ToVector4F( material.ColorDiffuse );
+							data.BaseColor = new ColorValue( value.X, value.Y, value.Z );
+
+							//!!!!check
+							if( value.W != 1 )
+								data.Opacity *= value.W;
+						}
+
+						//Opacity
+						if( material.HasOpacity && material.Opacity < 1 )
+							data.Opacity *= material.Opacity;
+
+						//!!!!check
+						//Opacity from TransparencyFactor
+						if( material.HasTransparencyFactor && material.TransparencyFactor > 0 )
+							data.Opacity *= 1.0f - material.TransparencyFactor;
+
+
+						//Metallic
+						{
+							var property = material.GetProperty( "$mat.metallicFactor", TextureType.None, 0 );
+							if( property != null )
+							{
+								if( property.PropertyType == PropertyType.Float )
+									data.Metallic = property.GetFloatValue();
+								else if( property.PropertyType == PropertyType.Integer )
+									data.Metallic = property.GetIntegerValue();
+							}
+						}
+
+						//Roughness
+						{
+							var property = material.GetProperty( "$mat.roughnessFactor", TextureType.None, 0 );
+							if( property != null )
+							{
+								if( property.PropertyType == PropertyType.Float )
+									data.Roughness = property.GetFloatValue();
+								else if( property.PropertyType == PropertyType.Integer )
+									data.Roughness = property.GetIntegerValue();
+							}
+						}
+
+						//Emissive color
+						if( material.HasColorEmissive )
+						{
+							var value = ToVector4F( material.ColorEmissive ).ToVector3F();
+
+							var intensityProperty = material.GetProperty( "$mat.emissiveIntensity", TextureType.None, 0 );
+							if( intensityProperty != null )
+							{
+								if( intensityProperty.PropertyType == PropertyType.Float )
+									value *= intensityProperty.GetFloatValue();
+								else if( intensityProperty.PropertyType == PropertyType.Integer )
+									value *= intensityProperty.GetIntegerValue();
+							}
+
+							if( value != Vector3F.Zero )
+								data.EmissionColor = new ColorValue( value );
+						}
+
+						//Clearcoat
+						{
+							var property = material.GetProperty( "$mat.clearcoat.factor", TextureType.None, 0 );
+							if( property != null )
+							{
+								if( property.PropertyType == PropertyType.Float )
+									data.Clearcoat = property.GetFloatValue();
+								else if( property.PropertyType == PropertyType.Integer )
+									data.Clearcoat = property.GetIntegerValue();
+							}
+						}
+
+						//ClearcoatRoughness
+						{
+							var property = material.GetProperty( "$mat.clearcoat.roughnessFactor", TextureType.None, 0 );
+							if( property != null )
+							{
+								if( property.PropertyType == PropertyType.Float )
+									data.ClearcoatRoughness = property.GetFloatValue();
+								else if( property.PropertyType == PropertyType.Integer )
+									data.ClearcoatRoughness = property.GetIntegerValue();
+							}
+						}
+
+						//SheenColor
+						{
+							var property = material.GetProperty( "$clr.sheen.factor", TextureType.None, 0 );
+							if( property != null )
+							{
+								if( property.PropertyType == PropertyType.Float )
+								{
+									var array = property.GetFloatArrayValue();
+									if( array != null && array.Length >= 3 )
+										data.SheenColor = new ColorValue( array[ 0 ], array[ 1 ], array[ 2 ] );
+								}
+								else if( property.PropertyType == PropertyType.Integer )
+								{
+									var array = property.GetIntegerArrayValue();
+									if( array != null && array.Length >= 3 )
+										data.SheenColor = new ColorValue( array[ 0 ], array[ 1 ], array[ 2 ] );
+								}
+							}
+						}
+
+
+						//!!!!sheen.roughnessFactor
+
+
+						//!!!!need modern implementation of Transmission
+
+						////Transmission factor
+						//float? transmissionFactor = null;
+						//foreach( var p in material.GetAllProperties() )
+						//{
+						//	if( p.Name == "$mat.transmission.factor" )
+						//	{
+						//		if( p.PropertyType == PropertyType.Float )
+						//			transmissionFactor = p.GetFloatValue();
+						//		else if( p.PropertyType == PropertyType.Double )
+						//			transmissionFactor = (float)p.GetDoubleValue();
+						//	}
+						//}
+						//if( data.Opacity == 1 && transmissionFactor.HasValue && transmissionFactor.Value > 0 )
+						//{
+						//	data.Opacity = MathEx.Saturate( 1.0f - MathEx.Sqrt( transmissionFactor.Value ) );
+						//}
+
+
+						//unlit
+						{
+							var property = material.GetProperty( "$mat.gltf.unlit", TextureType.None, 0 );
+							if( property != null )
+							{
+								if( property.PropertyType == PropertyType.Buffer )
+								{
+									if( property.ByteCount == 1 && property.RawData[ 0 ] != 0 )
+										data.ShadingModel = Material.ShadingModelEnum.Unlit;
+								}
+							}
+						}
+
+
+						var textureTypes = new List<(TextureType, int)>();
+						textureTypes.Add( (TextureType.Diffuse, 0) );
+						textureTypes.Add( (TextureType.Normals, 0) );
+						textureTypes.Add( (TextureType.Emissive, 0) );
+						textureTypes.Add( (TextureType.Lightmap, 0) );
+						textureTypes.Add( (TextureType.AmbientOcclusion, 0) );
+						textureTypes.Add( (TextureType.Metalness, 0) );
+						textureTypes.Add( (TextureType.Roughness, 0) );
+						textureTypes.Add( (TextureType.Displacement, 0) );
+						textureTypes.Add( (TextureType.Height, 0) );
+						textureTypes.Add( (TextureType.Opacity, 0) );
+						textureTypes.Add( (TextureType.BaseColor, 0) );
+						textureTypes.Add( (TextureType.EmissionColor, 0) );
+						textureTypes.Add( (TextureType.GltfMetallicRoughness, 0) );
+						textureTypes.Add( (TextureType.MayaBase, 0) );
+						textureTypes.Add( (TextureType.MayaSpecularRoughness, 0) );
+						textureTypes.Add( (TextureType.Ambient, 0) );
+						textureTypes.Add( (TextureType.Clearcoat, 0) );
+						textureTypes.Add( (TextureType.Clearcoat, 1) );
+						textureTypes.Add( (TextureType.Clearcoat, 2) );
+						textureTypes.Add( (TextureType.Sheen, 0) );
+
 
 						//!!!!
 
-						//if( aiMaterial.HasTransparencyFactor )
-						//	Log.Info( "tf " + aiMaterial.TransparencyFactor.ToString() );
+						///// <summary>
+						///// Simulates transmission through the surface.
+						///// May include further information such as wall thickness.
+						///// </summary>
+						//Transmission = 21,
 
-						//if( aiMaterial.HasColorTransparent )
-						//	Log.Info( "ct " + aiMaterial.ColorTransparent.ToString() );
-
-						//if( aiMaterial.HasBlendMode )
-						//	Log.Info( "bm " + aiMaterial.BlendMode.ToString() );
-
-
-						//!!!!support texture coord channels? right now support only channel 0
-
-
-						var textureTypes = new List<TextureType>();
-						textureTypes.Add( TextureType.Diffuse );
-						textureTypes.Add( TextureType.Normals );
-						textureTypes.Add( TextureType.Emissive );
-						textureTypes.Add( TextureType.Lightmap );
-						textureTypes.Add( TextureType.AmbientOcclusion );
-						textureTypes.Add( TextureType.Metalness );
-						textureTypes.Add( TextureType.Roughness );
-						textureTypes.Add( TextureType.Displacement );
-						textureTypes.Add( TextureType.Height );
-						textureTypes.Add( TextureType.Opacity );
+						///// <summary>
+						///// Simulates a surface with directional properties.
+						///// </summary>
+						//Anisotropy = 26,
 
 
-						foreach( var textureType in textureTypes )
+						//!!!!SheenRoughness
+						//add support to the engine
+						//index == 1
+						//#define AI_MATKEY_SHEEN_ROUGHNESS_TEXTURE aiTextureType_SHEEN, 1
+
+
+
+						foreach( var textureTypeItem in textureTypes )
 						{
-							int nTexCoord = 0;//for( int nTexCoord = 0; nTexCoord < 4; nTexCoord++ )
+							var textureType = textureTypeItem.Item1;
+							var textureIndex = textureTypeItem.Item2;
+
+							material.GetMaterialTexture( textureType, textureIndex, out var slot );
+							if( !string.IsNullOrEmpty( slot.FilePath ) )
 							{
-								aiMaterial.GetMaterialTexture( textureType, nTexCoord, out var slot );
+								string fullPath = "";
 
-								if( !string.IsNullOrEmpty( slot.FilePath ) && nTexCoord == 0 )
+								if( slot.FilePath.Length > 1 && slot.FilePath[ 0 ] == '*' )
 								{
-									string fullPath = "";
+									var filePath = slot.FilePath.Substring( 1 );
 
-									if( slot.FilePath.Length > 1 && slot.FilePath[ 0 ] == '*' )
+									//replace %20
+									filePath = System.Web.HttpUtility.UrlDecode( filePath );
+
+									//embed
+									if( int.TryParse( filePath, out var embedIndex ) )
 									{
-										var filePath = slot.FilePath.Substring( 1 );
-
-										//replace %20
-										filePath = System.Web.HttpUtility.UrlDecode( filePath );
-
-										//embed
-										if( int.TryParse( filePath, out var embedIndex ) )
+										if( embedIndex < scene.TextureCount )
 										{
-											if( embedIndex < scene.TextureCount )
+											if( !extractedTextures.TryGetValue( embedIndex, out var fullPath2 ) )
 											{
-												if( !extractedTextures.TryGetValue( embedIndex, out var fullPath2 ) )
+												var embedTexture = scene.Textures[ embedIndex ];
+												if( embedTexture.HasCompressedData )
 												{
-													var embedTexture = scene.Textures[ embedIndex ];
-													if( embedTexture.HasCompressedData )
+													//compressed data
+													var ext = embedTexture.CompressedFormatHint;
+													if( !string.IsNullOrEmpty( ext ) )
 													{
-														//compressed data
-														var ext = embedTexture.CompressedFormatHint;
-														if( !string.IsNullOrEmpty( ext ) )
+														var fileName = embedTexture.Filename;
+														if( string.IsNullOrEmpty( fileName ) )
+															fileName = embedIndex.ToString();
+														fullPath2 = Path.Combine( embedTexturesOutputVirtualDirectory, fileName + "." + ext );
+
+														var realPath = VirtualPathUtility.GetRealPathByVirtual( fullPath2 );
+
+														//write file
 														{
-															fullPath2 = Path.Combine( embedTexturesOutputVirtualDirectory, embedTexture.Filename + "." + ext );
-															var realPath = VirtualPathUtility.GetRealPathByVirtual( fullPath2 );
-
-															//write file
-															{
-																var realPathFolder = Path.GetDirectoryName( realPath );
-																if( !Directory.Exists( realPathFolder ) )
-																	Directory.CreateDirectory( realPathFolder );
-																File.WriteAllBytes( realPath, embedTexture.CompressedData );
-															}
-
-															extractedTextures[ embedIndex ] = fullPath2;
+															var realPathFolder = Path.GetDirectoryName( realPath );
+															if( !Directory.Exists( realPathFolder ) )
+																Directory.CreateDirectory( realPathFolder );
+															File.WriteAllBytes( realPath, embedTexture.CompressedData );
 														}
-													}
-													else
-													{
-														//uncompressed data
 
-														//!!!!impl
+														extractedTextures[ embedIndex ] = fullPath2;
 													}
 												}
+												else
+												{
+													//uncompressed data
 
-												fullPath = fullPath2;
+													//impl?
+													//Log.InvisibleInfo( "impl" );
+												}
 											}
-										}
-									}
-									else
-									{
-										//usual reference to file
 
-										var filePath = slot.FilePath;
-										if( filePath.Length > 2 && filePath.Substring( 0, 2 ) == "./" )
-											filePath = filePath.Substring( 2 );
-										filePath = VirtualPathUtility.NormalizePath( filePath );
-
-										//replace %20
-										filePath = System.Web.HttpUtility.UrlDecode( filePath );
-
-										var fullPath2 = Path.Combine( importContext.directoryName, filePath );
-										if( VirtualFile.Exists( fullPath2 ) )
 											fullPath = fullPath2;
+										}
+									}
+								}
+								else
+								{
+									//usual reference to file
+
+									var filePath = slot.FilePath;
+									if( filePath.Length > 2 && filePath.Substring( 0, 2 ) == "./" )
+										filePath = filePath.Substring( 2 );
+									filePath = VirtualPathUtility.NormalizePath( filePath );
+
+									//replace %20
+									filePath = System.Web.HttpUtility.UrlDecode( filePath );
+
+									var fullPath2 = Path.Combine( importContext.directoryName, filePath );
+									if( VirtualFile.Exists( fullPath2 ) )
+										fullPath = fullPath2;
+								}
+
+								if( !string.IsNullOrEmpty( fullPath ) )
+								{
+									var filePath = Path.GetFileName( fullPath );
+
+									//parse uv transform
+									TextureUVTransform uvTransform = null;
+									{
+										var p = material.GetAllProperties().FirstOrDefault( p => p.Name == "$tex.uvtrafo" && p.TextureType == textureType && p.TextureIndex == 0 );
+										if( p != null && p.RawData != null && p.RawData.Length == 20 )
+										{
+											var offset = new Vector2F( BitConverter.ToSingle( p.RawData, 0 ), BitConverter.ToSingle( p.RawData, 4 ) );
+											var scale = new Vector2F( BitConverter.ToSingle( p.RawData, 8 ), BitConverter.ToSingle( p.RawData, 12 ) );
+											var rotation = BitConverter.ToSingle( p.RawData, 16 );
+
+											if( !offset.Equals( Vector2F.Zero, 0.001f ) || !scale.Equals( Vector2F.One, 0.001f ) || Math.Abs( rotation ) > 0.001f )
+											{
+												uvTransform = new TextureUVTransform() { Translation = offset, Scale = scale, Rotation = rotation };
+											}
+										}
 									}
 
-									if( !string.IsNullOrEmpty( fullPath ) )
+									switch( textureType )
 									{
-										var filePath = Path.GetFileName( fullPath );
+									case TextureType.Diffuse:
+									case TextureType.BaseColor:
+									case TextureType.MayaBase:
+										data.BaseColorTexture = fullPath;
+										data.BaseColorTextureUVIndex = slot.UVIndex;
+										data.BaseColorTextureUVTransform = uvTransform;
+										break;
 
-										switch( textureType )
+									case TextureType.Normals:
+										data.NormalTexture = fullPath;
+										data.NormalTextureUVIndex = slot.UVIndex;
+										data.NormalTextureUVTransform = uvTransform;
+										break;
+
+									case TextureType.Emissive:
+										data.EmissiveTexture = fullPath;
+										data.EmissiveTextureUVIndex = slot.UVIndex;
+										data.EmissiveTextureUVTransform = uvTransform;
+										break;
+
+									//case TextureType.EmissionColor:
+									//	data.EmissiveTexture = fullPath;
+									//	break;
+
+									case TextureType.Metalness:
+										data.MetallicTexture = fullPath;
+										data.MetallicTextureUVIndex = slot.UVIndex;
+										data.MetallicTextureUVTransform = uvTransform;
+										break;
+
+									case TextureType.Roughness:
+									case TextureType.MayaSpecularRoughness:
+										data.RoughnessTexture = fullPath;
+										data.RoughnessTextureUVIndex = slot.UVIndex;
+										data.RoughnessTextureUVTransform = uvTransform;
+										break;
+
+									case TextureType.Displacement:
+									case TextureType.Height:
+										data.DisplacementTexture = fullPath;
+										data.DisplacementTextureUVIndex = slot.UVIndex;
+										data.DisplacementTextureUVTransform = uvTransform;
+										break;
+
+									case TextureType.Opacity:
+										data.OpacityTexture = fullPath;
+										data.OpacityTextureUVIndex = slot.UVIndex;
+										data.OpacityTextureUVTransform = uvTransform;
+										break;
+
+									case TextureType.Lightmap:
+									case TextureType.AmbientOcclusion:
+									case TextureType.Ambient:
+										data.AmbientOcclusionTexture = fullPath;
+										data.AmbientOcclusionTextureUVIndex = slot.UVIndex;
+										data.AmbientOcclusionTextureUVTransform = uvTransform;
+										break;
+
+									case TextureType.GltfMetallicRoughness:
+										data.RoughnessTexture = fullPath;
+										data.RoughnessTextureChannel = "G";
+										data.RoughnessTextureUVIndex = slot.UVIndex;
+										data.RoughnessTextureUVTransform = uvTransform;
+										data.MetallicTexture = fullPath;
+										data.MetallicTextureChannel = "B";
+										data.MetallicTextureUVIndex = slot.UVIndex;
+										data.MetallicTextureUVTransform = uvTransform;
+										break;
+
+									case TextureType.Clearcoat:
+										switch( textureIndex )
 										{
-										case TextureType.Diffuse:
-											data.BaseColorTexture = fullPath;
+										case 0:
+											data.ClearcoatTexture = fullPath;
+											data.ClearcoatTextureUVTransform = uvTransform;
+											data.ClearcoatTextureUVIndex = slot.UVIndex;
 											break;
-
-										case TextureType.Normals:
-											data.NormalTexture = fullPath;
+										case 1:
+											data.ClearcoatRoughnessTexture = fullPath;
+											data.ClearcoatRoughnessTextureUVTransform = uvTransform;
+											data.ClearcoatRoughnessTextureUVIndex = slot.UVIndex;
 											break;
-
-										case TextureType.Emissive:
-											data.EmissiveTexture = fullPath;
-											break;
-
-										case TextureType.Metalness:
-											data.MetallicTexture = fullPath;
-											break;
-
-										case TextureType.Roughness:
-											data.RoughnessTexture = fullPath;
-											break;
-
-										case TextureType.Displacement:
-										case TextureType.Height:
-											data.DisplacementTexture = fullPath;
-											break;
-
-										case TextureType.Opacity:
-											data.OpacityTexture = fullPath;
-											break;
-
-										case TextureType.Lightmap:
-										case TextureType.AmbientOcclusion:
-											data.AmbientOcclusionTexture = fullPath;
-
-											//Apps specific (Sketchfab)
-											if( filePath.ToLower().Contains( "_metallicroughness." ) )
-											{
-												data.RoughnessTexture = fullPath;
-												data.RoughnessTextureChannel = "G";
-												data.MetallicTexture = fullPath;
-												data.MetallicTextureChannel = "B";
-											}
-
+										case 2:
+											data.ClearcoatNormalTexture = fullPath;
+											data.ClearcoatNormalTextureUVTransform = uvTransform;
+											data.ClearcoatNormalTextureUVIndex = slot.UVIndex;
 											break;
 										}
+										break;
 
+									case TextureType.Sheen:
+										data.SheenColorTexture = fullPath;
+										data.SheenColorTextureUVIndex = slot.UVIndex;
+										data.SheenColorTextureUVTransform = uvTransform;
+										break;
 									}
-
 								}
 							}
 						}
 
 						//fix channels for merged metallic, roughness textures
-						if( !string.IsNullOrEmpty( data.MetallicTexture ) && !string.IsNullOrEmpty( data.RoughnessTexture ) && data.MetallicTexture == data.RoughnessTexture )
+						if( !string.IsNullOrEmpty( data.MetallicTexture ) && !string.IsNullOrEmpty( data.RoughnessTexture ) && data.MetallicTexture == data.RoughnessTexture && data.MetallicTextureChannel == "R" && data.RoughnessTextureChannel == "R" )
 						{
-							if( data.MetallicTextureChannel == "R" && data.RoughnessTextureChannel == "R" )
+							data.RoughnessTextureChannel = "G";
+							data.MetallicTextureChannel = "B";
+						}
+
+						//add opacity texture from base color texture
+						if( data.BlendMode == Material.BlendModeEnum.Masked || data.BlendMode == Material.BlendModeEnum.Transparent )
+						{
+							if( string.IsNullOrEmpty( data.OpacityTexture ) && !string.IsNullOrEmpty( data.BaseColorTexture ) )
 							{
-								//!!!!maybe detect order by file name
-								data.MetallicTextureChannel = "R";
-								data.RoughnessTextureChannel = "G";
+								data.OpacityTexture = data.BaseColorTexture;
+								data.OpacityTextureChannel = "A";
+								data.OpacityTextureUVIndex = data.BaseColorTextureUVIndex;
 							}
 						}
 
@@ -2162,8 +1624,15 @@ namespace NeoAxis//.Import
 							{
 								data.OpacityTexture = data.BaseColorTexture;
 								data.OpacityTextureChannel = "A";
+								data.OpacityTextureUVIndex = data.BaseColorTextureUVIndex;
+
+								data.BlendMode = Material.BlendModeEnum.Masked;
 							}
 						}
+
+						//fix Blend mode
+						if( data.Opacity < 1 && data.BlendMode == Material.BlendModeEnum.Opaque )
+							data.BlendMode = Material.BlendModeEnum.Masked;
 
 					}
 					catch( Exception e )
@@ -2176,6 +1645,937 @@ namespace NeoAxis//.Import
 			}
 
 			return result;
+		}
+
+
+		//skeleton and animations
+
+		static void InitBoneRecursive( ImportContext importContext, Component parentComponent, Node boneNode )
+		{
+			var skeletonStructure = importContext.skeletonStructure;
+
+			var boneComponent = parentComponent.CreateComponent<SkeletonBone>();
+			boneComponent.Name = boneNode.Name;
+
+			//calculate full transform from root to this bone
+			var transform = GetNodeFullTransform( importContext, boneNode );
+			transform.Decompose( out var translation, out Quaternion rotation, out var scale );
+
+			//round
+			translation.X = Math.Round( translation.X, 5 );
+			translation.Y = Math.Round( translation.Y, 5 );
+			translation.Z = Math.Round( translation.Z, 5 );
+			rotation.X = Math.Round( rotation.X, 5 );
+			rotation.Y = Math.Round( rotation.Y, 5 );
+			rotation.Z = Math.Round( rotation.Z, 5 );
+			rotation.W = Math.Round( rotation.W, 5 );
+			scale.X = Math.Round( scale.X, 5 );
+			scale.Y = Math.Round( scale.Y, 5 );
+			scale.Z = Math.Round( scale.Z, 5 );
+
+			boneComponent.Transform = new Transform( translation, rotation, scale );
+
+			skeletonStructure.nodeBySkeletonBone[ boneComponent ] = boneNode;
+
+			foreach( var childBone in boneNode.Children )
+			{
+				if( skeletonStructure.boneIndexByName.ContainsKey( childBone.Name ) )
+					InitBoneRecursive( importContext, boneComponent, childBone );
+			}
+		}
+
+		class MeshesSkeletonStructure
+		{
+			Internal.Assimp.Scene scene;
+
+			public Dictionary<Node, bool> potentiallyMeshBones = new Dictionary<Node, bool>();
+			public Dictionary<string, Matrix4> boneOffsetMatrixByName = new Dictionary<string, Matrix4>();
+
+			//public ESet<string> nodesWithAnimationData = new ESet<string>(); //to detect rootSkeletonNode
+			public Node rootSkeletonNode;
+			public EDictionary<string, int> boneIndexByName = new EDictionary<string, int>();
+			public EDictionary<string, Node> boneNodeByName = new EDictionary<string, Node>();
+			public EDictionary<SkeletonBone, Node> nodeBySkeletonBone = new EDictionary<SkeletonBone, Node>();
+
+			//
+
+			public MeshesSkeletonStructure( Internal.Assimp.Scene scene )
+			{
+				this.scene = scene;
+
+				CalculatePotentiallyMeshBones();
+				//CalculateNodeWithAnimationData();
+				CalculateRootSkeletonNode();
+				CalculateAllBoneNamesRecursive( rootSkeletonNode );
+			}
+
+			Node FindNodeByName( Node node, string name )
+			{
+				if( node.Name == name )
+					return node;
+				return node.Children.Select( c => FindNodeByName( c, name ) ).FirstOrDefault( n => n != null );
+			}
+
+			void CalculatePotentiallyMeshBones()
+			{
+				foreach( var mesh in scene.Meshes )
+				{
+					foreach( var bone in mesh.Bones )
+					{
+						var node = FindNodeByName( scene.RootNode, bone.Name );
+						if( node != null )
+						{
+							potentiallyMeshBones[ node ] = true;
+
+							while( node != null )
+							{
+								potentiallyMeshBones[ node ] = true;
+								node = node.Parent;
+							}
+						}
+
+						//get bone offset matrix
+						var offsetMatrix = ToMatrix4( bone.OffsetMatrix );
+						if( boneOffsetMatrixByName.TryGetValue( bone.Name, out var currentMatrix ) )
+						{
+							//check that offset matrix is the same for all meshes
+							if( offsetMatrix != currentMatrix )
+								Log.Warning( $"Bone \"{bone.Name}\" has different offset matrices in different meshes." );
+						}
+						boneOffsetMatrixByName[ bone.Name ] = offsetMatrix;
+					}
+				}
+			}
+
+			//void CalculateNodeWithAnimationData()
+			//{
+			//	for( int nAnimation = 0; nAnimation < scene.AnimationCount; nAnimation++ )
+			//	{
+			//		var animation = scene.Animations[ nAnimation ];
+
+			//		foreach( var channel in animation.NodeAnimationChannels )
+			//			nodesWithAnimationData.AddWithCheckAlreadyContained( channel.NodeName );
+			//	}
+			//}
+
+			void CalculateRootSkeletonNodeRecursive( Node node )
+			{
+				var childrenPotentiallyMeshBones = 0;
+				foreach( var childNode in node.Children )
+				{
+					if( potentiallyMeshBones.ContainsKey( childNode ) )
+						childrenPotentiallyMeshBones++;
+				}
+
+				//more than 1 child nodes with potentially mesh bones or contains animation tracks, so this node is root skeleton node
+				if( childrenPotentiallyMeshBones > 1 ) //|| nodesWithAnimationData.Contains( node.Name ) )
+				{
+					//found root skeleton node, exit
+					rootSkeletonNode = node;
+					return;
+				}
+
+				//enumerate child nodes
+				foreach( var childNode2 in node.Children )
+				{
+					CalculateRootSkeletonNodeRecursive( childNode2 );
+
+					//already found root skeleton node, exit
+					if( rootSkeletonNode != null )
+						return;
+				}
+			}
+
+			void CalculateRootSkeletonNode()
+			{
+				//!!!!
+				//not work
+				////unable from Assimp to detect root skeleton node, so just find first node with more than 1 child nodes with potentially mesh bones
+				//CalculateRootSkeletonNodeRecursive( scene.RootNode );
+
+				//or use root node if not found
+				if( rootSkeletonNode == null )
+					rootSkeletonNode = scene.RootNode;
+			}
+
+			void CalculateAllBoneNamesRecursive( Node node )
+			{
+				boneIndexByName.Add( node.Name, boneIndexByName.Count );
+				boneNodeByName.Add( node.Name, node );
+
+				foreach( var childNode in node.Children )
+				{
+					if( potentiallyMeshBones.ContainsKey( childNode ) )
+						CalculateAllBoneNamesRecursive( childNode );
+				}
+			}
+		}
+
+		////Node rootNode, out int[] newIndexFromOldIndex, out SkeletonBone[] oldBoneFromNewIndex //, Matrix4 additionalTransform/*, out EDictionary<SkeletonBone, Node> addedBones*/ ) //, Dictionary<SkeletonBone, Matrix4> boneTransformsToNormalize )	
+		////newIndexFromOld - an array mapping from old bone indices to a new : ret[oldIndex]==newIndex
+
+		static Skeleton CreateSkeletonComponent( ImportContext importContext, Internal.Assimp.Scene scene )
+
+		{
+			//newIndexFromOldIndex = null;
+			//oldBoneFromNewIndex = null;
+
+			var skeletonStructure = new MeshesSkeletonStructure( scene );
+
+			//no bones
+			if( skeletonStructure.potentiallyMeshBones.Count == 0 )
+				return null;
+
+			importContext.skeletonStructure = skeletonStructure;
+
+			//create skeleton component
+			var skeletonComponent = new Skeleton();
+			skeletonComponent.Name = "Skeleton";
+
+			//create bone components
+			InitBoneRecursive( importContext, skeletonComponent, skeletonStructure.rootSkeletonNode );
+
+
+			////var oldBones = new Dictionary<NeoAxis.SkeletonBone, SkeletonBone>();
+			////foreach( var firstLevelBone in skeleton.RootBone.Children )
+			////	InitBoneRecursive( importContext, skeletonComponent, firstLevelBone, skeleton, oldBones, additionalTransform, boneTransformsToNormalize );
+
+			////var allBones = skeletonComponent.GetBones(); //contains information about new bone indices
+			////int maxOldIndex = oldBones.Count == 0 ? -1 : oldBones.Values.Select( _ => skeleton.GetBoneIndexByNode( _.Node ) ).Max();
+			////newIndexFromOldIndex = new int[ maxOldIndex + 1 ];
+			////for( int i = 0; i < newIndexFromOldIndex.Length; i++ )
+			////	newIndexFromOldIndex[ i ] = -1;
+			////for( int newIndex = 0; newIndex < allBones.Length; newIndex++ )
+			////{
+			////	var bone = oldBones[ allBones[ newIndex ] ];
+			////	newIndexFromOldIndex[ skeleton.GetBoneIndexByNode( bone.Node ) ] = newIndex;
+			////}
+
+			////oldBoneFromNewIndex = new SkeletonBone[ allBones.Length ];
+			////for( int boneIndex = 0; boneIndex < oldBoneFromNewIndex.Length; boneIndex++ )
+			////	oldBoneFromNewIndex[ boneIndex ] = oldBones[ allBones[ boneIndex ] ];
+
+
+			return skeletonComponent;
+		}
+
+		class KeyCalculator
+		{
+			public NodeAnimationChannel channel;
+			public double timeFactor;
+
+			//
+
+			double RepeatTime( double time, double firstTime, double lastTime )
+			{
+				var length = lastTime - firstTime;
+				if( length <= 0 )
+					return firstTime;
+
+				time = firstTime + ( time - firstTime ) % length;
+				if( time < firstTime )
+					time += length;
+				return time;
+			}
+
+			double GetPositionTime( int index ) => channel.PositionKeys[ index ].Time * timeFactor;
+			double GetRotationTime( int index ) => channel.RotationKeys[ index ].Time * timeFactor;
+			double GetScalingTime( int index ) => channel.ScalingKeys[ index ].Time * timeFactor;
+
+			public Vector3 EvaluatePosition( double time )
+			{
+				//if( channel.PositionKeyCount == 0 )
+				//	return null;
+				if( channel.PositionKeyCount == 1 )
+					return ToVector3( channel.PositionKeys[ 0 ].Value );
+
+				var firstTime = GetPositionTime( 0 );
+				var lastTime = GetPositionTime( channel.PositionKeyCount - 1 );
+
+				if( time < firstTime )
+				{
+					switch( channel.PreState )
+					{
+					case AnimationBehaviour.Constant:
+						return ToVector3( channel.PositionKeys[ 0 ].Value );
+					case AnimationBehaviour.Repeat:
+						time = RepeatTime( time, firstTime, lastTime );
+						break;
+					default: //case AnimationBehaviour.Linear:
+						{
+							var t0 = GetPositionTime( 0 );
+							var t1 = GetPositionTime( 1 );
+							var v0 = ToVector3( channel.PositionKeys[ 0 ].Value );
+							var v1 = ToVector3( channel.PositionKeys[ 1 ].Value );
+							var factor = t1 != t0 ? ( time - t0 ) / ( t1 - t0 ) : 0.0;
+							return Vector3.Lerp( v0, v1, factor );
+						}
+					}
+				}
+				else if( time > lastTime )
+				{
+					switch( channel.PostState )
+					{
+					case AnimationBehaviour.Constant:
+						return ToVector3( channel.PositionKeys[ channel.PositionKeyCount - 1 ].Value );
+					case AnimationBehaviour.Repeat:
+						time = RepeatTime( time, firstTime, lastTime );
+						break;
+					default:// case AnimationBehaviour.Linear:
+						{
+							var i0 = channel.PositionKeyCount - 2;
+							var i1 = channel.PositionKeyCount - 1;
+							var t0 = GetPositionTime( i0 );
+							var t1 = GetPositionTime( i1 );
+							var v0 = ToVector3( channel.PositionKeys[ i0 ].Value );
+							var v1 = ToVector3( channel.PositionKeys[ i1 ].Value );
+							var factor = t1 != t0 ? ( time - t0 ) / ( t1 - t0 ) : 0.0;
+							return Vector3.Lerp( v0, v1, factor );
+						}
+					}
+				}
+
+				for( int n = 0; n < channel.PositionKeyCount - 1; n++ )
+				{
+					var t0 = GetPositionTime( n );
+					var t1 = GetPositionTime( n + 1 );
+
+					if( time <= t1 || n == channel.PositionKeyCount - 2 )
+					{
+						var v0 = ToVector3( channel.PositionKeys[ n ].Value );
+						var v1 = ToVector3( channel.PositionKeys[ n + 1 ].Value );
+						var factor = t1 != t0 ? ( time - t0 ) / ( t1 - t0 ) : 0.0;
+						return Vector3.Lerp( v0, v1, factor );
+					}
+				}
+
+				return ToVector3( channel.PositionKeys[ channel.PositionKeyCount - 1 ].Value );
+			}
+
+			public Quaternion EvaluateRotation( double time )
+			{
+				//if( channel.RotationKeyCount == 0 )
+				//	return defaultRotation;
+				if( channel.RotationKeyCount == 1 )
+					return ToQuaternionNormalize( channel.RotationKeys[ 0 ].Value );
+
+				var firstTime = GetRotationTime( 0 );
+				var lastTime = GetRotationTime( channel.RotationKeyCount - 1 );
+
+				if( time < firstTime )
+				{
+					switch( channel.PreState )
+					{
+					case AnimationBehaviour.Constant:
+						return ToQuaternionNormalize( channel.RotationKeys[ 0 ].Value );
+					case AnimationBehaviour.Repeat:
+						time = RepeatTime( time, firstTime, lastTime );
+						break;
+					default://case AnimationBehaviour.Linear:
+						{
+							var t0 = GetRotationTime( 0 );
+							var t1 = GetRotationTime( 1 );
+							var v0 = ToQuaternionNormalize( channel.RotationKeys[ 0 ].Value );
+							var v1 = ToQuaternionNormalize( channel.RotationKeys[ 1 ].Value );
+							var factor = t1 != t0 ? ( time - t0 ) / ( t1 - t0 ) : 0.0;
+							return Quaternion.Slerp( v0, v1, factor );
+						}
+					}
+				}
+				else if( time > lastTime )
+				{
+					switch( channel.PostState )
+					{
+					case AnimationBehaviour.Constant:
+						return ToQuaternionNormalize( channel.RotationKeys[ channel.RotationKeyCount - 1 ].Value );
+					case AnimationBehaviour.Repeat:
+						time = RepeatTime( time, firstTime, lastTime );
+						break;
+					default://case AnimationBehaviour.Linear:
+						{
+							var i0 = channel.RotationKeyCount - 2;
+							var i1 = channel.RotationKeyCount - 1;
+							var t0 = GetRotationTime( i0 );
+							var t1 = GetRotationTime( i1 );
+							var v0 = ToQuaternionNormalize( channel.RotationKeys[ i0 ].Value );
+							var v1 = ToQuaternionNormalize( channel.RotationKeys[ i1 ].Value );
+							var factor = t1 != t0 ? ( time - t0 ) / ( t1 - t0 ) : 0.0;
+							return Quaternion.Slerp( v0, v1, factor );
+						}
+					}
+				}
+
+				for( int n = 0; n < channel.RotationKeyCount - 1; n++ )
+				{
+					var t0 = GetRotationTime( n );
+					var t1 = GetRotationTime( n + 1 );
+
+					if( time <= t1 || n == channel.RotationKeyCount - 2 )
+					{
+						var v0 = ToQuaternionNormalize( channel.RotationKeys[ n ].Value );
+						var v1 = ToQuaternionNormalize( channel.RotationKeys[ n + 1 ].Value );
+						var factor = t1 != t0 ? ( time - t0 ) / ( t1 - t0 ) : 0.0;
+						return Quaternion.Slerp( v0, v1, factor );
+					}
+				}
+
+				return ToQuaternionNormalize( channel.RotationKeys[ channel.RotationKeyCount - 1 ].Value );
+			}
+
+			public Vector3 EvaluateScale( double time )
+			{
+				//if( channel.ScalingKeyCount == 0 )
+				//	return defaultScale;
+				if( channel.ScalingKeyCount == 1 )
+					return ToVector3( channel.ScalingKeys[ 0 ].Value );
+
+				var firstTime = GetScalingTime( 0 );
+				var lastTime = GetScalingTime( channel.ScalingKeyCount - 1 );
+
+				if( time < firstTime )
+				{
+					switch( channel.PreState )
+					{
+					case AnimationBehaviour.Constant:
+						return ToVector3( channel.ScalingKeys[ 0 ].Value );
+					case AnimationBehaviour.Repeat:
+						time = RepeatTime( time, firstTime, lastTime );
+						break;
+					default://case AnimationBehaviour.Linear:
+						{
+							var t0 = GetScalingTime( 0 );
+							var t1 = GetScalingTime( 1 );
+							var v0 = ToVector3( channel.ScalingKeys[ 0 ].Value );
+							var v1 = ToVector3( channel.ScalingKeys[ 1 ].Value );
+							var factor = t1 != t0 ? ( time - t0 ) / ( t1 - t0 ) : 0.0;
+							return Vector3.Lerp( v0, v1, factor );
+						}
+					}
+				}
+				else if( time > lastTime )
+				{
+					switch( channel.PostState )
+					{
+					case AnimationBehaviour.Constant:
+						return ToVector3( channel.ScalingKeys[ channel.ScalingKeyCount - 1 ].Value );
+					case AnimationBehaviour.Repeat:
+						time = RepeatTime( time, firstTime, lastTime );
+						break;
+					default://case AnimationBehaviour.Linear:
+						{
+							var i0 = channel.ScalingKeyCount - 2;
+							var i1 = channel.ScalingKeyCount - 1;
+							var t0 = GetScalingTime( i0 );
+							var t1 = GetScalingTime( i1 );
+							var v0 = ToVector3( channel.ScalingKeys[ i0 ].Value );
+							var v1 = ToVector3( channel.ScalingKeys[ i1 ].Value );
+							var factor = t1 != t0 ? ( time - t0 ) / ( t1 - t0 ) : 0.0;
+							return Vector3.Lerp( v0, v1, factor );
+						}
+					}
+				}
+
+				for( int n = 0; n < channel.ScalingKeyCount - 1; n++ )
+				{
+					var t0 = GetScalingTime( n );
+					var t1 = GetScalingTime( n + 1 );
+
+					if( time <= t1 || n == channel.ScalingKeyCount - 2 )
+					{
+						var v0 = ToVector3( channel.ScalingKeys[ n ].Value );
+						var v1 = ToVector3( channel.ScalingKeys[ n + 1 ].Value );
+						var factor = t1 != t0 ? ( time - t0 ) / ( t1 - t0 ) : 0.0;
+						return Vector3.Lerp( v0, v1, factor );
+					}
+				}
+
+				return ToVector3( channel.ScalingKeys[ channel.ScalingKeyCount - 1 ].Value );
+			}
+		}
+
+		static void InitAnimations( ImportContext importContext, Internal.Assimp.Scene scene, Mesh meshComponent )
+		{
+			var skeletonStructure = importContext.skeletonStructure;
+			//var skeletonBonesArray = skeletonStructure.nodeBySkeletonBone.Keys.ToArray();
+
+			//create animations group component
+			var animationsComponent = meshComponent.CreateComponent<Component>();
+			animationsComponent.Name = "Animations";
+
+			//enumerate all animations
+			for( int nAnimation = 0; nAnimation < scene.AnimationCount; nAnimation++ )
+			{
+				var animation = scene.Animations[ nAnimation ];
+
+				//get time factor
+				if( animation.TicksPerSecond == 0 )
+					continue;
+				double timeFactor = 1.0 / animation.TicksPerSecond;
+
+				//create skeleton animation component
+				var skeletonAnimationComponent = animationsComponent.CreateComponent<SkeletonAnimation>();
+				skeletonAnimationComponent.Name = string.IsNullOrEmpty( animation.Name ) ? $"Animation {nAnimation + 1}" : animation.Name;
+
+				//create track as a child of animation component
+				var skeletonAnimationTrackComponent = skeletonAnimationComponent.CreateComponent<SkeletonAnimationTrack>();
+
+				//set animation name
+				var name = skeletonAnimationComponent.Name;
+				var prefix = "Track ";
+				if( name.Length < prefix.Length || name.Substring( 0, prefix.Length ) != prefix )
+					name = ( prefix + name ).Trim();
+				skeletonAnimationTrackComponent.Name = name;
+
+
+				//fill track data
+
+				var trackData = new List<SkeletonAnimationTrack.KeyFrame>();
+
+
+				////show info about animation and channels for testing
+				////Log.Info( "---------------- ANIMATION: " + skeletonAnimationComponent.Name );
+				////Log.Info( "Channels: " + animation.NodeAnimationChannelCount.ToString() + ", Bones: " + skeletonStructure.boneIndexByName.Count.ToString() );
+				////foreach( var channel in animation.NodeAnimationChannels )
+				////{
+				////	if( !skeletonStructure.boneIndexByName.TryGetValue( channel.NodeName, out var boneIndex ) )
+				////		continue;
+				////	Log.Info( "Channel: " + channel.NodeName + ", Position keys: " + channel.PositionKeys.Count.ToString() + ", Rotation keys: " + channel.RotationKeys.Count.ToString() + ", Scaling keys: " + channel.ScalingKeys.Count.ToString() );
+				////}
+
+
+
+
+				//!!!!something wrong in the code of getting track data
+
+				//useful info:
+				//NeoAxis skeleton bone components contains global transform, not relative.
+				//NeoAxis track data contains relative transforms, not global.
+				//ImportFBX.cs works right (import via FBX SDK), so the problem is in the code of getting track data from Assimp.
+				//To disable any transforms, disable FixAxes in the Import3D settings. Then global transform will be identity.
+
+				//how test models and snow hierarchy:
+				//https://gltf-viewer.donmccurdy.com/
+				//https://sandbox.babylonjs.com/
+
+				//useful samples:
+				//glTF-Sample-Assets library on guthub. SimpleSkin sample
+				//sketchfab models as example: https://sketchfab.com/3d-models/blue-flower-animated-c20b1f12833148e09f7f49c3dd444906
+
+				//minor nuance, but ok: in Assimp can't detect root skeleton node, so just use root node of the scene as root skeleton node
+				//CalculateRootSkeletonNode() method
+
+
+
+
+
+				{
+					//get sorted times from all channels of this animation
+					double[] availableTimes;
+					{
+						var availableTimesSet = new ESet<double>();
+						foreach( var channel in animation.NodeAnimationChannels )
+						{
+							foreach( var key in channel.PositionKeys )
+								availableTimesSet.AddWithCheckAlreadyContained( key.Time * timeFactor );
+							foreach( var key in channel.RotationKeys )
+								availableTimesSet.AddWithCheckAlreadyContained( key.Time * timeFactor );
+							foreach( var key in channel.ScalingKeys )
+								availableTimesSet.AddWithCheckAlreadyContained( key.Time * timeFactor );
+						}
+						availableTimes = availableTimesSet.ToArray();
+						CollectionUtility.MergeSort( availableTimes, delegate ( double v1, double v2 )
+						{
+							return ( v1 < v2 ) ? -1 : 1;
+						} );
+					}
+
+
+					NodeAnimationChannel GetChannel( string nodeName )
+					{
+						foreach( var channel in animation.NodeAnimationChannels )
+						{
+							if( channel.NodeName == nodeName )
+								return channel;
+						}
+						return null;
+					}
+
+					for( int nTime = 0; nTime < availableTimes.Length; nTime++ )
+					{
+						var time = availableTimes[ nTime ];
+
+
+						var boneGlobalTransforms = new Dictionary<string, Matrix4>();
+
+						void InitAnimationRecursive( Node node, Matrix4 parentTransform )
+						{
+							var nodeName = node.Name;
+							var nodeTransform = ToMatrix4( node.Transform );
+
+							var boneChannel = GetChannel( nodeName );
+							if( boneChannel != null )
+							{
+								var keyCalculator = new KeyCalculator { channel = boneChannel, timeFactor = timeFactor };
+
+								var position = keyCalculator.EvaluatePosition( time );
+								var rotation = keyCalculator.EvaluateRotation( time );
+								var scale = keyCalculator.EvaluateScale( time );
+
+								//this order gives right result on SimpleSkin
+								var localTransform = Matrix4.FromTranslate( position ) * rotation.ToMatrix3().ToMatrix4() * Matrix3.FromScale( scale ).ToMatrix4();
+								//var localTransform = Matrix3.FromScale( scale ).ToMatrix4() * rotation.ToMatrix3().ToMatrix4() * Matrix4.FromTranslate( position );
+
+								//this seems correct. because if disabled, the glitch remains
+								nodeTransform = localTransform;
+							}
+
+							var globalTransform = parentTransform * nodeTransform;
+
+							boneGlobalTransforms[ nodeName ] = globalTransform;
+
+							foreach( var child in node.Children )
+								InitAnimationRecursive( child, globalTransform );
+						}
+
+						InitAnimationRecursive( scene.RootNode, Matrix4.Identity );
+
+
+						var bonesWithData = new bool[ skeletonStructure.boneIndexByName.Count ];
+
+						foreach( var boneName in boneGlobalTransforms.Keys )
+						{
+							if( !skeletonStructure.boneIndexByName.TryGetValue( boneName, out var boneIndex ) )
+								continue;
+
+							bonesWithData[ boneIndex ] = true;
+
+							var boneGlobalTransform = boneGlobalTransforms[ boneName ];
+
+							Matrix4 result;
+
+							skeletonStructure.boneNodeByName.TryGetValue( boneName, out var boneNode );
+							var parentNode = boneNode.Parent;
+							if( parentNode != null )
+							{
+								var parentGlobalTransform = boneGlobalTransforms[ parentNode.Name ];
+
+								result = parentGlobalTransform.GetInverse() * boneGlobalTransform;
+								//result = boneGlobalTransform * parentGlobalTransform.GetInverse();
+							}
+							else
+							{
+								//!!!!right?
+								result = importContext.globalTransform * boneGlobalTransform;
+								//result = importContext.globalTransform * ToMatrix4( boneNode.Transform );
+							}
+
+							if( !result.Decompose( out var finalPosition, out Quaternion finalRotation, out var finalScale ) )
+								continue;
+
+							trackData.Add( new SkeletonAnimationTrack.KeyFrame
+							{
+								Time = (float)time,
+								BoneIndex = boneIndex,
+								Position = finalPosition.ToVector3F(),
+								Rotation = finalRotation.ToQuaternionF(),
+								Scale = finalScale.ToVector3F()
+							} );
+						}
+
+						//verify input data
+						for( int nBone = 0; nBone < bonesWithData.Length; nBone++ )
+						{
+							if( !bonesWithData[ nBone ] )
+							{
+								Log.Warning( "Bone \"" + skeletonStructure.boneNodeByName[ skeletonStructure.boneIndexByName.First( p => p.Value == nBone ).Key ].Name + "\" has no animation data in animation \"" + skeletonAnimationComponent.Name + "\"." );
+							}
+						}
+
+					}
+				}
+
+
+
+				//test
+				//{
+				//	trackData = new List<SkeletonAnimationTrack.KeyFrame>();
+
+				//	for( int n = 0; n < skeletonStructure.boneIndexByName.Count; n++ )
+				//	{
+				//		var boneNode = skeletonStructure.boneNodeByName.Values.FirstOrDefault( n2 => skeletonStructure.boneIndexByName[ n2.Name ] == n );
+
+				//		var tr = ToMatrix4( boneNode.Transform );
+
+				//		//!!!!
+				//		tr = Matrix4.Identity;
+
+				//		//!!!!
+				//		if( skeletonStructure.boneOffsetMatrixByName.TryGetValue( boneNode.Name, out var offsetMatrix ) )
+				//		{
+				//			tr = offsetMatrix;//.GetInverse();
+				//			//tr = offsetMatrix.GetInverse() * tr;
+
+				//			//tr *= offsetMatrix;
+				//		}
+
+				//		tr.Decompose( out var p, out Quaternion r, out var s );
+
+				//		//var p = new Vector3( 0, 0, 0 );
+				//		//var r = Quaternion.Identity;
+				//		//var s = new Vector3( 1, 1, 1 );
+
+				//		trackData.Add( new SkeletonAnimationTrack.KeyFrame
+				//		{
+				//			Time = (float)0,
+				//			BoneIndex = n,
+				//			Position = p.ToVector3F(),
+				//			Rotation = r.ToQuaternionF(),
+				//			Scale = s.ToVector3F()
+				//		} );
+				//	}
+				//}
+
+
+
+				////not working code
+				//if( false )
+				//{
+				//	var bonesWithData = new bool[ skeletonStructure.boneIndexByName.Count ];
+
+				//	//enumerate channels
+				//	foreach( var channel in animation.NodeAnimationChannels )
+				//	{
+				//		//get bone index
+				//		if( !skeletonStructure.boneIndexByName.TryGetValue( channel.NodeName, out var boneIndex ) )
+				//			continue;
+
+				//		//mark that this bone has animation data to fill later not initialized bones with default key frames
+				//		bonesWithData[ boneIndex ] = true;
+
+				//		if( channel.PositionKeys.Count == 0 || channel.RotationKeys.Count == 0 || channel.ScalingKeys.Count == 0 )
+				//		{
+				//			//!!!!possible?
+
+				//			Log.Warning( "Not all key types (position, rotation, scale) are present in the animation channel. This may lead to incorrect animation. Channel: " + channel.NodeName );
+				//			continue;
+				//		}
+
+				//		//get sorted times
+				//		double[] availableTimes;
+				//		{
+				//			var availableTimesSet = new ESet<double>();
+				//			foreach( var key in channel.PositionKeys )
+				//				availableTimesSet.AddWithCheckAlreadyContained( key.Time * timeFactor );
+				//			foreach( var key in channel.RotationKeys )
+				//				availableTimesSet.AddWithCheckAlreadyContained( key.Time * timeFactor );
+				//			foreach( var key in channel.ScalingKeys )
+				//				availableTimesSet.AddWithCheckAlreadyContained( key.Time * timeFactor );
+
+				//			availableTimes = availableTimesSet.ToArray();
+
+				//			CollectionUtility.MergeSort( availableTimes, delegate ( double v1, double v2 )
+				//			{
+				//				return ( v1 < v2 ) ? -1 : 1;
+				//			} );
+				//		}
+
+				//		var keyCalculator = new KeyCalculator { channel = channel, timeFactor = timeFactor };
+
+				//		//add key frames to track data
+				//		for( int nTime = 0; nTime < availableTimes.Length; nTime++ )
+				//		{
+				//			var time = availableTimes[ nTime ];
+
+				//			var position = keyCalculator.EvaluatePosition( time );
+				//			var rotation = keyCalculator.EvaluateRotation( time );
+				//			var scale = keyCalculator.EvaluateScale( time );
+
+				//			//make matrix from SRT
+				//			var localTransform = Matrix3.FromScale( scale ).ToMatrix4() * rotation.ToMatrix3().ToMatrix4() * Matrix4.FromTranslate( position );
+				//			//var localTransform = Matrix4.FromTranslate( position ) * rotation.ToMatrix3().ToMatrix4() * Matrix3.FromScale( scale ).ToMatrix4();
+
+				//			//decompose matrix to get final transform
+				//			if( !localTransform.Decompose( out var finalPosition, out Quaternion finalRotation, out var finalScale ) )
+				//				continue;
+
+				//			trackData.Add( new SkeletonAnimationTrack.KeyFrame
+				//			{
+				//				Time = (float)time,
+				//				BoneIndex = boneIndex,
+				//				Position = finalPosition.ToVector3F(),
+				//				Rotation = finalRotation.ToQuaternionF(),
+				//				Scale = finalScale.ToVector3F()
+				//			} );
+				//		}
+				//	}
+
+				//	//add default key frames for bones without animation data
+				//	for( int nBone = 0; nBone < bonesWithData.Length; nBone++ )
+				//	{
+				//		if( !bonesWithData[ nBone ] )
+				//		{
+				//			var boneNode = skeletonStructure.boneNodeByName.Values.FirstOrDefault( n => skeletonStructure.boneIndexByName[ n.Name ] == nBone );
+
+				//			if( boneNode == null )
+				//			{
+				//				//!!!!possible?
+
+				//				Log.Warning( "Bone node not found for bone index: " + nBone.ToString() );
+				//				continue;
+				//			}
+
+				//			var transform = ToMatrix4( boneNode.Transform );
+				//			transform.Decompose( out var translation, out Quaternion rotation, out var scale );
+
+				//			//!!!!right?
+				//			rotation.Normalize();
+
+				//			trackData.Add( new SkeletonAnimationTrack.KeyFrame
+				//			{
+				//				Time = 0,
+				//				BoneIndex = nBone,
+				//				Position = translation.ToVector3F(),
+				//				Rotation = rotation.ToQuaternionF(),
+				//				Scale = scale.ToVector3F()
+				//			} );
+				//		}
+				//	}
+				//}
+
+
+				//find min,max time and fill float.NaN time (for non animated bones with single keyframe) with minTime.
+				float minTime = float.PositiveInfinity;
+				float maxTime = float.NegativeInfinity;
+				bool empty = true;
+				for( int i = 0; i < trackData.Count; i++ )
+				{
+					float t = trackData[ i ].Time;
+					if( float.IsNaN( t ) ) //no animation - static key frame
+						continue;
+					empty = false;
+					if( t < minTime )
+						minTime = t;
+					if( maxTime < t )
+						maxTime = t;
+				}
+				if( empty )
+				{
+					maxTime = 0;
+					minTime = 0;
+				}
+				for( int i = 0; i < trackData.Count; i++ )
+				{
+					if( float.IsNaN( trackData[ i ].Time ) )
+					{
+						var e = trackData[ i ];
+						e.Time = minTime;
+						trackData[ i ] = e;
+					}
+				}
+
+
+				//var length = (float)animation.DurationInTicks / (float)animation.TicksPerSecond;
+				//Log.Info( $"Animation '{skeletonAnimationComponent.Name}' track '{skeletonAnimationTrackComponent.Name}' has {trackData.Count} key frames, time range: {minTime} - {maxTime}. length: {length}" );
+
+
+				//sort. by bone index first, then by time
+				CollectionUtility.MergeSort( trackData, ( a, b ) =>
+				{
+					var c = a.BoneIndex.CompareTo( b.BoneIndex );
+					if( c != 0 )
+						return c;
+					return a.Time.CompareTo( b.Time );
+				} );
+
+
+
+				//////apply parent transforms to the key frames to make them relative to the skeleton root
+				////for( int nBone = 0; nBone < skeletonStructure.boneIndexByName.Count; nBone++ )
+				////{
+				////	var bone = skeletonBonesArray[ nBone ];
+				////	var parentBone = bone.Parent as SkeletonBone;
+				////	var parentBoneIndex = parentBone != null ? Array.IndexOf( skeletonBonesArray, parentBone ) : -1;
+
+				////	if( parentBone != null )
+				////	{
+				////		var parentFrames = trackData.Where( e => e.BoneIndex == parentBoneIndex ).ToArray();
+
+				////		for( int nTrack = 0; nTrack < trackData.Count; nTrack++ )
+				////		{
+				////			var keyFrame = trackData[ nTrack ];
+				////			if( keyFrame.BoneIndex == nBone )
+				////			{
+				////				var time = keyFrame.Time;
+
+				////				//get interpolated parent frame for the same time. if not exists, interpolate between nearest frames
+
+				////				for( int n = 0; n < parentFrames.Length - 1; n++ )
+				////				{
+				////					var t0 = parentFrames[ n ];
+				////					var t1 = parentFrames[ n + 1 ];
+
+				////					if( time <= t1.Time || n == parentFrames.Length - 2 )
+				////					{
+				////						var factor = t1.Time != t0.Time ? ( time - t0.Time ) / ( t1.Time - t0.Time ) : 0.0f;
+				////						MathEx.Saturate( ref factor );
+				////						var position = Vector3.Lerp( t0.Position, t1.Position, factor );
+				////						var rotation = Quaternion.Slerp( t0.Rotation, t1.Rotation, factor );
+				////						var scale = Vector3.Lerp( t0.Scale, t1.Scale, factor );
+
+				////						var parentTransform = new Transform( position, rotation, scale ).ToMatrix4();
+				////						var transform = new Transform( keyFrame.Position, keyFrame.Rotation, keyFrame.Scale ).ToMatrix4();
+
+				////						var resultTransform = parentTransform * transform;
+				////						resultTransform.Decompose( out Vector3 t, out Quaternion r, out Vector3 s );
+
+				////						trackData[ nTrack ] = new SkeletonAnimationTrack.KeyFrame
+				////						{
+				////							BoneIndex = keyFrame.BoneIndex,
+				////							Time = keyFrame.Time,
+				////							Position = t.ToVector3F(),
+				////							Rotation = r.ToQuaternionF(),
+				////							Scale = s.ToVector3F()
+				////						};
+
+				////						break;
+				////					}
+				////				}
+				////			}
+				////		}
+				////	}
+				////	else
+				////	{
+				////		for( int nTrack = 0; nTrack < trackData.Count; nTrack++ )
+				////		{
+				////			var keyFrame = trackData[ nTrack ];
+				////			if( keyFrame.BoneIndex == nBone )
+				////			{
+				////				var transform = new Transform( keyFrame.Position, keyFrame.Rotation, keyFrame.Scale ).ToMatrix4();
+
+				////				var resultTransform = importContext.globalTransform * transform;
+				////				resultTransform.Decompose( out Vector3 t, out Quaternion r, out Vector3 s );
+
+				////				trackData[ nTrack ] = new SkeletonAnimationTrack.KeyFrame
+				////				{
+				////					BoneIndex = keyFrame.BoneIndex,
+				////					Time = keyFrame.Time,
+				////					Position = t.ToVector3F(),
+				////					Rotation = r.ToQuaternionF(),
+				////					Scale = s.ToVector3F()
+				////				};
+
+				////			}
+				////		}
+				////	}
+				////}
+
+
+				skeletonAnimationTrackComponent.KeyFrames = SkeletonAnimationTrack.ToBytes( trackData );
+				skeletonAnimationComponent.Track = ReferenceUtility.MakeThisReference( skeletonAnimationComponent, skeletonAnimationTrackComponent );
+
+				skeletonAnimationComponent.TrackStartTime = minTime;
+				skeletonAnimationComponent.Length = maxTime - minTime;
+			}
 		}
 	}
 }

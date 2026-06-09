@@ -1,7 +1,7 @@
 ﻿          __   __  ____  ____  ____  __ __  _     __ __
          /  \\/  \/  _ \/  _ \/  _ \/  \  \/ \___/_ / _\
          \       /   __/  _  \   __/      /  /  (_/  /__
-          \__\__/\_____/_____/__/  \__//_/\_____/__/___/v0.3.0
+          \__\__/\_____/_____/__/  \__//_/\_____/__/___/v1.2.1
 
 
 Description:
@@ -25,12 +25,15 @@ A list of options is available using the -help command line flag:
 > webpmux -help
 Usage: webpmux -get GET_OPTIONS INPUT -o OUTPUT
        webpmux -set SET_OPTIONS INPUT -o OUTPUT
+       webpmux -duration DURATION_OPTIONS [-duration ...]
+               INPUT -o OUTPUT
        webpmux -strip STRIP_OPTIONS INPUT -o OUTPUT
        webpmux -frame FRAME_OPTIONS [-frame...] [-loop LOOP_COUNT]
                [-bgcolor BACKGROUND_COLOR] -o OUTPUT
        webpmux -info INPUT
        webpmux [-h|-help]
        webpmux -version
+       webpmux argument_file_name
 
 GET_OPTIONS:
  Extract relevant data:
@@ -41,12 +44,24 @@ GET_OPTIONS:
 
 SET_OPTIONS:
  Set color profile/metadata:
+   loop LOOP_COUNT   set the loop count
    icc  file.icc     set ICC profile
    exif file.exif    set EXIF metadata
    xmp  file.xmp     set XMP metadata
    where:    'file.icc' contains the ICC profile to be set,
              'file.exif' contains the EXIF metadata to be set
              'file.xmp' contains the XMP metadata to be set
+
+DURATION_OPTIONS:
+ Set duration of selected frames:
+   duration            set duration for each frames
+   duration,frame      set duration of a particular frame
+   duration,start,end  set duration of frames in the
+                        interval [start,end])
+   where: 'duration' is the duration in milliseconds
+          'start' is the start frame index
+          'end' is the inclusive end frame index
+           The special 'end' value '0' means: last frame.
 
 STRIP_OPTIONS:
  Strip color profile/metadata:
@@ -78,6 +93,9 @@ INPUT & OUTPUT are in WebP format.
 
 Note: The nature of EXIF, XMP and ICC data is not checked and is assumed to be
 valid.
+
+Note: if a single file name is passed as the argument, the arguments will be
+tokenized from this file. The file name must not start with the character '-'.
 
 Visualization tool:
 ===================
@@ -194,11 +212,40 @@ Code example:
 For a detailed AnimEncoder API reference, please refer to the header file
 (src/webp/mux.h).
 
+AnimDecoder API:
+================
+This AnimDecoder API allows decoding (possibly) animated WebP images.
+
+Code Example:
+
+  WebPAnimDecoderOptions dec_options;
+  WebPAnimDecoderOptionsInit(&dec_options);
+  // Tune 'dec_options' as needed.
+  WebPAnimDecoder* dec = WebPAnimDecoderNew(webp_data, &dec_options);
+  WebPAnimInfo anim_info;
+  WebPAnimDecoderGetInfo(dec, &anim_info);
+  for (uint32_t i = 0; i < anim_info.loop_count; ++i) {
+    while (WebPAnimDecoderHasMoreFrames(dec)) {
+      uint8_t* buf;
+      int timestamp;
+      WebPAnimDecoderGetNext(dec, &buf, &timestamp);
+      // ... (Render 'buf' based on 'timestamp').
+      // ... (Do NOT free 'buf', as it is owned by 'dec').
+    }
+    WebPAnimDecoderReset(dec);
+  }
+  const WebPDemuxer* demuxer = WebPAnimDecoderGetDemuxer(dec);
+  // ... (Do something using 'demuxer'; e.g. get EXIF/XMP/ICC data).
+  WebPAnimDecoderDelete(dec);
+
+For a detailed AnimDecoder API reference, please refer to the header file
+(src/webp/demux.h).
+
 
 Bugs:
 =====
 
-Please report all bugs to our issue tracker:
+Please report all bugs to the issue tracker:
     https://bugs.chromium.org/p/webp
 Patches welcome! See this page to get started:
     http://www.webmproject.org/code/contribute/submitting-patches/

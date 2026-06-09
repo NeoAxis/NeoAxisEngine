@@ -402,7 +402,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The size of a voxel grid of a last LOD.
 		/// </summary>
-		[DefaultValue( VoxelGridSizeEnum._64 )]
+		[DefaultValue( VoxelGridSizeEnum._75 )] //_64
 		[DisplayName( "LOD Voxel Grid" )]
 		[Category( "Geometry" )]
 		public Reference<VoxelGridSizeEnum> LODVoxelGrid
@@ -412,7 +412,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="LODVoxelGrid"/> property value changes.</summary>
 		public event Action<Import3D> LODVoxelGridChanged;
-		ReferenceField<VoxelGridSizeEnum> _lODVoxelGrid = VoxelGridSizeEnum._64;
+		ReferenceField<VoxelGridSizeEnum> _lODVoxelGrid = VoxelGridSizeEnum._75; // _64;
 
 		/// <summary>
 		/// The factor to changing the visibility of thin objects. It is also useful when your model has holes in its shape, the algorithm thinks your model is empty inside.
@@ -521,16 +521,17 @@ namespace NeoAxis
 
 		public enum TransparentMaterialBlendingEnum
 		{
+			Auto,
 			Opaque,
 			Masked,
-			MaskedDithering,
+			//MaskedDithering,
 			Transparent,
 		}
 
 		/// <summary>
 		/// The blend mode of transparent materials.
 		/// </summary>
-		[DefaultValue( TransparentMaterialBlendingEnum.Transparent )]//MaskedDithering )]
+		[DefaultValue( TransparentMaterialBlendingEnum.Auto )]
 		[Category( "Material" )]
 		public Reference<TransparentMaterialBlendingEnum> TransparentMaterialBlending
 		{
@@ -539,7 +540,21 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="TransparentMaterialBlending"/> property value changes.</summary>
 		public event Action<Import3D> TransparentMaterialsBlendingChanged;
-		ReferenceField<TransparentMaterialBlendingEnum> _transparentMaterialFormat = TransparentMaterialBlendingEnum.Transparent;//MaskedDithering;
+		ReferenceField<TransparentMaterialBlendingEnum> _transparentMaterialFormat = TransparentMaterialBlendingEnum.Auto;
+
+		/// <summary>
+		/// Whether to enable dithering for materialw with masked transparency.
+		/// </summary>
+		[DefaultValue( true )]
+		[Category( "Material" )]
+		public Reference<bool> MaskedMaterialDithering
+		{
+			get { if( _maskedMaterialDithering.BeginGet() ) MaskedMaterialDithering = _maskedMaterialDithering.Get( this ); return _maskedMaterialDithering.value; }
+			set { if( _maskedMaterialDithering.BeginSet( this, ref value ) ) { try { MaskedMaterialDitheringChanged?.Invoke( this ); } finally { _maskedMaterialDithering.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="MaskedMaterialDithering"/> property value changes.</summary>
+		public event Action<Import3D> MaskedMaterialDitheringChanged;
+		ReferenceField<bool> _maskedMaterialDithering = true;
 
 		/// <summary>
 		/// Whether to flip UV coordinates by vertical axis.

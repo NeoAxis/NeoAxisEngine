@@ -20,8 +20,6 @@
 * THE SOFTWARE.
 */
 
-using System;
-
 namespace Internal.Assimp.Unmanaged
 {
     /// <summary>
@@ -38,7 +36,7 @@ namespace Internal.Assimp.Unmanaged
         /// part of the loading process is timed and logged.
         /// <para>Type: bool. Default: false</para>
         /// </summary>
-        public const String AI_CONFIG_GLOB_MEASURE_TIME = "GLOB_MEASURE_TIME";
+        public const string AI_CONFIG_GLOB_MEASURE_TIME = "GLOB_MEASURE_TIME";
 
         /// <summary>
         /// Sets Assimp's multithreading policy. This is ignored if Assimp is
@@ -48,7 +46,7 @@ namespace Internal.Assimp.Unmanaged
         /// ignored by Assimp.
         /// <para>Type: integer. Default: -1</para>
         /// </summary>
-        public const String AI_CONFIG_GLOB_MULTITHREADING = "GLOB_MULTITHREADING";
+        public const string AI_CONFIG_GLOB_MULTITHREADING = "GLOB_MULTITHREADING";
 
         /// <summary>
         /// Global setting to disable generation of skeleton dummy meshes. These are generated as a visualization aid
@@ -56,7 +54,7 @@ namespace Internal.Assimp.Unmanaged
         /// the bones.
         /// <para>Type: Bool. Default: false.</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_NO_SKELETON_MESHES = "IMPORT_NO_SKELETON_MESHES";
+        public const string AI_CONFIG_IMPORT_NO_SKELETON_MESHES = "IMPORT_NO_SKELETON_MESHES";
 
         #endregion
 
@@ -68,7 +66,7 @@ namespace Internal.Assimp.Unmanaged
         /// is in degrees. The maximum value is 175 degrees.
         /// <para>Type: float. Default: 45 degrees</para>
         /// </summary>
-        public const String AI_CONFIG_PP_CT_MAX_SMOOTHING_ANGLE = "PP_CT_MAX_SMOOTHING_ANGLE";
+        public const string AI_CONFIG_PP_CT_MAX_SMOOTHING_ANGLE = "PP_CT_MAX_SMOOTHING_ANGLE";
 
         /// <summary>
         /// Specifies the maximum angle that may be between two face normals at the same vertex position that
@@ -77,7 +75,7 @@ namespace Internal.Assimp.Unmanaged
         /// smoothed).
         /// <para>Type: float. Default: 175 degrees</para>
         /// </summary>
-        public const String AI_CONFIG_PP_GSN_MAX_SMOOTHING_ANGLE = "PP_GSN_MAX_SMOOTHING_ANGLE";
+        public const string AI_CONFIG_PP_GSN_MAX_SMOOTHING_ANGLE = "PP_GSN_MAX_SMOOTHING_ANGLE";
 
         /// <summary>
         /// Sets the colormap(= palette) to be used to decode embedded textures in MDL (Quake or 3DG5) files.
@@ -86,7 +84,7 @@ namespace Internal.Assimp.Unmanaged
         /// palette (from Quake 1) is used.
         /// <para>Type: string. Default: "colormap.lmp"</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_MDL_COLORMAP = "IMPORT_MDL_COLORMAP";
+        public const string AI_CONFIG_IMPORT_MDL_COLORMAP = "IMPORT_MDL_COLORMAP";
 
         /// <summary>
         /// Configures the <see cref="PostProcessSteps.RemoveRedundantMaterials"/> step to
@@ -99,7 +97,7 @@ namespace Internal.Assimp.Unmanaged
         /// by a reference to it.</para>
         /// <para>Default: string. Default: ""</para>
         /// </summary>
-        public const String AI_CONFIG_PP_RRM_EXCLUDE_LIST = "PP_RRM_EXCLUDE_LIST";
+        public const string AI_CONFIG_PP_RRM_EXCLUDE_LIST = "PP_RRM_EXCLUDE_LIST";
 
         /// <summary>
         /// Configures the <see cref="PostProcessSteps.PreTransformVertices"/> step
@@ -109,7 +107,7 @@ namespace Internal.Assimp.Unmanaged
         /// important additional information which you intend to parse.</para>
         /// <para>Type: bool. Default: false</para>
         /// </summary>
-        public const String AI_CONFIG_PP_PTV_KEEP_HIERARCHY = "PP_PTV_KEEP_HIERARCHY";
+        public const string AI_CONFIG_PP_PTV_KEEP_HIERARCHY = "PP_PTV_KEEP_HIERARCHY";
 
         /// <summary>
         /// Configures the <see cref="PostProcessSteps.PreTransformVertices"/> step
@@ -119,7 +117,7 @@ namespace Internal.Assimp.Unmanaged
         /// of the input data.
         /// <para>Type: bool. Default: false</para>
         /// </summary>
-        public const String AI_CONFIG_PP_PTV_NORMALIZE = "PP_PTV_NORMALIZE";
+        public const string AI_CONFIG_PP_PTV_NORMALIZE = "PP_PTV_NORMALIZE";
 
         /// <summary>
         /// Configures the <see cref="PostProcessSteps.FindDegenerates"/> step
@@ -128,14 +126,14 @@ namespace Internal.Assimp.Unmanaged
         /// degenerated lines to points.</para>
         /// <para>Type: bool. Default: false</para>
         /// </summary>
-        public const String AI_CONFIG_PP_FD_REMOVE = "PP_FD_REMOVE";
+        public const string AI_CONFIG_PP_FD_REMOVE = "PP_FD_REMOVE";
 
         /// <summary>
         /// Configures the <see cref="PostProcessSteps.FindDegenerates"/> step
         /// to check the area of a triangle to be greater than 1e-6. If this is not the case, the triangle will be removed if <see cref="AI_CONFIG_PP_FD_REMOVE"/> is set to true.
         /// <para>Type: bool. Default: false</para>
         /// </summary>
-        public const String AI_CONFIG_PP_FD_CHECKAREA = "PP_FD_CHECKAREA";
+        public const string AI_CONFIG_PP_FD_CHECKAREA = "PP_FD_CHECKAREA";
 
         /// <summary>
         /// Configures the <see cref="PostProcessSteps.OptimizeGraph"/> step
@@ -146,7 +144,7 @@ namespace Internal.Assimp.Unmanaged
         /// postprocessing step.</para>
         /// <para>Type: string. Default: ""</para>
         /// </summary>
-        public const String AI_CONFIG_PP_OG_EXCLUDE_LIST = "PP_OG_EXCLUDE_LIST";
+        public const string AI_CONFIG_PP_OG_EXCLUDE_LIST = "PP_OG_EXCLUDE_LIST";
 
         /// <summary>
         /// Sets the maximum number of triangles a mesh can contain. This is used by the
@@ -154,7 +152,7 @@ namespace Internal.Assimp.Unmanaged
         /// whether a mesh must be split or not.
         /// <para>Type: int. Default: AiDefines.AI_SLM_DEFAULT_MAX_TRIANGLES</para>
         /// </summary>
-        public const String AI_CONFIG_PP_SLM_TRIANGLE_LIMIT = "PP_SLM_TRIANGLE_LIMIT";
+        public const string AI_CONFIG_PP_SLM_TRIANGLE_LIMIT = "PP_SLM_TRIANGLE_LIMIT";
 
         /// <summary>
         /// Sets the maximum number of vertices in a mesh. This is used by the
@@ -162,14 +160,14 @@ namespace Internal.Assimp.Unmanaged
         /// whether a mesh must be split or not.
         /// <para>Type: integer. Default: AiDefines.AI_SLM_DEFAULT_MAX_VERTICES</para>
         /// </summary>
-        public const String AI_CONFIG_PP_SLM_VERTEX_LIMIT = "PP_SLM_VERTEX_LIMIT";
+        public const string AI_CONFIG_PP_SLM_VERTEX_LIMIT = "PP_SLM_VERTEX_LIMIT";
 
         /// <summary>
         /// Sets the maximum number of bones that can affect a single vertex. This is used
         /// by the <see cref="PostProcessSteps.LimitBoneWeights"/> step.
         /// <para>Type: integer. Default: AiDefines.AI_LBW_MAX_WEIGHTS</para>
         /// </summary>
-        public const String AI_CONFIG_PP_LBW_MAX_WEIGHTS = "PP_LBW_MAX_WEIGHTS";
+        public const string AI_CONFIG_PP_LBW_MAX_WEIGHTS = "PP_LBW_MAX_WEIGHTS";
 
         /// <summary>
         /// Sets the size of the post-transform vertex cache to optimize vertices for. This is
@@ -180,7 +178,7 @@ namespace Internal.Assimp.Unmanaged
         /// for most Nvidia/AMD cards since 2002.
         /// <para>Type: integer. Default: AiDefines.PP_ICL_PTCACHE_SIZE</para>
         /// </summary>
-        public const String AI_CONFIG_PP_ICL_PTCACHE_SIZE = "PP_ICL_PTCACHE_SIZE";
+        public const string AI_CONFIG_PP_ICL_PTCACHE_SIZE = "PP_ICL_PTCACHE_SIZE";
 
         /// <summary>
         /// Input parameter to the <see cref="PostProcessSteps.RemoveComponent"/> step. 
@@ -189,7 +187,7 @@ namespace Internal.Assimp.Unmanaged
         /// the step is executed, the import FAILS.</para>
         /// <para>Type: integer. Default: 0</para>
         /// </summary>
-        public const String AI_CONFIG_PP_RVC_FLAGS = "PP_RVC_FLAGS";
+        public const string AI_CONFIG_PP_RVC_FLAGS = "PP_RVC_FLAGS";
 
         /// <summary>
         /// Input parameter to the <see cref="PostProcessSteps.SortByPrimitiveType"/> step.
@@ -198,7 +196,7 @@ namespace Internal.Assimp.Unmanaged
         /// Specifying ALL types is illegal.</para>
         /// <para>Type: integer. Default: 0</para>
         /// </summary>
-        public const String AI_CONFIG_PP_SBP_REMOVE = "PP_SBP_REMOVE";
+        public const string AI_CONFIG_PP_SBP_REMOVE = "PP_SBP_REMOVE";
 
         /// <summary>
         /// Input parameter to the <see cref="PostProcessSteps.FindInvalidData"/> step.
@@ -208,7 +206,7 @@ namespace Internal.Assimp.Unmanaged
         /// true for all vector/quaternion components.
         /// <para>Type: float. Default: 0.0f (comparisons are exact)</para>
         /// </summary>
-        public const String AI_CONFIG_PP_FID_ANIM_ACCURACY = "PP_FID_ANIM_ACCURACY";
+        public const string AI_CONFIG_PP_FID_ANIM_ACCURACY = "PP_FID_ANIM_ACCURACY";
 
         /// <summary>
         /// Input parameter to the <see cref="PostProcessSteps.FindInvalidData"/> step. Set to true to
@@ -216,7 +214,7 @@ namespace Internal.Assimp.Unmanaged
         /// like seasonally variable ones - one for summer and one for winter.
         /// <para>Type: Bool. Default: false.</para>
         /// </summary>
-        public const String AI_CONFIG_PP_FID_IGNORE_TEXTURECOORDS = "PP_FID_IGNORE_TEXTURECOORDS";
+        public const string AI_CONFIG_PP_FID_IGNORE_TEXTURECOORDS = "PP_FID_IGNORE_TEXTURECOORDS";
 
         /// <summary>
         /// Input parameter to the <see cref="PostProcessSteps.TransformUVCoords"/> step.
@@ -224,7 +222,7 @@ namespace Internal.Assimp.Unmanaged
         /// <para>This is bitwise combination of the <see cref="UVTransformFlags"/> flag.</para>
         /// <para>Type: integer. Default: AiDefines.AI_UV_TRAFO_ALL (All combinations)</para>
         /// </summary>
-        public const String AI_CONFIG_PP_TUV_EVALUATE = "PP_TUV_EVALUATE";
+        public const string AI_CONFIG_PP_TUV_EVALUATE = "PP_TUV_EVALUATE";
 
         /// <summary>
         /// A hint to Assimp to favour speed against import quality. Enabling this option
@@ -233,59 +231,59 @@ namespace Internal.Assimp.Unmanaged
         /// for true.
         /// <para>Type: integer. Default: 0</para>
         /// </summary>
-        public const String AI_CONFIG_FAVOUR_SPEED = "FAVOUR_SPEED";
+        public const string AI_CONFIG_FAVOUR_SPEED = "FAVOUR_SPEED";
 
         /// <summary>
         /// Maximum bone cone per mesh for the <see cref="PostProcessSteps.SplitByBoneCount"/> step. Meshes
         /// are split until the max number of bones is reached.
         /// <para>Type: integer. Default: 60</para>
         /// </summary>
-        public const String AI_CONFIG_PP_SBBC_MAX_BONES = "PP_SBBC_MAX_BONES";
+        public const string AI_CONFIG_PP_SBBC_MAX_BONES = "PP_SBBC_MAX_BONES";
 
         /// <summary>
         /// Source UV channel for tangent space computation. The specified channel must exist or an error will be raised.
         /// <para>Type: integer. Default: 0</para>
         /// </summary>
-        public const String AI_CONFIG_PP_CT_TEXTURE_CHANNEL_INDEX = "PP_CT_TEXTURE_CHANNEL_INDEX";
+        public const string AI_CONFIG_PP_CT_TEXTURE_CHANNEL_INDEX = "PP_CT_TEXTURE_CHANNEL_INDEX";
 
         /// <summary>
         /// Threshold used to determine if a bone is kept or removed during the <see cref="PostProcessSteps.Debone"/> step.
         /// <para>Type: float. Default: 1.0f</para>
         /// </summary>
-        public const String AI_CONFIG_PP_DB_THRESHOLD = "PP_DB_THRESHOLD";
+        public const string AI_CONFIG_PP_DB_THRESHOLD = "PP_DB_THRESHOLD";
 
         /// <summary>
         /// Require all bones to qualify for deboning before any are removed.
         /// <para>Type: bool. Default: false</para>
         /// </summary>
-        public const String AI_CONFIG_PP_DB_ALL_OR_NONE = "PP_DB_ALL_OR_NONE";
+        public const string AI_CONFIG_PP_DB_ALL_OR_NONE = "PP_DB_ALL_OR_NONE";
 
         /// <summary>
         /// Configures the <see cref="PostProcessSteps.PreTransformVertices"/> step to use a user defined matrix as the scene root node
         /// transformation before transforming vertices.
         /// <para>Type: bool. Default: false</para>
         /// </summary>
-        public const String AI_CONFIG_PP_PTV_ADD_ROOT_TRANSFORMATION = "PP_PTV_ADD_ROOT_TRANSFORMATION";
+        public const string AI_CONFIG_PP_PTV_ADD_ROOT_TRANSFORMATION = "PP_PTV_ADD_ROOT_TRANSFORMATION";
 
         /// <summary>
         /// Configures the <see cref="PostProcessSteps.PreTransformVertices"/> step to use a user defined matrix as the scene root node transformation
         /// before transforming vertices.
         /// <para>Type: Matrix4x4. Default: Identity Matrix</para>
         /// </summary>
-        public const String AI_CONFIG_PP_PTV_ROOT_TRANSFORMATION = "PP_PTV_ROOT_TRANSFORMATION";
+        public const string AI_CONFIG_PP_PTV_ROOT_TRANSFORMATION = "PP_PTV_ROOT_TRANSFORMATION";
 
         /// <summary>
         /// Configures the <see cref="PostProcessSteps.GlobalScale"/> step to scale the entire scene by a certain amount. Some importers provide a mechanism to define a scaling unit for the model,
         /// which this processing step can utilize.
         /// <para>Type: Float. Default: 1.0f.</para>
         /// </summary>
-        public const String AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY = "GLOBAL_SCALE_FACTOR";
+        public const string AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY = "GLOBAL_SCALE_FACTOR";
 
         /// <summary>
         /// Applies application-specific scale to the global scale factor to allow for backwards compatibility.
         /// <para>Type: Float. Default: 1.0f.</para>
         /// </summary>
-        public const String AI_CONFIG_APP_SCALE_KEY = "APP_SCALE_FACTOR";
+        public const string AI_CONFIG_APP_SCALE_KEY = "APP_SCALE_FACTOR";
 
         #endregion
 
@@ -301,44 +299,44 @@ namespace Internal.Assimp.Unmanaged
         /// you want to override the global setting.</para>
         /// <para>Type: integer. Default: 0</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_GLOBAL_KEYFRAME = "IMPORT_GLOBAL_KEYFRAME";
+        public const string AI_CONFIG_IMPORT_GLOBAL_KEYFRAME = "IMPORT_GLOBAL_KEYFRAME";
 
         /// <summary>
         /// See the documentation for <see cref="AiConfigs.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME"/>.
         /// </summary>
-        public const String AI_CONFIG_IMPORT_MD3_KEYFRAME = "IMPORT_MD3_KEYFRAME";
+        public const string AI_CONFIG_IMPORT_MD3_KEYFRAME = "IMPORT_MD3_KEYFRAME";
 
         /// <summary>
         /// See the documentation for <see cref="AiConfigs.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME"/>.
         /// </summary>
-        public const String AI_CONFIG_IMPORT_MD2_KEYFRAME = "IMPORT_MD3_KEYFRAME";
+        public const string AI_CONFIG_IMPORT_MD2_KEYFRAME = "IMPORT_MD3_KEYFRAME";
 
         /// <summary>
         /// See the documentation for <see cref="AiConfigs.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME"/>.
         /// </summary>
-        public const String AI_CONFIG_IMPORT_MDL_KEYFRAME = "IMPORT_MDL_KEYFRAME";
+        public const string AI_CONFIG_IMPORT_MDL_KEYFRAME = "IMPORT_MDL_KEYFRAME";
 
         /// <summary>
         /// See the documentation for <see cref="AiConfigs.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME"/>.
         /// </summary>
-        public const String AI_CONFIG_IMPORT_MDC_KEYFRAME = "IMPORT_MDC_KEYFRAME";
+        public const string AI_CONFIG_IMPORT_MDC_KEYFRAME = "IMPORT_MDC_KEYFRAME";
 
         /// <summary>
         /// See the documentation for <see cref="AiConfigs.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME"/>.
         /// </summary>
-        public const String AI_CONFIG_IMPORT_SMD_KEYFRAME = "IMPORT_SMD_KEYFRAME";
+        public const string AI_CONFIG_IMPORT_SMD_KEYFRAME = "IMPORT_SMD_KEYFRAME";
 
         /// <summary>
         /// See the documentation for <see cref="AiConfigs.AI_CONFIG_IMPORT_GLOBAL_KEYFRAME"/>.
         /// </summary>
-        public const String AI_CONFIG_IMPORT_UNREAL_KEYFRAME = "IMPORT_UNREAL_KEYFRAME";
+        public const string AI_CONFIG_IMPORT_UNREAL_KEYFRAME = "IMPORT_UNREAL_KEYFRAME";
 
         /// <summary>
         /// Configures the AC loader to collect all surfaces which have the "Backface cull" flag set in separate
         /// meshes.
         /// <para>Type: bool. Default: true</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_AC_SEPARATE_BFCULL = "IMPORT_AC_SEPARATE_BFCULL";
+        public const string AI_CONFIG_IMPORT_AC_SEPARATE_BFCULL = "IMPORT_AC_SEPARATE_BFCULL";
 
         /// <summary>
         /// Configures whether the AC loader evaluates subdivision surfaces (indicated by the presence
@@ -346,13 +344,13 @@ namespace Internal.Assimp.Unmanaged
         /// the subdivision using the standard Catmull-Clark algorithm.
         /// <para>Type: bool. Default: true</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_AC_EVAL_SUBDIVISION = "IMPORT_AC_EVAL_SUBDIVISION";
+        public const string AI_CONFIG_IMPORT_AC_EVAL_SUBDIVISION = "IMPORT_AC_EVAL_SUBDIVISION";
 
         /// <summary>
         /// Configures the UNREAL 3D loader to separate faces with different surface flags (e.g. two-sided vs single-sided).
         /// <para>Type: bool. Default: true</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_UNREAL_HANDLE_FLAGS = "UNREAL_HANDLE_FLAGS";
+        public const string AI_CONFIG_IMPORT_UNREAL_HANDLE_FLAGS = "UNREAL_HANDLE_FLAGS";
 
         /// <summary>
         /// Configures the terragen import plugin to compute UV's for terrains, if
@@ -362,14 +360,14 @@ namespace Internal.Assimp.Unmanaged
         /// want to offer an easy way to apply textures to terrains.</para>
         /// <para>Type: bool. Default: false</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_TER_MAKE_UVS = "IMPORT_TER_MAKE_UVS";
+        public const string AI_CONFIG_IMPORT_TER_MAKE_UVS = "IMPORT_TER_MAKE_UVS";
 
         /// <summary>
         /// Configures the ASE loader to always reconstruct normal vectors basing on the smoothing groups
         /// loaded from the file. Some ASE files carry invalid normals, others don't.
         /// <para>Type: bool. Default: true</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_ASE_RECONSTRUCT_NORMALS = "IMPORT_ASE_RECONSTRUCT_NORMALS";
+        public const string AI_CONFIG_IMPORT_ASE_RECONSTRUCT_NORMALS = "IMPORT_ASE_RECONSTRUCT_NORMALS";
 
         /// <summary>
         /// Configures the M3D loader to detect and process multi-part Quake player models. These models
@@ -377,7 +375,7 @@ namespace Internal.Assimp.Unmanaged
         /// set to true, Assimp will try to load and combine all three files if one of them is loaded.
         /// <para>Type: bool. Default: true</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_MD3_HANDLE_MULTIPART = "IMPORT_MD3_HANDLE_MULTIPART";
+        public const string AI_CONFIG_IMPORT_MD3_HANDLE_MULTIPART = "IMPORT_MD3_HANDLE_MULTIPART";
 
         /// <summary>
         /// Tells the MD3 loader which skin files to load. When loading MD3 files, Assimp checks
@@ -386,14 +384,14 @@ namespace Internal.Assimp.Unmanaged
         /// are typical skin names.
         /// <para>Type: string. Default: "default"</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_MD3_SKIN_NAME = "IMPORT_MD3_SKIN_NAME";
+        public const string AI_CONFIG_IMPORT_MD3_SKIN_NAME = "IMPORT_MD3_SKIN_NAME";
 
         /// <summary>
         /// Specifies the Quake 3 shader file to be used for a particular MD3 file. This can be a full path or
         /// relative to where all MD3 shaders reside.
         /// <para>Type: string. Default: ""</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_MD3_SHADER_SRC = "IMPORT_MD3_SHADER_SRC";
+        public const string AI_CONFIG_IMPORT_MD3_SHADER_SRC = "IMPORT_MD3_SHADER_SRC";
 
         /// <summary>
         /// Configures the LWO loader to load just one layer from the model.
@@ -403,7 +401,7 @@ namespace Internal.Assimp.Unmanaged
         /// if the requested layer is not vailable. The layer index is zero-based and the layer name may not be empty</para>
         /// <para>Type: bool. Default: false (All layers are loaded)</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_LWO_ONE_LAYER_ONLY = "IMPORT_LWO_ONE_LAYER_ONLY";
+        public const string AI_CONFIG_IMPORT_LWO_ONE_LAYER_ONLY = "IMPORT_LWO_ONE_LAYER_ONLY";
 
         /// <summary>
         /// Configures the MD5 loader to not load the MD5ANIM file for a MD5MESH file automatically.
@@ -412,7 +410,7 @@ namespace Internal.Assimp.Unmanaged
         /// option can be used to disable this behavior.</para>
         /// <para>Type: bool. Default: false</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_MD5_NO_ANIM_AUTOLOAD = "IMPORT_MD5_NO_ANIM_AUTOLOAD";
+        public const string AI_CONFIG_IMPORT_MD5_NO_ANIM_AUTOLOAD = "IMPORT_MD5_NO_ANIM_AUTOLOAD";
 
         /// <summary>
         /// Defines the beginning of the time range for which the LWS loader evaluates animations and computes
@@ -426,7 +424,7 @@ namespace Internal.Assimp.Unmanaged
         /// file ('FirstFrame' line)</para>
         /// <para>Type: integer. Default: taken from file</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_LWS_ANIM_START = "IMPORT_LWS_ANIM_START";
+        public const string AI_CONFIG_IMPORT_LWS_ANIM_START = "IMPORT_LWS_ANIM_START";
 
         /// <summary>
         /// Defines the ending of the time range for which the LWS loader evaluates animations and computes
@@ -440,7 +438,7 @@ namespace Internal.Assimp.Unmanaged
         /// file.</para>
         /// <para>Type: integer. Default: taken from file</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_LWS_ANIM_END = "IMPORT_LWS_ANIM_END";
+        public const string AI_CONFIG_IMPORT_LWS_ANIM_END = "IMPORT_LWS_ANIM_END";
 
         /// <summary>
         /// Defines the output frame rate of the IRR loader.
@@ -448,7 +446,7 @@ namespace Internal.Assimp.Unmanaged
         /// a loss of quality. This setting defines how many keys per second are returned by the converter.</para>
         /// <para>Type: integer. Default: 100</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_IRR_ANIM_FPS = "IMPORT_IRR_ANIM_FPS";
+        public const string AI_CONFIG_IMPORT_IRR_ANIM_FPS = "IMPORT_IRR_ANIM_FPS";
 
         /// <summary>
         /// The Ogre importer will try to load this MaterialFile. Ogre meshes reference with material names, this does not tell Assimp
@@ -456,7 +454,7 @@ namespace Internal.Assimp.Unmanaged
         /// and lastly the material name defined by this config property.
         /// <para>Type: string. Default: "Scene.Material"</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_OGRE_MATERIAL_FILE = "IMPORT_OGRE_MATERIAL_FILE";
+        public const string AI_CONFIG_IMPORT_OGRE_MATERIAL_FILE = "IMPORT_OGRE_MATERIAL_FILE";
 
         /// <summary>
         /// The Ogre importer will detect the texture usage from the filename. Normally a texture is loaded as a color map, if no target is specified
@@ -472,13 +470,13 @@ namespace Internal.Assimp.Unmanaged
         /// <see cref="TextureType.Diffuse"/> is used.
         /// <para>Type: Bool. Default: false.</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME = "IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME";
+        public const string AI_CONFIG_IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME = "IMPORT_OGRE_TEXTURETYPE_FROM_FILENAME";
 
         /// <summary>
         /// Specifies whether the IFC loader skips over IfcSpace elements. IfcSpace elements (and their geometric representations) are used to represent free space in a building story.
         /// <para>Type: Bool. Default: true.</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_IFC_SKIP_SPACE_REPRESENTATIONS = "IMPORT_IFC_SKIP_SPACE_REPRESENTATIONS";
+        public const string AI_CONFIG_IMPORT_IFC_SKIP_SPACE_REPRESENTATIONS = "IMPORT_IFC_SKIP_SPACE_REPRESENTATIONS";
 
         /// <summary>
         /// Specifies whether the IFC loader will use its own, custom triangulation algorithm to triangulate wall and floor meshes. If this is set to false,
@@ -487,25 +485,25 @@ namespace Internal.Assimp.Unmanaged
         /// issues with these kind of polygons.
         /// <para>Type: Bool. Default: true.</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_IFC_CUSTOM_TRIANGULATION = "IMPORT_IFC_CUSTOM_TRIANGULATION";
+        public const string AI_CONFIG_IMPORT_IFC_CUSTOM_TRIANGULATION = "IMPORT_IFC_CUSTOM_TRIANGULATION";
 
         /// <summary>
         /// Specifies the tessellation conic angle for IFC smoothing curves. Accepted range of values is between [5, 120]
         /// <para>Type: Float. Default: 10.0f</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_IFC_SMOOTHING_ANGLE = "IMPORT_IFC_SMOOTHING_ANGLE";
+        public const string AI_CONFIG_IMPORT_IFC_SMOOTHING_ANGLE = "IMPORT_IFC_SMOOTHING_ANGLE";
 
         /// <summary>
         /// Specifies the tessellation for IFC cylindrical shapes. E.g. the number of segments used to approximate a circle. Accepted range of values is between [3, 180].
         /// <para>Type: Integer. Default: 32</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_IFC_CYLINDRICAL_TESSELLATION = "IMPORT_IFC_CYLINDRICAL_TESSELLATION";
+        public const string AI_CONFIG_IMPORT_IFC_CYLINDRICAL_TESSELLATION = "IMPORT_IFC_CYLINDRICAL_TESSELLATION";
 
         /// <summary>
         /// Specifies whether the collada loader will ignore the up direction.
         /// <para>Type: Bool. Default: false</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_COLLADA_IGNORE_UP_DIRECTION = "IMPORT_COLLADA_IGNORE_UP_DIRECTION";
+        public const string AI_CONFIG_IMPORT_COLLADA_IGNORE_UP_DIRECTION = "IMPORT_COLLADA_IGNORE_UP_DIRECTION";
 
         /// <summary>
         /// Specifies whether the Collada loader should use Collada names as node names.
@@ -513,56 +511,56 @@ namespace Internal.Assimp.Unmanaged
         /// node name. The default is to use the id tag (resp. sid tag, if no id tag is present) instead.
         /// <para>Type: Bool. Default: false.</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_COLLADA_USE_COLLADA_NAMES = "IMPORT_COLLADA_USE_COLLADA_NAMES";
+        public const string AI_CONFIG_IMPORT_COLLADA_USE_COLLADA_NAMES = "IMPORT_COLLADA_USE_COLLADA_NAMES";
 
         /// <summary>
         /// Specifies whether the FBX importer will merge all geometry layers present in the source file or take only the first.
         /// <para>Type: bool. Default: true.</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_FBX_READ_ALL_GEOMETRY_LAYERS = "IMPORT_FBX_READ_ALL_GEOMETRY_LAYERS";
+        public const string AI_CONFIG_IMPORT_FBX_READ_ALL_GEOMETRY_LAYERS = "IMPORT_FBX_READ_ALL_GEOMETRY_LAYERS";
 
         /// <summary>
         /// Specifies whether the FBX importer will read all materials present in the source file or take only the referenced materials, if the importer
         /// will read materials, otherwise this has no effect.
         /// <para>Type: Bool. Default: false.</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_FBX_READ_ALL_MATERIALS = "IMPORT_FBX_READ_ALL_MATERIALS";
+        public const string AI_CONFIG_IMPORT_FBX_READ_ALL_MATERIALS = "IMPORT_FBX_READ_ALL_MATERIALS";
 
         /// <summary>
         /// Specifies whether the FBX importer will read materials.
         /// <para>Type: Bool. Default: true.</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_FBX_READ_MATERIALS = "IMPORT_FBX_READ_MATERIALS";
+        public const string AI_CONFIG_IMPORT_FBX_READ_MATERIALS = "IMPORT_FBX_READ_MATERIALS";
 
         /// <summary>
         /// Specifies whether the FBX importer will read embedded textures.
         /// <para>Type: Bool. Default: true.</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_FBX_READ_TEXTURES = "IMPORT_FBX_READ_TEXTURES";
+        public const string AI_CONFIG_IMPORT_FBX_READ_TEXTURES = "IMPORT_FBX_READ_TEXTURES";
 
         /// <summary>
         /// Specifies whether the fbx importer will use the legacy embedded texture naming.
         /// <para>Type: Bool. Default: false.</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_FBX_EMBEDDED_TEXTURES_LEGACY_NAMING = "AI_CONFIG_IMPORT_FBX_EMBEDDED_TEXTURES_LEGACY_NAMING";
+        public const string AI_CONFIG_IMPORT_FBX_EMBEDDED_TEXTURES_LEGACY_NAMING = "AI_CONFIG_IMPORT_FBX_EMBEDDED_TEXTURES_LEGACY_NAMING";
 
         /// <summary>
         /// Specifies whether the FBX importer will read cameras.
         /// <para>Type: Bool. Default: true.</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_FBX_READ_CAMERAS = "IMPORT_FBX_READ_CAMERAS";
+        public const string AI_CONFIG_IMPORT_FBX_READ_CAMERAS = "IMPORT_FBX_READ_CAMERAS";
 
         /// <summary>
         /// Specifies whether the FBX importer will read light sources.
         /// <para>Type: Bool. Default: true.</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_FBX_READ_LIGHTS = "IMPORT_FBX_READ_LIGHTS";
+        public const string AI_CONFIG_IMPORT_FBX_READ_LIGHTS = "IMPORT_FBX_READ_LIGHTS";
 
         /// <summary>
         /// Specifies whether the FBX importer will read animations.
         /// <para>Type: Bool. default: true.</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_FBX_READ_ANIMATIONS = "IMPORT_FBX_READ_ANIMATIONS";
+        public const string AI_CONFIG_IMPORT_FBX_READ_ANIMATIONS = "IMPORT_FBX_READ_ANIMATIONS";
 
         /// <summary>
         /// Specifies whether the FBX importer will act in strict mode in which only the FBX 2013
@@ -570,40 +568,47 @@ namespace Internal.Assimp.Unmanaged
         /// format is best supported and well-tested.
         /// <para>Type: Bool. Default: false.</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_FBX_STRICT_MODE = "IMPORT_FBX_STRICT_MODE";
+        public const string AI_CONFIG_IMPORT_FBX_STRICT_MODE = "IMPORT_FBX_STRICT_MODE";
 
         /// <summary>
         /// Specifies whether the FBX importer will preserve pivot points for transformations (as extra nodes). If set to false, pivots
         /// and offsets will be evaluated whenever possible.
         /// <para>Type: Bool. Default: true.</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS = "IMPORT_FBX_PRESERVE_PIVOTS";
+        public const string AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS = "IMPORT_FBX_PRESERVE_PIVOTS";
 
         /// <summary>
         /// Specifies whether the importer will drop empty animation curves or animation curves which match the bind pose 
         /// transformation over their entire defined range.
         /// <para>Type: Bool. Default: true.</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES = "IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES";
+        public const string AI_CONFIG_IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES = "IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES";
 
         /// <summary>
         /// Specifies whether the importer shall convert the unit from centimeter (cm) to meter (m).
         /// <para>Type: Bool. Default: false.</para>
         /// </summary>
-        public const String AI_CONFIG_FBX_CONVERT_TO_M = "AI_CONFIG_FBX_CONVERT_TO_M";
+        public const string AI_CONFIG_FBX_CONVERT_TO_M = "AI_CONFIG_FBX_CONVERT_TO_M";
+
+        /// <summary>
+        /// Specifies whether the importer should ignore the embedded axis directions in the FBX file and load it as is.
+        /// <para>Type: Bool. Default: false.</para>
+        /// <remarks>Prior to Assimp v6.x.x the behavior was equivalent to the property being set to true.</remarks>
+        /// </summary>
+        public const string AI_CONFIG_IMPORT_FBX_IGNORE_UP_DIRECTION = "AI_CONFIG_IMPORT_FBX_IGNORE_UP_DIRECTION";
 
         /// <summary>
         /// Specifies whether the importer will load multiple animations.
         /// <para>Type: Bool. Default: true.</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_SMD_LOAD_ANIMATION_LIST = "IMPORT_SMD_LOAD_ANIMATION_LIST";
+        public const string AI_CONFIG_IMPORT_SMD_LOAD_ANIMATION_LIST = "IMPORT_SMD_LOAD_ANIMATION_LIST";
 
         /// <summary>
         /// Specifies whether the importer removes empty bones or not. Empty bones are often used to define connections for other models (e.g.
         /// attachment points).
         /// <para>Type: Bool. Default: true.</para>
         /// </summary>
-        public const String AI_CONFIG_IMPORT_REMOVE_EMPTY_BONES = "AI_CONFIG_IMPORT_REMOVE_EMPTY_BONES";
+        public const string AI_CONFIG_IMPORT_REMOVE_EMPTY_BONES = "AI_CONFIG_IMPORT_REMOVE_EMPTY_BONES";
 
         #endregion
 
@@ -613,7 +618,7 @@ namespace Internal.Assimp.Unmanaged
         /// Specifies if the X-file exporter should use 64-bit doubles rather than 32-bit floats.
         /// <para>Type: Bool. Default: false.</para>
         /// </summary>
-        public const String AI_CONFIG_EXPORT_XFILE_64BIT = "EXPORT_XFILE_64BIT";
+        public const string AI_CONFIG_EXPORT_XFILE_64BIT = "EXPORT_XFILE_64BIT";
         
         /// <summary>
         /// Specifies whether the export should be able to export point clouds. When this flag is not defined
@@ -622,7 +627,7 @@ namespace Internal.Assimp.Unmanaged
         /// flag and enable the functionality to export pure point clouds.
         /// <para>Type: Bool. Default: false.</para>
         /// </summary>
-        public const String AI_CONFIG_EXPORT_POINT_CLOUDS = "EXPORT_POINT_CLOUDS";
+        public const string AI_CONFIG_EXPORT_POINT_CLOUDS = "EXPORT_POINT_CLOUDS";
 
         #endregion
     }

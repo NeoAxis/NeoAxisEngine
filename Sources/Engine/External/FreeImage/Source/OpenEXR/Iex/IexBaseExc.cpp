@@ -150,7 +150,7 @@ void
 iex_debugTrap()
 {
     // how to in Linux?
-    //if (0 != ::getenv("IEXDEBUGTHROW"))
-    //    __builtin_trap();
+    if (0 != ::getenv("IEXDEBUGTHROW"))
+        __builtin_trap();
 }
 #endif

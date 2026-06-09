@@ -242,9 +242,13 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 
 		// Read the header information: width, height and the 'max' value if any
 
-		int width  = GetInt(io, handle);
-		int height = GetInt(io, handle);
+		const int width  = GetInt(io, handle);
+		const int height = GetInt(io, handle);
 		int maxval = 1;
+
+		if (width < 0 || height < 0) {
+			throw FI_MSG_ERROR_PARSING;
+		}
 
 		if((id_two == '2') || (id_two == '5') || (id_two == '3') || (id_two == '6')) {
 			maxval = GetInt(io, handle);

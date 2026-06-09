@@ -124,8 +124,8 @@ namespace NeoAxis
 			foreach( var material in materials )
 			{
 				var extensionData2 = new CompileExtensionData();
-				extensionData2.materialIndexShaderProperties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( MaterialIndex ) )) );
-				extensionData2.shadowCasterMaterialIndexShaderProperties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( MaterialIndex ) )) );
+				extensionData2.materialIndexShaderProperties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( MaterialIndex ) ), false) );
+				extensionData2.shadowCasterMaterialIndexShaderProperties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( MaterialIndex ) ), false) );
 
 				var separatePassIndex = resultSeparatePasses.Count;
 
@@ -220,8 +220,8 @@ namespace NeoAxis
 						combinedMaterial.ShadingModel = ShadingModelEnum.Simple;
 
 					combinedMaterial.OpacityDithering = group.Materials.Exists( m => m.OpacityDithering );
-					if( group.Materials.Exists( m => m.ClearCoat.Value != 0 ) )
-						combinedMaterial.ClearCoat = 1;
+					if( group.Materials.Exists( m => m.Clearcoat.Value != 0 ) )
+						combinedMaterial.Clearcoat = 1;
 					if( group.Materials.Exists( m => m.Anisotropy.Value != 0 ) )
 						combinedMaterial.Anisotropy = 1;
 					//if( group.Materials.Exists( m => m.RayTracingReflection.Value != 0 ) )
@@ -242,8 +242,8 @@ namespace NeoAxis
 
 
 					var extensionData2 = new CompileExtensionData();
-					extensionData2.materialIndexShaderProperties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( MaterialIndex ) )) );
-					extensionData2.shadowCasterMaterialIndexShaderProperties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( MaterialIndex ) )) );
+					extensionData2.materialIndexShaderProperties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( MaterialIndex ) ), false) );
+					extensionData2.shadowCasterMaterialIndexShaderProperties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( MaterialIndex ) ), false) );
 
 					//var referencedSeparateMaterials = new CompiledMaterialData[ group.Materials.Count ];
 					//for( int n = 0; n < group.Materials.Count; n++ )

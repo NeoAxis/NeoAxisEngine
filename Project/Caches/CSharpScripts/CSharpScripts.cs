@@ -1023,5 +1023,548 @@ public class DynamicClassCD77F714BBDC128E3675B41DB2C321D17906634F20B508D44777046
         Log.Info("Message from the dialogue");
     }
 }
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgTGlnaHQ0X1VwZGF0ZUV2ZW50KE5lb0F4aXMuQ29tcG9uZW50IHNlbmRlciwgZmxvYXQgZGVsdGEpCnsKCXZhciBvYmogPSAoT2JqZWN0SW5TcGFjZSlzZW5kZXI7Cgl2YXIgdHIgPSBvYmouVHJhbnNmb3JtVjsKCW9iai5UcmFuc2Zvcm0gPSBuZXcgVHJhbnNmb3JtKHRyLlBvc2l0aW9uLCBRdWF0ZXJuaW9uLkZyb21Sb3RhdGVCeVooVGltZS5DdXJyZW50ICogMC4yNSksIHRyLlNjYWxlKTsKfQo=")]
+public class DynamicClass97F08E2F9EE2F19AC07C149F6993F605552F1C8E62B48E815F37305A31606821
+{
+    public NeoAxis.CSharpScript Owner;
+    public void Light4_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var obj = (ObjectInSpace)sender;
+        var tr = obj.TransformV;
+        obj.Transform = new Transform(tr.Position, Quaternion.FromRotateByZ(Time.Current * 0.25), tr.Scale);
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgQnV0dG9uX0NsaWNrKE5lb0F4aXMuQnV0dG9uM0Qgc2VuZGVyLCBOZW9BeGlzLkNvbXBvbmVudCBpbml0aWF0b3IpCnsKCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRTY2VuZTsKCgkvL29wZW4gb3IgY2xvc2UgdGhlIGdhdGUKCXZhciBnYXRlID0gc2NlbmUuR2V0Q29tcG9uZW50PEdhdGU+KCJEZWZhdWx0IEdhdGUgMiIpOwoJaWYoZ2F0ZSAhPSBudWxsKQoJewoJCWdhdGUuVHJ5U3dpdGNoKGluaXRpYXRvcik7CgoJCS8vISEhIWFkZCBuZXR3b3JraW5nIHN1cHBvcnQKCQkvL2dhdGUuVHJ5U2V0U3RhdGUKCQkvL2dhdGUuRGVzaXJlZFN0YXRlID0gc2VuZGVyLkFjdGl2YXRlZC5WYWx1ZSA_IDEgOiAwOwoJfQkKfQo=")]
+public class DynamicClass8FE2891E3622FE393024552D21521C7BEBAB5C2AF7ED9B4DB19478AD9F4C655A
+{
+    public NeoAxis.CSharpScript Owner;
+    public void Button_Click(NeoAxis.Button3D sender, NeoAxis.Component initiator)
+    {
+        var scene = sender.ParentScene;
+        //open or close the gate
+        var gate = scene.GetComponent<Gate>("Default Gate 2");
+        if (gate != null)
+        {
+            gate.TrySwitch(initiator);
+        //!!!!add networking support
+        //gate.TrySetState
+        //gate.DesiredState = sender.Activated.Value ? 1 : 0;
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgSW50ZXJhY3RpdmVPYmplY3RfQ2xpY2soTmVvQXhpcy5JbnRlcmFjdGl2ZU9iamVjdCBzZW5kZXIsIE5lb0F4aXMuQ29tcG9uZW50IGluaXRpYXRvcikKewoJLy9zaG93IHNjcmVlbiBtZXNzYWdlCgl2YXIgdGV4dCA9ICJDbGljayEiOwoJaWYgKHNlbmRlci5OZXR3b3JrSXNTZXJ2ZXIpCgl7CgkJdmFyIG5ldHdvcmtMb2dpYyA9IE5ldHdvcmtMb2dpY1V0aWxpdHkuR2V0TmV0d29ya0xvZ2ljKGluaXRpYXRvcikgYXMgTmV0d29ya0xvZ2ljOwoJCW5ldHdvcmtMb2dpYz8uU2VuZFNjcmVlbk1lc3NhZ2VUb0NsaWVudEJ5Q29udHJvbGxlZE9iamVjdChpbml0aWF0b3IsIHRleHQsIGZhbHNlKTsKCX0KCWVsc2UKCQlTY3JlZW5NZXNzYWdlcy5BZGQodGV4dCk7Cn0K")]
+public class DynamicClassC6807387C6C4481F71DA9C37D8CB52E0DAC8BC76C98ACD92F55EAC01F1D5690F
+{
+    public NeoAxis.CSharpScript Owner;
+    public void InteractiveObject_Click(NeoAxis.InteractiveObject sender, NeoAxis.Component initiator)
+    {
+        //show screen message
+        var text = "Click!";
+        if (sender.NetworkIsServer)
+        {
+            var networkLogic = NetworkLogicUtility.GetNetworkLogic(initiator) as NetworkLogic;
+            networkLogic?.SendScreenMessageToClientByControlledObject(initiator, text, false);
+        }
+        else
+            ScreenMessages.Add(text);
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgRGVmYXVsdEdhdGUzX0NhblN3aXRjaChOZW9BeGlzLkdhdGUgc2VuZGVyLCBOZW9BeGlzLkNvbXBvbmVudCBpbml0aWF0b3IsIHJlZiBib29sIGNhblN3aXRjaCkKewoJLy9nZXQgYSBjaGFyYWN0ZXIgb2YgdGhlIHBsYXllcgoJdmFyIHBsYXllckNoYXJhY3RlciA9IGluaXRpYXRvciBhcyBDaGFyYWN0ZXI7CglpZiAocGxheWVyQ2hhcmFjdGVyICE9IG51bGwpCgl7CgkJLy9jaGVja3MgcGxheWVyJ3MgY2hhcmFjdGVyIGhhcyBhIGtleQoJCXZhciBpdGVtID0gcGxheWVyQ2hhcmFjdGVyLkdldEl0ZW1CeVJlc291cmNlTmFtZShAIkNvbnRlbnRcSXRlbXMgM0RcTmVvQXhpc1xLZXlcS2V5Lml0ZW10eXBlIik7CgkJaWYgKGl0ZW0gPT0gbnVsbCkKCQl7CgkJCS8vc2hvdyBzY3JlZW4gbWVzc2FnZQoJCQl2YXIgdGV4dCA9ICJZb3UgbmVlZCB0byBoYXZlIGEga2V5IHRvIG9wZW4gdGhlIGRvb3IuIjsJCQkKCQkJaWYoc2VuZGVyLk5ldHdvcmtJc1NlcnZlcikgLy9pZihTaW11bGF0aW9uQXBwU2VydmVyLlNlcnZlciAhPSBudWxsKQoJCQl7CgkJCQl2YXIgbmV0d29ya0xvZ2ljID0gTmV0d29ya0xvZ2ljVXRpbGl0eS5HZXROZXR3b3JrTG9naWMoaW5pdGlhdG9yKSBhcyBOZXR3b3JrTG9naWM7CgkJCQluZXR3b3JrTG9naWM_LlNlbmRTY3JlZW5NZXNzYWdlVG9DbGllbnRCeUNvbnRyb2xsZWRPYmplY3QoaW5pdGlhdG9yLCB0ZXh0LCBmYWxzZSk7CgkJCX0KCQkJZWxzZQoJCQkJU2NyZWVuTWVzc2FnZXMuQWRkKHRleHQpOwoJCQkJCgkJCS8vc2V0IGNhbid0IGludGVyYWN0IAoJCQljYW5Td2l0Y2ggPSBmYWxzZTsKCQkJCgkJCXJldHVybjsKCQl9Cgl9CQkJCn0K")]
+public class DynamicClass5C107FE9ACF32DB6D9998ED1C2FC4C6576FBD0BF57F255F5D68F2A04CCCD0BFC
+{
+    public NeoAxis.CSharpScript Owner;
+    public void DefaultGate3_CanSwitch(NeoAxis.Gate sender, NeoAxis.Component initiator, ref bool canSwitch)
+    {
+        //get a character of the player
+        var playerCharacter = initiator as Character;
+        if (playerCharacter != null)
+        {
+            //checks player's character has a key
+            var item = playerCharacter.GetItemByResourceName(@"Content\Items 3D\NeoAxis\Key\Key.itemtype");
+            if (item == null)
+            {
+                //show screen message
+                var text = "You need to have a key to open the door.";
+                if (sender.NetworkIsServer) //if(SimulationAppServer.Server != null)
+                {
+                    var networkLogic = NetworkLogicUtility.GetNetworkLogic(initiator) as NetworkLogic;
+                    networkLogic?.SendScreenMessageToClientByControlledObject(initiator, text, false);
+                }
+                else
+                    ScreenMessages.Add(text);
+                //set can't interact 
+                canSwitch = false;
+                return;
+            }
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgTWVzaEluU3BhY2VBbmltYXRpb25Db250cm9sbGVyX0NhbGN1bGF0ZUJvbmVUcmFuc2Zvcm1zKE5lb0F4aXMuTWVzaEluU3BhY2VBbmltYXRpb25Db250cm9sbGVyIHNlbmRlciwgTmVvQXhpcy5Ta2VsZXRvbkFuaW1hdGlvblRyYWNrLkNhbGN1bGF0ZUJvbmVUcmFuc2Zvcm1zSXRlbVtdIHJlc3VsdCkKewoJLy90byBlbmFibGUgdGhpcyBldmVudCBoYW5kbGVyIGluIHRoZSBlZGl0b3IgY2hhbmdlICJXaGVuIEVuYWJsZSIgcHJvcGVydHkgdG8gIlNpbXVsYXRpb24gfCBJbnN0YW5jZSB8IEVkaXRvciIuCgkvL2NvbXBvbmVudDogQ2hhcmFjdGVyL01lc2ggSW4gU3BhY2UvQyMgU2NyaXB0L0V2ZW50IEhhbmRsZXIgQ2FsY3VsYXRlQm9uZVRyYW5zZm9ybXMuCgkKCXZhciBib25lSW5kZXggPSBzZW5kZXIuR2V0Qm9uZUluZGV4KCJtaXhhbW9yaWc6U3BpbmUxIik7CglpZihib25lSW5kZXggIT0gLTEpCgl7CgkJcmVmIHZhciBpdGVtID0gcmVmIHJlc3VsdFtib25lSW5kZXhdOwoKCQkvL2NhbGN1bGF0ZSBib25lIG9mZnNldAoJCXZhciBhbmdsZSA9IG5ldyBEZWdyZWUoNjApICogTWF0aC5TaW4oVGltZS5DdXJyZW50KTsgCgkJdmFyIG9mZnNldCA9IE1hdHJpeDNGLkZyb21Sb3RhdGVCeVkoKGZsb2F0KWFuZ2xlLkluUmFkaWFucygpKS5Ub1F1YXRlcm5pb24oKTsKCQkKCQkvL3VwZGF0ZSB0aGUgYm9uZQoJCWl0ZW0uUm90YXRpb24gKj0gb2Zmc2V0OwoJfQkKfQo=")]
+public class DynamicClassD11D0BDF2CE301BB2E8F6F60961E3230562912D7DE50E1854F960982DD980C0E
+{
+    public NeoAxis.CSharpScript Owner;
+    public void MeshInSpaceAnimationController_CalculateBoneTransforms(NeoAxis.MeshInSpaceAnimationController sender, NeoAxis.SkeletonAnimationTrack.CalculateBoneTransformsItem[] result)
+    {
+        //to enable this event handler in the editor change "When Enable" property to "Simulation | Instance | Editor".
+        //component: Character/Mesh In Space/C# Script/Event Handler CalculateBoneTransforms.
+        var boneIndex = sender.GetBoneIndex("mixamorig:Spine1");
+        if (boneIndex != -1)
+        {
+            ref var item = ref result[boneIndex];
+            //calculate bone offset
+            var angle = new Degree(60) * Math.Sin(Time.Current);
+            var offset = Matrix3F.FromRotateByY((float)angle.InRadians()).ToQuaternion();
+            //update the bone
+            item.Rotation *= offset;
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("VHJhbnNmb3JtIE1ldGhvZCgpCnsKCXZhciBhbmdsZSA9IEVuZ2luZUFwcC5FbmdpbmVUaW1lICogLTEuMDsKCXZhciBvZmZzZXQgPSBuZXcgVmVjdG9yMyhNYXRoLkNvcyhhbmdsZSksIE1hdGguU2luKGFuZ2xlKSwgMCkgKiAyLjA7Cgl2YXIgbG9va1RvID0gbmV3IFZlY3RvcjMoMTEuNzM3NDgzOTEyNDgyNywgLTAuMDUxNzc2NzUwMzI0MzksIC0xNC44MDkyNzU1ODI1MDkyKTsKCXZhciBsb29rQXQgPSBRdWF0ZXJuaW9uLkxvb2tBdCgtb2Zmc2V0LCBuZXcgVmVjdG9yMygwLDAsMSkpOwoJCglyZXR1cm4gbmV3IFRyYW5zZm9ybSggbG9va1RvICsgb2Zmc2V0LCBsb29rQXQsIFZlY3RvcjMuT25lICk7Cn0K")]
+public class DynamicClass18A7B3363998B96C0E6D19CE157D3F0E05EA2CD7494616F26C28412469E21318
+{
+    public NeoAxis.CSharpScript Owner;
+    Transform Method()
+    {
+        var angle = EngineApp.EngineTime * -1.0;
+        var offset = new Vector3(Math.Cos(angle), Math.Sin(angle), 0) * 2.0;
+        var lookTo = new Vector3(11.7374839124827, -0.05177675032439, -14.8092755825092);
+        var lookAt = Quaternion.LookAt(-offset, new Vector3(0, 0, 1));
+        return new Transform(lookTo + offset, lookAt, Vector3.One);
+    }
+}
+
+[CSharpScriptGeneratedAttribute("VHJhbnNmb3JtIE1ldGhvZCgpCnsKCXZhciBhbmdsZSA9IEVuZ2luZUFwcC5FbmdpbmVUaW1lICogMS4zOwoJdmFyIG9mZnNldCA9IG5ldyBWZWN0b3IzKE1hdGguQ29zKGFuZ2xlKSwgTWF0aC5TaW4oYW5nbGUpLCAwKSAqIDIuMDsKCXZhciBsb29rVG8gPSBuZXcgVmVjdG9yMygxMS43Mzc0ODM5MTI0ODI3LCAtMC4wNTE3NzY3NTAzMjQzOSwgLTE1LjUwOTI3NTU4MjUwOTIpOwoJdmFyIGxvb2tBdCA9IFF1YXRlcm5pb24uTG9va0F0KC1vZmZzZXQsIG5ldyBWZWN0b3IzKDAsMCwxKSk7CgkKCXJldHVybiBuZXcgVHJhbnNmb3JtKCBsb29rVG8gKyBvZmZzZXQsIGxvb2tBdCwgbmV3IFZlY3RvcjMoMC41LDAuNSwwLjUpICk7Cn0K")]
+public class DynamicClass4E5C224DE2D6FE23DDD4DAFC8B01F3FBD396357061CC49E0F8B9445FCDE75B0F
+{
+    public NeoAxis.CSharpScript Owner;
+    Transform Method()
+    {
+        var angle = EngineApp.EngineTime * 1.3;
+        var offset = new Vector3(Math.Cos(angle), Math.Sin(angle), 0) * 2.0;
+        var lookTo = new Vector3(11.7374839124827, -0.05177675032439, -15.5092755825092);
+        var lookAt = Quaternion.LookAt(-offset, new Vector3(0, 0, 1));
+        return new Transform(lookTo + offset, lookAt, new Vector3(0.5, 0.5, 0.5));
+    }
+}
+
+[CSharpScriptGeneratedAttribute("VHJhbnNmb3JtIE1ldGhvZCgpCnsKCXZhciBhbmdsZSA9IEVuZ2luZUFwcC5FbmdpbmVUaW1lICogNTsKCXZhciByb3RhdGlvbiA9IFF1YXRlcm5pb24uRnJvbVJvdGF0ZUJ5WihhbmdsZSk7CgoJcmV0dXJuIG5ldyBUcmFuc2Zvcm0obmV3IFZlY3RvcjMoMTEuNzM3NCwgLTAuMDUxNywgLTE2LjMwNzEpLCByb3RhdGlvbiwgbmV3IFZlY3RvcjMoMC40LCAwLjQsIDAuNCkpOwp9Cg==")]
+public class DynamicClass59F5160527C220D61121765812535F715E795B3A07FE6A450DEEFCC0746F11D5
+{
+    public NeoAxis.CSharpScript Owner;
+    Transform Method()
+    {
+        var angle = EngineApp.EngineTime * 5;
+        var rotation = Quaternion.FromRotateByZ(angle);
+        return new Transform(new Vector3(11.7374, -0.0517, -16.3071), rotation, new Vector3(0.4, 0.4, 0.4));
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgSW5kaXJlY3RMaWdodGluZ19VcGRhdGVFdmVudChOZW9BeGlzLkNvbXBvbmVudCBzZW5kZXIsIGZsb2F0IGRlbHRhKQp7Cgl2YXIgZWZmZWN0ID0gc2VuZGVyIGFzIFJlbmRlcmluZ0VmZmVjdF9JbmRpcmVjdExpZ2h0aW5nOwoJaWYoZWZmZWN0ICE9IG51bGwpCgkJZWZmZWN0LkludGVuc2l0eSA9IChUaW1lLkN1cnJlbnQgJSA4LjApID4gNCA_IDEgOiAwOwp9Cg==")]
+public class DynamicClass3C0B0632C0376DBDE4309FC857CEA711519D39308970B7C42F61B0DD30E61A98
+{
+    public NeoAxis.CSharpScript Owner;
+    public void IndirectLighting_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var effect = sender as RenderingEffect_IndirectLighting;
+        if (effect != null)
+            effect.Intensity = (Time.Current % 8.0) > 4 ? 1 : 0;
+    }
+}
+
+[CSharpScriptGeneratedAttribute("VHJhbnNmb3JtIE1ldGhvZCgpCnsKCXZhciBhbmdsZSA9IEVuZ2luZUFwcC5FbmdpbmVUaW1lICogMC4zOwoJdmFyIG9mZnNldCA9IG5ldyBWZWN0b3IzKE1hdGguQ29zKGFuZ2xlKSwgTWF0aC5TaW4oYW5nbGUpLCAwKSAqIDIuNTsKCXZhciBsb29rVG8gPSBuZXcgVmVjdG9yMygxMS43Mzc0ODM5MTI0ODI3LCAtMC4wNTE3NzY3NTAzMjQzOSwgLTE1LjUwOTI3NTU4MjUwOTIpOwoJdmFyIGxvb2tBdCA9IFF1YXRlcm5pb24uTG9va0F0KC1vZmZzZXQsIG5ldyBWZWN0b3IzKDAsMCwxKSk7CgkKCXJldHVybiBuZXcgVHJhbnNmb3JtKCBsb29rVG8gKyBvZmZzZXQsIGxvb2tBdCwgVmVjdG9yMy5PbmUgKTsKfQo=")]
+public class DynamicClass38E1E68F4590ADDA8A2E2D87A752F325B659F81F3159DB8B10100F7BB9E01C46
+{
+    public NeoAxis.CSharpScript Owner;
+    Transform Method()
+    {
+        var angle = EngineApp.EngineTime * 0.3;
+        var offset = new Vector3(Math.Cos(angle), Math.Sin(angle), 0) * 2.5;
+        var lookTo = new Vector3(11.7374839124827, -0.05177675032439, -15.5092755825092);
+        var lookAt = Quaternion.LookAt(-offset, new Vector3(0, 0, 1));
+        return new Transform(lookTo + offset, lookAt, Vector3.One);
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgQm94MTBfVXBkYXRlRXZlbnQoTmVvQXhpcy5Db21wb25lbnQgc2VuZGVyLCBmbG9hdCBkZWx0YSkKewoJdmFyIG9iaiA9IChPYmplY3RJblNwYWNlKXNlbmRlcjsKCgl2YXIgdHIgPSBvYmouVHJhbnNmb3JtVjsKCXZhciBuZXdUciA9IHRyLlVwZGF0ZVJvdGF0aW9uKFF1YXRlcm5pb24uRnJvbVJvdGF0ZUJ5WihFbmdpbmVBcHAuRW5naW5lVGltZSAvIDIpKTsKCW9iai5UcmFuc2Zvcm0gPSBuZXdUcjsKfQo=")]
+public class DynamicClass0E8E609371B70770BC55E73FC09A837304ABB7E8A508B15C379AAC9E8EAD4B72
+{
+    public NeoAxis.CSharpScript Owner;
+    public void Box10_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var obj = (ObjectInSpace)sender;
+        var tr = obj.TransformV;
+        var newTr = tr.UpdateRotation(Quaternion.FromRotateByZ(EngineApp.EngineTime / 2));
+        obj.Transform = newTr;
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgX1VwZGF0ZUV2ZW50KE5lb0F4aXMuQ29tcG9uZW50IHNlbmRlciwgZmxvYXQgZGVsdGEpCnsKCXRyeQoJewoJCXZhciBhbGwgPSBUaW1lLkN1cnJlbnQgJSA4ID4gNC4wOwoJCQoJCWZvcmVhY2godmFyIHNlbnNvciBpbiBzZW5kZXIuR2V0Q29tcG9uZW50czxTZW5zb3I+KCkpCgkJewoJCQlzZW5zb3IuTW9kZSA9IGFsbCA_IFNlbnNvci5Nb2RlRW51bS5BbGxPYmplY3RzIDogU2Vuc29yLk1vZGVFbnVtLk9uZUNsb3Nlc3RPYmplY3Q7CgkJfQoJfQoJY2F0Y2goRXhjZXB0aW9uIGUpCgl7CgkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCX0JCn0K")]
+public class DynamicClass3A57E5338BE6077103B8811D0EB5BCD2DB48A32E3A3C110C368ACD9486FAB7AA
+{
+    public NeoAxis.CSharpScript Owner;
+    public void _UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        try
+        {
+            var all = Time.Current % 8 > 4.0;
+            foreach (var sensor in sender.GetComponents<Sensor>())
+            {
+                sensor.Mode = all ? Sensor.ModeEnum.AllObjects : Sensor.ModeEnum.OneClosestObject;
+            }
+        }
+        catch (Exception e)
+        {
+            Log.Warning(e.Message);
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("Y29uc3QgZG91YmxlIHJlc2V0VGltZSA9IDIwOwpkb3VibGUgbGFzdFJlc2V0VGltZTsKRGljdGlvbmFyeTxNZXNoSW5TcGFjZSwgVHJhbnNmb3JtPiBvcmlnaW5hbFRyYW5zZm9ybXMgPSBuZXcgRGljdGlvbmFyeTxNZXNoSW5TcGFjZSwgVHJhbnNmb3JtPigpOwoKcHVibGljIHZvaWQgX1NpbXVsYXRpb25TdGVwKE5lb0F4aXMuQ29tcG9uZW50IG9iaikKewoJLy9zYXZlIGluaXRpYWwgc3RhdGUgb2Ygb2JqZWN0cwoJaWYgKGxhc3RSZXNldFRpbWUgPT0gMCkKCXsKCQlsYXN0UmVzZXRUaW1lID0gVGltZS5DdXJyZW50OwoJCQoJCWZvcmVhY2ggKHZhciBjb21wb25lbnQgaW4gU2NlbmUuRmlyc3QuR2V0Q29tcG9uZW50czxNZXNoSW5TcGFjZT4oKSkKCQl7CgkJCWlmIChjb21wb25lbnQuTmFtZS5Db250YWlucygiU0ZDcmF0ZSIpKQoJCQkJb3JpZ2luYWxUcmFuc2Zvcm1zW2NvbXBvbmVudF0gPSBjb21wb25lbnQuVHJhbnNmb3JtLlZhbHVlOwoJCX0KCX0KCgkvL3Jlc2V0CglpZiAobGFzdFJlc2V0VGltZSAhPSAwICYmIFRpbWUuQ3VycmVudCAtIGxhc3RSZXNldFRpbWUgPiByZXNldFRpbWUgKQoJewoJCWxhc3RSZXNldFRpbWUgPSBUaW1lLkN1cnJlbnQ7CgkJCgkJZm9yZWFjaCAodmFyIHBhaXIgaW4gb3JpZ2luYWxUcmFuc2Zvcm1zKQoJCQlwYWlyLktleS5UcmFuc2Zvcm0gPSBwYWlyLlZhbHVlOwoJfQp9Cg==")]
+public class DynamicClass41F4FA92BF32BAAA0D93BB318FAC7C014D94107DCB078B2C9F2D4B43E90E769E
+{
+    public NeoAxis.CSharpScript Owner;
+    const double resetTime = 20;
+    double lastResetTime;
+    Dictionary<MeshInSpace, Transform> originalTransforms = new Dictionary<MeshInSpace, Transform>();
+    public void _SimulationStep(NeoAxis.Component obj)
+    {
+        //save initial state of objects
+        if (lastResetTime == 0)
+        {
+            lastResetTime = Time.Current;
+            foreach (var component in Scene.First.GetComponents<MeshInSpace>())
+            {
+                if (component.Name.Contains("SFCrate"))
+                    originalTransforms[component] = component.Transform.Value;
+            }
+        }
+
+        //reset
+        if (lastResetTime != 0 && Time.Current - lastResetTime > resetTime)
+        {
+            lastResetTime = Time.Current;
+            foreach (var pair in originalTransforms)
+                pair.Key.Transform = pair.Value;
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgUGFpbnRMYXllcl9VcGRhdGVFdmVudChOZW9BeGlzLkNvbXBvbmVudCBzZW5kZXIsIGZsb2F0IGRlbHRhKQp7Cgl2YXIgbGF5ZXIgPSAoUGFpbnRMYXllcilzZW5kZXI7CglsYXllci5NYXRlcmlhbENvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMSwgMSwgTWF0aEV4LlNpbihUaW1lLkN1cnJlbnQpICogMC41ICsgMC41KTsKfQo=")]
+public class DynamicClass87CB81277738E3204CECEEF6374F3AD27C4171EA1B50DAD28C3F381575BB5F23
+{
+    public NeoAxis.CSharpScript Owner;
+    public void PaintLayer_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var layer = (PaintLayer)sender;
+        layer.MaterialColor = new ColorValue(1, 1, 1, MathEx.Sin(Time.Current) * 0.5 + 0.5);
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgUGFpbnRMYXllcl9VcGRhdGVFdmVudChOZW9BeGlzLkNvbXBvbmVudCBzZW5kZXIsIGZsb2F0IGRlbHRhKQp7Cgl2YXIgbGF5ZXIgPSAoUGFpbnRMYXllcilzZW5kZXI7CglsYXllci5NYXRlcmlhbENvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMSwgMSwgTWF0aEV4LkNvcyhUaW1lLkN1cnJlbnQpICogMC41ICsgMC41KTsKfQo=")]
+public class DynamicClass0CEA82422398667C47366B923DF74C9208964575BB36AE3031D0BF5B96FCC8FE
+{
+    public NeoAxis.CSharpScript Owner;
+    public void PaintLayer_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var layer = (PaintLayer)sender;
+        layer.MaterialColor = new ColorValue(1, 1, 1, MathEx.Cos(Time.Current) * 0.5 + 0.5);
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgU0ZDcmF0ZTFfVXBkYXRlRXZlbnQoTmVvQXhpcy5Db21wb25lbnQgc2VuZGVyLCBmbG9hdCBkZWx0YSkKewoJdmFyIG1lc2hJblNwYWNlID0gKE1lc2hJblNwYWNlKXNlbmRlcjsKCQoJLy91c2UgbWVzaCBvZiB0aGUgY29tcG9uZW50Cgl2YXIgbWVzaCA9IG1lc2hJblNwYWNlLk1lc2guVmFsdWU7CgkKCXZhciBkaXN0YW5jZVN0ZXBzID0gNTsKCXZhciBhbmdsZVN0ZXBzID0gODsKCgl2YXIgYWRkaXRpb25hbEl0ZW1zID0gbmV3IE1lc2hJblNwYWNlLkFkZGl0aW9uYWxJdGVtW2Rpc3RhbmNlU3RlcHMgKiBhbmdsZVN0ZXBzXTsKCglpbnQgY3VycmVudEluZGV4ID0gMDsKCglmb3IgKGludCBkaXN0YW5jZVN0ZXAgPSAwOyBkaXN0YW5jZVN0ZXAgPCBkaXN0YW5jZVN0ZXBzOyBkaXN0YW5jZVN0ZXArKykKCXsKCQl2YXIgZGlzdGFuY2UgPSAoZG91YmxlKWRpc3RhbmNlU3RlcCAqIDEuMGY7CgoJCWZvciAoaW50IGFuZ2xlU3RlcCA9IDA7IGFuZ2xlU3RlcCA8IGFuZ2xlU3RlcHM7IGFuZ2xlU3RlcCsrKQoJCXsKCQkJdmFyIGFuZ2xlID0gTWF0aC5QSSAqIDIgKiBhbmdsZVN0ZXAgLyBhbmdsZVN0ZXBzICsgVGltZS5DdXJyZW50ICogMC41OwoKCQkJdmFyIHBvcyA9IG5ldyBWZWN0b3IzKE1hdGguQ29zKGFuZ2xlKSwgTWF0aC5TaW4oYW5nbGUpLCAwKSAqIGRpc3RhbmNlOwoJCQl2YXIgcm90ID0gUXVhdGVybmlvbi5JZGVudGl0eTsKCQkJdmFyIHNjbCA9IG5ldyBWZWN0b3IzKDAuMyAvIGRpc3RhbmNlLCAwLjMgLyBkaXN0YW5jZSwgMC4zIC8gZGlzdGFuY2UpOwoKCQkJYWRkaXRpb25hbEl0ZW1zW2N1cnJlbnRJbmRleF0gPSBuZXcgTWVzaEluU3BhY2UuQWRkaXRpb25hbEl0ZW0obWVzaCwgcG9zLCByb3QsIHNjbCwgbmV3IENvbG9yVmFsdWUoMSwgMSwgMCkpOwoJCQljdXJyZW50SW5kZXgrKzsKCQl9Cgl9CgoJLyoKCXZhciBhZGRpdGlvbmFsSXRlbXMgPSBuZXcgTWVzaEluU3BhY2UuQWRkaXRpb25hbEl0ZW1bMV07CglyZWYgdmFyIGl0ZW0gPSByZWYgYWRkaXRpb25hbEl0ZW1zWzBdOwoJaXRlbS5NZXNoID0gbWVzaDsKCWl0ZW0uUG9zaXRpb24gPSBuZXcgVmVjdG9yMygxLCAwLCAwKTsKCWl0ZW0uUm90YXRpb24gPSBRdWF0ZXJuaW9uLklkZW50aXR5OzsKCWl0ZW0uU2NhbGUgPSBuZXcgVmVjdG9yMyguMiwgLjIsIC4yKTsKCWl0ZW0uQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAxLCAwKTsKCSovCgoJbWVzaEluU3BhY2UuQWRkaXRpb25hbEl0ZW1zID0gYWRkaXRpb25hbEl0ZW1zOwoKCgkvL3VwZGF0ZSBib3VuZHMgd2hlbiBuZWVkIHVwZGF0ZQoJewoJCXZhciB0ciA9IG1lc2hJblNwYWNlLlRyYW5zZm9ybVY7CgkJdmFyIGJvdW5kcyA9IG5ldyBCb3VuZHMoLTQsIC00LCAtMC41LCA0LCA0LCAwLjUpOwoJCXZhciBib3ggPSBuZXcgQm94KGJvdW5kcywgdHIuUG9zaXRpb24sIHRyLlJvdGF0aW9uLlRvTWF0cml4MygpKTsKCQltZXNoSW5TcGFjZS5TcGFjZUJvdW5kc092ZXJyaWRlID0gbmV3IFNwYWNlQm91bmRzKGJveC5Ub0JvdW5kcygpKTsKCQltZXNoSW5TcGFjZS5TcGFjZUJvdW5kc1VwZGF0ZSgpOwoJfQp9Cg==")]
+public class DynamicClass4006E112E81EFCB3154A5D2D5F374B8CBC164255996A9CB6E609B1805712BE55
+{
+    public NeoAxis.CSharpScript Owner;
+    public void SFCrate1_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var meshInSpace = (MeshInSpace)sender;
+        //use mesh of the component
+        var mesh = meshInSpace.Mesh.Value;
+        var distanceSteps = 5;
+        var angleSteps = 8;
+        var additionalItems = new MeshInSpace.AdditionalItem[distanceSteps * angleSteps];
+        int currentIndex = 0;
+        for (int distanceStep = 0; distanceStep < distanceSteps; distanceStep++)
+        {
+            var distance = (double)distanceStep * 1.0f;
+            for (int angleStep = 0; angleStep < angleSteps; angleStep++)
+            {
+                var angle = Math.PI * 2 * angleStep / angleSteps + Time.Current * 0.5;
+                var pos = new Vector3(Math.Cos(angle), Math.Sin(angle), 0) * distance;
+                var rot = Quaternion.Identity;
+                var scl = new Vector3(0.3 / distance, 0.3 / distance, 0.3 / distance);
+                additionalItems[currentIndex] = new MeshInSpace.AdditionalItem(mesh, pos, rot, scl, new ColorValue(1, 1, 0));
+                currentIndex++;
+            }
+        }
+
+        /*
+	var additionalItems = new MeshInSpace.AdditionalItem[1];
+	ref var item = ref additionalItems[0];
+	item.Mesh = mesh;
+	item.Position = new Vector3(1, 0, 0);
+	item.Rotation = Quaternion.Identity;;
+	item.Scale = new Vector3(.2, .2, .2);
+	item.Color = new ColorValue(1, 1, 0);
+	*/
+        meshInSpace.AdditionalItems = additionalItems;
+        //update bounds when need update
+        {
+            var tr = meshInSpace.TransformV;
+            var bounds = new Bounds(-4, -4, -0.5, 4, 4, 0.5);
+            var box = new Box(bounds, tr.Position, tr.Rotation.ToMatrix3());
+            meshInSpace.SpaceBoundsOverride = new SpaceBounds(box.ToBounds());
+            meshInSpace.SpaceBoundsUpdate();
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("Y2xhc3MgX1RlbXB7Cn0=")]
+public class DynamicClassDE8FFF4AC5357F29AC8BBDD6822A0D4AB8BF8DDC6BD03130D02DDFE04424217D
+{
+    public NeoAxis.CSharpScript Owner;
+    class _Temp
+    {
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgUGF0aGZpbmRpbmdHZW9tZXRyeV9VcGRhdGVFdmVudChOZW9BeGlzLkNvbXBvbmVudCBzZW5kZXIsIGZsb2F0IGRlbHRhKQp7Cn0K")]
+public class DynamicClass0E058E9E09355AFB4F2B27A02444779DCBC3828E7E3B05C4357CC92402097522
+{
+    public NeoAxis.CSharpScript Owner;
+    public void PathfindingGeometry_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgUGF0aGZpbmRpbmdHZW9tZXRyeV9VcGRhdGVFdmVudChOZW9BeGlzLkNvbXBvbmVudCBzZW5kZXIsIGZsb2F0IGRlbHRhKQp7Cgl2YXIgb2JqID0gKE9iamVjdEluU3BhY2Upc2VuZGVyOwoJdmFyIHNvdXJjZVRyYW5zZm9ybSA9IG9iai5UcmFuc2Zvcm0uVmFsdWU7CgoJdmFyIHJvdGF0aW9uID0gUXVhdGVybmlvbi5Gcm9tUm90YXRlQnlaKCBFbmdpbmVBcHAuRW5naW5lVGltZSAqIDAuMSApOwoJb2JqLlRyYW5zZm9ybSA9IG5ldyBUcmFuc2Zvcm0oIHNvdXJjZVRyYW5zZm9ybS5Qb3NpdGlvbiwgcm90YXRpb24sIHNvdXJjZVRyYW5zZm9ybS5TY2FsZSApOyAKfQo=")]
+public class DynamicClass2BB5B9519AD69E40FE96386DE12F37B02CFB752D0EFF8DB14CF57CAA08116B49
+{
+    public NeoAxis.CSharpScript Owner;
+    public void PathfindingGeometry_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var obj = (ObjectInSpace)sender;
+        var sourceTransform = obj.Transform.Value;
+        var rotation = Quaternion.FromRotateByZ(EngineApp.EngineTime * 0.1);
+        obj.Transform = new Transform(sourceTransform.Position, rotation, sourceTransform.Scale);
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgUGF0aGZpbmRpbmdHZW9tZXRyeV9VcGRhdGVFdmVudChOZW9BeGlzLkNvbXBvbmVudCBzZW5kZXIsIGZsb2F0IGRlbHRhKQp7Cgl2YXIgb2JqID0gKE9iamVjdEluU3BhY2Upc2VuZGVyOwoJdmFyIHNvdXJjZVRyYW5zZm9ybSA9IG9iai5UcmFuc2Zvcm0uVmFsdWU7CgoJdmFyIHJvdGF0aW9uID0gUXVhdGVybmlvbi5Gcm9tUm90YXRlQnlaKCBFbmdpbmVBcHAuRW5naW5lVGltZSAqIDAuMiApOwoJb2JqLlRyYW5zZm9ybSA9IG5ldyBUcmFuc2Zvcm0oIHNvdXJjZVRyYW5zZm9ybS5Qb3NpdGlvbiwgcm90YXRpb24sIHNvdXJjZVRyYW5zZm9ybS5TY2FsZSApOyAKfQo=")]
+public class DynamicClassB3CA78B4EE53495B8A0EC258842A91480BAE6FB344DDC17611E11B6F37188A56
+{
+    public NeoAxis.CSharpScript Owner;
+    public void PathfindingGeometry_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var obj = (ObjectInSpace)sender;
+        var sourceTransform = obj.Transform.Value;
+        var rotation = Quaternion.FromRotateByZ(EngineApp.EngineTime * 0.2);
+        obj.Transform = new Transform(sourceTransform.Position, rotation, sourceTransform.Scale);
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgUGF0aGZpbmRpbmdHZW9tZXRyeV9VcGRhdGVFdmVudChOZW9BeGlzLkNvbXBvbmVudCBzZW5kZXIsIGZsb2F0IGRlbHRhKQp7Cgl2YXIgb2JqID0gKE9iamVjdEluU3BhY2Upc2VuZGVyOwoJdmFyIHNvdXJjZVRyYW5zZm9ybSA9IG9iai5UcmFuc2Zvcm0uVmFsdWU7Cgl2YXIgcm90YXRpb24gPSBRdWF0ZXJuaW9uLkZyb21Sb3RhdGVCeVooIEVuZ2luZUFwcC5FbmdpbmVUaW1lICogMC4yICk7CglvYmouVHJhbnNmb3JtID0gbmV3IFRyYW5zZm9ybSggc291cmNlVHJhbnNmb3JtLlBvc2l0aW9uLCByb3RhdGlvbiwgc291cmNlVHJhbnNmb3JtLlNjYWxlICk7IAp9Cg==")]
+public class DynamicClassDC0B0074B27FF845D3921D53478ACDDD0FF9207A89AA90C0C0F968DC100764B3
+{
+    public NeoAxis.CSharpScript Owner;
+    public void PathfindingGeometry_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var obj = (ObjectInSpace)sender;
+        var sourceTransform = obj.Transform.Value;
+        var rotation = Quaternion.FromRotateByZ(EngineApp.EngineTime * 0.2);
+        obj.Transform = new Transform(sourceTransform.Position, rotation, sourceTransform.Scale);
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgUGF0aGZpbmRpbmdHZW9tZXRyeV9VcGRhdGVFdmVudChOZW9BeGlzLkNvbXBvbmVudCBzZW5kZXIsIGZsb2F0IGRlbHRhKQp7Cgl2YXIgZ2F0ZSA9IHNlbmRlci5QYXJlbnQgYXMgR2F0ZTsKCWlmKCBnYXRlICE9IG51bGwgKQoJewoJCQoJfQp9Cg==")]
+public class DynamicClassD6CD05E0B216E935FB460AF53A8B889E296A02B478F49B9EC7BD5B41B0F67805
+{
+    public NeoAxis.CSharpScript Owner;
+    public void PathfindingGeometry_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var gate = sender.Parent as Gate;
+        if (gate != null)
+        {
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgUGF0aGZpbmRpbmdHZW9tZXRyeV9VcGRhdGVFdmVudChOZW9BeGlzLkNvbXBvbmVudCBzZW5kZXIsIGZsb2F0IGRlbHRhKQp7Cgl2YXIgZ2F0ZSA9IHNlbmRlci5QYXJlbnQgYXMgR2F0ZTsKCWlmKCBnYXRlICE9IG51bGwgKQoJCXNlbmRlci5FbmFibGVkID0gIWdhdGUuSXNPcGVuOwp9Cg==")]
+public class DynamicClassB15496999F60B7B775E9128451867BC18E69F66FDB3D2859D359C41A1DABE556
+{
+    public NeoAxis.CSharpScript Owner;
+    public void PathfindingGeometry_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var gate = sender.Parent as Gate;
+        if (gate != null)
+            sender.Enabled = !gate.IsOpen;
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgRGVmYXVsdEdhdGVfVXBkYXRlRXZlbnQoTmVvQXhpcy5Db21wb25lbnQgc2VuZGVyLCBmbG9hdCBkZWx0YSkKewp9Cg==")]
+public class DynamicClass68785CD43970A7D4ABC30A3D663DE8EBF9025C16F094763F20A46666A59783DD
+{
+    public NeoAxis.CSharpScript Owner;
+    public void DefaultGate_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgRGVmYXVsdEdhdGVfVXBkYXRlRXZlbnQoTmVvQXhpcy5Db21wb25lbnQgc2VuZGVyLCBmbG9hdCBkZWx0YSkKewoJdmFyIGdhdGUgPSBzZW5kZXIgYXMgR2F0ZTsKCXZhciBwYXRoZmluZGluZ0dlb21ldHJ5ID0gc2VuZGVyLkdldENvbXBvbmVudDxQYXRoZmluZGluZ0dlb21ldHJ5PigpOwkKCWlmKCBwYXRoZmluZGluZ0dlb21ldHJ5ICE9IG51bGwgKQoJewoJCXNlbmRlci5FbmFibGVkID0gIWdhdGUuSXNPcGVuOwoJfQp9Cg==")]
+public class DynamicClassA098737D0DA287D6FA88D26E0B601F977DC2282CB15E5B12FD54321936AD14F7
+{
+    public NeoAxis.CSharpScript Owner;
+    public void DefaultGate_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var gate = sender as Gate;
+        var pathfindingGeometry = sender.GetComponent<PathfindingGeometry>();
+        if (pathfindingGeometry != null)
+        {
+            sender.Enabled = !gate.IsOpen;
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgRGVmYXVsdEdhdGVfVXBkYXRlRXZlbnQoTmVvQXhpcy5Db21wb25lbnQgc2VuZGVyLCBmbG9hdCBkZWx0YSkKewoJdmFyIGdhdGUgPSBzZW5kZXIgYXMgR2F0ZTsKCXZhciBwYXRoZmluZGluZ0dlb21ldHJ5ID0gc2VuZGVyLkdldENvbXBvbmVudDxQYXRoZmluZGluZ0dlb21ldHJ5PigpOwkKCWlmKCBwYXRoZmluZGluZ0dlb21ldHJ5ICE9IG51bGwgKQoJewoJCXBhdGhmaW5kaW5nR2VvbWV0cnkuRW5hYmxlZCA9ICFnYXRlLklzT3BlbjsKCX0KfQo=")]
+public class DynamicClass3A2A31664CD7C21564321A9D24A8D12550141229A665DB2AADDC9E1CD6118FCD
+{
+    public NeoAxis.CSharpScript Owner;
+    public void DefaultGate_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var gate = sender as Gate;
+        var pathfindingGeometry = sender.GetComponent<PathfindingGeometry>();
+        if (pathfindingGeometry != null)
+        {
+            pathfindingGeometry.Enabled = !gate.IsOpen;
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgRGVmYXVsdEdhdGVfVXBkYXRlRXZlbnQoTmVvQXhpcy5Db21wb25lbnQgc2VuZGVyLCBmbG9hdCBkZWx0YSkKewoJdmFyIGdhdGUgPSBzZW5kZXIgYXMgR2F0ZTsKCXZhciBwYXRoZmluZGluZ0dlb21ldHJ5ID0gc2VuZGVyLkdldENvbXBvbmVudDxQYXRoZmluZGluZ0dlb21ldHJ5PigpOwkKCWlmKCBwYXRoZmluZGluZ0dlb21ldHJ5ICE9IG51bGwgKQoJCXBhdGhmaW5kaW5nR2VvbWV0cnkuRW5hYmxlZCA9ICFnYXRlLklzT3BlbjsKfQo=")]
+public class DynamicClass7B96BE199DE04D2D105397119F116938474F9D05D6D0AF1F7991B7EF8215416F
+{
+    public NeoAxis.CSharpScript Owner;
+    public void DefaultGate_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var gate = sender as Gate;
+        var pathfindingGeometry = sender.GetComponent<PathfindingGeometry>();
+        if (pathfindingGeometry != null)
+            pathfindingGeometry.Enabled = !gate.IsOpen;
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgRGVmYXVsdEdhdGVfVXBkYXRlRXZlbnQoTmVvQXhpcy5Db21wb25lbnQgc2VuZGVyLCBmbG9hdCBkZWx0YSkKewoJdmFyIGdhdGUgPSBzZW5kZXIgYXMgR2F0ZTsKCgkvL3VwZGF0ZSBvcGVuCglnYXRlLkRlc2lyZWRTdGF0ZSA9IEVuZ2luZUFwcC5FbmdpbmVUaW1lOwoJCgkvL3VwZGF0ZSBwYXRoZmluZGluZyBnZW9tZXRyeQoJdmFyIHBhdGhmaW5kaW5nR2VvbWV0cnkgPSBzZW5kZXIuR2V0Q29tcG9uZW50PFBhdGhmaW5kaW5nR2VvbWV0cnk+KCk7CQoJaWYoIHBhdGhmaW5kaW5nR2VvbWV0cnkgIT0gbnVsbCApCgkJcGF0aGZpbmRpbmdHZW9tZXRyeS5FbmFibGVkID0gIWdhdGUuSXNPcGVuOwp9Cg==")]
+public class DynamicClass8422DE6EDB743CDA79E26CA3F5CAAD5A24BF8A251CA0B8E69AA73AA25750B03A
+{
+    public NeoAxis.CSharpScript Owner;
+    public void DefaultGate_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var gate = sender as Gate;
+        //update open
+        gate.DesiredState = EngineApp.EngineTime;
+        //update pathfinding geometry
+        var pathfindingGeometry = sender.GetComponent<PathfindingGeometry>();
+        if (pathfindingGeometry != null)
+            pathfindingGeometry.Enabled = !gate.IsOpen;
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgRGVmYXVsdEdhdGVfVXBkYXRlRXZlbnQoTmVvQXhpcy5Db21wb25lbnQgc2VuZGVyLCBmbG9hdCBkZWx0YSkKewoJdmFyIGdhdGUgPSBzZW5kZXIgYXMgR2F0ZTsKCgkvL3VwZGF0ZSBvcGVuCglnYXRlLkRlc2lyZWRTdGF0ZSA9IEVuZ2luZUFwcC5FbmdpbmVUaW1lICUgNCAvIDQ7CgkKCS8vdXBkYXRlIHBhdGhmaW5kaW5nIGdlb21ldHJ5Cgl2YXIgcGF0aGZpbmRpbmdHZW9tZXRyeSA9IHNlbmRlci5HZXRDb21wb25lbnQ8UGF0aGZpbmRpbmdHZW9tZXRyeT4oKTsJCglpZiggcGF0aGZpbmRpbmdHZW9tZXRyeSAhPSBudWxsICkKCQlwYXRoZmluZGluZ0dlb21ldHJ5LkVuYWJsZWQgPSAhZ2F0ZS5Jc09wZW47Cn0K")]
+public class DynamicClass7FFBBA97577EBBF6F32B042E9DB5195E709E4E0DD44E9A6F34C35F42E7936A31
+{
+    public NeoAxis.CSharpScript Owner;
+    public void DefaultGate_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var gate = sender as Gate;
+        //update open
+        gate.DesiredState = EngineApp.EngineTime % 4 / 4;
+        //update pathfinding geometry
+        var pathfindingGeometry = sender.GetComponent<PathfindingGeometry>();
+        if (pathfindingGeometry != null)
+            pathfindingGeometry.Enabled = !gate.IsOpen;
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgRGVmYXVsdEdhdGVfVXBkYXRlRXZlbnQoTmVvQXhpcy5Db21wb25lbnQgc2VuZGVyLCBmbG9hdCBkZWx0YSkKewoJdmFyIGdhdGUgPSBzZW5kZXIgYXMgR2F0ZTsKCgkvL3VwZGF0ZSBvcGVuCglpZiggRW5naW5lQXBwLkVuZ2luZVRpbWUgJSA0IDwgMiApCgkJZ2F0ZS5EZXNpcmVkU3RhdGUgPSAwOwoJZWxzZQoJCWdhdGUuRGVzaXJlZFN0YXRlID0gMTsKCQoJLy91cGRhdGUgcGF0aGZpbmRpbmcgZ2VvbWV0cnkKCXZhciBwYXRoZmluZGluZ0dlb21ldHJ5ID0gc2VuZGVyLkdldENvbXBvbmVudDxQYXRoZmluZGluZ0dlb21ldHJ5PigpOwkKCWlmKCBwYXRoZmluZGluZ0dlb21ldHJ5ICE9IG51bGwgKQoJCXBhdGhmaW5kaW5nR2VvbWV0cnkuRW5hYmxlZCA9ICFnYXRlLklzT3BlbjsKfQo=")]
+public class DynamicClass47C6DBB68F8385BD3A169758630345900D06539E12FD189AC8EFD535726E8C8C
+{
+    public NeoAxis.CSharpScript Owner;
+    public void DefaultGate_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var gate = sender as Gate;
+        //update open
+        if (EngineApp.EngineTime % 4 < 2)
+            gate.DesiredState = 0;
+        else
+            gate.DesiredState = 1;
+        //update pathfinding geometry
+        var pathfindingGeometry = sender.GetComponent<PathfindingGeometry>();
+        if (pathfindingGeometry != null)
+            pathfindingGeometry.Enabled = !gate.IsOpen;
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgRGVmYXVsdEdhdGVfVXBkYXRlRXZlbnQoTmVvQXhpcy5Db21wb25lbnQgc2VuZGVyLCBmbG9hdCBkZWx0YSkKewoJdmFyIGdhdGUgPSBzZW5kZXIgYXMgR2F0ZTsKCgkvL3VwZGF0ZSBvcGVuZWQgZ2F0ZSBzdGF0ZQoJaWYoIEVuZ2luZUFwcC5FbmdpbmVUaW1lICUgNCA8IDIgKQoJCWdhdGUuRGVzaXJlZFN0YXRlID0gMDsKCWVsc2UKCQlnYXRlLkRlc2lyZWRTdGF0ZSA9IDE7CgkKCS8vdXBkYXRlIHBhdGhmaW5kaW5nIGdlb21ldHJ5Cgl2YXIgcGF0aGZpbmRpbmdHZW9tZXRyeSA9IHNlbmRlci5HZXRDb21wb25lbnQ8UGF0aGZpbmRpbmdHZW9tZXRyeT4oKTsJCglpZiggcGF0aGZpbmRpbmdHZW9tZXRyeSAhPSBudWxsICkKCQlwYXRoZmluZGluZ0dlb21ldHJ5LkVuYWJsZWQgPSAhZ2F0ZS5Jc09wZW47Cn0K")]
+public class DynamicClassDE39D0B902F28CC64FFBFF1405583E8972193AEFCE4F66EBDC7FF69DF5551A36
+{
+    public NeoAxis.CSharpScript Owner;
+    public void DefaultGate_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var gate = sender as Gate;
+        //update opened gate state
+        if (EngineApp.EngineTime % 4 < 2)
+            gate.DesiredState = 0;
+        else
+            gate.DesiredState = 1;
+        //update pathfinding geometry
+        var pathfindingGeometry = sender.GetComponent<PathfindingGeometry>();
+        if (pathfindingGeometry != null)
+            pathfindingGeometry.Enabled = !gate.IsOpen;
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgRGVmYXVsdEdhdGVfVXBkYXRlRXZlbnQoTmVvQXhpcy5Db21wb25lbnQgc2VuZGVyLCBmbG9hdCBkZWx0YSkKewoJdmFyIGdhdGUgPSBzZW5kZXIgYXMgR2F0ZTsKCgkvL3VwZGF0ZSBvcGVuZWQgZ2F0ZSBzdGF0ZQoJaWYoIEVuZ2luZUFwcC5FbmdpbmVUaW1lICUgNiA8IDMgKQoJCWdhdGUuRGVzaXJlZFN0YXRlID0gMDsKCWVsc2UKCQlnYXRlLkRlc2lyZWRTdGF0ZSA9IDE7CgkKCS8vdXBkYXRlIHBhdGhmaW5kaW5nIGdlb21ldHJ5Cgl2YXIgcGF0aGZpbmRpbmdHZW9tZXRyeSA9IHNlbmRlci5HZXRDb21wb25lbnQ8UGF0aGZpbmRpbmdHZW9tZXRyeT4oKTsJCglpZiggcGF0aGZpbmRpbmdHZW9tZXRyeSAhPSBudWxsICkKCQlwYXRoZmluZGluZ0dlb21ldHJ5LkVuYWJsZWQgPSAhZ2F0ZS5Jc09wZW47Cn0K")]
+public class DynamicClass13A4CE59100264BBF7E93B19AAE4F6BBBB8A113C61A28834BCB37EA36894E1D4
+{
+    public NeoAxis.CSharpScript Owner;
+    public void DefaultGate_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var gate = sender as Gate;
+        //update opened gate state
+        if (EngineApp.EngineTime % 6 < 3)
+            gate.DesiredState = 0;
+        else
+            gate.DesiredState = 1;
+        //update pathfinding geometry
+        var pathfindingGeometry = sender.GetComponent<PathfindingGeometry>();
+        if (pathfindingGeometry != null)
+            pathfindingGeometry.Enabled = !gate.IsOpen;
+    }
+}
+
+[CSharpScriptGeneratedAttribute("cHVibGljIHZvaWQgRGVmYXVsdEdhdGVfVXBkYXRlRXZlbnQoTmVvQXhpcy5Db21wb25lbnQgc2VuZGVyLCBmbG9hdCBkZWx0YSkKewoJdmFyIGdhdGUgPSBzZW5kZXIgYXMgR2F0ZTsKCgkvL3VwZGF0ZSBvcGVuZWQgZ2F0ZSBzdGF0ZQoJaWYoIEVuZ2luZUFwcC5FbmdpbmVUaW1lICUgMTAgPCA1ICkKCQlnYXRlLkRlc2lyZWRTdGF0ZSA9IDA7CgllbHNlCgkJZ2F0ZS5EZXNpcmVkU3RhdGUgPSAxOwoJCgkvL3VwZGF0ZSBwYXRoZmluZGluZyBnZW9tZXRyeQoJdmFyIHBhdGhmaW5kaW5nR2VvbWV0cnkgPSBzZW5kZXIuR2V0Q29tcG9uZW50PFBhdGhmaW5kaW5nR2VvbWV0cnk+KCk7CQoJaWYoIHBhdGhmaW5kaW5nR2VvbWV0cnkgIT0gbnVsbCApCgkJcGF0aGZpbmRpbmdHZW9tZXRyeS5FbmFibGVkID0gIWdhdGUuSXNPcGVuOwp9Cg==")]
+public class DynamicClass3D5E78164E9CBB46513C3027C5DA48D26700D350AF5ED2A5DF0600FBE3983F88
+{
+    public NeoAxis.CSharpScript Owner;
+    public void DefaultGate_UpdateEvent(NeoAxis.Component sender, float delta)
+    {
+        var gate = sender as Gate;
+        //update opened gate state
+        if (EngineApp.EngineTime % 10 < 5)
+            gate.DesiredState = 0;
+        else
+            gate.DesiredState = 1;
+        //update pathfinding geometry
+        var pathfindingGeometry = sender.GetComponent<PathfindingGeometry>();
+        if (pathfindingGeometry != null)
+            pathfindingGeometry.Enabled = !gate.IsOpen;
+    }
+}
 }
 #endif

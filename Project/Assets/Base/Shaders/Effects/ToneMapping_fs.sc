@@ -6,9 +6,32 @@ $input v_texCoord0
 SAMPLER2D(s_sourceTexture, 0);
 uniform vec4 u_tonemapping_parameters;
 #define intensity u_tonemapping_parameters.x
-#define gammaInput u_tonemapping_parameters.y
+//#define gammaInput u_tonemapping_parameters.y
 #define exposure u_tonemapping_parameters.z
-#define gammaOutput u_tonemapping_parameters.w
+//#define gammaOutput u_tonemapping_parameters.w
+
+//////////////////////////////////////////////////////////
+//Neutral
+
+vec3 method_PBRNeutralToneMapping( vec3 color )
+{
+	const float startCompression = 0.8 - 0.04;
+	const float desaturation = 0.15;
+
+	float x = min(color.r, min(color.g, color.b));
+	float offset = x < 0.08 ? x - 6.25 * x * x : 0.04;
+	color -= offset;
+
+	float peak = max(color.r, max(color.g, color.b));
+	if (peak < startCompression) return color;
+
+	const float d = 1.0 - startCompression;
+	float newPeak = 1.0 - d * d / (peak + d - startCompression);
+	color *= newPeak / peak;
+
+	float g = 1.0 - 1.0 / (desaturation * (peak - newPeak) + 1.0);
+	return mix(color, newPeak * vec3(1, 1, 1), g);
+}
 
 //////////////////////////////////////////////////////////
 //Linear
@@ -66,23 +89,30 @@ void main()
 
 	vec3 color = sourceColor.rgb;
 
-	// Gamma input
-	color = pow(color,vec3_splat(1.0/gammaInput));
+	//// Gamma input
+	//color = pow(color,vec3_splat(1.0/gammaInput));
 		
 	// Exposure Adjustment
 	color *= exposure;
 
 	// Tone mapping
-#ifdef TONEMAPPING_METHOD_LINEAR
+#ifdef TONEMAPPING_METHOD_NEUTRAL
+	color = method_PBRNeutralToneMapping(color);
+#elif defined(TONEMAPPING_METHOD_LINEAR)
 	color = method_linear(color);
 #elif defined(TONEMAPPING_METHOD_ACES)
 	color = method_ACES(color);
 #elif defined(TONEMAPPING_METHOD_CUSTOM)
 	color = method_custom(color);
 #endif
-    
+
 	// Gamma output
-	color = pow(color,vec3_splat(1.0/gammaOutput));
+#ifdef ACCURATE_SRGB_CORRECTION
+	color = toGammaAccurate( color );
+#else
+	color = toGamma( color );
+#endif
+	//color = pow(color,vec3_splat(1.0/gammaOutput));
 
 	gl_FragColor = lerp(sourceColor, vec4(color, sourceColor.w), intensity);
 }

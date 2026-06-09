@@ -33,6 +33,7 @@ namespace NeoAxis.Editor
 
 			if( Sky != null )
 			{
+				Is3DScene = false;
 				var scene = CreateScene( false );
 
 				instanceInScene = (Sky)Sky.Clone();

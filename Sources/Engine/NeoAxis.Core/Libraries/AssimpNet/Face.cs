@@ -41,36 +41,18 @@ namespace Internal.Assimp
         /// <summary>
         /// Gets the number of indices defined in the face.
         /// </summary>
-        public int IndexCount
-        {
-            get
-            {
-                return m_indices.Count;
-            }
-        }
+        public int IndexCount => m_indices.Count;
 
         /// <summary>
         /// Gets if the face has faces (should always be true).
         /// </summary>
-        public bool HasIndices
-        {
-            get
-            {
-                return m_indices.Count > 0;
-            }
-        }
+        public bool HasIndices => m_indices.Count > 0;
 
         /// <summary>
         /// Gets or sets the indices that refer to positions of vertex data in the mesh's vertex 
         /// arrays.
         /// </summary>
-        public List<int> Indices
-        {
-            get
-            {
-                return m_indices;
-            }
-        }
+        public List<int> Indices => m_indices;
 
         /// <summary>
         /// Constructs a new instance of the <see cref="Face"/> class.
@@ -97,7 +79,7 @@ namespace Internal.Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<Face, AiFace>.IsNativeBlittable { get { return true; } }
+        bool IMarshalable<Face, AiFace>.IsNativeBlittable => true;
 
         /// <summary>
         /// Writes the managed data to the native value.
@@ -110,7 +92,7 @@ namespace Internal.Assimp
             nativeValue.Indices = IntPtr.Zero;
 
             if(nativeValue.NumIndices > 0)
-                nativeValue.Indices = MemoryHelper.ToNativeArray<int>(m_indices.ToArray());
+                nativeValue.Indices = MemoryHelper.ToNativeArray<int>(m_indices);
         }
 
         /// <summary>

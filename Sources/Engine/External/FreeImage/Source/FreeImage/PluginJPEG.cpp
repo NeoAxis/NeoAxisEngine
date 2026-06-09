@@ -1500,14 +1500,14 @@ Save(FreeImageIO *io, FIBITMAP *dib, fi_handle handle, int page, int flags, void
 
 			// thumbnail support (JFIF 1.02 extension markers)
 			if(FreeImage_GetThumbnail(dib) != NULL) {
-				cinfo.write_JFIF_header = 1; //<### force it, though when color is CMYK it will be incorrect
+				cinfo.write_JFIF_header = static_cast<boolean>(1); //<### force it, though when color is CMYK it will be incorrect
 				cinfo.JFIF_minor_version = 2;
 			}
 
 			// baseline JPEG support
-			if ((flags & JPEG_BASELINE) ==  JPEG_BASELINE) {
-				cinfo.write_JFIF_header = 0;	// No marker for non-JFIF colorspaces
-				cinfo.write_Adobe_marker = 0;	// write no Adobe marker by default				
+			if ((flags & JPEG_BASELINE) == JPEG_BASELINE) {
+				cinfo.write_JFIF_header = static_cast<boolean>(0);	// No marker for non-JFIF colorspaces
+				cinfo.write_Adobe_marker = static_cast<boolean>(0);	// write no Adobe marker by default				
 			}
 
 			// set subsampling options if required

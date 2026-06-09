@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2024.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1144, 842\"><KW V=\"1\" A=\"04A04844246E4D5445970D859D0F09D4\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"4C256B5B8CDC4442B7993B80F68BA3EF\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"04A04844246E4D5445970D859D0F09D4\"><KP UN=\"04A04844246E4D5445970D859D0F09D4\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"D323F78E85E84FE457B2FEE26F90B132\" S=\"False\"><CPD ObjPath=\"$Character\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1192, 963\"><KW V=\"1\" A=\"04A04844246E4D5445970D859D0F09D4\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"4C256B5B8CDC4442B7993B80F68BA3EF\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"04A04844246E4D5445970D859D0F09D4\"><KP UN=\"04A04844246E4D5445970D859D0F09D4\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"D323F78E85E84FE457B2FEE26F90B132\" S=\"False\"><CPD ObjPath=\"$Character\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	DisplayDevelopmentDataInSimulation = True
 	RenderingPipeline
 	{
@@ -37,7 +37,8 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -18.1591382869364 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 60000
+		Brightness = 30000
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -49,6 +50,7 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 91.429
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
@@ -79,7 +81,6 @@
 			.component NeoAxis.RenderingEffect_ToneMapping
 			{
 				Name = Tone Mapping
-				Intensity = 0.5
 			}
 			.component NeoAxis.RenderingEffect_ToLDR
 			{
@@ -184,22 +185,22 @@
 		Collision = True
 		LeftHandFactor = 1
 		LeftHandIndexFingerFlexionFactor = 1
-		LeftHandIndexFingerFlexionValue = 0.9271077429820022
+		LeftHandIndexFingerFlexionValue = 0.17252842070239616
 		LeftHandMiddleFingerFlexionFactor = 1
-		LeftHandMiddleFingerFlexionValue = 0.9271077429820022
+		LeftHandMiddleFingerFlexionValue = 0.17252842070239616
 		LeftHandRingFingerFlexionFactor = 1
-		LeftHandRingFingerFlexionValue = 0.9271077429820022
+		LeftHandRingFingerFlexionValue = 0.17252842070239616
 		LeftHandLittleFingerFlexionFactor = 1
-		LeftHandLittleFingerFlexionValue = 0.9271077429820022
+		LeftHandLittleFingerFlexionValue = 0.17252842070239616
 		RightHandFactor = 1
 		RightHandIndexFingerFlexionFactor = 1
-		RightHandIndexFingerFlexionValue = 0.27090404287885805
+		RightHandIndexFingerFlexionValue = 0.8537281574756284
 		RightHandMiddleFingerFlexionFactor = 1
-		RightHandMiddleFingerFlexionValue = 0.27090404287885805
+		RightHandMiddleFingerFlexionValue = 0.8537281574756284
 		RightHandRingFingerFlexionFactor = 1
-		RightHandRingFingerFlexionValue = 0.27090404287885805
+		RightHandRingFingerFlexionValue = 0.8537281574756284
 		RightHandLittleFingerFlexionFactor = 1
-		RightHandLittleFingerFlexionValue = 0.27090404287885805
+		RightHandLittleFingerFlexionValue = 0.8537281574756284
 		HeadFactor = 1
 		SpecialEffects
 		{

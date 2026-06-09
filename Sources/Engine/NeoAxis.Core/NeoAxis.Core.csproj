@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-	<CheckEolTargetFramework>false</CheckEolTargetFramework>
-	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  	<CheckEolTargetFramework>false</CheckEolTargetFramework>
+  	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <OutputType>Library</OutputType>
-	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+  	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <RootNamespace>NeoAxis</RootNamespace>
     <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -24,7 +24,8 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>	
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\..\..\Project\Binaries\</OutputPath>
@@ -48,212 +49,10 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Editor\ResourcesToCreate\**" />
-    <Compile Remove="obj\**" />
-    <Compile Remove="Properties\Android\**" />
-    <Compile Remove="Resources\**" />
-    <EmbeddedResource Remove="Editor\ResourcesToCreate\**" />
-    <EmbeddedResource Remove="obj\**" />
-    <EmbeddedResource Remove="Properties\Android\**" />
-    <EmbeddedResource Remove="Resources\**" />
-    <None Remove="Editor\ResourcesToCreate\**" />
     <None Remove="obj\**" />
-    <None Remove="Properties\Android\**" />
-    <None Remove="Resources\**" />
-    <Page Remove="Properties\Android\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Components\Camera\Component_Camera_PreviewControl.cs" />
-    <Compile Update="Components\GroupOfObjects\Component_GroupOfObjectsElement_SettingsCell.cs" />
-    <Compile Update="Components\Material\Component_Material_PreviewImage.cs" />
-    <Compile Update="Components\Material\Component_Material_PreviewControl - Copy.designer.cs">
-      <DependentUpon>Component_Material_PreviewControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Components\Mesh\Component_MeshModifier_SettingsCell.cs" />
-    <Compile Update="Components\ParticleSystem\Component_ParticleSystem_SettingsCell.cs" />
-    <Compile Update="Components\ParticleSystem\Component_ParticleSystem_DocumentWindow.cs" />
-    <Compile Update="Components\ParticleSystem\Component_ParticleSystem_DocumentWindow.designer.cs">
-      <DependentUpon>Component_ParticleSystem_DocumentWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Components\ParticleSystem\Component_ParticleSystem_PreviewControl.cs" />
-    <Compile Update="Components\ParticleSystem\Component_ParticleSystem_PreviewControl.designer.cs">
-      <DependentUpon>Component_ParticleSystem_PreviewControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Components\ParticleSystem\Component_ParticleSystemInSpace_SettingsCell.cs" />
-    <Compile Update="Components\Scene\SceneEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Components\Sprite\Component_Sprite_PreviewControl.cs" />
-    <Compile Update="Components\Stores\Component_StoreItem_PreviewControl.cs" />
-    <Compile Update="Components\Surface\Component_Surface_Editor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Components\Surface\Component_Surface_Preview.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Components\GroupOfObjects\Component_GroupOfObjects_SettingsCell.cs" />
-    <Compile Update="Components\Image\Component_Image_DocumentWindow.cs" />
-    <Compile Update="Components\Image\Component_Image_DocumentWindow.designer.cs">
-      <DependentUpon>Component_Image_DocumentWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Components\ReflectionProbe\Component_ReflectionProbe_SettingsCell.cs" />
-    <Compile Update="Editor\CanvasBasedEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Editor\CanvasBasedPreview.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Editor\DocumentWindowWithViewportWorkareaMode.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Editor\SettingsCellProcedureUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Design\Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Docking\Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Libraries\Krypton\ComponentFactory.Krypton.Workspace\Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Components\Import3D\Component_Import3D_DocumentWindow.cs" />
-    <Compile Update="Components\Import3D\Component_Import3D_PreviewControl.cs" />
-    <Compile Update="Components\Import3D\Component_Import3D_SettingsCell.cs" />
-    <Compile Update="Components\Scripting\Component_CSharpScript_SettingsCell.cs" />
-    <Compile Update="Components\Sound\Component_Sound_PreviewControl.cs" />
-    <Compile Update="Components\Sound\Component_Sound_PreviewControl.designer.cs">
-      <DependentUpon>Component_Sound_PreviewControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Components\ObjectInSpace\Component_ObjectInSpace_PreviewControl.cs" />
-    <Compile Update="Components\Material\Component_Material_SettingsCell.cs" />
-    <Compile Update="Components\Image\Component_Image_PreviewControl.cs" />
-    <Compile Update="Components\Image\Component_Image_PreviewControl.designer.cs">
-      <DependentUpon>Component_Image_PreviewControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Components\Material\Component_Material_DocumentWindow.cs" />
-    <Compile Update="Components\Material\Component_Material_DocumentWindow.designer.cs">
-      <DependentUpon>Component_Material_DocumentWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Components\FlowGraph\Component_FlowGraph_DocumentWindow.designer.cs">
-      <DependentUpon>Component_FlowGraph_DocumentWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Components\Material\Component_Material_PreviewControl.cs" />
-    <Compile Update="Components\Material\Component_Material_PreviewControl.designer.cs">
-      <DependentUpon>Component_Material_PreviewControl.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Components\Mesh\Component_Mesh_PreviewControl.cs" />
-    <Compile Update="Components\FlowGraph\Component_FlowGraph_DocumentWindow.cs" />
-    <Compile Update="Components\Scene\Component_Scene_DocumentWindow.designer.cs">
-      <DependentUpon>Component_Scene_DocumentWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Components\Mesh\Component_Mesh_DocumentWindow.cs" />
-    <Compile Update="Components\Scene\Component_Scene_DocumentWindow.cs" />
-    <Compile Update="Components\Rendering\Component_RenderingEffect_CodeGenerated_SettingsCell.cs" />
-    <Compile Update="Components\Rendering\Component_RenderingEffect_Simple_SettingsCell.cs" />
-    <Compile Update="Components\UI\UIControl_DocumentWindow.cs" />
-    <Compile Update="Components\UI\UIControl_DocumentWindow.designer.cs">
-      <DependentUpon>UIControl_DocumentWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Components\Mesh\Component_Mesh_SettingsCell.cs" />
-    <Compile Update="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Components\Material\Component_Material_DocumentWindow.resx">
-      <DependentUpon>Component_Material_DocumentWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Components\Material\Component_Material_PreviewControl - Copy.resx">
-      <DependentUpon>Component_Material_PreviewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Components\ParticleSystem\Component_ParticleSystem_PreviewControl.resx">
-      <DependentUpon>Component_ParticleSystem_PreviewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Components\Scene\Component_Scene_DocumentWindow.resx">
-      <DependentUpon>Component_Scene_DocumentWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\SettingsCell_Properties.resx">
-      <DependentUpon>SettingsCell_Properties.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Components\FlowGraph\Component_FlowGraph_DocumentWindow.resx">
-      <DependentUpon>Component_FlowGraph_DocumentWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Components\Material\Component_Material_PreviewControl.resx">
-      <DependentUpon>Component_Material_PreviewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Components\Sound\Component_Sound_PreviewControl.resx">
-      <DependentUpon>Component_Sound_PreviewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Components\Image\Component_Image_PreviewControl.resx">
-      <DependentUpon>Component_Image_PreviewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Editor\OutputWindow.resx">
-      <DependentUpon>OutputWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Libraries\Krypton\ComponentFactory.Krypton.Design\Properties\Resources.resx">
-      <CustomToolNamespace>ComponentFactory.Krypton.Design.Properties</CustomToolNamespace>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Libraries\Krypton\ComponentFactory.Krypton.Docking\Properties\Resources.resx">
-      <CustomToolNamespace>ComponentFactory.Krypton.Docking.Properties</CustomToolNamespace>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Libraries\Krypton\ComponentFactory.Krypton.Navigator\Properties\Resources.resx">
-      <CustomToolNamespace>ComponentFactory.Krypton.Navigator.Properties</CustomToolNamespace>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Libraries\Krypton\ComponentFactory.Krypton.Ribbon\Properties\Resources.resx">
-      <CustomToolNamespace>ComponentFactory.Krypton.Ribbon.Properties</CustomToolNamespace>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Libraries\Krypton\ComponentFactory.Krypton.Toolkit\Properties\Resources.resx">
-      <CustomToolNamespace>ComponentFactory.Krypton.Toolkit.Properties</CustomToolNamespace>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Libraries\Krypton\ComponentFactory.Krypton.Workspace\Properties\Resources.resx">
-      <CustomToolNamespace>ComponentFactory.Krypton.Workspace.Properties</CustomToolNamespace>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
 
   <Target Name="FailIfOptimizeEnabled" BeforeTargets="BeforeBuild">

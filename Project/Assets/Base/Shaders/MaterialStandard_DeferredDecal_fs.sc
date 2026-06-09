@@ -211,9 +211,9 @@ void main()
 	float metallic = u_materialMetallic;
 	float roughness = u_materialRoughness;
 	float reflectance = u_materialReflectance;
-	float clearCoat = u_materialClearCoat;
-	float clearCoatRoughness = u_materialClearCoatRoughness;
-	vec3 clearCoatNormal = vec3_splat(0);
+	float clearcoat = u_materialClearcoat;
+	float clearcoatRoughness = u_materialClearcoatRoughness;
+	vec3 clearcoatNormal = vec3_splat(0);
 	float anisotropy = u_materialAnisotropy;
 	vec3 anisotropyDirection = u_materialAnisotropyDirection;
 	float thickness = u_materialThickness;
@@ -308,8 +308,8 @@ void main()
 	BRANCH
 	if(any2(normal))
 	{
-		vec3 bitangent = cross(sourceTangent.xyz, sourceNormal) * sourceTangent.w;		
-		mat3 tbn = transpose(mtxFromRows(tangent.xyz, bitangent, sourceNormal));
+		MEDIUMP vec3 bitangent = cross(sourceTangent.xyz, sourceNormal) * sourceTangent.w;		
+		MEDIUMP mat3 tbn = mtxFromCols(tangent.xyz, bitangent, sourceNormal);
 		normal = expand(normal);
 		normal.z = sqrt(max(1.0 - dot(normal.xy, normal.xy), 0.0));
 		normal = normalize(mul(tbn, normal));

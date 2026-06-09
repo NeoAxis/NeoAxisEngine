@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2024.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1144, 842\"><KW V=\"1\" A=\"256C67A18D664B0E39BBE68CF4257695\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"195C129810504C44FB9460EF63604BF0\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"256C67A18D664B0E39BBE68CF4257695\"><KP UN=\"256C67A18D664B0E39BBE68CF4257695\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"807D4402F5F044BD20A33FBD57F87B60\" S=\"False\"><CPD ObjPath=\"$Button\\$C# Script\" /></KP><KP UN=\"7E31A4CB945041FD8788F1C45EF827C0\" S=\"False\"><CPD ObjPath=\"$Regulator\\$C# Script\" /></KP><KP UN=\"D9CD5B53C89443169D9923C591371B7B\" S=\"False\"><CPD ObjPath=\"$Character NPC\\$Character AI\\$Flow Graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1192, 963\"><KW V=\"1\" A=\"256C67A18D664B0E39BBE68CF4257695\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"195C129810504C44FB9460EF63604BF0\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"256C67A18D664B0E39BBE68CF4257695\"><KP UN=\"256C67A18D664B0E39BBE68CF4257695\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"807D4402F5F044BD20A33FBD57F87B60\" S=\"False\"><CPD ObjPath=\"$Button\\$C# Script\" /></KP><KP UN=\"7E31A4CB945041FD8788F1C45EF827C0\" S=\"False\"><CPD ObjPath=\"$Regulator\\$C# Script\" /></KP><KP UN=\"D9CD5B53C89443169D9923C591371B7B\" S=\"False\"><CPD ObjPath=\"$Character NPC\\$Character AI\\$Flow Graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BackgroundColor = 0 0 0
 	RenderingPipeline
 	{
@@ -20,7 +20,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "5.69597433896158 10.0731034760357 9.10418274135374; -0.429069392018492 -0.161717575626998 0.83157279545469 -0.313422348319132; 1 1 1"
+		Transform = "6.76684912298628 11.3708838369722 5.50539740570363; -0.271896992265363 -0.108307217906624 0.888328482040651 -0.353856016116342; 1 1 1"
 	}
 	.component NeoAxis.Camera
 	{
@@ -37,7 +37,8 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 37388.562104070006
+		Brightness = 30000
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -50,6 +51,7 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 91.429
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
@@ -150,6 +152,10 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Concrete\\Concrete Floor 01.material"
+		}
 		SpecialEffects
 		{
 			Value
@@ -165,7 +171,7 @@
 				Name = Mesh Geometry
 				Dimensions = 2000 2000
 				Segments = 50 50
-				UVTilesPerUnit = 0.25 0.25
+				UVTilesPerUnit = 0.3 0.3
 			}
 		}
 		.component NeoAxis.RigidBody
@@ -372,7 +378,7 @@
 		Transform = "-2.41517832593618 4.01409060633201 1.32489341333328; 0 0 -0.478282120422081 0.878206247577731; 1 1 1"
 		Mesh
 		{
-			GetByReference = "Content\\Buttons\\Default\\Base.mesh"
+			GetByReference = "Content\\Buttons 3D\\Default\\Base.mesh"
 		}
 		SpecialEffects
 		{
@@ -599,6 +605,7 @@
 		Type = Point
 		Brightness = 422155.6493165101
 		AttenuationFar = 14.884
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Fog
 	{

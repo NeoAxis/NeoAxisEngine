@@ -127,6 +127,12 @@ FIBITMAP* J2KImageToFIBITMAP(int format_id, const opj_image_t *image, BOOL heade
 	FIBITMAP *dib = NULL;
 
 	try {
+		// check the number of components
+		int numcomps = image->numcomps;
+		if (numcomps < 1) {
+			throw FI_MSG_ERROR_CORRUPTED_IMAGE;
+		}
+
 		// compute image width and height
 
 		//int w = int_ceildiv(image->x1 - image->x0, image->comps[0].dx);
@@ -136,10 +142,6 @@ FIBITMAP* J2KImageToFIBITMAP(int format_id, const opj_image_t *image, BOOL heade
 		//int h = int_ceildiv(image->y1 - image->y0, image->comps[0].dy);
 		//int hr = image->comps[0].h;
 		int hrr = int_ceildivpow2(image->comps[0].h, image->comps[0].factor);
-
-		// check the number of components
-
-		int numcomps = image->numcomps;
 
 		BOOL bIsValid = TRUE;
 		for(int c = 0; c < numcomps - 1; c++) {

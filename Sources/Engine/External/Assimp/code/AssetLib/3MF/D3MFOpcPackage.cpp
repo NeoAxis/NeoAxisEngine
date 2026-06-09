@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2022, assimp team
+Copyright (c) 2006-2026, assimp team
 
 All rights reserved.
 
@@ -65,10 +65,9 @@ namespace D3MF {
 
 using OpcPackageRelationshipPtr = std::shared_ptr<OpcPackageRelationship>;
 
-class OpcPackageRelationshipReader {
+class OpcPackageRelationshipReader final {
 public:
-    OpcPackageRelationshipReader(XmlParser &parser) :
-            mRelations() {
+    explicit OpcPackageRelationshipReader(XmlParser &parser) : mRelations() {
         XmlNode root = parser.getRootNode();
         ParseRootNode(root);
     }
@@ -119,9 +118,9 @@ public:
 
 static bool IsEmbeddedTexture( const std::string &filename ) {
     const std::string extension = BaseImporter::GetExtension(filename);
-    if (extension == "jpg" || extension == "png") {
+    if (extension == "jpg" || extension == "png" || extension == "jpeg") {
         std::string::size_type pos = filename.find("thumbnail");
-        if (pos == std::string::npos) {
+        if (pos != std::string::npos) {
             return false;
         }
         return true;

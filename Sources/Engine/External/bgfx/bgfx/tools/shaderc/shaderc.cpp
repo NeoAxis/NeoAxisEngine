@@ -926,6 +926,13 @@ namespace bgfx
 
 		char* scratch(const char* _str)
 		{
+			//!!!!betauser
+			if (m_scratchPos >= sizeof(m_scratch))
+			{
+				FPRINTF(stderr, "Scratch buffer overflow! Increase size of m_scratch.\n");
+				abort();
+			}
+
 			char* result = &m_scratch[m_scratchPos];
 			bx::strCopy(result, uint32_t(sizeof(m_scratch)-m_scratchPos), _str);
 			m_scratchPos += (uint32_t)bx::strLen(_str)+1;
@@ -940,7 +947,9 @@ namespace bgfx
 		std::string m_default;
 		std::string m_input;
 		std::string m_preprocessed;
-		char m_scratch[16<<10];
+		//!!!!betauser
+		char m_scratch[16<<16];
+		//char m_scratch[16<<10];
 		uint32_t m_scratchPos;
 		uint32_t m_fgetsPos;
 		bx::WriterI* m_messageWriter;

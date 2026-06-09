@@ -1836,14 +1836,14 @@
     ],
     "images" : [
         {
-            "mimeType" : "image/png",
+            "mimeType" : "image/jpg",
             "name" : "M_Ferret_Scout_Car_Wheels_normal",
-            "uri" : "M_Ferret_Scout_Car_Wheels_normal.png"
+            "uri" : "M_Ferret_Scout_Car_Wheels_normal.jpg"
         },
         {
-            "mimeType" : "image/png",
+            "mimeType" : "image/jpg",
             "name" : "M_Ferret_Scout_Car_Wheels_metallicRoughness",
-            "uri" : "M_Ferret_Scout_Car_Wheels_metallicRoughness.png"
+            "uri" : "M_Ferret_Scout_Car_Wheels_metallicRoughness.jpg"
         },
         {
             "mimeType" : "image/jpeg",

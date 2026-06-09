@@ -55,7 +55,7 @@ ToneMappingReinhard05(FIBITMAP *dib, FIBITMAP *Y, float f, float m, float a, flo
 	float L;		// pixel luminance
 	float I_g, I_l; // global and local light adaptation
 	float I_a;		// interpolated pixel light adaptation
-	float k;		// key (low-key means overall dark image, high-key means overall light image)
+	float k = 0;	// key (low-key means overall dark image, high-key means overall light image)
 
 	// check input parameters 
 

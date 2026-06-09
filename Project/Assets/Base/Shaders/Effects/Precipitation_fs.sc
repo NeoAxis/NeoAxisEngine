@@ -6,6 +6,7 @@ $input v_texCoord0
 
 SAMPLER2D(s_sourceTexture, 0);
 uniform vec4/*float*/ intensity;
+uniform vec4/*vec3*/ precipitationMultiplier;
 
 
 float random1(float dt)
@@ -102,14 +103,13 @@ vec4 mainproc(float time, vec2 gl_FragCoord)
     }
 
     // Fragment shader output
-    return vec4(pixel_color, 1.0);
+	return vec4(pixel_color, 0.0);
+    //return vec4(pixel_color, 1.0);
 }
 
 void main()
 {
-	vec4 sourceColor = texture2D(s_sourceTexture, v_texCoord0);
-	
-	vec4 color = sourceColor + mainproc(u_engineTime, v_texCoord0) / 20.0;
-	
+	vec4 sourceColor = texture2D(s_sourceTexture, v_texCoord0);	
+	vec4 color = sourceColor + mainproc(u_engineTime, v_texCoord0) * precipitationMultiplier / 20.0;
 	gl_FragColor = lerp(sourceColor, color, intensity.x);
 }

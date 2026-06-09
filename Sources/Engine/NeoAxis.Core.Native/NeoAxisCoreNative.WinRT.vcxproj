@@ -8,8 +8,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImageLibrary\NULLRenderSystem.cpp" />
-    <ClCompile Include="..\External\FreeImage\Source\DeprecationManager\Deprecated.cpp" />
-    <ClCompile Include="..\External\FreeImage\Source\DeprecationManager\DeprecationMgr.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Background.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\BSplineRotate.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Channels.cpp" />
@@ -217,9 +215,6 @@
     <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jmemmgr.c">
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jmemnobs.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
     <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jquant1.c">
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
@@ -230,63 +225,6 @@
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <ClCompile Include="..\External\FreeImage\Source\LibJPEG\transupp.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_callback_xs.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_chunk_descr.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_chunk_io.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_chunk_prc.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_chunk_xs.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_cms.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_display.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_dither.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_error.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_filter.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_hlapi.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_jpeg.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_object_prc.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_pixels.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_prop_xs.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_read.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_trace.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_write.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibMNG\libmng_zlib.c">
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\bio.c">
@@ -361,9 +299,6 @@
     <ClCompile Include="..\External\FreeImage\Source\LibOpenJPEG\tpix_manager.c">
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibPNG\example.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
     <ClCompile Include="..\External\FreeImage\Source\LibPNG\png.c">
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
@@ -409,10 +344,6 @@
     <ClCompile Include="..\External\FreeImage\Source\LibPNG\pngwutil.c">
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\internal\dcraw_common.cpp" />
-    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\internal\dcraw_fileio.cpp" />
-    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\internal\demosaic_packs.cpp" />
-    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\libraw_cxx.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\libraw_c_api.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\libraw_datastream.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_aux.c">
@@ -526,315 +457,6 @@
     <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_zip.c">
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.alpha.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.buffer.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.frame.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.idec.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.io.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.quant.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.tree.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.vp8.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.vp8l.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\dec.webp.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\demux\demux.anim_decode.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\demux\demux.demux.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.alpha_processing.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.alpha_processing_mips_dsp_r2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.alpha_processing_sse2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.alpha_processing_sse41.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.argb.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.argb_mips_dsp_r2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.argb_sse2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.cost.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.cost_mips32.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.cost_mips_dsp_r2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.cost_sse2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.cpu.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_clip_tables.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_mips32.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_mips_dsp_r2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_neon.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_sse2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.dec_sse41.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_avx2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_mips32.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_mips_dsp_r2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_neon.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_sse2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.enc_sse41.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.filters.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.filters_mips_dsp_r2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.filters_sse2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc_mips32.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc_mips_dsp_r2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc_neon.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc_sse2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_enc_sse41.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_mips_dsp_r2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_neon.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.lossless_sse2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.rescaler.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.rescaler_mips32.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.rescaler_mips_dsp_r2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.rescaler_neon.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.rescaler_sse2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.upsampling.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.upsampling_mips_dsp_r2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.upsampling_neon.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.upsampling_sse2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.yuv.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.yuv_mips32.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.yuv_mips_dsp_r2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dsp.yuv_sse2.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.alpha.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.analysis.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.backward_references.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.config.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.cost.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.delta_palettization.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.filter.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.frame.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.histogram.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.iterator.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.near_lossless.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.picture.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.picture_csp.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.picture_psnr.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.picture_rescale.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.picture_tools.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.quant.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.syntax.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.token.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.tree.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.vp8l.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\enc.webpenc.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\extras\extras.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\mux\mux.anim_encode.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\mux\mux.muxedit.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\mux\mux.muxinternal.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\mux\mux.muxread.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.bit_reader.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.bit_writer.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.color_cache.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.filters.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.huffman.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.huffman_encode.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.quant_levels.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.quant_levels_dec.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.random.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.rescaler.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.thread.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.utils.c">
-      <CompileAs>CompileAsC</CompileAs>
-    </ClCompile>
     <ClCompile Include="..\External\FreeImage\Source\Metadata\Exif.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\Metadata\FIRational.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\Metadata\FreeImageTag.cpp" />
@@ -847,7 +469,6 @@
     <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IexMath\IexMathFpu.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Iex\IexBaseExc.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Iex\IexThrowErrnoExc.cpp" />
-    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\dwaLookups.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfAcesFile.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfAttribute.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfB44Compressor.cpp" />
@@ -937,10 +558,7 @@
     <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfWav.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfZip.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmImf\ImfZipCompressor.cpp" />
-    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThread.cpp" />
-    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadMutex.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadPool.cpp" />
-    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadSemaphore.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathBox.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathColorAlgo.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Imath\ImathFun.cpp" />
@@ -1888,6 +1506,524 @@
     <ClCompile Include="SimpleTrayIcon\TrayMenuSeparator.cpp" />
     <ClCompile Include="..\External\OpenALSoft\alc\backends\alsa.cpp" />
     <ClCompile Include="..\External\OpenALSoft\alc\backends\opensl.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\FreeImage\FreeImageC.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\cdjpeg.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\ckconfig.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\jmemansi.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\rdbmp.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\rdcolmap.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\rdgif.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\rdppm.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\rdrle.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\rdswitch.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\rdtarga.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\wrbmp.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\wrgif.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\wrppm.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\wrrle.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibJPEG\wrtarga.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\decoders\canon_600.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\decoders\crx.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\decoders\decoders_dcraw.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\decoders\decoders_libraw.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\decoders\decoders_libraw_dcrdefs.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\decoders\dng.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\decoders\fp_dng.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\decoders\fuji_compressed.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\decoders\generic.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\decoders\kodak_decoders.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\decoders\load_mfbacks.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\decoders\smal.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\decoders\unpack.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\decoders\unpack_thumb.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\demosaic\aahd_demosaic.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\demosaic\ahd_demosaic.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\demosaic\dcb_demosaic.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\demosaic\dht_demosaic.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\demosaic\misc_demosaic.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\demosaic\xtrans_demosaic.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\integration\dngsdk_glue.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\integration\rawspeed_glue.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\adobepano.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\canon.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\ciff.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\cr3_parser.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\epson.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\exif_gps.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\fuji.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\hasselblad_model.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\identify.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\identify_tools.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\kodak.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\leica.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\makernotes.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\mediumformat.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\minolta.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\misc_parsers.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\nikon.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\normalize_model.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\olympus.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\p1.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\pentax.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\samsung.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\sony.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\metadata\tiff.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\postprocessing\aspect_ratio.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\postprocessing\dcraw_process.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\postprocessing\mem_image.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\postprocessing\postprocessing_aux.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\postprocessing\postprocessing_utils.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\postprocessing\postprocessing_utils_dcrdefs.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\preprocessing\ext_preprocess.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\preprocessing\raw2image.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\preprocessing\subtract_black.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\tables\cameralist.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\tables\colorconst.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\tables\colordata.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\tables\wblists.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\utils\curves.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\utils\decoder_info.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\utils\init_close_utils.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\utils\open.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\utils\phaseone_processing.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\utils\read_utils.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\utils\thumb_utils.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\utils\utils_dcraw.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\utils\utils_libraw.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\write\apply_profile.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\write\file_write.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\write\tiff_writer.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\x3f\x3f_parse_process.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibRawLite\src\x3f\x3f_utils_patched.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_hash_set.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_jbig.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_lerc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_stream.cxx" />
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_unix.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_webp.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_win32.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_zstd.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\alpha_dec.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\buffer_dec.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\frame_dec.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\idec_dec.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\io_dec.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\quant_dec.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\tree_dec.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\vp8l_dec.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\vp8_dec.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dec\webp_dec.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\demux\anim_decode.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\demux\demux.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\alpha_processing.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\alpha_processing_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\alpha_processing_neon.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\alpha_processing_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\alpha_processing_sse41.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\cost.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\cost_mips32.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\cost_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\cost_neon.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\cost_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dec.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dec_clip_tables.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dec_mips32.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dec_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dec_msa.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dec_neon.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dec_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\dec_sse41.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\enc_avx2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\enc_mips32.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\enc_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\enc_msa.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\enc_neon.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\enc_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\enc_sse41.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\filters.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\filters_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\filters_msa.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\filters_neon.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\filters_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\libwebp_cpu.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\lossless.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\lossless_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\lossless_enc_mips32.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\lossless_enc_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\lossless_enc_msa.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\lossless_enc_neon.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\lossless_enc_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\lossless_enc_sse41.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\lossless_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\lossless_msa.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\lossless_neon.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\lossless_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\lossless_sse41.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\rescaler.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\rescaler_mips32.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\rescaler_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\rescaler_msa.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\rescaler_neon.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\rescaler_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\ssim.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\ssim_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\upsampling.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\upsampling_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\upsampling_msa.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\upsampling_neon.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\upsampling_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\upsampling_sse41.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\yuv.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\yuv_mips32.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\yuv_mips_dsp_r2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\yuv_neon.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\yuv_sse2.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\dsp\yuv_sse41.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\alpha_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\analysis_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\backward_references_cost_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\backward_references_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\config_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\cost_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\filter_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\frame_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\histogram_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\iterator_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\near_lossless_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\picture_csp_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\picture_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\picture_psnr_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\picture_rescale_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\picture_tools_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\predictor_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\quant_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\syntax_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\token_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\tree_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\vp8l_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\enc\webp_enc.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\mux\anim_encode.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\mux\muxedit.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\mux\muxinternal.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\mux\muxread.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\bit_reader_utils.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\bit_writer_utils.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\color_cache_utils.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\filters_utils.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\huffman_encode_utils.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\huffman_utils.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\quant_levels_dec_utils.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\quant_levels_utils.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\random_utils.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\rescaler_utils.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\thread_utils.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\LibWebP\src\utils\utils.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Half\eLut.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\Half\toFloat.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadMutexPosix.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadMutexWin32.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadPosix.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadSemaphorePosix.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadSemaphorePosixCompat.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadSemaphoreWin32.cpp" />
+    <ClCompile Include="..\External\FreeImage\Source\OpenEXR\IlmThread\IlmThreadWin32.cpp" />
+    <ClCompile Include="..\External\FreeType\src\base\ftdebug.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\sdf\ftbsdf.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\sdf\ftsdf.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\sdf\ftsdfcommon.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\sdf\ftsdfrend.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\External\FreeType\src\svg\ftsvg.c">
+      <CompileAs>CompileAsC</CompileAs>
+    </ClCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A49B1604-5C02-3455-8543-8A45A6E6C450}</ProjectGuid>
@@ -1939,7 +2075,7 @@
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>ImageLibrary;..\NativeMemoryManager;..\External\FreeImage\Source;..\External\FreeType\include;NeoAxis;NeoAxis\hacd\HACD_Lib\inc;NativeWrapper;MemoryManager;MaskedOcclusionCulling;.\;..\External\OggVorbisTheora\libogg\include;..\External\OggVorbisTheora\libtheora\include;..\External\OggVorbisTheora\libvorbis\include;..\External\OggVorbisTheora\libvorbisfile\include;..\External\FreeImage\Source\FreeImageToolkit;..\External\FreeImage\Source\LibJPEG;include;..\External\FreeImage\Source\LibOpenJPEG;..\External\FreeImage\Source\LibPNG;..\External\FreeImage\Source\LibRawLite;..\External\FreeImage\Source\LibRawLite\dcraw;..\External\FreeImage\Source\LibRawLite\internal;..\External\FreeImage\Source\LibRawLite\libraw;..\External\FreeImage\Source\LibRawLite\src;..\External\FreeImage\Source\LibTIFF;..\External\FreeImage\Source\LibWebP;..\External\FreeImage\Source\OpenEXR;..\External\FreeImage\Source\OpenEXR\Half;..\External\FreeImage\Source\OpenEXR\Iex;..\External\FreeImage\Source\OpenEXR\IexMath;..\External\FreeImage\Source\OpenEXR\IlmImf;..\External\FreeImage\Source\OpenEXR\IlmThread;..\External\FreeImage\Source\OpenEXR\Imath;..\External\FreeImage\Source\ZLib;..\External\OpenALSoft;..\External\OpenALSoft\include;..\External\OpenALSoft\build;..\External\OpenALSoft\alc;..\External\OpenALSoft\common;..\External\OpenALSoft\al;..\External\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;_WINRT_DLL;NATIVEMEMORYMANAGER_EXPORTS;JPH_DOUBLE_PRECISION;JPH_DEBUG_RENDERER;JPH_USE_SSE4_1;JPH_FLOA_______disabled_______TING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;_HAS_STD_BYTE=0;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;FT2_BUILD_LIBRARY;OPJ_STATIC;LIBRAW_NODLL;LIBRAW_LIBRARY_BUILD;USE_JPIP;DISABLE_PERF_MEASUREMENT;_HAS_AUTO_PTR_ETC=1;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;_LARGEFILE_SOURCE;_LARGE_FILES;_CRT_SECURE_NO_WARNINGS;strcasecmp=_stricmp;strncasecmp=_strnicmp;OpenAL_EXPORTS;NOMINMAX;SDL_BUILDING_WINRT=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;_WINRT_DLL;NATIVEMEMORYMANAGER_EXPORTS;JPH_DOUBLE_PRECISION;JPH_DEBUG_RENDERER;JPH_USE_SSE4_1;JPH_FLOA_______disabled_______TING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;_HAS_STD_BYTE=0;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;FT2_BUILD_LIBRARY;OPJ_STATIC;LIBRAW_NODLL;LIBRAW_LIBRARY_BUILD;USE_JPIP;DISABLE_PERF_MEASUREMENT;_HAS_AUTO_PTR_ETC=1;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;_LARGEFILE_SOURCE;_LARGE_FILES;_CRT_SECURE_NO_WARNINGS;strcasecmp=_stricmp;strncasecmp=_strnicmp;OpenAL_EXPORTS;NOMINMAX;SDL_BUILDING_WINRT=1;INCLUDE_LIB_OPENEXR;INCLUDE_LIB_RAW;INCLUDE_LIB_WEBP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>

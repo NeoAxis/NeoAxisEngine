@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"F4DB533C31C040B98A98FB78DE86F73F\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"CDCAFC612A604332059A8B71DEDA5F9D\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"F4DB533C31C040B98A98FB78DE86F73F\"><KP UN=\"F4DB533C31C040B98A98FB78DE86F73F\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"74B2358CD86F4C7AF2925B9F78248F9C\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP><KP UN=\"CF86492588AE41BC15A0C88B38B4D44B\" S=\"False\"><CPD ObjPath=\"$C# Script 2\" /></KP><KP UN=\"3E2592181BA44A46F6930B2D0FF177B9\" S=\"False\"><CPD ObjPath=\"$C# Script 3\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1192, 963\"><KW V=\"1\" A=\"F4DB533C31C040B98A98FB78DE86F73F\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"CDCAFC612A604332059A8B71DEDA5F9D\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"F4DB533C31C040B98A98FB78DE86F73F\"><KP UN=\"F4DB533C31C040B98A98FB78DE86F73F\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"74B2358CD86F4C7AF2925B9F78248F9C\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP><KP UN=\"CF86492588AE41BC15A0C88B38B4D44B\" S=\"False\"><CPD ObjPath=\"$C# Script 2\" /></KP><KP UN=\"3E2592181BA44A46F6930B2D0FF177B9\" S=\"False\"><CPD ObjPath=\"$C# Script 3\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BackgroundColor = 0.6666667 0.6666667 0.6666667
 	DisplayDevelopmentDataInEditor = False
 	DisplayTextInfo = True
@@ -26,6 +26,7 @@
 		Transform = "-27.7871391969358 37.4683781031502 14.686420383686; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
 		Brightness = 7290
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
@@ -44,6 +45,10 @@
 				Name = Ambient Occlusion
 				Intensity = 0.8
 				Radius = 2
+			}
+			.component NeoAxis.RenderingEffect_ToneMapping
+			{
+				Name = Tone Mapping
 			}
 			.component NeoAxis.RenderingEffect_ToLDR
 			{
@@ -88,6 +93,7 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 90
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -96,6 +102,7 @@
 		Type = Point
 		Brightness = 279839.871757908
 		AttenuationFar = 20
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -104,6 +111,7 @@
 		Type = Point
 		Brightness = 106423.382038007
 		AttenuationFar = 20
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.MeshInSpace
 	{
@@ -113,10 +121,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -169,10 +173,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -202,10 +202,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -258,10 +254,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -321,10 +313,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Materials\\$Sci-fi Drone Yellow"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -344,10 +332,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Materials\\$Sci-fi Drone Red"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -369,10 +353,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Materials\\$Sci-fi Drone Blue"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -388,10 +368,6 @@
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -412,10 +388,6 @@
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Spaceship\\Spaceship.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{

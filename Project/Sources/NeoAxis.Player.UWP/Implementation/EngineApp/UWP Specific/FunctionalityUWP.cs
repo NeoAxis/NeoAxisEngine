@@ -108,6 +108,8 @@ namespace NeoAxis
 
 			//ApplicationView.PreferredLaunchWindowingMode = EngineApp.FullscreenEnabled ? ApplicationViewWindowingMode.FullScreen : ApplicationViewWindowingMode.PreferredLaunchViewSize;
 
+			coreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+
 			coreWindow.SizeChanged += CoreWindow_SizeChanged;
 			//coreWindow.KeyDown += CoreWindow_KeyDown;
 			//coreWindow.KeyUp += CoreWindow_KeyUp;
@@ -119,8 +121,6 @@ namespace NeoAxis
 			coreWindow.VisibilityChanged += CoreWindow_VisibilityChanged;
 			coreWindow.Activated += CoreWindow_Activated;
 			coreWindow.Closed += CoreWindow_Closed;
-
-			coreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
 
 			displayInfo.DpiChanged += CurrentDisplayInformation_DpiChanged;
 			displayInfo.OrientationChanged += CurrentDisplayInformation_OrientationChanged;
@@ -278,7 +278,7 @@ namespace NeoAxis
 
 		private void Dispatcher_AcceleratorKeyActivated( CoreDispatcher sender, AcceleratorKeyEventArgs args )
 		{
-			args.Handled = true;
+			//args.Handled = true;
 
 			var eventType = args.EventType;
 			var virtualKey = args.VirtualKey;
@@ -326,12 +326,18 @@ namespace NeoAxis
 							handled = true;
 						}
 					}
+
+					if( handled )
+						args.Handled = true;
 				}
 				else if( eventType == CoreAcceleratorKeyEventType.KeyUp || eventType == CoreAcceleratorKeyEventType.SystemKeyUp )
 				{
 					bool handled = false;
 					viewport.PerformKeyUp( new KeyEvent( eKey ), ref handled );
 					//args.Handled = handled;
+
+					if( handled )
+						args.Handled = true;
 				}
 				else if( eventType == CoreAcceleratorKeyEventType.Character || eventType == CoreAcceleratorKeyEventType.UnicodeCharacter )
 				{
@@ -340,6 +346,9 @@ namespace NeoAxis
 					bool handled = false;
 					GetViewport()?.PerformKeyPress( keyPressEvent, ref handled );
 					//args.Handled = handled;
+
+					if( handled )
+						args.Handled = true;
 				}
 			} );
 
@@ -356,12 +365,14 @@ namespace NeoAxis
 
 		//private void CoreWindow_CharacterReceived( CoreWindow sender, CharacterReceivedEventArgs args )
 		//{
-		//	char keyChar = (char)args.KeyCode;
+		//	//Log.Info( args.ToString() );
 
-		//	KeyPressEvent keyPressEvent = new KeyPressEvent( keyChar );
-		//	bool handled = false;
-		//	GetViewport()?.PerformKeyPress( keyPressEvent, ref handled );
-		//	//args.Handled = handled;
+		//	//char keyChar = (char)args.KeyCode;
+
+		//	//KeyPressEvent keyPressEvent = new KeyPressEvent( keyChar );
+		//	//bool handled = false;
+		//	//GetViewport()?.PerformKeyPress( keyPressEvent, ref handled );
+		//	////args.Handled = handled;
 		//}
 
 		private void CoreWindow_VisibilityChanged( CoreWindow sender, VisibilityChangedEventArgs args )

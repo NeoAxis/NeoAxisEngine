@@ -166,6 +166,11 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 
 			if (count == 0) {
 				k = 0;
+				// Guard against pointer underflow: do not move past
+				// the first scanline of the allocated bitmap.
+				if (bits < FreeImage_GetBits(dib) + pitch) {
+					break;
+				}
 				bits -= pitch;
 
 				// paint shop pro adds two useless bytes here...

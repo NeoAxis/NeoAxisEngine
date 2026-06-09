@@ -1,8 +1,7 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
-	BackgroundColor = 1 1 1
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -22,7 +21,8 @@
 		Name = Ambient Light
 		Transform = "-27.7871391969358 37.4683781031502 14.686420383686; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 7290
+		Brightness = 30000
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
@@ -36,6 +36,10 @@
 		.component NeoAxis.Component
 		{
 			Name = Scene Effects
+			.component NeoAxis.RenderingEffect_ToneMapping
+			{
+				Name = Tone Mapping
+			}
 			.component NeoAxis.RenderingEffect_Antialiasing
 			{
 				Name = Antialiasing
@@ -70,6 +74,7 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 90
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -78,6 +83,7 @@
 		Type = Point
 		Brightness = 279839.871757908
 		AttenuationFar = 20
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -86,6 +92,7 @@
 		Type = Point
 		Brightness = 106423.382038007
 		AttenuationFar = 20
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.MeshInSpace
 	{
@@ -95,10 +102,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -151,10 +154,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -184,10 +183,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -240,10 +235,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -333,10 +324,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Scenes\\Material inheritance\\Material base.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -365,10 +352,6 @@
 		{
 			GetByReference = "this:..\\$Material Instance Red"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -396,10 +379,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "this:..\\$Material Instance Green"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{

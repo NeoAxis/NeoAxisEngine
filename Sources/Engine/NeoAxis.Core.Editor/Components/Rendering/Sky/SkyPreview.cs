@@ -29,6 +29,7 @@ namespace NeoAxis.Editor
 
 			if( Sky != null )
 			{
+				Is3DScene = false;
 				var scene = CreateScene( false );
 				CreateObject();
 				scene.Enabled = true;

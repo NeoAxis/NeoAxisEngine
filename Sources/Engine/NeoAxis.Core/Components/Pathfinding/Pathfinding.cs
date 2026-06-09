@@ -3,10 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using Internal.SharpNav;
-using Internal.SharpNav.Pathfinding;
-using Internal.SharpNav.Geometry;
 using System.Threading;
+using Internal.DotRecast.Detour;
+using Internal.DotRecast.Recast;
+using Internal.DotRecast.Recast.Geom;
+using Internal.DotRecast.Core.Numerics;
+using Internal.DotRecast.Recast.Toolset;
+using Internal.DotRecast.Recast.Toolset.Builder;
+using Internal.DotRecast.Recast.Toolset.Tools;
+using Internal.DotRecast.Detour.TileCache.Io.Compress;
+using System.Linq;
 
 namespace NeoAxis
 {
@@ -20,76 +26,31 @@ namespace NeoAxis
 		static List<Pathfinding> instances = new List<Pathfinding>();
 		static Pathfinding[] instancesAsArray = Array.Empty<Pathfinding>();
 
-		//!!!!
-		const int maxPathFindInParallel = 8;
-
 		PrecompiledDataClass precompiledData;
 		BackgroundThreadData backgroundThreadData;
 
 		bool firstOnUpdateAfterEnabledInHierarchy;
 
-		//!!!!
-		//Vector3[] tempDebugVertices;
-		//int[] tempDebugIndices;
+		Dictionary<PathfindingGeometry, DynamicGeometriesToUpdateItem> dynamicGeometriesToUpdate = new Dictionary<PathfindingGeometry, DynamicGeometriesToUpdateItem>();
+
+		double dynamicGeometriesUpdateRemainingTime;
+		//double autoUpdateEditorRemainingTime;
 
 		/////////////////////////////////////////
-
-		//!!!!
-		//!!!!THE SUPPORT OF THE FEATURE IS NOT COMPLETED.
-		/// <summary>
-		/// Whether to use tiles to partition the navigation mesh. THE SUPPORT OF THE FEATURE IS NOT COMPLETED.
-		/// </summary>
-		[Category( "Tiles" )]
-		[DefaultValue( false )]//!!!![DefaultValue( true )]
-		public Reference<bool> Tiles
-		{
-			get { if( _tiles.BeginGet() ) Tiles = _tiles.Get( this ); return _tiles.value; }
-			set { if( _tiles.BeginSet( this, ref value ) ) { try { TilesChanged?.Invoke( this ); } finally { _tiles.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="Tiles"/> property value changes.</summary>
-		public event Action<Pathfinding> TilesChanged;
-		ReferenceField<bool> _tiles = false;//!!!! true;
-
-		//!!!!default
-		/// <summary>
-		/// The amount of cells in the tile by one axis.
-		/// </summary>
-		[Category( "Tiles" )]
-		[DefaultValue( 30 )]
-		public Reference<int> TileSizeInCells
-		{
-			get { if( _tileSizeInCells.BeginGet() ) TileSizeInCells = _tileSizeInCells.Get( this ); return _tileSizeInCells.value; }
-			set
-			{
-				if( _tileSizeInCells.BeginSet( this, ref value ) )
-				{
-					if( value < 1 )
-						value = new Reference<int>( 1, value.GetByReference );
-					try { TileSizeInCellsChanged?.Invoke( this ); } finally { _tileSizeInCells.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="TileSizeInCells"/> property value changes.</summary>
-		public event Action<Pathfinding> TileSizeInCellsChanged;
-		ReferenceField<int> _tileSizeInCells = 30;
 
 		/// <summary>
 		/// The width and depth resolution used when sampling the source geometry. The width and depth of the voxels in voxel fields. The width and depth of the cell columns that make up voxel fields. A lower value allows for the generated meshes to more closely match the source geometry, but at a higher processing and memory cost.
 		/// </summary>
 		[DefaultValue( 0.3 )]
-		[Serialize]
 		[Category( "Grid" )]
 		public Reference<double> CellSize
 		{
 			get { if( _cellSize.BeginGet() ) CellSize = _cellSize.Get( this ); return _cellSize.value; }
 			set
 			{
-				if( _cellSize.BeginSet( this, ref value ) )
-				{
-					if( value < 0.01 )
-						value = new Reference<double>( 0.01, value.GetByReference );
-					try { CellSizeChanged?.Invoke( this ); } finally { _cellSize.EndSet(); }
-				}
+				if( value < 0.01 )
+					value = new Reference<double>( 0.01, value.GetByReference );
+				if( _cellSize.BeginSet( this, ref value ) ) { try { CellSizeChanged?.Invoke( this ); } finally { _cellSize.EndSet(); } }
 			}
 		}
 		/// <summary>Occurs when the <see cref="CellSize"/> property value changes.</summary>
@@ -100,65 +61,53 @@ namespace NeoAxis
 		/// The height resolution used when sampling the source geometry. The height of the voxels in voxel fields.
 		/// </summary>
 		[DefaultValue( 0.2 )]
-		[Serialize]
 		[Category( "Grid" )]
 		public Reference<double> CellHeight
 		{
 			get { if( _cellHeight.BeginGet() ) CellHeight = _cellHeight.Get( this ); return _cellHeight.value; }
 			set
 			{
-				if( _cellHeight.BeginSet( this, ref value ) )
-				{
-					if( value < 0.01 )
-						value = new Reference<double>( 0.01, value.GetByReference );
-					try { CellHeightChanged?.Invoke( this ); } finally { _cellHeight.EndSet(); }
-				}
+				if( value < 0.01 )
+					value = new Reference<double>( 0.01, value.GetByReference );
+				if( _cellHeight.BeginSet( this, ref value ) ) { try { CellHeightChanged?.Invoke( this ); } finally { _cellHeight.EndSet(); } }
 			}
 		}
 		/// <summary>Occurs when the <see cref="CellHeight"/> property value changes.</summary>
 		public event Action<Pathfinding> CellHeightChanged;
 		ReferenceField<double> _cellHeight = 0.2;
 
-		//!!!!?
-		///// <summary>
-		///// Max amount of triangles for each chunk in the internal AABB tree.
-		///// </summary>
-		//[DefaultValue( 512 )]
-		//[Serialize]
-		//[Category( "Grid" )]
-		//public Reference<int> TrianglesPerChunk
-		//{
-		//	get { if( _trianglesPerChunk.BeginGet() ) TrianglesPerChunk = _trianglesPerChunk.Get( this ); return _trianglesPerChunk.value; }
-		//	set
-		//	{
-		//		if( _trianglesPerChunk.BeginSet( this, ref value ) )
-		//		{
-		//			if( value < 128 )
-		//				value = new Reference<int>( 128, value.GetByReference );
-		//			try { TrianglesPerChunkChanged?.Invoke( this ); } finally { _trianglesPerChunk.EndSet(); }
-		//		}
-		//	}
-		//}
-		//public event Action<Pathfinding> TrianglesPerChunkChanged;
-		//ReferenceField<int> _trianglesPerChunk = 512;
+		/// <summary>
+		/// The amount of cells in the tile by one axis.
+		/// </summary>
+		[Category( "Grid" )]
+		[DefaultValue( 32 )]
+		public Reference<int> TileSize
+		{
+			get { if( _tileSize.BeginGet() ) TileSize = _tileSize.Get( this ); return _tileSize.value; }
+			set
+			{
+				if( value < 1 )
+					value = new Reference<int>( 1, value.GetByReference );
+				if( _tileSize.BeginSet( this, ref value ) ) { try { TileSizeChanged?.Invoke( this ); } finally { _tileSize.EndSet(); } }
+			}
+		}
+		/// <summary>Occurs when the <see cref="TileSize"/> property value changes.</summary>
+		public event Action<Pathfinding> TileSizeChanged;
+		ReferenceField<int> _tileSize = 32;
 
 		/// <summary>
 		/// The minimum region size for unconnected (island) regions. The value is in voxels. Regions that are not connected to any other region and are smaller than this size will be culled before mesh generation. I.e. They will no longer be considered traversable.
 		/// </summary>
 		[DefaultValue( 8 )]
-		[Serialize]
 		[Category( "Regions" )]
 		public Reference<int> MinRegionSize
 		{
 			get { if( _minRegionSize.BeginGet() ) MinRegionSize = _minRegionSize.Get( this ); return _minRegionSize.value; }
 			set
 			{
-				if( _minRegionSize.BeginSet( this, ref value ) )
-				{
-					if( value < 1 )
-						value = new Reference<int>( 1, value.GetByReference );
-					try { MinRegionSizeChanged?.Invoke( this ); } finally { _minRegionSize.EndSet(); }
-				}
+				if( value < 1 )
+					value = new Reference<int>( 1, value.GetByReference );
+				if( _minRegionSize.BeginSet( this, ref value ) ) { try { MinRegionSizeChanged?.Invoke( this ); } finally { _minRegionSize.EndSet(); } }
 			}
 		}
 		/// <summary>Occurs when the <see cref="MinRegionSize"/> property value changes.</summary>
@@ -169,19 +118,15 @@ namespace NeoAxis
 		/// Any regions smaller than this size will, if possible, be merged with larger regions. Value is in voxels. Helps reduce the number of small regions. This is especially an issue in diagonal path regions where inherent faults in the region generation algorithm can result in unnecessarily small regions.
 		/// </summary>
 		[DefaultValue( 20 )]
-		[Serialize]
 		[Category( "Regions" )]
 		public Reference<int> MergedRegionSize
 		{
 			get { if( _mergedRegionSize.BeginGet() ) MergedRegionSize = _mergedRegionSize.Get( this ); return _mergedRegionSize.value; }
 			set
 			{
-				if( _mergedRegionSize.BeginSet( this, ref value ) )
-				{
-					if( value < 0 )
-						value = new Reference<int>( 0, value.GetByReference );
-					try { MergedRegionSizeChanged?.Invoke( this ); } finally { _mergedRegionSize.EndSet(); }
-				}
+				if( value < 0 )
+					value = new Reference<int>( 0, value.GetByReference );
+				if( _mergedRegionSize.BeginSet( this, ref value ) ) { try { MergedRegionSizeChanged?.Invoke( this ); } finally { _mergedRegionSize.EndSet(); } }
 			}
 		}
 		/// <summary>Occurs when the <see cref="MergedRegionSize"/> property value changes.</summary>
@@ -192,132 +137,108 @@ namespace NeoAxis
 		/// The maximum length of polygon edges that represent the border of meshes. More vertices will be added to border edges if this value is exceeded for a particular edge. A value of zero will disable this feature.
 		/// </summary>
 		[DefaultValue( 12 )]
-		[Serialize]
 		[Category( "Polygonization" )]
-		public Reference<int> MaxEdgeLength
+		public Reference<int> EdgeMaxLength
 		{
-			get { if( _maxEdgeLength.BeginGet() ) MaxEdgeLength = _maxEdgeLength.Get( this ); return _maxEdgeLength.value; }
+			get { if( _edgeMaxLength.BeginGet() ) EdgeMaxLength = _edgeMaxLength.Get( this ); return _edgeMaxLength.value; }
 			set
 			{
-				if( _maxEdgeLength.BeginSet( this, ref value ) )
-				{
-					if( value < 0 )
-						value = new Reference<int>( 0, value.GetByReference );
-					try { MaxEdgeLengthChanged?.Invoke( this ); } finally { _maxEdgeLength.EndSet(); }
-				}
+				if( value < 0 )
+					value = new Reference<int>( 0, value.GetByReference );
+				if( _edgeMaxLength.BeginSet( this, ref value ) ) { try { EdgeMaxLengthChanged?.Invoke( this ); } finally { _edgeMaxLength.EndSet(); } }
 			}
 		}
-		/// <summary>Occurs when the <see cref="MaxEdgeLength"/> property value changes.</summary>
-		public event Action<Pathfinding> MaxEdgeLengthChanged;
-		ReferenceField<int> _maxEdgeLength = 12;
+		/// <summary>Occurs when the <see cref="EdgeMaxLength"/> property value changes.</summary>
+		public event Action<Pathfinding> EdgeMaxLengthChanged;
+		ReferenceField<int> _edgeMaxLength = 12;
 
 		/// <summary>
 		/// The maximum distance the edges of meshes may deviate from the source geometry. A lower value will result in mesh edges following the xy-plane geometry contour more accurately at the expense of an increased triangle count.
 		/// </summary>
-		[DefaultValue( 1.8 )]
-		[Serialize]
+		[DefaultValue( 1.3 )]
 		[Category( "Polygonization" )]
-		public Reference<double> MaxEdgeError
+		public Reference<double> EdgeMaxError
 		{
-			get { if( _maxEdgeError.BeginGet() ) MaxEdgeError = _maxEdgeError.Get( this ); return _maxEdgeError.value; }
+			get { if( _edgeMaxError.BeginGet() ) EdgeMaxError = _edgeMaxError.Get( this ); return _edgeMaxError.value; }
 			set
 			{
-				if( _maxEdgeError.BeginSet( this, ref value ) )
-				{
-					if( value < 0.1 )
-						value = new Reference<double>( 0.1, value.GetByReference );
-					try { MaxEdgeErrorChanged?.Invoke( this ); } finally { _maxEdgeError.EndSet(); }
-				}
+				if( value < 0.1 )
+					value = new Reference<double>( 0.1, value.GetByReference );
+				if( _edgeMaxError.BeginSet( this, ref value ) ) { try { EdgeMaxErrorChanged?.Invoke( this ); } finally { _edgeMaxError.EndSet(); } }
 			}
 		}
-		/// <summary>Occurs when the <see cref="MaxEdgeError"/> property value changes.</summary>
-		public event Action<Pathfinding> MaxEdgeErrorChanged;
-		ReferenceField<double> _maxEdgeError = 1.8;
+		/// <summary>Occurs when the <see cref="EdgeMaxError"/> property value changes.</summary>
+		public event Action<Pathfinding> EdgeMaxErrorChanged;
+		ReferenceField<double> _edgeMaxError = 1.3;
 
-		[DefaultValue( 6 )]
-		[Serialize]
-		[Category( "Polygonization" )]
-		[Range( 3, 6 )]
-		public Reference<int> MaxVerticesPerPolygon
-		{
-			get { if( _maxVerticesPerPolygon.BeginGet() ) MaxVerticesPerPolygon = _maxVerticesPerPolygon.Get( this ); return _maxVerticesPerPolygon.value; }
-			set
-			{
-				if( _maxVerticesPerPolygon.BeginSet( this, ref value ) )
-				{
-					if( value < 3 )
-						value = new Reference<int>( 3, value.GetByReference );
-					try { MaxVerticesPerPolygonChanged?.Invoke( this ); } finally { _maxVerticesPerPolygon.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="MaxVerticesPerPolygon"/> property value changes.</summary>
-		public event Action<Pathfinding> MaxVerticesPerPolygonChanged;
-		ReferenceField<int> _maxVerticesPerPolygon = 6;
+		//[DefaultValue( 6 )]
+		//[Category( "Polygonization" )]
+		//[Range( 3, 6 )]
+		//public Reference<int> MaxVerticesPerPolygon
+		//{
+		//	get { if( _maxVerticesPerPolygon.BeginGet() ) MaxVerticesPerPolygon = _maxVerticesPerPolygon.Get( this ); return _maxVerticesPerPolygon.value; }
+		//	set
+		//	{
+		//		if( value < 3 )
+		//			value = new Reference<int>( 3, value.GetByReference );
+		//		if( _maxVerticesPerPolygon.BeginSet( this, ref value ) ) { try { MaxVerticesPerPolygonChanged?.Invoke( this ); } finally { _maxVerticesPerPolygon.EndSet(); } }
+		//	}
+		//}
+		///// <summary>Occurs when the <see cref="MaxVerticesPerPolygon"/> property value changes.</summary>
+		//public event Action<Pathfinding> MaxVerticesPerPolygonChanged;
+		//ReferenceField<int> _maxVerticesPerPolygon = 6;
 
 		/// <summary>
 		/// Sets the sampling distance to use when matching the detail mesh to the surface of the original geometry. Impacts how well the final detail mesh conforms to the surface contour of the original geometry. Higher values result in a detail mesh which conforms more closely to the original geometry's surface at the cost of a higher final triangle count and higher processing cost.
 		/// </summary>
 		[DefaultValue( 6 )]
-		[Serialize]
 		[Category( "Detail Mesh" )]
-		public Reference<int> DetailSampleDistance
+		public Reference<double> DetailSampleDistance
 		{
 			get { if( _detailSampleDistance.BeginGet() ) DetailSampleDistance = _detailSampleDistance.Get( this ); return _detailSampleDistance.value; }
 			set
 			{
-				if( _detailSampleDistance.BeginSet( this, ref value ) )
-				{
-					if( value < 0.0 )
-						value = new Reference<int>( 0, value.GetByReference );
-					try { DetailSampleDistanceChanged?.Invoke( this ); } finally { _detailSampleDistance.EndSet(); }
-				}
+				if( value < 0.0 )
+					value = new Reference<double>( 0, value.GetByReference );
+				if( _detailSampleDistance.BeginSet( this, ref value ) ) { try { DetailSampleDistanceChanged?.Invoke( this ); } finally { _detailSampleDistance.EndSet(); } }
 			}
 		}
 		/// <summary>Occurs when the <see cref="DetailSampleDistance"/> property value changes.</summary>
 		public event Action<Pathfinding> DetailSampleDistanceChanged;
-		ReferenceField<int> _detailSampleDistance = 6;
+		ReferenceField<double> _detailSampleDistance = 6;
 
 		/// <summary>
 		/// The maximum distance the surface of the detail mesh may deviate from the surface of the original geometry.
 		/// </summary>
 		[DefaultValue( 1 )]
-		[Serialize]
 		[Category( "Detail Mesh" )]
-		public Reference<int> DetailMaxSampleError
+		public Reference<double> DetailMaxSampleError
 		{
 			get { if( _detailMaxSampleError.BeginGet() ) DetailMaxSampleError = _detailMaxSampleError.Get( this ); return _detailMaxSampleError.value; }
 			set
 			{
-				if( _detailMaxSampleError.BeginSet( this, ref value ) )
-				{
-					if( value < 0.0 )
-						value = new Reference<int>( 0, value.GetByReference );
-					try { DetailMaxSampleErrorChanged?.Invoke( this ); } finally { _detailMaxSampleError.EndSet(); }
-				}
+				if( value < 0.0 )
+					value = new Reference<double>( 0, value.GetByReference );
+				if( _detailMaxSampleError.BeginSet( this, ref value ) ) { try { DetailMaxSampleErrorChanged?.Invoke( this ); } finally { _detailMaxSampleError.EndSet(); } }
 			}
 		}
 		/// <summary>Occurs when the <see cref="DetailMaxSampleError"/> property value changes.</summary>
 		public event Action<Pathfinding> DetailMaxSampleErrorChanged;
-		ReferenceField<int> _detailMaxSampleError = 1;
+		ReferenceField<double> _detailMaxSampleError = 1;
 
 		/// <summary>
 		/// Minimum height where the agent can still walk.
 		/// </summary>
 		[DefaultValue( 2.0 )]
-		[Serialize]
 		[Category( "Agent" )]
 		public Reference<double> AgentHeight
 		{
 			get { if( _agentHeight.BeginGet() ) AgentHeight = _agentHeight.Get( this ); return _agentHeight.value; }
 			set
 			{
-				if( _agentHeight.BeginSet( this, ref value ) )
-				{
-					if( value < 0.1 )
-						value = new Reference<double>( 0.1, value.GetByReference );
-					try { AgentHeightChanged?.Invoke( this ); } finally { _agentHeight.EndSet(); }
-				}
+				if( value < 0.1 )
+					value = new Reference<double>( 0.1, value.GetByReference );
+				if( _agentHeight.BeginSet( this, ref value ) ) { try { AgentHeightChanged?.Invoke( this ); } finally { _agentHeight.EndSet(); } }
 			}
 		}
 		/// <summary>Occurs when the <see cref="AgentHeight"/> property value changes.</summary>
@@ -328,19 +249,15 @@ namespace NeoAxis
 		/// Radius of the agent.
 		/// </summary>
 		[DefaultValue( 0.6 )]
-		[Serialize]
 		[Category( "Agent" )]
 		public Reference<double> AgentRadius
 		{
 			get { if( _agentRadius.BeginGet() ) AgentRadius = _agentRadius.Get( this ); return _agentRadius.value; }
 			set
 			{
-				if( _agentRadius.BeginSet( this, ref value ) )
-				{
-					if( value < 0.0 )
-						value = new Reference<double>( 0.0, value.GetByReference );
-					try { AgentRadiusChanged?.Invoke( this ); } finally { _agentRadius.EndSet(); }
-				}
+				if( value < 0.0 )
+					value = new Reference<double>( 0.0, value.GetByReference );
+				if( _agentRadius.BeginSet( this, ref value ) ) { try { AgentRadiusChanged?.Invoke( this ); } finally { _agentRadius.EndSet(); } }
 			}
 		}
 		/// <summary>Occurs when the <see cref="AgentRadius"/> property value changes.</summary>
@@ -351,95 +268,135 @@ namespace NeoAxis
 		/// Maximum height between grid cells the agent can climb.
 		/// </summary>
 		[DefaultValue( 0.9 )]
-		[Serialize]
 		[Category( "Agent" )]
 		public Reference<double> AgentMaxClimb
 		{
 			get { if( _agentMaxClimb.BeginGet() ) AgentMaxClimb = _agentMaxClimb.Get( this ); return _agentMaxClimb.value; }
 			set
 			{
-				if( _agentMaxClimb.BeginSet( this, ref value ) )
-				{
-					if( value < 0.001 )
-						value = new Reference<double>( 0.001, value.GetByReference );
-					try { AgentMaxClimbChanged?.Invoke( this ); } finally { _agentMaxClimb.EndSet(); }
-				}
+				if( value < 0.001 )
+					value = new Reference<double>( 0.001, value.GetByReference );
+				if( _agentMaxClimb.BeginSet( this, ref value ) ) { try { AgentMaxClimbChanged?.Invoke( this ); } finally { _agentMaxClimb.EndSet(); } }
 			}
 		}
 		/// <summary>Occurs when the <see cref="AgentMaxClimb"/> property value changes.</summary>
 		public event Action<Pathfinding> AgentMaxClimbChanged;
 		ReferenceField<double> _agentMaxClimb = 0.9;
 
-		//!!!!
-		///// <summary>
-		///// Maximum walkable slope angle in degrees.
-		///// </summary>
-		//[DefaultValue( "45" )]
-		//[Serialize]
-		//[Category( "Agent" )]
-		//[ApplicableRange( 1, 89 )]
-		//public Reference<Degree> AgentMaxSlope
-		//{
-		//	get { if( _agentMaxSlope.BeginGet() ) AgentMaxSlope = _agentMaxSlope.Get( this ); return _agentMaxSlope.value; }
-		//	set
-		//	{
-		//		if( _agentMaxSlope.BeginSet( this, ref value ) )
-		//		{
-		//			if( value.Value < 1 )
-		//				value = new Reference<Degree>( 1, value.GetByReference );
-		//			if( value.Value > 89 )
-		//				value = new Reference<Degree>( 89, value.GetByReference );
-		//			try { AgentMaxSlopeChanged?.Invoke( this ); } finally { _agentMaxSlope.EndSet(); }
-		//		}
-		//	}
-		//}
-		//public event Action<Pathfinding> AgentMaxSlopeChanged;
-		//ReferenceField<Degree> _agentMaxSlope = new Degree( 45 );
-
 		/// <summary>
-		/// Maximum number of search nodes to use (max 65536).
+		/// Maximum walkable slope angle in degrees.
 		/// </summary>
-		[DefaultValue( 4096 )]
-		[Serialize]
-		[Category( "Pathfinding" )]
-		public Reference<int> PathfindingMaxNodes
+		[DefaultValue( "45" )]
+		[Category( "Agent" )]
+		[Range( 1, 89 )]
+		public Reference<Degree> AgentMaxSlope
 		{
-			get { if( _pathfindingMaxNodes.BeginGet() ) PathfindingMaxNodes = _pathfindingMaxNodes.Get( this ); return _pathfindingMaxNodes.value; }
+			get { if( _agentMaxSlope.BeginGet() ) AgentMaxSlope = _agentMaxSlope.Get( this ); return _agentMaxSlope.value; }
 			set
 			{
-				if( _pathfindingMaxNodes.BeginSet( this, ref value ) )
-				{
-					if( value < 4 )
-						value = new Reference<int>( 4, value.GetByReference );
-					if( value > 65536 )
-						value = new Reference<int>( 65536, value.GetByReference );
-					try
-					{
-						PathfindingMaxNodesChanged?.Invoke( this );
-						//navMeshQuery = null;
-					}
-					finally { _pathfindingMaxNodes.EndSet(); }
-				}
+				if( value.Value < 1 )
+					value = new Reference<Degree>( 1, value.GetByReference );
+				if( value.Value > 89 )
+					value = new Reference<Degree>( 89, value.GetByReference );
+				if( _agentMaxSlope.BeginSet( this, ref value ) ) { try { AgentMaxSlopeChanged?.Invoke( this ); } finally { _agentMaxSlope.EndSet(); } }
 			}
 		}
-		/// <summary>Occurs when the <see cref="PathfindingMaxNodes"/> property value changes.</summary>
-		public event Action<Pathfinding> PathfindingMaxNodesChanged;
-		ReferenceField<int> _pathfindingMaxNodes = 4096;
+		public event Action<Pathfinding> AgentMaxSlopeChanged;
+		ReferenceField<Degree> _agentMaxSlope = new Degree( 45 );
 
-		[Category( "Debug" )]
-		[DefaultValue( false )]
-		[Serialize]
-		public Reference<bool> AlwaysDisplayNavMesh
+		/// <summary>
+		/// The period in seconds between updates of dynamic obstacles.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		[Category( "Dynamic Obstacles" )]
+		public Reference<double> DynamicObstaclesUpdatePeriod
 		{
-			get { if( _alwaysDisplayNavMesh.BeginGet() ) AlwaysDisplayNavMesh = _alwaysDisplayNavMesh.Get( this ); return _alwaysDisplayNavMesh.value; }
-			set { if( _alwaysDisplayNavMesh.BeginSet( this, ref value ) ) { try { AlwaysDisplayNavMeshChanged?.Invoke( this ); } finally { _alwaysDisplayNavMesh.EndSet(); } } }
+			get { if( _dynamicObstaclesUpdatePeriod.BeginGet() ) DynamicObstaclesUpdatePeriod = _dynamicObstaclesUpdatePeriod.Get( this ); return _dynamicObstaclesUpdatePeriod.value; }
+			set { if( _dynamicObstaclesUpdatePeriod.BeginSet( this, ref value ) ) { try { DynamicObstaclesUpdatePeriodChanged?.Invoke( this ); } finally { _dynamicObstaclesUpdatePeriod.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="AlwaysDisplayNavMesh"/> property value changes.</summary>
-		public event Action<Pathfinding> AlwaysDisplayNavMeshChanged;
-		ReferenceField<bool> _alwaysDisplayNavMesh = false;
+		/// <summary>Occurs when the <see cref="DynamicObstaclesUpdatePeriod"/> property value changes.</summary>
+		public event Action<Pathfinding> DynamicObstaclesUpdatePeriodChanged;
+		ReferenceField<double> _dynamicObstaclesUpdatePeriod = 1.0;
+
+		/// <summary>
+		/// The maximum number of pathfinding processes to run in parallel. Set zero for automatically use the number of processor cores.
+		/// </summary>
+		[DefaultValue( 4 )]
+		[Category( "Pathfinding" )]
+		public Reference<int> PathfindingParallelCount
+		{
+			get { if( _pathfindingParallelCount.BeginGet() ) PathfindingParallelCount = _pathfindingParallelCount.Get( this ); return _pathfindingParallelCount.value; }
+			set { if( _pathfindingParallelCount.BeginSet( this, ref value ) ) { try { PathfindingParallelCountChanged?.Invoke( this ); } finally { _pathfindingParallelCount.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PathfindingParallelCount"/> property value changes.</summary>
+		public event Action<Pathfinding> PathfindingParallelCountChanged;
+		ReferenceField<int> _pathfindingParallelCount = 4;
+
+		/// <summary>
+		/// Whether to visualize the input geometry used for navigation mesh generation.
+		/// </summary>
+		[Category( "Visualization" )]
+		[DefaultValue( false )]
+		public Reference<bool> ShowInputMesh
+		{
+			get { if( _showInputMesh.BeginGet() ) ShowInputMesh = _showInputMesh.Get( this ); return _showInputMesh.value; }
+			set { if( _showInputMesh.BeginSet( this, ref value ) ) { try { ShowInputMeshChanged?.Invoke( this ); } finally { _showInputMesh.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ShowInputMesh"/> property value changes.</summary>
+		public event Action<Pathfinding> ShowInputMeshChanged;
+		ReferenceField<bool> _showInputMesh = false;
+
+		/// <summary>
+		/// Whether to visualize the navigation mesh.
+		/// </summary>
+		[Category( "Visualization" )]
+		[DefaultValue( false )]
+		public Reference<bool> ShowNavMesh
+		{
+			get { if( _showNavMesh.BeginGet() ) ShowNavMesh = _showNavMesh.Get( this ); return _showNavMesh.value; }
+			set { if( _showNavMesh.BeginSet( this, ref value ) ) { try { ShowNavMeshChanged?.Invoke( this ); } finally { _showNavMesh.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ShowNavMesh"/> property value changes.</summary>
+		public event Action<Pathfinding> ShowNavMeshChanged;
+		ReferenceField<bool> _showNavMesh = false;
+
+		/// <summary>
+		/// Whether to visualize the navigation mesh when the object is selected in the editor.
+		/// </summary>
+		[Category( "Visualization" )]
+		[DefaultValue( true )]
+		public Reference<bool> ShowNavMeshWhenSelected
+		{
+			get { if( _showNavMeshWhenSelected.BeginGet() ) ShowNavMeshWhenSelected = _showNavMeshWhenSelected.Get( this ); return _showNavMeshWhenSelected.value; }
+			set { if( _showNavMeshWhenSelected.BeginSet( this, ref value ) ) { try { ShowNavMeshWhenSelectedChanged?.Invoke( this ); } finally { _showNavMeshWhenSelected.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ShowNavMeshWhenSelected"/> property value changes.</summary>
+		public event Action<Pathfinding> ShowNavMeshWhenSelectedChanged;
+		ReferenceField<bool> _showNavMeshWhenSelected = true;
+
+		//work with frezees
+		///// <summary>
+		///// The period in seconds between updates of the navigation mesh in the editor. Set zero to disable automatic updates.
+		///// </summary>
+		//[DefaultValue( 1.0 )]
+		//public Reference<double> AutoUpdatePeriodEditor
+		//{
+		//	get { if( _autoUpdatePeriodEditor.BeginGet() ) AutoUpdatePeriodEditor = _autoUpdatePeriodEditor.Get( this ); return _autoUpdatePeriodEditor.value; }
+		//	set { if( _autoUpdatePeriodEditor.BeginSet( this, ref value ) ) { try { AutoUpdatePeriodEditorChanged?.Invoke( this ); } finally { _autoUpdatePeriodEditor.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="AutoUpdatePeriodEditor"/> property value changes.</summary>
+		//public event Action<Pathfinding> AutoUpdatePeriodEditorChanged;
+		//ReferenceField<double> _autoUpdatePeriodEditor = 1.0;
+
+		/////////////////////////////////////////
+
+		public delegate void FilterGeometryDelegate( Pathfinding sender, Component geometryOrGeometryTag, ref bool add );
+		public event FilterGeometryDelegate FilterGeometry;
+
+		/////////////////////////////////////////
 
 		[Browsable( false )]
-		public PrecompiledDataClass PrecompiledData
+		internal PrecompiledDataClass PrecompiledData
 		{
 			get { return precompiledData; }
 			set
@@ -450,195 +407,109 @@ namespace NeoAxis
 
 				if( precompiledData != null )
 				{
-					var settings = new NavMeshGenerationSettings();
-					settings.CellSize = (float)CellSize;
-					settings.CellHeight = (float)CellHeight;
-					settings.MaxClimb = (float)AgentMaxClimb;
-					settings.AgentHeight = (float)AgentHeight;
-					settings.AgentRadius = (float)AgentRadius;
-					settings.MinRegionSize = MinRegionSize;
-					settings.MergedRegionSize = MergedRegionSize;
-					settings.MaxEdgeLength = MaxEdgeLength;
-					settings.MaxEdgeError = (float)MaxEdgeError;
-					settings.VertsPerPoly = MaxVerticesPerPolygon;
-					settings.SampleDistance = DetailSampleDistance;
-					settings.MaxSampleError = DetailMaxSampleError;
-					settings.BuildBoundingVolumeTree = true;
-					precompiledData.generationSettings = settings;
+					var settings = new RcNavMeshBuildSettings();
+
+					settings.cellSize = (float)CellSize;
+					settings.cellHeight = (float)CellHeight;
+
+					settings.agentHeight = (float)AgentHeight;
+					settings.agentRadius = (float)AgentRadius;
+					settings.agentMaxClimb = (float)AgentMaxClimb;
+					settings.agentMaxSlope = (float)AgentMaxSlope.Value;
+
+					//!!!!
+					//public float agentMaxAcceleration = 8.0f;
+					//public float agentMaxSpeed = 3.5f;
+
+					settings.minRegionSize = MinRegionSize;
+					settings.mergedRegionSize = MergedRegionSize;
+
+					//!!!!
+					//public int partitioning = RcPartitionType.WATERSHED.Value;
+
+					//!!!!
+					//public bool filterLowHangingObstacles = true;
+					//public bool filterLedgeSpans = true;
+					//public bool filterWalkableLowHeightSpans = true;
+
+					settings.edgeMaxLen = EdgeMaxLength;
+					settings.edgeMaxError = (float)EdgeMaxError;
+					//settings.vertsPerPoly = MaxVerticesPerPolygon;
+
+					settings.detailSampleDist = (float)DetailSampleDistance;
+					settings.detailSampleMaxError = (float)DetailMaxSampleError;
+
+					settings.tiled = true;
+					settings.tileSize = TileSize;
+
+					settings.keepInterResults = false;
+					//public bool buildAll = true;
+
+					precompiledData.buildSettings = settings;
 				}
 			}
 		}
 
 		/////////////////////////////////////////
 
-		public class PrecompiledDataClass
+		internal class PrecompiledDataClass
 		{
-			internal bool tiles;
-			internal int tileSizeInCells;
-			internal double cellSize;
-			internal double cellHeight;
-
-			internal class TileData
-			{
-				public Vector2I index;
-				//public Rectangle bounds;
-				public TileGeometry staticGeometry;
-			}
-
-			internal Dictionary<Vector2I, TileData> precompiledTiles = new Dictionary<Vector2I, TileData>();
+			internal StaticGeometry staticGeometry;
 
 			//!!!!
 			//!!!!struct?
-			internal class MeshOffLinkConnection
-			{
-				public Vector3 Position1;
-				public Vector3 Position2;
-				//!!!!
-			}
-			internal List<MeshOffLinkConnection> meshOffLinkConnections = new List<MeshOffLinkConnection>();
+			//internal class MeshOffLinkConnection
+			//{
+			//	public Vector3 Position1;
+			//	public Vector3 Position2;
+			//	//!!!!
+			//}
+			//internal List<MeshOffLinkConnection> meshOffLinkConnections = new List<MeshOffLinkConnection>();
 
-			internal NavMeshGenerationSettings generationSettings = new NavMeshGenerationSettings();
-
-			//
-
-			internal bool Load( TextBlock block )
-			{
-				try
-				{
-					tiles = bool.Parse( block.GetAttribute( "Tiles" ) );
-					tileSizeInCells = int.Parse( block.GetAttribute( "TileSizeInCells" ) );
-					cellSize = double.Parse( block.GetAttribute( "CellSize" ) );
-					cellHeight = double.Parse( block.GetAttribute( "CellHeight" ) );
-
-					foreach( var tileBlock in block.Children )
-					{
-						if( tileBlock.Name == "Tile" )
-						{
-							var tile = new TileData();
-							tile.index = Vector2I.Parse( tileBlock.GetAttribute( "Index" ) );
-							//tile.bounds = Bounds.Parse( tileBlock.GetAttribute( "Bounds" ) );
-
-							var staticGeometryBlock = tileBlock.FindChild( "StaticGeometry" );
-							if( staticGeometryBlock != null )
-							{
-								var staticGeometry = new TileGeometry();
-								if( !staticGeometry.Load( staticGeometryBlock ) )
-									return false;
-								tile.staticGeometry = staticGeometry;
-							}
-
-							precompiledTiles[ tile.index ] = tile;
-						}
-					}
-
-					//!!!!!mesh off links
-				}
-				catch
-				{
-					return false;
-				}
-				return true;
-			}
-
-			internal void Save( TextBlock block )
-			{
-				block.SetAttribute( "Tiles", tiles.ToString() );
-				block.SetAttribute( "TileSizeInCells", tileSizeInCells.ToString() );
-				block.SetAttribute( "CellSize", cellSize.ToString() );
-				block.SetAttribute( "CellHeight", cellHeight.ToString() );
-
-				foreach( var tile in precompiledTiles.Values )
-				{
-					var tileBlock = block.AddChild( "Tile" );
-					tileBlock.SetAttribute( "Index", tile.index.ToString() );
-					//tileBlock.SetAttribute( "Bounds", tile.bounds.ToString() );
-
-					if( tile.staticGeometry != null )
-					{
-						var staticGeometryBlock = tileBlock.AddChild( "StaticGeometry" );
-						tile.staticGeometry.Save( staticGeometryBlock );
-					}
-				}
-			}
-
-			internal RectangleI GetTileIndexRangeByBounds( Rectangle bounds )
-			{
-				if( tiles )
-				{
-					var tileSize = cellSize * tileSizeInCells;
-
-					var min = bounds.Minimum / tileSize;
-					if( min.X < 0 ) min.X--;
-					if( min.Y < 0 ) min.Y--;
-
-					var max = bounds.Maximum / tileSize;
-					if( max.X < 0 ) max.X--;
-					if( max.Y < 0 ) max.Y--;
-
-					return new RectangleI( (int)min.X, (int)min.Y, (int)max.X + 1, (int)max.Y + 1 );
-				}
-				else
-					return new RectangleI( 0, 0, 1, 1 );
-			}
-
-			internal Rectangle GetTileBounds( Vector2I index )
-			{
-				if( tiles )
-				{
-					var tileSize = cellSize * tileSizeInCells;
-					var x = tileSize * index.X;
-					var y = tileSize * index.Y;
-					return new Rectangle( x, y, x + tileSize, y + tileSize );
-				}
-				else
-					return new Rectangle( double.MinValue, double.MinValue, double.MaxValue, double.MaxValue );
-			}
+			internal RcNavMeshBuildSettings buildSettings = new RcNavMeshBuildSettings();
 		}
 
 		/////////////////////////////////////////
 
-		class BackgroundThreadData
+		//not work
+		public class ConvexVolume
 		{
-			public PrecompiledDataClass precompiledData;
-			public Dictionary<Vector2I, TileData> backgroundTiles = new Dictionary<Vector2I, TileData>();
+			public List<Vector3> Vertices = new List<Vector3>(); //public Vector3[] Vertices;
+			public double HeightMin;
+			public double HeightMax;
 
-			//!!!!проверить не всё ли время обновляется
-			//!!!!обновлять а то накапливаться будут
+			//!!!!walkable on the volume
+		}
+
+		/////////////////////////////////////////
+
+		internal class BackgroundThreadData
+		{
+			public Pathfinding pathfinding;
+			public PrecompiledDataClass precompiledData;
+
 			public Queue<Command> commandQueue = new Queue<Command>();
 			Thread commandThread;
 
-			public TiledNavMesh tiledNavMesh;
-			public Queue<NavMeshQuery> freeNavMeshQueries = new Queue<NavMeshQuery>();
-			public int navMeshQueriesCreatedForMaxNodes = -1;
+			public RcObstacleTool obstacleTool;
+			public DtNavMesh navMesh;
+			public Queue<DtNavMeshQuery> freeNavMeshQueries = new Queue<DtNavMeshQuery>();
 
 			//separate by tiles?
-			public Vector3[] navigationMeshVertices;
+			//!!!!indices?
+			public volatile Vector3[] navigationMeshVertices;
+			public volatile Vector3[] navigationMeshVerticesPrevious;
+
+			//dynamic obstacles
+			public Dictionary<PathfindingGeometry, long> dynamicObstacles = new Dictionary<PathfindingGeometry, long>();
+			public volatile int dynamicObstaclesCountLockFree;
 
 			////////////
 
-			public class TileData
+			public BackgroundThreadData( Pathfinding pathfinding, PrecompiledDataClass precompiledData )
 			{
-				public Vector2I index;
-				public bool needUpdate;
-				//!!!!проверить чтобы не копились
-				public ESet<DynamicObstacleData> dynamicObstacles = new ESet<DynamicObstacleData>();
-				////debug draw
-				//public Vector3F[] navigationMeshVertices;
-			}
-
-			////////////
-
-			public BackgroundThreadData( PrecompiledDataClass precompiledData )
-			{
+				this.pathfinding = pathfinding;
 				this.precompiledData = precompiledData;
-
-				//create tiles
-				foreach( var precompiledTile in precompiledData.precompiledTiles.Values )
-				{
-					var backgroundTile = new TileData();
-					backgroundTile.index = precompiledTile.index;
-					backgroundTiles.Add( backgroundTile.index, backgroundTile );
-				}
 			}
 
 			void WaitCommandToProcessFromMainThread( Command command )
@@ -646,9 +517,21 @@ namespace NeoAxis
 				while( !command.processed )
 				{
 					UpdateFromMainThread();
-					//!!!!
 					Thread.Sleep( 0 );
 				}
+			}
+
+			public bool CommandTypeIsInQueue( Type type )
+			{
+				lock( commandQueue )
+				{
+					foreach( var c in commandQueue )
+					{
+						if( c.GetType() == type )
+							return true;
+					}
+				}
+				return false;
 			}
 
 			public void AddCommandFromMainThread( Command command, bool wait, bool skipIfSameTypeCommandInQueue )
@@ -657,12 +540,14 @@ namespace NeoAxis
 				{
 					if( skipIfSameTypeCommandInQueue )
 					{
-						var type = command.GetType();
-						foreach( var c in commandQueue )
-						{
-							if( c.GetType() == type )
-								return;
-						}
+						if( CommandTypeIsInQueue( command.GetType() ) )
+							return;
+						//var type = command.GetType();
+						//foreach( var c in commandQueue )
+						//{
+						//	if( c.GetType() == type )
+						//		return;
+						//}
 					}
 
 					commandQueue.Enqueue( command );
@@ -674,18 +559,25 @@ namespace NeoAxis
 
 			void ThreadFunction( object param )
 			{
-				next:
-				Command command = null;
-				lock( commandQueue )
+				try
 				{
-					if( commandQueue.Count != 0 )
-						command = commandQueue.Dequeue();
-				}
+					next:
+					Command command = null;
+					lock( commandQueue )
+					{
+						if( commandQueue.Count != 0 )
+							command = commandQueue.Dequeue();
+					}
 
-				if( command != null )
+					if( command != null )
+					{
+						command.PerformProcess();
+						goto next;
+					}
+				}
+				catch( Exception e )
 				{
-					command.PerformProcess();
-					goto next;
+					Log.Warning( "Exception in pathfinding background thread: " + e.ToString() );
 				}
 			}
 
@@ -717,304 +609,95 @@ namespace NeoAxis
 
 			public void UpdateNavMesh()
 			{
-				if( backgroundTiles.Count == 0 )
+				if( precompiledData == null )
 					return;
 
-				//!!!!tiles
-				//!!!!пока полностью обновляется
-				foreach( var tile in backgroundTiles.Values )
-				{
-					if( tile.needUpdate )
-					{
-						tile.needUpdate = false;
-
-						tiledNavMesh = null;
-						freeNavMeshQueries.Clear();
-						navMeshQueriesCreatedForMaxNodes = -1;
-
-						//!!!!
-						navigationMeshVertices = null;
-					}
-				}
-
-				if( tiledNavMesh == null )
+				if( navMesh == null )
 				{
 					try
 					{
-						var settings = precompiledData.generationSettings;
+						var settings = precompiledData.buildSettings;
+						var staticGeometry = precompiledData.staticGeometry;
 
-						//!!!!
-						//level.SetBoundingBoxOffset(new SVector3(settings.CellSize * 0.5f, settings.CellHeight * 0.5f, settings.CellSize * 0.5f));
-
-						if( precompiledData.tiles )
+						Bounds bounds = Bounds.Cleared;
 						{
-							var tileSize = precompiledData.cellSize * precompiledData.tileSizeInCells;
+							if( staticGeometry != null )
+								bounds.Add( staticGeometry.bounds );
+						}
 
-							var maxTiles = precompiledData.precompiledTiles.Count;
+						if( !bounds.IsCleared() )
+						{
+							var vertices = new List<Vector3>( 2048 );
+							var indices = new List<int>( 2048 );
 
-							//!!!!
-							var maxPolys = 10000;// 0;
-
-							var buildDatas = new List<NavMeshBuilder>();
-
-							foreach( var tile in precompiledData.precompiledTiles.Values )
+							//rasterize static geometry
+							if( staticGeometry != null && !staticGeometry.IsEmpty )
 							{
-								var tileBounds = precompiledData.GetTileBounds( tile.index );
-
-								Bounds boundsObjects = Bounds.Cleared;
+								var areaData = staticGeometry.areaData;
+								if( areaData != null )
 								{
-									if( tile.staticGeometry != null )
-										boundsObjects.Add( tile.staticGeometry.bounds );
-
-									var backgroundTile = backgroundTiles[ tile.index ];
-									foreach( var dynamicObstacle in backgroundTile.dynamicObstacles )
-										boundsObjects.Add( dynamicObstacle.Vertices );
-								}
-
-								if( !boundsObjects.IsCleared() )
-								{
-									var boundsMinZ = boundsObjects.Minimum.Z;
-									boundsMinZ /= precompiledData.cellHeight;
-									boundsMinZ = (int)boundsMinZ - 2;
-									boundsMinZ *= precompiledData.cellHeight;
-
-									var boundsMaxZ = boundsObjects.Maximum.Z;
-									boundsMaxZ /= precompiledData.cellHeight;
-									boundsMaxZ = (int)boundsMaxZ + 2;
-									boundsMaxZ *= precompiledData.cellHeight;
-
-									var tileBounds3 = new Bounds(
-										new Vector3( tileBounds.Minimum, boundsMinZ ),
-										new Vector3( tileBounds.Maximum, boundsMaxZ ) );
-
-									var heightfield = new Heightfield( ToSharpNav( tileBounds3 ), settings );
-
-									//!!!!по идее это можно не обновлять
-									//rasterize static geometry
-									if( tile.staticGeometry != null )
-									{
-										for( int n = 0; n < 256; n++ )
-										{
-											var areaData = tile.staticGeometry.data[ n ];
-											if( areaData != null && areaData.vertices.Count != 0 )
-											{
-												var vertices2 = new Internal.SharpNav.Geometry.Vector3[ areaData.vertices.Count ];
-												for( int nVertex = 0; nVertex < vertices2.Length; nVertex++ )
-													vertices2[ nVertex ] = ToSharpNav( areaData.vertices.Data[ nVertex ] );
-												////!!!!с индексами передавать
-												//var vertices2 = new SharpNav.Geometry.Vector3[ areaData.indices.Count ];
-												//for( int index = 0; index < areaData.indices.Count; index++ )
-												//	vertices2[ index ] = ToSharpNav( areaData.vertices.Data[ areaData.indices.Data[ index ] ] );
-
-												heightfield.RasterizeTriangles( vertices2, (byte)n );
-											}
-										}
-
-										//Area[] areas = AreaGenerator.From( vertices2, Area.Default )
-										//	.MarkBelowSlope( (float)AgentMaxSlope.Value.InRadians(), Area.Null )
-										//	.ToArray();
-										//Area[] areas = AreaGenerator.From(triEnumerable, Area.Default)
-										//	.MarkAboveHeight(areaSettings.MaxLevelHeight, Area.Null)
-										//	.MarkBelowHeight(areaSettings.MinLevelHeight, Area.Null)
-										//	.MarkBelowSlope(areaSettings.MaxTriSlope, Area.Null)
-										//	.ToArray();
-										//heightfield.RasterizeTrianglesWithAreas( vertices2, areas );
-									}
-
-									//rasterize dynamic obstacles
-									{
-										var backgroundTile = backgroundTiles[ tile.index ];
-
-										foreach( var dynamicObstacle in backgroundTile.dynamicObstacles )
-										{
-											//!!!!с индексами передавать
-											var vertices2 = new Internal.SharpNav.Geometry.Vector3[ dynamicObstacle.Indices.Length ];
-											for( int index = 0; index < dynamicObstacle.Indices.Length; index++ )
-												vertices2[ index ] = ToSharpNav( dynamicObstacle.Vertices[ dynamicObstacle.Indices[ index ] ] );
-
-											heightfield.RasterizeTriangles( vertices2, dynamicObstacle.Area );
-										}
-									}
-
-									//heightfield.RasterizeTriangles( vertices2, Area.Default );
-									////Area[] areas = AreaGenerator.From( vertices2, Area.Default )
-									////	.MarkBelowSlope( (float)AgentMaxSlope.Value.InRadians(), Area.Null )
-									////	.ToArray();
-									////Area[] areas = AreaGenerator.From(triEnumerable, Area.Default)
-									////	.MarkAboveHeight(areaSettings.MaxLevelHeight, Area.Null)
-									////	.MarkBelowHeight(areaSettings.MinLevelHeight, Area.Null)
-									////	.MarkBelowSlope(areaSettings.MaxTriSlope, Area.Null)
-									////	.ToArray();
-									////heightfield.RasterizeTrianglesWithAreas( vertices2, areas );
-
-									heightfield.FilterLedgeSpans( settings.VoxelAgentHeight, settings.VoxelMaxClimb );
-									heightfield.FilterLowHangingWalkableObstacles( settings.VoxelMaxClimb );
-									heightfield.FilterWalkableLowHeightSpans( settings.VoxelAgentHeight );
-
-									var compactHeightfield = new CompactHeightfield( heightfield, settings );
-									compactHeightfield.Erode( settings.VoxelAgentRadius );
-									compactHeightfield.BuildDistanceField();
-									//!!!!boiderSize?
-									compactHeightfield.BuildRegions( 0, settings.MinRegionSize, settings.MergedRegionSize );
-
-									//System.Random r = new System.Random();
-									//var regionColors = new ColorByte[ compactHeightfield.MaxRegions ];
-									//regionColors[ 0 ] = new ColorByte( 0, 0, 0 );
-									//for( int i = 1; i < regionColors.Length; i++ )
-									//	regionColors[ i ] = new ColorByte( (byte)r.Next( 0, 255 ), (byte)r.Next( 0, 255 ), (byte)r.Next( 0, 255 ), (byte)255 );
-
-									var contourSet = compactHeightfield.BuildContourSet( settings );
-									var polyMesh = new PolyMesh( contourSet, settings );
-									var polyMeshDetail = new PolyMeshDetail( polyMesh, compactHeightfield, settings );
-
-									var buildData = new NavMeshBuilder( polyMesh, polyMeshDetail, new OffMeshConnection[ 0 ], settings );
-									buildData.Header.X = tile.index.X;
-									buildData.Header.Y = tile.index.Y;
-
-									buildDatas.Add( buildData );
+									var startVertexIndex = vertices.Count;
+									vertices.AddRange( areaData.vertices.Data );
+									for( int n = 0; n < areaData.indices.Count; n++ )
+										indices.Add( startVertexIndex + areaData.indices[ n ] );
 								}
 							}
 
-							tiledNavMesh = new TiledNavMesh( new Internal.SharpNav.Geometry.Vector3( 0, 0, 0 ), (float)tileSize, (float)tileSize, maxTiles, maxPolys );
-							foreach( var buildData in buildDatas )
-								tiledNavMesh.AddTile( buildData );
+							var floatVertices = new float[ vertices.Count * 3 ];
+							for( int n = 0; n < vertices.Count; n++ )
+							{
+								var v = ConvertToDotRecastCoordinates( vertices[ n ] );
+								floatVertices[ n * 3 + 0 ] = v.X;
+								floatVertices[ n * 3 + 1 ] = v.Y;
+								floatVertices[ n * 3 + 2 ] = v.Z;
+							}
 
+							//add triangles
+							var geometryProvider = new RcSampleInputGeomProvider( floatVertices, indices.ToArray() );
 
-							//var boundsMin = new SharpNav.Geometry.Vector3( float.MaxValue, float.MaxValue, float.MaxValue );
-							//foreach( var buildData in buildDatas )
+							//!!!!not work
+							////add convex volumes
+							//foreach( var sourceVolume in staticGeometry.convexVolumes )
 							//{
-							//	var m = buildData.Header.Bounds.Min;
+							//	var volume = new RcConvexVolume();
 
-							//	//!!!!!y -> z, z -> y
-							//	if( m.X < boundsMin.X )
-							//		boundsMin.X = m.X;
-							//	if( m.Y < boundsMin.Y )
-							//		boundsMin.Y = m.Y;
-							//	if( m.Z < boundsMin.Z )
-							//		boundsMin.Z = m.Z;
+							//	//var vv = sourceVolume.Vertices.GetReverse().ToArray();
+							//	//volume.verts = new float[ sourceVolume.Vertices.Count * 3 ];
+							//	//for( int n = 0; n < vv.Length; n++ )
+							//	//{
+							//	//	var v = ConvertToDotRecastCoordinates( vv[ n ] );
+							//	//	volume.verts[ n * 3 + 0 ] = v.X;
+							//	//	volume.verts[ n * 3 + 1 ] = v.Y;
+							//	//	volume.verts[ n * 3 + 2 ] = v.Z;
+							//	//}
+
+							//	volume.verts = new float[ sourceVolume.Vertices.Count * 3 ];
+							//	for( int n = 0; n < sourceVolume.Vertices.Count; n++ )
+							//	{
+							//		var v = ConvertToDotRecastCoordinates( sourceVolume.Vertices[ n ] );
+							//		volume.verts[ n * 3 + 0 ] = v.X;
+							//		volume.verts[ n * 3 + 1 ] = v.Y;
+							//		volume.verts[ n * 3 + 2 ] = v.Z;
+							//	}
+
+							//	volume.hmin = (float)sourceVolume.HeightMin;
+							//	volume.hmax = (float)sourceVolume.HeightMax;
+
+							//	//!!!!
+							//	//volume.areaMod = new RcAreaModification( 42 );// RcAreaModification.RC_AREA_FLAGS_MASK );
+
+							//	geometryProvider.AddConvexVolume( volume );
 							//}
-							//tiledNavMesh = new TiledNavMesh( boundsMin, (float)tileSize, (float)tileSize, maxTiles, maxPolys );
 
-						}
-						else
-						{
-							var tile = precompiledData.precompiledTiles[ Vector2I.Zero ];
+							var obstacleTool = new RcObstacleTool( DtTileCacheCompressorFactory.Shared );
+							var buildResult = obstacleTool.Build( geometryProvider, settings, Internal.DotRecast.Core.RcByteOrder.LITTLE_ENDIAN, true );
 
-							Bounds bounds = Bounds.Cleared;
+							if( buildResult.Success )
 							{
-								if( tile.staticGeometry != null )
-									bounds.Add( tile.staticGeometry.bounds );
-
-								var backgroundTile = backgroundTiles[ tile.index ];
-								foreach( var dynamicObstacle in backgroundTile.dynamicObstacles )
-									bounds.Add( dynamicObstacle.Vertices );
-							}
-
-							if( !bounds.IsCleared() )
-							{
-								var heightfield = new Heightfield( ToSharpNav( bounds ), settings );
-
-								//!!!!по идее это можно не обновлять
-								//rasterize static geometry
-								if( tile.staticGeometry != null )
-								{
-									for( int n = 0; n < 256; n++ )
-									{
-										var areaData = tile.staticGeometry.data[ n ];
-										if( areaData != null && areaData.vertices.Count != 0 )
-										{
-											var vertices2 = new Internal.SharpNav.Geometry.Vector3[ areaData.vertices.Count ];
-											for( int nVertex = 0; nVertex < vertices2.Length; nVertex++ )
-												vertices2[ nVertex ] = ToSharpNav( areaData.vertices.Data[ nVertex ] );
-											////!!!!с индексами передавать
-											//var vertices2 = new SharpNav.Geometry.Vector3[ areaData.indices.Count ];
-											//for( int index = 0; index < areaData.indices.Count; index++ )
-											//	vertices2[ index ] = ToSharpNav( areaData.vertices.Data[ areaData.indices.Data[ index ] ] );
-
-											heightfield.RasterizeTriangles( vertices2, (byte)n );
-										}
-									}
-
-									//Area[] areas = AreaGenerator.From( vertices2, Area.Default )
-									//	.MarkBelowSlope( (float)AgentMaxSlope.Value.InRadians(), Area.Null )
-									//	.ToArray();
-									//Area[] areas = AreaGenerator.From(triEnumerable, Area.Default)
-									//	.MarkAboveHeight(areaSettings.MaxLevelHeight, Area.Null)
-									//	.MarkBelowHeight(areaSettings.MinLevelHeight, Area.Null)
-									//	.MarkBelowSlope(areaSettings.MaxTriSlope, Area.Null)
-									//	.ToArray();
-									//heightfield.RasterizeTrianglesWithAreas( vertices2, areas );
-								}
-
-								//rasterize dynamic obstacles
-								{
-									var backgroundTile = backgroundTiles[ tile.index ];
-
-									foreach( var dynamicObstacle in backgroundTile.dynamicObstacles )
-									{
-										//!!!!с индексами передавать
-										var vertices2 = new Internal.SharpNav.Geometry.Vector3[ dynamicObstacle.Indices.Length ];
-										for( int index = 0; index < dynamicObstacle.Indices.Length; index++ )
-											vertices2[ index ] = ToSharpNav( dynamicObstacle.Vertices[ dynamicObstacle.Indices[ index ] ] );
-
-										heightfield.RasterizeTriangles( vertices2, dynamicObstacle.Area );
-									}
-								}
-
-								heightfield.FilterLedgeSpans( settings.VoxelAgentHeight, settings.VoxelMaxClimb );
-								heightfield.FilterLowHangingWalkableObstacles( settings.VoxelMaxClimb );
-								heightfield.FilterWalkableLowHeightSpans( settings.VoxelAgentHeight );
-
-								var compactHeightfield = new CompactHeightfield( heightfield, settings );
-								compactHeightfield.Erode( settings.VoxelAgentRadius );
-								compactHeightfield.BuildDistanceField();
-								//!!!!boiderSize?
-								compactHeightfield.BuildRegions( 0, settings.MinRegionSize, settings.MergedRegionSize );
-
-								//System.Random r = new System.Random();
-								//var regionColors = new ColorByte[ compactHeightfield.MaxRegions ];
-								//regionColors[ 0 ] = new ColorByte( 0, 0, 0 );
-								//for( int i = 1; i < regionColors.Length; i++ )
-								//	regionColors[ i ] = new ColorByte( (byte)r.Next( 0, 255 ), (byte)r.Next( 0, 255 ), (byte)r.Next( 0, 255 ), (byte)255 );
-
-								var contourSet = compactHeightfield.BuildContourSet( settings );
-								var polyMesh = new PolyMesh( contourSet, settings );
-								var polyMeshDetail = new PolyMeshDetail( polyMesh, compactHeightfield, settings );
-
-								var offMeshConnections = new List<OffMeshConnection>();
-
-								//!!!!temp
-								//foreach( var precompiledConnection in precompiledData.meshOffLinkConnections )
-								//{
-								//	var connection = new OffMeshConnection();
-
-								//	connection.Pos0 = ToSharpNav( precompiledConnection.Position1 );
-								//	connection.Pos1 = ToSharpNav( precompiledConnection.Position2 );
-
-								//	//!!!!
-
-								//	connection.Radius = 1;
-
-								//	//!!!!
-								//	connection.Flags = OffMeshConnectionFlags.Bidirectional;
-
-								//	//!!!!
-								//	//connection.Poly = zzzz;
-
-								//	//!!!!
-								//	connection.Side = BoundarySide.PlusX;
-
-								//	offMeshConnections.Add( connection );
-								//}
-
-								var buildData = new NavMeshBuilder( polyMesh, polyMeshDetail, offMeshConnections.ToArray(), settings );
-								tiledNavMesh = new TiledNavMesh( buildData );
+								this.obstacleTool = obstacleTool;
+								navMesh = buildResult.NavMesh;
 							}
 						}
-
-						//!!!!
-						////Pathfinding with multiple units
-						//GenerateCrowd();
 					}
 					catch//( Exception e )
 					{
@@ -1029,7 +712,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		abstract class Command
+		internal abstract class Command
 		{
 			public BackgroundThreadData owner;
 			public volatile bool processed;
@@ -1056,13 +739,33 @@ namespace NeoAxis
 			public double StepSize = 0.5;
 			public double Slop = 0.01;
 			public Vector3 PolygonPickExtents = new Vector3( 2, 2, 2 );
-			//public int MaxPolygonPath = 512;
+
+			public int MaxPolygonPath = 512;
 			public int MaxSmoothPath = 2048;
 			//public int MaxSteerPoints = 16;
 
 			public bool Finished;
-			public Vector3[] Path;
+			public bool Partial;
+			public PathPoint[] Path;
 			public string Error = string.Empty;
+
+			//
+
+			public struct PathPoint
+			{
+				public Vector3 Position;
+				public bool Turn;
+			}
+		}
+
+		/////////////////////////////////////////
+
+		internal class DynamicGeometriesToUpdateItem
+		{
+			public bool Add;
+
+			public Box? Box;
+			public Cylinder? Cylinder;
 		}
 
 		/////////////////////////////////////////
@@ -1077,104 +780,68 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		class CommandDynamicObstacleAdd : Command
+		class CommandUpdateDynamicObstacles : Command
 		{
-			public DynamicObstacleData dynamicObstacle;
+			public KeyValuePair<PathfindingGeometry, DynamicGeometriesToUpdateItem>[] geometries;
+
+			//
 
 			protected override void Process()
 			{
-				if( owner.backgroundTiles.Count == 0 )
-					return;
-
-				var obstanceBounds = dynamicObstacle.Bounds.ToRectangle();
-
-				var tileIndexRange = owner.precompiledData.GetTileIndexRangeByBounds( dynamicObstacle.Bounds.ToRectangle() );
-				for( int y = tileIndexRange.Minimum.Y; y < tileIndexRange.Maximum.Y; y++ )
+				var obstacleTool = owner.obstacleTool;
+				if( obstacleTool != null )
 				{
-					for( int x = tileIndexRange.Minimum.X; x < tileIndexRange.Maximum.X; x++ )
+					var tileCache = obstacleTool.GetTileCache();
+					if( tileCache != null )
 					{
-						var index = new Vector2I( x, y );
-						var tileBounds = owner.precompiledData.GetTileBounds( index );
-
-						if( obstanceBounds.Intersects( tileBounds ) )
+						foreach( var pair in geometries )
 						{
-							if( owner.backgroundTiles.TryGetValue( index, out var tile ) )
-							{
-								if( tile.dynamicObstacles.AddWithCheckAlreadyContained( dynamicObstacle ) )
-								{
-									tile.needUpdate = true;
+							var geometry = pair.Key;
+							var item = pair.Value;
 
-									//!!!!
-									owner.navigationMeshVertices = null;
+							//remove
+							{
+								if( owner.dynamicObstacles.TryGetValue( geometry, out var id ) )
+								{
+									tileCache.RemoveObstacle( id );
+									owner.dynamicObstacles.Remove( geometry );
+								}
+							}
+
+							//add
+							if( item.Add )
+							{
+								if( item.Box != null )
+								{
+									var box = item.Box.Value;
+
+									var center = ConvertToDotRecastCoordinates( box.Center );
+									var extents = ConvertToDotRecastCoordinates( box.Extents, true );
+									var angle = -(float)MathEx.DegreeToRadian( box.Axis.ToAngles().Yaw );
+
+									var id = tileCache.AddBoxObstacle( center, extents, angle );
+									owner.dynamicObstacles[ geometry ] = id;
+								}
+								else if( item.Cylinder != null )
+								{
+									var cylinder = item.Cylinder.Value;
+
+									var position = ConvertToDotRecastCoordinates( cylinder.Point1 );
+									var id = tileCache.AddObstacle( position, (float)cylinder.Radius, (float)cylinder.GetLength() );
+									owner.dynamicObstacles[ geometry ] = id;
 								}
 							}
 						}
-					}
-				}
 
+						owner.dynamicObstaclesCountLockFree = owner.dynamicObstacles.Count;
 
-				//	var tile = owner.backgroundTiles[ Vector2I.Zero ];
-
-				//	if( tile.dynamicObstacles.AddWithCheckAlreadyContained( dynamicObstacle ) )
-				//	{
-				//		tile.needUpdate = true;
-
-				//		//!!!!
-				//		owner.navigationMeshVertices = null;
-				//	}
-			}
-		}
-
-		/////////////////////////////////////////
-
-		class CommandDynamicObstacleDelete : Command
-		{
-			public DynamicObstacleData dynamicObstacle;
-
-			protected override void Process()
-			{
-				if( owner.backgroundTiles.Count == 0 )
-					return;
-
-				var obstanceBounds = dynamicObstacle.Bounds.ToRectangle();
-
-				var tileIndexRange = owner.precompiledData.GetTileIndexRangeByBounds( dynamicObstacle.Bounds.ToRectangle() );
-				for( int y = tileIndexRange.Minimum.Y; y < tileIndexRange.Maximum.Y; y++ )
-				{
-					for( int x = tileIndexRange.Minimum.X; x < tileIndexRange.Maximum.X; x++ )
-					{
-						var index = new Vector2I( x, y );
-						var tileBounds = owner.precompiledData.GetTileBounds( index );
-
-						if( obstanceBounds.Intersects( tileBounds ) )
+						while( !tileCache.Update() )
 						{
-							if( owner.backgroundTiles.TryGetValue( index, out var tile ) )
-							{
-								if( tile.dynamicObstacles.Remove( dynamicObstacle ) )
-								{
-									tile.needUpdate = true;
-
-									//!!!!
-									owner.navigationMeshVertices = null;
-								}
-							}
 						}
+
+						owner.navigationMeshVertices = null;
 					}
 				}
-
-
-				//if( owner.backgroundTiles.Count != 0 )
-				//{
-				//	var tile = owner.backgroundTiles[ Vector2I.Zero ];
-
-				//	if( tile.dynamicObstacles.Remove( dynamicObstacle ) )
-				//	{
-				//		tile.needUpdate = true;
-
-				//		//!!!!
-				//		owner.navigationMeshVertices = null;
-				//	}
-				//}
 			}
 		}
 
@@ -1183,184 +850,123 @@ namespace NeoAxis
 		class CommandFindPath : Command
 		{
 			public FindPathContext[] contexts;
-			public int pathfindingMaxNodes;
 
 			//
 
-			static void VMad( ref Internal.SharpNav.Geometry.Vector3 dest, Internal.SharpNav.Geometry.Vector3 v1, Internal.SharpNav.Geometry.Vector3 v2, float s )
-			{
-				dest.X = v1.X + v2.X * s;
-				dest.Y = v1.Y + v2.Y * s;
-				dest.Z = v1.Z + v2.Z * s;
-			}
-
-			static bool GetSteerTarget( NavMeshQuery navMeshQuery, Internal.SharpNav.Geometry.Vector3 startPos, Internal.SharpNav.Geometry.Vector3 endPos, float minTargetDist, Internal.SharpNav.Pathfinding.Path path, ref Internal.SharpNav.Geometry.Vector3 steerPos, ref StraightPathFlags steerPosFlag, ref NavPolyId steerPosRef )
-			{
-				StraightPath steerPath = new StraightPath();
-				navMeshQuery.FindStraightPath( startPos, endPos, path, steerPath, 0 );
-				int nsteerPath = steerPath.Count;
-				if( nsteerPath == 0 )
-					return false;
-
-				//find vertex far enough to steer to
-				int ns = 0;
-				while( ns < nsteerPath )
-				{
-					if( ( steerPath[ ns ].Flags & StraightPathFlags.OffMeshConnection ) != 0 ||
-						!InRange( steerPath[ ns ].Point.Position, startPos, minTargetDist, 1000.0f ) )
-						break;
-
-					ns++;
-				}
-
-				//failed to find good point to steer to
-				if( ns >= nsteerPath )
-					return false;
-
-				steerPos = steerPath[ ns ].Point.Position;
-				steerPos.Y = startPos.Y;
-				steerPosFlag = steerPath[ ns ].Flags;
-				if( steerPosFlag == StraightPathFlags.None && ns == ( nsteerPath - 1 ) )
-					steerPosFlag = StraightPathFlags.End; // otherwise seeks path infinitely!!!
-				steerPosRef = steerPath[ ns ].Point.Polygon;
-
-				return true;
-			}
-
-			static bool InRange( Internal.SharpNav.Geometry.Vector3 v1, Internal.SharpNav.Geometry.Vector3 v2, float r, float h )
-			{
-				float dx = v2.X - v1.X;
-				float dy = v2.Y - v1.Y;
-				float dz = v2.Z - v1.Z;
-				return ( dx * dx + dz * dz ) < ( r * r ) && Math.Abs( dy ) < h;
-			}
-
 			protected override void Process()
 			{
-				owner.UpdateNavMesh();
+				//owner.UpdateNavMesh();
 
-				if( owner.tiledNavMesh != null )
+				if( owner.navMesh != null )
 				{
-					if( owner.navMeshQueriesCreatedForMaxNodes != pathfindingMaxNodes )
-						owner.freeNavMeshQueries.Clear();
-					owner.navMeshQueriesCreatedForMaxNodes = pathfindingMaxNodes;
+					ParallelOptions parallelOptions;
+					if( owner.pathfinding.PathfindingParallelCount > 0 )
+						parallelOptions = new ParallelOptions() { MaxDegreeOfParallelism = owner.pathfinding.PathfindingParallelCount };
+					else
+						parallelOptions = new ParallelOptions();
 
-					var parallelOptions = new ParallelOptions() { MaxDegreeOfParallelism = maxPathFindInParallel };
 					Parallel.ForEach( contexts, parallelOptions, delegate ( FindPathContext context )
 					{
-						NavMeshQuery query = null;
+						DtNavMeshQuery query = null;
 						lock( owner.freeNavMeshQueries )
 						{
 							if( owner.freeNavMeshQueries.Count != 0 )
 								query = owner.freeNavMeshQueries.Dequeue();
 							else
-								query = new NavMeshQuery( owner.tiledNavMesh, pathfindingMaxNodes );
+								query = new DtNavMeshQuery( owner.navMesh );
 						}
 
 						try
 						{
-							var extents = ToSharpNav( context.PolygonPickExtents, true );
-							var startPt = query.FindNearestPoly( ToSharpNav( context.Start ), extents );
-							var endPt = query.FindNearestPoly( ToSharpNav( context.End ), extents );
+							var halfExtents = ConvertToDotRecastCoordinates( context.PolygonPickExtents * 0.5, true );
+							var startPos = ConvertToDotRecastCoordinates( context.Start );
+							var endPos = ConvertToDotRecastCoordinates( context.End );
 
-							var filter = new NavQueryFilter();
+							var filter = new DtQueryDefaultFilter();
+							//filter.SetIncludeFlags( 0xffff );
+							//filter.SetExcludeFlags( 0 );
 
-							var path = new Internal.SharpNav.Pathfinding.Path();
-							var found = query.FindPath( ref startPt, ref endPt, filter, path );
+							query.FindNearestPoly( startPos, halfExtents, filter, out var startRef, out var startNearestPt, out _ );
+							query.FindNearestPoly( endPos, halfExtents, filter, out var endRef, out var endNearestPt, out _ );
 
-							Vector3[] pathResult = null;
-							if( found )
+							var polys = new long[ context.MaxPolygonPath ];
+							var smoothPath = new RcVec3f[ context.MaxSmoothPath ];
+
+							var enableRaycast = true;
+
+							var tool = new RcTestNavMeshTool();
+							var status = tool.FindFollowPath( owner.navMesh, query, startRef, endRef, startPos, endPos, filter, enableRaycast, polys, out var polysCount, smoothPath, out var smoothPathSize, (float)context.StepSize, (float)context.Slop );
+
+							if( status.Succeeded() )
 							{
-								//find a smooth path over the mesh surface
-								int npolys = path.Count;
-								Internal.SharpNav.Geometry.Vector3 iterPos = new Internal.SharpNav.Geometry.Vector3();
-								Internal.SharpNav.Geometry.Vector3 targetPos = new Internal.SharpNav.Geometry.Vector3();
-								query.ClosestPointOnPoly( startPt.Polygon, startPt.Position, ref iterPos );
-								query.ClosestPointOnPoly( path[ npolys - 1 ], endPt.Position, ref targetPos );
-
-								var smoothPath = new List<Internal.SharpNav.Geometry.Vector3>( context.MaxSmoothPath );
-								smoothPath.Add( iterPos );
-
-								//for( int n = 0; n < path.Count; n++ )
-								//{
-								//	Vector3 closest = Vector3.Zero;
-								//	if( navMeshQuery.ClosestPointOnPoly( path[ n ], startPt.Position, ref closest ) )
-								//		smoothPath.Add( closest );
-								//}
-
-								float stepSize = (float)context.StepSize;
-								float slop = (float)context.Slop;
-
-								while( npolys > 0 && smoothPath.Count < smoothPath.Capacity )
+								context.Path = new FindPathContext.PathPoint[ smoothPathSize ];
+								for( int n = 0; n < smoothPathSize; n++ )
 								{
-									//find location to steer towards
-									Internal.SharpNav.Geometry.Vector3 steerPos = new Internal.SharpNav.Geometry.Vector3();
-									StraightPathFlags steerPosFlag = 0;
-									NavPolyId steerPosRef = NavPolyId.Null;
-
-									if( !GetSteerTarget( query, iterPos, targetPos, slop, path, ref steerPos, ref steerPosFlag, ref steerPosRef ) )
-										break;
-
-									bool endOfPath = ( steerPosFlag & StraightPathFlags.End ) != 0 ? true : false;
-									bool offMeshConnection = ( steerPosFlag & StraightPathFlags.OffMeshConnection ) != 0 ? true : false;
-
-									//find movement delta
-									Internal.SharpNav.Geometry.Vector3 delta = steerPos - iterPos;
-									float len = (float)Math.Sqrt( Internal.SharpNav.Geometry.Vector3.Dot( delta, delta ) );
-
-									//if steer target is at end of path or off-mesh link
-									//don't move past location
-									if( ( endOfPath || offMeshConnection ) && len < stepSize )
-										len = 1;
-									else
-										len = stepSize / len;
-
-									Internal.SharpNav.Geometry.Vector3 moveTgt = new Internal.SharpNav.Geometry.Vector3();
-									VMad( ref moveTgt, iterPos, delta, len );
-
-									//move
-									Internal.SharpNav.Geometry.Vector3 result = new Internal.SharpNav.Geometry.Vector3();
-									List<NavPolyId> visited = new List<NavPolyId>( 16 );
-									NavPoint startPoint = new NavPoint( path[ 0 ], iterPos );
-									query.MoveAlongSurface( ref startPoint, ref moveTgt, out result, visited );
-									path.FixupCorridor( visited );
-									npolys = path.Count;
-									float h = 0;
-									query.GetPolyHeight( path[ 0 ], result, ref h );
-									result.Y = h;
-									iterPos = result;
-
-									//handle end of path when close enough
-									if( endOfPath && InRange( iterPos, steerPos, slop, 1.0f ) )
-									{
-										//reached end of path
-										iterPos = targetPos;
-										if( smoothPath.Count < smoothPath.Capacity )
-											smoothPath.Add( iterPos );
-										break;
-									}
-
-									//store results
-									if( smoothPath.Count < smoothPath.Capacity )
-										smoothPath.Add( iterPos );
+									ref var p = ref context.Path[ n ];
+									p.Position = ConvertToEngineCoordinates( smoothPath[ n ] );
 								}
 
-								pathResult = new Vector3[ smoothPath.Count ];
-								for( int n = 0; n < pathResult.Length; n++ )
-									pathResult[ n ] = ToEngine( smoothPath[ n ] );
+								var stepSize = context.StepSize;
 
-								//if( pathCount > 0 )
-								//{
-								//	path = new Vec3[ pathCount ];
-								//	//!!!!double support
-								//	for( int n = 0; n < pathCount; n++ )
-								//		path[ n ] = ToEngineVec3( pathPointer[ n ] );
-								//}
-								//else
-								//	path = new Vec3[] { context.Start };
+								for( int n = 1; n < smoothPathSize - 1; n++ )
+								{
+									ref var p = ref context.Path[ n ];
+
+									var previous = context.Path[ n - 1 ].Position.ToVector2();
+									var next = context.Path[ n + 1 ].Position.ToVector2();
+									var p2 = p.Position.ToVector2();
+
+									var projected = MathAlgorithms.ProjectPointToLine( previous, next, p2 );
+
+									var lengthSquared = ( projected - p2 ).LengthSquared();
+									p.Turn = lengthSquared > ( stepSize * 0.01 ) * ( stepSize * 0.01 );
+								}
 							}
 
-							context.Path = pathResult;
+
+
+							////var pathResult = new Vector3[ smoothPathSize ];
+							////for( int n = 0; n < smoothPathSize; n++ )
+							////	pathResult[ n ] = ConvertToEngineCoordinates( smoothPath[ n ] );
+
+
+							////var path = new long[ context.MaxPolygonPath ];
+							////query.FindPath( startRef, endRef, startPos, endPos, filter, path, out var pathCount, 256 );
+
+							////var options = 0;
+
+							////var straightPath = new DtStraightPath[ 256 ];
+
+							////if( true )
+							////{
+
+							////	//var status = query.FindStraightPath( startPos, endPos, path, 256, straightPath, out var straightPathCount, 256, options );
+
+							////	//pathResult = new Vector3[ straightPathCount ];
+							////	//for( int n = 0; n < straightPathCount; n++ )
+							////	//	pathResult[ n ] = ConvertToEngineCoordinates( straightPath[ n ].pos );
+
+
+							////	//var polys = new long[ context.MaxPolygonPath ];
+
+							////	//query.FindPath( startRef, endRef, startPos, endPos, filter, polys, out var polysCount, polys.Length );
+
+							////	//if( polysCount > 0 )
+							////	//{
+
+							////	//	// Iterate over the path to find smooth path on the detail mesh surface.
+							////	//	query.ClosestPointOnPoly( startRef, startPos, out var iterPos, out var _ );
+							////	//	query.ClosestPointOnPoly( polys[ polysCount - 1 ], endPos, out var targetPos, out var _ );
+
+							////	//	var pathResult = new Vector3[ polysCount ];
+							////	//	for( int n = 0; n < polysCount; n++ )
+							////	//		pathResult[ n ] = ConvertToEngineCoordinates( polys[ n ].pos );
+
+							////	//	context.Path = pathResult;
+							////	//}
+							////}
+							////else
+
 						}
 						catch( Exception e )
 						{
@@ -1372,7 +978,6 @@ namespace NeoAxis
 								owner.freeNavMeshQueries.Enqueue( query );
 						}
 					} );
-
 				}
 				else
 				{
@@ -1394,52 +999,64 @@ namespace NeoAxis
 				//update only when command queue is empty
 				if( owner.navigationMeshVertices == null && owner.CommandQueueIsEmpty )
 				{
-					owner.UpdateNavMesh();
+					//owner.UpdateNavMesh();
 
-					if( owner.tiledNavMesh != null )
+					if( owner.navMesh != null )
 					{
 						//!!!!separate by tiles?
+						//!!!!indices?
 
-						//!!!!capacity
 						var result = new List<Vector3>( 1024 );
 
-						foreach( var tile in owner.tiledNavMesh.Tiles )
+						var navMesh = owner.navMesh;
+
+						for( int nTile = 0; nTile < navMesh.GetMaxTiles(); nTile++ )
 						{
-							//int capacity = 0;
-							//for( int nPoly = 0; nPoly < tile.PolyCount; nPoly++ )
-							//{
-							//	var poly = tile.Polys[ nPoly ];
-							//	if( poly.Area.IsWalkable )
-							//	{
-							//		for( int n = 2; n < poly.VertCount; n++ )
-							//			capacity += 3;
-							//	}
-							//}
+							var tile = navMesh.GetTile( nTile );
+							if( tile == null )
+								continue;
 
-							for( int nPoly = 0; nPoly < tile.PolyCount; nPoly++ )
+							var data = tile.data;
+							if( data == null )
+								continue;
+							var vertices = data.verts;
+							var polys = data.polys;
+							if( vertices == null || polys == null )
+								continue;
+
+							foreach( var poly in polys )
 							{
-								var poly = tile.Polys[ nPoly ];
-								if( poly.Area.IsWalkable )
-								{
-									for( int n = 2; n < poly.VertCount; n++ )
-									{
-										int index0 = poly.Verts[ 0 ];
-										int index1 = poly.Verts[ n ];
-										int index2 = poly.Verts[ n - 1 ];
-										//int index0 = poly.Verts[ 0 ];
-										//int index1 = poly.Verts[ n - 1 ];
-										//int index2 = poly.Verts[ n ];
+								//if( poly.Area.IsWalkable )
+								//{
 
-										result.Add( ToEngine( tile.Verts[ index0 ] ) );
-										result.Add( ToEngine( tile.Verts[ index1 ] ) );
-										result.Add( ToEngine( tile.Verts[ index2 ] ) );
-									}
+								for( int n = 2; n < poly.vertCount; n++ )
+								{
+									int index0 = poly.verts[ 0 ];
+									int index1 = poly.verts[ n ];
+									int index2 = poly.verts[ n - 1 ];
+
+									var v0 = new RcVec3f( vertices[ index0 * 3 ], vertices[ index0 * 3 + 1 ], vertices[ index0 * 3 + 2 ] );
+									var v1 = new RcVec3f( vertices[ index1 * 3 ], vertices[ index1 * 3 + 1 ], vertices[ index1 * 3 + 2 ] );
+									var v2 = new RcVec3f( vertices[ index2 * 3 ], vertices[ index2 * 3 + 1 ], vertices[ index2 * 3 + 2 ] );
+
+									var vv0 = ConvertToEngineCoordinates( v0 );
+									var vv1 = ConvertToEngineCoordinates( v1 );
+									var vv2 = ConvertToEngineCoordinates( v2 );
+
+									result.Add( vv0 );
+									//result.Add( v1 );
+									result.Add( vv2 );
+									result.Add( vv1 );
 								}
+
+								//}
 							}
 						}
 
 						//with indexes?
-						owner.navigationMeshVertices = result.ToArray();
+						var resultArray = result.ToArray();
+						owner.navigationMeshVerticesPrevious = resultArray;
+						owner.navigationMeshVertices = resultArray;
 					}
 				}
 			}
@@ -1447,192 +1064,140 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		internal class TileGeometry
+		internal class StaticGeometry
 		{
 			public Bounds bounds = Bounds.Cleared;
-			public AreaData[] data = new AreaData[ 256 ];
+			public AreaData areaData = new AreaData();
+
+			//public List<ConvexVolume> convexVolumes = new List<ConvexVolume>();
 
 			//
 
 			public class AreaData
 			{
-				public OpenList<Vector3> vertices;
-				//public OpenList<int> indices;
 
-				public AreaData( bool createLists )
+				//!!!!maybe not save in simulation. used to visualize input mesh
+
+				public OpenList<Vector3> vertices;
+				public OpenList<int> indices;
+
+				public AreaData()
 				{
-					if( createLists )
-					{
-						vertices = new OpenList<Vector3>( 2048 );
-						//indices = new OpenList<int>( 2048 );
-					}
+					vertices = new OpenList<Vector3>( 2048 );
+					indices = new OpenList<int>( 2048 );
 				}
 			}
 
-			public void Add( Vector3[] vertices, int[] indices, byte area, bool clipByBounds, Rectangle clipBounds )
+			public void Add( Vector3[] vertices, int[] indices/*, byte area*/)//, bool clipByBounds, Rectangle clipBounds )
 			{
 				if( indices.Length == 0 || vertices.Length == 0 )
 					return;
 
-				var newVertices = new List<Vector3>( vertices.Length );
+				//var newVertices = new List<Vector3>( vertices.Length );
+				//var newIndices = new List<int>( indices.Length );
 
-				if( clipByBounds )
-				{
-					for( int nTriangle = 0; nTriangle < indices.Length / 3; nTriangle++ )
-					{
-						var polygon = new Vector3[ 3 ];
-						polygon[ 0 ] = vertices[ indices[ nTriangle * 3 + 0 ] ];
-						polygon[ 1 ] = vertices[ indices[ nTriangle * 3 + 1 ] ];
-						polygon[ 2 ] = vertices[ indices[ nTriangle * 3 + 2 ] ];
-
-						//+X
-						{
-							var plane = Plane.FromPointAndNormal( new Vector3( clipBounds.Maximum, 0 ), new Vector3( -1, 0, 0 ) );
-							polygon = MathAlgorithms.ClipPolygonByPlane( polygon, plane );
-						}
-
-						//+Y
-						{
-							var plane = Plane.FromPointAndNormal( new Vector3( clipBounds.Maximum, 0 ), new Vector3( 0, -1, 0 ) );
-							polygon = MathAlgorithms.ClipPolygonByPlane( polygon, plane );
-						}
-
-						//-X
-						{
-							var plane = Plane.FromPointAndNormal( new Vector3( clipBounds.Minimum, 0 ), new Vector3( 1, 0, 0 ) );
-							polygon = MathAlgorithms.ClipPolygonByPlane( polygon, plane );
-						}
-
-						//-Y
-						{
-							var plane = Plane.FromPointAndNormal( new Vector3( clipBounds.Minimum, 0 ), new Vector3( 0, 1, 0 ) );
-							polygon = MathAlgorithms.ClipPolygonByPlane( polygon, plane );
-						}
-
-						//triangulate
-						for( int n = 1; n < polygon.Length - 1; n++ )
-						{
-							var v1 = polygon[ 0 ];
-							var v2 = polygon[ n ];
-							var v3 = polygon[ n + 1 ];
-
-							if( v1 != v2 && v1 != v3 && v2 != v3 )
-							{
-								newVertices.Add( v1 );
-								newVertices.Add( v2 );
-								newVertices.Add( v3 );
-							}
-						}
-					}
-				}
-				else
-				{
-					for( int nTriangle = 0; nTriangle < indices.Length / 3; nTriangle++ )
-					{
-						var v1 = vertices[ indices[ nTriangle * 3 + 0 ] ];
-						var v2 = vertices[ indices[ nTriangle * 3 + 1 ] ];
-						var v3 = vertices[ indices[ nTriangle * 3 + 2 ] ];
-
-						if( v1 != v2 && v1 != v3 && v2 != v3 )
-						{
-							newVertices.Add( v1 );
-							newVertices.Add( v2 );
-							newVertices.Add( v3 );
-						}
-					}
-				}
-
-				if( newVertices.Count == 0 )
-					return;
-
-				var areaData = data[ area ];
-				if( areaData == null )
-				{
-					areaData = new AreaData( true );
-					data[ area ] = areaData;
-				}
-
-				areaData.vertices.AddRange( newVertices );
+				//if( clipByBounds )
 				//{
-				//	var startVertexIndex = areaData.vertices.Count;
+				//	for( int nTriangle = 0; nTriangle < indices.Length / 3; nTriangle++ )
+				//	{
+				//		var polygon = new Vector3[ 3 ];
+				//		polygon[ 0 ] = vertices[ indices[ nTriangle * 3 + 0 ] ];
+				//		polygon[ 1 ] = vertices[ indices[ nTriangle * 3 + 1 ] ];
+				//		polygon[ 2 ] = vertices[ indices[ nTriangle * 3 + 2 ] ];
 
-				//	areaData.vertices.AddRange( vertices );
-				//	foreach( var index in indices )
-				//		areaData.indices.Add( startVertexIndex + index );
+				//		//+X
+				//		{
+				//			var plane = Plane.FromPointAndNormal( new Vector3( clipBounds.Maximum, 0 ), new Vector3( -1, 0, 0 ) );
+				//			polygon = MathAlgorithms.ClipPolygonByPlane( polygon, plane );
+				//		}
+
+				//		//+Y
+				//		{
+				//			var plane = Plane.FromPointAndNormal( new Vector3( clipBounds.Maximum, 0 ), new Vector3( 0, -1, 0 ) );
+				//			polygon = MathAlgorithms.ClipPolygonByPlane( polygon, plane );
+				//		}
+
+				//		//-X
+				//		{
+				//			var plane = Plane.FromPointAndNormal( new Vector3( clipBounds.Minimum, 0 ), new Vector3( 1, 0, 0 ) );
+				//			polygon = MathAlgorithms.ClipPolygonByPlane( polygon, plane );
+				//		}
+
+				//		//-Y
+				//		{
+				//			var plane = Plane.FromPointAndNormal( new Vector3( clipBounds.Minimum, 0 ), new Vector3( 0, 1, 0 ) );
+				//			polygon = MathAlgorithms.ClipPolygonByPlane( polygon, plane );
+				//		}
+
+				//		//!!!!impl indices
+
+				//		////triangulate
+				//		//for( int n = 1; n < polygon.Length - 1; n++ )
+				//		//{
+				//		//	var v1 = polygon[ 0 ];
+				//		//	var v2 = polygon[ n ];
+				//		//	var v3 = polygon[ n + 1 ];
+
+				//		//	if( v1 != v2 && v1 != v3 && v2 != v3 )
+				//		//	{
+				//		//		newVertices.Add( v1 );
+				//		//		newVertices.Add( v2 );
+				//		//		newVertices.Add( v3 );
+				//		//	}
+				//		//}
+				//	}
+				//}
+				//else
+				{
+					//for( int nTriangle = 0; nTriangle < indices.Length / 3; nTriangle++ )
+					//{
+					//	var v1 = vertices[ indices[ nTriangle * 3 + 0 ] ];
+					//	var v2 = vertices[ indices[ nTriangle * 3 + 1 ] ];
+					//	var v3 = vertices[ indices[ nTriangle * 3 + 2 ] ];
+
+					//	if( v1 != v2 && v1 != v3 && v2 != v3 )
+					//	{
+					//		newVertices.Add( v1 );
+					//		newVertices.Add( v2 );
+					//		newVertices.Add( v3 );
+					//	}
+					//}
+				}
+
+				//if( newVertices.Count == 0 )
+				//	return;
+
+				//var areaData = data[ area ];
+				//if( areaData == null )
+				//{
+				//	areaData = new AreaData( true );
+				//	data[ area ] = areaData;
 				//}
 
-				bounds.Add( newVertices );
+				//areaData.vertices.AddRange( newVertices );
+
+				var startVertexIndex = areaData.vertices.Count;
+				areaData.vertices.AddRange( vertices );
+				foreach( var index in indices )
+					areaData.indices.Add( startVertexIndex + index );
+
+				bounds.Add( vertices );// newVertices );
 			}
 
 			public bool IsEmpty
 			{
 				get
 				{
-					for( int n = 0; n < 256; n++ )
-					{
-						if( data[ n ] != null )
-							return false;
-					}
-					return true;
+					return areaData.indices.Count == 0;
+
+					//for( int n = 0; n < 256; n++ )
+					//{
+					//	if( data[ n ] != null )
+					//		return false;
+					//}
+					//return true;
 				}
 			}
-
-			public bool Load( TextBlock block )
-			{
-				try
-				{
-					foreach( var areaBlock in block.Children )
-					{
-						if( areaBlock.Name == "Area" )
-						{
-							var areaData = new AreaData( false );
-
-							var index = int.Parse( areaBlock.GetAttribute( "Index" ) );
-
-							var vertices = CollectionUtility.FromByteArray<Vector3>( Convert.FromBase64String( areaBlock.GetAttribute( "Vertices" ) ) );
-							//var indices = CollectionUtility.FromByteArray<int>( Convert.FromBase64String( areaBlock.GetAttribute( "Indices" ) ) );
-
-							areaData.vertices = new OpenList<Vector3>( vertices );
-							//areaData.indices = new OpenList<int>( indices );
-
-							data[ index ] = areaData;
-
-							bounds.Add( vertices );
-						}
-					}
-				}
-				catch
-				{
-					return false;
-				}
-				return true;
-			}
-
-			public void Save( TextBlock block )
-			{
-				for( int n = 0; n < 256; n++ )
-				{
-					var areaData = data[ n ];
-					if( areaData != null && areaData.vertices.Count != 0 )
-					{
-						var areaBlock = block.AddChild( "Area" );
-
-						areaBlock.SetAttribute( "Index", n.ToString() );
-						areaBlock.SetAttribute( "Vertices", Convert.ToBase64String( CollectionUtility.ToByteArray( areaData.vertices.ToArray() ), Base64FormattingOptions.None ) );
-						//areaBlock.SetAttribute( "Indices", Convert.ToBase64String( CollectionUtility.ToByteArray( areaData.indices.ToArray() ), Base64FormattingOptions.None ) );
-					}
-				}
-			}
-		}
-
-		/////////////////////////////////////////
-
-		public class DynamicObstacleData
-		{
-			public Bounds Bounds;
-			public byte Area;
-			public Vector3[] Vertices;
-			public int[] Indices;
 		}
 
 		///////////////////////////////////////////
@@ -1654,43 +1219,48 @@ namespace NeoAxis
 		{
 			base.OnMetadataGetMembersFilter( context, member, ref skip );
 
-			var p = member as Metadata.Property;
-			if( p != null )
-			{
-				switch( p.Name )
-				{
-				case nameof( TileSizeInCells ):
-					if( !Tiles )
-						skip = true;
-					break;
-				}
-			}
+			//!!!!impl
+
+			//var p = member as Metadata.Property;
+			//if( p != null )
+			//{
+			//	switch( p.Name )
+			//	{
+			//	case nameof( TileSizeInCells ):
+			//		if( !Tiles )
+			//			skip = true;
+			//		break;
+			//	}
+			//}
 		}
 
 		//!!!!double
 
-		static Internal.SharpNav.Geometry.Vector3 ToSharpNav( Vector3 v, bool abs = false )
+		public static RcVec3f ConvertToDotRecastCoordinates( Vector3 v, bool abs = false )
 		{
 			if( abs )
-				return new Internal.SharpNav.Geometry.Vector3( (float)Math.Abs( v.X ), (float)Math.Abs( v.Z ), (float)Math.Abs( v.Y ) );
+				return new RcVec3f( (float)Math.Abs( v.X ), (float)Math.Abs( v.Z ), (float)Math.Abs( v.Y ) );
 			else
-				return new Internal.SharpNav.Geometry.Vector3( (float)v.X, (float)v.Z, (float)v.Y );
+				return new RcVec3f( (float)v.X, (float)v.Z, -(float)v.Y );
 		}
 
-		static BBox3 ToSharpNav( Bounds v )
+		public static Vector3F ConvertToEngineCoordinates( RcVec3f v, bool abs = false )
 		{
-			var min = new Vector3( v.Minimum.X, v.Minimum.Z, v.Minimum.Y );
-			var max = new Vector3( v.Maximum.X, v.Maximum.Z, v.Maximum.Y );
-
-			var b = new Bounds( min );
-			b.Add( max );
-			return new BBox3( (float)b.Minimum.X, (float)b.Minimum.Y, (float)b.Minimum.Z, (float)b.Maximum.X, (float)b.Maximum.Y, (float)b.Maximum.Z );
+			if( abs )
+				return new Vector3F( Math.Abs( v.X ), Math.Abs( v.Z ), Math.Abs( v.Y ) );
+			else
+				return new Vector3F( v.X, -v.Z, v.Y );
 		}
 
-		static Vector3F ToEngine( Internal.SharpNav.Geometry.Vector3 v )
-		{
-			return new Vector3F( v.X, v.Z, v.Y );
-		}
+		////static BBox3 ToSharpNav( Bounds v )
+		////{
+		////	var min = new Vector3( v.Minimum.X, v.Minimum.Z, v.Minimum.Y );
+		////	var max = new Vector3( v.Maximum.X, v.Maximum.Z, v.Maximum.Y );
+
+		////	var b = new Bounds( min );
+		////	b.Add( max );
+		////	return new BBox3( (float)b.Minimum.X, (float)b.Minimum.Y, (float)b.Minimum.Z, (float)b.Maximum.X, (float)b.Maximum.Y, (float)b.Maximum.Z );
+		////}
 
 		protected override void OnEnabledInHierarchyChanged()
 		{
@@ -1715,11 +1285,7 @@ namespace NeoAxis
 			}
 
 			if( EnabledInHierarchyAndIsInstance )
-			{
 				firstOnUpdateAfterEnabledInHierarchy = true;
-				//AddCommandsToUpdateDynamicObstacles();
-				//DoForceUpdate( false );
-			}
 
 			if( !EnabledInHierarchyAndIsInstance )
 			{
@@ -1731,53 +1297,53 @@ namespace NeoAxis
 			}
 		}
 
-		Bounds GetGeometriesBoundsForNavMesh()
-		{
-			var result = Bounds.Cleared;
+		////Bounds GetGeometriesBoundsForNavMesh()
+		////{
+		////	var result = Bounds.Cleared;
 
-			var scene = FindParent<Scene>();
-			if( scene != null )
-			{
-				//Geometry
-				foreach( var geometry in scene.GetComponents<PathfindingGeometry>( false, true, true ) )
-				{
-					var type = geometry.Type.Value;
-					if( type == PathfindingGeometry.TypeEnum.BakedObstacle )
-						result.Add( geometry.SpaceBounds.BoundingBox );
-				}
+		////	var scene = FindParent<Scene>();
+		////	if( scene != null )
+		////	{
+		////		//Geometry
+		////		foreach( var geometry in scene.GetComponents<PathfindingGeometry>( false, true, true ) )
+		////		{
+		////			var type = geometry.Type.Value;
+		////			if( type == PathfindingGeometry.TypeEnum.BakedObstacle )
+		////				result.Add( geometry.SpaceBounds.BoundingBox );
+		////		}
 
-				foreach( var geometryTag in scene.GetComponents<PathfindingGeometryTag>( false, true, true ) )
-				{
-					var type = geometryTag.Type.Value;
-					if( type == PathfindingGeometryTag.TypeEnum.BakedObstacle )
-					{
-						//MeshInSpace
-						var meshInSpace = geometryTag.Parent as MeshInSpace;
-						if( meshInSpace != null )
-						{
-							var mesh = meshInSpace.Mesh.Value;
-							if( mesh != null && mesh.Result != null )
-							{
-								var b = meshInSpace.SpaceBounds.BoundingBox;
-								if( !b.IsCleared() )
-									result.Add( b );
-							}
-						}
+		////		foreach( var geometryTag in scene.GetComponents<PathfindingGeometryTag>( false, true, true ) )
+		////		{
+		////			var type = geometryTag.Type.Value;
+		////			if( type == PathfindingGeometryTag.TypeEnum.BakedObstacle )
+		////			{
+		////				//MeshInSpace
+		////				var meshInSpace = geometryTag.Parent as MeshInSpace;
+		////				if( meshInSpace != null )
+		////				{
+		////					var mesh = meshInSpace.Mesh.Value;
+		////					if( mesh != null && mesh.Result != null )
+		////					{
+		////						var b = meshInSpace.SpaceBounds.BoundingBox;
+		////						if( !b.IsCleared() )
+		////							result.Add( b );
+		////					}
+		////				}
 
-						//Terrain
-						var terrain = geometryTag.Parent as Terrain;
-						if( terrain != null )
-						{
-							var b = terrain.GetBoundsFromTiles();
-							if( !b.IsCleared() )
-								result.Add( b );
-						}
-					}
-				}
-			}
+		////				//Terrain
+		////				var terrain = geometryTag.Parent as Terrain;
+		////				if( terrain != null )
+		////				{
+		////					var b = terrain.GetBoundsFromTiles();
+		////					if( !b.IsCleared() )
+		////						result.Add( b );
+		////				}
+		////			}
+		////		}
+		////	}
 
-			return result;
-		}
+		////	return result;
+		////}
 
 		List<Component> GetAllBakedGeometriesAndGeometryTags()
 		{
@@ -1788,15 +1354,20 @@ namespace NeoAxis
 			{
 				foreach( var geometry in scene.GetComponents<PathfindingGeometry>( false, true, true ) )
 				{
-					var type = geometry.Type.Value;
-					if( type == PathfindingGeometry.TypeEnum.BakedObstacle )
-						result.Add( geometry );
+					if( !geometry.Dynamic )
+					{
+						var add = true;
+						FilterGeometry?.Invoke( this, geometry, ref add );
+						if( add )
+							result.Add( geometry );
+					}
 				}
 
 				foreach( var geometryTag in scene.GetComponents<PathfindingGeometryTag>( false, true, true ) )
 				{
-					var type = geometryTag.Type.Value;
-					if( type == PathfindingGeometryTag.TypeEnum.BakedObstacle )
+					var add = true;
+					FilterGeometry?.Invoke( this, geometryTag, ref add );
+					if( add )
 						result.Add( geometryTag );
 				}
 			}
@@ -1804,34 +1375,41 @@ namespace NeoAxis
 			return result;
 		}
 
-		TileGeometry GetGeometriesForNavMesh( List<Component> allBakedGeometriesAndGeometryTags, bool clipByBounds, Rectangle clipBounds )
+		StaticGeometry GetGeometriesForNavMesh( List<Component> allBakedGeometriesAndGeometryTags )//, bool clipByBounds, Rectangle clipBounds )
 		{
-			var result = new TileGeometry();
+			var result = new StaticGeometry();
 
 			foreach( var obj in allBakedGeometriesAndGeometryTags )
 			{
 				//Geometry
 				var geometry = obj as PathfindingGeometry;
-				if( geometry != null && ( !clipByBounds || geometry.SpaceBounds.BoundingBox.ToRectangle().Intersects( clipBounds ) ) )
+				if( geometry != null ) //&& ( !clipByBounds || geometry.SpaceBounds.BoundingBox.ToRectangle().Intersects( clipBounds ) ) )
 				{
-					var type = geometry.Type.Value;
-					if( type == PathfindingGeometry.TypeEnum.BakedObstacle )
+					if( !geometry.Dynamic )
 					{
-						geometry.GetGeometry( out var vertices, out var indices );
-						if( vertices != null )
-							result.Add( vertices, indices, (byte)geometry.Area, clipByBounds, clipBounds );
+						//var convexVolume = geometry.GetConvexVolume();
+						//if( convexVolume != null )
+						//{
+						//	result.convexVolumes.Add( convexVolume );
+						//}
+						//else
+						{
+							geometry.GetGeometry( out var vertices, out var indices );
+							if( vertices != null )
+								result.Add( vertices, indices/*, (byte)geometry.Area*/);//, clipByBounds, clipBounds );
+						}
 					}
 				}
 
 				var geometryTag = obj as PathfindingGeometryTag;
 				if( geometryTag != null )
 				{
-					var type = geometryTag.Type.Value;
-					if( type == PathfindingGeometryTag.TypeEnum.BakedObstacle )
+					//var type = geometryTag.Type.Value;
+					//if( type == PathfindingGeometryTag.TypeEnum.BakedObstacle )
 					{
 						//MeshInSpace
 						var meshInSpace = geometryTag.Parent as MeshInSpace;
-						if( meshInSpace != null && ( !clipByBounds || meshInSpace.SpaceBounds.BoundingBox.ToRectangle().Intersects( clipBounds ) ) )
+						if( meshInSpace != null ) //&& ( !clipByBounds || meshInSpace.SpaceBounds.BoundingBox.ToRectangle().Intersects( clipBounds ) ) )
 						{
 							var mesh = meshInSpace.Mesh.Value;
 							if( mesh != null && mesh.Result != null )
@@ -1845,18 +1423,18 @@ namespace NeoAxis
 								for( int n = 0; n < vertices.Length; n++ )
 									vertices[ n ] = transform * extractedVertices[ n ].ToVector3();
 
-								result.Add( vertices, mesh.Result.ExtractedIndices, (byte)geometryTag.Area, clipByBounds, clipBounds );
+								result.Add( vertices, mesh.Result.ExtractedIndices/*, (byte)geometryTag.Area*/);//, clipByBounds, clipBounds );
 							}
 						}
 
 						//Terrain
 						var terrain = geometryTag.Parent as Terrain;
-						if( terrain != null && ( !clipByBounds || terrain.GetBounds2().Intersects( clipBounds ) ) )
+						if( terrain != null ) //&& ( !clipByBounds || terrain.GetBounds2().Intersects( clipBounds ) ) )
 						{
 							terrain.GetGeometryFromTiles( delegate ( SpaceBounds tileBounds, Vector3[] tileVertices, int[] tileIndices )
 							{
-								if( !clipByBounds || tileBounds.BoundingBox.ToRectangle().Intersects( clipBounds ) )
-									result.Add( tileVertices, tileIndices, (byte)geometryTag.Area, clipByBounds, clipBounds );
+								//if( !clipByBounds || tileBounds.BoundingBox.ToRectangle().Intersects( clipBounds ) )
+								result.Add( tileVertices, tileIndices/*, (byte)geometryTag.Area*/);//, clipByBounds, clipBounds );
 							} );
 						}
 					}
@@ -1870,67 +1448,54 @@ namespace NeoAxis
 		private void Scene_RenderEvent( Scene sender, Viewport viewport )
 		{
 			var context2 = viewport.RenderingContext.ObjectInSpaceRenderingContext;
-
-			bool display = AlwaysDisplayNavMesh || context2.selectedObjects.Contains( this );// || context.canSelectObjects.Contains( this ) ;
-			if( display )
-				DebugDrawNavMesh( viewport );
-
-			////!!!!
-			//if( tempDebugIndices != null )
-			//{
-			//	var transform = Matrix4.FromTranslate( new Vector3( 0, 0, 0.05 ) );
-
-			//	var renderer = viewport.Simple3DRenderer;
-
-			//	renderer.SetColor( new ColorValue( 0, 0, 1, 1 ), new ColorValue( 0, 0, 1, 0.3 ) );
-			//	renderer.AddTriangles( tempDebugVertices, tempDebugIndices, transform, false, true );
-
-			//	renderer.SetColor( new ColorValue( 1, 0, 0, 1 ), new ColorValue( 1, 0, 0, 0.3 ) );
-			//	renderer.AddTriangles( tempDebugVertices, tempDebugIndices, transform, true, true );
-			//}
+			if( ShowInputMesh )
+				DrawInputMesh( viewport );
+			if( ShowNavMesh || ShowNavMeshWhenSelected && context2.selectedObjects.Contains( this ) )
+				DrawNavMesh( viewport );
 		}
 
-		public void DebugDrawNavMesh( Viewport viewport )
+		public void DrawInputMesh( Viewport viewport )
 		{
-			var backgroundThreadData = GetBackgroundThreadData();
-			if( backgroundThreadData != null )
+			var staticGeometry = GetBackgroundThreadData()?.precompiledData?.staticGeometry;
+			if( staticGeometry != null )
 			{
-				var vertices = backgroundThreadData.navigationMeshVertices;
-
-				if( vertices == null )
-					NeedGetNavigationMeshVertices( false );
-
-				if( vertices != null )
+				var areaData = staticGeometry.areaData;
+				if( areaData != null )
 				{
-					//render
-					var transform = Matrix4.FromTranslate( new Vector3( 0, 0, 0.05 ) );
-					var renderer = viewport.Simple3DRenderer;
-					renderer.SetColor( new ColorValue( 0, 1, 0, 0.3 ), new ColorValue( 0, 1, 0, 0.1 ) );
-					renderer.AddTriangles( vertices, ref transform, false, true );
-					renderer.SetColor( new ColorValue( 1, 1, 0, 0.3 ), new ColorValue( 1, 1, 0, 0.1 ) );
-					renderer.AddTriangles( vertices, ref transform, true, true );
+					var vertices = areaData.vertices?.ToArray();
+					var indices = areaData.indices?.ToArray();
+					if( vertices != null && indices != null )
+					{
+						var transform = Matrix4.FromTranslate( new Vector3( 0, 0, 0.05 ) );
+						var renderer = viewport.Simple3DRenderer;
+						renderer.SetColor( new ColorValue( 0, 0, 1, 0.4 ), new ColorValue( 0, 0, 1, 0.2 ) );
+						renderer.AddTriangles( vertices, indices, ref transform, false, true );
+						renderer.SetColor( new ColorValue( 0, 0, 1, 1 ), new ColorValue( 0, 0, 1, 0.5 ) );
+						renderer.AddTriangles( vertices, indices, ref transform, true, true );
+					}
 				}
 			}
 		}
 
-		void AddCommandsToUpdateDynamicObstacles()
+		public void DrawNavMesh( Viewport viewport )
 		{
-			var scene = FindParent<Scene>();
-			if( scene != null )
+			var backgroundThreadData = GetBackgroundThreadData();
+			if( backgroundThreadData != null )
 			{
-				foreach( var geometry in scene.GetComponents<PathfindingGeometry>( false, true, true ) )
-				{
-					var type = geometry.Type.Value;
-					if( type == PathfindingGeometry.TypeEnum.DynamicObstacle )
-						geometry.UpdateDynamicObstacle( true );
-				}
+				//no data, need to get it
+				if( backgroundThreadData.navigationMeshVertices == null )
+					NeedGetNavigationMeshVertices( false );
 
-				//foreach( var geometryTag in scene.GetComponents<Pathfinding_GeometryTag>( false, true, true ) )
-				//{
-				//	var type = geometryTag.Type.Value;
-				//	if( type == Pathfinding_GeometryTag.TypeEnum.WalkableArea || type == Pathfinding_GeometryTag.TypeEnum.BakedObstacle )
-				//		AddGeometryTagToCollector( collector, geometryTag );
-				//}
+				var vertices = backgroundThreadData.navigationMeshVertices ?? backgroundThreadData.navigationMeshVerticesPrevious;
+				if( vertices != null )
+				{
+					var transform = Matrix4.FromTranslate( new Vector3( 0, 0, 0.05 ) );
+					var renderer = viewport.Simple3DRenderer;
+					renderer.SetColor( new ColorValue( 0, 1, 0, 0.4 ), new ColorValue( 0, 1, 0, 0.2 ) );
+					renderer.AddTriangles( vertices, ref transform, false, true );
+					renderer.SetColor( new ColorValue( 1, 1, 0, 1 ), new ColorValue( 1, 1, 0, 0.5 ) );
+					renderer.AddTriangles( vertices, ref transform, true, true );
+				}
 			}
 		}
 
@@ -1947,89 +1512,30 @@ namespace NeoAxis
 			}
 
 			var newData = new PrecompiledDataClass();
-			newData.tiles = Tiles;
-			newData.tileSizeInCells = TileSizeInCells;
-			newData.cellSize = CellSize;
-			newData.cellHeight = CellHeight;
 
 			var allBakedGeometriesAndGeometryTags = GetAllBakedGeometriesAndGeometryTags();
 
-			if( Tiles )
+			var staticGeometry = GetGeometriesForNavMesh( allBakedGeometriesAndGeometryTags );//, false, new Rectangle( double.MinValue, double.MinValue, double.MaxValue, double.MaxValue ) );
+
+			if( staticGeometry.IsEmpty )
 			{
-				var totalBounds = GetGeometriesBoundsForNavMesh();
-
-				var tileIndexRange = newData.GetTileIndexRangeByBounds( totalBounds.ToRectangle() );
-				for( int y = tileIndexRange.Minimum.Y; y < tileIndexRange.Maximum.Y; y++ )
-				{
-					for( int x = tileIndexRange.Minimum.X; x < tileIndexRange.Maximum.X; x++ )
-					{
-						var index = new Vector2I( x, y );
-						var tileBounds = newData.GetTileBounds( index );
-
-						var tileGeometry = GetGeometriesForNavMesh( allBakedGeometriesAndGeometryTags, true, tileBounds );
-
-						var tile = new PrecompiledDataClass.TileData();
-						tile.index = index;
-						if( !tileGeometry.IsEmpty )
-							tile.staticGeometry = tileGeometry;
-						newData.precompiledTiles.Add( tile.index, tile );
-					}
-				}
-
-				//if( newData.precompiledTiles.Count == 0 )
-				//{
-				//	error = "No vertices were gathered from collision objects.";
-				//	return false;
-				//}
-			}
-			else
-			{
-				var tileGeometry = GetGeometriesForNavMesh( allBakedGeometriesAndGeometryTags, false, new Rectangle( double.MinValue, double.MinValue, double.MaxValue, double.MaxValue ) );
-				//if( tileGeometry.IsEmpty )
-				//{
-				//	error = "No vertices were gathered from collision objects.";
-				//	return false;
-				//}
-
-				var tile = new PrecompiledDataClass.TileData();
-				tile.index = Vector2I.Zero;
-				tile.staticGeometry = tileGeometry;
-				newData.precompiledTiles.Add( tile.index, tile );
+				error = "No geometry were gathered from collision objects.";
+				return false;
 			}
 
-			//!!!!
-			//{
-			//	var scene = FindParent<Scene>();
-
-			//	var object1 = scene.GetComponent( "Object In Space 3" ) as ObjectInSpace;
-			//	var object2 = scene.GetComponent( "Object In Space 4" ) as ObjectInSpace;
-
-			//	if( object1 != null && object2 != null )
-			//	{
-			//		var connection = new PrecompiledDataClass.MeshOffLinkConnection();
-			//		connection.Position1 = object1.TransformV.Position;
-			//		connection.Position2 = object2.TransformV.Position;
-
-			//		//!!!!
-
-			//		newData.meshOffLinkConnections.Add( connection );
-			//	}
-			//}
+			newData.staticGeometry = staticGeometry;
 
 			PrecompiledData = newData;
-
-			//update dynamic obstacles
-			AddCommandsToUpdateDynamicObstacles();
 
 			return true;
 		}
 
-		BackgroundThreadData GetBackgroundThreadData()
+		internal BackgroundThreadData GetBackgroundThreadData()
 		{
-			if( precompiledData != null && EnabledInHierarchy ) //!!!!new EnabledInHierarchy
+			if( precompiledData != null && EnabledInHierarchy )
 			{
 				if( backgroundThreadData == null || backgroundThreadData.precompiledData != precompiledData )
-					backgroundThreadData = new BackgroundThreadData( precompiledData );
+					backgroundThreadData = new BackgroundThreadData( this, precompiledData );
 			}
 			else
 				backgroundThreadData = null;
@@ -2041,18 +1547,61 @@ namespace NeoAxis
 		{
 			base.OnUpdate( delta );
 
-			if( EnabledInHierarchy ) //!!!!new EnabledInHierarchy
+			if( EnabledInHierarchy )
 			{
 				if( firstOnUpdateAfterEnabledInHierarchy )
 				{
 					firstOnUpdateAfterEnabledInHierarchy = false;
-					//AddCommandsToUpdateDynamicObstacles();
-					DoForceUpdate( false );
+					StartFullUpdate();// false );
 				}
+
+				//update dynamic obstacles
+				dynamicGeometriesUpdateRemainingTime -= delta;
+				if( dynamicGeometriesUpdateRemainingTime < 0 )
+				{
+					dynamicGeometriesUpdateRemainingTime = DynamicObstaclesUpdatePeriod.Value;
+
+					lock( dynamicGeometriesToUpdate )
+					{
+						if( dynamicGeometriesToUpdate.Count > 0 )
+						{
+							if( !CommandTypeIsInQueue( typeof( CommandUpdateDynamicObstacles ) ) )
+							{
+								var command = new CommandUpdateDynamicObstacles();
+								command.geometries = dynamicGeometriesToUpdate.ToArray();
+								AddCommand( command, false, false );
+
+								dynamicGeometriesToUpdate.Clear();
+							}
+						}
+					}
+				}
+
+				//work with frezees
+				////auto update in the editor
+				//if( EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor && AutoUpdatePeriodEditor.Value != 0 )
+				//{
+				//	autoUpdateEditorRemainingTime -= delta;
+				//	if( autoUpdateEditorRemainingTime < 0 )
+				//	{
+				//		autoUpdateEditorRemainingTime = AutoUpdatePeriodEditor.Value;
+
+				//		if( !CommandTypeIsInQueue( typeof( CommandForceUpdate ) ) )
+				//			StartFullUpdate();
+				//	}
+				//}
 			}
 
 			var backgroundThreadData = GetBackgroundThreadData();
 			backgroundThreadData?.UpdateFromMainThread();
+		}
+
+		bool CommandTypeIsInQueue( Type type )
+		{
+			var backgroundThreadData = GetBackgroundThreadData();
+			if( backgroundThreadData != null )
+				return backgroundThreadData.CommandTypeIsInQueue( type );
+			return false;
 		}
 
 		void AddCommand( Command command, bool wait, bool skipIfSameTypeCommandInQueue )
@@ -2070,7 +1619,6 @@ namespace NeoAxis
 		{
 			var command = new CommandFindPath();
 			command.contexts = contexts;
-			command.pathfindingMaxNodes = PathfindingMaxNodes;
 			AddCommand( command, wait, false );
 		}
 
@@ -2086,56 +1634,52 @@ namespace NeoAxis
 			AddCommand( command, wait, true );
 		}
 
-		public void DynamicObstacleAdd( DynamicObstacleData dynamicObstacle, bool wait )
+		public void StartFullUpdate()// bool wait )
 		{
-			var command = new CommandDynamicObstacleAdd();
-			command.dynamicObstacle = dynamicObstacle;
-			AddCommand( command, wait, false );
-		}
-
-		public void DynamicObstacleDelete( DynamicObstacleData dynamicObstacle, bool wait )
-		{
-			var command = new CommandDynamicObstacleDelete();
-			command.dynamicObstacle = dynamicObstacle;
-			AddCommand( command, wait, false );
-		}
-
-		protected override bool OnLoad( Metadata.LoadContext context, TextBlock block, out string error )
-		{
-			if( !base.OnLoad( context, block, out error ) )
-				return false;
-
-			var blockData = block.FindChild( "PrecompiledData" );
-			if( blockData != null )
+			//if( precompiledData == null )
+			if( !BuildPrecompiledData( out var error ) )
 			{
-				var precompiledData = new PrecompiledDataClass();
-				if( !precompiledData.Load( blockData ) )
-					return false;
-				PrecompiledData = precompiledData;
+				//Log.Warning( error );
+				return;
 			}
 
-			return true;
-		}
-
-		protected override bool OnSave( Metadata.SaveContext context, TextBlock block, ref bool skipSave, out string error )
-		{
-			if( !base.OnSave( context, block, ref skipSave, out error ) )
-				return false;
-
-			if( PrecompiledData != null )
-			{
-				var blockData = block.AddChild( "PrecompiledData" );
-				PrecompiledData.Save( blockData );
-			}
-
-			return true;
-		}
-
-		public void DoForceUpdate( bool wait )
-		{
 			var command = new CommandForceUpdate();
-			AddCommand( command, wait, true );
+			AddCommand( command, false, true );
+
+			//add dynamic obstacles update commands for all dynamic geometries
+			var scene = FindParent<Scene>();
+			if( scene != null )
+			{
+				foreach( var geometry in scene.GetComponents<PathfindingGeometry>( false, true, true ) )
+				{
+					if( geometry.Dynamic )
+					{
+						var add = true;
+						FilterGeometry?.Invoke( this, geometry, ref add );
+						if( add )
+							geometry.DynamicMode_UpdatePathfindingComponents( this );
+					}
+				}
+
+				////foreach( var geometryTag in scene.GetComponents<Pathfinding_GeometryTag>( false, true, true ) )
+				////{
+				////	var type = geometryTag.Type.Value;
+				////	if( type == Pathfinding_GeometryTag.TypeEnum.WalkableArea || type == Pathfinding_GeometryTag.TypeEnum.BakedObstacle )
+				////		AddGeometryTagToCollector( collector, geometryTag );
+				////}
+
+			}
 		}
 
+		internal void OnUpdatePathfindingGeometry( PathfindingGeometry geometry, DynamicGeometriesToUpdateItem data )
+		{
+			var add = true;
+			FilterGeometry?.Invoke( this, geometry, ref add );
+			if( add )
+			{
+				lock( dynamicGeometriesToUpdate )
+					dynamicGeometriesToUpdate[ geometry ] = data;
+			}
+		}
 	}
 }

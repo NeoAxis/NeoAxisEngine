@@ -382,7 +382,7 @@ namespace NeoAxis
 					{
 						if( findPathContext.Path != null )
 						{
-							path = findPathContext.Path;
+							path = findPathContext.Path.Select( p => p.Position ).ToArray();
 							foundPathForTargetPosition = target;
 							currentIndex = 0;
 

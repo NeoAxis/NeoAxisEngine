@@ -395,66 +395,66 @@ namespace NeoAxis
 		ReferenceField<double> _opacityMaskThreshold = 0.5;
 
 		/// <summary>
-		/// Strength of the clear coat layer.
+		/// Strength of the clearcoat layer.
 		/// </summary>
 		[DefaultValue( 0.0 )]
 		[Range( 0, 1 )]
 		[Serialize]
 		[Category( "Shading" )]
-		public Reference<double> ClearCoat
+		public Reference<double> Clearcoat
 		{
-			get { if( _clearCoat.BeginGet() ) ClearCoat = _clearCoat.Get( this ); return _clearCoat.value; }
+			get { if( _clearcoat.BeginGet() ) Clearcoat = _clearcoat.Get( this ); return _clearcoat.value; }
 			set
 			{
-				var oldValue = _clearCoat.value.Value;
-				if( _clearCoat.BeginSet( this, ref value ) )
+				var oldValue = _clearcoat.value.Value;
+				if( _clearcoat.BeginSet( this, ref value ) )
 				{
 					try
 					{
-						ClearCoatChanged?.Invoke( this );
+						ClearcoatChanged?.Invoke( this );
 
 						//!!!!если компилировать чтобы было несколько комбинаций, то не надо перекомпилироать если стало == 0
 						if( ( oldValue == 0 && value.Value != 0 ) || ( oldValue != 0 && value.Value == 0 ) )
 							ShouldRecompile = true;
 					}
-					finally { _clearCoat.EndSet(); }
+					finally { _clearcoat.EndSet(); }
 				}
 			}
 		}
-		/// <summary>Occurs when the <see cref="ClearCoat"/> property value changes.</summary>
-		public event Action<Material> ClearCoatChanged;
-		ReferenceField<double> _clearCoat = 0.0;
+		/// <summary>Occurs when the <see cref="Clearcoat"/> property value changes.</summary>
+		public event Action<Material> ClearcoatChanged;
+		ReferenceField<double> _clearcoat = 0.0;
 
 		/// <summary>
-		/// Perceived smoothness or roughness of the clear coat layer.
+		/// Perceived smoothness or roughness of the clearcoat layer.
 		/// </summary>
 		[DefaultValue( 0.5 )]
 		[Range( 0, 1 )]
 		[Serialize]
 		[Category( "Shading" )]
-		public Reference<double> ClearCoatRoughness
+		public Reference<double> ClearcoatRoughness
 		{
-			get { if( _clearCoatRoughness.BeginGet() ) ClearCoatRoughness = _clearCoatRoughness.Get( this ); return _clearCoatRoughness.value; }
-			set { if( _clearCoatRoughness.BeginSet( this, ref value ) ) { try { ClearCoatRoughnessChanged?.Invoke( this ); } finally { _clearCoatRoughness.EndSet(); } } }
+			get { if( _clearcoatRoughness.BeginGet() ) ClearcoatRoughness = _clearcoatRoughness.Get( this ); return _clearcoatRoughness.value; }
+			set { if( _clearcoatRoughness.BeginSet( this, ref value ) ) { try { ClearcoatRoughnessChanged?.Invoke( this ); } finally { _clearcoatRoughness.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="ClearCoatRoughness"/> property value changes.</summary>
-		public event Action<Material> ClearCoatRoughnessChanged;
-		ReferenceField<double> _clearCoatRoughness = 0.5;
+		/// <summary>Occurs when the <see cref="ClearcoatRoughness"/> property value changes.</summary>
+		public event Action<Material> ClearcoatRoughnessChanged;
+		ReferenceField<double> _clearcoatRoughness = 0.5;
 
 		/// <summary>
-		/// A detail normal used to perturb the clear coat layer using bump mapping (normal mapping).
+		/// A detail normal used to perturb the clearcoat layer using bump mapping (normal mapping).
 		/// </summary>
 		[DefaultValue( "0 0 0" )]
 		[Serialize]
 		[Category( "Shading" )]
-		public Reference<Vector3> ClearCoatNormal
+		public Reference<Vector3> ClearcoatNormal
 		{
-			get { if( _clearCoatNormal.BeginGet() ) ClearCoatNormal = _clearCoatNormal.Get( this ); return _clearCoatNormal.value; }
-			set { if( _clearCoatNormal.BeginSet( this, ref value ) ) { try { ClearCoatNormalChanged?.Invoke( this ); } finally { _clearCoatNormal.EndSet(); } } }
+			get { if( _clearcoatNormal.BeginGet() ) ClearcoatNormal = _clearcoatNormal.Get( this ); return _clearcoatNormal.value; }
+			set { if( _clearcoatNormal.BeginSet( this, ref value ) ) { try { ClearcoatNormalChanged?.Invoke( this ); } finally { _clearcoatNormal.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="ClearCoatNormal"/> property value changes.</summary>
-		public event Action<Material> ClearCoatNormalChanged;
-		ReferenceField<Vector3> _clearCoatNormal;
+		/// <summary>Occurs when the <see cref="ClearcoatNormal"/> property value changes.</summary>
+		public event Action<Material> ClearcoatNormalChanged;
+		ReferenceField<Vector3> _clearcoatNormal;
 
 		/// <summary>
 		/// Amount of anisotropy.
@@ -1218,19 +1218,19 @@ namespace NeoAxis
 						skip = true;
 					break;
 
-				case nameof( ClearCoat ):
+				case nameof( Clearcoat ):
 					if( ShadingModel.Value != ShadingModelEnum.Lit )
 						skip = true;
 					break;
 
-				case nameof( ClearCoatRoughness ):
-				case nameof( ClearCoatNormal ):
+				case nameof( ClearcoatRoughness ):
+				case nameof( ClearcoatNormal ):
 					{
 						if( ShadingModel.Value != ShadingModelEnum.Lit )
 							skip = true;
 						else
 						{
-							var r = ClearCoat;
+							var r = Clearcoat;
 							if( r.Value == 0.0 && string.IsNullOrEmpty( r.GetByReference ) )
 								skip = true;
 						}
@@ -1379,13 +1379,13 @@ namespace NeoAxis
 
 				//vertex
 				{
-					var properties = new List<(Component, int, Metadata.Property)>();
-					properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( PositionOffset ) )) );
+					var properties = new List<(Component, int, Metadata.Property, bool)>();
+					properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( PositionOffset ) ), false) );
 
 					if( AdvancedScripting )
 					{
-						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
-						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
+						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) ), false) );
+						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) ), false) );
 					}
 
 					if( compiledData.extensionData != null )
@@ -1429,12 +1429,12 @@ namespace NeoAxis
 				//material index
 				if( compiledData.specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass || compiledData.specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
 				{
-					var properties = new List<(Component, int, Metadata.Property)>();
+					var properties = new List<(Component, int, Metadata.Property, bool)>();
 
 					if( AdvancedScripting )
 					{
-						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
-						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
+						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) ), false) );
+						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) ), false) );
 					}
 
 					if( compiledData.extensionData != null )
@@ -1479,14 +1479,14 @@ namespace NeoAxis
 				//displacement
 				if( Displacement.ReferenceSpecified && RenderingSystem.DisplacementMaxSteps != 0 )
 				{
-					var properties = new List<(Component, int, Metadata.Property)>();
-					properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Displacement ) )) );
-					properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( DisplacementScale ) )) );
+					var properties = new List<(Component, int, Metadata.Property, bool)>();
+					properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Displacement ) ), false) );
+					properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( DisplacementScale ) ), false) );
 
 					if( AdvancedScripting )
 					{
-						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
-						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
+						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) ), false) );
+						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) ), false) );
 					}
 
 					//if( compiledData.extensionData != null )
@@ -1529,7 +1529,7 @@ namespace NeoAxis
 
 				//fragment
 				{
-					var properties = new List<(Component, int, Metadata.Property)>( 32 );
+					var properties = new List<(Component, int, Metadata.Property, bool)>( 32 );
 
 					for( int materialIndex = 0; materialIndex < sourceMaterials.Count; materialIndex++ )
 					{
@@ -1538,10 +1538,10 @@ namespace NeoAxis
 						if( RenderingSystem.NormalMapping ) //!!!!new
 						{
 							if( RenderingSystem.MaterialShading != ProjectSettingsPage_Rendering.MaterialShadingEnum.Simple )
-								properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Normal ) )) );
+								properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Normal ) ), false) );
 						}
 
-						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( BaseColor ) )) );
+						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( BaseColor ) ), true) );
 
 						//if( ( compiledData.specialMode == CompiledMaterialData.SpecialMode.PaintLayerMasked || compiledData.specialMode == CompiledMaterialData.SpecialMode.PaintLayerTransparent ) && !Opacity.ReferenceSpecified )
 						//{
@@ -1556,39 +1556,39 @@ namespace NeoAxis
 
 						if( RenderingSystem.MaterialShading != ProjectSettingsPage_Rendering.MaterialShadingEnum.Simple )
 						{
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Metallic ) )) );
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Roughness ) )) );
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Reflectance ) )) );
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( ClearCoat ) )) );
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( ClearCoatRoughness ) )) );
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( ClearCoatNormal ) )) );
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Anisotropy ) )) );
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( AnisotropyDirection ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Metallic ) ), false) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Roughness ) ), false) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Reflectance ) ), false) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Clearcoat ) ), false) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( ClearcoatRoughness ) ), false) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( ClearcoatNormal ) ), false) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Anisotropy ) ), false) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( AnisotropyDirection ) ), false) );
 							//properties.Add( (material, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( AnisotropyDirectionBasis ) )) );
 
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Thickness ) )) );
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( SubsurfacePower ) )) );
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( SheenColor ) )) );
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( SubsurfaceColor ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Thickness ) ), false) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( SubsurfacePower ) ), false) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( SheenColor ) ), true) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( SubsurfaceColor ) ), true) );
 
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( AmbientOcclusion ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( AmbientOcclusion ) ), false) );
 							//properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( RayTracingReflection ) )) );
 						}
 
-						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Emissive ) )) );
+						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Emissive ) ), true) );
 
 						if( RenderingSystem.MaterialShading != ProjectSettingsPage_Rendering.MaterialShadingEnum.Simple )
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( SoftParticlesDistance ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( SoftParticlesDistance ) ), false) );
 
 						if( AdvancedScripting )
 						{
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) ), false) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) ), false) );
 						}
 
 						if( DepthOffsetMode.Value != DepthOffsetModeEnum.None )
 						{
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( DepthOffset ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( DepthOffset ) ), false) );
 						}
 					}
 
@@ -1632,7 +1632,7 @@ namespace NeoAxis
 
 				//opacity
 				{
-					var properties = new List<(Component, int, Metadata.Property)>();
+					var properties = new List<(Component, int, Metadata.Property, bool)>();
 
 					for( int materialIndex = 0; materialIndex < sourceMaterials.Count; materialIndex++ )
 					{
@@ -1642,17 +1642,17 @@ namespace NeoAxis
 						{
 							var obj = new ShaderGenerator.PaintLayerOpacityPropertyWithMask();
 							obj.Init();
-							properties.Add( (obj, materialIndex, (Metadata.Property)obj.MetadataGetMemberBySignature( "property:" + nameof( Opacity ) )) );
+							properties.Add( (obj, materialIndex, (Metadata.Property)obj.MetadataGetMemberBySignature( "property:" + nameof( Opacity ) ), false) );
 						}
 						else
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Opacity ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Opacity ) ), false) );
 
-						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( OpacityMaskThreshold ) )) );
+						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( OpacityMaskThreshold ) ), false) );
 
 						if( AdvancedScripting )
 						{
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) ), false) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) ), false) );
 						}
 					}
 
@@ -1703,13 +1703,13 @@ namespace NeoAxis
 
 				//vertex
 				{
-					var properties = new List<(Component, int, Metadata.Property)>();
-					properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( PositionOffset ) )) );
+					var properties = new List<(Component, int, Metadata.Property, bool)>();
+					properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( PositionOffset ) ), false) );
 
 					if( AdvancedScripting )
 					{
-						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
-						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
+						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) ), false) );
+						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) ), false) );
 					}
 
 					if( compiledData.extensionData != null )
@@ -1753,12 +1753,12 @@ namespace NeoAxis
 				//material index
 				if( compiledData.specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass || compiledData.specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
 				{
-					var properties = new List<(Component, int, Metadata.Property)>();
+					var properties = new List<(Component, int, Metadata.Property, bool)>();
 
 					if( AdvancedScripting )
 					{
-						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
-						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
+						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) ), false) );
+						properties.Add( (this, 0, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) ), false) );
 					}
 
 					if( compiledData.extensionData != null )
@@ -1802,7 +1802,7 @@ namespace NeoAxis
 
 				//fragment. opacity
 				{
-					var properties = new List<(Component, int, Metadata.Property)>();
+					var properties = new List<(Component, int, Metadata.Property, bool)>();
 
 					for( int materialIndex = 0; materialIndex < sourceMaterials.Count; materialIndex++ )
 					{
@@ -1816,14 +1816,14 @@ namespace NeoAxis
 						//}
 						//else
 
-						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Opacity ) )) );
+						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( Opacity ) ), false) );
 
-						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( OpacityMaskThreshold ) )) );
+						properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( OpacityMaskThreshold ) ), false) );
 
 						if( AdvancedScripting )
 						{
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) )) );
-							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) )) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter1 ) ), false) );
+							properties.Add( (material, materialIndex, (Metadata.Property)MetadataGetMemberBySignature( "property:" + nameof( CustomParameter2 ) ), false) );
 						}
 					}
 
@@ -1876,14 +1876,14 @@ namespace NeoAxis
 		/// </summary>
 		public class CompileExtensionData
 		{
-			public List<(Component, int, Metadata.Property)> vertexShaderProperties = new List<(Component, int, Metadata.Property)>();
-			public List<(Component, int, Metadata.Property)> materialIndexShaderProperties = new List<(Component, int, Metadata.Property)>();
+			public List<(Component, int, Metadata.Property, bool)> vertexShaderProperties = new List<(Component, int, Metadata.Property, bool)>();
+			public List<(Component, int, Metadata.Property, bool)> materialIndexShaderProperties = new List<(Component, int, Metadata.Property, bool)>();
 			//displacement?
-			public List<(Component, int, Metadata.Property)> fragmentShaderProperties = new List<(Component, int, Metadata.Property)>();
+			public List<(Component, int, Metadata.Property, bool)> fragmentShaderProperties = new List<(Component, int, Metadata.Property, bool)>();
 
-			public List<(Component, int, Metadata.Property)> shadowCasterVertexShaderProperties = new List<(Component, int, Metadata.Property)>();
-			public List<(Component, int, Metadata.Property)> shadowCasterMaterialIndexShaderProperties = new List<(Component, int, Metadata.Property)>();
-			public List<(Component, int, Metadata.Property)> shadowCasterFragmentShaderProperties = new List<(Component, int, Metadata.Property)>();
+			public List<(Component, int, Metadata.Property, bool)> shadowCasterVertexShaderProperties = new List<(Component, int, Metadata.Property, bool)>();
+			public List<(Component, int, Metadata.Property, bool)> shadowCasterMaterialIndexShaderProperties = new List<(Component, int, Metadata.Property, bool)>();
+			public List<(Component, int, Metadata.Property, bool)> shadowCasterFragmentShaderProperties = new List<(Component, int, Metadata.Property, bool)>();
 		}
 
 		/////////////////////////////////////////
@@ -1940,8 +1940,8 @@ namespace NeoAxis
 			//if( ShadingModel.Value != ShadingModelEnum.Lit && ShadingModel.Value != ShadingModelEnum.Simple )
 			//	return "Shading Model";
 
-			if( ClearCoat.ReferenceSpecified || ClearCoat.Value != 0 )
-				return "Clear Coat";
+			if( Clearcoat.ReferenceSpecified || Clearcoat.Value != 0 )
+				return "Clearcoat";
 			if( Anisotropy.ReferenceSpecified || Anisotropy.Value != 0 )
 				return "Anisotropy";
 			if( !ReceiveShadows )
@@ -2159,15 +2159,15 @@ namespace NeoAxis
 
 							if( ShadingModel.Value == ShadingModelEnum.Lit )
 							{
-								if( ClearCoat.ReferenceSpecified || ClearCoat.Value != 0 )
-									fragmentDefines.Add( ("MATERIAL_HAS_CLEAR_COAT", "") );
+								if( Clearcoat.ReferenceSpecified || Clearcoat.Value != 0 )
+									fragmentDefines.Add( ("MATERIAL_HAS_CLEARCOAT", "") );
 								if( Anisotropy.ReferenceSpecified || Anisotropy.Value != 0 )
 									fragmentDefines.Add( ("MATERIAL_HAS_ANISOTROPY", "") );
 							}
 
 							if( RenderingSystem.DisplacementMaxSteps > 0 && Displacement.ReferenceSpecified )
 								generalDefines.Add( ("DISPLACEMENT", "") );
-							if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
+							if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering && RenderingSystem.OpacityDithering )
 								fragmentDefines.Add( ("OPACITY_DITHERING", "") );
 							if( SoftParticles )
 								fragmentDefines.Add( ("SOFT_PARTICLES", "") );
@@ -2650,7 +2650,7 @@ namespace NeoAxis
 								var generalDefines = new List<(string, string)>();
 								generalDefines.Add( ("LIGHT_TYPE_" + lightType.ToString().ToUpper(), "") );
 								generalDefines.Add( ("BLEND_MODE_" + blendMode.ToString().ToUpper(), "") );
-								if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
+								if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering && RenderingSystem.OpacityDithering )
 									fragmentDefines.Add( ("OPACITY_DITHERING", "") );
 								if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass )
 									fragmentDefines.Add( ("MULTI_MATERIAL_SEPARATE_PASS", "") );
@@ -2805,7 +2805,7 @@ namespace NeoAxis
 
 							if( RenderingSystem.DisplacementMaxSteps > 0 && Displacement.ReferenceSpecified )
 								generalDefines.Add( ("DISPLACEMENT", "") );
-							if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
+							if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering && RenderingSystem.OpacityDithering )
 								fragmentDefines.Add( ("OPACITY_DITHERING", "") );
 							//if( SoftParticles )
 							//	generalDefines.Add( ("SOFT_PARTICLES", "") );
@@ -2970,7 +2970,7 @@ namespace NeoAxis
 
 						if( RenderingSystem.DisplacementMaxSteps > 0 && Displacement.ReferenceSpecified )
 							generalDefines.Add( ("DISPLACEMENT", "") );
-						if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
+						if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering && RenderingSystem.OpacityDithering )
 							fragmentDefines.Add( ("OPACITY_DITHERING", "") );
 						//if( SoftParticles )
 						//	generalDefines.Add( ("SOFT_PARTICLES", "") );

@@ -30,7 +30,7 @@
     <Optimize>False</Optimize>
     <!-- Optional: produce symbols like Debug so stack traces are useful -->
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>    
+    <DebugType>portable</DebugType>      
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Implementation\RestartApp.cs" />
@@ -85,8 +85,6 @@
     <AndroidAsset Include="Assets\Project.zip.hash">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AndroidAsset>
-    <None Include="lib\arm64-v8a\libbgfx.so"></None>
-    <None Include="lib\arm64-v8a\libNeoAxisCoreNative.so"></None>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="NeoAxis.Core">
@@ -94,6 +92,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <AndroidNativeLibrary Update="lib\arm64-v8a\libbgfx.so">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Link>libs\arm64-v8a\libbgfx.so</Link>
+    </AndroidNativeLibrary>
+    <AndroidNativeLibrary Update="lib\arm64-v8a\libNeoAxisCoreNative.so">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Link>libs\arm64-v8a\libNeoAxisCoreNative.so</Link>
+    </AndroidNativeLibrary>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

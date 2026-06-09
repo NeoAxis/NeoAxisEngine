@@ -20,8 +20,6 @@
 * THE SOFTWARE.
 */
 
-using System;
-
 namespace Internal.Assimp.Unmanaged
 {
     /// <summary>
@@ -118,12 +116,12 @@ namespace Internal.Assimp.Unmanaged
         /// <summary>
         /// Defines the default color material.
         /// </summary>
-        public const String AI_DEFAULT_MATERIAL_NAME = "DefaultMaterial";
+        public const string AI_DEFAULT_MATERIAL_NAME = "DefaultMaterial";
 
         /// <summary>
         /// Defines the default textured material (if the meshes have UV coords).
         /// </summary>
-        public const String AI_DEFAULT_TEXTURED_MATERIAL_NAME = "TexturedDefaultMaterial";
+        public const string AI_DEFAULT_TEXTURED_MATERIAL_NAME = "TexturedDefaultMaterial";
 
         #endregion
     }

@@ -134,8 +134,8 @@ namespace NeoAxis
 				Metallic = 1 << 3,
 				Roughness = 1 << 4,
 				Reflectance = 1 << 5,
-				ClearCoat = 1 << 6,
-				ClearCoatRoughness = 1 << 7,
+				Clearcoat = 1 << 6,
+				ClearcoatRoughness = 1 << 7,
 				Anisotropy = 1 << 8,
 				AnisotropyDirection = 1 << 9,
 				Thickness = 1 << 10,
@@ -180,8 +180,8 @@ namespace NeoAxis
 				public HalfType reflectance;
 
 				//5
-				public HalfType clearCoat;
-				public HalfType clearCoatRoughness;
+				public HalfType clearcoat;
+				public HalfType clearcoatRoughness;
 				public HalfType anisotropy;
 				public HalfType thickness;
 
@@ -249,11 +249,11 @@ namespace NeoAxis
 
 					if( owner.ShadingModel.Value == ShadingModelEnum.Lit )
 					{
-						if( !owner.ClearCoat.ReferenceSpecified && owner.ClearCoat.Value != 0 )
+						if( !owner.Clearcoat.ReferenceSpecified && owner.Clearcoat.Value != 0 )
 						{
-							materialDataDynamicParametersToUpdate |= DynamicParametersUniformToUpdate.ClearCoat;
-							if( !owner.ClearCoatRoughness.ReferenceSpecified )
-								materialDataDynamicParametersToUpdate |= DynamicParametersUniformToUpdate.ClearCoatRoughness;
+							materialDataDynamicParametersToUpdate |= DynamicParametersUniformToUpdate.Clearcoat;
+							if( !owner.ClearcoatRoughness.ReferenceSpecified )
+								materialDataDynamicParametersToUpdate |= DynamicParametersUniformToUpdate.ClearcoatRoughness;
 						}
 
 						if( !owner.Anisotropy.ReferenceSpecified && owner.Anisotropy.Value != 0 )
@@ -331,10 +331,10 @@ namespace NeoAxis
 					materialDataDynamicParametersData.roughness = ToHalf( owner.Roughness );
 				if( ( materialDataDynamicParametersToUpdate & DynamicParametersUniformToUpdate.Reflectance ) != 0 )
 					materialDataDynamicParametersData.reflectance = ToHalf( owner.Reflectance );
-				if( ( materialDataDynamicParametersToUpdate & DynamicParametersUniformToUpdate.ClearCoat ) != 0 )
-					materialDataDynamicParametersData.clearCoat = ToHalf( owner.ClearCoat );
-				if( ( materialDataDynamicParametersToUpdate & DynamicParametersUniformToUpdate.ClearCoatRoughness ) != 0 )
-					materialDataDynamicParametersData.clearCoatRoughness = ToHalf( owner.ClearCoatRoughness );
+				if( ( materialDataDynamicParametersToUpdate & DynamicParametersUniformToUpdate.Clearcoat ) != 0 )
+					materialDataDynamicParametersData.clearcoat = ToHalf( owner.Clearcoat );
+				if( ( materialDataDynamicParametersToUpdate & DynamicParametersUniformToUpdate.ClearcoatRoughness ) != 0 )
+					materialDataDynamicParametersData.clearcoatRoughness = ToHalf( owner.ClearcoatRoughness );
 				if( ( materialDataDynamicParametersToUpdate & DynamicParametersUniformToUpdate.Anisotropy ) != 0 )
 					materialDataDynamicParametersData.anisotropy = ToHalf( owner.Anisotropy );
 				if( ( materialDataDynamicParametersToUpdate & DynamicParametersUniformToUpdate.AnisotropyDirection ) != 0 )

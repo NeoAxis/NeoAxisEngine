@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2024.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"07F44F47046D4794D4B38F4CF7DD7A07\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"0DF6541441E84D2550B3D01B893DAB72\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"07F44F47046D4794D4B38F4CF7DD7A07\"><KP UN=\"07F44F47046D4794D4B38F4CF7DD7A07\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"57893F0D0E144F678884B085CAAB9D1C\" S=\"False\"><CPD ObjPath=\"$Rendering Pipeline\\$Background Effects\\$Script\\$Shader graph\" /></KP><KP UN=\"CB060FDDB1A7430C59BA755C3DB17584\" S=\"False\"><CPD ObjPath=\"$Rendering Pipeline\\$Background Effects\\$Script\\$Shader graph\\$Node Shader 1\\$Shader\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1192, 963\"><KW V=\"1\" A=\"07F44F47046D4794D4B38F4CF7DD7A07\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"0DF6541441E84D2550B3D01B893DAB72\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"07F44F47046D4794D4B38F4CF7DD7A07\"><KP UN=\"07F44F47046D4794D4B38F4CF7DD7A07\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"57893F0D0E144F678884B085CAAB9D1C\" S=\"False\"><CPD ObjPath=\"$Rendering Pipeline\\$Background Effects\\$Script\\$Shader graph\" /></KP><KP UN=\"CB060FDDB1A7430C59BA755C3DB17584\" S=\"False\"><CPD ObjPath=\"$Rendering Pipeline\\$Background Effects\\$Script\\$Shader graph\\$Node Shader 1\\$Shader\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BackgroundColor = 0.2392157 0.2392157 0.2392157
 	Mode = _2D
 	ScreenOrientation = Landscape
@@ -47,6 +47,7 @@
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
 		Brightness = 30000
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -58,6 +59,7 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 91.429
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
@@ -202,7 +204,6 @@
 			}
 			.component NeoAxis.RenderingEffect_ToneMapping
 			{
-				Enabled = False
 				Name = Tone Mapping
 				Intensity = 0.5
 			}
@@ -283,10 +284,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Spaceship\\Spaceship.fbx|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -355,10 +352,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -423,10 +416,6 @@
 		{
 			GetByReference = "root:$Material White"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -457,10 +446,6 @@
 		{
 			GetByReference = "root:$Material White"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -490,10 +475,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "root:$Material White"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -526,10 +507,6 @@
 		{
 			GetByReference = "root:$Material White"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -560,10 +537,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Materials\\Planets\\Planet2.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -592,10 +565,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Samples\\Starter Content\\Materials\\Planets\\Planet1.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -626,10 +595,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Materials\\Planets\\Planet2.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -658,10 +623,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Samples\\Starter Content\\Materials\\Planets\\Planet2.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -692,10 +653,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Materials\\Planets\\Planet2.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -725,10 +682,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Materials\\Planets\\Planet2.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -757,10 +710,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Samples\\Starter Content\\Materials\\Planets\\Planet1.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{

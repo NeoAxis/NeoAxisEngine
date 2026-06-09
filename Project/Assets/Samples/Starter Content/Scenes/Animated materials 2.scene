@@ -1,7 +1,8 @@
+// Made with NeoAxis Engine 2026.1.
+
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1176, 842\"><KW V=\"1\" A=\"DB4AC180ECEE4059F5BDABD7BE864529\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"55B592D7E59C4714F985926F12589070\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"DB4AC180ECEE4059F5BDABD7BE864529\"><KP UN=\"DB4AC180ECEE4059F5BDABD7BE864529\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"AA5AAD9622144A6BF2ABCA50D8C9CEE9\" S=\"False\"><CPD ObjPath=\"$Opacity Change\\$Shader graph\" /></KP><KP UN=\"5BF21E898CF546C75FA11A2D527498D7\" S=\"False\"><CPD ObjPath=\"$Position Change\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
-	BackgroundColor = 1 1 1
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1192, 963\"><KW V=\"1\" A=\"DB4AC180ECEE4059F5BDABD7BE864529\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"55B592D7E59C4714F985926F12589070\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"DB4AC180ECEE4059F5BDABD7BE864529\"><KP UN=\"DB4AC180ECEE4059F5BDABD7BE864529\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"AA5AAD9622144A6BF2ABCA50D8C9CEE9\" S=\"False\"><CPD ObjPath=\"$Opacity Change\\$Shader graph\" /></KP><KP UN=\"5BF21E898CF546C75FA11A2D527498D7\" S=\"False\"><CPD ObjPath=\"$Position Change\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -22,6 +23,7 @@
 		Transform = "-27.7871391969358 37.4683781031502 14.686420383686; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
 		Brightness = 7290
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
@@ -40,6 +42,10 @@
 				Name = Ambient Occlusion
 				Intensity = 0.657
 			}
+			.component NeoAxis.RenderingEffect_ToneMapping
+			{
+				Name = Tone Mapping
+			}
 			.component NeoAxis.RenderingEffect_Antialiasing
 			{
 				Name = Antialiasing
@@ -51,13 +57,18 @@
 			.component NeoAxis.RenderingEffect_Sharpen
 			{
 				Name = Sharpen
-				Shader = "Base\\Shaders\\Effects\\Sharpen_fs.sc"
 			}
 		}
 	}
 	.component NeoAxis.GameMode
 	{
 		Name = Game Mode
+		CutsceneStarted = False
+		CutsceneGuiFadingFactor = 0
+		CutsceneGuiFadingSpeed = 0
+		ScreenFadingCurrentColor = 0 0 0 0
+		ScreenFadingTargetColor = 0 0 0 0
+		ScreenFadingSpeed = 0
 	}
 	.component NeoAxis.Light
 	{
@@ -69,6 +80,7 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 90
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -77,14 +89,16 @@
 		Type = Point
 		Brightness = 279839.871757908
 		AttenuationFar = 20
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
 		Name = Light3
 		Transform = "9.45344240293682 -4.18588145995731 -13.760985157176; 0 0 0 1; 1 1 1"
 		Type = Point
-		Brightness = 106423.382038007
+		Brightness = 306423.382038007
 		AttenuationFar = 20
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.MeshInSpace
 	{
@@ -95,9 +109,12 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
+		SpecialEffects
 		{
-			Count = 0
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Mesh
 		{
@@ -143,9 +160,12 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
+		SpecialEffects
 		{
-			Count = 0
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Mesh
 		{
@@ -170,9 +190,12 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
+		SpecialEffects
 		{
-			Count = 0
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Mesh
 		{
@@ -219,9 +242,12 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
+		SpecialEffects
 		{
-			Count = 0
+			Value
+			{
+				Count = 0
+			}
 		}
 		.component NeoAxis.Mesh
 		{
@@ -271,9 +297,12 @@
 		{
 			GetByReference = "root:$Opacity Change"
 		}
-		ReplaceMaterialSelectively
+		SpecialEffects
 		{
-			Count = 0
+			Value
+			{
+				Count = 0
+			}
 		}
 	}
 	.component NeoAxis.MeshInSpace
@@ -288,9 +317,12 @@
 		{
 			GetByReference = "root:$Position Change"
 		}
-		ReplaceMaterialSelectively
+		SpecialEffects
 		{
-			Count = 0
+			Value
+			{
+				Count = 0
+			}
 		}
 	}
 	.component NeoAxis.Material

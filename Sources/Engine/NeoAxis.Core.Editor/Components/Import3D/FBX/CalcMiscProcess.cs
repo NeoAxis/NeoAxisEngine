@@ -39,7 +39,6 @@ namespace NeoAxis.Import.FBX
 			}
 		}
 
-		//Перебор минимальных циклов на yield 5-10 наносекунд на итерацию, не тормозит.
 		public static IEnumerable<RangeI> EnumeratePolygons( VertexInfo[] vertices )
 		{
 			int startIndex = 0;

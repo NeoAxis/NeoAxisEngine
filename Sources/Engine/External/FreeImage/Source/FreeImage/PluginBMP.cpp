@@ -139,6 +139,75 @@ SwapFileHeader(BITMAPFILEHEADER *header) {
 // --------------------------------------------------------------------------
 
 /**
+Check if a BITMAPINFOHEADER is valid
+@return Returns TRUE if successful, returns FALSE otherwise
+*/
+static BOOL
+CheckBitmapInfoHeader(BITMAPINFOHEADER *bih) {
+	if (bih->biSize != sizeof(BITMAPINFOHEADER)) {
+		// The size, in bytes, of the image.This may be set to zero for BI_RGB bitmaps.
+		// If biCompression is BI_JPEG or BI_PNG, biSizeImage indicates the size of the JPEG or PNG image buffer, respectively.
+		if ((bih->biSize == 0) && (bih->biCompression != BI_RGB)) {
+			return FALSE;
+		}
+		else if ((bih->biCompression == BI_JPEG) || (bih->biCompression == BI_PNG)) {
+			// JPEG or PNG is not yet supported
+			return FALSE;
+		}
+		else {
+			return FALSE;
+		}
+	}
+	if (bih->biWidth < 0) {
+		return FALSE;
+	}
+	if (bih->biHeight < 0) {
+		// If biHeight is negative, indicating a top-down DIB, biCompression must be either BI_RGB or BI_BITFIELDS. 
+		// Top-down DIBs cannot be compressed.
+		// If biCompression is BI_JPEG or BI_PNG, the biHeight member specifies the height of the decompressed JPEG or PNG image file, respectively.
+		if ((bih->biCompression != BI_RGB) && (bih->biCompression != BI_BITFIELDS)) {
+			return FALSE;
+		}
+	}
+	if (bih->biPlanes != 1) {
+		//  The number of planes for the target device. This value must be set to 1.
+		return FALSE;
+	}
+	switch (bih->biBitCount) {
+		case 0:
+			// The number of bits-per-pixel is specified or is implied by the JPEG or PNG format.
+			// JPEG or PNG is not yet supported			
+			return FALSE;
+			break;
+		case 1:
+		case 4:
+		case 8:
+		case 16:
+		case 24:
+		case 32:
+			break;
+		default:
+			// Unsupported bitdepth
+			return FALSE;
+	}
+	switch (bih->biCompression) {
+		case BI_RGB:
+		case BI_RLE8:
+		case BI_RLE4:
+		case BI_BITFIELDS:
+			break;
+		case BI_JPEG:
+		case BI_PNG:
+		default:
+			return FALSE;
+	}
+
+	return TRUE;
+}
+
+// --------------------------------------------------------------------------
+
+/**
 Load uncompressed image pixels for 1-, 4-, 8-, 16-, 24- and 32-bit dib
 @param io FreeImage IO
 @param handle FreeImage IO handle
@@ -181,6 +250,7 @@ LoadPixelData(FreeImageIO *io, fi_handle handle, FIBITMAP *dib, int height, unsi
 		}
 	}
 #endif
+
 #if FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_RGB
 	if (bit_count == 24 || bit_count == 32) {
 		for(unsigned y = 0; y < FreeImage_GetHeight(dib); y++) {
@@ -202,7 +272,7 @@ Load image pixels for 4-bit RLE compressed dib
 @param handle FreeImage IO handle
 @param width Image width
 @param height Image height
-@param dib Image to be loaded 
+@param dib 4-bit image to be loaded 
 @return Returns TRUE if successful, returns FALSE otherwise
 */
 static BOOL 
@@ -217,7 +287,9 @@ LoadPixelDataRLE4(FreeImageIO *io, fi_handle handle, int width, int height, FIBI
 		height = abs(height);
 
 		pixels = (BYTE*)malloc(width * height * sizeof(BYTE));
-		if(!pixels) throw(1);
+		if (!pixels) {
+			throw(1);
+		}
 		memset(pixels, 0, width * height * sizeof(BYTE));
 
 		BYTE *q = pixels;
@@ -237,7 +309,7 @@ LoadPixelDataRLE4(FreeImageIO *io, fi_handle handle, int width, int height, FIBI
 					throw(1);
 				}
 				for (int i = 0; i < status_byte; i++)	{
-					*q++=(BYTE)((i & 0x01) ? (second_byte & 0x0f) : ((second_byte >> 4) & 0x0f));
+					*q++ = (BYTE)((i & 0x01) ? (second_byte & 0x0f) : ((second_byte >> 4) & 0x0f));
 				}
 				bits += status_byte;
 			}
@@ -252,7 +324,7 @@ LoadPixelDataRLE4(FreeImageIO *io, fi_handle handle, int width, int height, FIBI
 						// End of line
 						bits = 0;
 						scanline++;
-						q = pixels + scanline*width;
+						q = pixels + scanline * width;
 					}
 					break;
 
@@ -264,7 +336,6 @@ LoadPixelDataRLE4(FreeImageIO *io, fi_handle handle, int width, int height, FIBI
 					case RLE_DELTA:
 					{
 						// read the delta values
-
 						BYTE delta_x = 0;
 						BYTE delta_y = 0;
 
@@ -276,7 +347,6 @@ LoadPixelDataRLE4(FreeImageIO *io, fi_handle handle, int width, int height, FIBI
 						}
 
 						// apply them
-
 						bits += delta_x;
 						scanline += delta_y;
 						q = pixels + scanline*width+bits;
@@ -293,7 +363,7 @@ LoadPixelDataRLE4(FreeImageIO *io, fi_handle handle, int width, int height, FIBI
 									throw(1);
 								}
 							}
-							*q++=(BYTE)((i & 0x01) ? (second_byte & 0x0f) : ((second_byte >> 4) & 0x0f));
+							*q++ = (BYTE)((i & 0x01) ? (second_byte & 0x0f) : ((second_byte >> 4) & 0x0f));
 						}
 						bits += status_byte;
 						// Read pad byte
@@ -334,7 +404,9 @@ LoadPixelDataRLE4(FreeImageIO *io, fi_handle handle, int width, int height, FIBI
 		return TRUE;
 
 	} catch(int) {
-		if(pixels) free(pixels);
+		if (pixels) {
+			free(pixels);
+		}
 		return FALSE;
 	}
 }
@@ -345,7 +417,7 @@ Load image pixels for 8-bit RLE compressed dib
 @param handle FreeImage IO handle
 @param width Image width
 @param height Image height
-@param dib Image to be loaded 
+@param dib 8-bit image to be loaded 
 @return Returns TRUE if successful, returns FALSE otherwise
 */
 static BOOL 
@@ -354,103 +426,85 @@ LoadPixelDataRLE8(FreeImageIO *io, fi_handle handle, int width, int height, FIBI
 	BYTE second_byte = 0;
 	int scanline = 0;
 	int bits = 0;
+	int count = 0;
+	BYTE delta_x = 0;
+	BYTE delta_y = 0;
 
-	for (;;) {
-		if( io->read_proc(&status_byte, sizeof(BYTE), 1, handle) != 1) {
+	height = abs(height);
+	
+	while(scanline < height) {
+
+		if (io->read_proc(&status_byte, sizeof(BYTE), 1, handle) != 1) {
 			return FALSE;
 		}
 
-		switch (status_byte) {
-			case RLE_COMMAND :
-				if(io->read_proc(&status_byte, sizeof(BYTE), 1, handle) != 1) {
-					return FALSE;
-				}
+		if (status_byte == RLE_COMMAND) {
+			if (io->read_proc(&status_byte, sizeof(BYTE), 1, handle) != 1) {
+				return FALSE;
+			}
 
-				switch (status_byte) {
-					case RLE_ENDOFLINE :
-						bits = 0;
-						scanline++;
-						break;
+			switch (status_byte) {
+				case RLE_ENDOFLINE:
+					bits = 0;
+					scanline++;
+					break;
 
-					case RLE_ENDOFBITMAP :
-						return TRUE;
-
-					case RLE_DELTA :
-					{
-						// read the delta values
-
-						BYTE delta_x = 0;
-						BYTE delta_y = 0;
-
-						if(io->read_proc(&delta_x, sizeof(BYTE), 1, handle) != 1) {
-							return FALSE;
-						}
-						if(io->read_proc(&delta_y, sizeof(BYTE), 1, handle) != 1) {
-							return FALSE;
-						}
-
-						// apply them
-
-						bits     += delta_x;
-						scanline += delta_y;
-
-						break;
-					}
-
-					default :
-					{
-						if(scanline >= abs(height)) {
-							return TRUE;
-						}
-
-						int count = MIN((int)status_byte, width - bits);
-
-						BYTE *sline = FreeImage_GetScanLine(dib, scanline);
-
-						if(io->read_proc((void *)(sline + bits), sizeof(BYTE) * count, 1, handle) != 1) {
-							return FALSE;
-						}
-						
-						// align run length to even number of bytes 
-
-						if ((status_byte & 1) == 1) {
-							if(io->read_proc(&second_byte, sizeof(BYTE), 1, handle) != 1) {
-								return FALSE;
-							}
-						}
-
-						bits += status_byte;													
-
-						break;	
-					}
-				}
-
-				break;
-
-			default :
-			{
-				if(scanline >= abs(height)) {
+				case RLE_ENDOFBITMAP:
 					return TRUE;
-				}
 
-				int count = MIN((int)status_byte, width - bits);
+				case RLE_DELTA:
+					// read the delta values
+					delta_x = 0;
+					delta_y = 0;
+					if (io->read_proc(&delta_x, sizeof(BYTE), 1, handle) != 1) {
+						return FALSE;
+					}
+					if (io->read_proc(&delta_y, sizeof(BYTE), 1, handle) != 1) {
+						return FALSE;
+					}
+					// apply them
+					bits += delta_x;
+					scanline += delta_y;
+					break;
 
-				BYTE *sline = FreeImage_GetScanLine(dib, scanline);
+				default:
+					// absolute mode
+					count = MIN((int)status_byte, width - bits);
+					if (count < 0) {
+						return FALSE;
+					}
+					BYTE *sline = FreeImage_GetScanLine(dib, scanline);
+					if (io->read_proc((void *)(sline + bits), sizeof(BYTE) * count, 1, handle) != 1) {
+						return FALSE;
+					}
+					// align run length to even number of bytes
+					if ((status_byte & 1) == 1) {
+						if (io->read_proc(&second_byte, sizeof(BYTE), 1, handle) != 1) {
+							return FALSE;
+						}
+					}
+					bits += status_byte;				
+					break;
 
-				if(io->read_proc(&second_byte, sizeof(BYTE), 1, handle) != 1) {
-					return FALSE;
-				}
-
-				for (int i = 0; i < count; i++) {
-					*(sline + bits) = second_byte;
-
-					bits++;					
-				}
-
-				break;
+			} // switch (status_byte)
+		}
+		else {
+			count = MIN((int)status_byte, width - bits);
+			if (count < 0) {
+				return FALSE;
+			}
+			BYTE *sline = FreeImage_GetScanLine(dib, scanline);
+			if (io->read_proc(&second_byte, sizeof(BYTE), 1, handle) != 1) {
+				return FALSE;
+			}
+			for (int i = 0; i < count; i++) {
+				*(sline + bits) = second_byte;
+				bits++;
 			}
 		}
 	}
+	
+	return FALSE;
 }
 
 // --------------------------------------------------------------------------
@@ -463,13 +517,19 @@ LoadWindowsBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bit
 		BOOL header_only = (flags & FIF_LOAD_NOPIXELS) == FIF_LOAD_NOPIXELS;
 
 		// load the info header
-
 		BITMAPINFOHEADER bih;
+		memset(&bih, 0, sizeof(BITMAPINFOHEADER));
+		if (io->read_proc(&bih, sizeof(BITMAPINFOHEADER), 1, handle) != 1) {
+			throw FI_MSG_ERROR_INVALID_FORMAT;
+		}
 
-		io->read_proc(&bih, sizeof(BITMAPINFOHEADER), 1, handle);
 #ifdef FREEIMAGE_BIGENDIAN
 		SwapInfoHeader(&bih);
 #endif
+
+		if (CheckBitmapInfoHeader(&bih) == FALSE) {
+			throw FI_MSG_ERROR_INVALID_FORMAT;
+		}
 
 		// keep some general information about the bitmap
 
@@ -514,11 +574,11 @@ LoadWindowsBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bit
 				}
 				
 				// load the palette
-
 				io->read_proc(FreeImage_GetPalette(dib), used_colors * sizeof(RGBQUAD), 1, handle);
+
 #if FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_RGB
 				RGBQUAD *pal = FreeImage_GetPalette(dib);
-				for(int i = 0; i < used_colors; i++) {
+				for(unsigned i = 0; i < used_colors; i++) {
 					INPLACESWAP(pal[i].rgbRed, pal[i].rgbBlue);
 				}
 #endif
@@ -544,7 +604,7 @@ LoadWindowsBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bit
 						break;
 
 					case BI_RLE4 :
-						if( LoadPixelDataRLE4(io, handle, width, height, dib) ) {
+						if( (bit_count == 4) && LoadPixelDataRLE4(io, handle, width, height, dib) ) {
 							return dib;
 						} else {
 							throw "Error encountered while decoding RLE4 BMP data";
@@ -552,7 +612,7 @@ LoadWindowsBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bit
 						break;
 
 					case BI_RLE8 :
-						if( LoadPixelDataRLE8(io, handle, width, height, dib) ) {
+						if( (bit_count == 8) && LoadPixelDataRLE8(io, handle, width, height, dib) ) {
 							return dib;
 						} else {
 							throw "Error encountered while decoding RLE8 BMP data";
@@ -568,10 +628,18 @@ LoadWindowsBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bit
 			case 16 :
 			{
 				int use_bitfields = 0;
-				if (bih.biCompression == BI_BITFIELDS) use_bitfields = 3;
-				else if (bih.biCompression == BI_ALPHABITFIELDS) use_bitfields = 4;
-				else if (type == 52) use_bitfields = 3;
-				else if (type >= 56) use_bitfields = 4;
+				if (bih.biCompression == BI_BITFIELDS) {
+					use_bitfields = 3;
+				}
+				else if (bih.biCompression == BI_ALPHABITFIELDS) {
+					use_bitfields = 4;
+				}
+				else if (type == 52) {
+					use_bitfields = 3;
+				}
+				else if (type >= 56) {
+					use_bitfields = 4;
+				}
 				
 				if (use_bitfields > 0) {
  					DWORD bitfields[4];
@@ -602,16 +670,24 @@ LoadWindowsBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bit
 
 				return dib;
 			}
-			break; // 16-bit
+			break; // 16-bit RGB
 
 			case 24 :
 			case 32 :
 			{
 				int use_bitfields = 0;
-				if (bih.biCompression == BI_BITFIELDS) use_bitfields = 3;
-				else if (bih.biCompression == BI_ALPHABITFIELDS) use_bitfields = 4;
-				else if (type == 52) use_bitfields = 3;
-				else if (type >= 56) use_bitfields = 4;
+				if (bih.biCompression == BI_BITFIELDS) {
+					use_bitfields = 3;
+				}
+				else if (bih.biCompression == BI_ALPHABITFIELDS) {
+					use_bitfields = 4;
+				}
+				else if (type == 52) {
+					use_bitfields = 3;
+				}
+				else if (type >= 56) {
+					use_bitfields = 4;
+				}
 
  				if (use_bitfields > 0) {
 					DWORD bitfields[4];
@@ -679,13 +755,19 @@ LoadOS22XBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bits_
 		BOOL header_only = (flags & FIF_LOAD_NOPIXELS) == FIF_LOAD_NOPIXELS;
 
 		// load the info header
-
 		BITMAPINFOHEADER bih;
+		memset(&bih, 0, sizeof(BITMAPINFOHEADER));
+		if (io->read_proc(&bih, sizeof(BITMAPINFOHEADER), 1, handle) != 1) {
+			throw FI_MSG_ERROR_INVALID_FORMAT;
+		}
 
-		io->read_proc(&bih, sizeof(BITMAPINFOHEADER), 1, handle);
 #ifdef FREEIMAGE_BIGENDIAN
 		SwapInfoHeader(&bih);
 #endif
+
+		if (CheckBitmapInfoHeader(&bih) == FALSE) {
+			throw FI_MSG_ERROR_INVALID_FORMAT;
+		}
 
 		// keep some general information about the bitmap
 
@@ -767,17 +849,19 @@ LoadOS22XBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bits_
 						return dib;
 
 					case BI_RLE4 :
-						if( LoadPixelDataRLE4(io, handle, width, height, dib) ) {
+						if ((bit_count == 4) && LoadPixelDataRLE4(io, handle, width, height, dib)) {
 							return dib;
-						} else {
+						}
+						else {
 							throw "Error encountered while decoding RLE4 BMP data";
 						}
 						break;
 
 					case BI_RLE8 :
-						if( LoadPixelDataRLE8(io, handle, width, height, dib) ) {
+						if ((bit_count == 8) && LoadPixelDataRLE8(io, handle, width, height, dib)) {
 							return dib;
-						} else {
+						}
+						else {
 							throw "Error encountered while decoding RLE8 BMP data";
 						}
 						break;
@@ -789,7 +873,7 @@ LoadOS22XBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bits_
 
 			case 16 :
 			{
-				if (bih.biCompression == 3) {
+				if (bih.biCompression == BI_BITFIELDS) {
 					DWORD bitfields[3];
 
 					io->read_proc(bitfields, 3 * sizeof(DWORD), 1, handle);
@@ -863,9 +947,9 @@ LoadOS22XBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bits_
 			}
 		}
 	} catch(const char *message) {
-		if(dib)
+		if (dib) {
 			FreeImage_Unload(dib);
-
+		}
 		FreeImage_OutputMessageProc(s_format_id, message);
 	}
 
@@ -881,9 +965,13 @@ LoadOS21XBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bits_
 	try {
 		BOOL header_only = (flags & FIF_LOAD_NOPIXELS) == FIF_LOAD_NOPIXELS;
 
+		// load the info header
 		BITMAPINFOOS2_1X_HEADER bios2_1x;
+		memset(&bios2_1x, 0, sizeof(BITMAPINFOOS2_1X_HEADER));
+		if (io->read_proc(&bios2_1x, sizeof(BITMAPINFOOS2_1X_HEADER), 1, handle) != 1) {
+			throw FI_MSG_ERROR_INVALID_FORMAT;
+		}
 
-		io->read_proc(&bios2_1x, sizeof(BITMAPINFOOS2_1X_HEADER), 1, handle);
 #ifdef FREEIMAGE_BIGENDIAN
 		SwapOS21XHeader(&bios2_1x);
 #endif
@@ -1005,9 +1093,9 @@ LoadOS21XBMP(FreeImageIO *io, fi_handle handle, int flags, unsigned bitmap_bits_
 			}
 		}
 	} catch(const char *message) {	
-		if(dib)
+		if (dib) {
 			FreeImage_Unload(dib);
-
+		}
 		FreeImage_OutputMessageProc(s_format_id, message);
 	}
 
@@ -1090,28 +1178,29 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 		BITMAPFILEHEADER bitmapfileheader;
 		DWORD type = 0;
 
-		// we use this offset value to make seemingly absolute seeks relative in the file
-		
+		// we use this offset value to make seemingly absolute seeks relative in the file		
 		long offset_in_file = io->tell_proc(handle);
 
 		// read the fileheader
+		memset(&bitmapfileheader, 0, sizeof(BITMAPFILEHEADER));
+		if (io->read_proc(&bitmapfileheader, sizeof(BITMAPFILEHEADER), 1, handle) != 1) {
+			return NULL;
+		}
 
-		io->read_proc(&bitmapfileheader, sizeof(BITMAPFILEHEADER), 1, handle);
 #ifdef FREEIMAGE_BIGENDIAN
 		SwapFileHeader(&bitmapfileheader);
 #endif
 
 		// check the signature
-
 		if((bitmapfileheader.bfType != 0x4D42) && (bitmapfileheader.bfType != 0x4142)) {
 			FreeImage_OutputMessageProc(s_format_id, FI_MSG_ERROR_MAGIC_NUMBER);
 			return NULL;
 		}
 
 		// read the first byte of the infoheader
-
 		io->read_proc(&type, sizeof(DWORD), 1, handle);
 		io->seek_proc(handle, 0 - (long)sizeof(DWORD), SEEK_CUR);
+
 #ifdef FREEIMAGE_BIGENDIAN
 		SwapLong(&type);
 #endif
@@ -1138,7 +1227,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 				break;
 		}
 
-		FreeImage_OutputMessageProc(s_format_id, "unknown bmp subtype with id %d", type);
+		FreeImage_OutputMessageProc(s_format_id, "Unknown bmp subtype with id %d", type);
 	}
 
 	return NULL;
@@ -1418,8 +1507,9 @@ Save(FreeImageIO *io, FIBITMAP *dib, fi_handle handle, int page, int flags, void
 			}
 
 			free(buffer);
+
 #ifdef FREEIMAGE_BIGENDIAN
-		} else if (bpp == 16) {
+		} else if (dst_bpp == 16) {
 			int padding = dst_pitch - dst_width * sizeof(WORD);
 			WORD pad = 0;
 			WORD pixel;
@@ -1439,8 +1529,9 @@ Save(FreeImageIO *io, FIBITMAP *dib, fi_handle handle, int page, int flags, void
 				}
 			}
 #endif
+
 #if FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_RGB
-		} else if (bpp == 24) {
+		} else if (dst_bpp == 24) {
 			int padding = dst_pitch - dst_width * sizeof(FILE_BGR);
 			DWORD pad = 0;
 			FILE_BGR bgr;
@@ -1461,7 +1552,7 @@ Save(FreeImageIO *io, FIBITMAP *dib, fi_handle handle, int page, int flags, void
 					}
 				}
 			}
-		} else if (bpp == 32) {
+		} else if (dst_bpp == 32) {
 			FILE_BGRA bgra;
 			for(unsigned y = 0; y < dst_height; y++) {
 				BYTE *line = FreeImage_GetScanLine(dib, y);

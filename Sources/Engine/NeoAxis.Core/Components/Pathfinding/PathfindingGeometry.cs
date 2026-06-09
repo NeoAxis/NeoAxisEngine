@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Xml.Schema;
 
 namespace NeoAxis
 {
@@ -11,61 +12,6 @@ namespace NeoAxis
 	[AddToResourcesWindow( @"Addons\Pathfinding\Pathfinding Geometry", 550 )]
 	public class PathfindingGeometry : ObjectInSpace
 	{
-		bool needUpdateDynamicObstacle;
-		Pathfinding.DynamicObstacleData dynamicObstacle;
-
-		//
-
-		/// <summary>
-		/// The available types of a geometry.
-		/// </summary>
-		public enum TypeEnum
-		{
-			///// <summary>
-			///// A character can walk on top of a geometry.
-			///// </summary>
-			//WalkableArea,
-
-			/// <summary>
-			/// A character can't walk on top of a geometry.
-			/// </summary>
-			BakedObstacle,
-
-			/// <summary>
-			/// An obstacle can be changed during the simulation.
-			/// </summary>
-			DynamicObstacle,
-		}
-
-		/// <summary>
-		/// The type of the geometry.
-		/// </summary>
-		[DefaultValue( TypeEnum.BakedObstacle )]
-		[Serialize]
-		public Reference<TypeEnum> Type
-		{
-			get { if( _type.BeginGet() ) Type = _type.Get( this ); return _type.value; }
-			set
-			{
-				var oldValue = _type.value.Value;
-
-				if( _type.BeginSet( this, ref value ) )
-				{
-					try
-					{
-						TypeChanged?.Invoke( this );
-
-						if( oldValue == TypeEnum.DynamicObstacle || value.Value == TypeEnum.DynamicObstacle )
-							needUpdateDynamicObstacle = true;
-					}
-					finally { _type.EndSet(); }
-				}
-			}
-		}
-		/// <summary>Occurs when the <see cref="Type"/> property value changes.</summary>
-		public event Action<PathfindingGeometry> TypeChanged;
-		ReferenceField<TypeEnum> _type = TypeEnum.BakedObstacle;
-
 		/// <summary>
 		/// The available shapes of a geometry.
 		/// </summary>
@@ -73,9 +19,11 @@ namespace NeoAxis
 		{
 			Box,
 			Cylinder,
-			//!!!!what else. mesh?
 		}
 
+		/// <summary>
+		/// The shape of the geometry.
+		/// </summary>
 		[DefaultValue( ShapeEnum.Box )]
 		[Serialize]
 		public Reference<ShapeEnum> Shape
@@ -90,8 +38,8 @@ namespace NeoAxis
 						ShapeChanged?.Invoke( this );
 
 						SpaceBoundsUpdate();
-						if( Type.Value == TypeEnum.DynamicObstacle )
-							needUpdateDynamicObstacle = true;
+						if( Dynamic )
+							DynamicMode_UpdatePathfindingComponents();
 					}
 					finally { _shape.EndSet(); }
 				}
@@ -102,31 +50,44 @@ namespace NeoAxis
 		ReferenceField<ShapeEnum> _shape = ShapeEnum.Box;
 
 		/// <summary>
-		/// The area of the walkable geometry, which is intended to configure walking cost. Zero value is a non-walkable area.
+		/// Whether to update the geometry data during the simulation. This option is intended for dynamic obstacles.
 		/// </summary>
-		[DefaultValue( (uint)255 )]
-		[Range( 0, 255 )]
-		public Reference<uint> Area
+		[DefaultValue( false )]
+		public Reference<bool> Dynamic
 		{
-			get { if( _area.BeginGet() ) Area = _area.Get( this ); return _area.value; }
+			get { if( _dynamic.BeginGet() ) Dynamic = _dynamic.Get( this ); return _dynamic.value; }
 			set
 			{
-				if( _area.BeginSet( this, ref value ) )
+				if( _dynamic.BeginSet( this, ref value ) )
 				{
 					try
 					{
-						AreaChanged?.Invoke( this );
-
-						if( Type.Value == TypeEnum.DynamicObstacle )
-							needUpdateDynamicObstacle = true;
+						DynamicChanged?.Invoke( this );
+						DynamicMode_UpdatePathfindingComponents();
 					}
-					finally { _area.EndSet(); }
+					finally { _dynamic.EndSet(); }
 				}
 			}
 		}
-		/// <summary>Occurs when the <see cref="Area"/> property value changes.</summary>
-		public event Action<PathfindingGeometry> AreaChanged;
-		ReferenceField<uint> _area = 255;
+		/// <summary>Occurs when the <see cref="Dynamic"/> property value changes.</summary>
+		public event Action<PathfindingGeometry> DynamicChanged;
+		ReferenceField<bool> _dynamic = false;
+
+
+		//!!!!RemoveObstacle, Obstacle, Ground/Walkable/ObstacleWalkableOver
+
+		/// <summary>
+		/// Whether to walk on top of the geometry. This option is available only for static obstacles.
+		/// </summary>
+		[DefaultValue( false )]
+		public Reference<bool> Walkable
+		{
+			get { if( _walkable.BeginGet() ) Walkable = _walkable.Get( this ); return _walkable.value; }
+			set { if( _walkable.BeginSet( this, ref value ) ) { try { WalkableChanged?.Invoke( this ); } finally { _walkable.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Walkable"/> property value changes.</summary>
+		public event Action<PathfindingGeometry> WalkableChanged;
+		ReferenceField<bool> _walkable = false;
 
 		//
 
@@ -139,12 +100,9 @@ namespace NeoAxis
 			{
 				switch( p.Name )
 				{
-				case nameof( Shape ):
-					{
-						var geometryType = Type.Value;
-						if( geometryType == TypeEnum.BakedObstacle || geometryType == TypeEnum.DynamicObstacle )
-							skip = true;
-					}
+				case nameof( Walkable ):
+					if( Dynamic )
+						skip = true;
 					break;
 				}
 			}
@@ -208,9 +166,9 @@ namespace NeoAxis
 			{
 				var context2 = context.ObjectInSpaceRenderingContext;
 
-				//!!!!опцию DisplayPathfindingGeometries
+				//!!!!? option DisplayPathfindingGeometries
 
-				bool show = ( context.SceneDisplayDevelopmentDataInThisApplication /*!!!! && ParentScene.DisplayLights */) ||
+				bool show = ( context.SceneDisplayDevelopmentDataInThisApplication /* && ParentScene.DisplayLights */) ||
 					context2.selectedObjects.Contains( this ) || context2.canSelectObjects.Contains( this ) || context2.objectToCreate == this;
 				if( show )
 				{
@@ -232,36 +190,64 @@ namespace NeoAxis
 				}
 				//if( !show )
 				//	context.disableShowingLabelForThisObject = true;
-
-
-
-
-				//var displayColor = DisplayColor.Value;
-				//if( displayColor.Alpha != 0 )
-				//{
-				//	context.viewport.Simple3DRenderer.SetColor( displayColor, displayColor * ProjectSettings.Get.HiddenByOtherObjectsColorMultiplier );
-				//	RenderShape( context );
-				//}
-
-				//if( DisplayObjects )
-				//{
-				//	var color = DisplayObjectsColor.Value;
-				//	if( color.Alpha != 0 )
-				//	{
-				//		context.viewport.Simple3DRenderer.SetColor( color, color * ProjectSettings.Get.HiddenByOtherObjectsColorMultiplier );
-				//		//foreach( var refObject in Objects )
-				//		//{
-				//		//	var obj = refObject.Value;
-				//		//	if( obj != null && obj.EnabledInHierarchy )
-				//		//		context.viewport.Simple3DRenderer.AddBounds( obj.SpaceBounds.CalculatedBoundingBox );
-				//		//}
-
-				//		foreach( var item in CalculateObjects() )
-				//			RenderItem( context.viewport.Simple3DRenderer, item );
-				//	}
-				//}
 			}
 		}
+
+		//!!!!not work
+		//public Pathfinding.ConvexVolume GetConvexVolume()
+		//{
+		//	var tr = Transform.Value;
+		//	if( tr.Rotation.GetUp().Equals( Vector3.ZAxis, 0.01 ) )
+		//	{
+		//		switch( Shape.Value )
+		//		{
+		//		case ShapeEnum.Box:
+		//			{
+		//				//SimpleMeshGenerator.GenerateBox( Vector3.One, out Vector3[] verticesLocal, out _ );
+
+		//				//var transform = Transform.Value.ToMatrix4();
+
+		//				//var vertices = new Vector3[ verticesLocal.Length ];
+		//				//for( int n = 0; n < vertices.Length; n++ )
+		//				//	vertices[ n ] = transform * verticesLocal[ n ];
+
+		//				var box = GetBox();
+		//				var boxCenter = box.Center;
+		//				var points = box.ToPoints();
+
+		//				var volume = new Pathfinding.ConvexVolume();
+		//				volume.HeightMin = double.MaxValue;
+		//				volume.HeightMax = double.MinValue;
+
+		//				foreach( var p in points )
+		//				{
+		//					if( p.Z < box.Center.Z )
+		//						volume.Vertices.Add( p );
+		//					var h = p.Z;
+		//					if( h < volume.HeightMin )
+		//						volume.HeightMin = h;
+		//					if( h > volume.HeightMax )
+		//						volume.HeightMax = h;
+		//				}
+
+		//				return volume;
+		//			}
+
+		//			//case ShapeEnum.Cylinder:
+		//			//	{
+		//			//		var cylinder = GetCylinder();
+		//			//		SimpleMeshGenerator.GenerateCylinder( 2, cylinder.Radius, cylinder.GetLength(), 16, true, true, true, out Vector3[] verticesLocal, out int[] indices );
+		//			//		var transform = Transform.Value.UpdateScale( Vector3.One );
+		//			//		var vertices = new Vector3[ verticesLocal.Length ];
+		//			//		for( int n = 0; n < vertices.Length; n++ )
+		//			//			vertices[ n ] = transform * verticesLocal[ n ];
+		//			//		return new Pathfinding.ConvexVolume( vertices, indices );
+		//			//	}
+
+		//		}
+		//	}
+		//	return null;
+		//}
 
 		public void GetGeometry( out Vector3[] vertices, out int[] indices )
 		{
@@ -283,7 +269,13 @@ namespace NeoAxis
 				{
 					var cylinder = GetCylinder();
 
-					SimpleMeshGenerator.GenerateCylinder( 2, cylinder.Radius, cylinder.GetLength(), 16, true, true, true, out Vector3[] verticesLocal, out indices );
+					var segments = 16;
+					if( cylinder.Radius < 10 )
+						segments = 12;
+					if( cylinder.Radius < 5 )
+						segments = 10;
+
+					SimpleMeshGenerator.GenerateCylinder( 2, cylinder.Radius, cylinder.GetLength(), segments, true, true, true, out Vector3[] verticesLocal, out indices );
 
 					var transform = Transform.Value.UpdateScale( Vector3.One );
 
@@ -298,89 +290,79 @@ namespace NeoAxis
 				indices = null;
 				break;
 			}
+
+			if( indices != null && !Walkable )
+			{
+				//invert triangle order
+				for( int nTriangle = 0; nTriangle < indices.Length / 3; nTriangle++ )
+				{
+					var index0 = indices[ nTriangle * 3 + 0 ];
+					var index1 = indices[ nTriangle * 3 + 1 ];
+					var index2 = indices[ nTriangle * 3 + 2 ];
+
+					var vertex0 = vertices[ index0 ];
+					var vertex1 = vertices[ index1 ];
+					var vertex2 = vertices[ index2 ];
+
+					var normal = Vector3.Cross( vertex1 - vertex0, vertex2 - vertex0 );
+					if( normal.Z > 0 )
+					{
+						indices[ nTriangle * 3 + 0 ] = index0;
+						indices[ nTriangle * 3 + 1 ] = index2;
+						indices[ nTriangle * 3 + 2 ] = index1;
+					}
+				}
+			}
 		}
 
 		protected override void OnEnabledInHierarchyChanged()
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			if( EnabledInHierarchyAndIsInstance )
-			{
-				if( dynamicObstacle == null )
-					UpdateDynamicObstacle( true );
-			}
-			else
-				DeleteDynamicObstacle();
+			if( Dynamic )
+				DynamicMode_UpdatePathfindingComponents();
 		}
 
 		protected override void OnTransformChanged()
 		{
 			base.OnTransformChanged();
 
-			if( Type.Value == TypeEnum.DynamicObstacle )
-				needUpdateDynamicObstacle = true;
+			if( Dynamic )
+				DynamicMode_UpdatePathfindingComponents();
 		}
 
-		protected override void OnUpdate( float delta )
+		internal void DynamicMode_UpdatePathfindingComponents( Pathfinding specifiedPathfinding = null )
 		{
-			base.OnUpdate( delta );
+			var add = EnabledInHierarchy && Dynamic;
 
-			UpdateDynamicObstacle( false );
-		}
-
-		internal void UpdateDynamicObstacle( bool forceUpdate )
-		{
-			if( needUpdateDynamicObstacle || forceUpdate )
+			var scene = ParentScene;
+			if( scene != null )
 			{
-				needUpdateDynamicObstacle = false;
-
-				//delete previous
-				DeleteDynamicObstacle();
-
-				//add new
-				if( EnabledInHierarchy && Type.Value == TypeEnum.DynamicObstacle )
+				var instances = Pathfinding.Instances;
+				for( int n = 0; n < instances.Count; n++ )
 				{
-					dynamicObstacle = new Pathfinding.DynamicObstacleData();
-					dynamicObstacle.Area = (byte)Area.Value;
-					dynamicObstacle.Bounds = SpaceBounds.BoundingBox;
-					//SpaceBounds.GetCalculatedBoundingBox( out dynamicObstacle.Bounds );
+					var pathfinding = instances[ n ];
 
-					//!!!!calculate geometry from background thread
-					GetGeometry( out dynamicObstacle.Vertices, out dynamicObstacle.Indices );
-
-
-					var scene = ParentScene;
-					if( scene != null )
+					if( scene == pathfinding.ParentScene && ( specifiedPathfinding == null || pathfinding == specifiedPathfinding ) )
 					{
-						var instances = Pathfinding.Instances;
-						for( int n = 0; n < instances.Count; n++ )
+						var data = new Pathfinding.DynamicGeometriesToUpdateItem();
+						data.Add = add;
+						if( add )
 						{
-							var pathfinding = instances[ n ];
-							if( scene == pathfinding.ParentScene )
-								pathfinding.DynamicObstacleAdd( dynamicObstacle, false );
+							switch( Shape.Value )
+							{
+							case ShapeEnum.Box:
+								data.Box = GetBox();
+								break;
+							case ShapeEnum.Cylinder:
+								data.Cylinder = GetCylinder();
+								break;
+							}
 						}
+
+						pathfinding.OnUpdatePathfindingGeometry( this, data );
 					}
 				}
-			}
-		}
-
-		void DeleteDynamicObstacle()
-		{
-			if( dynamicObstacle != null )
-			{
-				var scene = ParentScene;
-				if( scene != null )
-				{
-					var instances = Pathfinding.Instances;
-					for( int n = 0; n < instances.Count; n++ )
-					{
-						var pathfinding = instances[ n ];
-						if( scene == pathfinding.ParentScene )
-							pathfinding.DynamicObstacleDelete( dynamicObstacle, false );
-					}
-				}
-
-				dynamicObstacle = null;
 			}
 		}
 	}

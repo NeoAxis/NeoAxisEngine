@@ -10710,14 +10710,14 @@
     ],
     "images" : [
         {
-            "mimeType" : "image/png",
+            "mimeType" : "image/jpg",
             "name" : "M_Ferret_Scout_Car_Assets_normal",
-            "uri" : "M_Ferret_Scout_Car_Assets_normal.png"
+            "uri" : "M_Ferret_Scout_Car_Assets_normal.jpg"
         },
         {
-            "mimeType" : "image/png",
+            "mimeType" : "image/jpg",
             "name" : "M_Ferret_Scout_Car_Assets_metallicRoughness",
-            "uri" : "M_Ferret_Scout_Car_Assets_metallicRoughness.png"
+            "uri" : "M_Ferret_Scout_Car_Assets_metallicRoughness.jpg"
         },
         {
             "mimeType" : "image/jpeg",
@@ -10725,14 +10725,14 @@
             "uri" : "M_Ferret_Scout_Car_Assets_baseColor.jpg"
         },
         {
-            "mimeType" : "image/png",
+            "mimeType" : "image/jpg",
             "name" : "M_Ferret_Scout_Car_Middle_normal",
-            "uri" : "M_Ferret_Scout_Car_Middle_normal.png"
+            "uri" : "M_Ferret_Scout_Car_Middle_normal.jpg"
         },
         {
-            "mimeType" : "image/png",
+            "mimeType" : "image/jpg",
             "name" : "M_Ferret_Scout_Car_Middle_metallicRoughness",
-            "uri" : "M_Ferret_Scout_Car_Middle_metallicRoughness.png"
+            "uri" : "M_Ferret_Scout_Car_Middle_metallicRoughness.jpg"
         },
         {
             "mimeType" : "image/jpeg",
@@ -10740,14 +10740,14 @@
             "uri" : "M_Ferret_Scout_Car_Middle_baseColor.jpg"
         },
         {
-            "mimeType" : "image/png",
+            "mimeType" : "image/jpg",
             "name" : "M_Ferret_Scout_Car_Wheels_normal",
-            "uri" : "M_Ferret_Scout_Car_Wheels_normal.png"
+            "uri" : "M_Ferret_Scout_Car_Wheels_normal.jpg"
         },
         {
-            "mimeType" : "image/png",
+            "mimeType" : "image/jpg",
             "name" : "M_Ferret_Scout_Car_Wheels_metallicRoughness",
-            "uri" : "M_Ferret_Scout_Car_Wheels_metallicRoughness.png"
+            "uri" : "M_Ferret_Scout_Car_Wheels_metallicRoughness.jpg"
         },
         {
             "mimeType" : "image/jpeg",
@@ -10755,14 +10755,14 @@
             "uri" : "M_Ferret_Scout_Car_Wheels_baseColor.jpg"
         },
         {
-            "mimeType" : "image/png",
+            "mimeType" : "image/jpg",
             "name" : "M_Ferret_Scout_Car_Main_normal",
-            "uri" : "M_Ferret_Scout_Car_Main_normal.png"
+            "uri" : "M_Ferret_Scout_Car_Main_normal.jpg"
         },
         {
-            "mimeType" : "image/png",
+            "mimeType" : "image/jpg",
             "name" : "M_Ferret_Scout_Car_Main_metallicRoughness",
-            "uri" : "M_Ferret_Scout_Car_Main_metallicRoughness.png"
+            "uri" : "M_Ferret_Scout_Car_Main_metallicRoughness.jpg"
         },
         {
             "mimeType" : "image/jpeg",
@@ -10770,29 +10770,29 @@
             "uri" : "M_Ferret_Scout_Car_Main_baseColor.jpg"
         },
         {
-            "mimeType" : "image/png",
+            "mimeType" : "image/jpg",
             "name" : "M_Ferret_Scout_Car_Glass_normal",
-            "uri" : "M_Ferret_Scout_Car_Glass_normal.png"
+            "uri" : "M_Ferret_Scout_Car_Glass_normal.jpg"
         },
         {
-            "mimeType" : "image/png",
+            "mimeType" : "image/jpg",
             "name" : "M_Ferret_Scout_Car_Glass_metallicRoughness",
-            "uri" : "M_Ferret_Scout_Car_Glass_metallicRoughness.png"
+            "uri" : "M_Ferret_Scout_Car_Glass_metallicRoughness.jpg"
         },
         {
-            "mimeType" : "image/png",
+            "mimeType" : "image/jpg",
             "name" : "M_Ferret_Scout_Car_Glass_baseColor",
-            "uri" : "M_Ferret_Scout_Car_Glass_baseColor.png"
+            "uri" : "M_Ferret_Scout_Car_Glass_baseColor.jpg"
         },
         {
-            "mimeType" : "image/png",
+            "mimeType" : "image/jpg",
             "name" : "M_Ferret_Scout_Car_Sides_normal",
-            "uri" : "M_Ferret_Scout_Car_Sides_normal.png"
+            "uri" : "M_Ferret_Scout_Car_Sides_normal.jpg"
         },
         {
-            "mimeType" : "image/png",
+            "mimeType" : "image/jpg",
             "name" : "M_Ferret_Scout_Car_Sides_metallicRoughness",
-            "uri" : "M_Ferret_Scout_Car_Sides_metallicRoughness.png"
+            "uri" : "M_Ferret_Scout_Car_Sides_metallicRoughness.jpg"
         },
         {
             "mimeType" : "image/jpeg",
@@ -10800,14 +10800,14 @@
             "uri" : "M_Ferret_Scout_Car_Sides_baseColor.jpg"
         },
         {
-            "mimeType" : "image/png",
+            "mimeType" : "image/jpg",
             "name" : "M_Ferret_Scout_Car_Tower_normal",
-            "uri" : "M_Ferret_Scout_Car_Tower_normal.png"
+            "uri" : "M_Ferret_Scout_Car_Tower_normal.jpg"
         },
         {
-            "mimeType" : "image/png",
+            "mimeType" : "image/jpg",
             "name" : "M_Ferret_Scout_Car_Tower_metallicRoughness",
-            "uri" : "M_Ferret_Scout_Car_Tower_metallicRoughness.png"
+            "uri" : "M_Ferret_Scout_Car_Tower_metallicRoughness.jpg"
         },
         {
             "mimeType" : "image/jpeg",

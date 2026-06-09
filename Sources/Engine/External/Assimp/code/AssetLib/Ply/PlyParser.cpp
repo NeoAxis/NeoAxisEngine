@@ -3,8 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2022, assimp team
-
+Copyright (c) 2006-2026, assimp team
 
 All rights reserved.
 
@@ -48,39 +47,58 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <assimp/ByteSwapper.h>
 #include <assimp/fast_atof.h>
 #include <assimp/DefaultLogger.hpp>
+#include <unordered_set>
 #include <utility>
 
-using namespace Assimp;
+namespace Assimp {
 
 // ------------------------------------------------------------------------------------------------
-PLY::EDataType PLY::Property::ParseDataType(std::vector<char> &buffer) {
+static std::string to_string(EElementSemantic e) {
+    switch (e) {
+        case EEST_Vertex:
+            return std::string{ "vertex" };
+        case EEST_TriStrip:
+            return std::string{ "tristrips" };
+        case EEST_Edge:
+            return std::string{ "edge" };
+        case EEST_Material:
+            return std::string{ "material" };
+        case EEST_TextureFile:
+            return std::string{ "TextureFile" };
+        default:
+            return std::string{ "invalid" };
+    }
+}
+
+// ------------------------------------------------------------------------------------------------
+EDataType Property::ParseDataType(std::vector<char> &buffer) {
     ai_assert(!buffer.empty());
 
-    PLY::EDataType eOut = PLY::EDT_INVALID;
+    EDataType eOut = EDT_INVALID;
 
-    if (PLY::DOM::TokenMatch(buffer, "char", 4) ||
-            PLY::DOM::TokenMatch(buffer, "int8", 4)) {
-        eOut = PLY::EDT_Char;
-    } else if (PLY::DOM::TokenMatch(buffer, "uchar", 5) ||
-               PLY::DOM::TokenMatch(buffer, "uint8", 5)) {
-        eOut = PLY::EDT_UChar;
-    } else if (PLY::DOM::TokenMatch(buffer, "short", 5) ||
-               PLY::DOM::TokenMatch(buffer, "int16", 5)) {
-        eOut = PLY::EDT_Short;
-    } else if (PLY::DOM::TokenMatch(buffer, "ushort", 6) ||
-               PLY::DOM::TokenMatch(buffer, "uint16", 6)) {
-        eOut = PLY::EDT_UShort;
-    } else if (PLY::DOM::TokenMatch(buffer, "int32", 5) || PLY::DOM::TokenMatch(buffer, "int", 3)) {
-        eOut = PLY::EDT_Int;
-    } else if (PLY::DOM::TokenMatch(buffer, "uint32", 6) || PLY::DOM::TokenMatch(buffer, "uint", 4)) {
-        eOut = PLY::EDT_UInt;
-    } else if (PLY::DOM::TokenMatch(buffer, "float", 5) || PLY::DOM::TokenMatch(buffer, "float32", 7)) {
-        eOut = PLY::EDT_Float;
-    } else if (PLY::DOM::TokenMatch(buffer, "double64", 8) || PLY::DOM::TokenMatch(buffer, "double", 6) ||
-               PLY::DOM::TokenMatch(buffer, "float64", 7)) {
-        eOut = PLY::EDT_Double;
+    if (DOM::TokenMatch(buffer, "char", 4) ||
+               DOM::TokenMatch(buffer, "int8", 4)) {
+        eOut = EDT_Char;
+    } else if (DOM::TokenMatch(buffer, "uchar", 5) ||
+               DOM::TokenMatch(buffer, "uint8", 5)) {
+        eOut = EDT_UChar;
+    } else if (DOM::TokenMatch(buffer, "short", 5) ||
+               DOM::TokenMatch(buffer, "int16", 5)) {
+        eOut = EDT_Short;
+    } else if (DOM::TokenMatch(buffer, "ushort", 6) ||
+               DOM::TokenMatch(buffer, "uint16", 6)) {
+        eOut = EDT_UShort;
+    } else if (DOM::TokenMatch(buffer, "int32", 5) || DOM::TokenMatch(buffer, "int", 3)) {
+        eOut = EDT_Int;
+    } else if (DOM::TokenMatch(buffer, "uint32", 6) || DOM::TokenMatch(buffer, "uint", 4)) {
+        eOut = EDT_UInt;
+    } else if (DOM::TokenMatch(buffer, "float", 5) || DOM::TokenMatch(buffer, "float32", 7)) {
+        eOut = EDT_Float;
+    } else if (DOM::TokenMatch(buffer, "double64", 8) || DOM::TokenMatch(buffer, "double", 6) ||
+               DOM::TokenMatch(buffer, "float64", 7)) {
+        eOut = EDT_Double;
     }
-    if (PLY::EDT_INVALID == eOut) {
+    if (EDT_INVALID == eOut) {
         ASSIMP_LOG_INFO("Found unknown data type in PLY file. This is OK");
     }
 
@@ -88,81 +106,81 @@ PLY::EDataType PLY::Property::ParseDataType(std::vector<char> &buffer) {
 }
 
 // ------------------------------------------------------------------------------------------------
-PLY::ESemantic PLY::Property::ParseSemantic(std::vector<char> &buffer) {
+ESemantic Property::ParseSemantic(std::vector<char> &buffer) {
     ai_assert(!buffer.empty());
 
-    PLY::ESemantic eOut = PLY::EST_INVALID;
-    if (PLY::DOM::TokenMatch(buffer, "red", 3)) {
-        eOut = PLY::EST_Red;
-    } else if (PLY::DOM::TokenMatch(buffer, "green", 5)) {
-        eOut = PLY::EST_Green;
-    } else if (PLY::DOM::TokenMatch(buffer, "blue", 4)) {
-        eOut = PLY::EST_Blue;
-    } else if (PLY::DOM::TokenMatch(buffer, "alpha", 5)) {
-        eOut = PLY::EST_Alpha;
-    } else if (PLY::DOM::TokenMatch(buffer, "vertex_index", 12) || PLY::DOM::TokenMatch(buffer, "vertex_indices", 14)) {
-        eOut = PLY::EST_VertexIndex;
-    } else if (PLY::DOM::TokenMatch(buffer, "texcoord", 8)) // Manage uv coords on faces
+    ESemantic eOut = PLY::EST_INVALID;
+    if (DOM::TokenMatch(buffer, "red", 3)) {
+        eOut = EST_Red;
+    } else if (DOM::TokenMatch(buffer, "green", 5)) {
+        eOut = EST_Green;
+    } else if (DOM::TokenMatch(buffer, "blue", 4)) {
+        eOut = EST_Blue;
+    } else if (DOM::TokenMatch(buffer, "alpha", 5)) {
+        eOut = EST_Alpha;
+    } else if (DOM::TokenMatch(buffer, "vertex_index", 12) || PLY::DOM::TokenMatch(buffer, "vertex_indices", 14)) {
+        eOut = EST_VertexIndex;
+    } else if (DOM::TokenMatch(buffer, "texcoord", 8)) // Manage uv coords on faces
     {
-        eOut = PLY::EST_TextureCoordinates;
-    } else if (PLY::DOM::TokenMatch(buffer, "material_index", 14)) {
-        eOut = PLY::EST_MaterialIndex;
-    } else if (PLY::DOM::TokenMatch(buffer, "ambient_red", 11)) {
-        eOut = PLY::EST_AmbientRed;
-    } else if (PLY::DOM::TokenMatch(buffer, "ambient_green", 13)) {
-        eOut = PLY::EST_AmbientGreen;
-    } else if (PLY::DOM::TokenMatch(buffer, "ambient_blue", 12)) {
-        eOut = PLY::EST_AmbientBlue;
-    } else if (PLY::DOM::TokenMatch(buffer, "ambient_alpha", 13)) {
-        eOut = PLY::EST_AmbientAlpha;
-    } else if (PLY::DOM::TokenMatch(buffer, "diffuse_red", 11)) {
-        eOut = PLY::EST_DiffuseRed;
-    } else if (PLY::DOM::TokenMatch(buffer, "diffuse_green", 13)) {
-        eOut = PLY::EST_DiffuseGreen;
-    } else if (PLY::DOM::TokenMatch(buffer, "diffuse_blue", 12)) {
-        eOut = PLY::EST_DiffuseBlue;
-    } else if (PLY::DOM::TokenMatch(buffer, "diffuse_alpha", 13)) {
-        eOut = PLY::EST_DiffuseAlpha;
-    } else if (PLY::DOM::TokenMatch(buffer, "specular_red", 12)) {
-        eOut = PLY::EST_SpecularRed;
-    } else if (PLY::DOM::TokenMatch(buffer, "specular_green", 14)) {
-        eOut = PLY::EST_SpecularGreen;
-    } else if (PLY::DOM::TokenMatch(buffer, "specular_blue", 13)) {
-        eOut = PLY::EST_SpecularBlue;
-    } else if (PLY::DOM::TokenMatch(buffer, "specular_alpha", 14)) {
-        eOut = PLY::EST_SpecularAlpha;
-    } else if (PLY::DOM::TokenMatch(buffer, "opacity", 7)) {
-        eOut = PLY::EST_Opacity;
-    } else if (PLY::DOM::TokenMatch(buffer, "specular_power", 14)) {
-        eOut = PLY::EST_PhongPower;
-    } else if (PLY::DOM::TokenMatch(buffer, "r", 1)) {
-        eOut = PLY::EST_Red;
-    } else if (PLY::DOM::TokenMatch(buffer, "g", 1)) {
-        eOut = PLY::EST_Green;
-    } else if (PLY::DOM::TokenMatch(buffer, "b", 1)) {
-        eOut = PLY::EST_Blue;
+        eOut = EST_TextureCoordinates;
+    } else if (DOM::TokenMatch(buffer, "material_index", 14)) {
+        eOut = EST_MaterialIndex;
+    } else if (DOM::TokenMatch(buffer, "ambient_red", 11)) {
+        eOut = EST_AmbientRed;
+    } else if (DOM::TokenMatch(buffer, "ambient_green", 13)) {
+        eOut = EST_AmbientGreen;
+    } else if (DOM::TokenMatch(buffer, "ambient_blue", 12)) {
+        eOut = EST_AmbientBlue;
+    } else if (DOM::TokenMatch(buffer, "ambient_alpha", 13)) {
+        eOut = EST_AmbientAlpha;
+    } else if (DOM::TokenMatch(buffer, "diffuse_red", 11)) {
+        eOut = EST_DiffuseRed;
+    } else if (DOM::TokenMatch(buffer, "diffuse_green", 13)) {
+        eOut = EST_DiffuseGreen;
+    } else if (DOM::TokenMatch(buffer, "diffuse_blue", 12)) {
+        eOut = EST_DiffuseBlue;
+    } else if (DOM::TokenMatch(buffer, "diffuse_alpha", 13)) {
+        eOut = EST_DiffuseAlpha;
+    } else if (DOM::TokenMatch(buffer, "specular_red", 12)) {
+        eOut = EST_SpecularRed;
+    } else if (DOM::TokenMatch(buffer, "specular_green", 14)) {
+        eOut = EST_SpecularGreen;
+    } else if (DOM::TokenMatch(buffer, "specular_blue", 13)) {
+        eOut = EST_SpecularBlue;
+    } else if (DOM::TokenMatch(buffer, "specular_alpha", 14)) {
+        eOut = EST_SpecularAlpha;
+    } else if (DOM::TokenMatch(buffer, "opacity", 7)) {
+        eOut = EST_Opacity;
+    } else if (DOM::TokenMatch(buffer, "specular_power", 14)) {
+        eOut = EST_PhongPower;
+    } else if (DOM::TokenMatch(buffer, "r", 1)) {
+        eOut = EST_Red;
+    } else if (DOM::TokenMatch(buffer, "g", 1)) {
+        eOut = EST_Green;
+    } else if (DOM::TokenMatch(buffer, "b", 1)) {
+        eOut = EST_Blue;
     }
 
     // NOTE: Blender3D exports texture coordinates as s,t tuples
-    else if (PLY::DOM::TokenMatch(buffer, "u", 1) || PLY::DOM::TokenMatch(buffer, "s", 1) || PLY::DOM::TokenMatch(buffer, "tx", 2) || PLY::DOM::TokenMatch(buffer, "texture_u", 9)) {
-        eOut = PLY::EST_UTextureCoord;
-    } else if (PLY::DOM::TokenMatch(buffer, "v", 1) || PLY::DOM::TokenMatch(buffer, "t", 1) || PLY::DOM::TokenMatch(buffer, "ty", 2) || PLY::DOM::TokenMatch(buffer, "texture_v", 9)) {
-        eOut = PLY::EST_VTextureCoord;
-    } else if (PLY::DOM::TokenMatch(buffer, "x", 1)) {
-        eOut = PLY::EST_XCoord;
-    } else if (PLY::DOM::TokenMatch(buffer, "y", 1)) {
-        eOut = PLY::EST_YCoord;
-    } else if (PLY::DOM::TokenMatch(buffer, "z", 1)) {
-        eOut = PLY::EST_ZCoord;
-    } else if (PLY::DOM::TokenMatch(buffer, "nx", 2)) {
-        eOut = PLY::EST_XNormal;
-    } else if (PLY::DOM::TokenMatch(buffer, "ny", 2)) {
-        eOut = PLY::EST_YNormal;
-    } else if (PLY::DOM::TokenMatch(buffer, "nz", 2)) {
-        eOut = PLY::EST_ZNormal;
+    else if (DOM::TokenMatch(buffer, "u", 1) || PLY::DOM::TokenMatch(buffer, "s", 1) || PLY::DOM::TokenMatch(buffer, "tx", 2) || PLY::DOM::TokenMatch(buffer, "texture_u", 9)) {
+        eOut = EST_UTextureCoord;
+    } else if (DOM::TokenMatch(buffer, "v", 1) || PLY::DOM::TokenMatch(buffer, "t", 1) || PLY::DOM::TokenMatch(buffer, "ty", 2) || PLY::DOM::TokenMatch(buffer, "texture_v", 9)) {
+        eOut = EST_VTextureCoord;
+    } else if (DOM::TokenMatch(buffer, "x", 1)) {
+        eOut = EST_XCoord;
+    } else if (DOM::TokenMatch(buffer, "y", 1)) {
+        eOut = EST_YCoord;
+    } else if (DOM::TokenMatch(buffer, "z", 1)) {
+        eOut = EST_ZCoord;
+    } else if (DOM::TokenMatch(buffer, "nx", 2)) {
+        eOut = EST_XNormal;
+    } else if (DOM::TokenMatch(buffer, "ny", 2)) {
+        eOut = EST_YNormal;
+    } else if (DOM::TokenMatch(buffer, "nz", 2)) {
+        eOut = EST_ZNormal;
     } else {
         ASSIMP_LOG_INFO("Found unknown property semantic in file. This is ok");
-        PLY::DOM::SkipLine(buffer);
+        DOM::SkipLine(buffer);
     }
     return eOut;
 }
@@ -176,12 +194,12 @@ bool PLY::Property::ParseProperty(std::vector<char> &buffer, PLY::Property *pOut
     // "property list uchar int vertex_index"
 
     // skip leading spaces
-    if (!PLY::DOM::SkipSpaces(buffer)) {
+    if (!DOM::SkipSpaces(buffer)) {
         return false;
     }
 
     // skip the "property" string at the beginning
-    if (!PLY::DOM::TokenMatch(buffer, "property", 8)) {
+    if (!DOM::TokenMatch(buffer, "property", 8)) {
         // seems not to be a valid property entry
         return false;
     }
@@ -281,6 +299,10 @@ bool PLY::Element::ParseElement(IOStreamBuffer<char> &streamBuffer, std::vector<
         // if the exact semantic can't be determined, just store
         // the original string identifier
         pOut->szName = std::string(&buffer[0], &buffer[0] + strlen(&buffer[0]));
+        auto pos = pOut->szName.find_last_of(' ');
+        if (pos != std::string::npos) {
+            pOut->szName.erase(pos, pOut->szName.size());
+        }
     }
 
     if (!PLY::DOM::SkipSpaces(buffer))
@@ -296,7 +318,7 @@ bool PLY::Element::ParseElement(IOStreamBuffer<char> &streamBuffer, std::vector<
         return true;
     }
 
-    //parse the number of occurrences of this element
+    // parse the number of occurrences of this element
     const char *pCur = (char *)&buffer[0];
     pOut->NumOccur = strtoul10(pCur, &pCur);
 
@@ -324,10 +346,11 @@ bool PLY::Element::ParseElement(IOStreamBuffer<char> &streamBuffer, std::vector<
 // ------------------------------------------------------------------------------------------------
 bool PLY::DOM::SkipSpaces(std::vector<char> &buffer) {
     const char *pCur = buffer.empty() ? nullptr : (char *)&buffer[0];
+    const char *end = pCur + buffer.size();
     bool ret = false;
     if (pCur) {
         const char *szCur = pCur;
-        ret = Assimp::SkipSpaces(pCur, &pCur);
+        ret = Assimp::SkipSpaces(pCur, &pCur, end);
 
         uintptr_t iDiff = (uintptr_t)pCur - (uintptr_t)szCur;
         buffer.erase(buffer.begin(), buffer.begin() + iDiff);
@@ -337,12 +360,14 @@ bool PLY::DOM::SkipSpaces(std::vector<char> &buffer) {
     return ret;
 }
 
+// ------------------------------------------------------------------------------------------------
 bool PLY::DOM::SkipLine(std::vector<char> &buffer) {
     const char *pCur = buffer.empty() ? nullptr : (char *)&buffer[0];
+    const char *end = pCur + buffer.size();
     bool ret = false;
     if (pCur) {
         const char *szCur = pCur;
-        ret = Assimp::SkipLine(pCur, &pCur);
+        ret = Assimp::SkipLine(pCur, &pCur, end);
 
         uintptr_t iDiff = (uintptr_t)pCur - (uintptr_t)szCur;
         buffer.erase(buffer.begin(), buffer.begin() + iDiff);
@@ -352,6 +377,7 @@ bool PLY::DOM::SkipLine(std::vector<char> &buffer) {
     return ret;
 }
 
+// ------------------------------------------------------------------------------------------------
 bool PLY::DOM::TokenMatch(std::vector<char> &buffer, const char *token, unsigned int len) {
     const char *pCur = buffer.empty() ? nullptr : (char *)&buffer[0];
     bool ret = false;
@@ -367,12 +393,14 @@ bool PLY::DOM::TokenMatch(std::vector<char> &buffer, const char *token, unsigned
     return ret;
 }
 
+// ------------------------------------------------------------------------------------------------
 bool PLY::DOM::SkipSpacesAndLineEnd(std::vector<char> &buffer) {
     const char *pCur = buffer.empty() ? nullptr : (char *)&buffer[0];
+    const char *end = pCur + buffer.size();
     bool ret = false;
     if (pCur) {
         const char *szCur = pCur;
-        ret = Assimp::SkipSpacesAndLineEnd(pCur, &pCur);
+        ret = Assimp::SkipSpacesAndLineEnd(pCur, &pCur, end);
 
         uintptr_t iDiff = (uintptr_t)pCur - (uintptr_t)szCur;
         buffer.erase(buffer.begin(), buffer.begin() + iDiff);
@@ -382,6 +410,7 @@ bool PLY::DOM::SkipSpacesAndLineEnd(std::vector<char> &buffer) {
     return ret;
 }
 
+// ------------------------------------------------------------------------------------------------
 bool PLY::DOM::SkipComments(std::vector<char> buffer) {
     ai_assert(!buffer.empty());
 
@@ -411,6 +440,7 @@ bool PLY::DOM::SkipComments(std::vector<char> buffer) {
 bool PLY::DOM::ParseHeader(IOStreamBuffer<char> &streamBuffer, std::vector<char> &buffer, bool isBinary) {
     ASSIMP_LOG_VERBOSE_DEBUG("PLY::DOM::ParseHeader() begin");
 
+    std::unordered_set<std::string> definedAlElements;
     // parse all elements
     while (!buffer.empty()) {
         // skip all comments
@@ -419,6 +449,13 @@ bool PLY::DOM::ParseHeader(IOStreamBuffer<char> &streamBuffer, std::vector<char>
         PLY::Element out;
         if (PLY::Element::ParseElement(streamBuffer, buffer, &out)) {
             // add the element to the list of elements
+
+            const auto propertyName = (out.szName.empty()) ? to_string(out.eSemantic) : out.szName;
+            auto alreadyDefined = definedAlElements.find(propertyName);
+            if (alreadyDefined != definedAlElements.end()) {
+                throw DeadlyImportError("Property '" + propertyName + "' in header already defined ");
+            }
+            definedAlElements.insert(propertyName);
             alElements.push_back(out);
         } else if (TokenMatch(buffer, "end_header", 10)) {
             // we have reached the end of the header
@@ -426,7 +463,7 @@ bool PLY::DOM::ParseHeader(IOStreamBuffer<char> &streamBuffer, std::vector<char>
         } else {
             // ignore unknown header elements
             if (!streamBuffer.getNextLine(buffer))
-              return false;
+                return false;
         }
     }
 
@@ -446,7 +483,7 @@ bool PLY::DOM::ParseElementInstanceLists(IOStreamBuffer<char> &streamBuffer, std
     std::vector<PLY::ElementInstanceList>::iterator a = alElementData.begin();
 
     // parse all element instances
-    //construct vertices and faces
+    // construct vertices and faces
     for (; i != alElements.end(); ++i, ++a) {
         if ((*i).eSemantic == EEST_Vertex || (*i).eSemantic == EEST_Face || (*i).eSemantic == EEST_TriStrip) {
             PLY::ElementInstanceList::ParseInstanceList(streamBuffer, buffer, &(*i), nullptr, loader);
@@ -528,7 +565,7 @@ bool PLY::DOM::ParseInstance(IOStreamBuffer<char> &streamBuffer, DOM *p_pcOut, P
         return false;
     }
 
-    //get next line after header
+    // get next line after header
     streamBuffer.getNextLine(buffer);
     if (!p_pcOut->ParseElementInstanceLists(streamBuffer, buffer, loader)) {
         ASSIMP_LOG_VERBOSE_DEBUG("PLY::DOM::ParseInstance() failure");
@@ -558,23 +595,24 @@ bool PLY::ElementInstanceList::ParseInstanceList(
         }
     } else {
         const char *pCur = (const char *)&buffer[0];
+        const char *end = pCur + buffer.size();
         // be sure to have enough storage
         for (unsigned int i = 0; i < pcElement->NumOccur; ++i) {
             if (p_pcOut)
-                PLY::ElementInstance::ParseInstance(pCur, pcElement, &p_pcOut->alInstances[i]);
+                PLY::ElementInstance::ParseInstance(pCur, end, pcElement, &p_pcOut->alInstances[i]);
             else {
                 ElementInstance elt;
-                PLY::ElementInstance::ParseInstance(pCur, pcElement, &elt);
+                PLY::ElementInstance::ParseInstance(pCur, end, pcElement, &elt);
 
                 // Create vertex or face
                 if (pcElement->eSemantic == EEST_Vertex) {
-                    //call loader instance from here
+                    // call loader instance from here
                     loader->LoadVertex(pcElement, &elt, i);
                 } else if (pcElement->eSemantic == EEST_Face) {
-                    //call loader instance from here
+                    // call loader instance from here
                     loader->LoadFace(pcElement, &elt, i);
                 } else if (pcElement->eSemantic == EEST_TriStrip) {
-                    //call loader instance from here
+                    // call loader instance from here
                     loader->LoadFace(pcElement, &elt, i);
                 }
             }
@@ -611,13 +649,13 @@ bool PLY::ElementInstanceList::ParseInstanceListBinary(
 
             // Create vertex or face
             if (pcElement->eSemantic == EEST_Vertex) {
-                //call loader instance from here
+                // call loader instance from here
                 loader->LoadVertex(pcElement, &elt, i);
             } else if (pcElement->eSemantic == EEST_Face) {
-                //call loader instance from here
+                // call loader instance from here
                 loader->LoadFace(pcElement, &elt, i);
             } else if (pcElement->eSemantic == EEST_TriStrip) {
-                //call loader instance from here
+                // call loader instance from here
                 loader->LoadFace(pcElement, &elt, i);
             }
         }
@@ -626,7 +664,7 @@ bool PLY::ElementInstanceList::ParseInstanceListBinary(
 }
 
 // ------------------------------------------------------------------------------------------------
-bool PLY::ElementInstance::ParseInstance(const char *&pCur,
+bool PLY::ElementInstance::ParseInstance(const char *&pCur, const char *end,
         const PLY::Element *pcElement,
         PLY::ElementInstance *p_pcOut) {
     ai_assert(nullptr != pcElement);
@@ -638,7 +676,7 @@ bool PLY::ElementInstance::ParseInstance(const char *&pCur,
     std::vector<PLY::PropertyInstance>::iterator i = p_pcOut->alProperties.begin();
     std::vector<PLY::Property>::const_iterator a = pcElement->alProperties.begin();
     for (; i != p_pcOut->alProperties.end(); ++i, ++a) {
-        if (!(PLY::PropertyInstance::ParseInstance(pCur, &(*a), &(*i)))) {
+        if (!(PLY::PropertyInstance::ParseInstance(pCur, end, &(*a), &(*i)))) {
             ASSIMP_LOG_WARN("Unable to parse property instance. "
                             "Skipping this element instance");
 
@@ -678,13 +716,13 @@ bool PLY::ElementInstance::ParseInstanceBinary(
 }
 
 // ------------------------------------------------------------------------------------------------
-bool PLY::PropertyInstance::ParseInstance(const char *&pCur,
-        const PLY::Property *prop, PLY::PropertyInstance *p_pcOut) {
+bool PLY::PropertyInstance::ParseInstance(const char *&pCur, const char *end, const PLY::Property *prop,
+        PLY::PropertyInstance *p_pcOut) {
     ai_assert(nullptr != prop);
     ai_assert(nullptr != p_pcOut);
 
     // skip spaces at the beginning
-    if (!SkipSpaces(&pCur)) {
+    if (!SkipSpaces(&pCur, end)) {
         return false;
     }
 
@@ -699,7 +737,7 @@ bool PLY::PropertyInstance::ParseInstance(const char *&pCur,
         // parse all list elements
         p_pcOut->avList.resize(iNum);
         for (unsigned int i = 0; i < iNum; ++i) {
-            if (!SkipSpaces(&pCur))
+            if (!SkipSpaces(&pCur, end))
                 return false;
 
             PLY::PropertyInstance::ParseValue(pCur, prop->eType, &p_pcOut->avList[i]);
@@ -711,7 +749,7 @@ bool PLY::PropertyInstance::ParseInstance(const char *&pCur,
         PLY::PropertyInstance::ParseValue(pCur, prop->eType, &v);
         p_pcOut->avList.push_back(v);
     }
-    SkipSpacesAndLineEnd(&pCur);
+    SkipSpacesAndLineEnd(&pCur, end);
     return true;
 }
 
@@ -774,7 +812,7 @@ bool PLY::PropertyInstance::ParseValue(const char *&pCur,
     ai_assert(nullptr != pCur);
     ai_assert(nullptr != out);
 
-    //calc element size
+    // calc element size
     bool ret = true;
     switch (eType) {
     case EDT_UInt:
@@ -795,14 +833,14 @@ bool PLY::PropertyInstance::ParseValue(const char *&pCur,
         // technically this should cast to float, but people tend to use float descriptors for double data
         // this is the best way to not risk losing precision on import and it doesn't hurt to do this
         ai_real f;
-        pCur = fast_atoreal_move<ai_real>(pCur, f);
+        pCur = fast_atoreal_move(pCur, f);
         out->fFloat = (ai_real)f;
         break;
 
     case EDT_Double:
         double d;
-        pCur = fast_atoreal_move<double>(pCur, d);
-        out->fDouble = (double)d;
+        pCur = fast_atoreal_move(pCur, d);
+        out->fDouble = d;
         break;
 
     case EDT_INVALID:
@@ -815,16 +853,16 @@ bool PLY::PropertyInstance::ParseValue(const char *&pCur,
 }
 
 // ------------------------------------------------------------------------------------------------
-bool PLY::PropertyInstance::ParseValueBinary(IOStreamBuffer<char> &streamBuffer,
+bool PropertyInstance::ParseValueBinary(IOStreamBuffer<char> &streamBuffer,
         std::vector<char> &buffer,
         const char *&pCur,
         unsigned int &bufferSize,
-        PLY::EDataType eType,
-        PLY::PropertyInstance::ValueUnion *out,
+        EDataType eType,
+        PropertyInstance::ValueUnion *out,
         bool p_bBE) {
     ai_assert(nullptr != out);
 
-    //calc element size
+    // calc element size
     unsigned int lsize = 0;
     switch (eType) {
     case EDT_Char:
@@ -852,11 +890,11 @@ bool PLY::PropertyInstance::ParseValueBinary(IOStreamBuffer<char> &streamBuffer,
         break;
     }
 
-    //read the next file block if needed
+    // read the next file block if needed
     if (bufferSize < lsize) {
         std::vector<char> nbuffer;
         if (streamBuffer.getNextBlock(nbuffer)) {
-            //concat buffer contents
+            // concat buffer contents
             buffer = std::vector<char>(buffer.end() - bufferSize, buffer.end());
             buffer.insert(buffer.end(), nbuffer.begin(), nbuffer.end());
             nbuffer.clear();
@@ -957,5 +995,9 @@ bool PLY::PropertyInstance::ParseValueBinary(IOStreamBuffer<char> &streamBuffer,
 
     return ret;
 }
+
+// ------------------------------------------------------------------------------------------------
+
+} // namespace Assimp
 
 #endif // !! ASSIMP_BUILD_NO_PLY_IMPORTER

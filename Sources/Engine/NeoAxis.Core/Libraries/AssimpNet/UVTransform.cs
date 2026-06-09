@@ -20,7 +20,7 @@
 * THE SOFTWARE.
 */
 
-using System;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace Internal.Assimp
@@ -28,24 +28,11 @@ namespace Internal.Assimp
     /// <summary>
     /// Defines how an UV channel is transformed.
     /// </summary>
+    /// <param name="Translation">Translation on the U and V axes. Default is 0|0.</param>
+    /// <param name="Scaling">Scaling on the U and V axes. Default is 1|1.</param>
+    /// <param name="Rotation">Rotation in counter-clockwise direction, specified in
+    /// radians. The rotation center is 0.5f|0.5f and the
+    /// default value is zero.</param>
     [StructLayout(LayoutKind.Sequential)]
-    public struct UVTransform
-    {
-        /// <summary>
-        /// Translation on the U and V axes. Default is 0|0
-        /// </summary>
-        public Vector2D Translation;
-
-        /// <summary>
-        /// Scaling on the U and V axes. Default is 1|1.
-        /// </summary>
-        public Vector2D Scaling;
-
-        /// <summary>
-        /// Rotation in counter-clockwise direction, specfied in
-        /// radians. The rotation center is 0.5f|0.5f and the
-        /// default value is zero.
-        /// </summary>
-        public float Rotation;
-    }
+    public record struct UVTransform(Vector2 Translation, Vector2 Scaling, float Rotation);
 }

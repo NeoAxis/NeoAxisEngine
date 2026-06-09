@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2024.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1144, 842\"><KW V=\"1\" A=\"70987FB780954C7637A20C3819F3FC99\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"064BDE238FF64DD14DAD2C4984CE9D22\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"70987FB780954C7637A20C3819F3FC99\"><KP UN=\"70987FB780954C7637A20C3819F3FC99\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"C279F2E359004186F69BE819B3194B47\" S=\"False\"><CPD ObjPath=\"$SFCrate1 2\\$Paint Layer\\$C# Script\" /></KP><KP UN=\"C6DB2560456C419026A523E7F22642B8\" S=\"False\"><CPD ObjPath=\"$SFCrate1 3\\$Paint Layer\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1192, 963\"><KW V=\"1\" A=\"70987FB780954C7637A20C3819F3FC99\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"064BDE238FF64DD14DAD2C4984CE9D22\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"70987FB780954C7637A20C3819F3FC99\"><KP UN=\"70987FB780954C7637A20C3819F3FC99\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"C279F2E359004186F69BE819B3194B47\" S=\"False\"><CPD ObjPath=\"$SFCrate1 2\\$Paint Layer\\$C# Script\" /></KP><KP UN=\"C6DB2560456C419026A523E7F22642B8\" S=\"False\"><CPD ObjPath=\"$SFCrate1 3\\$Paint Layer\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -36,7 +36,8 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 60000
+		Brightness = 30000
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -48,6 +49,7 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 91.429
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
@@ -76,7 +78,6 @@
 			.component NeoAxis.RenderingEffect_ToneMapping
 			{
 				Name = Tone Mapping
-				Intensity = 0.5
 			}
 			.component NeoAxis.RenderingEffect_ToLDR
 			{
@@ -124,6 +125,7 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 91.429
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.MeshInSpace
 	{
@@ -203,7 +205,7 @@
 		.component NeoAxis.PaintLayer
 		{
 			Name = Paint Layer
-			MaterialColor = 1 1 1 0.0027472
+			MaterialColor = 1 1 1 0.927698
 			BlendMode = Transparent
 			MaskImage
 			{
@@ -258,7 +260,7 @@
 		.component NeoAxis.PaintLayer
 		{
 			Name = Paint Layer
-			MaterialColor = 1 1 1 0.4476584
+			MaterialColor = 1 1 1 0.7589873
 			BlendMode = Transparent
 			MaskImage
 			{

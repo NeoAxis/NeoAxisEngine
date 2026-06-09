@@ -39,14 +39,14 @@ namespace Internal.Assimp
         /// Initializes a new instance of the <see cref="AssimpException"/> class.
         /// </summary>
         /// <param name="msg">The error message.</param>
-        public AssimpException(String msg) : base(msg) { }
+        public AssimpException(string msg) : base(msg) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AssimpException"/> class.
         /// </summary>
         /// <param name="paramName">Name of the param.</param>
         /// <param name="msg">The error message.</param>
-        public AssimpException(String paramName, String msg)
+        public AssimpException(string paramName, string msg)
             : base("Parameter: " + paramName + " Error: " + msg) { }
 
         /// <summary>
@@ -54,6 +54,6 @@ namespace Internal.Assimp
         /// </summary>
         /// <param name="msg">The error message</param>
         /// <param name="innerException">The inner exception.</param>
-        public AssimpException(String msg, Exception innerException) : base(msg, innerException) { }
+        public AssimpException(string msg, Exception innerException) : base(msg, innerException) { }
     }
 }

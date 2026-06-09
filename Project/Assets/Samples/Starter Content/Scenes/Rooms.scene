@@ -1,8 +1,9 @@
-// Made with NeoAxis Engine 2024.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
 	BackgroundColor = 0 0 0
+	BackgroundColorAffectLighting = 0
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -19,7 +20,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "2.3993412177361 7.69702804257456 12.2467912686789; -0.381749148499888 0.381328544260311 0.595666670184096 0.595010375526103; 1 1 1"
+		Transform = "-2.77236623614367 21.0672306654661 6.15728519345485; 0.207913319409295 0.330600330957842 -0.490090221494516 0.779286242389939; 1 1 1"
 	}
 	.component NeoAxis.Camera
 	{
@@ -37,7 +38,8 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 60000
+		Brightness = 10000
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -50,12 +52,12 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 91.429
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
 		LODScale = 2
-		ShadowIntensity = 0.75
 		ShadowDirectionalDistance = 70
 		ShadowPointSpotlightDistance = 70
 		.component NeoAxis.Component
@@ -77,7 +79,6 @@
 			.component NeoAxis.RenderingEffect_ToneMapping
 			{
 				Name = Tone Mapping
-				Intensity = 0.5
 			}
 			.component NeoAxis.RenderingEffect_ToLDR
 			{
@@ -168,7 +169,7 @@
 		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
-			Transform = "0 0 0.365686006920686; 0 0 0 1; 1 1 1"
+			Transform = "0 0 0.487588211884837; 0 0 0 1; 1 1 1"
 			MaterialFriction = 0.2
 			.component NeoAxis.CollisionShape_Mesh
 			{
@@ -289,8 +290,9 @@
 		Name = Light 3
 		Transform = "-0.331504629760971 16.5 2.81644912329719; 0 0 0 1; 1 1 1"
 		Type = Point
-		Brightness = 300000
+		Brightness = 120000
 		AttenuationFar = 30
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.SurfaceArea
 	{
@@ -437,16 +439,18 @@
 		Name = Light 2
 		Transform = "6.16849537023903 10.5 3; 0 0 0 1; 1 1 1"
 		Type = Point
-		Brightness = 300000
+		Brightness = 120000
 		AttenuationFar = 30
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
 		Name = Light 7
 		Transform = "-1.58150462976097 10.5 3; 0 0 0 1; 1 1 1"
 		Type = Point
-		Brightness = 300000
+		Brightness = 120000
 		AttenuationFar = 30
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.AreaPoint
 	{

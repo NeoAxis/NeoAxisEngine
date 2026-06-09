@@ -34,18 +34,18 @@ FI_STRUCT (FIMEMORYHEADER) {
 	When the buffer is a wrapped buffer, it is read-only, no need to delete it. 
 	When the buffer is a read/write buffer, it is allocated dynamically and must be deleted when no longer needed.
 	*/
-	BOOL delete_me;
+	bool delete_me;
 	/**
 	file_length is equal to the input buffer size when the buffer is a wrapped buffer, i.e. file_length == data_length. 
 	file_length is the amount of the written bytes when the buffer is a read/write buffer.
 	*/
-	long file_length;
+	int file_length;
 	/**
 	When using read-only input buffers, data_length is equal to the input buffer size, i.e. the file_length.
 	When using read/write buffers, data_length is the size of the allocated buffer, 
 	whose size is greater than or equal to file_length.
 	*/
-	long data_length;
+	int data_length;
 	/**
 	start buffer address
 	*/
@@ -53,7 +53,7 @@ FI_STRUCT (FIMEMORYHEADER) {
 	/**
 	Current position into the memory stream
 	*/
-	long current_position;
+	int current_position;
 };
 
 void SetDefaultIO(FreeImageIO *io);

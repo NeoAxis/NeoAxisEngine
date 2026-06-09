@@ -21,14 +21,10 @@ namespace NeoAxis
 			ShaderFile = shaderDefault;
 		}
 
-		////!!!!возможность: или белая, или черная текстуры подставлять вместо ""
-		const string lookupTableDefault = @"Base\Images\Color grading LUTs\Sepia.png";
 		/// <summary>
-		/// The lookup texture (LUT) used.
+		/// The lookup texture used.
 		/// </summary>
-		[DefaultValueReference( lookupTableDefault )]
-		//[DefaultValue( "reference:" + lookupTableDefault )]
-		//[DefaultValue( null )]
+		[DefaultValueReference( @"Base\Images\Color grading LUTs\No effect.png" )]
 		[ImageComponent.BindSettings( TextureAddressingMode.Clamp, FilterOption.Linear, FilterOption.Linear, FilterOption.None, 1 )]
 		public Reference<ImageComponent> LookupTable
 		{
@@ -37,7 +33,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="LookupTable"/> property value changes.</summary>
 		public event Action<RenderingEffect_ColorGrading> LookupTableChanged;
-		ReferenceField<ImageComponent> _lookupTable = new Reference<ImageComponent>( null, lookupTableDefault );
+		ReferenceField<ImageComponent> _lookupTable = new Reference<ImageComponent>( null, @"Base\Images\Color grading LUTs\No effect.png" );
 
 		/// <summary>
 		/// The color multiplier.

@@ -31,7 +31,7 @@ namespace Internal.Assimp
     /// </summary>
     public sealed class MeshMorphAnimationChannel : IMarshalable<MeshMorphAnimationChannel, AiMeshMorphAnim>
     {
-        private String m_name;
+        private string m_name;
         private List<MeshMorphKey> m_meshMorphkeys;
 
         /// <summary>
@@ -39,57 +39,33 @@ namespace Internal.Assimp
         /// animation meshes need to be named (not necessarily uniquely, the name can basically
         /// serve as a wildcard to select a group of meshes with similar animation setup).
         /// </summary>
-        public String Name
+        public string Name
         {
-            get
-            {
-                return m_name;
-            }
-            set
-            {
-                m_name = value;
-            }
+            get => m_name;
+            set => m_name = value;
         }
 
         /// <summary>
         /// Gets the number of mesh morph keys in this animation channel. There will always be at least one key.
         /// </summary>
-        public int MeshMorphKeyCount
-        {
-            get
-            {
-                return m_meshMorphkeys.Count;
-            }
-        }
+        public int MeshMorphKeyCount => m_meshMorphkeys.Count;
 
         /// <summary>
         /// Gets if this animation channel has mesh keys - this should always be true.
         /// </summary>
-        public bool HasMeshMorphKeys
-        {
-            get
-            {
-                return m_meshMorphkeys.Count > 0;
-            }
-        }
+        public bool HasMeshMorphKeys => m_meshMorphkeys.Count > 0;
 
         /// <summary>
         /// Gets the mesh morph keyframes of the animation. This should not be null.
         /// </summary>
-        public List<MeshMorphKey> MeshMorphKeys
-        {
-            get
-            {
-                return m_meshMorphkeys;
-            }
-        }
+        public List<MeshMorphKey> MeshMorphKeys => m_meshMorphkeys;
 
         /// <summary>
         /// Constructs a new instance of the <see cref="MeshMorphAnimationChannel" /> class.
         /// </summary>
         public MeshMorphAnimationChannel()
         {
-            m_name = String.Empty;
+            m_name = string.Empty;
             m_meshMorphkeys = new List<MeshMorphKey>();
         }
 
@@ -98,7 +74,7 @@ namespace Internal.Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<MeshMorphAnimationChannel, AiMeshMorphAnim>.IsNativeBlittable { get { return true; } }
+        bool IMarshalable<MeshMorphAnimationChannel, AiMeshMorphAnim>.IsNativeBlittable => true;
 
         /// <summary>
         /// Reads the unmanaged data from the native value.
@@ -125,7 +101,7 @@ namespace Internal.Assimp
             nativeValue.Keys = IntPtr.Zero;
 
             if(nativeValue.NumKeys > 0)
-                nativeValue.Keys = MemoryHelper.ToNativeArray<MeshMorphKey, AiMeshMorphKey>(m_meshMorphkeys.ToArray(), false);
+                nativeValue.Keys = MemoryHelper.ToNativeArray<MeshMorphKey, AiMeshMorphKey>(m_meshMorphkeys, false);
         }
 
         /// <summary>

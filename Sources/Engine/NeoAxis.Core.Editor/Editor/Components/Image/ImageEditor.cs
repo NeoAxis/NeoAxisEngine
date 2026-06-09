@@ -25,6 +25,7 @@ namespace NeoAxis.Editor
 		{
 			base.OnLoad( e );
 
+			Is3DScene = false;
 			var scene = CreateScene( false );
 
 			if( Texture?.Result?.TextureType == ImageComponent.TypeEnum.Cube )

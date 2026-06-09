@@ -51,6 +51,12 @@ typedef struct {
 } fi_ioStructure, *pfi_ioStructure;
 
 // ==========================================================
+// Plugin Interface
+// ==========================================================
+
+static int s_format_id;
+
+// ==========================================================
 // libpng interface
 // ==========================================================
 
@@ -77,8 +83,8 @@ _FlushProc(png_structp png_ptr) {
 
 static void
 error_handler(png_structp png_ptr, const char *error) {
-	(png_structp)png_ptr;
-	throw error;
+	FreeImage_OutputMessageProc(s_format_id, error);
+	png_longjmp(png_ptr, 1);
 }
 
 // in FreeImage warnings disabled
@@ -233,12 +239,6 @@ WriteMetadata(png_structp png_ptr, png_infop info_ptr, FIBITMAP *dib) {
 
 	return bResult;
 }
-
-// ==========================================================
-// Plugin Interface
-// ==========================================================
-
-static int s_format_id;
 
 // ==========================================================
 // Plugin Implementation
@@ -549,11 +549,13 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 
 			// init the IO
 
-			png_set_read_fn(png_ptr, &fio, _ReadProc);
+			png_set_read_fn(png_ptr, &fio, _ReadProc);            
+			
+			// PNG errors will be redirected here
 
-            if (setjmp(png_jmpbuf(png_ptr))) {
-				png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-				return NULL;
+			if (setjmp(png_jmpbuf(png_ptr))) {
+				// assume error_handler was called before by the PNG library
+				throw((const char*)NULL);
 			}
 
 			// because we have already read the signature...
@@ -790,7 +792,9 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 			if (dib) {
 				FreeImage_Unload(dib);
 			}
-			FreeImage_OutputMessageProc(s_format_id, text);
+			if (NULL != text) {
+				FreeImage_OutputMessageProc(s_format_id, text);
+			}
 			
 			return NULL;
 		}

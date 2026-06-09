@@ -36,13 +36,7 @@ namespace Internal.Assimp
         /// <summary>
         /// Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1" />.
         /// </summary>
-        public int Count
-        {
-            get
-            {
-                return m_children.Count;
-            }
-        }
+        public int Count => m_children.Count;
 
         /// <summary>
         /// Gets or sets the element at the specified index.
@@ -71,13 +65,7 @@ namespace Internal.Assimp
         /// Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
         /// </summary>
         /// <returns>true if the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only; otherwise, false.</returns>
-        public bool IsReadOnly
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public bool IsReadOnly => false;
 
         /// <summary>
         /// Constructs a new instance of the <see cref="NodeCollection"/> class.
@@ -214,15 +202,6 @@ namespace Internal.Assimp
             }
 
             return false;
-        }
-
-        /// <summary>
-        /// Copies elements in the collection to a new array.
-        /// </summary>
-        /// <returns>Array of copied elements</returns>
-        public Node[] ToArray()
-        {
-            return m_children.ToArray();
         }
 
         /// <summary>

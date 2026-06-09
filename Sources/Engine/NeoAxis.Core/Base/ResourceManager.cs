@@ -612,7 +612,7 @@ namespace NeoAxis
 			RegisterType( "Assembly", new string[] { "dll" }, typeof( AssemblyResource ) );
 			RegisterType( "Component", new string[] { "component", "class", "type" }, typeof( Resource ) );
 
-			RegisterType( "Image", new string[] { "image", "jpg", "jif", "jpeg", "jpe", "tga", "targa", "dds", "png", "bmp", "psd", "hdr", "ico", "gif", "tif", "tiff", "exr", "j2k", "j2c", "jp2" }, typeof( ImageResource ) );
+			RegisterType( "Image", new string[] { "image", "jpg", "jif", "jpeg", "jpe", "tga", "targa", "dds", "png", "bmp", "psd", "hdr", "ico", "gif", "tif", "tiff", "exr", "j2k", "j2c", "jp2", "webp" }, typeof( ImageResource ) );
 
 			RegisterType( "Sound", new string[] { "sound", "ogg", "wav" }, typeof( SoundResource ) );
 			RegisterType( "Material", new string[] { "material" }, typeof( Resource ) );

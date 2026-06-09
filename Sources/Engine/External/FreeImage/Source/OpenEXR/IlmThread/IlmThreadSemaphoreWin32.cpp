@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef _WIN32
+
 ///////////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2005-2012, Industrial Light & Magic, a division of Lucas
@@ -37,10 +40,6 @@
 //	class Semaphore -- implementation for Windows
 //
 //-----------------------------------------------------------------------------
-
-#include "IlmBaseConfig.h"
-
-#if defined(_WIN32) && !defined(HAVE_PTHREAD) && !defined(HAVE_POSIX_SEMAPHORES)
 
 #include "IlmThreadSemaphore.h"
 #include "Iex.h"
@@ -150,4 +149,5 @@ Semaphore::value() const
 
 ILMTHREAD_INTERNAL_NAMESPACE_SOURCE_EXIT
 
+//!!!!betauser
 #endif

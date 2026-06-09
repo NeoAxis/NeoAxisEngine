@@ -1,19 +1,9 @@
 ﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
 using System;
-using System.Text;
-using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
 using Internal.ComponentFactory.Krypton.Toolkit;
-using Internal.ComponentFactory.Krypton.Navigator;
-using Internal.ComponentFactory.Krypton.Workspace;
-using Internal.ComponentFactory.Krypton.Docking;
-using System.IO;
-using System.Runtime.InteropServices;
-using Internal.SharpBgfx;
 
 namespace NeoAxis.Editor
 {
@@ -1596,7 +1586,6 @@ namespace NeoAxis.Editor
 			scene = ComponentUtility.CreateComponent<Scene>( null, true, enable );
 			sceneNeedDispose = true;
 
-			//!!!!что еще отключать?
 			scene.OctreeEnabled = false;
 
 			//rendering pipeline
@@ -1604,12 +1593,15 @@ namespace NeoAxis.Editor
 				var pipeline = (RenderingPipeline)scene.CreateComponent( RenderingSystem.RenderingPipelineBasic, -1, false );
 				scene.RenderingPipeline = pipeline;
 
-				//!!!!что еще отключать?
 				pipeline.DeferredShading = AutoTrueFalse.False;
 				pipeline.LODRange = new RangeI( 0, 0 );
+				( (RenderingPipeline_Basic)pipeline ).UseMultiRenderTargets = AutoTrueFalse.False;
+				( (RenderingPipeline_Basic)pipeline ).Shadows = false;
+				( (RenderingPipeline_Basic)pipeline ).ProvideColorDepthTextureCopy = AutoTrueFalse.False;
+				( (RenderingPipeline_Basic)pipeline ).LightGrid = AutoTrueFalse.False;
 
 				double c = 1;
-				double c2 = 1;
+				//double c2 = 1;
 
 				if( EditorAPI2.DarkTheme )
 					scene.BackgroundColor = new ColorValue( 40.0 / 255 * c, 40.0 / 255 * c, 40.0 / 255 * c );
@@ -1618,26 +1610,34 @@ namespace NeoAxis.Editor
 				scene.BackgroundColorAffectLighting = 1;
 				scene.BackgroundColorEnvironmentOverride = new ColorValue( 0.8, 0.8, 0.8 );
 
-				var backgroundEffects = pipeline.CreateComponent<Component>();
-				backgroundEffects.Name = "Background Effects";
+				//var backgroundEffects = pipeline.CreateComponent<Component>();
+				//backgroundEffects.Name = "Background Effects";
 
-				var vignetting = backgroundEffects.CreateComponent<RenderingEffect_Vignetting>();
-				if( EditorAPI2.DarkTheme )
-					vignetting.Color = new ColorValue( 45.0 / 255 * c2, 45.0 / 255 * c2, 45.0 / 255 * c2 );
-				else
-					vignetting.Color = new ColorValue( 24.0 / 255 * c2, 48.0 / 255 * c2, 72.0 / 255 * c2 );
-				vignetting.Radius = 2;
+				//var vignetting = backgroundEffects.CreateComponent<RenderingEffect_Vignetting>();
+				//if( EditorAPI2.DarkTheme )
+				//	vignetting.Color = new ColorValue( 45.0 / 255 * c2, 45.0 / 255 * c2, 45.0 / 255 * c2 );
+				//else
+				//	vignetting.Color = new ColorValue( 24.0 / 255 * c2, 48.0 / 255 * c2, 72.0 / 255 * c2 );
+				//vignetting.Radius = 2;
 
-				var noise = backgroundEffects.CreateComponent<RenderingEffect_Noise>();
-				noise.Multiply = new Range( 0.9, 1.1 );
+				//var noise = backgroundEffects.CreateComponent<RenderingEffect_Noise>();
+				//noise.Multiply = new Range( 0.9, 1.1 );
 
 				var sceneEffects = pipeline.CreateComponent<Component>();
 				sceneEffects.Name = "Scene Effects";
 
+				//tone mapping
+				if( Is3DScene )
+				{
+					var toneMapping = sceneEffects.CreateComponent<RenderingEffect_ToneMapping>();
+					toneMapping.Intensity = ReferenceUtility.MakeReference( "Base\\ProjectSettings.component|$Preview\\PreviewToneMapping" );
+				}
+
 				//antialiasing
 				sceneEffects.CreateComponent<RenderingEffect_ToLDR>();
 				var antialiasing = sceneEffects.CreateComponent<RenderingEffect_Antialiasing>();
-				antialiasing.BasicTechnique = RenderingEffect_Antialiasing.BasicTechniqueEnum.SSAAx4;
+				antialiasing.BasicTechnique = RenderingEffect_Antialiasing.BasicTechniqueEnum.FXAA; //SSAAx4;
+				antialiasing.MotionTechnique = RenderingEffect_Antialiasing.MotionTechniqueEnum.None;
 
 				pipeline.Enabled = true;
 			}
@@ -1647,7 +1647,6 @@ namespace NeoAxis.Editor
 				var light = scene.CreateComponent<Light>();
 				light.Type = Light.TypeEnum.Ambient;
 				light.Brightness = ReferenceUtility.MakeReference( "Base\\ProjectSettings.component|$Preview\\PreviewAmbientLightBrightness" );
-				//light.Brightness = ProjectSettings.Get.PreviewAmbientLightBrightness.Value;
 			}
 
 			//directional light
@@ -1656,7 +1655,6 @@ namespace NeoAxis.Editor
 				light.Type = Light.TypeEnum.Directional;
 				light.Transform = new Transform( new Vector3( 0, 0, 0 ), Quaternion.FromDirectionZAxisUp( new Vector3( 0, 0, -1 ) ), Vector3.One );
 				light.Brightness = ReferenceUtility.MakeReference( "Base\\ProjectSettings.component|$Preview\\PreviewDirectionalLightBrightness" );
-				//light.Brightness = ProjectSettings.Get.PreviewDirectionalLightBrightness.Value;
 				light.Shadows = false;
 				//light.Type = Light.TypeEnum.Point;
 				//light.Transform = new Transform( new Vec3( 0, 0, 2 ), Quat.Identity, Vec3.One );
@@ -2027,5 +2025,11 @@ namespace NeoAxis.Editor
 
 			objectCreationMode = mode;
 		}
+
+		/// <summary>
+		/// Whether to use 3D rendering in the window. This affects enabling of the tone mapping effect.
+		/// </summary>
+		[Browsable( false )]
+		public bool Is3DScene { get; set; } = true;
 	}
 }

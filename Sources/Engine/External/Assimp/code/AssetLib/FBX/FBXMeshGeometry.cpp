@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2022, assimp team
+Copyright (c) 2006-2026, assimp team
 
 All rights reserved.
 
@@ -45,6 +45,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifndef ASSIMP_BUILD_NO_FBX_IMPORTER
 
+#include <algorithm>
 #include <functional>
 
 #include "FBXMeshGeometry.h"
@@ -69,8 +70,10 @@ Geometry::Geometry(uint64_t id, const Element& element, const std::string& name,
         }
         const BlendShape* const bsp = ProcessSimpleConnection<BlendShape>(*con, false, "BlendShape -> Geometry", element);
         if (bsp) {
-            auto pr = blendShapes.insert(bsp);
-            if (!pr.second) {
+            // Only add a blendshape if it doesn't exist already
+            if (std::find(blendShapes.begin(), blendShapes.end(), bsp) == blendShapes.end()) {
+                blendShapes.push_back(bsp);
+            } else {
                 FBXImporter::LogWarn("there is the same blendShape id ", bsp->ID());
             }
         }
@@ -78,7 +81,7 @@ Geometry::Geometry(uint64_t id, const Element& element, const std::string& name,
 }
 
 // ------------------------------------------------------------------------------------------------
-const std::unordered_set<const BlendShape*>& Geometry::GetBlendShapes() const {
+const std::vector<const BlendShape*>& Geometry::GetBlendShapes() const {
     return blendShapes;
 }
 
@@ -644,10 +647,12 @@ void MeshGeometry::ReadVertexDataMaterials(std::vector<int>& materials_out, cons
         return;
     }
 
-    // materials are handled separately. First of all, they are assigned per-face
-    // and not per polyvert. Secondly, ReferenceInformationType=IndexToDirect
-    // has a slightly different meaning for materials.
-    ParseVectorDataArray(materials_out,GetRequiredElement(source,"Materials"));
+    if (source["Materials"]) {
+        // materials are handled separately. First of all, they are assigned per-face
+        // and not per polyvert. Secondly, ReferenceInformationType=IndexToDirect
+        // has a slightly different meaning for materials.
+        ParseVectorDataArray(materials_out, GetRequiredElement(source, "Materials"));
+    }
 
     if (MappingInformationType == "AllSame") {
         // easy - same material for all faces
@@ -683,11 +688,14 @@ ShapeGeometry::ShapeGeometry(uint64_t id, const Element& element, const std::str
         DOMError("failed to read Geometry object (class: Shape), no data scope found");
     }
     const Element& Indexes = GetRequiredElement(*sc, "Indexes", &element);
-    const Element& Normals = GetRequiredElement(*sc, "Normals", &element);
     const Element& Vertices = GetRequiredElement(*sc, "Vertices", &element);
     ParseVectorDataArray(m_indices, Indexes);
     ParseVectorDataArray(m_vertices, Vertices);
-    ParseVectorDataArray(m_normals, Normals);
+
+    if ((*sc)["Normals"]) {
+        const Element& Normals = GetRequiredElement(*sc, "Normals", &element);
+        ParseVectorDataArray(m_normals, Normals);
+    }
 }
 
 // ------------------------------------------------------------------------------------------------

@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using NeoAxis.Editor;
 using System.Linq;
-using Internal.SharpNav.Geometry;
 
 namespace NeoAxis
 {

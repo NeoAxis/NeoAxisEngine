@@ -453,3 +453,13 @@ void rayAABBIntersect(vec3 ray_origin, vec3 ray_dir, vec3 minpos, vec3 maxpos, o
 #endif
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+vec2 uvTransform(vec2 translation, float rotation, vec2 scale, vec2 texCoord)
+{
+	vec2 uv = texCoord * scale;
+    float c = cos( rotation );
+    float s = sin( rotation );
+    uv = vec2( uv.x * c - uv.y * s, uv.x * s + uv.y * c );
+	uv += vec2( translation.x, -translation.y );
+    return uv;
+}

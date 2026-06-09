@@ -1517,7 +1517,7 @@ namespace NeoAxis
 				{
 				//case nameof( InstancingMinCount ):
 				case nameof( InstancingMaxCount ):
-				//case nameof( InstancingTransparent ):
+					//case nameof( InstancingTransparent ):
 					if( !Instancing )
 						skip = true;
 					break;

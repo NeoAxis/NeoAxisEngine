@@ -2,7 +2,7 @@
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1174, 963\"><KW V=\"1\" A=\"A4F0C5CC785E4EED91B891480301153A\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"691D02B801C846BF37B51655FFEF360A\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"A4F0C5CC785E4EED91B891480301153A\"><KP UN=\"A4F0C5CC785E4EED91B891480301153A\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"2C6935ACDAC3458727866D15C720CE1D\" S=\"False\"><CPD ObjPath=\"$Button\\$C# Script\" /></KP><KP UN=\"6E004B7797A8473683B9007600BE6B86\" S=\"False\"><CPD ObjPath=\"$Default Gate 3\\$C# Script\" /></KP><KP UN=\"B00DB9D5A61F41985083294B365B5611\" S=\"False\"><CPD ObjPath=\"$Pipe 2\\$Interactive Object\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1143, 963\"><KW V=\"1\" A=\"A4F0C5CC785E4EED91B891480301153A\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"691D02B801C846BF37B51655FFEF360A\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"A4F0C5CC785E4EED91B891480301153A\"><KP UN=\"A4F0C5CC785E4EED91B891480301153A\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"2C6935ACDAC3458727866D15C720CE1D\" S=\"False\"><CPD ObjPath=\"$Button\\$C# Script\" /></KP><KP UN=\"6E004B7797A8473683B9007600BE6B86\" S=\"False\"><CPD ObjPath=\"$Default Gate 3\\$C# Script\" /></KP><KP UN=\"B00DB9D5A61F41985083294B365B5611\" S=\"False\"><CPD ObjPath=\"$Pipe 2\\$Interactive Object\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -36,7 +36,8 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 60000
+		Brightness = 30000
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -48,6 +49,7 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 91.429
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
@@ -73,7 +75,6 @@
 			.component NeoAxis.RenderingEffect_ToneMapping
 			{
 				Name = Tone Mapping
-				Intensity = 0.5
 			}
 			.component NeoAxis.RenderingEffect_ToLDR
 			{

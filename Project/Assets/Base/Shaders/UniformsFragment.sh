@@ -71,8 +71,8 @@ uniform vec4 u_lightGridParams;
 #define u_materialEmissive ( texelFetch( s_materials, ivec2( 4, frameMaterialIndex ), 0 ).xyz )
 #define u_materialReflectance ( texelFetch( s_materials, ivec2( 4, frameMaterialIndex ), 0 ).w )
 
-#define u_materialClearCoat ( texelFetch( s_materials, ivec2( 5, frameMaterialIndex ), 0 ).x )
-#define u_materialClearCoatRoughness ( texelFetch( s_materials, ivec2( 5, frameMaterialIndex ), 0 ).y )
+#define u_materialClearcoat ( texelFetch( s_materials, ivec2( 5, frameMaterialIndex ), 0 ).x )
+#define u_materialClearcoatRoughness ( texelFetch( s_materials, ivec2( 5, frameMaterialIndex ), 0 ).y )
 #define u_materialAnisotropy ( texelFetch( s_materials, ivec2( 5, frameMaterialIndex ), 0 ).z )
 #define u_materialThickness ( texelFetch( s_materials, ivec2( 5, frameMaterialIndex ), 0 ).w )
 
@@ -105,8 +105,8 @@ uniform vec4 u_lightGridParams;
 #define u_materialRoughness materialStandardFragment[3].w
 #define u_materialEmissive materialStandardFragment[4].xyz
 #define u_materialReflectance materialStandardFragment[4].w
-#define u_materialClearCoat materialStandardFragment[5].x
-#define u_materialClearCoatRoughness materialStandardFragment[5].y
+#define u_materialClearcoat materialStandardFragment[5].x
+#define u_materialClearcoatRoughness materialStandardFragment[5].y
 #define u_materialAnisotropy materialStandardFragment[5].z
 #define u_materialThickness materialStandardFragment[5].w
 #define u_materialSubsurfacePower materialStandardFragment[6].x

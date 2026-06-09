@@ -20,6 +20,8 @@
 // Use at your own risk!
 // ==========================================================
 
+#if INCLUDE_LIB_OPENEXR
+
 #include "FreeImage.h"
 #include "Utilities.h"
 
@@ -771,3 +773,5 @@ InitEXR(Plugin *plugin, int format_id) {
 	plugin->supports_icc_profiles_proc = NULL;
 	plugin->supports_no_pixels_proc = SupportsNoPixels;
 }
+
+#endif

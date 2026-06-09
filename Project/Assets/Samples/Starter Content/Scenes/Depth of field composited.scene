@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
@@ -22,6 +22,7 @@
 		Transform = "-27.7871391969358 37.4683781031502 24.8527169920668; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
 		Brightness = 30000
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -33,6 +34,7 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 90
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
@@ -49,7 +51,6 @@
 			.component NeoAxis.RenderingEffect_ToneMapping
 			{
 				Name = Tone Mapping
-				Intensity = 0.5
 			}
 			.component NeoAxis.RenderingEffect_ToLDR
 			{
@@ -145,6 +146,7 @@
 		Type = Point
 		Brightness = 514788.5
 		AttenuationFar = 93.025
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.MeshInSpace
 	{
@@ -154,10 +156,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -211,10 +209,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -266,10 +260,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -323,10 +313,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -379,10 +365,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -434,10 +416,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -453,10 +431,6 @@
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -474,10 +448,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -493,10 +463,6 @@
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -514,10 +480,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -533,10 +495,6 @@
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -554,10 +512,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -573,10 +527,6 @@
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -594,10 +544,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Tank Doodad\\Model.dae|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -613,10 +559,6 @@
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Tank Doodad\\Model.dae|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -634,10 +576,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Tank Doodad\\Model.dae|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -653,10 +591,6 @@
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Tank Doodad\\Model.dae|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -674,10 +608,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Tank Doodad\\Model.dae|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -693,10 +623,6 @@
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Tank Doodad\\Model.dae|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -714,10 +640,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Tank Doodad\\Model.dae|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -733,10 +655,6 @@
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Tank Doodad\\Model.dae|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -754,10 +672,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -774,10 +688,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -793,10 +703,6 @@
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -818,10 +724,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Materials\\$Sci-fi Drone Blue"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -837,10 +739,6 @@
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -862,10 +760,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Materials\\$Sci-fi Drone Red"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -881,10 +775,6 @@
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -902,10 +792,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -922,10 +808,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -941,10 +823,6 @@
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{

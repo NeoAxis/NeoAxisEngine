@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1155, 842\"><KW V=\"1\" A=\"C1F5BEB678A045B3BE91DBEA410F2DBB\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"32D7B3C3A5DC41F5B3B6142865E59344\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"C1F5BEB678A045B3BE91DBEA410F2DBB\"><KP UN=\"C1F5BEB678A045B3BE91DBEA410F2DBB\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"B5B5A5A454584B369CA7ABFD6839B548\" S=\"False\"><CPD ObjPath=\"$GetObjectTransform\\$Flowchart\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1192, 963\"><KW V=\"1\" A=\"C1F5BEB678A045B3BE91DBEA410F2DBB\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"32D7B3C3A5DC41F5B3B6142865E59344\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"C1F5BEB678A045B3BE91DBEA410F2DBB\"><KP UN=\"C1F5BEB678A045B3BE91DBEA410F2DBB\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"B5B5A5A454584B369CA7ABFD6839B548\" S=\"False\"><CPD ObjPath=\"$GetObjectTransform\\$Flowchart\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	DisplayDevelopmentDataInSimulation = True
 	OctreeEnabled = False
 	RenderingPipeline
@@ -25,6 +25,7 @@
 		Transform = "-27.7871391969358 37.4683781031502 14.686420383686; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
 		Brightness = 20000
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
@@ -51,9 +52,7 @@
 			}
 			.component NeoAxis.RenderingEffect_ToneMapping
 			{
-				Enabled = False
 				Name = Tone Mapping
-				Intensity = 0.5
 			}
 			.component NeoAxis.RenderingEffect_ColorGrading
 			{
@@ -98,6 +97,7 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 90
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Material
 	{
@@ -153,10 +153,6 @@
 		{
 			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -209,10 +205,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -246,10 +238,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -306,10 +294,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -679,6 +663,7 @@
 		Transform = "12.7253496792215 -3.32669780264678 -13.7046880684082; -0.264977845245967 0.273519218321245 0.664112001992913 0.643373318957745; 1 1 1"
 		Type = Spotlight
 		Brightness = 8043570
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.SoundSource
 	{

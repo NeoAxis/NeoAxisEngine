@@ -872,26 +872,22 @@ namespace NeoAxis.Editor
 			kryptonRibbon.ClickAppButton();
 		}
 
-		public void RenderViewports( out bool existActiveViewports )
+		public void RenderViewports( out bool existActiveViewports, bool deleteAll = false )
 		{
 			existActiveViewports = false;
 
 			if( EngineApp.AfterFatalOperations )
 				return;
 
-			//!!!!
-
-			//!!!!каким-то не нужно часто обновляться
-
-			if( Visible && WindowState != FormWindowState.Minimized )
+			if( Visible && WindowState != FormWindowState.Minimized || deleteAll )
 			{
 				//get available controls
-				List<EngineViewportControl> toRender = new List<EngineViewportControl>();
-				List<EngineViewportControl> unvisible = new List<EngineViewportControl>();
+				var toRender = new List<EngineViewportControl>();
+				var unvisible = new List<EngineViewportControl>();
 
 				foreach( var control in EngineViewportControl.AllInstances )
 				{
-					if( control.IsAllowRender() )
+					if( control.IsAllowRender() && !deleteAll )
 					{
 						if( control.AutomaticUpdateFPS != 0 )
 							toRender.Add( control );
@@ -900,12 +896,27 @@ namespace NeoAxis.Editor
 						unvisible.Add( control );
 				}
 
+
+				//{
+				//	var unvisibleWithRenderTargets = unvisible.Count( w => w.RenderWindow != null );
+				//	Log.Info( $"All {EngineViewportControl.AllInstances.Count}, Unvisible {unvisible.Count}, Unvisible with render targets {unvisibleWithRenderTargets}" );
+				//}
+
+				//!!!!можно проверять сколько кадров не рисовался, тогда без ожидания
+
+
 				bool existsToDispose = false;
 				foreach( var control in unvisible )
 				{
-					var context = control.Viewport?.RenderingContext;
-					if( context != null )
+					if( control.RenderWindow != null )
+					{
 						existsToDispose = true;
+						break;
+					}
+
+					//var context = control.Viewport?.RenderingContext;
+					//if( context != null )
+					//	existsToDispose = true;
 				}
 
 				if( existsToDispose )
@@ -919,24 +930,33 @@ namespace NeoAxis.Editor
 				//destroy render targets for unvisible controls
 				foreach( var control in unvisible )
 				{
-					var context = control.Viewport?.RenderingContext;
-					if( context != null )
-					{
-						control.Viewport.RenderingContext = null;
-						context.Dispose();
-					}
+					control.DestroyRenderTarget();
 
 					//var context = control.Viewport?.RenderingContext;
 					//if( context != null )
 					//{
-					//	if( context.DynamicTexturesAreExists() )
-					//	{
-					//		context.MultiRenderTarget_DestroyAll();
-					//		context.DynamicTexture_DestroyAll();
-
-					//		callFrame = true;
-					//	}
+					//	control.Viewport.RenderingContext = null;
+					//	context.Dispose();
 					//}
+
+					////var context = control.Viewport?.RenderingContext;
+					////if( context != null )
+					////{
+					////	if( context.DynamicTexturesAreExists() )
+					////	{
+					////		context.MultiRenderTarget_DestroyAll();
+					////		context.DynamicTexture_DestroyAll();
+
+					////		callFrame = true;
+					////	}
+					////}
+				}
+
+				//preview images (delete)
+				if( deleteAll )
+				{
+					if( EngineApp.Instance != null && EngineApp.Created )
+						PreviewImagesManager.Update( deleteAll );
 				}
 
 				if( existsToDispose )
@@ -945,13 +965,12 @@ namespace NeoAxis.Editor
 					RenderingSystem.CallFrame();
 					Thread.Sleep( 10 );
 					RenderingSystem.CallFrame();
-					Thread.Sleep( 10 );
 				}
 
 				//preview images
 				if( EngineApp.Instance != null && EngineApp.Created )
 				{
-					PreviewImagesManager.Update();
+					PreviewImagesManager.Update( deleteAll );
 					if( PreviewImagesManager.ExistsWorkingProcessors() )
 						existActiveViewports = true;
 				}
@@ -965,83 +984,7 @@ namespace NeoAxis.Editor
 						control.TryRender();
 				}
 			}
-
-			//bool allowRender = MainForm.Instance.Visible &&
-			//	MainForm.Instance.WindowState != FormWindowState.Minimized &&
-			//	MainForm.Instance.IsAllowRenderScene();
-
-			//internal bool IsAllowRenderScene()
-			//{
-			//	if( runMapProcess != null )
-			//		return false;
-			//	if( !timer1.Enabled )
-			//		return false;
-
-			//	Form activeForm = ActiveForm;
-			//	if( activeForm == null )
-			//		return false;
-
-			//	string fullName = activeForm.GetType().FullName;
-			//	if( fullName == "System.Windows.Forms.PropertyGridInternal.PropertyGridView+DropDownHolder" )
-			//		return true;
-			//	if( fullName == "WeifenLuo.WinFormsUI.Docking.FloatWindow" )
-			//		return true;
-
-			//	//MapCompositorManager form
-			//	{
-			//		string helper = activeForm.Tag as string;
-			//		if( helper != null && helper == "MapCompositorManagerForm" )
-			//			return true;
-			//	}
-
-			//	Form form = activeForm;
-			//	while( form != null )
-			//	{
-			//		if( form == this )
-			//			return true;
-			//		if( form.Modal )
-			//			return false;
-			//		form = form.Owner;
-			//	}
-
-			//	return false;
-			//}
-
-
 		}
-
-		////!!!!temp
-		//public static bool checkRestartApplicationToApplyChangedNeedCheck;
-		//bool checkRestartApplicationToApplyChangedInside;
-		//void CheckRestartApplicationToApplyChanged()
-		//{
-		//	if( !checkRestartApplicationToApplyChangedNeedCheck )
-		//		return;
-
-		//	if( checkRestartApplicationToApplyChangedInside )
-		//		return;
-		//	checkRestartApplicationToApplyChangedInside = true;
-
-		//	checkRestartApplicationToApplyChangedNeedCheck = false;
-
-		//	//!!!!
-		//	//ScreenNotifications.Show( "(TEMP) Restart application to affect other resources.", true );
-
-		//	//{
-		//	//	string text = "Unimplemented feature.\n\n";
-		//	//	text += "The automatic resource updating after making changes at this time is not supported. Need restart application.\r\r";
-		//	//	text += "Restart?";
-
-		//	//	var result = EditorMessageBox.ShowQuestion( text, MessageBoxButtons.YesNo );
-		//	//	if( result == DialogResult.Yes )
-		//	//	{
-		//	//		EditorProgram.needRestartApplication = true;
-		//	//		EditorForm.Instance.Close();
-		//	//	}
-		//	//}
-
-		//	checkRestartApplicationToApplyChangedInside = false;
-		//}
 
 		[Browsable( false )]
 		public WorkspaceControllerForForm WorkspaceController
@@ -2384,6 +2327,14 @@ namespace NeoAxis.Editor
 				handleParam.ExStyle |= 0x02000000;//WS_EX_COMPOSITED       
 				return handleParam;
 			}
+		}
+
+		protected override void OnResize( EventArgs e )
+		{
+			base.OnResize( e );
+
+			if( WindowState == FormWindowState.Minimized )
+				RenderViewports( out _, true );
 		}
 	}
 }

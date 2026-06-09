@@ -290,9 +290,9 @@ void main()
 	float metallic = u_materialMetallic;
 	float roughness = u_materialRoughness;
 	float reflectance = u_materialReflectance;
-	float clearCoat = u_materialClearCoat;
-	float clearCoatRoughness = u_materialClearCoatRoughness;
-	vec3 clearCoatNormal = vec3_splat(0);
+	float clearcoat = u_materialClearcoat;
+	float clearcoatRoughness = u_materialClearcoatRoughness;
+	vec3 clearcoatNormal = vec3_splat(0);
 	float anisotropy = u_materialAnisotropy;
 	vec3 anisotropyDirection = vec3_splat(0);// = u_materialAnisotropyDirection;
 	float anisotropyDirectionBasis = u_materialAnisotropyDirectionBasis;
@@ -436,12 +436,12 @@ void main()
 #endif	
 
 	MEDIUMP vec3 bitangent = cross(tangent.xyz, inputWorldNormal) * tangent.w;
+	MEDIUMP mat3 tbn = mtxFromCols(tangent.xyz, bitangent, inputWorldNormal);
 	
 #if defined(GLOBAL_NORMAL_MAPPING) && GLOBAL_MATERIAL_SHADING != GLOBAL_MATERIAL_SHADING_SIMPLE
 	BRANCH
 	if(any2(normal))
 	{
-		MEDIUMP mat3 tbn = transpose(mtxFromRows(tangent.xyz, bitangent, inputWorldNormal));
 		normal = expand(normal);
 		normal.z = sqrt(max(1.0 - dot(normal.xy, normal.xy), 0.0));
 		normal = normalize(mul(tbn, normal));
@@ -457,15 +457,16 @@ void main()
 		normal = -normal;
 #endif
 
-	//clearCoatNormal
-#ifdef MATERIAL_HAS_CLEAR_COAT
-	if(any2(clearCoatNormal))
+	//clearcoatNormal
+#ifdef MATERIAL_HAS_CLEARCOAT
+	if(any2(clearcoatNormal))
 	{
-		clearCoatNormal = expand(clearCoatNormal);
-		clearCoatNormal.z = sqrt(max(1.0 - dot(clearCoatNormal.xy, clearCoatNormal.xy), 0.0));
+		clearcoatNormal = expand(clearcoatNormal);
+		clearcoatNormal.z = sqrt(max(1.0 - dot(clearcoatNormal.xy, clearcoatNormal.xy), 0.0));
+		clearcoatNormal = normalize(mul(tbn, clearcoatNormal));
 	}	
 	else
-		clearCoatNormal = normal;
+		clearcoatNormal = normal;
 #endif
 
 	//ambient light
@@ -651,10 +652,10 @@ void main()
 						material.subsurfaceColor = subsurfaceColor;
 					#endif
 
-					#ifdef MATERIAL_HAS_CLEAR_COAT
-						material.clearCoat = clearCoat;
-						material.clearCoatRoughness = clearCoatRoughness;
-						material.clearCoatNormal = clearCoatNormal;
+					#ifdef MATERIAL_HAS_CLEARCOAT
+						material.clearcoat = clearcoat;
+						material.clearcoatRoughness = clearcoatRoughness;
+						material.clearcoatNormal = clearcoatNormal;
 					#endif
 
 					#if defined(SHADING_MODEL_CLOTH)
@@ -713,10 +714,10 @@ void main()
 					material.subsurfaceColor = subsurfaceColor;
 				#endif
 
-				#ifdef MATERIAL_HAS_CLEAR_COAT
-					material.clearCoat = clearCoat;
-					material.clearCoatRoughness = clearCoatRoughness;
-					material.clearCoatNormal = clearCoatNormal;
+				#ifdef MATERIAL_HAS_CLEARCOAT
+					material.clearcoat = clearcoat;
+					material.clearcoatRoughness = clearcoatRoughness;
+					material.clearcoatNormal = clearcoatNormal;
 				#endif
 
 				#if defined(SHADING_MODEL_CLOTH)

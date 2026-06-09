@@ -413,7 +413,7 @@ namespace NeoAxis.Editor
 					updateTime = 0.05;
 			}
 			if( EngineApp.GetSystemTime() - lastUpdateTime < updateTime )
-				return;
+				return;		
 
 			UpdateSelectedPanel();
 

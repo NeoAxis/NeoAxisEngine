@@ -3236,14 +3236,14 @@
     ],
     "images" : [
         {
-            "mimeType" : "image/png",
+            "mimeType" : "image/jpg",
             "name" : "M_Ferret_Scout_Car_Tower_normal",
-            "uri" : "M_Ferret_Scout_Car_Tower_normal.png"
+            "uri" : "M_Ferret_Scout_Car_Tower_normal.jpg"
         },
         {
-            "mimeType" : "image/png",
+            "mimeType" : "image/jpg",
             "name" : "M_Ferret_Scout_Car_Tower_metallicRoughness",
-            "uri" : "M_Ferret_Scout_Car_Tower_metallicRoughness.png"
+            "uri" : "M_Ferret_Scout_Car_Tower_metallicRoughness.jpg"
         },
         {
             "mimeType" : "image/jpeg",

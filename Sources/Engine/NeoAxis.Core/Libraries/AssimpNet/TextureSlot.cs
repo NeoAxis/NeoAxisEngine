@@ -20,8 +20,6 @@
 * THE SOFTWARE.
 */
 
-using System;
-
 namespace Internal.Assimp
 {
     /// <summary>
@@ -32,7 +30,7 @@ namespace Internal.Assimp
         /// <summary>
         /// Gets the texture file path.
         /// </summary>
-        public String FilePath;
+        public string FilePath;
 
         /// <summary>
         /// Gets the texture type semantic.
@@ -92,10 +90,10 @@ namespace Internal.Assimp
         /// <param name="wrapModeU">Texture wrap mode for U coordinate</param>
         /// <param name="wrapModeV">Texture wrap mode for V coordinate</param>
         /// <param name="flags">Misc flags</param>
-        public TextureSlot(String filePath, TextureType typeSemantic, int texIndex, TextureMapping mapping, int uvIndex, float blendFactor,
+        public TextureSlot(string filePath, TextureType typeSemantic, int texIndex, TextureMapping mapping, int uvIndex, float blendFactor,
             TextureOperation texOp, TextureWrapMode wrapModeU, TextureWrapMode wrapModeV, int flags)
         {
-            FilePath = (filePath == null) ? String.Empty : filePath;
+            FilePath = (filePath == null) ? string.Empty : filePath;
             TextureType = typeSemantic;
             TextureIndex = texIndex;
             Mapping = mapping;

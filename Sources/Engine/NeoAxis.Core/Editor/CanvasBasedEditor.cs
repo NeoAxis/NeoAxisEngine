@@ -1271,6 +1271,11 @@ namespace NeoAxis.Editor
 			}
 		}
 
+		public bool Is3DScene
+		{
+			get { return owner.Is3DScene; }
+			set { owner.Is3DScene = value; }
+		}
 	}
 }
 

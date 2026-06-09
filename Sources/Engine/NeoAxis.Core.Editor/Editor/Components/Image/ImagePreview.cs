@@ -16,6 +16,7 @@ namespace NeoAxis.Editor
 		{
 			base.OnLoad( e );
 
+			Is3DScene = false;
 			var scene = CreateScene( false );
 
 			var texture = ObjectOfPreview as ImageComponent;

@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
@@ -14,15 +14,16 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "-1.16511848174623 -0.012003335991884 0.682217304671246; 0.00133204756438515 0.452204025532675 -0.00262727889123036 0.891909660418003; 1 1 1"
+		Transform = "1.26669453008547 -1.6811791237486 1.51985562142514; -0.353887604204151 0.351768469594852 0.614627209405489 0.610946725048889; 1 1 1"
 	}
 	.component NeoAxis.Light
 	{
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 50000
+		Brightness = 30000
 		Color = 0.7750196 0.7930196 1
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -35,6 +36,7 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 91.429
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
@@ -104,7 +106,58 @@
 	{
 		Name = Ground
 		CanBeSelected = False
-		Transform = "0 0 0; 0 0 -0.707106781186547 0.707106781186548; 1 1 1"
+		Transform = "51 0 0; 0 0 -0.707106781186547 0.707106781186548; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\White.material"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+				Dimensions = 100 100
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform
+			{
+				GetByReference = "this:..\\Transform"
+			}
+			.component NeoAxis.CollisionShape_Mesh
+			{
+				Mesh
+				{
+					GetByReference = "this:..\\..\\Mesh"
+				}
+				Vertices
+				{
+				}
+				Indices
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Ground 2
+		CanBeSelected = False
+		Transform = "-49 0 0; 0 0 -0.707106781186547 0.707106781186548; 1 1 1"
 		Color = 0.7568628 0.7568628 0.7568628
 		Mesh
 		{
@@ -113,10 +166,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -171,7 +220,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh In Space
-		Transform = "0.497729954002901 0.353041183209837 0.151096292151867; 0 0 0 1; 4 1 1"
+		Transform = "0.38780085809718 0.0221432109952765 0.151096292151867; 0 0 -0.707106781186548 0.707106781186548; 4 1 1"
 		CastShadows = False
 		Mesh
 		{
@@ -180,10 +229,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Samples\\Starter Content\\Materials\\Road\\Road no dithering.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -203,8 +248,37 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
-		Name = Mesh In Space 2
-		Transform = "0.544064370827827 -0.35508917804421 0.151096292151867; 0 0 0 1; 4 1 1"
+		Name = Mesh In Space 4
+		Transform = "1.8543180303796 0.0221432109952765 0.151096292151867; 0 0 -0.707106781186548 0.707106781186548; 4 1 1"
+		CastShadows = False
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Samples\\Starter Content\\Materials\\Road\\Road no dithering.material"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh In Space 3
+		Transform = "1.14618766912555 -0.0241912058296494 0.151096292151867; 0 0 -0.707106781186548 0.707106781186548; 4 1 1"
 		CastShadows = False
 		Mesh
 		{
@@ -213,10 +287,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Samples\\Starter Content\\Materials\\Road\\Road.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{

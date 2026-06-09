@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2024.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
@@ -17,25 +17,27 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "-19.7092132979513 -20.8957693055694 15.3398321524616; -0.356535235100715 0.0291208840458016 0.930728549316547 0.0760195220399688; 1 1 1"
+		Transform = "-7.48063961208753 -23.2302647443553 25.4964335785368; -0.403960355659184 0.0239658834477906 0.912857407127884 0.0541573793497124; 1 1 1"
 	}
 	.component NeoAxis.Light
 	{
 		Name = Ambient Light
 		Transform = "-27.7871391969358 -22.3112535611728 24.8527169920668; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 103244.904396875
+		Brightness = 60000
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
 		Name = Light1
 		Transform = "-67.3559686436172 -24.6930832758389 30.8437317105508; -0.150389792056384 -0.860501251044365 0.0460004842907831 -0.484566262590921; 1 1 1"
 		Type = Directional
-		Brightness = 207307.1593
+		Brightness = 350000
 		AttenuationFar = 100
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 90
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
@@ -52,7 +54,6 @@
 			.component NeoAxis.RenderingEffect_ToneMapping
 			{
 				Name = Tone Mapping
-				Intensity = 0.5
 			}
 			.component NeoAxis.RenderingEffect_ToLDR
 			{
@@ -132,10 +133,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -193,9 +190,257 @@
 		{
 			GetByReference = "root:$Material Standard 2"
 		}
-		ReplaceMaterialSelectively
+		SpecialEffects
 		{
-			Count = 0
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 12
+		Transform = "-38.2972688970552 3.92768619643531 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 6
+		Transform = "-51.2972688970552 -8.07231380356469 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 19
+		Transform = "-66.2972688970552 -8.07231380356469 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 11
+		Transform = "-51.2972688970552 3.92768619643531 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 23
+		Transform = "-66.2972688970552 3.92768619643531 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 10
+		Transform = "-26.2972688970552 -8.07231380356469 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 17
+		Transform = "-15.2972688970552 -8.07231380356469 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 13
+		Transform = "-26.2972688970552 3.92768619643531 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 18
+		Transform = "-15.2972688970552 3.92768619643531 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
 		}
 		SpecialEffects
 		{
@@ -225,9 +470,117 @@
 		{
 			GetByReference = "root:$Material Standard 2"
 		}
-		ReplaceMaterialSelectively
+		SpecialEffects
 		{
-			Count = 0
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 5
+		Transform = "-51.2972688970552 -18.9293647915688 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 20
+		Transform = "-66.2972688970552 -18.9293647915688 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 9
+		Transform = "-26.2972688970552 -18.9293647915688 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 14
+		Transform = "-15.2972688970552 -18.9293647915688 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
 		}
 		SpecialEffects
 		{
@@ -257,9 +610,257 @@
 		{
 			GetByReference = "root:$Material Standard 2"
 		}
-		ReplaceMaterialSelectively
+		SpecialEffects
 		{
-			Count = 0
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 4
+		Transform = "-51.2972688970552 -29.9355779415399 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 21
+		Transform = "-66.2972688970552 -29.9355779415399 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 8
+		Transform = "-26.2972688970552 -29.9355779415399 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 15
+		Transform = "-15.2972688970552 -29.9355779415399 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 2
+		Transform = "-38.2972688970552 -40.9355779415399 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 3
+		Transform = "-51.2972688970552 -40.9355779415399 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 22
+		Transform = "-66.2972688970552 -40.9355779415399 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 7
+		Transform = "-26.2972688970552 -40.9355779415399 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Sphere
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Mesh in Space 16
+		Transform = "-15.2972688970552 -40.9355779415399 0.788818000120195; 0 0 0 1; 7.43999979525805 7.43999979525805 7.43999979525805"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "root:$Material Standard 2"
 		}
 		SpecialEffects
 		{
@@ -280,12 +881,13 @@
 	.component NeoAxis.ReflectionProbe
 	{
 		Name = Reflection Probe
-		Transform = "-35.749352479094 -8.49698458959867 7.11352506576382; 0 0 0 1; 12.3095996403784 12.3095996403784 12.3095996403784"
+		Transform = "-35.749352479094 -8.49698458959867 6.11352506576382; 0 0 0 1; 12.3095996403784 12.3095996403784 12.3095996403784"
 	}
 	.component NeoAxis.ReflectionProbe
 	{
 		Name = Reflection Probe 2
-		Transform = "-35.9954335149967 -31.5580979149314 2.06189155977484; 0 0 0 1; 12.3095996403784 12.3095996403784 12.3095996403784"
+		Transform = "-31.9954335149967 -31.0974708813338 2.06189155977484; 0 0 0 1; 12.3095996403784 12.3095996403784 12.3095996403784"
+		Multiplier = 1 0 0
 		Cubemap
 		{
 			GetByReference = "Content\\Environments\\Base\\Gradient.image"

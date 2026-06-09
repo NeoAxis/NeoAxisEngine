@@ -1,5 +1,5 @@
 ﻿//!!!!betauser
-///*
+//*
 //* Copyright (c) 2012-2020 AssimpNet - Nicholas Woodfield
 //* 
 //* Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,6 +24,7 @@
 //using System;
 //using System.Collections.Generic;
 //using System.IO;
+//using System.Linq;
 
 //namespace Internal.Assimp
 //{
@@ -46,7 +47,7 @@
 //        /// Constructs a new FileIOSystem that uses the specified search directories.
 //        /// </summary>
 //        /// <param name="searchPaths">Search directories to search for files in</param>
-//        public FileIOSystem(params String[] searchPaths)
+//        public FileIOSystem(params string[] searchPaths)
 //        {
 //            m_searchDirectories = new List<DirectoryInfo>();
 
@@ -57,15 +58,15 @@
 //        /// Sets the search directories the FileIOSystem will use when searching for files.
 //        /// </summary>
 //        /// <param name="searchPaths">Directory paths</param>
-//        public void SetSearchDirectories(params String[] searchPaths)
+//        public void SetSearchDirectories(params string[] searchPaths)
 //        {
 //            m_searchDirectories.Clear();
 
 //            if(searchPaths != null && searchPaths.Length != 0)
 //            {
-//                foreach(String path in searchPaths)
+//                foreach(string path in searchPaths)
 //                {
-//                    if(!String.IsNullOrEmpty(path) && Directory.Exists(path))
+//                    if(!string.IsNullOrEmpty(path) && Directory.Exists(path))
 //                        m_searchDirectories.Add(new DirectoryInfo(path));
 //                }
 //            }
@@ -75,16 +76,9 @@
 //        /// Gets the search directories the FileIOSystem is using.
 //        /// </summary>
 //        /// <returns>Directory paths</returns>
-//        public String[] GetSearchDirectories()
+//        public IEnumerable<string> GetSearchDirectories()
 //        {
-//            List<String> searchPaths = new List<String>();
-
-//            foreach(DirectoryInfo dir in m_searchDirectories)
-//            {
-//                searchPaths.Add(dir.FullName);
-//            }
-
-//            return searchPaths.ToArray();
+//            return m_searchDirectories.Select(x => x.FullName);
 //        }
 
 //        /// <summary>
@@ -93,7 +87,7 @@
 //        /// <param name="pathToFile">Path to the file</param>
 //        /// <param name="fileMode">Desired file access mode</param>
 //        /// <returns>The IO stream</returns>
-//        public override IOStream OpenFile(String pathToFile, FileIOMode fileMode)
+//        public override IOStream OpenFile(string pathToFile, FileIOMode fileMode)
 //        {
 //            return new FileIOStream(this, pathToFile, fileMode);
 //        }
@@ -104,16 +98,16 @@
 //        /// <param name="fileName">File name (+ extension) to search for</param>
 //        /// <param name="pathToFile">Found file path</param>
 //        /// <returns>True if the file was found, false otherwise</returns>
-//        public bool FindFile(String fileName, out String pathToFile)
+//        public bool FindFile(string fileName, out string pathToFile)
 //        {
 //            pathToFile = null;
 
-//            if(String.IsNullOrEmpty(fileName) || m_searchDirectories.Count == 0)
+//            if(string.IsNullOrEmpty(fileName) || m_searchDirectories.Count == 0)
 //                return false;
 
 //            foreach(DirectoryInfo dir in m_searchDirectories)
 //            {
-//                String fullPath = Path.Combine(dir.FullName, fileName);
+//                string fullPath = Path.Combine(dir.FullName, fileName);
 //                if(File.Exists(fullPath))
 //                {
 //                    pathToFile = fullPath;
@@ -133,15 +127,9 @@
 //        private FileIOSystem m_parent;
 //        private FileStream m_fileStream;
 
-//        public override bool IsValid
-//        {
-//            get
-//            {
-//                return m_fileStream != null;
-//            }
-//        }
+//        public override bool IsValid => m_fileStream != null;
 
-//        public FileIOStream(FileIOSystem parent, String pathToFile, FileIOMode fileMode)
+//        public FileIOStream(FileIOSystem parent, string pathToFile, FileIOMode fileMode)
 //            : base(pathToFile, fileMode)
 //        {
 //            m_parent = parent;
@@ -151,12 +139,12 @@
 //                case FileIOMode.Read:
 //                case FileIOMode.ReadBinary:
 //                case FileIOMode.ReadText:
-//                    OpenRead(pathToFile, fileMode);
+//                    OpenRead(pathToFile);
 //                    break;
 //                case FileIOMode.Write:
 //                case FileIOMode.WriteBinary:
 //                case FileIOMode.WriteText:
-//                    OpenWrite(pathToFile, fileMode);
+//                    OpenWrite(pathToFile);
 //                    break;
 //            }
 //        }
@@ -164,10 +152,10 @@
 //        public override long Write(byte[] dataToWrite, long count)
 //        {
 //            if(dataToWrite == null)
-//                throw new ArgumentOutOfRangeException("dataToWrite", "Data to write cannot be null.");
+//                throw new ArgumentOutOfRangeException(nameof(dataToWrite), "Data to write cannot be null.");
 
 //            if(count < 0 || dataToWrite.Length < count)
-//                throw new ArgumentOutOfRangeException("count", "Number of bytes to write is greater than data size.");
+//                throw new ArgumentOutOfRangeException(nameof(count), "Number of bytes to write is greater than data size.");
 
 //            if(m_fileStream == null || !m_fileStream.CanWrite)
 //                throw new IOException("Stream is not writable.");
@@ -183,10 +171,10 @@
 //        public override long Read(byte[] dataRead, long count)
 //        {
 //            if(dataRead == null)
-//                throw new ArgumentOutOfRangeException("dataRead", "Array to store data in cannot be null.");
+//                throw new ArgumentOutOfRangeException(nameof(dataRead), "Array to store data in cannot be null.");
 
 //            if(count < 0 || dataRead.Length < count)
-//                throw new ArgumentOutOfRangeException("count", "Number of bytes to read is greater than data store size.");
+//                throw new ArgumentOutOfRangeException(nameof(count), "Number of bytes to read is greater than data store size.");
 
 //            if(m_fileStream == null || !m_fileStream.CanRead)
 //                throw new IOException("Stream is not readable.");
@@ -252,8 +240,7 @@
 //        {
 //            if(!IsDisposed && disposing)
 //            {
-//                if(m_fileStream != null)
-//                    m_fileStream.Dispose();
+//                m_fileStream?.Dispose();
 
 //                m_fileStream = null;
 
@@ -261,19 +248,18 @@
 //            }
 //        }
 
-//        private void OpenRead(String pathToFile, FileIOMode fileMode)
+//        private void OpenRead(string pathToFile)
 //        {
-//            String fileName = Path.GetFileName(pathToFile);
+//            string fileName = Path.GetFileName(pathToFile);
 
-//            String foundPath;
-//            if(m_parent.FindFile(fileName, out foundPath))
+//            if(m_parent.FindFile(fileName, out string foundPath))
 //                pathToFile = foundPath;
 
 //            if(File.Exists(pathToFile))
 //                m_fileStream = File.OpenRead(pathToFile);
 //        }
 
-//        private void OpenWrite(String pathToFile, FileIOMode fileMode)
+//        private void OpenWrite(string pathToFile)
 //        {
 //            m_fileStream = File.OpenWrite(pathToFile);
 //        }

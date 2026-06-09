@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"9548DCD6D149499BE584418DFC2068A8\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"7957DABB94FF4DB255877C2A7B895295\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"9548DCD6D149499BE584418DFC2068A8\"><KP UN=\"9548DCD6D149499BE584418DFC2068A8\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"25B96ED2DE084CC80781AA9F00E91F93\" S=\"False\"><CPD ObjPath=\"$Opacity Change\" /></KP><KP UN=\"02E5CBADE9584119259C83EBD3C481F4\" S=\"False\"><CPD ObjPath=\"$Opacity Change\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1192, 963\"><KW V=\"1\" A=\"9548DCD6D149499BE584418DFC2068A8\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"7957DABB94FF4DB255877C2A7B895295\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"9548DCD6D149499BE584418DFC2068A8\"><KP UN=\"9548DCD6D149499BE584418DFC2068A8\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"25B96ED2DE084CC80781AA9F00E91F93\" S=\"False\"><CPD ObjPath=\"$Opacity Change\" /></KP><KP UN=\"02E5CBADE9584119259C83EBD3C481F4\" S=\"False\"><CPD ObjPath=\"$Opacity Change\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -22,7 +22,8 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 40000
+		Brightness = 30000
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -35,6 +36,7 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 91.429
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
@@ -65,9 +67,8 @@
 			}
 			.component NeoAxis.RenderingEffect_ToneMapping
 			{
-				Enabled = False
 				Name = Tone Mapping
-				Intensity = 0.5
+				Intensity = 0.75
 			}
 			.component NeoAxis.RenderingEffect_ToLDR
 			{
@@ -106,11 +107,12 @@
 		Name = Light 2
 		Transform = "-13.1743988018492 -33.0476964207837 39.8190565014688; -0.652509760369867 -0.513060032128782 0.536036061986784 -0.153836784625045; 1 1 1"
 		Type = Spotlight
-		Brightness = 300000
+		Brightness = 200000
 		AttenuationFar = 505.521
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 88.421
 		SpotlightOuterAngle = 88.421
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.MeshInSpace
 	{
@@ -121,10 +123,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -173,10 +171,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Baby Elephant\\babyElephant_rigged_animated.fbx|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -206,10 +200,6 @@
 		{
 			GetByReference = "this:..\\$Opacity Change"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -238,10 +228,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Base\\Materials\\Null.material"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{

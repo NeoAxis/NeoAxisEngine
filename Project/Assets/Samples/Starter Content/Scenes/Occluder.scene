@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2024.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
@@ -20,7 +20,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "2.3303527717423 -6.5380575341062 4.53252631189312; -0.135839435489763 0.133604801160868 0.699886113584425 0.688372597424009; 1 1 1"
+		Transform = "2.62249556947302 -9.50739040182033 6.51201213917686; -0.149817824857391 0.147694613523131 0.696197387492509 0.686330910086278; 1 1 1"
 	}
 	.component NeoAxis.Camera
 	{
@@ -37,7 +37,8 @@
 		Name = Ambient Light
 		Transform = "18.5822734231225 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 60000
+		Brightness = 30000
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -49,6 +50,7 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 91.429
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
@@ -72,7 +74,6 @@
 			.component NeoAxis.RenderingEffect_ToneMapping
 			{
 				Name = Tone Mapping
-				Intensity = 0.5
 			}
 			.component NeoAxis.RenderingEffect_ToLDR
 			{
@@ -232,8 +233,56 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 67
+		Transform = "4.70197196338417 20.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 22
 		Transform = "8.76208603516043 10.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 68
+		Transform = "8.76208603516043 20.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -328,8 +377,56 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 69
+		Transform = "4.70197196338417 22.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 45
 		Transform = "4.70197196338417 15.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 70
+		Transform = "4.70197196338417 25.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -376,8 +473,56 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 71
+		Transform = "4.70197196338417 27.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 24
 		Transform = "8.76208603516043 12.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 72
+		Transform = "8.76208603516043 22.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -424,8 +569,56 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 73
+		Transform = "8.76208603516043 25.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 57
 		Transform = "8.76208603516043 17.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 74
+		Transform = "8.76208603516043 27.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -496,8 +689,56 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 111
+		Transform = "15.8066665199501 5.77635926158248 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 41
 		Transform = "13.3066665199501 5.77635926158248 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 112
+		Transform = "18.3066665199501 5.77635926158248 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -544,6 +785,30 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 75
+		Transform = "6.74655244817383 20.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 26
 		Transform = "10.8066665199501 10.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
@@ -568,8 +833,152 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 113
+		Transform = "15.8066665199501 10.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 76
+		Transform = "10.8066665199501 20.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 114
+		Transform = "15.8066665199501 20.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 42
 		Transform = "13.3066665199501 10.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 115
+		Transform = "18.3066665199501 10.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 77
+		Transform = "13.3066665199501 20.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 116
+		Transform = "18.3066665199501 20.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -640,8 +1049,56 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 117
+		Transform = "15.8066665199501 8.16132926781959 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 44
 		Transform = "13.3066665199501 8.16132926781959 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 118
+		Transform = "18.3066665199501 8.16132926781959 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -688,8 +1145,56 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 78
+		Transform = "6.74655244817383 22.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 47
 		Transform = "6.74655244817383 15.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 79
+		Transform = "6.74655244817383 25.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -736,8 +1241,104 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 80
+		Transform = "6.74655244817383 27.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 28
 		Transform = "10.8066665199501 12.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 119
+		Transform = "15.8066665199501 12.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 81
+		Transform = "10.8066665199501 22.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 120
+		Transform = "15.8066665199501 22.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -784,8 +1385,152 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 121
+		Transform = "15.8066665199501 15.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 82
+		Transform = "10.8066665199501 25.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 122
+		Transform = "15.8066665199501 25.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 59
 		Transform = "10.8066665199501 17.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 123
+		Transform = "15.8066665199501 17.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 83
+		Transform = "10.8066665199501 27.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 124
+		Transform = "15.8066665199501 27.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -832,6 +1577,78 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 125
+		Transform = "18.3066665199501 12.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 84
+		Transform = "13.3066665199501 22.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 126
+		Transform = "18.3066665199501 22.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 49
 		Transform = "13.3066665199501 15.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
@@ -856,8 +1673,152 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 127
+		Transform = "18.3066665199501 15.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 85
+		Transform = "13.3066665199501 25.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 128
+		Transform = "18.3066665199501 25.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 60
 		Transform = "13.3066665199501 17.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 129
+		Transform = "18.3066665199501 17.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 86
+		Transform = "13.3066665199501 27.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 130
+		Transform = "18.3066665199501 27.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -928,6 +1889,30 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 87
+		Transform = "2.42599027312691 20.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 8
 		Transform = "2.42599027312691 8.16132926781959 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
@@ -976,6 +1961,30 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 88
+		Transform = "2.42599027312691 22.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 50
 		Transform = "2.42599027312691 15.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
@@ -1000,8 +2009,56 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 89
+		Transform = "2.42599027312691 25.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 61
 		Transform = "2.42599027312691 17.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 90
+		Transform = "2.42599027312691 27.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -1096,8 +2153,56 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 91
+		Transform = "0.181002797531628 20.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 30
 		Transform = "-4.4741818650192 10.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 92
+		Transform = "-4.4741818650192 20.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -1192,8 +2297,56 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 93
+		Transform = "0.181002797531628 22.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 51
 		Transform = "0.181002797531628 15.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 94
+		Transform = "0.181002797531628 25.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -1240,8 +2393,56 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 95
+		Transform = "0.181002797531628 27.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 32
 		Transform = "-4.4741818650192 12.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 96
+		Transform = "-4.4741818650192 22.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -1288,8 +2489,56 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 97
+		Transform = "-4.4741818650192 25.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 63
 		Transform = "-4.4741818650192 17.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 98
+		Transform = "-4.4741818650192 27.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -1360,8 +2609,56 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 131
+		Transform = "-11.8811552290088 5.77635926158248 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 37
 		Transform = "-9.38115522900875 5.77635926158248 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 132
+		Transform = "-14.3811552290087 5.77635926158248 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -1408,6 +2705,30 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 99
+		Transform = "-2.19060517730257 20.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 34
 		Transform = "-6.88115522900875 10.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
@@ -1432,8 +2753,152 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 133
+		Transform = "-11.8811552290088 10.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 100
+		Transform = "-6.88115522900875 20.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 134
+		Transform = "-11.8811552290088 20.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 39
 		Transform = "-9.38115522900875 10.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 135
+		Transform = "-14.3811552290087 10.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 101
+		Transform = "-9.38115522900875 20.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 136
+		Transform = "-14.3811552290087 20.5604427059322 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -1504,8 +2969,56 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 137
+		Transform = "-11.8811552290088 8.16132926781959 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 38
 		Transform = "-9.38115522900875 8.16132926781959 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 138
+		Transform = "-14.3811552290087 8.16132926781959 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -1552,8 +3065,56 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 102
+		Transform = "-2.19060517730257 22.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 53
 		Transform = "-2.19060517730257 15.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 103
+		Transform = "-2.19060517730257 25.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -1600,8 +3161,104 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 104
+		Transform = "-2.19060517730257 27.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 36
 		Transform = "-6.88115522900875 12.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 139
+		Transform = "-11.8811552290088 12.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 105
+		Transform = "-6.88115522900875 22.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 140
+		Transform = "-11.8811552290088 22.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -1648,8 +3305,152 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 141
+		Transform = "-11.8811552290088 15.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 106
+		Transform = "-6.88115522900875 25.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 142
+		Transform = "-11.8811552290088 25.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 65
 		Transform = "-6.88115522900875 17.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 143
+		Transform = "-11.8811552290088 17.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 107
+		Transform = "-6.88115522900875 27.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 144
+		Transform = "-11.8811552290088 27.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -1696,8 +3497,152 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 145
+		Transform = "-14.3811552290087 12.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 108
+		Transform = "-9.38115522900875 22.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 146
+		Transform = "-14.3811552290087 22.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 55
 		Transform = "-9.38115522900875 15.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 147
+		Transform = "-14.3811552290087 15.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 109
+		Transform = "-9.38115522900875 25.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 148
+		Transform = "-14.3811552290087 25.4454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -1742,6 +3687,78 @@
 			}
 		}
 	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 149
+		Transform = "-14.3811552290087 17.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 110
+		Transform = "-9.38115522900875 27.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 150
+		Transform = "-14.3811552290087 27.9454127121693 0.500000000000008; 0 0 0 1; 1 1 1"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
 	.component NeoAxis.GroupOfObjects
 	{
 		Name = Group Of Objects
@@ -1757,6 +3774,103 @@
 	.component NeoAxis.Occluder
 	{
 		Name = Occluder
-		Transform = "2.27748712688682 0.839558596400107 2.19160743557463; 0 0 0 1; 5.42043041753421 0.584848526645147 4.63997054468816"
+		Transform = "2.27748712688682 0.839558596400107 2.19160743557463; 0 0 0 1; 5.42043041753421 0.1 4.63997054468816"
+	}
+	.component NeoAxis.Occluder
+	{
+		Name = Occluder 2
+		Transform = "10.2774871268868 0.839558596400107 2.19160743557463; 0 0 0 1; 5.42043041753421 0.1 4.63997054468816"
+	}
+	.component NeoAxis.Occluder
+	{
+		Name = Occluder 3
+		Transform = "-5.72251287311318 0.839558596400107 2.19160743557463; 0 0 0 1; 5.42043041753421 0.1 4.63997054468816"
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane
+		Transform = "2.27748712688682 0.839558596400107 2.19160743557463; 0.707106781186548 0 0 0.707106781186548; 5.42043041753421 4.63997054468816 1"
+		Color = 1 0 0 0.5
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\White.material"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 2
+		Transform = "10.2774871268868 0.839558596400107 2.19160743557463; 0.707106781186548 0 0 0.707106781186548; 5.42043041753421 4.63997054468816 1"
+		Color = 1 0 0 0.5
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\White.material"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+			}
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Plane 3
+		Transform = "-5.72251287311318 0.839558596400107 2.19160743557463; 0.707106781186548 0 0 0.707106781186548; 5.42043041753421 4.63997054468816 1"
+		Color = 1 0 0 0.5
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\White.material"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Plane
+			{
+				Name = Mesh Geometry
+			}
+		}
 	}
 }

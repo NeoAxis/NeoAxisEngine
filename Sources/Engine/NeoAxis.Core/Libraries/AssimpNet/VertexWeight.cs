@@ -20,8 +20,6 @@
 * THE SOFTWARE.
 */
 
-using System;
-using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace Internal.Assimp
@@ -29,42 +27,9 @@ namespace Internal.Assimp
     /// <summary>
     /// Represents a single influence of a bone on a vertex.
     /// </summary>
+    /// <param name="VertexID">Index of the vertex which is influenced by the bone.</param>
+    /// <param name="Weight">Strength of the influence in range of (0...1). All influences
+    /// from all bones at one vertex amounts to 1.</param>
     [StructLayout(LayoutKind.Sequential)]
-    public struct VertexWeight
-    {
-        /// <summary>
-        /// Index of the vertex which is influenced by the bone.
-        /// </summary>
-        public int VertexID;
-
-        /// <summary>
-        /// Strength of the influence in range of (0...1). All influences
-        /// from all bones at one vertex amounts to 1.
-        /// </summary>
-        public float Weight;
-
-        /// <summary>
-        /// Constructs a new VertexWeight.
-        /// </summary>
-        /// <param name="vertID">Index of the vertex.</param>
-        /// <param name="weight">Weight of the influence.</param>
-        public VertexWeight(int vertID, float weight)
-        {
-            VertexID = vertID;
-            Weight = weight;
-        }
-
-        /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
-        /// </returns>
-        public override string ToString()
-        {
-            CultureInfo info = CultureInfo.CurrentCulture;
-            return String.Format(info, "{{VertexID:{0} Weight:{1}}}",
-                new Object[] { VertexID.ToString(info), Weight.ToString(info) });
-        }
-    }
+    public record struct VertexWeight(int VertexID, float Weight);
 }

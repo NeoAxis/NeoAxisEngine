@@ -35,7 +35,7 @@ namespace Internal.Assimp
     /// </summary>
     public sealed class EmbeddedTexture : IMarshalable<EmbeddedTexture, AiTexture>
     {
-        private String m_filename;
+        private string m_filename;
         
         private bool m_isCompressed;
 
@@ -46,137 +46,71 @@ namespace Internal.Assimp
 
         //Compressed textures only
         private byte[] m_compressedData;
-        private String m_compressedFormatHint;
+        private string m_compressedFormatHint;
 
         /// <summary>
         /// Gets or sets the texture's original filename.
         /// </summary>
         public string Filename
         {
-            get
-            {
-                return m_filename;
-            }
-            set
-            {
-                m_filename = value;
-            }
+            get => m_filename;
+            set => m_filename = value;
         }
 
         /// <summary>
         /// Gets if the texture is compressed or not.
         /// </summary>
-        public bool IsCompressed
-        {
-            get
-            {
-                return m_isCompressed;
-            }
-        }
+        public bool IsCompressed => m_isCompressed;
 
         /// <summary>
         /// Gets the width of the texture in pixels. Only valid for non-compressed textures.
         /// </summary>
-        public int Width
-        {
-            get
-            {
-                return m_width;
-            }
-        }
+        public int Width => m_width;
 
         /// <summary>
         /// Gets the height of the texture in pixels. Only valid for non-compressed textures.
         /// </summary>
-        public int Height
-        {
-            get
-            {
-                return m_height;
-            }
-        }
+        public int Height => m_height;
 
-        /// <summary>
-        /// Gets if the texture has non-compressed texel data. Only valid for non-compressed textures.
-        /// </summary>
-        public bool HasNonCompressedData
-        {
-            get
-            {
-				//!!!!betauser
-				return m_nonCompressedData != null && m_nonCompressedData.Length != 0;
-				//return m_nonCompressedData != null || m_nonCompressedData.Length != 0;
-			}
-        }
+		/// <summary>
+		/// Gets if the texture has non-compressed texel data. Only valid for non-compressed textures.
+		/// </summary>
+		//!!!!betauser
+		public bool HasNonCompressedData => m_nonCompressedData != null && m_nonCompressedData.Length != 0;
+		//public bool HasNonCompressedData => m_nonCompressedData != null || m_nonCompressedData.Length != 0;
 
-        /// <summary>
-        /// Gets the size of the non-compressed texel data. Only valid for non-compressed textures.
-        /// </summary>
-        public int NonCompressedDataSize
-        {
-            get
-            {
-                return (m_nonCompressedData == null) ? 0 : m_nonCompressedData.Length;
-            }
-        }
+		/// <summary>
+		/// Gets the size of the non-compressed texel data. Only valid for non-compressed textures.
+		/// </summary>
+		public int NonCompressedDataSize => (m_nonCompressedData == null) ? 0 : m_nonCompressedData.Length;
 
         /// <summary>
         /// Gets the non-compressed texel data, the array is of size Width * Height. Only valid for non-compressed textures.
         /// </summary>
-        public Texel[] NonCompressedData
-        {
-            get
-            {
-                return m_nonCompressedData;
-            }
-        }
+        public Texel[] NonCompressedData => m_nonCompressedData;
 
-        /// <summary>
-        /// Gets if the embedded texture has compressed data. Only valid for compressed textures.
-        /// </summary>
-        public bool HasCompressedData
-        {
-            get
-            {
-				//!!!!betauser
-				return m_compressedData != null && m_compressedData.Length != 0;
-				//return m_compressedData != null || m_compressedData.Length != 0;
-			}
-        }
+		/// <summary>
+		/// Gets if the embedded texture has compressed data. Only valid for compressed textures.
+		/// </summary>
+		//!!!!betauser
+		public bool HasCompressedData => m_compressedData != null && m_compressedData.Length != 0;
+		//public bool HasCompressedData => m_compressedData != null || m_compressedData.Length != 0;
 
-        /// <summary>
-        /// Gets the size of the compressed data. Only valid for compressed textures.
-        /// </summary>
-        public int CompressedDataSize
-        {
-            get
-            {
-                return (m_compressedData == null) ? 0 : m_compressedData.Length;
-            }
-        }
+		/// <summary>
+		/// Gets the size of the compressed data. Only valid for compressed textures.
+		/// </summary>
+		public int CompressedDataSize => (m_compressedData == null) ? 0 : m_compressedData.Length;
 
         /// <summary>
         /// Gets the raw byte data representing the compressed texture. Only valid for compressed textures.
         /// </summary>
-        public byte[] CompressedData
-        {
-            get
-            {
-                return m_compressedData;
-            }
-        }
+        public byte[] CompressedData => m_compressedData;
 
         /// <summary>
         /// Gets the format hint to determine the type of compressed data. This hint
         /// is a three-character lower-case hint like "dds", "jpg", "png".
         /// </summary>
-        public String CompressedFormatHint
-        {
-            get
-            {
-                return m_compressedFormatHint;
-            }
-        }
+        public string CompressedFormatHint => m_compressedFormatHint;
 
         /// <summary>
         /// Constructs a new instance of the <see cref="EmbeddedTexture"/> class. Should use only if
@@ -195,7 +129,7 @@ namespace Internal.Assimp
         /// <param name="compressedFormatHint">The 3 character format hint.</param>
         /// <param name="compressedData">The compressed data.</param>
         /// <param name="originalFileName">Optional file name for the texture.</param>
-        public EmbeddedTexture(String compressedFormatHint, byte[] compressedData, String originalFileName = "")
+        public EmbeddedTexture(string compressedFormatHint, byte[] compressedData, string originalFileName = "")
         {
             m_filename = originalFileName;
             m_compressedFormatHint = compressedFormatHint;
@@ -216,7 +150,7 @@ namespace Internal.Assimp
         /// <param name="uncompressedData">Color data</param>
         /// <param name="originalFileName">Optional file name for the texture.</param>
         /// <exception cref="ArgumentException">Thrown if the data size does not match width * height.</exception>
-        public EmbeddedTexture(int width, int height, Texel[] uncompressedData, String originalFileName = "")
+        public EmbeddedTexture(int width, int height, Texel[] uncompressedData, string originalFileName = "")
         {
             m_filename = originalFileName;
             m_width = width;
@@ -236,7 +170,7 @@ namespace Internal.Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<EmbeddedTexture, AiTexture>.IsNativeBlittable { get { return true; } }
+        bool IMarshalable<EmbeddedTexture, AiTexture>.IsNativeBlittable => true;
 
         /// <summary>
         /// Writes the managed data to the native value.

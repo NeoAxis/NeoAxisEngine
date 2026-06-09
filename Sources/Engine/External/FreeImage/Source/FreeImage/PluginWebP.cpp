@@ -19,6 +19,8 @@
 // Use at your own risk!
 // ==========================================================
 
+#if INCLUDE_LIB_WEBP
+
 #include "FreeImage.h"
 #include "Utilities.h"
 
@@ -695,3 +697,4 @@ InitWEBP(Plugin *plugin, int format_id) {
 	plugin->supports_no_pixels_proc = SupportsNoPixels;
 }
 
+#endif

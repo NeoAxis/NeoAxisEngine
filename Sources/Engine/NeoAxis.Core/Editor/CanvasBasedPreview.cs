@@ -376,6 +376,11 @@ namespace NeoAxis.Editor
 			return owner.AddTextWordWrapWithShadow( text, rectangle, horizontalAlign, verticalAlign, color );
 		}
 
+		public bool Is3DScene
+		{
+			get { return owner.Is3DScene; }
+			set { owner.Is3DScene = value; }
+		}
 	}
 }
 

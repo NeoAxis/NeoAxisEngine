@@ -398,7 +398,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The texture used by the skybox.
 		/// </summary>
-		[DefaultValueReference( @"Content\Environments\Base\Forest.image" )]//[DefaultValue( null )]
+		[DefaultValueReference( @"Content\Environments\Basic Library\Outdoor\Textures\kloofendal_48d_partly_cloudy_4k.hdr" )] //[DefaultValueReference( @"Content\Environments\Base\Forest.image" )]
 		[Category( "Cubemap" )]
 		public Reference<ImageComponent> Cubemap
 		{
@@ -419,7 +419,8 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="Cubemap"/> property value changes.</summary>
 		public event Action<Sky> CubemapChanged;
-		ReferenceField<ImageComponent> _cubemap = new Reference<ImageComponent>( null, @"Content\Environments\Base\Forest.image" );
+		ReferenceField<ImageComponent> _cubemap = new Reference<ImageComponent>( null, @"Content\Environments\Basic Library\Outdoor\Textures\kloofendal_48d_partly_cloudy_4k.hdr" );
+		//ReferenceField<ImageComponent> _cubemap = new Reference<ImageComponent>( null, @"Content\Environments\Base\Forest.image" );
 
 		///// <summary>
 		///// Positive X side of the texture used by the skybox.
@@ -610,7 +611,7 @@ namespace NeoAxis
 		/// <summary>
 		/// A skybox color multiplier.
 		/// </summary>
-		[DefaultValue( "1 1 1" )]
+		[DefaultValue( "1 1 1; 2" )]
 		[ApplicableRangeColorValuePower( 0, 4 )]
 		[ColorValueNoAlpha]
 		[Category( "Cubemap" )]
@@ -621,7 +622,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="CubemapMultiplier"/> property value changes.</summary>
 		public event Action<Sky> CubemapMultiplierChanged;
-		ReferenceField<ColorValuePowered> _cubemapMultiplier = new ColorValuePowered( 1, 1, 1 );
+		ReferenceField<ColorValuePowered> _cubemapMultiplier = new ColorValuePowered( 1, 1, 1, 1, 2 );
 
 		///// <summary>
 		///// Whether to affect to ambient lighting.
@@ -1205,6 +1206,8 @@ namespace NeoAxis
 
 				if( !cube )
 					generalDefines.Add( ("USE_2D", "") );
+				if( RenderingSystem.AccurateSrgbCorrection )
+					generalDefines.Add( ("ACCURATE_SRGB_CORRECTION", "") );
 
 				//vertex program
 				GpuProgram vertexProgram = GpuProgramManager.GetProgram( $"Sky_Vertex_", GpuProgramType.Vertex,

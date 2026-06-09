@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1149, 842\"><KW V=\"1\" A=\"C1F5BEB678A045B3BE91DBEA410F2DBB\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"32D7B3C3A5DC41F5B3B6142865E59344\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"C1F5BEB678A045B3BE91DBEA410F2DBB\"><KP UN=\"C1F5BEB678A045B3BE91DBEA410F2DBB\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"B5B5A5A454584B369CA7ABFD6839B548\" S=\"False\"><CPD ObjPath=\"$GetObjectTransform\\$Flow graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1192, 963\"><KW V=\"1\" A=\"C1F5BEB678A045B3BE91DBEA410F2DBB\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"32D7B3C3A5DC41F5B3B6142865E59344\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"C1F5BEB678A045B3BE91DBEA410F2DBB\"><KP UN=\"C1F5BEB678A045B3BE91DBEA410F2DBB\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"B5B5A5A454584B369CA7ABFD6839B548\" S=\"False\"><CPD ObjPath=\"$GetObjectTransform\\$Flow graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BackgroundColor = 0.6666667 0.6666667 0.6666667
 	DisplayDevelopmentDataInEditor = False
 	DisplayTextInfo = True
@@ -25,7 +25,8 @@
 		Name = Ambient Light
 		Transform = "-27.7871391969358 37.4683781031502 14.686420383686; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 7290
+		Brightness = 30000
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
@@ -44,6 +45,10 @@
 				Name = Ambient Occlusion
 				Intensity = 0.8
 				Radius = 3
+			}
+			.component NeoAxis.RenderingEffect_ToneMapping
+			{
+				Name = Tone Mapping
 			}
 			.component NeoAxis.RenderingEffect_ToLDR
 			{
@@ -83,6 +88,7 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 70
 		SpotlightOuterAngle = 70
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -91,6 +97,7 @@
 		Type = Point
 		Brightness = 279839.871757908
 		AttenuationFar = 20
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -99,6 +106,7 @@
 		Type = Point
 		Brightness = 106423.382038007
 		AttenuationFar = 20
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.MeshInSpace
 	{
@@ -108,10 +116,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -164,10 +168,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -197,10 +197,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -253,10 +249,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -312,10 +304,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -336,10 +324,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Materials\\$Sci-fi Drone Red"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -359,10 +343,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Sci-fi Drone\\Sci-fi Drone.fbx|$Materials\\$Sci-fi Drone Blue"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -698,10 +678,6 @@
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{

@@ -111,8 +111,8 @@ rgbe_Error(rgbe_error_code error_code, const char *msg) {
 		case rgbe_format_error:
 			FreeImage_OutputMessageProc(s_format_id, "RGBE bad file format: %s\n", msg);
 			break;
-		default:
 		case rgbe_memory_error:
+		default:
 			FreeImage_OutputMessageProc(s_format_id, "RGBE error: %s\n",msg);
 	}
 
@@ -127,10 +127,12 @@ rgbe_GetLine(FreeImageIO *io, fi_handle handle, char *buffer, int length) {
 	int i;
 	memset(buffer, 0, length);
 	for(i = 0; i < length; i++) {
-		if(!io->read_proc(&buffer[i], 1, 1, handle))
+		if (!io->read_proc(&buffer[i], 1, 1, handle)) {
 			return FALSE;
-		if(buffer[i] == 0x0A)
+		}
+		if (buffer[i] == 0x0A) {
 			break;
+		}
 	}
 	
 	return (i < length) ? TRUE : FALSE;
@@ -142,16 +144,18 @@ Note: you can remove the "inline"s if your compiler complains about it
 */
 static inline void 
 rgbe_FloatToRGBE(BYTE rgbe[4], FIRGBF *rgbf) {
-	float v;
-	int e;
-
-	v = rgbf->red;
-	if (rgbf->green > v) v = rgbf->green;
-	if (rgbf->blue > v) v = rgbf->blue;
+	float v = rgbf->red;
+	if (rgbf->green > v) {
+		v = rgbf->green;
+	}
+	if (rgbf->blue > v) {
+		v = rgbf->blue;
+	}
 	if (v < 1e-32) {
 		rgbe[0] = rgbe[1] = rgbe[2] = rgbe[3] = 0;
 	}
 	else {
+		int e;
 		v = (float)(frexp(v, &e) * 256.0 / v);
 		rgbe[0] = (BYTE) (rgbf->red * v);
 		rgbe[1] = (BYTE) (rgbf->green * v);
@@ -168,11 +172,10 @@ However we wanted pixels in the range [0,1] to map back into the range [0,1].
 static inline void 
 rgbe_RGBEToFloat(FIRGBF *rgbf, BYTE rgbe[4]) {
 	if (rgbe[3]) {   // nonzero pixel
-		float f = (float)(ldexp(1.0, rgbe[3] - (int)(128+8)));
+		const float f = (float)(ldexp(1.0, rgbe[3] - (int)(128+8)));
 		rgbf->red   = rgbe[0] * f;
 		rgbf->green = rgbe[1] * f;
 		rgbf->blue  = rgbe[2] * f;
-
 	}
 	else {
 		rgbf->red = rgbf->green = rgbf->blue = 0;
@@ -196,8 +199,9 @@ rgbe_ReadHeader(FreeImageIO *io, fi_handle handle, unsigned *width, unsigned *he
 	header_info->exposure = 1.0;
 
 	// get the first line
-	if(!rgbe_GetLine(io, handle, buf, HDR_MAXLINE))
+	if (!rgbe_GetLine(io, handle, buf, HDR_MAXLINE)) {
 		return rgbe_Error(rgbe_read_error, NULL);
+	}
 
 	// check the signature
 
@@ -208,8 +212,9 @@ rgbe_ReadHeader(FreeImageIO *io, fi_handle handle, unsigned *width, unsigned *he
 	else {
 		header_info->valid |= RGBE_VALID_PROGRAMTYPE;
 		for(i = 0; i < sizeof(header_info->programtype) - 1; i++) {
-			if((buf[i+2] == 0) || isspace(buf[i+2]))
+			if ((buf[i + 2] == 0) || isspace(buf[i + 2])) {
 				break;
+			}
 			header_info->programtype[i] = buf[i+2];
 		}
 		header_info->programtype[i] = 0;
@@ -217,8 +222,9 @@ rgbe_ReadHeader(FreeImageIO *io, fi_handle handle, unsigned *width, unsigned *he
 
 	for(;;) {
 		// get next line
-		if(!rgbe_GetLine(io, handle, buf, HDR_MAXLINE))
+		if (!rgbe_GetLine(io, handle, buf, HDR_MAXLINE)) {
 			return rgbe_Error(rgbe_read_error, NULL);
+		}
 
 		if((buf[0] == 0) || (buf[0] == '\n')) {
 			// end of header so break out of loop
@@ -238,7 +244,8 @@ rgbe_ReadHeader(FreeImageIO *io, fi_handle handle, unsigned *width, unsigned *he
 		}
 		else if((buf[0] == '#') && (buf[1] == 0x20)) {
 			header_info->valid |= RGBE_VALID_COMMENT;
-			strcpy(header_info->comment, buf);
+			strncpy(header_info->comment, buf, HDR_MAXLINE - 1);
+			header_info->comment[HDR_MAXLINE - 1] = '\0';
 		}
 	}
 	if(!bHeaderFound || !bFormatFound) {
@@ -246,8 +253,9 @@ rgbe_ReadHeader(FreeImageIO *io, fi_handle handle, unsigned *width, unsigned *he
 	}
 
 	// get next line
-	if(!rgbe_GetLine(io, handle, buf, HDR_MAXLINE))
+	if (!rgbe_GetLine(io, handle, buf, HDR_MAXLINE)) {
 		return rgbe_Error(rgbe_read_error, NULL);
+	}
 
 	// get the image width & height
 	if(sscanf(buf,"-Y %d +X %d", height, width) < 2) {
@@ -264,36 +272,42 @@ rgbe_ReadHeader(FreeImageIO *io, fi_handle handle, unsigned *width, unsigned *he
 */
 static BOOL 
 rgbe_WriteHeader(FreeImageIO *io, fi_handle handle, unsigned width, unsigned height, rgbeHeaderInfo *info) {
-	char buffer[HDR_MAXLINE];
+	char buffer[HDR_MAXLINE + 1];
 
 	const char *programtype = "RADIANCE";
 
-	if(info && (info->valid & RGBE_VALID_PROGRAMTYPE)) {
+	if (info && (info->valid & RGBE_VALID_PROGRAMTYPE)) {
 		programtype = info->programtype;
 	}
 	// The #? is to identify file type, the programtype is optional
-	sprintf(buffer, "#?%s\n", programtype);
-	if(io->write_proc(buffer, 1, (unsigned int)strlen(buffer), handle) < 1)
+	snprintf(buffer, HDR_MAXLINE, "#?%s\n", programtype);
+	if (io->write_proc(buffer, 1, (unsigned int)strlen(buffer), handle) < 1) {
 		return rgbe_Error(rgbe_write_error, NULL);
-	sprintf(buffer, "%s\n", info->comment);
-	if(io->write_proc(buffer, 1, (unsigned int)strlen(buffer), handle) < 1)
-		return rgbe_Error(rgbe_write_error, NULL);
-	sprintf(buffer, "FORMAT=32-bit_rle_rgbe\n");
-	if(io->write_proc(buffer, 1, (unsigned int)strlen(buffer), handle) < 1)
-		return rgbe_Error(rgbe_write_error, NULL);
-	if(info && (info->valid & RGBE_VALID_GAMMA)) {
-		sprintf(buffer, "GAMMA=%g\n", info->gamma);
-		if(io->write_proc(buffer, 1, (unsigned int)strlen(buffer), handle) < 1)
-			return rgbe_Error(rgbe_write_error, NULL);
 	}
-	if(info && (info->valid & RGBE_VALID_EXPOSURE)) {
-		sprintf(buffer,"EXPOSURE=%g\n", info->exposure);
-		if(io->write_proc(buffer, 1, (unsigned int)strlen(buffer), handle) < 1)
-			return rgbe_Error(rgbe_write_error, NULL);
-	}
-	sprintf(buffer, "\n-Y %d +X %d\n", height, width);
-	if(io->write_proc(buffer, 1, (unsigned int)strlen(buffer), handle) < 1)
+	snprintf(buffer, HDR_MAXLINE, "%s\n", info->comment);
+	if (io->write_proc(buffer, 1, (unsigned int)strlen(buffer), handle) < 1) {
 		return rgbe_Error(rgbe_write_error, NULL);
+	}
+	snprintf(buffer, HDR_MAXLINE, "FORMAT=32-bit_rle_rgbe\n");
+	if (io->write_proc(buffer, 1, (unsigned int)strlen(buffer), handle) < 1) {
+		return rgbe_Error(rgbe_write_error, NULL);
+	}
+	if (info && (info->valid & RGBE_VALID_GAMMA)) {
+		snprintf(buffer, HDR_MAXLINE, "GAMMA=%g\n", info->gamma);
+		if (io->write_proc(buffer, 1, (unsigned int)strlen(buffer), handle) < 1) {
+			return rgbe_Error(rgbe_write_error, NULL);
+		}
+	}
+	if (info && (info->valid & RGBE_VALID_EXPOSURE)) {
+		snprintf(buffer, HDR_MAXLINE, "EXPOSURE=%g\n", info->exposure);
+		if (io->write_proc(buffer, 1, (unsigned int)strlen(buffer), handle) < 1) {
+			return rgbe_Error(rgbe_write_error, NULL);
+		}
+	}
+	snprintf(buffer, HDR_MAXLINE, "\n-Y %d +X %d\n", height, width);
+	if (io->write_proc(buffer, 1, (unsigned int)strlen(buffer), handle) < 1) {
+		return rgbe_Error(rgbe_write_error, NULL);
+	}
 
 	return TRUE;
 }
@@ -306,7 +320,7 @@ static BOOL
 rgbe_WriteMetadata(FIBITMAP *dib, rgbeHeaderInfo *header_info) {
 	header_info->gamma = 1;
 	header_info->valid |= RGBE_VALID_GAMMA;
-	header_info->exposure = 0;
+	header_info->exposure = 1;	// default value
 	header_info->valid |= RGBE_VALID_EXPOSURE;
 
 	return TRUE;
@@ -340,8 +354,9 @@ rgbe_WritePixels(FreeImageIO *io, fi_handle handle, FIRGBF *data, unsigned numpi
 
   for(unsigned x = 0; x < numpixels; x++) {
 	  rgbe_FloatToRGBE(rgbe, &data[x]);
-	  if(io->write_proc(rgbe, sizeof(rgbe), 1, handle) < 1)
+	  if (io->write_proc(rgbe, sizeof(rgbe), 1, handle) < 1) {
 		  return rgbe_Error(rgbe_write_error, NULL);
+	  }
   }
 
   return TRUE;
@@ -398,8 +413,9 @@ rgbe_ReadPixels_RLE(FreeImageIO *io, fi_handle handle, FIRGBF *data, int scanlin
 						free(scanline_buffer);
 						return rgbe_Error(rgbe_format_error, "bad scanline data");
 					}
-					while(count-- > 0)
+					while (count-- > 0) {
 						*ptr++ = buf[1];
+					}
 				}
 				else {
 					// a non-run
@@ -467,28 +483,33 @@ rgbe_WriteBytes_RLE(FreeImageIO *io, fi_handle handle, BYTE *data, int numbytes)
 		if ((old_run_count > 1)&&(old_run_count == beg_run - cur)) {
 			buf[0] = (BYTE)(128 + old_run_count);   // write short run
 			buf[1] = data[cur];
-			if(io->write_proc(buf, 2 * sizeof(BYTE), 1, handle) < 1)
+			if (io->write_proc(buf, 2 * sizeof(BYTE), 1, handle) < 1) {
 				return rgbe_Error(rgbe_write_error, NULL);
+			}
 			cur = beg_run;
 		}
 		// write out bytes until we reach the start of the next run 
 		while(cur < beg_run) {
 			nonrun_count = beg_run - cur;
-			if (nonrun_count > 128) 
+			if (nonrun_count > 128) {
 				nonrun_count = 128;
+			}
 			buf[0] = (BYTE)nonrun_count;
-			if(io->write_proc(buf, sizeof(buf[0]), 1, handle) < 1)
-				return rgbe_Error(rgbe_write_error,NULL);
-			if(io->write_proc(&data[cur], sizeof(data[0]) * nonrun_count, 1, handle) < 1)
-				return rgbe_Error(rgbe_write_error,NULL);
+			if (io->write_proc(buf, sizeof(buf[0]), 1, handle) < 1) {
+				return rgbe_Error(rgbe_write_error, NULL);
+			}
+			if (io->write_proc(&data[cur], sizeof(data[0]) * nonrun_count, 1, handle) < 1) {
+				return rgbe_Error(rgbe_write_error, NULL);
+			}
 			cur += nonrun_count;
 		}
 		// write out next run if one was found 
 		if (run_count >= MINRUNLENGTH) {
 			buf[0] = (BYTE)(128 + run_count);
 			buf[1] = data[beg_run];
-			if(io->write_proc(buf, sizeof(buf[0]) * 2, 1, handle) < 1)
-				return rgbe_Error(rgbe_write_error,NULL);
+			if (io->write_proc(buf, sizeof(buf[0]) * 2, 1, handle) < 1) {
+				return rgbe_Error(rgbe_write_error, NULL);
+			}
 			cur += run_count;
 		}
 	}

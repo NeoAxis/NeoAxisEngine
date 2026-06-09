@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2024.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1144, 842\"><KW V=\"1\" A=\"BCA52DF15A69481CB1A4E4952BAD03AB\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"ABE5E46721694418CDA665770640AB27\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"BCA52DF15A69481CB1A4E4952BAD03AB\"><KP UN=\"BCA52DF15A69481CB1A4E4952BAD03AB\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"1DA4CFCDC01548FCEB821DEAD055F32E\" S=\"False\"><CPD ObjPath=\"$Light4\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1192, 963\"><KW V=\"1\" A=\"BCA52DF15A69481CB1A4E4952BAD03AB\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"ABE5E46721694418CDA665770640AB27\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"BCA52DF15A69481CB1A4E4952BAD03AB\"><KP UN=\"BCA52DF15A69481CB1A4E4952BAD03AB\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"1DA4CFCDC01548FCEB821DEAD055F32E\" S=\"False\"><CPD ObjPath=\"$Light4\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BackgroundColor = 0.3077647 0.4585882 0.7294118
 	DisplayDevelopmentDataInSimulation = True
 	DisplayLights = True
@@ -25,7 +25,8 @@
 		Name = Ambient Light
 		Transform = "-38.9672666736033 4.93840505726751 24.8527169920668; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 50000
+		Brightness = 30000
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
@@ -44,6 +45,10 @@
 		.component NeoAxis.Component
 		{
 			Name = Scene Effects
+			.component NeoAxis.RenderingEffect_ToneMapping
+			{
+				Name = Tone Mapping
+			}
 			.component NeoAxis.RenderingEffect_Antialiasing
 			{
 				Name = Antialiasing
@@ -79,6 +84,7 @@
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 90
 		MaskTransform = "0 0 0; 0 0 0 1; 0.02 0.02 0.02"
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Material
 	{
@@ -185,6 +191,7 @@
 		Brightness = 998973.4375
 		AttenuationFar = 132.496
 		AttenuationPower = 1.06929
+		ShadowNearClipDistance = 0.1
 		Mask
 		{
 			GetByReference = "Samples\\Starter Content\\Textures\\LightMask.jpg"
@@ -201,6 +208,7 @@
 		AttenuationFar = 132.496
 		AttenuationPower = 1.06929
 		SpotlightOuterAngle = 23.607
+		ShadowNearClipDistance = 0.1
 		Mask
 		{
 			GetByReference = "Samples\\Starter Content\\Textures\\LightMask.jpg"
@@ -210,11 +218,12 @@
 	{
 		Name = Light4
 		ScreenLabel = AlwaysDisplay
-		Transform = "-143.694883030573 51.6707628412071 10.5607987376299; 0 0 0.96049258366912 -0.27830558154054; 0.456621010112085 0.456621010112085 0.456621010112085"
+		Transform = "-143.694883030573 51.6707628412071 10.5607987376299; 0 0 0.887831353443382 0.460168977488589; 0.456621010112085 0.456621010112085 0.456621010112085"
 		Type = Point
 		Brightness = 1389918
 		AttenuationFar = 93.025
 		AttenuationPower = 1.10889
+		ShadowNearClipDistance = 0.1
 		Mask
 		{
 			GetByReference = "Samples\\Starter Content\\Textures\\CubeDDS.dds"
@@ -249,12 +258,13 @@
 	{
 		Name = Light 3
 		ScreenLabel = AlwaysDisplay
-		Transform = "-119.520996473399 100.655659190103 10.5607987376299; 0 0 0.96049258366912 -0.27830558154054; 0.456621010112085 0.456621010112085 0.456621010112085"
+		Transform = "-119.520996473399 100.655659190103 10.5607987376299; 0 0 0.887831353443382 0.460168977488589; 0.456621010112085 0.456621010112085 0.456621010112085"
 		Type = Point
 		Brightness = 1389918
 		Color = 0.2309412 0.649098 1
 		AttenuationFar = 93.025
 		AttenuationPower = 1.10889
+		ShadowNearClipDistance = 0.1
 		Mask
 		{
 			GetByReference = "Samples\\Starter Content\\Textures\\LightMask.jpg"
@@ -3849,6 +3859,5 @@
 	{
 		Name = Fog
 		Color = 0.7990196 0.872 0.812
-		Density = 0.005
 	}
 }

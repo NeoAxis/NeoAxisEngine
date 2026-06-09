@@ -28,10 +28,10 @@ struct MaterialInputs {
 	MEDIUMP vec3 anisotropyDirection;
 #endif
 
-#ifdef MATERIAL_HAS_CLEAR_COAT
-	MEDIUMP float clearCoat;
-	MEDIUMP float clearCoatRoughness;
-	MEDIUMP vec3 clearCoatNormal;
+#ifdef MATERIAL_HAS_CLEARCOAT
+	MEDIUMP float clearcoat;
+	MEDIUMP float clearcoatRoughness;
+	MEDIUMP vec3 clearcoatNormal;
 #endif	
 
 #if defined(SHADING_MODEL_SUBSURFACE) || defined(SHADING_MODEL_FOLIAGE)
@@ -55,10 +55,10 @@ struct PixelParams {
 	MEDIUMP vec3 dfg;
 	MEDIUMP vec3 energyCompensation;
 
-#ifdef MATERIAL_HAS_CLEAR_COAT
-	MEDIUMP float clearCoat;
-	MEDIUMP float clearCoatRoughness;
-	MEDIUMP float clearCoatLinearRoughness;
+#ifdef MATERIAL_HAS_CLEARCOAT
+	MEDIUMP float clearcoat;
+	MEDIUMP float clearcoatRoughness;
+	MEDIUMP float clearcoatLinearRoughness;
 #endif
 
 #ifdef MATERIAL_HAS_ANISOTROPY
@@ -82,8 +82,8 @@ struct ShadingParams {
 	HIGHP mat3 tangentToWorld;
 	MEDIUMP vec3 normal;
 	//vec3 input_normal;
-#ifdef MATERIAL_HAS_CLEAR_COAT
-	MEDIUMP vec3 clearCoatNormal;
+#ifdef MATERIAL_HAS_CLEARCOAT
+	MEDIUMP vec3 clearcoatNormal;
 #endif	
 	MEDIUMP vec3 view;
 	MEDIUMP vec3 L;
@@ -219,25 +219,25 @@ void evaluateClothIndirectDiffuseBRDF(const PixelParams pixel, const ShadingPara
 #endif
 }
 
-#ifdef MATERIAL_HAS_CLEAR_COAT
-void iblClearCoatDiffuse(const PixelParams pixel, const ShadingParams shading, inout vec3 Fd)
+#ifdef MATERIAL_HAS_CLEARCOAT
+void iblClearcoatDiffuse(const PixelParams pixel, const ShadingParams shading, inout vec3 Fd)
 {
-	MEDIUMP float clearCoatNoV = clampNoV(dot(shading.clearCoatNormal, shading.view));
+	MEDIUMP float clearcoatNoV = clampNoV(dot(shading.clearcoatNormal, shading.view));
 	// The clear coat layer assumes an IOR of 1.5 (4% reflectance)
-	MEDIUMP float Fc = F_Schlick(0.04, 1.0, clearCoatNoV) * pixel.clearCoat;
+	MEDIUMP float Fc = F_Schlick(0.04, 1.0, clearcoatNoV) * pixel.clearcoat;
 	MEDIUMP float attenuation = 1.0 - Fc;
 	Fd *= attenuation;
 }
 
-void iblClearCoatSpecular(const PixelParams pixel, const ShadingParams shading, float specularAO, inout vec3 Fr, samplerCube environmentTexture, EnvironmentTextureData environmentTextureData, vec3 replaceSpecularIrradianceValue, float replaceSpecularIrradianceFactor)
+void iblClearcoatSpecular(const PixelParams pixel, const ShadingParams shading, float specularAO, inout vec3 Fr, samplerCube environmentTexture, EnvironmentTextureData environmentTextureData, vec3 replaceSpecularIrradianceValue, float replaceSpecularIrradianceFactor)
 {
-	MEDIUMP float clearCoatNoV = clampNoV(dot(shading.clearCoatNormal, shading.view));
-	MEDIUMP vec3 clearCoatR = reflect(-shading.view, shading.clearCoatNormal);
-	MEDIUMP float Fc = F_Schlick(0.04, 1.0, clearCoatNoV) * pixel.clearCoat;
+	MEDIUMP float clearcoatNoV = clampNoV(dot(shading.clearcoatNormal, shading.view));
+	MEDIUMP vec3 clearcoatR = reflect(-shading.view, shading.clearcoatNormal);
+	MEDIUMP float Fc = F_Schlick(0.04, 1.0, clearcoatNoV) * pixel.clearcoat;
 	MEDIUMP float attenuation = 1.0 - Fc;
 	Fr *= sq(attenuation);	
-	Fr += mix( specularIrradiance( clearCoatR, pixel.clearCoatRoughness, environmentTexture, environmentTextureData ), replaceSpecularIrradianceValue, replaceSpecularIrradianceFactor ) * ( specularAO * Fc );	
-	//Fr += specularIrradiance(clearCoatR, pixel.clearCoatRoughness, environmentTexture, environmentTextureData) * (specularAO * Fc);
+	Fr += mix( specularIrradiance( clearcoatR, pixel.clearcoatRoughness, environmentTexture, environmentTextureData ), replaceSpecularIrradianceValue, replaceSpecularIrradianceFactor ) * ( specularAO * Fc );	
+	//Fr += specularIrradiance(clearcoatR, pixel.clearcoatRoughness, environmentTexture, environmentTextureData) * (specularAO * Fc);
 }
 #endif
 
@@ -297,8 +297,8 @@ MEDIUMP vec3 iblDiffuse(const MaterialInputs material, const PixelParams pixel, 
 	
 	MEDIUMP vec3 Fd = pixel.diffuseColor * diffuseIrr * diffuseBRDF;
 
-#ifdef MATERIAL_HAS_CLEAR_COAT
-	iblClearCoatDiffuse(pixel, shading, Fd);
+#ifdef MATERIAL_HAS_CLEARCOAT
+	iblClearcoatDiffuse(pixel, shading, Fd);
 #endif
 
 #if defined(SHADING_MODEL_SUBSURFACE) || defined(SHADING_MODEL_FOLIAGE)
@@ -337,8 +337,8 @@ MEDIUMP vec3 iblSpecular(const MaterialInputs material, const PixelParams pixel,
 	MEDIUMP vec3 Fr = specularDFG(pixel) * specIrradiance * specularAO;
 	Fr *= pixel.energyCompensation;
 
-#ifdef MATERIAL_HAS_CLEAR_COAT
-	iblClearCoatSpecular( pixel, shading, specularAO, Fr, environmentTexture, environmentTextureData, replaceSpecularIrradianceValue, replaceSpecularIrradianceFactor );
+#ifdef MATERIAL_HAS_CLEARCOAT
+	iblClearcoatSpecular( pixel, shading, specularAO, Fr, environmentTexture, environmentTextureData, replaceSpecularIrradianceValue, replaceSpecularIrradianceFactor );
 #endif
 	
 	return Fr * IBL_LUMINANCE;
@@ -365,20 +365,17 @@ void getPBRFilamentShadingParams(const MaterialInputs material, vec3 tangent, ve
 
 	shading.ToL = saturate(dot(normal, shading.L));
 
-	shading.tangentToWorld = transpose(mtxFromRows(tangent, bitangent, normal));
+	shading.tangentToWorld = mtxFromCols(tangent, bitangent, normal);
 
 	shading.NoV = clampNoV(dot(shading.normal, shading.view));
 	shading.reflected = reflect(-shading.view, normal);
 
-#ifdef MATERIAL_HAS_CLEAR_COAT
-	mat3 tangentToWorld_ClearCoat = transpose(mtxFromRows(tangent, bitangent, inputNormal));
-	shading.clearCoatNormal = normalize(mul(tangentToWorld_ClearCoat, material.clearCoatNormal));
+#ifdef MATERIAL_HAS_CLEARCOAT
+	shading.clearcoatNormal = normalize(material.clearcoatNormal);
 	#ifdef TWO_SIDED_FLIP_NORMALS
 		if(frontFacing)
-			shading.clearCoatNormal = -shading.clearCoatNormal;
+			shading.clearcoatNormal = -shading.clearcoatNormal;
 	#endif	
-//#else
-//	shading.clearCoatNormal = vec3_splat(0);
 #endif
 	
 }
@@ -415,28 +412,28 @@ void getPBRFilamentPixelParams(const MaterialInputs material, const ShadingParam
 //	roughness = max(roughness, geometricRoughness);
 //#endif
 
-#ifdef MATERIAL_HAS_CLEAR_COAT
-	pixel.clearCoat = material.clearCoat;
+#ifdef MATERIAL_HAS_CLEARCOAT
+	pixel.clearcoat = material.clearcoat;
 
 	// Clamp the clear coat roughness to avoid divisions by 0
-	MEDIUMP float clearCoatRoughness = material.clearCoatRoughness;
-	clearCoatRoughness = mix(MIN_ROUGHNESS, MAX_CLEAR_COAT_ROUGHNESS, clearCoatRoughness);
+	MEDIUMP float clearcoatRoughness = material.clearcoatRoughness;
+	clearcoatRoughness = mix(MIN_ROUGHNESS, MAX_CLEAR_COAT_ROUGHNESS, clearcoatRoughness);
 
 //#if defined(GEOMETRIC_SPECULAR_AA_ROUGHNESS)
-//	clearCoatRoughness = max(clearCoatRoughness, geometricRoughness);
+//	clearcoatRoughness = max(clearcoatRoughness, geometricRoughness);
 //#endif
 
 	// Remap the roughness to perceptually linear roughness
-	pixel.clearCoatRoughness = clearCoatRoughness;
-	pixel.clearCoatLinearRoughness = clearCoatRoughness * clearCoatRoughness;
+	pixel.clearcoatRoughness = clearcoatRoughness;
+	pixel.clearcoatLinearRoughness = clearcoatRoughness * clearcoatRoughness;
 #endif	
 
 	//!!!!is not used
-//#if defined(MATERIAL_HAS_CLEAR_COAT_ROUGHNESS)
+//#if defined(MATERIAL_HAS_CLEARCOAT_ROUGHNESS)
 //	// This is a hack but it will do: the base layer must be at least as rough
 //	// as the clear coat layer to take into account possible diffusion by the
 //	// top layer
-//	roughness = max(roughness, pixel.clearCoatRoughness);
+//	roughness = max(roughness, pixel.clearcoatRoughness);
 //#endif
 
 #if defined(SHADING_MODEL_SUBSURFACE) || defined(SHADING_MODEL_FOLIAGE)
@@ -515,18 +512,18 @@ MEDIUMP vec3 anisotropicLobe(const PixelParams pixel, const ShadingParams shadin
 }
 #endif
 
-#ifdef MATERIAL_HAS_CLEAR_COAT
-MEDIUMP float clearCoatLobe(const PixelParams pixel, const ShadingParams shading, out float Fcc)
+#ifdef MATERIAL_HAS_CLEARCOAT
+MEDIUMP float clearcoatLobe(const PixelParams pixel, const ShadingParams shading, out float Fcc)
 {
 	// If the material has a normal map, we want to use the geometric normal
 	// instead to avoid applying the normal map details to the clear coat layer
 
-	MEDIUMP float clearCoatNoH = saturate(dot(shading.clearCoatNormal, shading.H));
+	MEDIUMP float clearcoatNoH = saturate(dot(shading.clearcoatNormal, shading.H));
 
 	// clear coat specular lobe
-	MEDIUMP float D = distributionClearCoat(pixel.clearCoatLinearRoughness, clearCoatNoH, shading.H);
-	MEDIUMP float V = visibilityClearCoat(pixel.clearCoatRoughness, pixel.clearCoatLinearRoughness, shading.LoH);
-	MEDIUMP float F = F_Schlick(0.04, 1.0, shading.LoH) * pixel.clearCoat; // fix IOR to 1.5
+	MEDIUMP float D = distributionClearcoat(pixel.clearcoatLinearRoughness, clearcoatNoH, shading.H);
+	MEDIUMP float V = visibilityClearcoat(pixel.clearcoatRoughness, pixel.clearcoatLinearRoughness, shading.LoH);
+	MEDIUMP float F = F_Schlick(0.04, 1.0, shading.LoH) * pixel.clearcoat; // fix IOR to 1.5
 
 	Fcc = F;
 	return D * V * F;
@@ -554,10 +551,10 @@ MEDIUMP vec3 surfaceShadingStandard(const PixelParams pixel, const ShadingParams
 
 	MEDIUMP vec3 color;
 
-#ifdef MATERIAL_HAS_CLEAR_COAT
+#ifdef MATERIAL_HAS_CLEARCOAT
 	{
 		MEDIUMP float Fcc;
-		MEDIUMP float clearCoat = clearCoatLobe(pixel, shading, Fcc);
+		MEDIUMP float clearcoat = clearcoatLobe(pixel, shading, Fcc);
 
 		// Energy compensation and absorption; the clear coat Fresnel term is
 		// squared to take into account both entering through and exiting through
@@ -567,8 +564,8 @@ MEDIUMP vec3 surfaceShadingStandard(const PixelParams pixel, const ShadingParams
 
 		// If the material has a normal map, we want to use the geometric normal
 		// instead to avoid applying the normal map details to the clear coat layer
-		MEDIUMP float clearCoatNoL = saturate(dot(shading.clearCoatNormal, shading.L));
-		color += clearCoat * clearCoatNoL;
+		MEDIUMP float clearcoatNoL = saturate(dot(shading.clearcoatNormal, shading.L));
+		color += clearcoat * clearcoatNoL;
 
 		// Early exit to avoid the extra multiplication by NoL
 		return color;

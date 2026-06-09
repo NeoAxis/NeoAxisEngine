@@ -944,6 +944,10 @@ namespace NeoAxis
 					//float offset = (float)variant.trueTypeFontSizeYInPixels - (float)glyphDrawOffsetY + sizeY * trueTypeDefinition.DrawOffsetY;
 					//Log.Info( "char: " + ( (char)character ).ToString() + " " + offset.ToString() );
 
+					//fix negative offset
+					if( glyphDrawOffsetX < 0 )
+						glyphDrawOffsetX = 0;
+
 					characterInfo.drawOffsetInPixels = new Vector2I( glyphDrawOffsetX,
 						(int)( (float)variant.trueTypeFontSizeYInPixels - (float)glyphDrawOffsetY +
 						sizeY * DrawOffsetY.Value ) );

@@ -21,6 +21,7 @@
 */
 
 using System;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -241,32 +242,32 @@ namespace Internal.Assimp.Unmanaged
         public uint NumFaces;
 
         /// <summary>
-        /// aiVector3D*, array of positions.
+        /// aiVector3*, array of positions.
         /// </summary>
         public IntPtr Vertices;
 
         /// <summary>
-        /// aiVector3D*, array of normals.
+        /// aiVector3*, array of normals.
         /// </summary>
         public IntPtr Normals;
 
         /// <summary>
-        /// aiVector3D*, array of tangents.
+        /// aiVector3*, array of tangents.
         /// </summary>
         public IntPtr Tangents;
 
         /// <summary>
-        /// aiVector3D*, array of bitangents.
+        /// aiVector3*, array of bitangents.
         /// </summary>
         public IntPtr BiTangents;
 
         /// <summary>
-        /// aiColor4D*[Max_Value], array of arrays of vertex colors. Max_Value is defined as <see cref="AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS"/>.
+        /// aiVector4*[Max_Value], array of arrays of vertex colors. Max_Value is defined as <see cref="AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS"/>.
         /// </summary>
         public AiMeshColorArray Colors;
 
         /// <summary>
-        /// aiVector3D*[Max_Value], array of arrays of texture coordinates. Max_Value is defined as <see cref="AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS"/>.
+        /// aiVector3*[Max_Value], array of arrays of texture coordinates. Max_Value is defined as <see cref="AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS"/>.
         /// </summary>
         public AiMeshTextureCoordinateArray TextureCoords;
 
@@ -366,10 +367,10 @@ namespace Internal.Assimp.Unmanaged
         /// Sets the format hint.
         /// </summary>
         /// <param name="formatHint">Format hint - must be 3 characters or less</param>
-        public void SetFormatHint(String formatHint)
+        public void SetFormatHint(string formatHint)
         {
             int maxLen = s_nullFormat.Length;
-            char[] hintChars = (String.IsNullOrEmpty(formatHint)) ? s_nullFormat : formatHint.ToLowerInvariant().ToCharArray();
+            char[] hintChars = (string.IsNullOrEmpty(formatHint)) ? s_nullFormat : formatHint.ToLowerInvariant().ToCharArray();
 
             int count = hintChars.Length;
 
@@ -384,7 +385,7 @@ namespace Internal.Assimp.Unmanaged
         /// Gets the format hint.
         /// </summary>
         /// <returns>The format hint</returns>
-        public String GetFormatHint()
+        public string GetFormatHint()
         {
             return GetFormatHint(this);
         }
@@ -394,29 +395,11 @@ namespace Internal.Assimp.Unmanaged
         /// </summary>
         /// <param name="aiTex">AiTexture</param>
         /// <returns>The format hint</returns>
-        public static String GetFormatHint(in AiTexture aiTex)
+        public static string GetFormatHint(in AiTexture aiTex)
         {
             fixed (sbyte* charPtr = aiTex.FormatHint)
             {
-#if !NETSTANDARD1_3
-                return new String(charPtr);
-#else
-                //Determine how many actual characters there are...
-                int maxLen = s_nullFormat.Length;
-                int nonTerminatorCount = 0;
-                for(int i = 0; i < maxLen; i++)
-                {
-                    if(aiTex.FormatHint[i] == '\0')
-                        break;
-
-                    nonTerminatorCount++;
-                }
-
-                if(nonTerminatorCount == 0)
-                    return String.Empty;
-
-                return Encoding.ASCII.GetString((byte*) charPtr, nonTerminatorCount);
-#endif
+                return new string(charPtr);
             }
         }
     }
@@ -738,17 +721,17 @@ namespace Internal.Assimp.Unmanaged
         /// <summary>
         /// Position of the light.
         /// </summary>
-        public Vector3D Position;
+        public Vector3 Position;
 
         /// <summary>
         /// Direction of the spot/directional light.
         /// </summary>
-        public Vector3D Direction;
+        public Vector3 Direction;
 
         /// <summary>
         /// Up direction of the light source in space. Undefined for point lights.
         /// </summary>
-        public Vector3D Up;
+        public Vector3 Up;
 
         /// <summary>
         /// Attenuation constant value.
@@ -768,17 +751,17 @@ namespace Internal.Assimp.Unmanaged
         /// <summary>
         /// Diffuse color.
         /// </summary>
-        public Color3D ColorDiffuse;
+        public Vector3 ColorDiffuse;
 
         /// <summary>
         /// Specular color.
         /// </summary>
-        public Color3D ColorSpecular;
+        public Vector3 ColorSpecular;
 
         /// <summary>
         /// Ambient color.
         /// </summary>
-        public Color3D ColorAmbient;
+        public Vector3 ColorAmbient;
 
         /// <summary>
         /// Spot light inner angle.
@@ -793,7 +776,7 @@ namespace Internal.Assimp.Unmanaged
         /// <summary>
         /// Width (X) and Height (Y) of the area that represents an <see cref="LightSourceType.Area"/> light.
         /// </summary>
-        public Vector2D AreaSize;
+        public Vector2 AreaSize;
     }
 
     /// <summary>
@@ -810,17 +793,17 @@ namespace Internal.Assimp.Unmanaged
         /// <summary>
         /// Position of the camera.
         /// </summary>
-        public Vector3D Position;
+        public Vector3 Position;
 
         /// <summary>
         /// Up vector of the camera.
         /// </summary>
-        public Vector3D Up;
+        public Vector3 Up;
 
         /// <summary>
         /// Viewing direction of the camera.
         /// </summary>
-        public Vector3D LookAt;
+        public Vector3 LookAt;
 
         /// <summary>
         /// Field Of View of the camera.
@@ -863,7 +846,7 @@ namespace Internal.Assimp.Unmanaged
         /// Constructs a new instance of the <see cref="AiString"/> struct.
         /// </summary>
         /// <param name="data">The string data</param>
-        public AiString(String data)
+        public AiString(string data)
         {
             Length = 0;
 
@@ -876,7 +859,7 @@ namespace Internal.Assimp.Unmanaged
         /// </summary>
         /// <param name="aiStr">AiString</param>
         /// <returns>AiString string data</returns>
-        public unsafe static String GetString(in AiString aiStr)
+        public unsafe static string GetString(in AiString aiStr)
         {
             int length = (int) aiStr.Length;
 
@@ -892,7 +875,7 @@ namespace Internal.Assimp.Unmanaged
             }
             else
             {
-                return String.Empty;
+                return string.Empty;
             }
         }
 
@@ -901,7 +884,7 @@ namespace Internal.Assimp.Unmanaged
         /// an empty string rather than garbage.
         /// </summary>
         /// <returns>AiString string data</returns>
-        public String GetString()
+        public string GetString()
         {
             return GetString(this);
         }
@@ -911,13 +894,13 @@ namespace Internal.Assimp.Unmanaged
         /// </summary>
         /// <param name="data">String data to set</param>
         /// <returns>True if the operation was successful, false otherwise.</returns>
-        public unsafe bool SetString(String data)
+        public unsafe bool SetString(string data)
         {
-            if(String.IsNullOrEmpty(data))
+            if(string.IsNullOrEmpty(data))
             {
                 Length = 0;
                 fixed(byte* bytePtr = Data)
-                    MemoryHelper.ClearMemory(new IntPtr(bytePtr), 0, AiDefines.MAX_LENGTH);
+                    MemoryHelper.ClearMemory(new IntPtr(bytePtr), AiDefines.MAX_LENGTH);
 
                 return true;
             }
@@ -945,8 +928,8 @@ namespace Internal.Assimp.Unmanaged
         /// <summary>
         /// Returns the fully qualified type name of this instance.
         /// </summary>
-        /// <returns>A <see cref="T:System.String" /> containing a fully qualified type name.</returns>
-        public override String ToString()
+        /// <returns>A <see cref="T:string" /> containing a fully qualified type name.</returns>
+        public override string ToString()
         {
             return GetString();
         }
@@ -1029,32 +1012,32 @@ namespace Internal.Assimp.Unmanaged
         public AiString Name;
         
         /// <summary>
-        /// aiVector3D*, replacement position array.
+        /// aiVector3*, replacement position array.
         /// </summary>
         public IntPtr Vertices;
 
         /// <summary>
-        /// aiVector3D*, replacement normal array.
+        /// aiVector3*, replacement normal array.
         /// </summary>
         public IntPtr Normals;
 
         /// <summary>
-        /// aiVector3D*, replacement tangent array.
+        /// aiVector3*, replacement tangent array.
         /// </summary>
         public IntPtr Tangents;
 
         /// <summary>
-        /// aiVector3D*, replacement bitangent array.
+        /// aiVector3*, replacement bitangent array.
         /// </summary>
         public IntPtr BiTangents;
 
         /// <summary>
-        /// aiColor4D*[Max_Value], array of arrays of vertex colors. Max_Value is defined as <see cref="AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS"/>.
+        /// aiVector4*[Max_Value], array of arrays of vertex colors. Max_Value is defined as <see cref="AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS"/>.
         /// </summary>
         public AiMeshColorArray Colors;
 
         /// <summary>
-        /// aiVector3D*[Max_Value], array of arrays of texture coordinates. Max_Value is defined as <see cref="AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS"/>.
+        /// aiVector3*[Max_Value], array of arrays of texture coordinates. Max_Value is defined as <see cref="AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS"/>.
         /// </summary>
         public AiMeshTextureCoordinateArray TextureCoords;
 
@@ -1249,7 +1232,7 @@ namespace Internal.Assimp.Unmanaged
     /// <param name="msg">Log message</param>
     /// <param name="userData">char* pointer to user data that is passed to the callback</param>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void AiLogStreamCallback([In, MarshalAs(UnmanagedType.LPStr)] String msg, IntPtr userData);
+    public delegate void AiLogStreamCallback([In, MarshalAs(UnmanagedType.LPStr)] string msg, IntPtr userData);
 
     /// <summary>
     /// Callback delegate for a custom file system, to write to a file.
@@ -1306,7 +1289,7 @@ namespace Internal.Assimp.Unmanaged
     /// <param name="mode">Read-write permissions to request</param>
     /// <returns>Pointer to an AiFile instance.</returns>
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate IntPtr AiFileOpenProc(IntPtr fileIO, [In, MarshalAs(UnmanagedType.LPStr)] String pathToFile, [In, MarshalAs(UnmanagedType.LPStr)] String mode);
+    public delegate IntPtr AiFileOpenProc(IntPtr fileIO, [In, MarshalAs(UnmanagedType.LPStr)] string pathToFile, [In, MarshalAs(UnmanagedType.LPStr)] string mode);
 
     /// <summary>
     /// Callback delegate for a custom file system, to close a given file and free its memory.
@@ -1334,13 +1317,7 @@ namespace Internal.Assimp.Unmanaged
         /// <summary>
         /// Gets the length of the array.
         /// </summary>
-        public int Length
-        {
-            get
-            {
-                return AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS;
-            }
-        }
+        public int Length => AiDefines.AI_MAX_NUMBER_OF_COLOR_SETS;
 
         /// <summary>
         /// Gets or sets an array value at the specified index.
@@ -1418,13 +1395,7 @@ namespace Internal.Assimp.Unmanaged
         /// <summary>
         /// Gets the length of the array.
         /// </summary>
-        public int Length
-        {
-            get
-            {
-                return AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS;
-            }
-        }
+        public int Length => AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS;
 
         /// <summary>
         /// Gets or sets an array value at the specified index.
@@ -1502,13 +1473,7 @@ namespace Internal.Assimp.Unmanaged
         /// <summary>
         /// Gets the length of the array.
         /// </summary>
-        public int Length
-        {
-            get
-            {
-                return AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS;
-            }
-        }
+        public int Length => AiDefines.AI_MAX_NUMBER_OF_TEXTURECOORDS;
 
         /// <summary>
         /// Gets or sets an array value at the specified index.

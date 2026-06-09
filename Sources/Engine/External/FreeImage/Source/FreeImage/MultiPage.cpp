@@ -274,8 +274,8 @@ FreeImage_OpenMultiBitmap(FREE_IMAGE_FORMAT fif, const char *filename, BOOL crea
 					}
 				}
 
-				std::auto_ptr<FIMULTIBITMAP> bitmap (new FIMULTIBITMAP);
-				std::auto_ptr<MULTIBITMAPHEADER> header (new MULTIBITMAPHEADER);
+				std::unique_ptr<FIMULTIBITMAP> bitmap (new FIMULTIBITMAP);
+				std::unique_ptr<MULTIBITMAPHEADER> header (new MULTIBITMAPHEADER);
 				header->m_filename = filename;
 				// io is default
 				header->node = node;
@@ -307,7 +307,9 @@ FreeImage_OpenMultiBitmap(FREE_IMAGE_FORMAT fif, const char *filename, BOOL crea
 					
 					if (!header->m_cachefile.open(cache_name, keep_cache_in_memory)) {
 						// an error occured ...
-						fclose(handle);
+						if(handle){
+						  fclose(handle);
+						}
 						return NULL;
 					}
 				}
@@ -340,8 +342,8 @@ FreeImage_OpenMultiBitmapFromHandle(FREE_IMAGE_FORMAT fif, FreeImageIO *io, fi_h
 				PluginNode *node = list->FindNodeFromFIF(fif);
 			
 				if (node) {
-					std::auto_ptr<FIMULTIBITMAP> bitmap (new FIMULTIBITMAP);
-					std::auto_ptr<MULTIBITMAPHEADER> header (new MULTIBITMAPHEADER);
+					std::unique_ptr<FIMULTIBITMAP> bitmap (new FIMULTIBITMAP);
+					std::unique_ptr<MULTIBITMAPHEADER> header (new MULTIBITMAPHEADER);
 					header->io = *io;
 					header->node = node;
 					header->fif = fif;

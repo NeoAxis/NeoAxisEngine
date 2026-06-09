@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef _WIN32
+
 ///////////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2005-2012, Industrial Light & Magic, a division of Lucas
@@ -38,9 +41,6 @@
 //
 //-----------------------------------------------------------------------------
 
-#include "IlmBaseConfig.h"
-
-#if !defined(HAVE_PTHREAD) && defined(_WIN32)
 
 #include "IlmThread.h"
 #include "Iex.h"
@@ -97,4 +97,5 @@ Thread::start ()
 
 ILMTHREAD_INTERNAL_NAMESPACE_SOURCE_EXIT
 
+//!!!!betauser
 #endif

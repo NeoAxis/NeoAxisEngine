@@ -20,7 +20,7 @@
 * THE SOFTWARE.
 */
 
-using System;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace Internal.Assimp
@@ -28,28 +28,8 @@ namespace Internal.Assimp
     /// <summary>
     /// Defines a 3D ray with a point of origin and a direction.
     /// </summary>
+    /// <param name="Position">Origin of the ray in space."></param>
+    /// <param name="Direction">Direction of the ray."></param>
     [StructLayout(LayoutKind.Sequential)]
-    public struct Ray
-    {
-        /// <summary>
-        /// Origin of the ray in space.
-        /// </summary>
-        public Vector3D Position;
-
-        /// <summary>
-        /// Direction of the ray.
-        /// </summary>
-        public Vector3D Direction;
-
-        /// <summary>
-        /// Constructs a new Ray.
-        /// </summary>
-        /// <param name="pos">Origin of the ray.</param>
-        /// <param name="dir">Direction of the ray.</param>
-        public Ray(Vector3D pos, Vector3D dir)
-        {
-            Position = pos;
-            Direction = dir;
-        }
-    }
+    public record struct Ray(Vector3 Position, Vector3 Direction);
 }

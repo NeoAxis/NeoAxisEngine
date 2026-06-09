@@ -29,7 +29,7 @@
 // Version information ------------------------------------------------------
 
 #define FREEIMAGE_MAJOR_VERSION   3
-#define FREEIMAGE_MINOR_VERSION   18
+#define FREEIMAGE_MINOR_VERSION   19
 #define FREEIMAGE_RELEASE_SERIAL  0
 
 // Compiler options ---------------------------------------------------------
@@ -148,24 +148,52 @@ FI_STRUCT (FIMULTIBITMAP) { void *data; };
 #endif
 
 #ifndef _MSC_VER
-// define portable types for 32-bit / 64-bit OS
-#include <inttypes.h>
-typedef int32_t BOOL;
-typedef uint8_t BYTE;
-typedef uint16_t WORD;
-typedef uint32_t DWORD;
-typedef int32_t LONG;
-typedef int64_t INT64;
-typedef uint64_t UINT64;
+    // define portable types for 32-bit / 64-bit OS
+    #include <inttypes.h>
+    #ifndef BOOL
+        #define BOOL int32_t
+    #endif
+    #ifndef BYTE
+        #define BYTE uint8_t
+    #endif
+    #ifndef WORD
+        #define WORD uint16_t
+    #endif
+    #ifndef DWORD
+        #define DWORD uint32_t
+    #endif
+    #ifndef LONG
+        #define LONG int32_t
+    #endif
+    #ifndef INT64
+        #define INT64 int64_t
+    #endif
+    #ifndef UINT64
+        #define UINT64 uint64_t
+    #endif
 #else
-// MS is not C99 ISO compliant
-typedef long BOOL;
-typedef unsigned char BYTE;
-typedef unsigned short WORD;
-typedef unsigned long DWORD;
-typedef long LONG;
-typedef signed __int64 INT64;
-typedef unsigned __int64 UINT64;
+    // MS is not C99 ISO compliant
+    #ifndef BOOL
+        #define BOOL long
+    #endif
+    #ifndef BYTE
+        #define BYTE unsigned char
+    #endif
+    #ifndef WORD
+        #define WORD unsigned short
+    #endif
+    #ifndef DWORD
+        #define DWORD unsigned long
+    #endif
+    #ifndef LONG
+        #define LONG long
+    #endif
+    #ifndef INT64
+        #define INT64 signed __int64
+    #endif
+    #ifndef UINT64
+        #define UINT64 unsigned __int64
+    #endif
 #endif // _MSC_VER
 
 #if (defined(_WIN32) || defined(__WIN32__))
@@ -418,7 +446,8 @@ FI_ENUM(FREE_IMAGE_FORMAT) {
 	FIF_PFM		= 32,
 	FIF_PICT	= 33,
 	FIF_RAW		= 34,
-	FIF_WEBP	= 35
+	FIF_WEBP	= 35,
+	FIF_JXR		= 36
 };
 
 /** Image type used in FreeImage.
@@ -746,7 +775,7 @@ typedef void (DLL_CALLCONV *FI_InitProc)(Plugin *plugin, int format_id);
 #define TIFF_DEFAULT        0
 #define TIFF_CMYK			0x0001	//! reads/stores tags for separated CMYK (use | to combine with compression flags)
 #define TIFF_PACKBITS       0x0100  //! save using PACKBITS compression
-#define TIFF_DEFLATE        0x0200  //! save using DEFLATE compression (a.k.a. ZLIB compression)
+#define TIFF_DEFLATE        0x0200  //! save using DEFLATE compression (a.k.a. ZLIB compression) - obsolete, will save as TIFF_ADOBE_DEFLATE
 #define TIFF_ADOBE_DEFLATE  0x0400  //! save using ADOBE DEFLATE compression
 #define TIFF_NONE           0x0800  //! save without any compression
 #define TIFF_CCITTFAX3		0x1000  //! save using CCITT Group 3 fax encoding
@@ -875,12 +904,18 @@ DLL_API void DLL_CALLCONV FreeImage_UnlockPage(FIMULTIBITMAP *bitmap, FIBITMAP *
 DLL_API BOOL DLL_CALLCONV FreeImage_MovePage(FIMULTIBITMAP *bitmap, int target, int source);
 DLL_API BOOL DLL_CALLCONV FreeImage_GetLockedPageNumbers(FIMULTIBITMAP *bitmap, int *pages, int *count);
 
-// Filetype request routines ------------------------------------------------
+// File type request routines ------------------------------------------------
 
 DLL_API FREE_IMAGE_FORMAT DLL_CALLCONV FreeImage_GetFileType(const char *filename, int size FI_DEFAULT(0));
 DLL_API FREE_IMAGE_FORMAT DLL_CALLCONV FreeImage_GetFileTypeU(const wchar_t *filename, int size FI_DEFAULT(0));
 DLL_API FREE_IMAGE_FORMAT DLL_CALLCONV FreeImage_GetFileTypeFromHandle(FreeImageIO *io, fi_handle handle, int size FI_DEFAULT(0));
 DLL_API FREE_IMAGE_FORMAT DLL_CALLCONV FreeImage_GetFileTypeFromMemory(FIMEMORY *stream, int size FI_DEFAULT(0));
+
+DLL_API BOOL DLL_CALLCONV FreeImage_Validate(FREE_IMAGE_FORMAT fif, const char *filename);
+DLL_API BOOL DLL_CALLCONV FreeImage_ValidateU(FREE_IMAGE_FORMAT fif, const wchar_t *filename);
+DLL_API BOOL DLL_CALLCONV FreeImage_ValidateFromHandle(FREE_IMAGE_FORMAT fif, FreeImageIO *io, fi_handle handle);
+DLL_API BOOL DLL_CALLCONV FreeImage_ValidateFromMemory(FREE_IMAGE_FORMAT fif, FIMEMORY *stream);
+
 
 // Image type request routine -----------------------------------------------
 
@@ -1097,8 +1132,6 @@ DLL_API BOOL DLL_CALLCONV FreeImage_JPEGTransformCombinedFromMemory(FIMEMORY* sr
 // --------------------------------------------------------------------------
 
 // rotation and flipping
-/// @deprecated see FreeImage_Rotate
-DLL_API FIBITMAP *DLL_CALLCONV FreeImage_RotateClassic(FIBITMAP *dib, double angle);
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_Rotate(FIBITMAP *dib, double angle, const void *bkcolor FI_DEFAULT(NULL));
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_RotateEx(FIBITMAP *dib, double angle, double x_shift, double y_shift, double x_origin, double y_origin, BOOL use_mask);
 DLL_API BOOL DLL_CALLCONV FreeImage_FlipHorizontal(FIBITMAP *dib);

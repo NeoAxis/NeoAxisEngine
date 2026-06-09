@@ -127,7 +127,7 @@ Load(FreeImageIO *io, fi_handle handle, int page, int flags, void *data) {
 static BOOL DLL_CALLCONV
 Save(FreeImageIO *io, FIBITMAP *dib, fi_handle handle, int page, int flags, void *data) {
 	if(!handle) {
-		return NULL;
+		return FALSE;
 	}
 	try {
 		psdParser parser;

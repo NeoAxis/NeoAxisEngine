@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using Internal.Assimp.Unmanaged;
 
 namespace Internal.Assimp
@@ -31,7 +32,7 @@ namespace Internal.Assimp
     /// </summary>
     public sealed class Node : IMarshalable<Node, AiNode>
     {
-        private String m_name;
+        private string m_name;
         private Matrix4x4 m_transform;
         private Node m_parent;
         private NodeCollection m_children;
@@ -41,16 +42,10 @@ namespace Internal.Assimp
         /// <summary>
         /// Gets or sets the name of the node.
         /// </summary>
-        public String Name
+        public string Name
         {
-            get
-            {
-                return m_name;
-            }
-            set
-            {
-                m_name = value;
-            }
+            get => m_name;
+            set => m_name = value;
         }
 
         /// <summary>
@@ -58,112 +53,58 @@ namespace Internal.Assimp
         /// </summary>
         public Matrix4x4 Transform
         {
-            get
-            {
-                return m_transform;
-            }
-            set
-            {
-                m_transform = value;
-            }
+            get => m_transform;
+            set => m_transform = value;
         }
 
         /// <summary>
         /// Gets the node's parent, if it exists. 
         /// </summary>
-        public Node Parent
-        {
-            get
-            {
-                return m_parent;
-            }
-        }
+        public Node Parent => m_parent;
 
         /// <summary>
         /// Gets the number of children that is owned by this node.
         /// </summary>
-        public int ChildCount
-        {
-            get
-            {
-                return m_children.Count;
-            }
-        }
+        public int ChildCount => m_children.Count;
 
         /// <summary>
         /// Gets if the node contains children.
         /// </summary>
-        public bool HasChildren
-        {
-            get
-            {
-                return m_children.Count > 0;
-            }
-        }
+        public bool HasChildren => m_children.Count > 0;
 
         /// <summary>
         /// Gets the node's children.
         /// </summary>
-        public NodeCollection Children
-        {
-            get
-            {
-                return m_children;
-            }
-        }
+        public NodeCollection Children => m_children;
 
         /// <summary>
         /// Gets the number of meshes referenced by this node.
         /// </summary>
-        public int MeshCount
-        {
-            get
-            {
-                return m_meshes.Count;
-            }
-        }
+        public int MeshCount => m_meshes.Count;
 
         /// <summary>
         /// Gets if the node contains mesh references.
         /// </summary>
-        public bool HasMeshes
-        {
-            get
-            {
-                return m_meshes.Count > 0;
-            }
-        }
+        public bool HasMeshes => m_meshes.Count > 0;
 
         /// <summary>
         /// Gets the indices of the meshes referenced by this node. Meshes can be
         /// shared between nodes, so there is a mesh collection owned by the scene
         /// that each node can reference.
         /// </summary>
-        public List<int> MeshIndices
-        {
-            get
-            {
-                return m_meshes;
-            }
-        }
+        public List<int> MeshIndices => m_meshes;
 
         /// <summary>
         /// Gets the node's metadata container.
         /// </summary>
-        public Metadata Metadata
-        {
-            get
-            {
-                return m_metaData;
-            }
-        }
+        public Metadata Metadata => m_metaData;
 
         /// <summary>
         /// Constructs a new instance of the <see cref="Node"/> class.
         /// </summary>
         public Node()
         {
-            m_name = String.Empty;
+            m_name = string.Empty;
             m_transform = Matrix4x4.Identity;
             m_parent = null;
             m_children = new NodeCollection(this);
@@ -175,7 +116,7 @@ namespace Internal.Assimp
         /// Constructs a new instance of the <see cref="Node"/> class.
         /// </summary>
         /// <param name="name">Name of the node</param>
-        public Node(String name)
+        public Node(string name)
             : this()
         {
             m_name = name;
@@ -186,7 +127,7 @@ namespace Internal.Assimp
         /// </summary>
         /// <param name="name">Name of the node</param>
         /// <param name="parent">Parent of the node</param>
-        public Node(String name, Node parent)
+        public Node(string name, Node parent)
             : this()
         {
             m_name = name;
@@ -205,7 +146,7 @@ namespace Internal.Assimp
         /// </summary>
         /// <param name="name">Node name</param>
         /// <returns>The node or null if it does not exist</returns>
-        public Node FindNode(String name)
+        public Node FindNode(string name)
         {
             if(name.Equals(m_name))
                 return this;
@@ -240,7 +181,7 @@ namespace Internal.Assimp
             nativeValue.Parent = parentPtr;
 
             nativeValue.NumMeshes = (uint) node.m_meshes.Count;
-            nativeValue.Meshes = MemoryHelper.ToNativeArray<int>(node.m_meshes.ToArray());
+            nativeValue.Meshes = MemoryHelper.ToNativeArray<int>(node.m_meshes);
             nativeValue.MetaData = IntPtr.Zero;
 
             //If has metadata, create it, otherwise it should be NULL
@@ -261,7 +202,7 @@ namespace Internal.Assimp
 
                 for(int i = 0; i < numChildren; i++)
                 {
-                    IntPtr currPos = MemoryHelper.AddIntPtr(childrenPtr, stride * i);
+                    IntPtr currPos = childrenPtr + stride * i;
                     Node child = node.m_children[i];
 
                     IntPtr childPtr = IntPtr.Zero;
@@ -289,7 +230,7 @@ namespace Internal.Assimp
         /// <summary>
         /// Gets a value indicating whether this instance is native blittable.
         /// </summary>
-        bool IMarshalable<Node, AiNode>.IsNativeBlittable { get { return true; } }
+        bool IMarshalable<Node, AiNode>.IsNativeBlittable => true;
 
         /// <summary>
         /// Writes the managed data to the native value.
@@ -311,7 +252,7 @@ namespace Internal.Assimp
                 nativeValue.MetaData = MemoryHelper.ToNativePointer<Metadata, AiMetadata>(m_metaData);
 
             if(nativeValue.NumMeshes > 0)
-                nativeValue.Meshes = MemoryHelper.ToNativeArray<int>(m_meshes.ToArray());
+                nativeValue.Meshes = MemoryHelper.ToNativeArray<int>(m_meshes);
 
             //Now descend through the children
             nativeValue.NumChildren = (uint) m_children.Count;
@@ -327,7 +268,7 @@ namespace Internal.Assimp
 
                 for(int i = 0; i < numChildren; i++)
                 {
-                    IntPtr currPos = MemoryHelper.AddIntPtr(childrenPtr, stride * i);
+                    IntPtr currPos = childrenPtr + stride * i;
                     Node child = m_children[i];
 
                     IntPtr childPtr = IntPtr.Zero;
@@ -363,7 +304,7 @@ namespace Internal.Assimp
             if(nativeValue.MetaData != IntPtr.Zero)
             {
                 Metadata data = MemoryHelper.FromNativePointer<Metadata, AiMetadata>(nativeValue.MetaData);
-                foreach(KeyValuePair<String, Metadata.Entry> kv in data)
+                foreach(KeyValuePair<string, Metadata.Entry> kv in data)
                     m_metaData.Add(kv.Key, kv.Value);
             }
 

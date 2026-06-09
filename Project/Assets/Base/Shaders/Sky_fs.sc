@@ -60,11 +60,6 @@ vec3 convertXYZ2RGB(vec3 _xyz)
 	return rgb;
 }
 
-vec3 toGamma(vec3 _rgb)
-{
-	return pow(abs(_rgb), vec3_splat(1.0/2.2) );
-}
-
 //uniformly distributed, normalized rand, [0, 1)
 float nrand(vec2 n)
 {
@@ -233,8 +228,12 @@ void main()
 		float sun  = exp(-dist/ u_parameters.y / size2) + step(dist, size2);
 		float sun2 = min(sun * sun, 1.0);
 		vec3 color2 = v_skyColor + sun2;
-		
+
+#ifdef ACCURATE_SRGB_CORRECTION	
+		color2 = toGammaAccurate( color2 );
+#else
 		color2 = toGamma(color2);
+#endif
 		
 		if(u_atmospherePreventBanding)
 		{

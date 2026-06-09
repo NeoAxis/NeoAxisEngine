@@ -20,8 +20,6 @@
 * THE SOFTWARE.
 */
 
-using System;
-
 namespace Internal.Assimp.Unmanaged
 {
     /// <summary>
@@ -36,312 +34,312 @@ namespace Internal.Assimp.Unmanaged
         /// <summary>
         /// Material name (String)
         /// </summary>
-        public const String NAME_BASE = "?mat.name";
+        public const string NAME_BASE = "?mat.name";
 
         /// <summary>
         /// Material name (String)
         /// </summary>
-        public const String NAME = "?mat.name,0,0";
+        public const string NAME = "?mat.name,0,0";
 
         /// <summary>
         /// Two sided property (boolean)
         /// </summary>
-        public const String TWOSIDED_BASE = "$mat.twosided";
+        public const string TWOSIDED_BASE = "$mat.twosided";
 
         /// <summary>
         /// Two sided property (boolean)
         /// </summary>
-        public const String TWOSIDED = "$mat.twosided,0,0";
+        public const string TWOSIDED = "$mat.twosided,0,0";
 
         /// <summary>
         /// Shading mode property (ShadingMode)
         /// </summary>
-        public const String SHADING_MODEL_BASE = "$mat.shadingm";
+        public const string SHADING_MODEL_BASE = "$mat.shadingm";
 
         /// <summary>
         /// Shading mode property (ShadingMode)
         /// </summary>
-        public const String SHADING_MODEL = "$mat.shadingm,0,0";
+        public const string SHADING_MODEL = "$mat.shadingm,0,0";
 
         /// <summary>
         /// Enable wireframe property (boolean)
         /// </summary>
-        public const String ENABLE_WIREFRAME_BASE = "$mat.wireframe";
+        public const string ENABLE_WIREFRAME_BASE = "$mat.wireframe";
 
         /// <summary>
         /// Enable wireframe property (boolean)
         /// </summary>
-        public const String ENABLE_WIREFRAME = "$mat.wireframe,0,0";
+        public const string ENABLE_WIREFRAME = "$mat.wireframe,0,0";
 
         /// <summary>
         /// Blending function (BlendMode)
         /// </summary>
-        public const String BLEND_FUNC_BASE = "$mat.blend";
+        public const string BLEND_FUNC_BASE = "$mat.blend";
 
         /// <summary>
         /// Blending function (BlendMode)
         /// </summary>
-        public const String BLEND_FUNC = "$mat.blend,0,0";
+        public const string BLEND_FUNC = "$mat.blend,0,0";
 
         /// <summary>
         /// Opacity (float)
         /// </summary>
-        public const String OPACITY_BASE = "$mat.opacity";
+        public const string OPACITY_BASE = "$mat.opacity";
 
         /// <summary>
         /// Opacity (float)
         /// </summary>
-        public const String OPACITY = "$mat.opacity,0,0";
+        public const string OPACITY = "$mat.opacity,0,0";
 
         /// <summary>
         /// Transparency Factor (float)
         /// </summary>
-        public const String TRANSPARENCYFACTOR_BASE = "$mat.transparencyfactor";
+        public const string TRANSPARENCYFACTOR_BASE = "$mat.transparencyfactor";
 
         /// <summary>
         /// Transparency Factor (float)
         /// </summary>
-        public const String TRANSPARENCYFACTOR = "$mat.transparencyfactor,0,0";
+        public const string TRANSPARENCYFACTOR = "$mat.transparencyfactor,0,0";
 
         /// <summary>
         /// Bumpscaling (float)
         /// </summary>
-        public const String BUMPSCALING_BASE = "$mat.bumpscaling";
+        public const string BUMPSCALING_BASE = "$mat.bumpscaling";
 
         /// <summary>
         /// Bumpscaling (float)
         /// </summary>
-        public const String BUMPSCALING = "$mat.bumpscaling,0,0";
+        public const string BUMPSCALING = "$mat.bumpscaling,0,0";
 
         /// <summary>
         /// Shininess (float)
         /// </summary>
-        public const String SHININESS_BASE = "$mat.shininess";
+        public const string SHININESS_BASE = "$mat.shininess";
 
         /// <summary>
         /// Shininess (float)
         /// </summary>
-        public const String SHININESS = "$mat.shininess,0,0";
+        public const string SHININESS = "$mat.shininess,0,0";
 
         /// <summary>
         /// Reflectivity (float)
         /// </summary>
-        public const String REFLECTIVITY_BASE = "$mat.reflectivity";
+        public const string REFLECTIVITY_BASE = "$mat.reflectivity";
 
         /// <summary>
         /// Reflectivity (float)
         /// </summary>
-        public const String REFLECTIVITY = "$mat.reflectivity,0,0";
+        public const string REFLECTIVITY = "$mat.reflectivity,0,0";
 
         /// <summary>
         /// Shininess strength (float)
         /// </summary>
-        public const String SHININESS_STRENGTH_BASE = "$mat.shinpercent";
+        public const string SHININESS_STRENGTH_BASE = "$mat.shinpercent";
 
         /// <summary>
         /// Shininess strength (float)
         /// </summary>
-        public const String SHININESS_STRENGTH = "$mat.shinpercent,0,0";
+        public const string SHININESS_STRENGTH = "$mat.shinpercent,0,0";
 
         /// <summary>
         /// Refracti (float)
         /// </summary>
-        public const String REFRACTI_BASE = "$mat.refracti";
+        public const string REFRACTI_BASE = "$mat.refracti";
 
         /// <summary>
         /// Refracti (float)
         /// </summary>
-        public const String REFRACTI = "$mat.refracti,0,0";
+        public const string REFRACTI = "$mat.refracti,0,0";
 
         /// <summary>
-        /// Diffuse color (Color4D)
+        /// Diffuse color (Vector4)
         /// </summary>
-        public const String COLOR_DIFFUSE_BASE = "$clr.diffuse";
+        public const string COLOR_DIFFUSE_BASE = "$clr.diffuse";
 
         /// <summary>
-        /// Diffuse color (Color4D)
+        /// Diffuse color (Vector4)
         /// </summary>
-        public const String COLOR_DIFFUSE = "$clr.diffuse,0,0";
+        public const string COLOR_DIFFUSE = "$clr.diffuse,0,0";
 
         /// <summary>
-        /// Ambient color (Color4D)
+        /// Ambient color (Vector4)
         /// </summary>
-        public const String COLOR_AMBIENT_BASE = "$clr.ambient";
+        public const string COLOR_AMBIENT_BASE = "$clr.ambient";
 
         /// <summary>
-        /// Ambient color (Color4D)
+        /// Ambient color (Vector4)
         /// </summary>
-        public const String COLOR_AMBIENT = "$clr.ambient,0,0";
+        public const string COLOR_AMBIENT = "$clr.ambient,0,0";
 
         /// <summary>
-        /// Specular color (Color4D)
+        /// Specular color (Vector4)
         /// </summary>
-        public const String COLOR_SPECULAR_BASE = "$clr.specular";
+        public const string COLOR_SPECULAR_BASE = "$clr.specular";
 
         /// <summary>
-        /// Specular color (Color4D)
+        /// Specular color (Vector4)
         /// </summary>
-        public const String COLOR_SPECULAR = "$clr.specular,0,0";
+        public const string COLOR_SPECULAR = "$clr.specular,0,0";
 
         /// <summary>
-        /// Emissive color (Color4D)
+        /// Emissive color (Vector4)
         /// </summary>
-        public const String COLOR_EMISSIVE_BASE = "$clr.emissive";
+        public const string COLOR_EMISSIVE_BASE = "$clr.emissive";
 
         /// <summary>
-        /// Emissive color (Color4D)
+        /// Emissive color (Vector4)
         /// </summary>
-        public const String COLOR_EMISSIVE = "$clr.emissive,0,0";
+        public const string COLOR_EMISSIVE = "$clr.emissive,0,0";
 
         /// <summary>
-        /// Transparent color (Color4D)
+        /// Transparent color (Vector4)
         /// </summary>
-        public const String COLOR_TRANSPARENT_BASE = "$clr.transparent";
+        public const string COLOR_TRANSPARENT_BASE = "$clr.transparent";
 
         /// <summary>
-        /// Transparent color (Color4D)
+        /// Transparent color (Vector4)
         /// </summary>
-        public const String COLOR_TRANSPARENT = "$clr.transparent,0,0";
+        public const string COLOR_TRANSPARENT = "$clr.transparent,0,0";
 
         /// <summary>
-        /// Reflective color (Color4D)
+        /// Reflective color (Vector4)
         /// </summary>
-        public const String COLOR_REFLECTIVE_BASE = "$clr.reflective";
+        public const string COLOR_REFLECTIVE_BASE = "$clr.reflective";
 
         /// <summary>
-        /// Reflective color (Color4D)
+        /// Reflective color (Vector4)
         /// </summary>
-        public const String COLOR_REFLECTIVE = "$clr.reflective,0,0";
-
-        /// <summary>
-        /// Background image (String)
-        /// </summary>
-        public const String GLOBAL_BACKGROUND_IMAGE_BASE = "?bg.global";
+        public const string COLOR_REFLECTIVE = "$clr.reflective,0,0";
 
         /// <summary>
         /// Background image (String)
         /// </summary>
-        public const String GLOBAL_BACKGROUND_IMAGE = "?bg.global,0,0";
+        public const string GLOBAL_BACKGROUND_IMAGE_BASE = "?bg.global";
+
+        /// <summary>
+        /// Background image (String)
+        /// </summary>
+        public const string GLOBAL_BACKGROUND_IMAGE = "?bg.global,0,0";
 
         /// <summary>
         /// Texture base name
         /// </summary>
-        public const String TEXTURE_BASE = "$tex.file";
+        public const string TEXTURE_BASE = "$tex.file";
 
         /// <summary>
         /// UVWSRC base name
         /// </summary>
-        public const String UVWSRC_BASE = "$tex.uvwsrc";
+        public const string UVWSRC_BASE = "$tex.uvwsrc";
 
         /// <summary>
         /// Texture op base name
         /// </summary>
-        public const String TEXOP_BASE = "$tex.op";
+        public const string TEXOP_BASE = "$tex.op";
 
         /// <summary>
         /// Mapping base name
         /// </summary>
-        public const String MAPPING_BASE = "$tex.mapping";
+        public const string MAPPING_BASE = "$tex.mapping";
 
         /// <summary>
         /// Texture blend base name.
         /// </summary>
-        public const String TEXBLEND_BASE = "$tex.blend";
+        public const string TEXBLEND_BASE = "$tex.blend";
 
         /// <summary>
         /// Mapping mode U base name
         /// </summary>
-        public const String MAPPINGMODE_U_BASE = "$tex.mapmodeu";
+        public const string MAPPINGMODE_U_BASE = "$tex.mapmodeu";
 
         /// <summary>
         /// Mapping mode V base name
         /// </summary>
-        public const String MAPPINGMODE_V_BASE = "$tex.mapmodev";
+        public const string MAPPINGMODE_V_BASE = "$tex.mapmodev";
 
         /// <summary>
         /// Texture map axis base name
         /// </summary>
-        public const String TEXMAP_AXIS_BASE = "$tex.mapaxis";
+        public const string TEXMAP_AXIS_BASE = "$tex.mapaxis";
 
         /// <summary>
         /// UV transform base name
         /// </summary>
-        public const String UVTRANSFORM_BASE = "$tex.uvtrafo";
+        public const string UVTRANSFORM_BASE = "$tex.uvtrafo";
 
         /// <summary>
         /// Texture flags base name
         /// </summary>
-        public const String TEXFLAGS_BASE = "$tex.flags";
+        public const string TEXFLAGS_BASE = "$tex.flags";
 
         /// <summary>
         /// Shader language type (string)
         /// </summary>
-        public const String GLOBAL_SHADERLANG_BASE = "?sh.lang";
+        public const string GLOBAL_SHADERLANG_BASE = "?sh.lang";
 
         /// <summary>
         /// Shader language type (string)
         /// </summary>
-        public const String GLOBAL_SHADERLANG = "?sh.lang,0,0";
+        public const string GLOBAL_SHADERLANG = "?sh.lang,0,0";
 
         /// <summary>
         /// Vertex shader source code (string)
         /// </summary>
-        public const String SHADER_VERTEX_BASE = "?sh.vs";
+        public const string SHADER_VERTEX_BASE = "?sh.vs";
 
         /// <summary>
         /// Vertex shader source code (string)
         /// </summary>
-        public const String SHADER_VERTEX = "?sh.vs,0,0";
+        public const string SHADER_VERTEX = "?sh.vs,0,0";
 
         /// <summary>
         /// Fragment/Pixel shader source code (string)
         /// </summary>
-        public const String SHADER_FRAGMENT_BASE = "?sh.fs";
+        public const string SHADER_FRAGMENT_BASE = "?sh.fs";
 
         /// <summary>
         /// Fragment/Pixel shader source code (string)
         /// </summary>
-        public const String SHADER_FRAGMENT = "?sh.fs,0,0";
+        public const string SHADER_FRAGMENT = "?sh.fs,0,0";
 
         /// <summary>
         /// Geometry shader source code (string)
         /// </summary>
-        public const String SHADER_GEO_BASE = "?sh.gs";
+        public const string SHADER_GEO_BASE = "?sh.gs";
 
         /// <summary>
         /// Geometry shader source code (string)
         /// </summary>
-        public const String SHADER_GEO = "?sh.gs,0,0";
+        public const string SHADER_GEO = "?sh.gs,0,0";
 
         /// <summary>
         /// Tesselation shader source code (string)
         /// </summary>
-        public const String SHADER_TESSELATION_BASE = "?sh.ts";
+        public const string SHADER_TESSELATION_BASE = "?sh.ts";
 
         /// <summary>
         /// Tesselation shader source code (string)
         /// </summary>
-        public const String SHADER_TESSELATION = "?sh.ts,0,0";
+        public const string SHADER_TESSELATION = "?sh.ts,0,0";
 
         /// <summary>
         /// Primitive/Domain shader source code (string)
         /// </summary>
-        public const String SHADER_PRIMITIVE_BASE = "?sh.ps";
+        public const string SHADER_PRIMITIVE_BASE = "?sh.ps";
 
         /// <summary>
         /// Primitive/Domain shader source code (string)
         /// </summary>
-        public const String SHADER_PRIMITIVE = "?sh.ps,0,0";
+        public const string SHADER_PRIMITIVE = "?sh.ps,0,0";
 
         /// <summary>
         /// Compute shader source code (string)
         /// </summary>
-        public const String SHADER_COMPUTE_BASE = "?sh.cs";
+        public const string SHADER_COMPUTE_BASE = "?sh.cs";
 
         /// <summary>
         /// Compute shader source code (string)
         /// </summary>
-        public const String SHADER_COMPUTE = "?sh.cs,0,0";
+        public const string SHADER_COMPUTE = "?sh.cs,0,0";
 
         /// <summary>
         /// Helper function to get the fully qualified name of a texture property type name. Takes
@@ -352,9 +350,9 @@ namespace Internal.Assimp.Unmanaged
         /// <param name="texType">Texture type</param>
         /// <param name="texIndex">Texture index</param>
         /// <returns>Fully qualified texture name</returns>
-        public static String GetFullTextureName(String baseName, TextureType texType, int texIndex)
+        public static string GetFullTextureName(string baseName, TextureType texType, int texIndex)
         {
-            return String.Format("{0},{1},{2}", baseName, (int) texType, texIndex);
+            return $"{baseName},{(int)texType},{texIndex}";
         }
 
         /// <summary>
@@ -364,16 +362,16 @@ namespace Internal.Assimp.Unmanaged
         /// </summary>
         /// <param name="fullyQualifiedName">Fully qualified material property name.</param>
         /// <returns>Base name of the property type.</returns>
-        public static String GetBaseName(String fullyQualifiedName)
+        public static string GetBaseName(string fullyQualifiedName)
         {
-            if(String.IsNullOrEmpty(fullyQualifiedName))
-                return String.Empty;
+            if(string.IsNullOrEmpty(fullyQualifiedName))
+                return string.Empty;
 
-            String[] substrings = fullyQualifiedName.Split(',');
+            string[] substrings = fullyQualifiedName.Split(',');
             if(substrings != null && substrings.Length == 3)
                 return substrings[0];
 
-            return String.Empty;
+            return string.Empty;
         }
     }
 }

@@ -31,6 +31,7 @@ namespace NeoAxis.Editor
 
 			if( ItemType != null )
 			{
+				Is3DScene = false;
 				var scene = CreateScene( false );
 				CreateObject();
 				scene.Enabled = true;

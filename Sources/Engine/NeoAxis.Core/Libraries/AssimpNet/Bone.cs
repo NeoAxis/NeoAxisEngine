@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using Internal.Assimp.Unmanaged;
 
 namespace Internal.Assimp
@@ -33,57 +34,33 @@ namespace Internal.Assimp
     /// </summary>
     public sealed class Bone : IMarshalable<Bone, AiBone>
     {
-        private String m_name;
+        private string m_name;
         private List<VertexWeight> m_weights;
         private Matrix4x4 m_offsetMatrix;
 
         /// <summary>
         /// Gets or sets the name of the bone.
         /// </summary>
-        public String Name
+        public string Name
         {
-            get
-            {
-                return m_name;
-            }
-            set
-            {
-                m_name = value;
-            }
+            get => m_name;
+            set => m_name = value;
         }
 
         /// <summary>
         /// Gets the number of vertex influences the bone contains.
         /// </summary>
-        public int VertexWeightCount
-        {
-            get
-            {
-                return m_weights.Count;
-            }
-        }
+        public int VertexWeightCount => m_weights.Count;
 
         /// <summary>
         /// Gets if the bone has vertex weights - this should always be true.
         /// </summary>
-        public bool HasVertexWeights
-        {
-            get
-            {
-                return m_weights.Count > 0;
-            }
-        }
+        public bool HasVertexWeights => m_weights.Count > 0;
 
         /// <summary>
         /// Gets the influence weights of this bone, by vertex index.
         /// </summary>
-        public List<VertexWeight> VertexWeights
-        {
-            get
-            {
-                return m_weights;
-            }
-        }
+        public List<VertexWeight> VertexWeights => m_weights;
 
         /// <summary>
         /// Gets or sets the matrix that transforms from bone space to mesh space in bind pose. This matrix describes the
@@ -94,14 +71,8 @@ namespace Internal.Assimp
         /// </summary>
         public Matrix4x4 OffsetMatrix
         {
-            get
-            {
-                return m_offsetMatrix;
-            }
-            set
-            {
-                m_offsetMatrix = value;
-            }
+            get => m_offsetMatrix;
+            set => m_offsetMatrix = value;
         }
 
         /// <summary>
@@ -110,7 +81,7 @@ namespace Internal.Assimp
         public Bone()
         {
             m_name = null;
-            m_offsetMatrix = Matrix3x3.Identity;
+            m_offsetMatrix = Matrix4x4.Identity;
             m_weights = new List<VertexWeight>();
         }
 
@@ -120,7 +91,7 @@ namespace Internal.Assimp
         /// <param name="name">Name of the bone</param>
         /// <param name="offsetMatrix">Bone's offset matrix</param>
         /// <param name="weights">Vertex weights</param>
-        public Bone(String name, Matrix3x3 offsetMatrix, VertexWeight[] weights)
+        public Bone(string name, Matrix3x3 offsetMatrix, VertexWeight[] weights)
         {
             m_name = name;
             m_offsetMatrix = offsetMatrix;
@@ -135,7 +106,7 @@ namespace Internal.Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<Bone, AiBone>.IsNativeBlittable { get { return true; } }
+        bool IMarshalable<Bone, AiBone>.IsNativeBlittable => true;
 
         /// <summary>
         /// Writes the managed data to the native value.
@@ -152,7 +123,7 @@ namespace Internal.Assimp
             nativeValue.Weights = IntPtr.Zero;
 
             if(nativeValue.NumWeights > 0)
-                nativeValue.Weights = MemoryHelper.ToNativeArray<VertexWeight>(m_weights.ToArray());
+                nativeValue.Weights = MemoryHelper.ToNativeArray<VertexWeight>(m_weights);
         }
 
         /// <summary>
@@ -180,8 +151,8 @@ namespace Internal.Assimp
                 return;
 
             AiBone aiBone = MemoryHelper.Read<AiBone>(nativeValue);
-            int numWeights = MemoryHelper.Read<int>(MemoryHelper.AddIntPtr(nativeValue, MemoryHelper.SizeOf<AiString>()));
-            IntPtr weightsPtr = MemoryHelper.AddIntPtr(nativeValue, MemoryHelper.SizeOf<AiString>() + sizeof(uint));
+            int numWeights = MemoryHelper.Read<int>(nativeValue + MemoryHelper.SizeOf<AiString>());
+            IntPtr weightsPtr = nativeValue + MemoryHelper.SizeOf<AiString>() + sizeof(uint);
 
             if(aiBone.NumWeights > 0 && aiBone.Weights != IntPtr.Zero)
                 MemoryHelper.FreeMemory(aiBone.Weights);

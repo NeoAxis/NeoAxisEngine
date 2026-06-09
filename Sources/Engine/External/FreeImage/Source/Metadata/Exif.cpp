@@ -68,33 +68,41 @@ Compare characters of two strings without regard to case.
 */
 static int 
 FreeImage_strnicmp(const char *s1, const char *s2, size_t len) {
-	unsigned char c1, c2;
+	if (!s1 || !s2) {
+		return -1;
+	}
 
-	if(!s1 || !s2) return -1;
+	unsigned char c1 = 0;
+	unsigned char c2 = 0;
 
-	c1 = 0;	c2 = 0;
 	if(len) {
 		do {
-			c1 = *s1; c2 = *s2;
-			s1++; s2++;
-			if (!c1)
+			c1 = *s1; 
+			c2 = *s2;
+			s1++; 
+			s2++;
+			if (!c1) {
 				break;
-			if (!c2)
+			}
+			if (!c2) {
 				break;
-			if (c1 == c2)
+			}
+			if (c1 == c2) {
 				continue;
+			}
 			c1 = (BYTE)tolower(c1);
 			c2 = (BYTE)tolower(c2);
-			if (c1 != c2)
+			if (c1 != c2) {
 				break;
+			}
 		} while (--len);
 	}
-	return (int)c1 - (int)c2;
+	return ((int)c1 - (int)c2);
 }
 
-
 // ----------------------------------------------------------
-//   Little Endian / Big Endian io routines
+// Little Endian / Big Endian io routines
+// msb_order is Endianness order of the Exif file (TRUE if big-endian, FALSE if little-endian)
 // ----------------------------------------------------------
 
 static short 
@@ -145,6 +153,12 @@ ReadUint32(BOOL msb_order, const void *buffer) {
 /**
 Process a IFD offset
 Returns the offset and the metadata model for this tag
+
+@param tag
+@param pval
+@param msb_order Endianness order of the Exif file (TRUE if big-endian, FALSE if little-endian)
+@param subdirOffset [output] Offset into the IFD
+@param md_model [output] Metadata model to process
 */
 static void 
 processIFDOffset(FITAG *tag, const char *pval, BOOL msb_order, DWORD *subdirOffset, TagLib::MDMODEL *md_model) {
@@ -162,12 +176,28 @@ processIFDOffset(FITAG *tag, const char *pval, BOOL msb_order, DWORD *subdirOffs
 		case TAG_INTEROP_OFFSET:
 			*md_model = TagLib::EXIF_INTEROP;
 			break;
+		default:
+			break;
 	}
 }
 
 /**
 Process a maker note IFD offset
 Returns the offset and the metadata model for this tag
+
+A makernote is usually structured as this
+- a header (0 or n bytes)
+- a standard TIFF IFD (start just after the header)
+It can also contain
+- a header
+- an IFD offset
+- a standard TIFF IFD (start at the IFD offset)
+
+@param dib Image to be processed
+@param pval Current Exif IFD memory pointer
+@param msb_order Endianness order of the Exif file (TRUE if big-endian, FALSE if little-endian)
+@param subdirOffset [output] Offset into the IFD
+@param md_model [output] Metadata model to process
 */
 static void 
 processMakerNote(FIBITMAP *dib, const char *pval, BOOL msb_order, DWORD *subdirOffset, TagLib::MDMODEL *md_model) {
@@ -192,8 +222,8 @@ processMakerNote(FIBITMAP *dib, const char *pval, BOOL msb_order, DWORD *subdirO
 	else if(memcmp("OLYMPUS\x00\x49\x49\x03\x00", pval, 12) == 0) {
 		// Olympus Type 2 Makernote
 		// !!! NOT YET SUPPORTED !!!
-		*subdirOffset = 0;
 		*md_model = TagLib::UNKNOWN;
+		*subdirOffset = 0;
 	}
 	else if(memcmp("Nikon", pval, 5) == 0) {
 		/* There are two scenarios here:
@@ -212,20 +242,20 @@ processMakerNote(FIBITMAP *dib, const char *pval, BOOL msb_order, DWORD *subdirO
             // Nikon type 3 Makernote
 			*md_model = TagLib::EXIF_MAKERNOTE_NIKONTYPE3;
 			*subdirOffset = 18;
-        } else {
+		} else {
 			// Unsupported makernote data ignored
-			*subdirOffset = 0;
 			*md_model = TagLib::UNKNOWN;
+			*subdirOffset = 0;
 		}
 	} else if(Maker && (FreeImage_strnicmp("NIKON", Maker, 5) == 0)) {
 		// Nikon type 2 Makernote
 		*md_model = TagLib::EXIF_MAKERNOTE_NIKONTYPE2;
 		*subdirOffset = 0;
-    } else if(Maker && (FreeImage_strnicmp("Canon", Maker, 5) == 0)) {
+	} else if(Maker && (FreeImage_strnicmp("Canon", Maker, 5) == 0)) {
         // Canon Makernote
 		*md_model = TagLib::EXIF_MAKERNOTE_CANON;
-		*subdirOffset = 0;		
-    } else if(Maker && (FreeImage_strnicmp("Casio", Maker, 5) == 0)) {
+		*subdirOffset = 0;
+	} else if(Maker && (FreeImage_strnicmp("Casio", Maker, 5) == 0)) {
         // Casio Makernote
 		if(memcmp("QVC\x00\x00\x00", pval, 6) == 0) {
 			// Casio Type 2 Makernote
@@ -240,8 +270,8 @@ processMakerNote(FIBITMAP *dib, const char *pval, BOOL msb_order, DWORD *subdirO
         // Fujifile Makernote
 		// Fujifilm's Makernote always use little-endian order altough the Exif section maybe in little-endian order or in big-endian order. 
 		// If msb_order == TRUE, the Makernote won't be read: 
-		// the value of ifdStart will be 0x0c000000 instead of 0x0000000c and the MakerNote section will be discarded later
-		// in jpeg_read_exif_dir because the IFD is too high
+		// the value of ifdStart will be 0x0c000000 instead of 0x0000000c and the MakerNote section will be 
+		// discarded later in jpeg_read_exif_dir because the IFD is too high
 		*md_model = TagLib::EXIF_MAKERNOTE_FUJIFILM;
         DWORD ifdStart = ReadUint32(msb_order, pval + 8);
 		*subdirOffset = ifdStart;
@@ -264,8 +294,8 @@ processMakerNote(FIBITMAP *dib, const char *pval, BOOL msb_order, DWORD *subdirO
 		// Leica maker note
 		if(memcmp("LEICA\x00\x00\x00", pval, 8) == 0) {
 			// not yet supported makernote data ignored
-			*subdirOffset = 0;
 			*md_model = TagLib::UNKNOWN;
+			*subdirOffset = 0;
 		}
 	}
 	else if(Maker && ((FreeImage_strnicmp("Pentax", Maker, 6) == 0) || (FreeImage_strnicmp("Asahi", Maker, 5) == 0))) {
@@ -290,12 +320,20 @@ processMakerNote(FIBITMAP *dib, const char *pval, BOOL msb_order, DWORD *subdirO
 		const char *Model = (char*)FreeImage_GetTagValue(tagModel);
 		if(Model && (memcmp("SIGMA SD1\x00", Model, 10) == 0)) {
 			// Sigma SD1 maker note
-			*subdirOffset = 10;
 			*md_model = TagLib::EXIF_MAKERNOTE_SIGMA_SD1;
+			*subdirOffset = 10;
 		} else {
 			// Sigma / Foveon makernote
-			*subdirOffset = 10;
 			*md_model = TagLib::EXIF_MAKERNOTE_SIGMA_FOVEON;
+			*subdirOffset = 10;
+		}
+	}
+	else if (Maker && (FreeImage_strnicmp("Apple", Maker, 5) == 0)) {
+		// Apple maker note
+		if (memcmp("Apple iOS", pval, 9) == 0) {
+			// Apple iOS Makernote
+			*md_model = TagLib::EXIF_MAKERNOTE_APPLE_IOS;
+			*subdirOffset = 14;
 		}
 	}
 }
@@ -303,6 +341,10 @@ processMakerNote(FIBITMAP *dib, const char *pval, BOOL msb_order, DWORD *subdirO
 /**
 Process a Canon maker note tag. 
 A single Canon tag may contain many other tags within.
+
+@param dib Image to be processed
+@param tag MakerNote Exif tag
+@return Returns TRUE if successful, returns FALSE otherwise
 */
 static BOOL 
 processCanonMakerNoteTag(FIBITMAP *dib, FITAG *tag) {
@@ -398,6 +440,12 @@ processCanonMakerNoteTag(FIBITMAP *dib, FITAG *tag) {
 
 /**
 Process a standard Exif tag
+
+@param dib Image to be processed
+@param tag
+@param pval
+@param msb_order Endianness order of the Exif file (TRUE if big-endian, FALSE if little-endian)
+@param md_model
 */
 static void 
 processExifTag(FIBITMAP *dib, FITAG *tag, char *pval, BOOL msb_order, TagLib::MDMODEL md_model) {
@@ -511,13 +559,14 @@ processExifTag(FIBITMAP *dib, FITAG *tag, char *pval, BOOL msb_order, TagLib::MD
 
 	// free the temporary buffer
 	free(exif_value);
-
 }
+
+// --------------------------------------------------------------------------
 
 /**
 Process Exif directory
 
-@param dib Input FIBITMAP
+@param dib Image to be processed
 @param tiffp Pointer to the TIFF header
 @param dwOffsetIfd0 Offset to the 0th IFD (first IFD)
 @param dwLength Length of the Exif file
@@ -589,7 +638,9 @@ jpeg_read_exif_dir(FIBITMAP *dib, const BYTE *tiffp, DWORD dwOffsetIfd0, DWORD d
 			
 			// create a tag
 			FITAG *tag = FreeImage_CreateTag();
-			if(!tag) return FALSE;
+			if (!tag) {
+				return FALSE;
+			}
 
 			// point to the directory entry
 			pde = (char*) DIR_ENTRY_ADDR(ifdp, de);
@@ -639,7 +690,7 @@ jpeg_read_exif_dir(FIBITMAP *dib, const BYTE *tiffp, DWORD dwOffsetIfd0, DWORD d
 					continue;
 				}
 				// now check that length does not exceed the buffer size
-				if(FreeImage_GetTagLength(tag) > dwLength - offset_value){
+				if(FreeImage_GetTagLength(tag) > (dwLength - offset_value)){
 					// a problem occured : delete the tag (not free'd after)
 					FreeImage_DeleteTag(tag);
 					// jump to next entry
@@ -719,8 +770,13 @@ jpeg_read_exif_dir(FIBITMAP *dib, const BYTE *tiffp, DWORD dwOffsetIfd0, DWORD d
 	//
 
 	const WORD entriesCount0th = ReadUint16(msb_order, ifd0th);
+
+	const BYTE* de_addr = DIR_ENTRY_ADDR(ifd0th, entriesCount0th);
+	if(de_addr+4 >= (BYTE*)(dwLength + ifd0th - tiffp)) {
+		return TRUE; //< no thumbnail
+	}
 	
-	DWORD next_offset = ReadUint32(msb_order, DIR_ENTRY_ADDR(ifd0th, entriesCount0th));
+	DWORD next_offset = ReadUint32(msb_order, de_addr);
 	if((next_offset == 0) || (next_offset >= dwLength)) {
 		return TRUE; //< no thumbnail
 	}
@@ -805,7 +861,7 @@ jpeg_read_exif_dir(FIBITMAP *dib, const BYTE *tiffp, DWORD dwOffsetIfd0, DWORD d
 
 /**
 Read and decode JPEG_APP1 marker (Exif profile)
-@param dib Input FIBITMAP
+@param dib Image to be processed
 @param data Pointer to the APP1 marker
 @param length APP1 marker length
 @return Returns TRUE if successful, FALSE otherwise
@@ -880,7 +936,7 @@ jpeg_read_exif_profile(FIBITMAP *dib, const BYTE *data, unsigned length) {
 
 /**
 Read JPEG_APP1 marker (Exif profile)
-@param dib Input FIBITMAP
+@param dib Image to be processed
 @param dataptr Pointer to the APP1 marker
 @param datalen APP1 marker length
 @return Returns TRUE if successful, FALSE otherwise
@@ -923,7 +979,7 @@ jpeg_read_exif_profile_raw(FIBITMAP *dib, const BYTE *profile, unsigned length) 
 
 /**
 Read and decode JPEG-XR Exif IFD
-@param dib Input FIBITMAP
+@param dib Image to be processed
 @param profile Pointer to the Exif marker
 @param length Exif marker length
 @param file_offset Reference offset in the original file of each tag value whose length is > 4
@@ -940,7 +996,7 @@ jpegxr_read_exif_profile(FIBITMAP *dib, const BYTE *profile, unsigned length, un
 
 /**
 Read and decode JPEG-XR Exif-GPS IFD
-@param dib Input FIBITMAP
+@param dib Image to be processed
 @param profile Pointer to the Exif-GPS profile
 @param length Exif-GPS profile length
 @param file_offset Reference offset in the original file of each tag value whose length is > 4

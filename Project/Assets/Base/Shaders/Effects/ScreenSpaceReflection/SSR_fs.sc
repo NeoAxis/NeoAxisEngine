@@ -459,10 +459,10 @@ vec4 glossyReflection( vec3 position, vec3 viewNormal, vec3 view, vec4 fragCoord
 					material.subsurfaceColor = subsurfaceColor;
 					//#endif
 
-		#ifdef MATERIAL_HAS_CLEAR_COAT
-					material.clearCoat = 0;
-					material.clearCoatRoughness = 0;
-					material.clearCoatNormal = vec3_splat(0);
+		#ifdef MATERIAL_HAS_CLEARCOAT
+					material.clearcoat = 0;
+					material.clearcoatRoughness = 0;
+					material.clearcoatNormal = vec3_splat(0);
 		#endif
 
 					//#if defined(SHADING_MODEL_CLOTH)
@@ -537,10 +537,10 @@ vec4 glossyReflection( vec3 position, vec3 viewNormal, vec3 view, vec4 fragCoord
 				material.subsurfaceColor = subsurfaceColor;
 				//#endif
 
-		#ifdef MATERIAL_HAS_CLEAR_COAT
-				material.clearCoat = 0;
-				material.clearCoatRoughness = 0;
-				material.clearCoatNormal = vec3_splat(0);
+		#ifdef MATERIAL_HAS_CLEARCOAT
+				material.clearcoat = 0;
+				material.clearcoatRoughness = 0;
+				material.clearcoatNormal = vec3_splat(0);
 		#endif
 
 				/*
@@ -676,10 +676,10 @@ vec3 specularIBL(vec2 texCoords)
 	material.anisotropyDirection = vec3_splat(0);
 #endif
 
-#ifdef MATERIAL_HAS_CLEAR_COAT
-	material.clearCoat = 0;
-	material.clearCoatRoughness = 0;
-	material.clearCoatNormal = vec3_splat(0);
+#ifdef MATERIAL_HAS_CLEARCOAT
+	material.clearcoat = 0;
+	material.clearcoatRoughness = 0;
+	material.clearcoatNormal = vec3_splat(0);
 #endif
 
 	ShadingParams shading;

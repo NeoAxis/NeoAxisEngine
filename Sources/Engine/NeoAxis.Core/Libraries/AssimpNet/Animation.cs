@@ -32,7 +32,7 @@ namespace Internal.Assimp
     /// </summary>
     public sealed class Animation : IMarshalable<Animation, AiAnimation>
     {
-        private String m_name;
+        private string m_name;
         private double m_duration;
         private double m_ticksPerSecond;
         private List<NodeAnimationChannel> m_nodeChannels;
@@ -44,16 +44,10 @@ namespace Internal.Assimp
         /// data was exported from only supports a single animation channel, this
         /// name is usually empty.
         /// </summary>
-        public String Name
+        public string Name
         {
-            get
-            {
-                return m_name;
-            }
-            set
-            {
-                m_name = value;
-            }
+            get => m_name;
+            set => m_name = value;
         }
 
         /// <summary>
@@ -61,14 +55,8 @@ namespace Internal.Assimp
         /// </summary>
         public double DurationInTicks
         {
-            get
-            {
-                return m_duration;
-            }
-            set
-            {
-                m_duration = value;
-            }
+            get => m_duration;
+            set => m_duration = value;
         }
 
         /// <summary>
@@ -77,111 +65,57 @@ namespace Internal.Assimp
         /// </summary>
         public double TicksPerSecond
         {
-            get
-            {
-                return m_ticksPerSecond;
-            }
-            set
-            {
-                m_ticksPerSecond = value;
-            }
+            get => m_ticksPerSecond;
+            set => m_ticksPerSecond = value;
         }
 
         /// <summary>
         /// Gets if the animation has node animation channels.
         /// </summary>
-        public bool HasNodeAnimations
-        {
-            get
-            {
-                return m_nodeChannels.Count > 0;
-            }
-        }
+        public bool HasNodeAnimations => m_nodeChannels.Count > 0;
 
         /// <summary>
         /// Gets the number of node animation channels where each channel
         /// affects a single node.
         /// </summary>
-        public int NodeAnimationChannelCount
-        {
-            get
-            {
-                return m_nodeChannels.Count;
-            }
-        }
+        public int NodeAnimationChannelCount => m_nodeChannels.Count;
 
         /// <summary>
         /// Gets the node animation channels.
         /// </summary>
-        public List<NodeAnimationChannel> NodeAnimationChannels
-        {
-            get
-            {
-                return m_nodeChannels;
-            }
-        }
+        public List<NodeAnimationChannel> NodeAnimationChannels => m_nodeChannels;
 
         /// <summary>
         /// Gets if the animation has mesh animations.
         /// </summary>
-        public bool HasMeshAnimations
-        {
-            get
-            {
-                return m_meshChannels.Count > 0;
-            }
-        }
+        public bool HasMeshAnimations => m_meshChannels.Count > 0;
 
         /// <summary>
         /// Gets the number of mesh animation channels.
         /// </summary>
-        public int MeshAnimationChannelCount
-        {
-            get
-            {
-                return m_meshChannels.Count;
-            }
-        }
+        public int MeshAnimationChannelCount => m_meshChannels.Count;
 
         /// <summary>
         /// Gets the number of mesh morph animation channels.
         /// </summary>
-        public int MeshMorphAnimationChannelCount
-        {
-            get
-            {
-                return m_meshMorphChannels.Count;
-            }
-        }
+        public int MeshMorphAnimationChannelCount => m_meshMorphChannels.Count;
 
         /// <summary>
         /// Gets the mesh animation channels.
         /// </summary>
-        public List<MeshAnimationChannel> MeshAnimationChannels
-        {
-            get
-            {
-                return m_meshChannels;
-            }
-        }
+        public List<MeshAnimationChannel> MeshAnimationChannels => m_meshChannels;
 
         /// <summary>
         /// Gets the mesh morph animation channels.
         /// </summary>
-        public List<MeshMorphAnimationChannel> MeshMorphAnimationChannels
-        {
-            get
-            {
-                return m_meshMorphChannels;
-            }
-        }
+        public List<MeshMorphAnimationChannel> MeshMorphAnimationChannels => m_meshMorphChannels;
 
         /// <summary>
         /// Constructs a new instance of the <see cref="Animation"/> class.
         /// </summary>
         public Animation()
         {
-            m_name = String.Empty;
+            m_name = string.Empty;
             m_duration = 0;
             m_ticksPerSecond = 0;
             m_nodeChannels = new List<NodeAnimationChannel>();
@@ -194,7 +128,7 @@ namespace Internal.Assimp
         /// <summary>
         /// Gets if the native value type is blittable (that is, does not require marshaling by the runtime, e.g. has MarshalAs attributes).
         /// </summary>
-        bool IMarshalable<Animation, AiAnimation>.IsNativeBlittable { get { return true; } }
+        bool IMarshalable<Animation, AiAnimation>.IsNativeBlittable => true;
 
         /// <summary>
         /// Writes the managed data to the native value.
@@ -214,13 +148,13 @@ namespace Internal.Assimp
             nativeValue.MeshMorphChannels = IntPtr.Zero;
 
             if(nativeValue.NumChannels > 0)
-                nativeValue.Channels = MemoryHelper.ToNativeArray<NodeAnimationChannel, AiNodeAnim>(m_nodeChannels.ToArray(), true);
+                nativeValue.Channels = MemoryHelper.ToNativeArray<NodeAnimationChannel, AiNodeAnim>(m_nodeChannels, true);
 
             if(nativeValue.NumMeshChannels > 0)
-                nativeValue.MeshChannels = MemoryHelper.ToNativeArray<MeshAnimationChannel, AiMeshAnim>(m_meshChannels.ToArray(), true);
+                nativeValue.MeshChannels = MemoryHelper.ToNativeArray<MeshAnimationChannel, AiMeshAnim>(m_meshChannels, true);
 
             if(nativeValue.NumMeshMorphChannels > 0)
-                nativeValue.MeshMorphChannels = MemoryHelper.ToNativeArray<MeshMorphAnimationChannel, AiMeshMorphAnim>(m_meshMorphChannels.ToArray(), true);
+                nativeValue.MeshMorphChannels = MemoryHelper.ToNativeArray<MeshMorphAnimationChannel, AiMeshMorphAnim>(m_meshMorphChannels, true);
         }
 
         /// <summary>

@@ -103,7 +103,8 @@ namespace NeoAxis
 		/// The cubemap texture of reflection data used by the probe.
 		/// </summary>
 		//[Category( "Resource" )]
-		[DefaultValueReference( @"Content\Environments\Base\Forest.image" )]
+		[DefaultValueReference( @"Content\Environments\Basic Library\Outdoor\Textures\kloofendal_48d_partly_cloudy_4k.hdr" )]
+		//[DefaultValueReference( @"Content\Environments\Base\Forest.image" )]
 		public Reference<ImageComponent> Cubemap
 		{
 			get { if( _cubemap.BeginGet() ) Cubemap = _cubemap.Get( this ); return _cubemap.value; }
@@ -122,7 +123,8 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="Cubemap"/> property value changes.</summary>
 		public event Action<ReflectionProbe> CubemapChanged;
-		ReferenceField<ImageComponent> _cubemap = new Reference<ImageComponent>( null, @"Content\Environments\Base\Forest.image" );
+		ReferenceField<ImageComponent> _cubemap = new Reference<ImageComponent>( null, @"Content\Environments\Basic Library\Outdoor\Textures\kloofendal_48d_partly_cloudy_4k.hdr" );
+		//ReferenceField<ImageComponent> _cubemap = new Reference<ImageComponent>( null, @"Content\Environments\Base\Forest.image" );
 
 		/// <summary>
 		/// The horizontal rotation of the cubemap.
@@ -155,7 +157,7 @@ namespace NeoAxis
 		/// <summary>
 		/// A cubemap color multiplier.
 		/// </summary>
-		[DefaultValue( "1 1 1" )]
+		[DefaultValue( "1 1 1; 2" )]
 		[ApplicableRangeColorValuePower( 0, 4 )]
 		[ColorValueNoAlpha]
 		public Reference<ColorValuePowered> Multiplier
@@ -165,7 +167,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="Multiplier"/> property value changes.</summary>
 		public event Action<ReflectionProbe> MultiplierChanged;
-		ReferenceField<ColorValuePowered> _multiplier = new ColorValuePowered( 1, 1, 1 );
+		ReferenceField<ColorValuePowered> _multiplier = new ColorValuePowered( 1, 1, 1, 1, 2 );
 
 		///// <summary>
 		///// The cubemap texture of irradiance data used by the probe.

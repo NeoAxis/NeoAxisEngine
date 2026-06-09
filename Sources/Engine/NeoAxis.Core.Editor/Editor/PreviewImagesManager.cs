@@ -580,24 +580,40 @@ namespace NeoAxis.Editor
 			return processors.Exists( p => p.Working );
 		}
 
-		public static void Update()
+		public static void Update( bool deleteAll )
 		{
-			//start tasks
-			again:
-			if( imagesToProcess.Count != 0 )
+			if( !deleteAll )
 			{
-				var processor = GetFreeProcessor();
-				if( processor != null )
+				//start tasks
+				again:
+				if( imagesToProcess.Count != 0 )
 				{
-					var imageToProcess = imagesToProcess.Dequeue();
-					processor.StartTask( imageToProcess );
-					goto again;
+					var processor = GetFreeProcessor();
+					if( processor != null )
+					{
+						var imageToProcess = imagesToProcess.Dequeue();
+						processor.StartTask( imageToProcess );
+						goto again;
+					}
 				}
-			}
 
-			//update processors
-			foreach( var processor in processors )
-				processor.Update();
+				//update processors
+				foreach( var processor in processors )
+					processor.Update();
+			}
+			else
+			{
+				foreach( var processor in processors )
+					processor.ClearTask();
+
+				try
+				{
+					foreach( var processor in processors )
+						processor.Dispose();
+					processors.Clear();
+				}
+				catch { }
+			}
 		}
 
 		static string GetCacheFileNameByResourceVirtualFileName( string virtualFileName )

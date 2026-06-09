@@ -623,6 +623,36 @@ namespace NeoAxis
 		ReferenceField<bool> _removeTextureTilingLimitedDevice = false;
 
 		/// <summary>
+		/// Whether to allow opacity dithering for masked materials.
+		/// </summary>
+		[Category( "Rendering: Basic Device" )]
+		[DisplayName( "Opacity Dithering (Restart to apply changes)" )]
+		[DefaultValue( true )]
+		public Reference<bool> OpacityDithering
+		{
+			get { if( _opacityDithering.BeginGet() ) OpacityDithering = _opacityDithering.Get( this ); return _opacityDithering.value; }
+			set { if( _opacityDithering.BeginSet( this, ref value ) ) { try { OpacityDitheringChanged?.Invoke( this ); } finally { _opacityDithering.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="OpacityDithering"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_Rendering> OpacityDitheringChanged;
+		ReferenceField<bool> _opacityDithering = true;
+
+		/// <summary>
+		/// Whether to allow opacity dithering for masked materials on limited devices (mobile).
+		/// </summary>
+		[Category( "Rendering: Limited Device" )]
+		[DisplayName( "Opacity Dithering" )]
+		[DefaultValue( false )]
+		public Reference<bool> OpacityDitheringLimitedDevice
+		{
+			get { if( _opacityDitheringLimitedDevice.BeginGet() ) OpacityDitheringLimitedDevice = _opacityDitheringLimitedDevice.Get( this ); return _opacityDitheringLimitedDevice.value; }
+			set { if( _opacityDitheringLimitedDevice.BeginSet( this, ref value ) ) { try { OpacityDitheringLimitedDeviceChanged?.Invoke( this ); } finally { _opacityDitheringLimitedDevice.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="OpacityDitheringLimitedDevice"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_Rendering> OpacityDitheringLimitedDeviceChanged;
+		ReferenceField<bool> _opacityDitheringLimitedDevice = false;
+		
+		/// <summary>
 		/// Whether to allow using the motion vectors to enable a motion blur or a temporal antialiasing.
 		/// </summary>
 		[Category( "Rendering: Basic Device" )]
@@ -956,6 +986,37 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="DebugModeLimitedDevice"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_Rendering> DebugModeLimitedDeviceChanged;
 		ReferenceField<bool> _debugModeLimitedDevice = false;
+
+		/// <summary>
+		/// Whether to enable accurate sRGB correction between linear and sRGB color spaces in the shader.
+		/// </summary>
+		[Category( "Rendering: Basic Device" )]
+		[DisplayName( "Accurate sRGB Correction (Restart to apply changes)" )]
+		[DefaultValue( false )]
+		public Reference<bool> AccurateSrgbCorrection
+		{
+			get { if( _accurateSrgbCorrection.BeginGet() ) AccurateSrgbCorrection = _accurateSrgbCorrection.Get( this ); return _accurateSrgbCorrection.value; }
+			set { if( _accurateSrgbCorrection.BeginSet( this, ref value ) ) { try { AccurateSrgbCorrectionChanged?.Invoke( this ); } finally { _accurateSrgbCorrection.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="AccurateSrgbCorrection"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_Rendering> AccurateSrgbCorrectionChanged;
+		ReferenceField<bool> _accurateSrgbCorrection = false;
+
+		/// <summary>
+		/// Whether to enable accurate sRGB correction between linear and sRGB color spaces in the shader on limited devices (mobile).
+		/// </summary>
+		[Category( "Rendering: Limited Device" )]
+		[DisplayName( "Accurate sRGB Correction" )]
+		[DefaultValue( false )]
+		public Reference<bool> AccurateSrgbCorrectionLimitedDevice
+		{
+			get { if( _accurateSrgbCorrectionLimitedDevice.BeginGet() ) AccurateSrgbCorrectionLimitedDevice = _accurateSrgbCorrectionLimitedDevice.Get( this ); return _accurateSrgbCorrectionLimitedDevice.value; }
+			set { if( _accurateSrgbCorrectionLimitedDevice.BeginSet( this, ref value ) ) { try { AccurateSrgbCorrectionLimitedDeviceChanged?.Invoke( this ); } finally { _accurateSrgbCorrectionLimitedDevice.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="AccurateSrgbCorrectionLimitedDevice"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_Rendering> AccurateSrgbCorrectionLimitedDeviceChanged;
+		ReferenceField<bool> _accurateSrgbCorrectionLimitedDevice = false;
+
 
 		///// <summary>
 		///// Whether to allow using the deferred shading.

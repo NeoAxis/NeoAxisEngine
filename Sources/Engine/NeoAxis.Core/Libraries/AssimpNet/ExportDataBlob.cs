@@ -48,7 +48,7 @@ namespace Internal.Assimp
     /// </remarks>
     public sealed class ExportDataBlob
     {
-        private String m_name;
+        private string m_name;
         private byte[] m_data;
         private ExportDataBlob m_next;
 
@@ -56,46 +56,22 @@ namespace Internal.Assimp
         /// Gets the name of the blob. The first and primary blob always has an empty string for a name. Auxillary files
         /// that are nested will have names.
         /// </summary>
-        public String Name
-        {
-            get
-            {
-                return m_name;
-            }
-        }
+        public string Name => m_name;
 
         /// <summary>
         /// Get the blob data.
         /// </summary>
-        public byte[] Data
-        {
-            get
-            {
-                return m_data;
-            }
-        }
+        public byte[] Data => m_data;
 
         /// <summary>
         /// Gets the next data blob.
         /// </summary>
-        public ExportDataBlob NextBlob
-        {
-            get
-            {
-                return m_next;
-            }
-        }
+        public ExportDataBlob NextBlob => m_next;
 
         /// <summary>
         /// Gets if the blob data is valid.
         /// </summary>
-        public bool HasData
-        {
-            get
-            {
-                return m_data != null;
-            }
-        }
+        public bool HasData => m_data != null;
 
         /// <summary>
         /// Creates a new ExportDataBlob.
@@ -122,7 +98,7 @@ namespace Internal.Assimp
         /// </summary>
         /// <param name="name">Name</param>
         /// <param name="data">Data</param>
-        internal ExportDataBlob(String name, byte[] data)
+        internal ExportDataBlob(string name, byte[] data)
         {
             m_name = name;
             m_data = data;
@@ -183,7 +159,7 @@ namespace Internal.Assimp
             if(reader == null)
                 return null;
 
-            String name = reader.ReadString();
+            string name = reader.ReadString();
             int count = reader.ReadInt32();
             byte[] data = reader.ReadBytes(count);
             bool hasNext = reader.ReadBoolean();

@@ -2541,12 +2541,12 @@ namespace bgfx
 			if (m_rendererInitialized)
 			{
 				{
-				BGFX_PROFILER_SCOPE("bgfx/Render submit", 0xff2040ff);
-				m_renderCtx->submit(m_render, m_clearQuad, m_textVideoMemBlitter);
-				m_flipped = false;
-			}
+					BGFX_PROFILER_SCOPE("bgfx/Render submit", 0xff2040ff);
+					m_renderCtx->submit(m_render, m_clearQuad, m_textVideoMemBlitter);
+					m_flipped = false;
+				}
 
-			{
+				{
 					BGFX_PROFILER_SCOPE("bgfx/Screenshot", 0xff2040ff);
 					for (uint8_t ii = 0, num = m_render->m_numScreenShots; ii < num; ++ii)
 					{

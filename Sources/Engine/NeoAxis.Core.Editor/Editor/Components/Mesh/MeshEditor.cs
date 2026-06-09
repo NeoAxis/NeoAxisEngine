@@ -2400,9 +2400,6 @@ namespace NeoAxis.Editor
 
 				if( selectedMesh != null )
 				{
-					var resultVertices = new OpenList<Vector3F>( 16384 );
-					var resultIndices = new OpenList<int>( 16384 );
-
 					var items = new List<ExtractActualGeometryItem>();
 					foreach( var geometry in selectedMesh.GetComponents<MeshGeometry>() )
 					{
@@ -2412,16 +2409,6 @@ namespace NeoAxis.Editor
 						else
 							Log.Warning( "Mesh Editor: ExtractActualGeometry: " + error );
 					}
-
-					//var items = new List<MeshGeometry.ExtractActualGeometryItem>();
-					//foreach( var geometry in selectedMesh.GetComponents<MeshGeometry>() )
-					//{
-					//	var items2 = geometry.ExtractActualGeometry( true, out var error );
-					//	if( !string.IsNullOrEmpty( error ) )
-					//		Log.Warning( "Mesh Editor: ExtractActualGeometry: " + error );
-
-					//	items.AddRange( items2 );
-					//}
 
 					var bounds = BoundsF.Cleared;
 					var vertexCount = 0;
@@ -2440,6 +2427,20 @@ namespace NeoAxis.Editor
 					if( vertexCount > 100000 )
 						radius /= vertexCount / 100000.0f;
 
+					Vector3F[] vertices2;
+					int[] indices2;
+					if( vertexCount < 100000 )
+						SimpleMeshGenerator.GenerateSphere( new SphereF( Vector3F.Zero, radius ), 6, 6, false, out vertices2, out indices2 );
+					else
+					{
+						var b = new BoundsF( Vector3F.Zero );
+						b.Expand( radius );
+						SimpleMeshGenerator.GenerateBox( b, out vertices2, out indices2 );
+					}
+
+					var resultVertices = new OpenList<Vector3F>( vertices2.Length * vertexCount );
+					var resultIndices = new OpenList<int>( indices2.Length * vertexCount );
+
 					foreach( var item in items )
 					{
 						var vertices = item.Vertices;
@@ -2447,19 +2448,9 @@ namespace NeoAxis.Editor
 						{
 							var p = vertices[ n ].Position;
 
-							Vector3F[] vertices2;
-							int[] indices2;
-							if( vertexCount < 100000 )
-								SimpleMeshGenerator.GenerateSphere( new SphereF( p, radius ), 6, 6, false, out vertices2, out indices2 );
-							else
-							{
-								var b = new BoundsF( p );
-								b.Expand( radius );
-								SimpleMeshGenerator.GenerateBox( b, out vertices2, out indices2 );
-							}
-
 							var startVertexIndex = resultVertices.Count;
-							resultVertices.AddRange( vertices2 );
+							foreach( var vertex in vertices2 )
+								resultVertices.Add( p + vertex );
 							foreach( var index in indices2 )
 								resultIndices.Add( index + startVertexIndex );
 						}

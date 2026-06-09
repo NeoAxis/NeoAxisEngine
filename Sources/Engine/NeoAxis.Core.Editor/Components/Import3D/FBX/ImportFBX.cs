@@ -34,23 +34,6 @@ namespace NeoAxis.Import.FBX
 			public Material defaultMaterial;
 		}
 
-		//static bool HasTransformMatrixNegParity( Matrix3F m )
-		//{
-		//	return Vector3F.Dot( Vector3F.Cross( m.Item0, m.Item1 ), m.Item2 ) < 0.0f ? true : false;
-		//}
-
-		//static bool ContainsMeshesRecursive( Node node )
-		//{
-		//	if( node.HasMeshes )
-		//		return true;
-		//	foreach( var child in node.Children )
-		//	{
-		//		if( ContainsMeshesRecursive( child ) )
-		//			return true;
-		//	}
-		//	return false;
-		//}
-
 		public static void DoImport( Settings settings, out string error )
 		{
 			error = "(NO ERROR MESSAGE)";
@@ -224,10 +207,9 @@ namespace NeoAxis.Import.FBX
 			{
 				sceneLoader.Load( scene, context.manager, options, additionalTransform );
 
-				//!!!!lslsl
-				var boneTransformsToNormalize = new Dictionary<SkeletonBone, Matrix4>( 128 );
-
-				var skeletonComponent = CreateSkeletonComponent( context, sceneLoader.Skeleton, out int[] newIndexFromOldIndex, out SkeletonBone[] oldBoneFromNewIndex, additionalTransform, boneTransformsToNormalize );
+				//skeleton and animations
+				//var boneTransformsToNormalize = new Dictionary<SkeletonBone, Matrix4>( 128 );
+				var skeletonComponent = CreateSkeletonComponent( context, sceneLoader.Skeleton, out int[] newIndexFromOldIndex, out SkeletonBone[] oldBoneFromNewIndex, additionalTransform );//, boneTransformsToNormalize );
 
 				var mesh = settings.component.CreateComponent<Mesh>( enabled: false );
 				mesh.Name = "Mesh";
@@ -235,11 +217,12 @@ namespace NeoAxis.Import.FBX
 				foreach( var geom in sceneLoader.Geometries )
 					ImportGeometry( context, mesh, geom, newIndexFromOldIndex );
 
+				//skeleton and animations
 				if( skeletonComponent != null )
 				{
 					mesh.AddComponent( skeletonComponent );
 					mesh.Skeleton = ReferenceUtility.MakeThisReference( mesh, skeletonComponent );
-					InitAnimations( context, sceneLoader, mesh, oldBoneFromNewIndex, additionalTransform, boneTransformsToNormalize );
+					InitAnimations( context, sceneLoader, mesh, oldBoneFromNewIndex, additionalTransform );//, boneTransformsToNormalize );
 				}
 
 				if( settings.component.MergeGeometries.Value != Import3D.MergeGeometriesEnum.False )
@@ -249,13 +232,15 @@ namespace NeoAxis.Import.FBX
 			}
 
 			//create meshes, object in space (Meshes mode)
-			if( mode == Import3D.ModeEnum.Meshes /*&& scene.HasMeshes && scene.MeshCount != 0*/ )
+			if( mode == Import3D.ModeEnum.Meshes )
 			{
-				//!!!!lslsl
-				var boneTransformsToNormalize = new Dictionary<SkeletonBone, Matrix4>( 128 );
-
 				sceneLoader.Load( scene, context.manager, options, additionalTransform );
-				NeoAxis.Skeleton skeletonComponent = CreateSkeletonComponent( context, sceneLoader.Skeleton, out int[] newIndexFromOldIndex, out SkeletonBone[] oldBoneFromNewIndex, additionalTransform, boneTransformsToNormalize );
+
+				//skeleton and animations
+				//!!!!is not enabled in Meshes mode
+				int[] newIndexFromOldIndex = null;
+				//var boneTransformsToNormalize = new Dictionary<SkeletonBone, Matrix4>( 128 );
+				//NeoAxis.Skeleton skeletonComponent = CreateSkeletonComponent( context, sceneLoader.Skeleton, out int[] newIndexFromOldIndex, out SkeletonBone[] oldBoneFromNewIndex, additionalTransform, boneTransformsToNormalize );
 
 				var meshesGroup = settings.component.GetComponent( "Meshes" );
 
@@ -326,82 +311,6 @@ namespace NeoAxis.Import.FBX
 				//	objectInSpace.Enabled = true;
 				//}
 			}
-
-
-			////create meshes, object in space (Meshes mode)
-			//if( settings.component.Mode.Value == Import3D.ModeEnum.Meshes /*&& scene.HasMeshes && scene.MeshCount != 0*/ )
-			//{
-			//	var meshesGroup = settings.component.GetComponent( "Meshes" );
-
-			//	//Meshes
-			//	if( settings.updateMeshes )
-			//	{
-			//		meshesGroup = settings.component.CreateComponent<Component>( enable: false );
-			//		meshesGroup.Name = "Meshes";
-
-			//		//!!!!правильно ли работает? может как-то иначе в случае FBX на меши делить
-
-			//		for( int i = 0; i < rootNode.GetChildCount(); i++ )
-			//		{
-			//			var node = rootNode.GetChild( i );
-
-			//			//!!!!transform?
-
-			//			var mesh = meshesGroup.CreateComponent<Mesh>();
-			//			InitMeshGeometriesRecursive( importContext, node, additionalTransform, mesh );
-
-			//			if( mesh.Components.Count != 0 )
-			//			{
-			//				mesh.Name = mesh.Components.ToArray()[ 0 ].Name;
-
-			//				//!!!!transform?
-
-			//				if( settings.component.MergeMeshGeometries )
-			//					mesh.MergeGeometriesWithEqualVertexStructureAndMaterial();
-			//			}
-			//			else
-			//				mesh.Dispose();
-			//		}
-
-			//		meshesGroup.Enabled = true;
-			//	}
-
-			//	//Object In Space
-			//	if( settings.updateObjectsInSpace && meshesGroup != null )
-			//	{
-			//		var objectInSpace = settings.component.CreateComponent<ObjectInSpace>( enable: false );
-			//		objectInSpace.Name = "Object In Space";
-
-			//		foreach( var mesh in meshesGroup.Components )
-			//		{
-			//			var meshInSpace = objectInSpace.CreateComponent<MeshInSpace>();
-			//			meshInSpace.Name = mesh.Name;
-			//			meshInSpace.CanBeSelected = false;
-			//			meshInSpace.Mesh = ReferenceUtils.CreateReference<Mesh>( null, ReferenceUtils.CalculateRootReference( mesh ) );
-
-			//			//Transform
-			//			//!!!!transform?
-			//			var pos = Vec3.Zero;
-			//			var rot = Quat.Identity;
-			//			var scl = Vec3.One;
-			//			//( globalTransform * node.Transform.ToMat4() ).Decompose( out var pos, out Quat rot, out var scl );
-
-			//			var transformOffset = meshInSpace.CreateComponent<TransformOffset>();
-			//			transformOffset.Name = "Transform Offset";
-			//			transformOffset.PositionOffset = pos;
-			//			transformOffset.RotationOffset = rot;
-			//			transformOffset.ScaleOffset = scl;
-			//			transformOffset.Source = ReferenceUtils.CreateReference<Transform>( null,
-			//				ReferenceUtils.CalculateThisReference( transformOffset, objectInSpace, "Transform" ) );
-
-			//			meshInSpace.Transform = ReferenceUtils.CreateReference<Transform>( null,
-			//				ReferenceUtils.CalculateThisReference( meshInSpace, transformOffset, "Result" ) );
-			//		}
-
-			//		objectInSpace.Enabled = true;
-			//	}
-			//}
-
 		}
 
 		static void ImportGeometry( ImportContext importContext, Component parent, MeshData geom, int[] newIndexFromOldIndex )
@@ -413,6 +322,7 @@ namespace NeoAxis.Import.FBX
 			//CalcIndices.CalculateIndicesBySpatialSort( geom, out StandardVertex[] vertices, out int[] indices );
 			//CalcIndices.CalculateIndicesByOctree( m, out StandardVertexF[] verticesO, out int[] indicesO );
 
+			//affect blend indices
 			if( newIndexFromOldIndex != null )
 			{
 				for( int i = 0; i < vertices.Length; i++ )
@@ -452,7 +362,7 @@ namespace NeoAxis.Import.FBX
 		}
 
 		//newIndexFromOld - an array mapping from old bone indices to a new : ret[oldIndex]==newIndex
-		static NeoAxis.Skeleton CreateSkeletonComponent( ImportContext importContext, Skeleton skeleton, out int[] newIndexFromOldIndex, out SkeletonBone[] oldBoneFromNewIndex, Matrix4 additionalTransform, Dictionary<SkeletonBone, Matrix4> boneTransformsToNormalize )
+		static NeoAxis.Skeleton CreateSkeletonComponent( ImportContext importContext, Skeleton skeleton, out int[] newIndexFromOldIndex, out SkeletonBone[] oldBoneFromNewIndex, Matrix4 additionalTransform ) //, Dictionary<SkeletonBone, Matrix4> boneTransformsToNormalize )
 		{
 			newIndexFromOldIndex = null;
 			oldBoneFromNewIndex = null;
@@ -463,29 +373,29 @@ namespace NeoAxis.Import.FBX
 			skeletonComponent.Name = "Skeleton";
 			//skeletonComponent.Normalized = importContext.settings.component.NormalizeSkeleton;
 
-			var oldBones = new Dictionary<NeoAxis.SkeletonBone, SkeletonBone>();
+			var addedBones = new Dictionary<NeoAxis.SkeletonBone, SkeletonBone>();
 			foreach( var firstLevelBone in skeleton.RootBone.Children )
-				InitBoneRecursive( importContext, skeletonComponent, firstLevelBone, skeleton, oldBones, additionalTransform, boneTransformsToNormalize );
+				InitBoneRecursive( importContext, skeletonComponent, firstLevelBone, skeleton, addedBones, additionalTransform ); //, boneTransformsToNormalize );
 
 			var allBones = skeletonComponent.GetBones(); //contains information about new bone indices
-			int maxOldIndex = oldBones.Count == 0 ? -1 : oldBones.Values.Select( _ => skeleton.GetBoneIndexByNode( _.Node ) ).Max();
+			int maxOldIndex = addedBones.Count == 0 ? -1 : addedBones.Values.Select( _ => skeleton.GetBoneIndexByNode( _.Node ) ).Max();
 			newIndexFromOldIndex = new int[ maxOldIndex + 1 ];
 			for( int i = 0; i < newIndexFromOldIndex.Length; i++ )
 				newIndexFromOldIndex[ i ] = -1;
 			for( int newIndex = 0; newIndex < allBones.Length; newIndex++ )
 			{
-				var bone = oldBones[ allBones[ newIndex ] ];
+				var bone = addedBones[ allBones[ newIndex ] ];
 				newIndexFromOldIndex[ skeleton.GetBoneIndexByNode( bone.Node ) ] = newIndex;
 			}
 
 			oldBoneFromNewIndex = new SkeletonBone[ allBones.Length ];
 			for( int boneIndex = 0; boneIndex < oldBoneFromNewIndex.Length; boneIndex++ )
-				oldBoneFromNewIndex[ boneIndex ] = oldBones[ allBones[ boneIndex ] ];
+				oldBoneFromNewIndex[ boneIndex ] = addedBones[ allBones[ boneIndex ] ];
 
 			return skeletonComponent;
 		}
 
-		static void InitAnimations( ImportContext importContext, SceneLoader sceneLoader, Mesh parentComponent, SkeletonBone[] oldBonesFromNewIndex, Matrix4 additionalTransform, Dictionary<SkeletonBone, Matrix4> boneTransformsToNormalize )
+		static void InitAnimations( ImportContext importContext, SceneLoader sceneLoader, Mesh parentComponent, SkeletonBone[] oldBonesFromNewIndex, Matrix4 additionalTransform ) //, Dictionary<SkeletonBone, Matrix4> boneTransformsToNormalize )
 		{
 			var animationsComponent = parentComponent.CreateComponent<Component>();
 			animationsComponent.Name = "Animations";
@@ -519,6 +429,8 @@ namespace NeoAxis.Import.FBX
 
 
 					var trackData = new List<SkeletonAnimationTrack.KeyFrame>();
+
+					//fill trackData
 					for( int boneIndex = 0; boneIndex < oldBonesFromNewIndex.Length; boneIndex++ )
 					{
 						var bone = oldBonesFromNewIndex[ boneIndex ];
@@ -610,6 +522,15 @@ namespace NeoAxis.Import.FBX
 						}
 					}
 
+					//sort. by bone index first, then by time
+					CollectionUtility.MergeSort( trackData, ( a, b ) =>
+					{
+						var c = a.BoneIndex.CompareTo( b.BoneIndex );
+						if( c != 0 )
+							return c;
+						return a.Time.CompareTo( b.Time );
+					} );
+
 					skeletonAnimationTrackComponent.KeyFrames = SkeletonAnimationTrack.ToBytes( trackData );
 					skeletonAnimationComponent.Track = ReferenceUtility.MakeThisReference( skeletonAnimationComponent, skeletonAnimationTrackComponent );
 
@@ -619,7 +540,7 @@ namespace NeoAxis.Import.FBX
 			}
 		}
 
-		static void InitBoneRecursive( ImportContext importContext, Component parentComponent, SkeletonBone bone, Skeleton skeleton, Dictionary<NeoAxis.SkeletonBone, SkeletonBone> oldBones, Matrix4 additionalTransform, Dictionary<SkeletonBone, Matrix4> boneTransformsToNormalize )
+		static void InitBoneRecursive( ImportContext importContext, Component parentComponent, SkeletonBone bone, Skeleton skeleton, Dictionary<NeoAxis.SkeletonBone, SkeletonBone> addedBones, Matrix4 additionalTransform ) //, Dictionary<SkeletonBone, Matrix4> boneTransformsToNormalize )
 		{
 			var boneComponent = parentComponent.CreateComponent<NeoAxis.SkeletonBone>();
 			boneComponent.Name = bone.Name;
@@ -672,10 +593,10 @@ namespace NeoAxis.Import.FBX
 			//boneComponent.RotationBeforeNormalization = rotation2;
 			//boneComponent.ScaleBeforeNormalization = scale2;
 			////boneComponent.RotationScaleBeforeNormalization = initialTransform2;
-			oldBones[ boneComponent ] = bone;
+			addedBones[ boneComponent ] = bone;
 
 			foreach( var childBone in bone.Children )
-				InitBoneRecursive( importContext, boneComponent, childBone, skeleton, oldBones, additionalTransform, boneTransformsToNormalize );
+				InitBoneRecursive( importContext, boneComponent, childBone, skeleton, addedBones, additionalTransform ); //, boneTransformsToNormalize );
 		}
 
 		/////////////////////////////////////////
@@ -696,6 +617,31 @@ namespace NeoAxis.Import.FBX
 
 				try
 				{
+
+
+					//!!!!
+					//{
+					//	Log.Info( "---------: " + data.Name );
+
+					//	var p = fbxMaterial.GetFirstProperty();
+
+					//	while( p.IsValid() )
+					//	{
+					//		Log.Info( "Property: " + p.GetName() );
+					//		//show more info about property. interesting about textures
+					//		Log.Info( "  Type: " + p.GetPropertyDataType().GetName() );
+
+					//		var textureCount = p.GetSrcObjectCount();
+					//		Log.Info( "  ObjectCount: " + textureCount );
+
+
+					//		p = fbxMaterial.GetNextProperty( p );
+					//	}
+
+					//	Log.Info( "---- END" );
+					//}
+
+
 					//FbxSurfaceMaterial
 					if( fbxMaterial.GetRuntimeClassId().Is( FbxSurfaceMaterial.ClassId ) ) //FbxSurfaceLambert
 					{

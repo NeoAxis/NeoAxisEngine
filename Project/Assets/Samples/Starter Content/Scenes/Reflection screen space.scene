@@ -1,9 +1,8 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2026.2.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1145, 842\"><KW V=\"1\" A=\"75A91A96794E414A09A2B12F0BFB597D\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"05EEC8DB64254BB64290533DB5F3D9EF\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"75A91A96794E414A09A2B12F0BFB597D\"><KP UN=\"75A91A96794E414A09A2B12F0BFB597D\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"C42D4348B80D4EC47095F1FB003E4098\" S=\"False\"><CPD ObjPath=\"$Material Floor\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
-	BackgroundColor = 1 1 1
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1202, 963\"><KW V=\"1\" A=\"75A91A96794E414A09A2B12F0BFB597D\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"05EEC8DB64254BB64290533DB5F3D9EF\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"75A91A96794E414A09A2B12F0BFB597D\"><KP UN=\"75A91A96794E414A09A2B12F0BFB597D\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"C42D4348B80D4EC47095F1FB003E4098\" S=\"False\"><CPD ObjPath=\"$Material Floor\\$Shader graph\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -16,14 +15,15 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "16.5392776527373 0.696980527899666 -14.8141864955869; -0.16441832956375 -0.00672769405925378 0.98554305658818 -0.0403265997443205; 1 1 1"
+		Transform = "16.5392776527373 0.696980527899666 -14.8141864955869; -0.123321561070368 -0.00865721250864768 0.989892860456023 -0.0694907912240177; 1 1 1"
 	}
 	.component NeoAxis.Light
 	{
 		Name = Ambient Light
 		Transform = "-27.7871391969358 37.4683781031502 14.686420383686; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
-		Brightness = 50000
+		Brightness = 30000
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
@@ -39,6 +39,10 @@
 			.component NeoAxis.RenderingEffect_Reflection
 			{
 				Name = Reflection
+			}
+			.component NeoAxis.RenderingEffect_ToneMapping
+			{
+				Name = Tone Mapping
 			}
 			.component NeoAxis.RenderingEffect_Antialiasing
 			{
@@ -74,6 +78,7 @@
 		AttenuationPower = 1.5
 		SpotlightInnerAngle = 80
 		SpotlightOuterAngle = 90
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -82,6 +87,7 @@
 		Transform = "16.2614505529656 1.98343514224467 -13.6195803875689; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -90,6 +96,7 @@
 		Transform = "9.45344240293682 -4.18588145995731 -13.760985157176; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 616298.8125
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.MeshInSpace
 	{
@@ -103,10 +110,6 @@
 		ReplaceMaterial
 		{
 			GetByReference = "this:..\\$Material Floor"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -161,10 +164,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -193,10 +192,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -249,10 +244,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -309,10 +300,6 @@
 		{
 			GetByReference = "Base\\Materials\\Dark Red.material"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -328,10 +315,6 @@
 		Mesh
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -349,10 +332,6 @@
 		{
 			GetByReference = "Samples\\Starter Content\\Models\\Ball in 3D Coat\\export3dcoat.obj|$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -367,7 +346,6 @@
 		Metallic = 0.5
 		Roughness = 0
 		Reflectance = 1
-		RayTracingReflection = 1
 		BaseColor
 		{
 			GetByReference = "this:$Shader graph\\$Node Texture Sample 2\\$Texture Sample\\RGBA"
@@ -452,8 +430,9 @@
 			}
 		}
 	}
-	.component NeoAxis.Skybox
+	.component NeoAxis.Sky
 	{
+		Enabled = False
 		Name = Sky
 	}
 }

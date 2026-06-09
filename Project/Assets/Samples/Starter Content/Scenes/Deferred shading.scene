@@ -1,8 +1,10 @@
-// Made with NeoAxis Engine 2023.1.
+// Made with NeoAxis Engine 2026.1.
 
 .component NeoAxis.Scene
 {
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1192, 963\"><KW V=\"1\" A=\"09F15C5255AA474F199F6E0CD6209C27\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"FE9FB020676D4E4CDBA275A4C76BD0B4\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"09F15C5255AA474F199F6E0CD6209C27\"><KP UN=\"09F15C5255AA474F199F6E0CD6209C27\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"933000FB215445BD6884DEDECAE7938E\" S=\"False\"><CPD ObjPath=\"$Material Standard\\$Flowchart\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BackgroundColor = 0 0 0
+	BackgroundColorAffectLighting = 0
 	DisplayTextInfo = True
 	RenderingPipeline
 	{
@@ -15,21 +17,19 @@
 	.component NeoAxis.Camera
 	{
 		Name = Camera Editor
-		Visible = False
 		Transform = "17.1218106675489 -4.42040756566806 -12.5731334167121; -0.211772629418234 0.0915728961927236 0.89309955253987 0.386186415303864; 1 1 1"
 	}
 	.component NeoAxis.Light
 	{
 		Name = Ambient Light
-		Transform = "-27.7871391969358 37.4683781031502 14.686420383686; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
+		Transform = "12.6815159469574 -3.15861764682518 -14.0866810139582; 0 0 0 1; 1 1 1"
 		Type = Ambient
-		Brightness = 4094.691316893
+		Brightness = 0
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.RenderingPipeline_Basic
 	{
 		Name = Rendering Pipeline
-		ShadowDirectionalLightCascades = 1
-		ShadowSpotlightTextureSize = _2048
 		.component NeoAxis.Component
 		{
 			Name = Background Effects
@@ -37,6 +37,14 @@
 		.component NeoAxis.Component
 		{
 			Name = Scene Effects
+			.component NeoAxis.RenderingEffect_ToneMapping
+			{
+				Name = Tone Mapping
+			}
+			.component NeoAxis.RenderingEffect_ToLDR
+			{
+				Name = To LDR
+			}
 			.component NeoAxis.RenderingEffect_Antialiasing
 			{
 				Name = Antialiasing
@@ -54,7 +62,12 @@
 				Enabled = False
 				Name = Show Render Target
 				Texture = Depth
+				DepthMultiplier = 62.09440000000001
 			}
+		}
+		.component NeoAxis.Component
+		{
+			Name = Final Image Effects
 		}
 	}
 	.component NeoAxis.GameMode
@@ -66,18 +79,6 @@
 		ScreenFadingCurrentColor = 0 0 0 0
 		ScreenFadingTargetColor = 0 0 0 0
 		ScreenFadingSpeed = 0
-	}
-	.component NeoAxis.Light
-	{
-		Enabled = False
-		Name = Light1
-		Transform = "21.096603415861 -4.02738720650646 -4.54723975048288; -0.385544653371362 -0.735088364894102 0.426206952042812 -0.359649899324952; 1 1 1"
-		Type = Spotlight
-		Brightness = 346459.78125
-		AttenuationFar = 100
-		AttenuationPower = 1.5
-		SpotlightInnerAngle = 80
-		SpotlightOuterAngle = 90
 	}
 	.component NeoAxis.Material
 	{
@@ -122,20 +123,13 @@
 	}
 	.component NeoAxis.Light
 	{
-		Enabled = False
-		Name = Light2
-		Transform = "16.2614505529656 1.98343514224467 -13.6195803875689; 0 0 0 1; 1 1 1"
-		Type = Point
-		Brightness = 514788.5
-	}
-	.component NeoAxis.Light
-	{
 		Name = Light4
 		Transform = "13.0484878794768 -2.71432365730669 -16.3155940076594; 0 0 0 1; 1 1 1"
 		Type = Point
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -145,6 +139,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -154,6 +149,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -163,6 +159,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -172,6 +169,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -181,6 +179,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -190,6 +189,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -199,6 +199,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -208,6 +209,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -217,6 +219,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -226,6 +229,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -235,6 +239,7 @@
 		Brightness = 256906.360508832
 		AttenuationNear = 0.484
 		AttenuationFar = 4.624
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -244,6 +249,7 @@
 		Brightness = 256906.360508832
 		AttenuationNear = 0.484
 		AttenuationFar = 4.624
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -253,6 +259,7 @@
 		Brightness = 256906.360508832
 		AttenuationNear = 0.484
 		AttenuationFar = 4.624
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -262,6 +269,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -271,6 +279,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -280,6 +289,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -289,6 +299,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -298,6 +309,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -307,6 +319,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -316,6 +329,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -325,6 +339,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -334,6 +349,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -343,6 +359,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -352,6 +369,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -361,6 +379,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -370,6 +389,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -379,6 +399,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -388,6 +409,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -397,6 +419,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -406,6 +429,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -415,6 +439,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -424,6 +449,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -433,6 +459,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -442,6 +469,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -451,6 +479,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -461,6 +490,7 @@
 		Color = 0.9643922 1 0.1054118
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -471,6 +501,7 @@
 		Color = 0.9643922 1 0.1054118
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -481,6 +512,7 @@
 		Color = 0.9643922 1 0.1054118
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -491,6 +523,7 @@
 		Color = 0.9643922 1 0.1054118
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -501,6 +534,7 @@
 		Color = 0.9643922 1 0.1054118
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -511,6 +545,7 @@
 		Color = 0.9643922 1 0.1054118
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -521,6 +556,7 @@
 		Color = 0.9643922 1 0.1054118
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -531,6 +567,7 @@
 		Color = 0.9643922 1 0.1054118
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -541,6 +578,7 @@
 		Color = 0.9643922 1 0.1054118
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -551,6 +589,7 @@
 		Color = 0.9643922 1 0.1054118
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -561,6 +600,7 @@
 		Color = 0.9643922 1 0.1054118
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -571,6 +611,7 @@
 		Color = 0.9643922 1 0.1054118
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -581,6 +622,7 @@
 		Color = 0.9643922 1 0.1054118
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -591,6 +633,7 @@
 		Color = 0.9643922 1 0.1054118
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -601,6 +644,7 @@
 		Color = 0.9643922 1 0.1054118
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -611,6 +655,7 @@
 		Color = 0.9643922 1 0.1054118
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -621,6 +666,7 @@
 		Color = 0.9643922 1 0.1054118
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -631,6 +677,7 @@
 		Color = 0.9643922 1 0.1054118
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -640,6 +687,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -649,6 +697,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -658,6 +707,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -667,6 +717,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -676,6 +727,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -685,6 +737,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -694,6 +747,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -703,6 +757,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -712,6 +767,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -721,6 +777,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -730,6 +787,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -739,6 +797,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -748,6 +807,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -757,6 +817,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -766,6 +827,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -775,6 +837,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -784,6 +847,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -793,6 +857,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -802,6 +867,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -811,6 +877,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -820,6 +887,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -829,6 +897,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -838,6 +907,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -847,6 +917,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -856,6 +927,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -865,6 +937,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -874,6 +947,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -883,6 +957,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -892,6 +967,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -901,6 +977,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -910,6 +987,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -919,6 +997,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.Light
 	{
@@ -928,14 +1007,7 @@
 		Brightness = 514788.5
 		AttenuationNear = 0.484
 		Shadows = False
-	}
-	.component NeoAxis.Light
-	{
-		Enabled = False
-		Name = Light3
-		Transform = "9.45344240293682 -4.18588145995731 -13.760985157176; 0 0 0 1; 1 1 1"
-		Type = Point
-		Brightness = 616298.8125
+		ShadowNearClipDistance = 0.1
 	}
 	.component NeoAxis.MeshInSpace
 	{
@@ -945,10 +1017,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1002,10 +1070,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1035,10 +1099,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{
@@ -1092,10 +1152,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1147,10 +1203,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1175,10 +1227,6 @@
 		{
 			GetByReference = "this:$Mesh"
 		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
-		}
 		SpecialEffects
 		{
 			Value
@@ -1202,10 +1250,6 @@
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterialSelectively
-		{
-			Count = 0
 		}
 		SpecialEffects
 		{

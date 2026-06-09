@@ -13360,6 +13360,7 @@ namespace NeoAxis
 			context.LODRange = LODRange.Value;
 			//additional 1.5 multiplier to add more quality
 			context.LODScale = (float)( LODScale.Value * GlobalLODScale * 1.5f );
+
 			context.LODScaleShadowsSquared = (float)( LODScaleShadows.Value * GlobalLODScaleShadows );
 			context.LODScaleShadowsSquared *= context.LODScaleShadowsSquared;
 			context.SmoothLOD = RenderingSystem.SmoothLOD;

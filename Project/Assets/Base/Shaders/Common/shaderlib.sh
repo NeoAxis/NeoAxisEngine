@@ -212,9 +212,14 @@ vec3 convertYIQ2RGB(vec3 _yiq)
 	return rgb;
 }
 
+*/
+
+
 vec3 toLinear(vec3 _rgb)
 {
-	return pow(abs(_rgb), vec3_splat(2.2) );
+	//!!!!betauser
+	return pow(_rgb, vec3_splat(2.2) );
+	//return pow(abs(_rgb), vec3_splat(2.2) );
 }
 
 vec4 toLinear(vec4 _rgba)
@@ -237,12 +242,16 @@ vec4 toLinearAccurate(vec4 _rgba)
 
 float toGamma(float _r)
 {
-	return pow(abs(_r), 1.0/2.2);
+	//!!!!betauser
+	return pow(_r, 1.0/2.2);
+	//return pow(abs(_r), 1.0/2.2);
 }
 
 vec3 toGamma(vec3 _rgb)
 {
-	return pow(abs(_rgb), vec3_splat(1.0/2.2) );
+	//!!!!betauser
+	return pow(_rgb, vec3_splat(1.0/2.2) );
+	//return pow(abs(_rgb), vec3_splat(1.0/2.2) );
 }
 
 vec4 toGamma(vec4 _rgba)
@@ -253,7 +262,9 @@ vec4 toGamma(vec4 _rgba)
 vec3 toGammaAccurate(vec3 _rgb)
 {
 	vec3 lo  = _rgb * 12.92;
-	vec3 hi  = pow(abs(_rgb), vec3_splat(1.0/2.4) ) * 1.055 - 0.055;
+	//!!!!betauser
+	vec3 hi  = pow(_rgb, vec3_splat(1.0/2.4) ) * 1.055 - 0.055;
+	//vec3 hi  = pow(abs(_rgb), vec3_splat(1.0/2.4) ) * 1.055 - 0.055;
 	vec3 rgb = mix(hi, lo, vec3(lessThanEqual(_rgb, vec3_splat(0.0031308) ) ) );
 	return rgb;
 }
@@ -262,6 +273,8 @@ vec4 toGammaAccurate(vec4 _rgba)
 {
 	return vec4(toGammaAccurate(_rgba.xyz), _rgba.w);
 }
+
+/*
 
 vec3 toReinhard(vec3 _rgb)
 {

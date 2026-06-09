@@ -15,7 +15,7 @@ namespace NeoAxis
 		/// The brightness of the ambient light.
 		/// </summary>
 		[Category( "Preview" )]
-		[DefaultValue( 50000.0 )]
+		[DefaultValue( 30000.0 )] //50000.0
 		[Range( 0, 100000 )]
 		public Reference<double> PreviewAmbientLightBrightness
 		{
@@ -24,13 +24,13 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="PreviewAmbientLightBrightness"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_Preview> PreviewAmbientLightBrightnessChanged;
-		ReferenceField<double> _previewAmbientLightBrightness = 50000.0;
+		ReferenceField<double> _previewAmbientLightBrightness = 30000.0; //50000.0;
 
 		/// <summary>
 		/// The brightness of the directional light.
 		/// </summary>
 		[Category( "Preview" )]
-		[DefaultValue( 200000.0 )]
+		[DefaultValue( 250000.0 )] //200000.0
 		[Range( 0, 1000000 )]
 		public Reference<double> PreviewDirectionalLightBrightness
 		{
@@ -39,22 +39,51 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="PreviewDirectionalLightBrightness"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_Preview> PreviewDirectionalLightBrightnessChanged;
-		ReferenceField<double> _previewDirectionalLightBrightness = 200000.0;
+		ReferenceField<double> _previewDirectionalLightBrightness = 250000.0; //200000.0
 
 		/// <summary>
-		/// The material of preview environment for the light theme.
+		/// The level of tone mapping for the preview.
 		/// </summary>
-		[DefaultValueReference( @"Content\Environments\Base\Forest.image" )]
-		[Category( "Preview" )]
-		[DisplayName( "Material Preview Environment for Light Theme" )]
-		public Reference<ImageComponent> MaterialPreviewEnvironmentLightTheme
+		[DefaultValue( 1.0 )]
+		[Range( 0, 1 )]
+		public Reference<double> PreviewToneMapping
 		{
-			get { if( _materialPreviewEnvironmentLightTheme.BeginGet() ) MaterialPreviewEnvironmentLightTheme = _materialPreviewEnvironmentLightTheme.Get( this ); return _materialPreviewEnvironmentLightTheme.value; }
-			set { if( _materialPreviewEnvironmentLightTheme.BeginSet( this, ref value ) ) { try { MaterialPreviewEnvironmentLightThemeChanged?.Invoke( this ); } finally { _materialPreviewEnvironmentLightTheme.EndSet(); } } }
+			get { if( _previewToneMapping.BeginGet() ) PreviewToneMapping = _previewToneMapping.Get( this ); return _previewToneMapping.value; }
+			set { if( _previewToneMapping.BeginSet( this, ref value ) ) { try { PreviewToneMappingChanged?.Invoke( this ); } finally { _previewToneMapping.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="MaterialPreviewEnvironmentLightTheme"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_Preview> MaterialPreviewEnvironmentLightThemeChanged;
-		ReferenceField<ImageComponent> _materialPreviewEnvironmentLightTheme = new Reference<ImageComponent>( null, @"Content\Environments\Base\Forest.image" );
+		/// <summary>Occurs when the <see cref="PreviewToneMapping"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_Preview> PreviewToneMappingChanged;
+		ReferenceField<double> _previewToneMapping = 1.0;
+
+		/// <summary>
+		/// The material of preview environment.
+		/// </summary>
+		[DefaultValueReference( @"Content\Environments\Basic Library\Outdoor\Textures\kloofendal_48d_partly_cloudy_4k.hdr" )]
+		[Category( "Preview" )]
+		[DisplayName( "Material Preview Environment" )]
+		public Reference<ImageComponent> MaterialPreviewEnvironment
+		{
+			get { if( _materialPreviewEnvironment.BeginGet() ) MaterialPreviewEnvironment = _materialPreviewEnvironment.Get( this ); return _materialPreviewEnvironment.value; }
+			set { if( _materialPreviewEnvironment.BeginSet( this, ref value ) ) { try { MaterialPreviewEnvironmentChanged?.Invoke( this ); } finally { _materialPreviewEnvironment.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="MaterialPreviewEnvironment"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_Preview> MaterialPreviewEnvironmentChanged;
+		ReferenceField<ImageComponent> _materialPreviewEnvironment = new Reference<ImageComponent>( null, @"Content\Environments\Basic Library\Outdoor\Textures\kloofendal_48d_partly_cloudy_4k.hdr" );
+
+		///// <summary>
+		///// The material of preview environment for the light theme.
+		///// </summary>
+		//[DefaultValueReference( @"Content\Environments\Base\Forest.image" )]
+		//[Category( "Preview" )]
+		//[DisplayName( "Material Preview Environment for Light Theme" )]
+		//public Reference<ImageComponent> MaterialPreviewEnvironmentLightTheme
+		//{
+		//	get { if( _materialPreviewEnvironmentLightTheme.BeginGet() ) MaterialPreviewEnvironmentLightTheme = _materialPreviewEnvironmentLightTheme.Get( this ); return _materialPreviewEnvironmentLightTheme.value; }
+		//	set { if( _materialPreviewEnvironmentLightTheme.BeginSet( this, ref value ) ) { try { MaterialPreviewEnvironmentLightThemeChanged?.Invoke( this ); } finally { _materialPreviewEnvironmentLightTheme.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="MaterialPreviewEnvironmentLightTheme"/> property value changes.</summary>
+		//public event Action<ProjectSettingsPage_Preview> MaterialPreviewEnvironmentLightThemeChanged;
+		//ReferenceField<ImageComponent> _materialPreviewEnvironmentLightTheme = new Reference<ImageComponent>( null, @"Content\Environments\Base\Forest.image" );
 
 		/// <summary>
 		/// The preview mesh for the material.
@@ -70,33 +99,35 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_Preview> MaterialPreviewMeshChanged;
 		ReferenceField<Mesh> _materialPreviewMesh = new Reference<Mesh>( null, @"Base\Tools\Material Preview\Sphere.mesh" );
 
-		/// <summary>
-		/// The material of preview environment for the dark theme.
-		/// </summary>
-		[DefaultValueReference( @"Content\Environments\Base\Forest.image" )]
-		[Category( "Preview" )]
-		[DisplayName( "Material Preview Environment for Dark Theme" )]
-		public Reference<ImageComponent> MaterialPreviewEnvironmentDarkTheme
-		{
-			get { if( _materialPreviewEnvironmentDarkTheme.BeginGet() ) MaterialPreviewEnvironmentDarkTheme = _materialPreviewEnvironmentDarkTheme.Get( this ); return _materialPreviewEnvironmentDarkTheme.value; }
-			set { if( _materialPreviewEnvironmentDarkTheme.BeginSet( this, ref value ) ) { try { MaterialPreviewEnvironmentDarkThemeChanged?.Invoke( this ); } finally { _materialPreviewEnvironmentDarkTheme.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="MaterialPreviewEnvironmentDarkTheme"/> property value changes.</summary>
-		public event Action<ProjectSettingsPage_Preview> MaterialPreviewEnvironmentDarkThemeChanged;
-		ReferenceField<ImageComponent> _materialPreviewEnvironmentDarkTheme = new Reference<ImageComponent>( null, @"Content\Environments\Base\Forest.image" );
+		///// <summary>
+		///// The material of preview environment for the dark theme.
+		///// </summary>
+		//[DefaultValueReference( @"Content\Environments\Base\Forest.image" )]
+		//[Category( "Preview" )]
+		//[DisplayName( "Material Preview Environment for Dark Theme" )]
+		//public Reference<ImageComponent> MaterialPreviewEnvironmentDarkTheme
+		//{
+		//	get { if( _materialPreviewEnvironmentDarkTheme.BeginGet() ) MaterialPreviewEnvironmentDarkTheme = _materialPreviewEnvironmentDarkTheme.Get( this ); return _materialPreviewEnvironmentDarkTheme.value; }
+		//	set { if( _materialPreviewEnvironmentDarkTheme.BeginSet( this, ref value ) ) { try { MaterialPreviewEnvironmentDarkThemeChanged?.Invoke( this ); } finally { _materialPreviewEnvironmentDarkTheme.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="MaterialPreviewEnvironmentDarkTheme"/> property value changes.</summary>
+		//public event Action<ProjectSettingsPage_Preview> MaterialPreviewEnvironmentDarkThemeChanged;
+		//ReferenceField<ImageComponent> _materialPreviewEnvironmentDarkTheme = new Reference<ImageComponent>( null, @"Content\Environments\Base\Forest.image" );
 
 		public Reference<ImageComponent> GetMaterialPreviewEnvironment()
 		{
-			if( EditorAPI.DarkTheme )
-				return MaterialPreviewEnvironmentDarkTheme;
-			else
-				return MaterialPreviewEnvironmentLightTheme;
+			return MaterialPreviewEnvironment;
+
+			//if( EditorAPI.DarkTheme )
+			//	return MaterialPreviewEnvironmentDarkTheme;
+			//else
+			//	return MaterialPreviewEnvironmentLightTheme;
 		}
 
 		/// <summary>
 		/// The color multiplier to preview material.
 		/// </summary>
-		[DefaultValue( "1 1 1" )]
+		[DefaultValue( "1 1 1; 2" )]
 		[ApplicableRangeColorValuePower( 0, 4 )]
 		[ColorValueNoAlpha]
 		[Category( "Preview" )]
@@ -107,12 +138,12 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="MaterialPreviewEnvironmentMultiplier"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_Preview> MaterialPreviewEnvironmentMultiplierChanged;
-		ReferenceField<ColorValuePowered> _materialPreviewEnvironmentMultiplier = new ColorValuePowered( 1, 1, 1 );
+		ReferenceField<ColorValuePowered> _materialPreviewEnvironmentMultiplier = new ColorValuePowered( 1, 1, 1, 1, 2 );
 
 		/// <summary>
 		/// The factor of lighting for preview material.
 		/// </summary>
-		[DefaultValue( 0.5 )]
+		[DefaultValue( 1.0 )] //0.5
 		[Range( 0, 1 )]
 		[Category( "Preview" )]
 		public Reference<double> MaterialPreviewEnvironmentAffectLighting
@@ -122,6 +153,9 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="MaterialPreviewEnvironmentAffectLighting"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_Preview> MaterialPreviewEnvironmentAffectLightingChanged;
-		ReferenceField<double> _materialPreviewEnvironmentAffectLighting = 0.5;
+		ReferenceField<double> _materialPreviewEnvironmentAffectLighting = 1.0; //0.5;
+
+
+		//!!!!MaterialPreviewEnvironmentColorGrading
 	}
 }
